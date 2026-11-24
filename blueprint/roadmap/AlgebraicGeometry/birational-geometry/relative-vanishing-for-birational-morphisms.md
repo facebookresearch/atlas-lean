@@ -35,8 +35,10 @@ of $\bar\Delta$: this gives a smooth projective $\bar X$ with a birational morph
 morphism $\tau \colon X' = \bar f^{-1}(Z) \to X$ such that $\tau^* D$ has snc support. Esnault and
 Viehweg's Claim 5.13, which is local on $X$, applied after the usual reduction to coefficients $0 <
 \alpha_j < N$, gives $R\tau_* \mathcal{O}_{X'}(\lfloor \tau^* D / N \rfloor) = \mathcal{O}_X(\lfloor
-D / N \rfloor)$ for these inverse eigensheaves; Grothendieck duality for $\tau$ (Stacks Project,
-Section 48.16, Tag 0A9Y), with $\tau^! \omega_X = \omega_{X'}$, turns it into
+D / N \rfloor)$ for these inverse eigensheaves; Grothendieck duality for the proper morphism $\tau$
+(Stacks Project, Section 48.19, Tag 0AU3, items (2) and (4)(c), for the functor $\tau^!$ of Section
+48.16, Tag 0A9Y), with $\tau^!(\omega_X[n]) = \omega_{X'}[n]$ for the common dimension $n$ of $X$
+and $X'$, turns it into
 $R\tau_*\bigl(\omega_{X'}(-\lfloor \tau^* D / N \rfloor)\bigr) = \omega_X(-\lfloor D / N \rfloor)$,
 so the statement for $f$ follows from the statement for $\bar f$ over $Z$. For $\bar f$, choose an
 ample $\mathcal{A}$ on $\bar Z$ and $m$ so large that $m \mathcal{A} - \bar\Delta / N$ is an ample

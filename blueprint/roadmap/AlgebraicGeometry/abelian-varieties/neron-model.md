@@ -55,8 +55,11 @@ A good expansion follows Bosch, Lütkebohmert and Raynaud and has pages for:
 A good expansion also states and links:
 
 - the Yoneda lemma, for the uniqueness of the Néron model up to unique isomorphism
-- Bertini slicing, with Poincaré's reducibility theorem, for the presentation of $A$ as a quotient
-  of a Jacobian (Conrad, Proposition 4.3)
+- Bertini slicing, for a smooth proper geometrically connected curve $X$ over $K$ with a surjection
+  $J_X \to A$ from its Jacobian (Conrad, proof of Proposition 4.3)
+- Poincaré's reducibility theorem, for an abelian variety $B$ over $K$ with $A \times B$ isogenous
+  to $J_X$, through which semistable reduction passes from $J_X$ to $A$ (Conrad, proof of
+  Proposition 4.3)
 
 ## Sources
 

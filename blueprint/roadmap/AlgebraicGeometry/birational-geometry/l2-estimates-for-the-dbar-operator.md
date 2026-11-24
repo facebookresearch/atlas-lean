@@ -50,8 +50,10 @@ A good expansion has pages for:
   is nef. With the Riemann–Roch formula $\chi(X, kL) = \frac{(L^n)}{n!} k^n + o(k^n)$ this gives
   $\operatorname{Vol}(L) = (L^n)$ for nef $L$ (proof of Corollary (6.19)). The remark after (6.13)
   refers to Corollary (8.4) as "Corollary 8.3";
-- the Riemann–Roch formula $\chi(X, kL) = \frac{(L^n)}{n!} k^n + o(k^n)$, a consequence of the
-  Hirzebruch–Riemann–Roch theorem, which Esnault and Viehweg also use for their Lemma 5.8;
+- the Riemann–Roch formula $\chi(X, kL) = \frac{(L^n)}{n!} k^n + o(k^n)$ on a compact complex
+  manifold, a consequence of the Hirzebruch–Riemann–Roch theorem in that generality, which the
+  standard results of coherent cohomology state only for smooth projective varieties; Esnault and
+  Viehweg also use it, for their Lemma 5.8;
 - complete Kähler metrics: every weakly pseudoconvex Kähler manifold carries one (Demailly, the
   observation before (5.2), p. 34), and so does $X_c \setminus Y$ for $X$ weakly pseudoconvex
   Kähler, exhausted by the sublevel sets $X_c$, and $Y = \sigma^{-1}(0)$ an analytic subset defined
@@ -60,11 +62,12 @@ A good expansion has pages for:
   Z$ is complete Kähler whenever $\Omega$ is a relatively compact open subset of a Kähler manifold
   and $\Omega$ itself carries a complete Kähler metric, in particular for the sublevel sets $\Omega
   = X_c$ of a weakly pseudoconvex $X$ (Demailly 1982, Théorème 1.5 and Remarque 1.6, p. 464);
-- the Serre–Siegel lemma (Demailly (6.13), p. 45, proved from the Schwarz lemma): for a holomorphic
-  line bundle $L$ on a compact complex manifold with $\kappa(L) \ge 0$, $h^0(X, mL) =
-  O(m^{\kappa(L)})$ for $m \ge 1$ and $\kappa(L)$ is the smallest exponent with this property, while
-  $h^0(X, mL) = 0$ for all $m \ge 1$ when $\kappa(L) = -\infty$; the volume is finite, and $L$ is
-  big if and only if its volume is positive.
+- the Serre–Siegel lemma (Demailly (6.13), p. 45, proved from the Schwarz lemma on polydiscs, which
+  reduces to the unit disc along complex lines through the centre): for a holomorphic line bundle
+  $L$ on a compact complex manifold with $\kappa(L) \ge 0$, $h^0(X, mL) = O(m^{\kappa(L)})$ for $m
+  \ge 1$ and $\kappa(L)$ is the smallest exponent with this property, while $h^0(X, mL) = 0$ for all
+  $m \ge 1$ when $\kappa(L) = -\infty$; the volume is finite, and $L$ is big if and only if its
+  volume is positive.
 
 ## Depends on
 
@@ -74,8 +77,8 @@ A good expansion has pages for:
 ## Proof depends on
 
 - [Schwarz–Pick lemma](../../Analysis/complex-analysis/geometric-function-theory/schwarz-pick-lemma/schwarz-pick.md),
-  for the Schwarz bound $|f(z)| \le |z|$ on the unit disc, its case $w = 0$ when $f(0) = 0$, from
-  which Demailly proves the Serre–Siegel lemma (6.13)
+  for the Schwarz bound $|f(z)| \le |z|$ on the unit disc, its case $w = 0$ when $f(0) = 0$, to
+  which the Schwarz lemma on polydiscs behind the Serre–Siegel lemma (6.13) reduces
 
 ## Expansion
 

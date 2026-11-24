@@ -21,7 +21,11 @@ abelian variety by a torus, such as the semi-abelian schemes of
 
 ## Proof depends on
 
-Its proof uses the inputs listed under Expansion.
+- [Localization at a height-one prime is a DVR](../../RingTheory/valuation-rings/discrete-valuation-rings-at-height-one-primes/is-discrete-valuation-ring-of-height-eq.md),
+  for the discrete valuation rings at the points of codimension one of $S$, localizations of a
+  noetherian integrally closed domain on an integral affine open subscheme, over which the expansion
+  of 1 first extends the homomorphism; the extension across codimension two needs the further inputs
+  listed under Expansion
 
 ## Expansion
 

@@ -118,8 +118,11 @@ A good expansion also states and links:
   finiteness theorem in 2
 - the Čech complex and the exactness of flat tensor products (Stacks Project, Tag 02KH), for flat
   base change in 2
-- Kleiman's criterion for nef line bundles and his nonnegativity of mixed intersection numbers of
-  nef sheaves (Keeler, Proposition 2.11 and Lemma 2.12), as a page of its own, for 5 and 6
+- Kleiman's criterion for nef line bundles (Keeler, Proposition 2.11) and the nonnegativity of the
+  products $L^i \cdot N^{d-i} \cdot V$ of two nef classes on a $d$-dimensional integral $V$
+  contracted by $\pi$ (Keeler, Lemma 2.12), as a page of its own, for 5 and 6; the page on
+  intersection numbers of nef line bundles states the nonnegativity for any number of nef classes
+  but depends on this node, so this step needs a proof independent of it
 - the growth estimates that Esnault and Viehweg take from Mori (Esnault–Viehweg, Properties 5.4),
   for 9 and 10
 

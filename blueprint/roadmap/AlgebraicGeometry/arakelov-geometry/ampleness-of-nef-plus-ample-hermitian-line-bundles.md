@@ -60,6 +60,14 @@ A good expansion follows this derivation, with pages for:
 - [Zhang's arithmetic ampleness theorem](arithmetic-ampleness-theorem.md), for Zhang's theorem,
   whose arguments Moriwaki's Corollary 5.1 adapts once the metric is semiample, and which gives the
   small sections directly when the generic fibre is smooth
+- [Moriwaki's generalized Hodge index theorem](arithmetic-volumes/generalized-hodge-index-theorem.md),
+  for the bigness of $\bar B|_Y$ on every horizontal integral closed subscheme $Y$, which its
+  corollary gives from the positive top self-intersection, $B|_Y$ being nef on every geometric fibre
+  and $c_1(\bar B|_Y)$ semipositive: the first step of the proof of Corollary 5.1, for the
+  $C^\infty$ metric of $\bar B$; it does not give Corollary 5.1 for continuous metrics
+- [Extension of small sections and bases of small sections](extension-of-small-sections.md), for
+  Zhang's Theorem (4.2), whose arguments the proof of Corollary 5.1 then follows to pass to a basis
+  of strictly small sections of $H^0(X, nB)$; it does not give Corollary 5.1 itself
 
 ## Sources
 

@@ -98,6 +98,11 @@ A good expansion has pages for:
 - [Chow groups with supports and their products](chow-groups-with-supports.md), for the algebraic
   Chow groups and $K$-theory with supports and their products, on which the arithmetic Chern
   character with supports is built
+- [Green forms of logarithmic type and the star product](green-forms-of-logarithmic-type.md), for
+  the smooth representative, modulo $\operatorname{im} \partial + \operatorname{im} \bar\partial$,
+  of the push-forward of a current whose $dd^c$ is smooth (item 4), which defines the
+  singular-current correction of Definition 6 (Gillet–Soulé, Inventiones, p. 510, citing IHÉS 72,
+  Theorem 1.2.2 (i))
 
 ## Expansion
 
