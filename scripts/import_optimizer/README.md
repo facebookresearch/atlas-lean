@@ -18,6 +18,11 @@ compiled artifacts using the normal
 ATLAS build setup before optimizing library modules. No dependency versions are
 changed by these scripts.
 
+Build every dependency package before optimizing. Each Lake preparation watches
+the module paths it may add under every captured `LEAN_PATH` entry, including
+entries that do not exist yet, so a preparation that creates a dependency's
+artifact root is rejected, and the output directory refuses later preparations.
+
 Run from the repository root. The inventory includes tracked root-package Lean
 sources and read-only helpers under `scripts/`. It excludes `Atlas/`, `v1/`, and
 Lean examples under `docs/`: those are not part of the root Lake build.
