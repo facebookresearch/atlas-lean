@@ -88,4 +88,10 @@ example {X : Scheme.{u}} {L : X.Modules}
     (R : RootStack L s 0) : False :=
   (lt_irrefl 0) R.positive
 
+/-- The rooted module of a root stack is a line bundle. -/
+example {X : Scheme.{u}} {L : X.Modules}
+    {s : MathlibExt.AlgebraicGeometry.LineBundleTaskContracts.Section L} {n : ℕ}
+    (R : RootStack L s n) : MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries.IsLineBundle L :=
+  R.line
+
 end MathlibExtTest.AlgebraicGeometry.RootStacks
