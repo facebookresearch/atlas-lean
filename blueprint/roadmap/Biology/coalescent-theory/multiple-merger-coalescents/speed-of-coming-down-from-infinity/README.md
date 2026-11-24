@@ -1,0 +1,17 @@
+# Speed of coming down from infinity
+
+- [Kernel of the Laplace exponent of a Λ-coalescent](psi-kernel.md)
+- [The Laplace exponent of a Λ-coalescent](psi.md)
+- [Grey's condition](grey-condition.md)
+- [The tail integral of 1/ψ](psi-tail.md)
+- [The speed of coming down from infinity](speed.md)
+- [The atom at 0 splits off the Laplace exponent](psi-eq.md)
+- [Quadratic upper bound on the Laplace exponent for nonnegative q](psi-le.md)
+- [Grey's condition holds for every cutoff once it holds for one](grey-condition-iff.md)
+- [Grey's condition makes the tail integral of 1/ψ finite and positive](psi-tail-pos.md)
+- [Under Grey's condition the speed inverts the tail integral](psi-tail-speed.md)
+- [Under Grey's condition the speed blows up at time zero](tendsto-speed-zero.md)
+- [Kingman lower bound on the tail integral of 1/ψ](two-div-le-psi-tail.md)
+- [Pushing the clamped Beta measure back to the real line](map-val-beta-lambda.md)
+- [Growth of the Laplace exponent for a Beta pushforward, 1 < α < 2](tendsto-psi-div-rpow-of-map-val-eq-beta.md)
+- [Growth of the Laplace exponent of the Beta-coalescent for 1 < α < 2](tendsto-psi-div-rpow-beta-lambda.md)

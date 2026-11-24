@@ -37,7 +37,7 @@ reused rather than repeated.
 **Parameter domain.** The epidemiological parameters are `β ≥ 0`, `γ > 0`, `0 ≤ ε ≤ 1`,
 `0 ≤ p ≤ 1` and `N > 0`; each theorem states the hypotheses it uses. `Rv` and
 `criticalCoverage` are total functions that follow Lean's convention `x / 0 = 0`: `Rv` has its
-epidemiological meaning for `γ > 0`, and `criticalCoverage` for `β, ε > 0`.
+epidemiological meaning for `β ≥ 0` and `γ > 0`, and `criticalCoverage` for `β, ε > 0`.
 
 The **vaccinated reproduction number** is `R_v = R₀ (1 - ε p)` with `R₀ = β / γ`, and the
 **critical vaccination coverage** is `p_c = (1 - 1 / R₀) / ε`. For `β, γ, ε > 0`,
@@ -48,8 +48,8 @@ meaning. The threshold is sharp:
 
 * **Disease-free side.** If `R_v < 1` (any `ε ∈ [0, 1]`), or `R_v = 1` and `ε < 1`, every
   solution with nonnegative initial state has `I_u, I_v → 0` and `S_u → (1 - p) N`,
-  `S_v → p N`; the total `I_u + I_v` is nonincreasing (stability of the disease-free state) and,
-  for `R_v < 1`, decays like `e^{-γ (1 - R_v) t}`. The proof uses
+  `S_v → p N`; the total `I_u + I_v` never exceeds its initial value (stability of the
+  disease-free state) and, for `R_v < 1`, decays like `e^{-γ (1 - R_v) t}`. The proof uses
   `d/dt (I_u + I_v) = γ (R_v - 1) (I_u + I_v) - (β / N) (I_u + I_v) (I_u + (1 - ε) I_v)`.
 * **Endemic side.** For `0 < p < 1` and `ε < 1`, a positive (endemic) equilibrium exists iff
   `R_v > 1` (`exists_isEndemicEq`, `one_lt_Rv_of_isEndemicEq`). It is unique, and it attracts
@@ -58,8 +58,8 @@ meaning. The threshold is sharp:
   of Volterra functions `V = g(I_u*, I_u) + g(I_v*, I_v)`, `g(a, x) = x - a - a log (x / a)`
   (`SEIRVital.volterra`), with
 
-    `V' = -(β/N) I (I_u - I_u*)² / I_u - ((1-ε)β/N) I (I_v - I_v*)² / I_v
-          - γ (I_u I_v* - I_v I_u*)² / ((I_u* + I_v*) I_u I_v) ≤ 0`,
+    `V' = -(β/N) I (I_u - I_u*)² / I_u - ((1-ε)β/N) I (I_v - I_v*)² / I_v`
+      `- γ (I_u I_v* - I_v I_u*)² / ((I_u* + I_v*) I_u I_v) ≤ 0`,
 
   `I = I_u + I_v`; the last term is the two-group Cauchy–Schwarz (AM–HM) defect. As in
   `SISGlobalStability`, convergence is quantitative: `V(t) ≤ V(0) e^{-κ t}`.
@@ -120,9 +120,9 @@ open SEIRVital (volterra volterra_nonneg hasDerivAt_volterra le_of_volterra_le s
 
 /-! ### Two calculus lemmas on `[0, ∞)` -/
 
-/-- **Nonnegativity propagates.** If `u(0) ≥ 0` and `u' ≥ 0` wherever `u < 0` on `[0, T]`, then
-`u ≥ 0` on `[0, T]`. (After the last zero before a negative value, `u` would be negative and
-nondecreasing.) -/
+/-- **Nonnegativity propagates.** If `u` is differentiable on `[0, T]` with derivative `u'`,
+`u(0) ≥ 0` and `u' ≥ 0` wherever `u < 0` on `[0, T]`, then `u ≥ 0` on `[0, T]`. (After the last zero
+before a negative value, `u` would be negative and nondecreasing.) -/
 theorem nonneg_of_hasDerivAt {u u' : ℝ → ℝ} {T : ℝ}
     (hd : ∀ t ∈ Icc 0 T, HasDerivAt u (u' t) t) (h0 : 0 ≤ u 0)
     (hneg : ∀ t ∈ Icc 0 T, u t < 0 → 0 ≤ u' t) : ∀ t ∈ Icc 0 T, 0 ≤ u t := by
@@ -151,7 +151,8 @@ theorem nonneg_of_hasDerivAt {u u' : ℝ → ℝ} {T : ℝ}
   have := hmono ⟨le_rfl, hτt.le⟩ ⟨hτt.le, le_rfl⟩ hτt.le
   linarith
 
-/-- **Exponential comparison.** If `W' ≤ -κ W` on `[0, ∞)`, then `W(t) ≤ W(0) e^{-κ t}`. -/
+/-- **Exponential comparison.** If `W` is differentiable on `[0, ∞)` with derivative `W' ≤ -κ W`
+there, then `W(t) ≤ W(0) e^{-κ t}` for every `t ≥ 0`. -/
 theorem le_mul_exp_of_hasDerivAt {W W' : ℝ → ℝ} {κ : ℝ}
     (hd : ∀ t, 0 ≤ t → HasDerivAt W (W' t) t) (h : ∀ t, 0 ≤ t → W' t ≤ -κ * W t)
     {t : ℝ} (ht : 0 ≤ t) : W t ≤ W 0 * exp (-κ * t) := by
@@ -177,8 +178,9 @@ theorem le_mul_exp_of_hasDerivAt {W W' : ℝ → ℝ} {κ : ℝ}
 /-! ### The model -/
 
 /-- `(S_u, I_u, S_v, I_v)` solves the SIS model with leaky vaccination for `t ≥ 0`: transmission
-rate `β`, recovery rate `γ`, vaccine efficacy `ε` (vaccinated susceptibles are infected at
-`1 - ε` times the unvaccinated rate) and mixing population `N`. -/
+rate `β`, recovery rate `γ`, vaccine efficacy `ε` (vaccinated susceptibles are infected at `1 - ε`
+times the unvaccinated rate) and mixing population `N`: two-sided derivatives at every `t ≥ 0`, with
+quotients by `N` read as `0` when `N = 0`; nothing else is required. -/
 structure IsSolution (β γ ε N : ℝ) (Su Iu Sv Iv : ℝ → ℝ) : Prop where
   /-- Unvaccinated susceptibles are infected at rate `β S_u I / N` and regained at rate
   `γ I_u`. -/
@@ -193,8 +195,9 @@ structure IsSolution (β γ ε N : ℝ) (Su Iu Sv Iv : ℝ → ℝ) : Prop where
     HasDerivAt Iv ((1 - ε) * β * Sv t * (Iu t + Iv t) / N - γ * Iv t) t
 
 /-- The **vaccinated reproduction number** `R_v = R₀ (1 - ε p)`, `R₀ = β / γ`: coverage `p`,
-efficacy `ε`. It has its epidemiological meaning for `γ > 0`; at `γ = 0` Lean's convention
-`β / 0 = 0` makes it `0`. -/
+efficacy `ε`. It has its epidemiological meaning for `β ≥ 0` and `γ > 0`, where `β / γ` is the
+basic reproduction number of the SIS model; at `γ = 0` Lean's convention `β / 0 = 0` makes it
+`0`. -/
 noncomputable def Rv (β γ ε p : ℝ) : ℝ := β / γ * (1 - ε * p)
 
 /-- The **critical vaccination coverage** `p_c = (1 - 1 / R₀) / ε = (1 - γ / β) / ε`. It has its
@@ -220,7 +223,8 @@ so the disease-free results apply; the threshold equivalences need `β > 0`. -/
 @[simp]
 theorem Rv_zero_transmission (γ ε p : ℝ) : Rv 0 γ ε p = 0 := by simp [Rv]
 
-/-- Without vaccination, `R_v` is the next-generation `R₀` of the SIS model (`SIS.R0_eq`). -/
+/-- Without vaccination (`β ≥ 0`, `γ > 0`), `R_v` is the next-generation `R₀` of the SIS model
+(`SIS.R0_eq`). -/
 theorem Rv_zero_coverage_eq_R0 (hβ : 0 ≤ β) (hγ : 0 < γ) :
     Rv β γ ε 0 = NextGenerationMatrix.R0 !![β] !![γ] := by
   rw [Rv_zero_coverage, SIS.R0_eq hβ hγ]
@@ -255,7 +259,7 @@ theorem criticalCoverage_le_one_iff (hε : 0 < ε) :
     criticalCoverage β γ ε ≤ 1 ↔ 1 - γ / β ≤ ε := by
   rw [criticalCoverage, div_le_one hε]
 
-/-- If `R₀ = β / γ ≤ 1` then `p_c ≤ 0`: no vaccination is needed. -/
+/-- For `β, γ, ε > 0`, if `R₀ = β / γ ≤ 1` then `p_c ≤ 0`: no vaccination is needed. -/
 theorem criticalCoverage_nonpos (hβ : 0 < β) (hγ : 0 < γ) (hε : 0 < ε) (hR : β / γ ≤ 1) :
     criticalCoverage β γ ε ≤ 0 := by
   rw [criticalCoverage_eq hβ hε]
@@ -296,16 +300,18 @@ theorem toSIS (h : IsSolution β γ 0 N Su Iu Sv Iv) :
   ⟨fun t ht => by convert (h.hasDerivAt_Su t ht).add (h.hasDerivAt_Sv t ht) using 1; ring,
     fun t ht => by convert (h.hasDerivAt_Iu t ht).add (h.hasDerivAt_Iv t ht) using 1; ring⟩
 
-/-- For `ε = 0`, `0 ≤ γ < β`, `N > 0` and `I(0) > 0`, the total infected converges to the SIS
-endemic level `N (1 - γ / β)` (`SIS.IsSolution.tendsto_infected_endemic`). -/
+/-- For `ε = 0`, `0 ≤ γ < β`, `N > 0`, total population `N` at time `0` and `I(0) > 0`, the total
+infected converges to the SIS endemic level `N (1 - γ / β)`
+(`SIS.IsSolution.tendsto_infected_endemic`). -/
 theorem tendsto_totalInfected_endemic_of_efficacy_zero (h : IsSolution β γ 0 N Su Iu Sv Iv)
     (hγ : 0 ≤ γ) (hγβ : γ < β) (hN : 0 < N) (hS : Su 0 + Sv 0 + (Iu 0 + Iv 0) = N)
     (hI0 : 0 < Iu 0 + Iv 0) :
     Tendsto (fun t => Iu t + Iv t) atTop (𝓝 (N * (1 - γ / β))) :=
   h.toSIS.tendsto_infected_endemic hγ hγβ hN hS hI0
 
-/-- **The total-infected equation.** With group sizes `(1 - p) N` and `p N`,
-`I' = γ (R_v - 1) I - (β / N) I (I_u + (1 - ε) I_v)` for `I = I_u + I_v`. -/
+/-- **The total-infected equation.** For `N ≠ 0`, `γ ≠ 0` and group sizes `(1 - p) N` and `p N` at
+time `0`, at every `t ≥ 0` `I' = γ (R_v - 1) I - (β / N) I (I_u + (1 - ε) I_v)` for
+`I = I_u + I_v`. -/
 theorem hasDerivAt_totalInfected (h : IsSolution β γ ε N Su Iu Sv Iv) (hN : N ≠ 0)
     (hγ : γ ≠ 0) (hu : Su 0 + Iu 0 = (1 - p) * N) (hv : Sv 0 + Iv 0 = p * N) {t : ℝ}
     (ht : 0 ≤ t) :
@@ -409,8 +415,9 @@ private theorem deriv_totalInfected_le {t : ℝ} (ht : 0 ≤ t) :
     := by ring
   linarith
 
-/-- **Stability of the disease-free state.** If `R_v ≤ 1`, the total infected is
-nonincreasing: `I_u(t) + I_v(t) ≤ I_u(0) + I_v(0)`. -/
+/-- **Stability of the disease-free state.** For `β ≥ 0`, `γ, N > 0`, `0 ≤ ε ≤ 1` and a solution
+with group sizes `(1 - p) N` and `p N` starting in the nonnegative orthant, if `R_v ≤ 1` the total
+infected never exceeds its initial value: `I_u(t) + I_v(t) ≤ I_u(0) + I_v(0)`. -/
 theorem totalInfected_le_initial (hR : Rv β γ ε p ≤ 1) {t : ℝ} (ht : 0 ≤ t) :
     Iu t + Iv t ≤ Iu 0 + Iv 0 := by
   have := le_mul_exp_of_hasDerivAt (κ := 0)
@@ -426,7 +433,8 @@ theorem totalInfected_le_initial (hR : Rv β γ ε p ≤ 1) {t : ℝ} (ht : 0 �
       linarith) ht
   simpa using this
 
-/-- **Exponential bound on the total infected.** For every `R_v`,
+/-- **Exponential bound on the total infected.** For `β ≥ 0`, `γ, N > 0`, `0 ≤ ε ≤ 1` and a solution
+with group sizes `(1 - p) N` and `p N` starting in the nonnegative orthant and every `R_v`,
 `I_u(t) + I_v(t) ≤ (I_u(0) + I_v(0)) e^{-γ (1 - R_v) t}`; this is exponential decay when
 `R_v < 1`. -/
 theorem totalInfected_le_exp {t : ℝ} (ht : 0 ≤ t) :
@@ -438,7 +446,8 @@ theorem totalInfected_le_exp {t : ℝ} (ht : 0 ≤ t) :
         mul_nonneg (div_nonneg (mul_nonneg hβ (by linarith)) hN.le) (sq_nonneg _)
       nlinarith) ht
 
-/-- **Algebraic extinction at threshold.** If `R_v = 1`, then
+/-- **Algebraic extinction at threshold.** For `β ≥ 0`, `γ, N > 0`, `0 ≤ ε ≤ 1` and a solution with
+group sizes `(1 - p) N` and `p N` starting in the nonnegative orthant, if `R_v = 1` then
 `I(t) ≤ I(0) / (1 + c I(0) t)` with `I = I_u + I_v` and `c = β (1 - ε) / N`. -/
 theorem totalInfected_le_critical (hR : Rv β γ ε p = 1) {t : ℝ} (ht : 0 ≤ t) :
     Iu t + Iv t ≤ (Iu 0 + Iv 0) / (1 + β * (1 - ε) / N * (Iu 0 + Iv 0) * t) := by
@@ -502,9 +511,10 @@ private theorem tendsto_of_totalInfected (hI : Tendsto (fun t => Iu t + Iv t) at
     filter_upwards [eventually_ge_atTop 0] with t ht
     linarith [h.vaccinated_total ht]
 
-/-- **Global attractivity of the disease-free equilibrium.** If `R_v < 1`, or `R_v = 1` with an
-imperfect vaccine (`ε < 1`) and `β > 0`, every solution with group sizes `(1 - p) N` and `p N`
-starting in the nonnegative orthant has `I_u, I_v → 0`, `S_u → (1 - p) N` and `S_v → p N`. -/
+/-- **Global attractivity of the disease-free equilibrium.** For `β ≥ 0`, `γ, N > 0` and
+`0 ≤ ε ≤ 1`: if `R_v < 1`, or `R_v = 1` with an imperfect vaccine (`ε < 1`) and `β > 0`, every
+solution with group sizes `(1 - p) N` and `p N` starting in the nonnegative orthant has
+`I_u, I_v → 0`, `S_u → (1 - p) N` and `S_v → p N`. -/
 theorem tendsto_dfe (hR : Rv β γ ε p < 1 ∨ (Rv β γ ε p = 1 ∧ ε < 1 ∧ 0 < β)) :
     Tendsto Su atTop (𝓝 ((1 - p) * N)) ∧ Tendsto Iu atTop (𝓝 0) ∧
       Tendsto Sv atTop (𝓝 (p * N)) ∧ Tendsto Iv atTop (𝓝 0) := by
@@ -537,8 +547,8 @@ theorem tendsto_dfe (hR : Rv β γ ε p < 1 ∨ (Rv β γ ε p = 1 ∧ ε < 1 �
       have : 0 ≤ c⁻¹ * t⁻¹ := by positivity
       linarith
 
-/-- **Vaccinating at or above the critical coverage eliminates the infection.** For an imperfect
-but effective vaccine (`0 < ε < 1`), `β > 0` and coverage `p ≥ p_c`, every solution with group
+/-- **Vaccinating at or above the critical coverage eliminates the infection.** For an imperfect but
+effective vaccine (`0 < ε < 1`), `β, γ, N > 0` and coverage `p ≥ p_c`, every solution with group
 sizes `(1 - p) N` and `p N` starting in the nonnegative orthant converges to the disease-free
 equilibrium. -/
 theorem tendsto_dfe_of_criticalCoverage_le (hβ' : 0 < β) (hε : 0 < ε) (hε' : ε < 1)
@@ -556,8 +566,9 @@ end IsSolution
 
 /-! ### The endemic equilibrium -/
 
-/-- `(I_u*, I_v*) = (a, c)` is an **endemic equilibrium**: both infected levels are positive and
-the infected equations vanish with `S_u = (1 - p) N - a`, `S_v = p N - c`. -/
+/-- `(I_u*, I_v*) = (a, c)` is an **endemic equilibrium**: both infected levels are positive and the
+infected equations vanish with `S_u = (1 - p) N - a`, `S_v = p N - c` (quotients by `N` read as `0`
+when `N = 0`). -/
 structure IsEndemicEq (β γ ε N p a c : ℝ) : Prop where
   /-- Positive unvaccinated infected level. -/
   pos_unvaccinated : 0 < a
@@ -679,17 +690,18 @@ end Endemic
 /-! ### The Lyapunov function -/
 
 /-- The **Lyapunov function** of the endemic equilibrium `(a, c) = (I_u*, I_v*)`:
-`V(x, y) = g(a, x) + g(c, y)`, `g(a, x) = x - a - a log (x / a)`. -/
+`V(x, y) = g(a, x) + g(c, y)`, `g(a, x) = x - a - a log (x / a)`, defined for all reals with the
+real logarithm and `z / 0 = 0`; for `a, c, x, y > 0` each term is nonnegative. -/
 noncomputable def lyapunov (a c x y : ℝ) : ℝ := volterra a x + volterra c y
 
 /-- The derivative of `lyapunov` along solutions (`lyapunov_deriv_eq`):
 `-(β/N) I (x - a)² / x - ((1 - ε) β / N) I (y - c)² / y - γ (x c - y a)² / ((a + c) x y)`,
-`I = x + y`. -/
+`I = x + y`, with the convention `z / 0 = 0`. -/
 noncomputable def lyapunovDeriv (β γ ε N a c x y : ℝ) : ℝ :=
   -(β * (x + y) * (x - a) ^ 2 / (N * x)) - (1 - ε) * β * (x + y) * (y - c) ^ 2 / (N * y) -
     γ * (x * c - y * a) ^ 2 / ((a + c) * x * y)
 
-/-- `g(a, x) ≤ (x - a)² / x` (from `log y ≥ 1 - 1 / y`). -/
+/-- For `a, x > 0`, `g(a, x) ≤ (x - a)² / x` (from `log y ≥ 1 - 1 / y`). -/
 theorem volterra_le_sq_div {a x : ℝ} (ha : 0 < a) (hx : 0 < x) :
     volterra a x ≤ (x - a) ^ 2 / x := by
   have h := mul_le_mul_of_nonneg_left (Real.one_sub_inv_le_log_of_pos (div_pos hx ha)) ha.le
@@ -719,8 +731,9 @@ theorem lyapunov_deriv_eq (he : IsEndemicEq β γ ε N p a c) (hN : N ≠ 0) {x 
   field_simp
   ring
 
-/-- `V' ≤ -(β/N) I (x - a)² / x - ((1 - ε) β / N) I (y - c)² / y` for `x, y > 0` and `γ ≥ 0`:
-the dropped term `γ (x c - y a)² / ((a + c) x y)` is nonnegative. -/
+/-- At an endemic equilibrium `(a, c)` (so `a + c > 0`), for `x, y > 0` and `γ ≥ 0`,
+`V' ≤ -(β/N) I (x - a)² / x - ((1 - ε) β / N) I (y - c)² / y` with `I = x + y`: the dropped term
+`γ (x c - y a)² / ((a + c) x y)` is nonnegative. -/
 theorem lyapunovDeriv_le (he : IsEndemicEq β γ ε N p a c) (hγ : 0 ≤ γ) {x y : ℝ} (hx : 0 < x)
     (hy : 0 < y) :
     lyapunovDeriv β γ ε N a c x y ≤
@@ -763,7 +776,8 @@ namespace IsSolution
 
 variable {β γ ε N p a c : ℝ} {Su Iu Sv Iv : ℝ → ℝ}
 
-/-- **The Lyapunov derivative along solutions.** At a time `t ≥ 0` with `I_u(t), I_v(t) > 0`,
+/-- **The Lyapunov derivative along solutions.** For an endemic equilibrium `(a, c)`, `N ≠ 0` and
+group sizes `(1 - p) N` and `p N` at time `0`, at a time `t ≥ 0` with `I_u(t), I_v(t) > 0`,
 `d/dt V(I_u(t), I_v(t)) = lyapunovDeriv (I_u(t), I_v(t))`. -/
 theorem hasDerivAt_lyapunov (h : IsSolution β γ ε N Su Iu Sv Iv)
     (he : IsEndemicEq β γ ε N p a c) (hN : N ≠ 0) (hu : Su 0 + Iu 0 = (1 - p) * N)
@@ -787,8 +801,9 @@ variable (h : IsSolution β γ ε N Su Iu Sv Iv) (he : IsEndemicEq β γ ε N p 
 include h he hβ hγ hε hN hu hv hSu0 hSv0 hIu0 hIv0
 
 omit he hu hv in
-/-- **Positivity of the infectives**: `I_u(t), I_v(t) > 0` for `t ≥ 0`; the proof bounds them
-below by `I_u(0) e^{-γ t}` and `I_v(0) e^{-γ t}`. -/
+/-- **Positivity of the infectives**: for `β ≥ 0`, `γ, N > 0`, `ε < 1` and a solution with
+`S_u(0), S_v(0) ≥ 0` and `I_u(0), I_v(0) > 0`, `I_u(t), I_v(t) > 0` for `t ≥ 0`; the proof bounds
+them below by `I_u(0) e^{-γ t}` and `I_v(0) e^{-γ t}`. -/
 theorem infected_pos {t : ℝ} (ht : 0 ≤ t) : 0 < Iu t ∧ 0 < Iv t := by
   have hnn := fun s (hs : 0 ≤ s) =>
     h.nonneg hβ hγ.le hε.le hN hSu0 hIu0.le hSv0 hIv0.le hs
@@ -809,7 +824,9 @@ theorem infected_pos {t : ℝ} (ht : 0 ≤ t) : 0 < Iu t ∧ 0 < Iv t := by
   have e2 := mul_pos hIv0 (exp_pos (-γ * t))
   constructor <;> linarith
 
-/-- **`V` is nonincreasing**: `V(t) ≤ V(0)`. -/
+/-- **`V` never exceeds its initial value**: `V(t) ≤ V(0)` for `t ≥ 0`, for an endemic equilibrium
+`(a, c)`, `β ≥ 0`, `γ, N > 0`, `ε < 1` and a solution with group sizes `(1 - p) N` and `p N`,
+`S_u(0), S_v(0) ≥ 0` and `I_u(0), I_v(0) > 0`. -/
 theorem lyapunov_le_initial {t : ℝ} (ht : 0 ≤ t) :
     lyapunov a c (Iu t) (Iv t) ≤ lyapunov a c (Iu 0) (Iv 0) := by
   have hpos := fun s (hs : 0 ≤ s) =>
@@ -829,7 +846,9 @@ theorem lyapunov_le_initial {t : ℝ} (ht : 0 ≤ t) :
       linarith) ht
   simpa using this
 
-/-- **Uniform persistence**: `I_u(t) ≥ m := a e^{-(V(0) + a) / a} > 0`. -/
+/-- **Persistence with an explicit bound**: `I_u(t) ≥ m := a e^{-(V(0) + a) / a} > 0` for `t ≥ 0`,
+for an endemic equilibrium `(a, c)`, `β ≥ 0`, `γ, N > 0`, `ε < 1` and a solution with group sizes
+`(1 - p) N` and `p N`, `S_u(0), S_v(0) ≥ 0` and `I_u(0), I_v(0) > 0`; `m` depends on `V(0)`. -/
 theorem persistence {t : ℝ} (ht : 0 ≤ t) :
     a * exp (-(lyapunov a c (Iu 0) (Iv 0) + a) / a) ≤ Iu t := by
   have hpos := h.infected_pos hβ hγ hε hN hSu0 hSv0 hIu0 hIv0 ht
@@ -837,8 +856,10 @@ theorem persistence {t : ℝ} (ht : 0 ≤ t) :
   have hg := volterra_nonneg he.pos_vaccinated hpos.2
   exact le_of_volterra_le he.pos_unvaccinated hpos.1 ((le_add_of_nonneg_right hg).trans hV)
 
-/-- **Exponential decay of the Lyapunov function**: `V(t) ≤ V(0) e^{-κ t}` for some `κ > 0`
-(`κ = min(β, (1 - ε) β) m / N`, `m` the persistence bound; needs `β > 0`). -/
+/-- **Exponential decay of the Lyapunov function**: `V(t) ≤ V(0) e^{-κ t}` for some `κ > 0`, for an
+endemic equilibrium `(a, c)`, `β ≥ 0`, `γ, N > 0`, `ε < 1` and a solution with group sizes
+`(1 - p) N` and `p N`, `S_u(0), S_v(0) ≥ 0` and `I_u(0), I_v(0) > 0` (`κ = min(β, (1 - ε) β) m / N`,
+`m` the persistence bound; needs `β > 0`). -/
 theorem exists_lyapunov_le_exp (hβ' : 0 < β) :
     ∃ κ > 0, ∀ t, 0 ≤ t →
       lyapunov a c (Iu t) (Iv t) ≤ lyapunov a c (Iu 0) (Iv 0) * exp (-κ * t) := by
@@ -883,8 +904,9 @@ theorem exists_lyapunov_le_exp (hβ' : 0 < β) :
   rw [e1, e2] at h1
   nlinarith
 
-/-- `(I_u - a)² + (I_v - c)² ≤ 2 N V(I_u, I_v)` along solutions (the equilibrium itself forces
-`0 < p < 1`). -/
+/-- `(I_u - a)² + (I_v - c)² ≤ 2 N V(I_u, I_v)` for `t ≥ 0`, for an endemic equilibrium `(a, c)`,
+`β ≥ 0`, `γ, N > 0`, `ε < 1` and a solution with group sizes `(1 - p) N` and `p N`,
+`S_u(0), S_v(0) ≥ 0` and `I_u(0), I_v(0) > 0` (the equilibrium itself forces `0 < p < 1`). -/
 theorem sq_add_sq_le_lyapunov {t : ℝ} (ht : 0 ≤ t) :
     (Iu t - a) ^ 2 + (Iv t - c) ^ 2 ≤ 2 * N * lyapunov a c (Iu t) (Iv t) := by
   have hpos := h.infected_pos hβ hγ hε hN hSu0 hSv0 hIu0 hIv0 ht
@@ -905,7 +927,7 @@ theorem sq_add_sq_le_lyapunov {t : ℝ} (ht : 0 ≤ t) :
   unfold lyapunov
   linarith
 
-/-- **Global attractivity of the endemic equilibrium.** For `β, γ, N > 0`,
+/-- **Attractivity of the endemic equilibrium for infections in both groups.** For `β, γ, N > 0`,
 `ε < 1` and an endemic equilibrium `(a, c)`, every solution with group sizes `(1 - p) N` and
 `p N`, `S_u(0), S_v(0) ≥ 0` and `I_u(0), I_v(0) > 0` converges: `S_u → (1 - p) N - a`,
 `I_u → a`, `S_v → p N - c`, `I_v → c`. -/
@@ -945,7 +967,9 @@ theorem tendsto_endemic (hβ' : 0 < β) :
     filter_upwards [eventually_ge_atTop 0] with t ht
     linarith [h.vaccinated_total ht]
 
-/-- **Lyapunov stability of the endemic equilibrium**, with an explicit bound: for `t ≥ 0`,
+/-- **Lyapunov stability of the endemic equilibrium**, with an explicit bound, for an endemic
+equilibrium `(a, c)`, `β ≥ 0`, `γ, N > 0`, `ε < 1` and a solution with group sizes `(1 - p) N` and
+`p N`, `S_u(0), S_v(0) ≥ 0` and `I_u(0), I_v(0) > 0`: for `t ≥ 0`,
 `(I_u(t) - a)² + (I_v(t) - c)² ≤ 2 N ((I_u(0) - a)² / I_u(0) + (I_v(0) - c)² / I_v(0))`. -/
 theorem endemic_stability {t : ℝ} (ht : 0 ≤ t) :
     (Iu t - a) ^ 2 + (Iv t - c) ^ 2 ≤
@@ -975,9 +999,9 @@ theorem IsEndemicEq.unique {β γ ε N p a c a' c' : ℝ} (he : IsEndemicEq β �
     (tendsto_nhds_unique tendsto_const_nhds hy).symm⟩
 
 /-- **The threshold theorem for coverage.** For `β, γ, N > 0`, `0 < p < 1` and an imperfect but
-effective vaccine `0 < ε < 1`: if `p < p_c` there is an endemic equilibrium `(a, c)` and it
-attracts every solution with group sizes `(1 - p) N` and `p N`, nonnegative susceptibles and
-positive infectives in both groups. -/
+effective vaccine `0 < ε < 1`: if `p < p_c`, every solution with group sizes `(1 - p) N` and `p N`,
+nonnegative susceptibles and positive infectives in both groups tends to an endemic equilibrium
+`(a, c)`; by `IsEndemicEq.unique` it is the same for every such solution. -/
 theorem IsSolution.tendsto_endemic_of_lt {β γ ε N p : ℝ} {Su Iu Sv Iv : ℝ → ℝ}
     (h : IsSolution β γ ε N Su Iu Sv Iv) (hβ : 0 < β) (hγ : 0 < γ) (hε0 : 0 < ε) (hε : ε < 1)
     (hN : 0 < N) (hp0 : 0 < p) (hp1 : p < 1) (hp : p < criticalCoverage β γ ε)
