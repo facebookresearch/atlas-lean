@@ -1,5 +1,7 @@
-# Centring Type
+# Centring types of Bravais lattices
 
-Centring types. Metadata only: part of the 14-Bravais-lattice metadata table. `baseCentred`
-is the C setting (A and B are equivalent alternate settings); `rhombohedral` is the R
-centring of the trigonal system.
+The centring types are the five labels primitive, base-centred, body-centred, face-centred and
+rhombohedral, used in the [metadata table](bravais-metadata-table.md). Base-centred stands for the C
+setting (the A and B settings are equivalent alternatives); rhombohedral is the R centring of the
+trigonal system. Labels only: no lattice or basis matrix is attached, and no classification theorem
+is claimed.

@@ -1,4 +1,4 @@
-# Admissible Set
+# Displacements admissible below a rigid obstacle
 
-The admissible displacements below a rigid obstacle at position `g`: the nonpenetration
-constraint `u ≤ g`.
+For a real number `g` (obstacle position), the admissible set is `{u ∈ ℝ : u ≤ g}`: the
+nonpenetration constraint.

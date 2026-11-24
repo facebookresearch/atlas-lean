@@ -1,6 +1,6 @@
-# Is Admissible Contact
+# Admissible contact states with Coulomb friction
 
-An admissible contact state for the friction coefficient `μ`: compression-positive
-normal force `0 ≤ N`, gap `0 ≤ g`, complementarity `N * g = 0`, and the Coulomb bound
-`‖t‖ ≤ μ * N` on the tangent traction `t`, measured in the inner-product norm of `E`.
-Physically meaningful for `0 ≤ μ`.
+For a real inner product space `E`, real numbers `μ` (friction coefficient), `N`
+(compression-positive normal force) and `g` (normal gap), and a tangent traction `t ∈ E`, the
+contact state is admissible when `N ≥ 0`, `g ≥ 0`, `N g = 0` and `‖t‖ ≤ μ N`. The definition is
+physically meaningful for `μ ≥ 0`.

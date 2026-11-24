@@ -1,7 +1,6 @@
-# Normal tangent decomposition iff
+# Normal and tangent parts of an interface traction
 
-Normal/tangent frame of an interface traction. For a unit normal `n` pointing out of the
-body, the traction `τ` on the body splits as `τ = t - N • n` with `t` orthogonal to `n`
-exactly when `N = -⟪τ, n⟫` is the compression-positive normal force and
-`t = τ - ⟪τ, n⟫ • n` is the tangent traction. For a body with tension-positive Cauchy stress
-`σ`, `τ` is the Cauchy traction `σ n` and `N` is the compression-positive normal stress.
+For a real inner product space `E`, a unit normal `n` (`‖n‖ = 1`) pointing out of the body, a
+traction `τ ∈ E` on the body, a vector `t ∈ E` and a real `N`: `τ = t - N n` with `⟨t, n⟩ = 0` if
+and only if `N = -⟨τ, n⟩` (the compression-positive normal force) and `t = τ - ⟨τ, n⟩ n` (the
+tangent traction). For a tension-positive Cauchy stress `σ`, `τ` is the Cauchy traction `σ n`.

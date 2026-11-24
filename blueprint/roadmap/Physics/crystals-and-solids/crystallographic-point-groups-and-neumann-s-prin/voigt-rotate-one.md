@@ -1,3 +1,4 @@
-# Voigt Rotate one
+# The identity matrix acts trivially on Voigt matrices
 
-The identity matrix acts trivially.
+For every real `6 × 6` matrix `C`, the [action](voigt-rotate.md) of the `3 × 3` identity matrix on
+`C` gives `C`.

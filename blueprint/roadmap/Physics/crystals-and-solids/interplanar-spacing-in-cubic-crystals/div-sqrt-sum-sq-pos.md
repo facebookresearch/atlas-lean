@@ -1,4 +1,9 @@
-# Div sqrt sum Sq pos
+# For a > 0 and nonzero indices, a / √(h² + k² + l²) is positive
 
-The expression `a / √(h ^ 2 + k ^ 2 + l ^ 2)` is positive when `a > 0` and
-`h ^ 2 + k ^ 2 + l ^ 2 > 0`.
+Let `a > 0` and let `h`, `k`, `l` be integers with `h² + k² + l² > 0`. Then
+`a / √(h² + k² + l²) > 0`. The condition on the indices matters: for `h = k = l = 0` the
+expression is `a / 0 = 0` with the convention `u / 0 = 0`.
+
+In textbooks `a / √(h² + k² + l²)` is the spacing `d_hkl` of the `(hkl)` planes of a simple cubic
+lattice with lattice parameter `a > 0`; that identification is not part of the statement, which is
+an algebraic identity about the expression.

@@ -1,5 +1,11 @@
-# Circulatory witnesses
+# Stable, neutral and growing solutions of the circulatory model
 
-Stable, neutral and unstable witnesses of the declared model: at `q = 0` every `C²`
-solution decays; at `q = 2` a solution keeps Euclidean norm `1`; at `q = 8` a solution has
-unbounded Euclidean norm. Three sample loads, not a threshold classification in `q`.
+For the [circulatory two-mode model](circulatory-residual.md):
+
+- at `q = 0`, every twice continuously differentiable solution tends to `0`;
+- at `q = 2`, the [neutral trajectory](neutral-mode.md) solves the model and has Euclidean norm `1` at
+  every time;
+- at `q = 8`, the [growing trajectory](growing-mode.md) solves the model and its Euclidean norm tends to
+  `+∞`.
+
+These are three sample loads, not a classification of stability by `q`.

@@ -1,3 +1,4 @@
-# Lattice Vector injective
+# Distinct cell indices give distinct lattice vectors
 
-Distinct integer cell indices give distinct lattice vectors, because `det B ≠ 0`.
+For every [Bravais lattice](bravais-lattice.md) with basis matrix `B`, the map `n ↦ B n` from cell
+indices `n ∈ ℤ³` to lattice vectors is injective.

@@ -1,4 +1,4 @@
-# Coulomb slip power pos of neg
+# With a negative friction coefficient slip supplies power
 
-A negative coefficient makes slip supply power: for `μ < 0 < N` and `v ≠ 0`, every force on
-the graph has `F v > 0`.
+For real numbers `μ < 0`, `N > 0`, `v ≠ 0` and `F` satisfying the [Coulomb law](is-coulomb-friction.md),
+`F v > 0`.

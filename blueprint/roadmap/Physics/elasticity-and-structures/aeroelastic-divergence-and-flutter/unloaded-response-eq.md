@@ -1,4 +1,4 @@
-# Unloaded response eq
+# Every solution without load is a damped critical response
 
-Full response at `q = 0`, by linear ODE uniqueness: every `C²` solution is
-`z(t) = e^(-t) (z(0) + t (z'(0) + z(0)))`.
+If `z : ℝ → ℝ²` is twice continuously differentiable and its [residual](circulatory-residual.md) at `q = 0`
+vanishes at every time, then `z(t) = e^{-t} (z(0) + t (z'(0) + z(0)))` for every `t`.

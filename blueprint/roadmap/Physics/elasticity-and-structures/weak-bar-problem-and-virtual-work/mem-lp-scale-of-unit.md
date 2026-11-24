@@ -1,3 +1,4 @@
-# Mem Lp scale of Unit
+# Square integrability survives rescaling from the unit interval
 
-The scaled weak derivative `x ↦ g (x / L) / L` is in `L²(0, L)` when `g ∈ L²(0, 1)`.
+For a real `L > 0` and a function `g` square integrable on `[0, 1]`, the function `x ↦ g(x / L) / L`
+is square integrable on `[0, L]`.

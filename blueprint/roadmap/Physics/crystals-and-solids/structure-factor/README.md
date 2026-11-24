@@ -1,10 +1,10 @@
 # Structure factor
 
-## A. Finite structure factor
+## Finite structure factor
 
-- [Structure Factor](structure-factor.md)
-- [Structure Factor eq sum amp of zero](structure-factor-eq-sum-amp-of-zero.md)
+- [Finite structure factor with the negative-exponent kernel](structure-factor.md)
+- [At zero wavevector, the structure factor is the sum of the amplitudes](structure-factor-eq-sum-amp-of-zero.md)
 
-## B. Two-site cancellation
+## Two-site cancellation
 
-- [Structure Factor two Site cancel](structure-factor-two-site-cancel.md)
+- [Two equal amplitudes at 0 and 1 in ℤ/2ℤ cancel at k = 1](structure-factor-two-site-cancel.md)

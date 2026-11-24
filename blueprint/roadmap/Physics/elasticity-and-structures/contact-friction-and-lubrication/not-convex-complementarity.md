@@ -1,5 +1,4 @@
-# Not convex complementarity
+# The unilateral complementarity set is not convex
 
-Main result, non-convex part: the unilateral complementarity set
-`{(N, g) | 0 ≤ N ∧ 0 ≤ g ∧ N * g = 0}` in the `(N, g)` plane, the union of the two
-nonnegative half-axes, is not convex.
+The set `{(N, g) ∈ ℝ² : N ≥ 0, g ≥ 0, N g = 0}`, the union of the two nonnegative half-axes, is not
+convex.

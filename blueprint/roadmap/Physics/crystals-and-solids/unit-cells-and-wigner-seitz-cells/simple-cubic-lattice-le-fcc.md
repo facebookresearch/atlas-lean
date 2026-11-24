@@ -1,4 +1,7 @@
-# Simple Cubic lattice le fcc
+# The simple cubic lattice is a sublattice of the face-centred one
 
-The simple cubic lattice of side `a` is a sublattice of the face-centred cubic lattice:
-each cubic edge is an integer combination of FCC primitive vectors.
+For every `a > 0`, the lattice of the
+[simple cubic lattice](../reciprocal-lattices-and-brillouin-zones/simple-cubic.md) of side `a` is
+contained in that of the
+[face-centred cubic lattice](../reciprocal-lattices-and-brillouin-zones/face-centered-cubic.md)
+whose conventional cube has side `a`.

@@ -1,3 +1,4 @@
-# Is Closed wigner Seitz Cell
+# The Wigner–Seitz cell is closed
 
-The Wigner–Seitz cell is closed, as an intersection of closed half-spaces.
+For every Bravais lattice, the [Wigner–Seitz cell](wigner-seitz-cell.md) is a closed subset of
+`ℝ³`: it is an intersection of closed half-spaces.

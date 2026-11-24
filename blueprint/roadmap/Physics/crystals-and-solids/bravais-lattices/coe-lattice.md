@@ -1,3 +1,4 @@
-# Coe lattice
+# The lattice is the image of the lattice-vector map
 
-The set `{B *ᵥ n | n : Fin 3 → ℤ}` is the carrier of the submodule `L`.
+For every [Bravais lattice](bravais-lattice.md) with basis matrix `B`, the [lattice](lattice.md)
+`L`, as a set, equals `{B n : n ∈ ℤ³}`.

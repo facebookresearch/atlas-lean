@@ -1,3 +1,4 @@
-# Miller Bravais Plane
+# Miller–Bravais plane indices of a hexagonal crystal
 
-Miller-Bravais plane indices `(h k i l)` with `i = -(h + k)`.
+For Miller indices `(h, k, l) ∈ ℤ³`, the Miller–Bravais plane indices are `(h, k, i, l)` with
+`i = -(h + k)`.

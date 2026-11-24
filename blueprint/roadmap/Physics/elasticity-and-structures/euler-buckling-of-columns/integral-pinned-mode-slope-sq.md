@@ -1,4 +1,4 @@
-# Integral pinned Mode slope sq
+# Integral of the squared slope of the pinned mode
 
-Integral of the squared derivative of the pinned mode over
-`[0, L]` is `(π / L)^2 * (L / 2)`.
+For `L > 0`, the [pinned mode](pinned-mode.md) `w(x) = sin(πx / L)` satisfies
+`∫₀ᴸ w'(x)² dx = (π / L)² (L / 2)`.

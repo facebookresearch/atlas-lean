@@ -1,4 +1,4 @@
-# Not is Reynolds Solution of h L eq zero
+# A film closing at the outlet admits no Reynolds solution
 
-An outlet thickness `hL = 0` is rejected: for `h0, μ, U, L > 0` the stated Reynolds model
-with the film closing at `x = L` has no solution.
+For real numbers `μ > 0`, `U > 0`, `h₀ > 0` and `L > 0`, with outlet thickness `h_L = 0`, no pair
+`(p, p')` is a [solution of the Reynolds model](is-reynolds-solution.md).

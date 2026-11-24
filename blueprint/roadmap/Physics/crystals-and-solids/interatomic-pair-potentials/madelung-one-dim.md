@@ -1,4 +1,5 @@
-# Madelung one dim
+# Madelung constant of the one-dimensional ionic chain
 
-The 1D Madelung constant `2 * log 2` as an ordered partial-sum limit: twice the
-alternating harmonic limit `Real.tendsto_sum_alternating_harmonic`.
+The partial sums `2 ∑_{k=0}^{N-1} (-1)^k / (k + 1)` converge to `2 log 2` as `N → ∞`: the Madelung
+constant of the alternating one-dimensional chain, as the limit of the partial sums taken in this
+order (the series converges only conditionally).

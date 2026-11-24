@@ -1,5 +1,5 @@
-# Circulatory Residual eq ports
+# The circulatory model as a force balance of two unit modes
 
-Force port: the model is the force balance `M z'' + D z' + K z - q J z` of the two unit
-modes, with mass `M = 1`, damping `D = 2` and modal stiffness `K = diagonal (1, 1)`, driven by
-the circulatory generalized force.
+For every real `q`, trajectory `z : ℝ → ℝ²` and time `t`, the [residual](circulatory-residual.md) equals
+`M z''(t) + D z'(t) + K z(t) - q J z(t)` with mass `M = 1`, damping `D = 2·1` and modal stiffness
+`K = diag(1, 1)`, the last term being the [circulatory force](circulatory-force.md).

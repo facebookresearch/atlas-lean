@@ -1,6 +1,5 @@
-# Inner eq and nonpos
+# Coulomb friction power at an interface is nonpositive
 
-Main result, frictional power: on the physical domain `0 ≤ μ`, `0 ≤ N` a Coulomb traction
-delivers the power `⟪t, v⟫ = -(μ * N * ‖v‖) ≤ 0`. A sliding contact (`v ≠ 0`) dissipates
-`μ * N * ‖v‖`; a sticking contact (`v = 0`) does no work, for every stick traction allowed
-by the separate stick rule and without dividing by `‖v‖`.
+For a real inner product space `E`, real numbers `μ ≥ 0` and `N ≥ 0`, and `v, t ∈ E` satisfying the
+[vector Coulomb law](is-coulomb-traction.md), `⟨t, v⟩ = -μ N ‖v‖` and `⟨t, v⟩ ≤ 0`: a sliding contact
+dissipates `μ N ‖v‖` and a sticking contact does no work.

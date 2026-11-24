@@ -1,4 +1,4 @@
-# Eq zero of gap pos
+# A separated contact carries no force
 
-Separated contact carries no force: an admissible contact state with an open gap
-`0 < g` has zero normal force and zero tangent traction, for every `μ`.
+For a real inner product space `E`, real numbers `μ`, `N` and `g > 0`, and `t ∈ E`, if the contact
+state `(N, g, t)` is [admissible](is-admissible-contact.md) then `N = 0` and `t = 0`, for every `μ`.

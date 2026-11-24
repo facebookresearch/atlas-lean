@@ -1,3 +1,3 @@
-# Stiffness Map
+# Linear spring as an operator on the real line
 
-The linear spring `u ↦ k u` of stiffness `k`, as a continuous linear operator on `ℝ`.
+For a real number `k` (stiffness), the stiffness map is the continuous linear map `u ↦ k u` on `ℝ`.

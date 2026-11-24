@@ -1,3 +1,5 @@
-# Positions relabel
+# Relabeling the cells of a crystal moves no atom
 
-A unimodular relabeling of the cells does not move any atom.
+For every [crystal with motif](bravais-crystal.md) `F` and an integer `3 × 3` matrix `P` with
+`det P = ±1` (so that `P` has an integer inverse), the [relabeled crystal](relabel-2.md) has the
+same set of [atomic positions](positions.md) as the original.

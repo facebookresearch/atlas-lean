@@ -1,3 +1,4 @@
-# Small Strain apply self
+# The diagonal small strains are the diagonal gradient entries
 
-On the diagonal the small strain is the displacement gradient: `ε i i = H i i`.
+For every real `3 × 3` matrix `H` and every index `i`, the [small strain](small-strain.md) of `H`
+has diagonal entry `ε_ii = H_ii`.

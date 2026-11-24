@@ -1,9 +1,12 @@
-# Strain eq of stress held
+# With stress held from t = 0, the Maxwell strain grows linearly
 
-Constant-stress creep (the creep test). If a history obeys the canonical relation for
-`t ≥ 0` and the stress is held at its initial value `σ 0` there, then for every `t ≥ 0` the
-strain changes linearly at the dashpot strain rate: `ε t = ε 0 + σ 0 / η * t`. For `σ 0 ≠ 0`
-this is creep without bound (unrestricted flow) of the single branch; it is not a prediction
-of the deformation of a pavement or of any layered structure. This is the
-`amount_rate_zero` closed form at input rate `σ 0 / η`. Nothing is claimed for
-`t < 0`.
+Let a [Maxwell branch](maxwell-branch.md) with modulus $E > 0$ and viscosity $\eta > 0$ and
+histories $\sigma$, $\varepsilon$ with rates $\sigma'$, $\varepsilon'$ obey the
+[constitutive relation](is-history.md) on $[0, \infty)$, with two-sided derivatives at every
+$t \ge 0$, $t = 0$ included, and let the stress be held: $\sigma(t) = \sigma(0)$ for every
+$t \ge 0$. Then for every $t \ge 0$
+
+$$\varepsilon(t) = \varepsilon(0) + \frac{\sigma(0)}{\eta}\, t,$$
+
+linear creep at the strain rate of the dashpot. For $\sigma(0) \ne 0$ the strain is unbounded on
+$[0, \infty)$: the single branch flows without limit. Nothing is claimed for $t < 0$.

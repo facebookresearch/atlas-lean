@@ -1,3 +1,3 @@
-# C4 orthogonal
+# The quarter-turn is orthogonal
 
-`C4` is orthogonal.
+The [quarter-turn](c4.md) `C₄` satisfies `C₄ᵀ C₄ = 1`.

@@ -1,4 +1,4 @@
-# Compression Positive Stress involutive
+# Changing the stress sign convention twice is the identity
 
-Converting the stress sign twice returns the original
-stress.
+For every real `n × n` matrix `σ`, the [compression-positive form](compression-positive-stress.md)
+of the compression-positive form of `σ` is `σ` itself: `-(-σ) = σ`.

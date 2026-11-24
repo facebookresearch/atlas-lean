@@ -1,3 +1,4 @@
-# Log Strain lt
+# For e > -1 and e ≠ 0, the logarithmic strain is less than e
 
-Strict upper bound: `ln(1+e) < e` for `e > -1`, `e ≠ 0`.
+For every real `e > -1` with `e ≠ 0`, the [logarithmic strain](log-strain.md) satisfies
+`log(1 + e) < e`; at `e = 0` both sides are `0`.

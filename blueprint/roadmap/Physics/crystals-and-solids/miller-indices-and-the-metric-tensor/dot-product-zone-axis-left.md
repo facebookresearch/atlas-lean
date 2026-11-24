@@ -1,3 +1,3 @@
-# Dot Product zone Axis left
+# The index cross product is orthogonal to the first index triple
 
-The index cross product is perpendicular to the first plane's indices.
+For all `h`, `h' ∈ ℤ³`, `h · (h × h') = 0`.

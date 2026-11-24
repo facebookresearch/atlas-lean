@@ -1,4 +1,5 @@
-# Det cartesian Matrix ne zero iff
+# The basis matrix is nonsingular iff the vectors are independent
 
-Three vectors are linearly independent, and hence a basis, exactly when their basis matrix has
-nonzero determinant.
+For all vectors `v₀`, `v₁`, `v₂` of three-dimensional Euclidean space, the determinant of their
+[basis matrix](cartesian-matrix.md) is nonzero if and only if the vectors are linearly independent,
+that is, if and only if they form a basis.

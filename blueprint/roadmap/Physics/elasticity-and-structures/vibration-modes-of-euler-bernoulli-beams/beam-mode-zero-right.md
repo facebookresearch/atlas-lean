@@ -1,3 +1,4 @@
-# Beam Mode zero right
+# For nonzero length the simply supported mode vanishes at x = L
 
-Right support value: `w(L, t) = 0` for `L ≠ 0`.
+For a positive integer `k`, a real `L ≠ 0` and all reals `ω` and `t`, the
+[simply supported mode](beam-mode.md) `w(x, t) = sin(kπx / L) cos(ω t)` satisfies `w(L, t) = 0`.

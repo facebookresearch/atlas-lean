@@ -1,7 +1,6 @@
-# Is Coulomb Traction
+# Vector Coulomb friction law at a unilateral interface
 
-The vector Coulomb friction law at a unilateral interface, with friction coefficient `μ`
-and compression-positive normal force `N`: at a nonzero tangential slip velocity `v` the
-tangent traction is `t = -(μ * N) • (‖v‖⁻¹ • v)`, of norm `|μ * N|` and opposite to `v` when
-`0 < μ * N`; at `v = 0` (stick) it may be any `t` with `‖t‖ ≤ μ * N`. The stick branch
-involves no division. Physically meaningful for `0 ≤ μ` and `0 ≤ N`.
+For a real inner product space `E`, real numbers `μ` and `N`, a slip velocity `v ∈ E` and a tangent
+traction `t ∈ E`, the Coulomb law holds when `t = -μ N v / ‖v‖` if `v ≠ 0` (slip: norm `|μ N|`,
+opposite to `v` when `μ N > 0`) and `‖t‖ ≤ μ N` if `v = 0` (stick). The stick branch involves no
+division; the law is physically meaningful for `μ ≥ 0` and `N ≥ 0`.

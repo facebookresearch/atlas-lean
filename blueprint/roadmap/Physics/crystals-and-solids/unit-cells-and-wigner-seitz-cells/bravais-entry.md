@@ -1,5 +1,5 @@
-# Bravais Entry
+# Entry of the Bravais lattice metadata table
 
-A Bravais metadata entry: name (Pearson symbol), crystal system and centring type. It holds
-no basis matrix and is not linked to any `BravaisLattice`; no completeness or classification
-theorem is claimed.
+A Bravais metadata entry records a name (a Pearson symbol, as a string), a
+[crystal system](crystal-system.md) and a [centring type](centring-type.md). It holds no basis
+matrix and is attached to no Bravais lattice; no completeness or classification theorem is claimed.

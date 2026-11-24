@@ -1,3 +1,4 @@
-# Scaled Load
+# Load of a bar rescaled to the unit interval
 
-The unit source `f̂ ξ = L q (L ξ)`.
+For a function `q` (axial load) and real numbers `L` and `ξ`, the rescaled load is
+`f̂(ξ) = L q(L ξ)`.

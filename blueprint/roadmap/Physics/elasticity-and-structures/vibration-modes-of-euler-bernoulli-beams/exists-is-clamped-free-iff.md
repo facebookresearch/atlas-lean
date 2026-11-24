@@ -1,5 +1,5 @@
-# Exists is Clamped Free iff
+# A clamped–free family member exists iff cos βL cosh βL + 1 = 0
 
-The characteristic equation, from the boundary matrix: for `β > 0` and `L > 0` some family
-member with nonzero coefficients meets the clamped-free conditions exactly when
-`cos (β L) cosh (β L) + 1 = 0`.
+For `β > 0` and `L > 0`, some [family member](mode-family.md) with coefficients `c ≠ 0` satisfies
+the [clamped–free conditions](is-clamped-free.md) for the length `L` if and only if
+`cos(βL) cosh(βL) + 1 = 0`.

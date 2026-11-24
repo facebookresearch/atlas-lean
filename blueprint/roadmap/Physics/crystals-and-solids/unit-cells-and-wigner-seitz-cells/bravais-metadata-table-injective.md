@@ -1,3 +1,4 @@
-# Bravais Metadata Table injective
+# The fourteen Bravais metadata entries are distinct
 
-The 14 metadata entries are pairwise distinct.
+The fourteen [entries](bravais-entry.md) of the [metadata table](bravais-metadata-table.md) are
+pairwise distinct.

@@ -1,3 +1,3 @@
-# C4 trace
+# The quarter-turn has trace 0
 
-`C4` has trace zero.
+The [quarter-turn](c4.md) `C₄` has `tr C₄ = 0`.

@@ -1,13 +1,24 @@
-# Deviatoric return maximum plastic work
+# For μ > 0, the deviatoric return satisfies maximum plastic work
 
-Maximum plastic work for the deviatoric return. For a trial stress `σTrial`, a shear modulus
-`μ > 0` and a fixed nonempty complete convex yield section `K` of symmetric trace-free stresses,
-let `σ := meanStress σTrial • 1 + convexProjection K (deviatoricStress σTrial)` be the returned
-stress and
-`Δε_p := (σTrial - σ) / (2 μ)` the isotropic plastic strain increment. Then every admissible
-stress `τ ∈ K` satisfies `(σ - τ) : Δε_p = ∑ i, ∑ j, (σ - τ) i j * Δε_p i j ≥ 0`: for
-every admissible comparison stress `τ ∈ K`, the returned stress `σ` (which itself need not
-lie in `K`, since it carries the trial mean stress) does at least as much plastic work on
-`Δε_p` as `τ`. The hydrostatic
-part of `σ` does no plastic work because `Δε_p` is trace-free, which uses `K ⊆ deviatoricStresses`
-(pressure insensitivity). No symmetry of `σTrial` is needed.
+Let $\mu > 0$, let $\mathcal K$ be a nonempty convex set of real $3 \times 3$ matrices that is
+complete for the Frobenius distance (equivalently, closed) and consists of
+[deviatoric stresses](deviatoric-stresses.md), and let $\sigma_{\mathrm{trial}}$ be a real
+$3 \times 3$ matrix, not necessarily symmetric. With
+$\sigma_m = \operatorname{tr} \sigma_{\mathrm{trial}} / 3$ its
+[mean stress](../cauchy-stress-small-strain-and-mohr-s-circle/mean-stress.md), let
+$\sigma = \sigma_m I + P_{\mathcal K}(s_{\mathrm{trial}})$ be the stress returned from the
+[deviator](../cauchy-stress-small-strain-and-mohr-s-circle/deviatoric-stress.md)
+$s_{\mathrm{trial}}$ by the
+[nearest-point projection](../../../Analysis/hilbert-spaces/hilbert-projection-theorem/convex-projection.md)
+and $\Delta\varepsilon_p = (\sigma_{\mathrm{trial}} - \sigma) / (2\mu)$ the
+[plastic strain increment](plastic-strain-increment.md). Then for every $\tau \in \mathcal K$,
+
+$$
+(\sigma - \tau) : \Delta\varepsilon_p =
+\sum_{i, j} (\sigma - \tau)_{ij}\, (\Delta\varepsilon_p)_{ij} \ge 0.
+$$
+
+So the returned stress does at least as much plastic work on $\Delta\varepsilon_p$ as every
+admissible stress $\tau$, although $\sigma$ itself need not lie in $\mathcal K$, since it carries
+the trial mean stress. The mean-stress part of $\sigma$ does no work on $\Delta\varepsilon_p$, which
+is trace-free because $\mathcal K$ consists of trace-free matrices.

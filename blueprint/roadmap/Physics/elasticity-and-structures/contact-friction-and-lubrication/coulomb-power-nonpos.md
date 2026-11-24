@@ -1,3 +1,4 @@
-# Coulomb power nonpos
+# With nonnegative coefficient and normal force friction dissipates
 
-Dissipation: for `μ, N ≥ 0` the friction force never supplies power, `F v ≤ 0`.
+For real numbers `μ ≥ 0`, `N ≥ 0`, `v` and `F` satisfying the [Coulomb law](is-coulomb-friction.md),
+`F v ≤ 0`: friction never supplies power.

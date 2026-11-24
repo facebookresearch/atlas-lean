@@ -1,4 +1,7 @@
-# The reciprocal lattice consists of the wave vectors `G` with `G ⬝ R ∈ 2πℤ` for every lattice vector `R`
+# G is in the reciprocal lattice iff G · R ∈ 2πℤ for all lattice R
 
-**The reciprocal lattice consists of the wave vectors `G` with `G ⬝ R ∈ 2πℤ` for every lattice
-vector `R`.**
+Let `Λ` be a [Bravais lattice](../bravais-lattices/bravais-lattice.md) with basis matrix `B`, whose
+columns are the primitive vectors `a₁`, `a₂`, `a₃` (so `det B ≠ 0`). A vector `G ∈ ℝ³` belongs to
+the [lattice](../bravais-lattices/lattice.md) of the [reciprocal lattice](reciprocal.md) of `Λ` if
+and only if, for every vector `R` of the lattice of `Λ`, there is an integer `k` with
+`G · R = 2π k`.

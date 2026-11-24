@@ -1,3 +1,5 @@
-# Ae bounds scaled Rigidity
+# Bounds on the rigidity carry over to the rescaled rigidity
 
-The rigidity bounds transport to `EAmin / L ≤ κ ≤ EAmax / L` a.e. on `[0, 1]`.
+For a real `L > 0` and a function `EA` with `EA_min ≤ EA ≤ EA_max` almost everywhere on `[0, L]`,
+the [rescaled rigidity](scaled-rigidity.md) satisfies `EA_min / L ≤ κ ≤ EA_max / L` almost
+everywhere on `[0, 1]`.

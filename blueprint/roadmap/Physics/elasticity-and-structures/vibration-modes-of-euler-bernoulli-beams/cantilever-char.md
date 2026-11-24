@@ -1,3 +1,4 @@
-# Cantilever Char
+# Characteristic function of the clamped–free beam
 
-The cantilever characteristic function `cos z * cosh z + 1`.
+For a real `z`, `f(z) = cos z cosh z + 1`. Its roots `z = βL` give the clamped–free modes
+([characteristic equation](exists-is-clamped-free-iff.md)).

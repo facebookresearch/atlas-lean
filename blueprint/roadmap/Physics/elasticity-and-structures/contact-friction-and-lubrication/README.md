@@ -1,91 +1,91 @@
 # Contact, friction and lubrication
 
-## A.1. Film, model and closed-form pressure
+## Plane slider: film, model and closed-form pressure
 
-- [Slider Film](slider-film.md)
-- [Is Reynolds Solution](is-reynolds-solution.md)
-- [Slider Pressure](slider-pressure.md)
-- [Slider Pressure Gradient](slider-pressure-gradient.md)
-- [Slider Load](slider-load.md)
-- [Slider Film pos](slider-film-pos.md)
+- [Film thickness of a plane slider](slider-film.md)
+- [Solutions of the Reynolds equation for a plane slider](is-reynolds-solution.md)
+- [Closed-form pressure of a plane slider](slider-pressure.md)
+- [Closed-form pressure gradient of a plane slider](slider-pressure-gradient.md)
+- [Load per unit width of a plane slider](slider-load.md)
+- [The slider film stays open](slider-film-pos.md)
 
-## A.2. Solution of the Reynolds model
+## Solution of the slider Reynolds equation
 
-- [Slider Pressure is Reynolds Solution](slider-pressure-is-reynolds-solution.md)
-- [Is Reynolds Solution unique](is-reynolds-solution-unique.md)
+- [The closed-form pressure solves the slider Reynolds equation](slider-pressure-is-reynolds-solution.md)
+- [The slider Reynolds equation has only the closed-form solution](is-reynolds-solution-unique.md)
 
-## A.3. Positivity and load for the converging film
+## Pressure and load for a converging film
 
-- [Slider Pressure pos](slider-pressure-pos.md)
-- [Slider Load eq](slider-load-eq.md)
-- [Slider Load pos](slider-load-pos.md)
+- [For a converging film the slider pressure is positive inside](slider-pressure-pos.md)
+- [Closed-form load per unit width of a plane slider](slider-load-eq.md)
+- [For a converging film the slider load is positive](slider-load-pos.md)
 
-## A.4. Diverging and closed films
+## Diverging and closed films
 
-- [Slider Pressure neg of diverging](slider-pressure-neg-of-diverging.md)
-- [Not is Reynolds Solution of h L eq zero](not-is-reynolds-solution-of-h-l-eq-zero.md)
+- [For a diverging film the slider pressure is negative inside](slider-pressure-neg-of-diverging.md)
+- [A film closing at the outlet admits no Reynolds solution](not-is-reynolds-solution-of-h-l-eq-zero.md)
 
-## B.1. The contact model
+## Scalar unilateral contact
 
-- [Admissible Set](admissible-set.md)
-- [Stiffness Map](stiffness-map.md)
-- [Contact Displacement](contact-displacement.md)
-- [Contact Force](contact-force.md)
-- [Contact Gap](contact-gap.md)
-- [Inner stiffness Map sub](inner-stiffness-map-sub.md)
+- [Displacements admissible below a rigid obstacle](admissible-set.md)
+- [Linear spring as an operator on the real line](stiffness-map.md)
+- [Displacement of a spring pressed against an obstacle](contact-displacement.md)
+- [Magnitude of the obstacle contact force](contact-force.md)
+- [Gap between a body and an obstacle](contact-gap.md)
+- [The contact variational inequality on the real line](inner-stiffness-map-sub.md)
 
-## B.2. The hypotheses of Stampacchia's theorem
+## The hypotheses of Stampacchia's theorem
 
-- [Admissible Set nonempty](admissible-set-nonempty.md)
-- [Is Closed admissible Set](is-closed-admissible-set.md)
-- [Convex admissible Set](convex-admissible-set.md)
-- [Stiffness Map coercive](stiffness-map-coercive.md)
+- [The admissible set below an obstacle is nonempty](admissible-set-nonempty.md)
+- [The admissible set below an obstacle is closed](is-closed-admissible-set.md)
+- [The admissible set below an obstacle is convex](convex-admissible-set.md)
+- [A spring of positive stiffness is coercive](stiffness-map-coercive.md)
 
-## B.3. Existence, uniqueness and the contact displacement
+## Existence, uniqueness and the contact displacement
 
-- [Scalar unilateral contact as a Stampacchia variational inequality](exists-unique-contact.md)
-- [Contact vi iff](contact-vi-iff.md)
+- [Scalar unilateral contact has exactly one solution](exists-unique-contact.md)
+- [The contact variational inequality is solved by min(g, f / k)](contact-vi-iff.md)
 
-## B.4. Complementarity
+## Complementarity
 
-- [Complementarity from the variational inequality](complementarity-of-vi.md)
-- [Contact Displacement complementarity](contact-displacement-complementarity.md)
+- [A contact solution satisfies complementarity](complementarity-of-vi.md)
+- [The contact displacement satisfies complementarity](contact-displacement-complementarity.md)
 
-## C.1. The friction graph
+## Scalar Coulomb friction
 
-- [Is Coulomb Friction](is-coulomb-friction.md)
-- [Is Coulomb Friction of ne zero](is-coulomb-friction-of-ne-zero.md)
-- [Is Coulomb Friction zero](is-coulomb-friction-zero.md)
+- [Scalar Coulomb friction law](is-coulomb-friction.md)
+- [At nonzero velocity Coulomb friction is −μ N sign v](is-coulomb-friction-of-ne-zero.md)
+- [At rest Coulomb friction is any force between −μ N and μ N](is-coulomb-friction-zero.md)
 
-## C.2. Friction power and dissipation
+## Friction power and dissipation
 
-- [Coulomb power eq](coulomb-power-eq.md)
-- [Coulomb power nonpos](coulomb-power-nonpos.md)
+- [Coulomb friction delivers the power −μ N times the speed](coulomb-power-eq.md)
+- [With nonnegative coefficient and normal force friction dissipates](coulomb-power-nonpos.md)
 
-## C.3. Static equilibrium and non-uniqueness at rest
+## Static equilibrium and non-uniqueness at rest
 
-- [Coulomb static equilibrium iff](coulomb-static-equilibrium-iff.md)
-- [Coulomb stick not unique](coulomb-stick-not-unique.md)
+- [Static equilibrium under Coulomb friction](coulomb-static-equilibrium-iff.md)
+- [At rest the Coulomb law does not determine the force](coulomb-stick-not-unique.md)
 
-## C.4. Negative coefficient
+## Negative friction coefficient
 
-- [Coulomb not exists stick of neg](coulomb-not-exists-stick-of-neg.md)
-- [Coulomb slip power pos of neg](coulomb-slip-power-pos-of-neg.md)
+- [A negative friction coefficient admits no force at rest](coulomb-not-exists-stick-of-neg.md)
+- [With a negative friction coefficient slip supplies power](coulomb-slip-power-pos-of-neg.md)
 
-## D. Unilateral contact with Coulomb friction
+## Unilateral contact with Coulomb friction
 
-- [Friction Cone](friction-cone.md)
-- [Is Admissible Contact](is-admissible-contact.md)
-- [Normal tangent decomposition iff](normal-tangent-decomposition-iff.md)
-- [Convex friction Cone](convex-friction-cone.md)
-- [Not convex complementarity](not-convex-complementarity.md)
-- [Eq zero of gap pos](eq-zero-of-gap-pos.md)
-- [Is Admissible Contact zero tangent iff](is-admissible-contact-zero-tangent-iff.md)
+- [Coulomb friction cone](friction-cone.md)
+- [Admissible contact states with Coulomb friction](is-admissible-contact.md)
+- [Normal and tangent parts of an interface traction](normal-tangent-decomposition-iff.md)
+- [For a nonnegative coefficient the friction cone is convex](convex-friction-cone.md)
+- [The unilateral complementarity set is not convex](not-convex-complementarity.md)
+- [A separated contact carries no force](eq-zero-of-gap-pos.md)
+- [Without tangent traction admissibility is unilateral complementarity](is-admissible-contact-zero-tangent-iff.md)
 
-## E. Coulomb sliding and sticking at a unilateral interface
+## Coulomb sliding and sticking at an interface
 
-- [Is Coulomb Traction](is-coulomb-traction.md)
-- [Inner eq and nonpos](inner-eq-and-nonpos.md)
-- [Inner pos of mul neg](inner-pos-of-mul-neg.md)
-- [Is Admissible Contact](is-admissible-contact-2.md)
-- [Is Coulomb Traction iff is Coulomb Friction](is-coulomb-traction-iff-is-coulomb-frict.md)
+- [Vector Coulomb friction law at a unilateral interface](is-coulomb-traction.md)
+- [Coulomb friction power at an interface is nonpositive](inner-eq-and-nonpos.md)
+- [If μ N < 0 the vector Coulomb law supplies power](inner-pos-of-mul-neg.md)
+- [Coulomb tractions are admissible closed contact states](is-admissible-contact-2.md)
+- [On a tangent line the vector law is the scalar Coulomb law](is-coulomb-traction-iff-is-coulomb-frict.md)

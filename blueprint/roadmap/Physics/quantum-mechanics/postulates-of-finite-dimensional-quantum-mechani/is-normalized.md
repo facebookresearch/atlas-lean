@@ -1,4 +1,4 @@
-# Is Normalized
+# Normalized state vector
 
-A vector `ψ : EuclideanSpace ℂ (Fin n)` is normalized if its Euclidean norm is one,
-`‖ψ‖ = 1`. Pure states of an `n`-level system are normalized vectors.
+For `n ∈ ℕ`, a vector `ψ ∈ ℂⁿ` is normalized if its Euclidean norm is `1`, `‖ψ‖ = 1`. Pure states of
+an `n`-level system are normalized vectors.

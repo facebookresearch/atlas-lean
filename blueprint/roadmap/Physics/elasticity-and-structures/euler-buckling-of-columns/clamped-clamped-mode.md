@@ -1,5 +1,6 @@
-# Clamped Clamped Mode
+# Clamped–clamped column mode
 
-The clamped-clamped column mode `w(x) = 1 - cos (2πx / L)` on a column
-of length `L`. This is one explicit buckling eigenfunction; nothing here
-claims it is the lowest mode or part of a complete set.
+For reals `L` (column length) and `x`, `w(x) = 1 − cos(2πx / L)`. With the convention `x / 0 = 0`,
+`w = 0` everywhere when `L = 0`. In the physical reading `L > 0` and the column is clamped at both
+ends. It is one explicit buckling eigenfunction; it is not claimed to be the lowest mode or part of
+a complete set.

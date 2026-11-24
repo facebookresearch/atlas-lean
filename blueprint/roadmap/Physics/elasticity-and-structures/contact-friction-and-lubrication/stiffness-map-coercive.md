@@ -1,4 +1,5 @@
-# Stiffness Map coercive
+# A spring of positive stiffness is coercive
 
-A spring of positive stiffness is coercive, in the form of the hypothesis of Stampacchia's
-theorem: `α ‖u‖ ^ 2 ≤ ⟪k u, u⟫` for some `α > 0` (namely `α = k`).
+For a real `k > 0`, there is `α > 0` (namely `α = k`) with `α |u|² ≤ (k u) u` for every real `u`:
+the [stiffness map](stiffness-map.md) satisfies the coercivity hypothesis of
+[Stampacchia's theorem](../../../Analysis/convex-analysis-and-variations/stampacchia-s-theorem/exists-unique-stampacchia.md).

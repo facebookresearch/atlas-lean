@@ -1,3 +1,4 @@
-# Iterated Deriv four clamped Free Mode
+# Fourth derivative of the clamped–free column mode
 
-Fourth derivative of the clamped-free mode.
+For a real `L ≠ 0` and every `x`, the [clamped–free mode](clamped-free-mode.md)
+`w(x) = 1 − cos(πx / (2L))` satisfies `w''''(x) = −(π / (2L))⁴ cos(πx / (2L))`.

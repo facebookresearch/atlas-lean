@@ -1,5 +1,5 @@
-# Differential Hamiltonian
+# Differential Hamiltonian with a potential V
 
-The differential Hamiltonian `f ↦ -f'' + V f` for a potential `V : ℝ → ℂ` (units with `ħ = 1`
-and mass `1 / 2`), with domain the twice continuously differentiable functions `ℝ → ℂ`,
-`ContDiff ℝ 2 f`.
+For a potential `V : ℝ → ℂ`, the [operator with domain](operator-with-domain.md) whose domain is the
+set of twice continuously differentiable functions `ℝ → ℂ` and whose action is
+`f ↦ (x ↦ −f''(x) + V(x) f(x))` (units with `ħ = 1` and mass `1/2`).

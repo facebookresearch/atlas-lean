@@ -1,3 +1,4 @@
-# Volume parallelepiped primitive Vector
+# The primitive cell has volume the absolute determinant
 
-The cell spanned by the primitive vectors has volume `|det B|`.
+For every [Bravais lattice](bravais-lattice.md) with basis matrix `B`, the parallelepiped spanned by
+the primitive vectors `a₀`, `a₁`, `a₂` has Lebesgue volume `|det B|`.

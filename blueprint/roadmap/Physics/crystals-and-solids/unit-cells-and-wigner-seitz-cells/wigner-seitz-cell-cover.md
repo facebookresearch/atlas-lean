@@ -1,5 +1,6 @@
-# Wigner-Seitz covering
+# The lattice translates of the Wigner–Seitz cell cover space
 
-The lattice translates of the (closed) Wigner-Seitz cell cover
-the whole space. Boundary convention (from `wignerSeitzCell`): the closed cell of points at
-least as close to the origin as to any lattice point, ties included.
+Let a [Bravais lattice](../bravais-lattices/bravais-lattice.md) have lattice `L`, and let `W` be its
+[Wigner–Seitz cell](../reciprocal-lattices-and-brillouin-zones/wigner-seitz-cell.md)
+`W = {x : ‖x‖ ≤ ‖x - R‖ for every R ∈ L}` (closed: ties included). For every point `x` there is
+`R ∈ L` with `x - R ∈ W`: the translates `R + W`, `R ∈ L`, cover all of space.

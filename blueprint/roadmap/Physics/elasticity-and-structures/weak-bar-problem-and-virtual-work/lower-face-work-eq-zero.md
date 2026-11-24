@@ -1,3 +1,4 @@
-# Lower Face Work eq zero
+# A lower face where the displacement vanishes does no work
 
-The lower face `x i = a i` does no work if `v` vanishes on it.
+For a box `[a, b] ⊂ ℝ³`, a stress field `σ`, an index `i` and a virtual displacement `v` that
+vanishes on the face `x_i = a_i`, the [lower-face work](lower-face-work.md) on that face is `0`.

@@ -1,5 +1,7 @@
-# The index cross product satisfies the zone law for both planes
+# The index cross product satisfies the zone law for both families
 
-The vector with
-indices `h ⨯₃ h'` pairs to zero with both `G_hkl` and `G_h'k'l'`. For parallel index triples
-it is the zero vector, so this alone does not produce a zone axis; see `zoneAxis_unique`.
+For every [Bravais lattice](../bravais-lattices/bravais-lattice.md) and all `h`, `h' ∈ ℤ³`, the
+[lattice direction](lattice-direction.md) `[h × h']` of the [index cross product](zone-axis.md)
+satisfies `g_h · [h × h'] = 0` and `g_h' · [h × h'] = 0`, where `g` denotes
+[reciprocal-lattice vectors](reciprocal-vector.md). For parallel triples `h × h' = 0`, so this alone
+gives no zone axis ([zone axis](zone-axis-unique.md)).

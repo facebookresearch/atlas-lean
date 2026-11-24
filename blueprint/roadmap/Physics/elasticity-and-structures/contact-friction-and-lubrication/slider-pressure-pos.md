@@ -1,4 +1,4 @@
-# Slider Pressure pos
+# For a converging film the slider pressure is positive inside
 
-For the converging film `h0 > hL > 0` with `μ, U, L > 0` the pressure is positive inside
-the slider.
+For real numbers `μ > 0`, `U > 0`, `L > 0` and a converging film `h₀ > h_L > 0`, the
+[closed-form pressure](slider-pressure.md) is positive at every `x` with `0 < x < L`.

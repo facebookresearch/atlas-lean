@@ -1,6 +1,5 @@
-# GL(3, Z) change of basis
+# Two bases give the same lattice iff they differ by a unimodular matrix
 
-Two `BravaisLattice`s span the same lattice iff their basis
-matrices satisfy `B' = B * P` for an integer matrix `P` with `det P = ±1` (as `IsUnit P.det`),
-in the column convention of `BravaisLattice`. The reverse direction reuses `lattice_relabel`;
-the forward direction extracts `P` and proves `det P = ±1` from the determinant equations.
+Let two [Bravais lattices](../bravais-lattices/bravais-lattice.md) have basis matrices `B` and `B'`
+and lattices `L` and `L'`. Then `L = L'` if and only if `B' = B P` for an integer matrix `P` with
+`det P = ±1` (an element of `GL(3, ℤ)`), the basis matrices having the primitive vectors as columns.

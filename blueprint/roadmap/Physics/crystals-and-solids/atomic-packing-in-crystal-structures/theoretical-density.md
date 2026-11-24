@@ -1,5 +1,5 @@
-# Theoretical Density
+# Theoretical density of a crystal
 
-Theoretical density on its physical domain: `n` atoms per conventional
-cell, molar mass `A > 0`, cell volume `Vc > 0`, Avogadro constant `NA > 0`, in
-consistent units.
+For `n ∈ ℕ` atoms per conventional cell, a molar mass `A > 0`, a cell volume `V_c > 0` and an
+Avogadro constant `N_A > 0` (the three inequalities are arguments), `n A / (V_c N_A)`, in consistent
+units.

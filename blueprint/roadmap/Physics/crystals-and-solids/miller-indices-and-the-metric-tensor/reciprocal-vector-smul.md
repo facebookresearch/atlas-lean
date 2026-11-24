@@ -1,4 +1,5 @@
-# Reciprocal Vector smul
+# Scaling the Miller indices scales the reciprocal vector
 
-Scaling the indices scales the reciprocal vector: `G_(n h) = n • G_h`. Unreduced indices
-such as `(200)` give a multiple of the reduced `(100)` vector.
+For every [Bravais lattice](../bravais-lattices/bravais-lattice.md), every integer `n` and all
+Miller indices `h ∈ ℤ³`, the [reciprocal-lattice vectors](reciprocal-vector.md) satisfy
+`g_(n h) = n g_h`: unreduced indices such as `(2 0 0)` give a multiple of the vector of `(1 0 0)`.

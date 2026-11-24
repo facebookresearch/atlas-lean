@@ -1,4 +1,4 @@
-# Inner mul Vec left of is Hermitian
+# A Hermitian matrix is self-adjoint for the inner product
 
-A Hermitian matrix is its own adjoint: `inner ℂ (A x) y = inner ℂ x (A y)`. This combines
-`inner_mulVec_left` with `Aᴴ = A` (`Matrix.IsHermitian.eq`).
+For a Hermitian complex `n × n` matrix `A` (`Aᴴ = A`, with `Aᴴ` the conjugate transpose) and all
+`x, y ∈ ℂⁿ`, `⟨A x, y⟩ = ⟨x, A y⟩`.

@@ -1,4 +1,6 @@
-# Crystal System
+# The seven crystal systems
 
-The seven crystal systems. Metadata only: part of the 14-Bravais-lattice metadata table, not a
-classification theorem.
+The crystal systems are the seven labels triclinic, monoclinic, orthorhombic, tetragonal, trigonal,
+hexagonal and cubic, used in the [metadata table](bravais-metadata-table.md) of the fourteen Bravais
+lattice types. Labels only: no lattice or basis matrix is attached, and no classification theorem is
+claimed.

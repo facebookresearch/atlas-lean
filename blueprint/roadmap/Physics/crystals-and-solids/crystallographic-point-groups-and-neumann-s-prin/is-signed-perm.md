@@ -1,5 +1,7 @@
-# Is Signed Perm
+# Signed permutation matrix
 
-A signed permutation matrix: each row has exactly one nonzero entry, `±1`,
-at column `σ i`. The cubic point group (reference data: the 24 rotations) is
-the set of signed permutation matrices with determinant one.
+A real `3 × 3` matrix `M` is a signed permutation matrix if there are a permutation `σ` of
+`{1, 2, 3}` and signs `s₁, s₂, s₃ ∈ {1, -1}` such that `M_{ij} = sᵢ` when `σ(i) = j` and
+`M_{ij} = 0` otherwise: each row has exactly one nonzero entry, equal to `±1`. As reference data,
+not proved here, the 24 rotations of the cubic point group are the signed permutation matrices of
+determinant `1`.

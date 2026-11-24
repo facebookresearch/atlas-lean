@@ -1,3 +1,4 @@
-# Born Lande Energy neg of pos
+# The Born–Landé lattice energy is negative for positive constants
 
-The Born-Lande lattice energy is negative when all parameters are positive and `1 < n`.
+For positive real numbers `N_A`, `M`, `z₊`, `z₋`, `e`, `ε₀` and `r₀` and a real `n > 1`, the
+[Born–Landé lattice energy](born-lande-energy.md) is negative.

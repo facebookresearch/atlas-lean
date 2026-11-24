@@ -1,3 +1,3 @@
-# Circulatory J transpose
+# The circulatory load operator is skew-symmetric
 
-The circulatory operator is skew: `Jᵀ = -J`.
+The [circulatory load operator](circulatory-j.md) satisfies `Jᵀ = -J`.

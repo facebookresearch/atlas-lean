@@ -1,4 +1,4 @@
-# Lattice Equiv Int
+# Integer indices correspond bijectively to lattice points
 
-The lattice vectors are indexed by integer vectors: `n ↦ B *ᵥ n` is an additive equivalence
-between `Fin 3 → ℤ` and the lattice.
+For a [Bravais lattice](../bravais-lattices/bravais-lattice.md) with basis matrix `B` and lattice
+`L`, the map `n ↦ B n` is an additive bijection from `ℤ³` onto `L`.

@@ -1,3 +1,3 @@
-# Mirror trace
+# The mirror has trace 0
 
-`mirror` has trace zero.
+The [mirror](mirror.md) `M` has `tr M = 0`.

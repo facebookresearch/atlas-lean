@@ -1,4 +1,5 @@
-# Slider Pressure is Reynolds Solution
+# The closed-form pressure solves the slider Reynolds equation
 
-Existence: for positive end thicknesses `h0 ≠ hL` and `L > 0`, the closed-form pressure,
-with the closed-form gradient, solves the stated Reynolds model.
+For real numbers `μ` and `U`, positive end thicknesses `h₀ ≠ h_L` and `L > 0`, the
+[closed-form pressure](slider-pressure.md) with the [closed-form gradient](slider-pressure-gradient.md)
+is a [solution of the Reynolds model](is-reynolds-solution.md).

@@ -1,4 +1,4 @@
-# Coulomb not exists stick of neg
+# A negative friction coefficient admits no force at rest
 
-A negative coefficient admits no stick force: for `μ < 0 < N` the interval `[-μ N, μ N]` is
-empty, so no force is admissible at rest.
+For real numbers `μ < 0` and `N > 0`, no force satisfies the [Coulomb law](is-coulomb-friction.md) at
+velocity `0`: the interval `[-μ N, μ N]` is empty.

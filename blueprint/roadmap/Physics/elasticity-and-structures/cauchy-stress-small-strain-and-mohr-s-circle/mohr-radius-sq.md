@@ -1,3 +1,4 @@
-# Mohr Radius Sq
+# Squared radius of Mohr's circle
 
-Squared Mohr's circle radius.
+For real `σx`, `σy` and `τ`, the squared radius of Mohr's circle is `((σx - σy)/2)² + τ²`; the
+radius is its nonnegative square root.

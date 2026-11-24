@@ -1,4 +1,4 @@
-# Theoretical Density eq raw
+# The theoretical density is the raw expression on its domain
 
-On its domain the physical density is the raw expression, so
-`theoreticalDensityRaw_eq` and `density_mat_c1` evaluate it.
+For `n ∈ ℕ` and `A, V_c, N_A > 0`, the [theoretical density](theoretical-density.md) equals the
+[density expression](theoretical-density-raw.md) `n A / (V_c N_A)`.

@@ -1,5 +1,6 @@
-# Branch
+# The Maxwell branch of a calibration at a state of its domain
 
-The Maxwell branch declared by a calibration at a state `θ` of its domain: modulus
-`c.modulus θ` and viscosity `c.viscosity θ`. A load history analyzed with this branch holds
-the state `θ` fixed.
+For a [calibration](maxwell-calibration.md) with modulus $E(\theta)$, viscosity $\eta(\theta)$ and
+domain $D$, and a state $\theta \in D$, the [Maxwell branch](maxwell-branch.md) with modulus
+$E(\theta) > 0$ and viscosity $\eta(\theta) > 0$. A load history analysed with this branch keeps the
+state $\theta$ fixed.

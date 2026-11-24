@@ -1,4 +1,5 @@
-# Is Reflected Stack
+# Reflected stack of plies
 
-A reflected stack: interfaces symmetric about the midplane, `z (n - k) = -z k`, and each ply
-with the stiffness of its mirror ply, `Q̄ (n - 1 - i) = Q̄ i`.
+For `n ∈ ℕ`, interfaces `z_0, …, z_n` and ply stiffnesses `Q̄_0, …, Q̄_{n−1}` form a reflected stack
+if `z_{n−k} = −z_k` for every `k ∈ {0, …, n}` and `Q̄_{n−1−i} = Q̄_i` for every ply `i`: interfaces
+and ply stiffnesses are mirrored about the reference plane `s = 0`, which is then the midplane.

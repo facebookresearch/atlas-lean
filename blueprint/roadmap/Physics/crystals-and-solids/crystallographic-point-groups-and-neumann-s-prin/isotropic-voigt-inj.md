@@ -1,4 +1,4 @@
-# Isotropic Voigt inj
+# The two Lamé constants are independent
 
-The two Lamé constants are independent: the family is injective in
-`(lam, mu)`.
+For real numbers `λ, μ, λ', μ'`, if the [isotropic Voigt matrices](isotropic-voigt.md) of `(λ, μ)`
+and `(λ', μ')` are equal, then `λ = λ'` and `μ = μ'`.

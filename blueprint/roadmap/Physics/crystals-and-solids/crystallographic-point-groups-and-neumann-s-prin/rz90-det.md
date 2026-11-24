@@ -1,3 +1,3 @@
-# Rz90 det
+# The quarter-turn about the z-axis has determinant 1
 
-`Rz90` has determinant one.
+The [quarter-turn about the z-axis](rz90.md) `R_z` has `det R_z = 1`.

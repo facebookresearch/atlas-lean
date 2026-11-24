@@ -1,4 +1,3 @@
-# Angstrom cubed to cm cubed
+# A cube of edge 4 Å has volume 64 × 10⁻²⁴ cm³
 
-Unit conversion for the MAT-C1 fixture: `Vc = 4³ = 64 Å³` with
-`1 Å = 1e-8 cm` gives `Vc = 64e-24 cm³`.
+`4³ · (10⁻⁸)³ = 64 × 10⁻²⁴`: with `1 Å = 10⁻⁸ cm`, a cube of edge `4 Å` has volume `64 × 10⁻²⁴ cm³`.

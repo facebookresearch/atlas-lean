@@ -1,3 +1,4 @@
-# Slider Film pos
+# The slider film stays open
 
-The film stays open: for positive end thicknesses the film is positive on `[0, L]`.
+For real numbers `h₀ > 0`, `h_L > 0` and `L > 0` and every `x ∈ [0, L]`, the
+[film thickness](slider-film.md) `h(x)` is positive.

@@ -1,3 +1,3 @@
-# Born Lande Energy factor mem
+# The Born–Landé factor lies strictly between 0 and 1
 
-The Born-Lande factor `1 - 1 / n` lies strictly between `0` and `1`.
+For every real `n > 1`, `0 < 1 - 1/n < 1`.

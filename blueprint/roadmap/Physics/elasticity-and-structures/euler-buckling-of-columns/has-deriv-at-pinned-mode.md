@@ -1,3 +1,4 @@
-# Has Deriv At pinned Mode
+# The pinned mode has derivative (π / L) cos(πx / L)
 
-First derivative of the pinned mode at a point.
+For all reals `L` and `x`, the [pinned mode](pinned-mode.md) `w(x) = sin(πx / L)` has derivative
+`(π / L) cos(πx / L)` at `x`.

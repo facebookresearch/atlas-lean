@@ -1,4 +1,5 @@
-# Exists neutral displacement
+# At the divergence pressure a nonzero twist is in equilibrium
 
-Neutral displacement: the divergence pressure is positive and a nonzero twist
-balances the moment there with zero rigid angle.
+For real numbers `K > 0`, `S`, `e` and `C_Lα` with `S e C_Lα > 0`, the
+[divergence pressure](divergence-pressure.md) `q_D` is positive and some twist `θ ≠ 0` makes the
+[restoring moment](restoring-moment.md) at `q_D` with zero rigid angle vanish: a neutral displacement.

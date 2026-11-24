@@ -1,4 +1,5 @@
-# Neutral Mode power balance
+# On the neutral trajectory the load power balances the damping
 
-Neutral power balance: on the neutral trajectory the circulatory port power equals the
-damping loss, `(2 J z) ⬝ᵥ z' = 2 z' ⬝ᵥ z' = 2`.
+At every time `t`, the [neutral trajectory](neutral-mode.md) `z` satisfies `(2 J z(t)) · z'(t) = 2 z'(t) · z'(t)`
+and `2 z'(t) · z'(t) = 2`: the power of the [circulatory force](circulatory-force.md) at `q = 2` equals the
+damping loss.

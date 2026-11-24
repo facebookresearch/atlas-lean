@@ -1,5 +1,5 @@
-# Inf' eigenvalues le expectation Value
+# The expectation value is at least the smallest eigenvalue
 
-For every Hermitian matrix `A` and normalized state `ψ`, the expectation value of `A` is at
-least the smallest eigenvalue of `A`. The spectral hypothesis of `inf'_le_expectationValue` is
-discharged by Mathlib's spectral theorem `Matrix.IsHermitian.spectral_theorem`.
+For `n ≥ 1`, a Hermitian complex `n × n` matrix `A` (`Aᴴ = A`, with `Aᴴ` the conjugate transpose)
+and every [normalized](is-normalized.md) `ψ`, `‖ψ‖ = 1`, the smallest eigenvalue of `A` is at most
+the [expectation value](expectation-value.md) `⟨A⟩_ψ = Re ⟨ψ, A ψ⟩`.

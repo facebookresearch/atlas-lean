@@ -1,6 +1,8 @@
-# Weak H10 On
+# Bar functions vanishing at both ends with square-integrable derivative
 
-An element of `H¹₀(0, L)`, in the encoding of `EarthScience.WeakH10`: a representative
-`toFun`, meaningful on `[0, L]`, which on `[0, L]` is the primitive from `0` of a weak derivative
-`weakDeriv ∈ L²(0, L)`, and whose weak derivative has integral zero over `[0, L]` (the end
-condition `toFun L = 0`). Values outside `[0, L]` are unconstrained.
+For a real number `L` (the bar length, intended `L > 0`), an element of `H¹₀(0, L)` consists of a
+representative `v : ℝ → ℝ` and a weak derivative `v' : ℝ → ℝ` such that `v'` is square integrable on
+`[0, L]`, `v(x) = ∫_0^x v'(t) dt` for every `x ∈ [0, L]`, and `∫_0^L v'(t) dt = 0` (so that
+`v(L) = 0`). Values outside `[0, L]` are unconstrained. This is the encoding of the
+[unit-interval space](../../../Analysis/partial-differential-equations/weak-solutions-of-elliptic-equations/weak-h10.md)
+on `[0, L]`.

@@ -1,3 +1,4 @@
-# Compression Positive Stress is Symmetric Stress
+# The compression-positive form of a symmetric stress is symmetric
 
-Symmetry is preserved by the stress-sign conversion.
+If a real `n × n` matrix `σ` is [symmetric](is-symmetric-stress.md), `σᵀ = σ`, then so is its
+[compression-positive form](compression-positive-stress.md): `(-σ)ᵀ = -σ`.

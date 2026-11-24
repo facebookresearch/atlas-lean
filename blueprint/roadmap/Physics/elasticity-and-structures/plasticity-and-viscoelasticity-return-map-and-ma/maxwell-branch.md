@@ -1,4 +1,6 @@
-# Maxwell Branch
+# Maxwell branch: a spring and a dashpot in series
 
-A Maxwell branch: a linear spring of modulus `E` (stress per unit strain) in series with a
-linear dashpot of viscosity `η` (stress times time per unit strain), both strictly positive.
+A Maxwell branch consists of two real numbers, the modulus $E > 0$ of a linear spring (stress per
+unit strain) and the viscosity $\eta > 0$ of a linear dashpot (stress times time per unit strain),
+connected in series: both carry the same stress, and their strains add. The two positivity
+conditions are part of the branch.

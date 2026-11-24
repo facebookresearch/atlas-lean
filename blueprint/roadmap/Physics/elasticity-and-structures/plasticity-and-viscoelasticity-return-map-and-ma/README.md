@@ -1,21 +1,37 @@
 # Plasticity and viscoelasticity: return map and Maxwell model
 
-- [Deviatoric Stresses](deviatoric-stresses.md)
-- [Plastic Strain Increment](plastic-strain-increment.md)
-- [Frobenius inner eq sum mul](frobenius-inner-eq-sum-mul.md)
-- [Deviatoric return](deviatoric-return.md)
-- [Deviatoric return firmly nonexpansive](deviatoric-return-firmly-nonexpansive.md)
-- [Eq projection iff energy le](eq-projection-iff-energy-le.md)
-- [Deviatoric return maximum plastic work](deviatoric-return-maximum-plastic-work.md)
-- [Maxwell Branch](maxwell-branch.md)
-- [Relaxation Time](relaxation-time.md)
-- [Stored Energy](stored-energy.md)
-- [Dissipation Rate](dissipation-rate.md)
-- [Is History](is-history.md)
-- [Is History iff relaxation](is-history-iff-relaxation.md)
-- [Has Deriv At stored Energy](has-deriv-at-stored-energy.md)
-- [Stress eq of strain held](stress-eq-of-strain-held.md)
-- [Strain eq of stress held](strain-eq-of-stress-held.md)
-- [Dissipation Rate pos iff](dissipation-rate-pos-iff.md)
-- [Maxwell Calibration](maxwell-calibration.md)
-- [Branch](branch.md)
+The deviatoric return map of perfect plasticity for real $3 \times 3$ stress matrices, with the
+Frobenius inner product: the nearest-point projection of the trial deviator onto a nonempty complete
+convex yield section of deviatoric stresses, its firm nonexpansiveness, its energy characterization
+and maximum plastic work, for a shear modulus $\mu > 0$. Then the Maxwell branch, a linear spring of
+modulus $E > 0$ in series with a linear dashpot of viscosity $\eta > 0$: its constitutive relation,
+energy balance, stress relaxation at held strain and creep at held stress, and calibrations over a
+set of states.
+
+## The deviatoric return map
+
+- [Admissible deviatoric stresses](deviatoric-stresses.md)
+- [Isotropic plastic strain increment](plastic-strain-increment.md)
+- [The Frobenius inner product is the full double contraction](frobenius-inner-eq-sum-mul.md)
+- [Deviatoric return map for perfect plasticity](deviatoric-return.md)
+- [The deviatoric return is firmly nonexpansive with the 2μ scaling](deviatoric-return-firmly-nonexpansive.md)
+- [For μ > 0, the projection is the minimizer of the energy metric](eq-projection-iff-energy-le.md)
+- [For μ > 0, the deviatoric return satisfies maximum plastic work](deviatoric-return-maximum-plastic-work.md)
+
+## The Maxwell branch
+
+- [Maxwell branch: a spring and a dashpot in series](maxwell-branch.md)
+- [Relaxation time of a Maxwell branch](relaxation-time.md)
+- [Energy stored in the spring of a Maxwell branch](stored-energy.md)
+- [Power dissipated in the dashpot of a Maxwell branch](dissipation-rate.md)
+- [Stress and strain histories of a Maxwell branch on a set of times](is-history.md)
+- [The Maxwell constitutive relation in relaxation form](is-history-iff-relaxation.md)
+- [Energy balance of a Maxwell branch](has-deriv-at-stored-energy.md)
+- [With strain held from t = 0, the Maxwell stress decays exponentially](stress-eq-of-strain-held.md)
+- [With stress held from t = 0, the Maxwell strain grows linearly](strain-eq-of-stress-held.md)
+- [The dashpot dissipates power exactly at nonzero stress](dissipation-rate-pos-iff.md)
+
+## Calibrated Maxwell branches
+
+- [Calibration of a Maxwell branch over a set of states](maxwell-calibration.md)
+- [The Maxwell branch of a calibration at a state of its domain](branch.md)

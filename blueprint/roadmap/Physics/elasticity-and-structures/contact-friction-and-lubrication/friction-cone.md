@@ -1,6 +1,7 @@
-# Friction Cone
+# Coulomb friction cone
 
-The Coulomb friction cone in `(N, t)` coordinates, `‖t‖ ≤ μ * N` with `0 ≤ N`, for the
-compression-positive normal force `N` and the tangent traction `t`. The inner product on `E`
-is required by design, though unused in the body: it makes `‖·‖` the Euclidean norm, so the
-cone is isotropic.
+For a real inner product space `E` and a real number `μ` (friction coefficient), the friction cone
+is the set of pairs `(N, t) ∈ ℝ × E` with `‖t‖ ≤ μ N` and `N ≥ 0`, for the compression-positive
+normal force `N` and the tangent traction `t`. The norm is the inner-product norm, so the cone is
+isotropic; the slip threshold `‖t‖ = μ N` is included, and for `μ = 0` the cone is the ray `t = 0`,
+`N ≥ 0`.

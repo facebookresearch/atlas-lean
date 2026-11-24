@@ -1,4 +1,5 @@
-# Lattice Vector add position
+# Translating an atom by a lattice vector shifts its cell index
 
-Translating the atom at `(n, f)` by the lattice vector `B *ᵥ m` gives the atom at
-`(n + m, f)`.
+Let a [crystal with motif](bravais-crystal.md) `F` have basis matrix `B` (`det B ≠ 0`), lattice `L`
+and offsets `u_f` (`f ∈ F`). For all `m, n ∈ ℤ³` and `f ∈ F`, `B m + (B n + u_f) = B (n + m) + u_f`:
+translating the atom `(n, f)` by the lattice vector `B m` gives the atom `(n + m, f)`.

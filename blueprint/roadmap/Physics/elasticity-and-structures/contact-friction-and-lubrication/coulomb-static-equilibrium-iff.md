@@ -1,4 +1,4 @@
-# Coulomb static equilibrium iff
+# Static equilibrium under Coulomb friction
 
-Static equilibrium: a body at rest under the applied tangential force `Fa` balances it with an
-admissible stick force, `Fa + F = 0`, exactly when `Fa ∈ [-μ N, μ N]`.
+For all real `μ`, `N` and `F_a` (applied tangential force), there is a force `F` admissible by the
+[Coulomb law](is-coulomb-friction.md) at rest with `F_a + F = 0` if and only if `-μ N ≤ F_a ≤ μ N`.

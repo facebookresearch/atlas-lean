@@ -1,6 +1,8 @@
-# Has Deriv At energy
+# Energy balance of the circulatory model
 
-Power port and energy balance: for every `C²` trajectory the energy
-`E = (z' ⬝ᵥ z' + z ⬝ᵥ z) / 2` has derivative `R ⬝ᵥ z' - 2 z' ⬝ᵥ z' + (q J z) ⬝ᵥ z'`, where `R` is
-the model residual. On solutions the damping removes `2 z' ⬝ᵥ z'` and the circulatory load
-supplies the port power `(q J z) ⬝ᵥ z'`.
+For every real `q` and every twice continuously differentiable trajectory `z : ℝ → ℝ²`, the energy
+`E(s) = (z'(s) · z'(s) + z(s) · z(s)) / 2` has, at every time `t`, the derivative
+`r(t) · z'(t) - 2 z'(t) · z'(t) + (q J z(t)) · z'(t)`, where `r` is the
+[residual](circulatory-residual.md). On a solution (`r = 0`) the
+damping removes `2 z' · z'` and the [circulatory force](circulatory-force.md) supplies the power
+`(q J z) · z'`.

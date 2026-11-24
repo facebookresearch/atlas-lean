@@ -1,11 +1,7 @@
-# Clamped Clamped column Equation
+# The clamped–clamped mode solves the column equation for every EI
 
-Unrestricted algebraic form of the clamped-clamped column identity:
-with axial load `P = 4π²EI / L²`, the mode `w = 1 - cos (2πx / L)`
-satisfies the fourth-order Euler column equation
-`EI * w'''' + P * w'' = 0` at every `x`, together with the clamped
-displacement and slope conditions `w = w' = 0` at both supports, for
-every real `EI` (the identity is linear in `EI`; the degenerate case
-`EI = 0` makes both sides of the equation zero and carries no column
-mechanics). This records one explicit eigenpair, not a lowest-mode or
-completeness claim.
+For `L > 0` and every real `EI`, the [clamped–clamped mode](clamped-clamped-mode.md)
+`w(x) = 1 − cos(2πx / L)` and the axial load `P = 4π² EI / L²` satisfy `EI w''''(x) + P w''(x) = 0`
+at every `x`, together with `w(0) = w(L) = 0` and `w'(0) = w'(L) = 0`. For `EI = 0` both terms
+vanish. This is one explicit eigenpair: it is not claimed to give the lowest buckling load or to
+belong to a complete set of modes.

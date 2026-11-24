@@ -1,3 +1,4 @@
-# Clamped Free Mode zero
+# The clamped–free column mode vanishes at x = 0
 
-The clamped-free mode vanishes at the clamped support.
+For every real `L`, the [clamped–free mode](clamped-free-mode.md) `w(x) = 1 − cos(πx / (2L))`
+satisfies `w(0) = 0`.

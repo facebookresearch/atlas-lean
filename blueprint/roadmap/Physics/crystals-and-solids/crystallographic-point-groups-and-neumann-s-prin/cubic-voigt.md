@@ -1,12 +1,6 @@
-# Cubic Voigt
+# Three-parameter cubic Voigt stiffness matrix
 
-The cubic Voigt family: `3 × 3` normal block with `c11` on the diagonal
-and `c12` off-diagonal, `3 × 3` shear block `c44 • 1`, zero couplings:
-```
-c11 c12 c12 0   0   0
-c12 c11 c12 0   0   0
-c12 c12 c11 0   0   0
-0   0   0   c44 0   0
-0   0   0   0   c44 0
-0   0   0   0   0   c44
-```
+For real numbers `c₁₁`, `c₁₂` and `c₄₄`, the cubic Voigt matrix is the real `6 × 6` matrix with
+normal block `[[c₁₁, c₁₂, c₁₂], [c₁₂, c₁₁, c₁₂], [c₁₂, c₁₂, c₁₁]]` in the indices `1, 2, 3`, shear
+block `c₄₄ · 1` in the indices `4, 5, 6`, and zero couplings between the two blocks. Voigt indices
+`1, …, 6` label the axis pairs `xx`, `yy`, `zz`, `yz`, `xz`, `xy`, in this order.

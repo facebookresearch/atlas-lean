@@ -1,5 +1,6 @@
-# Abs det eq of lattice eq
+# Equal lattices have equal absolute determinants
 
-The cell volume `|det B|` does not depend on the choice of basis: lattices with the same
-lattice vectors have the same `|det|`. The absolute value absorbs the sign, so left-handed
-(`det B < 0`) and right-handed bases give the same volume.
+Let two [Bravais lattices](../bravais-lattices/bravais-lattice.md) have basis matrices `B` and `B'`
+and lattices `L` and `L'`. If `L = L'`, then `|det B| = |det B'|`: the cell volume does not depend
+on the choice of basis, the absolute value absorbing the sign of the determinant (left- or
+right-handed bases).

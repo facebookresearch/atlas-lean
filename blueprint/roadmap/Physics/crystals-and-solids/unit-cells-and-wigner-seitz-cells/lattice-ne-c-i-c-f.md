@@ -1,3 +1,6 @@
-# Lattice ne c I c F
+# Body-centred and face-centred cubic lattices of equal side differ
 
-Cubic I and F with the same parameter are different lattices (reference-only).
+For `a > 0`, the
+[body-centred cubic lattice](../reciprocal-lattices-and-brillouin-zones/body-centered-cubic.md) and
+the [face-centred cubic lattice](../reciprocal-lattices-and-brillouin-zones/face-centered-cubic.md),
+both with conventional cube of side `a`, have different [lattices](../bravais-lattices/lattice.md).

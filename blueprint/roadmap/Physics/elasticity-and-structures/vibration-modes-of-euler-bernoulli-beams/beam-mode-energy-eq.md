@@ -1,4 +1,5 @@
-# Beam Mode Energy eq
+# Energy of the simply supported mode at time t
 
-The mode energy evaluates to
-`(L / 4) * (ρA * ω^2 * sin^2(ωt) + EI * (kπ / L)^4 * cos^2(ωt))`.
+For `L > 0`, all reals `EI`, `ρA` and `ω`, a positive integer `k` and every time `t`, the
+[energy](beam-mode-energy.md) of the mode is
+`E(t) = (L / 4) (ρA ω² sin²(ω t) + EI (kπ / L)⁴ cos²(ω t))`.

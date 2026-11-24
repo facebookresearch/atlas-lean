@@ -1,6 +1,11 @@
-# Has Deriv At stored Energy
+# Energy balance of a Maxwell branch
 
-Energy balance. Along a history that obeys the canonical relation on `I`, at every time of
-`I` the stored energy changes at the input power `σ * ε'` minus the dashpot dissipation:
-`(σ ^ 2 / (2 * E))' = σ * ε' - σ ^ 2 / η`. The physical reading is `0 < E` and `0 < η`, the
-fields of the record.
+Let a [Maxwell branch](maxwell-branch.md) with modulus $E > 0$ and viscosity $\eta > 0$, a set $I$
+of times and histories $\sigma$, $\varepsilon$ with rates $\sigma'$, $\varepsilon'$ obey the
+[constitutive relation](is-history.md) on $I$. Then at every $t \in I$ the
+[stored energy](stored-energy.md) $\sigma^2 / (2E)$ has the derivative
+
+$$\frac{d}{dt} \frac{\sigma(t)^2}{2E} = \sigma(t)\, \varepsilon'(t) - \frac{\sigma(t)^2}{\eta},$$
+
+the input power per unit volume $\sigma \varepsilon'$ minus the
+[dissipation rate](dissipation-rate.md) of the dashpot.

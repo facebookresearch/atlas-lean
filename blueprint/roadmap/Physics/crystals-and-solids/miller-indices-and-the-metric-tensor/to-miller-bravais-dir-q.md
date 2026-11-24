@@ -1,4 +1,5 @@
-# To Miller Bravais Dir Q
+# Conversion of rational directions to Miller–Bravais indices
 
-Miller-Bravais direction conversion with exact rational factors: `U = (2u-v)/3`,
-`V = (2v-u)/3`, `T = -(u+v)/3`, `W = w`.
+For a rational direction `(u, v, w) ∈ ℚ³`, the Miller–Bravais direction is
+`(U, V, T, W) = ((2u - v)/3, (2v - u)/3, -(u + v)/3, w)`. Its inverse on four-index directions with
+`U + V + T = 0` is the [three-index conversion](of-miller-bravais-dir.md).

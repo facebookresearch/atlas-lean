@@ -1,4 +1,5 @@
-# Slider Load eq
+# Closed-form load per unit width of a plane slider
 
-Load per unit width in closed form, for positive end thicknesses `h0 ≠ hL` and `L > 0`:
-`W = 6 μ U L² / (h0 - hL)² (log (h0 / hL) - 2 (h0 - hL) / (h0 + hL))`.
+For real numbers `μ` and `U`, positive end thicknesses `h₀ ≠ h_L` and `L > 0`, the
+[load per unit width](slider-load.md) is
+`W = 6 μ U L² / (h₀ - h_L)² · (log(h₀ / h_L) - 2 (h₀ - h_L) / (h₀ + h_L))`.

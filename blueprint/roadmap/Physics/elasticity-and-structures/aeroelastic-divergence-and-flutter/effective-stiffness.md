@@ -1,3 +1,4 @@
-# Effective Stiffness
+# Effective torsional stiffness of a typical section
 
-Effective torsional stiffness `K - q * (S * e * CLα)`.
+For real numbers `K`, `q`, `S`, `e` and `C_Lα`, the effective torsional stiffness is
+`K - q (S e C_Lα)`.

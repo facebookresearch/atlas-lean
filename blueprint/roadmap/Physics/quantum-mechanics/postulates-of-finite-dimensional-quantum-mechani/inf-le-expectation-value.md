@@ -1,7 +1,7 @@
-# Inf' le expectation Value
+# Variational bound under a given spectral decomposition
 
-Variational bound: if `A = U * diagonal d * Uᴴ` with `U` unitary and `d` real, then for every
-normalized state `ψ` the expectation value of `A` is at least the smallest entry
-`Finset.univ.inf' Finset.univ_nonempty d` of `d`. The decomposition is an explicit hypothesis; such
-an `A` is Hermitian (`Matrix.isHermitian_mul_mul_conjTranspose`), and Mathlib's spectral theorem
-provides the decomposition for every Hermitian matrix (`inf'_eigenvalues_le_expectationValue`).
+Let `n ≥ 1`, let `U` be a unitary complex `n × n` matrix, `d ∈ ℝⁿ`, and `A = U diag(d) Uᴴ`. Then for
+every [normalized](is-normalized.md) `ψ`, `‖ψ‖ = 1`, `min_i d_i ≤ ⟨A⟩_ψ`, the
+[expectation value](expectation-value.md) `⟨A⟩_ψ = Re ⟨ψ, A ψ⟩`. The decomposition of `A` is a
+hypothesis; such an `A` is Hermitian, and every Hermitian matrix has one
+([bound by the smallest eigenvalue](inf-eigenvalues-le-expectation-value.md)).

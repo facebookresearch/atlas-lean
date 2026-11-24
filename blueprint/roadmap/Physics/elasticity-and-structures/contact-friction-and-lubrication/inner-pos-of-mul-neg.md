@@ -1,6 +1,6 @@
-# Inner pos of mul neg
+# If μ N < 0 the vector Coulomb law supplies power
 
-Control, invalid sign: if `μ * N < 0`, the stick rule admits no traction
-(`‖t‖ ≤ μ * N < 0` is impossible), so every Coulomb traction is a sliding one and the friction
-law supplies positive power. The sign in `IsCoulombTraction.inner_eq_and_nonpos` therefore
-needs `0 ≤ μ * N`; both `μ < 0 < N` and `N < 0 < μ` reverse it.
+For a real inner product space `E`, real numbers `μ` and `N` with `μ N < 0`, and `v, t ∈ E`
+satisfying the [vector Coulomb law](is-coulomb-traction.md), `⟨t, v⟩ > 0`: the stick branch is
+empty, so every such traction slides and supplies positive power. Both `μ < 0 < N` and `N < 0 < μ`
+reverse the sign.

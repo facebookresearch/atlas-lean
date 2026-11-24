@@ -1,3 +1,3 @@
-# Admissible Set nonempty
+# The admissible set below an obstacle is nonempty
 
-The admissible set is nonempty: it contains the obstacle position.
+For every real `g`, the [admissible set](admissible-set.md) `{u ≤ g}` is nonempty: it contains `g`.

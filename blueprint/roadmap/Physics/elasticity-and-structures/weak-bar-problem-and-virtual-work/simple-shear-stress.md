@@ -1,3 +1,4 @@
-# Simple Shear Stress
+# Simple-shear stress
 
-The simple-shear stress `τ (e₀ e₁ᵀ + e₁ e₀ᵀ)`.
+For a real `τ`, the simple-shear stress is the `3 × 3` matrix with rows `(0, τ, 0)`, `(τ, 0, 0)` and
+`(0, 0, 0)`.

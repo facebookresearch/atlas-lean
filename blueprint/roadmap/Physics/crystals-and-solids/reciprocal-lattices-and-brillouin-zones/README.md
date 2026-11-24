@@ -1,54 +1,57 @@
 # Reciprocal lattices and Brillouin zones
 
-## A. The reciprocal lattice
+## Cross products of the basis columns
 
-- [Cross Columns](cross-columns.md)
-- [Col cross Columns](col-cross-columns.md)
-- [Cross Columns eq transpose adjugate](cross-columns-eq-transpose-adjugate.md)
-- [Transpose mul cross Columns](transpose-mul-cross-columns.md)
-- [Transpose mul smul cross Columns](transpose-mul-smul-cross-columns.md)
-- [Reciprocal](reciprocal.md)
-- [Reciprocal basis Matrix](reciprocal-basis-matrix.md)
-- [Det basis Matrix eq triple product](det-basis-matrix-eq-triple-product.md)
-- [Reciprocal primitive Vector](reciprocal-primitive-vector.md)
+- [Matrix of cross products of the columns](cross-columns.md)
+- [Columns of the cross-column matrix](col-cross-columns.md)
+- [The cross-column matrix is the transposed adjugate](cross-columns-eq-transpose-adjugate.md)
+- [Triple products of the columns give det B times the identity](transpose-mul-cross-columns.md)
+- [For det B ≠ 0, the scaled cross-column matrix is 2π-dual to B](transpose-mul-smul-cross-columns.md)
+- [The oriented cell volume is the triple product a₁ · (a₂ × a₃)](det-basis-matrix-eq-triple-product.md)
 
-## B. Duality, cell volume and the double reciprocal
+## The reciprocal lattice
 
-- [Basis Matrix injective](basis-matrix-injective.md)
-- [Transpose mul reciprocal basis Matrix](transpose-mul-reciprocal-basis-matrix.md)
-- [Duality of the reciprocal basis](inner-primitive-vector-reciprocal.md)
-- [Inner reciprocal primitive Vector](inner-reciprocal-primitive-vector.md)
-- [Reciprocal basis Matrix eq iff](reciprocal-basis-matrix-eq-iff.md)
-- [Reciprocal basis Matrix eq inv transpose](reciprocal-basis-matrix-eq-inv-transpose.md)
-- [The reciprocal cell volume](det-reciprocal-basis-matrix.md)
-- [Volume parallelepiped reciprocal](volume-parallelepiped-reciprocal.md)
+- [Reciprocal lattice in the 2π convention](reciprocal.md)
+- [Basis matrix of the reciprocal lattice](reciprocal-basis-matrix.md)
+- [Cross-product formula for the reciprocal primitive vectors](reciprocal-primitive-vector.md)
+- [A Bravais lattice is determined by its basis matrix](basis-matrix-injective.md)
+
+## Duality, cell volume and the double reciprocal
+
+- [Duality in matrix form: Bᵀ B* = 2π times the identity](transpose-mul-reciprocal-basis-matrix.md)
+- [Duality of the reciprocal basis: aᵢ · bⱼ = 2π δᵢⱼ](inner-primitive-vector-reciprocal.md)
+- [Duality with the factors swapped: bᵢ · aⱼ = 2π δᵢⱼ](inner-reciprocal-primitive-vector.md)
+- [The reciprocal basis is the only basis 2π-dual to the lattice basis](reciprocal-basis-matrix-eq-iff.md)
+- [The reciprocal basis matrix is 2π times the inverse transpose](reciprocal-basis-matrix-eq-inv-transpose.md)
+- [Oriented volume of the reciprocal cell: det B* = (2π)³ / det B](det-reciprocal-basis-matrix.md)
+- [Lebesgue volume of the reciprocal primitive cell](volume-parallelepiped-reciprocal.md)
 - [The reciprocal of the reciprocal lattice is the original lattice](reciprocal-reciprocal.md)
 
-## C. Reciprocal lattice vectors
+## Reciprocal lattice vectors
 
-- [Primitive Vector mem lattice](primitive-vector-mem-lattice.md)
-- [Inner reciprocal lattice Vector primitive Vector](inner-reciprocal-lattice-vector-primitiv.md)
-- [Inner reciprocal lattice Vector](inner-reciprocal-lattice-vector.md)
-- [The reciprocal lattice consists of the wave vectors `G` with `G ⬝ R ∈ 2πℤ` for every lattice vector `R`](mem-lattice-reciprocal-iff.md)
-- [Plane-wave form](mem-lattice-reciprocal-iff-exp.md)
-- [Lattice reciprocal relabel](lattice-reciprocal-relabel.md)
+- [Each primitive vector is a lattice vector](primitive-vector-mem-lattice.md)
+- [A reciprocal lattice vector pairs with aⱼ to 2π mⱼ](inner-reciprocal-lattice-vector-primitiv.md)
+- [Reciprocal and direct lattice vectors pair to a multiple of 2π](inner-reciprocal-lattice-vector.md)
+- [G is in the reciprocal lattice iff G · R ∈ 2πℤ for all lattice R](mem-lattice-reciprocal-iff.md)
+- [G is in the reciprocal lattice iff exp(i G · R) = 1 for all lattice R](mem-lattice-reciprocal-iff-exp.md)
+- [The reciprocal lattice does not depend on the primitive vectors](lattice-reciprocal-relabel.md)
 
-## D. Cubic lattices
+## Cubic lattices
 
-- [Simple Cubic](simple-cubic.md)
-- [Face Centered Cubic](face-centered-cubic.md)
-- [Body Centered Cubic](body-centered-cubic.md)
-- [The reciprocal of the simple cubic lattice of side `a` is the simple cubic lattice of side `2π / a`](reciprocal-simple-cubic.md)
-- [The reciprocal of the face-centered cubic lattice of side `a` is the body-centered cubic lattice of side `4π / a`](reciprocal-face-centered-cubic.md)
-- [The reciprocal of the body-centered cubic lattice of side `a` is the face-centered cubic lattice of side `4π / a`](reciprocal-body-centered-cubic.md)
+- [Simple cubic lattice of side a](simple-cubic.md)
+- [Face-centred cubic lattice with cubic cell of side a](face-centered-cubic.md)
+- [Body-centred cubic lattice with cubic cell of side a](body-centered-cubic.md)
+- [The reciprocal of simple cubic of side a is simple cubic of side 2π/a](reciprocal-simple-cubic.md)
+- [The reciprocal of fcc of side a is bcc of side 4π/a](reciprocal-face-centered-cubic.md)
+- [The reciprocal of bcc of side a is fcc of side 4π/a](reciprocal-body-centered-cubic.md)
 
-## E. The Wigner–Seitz cell and the first Brillouin zone
+## Wigner–Seitz cell and first Brillouin zone
 
-- [Wigner Seitz Cell](wigner-seitz-cell.md)
-- [Is Closed wigner Seitz Cell](is-closed-wigner-seitz-cell.md)
-- [Exists forall norm sub le](exists-forall-norm-sub-le.md)
-- [The Wigner–Seitz cell is a fundamental domain for the lattice translations](is-add-fundamental-domain-wigner-seitz-c.md)
-- [The Wigner–Seitz cell has volume `|det B|`](volume-wigner-seitz-cell.md)
-- [First Brillouin Zone](first-brillouin-zone.md)
-- [Is Add Fundamental Domain first Brillouin Zone](is-add-fundamental-domain-first-brilloui.md)
-- [The first Brillouin zone has volume `(2π)³ / |det B|`](volume-first-brillouin-zone.md)
+- [Wigner–Seitz cell of a Bravais lattice](wigner-seitz-cell.md)
+- [The Wigner–Seitz cell is closed](is-closed-wigner-seitz-cell.md)
+- [Every point has a nearest lattice point](exists-forall-norm-sub-le.md)
+- [The Wigner–Seitz cell is a fundamental domain for lattice translations](is-add-fundamental-domain-wigner-seitz-c.md)
+- [The Wigner–Seitz cell has volume equal to the absolute determinant](volume-wigner-seitz-cell.md)
+- [First Brillouin zone](first-brillouin-zone.md)
+- [The first Brillouin zone is a fundamental domain for reciprocal shifts](is-add-fundamental-domain-first-brilloui.md)
+- [The first Brillouin zone has volume (2π)³ over the cell volume](volume-first-brillouin-zone.md)

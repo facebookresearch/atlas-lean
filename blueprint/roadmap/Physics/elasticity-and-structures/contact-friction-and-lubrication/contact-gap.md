@@ -1,3 +1,3 @@
-# Contact Gap
+# Gap between a body and an obstacle
 
-The gap `g - u` between the obstacle and the body.
+For real numbers `g` (obstacle position) and `u` (displacement), the gap is `g - u`.

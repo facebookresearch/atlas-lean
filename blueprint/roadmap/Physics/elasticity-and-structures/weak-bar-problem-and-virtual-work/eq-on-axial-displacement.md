@@ -1,4 +1,5 @@
-# Eq On axial Displacement
+# With constant rigidity the weak solution is the classical bar
 
-Constant rigidity recovers the classical bar: every weak solution with constant `EA > 0`
-and uniform load `q` equals `q x (L - x) / (2 EA)` on `[0, L]`.
+For real numbers `L > 0`, `EA > 0` and `q`, every [weak bar solution](is-weak-bar-solution.md) with the
+constant rigidity `EA` and the uniform load `q` equals the
+[classical displacement](../prismatic-bars-shafts-and-beams/axial-displacement.md) `q x (L - x) / (2 EA)` at every `x ∈ [0, L]`.

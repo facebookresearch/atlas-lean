@@ -1,5 +1,5 @@
-# Atomic Packing Factor
+# Atomic packing factor
 
-Atomic packing factor on its physical domain: `n` atoms per conventional
-cell, sphere radius `R > 0`, conventional-cell volume `Vc > 0`. All lengths in
-one consistent unit.
+For `n ∈ ℕ` atoms per conventional cell, an atomic radius `R > 0` and a cell volume `V_c > 0` (both
+inequalities are arguments), the ratio `n (4/3) π R³ / V_c` of the volume of `n` hard spheres of
+radius `R` to the cell volume, all lengths in one unit.

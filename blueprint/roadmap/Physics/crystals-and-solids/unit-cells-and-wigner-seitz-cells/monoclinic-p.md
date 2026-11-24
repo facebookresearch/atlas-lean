@@ -1,4 +1,5 @@
-# Monoclinic P
+# For sin β ≠ 0, the primitive monoclinic lattice
 
-The primitive monoclinic lattice with parameters `a, b, c > 0` and angle `β` with
-`sin β ≠ 0`: basis vectors `(a, 0, 0)`, `(0, b, 0)`, `(c cosβ, 0, c sinβ)`. Pearson symbol `mP`.
+For `a, b, c > 0` and an angle `β` with `sin β ≠ 0`, the primitive monoclinic lattice (Pearson
+symbol `mP`) is the [Bravais lattice](../bravais-lattices/bravais-lattice.md) whose primitive
+vectors (columns of the basis matrix) are `(a, 0, 0)`, `(0, b, 0)` and `(c cos β, 0, c sin β)`.

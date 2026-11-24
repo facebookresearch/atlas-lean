@@ -1,4 +1,4 @@
-# Repr lattice Vector
+# The primitive coordinates of a lattice vector are its index
 
-The coordinates of the lattice vector `B *ᵥ n` in the primitive basis are the entries of
-`n`.
+For every [Bravais lattice](bravais-lattice.md) and every `n ∈ ℤ³`, the coordinates of the
+[lattice vector](lattice-vector.md) `B n` in the [primitive basis](basis.md) are `n₀`, `n₁`, `n₂`.

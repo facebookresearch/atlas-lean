@@ -1,3 +1,4 @@
-# Engineering Shear small Strain
+# Engineering shear of a small strain from the gradient
 
-Engineering shear of a small strain: `γ₀₁ = 2 ε₀₁ = H 0 1 + H 1 0`.
+For every real `3 × 3` matrix `H`, the [engineering shear](engineering-shear.md) of the
+[small strain](small-strain.md) of `H` is `γ₀₁ = 2 ε₀₁ = H₀₁ + H₁₀`.

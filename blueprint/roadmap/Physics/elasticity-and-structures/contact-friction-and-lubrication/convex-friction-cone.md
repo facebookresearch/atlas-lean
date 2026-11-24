@@ -1,5 +1,4 @@
-# Convex friction Cone
+# For a nonnegative coefficient the friction cone is convex
 
-Main result, convex part: for a friction coefficient `0 ≤ μ` the friction cone is convex
-in `(N, t)`. This is the only convexity claim; the complementarity set is not convex
-(`not_convex_complementarity`).
+For a real inner product space `E` and a real `μ ≥ 0`, the [friction cone](friction-cone.md)
+`{(N, t) : ‖t‖ ≤ μ N, N ≥ 0}` is a convex subset of `ℝ × E`.

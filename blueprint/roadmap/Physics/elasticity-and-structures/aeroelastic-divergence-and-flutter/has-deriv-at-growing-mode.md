@@ -1,4 +1,4 @@
-# Has Deriv At growing Mode
+# Velocity of the growing trajectory
 
-First derivative of the growing trajectory:
-`z' = e^t (cos 2t - 2 sin 2t, sin 2t + 2 cos 2t)`.
+At every time `t`, the [growing trajectory](growing-mode.md) has derivative
+`z'(t) = e^t (cos 2t - 2 sin 2t, sin 2t + 2 cos 2t)`.

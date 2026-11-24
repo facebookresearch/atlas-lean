@@ -1,7 +1,5 @@
-# Operator With Domain
+# Operator on functions with a domain
 
-An operator on functions `ℝ → ℂ` together with its domain: `domain` is the set of functions on
-which the operator is defined, and `op` is defined only on elements of `domain`, as a function out
-of the subtype. An unbounded operator is such a pair, never an endomorphism of the whole function
-space. No linearity, continuity, density of the domain or self-adjointness is assumed or
-claimed.
+A pair `(D, T)` of a set `D` of functions `ℝ → ℂ` (the domain) and a map `T` that sends each `f ∈ D`
+to a function `ℝ → ℂ`: an operator defined only on its domain. No linearity, continuity, density of
+the domain or self-adjointness is assumed.

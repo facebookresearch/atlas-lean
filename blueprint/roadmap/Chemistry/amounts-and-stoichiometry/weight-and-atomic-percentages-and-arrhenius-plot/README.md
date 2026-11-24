@@ -1,12 +1,12 @@
 # Weight and atomic percentages and Arrhenius plots
 
-## a. Arrhenius coordinates
+## Arrhenius coordinates
 
-- [Arrhenius log](arrhenius-log.md)
-- [Arrhenius log10](arrhenius-log10.md)
+- [Arrhenius identity in natural logarithms](arrhenius-log.md)
+- [Arrhenius identity in base-10 logarithms](arrhenius-log10.md)
 
-## b. Composition percentages
+## Composition percentages
 
-- [Wt Pct](wt-pct.md)
-- [At Pct](at-pct.md)
-- [Wt Pct at Pct](wt-pct-at-pct.md)
+- [Weight percent of a component](wt-pct.md)
+- [Atomic percent of a component](at-pct.md)
+- [Weight and atomic percent conversions are mutually inverse](wt-pct-at-pct.md)

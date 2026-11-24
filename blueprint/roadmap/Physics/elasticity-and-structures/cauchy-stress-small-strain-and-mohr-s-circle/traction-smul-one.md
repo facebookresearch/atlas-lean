@@ -1,4 +1,6 @@
-# Traction smul one
+# A hydrostatic stress has traction along the normal
 
-Hydrostatic stress `σ = s • 1` has traction `s • v` on the face with normal `v`: the traction
-is along the normal, outward for `s > 0` (tension-positive).
+For every `s ∈ ℝ` and `v ∈ ℝⁿ`, the hydrostatic stress `s 1`, with `1` the `n × n` identity matrix,
+has [traction](traction.md) `s v` on the face with normal `v`. The traction is along the normal:
+with the tension-positive convention and an outward normal `v`, it points outward when `s > 0`
+(tension) and inward when `s < 0`.

@@ -1,4 +1,6 @@
-# Slider Pressure
+# Closed-form pressure of a plane slider
 
-Closed-form plane-slider pressure `6 μ U L (h0 - h) (h - hL) / ((h0² - hL²) h²)` with
-`h = sliderFilm h0 hL L x`.
+For real numbers `μ`, `U`, `h₀`, `h_L`, `L` and `x`, with `h = h(x)` the
+[film thickness](slider-film.md), the pressure is `6 μ U L (h₀ - h) (h - h_L) / ((h₀² - h_L²) h²)`.
+With the convention `a / 0 = 0`, it is `0` when `h₀² = h_L²` or `h = 0`; the intended domain is
+`0 < h₀`, `0 < h_L`, `h₀ ≠ h_L` and `L > 0`.
