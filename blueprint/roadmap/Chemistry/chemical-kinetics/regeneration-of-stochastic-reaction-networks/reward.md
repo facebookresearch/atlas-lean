@@ -11,8 +11,9 @@ The reward collected by the observable $g$ during the first $m$ holding interval
 $$R_m(x, \omega) = \sum_{i < m} g(Y_i)\, H_i ,$$
 
 with $R_0 = 0$. By the convention $a / 0 = 0$, a step at a state with $q(Y_i) = 0$ has $H_i = 0$
-and contributes $0$, not the infinite stay at an absorbing state. For $g = 1$ the reward is the
-[jump time](../non-explosion-of-stochastic-reaction-networks/jump-time.md) $T_m = H_0 + \dots + H_{m-1}$.
+and contributes $0$, not the infinite stay at an absorbing state. For $g = 1$ it is the sum
+$H_0 + \dots + H_{m-1}$ that defines the
+[jump time](../non-explosion-of-stochastic-reaction-networks/jump-time.md) $T_m$.
 In the model $q$ is a positive holding rate and the clocks $E_i$ are nonnegative, so that $H_i$ is
 the time spent in $Y_i$; the definition allows any real $q$, $g$ and clock values. On a countable
 state space whose singletons are measurable, for positive rates, nonnegative clocks and a bounded

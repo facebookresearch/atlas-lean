@@ -6,7 +6,7 @@
 - [Evolutionarily stable behavior strategy of a role game](is-role-ess.md)
 - [Strict Nash equilibrium of a bimatrix game](is-strict-nash.md)
 - [Symmetrized matrix game of a role game](symmetrize.md)
-- [Marginal behavior strategy of a strategy on pairs](marginals.md)
+- [Role marginals of a vector on pairs of strategies](marginals.md)
 - [Product strategy on pairs of role strategies](prod-strategy.md)
 
 ## Mixed strategies and point masses

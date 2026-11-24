@@ -5,7 +5,7 @@
 - [Generalized Lotka–Volterra vector field](lv-field.md)
 - [Lotka–Volterra growth rates of a matrix game](lv-growth.md)
 - [Lotka–Volterra interaction matrix of a matrix game](lv-interaction.md)
-- [A game with given Lotka–Volterra parameters](lv-game.md)
+- [Matrix game built from Lotka–Volterra growth rates and interactions](lv-game.md)
 - [From replicator frequencies to Lotka–Volterra densities](to-lv.md)
 - [From Lotka–Volterra densities to replicator frequencies](of-lv.md)
 - [Lotka–Volterra time along a replicator solution](time-change.md)

@@ -639,7 +639,7 @@ theorem isRoot_hopfEigenvalue (n : ℕ) (β μ : ℝ) :
     ((jacobian (gain n μ) β).charpoly.map Complex.ofRealHom).IsRoot (hopfEigenvalue n β μ) :=
   (isRoot_iff _ _ _).2 (Or.inr (Or.inl (quad_hopfEigenvalue n β μ)))
 
-/-- `w = (1 + β) + 2 i ω`, the square root of the discriminant at a Hopf point. -/
+/-- `w = (1 + β) + 2 i ω`; for `β > 0` it is the square root of the discriminant at a Hopf point. -/
 noncomputable def hopfRoot (a β : ℝ) : ℂ := ⟨1 + β, 2 * hopfFreq a β⟩
 
 lemma hopfRoot_sq {a β : ℝ} (hβ : 0 < β) (hH : IsHopf a β) :

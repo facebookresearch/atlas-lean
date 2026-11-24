@@ -177,7 +177,8 @@ noncomputable def timeChange (x : ℝ → Option ι → ℝ) (t : ℝ) : ℝ :=
 
 /-- The Lotka–Volterra trajectory of a replicator solution `x`, in Lotka–Volterra time `u`:
 `toLV (x (τ⁻¹ u))` with `τ = timeChange x`, where `τ⁻¹ = invFun τ` is the inverse on the range of
-an injective `τ` and an unspecified value off it. -/
+an injective `τ` and an unspecified value off it. With `a / 0 = 0`, every coordinate is `0` when
+the selected state `x (τ⁻¹ u)` has `x_none = 0`. -/
 noncomputable def lvTrajectory (x : ℝ → Option ι → ℝ) (u : ℝ) : ι → ℝ :=
   toLV (x (invFun (timeChange x) u))
 
@@ -189,7 +190,8 @@ noncomputable def repTimeChange (y : ℝ → ι → ℝ) (τ : ℝ) : ℝ :=
 
 /-- The replicator trajectory of a Lotka–Volterra solution `y`, in replicator time `t`:
 `ofLV (y (t⁻¹ t))` with `t(·) = repTimeChange y`, where `t⁻¹ = invFun t(·)` is the inverse on the
-range of an injective `t(·)` and an unspecified value off it. -/
+range of an injective `t(·)` and an unspecified value off it. With `a / 0 = 0`, every coordinate
+is `0` when `1 + ∑ y_j = 0` at the selected state `y (t⁻¹ t)`. -/
 noncomputable def repTrajectory (y : ℝ → ι → ℝ) (t : ℝ) : Option ι → ℝ :=
   ofLV (y (invFun (repTimeChange y) t))
 

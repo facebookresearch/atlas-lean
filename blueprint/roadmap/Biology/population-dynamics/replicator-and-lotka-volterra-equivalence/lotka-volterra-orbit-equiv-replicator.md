@@ -3,10 +3,9 @@
 Let `ι` be a finite nonempty set of species, `A` a payoff matrix on the strategies `ι ∪ {o}`, and
 `y` a positive solution on `[0, ∞)` of the Lotka–Volterra equation `y_i' = F_i(y)`, where `F` is the
 [Lotka–Volterra field](lv-field.md) with the [growth rates](lv-growth.md) and
-[interaction matrix](lv-interaction.md) of `A` (every pair of growth rates and interaction matrix
-[arises from a game](lv-game.md)): each `y_i` has derivative `F_i(y(τ))` and `y_i(τ) > 0` at every
-`τ ≥ 0`. Then, with `t(·)` the [replicator time](rep-time-change.md) and `X` the
-[replicator trajectory](rep-trajectory.md) (Hofbauer and Sigmund 1998, §7.5):
+[interaction matrix](lv-interaction.md) of `A`: each `y_i` has derivative `F_i(y(τ))` and
+`y_i(τ) > 0` at every `τ ≥ 0`. Then, with `t(·)` the [replicator time](rep-time-change.md) and `X`
+the [replicator trajectory](rep-trajectory.md) (Hofbauer and Sigmund 1998, §7.5):
 
 - `t(0) = 0`, `t(·)` is continuously differentiable on `ℝ`, and its derivative at every real `τ` is
   `1 + ∑_j y_j(max(τ, 0)) ≥ 1`, so it preserves orientation;

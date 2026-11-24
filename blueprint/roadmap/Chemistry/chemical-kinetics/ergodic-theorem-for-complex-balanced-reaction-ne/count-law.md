@@ -7,5 +7,5 @@ For a set `S` and a function `p : ℕ^S → ℝ`, this is the measure on `ℕ^S`
 measurable set `A`.
 
 Negative values of `p` count as `0`, and the total mass `∑_x max(p(x), 0)` can be any value in
-`[0, ∞]`. When `p ≥ 0` and `∑_x p(x) = 1`, `μ_p` is a probability measure, and for finite `S` it
-is the law with mass function `p`: `μ_p({x}) = p(x)`.
+`[0, ∞]`. For finite `S` and a probability mass function `p` (`p ≥ 0` and `∑_x p(x) = 1`), the
+[integral](integral-count-law.md) of a bounded function `f` against `μ_p` is `∑_x p(x) f(x)`.

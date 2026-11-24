@@ -7,7 +7,7 @@ jump–hold chain at a state $x \in \mathbb{N}^S$ is
 $$q(x) = \begin{cases} \lambda(x) & \text{if } \lambda(x) \ne 0, \\ 1 & \text{if } \lambda(x) = 0.
 \end{cases}$$
 
-Since the propensities are nonnegative, $q(x) > 0$ at every state. A state with $\lambda(x) = 0$ is
-absorbing: every propensity vanishes there, so no reaction can fire. It gets the fictitious rate
-$1$, and the [jump kernel](jump-pmf.md) there is the point mass at $x$, so the chain makes
-fictitious jumps $x \mapsto x$, which do not move it.
+A state with $\lambda(x) = 0$ is absorbing: the propensities are nonnegative, so every one of them
+vanishes there and no reaction can fire. It gets the fictitious rate $1$, and the
+[jump kernel](jump-pmf.md) there is the point mass at $x$, so the chain makes fictitious jumps
+$x \mapsto x$, which do not move it.

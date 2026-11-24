@@ -13,6 +13,6 @@ $R_0 = 0$. Hence:
 
 - if $V_{k+1} < \infty$, then $V_k < \infty$ and $C_k = \sum_{V_k \le i < V_{k+1}} g(Y_i)\, H_i$
   is the reward collected from the $k$-th to the $(k+1)$-st visit to $x_0$; for $g = 1$ it is the
-  cycle length $T_{V_{k+1}} - T_{V_k}$;
+  sum $\sum_{V_k \le i < V_{k+1}} H_i$ of the holding times of the cycle;
 - if $V_k < \infty$ and $V_{k+1} = \infty$, then $C_k = -R_{V_k}$;
 - if $V_k = \infty$, then $V_{k+1} = \infty$ and $C_k = 0$.

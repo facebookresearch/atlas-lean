@@ -8,5 +8,5 @@ projection onto $X_1$ along $X_0$. Then $\ker L = X_0$ and $\operatorname{range}
 
 The splitting is the bounded linear map $E \times \Lambda \to (X_0 \times \Lambda) \times X_1$,
 $(x, p) \mapsto ((\pi_0 x, p), \pi_1 x)$, where $\pi_0$ and $\pi_1$ are the projections onto $X_0$
-and $X_1$ along each other. It is inverse to the [ansatz](ls-embed.md)
-$((z, p), w) \mapsto (z + w, p)$.
+and $X_1$ along each other. The [ansatz](ls-embed.md) $((z, p), w) \mapsto (z + w, p)$ maps in the
+opposite direction.

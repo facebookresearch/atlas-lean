@@ -51,7 +51,7 @@
 - [Eigenvalue curve of the six-variable repressilator](hopf-eigenvalue.md)
 - [The eigenvalue curve solves (λ + 1)(λ + β) = a β c](quad-hopf-eigenvalue.md)
 - [The eigenvalue curve consists of eigenvalues](is-root-hopf-eigenvalue.md)
-- [Square root of the discriminant at a Hopf point](hopf-root.md)
+- [The complex number (1 + β) + 2iω](hopf-root.md)
 - [The eigenvalue curve passes through iω at a Hopf level](hopf-eigenvalue-hopf.md)
 - [Derivative of the loop gain](gain-deriv.md)
 - [Crossing speed of the eigenvalue curve](hopf-speed.md)

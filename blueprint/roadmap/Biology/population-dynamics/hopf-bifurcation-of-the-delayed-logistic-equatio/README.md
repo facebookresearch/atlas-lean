@@ -8,12 +8,12 @@
 - [At the critical delay every root with zero real part is ± i r](eq-i-mul-or-eq-neg-i-mul-of-re-eq-zero.md)
 - [At the critical delay all other roots have negative real part](re-neg-of-char-fun-critical-delay.md)
 
-## The root branch through i r and transversality
+## The root branch near i r and transversality
 
-- [Delay at which a complex number is a characteristic root](root-delay.md)
-- [Derivative of the root delay at i r](root-delay-deriv.md)
-- [Transversality: real part of the inverse root-delay derivative](re-inv-root-delay-deriv.md)
-- [Characteristic root branch through i r](root-branch.md)
+- [Root delay −log(−z / r) / z of a complex number](root-delay.md)
+- [Complex constant (1 + (π / 2) i) / r² of the root branch](root-delay-deriv.md)
+- [Transversality constant: Re(1 / d) > 0 for the root-branch d](re-inv-root-delay-deriv.md)
+- [Root branch: local inverse of the root delay near i r](root-branch.md)
 - [Near the critical delay the root branch is a characteristic root](eventually-char-fun-root-branch.md)
 - [Just below the critical delay the root branch has negative real part](eventually-root-branch-re-neg-left.md)
 - [Just above the critical delay the root branch has positive real part](eventually-root-branch-re-pos-right.md)
@@ -25,10 +25,10 @@
 - [Bifurcation parameter of the approximate Hopf orbit](hopf-param.md)
 - [Angular frequency of the approximate Hopf orbit](hopf-freq.md)
 - [Third-order profile of the approximate Hopf orbit](hopf-profile.md)
-- [Derivative of the Hopf profile in θ](hopf-profile-deriv.md)
+- [Termwise θ-derivative formula of the Hopf profile](hopf-profile-deriv.md)
 - [Approximate Hopf orbit in scaled time](hopf-approx.md)
-- [Hopf profile as a polynomial in cos θ and sin θ](profile-poly.md)
-- [Derivative of the Hopf profile as a polynomial in cos θ and sin θ](profile-deriv-poly.md)
+- [Profile polynomial P(ε, C, S) of the Hopf expansion](profile-poly.md)
+- [Polynomial P′(ε, C, S) of the termwise derivative formula](profile-deriv-poly.md)
 - [Divided difference of the profile polynomial in its cos argument](profile-diff-p.md)
 - [Divided difference of the profile polynomial in its sin argument](profile-diff-q.md)
 - [Coefficient of ε⁴ in the Hopf residual](residual-coeff.md)
