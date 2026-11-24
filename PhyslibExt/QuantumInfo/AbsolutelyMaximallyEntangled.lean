@@ -33,6 +33,7 @@ public import Mathlib.Data.Nat.Notation
 public import Mathlib.Data.ZMod.Defs
 public import Mathlib.LinearAlgebra.Matrix.Defs
 public import Mathlib.Logic.Equiv.Defs
+import Mathlib.Logic.Equiv.Prod
 public import Mathlib.Tactic.Lemma
 public import Mathlib.Tactic.NormNum.Prime
 public import MathlibExt.Algebra.BigOperators.SeparableSum
@@ -1217,7 +1218,7 @@ lemma ameState_norm_sq_sum :
   have hA : A.card = 4 := by decide
   apply Complex.ofReal_injective
   push_cast
-  rw [← (splitOnEquiv (R := Fin 10) A).sum_comp]
+  rw [← (Equiv.piEquivPiSubtypeProd (fun i : Fin 9 => i ∈ A) (fun _ => Fin 10)).symm.sum_comp]
   rw [Fintype.sum_prod_type]
   have hn (z : ℂ) : (↑‖z‖ : ℂ) ^ 2 = z * star z := by
     exact (RCLike.mul_conj z).symm
@@ -1228,7 +1229,7 @@ lemma ameState_norm_sq_sum :
       (∑ z : {i : Fin 9 // i ∉ A} → Fin 10,
         ameAmplitude (pasteOn A x z) * star (ameAmplitude (pasteOn A x z))) =
         ((10 ^ 4 : ℂ)⁻¹) := by
-    simpa [splitOnEquiv] using ameAmplitude_paste_sum A hA x x
+    simpa using ameAmplitude_paste_sum A hA x x
   simp_rw [hc]
   simp [Fintype.card_fun, Fintype.card_coe, hA]
   norm_num

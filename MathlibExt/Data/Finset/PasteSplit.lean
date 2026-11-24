@@ -11,17 +11,15 @@ module
 public import Mathlib.Data.Finset.BooleanAlgebra
 public import Mathlib.Data.Finset.Defs
 public import Mathlib.Data.Finset.Image
-import Mathlib.Logic.Equiv.Prod
 
 @[expose] public section
 
 /-!
-# Splitting and gluing functions along a finset
+# Gluing functions along a finset
 
 `pasteOn A x z` glues a function on a finset `A` and a function on its complement into a
-function on the whole index type, `splitOnEquiv` packages this as an equivalence, and
-`finsetMapComplEquiv` transports the complement of a finset along a permutation.
-Mathlib's `Finset.equivMap` transports the finset itself.
+function on the whole index type. `finsetMapComplEquiv` transports the complement of a finset
+along a permutation. Mathlib's `Finset.equivMap` transports the finset itself.
 
 Extracted from the absolutely-maximally-entangled-state development now in
 `PhyslibExt.QuantumInfo.AbsolutelyMaximallyEntangled`.
@@ -52,11 +50,5 @@ def pasteOn {ι R : Type*} [DecidableEq ι] (A : Finset ι)
 @[simp] lemma pasteOn_not_mem {ι R : Type*} [DecidableEq ι] (A : Finset ι)
     (x : A → R) (z : {i : ι // i ∉ A} → R) (i : {i : ι // i ∉ A}) :
     pasteOn A x z i.1 = z i := by simp [pasteOn, i.2]
-
-/-- Functions on `ι` are the same thing as a pair of functions, one on a finset `A` and one
-on its complement; the forward map is `pasteOn`. -/
-def splitOnEquiv {ι R : Type*} [DecidableEq ι] (A : Finset ι) :
-    ((A → R) × ({i : ι // i ∉ A} → R)) ≃ (ι → R) :=
-  (Equiv.piEquivPiSubtypeProd (fun i : ι => i ∈ A) (fun _ => R)).symm
 
 end MetaMathlibExt

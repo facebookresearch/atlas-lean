@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.Logic.Equiv.Prod
 public import MathlibExt.Data.Finset.PasteSplit
 public import MathlibExt.LinearAlgebra.Matrix.DetFinSmall
 public import MathlibExt.Algebra.BigOperators.SeparableSum
@@ -27,17 +28,10 @@ open MetaMathlibExt
 example (x : ({0, 1} : Finset (Fin 3)) → ℕ) (z : {i : Fin 3 // i ∉ ({0, 1} : Finset (Fin 3))} → ℕ)
     (i : ({0, 1} : Finset (Fin 3))) : pasteOn _ x z i.1 = x i := pasteOn_mem _ x z i
 
--- `splitOnEquiv` is an equivalence, so gluing and splitting are inverse.
-example (A : Finset (Fin 3)) (f : Fin 3 → ℕ) :
-    (splitOnEquiv (R := ℕ) A) ((splitOnEquiv A).symm f) = f :=
-  (splitOnEquiv A).apply_symm_apply f
-
--- Both projections keep the same computation rules as the standalone gluing function.
+-- Gluing with the inverse of Mathlib's equivalence computes as `pasteOn`.
 example (A : Finset (Fin 3)) (x : A → ℕ) (z : {i : Fin 3 // i ∉ A} → ℕ) :
-    splitOnEquiv A (x, z) = pasteOn A x z := rfl
-
-example (A : Finset (Fin 3)) (f : Fin 3 → ℕ) :
-    (splitOnEquiv (R := ℕ) A).symm f = (fun i => f i.1, fun i => f i.1) := rfl
+    (Equiv.piEquivPiSubtypeProd (fun i : Fin 3 => i ∈ A) (fun _ => ℕ)).symm (x, z) =
+      pasteOn A x z := rfl
 
 -- The inverse on the complement uses the inverse of the supplied permutation.
 example (S : Finset (Fin 3)) (e : Equiv.Perm (Fin 3)) (y : ↥((S.map e.toEmbedding)ᶜ)) :
