@@ -10,8 +10,14 @@ $\mathcal{J}(D)$, so that $\mathcal{O}_{X'}(K_{X'/X} - \lfloor \mu^* D \rfloor)$
 $\mathcal{J}(D)$ without higher direct images.
 
 Lazarsfeld sketches the proof: one reduces to the case where $X$ is projective and applies the
-[Kawamata–Viehweg vanishing theorem](kawamata-viehweg-vanishing-theorem.md) in that global setting.
-He refers to Positivity II, §9.4.A, for an account.
+Kawamata–Viehweg vanishing theorem in that global setting (Positivity II, §9.4.A). Esnault and
+Viehweg carry out this argument for their
+[relative vanishing theorem](relative-vanishing-for-proper-morphisms.md), whose case 2 gives the
+statement. Write $D = \Delta / N$ with $\Delta$ an effective integral divisor, Cartier as $X$ is
+smooth; $\mu^* \Delta$ has snc support, $\mu$ being a log resolution, and $\lfloor \mu^* \Delta / N
+\rfloor = \lfloor \mu^* D \rfloor$, so $R^j \mu_*(\omega_{X'} \otimes \mathcal{O}_{X'}(-\lfloor
+\mu^* D \rfloor)) = 0$ for $j > 0$. As $\mathcal{O}_{X'}(K_{X'/X}) = \omega_{X'} \otimes \mu^*
+\omega_X^{-1}$, the projection formula gives the vanishing above.
 
 ## Depends on
 
@@ -22,12 +28,11 @@ He refers to Positivity II, §9.4.A, for an account.
 
 ## Proof depends on
 
-- [Kawamata–Viehweg vanishing theorem](kawamata-viehweg-vanishing-theorem.md)
+- [Relative vanishing theorem for proper morphisms](relative-vanishing-for-proper-morphisms.md), for
+  its case 2, the birational case (Esnault–Viehweg, Corollary 6.11 b)), which contains the reduction
+  to a projective $X$ and the global Kawamata–Viehweg vanishing
 - [Standard results of coherent cohomology on projective varieties](standard-results-of-coherent-cohomology.md),
-  for Serre vanishing and the Leray spectral sequence, by which the local vanishing follows from the
-  global one
-- Not yet a page: the reduction of the local statement to a projective $X$ with a compactified log
-  resolution (Lazarsfeld, *Positivity II*, §9.4.A), for the passage to the global setting
+  for the projection formula (item 1)
 
 ## Sources
 
@@ -36,3 +41,6 @@ He refers to Positivity II, §9.4.A, for an account.
   Theorem 2.4, pp. 11–12. See also R. Lazarsfeld, *Positivity in Algebraic Geometry I, II*, Ergebnisse
   der Mathematik und ihrer Grenzgebiete 48, 49, Springer, 2004: the chapter "Multiplier Ideal Sheaves"
   (volume II, pp. 139–231), whose §9.4.A the short course cites for the proof.
+- H. Esnault and E. Viehweg, *Lectures on Vanishing Theorems*, DMV Seminar 20, Birkhäuser, 1992;
+  electronic version on H. Esnault's page, <https://page.mi.fu-berlin.de/esnault/books/esvibuch.pdf>
+  (page numbers of the electronic version): Corollary 6.11 b), p. 59.
