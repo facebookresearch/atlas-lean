@@ -100,8 +100,9 @@ places.
 
 - [Resolution of singularities of quasi-projective varieties](../birational-geometry/resolution-of-singularities/resolution-of-singularities-of-quasi-projective-varieties.md), for the resolution of the generic fibre in the existence of a generic resolution of singularities
 - [Standard results of coherent cohomology on projective varieties](../birational-geometry/standard-results-of-coherent-cohomology.md),
-  for the finiteness theorem, which makes $H^0(X, L)$ a finitely generated $\mathbb{Z}$-module, and
-  for flat base change and GAGA, which identify $H^0(X, L) \otimes_\mathbb{Z} \mathbb{C}$ with the
+  for the finiteness theorem, which makes $H^0(X, L)$ a finitely generated $\mathbb{Z}$-module for
+  $X$ projective over $\mathbb{Z}$, and for flat base change along the flat ring map $\mathbb{Z} \to
+  \mathbb{C}$ and GAGA, which identify $H^0(X, L) \otimes_\mathbb{Z} \mathbb{C}$ with the
   holomorphic sections of $L$ over $X(\mathbb{C})$
 
 ## Sources

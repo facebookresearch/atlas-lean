@@ -23,11 +23,13 @@ statements use without proof. The setting is given in each item. The targets are
    fails, its sheaf dual being $0$). GAGA: for a complex projective scheme and a coherent sheaf
    $\mathcal{F}$, the comparison maps $H^q(X, \mathcal{F}) \to H^q(X^{\mathrm{an}},
    \mathcal{F}^{\mathrm{an}})$ are isomorphisms in all degrees $q \ge 0$, and coherent analytic
-   sheaves are algebraic. Flat base change along a field extension $k \subset k'$, for $X$
-   quasi-compact and quasi-separated over $k$ (for instance projective) and $\mathcal{F}$
-   quasi-coherent: $H^q(X_{k'}, \mathcal{F}_{k'}) = H^q(X, \mathcal{F}) \otimes_k k'$. Without
-   quasi-compactness it fails already in degree $0$: for $X$ a disjoint union of countably many
-   points and $k'/k$ of infinite degree, $(\prod k) \otimes_k k' \to \prod k'$ is not surjective.
+   sheaves are algebraic. Flat base change: for a flat ring map $A \to A'$, a scheme $X$
+   quasi-compact and quasi-separated over $A$ (for instance projective) and a quasi-coherent
+   $\mathcal{F}$ on $X$, $H^q(X_{A'}, \mathcal{F}_{A'}) = H^q(X, \mathcal{F}) \otimes_A A'$ for all
+   $q \ge 0$ (Stacks Project, Tag 02KH), for instance along $\mathbb{Z} \to \mathbb{C}$ or a field
+   extension $k \subset k'$. Without quasi-compactness it fails already in degree $0$: for $X$ a
+   disjoint union of countably many points and $k'/k$ of infinite degree, $(\prod k) \otimes_k k'
+   \to \prod k'$ is not surjective.
 3. (Riemann–Roch.) For a proper scheme over a field, a coherent sheaf $\mathcal{F} \ne 0$ with
    support of dimension $e$ and a line bundle $L$, $\chi(X, \mathcal{F} \otimes L^{\otimes \nu})$ is
    a polynomial in $\nu$ of degree at most $e$ whose coefficient of $\nu^e$ is $\sum_Z
@@ -74,13 +76,14 @@ on nef and big line bundles, which uses 6, does not form a cycle with this node.
 has separate pages for the independent results: the projection formula and the Leray degeneration
 (Stacks Project, Tags 01E8, 01F2 and 01F4); Serre vanishing (Tag 0B5U; Esnault–Viehweg, Theorem
 1.1); Serre duality for vector bundles and for coherent sheaves (Tags 0FVV and 0FW0); GAGA (Serre,
-§12, Theorems 1–3); flat base change along field extensions (Tag 02KH; Esnault–Viehweg, 8.1); the
-Euler polynomial of a coherent sheaf (Tags 0BEM, 0BEN and 0BEP) and, separately,
-Hirzebruch–Riemann–Roch on smooth projective varieties (Tag 02UO, a statement); Bertini's theorem
-(Kleiman, *Bertini and his two fundamental theorems*, Theorem 4.1 and its proof); Seshadri's and
-Nakai's criteria, with the definitions of ample and nef line bundles kept on a page of their own
-(Keeler, Propositions 2.10 and 2.13); and the embedding and descent criteria (Milne; Stacks Project,
-Tags 0E8S, 0BDC and 0BDG).
+§12, Theorems 1–3); the finiteness of the higher direct images of coherent sheaves under proper
+morphisms (EGA III, Théorème (3.2.1)); flat base change along flat ring maps (Tag 02KH;
+Esnault–Viehweg, 8.1, for field extensions); the Euler polynomial of a coherent sheaf (Tags 0BEM,
+0BEN and 0BEP) and, separately, Hirzebruch–Riemann–Roch on smooth projective varieties (Tag 02UO, a
+statement); Bertini's theorem (Kleiman, *Bertini and his two fundamental theorems*, Theorem 4.1 and
+its proof); Seshadri's and Nakai's criteria, with the definitions of ample and nef line bundles kept
+on a page of their own (Keeler, Propositions 2.10 and 2.13); and the embedding and descent criteria
+(Milne; Stacks Project, Tags 0E8S, 0BDC and 0BDG).
 
 ## Depends on
 

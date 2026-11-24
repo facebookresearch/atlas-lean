@@ -56,7 +56,8 @@ sections for ample hermitian line bundles (Corollary 2.7).
 - [Arithmetic Hilbert–Samuel theorem](../arithmetic-hilbert-samuel-theorem.md), in Yuan's proof (Proposition 2.8 through Corollary 2.7, and the last step of Section 2.5.1)
 - [Estimates for small sections along an effective divisor](estimates-for-small-sections-along-a-divisor.md), for the Bertini step of Section 2.3.3 and the estimates of Theorems 2.10–2.11, Propositions 2.12–2.14 and Lemmas 2.15–2.16, which bound the logarithm of the number of small sections
 - [Small elements of normed lattices](../small-elements-of-normed-lattices.md), for the lower bound of the number of small sections by $\chi_{\sup}$ (Moriwaki's Proposition 2.1 (1)) in Moriwaki's extension
-- [Zhang's arithmetic ampleness theorem](../arithmetic-ampleness-theorem.md), for the bases of small sections in Yuan's Corollary 2.7, and for the ampleness of $\bar L + \varepsilon \bar A$ and $\bar M + \varepsilon \bar A$ for nef $\bar L$, $\bar M$ and ample $\bar A$ in Moriwaki's extension (proof of Theorem 5.6)
+- [Zhang's arithmetic ampleness theorem](../arithmetic-ampleness-theorem.md), for the bases of small sections in Yuan's Corollary 2.7
+- [Ampleness of nef plus ample hermitian line bundles](../ampleness-of-nef-plus-ample-hermitian-line-bundles.md), for the ampleness of $\bar L + \varepsilon \bar A$ and $\bar M + \varepsilon \bar A$ for nef $\bar L$, $\bar M$ and ample $\bar A$ in Moriwaki's extension (proof of Theorem 5.6)
 - [Arithmetic volume](arithmetic-volume.md), for the homogeneity used in Moriwaki's extension
 - [Resolution of singularities of quasi-projective varieties](../../birational-geometry/resolution-of-singularities/resolution-of-singularities-of-quasi-projective-varieties.md), for the generic resolution in Yuan's reduction (Section 2.3.3)
 

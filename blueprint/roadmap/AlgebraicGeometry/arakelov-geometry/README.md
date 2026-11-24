@@ -22,4 +22,6 @@ Arithmetic varieties over the integers or over rings of integers, with hermitian
 - [Arithmetic Hilbert–Samuel theorem](arithmetic-hilbert-samuel-theorem.md)
 - [Extension of small sections and bases of small sections](extension-of-small-sections.md)
 - [Zhang's arithmetic ampleness theorem](arithmetic-ampleness-theorem.md)
+- [Ampleness of nef plus ample hermitian line bundles](ampleness-of-nef-plus-ample-hermitian-line-bundles.md)
+
 - [Arithmetic volumes](arithmetic-volumes/README.md)

@@ -18,7 +18,7 @@ He refers to Positivity II, §9.4.A, for an account.
 - [Multiplier ideal of an effective Q-divisor](multiplier-ideal-of-a-q-divisor.md), for log
   resolutions, the relative canonical divisor and $\mathcal{J}(D)$
 - [Geometrically reduced variety over a field](../schemes-and-morphisms/varieties-over-a-field/is-variety.md),
-  for smooth complex varieties
+  for the underlying smooth complex variety; the statement is local on $X$
 
 ## Proof depends on
 

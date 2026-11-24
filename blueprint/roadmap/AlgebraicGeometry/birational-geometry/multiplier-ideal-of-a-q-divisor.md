@@ -38,12 +38,13 @@ the two constructions agree by Lemma 1.7 applied on $X_1$ and on $X_2$, together
 composition rule $\mu_* (\mathcal{O}_{X'}(K_{X'/X}) \otimes \mathcal{J}(X', \mu^* D)) =
 \mathcal{J}(X, D)$ for proper birational $\mu$ (Lemma 1.9). In particular $\mathcal{J}(D) =
 \mathcal{O}_X(-\lfloor D \rfloor)$ when $D$ has snc support. Writing $\mu^* D = \sum_i r_i E_i$ and
-$K_{X'/X} = \sum_i b_i E_i$ with distinct prime divisors $E_i$ on $X'$, $\mathcal{J}(D)$ is the
-sheaf of rational functions $f$ with $\operatorname{ord}_{E_i}(f) \ge \lfloor r_i \rfloor - b_i$ for
-all $i$ and $f$ otherwise regular; as $b_i > 0$ only for exceptional $E_i$, such $f$ have no poles
-on $X$ (Lazarsfeld (1.1) and the discussion after it). Rounding does not commute with pull-back: for
-three distinct lines $A_1, A_2, A_3$ through the origin of $\mathbb{C}^2$ and $D = \frac{2}{3}(A_1 +
-A_2 + A_3)$, $\mathcal{J}(D)$ is the maximal ideal of the origin (Example 1.5).
+$K_{X'/X} = \sum_i b_i E_i$ with distinct prime divisors $E_i$ on $X'$, $\mathcal{J}(D)$ is, on each
+connected component of $X$, the sheaf of rational functions $f$ with $\operatorname{ord}_{E_i}(f)
+\ge \lfloor r_i \rfloor - b_i$ for all $i$ and $f$ otherwise regular; as $b_i > 0$ only for
+exceptional $E_i$, such $f$ have no poles on $X$ (Lazarsfeld (1.1) and the discussion after it).
+Rounding does not commute with pull-back: for three distinct lines $A_1, A_2, A_3$ through the
+origin of $\mathbb{C}^2$ and $D = \frac{2}{3}(A_1 + A_2 + A_3)$, $\mathcal{J}(D)$ is the maximal
+ideal of the origin (Example 1.5).
 
 Analytically, if $f_i$ are local equations of the $D_i$, $\mathcal{J}(D)$ is locally the ideal of
 holomorphic functions $h$ such that $|h|^2 / \prod_i |f_i|^{2a_i}$ is locally integrable
@@ -60,7 +61,7 @@ defines it ((6.23)–(6.24′)).
 - [Principalization of ideal sheaves in characteristic zero](resolution-of-singularities/principalization-of-ideal-sheaves.md), for
   the existence of log resolutions
 - [Geometrically reduced variety over a field](../schemes-and-morphisms/varieties-over-a-field/is-variety.md),
-  for smooth complex algebraic varieties
+  for the underlying smooth complex variety, whose connected components are treated separately
 
 ## Proof depends on
 

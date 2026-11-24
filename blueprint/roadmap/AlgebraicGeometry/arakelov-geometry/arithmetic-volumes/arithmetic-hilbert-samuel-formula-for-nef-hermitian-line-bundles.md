@@ -35,7 +35,7 @@ $\limsup$.
 - [Continuity of the arithmetic volume](continuity-of-the-arithmetic-volume.md)
 - [Arithmetic volume](arithmetic-volume.md), for the ample case of Lemma 3.1, Theorem 4.3, the effectivity of some $k \bar L - \bar A$ for big $\bar L$, Lemma 4.4 and homogeneity
 - [Arithmetic Hilbert–Samuel theorem](../arithmetic-hilbert-samuel-theorem.md), through the ample case of Lemma 3.1 applied to $\bar L + \varepsilon \bar A$ and to $p \bar L - (k \bar L - \bar A)$
-- [Zhang's arithmetic ampleness theorem](../arithmetic-ampleness-theorem.md), for the ampleness of $\bar L + \varepsilon \bar A$ and of $p \bar L - (k \bar L - \bar A) = (p - k) \bar L + \bar A$ for nef $\bar L$ and ample $\bar A$ (Moriwaki, proof of Corollary 5.5)
+- [Ampleness of nef plus ample hermitian line bundles](../ampleness-of-nef-plus-ample-hermitian-line-bundles.md), for the ampleness of $\bar L + \varepsilon \bar A$ and of $p \bar L - (k \bar L - \bar A) = (p - k) \bar L + \bar A$ for nef $\bar L$ and ample $\bar A$ (Moriwaki, proof of Corollary 5.5)
 
 ## Sources
 

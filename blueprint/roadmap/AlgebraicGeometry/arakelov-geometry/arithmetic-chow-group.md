@@ -36,10 +36,11 @@ current $g$ for $Z$; these pairs form a subgroup $\widehat{Z}^p(X)$ of $Z^p(X) \
 \widetilde{\mathcal{D}}^{p-1,p-1}(X_\mathbb{R})$. Let $i \colon W \to X$ be an integral subscheme of
 codimension $p - 1$ and $f \in k(W)^\times$. If $W$ does not meet $X_F$, then $W_\infty$ is empty
 and the current $i_*[\log |f|^2]$ below is $0$. Otherwise, for a resolution of singularities $\pi
-\colon \widetilde W_\infty \to W_\infty$ with $\pi$ proper, $f$ restricts to a rational function
-$\tilde f$ on $\widetilde W_\infty$, the function $\log |\tilde f|^2$ is locally integrable, and its
-push-forward $i_*[\log |f|^2] \in \mathcal{D}^{p-1,p-1}(X_\mathbb{R})$ along $\widetilde W_\infty
-\to X_\infty$ does not depend on the resolution. Write $i_* \log |f|^2$ for its class in
+\colon \widetilde W_\infty \to W_\infty$ with $\pi$ proper, a disjoint union of resolutions of the
+irreducible components of $W_\infty$, $f$ restricts to a rational function $\tilde f$ on $\widetilde
+W_\infty$, the function $\log |\tilde f|^2$ is locally integrable, and its push-forward $i_*[\log
+|f|^2] \in \mathcal{D}^{p-1,p-1}(X_\mathbb{R})$ along $\widetilde W_\infty \to X_\infty$ does not
+depend on the resolution. Write $i_* \log |f|^2$ for its class in
 $\widetilde{\mathcal{D}}^{p-1,p-1}(X_\mathbb{R})$. Then $dd^c \, i_*[\log |f|^2] =
 \delta_{\operatorname{div}(f)}$, so
 

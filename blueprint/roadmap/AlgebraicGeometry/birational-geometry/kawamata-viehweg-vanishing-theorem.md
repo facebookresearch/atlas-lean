@@ -1,7 +1,7 @@
 # Kawamata–Viehweg vanishing theorem
 
-Let $X$ be a smooth projective variety of dimension $n$ over a field of characteristic zero, $L$ an
-integral divisor and $D$ an effective $\mathbb{Q}$-divisor on $X$ such that $L - D$ is
+Let $X$ be an integral smooth projective variety of dimension $n$ over a field of characteristic
+zero, $L$ an integral divisor and $D$ an effective $\mathbb{Q}$-divisor on $X$ such that $L - D$ is
 [nef and big](nef-and-big-line-bundles.md) and $D$ has
 [simple normal crossing support](simple-normal-crossing-divisor.md). Then
 
@@ -59,7 +59,7 @@ singularities, which is shown with desingularizations of them.
   round-down and snc support
 - [Nef and big line bundles](nef-and-big-line-bundles.md), for nef and big $\mathbb{Q}$-divisors
 - [Geometrically reduced variety over a field](../schemes-and-morphisms/varieties-over-a-field/is-variety.md),
-  for smooth projective varieties over a field
+  for the underlying variety over a field, which the statement takes smooth, projective and integral
 
 ## Proof depends on
 
