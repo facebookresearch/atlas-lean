@@ -12805,6 +12805,7 @@
   "MathlibExt/Probability/HellySelection": {"to": "Probability/convergence-of-measures", "title": "Helly's selection theorem"},
   "MathlibExt/Probability/HewittSavage": {"to": "Probability/foundations", "title": "Hewitt–Savage zero–one law"},
   "MathlibExt/Probability/HewittSavageSequence": {"to": "Probability/foundations", "title": "Hewitt–Savage zero–one law"},
+  "MathlibExt/Probability/HighDimensionalStatistics": {"to": "Probability/concentration-inequalities", "title": "Sub-exponential variables and Bernstein's inequality"},
   "MathlibExt/Probability/HoeffdingBernoulliSumAbsTail": {"to": "Probability/concentration-inequalities", "title": "Hoeffding's inequality"},
   "MathlibExt/Probability/HoeffdingBinomialLowerTail": {"to": "Probability/concentration-inequalities", "title": "Hoeffding's inequality"},
   "MathlibExt/Probability/HoeffdingBounded": {"to": "Probability/concentration-inequalities", "title": "Hoeffding's inequality"},

@@ -78344,6 +78344,8 @@
 "ProbabilityTheory.HasSubexponentialMGF.measureReal_ge_le_exp": "54697e3144f4e6a1",
 "ProbabilityTheory.HasSubexponentialMGF.measureReal_ge_le_of_ge": "21aeaf0a91f99c7a",
 "ProbabilityTheory.HasSubexponentialMGF.measureReal_ge_le_of_le": "7eb7e09eb54675b3",
+"ProbabilityTheory.HasSubexponentialMGF.neg": "69d41c92e84192d8",
+"ProbabilityTheory.HasSubexponentialMGF.of_map": "f717c1bc034daa5d",
 "ProbabilityTheory.HasSubexponentialMGF.sum_of_iIndepFun": "3456b033719cedae",
 "ProbabilityTheory.HasSubgaussianMGF.hasSubexponentialMGF": "ffbc31f50163e172",
 "ProbabilityTheory.Iio_subset_integrableExpSet_gammaMeasure": "460b63ac945d990d",
