@@ -1,7 +1,20 @@
 /-
-# Closed range of an operator implies closed range of its Hilbert adjoint
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
 
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Portions of this file are adapted from:
+
+`benchmark/level2/ma_proofbench_l2_85.lean` (openbmb/ma-proofbench, commit 31bab4c).
 Copyright (c) 2026 OpenBMB
+Licensed under the MIT License.
+Authors: L. Pu et al.
+
+The theorem statement and its informal description are adapted from this problem.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,26 +33,21 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
-Attribution and modification notice: the statement below is taken from openbmb/ma-proofbench at
-commit 31bab4c78fd1b0c464e767d62e9202163d1e9029, `benchmark/level2/ma_proofbench_l2_85.lean`
-(MA-ProofBench, L. Pu et al., *MA-ProofBench: A Two-Tiered Evaluation of LLMs for Theorem
-Proving in Mathematical Analysis*, arXiv:2606.13782; byte-identical to the Hugging Face dataset
-openbmb/MA-ProofBench), distributed under the MIT License above. Changes made: converted
-`theorem ma_proofbench_l2_85 … := by sorry` into the Batteries `theorem_wanted`
-`isClosed_range_adjoint_of_isClosed_range`; moved the informal problem statement docstring onto
-it and placed the declarations in namespace
-`MathlibExt.Analysis.OperatorTheory.HilbertAdjointClosedRangeWanted`; replaced `import Mathlib`
-by `public import Mathlib` under the module system.
 -/
+
 module
 
-public import Batteries.Util.ProofWanted
-public import Mathlib
+public import Mathlib.Analysis.InnerProductSpace.Adjoint
+import MathlibExt.Analysis.InnerProductSpace.ClosedRangeAdjoint
 
-@[expose] public section
+/-!
+# Closed range of the Hilbert space adjoint
 
-open MeasureTheory Filter
+A bounded linear map between complex Hilbert spaces with closed range has an adjoint
+with closed range.
+-/
+
+public section
 
 namespace MathlibExt.Analysis.OperatorTheory.HilbertAdjointClosedRangeWanted
 
@@ -51,11 +59,12 @@ Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level II (Operator theor
 theory of linear operators), `benchmark/level2/ma_proofbench_l2_85.lean` at
 openbmb/ma-proofbench@31bab4c.
 -/
-public theorem_wanted isClosed_range_adjoint_of_isClosed_range {X Y : Type*}
+theorem isClosed_range_adjoint_of_isClosed_range {X Y : Type*}
     [NormedAddCommGroup X] [InnerProductSpace ℂ X] [CompleteSpace X]
     [NormedAddCommGroup Y] [InnerProductSpace ℂ Y] [CompleteSpace Y]
     (A : X →L[ℂ] Y)
     (hRan : IsClosed (LinearMap.range A.toLinearMap : Set Y)) :
-    IsClosed (LinearMap.range A.adjoint.toLinearMap : Set X)
+    IsClosed (LinearMap.range A.adjoint.toLinearMap : Set X) :=
+  A.isClosed_range_adjoint_of_isClosed_range hRan
 
 end MathlibExt.Analysis.OperatorTheory.HilbertAdjointClosedRangeWanted
