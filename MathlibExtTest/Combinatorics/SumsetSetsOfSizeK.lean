@@ -57,3 +57,51 @@ example : let a : ℕ → ℤ := fun n => if n = 3 then 4 else n
         decide)
       1 (by decide) 2 (by decide) (by decide) (by decide)
   · decide
+
+-- A last gap 1 after a gap 2 is not a multiple: 6 and 8 are the paper's witnesses, 4 is extra.
+example : let a : ℕ → ℤ := fun n => if n < 2 then n else n + 1
+    let extras := (3 : ℕ) • (Finset.range 4).image a \ sumsetTrivialElements 3 4 a
+    2 ≤ extras.card ∧ extras = {4, 6, 8} := by
+  intro a extras
+  constructor
+  · exact nontrivial_sumset_card_of_last_gap_ne_nsmul 3 4 le_rfl a (by decide)
+      (fun i hi => by
+        obtain rfl : i = 0 := by omega
+        decide)
+      2 1 (by decide) (by decide) (by decide) (by decide)
+      (fun d _ => by rw [Int.nsmul_eq_mul]; omega)
+  · decide
+
+-- Equal last gaps (`d = 1`) must be excluded: every sum of three elements of 0, 1, 2, 3 is trivial.
+example : (3 : ℕ) • (Finset.range 4).image (fun n : ℕ => (n : ℤ)) \
+    sumsetTrivialElements 3 4 (fun n : ℕ => (n : ℤ)) = ∅ := by decide
+
+-- With three summands and four points the forbidden interval is the singleton {11}.
+example (A : Finset (ℤ × ℤ)) (hA : A.card = 4) : ((3 : ℕ) • A).card ≠ 11 := by
+  intro he
+  apply card_nsmul_notMem_Icc_of_isAddTorsionFree 3 4 le_rfl A hA
+  rw [he]
+  decide
+
+-- Both sizes immediately adjacent to the gap occur.
+example : ((3 : ℕ) • ({0, 1, 2, 3} : Finset ℤ)).card = 10 ∧
+    ((3 : ℕ) • ({0, 1, 2, 4} : Finset ℤ)).card = 12 := by decide
+
+-- A progression with step two has only trivial sums. The sequence can drop after the prefix.
+example : let a : ℕ → ℤ := fun n => if n < 4 then 2 * (n : ℤ) else 0
+    ∀ i < 4, a i = i • a 1 := by
+  intro a
+  have hinc : ∀ i : Fin 3, a i < a (i.val + 1) := by decide
+  exact (arithProg_or_nontrivial_sumset_card_of_last_gaps_eq 3 4 le_rfl a (by decide)
+    (fun i hi => hinc ⟨i, by omega⟩) (by decide)).resolve_right (by decide)
+
+-- For 0, 1, 3, 5 the shorter sumset attains the bound, with witnesses 0 + 1 + 3 and 0 + 3 + 3.
+example : let a : ℕ → ℤ := fun n => if n = 0 then 0 else 2 * (n : ℤ) - 1
+    let extras := (3 : ℕ) • (Finset.range 3).image a \ sumsetTrivialElements 3 3 a
+    2 ≤ extras.card ∧ extras = {4, 6} := by
+  intro a extras
+  have hinc : ∀ i : Fin 3, a i < a (i.val + 1) := by decide
+  refine ⟨?_, by decide⟩
+  apply (arithProg_or_nontrivial_sumset_card_of_last_gaps_eq 3 4 le_rfl a (by decide)
+    (fun i hi => hinc ⟨i, by omega⟩) (by decide)).resolve_left
+  exact fun hap => (by decide : a 2 ≠ 2 • a 1) (hap 2 (by decide))

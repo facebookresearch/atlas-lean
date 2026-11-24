@@ -17,6 +17,7 @@ public import MathlibExt.NumberTheory.GeneralizedMarkovCharacteristic
 public import MathlibExt.NumberTheory.GeneralizedMarkovCongruence
 public import MathlibExt.NumberTheory.GeneralizedMarkovDiscriminant
 public import MathlibExt.NumberTheory.GeneralizedMarkovEquation
+public import MathlibExt.NumberTheory.GeneralizedSecondMarkovVieta
 
 namespace MetaMathlibExt
 
@@ -138,26 +139,6 @@ Matsushita, Corollary 8). -/
 public theorem_wanted IsGenMarkovTriple.pairwise_coprime {k a b c : ℕ}
     (h : IsGenMarkovTriple k a b c) :
     Nat.Coprime a b ∧ Nat.Coprime b c ∧ Nat.Coprime a c
-
-/-- **Vieta jumping for the second generalized Markov equation.** Let $k$ be a natural number
-and let $a, b, c$ be integers with
-
-$$a^2 + b^2 + c^2 + (k^2 + 2k)(a + b + c) + 2k^3 + 3k^2 = abc.$$
-
-Then the triples $(a, ab - c - k^2 - 2k, b)$ and $(b, bc - a - k^2 - 2k, c)$ satisfy the same
-equation.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Proposition 2.6. -/
-public theorem_wanted genSecondMarkov_vieta (k : ℕ) {a b c : ℤ}
-    (h : a ^ 2 + b ^ 2 + c ^ 2 + ((k : ℤ) ^ 2 + 2 * k) * (a + b + c) + 2 * (k : ℤ) ^ 3 +
-      3 * (k : ℤ) ^ 2 = a * b * c) :
-    (let c' := a * b - c - (k : ℤ) ^ 2 - 2 * k;
-      a ^ 2 + c' ^ 2 + b ^ 2 + ((k : ℤ) ^ 2 + 2 * k) * (a + c' + b) + 2 * (k : ℤ) ^ 3 +
-        3 * (k : ℤ) ^ 2 = a * c' * b) ∧
-    (let a' := b * c - a - (k : ℤ) ^ 2 - 2 * k;
-      b ^ 2 + a' ^ 2 + c ^ 2 + ((k : ℤ) ^ 2 + 2 * k) * (b + a' + c) + 2 * (k : ℤ) ^ 3 +
-        3 * (k : ℤ) ^ 2 = b * a' * c)
 
 /-- **At most two solutions of $x^2 + kx + 1 \equiv 0$ modulo an odd prime power.** Let $p$
 be an odd prime, let $m \ge 2$ and let $k \in \mathbb{N}$ with $k^2 - 4 \not\equiv 0 \pmod p$.

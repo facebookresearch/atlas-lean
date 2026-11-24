@@ -14,3 +14,4 @@ Group axioms and homomorphisms, subgroups and their lattice, cosets and index, n
 - [Quotient group by a normal subgroup](quotient-group.md)
 - [Lagrange's theorem: the order of a group is the number of cosets of a subgroup times its order](lagrange-theorem.md)
 - [First isomorphism theorem for groups](first-isomorphism-groups.md)
+- [The image of a group homomorphism is a subgroup](homomorphism-image-subgroup.md)

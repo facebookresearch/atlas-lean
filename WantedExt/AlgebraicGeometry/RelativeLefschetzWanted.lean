@@ -40,7 +40,6 @@ namespace WantedExt.AlgebraicGeometry.RelativeLefschetzWanted
 open CategoryTheory CategoryTheory.Limits
 open _root_.AlgebraicGeometry MathlibExt.AlgebraicGeometry
 open ComplexAnalytification PerverseSheaves RelativeLefschetz
-open DeCataldoMiglioriniDecompositionWanted (projectiveSpace)
 
 attribute [local instance] HasDerivedCategory.standard
 
@@ -57,7 +56,7 @@ public theorem_wanted relative_hard_lefschetz (X Y : ComplexScheme)
     [IsComplexVariety X] [IsComplexVariety Y] [PerverseSheafTheory Y]
     (d n k : ℕ) [SmoothOfRelativeDimension d X.hom] (hn : 1 ≤ n)
     (f : X ⟶ Y) [IsProper f.left] (E : RelativeProjectiveEmbedding f n)
-    (η : unitComplex (projectiveSpace n) ⟶ (unitComplex (projectiveSpace n))⟦(2 : ℤ)⟧)
+    (η : unitComplex (ProjectiveSpace.projectiveSpace ℂ n) ⟶ (unitComplex (ProjectiveSpace.projectiveSpace ℂ n))⟦(2 : ℤ)⟧)
     (hη : η ≠ 0) :
     ∃ hK : boundedConstructible Y (ConstructibleComplexes.normalizedDirectImage ℚ X Y f d),
       IsIso (perversePowerMap Y ⟨_, hK⟩ k
