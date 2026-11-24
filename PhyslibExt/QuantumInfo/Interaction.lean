@@ -18,16 +18,46 @@ import Mathlib.Algebra.Order.IsBotOne
 /-!
 # Quantum interaction semantics: alternating channels and the value
 
-An `m`-message quantum interaction between a verifier (private register
-`V`, message register `M`) and a prover (private register `P`): the
-verifier's initial state on `V × M` already holds the first message; each
-of the `k` rounds is a prover channel on `M × P` followed by a verifier
-channel on `V × M`; at the end the verifier measures a two-outcome POVM
-on `V × M`. The value at a fixed finite prover workspace `dP` is the
-supremum of the acceptance probability over all prover strategies, an
-element of `Prob` (the unit interval with its complete linear order), so
-the supremum is always well-defined; attainment is a separate
-compactness statement not proved here.
+## i. Overview
+
+A verifier-first quantum interaction with an even number `2k` of
+exchanged messages between a verifier (private register `V`, message
+register `M`) and a prover (private register `P`): the verifier's
+initial state on `V × M` already holds the first message; then each of
+the `k` rounds is one prover message (a prover channel on `M × P`)
+followed by one verifier message (a verifier channel on `V × M`); at
+the end the verifier measures a two-outcome POVM on `V × M`.
+Odd-message schedules in which the prover moves first are not
+represented by this API. The value at a fixed finite prover workspace
+`dP` is the supremum of the acceptance probability over all prover
+strategies, an element of `Prob` (the unit interval with its complete
+linear order), so the supremum is always well-defined; attainment is a
+separate compactness statement not proved here. Register index types
+are intended as nonempty finite alphabets (the finite-dimensional
+spaces of the sources); the empty-index case is recorded only as the
+degenerate `value_of_isEmpty` artifact.
+
+## ii. Key results
+
+* `value_zero`: with no prover turns, the value is the verifier's
+acceptance of its initial state.
+* `value_le_iff`: the value is the least upper bound of the acceptance
+probabilities.
+* `run_succ_apply`: the action of `run` on a state is the last round
+after the earlier rounds.
+
+## iii. Table of contents
+
+* `Verifier` and `Prover`: the interaction parties.
+* `round` and `run`: one round and the channel of `k` rounds.
+* `run_succ` and `run_succ_apply`: unfolding one round of `run`.
+* `finalState`, `acceptProb`, and `value`: final state, acceptance
+probability, and the value.
+* `le_value` and `value_le_iff`: the value as least upper bound.
+* `value_zero`: the zero-message value.
+* `value_of_isEmpty`: the empty-index artifact.
+
+## iv. References
 
 Source: J. Watrous, "Quantum computational complexity", in Encyclopedia
 of Complexity and Systems Science, Springer, 2009 (arXiv:0804.3401),
@@ -84,7 +114,7 @@ noncomputable def run : (k : ℕ) → (Fin k → CPTPMap (dV × dM) (dV × dM)) 
       run k (fun i => Vs i.castSucc) (fun i => Ps i.castSucc)
 
 /-- Unfolding one round of `run` (the `CPTPMap` composition interface). -/
-theorem run_succ (k : ℕ) (Vs : Fin (k + 1) → CPTPMap (dV × dM) (dV × dM))
+lemma run_succ (k : ℕ) (Vs : Fin (k + 1) → CPTPMap (dV × dM) (dV × dM))
     (Ps : Fin (k + 1) → CPTPMap (dM × dP) (dM × dP)) :
     run (k + 1) Vs Ps = round (Vs (Fin.last k)) (Ps (Fin.last k)) ∘ₘ
       run k (fun i => Vs i.castSucc) (fun i => Ps i.castSucc) := by
@@ -92,7 +122,7 @@ theorem run_succ (k : ℕ) (Vs : Fin (k + 1) → CPTPMap (dV × dM) (dV × dM))
 
 /-- The action of `run` on a state is the last round after the earlier
 rounds. -/
-theorem run_succ_apply (k : ℕ)
+lemma run_succ_apply (k : ℕ)
     (Vs : Fin (k + 1) → CPTPMap (dV × dM) (dV × dM))
     (Ps : Fin (k + 1) → CPTPMap (dM × dP) (dM × dP))
     (ρ : MState (dV × dM × dP)) :
@@ -120,13 +150,13 @@ noncomputable def value {k : ℕ} (V : Verifier k dV dM) (dP : Type*)
   ⨆ P : Prover k dM dP, acceptProb V P
 
 /-- Every prover's acceptance is at most the value. -/
-theorem le_value {k : ℕ} (V : Verifier k dV dM) (P : Prover k dM dP) :
+lemma le_value {k : ℕ} (V : Verifier k dV dM) (P : Prover k dM dP) :
     acceptProb V P ≤ value V dP := by
   unfold value
   exact le_ciSup (OrderTop.bddAbove _) P
 
 /-- The value is the least upper bound of the acceptance probabilities. -/
-theorem value_le_iff {k : ℕ} (V : Verifier k dV dM) (p : Prob) :
+lemma value_le_iff {k : ℕ} (V : Verifier k dV dM) (p : Prob) :
     value V dP ≤ p ↔ ∀ P : Prover k dM dP, acceptProb V P ≤ p := by
   constructor
   · intro h P
@@ -137,7 +167,7 @@ theorem value_le_iff {k : ℕ} (V : Verifier k dV dM) (p : Prob) :
 
 /-- **Zero-message nonvacuity:** with no prover turns, the value is the
 verifier's acceptance of its initial state. -/
-theorem value_zero [Nonempty dP] (V : Verifier 0 dV dM) :
+lemma value_zero [Nonempty dP] (V : Verifier 0 dV dM) :
     value V dP = V.accept.measure V.init true := by
   have hfinal : ∀ P : Prover 0 dM dP, finalState V P = V.init := by
     intro P
@@ -157,9 +187,12 @@ theorem value_zero [Nonempty dP] (V : Verifier 0 dV dM) :
   unfold value
   simp only [hconst, ciSup_const]
 
-/-- With an empty prover workspace there are no strategies and the value
-is `0`. -/
-theorem value_of_isEmpty {k : ℕ} (V : Verifier k dV dM) (dE : Type*)
+/-- Zero-dimensional artifact: with an empty index type there is no
+density operator at all, so there are no prover strategies and the value
+is `0`. This is not the memoryless prover: no private workspace is the
+one-dimensional register `Unit`, which does have strategies (see the
+tests). -/
+lemma value_of_isEmpty {k : ℕ} (V : Verifier k dV dM) (dE : Type*)
     [Fintype dE] [DecidableEq dE] [IsEmpty dE] :
     value V dE = 0 := by
   haveI : IsEmpty (MState dE) := ⟨fun ρ => (inferInstance : IsEmpty dE).elim (Classical.choice ρ.nonempty)⟩
