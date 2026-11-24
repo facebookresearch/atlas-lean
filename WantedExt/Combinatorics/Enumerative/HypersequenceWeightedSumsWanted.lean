@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.Complex.Basic
 public import MathlibExt.Combinatorics.Enumerative.AlternatingBinomialPowerSumRecurrences
+public import MathlibExt.Combinatorics.Enumerative.AlternatingBinomialPowerSumStirling
 public import MathlibExt.Combinatorics.Enumerative.Hypersequence
 public import MathlibExt.Combinatorics.Enumerative.RingChooseSub
 public import MathlibExt.Combinatorics.Enumerative.SuccPowStirlingSecond
@@ -231,23 +232,6 @@ public theorem_wanted sum_pow_mul_eq (a : ℕ → ℂ) (ℓ n : ℕ) :
         ∑ j ∈ range (ℓ + 1), (ℓ.choose j : ℂ) *
           (∑ m ∈ range (j + 1), (-1) ^ m * (m.factorial : ℂ) * (Nat.stirlingSecond j m : ℂ) *
             hypersequence a (m + 1) n) * ((n : ℂ) + 1) ^ (ℓ - j)
-
-/-- **Boyadzhiev's and Katsuura's formulas for alternating binomial power sums.** Let
-$p_{\ell,m}(x, y) = \sum_{k=0}^{m} (-1)^k \binom{m}{k} (kx + y)^\ell$ and let $S(j, m)$ denote the
-Stirling numbers of the second kind. For all complex numbers $x, y$ and natural numbers
-$\ell, m$:
-(i) (Boyadzhiev) $p_{\ell,m}(x, y) = \sum_{j=m}^{\ell} \binom{\ell}{j} (-1)^m m!\, S(j, m)\,
-x^j y^{\ell-j}$, where the sum is empty (hence $0$) when $\ell < m$;
-(ii) (Katsuura) if $\ell < m$ then $p_{\ell,m}(x, y) = 0$, and $p_{m,m}(x, y) = (-1)^m x^m m!$.
-
-Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted Sums*,
-INTEGERS 24 (2024), Article A70, Proposition 1 (`integers-2024-A70-prop-1`). -/
-public theorem_wanted alternatingBinomialPowerSum_eq_sum_stirlingSecond (x y : ℂ) (ℓ m : ℕ) :
-    alternatingBinomialPowerSum ℓ m x y =
-        ∑ j ∈ Icc m ℓ, (ℓ.choose j : ℂ) * (-1) ^ m * (m.factorial : ℂ) *
-          (Nat.stirlingSecond j m : ℂ) * x ^ j * y ^ (ℓ - j) ∧
-      (ℓ < m → alternatingBinomialPowerSum ℓ m x y = 0) ∧
-      alternatingBinomialPowerSum m m x y = (-1) ^ m * x ^ m * (m.factorial : ℂ)
 
 /-- **Special values of alternating binomial power sums.** Let
 $p_{\ell,m}(x, y) = \sum_{k=0}^{m} (-1)^k \binom{m}{k} (kx + y)^\ell$, with $0^0 = 1$, and let
