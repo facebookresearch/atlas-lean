@@ -10490,6 +10490,7 @@
   "MathlibExt/Combinatorics/Enumerative/CyclicPatternAvoidingStacks": {"to": "Combinatorics/permutations/permutation-patterns", "title": "Cyclic-pattern-avoiding stack sorting"},
   "MathlibExt/Combinatorics/Enumerative/DegenerateHarmonicRiordan": {"to": "Combinatorics/riordan-arrays-transforms/riordan-arrays", "title": "Degenerate harmonic numbers and Riordan arrays"},
   "MathlibExt/Combinatorics/Enumerative/DelannoyConstructions": {"to": "Combinatorics/catalan-numbers-lattice-paths/dyck-paths-lattice-walks", "title": "Generalized Delannoy numbers"},
+  "MathlibExt/Combinatorics/Enumerative/DelannoyRowsParity": {"to": "Combinatorics/catalan-numbers-lattice-paths/dyck-paths-lattice-walks", "title": "Generalized Delannoy numbers"},
   "MathlibExt/Combinatorics/Enumerative/DiagonalSumsOfARiordanOrTriangularArray": {"to": "Combinatorics/riordan-arrays-transforms/riordan-arrays", "title": "Diagonal sums of number triangles"},
   "MathlibExt/Combinatorics/Enumerative/DigitalBinomialTheorem": {"to": "Combinatorics/binomial-coefficients/generalized-binomial-coefficients", "title": "Digital binomial theorem"},
   "MathlibExt/Combinatorics/Enumerative/DombNumber": {"to": "Combinatorics/binomial-coefficients/binomial-sums", "title": "Domb numbers"},
