@@ -7,7 +7,7 @@ Let $L = n/d$ be a proper rational loop transfer function with real coefficients
 
 ## Expansion
 
-The proof is the principle of variation of the argument applied to $f = 1 + L$ on the region bounded by $\Gamma$: the number of clockwise turns of $f(\Gamma)$ about $0$, which equals the number of clockwise turns of $L(\Gamma)$ about $-1$, is $Z - P$, because the poles of $f$ are those of $L$ and coprimality prevents cancellation between $d$ and $d + n$. The [argument principle on a piecewise-smooth Jordan contour](../complex-analysis/cauchy-theory/argument-principle/argument-principle-on-a-piecewise-smooth-jordan-contour.md) is itself planned; [the large and small arcs of the Nyquist contour](the-large-and-small-arcs-of-the-nyquist-contour.md) supply the remaining facts about the contour. This page stays not ready until the contour version of the argument principle is on the graph.
+The proof is the principle of variation of the argument applied to $f = 1 + L$ on the region bounded by $\Gamma$: the number of clockwise turns of $f(\Gamma)$ about $0$, which equals the number of clockwise turns of $L(\Gamma)$ about $-1$, is $Z - P$, because the poles of $f$ are those of $L$ and coprimality prevents cancellation between $d$ and $d + n$. The [argument principle on a piecewise-smooth Jordan contour](../complex-analysis/cauchy-theory/argument-principle/argument-principle-on-a-piecewise-smooth-jordan-contour.md) gives the count, and [the large and small arcs of the Nyquist contour](the-large-and-small-arcs-of-the-nyquist-contour.md) supply the remaining facts about the contour.
 
 ## Proof depends on
 

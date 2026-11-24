@@ -8,7 +8,7 @@ and this number is the winding number about $0$ of the closed curve $f \circ \Ga
 
 ## Expansion
 
-The proof combines Cauchy's theorem on the Jordan domain $D$ with the residue of $f'/f$ at a zero or pole of order $m$, which is $m$ or $-m$. The graph has the [argument principle on a closed disc](argument-principle-closed-ball-general.md); the general Jordan-domain version needs the Jordan curve theorem for piecewise-smooth curves and Cauchy's theorem for their interiors, or, for the Nyquist contour in particular, a decomposition of the half-disc with indentations into finitely many convex pieces. Until one of these is on the graph, this page records the statement with its hypotheses.
+The proof combines Cauchy's theorem on the Jordan domain $D$ with the residue of $f'/f$ at a zero or pole of order $m$, which is $m$ or $-m$. Beyond the [argument principle on a closed disc](argument-principle-closed-ball-general.md), the general Jordan-domain version needs the Jordan curve theorem for piecewise-smooth curves and Cauchy's theorem for their interiors, or, for the Nyquist contour in particular, a decomposition of the half-disc with indentations into finitely many convex pieces.
 
 ## Depends on
 

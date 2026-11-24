@@ -13,7 +13,7 @@ Scaling $C$ and $D$ by $1/\gamma$ turns nonexpansiveness into an $L^2$ gain at m
 
 ## Expansion
 
-The converse needs a construction of $P$ from the frequency-domain bound: by the Kalman–Yakubovich–Popov lemma, or, when $D^\top D \prec I$, from the stabilizing solution of the Riccati equation $A^\top P + PA + C^\top C + (PB + C^\top D)(I - D^\top D)^{-1}(PB + C^\top D)^\top = 0$, which exists exactly when the associated Hamiltonian matrix has no imaginary eigenvalues. Neither the KYP lemma nor this Riccati existence theorem is on the graph yet, so the converse is recorded here with its hypotheses.
+The converse needs a construction of $P$ from the frequency-domain bound: by the Kalman–Yakubovich–Popov lemma, or, when $D^\top D \prec I$, from the stabilizing solution of the Riccati equation $A^\top P + PA + C^\top C + (PB + C^\top D)(I - D^\top D)^{-1}(PB + C^\top D)^\top = 0$, which exists exactly when the associated Hamiltonian matrix has no imaginary eigenvalues. The converse rests on one of these two results.
 
 ## Background
 
