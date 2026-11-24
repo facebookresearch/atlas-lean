@@ -13013,6 +13013,7 @@
   "MathlibExt/Probability/Percolation/SurfaceReassembly": {"to": "Probability/percolation/sharpness", "title": "Exponential decay below the critical point"},
   "MathlibExt/Probability/Percolation/Susceptibility": {"to": "Probability/percolation/sharpness", "title": "Sharpness of the phase transition for Bernoulli bond percolation on ℤ^d"},
   "MathlibExt/Probability/Percolation/Theta": {"to": "Probability/percolation/phase-transition", "title": "Percolation probability and critical point"},
+  "MathlibExt/Probability/Percolation/ThetaContinuity": {"to": "Probability/percolation/phase-transition", "title": "Percolation probability and critical point"},
   "MathlibExt/Probability/Percolation/TildePc": {"to": "Probability/percolation/sharpness", "title": "Sharpness of the phase transition"},
   "MathlibExt/Probability/Percolation/TranslationInvariance": {"to": "Probability/percolation/sharpness", "title": "Exponential decay below the critical point"},
   "MathlibExt/Probability/Percolation/TwoDimensional/Crossings": {"to": "Probability/percolation/crossings", "title": "Rectangle crossings on the square lattice"},
