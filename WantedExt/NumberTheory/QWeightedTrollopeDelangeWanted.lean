@@ -10,11 +10,11 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Log.Base
-public import Mathlib.Data.Nat.Digits.Defs
 public import MathlibExt.Probability.ProbabilityMassFunction.Uniform
 public import Mathlib.Probability.ProductMeasure
 public import Mathlib.Topology.UniformSpace.UniformConvergence
 public import MathlibExt.NumberTheory.Digits.DyadicMantissa
+public import MathlibExt.NumberTheory.Digits.QWeightedTrollopeDelange
 
 namespace MetaMathlibExt
 
@@ -22,88 +22,11 @@ namespace MetaMathlibExt
 
 open Finset
 
-/-- **The $q$-weighted binary digit sum.** Let $q$ be an element of a commutative ring and let
-$k$ be a natural number with binary expansion $k = \sum_{i \ge 0} \omega_i 2^i$, where
-$\omega_i \in \{0, 1\}$. The $q$-weighted binary digit sum of $k$ is
-$s_q(k) = \sum_{i \ge 0} \omega_i q^{i+1}$, a finite sum because only finitely many $\omega_i$
-are nonzero.
-
-Source: Aleksei Minabutdinov, *A q-Weighted Analogue of the Trollope-Delange Formula*,
-INTEGERS 26 (2026), Article A61, Section 1 (definition of `s_q`). -/
-def qWeightedDigitSum {R : Type*} [CommRing R] (q : R) (k : ℕ) : R :=
-  ∑ i ∈ range (Nat.digits 2 k).length, ((Nat.digits 2 k).getD i 0 : R) * q ^ (i + 1)
-
-/-- **Partial sums of the $q$-weighted binary digit sum.** For an element $q$ of a commutative
-ring and a natural number $n$, the partial sum is $S_q(n) = \sum_{k=0}^{n-1} s_q(k)$, where $s_q$
-is the $q$-weighted binary digit sum.
-
-Source: Aleksei Minabutdinov, *A q-Weighted Analogue of the Trollope-Delange Formula*,
-INTEGERS 26 (2026), Article A61, Section 1 (definition of `S_q`). -/
-def qWeightedDigitPartialSum {R : Type*} [CommRing R] (q : R) (n : ℕ) : R :=
-  ∑ k ∈ range n, qWeightedDigitSum q k
-
-/-- **The Takagi–Landsberg function.** For a real or complex parameter $a$ and a real number $x$,
-let $\tau(y)$ denote the distance from a real number $y$ to the nearest integer. The
-Takagi–Landsberg function is $\mathcal{T}_a(x) = \sum_{n \ge 0} a^n \tau(2^n x)$, where the
-value is taken to be $0$ when the series does not converge absolutely. The series converges for
-$|a| < 1$, and at dyadic rationals $x$ it is a finite sum.
-
-Source: Aleksei Minabutdinov, *A q-Weighted Analogue of the Trollope-Delange Formula*,
-INTEGERS 26 (2026), Article A61, Section 1.1, equation (TakagiLandsberg). -/
-noncomputable def takagiLandsberg {𝕜 : Type*} [RCLike 𝕜] (a : 𝕜) (x : ℝ) : 𝕜 :=
-  ∑' n : ℕ, a ^ n * ((|2 ^ n * x - round (2 ^ n * x)| : ℝ) : 𝕜)
-
-/-- **The $q$-weighted digit sum of zero.** For every element $q$ of a commutative ring, the
-$q$-weighted binary digit sum of $0$ is $s_q(0) = 0$.
-
-Source: Aleksei Minabutdinov, *A q-Weighted Analogue of the Trollope-Delange Formula*,
-INTEGERS 26 (2026), Article A61, Section 1. -/
-theorem qWeightedDigitSum_zero {R : Type*} [CommRing R] (q : R) : qWeightedDigitSum q 0 = 0 := by
-  simp [qWeightedDigitSum]
-
-/-- **Binary recursion for the $q$-weighted digit sum.** Let $q$ be an element of a commutative
-ring and let $k > 0$ be a natural number. Then the $q$-weighted binary digit sum satisfies
-$s_q(k) = q\,(k \bmod 2) + q\,s_q(\lfloor k/2 \rfloor)$.
-
-This gives the paper's relations $s_q(2j) = q\,s_q(j)$ for $j \ge 1$ and
-$s_q(2j+1) = q\,s_q(j) + q$ for $j \ge 0$.
-
-Source: Aleksei Minabutdinov, *A q-Weighted Analogue of the Trollope-Delange Formula*,
-INTEGERS 26 (2026), Article A61, proof of Theorem 1, equations (s(2j)) and (s(2j+1)). -/
-theorem qWeightedDigitSum_of_pos {R : Type*} [CommRing R] (q : R) {k : ℕ} (hk : 0 < k) :
-    qWeightedDigitSum q k = q * ((k % 2 : ℕ) : R) + q * qWeightedDigitSum q (k / 2) := by
-  unfold qWeightedDigitSum
-  rw [Nat.digits_def' (by norm_num) hk, List.length_cons, sum_range_succ', mul_sum]
-  simp only [List.getD_cons_succ, List.getD_cons_zero, zero_add, pow_one]
-  rw [add_comm]
-  congr 1
-  · ring
-  · refine sum_congr rfl fun i _ => ?_
-    ring
-
-/-- **The Takagi–Landsberg function vanishes at zero.** For every real or complex parameter $a$,
-the Takagi–Landsberg function satisfies $\mathcal{T}_a(0) = 0$.
-
-Source: Aleksei Minabutdinov, *A q-Weighted Analogue of the Trollope-Delange Formula*,
-INTEGERS 26 (2026), Article A61, Section 1.1. -/
-theorem takagiLandsberg_zero {𝕜 : Type*} [RCLike 𝕜] (a : 𝕜) : takagiLandsberg a 0 = 0 := by
-  simp [takagiLandsberg]
-
-/-- **Dyadic values of the normalized $q$-weighted fluctuation.** Let $q$ be a complex number
-with $|q| > 1/2$, let $N > 0$ be a natural number, and let $j \le 2^{N-1}$ be a natural number.
-Put $t_j = j / 2^{N-1}$ and $a = 1/(2q)$. Then
-$$\frac{S_q(2j) - t_j\,S_q(2^N)}{(2q)^{N-1}} = -q\,\mathcal{T}_a(t_j),$$
-where $S_q$ is the partial sum of the $q$-weighted binary digit sum and $\mathcal{T}_a$ is the
-Takagi–Landsberg function. With $l = 2^N$ we have $t_j l = 2j$, so the numerator is the
-fluctuation $S_q(t_j l) - t_j\,S_q(l)$ at the grid point $t_j$ of $[0, 1]$.
-
-Source: Aleksei Minabutdinov, *A q-Weighted Analogue of the Trollope-Delange Formula*,
-INTEGERS 26 (2026), Article A61, Proposition 1 (`integers-2026-A61-prop-1`). -/
-public theorem_wanted qWeightedDigitPartialSum_dyadic_fluctuation (q : ℂ) (hq : 1 / 2 < ‖q‖)
-    (N : ℕ) (hN : 0 < N) (j : ℕ) (hj : j ≤ 2 ^ (N - 1)) :
-    (qWeightedDigitPartialSum q (2 * j) -
-        ((j : ℂ) / 2 ^ (N - 1)) * qWeightedDigitPartialSum q (2 ^ N)) / (2 * q) ^ (N - 1) =
-      -q * takagiLandsberg (1 / (2 * q)) ((j : ℝ) / 2 ^ (N - 1))
+-- The definitions `qWeightedDigitSum`, `qWeightedDigitPartialSum` and `takagiLandsberg`, with
+-- their lemmas `qWeightedDigitSum_zero`, `qWeightedDigitSum_of_pos` and `takagiLandsberg_zero`,
+-- moved to `MathlibExt.NumberTheory.Digits.QWeightedTrollopeDelange`, which this module imports.
+-- The dyadic values of the normalized fluctuation,
+-- `qWeightedDigitPartialSum_dyadic_fluctuation`, are proved there.
 
 /-- **The $q$-weighted Trollope–Delange formula.** Let $q$ be a real number with $|q| > 1/2$ and
 $q \ne 1$, and put $a = 1/(2q)$. For a positive integer $n$, let $k = \lfloor \log_2 n \rfloor$

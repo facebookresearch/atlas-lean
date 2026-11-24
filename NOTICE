@@ -7,7 +7,11 @@ any applicable license terms.
 
 Files:
   MathlibExt/CategoryTheory/Waldhausen/Basic.lean
+  MathlibExt/CategoryTheory/Waldhausen/ExactFunctor.lean
   MathlibExt/CategoryTheory/Waldhausen/SConstruction/FiniteStage.lean
+  MathlibExt/KTheory/Waldhausen/K0/Basic.lean
+  MathlibExt/KTheory/Waldhausen/K0/WaldhausenExactFunctor.lean
   MathlibExtTest/CategoryTheory/Waldhausen/SConstruction/FiniteStageTests.lean
+  MathlibExtTest/KTheory/Waldhausen/K0/WaldhausenExactFunctorTests.lean
 
 Author: @toskua, Avocado

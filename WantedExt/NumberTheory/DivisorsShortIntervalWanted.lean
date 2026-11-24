@@ -93,22 +93,6 @@ public theorem_wanted exists_shortIntervalDivisorCount_le_of_window_theta_sq :
       (shortIntervalDivisorCount n ((n : ℝ) ^ θ) ((n : ℝ) ^ (θ ^ 2 - ε)) : ℝ) ≤
         C * (θ * (1 - θ) / ε + 1 / (θ * (1 - θ)))
 
-/-- **Exponents with a margin in Letendre's inequality.** Let $\xi(\theta, \eta)$ denote Letendre's
-saving exponent, and let $\theta$, $\eta$ and $\delta$ be real numbers with $0 \le \delta \le 1$,
-$\eta < \theta < 1$ and $0 < \theta^2 - (\theta(1 - \theta))^2 \delta \le \eta$. Then there is a
-real number $A > 0$ with $\xi(\theta, \eta) - \delta \le A \le \xi(\theta, \eta)$ such that
-$((\theta - t)/\alpha)^2 - (\eta - t)/\alpha \ge (\theta(1 - \theta))^2 \delta$ for all real
-numbers $\alpha$ and $t$ with $0 < \alpha \le A$ and $0 \le t \le 1 - \alpha$.
-
-Source: Patrick Letendre, *Divisors of an Integer in a Short Interval*, INTEGERS 26 (2026),
-Article A115, Proposition 3 (`integers-2026-A115-prop-3`). -/
-public theorem_wanted exists_alpha_with_margin {θ η δ : ℝ}
-    (h₀ : 0 < θ ^ 2 - (θ * (1 - θ)) ^ 2 * δ) (h₁ : θ ^ 2 - (θ * (1 - θ)) ^ 2 * δ ≤ η)
-    (h₂ : η < θ) (h₃ : θ < 1) (hδ₀ : 0 ≤ δ) (hδ₁ : δ ≤ 1) :
-    ∃ A : ℝ, 0 < A ∧ letendreXi θ η - δ ≤ A ∧ A ≤ letendreXi θ η ∧
-      ∀ α : ℝ, 0 < α → α ≤ A → ∀ t : ℝ, 0 ≤ t → t ≤ 1 - α →
-        (θ * (1 - θ)) ^ 2 * δ ≤ ((θ - t) / α) ^ 2 - (η - t) / α
-
 /-- **Letendre's bound for divisors in short intervals.** For a natural number $n$ and real numbers
 $X$, $Y$, let $D_n(X, Y)$ be the number of divisors $d$ of $n$ with $X \le d \le X + Y$, let
 $\tau(n)$ be the number of divisors of $n$, let $V(n)$ be the largest exponent in the prime
@@ -126,20 +110,6 @@ public theorem_wanted exists_shortIntervalDivisorCount_le_letendre :
         C * (n.divisors.card : ℝ) ^ (1 - letendreXi θ η) *
           ((n.primeFactors.sup n.factorization : ℕ) * Real.log n.divisors.card /
             (θ * (1 - θ)))
-
-/-- **Arbitrarily large integers with a divisor in a short window.** Let $\theta$ and $\varepsilon$
-be real numbers with $0 < \theta < 1$ and $0 < \varepsilon < \theta$. Then for every natural
-number $N$ there is a natural number $n \ge N$ with at least one divisor $d$ satisfying
-$n^\theta \le d \le n^\theta + n^{\theta - \varepsilon}$.
-
-This is the nontrivial form of the statement that a constant bounding the number of such divisors
-for all $n \ge 1$ is at least $1$; that weaker statement already follows from $n = 1$.
-
-Source: Patrick Letendre, *Divisors of an Integer in a Short Interval*, INTEGERS 26 (2026),
-Article A115, Proposition 4 (`integers-2026-A115-prop-4`). -/
-public theorem_wanted exists_large_shortIntervalDivisorCount_pos {θ ε : ℝ} (hθ₀ : 0 < θ)
-    (hθ₁ : θ < 1) (hε₀ : 0 < ε) (hε : ε < θ) :
-    ∀ N : ℕ, ∃ n ≥ N, 1 ≤ shortIntervalDivisorCount n ((n : ℝ) ^ θ) ((n : ℝ) ^ (θ - ε))
 
 /-- **Lower bound for constants bounding divisors in short windows.** There is an absolute
 constant $c > 0$ with the following property. Let $\theta$, $\varepsilon$ and $k$ be real numbers

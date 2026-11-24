@@ -13,6 +13,7 @@ public import MathlibExt.Combinatorics.Additive.ConsecutiveOrthogonal
 public import MathlibExt.Combinatorics.Additive.ConsecutiveZeroSum
 public import MathlibExt.Combinatorics.Additive.DavenportModuleProd
 public import MathlibExt.NumberTheory.UnitWeightedZeroSumOfDivPrime
+public import MathlibExt.NumberTheory.UnitWeightedZeroSumOfEvenUnits
 public import Mathlib.Data.Rat.Floor
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.GroupTheory.Coset.Defs
@@ -168,17 +169,6 @@ of `ℤ_n`*, INTEGERS 24 (2024), Article A38, Theorem 4.1 (`integers-2024-A38-th
 public theorem_wanted davenport_zmod_two_pow (a : ℕ) :
     IsLeast (davenportSet (ZMod 2) (Fin a → ZMod 2) ({1} : Set (ZMod 2))) (a + 1)
 
-/-- **A nonzero vector of $\mathbb{Z}_2^m$ orthogonal to $a$ vectors when $a < m$.** Let
-$\mathbb{Z}_2 = \mathbb{Z}/2\mathbb{Z}$, let $a + 1 \le m$ and let
-$v_1, \dots, v_a \in \mathbb{Z}_2^m$. Then there is a nonzero $w \in \mathbb{Z}_2^m$ with
-$w \cdot v_i = \sum_j w_j (v_i)_j = 0$ in $\mathbb{Z}_2$ for every $i$.
-
-Source: Santanu Mondal, Krishnendu Paul and Shameek Paul, *On Unit-Weighted Zero-Sum Constants
-of `ℤ_n`*, INTEGERS 24 (2024), Article A38, Lemma 4.2 (`integers-2024-A38-lem-4-2`). -/
-public theorem_wanted exists_ne_zero_orthogonal {a m : ℕ} (hm : a + 1 ≤ m)
-    (v : Fin a → Fin m → ZMod 2) :
-    ∃ w : Fin m → ZMod 2, w ≠ 0 ∧ ∀ i, ∑ j, w j * v i j = 0
-
 /-- **A nonempty subset of $\{1, \dots, m\}$ meeting $a$ given sets evenly.** Let $a + 1 \le m$
 and let $X_1, \dots, X_a$ be finite sets of natural numbers. Then there is a nonempty set
 $Y \subseteq \{1, \dots, m\}$ such that $|Y \cap X_i|$ is even for every $i$.
@@ -317,18 +307,6 @@ public theorem_wanted unitEquiv_profile_of_eExtremal {r : ℕ} (hr : 1 ≤ r)
       ∃ c : ZMod (2 ^ r), IsUnit c ∧ ∃ σ : Equiv.Perm (Fin (2 ^ r + r - 1)),
         ∃ b : Fin (2 ^ r + r - 1) → ZMod (2 ^ r), (∀ i, IsUnit (b i)) ∧
           ∀ i, c * y (σ i) = b i * x i
-
-/-- **Luca's lemma on unit-weighted zero sums modulo $2^r$.** Let $r$ and $k$ be natural numbers
-and let $x_1, \dots, x_k \in \mathbb{Z}/2^r\mathbb{Z}$. If the number of indices $j$ for which
-$x_j$ is a unit is even and nonzero, then there are units $a_1, \dots, a_k$ of
-$\mathbb{Z}/2^r\mathbb{Z}$ with $a_1 x_1 + \dots + a_k x_k = 0$.
-
-Source: Santanu Mondal, Krishnendu Paul and Shameek Paul, *On Unit-Weighted Zero-Sum Constants
-of `ℤ_n`*, INTEGERS 24 (2024), Article A38, Lemma 6.5 (`integers-2024-A38-lem-6-5`). -/
-public theorem_wanted unitWeightedZeroSum_of_even_units {r k : ℕ} (x : Fin k → ZMod (2 ^ r))
-    (h0 : (Finset.univ.filter fun j => IsUnit (x j)).card ≠ 0)
-    (he : Even (Finset.univ.filter fun j => IsUnit (x j)).card) :
-    IsUnitWeightedZeroSum (2 ^ r) x
 
 /-- **Halving consecutive unit-weighted zero-sum free sequences modulo a power of two.** Let
 $s \ge 0$, $n = 2^{s+1}$ and $n' = 2^s$. Say that a sequence $y_1, \dots, y_L$ in $\mathbb{Z}_m$ has

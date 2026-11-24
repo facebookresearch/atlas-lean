@@ -91,18 +91,6 @@ public theorem_wanted countable_not_type2IrrationalitySequence_floor_pow_two_pow
       Tendsto (fun n => (b n : ℝ) / ⌊α ^ 2 ^ (n + 1)⌋₊) atTop (𝓝 1) →
         ∀ q : ℚ, ¬HasSum (fun n => 1 / (b n : ℝ)) q}
 
-/-- **Recursion for the pseudo-greedy expansion.** Let $r > 0$ be a real number, and let
-$(a_n)$ be its pseudo-greedy expansion and $(\varepsilon_n)$ its gap sequence. Then for every
-$n \ge 0$,
-$$a_{n+1} = \frac{a_n^2}{1 - \varepsilon_n} - a_n + (1 - \varepsilon_{n+1}).$$
-
-Source: Junnosuke Koizumi, *Irrationality of the Reciprocal Sum of Doubly Exponential
-Sequences*, INTEGERS 26 (2026), Article A28, Lemma 2 (`integers-2026-A28-lem-2`). -/
-public theorem_wanted pseudoGreedyExpansion_succ_eq {r : ℝ} (hr : 0 < r) (n : ℕ) :
-    (pseudoGreedyExpansion r (n + 1) : ℝ) =
-      1 / (1 - pseudoGreedyGap r n) * (pseudoGreedyExpansion r n : ℝ) ^ 2 -
-        pseudoGreedyExpansion r n + (1 - pseudoGreedyGap r (n + 1))
-
 /-- **A vanishing gap stays zero.** Let $r > 0$ be a real number and let $(\varepsilon_n)$ be
 the gap sequence of its pseudo-greedy expansion. For every $n \ge 0$, if $\varepsilon_n = 0$,
 then $\varepsilon_{n+1} = 0$.

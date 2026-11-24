@@ -109,6 +109,34 @@ Source: Oscar Quester, *On Some Properties of Accessible Sets*, INTEGERS 25 (202
 public theorem isLarge_iff (D : Set ℕ) : IsLarge D ↔ ∀ r : ℕ, 1 ≤ r → IsRLarge r D :=
   Iff.rfl
 
+/-- **Largeness is partition regular.** If $D_1, D_2 \subseteq \mathbb{N}$ and their union
+$D = D_1 \cup D_2$ is large, then $D_1$ is large or $D_2$ is large.
+
+Source: Oscar Quester, *On Some Properties of Accessible Sets*, INTEGERS 25 (2025), Article A64,
+        Theorem 4. -/
+public theorem large_union_partition (D D₁ D₂ : Set ℕ)
+    (hD : D = D₁ ∪ D₂) (hlarge : IsLarge D) :
+    IsLarge D₁ ∨ IsLarge D₂ := by
+  subst D
+  have hpos := (hlarge 1 le_rfl).1
+  refine or_iff_not_imp_left.mpr fun h₁ r₂ hr₂ =>
+    ⟨Set.Subset.trans Set.subset_union_right hpos, hr₂, ?_⟩
+  obtain ⟨r₁, hr₁, c₁, k₁, _, hbad⟩ :
+      ∃ r, 1 ≤ r ∧ ∃ (c : ℕ+ → Fin r) (k : ℕ), 1 ≤ k ∧
+        ¬ ∃ x : Fin k → ℕ+, IsMonochromatic c x ∧ IsDAP D₁ k x := by
+    by_contra! hall
+    exact h₁ fun r hr => ⟨Set.Subset.trans Set.subset_union_left hpos, hr, hall r hr⟩
+  intro c₂ k₂ hk₂
+  -- A single progression for the product coloring has both required lengths as prefixes.
+  obtain ⟨x, hx, a, d, hd, hgap⟩ := (hlarge (r₁ * r₂) (Nat.mul_pos hr₁ hr₂)).2.2
+    (fun n => finProdFinEquiv (c₁ n, c₂ n)) (max k₁ k₂) (hk₂.trans (le_max_right ..))
+  have hpair (i j : Fin (max k₁ k₂)) := Prod.mk.inj (finProdFinEquiv.injective (hx i j))
+  rcases hd with hd | hd
+  · let ι := Fin.castLE (le_max_left k₁ k₂)
+    exact (hbad ⟨x ∘ ι, fun i j => (hpair (ι i) (ι j)).1, a, d, hd, fun i => hgap (ι i)⟩).elim
+  · let ι := Fin.castLE (le_max_right k₁ k₂)
+    exact ⟨x ∘ ι, fun i j => (hpair (ι i) (ι j)).2, a, d, hd, fun i => hgap (ι i)⟩
+
 /-- **$D$-diffsequences.** Let $D$ be a set of natural numbers and $k$ a natural number. A
 finite sequence $x_0, \dots, x_{k-1}$ of integers is a $D$-diffsequence when for every $i$ with
 $i + 1 < k$ there is $d \in D$ with $x_{i+1} - x_i = d$.
@@ -160,6 +188,46 @@ public theorem isRAccessible_iff (r : ℕ) (D : Set ℕ) :
         ∃ x : Fin k → ℕ+,
           IsMonochromatic c x ∧ IsDDiffSequence D (fun i => ((x i : ℕ) : ℤ)) :=
   Iff.rfl
+
+/-- **Sets containing their own long diffsequences are 2-accessible.** Let $D$ be a set of
+positive integers. If for every $k \ge 1$ there are positive integers $x_1, \dots, x_k$, all in
+$D$, that form a $D$-diffsequence, then $D$ is $2$-accessible.
+
+Source: Oscar Quester, *On Some Properties of Accessible Sets*, INTEGERS 25 (2025), Article A64,
+        Corollary 2. -/
+public theorem two_accessible_of_internal_diffsequences (D : Set ℕ)
+    (hD : D ⊆ Set.Ioi 0)
+    (hseq : ∀ k : ℕ, 1 ≤ k → ∃ x : Fin k → ℕ+,
+      (∀ i, (x i : ℕ) ∈ D) ∧
+        IsDDiffSequence D (fun i => ((x i : ℕ) : ℤ))) :
+    IsRAccessible 2 D := by
+  classical
+  refine ⟨hD, by decide, ?_⟩
+  intro c k hk
+  obtain ⟨x, hx, hdiff⟩ := hseq k hk
+  by_cases h : ∀ a : ℕ+, ∃ i, c (a + x i) = c a
+  · -- Follow same-colored steps whose sizes are terms of the internal sequence.
+    choose step hstep using h
+    let walk : ℕ → ℕ+ := Nat.rec 1 (fun _ a => a + x (step a))
+    have hcolor (n : ℕ) : c (walk n) = c 1 := by
+      induction n with
+      | zero => rfl
+      | succ n ih => exact (hstep (walk n)).trans ih
+    refine ⟨fun i => walk i, fun i j => (hcolor i).trans (hcolor j).symm, ?_⟩
+    intro i hi
+    exact ⟨_, hx (step (walk i)), by simp [walk, PNat.add_coe]⟩
+  · -- All terms of this translate have the unique color different from that of its base.
+    push Not at h
+    obtain ⟨a, ha⟩ := h
+    refine ⟨fun i => a + x i, ?_, ?_⟩
+    · intro i j
+      change c (a + x i) = c (a + x j)
+      have hi := ha i
+      have hj := ha j
+      omega
+    · intro i hi
+      obtain ⟨d, hd, heq⟩ := hdiff i hi
+      exact ⟨d, hd, by simpa [PNat.add_coe] using heq⟩
 
 /-- **Accessibility with more colors implies accessibility with fewer.** Let $D$ be a set of
 natural numbers and let $r, s$ be natural numbers with $1 \le r \le s$. If $D$ is

@@ -2,5 +2,6 @@
 
 Reductive groups over archimedean and non-archimedean local fields and their representations: structure theory (parabolic subgroups and their Langlands decompositions, Cartan, Iwasawa and Bruhat decompositions, symmetric spaces of real groups, Bruhat–Tits buildings, parahoric subgroups and Moy–Prasad filtrations, dual and L-groups); smooth and admissible representations of p-adic groups (parabolic induction and Jacquet modules, cuspidal, square-integrable and tempered representations, the Bernstein–Zelevinsky and Zelevinsky classifications for GL(n), Iwahori-fixed vectors and depth); admissible representations, Harish-Chandra modules and smooth globalizations of real reductive groups such as U(p, q), with their discrete series; and the classical and p-adic local Langlands correspondences. Representations of compact and general topological groups and of Lie algebras, and Schur–Weyl duality, are under representations of topological and Lie groups; the Weil representation and the theta correspondence, local and global, are under automorphic forms and representations.
 
-- [Smooth representations of p-adic GLₙ and the local Langlands correspondence](smooth-representations-of-p-adic-gl-n-and-local-langlands.md)
-- [Representations of U(p, q)](representations-of-u-p-q.md)
+- [Smooth representations of p-adic reductive groups](representations-of-p-adic-reductive-groups/README.md)
+- [Representations of p-adic GLₙ and the local Langlands correspondence](representations-of-p-adic-gl-n/README.md)
+- [Representations of real reductive groups](representations-of-real-reductive-groups/README.md)

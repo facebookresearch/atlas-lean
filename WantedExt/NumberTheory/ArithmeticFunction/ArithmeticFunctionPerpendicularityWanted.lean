@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.NumberTheory.ArithmeticFunction.Antimultiplicative
 public import MathlibExt.NumberTheory.RearickLogarithm
 
 /-!
@@ -27,51 +28,6 @@ antimultiplicative functions (`IsAntimultiplicative`). The paper's real power `f
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Antimultiplicative arithmetical functions.** Let $R$ be a type with a zero and a one. An
-arithmetical function $f$ with values in $R$ is antimultiplicative if $f(1) = 1$ and $f(p^k) = 0$
-for every prime $p$ and every integer $k \ge 1$.
-
-Source: Pentti Haukkanen and Timo Tossavainen, *Some Perpendicularities of Arithmetical
-Functions*, INTEGERS 25 (2025), Article A33, Section 2. -/
-def IsAntimultiplicative {R : Type*} [Zero R] [One R] (f : ArithmeticFunction R) : Prop :=
-  f 1 = 1 ∧ ∀ p k : ℕ, p.Prime → 0 < k → f (p ^ k) = 0
-
-/-- **The Dirichlet identity is antimultiplicative.** For every semiring $R$, the identity
-$\delta$ of Dirichlet convolution on arithmetical functions with values in $R$, given by
-$\delta(1) = 1$ and $\delta(n) = 0$ for $n \ne 1$, is antimultiplicative.
-
-Source: Pentti Haukkanen and Timo Tossavainen, *Some Perpendicularities of Arithmetical
-Functions*, INTEGERS 25 (2025), Article A33, Section 2. -/
-theorem isAntimultiplicative_one {R : Type*} [Semiring R] :
-    IsAntimultiplicative (1 : ArithmeticFunction R) := by
-  refine ⟨ArithmeticFunction.one_one, fun p k hp hk => ?_⟩
-  exact ArithmeticFunction.one_apply_ne (Nat.one_lt_pow hk.ne' hp.one_lt).ne'
-
-/-- **Antimultiplicative functions vanish at primes.** Let $R$ be a type with a zero and a one, and
-let $f$ be an antimultiplicative arithmetical function with values in $R$. Then $f(p) = 0$ for
-every prime $p$.
-
-Source: Pentti Haukkanen and Timo Tossavainen, *Some Perpendicularities of Arithmetical
-Functions*, INTEGERS 25 (2025), Article A33, Section 2. -/
-theorem IsAntimultiplicative.apply_prime {R : Type*} [Zero R] [One R] {f : ArithmeticFunction R}
-    (hf : IsAntimultiplicative f) {p : ℕ} (hp : p.Prime) : f p = 0 := by
-  simpa using hf.2 p 1 hp one_pos
-
-/-- **Multiplicative and antimultiplicative units form subgroups.** Let $U$ be the group of units
-of the ring of real arithmetical functions under Dirichlet convolution. The units $f$ with
-$f(1) = 1$, the multiplicative units and the antimultiplicative units form subgroups $U_1$, $U_M$
-and $U_A$ of $U$, respectively. Moreover $U_M \le U_1$, $U_A \le U_1$ and
-$U_M \cap U_A = \{\delta\}$, where $\delta$ is the Dirichlet identity.
-
-Source: Pentti Haukkanen and Timo Tossavainen, *Some Perpendicularities of Arithmetical
-Functions*, INTEGERS 25 (2025), Article A33, Proposition 1 (`integers-2025-A33-prop-1`). -/
-public theorem_wanted dirichletUnits_multiplicative_antimultiplicative_subgroups :
-    ∃ U₁ UM UA : Subgroup (ArithmeticFunction ℝ)ˣ,
-      (∀ u, u ∈ U₁ ↔ (u : ArithmeticFunction ℝ) 1 = 1) ∧
-      (∀ u, u ∈ UM ↔ (u : ArithmeticFunction ℝ).IsMultiplicative) ∧
-      (∀ u, u ∈ UA ↔ IsAntimultiplicative (u : ArithmeticFunction ℝ)) ∧
-      UM ≤ U₁ ∧ UA ≤ U₁ ∧ UM ⊓ UA = ⊥
 
 /-- **Unique splitting into multiplicative and antimultiplicative parts.** Every real
 arithmetical function $f$ with $f(1) = 1$ can be written in exactly one way as a Dirichlet
