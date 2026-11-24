@@ -4,4 +4,5 @@ For an initial count `N0 ≥ 0` and cumulative arrival and departure counts `A, 
 let `τ(t)` be the [exit time](link-exit-time.md) of the vehicle that enters at time `t`. If `D` is
 continuous, `D(t) ≤ N0 + A(t)` (nonnegative storage on the link at entry), and the exit time is
 finite, `τ(t) = e`, then `D(e) = N0 + A(t)`. For a strictly increasing `D` this makes `e` the only
-time with that count; on a plateau `e` is its left end, not an arbitrary root.
+time with that count; on a plateau `e` is the first time at or after `t` with that count, not an
+arbitrary root.

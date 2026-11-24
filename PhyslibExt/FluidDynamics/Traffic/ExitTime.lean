@@ -29,7 +29,7 @@ deterministic departure curve, the target set `Set.Ici (N0 + A t)`,
 and start time `t`. Thus it is the infimum of times at or after entry
 whose departure count reaches the FIFO number, or `⊤` if none does.
 For right-continuous `D` the infimum is attained; on a plateau it is
-the left end. Exit never precedes entry.
+the first such time at or after entry. Exit never precedes entry.
 
 This is a single-link model. No origin-destination or path convention,
 junction rule, interpolation between discrete steps, equilibrium, or
@@ -133,8 +133,8 @@ lemma linkExitTime_ne_top_iff (N0 : ℝ≥0) (A D : ℝ≥0 → ℝ≥0) (hD : M
 nondecreasing and right-continuous (counts over `[0, s]`). For every time `s ≥ t`, the vehicle
 that enters at `t` has left by time `s` if and only if `N0 + A t ≤ D s`. So the exit time is the
 least `s ≥ t` with `N0 + A t ≤ D s`, and on a departure plateau at the vehicle number it is the
-left end of the plateau. Right-continuity makes that least time attained; at a jump of a
-left-continuous count the equivalence fails. -/
+left end of the plateau, or `t` when the plateau begins before `t`. Right-continuity makes that
+least time attained; at a jump of a left-continuous count the equivalence fails. -/
 lemma linkExitTime_le_iff (N0 : ℝ≥0) (A D : ℝ≥0 → ℝ≥0) (hD : Monotone D)
     (hrc : ∀ s, ContinuousWithinAt D (Set.Ici s) s) {t s : ℝ≥0} (hts : t ≤ s) :
     linkExitTime N0 A D t ≤ s ↔ N0 + A t ≤ D s := by
@@ -188,7 +188,8 @@ lemma linkExitTime_le_iff (N0 : ℝ≥0) (A D : ℝ≥0 → ℝ≥0) (hD : Monot
 and let the link storage at the entry time be nonnegative, `D t ≤ N0 + A t`. If the vehicle
 that enters at `t` has the finite exit time `e`, the departure count at `e` equals the vehicle's
 number: `D e = N0 + A t`. For a strictly increasing `D` this makes `e` the only time with that
-count; on a plateau `e` is the left end fixed by `linkExitTime`, not an arbitrary root. -/
+count; on a plateau `e` is the first time at or after `t` with that count, fixed by `linkExitTime`,
+not an arbitrary root. -/
 lemma apply_eq_label_of_linkExitTime_eq (N0 : ℝ≥0) (A D : ℝ≥0 → ℝ≥0) (hc : Continuous D)
     {t e : ℝ≥0} (hcaus : D t ≤ N0 + A t) (he : linkExitTime N0 A D t = e) :
     D e = N0 + A t := by

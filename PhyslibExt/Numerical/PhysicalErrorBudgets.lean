@@ -927,7 +927,8 @@ open Finset
 
 /-- The actual residual of a computed temperature sequence `Y` in the Euler recurrence at
 `dt = τ / 10`: `η_j = Y (j + 1) - (Y j + (τ / 10) Q(Y j) / C)`, the amount by which the computed
-step `j` misses one exact Euler step. It is computed from `Y`, in the temperature unit of `Y`. -/
+step `j` misses one exact Euler step. It is computed from `Y`, in the temperature unit of `Y`. With
+`a / 0 = 0` it is `Y (j + 1) - Y j` when `C = 0` or `G = 0`. -/
 noncomputable def bathEulerResidual (C G Tamb : ℝ) (Y : ℕ → ℝ) (j : ℕ) : ℝ :=
   Y (j + 1) - bathEulerStep C G Tamb (thermalTimeConstant C G / 10) (Y j)
 
