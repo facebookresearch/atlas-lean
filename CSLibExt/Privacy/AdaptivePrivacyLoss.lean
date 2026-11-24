@@ -1277,8 +1277,9 @@ theorem transcript_isApproxDP_of_tail {C Y Database : Type*} [Fintype C]
 
 Each stage is pure-DP; the transcript is approximately DP with deviation
 `t = eps * sqrt (2 * k * log (1 / δ'))` on top of the summed drift
-`k * eps * (exp eps - 1)`. The degenerate cases (`k = 0`, `eps = 0`) give
-a zero budget with database-independent laws. -/
+`k * eps * (exp eps - 1)`. The degenerate cases are exact with zero budget:
+at `k = 0` the transcript law does not depend on the database, and at
+`eps = 0` adjacent databases give equal transcript laws. -/
 theorem transcript_isApproxDP_advanced_composition_pure {C Y Database : Type*}
     [Fintype C] [Fintype Y] (R : PMF C)
     (K : (n : ℕ) → Hist C Y n → Database → PMF Y)
