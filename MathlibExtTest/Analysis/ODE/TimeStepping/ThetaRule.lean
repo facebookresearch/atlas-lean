@@ -174,13 +174,16 @@ example {u : ℕ → ℝ} (hu : IsSolution (1 / 2) 1 (1 / 10) u) (hu0 : u 0 = 1)
   norm_num at this
   exact this
 
--- Convergence at `t = 1` for every `θ ∈ [0, 1]`, with `u^n_m = A(θ, a, 1/n)^m`.
+-- Convergence at `t = 1` for `θ ≥ 0`; the row for zero steps need not start at `I = 1`.
 example {θ a : ℝ} (hθ : 0 ≤ θ) (ha : 0 ≤ a) :
-    Tendsto (fun n : ℕ ↦ amplificationFactor θ a (1 / n) ^ n) atTop
+    Tendsto (fun n : ℕ ↦ if n = 0 then 0 else amplificationFactor θ a (1 / n) ^ n) atTop
       (𝓝 (Real.exp (-a * 1))) := by
-  have h := tendsto_of_isSolution (I := 1) (u := fun n m ↦ amplificationFactor θ a (1 / n) ^ m)
-    hθ ha one_pos (fun n hn ↦ (isSolution_iff (by positivity) (by positivity)).mpr
-      fun m ↦ by simp) fun n ↦ by simp
+  have h := tendsto_of_isSolution (I := 1)
+    (u := fun n m ↦ if n = 0 then 0 else amplificationFactor θ a (1 / n) ^ m) hθ ha one_pos
+    (fun n hn ↦ by
+      simp only [ite_eq_right hn.ne']
+      exact (isSolution_iff (by positivity) (by positivity)).mpr fun m ↦ by simp)
+    (fun n hn ↦ by simp [hn.ne'])
   simpa using h
 
 end MathlibExtTest.Analysis.ODE.TimeStepping.ThetaRule

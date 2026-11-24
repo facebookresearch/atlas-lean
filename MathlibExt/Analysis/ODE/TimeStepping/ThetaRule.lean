@@ -348,9 +348,10 @@ theorem IsSolution.abs_sub_exp_le_of_half {a Δt : ℝ} {u : ℕ → ℝ} (hu : 
 
 /-- **Convergence of the θ-rule.** Let $\theta, a \ge 0$ and $t > 0$. If, for every $n \ge 1$, $u_n$
 solves the θ-rule with time step $t / n$ and $u_n^0 = I$, then $u_n^n \to I e^{-a t}$ as
-$n \to \infty$. -/
+$n \to \infty$. No condition is imposed on $u_0$. -/
 theorem tendsto_of_isSolution {θ a t I : ℝ} {u : ℕ → ℕ → ℝ} (hθ : 0 ≤ θ) (ha : 0 ≤ a)
-    (ht : 0 < t) (hu : ∀ n : ℕ, 0 < n → IsSolution θ a (t / n) (u n)) (hI : ∀ n, u n 0 = I) :
+    (ht : 0 < t) (hu : ∀ n : ℕ, 0 < n → IsSolution θ a (t / n) (u n))
+    (hI : ∀ n : ℕ, 0 < n → u n 0 = I) :
     Tendsto (fun n ↦ u n n) atTop (𝓝 (I * Real.exp (-a * t))) := by
   have hstab : ∀ᶠ n : ℕ in atTop, (1 - 2 * θ) * a * (t / n) ≤ 2 := by
     have := (tendsto_const_div_atTop_nhds_zero_nat ((1 - 2 * θ) * a * t)).eventually
@@ -363,7 +364,7 @@ theorem tendsto_of_isSolution {θ a t I : ℝ} {u : ℕ → ℕ → ℝ} (hθ : 
     have hn' : (n : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr hn0.ne'
     have hΔt : 0 < t / n := div_pos ht (Nat.cast_pos.mpr hn0)
     have h := (hu n hn0).abs_sub_exp_le hθ ha hΔt hn n
-    rw [hI, mul_div_cancel₀ t hn'] at h
+    rw [hI n hn0, mul_div_cancel₀ t hn'] at h
     exact h.trans_eq (by ring)
   rw [tendsto_iff_norm_sub_tendsto_zero]
   refine squeeze_zero' (Eventually.of_forall fun _ ↦ norm_nonneg _) ?_
