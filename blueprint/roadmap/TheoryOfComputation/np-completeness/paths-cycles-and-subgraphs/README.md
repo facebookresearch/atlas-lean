@@ -6,6 +6,7 @@ Hamiltonian paths and cycles, longest paths and cycles, disjoint paths and path 
 - [Capacitated vehicle routing](capacitated-vehicle-routing/README.md)
 - [Degree-constrained spanning tree](degree-constrained-spanning-tree/README.md)
 - [Directed Hamiltonian cycle](directed-hamiltonian-cycle/README.md)
+- [Graph class recognition and order dimension](graph-class-recognition-and-order-dimension/README.md)
 - [Hamiltonian path in directed graphs](hamiltonian-path-in-directed-graphs/README.md)
 - [Induced subgraph isomorphism](induced-subgraph-isomorphism/README.md)
 - [Longest cycle](longest-cycle/README.md)

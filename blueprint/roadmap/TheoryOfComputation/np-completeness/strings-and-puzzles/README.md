@@ -6,6 +6,7 @@ String problems (closest string, longest common subsequence, shortest common sup
 - [Bounded Post correspondence problem](bounded-post-correspondence-problem/README.md)
 - [Closest string](closest-string/README.md)
 - [Iterated shuffle membership](iterated-shuffle-membership/README.md)
+- [Kingdomino tilings](kingdomino-tilings/README.md)
 - [Lambek calculus derivability](lambek-calculus-derivability/README.md)
 - [Latin square completion](latin-square-completion/README.md)
 - [Longest common subsequence of many strings](longest-common-subsequence-of-many-strings/README.md)
@@ -15,4 +16,5 @@ String problems (closest string, longest common subsequence, shortest common sup
 - [Shortest common supersequence](shortest-common-supersequence/README.md)
 - [Single-letter context-free language membership](single-letter-context-free-language-membership/README.md)
 - [Sudoku](sudoku/README.md)
+- [Tilings, packings and puzzles](tilings-packings-and-puzzles/README.md)
 - [Unshuffling a square](unshuffling-a-square/README.md)

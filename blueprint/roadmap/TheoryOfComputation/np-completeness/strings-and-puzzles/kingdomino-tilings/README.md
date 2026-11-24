@@ -1,0 +1,17 @@
+# Kingdomino tilings
+
+- [Dominoes](domino.md)
+- [Instances of KINGDOMINO (K-TILING)](kingdomino-instance.md)
+- [Board graph of Kingdomino](board-graph.md)
+- [The tower](tower.md)
+- [Placed cells](placed-cell.md)
+- [Cells placed by the first k dominoes](placed-cells.md)
+- [Cells touching the board](touches.md)
+- [Legal domino placements](can-place.md)
+- [K-tilings](is-ktiling.md)
+- [Region graph of a board](region-graph.md)
+- [Score of a board](score.md)
+- [Well-formed instances of KINGDOMINO (K-TILING)](well-formed.md)
+- [Feasible instances of KINGDOMINO (K-TILING)](kingdomino-feasible.md)
+- [KINGDOMINO (K-TILING) as a decision problem](kingdomino-dec.md)
+- [KINGDOMINO (K-TILING) is NP-complete](kingdomino-np-complete.md)

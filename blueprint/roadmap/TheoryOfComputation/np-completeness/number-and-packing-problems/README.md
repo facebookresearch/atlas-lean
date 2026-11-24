@@ -6,6 +6,7 @@ Subset sum, subset product, partition, 3-partition, multiway partition, knapsack
 - [3-partition problem](3-partition-problem/README.md)
 - [Bin packing](bin-packing/README.md)
 - [Exact-cardinality subset sum](exact-cardinality-subset-sum/README.md)
+- [Geometric, topological and algebraic problems](geometric-topological-and-algebraic-problems/README.md)
 - [Knapsack problem](knapsack-problem/README.md)
 - [Multiple knapsack problem](multiple-knapsack-problem/README.md)
 - [Multiway number partitioning](multiway-number-partitioning/README.md)
