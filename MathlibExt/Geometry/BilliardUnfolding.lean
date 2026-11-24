@@ -8,10 +8,17 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import Batteries.Util.ProofWanted
 public import Mathlib.Basic.Real.Basic
+import Mathlib.Data.Nat.GCD.Basic
 
-@[expose] public section
+/-!
+# Diagonal billiard unfolding in a rectangle
+
+`billiardUnfoldingDiagonalLemma` gives the coprime tile counts for commensurable side lengths
+and identifies the possible corners after folding back.
+-/
+
+public section
 
 namespace MathlibExt.Geometry.ScottishBook147Wanted
 
@@ -34,12 +41,28 @@ typescript labels the entry Theorem (Problem Mazur). Elementary unfolding
 argument for polygonal billiards, see e.g. S. Tabachnikov, Geometry and
 Billiards.
 -/
-theorem_wanted billiardUnfoldingDiagonalLemma :
+theorem billiardUnfoldingDiagonalLemma :
     ∀ a b : ℝ, 0 < a → 0 < b →
       (∃ m n : ℕ, 0 < m ∧ 0 < n ∧ a * (n : ℝ) = b * (m : ℝ)) →
       ∃ t : ℝ, ∃ k l N : ℕ, 0 < t ∧ 0 < k ∧ 0 < l ∧ t = (k : ℝ) * a ∧
         t = (l : ℝ) * b ∧ N + 2 = k + l ∧ Nat.Coprime k l ∧
         (if k % 2 = 1 then a else 0, if l % 2 = 1 then b else 0) ∈
-          ({(a, 0), (0, b), (a, b)} : Set (ℝ × ℝ))
+          ({(a, 0), (0, b), (a, b)} : Set (ℝ × ℝ)) := by
+  intro a b ha _ ⟨m, n, hm, hn, hab⟩
+  obtain ⟨g, k, l, hg, hcop, rfl, rfl⟩ := Nat.exists_coprime' (Nat.gcd_pos_of_pos_left m hn)
+  have hk := Nat.pos_of_mul_pos_right hn
+  have hl := Nat.pos_of_mul_pos_right hm
+  have hstep : (k : ℝ) * a = (l : ℝ) * b := by
+    apply mul_right_cancel₀ (Nat.cast_ne_zero.mpr hg.ne' : (g : ℝ) ≠ 0)
+    simpa only [Nat.cast_mul, mul_left_comm, mul_comm, mul_assoc] using hab
+  refine ⟨k * a, k, l, k + l - 2, mul_pos (Nat.cast_pos.mpr hk) ha, hk, hl, rfl,
+    hstep, by omega, hcop, ?_⟩
+  by_cases hkodd : k % 2 = 1
+  · by_cases hlodd : l % 2 = 1 <;> simp [hkodd, hlodd]
+  · have hlodd : l % 2 = 1 := by
+      by_contra h
+      have := Nat.eq_one_of_dvd_coprimes hcop (show 2 ∣ k by omega) (show 2 ∣ l by omega)
+      omega
+    simp [hkodd, hlodd]
 
 end MathlibExt.Geometry.ScottishBook147Wanted
