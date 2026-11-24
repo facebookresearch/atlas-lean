@@ -12447,6 +12447,7 @@
   "MathlibExt/NumberTheory/PrimeCounting/SquarefreeTotient": {"to": "NumberTheory/distribution-of-primes/primes-in-progressions", "title": "Brun–Titchmarsh theorem"},
   "MathlibExt/NumberTheory/PrimeCounting/SquarefreeTotientWeighted": {"to": "NumberTheory/distribution-of-primes/primes-in-progressions", "title": "Brun–Titchmarsh theorem"},
   "MathlibExt/NumberTheory/PrimeCounting/VPRamanujanNumber": {"to": "NumberTheory/distribution-of-primes/prime-gaps-short-intervals", "title": "Ramanujan primes"},
+  "MathlibExt/NumberTheory/PrimeCounting/WallisPrimeFactor": {"to": "NumberTheory/distribution-of-primes/primes-in-progressions", "title": "Wallis-type prime products in residue classes"},
   "MathlibExt/NumberTheory/PrimeCounting/WeakPNTArithmeticProgression": {"to": "NumberTheory/distribution-of-primes/primes-in-progressions", "title": "Prime number theorem for arithmetic progressions"},
   "MathlibExt/NumberTheory/PrimeCounting/WeightedHilbert": {"to": "NumberTheory/distribution-of-primes/sieve-methods", "title": "Large sieve"},
   "MathlibExt/NumberTheory/PrimeCounting/WeightedLargeSieve": {"to": "NumberTheory/distribution-of-primes/sieve-methods", "title": "Large sieve"},
