@@ -1,0 +1,15 @@
+# Relative Words Evaluation
+
+- [Generator](generator.md)
+- [Generator length](generator-length.md)
+- [Cons eq comp](cons-eq-comp.md)
+- [Eval](eval.md)
+- [Eval precompose](eval-precompose.md)
+- [Eval comp](eval-comp.md)
+- [Eval generator](eval-generator.md)
+- [Eval Functor](eval-functor.md)
+- [Map Word](map-word.md)
+- [Restriction](restriction.md)
+- [Map Word comp](map-word-comp.md)
+- [Recover eval](recover-eval.md)
+- [Recover Functor](recover-functor.md)

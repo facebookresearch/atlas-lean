@@ -1,5 +1,5 @@
 {
-  "lean_toolchain": "leanprover/lean4:v4.35.0",
+  "lean_toolchain": "leanprover/lean4:v4.36.0",
   "roots": [
     "MathlibExt",
     "MathlibExtTest",
@@ -9,7 +9,7 @@
   ],
   "schema_version": 2,
   "upstream": {
-    "commit": "075e9d5d217821aaf3a66cfdf09d0487a64e1f10",
+    "commit": "0d1c56ed518db7b1b982c304e17014d30e2b00b7",
     "repository": "fairinternal/formal-math"
   }
 }

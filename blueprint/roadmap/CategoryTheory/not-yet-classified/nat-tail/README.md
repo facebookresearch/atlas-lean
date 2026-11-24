@@ -1,0 +1,18 @@
+# Nat Tail
+
+- [Tail Functor](tail-functor.md)
+- [Tail Functor obj](tail-functor-obj.md)
+- [Tail Functor map](tail-functor-map.md)
+- [Tail Functor final](tail-functor-final.md)
+- [Type Tail Cocone](type-tail-cocone.md)
+- [Type Tail Is Colimit](type-tail-is-colimit.md)
+- [Type Tail Iso](type-tail-iso.md)
+- [Type Tail Iso hom](type-tail-iso-hom.md)
+- [Type Tail Iso inv](type-tail-iso-inv.md)
+- [Type Tail Iso hom ι](type-tail-iso-hom-2.md)
+- [Type Tail Iso inv ι](type-tail-iso-inv-2.md)
+- [Type Tail Iso hom naturality](type-tail-iso-hom-naturality.md)
+- [Type Tail Iso inv naturality](type-tail-iso-inv-naturality.md)
+- [Type Tail Diagram Functor](type-tail-diagram-functor.md)
+- [Type Tail Colimit Nat Iso](type-tail-colimit-nat-iso.md)
+- [Type Tail Colimit Nat Iso app](type-tail-colimit-nat-iso-app.md)

@@ -1,0 +1,5 @@
+{
+  "rows": [
+    {"path": "MathlibExtTest/KTheory/Ring/ScalarMapMixedUniverseFixtures.lean", "disposition": "identical", "published_sha256": "35d695e10892e67298ddcffc2e1c3855f5e250200213beda0a8ebd21d76dec84", "upstream_sha256": "dca62a929fa4a7c5f4fc586f88f9946922debb449c94face3b83a61b900da806"}
+  ]
+}
