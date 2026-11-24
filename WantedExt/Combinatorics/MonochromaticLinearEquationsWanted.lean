@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import MathlibExt.Combinatorics.MonochromaticLinearEquations
+public import MathlibExt.Combinatorics.MonochromaticLinearEquations.Recolouring
 
 /-!
 # Uncommon linear equations over the integers
@@ -32,17 +32,6 @@ Three Colors*, INTEGERS 25 (2025), Article A88, Corollary 1 (`integers-2025-A88-
 public theorem_wanted isUncommonOverIntegers_of_odd (m : ℕ) (hm : 1 ≤ m)
     (a : Fin (2 * m + 1) → ℤ) (ha : ∀ i, a i ≠ 0) (hsign : ∃ i j, a i < 0 ∧ 0 < a j)
     (r : ℕ) (hr : 3 ≤ r) :
-    IsUncommonOverIntegers a r
-
-/-- **Two-colour uncommonness over the integers extends to more colours.** Let
-$k \ge 3$ and let $a_1, \dots, a_k$ be nonzero integers. If the equation
-$a_1x_1 + \cdots + a_kx_k = 0$ is $2$-uncommon over the integers, then it is $r$-uncommon
-over the integers for every $r \ge 3$.
-
-Source: Laurence P. Wijaya, *On Monochromatic Solutions of Linear Equations Using at Least
-Three Colors*, INTEGERS 25 (2025), Article A88, Theorem 2 (`integers-2025-A88-thm-2`). -/
-public theorem_wanted isUncommonOverIntegers_of_two (k : ℕ) (hk : 3 ≤ k) (a : Fin k → ℤ)
-    (ha : ∀ i, a i ≠ 0) (h2 : IsUncommonOverIntegers a 2) (r : ℕ) (hr : 3 ≤ r) :
     IsUncommonOverIntegers a r
 
 /-- **Uncommonness of even-length equations without a canceling partition.** Let $m \ge 2$
