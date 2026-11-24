@@ -10,10 +10,9 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Combinatorics.Enumerative.Partition.Basic
-public import Mathlib.Order.Filter.AtTopBot.Basic
 public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.RingTheory.PowerSeries.Inverse
-public import MathlibExt.Combinatorics.Enumerative.GaussianBinomial
+public import MathlibExt.Combinatorics.Enumerative.FixedColumnHooks
 
 namespace MetaMathlibExt
 
@@ -209,39 +208,6 @@ public theorem_wanted columnHook_size_genFun (n m k : ℕ) (hm : 1 ≤ m) (hk : 
         m ≤ partitionRowLen p s ∧ partitionHookLength p s m = k)).card : ℕ) : ℚ) =
       coeff n (X ^ (m + k - 1) * P * ∑ l ∈ Finset.Icc 1 k, X ^ ((m - 1) * (k - l)) *
         mPoch (l - 1) * (qPochFin X (l - 1) * qPochFin X (k - l))⁻¹)
-
-/-- **Limit of the fixed-hook generating functions.** Let $m \ge 2$ be a natural number and work
-in $\mathbb{Q}[[q]]$. For $j \in \mathbb{N}$ write $(q;q)_j = \prod_{i=1}^{j} (1 - q^i)$ and
-$(q^m;q)_j = \prod_{i=0}^{j-1} (1 - q^{m+i})$. Then for every natural number $n$ there is a $K$
-such that for every $k \ge K$ the coefficient of $q^n$ in
-$$
-\frac{q^{m-1}}{\prod_{i=0}^{n} (1 - q^{k+i})}
-\sum_{l=1}^{k} \frac{q^{(m-1)(k-l)} (q^m;q)_{l-1}}{(q;q)_{l-1} (q;q)_{k-l}}
-$$
-equals the coefficient of $q^n$ in
-$$
-\frac{q^{m-1}}{(1 - q^{m-1}) (q;q)_{n+1}}.
-$$
-
-This is the coefficientwise ($q$-adic) form of the limit
-$$
-\lim_{k \to \infty} \frac{q^{m-1}}{(q^k;q)_\infty}
-\sum_{l=1}^{k} \frac{q^{(m-1)(k-l)} (q^m;q)_{l-1}}{(q;q)_{l-1} (q;q)_{k-l}}
-= \frac{q^{m-1}}{(1 - q^{m-1}) (q;q)_\infty},
-$$
-where $(a;q)_\infty = \prod_{i \ge 0} (1 - a q^i)$: for the coefficient of $q^n$, the products
-$(q^k;q)_\infty$ and $(q;q)_\infty$ are replaced by their first $n + 1$ factors, which changes no
-coefficient below $q^{n+1}$.
-
-Source: Philip Cuthbertson, *Fixed Hooks in Arbitrary Columns of Partitions*, INTEGERS 25
-(2025), Article A28, Theorem 5 (`integers-2025-A28-thm-5`). -/
-public theorem_wanted columnHook_size_genFun_limit (m : ℕ) (hm : 2 ≤ m) (n : ℕ) :
-    ∀ᶠ k in Filter.atTop,
-      coeff n (X ^ (m - 1) * (∏ i ∈ Finset.range (n + 1), (1 - X ^ (k + i)))⁻¹ *
-        ∑ l ∈ Finset.Icc 1 k, X ^ ((m - 1) * (k - l)) *
-          (∏ i ∈ Finset.range (l - 1), (1 - X ^ (m + i))) *
-          (qPochFin (X : ℚ⟦X⟧) (l - 1) * qPochFin X (k - l))⁻¹) =
-      coeff n (X ^ (m - 1) * ((1 - X ^ (m - 1)) * qPochFin (X : ℚ⟦X⟧) (n + 1))⁻¹)
 
 /-- **Partitions with a fixed first-column hook arising from a part of given size.** Let $n$ and $k$
 be natural numbers with $k \ge 1$ and let $h < k$ be an integer. The number of partitions

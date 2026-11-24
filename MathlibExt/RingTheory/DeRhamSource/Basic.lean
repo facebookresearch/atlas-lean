@@ -8,14 +8,14 @@ LICENSE file in the root directory of this source tree.
 module
 
 /-
-Completed mathematical proof port from AxiomMath/Stacks, commit
-c496df0d9beea9deaeabcea8492605f9a0a2313b, under Apache 2.0.
-Original source: https://github.com/AxiomMath/Stacks/blob/c496df0d9beea9deaeabcea8492605f9a0a2313b/StacksFrontier/RingTheory/DeRham/Basic.lean
-Original license: https://github.com/AxiomMath/Stacks/blob/c496df0d9beea9deaeabcea8492605f9a0a2313b/LICENSE
-Modifications: module paths and outer namespace are adapted for Atlas;
-source-only documentation cross-reference attributes are omitted.
-Original mathematical statements and proof bodies are retained; one
-scalar-associativity rewrite is made explicit for Lean 4.35 inference.
+Portions of this file are adapted from:
+
+`StacksFrontier/RingTheory/DeRham/Basic.lean` (AxiomMath/Stacks, revision
+c496df0d9beea9deaeabcea8492605f9a0a2313b):
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Modifications: module paths and outer namespace are adapted for Atlas; source-only documentation
+cross-reference attributes are omitted. Original mathematical statements and proof bodies are
+retained; one scalar-associativity rewrite is made explicit for Lean 4.35 inference.
 -/
 
 public import Mathlib.LinearAlgebra.ExteriorPower.Basic
@@ -277,7 +277,7 @@ private lemma ι_mul_ιMulti_eq_zero (n : ℕ) (v : Fin n → Ω[B⁄A]) (i : Fi
 /-- The de Rham differential of a wedge of `n` differentials, as an `A`-multilinear map: the
 antisymmetrisation of `d₁` over the `n` slots, written without signs. -/
 private noncomputable def G (d1 : Ω[B⁄A] →ₗ[A] Ext A B) :
-    ∀ n : ℕ, MultilinearMap A (fun _ : Fin n => Ω[B⁄A]) (Ext A B)
+    ∀ n : ℕ, MultilinearMap (RingHom.id A) (fun _ : Fin n => Ω[B⁄A]) (Ext A B)
   | 0 => 0
   | (n + 1) =>
     LinearMap.uncurryLeft
@@ -826,7 +826,7 @@ variable {Q : Type*} [AddCommGroup Q] [Module R Q] [Module S Q] [IsScalarTower R
 omit [Module R Q] [IsScalarTower R S Q] in
 /-- Two `S`-multilinear maps on `N` agreeing on tuples from the image of `f` are equal. -/
 public lemma multilinearMap_ext {n : ℕ} {f : M →ₗ[R] N} (hf : IsBaseChange S f)
-    {β₁ β₂ : MultilinearMap S (fun _ : Fin n ↦ N) Q}
+    {β₁ β₂ : MultilinearMap (RingHom.id S) (fun _ : Fin n ↦ N) Q}
     (h : ∀ v : Fin n → M, (β₁ fun i ↦ f (v i)) = β₂ fun i ↦ f (v i)) : β₁ = β₂ :=
   MultilinearMap.ext_of_span_eq_top (γ := fun _ ↦ M) (g := fun _ m ↦ f m)
     (fun _ ↦ by simpa using IsBaseChange.span_range_eq_top hf) h
@@ -835,19 +835,19 @@ public lemma multilinearMap_ext {n : ℕ} {f : M →ₗ[R] N} (hf : IsBaseChange
 one slot at a time: the extension in `n + 1` slots is the `S`-linear extension of the map
 sending `x : M` to the extension of `α.curryLeft x`. -/
 public lemma exists_multilinearMap {n : ℕ} {f : M →ₗ[R] N} (hf : IsBaseChange S f)
-    (α : MultilinearMap R (fun _ : Fin n ↦ M) Q) :
-    ∃ β : MultilinearMap S (fun _ : Fin n ↦ N) Q,
+    (α : MultilinearMap (RingHom.id R) (fun _ : Fin n ↦ M) Q) :
+    ∃ β : MultilinearMap (RingHom.id S) (fun _ : Fin n ↦ N) Q,
       ∀ v : Fin n → M, (β fun i ↦ f (v i)) = α v := by
   induction n with
   | zero =>
-    refine ⟨MultilinearMap.constOfIsEmpty S _ (α 0), fun v ↦ ?_⟩
+    refine ⟨MultilinearMap.constOfIsEmpty (RingHom.id S) _ (α 0), fun v ↦ ?_⟩
     rw [Subsingleton.elim (0 : Fin 0 → M) v]
     rfl
   | succ n ih =>
-    have : IsScalarTower R S (MultilinearMap S (fun _ : Fin n ↦ N) Q) :=
+    have : IsScalarTower R S (MultilinearMap (RingHom.id S) (fun _ : Fin n ↦ N) Q) :=
       ⟨fun r s β ↦ by ext v; exact smul_assoc r s (β v)⟩
     choose F hF using fun x : M ↦ ih (α.curryLeft x)
-    let F' : M →ₗ[R] MultilinearMap S (fun _ : Fin n ↦ N) Q :=
+    let F' : M →ₗ[R] MultilinearMap (RingHom.id S) (fun _ : Fin n ↦ N) Q :=
       { toFun := F
         map_add' := fun x y ↦ multilinearMap_ext hf fun v ↦ by
           simp only [hF, add_apply, MultilinearMap.curryLeft_apply]
@@ -870,11 +870,11 @@ maps in the remaining slots, the extension vanishes on the diagonal of the image
 because `α` is alternating, hence is alternating by `isAlt_of_span_eq_top`. -/
 public lemma extension_eq_zero_of_zero_eq_one {m : ℕ} {f : M →ₗ[R] N}
     (hf : IsBaseChange S f) (α : M [⋀^Fin (m + 2)]→ₗ[R] Q)
-    (β : MultilinearMap S (fun _ : Fin (m + 2) ↦ N) Q)
+    (β : MultilinearMap (RingHom.id S) (fun _ : Fin (m + 2) ↦ N) Q)
     (hβ : ∀ v : Fin (m + 2) → M, (β fun i ↦ f (v i)) = α v)
     (u : Fin (m + 2) → N) (hu : u 0 = u 1) : β u = 0 := by
-  set b : N →ₗ[S] N →ₗ[S] MultilinearMap S (fun _ : Fin m ↦ N) Q :=
-    (multilinearCurryLeftEquiv S (fun _ : Fin (m + 1) ↦ N) Q).toLinearMap ∘ₗ β.curryLeft
+  set b : N →ₗ[S] N →ₗ[S] MultilinearMap (RingHom.id S) (fun _ : Fin m ↦ N) Q :=
+    (multilinearCurryLeftEquiv (RingHom.id S) (fun _ : Fin (m + 1) ↦ N) Q).toLinearMap ∘ₗ β.curryLeft
   have hb : ∀ (y z : N) (v : Fin m → N), b y z v = β (Fin.cons y (Fin.cons z v)) :=
     fun _ _ _ ↦ rfl
   have halt : b.IsAlt := by

@@ -43,19 +43,6 @@ public theorem_wanted dumontThomas_numeration {A : Type*} (η : A → List A)
           ((List.range (k' + 1)).reverse.map fun j => morphIterate η j (s' j).1).flatten) →
         k' = k ∧ ∀ i ≤ k, s' i = s i
 
-/-- **Weighted length of an admissible sequence.** Let $\eta$ be a substitution on an alphabet
-$A$, extended to finite words by concatenation, and let $(m_i, a_i)_{0 \le i \le k}$ be a
-sequence of pairs of a finite word $m_i$ over $A$ and a letter $a_i \in A$ that is admissible
-with respect to $\eta$. Then $\sum_{j=0}^{k} |\eta^j(m_j)| < |\eta^k(m_k a_k)|$, where
-$\eta^j$ is the $j$-th iterate of $\eta$ and $|w|$ is the length of a word $w$.
-
-Source: Sébastien Labbé and Jana Lepšová, *Dumont-Thomas Complement Numeration Systems for
-ℤ*, INTEGERS 24 (2024), Article A112, Lemma 3.3 (Dumont and Thomas, Lemma 1.1). -/
-public theorem_wanted admissibleSequence_weightedLength_lt {A : Type*} (η : A → List A)
-    (hη : IsSubstitution η) (s : ℕ → List A × A) (k : ℕ) (hs : IsAdmissibleSequence η s k) :
-    ∑ j ∈ Finset.range (k + 1), (morphIterate η j (s j).1).length <
-      (morphIterate η k ((s k).1 ++ [(s k).2])).length
-
 /-- **Admissible sequences are determined by their weighted length.** Let $\eta$ be a
 substitution on an alphabet $A$, let $b \in A$ and $k \in \mathbb{N}$, and let
 $(m_i, a_i)_{i = 0, \dots, k}$ and $(m'_i, a'_i)_{i = 0, \dots, k}$ be two $b$-admissible

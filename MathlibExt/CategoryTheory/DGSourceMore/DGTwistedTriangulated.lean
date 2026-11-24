@@ -22,7 +22,7 @@ public import Mathlib.CategoryTheory.Triangulated.Subcategory
 
 Let `C` be a differential graded category and let `H⁰` be the homotopy category of the twisted
 objects of the additive closure of the shift closure of `C`, with the pretriangulated structure of
-`TauCeti/CategoryTheory/DG/Twisted/Pretriangulated.lean`, whose distinguished triangles are the
+`MathlibExt/CategoryTheory/DGSourceMore/DGTwistedPretriangulated.lean`, whose distinguished triangles are the
 triangles isomorphic to cone triangles `P ⟶ Q ⟶ cone u ⟶ P⟦1⟧`.  This file proves the octahedral
 axiom, so that `H⁰` is a triangulated category.
 
