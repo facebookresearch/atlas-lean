@@ -1,6 +1,6 @@
 # Two-sequence lattice bounds on the maximal alignment score
 
-Let `p` and `q` be [probability vectors](../../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/expectation-maximization-algorithm/is-dist.md)
+Let `p` and `q` be [probability vectors](../../../../Probability/not-yet-classified/is-dist.md)
 on a finite alphabet and `s` a real score on pairs of letters, and consider two independent words
 of lengths `m_N` and `n_N` with letter laws `p` and `q` ([two-sequence model](two-prob.md)). Let
 `θ > 0` with `∑_{a,b} p_a q_b e^{θ s(a, b)} = 1`, suppose the pair score satisfies the

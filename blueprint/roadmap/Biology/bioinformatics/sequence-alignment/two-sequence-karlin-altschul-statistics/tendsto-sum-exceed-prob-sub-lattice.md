@@ -1,6 +1,6 @@
 # The expected number of exceeding diagonals, lattice case
 
-Let `p` and `q` be [probability vectors](../../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/expectation-maximization-algorithm/is-dist.md)
+Let `p` and `q` be [probability vectors](../../../../Probability/not-yet-classified/is-dist.md)
 on a finite alphabet and `s` a real score on letter pairs. Let `θ > 0` be a Cramér root of the
 pair score, `∑_{a,b} p_a q_b e^{θ s(a, b)} = 1` ([pair law](pair-law.md),
 [pair score](pair-score.md)), and suppose the pair score satisfies the

@@ -1,7 +1,7 @@
 # Karlin–Altschul upper bound for two sequences
 
 Let `p` and `q` be
-[probability vectors](../../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/expectation-maximization-algorithm/is-dist.md)
+[probability vectors](../../../../Probability/not-yet-classified/is-dist.md)
 on a finite alphabet, `s` a real score on pairs of letters, and `θ ≥ 0` a root of
 `∑_{a, b} p_a q_b e^{θ s(a, b)} = 1`, the
 [moment generating function](../../../../Probability/random-walks/maximal-segment-score-of-a-random-sequence/score-mgf.md) of the

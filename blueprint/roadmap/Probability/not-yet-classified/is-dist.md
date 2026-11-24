@@ -1,4 +1,4 @@
-# Probability distributions on a finite latent space
+# Probability distributions on a finite set
 
 A function $q : Z \to \mathbb{R}$ on a
 finite set $Z$ is a probability distribution when $q(z) \ge 0$ for every $z \in Z$ and

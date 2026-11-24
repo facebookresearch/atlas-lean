@@ -1,7 +1,7 @@
 # Events along one diagonal have their one-sequence probability
 
 Let `p` and `q` be
-[probability vectors](../../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/expectation-maximization-algorithm/is-dist.md)
+[probability vectors](../../../../Probability/not-yet-classified/is-dist.md)
 on a finite alphabet, `s` a real score on pairs of letters, `m` and `n` natural numbers, `d` an
 integer and `P` a property of score lists. For independent words of `m` and `n` independent
 letters with laws `p` and `q`, the [probability](two-prob.md) that the
