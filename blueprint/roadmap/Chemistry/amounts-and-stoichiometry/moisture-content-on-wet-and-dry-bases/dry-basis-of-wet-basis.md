@@ -1,6 +1,6 @@
 # For $m_w \ge 0 < m_s$, the dry basis is $w/(1-w)$ of the wet basis $w$
 
-If $m_s > 0$ and $m_w \ge 0$, the [dry-basis](dry-basis.md) and [wet-basis](wet-basis.md) moisture
+If $m_s > 0$ and $m_w \ge 0$, the [dry-basis](../../../EarthScience/hydrology-and-surface-processes/part-02/soil-phase-relations/gravimetric-water-content.md) and [wet-basis](wet-basis.md) moisture
 contents $X = m_w / m_s$ and $w = m_w / (m_w + m_s)$ of the same material satisfy
 
 $$X = \frac{w}{1 - w} .$$

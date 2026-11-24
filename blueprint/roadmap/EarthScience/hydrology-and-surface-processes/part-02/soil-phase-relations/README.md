@@ -10,7 +10,7 @@
 - [Submerged unit weight is the saturated one minus that of water](submerged-eq-sat-sub-water.md)
 - [Positive submerged unit weight exactly for specific gravity above one](submerged-pos-iff.md)
 - [Degree of saturation of a soil element](degree-of-saturation.md)
-- [Gravimetric water content](gravimetric-water-content.md)
+- [Gravimetric water content, or dry-basis moisture content, Mw / Ms](gravimetric-water-content.md)
 - [Specific gravity of the soil solids](specific-gravity.md)
 - [Saturation times void ratio is water content times specific gravity](saturation-mul-void-ratio.md)
 - [The degree of saturation lies between zero and one](degree-of-saturation-mem-icc.md)

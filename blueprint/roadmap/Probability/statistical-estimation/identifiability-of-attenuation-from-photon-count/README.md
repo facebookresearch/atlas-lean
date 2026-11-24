@@ -11,8 +11,7 @@ $x \mapsto Ax$ is.
 
 ## Log attenuation of a single ray
 
-- [For $I_0 > 0$, $-\log(I/I_0)$ recovers $L$ from $I = I_0 e^{-L}$](attenuation-log-inversion.md)
-- [For $I_0 > 0$, $\log(I_0/I)$ recovers $L$ from $I = I_0 e^{-L}$](attenuation-log-ratio.md)
+- [For $I_0 > 0$, the log attenuation recovers $L$ from $I = I_0 e^{-L}$](attenuation-log-inversion.md)
 - [Equal mix of line integrals $0$ and $2$: log attenuation is not $1$](mixture-log-ne-mean.md)
 
 ## Photon-count law and identification

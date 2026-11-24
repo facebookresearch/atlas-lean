@@ -27,8 +27,6 @@
 
 - [Paris-law crack growth, logarithmic branch: $a_0 e^{KN}$](paris-crack-exp.md)
 - [Paris life in the logarithmic branch, $N_f = \log(a_c/a_0)/K$](paris-life-exp.md)
-- [The logarithmic-branch crack starts at $a_0$](paris-crack-exp-zero.md)
-- [The logarithmic-branch crack solves $da/dN = K a$](has-deriv-at-paris-crack-exp.md)
 - [For $K > 0$, $0 < a_0 < a_c$, the logarithmic Paris life is positive](paris-life-exp-pos.md)
 - [For $K, a_0, a_c > 0$: the logarithmic crack reaches $a_c$ at its life](paris-crack-exp-at-life.md)
 - [For $K > 0$, $0 < a_0 < a_c$: $a_0 e^{KN} < a_c$ iff $N < N_f$](paris-crack-exp-lt-iff.md)

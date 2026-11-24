@@ -7,7 +7,6 @@ and $w / (1 - w)$ tends to $+\infty$ as $w \to 1^-$. The definitions take all re
 convention $x / 0 = 0$.
 
 - [Wet-basis moisture content $m_w / (m_w + m_s)$](wet-basis.md)
-- [Dry-basis moisture content $m_w / m_s$](dry-basis.md)
 - [Dry basis as a function of the wet basis, $w / (1 - w)$](dry-of-wet.md)
 - [Wet basis as a function of the dry basis, $X / (1 + X)$](wet-of-dry.md)
 - [For $m_w \ge 0$ and $m_s > 0$, the wet-basis content is nonnegative](wet-basis-nonneg.md)

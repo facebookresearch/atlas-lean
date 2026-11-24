@@ -31,9 +31,9 @@
 
 - [Integrated first-order rate law](first-order-sol.md)
 - [First-order decay as a one-compartment bolus](first-order-sol-eq-amount.md)
-- [Initial value of the first-order solution](first-order-sol-zero.md)
+- [The exponential A₀ e^(−kt) takes the value A₀ at t = 0](first-order-sol-zero.md)
 - [The first-order solution stays positive](first-order-sol-pos.md)
-- [The first-order solution satisfies its rate equation](has-deriv-at-first-order-sol.md)
+- [The exponential A₀ e^(−kt) satisfies f′ = −k f at every t](has-deriv-at-first-order-sol.md)
 - [Uniqueness of the first-order solution](first-order-sol-unique.md)
 - [Half-life of a first-order reaction](first-order-sol-half-life.md)
 - [Uniqueness of the first-order half-life](first-order-sol-half-life-unique.md)
