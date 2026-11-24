@@ -66,7 +66,7 @@ import Mathlib.Tactic.Ring
 
 /-! # Smooth functions with a vanishing derivative at every point
 
-The open set of polynomial germs has no isolated points in its relative complement:
+The relative complement of the open set of polynomial germs has no isolated points:
 polynomials on either side of an isolated point would have the same jet there. If the
 complement is nonempty, Baire category gives a relatively open patch where one fixed
 derivative vanishes. Accumulation makes every higher derivative vanish on that patch.
