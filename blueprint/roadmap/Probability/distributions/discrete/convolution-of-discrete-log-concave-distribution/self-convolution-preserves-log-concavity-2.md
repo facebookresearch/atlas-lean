@@ -1,6 +1,6 @@
 # Self-convolution need not preserve discrete log-concavity
 
-Call a probability mass function $p$ on $\mathbb Z^d$ log-concave if it is the restriction to $\mathbb Z^d$ of a function $f : \mathbb R^d \to [0, \infty)$ with $f((1-t)x + ty) \ge f(x)^{1-t}f(y)^t$ for all $x, y$ and $t \in [0, 1]$; its self-convolution is $(p * p)(z) = \sum_x p(x)p(z - x)$. Self-convolution does not preserve this property: in some dimension $d$ there is a log-concave probability mass function on $\mathbb Z^d$ whose self-convolution is not the restriction to $\mathbb Z^d$ of any such function. Fradelizi, Gavalakis and Rapaport give an example in $\mathbb Z^3$, the uniform law on the Reeve tetrahedron $\{(0,0,0), (1,0,0), (0,1,0), (1,1,2)\}$.
+Call a probability mass function $p$ on $\mathbb Z^d$ log-concave if it is the restriction to $\mathbb Z^d$ of a function $f : \mathbb R^d \to [0, \infty)$ with $f((1-t)x + ty) \ge f(x)^{1-t}f(y)^t$ for all $x, y$ and $t \in [0, 1]$; its self-convolution is $(p * p)(z) = \sum_x p(x)p(z - x)$. Self-convolution does not preserve this property: in some dimension $d$ there is a log-concave probability mass function on $\mathbb Z^d$ whose self-convolution is not the restriction to $\mathbb Z^d$ of any such function (Fradelizi, Gavalakis and Rapaport).
 
 ## Sources
 

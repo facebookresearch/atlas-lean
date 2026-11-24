@@ -1,4 +1,4 @@
-# Every Cayley graph has an invariant random perfect matching
+# Every infinite connected Cayley graph has an invariant random perfect matching
 
 Every infinite connected Cayley graph of a finitely generated group $\Gamma$ admits a $\Gamma$-invariant random perfect matching (Csóka and Lippner, 2017).
 

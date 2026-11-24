@@ -1,6 +1,6 @@
 # Long clusters do not force giant components
 
-Call a finite graph a $(b, d)$-expander if all degrees are at most $d$ and every set $S$ of at most half the vertices has at least $b|S|$ edges leaving it. In bond percolation with $p = 1/2$, the diameter of a cluster is measured in the cluster itself. The claim fails: there are $b > 0$, $d$, $(b, d)$-expanders $G_k$ with $|V(G_k)| \to \infty$ and vertices $v_k$ whose cluster has diameter greater than $\mathrm{diam}(G_k)/2$ with probability greater than $1/2$ for every $k$, such that for no $c > 0$ does the probability that some cluster has at least $c|V(G_k)|$ vertices tend to $1$. Krivelevich, Lubetzky and Sudakov constructed expanders in which a prescribed cluster has diameter at least $(1 - \varepsilon)\mathrm{diam}(G)$ with probability at least $1 - \varepsilon$ while with high probability every cluster has at most $n^{1-\delta}$ vertices.
+Call a finite graph a $(b, d)$-expander if all degrees are at most $d$ and every set $S$ of at most half the vertices has at least $b|S|$ edges leaving it. In bond percolation with $p = 1/2$, the diameter of a cluster is measured in the cluster itself. The claim fails: there are $b > 0$, $d$, $(b, d)$-expanders $G_k$ with $|V(G_k)| \to \infty$ and vertices $v_k$ whose cluster has diameter greater than $\mathrm{diam}(G_k)/2$ with probability greater than $1/2$ for every $k$, such that for no $c > 0$ does the probability that some cluster has at least $c|V(G_k)|$ vertices tend to $1$ (Krivelevich, Lubetzky and Sudakov).
 
 ## Sources
 

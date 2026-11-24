@@ -1,4 +1,4 @@
-# Mixing is controlled by hitting times of half-mass sets
+# Mixing of lazy reversible chains is controlled by hitting times of half-mass sets
 
 For an irreducible finite Markov chain with transition matrix $P$ and stationary distribution $\pi$, let $T(1/2) = \max\{\mathbb E_x\tau_A : \pi(A) \ge 1/2\}$, where $\tau_A$ is the hitting time of $A$, and let $t_{\mathrm{mix}}$ be the total variation mixing time at level $1/4$. There is a universal $c > 0$ with $t_{\mathrm{mix}} \le c\,T(1/2)$ for every irreducible, reversible, lazy finite Markov chain (Griffiths, Kang, Oliveira and Patel).
 

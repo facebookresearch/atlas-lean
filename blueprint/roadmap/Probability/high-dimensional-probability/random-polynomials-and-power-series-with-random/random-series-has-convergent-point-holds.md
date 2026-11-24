@@ -1,6 +1,6 @@
 # Random power series with small coefficients converge somewhere on the circle
 
-Let $\varepsilon_0, \varepsilon_1, \dots$ be independent uniform random signs. If $\sum_na_n^2 = \infty$ and $a_n = o(n^{-1/2})$, then almost surely $\sum_n\varepsilon_na_nz^n$ converges at some $z$ with $|z| = 1$; indeed the set of such points has Hausdorff dimension $1$ (Michelen and Sawhney).
+Let $\varepsilon_0, \varepsilon_1, \dots$ be independent uniform random signs. If $\sum_na_n^2 = \infty$ and $a_n = o(n^{-1/2})$, then almost surely $\sum_n\varepsilon_na_nz^n$ converges at some $z$ with $|z| = 1$ (Michelen and Sawhney).
 
 ## Sources
 

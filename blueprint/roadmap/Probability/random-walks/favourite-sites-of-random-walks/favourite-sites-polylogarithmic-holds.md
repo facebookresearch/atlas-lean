@@ -1,6 +1,6 @@
 # Planar random walk has polylogarithmically many favourite sites
 
-For simple random walk on $\mathbb Z^2$, a site is favourite at time $k$ if its local time (number of visits up to time $k$) is maximal. There is $C$ such that almost surely, for all large $n$, at most $(\log n)^C$ sites are favourite at some time $k \le n$; this follows from the theorem of Hao, Li, Okada and Zheng that almost surely at most $3$ sites are favourite at each large time, together with the $(\log n)^2$ growth of the maximal local time.
+For simple random walk on $\mathbb Z^2$, a site is favourite at time $k$ if its local time (number of visits up to time $k$) is maximal. There is $C$ such that almost surely, for all large $n$, at most $(\log n)^C$ sites are favourite at some time $k \le n$. This follows from the theorem of Hao, Li, Okada and Zheng on favourite sites together with the Erdős–Taylor bound on the maximal local time.
 
 ## Sources
 

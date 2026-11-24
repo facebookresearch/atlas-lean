@@ -1,6 +1,6 @@
 # Groups of intermediate growth have a percolation phase transition
 
-Let $p_c$ denote the critical probability of Bernoulli bond percolation on a Cayley graph. If a countable group has a finite generating family whose growth function is not bounded by any polynomial and is eventually at most $b^n$ for every $b > 1$, then the Cayley graph has $p_c < 1$. This follows from the theorem of Duminil-Copin, Goswami, Raoufi, Severo and Yadin (2020) that $p_c < 1$ on every quasi-transitive graph of super-linear growth.
+Let $p_c$ denote the critical probability of Bernoulli bond percolation on a Cayley graph. If a countable group has a finite generating family whose growth function is not bounded by any polynomial and is eventually at most $b^n$ for every $b > 1$, then the Cayley graph has $p_c < 1$. This follows from the theorem of Duminil-Copin, Goswami, Raoufi, Severo and Yadin (2020).
 
 ## Sources
 

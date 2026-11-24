@@ -1,4 +1,4 @@
-# Restricting a Gaussian to a convex set reduces directional variance strictly
+# Unit directional variance of a Gaussian restricted to a convex set forces a cylinder
 
 If $K \subseteq \mathbb R^n$ is closed and convex with positive standard Gaussian measure, $\theta$ is a unit vector and the standard Gaussian conditioned on $K$ has variance $1$ in direction $\theta$, then $K$ is a cylinder in direction $\theta$. This follows from Vempala's monotonicity lemma for log-concave restrictions.
 
