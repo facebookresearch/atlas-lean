@@ -5,9 +5,11 @@ polynomial $W : E \to \mathbb{R}$ and every real $\alpha \ne 0$ the following ho
 $\varepsilon > 0$ the values $|W(x)|$ are bounded on the open $\varepsilon$-neighbourhood of $R$,
 that is, for the $x \in E$ with $\operatorname{dist}(x, r) < \varepsilon$ for some $r \in R$, then
 for some $\delta > 0$ the values $|W(x)|$ are bounded on the open $\delta$-neighbourhood of the
-scaled set $\alpha R = \{\alpha r : r \in R\}$. Here a continuous polynomial is a finite sum of
-continuous homogeneous polynomials; Pestov's counterexample has degree two,
-$W(x) = B(x, x) + \ell(x)$ with $B$ a continuous bilinear form and $\ell$ a continuous linear
+scaled set $\alpha R = \{\alpha r : r \in R\}$. Here a continuous polynomial of degree at most $n$
+is a sum $W(x) = \sum_{j=0}^{n} P_j(x, \dots, x)$ with $P_j$ a continuous $j$-linear form on $E$,
+the $j = 0$ term being the constant term; by polarization these are exactly the finite sums of
+continuous homogeneous polynomials, of every finite degree. Pestov's counterexample has degree
+two, $W(x) = B(x, x) + \ell(x)$ with $B$ a continuous bilinear form and $\ell$ a continuous linear
 functional.
 
 The question is only interesting for polynomials that are not homogeneous: for a homogeneous
