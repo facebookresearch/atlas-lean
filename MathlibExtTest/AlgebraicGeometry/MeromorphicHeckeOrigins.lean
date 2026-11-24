@@ -30,7 +30,18 @@ variable (p : ℕ) [Fact p.Prime] (E : Type) [Field E]
 
 example (M : Modification p E G H P d U)
     (hM : MeromorphicHeckeModels.IsMeromorphic p E G H P d U M) :
-    Nonempty (CartierAtlas p E d U) := hM.1
+    Nonempty (CartierAtlas p E d U) :=
+  let ⟨A, _⟩ := hM; ⟨A⟩
+
+/-- The pole predicate supplies integral frames of both torsors on every atlas chart, so it is
+not satisfied vacuously by charts without frames. -/
+example (M : Modification p E G H P d U)
+    (hM : MeromorphicHeckeModels.IsMeromorphic p E G H P d U M) :
+    ∃ A : CartierAtlas p E d U, ∀ i : A.index,
+      Nonempty (IntegralFrame p E G H d U (A.chart i) M.left) ∧
+        Nonempty (IntegralFrame p E G H d U (A.chart i) M.right) := by
+  obtain ⟨A, hA⟩ := hM
+  exact ⟨A, fun i ↦ let ⟨l, r, _⟩ := hA i; ⟨⟨l⟩, ⟨r⟩⟩⟩
 
 example (Q : PoleChart p E d U) (a : E) :
     MeromorphicHeckeModels.positiveScalars p E d U Q a =

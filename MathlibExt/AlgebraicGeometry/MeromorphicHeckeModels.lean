@@ -15,11 +15,14 @@ public import Mathlib.RingTheory.Localization.Away.Basic
 /-!
 # Meromorphic Hecke objects and their actual formal coefficient rings
 
-The pole condition requires every representation matrix, in every pair
-of original integral torsor frames, to become an original analytic
+The pole condition asks for a Cartier atlas whose pole charts carry
+original integral frames of both torsors, and requires every
+representation matrix, in those frames, to become an original analytic
 matrix after multiplication by a finite power of the Cartier parameter.
-Bounds are local on affinoid etale neighbourhoods; an arbitrary
-non-quasicompact perfectoid family is not assigned one uniform exponent.
+The frames are part of the witness, so the condition cannot hold
+vacuously on charts without frames. Bounds are local on affinoid etale
+neighbourhoods; an arbitrary non-quasicompact perfectoid family is not
+assigned one uniform exponent.
 
 The Hecke objects retain exactly the two original G-torsors and their
 punctured comparison. Their formal positive ring is the literal
@@ -64,13 +67,14 @@ def HasPoleBound (Q : PoleChart p E d U) (M : Modification p E G H P d U)
       (sectionMap p E Q.puncture.map Q.parameter) ^ k *
         comparisonMatrix p E G H P d U Q M left right n ρ i j
 
-/-- Meromorphicity is local finite-pole extension on the original geometric charts. -/
+/-- Meromorphicity is local finite-pole extension: some Cartier atlas has pole charts carrying
+integral frames of both torsors, in which every representation matrix has a finite pole. -/
 def IsMeromorphic (M : Modification p E G H P d U) : Prop :=
-  Nonempty (CartierAtlas p E d U) ∧ ∀ (Q : PoleChart p E d U)
-    (left : IntegralFrame p E G H d U Q M.left)
-    (right : IntegralFrame p E G H d U Q M.right)
-    (n : ℕ) (ρ : Representation E G n),
-      ∃ k : ℕ, HasPoleBound p E G H P d U Q M left right n ρ k
+  ∃ A : CartierAtlas p E d U, ∀ i : A.index,
+    ∃ (left : IntegralFrame p E G H d U (A.chart i) M.left)
+      (right : IntegralFrame p E G H d U (A.chart i) M.right),
+      ∀ (n : ℕ) (ρ : Representation E G n), ∃ k : ℕ,
+        HasPoleBound p E G H P d U (A.chart i) M left right n ρ k
 
 /-- This full subcategory retains the original punctured isomorphism and all its arrows. -/
 abbrev MeromorphicModifications :=
