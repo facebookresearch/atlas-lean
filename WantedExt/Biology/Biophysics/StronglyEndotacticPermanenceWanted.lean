@@ -1,0 +1,172 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+# Strongly endotactic reaction networks are permanent
+
+A reaction network on a finite set `S` of species has finitely many reactions `r : y → y'` with
+real complexes `y, y' ∈ ℝ^S` and reaction vectors `y' - y`; its stoichiometric subspace `H` is
+the span of the reaction vectors. For `w ∈ ℝ^S` write `y ≤_w y'` when `⟨w, y⟩ ≤ ⟨w, y'⟩`. A
+reaction is `w`-essential if `⟨w, y' - y⟩ ≠ 0`, and the `w`-support is the set of
+`≤_w`-maximal reactants of `w`-essential reactions. The network is **endotactic** if for every
+`w`, every `w`-essential reaction whose reactant lies in the `w`-support has `⟨w, y' - y⟩ < 0`.
+It is **strongly endotactic** if moreover for every `w` not orthogonal to `H` there is a reaction
+`y → y'` with `⟨w, y' - y⟩ < 0` whose reactant `y` is `≤_w`-maximal among all reactants.
+
+A tempering assigns to each reaction `r` a compact interval `[a_r, b_r] ⊆ (0, ∞)`. For a positive
+`x₀`, the invariant polyhedron is `(x₀ + H) ∩ ℝ_{≥0}^S`; its relative interior is
+`(x₀ + H) ∩ ℝ_{>0}^S`. The mass-action differential inclusion has, over a point `x` of the
+relative interior, the fiber `{∑_r k_r x^{y_r} (y'_r - y_r) : k_r ∈ [a_r, b_r]}` (real powers),
+and is empty elsewhere. A trajectory is a differentiable curve on an interval `I ⊆ [0, ∞)`
+containing its left endpoint whose tangent vectors lie in the inclusion. The inclusion is
+**persistent** if the closure of every trajectory in `[0, ∞]^S` avoids the boundary, that is,
+every trajectory stays in a compact subset of `ℝ_{>0}^S`, and **permanent** if moreover there is
+a compact `Ω ⊆ ℝ_{>0}^S` that every trajectory defined on a ray eventually enters and stays in. A
+network is permanent if the inclusion is permanent for every tempering and every invariant
+polyhedron.
+
+**Theorem 1.1** (Gopalkrishnan–Miller–Shiu 2014). Every strongly endotactic reaction network is
+permanent.
+
+**Theorem 1.3** (Gopalkrishnan–Miller–Shiu 2014). Every weakly reversible reaction network with
+exactly one linkage class is permanent.
+
+Theorem 1.2 of the source (the global attractor conjecture for strongly endotactic
+complex-balanced systems) is not stated here. Reactions are indexed, so parallel reactions are
+allowed; their temperings add and give the same inclusion as a single reaction, and neither the
+endotactic conditions nor the linkage classes change. Complexes are the reactants and products,
+so the source's isolated complexes (which do not affect the dynamics) are not represented.
+
+Sources: M. Gopalkrishnan, E. Miller, A. Shiu, "A geometric approach to the global attractor
+conjecture", SIAM J. Appl. Dyn. Syst. 13 (2014) 758–797, Definitions 3.1–3.11 and 4.1–4.2,
+Theorems 1.1 and 1.3 (arXiv:1305.5303).
+-/
+module
+
+public import Batteries.Util.ProofWanted
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Analysis.Calculus.Deriv.Basic
+public import Mathlib.LinearAlgebra.Span.Defs
+public import Mathlib.Logic.Relation
+public import Mathlib.Order.Interval.Set.OrdConnected
+public import Mathlib.Topology.Compactness.Compact
+
+@[expose] public section
+
+namespace WantedExt.Biology.Biophysics.StronglyEndotacticPermanenceWanted
+
+/-- A reaction network with real complexes: reaction `r` has reactant `src r` and product
+`prod r`. -/
+structure Network (S ρ : Type*) where
+  /-- The reactant complex of each reaction. -/
+  src : ρ → S → ℝ
+  /-- The product complex of each reaction. -/
+  prod : ρ → S → ℝ
+
+namespace Network
+
+variable {S ρ : Type*} [Fintype S] (N : Network S ρ)
+
+/-- The pairing `⟨w, y⟩ = ∑_s w_s y_s`. -/
+def pair (w y : S → ℝ) : ℝ :=
+  ∑ s, w s * y s
+
+/-- The reaction vector `prod r - src r`. -/
+def flux (r : ρ) : S → ℝ :=
+  N.prod r - N.src r
+
+/-- The stoichiometric subspace: the span of the reaction vectors. -/
+def stoichiometricSubspace : Submodule ℝ (S → ℝ) :=
+  Submodule.span ℝ (Set.range N.flux)
+
+/-- Reaction `r` is `w`-essential: its reaction vector is not orthogonal to `w`. -/
+def IsEssential (w : S → ℝ) (r : ρ) : Prop :=
+  pair w (N.flux r) ≠ 0
+
+/-- The reactant of `r` lies in the `w`-support: it is `≤_w`-maximal among the reactants of
+`w`-essential reactions. -/
+def InSupport (w : S → ℝ) (r : ρ) : Prop :=
+  ∀ r', N.IsEssential w r' → pair w (N.src r') ≤ pair w (N.src r)
+
+/-- The network is endotactic: for every `w`, every `w`-essential reaction whose reactant lies in
+the `w`-support has `⟨w, y' - y⟩ < 0`. -/
+def IsEndotactic : Prop :=
+  ∀ w r, N.IsEssential w r → N.InSupport w r → pair w (N.flux r) < 0
+
+/-- The network is strongly endotactic: it is endotactic, and for every `w` not orthogonal to the
+stoichiometric subspace some reaction `y → y'` has `⟨w, y' - y⟩ < 0` and a reactant `y` that is
+`≤_w`-maximal among all reactants. -/
+def IsStronglyEndotactic : Prop :=
+  N.IsEndotactic ∧ ∀ w, (∃ r, pair w (N.flux r) ≠ 0) →
+    ∃ r, pair w (N.flux r) < 0 ∧ ∀ r', pair w (N.src r') ≤ pair w (N.src r)
+
+/-- The directed reaction relation on complexes. -/
+def Reacts (y y' : S → ℝ) : Prop :=
+  ∃ r, N.src r = y ∧ N.prod r = y'
+
+/-- The complexes: the reactants and products. -/
+def complexes : Set (S → ℝ) :=
+  Set.range N.src ∪ Set.range N.prod
+
+/-- Weak reversibility: every reaction `y → y'` lies on a directed cycle of reactions. -/
+def IsWeaklyReversible : Prop :=
+  ∀ r, Relation.ReflTransGen N.Reacts (N.prod r) (N.src r)
+
+/-- The network has exactly one linkage class: it has a complex, and any two complexes are joined
+by an undirected path of reactions. -/
+def HasOneLinkageClass : Prop :=
+  N.complexes.Nonempty ∧ ∀ y ∈ N.complexes, ∀ y' ∈ N.complexes, Relation.EqvGen N.Reacts y y'
+
+/-- The fiber of the mass-action differential inclusion over `x`, for the tempering
+`[lo r, hi r]` and the invariant polyhedron of `x₀`: empty unless `x` lies in the relative
+interior `(x₀ + H) ∩ ℝ_{>0}^S`. -/
+def fiber [Fintype ρ] (lo hi : ρ → ℝ) (x₀ x : S → ℝ) : Set (S → ℝ) :=
+  {v | (∀ s, 0 < x s) ∧ x - x₀ ∈ N.stoichiometricSubspace ∧
+    ∃ k : ρ → ℝ, (∀ r, lo r ≤ k r ∧ k r ≤ hi r) ∧
+      v = ∑ r, (k r * ∏ s, x s ^ N.src r s) • N.flux r}
+
+/-- `f` is a trajectory of the mass-action differential inclusion on the interval `I`: `I` is a
+nonempty interval in `[0, ∞)` containing its left endpoint `a`, and `f` is differentiable along
+`I` with tangent vectors in the fiber. -/
+def IsTrajectory [Fintype ρ] (lo hi : ρ → ℝ) (x₀ : S → ℝ) (I : Set ℝ) (a : ℝ)
+    (f : ℝ → S → ℝ) : Prop :=
+  0 ≤ a ∧ a ∈ I ∧ I.OrdConnected ∧ (∀ t ∈ I, a ≤ t) ∧
+    ∀ t ∈ I, ∃ v ∈ N.fiber lo hi x₀ (f t), HasDerivWithinAt f v I t
+
+/-- The network is permanent: for every tempering `[lo r, hi r] ⊆ (0, ∞)` and every positive
+`x₀`, every trajectory stays in a compact subset of `ℝ_{>0}^S` (persistence), and there is a
+compact `Ω ⊆ ℝ_{>0}^S` such that every trajectory on a ray is eventually in `Ω`. -/
+def IsPermanent [Fintype ρ] : Prop :=
+  ∀ lo hi : ρ → ℝ, (∀ r, 0 < lo r ∧ lo r ≤ hi r) → ∀ x₀ : S → ℝ, (∀ s, 0 < x₀ s) →
+    (∀ I a f, N.IsTrajectory lo hi x₀ I a f →
+      ∃ K : Set (S → ℝ), IsCompact K ∧ (∀ y ∈ K, ∀ s, 0 < y s) ∧ f '' I ⊆ K) ∧
+    ∃ Ω : Set (S → ℝ), IsCompact Ω ∧ (∀ y ∈ Ω, ∀ s, 0 < y s) ∧
+      ∀ a f, N.IsTrajectory lo hi x₀ (Set.Ici a) a f → ∃ T, ∀ t ≥ T, f t ∈ Ω
+
+end Network
+
+/-- **Strongly endotactic networks are permanent** (Gopalkrishnan–Miller–Shiu 2014,
+Theorem 1.1).
+
+Source: M. Gopalkrishnan, E. Miller, A. Shiu, SIAM J. Appl. Dyn. Syst. 13 (2014) 758–797,
+Theorem 1.1. -/
+theorem_wanted isPermanent_of_isStronglyEndotactic {S ρ : Type*} [Fintype S] [Fintype ρ]
+    (N : Network S ρ) (h : N.IsStronglyEndotactic) :
+    N.IsPermanent
+
+/-- **Weakly reversible networks with one linkage class are permanent** (Gopalkrishnan–Miller–
+Shiu 2014, Theorem 1.3).
+
+Source: M. Gopalkrishnan, E. Miller, A. Shiu, SIAM J. Appl. Dyn. Syst. 13 (2014) 758–797,
+Theorem 1.3. -/
+theorem_wanted isPermanent_of_isWeaklyReversible_of_hasOneLinkageClass {S ρ : Type*}
+    [Fintype S] [Fintype ρ] (N : Network S ρ) (hwr : N.IsWeaklyReversible)
+    (hone : N.HasOneLinkageClass) :
+    N.IsPermanent
+
+end WantedExt.Biology.Biophysics.StronglyEndotacticPermanenceWanted
