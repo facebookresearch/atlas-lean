@@ -1058,4 +1058,56 @@ theorem test_domination_half_via :
 #print axioms test_domination_half_compute
 #print axioms test_domination_half_via
 
+
+-- Pair-local assembly tests: two-sided `maxDivLE` for the test kernels at
+-- `ε = log 3`, the `k = 2`, `δ' = 1 / 2` advanced-composition instance for the
+-- fixture, and the `ε = 0`, `P = Q` adapter sanity check.
+
+-- Convert an `IsDP`-shaped `ENNReal` bound into a real-mass bound.
+theorem test_pair_toReal_le_of_le {a b : ENNReal} {c : ℝ} (hc : 0 ≤ c)
+    (hb : b ≠ ⊤) (h : a ≤ ENNReal.ofReal c * b) :
+    a.toReal ≤ c * b.toReal := by
+  have hfin : ENNReal.ofReal c * b ≠ ⊤ :=
+    ENNReal.mul_ne_top ENNReal.ofReal_ne_top hb
+  have hle := ENNReal.toReal_mono hfin h
+  rwa [ENNReal.toReal_mul, ENNReal.toReal_ofReal hc] at hle
+
+-- Two-sided `maxDivLE` for the test kernels at `ε = log 3`, forward direction.
+open CSLibExt.Privacy.MaxDivergenceDecomposition in
+theorem test_pair_maxDivLE_false_true (n : ℕ) (h : Hist Bool Bool n) :
+    maxDivLE (testK n h false) (testK n h true) (Real.log 3) := by
+  intro o
+  exact test_pair_toReal_le_of_le (Real.exp_pos _).le
+    ((testK n h true).apply_ne_top o) ((testK_isDP n h).2 false true trivial o)
+
+-- Two-sided `maxDivLE` for the test kernels at `ε = log 3`, reverse direction.
+open CSLibExt.Privacy.MaxDivergenceDecomposition in
+theorem test_pair_maxDivLE_true_false (n : ℕ) (h : Hist Bool Bool n) :
+    maxDivLE (testK n h true) (testK n h false) (Real.log 3) := by
+  intro o
+  exact test_pair_toReal_le_of_le (Real.exp_pos _).le
+    ((testK n h false).apply_ne_top o) ((testK_isDP n h).2 true false trivial o)
+
+-- Pairwise advanced composition for the two-stage fixture at `δ' = 1 / 2`.
+open CSLibExt.Privacy.MaxDivergenceDecomposition in
+theorem test_pair_adv_comp_pair :
+    approxMaxDivLE (transcript testCoin testK 2 false) (transcript testCoin testK 2 true)
+      (Real.log 3 * Real.sqrt (2 * ((2 : ℕ) : ℝ) * Real.log (1 / (1 / 2 : ℝ))) +
+        ((2 : ℕ) : ℝ) * (Real.log 3 * (Real.exp (Real.log 3) - 1))) (1 / 2 : ℝ) ∧
+    approxMaxDivLE (transcript testCoin testK 2 true) (transcript testCoin testK 2 false)
+      (Real.log 3 * Real.sqrt (2 * ((2 : ℕ) : ℝ) * Real.log (1 / (1 / 2 : ℝ))) +
+        ((2 : ℕ) : ℝ) * (Real.log 3 * (Real.exp (Real.log 3) - 1))) (1 / 2 : ℝ) :=
+  transcript_approxMaxDivLE_advanced_composition_pair testCoin testK (Real.log 3) 2 (1 / 2)
+    (Real.log_nonneg (by norm_num))
+    (fun n h => ⟨test_pair_maxDivLE_false_true n h, test_pair_maxDivLE_true_false n h⟩)
+    (by norm_num) (by norm_num)
+
+-- Adapter sanity: `maxDivLE` is reflexive at `ε = 0`.
+open CSLibExt.Privacy.MaxDivergenceDecomposition in
+theorem test_pair_adapter_zero_refl (P : PMF Bool) : maxDivLE P P 0 := by
+  intro o
+  rw [Real.exp_zero, one_mul]
+
+#print axioms transcript_approxMaxDivLE_advanced_composition_pair
+
 end CSLibExt.Privacy.DifferentialPrivacy

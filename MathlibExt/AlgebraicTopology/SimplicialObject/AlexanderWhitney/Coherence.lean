@@ -6,7 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
 module
 
 public import MathlibExt.AlgebraicTopology.SimplicialObject.AlexanderWhitney
@@ -40,11 +39,6 @@ theorem backInclusion_assoc (p q r n : ℕ) (h : p + q + r = n) :
   ext i
   change (i.val + q) + p = i.val + (p + q)
   omega
-@[simp]
-theorem backInclusion_zero_left (n : ℕ) :
-    backInclusion 0 n n (by omega) = 𝟙 ⦋n⦌ := by
-  ext i
-  simp [backInclusion, SimplexCategory.subinterval]
 
 @[simp]
 theorem frontInclusion_zero_right (n : ℕ) :
@@ -82,7 +76,8 @@ theorem middleFace_assoc (X : SimplicialObject C) (p q r n : ℕ)
           (frontInclusion q r (q + r) rfl).op := by
     simpa only [CategoryTheory.op_comp] using congrArg Quiver.Hom.op hInc
   have hMap := congrArg X.map hOp
-  simpa only [frontFace, backFace, Functor.map_comp] using hMap
+  simpa only [frontFace, backFace, backInclusion, SimplicialObject.δ₀Iter, Functor.map_comp]
+    using hMap
 
 @[reassoc]
 theorem backFace_assoc (X : SimplicialObject C) (p q r n : ℕ)
@@ -97,13 +92,7 @@ theorem backFace_assoc (X : SimplicialObject C) (p q r n : ℕ)
         (backInclusion (p + q) r n (by omega)).op := by
     simpa only [CategoryTheory.op_comp] using congrArg Quiver.Hom.op hInc
   have hMap := congrArg X.map hOp
-  simpa only [backFace, Functor.map_comp] using hMap
-
-@[simp]
-theorem backFace_zero_left (X : SimplicialObject C) (n : ℕ) :
-    backFace X (show 0 + n = n by omega) = 𝟙 _ := by
-  rw [backFace, backInclusion_zero_left]
-  simp
+  simpa only [backFace, backInclusion, SimplicialObject.δ₀Iter, Functor.map_comp] using hMap
 
 @[simp]
 theorem frontFace_zero_right (X : SimplicialObject C) (n : ℕ) :

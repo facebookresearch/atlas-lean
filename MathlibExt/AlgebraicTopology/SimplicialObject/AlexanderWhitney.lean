@@ -1,13 +1,4 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
--/
-
-
-/-
 Copyright (c) 2026 Tsutomu Okano. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Tsutomu Okano
@@ -15,6 +6,7 @@ Authors: Tsutomu Okano
 module
 
 public import Mathlib.AlgebraicTopology.SimplicialObject.Basic
+public import Mathlib.AlgebraicTopology.SimplicialObject.DeltaZeroIter
 
 /-!
 # Alexander–Whitney front and back face interface
@@ -23,10 +15,10 @@ This file provides the generic, category-level Alexander–Whitney interface for
 simplicial objects. It owns the canonical front and back subinterval inclusions
 in the simplex category and the induced morphisms of an arbitrary `SimplicialObject C`.
 
-The inclusions are built definitionally from `SimplexCategory.subinterval` and the
-simplicial-object morphisms are obtained by applying `X.map` to the opposite of
-those inclusions. No preadditive, abelian, monoidal or concrete hypotheses are
-required.
+The front inclusion is built from `SimplexCategory.subinterval`, the back inclusion is
+Mathlib's iterated face `SimplexCategory.δ₀Iter`, and the simplicial-object morphisms are obtained
+by applying `X.map` to the opposite of those inclusions. No preadditive, abelian, monoidal or
+concrete hypotheses are required.
 
 This is the first generic layer for the later alternating-chain Alexander–Whitney
 construction; it is not an `SSet` element API and not yet a chain map.
@@ -50,9 +42,9 @@ def frontInclusion (p q n : ℕ) (h : p + q = n) : ⦋p⦌ ⟶ ⦋n⦌ :=
 
 /-- Back subinterval inclusion `⦋q⦌ ⟶ ⦋n⦌` beginning at `p`, for `p + q = n`.
 
-Built definitionally from `SimplexCategory.subinterval p q _`. -/
+This is Mathlib's `SimplexCategory.δ₀Iter p`, the `p`-fold iterate of `δ 0`. -/
 def backInclusion (p q n : ℕ) (h : p + q = n) : ⦋q⦌ ⟶ ⦋n⦌ :=
-  SimplexCategory.subinterval (n := n) p q (by omega)
+  SimplexCategory.δ₀Iter p (by omega)
 
 @[simp]
 lemma frontInclusion_toOrderHom (p q n : ℕ) (h : p + q = n) (i : Fin (p + 1)) :
@@ -74,11 +66,11 @@ def frontFace (X : SimplicialObject C) {p q n : ℕ} (h : p + q = n) :
 
 /-- Back face of a simplicial object: the morphism induced by `backInclusion`.
 
-For `X : SimplicialObject C` and `h : p + q = n`, this is
+For `X : SimplicialObject C` and `h : p + q = n`, this is Mathlib's `X.δ₀Iter p`, that is
 `X.map (backInclusion p q n h).op : X _⦋n⦌ ⟶ X _⦋q⦌`. -/
 def backFace (X : SimplicialObject C) {p q n : ℕ} (h : p + q = n) :
     X.obj (Opposite.op ⦋n⦌) ⟶ X.obj (Opposite.op ⦋q⦌) :=
-  X.map (backInclusion p q n h).op
+  X.δ₀Iter p (by omega)
 
 @[reassoc (attr := simp)]
 theorem frontFace_naturality {X Y : SimplicialObject C} (f : X ⟶ Y)

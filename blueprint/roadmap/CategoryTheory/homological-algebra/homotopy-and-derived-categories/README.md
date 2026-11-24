@@ -2,6 +2,7 @@
 
 Chain homotopies, mapping cones and cylinders, the homotopy category of complexes and its triangulated structure, and derived categories obtained by inverting quasi-isomorphisms; triangulated categories in general are in the triangulated categories field.
 
+- [Homotopy equivalence of homological complexes](chain-homotopy-equivalence.md)
 - [An additive normal form for raw cochains](an-additive-normal-form-for-raw-cochains/README.md)
 - [Cochain-level chain-map naturality and square identities](cochain-level-chain-map-naturality-and-square-id/README.md)
 - [Generic cocycle pre/post laws](generic-cocycle-pre-post-laws/README.md)
