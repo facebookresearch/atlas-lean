@@ -62,6 +62,15 @@ been identified; and the polarization form of 5 with its isotropy and perfectnes
 - [Abelian scheme](../abelian-scheme.md)
 - [Dual abelian scheme](../dual-abelian-scheme.md), for $\operatorname{Lie}(A^t/R)$ and $\varphi_L$
 
+## Proof depends on
+
+The steps of its proof are not pages yet: the Hodge–de Rham spectral sequence of an abelian scheme
+over a ring, its degeneration and base change; universal vector extensions and the identifications
+of Mazur and Messing; the crystalline comparison for $p$-nilpotent thickenings (Stacks Project, Tag
+07LG) and the Gauss–Manin connection for divided power thickenings of $\mathbb{Q}$-algebras; and the
+polarization form of 5 with its isotropy and perfectness. No source has been identified for the
+mixed thickenings of 4.
+
 ## Sources
 
 - B. Mazur and W. Messing, *Universal Extensions and One Dimensional Crystalline Cohomology*,

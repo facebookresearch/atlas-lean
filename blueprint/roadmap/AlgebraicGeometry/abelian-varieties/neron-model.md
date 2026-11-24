@@ -45,6 +45,11 @@ A good expansion follows Bosch, Lütkebohmert and Raynaud and has pages for:
 
 - [Abelian scheme](abelian-scheme.md), for abelian varieties and abelian schemes
 
+## Proof depends on
+
+The steps of its proof are not pages yet: Néron's existence theorem with its construction and the
+basic properties of Néron models (Bosch–Lütkebohmert–Raynaud).
+
 ## Sources
 
 - J. S. Milne, *Abelian Varieties*, course notes, version 2.00 (2008),

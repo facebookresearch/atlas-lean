@@ -90,6 +90,19 @@ A good expansion has pages for:
 - [Arithmetic intersection product](arithmetic-intersection-product.md)
 - [Arithmetic degree and arithmetic intersection numbers](arithmetic-intersection-numbers.md), for $\hat c_1$ of hermitian line bundles
 
+## Proof depends on
+
+- [Arithmetic intersection product](arithmetic-intersection-product.md), for the products and cap
+  products of arithmetic classes in the constructions
+- [Chow groups with supports and their products](chow-groups-with-supports.md), for the Chern
+  character with supports
+
+The other steps of its proof are not pages yet: the secondary Bott–Chern classes and their
+properties (Bismut–Gillet–Soulé, I; Gillet–Soulé, Inventiones, 2.4.1), the splitting principle for
+hermitian vector bundles, the arithmetic Grothendieck group and its action on the arithmetic Chow
+groups graded by dimension (Inventiones, Theorem 4), and the comparisons of Inventiones, §2.6 and §3
+(Proposition 1, Lemmas 21 and 25, Theorems 5 and 6).
+
 ## Sources
 
 - H. Gillet and C. Soulé, "Characteristic classes for algebraic vector bundles with Hermitian

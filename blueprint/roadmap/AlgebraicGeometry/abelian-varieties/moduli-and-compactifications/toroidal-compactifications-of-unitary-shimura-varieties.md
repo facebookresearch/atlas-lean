@@ -47,6 +47,14 @@ without self-intersections; and the ampleness of $\omega_Y^{\otimes k} \otimes \
 
 - [Moduli of principally polarized abelian varieties and their compactifications](moduli-of-principally-polarized-abelian-varieties.md)
 
+## Proof depends on
+
+The steps of its proof are not pages yet: the moduli problems of PEL type attached to unitary groups
+and their integral models, their toroidal compactifications for smooth projective cone
+decompositions, the logarithmic Kodaira–Spencer isomorphism on the compactification, the comparison
+of their charts with toric charts, and the ampleness of $\omega_Y^{\otimes k} \otimes
+\mathcal{O}_Y(-B)$.
+
 ## Sources
 
 - K.-W. Lan, "Integral models of toroidal compactifications with projective cone decompositions",

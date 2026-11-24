@@ -42,6 +42,22 @@ Corollary (5.1.8) on closed subschemes, from which Theorem (5.4.1) follows by al
 of a formal morphism; and Theorem (5.4.5), proved by embedding $\mathfrak{X}$ in a projective space
 by lifted sections of a power of $\mathcal{L}$ and algebraizing the coherent ideal of its image.
 
+## Depends on
+
+Its statement uses noetherian adic rings, formal schemes, formal completions and coherent sheaves on
+them, which no page states yet.
+
+## Proof depends on
+
+- [Standard results of coherent cohomology on projective varieties](../../birational-geometry/standard-results-of-coherent-cohomology.md),
+  for the finiteness theorem, on which the comparison theorem for the cohomology of completions
+  rests
+
+The other steps of its proof are not pages yet: the comparison theorem for the cohomology of the
+completion of a coherent sheaf (EGA III, §4), the existence theorem for projective morphisms (§5.2),
+its extension through Chow's lemma and noetherian induction ((5.3.1)–(5.3.5)), Corollary (5.1.8) on
+closed subschemes and Theorem (5.4.5).
+
 ## Sources
 
 - A. Grothendieck (with J. Dieudonné), "Éléments de géométrie algébrique III. Étude cohomologique

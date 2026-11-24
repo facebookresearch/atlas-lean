@@ -35,6 +35,11 @@ fundamental class of $Z$ is a homology class, or the current $[Z]$ of integratio
 $Z_{\mathrm{reg}}$, closed and positive of locally finite mass by Lelong's theorem, not a cohomology
 class of $V$.
 
+## Depends on
+
+- [Arithmetic varieties and hermitian vector bundles](arithmetic-variety.md), for metrics smooth in
+  the sense of local ambient extensions
+
 ## Proof depends on
 
 - [Resolution of singularities of quasi-projective varieties](../birational-geometry/resolution-of-singularities/resolution-of-singularities-of-quasi-projective-varieties.md),

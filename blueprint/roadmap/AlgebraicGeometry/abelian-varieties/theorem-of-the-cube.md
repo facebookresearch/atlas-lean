@@ -54,6 +54,11 @@ later version, referring to Mumford's *Abelian Varieties*, pp. 57–58.
 
 - [Abelian scheme](abelian-scheme.md), for abelian varieties over a field
 
+## Proof depends on
+
+The steps of its proof are not pages yet: the proofs of 1–5 in van der Geer and Moonen's Chapter II,
+the theorem of the cube through the seesaw principle and Krull's intersection theorem.
+
 ## Sources
 
 - G. van der Geer and B. Moonen, *Abelian Varieties*, book draft, Chapter II, "Line bundles and

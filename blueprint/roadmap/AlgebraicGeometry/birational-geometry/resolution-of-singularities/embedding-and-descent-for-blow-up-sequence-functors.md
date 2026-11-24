@@ -44,6 +44,12 @@ smooth surjections and the compatibility of blowing up with flat base change.
 - [Simple normal crossing divisor](../simple-normal-crossing-divisor.md), for blow-up sequences and blow-up
   sequence functors
 
+## Proof depends on
+
+The steps of its proof are not pages yet: the descent of closed subschemes along smooth surjections,
+the compatibility of blowing up with flat base change, and, for 3, Kollár's local general linear
+projection over an infinite field.
+
 ## Sources
 
 - J. Kollár, "Resolution of singularities – Seattle lecture", arXiv:math/0508332 (version 3),

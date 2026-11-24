@@ -54,6 +54,23 @@ the case of kernels of order prime to the characteristic.
 - [Isogenies of abelian schemes](isogenies-of-abelian-schemes.md), for isogenies and their degrees
 - [Polarization](polarization.md), for the polarizations whose descent 4 describes
 
+## Proof depends on
+
+- [Dual abelian variety](dual-abelian-variety.md), for $\varphi_L$ and the dual homomorphisms used
+  in 1 and 4
+- [Theorem of the cube, theorem of the square and the seesaw principle](theorem-of-the-cube.md), for
+  the theorem of the square and the group $K(L)$
+- [Isogenies of abelian schemes](isogenies-of-abelian-schemes.md), for the degrees of isogenies and
+  of $n_A$, used in 2, 4 and 5
+- [Standard results of coherent cohomology on projective varieties](../birational-geometry/standard-results-of-coherent-cohomology.md),
+  for the Riemann–Roch polynomial and Serre duality used in 2 and 3
+
+The other steps of its proof are not pages yet: the surjectivity of $\varphi_L$ (van der
+Geer–Moonen, Theorem (6.18)), Mumford's Riemann–Roch and vanishing theorems (Mumford, §16), theta
+groups with the Weil pairings $e_\lambda$ and van der Geer and Moonen's descent criterion, and, for
+5, an isogeny $h$ with $h \circ f = n_A$ or Deligne's theorem that a finite commutative group scheme
+over a field is killed by its order.
+
 ## Sources
 
 - G. van der Geer and B. Moonen, *Abelian Varieties*, book draft, Chapter VI, "The Picard scheme of

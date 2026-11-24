@@ -63,6 +63,23 @@ A good expansion has pages for:
   $h^0(X, mL) = 0$ for all $m \ge 1$ when $\kappa(L) = -\infty$; the volume is finite, and $L$ is
   big if and only if its volume is positive.
 
+## Depends on
+
+- [Currents of integration and the support theorems](currents-of-integration.md), for the curvature
+  currents of singular metrics in Corollary (5.3)
+
+Its statement also uses Kähler manifolds with complete metrics and hermitian vector bundles with
+their curvature operators on $L^2$ forms, which no page states yet.
+
+## Proof depends on
+
+The steps of its proof are not pages yet: the Kähler identities and the Bochner–Kodaira–Nakano
+identity with its a priori inequality, the $L^2$ existence theorems (5.1)–(5.3), Ohsawa's twisted
+estimates and Ohsawa and Takegoshi's §§1–3, the holomorphic Morse inequalities, the Riemann–Roch
+formula $\chi(X, kL) = \frac{(L^n)}{n!} k^n + o(k^n)$, the complete Kähler metrics on weakly
+pseudoconvex manifolds and on complements of analytic subsets, and the Serre–Siegel lemma (Demailly,
+§§4–5, 8, 12–13).
+
 ## Sources
 
 - J.-P. Demailly, *Analytic Methods in Algebraic Geometry*, Surveys of Modern Mathematics 1, Higher

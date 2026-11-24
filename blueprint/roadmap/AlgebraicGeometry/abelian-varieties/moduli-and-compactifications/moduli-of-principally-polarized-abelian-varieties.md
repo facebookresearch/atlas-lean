@@ -52,6 +52,17 @@ unitary Shimura varieties](toroidal-compactifications-of-unitary-shimura-varieti
 - [Abelian scheme](../abelian-scheme.md)
 - [Polarization](../polarization.md)
 
+## Proof depends on
+
+- [Mumford's construction of degenerating abelian varieties](mumford-construction-of-degenerating-abelian-varieties.md),
+  for the totally toric case of the inverse of the degeneration data, which Faltings and Chai
+  generalize
+
+The other steps of its proof are not pages yet: the representability of the moduli functors with
+level structure and the irreducibility of their geometric fibres, the degeneration data of polarized
+semi-abelian schemes and their inverse, the toroidal and minimal compactifications, and the Koecher
+principle (Faltings–Chai; Lan; Madapusi Pera).
+
 ## Sources
 
 - G. Faltings and C.-L. Chai, *Degeneration of Abelian Varieties*, Ergebnisse der Mathematik (3) 22,

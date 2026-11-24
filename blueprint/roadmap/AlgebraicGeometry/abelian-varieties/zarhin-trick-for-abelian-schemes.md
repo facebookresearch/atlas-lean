@@ -42,6 +42,19 @@ polarization, a bridge for which no source has yet been identified.
 - [Theorem of the cube, theorem of the square and the seesaw principle](theorem-of-the-cube.md), for
   the Mumford bundle over a field; 2 needs its relative form over $R$, a page of the expansion
 
+## Proof depends on
+
+- [Zarhin's trick](zarhin-trick.md), for the construction over a field
+- [Lagrange's four-square theorem](../../NumberTheory/quadratic-forms-sums-of-squares/sums-of-squares/lagrange-four-square-theorem.md),
+  for the representation of an integer as a sum of four squares in Moret-Bailly's IX, 1.4–1.6
+
+The other steps of its proof are not pages yet: Moret-Bailly's abelian schemes $A \otimes_\mathbb{Z}
+M$ with their duals and polarizations (IX, 1.2–1.3), the descent of polarizations along isogenies of
+abelian schemes through finite flat subgroup schemes and Weil pairings, and his quaternionic lattice
+(IX, 1.4–1.6); and, for 2, the relative theorem of the cube over $R$ and the existence over $R$ of a
+symmetric line bundle inducing a given principal polarization, for which no source has been
+identified.
+
 ## Sources
 
 - L. Moret-Bailly, *Pinceaux de variétés abéliennes*, Astérisque 129, 1985,

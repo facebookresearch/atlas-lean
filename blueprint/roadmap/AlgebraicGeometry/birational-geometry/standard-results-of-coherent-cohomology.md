@@ -86,6 +86,10 @@ Tags 0E8S, 0BDC and 0BDG).
 
 - [Simple normal crossing divisor](simple-normal-crossing-divisor.md), for the transversality in 4
 
+## Proof depends on
+
+The steps of its proof are not pages yet: the classical proofs of 1–10, which its sources give.
+
 ## Sources
 
 - H. Esnault and E. Viehweg, *Lectures on Vanishing Theorems*, DMV Seminar 20, Birkhäuser, 1992;

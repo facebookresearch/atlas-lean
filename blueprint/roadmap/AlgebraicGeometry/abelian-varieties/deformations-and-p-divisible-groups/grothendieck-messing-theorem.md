@@ -60,6 +60,18 @@ Rham homology for abelian schemes, and the bijection and lifting criterion of (4
 
 - [p-divisible group](p-divisible-group.md)
 - [Abelian scheme](../abelian-scheme.md), for item (3)
+- [De Rham cohomology of abelian schemes](de-rham-cohomology-of-abelian-schemes.md), for the de Rham
+  homology of $A$ and its Hodge filtration in item (3)
+
+## Proof depends on
+
+- [De Rham cohomology of abelian schemes](de-rham-cohomology-of-abelian-schemes.md), for the de Rham
+  homology of an abelian scheme and its Hodge filtration, with which (3) compares the crystal
+
+The other steps of its proof are not pages yet: the universal extension of a $p$-divisible group by
+a vector group and its Lie algebra, the construction of the Dieudonné crystal and its values on
+nilpotent divided power thickenings, and the bijection and lifting criterion of (4) (Messing; Zink,
+Theorems 2.49–2.54).
 
 ## Sources
 

@@ -32,6 +32,12 @@ and Mumford's argument reducing the general case to an affine neighbourhood of t
 
 - [Abelian scheme](abelian-scheme.md), for the conventions on varieties
 
+## Proof depends on
+
+The steps of its proof are not pages yet: the cohomological flatness of $\pi$ in dimension zero
+(Robert, Lemma A.2.1), the case of an affine target (Robert, Remark 2.3.9) and Mumford's reduction
+to an affine neighbourhood of the image of a fibre (*Geometric Invariant Theory*, Proposition 6.1).
+
 ## Sources
 
 - D. Robert, *Theory of abelian varieties and their moduli spaces*, draft book (version of 7 March

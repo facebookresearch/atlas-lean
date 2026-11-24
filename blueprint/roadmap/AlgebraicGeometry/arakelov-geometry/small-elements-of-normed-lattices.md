@@ -51,6 +51,17 @@ A good expansion has pages for:
   lattice points in $K$ and $K^*$, from which Moriwaki deduces items 1–5 (Moriwaki, proof of
   Proposition 2.1, pp. 13–14).
 
+## Depends on
+
+This node has no prerequisites.
+
+## Proof depends on
+
+The steps of its proof are not pages yet: Minkowski's first theorem in its counting form,
+Minkowski's second theorem on successive minima, Mahler's inequality $V(K) V(K^*) \ge 4^n / (n!)^2$
+and Gillet and Soulé's estimates for the numbers of lattice points in $K$ and $K^*$ (Moriwaki, proof
+of Proposition 2.1).
+
 ## Sources
 
 - A. Moriwaki, "Continuity of volumes on arithmetic varieties", J. Algebraic Geom. 18 (2009),

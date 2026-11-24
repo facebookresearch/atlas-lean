@@ -31,6 +31,13 @@ identified, and this plan is not a proof of it.
 
 - [Abelian scheme](abelian-scheme.md)
 
+## Proof depends on
+
+The steps of its proof are not pages yet: the extension of homomorphisms of semi-abelian schemes
+over discrete valuation rings and then over normal bases (Faltings–Chai, chapter I), and, for 2, the
+semipositivity of the Hodge bundle of a semi-abelian scheme over a curve in characteristic zero, for
+which no source in this generality has been identified.
+
 ## Sources
 
 - G. Faltings and C.-L. Chai, *Degeneration of Abelian Varieties*, Ergebnisse der Mathematik (3) 22,

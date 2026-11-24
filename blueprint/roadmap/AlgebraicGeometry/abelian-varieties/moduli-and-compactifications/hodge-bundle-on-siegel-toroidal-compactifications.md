@@ -47,6 +47,17 @@ prescribed by the values $d\,\varphi(n\gamma_i)$ of the fan on the period forms 
 
 - [Moduli of principally polarized abelian varieties and their compactifications](moduli-of-principally-polarized-abelian-varieties.md)
 
+## Proof depends on
+
+- [Moduli of principally polarized abelian varieties and their compactifications](moduli-of-principally-polarized-abelian-varieties.md),
+  for the toroidal and minimal compactifications of the Siegel moduli schemes
+
+The other steps of its proof are not pages yet: smooth projective admissible cone decompositions for
+the Siegel group, the toroidal compactifications over $\mathbb{Z}[\zeta_n, 1/n]$ with their
+semi-abelian extensions and local charts, the global generation of a power of the Hodge bundle and
+Lan's Corollary 6.7. That the divisor $D'$ can be taken to be $B$ is open, with no source
+identified.
+
 ## Sources
 
 - G. Faltings and C.-L. Chai, *Degeneration of Abelian Varieties*, Ergebnisse der Mathematik (3) 22,

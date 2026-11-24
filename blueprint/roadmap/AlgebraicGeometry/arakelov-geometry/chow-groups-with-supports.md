@@ -51,6 +51,22 @@ A good expansion has pages for:
   lemma for $K_1$-chains above, which the proof of the arithmetic intersection product uses on the
   generic fibre (Gillet–Soulé 4.2.5–4.2.6 and p. 143).
 
+## Depends on
+
+- [Geometrically reduced variety over a field](../schemes-and-morphisms/varieties-over-a-field/is-variety.md),
+  for the smooth quasi-projective varieties of the moving lemma
+
+Its statement also uses the Grothendieck group of complexes of locally free sheaves acyclic off a
+closed subset, with its $\gamma$-filtration, and $K_1$-chains, which no page states yet.
+
+## Proof depends on
+
+The steps of its proof are not pages yet: $K$-theory with supports, its $\lambda$-operations and
+$\gamma$-filtration, with the isomorphism above (Gillet–Soulé, *Adams operations*, Theorem 8.2;
+Soulé, Theorem 4); the products and their agreement with Serre's Tor formula (Theorem C; Serre,
+Chapter V); Chow's moving lemma for cycles (Roberts) and the moving lemma for $K_1$-chains
+(Gillet–Soulé 4.2.5–4.2.6).
+
 ## Sources
 
 - H. Gillet and C. Soulé, "Arithmetic intersection theory", Publ. Math. IHÉS 72 (1990), 93–174,

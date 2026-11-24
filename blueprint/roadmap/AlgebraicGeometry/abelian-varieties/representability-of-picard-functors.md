@@ -45,6 +45,20 @@ application to Picard functors; Grothendieck's construction through Hilbert and 
 projective case; Raynaud's theorem; and the passage from a quasi-separated group algebraic space
 over a field to a scheme, through its dense schematic open subspace.
 
+## Depends on
+
+- [Abelian scheme](abelian-scheme.md), for the abelian schemes of 4 and the abelian varieties of 5
+
+Its statement also uses relative Picard functors as fppf sheaves and algebraic spaces, which no page
+states yet.
+
+## Proof depends on
+
+The steps of its proof are not pages yet: Artin's representability criterion for algebraic spaces
+and its application to Picard functors, Grothendieck's construction through Hilbert and Quot
+schemes, Raynaud's theorem, the passage from a group algebraic space over a field to a scheme, and,
+for 5, the Borel–Hopf structure theorem for graded bialgebras (van der Geer–Moonen, (6.12)–(6.13)).
+
 ## Sources
 
 - D. Robert, *Theory of abelian varieties and their moduli spaces*, draft book (version of 7 March

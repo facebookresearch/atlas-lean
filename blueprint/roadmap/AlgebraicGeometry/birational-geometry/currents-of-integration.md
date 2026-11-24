@@ -23,6 +23,20 @@ A good expansion has pages for:
 - the fundamental solution $\frac{i}{\pi} \partial\bar\partial \log |z| = \delta_0$ on $\mathbb{C}$
   (Chapter I, Corollary 3.4).
 
+## Depends on
+
+Its statement uses closed analytic subsets of complex manifolds, their regular loci and currents on
+complex manifolds, which no page states yet.
+
+## Proof depends on
+
+The steps of its proof are not pages yet: currents on manifolds with their derivatives,
+push-forwards and pull-backs (Demailly, *Complex Analytic and Differential Geometry*, Chapter I,
+§2), positive forms and positive currents (Chapter III, §1), Lelong's theorem with the local
+finiteness of the volume of $A_{\mathrm{reg}}$ and the Skoda–El Mir extension theorem, the support
+theorems (Chapter III, (2.10)–(2.14)) and the fundamental solution $\frac{i}{\pi}
+\partial\bar\partial \log |z| = \delta_0$ on $\mathbb{C}$.
+
 ## Sources
 
 - J.-P. Demailly, *Complex Analytic and Differential Geometry*, version of 21 June 2012,
