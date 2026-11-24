@@ -1,7 +1,8 @@
-# Stagnation energy not isentropic
+# The energy balance alone does not fix the stagnation pressure
 
-The energy balance alone does not give the isentrope: under the hypotheses of
-`stagnation_temperature_ratio` with `M > 0`, and a static state `p = ρ R T` with `ρ > 0`, the
-state with pressure `p0 = p`, density `ρ0 = p / (R T0)` and the same `T0` obeys the ideal-gas
-law, but its pressure ratio `p0 / p = 1` is below the isentropic `(T0 / T) ^ (γ / (γ - 1))`
-(its entropy rises by `cp log (T0 / T) > 0`).
+Let `γ > 1`, `R > 0`, `T > 0` and `cp = γ R / (γ - 1)`, let `a` satisfy `a² = γ R T` (a sound
+speed), let `M = |u| / a` be the Mach number of the velocity coordinate `u`, and let the stagnation
+energy balance `cp T + u² / 2 = cp T0` hold. Let `M > 0`, `ρ > 0` and `p = ρ R T`. Then there are
+`ρ0 > 0` and `p0` with the ideal-gas law `p0 = ρ0 R T0` and `p0 / p < (T0 / T)^(γ / (γ - 1))`, for
+example `p0 = p` and `ρ0 = p / (R T0)`: without the isentropic connection the stagnation pressure is
+not determined.

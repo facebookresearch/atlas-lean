@@ -1,5 +1,7 @@
-# Exists Unique is Radiosity
+# For emissivities 0 < ε ≤ 1, the radiosities exist and are unique
 
-Existence and uniqueness of the gray radiosities: in an enclosure whose surfaces all have
-emissivity `0 < ε i ≤ 1`, the radiosity equations have exactly one solution, for every
-temperature field and every `σ`.
+Let `ι` be a finite set of surfaces with areas `A` and view factors `F` forming a
+[black enclosure](is-black-enclosure.md) and let the emissivities satisfy `0 < ε_i ≤ 1`. Then for
+every real `σ` and all temperatures `T`, the [radiosity equations](is-radiosity.md) have exactly one
+solution `J`. Positive emissivity matters: with all emissivities zero the solution is not unique
+([reflectors](not-exists-unique-is-radiosity-of-emissi.md)).

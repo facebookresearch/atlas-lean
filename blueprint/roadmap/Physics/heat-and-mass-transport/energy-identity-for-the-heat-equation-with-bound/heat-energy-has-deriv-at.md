@@ -1,19 +1,15 @@
-# Heat Energy has Deriv At
+# Energy identity with boundary work for the heat equation at one time
 
-Quadratic heat-energy identity with explicit boundary work, at
-one time `t`: for a temperature field `u` with actual time
-derivative `ut`, spatial derivatives `ux`, `uxx` in `HasDerivAt`
-form on `Set.uIcc 0 L` (`0 ≤ L`), satisfying
-`ut t x = D * uxx t x + src t x` there, the energy
-`E(τ) = ∫₀ᴸ u(τ, x)^2 / 2 dx` has derivative at `t` equal to
-`-D * ∫₀ᴸ ux^2 dx + D * (u(t, L) * ux(t, L) - u(t, 0) * ux(t, 0))
-+ ∫₀ᴸ u * src dx`. The boundary terms are retained, not discarded.
-All hypotheses are scoped to the single time `t` and the interval
-`[0, L]`. The hypothesis `hE` is the differentiation under the
-integral, as a `HasDerivAt` for the energy itself; `ut` is
-required to be the actual time derivative (`hut`). No joint
-regularity hypothesis is declared: the assumptions are exactly
-the pointwise derivative and continuity data at this `t`. The integration by parts is proved
-from the stated derivative and continuity data. The first term is
-the diffusion contribution; it is a dissipation only when
-`0 ≤ D` (see `diffusion_contribution_nonpos`).
+Let `0 ≤ L`, `D` and `t` be real, and let `u`, `ut`, `ux`, `uxx` and `src` be functions of time and
+position. Assume that at time `t`, for every `x` with `0 ≤ x ≤ L`: `u(·, x)` has the derivative
+`ut(t, x)` at `t`; `u(t, ·)` has the derivative `ux(t, x)` at `x`; `ux(t, ·)` has the derivative
+`uxx(t, x)` at `x`; and `ut(t, x) = D uxx(t, x) + src(t, x)`. Assume also that `u(t, ·)`, `ux(t, ·)`
+and `uxx(t, ·)` are continuous on `[0, L]`, that `x ↦ u(t, x) ut(t, x)` is integrable on `[0, L]`,
+and that the energy `E(τ) = ∫_0^L u(τ, x)²/2 dx` has the derivative `∫_0^L u(t, x) ut(t, x) dx` at
+`t` (differentiation under the integral). Then `E` has at `t` the derivative
+
+`-D ∫_0^L ux(t, x)² dx + D (u(t, L) ux(t, L) - u(t, 0) ux(t, 0)) + ∫_0^L u(t, x) src(t, x) dx`.
+
+The three terms are the diffusion contribution, the boundary work at the two ends, kept explicitly,
+and the source power. The diffusion contribution is a dissipation when `D ≥ 0`. All hypotheses
+concern the single time `t`.

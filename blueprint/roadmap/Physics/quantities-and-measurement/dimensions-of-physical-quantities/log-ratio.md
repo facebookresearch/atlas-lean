@@ -1,6 +1,6 @@
-# Log Ratio
+# Logarithm of the ratio of two positive quantities of one dimension
 
-The logarithm `log (x / x0)` of the ratio of two positive quantities of the *same*
-dimension `d`. Both arguments share the dimension index, so a ratio of quantities of
-different dimensions is a type error; only after the type-level quotient `d / d = 1`
-is formed is the coordinate ratio passed to `Real.log`.
+For two quantities `x` and `x₀` of the same dimension `d` with positive values, the logarithm
+`ln (x / x₀)` of their ratio, a dimensionless quantity: its value is the natural logarithm of the
+quotient of the values. A ratio of quantities of different dimensions is not accepted, and no
+logarithm of a single dimensioned value is formed.

@@ -1,6 +1,6 @@
-# Uniform convergence of the slab series
+# For c₀ ≥ 0 and δ > 0 the slab series converges uniformly for t ≥ δ
 
-For `c₀ ≥ 0`, `L > 0`, `D > 0` and `δ > 0`, the
-partial sums `∑_{n < N} fourierTerm c₀ L D n x t` converge to the sum of the series uniformly on
-`[0, L] × [δ, ∞)` (Weierstrass M-test). That the sum solves the diffusion equation or attains
-the initial data at `t = 0` is not proved.
+Let `c₀ ≥ 0`, `L > 0`, `D > 0` and `δ > 0`. The partial sums `∑_{n < N}` of the
+[series term](fourier-term.md) `bₙ sin(nπx/L) exp(-D (nπ/L)² t)` converge, as `N → ∞`, to the sum of
+the series uniformly on `[0, L] × [δ, ∞)`, by the Weierstrass M-test with the
+[geometric bounds](fourier-term-bound.md).

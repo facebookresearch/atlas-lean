@@ -1,3 +1,6 @@
-# Two Cell Stiffness eq stiffness
+# The interior stiffness is the unit stiffness scaled by EA/L
 
-The physical stiffness is the assembled unit entry scaled by `EA / L`.
+For all real `EA` and `L`, the [interior stiffness](two-cell-stiffness.md) `4 EA / L` equals
+`EA / L` times the assembled unit
+[stiffness](../finite-element-method-in-one-dimension/stiffness.md) entry of the interior node of
+the [two-cell partition](two-cells.md).

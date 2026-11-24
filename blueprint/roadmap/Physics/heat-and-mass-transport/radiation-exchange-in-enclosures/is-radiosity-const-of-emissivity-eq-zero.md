@@ -1,4 +1,6 @@
-# Is Radiosity const of emissivity eq zero
+# With zero emissivities, every constant radiosity is a solution
 
-Reflectors only: with every emissivity zero, each constant radiosity solves the equations of
-an enclosure, whatever the temperatures.
+Let `ι` be a finite set of surfaces with areas `A` and view factors `F` forming a
+[black enclosure](is-black-enclosure.md), and let every emissivity be `0`. Then for every `σ`, all
+temperatures `T` and every real `c`, the constant field `J_i = c` solves the
+[radiosity equations](is-radiosity.md).

@@ -1,3 +1,4 @@
-# Pipe Mean Velocity pos
+# The mean velocity is positive for a positive pressure gradient
 
-The mean velocity is positive for `G, μ, R > 0`.
+For `G > 0`, `μ > 0`, `R > 0` and every real `z`, the [mean velocity](pipe-mean-velocity.md)
+`V = Q / (π R²)` is positive.

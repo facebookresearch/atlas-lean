@@ -1,3 +1,5 @@
-# Resistance Dim mul capacitance Dim
+# Resistance times capacitance is a time
 
-Resistance times capacitance has the time dimension.
+Over the charge-based base quantities length `L`, time `T`, mass `M`, electric charge `C` and
+temperature `Θ`, the [resistance](resistance-dim.md) dimension times the
+[capacitance](capacitance-dim.md) dimension is the time dimension `T`.

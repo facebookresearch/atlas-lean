@@ -1,5 +1,6 @@
-# The trace decoder
+# Decoding an encoded trace
 
-For an input of at most 300 characters with exactly eleven
-comma-separated tokens, the list of the token values when every token decodes; `none` for a longer
-input, any other token count, or a token that does not decode.
+For a list of characters `s`, the trace decoder returns, when `s` has at most 300 characters and
+[splits](split-on-char.md) at `,` into exactly eleven pieces that all
+[decode as tokens](decode-token.md), the list of the eleven token values; otherwise it returns
+nothing.

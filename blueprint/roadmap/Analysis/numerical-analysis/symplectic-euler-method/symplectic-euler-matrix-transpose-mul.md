@@ -1,5 +1,4 @@
-# Symplectic Euler Matrix transpose mul
+# The symplectic Euler step matrix is symplectic
 
-Symplecticity of the momentum-first step in transposed form:
-`Mᵀ * J * M = J` for the concrete `Fin 2` alternating matrix
-`J = [[0, -1], [1, 0]]`.
+For real numbers `m ≠ 0`, `k` and `h`, the [symplectic Euler step matrix](symplectic-euler-matrix.md)
+`M` satisfies `Mᵀ J M = J` for the 2 × 2 matrix `J` with rows `(0, -1)` and `(1, 0)`.

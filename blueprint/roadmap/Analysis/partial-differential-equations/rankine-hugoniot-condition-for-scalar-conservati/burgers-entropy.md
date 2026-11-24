@@ -1,3 +1,3 @@
-# Burgers Entropy
+# Entropy for the Burgers equation
 
-Entropy `η u = u ^ 2 / 2` for the Burgers flux.
+For a real `u`, the entropy is `η(u) = u² / 2`.

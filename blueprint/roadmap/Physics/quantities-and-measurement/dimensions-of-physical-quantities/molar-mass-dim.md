@@ -1,3 +1,5 @@
-# Molar Mass Dim
+# Dimension of molar mass
 
-The molar mass dimension `M N⁻¹`.
+Over the seven ISQ base quantities length `L`, mass `M`, time `T`, electric current `I`,
+thermodynamic temperature `Θ`, amount of substance `N` and luminous intensity `J`, the dimension of
+molar mass is `M N⁻¹`, a mass per [amount of substance](amount-dim.md).

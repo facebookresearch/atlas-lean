@@ -1,6 +1,6 @@
-# Weak Residual moving Step eq zero iff of trace ne zero
+# A test with nonzero front integral detects the jump condition
 
-A test with nonzero interface integral detects the jump: for a smooth test `φ` vanishing
-outside a bounded rectangle, with time and space partials `φt`, `φx`, and
-`∫ φ (t, c * t) dt ≠ 0` (a positive one such as `interfaceTest`), the weak residual of the
-moving step vanishes exactly when `c * (uR - uL) = f uR - f uL`.
+For a flux `f`, real numbers `u_L`, `u_R` and `c`, and a smooth test function `φ` with time and
+space partial derivatives `φ_t`, `φ_x` that vanishes outside a bounded rectangle and satisfies
+`∫ φ(t, c t) dt ≠ 0`, the [weak residual](weak-residual.md) of the [moving step](moving-step.md) is
+`0` if and only if `c (u_R - u_L) = f(u_R) - f(u_L)`.

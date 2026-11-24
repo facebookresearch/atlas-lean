@@ -1,5 +1,6 @@
-# Quad Midpoint Coeff sub quad Coeff
+# The midpoint and exact-load coefficients differ by β/384
 
-The midpoint coefficient differs from the exact-load coefficient by `β / 384` (midpoint
-minus exact; for `EA > 0` it has the sign of `Q`); the physical coefficient error is
-`|β| / 384`.
+For real numbers `EA ≠ 0`, `L > 0` and `Q`, the [midpoint coefficient](quad-midpoint-coeff.md) minus
+the [exact-load coefficient](quad-coeff.md) is `β / 384`, with the [amplitude](quad-amplitude.md)
+`β`, so the two differ by `|β| / 384` in absolute value; for `EA > 0` the difference has the sign of
+`Q`.

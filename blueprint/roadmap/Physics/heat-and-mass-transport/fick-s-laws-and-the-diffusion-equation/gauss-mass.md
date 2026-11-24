@@ -1,5 +1,10 @@
-# Conservation of mass
+# For D > 0 and t > 0 the Gaussian has total mass M
 
-For `D > 0`, `t > 0` and every real `M`, the Gaussian has total
-mass `∫ gauss M D x t dx = M` on the line. This is `EarthScience.point_release_integral` with no
-drift and no reaction.
+Let `D > 0` and `t > 0`. For every real `M`, the [Gaussian](gauss.md)
+`G(x, t) = M/√(4πDt) · exp(-x²/(4Dt))` has
+
+`∫_ℝ G(x, t) dx = M`.
+
+It is a special case of the
+[point-release inventory](../point-release-solution-of-advection-diffusion-re/point-release-integral.md),
+with no drift and no reaction.

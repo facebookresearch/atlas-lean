@@ -1,4 +1,4 @@
-# Pipe Mean Velocity ne zero
+# The mean velocity is nonzero for a nonzero pressure gradient
 
-The mean velocity is nonzero for `G ≠ 0` and `μ, R > 0`: the pipe carries a flow in one of the
-two directions.
+For `G ≠ 0`, `μ > 0`, `R > 0` and every real `z`, the [mean velocity](pipe-mean-velocity.md)
+`V = Q / (π R²)` is nonzero: the pipe carries a flow in one of the two directions.

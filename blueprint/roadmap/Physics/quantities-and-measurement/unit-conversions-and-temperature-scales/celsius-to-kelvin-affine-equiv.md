@@ -1,3 +1,4 @@
-# Celsius To Kelvin Affine Equiv
+# Celsius-to-kelvin conversion as an affine bijection
 
-Celsius-to-Kelvin conversion as an affine equivalence of real coordinates.
+The translation `T ↦ T + 273.15` of the real line, as an affine bijection (with inverse
+`T ↦ T - 273.15`).

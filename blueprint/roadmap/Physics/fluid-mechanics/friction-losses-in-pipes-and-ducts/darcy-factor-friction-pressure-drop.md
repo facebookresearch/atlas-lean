@@ -1,9 +1,15 @@
-# Guarded friction loss
+# Guarded friction loss: positive coefficient, power and reversal
 
-Where a friction correlation supplies a Darcy factor `f > 0` for a
-request whose Reynolds number and relative roughness are those of the flow and the pipe,
-`Re = ρ |Q / A| D / μ` and `ε / D`, the correlation was calibrated for the pipe's relative
-roughness; the coefficient `c = f L ρ / (2 D A ^ 2)` is positive; the reversed flow `-Q` has the
-same Reynolds number (and, in the same pipe, the same roughness), so the same certified factor
-applies to it; the dissipated power `Δp Q` is nonnegative; and the reversed flow has the pressure
-drop `-Δp`.
+Let a [friction correlation](friction-correlation.md) `C`
+[apply as a Darcy factor](darcy-applies.md) to a [request](friction-request.md) `r`, with a positive
+[Darcy factor](darcy-factor.md) `f`. Let `L`, `D`, `A`, `ρ` and `μ` be positive and `Q` and `ε`
+real, and suppose the request's Reynolds number is that of the flow, `Re = ρ |Q / A| D / μ`, and its
+relative roughness is that of the pipe, `ε / D`. Then:
+
+- the correlation was calibrated for the pipe's relative roughness `ε / D`;
+- the [loss coefficient](darcy-coefficient.md) `c = f L ρ / (2 D A²)` is positive;
+- the reversed flow `-Q` has the same Reynolds number, `Re = ρ |-Q / A| D / μ`, so the same
+  factor applies to it in the same pipe;
+- the dissipated power `Δp Q` of the [pressure drop](friction-pressure-drop.md)
+  `Δp = c Q |Q|` is nonnegative;
+- the reversed flow has the pressure drop `-Δp`.

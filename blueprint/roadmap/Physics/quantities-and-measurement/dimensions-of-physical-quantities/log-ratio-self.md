@@ -1,3 +1,3 @@
-# Log Ratio self
+# The log-ratio of a positive quantity to itself is zero
 
-The `logRatio` of a coordinate to itself is `0`.
+For every quantity `x` with a positive value, the [log-ratio](log-ratio.md) of `x` to itself is `0`.

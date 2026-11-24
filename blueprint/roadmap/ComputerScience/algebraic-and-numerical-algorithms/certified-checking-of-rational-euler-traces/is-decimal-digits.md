@@ -1,3 +1,4 @@
-# Is Decimal Digits
+# Run of one to eleven decimal digits
 
-A digit run of the format: one to eleven ASCII decimal digits `'0', …, '9'`.
+A list of characters is a digit run when it has between one and eleven characters, each an ASCII
+decimal digit `'0'`, …, `'9'`.

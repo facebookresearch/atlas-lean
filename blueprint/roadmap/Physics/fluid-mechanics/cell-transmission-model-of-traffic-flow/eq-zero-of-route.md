@@ -1,5 +1,6 @@
-# Routing certificates are turning certificates
+# Route certificates are supported on movements
 
-If every commodity is a route given by a
-valid walk and carries flow only from an arc of its route to the next arc, then its turning
-flows are supported on movements: a flow from `e` to `e'` with `head e ≠ tail e'` is zero.
+Let each commodity `c` follow a route: a list of links forming a walk from its origin to its
+destination, each link starting at the junction where the previous one ends. If commodity `c`
+carries flow only from a link of its route to the next link of the route (`q(c, e, e') ≠ 0` implies
+that `(e, e')` are consecutive in the list), then `q(c, e, e') = 0` whenever `head e ≠ tail e'`.

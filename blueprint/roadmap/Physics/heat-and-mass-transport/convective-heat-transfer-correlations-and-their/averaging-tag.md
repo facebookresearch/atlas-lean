@@ -1,4 +1,3 @@
-# Averaging Tag
+# Local or surface-averaged correlation value
 
-Whether a correlation gives the local value at one surface position or the value averaged
-over the surface.
+A correlation value is either local, at one surface position, or averaged over the surface.

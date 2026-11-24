@@ -1,90 +1,87 @@
 # Fick's laws and the diffusion equation
 
-## A. Fick's first law and the diffusion equation
+## Fick's first law and the diffusion equation
 
-- [Fick's first law](fick-flux.md)
-- [Fick's second law from the continuity equation](fick-continuity-imply-diffusion.md)
+- [Fick's first law: the flux is −D times the concentration gradient](fick-flux.md)
+- [Fick's law with the continuity equation gives the diffusion equation](fick-continuity-imply-diffusion.md)
 
-## B. The Gaussian on the line
+## The Gaussian on the line
 
-- [Gauss](gauss.md)
+- [Gaussian concentration with total mass M on the line](gauss.md)
+- [Spatial derivative of the Gaussian for D > 0 and t > 0](gauss-xderiv-value.md)
+- [Second spatial derivative of the Gaussian for D > 0 and t > 0](gauss-xxderiv-value.md)
+- [Time derivative of the Gaussian for D > 0 and t > 0](gauss-tderiv-value.md)
+- [For D > 0 and t > 0 the Gaussian solves the diffusion equation](gauss-pde.md)
 
-## B.1. Derivatives and the diffusion equation
+## Mass and the initial limit of the Gaussian
 
-- [Gauss xderiv value](gauss-xderiv-value.md)
-- [Gauss xxderiv value](gauss-xxderiv-value.md)
-- [Gauss tderiv value](gauss-tderiv-value.md)
-- [The Gaussian solves the diffusion equation](gauss-pde.md)
+- [For M, D and t positive the Gaussian is nonnegative](gauss-nonneg.md)
+- [For D > 0 and t > 0 the Gaussian has total mass M](gauss-mass.md)
+- [For M > 0 the Gaussian tends to the point mass M δ₀ as t → 0⁺](gauss-weak-limit.md)
 
-## B.2. Mass and the initial limit
+## The complementary error function
 
-- [Gauss nonneg](gauss-nonneg.md)
-- [Conservation of mass](gauss-mass.md)
-- [Initial limit of the Gaussian](gauss-weak-limit.md)
+- [Complementary error function](erfc.md)
+- [Derivative function of the complementary error function](erfc-deriv.md)
+- [Second-derivative function of the complementary error function](erfc-deriv2.md)
+- [The complementary error function equals 1 at 0](erfc-zero.md)
+- [The complementary error function has derivative −2e^−x²/√π](has-deriv-at-erfc.md)
+- [The derivative −2e^−x²/√π has derivative 4x e^−x²/√π](has-deriv-at-erfc-deriv.md)
+- [The complementary error function solves y″ + 2x y′ = 0](erfc-ode.md)
+- [The complementary error function is strictly decreasing](erfc-strict-anti.md)
+- [The complementary error function tends to 0 at +∞](erfc-tendsto-at-top.md)
+- [For u ≥ 0 the complementary error function is a Gaussian tail integral](erfc-tail.md)
+- [The complementary error function is nonnegative for u ≥ 0](erfc-nonneg.md)
+- [For u ≥ 0 the complementary error function is at most 2√2 e^−u²/2](erfc-le-gauss.md)
 
-## C.1. The complementary error function
+## The error-function profile
 
-- [Erfc](erfc.md)
-- [Erfc Deriv](erfc-deriv.md)
-- [Erfc Deriv2](erfc-deriv2.md)
-- [Erfc zero](erfc-zero.md)
-- [Has Deriv At erfc](has-deriv-at-erfc.md)
-- [Has Deriv At erfc Deriv](has-deriv-at-erfc-deriv.md)
-- [Erfc ode](erfc-ode.md)
-- [Erfc strict Anti](erfc-strict-anti.md)
-- [Erfc tendsto at Top](erfc-tendsto-at-top.md)
-- [Erfc tail](erfc-tail.md)
-- [Erfc nonneg](erfc-nonneg.md)
-- [Erfc le gauss](erfc-le-gauss.md)
+- [Error-function profile with surface concentration cs](erfc-profile.md)
+- [Spatial derivative of the error-function profile for D, t > 0](erfc-profile-xderiv-value.md)
+- [Second spatial derivative of the error-function profile for D, t > 0](erfc-profile-xxderiv-value.md)
+- [Time derivative of the error-function profile for D, t > 0](erfc-profile-tderiv-value.md)
+- [For D, t > 0 the error-function profile solves the diffusion equation](erfc-profile-pde.md)
 
-## C.2. The profile and the diffusion equation
+## Surface, far-field and initial values
 
-- [Erfc Profile](erfc-profile.md)
-- [Erfc Profile xderiv value](erfc-profile-xderiv-value.md)
-- [Erfc Profile xxderiv value](erfc-profile-xxderiv-value.md)
-- [Erfc Profile tderiv value](erfc-profile-tderiv-value.md)
-- [The error-function profile solves the diffusion equation](erfc-profile-pde.md)
+- [For D, t > 0 the error-function profile equals cs at the surface](erfc-profile-surface.md)
+- [For D, t > 0 the error-function profile tends to 0 as x → ∞](erfc-profile-farfield.md)
+- [For x > 0 and D > 0 the profile tends to 0 as t → 0⁺](erfc-profile-initial.md)
 
-## C.3. Surface, far-field and initial values
+## Mass uptake through the surface
 
-- [Erfc Profile surface](erfc-profile-surface.md)
-- [Erfc Profile farfield](erfc-profile-farfield.md)
-- [Erfc Profile initial](erfc-profile-initial.md)
+- [For cs, D and t positive the profile is integrable on the half-line](erfc-profile-integrable-on.md)
+- [For x, cs and D positive the concentration at depth x increases in t](profile-pointwise-lt.md)
+- [For cs, D > 0 the amount on the half-line increases strictly in time](erfc-profile-mass-strict-mono.md)
 
-## C.4. Mass uptake through the surface
+## Uniqueness for the Dirichlet problem
 
-- [Erfc Profile integrable On](erfc-profile-integrable-on.md)
-- [Profile pointwise lt](profile-pointwise-lt.md)
-- [Mass uptake](erfc-profile-mass-strict-mono.md)
+- [For a ≤ b and continuous w the energy is continuous on 0 ≤ t ≤ T](continuous-on-energy.md)
+- [With zero boundary values the energy has derivative −2D ∫ wx²](energy-identity-deriv.md)
+- [For D > 0 the Dirichlet problem has at most one solution](diffusion-unique-dirichlet.md)
 
-## D. Uniqueness for the Dirichlet problem
+## Parabolic scaling
 
-- [Continuous On energy](continuous-on-energy.md)
-- [Energy identity at an interior time](energy-identity-deriv.md)
-- [Uniqueness for the Dirichlet problem](diffusion-unique-dirichlet.md)
+- [Parabolic rescaling of a concentration field](scaled-sol.md)
+- [Parabolic rescaling of a solution at one point](similarity-pde-at.md)
+- [For λ > 0 parabolic rescaling maps solutions on the plane to solutions](similarity-pde.md)
+- [Similarity variable of the diffusion equation](sim-var.md)
+- [For D, t and λ positive the similarity variable is scaling invariant](sim-var-invariant.md)
 
-## E. Parabolic scaling
+## The steady membrane profile
 
-- [Scaled Sol](scaled-sol.md)
-- [Parabolic scaling at a point](similarity-pde-at.md)
-- [Parabolic scaling](similarity-pde.md)
-- [Sim Var](sim-var.md)
-- [Sim Var invariant](sim-var-invariant.md)
+- [Linear steady profile between two boundary concentrations](steady-profile.md)
+- [The steady profile equals c₁ at x = 0](steady-boundary-zero.md)
+- [For L > 0 the steady profile equals c₂ at x = L](steady-boundary-l.md)
+- [The steady profile has the constant slope c₂ − c₁ over L](steady-xderiv-value.md)
+- [For L > 0 the steady profile solves the steady diffusion equation](steady-pde.md)
+- [For L > 0 the steady membrane flux is D times c₁ − c₂ over L](steady-flux.md)
 
-## F. The steady membrane profile
+## The slab sine series
 
-- [Steady Profile](steady-profile.md)
-- [Steady boundary zero](steady-boundary-zero.md)
-- [Steady boundary L](steady-boundary-l.md)
-- [Steady xderiv value](steady-xderiv-value.md)
-- [Steady pde](steady-pde.md)
-- [Steady membrane flux](steady-flux.md)
-
-## G. The slab sine series
-
-- [Fourier Coeff](fourier-coeff.md)
-- [Fourier Term](fourier-term.md)
-- [Sine coefficients of a uniform profile](fourier-coeff-formula.md)
-- [Fourier Term bound](fourier-term-bound.md)
-- [Fourier dominator summable](fourier-dominator-summable.md)
-- [Uniform convergence of the slab series](fourier-uniform-convergent.md)
+- [Sine coefficients of a uniform initial concentration](fourier-coeff.md)
+- [Terms of the slab sine series](fourier-term.md)
+- [For L > 0 and n ≥ 1 the sine-coefficient integral gives bₙ](fourier-coeff-formula.md)
+- [For t ≥ δ > 0 the series terms are bounded by a geometric sequence](fourier-term-bound.md)
+- [For L, D and δ positive the geometric bounds are summable](fourier-dominator-summable.md)
+- [For c₀ ≥ 0 and δ > 0 the slab series converges uniformly for t ≥ δ](fourier-uniform-convergent.md)

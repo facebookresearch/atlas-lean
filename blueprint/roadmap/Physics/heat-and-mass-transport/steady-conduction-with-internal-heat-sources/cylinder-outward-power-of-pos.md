@@ -1,8 +1,10 @@
-# Cylinder outward Power of pos
+# For R, k > 0 the outward power per unit length is πR² qvol
 
-Outward conductive power per unit length at the surface of the
-physical cylinder: for radius `0 < R` and conductivity `0 < k`,
-`2πR * (-k * T'(R)) = π * R^2 * qvol`, balancing the total source
-generated in the cross-section. Here `2πR` is the circumference per
-unit length and the profile is the physical solution on
-`0 ≤ r ≤ R`.
+Let `R > 0` and `k > 0`. For every real `qvol`, the [cylinder gradient](cylinder-gradient.md)
+`T′(r) = -qvol r/(2k)` satisfies
+
+`2πR · (-k T′(R)) = πR² qvol`:
+
+the outward conductive power per unit length through the surface, `2πR` times the outward flux,
+balances the heat generated in the cross-section. It is a special case of the
+[algebraic surface-power identity](cylinder-outward-power.md).

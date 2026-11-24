@@ -1,3 +1,5 @@
-# Erfc le gauss
+# For u ≥ 0 the complementary error function is at most 2√2 e^−u²/2
 
-A Gaussian upper bound on `[0, ∞)`: `erfc u ≤ 2√2 exp(-u²/2)` for `u ≥ 0`.
+For every real `u ≥ 0`, the [complementary error function](erfc.md) satisfies
+
+`erfc u ≤ 2√2 exp(-u²/2)`.

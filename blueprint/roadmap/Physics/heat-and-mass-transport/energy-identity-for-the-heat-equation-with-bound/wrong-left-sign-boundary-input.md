@@ -1,5 +1,9 @@
-# Wrong Left Sign boundary Input
+# With the wrong sign at x = 0 the boundary work can be positive
 
-Invalid: the wrong left sign (`-k * ux(0) = h0 * θ(0)`, i.e. normal `+1` at `0`)
-admits boundary input: with `k = h0 = D = 1`, `θ(0) = 1`, `ux(0) = -1`,
-`θ(L) = ux(L) = 0`, the boundary work `D * (θ(L) ux(L) - θ(0) ux(0))` is `1 > 0`.
+There are reals `k > 0`, `h₀ > 0`, `D > 0` and `θ₀`, `ux₀`, `θ_L`, `ux_L` with `-k ux₀ = h₀ θ₀` (the
+Robin condition at `x = 0` with the sign reversed), `-k ux_L = 0 · θ_L`, and positive boundary work
+
+`D (θ_L ux_L - θ₀ ux₀) > 0`.
+
+The proof takes `k = h₀ = D = 1`, `θ₀ = 1`, `ux₀ = -1` and `θ_L = ux_L = 0`, giving boundary work
+`1`. So the outward sign convention at `x = 0` is needed for dissipation.

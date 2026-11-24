@@ -1,5 +1,6 @@
-# Darcy Applies
+# When a correlation supplies a Darcy factor for a request
 
-The correlation supplies a Darcy factor for a request: it is in the Darcy convention, the
-request has its duct shape, hydrodynamic development and relative roughness (each compared by
-equality), and the request's Reynolds number lies in its validity domain.
+A [friction correlation](friction-correlation.md) applies as a Darcy factor to a
+[friction request](friction-request.md) when: the correlation is in the Darcy convention; the
+request has the correlation's duct shape, hydrodynamic development and relative roughness, each
+compared by equality; and the request's Reynolds number lies in the correlation's validity domain.

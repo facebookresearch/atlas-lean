@@ -1,6 +1,8 @@
-# Has Deriv At thermal Storage
+# With symmetric conductances the stored heat changes at the input rate
 
-Storage balance at time `t`: if `dT i` is the derivative of `T i` at `t`, the conductances
-are symmetric and every node obeys `C i * dT i = ∑ j, G i j * (T j t - T i t) + Q i` at `t`, the
-stored heat `∑ i, C i * T i` has derivative `∑ i, Q i` at `t`: conduction between nodes cancels.
-This is `ZoneHeatInventory.heat_inventory_hasDerivAt` with inputs `Q` and no heating power.
+Let `ι` be a finite index set of nodes, with capacities `C i`, conductances `G i j` such that
+`G i j = G j i`, temperatures `T i` differentiable at time `t` with derivatives `dT i` and inputs
+`Q i`, such that every node obeys `C i dT i = ∑_j G i j (T j(t) - T i(t)) + Q i`. Then the stored
+heat `∑_i C i T i` has at `t` the derivative `∑_i Q i`: conduction between nodes cancels. It is the
+case without heating power of the
+[zone heat-inventory balance](../heat-balance-of-lumped-thermal-networks/heat-inventory-has-deriv-at.md).

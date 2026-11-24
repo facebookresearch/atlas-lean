@@ -1,5 +1,8 @@
-# Friction Request
+# Friction-factor request of a duct flow
 
-A friction-factor request: the Reynolds number `Re = ρ |V| D / μ` on the hydraulic diameter
-`D`, the relative roughness `ε / D` of the duct wall (roughness height `ε` over `D`, `0` for a
-smooth wall), the duct shape, and the hydrodynamic development at the evaluated section.
+A friction-factor request consists of a Reynolds number `Re` (on the hydraulic diameter), a relative
+roughness `ε / D` of the duct wall (roughness height over hydraulic diameter, `0` for a smooth
+wall), a [duct shape](duct-shape.md) and the
+[hydrodynamic development](../../heat-and-mass-transport/convective-heat-transfer-correlations-and-their/flow-development.md)
+of the velocity profile at the evaluated section. The two numbers are arbitrary reals; physically
+`Re = ρ |V| D / μ > 0` and `ε / D ≥ 0`.

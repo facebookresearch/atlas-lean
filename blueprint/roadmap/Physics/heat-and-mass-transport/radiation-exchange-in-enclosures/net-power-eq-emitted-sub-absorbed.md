@@ -1,6 +1,11 @@
-# Net Power eq emitted sub absorbed
+# Net power of a black surface is emission minus absorption
 
-Emission minus absorption: in a black enclosure with `σ > 0` and absolute temperatures
-`T ≥ 0`, the net power of surface `i` is its area times the hemispheric integral of its
-Lambertian intensity `σ T i ^ 4 / π`, minus the power `A j * F j i` times the same integral for
-`T j`, arriving from every surface `j` and absorbed.
+Let `ι` be a finite set of surfaces with areas `A` and view factors `F` forming a
+[black enclosure](is-black-enclosure.md), let `σ > 0` and let the temperatures `T_i ≥ 0` be
+absolute. Then for every surface `i`,
+
+`P_i = A_i E(T_i) - ∑_j A_j F_{ji} E(T_j)`, where `E(T) = ∫₀^{π/2} (σ T⁴ / π) cos θ · 2π sin θ dθ`
+
+is the hemispheric integral of the Lambertian intensity `σ T⁴ / π`, the blackbody emissive power
+(equal to `σ T⁴`). So the [net power](net-power.md) is the power emitted by `i` minus the power
+arriving from every surface and absorbed.

@@ -1,4 +1,6 @@
-# Uniqueness
+# For K ≥ 0, every counterflow solution is the closed form
 
-For `K ≥ 0`, every solution of the counterflow equations on `[0, L]` with the
-hot inlet `Thi` at `x = 0` and the cold inlet `Tci` at `x = L` is the closed form on `[0, L]`.
+Let `C_h > 0`, `C_c > 0` and `K ≥ 0`, and let `L`, `T_hi`, `T_ci` be real. If `(T_h, T_c)` is a
+[counterflow solution](is-counterflow-solution.md) on `[0, L]`, then for every `x ∈ [0, L]`,
+`T_h(x)` and `T_c(x)` are the [hot](counterflow-hot-temp.md) and [cold](counterflow-cold-temp.md)
+closed-form temperatures at `x`.

@@ -1,5 +1,6 @@
-# Sampled Wave
+# Traveling wave sampled at the nodes of a periodic grid
 
-The point sample `w_j^n = c(n * dt, j * dx)` of the traveling wave on `ncells` uniform
-periodic cells of `[0, L)`, `dx = L / ncells`: node `j : ZMod ncells` sits at
-`x_j = j.val * dx` and time level `n` at `t_n = n * dt`.
+For real numbers `c₀`, `a`, `v`, `L` and `Δt`, a number of cells `N_c ≥ 1`, a time level `n` and a
+node `j ∈ ℤ/N_cℤ`, the sample is `w_j^n = c(n Δt, x_j)` of the [traveling wave](traveling-wave.md),
+at the node `x_j = j Δx` with `Δx = L / N_c` and `j` read in `{0, …, N_c - 1}`. These are point
+values, not cell averages.

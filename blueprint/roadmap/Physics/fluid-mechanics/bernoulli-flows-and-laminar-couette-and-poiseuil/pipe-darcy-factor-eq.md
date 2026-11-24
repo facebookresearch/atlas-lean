@@ -1,7 +1,7 @@
-# Laminar Darcy factor
+# The laminar Darcy friction factor is 64 over the Reynolds number
 
-For `ρ, μ, R, L > 0` (positive density, viscosity, radius and
-length) and `G ≠ 0` (a nonzero flow, in either direction), the Darcy factor
-(`FluidDynamics.PipeFrictionPorts.darcyFactorOfDrop`) of the oriented Poiseuille pressure drop
-`G L` over the length `L` on the diameter `D = 2 R` at the signed mean velocity `V` is `64 / Re`,
-with `Re = ρ |V| D / μ`.
+Let `ρ > 0`, `μ > 0`, `R > 0`, `L > 0` and `G ≠ 0`, and let `z` be real. Then the Darcy friction
+factor `f = 2 D Δp / (ρ V |V| L)` of the oriented pressure drop `Δp = G L` over the length `L`, on
+the diameter `D = 2 R`, at the mean velocity `V` (defined for `L, D, ρ > 0` and a drop along the
+flow, `Δp V > 0`, which [holds here](pipe-drop-mul-mean-velocity-pos.md)) equals `64 / Re`, with the
+Reynolds number `Re = ρ |V| D / μ` on the diameter `D = 2 R`, in either flow direction.

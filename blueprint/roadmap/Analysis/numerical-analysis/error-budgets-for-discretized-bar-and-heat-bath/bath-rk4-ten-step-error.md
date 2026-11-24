@@ -1,5 +1,5 @@
-# Ten-step error bound
+# Ten Runge–Kutta steps of size τ/10 err by less than a millionth of Δ
 
-For `C, G > 0` and `Δ ≠ 0`, the ten-step RK4 iterate at
-`dt = τ / 10` differs from the exact temperature at `τ` by less than `|Δ| × 10⁻⁶`:
-`|T_10 - T(τ)| < |Δ| / 10 ^ 6`.
+Under the hypotheses of the [Runge–Kutta closed form](bath-rk4-closed-form.md) (`C > 0`, `G > 0`,
+`X_0 = T_amb + Δ`, steps of size `τ / 10`) with `Δ ≠ 0`, `|X_10 - T(τ)| < |Δ| / 10⁶`, where `T` is
+the exact [trajectory](bath-trajectory.md).

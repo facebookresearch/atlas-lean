@@ -1,4 +1,5 @@
-# Couette Flow convective Navier Stokes
+# Plane Couette flow solves the convective Navier–Stokes equations
 
-Plane Couette flow satisfies Physlib's convective Navier-Stokes equations with constant
-pressure `p₀`, shear viscosity `μ` and second viscosity `lam`.
+For all real `ρ`, `μ`, `λ`, `p₀`, `U_w` and `H`, [plane Couette flow](couette-flow.md) satisfies the
+Navier–Stokes equations in convective form (continuity, convective momentum balance and Newtonian
+stress) with the constant pressure `p₀`, the shear viscosity `μ` and the second viscosity `λ`.

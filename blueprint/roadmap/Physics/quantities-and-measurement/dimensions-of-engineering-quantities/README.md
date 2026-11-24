@@ -1,98 +1,98 @@
 # Dimensions of engineering quantities
 
-## A. Engineering dimension names and exponents
+## Engineering dimensions and their exponents
 
-- [Force Dim](force-dim.md)
-- [Power Dim](power-dim.md)
-- [Mass Flow Dim](mass-flow-dim.md)
-- [Molar Flow Dim](molar-flow-dim.md)
-- [Impulse Dim](impulse-dim.md)
-- [Translational Stiffness Dim](translational-stiffness-dim.md)
-- [Torsional Stiffness Dim](torsional-stiffness-dim.md)
-- [Faraday Dim](faraday-dim.md)
-- [Force Dim exponent](force-dim-exponent.md)
-- [Power Dim exponent](power-dim-exponent.md)
-- [Mass Flow Dim exponent](mass-flow-dim-exponent.md)
-- [Molar Flow Dim exponent](molar-flow-dim-exponent.md)
-- [Impulse Dim exponent](impulse-dim-exponent.md)
-- [Translational Stiffness Dim exponent](translational-stiffness-dim-exponent.md)
-- [Torsional Stiffness Dim exponent](torsional-stiffness-dim-exponent.md)
-- [Faraday Dim exponent](faraday-dim-exponent.md)
+- [Dimension of force](force-dim.md)
+- [Dimension of power](power-dim.md)
+- [Dimension of mass flow rate](mass-flow-dim.md)
+- [Dimension of molar flow rate](molar-flow-dim.md)
+- [Dimension of impulse](impulse-dim.md)
+- [Dimension of translational stiffness](translational-stiffness-dim.md)
+- [Dimension of torsional stiffness per radian](torsional-stiffness-dim.md)
+- [Dimension of the Faraday constant](faraday-dim.md)
+- [Exponents of the force dimension](force-dim-exponent.md)
+- [Exponents of the power dimension](power-dim-exponent.md)
+- [Exponents of the mass-flow-rate dimension](mass-flow-dim-exponent.md)
+- [Exponents of the molar-flow-rate dimension](molar-flow-dim-exponent.md)
+- [Exponents of the impulse dimension](impulse-dim-exponent.md)
+- [Exponents of the translational-stiffness dimension](translational-stiffness-dim-exponent.md)
+- [Exponents of the torsional-stiffness dimension](torsional-stiffness-dim-exponent.md)
+- [Exponents of the Faraday-constant dimension](faraday-dim-exponent.md)
 
-## B. Dimension identities and invalid identifications
+## Dimension identities and invalid identifications
 
-- [Force Dim mul length](force-dim-mul-length.md)
-- [Stress Dim mul area](stress-dim-mul-area.md)
-- [Power Dim mul time](power-dim-mul-time.md)
-- [Molar Mass Dim mul molar Flow Dim](molar-mass-dim-mul-molar-flow-dim.md)
-- [Faraday Dim mul amount Dim](faraday-dim-mul-amount-dim.md)
-- [Torsional Stiffness Dim eq energy Dim](torsional-stiffness-dim-eq-energy-dim.md)
-- [Force Dim mul length ne div length](force-dim-mul-length-ne-div-length.md)
-- [Mass Flow Dim ne molar Flow Dim](mass-flow-dim-ne-molar-flow-dim.md)
-- [Molar Flow Dim ne inv time](molar-flow-dim-ne-inv-time.md)
+- [Force times length is energy](force-dim-mul-length.md)
+- [Stress times area is force](stress-dim-mul-area.md)
+- [Power times time is energy](power-dim-mul-time.md)
+- [Molar mass times molar flow rate is a mass flow rate](molar-mass-dim-mul-molar-flow-dim.md)
+- [The Faraday constant times an amount is an electric charge](faraday-dim-mul-amount-dim.md)
+- [Torsional stiffness per radian has the energy dimension](torsional-stiffness-dim-eq-energy-dim.md)
+- [A newton metre is not a newton per metre](force-dim-mul-length-ne-div-length.md)
+- [A mass flow rate is not a molar flow rate](mass-flow-dim-ne-molar-flow-dim.md)
+- [A molar flow rate is not a particle rate](molar-flow-dim-ne-inv-time.md)
 
-## C. Instances of the existing rescaling results
+## Conversion factors of force, stress, power and flows
 
-- [Force Dim dim Scale round trip](force-dim-dim-scale-round-trip.md)
-- [Stress Dim dim Scale round trip](stress-dim-dim-scale-round-trip.md)
-- [Force with Dim round trip](force-with-dim-round-trip.md)
-- [Stress mul area with Dim dim Scale](stress-mul-area-with-dim-dim-scale.md)
-- [Dim Scale stress mul area](dim-scale-stress-mul-area.md)
-- [Dim Scale power mul time](dim-scale-power-mul-time.md)
-- [Dim Scale molar Mass mul molar Flow](dim-scale-molar-mass-mul-molar-flow.md)
-- [Dim Scale torsional Stiffness eq energy](dim-scale-torsional-stiffness-eq-energy.md)
+- [Converting a force value to other units and back returns it](force-dim-dim-scale-round-trip.md)
+- [Converting a stress value to other units and back returns it](stress-dim-dim-scale-round-trip.md)
+- [Converting a force quantity to other units and back returns it](force-with-dim-round-trip.md)
+- [Stress times area converts with the force factor](stress-mul-area-with-dim-dim-scale.md)
+- [Stress factor times area factor is the force factor](dim-scale-stress-mul-area.md)
+- [Power factor times time factor is the energy factor](dim-scale-power-mul-time.md)
+- [Molar-mass factor times molar-flow factor is the mass-flow factor](dim-scale-molar-mass-mul-molar-flow.md)
+- [Torsional stiffness and energy have the same conversion factor](dim-scale-torsional-stiffness-eq-energy.md)
 
-## D. Concrete fixtures
+## Metre-to-millimetre examples
 
-- [Si Scale](si-scale.md)
-- [Mm Scale](mm-scale.md)
-- [Dim Scale si mm force Dim](dim-scale-si-mm-force-dim.md)
-- [Dim Scale si mm stress Dim](dim-scale-si-mm-stress-dim.md)
-- [Force fixture round trip](force-fixture-round-trip.md)
-- [Stress fixture round trip](stress-fixture-round-trip.md)
+- [Units with magnitude one at every base quantity](si-scale.md)
+- [Units with the millimetre as length unit](mm-scale.md)
+- [From metres to millimetres, force values are multiplied by 1000](dim-scale-si-mm-force-dim.md)
+- [From metres to millimetres, stress values are divided by 1000](dim-scale-si-mm-stress-dim.md)
+- [A force of 5 base units is 5000 in millimetre units and back](force-fixture-round-trip.md)
+- [A stress of 2 base units is 1 / 500 in millimetre units and back](stress-fixture-round-trip.md)
 
-## E.1. Dimension identities of the three formulas
+## Dimensions of the stress, shaft-power and mass-flow formulas
 
-- [Force Dim mul inv area](force-dim-mul-inv-area.md)
-- [Torque mul angular Velocity](torque-mul-angular-velocity.md)
-- [Density mul velocity mul area](density-mul-velocity-mul-area.md)
+- [Force over area is a stress](force-dim-mul-inv-area.md)
+- [Torque times angular velocity is power](torque-mul-angular-velocity.md)
+- [Density times velocity times area is a mass flow rate](density-mul-velocity-mul-area.md)
 
-## E.2. Instances of the existing rescaling results
+## Conversion factors of the three formulas
 
-- [Dim Scale force Dim mul inv area](dim-scale-force-dim-mul-inv-area.md)
-- [Dim Scale torque mul angular Velocity](dim-scale-torque-mul-angular-velocity.md)
-- [Dim Scale density mul velocity mul area](dim-scale-density-mul-velocity-mul-area.md)
+- [The stress factor is the force factor over the area factor](dim-scale-force-dim-mul-inv-area.md)
+- [Torque factor times angular-velocity factor is the power factor](dim-scale-torque-mul-angular-velocity.md)
+- [Density, velocity and area factors multiply to the mass-flow factor](dim-scale-density-mul-velocity-mul-area.md)
 
-## E.3. The real-coordinate formulas commute with a change of units
+## The three formulas commute with a change of units
 
-- [Normal Stress coord dim Scale](normal-stress-coord-dim-scale.md)
-- [Shaft Power coord dim Scale](shaft-power-coord-dim-scale.md)
-- [Mass Flow Rate coord dim Scale](mass-flow-rate-coord-dim-scale.md)
+- [Normal stress F / A commutes with every change of units](normal-stress-coord-dim-scale.md)
+- [Shaft power τ ω commutes with every change of units](shaft-power-coord-dim-scale.md)
+- [Mass flow rate ρ v A commutes with every change of units](mass-flow-rate-coord-dim-scale.md)
 
-## E.4. Restoring the output quantity
+## Typed outputs, their conversion and round trips
 
-- [Normal Stress](normal-stress.md)
-- [Shaft Power](shaft-power.md)
-- [Mass Flow Rate](mass-flow-rate.md)
-- [Normal Stress val](normal-stress-val.md)
-- [Shaft Power val](shaft-power-val.md)
-- [Mass Flow Rate val](mass-flow-rate-val.md)
-- [Normal Stress dim Scale](normal-stress-dim-scale.md)
-- [Shaft Power dim Scale](shaft-power-dim-scale.md)
-- [Mass Flow Rate dim Scale](mass-flow-rate-dim-scale.md)
-- [Normal Stress coord round trip](normal-stress-coord-round-trip.md)
-- [Shaft Power coord round trip](shaft-power-coord-round-trip.md)
-- [Mass Flow Rate coord round trip](mass-flow-rate-coord-round-trip.md)
+- [Normal stress F / A as a typed quantity](normal-stress.md)
+- [Shaft power τ ω as a typed quantity](shaft-power.md)
+- [Mass flow rate ρ v A as a typed quantity](mass-flow-rate.md)
+- [The typed normal stress has value F / A](normal-stress-val.md)
+- [The typed shaft power has value τ ω](shaft-power-val.md)
+- [The typed mass flow rate has value ρ v A](mass-flow-rate-val.md)
+- [The typed normal stress commutes with every change of units](normal-stress-dim-scale.md)
+- [The typed shaft power commutes with every change of units](shaft-power-dim-scale.md)
+- [The typed mass flow rate commutes with every change of units](mass-flow-rate-dim-scale.md)
+- [Stress computed in new units and converted back is unchanged](normal-stress-coord-round-trip.md)
+- [Shaft power computed in new units and converted back is unchanged](shaft-power-coord-round-trip.md)
+- [Mass flow rate computed in new units and converted back is unchanged](mass-flow-rate-coord-round-trip.md)
 
-## E.5. Nonzero fixtures
+## Metre-to-millimetre examples for the three formulas
 
-- [Normal Stress si mm](normal-stress-si-mm.md)
-- [Shaft Power si mm](shaft-power-si-mm.md)
-- [Mass Flow Rate si mm](mass-flow-rate-si-mm.md)
+- [From metres to millimetres, the stress 5 / 2 becomes 1 / 400](normal-stress-si-mm.md)
+- [From metres to millimetres, the shaft power 12 becomes 12000000](shaft-power-si-mm.md)
+- [From metres to millimetres, the mass flow rate 20 stays 20](mass-flow-rate-si-mm.md)
 
-## E.6. Invalid and boundary examples
+## Invalid and boundary examples
 
-- [Force Dim ne area](force-dim-ne-area.md)
-- [Force add area not dim Scale](force-add-area-not-dim-scale.md)
-- [Normal Stress coord ne force Dim](normal-stress-coord-ne-force-dim.md)
-- [Two mul normal Stress coord dim Scale](two-mul-normal-stress-coord-dim-scale.md)
+- [Force and area have different dimensions](force-dim-ne-area.md)
+- [A sum of a force and an area converts like no dimension](force-add-area-not-dim-scale.md)
+- [Read as a force, F / A does not convert correctly](normal-stress-coord-ne-force-dim.md)
+- [The wrong stress 2 F / A also commutes with changes of units](two-mul-normal-stress-coord-dim-scale.md)

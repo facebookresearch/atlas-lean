@@ -1,44 +1,44 @@
 # Friction losses in pipes and ducts
 
-## A. A guarded friction-factor record
+## A guarded friction-factor record
 
-- [Friction Convention](friction-convention.md)
-- [Duct Shape](duct-shape.md)
-- [Friction Request](friction-request.md)
-- [Friction Correlation](friction-correlation.md)
-- [Darcy Applies](darcy-applies.md)
-- [Darcy Factor](darcy-factor.md)
-- [No value outside the box](not-darcy-applies.md)
-- [Roughness-domain evidence](relative-roughness-nonneg-of-darcy-appli.md)
-- [No factor for a negative roughness](not-darcy-applies-of-neg.md)
-- [Power Law Friction](power-law-friction.md)
-- [Power Law Friction darcy Factor](power-law-friction-darcy-factor.md)
-- [Power Law Friction darcy Factor pos](power-law-friction-darcy-factor-pos.md)
+- [Darcy and Fanning friction-factor conventions](friction-convention.md)
+- [Duct shape of a friction correlation](duct-shape.md)
+- [Friction-factor request of a duct flow](friction-request.md)
+- [Guarded empirical friction-factor correlation](friction-correlation.md)
+- [When a correlation supplies a Darcy factor for a request](darcy-applies.md)
+- [Darcy factor of a correlation where it applies](darcy-factor.md)
+- [No Darcy factor: Fanning record, other roughness or Re out of range](not-darcy-applies.md)
+- [A request that a correlation applies to has nonnegative roughness](relative-roughness-nonneg-of-darcy-appli.md)
+- [No Darcy factor for a negative relative roughness](not-darcy-applies-of-neg.md)
+- [Power-law friction correlation f = c Re^a](power-law-friction.md)
+- [Where a power-law correlation applies, its Darcy factor is c Re^a](power-law-friction-darcy-factor.md)
+- [For c > 0 a power-law correlation gives a positive Darcy factor](power-law-friction-darcy-factor-pos.md)
 
-## B. The Darcy-Weisbach loss and its dissipated power
+## The Darcy–Weisbach loss and its dissipated power
 
-- [Darcy Coefficient](darcy-coefficient.md)
-- [Friction Pressure Drop](friction-pressure-drop.md)
-- [Darcy-Weisbach in flow form](darcy-weisbach-eq.md)
-- [Darcy Coefficient pos](darcy-coefficient-pos.md)
-- [Flow reversal](friction-pressure-drop-neg.md)
-- [Sign friction Pressure Drop](sign-friction-pressure-drop.md)
-- [Nonnegative dissipated power](dissipated-power-nonneg.md)
-- [Dissipated Power pos](dissipated-power-pos.md)
+- [Darcy–Weisbach loss coefficient f L ρ / (2 D A²)](darcy-coefficient.md)
+- [Oriented friction pressure drop, quadratic in the flow](friction-pressure-drop.md)
+- [Darcy–Weisbach pressure drop in terms of the volumetric flow](darcy-weisbach-eq.md)
+- [Positive factor, length, diameter, area and density give c > 0](darcy-coefficient-pos.md)
+- [Reversing the flow reverses the pressure drop](friction-pressure-drop-neg.md)
+- [For c > 0 the pressure drop has the sign of the flow](sign-friction-pressure-drop.md)
+- [For c ≥ 0 the dissipated power of the friction loss is nonnegative](dissipated-power-nonneg.md)
+- [For c > 0 every nonzero flow dissipates a positive power](dissipated-power-pos.md)
 
-## C. Dissipated power through the energy ports
+## Dissipated power through the energy ports
 
-- [Port balance and internal-energy rise](port-energy-rate-add-eq-zero-iff.md)
-- [The dissipated power is the internal-energy rise](dissipated-power-eq-internal-energy-rise.md)
-- [Internal Energy Rise friction Pressure Drop](internal-energy-rise-friction-pressure-d.md)
+- [Port energies balance iff internal-energy rise equals pressure power](port-energy-rate-add-eq-zero-iff.md)
+- [Balanced ports: the internal-energy rise is the pressure-drop power](dissipated-power-eq-internal-energy-rise.md)
+- [With the Darcy loss the internal-energy rise is nonnegative](internal-energy-rise-friction-pressure-d.md)
 
-## D. The guarded loss
+## The guarded loss
 
-- [Guarded friction loss](darcy-factor-friction-pressure-drop.md)
+- [Guarded friction loss: positive coefficient, power and reversal](darcy-factor-friction-pressure-drop.md)
 
-## E. The Darcy factor of a pressure drop
+## The Darcy factor of a pressure drop
 
-- [Darcy Factor Of Drop](darcy-factor-of-drop.md)
-- [Darcy Factor Of Drop pos](darcy-factor-of-drop-pos.md)
-- [Friction Pressure Drop mul velocity pos](friction-pressure-drop-mul-velocity-pos.md)
-- [Inversion](darcy-factor-of-drop-friction-pressure-d.md)
+- [Darcy factor of a pressure drop along the flow](darcy-factor-of-drop.md)
+- [The Darcy factor of a drop along the flow is positive](darcy-factor-of-drop-pos.md)
+- [The Darcy pressure drop at Q = A V points along V for V ≠ 0](friction-pressure-drop-mul-velocity-pos.md)
+- [Inversion: the Darcy drop at Q = A V gives back the factor f](darcy-factor-of-drop-friction-pressure-d.md)

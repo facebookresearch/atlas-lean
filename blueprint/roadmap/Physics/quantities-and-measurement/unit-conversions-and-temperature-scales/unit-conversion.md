@@ -1,5 +1,5 @@
-# Unit Conversion
+# Conversion of a magnitude by a positive unit scale
 
-Unit-scale conversion by a strictly positive scale `a`: `C_a(x) = a * x`.
-Scales are units of `NNReal`, so strict positivity is carried by the
-type and the scale `0` is excluded.
+For a strictly positive scale `a`, the unit-scale conversion multiplies a real magnitude by `a`:
+`C_a(x) = a x`. The scale is an invertible element of the nonnegative reals, so `a > 0` and the
+scale `0` is excluded.

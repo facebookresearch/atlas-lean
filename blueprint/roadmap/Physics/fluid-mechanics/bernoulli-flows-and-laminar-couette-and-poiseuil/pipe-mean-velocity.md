@@ -1,5 +1,5 @@
-# Pipe Mean Velocity
+# Mean velocity of cylindrical Poiseuille flow
 
-The quotient `V = Q / (π R²)` of the signed flow rate by the disk area: the signed mean
-velocity of the pipe flow for `R > 0`, which every lemma assumes (at `R = 0` it is `0`, by the
-convention `x / 0 = 0`).
+For real `G`, `μ`, `R` and `z`, the mean velocity is `V = Q / (π R²)`, the quotient of the signed
+[flow rate](pipe-flow-rate.md) `Q` through the cross-section `x₂ = z` by the disk area. With the
+convention `x / 0 = 0` it is `0` when `R = 0`; the physical reading is `μ > 0` and `R > 0`.

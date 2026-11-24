@@ -1,4 +1,6 @@
-# Unit Error
+# Interpolation error of the unit profile
 
-The unit error `ê = û - I_P û` of the existing nodal interpolant on a partition `P` of
-`[0, 1]`.
+For a [partition](../../real-functions/integration/riemann-integral/partition.md) `P` of `[0, 1]`
+and a real `ξ`, the unit error is `ê(ξ) = û(ξ) - (I_P û)(ξ)`, where `û` is the
+[unit profile](unit-profile.md) and `I_P` the
+[piecewise linear nodal interpolant](../finite-element-method-in-one-dimension/interp.md) on `P`.

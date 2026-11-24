@@ -1,3 +1,3 @@
-# Burgers Flux
+# Burgers flux
 
-Burgers flux `f u = u ^ 2 / 2`.
+For a real `u`, the Burgers flux is `f(u) = u² / 2`.

@@ -1,4 +1,4 @@
-# Two Cell Load
+# Consistent load of the interior node of the two-cell bar
 
-The physical consistent load `F = q * L / 2` of the interior node under the uniform load
-`q`.
+For real numbers `L` and `q` (uniform load), the consistent load of the interior node is
+`F = q L / 2`.

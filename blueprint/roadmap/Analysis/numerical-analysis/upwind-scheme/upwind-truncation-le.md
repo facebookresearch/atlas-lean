@@ -1,5 +1,7 @@
-# Upwind truncation le
+# Truncation error of the upwind update on the sampled wave
 
-Nodal truncation error of the upwind update on the point samples: with `dx = L / ncells`,
-Courant number `ν = v * dt / dx ≥ 0` and `M = |a| (2π / L)²`, at every node, the wrapped one
-included, `|w_j^(n+1) - ((1 - ν) w_j^n + ν w_(j-1)^n)| ≤ dt * M * (v² dt + v dx) / 2`.
+For real numbers `L > 0`, `Δt > 0`, `c₀`, `a` and `v`, a number of cells `N_c ≥ 1` with Courant
+number `ν = v Δt / Δx ≥ 0` (`Δx = L / N_c`), every time level `n` and every node `j`, the
+[samples](sampled-wave.md) `w` satisfy
+`|w_j^{n+1} - ((1 - ν) w_j^n + ν w_{j-1}^n)| ≤ Δt M (v² Δt + v Δx) / 2` with `M = |a| (2π / L)²`,
+including the wrapped node `j = 0`.

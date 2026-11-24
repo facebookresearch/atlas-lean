@@ -1,5 +1,5 @@
-# Vapor Series Flux mul total
+# With nonzero total resistance, flux times resistance is the drop
 
-Validity of the flux quotient: when the total resistance is
-nonzero, the series flux times the total resistance recovers
-the boundary pressure drop.
+Let `n` be a natural number and `R : ℕ → ℝ` layer resistances with `∑_{i < n} R_i ≠ 0`, and let
+`p_in`, `p_out` be real numbers. Then the [steady series flux](vapor-series-flux.md) `g` satisfies
+`g ∑_{i < n} R_i = p_in - p_out`.

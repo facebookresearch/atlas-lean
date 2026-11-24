@@ -1,3 +1,4 @@
-# Cross Section Point
+# Point of a pipe cross-section
 
-The point of `Space` with transverse coordinates `q` on the cross-section `x 2 = z`.
+For a height `z` and transverse coordinates `q = (q₁, q₂)`, the cross-section point is the point
+`(q₁, q₂, z)` of three-dimensional space, on the cross-section `x₂ = z`.

@@ -1,4 +1,8 @@
-# Continuous On energy
+# For a ≤ b and continuous w the energy is continuous on 0 ≤ t ≤ T
 
-The energy `t ↦ ∫ₐᵇ w(x, t)² dx` is continuous on `[0, T]` when `a ≤ b` and `w` is
-continuous on the closed rectangle `[a, b] × [0, T]`.
+Let `a ≤ b` and `T` be real, and let `w(x, t)` be continuous on the closed rectangle
+`[a, b] × [0, T]`. Then the energy
+
+`E(t) = ∫_a^b w(x, t)² dx`
+
+is continuous on `[0, T]`.

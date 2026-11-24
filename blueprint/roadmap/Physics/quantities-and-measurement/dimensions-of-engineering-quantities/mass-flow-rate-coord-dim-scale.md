@@ -1,4 +1,8 @@
-# Mass Flow Rate coord dim Scale
+# Mass flow rate ρ v A commutes with every change of units
 
-Mass flow rate `ṁ = ρ v A` commutes with every change of unit scales: the converted density,
-normal velocity and positive area multiply to the converted mass flow rate.
+For two choices of units `u₁` and `u₂` (each assigning a positive magnitude to the unit of each of
+the seven ISQ base quantities), let `k(d)` be the
+[unit conversion factor](../quantity-calculus-and-dimensionless-groups/unit-factor.md) of a
+dimension `d` from `u₁` to `u₂`. For every real density `ρ`, normal velocity `v` and area `A > 0`,
+the converted values multiply to the converted mass flow rate:
+`(k(M L⁻³) ρ) (k(L T⁻¹) v) (k(L²) A) = k(M T⁻¹) (ρ v A)`.

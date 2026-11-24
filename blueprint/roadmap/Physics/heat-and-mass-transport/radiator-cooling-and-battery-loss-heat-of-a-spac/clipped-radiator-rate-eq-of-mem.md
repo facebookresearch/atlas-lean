@@ -1,3 +1,5 @@
-# Clipped Radiator Rate eq of mem
+# On the box, the clipped radiator rate is the radiator rate
 
-The clipped rate agrees with the physical rate on the box.
+For real `C`, `K_rad`, `Q`, `T_min`, `T_max` and `T ∈ [T_min, T_max]`, the
+[clipped radiator rate](clipped-radiator-rate.md) at `T` equals the
+[radiator rate](radiator-rate.md) at `T`.

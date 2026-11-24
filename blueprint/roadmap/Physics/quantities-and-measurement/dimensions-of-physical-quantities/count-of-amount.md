@@ -1,5 +1,7 @@
-# Count Of Amount
+# Particle count of an amount of substance
 
-The dimensionless particle count `N = n N_A` of an amount of substance `n`, given the
-Avogadro constant `N_A` as an inverse-amount quantity. The product is a `WithDim`
-multiplication, so its dimension `N * N⁻¹ = 1` is computed by the type system.
+For an Avogadro constant `N_A` (a quantity of the [Avogadro-constant dimension](avogadro-dim.md),
+the inverse of the [amount of substance](amount-dim.md) dimension) and an amount of substance `n` (a
+quantity of the [amount of substance](amount-dim.md) dimension), the particle count `n N_A`, a
+quantity of the [dimensionless](dimensionless-dim.md) dimension `1`; its value is the product of the
+values. In the physical reading `N_A > 0`.

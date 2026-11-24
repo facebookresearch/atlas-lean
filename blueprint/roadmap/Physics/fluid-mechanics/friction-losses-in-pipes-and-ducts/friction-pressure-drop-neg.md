@@ -1,3 +1,4 @@
-# Flow reversal
+# Reversing the flow reverses the pressure drop
 
-**Flow reversal** reverses the pressure drop: `Δp(-Q) = -Δp(Q)`.
+For all real `c` and `Q`, the [pressure drop](friction-pressure-drop.md) satisfies
+`Δp(-Q) = -Δp(Q)`: `c (-Q) |-Q| = -c Q |Q|`.

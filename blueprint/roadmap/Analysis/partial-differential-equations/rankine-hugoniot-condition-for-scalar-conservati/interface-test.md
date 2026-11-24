@@ -1,5 +1,6 @@
-# Interface Test
+# Test function concentrated on a straight front
 
-Interface test for the straight front `x = c * t`: the plane bump `(t, y) ↦ β t * θ y`, with
-a time bump `β` around `t₀` and a transverse bump `θ` around `0`, composed with the shear
-`(t, x) ↦ (t, x - c * t)`, so that `interfaceTest β θ c t x = β t * θ (x - c * t)`.
+For a smooth bump `β` centred at `t₀` and a smooth bump `θ` centred at `0` (smooth functions with
+values in `[0, 1]`, equal to `1` near the centre and vanishing outside a ball of radius `r_out`),
+and a speed `c`, the interface test is `φ(t, x) = β(t) θ(x - c t)`: a product bump composed with the
+shear `(t, x) ↦ (t, x - c t)`.

@@ -1,5 +1,8 @@
-# Heat Rate convective Tip
+# Base heat rate of a fin with a convective tip
 
-Convective tip `q L = h A (T L - Ta)` (outward normal `+x`), through the transfer solution:
-`q 0 = sqrt (h P k A) θ 0 (sinh (m L) + (h / (m k)) cosh (m L)) /
-(cosh (m L) + (h / (m k)) sinh (m L))`.
+Let `k`, `A`, `h`, `P` and `L` be positive, and let `(T, q)` be a
+[steady fin](is-fin-steady-state.md) on `[0, L]` with the convective tip condition
+`q(L) = hA (T(L) - Ta)` (outward normal `+x`). Then, with `θ(x) = T(x) - Ta` and the
+[fin parameter](fin-parameter.md) `m = √(hP/(kA))`,
+
+`q(0) = √(hPkA) θ(0) (sinh(mL) + (h/(mk)) cosh(mL)) / (cosh(mL) + (h/(mk)) sinh(mL))`.

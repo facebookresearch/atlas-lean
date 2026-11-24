@@ -1,5 +1,6 @@
-# Pipe Poiseuille Flow
+# Cylindrical Poiseuille flow with Newtonian stress
 
-Cylindrical Poiseuille flow on all of `Space`: constant density `ρ`, the steady Poiseuille
-velocity, Physlib's Newtonian stress for the pressure `p₀ - G z`, shear viscosity `μ` and
-second viscosity `lam`, and no body force.
+For real `ρ`, `μ`, `λ`, `p₀`, `G` and `R`, cylindrical Poiseuille flow is the
+[cylindrical Poiseuille fluid](pipe-poiseuille-fluid.md), on all of space, with the Newtonian stress
+of its velocity for the pressure `p₀ - G x₂`, the shear viscosity `μ` and the second viscosity `λ`,
+and no body force.

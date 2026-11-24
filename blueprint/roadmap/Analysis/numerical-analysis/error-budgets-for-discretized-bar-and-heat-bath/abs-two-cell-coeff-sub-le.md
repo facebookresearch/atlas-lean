@@ -1,4 +1,4 @@
-# Abs two Cell Coeff sub le
+# The residual bounds the coefficient error
 
-The residual bound on the coefficient error: `|c - c̃| ≤ L * |r| / (4 * EA)` for the physical
-bar `0 < EA`, `0 < L`.
+For real numbers `EA > 0`, `L > 0`, `q` and `c̃`, the [interior coefficient](two-cell-coeff.md) `c`
+satisfies `|c - c̃| ≤ L |r| / (4 EA)`, where `r` is the [residual](two-cell-residual.md) of `c̃`.

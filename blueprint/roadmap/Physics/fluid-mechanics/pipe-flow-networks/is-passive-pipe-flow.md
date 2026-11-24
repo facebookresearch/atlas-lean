@@ -1,5 +1,7 @@
-# Is Passive Pipe Flow
+# Passive pipe flow: pipe-flow equations with nonnegative resistances
 
-A passive pipe flow: the pipe-flow equations together with
-nonnegative resistance coefficients. A negative resistance would
-supply energy rather than dissipate it, so it is not passive.
+Let $V$ and $E$ be finite sets of nodes and arcs, each arc $e$ running from its tail $t(e)$ to its
+head $h(e)$, and let $r$ (resistances) and $q$ (arc flows) be real functions on $E$ and $d$ (nodal
+net inflows) and $H$ (heads) real functions on $V$. The data form a passive pipe flow when they
+satisfy the [pipe-flow equations](is-pipe-flow-equations.md) and $r_e \geq 0$ for every arc $e$. A
+negative resistance would supply energy rather than dissipate it.

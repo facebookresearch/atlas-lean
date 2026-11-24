@@ -1,5 +1,8 @@
-# Cylinder outward Power
+# For k ≠ 0 the cylinder surface power equals πR² times qvol
 
-Algebraic form of the surface-power identity:
-`2πR * (-k * T'(R)) = π * R^2 * qvol` for any `k ≠ 0`, with no
-physical domain assumed on `R` or `k`.
+Let `k ≠ 0`. For all real `R` and `qvol`, the [cylinder gradient](cylinder-gradient.md)
+`T′(r) = -qvol r/(2k)` satisfies
+
+`2πR · (-k T′(R)) = πR² qvol`,
+
+with no sign assumed on `R` or `k`.

@@ -1,3 +1,4 @@
-# Two Cell Coeff eq
+# Closed form of the interior coefficient
 
-The interior coefficient in closed form: `c = α / 4 = q * L ^ 2 / (8 * EA)`.
+For a real `L ≠ 0` and all real `EA` and `q`, the [interior coefficient](two-cell-coeff.md) is
+`c = q L² / (8 EA)`. With the convention `a / 0 = 0`, it is `0` when `EA = 0`.

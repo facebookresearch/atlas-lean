@@ -1,5 +1,4 @@
-# No source, constant temperature
+# Without a source a lumped body keeps its temperature
 
-A one-node network with capacity `C > 0`, no internal
-conductance and no source (`C T' = 0`) keeps its temperature: the storage law gives a constant
-`C T`.
+For a real `C > 0` and functions `T` and `v` such that `T` has derivative `v(t)` at every `t` and
+`C v(t) = 0` for every `t`, `T(t) = T(0)` for every `t`.

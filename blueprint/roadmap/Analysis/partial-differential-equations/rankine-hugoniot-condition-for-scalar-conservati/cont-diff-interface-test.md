@@ -1,3 +1,5 @@
-# Cont Diff interface Test
+# The interface test is smooth
 
-The interface test is smooth on the `(t, x)` plane.
+For every bump `β` centred at `t₀`, bump `θ` centred at `0` and real `c`, the
+[interface test](interface-test.md) `(t, x) ↦ β(t) θ(x - c t)` is infinitely differentiable on the
+plane.

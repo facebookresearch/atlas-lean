@@ -1,6 +1,6 @@
-# Three-term ten-step error budget
+# A computed temperature after ten steps lies within its error budget
 
-For `C, G > 0`, the exact Euler recurrence `X` at
-`dt = τ / 10` from `X 0 = T_amb + Δ` and any computed sequence `Y`, the computed temperature
-after ten steps is within the budget of the exact trajectory at `τ`: the propagated initial error,
-the weighted actual residuals and the truncation term `|Δ| / 10`.
+For real numbers `C > 0`, `G > 0`, `T_amb` and `Δ`, a real sequence `X` with `X_0 = T_amb + Δ` whose
+terms follow [Euler steps](bath-euler-step.md) of size `τ / 10`, and every real sequence `Y`,
+`|Y_10 - T(τ)|` is at most the [ten-step error budget](ten-step-error-budget.md) of `Y`, where `T`
+is the exact [trajectory](bath-trajectory.md).

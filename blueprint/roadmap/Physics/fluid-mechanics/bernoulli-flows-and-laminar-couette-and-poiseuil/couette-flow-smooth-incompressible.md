@@ -1,4 +1,4 @@
-# Couette Flow smooth Incompressible
+# Plane Couette flow is smoothly incompressible
 
-Plane Couette flow is smoothly incompressible: the velocity is differentiable and
-divergence free.
+For all real `ρ`, `μ`, `λ`, `p₀`, `U_w` and `H`, [plane Couette flow](couette-flow.md) is smoothly
+incompressible: its velocity is differentiable and divergence free.

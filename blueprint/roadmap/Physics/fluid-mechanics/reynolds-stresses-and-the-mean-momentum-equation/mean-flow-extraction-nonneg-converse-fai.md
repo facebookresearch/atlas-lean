@@ -1,5 +1,7 @@
-# Without `S ≠ 0` the converse fails
+# At zero strain, P ≥ 0 does not force νt ≥ 0
 
-At the zero strain, which is symmetric and trace free,
-the closure extracts nothing whatever the eddy viscosity, so nonnegative extraction does not
-force `νt ≥ 0`: `k = 1` with `νt = -1` is a counterexample.
+It is not true that, for all real `k ≥ 0` and `νt`, nonnegative
+[extraction](mean-flow-extraction.md) of the [closure](modeled-reynolds-stress.md) at the zero
+strain `S = 0` forces `νt ≥ 0`: at `S = 0` the extraction is `0` whatever `νt`, and `k = 1`,
+`νt = -1` is a counterexample. So the hypothesis `S ≠ 0` of the
+[converse](mean-flow-extraction-modeled-reynolds-st-3.md) is needed.

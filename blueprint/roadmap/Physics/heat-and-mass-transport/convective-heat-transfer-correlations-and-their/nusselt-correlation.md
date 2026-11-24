@@ -1,7 +1,15 @@
-# Nusselt Correlation
+# Range-guarded empirical Nusselt correlation
 
-A supplied empirical Nusselt correlation: its citation, the flow configuration, hydrodynamic
-and thermal development, property-variation class, local/average tag and property-evaluation
-temperature it was calibrated with, its validity domain of flow conditions, which is nonempty
-with positive `Re` and `Pr`, and its formula, which takes a proof that the flow conditions lie in
-the domain.
+An empirical Nusselt correlation consists of:
+
+- a citation (provenance only, not an applicability condition);
+- the [flow configuration](flow-configuration.md), hydrodynamic and thermal
+  [development](flow-development.md), [property-variation class](property-variation.md),
+  [local or averaged tag](averaging-tag.md) and [property temperature](property-temperature.md) it
+  was calibrated with;
+- a nonempty validity domain of [flow conditions](flow-conditions.md), on which `Re > 0` and
+  `Pr > 0`;
+- a formula giving a real number for each flow condition in the validity domain, and only there.
+
+The validity domain is calibration evidence supplied with the correlation; nothing asserts that the
+formula is physically correct inside or outside it.

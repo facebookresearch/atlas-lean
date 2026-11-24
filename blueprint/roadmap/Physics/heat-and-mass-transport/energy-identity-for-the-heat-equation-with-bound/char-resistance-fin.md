@@ -1,3 +1,6 @@
-# Char Resistance fin
+# Characteristic resistance of a fin with positive data
 
-The cable characteristic resistance of the fin is `1 / sqrt (h P k A)`.
+Let `k`, `A`, `h` and `P` be positive. With `rm = 1/(hP)` and `ri = 1/(kA)`, the cable
+characteristic resistance is
+
+`√(rm ri) = 1/√(hPkA)`.

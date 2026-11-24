@@ -1,3 +1,4 @@
-# Shear Fluid
+# Density and velocity of a parallel shear flow
 
-Density and velocity of the parallel shear flow with constant density `ρ`.
+For a constant density `ρ` and a real function `U(t, y)`, the parallel shear fluid has density `ρ`
+everywhere and the [shear velocity](shear-velocity.md) `(U(t, y), 0, 0)`.

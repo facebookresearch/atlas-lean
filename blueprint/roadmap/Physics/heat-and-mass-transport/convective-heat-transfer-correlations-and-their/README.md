@@ -1,34 +1,40 @@
 # Convective heat-transfer correlations and their ranges
 
-## A. The application context and the guarded correlation record
+## Application context of a correlation
 
-- [Flow Configuration](flow-configuration.md)
-- [Flow Development](flow-development.md)
-- [Property Variation](property-variation.md)
-- [Averaging Tag](averaging-tag.md)
-- [Property Temperature](property-temperature.md)
-- [Thermal Mode](thermal-mode.md)
-- [Holds](holds.md)
-- [Flow Conditions](flow-conditions.md)
-- [Correlation Request](correlation-request.md)
-- [Nusselt Correlation](nusselt-correlation.md)
-- [Applies](applies.md)
-- [Nusselt](nusselt.md)
-- [Exists applies](exists-applies.md)
-- [Power Law Correlation](power-law-correlation.md)
-- [Power Law Correlation nusselt](power-law-correlation-nusselt.md)
-- [Applies pos](applies-pos.md)
-- [Reynolds Number pos](reynolds-number-pos.md)
-- [Prandtl Number pos](prandtl-number-pos.md)
-- [Power Law nusselt pos](power-law-nusselt-pos.md)
+- [Flow configurations of a convection correlation](flow-configuration.md)
+- [Development state of a flow profile](flow-development.md)
+- [Size of the property variation across the boundary layer](property-variation.md)
+- [Local or surface-averaged correlation value](averaging-tag.md)
+- [Temperature at which fluid properties are evaluated](property-temperature.md)
+- [Thermal direction of a convection problem](thermal-mode.md)
+- [Sign condition of a thermal direction](holds.md)
+- [Flow conditions of a correlation request](flow-conditions.md)
+- [Correlation request: flow conditions with their application context](correlation-request.md)
 
-## B. Heat transfer coefficient and heat rate
+## Range-guarded correlations
 
-- [Heat Transfer Coefficient](heat-transfer-coefficient.md)
-- [Heat Transfer Coefficient pos](heat-transfer-coefficient-pos.md)
-- [Nusselt Number heat Transfer Coefficient](nusselt-number-heat-transfer-coefficient.md)
-- [Convective Heat Rate](convective-heat-rate.md)
-- [Convective Heat Rate val](convective-heat-rate-val.md)
-- [Sign convective Heat Rate](sign-convective-heat-rate.md)
-- [Power Law heat Rate sign](power-law-heat-rate-sign.md)
-- [Power Law Correlation heat Rate sign](power-law-correlation-heat-rate-sign.md)
+- [Range-guarded empirical Nusselt correlation](nusselt-correlation.md)
+- [When a Nusselt correlation applies to a request](applies.md)
+- [Nusselt number of a correlation for a request it applies to](nusselt.md)
+- [Every Nusselt correlation applies to some request](exists-applies.md)
+- [Where a correlation applies, Re and Pr are positive](applies-pos.md)
+- [Power-law Nusselt correlation Nu = c Re^a Pr^b](power-law-correlation.md)
+- [Where the power law applies, its Nusselt number is c Re^a Pr^b](power-law-correlation-nusselt.md)
+
+## Positive dimensionless groups
+
+- [Positive density, viscosity and length and nonzero speed give Re > 0](reynolds-number-pos.md)
+- [Positive viscosity, heat capacity and conductivity give Pr > 0](prandtl-number-pos.md)
+- [For c, Re, Pr > 0, the power law c Re^a Pr^b is positive](power-law-nusselt-pos.md)
+
+## Heat transfer coefficient and heat rate
+
+- [Heat transfer coefficient from a Nusselt number: h = Nu k / L](heat-transfer-coefficient.md)
+- [For positive Nu, k and L, the heat transfer coefficient is positive](heat-transfer-coefficient-pos.md)
+- [The coefficient h = Nu k / L inverts the Nusselt group](nusselt-number-heat-transfer-coefficient.md)
+- [Convective heat rate Q = h A ΔT](convective-heat-rate.md)
+- [The convective heat rate in coordinates is h A ΔT](convective-heat-rate-val.md)
+- [For positive h and A, the convective heat rate has the sign of ΔT](sign-convective-heat-rate.md)
+- [Power-law chain: h > 0 and the heat rate has the sign of ΔT](power-law-heat-rate-sign.md)
+- [Through the guard, a power law gives h > 0 and Q of the sign of ΔT](power-law-correlation-heat-rate-sign.md)

@@ -1,11 +1,10 @@
-# Vapor Series Flux
+# Steady vapour flux through layers in series
 
-Steady vapor mass flux through layers in series from boundary
-partial pressures `pin` and `pout` and layer vapor resistances
-`R i`: the total pressure drop divided by the total resistance.
-This is the totalized quotient: it is the physical steady flux
-only when the total resistance is nonzero (in particular for
-positive resistances); at zero total resistance Lean's division
-gives `0`, which has no physical steady-state meaning. Vapor
-mass flux and partial pressure keep their own dimensions; no
-heat-flux formula is asserted.
+For a natural number `n`, layer vapour resistances `R : ℕ → ℝ` and boundary partial pressures `p_in`
+and `p_out`, the steady vapour mass flux through the layers `0, …, n - 1` in series is
+
+`g = (p_in - p_out) / ∑_{i < n} R_i`.
+
+It is the physical steady flux when the total resistance is nonzero, in particular for positive
+resistances; with the convention `u / 0 = 0` it is `0` when the total resistance vanishes. No heat
+flux is involved.

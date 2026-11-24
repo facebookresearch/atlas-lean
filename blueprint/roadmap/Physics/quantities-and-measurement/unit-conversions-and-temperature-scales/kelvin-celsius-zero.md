@@ -1,3 +1,3 @@
-# Kelvin celsius zero
+# Zero degrees Celsius is 273.15 kelvin
 
-Zero point: `0 °C` maps to `273.15 K`.
+The [Celsius-to-kelvin map](celsius-to-kelvin.md) sends the reading `0 °C` to `273.15 K`.

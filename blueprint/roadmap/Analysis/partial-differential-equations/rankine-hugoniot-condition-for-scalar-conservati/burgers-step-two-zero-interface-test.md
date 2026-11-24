@@ -1,6 +1,6 @@
-# Burgers step two zero interface Test
+# An interface test detects the wrong speed of the Burgers step
 
-Fixture, a positive line-trace test detects a nonzero jump coefficient: for the Burgers flux
-`u ^ 2 / 2` and the states `2 | 0`, an interface test on the stationary front `x = 0` gives
-residual `0` at the Rankine-Hugoniot speed `1` and the positive residual `2 * ∫ β` at the
-incorrect speed `0`.
+For the Burgers flux `f(u) = u² / 2`, a bump `β` centred at `t₀` and a bump `θ` centred at `0`, the
+[interface test](interface-test.md) on the stationary front `x = 0` (`c = 0` in the test) gives the
+[moving step](moving-step.md) from `2` to `0` the [weak residual](weak-residual.md) `0` at the speed
+`1`, and the residual `2 ∫ β(t) dt > 0` at the speed `0`.

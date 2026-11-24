@@ -1,5 +1,6 @@
-# Parabolic scaling
+# For λ > 0 parabolic rescaling maps solutions on the plane to solutions
 
-If `c` solves `∂ₜc = D ∂ₓₓc` on all of `ℝ × ℝ`, with the derivatives
-`cx`, `cxx`, `ct` given at every point, then so does its rescaling `scaledSol c λ`. For a
-solution on part of the plane, such as the Gaussian for `t > 0`, use `similarity_pde_at`.
+Let `D` be real and `λ > 0`. Suppose `c(x, t)` has, at every point of `ℝ × ℝ`, the derivatives
+`ct = ∂c/∂t`, `cx = ∂c/∂x` and `cxx = ∂cx/∂x`, with `ct = D cxx` everywhere. Then the
+[rescaling](scaled-sol.md) `u(x, t) = c(λx, λ²t)` satisfies `∂u/∂t = D ∂²u/∂x²` at every `(x, t)`.
+For a solution on part of the plane, the [pointwise version](similarity-pde-at.md) applies.

@@ -1,3 +1,4 @@
-# Plane Poiseuille Pressure
+# Linear pressure of plane Poiseuille flow
 
-The linear pressure `p₀ - G x` with `x = x 0` the streamwise coordinate.
+For real `p₀` and `G`, the pressure of plane Poiseuille flow is `p(x) = p₀ - G x₀`, with `x₀` the
+streamwise coordinate.

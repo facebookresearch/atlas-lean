@@ -1,4 +1,4 @@
-# Si Scale
+# Units with magnitude one at every base quantity
 
-The base-unit scale with magnitude `1` at every base quantity (metre, kilogram, second,
-ampere, kelvin, mole, candela).
+The choice of units with magnitude `1` at each of the seven ISQ base quantities: metre, kilogram,
+second, ampere, kelvin, mole and candela.

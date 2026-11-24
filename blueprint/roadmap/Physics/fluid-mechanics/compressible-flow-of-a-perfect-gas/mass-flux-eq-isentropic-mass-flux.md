@@ -1,6 +1,9 @@
-# The flux of the isentropic state
+# The mass flux of an isentropically connected state
 
-Under the hypotheses of `stagnation_pressure_ratio`
-(stagnation energy balance, ideal-gas law at both states, declared isentropic connection) and a
-positive sound speed `a`, the mass flux `ρ |u|` of the static state is `G(M)` at its stagnation
-pressure and temperature.
+Let `γ > 1`, `R > 0`, `T > 0` and `cp = γ R / (γ - 1)`, let `a` satisfy `a² = γ R T` (a sound
+speed), let `M = |u| / a` be the Mach number of the velocity coordinate `u`, and let the stagnation
+energy balance `cp T + u² / 2 = cp T0` hold. Let `ρ > 0` and `ρ0 > 0`, with the ideal-gas law
+`p = ρ R T` and `p0 = ρ0 R T0` at the static and the stagnation state, and the isentropic connection
+`p / ρ^γ = p0 / ρ0^γ`. If `a > 0`, then the mass flux of the static state is `ρ |u| = G(M)`, with
+the [isentropic mass flux](isentropic-mass-flux.md)
+`G(M) = p0 √(γ / (R T0)) M (1 + (γ - 1) M² / 2)^(-(γ + 1) / (2 (γ - 1)))`.

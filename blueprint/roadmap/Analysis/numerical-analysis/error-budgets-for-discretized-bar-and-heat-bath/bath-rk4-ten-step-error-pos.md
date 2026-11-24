@@ -1,4 +1,5 @@
-# The error is not zero
+# The ten-step Runge–Kutta error is positive for a nonzero excess
 
-Under the hypotheses of `bathRK4_tenStep_error`,
-`|T_10 - T(τ)| > 0`: the RK4 factor `(72387 / 80000) ^ 10` exceeds the exact decay `exp (-1)`.
+Under the hypotheses of the [Runge–Kutta closed form](bath-rk4-closed-form.md) (`C > 0`, `G > 0`,
+`X_0 = T_amb + Δ`, steps of size `τ / 10`) with `Δ ≠ 0`, `|X_10 - T(τ)| > 0`, where `T` is the exact
+[trajectory](bath-trajectory.md).

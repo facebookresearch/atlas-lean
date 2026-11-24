@@ -1,3 +1,4 @@
-# Charge Of Current val
+# The charge of a current over a time has value I t
 
-The coordinate of `chargeOfCurrent I t` is `I t`.
+For every current `I` and time `t`, the numerical value of the
+[charge carried](charge-of-current.md) is the product `I t` of the numerical values.

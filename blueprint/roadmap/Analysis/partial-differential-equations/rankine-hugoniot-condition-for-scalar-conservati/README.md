@@ -1,66 +1,51 @@
 # Rankine–Hugoniot condition for scalar conservation laws
 
-## A. Rankine-Hugoniot from two classical sides
+## Classical solutions on both sides
 
-- [Conservation iff rankine Hugoniot](conservation-iff-rankine-hugoniot.md)
+- [Rankine–Hugoniot condition from classical solutions on both sides](conservation-iff-rankine-hugoniot.md)
 
-## B. Weak residual of a straight moving step
+## The moving step and its weak residual
 
-- [Moving Step](moving-step.md)
-- [Weak Residual](weak-residual.md)
+- [Straight moving step between two constant states](moving-step.md)
+- [Weak residual of a field for a scalar conservation law](weak-residual.md)
+- [The weak residual of a moving step is a genuine integral](integrable-weak-residual-moving-step.md)
+- [Weak residual of a straight moving step](weak-residual-moving-step.md)
+- [A test vanishing on the front cannot detect the jump](weak-residual-moving-step-eq-zero-of-tra.md)
+- [Weak residual of the Burgers step from 2 to 0](burgers-step-two-zero-weak-residual.md)
 
-## Integrability and the residual formula
+## Test functions concentrated on the front
 
-- [Integrable weak Residual moving Step](integrable-weak-residual-moving-step.md)
-- [Weak Residual moving Step](weak-residual-moving-step.md)
+- [Test function concentrated on a straight front](interface-test.md)
+- [Time partial derivative of the interface test](interface-test-dt.md)
+- [Space partial derivative of the interface test](interface-test-dx.md)
+- [The interface test is smooth](cont-diff-interface-test.md)
+- [The interface test has the stated time derivative](has-deriv-at-interface-test-time.md)
+- [The interface test has the stated space derivative](has-deriv-at-interface-test-space.md)
+- [The interface test vanishes outside a bounded rectangle](support-interface-test-subset.md)
+- [On the front the interface test is the time bump](interface-test-trace.md)
+- [The integral of the interface test along the front is positive](integral-interface-test-trace-pos.md)
 
-## Fixtures
+## Weak solutions and the jump condition
 
-- [Weak Residual moving Step eq zero of trace eq zero](weak-residual-moving-step-eq-zero-of-tra.md)
-- [Burgers step two zero weak Residual](burgers-step-two-zero-weak-residual.md)
+- [A test with nonzero front integral detects the jump condition](weak-residual-moving-step-eq-zero-iff-of.md)
+- [Weak solutions of a moving step satisfy exactly the jump condition](weak-residual-moving-step-eq-zero-iff.md)
+- [An interface test detects the wrong speed of the Burgers step](burgers-step-two-zero-interface-test.md)
+- [One vanishing residual does not establish the jump condition](exists-test-weak-residual-eq-zero-not-ra.md)
 
-## The interface test
+## The Burgers model and its entropy pair
 
-- [Interface Test](interface-test.md)
-- [Interface Test Dt](interface-test-dt.md)
-- [Interface Test Dx](interface-test-dx.md)
-- [Cont Diff interface Test](cont-diff-interface-test.md)
-- [Has Deriv At interface Test time](has-deriv-at-interface-test-time.md)
-- [Has Deriv At interface Test space](has-deriv-at-interface-test-space.md)
-- [Support interface Test subset](support-interface-test-subset.md)
-- [Interface Test trace](interface-test-trace.md)
-- [Integral interface Test trace pos](integral-interface-test-trace-pos.md)
+- [Burgers flux](burgers-flux.md)
+- [Entropy for the Burgers equation](burgers-entropy.md)
+- [Entropy flux for the Burgers equation](burgers-entropy-flux.md)
+- [Entropy production of a Burgers jump](burgers-entropy-production.md)
+- [The Burgers entropy pair is compatible and strictly convex](burgers-entropy-pair.md)
 
-## Weak jump equivalence
+## Shock speed and entropy admissibility for Burgers
 
-- [Weak Residual moving Step eq zero iff of trace ne zero](weak-residual-moving-step-eq-zero-iff-of.md)
-- [Weak Residual moving Step eq zero iff](weak-residual-moving-step-eq-zero-iff.md)
-
-## Fixtures
-
-- [Burgers step two zero interface Test](burgers-step-two-zero-interface-test.md)
-- [Exists test weak Residual eq zero not rankine Hugoniot](exists-test-weak-residual-eq-zero-not-ra.md)
-
-## Burgers model
-
-- [Burgers Flux](burgers-flux.md)
-- [Burgers Entropy](burgers-entropy.md)
-- [Burgers Entropy Flux](burgers-entropy-flux.md)
-- [Burgers Entropy Production](burgers-entropy-production.md)
-
-## Rankine-Hugoniot speed
-
-- [Burgers entropy Pair](burgers-entropy-pair.md)
-- [Burgers rankine Hugoniot iff](burgers-rankine-hugoniot-iff.md)
-- [Burgers conservation iff speed](burgers-conservation-iff-speed.md)
-
-## Entropy production and admissibility
-
-- [Burgers entropy Production mean](burgers-entropy-production-mean.md)
-- [Burgers decreasing Jump admissible](burgers-decreasing-jump-admissible.md)
-- [Burgers expansion Jump rejected](burgers-expansion-jump-rejected.md)
-
-## Fixtures
-
-- [Burgers shock two zero](burgers-shock-two-zero.md)
-- [Burgers expansion zero two](burgers-expansion-zero-two.md)
+- [For unequal states the Burgers jump moves at the mean speed](burgers-rankine-hugoniot-iff.md)
+- [A Burgers jump conserves mass exactly at the mean speed](burgers-conservation-iff-speed.md)
+- [Entropy production of a Burgers jump at the mean speed](burgers-entropy-production-mean.md)
+- [A decreasing Burgers jump satisfies the entropy inequality](burgers-decreasing-jump-admissible.md)
+- [An increasing Burgers jump violates the entropy inequality](burgers-expansion-jump-rejected.md)
+- [The Burgers shock from 2 to 0 at speed 1](burgers-shock-two-zero.md)
+- [The Burgers expansion jump from 0 to 2 at speed 1](burgers-expansion-zero-two.md)

@@ -1,7 +1,8 @@
-# Parabolic scaling at a point
+# Parabolic rescaling of a solution at one point
 
-Suppose `c` has the time derivative `ct` at `(λx, λ²t)`, the
-spatial derivative `cx` at every point of the line at time `λ²t`, and the second spatial
-derivative `cxx` at `(λx, λ²t)`, and solves `∂ₜc = D ∂ₓₓc` there. Then the rescaling
-`scaledSol c λ` solves the diffusion equation at `(x, t)`. Only the time `λ²t` enters, so this
-applies to solutions defined for `t > 0` only, such as the Gaussian.
+Let `D`, `λ`, `x` and `t` be real, `X = λx` and `τ = λ²t`. Suppose `c(X, ·)` has the derivative
+`ct(X, τ)` at `τ`; for every real `y`, `c(·, τ)` has the derivative `cx(y, τ)` at `y`; `cx(·, τ)`
+has the derivative `cxx(X, τ)` at `X`; and `ct(X, τ) = D cxx(X, τ)`. Then the
+[rescaling](scaled-sol.md) `u(x, t) = c(λx, λ²t)` satisfies `∂u/∂t = D ∂²u/∂x²` at `(x, t)`. Only
+the time `τ` enters, so this applies to solutions defined only for positive times, such as the
+[Gaussian](gauss.md).

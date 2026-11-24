@@ -1,5 +1,6 @@
-# The unstable step of a stable bath
+# Euler steps of size 3τ double the excess with alternating sign
 
-For `C, G > 0` the exact excess never exceeds its
-initial size, `|T(t) - T_amb| ≤ |Δ|` for `t ≥ 0`, but the Euler recurrence with `dt = 3 τ` has
-the amplification `-2`: `X j = T_amb + Δ (-2) ^ j` and `|X j - T_amb| = 2 ^ j |Δ|`.
+For real numbers `C > 0`, `G > 0`, `T_amb` and `Δ`, and a real sequence `X` with `X_0 = T_amb + Δ`
+and `X_{j+1}` the [Euler step](bath-euler-step.md) of size `3 τ` from `X_j`: the exact
+[trajectory](bath-trajectory.md) satisfies `|T(t) - T_amb| ≤ |Δ|` for every `t ≥ 0`, while
+`X_j = T_amb + Δ (-2)^j` and `|X_j - T_amb| = 2^j |Δ|` for every `j`.

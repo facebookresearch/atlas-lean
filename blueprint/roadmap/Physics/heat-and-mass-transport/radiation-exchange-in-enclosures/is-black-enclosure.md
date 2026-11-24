@@ -1,5 +1,11 @@
-# Is Black Enclosure
+# Diffuse enclosure: areas, view factors, row sums and reciprocity
 
-Diffuse black enclosure data on the finite surface set `ι`: areas `A i > 0`, view factors
-`F i j ≥ 0`, unit row sums `∑ j, F i j = 1` (closure: an opening must be an explicit node) and
-area reciprocity `A i * F i j = A j * F j i`.
+For a finite set `ι` of surfaces, areas `A : ι → ℝ` and view factors `F : ι × ι → ℝ` (`F_{ij}` the
+fraction of the radiation leaving `i` that arrives at `j`) form a black enclosure when:
+
+- `A_i > 0` for every surface;
+- `F_{ij} ≥ 0` for all surfaces;
+- `∑_j F_{ij} = 1` for every surface `i` (closure: an opening must be an explicit surface);
+- `A_i F_{ij} = A_j F_{ji}` for all surfaces (reciprocity).
+
+The same conditions are used for gray enclosures, whose surfaces also carry emissivities.

@@ -1,5 +1,7 @@
-# Rotor Power
+# Power of forces at points of a rotor turning at ω about e₃
 
-The power of forces `F k` exerted on the fluid at the points `x k` of a rotor turning at the
-signed angular speed `ω` about the shaft axis through `o`: the point `x k` moves with the rotor
-velocity `ω e₃ ⨯₃ (x k - o)`.
+For a signed angular speed `ω`, positive for a rotation counterclockwise seen from the tip of `e₃`,
+a point `o` of the shaft axis and finitely many forces `F_k` (indexed by a finite set) exerted on
+the fluid at points `x_k` of the rotor, the power of the forces is
+`P = Σ_k F_k · (ω e₃ × (x_k - o))`: each point `x_k` moves with the rotor velocity
+`ω e₃ × (x_k - o)` of the rigid rotation about the axis through `o` along `e₃`.

@@ -1,3 +1,5 @@
-# Unit Conversion Linear Equiv apply
+# The invertible linear map multiplies by the scale
 
-The bundled linear map agrees with unit-scale conversion.
+For every strictly positive scale `a` and every real `x`, the
+[invertible linear map of the scale](unit-conversion-linear-equiv.md) sends `x` to the
+[unit-scale conversion](unit-conversion.md) `a x`.

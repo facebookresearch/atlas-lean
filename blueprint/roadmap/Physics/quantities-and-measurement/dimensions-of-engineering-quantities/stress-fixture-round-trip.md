@@ -1,4 +1,7 @@
-# Stress fixture round trip
+# A stress of 2 base units is 1 / 500 in millimetre units and back
 
-The nonzero stress `2` (base units) becomes `1 / 500` in the millimetre scale and converts
-back to `2`.
+Let `k(d)` be the
+[unit conversion factor](../quantity-calculus-and-dimensionless-groups/unit-factor.md) of a
+dimension `d` from the [SI base units](si-scale.md) to the [millimetre units](mm-scale.md), and
+`k'(d)` the factor back. For the [stress](../dimensions-of-physical-quantities/stress-dim.md)
+dimension, `k(M L⁻¹ T⁻²) · 2 = 1 / 500` and `k'(M L⁻¹ T⁻²) (k(M L⁻¹ T⁻²) · 2) = 2`.

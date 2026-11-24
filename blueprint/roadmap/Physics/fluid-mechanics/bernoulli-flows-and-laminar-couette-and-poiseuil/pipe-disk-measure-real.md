@@ -1,4 +1,3 @@
-# Cross-section area
+# Area of the pipe cross-section
 
-For `R > 0` the pipe disk has Lebesgue measure `π R²`, by the polar
-change of variables.
+For `R > 0`, the [pipe disk](pipe-disk.md) `q₁² + q₂² ≤ R²` has Lebesgue measure `π R²`.

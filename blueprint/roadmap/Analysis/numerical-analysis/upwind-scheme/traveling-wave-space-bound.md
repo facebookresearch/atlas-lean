@@ -1,3 +1,5 @@
-# Traveling Wave space bound
+# Bound on the second spatial derivative of the traveling wave
 
-The second spatial derivative is bounded by `M = |a| (2π / L)²` everywhere.
+For all real `c₀`, `a`, `v`, `L`, `t` and `x`, the second derivative of the
+[traveling wave](traveling-wave.md) `y ↦ c(t, y)` at `x` has absolute value at most
+`M = |a| (2π / L)²`.

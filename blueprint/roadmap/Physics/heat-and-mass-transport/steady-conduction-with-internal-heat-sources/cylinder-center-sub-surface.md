@@ -1,3 +1,6 @@
-# Cylinder center sub surface
+# Axis-to-surface temperature rise of the heated cylinder
 
-Center-to-surface temperature rise: `qvol * R^2 / (4k)`.
+For all real `Ts`, `R`, `k` and `qvol`, the [cylinder temperature](cylinder-temperature.md)
+`T(r) = Ts + qvol (R² - r²)/(4k)` satisfies
+
+`T(0) - T(R) = qvol R²/(4k)`.

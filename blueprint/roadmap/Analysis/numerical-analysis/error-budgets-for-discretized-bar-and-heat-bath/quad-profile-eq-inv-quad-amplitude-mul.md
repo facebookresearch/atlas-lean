@@ -1,3 +1,5 @@
-# Quad Profile eq inv quad Amplitude mul
+# For nonzero amplitude the quadratic-load profile is recovered
 
-Inverse normalization, only for `β ≠ 0`: `û ξ = β⁻¹ * u (L * ξ)`.
+For real numbers `L ≠ 0`, `EA` and `Q` with [amplitude](quad-amplitude.md) `β ≠ 0`, and every real
+`ξ`, the [quadratic-load profile](quad-profile.md) satisfies `û(ξ) = β⁻¹ u(L ξ)`, where `u` is the
+[displacement](quad-displacement.md).

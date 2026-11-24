@@ -1,4 +1,5 @@
-# Pipe Poiseuille Velocity pos inside
+# The axial velocity is positive inside the pipe
 
-For `G, μ > 0` the axial velocity is positive strictly inside the pipe,
-`x 0² + x 1² < R²`.
+For `G > 0`, `μ > 0`, every real `R` and every point `x` with `x₀² + x₁² < R²`, the axial component
+`G (R² - x₀² - x₁²) / (4 μ)` of the [pipe Poiseuille velocity](pipe-poiseuille-velocity.md) is
+positive.

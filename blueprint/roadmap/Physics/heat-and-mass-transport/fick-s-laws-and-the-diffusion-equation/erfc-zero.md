@@ -1,3 +1,3 @@
-# Erfc zero
+# The complementary error function equals 1 at 0
 
-`erfc 0 = 1`.
+The [complementary error function](erfc.md) satisfies `erfc 0 = 1`.

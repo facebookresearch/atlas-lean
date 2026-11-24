@@ -1,3 +1,4 @@
-# Traveling Wave cont Diff
+# The traveling wave is twice continuously differentiable
 
-The traveling wave is jointly `C²` in `(t, x)`.
+For all real `c₀`, `a`, `v` and `L`, the [traveling wave](traveling-wave.md) `(t, x) ↦ c(t, x)` is twice
+continuously differentiable jointly in `(t, x)`.

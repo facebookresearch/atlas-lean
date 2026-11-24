@@ -1,3 +1,4 @@
-# Traveling Wave has Deriv At space
+# Spatial derivative of the traveling wave
 
-Spatial derivative through the affine phase: `∂ₓc = a (2π / L) cos θ`.
+For all real `c₀`, `a`, `v`, `L`, `t` and `x`, the [traveling wave](traveling-wave.md) `y ↦ c(t, y)` has
+derivative `a (2π / L) cos(2π (x - v t) / L)` at `x`.

@@ -1,3 +1,4 @@
-# Quad Amplitude ne zero iff
+# With nonzero rigidity and length β is zero only for Q = 0
 
-For `EA ≠ 0` and `L ≠ 0` the amplitude is nonzero exactly for a nonzero load.
+For real numbers `EA ≠ 0`, `L ≠ 0` and `Q`, the [quadratic-load amplitude](quad-amplitude.md) `β` is
+nonzero if and only if `Q ≠ 0`.

@@ -1,4 +1,9 @@
-# Parallel Hot Temp
+# Hot-stream temperature of the parallel-flow solution
 
-Hot-stream temperature of the parallel-flow solution with inlets `Thi`, `Tci` at `x = 0`:
-`Th(x) = Thi - Cc / (Ch + Cc) * (Thi - Tci) * (1 - exp (-r x))`. Intended for `Ch, Cc > 0`.
+For real `C_h`, `C_c`, `K`, inlet temperatures `T_hi`, `T_ci` and a position `x`, the parallel-flow
+hot-stream temperature is
+
+`T_h(x) = T_hi - C_c / (C_h + C_c) · (T_hi - T_ci) · (1 - exp(-r x))`,
+
+with `r` the [parallel-flow decay rate](parallel-decay-rate.md). It is meant for `C_h, C_c > 0`;
+with the convention `u / 0 = 0`, the fraction `C_c / (C_h + C_c)` is `0` when `C_h + C_c = 0`.

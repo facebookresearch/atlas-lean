@@ -1,4 +1,4 @@
-# Front speed eq of ne
+# For kR ≠ kL, the jump balance forces the Rankine–Hugoniot speed
 
-When the two states differ, the front speed is forced to be the
-Rankine-Hugoniot speed `(qR - qL) / (kR - kL)`.
+Let `kL`, `kR`, `s`, `qL` and `qR` be real with `kR ≠ kL`. If `s (kR - kL) = qR - qL`, then
+`s = (qR - qL) / (kR - kL)`: the front speed is the Rankine–Hugoniot speed of the two states.

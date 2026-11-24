@@ -1,3 +1,4 @@
-# Burgers Entropy Flux
+# Entropy flux for the Burgers equation
 
-Entropy flux `q u = u ^ 3 / 3` paired with `burgersEntropy`.
+For a real `u`, the entropy flux paired with the [entropy](burgers-entropy.md) `η(u) = u² / 2` is
+`q(u) = u³ / 3`.

@@ -1,5 +1,5 @@
-# Decode, then check
+# Decode-then-check of an encoded trace
 
-Accept an encoded trace exactly when it decodes and `checkThermalTrace`
-accepts the decoded list. On a concrete encoding this is a closed Boolean computation, checked by
-kernel reduction (`decide +kernel`).
+For a list of characters `s`, the encoded-trace checker returns the verdict of the
+[trace checker](check-thermal-trace.md) on the [decoded](decode-trace.md) list when `s` decodes, and
+false otherwise. On a concrete input it is a closed Boolean computation.

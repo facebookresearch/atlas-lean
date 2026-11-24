@@ -1,7 +1,11 @@
-# Robin Cosine Mode
+# A decaying cosine mode satisfies Robin conditions with h = kμ tan μL/2
 
-Robin cosine mode (nonzero fixture). `u t x = Ta + exp (-D * μ^2 * t) *
-cos (μ * (x - L / 2))` with `ux` its `x`-derivative solves `u_t = D * u_xx` at
-every point, satisfies the outward Robin conditions at both ends with
-`h = k * μ * tan (μ * L / 2)`, has `h ≥ 0` when `0 ≤ μ`, `0 ≤ L` and
-`μ * L / 2 < π / 2`, and has `θ(t, 0) ≠ 0` there.
+Let `k > 0`, `μ ≥ 0`, `L ≥ 0` with `μL/2 < π/2`, and let `D` and `Ta` be real. Let
+
+`u(t, x) = Ta + e^{-Dμ²t} cos(μ(x - L/2))` and `h = kμ tan(μL/2)`.
+
+Then, at every `(t, x)`, `u` has the time derivative `ut = -Dμ² e^{-Dμ²t} cos(μ(x - L/2))`, the
+spatial derivative `ux = -μ e^{-Dμ²t} sin(μ(x - L/2))` and the second spatial derivative
+`uxx = -μ² e^{-Dμ²t} cos(μ(x - L/2))`, and `ut = D uxx`. For every `t` the outward Robin conditions
+`k ux(t, 0) = h (u(t, 0) - Ta)` and `-k ux(t, L) = h (u(t, L) - Ta)` hold, `h ≥ 0`, and
+`u(t, 0) - Ta ≠ 0`: the mode is a nonzero example.

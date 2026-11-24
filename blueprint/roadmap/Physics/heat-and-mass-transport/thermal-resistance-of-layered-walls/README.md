@@ -1,13 +1,18 @@
 # Thermal resistance of layered walls
 
-- [Thermal Total Resistance](thermal-total-resistance.md)
-- [Thermal Interface Temp](thermal-interface-temp.md)
-- [Thermal Interface Temp succ sub](thermal-interface-temp-succ-sub.md)
-- [Thermal Interface Temp last sub film](thermal-interface-temp-last-sub-film.md)
-- [Thermal Total Resistance pos](thermal-total-resistance-pos.md)
-- [Thermal Interface Temp last sub film of pos](thermal-interface-temp-last-sub-film-of.md)
-- [Thermal Series Resistance](thermal-series-resistance.md)
-- [Thermal Overall Coefficient](thermal-overall-coefficient.md)
-- [Thermal Series Resistance pos](thermal-series-resistance-pos.md)
-- [Thermal Series Heat Rate of drops](thermal-series-heat-rate-of-drops.md)
-- [Thermal Series Heat Rate eq area mul U](thermal-series-heat-rate-eq-area-mul-u.md)
+## Series resistance and heat rate
+
+- [Series resistance of n layers between two surface films](thermal-series-resistance.md)
+- [Overall heat-transfer coefficient of a layered wall](thermal-overall-coefficient.md)
+- [For positive area, films, thicknesses and conductivities R > 0](thermal-series-resistance-pos.md)
+- [Film and layer drops of one heat rate Q give Q = ΔT over R](thermal-series-heat-rate-of-drops.md)
+- [Film and layer drops of one heat rate Q give Q = A U ΔT](thermal-series-heat-rate-eq-area-mul-u.md)
+
+## Interface temperatures
+
+- [Total resistance of a wall of n layers and two films](thermal-total-resistance.md)
+- [Positive data and nonnegative thicknesses give a positive resistance](thermal-total-resistance-pos.md)
+- [Interface temperature after the inside film and m layers](thermal-interface-temp.md)
+- [Adjacent interface temperatures differ by the layer drop](thermal-interface-temp-succ-sub.md)
+- [For R ≠ 0 the reconstruction ends at the outside air temperature](thermal-interface-temp-last-sub-film.md)
+- [For positive data the reconstruction ends at the outside temperature](thermal-interface-temp-last-sub-film-of.md)

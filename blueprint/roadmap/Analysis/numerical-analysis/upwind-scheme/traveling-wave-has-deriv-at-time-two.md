@@ -1,4 +1,4 @@
-# Traveling Wave has Deriv At time two
+# Second time derivative of the traveling wave
 
-Second time derivative: the time derivative of `c` has derivative
-`-v² a (2π / L)² sin θ`.
+For all real `c₀`, `a`, `v`, `L`, `t` and `x`, the time derivative `τ ↦ ∂ₜc(τ, x)` of the
+[traveling wave](traveling-wave.md) has derivative `-v² a (2π / L)² sin(2π (x - v t) / L)` at `t`.

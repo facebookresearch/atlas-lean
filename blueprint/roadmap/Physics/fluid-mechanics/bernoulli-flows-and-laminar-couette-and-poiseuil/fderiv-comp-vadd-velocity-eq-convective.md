@@ -1,4 +1,5 @@
-# Fderiv comp vadd velocity eq convective Term
+# The coordinate convective derivative is the convective term
 
-The coordinate convective derivative `(fderiv u) u` is Physlib's convective term
-`(u · ∇) u`.
+For a fluid flow with velocity `u`, a time `t` and points `o`, `p`, the derivative of the coordinate
+expression `v ↦ u(t, o + v)` at `p - o`, applied to `u(t, p)`, is the convective term `(u · ∇) u` of
+the flow at `(t, p)`.

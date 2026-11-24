@@ -1,3 +1,5 @@
-# Traveling Wave time bound
+# Bound on the second time derivative of the traveling wave
 
-The second time derivative is bounded by `v² M`, `M = |a| (2π / L)²`, everywhere.
+For all real `c₀`, `a`, `v`, `L`, `t` and `x`, the second derivative of the
+[traveling wave](traveling-wave.md) `τ ↦ c(τ, x)` at `t` has absolute value at most `v² M`, with
+`M = |a| (2π / L)²`.

@@ -1,3 +1,4 @@
-# Log Ratio eq sub
+# The log-ratio is a difference of logarithms
 
-`logRatio x x0` is `log x - log x0` on coordinates.
+For quantities `x` and `x₀` of one dimension with positive values, the [log-ratio](log-ratio.md) of
+`x` to `x₀` is `ln x - ln x₀`, computed from the values.

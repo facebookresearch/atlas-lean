@@ -1,30 +1,30 @@
 # Unsteady parallel shear flows
 
-## A. Parallel shear flow
+## Parallel shear flow
 
-- [Shear Velocity](shear-velocity.md)
-- [Shear Fluid](shear-fluid.md)
-- [Shear Flow](shear-flow.md)
-- [Shear Kinetic Energy](shear-kinetic-energy.md)
-- [Shear Velocity couette](shear-velocity-couette.md)
+- [Velocity field of a parallel shear flow](shear-velocity.md)
+- [Density and velocity of a parallel shear flow](shear-fluid.md)
+- [Parallel shear flow with Newtonian stress](shear-flow.md)
+- [Kinetic energy per unit wall area of a shear layer](shear-kinetic-energy.md)
+- [The linear shear profile is plane Couette flow](shear-velocity-couette.md)
 
-## B. Reduction to the heat equation
+## Reduction to the heat equation
 
-- [Shear Flow stress](shear-flow-stress.md)
-- [Shear Flow navier Stokes iff](shear-flow-navier-stokes-iff.md)
+- [Newtonian stress of a parallel shear flow](shear-flow-stress.md)
+- [The shear-flow Navier–Stokes equations reduce to the heat equation](shear-flow-navier-stokes-iff.md)
 
-## C. Kinetic energy with wall work
+## Kinetic energy with wall work
 
-- [Shear Flow kinetic Energy has Deriv At](shear-flow-kinetic-energy-has-deriv-at.md)
+- [Kinetic energy balance of a shear flow with wall work](shear-flow-kinetic-energy-has-deriv-at.md)
 
-## D. A single-mode transient with a moving wall
+## A single-mode transient with a moving wall
 
-- [Single Mode Profile](single-mode-profile.md)
-- [Single Mode Profile cont Diff](single-mode-profile-cont-diff.md)
-- [Single Mode Profile heat](single-mode-profile-heat.md)
-- [Single Mode Profile walls](single-mode-profile-walls.md)
-- [Single Mode Flow navier Stokes](single-mode-flow-navier-stokes.md)
-- [Single Mode Profile energy balance](single-mode-profile-energy-balance.md)
-- [Single Mode Profile energy pos](single-mode-profile-energy-pos.md)
-- [Single Mode Profile energy strict Mono On](single-mode-profile-energy-strict-mono-o.md)
-- [Single Mode Profile no wall work](single-mode-profile-no-wall-work.md)
+- [Single-mode transient between a fixed and a moving wall](single-mode-profile.md)
+- [The single-mode profile is twice continuously differentiable](single-mode-profile-cont-diff.md)
+- [The single-mode profile solves the heat equation](single-mode-profile-heat.md)
+- [Wall values of the single-mode profile](single-mode-profile-walls.md)
+- [The single-mode shear flow solves the Navier–Stokes equations](single-mode-flow-navier-stokes.md)
+- [Energy balance of the single-mode shear flow](single-mode-profile-energy-balance.md)
+- [The single-mode shear flow has positive kinetic energy](single-mode-profile-energy-pos.md)
+- [The single-mode kinetic energy increases despite dissipation](single-mode-profile-energy-strict-mono-o.md)
+- [Without the wall work the energy balance of the single mode fails](single-mode-profile-no-wall-work.md)

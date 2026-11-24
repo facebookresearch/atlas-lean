@@ -1,6 +1,6 @@
-# Stagnation temperature
+# Stagnation temperature of a perfect gas
 
-For `γ > 1`, `R > 0`, `T > 0`, `cp = γ R / (γ - 1)`, a sound
-speed `a` with `a ^ 2 = γ R T`, the Mach number `M = |u| / a` of the velocity coordinate `u`, and
-the stagnation energy balance `cp T + u ^ 2 / 2 = cp T0`, the stagnation-to-static temperature
-ratio is `T0 / T = 1 + (γ - 1) M ^ 2 / 2`. No entropy hypothesis enters.
+Let `γ > 1`, `R > 0`, `T > 0` and `cp = γ R / (γ - 1)`, let `a` satisfy `a² = γ R T` (a sound
+speed), let `M = |u| / a` be the Mach number of the velocity coordinate `u`, and let the stagnation
+energy balance `cp T + u² / 2 = cp T0` hold. Then `T0 / T = 1 + (γ - 1) M² / 2`. No entropy
+hypothesis enters.

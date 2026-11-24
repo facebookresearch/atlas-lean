@@ -1,4 +1,6 @@
-# Normal Stress
+# Normal stress F / A as a typed quantity
 
-The normal stress `σ = F / A` of a normal force `F` on a positive area `A`: the `WithDim`
-quotient, cast to `stressDim` by `forceDim_mul_inv_area`.
+For a normal force `F` (a quantity of the [force](force-dim.md) dimension, the component normal to
+the area) and an area `A` (a quantity of dimension `L²`) with `A > 0`, the normal stress `σ = F / A`
+as a quantity of the [stress](../dimensions-of-physical-quantities/stress-dim.md) dimension; its
+value is the quotient of the values.

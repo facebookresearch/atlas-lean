@@ -1,3 +1,4 @@
-# Erfc Profile surface
+# For D, t > 0 the error-function profile equals cs at the surface
 
-The surface is held at the concentration `cs`: `erfcProfile cs D 0 t = cs`.
+Let `D > 0` and `t > 0`. For every real `cs`, the [error-function profile](erfc-profile.md)
+`C(x, t) = cs · erfc(x/√(4Dt))` takes the value `C(0, t) = cs` at the surface `x = 0`.

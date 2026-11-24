@@ -1,4 +1,6 @@
-# Traveling Wave
+# Traveling sine wave
 
-The traveling sine wave `c(t, x) = c₀ + a sin(2π (x - v t) / L)` with mean `c₀`, amplitude
-`a`, speed `v` and spatial period `L`.
+For real numbers `c₀` (mean), `a` (amplitude), `v` (speed), `L` (spatial period), `t` and `x`, the
+traveling wave is `c(t, x) = c₀ + a sin(2π (x - v t) / L)`. With the convention `a / 0 = 0`, it is
+the constant `c₀` when `L = 0`; the intended domain is `L > 0`. Below, `θ = 2π (x - v t) / L` and
+`M = |a| (2π / L)²`.

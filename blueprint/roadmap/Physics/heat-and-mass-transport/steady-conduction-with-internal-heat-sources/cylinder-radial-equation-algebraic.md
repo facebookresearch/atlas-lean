@@ -1,8 +1,9 @@
-# Cylinder radial equation algebraic
+# For k ≠ 0 and r > 0 the cylinder profile solves the radial equation
 
-Algebraic radial identity for the polynomial extension of the
-cylinder profile: for any `r > 0` and `k ≠ 0`,
-`(1 / r) * (d/dr) (r * T'(r)) = -qvol / k`, the cylindrical
-Laplacian of the extended profile. This is not restricted to the
-physical cylinder; the physical statement is
-`cylinder_radial_equation`.
+Let `k ≠ 0` and `r > 0`. For every real `qvol`, the [cylinder gradient](cylinder-gradient.md)
+`T′(r) = -qvol r/(2k)` satisfies
+
+`(1/r) d/dr (r T′(r)) = -qvol/k`,
+
+the cylindrical heat-balance equation for the polynomial profile. No bound `r ≤ R` is assumed; the
+[physical form](cylinder-radial-equation.md) restricts to the cylinder.

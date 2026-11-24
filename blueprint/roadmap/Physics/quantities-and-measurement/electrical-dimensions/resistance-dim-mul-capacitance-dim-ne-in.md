@@ -1,3 +1,5 @@
-# Resistance Dim mul capacitance Dim ne inv time
+# Resistance times capacitance is not an inverse time
 
-R C is not an inverse time (a frequency).
+Over the charge-based base quantities length `L`, time `T`, mass `M`, electric charge `C` and
+temperature `Θ`, the [resistance](resistance-dim.md) dimension times the
+[capacitance](capacitance-dim.md) dimension is not `T⁻¹`, the dimension of a frequency.

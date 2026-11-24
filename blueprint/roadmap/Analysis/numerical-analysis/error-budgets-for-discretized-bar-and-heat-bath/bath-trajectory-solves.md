@@ -1,5 +1,5 @@
-# The trajectory solves the bath equation
+# The bath-cooling trajectory solves C T′ = Q(T)
 
-For `C, G > 0`, `T(0) = T_amb + Δ` and
-`T' = Q(T) / C`, that is `C T' = Q(T)`, at every time: the excess `T - T_amb` is the scalar
-exponential solution with rate `-1 / τ`.
+For real numbers `C > 0`, `G > 0`, `T_amb` and `Δ`, the [trajectory](bath-trajectory.md) satisfies
+`T(0) = T_amb + Δ` and has derivative `Q(T(t)) / C` at every time `t`, with the
+[bath power](bath-power.md) `Q`.

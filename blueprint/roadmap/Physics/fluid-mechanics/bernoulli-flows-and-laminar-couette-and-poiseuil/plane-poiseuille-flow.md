@@ -1,5 +1,5 @@
-# Plane Poiseuille Flow
+# Plane Poiseuille flow with Newtonian stress
 
-Plane Poiseuille flow: constant density `ρ`, the steady Poiseuille velocity, Physlib's
-Newtonian stress for the pressure `p₀ - G x`, shear viscosity `μ` and second viscosity `lam`,
-and no body force.
+For real `ρ`, `μ`, `λ`, `p₀`, `G` and `H`, plane Poiseuille flow is the
+[plane Poiseuille fluid](plane-poiseuille-fluid.md) with the Newtonian stress of its velocity for
+the pressure `p₀ - G x₀`, the shear viscosity `μ` and the second viscosity `λ`, and no body force.

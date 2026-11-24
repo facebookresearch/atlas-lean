@@ -1,5 +1,7 @@
-# Shear Flow
+# Parallel shear flow with Newtonian stress
 
-Parallel shear flow: constant density `ρ`, the velocity `(U(t, y), 0, 0)`, Physlib's
-Newtonian stress for the spatially uniform pressure `p(t)`, shear viscosity `μ` and second
-viscosity `lam`, and no body force.
+For a constant density `ρ`, a shear viscosity `μ`, a second viscosity `λ`, a spatially uniform
+pressure `p(t)` and a real function `U(t, y)`, the parallel shear flow is the
+[shear fluid](shear-fluid.md) of density `ρ` and velocity `(U(t, y), 0, 0)`, with the Newtonian
+stress tensor of that velocity for the pressure `p(t)` and the viscosities `μ` and `λ`, and no body
+force.

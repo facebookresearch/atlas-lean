@@ -1,5 +1,5 @@
-# Ten-step error bound
+# Ten Euler steps of size τ/10 are within a tenth of the excess
 
-For `C, G > 0`, the actual Euler recurrence at `dt = τ / 10` started
-at `T_amb + Δ` satisfies `|T_10 - T(τ)| ≤ |Δ| / 10`: the temperature amplitude `|Δ|` times the
-evaluated decay error `|(9 / 10) ^ 10 - exp (-1)| ≤ 1 / 10`.
+Under the hypotheses of the [closed form](bath-euler-closed-form.md) (`C > 0`, `G > 0`,
+`X_0 = T_amb + Δ`, Euler steps of size `τ / 10`), `|X_10 - T(τ)| ≤ |Δ| / 10`, where `T` is the exact
+[trajectory](bath-trajectory.md).

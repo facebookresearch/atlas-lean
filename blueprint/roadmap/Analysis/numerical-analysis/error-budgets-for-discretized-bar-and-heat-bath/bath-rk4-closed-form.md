@@ -1,5 +1,6 @@
-# The actual RK4 recurrence at `dt = τ / 10`
+# Runge–Kutta steps of size τ/10 multiply the excess by 72387/80000
 
-For `C, G > 0`, every real sequence with
-`X 0 = T_amb + Δ` and `X (j + 1)` the RK4 step of size `τ / 10` from `X j` at the time `j τ / 10`
-is `X j = T_amb + Δ (72387 / 80000) ^ j`.
+For real numbers `C > 0`, `G > 0`, `T_amb` and `Δ`, and a real sequence `X` with `X_0 = T_amb + Δ`
+and `X_{j+1}` the [classical Runge–Kutta step](../runge-kutta-methods/rk4.md) of size `τ / 10` of
+the [bath field](bath-field.md) from `X_j` at the time `j τ / 10` (`τ = C / G`), every term is
+`X_j = T_amb + Δ (72387/80000)^j`.

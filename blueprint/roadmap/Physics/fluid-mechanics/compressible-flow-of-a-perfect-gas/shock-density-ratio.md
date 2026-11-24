@@ -1,4 +1,5 @@
-# Shock Density Ratio
+# Density ratio of the distinct normal-shock branch
 
-The density ratio `ρ2 / ρ1 = (γ + 1) m / ((γ - 1) m + 2)` of the distinct normal-shock
-branch, at the squared upstream Mach number `m = M1 ^ 2`.
+For a heat-capacity ratio `γ` and the squared upstream Mach number `m` (real numbers), the density
+ratio of the distinct branch is `r = (γ + 1) m / ((γ - 1) m + 2)`. With the convention `x / 0 = 0`
+it is `0` when `(γ - 1) m + 2 = 0`, which for `γ > 1` happens only at a negative `m`.

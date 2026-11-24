@@ -1,4 +1,5 @@
-# Bath Field
+# Right-hand side of the bath-cooling equation
 
-The right side `(t, T) ↦ Q(T) / C` of the bath-cooling equation `C T' = Q(T)` of
-`PhysicalErrorBudgets`, as a field that does not depend on the time `t`.
+For real numbers `C`, `G` and `T_amb`, the bath field is `(t, T) ↦ Q(T) / C`, with the
+[bath power](bath-power.md) `Q`; it does not depend on `t`. With the convention `a / 0 = 0`, it is
+`0` when `C = 0`.

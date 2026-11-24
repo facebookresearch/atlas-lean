@@ -1,45 +1,48 @@
 # Certified checking of rational Euler traces
 
-## A. The trace checker
+## The trace checker and its soundness
 
-- [The trace checker](check-thermal-trace.md)
+- [Checker for a trace of Euler cooling coefficients](check-thermal-trace.md)
+- [An accepted trace is the sequence of powers of 9/10](check-thermal-trace-sound.md)
+- [An accepted trace ends at (9/10)^10](check-thermal-trace-terminal.md)
 
-## B. Soundness
+## The reconstructed endpoint temperature
 
-- [Soundness](check-thermal-trace-sound.md)
-- [Terminal value](check-thermal-trace-terminal.md)
+- [Endpoint temperature reconstructed from a trace](trace-endpoint.md)
+- [The endpoint of an accepted trace is the tenth Euler iterate](trace-endpoint-eq-iterate.md)
+- [The endpoint of an accepted trace is within a tenth of the excess](trace-endpoint-error.md)
 
-## C. The physical endpoint and its analytic bound
+## Digit runs and their values
 
-- [Trace Endpoint](trace-endpoint.md)
-- [The certified endpoint is the tenth Euler iterate](trace-endpoint-eq-iterate.md)
-- [Analytic bound for the certified endpoint](trace-endpoint-error.md)
+- [Value of a decimal digit character](digit-value.md)
+- [Positional value of a run of digits](decimal-value.md)
+- [Run of one to eleven decimal digits](is-decimal-digits.md)
+- [Bounded decoding of a decimal digit run](decode-decimal.md)
+- [A digit run decodes exactly when well formed, to its positional value](decode-decimal-eq-some-iff.md)
 
-## D. Bounded decoding of an encoded trace
+## Tokens and their decoding
 
-- [Digit Value](digit-value.md)
-- [Positional value](decimal-value.md)
-- [Is Decimal Digits](is-decimal-digits.md)
-- [Bounded decimal decoding](decode-decimal.md)
-- [Decode Numerator](decode-numerator.md)
-- [Decode Denominator](decode-denominator.md)
-- [Split On Char](split-on-char.md)
-- [Token decoding](decode-token.md)
-- [The trace decoder](decode-trace.md)
-- [Trace Token](trace-token.md)
-- [Encode](encode.md)
-- [Numerator](numerator.md)
-- [Denominator](denominator.md)
-- [Admissible token](admissible.md)
-- [Value](value.md)
-- [Bounded decimal decoding denotes its integer](decode-decimal-eq-some-iff.md)
-- [Token decoding](decode-token-eq-some-iff.md)
-- [Trace decoding denotes exactly the token values](decode-trace-eq-some-iff.md)
-- [Explicit rejection](decode-trace-eq-none-iff.md)
+- [Token of an encoded trace as written](trace-token.md)
+- [Characters of a trace token](encode.md)
+- [Integer denoted by the numerator of a trace token](numerator.md)
+- [Natural number denoted by the denominator of a trace token](denominator.md)
+- [Admissible trace token](admissible.md)
+- [Rational value of a trace token](value.md)
+- [Decoding the numerator of a trace token](decode-numerator.md)
+- [Decoding the denominator of a trace token](decode-denominator.md)
+- [Splitting a character list at a separator](split-on-char.md)
+- [Decoding one trace token](decode-token.md)
+- [A token decodes exactly when it encodes an admissible token](decode-token-eq-some-iff.md)
 
-## E. The proof-replay boundary
+## Decoding a whole trace
 
-- [Decode, then check](check-encoded-trace.md)
-- [Binding to the checker](check-encoded-trace-eq-true-iff.md)
-- [The accepted encodings](check-encoded-trace-eq-true-iff-decode-t.md)
-- [Soundness of an accepted encoding](check-encoded-trace-sound.md)
+- [Decoding an encoded trace](decode-trace.md)
+- [A trace decodes exactly when it joins eleven admissible tokens](decode-trace-eq-some-iff.md)
+- [A trace is rejected exactly when it is not eleven admissible tokens](decode-trace-eq-none-iff.md)
+
+## Checking an encoded trace
+
+- [Decode-then-check of an encoded trace](check-encoded-trace.md)
+- [An encoding is accepted exactly when its decoded list is accepted](check-encoded-trace-eq-true-iff.md)
+- [An encoding is accepted exactly when it decodes to the powers of 9/10](check-encoded-trace-eq-true-iff-decode-t.md)
+- [The decoded list of an accepted encoding is the powers of 9/10](check-encoded-trace-sound.md)

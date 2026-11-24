@@ -1,5 +1,9 @@
-# Gray Net Power
+# Net radiative power leaving a gray surface
 
-Net radiative power leaving gray surface `i` with radiosities `J`:
-`q i = ∑ j, A i * F i j * (J i - J j)` (watts), the black `netPower` with `σ * T ^ 4` replaced
-by the radiosity. Positive values are a net outflow.
+For areas `A`, view factors `F`, radiosities `J` and a surface `i`, the gray net power leaving `i`
+is
+
+`q_i = ∑_j A_i F_{ij} (J_i - J_j)`,
+
+the black [net power](net-power.md) with `σ T⁴` replaced by the radiosity; positive values are a
+net outflow.

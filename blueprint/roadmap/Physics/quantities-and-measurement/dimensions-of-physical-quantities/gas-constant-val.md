@@ -1,3 +1,4 @@
-# Gas Constant val
+# The molar gas constant's value is the product of the two values
 
-The coordinate of `gasConstant N_A k_B` is `N_A k_B`.
+For every Avogadro constant `N_A` and Boltzmann constant `k_B`, the value of the
+[molar gas constant](gas-constant.md) `R = N_A k_B` is the product of their values.

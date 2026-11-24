@@ -1,9 +1,9 @@
 # Gibbs phase rule
 
-## A. Counting identity
+## Counting identity
 
-- [Phase rule variable count](phase-rule-variable-count.md)
+- [Gibbs phase rule as a count: (P(C − 1) + 2) − C(P − 1) = C − P + 2](phase-rule-variable-count.md)
 
-## B. Dimension form
+## Rank–nullity form
 
-- [Phase rule finrank](phase-rule-finrank.md)
+- [Gibbs phase rule as rank–nullity for a surjective linear map](phase-rule-finrank.md)

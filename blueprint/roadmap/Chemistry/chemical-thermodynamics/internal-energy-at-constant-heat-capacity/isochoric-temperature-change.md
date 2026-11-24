@@ -1,6 +1,6 @@
-# Isochoric temperature change
+# At constant volume and heat capacity C > 0, T changes by Q / C
 
-Isochoric closed model with constant heat capacity `C > 0` and
-`dU = C * dT`: if the energy balance is `U1 - U0 = Q` and the
-constitutive relation is `U1 - U0 = C * (T1 - T0)`, then the temperature
-change is `Q / C`.
+In an isochoric closed model (no work, phase change or mass exchange) with constant heat capacity
+`C > 0`, let `U₀`, `U₁` be the initial and final internal energies, `T₀`, `T₁` the temperatures and
+`Q` the heat received, with the energy balance `U₁ - U₀ = Q` and the constitutive relation
+`U₁ - U₀ = C (T₁ - T₀)`. Then `T₁ - T₀ = Q / C`. The heat `Q` may have either sign.

@@ -1,6 +1,6 @@
-# Specific Entropy Change
+# Specific entropy change of a calorically perfect gas
 
-The entropy change per unit mass of a calorically perfect gas from the state `(T1, v1)` to the
-state `(T2, v2)`: `cv log (T2 / T1) + R log (v2 / v1)`, with the specific heat at constant volume
-`cv`, the specific gas constant `R` and the specific volumes `v1`, `v2` (`v = 1 / ρ`). Domain:
-positive temperatures and specific volumes; elsewhere `Real.log` returns a junk value.
+For a specific heat at constant volume `cv`, a specific gas constant `R`, temperatures `T1`, `T2`
+and specific volumes `v1`, `v2` (real numbers), the entropy change per unit mass from `(T1, v1)` to
+`(T2, v2)` is `cv log (T2 / T1) + R log (v2 / v1)`. The domain is positive temperatures and specific
+volumes; elsewhere the conventions `x / 0 = 0`, `log 0 = 0` and `log x = log |x|` give the value.

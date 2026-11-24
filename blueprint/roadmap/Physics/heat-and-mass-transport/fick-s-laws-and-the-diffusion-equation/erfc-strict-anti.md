@@ -1,3 +1,3 @@
-# Erfc strict Anti
+# The complementary error function is strictly decreasing
 
-`erfc` is strictly decreasing on the whole line.
+The [complementary error function](erfc.md) is strictly decreasing on all of `ℝ`.

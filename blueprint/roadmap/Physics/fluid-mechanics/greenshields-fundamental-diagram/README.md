@@ -1,11 +1,16 @@
 # Greenshields fundamental diagram
 
-- [Greenshields Vehicle Speed](greenshields-vehicle-speed.md)
-- [Greenshields characteristic Speed](greenshields-characteristic-speed.md)
-- [Greenshields speeds at jam](greenshields-speeds-at-jam.md)
-- [Greenshields speeds at zero](greenshields-speeds-at-zero.md)
-- [Greenshields characteristic Speed neg](greenshields-characteristic-speed-neg.md)
-- [Greenshields Flux](greenshields-flux.md)
-- [Greenshields flux range](greenshields-flux-nonneg-le.md)
-- [Greenshields Flux half](greenshields-flux-half.md)
-- [Capacity attainment](greenshields-flux-capacity-attained.md)
+## Vehicle and characteristic speeds
+
+- [Vehicle speed under the Greenshields closure](greenshields-vehicle-speed.md)
+- [Characteristic speed of the Greenshields flux](greenshields-characteristic-speed.md)
+- [Greenshields speeds at jam density](greenshields-speeds-at-jam.md)
+- [Greenshields speeds at zero density](greenshields-speeds-at-zero.md)
+- [Above half the jam density the characteristic speed is negative](greenshields-characteristic-speed-neg.md)
+
+## Flux and capacity
+
+- [Greenshields traffic flux](greenshields-flux.md)
+- [The Greenshields flux lies between zero and the capacity](greenshields-flux-nonneg-le.md)
+- [Greenshields flux at half the jam density](greenshields-flux-half.md)
+- [The Greenshields capacity is attained at half the jam density](greenshields-flux-capacity-attained.md)

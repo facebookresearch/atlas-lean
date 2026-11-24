@@ -1,4 +1,6 @@
-# Physical Error two Cells
+# Bar error on two equal cells
 
-Two cells, physical bar: `e (L / 4) = α / 16`, energy `(EA / L) α² / 12` and squared `L²`
-error `L α² / 480`.
+For a real `L > 0` and all real `EA` and `q`, on the [two-cell partition](two-cells.md), the
+[physical error](physical-error.md) satisfies `e(L / 4) = α / 16`,
+`∫_0^L EA e'(x)² dx = (EA / L) α² / 12` and `∫_0^L e(x)² dx = L α² / 480`, with the
+[amplitude](bar-amplitude.md) `α` (derivatives taken to be `0` where `e` is not differentiable).

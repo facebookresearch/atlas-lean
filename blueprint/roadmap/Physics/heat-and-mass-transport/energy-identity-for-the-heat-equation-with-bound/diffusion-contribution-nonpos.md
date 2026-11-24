@@ -1,4 +1,6 @@
-# Diffusion contribution nonpos
+# For D ≥ 0 and L ≥ 0 the diffusion contribution is nonpositive
 
-The diffusion contribution is nonpositive when the diffusivity
-is nonnegative: `-D * ∫₀ᴸ ux^2 ≤ 0` for `0 ≤ D` and `0 ≤ L`.
+Let `D ≥ 0` and `L ≥ 0`, and let `ux` be a function of time and position such that `x ↦ ux(t, x)²`
+is integrable on `[0, L]` at a time `t`. Then
+
+`-D ∫_0^L ux(t, x)² dx ≤ 0`.

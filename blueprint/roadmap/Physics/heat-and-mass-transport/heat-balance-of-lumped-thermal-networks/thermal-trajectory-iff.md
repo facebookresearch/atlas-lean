@@ -1,18 +1,15 @@
-# State-space form of the zone thermal network
+# For C i > 0 plant trajectories are exactly the zone-equation solutions
 
-**State-space form of the zone thermal network** (trajectory correspondence, and the
-physical-to-canonical bridge). Let `C i > 0` in every zone. The curve `s ↦ fun i => T i s` is
-a trajectory of the plant `(thermalA C G g0, thermalB C g0)` driven by the input
-`s ↦ Sum.elim (fun _ => Tout s) (fun i => P i s)` if and only if, at every time `t` and in
-every zone `i`, `T i` has a derivative `Tv` at `t` with
-`C i * Tv = (∑ j, G i j * (T j t - T i t)) + g0 i * (Tout t - T i t) + P i t`. Then `Tv` is
-the derivative of `T i` at `t`, so the right side says that `T` solves the zone equations
-with boundary input `g0 i * (Tout - T i)` and heating power `P i`. For the owner record `S`
-that `StateSpaceCoeffs.ofMatrix` builds from the four pinned matrices, the inline trajectory
-condition on the owner record (the convention of
-`MathlibExt.Analysis.Control.IsControllableOn`; the record itself carries no trajectory
-semantics), `∀ t, HasDerivAt z (S.A (z t) + S.B (w t)) t` for `z = fun s i => T i s` and
-`w = fun s => Sum.elim (fun _ => Tout s) (fun i => P i s)`, reduces to the left side by
-`simp only [ofMatrix_A_apply, ofMatrix_B_apply]`. Physical domain `C i > 0`,
-`G i j = G j i ≥ 0`, `g0 i ≥ 0` (positive thermal resistances `1 / G i j` and `1 / g0 i`
-where a path exists); the equivalence holds for all real `G` and `g0`.
+Let `ι` be a finite index set of zones with decidable equality, with capacities `C i`, inter-zone
+conductances `G i j` and boundary conductances `g0 i`. Let `C i > 0` for every `i`, and let `T i`,
+`Tout` and `P i` be real functions of time. The curve `s ↦ (T i(s))_i` satisfies, at every time `t`,
+
+`d/dt (T i(t))_i = A (T i(t))_i + B (Tout(t), P(t))`,
+
+with the [state matrix](thermal-a.md) `A` and the [input matrix](thermal-b.md) `B`, if and only if
+at every time `t` and in every zone `i`, `T i` has a derivative `T i′(t)` with
+
+`C i T i′(t) = ∑_j G i j (T j(t) - T i(t)) + g0 i (Tout(t) - T i(t)) + P i(t)`.
+
+No continuity of `Tout` or `P` is assumed. In the physical reading `G i j = G j i ≥ 0` and
+`g0 i ≥ 0`; the equivalence holds for all real `G` and `g0`.

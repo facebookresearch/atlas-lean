@@ -1,5 +1,5 @@
-# Bath Euler Residual
+# Residual of a computed temperature sequence in the Euler recurrence
 
-The actual residual of a computed temperature sequence `Y` in the Euler recurrence at
-`dt = τ / 10`: `η_j = Y (j + 1) - (Y j + (τ / 10) Q(Y j) / C)`, the amount by which the computed
-step `j` misses one exact Euler step. It is computed from `Y`, in the temperature unit of `Y`.
+For real numbers `C`, `G` and `T_amb`, a real sequence `Y` and an index `j`, the residual is
+`η_j = Y_{j+1} - S(Y_j)`, where `S` is the [Euler step](bath-euler-step.md) of size `τ / 10`,
+`τ = C / G`: the amount by which the computed step `j` misses one exact Euler step.

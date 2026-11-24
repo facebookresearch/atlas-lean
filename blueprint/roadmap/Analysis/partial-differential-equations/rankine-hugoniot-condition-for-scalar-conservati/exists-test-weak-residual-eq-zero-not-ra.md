@@ -1,5 +1,5 @@
-# Exists test weak Residual eq zero not rankine Hugoniot
+# One vanishing residual does not establish the jump condition
 
-Boundary example, one zero test cannot establish a weak equation: there is an admissible
-test, the zero test, whose residual against the Burgers step `2 | 0` at the incorrect speed `0`
-vanishes, although the Rankine-Hugoniot identity `0 * (0 - 2) = 0 ^ 2 / 2 - 2 ^ 2 / 2` fails.
+There is an admissible test (the zero test, vanishing outside a bounded rectangle) for which the
+[weak residual](weak-residual.md) of the Burgers [moving step](moving-step.md) from `2` to `0` at
+the speed `0` is `0`, although the jump condition `0 · (0 - 2) = 0² / 2 - 2² / 2` fails.

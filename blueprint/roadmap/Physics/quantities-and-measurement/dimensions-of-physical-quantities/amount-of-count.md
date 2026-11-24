@@ -1,5 +1,8 @@
-# Amount Of Count
+# Amount of substance of a particle count
 
-The amount of substance `n = N / N_A` of a dimensionless particle count `N`, given the
-Avogadro constant `N_A` as an inverse-amount quantity. The quotient is a `WithDim`
-division, so its dimension `1 * (N⁻¹)⁻¹ = N` is computed by the type system.
+For an Avogadro constant `N_A` (a quantity of the [Avogadro-constant dimension](avogadro-dim.md),
+the inverse of the [amount of substance](amount-dim.md) dimension) and a particle count `N` (a
+quantity of the [dimensionless](dimensionless-dim.md) dimension `1`), the amount of substance
+`n = N / N_A`, a quantity of the [amount of substance](amount-dim.md) dimension; its value is the
+quotient of the values. With the convention `x / 0 = 0`, it is `0` when `N_A = 0`. In the physical
+reading `N_A > 0` and `N ≥ 0`.

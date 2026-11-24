@@ -1,4 +1,7 @@
-# Dim Scale density mul velocity mul area
+# Density, velocity and area factors multiply to the mass-flow factor
 
-The mass-flow factor is the product of the density, velocity and area factors
-(`dimScale_mul` with `density_mul_velocity_mul_area`).
+For two choices of units `u₁` and `u₂` (each assigning a positive magnitude to the unit of each of
+the seven ISQ base quantities), let `k(d)` be the
+[unit conversion factor](../quantity-calculus-and-dimensionless-groups/unit-factor.md) of a
+dimension `d` from `u₁` to `u₂`. The factors of mass density, velocity and area multiply to the
+[mass-flow-rate](mass-flow-dim.md) factor: `k(M L⁻³) k(L T⁻¹) k(L²) = k(M T⁻¹)`.

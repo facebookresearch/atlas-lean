@@ -1,7 +1,7 @@
-# Flow-pair bridge
+# Arrivals and departures of the signal queue form a flow pair
 
-On the admitted domain `0 < lam < mu`, `0 ≤ R`, the cumulative
-arrivals and departures of the signal queue form a lossless flow pair (both vanish at time `0`,
-both are nondecreasing, and departures never exceed arrivals), and the backlog of that pair at
-every time `s ≥ 0` is the queue length `queueLen lam mu R s`. It identifies the fluid queue with
-its cumulative-count description, the form the virtual delay is defined on.
+For `0 < λ < μ` and `R ≥ 0`, the cumulative [arrivals](arrivals.md) `A(s) = λ s` and
+[departures](departures.md) `D(s) = λ s - Q(s)` form a lossless flow pair: both vanish at time `0`,
+both are nondecreasing, and `D(s) ≤ A(s)` for every `s ≥ 0`. Their backlog `A(s) - D(s)` is the
+[signal queue](queue-len.md) `Q(t)` (`λ t` for `t ≤ R`, `max(0, λ R - (μ - λ)(t - R))` for `t > R`)
+at every `s ≥ 0`.

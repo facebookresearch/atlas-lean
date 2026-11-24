@@ -1,3 +1,3 @@
-# Unit Profile
+# Unit displacement profile of a fixed-fixed bar
 
-The unit profile `û ξ = ξ * (1 - ξ)`.
+For a real `ξ`, the unit profile is `û(ξ) = ξ (1 - ξ)`.

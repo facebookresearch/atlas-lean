@@ -1,4 +1,4 @@
-# Two Cell Reconstruction zero and length
+# Every hat reconstruction vanishes at both ends of the bar
 
-Every hat reconstruction keeps the homogeneous Dirichlet values: `ũ_h 0 = 0` and
-`ũ_h L = 0`.
+For a real `L ≠ 0` and every real `c`, the [hat reconstruction](two-cell-reconstruction.md)
+`c φ(x / L)` is `0` at `x = 0` and at `x = L`.

@@ -1,4 +1,4 @@
-# Erfc Deriv2
+# Second-derivative function of the complementary error function
 
-The second derivative `erfc'' x = (4x/√π) exp(-x²)` of `erfc`
-(see `hasDerivAt_erfcDeriv`).
+For real `x`, `erfc″(x) = (4x/√π) exp(-x²)`. It is the [derivative](has-deriv-at-erfc-deriv.md) of
+[`erfc′`](erfc-deriv.md) at every `x`.

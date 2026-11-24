@@ -1,3 +1,6 @@
-# Base Dims nodup
+# Amount, length, mass, time and temperature dimensions are distinct
 
-The amount, length, mass, time and temperature dimensions are pairwise distinct.
+Over the seven ISQ base quantities length `L`, mass `M`, time `T`, electric current `I`,
+thermodynamic temperature `Θ`, amount of substance `N` and luminous intensity `J`, the dimensions
+`N`, `L`, `M`, `T` and `Θ` of [amount of substance](amount-dim.md), length, mass, time and
+[thermodynamic temperature](temperature-dim.md) are pairwise distinct.

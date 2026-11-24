@@ -1,3 +1,4 @@
-# Thermal D
+# Feedthrough matrix of the zone thermal network
 
-Feedthrough matrix `0`: the input does not reach the output directly.
+For an index set `ι` of zones, the feedthrough matrix is the zero matrix from the inputs `(Tout, P)`
+to the zone temperatures: the input does not reach the output directly.

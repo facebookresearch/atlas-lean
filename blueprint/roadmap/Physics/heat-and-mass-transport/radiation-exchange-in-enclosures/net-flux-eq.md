@@ -1,4 +1,4 @@
-# Net Flux eq
+# For positive area, the net flux is ∑ F_ij σ (T_i⁴ − T_j⁴)
 
-The net flux is the power with the area removed:
-`P i / A i = ∑ j, F i j * σ * (T i ^ 4 - T j ^ 4)` for `A i > 0`.
+Let `A_i > 0`. Then the [net flux](net-flux.md) leaving surface `i` is
+`∑_j F_{ij} σ (T_i⁴ - T_j⁴)`, for all real `σ`, view factors `F` and temperatures `T`.

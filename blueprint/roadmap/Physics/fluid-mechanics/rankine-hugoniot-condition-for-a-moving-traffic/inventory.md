@@ -1,4 +1,6 @@
-# Inventory
+# Vehicle count of a region split by a front at ξ
 
-Vehicle inventory of a two-state region `a ≤ x ≤ b` split by a front
-at `xi`: left density `kL` on `[a, xi]`, right density `kR` on `[xi, b]`.
+For densities `kL` and `kR`, the ends `a` and `b` of a road segment and the front position `ξ` (real
+numbers), the vehicle count is `N = kL (ξ - a) + kR (b - ξ)`: density `kL` on `[a, ξ]` and density
+`kR` on `[ξ, b]`. It is the count of vehicles in the segment when `a ≤ ξ ≤ b`; the formula is
+defined for all real values.

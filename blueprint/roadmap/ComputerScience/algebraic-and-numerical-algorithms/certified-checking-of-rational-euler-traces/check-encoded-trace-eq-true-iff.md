@@ -1,4 +1,5 @@
-# Binding to the checker
+# An encoding is accepted exactly when its decoded list is accepted
 
-An encoded trace is accepted exactly when it decodes to a list that
-`checkThermalTrace` accepts.
+For a list of characters `s`, the [encoded-trace checker](check-encoded-trace.md) accepts `s` if and
+only if `s` [decodes](decode-trace.md) to a list `y` that the
+[trace checker](check-thermal-trace.md) accepts.

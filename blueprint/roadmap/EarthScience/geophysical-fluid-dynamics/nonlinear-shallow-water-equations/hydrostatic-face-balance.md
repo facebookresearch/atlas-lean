@@ -1,11 +1,11 @@
 # Wet-bed reconstructed face balance
 
-At a face between two wet
-cells of a lake at rest (free surface `η` strictly above both beds, zero
-discharge), and for any numerical flux consistent on wet states, each
-corrected momentum flux of source (2.15)–(2.16) equals the hydrostatic momentum
-flux of the cell on its side: `g * hL ^ 2 / 2` for the left flux, used by
-the left cell, and `g * hR ^ 2 / 2` for the right flux, used by the right
-cell. This is the momentum part of the source's identities
-`𝓕_l = F(U_i)`, `𝓕_r = F(U_{i+1})` (Theorem 2.1 (ii)), on the strictly
-wet domain only.
+Let `g` be real, let the numerical flux `𝓕` be consistent on wet states:
+`𝓕((h, h u), (h, h u)) = (h u, h u² + g h² / 2)` for every depth `h > 0` and velocity `u`, and let
+the cells of a face be a lake at rest with free surface `η`: `hL + zL = η`, `hR + zR = η`,
+`max(zL, zR) < η` (both cells strictly wet) and zero discharges `hL uL = 0`, `hR uR = 0`. Then the
+momentum component of the [left numerical flux](left-flux.md) is `g hL² / 2` and that of the
+[right numerical flux](right-flux.md) is `g hR² / 2`: each corrected momentum flux equals the
+hydrostatic momentum flux of the cell on its side. This is the momentum part of the source's Theorem
+2.1 (ii), on the strictly wet domain only; the identities hold for every real `g`, and physically
+`g > 0`.

@@ -1,3 +1,4 @@
-# Traveling Wave pos
+# With amplitude below the mean the traveling wave is positive
 
-Positivity: when `|a| < c₀` the traveling wave is strictly positive everywhere.
+For real numbers `c₀` and `a` with `|a| < c₀` and all real `v`, `L`, `t` and `x`, the
+[traveling wave](traveling-wave.md) satisfies `c(t, x) > 0`.

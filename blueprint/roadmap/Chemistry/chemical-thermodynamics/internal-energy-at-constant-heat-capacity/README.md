@@ -1,7 +1,12 @@
 # Internal energy at constant heat capacity
 
-- [Internal Energy strict Mono](internal-energy-strict-mono.md)
-- [Internal Energy has Deriv At](internal-energy-has-deriv-at.md)
-- [Isochoric temperature change](isochoric-temperature-change.md)
-- [Isochoric heating](isochoric-heating.md)
-- [Isochoric zero heating](isochoric-zero-heating.md)
+## Isochoric heating
+
+- [At constant volume and heat capacity C > 0, T changes by Q / C](isochoric-temperature-change.md)
+- [Isochoric heating raises the energy by Q and the temperature by Q / C](isochoric-heating.md)
+- [Without heat input, the isochoric temperature does not change](isochoric-zero-heating.md)
+
+## Internal energy as a function of temperature
+
+- [The constant-capacity internal energy has temperature derivative C](internal-energy-has-deriv-at.md)
+- [For C > 0 the constant-capacity internal energy is strictly increasing](internal-energy-strict-mono.md)

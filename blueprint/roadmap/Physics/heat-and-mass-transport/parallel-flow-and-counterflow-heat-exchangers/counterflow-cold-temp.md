@@ -1,5 +1,11 @@
-# Counterflow Cold Temp
+# Cold-stream temperature of the counterflow solution
 
-Cold-stream temperature of the counterflow solution:
-`Tc(x) = Thi - D₀ - K / Cc * D₀ * ∫₀ˣ exp (-s y) dy`, so `Tc(0) = Thi - D₀` is the cold outlet.
-Intended for `Ch, Cc > 0`.
+For real `C_h`, `C_c`, `K`, `L`, `T_hi`, `T_ci` and a position `x`, the counterflow cold-stream
+temperature is
+
+`T_c(x) = T_hi - D₀ - (K / C_c) D₀ I(s, x)`,
+
+with `D₀` the [boundary constant](counterflow-inlet-diff.md), `s` the
+[counterflow rate](counterflow-rate.md) and `I(s, x)` the
+[exponential integral](exp-decay-integral.md), so `T_c(0) = T_hi - D₀` is the cold outlet. It is
+meant for `C_h, C_c > 0`; with `u / 0 = 0`, `K / C_c = 0` when `C_c = 0`.

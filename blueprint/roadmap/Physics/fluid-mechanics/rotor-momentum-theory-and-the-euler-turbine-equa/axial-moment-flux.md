@@ -1,7 +1,9 @@
-# Axial Moment Flux
+# Lumped axial angular-momentum flux of a port about the shaft
 
-The lumped axial angular-momentum flux of a port about the shaft: the moment
-`(x - o) ⨯₃ (ṁ c + p A n)` of its area-weighted local momentum flux about the point `o` of the
-shaft axis, projected on `e₃`, at the representative point `x`. It does not depend on the azimuth
-or the station of `x` (`axialMomentFlux_eq`); the lumped angular-momentum balance uses it as the
-port's angular-momentum outflow, which makes the radius of `x` an effective moment radius.
+For a point `o` of the shaft axis and a [port](rotor-port.md) with [representative point](point.md)
+`x = o + r e_r + z e₃`, the lumped axial angular-momentum flux of the port about `o` is
+`e₃ · ((x - o) × (ṁ c + p A n))`, the axial component of the moment about `o` of its
+[area-weighted local momentum flux](local-momentum-flux.md) `ṁ c + p A n`. It
+[equals](axial-moment-flux-eq.md) `ṁ r c_θ`, so it depends neither on `o` nor on the azimuth or the
+axial station of `x`. The lumped angular-momentum balance uses it as the port's angular-momentum
+outflow, which makes `r` an effective moment radius.

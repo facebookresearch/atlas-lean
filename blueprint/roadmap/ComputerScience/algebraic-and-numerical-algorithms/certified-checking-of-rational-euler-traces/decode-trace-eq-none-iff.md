@@ -1,5 +1,5 @@
-# Explicit rejection
+# A trace is rejected exactly when it is not eleven admissible tokens
 
-An input is rejected exactly when it has more than 300 characters or
-is not the comma-joined encoding of eleven admissible tokens: a wrong token count, a malformed
-token or a violated bound.
+For a list of characters `s`, the [trace decoder](decode-trace.md) returns nothing on `s` if and
+only if it is not the case that `s` has at most 300 characters and is obtained by joining with `,`
+the [encodings](encode.md) of eleven [admissible](admissible.md) tokens.

@@ -1,6 +1,11 @@
 # Heat and mass transport
 
-Diffusion, advection and reaction of heat and matter: Fick's laws and solutions of the diffusion equation, mass balances and conservative forms of advection–diffusion–reaction equations, steady and transient heat conduction and its energy identities, radiation exchange and radiative cooling, convective correlations and heat exchangers, lumped thermal networks, and heat, vapour and contaminant transfer in buildings. Equilibrium thermodynamics, heat engines and the kinetic theory of gases are under Chemistry.
+Diffusion, advection and reaction of heat and matter: Fick's laws and solutions of the diffusion
+equation, mass balances and conservative forms of advection–diffusion–reaction equations, steady and
+transient heat conduction and its energy identities, radiation exchange and radiative cooling,
+convective correlations and heat exchangers, lumped thermal networks, and heat, vapour and
+contaminant transfer in buildings. Equilibrium thermodynamics, heat engines and the kinetic theory
+of gases are under Chemistry.
 
 - [Conservation in multispecies reactive transport](conservation-in-multispecies-reactive-transport/README.md)
 - [Conservative and advective forms of transport equations](conservative-and-advective-forms-of-transport-eq/README.md)
@@ -19,4 +24,4 @@ Diffusion, advection and reaction of heat and matter: Fick's laws and solutions 
 - [Steady heat conduction in a slab](steady-heat-conduction-in-a-slab/README.md)
 - [Thermal resistance of layered walls](thermal-resistance-of-layered-walls/README.md)
 - [Vapour diffusion and condensation in building envelopes](vapour-diffusion-and-condensation-in-building-en/README.md)
-- [Nonnegativity of conductive dissipation](conductive-dissipation-nonneg.md)
+- [For k ≥ 0, the conductive dissipation is nonnegative](conductive-dissipation-nonneg.md)

@@ -1,3 +1,4 @@
-# Voltage Dim
+# Dimension of voltage
 
-Voltage `M L² T⁻² C⁻¹`.
+Over the charge-based base quantities length `L`, time `T`, mass `M`, electric charge `C` and
+temperature `Θ`, the dimension of voltage is `M L² T⁻² C⁻¹`, an energy per charge.

@@ -1,6 +1,7 @@
-# Burgers step two zero weak Residual
+# Weak residual of the Burgers step from 2 to 0
 
-Fixture: Burgers flux `u ^ 2 / 2` with the nonzero jump from `2` to `0`. At
-the Rankine-Hugoniot speed `1` the residual vanishes for every admissible test;
-at the incorrect stationary speed `0` it equals `2 * ∫ φ (t, 0) dt`, which is
-nonzero exactly when the test has nonzero integral along the front.
+For the Burgers flux `f(u) = u² / 2` and a smooth test function `φ` with time and space partial
+derivatives `φ_t`, `φ_x` that vanishes outside a bounded rectangle, the
+[weak residual](weak-residual.md) of the [moving step](moving-step.md) from `u_L = 2` to `u_R = 0`
+is `0` at the speed `c = 1` and equals `2 ∫ φ(t, 0) dt` at the speed `c = 0`; the latter is nonzero
+exactly when `∫ φ(t, 0) dt ≠ 0`.

@@ -1,3 +1,6 @@
-# Density mul velocity mul area
+# Density times velocity times area is a mass flow rate
 
-A mass density times a velocity times an area has the mass flow rate dimension.
+Over the seven ISQ base quantities length `L`, mass `M`, time `T`, electric current `I`,
+thermodynamic temperature `Θ`, amount of substance `N` and luminous intensity `J`, a mass density
+`M L⁻³` times a velocity `L T⁻¹` times an area `L²` has the [mass-flow-rate](mass-flow-dim.md)
+dimension `M T⁻¹`.

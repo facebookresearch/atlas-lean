@@ -1,5 +1,5 @@
-# Peclet example
+# The values 1, 2 and 18 satisfy the scaled equation at Pe = 6
 
-Concrete Péclet witness: `L = 2, U = 3, D = 1` gives `Pe = 6`, and
-scaled derivative values `ĉ_t̂ = 1, ĉ_x̂ = 2, ĉ_x̂x̂ = 18` satisfy
-`1 + 2 = (1 / 6) * 18`.
+The real numbers satisfy `1 + 2 = (1/(3 · 2/1)) · 18`. Read with `L = 2`, `U = 3` and `D = 1`, so
+that `Pe = UL/D = 6`, it says that the scaled derivative values `ĉt = 1`, `ĉx = 2` and `ĉxx = 18`
+satisfy the [scaled equation](advection-diffusion-nondimensional.md) `ĉt + ĉx = (1/Pe) ĉxx`.

@@ -1,131 +1,131 @@
 # Bernoulli flows and laminar Couette and Poiseuille flows
 
-## A. Transport through the fixed-origin chart
+## Transport through affine coordinates
 
-- [Fderiv comp vadd](fderiv-comp-vadd.md)
-- [Fderiv comp vadd eq inner grad](fderiv-comp-vadd-eq-inner-grad.md)
-- [Gradient comp vadd](gradient-comp-vadd.md)
-- [Fderiv comp vadd velocity eq convective Term](fderiv-comp-vadd-velocity-eq-convective.md)
-- [Is MIntegral Curve On iff coord](is-mintegral-curve-on-iff-coord.md)
+- [Derivatives in affine coordinates about an origin](fderiv-comp-vadd.md)
+- [Directional derivatives in coordinates as gradient inner products](fderiv-comp-vadd-eq-inner-grad.md)
+- [Gradients in affine coordinates about an origin](gradient-comp-vadd.md)
+- [The coordinate convective derivative is the convective term](fderiv-comp-vadd-velocity-eq-convective.md)
+- [Integral curves of a velocity field in affine coordinates](is-mintegral-curve-on-iff-coord.md)
 
-## B. Discharging the projected Euler premise
+## Bernoulli's theorem along a streamline
 
-- [Projected euler coord](projected-euler-coord.md)
-- [Bernoulli along streamline space](bernoulli-along-streamline-space.md)
-- [Bernoulli Function along streamline](bernoulli-function-along-streamline.md)
+- [Euler equations projected on the velocity in affine coordinates](projected-euler-coord.md)
+- [Bernoulli's theorem along a streamline of a steady Euler flow](bernoulli-along-streamline-space.md)
+- [Bernoulli function along a streamline for enthalpy p/ρ plus a constant](bernoulli-function-along-streamline.md)
 
-## C. Fixtures
+## A rotating fluid under gravity
 
-- [Rot Velocity](rot-velocity.md)
-- [Grav Potential](grav-potential.md)
-- [Rot Pressure](rot-pressure.md)
-- [Rot Flow](rot-flow.md)
-- [Circle](circle.md)
-- [Rot Flow euler](rot-flow-euler.md)
-- [Rot Flow body Force Potential](rot-flow-body-force-potential.md)
-- [Rot Velocity ne zero](rot-velocity-ne-zero.md)
-- [Circle is MIntegral Curve On](circle-is-mintegral-curve-on.md)
-- [Circle is Integral Curve On coord](circle-is-integral-curve-on-coord.md)
-- [Rot head differs across streamlines](rot-head-differs-across-streamlines.md)
-- [Polytropic Flow](polytropic-flow.md)
-- [Polytropic enthalpy not p Over Rho](polytropic-enthalpy-not-p-over-rho.md)
+- [Solid-body rotation about the vertical axis](rot-velocity.md)
+- [Gravitational potential of a uniform field](grav-potential.md)
+- [Pressure of a rotating fluid under gravity](rot-pressure.md)
+- [Rotating fluid under gravity with inviscid stress](rot-flow.md)
+- [Circular path at a given radius and height](circle.md)
+- [The rotating fluid under gravity solves the Euler equations](rot-flow-euler.md)
+- [The body force of the rotating fluid has a gravitational potential](rot-flow-body-force-potential.md)
+- [The solid-body rotation is a nonzero flow](rot-velocity-ne-zero.md)
+- [Circles are streamlines of the solid-body rotation](circle-is-mintegral-curve-on.md)
+- [Circles are streamlines of the rotation in any affine coordinates](circle-is-integral-curve-on-coord.md)
+- [The Bernoulli head differs between streamlines of the rotating fluid](rot-head-differs-across-streamlines.md)
+- [Rotating fluid with a polytropic enthalpy](polytropic-flow.md)
+- [A polytropic enthalpy is not pressure over density plus a constant](polytropic-enthalpy-not-p-over-rho.md)
 
-## D. Plane Couette flow
+## Plane Couette flow
 
-- [Couette Velocity](couette-velocity.md)
-- [Couette Fluid](couette-fluid.md)
-- [Couette Flow](couette-flow.md)
+- [Velocity of plane Couette flow](couette-velocity.md)
+- [Density and velocity of plane Couette flow](couette-fluid.md)
+- [Plane Couette flow with Newtonian stress](couette-flow.md)
 
-## E. Newtonian stress
+## Newtonian stress of plane Couette flow
 
-- [Couette Flow stress](couette-flow-stress.md)
+- [Newtonian stress of plane Couette flow](couette-flow-stress.md)
 
-## F. Continuity, incompressibility and Navier-Stokes
+## Continuity, incompressibility and Navier–Stokes for plane Couette flow
 
-- [Couette Flow smooth Continuity Equation](couette-flow-smooth-continuity-equation.md)
-- [Couette Flow smooth Incompressible](couette-flow-smooth-incompressible.md)
-- [Couette Flow navier Stokes premises](couette-flow-navier-stokes-premises.md)
-- [Couette Flow convective Navier Stokes](couette-flow-convective-navier-stokes.md)
-- [Couette Flow navier Stokes](couette-flow-navier-stokes.md)
+- [Plane Couette flow satisfies the smooth continuity equation](couette-flow-smooth-continuity-equation.md)
+- [Plane Couette flow is smoothly incompressible](couette-flow-smooth-incompressible.md)
+- [Differentiability conditions for plane Couette flow](couette-flow-navier-stokes-premises.md)
+- [Plane Couette flow solves the convective Navier–Stokes equations](couette-flow-convective-navier-stokes.md)
+- [Plane Couette flow solves the Navier–Stokes equations](couette-flow-navier-stokes.md)
 
-## G. No-slip walls
+## Walls of plane Couette flow
 
-- [Couette Velocity lower wall](couette-velocity-lower-wall.md)
-- [Couette Velocity upper wall](couette-velocity-upper-wall.md)
-- [Couette Flow witness](couette-flow-witness.md)
+- [The lower wall of plane Couette flow is at rest](couette-velocity-lower-wall.md)
+- [The upper wall of plane Couette flow moves with the wall speed](couette-velocity-upper-wall.md)
+- [Plane Couette flow with physical parameters](couette-flow-witness.md)
 
-## H. Plane Poiseuille flow
+## Plane Poiseuille flow
 
-- [Plane Poiseuille Velocity](plane-poiseuille-velocity.md)
-- [Plane Poiseuille Pressure](plane-poiseuille-pressure.md)
-- [Plane Poiseuille Fluid](plane-poiseuille-fluid.md)
-- [Plane Poiseuille Flow](plane-poiseuille-flow.md)
+- [Velocity of plane Poiseuille flow](plane-poiseuille-velocity.md)
+- [Linear pressure of plane Poiseuille flow](plane-poiseuille-pressure.md)
+- [Density and velocity of plane Poiseuille flow](plane-poiseuille-fluid.md)
+- [Plane Poiseuille flow with Newtonian stress](plane-poiseuille-flow.md)
 
-## I. Newtonian stress, continuity and Navier-Stokes for plane Poiseuille flow
+## Newtonian stress, continuity and Navier–Stokes for plane Poiseuille flow
 
-- [Plane Poiseuille Flow stress](plane-poiseuille-flow-stress.md)
-- [Plane Poiseuille Flow smooth Continuity Equation](plane-poiseuille-flow-smooth-continuity.md)
-- [Plane Poiseuille Flow smooth Incompressible](plane-poiseuille-flow-smooth-incompressi.md)
-- [Plane Poiseuille Flow navier Stokes premises](plane-poiseuille-flow-navier-stokes-prem.md)
-- [Plane Poiseuille Flow convective Navier Stokes](plane-poiseuille-flow-convective-navier.md)
-- [Plane Poiseuille Flow navier Stokes](plane-poiseuille-flow-navier-stokes.md)
+- [Newtonian stress of plane Poiseuille flow](plane-poiseuille-flow-stress.md)
+- [Plane Poiseuille flow satisfies the smooth continuity equation](plane-poiseuille-flow-smooth-continuity.md)
+- [Plane Poiseuille flow is smoothly incompressible](plane-poiseuille-flow-smooth-incompressi.md)
+- [Differentiability conditions for plane Poiseuille flow](plane-poiseuille-flow-navier-stokes-prem.md)
+- [Plane Poiseuille flow solves the convective Navier–Stokes equations](plane-poiseuille-flow-convective-navier.md)
+- [Plane Poiseuille flow solves the Navier–Stokes equations](plane-poiseuille-flow-navier-stokes.md)
 
-## J. No-slip walls and flow rate
+## No-slip walls and flow rate of plane Poiseuille flow
 
-- [Plane Poiseuille Velocity lower wall](plane-poiseuille-velocity-lower-wall.md)
-- [Plane Poiseuille Velocity upper wall](plane-poiseuille-velocity-upper-wall.md)
-- [Plane Poiseuille flow Rate](plane-poiseuille-flow-rate.md)
-- [Plane Poiseuille Flow witness](plane-poiseuille-flow-witness.md)
+- [No slip on the lower wall of plane Poiseuille flow](plane-poiseuille-velocity-lower-wall.md)
+- [No slip on the upper wall of plane Poiseuille flow](plane-poiseuille-velocity-upper-wall.md)
+- [Flow rate per unit width of plane Poiseuille flow](plane-poiseuille-flow-rate.md)
+- [Plane Poiseuille flow with physical parameters](plane-poiseuille-flow-witness.md)
 
-## K. No pressure gradient versus a moving wall
+## No pressure gradient versus a moving wall
 
-- [Plane Poiseuille zero gradient vs couette](plane-poiseuille-zero-gradient-vs-couett.md)
+- [Zero pressure gradient: no Poiseuille flow, but Couette flow moves](plane-poiseuille-zero-gradient-vs-couett.md)
 
-## L. Cylindrical Poiseuille flow
+## Cylindrical Poiseuille flow
 
-- [Pipe Poiseuille Velocity](pipe-poiseuille-velocity.md)
-- [Pipe Poiseuille Pressure](pipe-poiseuille-pressure.md)
-- [Pipe Poiseuille Fluid](pipe-poiseuille-fluid.md)
-- [Pipe Poiseuille Flow](pipe-poiseuille-flow.md)
-- [Pipe Reversed Flow](pipe-reversed-flow.md)
+- [Velocity of cylindrical Poiseuille flow](pipe-poiseuille-velocity.md)
+- [Linear pressure of cylindrical Poiseuille flow](pipe-poiseuille-pressure.md)
+- [Density and velocity of cylindrical Poiseuille flow](pipe-poiseuille-fluid.md)
+- [Cylindrical Poiseuille flow with Newtonian stress](pipe-poiseuille-flow.md)
+- [Pipe flow with the pressure gradient reversed](pipe-reversed-flow.md)
 
-## M. Newtonian stress, continuity and Navier-Stokes for cylindrical Poiseuille flow
+## Newtonian stress, continuity and Navier–Stokes for cylindrical Poiseuille flow
 
-- [Pipe Poiseuille Flow stress](pipe-poiseuille-flow-stress.md)
-- [Pipe Poiseuille Flow smooth Continuity Equation](pipe-poiseuille-flow-smooth-continuity-e.md)
-- [Pipe Poiseuille Flow smooth Incompressible](pipe-poiseuille-flow-smooth-incompressib.md)
-- [Pipe Poiseuille Flow navier Stokes premises](pipe-poiseuille-flow-navier-stokes-premi.md)
-- [Pipe Poiseuille Flow convective Navier Stokes](pipe-poiseuille-flow-convective-navier-s.md)
-- [Pipe Poiseuille Flow navier Stokes](pipe-poiseuille-flow-navier-stokes.md)
+- [Newtonian stress of cylindrical Poiseuille flow](pipe-poiseuille-flow-stress.md)
+- [Cylindrical Poiseuille flow satisfies the smooth continuity equation](pipe-poiseuille-flow-smooth-continuity-e.md)
+- [Cylindrical Poiseuille flow is smoothly incompressible](pipe-poiseuille-flow-smooth-incompressib.md)
+- [Differentiability conditions for cylindrical Poiseuille flow](pipe-poiseuille-flow-navier-stokes-premi.md)
+- [Pipe Poiseuille flow solves the convective Navier–Stokes equations](pipe-poiseuille-flow-convective-navier-s.md)
+- [Cylindrical Poiseuille flow solves the Navier–Stokes equations](pipe-poiseuille-flow-navier-stokes.md)
 
-## N. The pipe restriction and its lateral wall
+## The pipe restriction and its lateral wall
 
-- [Pipe Poiseuille Velocity lateral wall](pipe-poiseuille-velocity-lateral-wall.md)
-- [Pipe Poiseuille Velocity pos inside](pipe-poiseuille-velocity-pos-inside.md)
-- [Pipe Poiseuille Flow witness](pipe-poiseuille-flow-witness.md)
+- [No slip on the lateral wall of the pipe](pipe-poiseuille-velocity-lateral-wall.md)
+- [The axial velocity is positive inside the pipe](pipe-poiseuille-velocity-pos-inside.md)
+- [Cylindrical Poiseuille flow with physical parameters](pipe-poiseuille-flow-witness.md)
 
-## O. Reversed pressure gradient
+## Reversed pressure gradient
 
-- [Pipe Reversed Flow not navier Stokes](pipe-reversed-flow-not-navier-stokes.md)
+- [Reversing only the pressure gradient breaks Navier–Stokes](pipe-reversed-flow-not-navier-stokes.md)
 
-## P. The pipe cross-section and its flow rate
+## The pipe cross-section and its flow rate
 
-- [Pipe Disk](pipe-disk.md)
-- [Cross Section Point](cross-section-point.md)
-- [Pipe Axial Flux](pipe-axial-flux.md)
-- [Pipe Flow Rate](pipe-flow-rate.md)
-- [Pipe Mean Velocity](pipe-mean-velocity.md)
-- [Integrability](integrable-pipe-axial-flux.md)
-- [Cross-section area](pipe-disk-measure-real.md)
-- [Flow rate (Hagen-Poiseuille)](pipe-flow-rate-eq.md)
-- [Mean velocity](pipe-mean-velocity-eq.md)
-- [Pipe Mean Velocity pos](pipe-mean-velocity-pos.md)
-- [Pipe Mean Velocity ne zero](pipe-mean-velocity-ne-zero.md)
-- [Pipe drop mul mean Velocity pos](pipe-drop-mul-mean-velocity-pos.md)
-- [Centerline speed](pipe-centerline-eq-two-mul-mean-velocity.md)
+- [Disk of a pipe cross-section](pipe-disk.md)
+- [Point of a pipe cross-section](cross-section-point.md)
+- [Axial velocity on a pipe cross-section](pipe-axial-flux.md)
+- [Flow rate of cylindrical Poiseuille flow through a cross-section](pipe-flow-rate.md)
+- [Mean velocity of cylindrical Poiseuille flow](pipe-mean-velocity.md)
+- [The axial velocity on a cross-section is integrable](integrable-pipe-axial-flux.md)
+- [Area of the pipe cross-section](pipe-disk-measure-real.md)
+- [Hagen–Poiseuille flow rate](pipe-flow-rate-eq.md)
+- [Mean velocity of the Hagen–Poiseuille flow](pipe-mean-velocity-eq.md)
+- [The mean velocity is positive for a positive pressure gradient](pipe-mean-velocity-pos.md)
+- [The mean velocity is nonzero for a nonzero pressure gradient](pipe-mean-velocity-ne-zero.md)
+- [The Poiseuille pressure drop points along the mean flow](pipe-drop-mul-mean-velocity-pos.md)
+- [The centerline speed is twice the mean velocity](pipe-centerline-eq-two-mul-mean-velocity.md)
 
-## Q. Reynolds number and the Darcy and Fanning factors
+## Reynolds number and the Darcy and Fanning factors
 
-- [Laminar Darcy factor](pipe-darcy-factor-eq.md)
-- [Fanning factor](pipe-fanning-factor-eq.md)
-- [The Darcy-Weisbach loss of `PipeFrictionPorts`](pipe-friction-pressure-drop-eq.md)
+- [The laminar Darcy friction factor is 64 over the Reynolds number](pipe-darcy-factor-eq.md)
+- [The laminar Fanning friction factor is 16 over the Reynolds number](pipe-fanning-factor-eq.md)
+- [The Darcy–Weisbach loss with the laminar factor reproduces the drop](pipe-friction-pressure-drop-eq.md)

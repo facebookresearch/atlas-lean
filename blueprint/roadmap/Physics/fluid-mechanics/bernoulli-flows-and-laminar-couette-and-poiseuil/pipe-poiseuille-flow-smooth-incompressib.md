@@ -1,4 +1,5 @@
-# Pipe Poiseuille Flow smooth Incompressible
+# Cylindrical Poiseuille flow is smoothly incompressible
 
-Cylindrical Poiseuille flow is smoothly incompressible: the velocity is differentiable and
-divergence free.
+For all real `ρ`, `μ`, `λ`, `p₀`, `G` and `R`,
+[cylindrical Poiseuille flow](pipe-poiseuille-flow.md) is smoothly incompressible: its velocity is
+differentiable and divergence free.

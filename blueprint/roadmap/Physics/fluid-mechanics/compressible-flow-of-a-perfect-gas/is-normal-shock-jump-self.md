@@ -1,4 +1,4 @@
-# Is Normal Shock Jump self
+# The trivial branch solves the normal-shock jump conditions
 
-The trivial branch always exists: a perfect-gas state `p1 = ρ1 R T1` satisfies the jump
-conditions with itself as the downstream state.
+For all real `γ`, `R` and every state `(ρ1, u1, p1, T1)` with `p1 = ρ1 R T1`, the state and itself
+satisfy the [normal-shock jump conditions](is-normal-shock-jump.md).

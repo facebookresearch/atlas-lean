@@ -1,3 +1,4 @@
-# Pipe Poiseuille Pressure
+# Linear pressure of cylindrical Poiseuille flow
 
-The linear pressure `p₀ - G z` with `z = x 2` the axial coordinate.
+For real `p₀` and `G`, the pressure of cylindrical Poiseuille flow is `p(x) = p₀ - G x₂`, with `x₂`
+the axial coordinate.

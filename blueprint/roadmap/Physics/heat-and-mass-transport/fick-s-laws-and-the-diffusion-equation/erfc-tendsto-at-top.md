@@ -1,3 +1,3 @@
-# Erfc tendsto at Top
+# The complementary error function tends to 0 at +∞
 
-`erfc x → 0` as `x → ∞`.
+The [complementary error function](erfc.md) satisfies `erfc x → 0` as `x → +∞`.

@@ -1,13 +1,18 @@
 # Vapour diffusion and condensation in building envelopes
 
-- [Affine Profile](affine-profile.md)
-- [Affine Profile apply](affine-profile-apply.md)
-- [Affine no supersaturation](affine-no-supersaturation.md)
-- [Affine no supersaturation layers](affine-no-supersaturation-layers.md)
-- [Affine no supersaturation layers saturation Pressure](affine-no-supersaturation-layers-saturat.md)
-- [Vapor Series Flux](vapor-series-flux.md)
-- [Vapor Interface Pressure](vapor-interface-pressure.md)
-- [Vapor Interface Pressure zero](vapor-interface-pressure-zero.md)
-- [Vapor Interface Pressure last](vapor-interface-pressure-last.md)
-- [Vapor Interface Pressure succ sub](vapor-interface-pressure-succ-sub.md)
-- [Vapor Series Flux mul total](vapor-series-flux-mul-total.md)
+## No-supersaturation certificate for affine layers
+
+- [Affine profile across a layer](affine-profile.md)
+- [Affine profile in coordinates](affine-profile-apply.md)
+- [One-layer certificate against supersaturation in the affine model](affine-no-supersaturation.md)
+- [Layerwise certificate against supersaturation in the affine model](affine-no-supersaturation-layers.md)
+- [Layerwise certificate for the Clausius–Clapeyron saturation curve](affine-no-supersaturation-layers-saturat.md)
+
+## Steady vapour diffusion through layers in series
+
+- [Steady vapour flux through layers in series](vapor-series-flux.md)
+- [With nonzero total resistance, flux times resistance is the drop](vapor-series-flux-mul-total.md)
+- [Vapour pressure at an interface of layers in series](vapor-interface-pressure.md)
+- [The zeroth interface pressure is the inner boundary pressure](vapor-interface-pressure-zero.md)
+- [For nonzero total resistance, the last interface pressure is p_out](vapor-interface-pressure-last.md)
+- [Adjacent interface pressures differ by the flux times the resistance](vapor-interface-pressure-succ-sub.md)

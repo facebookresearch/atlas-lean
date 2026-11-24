@@ -1,4 +1,6 @@
-# Integral sq reconstruction error
+# Squared L² norm of the reconstruction error
 
-The squared `L²` norm of the displacement error carries the factor `L / 3`:
-`∫₀ᴸ (u_h - ũ_h)² = L * (c - c̃) ^ 2 / 3`.
+For a real `L > 0` and all real `EA`, `q` and `c̃`, the [reconstruction](physical-p1.md) `u_h` on
+the [two-cell partition](two-cells.md) and the [hat reconstruction](two-cell-reconstruction.md)
+`ũ_h` of `c̃` satisfy `∫_0^L (u_h(x) - ũ_h(x))² dx = L (c - c̃)² / 3`, with the
+[interior coefficient](two-cell-coeff.md) `c`.

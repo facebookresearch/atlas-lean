@@ -1,5 +1,7 @@
-# Friction Pressure Drop mul velocity pos
+# The Darcy pressure drop at Q = A V points along V for V ≠ 0
 
-For a positive factor, length, diameter, area and density, the pressure drop of the loss at
-the flow rate `Q = A V`, `V ≠ 0`, has the direction of the mean velocity `V`: its product with
-`Q` is the positive dissipated power (`dissipatedPower_pos`).
+Let `f`, `L`, `D`, `A` and `ρ` be positive and `V ≠ 0`. The
+[pressure drop](friction-pressure-drop.md) `c Q |Q|` at the flow `Q = A V`, with the
+[loss coefficient](darcy-coefficient.md) `c = f L ρ / (2 D A²)`, satisfies `(c Q |Q|) V > 0`: the
+drop points along the mean velocity, as the [Darcy factor of a drop](darcy-factor-of-drop.md)
+requires.

@@ -1,3 +1,4 @@
-# Power Dim
+# Dimension of power
 
-Power `M L² T⁻³`: the energy dimension `M L² T⁻²` of Physlib's `DimEnergy` per time.
+Over the charge-based base quantities length `L`, time `T`, mass `M`, electric charge `C` and
+temperature `Θ`, the dimension of power is `M L² T⁻³`, an energy `M L² T⁻²` per time.

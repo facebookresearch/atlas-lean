@@ -1,3 +1,5 @@
-# Load quad two Cells
+# Exact interior load of the quadratic load on two cells
 
-The exact interior load of the quadratic load on two cells: `∫₀¹ ξ ^ 2 φ = 7 / 48`.
+On the [two-cell partition](two-cells.md), the
+[load](../finite-element-method-in-one-dimension/load.md) of `f(ξ) = ξ²` at the interior node is
+`∫_0^1 ξ² φ(ξ) dξ = 7/48`.

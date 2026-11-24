@@ -1,4 +1,4 @@
-# Humidity Ratio nonneg
+# Nonnegative vapour over positive dry air gives a nonnegative ratio
 
-The humidity ratio of a nonnegative vapor mass over
-positive dry air is nonnegative.
+Let `m_v ≥ 0` and `m_a > 0`. Then the [humidity ratio](humidity-ratio.md) `m_v / m_a` is
+nonnegative.

@@ -1,5 +1,8 @@
-# Shear Flow navier Stokes iff
+# The shear-flow Navier–Stokes equations reduce to the heat equation
 
-Reduction: for `ρ > 0` and a jointly `C²` profile `U`, the shear flow satisfies Physlib's
-Navier-Stokes equations with the uniform pressure `p(t)`, shear viscosity `μ` and second
-viscosity `lam` exactly when `U_t = (μ / ρ) U_yy` at every time and height.
+Let `ρ > 0`, let `μ`, `λ` be real, `p(t)` a pressure, and `U` jointly twice continuously
+differentiable in `(t, y)`. Then the [parallel shear flow](shear-flow.md) of constant density `ρ`
+with velocity `(U(t, y), 0, 0)`, `y` the wall-normal coordinate satisfies the Navier–Stokes
+equations in conservative form (continuity, Cauchy momentum balance, and the Newtonian stress with
+the uniform pressure `p(t)`, the shear viscosity `μ` and the second viscosity `λ`) if and only if
+`U_t(τ, y) = (μ / ρ) U_yy(τ, y)` at every time `τ` and height `y`.

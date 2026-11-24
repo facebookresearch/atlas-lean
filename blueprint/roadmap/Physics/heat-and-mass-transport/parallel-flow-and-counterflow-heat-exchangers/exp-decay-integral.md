@@ -1,4 +1,4 @@
-# Exp Decay Integral
+# The integral of exp(−s y) from 0 to x in closed form
 
-The integral `∫₀ˣ exp (-s y) dy` in closed form: `(1 - exp (-s x)) / s` for `s ≠ 0` and its
-limit `x` for `s = 0`, so that no value divides by zero.
+For real `s` and `x`, the exponential integral is `(1 - exp(-s x)) / s` when `s ≠ 0`, and `x` when
+`s = 0`, its limit. It equals `∫₀ˣ exp(-s y) dy` in both cases, and no value divides by zero.

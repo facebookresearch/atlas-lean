@@ -1,4 +1,5 @@
-# Split On Char
+# Splitting a character list at a separator
 
-Split a character list at every `sep`, dropping the separators: `List.splitOn sep`, written by
-structural recursion so that kernel reduction in an importing module evaluates it.
+For a character `sep` and a list of characters, the split is the list of the maximal pieces between
+occurrences of `sep`, the separators dropped: `k` separators give `k + 1` pieces, possibly empty,
+and the empty list gives one empty piece.

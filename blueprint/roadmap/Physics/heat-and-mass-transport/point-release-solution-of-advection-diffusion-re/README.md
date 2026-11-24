@@ -1,7 +1,7 @@
 # Point-release solution of advection–diffusion–reaction
 
-- [Point release solves adr](point-release-solves-adr.md)
-- [Point release has Deriv At t](point-release-has-deriv-at-t.md)
-- [Point release has Deriv At x](point-release-has-deriv-at-x.md)
-- [Point release has Deriv At xx](point-release-has-deriv-at-xx.md)
-- [Point release integral](point-release-integral.md)
+- [For D, t > 0 the point release solves advection–diffusion–reaction](point-release-solves-adr.md)
+- [For D, t > 0 the point-release kernel is differentiable in time](point-release-has-deriv-at-t.md)
+- [The point-release kernel is differentiable in x for all parameters](point-release-has-deriv-at-x.md)
+- [The x-derivative of the point-release kernel is differentiable in x](point-release-has-deriv-at-xx.md)
+- [For D, t > 0 the point-release inventory is M e^−kt](point-release-integral.md)

@@ -1,14 +1,9 @@
-# Affine no supersaturation
+# One-layer certificate against supersaturation in the affine model
 
-Conservative one-layer no-supersaturation certificate.
-
-Let `psat` be a saturation-pressure curve, monotone on positive
-absolute temperatures. On one layer, the temperature and vapor
-partial pressure are the affine profiles between face values
-`(Tl, Tr)` and `(pl, pr)`, with `Tl, Tr > 0`. If the larger face
-vapor pressure is at most `psat (min Tl Tr)` (the saturation
-lower bound over the whole face-temperature interval supplied by
-monotonicity), then at every `θ ∈ [0, 1]` the affine temperature
-is positive and the affine vapor pressure does not exceed the
-saturation pressure there. This is only a no-supersaturation
-admission for the affine model, not a condensate prediction.
+Let `p_sat : ℝ → ℝ` be nondecreasing on the positive reals (a saturation-pressure curve of absolute
+temperature), let the face temperatures be `T_l > 0`, `T_r > 0` and the face vapour pressures `p_l`,
+`p_r`, and suppose `max(p_l, p_r) ≤ p_sat(min(T_l, T_r))`. Then for every `θ ∈ [0, 1]`, the
+[affine](affine-profile.md) temperature `T(θ) = (1 - θ) T_l + θ T_r` is positive and the affine
+vapour pressure `p(θ) = (1 - θ) p_l + θ p_r` satisfies `p(θ) ≤ p_sat(T(θ))`: the layer is nowhere
+supersaturated. This is a sufficient condition for the affine steady model only; it predicts no
+condensate and asserts no compliance with a standard.

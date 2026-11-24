@@ -1,7 +1,10 @@
-# Has Deriv At quadratic Functional
+# Without inputs the rate of ∑ C T²/2 is −½ ∑∑ G times squared gaps
 
-Quadratic Lyapunov identity at time `t`: with symmetric conductances and no external inputs,
-the functional `∑ i, C i * T i ^ 2 / 2` has derivative
-`-∑ i, ∑ j, G i j * (T i t - T j t) ^ 2 / 2` at `t`. This is
-`ZoneHeatInventory.quadratic_dissipation_hasDerivAt` with no boundary conductance, zero
-reference and no heating power.
+Let `ι` be a finite index set of nodes, with capacities `C i`, conductances `G i j` such that
+`G i j = G j i`, temperatures `T i` differentiable at time `t` with derivatives `dT i`, such that
+every node obeys `C i dT i = ∑_j G i j (T j(t) - T i(t))`. Then
+
+`∑_i C i T i²/2` has at `t` the derivative `-∑_i ∑_j G i j (T i(t) - T j(t))²/2`.
+
+It is the case with no boundary conductance, zero reference and no heating power of the
+[zone quadratic dissipation identity](../heat-balance-of-lumped-thermal-networks/quadratic-dissipation-has-deriv-at.md).

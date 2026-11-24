@@ -1,4 +1,6 @@
-# Force Dim ne area
+# Force and area have different dimensions
 
-A force and an area have different dimensions, so `WithDim` has no sum of a force and an area
-and no cast between them.
+Over the seven ISQ base quantities length `L`, mass `M`, time `T`, electric current `I`,
+thermodynamic temperature `Θ`, amount of substance `N` and luminous intensity `J`, the
+[force](force-dim.md) dimension differs from the area dimension `L²`, so a force and an area have no
+sum and neither converts into the other.

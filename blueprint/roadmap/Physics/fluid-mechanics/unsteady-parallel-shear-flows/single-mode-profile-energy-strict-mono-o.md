@@ -1,4 +1,5 @@
-# Single Mode Profile energy strict Mono On
+# The single-mode kinetic energy increases despite dissipation
 
-Increasing kinetic energy despite viscous dissipation: for `ρ, μ, L > 0` and `A ≠ 0` the
-kinetic energy of the single-mode flow is strictly increasing on `t ≥ 0`.
+For `ρ > 0`, `μ > 0`, `L > 0` and `A ≠ 0`, the [kinetic energy](shear-kinetic-energy.md) `K(t)` of
+the [single-mode profile](single-mode-profile.md) `U` with `ν = μ / ρ` is strictly increasing on
+`t ≥ 0`, although energy is dissipated.

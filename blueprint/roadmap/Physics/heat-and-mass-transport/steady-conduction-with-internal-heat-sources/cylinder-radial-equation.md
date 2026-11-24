@@ -1,6 +1,8 @@
-# Cylinder radial equation
+# On 0 < r ≤ R with R, k > 0 the radial heat-balance equation holds
 
-Radial heat-balance equation on the physical cylinder: for
-radius `0 < R`, conductivity `0 < k`, and an interior radius
-`0 < r` with `r ≤ R`,
-`(1 / r) * (d/dr) (r * T'(r)) = -qvol / k`.
+Let `R > 0`, `k > 0` and `0 < r ≤ R`. For every real `qvol`, the
+[cylinder gradient](cylinder-gradient.md) `T′(r) = -qvol r/(2k)` satisfies
+
+`(1/r) d/dr (r T′(r)) = -qvol/k`.
+
+It is a special case of the [algebraic radial identity](cylinder-radial-equation-algebraic.md).

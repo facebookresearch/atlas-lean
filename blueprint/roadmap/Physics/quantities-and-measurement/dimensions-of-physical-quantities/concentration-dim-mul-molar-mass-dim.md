@@ -1,3 +1,6 @@
-# Concentration Dim mul molar Mass Dim
+# Amount concentration times molar mass is a mass density
 
-An amount concentration times a molar mass has the mass density dimension `M L⁻³`.
+Over the seven ISQ base quantities length `L`, mass `M`, time `T`, electric current `I`,
+thermodynamic temperature `Θ`, amount of substance `N` and luminous intensity `J`, the
+[amount-concentration](concentration-dim.md) dimension `N L⁻³` times the
+[molar-mass](molar-mass-dim.md) dimension `M N⁻¹` is the mass-density dimension `M L⁻³`.

@@ -1,4 +1,6 @@
-# Nusselt
+# Nusselt number of a correlation for a request it applies to
 
-The Nusselt number of the correlation for a request, evaluated only where the correlation
+For a [Nusselt correlation](nusselt-correlation.md) that [applies](applies.md) to a
+[request](correlation-request.md), its Nusselt number for the request is the value of the
+correlation's formula at the request's flow conditions. It is defined only when the correlation
 applies.

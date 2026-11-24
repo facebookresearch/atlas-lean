@@ -1,4 +1,5 @@
-# Pipe Flow Rate
+# Flow rate of cylindrical Poiseuille flow through a cross-section
 
-The signed volumetric flow rate through the cross-section `x 2 = z`, positive along `x 2`: the
-Lebesgue integral of the axial velocity over the pipe disk.
+For real `G`, `μ`, `R` and `z`, the flow rate through the cross-section `x₂ = z` is the Lebesgue
+integral `Q = ∫ a(q) dq` over `ℝ × ℝ` of the [axial flux density](pipe-axial-flux.md) `a`: the
+signed volumetric flow rate, positive along `x₂`. The physical reading is `μ > 0` and `R > 0`.

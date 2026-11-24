@@ -1,80 +1,80 @@
 # Compressible flow of a perfect gas
 
-## A. Port enthalpy of a calorically perfect gas
+## Enthalpy of a calorically perfect gas
 
-- [Specific Enthalpy perfect Gas](specific-enthalpy-perfect-gas.md)
+- [Specific enthalpy of a calorically perfect gas](specific-enthalpy-perfect-gas.md)
 
-## B. Stagnation temperature
+## Stagnation temperature
 
-- [Stagnation temperature](stagnation-temperature-ratio.md)
+- [Stagnation temperature of a perfect gas](stagnation-temperature-ratio.md)
 
-## C. Stagnation pressure and density through the isentrope
+## Stagnation pressure and density through the isentrope
 
-- [Stagnation pressure](stagnation-pressure-ratio.md)
-- [Stagnation density](stagnation-density-ratio.md)
+- [Stagnation pressure of an isentropically connected state](stagnation-pressure-ratio.md)
+- [Stagnation density of an isentropically connected state](stagnation-density-ratio.md)
 
-## D. Boundary cases
+## Boundary cases of the stagnation state
 
-- [Temperature lt stagnation](temperature-lt-stagnation.md)
-- [Stagnation eq static of mach eq zero](stagnation-eq-static-of-mach-eq-zero.md)
-- [Stagnation energy not isentropic](stagnation-energy-not-isentropic.md)
+- [A moving perfect gas stagnates hotter](temperature-lt-stagnation.md)
+- [At zero Mach number the stagnation state is the static state](stagnation-eq-static-of-mach-eq-zero.md)
+- [The energy balance alone does not fix the stagnation pressure](stagnation-energy-not-isentropic.md)
 
-## E. The isentropic mass flux
+## The isentropic mass flux
 
-- [Isentropic Mass Flux](isentropic-mass-flux.md)
-- [The flux of the isentropic state](mass-flux-eq-isentropic-mass-flux.md)
-- [Derivative of the flux](has-deriv-at-isentropic-mass-flux.md)
+- [Isentropic mass flux per unit area of a perfect gas](isentropic-mass-flux.md)
+- [The mass flux of an isentropically connected state](mass-flux-eq-isentropic-mass-flux.md)
+- [Derivative of the isentropic mass flux](has-deriv-at-isentropic-mass-flux.md)
 
-## F. Monotonicity and the sonic maximum
+## Monotonicity and the sonic maximum
 
-- [Subsonic increase](isentropic-mass-flux-strict-mono-on.md)
-- [Supersonic decrease](isentropic-mass-flux-strict-anti-on.md)
-- [The sonic maximum is unique](isentropic-mass-flux-lt-sonic.md)
+- [The isentropic mass flux increases on the subsonic range](isentropic-mass-flux-strict-mono-on.md)
+- [The isentropic mass flux decreases on the supersonic range](isentropic-mass-flux-strict-anti-on.md)
+- [The sonic mass flux is the strict maximum](isentropic-mass-flux-lt-sonic.md)
 
-## G. The critical-area ratio
+## The critical-area ratio
 
-- [Critical-area ratio](area-ratio-eq-and-one-le.md)
-- [No area ratio at rest](isentropic-mass-flux-zero.md)
+- [Critical-area ratio of an isentropic flow](area-ratio-eq-and-one-le.md)
+- [At zero Mach number the flux vanishes and gives no area ratio](isentropic-mass-flux-zero.md)
 
-## H. The differentiated isentrope and mass conservation
+## The differentiated isentrope and mass conservation
 
-- [Differentiated isentrope](isentropic-density-derivative.md)
-- [Differentiated mass conservation](mass-flow-derivative.md)
+- [Differentiated isentrope in a duct](isentropic-density-derivative.md)
+- [Differentiated mass conservation in a duct](mass-flow-derivative.md)
 
-## I. The area-velocity relation and stationary area at a sonic station
+## The area-velocity relation and sonic stations
 
-- [Area-velocity relation](area-velocity-relation.md)
+- [Area-velocity relation of steady isentropic duct flow](area-velocity-relation.md)
 - [A sonic station has stationary area](area-deriv-eq-zero-of-mach-eq-one.md)
 - [Stationary area with accelerating flow is sonic](mach-eq-one-of-area-deriv-eq-zero.md)
-- [The choked mass flow makes the station sonic](mach-eq-one-of-choked.md)
+- [A choked mass flow makes the station sonic](mach-eq-one-of-choked.md)
 
-## J. Normal-shock jump conditions and branch ratios
+## Normal-shock jump conditions and branch ratios
 
-- [Is Normal Shock Jump](is-normal-shock-jump.md)
-- [Shock Density Ratio](shock-density-ratio.md)
-- [Shock Pressure Ratio](shock-pressure-ratio.md)
-- [Shock Temperature Ratio](shock-temperature-ratio.md)
+- [Jump conditions of a steady normal shock](is-normal-shock-jump.md)
+- [Density ratio of the distinct normal-shock branch](shock-density-ratio.md)
+- [Pressure ratio of the distinct normal-shock branch](shock-pressure-ratio.md)
+- [Temperature ratio of the distinct normal-shock branch](shock-temperature-ratio.md)
 
-## K. The two normal-shock branches
+## The two normal-shock branches
 
-- [Is Normal Shock Jump self](is-normal-shock-jump-self.md)
-- [Is Normal Shock Jump distinct](is-normal-shock-jump-distinct.md)
-- [Branch classification on the positive domain](normal-shock-classification.md)
-- [The distinct branch is physical only above the pressure-positivity threshold](is-normal-shock-jump-distinct-pos-iff.md)
-- [The roots coincide at `m = 1`](shock-ratio-eq-one-iff.md)
+- [The trivial branch solves the normal-shock jump conditions](is-normal-shock-jump-self.md)
+- [The distinct branch solves the normal-shock jump conditions](is-normal-shock-jump-distinct.md)
+- [Classification of positive normal-shock solutions](normal-shock-classification.md)
+- [Positivity of the distinct shock branch above the pressure threshold](is-normal-shock-jump-distinct-pos-iff.md)
+- [The two branches coincide exactly at unit Mach number](shock-ratio-eq-one-iff.md)
 
-## L. Specific entropy change in `(T, p)` form and on the distinct branch
+## Specific entropy change and the entropy jump across a shock
 
-- [Specific Entropy Change](specific-entropy-change.md)
-- [The `(T, p)` form of the specific entropy change](specific-entropy-change-perfect-gas.md)
-- [Shock Entropy Jump](shock-entropy-jump.md)
-- [No jump at `m = 1`](shock-entropy-jump-one.md)
-- [Derivative of the entropy jump](has-deriv-at-shock-entropy-jump.md)
-- [Sign of the entropy jump](shock-entropy-jump-pos-iff.md)
-- [Entropy change across the nontrivial branch](normal-shock-entropy-change.md)
+- [Specific entropy change of a calorically perfect gas](specific-entropy-change.md)
+- [Entropy change of a perfect gas in temperature and pressure](specific-entropy-change-perfect-gas.md)
+- [Entropy jump across the distinct normal-shock branch](shock-entropy-jump.md)
+- [No entropy jump at unit Mach number](shock-entropy-jump-one.md)
+- [Derivative of the normal-shock entropy jump](has-deriv-at-shock-entropy-jump.md)
+- [Sign of the normal-shock entropy jump](shock-entropy-jump-pos-iff.md)
+- [Entropy change across a nontrivial normal shock](normal-shock-entropy-change.md)
 
-## M. Selection of the compression branch
+## Selection of the compression branch
 
-- [Entropy selects the compression branch](normal-shock-entropy-pos-iff.md)
-- [Unchanged total enthalpy and `p02 / p01 = exp (-Δs / R)`](normal-shock-stagnation-pressure-ratio.md)
-- [Total pressure across the two branches](normal-shock-total-pressure-selection.md)
+- [Entropy selects the compression branch of a normal shock](normal-shock-entropy-pos-iff.md)
+- [Stagnation temperature and pressure across a normal shock](normal-shock-stagnation-pressure-ratio.md)
+- [Total pressure across the two normal-shock branches](normal-shock-total-pressure-selection.md)

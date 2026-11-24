@@ -1,4 +1,4 @@
-# Soundness
+# An accepted trace is the sequence of powers of 9/10
 
-An accepted list has eleven entries, and `y_j = (9 / 10) ^ j` for
-`j = 0, …, 10` after the cast to the reals.
+For every list `y` of rationals accepted by the [trace checker](check-thermal-trace.md), `y` has
+eleven entries and `y_j = (9/10)^j` in the reals for `j = 0, …, 10`.

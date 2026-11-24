@@ -1,4 +1,6 @@
-# Two Cells interior system
+# Unit stiffness and load at the interior node of two cells
 
-The unit two-cell system at the interior node: the assembled stiffness entry is
-`1 / h + 1 / h = 4` with `h = 1 / 2`, and the load of `-û'' = 2` is `∫₀¹ 2 φ = 1`.
+On the [two-cell partition](two-cells.md), the assembled
+[stiffness](../finite-element-method-in-one-dimension/stiffness.md) entry of the interior node is
+`4` (`1/h + 1/h` with `h = 1/2`), and the [load](../finite-element-method-in-one-dimension/load.md)
+of `-û'' = 2` at that node is `∫_0^1 2 φ = 1`.

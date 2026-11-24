@@ -1,4 +1,6 @@
-# Bounded decimal decoding denotes its integer
+# A digit run decodes exactly when well formed, to its positional value
 
-A digit run decodes exactly when it has one
-to eleven decimal digits, and then to its positional value.
+For a list of characters `d` and a natural number `n`, the
+[bounded decimal decoder](decode-decimal.md) returns `n` on `d` if and only if `d` is a
+[run of one to eleven decimal digits](is-decimal-digits.md) and `n` is its
+[positional value](decimal-value.md).

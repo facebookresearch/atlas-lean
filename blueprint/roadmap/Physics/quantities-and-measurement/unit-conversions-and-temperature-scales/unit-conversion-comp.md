@@ -1,5 +1,4 @@
-# Unit Conversion comp
+# Converting by a, then by b, is converting by b a
 
-Unit-scale conversions compose: converting by `a` then by `b` is
-converting by the composite scale `b * a` in `NNRealˣ`. Strictly
-positive scales stay strictly positive under multiplication.
+For strictly positive scales `a` and `b` and every real `x`, converting by `a` and then by `b` is
+converting by the product scale `b a`, which is again strictly positive: `b (a x) = (b a) x`.

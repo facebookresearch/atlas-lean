@@ -1,8 +1,10 @@
-# Slab Temperature
+# Temperature of a steady slab with a uniform heat source
 
-Temperature profile of the steady one-dimensional slab with constant
-conductivity and uniform volumetric heat source `H`: on a slab of
-thickness `L` with surface temperatures `Ts` and `Tb`,
-`T(d) = Ts + ((Tb - Ts) / L + H * L / (2k)) * d - H * d^2 / (2k)`. This is
-the existing geotherm profile shape read as a slab model; `H` is an
-externally supplied heat source. It is intended for `L ≠ 0`, `k ≠ 0`.
+For real `Ts`, `Tb`, `L`, `k`, `H` and `d`, the slab temperature is
+
+`T(d) = Ts + ((Tb - Ts)/L + HL/(2k)) d - H d²/(2k)`,
+
+the steady temperature at depth `d` of a slab of thickness `L` and conductivity `k` with surface
+temperatures `Ts` and `Tb` and a uniform volumetric heat source `H`. It is intended for `L ≠ 0` and
+`k ≠ 0`; with `x/0 = 0` the term `(Tb - Ts)/L` is `0` when `L = 0` and the terms divided by `k` are
+`0` when `k = 0`. In the physical reading `L > 0`, `k > 0` and `0 ≤ d ≤ L`.

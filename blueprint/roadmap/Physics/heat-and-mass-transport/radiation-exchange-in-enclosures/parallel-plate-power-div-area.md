@@ -1,4 +1,5 @@
-# Parallel Plate Power div area
+# For A > 0, the parallel-plate power per area is the net flux
 
-Power, not flux: dividing the net power by the plate area `A > 0` gives the net flux
-`σ * (T₁ ^ 4 - T₂ ^ 4) / (1 / ε₁ + 1 / ε₂ - 1)` (watts per square metre).
+Let `A > 0`. Then for all real `σ`, `ε₁`, `ε₂`, `T₁` and `T₂`, the
+[parallel-plate power](parallel-plate-power.md) divided by `A` is the net flux
+`σ (T₁⁴ - T₂⁴) / (1/ε₁ + 1/ε₂ - 1)`.

@@ -1,4 +1,8 @@
-# Parallel Effectiveness
+# Parallel-flow effectiveness
 
-Parallel-flow effectiveness `ε_p = (1 - exp (-NTU (1 + Cr))) / (1 + Cr)`. Domain `NTU ≥ 0`,
-`0 < Cr ≤ 1`, where the denominator is at least `1`.
+For real `NTU` and `C_r`, the parallel-flow effectiveness is
+
+`ε_p = (1 - exp(-NTU (1 + C_r))) / (1 + C_r)`.
+
+Its domain is `NTU ≥ 0`, `0 < C_r ≤ 1`, where the denominator is at least `1`; with the convention
+`u / 0 = 0` it is `0` at `C_r = -1`.

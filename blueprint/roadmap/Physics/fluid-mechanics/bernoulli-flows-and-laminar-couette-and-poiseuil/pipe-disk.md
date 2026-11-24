@@ -1,4 +1,4 @@
-# Pipe Disk
+# Disk of a pipe cross-section
 
-The closed pipe disk `{q | q.1² + q.2² ≤ R²}` of a cross-section, in transverse
-coordinates `q = (x 0, x 1)`.
+For a radius `R`, the pipe disk is the closed set `{q ∈ ℝ × ℝ : q₁² + q₂² ≤ R²}` of transverse
+coordinates `q = (q₁, q₂) = (x₀, x₁)`: a Euclidean disk (for `R = 0` the single point `(0, 0)`).

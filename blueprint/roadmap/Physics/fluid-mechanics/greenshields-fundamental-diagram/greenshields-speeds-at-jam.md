@@ -1,4 +1,5 @@
-# Greenshields speeds at jam
+# Greenshields speeds at jam density
 
-At jam density the vehicle speed is zero while the
-characteristic speed is `-vf`.
+For a jam density `kj > 0` and every real `vf`, at `k = kj` the
+[vehicle speed](greenshields-vehicle-speed.md) `v(k) = vf (1 - k / kj)` is `0` and the
+characteristic speed `vf (1 - 2 k / kj)` is `-vf`.

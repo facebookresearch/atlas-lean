@@ -1,4 +1,5 @@
-# Bath Power
+# Heat delivered by a bath at fixed temperature
 
-The power `Q(T) = -G (T - T_amb)` that a fixed bath at temperature `T_amb` delivers through the
-conductance `G` to a body at temperature `T`.
+For real numbers `G` (conductance), `T_amb` (bath temperature) and `T` (body temperature), the power
+delivered by the bath to the body is `Q(T) = -G (T - T_amb)`, positive when the body is colder than
+the bath and `G > 0`.

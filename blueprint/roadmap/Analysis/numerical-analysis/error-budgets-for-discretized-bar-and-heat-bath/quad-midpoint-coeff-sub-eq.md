@@ -1,3 +1,5 @@
-# Quad Midpoint Coeff sub eq
+# The midpoint coefficient error is the residual over the stiffness
 
-The residual identity of the midpoint system: `c_mid - c = L * r / (4 * EA)`.
+For real numbers `EA ≠ 0`, `L ≠ 0`, `Q` and `c`, the [midpoint coefficient](quad-midpoint-coeff.md)
+minus `c` equals `L r / (4 EA)`, where `r` is the [residual](quad-midpoint-residual.md) of `c` in
+the midpoint system.

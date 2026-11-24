@@ -1,3 +1,4 @@
-# Cylinder Temperature center
+# Temperature of the heated cylinder on its axis
 
-Center value: `T(0) = Ts + qvol * R^2 / (4k)`.
+For all real `Ts`, `R`, `k` and `qvol`, the [cylinder temperature](cylinder-temperature.md)
+`T(r) = Ts + qvol (R² - r²)/(4k)` satisfies `T(0) = Ts + qvol R²/(4k)`.

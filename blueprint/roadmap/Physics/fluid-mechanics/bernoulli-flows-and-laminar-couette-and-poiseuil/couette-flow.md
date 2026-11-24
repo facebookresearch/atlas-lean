@@ -1,5 +1,6 @@
-# Couette Flow
+# Plane Couette flow with Newtonian stress
 
-Plane Couette flow: constant density `ρ`, the steady Couette velocity, Physlib's Newtonian
-stress for constant pressure `p₀`, shear viscosity `μ` and second viscosity `lam`, and no body
-force.
+For real `ρ`, `μ`, `λ`, `p₀`, `U_w` and `H`, plane Couette flow is the
+[Couette fluid](couette-fluid.md) of density `ρ` and velocity `(U_w x₁ / H, 0, 0)` with the
+Newtonian stress of that velocity for the constant pressure `p₀`, the shear viscosity `μ` and the
+second viscosity `λ`, and no body force.

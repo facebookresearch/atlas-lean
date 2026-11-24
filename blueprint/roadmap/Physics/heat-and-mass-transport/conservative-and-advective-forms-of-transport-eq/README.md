@@ -1,4 +1,4 @@
 # Conservative and advective forms of transport equations
 
-- [Flux divergence eq advective](flux-divergence-eq-advective.md)
-- [Conservative advective pde equiv](conservative-advective-pde-equiv.md)
+- [Where ∂U/∂x = 0, the flux divergence equals the advective operator](flux-divergence-eq-advective.md)
+- [Where ∂U/∂x = 0, conservative and advective forms are equivalent](conservative-advective-pde-equiv.md)

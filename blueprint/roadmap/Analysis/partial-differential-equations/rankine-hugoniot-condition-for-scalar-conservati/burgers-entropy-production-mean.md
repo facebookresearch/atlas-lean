@@ -1,4 +1,4 @@
-# Burgers entropy Production mean
+# Entropy production of a Burgers jump at the mean speed
 
-Entropy production at the Rankine-Hugoniot speed:
-`[q] - ((uL + uR) / 2) * [η] = (uR - uL) ^ 3 / 12`.
+For all real `u_L` and `u_R`, the [entropy production](burgers-entropy-production.md) at the speed
+`(u_L + u_R) / 2` is `(u_R - u_L)³ / 12`.

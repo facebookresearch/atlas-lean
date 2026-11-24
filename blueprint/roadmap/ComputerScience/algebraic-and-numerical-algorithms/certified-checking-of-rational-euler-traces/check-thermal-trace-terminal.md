@@ -1,3 +1,4 @@
-# Terminal value
+# An accepted trace ends at (9/10)^10
 
-An accepted trace ends at `y_10 = (9 / 10) ^ 10` in the reals.
+For every list `y` of rationals accepted by the [trace checker](check-thermal-trace.md), its entry
+`y_10` equals `(9/10)^10` in the reals.

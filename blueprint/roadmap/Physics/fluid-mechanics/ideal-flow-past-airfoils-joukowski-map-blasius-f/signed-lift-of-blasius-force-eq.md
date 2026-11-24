@@ -1,9 +1,9 @@
-# Signed Lift of blasius Force eq
+# If the Blasius force is iρUΓ e^(−iα), the signed lift is −ρUΓ
 
-Signed lift from the Blasius force value. If the contour force
-for `physicalVelocity a U Γ α` is `I * ρ * U * Γ * exp (-α * I)`,
-then rotating that complex force by `exp (α * I)` gives
-`I * ρ * U * Γ`; hence the component perpendicular to the free
-stream, with the sign convention in `signedLift`, is `-ρ * U * Γ`.
-No positivity or nonvanishing hypothesis is needed for this
-algebraic step.
+Let `a`, `ρ`, `U`, `Γ`, `α`, `R` be real, and suppose that the [Blasius force](blasius-force.md),
+with density `ρ` and at radius `R`, of the [physical complex velocity](physical-velocity.md) with
+parameters `a`, `U`, `Γ`, `α` equals `iρUΓ e^{−iα}`. Then its [signed lift](signed-lift.md) at angle
+`α` is `−ρUΓ`: turning the force by `e^{iα}` gives `iρUΓ`, whose imaginary part is `ρUΓ`. No
+positivity or nonvanishing hypothesis is needed. With `ρ > 0` and `U > 0`, as in the physical
+reading, the lift is positive, along `(−sin α, cos α)`, exactly when `Γ < 0`, a clockwise
+circulation.

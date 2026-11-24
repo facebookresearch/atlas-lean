@@ -1,4 +1,4 @@
-# Decode Denominator
+# Decoding the denominator of a trace token
 
-Decode a denominator: one to eleven decimal digits denoting an integer in `[1, 10 ^ 10]`;
-`none` otherwise, `0` included.
+For a list of characters, the denominator decoder returns the value `d` of a decodable
+[digit run](decode-decimal.md) when `1 ≤ d ≤ 10^10`, and nothing otherwise (in particular for `0`).

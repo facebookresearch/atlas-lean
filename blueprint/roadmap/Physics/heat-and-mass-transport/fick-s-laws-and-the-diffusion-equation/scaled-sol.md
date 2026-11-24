@@ -1,3 +1,3 @@
-# Scaled Sol
+# Parabolic rescaling of a concentration field
 
-The parabolic rescaling `(x, t) ↦ c(λx, λ²t)` of a field `c` (position, then time).
+For a field `c(x, t)` and a real `λ`, the parabolic rescaling is the field `(x, t) ↦ c(λx, λ²t)`.

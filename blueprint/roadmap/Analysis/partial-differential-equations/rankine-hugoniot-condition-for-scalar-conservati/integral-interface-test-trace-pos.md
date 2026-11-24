@@ -1,4 +1,4 @@
-# Integral interface Test trace pos
+# The integral of the interface test along the front is positive
 
-The interface integral of the test is positive: `0 < ∫ φ (t, c * t) dt`, the integral of
-the time bump (`ContDiffBump.integral_pos`).
+For a bump `β` centred at `t₀`, a bump `θ` centred at `0` and a real `c`, the
+[interface test](interface-test.md) satisfies `∫ φ(t, c t) dt > 0`: the integral of the time bump.

@@ -1,4 +1,6 @@
-# The sonic maximum is unique
+# The sonic mass flux is the strict maximum
 
-For positive `p0`, `T0`, `R` and `γ > 1`, every `M ≠ 1` has
-`G(M) < G(1)`; for `M < 0`, which is not a Mach number, `G(M) < 0`.
+Let `p0 > 0`, `T0 > 0`, `R > 0` and `γ > 1`. Then the
+[isentropic mass flux](isentropic-mass-flux.md)
+`G(M) = p0 √(γ / (R T0)) M (1 + (γ - 1) M² / 2)^(-(γ + 1) / (2 (γ - 1)))` satisfies `G(M) < G(1)`
+for every real `M ≠ 1`. (For `M < 0`, which is not a Mach number, `G(M)` is negative.)

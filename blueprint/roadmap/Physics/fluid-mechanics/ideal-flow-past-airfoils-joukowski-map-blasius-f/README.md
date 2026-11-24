@@ -1,63 +1,65 @@
 # Ideal flow past airfoils: Joukowski map, Blasius force and lift
 
-- [Joukowski](joukowski.md)
-- [Far Field Zeta](far-field-zeta.md)
-- [Joukowski circle](joukowski-circle.md)
-- [Radicand mem slit Plane](radicand-mem-slit-plane.md)
-- [Joukowski far Field Zeta](joukowski-far-field-zeta.md)
-- [Norm far Field Zeta gt half](norm-far-field-zeta-gt-half.md)
-- [Abs far Field Zeta gt](abs-far-field-zeta-gt.md)
-- [Differentiable At far Field Zeta](differentiable-at-far-field-zeta.md)
-- [Kutta cancellation](kutta-cancellation.md)
+## The Joukowski map, its far-field branch and the Kutta circulation
 
-## Physical complex velocity and its far-field remainder
+- [Joukowski map J(ζ) = ζ + a²/ζ](joukowski.md)
+- [Far-field inverse branch ζ(z) of the Joukowski map](far-field-zeta.md)
+- [The Joukowski map sends a e^(iθ) to the real point 2a cos θ](joukowski-circle.md)
+- [For a > 0 and ‖z‖ > 2a, 1 − 4a²/z² lies in the slit plane](radicand-mem-slit-plane.md)
+- [For a > 0 and ‖z‖ > 2a, the Joukowski map sends ζ(z) back to z](joukowski-far-field-zeta.md)
+- [For a > 0 and ‖z‖ > 2a, the far-field branch has modulus above ‖z‖/2](norm-far-field-zeta-gt-half.md)
+- [For a > 0 and ‖z‖ > 2a, ζ(z) lies outside the circle of radius a](abs-far-field-zeta-gt.md)
+- [For a > 0, the far-field branch is holomorphic on ‖z‖ > 2a](differentiable-at-far-field-zeta.md)
+- [For a > 0, a zero circle velocity at ζ = a forces Γ = −4πaU sin α](kutta-cancellation.md)
 
-- [Circle Velocity](circle-velocity.md)
-- [Physical Velocity](physical-velocity.md)
-- [Circle Velocity kutta trailing Edge](circle-velocity-kutta-trailing-edge.md)
-- [Norm denominator ge](norm-denominator-ge.md)
-- [Differentiable On physical Velocity](differentiable-on-physical-velocity.md)
-- [Physical Velocity far Field bound](physical-velocity-far-field-bound.md)
-- [Exists physical Velocity far Field](exists-physical-velocity-far-field.md)
+## Circle-plane and physical complex velocities and the far-field remainder
 
-## B. Blasius force from a far-field expansion
+- [Complex velocity of a stream past a cylinder with circulation](circle-velocity.md)
+- [Physical-plane complex velocity through the far-field branch](physical-velocity.md)
+- [For a > 0, Γ = −4πaU sin α makes the circle velocity vanish at ζ = a](circle-velocity-kutta-trailing-edge.md)
+- [For a > 0 and ‖z‖ ≥ 4a, ‖1 − a²/ζ(z)²‖ is at least 3/4](norm-denominator-ge.md)
+- [For a > 0, the physical complex velocity is holomorphic on ‖z‖ > 2a](differentiable-on-physical-velocity.md)
+- [For a > 0 and ‖z‖ ≥ 4a, W(z) is U e^(−iα) + Γ/(2πiz) up to K/‖z‖²](physical-velocity-far-field-bound.md)
+- [For a > 0, W is holomorphic on ‖z‖ > 2a with an O(1/‖z‖²) remainder](exists-physical-velocity-far-field.md)
 
-- [Blasius Force](blasius-force.md)
-- [Blasius Force eq](blasius-force-eq.md)
+## Blasius force from a far-field expansion
 
-## C. Signed lift and lift coefficient
+- [Blasius force (iρ/2) ∮ W² dz on the circle of radius R about 0](blasius-force.md)
+- [Blasius force iρUΓ e^(−iα) from a far-field expansion of the velocity](blasius-force-eq.md)
 
-- [Signed Lift](signed-lift.md)
-- [Lift Coefficient](lift-coefficient.md)
-- [Blasius Force physical Velocity](blasius-force-physical-velocity.md)
-- [Signed Lift of blasius Force eq](signed-lift-of-blasius-force-eq.md)
-- [Lift Coefficient kutta](lift-coefficient-kutta.md)
-- [Abs two pi sin sub two pi le](abs-two-pi-sin-sub-two-pi-le.md)
-- [Signed Lift lift Coefficient kutta](signed-lift-lift-coefficient-kutta.md)
+## Signed lift and lift coefficient
 
-## D. Cylinder velocity and single-valued stream function
+- [Signed lift: the force component normal to the free stream](signed-lift.md)
+- [Lift coefficient L/(ρU²c/2) of a lift per unit span](lift-coefficient.md)
+- [For a, ρ, U > 0, the physical velocity has Blasius force iρUΓ e^(−iα)](blasius-force-physical-velocity.md)
+- [If the Blasius force is iρUΓ e^(−iα), the signed lift is −ρUΓ](signed-lift-of-blasius-force-eq.md)
+- [For nonzero a, ρ and U, the Kutta lift has coefficient 2π sin α](lift-coefficient-kutta.md)
+- [2π sin α and 2πα differ by at most π/3 times the absolute value of α³](abs-two-pi-sin-sub-two-pi-le.md)
+- [With a, ρ, U > 0, the Kutta lift coefficient is 2π sin α, near 2πα](signed-lift-lift-coefficient-kutta.md)
 
-- [Cyl U](cyl-u.md)
-- [Cyl V](cyl-v.md)
-- [Cyl Stream](cyl-stream.md)
+## Cylinder velocity and single-valued stream function
 
-## Derivative rules used below
+- [Horizontal velocity u of the flow past a cylinder with circulation](cyl-u.md)
+- [Vertical velocity v of the flow past a cylinder with circulation](cyl-v.md)
+- [Stream function of the flow past a cylinder with circulation](cyl-stream.md)
 
-- [Cyl normal zero](cyl-normal-zero.md)
-- [Cyl divergence free](cyl-divergence-free.md)
-- [Cyl curl free](cyl-curl-free.md)
-- [Cyl Stream deriv y](cyl-stream-deriv-y.md)
-- [Cyl Stream deriv x](cyl-stream-deriv-x.md)
+## No penetration, divergence, curl and stream-function derivatives
 
-## E. Cylinder pressure and the contour force
+- [No penetration: on x² + y² = a², the cylinder velocity is tangential](cyl-normal-zero.md)
+- [Away from the origin, the cylinder velocity field is divergence-free](cyl-divergence-free.md)
+- [Away from the origin, the cylinder velocity field is curl-free](cyl-curl-free.md)
+- [For a > 0, ∂ψ/∂y is the horizontal velocity u away from the origin](cyl-stream-deriv-y.md)
+- [For a > 0, ∂ψ/∂x is minus the vertical velocity v away from the origin](cyl-stream-deriv-x.md)
 
-- [Surface Force X](surface-force-x.md)
-- [Surface Force Y](surface-force-y.md)
-- [Circle Velocity zero eq cyl](circle-velocity-zero-eq-cyl.md)
-- [Norm sq circle Velocity zero circle Map](norm-sq-circle-velocity-zero-circle-map.md)
-- [Surface Pressure circle Map](surface-pressure-circle-map.md)
-- [Surface Force const](surface-force-const.md)
-- [Surface Pressure interval Integrable](surface-pressure-interval-integrable.md)
-- [Surface Force eq](surface-force-eq.md)
-- [Blasius Force circle Velocity zero](blasius-force-circle-velocity-zero.md)
-- [Blasius Force eq surface Force](blasius-force-eq-surface-force.md)
+## Cylinder pressure and the contour force
+
+- [Horizontal pressure force per unit span on the circle of radius a](surface-force-x.md)
+- [Vertical pressure force per unit span on the circle of radius a](surface-force-y.md)
+- [At α = 0, the circle velocity is u − iv of the cylinder flow](circle-velocity-zero-eq-cyl.md)
+- [For a > 0, the squared speed on the cylinder is (2U sin θ − Γ/(2πa))²](norm-sq-circle-velocity-zero-circle-map.md)
+- [For a > 0, Bernoulli's law gives the surface pressure on the cylinder](surface-pressure-circle-map.md)
+- [A constant pressure exerts no net force on a circle](surface-force-const.md)
+- [For a > 0, the Bernoulli surface-pressure integrands are integrable](surface-pressure-interval-integrable.md)
+- [For a > 0, the Bernoulli pressure force on the cylinder is (0, −ρUΓ)](surface-force-eq.md)
+- [For ρ, a, U > 0 and R ≥ a, the cylinder flow has Blasius force iρUΓ](blasius-force-circle-velocity-zero.md)
+- [The cylinder's Blasius force equals its Bernoulli pressure force](blasius-force-eq-surface-force.md)

@@ -1,8 +1,6 @@
-# Weak Residual moving Step
+# Weak residual of a straight moving step
 
-Weak residual of a straight moving step. For constant states `uL`, `uR`,
-interface `x = c * t`, any flux `f`, and a smooth test `φ` vanishing outside a
-bounded rectangle, with partial derivatives `φt`, `φx`:
-`∫∫ (u * φ_t + f u * φ_x) = -((f uR - f uL) - c * (uR - uL)) * ∫ φ (t, c * t) dt`.
-The time-derivative terms use the moving-interval transport theorem
-`ControlVolumes.movingJumpTransport`.
+For a flux `f`, real numbers `u_L`, `u_R` and `c`, and a smooth test function `φ` with time and
+space partial derivatives `φ_t` and `φ_x` that vanishes outside a bounded rectangle, the
+[weak residual](weak-residual.md) of the [moving step](moving-step.md) is
+`-((f(u_R) - f(u_L)) - c (u_R - u_L)) ∫ φ(t, c t) dt`.

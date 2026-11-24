@@ -1,4 +1,5 @@
-# Queue Len cycle end
+# The signal queue is empty at the end of the cycle under capacity
 
-The queue is empty at the cycle end, under
-`lam * (R + G) ≤ mu * G` with `0 < lam < mu`.
+For `0 < λ < μ`, `R ≥ 0`, `G ≥ 0` and the capacity condition `λ (R + G) ≤ μ G`, the
+[signal queue](queue-len.md) `Q(t)` (`λ t` for `t ≤ R`, `max(0, λ R - (μ - λ)(t - R))` for `t > R`)
+satisfies `Q(R + G) = 0`.

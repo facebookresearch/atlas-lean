@@ -1,4 +1,7 @@
-# Force Dim dim Scale round trip
+# Converting a force value to other units and back returns it
 
-Converting a force coordinate from `u1` to `u2` and back returns it
-(`dimScale_round_trip` at `forceDim`).
+For two choices of units `u₁` and `u₂` (each assigning a positive magnitude to the unit of each of
+the seven ISQ base quantities), let `k(d)` be the
+[unit conversion factor](../quantity-calculus-and-dimensionless-groups/unit-factor.md) of a
+dimension `d` from `u₁` to `u₂`, and `k'(d)` the factor back from `u₂` to `u₁`. For every real `x`,
+`k'(M L T⁻²) (k(M L T⁻²) x) = x`, where `M L T⁻²` is the [force](force-dim.md) dimension.

@@ -1,4 +1,4 @@
 # Differentiation of polynomial functions
 
-- [Quadratic has Deriv At](quadratic-has-deriv-at.md)
-- [Quadratic second has Deriv At](quadratic-second-has-deriv-at.md)
+- [Derivative of a quadratic function](quadratic-has-deriv-at.md)
+- [Second derivative of a quadratic function](quadratic-second-has-deriv-at.md)

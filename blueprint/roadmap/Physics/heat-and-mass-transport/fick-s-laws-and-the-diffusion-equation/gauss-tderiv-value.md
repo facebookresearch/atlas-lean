@@ -1,4 +1,6 @@
-# Gauss tderiv value
+# Time derivative of the Gaussian for D > 0 and t > 0
 
-The time derivative of the Gaussian for `D > 0` and `t > 0`:
-`∂ₜ gauss = gauss · (x² / (4Dt²) - 1 / (2t))`.
+Let `D > 0` and `t > 0`. For all real `M` and `x`, the [Gaussian](gauss.md)
+`G(x, t) = M/√(4πDt) · exp(-x²/(4Dt))` has, as a function of `t`, the derivative
+
+`∂G/∂t(x, t) = G(x, t) · (x²/(4Dt²) - 1/(2t))`.

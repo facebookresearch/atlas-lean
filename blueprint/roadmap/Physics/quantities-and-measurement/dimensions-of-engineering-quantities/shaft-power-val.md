@@ -1,3 +1,4 @@
-# Shaft Power val
+# The typed shaft power has value τ ω
 
-The coordinate of the typed shaft power is `τ ω` evaluated on the input coordinates.
+For every torque `τ` and angular velocity `ω`, the value of the [shaft power](shaft-power.md) is
+`τ ω`, computed from the values of `τ` and `ω`.

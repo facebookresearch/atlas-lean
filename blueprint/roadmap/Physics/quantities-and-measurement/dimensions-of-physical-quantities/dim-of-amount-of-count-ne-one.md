@@ -1,5 +1,4 @@
-# Dim Of amount Of Count ne one
+# The dimension of an amount of substance is not 1
 
-Unlike a dimensionless particle count, an amount of substance does not have dimension `1`;
-the content is `amountDim_ne_one`. Its coordinate rescales with the amount unit
-(`dimScale_single`), while that of a count does not (`dimScale_one_mul`).
+For every Avogadro constant `N_A` and particle count `N`, the dimension carried by the
+[amount of substance](amount-of-count.md) `N / N_A` is not the dimensionless dimension `1`.

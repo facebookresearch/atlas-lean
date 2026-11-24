@@ -14,7 +14,7 @@
 - [Reconstruction at a wet lake at rest](face-state-eq-of-lake-at-rest.md)
 - [Wet-bed reconstructed face balance](hydrostatic-face-balance.md)
 - [One-sided correction on a step](interface-flux-snd-of-step.md)
-- [Dry state excluded](exists-dry-left-face-imbalance.md)
+- [With a dry neighbour, wet-state consistency does not give the balance](exists-dry-left-face-imbalance.md)
 - [Conservative and primitive shallow-water forms agree at positive depth](shallow-water-conservative-iff-primitive.md)
 - [Centred rarefaction solves the conservative equations on the wet side](shallow-water-conservative-rarefaction.md)
 - [At zero depth conservation does not imply the primitive equations](exists-dry-conservative-not-primitive.md)

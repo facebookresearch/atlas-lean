@@ -1,6 +1,10 @@
-# Cosine Linear Power
+# Chopped-cosine linear power of a heated channel
 
-Chopped-cosine linear power `q'(z) = q₀ * cos (π z / Lₑ)` (power per unit length) at axial
-position `z`, with peak `q₀` at the midplane and extrapolated length `Lₑ`; a prescribed model
-input. Intended for `Lₑ > 0`; on the heated length `[-L/2, L/2]` with `L ≤ Lₑ` its values lie in
-`[0, q₀]` for `q₀ ≥ 0`.
+For real `q₀`, `Lₑ` and `z`, the chopped-cosine linear power is
+
+`q′(z) = q₀ cos(πz/Lₑ)`,
+
+the power per unit length at axial position `z`, with peak `q₀` at `z = 0` and extrapolated length
+`Lₑ`; it is a prescribed model input. It is intended for `Lₑ > 0`; with `x/0 = 0` it is the constant
+`q₀` when `Lₑ = 0`. On the heated length `-L/2 ≤ z ≤ L/2` with `0 < L ≤ Lₑ` and `q₀ ≥ 0` its values
+[lie between `0` and `q₀`](cosine-linear-power-mem-icc.md).

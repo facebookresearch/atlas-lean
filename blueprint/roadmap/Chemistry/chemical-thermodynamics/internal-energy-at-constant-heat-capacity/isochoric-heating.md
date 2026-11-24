@@ -1,6 +1,6 @@
-# Isochoric heating
+# Isochoric heating raises the energy by Q and the temperature by Q / C
 
-Heating: with the energy balance `U1 - U0 = Q`, the constitutive
-relation `U1 - U0 = C * (T1 - T0)`, and heat input `0 ≤ Q`, the final
-state satisfies `U1 = U0 + Q` and `T1 = T0 + Q / C`, so the energy
-rises by `Q`.
+In an isochoric closed model (no work, phase change or mass exchange) with constant heat capacity
+`C > 0`, let `U₀`, `U₁`, `T₀`, `T₁` and a heat input `Q ≥ 0` satisfy the energy balance
+`U₁ - U₀ = Q` and the constitutive relation `U₁ - U₀ = C (T₁ - T₀)`. Then `U₁ = U₀ + Q` and
+`T₁ = T₀ + Q / C`. The condition `Q ≥ 0` is not used: both identities hold for every real `Q`.

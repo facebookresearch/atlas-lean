@@ -1,5 +1,4 @@
-# Greenshields flux range
+# The Greenshields flux lies between zero and the capacity
 
-On the physical density range
-`0 ≤ k ≤ kj`, the Greenshields flux is nonnegative and at most the capacity
-`vf * kj / 4`.
+For `vf > 0`, `kj > 0` and a density `0 ≤ k ≤ kj`, the [Greenshields flux](greenshields-flux.md)
+`q(k) = vf k (1 - k / kj)` satisfies `0 ≤ q(k) ≤ vf kj / 4`.

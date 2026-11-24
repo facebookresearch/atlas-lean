@@ -1,9 +1,10 @@
-# Branch classification on the positive domain
+# Classification of positive normal-shock solutions
 
-For `γ > 1`, `R > 0`, an upstream state
-with `ρ1, T1 > 0`, sound speed `a1 ^ 2 = γ R T1`, Mach number `M1 = |u1| / a1`, and a downstream
-state with `ρ2, T2 > 0` satisfying the jump conditions, either the downstream state is the
-upstream one (trivial branch), or `ρ2 / ρ1`, `p2 / p1` and `T2 / T1` are the density, pressure
-and temperature ratios of the distinct branch at `m = M1 ^ 2`, and then
-`m > (γ - 1) / (2 γ)`. With zero velocity the trivial branch is forced, so no sign hypothesis on
-`u1` is needed here.
+Let `γ > 1` and `R > 0`, and let an upstream state `(ρ1, u1, p1, T1)` and a downstream state
+`(ρ2, u2, p2, T2)` with `ρ1, T1, ρ2, T2 > 0` satisfy the
+[normal-shock jump conditions](is-normal-shock-jump.md). Let `a1² = γ R T1` and `M1 = |u1| / a1`.
+Then either the downstream state is the upstream one (the trivial branch), or, with `m = M1²`, the
+ratios `ρ2 / ρ1`, `p2 / p1` and `T2 / T1` are the density, pressure and temperature ratios
+`r = (γ + 1) m / ((γ - 1) m + 2)`, `P = (2 γ m - (γ - 1)) / (γ + 1)` and `P / r` of the distinct
+branch, and `m > (γ - 1) / (2 γ)`. No sign condition on `u1` is needed: with zero velocity the
+trivial branch is forced. The entropy condition `m ≥ 1` is not part of the classification.

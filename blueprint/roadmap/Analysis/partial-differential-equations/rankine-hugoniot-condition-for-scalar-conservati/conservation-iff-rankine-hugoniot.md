@@ -1,23 +1,16 @@
-# Conservation iff rankine Hugoniot
+# Rankine–Hugoniot condition from classical solutions on both sides
 
-Rankine-Hugoniot from two classical sides.
+Let `f : ℝ → ℝ` be a flux, `s : ℝ → ℝ` an interface with derivative `c` at time `t`, and
+`a < s(t) < b`. Let `u_L`, `v_L : ℝ² → ℝ` (fields of `(τ, x)`) and an open set `U_L` containing
+`{t} × [a, s(t)]` be such that `u_L` is continuous on `U_L`, has time derivative `v_L` at every
+point of `U_L`, with `v_L` continuous on `U_L`; and symmetrically `u_R`, `v_R` and an open
+`U_R ⊇ {t} × [s(t), b]`. Suppose moreover that at time `t`:
 
-A scalar conservation law `u_t + f(u)_x = 0` holds classically on each side
-of an interface `x = s τ` that is differentiable at time `t` with speed `c`
-and lies strictly inside the fixed interval `[a, b]`. The left state is a
-field `uL` that is jointly continuous, with jointly continuous time partial
-`vL`, on an open set `UL` containing the closed left slice `{t} × [a, s t]`
-(a smooth neighbourhood reaching across the interface, so the one-sided
-trace `uL t (s t)` is a value of a continuous field); symmetrically `uR`,
-`vR` on `UR ⊇ {t} × [s t, b]`. At time `t` the spatial flux derivatives
-`gL`, `gR` exist on the open side intervals, the flux composites are
-continuous on the closed side intervals, and the side equations
-`vL t x + gL x = 0`, `vR t x + gR x = 0` hold on the open side intervals.
+- `y ↦ f(u_L(t, y))` is continuous on `[a, s(t)]` and has derivative `g_L(x)` at every
+  `x ∈ (a, s(t))`, with `v_L(t, x) + g_L(x) = 0` there;
+- symmetrically on `[s(t), b]` and `(s(t), b)` for `u_R`, with `v_R(t, x) + g_R(x) = 0`.
 
-Then the split mass on `[a, b]` changes at the conservation rate
-`f (uL t a) - f (uR t b)` (flux in at `a` minus flux out at `b`) exactly
-when the Rankine-Hugoniot jump identity
-`c * (uR t (s t) - uL t (s t)) = f (uR t (s t)) - f (uL t (s t))` holds.
-This is the classical Rankine-Hugoniot condition for scalar conservation laws
-(Evans, *Partial Differential Equations*, §3.4.1; LeVeque, *Finite Volume Methods
-for Hyperbolic Problems*, §11.8). No existence of such solutions is asserted.
+Then the split mass `τ ↦ ∫_a^{s(τ)} u_L(τ, x) dx + ∫_{s(τ)}^b u_R(τ, x) dx` has derivative
+`f(u_L(t, a)) - f(u_R(t, b))` at `t` (flux in at `a` minus flux out at `b`) if and only if
+`c (u_R - u_L) = f(u_R) - f(u_L)` at `(t, s(t))`, the Rankine–Hugoniot jump condition. No existence
+of such solutions is asserted.

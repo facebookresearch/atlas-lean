@@ -1,5 +1,6 @@
-# Flow Configuration
+# Flow configurations of a convection correlation
 
-The flow configuration a correlation was calibrated for: the geometry and the flow arrangement
-around it. A correlation applies only to requests for its own configuration; a correlation for
-another configuration needs its own constructor here.
+The flow configuration of a correlation is one of four geometries and flow arrangements: internal
+flow through a smooth circular tube, external flow parallel to a flat plate, external cross flow
+over a circular cylinder, and external flow over a sphere. A correlation applies only to requests
+for its own configuration ([applicability](applies.md)).
