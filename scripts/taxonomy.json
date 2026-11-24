@@ -11744,6 +11744,7 @@
   "MathlibExt/NumberTheory/BaseRecognizable": {"to": "NumberTheory/digits-numeration/numeration-automatic", "title": "Cobham's theorems on recognizable sets"},
   "MathlibExt/NumberTheory/Beatty/CountIncrement": {"to": "NumberTheory/diophantine-approximation/uniform-distribution-metric", "title": "Beatty sequences"},
   "MathlibExt/NumberTheory/Beatty/FloorFiber": {"to": "NumberTheory/diophantine-approximation/uniform-distribution-metric", "title": "Beatty sequences"},
+  "MathlibExt/NumberTheory/Beatty/GeneralizedWythoff": {"to": "NumberTheory/digits-numeration/numeration-automatic", "title": "Golden ratio base"},
   "MathlibExt/NumberTheory/Beatty/UspenskyBeattyPartition": {"to": "NumberTheory/diophantine-approximation/uniform-distribution-metric", "title": "Beatty sequences"},
   "MathlibExt/NumberTheory/BellMatrix": {"to": "Combinatorics/riordan-arrays-transforms/riordan-arrays", "title": "Bell matrices"},
   "MathlibExt/NumberTheory/Bernoulli/AbelBernoulliSums": {"to": "NumberTheory/special-numbers/bernoulli-numbers", "title": "Identities for Bernoulli numbers"},
