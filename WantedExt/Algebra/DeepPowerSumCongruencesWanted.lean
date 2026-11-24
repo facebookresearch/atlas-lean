@@ -39,7 +39,8 @@ paper's `e_n(P)` and `polyPowerSum P n` its `p_n(P)`, defined through Newton's i
 finitely many variables (`MvPolynomial σ ℚ`, `σ` finite), which loses nothing for identities
 between them.
 
-Proposition 3, `pow_mem_prime_pow_padicValNat_factorial_iff`, and Corollary 24,
+Proposition 3, `pow_mem_prime_pow_padicValNat_factorial_iff`, Kummer's theorem for multinomial
+coefficients, `padicValNat_multinomial_eq_sum_carries`, and Corollary 24,
 `padicValNat_sum_le_add_padicValNat_multinomial`, are proved in
 `MathlibExt.Algebra.DeepPowerSumCongruences`.
 -/
@@ -301,22 +302,6 @@ public theorem_wanted esymm_eq_sum_partitions (σ : Type*) [Fintype σ] (n : ℕ
       ((-1 : ℚ) ^ (n - Multiset.card l.parts) /
         ((l.parts.toFinset.prod fun a => a ^ l.parts.count a * (l.parts.count a).factorial :
           ℕ) : ℚ)) • (l.parts.map (MvPolynomial.psum σ ℚ)).prod
-
-/-- **Kummer's theorem for multinomial coefficients.** Let $p$ be a prime and let
-$r_1, \dots, r_k$ be natural numbers with sum $m$. For $i \ge 1$ let
-$c_i = \lfloor ((r_1 \bmod p^i) + \dots + (r_k \bmod p^i)) / p^i \rfloor$. Then
-
-$$v_p\binom{m}{r_1, \dots, r_k} = \sum_{i=1}^{m} c_i.$$
-
-Here $c_i$ is the carry into digit position $i$ when $r_1 + \dots + r_k$ is added in base $p$, and
-$c_i = 0$ for $i > m$, so the right side is the sum of all the carries.
-
-Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
-Congruences*, INTEGERS 24 (2024), Article A46, Theorem 23 (`integers-2024-A46-thm-23`). -/
-public theorem_wanted padicValNat_multinomial_eq_sum_carries {p : ℕ} [Fact p.Prime] {ι : Type*}
-    (s : Finset ι) (r : ι → ℕ) :
-    padicValNat p (Nat.multinomial s r) =
-      ∑ i ∈ Finset.Icc 1 (∑ j ∈ s, r j), (∑ j ∈ s, r j % p ^ i) / p ^ i
 
 /-- **The Artin–Hasse exponential has $p$-integral coefficients.** Let $p$ be a prime and let
 $F(z) = \exp\big(\sum_{j \ge 0} z^{p^j} / p^j\big) \in \mathbb{Q}[[z]]$ be the Artin–Hasse

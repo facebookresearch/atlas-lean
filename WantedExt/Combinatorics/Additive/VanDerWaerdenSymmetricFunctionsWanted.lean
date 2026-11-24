@@ -24,6 +24,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.Additive.VanDerWaerdenSumProductClassification
+public import MathlibExt.Combinatorics.Additive.VanDerWaerdenTransformationSums
 
 namespace MetaMathlibExt
 
@@ -145,21 +146,6 @@ to Some Symmetric Functions*, INTEGERS 26 (2026), Article A25, Theorem 4
 public theorem_wanted isVanishingFamily_sumAddMulProd_neg_one_prime_pow {p k : ℕ}
     (hp : p.Prime) (hk : 0 < k) :
     IsVanishingFamily (sumAddMulProdFamily (-1 : ZMod (p ^ k)))
-
-/-- **Vanishing of families of sums of transformed entries.** Let $n$ be a positive integer, $d$ a
-natural number and $g_1, \dots, g_d : \mathbb{Z}/n\mathbb{Z} \to \mathbb{Z}/n\mathbb{Z}$ maps.
-Then the family over $\mathbb{Z}/n\mathbb{Z}$ sending a block $(b_1, \dots, b_l)$ to the vector
-$\left(\sum_i g_1(b_i), \dots, \sum_i g_d(b_i)\right) \in (\mathbb{Z}/n\mathbb{Z})^d$ is
-vanishing, where a block counts as vanishing when all $d$ coordinates of this vector are zero.
-
-The source assumes $d > 0$; for $d = 0$ the statement is trivial.
-
-Source: Arie Bialostocki and Vladyslav Oles, *On Generalizing the Van Der Waerden Theorem
-to Some Symmetric Functions*, INTEGERS 26 (2026), Article A25, Theorem 6
-(`integers-2026-A25-thm-6`). -/
-public theorem_wanted isVanishingFamily_transformation_sums {n d : ℕ} (hn : 0 < n)
-    (g : Fin d → ZMod n → ZMod n) :
-    IsVanishingFamily (fun (l : ℕ) (b : Fin l → ZMod n) (t : Fin d) => ∑ i, g t (b i))
 
 end
 
