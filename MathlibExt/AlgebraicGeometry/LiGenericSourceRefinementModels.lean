@@ -198,6 +198,12 @@ structure CechGeometry where
 variable (G : CechGeometry F) (I : ModuleCat.{0} C.ring) (N : ModuleCat.{0} E.ring)
   (u : I →ₛₗ[scalar C E f] N)
 
+/-- The logarithmic coordinates of the coarse chart `a` are carried to those of the refining chart
+`b`, up to units (and a permutation of the two branches at a node). The refining chart has the same
+mode as `a`, or is ordinary: a chart away from the boundary and the nodes inside a boundary or node
+chart retains only its ordinary derivatives (as for restrictions to ordinary intersections in
+`LiCechChartModules.ModuleRestriction`). An ordinary chart is never refined by a boundary or node
+chart, and boundary and node charts are never interchanged. -/
 def LogNormalized {v : Fin C.family.components} {w : Fin E.family.components}
     (a : LiAffineMapCharts.Chart (C.family.curve v).π C.family.structural (C.family.map v))
     (b : LiAffineMapCharts.Chart (E.family.curve w).π E.family.structural (E.family.map w))
@@ -228,7 +234,10 @@ def LogNormalized {v : Fin C.family.components} {w : Fin E.family.components}
           (.node new qr full hs) (h x) (unit i : b.target) +
         coefficient (LiCechChartModules.nodeLog C.family.projection C.family.boundary C.family.parameterFunction I
           old pr pure ht x (permutation i))
-  | _, _, _ => True
+  | .ordinary .., .ordinary .., _ => True
+  | .boundary .., .ordinary .., _ => True
+  | .node .., .ordinary .., _ => True
+  | _, _, _ => False
 
 set_option maxHeartbeats 1000000 in
 -- Kernel checking retains the complete coefficient action on every full base Čech tuple.
