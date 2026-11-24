@@ -9456,6 +9456,7 @@
   "MathlibExt/Analysis/Convex/AcceleratedGradientFlow": {"to": "Analysis/convex-analysis-and-variations", "title": "Accelerated gradient methods"},
   "MathlibExt/Analysis/Convex/Choquet": {"to": "Analysis/banach-spaces/duality-and-weak-topologies", "title": "Choquet theory"},
   "MathlibExt/Analysis/Convex/Cocoercivity": {"to": "Analysis/convex-analysis-and-variations", "title": "Gradient descent"},
+  "MathlibExt/Analysis/Convex/DikinEllipsoid": {"to": "Analysis/convex-analysis-and-variations", "title": "Self-concordant functions and barriers"},
   "MathlibExt/Analysis/Convex/DualViaConjugate": {"to": "Analysis/convex-analysis-and-variations", "title": "Lagrange duality"},
   "MathlibExt/Analysis/Convex/EllipsoidConvergence": {"to": "Analysis/convex-analysis-and-variations", "title": "Ellipsoid method"},
   "MathlibExt/Analysis/Convex/EllipsoidMethod": {"to": "Analysis/convex-analysis-and-variations", "title": "Ellipsoid method"},
