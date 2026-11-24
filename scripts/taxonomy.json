@@ -10386,6 +10386,7 @@
   "MathlibExt/Combinatorics/CleanLatticeParallelogram/ConvergentVectors": {"to": "Combinatorics/polytopes-simplicial-complexes", "title": "Clean lattice parallelograms"},
   "MathlibExt/Combinatorics/CleanLatticeParallelogram/Lame": {"to": "Combinatorics/polytopes-simplicial-complexes", "title": "Clean lattice parallelograms"},
   "MathlibExt/Combinatorics/Coding/CycleCode": {"to": "GraphTheory/graph-invariants-and-labelings", "title": "Shannon capacity of a graph"},
+  "MathlibExt/Combinatorics/Coding/CycleShannonBounds": {"to": "GraphTheory/graph-invariants-and-labelings", "title": "Shannon capacity of a graph"},
   "MathlibExt/Combinatorics/Coding/EliasBassalygo": {"to": "InformationTheory/error-correcting-codes", "title": "Bounds on code size"},
   "MathlibExt/Combinatorics/Coding/GilbertVarshamov": {"to": "InformationTheory/error-correcting-codes", "title": "Bounds on code size"},
   "MathlibExt/Combinatorics/Coding/HammingSpherePacking": {"to": "InformationTheory/error-correcting-codes", "title": "Bounds on code size"},
