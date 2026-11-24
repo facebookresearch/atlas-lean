@@ -25,7 +25,7 @@ The failure of interpolation without tests is a separate page.
 
 ## Sources
 
-- M. Borzechowski, M. Gattinger, H. H. Hansen, R. Ramanayake, F. Trucco Dalmas and Y. Venema,
+- Manfred Borzechowski, Malvin Gattinger, Helle Hvid Hansen, Revantha Ramanayake, Francisco Trucco Dalmas and Yde Venema,
   "Propositional dynamic logic has Craig interpolation: a tableau-based proof", preprint version 3
   (2026), Section 7.1, Definitions 7.1–7.2 and Theorem 7.3, with the proof overview in Section 7.2. <https://arxiv.org/abs/2503.13276>
 - M. Gattinger, "Propositional dynamic logic without tests does not have Craig interpolation",
