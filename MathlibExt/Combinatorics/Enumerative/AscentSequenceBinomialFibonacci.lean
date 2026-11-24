@@ -18,8 +18,9 @@ import Mathlib.Algebra.BigOperators.Ring.Finset
 
 The binomial terms count placements of marked tiles alternating in lengths one
 and two, with two choices for each unmarked tile (of length one). Pascal's
-identity gives a recurrence for each choice of starting length. The two sums
-then give the odd and even Fibonacci subsequences, respectively.
+identity gives a recurrence for each choice of starting length. Starting with
+a length-two marked tile gives the odd Fibonacci subsequence; starting with
+a length-one marked tile gives the even subsequence.
 
 The identity is the first sum of Proposition 2(i) evaluated in Proposition 3
 of [Callan and Mansour, INTEGERS 25 (2025), A80](https://math.colgate.edu/~integers/z80/z80.pdf),
