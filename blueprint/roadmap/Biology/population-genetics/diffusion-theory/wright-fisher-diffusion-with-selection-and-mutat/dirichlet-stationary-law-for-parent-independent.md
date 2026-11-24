@@ -8,10 +8,10 @@ $$\int L f \, d\pi = 0$$
 
 for every twice continuously differentiable $f$. For a monomial $x^n = \prod_i x_i^{n_i}$, with $|n| = \sum_i n_i$ and $c_i = \theta\nu_i$,
 
-$$L x^n = \frac12 \sum_i n_i (n_i - 1 + c_i)\, x^{n - e_i} - \frac12 |n| (|n| - 1 + \theta)\, x^n,$$
+$$L x^n = \frac12 \sum_{i:\,n_i\ge1} n_i (n_i - 1 + c_i)\, x^{n - e_i} - \frac12 |n| (|n| - 1 + \theta)\, x^n,$$
 
-and the Dirichlet moments $\mathbb E\, x^n = \prod_i (c_i)_{(n_i)} / \theta_{(|n|)}$ give $\mathbb E\, x^{n - e_i} = \mathbb E\, x^n\, (\theta + |n| - 1)/(c_i + n_i - 1)$, so
-$\mathbb E\, L x^n = \frac12 \mathbb E\, x^n\, (\theta + |n| - 1)\bigl(\sum_i n_i - |n|\bigr) = 0$; polynomials approximate every twice continuously
+and the Dirichlet moments $\mathbb E\, x^n = \prod_i (c_i)_{(n_i)} / \theta_{(|n|)}$ give $\mathbb E\, x^{n - e_i} = \mathbb E\, x^n\, (\theta + |n| - 1)/(c_i + n_i - 1)$ for each $i$ with $n_i\ge1$, so
+$\mathbb E\, L x^n = \frac12 \mathbb E\, x^n\, (\theta + |n| - 1)\bigl(\sum_{i:\,n_i\ge1} n_i - |n|\bigr) = 0$; polynomials approximate every twice continuously
 differentiable function together with its first and second derivatives uniformly on the simplex, and $L$ has bounded
 coefficients there. For $K = 2$ this is the stationarity of the
 [Beta density](../wright-fisher-diffusion-with-mutation/flux-beta-pdfreal.md) $\mathrm{Beta}(\theta\nu_1, \theta\nu_2)$, and the laws for all $K$ are the finite-dimensional marginals of the

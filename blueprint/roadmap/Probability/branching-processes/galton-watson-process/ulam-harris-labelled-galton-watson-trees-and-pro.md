@@ -40,7 +40,7 @@ projective, giving its law by Kolmogorov extension on countable discrete
 spaces. Membership of a word $i_1\cdots i_n$ is the intersection of the
 finitely many conditions $i_j\le\xi_{i_1\cdots i_{j-1}}$, so the tree map
 is measurable. Induction gives finite levels. The first $n$ levels reveal
-o offspring variable at depth $n$, so conditional independence gives the
+no offspring variable at depth $n$, so conditional independence gives the
 stated transition kernel. Induction on $n$ identifies the generation laws.
 Coordinate projections give measurability of forgetting the mark.
 This constructs the concrete labelled/marked spaces needed by the
