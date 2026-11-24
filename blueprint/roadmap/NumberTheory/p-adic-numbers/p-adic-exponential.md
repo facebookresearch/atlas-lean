@@ -18,6 +18,17 @@ For $K = \mathbb{Q}_p$ the convergence comes from Legendre's formula
 $\mathrm{ord}_p(k!) = (k - s_p(k)) / (p - 1)$, where $s_p(k)$ is the sum of the base-$p$ digits of $k$: the
 terms $x^k / k!$ tend to $0$ exactly when $\mathrm{ord}_p(x) > 1 / (p - 1)$.
 
+## Depends on
+
+This node has no prerequisites.
+
+## Proof depends on
+
+- [Legendre's formula with integer summands](../distribution-of-primes/prime-gaps-short-intervals/breusch-s-theorem-on-primes-between-x-and-9x-8/part-07/legendre-sum9.md), for $\mathrm{ord}_p(k!) = \sum_{j \ge 1} \lfloor k/p^j \rfloor < k/(p - 1)$ for $k \ge 1$, which gives the convergence of $\exp$ for $\mathrm{ord}_K(x) > \mathrm{ord}_K(p)/(p - 1)$
+- [Formal exponential turns sums into products](../../RingTheory/formal-power-series/exponential-of-multivariate-formal-power-series/exp-of-constant-coeff-zero-add.md), for $\exp(x + y) = \exp(x)\exp(y)$, which makes $\exp$ a homomorphism on $V$
+- Not yet a page: the compactness of $\mathcal{O}_K$ and of $U_K$, for the finite indices
+- Not yet a page: the identities $\log(\exp x) = x$ and $\exp(\log y) = y$ where the series converge, for the inverse
+
 ## Sources
 
 - J. S. Milne, *Class Field Theory*, version 4.03 (2020),

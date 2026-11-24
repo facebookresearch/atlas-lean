@@ -51,6 +51,14 @@ smooth if it is $C^\infty$ in the variable of $G_\infty$ and locally constant in
 
 - [Topological idele class group](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/adeles-and-ideles/topological-idele-class-group.md), on which the central characters $\omega$ are defined
 
+## Proof depends on
+
+- [Product formula for principal ideles](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/adeles-and-ideles/adelic-norm-principal-embedding.md), for the remark that with the entries of $r(x)$ alone every element of $\mathbb{Q}^\times$ would have height $1$
+- [Compactness of the completed ring of integers](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/adeles-and-ideles/is-compact-adic-completion-integers.md), for the compactness of the balls of the height: on a ball, $r(x)_v$ and its inverse have entries in $\mathcal{O}_v$ at almost all finite places $v$, so the ball lies in a product of compact sets
+- Not yet a page: the compactness of $k \backslash \mathbb{A}$, which, $N$ having a filtration by normal subgroups with quotients $\mathbb{G}_a$, makes $N(k) \backslash N(\mathbb{A})$ compact
+- Not yet a page: every proper parabolic subgroup of $\mathrm{GL}_n$ over $k$ is $\mathrm{GL}_n(k)$-conjugate to a standard one, which lies in a standard maximal one, for the reduction to standard maximal parabolic subgroups
+- Not yet a page: the description of the archimedean Hecke algebra $\mathcal{H}_v$ as $\mathcal{U}(\mathfrak{g}_v) \otimes_{\mathcal{U}(\mathfrak{k}_v)} \mathcal{A}(K_v)$ (Cogdell, Lecture 3, §1.0.1)
+
 ## Sources
 
 - J. W. Cogdell, "Lectures on L-functions, converse theorems, and functoriality for GL_n", in

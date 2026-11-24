@@ -19,6 +19,16 @@ multiplicity.
    a Fréchet space, the smooth $K$-finite vectors are dense; so for admissible $V$, $V_K$ is dense
    in $V$.
 
+## Depends on
+
+- Not yet a page: Zariski-connected reductive algebraic groups over $\mathbb{R}$, their groups of real points as Lie groups, and maximal compact subgroups
+
+## Proof depends on
+
+- [Peter–Weyl theorem: unitary representations separate points](../../lie-and-topological-representations/representations-of-compact-groups/peter-weyl-point-separation.md), for the density of the $K$-finite vectors in item 2: with the Stone–Weierstrass theorem it makes the matrix coefficients of the finite-dimensional representations of $K$ dense in $C(K)$, and integrating $\pi$ against them gives $K$-finite vectors
+- Not yet a page: Segal's theorem that the centre of $U(\mathfrak{g})$ acts by scalars on the smooth vectors of an irreducible unitary representation, and Harish-Chandra's theorem that an irreducible representation on which it so acts has finite $K$-multiplicities, at most $\dim V_i$ for $G$ connected semisimple with finite centre: the route to item 1, which the cited sources quote without proof
+- Not yet a page: Gårding's theorem that the smooth vectors are dense, through Dirac sequences $\pi(f_n)v \to v$, for item 2
+
 ## Sources
 
 - W. Casselman, "Canonical extensions of Harish-Chandra modules to representations of G", Canad. J.

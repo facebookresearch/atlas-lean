@@ -36,6 +36,12 @@ these modules are not unitarizable.
 - [Discrete series representations and formal degrees](discrete-series-and-formal-degrees.md), for square-integrable representations
 - [Admissible representations of real reductive groups](admissible-representations-of-real-reductive-groups.md), for $K$-finite vectors
 
+## Proof depends on
+
+- [Harish-Chandra modules](harish-chandra-modules.md), for the closed $G$-invariant subspaces of $\mathbf{F}_\lambda$, which correspond to the $(\mathfrak{g}, K)$-submodules of its $K$-finite vectors (its item 2), $\mathbf{F}_\lambda$ being admissible as its $K$-finite vectors form $V_\mu \otimes S(\mathfrak{p}_+)$
+- Not yet a page: Harish-Chandra's realization of $G/K$ as a bounded domain in $\mathfrak{p}_+$, through $G \subseteq P_+ K^{\mathbb{C}} P_-$, on which holomorphic sections become holomorphic $V_\mu$-valued functions and the $K$-finite ones are the polynomials, for $V_\mu \otimes S(\mathfrak{p}_+)$
+- Not yet a page: the completeness of the space of holomorphic sections for uniform convergence on compact sets, for the Fréchet space
+
 ## Sources
 
 - W. Schmid, "On the characters of the discrete series. The Hermitian symmetric case", Invent.

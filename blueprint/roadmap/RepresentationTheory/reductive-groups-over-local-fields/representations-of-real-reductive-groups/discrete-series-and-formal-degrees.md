@@ -41,6 +41,13 @@ two different representations, whose integrands need not be invariant under $Z$,
 
 - [Admissible representations of real reductive groups](admissible-representations-of-real-reductive-groups.md), for irreducible unitary representations and $K$-finite vectors
 
+## Proof depends on
+
+- [Spectral theorem for bounded self-adjoint operators, multiplication form](../../../Analysis/operator-theory/spectral-theory/spectral-theorem-for-bounded-self-adjoint-operat/bounded-self-adjoint-spectral-multiplica.md), for Schur's lemma for irreducible unitary representations, by which the bounded operators built from the coefficient maps $\xi \mapsto \langle \pi(\cdot)\xi, \eta \rangle$ that commute with $\pi$ are scalars
+- [Right-invariant Haar measures are inversion-invariant](../../../MeasureTheory/haar-measure/unimodular-groups/is-inv-invariant-of-is-mul-right-invaria.md), for unimodular $G$: $\langle \pi(g^{-1})\xi, \eta \rangle = \overline{\langle \pi(g)\eta, \xi \rangle}$ and the invariance of $dg$ under inversion exchange the roles of the two vectors
+- Not yet a page: the closed graph theorem, for the boundedness of the coefficient maps
+- Not yet a page: the integration formula $\int_G f \, dg = \int_{G/Z} \int_Z f(gz) \, dz \, d(gZ)$, for the compact centre
+
 ## Sources
 
 - J. Bernstein and B. Krötz, "Smooth Fréchet globalizations of Harish-Chandra modules", Israel J.

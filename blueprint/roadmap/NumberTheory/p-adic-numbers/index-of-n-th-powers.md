@@ -22,6 +22,10 @@ $h_n(U) = h_n(\mathcal{O}_K) = (\mathcal{O}_K : n\mathcal{O}_K) = |n|^{-1}$ beca
 [Herbrand quotients agree across a map with finite kernel and cokernel](../../RepresentationTheory/group-cohomology/tate-cohomology-and-the-herbrand-quotient/herbrand-quotient-finite-kernel-cokernel.md);
 and $U[n] = \mu_n(K)$, which gives $(U : U^n) = |\mu_n(K)| \, h_n(U)$.
 
+## Depends on
+
+- [Residue field of a local ring](../../RingTheory/local-rings/local-rings-and-residue-fields/residue-field-local-ring.md), for the residue characteristic in the example
+
 ## Proof depends on
 
 - [Herbrand quotients agree across a map with finite kernel and cokernel](../../RepresentationTheory/group-cohomology/tate-cohomology-and-the-herbrand-quotient/herbrand-quotient-finite-kernel-cokernel.md), for the trivial action of a cyclic group of order $n$
