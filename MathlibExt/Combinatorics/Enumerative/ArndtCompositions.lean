@@ -10,11 +10,14 @@ module
 
 public import Mathlib.Analysis.Asymptotics.AsymptoticEquivalent
 public import Mathlib.Data.Fin.Tuple.NatAntidiagonal
+public import Mathlib.Data.Nat.Fib.Basic
+public import Mathlib.RingTheory.PowerSeries.Basic
 import Mathlib.Algebra.BigOperators.NatAntidiagonal
 import Mathlib.Analysis.Asymptotics.SpecificAsymptotics
 import Mathlib.Analysis.SpecialFunctions.Choose
 import Mathlib.Analysis.SpecificLimits.Basic
 import Mathlib.Data.Nat.Choose.Bounds
+import MathlibExt.Combinatorics.Enumerative.KArndtRecurrence
 import MathlibExt.Data.Nat.Choose.HockeyStickConvolution
 
 /-!
@@ -84,6 +87,65 @@ Source: D. F. Checa and J. L. Ramírez, *Arndt compositions: a generating functi
 arXiv:2311.15388, Section 1 (list of the Arndt compositions of `6`). -/
 theorem arndtCompositionCount_six_four : arndtCompositionCount (fun _ => True) 6 4 = 1 := by
   decide
+
+open PowerSeries in
+/-- **Arndt compositions are counted by Fibonacci numbers.** Let $a(n, m)$ be the number of Arndt
+compositions of $n$ with $m$ parts, let $a(n) = \sum_{m=0}^{n} a(n, m)$ be the number of all
+Arndt compositions of $n$, and let $F_n$ be the $n$-th Fibonacci number ($F_0 = 0$, $F_1 = 1$).
+Then, in $\mathbb{Z}[[x]]$,
+$$\Big(\sum_{n \ge 0} a(n) x^n\Big)(1 - x - x^2) = 1 - x^2,$$
+and $a(n) = F_n$ for every $n \ge 1$.
+
+Source: Daniel F. Checa and José L. Ramírez, *Arndt Compositions: A Generating Functions
+Approach*, INTEGERS 24 (2024), Article A35, Corollary 2 (`integers-2024-A35-cor-2`). -/
+theorem arndtComposition_total_eq_fib :
+    (PowerSeries.mk fun n =>
+        ((∑ m ∈ Finset.range (n + 1), arndtCompositionCount (fun _ => True) n m : ℕ) : ℤ)) *
+        (1 - PowerSeries.X - PowerSeries.X ^ 2) = 1 - PowerSeries.X ^ 2 ∧
+      ∀ n : ℕ, 1 ≤ n →
+        ∑ m ∈ Finset.range (n + 1), arndtCompositionCount (fun _ => True) n m = Nat.fib n := by
+  let a (n : ℕ) : ℕ := ∑ m ∈ Finset.range (n + 1), arndtCompositionCount (fun _ => True) n m
+  change (mk fun n => (a n : ℤ)) * (1 - X - X ^ 2) = 1 - X ^ 2 ∧
+    ∀ n : ℕ, 1 ≤ n → a n = Nat.fib n
+  have hcount (n m : ℕ) :
+      arndtCompositionCount (fun _ => True) n m = kArndtCompositionCount 0 n m := by
+    unfold arndtCompositionCount kArndtCompositionCount
+    congr 1
+    exact Finset.filter_congr fun c _ => by simp
+  have htotal (n : ℕ) : a n = kArndtTotalCount 0 n := by
+    simp only [a, kArndtTotalCount, hcount]
+  -- At shift zero the two terms at weight `n - 3` cancel.
+  have hstep (n : ℕ) : (a (n + 3) : ℤ) = (a (n + 2) : ℤ) + (a (n + 1) : ℤ) := by
+    have hn : 3 ≤ n + 3 := by omega
+    simpa only [Nat.cast_zero, zero_add, ite_eq_left hn, Nat.sub_zero, sub_add_cancel,
+      show n + 3 - 1 = n + 2 by omega, show n + 3 - 2 = n + 1 by omega, ← htotal] using
+      kArndtTotalCount_recurrence.2 0 (n + 3) hn
+  have h0 : a 0 = 1 := by decide
+  have h1 : a 1 = 1 := by decide
+  have h2 : a 2 = 1 := by decide
+  constructor
+  · apply PowerSeries.ext
+    intro n
+    simp only [mul_sub, mul_one, map_sub, coeff_mk, coeff_mul_X_pow', coeff_one, coeff_X_pow]
+    rcases n with _ | _ | _ | n
+    · simp [h0, coeff_zero_mul_X]
+    · simp [h0, h1, coeff_succ_mul_X]
+    · simp [h0, h1, h2, coeff_succ_mul_X]
+    · have h : (a (n + 3) : ℤ) - a (n + 2) - a (n + 1) = 0 := by
+        rw [hstep n]
+        omega
+      simpa [coeff_succ_mul_X] using h
+  · intro n hn
+    induction n using Nat.strong_induction_on with
+    | ind n ih =>
+      rcases n with _ | _ | _ | n
+      · omega
+      · simpa using h1
+      · simpa using h2
+      · have h : a (n + 3) = a (n + 2) + a (n + 1) := by
+          exact_mod_cast hstep n
+        rw [h, ih (n + 2) (by omega) (by omega), ih (n + 1) (by omega) (by omega),
+          Nat.fib_add_two (n := n + 1), Nat.add_comm]
 
 namespace arndtCompositionCount_isEquivalent
 

@@ -18,12 +18,16 @@ We prove `bridgeTime_three_le_closed_form`: for $n \ge 7$ people with crossing t
 $1, \dots, n$ on a bridge of capacity $3$ with one torch, the optimal crossing time is at most
 $n^2/6 + 2n - 181/36 + (-1)^n/4 - (2/9)\cos(2n\pi/3)$.
 
-Explicit schedules for $7, \dots, 12$ people meet the bound. For $k \ge 13$ people, the three
+The theorem `closedForm_U_integral_and_near_V` shows that this bound is an integer in
+$[V(n), V(n) + 1)$, where $V(n) = n^2/6 + 2n - 11/2$.
+
+Explicit schedules for $7, \dots, 12$ people meet the bound. For $k \ge 9$ people, the three
 fastest people ferry the six slowest across, three at a time, in six crossings of total time
 $2k + 6$, after which $1, \dots, k - 6$ and the torch are on the left bank; these are the six
 moves of the arXiv version of the source (arXiv:2608.05190v1, proof of Proposition 8,
-Figure 5). The bound grows by the same amount from $k - 6$ to $k$, since its oscillating part has
-period $6$.
+Figure 5). Applying these moves before an optimal schedule for $k - 6$ gives
+`bridgeTime_three_le_sub_six`. The closed-form bound grows by the same amount from $k - 6$ to $k$,
+since its oscillating part has period $6$.
 -/
 
 set_option autoImplicit false
@@ -67,6 +71,40 @@ private theorem sixStep_cost (m : ℕ) (σ : List (Finset ℕ)) :
     scheduleCost (sixStep m σ) = scheduleCost σ + (2 * (m + 6) + 6) := by
   simp [scheduleCost, sixStep, sup_insert]
   omega
+
+-- Person 1 can ferry each additional person across and return for the original schedule.
+private theorem exists_schedule_three (n : ℕ) (hn : 1 ≤ n) : ∃ σ, IsBridgeSchedule 3 n σ := by
+  induction n, hn using Nat.le_induction with
+  | base => exact ⟨[{1}], by unfold IsBridgeSchedule; decide⟩
+  | succ n hn ih =>
+    obtain ⟨σ, hσ⟩ := ih
+    refine ⟨{1, n + 1} :: {1} :: σ, ?_⟩
+    have htail := scheduleFrom_mono (Icc_subset_Icc_right (Nat.le_succ n)) hσ
+    have hbank : (Icc 1 (n + 1) \ {1, n + 1}) ∪ {1} = Icc 1 n := by
+      ext i
+      simp only [mem_union, mem_sdiff, mem_Icc, mem_insert, mem_singleton]
+      omega
+    simp only [IsBridgeSchedule, bridgeScheduleFrom, Bool.and_eq_true, decide_eq_true_eq,
+      hbank, htail, and_true]
+    simp [insert_subset_iff, mem_Icc, card_pair (by omega : 1 ≠ n + 1)]
+
+/-- **Six-step upper bound for capacity three.** Let $T_3(n)$ be the optimal crossing time of
+$n$ people with crossing times $1, \dots, n$ on a bridge of capacity $3$ with one torch. For
+every $k \ge 9$, $T_3(k) \le T_3(k - 6) + 2k + 6$.
+
+Source: Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge
+and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
+Proposition 11 (`jis-2026-26.5.6-prop-11`). -/
+theorem bridgeTime_three_le_sub_six (k : ℕ) (hk : 9 ≤ k) :
+    bridgeTime 3 k ≤ bridgeTime 3 (k - 6) + 2 * k + 6 := by
+  obtain ⟨m, rfl⟩ : ∃ m, k = m + 6 := ⟨k - 6, by omega⟩
+  obtain ⟨τ, hτ⟩ := exists_schedule_three m (by omega)
+  obtain ⟨σ, hσ, hcost⟩ := Nat.sInf_mem
+    (s := {t | ∃ σ, IsBridgeSchedule 3 m σ ∧ scheduleCost σ = t}) ⟨_, τ, hτ, rfl⟩
+  change scheduleCost σ = bridgeTime 3 m at hcost
+  have h := bridgeTime_le_scheduleCost (sixStep_valid (by omega : 3 ≤ m) hσ)
+  rw [sixStep_cost, hcost] at h
+  simpa [Nat.add_assoc] using h
 
 -- The bound of the main theorem.
 private noncomputable def closedForm (n : ℕ) : ℝ :=
@@ -150,5 +188,39 @@ theorem bridgeTime_three_le_closed_form (n : ℕ) (hn : 7 ≤ n) :
       2 / 9 * Real.cos (2 * n * Real.pi / 3) := by
   obtain ⟨σ, hσ, hcost⟩ := exists_schedule_le_closedForm n hn
   exact (Nat.cast_le.mpr (bridgeTime_le_scheduleCost hσ)).trans hcost
+
+/-- **The capacity-3 closed form is an integer close to the lower bound.** For every integer
+$n \ge 7$, let $U(n) = n^2/6 + 2n - 181/36 + (-1)^n/4 - (2/9)\cos(2n\pi/3)$ and
+$V(n) = n^2/6 + 2n - 11/2$. Then $U(n)$ is an integer and $0 \le U(n) - V(n) < 1$.
+
+Source: Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge
+and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
+Lemma 19 (`jis-2026-26.5.6-lem-19`), with `U` from Theorem 12 and `V` from
+Proposition 17. -/
+theorem closedForm_U_integral_and_near_V (n : ℕ) (hn : 7 ≤ n) :
+    (∃ z : ℤ, (n : ℝ) ^ 2 / 6 + 2 * n - 181 / 36 + (-1 : ℝ) ^ n / 4 -
+        2 / 9 * Real.cos (2 * n * Real.pi / 3) = z) ∧
+      0 ≤ ((n : ℝ) ^ 2 / 6 + 2 * n - 181 / 36 + (-1 : ℝ) ^ n / 4 -
+          2 / 9 * Real.cos (2 * n * Real.pi / 3)) - ((n : ℝ) ^ 2 / 6 + 2 * n - 11 / 2) ∧
+      ((n : ℝ) ^ 2 / 6 + 2 * n - 181 / 36 + (-1 : ℝ) ^ n / 4 -
+          2 / 9 * Real.cos (2 * n * Real.pi / 3)) - ((n : ℝ) ^ 2 / 6 + 2 * n - 11 / 2) < 1 := by
+  change (∃ z : ℤ, closedForm n = z) ∧
+    0 ≤ closedForm n - ((n : ℝ) ^ 2 / 6 + 2 * n - 11 / 2) ∧
+    closedForm n - ((n : ℝ) ^ 2 / 6 + 2 * n - 11 / 2) < 1
+  induction n using Nat.strong_induction_on with
+  | _ n ih =>
+    by_cases hsmall : n ≤ 12
+    · refine ⟨⟨⌊closedForm n⌋, ?_⟩, ?_⟩ <;> rw [closedForm, cos_two_mul_pi_div_three] <;>
+        interval_cases n <;> norm_num
+    · obtain ⟨m, rfl⟩ : ∃ m, n = m + 6 := ⟨n - 6, by omega⟩
+      obtain ⟨⟨z, hz⟩, hgap⟩ := ih m (by omega) (by omega)
+      rw [closedForm_add_six]
+      refine ⟨⟨z + (2 * (m + 6) + 6 : ℕ), by simp [hz]⟩, ?_⟩
+      have hV : ((m + 6 : ℕ) : ℝ) ^ 2 / 6 + 2 * (m + 6 : ℕ) - 11 / 2 =
+          (m : ℝ) ^ 2 / 6 + 2 * m - 11 / 2 + (2 * (m + 6) + 6 : ℕ) := by
+        push_cast
+        ring
+      rw [hV]
+      simpa using hgap
 
 end MetaMathlibExt.BridgeTorchGeneralizations

@@ -215,22 +215,6 @@ public theorem_wanted arndtCompositionCount_holonomic_recurrence (n m : ℕ) :
         ((m : ℤ) - (m / 2 : ℕ)) * arndtCompositionCount (fun _ => True) (n + 1) m +
           (n : ℤ) * arndtCompositionCount (fun _ => True) n m = 0
 
-/-- **Arndt compositions are counted by Fibonacci numbers.** Let $a(n, m)$ be the number of Arndt
-compositions of $n$ with $m$ parts, let $a(n) = \sum_{m=0}^{n} a(n, m)$ be the number of all
-Arndt compositions of $n$, and let $F_n$ be the $n$-th Fibonacci number ($F_0 = 0$, $F_1 = 1$).
-Then, in $\mathbb{Z}[[x]]$,
-$$\Big(\sum_{n \ge 0} a(n) x^n\Big)(1 - x - x^2) = 1 - x^2,$$
-and $a(n) = F_n$ for every $n \ge 1$.
-
-Source: Daniel F. Checa and José L. Ramírez, *Arndt Compositions: A Generating Functions
-Approach*, INTEGERS 24 (2024), Article A35, Corollary 2 (`integers-2024-A35-cor-2`). -/
-public theorem_wanted arndtComposition_total_eq_fib :
-    (PowerSeries.mk fun n =>
-        ((∑ m ∈ Finset.range (n + 1), arndtCompositionCount (fun _ => True) n m : ℕ) : ℤ)) *
-        (1 - PowerSeries.X - PowerSeries.X ^ 2) = 1 - PowerSeries.X ^ 2 ∧
-      ∀ n : ℕ, 1 ≤ n →
-        ∑ m ∈ Finset.range (n + 1), arndtCompositionCount (fun _ => True) n m = Nat.fib n
-
 /-- **Expected number of parts of an Arndt composition.** Let $a(n, m)$ be the number of Arndt
 compositions of $n$ with $m$ parts, and $F_n$ the $n$-th Fibonacci number ($F_0 = 0$, $F_1 = 1$).
 Then
