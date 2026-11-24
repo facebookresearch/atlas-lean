@@ -14,6 +14,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Classes
+public import CSLibExt.Computability.Complexity.QuantumGates.InputFraming
 
 @[expose] public section
 
@@ -25,9 +26,8 @@ open Cslib.Complexity.Classes
 open MetaMathlibExt.ComplexityTheory
 
 /-- The `M`-bit least-significant-bit-first expansion of `y`, as the bit
-string a computational-basis measurement outcome decodes to. -/
-def shorBits (M : ℕ) (y : Fin (2 ^ M)) : List Bool :=
-  (List.finRange M).map (fun k => Nat.testBit y.val k)
+string a computational-basis measurement outcome decodes to. It is `Cslib.Complexity.Classes.measuredBits`, whose decoding and framed-recovery lemmas therefore apply to the outcomes below. -/
+abbrev shorBits (M : ℕ) (y : Fin (2 ^ M)) : List Bool := measuredBits M y
 
 /-- A successful Shor output for `N`: either a nontrivial factor `d` of
 `N`, or `0` together with `N` prime. -/
