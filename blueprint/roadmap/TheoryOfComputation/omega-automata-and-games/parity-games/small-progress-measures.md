@@ -6,13 +6,15 @@ Every finite parity game has a least game parity progress measure $\rho^*$, the 
 
 These are Jurdziński's progress measures with the order of priorities reversed: replacing each priority $p$ by $D - p$ for an even $D \ge d$ turns the least-priority condition of the source into the largest-priority condition used here.
 
-## Expansion
+## Depends on
 
-This node states a precise result. A good expansion adds a page for each of the following
-prerequisites and links it under the dependency sections below:
+- [Winning region of a parity game](winning-region.md)
 
-- Proof prerequisite: Positional determinacy of finite parity games.
-- Proof prerequisite: Min-parity to max-parity transport.
+## Proof depends on
+
+- [Finite parity games are positionally determined](finite-parity-games-are-positionally-determined.md)
+- [Progress measures give winning strategies in parity games](progress-measures-give-winning-strategies-in.md)
+- [Reversing priorities exchanges the min-parity and max-parity conditions](../parity-condition-on-infinite-sequences/reversing-priorities-exchanges-min-parity-and.md)
 
 ## Sources
 

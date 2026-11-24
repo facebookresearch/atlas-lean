@@ -10,12 +10,9 @@ These are Jurdziński's progress measures with the order of priorities reversed:
 
 - [Parity game](parity-game.md)
 
-## Expansion
+## Proof depends on
 
-This node states a precise result. A good expansion adds a page for each of the following
-prerequisites and links it under the dependency sections below:
-
-- Proof prerequisite: Min-parity to max-parity transport.
+- [Reversing priorities exchanges the min-parity and max-parity conditions](../parity-condition-on-infinite-sequences/reversing-priorities-exchanges-min-parity-and.md)
 
 ## Sources
 

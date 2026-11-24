@@ -6,13 +6,7 @@ In the asymptotic setting, an *efficient adversary* is a probabilistic algorithm
 
 - [Polynomial-time many-one reduction](../../../../TheoryOfComputation/np-completeness/cook-levin/binary-encoding-of-cnf-formulas/poly-many-one-red.md)
 - [Adaptive oracle algorithms](../oracle-algorithms/oracle-comp.md)
-
-## Expansion
-
-This node states a precise result. A good expansion adds a page for each of the following
-prerequisites and links it under the dependency sections below:
-
-- Statement prerequisite: Uniform probabilistic polynomial-time Turing machines.
+- [Probabilistic polynomial-time Turing machines](probabilistic-polynomial-time-turing-machines.md)
 
 ## Sources
 

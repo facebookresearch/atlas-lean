@@ -42,3 +42,4 @@
 ## Efficient adversaries
 
 - [Efficient adversaries](efficient-adversaries.md)
+- [Probabilistic polynomial-time Turing machines](probabilistic-polynomial-time-turing-machines.md)
