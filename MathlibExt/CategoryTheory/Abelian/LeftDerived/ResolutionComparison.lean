@@ -320,7 +320,8 @@ theorem leftDerivedPrecompIso_hom_app (n : ℕ) {X : C} (P : ProjectiveResolutio
       ((leftDerivedPrecompIso U L n).app X).hom from rfl, leftDerivedPrecompIso_app U L n P]
   rfl
 
-/-- The inverse component uses the reversed comparisons and the same complex-composition dictionary. -/
+/-- The inverse component uses the reversed comparisons and the same
+complex-composition dictionary. -/
 theorem leftDerivedPrecompIso_inv_app (n : ℕ) {X : C} (P : ProjectiveResolution X) :
     (leftDerivedPrecompIso U L n).inv.app X =
       ((U.mapProjectiveResolution P).isoLeftDerivedObj L n).hom ≫

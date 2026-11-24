@@ -166,10 +166,11 @@ theorem rightDerivedPrecompIsoWithResolution_toRightDerivedZero {X : C}
   simp only [rightDerivedPrecompIsoWithResolution, Iso.trans_hom, Iso.symm_hom,
     Category.assoc]
   erw [Category.assoc, Iso.inv_hom_id_assoc]
-  change I.toRightDerivedZero' (F ⋙ B) ≫
-      (((F ⋙ B).mapHomologicalComplex (ComplexShape.up ℕ)).obj I.cocomplex).homologyπ 0 ≫
-      (rightDerivedPrecompHomologyIso F B 0 I).hom ≫
-      ((F.mapInjectiveResolution I).isoRightDerivedObj B 0).inv = _
+  rw [← Category.assoc
+    ((((F ⋙ B).mapHomologicalComplex (ComplexShape.up ℕ)).obj I.cocomplex).sc 0).leftHomologyπ
+    ((((F ⋙ B).mapHomologicalComplex (ComplexShape.up ℕ)).obj I.cocomplex).sc 0).leftHomologyIso.hom]
+  rw [← ShortComplex.homologyπ]
+  simp only [CochainComplex.isoHomologyπ₀, HomologicalComplex.isoHomologyπ_hom]
   change I.toRightDerivedZero' (F ⋙ B) ≫
       (((F ⋙ B).mapHomologicalComplex (ComplexShape.up ℕ)).obj I.cocomplex).homologyπ 0 ≫
       HomologicalComplex.homologyMap
