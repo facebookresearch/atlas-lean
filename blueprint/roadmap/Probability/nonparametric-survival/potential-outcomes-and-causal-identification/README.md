@@ -62,3 +62,11 @@
   ignorability.
 - [Structural causal models and counterfactuals](../../../ComputerScience/machine-learning/probabilistic-graphical-models/structural-causal-models-and-counterfactuals/README.md):
   potential outcomes defined as solutions of submodels, with consistency as a theorem.
+
+- [Truncated Endpoint](truncated-endpoint.md)
+
+- [Truncated endpoint beyond the horizon](truncated-endpoint-eq-of-ge.md)
+
+- [Truncated endpoint at or inside the horizon](truncated-endpoint-eq-of-le.md)
+
+- [Truncation changes event times beyond the horizon](truncation-changes-value.md)

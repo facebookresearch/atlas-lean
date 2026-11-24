@@ -80,6 +80,15 @@
 - [For m ≥ 2 and positive shared variance, naive mean variance is too low](variance-cluster-row-div-lt-mean.md)
 - [A nonempty cluster mean has variance at least the shared variance](le-variance-cluster-mean.md)
 
+## Population PK observation
+
+- [Fixed-latent visit law](visit-law-fixed-latent.md)
+- [Zero-variance elimination rate](pop-zero-rate.md)
+- [Zero latent variance collapses the subject law](pop-zero-law-agreement.md)
+- [Shared random intercept cancels within subject](intercept-cancels-within-subject.md)
+- [A common nonzero offset shifts both visits](common-offset-present-in-both.md)
+- [Exponentiated shared intercept is a common factor](intercept-exp-factor.md)
+
 ## Related topics
 
 - [Linear mixed models and BLUP](../../../Biology/quantitative-genetics/linear-mixed-models-and-blup/README.md): the Gaussian mixed model, the marginal and conditional laws of its response, and BLUP as a conditional expectation.
