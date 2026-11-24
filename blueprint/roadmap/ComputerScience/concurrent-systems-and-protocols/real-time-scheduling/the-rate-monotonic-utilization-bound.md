@@ -1,6 +1,6 @@
 # The rate-monotonic utilization bound
 
-In the Liu–Layland periodic task model with $m \ge 1$ tasks, every task set with processor utilization $U = \sum_i C_i/T_i \le m(2^{1/m} - 1)$ is schedulable by the rate-monotonic priority assignment, and this threshold is the largest with this property: for every $\varepsilon > 0$ there is a set of $m$ tasks with utilization below $m(2^{1/m} - 1) + \varepsilon$ that the rate-monotonic assignment does not schedule. The threshold decreases to $\ln 2$ as $m \to \infty$. Task sets above the threshold can still be schedulable; for example, harmonic periods allow utilization $1$.
+In the Liu–Layland periodic task model with $m \ge 1$ tasks, every task set with processor utilization $U = \sum_i C_i/T_i < m(2^{1/m} - 1)$ is schedulable by the rate-monotonic priority assignment, and this threshold is the largest with this property: for every $\varepsilon > 0$ there is a set of $m$ tasks with utilization below $m(2^{1/m} - 1) + \varepsilon$ that the rate-monotonic assignment does not schedule. The threshold decreases to $\ln 2$ as $m \to \infty$. Task sets above the threshold can still be schedulable; for example, harmonic periods allow utilization $1$.
 
 ## Depends on
 

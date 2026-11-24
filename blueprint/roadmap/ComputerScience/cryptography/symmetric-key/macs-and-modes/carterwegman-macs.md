@@ -23,4 +23,4 @@ Let $H$ be a keyed hash function over $(K_H, M, T)$ with $T = \mathbb{Z}_N$. In 
 ## Sources
 
 - D. Boneh and V. Shoup, *A Graduate Course in Applied Cryptography*, version 0.4, 2017, <https://toc.cryptobook.us/>, Lemmas 7.2, 7.8 and 7.11, Theorems 7.7, 7.9 and 7.12, Definitions 7.5 and 7.7, and Remark 7.5
-- Original construction: M. N. Wegman and J. L. Carter, "New hash functions and their use in authentication and set equality", *Journal of Computer and System Sciences* 22(3):265–279, 1981. Boneh and Shoup name the construction after Carter and Wegman.
+- Original construction, with one-time pads in place of the PRF: M. N. Wegman and J. L. Carter, "New hash functions and their use in authentication and set equality", *Journal of Computer and System Sciences* 22(3):265–279, 1981. Boneh and Shoup name the construction after Carter and Wegman.
