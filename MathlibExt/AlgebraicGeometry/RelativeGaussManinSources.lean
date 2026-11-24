@@ -380,7 +380,7 @@ abbrev BaseOneFormType := AnalyticAbsoluteDeRhamSources.OneFormSource
 
 
 /-- The actual original cofactor and intermediate finite-form projection source. This factory
-+contains no higher vector bundle, connection or period comparison oracle. -/
+contains no higher vector bundle, connection or period comparison oracle. -/
 structure GaussManinFactory where
   scalar : ScalarCompatibility (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (H := H)
   cotangent : BaseCotangentType (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (H := H)

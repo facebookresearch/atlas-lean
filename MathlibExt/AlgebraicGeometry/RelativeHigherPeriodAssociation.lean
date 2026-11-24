@@ -419,7 +419,7 @@ variable [PreservesFiniteLimits (NativeRestrictionCohomologyMaps.restrictY (Zhat
   (SSZ : SingleRestrictionSource (baseZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)) (Zhat p X.left PX) (baseZScalar (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q) (N := N) (PS := PS)))
 
 /-- Native higher restriction from ACTUAL R^i f_* L to the degree-zero source of the
-+augmentation, using only native single/quotient/derived-unit factors. -/
+augmentation, using only native single/quotient/derived-unit factors. -/
 def higherZRestriction (i : ℤ) : (MathlibExt.AlgebraicGeometry.RelativeDeRhamHigherSources.higherIntegral (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q) (N := N) (PS := PS) (T := T) (TQ := TQ) (L := L) i) ⟶
     cohomology (Zhat p Y.left PY) ((derivedPushforward Q.functor (Zhat p Y.left PY) (baseZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)) (baseZUnit (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q))).obj
       (DerivedCategory.Plus.Q.obj (AssociatedPeriodAugmentationSources.coefficientComplex Q.functor (Zhat p Y.left PY) (Zhat p X.left PX) (coefficientScalar p K B X Y f PX PY E Q N PS) L.module))) i :=
@@ -433,8 +433,10 @@ def higherZRestriction (i : ℤ) : (MathlibExt.AlgebraicGeometry.RelativeDeRhamH
     ((derivedPushforward Q.functor (Zhat p Y.left PY) (baseZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)) (baseZUnit (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q))).map
       (DerivedCategory.Plus.Q.map (SSZ.iso L.module).hom))
 
-/-- The actual canonical integral higher association map. The coherent map is a separately
-+constructed intermediate IsIso theorem, used here by its native inverse. -/
+/-- The actual canonical integral higher association map. The invertibility of the coherent
+comparison is an input (an `IsIso` instance argument), used here through its native inverse; it is
+not requested, since the period objects are the naive structural periods
+(see `StructuralDeRhamPeriodSources`). -/
 def higherComparison (i : ℤ)
     [IsIso (coherentPeriodComparison (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (Ω := Ω) (M := M) (D := D) (DS := DS) (FS := FS) (hp := hp) (PM := PM) (PC := PC) (FC := FC) (PD := PD) (SO := SO) (AZO := AZO) (AZF := AZF) (ASO := ASO) i)] :
     BaseFilteredPeriodAssociation.localSystemFull p K SY.regular SY.positive (Zhat p Y.left PY) SY.untilting SY.scalars
@@ -458,7 +460,7 @@ def higherNabla (i : ℤ) (U : (AnalyticProObjectSites.ProEtaleSite p Y.left)ᵒ
   ((RelativeGaussManinSources.GaussManinFactory.connection (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (FX := FX) (IX := IX) (T := T) (TQ := TQ) (L := L) (Ω := Ω) (M := M) (D := D) (DS := DS) (FS := FS) (H := H) (S := GM) i).val.app U).hom.toAddMonoidHom
 
 /-- The period coefficient connection is a source OUTPUT on the computed higher module,
-+normalized on every original coefficient and full local-generator fraction. -/
+normalized on every original coefficient and full local-generator fraction. -/
 abbrev HigherCoefficientConnectionType (i : ℤ) := BaseFilteredPeriodAssociation.CoefficientConnectionSource
   p K SY.regular SY.positive SY.untilting SY.scalars (MathlibExt.AlgebraicGeometry.RelativeDeRhamHigherSources.higherDeRham (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (Ω := Ω) (M := M) (D := D) i) (AnalyticAbsoluteDeRhamSources.forms p K B Y PY SY H.absoluteFormsY)
     H.formSourceY.differential (higherNabla (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (FX := FX) (IX := IX) (T := T) (TQ := TQ) (L := L) (Ω := Ω) (M := M) (D := D) (DS := DS) (FS := FS) (H := H) (GM := GM) i) H.positiveConnectionY H.fullConnectionY
@@ -472,7 +474,7 @@ abbrev HigherAssociationPropertiesType := BaseFilteredPeriodAssociation.Associat
   p K SY.regular SY.positive (Zhat p Y.left PY) SY.untilting SY.scalars (MathlibExt.AlgebraicGeometry.RelativeIntegralPeriodComparison.scalarY (p := p) (K := K) (B := B) (Y := Y) (PY := PY) (SY := SY) (FY := FY) (IY := IY)) (MathlibExt.AlgebraicGeometry.RelativeDeRhamHigherSources.higherIntegral (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q) (N := N) (PS := PS) (T := T) (TQ := TQ) (L := L) i) (MathlibExt.AlgebraicGeometry.RelativeDeRhamHigherSources.higherDeRham (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (Ω := Ω) (M := M) (D := D) i) (AnalyticAbsoluteDeRhamSources.forms p K B Y PY SY H.absoluteFormsY) HF.filtration H.formSourceY.differential (higherNabla (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (FX := FX) (IX := IX) (T := T) (TQ := TQ) (L := L) (Ω := Ω) (M := M) (D := D) (DS := DS) (FS := FS) (H := H) (GM := GM) i) H.positiveConnectionY H.fullConnectionY HC (higherComparison (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (Ω := Ω) (M := M) (D := D) (DS := DS) (FS := FS) (hp := hp) (PM := PM) (PC := PC) (FC := FC) (PD := PD) (FX := FX) (FY := FY) (IX := IX) (IY := IY) (PS := PS) (T := T) (TQ := TQ) (L := L) (H := H) (CLX := CLX) (CLY := CLY) (CEY := CEY) (AL := AL) (SO := SO) (AZO := AZO) (AZF := AZF) (ASO := ASO) (SZ := SZ) (AZZ := AZZ) (ASZ := ASZ) (RZ := RZ) (IDZ := IDZ) (SSZ := SSZ) i)
 
 /-- The final associated filtered higher bundle is OUTPUT from the actual native map,
-+actual native image filtration and actual native Gauss--Manin connection. -/
+actual native image filtration and actual native Gauss--Manin connection. -/
 def higherAssociated
     [IsIso (higherComparison (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (Ω := Ω) (M := M) (D := D) (DS := DS) (FS := FS) (hp := hp) (PM := PM) (PC := PC) (FC := FC) (PD := PD) (FX := FX) (FY := FY) (IX := IX) (IY := IY) (PS := PS) (T := T) (TQ := TQ) (L := L) (H := H) (CLX := CLX) (CLY := CLY) (CEY := CEY) (AL := AL) (SO := SO) (AZO := AZO) (AZF := AZF) (ASO := ASO) (SZ := SZ) (AZZ := AZZ) (ASZ := ASZ) (RZ := RZ) (IDZ := IDZ) (SSZ := SSZ) i)]
     (HP : HigherAssociationPropertiesType (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (Ω := Ω) (M := M) (D := D) (DS := DS) (FS := FS) (hp := hp) (PM := PM) (PC := PC) (FC := FC) (PD := PD) (FX := FX) (FY := FY) (IX := IX) (IY := IY) (PS := PS)
