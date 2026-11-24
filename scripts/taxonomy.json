@@ -12744,6 +12744,7 @@
   "MathlibExt/NumberTheory/Padics/PontryaginDual": {"to": "NumberTheory/p-adic-numbers", "title": "p-adic Pontryagin duals"},
   "MathlibExt/NumberTheory/Padics/ShortRunValuations": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Divisors of the middle binomial coefficient"},
   "MathlibExt/NumberTheory/Padics/Strassmann": {"to": "NumberTheory/p-adic-numbers", "title": "Strassmann's theorem"},
+  "MathlibExt/NumberTheory/PadovanPerrinFundamentalProduct": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Generalized Padovan–Perrin recurrences"},
   "MathlibExt/NumberTheory/PadovanSequence": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Padovan and Perrin sequences"},
   "MathlibExt/NumberTheory/PalindromesArithmeticProgressions": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Palindromes in arithmetic progressions"},
   "MathlibExt/NumberTheory/PellCassiniIdentity": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Pell and Pell–Lucas numbers"},
