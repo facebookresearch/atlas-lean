@@ -62640,6 +62640,7 @@
 "MetaMathlibExt.Matrix.HasNonnegativeMinors": "fc3a0378a6bbc3a5",
 "MetaMathlibExt.Matrix.HasPositiveMinors": "84e4f2ae5e2c3033",
 "MetaMathlibExt.Matrix.HasPositiveMinors.entry_pos": "442f6e3bd7a0f5f9",
+"MetaMathlibExt.Matrix.IsSemiseparable": "af3684c4bdd4645b",
 "MetaMathlibExt.Matrix.det_toeplitzHessenberg_eq_sum_compositions": "7679398b96ee8f3e",
 "MetaMathlibExt.Matrix.det_toeplitzHessenberg_eq_sum_compositions_general": "9fc37ba5ac85ebb7",
 "MetaMathlibExt.Matrix.hasNonnegativeMinors_iff_isTotallyNonneg": "94f989c5cfdeadd4",
