@@ -20,4 +20,3 @@ contained in $\lesssim_v$; as $\lesssim_v \subseteq (\lesssim_v)^H$, the two coi
 ## Sources
 
 - A. M. Pitts, "Howe's method for higher-order languages", in D. Sangiorgi and J. Rutten (eds.), *Advanced Topics in Bisimulation and Coinduction*, Cambridge University Press, 2011, Chapter 5, <https://www.cl.cam.ac.uk/~amp12/papers/howmho/howmho.pdf>: Section 5.2 (call-by-value evaluation), Definitions 5.3.1 and 5.4.1, Section 5.5 (rules How1–How3, Lemmas 5.5.1 and 5.5.3, Lemma 5.5.4 and the proof of Theorem 5.5.5). Section 5.9 gives the call-by-name analogue (key lemma 5.78).
-- D. J. Howe, "Proving congruence of bisimulation in functional programming languages", *Information and Computation* 124(2):103–112, 1996 (; checked against Pitts, Section 5.5).

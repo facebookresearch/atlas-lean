@@ -20,4 +20,3 @@ $\langle \rho'_1[\vec\rho/\vec x], \dots, \rho'_w[\vec\rho/\vec x] \rangle$, and
 ## Sources
 
 - R. Álvarez Castro, *Mechanized Undecidability of Subtyping in System F*, Master's thesis, Saarland University, <https://ps.uni-saarland.de/~alvarez/thesis.pdf>: Definition 5.1, Sections 4.1–4.3 (Definitions 4.1–4.3 and 4.9–4.12, Theorem 4.13), Section 5.1 (the intermediate systems) and Section 5.2 (Definition 5.14 and Lemmas 5.15–5.16).
-- B. C. Pierce, "Bounded quantification is undecidable", *Information and Computation* 112(1):131–165, 1994 (; checked against Álvarez Castro, Chapters 4–5, which reformulates its argument).

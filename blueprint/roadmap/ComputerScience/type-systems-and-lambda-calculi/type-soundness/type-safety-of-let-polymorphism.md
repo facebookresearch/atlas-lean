@@ -28,4 +28,3 @@ function in $r$ and read it back at type $\mathrm{bool} \to \mathrm{bool}$.
 ## Sources
 
 - F. Pottier and D. Rémy, "The essence of ML type inference", in B. C. Pierce (ed.), *Advanced Topics in Types and Programming Languages*, MIT Press, 2005, Chapter 10, <http://gallium.inria.fr/~fpottier/publis/emlti-final.pdf>: Section 10.5 (Definitions 10.5.2, 10.5.5 and 10.5.6, the value-restriction example, Theorems 10.5.8, 10.5.10 and 10.5.11, and the remark that soundness transfers to Damas–Milner typing by Theorems 10.3.6 and 10.4.8).
-- R. Milner, "A theory of type polymorphism in programming", *Journal of Computer and System Sciences* 17(3):348–375, 1978 (; the slogan and its role are as reported by Pottier and Rémy, Section 10.5).
