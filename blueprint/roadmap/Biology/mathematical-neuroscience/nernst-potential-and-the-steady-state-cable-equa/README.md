@@ -18,7 +18,6 @@
 - [Membrane time constant of a passive cable](time-constant.md)
 - [For positive resistance and capacitance, the time constant is positive](time-constant-pos.md)
 - [For r_i ≠ 0, zero axial current exactly where the voltage slope is 0](sealed-end-iff.md)
-- [Characteristic resistance as membrane resistance over length constant](char-resistance-eq-div.md)
 - [Steady states satisfy the steady-state cable equation λ² V'' = V](has-deriv-within-at-voltage-deriv.md)
 - [A steady state restricts to a steady state on every subset](mono.md)
 - [With V₀ = r∞ I₀, the transfer-form voltage is r∞ I₀ e^(−x/λ)](cable-voltage-char-resistance-mul.md)

@@ -21,7 +21,6 @@
 - [The length constant is positive for positive resistances](length-constant-pos.md)
 - [The characteristic resistance is positive for positive resistances](char-resistance-pos.md)
 - [For positive resistances, the length constant satisfies λ² = r_m/r_i](length-constant-sq.md)
-- [For positive resistances, r_i λ² = r_m](mul-length-constant-sq.md)
 - [Characteristic resistance in terms of the length constant](char-resistance-eq.md)
 - [Transfer solution for a uniform cable](is-steady-state-cable.md)
 - [Inlet data determine voltage and current on a finite cable](eq-cable-icc.md)
