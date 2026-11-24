@@ -46,3 +46,30 @@ example : 1 < absLeastAPLength 4 := by
   refine le_csSup ⟨4, fun _ ⟨_, _, hd, h⟩ => apLength_le hd h⟩ ⟨-1, 2, by decide, ?_⟩
   intro i hi
   interval_cases i <;> decide
+
+-- At the smallest prime in this congruence class the centered window consists of -1 and 1.
+example : longestAPLength (-2) 3 = 2 := by
+  apply le_antisymm
+  · apply csSup_le'
+    rintro s ⟨b, d, hd, h⟩
+    by_contra! hs
+    have hmem (i : ℕ) (hi : i < s) : b + i * d = -1 ∨ b + i * d = 1 := by
+      have hterm := h i hi
+      rwa [show reducedResidueWindow (-2) 3 = {-1, 1} by decide +kernel,
+        Finset.mem_insert, Finset.mem_singleton] at hterm
+    have h0 := hmem 0 (by omega)
+    have h1 := hmem 1 (by omega)
+    have h2 := hmem 2 hs
+    push_cast at h0 h1 h2
+    omega
+  · exact (isLeast_longestAPLength_prime_of_mod_four_eq_three (p := 3)
+      (by decide) rfl).2 ⟨-2, rfl⟩
+
+-- Modulo seven the minimum is attained, and the window starting at one exceeds it.
+example : (∃ m, longestAPLength m 7 = 4) ∧ 4 < longestAPLength 0 7 := by
+  refine ⟨(isLeast_longestAPLength_prime_of_mod_four_eq_three (p := 7) (by decide) rfl).1, ?_⟩
+  change 5 ≤ longestAPLength 0 7
+  unfold longestAPLength
+  refine le_csSup ⟨7, fun _ ⟨_, _, hd, h⟩ => apLength_le hd h⟩ ⟨1, 1, one_pos, ?_⟩
+  intro i hi
+  interval_cases i <;> decide
