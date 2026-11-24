@@ -49,3 +49,7 @@
 - [Wahlund identity](wahlund.md)
 - [Wahlund effect](het-sub-le-het-total.md)
 - [Nonnegativity of the fixation index $F_{ST}$](fst-nonneg.md)
+
+## Relatedness estimates under population structure
+
+- [Pooled-frequency GRM bias for independent individuals](grm-bias-for-unrelated-pairs-across-subpopulatio.md)
