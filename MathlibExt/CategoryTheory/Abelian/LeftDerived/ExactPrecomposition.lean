@@ -32,7 +32,6 @@ universe u v u' v' u'' v''
 
 namespace CategoryTheory.Functor
 
-attribute [local implicit_reducible] HomologicalComplex.homologyFunctor
 
 variable {C : Type u} [Category.{v} C] [Abelian C]
   {D : Type u'} [Category.{v'} D] [Abelian D]
@@ -54,8 +53,7 @@ theorem mapChainAugmentation_f_zero (U : C ⥤ D) [U.Additive]
     ((HomologicalComplex.singleMapHomologicalComplex U
       (ComplexShape.down ℕ) 0).hom.app X).f 0 = _
   rw [HomologicalComplex.singleMapHomologicalComplex_hom_app_self]
-  simp only [ChainComplex.single₀ObjXSelf, Iso.refl_hom, Iso.refl_inv,
-    Functor.map_id, Category.comp_id]
+  simp only [ChainComplex.single₀ObjXSelf, Iso.refl_hom, Iso.refl_inv]
   change U.map (π.f 0) ≫ U.map (𝟙 X) ≫ 𝟙 (U.obj X) = U.map (π.f 0)
   exact (congrArg (fun z => U.map (π.f 0) ≫ z ≫ 𝟙 (U.obj X))
     (U.map_id X)).trans
@@ -153,8 +151,8 @@ theorem leftDerivedPrecompHomWithResolution_naturality (n : ℕ)
   let b := (U.mapHomologicalComplex (ComplexShape.down ℕ)).map a
   let ρP := mapChainAugmentation U P.π
   let ρQ := mapChainAugmentation U Q.π
-  letI : QuasiIso ρP := mapChainAugmentation_quasiIso U P.π
-  letI : QuasiIso ρQ := mapChainAugmentation_quasiIso U Q.π
+  let : QuasiIso ρP := mapChainAugmentation_quasiIso U P.π
+  let : QuasiIso ρQ := mapChainAugmentation_quasiIso U Q.π
   let H := HomologicalComplex.homologyFunctor E (ComplexShape.down ℕ) n
   let χ := Functor.mapHomologicalComplexCompIso (F := U) (G := L)
     (Iso.refl (U ⋙ L)) (ComplexShape.down ℕ)
@@ -237,7 +235,7 @@ theorem leftDerivedPrecompHomOfPreservesHomology_eq_inv
   apply NatTrans.ext
   funext X
   let P := projectiveResolution X
-  letI : QuasiIso (mapChainAugmentation U P.π) := mapChainAugmentation_quasiIso U P.π
+  let : QuasiIso (mapChainAugmentation U P.π) := mapChainAugmentation_quasiIso U P.π
   rw [leftDerivedPrecompHomOfPreservesHomology_app U L n P,
     leftDerivedPrecompIso_inv_app U L n P]
   have h := leftDerivedObjToAugmentedHom_projective_target L
@@ -271,7 +269,7 @@ theorem leftDerivedPrecompHomOfPreservesHomology_zero_augmentation :
   funext X
   let P := projectiveResolution X
   let ρ := mapChainAugmentation U P.π
-  letI : QuasiIso ρ := mapChainAugmentation_quasiIso U P.π
+  let : QuasiIso ρ := mapChainAugmentation_quasiIso U P.π
   let t := leftDerivedObjToAugmentedHom L
     ((U.mapHomologicalComplex (ComplexShape.down ℕ)).obj P.complex) ρ (𝟙 (U.obj X)) 0
   let χ := Functor.mapHomologicalComplexCompIso (F := U) (G := L)
@@ -316,7 +314,7 @@ theorem leftDerivedPrecompHomOfPreservesHomology_naturality_functor
   let P := projectiveResolution X
   let Q := (U.mapHomologicalComplex (ComplexShape.down ℕ)).obj P.complex
   let ρ := mapChainAugmentation U P.π
-  letI : QuasiIso ρ := mapChainAugmentation_quasiIso U P.π
+  let : QuasiIso ρ := mapChainAugmentation_quasiIso U P.π
   let H := HomologicalComplex.homologyFunctor E (ComplexShape.down ℕ) n
   let tL := leftDerivedObjToAugmentedHom L Q ρ (𝟙 (U.obj X)) n
   let tM := leftDerivedObjToAugmentedHom M Q ρ (𝟙 (U.obj X)) n

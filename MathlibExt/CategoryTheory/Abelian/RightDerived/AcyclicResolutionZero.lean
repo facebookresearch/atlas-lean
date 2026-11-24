@@ -55,12 +55,10 @@ private theorem homologyOpIso_hom_homologyπ_op
       rw [LeftHomologyData.homologyπ_comp_homologyIso_hom]
     _ = h.op.cyclesIso.hom ≫ (S.homologyπ ≫ h.homologyIso.hom ≫ h.ι).op := by
       simp only [RightHomologyData.op_π, op_comp, Category.assoc]
-      rfl
     _ = h.op.cyclesIso.hom ≫ (S.iCycles ≫ h.p).op :=
       congrArg (fun t => h.op.cyclesIso.hom ≫ t.op) hh
     _ = (h.op.cyclesIso.hom ≫ h.op.i) ≫ S.iCycles.op := by
       simp only [RightHomologyData.op_i, op_comp, Category.assoc]
-      rfl
     _ = S.op.iCycles ≫ S.iCycles.op := by
       rw [LeftHomologyData.cyclesIso_hom_comp_i]
     _ = S.op.homologyπ ≫ (S.op.homologyι ≫ S.opcyclesOpIso.hom) := by

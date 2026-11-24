@@ -27,6 +27,9 @@ set_option autoImplicit false
 universe v₁ u₁ v₂ u₂
 open CategoryTheory CategoryTheory.Limits
 
+local instance : ChainComplex.kernelTailEmbedding.IsRelIff :=
+  ComplexShape.instIsRelIffEmbeddingDown'Add 1 1
+
 namespace CategoryTheory.Functor
 
 set_option backward.isDefEq.respectTransparency.types false in
@@ -61,7 +64,8 @@ private theorem augmentationHomologyZero_naturality
     exact (Category.assoc _ _ _).trans
       ((congrArg (fun m => K.pOpcycles 0 ≫ m) (ChainComplex.isoHomologyι₀_inv_naturality b)).trans
         ((Category.assoc _ _ _).symm.trans
-          ((congrArg (fun m => m ≫ (ChainComplex.isoHomologyι₀ L).inv) (HomologicalComplex.p_opcyclesMap b 0)).trans
+          ((congrArg (fun m => m ≫ (ChainComplex.isoHomologyι₀ L).inv)
+            (HomologicalComplex.p_opcyclesMap b 0)).trans
             (Category.assoc _ _ _))))
   have haug : b.f 0 ≫ F.map (ρ.f 0) = F.map (π.f 0) ≫ F.map f :=
     (F.map_comp (a.f 0) (ρ.f 0)).symm.trans
@@ -273,7 +277,8 @@ noncomputable def augmentationRightHomologyMapData
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.defeqAttrib.useBackward true in
-/-- The exact original degree-one homology comparison commutes with the map of augmented complexes. -/
+/-- The exact original degree-one homology comparison commutes with the map of
+augmented complexes. -/
 lemma homologyOneIsoOfPreservedKernelTail_naturality
     (F : C ⥤ D) [F.Additive]
     (π : Q ⟶ (single₀ C).obj M) (ρ : R ⟶ (single₀ C).obj N)
@@ -470,7 +475,7 @@ theorem leftDerivedObjIsoHomologyOfAcyclicResolution_naturality
         HomologicalComplex.homologyMap
           ((F.mapHomologicalComplex (ComplexShape.down ℕ)).map a) n := by
   induction n using Nat.strong_induction_on generalizing M N Q R with
-  | h n ih =>
+  | ind n ih =>
       cases n with
       | zero =>
           exact leftDerivedObjIsoHomologyOfAcyclicResolution_zero_naturality

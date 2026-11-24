@@ -24,8 +24,6 @@ map without an injectivity premise on the source functor or exactness of the out
 noncomputable section
 open CategoryTheory CategoryTheory.Limits
 
-attribute [local implicit_reducible] HomologicalComplex.homologyFunctor
-
 universe uC vC uD vD uA vA
 
 namespace CategoryTheory.Functor

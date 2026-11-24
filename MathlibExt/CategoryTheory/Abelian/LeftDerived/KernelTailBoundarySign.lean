@@ -37,7 +37,6 @@ theorem normalizationRestrictionXIso_map_hom (F : C ⥤ D) [F.Additive]
         ChainComplex.kernelTailEmbedding h).hom := by
   subst h
   simp [HomologicalComplex.restrictionXIso]
-  rfl
 
 /-- The right-coordinate lift of a cycle has the literal mapped cross component. -/
 theorem normalizationMappedBiprod_inr_boundary (F : C ⥤ D) [F.Additive]
