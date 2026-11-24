@@ -14,6 +14,8 @@ Mathematical control theory of finite-dimensional systems: controllability of li
 - [Model predictive control](model-predictive-control/README.md)
 - [Robust and H-infinity control](robust-and-h-infinity-control/README.md)
 - [Adaptive control](adaptive-control/README.md)
+- [Nyquist's stability theorem](nyquist-s-stability-theorem.md)
+- [The large and small arcs of the Nyquist contour](the-large-and-small-arcs-of-the-nyquist-contour.md)
 
 ## Single-input single-output linear systems
 
