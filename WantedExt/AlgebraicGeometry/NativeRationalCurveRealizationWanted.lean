@@ -34,13 +34,14 @@ variable (S : Finset ℂ)
 /-- For any analytic connection de Rham data (requested as
 `RegularSingularRiemannHilbertWanted.analytic_connection_deRham_data`; all such data are canonically
 isomorphic), the ordinary curve de Rham complex is the horizontal one. -/
-def_wanted actual_curve_de_rham_horizontal_iso (D : AnalyticConnectionDeRhamData S r A) :
-  ordinaryCurveDR S A D ≅ horizontalDR S A
+def_wanted actual_curve_de_rham_horizontal_iso (hA : PolesWithin S A)
+    (D : AnalyticConnectionDeRhamData S r A hA) :
+  ordinaryCurveDR S A hA D ≅ horizontalDR S A hA
 
 def_wanted actual_curve_horizontal_matrix_maps (δ : RationalDerivative)
     {s : ℕ} (B : Matrix (Fin s) (Fin s) RationalFunctions)
     (G : Matrix (Fin s) (Fin r) RationalFunctions)
     (hA : PolesWithin S A) (hB : PolesWithin S B) (hG : PolesWithin S G)
-    (hHorizontal : HorizontalMatrix δ A B G) : CurveGaugeSource S A B G
+    (hHorizontal : HorizontalMatrix δ A B G) : CurveGaugeSource S A hA B hB G hG
 
 end WantedExt.AlgebraicGeometry.NativeRationalCurveRealizationWanted

@@ -68,6 +68,53 @@ example (S : Finset ℂ) : PolesWithin S (1 : Matrix (Fin 2) (Fin 2) RationalFun
   · subst h; simp
   · simp [Matrix.one_apply_ne h]
 
+/-- The zero matrix has no poles anywhere. -/
+theorem polesWithin_zero (S : Finset ℂ) {r : ℕ} :
+    PolesWithin S (0 : Matrix (Fin r) (Fin r) RationalFunctions) := by
+  intro z _ i j
+  simp
+
+/-- The coefficient `1/t` has its pole at `0`. -/
+abbrev inverseCoordinate : Matrix (Fin 1) (Fin 1) RationalFunctions :=
+  Matrix.of fun _ _ ↦ algebraMap (Polynomial ℂ) RationalFunctions 1 /
+    algebraMap (Polynomial ℂ) RationalFunctions Polynomial.X
+
+theorem inverseCoordinate_denom :
+    (algebraMap (Polynomial ℂ) RationalFunctions 1 /
+      algebraMap (Polynomial ℂ) RationalFunctions Polynomial.X).denom = Polynomial.X := by
+  rw [RatFunc.denom_div _ Polynomial.X_ne_zero]
+  simp
+
+theorem inverseCoordinate_num :
+    (algebraMap (Polynomial ℂ) RationalFunctions 1 /
+      algebraMap (Polynomial ℂ) RationalFunctions Polynomial.X).num = 1 := by
+  rw [RatFunc.num_div]
+  simp
+
+/-- Hidden-pole regression: `1/t` does not have its poles in `∅`, so no solution sheaf of
+`d/dt - 1/t` on the whole line `ℂ` can be formed (the evaluated coefficient at `0` would be the
+totalized `1/0 = 0`). -/
+example : ¬ PolesWithin (∅ : Finset ℂ) inverseCoordinate := by
+  intro h
+  have h0 := h 0 (Finset.notMem_empty 0) 0 0
+  simp only [inverseCoordinate, Matrix.of_apply] at h0
+  rw [inverseCoordinate_denom, Polynomial.eval_X] at h0
+  exact h0 rfl
+
+/-- Removing the pole: `1/t` has its poles in `{0}`, so its solution sections on `ℂ \ {0}` are
+defined, and there its evaluated coefficient is the actual value `1/z`. -/
+theorem inverseCoordinate_poles : PolesWithin ({0} : Finset ℂ) inverseCoordinate := by
+  intro z hz i j
+  simp only [inverseCoordinate, Matrix.of_apply]
+  rw [inverseCoordinate_denom, Polynomial.eval_X]
+  simpa using hz
+
+example (z : ℂ) : evaluatedAt inverseCoordinate_poles z 0 0 = 1 / z := by
+  rw [evaluatedAt_apply]
+  simp only [inverseCoordinate, Matrix.of_apply]
+  rw [RatFunc.eval, inverseCoordinate_num, inverseCoordinate_denom]
+  simp
+
 /-- Evaluation of a constant matrix is the matrix itself. -/
 example (z : ℂ) (c : ℂ) :
     evaluated (Matrix.of fun _ _ : Fin 2 ↦ (RatFunc.C c : RationalFunctions)) z =
@@ -84,20 +131,21 @@ open Classical in
 example (S : Finset ℂ) (U : TopologicalSpace.Opens (puncturedLine S))
     (w : EuclideanSpace ℂ (Fin 2)) :
     (fun z ↦ if z ∈ ambientOpen S U then w else 0) ∈
-      solutionSections S (0 : Matrix (Fin 2) (Fin 2) RationalFunctions) U := by
+      solutionSections S (0 : Matrix (Fin 2) (Fin 2) RationalFunctions) (polesWithin_zero S) U := by
   refine ⟨fun z hz ↦ by simp [hz], fun z hz i ↦ ?_⟩
   have hev : ∀ v : Fin 2 → ℂ,
-      (evaluated (0 : Matrix (Fin 2) (Fin 2) RationalFunctions) z).mulVec v i = 0 := by
+      (evaluatedAt (polesWithin_zero (r := 2) S) z).mulVec v i = 0 := by
     intro v
-    simp [evaluated, Matrix.mulVec, dotProduct]
+    simp [evaluatedAt, evaluated, Matrix.mulVec, dotProduct]
   simp only [hev]
   exact (hasDerivWithinAt_const z (ambientOpen S U) (w i)).congr
     (fun t ht ↦ by simp [ht]) (by simp [hz])
 
 /-- Solution sections vanish off the open: a nonzero value at an omitted point is excluded. -/
 example (S : Finset ℂ) {r : ℕ} (A : Matrix (Fin r) (Fin r) RationalFunctions)
+    (hA : PolesWithin S A)
     (U : TopologicalSpace.Opens (puncturedLine S)) (s : ℂ → EuclideanSpace ℂ (Fin r))
-    (z : ℂ) (hz : z ∉ ambientOpen S U) (hs : s z ≠ 0) : s ∉ solutionSections S A U :=
+    (z : ℂ) (hz : z ∉ ambientOpen S U) (hs : s z ≠ 0) : s ∉ solutionSections S A hA U :=
   fun h ↦ hs (h.1 z hz)
 
 end MathlibExtTest.AlgebraicGeometry.RegularSingularConnections

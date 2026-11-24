@@ -213,8 +213,11 @@ variable [T2Space X] [(Bimod.forget (B := KY X) (KY X)).Additive]
   (Projection : InverseSource ℂ (baseProjection (TopCat.of X)))
 
 /-- The enhanced quotient functor has a left adjoint, the functor `L^E` of D'Agnolo--Kashiwara
-(arXiv:1311.2374v2, §4). The reconstruction map uses only this adjunction and its counit. -/
-theorem_wanted coefficient_enhanced_quotient_left_adjoint :
+(arXiv:1311.2374v2, §4). The reconstruction map uses only this adjunction and its counit. As in
+D'Agnolo--Kashiwara, `X` is a good space: a Hausdorff, second-countable complex manifold of
+dimension `n`; these hypotheses are explicit binders of the request. -/
+theorem_wanted coefficient_enhanced_quotient_left_adjoint [T2Space X] [SecondCountableTopology X]
+    [IsManifold 𝓘(ℂ, TemperedDistributionSectionModels.ComplexCoordinates n) ∞ X] :
   (coefficientEnhancedQ X CoefficientExact CoefficientBounded Boundary Projection).IsRightAdjoint
 
 /-- Tensoring with a bounded coefficient complex has a right adjoint, the internal Hom of
@@ -331,7 +334,7 @@ theorem_wanted actual_holonomic_reconstruction_isIso
     IsIso (actualReconstructionMap n X IX IP NX NP PX PP Structure Operators MX MP V Ot HE Exp Plus
       Real Graph Proper Adj Image Derivation Geometry BoundedO Ordinary Normalize BetaExact
         Representatives CoefficientExact CoefficientBounded Boundary Projection M BoundedSolution
-        (quotientLeftAdjoint := ❰coefficient_enhanced_quotient_left_adjoint❱ X CoefficientExact
+        (quotientLeftAdjoint := ❰coefficient_enhanced_quotient_left_adjoint❱ n X CoefficientExact
           CoefficientBounded Boundary Projection)
         (tensorClosed := ❰bounded_coefficient_tensor_closed❱ n X IX Real Graph)
         (betaPullRightAdjoint := hBetaPull))

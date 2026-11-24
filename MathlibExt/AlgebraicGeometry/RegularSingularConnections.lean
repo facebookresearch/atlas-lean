@@ -28,7 +28,10 @@ the infinity condition uses `-t(δ-A)` in the coordinate `1/t`.
 
 Solution sections are actual holomorphic solutions of `s'=A(z)s` on the
 punctured complex line. Their presheaf and sheafification are constructed,
-rather than supplied as an unrelated functor or named predicate.
+rather than supplied as an unrelated functor or named predicate. They are
+formed only for a matrix whose poles lie in the removed finite set
+(`PolesWithin`), so the evaluated coefficients are the actual values of the
+rational functions at every point of the punctured line.
 
 Sources: Deligne, *Équations différentielles à points singuliers réguliers*,
 Lecture Notes in Mathematics 163 (1970), Chapters I and II, especially II §5.
@@ -126,20 +129,59 @@ def PolesWithin (S : Finset ℂ) {m n : ℕ}
     (A : Matrix (Fin m) (Fin n) RationalFunctions) : Prop :=
   ∀ z : ℂ, z ∉ S → ∀ i j, (A i j).denom.eval z ≠ 0
 
-/-- Evaluation of a matrix coefficient at an actual non-pole. -/
+/-- Evaluation of a matrix coefficient at a point. This is the actual value of the rational
+functions only at a non-pole (field division is totalized at a pole); the punctured-line APIs below
+use it through `evaluatedAt`, which requires the poles to lie in the removed set. -/
 def evaluated {m n : ℕ} (A : Matrix (Fin m) (Fin n) RationalFunctions)
     (z : ℂ) : Matrix (Fin m) (Fin n) ℂ :=
   fun i j ↦ RatFunc.eval (RingHom.id ℂ) z (A i j)
 
-/-- Actual solution sections. Zero extension outside the open makes their
-global function representatives unique; derivatives are checked within
+/-- Evaluation of a matrix whose poles lie in `S`, used at points of the punctured line, where every
+denominator is nonzero (`denom_eval_ne_zero`). -/
+def evaluatedAt {S : Finset ℂ} {m n : ℕ} {A : Matrix (Fin m) (Fin n) RationalFunctions}
+    (_hA : PolesWithin S A) (z : ℂ) : Matrix (Fin m) (Fin n) ℂ :=
+  evaluated A z
+
+theorem evaluatedAt_apply {S : Finset ℂ} {m n : ℕ} {A : Matrix (Fin m) (Fin n) RationalFunctions}
+    (hA : PolesWithin S A) (z : ℂ) (i : Fin m) (j : Fin n) :
+    evaluatedAt hA z i j = RatFunc.eval (RingHom.id ℂ) z (A i j) := rfl
+
+/-- At a point of the punctured line, every denominator of a matrix with poles in `S` is nonzero. -/
+theorem denom_eval_ne_zero {S : Finset ℂ} {m n : ℕ}
+    {A : Matrix (Fin m) (Fin n) RationalFunctions} (hA : PolesWithin S A) {z : ℂ}
+    (hz : z ∉ S) (i : Fin m) (j : Fin n) : (A i j).denom.eval z ≠ 0 :=
+  hA z hz i j
+
+/-- Negation does not create poles. -/
+theorem denom_neg_dvd (x : RationalFunctions) : (-x).denom ∣ x.denom :=
+  (RatFunc.denom_dvd x.denom_ne_zero).2 ⟨-x.num, by rw [map_neg, neg_div, RatFunc.num_div_denom]⟩
+
+/-- The poles of the transposed matrix are those of the matrix. -/
+theorem PolesWithin.transpose {S : Finset ℂ} {m n : ℕ}
+    {A : Matrix (Fin m) (Fin n) RationalFunctions} (hA : PolesWithin S A) :
+    PolesWithin S A.transpose :=
+  fun z hz i j ↦ hA z hz j i
+
+/-- The poles of the negated transposed matrix (the dual connection) lie in `S` as well. -/
+theorem PolesWithin.neg_transpose {S : Finset ℂ} {m n : ℕ}
+    {A : Matrix (Fin m) (Fin n) RationalFunctions} (hA : PolesWithin S A) :
+    PolesWithin S (-A.transpose) := by
+  intro z hz i j h0
+  obtain ⟨c, hc⟩ := denom_neg_dvd (A j i)
+  apply hA z hz j i
+  simp only [Matrix.neg_apply, Matrix.transpose_apply] at h0
+  rw [hc, Polynomial.eval_mul, h0, zero_mul]
+
+/-- Actual solution sections, for a matrix whose poles lie in `S`. Zero extension outside the
+open makes their global function representatives unique; derivatives are checked within
 the actual open, so that extension does not impose a boundary condition. -/
 def solutionSections {r : ℕ} (S : Finset ℂ)
-    (A : Matrix (Fin r) (Fin r) RationalFunctions) (U : Opens (puncturedLine S)) :
+    (A : Matrix (Fin r) (Fin r) RationalFunctions) (hA : PolesWithin S A)
+    (U : Opens (puncturedLine S)) :
     Submodule ℂ (ℂ → EuclideanSpace ℂ (Fin r)) where
   carrier := {s | (∀ z, z ∉ ambientOpen S U → s z = 0) ∧
     ∀ z, z ∈ ambientOpen S U → ∀ i,
-      HasDerivWithinAt (fun t ↦ s t i) ((evaluated A z).mulVec (s z) i)
+      HasDerivWithinAt (fun t ↦ s t i) ((evaluatedAt hA z).mulVec (s z) i)
         (ambientOpen S U) z}
   zero_mem' := by
     constructor
@@ -197,7 +239,7 @@ connection. The two terms are holomorphic vector functions and their `dt`
 coefficients, respectively; every local differential is the actual
 derivative minus the evaluated rational matrix. -/
 structure AnalyticConnectionDeRhamData (S : Finset ℂ) (r : ℕ)
-    (A : Matrix (Fin r) (Fin r) RationalFunctions) where
+    (A : Matrix (Fin r) (Fin r) RationalFunctions) (hA : PolesWithin S A) where
   functions : TopCat.Sheaf (ModuleCat.{0} ℂ) (puncturedLine S)
   forms : TopCat.Sheaf (ModuleCat.{0} ℂ) (puncturedLine S)
   functionSections (U : Opens (puncturedLine S)) :
@@ -217,13 +259,13 @@ structure AnalyticConnectionDeRhamData (S : Finset ℂ) (r : ℕ)
       (s : functions.obj.obj (op U)) (z : ℂ) (hz : z ∈ ambientOpen S U) (i : Fin r) :
     (formSections U (differential.hom.app (op U) s)).1 z i =
       derivWithin (fun t ↦ (functionSections U s).1 t i) (ambientOpen S U) z -
-        ((evaluated A z).mulVec ((functionSections U s).1 z)) i
+        ((evaluatedAt hA z).mulVec ((functionSections U s).1 z)) i
 
 /-- The actual unshifted analytic connection de Rham complex, in degrees
 zero and one. Its perverse normalization on a curve is the shift `[1]`. -/
 def analyticDeRhamComplex {S : Finset ℂ} {r : ℕ}
-    {A : Matrix (Fin r) (Fin r) RationalFunctions}
-    (D : AnalyticConnectionDeRhamData S r A) :
+    {A : Matrix (Fin r) (Fin r) RationalFunctions} {hA : PolesWithin S A}
+    (D : AnalyticConnectionDeRhamData S r A hA) :
     CochainComplex (TopCat.Sheaf (ModuleCat.{0} ℂ) (puncturedLine S)) ℕ :=
   MathlibExt.Algebra.Homology.twoTermComplex D.differential
 
@@ -234,9 +276,9 @@ theorem ambientOpen_mono (S : Finset ℂ) {U V : Opens (puncturedLine S)} (h : V
 
 /-- The restriction of the actual solution function. -/
 def restrictSolution {r : ℕ} (S : Finset ℂ)
-    (A : Matrix (Fin r) (Fin r) RationalFunctions)
+    (A : Matrix (Fin r) (Fin r) RationalFunctions) (hA : PolesWithin S A)
     {U V : Opens (puncturedLine S)} (h : V ≤ U) :
-    solutionSections S A U →ₗ[ℂ] solutionSections S A V := by
+    solutionSections S A hA U →ₗ[ℂ] solutionSections S A hA V := by
   classical
   refine
     { toFun := fun s ↦ ⟨fun z ↦ if z ∈ ambientOpen S V then s.1 z else 0, ?_⟩
@@ -261,10 +303,10 @@ def restrictSolution {r : ℕ} (S : Finset ℂ)
 
 /-- The actual presheaf of holomorphic solutions of `s'=A(z)s`. -/
 def solutionPresheaf {r : ℕ} (S : Finset ℂ)
-    (A : Matrix (Fin r) (Fin r) RationalFunctions) :
+    (A : Matrix (Fin r) (Fin r) RationalFunctions) (hA : PolesWithin S A) :
     (Opens (puncturedLine S))ᵒᵖ ⥤ ModuleCat.{0} ℂ where
-  obj U := ModuleCat.of ℂ (solutionSections S A U.unop)
-  map h := ModuleCat.ofHom (restrictSolution S A h.unop.le)
+  obj U := ModuleCat.of ℂ (solutionSections S A hA U.unop)
+  map h := ModuleCat.ofHom (restrictSolution S A hA h.unop.le)
   map_id U := by
     ext s z
     by_cases hz : z ∈ ambientOpen S U.unop
@@ -279,17 +321,17 @@ def solutionPresheaf {r : ℕ} (S : Finset ℂ)
 
 /-- The actual solution sheaf, obtained from these explicit sections. -/
 def solutionSheaf {r : ℕ} (S : Finset ℂ)
-    (A : Matrix (Fin r) (Fin r) RationalFunctions) :
+    (A : Matrix (Fin r) (Fin r) RationalFunctions) (hA : PolesWithin S A) :
     TopCat.Sheaf (ModuleCat.{0} ℂ) (puncturedLine S) :=
   (presheafToSheaf (Opens.grothendieckTopology (puncturedLine S))
-    (ModuleCat.{0} ℂ)).obj (solutionPresheaf S A)
+    (ModuleCat.{0} ℂ)).obj (solutionPresheaf S A hA)
 
 /-- The actual map from solution presheaf sections into the solution sheaf. -/
 def solutionUnit {r : ℕ} (S : Finset ℂ)
-    (A : Matrix (Fin r) (Fin r) RationalFunctions) :
-    solutionPresheaf S A ⟶ (solutionSheaf S A).obj :=
+    (A : Matrix (Fin r) (Fin r) RationalFunctions) (hA : PolesWithin S A) :
+    solutionPresheaf S A hA ⟶ (solutionSheaf S A hA).obj :=
   (sheafificationAdjunction (Opens.grothendieckTopology (puncturedLine S))
-    (ModuleCat.{0} ℂ)).unit.app (solutionPresheaf S A)
+    (ModuleCat.{0} ℂ)).unit.app (solutionPresheaf S A hA)
 
 /-- The actual horizontal rational gauge equation for an interconnection
 map `G : (δ-A) → (δ-B)`. -/
@@ -300,16 +342,17 @@ def HorizontalMatrix (δ : RationalDerivative) {r s : ℕ}
   ∀ i j, δ.derivation (G i j) = (B * G - G * A) i j
 
 /-- A sheaf morphism is normalized by the actual evaluated rational matrix
-on every solution section before sheafification. -/
+on every solution section before sheafification; all three matrices have their poles in `S`. -/
 def InducedByMatrix {r s : ℕ} (S : Finset ℂ)
     (A : Matrix (Fin r) (Fin r) RationalFunctions)
     (B : Matrix (Fin s) (Fin s) RationalFunctions)
-    (φ : solutionSheaf S A ⟶ solutionSheaf S B)
-    (G : Matrix (Fin s) (Fin r) RationalFunctions) : Prop :=
-  ∀ (U : Opens (puncturedLine S)) (v : solutionSections S A U),
-    ∃ w : solutionSections S B U,
-      (∀ z ∈ ambientOpen S U, ∀ i, w.1 z i = ((evaluated G z).mulVec (v.1 z)) i) ∧
-      φ.hom.app (op U) ((solutionUnit S A).app (op U) v) =
-        (solutionUnit S B).app (op U) w
+    (hA : PolesWithin S A) (hB : PolesWithin S B)
+    (φ : solutionSheaf S A hA ⟶ solutionSheaf S B hB)
+    (G : Matrix (Fin s) (Fin r) RationalFunctions) (hG : PolesWithin S G) : Prop :=
+  ∀ (U : Opens (puncturedLine S)) (v : solutionSections S A hA U),
+    ∃ w : solutionSections S B hB U,
+      (∀ z ∈ ambientOpen S U, ∀ i, w.1 z i = ((evaluatedAt hG z).mulVec (v.1 z)) i) ∧
+      φ.hom.app (op U) ((solutionUnit S A hA).app (op U) v) =
+        (solutionUnit S B hB).app (op U) w
 
 end MathlibExt.AlgebraicGeometry.RegularSingularConnections

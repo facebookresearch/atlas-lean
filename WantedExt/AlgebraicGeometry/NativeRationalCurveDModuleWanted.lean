@@ -97,17 +97,17 @@ def_wanted actual_curve_coordinate : CurveCoordinateSource S
 
 def_wanted actual_curve_native_connection {r : ℕ}
     (A : Matrix (Fin r) (Fin r) RationalFunctions) (C : CurveCoordinateSource S)
-    (hA : PolesWithin S A) : RationalConnectionModuleSource S A C
+    (hA : PolesWithin S A) : RationalConnectionModuleSource S A hA C
 
-variable {r : ℕ} (A : Matrix (Fin r) (Fin r) RationalFunctions)
-  (C : CurveCoordinateSource S) (MA : RationalConnectionModuleSource S A C)
+variable {r : ℕ} (A : Matrix (Fin r) (Fin r) RationalFunctions) (hA : PolesWithin S A)
+  (C : CurveCoordinateSource S) (MA : RationalConnectionModuleSource S A hA C)
 
 /-- The ordinary de Rham complex of the native connection module, formed with the canonical
 anti-identification of the opposite differential ring, is the two-term connection complex shifted
 by one, for any analytic connection de Rham data `D` (requested as
 `RegularSingularRiemannHilbertWanted.analytic_connection_deRham_data`; all such data are
 canonically isomorphic). -/
-def_wanted actual_curve_native_DR_iso (D : AnalyticConnectionDeRhamData S r A)
+def_wanted actual_curve_native_DR_iso (D : AnalyticConnectionDeRhamData S r A hA)
     (c : CanonicalOppositeRings.CanonicalOppositeCarrier (puncturedLine S)
       (analyticCoefficients 1 (puncturedLine S)))
     (hRBack : CanonicalOppositeRings.IsCanonicalBack c RBack) :
@@ -115,20 +115,20 @@ def_wanted actual_curve_native_DR_iso (D : AnalyticConnectionDeRhamData S r A)
     RBack UnitOpp RightView RightExact CoefficientExact AlphaExact).obj
       ((DerivedCategory.singleFunctor (RingedComplexCoefficientModels.OrdinaryModule
         (TopCat.of (puncturedLine S)) (analyticDifferentialRing 1 (puncturedLine S))) 0).obj
-          MA.object) ≅ ordinaryCurveDR S A D
+          MA.object) ≅ ordinaryCurveDR S A hA D
 
 def_wanted actual_curve_native_Sol_iso :
   (actualOrdinarySol 1 (puncturedLine S) Ordinary Normalize BetaExact Structure
     CoefficientExact AlphaExact).obj
       (Opposite.op ((DerivedCategory.singleFunctor (RingedComplexCoefficientModels.OrdinaryModule
         (TopCat.of (puncturedLine S)) (analyticDifferentialRing 1 (puncturedLine S))) 0).obj
-          MA.object)) ≅ ordinaryCurveSol S A
+          MA.object)) ≅ ordinaryCurveSol S A hA
 
 def_wanted actual_curve_native_gauge (δ : RationalDerivative) {s : ℕ}
     (B : Matrix (Fin s) (Fin s) RationalFunctions)
     (G : Matrix (Fin s) (Fin r) RationalFunctions)
-    (MB : RationalConnectionModuleSource S B C)
-    (hA : PolesWithin S A) (hB : PolesWithin S B) (hG : PolesWithin S G)
-    (hHorizontal : HorizontalMatrix δ A B G) : NativeCurveGaugeSource S A C B G MA MB
+    (hB : PolesWithin S B) (hG : PolesWithin S G)
+    (MB : RationalConnectionModuleSource S B hB C)
+    (hHorizontal : HorizontalMatrix δ A B G) : NativeCurveGaugeSource S A hA C B hB G hG MA MB
 
 end WantedExt.AlgebraicGeometry.NativeRationalCurveDModuleWanted

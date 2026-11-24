@@ -43,9 +43,9 @@ local instance nativeCurvePreadditive :
     Preadditive (OrdinarySheaf ℂ (puncturedLine S)) := Abelian.toPreadditive
 attribute [local instance] HasDerivedCategory.standard
 
-variable {r : ℕ} (A : Matrix (Fin r) (Fin r) RationalFunctions)
+variable {r : ℕ} (A : Matrix (Fin r) (Fin r) RationalFunctions) (hA : PolesWithin S A)
 
-def ordinaryCurveDR (D : AnalyticConnectionDeRhamData S r A) :
+def ordinaryCurveDR (D : AnalyticConnectionDeRhamData S r A hA) :
     DerivedCategory (OrdinarySheaf ℂ (puncturedLine S)) :=
   (shiftFunctor (DerivedCategory (OrdinarySheaf ℂ (puncturedLine S))) (1 : ℤ)).obj
     (DerivedCategory.Q.obj (((ComplexShape.embeddingUpNat).extendFunctor
@@ -53,14 +53,15 @@ def ordinaryCurveDR (D : AnalyticConnectionDeRhamData S r A) :
 
 def horizontalDR : DerivedCategory (OrdinarySheaf ℂ (puncturedLine S)) :=
   (shiftFunctor (DerivedCategory (OrdinarySheaf ℂ (puncturedLine S))) (1 : ℤ)).obj
-    ((DerivedCategory.singleFunctor (OrdinarySheaf ℂ (puncturedLine S)) 0).obj (solutionSheaf S A))
+    ((DerivedCategory.singleFunctor (OrdinarySheaf ℂ (puncturedLine S)) 0).obj
+      (solutionSheaf S A hA))
 
 def ordinaryCurveSol : DerivedCategory (OrdinarySheaf ℂ (puncturedLine S)) :=
   (DerivedCategory.singleFunctor (OrdinarySheaf ℂ (puncturedLine S)) 0).obj
-    (solutionSheaf S (-A.transpose))
+    (solutionSheaf S (-A.transpose) hA.neg_transpose)
 
-variable {s : ℕ} (B : Matrix (Fin s) (Fin s) RationalFunctions)
-  (G : Matrix (Fin s) (Fin r) RationalFunctions)
+variable {s : ℕ} (B : Matrix (Fin s) (Fin s) RationalFunctions) (hB : PolesWithin S B)
+  (G : Matrix (Fin s) (Fin r) RationalFunctions) (hG : PolesWithin S G)
 
 theorem horizontal_reversed_transpose (δ : RationalDerivative)
     (h : HorizontalMatrix δ A B G) : HorizontalMatrix δ (-B.transpose) (-A.transpose) G.transpose := by
@@ -75,16 +76,20 @@ theorem horizontal_reversed_transpose (δ : RationalDerivative)
 
 /-- Both original sheaf maps retain their actual matrix section values before sheafification. -/
 structure CurveGaugeSource where
-  drMap : solutionSheaf S A ⟶ solutionSheaf S B
-  drValues : InducedByMatrix S A B drMap G
-  solMap : solutionSheaf S (-B.transpose) ⟶ solutionSheaf S (-A.transpose)
-  solValues : InducedByMatrix S (-B.transpose) (-A.transpose) solMap G.transpose
+  drMap : solutionSheaf S A hA ⟶ solutionSheaf S B hB
+  drValues : InducedByMatrix S A B hA hB drMap G hG
+  solMap : solutionSheaf S (-B.transpose) hB.neg_transpose ⟶
+    solutionSheaf S (-A.transpose) hA.neg_transpose
+  solValues : InducedByMatrix S (-B.transpose) (-A.transpose) hB.neg_transpose hA.neg_transpose
+    solMap G.transpose hG.transpose
 
-def ordinaryCurveDRMap (P : CurveGaugeSource S A B G) : horizontalDR S A ⟶ horizontalDR S B :=
+def ordinaryCurveDRMap (P : CurveGaugeSource S A hA B hB G hG) :
+    horizontalDR S A hA ⟶ horizontalDR S B hB :=
   (shiftFunctor (DerivedCategory (OrdinarySheaf ℂ (puncturedLine S))) (1 : ℤ)).map
     ((DerivedCategory.singleFunctor (OrdinarySheaf ℂ (puncturedLine S)) 0).map P.drMap)
 
-def ordinaryCurveSolMap (P : CurveGaugeSource S A B G) : ordinaryCurveSol S B ⟶ ordinaryCurveSol S A :=
+def ordinaryCurveSolMap (P : CurveGaugeSource S A hA B hB G hG) :
+    ordinaryCurveSol S B hB ⟶ ordinaryCurveSol S A hA :=
   (DerivedCategory.singleFunctor (OrdinarySheaf ℂ (puncturedLine S)) 0).map P.solMap
 
 end MathlibExt.AlgebraicGeometry.NativeRationalCurveRealizations

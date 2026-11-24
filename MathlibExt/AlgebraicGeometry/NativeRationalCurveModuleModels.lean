@@ -73,7 +73,8 @@ structure CurveCoordinateSource where
     P ∈ Subring.closure (Set.range (scalarFinite ℂ (puncturedLine S) (curveCoefficients S) U) ∪
       {partialFinite ℂ (puncturedLine S) (curveCoefficients S) coordinate U})
 
-variable {r : ℕ} (A : Matrix (Fin r) (Fin r) RationalFunctions) (C : CurveCoordinateSource S)
+variable {r : ℕ} (A : Matrix (Fin r) (Fin r) RationalFunctions) (hA : PolesWithin S A)
+  (C : CurveCoordinateSource S)
 
 /-- The actual native left D-module connection, fixed on every original vector section and operator generator. -/
 structure RationalConnectionModuleSource where
@@ -94,17 +95,18 @@ structure RationalConnectionModuleSource where
       (operatorPresheaf ℂ (puncturedLine S) (curveCoefficients S))).app (op U)).hom
         (partialFinite ℂ (puncturedLine S) (curveCoefficients S) C.coordinate U) • s)).val x.val.val i =
       derivWithin (fun t => (sections U s).val t i) (ambientOpen S U) x.val.val -
-        ((evaluated A x.val.val).mulVec ((sections U s).val x.val.val)) i
+        ((evaluatedAt hA x.val.val).mulVec ((sections U s).val x.val.val)) i
 
 /-- The original horizontal matrix as an actual map of full native D-modules. -/
 structure NativeCurveGaugeSource
-    {s : ℕ} (B : Matrix (Fin s) (Fin s) RationalFunctions)
-    (G : Matrix (Fin s) (Fin r) RationalFunctions)
-    (MA : RationalConnectionModuleSource S A C) (MB : RationalConnectionModuleSource S B C) where
+    {s : ℕ} (B : Matrix (Fin s) (Fin s) RationalFunctions) (hB : PolesWithin S B)
+    (G : Matrix (Fin s) (Fin r) RationalFunctions) (hG : PolesWithin S G)
+    (MA : RationalConnectionModuleSource S A hA C)
+    (MB : RationalConnectionModuleSource S B hB C) where
   map : MA.object ⟶ MB.object
   sectionValues : ∀ (U : Opens (puncturedLine S)) (v : MA.object.val.obj (op U))
       (x : U) (i : Fin s),
     (MB.sections U ((map.val.app (op U)).hom v)).val x.val.val i =
-      ((evaluated G x.val.val).mulVec ((MA.sections U v).val x.val.val)) i
+      ((evaluatedAt hG x.val.val).mulVec ((MA.sections U v).val x.val.val)) i
 
 end MathlibExt.AlgebraicGeometry.NativeRationalCurveModuleModels
