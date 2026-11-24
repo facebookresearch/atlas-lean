@@ -69,17 +69,6 @@ Source: Sabar Taoufik, *A New Triangle of Numbers: Properties and Observations*,
 public theorem_wanted fineNumber_eq_sabarNumber_sub (n : ℕ) (hn : 2 ≤ n) :
     fineNumber n = (sabarNumber (2 * n) (n + 1) - sabarNumber (2 * n) (n - 1) : ℤ)
 
-/-- **Sabar's alternating binomial sum equal to $n$.** For every natural number $n \ge 2$, in the
-rational numbers,
-
-$$\sum_{k=1}^{n} (-1)^{k+1} \left(1 - \frac{2k}{n+1} + \frac{n}{k+1}\right) \binom{n+k}{k} = n.$$
-
-Source: Sabar Taoufik, *A New Triangle of Numbers: Properties and Observations*, INTEGERS 26
-(2026), Article A27, Corollary 2 (`integers-2026-A27-cor-2`). -/
-public theorem_wanted sum_neg_one_pow_mul_choose_eq_self (n : ℕ) (hn : 2 ≤ n) :
-    ∑ k ∈ Finset.Icc 1 n, (-1 : ℚ) ^ (k + 1) *
-        (1 - 2 * (k : ℚ) / (n + 1) + (n : ℚ) / (k + 1)) * ((n + k).choose k : ℚ) = n
-
 /-- **Central entries of Sabar's triangle and Fine numbers.** Let $F(m)$ denote the Fine numbers
 and $C_m$ the Catalan numbers. For every natural number $n \ge 1$, the entries of Sabar's
 triangle $s$ satisfy
@@ -100,18 +89,6 @@ public theorem_wanted sabarNumber_central_eq_fineNumber (n : ℕ) (hn : 1 ≤ n)
         (2 / 3) * ((2 * n).choose n : ℚ) - (1 / 3) * fineNumber (n - 1) + (-1) ^ (n + 1) ∧
       (sabarNumber (2 * n - 1) n : ℚ) =
         (2 / 3) * ((2 * n - 1).choose n : ℚ) + (1 / 3) * fineNumber (n - 1) + (-1) ^ n
-
-/-- **Consecutive Whitt generalized Catalan numbers at $\alpha = 2$.** For every natural number
-$n \ge 1$, Whitt's generalized Catalan numbers at $\alpha = 2$ satisfy
-
-$$C(2, n) + C(2, n+1) = 2^{n+1} c_n,$$
-
-where $c_n = \frac{1}{n+1}\binom{2n}{n}$ is the $n$-th Catalan number.
-
-Source: Sabar Taoufik, *A New Triangle of Numbers: Properties and Observations*, INTEGERS 26
-(2026), Article A27, Theorem 6 (`integers-2026-A27-thm-6`). -/
-public theorem_wanted whittGeneralizedCatalan_two_add_succ (n : ℕ) (hn : 1 ≤ n) :
-    whittGeneralizedCatalan 2 n + whittGeneralizedCatalan 2 (n + 1) = 2 ^ (n + 1) * catalan n
 
 /-- **Central entries of Sabar's triangle and Whitt's numbers.** Let $C(2, m)$ denote Whitt's
 generalized Catalan numbers at $\alpha = 2$. For every natural number $n \ge 1$, the central

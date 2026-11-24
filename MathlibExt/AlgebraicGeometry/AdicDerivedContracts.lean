@@ -37,8 +37,8 @@ the composition of derived inverse images, the adjunction between derived invers
 image, and the comparison of derived global sections with derived direct image, each normalized by
 the corresponding underived map on every complex. The first always holds
 (`derivedPullbackPasting`); the other two are hypotheses of the constructions that use them, and
-their constructions are tracked as `def_wanted` in
-`WantedExt.AlgebraicGeometry.AdicDerivedComparisonsWanted`.
+their constructions are tracked as the `def_wanted` requests `derivedAdjunction` and
+`globalSectionsPushforward` in `WantedExt.AlgebraicGeometry.AdicDerivedComparisonsWanted`.
 
 For an open immersion `j` and a closed immersion `i` into the same scheme, the nearby object is
 `i^* Rj_*` of the continuous coefficients, specialization is the map from the coefficients
