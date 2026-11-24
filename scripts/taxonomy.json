@@ -12858,6 +12858,7 @@
   "MathlibExt/NumberTheory/TwoPrimeDCarmichael": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Absolute Lucas pseudoprimes"},
   "MathlibExt/NumberTheory/TwoSetsSumsetSquares": {"to": "NumberTheory/diophantine-equations/diophantine-tuples-egyptian", "title": "Sets with square pairwise sums"},
   "MathlibExt/NumberTheory/UnitaryDivisor": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Unitary divisors"},
+  "MathlibExt/NumberTheory/UnitaryDivisorCount": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Zumkeller numbers"},
   "MathlibExt/NumberTheory/UnitarySpoofLehmer": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Spoof Lehmer factorizations"},
   "MathlibExt/NumberTheory/ValuationOnePoints": {"to": "NumberTheory/p-adic-numbers", "title": "Points of valuation one of two-variable polynomials"},
   "MathlibExt/NumberTheory/VaughanIdentity": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Vaughan's identity"},

@@ -33,18 +33,11 @@ public import Mathlib.Data.Nat.Factorization.Basic
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import MathlibExt.NumberTheory.SZumkeller
 public import MathlibExt.NumberTheory.SumSquaredDivisorsProduct
+public import MathlibExt.NumberTheory.UnitaryDivisorCount
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Number of unitary divisors.** A positive integer $n$ with $m$ distinct prime factors has
-exactly $2^m$ unitary divisors.
-
-Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
-Numbers*, INTEGERS 24 (2024), Article A95, Lemma 2 (quoting Bege). -/
-public theorem_wanted card_unitaryDivisors (n : ℕ) (hn : n ≠ 0) :
-    (Nat.unitaryDivisors n).card = 2 ^ n.primeFactors.card
 
 /-- **Sum of squares of unitary divisors.** For every positive integer $n$, the sum of the
 squares of the unitary divisors of $n$ equals $\prod_{p} \left(1 + p^{2k_p}\right)$, where $p$
