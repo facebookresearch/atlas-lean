@@ -14,4 +14,4 @@ Model a heap as a finite set $H$ of cells, a successor relation ${\to} \subseteq
 - P. R. Wilson, "Uniprocessor garbage collection techniques", in *Memory Management (IWMM 92)*, LNCS 637, Springer, 1992; extended version at <https://www.cs.cmu.edu/~fp/courses/15411-f14/misc/wilson94-gc.pdf>:
     - Section 1 (the liveness criterion: the root set, reachability along directed paths of pointers, and garbage as unreachable objects);
     - Section 2.2 (mark-sweep collection: tracing from the root set by a depth-first or breadth-first traversal, marking the objects reached); the invariant proof above is written out here.
-- R. Jones, A. Hosking and E. Moss, *The Garbage Collection Handbook*, CRC Press, 2011 (not opened).
+- R. Jones, A. Hosking and E. Moss, *The Garbage Collection Handbook*, CRC Press, 2011.

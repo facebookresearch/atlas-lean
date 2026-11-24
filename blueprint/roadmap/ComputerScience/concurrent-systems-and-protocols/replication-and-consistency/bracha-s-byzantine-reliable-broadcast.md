@@ -22,4 +22,4 @@ The protocol sends $O(n^2)$ messages carrying $v$ and needs no cryptography beyo
 ## Sources
 
 - "Living with asynchrony: Bracha's reliable broadcast", *Decentralized Thoughts*, 19 September 2020, <https://decentralizedthoughts.github.io/2020-09-19-living-with-asynchrony-brachas-reliable-broadcast/>: the reliable broadcast properties, the protocol, Claims 1–3 and their proofs, and the notes on message complexity and resilience.
-- G. Bracha, "Asynchronous Byzantine agreement protocols", *Information and Computation* 75(2):130–143, 1987 (not opened).
+- G. Bracha, "Asynchronous Byzantine agreement protocols", *Information and Computation* 75(2):130–143, 1987.

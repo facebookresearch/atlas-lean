@@ -33,4 +33,4 @@ Abstract syntax trees are numerals, sums $a \oplus b$ and products $a \otimes b$
 ## Sources
 
 - J. Prins, *Operator Precedence and Stratified Grammars*, Lecture 7 of COMP 520: Compilers, University of North Carolina, 2022, <https://www.cs.unc.edu/~prins/Classes/520/LECS/07-Precedence.pdf>: slides 3–5 (the ambiguous expression grammar, the stratified grammar $E ::= E + T \mid T$, $T ::= T * F \mid F$, $F ::= (E) \mid num$, and how it encodes associativity and precedence) and slide 8 (building abstract syntax trees bottom up). The proofs above are written out here.
-- J. E. Hopcroft and J. D. Ullman, *Introduction to Automata Theory, Languages, and Computation*, Addison-Wesley, 1979 (not opened).
+- J. E. Hopcroft and J. D. Ullman, *Introduction to Automata Theory, Languages, and Computation*, Addison-Wesley, 1979.

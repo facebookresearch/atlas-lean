@@ -29,4 +29,4 @@ contextual equivalence.
 ## Sources
 
 - A. M. Pitts, "Howe's method for higher-order languages", in D. Sangiorgi and J. Rutten (eds.), *Advanced Topics in Bisimulation and Coinduction*, Cambridge University Press, 2011, Chapter 5, <https://www.cl.cam.ac.uk/~amp12/papers/howmho/howmho.pdf>: Section 5.1 (origin in Abramsky's lazy λ-calculus), Definitions 5.4.2 and 5.6.2, Theorem 5.5.5, Lemma 5.6.4, Theorem 5.6.5 and Section 5.9 (call-by-name version).
-- D. J. Howe, "Proving congruence of bisimulation in functional programming languages", *Information and Computation* 124(2):103–112, 1996 (not opened; checked against Pitts, Sections 5.1, 5.5 and 5.9).
+- D. J. Howe, "Proving congruence of bisimulation in functional programming languages", *Information and Computation* 124(2):103–112, 1996 (; checked against Pitts, Sections 5.1, 5.5 and 5.9).

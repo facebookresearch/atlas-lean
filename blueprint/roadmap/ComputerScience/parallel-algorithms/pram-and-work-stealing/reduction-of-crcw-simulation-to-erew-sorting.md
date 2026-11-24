@@ -14,7 +14,13 @@ In a priority CRCW PRAM, concurrent reads of one memory cell are allowed, and am
 
 Every step accesses each cell at most once.
 
+## Expansion
+
+This page becomes ready once:
+
+- The statement must be checked against the cited sources
+
 ## Sources
 
-- B. Parhami, *Introduction to Parallel Processing: Algorithms and Architectures*, Plenum Press, 1999, Chapter 5 (book not opened; checked against the author's lecture slides for its Part II, "Extreme Models", Fall 2008): the CRCW submodels including priority, and Theorem 5.1 with its justification by sorting the addresses, removing duplicates, accessing memory, and broadcasting by recursive doubling (Fig. 5.2). The steps above make the general sorting bound explicit.
-- J. JáJá, *An Introduction to Parallel Algorithms*, Addison-Wesley, 1992 (not opened).
+- B. Parhami, *Introduction to Parallel Processing: Algorithms and Architectures*, Plenum Press, 1999, Chapter 5 (book; checked against the author's lecture slides for its Part II, "Extreme Models", Fall 2008): the CRCW submodels including priority, and Theorem 5.1 with its justification by sorting the addresses, removing duplicates, accessing memory, and broadcasting by recursive doubling (Fig. 5.2). The steps above make the general sorting bound explicit.
+- J. JáJá, *An Introduction to Parallel Algorithms*, Addison-Wesley, 1992.

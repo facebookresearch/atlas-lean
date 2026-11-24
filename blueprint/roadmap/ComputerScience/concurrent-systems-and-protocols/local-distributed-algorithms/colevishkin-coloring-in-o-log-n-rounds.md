@@ -19,5 +19,5 @@ To know when to switch to the second stage, the nodes need an upper bound on $\l
 ## Sources
 
 - J. Aspnes, *Notes on Theory of Distributed Systems*, Yale University, <https://cs.yale.edu/homes/aspnes/classes/4650/notes.pdf>, Section 33.2.1 (coloring graphs with out-degree 1: the bit-index color reduction, its correctness, the $O(\log^* N)$ bound and the reduction from six to three colors).
-- R. Cole and U. Vishkin, "Deterministic coin tossing with applications to optimal parallel list ranking", *Information and Control* 70(1):32–53, 1986 (not opened).
+- R. Cole and U. Vishkin, "Deterministic coin tossing with applications to optimal parallel list ranking", *Information and Control* 70(1):32–53, 1986.
 - N. Linial, "Locality in distributed graph algorithms", *SIAM Journal on Computing* 21(1):193–201, 1992.

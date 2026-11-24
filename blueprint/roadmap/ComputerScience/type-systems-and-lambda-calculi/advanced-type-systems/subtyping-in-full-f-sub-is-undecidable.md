@@ -20,4 +20,4 @@ With the rowing machines, the encoding $F$ and the closed types $\sigma_w$ of
 ## Sources
 
 - R. Álvarez Castro, *Mechanized Undecidability of Subtyping in System F*, Master's thesis, Saarland University, <https://ps.uni-saarland.de/~alvarez/thesis.pdf>: Theorems 4.8, 4.13–4.14, 5.5, 5.9, 5.13, 5.17, 5.18 and 5.21 (Section 5.3).
-- B. C. Pierce, "Bounded quantification is undecidable", *Information and Computation* 112(1):131–165, 1994 (not opened; checked against Álvarez Castro, Chapter 5).
+- B. C. Pierce, "Bounded quantification is undecidable", *Information and Computation* 112(1):131–165, 1994 (; checked against Álvarez Castro, Chapter 5).

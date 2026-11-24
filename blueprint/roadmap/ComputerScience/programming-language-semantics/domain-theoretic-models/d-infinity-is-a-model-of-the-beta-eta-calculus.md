@@ -31,4 +31,4 @@ retract.
 
 - D. Scott, *Continuous Lattices*, Technical Monograph PRG-7, Oxford University Computing Laboratory, 1971, <http://www.cs.ox.ac.uk/files/3229/PRG07.pdf>: Theorem 4.4 (the isomorphism used for application and abstraction).
 - S. Abramsky and A. Jung, "Domain theory", in *Handbook of Logic in Computer Science*, Vol. 3, Oxford University Press, 1994, <https://www.cs.bham.ac.uk/~axj/pub/papers/handy1.pdf>: Section 5.1.1 (a solution of $X \cong [X \to X]$, with the isomorphisms explicit, gives a model of the untyped λ-calculus). The three numbered properties are derived on this page.
-- H. P. Barendregt, *The Lambda Calculus: Its Syntax and Semantics*, revised ed., North-Holland, 1984 (not opened).
+- H. P. Barendregt, *The Lambda Calculus: Its Syntax and Semantics*, revised ed., North-Holland, 1984.

@@ -9,7 +9,7 @@ In the MSI protocol each cache holds each block in one of three stable states:
 - **Shared (S):** a read-only copy;
 - **Invalid (I):** no copy.
 
-A load miss issues GetS and ends in S; a store issues GetM and ends in M. Writing back a Modified block issues PutM, while an S copy may be evicted silently. When a controller snoops another core's GetS for a block it holds in M, it supplies the data and moves to S. When it snoops another core's GetM, it moves to I from S or M, supplying the data from M.
+A load miss issues GetS and ends in S; loads in S or M and stores in M hit locally and issue no request; a store in I or S issues GetM and ends in M. Writing back a Modified block issues PutM, while an S copy may be evicted silently. When a controller snoops another core's GetS for a block it holds in M, it supplies the data and moves to S. When it snoops another core's GetM, it moves to I from S or M, supplying the data from M.
 
 In this system the protocol maintains the [coherence invariants](cache-coherence-invariants.md) in the logical time given by the bus order:
 - At most one cache holds a block in M, and then no other cache holds it in S.

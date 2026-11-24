@@ -20,5 +20,5 @@ system is still equivalent to the declarative one, but the search need not termi
 ## Sources
 
 - R. Álvarez Castro, *Mechanized Undecidability of Subtyping in System F*, Master's thesis, Saarland University, <https://ps.uni-saarland.de/~alvarez/thesis.pdf>: Section 1.1 (the kernel quantifier rule, Figure 1.2, and decidability of the kernel relation), Definition 5.1 and Section 5.1.1 (Definition 5.2 of the algorithmic system, Lemmas 5.3–5.4 and Theorem 5.5, stated there for the arrow-free fragment).
-- B. C. Pierce, *Types and Programming Languages*, MIT Press, 2002, Sections 28.3–28.5 (not opened; checked against Álvarez Castro, Sections 1.1 and 5.1.1).
-- L. Cardelli and P. Wegner, "On understanding types, data abstraction, and polymorphism", *ACM Computing Surveys* 17(4):471–523, 1985 (not opened; origin of the kernel system as reported by Álvarez Castro, Section 1.1).
+- B. C. Pierce, *Types and Programming Languages*, MIT Press, 2002, Sections 28.3–28.5 (; checked against Álvarez Castro, Sections 1.1 and 5.1.1).
+- L. Cardelli and P. Wegner, "On understanding types, data abstraction, and polymorphism", *ACM Computing Surveys* 17(4):471–523, 1985 (; origin of the kernel system as reported by Álvarez Castro, Section 1.1).

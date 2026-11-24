@@ -21,5 +21,5 @@ Causal broadcast is [reliable broadcast](reliable-broadcast.md) with *causal del
 ## Sources
 
 - A. Bieniusa, *Fault-tolerance in message-passing distributed systems: broadcast*, lecture slides, Programming Distributed Systems, TU Kaiserslautern, 2020, <https://pl.cs.uni-kl.de/homepage/teaching/ss20/progdist/slides/5_broadcast.pdf>: the specification of reliable causal broadcast (slide 41) and Algorithm 2 with vector clocks (slide 47, after Raynal, Schiper and Toueg). The correctness argument is given above.
-- M. Raynal, A. Schiper and S. Toueg, "The causal ordering abstraction and a simple way to implement it", *Information Processing Letters* 39(6):343–350, 1991 (not opened).
-- K. Birman, A. Schiper and P. Stephenson, "Lightweight causal and atomic group multicast", *ACM Transactions on Computer Systems* 9(3):272–314, 1991 (not opened).
+- M. Raynal, A. Schiper and S. Toueg, "The causal ordering abstraction and a simple way to implement it", *Information Processing Letters* 39(6):343–350, 1991.
+- K. Birman, A. Schiper and P. Stephenson, "Lightweight causal and atomic group multicast", *ACM Transactions on Computer Systems* 9(3):272–314, 1991.
