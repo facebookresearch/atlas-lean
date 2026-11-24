@@ -935,21 +935,6 @@ public theorem_wanted signedInvSeq_wilf_b1b0_b00_b01_0b0_1b0 :
       signedInvAvoidCount {⟨.gt, true, true⟩, ⟨.eq, true, true⟩, ⟨.lt, true, false⟩,
           ⟨.eq, false, true⟩, ⟨.gt, false, true⟩}
 
-/-- **Mansour–Safadi Theorem 16: a Wilf-equivalence of six-pattern sets.** Length-2 signed
-patterns are written as in the paper, a bar marking a barred letter, and $B \sim C$ means that
-for every $n \ge 0$ the number $|\bar I_n(B)|$ of signed inversion sequences of length $n$
-avoiding every pattern of $B$ equals $|\bar I_n(C)|$. Then
-$\{\bar1\bar0, \bar10, \bar0\bar1, \bar00, \bar01, 0\bar0\} \sim
-\{\bar1\bar0, \bar10, \bar0\bar1, \bar0\bar0, \bar01, 0\bar0\}$.
-
-Source: Toufik Mansour and Amir Safadi, *Signed Inversion Sequences Avoiding a Set of Length-2
-Signed Patterns*, INTEGERS 26 (2026), Article A74, Theorem 16 (`integers-2026-A74-thm-16`). -/
-public theorem_wanted signedInvSeq_wilf_b1b0_b10_b0b1_b00_b01_0b0 :
-    signedInvAvoidCount {⟨.gt, true, true⟩, ⟨.gt, true, false⟩, ⟨.lt, true, true⟩,
-        ⟨.eq, true, false⟩, ⟨.lt, true, false⟩, ⟨.eq, false, true⟩} =
-      signedInvAvoidCount {⟨.gt, true, true⟩, ⟨.gt, true, false⟩, ⟨.lt, true, true⟩,
-          ⟨.eq, true, true⟩, ⟨.lt, true, false⟩, ⟨.eq, false, true⟩}
-
 /-- **Three six-pattern sets with 2 · n! avoiders (Theorem 17).** Write a length-2 signed pattern
 as $\tau_1\tau_2$, where $00$, $01$ and $10$ record whether $|\tau_1|$ is equal to, smaller than
 or larger than $|\tau_2|$ and a bar marks a barred letter, and write $|\bar I_n(A)|$ for the

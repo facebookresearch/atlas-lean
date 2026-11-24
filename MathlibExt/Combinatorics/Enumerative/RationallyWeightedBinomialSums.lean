@@ -29,9 +29,10 @@ import MathlibExt.NumberTheory.DilcherFiniteMultipleHarmonic
 For every natural number `n`, `∑_{k=0}^n binom(n, k) / (k + 1) = (2^{n+1} - 1) / (n + 1)` in `ℚ`
 (`MetaMathlibExt.sum_choose_div_succ`).
 
-The alternating binomial sum with inverse-square weights equals the sum of the harmonic
-numbers divided by their indices. This follows from Dilcher's identity at exponent two by
-grouping the weakly increasing pairs by their second entry.
+The alternating binomial sum with reciprocal weights equals the harmonic number
+(Finkel's identity). The inverse-square sum equals the sum of the harmonic
+numbers divided by their indices, by Dilcher's identity at exponent two and
+grouping by the second entry.
 
 Expanding a power in falling factorials gives a formula for the power-weighted binomial sum
 of Fibonacci numbers at every exponent. The first four powers give explicit closed forms.
@@ -111,6 +112,62 @@ public theorem sum_neg_one_pow_choose_two_pow_mul_sq (N : ℕ) :
     _ = _ := (Finset.sum_congr rfl fun k _ => by ac_rfl).trans h
     _ = ((N * (N - 1) : ℕ) : ℤ) - N := by ring
     _ = _ := by rw [← hN]; ring
+
+-- The shifted row that Pascal's identity adds in the harmonic recurrence.
+private theorem sum_neg_one_pow_choose_div_succ (n : ℕ) :
+    ∑ j ∈ Finset.range (n + 1), (-1 : ℚ) ^ j * n.choose j / (j + 1) =
+      ((n : ℚ) + 1)⁻¹ := by
+  -- The full alternating row vanishes by the binomial theorem at -1 and 1.
+  have hrow :
+      ∑ j ∈ Finset.range (n + 2), (-1 : ℚ) ^ j * (n + 1).choose j = 0 := by
+    simpa [zero_pow (Nat.succ_ne_zero n)] using (add_pow (-1 : ℚ) 1 (n + 1)).symm
+  have htail :
+      ∑ j ∈ Finset.range (n + 1), (-1 : ℚ) ^ j * (n + 1).choose (j + 1) = 1 := by
+    rw [Finset.sum_range_succ'] at hrow
+    simp only [pow_zero, Nat.choose_zero_right, Nat.cast_one, one_mul, pow_succ,
+      mul_neg_one, neg_mul, Finset.sum_neg_distrib] at hrow
+    linarith
+  calc
+    _ = ∑ j ∈ Finset.range (n + 1),
+          (-1 : ℚ) ^ j * (n + 1).choose (j + 1) / (n + 1) := by
+      refine Finset.sum_congr rfl fun j _ => ?_
+      have hchoose :
+          (n.choose j : ℚ) / (j + 1) = ((n + 1).choose (j + 1) : ℚ) / (n + 1) := by
+        rw [div_eq_div_iff (by positivity) (by positivity)]
+        have h : ((n : ℚ) + 1) * n.choose j =
+            (n + 1).choose (j + 1) * ((j : ℚ) + 1) := by
+          exact_mod_cast Nat.add_one_mul_choose_eq n j
+        simpa only [mul_comm] using h
+      rw [mul_div_assoc, hchoose, ← mul_div_assoc]
+    _ = _ := by rw [← Finset.sum_div, htail, one_div]
+
+/-- **Finkel's identity.** For every natural number $n$, with $H_n = \sum_{j=1}^{n} 1/j$ the
+$n$-th harmonic number,
+
+$$\sum_{k=1}^{n} (-1)^{k-1} \frac{1}{k} \binom{n}{k} = H_n.$$
+
+Source: Andreea M. Stănică, Gabriela N. Stănică, and Pantelimon Stănică, *An Evaluation of
+Rationally Weighted Binomial Sums Via Some Differential and Integral Operators*, The Fibonacci
+Quarterly 62 (2024), Article 62-1/stanica09202023, Corollary 3.2. -/
+public theorem sum_neg_one_pow_choose_div_eq_harmonic (n : ℕ) :
+    ∑ k ∈ Finset.Icc 1 n, (-1 : ℚ) ^ (k - 1) * n.choose k / k = harmonic n := by
+  -- Reindex by `k = j + 1` so Pascal's identity applies to each coefficient.
+  simp only [← Finset.Ico_add_one_right_eq_Icc, Finset.sum_Ico_eq_sum_range,
+    Nat.add_sub_cancel, Nat.cast_add, Nat.cast_one, Nat.add_comm 1]
+  induction n with
+  | zero => simp
+  | succ n ih =>
+    rw [harmonic_succ, ← ih]
+    calc
+      _ = (∑ j ∈ Finset.range (n + 1),
+            (-1 : ℚ) ^ j * n.choose (j + 1) / (j + 1)) +
+          ∑ j ∈ Finset.range (n + 1), (-1 : ℚ) ^ j * n.choose j / (j + 1) := by
+        rw [← Finset.sum_add_distrib]
+        refine Finset.sum_congr rfl fun j _ => ?_
+        rw [Nat.choose_succ_succ', Nat.cast_add, mul_add, add_div, add_comm]
+      _ = _ := by
+        rw [Finset.sum_range_succ, sum_neg_one_pow_choose_div_succ]
+        simp [Nat.cast_add, Nat.cast_one]
 
 /-- **Alternating binomial sum with inverse-square weights.** For every natural number $n$, with
 $H_k = \sum_{j=1}^{k} 1/j$ the $k$-th harmonic number,

@@ -54,7 +54,7 @@ theorem nominal_eq_priceIndex_mul_real {nominal priceIndex : ℝ} (hP : priceInd
   exact (mul_div_cancel₀ nominal hP).symm
 
 /-- **Price index equals nominal over real.** Under the same convention, with nonzero real
-value, the price index is recovered as `nominal / real`. -/
+value and `nominal = priceIndex * real`, the price index is recovered as `nominal / real`. -/
 theorem priceIndex_eq_nominal_div_real {nominal real priceIndex : ℝ} (hR : real ≠ 0)
     (h : nominal = priceIndex * real) : priceIndex = nominal / real := by
   rw [h]
