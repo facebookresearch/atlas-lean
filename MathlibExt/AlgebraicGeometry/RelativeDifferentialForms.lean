@@ -40,7 +40,7 @@ namespace MathlibExt.AlgebraicGeometry.RelativeDifferentialForms
 
 open _root_.CategoryTheory _root_.CategoryTheory.MonoidalCategory _root_.AlgebraicGeometry Opposite
 open TopologicalSpace PresheafOfModulesOfCommRing
-open LineBundleTaskContracts AlgebraicLineBundleFamilies DeligneFaltingsCategories
+open LineBundleTaskContracts AlgebraicLineBundleFamilies
 open NativeTensorComparisons
 
 variable {Y T : Scheme.{0}} (pi : Y ⟶ T)
