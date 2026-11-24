@@ -16,7 +16,8 @@ import Mathlib.Tactic.Linarith
 # Pseudo-greedy expansions into unit fractions
 
 The remainders of Koizumi's pseudo-greedy expansion tend to zero for every positive
-initial value, so the reciprocals of the expansion terms sum to that value.
+initial value, so the reciprocals of the expansion terms sum to that value. The gap
+sequence gives a recurrence for successive expansion terms.
 -/
 
 open Filter Topology
@@ -113,6 +114,18 @@ theorem pseudoGreedyGap_one_zero : pseudoGreedyGap 1 0 = 0 := by
   simp only [pseudoGreedyRemainder]
   norm_num
 
+private theorem inv_remainder_lt_expansion (r : ℝ) (n : ℕ) :
+    (pseudoGreedyRemainder r n)⁻¹ < (pseudoGreedyExpansion r n : ℝ) := by
+  unfold pseudoGreedyExpansion
+  linarith [Int.lt_floor_add_one ((pseudoGreedyRemainder r n)⁻¹ + 1 + 1 / 2)]
+
+private theorem remainder_pos {r : ℝ} (hr : 0 < r) (n : ℕ) : 0 < pseudoGreedyRemainder r n := by
+  induction n with
+  | zero => exact hr
+  | succ n ih =>
+    rw [pseudoGreedyRemainder_succ, sub_pos, one_div]
+    exact inv_lt_of_inv_lt₀ ih (inv_remainder_lt_expansion r n)
+
 /-- **Convergence of the pseudo-greedy expansion.** For every real number $r > 0$, the
 pseudo-greedy expansion $(a_n)_{n \ge 0}$ of $r$ satisfies $\sum_n 1 / a_n = r$.
 
@@ -123,16 +136,8 @@ theorem hasSum_one_div_pseudoGreedyExpansion {r : ℝ} (hr : 0 < r) :
   let x := pseudoGreedyRemainder r
   let a (n : ℕ) : ℝ := pseudoGreedyExpansion r n
   have hstep (n) : x (n + 1) = x n - 1 / a n := pseudoGreedyRemainder_succ r n
-  have hlower (n) : (x n)⁻¹ < a n := by
-    change (x n)⁻¹ < (⌊(x n)⁻¹ + 1 + 1 / 2⌋ : ℝ)
-    linarith [Int.lt_floor_add_one ((x n)⁻¹ + 1 + 1 / 2)]
-  have hx (n) : 0 < x n := by
-    induction n with
-    | zero => exact hr
-    | succ n ih =>
-      rw [hstep, sub_pos, one_div]
-      exact inv_lt_of_inv_lt₀ ih (hlower n)
-  have ha (n) : 0 < a n := (inv_pos.mpr (hx n)).trans (hlower n)
+  have hx (n) : 0 < x n := remainder_pos hr n
+  have ha (n) : 0 < a n := (inv_pos.mpr (hx n)).trans (inv_remainder_lt_expansion r n)
   have hterm (n) : 0 ≤ 1 / a n := (one_div_pos.mpr (ha n)).le
   have hsum (n) : ∑ k ∈ Finset.range n, 1 / a k = r - x n := by
     induction n with
@@ -155,6 +160,31 @@ theorem hasSum_one_div_pseudoGreedyExpansion {r : ℝ} (hr : 0 < r) :
   apply (hasSum_iff_tendsto_nat_of_nonneg hterm r).mpr
   simp only [hsum]
   simpa using hzero.const_sub r
+
+/-- **Recursion for the pseudo-greedy expansion.** Let $r > 0$ be a real number, and let
+$(a_n)$ be its pseudo-greedy expansion and $(\varepsilon_n)$ its gap sequence. Then for every
+$n \ge 0$,
+$$a_{n+1} = \frac{a_n^2}{1 - \varepsilon_n} - a_n + (1 - \varepsilon_{n+1}).$$
+
+Source: Junnosuke Koizumi, *Irrationality of the Reciprocal Sum of Doubly Exponential
+Sequences*, INTEGERS 26 (2026), Article A28, Lemma 2 (`integers-2026-A28-lem-2`). -/
+theorem pseudoGreedyExpansion_succ_eq {r : ℝ} (hr : 0 < r) (n : ℕ) :
+    (pseudoGreedyExpansion r (n + 1) : ℝ) =
+      1 / (1 - pseudoGreedyGap r n) * (pseudoGreedyExpansion r n : ℝ) ^ 2 -
+        pseudoGreedyExpansion r n + (1 - pseudoGreedyGap r (n + 1)) := by
+  let u := (pseudoGreedyRemainder r n)⁻¹
+  let a : ℝ := pseudoGreedyExpansion r n
+  have hu : 0 < u := inv_pos.mpr (remainder_pos hr n)
+  have hua : u < a := inv_remainder_lt_expansion r n
+  have hnext : pseudoGreedyRemainder r (n + 1) = (a - u) / (u * a) := by
+    rw [pseudoGreedyRemainder_succ, one_div]
+    simpa only [u, inv_inv] using inv_sub_inv hu.ne' (hu.trans hua).ne'
+  have hgap : 1 - pseudoGreedyGap r n = a - u := by
+    change 1 - (u + 1 - a) = a - u
+    ring
+  rw [hgap, pseudoGreedyGap, hnext, inv_div]
+  field_simp [(sub_pos.mpr hua).ne']
+  ring
 
 end
 

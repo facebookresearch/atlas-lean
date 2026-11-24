@@ -19,6 +19,7 @@ public import Mathlib.Data.Int.GCD
 public import Mathlib.Data.Nat.Prime.Defs
 public import MathlibExt.NumberTheory.CubeFactorGCD
 public import MathlibExt.NumberTheory.CubeSubCube
+public import MathlibExt.NumberTheory.PrimeGCDCubeSplit
 
 namespace MetaMathlibExt
 
@@ -36,29 +37,6 @@ public theorem_wanted cube_split_of_mul_eq_prime_sq_mul_cube_of_gcd_eq_one
     (hg : Int.gcd R S = 1) :
     ∃ C₁ C₂ : ℤ, (R = C₁ ^ 3 ∧ S = (p : ℤ) ^ 2 * C₂ ^ 3) ∨
       (R = (p : ℤ) ^ 2 * C₁ ^ 3 ∧ S = C₂ ^ 3)
-
-/-- **Splitting $RS = p^2 C^3$ when $\gcd(R, S)$ is prime.** Let $p$ be a prime and let $R$, $S$,
-$C$ be integers with $RS = p^2 C^3$ such that $g = \gcd(R, S)$ is prime. Then there are
-integers $C_1$, $C_2$ such that one of the following holds: $R = g C_1^3$ and $S = g C_2^3$;
-or $R = g C_1^3$ and $S = g^2 p^2 C_2^3$; or $S = g C_1^3$ and $R = g^2 p^2 C_2^3$; or
-$R = g p^2 C_1^3$ and $S = g^2 C_2^3$; or $S = g p^2 C_1^3$ and $R = g^2 C_2^3$.
-
-Source: Jialai She, *Nonexistence of Consecutive Powerful Triplets Around Cubes
-with Prime-Square Factors*, INTEGERS 25 (2025), Article A103, Lemma 1
-(`integers-2025-A103-lem-1`). -/
-public theorem_wanted cube_split_of_mul_eq_prime_sq_mul_cube_of_gcd_prime
-    {p : ℕ} (hp : p.Prime) {R S C : ℤ} (h : R * S = (p : ℤ) ^ 2 * C ^ 3)
-    (hg : (Int.gcd R S).Prime) :
-    ∃ C₁ C₂ : ℤ,
-      (R = (Int.gcd R S : ℤ) * C₁ ^ 3 ∧ S = (Int.gcd R S : ℤ) * C₂ ^ 3) ∨
-      (R = (Int.gcd R S : ℤ) * C₁ ^ 3 ∧
-        S = (Int.gcd R S : ℤ) ^ 2 * (p : ℤ) ^ 2 * C₂ ^ 3) ∨
-      (S = (Int.gcd R S : ℤ) * C₁ ^ 3 ∧
-        R = (Int.gcd R S : ℤ) ^ 2 * (p : ℤ) ^ 2 * C₂ ^ 3) ∨
-      (R = (Int.gcd R S : ℤ) * (p : ℤ) ^ 2 * C₁ ^ 3 ∧
-        S = (Int.gcd R S : ℤ) ^ 2 * C₂ ^ 3) ∨
-      (S = (Int.gcd R S : ℤ) * (p : ℤ) ^ 2 * C₁ ^ 3 ∧
-        R = (Int.gcd R S : ℤ) ^ 2 * C₂ ^ 3)
 
 /-- **Integer solutions of $u^2 \pm u + 1 = 3v^3$.** For all integers $u$ and $v$,
 $u^2 + u + 1 = 3v^3$ if and only if $(u, v) = (-2, 1)$ or $(u, v) = (1, 1)$, and
