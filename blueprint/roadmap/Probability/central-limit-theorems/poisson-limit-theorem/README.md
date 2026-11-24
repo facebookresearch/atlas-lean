@@ -30,10 +30,7 @@ $n p_n \to \lambda$, follows from it.
 - [Characteristic function of a Poisson law](char-fun-poisson-prob-measure.md): lemma used in the characteristic-function proof
 - [Convergence of characteristic functions to the Poisson law](tendsto-char-fun-binomial-poisson-approx.md): lemma used in the proof of the main statement
 - [Analytic core of Poisson convergence](elem-symm-poly-tendsto-poisson.md): more general form for triangular arrays with non-identical success probabilities, stated for point masses
-
-## Further results
-
-- [Chen–Stein Poisson approximation: two moments suffice](chen-stein-poisson-approximation-two-moments-suffice.md)
+- [Chen–Stein Poisson approximation: two moments suffice](chen-stein-poisson-approximation-two-moments-suffice.md): quantitative Poisson approximation in total variation from the first two moments
 
 ## Background
 
