@@ -2,9 +2,9 @@
 
 ## Simplicity of the imaginary pair at the critical delay
 
-- [Derivative of the characteristic function in z](char-fun-deriv.md)
-- [At the critical delay the z-derivative at i r is 1 + (π / 2) i](char-fun-deriv-critical-delay.md)
-- [At the critical delay, i r is a simple characteristic root](char-fun-deriv-critical-delay-ne-zero.md)
+- [Termwise derivative formula of the characteristic function in z](char-fun-deriv.md)
+- [At the critical delay the termwise z-derivative at i r is 1 + πi/2](char-fun-deriv-critical-delay.md)
+- [At the critical delay the termwise z-derivative at i r is nonzero](char-fun-deriv-critical-delay-ne-zero.md)
 - [At the critical delay every root with zero real part is ± i r](eq-i-mul-or-eq-neg-i-mul-of-re-eq-zero.md)
 - [At the critical delay all other roots have negative real part](re-neg-of-char-fun-critical-delay.md)
 
@@ -29,8 +29,8 @@
 - [Approximate Hopf orbit in scaled time](hopf-approx.md)
 - [Profile polynomial P(ε, C, S) of the Hopf expansion](profile-poly.md)
 - [Polynomial P′(ε, C, S) of the termwise derivative formula](profile-deriv-poly.md)
-- [Divided difference of the profile polynomial in its cos argument](profile-diff-p.md)
-- [Divided difference of the profile polynomial in its sin argument](profile-diff-q.md)
+- [Divided-difference formula of the profile polynomial, cos argument](profile-diff-p.md)
+- [Divided-difference formula of the profile polynomial, sin argument](profile-diff-q.md)
 - [Coefficient of ε⁴ in the Hopf residual](residual-coeff.md)
 - [The Poincaré–Lindstedt cancellation of the Hopf residual](residual-poly-eq.md)
 - [Continuous functions on ℝ⁵ are bounded on the centred cube of side 2](exists-bound-box.md)
