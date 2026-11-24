@@ -52,6 +52,7 @@ public import MathlibExt.NumberTheory.PowAddPowEqSq
 public import MathlibExt.NumberTheory.PowAddPowEqSqModFourOne
 public import MathlibExt.NumberTheory.PowAddPowEqSqOppositeParity
 public import MathlibExt.NumberTheory.ThreePowAddThirtyfivePow
+public import MathlibExt.NumberTheory.TwoPowAddFifteenPow
 
 set_option autoImplicit false
 
@@ -122,15 +123,5 @@ theorem_wanted solutions_mod_sixty (n p x y z : ℕ) (hp : p.Prime)
     n ^ x + (5 * p) ^ y = z ^ 2 ↔
       (x = 0 ∧ y = 1 ∧ z ^ 2 = 5 * p + 1) ∨
         (x = 1 ∧ y = 0 ∧ z ^ 2 = n + 1)
-
-/-- **Solutions of $2^x + 15^y = z^2$.** The natural numbers $x$, $y$, $z$ with
-$2^x + 15^y = z^2$ are exactly $(x, y, z) = (3, 0, 3)$, $(0, 1, 4)$ and $(6, 2, 17)$.
-
-Source: Suton Tadee, "On the Diophantine Equation
-`n^x + (5p)^y = z^2`", Corollary 3. -/
-theorem_wanted two_pow_add_fifteen_pow (x y z : ℕ) :
-    2 ^ x + 15 ^ y = z ^ 2 ↔
-      (x = 3 ∧ y = 0 ∧ z = 3) ∨ (x = 0 ∧ y = 1 ∧ z = 4) ∨
-        (x = 6 ∧ y = 2 ∧ z = 17)
 
 end MathlibExt.NumberTheory.PowAddPowEqSqWanted
