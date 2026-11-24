@@ -39,6 +39,17 @@ example : ((0 : ℝ) - (-3)) ^ 2 * ((3 / 4) ^ 2 + 1) =
     (3 / 4 - (-3)) ^ 2 * (0 ^ 2 + 1) := by
   apply bisector_slope_equation 0 (3 / 4) (-3) <;> norm_num
 
+-- The Pell points (1, 1) and (1/7, 5/7) admit both the slope 1/2 and its negative reciprocal.
+example (c : ℚ) (hc : c ∈ ({1 / 2, -2} : Set ℚ)) :
+    ∃ u v : ℚ, 1 ^ 2 - 2 * u ^ 2 = -1 ∧ (1 / 7) ^ 2 - 2 * v ^ 2 = -1 ∧
+      ((u + v ≠ 0 ∧ c = (1 * v + u * (1 / 7)) / (u + v)) ∨
+        (1 * v + u * (1 / 7) ≠ 0 ∧ c = -(u + v) / (1 * v + u * (1 / 7)))) := by
+  apply bisector_equation_rat_solution_negPell 2 (by decide) Int.prime_two.squarefree
+      1 (1 / 7) c (by norm_num) _ ⟨1, by norm_num⟩ ⟨5 / 7, by norm_num⟩
+  rcases hc with rfl | rfl <;> norm_num
+
+#print axioms bisector_equation_rat_solution_negPell
+
 -- The Pell solutions (1, 1) and (7, 5) give bisector slopes 2 and -1/2.
 example : ∀ c ∈ ({2, -1 / 2} : Set ℚ),
     (1 - c) ^ 2 * (7 ^ 2 + 1) = (7 - c) ^ 2 * (1 ^ 2 + 1) := by
