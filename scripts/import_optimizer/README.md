@@ -114,6 +114,13 @@ with their recorded bytes, for modules none of its inputs provided and no search
 outside the root artifact root provides now. Custody and
 growth records are trusted run state: removing or changing them invalidates
 these record-based checks. Recover from a rejection with a new output directory.
+`--retry-blocked` does not relax custody: if Lake rebuilds a stale or partial
+artifact that an earlier row pinned, the retry is rejected too.
+
+Each resume parses every saved compilation input manifest to recover root
+receipts, then hashes each distinct root artifact. Startup cost therefore grows
+with accumulated manifest data. Repeated short `--max-batches` invocations pay
+that cost each time; avoid unnecessary resumes in long campaigns.
 
 These checks compare identities and listings at the boundaries of each Lake
 window, plus the Linux watch during it. They do not see a new file name created
