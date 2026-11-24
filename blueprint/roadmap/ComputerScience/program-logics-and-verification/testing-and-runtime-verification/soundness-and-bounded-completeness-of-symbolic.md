@@ -3,7 +3,8 @@
 Run bounded symbolic execution on an IMP command $c$ from the initial path (guard $\mathrm{true}$, initial store, cost $0$), using
 the [symbolic stores and paths](symbolic-expressions-and-symbolic-states.md). Assignments update the store with the
 substituted expression, a conditional splits on its guard and its negation, each loop-body entry increases the cost by
-one, and a path is cut off once its cost reaches the budget $k$. A branch is pruned only when its substituted guard folds
+one, and a path whose cost has already reached the budget $k$ is cut off when its loop guard holds, that is, when
+it would enter a loop body for the $(k+1)$st time. A branch is pruned only when its substituted guard folds
 to the literal $\mathrm{false}$. The result is a finite list of leaves, each a terminated path or a cut-off path. Let
 $s \Downarrow_n f$ mean that $c$ has a big-step execution from $s$ to $f$ entering loop bodies $n$ times in total.
 
