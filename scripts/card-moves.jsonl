@@ -868,4 +868,7 @@
 {"page": "EarthScience/hydrology-and-surface-processes/terzaghi-consolidation/integral-sin-pi-mul-div", "to": "EarthScience/hydrology-and-surface-processes/part-02/terzaghi-consolidation/integral-sin-pi-mul-div", "article_id": "af_997a64096e2bee4f0b6a9986"}
 {"statement": "af_cabe1f8f2103ad2c3c861c24", "page": "NumberTheory/modular-forms-q-series/modular-forms/chowla-selberg-eta-class-average", "replaced_by": "af_1ebdd344a2e8401da0c0d6c3"}
 {"statement": "af_f0ec3f33dc571f43bd7e537c", "page": "NumberTheory/quadratic-forms-sums-of-squares/hermitian-unimodular-mass-ratio", "replaced_by": "af_560836e6f6da5f8277bd51e0"}
+{"statement": "af_46666407508e4f2a1714406a", "page": "AlgebraicGeometry/abelian-varieties/abelian-schemes-and-their-moduli", "replaced_by": "af_ea0c967113072459d00ad318"}
+{"statement": "af_efd1199831a9c2dde0cd15b4", "page": "AlgebraicGeometry/birational-geometry/vanishing-theorems-and-resolution-in-characteristic-zero", "replaced_by": "af_4a32ab1ca030ed7b2bfdcf37"}
+{"statement": "af_bd9b070b17390b8737ad9d54", "page": "AlgebraicGeometry/arakelov-geometry/arithmetic-intersection-theory-heights-and-volumes", "replaced_by": "af_dcac7b1f5204b9f3fde15cbb"}
 {"page": "GameTheory/combinatorial-games/sylver-coinage/numerical-semigroup-two-generated-symmet", "to": "NumberTheory/numerical-semigroups/numerical-semigroup-two-generated-symmet", "article_id": "af_2690e0691fad16fe00707d7a"}

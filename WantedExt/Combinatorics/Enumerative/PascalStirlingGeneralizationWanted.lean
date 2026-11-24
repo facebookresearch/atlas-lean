@@ -26,8 +26,9 @@ and Stirling Matrices*, Journal of Integer Sequences 29 (2026), Article 26.5.4.
 For a sequence `α = (α_j)_{j ≥ 1}` (here `α : ℕ → R` with `α 0` unused) the paper's matrices
 `S_α(n)`, `𝖲_α(n)` and `𝖴_α(n)` are given by recurrences on their entries; the entry functions
 below use 0-based indices, so entry `(i, j)` here is the paper's `(i + 1, j + 1)`. Statements were
-checked with exact rational arithmetic before stating. The α-upper entries, matrix and determinant
-formula are in `MathlibExt.Combinatorics.Enumerative.AlphaUpperMatrix`.
+checked with exact rational arithmetic before stating. The α-upper entries, their symmetric
+polynomial formula, the matrix and its determinant formula are in
+`MathlibExt.Combinatorics.Enumerative.AlphaUpperMatrix`.
 
 The factorial matrix of a power series (`powerSeriesFactorialMatrix`), the lemma on its diagonal
 entries (`powerSeriesFactorialMatrix_apply_self`) and the proved multiplicativity
@@ -146,24 +147,6 @@ Source: A. R. Moghaddamfar, Navid Salehy and Nima Salehy, *A Generalization of t
 Stirling Matrices*, Journal of Integer Sequences 29 (2026), Article 26.5.4, Section 1.4. -/
 def shiftedAlphaStirlingMatrix (α : ℕ → R) (n : ℕ) : Matrix (Fin n) (Fin n) R :=
   Matrix.of fun a b => shiftedAlphaStirlingEntry α a b
-
-/-- **α-upper entries are complete homogeneous symmetric polynomials.** Let $R$ be a commutative
-ring, let $\alpha$ be a sequence in $R$, and let $u_{i,j}$ ($i, j \ge 0$) be the α-upper entries
-of $\alpha$. For all $i \le j$, $u_{i,j} = h_i(\alpha_{i+1}, \alpha_{i+2}, \dots, \alpha_{j+1})$,
-where $h_i$ is the complete homogeneous symmetric polynomial of degree $i$ in $j - i + 1$
-variables.
-
-Writing $\mathsf{U}_{i,j}$ for the entries of the paper's matrix $\mathsf{U}_\alpha(n)$ in its
-$1$-based indexing, this reads $\mathsf{U}_{i,j} = h_{i-1}(\alpha_i, \dots, \alpha_j)$ for
-$j \ge i \ge 1$.
-
-Source: A. R. Moghaddamfar, Navid Salehy and Nima Salehy, *A Generalization of the Pascal and
-Stirling Matrices*, Journal of Integer Sequences 29 (2026), Article 26.5.4, Lemma 1
-(`jis-2026-26.5.4-lem-1`). -/
-public theorem_wanted alphaUpperEntry_eq_hsymm (α : ℕ → R) {i j : ℕ} (hij : i ≤ j) :
-    alphaUpperEntry α i j =
-      MvPolynomial.eval (fun t : Fin (j - i + 1) => α (i + 1 + t))
-        (MvPolynomial.hsymm (Fin (j - i + 1)) R i)
 
 /-- **LU decomposition of the shifted α-Stirling matrix.** Let $R$ be a commutative ring, let
 $\alpha = (\alpha_j)_{j \ge 1}$ be a sequence in $R$, and let $n$ be a natural number. Then

@@ -1,5 +1,6 @@
 {
   "rows": [
+    {"path": "MathlibExt/RepresentationTheory/CoinvariantsReflection.lean", "disposition": "identical", "published_sha256": "a9cda1e5a152efe06056a1d7f90fa0ebb89effe97a4d6e06233211427a0b90ef", "upstream_sha256": "b89dd29a8d2465629d5744a5f7680c99536dcd1c7a864fd03f064d359e6879e9"},
     {"path": "MathlibExt/RepresentationTheory/Homological/TateCohomology/FiniteCyclic.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "aed6252ce08ecf620bd203971b20f0c854c7800b0d34637ca9bfd9575cde0fe9", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "bd66d6300025449758307189276cb8e3f666e0ad8a6cbaff51f29e86a5cd8aa3"},
     {"path": "MathlibExt/RepresentationTheory/Homological/TateCohomology/HerbrandQuotient.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "84ba16c66410b8dc628e7b72593b9dab37ec0847cfd2e0a844c961a3c1d20056", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "560baa3a22336e4ec92c3009d4cc3a2fc14888f686cc555145ab39a9d4da93ef"}
   ]
