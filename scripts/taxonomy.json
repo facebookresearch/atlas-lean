@@ -11024,6 +11024,7 @@
   "MathlibExt/Combinatorics/MatrixDiscrepancy": {"to": "Combinatorics/discrepancy-theory", "title": "Komlós conjecture"},
   "MathlibExt/Combinatorics/Matroid/Algebraic": {"to": "Combinatorics/matroid-theory", "title": "Algebraic matroids"},
   "MathlibExt/Combinatorics/Matroid/ChowRing": {"to": "Combinatorics/matroid-theory", "title": "Hodge theory for matroids"},
+  "MathlibExt/Combinatorics/Matroid/IndependenceLorentzian": {"to": "Combinatorics/matroid-theory", "title": "Lorentzian polynomials"},
   "MathlibExt/Combinatorics/Matroid/MConvex": {"to": "Combinatorics/matroid-theory", "title": "Lorentzian polynomials"},
   "MathlibExt/Combinatorics/Matroid/MatroidIntersection": {"to": "Combinatorics/matroid-theory", "title": "Matroid intersection theorem"},
   "MathlibExt/Combinatorics/Matroid/MatroidPartition": {"to": "Combinatorics/matroid-theory", "title": "Matroid partition theorem"},
