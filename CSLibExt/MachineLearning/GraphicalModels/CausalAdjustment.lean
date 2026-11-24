@@ -58,8 +58,10 @@ open Finset Convexity MetaMathlibExt.FiniteWeight
 
 variable {α : Type*}
 
-/-- The assignment equal to `t` on `T` and to `x'` elsewhere. -/
-private def fill {n : ℕ} (T : Finset (Fin n)) (x' : Fin n → α) (t : T → α) : Fin n → α :=
+/-- **Overwriting an assignment on a set of nodes**: for a finite set `T` of nodes, an assignment
+`x' : Fin n → α` and values `t : T → α` on `T`, `fill T x' t` is the assignment `x` with
+`x i = t ⟨i, hi⟩` for `hi : i ∈ T` and `x i = x' i` for `i ∉ T`. -/
+def fill {n : ℕ} (T : Finset (Fin n)) (x' : Fin n → α) (t : T → α) : Fin n → α :=
   fun i => if h : i ∈ T then t ⟨i, h⟩ else x' i
 
 /-- Splitting a sum against `P` by the values `t` of the variables in `T` (disjoint from the
