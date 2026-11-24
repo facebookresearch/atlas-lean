@@ -1,6 +1,6 @@
 # Quantities, units and measurement
 
-Physical quantities and their dimensions in the International System of Quantities, unit conversions and dimensionless groups, the calibration of instruments and strain gauges, and the propagation of measurement uncertainty through linear, linearized and Lipschitz models. Calibration in analytical chemistry is under Chemistry.
+Physical quantities and their dimensions in the International System of Quantities, unit conversions and dimensionless groups, the inversion of a known linear calibration, and the propagation of measurement uncertainty through linear, linearized and Lipschitz models. Calibration in analytical chemistry is under Chemistry.
 
 - [Dimensions of engineering quantities](dimensions-of-engineering-quantities/README.md)
 - [Dimensions of physical quantities](dimensions-of-physical-quantities/README.md)
