@@ -65,6 +65,10 @@ variable
   {g n : ℕ} (a : Fin n → ℤ) (B : RubberModuliModel O P Q R S (g := g) a)
   (Z : Point D K)
 
+/-- The virtual-class input for rubber maps. The comparisons `comparison` and
+`globalComparison` identify the Li deformation complex with the obstruction-theory complex as
+complexes (locally in the derived category, and by one global cochain map); they are not required
+to match the obstruction assignments, so this records the weaker complex-level comparison. -/
 structure VirtualData where
   structural : StackHom B.stack Z.model.stack
   bundle : VectorBundleStack B.stack

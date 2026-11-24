@@ -54,6 +54,9 @@ structure FamilyBaseChange {T U : Over (Spec (.of k))} (f : T ⟶ U)
 variable [LocallyOfFiniteType P.target.hom] [IsNoetherian P.target.left]
   (beta : Fin G.vertices → RelativeCurveClasses.CurveClass P.target)
 
+/-- The moduli stack of stable relative maps of the given Chow-refined type (`HasVertexClasses`):
+the subfunctor of Li's moduli (math/0009097v1, Defs. 4.6–4.7) fixing the pushed Chow classes,
+not only the degree. -/
 structure RelativeModuliModel where
   stack : Stack (Spec (.of k))
   family : ∀ T : Over (Spec (.of k)), stack.Fibre T ⥤ StableTypeFamily P R S G T beta

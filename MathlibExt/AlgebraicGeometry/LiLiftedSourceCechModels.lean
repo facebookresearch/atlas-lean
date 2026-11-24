@@ -109,6 +109,14 @@ structure Overlap (t : Fin 2 → Fin L.count) where
       pullback.snd (lift (t 0)).source (lift (t 1)).source =
     (G.source ⦋1⦌ t).hom ≫ WidePullback.π _ 1 ≫
       Spec.map (CommRingCat.ofHom (lift (t 1)).extensionData.extension.projection.toRingHom)
+  /-- The overlap's square-zero base is the pullback of the fixed universal split base, with the
+  induced coefficient map, so lift differences are measured in the universal extension's
+  coefficients (not a rescaled identification). -/
+  globalBase : TrivSqZeroExt A (rightDual C.matrix) →+* extensionData.extension.ring
+  global_coefficient : ∀ x : rightDual C.matrix,
+    globalBase (TrivSqZeroExt.inr x) = extensionData.baseMap (TrivSqZeroExt.inr (1 ⊗ₜ[A] x))
+  source_over : iso.hom ≫ pullback.fst (lift (t 0)).source (lift (t 1)).source ≫ (lift (t 0)).source ≫
+      U.universal.curve.π = Spec.map (CommRingCat.ofHom globalBase)
   pair : Pair (RubberLieQuotientComplexes.parameters P R S m) (G.chart ⦋1⦌ t) (rightDual C.matrix) extensionData
   first : Spec.map (CommRingCat.ofHom pair.first) ≫ (G.chart ⦋1⦌ t).targetMap =
     iso.hom ≫ pullback.snd (lift (t 0)).source (lift (t 1)).source ≫ (lift (t 1)).target
@@ -122,6 +130,12 @@ structure TrivialLift (i : Fin L.count) where
   extensionData : LocalExtension (G.chart ⦋0⦌ (fun _ => i)) (leftDual C.matrix)
   source : Spec (.of extensionData.extension.ring) ⟶ U.trivial.family.curve.X
   etale : Etale source
+  /-- The trivialising lift lives over the fixed trivial split base, with the induced coefficient
+  map. -/
+  globalBase : TrivSqZeroExt A (leftDual C.matrix) →+* extensionData.extension.ring
+  global_coefficient : ∀ x : leftDual C.matrix,
+    globalBase (TrivSqZeroExt.inr x) = extensionData.baseMap (TrivSqZeroExt.inr (1 ⊗ₜ[A] x))
+  source_over : source ≫ U.trivial.family.curve.π = Spec.map (CommRingCat.ofHom globalBase)
   source_cartesian : IsPullback (Spec.map (CommRingCat.ofHom extensionData.extension.projection.toRingHom))
     (G.chart ⦋0⦌ (fun _ => i)).sourceMap source U.trivial.family.reduction
   pull : Spec (.of extensionData.extension.ring) ⟶ Spec (.of (lift i).extensionData.extension.ring)

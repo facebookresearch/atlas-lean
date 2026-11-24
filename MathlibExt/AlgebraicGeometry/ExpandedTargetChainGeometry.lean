@@ -76,17 +76,24 @@ def ruledContraction : ruledScheme P R ⟶ P.target :=
     change (R.projection ≫ P.inclusion.left) ≫ P.target.hom = R.projection ≫ P.divisor.hom
     rw [Category.assoc, Over.w P.inclusion])
 
-/-- The actual quotient chain, including both ends and every joining divisor. -/
+/-- The actual quotient chain, including both ends and every joining divisor.
+
+With the subline convention of `RelativeProjectiveLineModels` (the zero section is the
+`𝒪`-subline, with normal `N`; the infinity section is the `N`-subline, with normal `Nᵛ`), the
+strict transform of the original target meets the first ruled component along its infinity
+section (normal `Nᵛ` there, against `N` on the target side), each ruled component is glued at its
+zero section to the infinity section of the next, and the exposed boundary is the zero section of
+the last component (Li, math/0009097v1, §4.1). -/
 structure ExpandedSpecialFibre (m : ℕ) where
   scheme : Over (Spec (.of k))
   original : P.target ⟶ scheme
   ruled : Fin m → (ruledScheme P R ⟶ scheme)
   boundary : P.divisor ⟶ scheme
-  first : ∀ h : 0 < m, P.inclusion ≫ original = ruledZero P R ≫ ruled ⟨0, h⟩
+  first : ∀ h : 0 < m, P.inclusion ≫ original = ruledInfinity P R ≫ ruled ⟨0, h⟩
   joins : ∀ (j : Fin m) (h : j.val + 1 < m),
-    ruledInfinity P R ≫ ruled j = ruledZero P R ≫ ruled ⟨j.val + 1, h⟩
+    ruledZero P R ≫ ruled j = ruledInfinity P R ≫ ruled ⟨j.val + 1, h⟩
   last : ∀ h : 0 < m,
-    boundary = ruledInfinity P R ≫ ruled ⟨m - 1, by omega⟩
+    boundary = ruledZero P R ≫ ruled ⟨m - 1, by omega⟩
   empty : m = 0 → boundary = P.inclusion ≫ original
   contraction : scheme ⟶ P.target
   original_contraction : original ≫ contraction = 𝟙 P.target
@@ -94,9 +101,9 @@ structure ExpandedSpecialFibre (m : ℕ) where
   boundary_contraction : boundary ≫ contraction = P.inclusion
   universal : ∀ (Z : Over (Spec (.of k))) (f : P.target ⟶ Z)
       (g : Fin m → (ruledScheme P R ⟶ Z)),
-    (∀ h : 0 < m, P.inclusion ≫ f = ruledZero P R ≫ g ⟨0, h⟩) →
+    (∀ h : 0 < m, P.inclusion ≫ f = ruledInfinity P R ≫ g ⟨0, h⟩) →
     (∀ (j : Fin m) (h : j.val + 1 < m),
-      ruledInfinity P R ≫ g j = ruledZero P R ≫ g ⟨j.val + 1, h⟩) →
+      ruledZero P R ≫ g j = ruledInfinity P R ≫ g ⟨j.val + 1, h⟩) →
         ∃! q : scheme ⟶ Z, original ≫ q = f ∧ ∀ j, ruled j ≫ q = g j
 
 end MathlibExt.AlgebraicGeometry.ExpandedTargetChainGeometry

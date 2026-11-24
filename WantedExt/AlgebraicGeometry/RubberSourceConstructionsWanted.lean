@@ -105,7 +105,8 @@ def_wanted nativeLiFamilySourceDescent (k : Type) [Field k] [IsAlgClosed k] [Cha
     (B : RubberModuliModel O P D R S (g := g) a) :
     LiFamilySourceDescent.Descent (O := O) (P := P) (D := D) (R := R) (S := S) (a := a) (B := B)
 
-/-- Realize the actual homotopy-coherent affine module diagram of a bundle stack. -/
+/-- Realize the affine module diagram of a bundle stack objectwise, with a comparison homotopy for
+each restriction arrow (`BundleRealization`; unit and composition coherence is not requested). -/
 def_wanted nativeRubberBundleSourceRealization (k : Type) [Field k]
     (O : ProjectiveLine (Spec (.of k)) (structureModule (Spec (.of k))))
     (P : RelativePair (k := k)) (D : OriginalRubberPair O P)

@@ -636,8 +636,11 @@ def bundleTransition {p q : AffinePoint B.stack} {f : p ⟶ q} (T : BundleTransi
       (CochainComplex.mappingCone.mapHomologicalComplexIso (bundleArrow E p)
         (ModuleCat.restrictScalars ((rings B.stack).map f.op).hom)).inv
 
-/-- Strict cochain realization of the actual homotopy-coherent bundle diagram.
-The value and every arrow are normalized on the original two module blocks.
+/-- Strict cochain realization of the bundle diagram, objectwise and arrow by arrow.
+The value and every arrow are normalized on the original two module blocks, and each restriction
+arrow has its own comparison homotopy. These homotopies are not required to be compatible with
+the diagram's unit and composition cells (`mapId`, `mapComp`), so this is weaker than a
+realization of the homotopy-coherent diagram (a pseudonatural equivalence carrying those cells).
 This is an ordinary source realization input, independent of the Li theorem. -/
 structure BundleRealization where
   complex : GlobalComplex (B := B)
@@ -650,7 +653,12 @@ structure BundleRealization where
         (restrictionComplex ((rings B.stack).map f.op).hom).map (value p))
 
 /-- One global cochain map identifies the actual Li source with the actual
-bundle-stack diagram. Objectwise atlas isomorphisms cannot replace this map. -/
+bundle-stack diagram. Objectwise atlas isomorphisms cannot replace this map.
+
+This identifies the underlying complexes only: compatibility with the obstruction assignment
+(the square-zero obstruction classes of Li, math/0110113v1, Thm. 1.22, as pulled back in
+Behrend–Fantechi, Thm. 4.5) is not required, so for instance the negative of a comparison also
+qualifies. -/
 structure BundleBinding (L : Descent (O := O) (P := P) (D := D) (R := R) (S := S) (a := a) (B := B)) where
   realization : BundleRealization E
   comparison : L.complex ⟶ realization.complex

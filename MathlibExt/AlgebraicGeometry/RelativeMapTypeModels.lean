@@ -32,6 +32,10 @@ open _root_.CategoryTheory _root_.CategoryTheory.Limits _root_.AlgebraicGeometry
 open ExpandedTargetChainGeometry RelativeProjectiveLineModels StandardRelativeExpansionModels
 open ExpandedRelativeFamilies RelativeExpandedMapFamilies
 
+/-- A relative (possibly disconnected) type with `n` legs and `r` roots on the relative divisor.
+It has at least one vertex, so the glued types built from two of them (see
+`RelativeMapGluingGeometry`) have both sides nonempty: Li's types with an empty side
+(math/0009097v1, after (4.8)) are not covered here. -/
 structure RelativeType (n r : ℕ) where
   vertices : ℕ
   nonempty : 0 < vertices
@@ -123,7 +127,14 @@ def IsStableType (F : TypeFamily P R S G T) : Prop :=
 variable [LocallyOfFiniteType P.target.hom] [IsNoetherian P.target.left]
 
 /-- The degree is the actual pushed curve class after contraction to the
-original target, with its native all-field class/base-change normalization. -/
+original target, with its native all-field class/base-change normalization.
+
+This is a Chow-refined type: it fixes the rational Chow class of each vertex's pushed curve on
+every geometric fibre, which refines Li's fixed degree with respect to a polarisation
+(math/0009097v1, Defs. 4.6–4.7). The stable families of this type form the corresponding
+subfunctor of Li's moduli; in a family of Li's fixed degree the Chow classes may vary (for
+`E × ℙ¹` relative to `E × {∞}`, the fibres `{p} × ℙ¹` have fixed degree and contact but classes
+differing by `p − q`), so the two agree only when such classes are locally constant. -/
 def HasVertexClasses
     (beta : Fin G.vertices → RelativeCurveClasses.CurveClass P.target)
     (F : TypeFamily P R S G T) : Prop :=
