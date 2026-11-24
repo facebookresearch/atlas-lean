@@ -1,0 +1,3 @@
+# Dual bottom–top crossings under rotated-complement order
+
+Let $a, b, c, d \in \mathbb{Z}$ and let $\rho$ be the counterclockwise quarter-turn around the origin, acting on unordered pairs of primal sites by rotating both endpoints. For a primal configuration $\omega$, let $\widetilde\omega(e) = 1-\omega(\rho^{-1}e)$ be its rotated complement. Suppose $\widetilde\omega(e) \le \widetilde\omega'(e)$ for every unordered pair $e$ of primal sites. If $\omega$ belongs to the [dual bottom–top crossing event](dual-vertical-crossing-event.md) for $[a,b] \times [c,d]$, then $\omega'$ belongs to the same event.
