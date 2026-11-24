@@ -21,6 +21,7 @@ PDE existence, regularity and qualitative results: Cauchy–Kovalevskaya, heat a
 - [Radial symmetry of semilinear elliptic equations](radial-symmetry-of-semilinear-elliptic-equations/README.md)
 - [Singularity formation for the Euler equations](singularity-formation-for-the-euler-equations/README.md)
 - [Summation under heat integrals](summation-under-heat-integrals/README.md)
+- [Uniform bounds for forced Burgers](uniform-bounds-for-forced-burgers/README.md)
 - [Viscosity solutions of Hamilton–Jacobi equations](viscosity-solutions-of-hamilton-jacobi-equations/README.md)
 - [Weak solutions of elliptic equations](weak-solutions-of-elliptic-equations/README.md)
 - [Weighted heat gradient estimates](weighted-heat-gradient-estimates/README.md)

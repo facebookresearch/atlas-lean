@@ -9766,6 +9766,7 @@
   "MathlibExt/Analysis/Optimization/LineSearch": {"to": "Analysis/numerical-analysis", "title": "Line search methods"},
   "MathlibExt/Analysis/Optimization/QuasiNewton": {"to": "Analysis/numerical-analysis", "title": "Quasi-Newton methods"},
   "MathlibExt/Analysis/Optimization/TrustRegion": {"to": "Analysis/numerical-analysis", "title": "Trust-region methods"},
+  "MathlibExt/Analysis/PDE/ForcedBurgersBounds": {"to": "Analysis/partial-differential-equations", "title": "Uniform bounds for forced Burgers"},
   "MathlibExt/Analysis/PDE/ForcedBurgersInitialValue": {"to": "Analysis/partial-differential-equations", "title": "Forced Burgers initial-value construction"},
   "MathlibExt/Analysis/PDE/HeatDuhamel": {"to": "Analysis/partial-differential-equations", "title": "Heat-kernel Duhamel integral"},
   "MathlibExt/Analysis/PDE/HeatDuhamelDerivatives": {"to": "Analysis/partial-differential-equations", "title": "Heat-kernel Duhamel derivatives"},
