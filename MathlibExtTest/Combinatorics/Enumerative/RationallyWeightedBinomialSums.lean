@@ -49,6 +49,26 @@ example (n : ℕ) :
   push_cast at h
   exact_mod_cast h
 
+-- Rows zero and one give the empty sum and a single term, respectively.
+example : ∑ k ∈ Finset.Icc 1 0, (-1 : ℚ) ^ (k - 1) * (0 : ℕ).choose k / k = 0 :=
+  (sum_neg_one_pow_choose_div_eq_harmonic 0).trans harmonic_zero
+
+example : ∑ k ∈ Finset.Icc 1 1, (-1 : ℚ) ^ (k - 1) * (1 : ℕ).choose k / k = 1 := by
+  rw [sum_neg_one_pow_choose_div_eq_harmonic]
+  norm_num [harmonic, Finset.sum_range_succ]
+
+-- Row four includes both signs and sums to 4 - 6/2 + 4/3 - 1/4 = 25/12.
+example :
+    ∑ k ∈ Finset.Icc 1 4, (-1 : ℚ) ^ (k - 1) * (4 : ℕ).choose k / k = 25 / 12 := by
+  rw [sum_neg_one_pow_choose_div_eq_harmonic]
+  norm_num [harmonic, Finset.sum_range_succ]
+
+-- Independently evaluate the alternating sum in row four.
+example :
+    ∑ k ∈ Finset.Icc 1 4, (-1 : ℚ) ^ (k - 1) * (4 : ℕ).choose k / k = 25 / 12 := by
+  rw [← Finset.Ico_add_one_right_eq_Icc, Finset.sum_Ico_eq_sum_range]
+  norm_num [Finset.sum_range_succ, Nat.choose]
+
 -- The inverse-square sum is empty at zero.
 example : ∑ k ∈ Finset.Icc 1 0, (-1 : ℚ) ^ (k - 1) * (0 : ℕ).choose k / (k : ℚ) ^ 2 = 0 := by
   rw [sum_neg_one_pow_choose_div_sq_eq_sum_harmonic]
