@@ -1,4 +1,3 @@
-# Median
+# Lower median of a profile
 
-The lower median: the `((n-1)/2)`-th order statistic
-(0-indexed) of the profile, via the sorted list of reports.
+For $n \ge 1$ reports $x_1, \dots, x_n$, the lower median is the order statistic of index $\lfloor (n-1)/2 \rfloor$, counting from $0$, of the sorted reports.

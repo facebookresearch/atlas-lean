@@ -1,6 +1,6 @@
 # Is Min On of karush kuhn tucker convex affine
 
-Convex KKT sufficiency with affine equality constraints (MF11.3a). Minimize `f` subject to
+Convex KKT sufficiency with affine equality constraints. Minimize `f` subject to
 `g i y ≤ 0` and `h j y = 0`, where `f` and every `g i` are convex on the whole space, every `h j`
 is affine (convex and concave on the whole space), and all of them are differentiable at `x`.
 If `x` satisfies the equality constraints and `lam i ≥ 0` and `mu j` (of either sign) satisfy

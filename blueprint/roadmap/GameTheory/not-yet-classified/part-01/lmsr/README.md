@@ -2,6 +2,6 @@
 
 - [Lmsr Cost](lmsr-cost.md)
 - [Lmsr Price](lmsr-price.md)
-- [Lmsr Loss le](lmsr-loss-le.md)
-- [Deriv update lmsr Cost](deriv-update-lmsr-cost.md)
-- [Trade Profit eq log Score](trade-profit-eq-log-score.md)
+- [Worst-case loss of the LMSR market maker](lmsr-loss-le.md)
+- [The LMSR instantaneous price is the derivative of the cost](deriv-update-lmsr-cost.md)
+- [LMSR trade profit equals a log-score difference](trade-profit-eq-log-score.md)

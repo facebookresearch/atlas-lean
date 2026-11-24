@@ -12,4 +12,4 @@
 
 ## Graphical Models
 
-- [Discrete embedding, density form](to-kernel-cbn-joint-eq-with-density.md)
+- [Joint law of a discrete Bayesian network as a density](to-kernel-cbn-joint-eq-with-density.md)

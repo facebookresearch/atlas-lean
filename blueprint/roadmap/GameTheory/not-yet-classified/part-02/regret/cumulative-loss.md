@@ -1,3 +1,3 @@
 # Cumulative Loss
 
-Cumulative loss of the fixed action `a` over the horizon. (C1 base defs)
+Cumulative loss of the fixed action `a` over the horizon.

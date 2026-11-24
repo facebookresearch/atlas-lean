@@ -1,6 +1,6 @@
 # Integral balance in divergence form
 
-**Integral balance in divergence form** (MF08.2), conditional on the divergence theorem.
+**Integral balance in divergence form**, conditional on the divergence theorem.
 Let `Ω` be a compact subset of `ℝⁿ = Fin n → ℝ` with Lebesgue measure, let the density `u` be
 jointly `C¹`, let `q t` be the flux field at time `t` with divergence
 `FokkerPlanck.divergence (q t) = ∑ᵢ ∂ᵢ (q t)ᵢ`, and let `s t` be integrable on `Ω`. If the
