@@ -10,7 +10,7 @@ Let $A \in \mathbb{Q}^{m \times n}$ and $b \in \mathbb{Q}^m$. The system $Ax \le
 
 This page becomes ready once these prerequisites are stated:
 
-- Certificate soundness (existing code without page, backfill referral) (proof prerequisite)
+- Soundness of Farkas certificates: if $y \ge 0$, $y^{\mathsf T} A = 0$ and $y^{\mathsf T} b < 0$, then $Ax \le b$ has no solution, since any solution would give $0 = y^{\mathsf T} A x \le y^{\mathsf T} b < 0$ (proof prerequisite)
 
 ## Sources
 

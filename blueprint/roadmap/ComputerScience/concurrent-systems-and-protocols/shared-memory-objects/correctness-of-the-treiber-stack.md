@@ -9,8 +9,9 @@ Treiber's stack keeps a pointer to the top node of a singly linked list. A push 
 it and installs the node with a compare-and-swap on the top pointer, retrying if the compare-and-swap fails. A pop reads the top pointer,
 returns empty if it is null, and otherwise installs the successor of the top node by compare-and-swap, retrying on failure.
 
-Under sequential consistency, with an atomic compare-and-swap on the top pointer and with nodes never reused, so that the ABA problem
-cannot occur, Treiber's stack is linearizable with respect to the sequential stack specification, and it is lock-free.
+This node covers the correctness of Treiber's stack: its linearizability with respect to the sequential stack specification and its
+lock-freedom, under sequential consistency, with an atomic compare-and-swap on the top pointer and with nodes never reused, so that
+the ABA problem cannot occur. A precise statement fixes the shared-memory semantics and states both properties against a checked source.
 
 ## Expansion
 
@@ -19,7 +20,6 @@ This page becomes ready once these prerequisites are stated:
 - Linearizability of operation histories (statement prerequisite).
 - Progress conditions for concurrent implementations, including lock-freedom (statement prerequisite).
 - A shared-memory semantics with atomic reads, writes and compare-and-swap in which the algorithm is expressed.
-- An opened source, with a precise locator, for the algorithm and its correctness and lock-freedom statement.
 
 ## Sources
 
