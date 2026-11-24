@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Privacy.AdaptivePrivacyLoss
+public import CSLibExt.Privacy.ApproximateDifferentialPrivacy
 public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
@@ -17,6 +18,7 @@ public import Mathlib.Algebra.BigOperators.Ring.Finset
 public import Mathlib.Algebra.GroupWithZero.Defs
 public import Mathlib.Algebra.GroupWithZero.Units.Basic
 public import Mathlib.Analysis.Complex.ExponentialBounds
+public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.Analysis.SpecialFunctions.Exp
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Basic.ENNReal.Basic
@@ -924,5 +926,188 @@ such test would be vacuous. The exact MGF value above carries nonvacuity. -/
 #print axioms transcript_centered_mgf_le
 #print axioms transcript_tail_le
 #print axioms transcript_tail_outer_le
+
+/- Part C tests: pure-stage advanced composition.
+
+The corollary is instantiated on the randomized-response fixture
+(`ε = log 3`) at `δ' = 1 / 2`: two stages, one stage, and zero stages,
+plus a positive-length zero-budget case with a database-independent
+kernel. -/
+
+/-- Database-independent test kernel (constant coin). -/
+noncomputable def testK0 : (n : ℕ) → Hist Bool Bool n → Bool → PMF Bool :=
+  fun _ _ _ => testCoin
+
+theorem testK0_isDP (n : ℕ) (h : Hist Bool Bool n) :
+    IsDP (fun d => testK0 n h d) testAdj 0 :=
+  isDP_const testCoin testAdj
+
+/-- Advanced composition on the two-stage fixture. -/
+theorem test_advcomp_two_stage :
+    IsApproxDP (fun d => transcript testCoin testK 2 d) testAdj
+      (Real.log 3 * Real.sqrt (2 * ((2 : ℕ) : ℝ) * Real.log (1 / (1 / 2 : ℝ))) +
+        ((2 : ℕ) : ℝ) * (Real.log 3 * (Real.exp (Real.log 3) - 1)))
+      (1 / 2 : ℝ) :=
+  transcript_isApproxDP_advanced_composition_pure testCoin testK testAdj
+    (Real.log 3) 2 (1 / 2) testK_isDP (Real.log_nonneg (by norm_num))
+    (fun d d' _ => trivial) (by norm_num) (by norm_num)
+
+/-- Advanced composition with a single stage. -/
+theorem test_advcomp_one_stage :
+    IsApproxDP (fun d => transcript testCoin testK 1 d) testAdj
+      (Real.log 3 * Real.sqrt (2 * ((1 : ℕ) : ℝ) * Real.log (1 / (1 / 2 : ℝ))) +
+        ((1 : ℕ) : ℝ) * (Real.log 3 * (Real.exp (Real.log 3) - 1)))
+      (1 / 2 : ℝ) :=
+  transcript_isApproxDP_advanced_composition_pure testCoin testK testAdj
+    (Real.log 3) 1 (1 / 2) testK_isDP (Real.log_nonneg (by norm_num))
+    (fun d d' _ => trivial) (by norm_num) (by norm_num)
+
+/-- Advanced composition with zero stages. -/
+theorem test_advcomp_zero_stage :
+    IsApproxDP (fun d => transcript testCoin testK 0 d) testAdj
+      (Real.log 3 * Real.sqrt (2 * ((0 : ℕ) : ℝ) * Real.log (1 / (1 / 2 : ℝ))) +
+        ((0 : ℕ) : ℝ) * (Real.log 3 * (Real.exp (Real.log 3) - 1)))
+      (1 / 2 : ℝ) :=
+  transcript_isApproxDP_advanced_composition_pure testCoin testK testAdj
+    (Real.log 3) 0 (1 / 2) testK_isDP (Real.log_nonneg (by norm_num))
+    (fun d d' _ => trivial) (by norm_num) (by norm_num)
+
+/-- Advanced composition at zero budget with a database-independent kernel. -/
+theorem test_advcomp_zero_budget :
+    IsApproxDP (fun d => transcript testCoin testK0 2 d) testAdj
+      (0 * Real.sqrt (2 * ((2 : ℕ) : ℝ) * Real.log (1 / (1 / 2 : ℝ))) +
+        ((2 : ℕ) : ℝ) * (0 * (Real.exp 0 - 1)))
+      (1 / 2 : ℝ) :=
+  transcript_isApproxDP_advanced_composition_pure testCoin testK0 testAdj
+    0 2 (1 / 2) testK0_isDP le_rfl
+    (fun d d' _ => trivial) (by norm_num) (by norm_num)
+
+#print axioms transcript_isApproxDP_of_tail
+#print axioms transcript_isApproxDP_advanced_composition_pure
+
+/- Domination-transport tests.
+
+With `m = 1` and equal kernels the bound is reflexive; with `m = 1 / 2` a
+constant randomized-response kernel is dominated by the fair coin, checked
+by finite computation both at each stage and at the named transcript. -/
+
+/-- Domination with `m = 1` and equal kernels, at `testOmega`. -/
+theorem test_domination_one_refl :
+    (1 : ℝ) ^ 2 * (transcript testCoin testK 2 false testOmega).toReal
+      ≤ (transcript testCoin testK 2 false testOmega).toReal := by
+  have h := transcript_domination testCoin testK testK false false 2 1
+    zero_le_one le_rfl (fun n _ h y => le_of_eq (one_mul _))
+  exact h testOmega
+
+/-- Constant dominated kernel for the `m = 1 / 2` test. -/
+noncomputable def domL : (n : ℕ) → Hist Bool Bool n → Bool → PMF Bool :=
+  fun _ _ _ => rrPMF false
+
+/-- Constant dominating kernel for the `m = 1 / 2` test. -/
+noncomputable def domK : (n : ℕ) → Hist Bool Bool n → Bool → PMF Bool :=
+  fun _ _ _ => testCoin
+
+/-- Stage domination at `m = 1 / 2`, by finite case analysis. -/
+theorem test_domination_stage_half (i : Fin 2) :
+    (1 / 2 : ℝ)
+        * (domL i.val (histPrefix i testOmega) false (histOut i testOmega)).toReal
+      ≤ (domK i.val (histPrefix i testOmega) false (histOut i testOmega)).toReal := by
+  show (1 / 2 : ℝ) * (rrPMF false (histOut i testOmega)).toReal
+    ≤ (testCoin (histOut i testOmega)).toReal
+  rw [rrPMF_toReal, testCoin_toReal]
+  split_ifs <;> norm_num
+
+/-- Transcript domination at `m = 1 / 2`, by explicit computation. -/
+theorem test_domination_half_compute :
+    (1 / 2 : ℝ) ^ 2 * (transcript testCoin domL 2 false testOmega).toReal
+      ≤ (transcript testCoin domK 2 false testOmega).toReal := by
+  have hL := transcript_toReal_factor testCoin domL 2 false testOmega
+  have hK := transcript_toReal_factor testCoin domK 2 false testOmega
+  simp only [Fin.prod_univ_two, Fin.val_zero, Fin.val_one] at hL hK
+  have eL0 : (domL 0 (histPrefix 0 testOmega) false (histOut 0 testOmega)).toReal
+      = 3 / 4 := by
+    show (rrPMF false false).toReal = 3 / 4
+    rw [rrPMF_toReal, ite_eq_left rfl]
+  have eL1 : (domL 1 (histPrefix 1 testOmega) false (histOut 1 testOmega)).toReal
+      = 3 / 4 := by
+    show (rrPMF false false).toReal = 3 / 4
+    rw [rrPMF_toReal, ite_eq_left rfl]
+  have eK0 : (domK 0 (histPrefix 0 testOmega) false (histOut 0 testOmega)).toReal
+      = 1 / 2 :=
+    testCoin_toReal _
+  have eK1 : (domK 1 (histPrefix 1 testOmega) false (histOut 1 testOmega)).toReal
+      = 1 / 2 :=
+    testCoin_toReal _
+  rw [hL, hK, testCoin_toReal, eL0, eL1, eK0, eK1]
+  norm_num
+
+/-- Transcript domination at `m = 1 / 2`, via `transcript_domination`. -/
+theorem test_domination_half_via :
+    (1 / 2 : ℝ) ^ 2 * (transcript testCoin domL 2 false testOmega).toReal
+      ≤ (transcript testCoin domK 2 false testOmega).toReal := by
+  have h := transcript_domination testCoin domK domL false false 2 (1 / 2)
+    (by norm_num) (by norm_num) (fun n _ h y => by
+      show (1 / 2 : ℝ) * (rrPMF false y).toReal ≤ (testCoin y).toReal
+      rw [rrPMF_toReal, testCoin_toReal]
+      split_ifs <;> norm_num)
+  exact h testOmega
+
+#print axioms transcript_domination
+#print axioms test_domination_one_refl
+#print axioms test_domination_stage_half
+#print axioms test_domination_half_compute
+#print axioms test_domination_half_via
+
+
+-- Pair-local assembly tests: two-sided `maxDivLE` for the test kernels at
+-- `ε = log 3`, the `k = 2`, `δ' = 1 / 2` advanced-composition instance for the
+-- fixture, and the `ε = 0`, `P = Q` adapter sanity check.
+
+-- Convert an `IsDP`-shaped `ENNReal` bound into a real-mass bound.
+theorem test_pair_toReal_le_of_le {a b : ENNReal} {c : ℝ} (hc : 0 ≤ c)
+    (hb : b ≠ ⊤) (h : a ≤ ENNReal.ofReal c * b) :
+    a.toReal ≤ c * b.toReal := by
+  have hfin : ENNReal.ofReal c * b ≠ ⊤ :=
+    ENNReal.mul_ne_top ENNReal.ofReal_ne_top hb
+  have hle := ENNReal.toReal_mono hfin h
+  rwa [ENNReal.toReal_mul, ENNReal.toReal_ofReal hc] at hle
+
+-- Two-sided `maxDivLE` for the test kernels at `ε = log 3`, forward direction.
+open CSLibExt.Privacy.MaxDivergenceDecomposition in
+theorem test_pair_maxDivLE_false_true (n : ℕ) (h : Hist Bool Bool n) :
+    maxDivLE (testK n h false) (testK n h true) (Real.log 3) := by
+  intro o
+  exact test_pair_toReal_le_of_le (Real.exp_pos _).le
+    ((testK n h true).apply_ne_top o) ((testK_isDP n h).2 false true trivial o)
+
+-- Two-sided `maxDivLE` for the test kernels at `ε = log 3`, reverse direction.
+open CSLibExt.Privacy.MaxDivergenceDecomposition in
+theorem test_pair_maxDivLE_true_false (n : ℕ) (h : Hist Bool Bool n) :
+    maxDivLE (testK n h true) (testK n h false) (Real.log 3) := by
+  intro o
+  exact test_pair_toReal_le_of_le (Real.exp_pos _).le
+    ((testK n h false).apply_ne_top o) ((testK_isDP n h).2 true false trivial o)
+
+-- Pairwise advanced composition for the two-stage fixture at `δ' = 1 / 2`.
+open CSLibExt.Privacy.MaxDivergenceDecomposition in
+theorem test_pair_adv_comp_pair :
+    approxMaxDivLE (transcript testCoin testK 2 false) (transcript testCoin testK 2 true)
+      (Real.log 3 * Real.sqrt (2 * ((2 : ℕ) : ℝ) * Real.log (1 / (1 / 2 : ℝ))) +
+        ((2 : ℕ) : ℝ) * (Real.log 3 * (Real.exp (Real.log 3) - 1))) (1 / 2 : ℝ) ∧
+    approxMaxDivLE (transcript testCoin testK 2 true) (transcript testCoin testK 2 false)
+      (Real.log 3 * Real.sqrt (2 * ((2 : ℕ) : ℝ) * Real.log (1 / (1 / 2 : ℝ))) +
+        ((2 : ℕ) : ℝ) * (Real.log 3 * (Real.exp (Real.log 3) - 1))) (1 / 2 : ℝ) :=
+  transcript_approxMaxDivLE_advanced_composition_pair testCoin testK (Real.log 3) 2 (1 / 2)
+    (Real.log_nonneg (by norm_num))
+    (fun n h => ⟨test_pair_maxDivLE_false_true n h, test_pair_maxDivLE_true_false n h⟩)
+    (by norm_num) (by norm_num)
+
+-- Adapter sanity: `maxDivLE` is reflexive at `ε = 0`.
+open CSLibExt.Privacy.MaxDivergenceDecomposition in
+theorem test_pair_adapter_zero_refl (P : PMF Bool) : maxDivLE P P 0 := by
+  intro o
+  rw [Real.exp_zero, one_mul]
+
+#print axioms transcript_approxMaxDivLE_advanced_composition_pair
 
 end CSLibExt.Privacy.DifferentialPrivacy

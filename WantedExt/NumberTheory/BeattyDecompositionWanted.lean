@@ -13,6 +13,8 @@ public import Mathlib.NumberTheory.Rayleigh
 public import Mathlib.Data.Set.Card
 public import MathlibExt.NumberTheory.Beatty.CountIncrement
 public import MathlibExt.NumberTheory.Beatty.FloorFiber
+public import MathlibExt.NumberTheory.Beatty.FloorSubTwoIdentity
+public import MathlibExt.NumberTheory.Beatty.SelfBetween
 
 /-! # Decomposition of Beatty and complementary sequences (Polanco)
 
@@ -65,22 +67,6 @@ public theorem_wanted beatty_card_compl_between_eq_floor {α β : ℝ} (hirr : I
     ((Ioo (beattySeq α n) (beattySeq β n) ∩ {beattySeq β k | k > 0}).ncard : ℤ) =
       beattySeq (2 - α) n
 
-/-- **Counting $\alpha$-Beatty terms between $\lfloor n\alpha\rfloor$ and $\lfloor n\beta\rfloor$.**
-Let $\alpha$ be an irrational number with $1 < \alpha < 2$, let $\beta$ be a real number with
-$\alpha^{-1} + \beta^{-1} = 1$, and let $A$ be the set of the numbers $\lfloor k\alpha\rfloor$ for
-positive integers $k$. Then for every positive integer $n$, the number of elements of $A$ in the
-open interval $(\lfloor n\alpha\rfloor, \lfloor n\beta\rfloor)$ equals
-$\lfloor n(\beta - 2)\rfloor$.
-
-By Beatty's theorem, the Beatty sequences of $\alpha$ and $\beta$ are then complementary.
-
-Source: Geremias Polanco, *Decomposition of Beatty and Complementary Sequences*,
-INTEGERS 25 (2025), Article A104, Theorem 4 (`integers-2025-A104-thm-4`). -/
-public theorem_wanted beatty_card_self_between_eq_floor {α β : ℝ} (hirr : Irrational α)
-    (hα1 : 1 < α) (hα2 : α < 2) (hαβ : α⁻¹ + β⁻¹ = 1) {n : ℤ} (hn : 0 < n) :
-    ((Ioo (beattySeq α n) (beattySeq β n) ∩ {beattySeq α k | k > 0}).ncard : ℤ) =
-      beattySeq (β - 2) n
-
 /-- **Polanco's floor identity for $\lfloor (2 - \alpha) n \rfloor$.** Let $\alpha$ be an
 irrational real number with $1 < \alpha < 2$, let $\beta$ be a real number with
 $\alpha^{-1} + \beta^{-1} = 1$, and write $a_m = \lfloor m\alpha \rfloor$ and
@@ -101,26 +87,6 @@ public theorem_wanted beatty_floor_inv_sub_eq_floor_two_sub {α β : ℝ} (hirr 
     (hα1 : 1 < α) (hα2 : α < 2) (hαβ : α⁻¹ + β⁻¹ = 1) {n : ℤ} (hn : 0 < n) :
     ⌊β⁻¹ * ((beattySeq β (n - 1) + 1 : ℤ) : ℝ)⌋ - ⌊β⁻¹ * (beattySeq α n : ℝ)⌋ =
       beattySeq (2 - α) n
-
-/-- **Polanco's floor identity for $\lfloor (\beta - 2) n \rfloor$.** Let $\alpha$ be an
-irrational real number with $1 < \alpha < 2$, let $\beta$ be a real number with
-$\alpha^{-1} + \beta^{-1} = 1$, and write $a_n = \lfloor n\alpha \rfloor$ and
-$b_n = \lfloor n\beta \rfloor$. Then for every positive integer $n$,
-$$
-\lfloor \alpha^{-1} b_n \rfloor - \lfloor \alpha^{-1} (a_n + 1) \rfloor
-= \lfloor (\beta - 2) n \rfloor.
-$$
-
-Since $\alpha > 1$, Beatty's theorem says that the conditions "$\alpha$ is irrational and
-$\alpha^{-1} + \beta^{-1} = 1$" mean exactly that $(a_n)_{n \ge 1}$ and $(b_n)_{n \ge 1}$ are
-complementary Beatty sequences.
-
-Source: Geremias Polanco, *Decomposition of Beatty and Complementary Sequences*,
-INTEGERS 25 (2025), Article A104, Theorem 5, identity (8) (`integers-2025-A104-thm-5`). -/
-public theorem_wanted beatty_floor_inv_sub_eq_floor_sub_two {α β : ℝ} (hirr : Irrational α)
-    (hα1 : 1 < α) (hα2 : α < 2) (hαβ : α⁻¹ + β⁻¹ = 1) {n : ℤ} (hn : 0 < n) :
-    ⌊α⁻¹ * (beattySeq β n : ℝ)⌋ - ⌊α⁻¹ * ((beattySeq α n + 1 : ℤ) : ℝ)⌋ =
-      beattySeq (β - 2) n
 
 /-- **The $\beta$-Beatty counts between $\lfloor n\alpha\rfloor$ and $\lfloor n\beta\rfloor$ form a
 Beatty sequence.** Let $\alpha$ be an irrational number with $1 < \alpha < 2$, let $\beta$ be a

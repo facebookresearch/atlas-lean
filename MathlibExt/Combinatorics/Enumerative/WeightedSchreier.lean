@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.Data.Finset.Powerset
 public import Mathlib.Order.Interval.Finset.Nat
@@ -215,6 +216,49 @@ public theorem iteratedPartialSum_succ_succ {M : Type*} [AddCommMonoid M] (a : �
     iteratedPartialSum (k + 1) a (m + 1) =
       iteratedPartialSum (k + 1) a m + iteratedPartialSum k a m := by
   simp [iteratedPartialSum, seededPartialSums, Finset.sum_range_succ]
+
+/-- **Adding one to a sequence shifts its iterated partial sums by a binomial coefficient.**
+Let $R$ be a commutative ring, let $(a_n)_{n \ge 0}$ be a sequence in $R$, and let $k, m \ge 0$.
+Writing $P^{(k)}(x)(m)$ for the $k$-fold iterated partial sum of a sequence $x$ at $m$, we have
+$P^{(k)}((a_n + 1)_{n \ge 0})(m) - P^{(k)}((a_n)_{n \ge 0})(m) = \binom{m}{k}$, where
+$\binom{m}{k}$ is read as an element of $R$.
+
+Source: Hùng Việt Chu and Zachary Louis Vasseur, *Weighted Schreier-type Sets and the
+Fibonacci Sequence*, The Fibonacci Quarterly 62 (2024), no. 4, Lemma 3.3
+(`fq-2024-chu08302024rev-lem-3.3`). -/
+public theorem iteratedPartialSum_add_one_sub {R : Type*} [CommRing R] (a : ℕ → R)
+    (k m : ℕ) :
+    iteratedPartialSum k (fun n => a n + 1) m - iteratedPartialSum k a m = (m.choose k : R) := by
+  induction k generalizing m with
+  | zero => simp [iteratedPartialSum, seededPartialSums]
+  | succ k ih =>
+    induction m with
+    | zero => simp [iteratedPartialSum, seededPartialSums]
+    | succ m ihm =>
+      rw [iteratedPartialSum_succ_succ, iteratedPartialSum_succ_succ, add_sub_add_comm,
+        ihm, ih m, Nat.choose_succ_succ, Nat.cast_add]
+      exact add_comm _ _
+
+/-- **Iterated partial sums of shifted Fibonacci numbers.** Let $F_n$ denote the Fibonacci
+numbers, with $F_0 = 0$ and $F_1 = 1$, and write $P^{(k)}(x)(m)$ for the $k$-fold iterated
+partial sum of a sequence $x$ of natural numbers at $m$. Then for all $k, \ell \ge 0$,
+$P^{(k)}((F_{n+2})_{n \ge 0})(\ell) = P^{(k)}((F_n)_{n \ge 0})(\ell) +
+P^{(k)}((F_n)_{n \ge 0})(\ell + 1)$.
+
+Source: Hùng Việt Chu and Zachary Louis Vasseur, *Weighted Schreier-type Sets and the
+Fibonacci Sequence*, The Fibonacci Quarterly 62 (2024), no. 4, Lemma 3.4
+(`fq-2024-chu08302024rev-lem-3.4`). -/
+public theorem iteratedPartialSum_fib_add_two (k l : ℕ) :
+    iteratedPartialSum k (fun n => Nat.fib (n + 2)) l =
+      iteratedPartialSum k Nat.fib l + iteratedPartialSum k Nat.fib (l + 1) := by
+  unfold iteratedPartialSum
+  induction k generalizing l with
+  | zero => exact Nat.fib_add_two
+  | succ k ih =>
+    have hzero : seededPartialSums 0 Nat.fib k 0 = 0 := by
+      cases k <;> simp [seededPartialSums]
+    simp only [seededPartialSums, Pi.zero_apply, zero_add, ih, Finset.sum_add_distrib]
+    rw [Finset.sum_range_succ' (seededPartialSums 0 Nat.fib k) l, hzero, Nat.add_zero]
 
 end
 

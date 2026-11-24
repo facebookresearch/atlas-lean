@@ -43,12 +43,13 @@ whose first factor is nonnegative by `x n ≤ φ n` and whose second factor is p
 ## Main results
 
 * `MetaMathlibExt.a005773Recurrence_ratio_bounds`: both bounds, for every `n`.
+* `MetaMathlibExt.a005773Recurrence_weighted_logConcave`: log-concavity of four weighted sequences.
 * `MetaMathlibExt.a005773Recurrence_pow_logConvex`: log-convexity of `(n * A n) ^ n`.
 
 ## References
 
 * Feng-Zhen Zhao, *The Log-Behavior of Some Sequences Related to a Linear Recurrence
-  Sequence*, INTEGERS 25 (2025), Article A100, Lemma 1 and Theorem 4.
+  Sequence*, INTEGERS 25 (2025), Article A100.
 -/
 
 namespace MetaMathlibExt
@@ -147,6 +148,54 @@ public theorem a005773Recurrence_ratio_bounds (A : ℕ → ℝ) (h0 : A 0 = 1) (
       mul_nonneg (by linarith) (by positivity)
     rw [hφ, div_div_div_eq, div_le_div_iff₀ (by positivity) (by positivity)]
     linarith
+
+/-- **Log-concave weighted sequences built from A005773.**
+Let $(A_n)_{n \ge 0}$ be a sequence of real numbers with $A_0 = A_1 = 1$ and
+$(n+1) A_{n+1} = 2(n+1) A_n + 3(n-1) A_{n-1}$ for every $n \ge 1$, and write
+$\Delta A_n = A_{n+1} - A_n$ and $\Delta^2 A_n = A_{n+2} - 2A_{n+1} + A_n$. Then for every
+$n \ge 2$, each of the four sequences $z_m = m A_m$, $z_m = (m+1) A_{m+1} - m A_m$,
+$z_m = m\,\Delta A_m$ and $z_m = m\,\Delta^2 A_m$ satisfies $z_{n-1} z_{n+1} \le z_n^2$. That
+is, these four sequences, indexed from $m = 1$, are log-concave.
+
+Source: Feng-Zhen Zhao, *The Log-Behavior of Some Sequences Related to a Linear Recurrence
+Sequence*, INTEGERS 25 (2025), Article A100, Theorem 3. -/
+public theorem a005773Recurrence_weighted_logConcave (A : ℕ → ℝ) (h0 : A 0 = 1)
+    (h1 : A 1 = 1)
+    (hrec : ∀ n : ℕ, 1 ≤ n →
+      ((n : ℝ) + 1) * A (n + 1) = 2 * ((n : ℝ) + 1) * A n + 3 * ((n : ℝ) - 1) * A (n - 1))
+    (n : ℕ) (hn : 2 ≤ n) :
+    let W : ℕ → ℝ := fun m => m * A m
+    let V : ℕ → ℝ := fun m => (m + 1 : ℕ) * A (m + 1) - m * A m
+    let U : ℕ → ℝ := fun m => m * (A (m + 1) - A m)
+    let T : ℕ → ℝ := fun m => m * (A (m + 2) - 2 * A (m + 1) + A m)
+    W (n - 1) * W (n + 1) ≤ W n ^ 2 ∧ V (n - 1) * V (n + 1) ≤ V n ^ 2 ∧
+      U (n - 1) * U (n + 1) ≤ U n ^ 2 ∧ T (n - 1) * T (n + 1) ≤ T n ^ 2 := by
+  obtain ⟨k, rfl⟩ : ∃ k, n = k + 2 := ⟨n - 2, by omega⟩
+  -- The slacks in the ratio bounds at k + 1 give nonnegative coordinates for
+  -- the pair of consecutive terms. Solve the two slack equations to recover both terms.
+  obtain ⟨hlo, hhi⟩ := a005773Recurrence_ratio_mem h0 h1 hrec (k + 1)
+  push_cast at hlo hhi
+  let lo := ((2 * ((k : ℝ) + 1) + 1) * A (k + 2) - 6 * (k + 1) * A (k + 1)) / 3
+  let hi := (3 * (2 * ((k : ℝ) + 1) + 1) * A (k + 1) - 2 * (k + 1 + 1) * A (k + 2)) / 3
+  have hl : 0 ≤ lo := div_nonneg (sub_nonneg.mpr hlo) (by norm_num)
+  have hu : 0 ≤ hi := div_nonneg (sub_nonneg.mpr hhi) (by norm_num)
+  have ha : A (k + 1) = 2 * ((k : ℝ) + 2) * lo + (2 * k + 3) * hi := by
+    dsimp [lo, hi]
+    ring
+  have hb : A (k + 2) = 3 * (2 * (k : ℝ) + 3) * lo + 6 * (k + 1) * hi := by
+    dsimp [lo, hi]
+    ring
+  have step (j : ℕ) : A (j + 2) =
+      (2 * ((j : ℝ) + 2) * A (j + 1) + 3 * j * A j) / (j + 2) := by
+    apply eq_div_of_mul_eq (by positivity)
+    rw [mul_comm]
+    exact a005773Recurrence_succ hrec j
+  -- Eliminate the next three terms. After clearing positive denominators, each difference
+  -- of products has nonnegative coefficients in k, lo, and hi.
+  dsimp only
+  rw [show k + 2 - 1 = k + 1 by omega, step (k + 3), step (k + 2), step (k + 1), ha, hb]
+  push_cast
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> apply sub_nonneg.mp <;> field_simp <;> ring_nf <;> positivity
 
 /-- **Log-convexity of $(n A_n)^n$ for A005773.**
 Let $(A_n)_{n \ge 0}$ be a sequence of real numbers with $A_0 = A_1 = 1$ and

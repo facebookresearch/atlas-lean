@@ -15,6 +15,7 @@ public import Mathlib.Analysis.Complex.Basic
 public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.NumberTheory.Real.GoldenRatio
 public import Mathlib.RingTheory.Binomial
+public import MathlibExt.NumberTheory.KFibonacciAlternatingBinomial
 import Mathlib.Tactic.NormNum
 
 /-!
@@ -250,32 +251,6 @@ public theorem_wanted fib_eq_binomial_sum (n : ℕ) (hn : 2 ≤ n) :
       ((Ring.choose ((3 * ℓ : ℕ) - (n : ℤ)) ℓ -
         (if ℓ = 0 then 0 else Ring.choose ((3 * ℓ : ℕ) - (n : ℤ)) (ℓ - 1)) : ℤ) : ℚ) /
         2 ^ (3 * ℓ)
-
-/-- **Alternating binomial formula for the $k$-Fibonacci numbers.** Let $k \ge 2$ be a natural
-number and let $F_n^{(k)}$ be the $k$-Fibonacci numbers: $F_i^{(k)} = 0$ for $i < k - 1$,
-$F_{k-1}^{(k)} = 1$ and $F_{m+k}^{(k)} = F_m^{(k)} + F_{m+1}^{(k)} + \cdots + F_{m+k-1}^{(k)}$ for
-every $m \ge 0$. For an integer $x$ and a natural number $j$ let
-$\binom{x}{j} = x(x-1)\cdots(x-j+1)/j!$. Then for every natural number $n \ge k$,
-$$
-F_n^{(k)} = 2^{n-k} + \sum_{\ell=1}^{\lfloor (n-k+1)/(k+1) \rfloor} (-1)^\ell
-\left(\binom{n - (\ell+1)k + 2}{\ell} - \binom{n - (\ell+1)k}{\ell - 2}\right)
-2^{n - (k+1)\ell - k},
-$$
-where the term $\binom{n - (\ell+1)k}{\ell - 2}$ is taken to be $0$ for $\ell = 1$.
-
-The paper assumes $n \ne 2k - 1$; for $n = 2k - 1$ the sum is empty and both sides equal
-$2^{k-1}$.
-
-Source: Bakir Farhi, *Some Applications of the Lagrange Inversion Formula for the
-k-Fibonacci Numbers*, Journal of Integer Sequences 27 (2024), Article 24.1.1,
-Corollary 14 (`jis-2024-24.1.1-cor-14`). -/
-public theorem_wanted kFibonacci_eq_alternating_binomial_sum (k n : ℕ) (hk : 2 ≤ k)
-    (hkn : k ≤ n) (F : ℕ → ℤ) (hF0 : ∀ i < k - 1, F i = 0) (hF1 : F (k - 1) = 1)
-    (hrec : ∀ m, F (m + k) = ∑ i ∈ Finset.range k, F (m + i)) :
-    (F n : ℚ) = 2 ^ (n - k) + ∑ ℓ ∈ Finset.Icc 1 ((n - k + 1) / (k + 1)),
-      (-1) ^ ℓ * ((Ring.choose ((n : ℤ) - (ℓ + 1) * k + 2) ℓ -
-        (if ℓ = 1 then 0 else Ring.choose ((n : ℤ) - (ℓ + 1) * k) (ℓ - 2)) : ℤ) : ℚ) *
-        (2 : ℚ) ^ ((n : ℤ) - (k + 1) * ℓ - k)
 
 end
 

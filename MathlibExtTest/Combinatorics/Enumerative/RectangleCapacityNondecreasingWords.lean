@@ -30,3 +30,13 @@ example : (nondecreasingRectangleTotal 3 2 1 3 : ℤ) = 30 := by
   rw [(nondecreasingRectangleTotal_r_by_s 3 2 1 (by decide) (by decide) (by decide)).2 3
     (by decide)]
   decide
+
+-- With one letter, the unique word has one placement at each possible starting position.
+example (s n : ℕ) (hs : 1 ≤ s) (hn : s ≤ n) :
+    (nondecreasingRectangleTotal 1 1 s n : ℤ) = ((n - s + 1 : ℕ) : ℤ) := by
+  simpa [Nat.add_comm 1 s] using (nondecreasingRectangleTotal_one_by_s 1 s le_rfl hs).2 n hn
+
+-- At length four both terms of the signed sum contribute for width two over two letters.
+example : (nondecreasingRectangleTotal 2 1 2 4 : ℤ) = 21 := by
+  rw [(nondecreasingRectangleTotal_one_by_s 2 2 (by decide) (by decide)).2 4 (by decide)]
+  decide
