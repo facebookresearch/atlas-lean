@@ -12908,6 +12908,7 @@
   "MathlibExt/Probability/CharFunStandardizedBinomial": {"to": "Probability/central-limit-theorems", "title": "De Moivre–Laplace theorem"},
   "MathlibExt/Probability/CharFunTaylorBounds": {"to": "Probability/characteristic-functions", "title": "Taylor bounds for characteristic functions"},
   "MathlibExt/Probability/ChineseRestaurant": {"to": "Probability/bayesian-statistics", "title": "Blackwell–MacQueen urn"},
+  "MathlibExt/Probability/Combinatorics/JansonInequality": {"to": "Combinatorics/probabilistic-combinatorics", "title": "Janson's inequalities"},
   "MathlibExt/Probability/Combinatorics/LovaszLocalLemma": {"to": "Combinatorics/probabilistic-combinatorics", "title": "Lovász local lemma"},
   "MathlibExt/Probability/Combinatorics/LovaszLocalLemmaGeneral": {"to": "Combinatorics/probabilistic-combinatorics", "title": "Lovász local lemma"},
   "MathlibExt/Probability/Combinatorics/RandomSubset": {"to": "Combinatorics/probabilistic-combinatorics", "title": "Janson's inequalities"},
