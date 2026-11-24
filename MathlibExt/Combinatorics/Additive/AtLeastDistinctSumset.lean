@@ -80,6 +80,7 @@ private theorem mem_nsmul_iff_exists_multiset {G : Type*} [AddCommMonoid G] [Dec
         a, hmA a (Multiset.mem_cons_self a t), ?_⟩
       simp [add_comm]
 
+set_option linter.unusedVariables false in
 /-- **Decomposition of sums with at least $r$ distinct terms.** Let $G$ be an abelian group, $A$
 a nonempty finite subset of $G$, and $r, h$ natural numbers with $1 \le r \le |A|$ and $r \le h$.
 Write $h^{(\ge r)}A$ for the set of sums of $h$ elements of $A$, repetitions allowed, in which at
@@ -90,8 +91,8 @@ $r$ distinct elements of $A$. Then $h^{(\ge r)}A = (h - r)A + r^{\wedge}A$.
 Source: Jagannath Bhanja, *Sumsets with a Minimum Number of Distinct Terms*, INTEGERS 25 (2025),
 Article A12, Lemma 2, equation (5) (`integers-2025-A12-lem-2`). -/
 public theorem atLeastDistinctSumset_eq_nsmul_add_restrictedSumset {G : Type*}
-    [AddCommGroup G] [DecidableEq G] (A : Finset G) (_hA : A.Nonempty) (r h : ℕ) (_hr : 1 ≤ r)
-    (_hrk : r ≤ A.card) (hrh : r ≤ h) :
+    [AddCommGroup G] [DecidableEq G] (A : Finset G) (hA : A.Nonempty) (r h : ℕ) (hr : 1 ≤ r)
+    (hrk : r ≤ A.card) (hrh : r ≤ h) :
     atLeastDistinctSumset h r A = (h - r) • A + restrictedSumset r A := by
   ext x
   simp only [atLeastDistinctSumset, restrictedSumset, Finset.mem_image, Finset.mem_filter,
