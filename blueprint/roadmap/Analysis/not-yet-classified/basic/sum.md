@@ -1,7 +1,5 @@
-# Sum
+# Finite sums of completely positive maps
 
-Finite sum of completely positive maps is completely positive.
-
-The complete positivity is proved generically from entrywise additivity of
-`CStarMatrix.map` and closure of nonnegativity under finite sums, without
-introducing arbitrary complex scalar closure.
+For nonunital complex C*-algebras `A` and `B` with compatible star orders, a
+finite family `phi : ι → A →CP B` defines the completely positive map
+`a ↦ ∑ i, phi i a`. The empty family gives the zero map.

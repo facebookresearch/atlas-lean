@@ -84,8 +84,12 @@ theorem nonunitalGNSVector_inner (a : A) :
       rw [← stateGNSRepresentation_vector (PositiveContinuousLinearMap.ofClass tau) htau a]
       exact stateGNSRepresentation_state (PositiveContinuousLinearMap.ofClass tau) htau a
 
-/-- Anchored coefficient uniqueness on the original GNS carrier; this does
-not assert phase-sensitive uniqueness from vector-state realization alone. -/
+/-- **Uniqueness from GNS coefficients.** Let `A` be a nonunital complex
+C*-algebra with a compatible star order, and let `tau` be a positive complex
+linear functional whose associated continuous functional has operator norm one.
+If `y` belongs to the GNS Hilbert space of `tau` and
+`tau a = inner ℂ y (tau.toGNS a)` for every `a : A`, then
+`y = nonunitalGNSVector tau htau`. -/
 theorem nonunitalGNSVector_unique (y : tau.GNS)
     (hy : ∀ a : A, tau a = inner ℂ y (tau.toGNS a)) :
     y = nonunitalGNSVector tau htau := by
