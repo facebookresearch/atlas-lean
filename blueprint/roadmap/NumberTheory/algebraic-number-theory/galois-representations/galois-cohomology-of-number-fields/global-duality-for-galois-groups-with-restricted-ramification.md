@@ -57,7 +57,7 @@ A good expansion has pages for:
 - [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for Tate cohomology, class formations and level-compact formation modules in items 2 and 3
 - [Topological idele class group](../../adeles-class-field-theory/adeles-and-ideles/topological-idele-class-group.md), for the idèle class groups $C_K$, of which the $S$-idèle class groups $C_S(K)$ are quotients (items 2 and 3)
 - [Adelic norm](../../adeles-class-field-theory/adeles-and-ideles/adelic-norm.md), for the norm of idèle classes, whose kernel defines $C_S^0$ (item 3)
-- [Hilbert class field of a number field](../../adeles-class-field-theory/hilbert-class-field/is-hilbert-class-field.md), for the Hilbert class field of $K$, whose maximal subfield completely split at the places of $S$ is the field of the principalisation in item 2; that the ideals become principal there is the principal ideal theorem, a separate proof input
+- [Hilbert class field of a number field](../../adeles-class-field-theory/hilbert-class-field/is-hilbert-class-field.md), for the Hilbert class field of $K$, whose maximal subfield completely split at the places of $S$ is the field of the principalisation in item 2; that the ideals become principal there is the principal ideal theorem, listed under Expansion
 - [Local Tate duality](../galois-cohomology-of-local-fields/local-tate-duality.md), for the local pairings defining $\Xi^i$ in item 4
 - [Tate duality for the real numbers](../galois-cohomology-of-local-fields/tate-duality-for-the-real-numbers.md), for those pairings at the archimedean places
 
@@ -69,10 +69,15 @@ A good expansion has pages for:
 - [Unramified classes under local duality](../galois-cohomology-of-local-fields/unramified-classes-under-local-duality.md), for the exact annihilators behind (8.5.2) in item 4
 - [Tate duality for the real numbers](../galois-cohomology-of-local-fields/tate-duality-for-the-real-numbers.md), for the archimedean places in items 3 and 4
 - [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for the Tate–Nakayama theorem and the duality theorem (3.1.11)(i) for a level-compact formation module with divisible universal norm groups, which give the duality of item 3 in the degrees $i \le 0$ for every finitely generated $A$, and in all degrees if $A$ is $\mathbb{Z}$-free
-- Not yet a page: the principal ideal theorem, for the principalisation $\varinjlim_K \mathrm{Cl}_S(K) = 0$ of item 2 and the finiteness of $\text{Ш}^1(G_S, A')$ in (8.6.4) (item 5)
 - [Hilbert's Theorem 90 for the multiplicative group](../../../../FieldTheory/galois-theory/multiplicative-hilbert-s-theorem-90.md), for the vanishing of the local groups $H^1(F_v, \bar F_v^\times)$, from the finite theorem by the continuous direct limit over the finite Galois extensions of $F_v$ (items 1 and 6 of the cohomology of profinite groups), so that $\text{Ш}^1(G_S, \mathbb{Z}')$ is all of $H^1(G_S, \mathcal{O}_S^\times)$ in (8.6.3) (item 5); that global group is $\mathrm{Cl}_S(F)$ by (8.3.11)(ii), not zero
 - [Existence theorem of global class field theory](../../adeles-class-field-theory/existence-theorem/existence-of-class-fields.md), for the class field of the open subgroup of $C_F$ represented by the idèles with arbitrary components at the places of $S$ and unit components elsewhere, the maximal abelian extension of $F$ inside $F_S$ in which the places of $S$ split completely, whose Galois group is $\mathrm{Cl}_S(F)$ in (8.6.3), and of the corresponding subgroups after base change to the finite extensions $K$ in (8.6.4) (item 5)
 - [Global reciprocity law](../../adeles-class-field-theory/reciprocity-law/global-reciprocity-law.md), for the Artin isomorphisms of those class fields, $\mathrm{Gal} \cong C_F/N \cong \mathrm{Cl}_S(F)$, in (8.6.3) and (8.6.4) (item 5)
+
+## Expansion
+
+A good expansion also states and links:
+
+- the principal ideal theorem (Neukirch–Schmidt–Wingberg, proofs of (8.3.6), p. 456, and of (8.6.4)), for the principalisation $\varinjlim_K \mathrm{Cl}_S(K) = 0$ of item 2 and the finiteness of $\text{Ш}^1(G_S, A')$ in (8.6.4) (item 5)
 
 ## Sources
 

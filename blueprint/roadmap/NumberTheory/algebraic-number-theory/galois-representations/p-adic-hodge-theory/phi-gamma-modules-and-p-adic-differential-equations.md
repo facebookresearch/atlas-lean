@@ -26,7 +26,12 @@ A good expansion has pages for:
 ## Proof depends on
 
 - [Structure of the rings of periods](structure-of-the-period-rings.md), for the ring $R$, the field $B_{\mathrm{dR}}$ with its subrings and Sen's theory (its items 1 and 2), from which Berger builds the rings and the modules $D_{\mathrm{Sen}}(V)$ and $D_{\mathrm{dif}}(V)$ of items 2 and 3 (Berger 2002, §§1–2 and 5.3)
-- Not yet a page: Fontaine's equivalence for the absolute Galois group of a field $E$ of characteristic $p$, between its $\mathbb{Z}_p$-representations and the étale $\varphi$-modules over the Cohen ring $C(E)$ (Fontaine–Ouyang, Theorem 3.34) and between its $p$-adic representations and the étale $\varphi$-modules over the characteristic-zero field $\operatorname{Frac} C(E)$ (Theorem 3.35), which item 1 applies to $H_K$, identified with the absolute Galois group of the field of norms, before adding the action of $\Gamma_K$ (Fontaine–Ouyang, (5.26)–(5.29) and Theorem 5.22)
+
+## Expansion
+
+A good expansion also states and links:
+
+- Fontaine's equivalence for the absolute Galois group of a field $E$ of characteristic $p$, between its $\mathbb{Z}_p$-representations and the étale $\varphi$-modules over the Cohen ring $C(E)$ (Fontaine–Ouyang, Theorem 3.34) and between its $p$-adic representations and the étale $\varphi$-modules over the characteristic-zero field $\operatorname{Frac} C(E)$ (Theorem 3.35), which item 1 applies to $H_K$, identified with the absolute Galois group of the field of norms, before adding the action of $\Gamma_K$ (Fontaine–Ouyang, (5.26)–(5.29) and Theorem 5.22)
 
 ## Sources
 

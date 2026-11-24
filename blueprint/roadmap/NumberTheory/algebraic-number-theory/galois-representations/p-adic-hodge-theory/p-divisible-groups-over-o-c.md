@@ -37,16 +37,21 @@ A good expansion has pages for:
 - [p-divisible group](../../../../AlgebraicGeometry/abelian-varieties/deformations-and-p-divisible-groups/p-divisible-group.md)
 - [Crystalline representations](crystalline-representations.md), for $A_{\mathrm{cris}}$ and $B_{\mathrm{cris}}^+$
 - [Weakly admissible filtered (φ, N)-modules](weakly-admissible-filtered-phi-n-modules.md), for weak admissibility in the case $N = 0$, in the clause of item 2 on the bundle attached to a weakly admissible filtered $\varphi$-module; it is a condition on that module, not a hypothesis on $p$-divisible groups
-- Not yet a page: the extended Robba ring attached to $A_{\mathrm{inf}}$ (Fargues–Fontaine 2019, Definition 1.8.1, as cited by Bhatt–Scholze 2021, §6.4, n. 13), for the $\varphi$-modules over it in item 2
 
 ## Proof depends on
 
 - [Structure of the rings of periods](structure-of-the-period-rings.md), for the Dieudonné–Manin classification of isocrystals by their slopes (its item 5), for the slopes of the isocrystals over $\bar{\mathbb{F}}_p$ in items 2 and 3
-- Not yet a page: the realisation of every vector bundle on the Fargues–Fontaine curve as the bundle attached to an isocrystal over $\bar{\mathbb{F}}_p$ ([FF12], Theorem 7.14), for the classification of item 2 and the essential image in item 3 (Scholze–Weinstein, proof of Theorem 5.1.4)
-- Not yet a page: the isotriviality of Dieudonné modules over $B_{\mathrm{cris}}^+$ ([FF12], Theorem 7.24) and the full faithfulness of their functor to vector bundles ([FF12], Theorem 7.15 with Proposition 7.17), to which Scholze–Weinstein's Theorem 4.1.4 reduces the isotriviality and the full faithfulness of item 3
 - [Grothendieck–Messing deformation theorem](../../../../AlgebraicGeometry/abelian-varieties/deformations-and-p-divisible-groups/grothendieck-messing-theorem.md), for the value of the Dieudonné crystal on nilpotent divided power extensions (its item 1)
-- Not yet a page: the crystalline Dieudonné module as a crystal on the full crystalline site, and its evaluation on $A_{\mathrm{cris}}(R)$ for a semiperfect ring $R$, a divided power thickening that is not nilpotent (Messing; Berthelot–Breen–Messing; Scholze–Weinstein, §4.1), for the Dieudonné modules of items 1 and 3
-- Not yet a page: perfectoid spaces and tilting, for the perfectoid affinoid algebras of Scholze–Weinstein, §4.3, and the curve attached to $C$ in item 2
+
+## Expansion
+
+A good expansion also states and links:
+
+- the extended Robba ring attached to $A_{\mathrm{inf}}$ (Fargues–Fontaine 2019, Definition 1.8.1, as cited by Bhatt–Scholze 2021, §6.4, n. 13), for the $\varphi$-modules over it in item 2
+- the realisation of every vector bundle on the Fargues–Fontaine curve as the bundle attached to an isocrystal over $\bar{\mathbb{F}}_p$ ([FF12], Theorem 7.14), for the classification of item 2 and the essential image in item 3 (Scholze–Weinstein, proof of Theorem 5.1.4)
+- the isotriviality of Dieudonné modules over $B_{\mathrm{cris}}^+$ ([FF12], Theorem 7.24) and the full faithfulness of their functor to vector bundles ([FF12], Theorem 7.15 with Proposition 7.17), to which Scholze–Weinstein's Theorem 4.1.4 reduces the isotriviality and the full faithfulness of item 3
+- the crystalline Dieudonné module as a crystal on the full crystalline site, and its evaluation on $A_{\mathrm{cris}}(R)$ for a semiperfect ring $R$, a divided power thickening that is not nilpotent (Messing; Berthelot–Breen–Messing; Scholze–Weinstein, §4.1), for the Dieudonné modules of items 1 and 3
+- perfectoid spaces and tilting (Scholze–Weinstein, §2.3, citing [Sch12]), for the perfectoid affinoid algebras of Scholze–Weinstein, §4.3, and the curve attached to $C$ in item 2
 
 ## Sources
 

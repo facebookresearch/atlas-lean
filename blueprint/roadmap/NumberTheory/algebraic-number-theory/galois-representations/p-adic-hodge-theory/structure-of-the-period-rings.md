@@ -34,14 +34,19 @@ A good expansion has pages for:
 
 - [Cyclotomic character and Tate twists](../cyclotomic-character-and-tate-twists.md), for the twists $\mathbb{Q}_p(r)$ of item 3
 - [Weakly admissible filtered (φ, N)-modules](weakly-admissible-filtered-phi-n-modules.md), for $\varphi$-modules over $K_0$ and their Newton numbers in item 5
-- Not yet a page: the ring $W(R)$ of Witt vectors of the perfect ring $R$, with the Teichmüller expansion $\sum_{n \ge 0} p^n [x_n]$ of its elements, for $\theta \colon W(R) \to \mathcal{O}_C$ and $A_{\mathrm{cris}}$ in item 2
 
 ## Proof depends on
 
 - [Ramification groups of local fields](../../discriminants-ramification/ramification-groups-of-local-fields.md), for the lower numbering, on which the ramification estimates behind item 1 are built (Fontaine–Ouyang, §§1.3–1.4)
-- Not yet a page: the local different of an extension of local fields expressed through the upper numbering ((1.54)–(1.55)), the trace estimate of Corollary 1.79, and the ramification of totally ramified $\mathbb{Z}_p$-extensions ((1.68), Sen's filtration theorem), which give the almost étale condition and the estimates of Proposition 1.95 to Corollary 1.99 behind Tate's normalized traces (item 1; Fontaine–Ouyang, §§1.3.3–1.4.2)
-- Not yet a page: Lubin–Tate formal groups (Fontaine–Ouyang, §7.3.2), for the Lubin–Tate elements of item 4
-- Not yet a page: Fontaine's equivalence between the $p$-adic representations of the absolute Galois group of a field $E$ of characteristic $p$ and the étale $\varphi$-modules over the characteristic-zero field $\operatorname{Frac} C(E)$, for a Cohen ring $C(E)$ of $E$ (Fontaine–Ouyang, Proposition 3.32, Theorem 3.35), used in the proofs of item 6
+
+## Expansion
+
+A good expansion also states and links:
+
+- the ring $W(R)$ of Witt vectors of the perfect ring $R$, with the Teichmüller expansion $\sum_{n \ge 0} p^n [x_n]$ of its elements (Fontaine–Ouyang, §1.2.2), for $\theta \colon W(R) \to \mathcal{O}_C$ and $A_{\mathrm{cris}}$ in item 2
+- the local different of an extension of local fields expressed through the upper numbering ((1.54)–(1.55)), the trace estimate of Corollary 1.79, and the ramification of totally ramified $\mathbb{Z}_p$-extensions ((1.68), Sen's filtration theorem), which give the almost étale condition and the estimates of Proposition 1.95 to Corollary 1.99 behind Tate's normalized traces (item 1; Fontaine–Ouyang, §§1.3.3–1.4.2)
+- Lubin–Tate formal groups (Fontaine–Ouyang, §7.3.2), for the Lubin–Tate elements of item 4
+- Fontaine's equivalence between the $p$-adic representations of the absolute Galois group of a field $E$ of characteristic $p$ and the étale $\varphi$-modules over the characteristic-zero field $\operatorname{Frac} C(E)$, for a Cohen ring $C(E)$ of $E$ (Fontaine–Ouyang, Proposition 3.32, Theorem 3.35), used in the proofs of item 6
 
 ## Sources
 
