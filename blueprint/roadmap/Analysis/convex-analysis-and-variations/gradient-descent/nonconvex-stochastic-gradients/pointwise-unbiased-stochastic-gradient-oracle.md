@@ -25,8 +25,9 @@ does not require $f$ to be bounded below or $\nabla f$ to be Lipschitz.
 
 ## Depends on
 
-- [A Fréchet derivative given by a dot product is a gradient](../../../real-functions/multivariable-calculus/gradient/has-gradient-at-of-lp.md)
+- [Gradient of a function on Euclidean coordinate space](../../../../Probability/stochastic-calculus/fokker-planck-equation/grad.md)
 - [Probability measure](../../../../Probability/foundations/probability-measures/is-probability-measure.md)
+- [Borel σ-algebra](../../../../MeasureTheory/measurable-spaces/measurable-spaces-and-measurable-functions/sigma-algebras/borel.md)
 - [Measurable function](../../../../MeasureTheory/measurable-spaces/measurable-spaces-and-measurable-functions/measurable-functions/measurable.md)
 - [Expected value of a random variable](../../../../Probability/foundations/laws-of-random-variables-and-identical-distribut/expectation/expectation-random-variable.md)
 
