@@ -12060,6 +12060,7 @@
   "MathlibExt/NumberTheory/Digits/SutcliffeReverseMultiple": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Reverse multiples"},
   "MathlibExt/NumberTheory/Digits/SzuszVolkmannCounterexample": {"to": "NumberTheory/diophantine-approximation/uniform-distribution-metric", "title": "Normal numbers"},
   "MathlibExt/NumberTheory/Digits/ThreeDigitBinomialForm": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Palindromic representations of powers of two"},
+  "MathlibExt/NumberTheory/Digits/ThreeDigitPalindromeTwoPow": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Palindromic representations of powers of two"},
   "MathlibExt/NumberTheory/Digits/ThreePowCubeBound": {"to": "NumberTheory/congruences/covering-systems", "title": "Exact covering system digraphs"},
   "MathlibExt/NumberTheory/Digits/TrollopeDelange": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Dirichlet convolutions of digit sums"},
   "MathlibExt/NumberTheory/Digits/YoungGraph": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Reverse multiples"},
