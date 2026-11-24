@@ -1,0 +1,3 @@
+# Mean-value bound for the coefficient score in the shape
+
+For covariate rows $x_i$, offsets $o_i$ and counts $y_i$ of a sample, a null coefficient $\beta_0$ and a shape $\theta$, let $S_n(\theta) = \sum_{i<n}\frac{\theta(y_i - \mu_i)}{\theta + \mu_i}x_i$ with $\mu_i = e^{x_i^\top\beta_0 + o_i}$ be the coefficient score and $C_n(\theta) = n^{-1}\sum_{i<n}\frac{(y_i - \mu_i)\mu_i}{(\theta + \mu_i)^2}x_i$ the averaged cross term. If $\delta < \theta_0$ and $\|nC_n(c)\| \le B$ for every $c$ with $|c - \theta_0| \le \delta$, then $\|S_n(\theta) - S_n(\theta_0)\| \le B|\theta - \theta_0|$ for every such $\theta$.

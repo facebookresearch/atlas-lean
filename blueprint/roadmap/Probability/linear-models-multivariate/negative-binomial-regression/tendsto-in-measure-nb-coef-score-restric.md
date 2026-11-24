@@ -1,0 +1,3 @@
+# The restricted shape does not move the coefficient score
+
+For covariate rows $x_i$, offsets $o_i$ and counts $y_i$ of a sample, a null coefficient $\beta_0$ and a shape $\theta$, let $S_n(\theta) = \sum_{i<n}\frac{\theta(y_i - \mu_i)}{\theta + \mu_i}x_i$ with $\mu_i = e^{x_i^\top\beta_0 + o_i}$ be the coefficient score and $C_n(\theta) = n^{-1}\sum_{i<n}\frac{(y_i - \mu_i)\mu_i}{(\theta + \mu_i)^2}x_i$ the averaged cross term. Let $\tilde\theta_n \to \theta_0 > 0$ in probability with $\sqrt n(\tilde\theta_n - \theta_0)$ bounded in probability, and let $\sup_{|\theta - \theta_0| \le \delta}\|C_n(\theta)\| \to 0$ in probability for some $0 < \delta < \theta_0$. Then $n^{-1/2}(S_n(\tilde\theta_n) - S_n(\theta_0)) \to 0$ in probability.

@@ -1,0 +1,3 @@
+# Local convergence of Fisher scoring
+
+Let $E$ be a real normed space, $U : E \to E$ with $U(b) = 0$ and derivative $-I(x)$ at every $x \in B(b, r)$, with $\|I(x) - I(y)\| \le L\|x - y\|$ there, $I(b)$ having a left inverse of norm at most $M$, $\varepsilon \le r$ and $2ML\varepsilon \le 1$. If $T$ solves the Fisher-scoring equations $I(x)(T(x) - x) = U(x)$ on $B(b, \varepsilon)$, then from every $\beta_0 \in B(b, \varepsilon)$ the iterates stay in $B(b, \varepsilon)$, satisfy $\|\beta_{n+1} - b\| \le ML\|\beta_n - b\|^2$, $\|\beta_{n+1} - b\| \le \frac12\|\beta_n - b\|$ and $\|\beta_n - b\| \le 2^{-n}\|\beta_0 - b\|$, and converge to $b$. For a canonical generalized linear model these are the iteratively reweighted least-squares equations.

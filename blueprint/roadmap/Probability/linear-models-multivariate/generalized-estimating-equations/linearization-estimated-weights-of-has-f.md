@@ -1,0 +1,3 @@
+# Linearization with estimated weights from differentiability
+
+Suppose each cluster score $\beta \mapsto U_i(\beta, \theta)$ is differentiable near $\beta_0$ for every $\theta$ near $\theta_0$ with derivative $DU_i(\beta, \theta)$, $n^{-1}\sum_{i<n}DU_i(\beta, \theta) \to \bar A(\beta, \theta)$ uniformly near $(\beta_0, \theta_0)$ in probability with $\bar A$ continuous at $(\beta_0, \theta_0)$, and $\hat\beta_n \to \beta_0$, $\hat\theta_n \to \theta_0$ in probability. Then for every $\varepsilon > 0$, with probability tending to one, $\|n^{-1}\sum_i(U_i(\hat\beta_n, \hat\theta_n) - U_i(\beta_0, \hat\theta_n)) - \bar A(\beta_0, \theta_0)(\hat\beta_n - \beta_0)\| \le \varepsilon\|\hat\beta_n - \beta_0\|$.

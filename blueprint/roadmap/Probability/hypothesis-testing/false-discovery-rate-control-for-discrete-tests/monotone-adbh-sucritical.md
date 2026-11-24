@@ -1,0 +1,3 @@
+# Adaptive discrete critical values are nondecreasing
+
+For a level $\alpha$, null distribution functions $F_1, \dots, F_m$ and a finite support set $A$, let $\tau_m$ be the largest $t \in A \cup \{0\}$ with every $F_i(t) < 1$ and $\frac1m\sum_iF_i(t)/(1 - F_i(t)) \le \alpha$, and $\tau_k$ the largest $t \in A \cup \{0\}$ with $t \le \tau_m$ and $\frac1m\sum_iF_i(t)/(1 - F_i(\tau_m)) \le \alpha k/m$ (the discrete Benjamini–Hochberg critical values). The adaptive critical value $\tilde\tau_k$ is the largest $t \in A \cup \{0\}$ with $t \le \tau_m$ and $\frac1m\Sigma_{m-k+1}\big((F_i(t)/(1 - F_i(\tau_m)))_i\big) \le \alpha k/m$, where $\Sigma_r$ is the sum of the $r$ largest terms. If $\alpha \ge 0$, then $k \mapsto \tilde\tau_k$ is nondecreasing.

@@ -1,0 +1,3 @@
+# Uniqueness of the generalized linear model maximum-likelihood estimate
+
+Let $(\Theta, b, \mu, V)$ be a canonical cumulant specification: an open convex natural-parameter domain $\Theta \subseteq \mathbb{R}$, a cumulant $b$ with $b' = \mu$ and $\mu' = V \ge 0$ on $\Theta$. For an $n \times p$ design $X$, offset $o$, responses $y$ and dispersion $\varphi > 0$, write $\eta(\beta) = X\beta + o$, $\ell(\beta) = \sum_i(y_i\eta_i(\beta) - b(\eta_i(\beta)))/\varphi$, $W_i(\beta) = V(\eta_i(\beta))$, and let $D = \{\beta : \eta_i(\beta) \in \Theta \text{ for all } i\}$ be the coefficient domain. If $X$ has full column rank and $V > 0$ on $\Theta$, then $\ell$ has at most one maximizer on $D$. Existence is not claimed.

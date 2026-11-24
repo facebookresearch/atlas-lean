@@ -1,0 +1,3 @@
+# Unbiasedness of the generalized estimating function with fixed design
+
+On a probability space, for clusters $i$ with mean models $\mu_i(\beta)$, declared working covariances $V_i(\beta)$ and responses $y_i$, let $U(\beta) = \sum_iD_i(\beta)^\top V_i(\beta)^{-1}(y_i - \mu_i(\beta))$ be the generalized estimating function, $D_i = \partial\mu_i/\partial\beta$. If the responses $Y_i$ are integrable and the marginal mean model is correct at $\beta^*$, $\mathbb{E}[Y_i] = \mu_i(\beta^*)$, then $\mathbb{E}[U(\beta^*)] = 0$ for every choice of working covariances. No independence between clusters is assumed.

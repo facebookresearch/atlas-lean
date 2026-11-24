@@ -1,0 +1,3 @@
+# Roots of the closed-form negative binomial likelihood equation
+
+Consider negative binomial regression with joint parameter $p = (\beta, \theta)$, coefficients $\beta$ and shape $\theta$: an observation $z = (x, y)$ (covariate row $x$, count $y$) has density $f_p(z) = \mathrm{NB}(y; \theta, e^{x^\top\beta})$, with closed-form score $s_p(z)$ and observed information $J_p(z)$. Let $\hat p_n$ converge in probability to $p_0$ with positive shape and solve $\sum_{i<n}s_{\hat p_n}(z_i) = 0$ with probability tending to one. Then $\hat p_n$ solves the likelihood equation $\sum_{i<n}\nabla_p\log f_{\hat p_n}(z_i) = 0$ with probability tending to one.
