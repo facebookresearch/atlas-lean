@@ -1,0 +1,15 @@
+# LCAReconciliation
+
+- [Tree Data](tree-data.md)
+- [Is Reconciliation](is-reconciliation.md)
+- [Is Lca](is-lca.md)
+- [Share Edge](share-edge.md)
+- [Is Dup](is-dup.md)
+- [Dup Cost](dup-cost.md)
+- [Dist](dist.md)
+- [Seg Len](seg-len.md)
+- [Loss Cost](loss-cost.md)
+- [LCA reconciliation has minimum duplication cost](lca-dup-cost-min.md)
+- [LCA reconciliation minimizes duplication plus loss](lca-dup-loss-min.md)
+- [LCA reconciliation is the unique loss-optimal reconciliation](lca-loss-cost-unique.md)
+- [LCA reconciliation is the unique deep-coalescence-optimal reconciliation](lca-deep-cost-unique.md)
