@@ -80398,6 +80398,7 @@
 "NumberField.coe_principalDivisor_fst": "b647c78de6b3aa93",
 "NumberField.coe_principalDivisor_snd": "30f8c07c61018a03",
 "NumberField.degreeZero": "49afe36ccf0a0298",
+"NumberField.dirichlet_sUnit_theorem": "9d65bc09c589a6f5",
 "NumberField.finite_ramified_primes": "3ba1f88ab2bd9740",
 "NumberField.isOrder_integralClosure": "493bb0389653305f",
 "NumberField.isUnramifiedIn_mono": "0ffdf74b93cb4b1d",
