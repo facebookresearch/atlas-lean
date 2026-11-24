@@ -11007,6 +11007,7 @@
   "MathlibExt/Combinatorics/LorentzianPolynomials": {"to": "Combinatorics/matroid-theory", "title": "Lorentzian polynomials"},
   "MathlibExt/Combinatorics/Matching/BergeLemma": {"to": "GraphTheory/matchings-and-flows", "title": "Berge's lemma"},
   "MathlibExt/Combinatorics/Matching/GaleShapley": {"to": "GraphTheory/matchings-and-flows", "title": "Stable marriage problem"},
+  "MathlibExt/Combinatorics/Matching/ShortAugmentingPath": {"to": "GraphTheory/matchings-and-flows", "title": "Berge's lemma"},
   "MathlibExt/Combinatorics/MatrixDiscrepancy": {"to": "Combinatorics/discrepancy-theory", "title": "Komlós conjecture"},
   "MathlibExt/Combinatorics/Matroid/Algebraic": {"to": "Combinatorics/matroid-theory", "title": "Algebraic matroids"},
   "MathlibExt/Combinatorics/Matroid/ChowRing": {"to": "Combinatorics/matroid-theory", "title": "Hodge theory for matroids"},
