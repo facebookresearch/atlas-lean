@@ -50,7 +50,8 @@ Correspondence with the paper:
 
 The auxiliary `bias S T f`
 (`MathlibExt.Probability.FiniteTransport.bias`) is the expectation gap of a single
-real-valued score `f` between two populations, and `bias_le_earthmover`
+real-valued score `f` between two weight vectors (two populations, when
+they are probability distributions), and `bias_le_earthmover`
 bounds that score gap by the earthmover value for `1`-Lipschitz
 scores. It is neither the fixed-classifier statistical-parity gap of
 Definition 3.1 (a total variation distance between induced outcome
@@ -174,8 +175,9 @@ theorem isLipschitzFair_convexCombo {V O : Type*} [Fintype O]
 
 /-- Classifier-level transport bound: for an individually fair
 classifier and every coupling, the total variation distance between
-the induced outcome distributions is at most that coupling's
-transport cost. -/
+the induced outcome vectors is at most that coupling's transport
+cost. The pushforwards are probability distributions when `S` and
+`T` are, the case of `tvDist_inducedDist_le_earthmover`. -/
 theorem tvDist_inducedDist_le_transportCost {V O : Type*} [Fintype V]
     [Fintype O] {d : V → V → ℝ} {M : V → O → ℝ} {S T : V → ℝ}
     {π : V → V → ℝ} (hM : IsLipschitzFair d M) (hπ : IsCoupling S T π) :

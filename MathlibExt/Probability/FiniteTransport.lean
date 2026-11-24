@@ -32,8 +32,8 @@ expectation gap of a `1`-Lipschitz score.
 `earthmover` takes its marginals in the subtype `{p // IsDist p}` of
 probability vectors, so its defining infimum ranges over a nonempty set
 of couplings (`exists_coupling`). The auxiliary `bias S T f` is the
-expectation gap of a single real-valued score between the two
-distributions `S` and `T`.
+expectation gap of a single real-valued score between two weight
+vectors `S` and `T`.
 
 The ground cost `d` is unconstrained throughout, so for signed costs
 the earthmover value can be negative and is not a distance; it is the
@@ -52,8 +52,9 @@ noncomputable section
 
 export MathlibExt.Probability.FiniteDist (IsDist)
 
-/-- The distribution obtained by pushing a mass function `S` forward
-along a kernel `M`: outcome `o` has mass `∑ x, S x * M x o`. -/
+/-- The pushforward of a mass function `S` along a kernel `M`: outcome
+`o` has mass `∑ x, S x * M x o`. It is a probability distribution when
+`S` and every row of `M` are (`inducedDist_isDist`). -/
 def inducedDist {V O : Type*} [Fintype V] (M : V → O → ℝ) (S : V → ℝ) :
     O → ℝ :=
   fun o => ∑ x, S x * M x o
@@ -102,8 +103,10 @@ noncomputable def earthmover {V : Type*} [Fintype V] (d : V → V → ℝ)
     (S T : {p : V → ℝ // IsDist p}) : ℝ :=
   ⨅ π : {π // IsCoupling S.1 T.1 π}, transportCost d π
 
-/-- Expectation gap of a real-valued score `f` between the distributions
-`S` and `T`. -/
+/-- Expectation gap of a real-valued score `f` between the weight
+vectors `S` and `T`: the absolute difference of the weighted score
+sums. For probability distributions this is the gap between the two
+expectations of `f`. -/
 def bias {V : Type*} [Fintype V] (S T f : V → ℝ) : ℝ :=
   |∑ x, S x * f x - ∑ x, T x * f x|
 
@@ -308,8 +311,9 @@ theorem earthmover_le_transportCost {V : Type*} [Fintype V] {d : V → V → ℝ
   unfold earthmover
   exact ciInf_le hbdd ⟨π, hπ⟩
 
-/-- The expectation gap of a `1`-Lipschitz score (`∀ x y, |f x - f y| ≤ d x y`)
-is bounded by the transport cost of any coupling. -/
+/-- The expectation gap of a `1`-Lipschitz score (`∀ x y, |f x - f y| ≤ d x y`),
+a weighted score-sum gap for general weights, is bounded by the
+transport cost of any coupling of the two weight vectors. -/
 theorem bias_le_transportCost {V : Type*} [Fintype V] {d : V → V → ℝ}
     {S T f : V → ℝ} {π : V → V → ℝ} (hπ : IsCoupling S T π)
     (hf : ∀ x y, |f x - f y| ≤ d x y) :
