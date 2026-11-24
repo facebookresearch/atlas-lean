@@ -115,7 +115,8 @@ Source: Steven Edwards and William Griffiths, *Delannoy Constructions*, Journal
 of Integer Sequences 27 (2024), Article 24.1.8, Theorem 4
 (`jis-2024-24.1.8-thm-4`). -/
 public theorem genDelannoyUpper_add_succ_left (k m n : ℕ) (hk : 1 ≤ k) :
-    genDelannoyUpper k m n + genDelannoyUpper k (m + 1) n = genDelannoyUpper (k - 1) (m + 1) (n + 1) := by
+    genDelannoyUpper k m n + genDelannoyUpper k (m + 1) n =
+      genDelannoyUpper (k - 1) (m + 1) (n + 1) := by
   obtain ⟨s, rfl⟩ := Nat.exists_eq_add_of_le' hk
   rw [add_comm (genDelannoyUpper (s + 1) m n)]
   simp only [Nat.add_sub_cancel]
