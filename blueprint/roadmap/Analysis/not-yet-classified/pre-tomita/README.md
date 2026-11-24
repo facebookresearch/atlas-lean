@@ -1,0 +1,15 @@
+# Pre Tomita
+
+- [Finite Star Square GNSMap](finite-star-square-gnsmap.md)
+- [Finite Star Square GNSMap apply](finite-star-square-gnsmap-apply.md)
+- [Finite Star Square GNSMap injective](finite-star-square-gnsmap-injective.md)
+- [Tomita Core](tomita-core.md)
+- [Mem tomita Core](mem-tomita-core.md)
+- [Tomita Core Equiv](tomita-core-equiv.md)
+- [Tomita Core Equiv apply](tomita-core-equiv-apply.md)
+- [Pre Tomita Core](pre-tomita-core.md)
+- [Pre Tomita Core apply](pre-tomita-core-apply.md)
+- [Pre Tomita Core involutive](pre-tomita-core-involutive.md)
+- [Pre Tomita Operator](pre-tomita-operator.md)
+- [Pre Tomita Operator apply](pre-tomita-operator-apply.md)
+- [Pre Tomita Operator injective](pre-tomita-operator-injective.md)

@@ -1,0 +1,15 @@
+# Tomita Core Algebra
+
+- [Tomita Core Product](tomita-core-product.md)
+- [Tomita Core Product inverse](tomita-core-product-inverse.md)
+- [Tomita Core Product original](tomita-core-product-original.md)
+- [Tomita Core Non Unital Ring](tomita-core-non-unital-ring.md)
+- [Tomita Core Non Unital Ring add Group](tomita-core-non-unital-ring-add-group.md)
+- [Tomita Core Star](tomita-core-star.md)
+- [Pre Tomita Core inverse](pre-tomita-core-inverse.md)
+- [Tomita Core Star Ring](tomita-core-star-ring.md)
+- [Tomita Core Star Module](tomita-core-star-module.md)
+- [Tomita Core Product smul left](tomita-core-product-smul-left.md)
+- [Tomita Core Product smul right](tomita-core-product-smul-right.md)
+- [To Tomita Core Star Alg Hom](to-tomita-core-star-alg-hom.md)
+- [From Tomita Core Star Alg Hom](from-tomita-core-star-alg-hom.md)

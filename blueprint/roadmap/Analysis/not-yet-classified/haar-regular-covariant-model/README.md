@@ -1,0 +1,15 @@
+# Haar Regular Covariant Model
+
+- [Regular Coefficient Field](regular-coefficient-field.md)
+- [Continuous regular Coefficient Field action](continuous-regular-coefficient-field-act.md)
+- [Norm regular Coefficient Field le](norm-regular-coefficient-field-le.md)
+- [Regular Coefficient Operator](regular-coefficient-operator.md)
+- [Regular Coefficient Operator ae eq](regular-coefficient-operator-ae-eq.md)
+- [Norm regular Coefficient Operator apply le](norm-regular-coefficient-operator-apply.md)
+- [Regular Coefficient Operator add](regular-coefficient-operator-add.md)
+- [Regular Coefficient Operator smul](regular-coefficient-operator-smul.md)
+- [Regular Coefficient Operator mul](regular-coefficient-operator-mul.md)
+- [Regular Coefficient Operator star](regular-coefficient-operator-star.md)
+- [Regular Coefficient Hom](regular-coefficient-hom.md)
+- [Regular Coefficient Operator covariance](regular-coefficient-operator-covariance.md)
+- [Regular Covariant Representation](regular-covariant-representation.md)

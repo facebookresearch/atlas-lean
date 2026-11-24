@@ -32,3 +32,8 @@
 - [Lift unique](lift-unique.md)
 - [Common Map](common-map.md)
 - [Diagonal](diagonal.md)
+- [Pullback](pullback-3.md)
+- [Pullback middle](pullback-middle.md)
+- [Pullback Middle Map](pullback-middle-map.md)
+- [Pullback Middle Map coe](pullback-middle-map-coe.md)
+- [Pullback Hom](pullback-hom.md)

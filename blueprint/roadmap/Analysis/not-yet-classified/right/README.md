@@ -22,3 +22,8 @@
 ## The coefficient algebra as a right module over itself
 
 - [Self Module](self-module.md)
+
+## Commuting right-factor operators on supplied internal-tensor models
+
+- [Map Right Operator](map-right-operator.md)
+- [Map Right Operator pure](map-right-operator-pure.md)

@@ -1,0 +1,15 @@
+# Finite Inclusion
+
+- [Finite Inclusion](finite-inclusion.md)
+- [Finite Inclusion to Continuous Linear Map](finite-inclusion-to-continuous-linear-ma.md)
+- [Finite Inclusion adjoint](finite-inclusion-adjoint.md)
+- [Finite Inclusion apply](finite-inclusion-apply.md)
+- [Finite Inclusion adjoint apply](finite-inclusion-adjoint-apply.md)
+- [Coord finite Inclusion](coord-finite-inclusion.md)
+- [Finite Inclusion adjoint comp self](finite-inclusion-adjoint-comp-self.md)
+- [Finite Inclusion comp adjoint to Continuous Linear Map](finite-inclusion-comp-adjoint-to-continu.md)
+- [Right Inner finite Inclusion](right-inner-finite-inclusion.md)
+- [Norm finite Inclusion apply](norm-finite-inclusion-apply.md)
+- [Finite Inclusion isometry](finite-inclusion-isometry.md)
+- [Norm finite Inclusion le](norm-finite-inclusion-le.md)
+- [Norm finite Inclusion adjoint Operator le](norm-finite-inclusion-adjoint-operator-l.md)

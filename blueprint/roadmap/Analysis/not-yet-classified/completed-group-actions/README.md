@@ -1,0 +1,15 @@
+# Completed Group Actions
+
+- [Group Left Completion](group-left-completion.md)
+- [Group Right Completion](group-right-completion.md)
+- [Group Left Completion apply](group-left-completion-apply.md)
+- [Group Right Completion apply](group-right-completion-apply.md)
+- [Norm group Left Completion apply](norm-group-left-completion-apply.md)
+- [Norm group Right Completion apply](norm-group-right-completion-apply.md)
+- [Group Left Completion one](group-left-completion-one.md)
+- [Group Right Completion one](group-right-completion-one.md)
+- [Group Left Completion mul](group-left-completion-mul.md)
+- [Group Right Completion mul](group-right-completion-mul.md)
+- [Star group Left Completion](star-group-left-completion.md)
+- [Star group Right Completion](star-group-right-completion.md)
+- [Group Completion central](group-completion-central.md)

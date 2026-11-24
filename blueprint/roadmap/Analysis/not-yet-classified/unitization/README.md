@@ -38,3 +38,7 @@
 - [Fst Star Alg Hom comp star Map](fst-star-alg-hom-comp-star-map.md)
 - [Star Map fst](star-map-fst.md)
 - [Star Map snd](star-map-snd.md)
+- [Unitization](unitization.md)
+- [Unitization apply](unitization-apply.md)
+- [Unitization inr apply](unitization-inr-apply.md)
+- [Unitization normalize one](unitization-normalize-one.md)

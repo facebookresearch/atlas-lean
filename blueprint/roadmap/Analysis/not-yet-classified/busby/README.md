@@ -1,0 +1,18 @@
+# Busby
+
+- [Multiplier Map](multiplier-map.md)
+- [Multiplier Map inclusion](multiplier-map-inclusion.md)
+- [Multiplier Map ideal Equiv coe](multiplier-map-ideal-equiv-coe.md)
+- [Outer Quotient multiplier Map eq zero](outer-quotient-multiplier-map-eq-zero.md)
+- [Busby](busby.md)
+- [Busby quotient](busby-quotient.md)
+- [Busby quotient Equiv mk](busby-quotient-equiv-mk.md)
+- [Is Busby Invariant](is-busby-invariant.md)
+- [Busby is Busby Invariant](busby-is-busby-invariant.md)
+- [Busby unique](busby-unique.md)
+- [Busby Pullback](busby-pullback.md)
+- [Pullback Inclusion](pullback-inclusion.md)
+- [Pullback Quotient](pullback-quotient.md)
+- [Of Busby](of-busby.md)
+- [Of Busby ideal Equiv coe](of-busby-ideal-equiv-coe.md)
+- [Of Busby busby](of-busby-busby.md)

@@ -1,0 +1,15 @@
+# Asymptotic Algebra
+
+- [Asymptotic Algebra](asymptotic-algebra.md)
+- [C Star Algebra](c-star-algebra.md)
+- [Quotient Map](quotient-map.md)
+- [Mem vanishing Ideal iff](mem-vanishing-ideal-iff.md)
+- [Quotient Map eq zero iff](quotient-map-eq-zero-iff.md)
+- [Quotient Map eq iff](quotient-map-eq-iff.md)
+- [Quotient Map to BCF](quotient-map-to-bcf.md)
+- [Quotient Map surjective](quotient-map-surjective.md)
+- [Of Lift](of-lift.md)
+- [Of Lift apply](of-lift-apply.md)
+- [Strictly Equivalent of Lift](strictly-equivalent-of-lift.md)
+- [Of Hom](of-hom.md)
+- [Of Hom apply](of-hom-apply.md)

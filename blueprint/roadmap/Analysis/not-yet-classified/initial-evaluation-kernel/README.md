@@ -1,0 +1,57 @@
+# Initial Evaluation Kernel
+
+## Actual time coordinates
+
+- [Time Homeomorph NNReal](time-homeomorph-nnreal.md)
+- [Time Homeomorph NNReal apply](time-homeomorph-nnreal-apply.md)
+- [Time Homeomorph NNReal symm apply](time-homeomorph-nnreal-symm-apply.md)
+- [Time Homeomorph NNReal one](time-homeomorph-nnreal-one.md)
+- [Time Homeomorph NNReal symm zero](time-homeomorph-nnreal-symm-zero.md)
+- [Time Homeomorph NNReal pos](time-homeomorph-nnreal-pos.md)
+- [Positive NNReal Reciprocal Homeomorph](positive-nnreal-reciprocal-homeomorph.md)
+- [Positive NNReal Reciprocal Homeomorph apply](positive-nnreal-reciprocal-homeomorph-ap.md)
+- [Positive NNReal Reciprocal Homeomorph symm apply](positive-nnreal-reciprocal-homeomorph-sy.md)
+- [Positive NNReal Reciprocal Homeomorph time](positive-nnreal-reciprocal-homeomorph-ti.md)
+
+## Cone and suspension transport
+
+- [Cone Time Equiv](cone-time-equiv.md)
+- [Cone Time Equiv apply](cone-time-equiv-apply.md)
+- [Cone Time Equiv symm apply](cone-time-equiv-symm-apply.md)
+- [Cone Time Equiv one](cone-time-equiv-one.md)
+- [Cone Point Kernel Equiv](cone-point-kernel-equiv.md)
+- [Cone Point Kernel Equiv apply](cone-point-kernel-equiv-apply.md)
+- [Cone Point Kernel Equiv symm apply](cone-point-kernel-equiv-symm-apply.md)
+- [Open Interval Kernel Equiv](open-interval-kernel-equiv.md)
+- [Open Interval Kernel Equiv one](open-interval-kernel-equiv-one.md)
+- [Open Interval Kernel Equiv apply of one lt](open-interval-kernel-equiv-apply-of-one.md)
+- [Open Interval Kernel Equiv symm apply](open-interval-kernel-equiv-symm-apply.md)
+
+## The actual anchored closed ideal
+
+- [Initial Evaluation Ideal](initial-evaluation-ideal.md)
+- [Mem initial Evaluation Ideal](mem-initial-evaluation-ideal.md)
+- [Initial Evaluation Kernel](initial-evaluation-kernel.md)
+- [Initial Projection](initial-projection.md)
+- [Initial Projection apply](initial-projection-apply.md)
+- [Initial Set Section](initial-set-section.md)
+- [Initial Set Section val](initial-set-section-val.md)
+- [Evaluation initial Set Section](evaluation-initial-set-section.md)
+- [Initial Projection initial Set Section](initial-projection-initial-set-section.md)
+- [Initial Projection surjective](initial-projection-surjective.md)
+- [Actual Kernel Inclusion](actual-kernel-inclusion.md)
+- [Actual Kernel Inclusion val](actual-kernel-inclusion-val.md)
+- [Initial Projection actual Kernel Inclusion](initial-projection-actual-kernel-inclusi.md)
+- [Actual Kernel Inclusion injective](actual-kernel-inclusion-injective.md)
+- [Actual Kernel Inclusion exact](actual-kernel-inclusion-exact.md)
+- [Initial Suspension Inclusion](initial-suspension-inclusion.md)
+- [Initial Suspension Inclusion val](initial-suspension-inclusion-val.md)
+- [Initial Suspension Inclusion one](initial-suspension-inclusion-one.md)
+- [Initial Suspension Inclusion apply of one lt](initial-suspension-inclusion-apply-of-on.md)
+- [Initial Suspension Inclusion injective](initial-suspension-inclusion-injective.md)
+- [Initial Projection initial Suspension Inclusion](initial-projection-initial-suspension-in.md)
+- [Initial Suspension Inclusion exact](initial-suspension-inclusion-exact.md)
+- [Initial Evaluation Extension](initial-evaluation-extension.md)
+- [Initial Evaluation Extension middle](initial-evaluation-extension-middle.md)
+- [Initial Evaluation Extension inclusion apply](initial-evaluation-extension-inclusion-a.md)
+- [Initial Evaluation Extension quotient apply](initial-evaluation-extension-quotient-ap.md)

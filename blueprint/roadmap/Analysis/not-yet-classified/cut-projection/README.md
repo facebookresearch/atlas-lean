@@ -1,0 +1,41 @@
+# Cut Projection
+
+## Family
+
+- [Adjointable ext completed Single](adjointable-ext-completed-single.md)
+- [Cut Projection](cut-projection.md)
+- [Cut Projection apply completed Single](cut-projection-apply-completed-single.md)
+- [Star cut Projection](star-cut-projection.md)
+- [Cut Projection empty](cut-projection-empty.md)
+- [Cut Projection univ](cut-projection-univ.md)
+- [Cut Projection mul](cut-projection-mul.md)
+- [Cut Projection mul self](cut-projection-mul-self.md)
+- [Is Star Projection cut Projection](is-star-projection-cut-projection.md)
+- [Norm cut Projection le](norm-cut-projection-le.md)
+- [Cut Projection comm](cut-projection-comm.md)
+- [Cut Projection mul of disjoint](cut-projection-mul-of-disjoint.md)
+- [Cut Projection compl](cut-projection-compl.md)
+- [Cut Projection union](cut-projection-union.md)
+- [Coordinate Span](coordinate-span.md)
+- [Cut Projection eq self of mem closure coordinate Span](cut-projection-eq-self-of-mem-closure-co.md)
+- [Cut Projection mem closure coordinate Span](cut-projection-mem-closure-coordinate-sp.md)
+- [Range cut Projection](range-cut-projection.md)
+- [Is Closed range cut Projection](is-closed-range-cut-projection.md)
+- [Right Inner cut Projection of disjoint](right-inner-cut-projection-of-disjoint.md)
+- [Cut Involution](cut-involution.md)
+- [Cut Involution apply completed Single](cut-involution-apply-completed-single.md)
+- [Star cut Involution](star-cut-involution.md)
+- [Cut Involution mul self](cut-involution-mul-self.md)
+
+## Integer
+
+- [Nonnegative Projection](nonnegative-projection.md)
+- [Nonnegative Projection apply completed Single](nonnegative-projection-apply-completed-s.md)
+- [Star nonnegative Projection](star-nonnegative-projection.md)
+- [Nonnegative Projection mul self](nonnegative-projection-mul-self.md)
+- [Norm nonnegative Projection le](norm-nonnegative-projection-le.md)
+- [Range nonnegative Projection](range-nonnegative-projection.md)
+- [Nonnegative Involution](nonnegative-involution.md)
+- [Nonnegative Involution apply completed Single](nonnegative-involution-apply-completed-s.md)
+- [Star nonnegative Involution](star-nonnegative-involution.md)
+- [Nonnegative Involution mul self](nonnegative-involution-mul-self.md)

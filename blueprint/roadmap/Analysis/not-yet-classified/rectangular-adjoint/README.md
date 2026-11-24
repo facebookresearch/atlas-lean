@@ -1,0 +1,16 @@
+# Rectangular Adjoint
+
+- [Is Adjoint Witness](is-adjoint-witness.md)
+- [Adjoint Domain](adjoint-domain.md)
+- [Mem adjoint Domain iff](mem-adjoint-domain-iff.md)
+- [Adjoint Domain right smul](adjoint-domain-right-smul.md)
+- [Adjoint Witness unique](adjoint-witness-unique.md)
+- [Exists Unique adjoint Witness](exists-unique-adjoint-witness.md)
+- [Adjoint Value](adjoint-value.md)
+- [Adjoint Value spec](adjoint-value-spec.md)
+- [Adjoint Value right smul](adjoint-value-right-smul.md)
+- [Adjoint](adjoint.md)
+- [Adjoint pairing](adjoint-pairing.md)
+- [Adjoint right smul](adjoint-right-smul.md)
+- [Adjoint graph eq](adjoint-graph-eq.md)
+- [Is Closed adjoint graph](is-closed-adjoint-graph.md)

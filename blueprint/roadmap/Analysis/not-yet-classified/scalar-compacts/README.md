@@ -1,0 +1,16 @@
+# Scalar Compacts
+
+- [Hilbert](hilbert.md)
+- [Algebra](algebra.md)
+- [One Dimensional Projection](one-dimensional-projection.md)
+- [Rank One](rank-one.md)
+- [Rank One apply](rank-one-apply.md)
+- [Star rank One](star-rank-one.md)
+- [Rank One mul self](rank-one-mul-self.md)
+- [Norm rank One](norm-rank-one.md)
+- [Rank One Projection](rank-one-projection.md)
+- [Rank One Projection value](rank-one-projection-value.md)
+- [Basis Vector](basis-vector.md)
+- [Norm basis Vector](norm-basis-vector.md)
+- [Coordinate Projection](coordinate-projection.md)
+- [Coordinate Projection apply](coordinate-projection-apply.md)

@@ -34,3 +34,8 @@
 - [Norm adjoint comp self](norm-adjoint-comp-self.md)
 - [Map right smul](map-right-smul.md)
 - [End](end.md)
+
+## Ordinary Hilbert-space adjoint pairs on the scalar-right model
+
+- [Continuous Linear Map](continuous-linear-map.md)
+- [Of Ordinary Adjoint Pair](of-ordinary-adjoint-pair.md)
