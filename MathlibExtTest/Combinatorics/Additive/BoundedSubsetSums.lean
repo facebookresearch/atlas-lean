@@ -25,3 +25,27 @@ example : boundedSubsetSums 2 0
 
 -- When the lower and upper sizes coincide, zero has the same cap as each nonzero element.
 example : generalizedHFoldSumset ![(0 : ℤ), -2, 5] (fun _ => 1) 1 = {-2, 0, 5} := by decide
+
+private def cycle : Equiv.Perm (Fin 3) :=
+  (Equiv.swap 0 1).trans (Equiv.swap 1 2)
+
+example : (cycle 0, cycle 1, cycle 2) = (2, 0, 1) := by decide
+
+-- The three-cycle moves all coordinates, including the one with zero capacity.
+example : generalizedHFoldSumset (![-2, 7, (5 : ℤ)] ∘ cycle) (![1, 0, 2] ∘ cycle) 2 =
+    {3, 10} := by
+  rw [generalizedHFoldSumset_comp_perm]
+  decide
+
+-- The empty choice, the fully saturated choice, and an unattainable total.
+example : generalizedHFoldSumset (![-2, 7, (5 : ℤ)] ∘ cycle) (![1, 0, 2] ∘ cycle) 0 = {0} := by
+  rw [generalizedHFoldSumset_comp_perm]
+  decide
+
+example : generalizedHFoldSumset (![-2, 7, (5 : ℤ)] ∘ cycle) (![1, 0, 2] ∘ cycle) 3 = {8} := by
+  rw [generalizedHFoldSumset_comp_perm]
+  decide
+
+example : generalizedHFoldSumset (![-2, 7, (5 : ℤ)] ∘ cycle) (![1, 0, 2] ∘ cycle) 4 = ∅ := by
+  rw [generalizedHFoldSumset_comp_perm]
+  decide
