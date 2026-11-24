@@ -12570,6 +12570,7 @@
   "MathlibExt/NumberTheory/PrimeSupport": {"to": "NumberTheory/arithmetic-functions/special-integer-classes", "title": "Integers with the same prime divisors"},
   "MathlibExt/NumberTheory/PrimitiveDivisor": {"to": "NumberTheory/linear-recurrences/lucas-sequences-primitive-divisors", "title": "Primitive divisors"},
   "MathlibExt/NumberTheory/PrimitivePrimeDivisorPowAddOne": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Biunitary triperfect numbers"},
+  "MathlibExt/NumberTheory/PrimitivePrimeDivisorPowSubOne": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Biunitary triperfect numbers"},
   "MathlibExt/NumberTheory/PrimitiveLambdaRoots": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Primitive λ-roots"},
   "MathlibExt/NumberTheory/PrimitivePythagoreanSidesSumTwoSquares": {"to": "NumberTheory/diophantine-equations/pell-quadratic-equations", "title": "Pythagorean triples"},
   "MathlibExt/NumberTheory/ProdigiousNumber": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Prodigious numbers"},
