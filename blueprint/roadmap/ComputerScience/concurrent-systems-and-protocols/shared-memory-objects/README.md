@@ -14,3 +14,5 @@
 - [Nontrivial read-modify-write registers solve two-process consensus](nontrivial-read-modify-write-registers-solve.md)
 - [The double-collect lemma](the-double-collect-lemma.md)
 - [Valency arguments for consensus](valency-arguments-for-consensus.md)
+- [FIFO queues have consensus number two](fifo-queues-have-consensus-number-two.md)
+- [Registers have consensus number one](registers-have-consensus-number-one.md)
