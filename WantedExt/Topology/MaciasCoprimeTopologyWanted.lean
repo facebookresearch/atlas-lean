@@ -35,6 +35,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.GCD.Basic
 public import Mathlib.Topology.Bases
 public import MathlibExt.Topology.MaciasPrimeClosure
+public import MathlibExt.Topology.MaciasPrimeDensity
 
 set_option autoImplicit false
 
@@ -51,15 +52,6 @@ Infinitude of Prime Numbers", Theorem 1. -/
 theorem_wanted maciasBasis_isTopologicalBasis :
     @TopologicalSpace.IsTopologicalBasis ℕ+ maciasTopology
       maciasBasis
-
-/-- **Infinitude of the primes as density.** There are infinitely many prime numbers if and only
-if the set of prime numbers is dense in the positive integers with Macías's coprime topology.
-
-Source: Jhixon Macías, "Another Topological Proof of the
-Infinitude of Prime Numbers", Theorem 2. -/
-theorem_wanted infinite_primes_iff_dense_primeSet :
-    Set.Infinite {p : ℕ | Nat.Prime p} ↔
-      @Dense ℕ+ maciasTopology primeSet
 
 /-- **Density of the primes passes from the subspace without 1.** Let $X$ be the positive
 integers with Macías's coprime topology and $X_1$ the subspace of positive integers different

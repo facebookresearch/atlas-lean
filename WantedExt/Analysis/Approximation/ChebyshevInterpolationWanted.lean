@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
+public import MathlibExt.Analysis.Approximation.ChebyshevSeries
 public import MathlibExt.Analysis.Approximation.Equioscillation
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Chebyshev.Extremal
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
@@ -36,10 +37,11 @@ The open Bernstein ellipse `E_ρ`, `ρ > 1`, is the open region bounded by the e
 `±1` and semi-axis sum `ρ`, i.e. `{z : |z - 1| + |z + 1| < ρ + ρ⁻¹}` (ATAP Chapter 8);
 `bernsteinEllipse`.
 
+The definitions above and the convergence theorem for Lipschitz functions are provided by
+`MathlibExt.Analysis.Approximation.ChebyshevSeries`.
+
 Wanted statements:
 
-* `hasSum_chebCoeff_of_lipschitz` (ATAP Theorem 3.1): a Lipschitz function on `[-1, 1]` is the
-  sum of its Chebyshev series, which converges absolutely and uniformly.
 * `norm_chebCoeff_le_of_analytic` (ATAP Theorem 8.1): if `f` is analytic in `E_ρ` with
   `|f| ≤ M` there, then `|a_0| ≤ M` and `|a_k| ≤ 2 M ρ^{-k}` for `k ≥ 1`.
 * `norm_sub_chebProj_le_of_analytic`, `norm_sub_chebInterp_le_of_analytic` (ATAP Theorem 8.2):
@@ -75,35 +77,6 @@ For the minimax property `2^{1-n} T_n` that underlies these bounds see
 open Polynomial Real
 
 namespace MathlibExt.Analysis.Approximation.ChebyshevInterpolationWanted
-
-/-- The open Bernstein ellipse `E_ρ = {z : |z - 1| + |z + 1| < ρ + ρ⁻¹}` with foci `±1`. -/
-def bernsteinEllipse (ρ : ℝ) : Set ℂ :=
-  {z | ‖z - 1‖ + ‖z + 1‖ < ρ + ρ⁻¹}
-
-/-- The `k`-th Chebyshev coefficient `a_k = (c_k/π) ∫_0^π f(cos θ) cos(k θ) dθ` of
-`f : ℝ → ℂ` on `[-1, 1]`, with `c_0 = 1` and `c_k = 2` for `k ≥ 1` (ATAP Chapter 3). -/
-noncomputable def chebCoeff (f : ℝ → ℂ) (k : ℕ) : ℂ :=
-  (((if k = 0 then 1 else 2) / π : ℝ) : ℂ) *
-    ∫ θ in (0 : ℝ)..π, f (cos θ) * (cos (k * θ) : ℂ)
-
-/-- The Chebyshev projection `f_n(x) = ∑_{k ≤ n} a_k T_k(x)`, evaluated at `x`. -/
-noncomputable def chebProj (f : ℝ → ℂ) (n : ℕ) (x : ℝ) : ℂ :=
-  ∑ k ∈ Finset.range (n + 1), chebCoeff f k * (((Chebyshev.T ℝ k).eval x : ℝ) : ℂ)
-
-/-- The Chebyshev interpolant: the complex polynomial of degree `≤ n` interpolating `f` at the
-Chebyshev points `x_j = cos(j π / n)`, `0 ≤ j ≤ n`. -/
-noncomputable def chebInterp (f : ℝ → ℂ) (n : ℕ) : ℂ[X] :=
-  Lagrange.interpolate (Finset.univ : Finset (Fin (n + 1)))
-    (fun j => ((Chebyshev.node n j : ℝ) : ℂ)) (fun j => f (Chebyshev.node n j))
-
-/-- **Chebyshev series of Lipschitz functions** (ATAP Theorem 3.1): if `f` is Lipschitz on
-`[-1, 1]`, its Chebyshev coefficients are absolutely summable and `f(x) = ∑ a_k T_k(x)` for every
-`x ∈ [-1, 1]` (so the series converges absolutely and uniformly). -/
-theorem_wanted hasSum_chebCoeff_of_lipschitz {f : ℝ → ℂ} {K : NNReal}
-    (hf : LipschitzOnWith K f (Set.Icc (-1) 1)) :
-    Summable (fun k => ‖chebCoeff f k‖) ∧
-      ∀ x ∈ Set.Icc (-1 : ℝ) 1,
-        HasSum (fun k => chebCoeff f k * (((Chebyshev.T ℝ k).eval x : ℝ) : ℂ)) (f x)
 
 /-- **Chebyshev coefficients of analytic functions** (ATAP Theorem 8.1): if `f` is analytic in the
 open Bernstein ellipse `E_ρ`, `ρ > 1`, with `|f| ≤ M` there, then `|a_0| ≤ M` and

@@ -23,6 +23,14 @@ example : weightedSchreierCount 1 5 = 9 := by decide
 example (l : ℕ) : weightedSchreierCount 1 (l + 1) = Nat.fib (l + 2) + 1 := by
   simpa [Nat.add_comm 1 l] using weightedSchreierCount_one l
 
+-- For any positive k the empty interval contributes only the empty set.
+example {k : ℕ} (hk : 0 < k) : weightedSchreierCount k 0 = 1 :=
+  weightedSchreierCount_of_lt hk
+
+-- At bound 4, moving the zero-weight element into the interval changes the count.
+example : weightedSchreierCount 5 4 = 5 := weightedSchreierCount_of_lt (by decide)
+example : weightedSchreierCount 4 4 = 6 := by decide
+
 -- A second iteration uses both seed entries. The zero seed gives ordinary iterated sums.
 example : seededPartialSums (fun j => j + 3) (fun _ => 2) 2 3 = 19 := by decide
 example : iteratedPartialSum 2 (fun _ => (2 : ℕ)) 3 = 6 := by decide
