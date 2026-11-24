@@ -13,7 +13,6 @@ module
 
 public import Mathlib.Algebra.Group.Monoid
 public import Mathlib.Data.Set.Defs
-public import Mathlib.Tactic.Push
 public import Mathlib.Tactic.TypeStar
 
 @[expose] public section
