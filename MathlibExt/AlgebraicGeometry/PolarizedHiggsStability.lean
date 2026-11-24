@@ -53,21 +53,23 @@ the dimension of `X` and `H` is ample, so that the coefficient of degree `d - 1`
 `slope` is the actual slope term. -/
 structure HilbertNumerics (X : ComplexScheme) (H : LineBundle X.left) (d : ℕ) where
   dimension : topologicalKrullDim X.left = d
+  [noetherian : IsNoetherian X.left]
   ample : IsAmpleLine H
-  polynomial : ∀ F : X.left.Modules, IsCoherent F → Polynomial ℚ
-  normalization : ∀ (F : X.left.Modules) (hF : IsCoherent F), ∃ N : ℕ,
+  polynomial : ∀ F : X.left.Modules, IsFiniteTypeQuasicoherent F → Polynomial ℚ
+  normalization : ∀ (F : X.left.Modules) (hF : IsFiniteTypeQuasicoherent F), ∃ N : ℕ,
     ∀ n : ℕ, N ≤ n → (polynomial F hF).eval (n : ℚ) =
       (DivisorDynamics.truncatedEuler X d
         (moduleTensor X.left F (power H.val n)) : ℚ)
-  finiteCohomology : ∀ (F : X.left.Modules), IsCoherent F → ∀ n i : ℕ,
+  finiteCohomology : ∀ (F : X.left.Modules), IsFiniteTypeQuasicoherent F → ∀ n i : ℕ,
     FiniteDimensional ℂ (cohomology X.hom (moduleTensor X.left F (power H.val n)) i)
-  cohomologyAboveDimension : ∀ (F : X.left.Modules), IsCoherent F → ∀ n i : ℕ,
+  cohomologyAboveDimension : ∀ (F : X.left.Modules), IsFiniteTypeQuasicoherent F → ∀ n i : ℕ,
     d < i → IsZero (cohomology X.hom (moduleTensor X.left F (power H.val n)) i)
 
 /-- This coefficient divided by generic rank differs from usual slope only
 by a positive common scaling and a common Todd term on the fixed variety. -/
 def slope {X : ComplexScheme} {H : LineBundle X.left} {d : ℕ}
-    (N : HilbertNumerics X H d) (F : X.left.Modules) (hF : IsCoherent F) (r : ℕ) : ℚ :=
+    (N : HilbertNumerics X H d) (F : X.left.Modules) (hF : IsFiniteTypeQuasicoherent F)
+      (r : ℕ) : ℚ :=
   (N.polynomial F hF).coeff (d-1) / r
 
 /-- A saturated invariant coherent subsheaf, with its actual integrable field. -/
@@ -79,14 +81,14 @@ def Invariant {X : ComplexScheme} (E : HiggsBundle X)
 /-- The actual coherent Higgs bundle, without imposing stability or metrics. -/
 structure CoherentBundle (X : ComplexScheme) where
   bundle : HiggsBundle X
-  coherent : IsCoherent bundle.module
+  coherent : IsFiniteTypeQuasicoherent bundle.module
 
 /-- Positive-dimensional slope stability. Geometric smooth/projective/integral
 hypotheses are explicit on every existence/comparison theorem using this predicate. -/
 def IsStable {X : ComplexScheme} {H : LineBundle X.left} {d : ℕ}
     (N : HilbertNumerics X H d) (E : CoherentBundle X) : Prop :=
   0 < d ∧ 0 < E.bundle.rank ∧
-  ∀ (F : X.left.Modules) (hF : IsCoherent F) (s : ℕ), 0 < s → s < E.bundle.rank →
+  ∀ (F : X.left.Modules) (hF : IsFiniteTypeQuasicoherent F) (s : ℕ), 0 < s → s < E.bundle.rank →
     HasGenericRank F s → IsTorsionFree F → ∀ i : F ⟶ E.bundle.module,
       Mono i → IsTorsionFree (cokernel i) → Invariant E.bundle F i →
         slope N F hF s < slope N E.bundle.module E.coherent E.bundle.rank
@@ -94,7 +96,7 @@ def IsStable {X : ComplexScheme} {H : LineBundle X.left} {d : ℕ}
 def IsSemistable {X : ComplexScheme} {H : LineBundle X.left} {d : ℕ}
     (N : HilbertNumerics X H d) (E : CoherentBundle X) : Prop :=
   0 < d ∧ 0 < E.bundle.rank ∧
-  ∀ (F : X.left.Modules) (hF : IsCoherent F) (s : ℕ), 0 < s → s < E.bundle.rank →
+  ∀ (F : X.left.Modules) (hF : IsFiniteTypeQuasicoherent F) (s : ℕ), 0 < s → s < E.bundle.rank →
     HasGenericRank F s → IsTorsionFree F → ∀ i : F ⟶ E.bundle.module,
       Mono i → IsTorsionFree (cokernel i) → Invariant E.bundle F i →
         slope N F hF s ≤ slope N E.bundle.module E.coherent E.bundle.rank

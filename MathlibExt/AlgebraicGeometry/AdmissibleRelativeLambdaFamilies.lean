@@ -79,17 +79,18 @@ structure FibreTests where
   polarization : LineBundle (unitProduct X).left
   polarizationIso : polarization.val ≅
     (Scheme.Modules.pullback (prod.fst : unitProduct X ⟶ X).left).obj H.val
+  [noetherian : IsNoetherian (unitProduct X).left]
   ample : IsAmpleLine polarization
   numerics : HilbertNumerics (unitProduct X) polarization d
   coherent : ∀ E : Family X x scalarBase (P.differential scalarBase) n,
-    NumericalCompactifiedJacobians.IsCoherent (V.absolute X x n P E).object
+    NumericalCompactifiedJacobians.IsFiniteTypeQuasicoherent (V.absolute X x n P E).object
   chern : ∀ E : Family X x scalarBase (P.differential scalarBase) n,
     ChernGeometry (unitProduct X) d (V.absolute X x n P E).rank (V.absolute X x n P E).object
 
 /-- The fixed-rank Hilbert polynomial is computed from actual fibre
 cohomology and the actual structure sheaf, rather than supplied as a proxy. -/
 def HasRankHilbertPolynomial (F : FibreTests X x n P V d H)
-    (hO : NumericalCompactifiedJacobians.IsCoherent
+    (hO : NumericalCompactifiedJacobians.IsFiniteTypeQuasicoherent
       (CoherentCurveLinearSeries.structureModule (unitProduct X).left))
     (E : Family X x scalarBase (P.differential scalarBase) n) : Prop :=
   F.numerics.polynomial (V.absolute X x n P E).object (F.coherent E) =

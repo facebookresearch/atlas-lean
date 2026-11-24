@@ -41,23 +41,29 @@ abbrev CanonicalSections (C : ComplexScheme) (n : ℕ) :=
   (sectionsFunctor C.hom).obj (power (canonicalLine C) n)
 
 /-- Bases of the actual two spaces of canonical-line sections. -/
-structure SectionBases (C : ComplexScheme) where
+structure SectionBases (C : ComplexScheme) [IsProperCurve C.hom]
+    [HasConstantGlobalSections C.hom] where
   one : Module.Basis (Fin (genus C.hom)) ℂ (CanonicalSections C 1)
   two : Module.Basis (Fin (3 * genus C.hom - 3)) ℂ (CanonicalSections C 2)
 
-abbrev CoordinateIndex (C : ComplexScheme) :=
+abbrev CoordinateIndex (C : ComplexScheme) [IsProperCurve C.hom]
+    [HasConstantGlobalSections C.hom] :=
   Fin (genus C.hom) ⊕ Fin (3 * genus C.hom - 3)
 
-abbrev CoordinateRing (C : ComplexScheme) := MvPolynomial (CoordinateIndex C) ℂ
+abbrev CoordinateRing (C : ComplexScheme) [IsProperCurve C.hom]
+    [HasConstantGlobalSections C.hom] := MvPolynomial (CoordinateIndex C) ℂ
 
-def base (C : ComplexScheme) : ComplexScheme :=
+def base (C : ComplexScheme) [IsProperCurve C.hom]
+    [HasConstantGlobalSections C.hom] : ComplexScheme :=
   Over.mk (Spec.map (CommRingCat.ofHom (algebraMap ℂ (CoordinateRing C))))
 
-def coordinate (C : ComplexScheme) (i : CoordinateIndex C) : Γ((base C).left, ⊤) :=
+def coordinate (C : ComplexScheme) [IsProperCurve C.hom]
+    [HasConstantGlobalSections C.hom] (i : CoordinateIndex C) : Γ((base C).left, ⊤) :=
   (Scheme.ΓSpecIso (.of (CoordinateRing C))).inv.hom (MvPolynomial.X i)
 
 /-- The dimension parameter is the number of actual section coordinates. -/
-def baseDimension (C : ComplexScheme) : ℕ := Fintype.card (CoordinateIndex C)
+def baseDimension (C : ComplexScheme) [IsProperCurve C.hom]
+    [HasConstantGlobalSections C.hom] : ℕ := Fintype.card (CoordinateIndex C)
 
 theorem baseDimension_eq (C : ComplexScheme) [CurveSource C] :
     baseDimension C = 4 * genus C.hom - 3 := by
@@ -65,7 +71,8 @@ theorem baseDimension_eq (C : ComplexScheme) [CurveSource C] :
   simp only [baseDimension, CoordinateIndex, Fintype.card_sum, Fintype.card_fin]
   omega
 
-def parameterCoefficient {C T : ComplexScheme} (f : T ⟶ base C)
+def parameterCoefficient {C T : ComplexScheme} [IsProperCurve C.hom]
+    [HasConstantGlobalSections C.hom] (f : T ⟶ base C)
     (i : CoordinateIndex C) : Γ(T.left, ⊤) := f.left.appTop.hom (coordinate C i)
 
 def relativeLinePower (C T : ComplexScheme) (n : ℕ) : (prod C T).left.Modules :=
@@ -84,7 +91,8 @@ structure SectionPair (C T : ComplexScheme) where
   two : Γ(relativeLinePower C T 2, ⊤)
 
 /-- Evaluate the affine section coordinates on any coefficient scheme. -/
-def parameterSections (C : ComplexScheme) (S : SectionBases C)
+def parameterSections (C : ComplexScheme) [IsProperCurve C.hom]
+    [HasConstantGlobalSections C.hom] (S : SectionBases C)
     (T : ComplexScheme) (f : T ⟶ base C) : SectionPair C T where
   one := ∑ i : Fin (genus C.hom),
     (prod.snd : prod C T ⟶ T).left.appTop.hom (parameterCoefficient f (.inl i)) •
@@ -102,7 +110,8 @@ def characteristicOnBase (C T : ComplexScheme) (E : Family C T)
     (((K.coefficient n).val.app (op ⊤)).hom (1 : Γ((prod C T).left, ⊤)))
 
 /-- The scaling map is fixed on every affine coordinate, with weights one and two. -/
-structure BaseScaling (C : ComplexScheme) where
+structure BaseScaling (C : ComplexScheme) [IsProperCurve C.hom]
+    [HasConstantGlobalSections C.hom] where
   map : prod (ExpansionParameterModels.affineLine ℂ) (base C) ⟶ base C
   one : ∀ i : Fin (genus C.hom),
     map.left.appTop.hom (coordinate C (.inl i)) =
@@ -120,7 +129,8 @@ structure BaseScaling (C : ComplexScheme) where
         (coordinate C (.inr i))
 
 /-- The actual proper Hitchin morphism and its all-family coefficient normalization. -/
-structure HitchinModel (C : ComplexScheme) (B : BaseChanges C)
+structure HitchinModel (C : ComplexScheme) [IsProperCurve C.hom]
+    [HasConstantGlobalSections C.hom] (B : BaseChanges C)
     (M : ModuliModel C B) (S : SectionBases C) where
   map : M.scheme ⟶ base C
   proper : IsProper map.left

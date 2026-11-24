@@ -61,29 +61,36 @@ structure TotalLine (C : ComplexScheme) where
     ∃! g : T ⟶ scheme, ∃ h : g ≫ projection = f,
       pulledTautological projection tautological f g h = s
 
-def totalWithBase (C : ComplexScheme) (V : TotalLine C) : ComplexScheme :=
+def totalWithBase (C : ComplexScheme) [IsProperCurve C.hom] [HasConstantGlobalSections C.hom]
+    (V : TotalLine C) : ComplexScheme :=
   prod V.scheme (base C)
 
-def toCurveBase (C : ComplexScheme) (V : TotalLine C) :
+def toCurveBase (C : ComplexScheme) [IsProperCurve C.hom] [HasConstantGlobalSections C.hom]
+    (V : TotalLine C) :
     totalWithBase C V ⟶ prod C (base C) := prod.map V.projection (𝟙 (base C))
 
-def toCurve (C : ComplexScheme) (V : TotalLine C) : totalWithBase C V ⟶ C :=
+def toCurve (C : ComplexScheme) [IsProperCurve C.hom] [HasConstantGlobalSections C.hom]
+    (V : TotalLine C) : totalWithBase C V ⟶ C :=
   (prod.fst : prod V.scheme (base C) ⟶ V.scheme) ≫ V.projection
 
-theorem toCurveBase_first (C : ComplexScheme) (V : TotalLine C) :
+theorem toCurveBase_first (C : ComplexScheme) [IsProperCurve C.hom]
+    [HasConstantGlobalSections C.hom] (V : TotalLine C) :
     toCurveBase C V ≫ (prod.fst : prod C (base C) ⟶ C) = toCurve C V := by
   simp [toCurveBase, toCurve]
 
-def tautologicalLine (C : ComplexScheme) (V : TotalLine C) : (totalWithBase C V).left.Modules :=
+def tautologicalLine (C : ComplexScheme) [IsProperCurve C.hom] [HasConstantGlobalSections C.hom]
+    (V : TotalLine C) : (totalWithBase C V).left.Modules :=
   (Scheme.Modules.pullback (toCurve C V).left).obj (canonicalLine C)
 
-def universalTautological (C : ComplexScheme) (V : TotalLine C) :
+def universalTautological (C : ComplexScheme) [IsProperCurve C.hom]
+    [HasConstantGlobalSections C.hom] (V : TotalLine C) :
     Section (tautologicalLine C V) :=
   pulledTautological V.projection V.tautological (toCurve C V)
     (prod.fst : totalWithBase C V ⟶ V.scheme) rfl
 
 /-- Pull the actual Hitchin coefficient through the literal total-line product. -/
-def coefficientOnTotal (C : ComplexScheme) (V : TotalLine C)
+def coefficientOnTotal (C : ComplexScheme) [IsProperCurve C.hom] [HasConstantGlobalSections C.hom]
+    (V : TotalLine C)
     (P : PullbackPowers (toCurve C V).left) (n : ℕ)
     (s : Γ(relativeLinePower C (base C) n, ⊤)) :
     Γ(power (tautologicalLine C V) n, ⊤) :=
@@ -96,7 +103,8 @@ def coefficientOnTotal (C : ComplexScheme) (V : TotalLine C)
     (pullGlobal (toCurveBase C V).left (relativeLinePower C (base C) n) s)
 
 /-- The actual line-power equation, using native pure tensors and tautological y. -/
-def spectralEquation (C : ComplexScheme) (S : SectionBases C) (V : TotalLine C)
+def spectralEquation (C : ComplexScheme) [IsProperCurve C.hom] [HasConstantGlobalSections C.hom]
+    (S : SectionBases C) (V : TotalLine C)
     (P : PullbackPowers (toCurve C V).left) : Γ(power (tautologicalLine C V) 2, ⊤) :=
   let L := tautologicalLine C V
   let y := (((universalTautological C V).val.app (op ⊤)).hom
@@ -116,30 +124,36 @@ structure LineSectionIdeal (X : Scheme.{0}) (L : X.Modules) (s : Γ(L, ⊤)) whe
     ideal.ideal ⟨U, h⟩ = Ideal.span
       {F.repr ((L.val.map (homOfLE (show U ≤ ⊤ from le_top)).op).hom s) ()}
 
-structure SpectralIdeal (C : ComplexScheme) (S : SectionBases C) (V : TotalLine C)
+structure SpectralIdeal (C : ComplexScheme) [IsProperCurve C.hom]
+    [HasConstantGlobalSections C.hom] (S : SectionBases C) (V : TotalLine C)
     (P : PullbackPowers (toCurve C V).left) where
   equation : LineSectionIdeal (totalWithBase C V).left
     (power (tautologicalLine C V) 2) (spectralEquation C S V P)
 
 /-- The spectral family is the native subscheme of its genuine equation ideal. -/
-def spectralScheme {C : ComplexScheme} {S : SectionBases C} {V : TotalLine C}
+def spectralScheme {C : ComplexScheme} [IsProperCurve C.hom] [HasConstantGlobalSections C.hom]
+    {S : SectionBases C} {V : TotalLine C}
     {P : PullbackPowers (toCurve C V).left} (I : SpectralIdeal C S V P) : ComplexScheme :=
   Over.mk (I.equation.ideal.subschemeι ≫ (totalWithBase C V).hom)
 
-def spectralInclusion {C : ComplexScheme} {S : SectionBases C} {V : TotalLine C}
+def spectralInclusion {C : ComplexScheme} [IsProperCurve C.hom] [HasConstantGlobalSections C.hom]
+    {S : SectionBases C} {V : TotalLine C}
     {P : PullbackPowers (toCurve C V).left} (I : SpectralIdeal C S V P) :
     spectralScheme I ⟶ totalWithBase C V := Over.homMk I.equation.ideal.subschemeι rfl
 
-def spectralProjection {C : ComplexScheme} {S : SectionBases C} {V : TotalLine C}
+def spectralProjection {C : ComplexScheme} [IsProperCurve C.hom] [HasConstantGlobalSections C.hom]
+    {S : SectionBases C} {V : TotalLine C}
     {P : PullbackPowers (toCurve C V).left} (I : SpectralIdeal C S V P) :
     spectralScheme I ⟶ prod C (base C) := spectralInclusion I ≫ toCurveBase C V
 
-def parameterProjection {C : ComplexScheme} {S : SectionBases C} {V : TotalLine C}
+def parameterProjection {C : ComplexScheme} [IsProperCurve C.hom]
+    [HasConstantGlobalSections C.hom] {S : SectionBases C} {V : TotalLine C}
     {P : PullbackPowers (toCurve C V).left} (I : SpectralIdeal C S V P) :
     spectralScheme I ⟶ base C := spectralProjection I ≫ prod.snd
 
 /-- The finite flat double-cover theorem applies to the full equation scheme. -/
-structure SpectralFamily (C : ComplexScheme) (S : SectionBases C) where
+structure SpectralFamily (C : ComplexScheme) [IsProperCurve C.hom]
+    [HasConstantGlobalSections C.hom] (S : SectionBases C) where
   totalLine : TotalLine C
   powers : PullbackPowers (toCurve C totalLine).left
   ideal : SpectralIdeal C S totalLine powers
@@ -149,11 +163,13 @@ structure SpectralFamily (C : ComplexScheme) (S : SectionBases C) where
     ((Scheme.Modules.pushforward (spectralProjection ideal).left).obj
       (structureModule (spectralScheme ideal).left)) 2
 
-def baseChangedSpectral {C T : ComplexScheme} {S : SectionBases C}
+def baseChangedSpectral {C T : ComplexScheme} [IsProperCurve C.hom]
+    [HasConstantGlobalSections C.hom] {S : SectionBases C}
     (F : SpectralFamily C S) (s : T ⟶ base C) : ComplexScheme :=
   pullback (spectralProjection F.ideal) (prod.map (𝟙 C) s)
 
-def baseChangedProjection {C T : ComplexScheme} {S : SectionBases C}
+def baseChangedProjection {C T : ComplexScheme} [IsProperCurve C.hom]
+    [HasConstantGlobalSections C.hom] {S : SectionBases C}
     (F : SpectralFamily C S) (s : T ⟶ base C) : baseChangedSpectral F s ⟶ prod C T :=
   pullback.snd (spectralProjection F.ideal) (prod.map (𝟙 C) s)
 

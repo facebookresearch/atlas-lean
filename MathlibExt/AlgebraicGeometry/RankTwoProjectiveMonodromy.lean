@@ -50,7 +50,8 @@ open TwistedRankTwoRepresentations TwistedCharacterQuotientModels RankTwoMatrixG
 open GeneralLinearFrameSchemes ManifoldDifferentialForms
 open scoped Manifold ContDiff Matrix Matrix.Norms.Elementwise
 
-variable (C : ComplexScheme) [AnalyticRealization.AnalyticManifold C 1]
+variable (C : ComplexScheme) [AnalyticRealization.AnalyticManifold C 1] [IsProperCurve C.hom]
+  [HasConstantGlobalSections C.hom]
   [IsManifold 𝓘(ℝ, Coordinates 1) ∞ (space C)]
 
 abbrev Punctured (puncture : space C) := {x : space C // x ≠ puncture}
@@ -111,12 +112,12 @@ variable [ExteriorTheory ℝ (Coordinates 1) (space C)] (P : CurveNormalization 
 structure ReferenceLine (puncture : space C) where
   module : C.left.Modules
   line : IsLineBundle module
-  degree : degree C.hom module = 1
+  degree : degree C.hom module line = 1
   frames : LineFrames C module
   metric : HermitianMetric frames.bundle
   connection : SmoothConnection frames.bundle
   chern : connection.value = chernConnectionValue frames.bundle metric
-  curvature : IsProjectivelyFlat P frames.bundle 1 connection
+  curvature : HasNormalizedCentralCurvature P frames.bundle 1 connection
   trivialization : Fin frames.bundle.count → space C → ℂ
   smooth : ∀ i, ContMDiffOn 𝓘(ℝ, Coordinates 1) 𝓘(ℝ, ℂ) ∞ (trivialization i)
     {x | x ∈ frames.bundle.core.baseSet i ∧ x ≠ puncture}
@@ -146,7 +147,7 @@ structure HarmonicSolution {puncture : space C} (R : ReferenceLine C P puncture)
   harmonic : IsCentralHarmonicMetric P V.bundle 1 metric V.higgs
   realization : ConnectionRealization V.bundle
     (reconstructedConnection V.bundle metric V.higgs.value)
-  projective : IsProjectivelyFlat P V.bundle 1 realization.connection
+  projective : HasNormalizedCentralCurvature P V.bundle 1 realization.connection
   puncturedFlat : ∀ i x, x ∈ V.bundle.core.baseSet i → x ≠ puncture → ∀ u v,
     curvatureValue V.bundle (puncturedConnectionValue C P R V realization.connection) i x u v = 0
 

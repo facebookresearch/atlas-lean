@@ -10,6 +10,7 @@ module
 public import MathlibExt.AlgebraicGeometry.RankTwoSpectralFamilies
 public import MathlibExt.AlgebraicGeometry.NumericalCompactifiedJacobians
 public import Mathlib.CategoryTheory.Core
+public import MathlibExt.AlgebraicGeometry.CurveCohomologyCalculus
 
 /-!
 # Singular integral spectral sheaves and their tautological pushforward
@@ -73,12 +74,14 @@ def nativeTwistedImage {X Y : Scheme.{0}} (pi : X ⟶ Y)
     field := (Scheme.Modules.pushforward pi).map (tautologicalMultiplication pi F L y) ≫
       inv (projectionFormulaMap pi P F L) }
 
-def baseChangedTotalMap {C T : ComplexScheme} {S : SectionBases C}
+def baseChangedTotalMap {C T : ComplexScheme} [IsProperCurve C.hom]
+    [HasConstantGlobalSections C.hom] {S : SectionBases C}
     (F : SpectralFamily C S) (s : T ⟶ base C) : baseChangedSpectral F s ⟶
       totalWithBase C F.totalLine :=
   pullback.fst (spectralProjection F.ideal) (prod.map (𝟙 C) s) ≫ spectralInclusion F.ideal
 
-theorem baseChangedTotalMap_curve {C T : ComplexScheme} {S : SectionBases C}
+theorem baseChangedTotalMap_curve {C T : ComplexScheme} [IsProperCurve C.hom]
+    [HasConstantGlobalSections C.hom] {S : SectionBases C}
     (F : SpectralFamily C S) (s : T ⟶ base C) :
     baseChangedTotalMap F s ≫ toCurve C F.totalLine =
       baseChangedProjection F s ≫ (prod.fst : prod C T ⟶ C) := by
@@ -94,7 +97,8 @@ theorem baseChangedTotalMap_curve {C T : ComplexScheme} {S : SectionBases C}
     _ = _ := by simp
 
 /-- Tautological y after every actual coefficient-scheme base change. -/
-def baseChangedTautological {C T : ComplexScheme} {S : SectionBases C}
+def baseChangedTautological {C T : ComplexScheme} [IsProperCurve C.hom]
+    [HasConstantGlobalSections C.hom] {S : SectionBases C}
     (F : SpectralFamily C S) (s : T ⟶ base C) :
     Section ((Scheme.Modules.pullback (baseChangedProjection F s).left).obj
       ((Scheme.Modules.pullback (prod.fst : prod C T ⟶ C).left).obj (canonicalLine C))) :=
@@ -104,21 +108,27 @@ def baseChangedTautological {C T : ComplexScheme} {S : SectionBases C}
     (Scheme.Modules.pullbackComp (baseChangedProjection F s).left
       (prod.fst : prod C T ⟶ C).left).inv.app (canonicalLine C)
 
-variable (C : ComplexScheme) (B : BaseChanges C) (M : ModuliModel C B)
+variable (C : ComplexScheme) [IsProperCurve C.hom] [HasConstantGlobalSections C.hom]
+    (B : BaseChanges C) (M : ModuliModel C B)
   (S : SectionBases C) (H : HitchinModel C B M S) (F : SpectralFamily C S)
   (Ω : Type) [Field Ω] [Algebra ℂ Ω] (s : complexField Ω ⟶ base C)
 
 def spectralOverField : Over (Spec (.of Ω)) :=
   Over.mk (baseChangedProjection F s ≫ (prod.snd : prod C (complexField Ω) ⟶ complexField Ω)).left
 
-/-- Ordinary spectral degree for a directly pushed degree-one Higgs sheaf. -/
-def spectralDegree : ℤ :=
-  1 + degree (curveOverField C Ω).hom
-    ((Scheme.Modules.pullback (prod.fst : prod C (complexField Ω) ⟶ C).left).obj (canonicalLine C))
+/-- Ordinary spectral degree for a directly pushed degree-one Higgs sheaf: one plus the degree
+`2g - 2` of the canonical line. -/
+def spectralDegree : ℤ := 2 * (genus C.hom : ℤ) - 1
 
+/-- Rank-one torsion-free sheaves on the spectral fibre, a proper curve, whose degree
+`χ(E) - χ(𝒪)` is the spectral degree. -/
 def RankOneProperty : ObjectProperty (Core (baseChangedSpectral F s).left.Modules) := fun E =>
-  IsCoherent E.of ∧ IsTorsionFree E.of ∧ HasGenericRankOne E.of ∧
-    degree (spectralOverField C S F Ω s).hom E.of = spectralDegree C Ω
+  ∃ (_ : IsProperCurve (spectralOverField C S F Ω s).hom) (hF : IsFiniteTypeQuasicoherent E.of),
+    IsTorsionFree E.of ∧ HasGenericRankOne E.of ∧
+      euler (spectralOverField C S F Ω s).hom E.of hF -
+          CurveCohomologyCalculus.finrankEuler01 (spectralOverField C S F Ω s).hom
+            (structureModule (spectralOverField C S F Ω s).left) =
+        spectralDegree C
 
 abbrev RankOneSheaves := (RankOneProperty C S F Ω s).FullSubcategory
 

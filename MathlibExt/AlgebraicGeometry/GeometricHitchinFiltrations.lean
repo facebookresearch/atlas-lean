@@ -79,7 +79,10 @@ def shiftHypercohomology {Y : TopCat.{0}} (K : RationalDerived Y) (a d : ℤ) :
   map_add' b c := by simp [Preadditive.add_comp]
   map_smul' r b := by simp [Linear.smul_comp]
 
-variable (C : RankTwoHiggsCurveFamilies.ComplexScheme) (B : BaseChanges C) (M : ModuliModel C B)
+variable (C : RankTwoHiggsCurveFamilies.ComplexScheme)
+    [CoherentCurveLinearSeries.IsProperCurve C.hom]
+  [CoherentCurveLinearSeries.HasConstantGlobalSections C.hom] (B : BaseChanges C)
+    (M : ModuliModel C B)
   (S : SectionBases C) (H : HitchinModel C B M S)
 
 def shiftedHitchinComplex : RationalDerived (space (base C)) :=

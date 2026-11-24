@@ -57,12 +57,12 @@ def IsInvariant (N : LambdaConnection pi lambda D) (F : X.left.Modules)
 
 structure CoherentConnection (pi : X.left ⟶ T) (lambda : Γ(T, ⊤)) (D : Differential pi) where
   connection : LambdaConnection pi lambda D
-  coherent : IsCoherent connection.object
+  coherent : IsFiniteTypeQuasicoherent connection.object
 
 def IsSemistable {H : LineBundle X.left} {d : ℕ} (P : HilbertNumerics X H d)
     (E : CoherentConnection pi lambda D) : Prop :=
   0 < E.connection.rank ∧ (d = 0 ∨
-    ∀ (F : X.left.Modules) (hF : IsCoherent F) (r : ℕ),
+    ∀ (F : X.left.Modules) (hF : IsFiniteTypeQuasicoherent F) (r : ℕ),
       0 < r → r < E.connection.rank → HasGenericRank F r → IsTorsionFree F →
         ∀ i : F ⟶ E.connection.object, Mono i → IsTorsionFree (cokernel i) →
           IsInvariant E.connection F i →
@@ -71,7 +71,7 @@ def IsSemistable {H : LineBundle X.left} {d : ℕ} (P : HilbertNumerics X H d)
 def IsStable {H : LineBundle X.left} {d : ℕ} (P : HilbertNumerics X H d)
     (E : CoherentConnection pi lambda D) : Prop :=
   0 < E.connection.rank ∧ ((d = 0 ∧ E.connection.rank = 1) ∨
-    (0 < d ∧ ∀ (F : X.left.Modules) (hF : IsCoherent F) (r : ℕ),
+    (0 < d ∧ ∀ (F : X.left.Modules) (hF : IsFiniteTypeQuasicoherent F) (r : ℕ),
       0 < r → r < E.connection.rank → HasGenericRank F r → IsTorsionFree F →
         ∀ i : F ⟶ E.connection.object, Mono i → IsTorsionFree (cokernel i) →
           IsInvariant E.connection F i →

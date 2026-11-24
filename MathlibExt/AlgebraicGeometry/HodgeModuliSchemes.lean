@@ -162,6 +162,7 @@ structure HodgeRepresentation where
   frame_parameter : γ[frameScheme n,scheme] ≫ parameter =
     CartesianMonoidalCategory.snd (frameScheme n) scheme ≫ parameter
   line : LineBundle scheme.left
+  [noetherian : IsNoetherian scheme.left]
   ample : IsAmpleLine line
   linearization : Linearization (frameScheme n) scheme line.val
   actionPowers : PullbackPowers (LinearizedLineBundles.action (frameScheme n) scheme)

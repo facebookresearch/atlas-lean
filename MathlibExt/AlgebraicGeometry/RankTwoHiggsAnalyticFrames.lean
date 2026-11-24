@@ -65,8 +65,9 @@ def pointLineComparison (C : ComplexScheme) {B : BaseChanges C} (M : ModuliModel
       (congrArg Over.Hom.left (pointFamilyMap_first C M p))).app (canonicalLine C) ≪≫
     (Scheme.Modules.pullbackId C.left).app (canonicalLine C)
 
-structure HiggsPointModel (C : ComplexScheme) {B : BaseChanges C} (M : ModuliModel C B)
-    (p : ComplexPoints M.scheme.hom) where
+structure HiggsPointModel (C : ComplexScheme) [IsProperCurve C.hom]
+    [SmoothOfRelativeDimension 1 C.hom] [IsIntegral C.left] {B : BaseChanges C}
+    (M : ModuliModel C B) (p : ComplexPoints M.scheme.hom) where
   tensor : TensorPullbackComparison (pointFamilyMap C M p).left
   object : TwistedBundle C.left (canonicalLine C) 2
   module : object.module ≅
@@ -78,7 +79,7 @@ structure HiggsPointModel (C : ComplexScheme) {B : BaseChanges C} (M : ModuliMod
         ((Scheme.Modules.pullback (prod.fst : prod C M.scheme ⟶ C).left).obj
           (canonicalLine C))).hom ≫
       tensorMap (𝟙 _) (pointLineComparison C M p).hom
-  degree : CurveVectorBundles.bundleDegree C.hom object.module 2 = 1
+  degree : CurveVectorBundles.bundleDegree C.hom object.module 2 object.bundle = 1
   stable : IsStableCurve C object
 
 /-- The native universal differential, exterior-degree-one inclusion and sheafification unit. -/

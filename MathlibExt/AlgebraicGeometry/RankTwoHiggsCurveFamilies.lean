@@ -12,6 +12,7 @@ public import MathlibExt.AlgebraicGeometry.IntegrableHiggsBundles
 public import MathlibExt.AlgebraicGeometry.RelativeLambdaReindexing
 public import MathlibExt.AlgebraicGeometry.ProjectiveLineSystems
 public import MathlibExt.AlgebraicGeometry.PerverseSheaves
+public import Mathlib.Analysis.Complex.Polynomial.Basic
 
 /-!
 # Actual rank-two degree-one stable Higgs families
@@ -48,9 +49,13 @@ class CurveSource (C : ComplexScheme) extends PerverseSheaves.IsComplexVariety C
   connected : ConnectedSpace C.left
   projective : ProjectiveLineSystems.IsProjectiveVariety C
   cotangentLine : IsLineBundle (canonicalLine C)
+  [smoothCurve : SmoothOfRelativeDimension 1 C.hom]
+  [properCurve : IsProperCurve C.hom]
+  [integral : IsIntegral C.left]
   genusRange : 2 ≤ genus C.hom
 
-attribute [instance] CurveSource.smooth CurveSource.connected
+attribute [instance] CurveSource.smooth CurveSource.connected CurveSource.smoothCurve
+  CurveSource.properCurve CurveSource.integral
 
 abbrev Family (C T : ComplexScheme) := CurveFamily C T (canonicalLine C) 2
 
@@ -91,13 +96,18 @@ def curveOverField (C : ComplexScheme) (Ω : Type) [Field Ω] [Algebra ℂ Ω] :
     Over (Spec (.of Ω)) :=
   Over.mk (prod.snd : prod C (complexField Ω) ⟶ complexField Ω).left
 
+/-- Every geometric fibre of the family is a stable bundle of rank two and degree one on the
+base-changed curve, a smooth proper integral curve. -/
 def Admissible (C T : ComplexScheme) : ObjectProperty (Family C T) := fun E =>
   ∀ (Ω : Type) [Field Ω] [Algebra ℂ Ω] [IsAlgClosed Ω]
+    [IsProperCurve (curveOverField C Ω).hom]
+    [SmoothOfRelativeDimension 1 (curveOverField C Ω).hom]
+    [IsIntegral (curveOverField C Ω).left]
     (x : complexField Ω ⟶ T),
     ∃ P : TensorPullbackComparison (curveMap C x).left,
     ∃ E' : Family C (complexField Ω),
     Nonempty (FamilyPullback C x E E' P) ∧
-      bundleDegree (curveOverField C Ω).hom E'.module 2 = 1 ∧
+      bundleDegree (curveOverField C Ω).hom E'.module 2 E'.bundle = 1 ∧
       IsStableCurve (curveOverField C Ω) E'
 
 abbrev StableFamily (C T : ComplexScheme) := (Admissible C T).FullSubcategory

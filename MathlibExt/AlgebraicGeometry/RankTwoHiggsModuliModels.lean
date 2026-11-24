@@ -9,6 +9,7 @@ module
 
 public import MathlibExt.AlgebraicGeometry.RankTwoHiggsCurveFamilies
 public import MathlibExt.AlgebraicGeometry.NativeTensorComparisons
+public import MathlibExt.AlgebraicGeometry.ProjectiveSpace
 
 /-!
 # Actual coarse rank-two degree-one Higgs moduli
@@ -72,7 +73,7 @@ structure ModuliModel where
   scheme : ComplexScheme
   variety : PerverseSheaves.IsComplexVariety scheme
   smooth : Smooth scheme.hom
-  quasiProjective : ∃ n : ℕ, ∃ j : scheme ⟶ SurfaceHilbertSchemes.projectiveSpace ℂ n,
+  quasiProjective : ∃ n : ℕ, ∃ j : scheme ⟶ ProjectiveSpace.projectiveSpace ℂ n,
     IsImmersion j.left
   classes : ClassMaps C B scheme
   universalFamily : StableFamily C scheme

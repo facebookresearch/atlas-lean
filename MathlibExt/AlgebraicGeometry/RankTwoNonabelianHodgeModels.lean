@@ -42,7 +42,9 @@ open RankTwoMatrixGroupModels TwistedRankTwoRepresentations TwistedCharacterQuot
 open BettiRealization
 open scoped Manifold ContDiff
 
-variable (C : ComplexScheme) [AnalyticRealization.AnalyticManifold C 1]
+variable (C : ComplexScheme) [CoherentCurveLinearSeries.IsProperCurve C.hom]
+    [SmoothOfRelativeDimension 1 C.hom]
+  [IsIntegral C.left] [AnalyticRealization.AnalyticManifold C 1]
   [IsManifold 𝓘(ℝ, Coordinates 1) ∞ (space C)]
   [ExteriorTheory ℝ (Coordinates 1) (space C)]
   [FrameTheory 2] [GL2MatrixTheory] [Conjugation (CoherentCurveLinearSeries.genus C.hom)]

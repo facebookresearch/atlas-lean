@@ -57,14 +57,15 @@ def_wanted unit_fibre_comparison (X : ComplexScheme) (x : scalarBase ⟶ X) (n :
     (P : PullbackSystem X x n) : UnitFibreComparison X x n P
 
 def_wanted fibre_tests (X : ComplexScheme) [IsComplexVariety X]
-    (d : ℕ) [SmoothOfRelativeDimension d X.hom] [IsProper X.hom]
+    (d : ℕ) [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsNoetherian X.left]
     (_projective : DeCataldoMiglioriniDecompositionWanted.IsProjectiveOverC X)
     (x : scalarBase ⟶ X) (n : ℕ) (_rank : 0 < n)
     (H : LineBundle X.left) (_ample : IsAmpleLine H)
     (P : PullbackSystem X x n) (V : UnitFibreComparison X x n P) : FibreTests X x n P V d H
 
 theorem_wanted zero_semistability (X : ComplexScheme) [IsComplexVariety X]
-    (d : ℕ) [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsIntegral X.left]
+    (d : ℕ) [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsNoetherian X.left]
+      [IsIntegral X.left]
     (_projective : DeCataldoMiglioriniDecompositionWanted.IsProjectiveOverC X)
     (_dimension : 0 < d) (H : LineBundle X.left) (_ample : IsAmpleLine H)
     (N : HilbertNumerics X H d)
@@ -74,7 +75,8 @@ theorem_wanted zero_semistability (X : ComplexScheme) [IsComplexVariety X]
       PolarizedHiggsStability.IsSemistable N (LambdaConnectionStability.zeroCoherent C E)
 
 theorem_wanted nonzero_semistability (X : ComplexScheme) [IsComplexVariety X]
-    (d : ℕ) [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsIntegral X.left]
+    (d : ℕ) [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsNoetherian X.left]
+      [IsIntegral X.left]
     (_projective : DeCataldoMiglioriniDecompositionWanted.IsProjectiveOverC X)
     (H : LineBundle X.left) (_ample : IsAmpleLine H)
     (N : HilbertNumerics X H d) (D : Differential X.hom)
@@ -97,7 +99,7 @@ theorem_wanted nonzero_rational_chern_zero
 
 theorem_wanted finite_type_admissibility
     (X : ComplexScheme) [IsComplexVariety X] (d : ℕ) [SmoothOfRelativeDimension d X.hom]
-    [IsProper X.hom] [IsIntegral X.left]
+    [IsProper X.hom] [IsNoetherian X.left] [IsIntegral X.left]
     (_projective : DeCataldoMiglioriniDecompositionWanted.IsProjectiveOverC X)
     (x : scalarBase ⟶ X) (n : ℕ) (_rank : 0 < n)
     (H : LineBundle X.left) (_ample : IsAmpleLine H)
@@ -115,7 +117,7 @@ theorem_wanted finite_type_admissibility
 
 theorem_wanted admissible_reindexing
     (X : ComplexScheme) [IsComplexVariety X] (d : ℕ) [SmoothOfRelativeDimension d X.hom]
-    [IsProper X.hom] [IsIntegral X.left]
+    [IsProper X.hom] [IsNoetherian X.left] [IsIntegral X.left]
     (_projective : DeCataldoMiglioriniDecompositionWanted.IsProjectiveOverC X)
     (x : scalarBase ⟶ X) (n : ℕ) (_rank : 0 < n)
     (H : LineBundle X.left) (_ample : IsAmpleLine H)
@@ -131,7 +133,7 @@ theorem_wanted admissible_reindexing
 
 theorem_wanted affine_limit_descent
     (X : ComplexScheme) [IsComplexVariety X] (d : ℕ) [SmoothOfRelativeDimension d X.hom]
-    [IsProper X.hom] [IsIntegral X.left]
+    [IsProper X.hom] [IsNoetherian X.left] [IsIntegral X.left]
     (_projective : DeCataldoMiglioriniDecompositionWanted.IsProjectiveOverC X)
     (x : scalarBase ⟶ X) (n : ℕ) (_rank : 0 < n)
     (H : LineBundle X.left) (_ample : IsAmpleLine H)
@@ -153,7 +155,7 @@ def_wanted scalingParameterTheory [FrameTheory 1] : ScalingParameterTheory
 /-- Frame change and unit scaling preserve the fixed admissible families. -/
 theorem_wanted actionAdmissibility
     (X : ComplexScheme) [IsComplexVariety X] (d : ℕ)
-    [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsIntegral X.left]
+    [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsNoetherian X.left] [IsIntegral X.left]
     (_projective : DeCataldoMiglioriniDecompositionWanted.IsProjectiveOverC X)
     (x : scalarBase ⟶ X) (n : ℕ) (_rank : 0 < n)
     (H : LineBundle X.left) (_ample : IsAmpleLine H)
@@ -170,7 +172,7 @@ theorem_wanted actionAdmissibility
 /-- The rank-n polynomial comes from the actual zero/one fibre cohomology. -/
 theorem_wanted admissibleRankHilbertPolynomial
     (X : ComplexScheme) [IsComplexVariety X] (d : ℕ)
-    [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsIntegral X.left]
+    [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsNoetherian X.left] [IsIntegral X.left]
     (_projective : DeCataldoMiglioriniDecompositionWanted.IsProjectiveOverC X)
     (x : scalarBase ⟶ X) (n : ℕ) (_rank : 0 < n)
     (H : LineBundle X.left) (_ample : IsAmpleLine H)
@@ -182,7 +184,7 @@ theorem_wanted admissibleRankHilbertPolynomial
     (Q : ∀ {Y Z : ComplexScheme} [IsComplexVariety Y] [IsComplexVariety Z]
       (f : Y ⟶ Z) [IsProper f.left], ProperPullback (spaceMap f))
     (T : CharacteristicClassTheory D Q)
-    (hO : NumericalCompactifiedJacobians.IsCoherent
+    (hO : NumericalCompactifiedJacobians.IsFiniteTypeQuasicoherent
       (CoherentCurveLinearSeries.structureModule (unitProduct X).left))
     (S : ComplexScheme) [LocallyOfFiniteType S.hom] [QuasiCompact S.hom]
     (E : Family X x S (P.differential S) n)
@@ -193,7 +195,7 @@ theorem_wanted admissibleRankHilbertPolynomial
 /-- Simpson Proposition 4.1: the actual framed functor, actions and GIT line. -/
 def_wanted hodgeRepresentation
     (X : ComplexScheme) [IsComplexVariety X] (d : ℕ)
-    [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsIntegral X.left]
+    [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsNoetherian X.left] [IsIntegral X.left]
     (_projective : DeCataldoMiglioriniDecompositionWanted.IsProjectiveOverC X)
     (x : scalarBase ⟶ X) (n : ℕ) (_rank : 0 < n)
     (H : LineBundle X.left) (_ample : IsAmpleLine H)
@@ -213,7 +215,7 @@ def_wanted hodgeRepresentation
 /-- The actual quotient is universal over its target and over the parameter line. -/
 def_wanted hodgeQuotient
     (X : ComplexScheme) [IsComplexVariety X] (d : ℕ)
-    [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsIntegral X.left]
+    [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsNoetherian X.left] [IsIntegral X.left]
     (_projective : DeCataldoMiglioriniDecompositionWanted.IsProjectiveOverC X)
     (x : scalarBase ⟶ X) (n : ℕ) (_rank : 0 < n)
     (H : LineBundle X.left) (_ample : IsAmpleLine H)
@@ -234,7 +236,7 @@ def_wanted hodgeQuotient
 /-- Represent the independently defined constant-parameter family functor. -/
 def_wanted fixedRepresentation
     (X : ComplexScheme) [IsComplexVariety X] (d : ℕ)
-    [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsIntegral X.left]
+    [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsNoetherian X.left] [IsIntegral X.left]
     (_projective : DeCataldoMiglioriniDecompositionWanted.IsProjectiveOverC X)
     (x : scalarBase ⟶ X) (n : ℕ) (_rank : 0 < n)
     (H : LineBundle X.left) (_ample : IsAmpleLine H)
@@ -255,7 +257,7 @@ def_wanted fixedRepresentation
 /-- The fixed family quotient retains arbitrary target-base-change universality. -/
 def_wanted fixedQuotient
     (X : ComplexScheme) [IsComplexVariety X] (d : ℕ)
-    [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsIntegral X.left]
+    [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsNoetherian X.left] [IsIntegral X.left]
     (_projective : DeCataldoMiglioriniDecompositionWanted.IsProjectiveOverC X)
     (x : scalarBase ⟶ X) (n : ℕ) (_rank : 0 < n)
     (H : LineBundle X.left) (_ample : IsAmpleLine H)
@@ -277,7 +279,7 @@ def_wanted fixedQuotient
 /-- At zero, the actual relative operator becomes the integrable Higgs morphism. -/
 def_wanted zeroHiggsRealization
     (X : ComplexScheme) [IsComplexVariety X] (d : ℕ)
-    [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsIntegral X.left]
+    [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsNoetherian X.left] [IsIntegral X.left]
     (_projective : DeCataldoMiglioriniDecompositionWanted.IsProjectiveOverC X)
     (x : scalarBase ⟶ X) (n : ℕ) (_rank : 0 < n)
     (H : LineBundle X.left) (_ample : IsAmpleLine H)
@@ -295,7 +297,7 @@ def_wanted zeroHiggsRealization
 /-- At one, both actual connection operators and the frame specialize literally. -/
 def_wanted oneFlatRealization
     (X : ComplexScheme) [IsComplexVariety X] (d : ℕ)
-    [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsIntegral X.left]
+    [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsNoetherian X.left] [IsIntegral X.left]
     (_projective : DeCataldoMiglioriniDecompositionWanted.IsProjectiveOverC X)
     (x : scalarBase ⟶ X) (n : ℕ) (_rank : 0 < n)
     (H : LineBundle X.left) (_ample : IsAmpleLine H)
@@ -313,7 +315,7 @@ def_wanted oneFlatRealization
 /-- Both fibre isomorphisms preserve the actual family classes and quotient square. -/
 def_wanted hodgeFibreIdentification
     (X : ComplexScheme) [IsComplexVariety X] (d : ℕ)
-    [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsIntegral X.left]
+    [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsNoetherian X.left] [IsIntegral X.left]
     (_projective : DeCataldoMiglioriniDecompositionWanted.IsProjectiveOverC X)
     (x : scalarBase ⟶ X) (n : ℕ) (_rank : 0 < n)
     (H : LineBundle X.left) (_ample : IsAmpleLine H)
@@ -337,7 +339,7 @@ def_wanted hodgeFibreIdentification
 /-- Descend the literal scalar multiplication of the actual family operators. -/
 def_wanted coarseScalingDescent
     (X : ComplexScheme) [IsComplexVariety X] (d : ℕ)
-    [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsIntegral X.left]
+    [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsNoetherian X.left] [IsIntegral X.left]
     (_projective : DeCataldoMiglioriniDecompositionWanted.IsProjectiveOverC X)
     (x : scalarBase ⟶ X) (n : ℕ) (_rank : 0 < n)
     (H : LineBundle X.left) (_ample : IsAmpleLine H)
@@ -359,7 +361,7 @@ def_wanted coarseScalingDescent
 /-- The nonzero-fibre map is scaling by lambda inverse, in both directions. -/
 def_wanted nonzeroFibreScaling
     (X : ComplexScheme) [IsComplexVariety X] (d : ℕ)
-    [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsIntegral X.left]
+    [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsNoetherian X.left] [IsIntegral X.left]
     (_projective : DeCataldoMiglioriniDecompositionWanted.IsProjectiveOverC X)
     (x : scalarBase ⟶ X) (n : ℕ) (_rank : 0 < n)
     (H : LineBundle X.left) (_ample : IsAmpleLine H)
@@ -383,7 +385,7 @@ def_wanted nonzeroFibreScaling
 /-- Theorem 9.1 for the actual framed Hodge representation scheme. -/
 def_wanted framedEtaleLocalProduct
     (X : ComplexScheme) [IsComplexVariety X] (d : ℕ)
-    [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsIntegral X.left]
+    [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsNoetherian X.left] [IsIntegral X.left]
     (_projective : DeCataldoMiglioriniDecompositionWanted.IsProjectiveOverC X)
     (x : scalarBase ⟶ X) (n : ℕ) (_rank : 0 < n)
     (H : LineBundle X.left) (_ample : IsAmpleLine H)
@@ -405,7 +407,7 @@ def_wanted framedEtaleLocalProduct
 /-- Theorem 9.1 for the actual universal coarse Hodge quotient scheme. -/
 def_wanted coarseEtaleLocalProduct
     (X : ComplexScheme) [IsComplexVariety X] (d : ℕ)
-    [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsIntegral X.left]
+    [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsNoetherian X.left] [IsIntegral X.left]
     (_projective : DeCataldoMiglioriniDecompositionWanted.IsProjectiveOverC X)
     (x : scalarBase ⟶ X) (n : ℕ) (_rank : 0 < n)
     (H : LineBundle X.left) (_ample : IsAmpleLine H)
