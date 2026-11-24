@@ -13,18 +13,34 @@ import Mathlib.Data.ZMod.Basic
 import Mathlib.Tactic.LinearCombination
 
 /-!
-# Isomorphism of affine virtual dihedral quandles
+# Virtual racks and quandles
 
-A virtual rack is a rack together with a rack automorphism, its virtual structure. On the
-dihedral quandle $R_n$, the set $\mathbb{Z}/n\mathbb{Z}$ with $x \triangleleft y = 2x - y$, the
-affine maps $T_{a,u} \colon x \mapsto a + u x$ with $u$ a unit are virtual structures, and
-`dihedral_virtualRackIso_iff` decides when two of them give isomorphic virtual racks
-(Lực Ta, *Enumeration of Virtual Quandles Up to Isomorphism*, Journal of Integer Sequences 28
-(2025), Article 25.8.4, Proposition 21).
+A virtual rack $(R, f)$ is a rack $R$ together with a rack automorphism $f$ of $R$, its virtual
+structure. On the dihedral quandle $R_n$, the set $\mathbb{Z}/n\mathbb{Z}$ with
+$x \triangleleft y = 2x - y$, the affine maps $T_{a,u} \colon x \mapsto a + u x$ with $u$ a unit
+are virtual structures.
 
-The proof uses that for $n > 0$ a map $\psi$ of $\mathbb{Z}/n\mathbb{Z}$ with
-$\psi(2x - y) = 2\psi(x) - \psi(y)$ is affine, $\psi(x) = \psi(0) + (\psi(1) - \psi(0)) x$, by
-induction along $k = 2(k - 1) - (k - 2)$; for a bijection the slope $\psi(1) - \psi(0)$ is a unit.
+## Main definitions
+
+* `MetaMathlibExt.VirtualRackIso`: isomorphism of virtual racks.
+* `MetaMathlibExt.dihedralAffinePerm`: the affine permutation $T_{a,u}$ of $R_n$.
+
+## Main statements
+
+* `MetaMathlibExt.dihedral_virtualRackIso_iff`: for $n > 0$, the virtual racks $(R_n, T_{a,u})$
+  and $(R_n, T_{b,v})$ are isomorphic if and only if $u = v$ and $b = y a + (1 - u) x$ for some
+  $x$ and some unit $y$.
+
+## Implementation notes
+
+For $n > 0$ a map $\psi$ of $\mathbb{Z}/n\mathbb{Z}$ with $\psi(2x - y) = 2\psi(x) - \psi(y)$ is
+affine, $\psi(x) = \psi(0) + (\psi(1) - \psi(0)) x$, by induction along $k = 2(k - 1) - (k - 2)$;
+for a bijection the slope $\psi(1) - \psi(0)$ is a unit.
+
+## References
+
+* Lực Ta, *Enumeration of Virtual Quandles Up to Isomorphism*, Journal of Integer Sequences 28
+  (2025), Article 25.8.4, Section 2.2 and Proposition 21.
 -/
 
 namespace MetaMathlibExt
