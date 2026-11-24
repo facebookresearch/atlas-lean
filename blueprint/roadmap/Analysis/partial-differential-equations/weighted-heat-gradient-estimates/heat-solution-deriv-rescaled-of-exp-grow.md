@@ -5,9 +5,11 @@ $K_1(y)=(4\pi)^{-1/2}e^{-y^2/4}$ its time-one kernel.
 
 If $f$ is Lebesgue almost-everywhere strongly measurable and has at most exponential
 spatial growth, then for every $t>0$ and $x\in\mathbb R$,
+
 $$
 \partial_x P_t f(x)=-\frac1{2\sqrt t}\int_{\mathbb R} yK_1(y)f(x-\sqrt t\,y)\,dy.
 $$
+
 Here exponential growth means $|f(y)|\le M e^{c|y|}$ for some $M,c\ge0$.
 The derivative is the actual derivative of the existing heat evolution; the datum
 may be discontinuous. The proof rewrites the Gaussian-moment derivative as a

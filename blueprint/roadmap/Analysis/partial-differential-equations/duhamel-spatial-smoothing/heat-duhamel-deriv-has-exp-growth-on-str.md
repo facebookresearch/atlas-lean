@@ -8,10 +8,12 @@ No spatial or time derivative of $f$ is assumed.
 The actual derivative $(t,x)\mapsto\partial_xD_\nu f(t,x)$ has a uniform
 exponential spatial bound on the same finite strip. One may use growth exponent
 $c$ and coefficient
+
 $$
 \frac{M\sqrt T}{\sqrt\nu}
 \int_{\mathbb R}|y|K_1(y)e^{c\sqrt{\nu T}|y|}\,dy.
 $$
+
 The proof bounds $\sqrt t$ by $\sqrt T$ in the quantitative estimate. The Lean
 statement allows any real $T$; when $T<0$ the specified strip is empty. For
 $T=0$ the derivative vanishes. There is no hypothesis on forcing derivatives.

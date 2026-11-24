@@ -5,10 +5,12 @@ $K_1(y)=(4\pi)^{-1/2}e^{-y^2/4}$ its time-one kernel.
 
 Let $f$ be continuous, $M,c\ge0$, and $|f(y)|\le M e^{c|y|}$ for all $y$.
 If $s,S\in\mathbb R$ satisfy $|s|\le S$, then
+
 $$
 \left|\int_{\mathbb R}yK_1(y)f(x-sy)\,dy\right|
 \le M e^{c|x|}\int_{\mathbb R}|y|K_1(y)e^{cS|y|}\,dy.
 $$
+
 All integrals are justified by Gaussian domination. The proof uses
 $|x-sy|\le |x|+S|y|$, then the triangle inequality and monotonicity of integration.
 

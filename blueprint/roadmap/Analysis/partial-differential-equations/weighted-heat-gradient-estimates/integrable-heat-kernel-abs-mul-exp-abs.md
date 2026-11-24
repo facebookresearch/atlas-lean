@@ -1,7 +1,9 @@
 # Integrability of the weighted first Gaussian moment
 
 For every $t>0$ and every real $c$, the function
+
 $$y\longmapsto |y|K_t(y)e^{c|y|}$$
+
 is Lebesgue integrable on $\mathbb R$. The proof rewrites the kernel explicitly
 and applies Gaussian domination of polynomial times exponential growth with
 polynomial degree one. The weight parameter need not be nonnegative.

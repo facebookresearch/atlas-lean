@@ -2,9 +2,11 @@
 
 Suppose $f$ is jointly continuous on $[0,T]\times\mathbb R$ with a uniform
 exponential spatial bound. For $0\le t\le T$, arbitrary real $\nu$, and $x\in\mathbb R$,
+
 $$
 D_\nu f(t,x)=2t\int_0^1 r\,P_{\nu t r^2}(f(t(1-r^2),\cdot))(x)\,dr.
 $$
+
 The proof uses the differentiable substitution $s=t(1-r^2)$ and the continuity
 of heat families. Nonpositive heat times use the existing stationary extension;
 this algebraic identity makes no backward-heat or zero-viscosity smoothing claim.

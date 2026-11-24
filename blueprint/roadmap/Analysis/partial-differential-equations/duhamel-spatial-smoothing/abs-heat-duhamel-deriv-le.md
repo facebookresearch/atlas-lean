@@ -8,11 +8,13 @@ Let $P_t f$ be the whole-line Gaussian heat evolution and
 $K_1(y)=(4\pi)^{-1/2}e^{-y^2/4}$ its time-one kernel.
 
 For $0\le t\le T$ and every real $x$,
+
 $$
 |\partial_xD_\nu f(t,x)|\le
 \frac{M\sqrt t}{\sqrt\nu}
 \left(\int_{\mathbb R}|y|K_1(y)e^{c\sqrt{\nu T}|y|}\,dy\right)e^{c|x|}.
 $$
+
 The finite Gaussian moment is uniform over the strip. Apply the affine
 first-moment estimate inside the fixed-time representation, use
 $0\le r\le1$ and $t\le T$, and integrate the bound over an interval of length one.

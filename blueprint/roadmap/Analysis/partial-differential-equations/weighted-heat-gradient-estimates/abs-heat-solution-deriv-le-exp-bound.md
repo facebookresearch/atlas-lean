@@ -5,10 +5,12 @@ $K_1(y)=(4\pi)^{-1/2}e^{-y^2/4}$ its time-one kernel.
 
 Let $f$ be continuous with $|f(y)|\le M e^{c|y|}$, where $M,c\ge0$.
 For $0<t\le H$,
+
 $$
 |\partial_x P_t f(x)|\le \frac{M}{2\sqrt t}
 \left(\int_{\mathbb R}|y|K_1(y)e^{c\sqrt H|y|}\,dy\right)e^{c|x|}.
 $$
+
 The Gaussian moment is finite. The proof combines the actual rescaled derivative
 formula with the affine first-moment bound. No derivative of $f$ is required;
 no assertion at heat time zero is made.
