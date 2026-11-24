@@ -9,102 +9,21 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Data.List.Sort
-public import Mathlib.Data.Nat.Totient
-public import Mathlib.Data.ZMod.Basic
-public import Mathlib.Dynamics.PeriodicPts.Defs
 public import Mathlib.NumberTheory.Divisors
-public import Mathlib.Order.Lattice.Nat
-public import MathlibExt.NumberTheory.Digits.KaprekarProjectiveOrderTotient
+public import MathlibExt.NumberTheory.Digits.KaprekarMaximalPeriod
 
 /-!
 # Four-digit Kaprekar dynamics in odd bases (Chen, Ono, Schwartz, Thakur)
 
 Cycle-length and cycle-count statements from E. Chen, K. Ono, R. E. Schwartz and
 D. Thakur, *Four-Digit Kaprekar Dynamics in Odd Bases*, Journal of Integer Sequences
-29 (2026), Article 26.4.7.
-
-The Kaprekar routine on a four-digit base-`B` string with sorted digits
-`a₁ ≥ a₂ ≥ a₃ ≥ a₄` depends only on the difference pair `(d₁, d₂) = (a₁ - a₄, a₂ - a₃)`;
-the paper works on the state space `X_B = {(d₁, d₂) : 1 ≤ d₁ < B, 0 ≤ d₂ ≤ d₁}` (constant
-strings omitted) and counts terminal cycles of the induced map `K_B` there. A terminal
-cycle of length `L` is a periodic orbit of `K_B` in `X_B` of minimal period `L`, so the
-number of such cycles is the number of points of minimal period `L` divided by `L`.
-
-The structural classification (Theorem 1, with Lemma 11, Lemma 14 and Proposition 16)
-is already proved as `MetaMathlibExt.four_digit_kaprekar_structural_classification` in
-`MathlibExt/NumberTheory/Digits/KaprekarStructuralClassification.lean`, whose
-`let`-bound map `kaprekar` is the same formula as `kaprekarFourDigitStep` below.
-
-The projective order of `2` (`MetaMathlibExt.projectiveOrderTwo`), with its characterization and
-sample values, and the bound on the cycle lengths of doubling on pairs of projective classes are
-proved in `MathlibExt/NumberTheory/Digits/KaprekarProjectiveDoubling.lean`. The bound by half
-the totient is proved in `MathlibExt/NumberTheory/Digits/KaprekarProjectiveOrderTotient.lean`.
+29 (2026), Article 26.4.7. The difference-coordinate map, state space and maximal
+period criterion are in `MathlibExt/NumberTheory/Digits/KaprekarMaximalPeriod.lean`.
 -/
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **The four-digit Kaprekar map in difference coordinates.** For a base $B$ and a pair of
-natural numbers $(d_1, d_2)$, the map $K_B$ forms the list of four digits
-$[d_1 - 1, B - 1, B - 1, B - d_1]$ if $d_2 = 0$ and $[d_1, d_2 - 1, B - d_2 - 1, B - d_1]$ if
-$d_2 > 0$, sorts it decreasingly as $a_1 \ge a_2 \ge a_3 \ge a_4$, and sets
-$K_B(d_1, d_2) = (a_1 - a_4, a_2 - a_3)$. Subtraction of natural numbers is truncated at $0$;
-for $1 \le d_1 < B$ and $0 \le d_2 \le d_1$ no truncation occurs.
-
-For such $(d_1, d_2)$ the list holds the digits of the Kaprekar difference (largest minus
-smallest arrangement) of any four-digit base-$B$ string with difference coordinates
-$(d_1, d_2)$, as in paper displays (5) and (6).
-
-Source: Evan Chen, Ken Ono, Richard E. Schwartz, and Dinesh Thakur, *Four-Digit Kaprekar
-Dynamics in Odd Bases*, Journal of Integer Sequences 29 (2026), Article 26.4.7,
-Section 2.1. -/
-public def kaprekarFourDigitStep (B : ℕ) (d : ℕ × ℕ) : ℕ × ℕ :=
-  match List.insertionSort (· ≥ ·)
-    (if d.2 = 0 then [d.1 - 1, B - 1, B - 1, B - d.1]
-      else [d.1, d.2 - 1, B - d.2 - 1, B - d.1]) with
-  | [a, b, c, e] => (a - e, b - c)
-  | _ => (0, 0)
-
-/-- **Sample values of the four-digit Kaprekar map.** The four-digit Kaprekar map satisfies
-$K_{11}(5, 1) = (9, 1)$, $K_{11}(6, 0) = (5, 5)$ and $K_{11}(5, 5) = (2, 0)$ in base $11$, and
-$K_7(3, 1) = (5, 1)$, $K_7(5, 1) = (5, 3)$ and $K_7(5, 3) = (3, 1)$ in base $7$.
-
-In particular $(3, 1) \mapsto (5, 1) \mapsto (5, 3) \mapsto (3, 1)$ is a terminal cycle of $K_7$.
-
-Source: Evan Chen, Ken Ono, Richard E. Schwartz, and Dinesh Thakur, *Four-Digit Kaprekar
-Dynamics in Odd Bases*, Journal of Integer Sequences 29 (2026), Article 26.4.7,
-Examples 7, 12 and 18. -/
-public theorem kaprekarFourDigitStep_examples :
-    kaprekarFourDigitStep 11 (5, 1) = (9, 1) ∧ kaprekarFourDigitStep 11 (6, 0) = (5, 5) ∧
-      kaprekarFourDigitStep 11 (5, 5) = (2, 0) ∧ kaprekarFourDigitStep 7 (3, 1) = (5, 1) ∧
-      kaprekarFourDigitStep 7 (5, 1) = (5, 3) ∧ kaprekarFourDigitStep 7 (5, 3) = (3, 1) := by
-  simp [kaprekarFourDigitStep, List.insertionSort_cons, List.orderedInsert_cons]
-
-/-- **The four-digit Kaprekar state space.** For a base $B$, the state space $X_B$ is the finite
-set of pairs of natural numbers $(d_1, d_2)$ with $1 \le d_1 < B$ and $0 \le d_2 \le d_1$.
-
-A nonconstant four-digit base-$B$ string with sorted digits $a_1 \ge a_2 \ge a_3 \ge a_4$ has
-difference coordinates $(d_1, d_2) = (a_1 - a_4, a_2 - a_3)$, a point of $X_B$.
-
-Source: Evan Chen, Ken Ono, Richard E. Schwartz, and Dinesh Thakur, *Four-Digit Kaprekar
-Dynamics in Odd Bases*, Journal of Integer Sequences 29 (2026), Article 26.4.7,
-display (2). -/
-public def kaprekarFourDigitStates (B : ℕ) : Finset (ℕ × ℕ) :=
-  (Finset.range B ×ˢ Finset.range B).filter fun d => 1 ≤ d.1 ∧ d.2 ≤ d.1
-
-/-- **Sizes of the Kaprekar state spaces in bases 3 and 7.** The four-digit Kaprekar state spaces
-satisfy $|X_3| = 5$ and $|X_7| = 27$.
-
-Both values agree with the general count $|X_B| = (B - 1)(B + 2)/2$.
-
-Source: Evan Chen, Ken Ono, Richard E. Schwartz, and Dinesh Thakur, *Four-Digit Kaprekar
-Dynamics in Odd Bases*, Journal of Integer Sequences 29 (2026), Article 26.4.7,
-display (2) and the proof of Corollary 27. -/
-public theorem kaprekarFourDigitStates_card_examples :
-    (kaprekarFourDigitStates 3).card = 5 ∧ (kaprekarFourDigitStates 7).card = 27 := by
-  decide
 
 /-- **Long Kaprekar cycles force a prime base.** Let $B > 3$ be odd, let $K_B$ be the four-digit
 Kaprekar map and $X_B$ its state space. Every point of $X_B$ that is periodic for $K_B$ has
@@ -120,23 +39,6 @@ public theorem_wanted kaprekar_minimalPeriod_le_and_prime_of_eq (B : ℕ) (hB : 
       Function.minimalPeriod (kaprekarFourDigitStep B) d ≤ (B - 1) / 2) ∧
       ((∃ d ∈ kaprekarFourDigitStates B,
           Function.minimalPeriod (kaprekarFourDigitStep B) d = (B - 1) / 2) → B.Prime)
-
-/-- **Maximal Kaprekar cycle length in odd bases.** Let $B > 3$ be odd, let $K_B$ be the
-four-digit Kaprekar map and $X_B$ its state space, and let $\lambda(B)$ be the projective order
-of $2$ modulo $B$. Every point of $X_B$ that is periodic for $K_B$ has minimal period at most
-$(B - 1)/2$. Moreover, some point of $X_B$ has minimal period exactly $(B - 1)/2$ under $K_B$
-if and only if $B \ge 7$, $B$ is prime and $\lambda(B) = (B - 1)/2$.
-
-Source: Evan Chen, Ken Ono, Richard E. Schwartz, and Dinesh Thakur, *Four-Digit Kaprekar
-Dynamics in Odd Bases*, Journal of Integer Sequences 29 (2026), Article 26.4.7,
-Corollary 3 (`jis-2026-26.4.7-cor-3`). -/
-public theorem_wanted kaprekar_minimalPeriod_le_and_eq_iff (B : ℕ) (hB : Odd B)
-    (hB3 : 3 < B) :
-    (∀ d ∈ kaprekarFourDigitStates B, d ∈ Function.periodicPts (kaprekarFourDigitStep B) →
-      Function.minimalPeriod (kaprekarFourDigitStep B) d ≤ (B - 1) / 2) ∧
-      ((∃ d ∈ kaprekarFourDigitStates B,
-          Function.minimalPeriod (kaprekarFourDigitStep B) d = (B - 1) / 2) ↔
-        7 ≤ B ∧ B.Prime ∧ projectiveOrderTwo B = (B - 1) / 2)
 
 /-- **Number of Kaprekar cycles of maximal length.** Let $B > 3$ be odd, let $K_B$ be the
 four-digit Kaprekar map and $X_B$ its state space, and put $q = (B - 1)/2$. If some point of
