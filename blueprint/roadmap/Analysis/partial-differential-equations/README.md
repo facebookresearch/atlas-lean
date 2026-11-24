@@ -1,6 +1,6 @@
 # Partial differential equations
 
-PDE existence, regularity and qualitative results: Cauchy–Kovalevskaya, heat and Airy equations, weak solutions and elliptic regularity, Euler singularity formation, σ₂ Hessian estimates, radial symmetry, viscosity solutions, Dirichlet and Neumann spectra of the Laplacian.
+PDE existence, regularity and qualitative results: Cauchy–Kovalevskaya, heat and Airy equations, weak solutions and elliptic regularity, Euler singularity formation, σ₂ Hessian estimates, radial symmetry, viscosity solutions, reaction–diffusion systems and Turing instability, Dirichlet and Neumann spectra of the Laplacian.
 
 - [Airy equation and Kato smoothing](airy-equation-and-kato-smoothing/README.md)
 - [Cauchy–Kovalevskaya theorem](cauchy-kovalevskaya-theorem/README.md)
