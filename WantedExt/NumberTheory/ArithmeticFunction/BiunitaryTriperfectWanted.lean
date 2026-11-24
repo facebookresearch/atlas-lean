@@ -14,6 +14,7 @@ public import Mathlib.Data.Rat.Defs
 public import MathlibExt.NumberTheory.PrimitivePrimeDivisorPowAddOne
 public import MathlibExt.NumberTheory.PrimitivePrimeDivisorPowSubOne
 public import MathlibExt.NumberTheory.ArithmeticFunction.BiunitaryFortyOne
+public import MathlibExt.NumberTheory.ArithmeticFunction.BiunitaryDivisorParity
 
 /-!
 # Biunitary triperfect numbers divisible by `27`
@@ -52,15 +53,6 @@ Source: Tomohiro Yamada, *Determining all Biunitary Triperfect Numbers of a Cert
 Journal of Integer Sequences 28 (2025), Article 25.4.5, Theorem 1 (`jis-2025-25.4.5-thm-1`). -/
 public theorem_wanted sigmaBiunitary_eq_three_mul_iff_of_twentySeven_dvd (N : ℕ) (hN : 0 < N)
     (h27 : 27 ∣ N) : sigmaBiunitary N = 3 * N ↔ N = 2160
-
-/-- **Parity of the biunitary divisor sum.** For every positive integer $n$, the biunitary divisor
-sum $\sigma^{**}(n)$ is odd if and only if $n = 2^k$ for some natural number $k$ (so $n = 1$ is
-included).
-
-Source: Tomohiro Yamada, *Determining all Biunitary Triperfect Numbers of a Certain Form*,
-Journal of Integer Sequences 28 (2025), Article 25.4.5, Lemma 2 (`jis-2025-25.4.5-lem-2`). -/
-public theorem_wanted odd_sigmaBiunitary_iff (n : ℕ) (hn : 0 < n) :
-    Odd (sigmaBiunitary n) ↔ ∃ k : ℕ, n = 2 ^ k
 
 /-- **Powers of two dividing the biunitary divisor sum of an odd number.** For every odd natural
 number $n$, $2^{\omega(n)}$ divides $\sigma^{**}(n)$, where $\omega(n)$ is the number of distinct

@@ -14,6 +14,7 @@ import Mathlib.Data.Nat.Choose.Cast
 public import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 public import MathlibExt.Combinatorics.Enumerative.AlternatingBinomialPolynomial
+public import MathlibExt.Combinatorics.Enumerative.AlternatingCentralBinomialConvolution
 public import MathlibExt.Combinatorics.Enumerative.AlternatingCentralBinomialSum
 public import MathlibExt.Combinatorics.Enumerative.CentralBinomialBernstein
 public import MathlibExt.Combinatorics.Enumerative.CosinePowerIntegral
@@ -318,16 +319,6 @@ public theorem_wanted sum_neg_one_pow_choose_two_pow_div_add_one (m n : ℕ) :
       else -∑ k ∈ Icc 1 ((m + 1) / 2), (m.choose (2 * k - 1) : ℚ) / (2 * k + n)
 
 /-! ## Complements of Knuth's old sum -/
-
-/-- **Alternating convolution of central binomial coefficients.** For every natural number
-$n$, the integer $\sum_{k=0}^{n} (-1)^k \binom{2k}{k} \binom{2(n-k)}{n-k}$ equals
-$2^n \binom{n}{n/2}$ when $n$ is even and $0$ when $n$ is odd.
-
-Source: Kunle Adegoke, *A Short Proof of Knuth's Old Sum, Generalizations and Related
-Sums*, INTEGERS 26 (2026), Article A19, Theorem 3 (`integers-2026-A19-thm-3`). -/
-public theorem_wanted sum_neg_one_pow_centralBinom_mul_centralBinom (n : ℕ) :
-    ∑ k ∈ range (n + 1), (-1 : ℤ) ^ k * ((2 * k).choose k : ℤ) * ((2 * (n - k)).choose (n - k)) =
-      if Even n then 2 ^ n * (n.choose (n / 2) : ℤ) else 0
 
 /-- **Alternating convolution of generalized central binomial coefficients.** For every
 natural number $n$ and every real $v > -1$, the sum
