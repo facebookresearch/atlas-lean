@@ -9,10 +9,11 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Analysis.Calculus.IteratedDeriv.Defs
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Inverse
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.Data.Nat.Factorial.DoubleFactorial
+public import MathlibExt.Analysis.SpecialFunctions.Trigonometric.ArcsinQuotientDerivatives
+public import MathlibExt.Analysis.SpecialFunctions.Trigonometric.CotangentLimit
 public import MathlibExt.Analysis.SpecialFunctions.Trigonometric.HalfPeriodSineSumEven
 
 namespace MetaMathlibExt
@@ -123,42 +124,6 @@ public theorem_wanted tendsto_cosPowArea_doubleFactorial (n : ℕ) :
         ∑ j ∈ Finset.range ((n - 2) / 2 + 1),
           ((2 * j).doubleFactorial : ℝ) /
             ((2 * j + 1).doubleFactorial * (2 * j + 2)))))
-
-/-- **Double-factorial sums as derivatives of arcsine quotients.** Let $n$ be a natural number.
-If $n$ is odd, the $n$th derivative at $0$ of $x \mapsto \arcsin x / (1 - x)$ is
-$$n! \sum_{j=0}^{(n-1)/2} \frac{(2j-1)!!}{(2j)!!\,(2j+1)},$$
-and if $n \ge 2$ is even, the $n$th derivative at $0$ of $x \mapsto (\arcsin x)^2 / (2(1 - x))$ is
-$$n! \sum_{j=0}^{(n-2)/2} \frac{(2j)!!}{(2j+1)!!\,(2j+2)},$$
-where $(-1)!! = 1$ and $0!! = 1$.
-
-These are the $n$th terms of the exponential generating functions of $\arcsin x / (1 - x)$
-(OEIS A296726) and of $(\arcsin x)^2 / (2(1 - x))$ (OEIS A372324).
-
-Source: Muhammad Adam Dombrowski and Gregory Dresden, *Areas Between Cosines*,
-Journal of Integer Sequences 28 (2025), Article 25.2.3, Theorem 4
-(`jis-2025-25.2.3-thm-4`). -/
-public theorem_wanted iteratedDeriv_arcsin_div_one_sub_doubleFactorial (n : ℕ) :
-    (Odd n → iteratedDeriv n (fun x => arcsin x / (1 - x)) 0 =
-      n.factorial * ∑ j ∈ Finset.range ((n - 1) / 2 + 1),
-        ((2 * j - 1).doubleFactorial : ℝ) / ((2 * j).doubleFactorial * (2 * j + 1))) ∧
-    (Even n → 0 < n → iteratedDeriv n (fun x => arcsin x ^ 2 / (2 * (1 - x))) 0 =
-      n.factorial * ∑ j ∈ Finset.range ((n - 2) / 2 + 1),
-        ((2 * j).doubleFactorial : ℝ) / ((2 * j + 1).doubleFactorial * (2 * j + 2)))
-
-/-- **The cotangent limit $4/x$.** For every nonzero real number $x$, as $k \to \infty$ through the
-natural numbers,
-$$\left(\frac{1}{k} - 1\right)\cot\frac{x}{k-1} + \left(\frac{1}{k} + 1\right)\cot\frac{x}{k+1}
-\to \frac{4}{x}.$$
-
-The paper states this for every real number $x$; the hypothesis $x \neq 0$ is added because at
-$x = 0$ the cotangents and $4/x$ are undefined.
-
-Source: Muhammad Adam Dombrowski and Gregory Dresden, *Areas Between Cosines*,
-Journal of Integer Sequences 28 (2025), Article 25.2.3, Lemma 8
-(`jis-2025-25.2.3-lem-8`). -/
-public theorem_wanted tendsto_cot_div_pred_add_cot_div_succ {x : ℝ} (hx : x ≠ 0) :
-    Tendsto (fun k : ℕ => (1 / (k : ℝ) - 1) * cot (x / (k - 1)) +
-      (1 / (k : ℝ) + 1) * cot (x / (k + 1))) atTop (𝓝 (4 / x))
 
 /-- **Integral sums of $\cos qkx - \cos qx$ for odd $q$ and odd $k$.** Let $q$ be an odd natural
 number, and for each natural number $m$ put $k = 2m + 1$. Then, as $m \to \infty$,
