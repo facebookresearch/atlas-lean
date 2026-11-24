@@ -67,6 +67,12 @@ Press, 2011, with locators.
 - [Discreteness of the cuspidal spectrum](automorphic-forms-on-reductive-groups/discreteness-of-the-cuspidal-spectrum.md), for the cuspidal part of the discrete spectrum (the residual part is described through Eisenstein series)
 - [Eisenstein series and their meromorphic continuation](automorphic-forms-on-reductive-groups/eisenstein-series.md), for the residual spectrum
 
+## Proof depends on
+
+- [Jacquet–Shalika classification of automorphic representations of GLₙ](automorphic-representations-of-gl-n/jacquet-shalika-classification.md), for the Jacquet–Shalika theorem used in Mok's proof
+- Not yet a page: the stabilization of the twisted trace formula, with the fundamental lemma and its weighted form, for Mok's classification and its analogue for inner forms
+- Not yet a page: Mœglin and Waldspurger's classification of the discrete spectrum of $\mathrm{GL}_N$, for the blocks $\mu_i \boxtimes \nu_i$ and the classification
+
 ## Sources
 
 - C. P. Mok, "Endoscopic classification of representations of quasi-split unitary groups", Mem.

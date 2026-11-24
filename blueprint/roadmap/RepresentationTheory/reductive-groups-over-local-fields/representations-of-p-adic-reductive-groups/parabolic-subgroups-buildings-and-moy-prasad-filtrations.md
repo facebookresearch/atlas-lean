@@ -65,6 +65,16 @@ $G_{x,r}$, $r > 0$), the chains of elementary maps, the conjugacy of Iwahori sub
 products and of $\mathrm{GL}_m$, and the properties of the filtrations
 listed above, each citing the sources below with locators.
 
+## Depends on
+
+- Not yet a page: connected reductive groups over $F$, with their parabolic $F$-subgroups, maximal split tori, roots and Lie algebras, for all the items
+- Not yet a page: $\ell$-spaces and $\ell$-sheaves (Bernstein–Zelevinsky 1976), for the filtration of induced representations along the Bruhat decomposition
+
+## Proof depends on
+
+- Not yet a page: the structure theory of reductive groups over a field (Borel–Tits), for the parabolic subgroups, Levi decompositions, Weyl groups and the Bruhat decomposition
+- Not yet a page: Bruhat–Tits theory (Bruhat–Tits I and II), for the building, the parahoric subgroups and their integral models, on which Moy and Prasad construct the filtrations
+
 ## Sources
 
 - I. N. Bernstein and A. V. Zelevinsky, "Induced representations of reductive p-adic groups. I",

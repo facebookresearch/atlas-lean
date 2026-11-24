@@ -35,6 +35,11 @@ lattices, each with a precise statement and the locators below.
 
 - [Adelic norm](adeles-and-ideles/adelic-norm.md), for the normalized absolute values of the completions
 
+## Proof depends on
+
+- [The discriminant ideal is the norm of the different](../../../RingTheory/ramification/different-and-discriminant-ideals/discriminant-ideal-eq-span-norm.md), for the volume of $\mathbb{A}/K$: the norms of the local differents multiply to $\lvert d_K \rvert$
+- Not yet a page: the covolume $\lvert d_K \rvert^{1/2}$ of $\mathcal{O}_K$ in $K_\infty$ for the self-dual measures, for the volume of $\mathbb{A}/K$
+
 ## Sources
 
 - B. Poonen, *Tate's thesis*, lecture notes for MIT 18.786 (Spring 2015), PDF of 2025-10-11,

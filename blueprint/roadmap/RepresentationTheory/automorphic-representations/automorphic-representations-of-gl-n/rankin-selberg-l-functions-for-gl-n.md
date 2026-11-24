@@ -60,6 +60,12 @@ Rankin–Selberg integrals", 2009) consulted for hypotheses.
 - [Rapid decay of cusp forms](../automorphic-forms-on-reductive-groups/rapid-decay-of-cusp-forms.md), for the convergence of the global integrals
 - [Poisson summation formula for adeles](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/adelic-poisson-summation.md), for the functional equation of the mirabolic Eisenstein series $E(g, \Phi, s)$ used when $m = n$ (Cogdell, Proposition 5.4)
 
+## Proof depends on
+
+- Not yet a page: Shintani's formula for the unramified Whittaker functions of $\mathrm{GL}_n$, for the unramified computation (Cogdell, Lecture 7)
+- Not yet a page: Gelbart and Shahidi's boundedness in vertical strips (J. Amer. Math. Soc. 14 (2001)), cited by Cogdell, Lecture 9, §5
+- Not yet a page: Shahidi's method of constant terms of Eisenstein series on larger groups (Shahidi, 1981), for the non-vanishing on $\operatorname{Re} s = 1$
+
 ## Sources
 
 - J. W. Cogdell, "Lectures on L-functions, converse theorems, and functoriality for GL_n", in

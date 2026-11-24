@@ -28,6 +28,10 @@ for the exact hypotheses.
 
 - [Casselman–Wallach globalization](../../reductive-groups-over-local-fields/representations-of-real-reductive-groups/casselman-wallach-globalization.md), for smooth Fréchet representations of moderate growth and their underlying Harish-Chandra modules
 
+## Proof depends on
+
+- Not yet a page: the Gelfand–Kazhdan criterion for invariant distributions on $\mathrm{GL}_n(F)$, $F$ archimedean, on which Shalika's proof of uniqueness rests (Shalika, 1974)
+
 ## Sources
 
 - J. W. Cogdell, "Lectures on L-functions, converse theorems, and functoriality for GL_n", in

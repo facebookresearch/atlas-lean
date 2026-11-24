@@ -41,6 +41,17 @@ Plancherel theorem, Casselman's subrepresentation theorem, the automatic continu
 Langlands classification, the character identities used by Hecht and Schmid and the steps of the
 Atiyah–Schmid construction, each citing the sources below with locators.
 
+## Depends on
+
+- [Admissible representations of real reductive groups](admissible-representations-of-real-reductive-groups.md), for admissible and irreducible unitary representations and their smooth and $K$-finite vectors
+- [Discrete series representations and formal degrees](discrete-series-and-formal-degrees.md), for discrete series and square-integrable representations
+- Not yet a page: parabolic and Cartan subgroups of real reductive groups and of connected semisimple Lie groups with finite centre, and trace-class operators, for the characters and the principal series
+
+## Proof depends on
+
+- [Peter–Weyl theorem: unitary representations separate points](../../lie-and-topological-representations/representations-of-compact-groups/peter-weyl-point-separation.md), for the decomposition into $K$-types used throughout
+- Not yet a page: the analysis of elliptic operators on $G/K$ and of their $L^2$-indices that Atiyah and Schmid use in their §§4–5, for the Atiyah–Schmid construction
+
 ## Sources
 
 - W. Casselman, "Canonical extensions of Harish-Chandra modules to representations of G", Canad. J.

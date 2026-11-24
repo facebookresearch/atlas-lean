@@ -36,6 +36,11 @@ classification, each citing the sources below with locators.
 - [Parabolic induction and Jacquet functors](parabolic-induction-and-jacquet-functors.md)
 - [Parabolic subgroups, Bruhat–Tits buildings and Moy–Prasad filtrations](parabolic-subgroups-buildings-and-moy-prasad-filtrations.md), for Iwahori factorizations and the cones $A^-_\Theta$
 
+## Proof depends on
+
+- [Parabolic subgroups, Bruhat–Tits buildings and Moy–Prasad filtrations](parabolic-subgroups-buildings-and-moy-prasad-filtrations.md), for the compact open subgroups with an Iwahori factorization in Jacquet's lemmas and for the cones $A^-_\Theta$
+- Not yet a page: the Cartan decomposition $G = K A^- K$ for a good maximal compact subgroup $K$, through which the asymptotics on $A^-$ control the matrix coefficients on $G$, for Casselman's criteria
+
 ## Sources
 
 - W. Casselman, *Introduction to the theory of admissible representations of p-adic reductive

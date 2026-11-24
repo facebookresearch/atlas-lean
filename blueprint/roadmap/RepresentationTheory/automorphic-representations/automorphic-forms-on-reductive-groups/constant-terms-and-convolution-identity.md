@@ -43,6 +43,11 @@ precise statement and the locators below.
 - [Automorphic forms, cusp forms and automorphic representations](automorphic-forms-and-automorphic-representations.md), for automorphic forms, constant terms and cusp forms
 - [Harish-Chandra modules](../../reductive-groups-over-local-fields/representations-of-real-reductive-groups/harish-chandra-modules.md), for $(\mathfrak{g}, K)$-modules and the centre of the enveloping algebra
 
+## Proof depends on
+
+- [Siegel sets and reduction theory for adelic groups](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/reduction-theory-for-adelic-groups.md), for the properties of heights behind uniform moderate growth (Borel, §4.3)
+- Not yet a page: Harish-Chandra's homomorphism $\mathcal{Z}(\mathfrak{g}) \to \mathcal{Z}(\mathfrak{m})$, with the finiteness of $\mathcal{Z}(\mathfrak{m})$ over its image, for the $\mathcal{Z}(\mathfrak{m})$-finiteness of constant terms (Borel, 7.4)
+
 ## Sources
 
 - A. Borel, "Automorphic forms on reductive groups", lecture notes (Park City),

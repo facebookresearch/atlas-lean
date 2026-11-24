@@ -82,6 +82,12 @@ Lapid–Rallis, Yamana's Inventiones paper) should be consulted for the exact st
 - [Rallis inner product formula in Weil's convergent range](rallis-inner-product-formula.md), for the integral form of the Rallis inner product formula, from which the $L$-function form follows
 - [Global theta lifts of cusp forms](global-theta-lifts.md), for the theta lifts and the tower hypothesis in the $L$-function form
 
+## Proof depends on
+
+- [Global theta lifts of cusp forms](global-theta-lifts.md), for the tower property (its item 2), in the refinement
+- Not yet a page: the orbits of $Q(F)$ on $\mathrm{U}(W_n)(F) / \iota(\mathrm{U}(U) \times \mathrm{U}(U))(F)$ (Piatetski-Shapiro and Rallis), for the basic identity
+- Not yet a page: Yamana's theorem relating a pole of $L(s + \tfrac12, \pi \times \chi_V)$ to a non-zero lift to a Hermitian space of dimension $2n - m$, and the local conservation relation, for the refinement
+
 ## Sources
 
 - W. T. Gan, Y. Qiu and S. Takeda, "The regularized Siegel-Weil formula (the second term identity) and

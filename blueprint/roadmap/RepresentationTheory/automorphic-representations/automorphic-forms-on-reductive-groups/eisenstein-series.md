@@ -54,6 +54,12 @@ Math. 544, Springer, 1976) and Mœglin–Waldspurger's *Spectral decomposition a
 - [Automorphic forms, cusp forms and automorphic representations](automorphic-forms-and-automorphic-representations.md), for automorphic forms, cusp forms and constant terms
 - [Siegel sets and reduction theory for adelic groups](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/reduction-theory-for-adelic-groups.md), for $H_P$, $\mathfrak{a}_P$ and the Siegel sets on which the convergence is proved
 
+## Proof depends on
+
+- [Constant terms and Harish-Chandra's convolution identity for automorphic forms](constant-terms-and-convolution-identity.md), for the automorphy of constant terms on the Levi factors, used for the constant terms and the automorphy of Eisenstein series
+- Not yet a page: the Bruhat decomposition of $G(k)$ into double cosets $P(k) w Q(k)$, for the constant term formula
+- Not yet a page: the Paley–Wiener theorem on $i\mathfrak{a}_P^*$, for the wave packets (Arthur, §12)
+
 ## Sources
 
 - J. Arthur, "An introduction to the trace formula", in *Harmonic Analysis, the Trace Formula, and

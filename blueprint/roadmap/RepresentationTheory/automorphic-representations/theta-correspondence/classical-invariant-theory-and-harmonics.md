@@ -51,6 +51,17 @@ model. Howe's general theorems for $\mathcal{A}(U, W) = S(U) \otimes \Lambda(W)$
 $\mathbb{Z}/2$-graded oscillator algebra (for $U = 0$ and $W = \mathbb{C}$ the module has dimension $2$), are not needed
 and should get their own pages if wanted.
 
+## Depends on
+
+- [Explicit formulas for the Weil representation](explicit-formulas-for-the-weil-representation.md), for the Fock model, on which the members of a dual pair act in the last item
+- [Harish-Chandra modules](../../reductive-groups-over-local-fields/representations-of-real-reductive-groups/harish-chandra-modules.md), for $(\mathfrak{g}, K)$-modules in the last item
+- Not yet a page: the Weyl algebra of polynomial-coefficient differential operators on $U$, for all the items
+
+## Proof depends on
+
+- Not yet a page: Harish-Chandra's theorem that a finitely generated $(\mathfrak{g}, K)$-module annihilated by an ideal of finite codimension of the centre of $U(\mathfrak{g})$ is admissible, for the admissibility of the algebraic theta lifts
+- Not yet a page: the complete reducibility of the polynomial representations of the complex classical groups (Weyl's unitarian trick), for the isotypic decompositions
+
 ## Sources
 
 - R. Howe, "Remarks on classical invariant theory", Trans. Amer. Math. Soc. 313 (1989), 539–570,

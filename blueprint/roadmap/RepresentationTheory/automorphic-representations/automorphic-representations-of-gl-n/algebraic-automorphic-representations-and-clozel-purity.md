@@ -36,6 +36,11 @@ the archimedean local Langlands correspondence for $\mathrm{GL}_n$ as a page of 
 - [Harish-Chandra modules](../../reductive-groups-over-local-fields/representations-of-real-reductive-groups/harish-chandra-modules.md), for the archimedean components, their infinitesimal characters and their $(\mathfrak{g}, K)$-modules
 - [Tensor product theorem for automorphic representations](../automorphic-forms-on-reductive-groups/tensor-product-theorem.md), for the archimedean components $\pi_v$ of an automorphic representation
 
+## Proof depends on
+
+- Not yet a page: the archimedean local Langlands correspondence for $\mathrm{GL}_n$, which attaches $\sigma_v$ to $\pi_v$, for all the items
+- Not yet a page: the inputs of Clozel's proofs of the purity lemma and of the cohomological criterion (Clozel, 1990), which the cited source quotes without proof
+
 ## Sources
 
 - D. Ramakrishnan, "Decomposition and parity of Galois representations attached to GL(4)",

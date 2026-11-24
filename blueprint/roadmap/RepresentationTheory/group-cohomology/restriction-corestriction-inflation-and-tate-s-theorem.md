@@ -44,6 +44,10 @@ contains the following statements.
 A good expansion has a page for each numbered item, splitting the first into the formula
 $\mathrm{Cor} \circ \mathrm{Res} = (G : H)$ and its consequences.
 
+## Depends on
+
+This node has no prerequisites.
+
 ## Proof depends on
 
 - [Periodicity of Tate cohomology for finite cyclic groups](tate-cohomology-and-the-herbrand-quotient/nonempty-periodicity-iso.md), for the cyclic case of Tate's theorem

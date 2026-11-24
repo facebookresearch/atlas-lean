@@ -37,6 +37,14 @@ nodes for the geometric and global inputs of the proofs (Lubin–Tate spaces and
 cycles, the Jacquet–Langlands correspondence, the Shimura varieties used), placed in their own
 fields.
 
+## Depends on
+
+- [Cuspidal representations and Jacquet's embedding theorem](../representations-of-p-adic-reductive-groups/cuspidal-representations-and-jacquet-embedding.md), for supercuspidal representations
+- [Smooth and admissible representations of p-adic groups](../representations-of-p-adic-reductive-groups/smooth-representations-of-p-adic-groups.md), for twists, central characters and contragredients
+- [L- and ε-factors of pairs for GLₙ and of Weil–Deligne representations](l-and-epsilon-factors-of-pairs.md), for the Weil group $W_F$, the factors of pairs on both sides and the Weil–Deligne representations $\mathrm{Sp}(m)$
+- [Langlands classification for GLₙ](langlands-classification-for-gl-n.md), for the representations $L(\Delta_1, \dots, \Delta_r)$ of the reductions
+- [Local class field theory: the local Artin map](../../../NumberTheory/p-adic-numbers/local-class-field-theory.md), for the compatibility with local class field theory for $n = 1$
+
 ## Proof depends on
 
 - [Langlands classification for GLₙ](langlands-classification-for-gl-n.md), for the extension from supercuspidal to all irreducible representations through the representations $L(\Delta_1, \dots, \Delta_r)$

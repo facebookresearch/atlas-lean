@@ -45,6 +45,12 @@ precise statement and the sources below.
 - [Stone–von Neumann theorem for Heisenberg groups over local fields](stone-von-neumann-theorem.md), for the Heisenberg representation whose normalizer defines the Weil representation
 - [Additive duality of adeles and the volume of A/K](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/additive-duality-of-adeles.md), for the global additive characters of $\mathbb{A}_F/F$ and their local components, used in the product formula for Weil indices
 
+## Proof depends on
+
+- [Hilbert's Theorem 90 for the multiplicative group](../../../FieldTheory/galois-theory/multiplicative-hilbert-s-theorem-90.md), for the character twists of the splittings
+- [Additive duality of adeles and the volume of A/K](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/additive-duality-of-adeles.md), for the self-duality of $\mathbb{A}_F$ under which $F$ is its own annihilator, which puts $X_{\mathbb{A}}$ and its discrete subgroup $X_F$ in the situation of Weil's Théorème 5 (Weil, §29, p. 178)
+- Not yet a page: Weil's Théorème 5 (§20, p. 169): $\gamma(f) = 1$ for a character $f$ of the second degree, trivial on a closed subgroup $\Gamma$, whose associated morphism maps $(G, \Gamma)$ isomorphically onto $(G^*, \Gamma_*)$; he proves it through his Théorème 4 (§19, p. 168), which for discrete $\Gamma$ and $\Gamma_*$ contains Poisson's formula as a special case (p. 169), not through the adelic Poisson summation formula. With $G = X_{\mathbb{A}}$ and $\Gamma = X_F$ it gives $\gamma(q) = 1$, and his Corollaire 2 of Théorème 2 (§14, p. 162), applied to factorizable Schwartz–Bruhat functions, gives $\gamma(q) = \prod_v \gamma_{\psi_v}(q_v)$ (§30, the proof of Proposition 5, p. 179), for the product formula for Weil indices
+
 ## Sources
 
 - R. Ranga Rao, "On some explicit formulas in the theory of Weil representation", Pacific J. Math. 157
@@ -54,8 +60,9 @@ precise statement and the sources below.
 - A. Weil, "Sur certains groupes d'opérateurs unitaires", Acta Math. 111 (1964), 143–211,
   <https://doi.org/10.1007/BF02391012>: §30, Proposition 5 and the remarks after it (the product formula for
   Weil indices for one global character, Hilbert reciprocity as a formally weaker consequence), §26 (the real
-  indices $e^{\pm \pi i/4}$), §29 (the global character and its local components), §45 (the rational lift in the twofold
-  cover).
+  indices $e^{\pm \pi i/4}$), §29 (the global character and its local components; p. 178, the self-duality of the adeles in
+  which the field is its own dual), §45 (the rational lift in the twofold cover); and, for the proof of Proposition 5 (p. 179),
+  §14, Théorème 2 and its Corollaire 2 (pp. 161–162), §19, Théorème 4 (p. 168), and §20, Théorème 5 and the remark before it (p. 169).
 - S. S. Kudla, "Notes on the local theta correspondence", lecture notes, European School in Group
   Theory, 1996, <https://www.math.toronto.edu/~skudla/castle.pdf>: §I.4, Theorem 4.5, Corollaries 4.8 and
   4.9 (the twofold cover via the Rao cocycle), §I.6, Lemma 6.1 (the $\mathbb{C}^\times$-extension splits over

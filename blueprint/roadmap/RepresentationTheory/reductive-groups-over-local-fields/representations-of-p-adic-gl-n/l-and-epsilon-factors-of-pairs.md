@@ -60,6 +60,13 @@ follows there, since its printed factors do not depend on the product index.
 - [Galois cohomology and p-adic Hodge theory](../../../NumberTheory/algebraic-number-theory/galois-representations/galois-cohomology-and-p-adic-hodge-theory.md), for the Galois side ($F$ of characteristic zero): the Weil group and Weil–Deligne representations
 - [Local class field theory](../../../NumberTheory/p-adic-numbers/local-class-field-theory.md), for the Galois side ($F$ of characteristic zero): the local Artin map $\mathrm{rec}_F$, composed with pointwise inversion, $x \mapsto \mathrm{rec}_F(x)^{-1}$, and read in the Weil group, which makes characters of $F^\times$ characters of $W_F$
 
+## Proof depends on
+
+- [Parabolic induction and Jacquet functors](../representations-of-p-adic-reductive-groups/parabolic-induction-and-jacquet-functors.md), for the Jacquet modules whose finite functions give the asymptotics of Whittaker functions on the diagonal torus, behind the convergence and rationality of the local integrals (Cogdell, Lecture 6, §1, Proposition 6.1 and Remark 3, p. 46, and §2, Proposition 6.2, p. 47)
+- [Mirabolic restriction and Bernstein–Zelevinsky derivatives](bernstein-zelevinsky-derivatives.md), for the Kirillov models and the representations of the mirabolic subgroup in which the uniqueness principle behind the local functional equation is proved (Cogdell, Lecture 6, §3, p. 48)
+- [Functional equation of Hecke L-functions](../../../NumberTheory/zeta-l-functions/dirichlet-l-functions/hecke-l-function-functional-equation.md), for Tate's local factors and the global functional equations from which Deligne obtains the local constants
+- Not yet a page: Brauer's induction theorem, through which Deligne reduces the local constants to representations induced from characters
+
 ## Sources
 
 - T. Wedhorn, "The local Langlands correspondence for GL(n) over p-adic fields", lecture notes,
@@ -80,6 +87,14 @@ follows there, since its printed factors do not depend on the product index.
 - H. Jacquet, I. I. Piatetski-Shapiro and J. A. Shalika, "Rankin–Selberg convolutions", Amer. J.
   Math. 105 (1983), 367–483, the source of the factors of pairs, as cited by Wedhorn and by
   Henniart (2002, §1.2).
+- J. W. Cogdell, "Lectures on L-functions, converse theorems, and functoriality for GL_n", in
+  *Lectures on Automorphic L-functions*, Fields Institute Monographs 20, American Mathematical Society,
+  2004; author's version <https://people.math.osu.edu/cogdell.1/fields-www.pdf>: Lecture 6, §1,
+  Proposition 6.1 and Remark 3, p. 46 (the asymptotics of Whittaker functions on the diagonal torus,
+  through finite functions that come from the Jacquet module), §2, Proposition 6.2, p. 47 (convergence
+  and rationality of the local integrals), and §3, p. 48 (the uniqueness principle behind the local
+  functional equation, whose proof "takes place in the Kirillov models and involves the representation
+  theory of the mirabolic subgroup P and Bruhat theory", and Theorem 6.2).
 - P. Deligne, "Les constantes des équations fonctionnelles des fonctions L", in *Modular Functions
   of One Variable II*, Lecture Notes in Math. 349, Springer, 1973, 501–596, the source of the local
   constants, as cited by Wedhorn ([De2]).

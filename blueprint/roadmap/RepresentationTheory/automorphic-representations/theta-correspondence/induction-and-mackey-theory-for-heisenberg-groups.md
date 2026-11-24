@@ -33,6 +33,11 @@ theorem.
 
 - [Smooth and admissible representations of p-adic groups](../../reductive-groups-over-local-fields/representations-of-p-adic-reductive-groups/smooth-representations-of-p-adic-groups.md), for smooth representations of $\ell$-groups
 
+## Proof depends on
+
+- [Additive duality of adeles and the volume of A/K](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/additive-duality-of-adeles.md), for the self-duality $a \mapsto \psi(a\,\cdot)$ of the local field (its local duality, stated for completions of number fields), through which $Y$ is the Pontryagin dual of $X$
+- Not yet a page: Pontryagin duality for locally compact abelian groups, for the unitary form
+
 ## Sources
 
 - S. S. Kudla, "Notes on the local theta correspondence", lecture notes, European School in Group

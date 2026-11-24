@@ -42,6 +42,11 @@ general case should be sourced from Kudla–Rallis or from a published account c
 - [Meromorphic continuation of Hecke L-functions](../../../NumberTheory/zeta-l-functions/dirichlet-l-functions/hecke-l-function-meromorphic-continuation.md), for the Hecke $L$-functions in the normalizing factors
 - [Jacquet modules of the Weil representation and degenerate principal series](jacquet-modules-of-the-weil-representation.md), for the local degenerate principal series $I_n(s, \chi_v)$ and their constituents
 
+## Proof depends on
+
+- [Eisenstein series and their meromorphic continuation](../automorphic-forms-on-reductive-groups/eisenstein-series.md), for the constant term along the line parabolic subgroup and the functional equation (Tan's Propositions 4.4 and 4.8)
+- Not yet a page: the Bruhat decomposition of $G_n(F)$ into $Q(F)$-double cosets, which unfolds the non-singular Fourier coefficients into Euler products
+
 ## Sources
 
 - V. Tan, "Poles of Siegel Eisenstein series on U(n, n)", Canad. J. Math. 51 (1999), 164–175,

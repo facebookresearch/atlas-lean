@@ -55,6 +55,12 @@ has been consulted.
 - [Jacquet–Shalika classification of automorphic representations of GLₙ](jacquet-shalika-classification.md), for induced cuspidal (isobaric) representations and their Satake parameters
 - [Global reciprocity law](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/reciprocity-law/global-reciprocity-law.md), for the character $\eta$ attached to $E/F$
 
+## Proof depends on
+
+- [Rankin–Selberg L-functions for GLₙ × GLₘ](rankin-selberg-l-functions-for-gl-n.md), for the last step of the comparison (Arthur, the proof through (26.8))
+- [Jacquet–Shalika classification of automorphic representations of GLₙ](jacquet-shalika-classification.md), for strong multiplicity one for isobaric sums, which gives the uniqueness
+- Not yet a page: the invariant trace formula of $\mathrm{GL}_n$ over $F$, the twisted trace formula of $\mathrm{R}_{E/F}\mathrm{GL}_n$ for $\sigma$, the fundamental lemma for base change and the local base change of representations (Arthur–Clozel, Chapter 3), for the comparison
+
 ## Sources
 
 - J. Arthur, "An introduction to the trace formula", in *Harmonic Analysis, the Trace Formula, and

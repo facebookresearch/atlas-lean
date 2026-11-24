@@ -53,6 +53,13 @@ the degenerate principal series used, each with a precise statement and the sour
 - [Splitting characters and the Weil representation of unitary dual pairs](weil-representation-of-unitary-dual-pairs.md), for Siegel–Weil sections
 - [Jacquet modules of the Weil representation and degenerate principal series](jacquet-modules-of-the-weil-representation.md), for the local structure of the degenerate principal series
 
+## Proof depends on
+
+- [Fourier coefficients and poles of Siegel Eisenstein series](fourier-coefficients-and-poles-of-siegel-eisenstein-series.md), for the non-singular Fourier coefficients compared in the central case and, after the reduction to a smaller group, in the rank-$m$ comparison
+- [Eisenstein series and their meromorphic continuation](../automorphic-forms-on-reductive-groups/eisenstein-series.md), for the global intertwining operator and the functional equation
+- [Meromorphic continuation of Hecke L-functions](../../../NumberTheory/zeta-l-functions/dirichlet-l-functions/hecke-l-function-meromorphic-continuation.md), for the scalar functions $a(s)$ and $b(s)$
+- [Weil's convergence criterion for theta integrals](weil-convergence-criterion.md), for the convergence of $I_V(\varphi)$
+
 ## Sources
 
 - S. Yamana, "On the Siegel–Weil formula: the case of singular forms", Compositio Math. 147 (2011),

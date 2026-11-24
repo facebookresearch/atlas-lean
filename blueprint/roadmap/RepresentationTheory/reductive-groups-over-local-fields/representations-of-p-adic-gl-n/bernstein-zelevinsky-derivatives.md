@@ -36,6 +36,11 @@ Gelfand–Kazhdan theorem on invariant distributions, each citing the sources be
 - [Parabolic induction and Jacquet functors](../representations-of-p-adic-reductive-groups/parabolic-induction-and-jacquet-functors.md)
 - [Cuspidal representations and Jacquet's embedding theorem](../representations-of-p-adic-reductive-groups/cuspidal-representations-and-jacquet-embedding.md), for quasicuspidal representations
 
+## Proof depends on
+
+- Not yet a page: Bernstein and Zelevinsky's Theorem 5.2 on compositions of induction and restriction functors, in the mirabolic situations of their Proposition 4.13 (proved in their §7), for the Leibniz rule (their Lemma 4.5 and Corollary 4.6, proved in 4.14)
+- Not yet a page: distributions on $\ell$-spaces and $\ell$-sheaves (Bernstein–Zelevinsky 1976), for the Gelfand–Kazhdan method and Bernstein's $P$-invariant distributions
+
 ## Sources
 
 - I. N. Bernstein and A. V. Zelevinsky, "Induced representations of reductive p-adic groups. I",

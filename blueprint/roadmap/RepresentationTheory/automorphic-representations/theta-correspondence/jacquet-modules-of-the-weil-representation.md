@@ -58,6 +58,10 @@ statement and the sources below.
 - [Splitting characters and the Weil representation of unitary dual pairs](weil-representation-of-unitary-dual-pairs.md), for the local Weil representation
 - [Parabolic induction and Jacquet functors](../../reductive-groups-over-local-fields/representations-of-p-adic-reductive-groups/parabolic-induction-and-jacquet-functors.md), for Jacquet modules and induced representations
 
+## Proof depends on
+
+- Not yet a page: the exact sequences of Schwartz–Bruhat functions attached to an open subset and its closed complement in an $\ell$-space (Bernstein–Zelevinsky 1976), for Kudla's filtration and the orbit filtrations
+
 ## Sources
 
 - W. T. Gan and S. Takeda, "A proof of the Howe duality conjecture", J. Amer. Math. Soc. 29 (2016),

@@ -63,6 +63,13 @@ sources below.
 - [Adelic norm](adeles-and-ideles/adelic-norm.md), for the normalized absolute values of the completions
 - [Product formula for principal ideles](adeles-and-ideles/adelic-norm-principal-embedding.md), for the product formula on $k^\times$
 
+## Proof depends on
+
+- [Dirichlet's unit theorem: the logarithmic image of the units is a full lattice](../discriminants-ramification/dirichlet-unit-theorem.md), for the case of $\mathrm{GL}_1$, where the norm-one ideles modulo $k^\times$ form a compact group
+- [Minkowski's bound: every ideal class of a number field contains an integral ideal of small norm](../number-fields-embeddings/minkowski-bound.md), for the finiteness of the class group of $k$, the case $G = \mathrm{GL}_1$ of the finiteness of class numbers
+- [Compactness of the completed ring of integers](adeles-and-ideles/is-compact-adic-completion-integers.md), for the compactness of the balls of the height
+- Not yet a page: the reduction theory of $\mathrm{GL}_n$ over $\mathbb{Q}$ and the structure theory of reductive groups over $k$ (parabolic subgroups, Bruhat and Iwasawa decompositions), on which Borel and Harish-Chandra build the covering by Siegel sets and the maps $H_P$
+
 ## Sources
 
 - J. Arthur, "An introduction to the trace formula", in *Harmonic Analysis, the Trace Formula, and
