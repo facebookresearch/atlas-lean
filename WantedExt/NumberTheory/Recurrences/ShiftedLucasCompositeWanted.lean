@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.LucasSequence
+public import MathlibExt.NumberTheory.Recurrences.LucasQOneShiftComposite
 public import MathlibExt.NumberTheory.Recurrences.ShiftedLucasComposite
 public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.Basic.Real.Basic
@@ -24,30 +25,6 @@ namespace MetaMathlibExt
 Composite values of Lucas sequences `U_n(P, Q)` and of their unit shifts. An integer `m` is
 composite when `1 < m` and `m` is not prime.
 -/
-
-/-- **Composite terms of the Lucas sequence $U_n(3, -4)$.** Let $U_n = U_n(3, -4)$ be the
-Lucas sequence with $U_0 = 0$, $U_1 = 1$ and $U_{n+2} = 3U_{n+1} + 4U_n$, so that
-$U_n = 0, 1, 3, 13, 51, 205, 819, \ldots$. For every natural number $n \ge 4$, $U_n$ is
-composite: $U_n > 1$ and $U_n$ is not prime.
-
-Source: Dan Ismailescu, Daniel Hyunwoo Jeon, Aaron Kim, Joonbeom Kwon and Austin Lee,
-*Shifting Lucas Sequences Away from Primes*, INTEGERS 25 (2025), Article A42, Theorem 1
-(`integers-2025-A42-thm-1`). -/
-public theorem_wanted lucasU_three_neg_four_composite {n : ℕ} (hn : 4 ≤ n) :
-    1 < lucasU ⟨3, -4, by decide⟩ n ∧ ¬ (lucasU ⟨3, -4, by decide⟩ n).natAbs.Prime
-
-/-- **Unit shifts of $U_n(P, 1)$ are eventually composite.** Let $P \ge 3$ be an integer and
-let $U_n = U_n(P, 1)$ be the Lucas sequence with $U_0 = 0$, $U_1 = 1$ and
-$U_{n+2} = PU_{n+1} - U_n$. Then there is a natural number $N$ such that for every $n \ge N$
-the three integers $U_n - 1$, $U_n$ and $U_n + 1$ are all composite, that is, each is
-greater than $1$ and not prime.
-
-Source: Dan Ismailescu, Daniel Hyunwoo Jeon, Aaron Kim, Joonbeom Kwon and Austin Lee,
-*Shifting Lucas Sequences Away from Primes*, INTEGERS 25 (2025), Article A42, Theorem 2
-(`integers-2025-A42-thm-2`). -/
-public theorem_wanted lucasU_q_one_shifts_eventually_composite {P : ℤ} (hP : 3 ≤ P) :
-    ∃ N : ℕ, ∀ n ≥ N, ∀ d ∈ ({-1, 0, 1} : Set ℤ),
-      1 < lucasU ⟨P, 1, by decide⟩ n + d ∧ ¬ (lucasU ⟨P, 1, by decide⟩ n + d).natAbs.Prime
 
 /-- **A shift of $U_n(P, -1)$ away from primes.** Let $P \ge 1$ be an integer and let
 $U_n = U_n(P, -1)$ be the Lucas sequence with $U_0 = 0$, $U_1 = 1$ and

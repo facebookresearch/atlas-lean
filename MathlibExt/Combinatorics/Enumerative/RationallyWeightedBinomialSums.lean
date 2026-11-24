@@ -17,10 +17,12 @@ public import Mathlib.Data.Rat.Defs
 public import Mathlib.NumberTheory.Harmonic.Defs
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Algebra.BigOperators.Field
+import Mathlib.Algebra.BigOperators.Intervals
 import Mathlib.Algebra.Order.Field.Rat
 import Mathlib.Order.Fin.Basic
 import Mathlib.RingTheory.Polynomial.Bernstein
 import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Positivity
 import MathlibExt.NumberTheory.BinomialFibonacciConvolution
 import MathlibExt.NumberTheory.DilcherFiniteMultipleHarmonic
@@ -213,6 +215,76 @@ public theorem sum_neg_one_pow_choose_div_sq_eq_sum_harmonic (n : ℕ) :
         ← Finset.Ico_add_one_right_eq_Icc, Finset.sum_Ico_eq_sum_range]
       simp [Nat.add_comm]
 
+private noncomputable def weightedBinomialSum (x : ℝ) (p n : ℕ) : ℝ :=
+  ∑ k ∈ Finset.Icc 1 n, (n.choose k : ℝ) * x ^ k / (k : ℝ) ^ p
+
+private theorem weightedBinomialSum_zero_pow (x : ℝ) (n : ℕ) :
+    weightedBinomialSum x 0 n = (1 + x) ^ n - 1 := by
+  have h := add_pow x (1 : ℝ) n
+  rw [Finset.range_eq_Ico, Finset.sum_eq_sum_Ico_succ_bot (Nat.succ_pos n),
+    Nat.succ_eq_add_one, Finset.Ico_add_one_right_eq_Icc] at h
+  rw [weightedBinomialSum, eq_sub_iff_add_eq]
+  simpa only [one_pow, mul_one, pow_zero, div_one, Nat.choose_zero_right, Nat.cast_one,
+    mul_comm, add_comm] using h.symm
+
+-- Pascal's identity and absorption lower the denominator exponent by one.
+private theorem weightedBinomialSum_succ (x : ℝ) (p n : ℕ) :
+    weightedBinomialSum x (p + 1) (n + 1) =
+      weightedBinomialSum x (p + 1) n + weightedBinomialSum x p (n + 1) / (n + 1 : ℕ) := by
+  -- Extend the old row by its zero coefficient at `n + 1`.
+  have hext : (∑ k ∈ Finset.Icc 1 (n + 1), (n.choose k : ℝ) * x ^ k / (k : ℝ) ^ (p + 1)) =
+      weightedBinomialSum x (p + 1) n := by
+    rw [Finset.sum_Icc_succ_top (Nat.succ_pos n)]
+    simp [weightedBinomialSum]
+  rw [← hext, weightedBinomialSum, weightedBinomialSum, Finset.sum_div,
+    ← Finset.sum_add_distrib]
+  refine Finset.sum_congr rfl fun k hk => ?_
+  have hk' : 0 < k := (Finset.mem_Icc.mp hk).1
+  nth_rw 1 [Nat.choose_succ_left n k hk']
+  rw [Nat.cast_add, add_mul, add_div, add_comm]
+  congr 1
+  have habsorb : (n.choose (k - 1) : ℝ) / k = ((n + 1).choose k : ℝ) / (n + 1 : ℕ) := by
+    rw [div_eq_div_iff (Nat.cast_ne_zero.mpr (Nat.ne_of_gt hk'))
+      (Nat.cast_ne_zero.mpr (Nat.succ_ne_zero n))]
+    have h := Nat.add_one_mul_choose_eq n (k - 1)
+    rw [Nat.sub_add_cancel hk'] at h
+    exact_mod_cast (Nat.mul_comm _ _).trans h
+  calc
+    _ = (n.choose (k - 1) : ℝ) / k * (x ^ k / (k : ℝ) ^ p) := by
+      simp only [pow_succ, div_eq_mul_inv, mul_inv_rev]
+      ac_rfl
+    _ = _ := by
+      rw [habsorb]
+      simp only [div_eq_mul_inv]
+      ac_rfl
+
+private theorem weightedBinomialSum_succ_pow (x : ℝ) (p n : ℕ) :
+    weightedBinomialSum x (p + 1) n =
+      ∑ k ∈ Finset.Icc 1 n, weightedBinomialSum x p k / k := by
+  induction n with
+  | zero => simp [weightedBinomialSum]
+  | succ n ih =>
+    rw [weightedBinomialSum_succ, ih, Finset.sum_Icc_succ_top (Nat.succ_pos n)]
+
+/-- **Binomial sums weighted by $x^k/k^2$.** For every natural number $n$ and every real number
+$x$,
+
+$$\sum_{k=1}^{n} \binom{n}{k} \frac{x^k}{k^2} =
+\sum_{k=1}^{n} \frac{1}{k} \sum_{j=1}^{k} \frac{(1+x)^j}{j} -
+\sum_{k=1}^{n} \frac{1}{k} \sum_{j=1}^{k} \frac{1}{j}.$$
+
+Source: Andreea M. Stănică, Gabriela N. Stănică, and Pantelimon Stănică, *An Evaluation of
+Rationally Weighted Binomial Sums Via Some Differential and Integral Operators*, The Fibonacci
+Quarterly 62 (2024), Article 62-1/stanica09202023, Corollary 3.2. -/
+public theorem sum_choose_mul_pow_div_sq (n : ℕ) (x : ℝ) :
+    ∑ k ∈ Finset.Icc 1 n, (n.choose k : ℝ) * x ^ k / (k : ℝ) ^ 2 =
+      ∑ k ∈ Finset.Icc 1 n, 1 / (k : ℝ) * ∑ j ∈ Finset.Icc 1 k, (1 + x) ^ j / j -
+        ∑ k ∈ Finset.Icc 1 n, 1 / (k : ℝ) * ∑ j ∈ Finset.Icc 1 k, 1 / (j : ℝ) := by
+  change weightedBinomialSum x 2 n = _
+  rw [weightedBinomialSum_succ_pow x 1 n]
+  simp_rw [weightedBinomialSum_succ_pow x 0, weightedBinomialSum_zero_pow]
+  simp only [Finset.sum_sub_distrib, div_eq_inv_mul, mul_one, mul_sub]
+
 -- Absorbing one falling-factorial factor lowers the binomial row and shifts the Fibonacci index.
 private theorem sum_descFactorial_mul_choose_mul_fib_add (n i m : ℕ) :
     ∑ k ∈ Finset.range (n + 1), k.descFactorial i * n.choose k * Nat.fib (k + m) =
@@ -286,6 +358,82 @@ public theorem sum_pow_mul_choose_mul_fib_small (N : ℕ) :
     Finset.Ico_add_one_right_eq_Icc] at moment
   simpa [Finset.sum_range_succ, Nat.stirlingSecond, Nat.descFactorial, mul_assoc, mul_comm,
     mul_left_comm] using (show _ ∧ _ ∧ _ ∧ _ from ⟨moment 1, moment 2, moment 3, moment 4⟩)
+
+namespace sum_pow_mul_choose_mul_secondOrder
+
+-- One binomial step applies the recurrence once, advancing the sequence by two.
+private theorem binomial_shift (a b : ℝ) (W : ℕ → ℝ)
+    (hW : ∀ n, W (n + 2) = a * W (n + 1) + b * W n) (n m : ℕ) :
+    ∑ k ∈ Finset.range (n + 1), (n.choose k : ℝ) * (a ^ k * b ^ (n - k) * W (k + m)) =
+      W (2 * n + m) := by
+  induction n generalizing m with
+  | zero => simp
+  | succ n ih =>
+    rw [Finset.sum_choose_succ_mul (fun k j ↦ a ^ k * b ^ j * W (k + m)) n,
+      ← Finset.sum_add_distrib, show 2 * (n + 1) + m = 2 * n + (m + 2) by omega, ← ih]
+    refine Finset.sum_congr rfl fun k hk => ?_
+    have hk' := Finset.mem_range.mp hk
+    rw [show n + 1 - k = (n - k) + 1 by omega, pow_succ b, pow_succ a,
+      show k + (m + 2) = (k + m) + 2 by omega, hW, show k + 1 + m = k + m + 1 by omega]
+    ring
+
+-- Each falling-factorial factor lowers the binomial row and contributes a factor of a.
+private theorem factorial_moment (a b : ℝ) (W : ℕ → ℝ)
+    (hW : ∀ n, W (n + 2) = a * W (n + 1) + b * W n) (n i m : ℕ) :
+    ∑ k ∈ Finset.range (n + 1),
+        (k.descFactorial i : ℝ) * n.choose k * a ^ k * b ^ (n - k) * W (k + m) =
+      (n.descFactorial i : ℝ) * a ^ i * W (2 * n + m - i) := by
+  induction i generalizing n m with
+  | zero => simpa [mul_assoc] using binomial_shift a b W hW n m
+  | succ i ih =>
+    cases n with
+    | zero => simp
+    | succ n =>
+      rw [Finset.sum_range_succ']
+      simp only [Nat.zero_descFactorial_succ, Nat.cast_zero, zero_mul, add_zero]
+      calc
+        _ = ((n : ℝ) + 1) * a * ∑ k ∈ Finset.range (n + 1),
+            (k.descFactorial i : ℝ) * n.choose k * a ^ k * b ^ (n - k) * W (k + (m + 1)) := by
+          rw [Finset.mul_sum]
+          refine Finset.sum_congr rfl fun k _ => ?_
+          have h : ((n : ℝ) + 1) * n.choose k = ((n + 1).choose (k + 1) : ℝ) * (k + 1) := by
+            exact_mod_cast Nat.add_one_mul_choose_eq n k
+          rw [Nat.succ_descFactorial_succ, Nat.cast_mul, Nat.cast_succ, pow_succ,
+            Nat.add_sub_add_right, show k + 1 + m = k + (m + 1) by omega]
+          linear_combination
+            -(k.descFactorial i : ℝ) * a ^ k * a * b ^ (n - k) * W (k + (m + 1)) * h
+        _ = _ := by
+          rw [ih, Nat.succ_descFactorial_succ, Nat.cast_mul, Nat.cast_succ, pow_succ,
+            show 2 * (n + 1) + m - (i + 1) = 2 * n + (m + 1) - i by omega]
+          ring
+
+end sum_pow_mul_choose_mul_secondOrder
+
+/-- **Power-weighted binomial sums of a second-order linear recurrence.** Let $a$ and $b$ be real
+numbers and let $(W_n)_{n \ge 0}$ be a real sequence with $W_{n+2} = a W_{n+1} + b W_n$ for all
+$n \ge 0$. Write $S(r, i)$ for the Stirling numbers of the second kind and
+$(N)_i = N(N-1) \cdots (N-i+1)$ for the falling factorial, with $(N)_0 = 1$. Then for all natural
+numbers $N$ and $r$, with the convention $0^0 = 1$,
+$$\sum_{k=0}^{N} k^r \binom{N}{k} a^k b^{N-k} W_k = \sum_{i=0}^{r} S(r, i) (N)_i a^i W_{2N-i},$$
+where the terms with $i > N$ vanish because $(N)_i = 0$.
+
+Source: Andreea M. Stănică, Gabriela N. Stănică, and Pantelimon Stănică, *An Evaluation of
+Rationally Weighted Binomial Sums Via Some Differential and Integral Operators*, The Fibonacci
+Quarterly 62 (2024), Article 62-1/stanica09202023, Theorem 2.5. -/
+public theorem sum_pow_mul_choose_mul_secondOrder (a b : ℝ) (W : ℕ → ℝ)
+    (hW : ∀ n, W (n + 2) = a * W (n + 1) + b * W n) (N r : ℕ) :
+    ∑ k ∈ Finset.range (N + 1), (k : ℝ) ^ r * N.choose k * a ^ k * b ^ (N - k) * W k =
+      ∑ i ∈ Finset.range (r + 1),
+        (Nat.stirlingSecond r i : ℝ) * N.descFactorial i * a ^ i * W (2 * N - i) := by
+  have hpow (k : ℕ) : (k : ℝ) ^ r =
+      ∑ i ∈ Finset.range (r + 1), (Nat.stirlingSecond r i : ℝ) * k.descFactorial i := by
+    exact_mod_cast Nat.pow_eq_sum_stirlingSecond_mul_descFactorial k r
+  simp_rw [hpow, Finset.sum_mul]
+  rw [Finset.sum_comm]
+  refine Finset.sum_congr rfl fun i _ => ?_
+  simpa only [Finset.mul_sum, mul_assoc, Nat.add_zero] using
+    congrArg ((Nat.stirlingSecond r i : ℝ) * ·)
+      (sum_pow_mul_choose_mul_secondOrder.factorial_moment a b W hW N i 0)
 
 open Polynomial in
 /-- **Scherk's identity.** Write $S(r, i)$ for the Stirling numbers of the second kind. Let $N$ and

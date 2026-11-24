@@ -247,6 +247,15 @@ class Join(unittest.TestCase):
         "Mathlib": {"exclude": "the root import file"},
     }
 
+    def test_the_committed_taxonomy_places_mathlib_where_a_strict_join_accepts(self) -> None:
+        # What `join --strict` reads from scripts/taxonomy.json by default, on the committed file: a PR that changes
+        # only the taxonomy skips the Mathlib layer's build, so its unit tests catch what that join would refuse.
+        placements = graph.load_placements([graph.TAXONOMY])
+        scopes = graph.defined_scopes(graph.read_json_object(graph.TAXONOMY, "taxonomy"), str(graph.TAXONOMY))
+        self.assertTrue(scopes)
+        unknown = sorted(key for key, entry in placements.items() if "to" in entry and entry["to"] not in scopes)
+        self.assertEqual(unknown, [])
+
     def test_a_module_takes_its_own_key_else_its_nearest_placed_directory(self) -> None:
         cases = {
             "Mathlib/Topology/Algebra/Ring/Basic": "Mathlib/Topology/Algebra/Ring/Basic",

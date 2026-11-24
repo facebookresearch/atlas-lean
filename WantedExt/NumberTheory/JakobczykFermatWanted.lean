@@ -14,6 +14,7 @@ public import Mathlib.GroupTheory.OrderOfElement
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import Mathlib.NumberTheory.Fermat
 public import Mathlib.Order.Bounds.Defs
+public import MathlibExt.NumberTheory.FermatNumberSquareFactors
 public import MathlibExt.NumberTheory.GeneralizedFermatGCD
 public import MathlibExt.NumberTheory.GeneralizedFermatPeriod
 public import MathlibExt.NumberTheory.GeneralizedFermatSquareFactors
@@ -50,17 +51,6 @@ public theorem_wanted two_pow_half_modEq_one_fermatNumber {n p : ℕ} (hn : 2 �
     (hp : p.Prime) (hp2 : p ≠ 2) (hdvd : p ∣ Nat.fermatNumber n) :
     2 ^ ((p - 1) / 2) ≡ 1 [MOD Nat.fermatNumber n]
 
-/-- **Squared prime factors of Fermat numbers.** Let $F_n = 2^{2^n} + 1$ be the $n$-th Fermat
-number, and let $p$ be a prime dividing $F_n$. Then $p^2$ divides $F_n$ if and only if
-$2^{p-1} \equiv 1 \pmod{p^2}$.
-
-Source: Klaška, *Several Notes on Jakóbczyk's Hypothesis on Fermat Numbers*,
-INTEGERS 26 (2026), Article A77, Theorem 3 (`integers-2026-A77-thm-3`), citing
-Křížek, Luca, and Somer. -/
-public theorem_wanted sq_dvd_fermatNumber_iff {n p : ℕ} (hp : p.Prime)
-    (hdvd : p ∣ Nat.fermatNumber n) :
-    p ^ 2 ∣ Nat.fermatNumber n ↔ 2 ^ (p - 1) ≡ 1 [MOD p ^ 2]
-
 /-- **Squared prime factors of Fermat numbers via Wieferich primes and orders.** Let
 $F_n = 2^{2^n} + 1$ be the $n$-th Fermat number. For every natural number $n$ and every odd prime
 $p$, $p^2$ divides $F_n$ if and only if $p$ is a Wieferich prime (to base $2$) and the
@@ -75,38 +65,7 @@ INTEGERS 26 (2026), Article A77, Theorem 5, Equation (11)
 (`integers-2026-A77-thm-5`). -/
 public theorem_wanted sq_dvd_fermatNumber_iff_wieferich_orderOf {n p : ℕ} (hp : p.Prime)
     (hp2 : p ≠ 2) :
-    p ^ 2 ∣ Nat.fermatNumber n ↔ p.IsWieferichPrime ∧ orderOf (2 : ZMod p) = 2 ^ (n + 1) := by
-  have : Fact (2 < p) := ⟨lt_of_le_of_ne hp.two_le (Ne.symm hp2)⟩
-  have : Fact p.Prime := ⟨hp⟩
-  have hF : ((Nat.fermatNumber n : ℕ) : ZMod p) = (2 : ZMod p) ^ 2 ^ n + 1 := by
-    simp [Nat.fermatNumber]
-  have hdvd : p ∣ Nat.fermatNumber n ↔ orderOf (2 : ZMod p) = 2 ^ (n + 1) := by
-    rw [← ZMod.natCast_eq_zero_iff, hF]
-    constructor
-    · intro h
-      have h1 : (2 : ZMod p) ^ 2 ^ n = -1 := eq_neg_of_add_eq_zero_left h
-      refine orderOf_eq_prime_pow ?_ ?_
-      · rw [h1]; exact ZMod.neg_one_ne_one
-      · rw [pow_succ, pow_mul, h1]; norm_num
-    · intro h
-      have h2 : (2 : ZMod p) ^ 2 ^ (n + 1) = 1 := by rw [← h]; exact pow_orderOf_eq_one _
-      have h3 : (2 : ZMod p) ^ 2 ^ n ≠ 1 := by
-        intro h4
-        have h7 := Nat.le_of_dvd (by positivity) (h ▸ orderOf_dvd_of_pow_eq_one h4)
-        have h8 : 2 ^ n < 2 ^ (n + 1) := Nat.pow_lt_pow_right (by norm_num) (by omega)
-        omega
-      have h5 : (2 : ZMod p) ^ 2 ^ n * (2 : ZMod p) ^ 2 ^ n = 1 := by
-        rw [← pow_add, ← two_mul, ← pow_succ']; exact h2
-      rcases mul_self_eq_one_iff.mp h5 with h6 | h6
-      · exact absurd h6 h3
-      · rw [h6]; ring
-  rw [Nat.isWieferichPrime_iff_modEq]
-  constructor
-  · intro h
-    have hpd : p ∣ Nat.fermatNumber n := (dvd_pow_self p two_ne_zero).trans h
-    exact ⟨⟨hp, (❰sq_dvd_fermatNumber_iff❱ hp hpd).mp h⟩, hdvd.mp hpd⟩
-  · rintro ⟨⟨-, hw⟩, ho⟩
-    exact (❰sq_dvd_fermatNumber_iff❱ hp (hdvd.mpr ho)).mpr hw
+    p ^ 2 ∣ Nat.fermatNumber n ↔ p.IsWieferichPrime ∧ orderOf (2 : ZMod p) = 2 ^ (n + 1)
 
 /-- **Monotonicity of the number of prime factors of generalized Fermat numbers.** For natural
 numbers $a$, $b$ and $n$ write $F_n(a, b) = a^{b^n} + 1$, and let $\Omega(N)$ be the number of

@@ -87,10 +87,13 @@ variable {k : Type u} [Field k] {C : Over (Spec (.of k))}
   {L : C.left.Modules} {n : ℕ} [IsProperCurve C.hom]
 
 /-- Source-covered geometric toolkit data on the actual current carriers.
-The mapped unit is fixed by the chosen injective resolution. Neither
-spectral genus, rank nor degree is assumed by any field. -/
+The mapped unit is fixed by the chosen injective resolution. Degree additivity of
+line bundles on the base curve (requested by
+`CurveCohomologyCalculusWanted.isDegreeAdditive`) is an explicit field; neither
+spectral genus, rank nor spectral degree is assumed by any field. -/
 structure SpectralCohomologyInputs (P : SplitSpectralCover C L n) where
   tensor : CurveTensorEulerInputs C.hom
+  degreeAdditive : IsDegreeAdditive C.hom tensor
   structureResolution : MappedResolutionConditions (Scheme.Modules.pushforward P.q.left)
     (injectiveResolution (structureModule P.S.left))
 
@@ -106,7 +109,7 @@ structure SpectralLineInputs (P : SplitSpectralCover C L n) (M : P.S.left.Module
 
 theorem inverse_degree (P : SplitSpectralCover C L n) (I : SpectralCohomologyInputs P) :
     degree C.hom P.inverseLine P.inverseIsLine = -degree C.hom L P.line := by
-  have hT := tensor_degree C.hom I.tensor L P.inverseLine P.line P.inverseIsLine
+  have hT := I.degreeAdditive L P.inverseLine P.line P.inverseIsLine
   have hI := degree_eq_of_iso C.hom P.inverseTensor.some
     (I.tensor.tensor_line L P.inverseLine P.line P.inverseIsLine)
     (isLineBundle_structureModule C.left)
@@ -140,7 +143,7 @@ theorem spectralStructureEuler (P : SplitSpectralCover C L n)
           (finrankEuler01 C.hom (structureModule C.left) - i.val * degree C.hom L P.line) := by
       apply Finset.sum_congr rfl
       intro i hi
-      have hpow := degree_power C.hom I.tensor P.inverseLine P.inverseIsLine i.val
+      have hpow := degree_power C.hom I.tensor I.degreeAdditive P.inverseLine P.inverseIsLine i.val
       rw [inverse_degree P I] at hpow
       have he := degree_eq_finrankEuler01_sub C.hom (A i) (hA i)
       change degree C.hom (A i) (hA i) = (i.val : ℤ) * -degree C.hom L P.line at hpow

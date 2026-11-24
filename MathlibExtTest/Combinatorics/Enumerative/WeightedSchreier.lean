@@ -44,3 +44,15 @@ example : iteratedPartialSum 2 (fun n => Nat.fib (n + 2)) 2 = 1 := by
 example : iteratedPartialSum 2 (fun n => Nat.fib (n + 2)) 4 = 10 := by
   rw [iteratedPartialSum_fib_add_two]
   decide
+
+-- Negative input terms do not change the shift at positive depth.
+example : iteratedPartialSum 3 (fun n => -(n : ℤ) + 1) 5 -
+    iteratedPartialSum 3 (fun n => -(n : ℤ)) 5 = 10 := by
+  rw [iteratedPartialSum_add_one_sub (fun n => -(n : ℤ))]
+  decide
+
+-- With more iterations than input terms, both strict partial sums vanish.
+example : iteratedPartialSum 4 (fun n => -(n : ℤ) + 1) 2 -
+    iteratedPartialSum 4 (fun n => -(n : ℤ)) 2 = 0 := by
+  rw [iteratedPartialSum_add_one_sub (fun n => -(n : ℤ))]
+  decide

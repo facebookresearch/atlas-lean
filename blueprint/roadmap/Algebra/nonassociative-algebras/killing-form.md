@@ -1,0 +1,9 @@
+# Killing form of a Lie algebra
+
+The Killing form of a finite-dimensional Lie algebra $L$ over a field pairs $x, y \in L$ by the trace of the composite of their adjoint operators: $\kappa(x, y) = \operatorname{tr}(\operatorname{ad} x \circ \operatorname{ad} y)$, where $\operatorname{ad} x \colon L \to L$ is $y \mapsto [x, y]$. Mathlib defines it for Lie algebras over any commutative ring, with a convention for the trace when there is no finite basis. Let $R$ be a commutative ring and $L$ a Lie algebra over $R$. The Killing form of $L$ is the $R$-bilinear form on $L$ given by $\kappa(x, y) = \operatorname{tr}(\operatorname{ad} x \circ \operatorname{ad} y)$, where $\operatorname{tr}$ is Mathlib's trace of $R$-linear endomorphisms of $L$: the trace of the matrix of the endomorphism in a finite basis of $L$ when $L$ has one, and $0$ when $L$ has no finite basis. A finite-dimensional Lie algebra over a field has a finite basis, so this gives the familiar Killing form, in every characteristic. Nondegeneracy is not part of the definition.
+
+## Sources
+
+- James E. Humphreys, Introduction to Lie Algebras and Representation Theory, Graduate Texts in Mathematics 9, Springer-Verlag, 1972.
+- The mathlib Community, *mathlib4* at revision fc4f59e577feb1a4956671bc04ac18aaaf8cd842, for the trace form of a representation, here the adjoint one: `LieModule.traceForm`, https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/Algebra/Lie/TraceForm.lean#L53-L60.
+- The mathlib Community, *mathlib4* at revision fc4f59e577feb1a4956671bc04ac18aaaf8cd842, for the trace of an endomorphism, $0$ when there is no finite basis: `LinearMap.trace`, https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/LinearAlgebra/Trace.lean#L72-L76.
