@@ -60,7 +60,7 @@ boundary-dependent and remains separate.
 
 namespace EarthScience
 
-/-- Algebraic factorization of the Rayleigh number: the product of
+/-- Algebraic factorization of the Rayleigh number: for `ν > 0` and `κ > 0`, the product of
 `g * α * ΔT * H / ν` and `H ^ 2 / κ` is `g * α * ΔT * H ^ 3 / (ν * κ)`.
 This is an identity between the two expressions; it does not derive the
 Rayleigh number from the Boussinesq equations. -/
@@ -76,7 +76,7 @@ theorem rayleigh_number_pos {g α ΔT H ν κ : ℝ} (hg : 0 < g) (hα : 0 < α)
   have hnum : 0 < g * α * ΔT * H ^ 3 := by positivity
   exact div_pos hnum hden
 
-/-- Zero buoyancy (`ΔT = 0`) gives Rayleigh number `0`. -/
+/-- Zero buoyancy (`ΔT = 0`) gives Rayleigh number `0`, for `ν > 0` and `κ > 0`. -/
 theorem rayleigh_number_zero_buoyancy {g α H ν κ : ℝ} (hν : 0 < ν) (hκ : 0 < κ) :
     g * α * 0 * H ^ 3 / (ν * κ) = 0 := by
   have _ := hν

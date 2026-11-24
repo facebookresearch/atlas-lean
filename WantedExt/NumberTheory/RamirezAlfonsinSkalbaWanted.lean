@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Data.Set.Card
 public import Mathlib.NumberTheory.PrimeCounting
 public import Mathlib.NumberTheory.ArithmeticFunction.VonMangoldt
+public import MathlibExt.NumberTheory.RamirezAlfonsinSkalba
 
 /-!
 # Primes in the `ℓ`-numerical semigroup of two generators
@@ -31,18 +32,6 @@ open ArithmeticFunction
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Two representations by coprime generators.** Let $c$ and $d$ be coprime natural numbers.
-If natural numbers $x, y, x', y'$ satisfy $cx + dy = cx' + dy'$, then $c$ divides $y - y'$ and
-$d$ divides $x - x'$ in the integers.
-
-The paper's standing assumption $1 < c < d$ is not needed and is dropped.
-
-Source: Yuchen Ding and Takao Komatsu, *On a Conjecture of Ramírez Alfonsín and
-Skałba, III*, INTEGERS 25 (2025), Article A51, Lemma 1 (`integers-2025-A51-lem-1`). -/
-public theorem_wanted twoGenerator_dvd_sub_of_eq {c d : ℕ} (hcd : c.Coprime d)
-    {x y x' y' : ℕ} (h : c * x + d * y = c * x' + d * y') :
-    (c : ℤ) ∣ (y : ℤ) - y' ∧ (d : ℤ) ∣ (x : ℤ) - x'
 
 /-- **Normal form of a number with exactly $\ell$ representations.** Let $c$ and $d$ be coprime
 positive integers, and let $n$ and $\ell$ be natural numbers such that the equation
