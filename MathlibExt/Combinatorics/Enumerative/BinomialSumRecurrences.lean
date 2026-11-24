@@ -17,8 +17,10 @@ import Mathlib.RingTheory.PowerSeries.Order
 /-!
 # Step sums and finite recurrence windows
 
-The Riordan-array step sums are coefficients of a geometric series. A linear recurrence
-propagates any other linear recurrence that holds on a sufficiently long initial window.
+The Riordan-array step sums are coefficients of a geometric series. For a rational Riordan
+array, the step sums of all residues modulo the step therefore satisfy one common linear
+recurrence with integer coefficients. A linear recurrence propagates any other linear recurrence
+that holds on a sufficiently long initial window.
 -/
 
 namespace MetaMathlibExt
@@ -63,18 +65,11 @@ public theorem linearRecurrence_of_finite_window {R : Type*} [CommRing R]
         have hjs := (Finset.mem_Icc.mp hj).2
         rw [← Finset.mul_sum, ← hA (n - j) (by omega)]
 
-/-- **Step sums along a Riordan array.** Let $K$ be a field, let $g, h \in K[[x]]$ with
-$h(0) = 0$, and write $d(n, m) = [x^n]\, g(x) h(x)^m$. Then for all natural numbers $k > 1$,
-$p < k$ and $n$,
-$\sum_{j=0}^{n} d(n, kj + p) = [x^n]\, g(x) h(x)^p (1 - h(x)^k)^{-1}$.
-
-Since $h(0) = 0$, $d(n, m) = 0$ for $m > n$, so the left side is the full sum over all
-$j \ge 0$.
-
-Source: Eduardo H. M. Brietzke, *Recurrence Relations for Sums of Binomial Coefficients and
-Some Generalizations*, Journal of Integer Sequences 27 (2024), Article 24.3.4, Proposition 5. -/
-public theorem riordan_stepSum_coeff {K : Type*} [Field K] (g h : PowerSeries K)
-    (hh : PowerSeries.constantCoeff h = 0) (k p : ℕ) (hk : 1 < k) (hp : p < k) (n : ℕ) :
+/-- The step-sum formula of `riordan_stepSum_coeff` for every step `k ≥ 1`; the rational case
+below also needs the step `k = 1`. -/
+private theorem rationalRiordan_stepSum_linearRecurrence.stepSum_coeff {K : Type*} [Field K]
+    (g h : PowerSeries K) (hh : PowerSeries.constantCoeff h = 0) (k p : ℕ) (hk : 1 ≤ k)
+    (hp : p < k) (n : ℕ) :
     ∑ j ∈ Finset.range (n + 1), PowerSeries.coeff n (g * h ^ (k * j + p)) =
       PowerSeries.coeff n (g * h ^ p * (1 - h ^ k)⁻¹) := by
   let q := h ^ k
@@ -88,7 +83,7 @@ public theorem riordan_stepSum_coeff {K : Type*} [Field K] (g h : PowerSeries K)
       PowerSeries.inv_mul_cancel _ hunit, mul_one]
   have hdegree : n < k * (n + 1) := by
     refine (Nat.lt_succ_self n).trans_le ?_
-    simpa only [one_mul] using Nat.mul_le_mul_right (n + 1) hk.le
+    simpa only [one_mul] using Nat.mul_le_mul_right (n + 1) hk
   have horder : (n : ℕ∞) < (q ^ (n + 1)).order := by
     change (n : ℕ∞) < ((h ^ k) ^ (n + 1)).order
     rw [← pow_mul]
@@ -107,5 +102,130 @@ public theorem riordan_stepSum_coeff {K : Type*} [Field K] (g h : PowerSeries K)
       congr 1
       ac_rfl
     _ = _ := PowerSeries.coeff_mul_one_sub_of_lt_order n horder
+
+/-- **Step sums along a Riordan array.** Let $K$ be a field, let $g, h \in K[[x]]$ with
+$h(0) = 0$, and write $d(n, m) = [x^n]\, g(x) h(x)^m$. Then for all natural numbers $k > 1$,
+$p < k$ and $n$,
+$\sum_{j=0}^{n} d(n, kj + p) = [x^n]\, g(x) h(x)^p (1 - h(x)^k)^{-1}$.
+
+Since $h(0) = 0$, $d(n, m) = 0$ for $m > n$, so the left side is the full sum over all
+$j \ge 0$.
+
+Source: Eduardo H. M. Brietzke, *Recurrence Relations for Sums of Binomial Coefficients and
+Some Generalizations*, Journal of Integer Sequences 27 (2024), Article 24.3.4, Proposition 5. -/
+public theorem riordan_stepSum_coeff {K : Type*} [Field K] (g h : PowerSeries K)
+    (hh : PowerSeries.constantCoeff h = 0) (k p : ℕ) (hk : 1 < k) (hp : p < k) (n : ℕ) :
+    ∑ j ∈ Finset.range (n + 1), PowerSeries.coeff n (g * h ^ (k * j + p)) =
+      PowerSeries.coeff n (g * h ^ p * (1 - h ^ k)⁻¹) :=
+  rationalRiordan_stepSum_linearRecurrence.stepSum_coeff g h hh k p hk.le hp n
+
+section RationalRiordan
+
+open Polynomial
+
+-- `hh₁` is kept from the statement: it makes `h` have order exactly `ν`, which the recurrence
+-- does not need.
+set_option linter.unusedVariables false in
+/-- **Step sums of a rational Riordan array satisfy a common recurrence.** Let
+$g_1, g_2, h_1, h_2 \in \mathbb{Z}[x]$ with $g_2(0) = h_1(0) = h_2(0) = 1$, let $\nu \ge 1$ and
+$k \ge 1$ be natural numbers, and in $\mathbb{Q}[[x]]$ let $g = g_1/g_2$ and
+$h = x^\nu h_1/h_2$. For $p, n \in \mathbb{N}$ let
+$a_p(n) = \sum_{j=0}^{n} [x^n]\, g h^{kj+p}$. Then there are $r \in \mathbb{N}$ and integers
+$\alpha_1, \ldots, \alpha_r$ such that $a_p(n) = \sum_{i=1}^{r} \alpha_i a_p(n - i)$ for every
+$p < k$ and every $n \ge r$.
+
+Since $h$ has no constant term, $[x^n]\, g h^m = 0$ for $m > n$, so $a_p(n)$ is the full sum
+over all $j \ge 0$.
+
+Source: Eduardo H. M. Brietzke, *Recurrence Relations for Sums of Binomial Coefficients and
+Some Generalizations*, Journal of Integer Sequences 27 (2024), Article 24.3.4,
+Proposition 11. -/
+public theorem rationalRiordan_stepSum_linearRecurrence (g₁ g₂ h₁ h₂ : ℤ[X]) (ν : ℕ)
+    (hg₂ : g₂.eval 0 = 1) (hh₁ : h₁.eval 0 = 1) (hh₂ : h₂.eval 0 = 1) (hν : 1 ≤ ν)
+    (k : ℕ) (hk : 0 < k) :
+    let toQ : ℤ[X] → PowerSeries ℚ := fun q => ((q.map (Int.castRingHom ℚ)) : PowerSeries ℚ)
+    let g : PowerSeries ℚ := toQ g₁ * (toQ g₂)⁻¹
+    let h : PowerSeries ℚ := PowerSeries.X ^ ν * toQ h₁ * (toQ h₂)⁻¹
+    let a : ℕ → ℕ → ℚ := fun p n =>
+      ∑ j ∈ Finset.range (n + 1), PowerSeries.coeff n (g * h ^ (k * j + p))
+    ∃ (r : ℕ) (αs : ℕ → ℤ), ∀ p < k, ∀ n, r ≤ n →
+      a p n = ∑ i ∈ Finset.Icc 1 r, (αs i : ℚ) * a p (n - i) := by
+  intro toQ g h a
+  -- `toQ` is the ring homomorphism `φ`, and the step sums have the generating functions
+  -- `g hᵖ / (1 - hᵏ) = P p / Q` for the integer polynomials `Q` and `P p` below.
+  let φ : ℤ[X] →+* PowerSeries ℚ :=
+    coeToPowerSeries.ringHom.comp (mapRingHom (Int.castRingHom ℚ))
+  have hφ (q : ℤ[X]) : toQ q = φ q := rfl
+  have hφX : φ X = PowerSeries.X := by simp [φ]
+  have hφn (q : ℤ[X]) (n : ℕ) : PowerSeries.coeff n (φ q) = (q.coeff n : ℚ) := by
+    change PowerSeries.coeff n ((q.map (Int.castRingHom ℚ) : ℚ[X]) : PowerSeries ℚ) = _
+    rw [coeff_coe, coeff_map, eq_intCast]
+  have hφ0 (q : ℤ[X]) : PowerSeries.constantCoeff (φ q) = (q.eval 0 : ℤ) := by
+    rw [← PowerSeries.coeff_zero_eq_constantCoeff_apply, hφn, coeff_zero_eq_eval_zero]
+  let Q : ℤ[X] := g₂ * (h₂ ^ k - X ^ (ν * k) * h₁ ^ k)
+  let P : ℕ → ℤ[X] := fun p ↦ g₁ * X ^ (ν * p) * h₁ ^ p * h₂ ^ (k - p)
+  refine ⟨Q.natDegree + ∑ p ∈ Finset.range k, (P p).natDegree + 1, fun i ↦ -Q.coeff i, ?_⟩
+  intro p hp n hn
+  have hν₀ : ν ≠ 0 := by omega
+  have hk₀ : k ≠ 0 := by omega
+  have hh : PowerSeries.constantCoeff h = 0 := by simp [h, zero_pow hν₀]
+  set F := g * h ^ p * (1 - h ^ k)⁻¹ with hF
+  have ha (m : ℕ) : a p m = PowerSeries.coeff m F :=
+    rationalRiordan_stepSum_linearRecurrence.stepSum_coeff g h hh k p hk hp m
+  have eG : φ g₂ * (φ g₂)⁻¹ = 1 := PowerSeries.mul_inv_cancel _ (by simp [hφ0, hg₂])
+  have eH : φ h₂ * (φ h₂)⁻¹ = 1 := PowerSeries.mul_inv_cancel _ (by simp [hφ0, hh₂])
+  have eD : (1 - h ^ k) * (1 - h ^ k)⁻¹ = 1 :=
+    PowerSeries.mul_inv_cancel _ (by simp [hh, zero_pow hk₀])
+  have hQF : φ Q * F = φ (P p) := by
+    obtain ⟨m, rfl⟩ := Nat.exists_eq_add_of_le hp.le
+    have eHp : φ h₂ ^ p * (φ h₂)⁻¹ ^ p = 1 := by rw [← mul_pow, eH, one_pow]
+    have eHk : φ h₂ ^ (p + m) * (φ h₂)⁻¹ ^ (p + m) = 1 := by rw [← mul_pow, eH, one_pow]
+    -- `Q = g₂ h₂ᵏ (1 - hᵏ)` and `P p = g₁ h₂ᵏ hᵖ`.
+    have hQ : φ Q = φ g₂ * φ h₂ ^ (p + m) * (1 - h ^ (p + m)) := by
+      simp only [Q, h, hφ, hφX, map_mul, map_sub, map_pow]
+      linear_combination (φ g₂ * PowerSeries.X ^ (ν * (p + m)) * φ h₁ ^ (p + m)) * eHk
+    have hP : φ (P p) = φ g₁ * φ h₂ ^ (p + m) * h ^ p := by
+      simp only [P, h, hφ, hφX, map_mul, map_pow, Nat.add_sub_cancel_left]
+      linear_combination (-(φ g₁ * PowerSeries.X ^ (ν * p) * φ h₁ ^ p * φ h₂ ^ m)) * eHp
+    rw [hQ, hP, hF]
+    simp only [g, hφ]
+    linear_combination
+      (φ g₁ * φ h₂ ^ (p + m) * h ^ p * ((1 - h ^ (p + m)) * (1 - h ^ (p + m))⁻¹)) * eG +
+        (φ g₁ * φ h₂ ^ (p + m) * h ^ p) * eD
+  -- Compare the coefficients of `xⁿ` in `Q * F = P p`, where `Q(0) = 1` and `n > deg (P p)`.
+  set r := Q.natDegree + ∑ p ∈ Finset.range k, (P p).natDegree + 1 with hr
+  have hPdeg : (P p).natDegree < n := by
+    have := Finset.single_le_sum (f := fun i ↦ (P i).natDegree) (fun i _ ↦ Nat.zero_le _)
+      (Finset.mem_range.mpr hp)
+    omega
+  have hQ0 : Q.coeff 0 = 1 := by
+    rw [coeff_zero_eq_eval_zero]
+    simp [Q, hg₂, hh₂, zero_pow (Nat.mul_ne_zero hν₀ hk₀)]
+  have key : PowerSeries.coeff n (φ Q * F) = 0 := by
+    rw [hQF, hφn, coeff_eq_zero_of_natDegree_lt hPdeg, Int.cast_zero]
+  rw [PowerSeries.coeff_mul, Finset.Nat.sum_antidiagonal_eq_sum_range_succ
+    (fun i j ↦ PowerSeries.coeff i (φ Q) * PowerSeries.coeff j F)] at key
+  have hsplit :
+      ∑ i ∈ Finset.range (n + 1), PowerSeries.coeff i (φ Q) * PowerSeries.coeff (n - i) F =
+        ∑ i ∈ Finset.range (r + 1), PowerSeries.coeff i (φ Q) * PowerSeries.coeff (n - i) F := by
+    refine (Finset.sum_subset (fun i hi ↦ ?_) fun i _ hi ↦ ?_).symm
+    · simp only [Finset.mem_range] at hi ⊢
+      omega
+    · simp only [Finset.mem_range, not_lt] at hi
+      rw [hφn, coeff_eq_zero_of_natDegree_lt (by omega), Int.cast_zero, zero_mul]
+  rw [hsplit, Finset.sum_range_eq_add_Ico _ (by omega : 0 < r + 1),
+    Finset.Ico_add_one_right_eq_Icc, hφn, hQ0, Nat.sub_zero] at key
+  have hsum : ∑ i ∈ Finset.Icc 1 r, ((-Q.coeff i : ℤ) : ℚ) * PowerSeries.coeff (n - i) F =
+      -∑ i ∈ Finset.Icc 1 r, PowerSeries.coeff i (φ Q) * PowerSeries.coeff (n - i) F := by
+    rw [← Finset.sum_neg_distrib]
+    refine Finset.sum_congr rfl fun i _ ↦ ?_
+    rw [hφn]
+    push_cast
+    ring
+  simp only [ha]
+  rw [hsum]
+  linear_combination key
+
+end RationalRiordan
 
 end MetaMathlibExt
