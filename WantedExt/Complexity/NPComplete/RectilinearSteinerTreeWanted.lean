@@ -20,7 +20,7 @@ Journal on Applied Mathematics 32 (1977), 826-834, doi:10.1137/0132071.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Algebra.BigOperators.Finprod
 public import Mathlib.Algebra.Order.Group.Abs
 public import Mathlib.Combinatorics.SimpleGraph.Acyclic

@@ -13,6 +13,7 @@ public import Mathlib.Analysis.Asymptotics.Theta
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Nat.Log
 public import MathlibExt.Combinatorics.InfiniteWord.ThueMorse
+public import MathlibExt.Combinatorics.InfiniteWord.ThueMorseFactors
 public import MathlibExt.Combinatorics.InfiniteWord.WordFactorComplexity
 public import MathlibExt.Combinatorics.Words.BalancedDyadicNestedEventuallyPeriodic
 public import MathlibExt.Combinatorics.Words.BalancedNestedXor
@@ -261,16 +262,6 @@ public theorem_wanted rightSpecial_count_regular (k : ℕ) (a : ℕ → Bool)
     IsKRegularSequence k (fun n => ((rightSpecialFactors a n).ncard : ℤ)) ∧
       ∀ C : ℕ, (∀ n, (rightSpecialFactors a n).ncard ≤ C) →
         IsKAutomaticSequence k (fun n => Fin.ofNat (C + 1) (rightSpecialFactors a n).ncard)
-
-/-- **Factors of the Thue–Morse word are closed under complement.** For every natural number
-$n$, if a binary word $v$ of length $n$ is a factor of the Thue–Morse sequence, then so is the
-word obtained from $v$ by exchanging $0$ and $1$ in every position.
-
-Source: John M. Campbell and Benoît Cloitre, *Meta-Automatic Sequences*, Journal of
-Integer Sequences 29 (2026), Article 26.4.1, Lemma 29 (`jis-2026-26.4.1-lem-29`). -/
-public theorem_wanted thueMorse_factor_complement (n : ℕ) (v : Fin n → Bool)
-    (hv : v ∈ InfiniteWord.factorSet thueMorse n) :
-    (fun i => !v i) ∈ InfiniteWord.factorSet thueMorse n
 
 /-- **Factor complexity of the Thue–Morse Quarto word versus Thue–Morse.** Let $\mathcal{Q}$ be
 the Thue–Morse Quarto sequence and $t$ the Thue–Morse sequence, with factor complexities

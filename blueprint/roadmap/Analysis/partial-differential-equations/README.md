@@ -13,3 +13,4 @@ PDE existence, regularity and qualitative results: Cauchy–Kovalevskaya, heat a
 - [Weak solutions of elliptic equations](weak-solutions-of-elliptic-equations/README.md)
 - [Weak solutions of parabolic equations](weak-solutions-of-parabolic-equations/README.md)
 - [Conservation laws with concave flux](conservation-laws-with-concave-flux/README.md)
+- [Analytic elliptic regularity](analytic-elliptic-regularity.md)

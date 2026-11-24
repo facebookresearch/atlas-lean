@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Algebra.Polynomial.Derivative
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Combinatorics.Enumerative.Stirling
 public import Mathlib.Data.Nat.Choose.Sum
 public import Mathlib.Data.Nat.Fib.Basic
@@ -15,6 +17,7 @@ public import Mathlib.Data.Rat.Defs
 public import Mathlib.NumberTheory.Harmonic.Defs
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Algebra.BigOperators.Field
+import Mathlib.Algebra.BigOperators.Intervals
 import Mathlib.Algebra.Order.Field.Rat
 import Mathlib.Order.Fin.Basic
 import Mathlib.RingTheory.Polynomial.Bernstein
@@ -211,6 +214,76 @@ public theorem sum_neg_one_pow_choose_div_sq_eq_sum_harmonic (n : ℕ) :
         ← Finset.Ico_add_one_right_eq_Icc, Finset.sum_Ico_eq_sum_range]
       simp [Nat.add_comm]
 
+private noncomputable def weightedBinomialSum (x : ℝ) (p n : ℕ) : ℝ :=
+  ∑ k ∈ Finset.Icc 1 n, (n.choose k : ℝ) * x ^ k / (k : ℝ) ^ p
+
+private theorem weightedBinomialSum_zero_pow (x : ℝ) (n : ℕ) :
+    weightedBinomialSum x 0 n = (1 + x) ^ n - 1 := by
+  have h := add_pow x (1 : ℝ) n
+  rw [Finset.range_eq_Ico, Finset.sum_eq_sum_Ico_succ_bot (Nat.succ_pos n),
+    Nat.succ_eq_add_one, Finset.Ico_add_one_right_eq_Icc] at h
+  rw [weightedBinomialSum, eq_sub_iff_add_eq]
+  simpa only [one_pow, mul_one, pow_zero, div_one, Nat.choose_zero_right, Nat.cast_one,
+    mul_comm, add_comm] using h.symm
+
+-- Pascal's identity and absorption lower the denominator exponent by one.
+private theorem weightedBinomialSum_succ (x : ℝ) (p n : ℕ) :
+    weightedBinomialSum x (p + 1) (n + 1) =
+      weightedBinomialSum x (p + 1) n + weightedBinomialSum x p (n + 1) / (n + 1 : ℕ) := by
+  -- Extend the old row by its zero coefficient at `n + 1`.
+  have hext : (∑ k ∈ Finset.Icc 1 (n + 1), (n.choose k : ℝ) * x ^ k / (k : ℝ) ^ (p + 1)) =
+      weightedBinomialSum x (p + 1) n := by
+    rw [Finset.sum_Icc_succ_top (Nat.succ_pos n)]
+    simp [weightedBinomialSum]
+  rw [← hext, weightedBinomialSum, weightedBinomialSum, Finset.sum_div,
+    ← Finset.sum_add_distrib]
+  refine Finset.sum_congr rfl fun k hk => ?_
+  have hk' : 0 < k := (Finset.mem_Icc.mp hk).1
+  nth_rw 1 [Nat.choose_succ_left n k hk']
+  rw [Nat.cast_add, add_mul, add_div, add_comm]
+  congr 1
+  have habsorb : (n.choose (k - 1) : ℝ) / k = ((n + 1).choose k : ℝ) / (n + 1 : ℕ) := by
+    rw [div_eq_div_iff (Nat.cast_ne_zero.mpr (Nat.ne_of_gt hk'))
+      (Nat.cast_ne_zero.mpr (Nat.succ_ne_zero n))]
+    have h := Nat.add_one_mul_choose_eq n (k - 1)
+    rw [Nat.sub_add_cancel hk'] at h
+    exact_mod_cast (Nat.mul_comm _ _).trans h
+  calc
+    _ = (n.choose (k - 1) : ℝ) / k * (x ^ k / (k : ℝ) ^ p) := by
+      simp only [pow_succ, div_eq_mul_inv, mul_inv_rev]
+      ac_rfl
+    _ = _ := by
+      rw [habsorb]
+      simp only [div_eq_mul_inv]
+      ac_rfl
+
+private theorem weightedBinomialSum_succ_pow (x : ℝ) (p n : ℕ) :
+    weightedBinomialSum x (p + 1) n =
+      ∑ k ∈ Finset.Icc 1 n, weightedBinomialSum x p k / k := by
+  induction n with
+  | zero => simp [weightedBinomialSum]
+  | succ n ih =>
+    rw [weightedBinomialSum_succ, ih, Finset.sum_Icc_succ_top (Nat.succ_pos n)]
+
+/-- **Binomial sums weighted by $x^k/k^2$.** For every natural number $n$ and every real number
+$x$,
+
+$$\sum_{k=1}^{n} \binom{n}{k} \frac{x^k}{k^2} =
+\sum_{k=1}^{n} \frac{1}{k} \sum_{j=1}^{k} \frac{(1+x)^j}{j} -
+\sum_{k=1}^{n} \frac{1}{k} \sum_{j=1}^{k} \frac{1}{j}.$$
+
+Source: Andreea M. Stănică, Gabriela N. Stănică, and Pantelimon Stănică, *An Evaluation of
+Rationally Weighted Binomial Sums Via Some Differential and Integral Operators*, The Fibonacci
+Quarterly 62 (2024), Article 62-1/stanica09202023, Corollary 3.2. -/
+public theorem sum_choose_mul_pow_div_sq (n : ℕ) (x : ℝ) :
+    ∑ k ∈ Finset.Icc 1 n, (n.choose k : ℝ) * x ^ k / (k : ℝ) ^ 2 =
+      ∑ k ∈ Finset.Icc 1 n, 1 / (k : ℝ) * ∑ j ∈ Finset.Icc 1 k, (1 + x) ^ j / j -
+        ∑ k ∈ Finset.Icc 1 n, 1 / (k : ℝ) * ∑ j ∈ Finset.Icc 1 k, 1 / (j : ℝ) := by
+  change weightedBinomialSum x 2 n = _
+  rw [weightedBinomialSum_succ_pow x 1 n]
+  simp_rw [weightedBinomialSum_succ_pow x 0, weightedBinomialSum_zero_pow]
+  simp only [Finset.sum_sub_distrib, div_eq_inv_mul, mul_one, mul_sub]
+
 -- Absorbing one falling-factorial factor lowers the binomial row and shifts the Fibonacci index.
 private theorem sum_descFactorial_mul_choose_mul_fib_add (n i m : ℕ) :
     ∑ k ∈ Finset.range (n + 1), k.descFactorial i * n.choose k * Nat.fib (k + m) =
@@ -284,5 +357,38 @@ public theorem sum_pow_mul_choose_mul_fib_small (N : ℕ) :
     Finset.Ico_add_one_right_eq_Icc] at moment
   simpa [Finset.sum_range_succ, Nat.stirlingSecond, Nat.descFactorial, mul_assoc, mul_comm,
     mul_left_comm] using (show _ ∧ _ ∧ _ ∧ _ from ⟨moment 1, moment 2, moment 3, moment 4⟩)
+
+open Polynomial in
+/-- **Scherk's identity.** Write $S(r, i)$ for the Stirling numbers of the second kind. Let $N$ and
+$r$ be natural numbers, let $a_0, \dots, a_N$ be real numbers, and let $f$ be the polynomial
+$f(y) = \sum_{k=0}^{N} a_k y^k$, with $i$-th derivative $f^{(i)}$. Then for every real number $x$,
+with the convention $0^0 = 1$,
+$$\sum_{k=0}^{N} k^r a_k x^k = \sum_{i=0}^{r} S(r, i) \, x^i f^{(i)}(x).$$
+
+Source: Andreea M. Stănică, Gabriela N. Stănică, and Pantelimon Stănică, *An Evaluation of
+Rationally Weighted Binomial Sums Via Some Differential and Integral Operators*, The Fibonacci
+Quarterly 62 (2024), Article 62-1/stanica09202023, Theorem 2.1, equation (2.1). -/
+public theorem sum_pow_mul_coeff_eq_sum_stirlingSecond_derivative (a : ℕ → ℝ) (N r : ℕ)
+    (x : ℝ) :
+    ∑ k ∈ Finset.range (N + 1), (k : ℝ) ^ r * a k * x ^ k =
+      ∑ i ∈ Finset.range (r + 1), (Nat.stirlingSecond r i : ℝ) * x ^ i *
+        (derivative^[i] (∑ k ∈ Finset.range (N + 1), C (a k) * X ^ k)).eval x := by
+  have hpow (k : ℕ) : (k : ℝ) ^ r =
+      ∑ i ∈ Finset.range (r + 1), (Nat.stirlingSecond r i : ℝ) * k.descFactorial i := by
+    exact_mod_cast Nat.pow_eq_sum_stirlingSecond_mul_descFactorial k r
+  simp_rw [hpow, Finset.sum_mul]
+  rw [Finset.sum_comm]
+  refine Finset.sum_congr rfl fun i _ => ?_
+  rw [iterate_derivative_sum, eval_finsetSum, Finset.mul_sum]
+  refine Finset.sum_congr rfl fun k _ => ?_
+  simp only [iterate_derivative_C_mul, iterate_derivative_X_pow_eq_C_mul,
+    eval_mul, eval_C, eval_pow, eval_X]
+  by_cases hik : i ≤ k
+  · have hx : x ^ i * x ^ (k - i) = x ^ k := by
+      rw [← pow_add, Nat.add_comm i (k - i), Nat.sub_add_cancel hik]
+    rw [← hx]
+    ring
+  · simp only [Nat.descFactorial_eq_zero_iff_lt.mpr (Nat.lt_of_not_ge hik),
+      Nat.cast_zero, mul_zero, zero_mul]
 
 end MetaMathlibExt

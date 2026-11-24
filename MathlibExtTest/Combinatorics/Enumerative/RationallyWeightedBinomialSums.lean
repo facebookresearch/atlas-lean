@@ -97,6 +97,26 @@ example : ∑ k ∈ Finset.Icc 1 2, (-1 : ℚ) ^ (k - 1) * (2 : ℕ).choose k / 
   rw [show Finset.Icc 1 2 = {1, 2} from by decide]
   norm_num [harmonic, Finset.sum_range_succ]
 
+-- The inverse-square polynomial sum is empty at n = 0, for every x.
+example (x : ℝ) :
+    ∑ k ∈ Finset.Icc 1 0, ((0 : ℕ).choose k : ℝ) * x ^ k / (k : ℝ) ^ 2 = 0 := by
+  rw [sum_choose_mul_pow_div_sq]
+  simp
+
+-- At x = 0, the two nested sums agree for every n.
+example (n : ℕ) :
+    ∑ k ∈ Finset.Icc 1 n, (n.choose k : ℝ) * (0 : ℝ) ^ k / (k : ℝ) ^ 2 = 0 := by
+  rw [sum_choose_mul_pow_div_sq]
+  simp
+
+-- At n = 2 and x = -1 the identity gives -2 + 1/4 = -7/4.
+example :
+    ∑ k ∈ Finset.Icc 1 2, ((2 : ℕ).choose k : ℝ) * (-1 : ℝ) ^ k / (k : ℝ) ^ 2 = -7 / 4 := by
+  rw [sum_choose_mul_pow_div_sq]
+  simp only [show Finset.Icc 1 2 = {1, 2} from by decide, Finset.sum_insert (by decide :
+    (1 : ℕ) ∉ ({2} : Finset ℕ)), Finset.sum_singleton, Finset.Icc_self]
+  norm_num
+
 -- Exponent zero recovers the unweighted sum, including the zero-index term.
 example (N : ℕ) : ∑ k ∈ Finset.range (N + 1), N.choose k * Nat.fib k = Nat.fib (2 * N) := by
   simpa using sum_pow_mul_choose_mul_fib N 0
@@ -116,5 +136,26 @@ example : ∑ k ∈ Finset.Icc 1 1, k ^ 4 * (1 : ℕ).choose k * Nat.fib k = 1 :
 -- Row four is the first where all four terms of the fourth-power formula contribute.
 example : ∑ k ∈ Finset.Icc 1 4, k ^ 4 * (4 : ℕ).choose k * Nat.fib k = 1516 :=
   (sum_pow_mul_choose_mul_fib_small 4).2.2.2.trans (by decide)
+
+-- At x = r = 0, the constant coefficient survives by the convention 0^0 = 1.
+example (a : ℕ → ℝ) :
+    ∑ k ∈ Finset.range (2 + 1), (k : ℝ) ^ (0 : ℕ) * a k * (0 : ℝ) ^ k = a 0 := by
+  rw [sum_pow_mul_coeff_eq_sum_stirlingSecond_derivative]
+  norm_num [Finset.sum_range_succ, Nat.stirlingSecond, Polynomial.eval_add, Polynomial.eval_mul]
+
+-- At x = 0 and positive weight exponent, even the constant coefficient contributes zero.
+example (a : ℕ → ℝ) :
+    ∑ k ∈ Finset.range (2 + 1), (k : ℝ) ^ (2 : ℕ) * a k * (0 : ℝ) ^ k = 0 := by
+  rw [sum_pow_mul_coeff_eq_sum_stirlingSecond_derivative]
+  norm_num [Finset.sum_range_succ, Nat.stirlingSecond]
+
+-- For 1 + X + X² at x = -2 and r = 3, the third derivative vanishes;
+-- the two lower positive-order terms give 6 + 24 = 30.
+example : ∑ k ∈ Finset.range (2 + 1), (k : ℝ) ^ (3 : ℕ) * 1 * (-2 : ℝ) ^ k = 30 := by
+  rw [sum_pow_mul_coeff_eq_sum_stirlingSecond_derivative (fun _ => 1) 2 3 (-2)]
+  simp only [Polynomial.iterate_derivative_sum, Polynomial.eval_finsetSum,
+    Polynomial.iterate_derivative_C_mul, Polynomial.iterate_derivative_X_pow_eq_C_mul,
+    Polynomial.eval_mul, Polynomial.eval_C, Polynomial.eval_pow, Polynomial.eval_X]
+  norm_num [Finset.sum_range_succ, Nat.stirlingSecond, Nat.descFactorial]
 
 end MathlibExtTest.RationallyWeightedBinomialSums

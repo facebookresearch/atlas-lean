@@ -36,7 +36,7 @@ Theorem 2 (the mod-8 evaluation of `ρ^red_f`) is stated for
 module
 
 public import Batteries.Util.ProofWanted
-public import MathlibExt.Combinatorics.ReducedComplexities
+public import MathlibExt.Combinatorics.ThueMorseReducedComplexity
 
 set_option autoImplicit false
 
@@ -85,18 +85,6 @@ Rampersad, "Reduced Complexities for Sequences Over Finite
 Alphabets", Theorem 1. -/
 theorem_wanted rhoRed_thueMorse_odd (n : ℕ) (hn : Odd n) :
     rhoRed thueMorse n = rhoRed thueMorse ((n + 1) / 2)
-
-/-- **Reduced complexity of the Thue–Morse word at even lengths.** Let $t$ be the Thue–Morse
-sequence and $\rho^{\mathrm{red}}_t$ its reduced factor complexity. For every natural number
-$m \ge 1$, $\rho^{\mathrm{red}}_t(4m) = \rho^{\mathrm{red}}_t(m+1) + 2$, and for every natural
-number $m \ge 0$, $\rho^{\mathrm{red}}_t(4m+2) = \rho^{\mathrm{red}}_t(m+1) + 2$.
-
-Source: John M. Campbell, James D. Currie, and Narad
-Rampersad, "Reduced Complexities for Sequences Over Finite
-Alphabets", Theorem 1. -/
-theorem_wanted rhoRed_thueMorse_even (m : ℕ) :
-    rhoRed thueMorse (4 * (m + 1)) = rhoRed thueMorse (m + 2) + 2 ∧
-      rhoRed thueMorse (4 * m + 2) = rhoRed thueMorse (m + 1) + 2
 
 /-- **Runs in a word whose even-position letters alternate.** Let $n$ be a natural number and let
 $w = w_0 w_1 \cdots w_{2n}$ be a binary word of length $2n + 1$ with $w_{2i} \ne w_{2i+2}$ for

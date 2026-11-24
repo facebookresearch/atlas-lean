@@ -12,63 +12,13 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Combinatorics.Enumerative.Partition.Basic
 public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.RingTheory.PowerSeries.Inverse
-public import MathlibExt.Combinatorics.Enumerative.FixedColumnHooks
+public import MathlibExt.Combinatorics.Enumerative.FixedFirstColumnHook
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
 open PowerSeries MathlibExt
-
-/-- **Column lengths of a partition.** For a partition $\lambda$ of $n$ and a natural number $j$,
-the column length $\lambda'_j$ is the number of parts of $\lambda$, counted with multiplicity, that
-are at least $j$. For $j \ge 1$ this is the length of the $j$-th column of the Young diagram of
-$\lambda$, with columns numbered from $1$.
-
-Source: Philip Cuthbertson, *Fixed Hooks in Arbitrary Columns of Partitions*, INTEGERS 25
-(2025), Article A28, Section 1 (`λ'`, the conjugate partition). -/
-def partitionColLen {n : ℕ} (p : n.Partition) (j : ℕ) : ℕ :=
-  (p.parts.filter (j ≤ ·)).card
-
-/-- **Row lengths of a partition.** For a partition $\lambda$ of $n$ and a natural number $s$, the
-row length $\lambda_s$ is the number of $j \in \{1, \dots, n\}$ whose column length $\lambda'_j$ is
-at least $s$. For $s \ge 1$ this is the $s$-th largest part of $\lambda$ (rows are numbered from
-$1$), and it is $0$ when $\lambda$ has fewer than $s$ parts.
-
-Source: Philip Cuthbertson, *Fixed Hooks in Arbitrary Columns of Partitions*, INTEGERS 25
-(2025), Article A28, Section 1 (`λ = (λ₁, λ₂, …)` weakly decreasing). -/
-def partitionRowLen {n : ℕ} (p : n.Partition) (s : ℕ) : ℕ :=
-  ((Finset.Icc 1 n).filter (fun j => s ≤ partitionColLen p j)).card
-
-/-- **Hook length of a square of a partition.** For a partition $\lambda$ of $n$ and natural numbers
-$s$ and $m$, the hook length of the square in row $s$ and column $m$ is the integer
-$h_{s,m}(\lambda) = \lambda_s + \lambda'_m - s - m + 1$, where $\lambda_s$ is the row length and
-$\lambda'_m$ the column length defined above: for $s, m \ge 1$ they are the lengths of the $s$-th
-row and the $m$-th column of the Young diagram (numbered from $1$), and at index $0$ they take the
-values $\lambda_0 = n$ and $\lambda'_0$ = the number of parts of $\lambda$. The integer is given by
-this formula for all $s$ and $m$, also when $(s, m)$ is not a square of the Young diagram.
-
-Source: Philip Cuthbertson, *Fixed Hooks in Arbitrary Columns of Partitions*, INTEGERS 25
-(2025), Article A28, Section 1. -/
-def partitionHookLength {n : ℕ} (p : n.Partition) (s m : ℕ) : ℤ :=
-  (partitionRowLen p s : ℤ) + partitionColLen p m - s - m + 1
-
-/-- **Fixed hooks in a column of a partition.** Let $\lambda$ be a partition of $n$, let $m$ and $s$
-be natural numbers and let $h$ be an integer. The partition $\lambda$ has an $h$-fixed hook in
-column $m$ at row $s$ if the square $(s, m)$ lies in the Young diagram of $\lambda$, that is,
-$s \ge 1$ and $1 \le m \le \lambda_s$, and its hook length is $h_{s,m}(\lambda) = s + h$. In other
-words, the $s$-th term of the sequence $h_{1,m}(\lambda), h_{2,m}(\lambda), \dots$ of hook lengths
-in column $m$ is an $h$-fixed point.
-
-Source: Philip Cuthbertson, *Fixed Hooks in Arbitrary Columns of Partitions*, INTEGERS 25
-(2025), Article A28, Section 1 (an `h`-fixed point of the sequence
-`h_{1,m}(λ), h_{2,m}(λ), …`; Figure 2: `h_{m,s} = s + h` at part `λ_s`). -/
-def IsFixedColumnHook {n : ℕ} (p : n.Partition) (m s : ℕ) (h : ℤ) : Prop :=
-  1 ≤ s ∧ 1 ≤ m ∧ m ≤ partitionRowLen p s ∧ partitionHookLength p s m = s + h
-
-instance {n : ℕ} (p : n.Partition) (m s : ℕ) (h : ℤ) :
-    Decidable (IsFixedColumnHook p m s h) := by
-  unfold IsFixedColumnHook; infer_instance
 
 /-- **The partition $(4, 4, 3, 1)$ of $12$.** The partition of $12$ whose parts are $4$, $4$, $3$
 and $1$; it is the example partition drawn in Figure 1 of the source.
@@ -149,31 +99,6 @@ public theorem_wanted card_zeroFixedColumnHook_eq_twoColor_count (n m : ℕ) (hm
           (μ.parts.toFinset.filter (fun L => μ.parts.count L = L + m - 1 ∧
             Disjoint (Finset.Icc (L + 1) (L + 2 * m - 2)) μ.parts.toFinset)).card
 
-/-- **Fixed hooks in column $m$ arising from parts of size $m$.** Let $n$ and $m \ge 1$ be
-natural numbers and let $h$ be an integer.
-For a partition $\lambda$, write $\lambda_r$ for its $r$-th largest part ($0$ if it has fewer
-than $r$ parts), $\lambda'_m$ for the number of its parts that are at least $m$, and
-$h_{r,m}(\lambda) = \lambda_r + \lambda'_m - r - m + 1$ for the hook length of the square $(r, m)$.
-The partition $\lambda$ has an $h$-fixed hook in column $m$ at row $r$ when $r \ge 1$,
-$m \le \lambda_r$ and $h_{r,m}(\lambda) = r + h$.
-Count the partitions $\lambda$ of $n$ that have an $h$-fixed hook in column $m$ at some row
-$r \le n$ with $\lambda_r = m$. If $n - mh \ge 0$, this number equals the number of partitions of
-$n - mh$ in which $m$ occurs as a part exactly once, none of $m + 1, \dots, 2m - 1$ is a part,
-and at least $-h$ parts, counted with multiplicity, are at least $2m$. If $n - mh < 0$, the
-number is $0$.
-
-Source: Philip Cuthbertson, *Fixed Hooks in Arbitrary Columns of Partitions*, INTEGERS 25
-(2025), Article A28, Theorem 2 (`integers-2025-A28-thm-2`). -/
-public theorem_wanted card_fixedColumnHook_part_eq_column (n m : ℕ) (h : ℤ) (hm : 1 ≤ m) :
-    ((((Finset.univ : Finset n.Partition).filter (fun p =>
-        ((Finset.Icc 1 n).filter (fun s =>
-          IsFixedColumnHook p m s h ∧ partitionRowLen p s = m)).Nonempty)).card : ℕ) : ℤ) =
-      if 0 ≤ (n : ℤ) - m * h then
-        (((Finset.univ : Finset ((n : ℤ) - m * h).toNat.Partition).filter (fun p =>
-          p.parts.count m = 1 ∧ Disjoint (Finset.Icc (m + 1) (2 * m - 1)) p.parts.toFinset ∧
-            -h ≤ ((p.parts.filter (2 * m ≤ ·)).card : ℤ))).card : ℤ)
-      else 0
-
 /-- **Generating function for column-$m$ hooks of size $k$.** Let $n$, $m \ge 1$ and $k \ge 1$
 be natural numbers. For a partition $\lambda$, write $\lambda_r$ for its $r$-th largest part
 ($0$ if it has fewer than $r$ parts), $\lambda'_m$ for the number of its parts that are at least
@@ -208,30 +133,6 @@ public theorem_wanted columnHook_size_genFun (n m k : ℕ) (hm : 1 ≤ m) (hk : 
         m ≤ partitionRowLen p s ∧ partitionHookLength p s m = k)).card : ℕ) : ℚ) =
       coeff n (X ^ (m + k - 1) * P * ∑ l ∈ Finset.Icc 1 k, X ^ ((m - 1) * (k - l)) *
         mPoch (l - 1) * (qPochFin X (l - 1) * qPochFin X (k - l))⁻¹)
-
-/-- **Partitions with a fixed first-column hook arising from a part of given size.** Let $n$ and $k$
-be natural numbers with $k \ge 1$ and let $h < k$ be an integer. The number of partitions
-$\lambda$ of $n$ that have an $h$-fixed hook in column $1$ at some row $s$ with $\lambda_s = k$ is
-the coefficient of $q^n$ in
-$$\sum_{s=0}^{n} \frac{q^{s(k+1)+k(k-h)}}{(q;q)_{s+k-h-1}} \binom{s+k-1}{k-1}_q,$$
-where $(q;q)_j = \prod_{i<j} (1 - q^{i+1})$ is the finite $q$-Pochhammer symbol and
-$\binom{a}{b}_q$ is the Gaussian binomial coefficient.
-
-The $s$-th term has no monomial below $q^s$, so the count is also the coefficient of $q^n$ in the
-full series over all $s \ge 0$. Under $s \mapsto s + k - h$ that series is the paper's
-$\sum_{s \ge k-h} q^{(k+1)(s-1)+h+1} \binom{s+h-1}{k-1}_q / (q;q)_{s-1}$, whose lower limit
-$k - h$ is a positive row index.
-
-Source: Philip Cuthbertson, *Fixed Hooks in Arbitrary Columns of Partitions*, INTEGERS 25
-(2025), Article A28, Theorem 6 (`integers-2025-A28-thm-6`). -/
-public theorem_wanted fixedFirstColumnHook_part_genFun (n k : ℕ) (h : ℤ) (hk : 1 ≤ k)
-    (hh : h < k) :
-    (((Finset.univ : Finset n.Partition).filter (fun p =>
-        ((Finset.Icc 1 n).filter (fun s =>
-          IsFixedColumnHook p 1 s h ∧ partitionRowLen p s = k)).Nonempty)).card : ℚ) =
-      coeff n (∑ s ∈ Finset.range (n + 1),
-        X ^ ((s : ℤ) * (k + 1) + k * (k - h)).toNat *
-          (qPochFin (X : ℚ⟦X⟧) ((s : ℤ) + k - h - 1).toNat)⁻¹ * gaussBinom X (s + k - 1) (k - 1))
 
 /-- **Generating function for fixed column hooks from a part of size $k$.** Let $n$, $m \ge 1$
 and $k \ge m$ be natural numbers and let $h$ be an integer with $h + m \le k$.

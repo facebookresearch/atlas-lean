@@ -6,6 +6,7 @@ Distribution-free and semiparametric methods: empirical distribution functions (
 - [Competing risks](competing-risks/README.md)
 - [Consistency of the Kaplan–Meier estimator](consistency-of-the-kaplan-meier-estimator/README.md)
 - [Cox proportional hazards model](cox-proportional-hazards-model/README.md)
+- [Distribution-freeness of ranks](distribution-freeness-of-ranks/README.md)
 - [Glivenko–Cantelli theorem](glivenko-cantelli-theorem/README.md)
 - [Kaplan–Meier estimator](kaplan-meier-estimator/README.md)
 - [Log-rank test](log-rank-test/README.md)
