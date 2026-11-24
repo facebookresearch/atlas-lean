@@ -28,7 +28,3 @@ produces.
 ## General initial data
 
 - [Consolidation with square-integrable initial data](consolidation-with-square-integrable-initial-data.md)
-
-## General initial data
-
-- [Consolidation with square-integrable initial data](consolidation-with-square-integrable-initial-data.md)

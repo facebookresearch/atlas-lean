@@ -5,14 +5,19 @@ $\Delta t > 0$ for one-dimensional advection, diffusion and reaction be
 $u_i^+ = u_i - \frac{\Delta t}{\Delta x_i}(F_{i+1} - F_i) + \Delta t\, r_i$, with face fluxes $F_0$ (inflow boundary), $F_1, \dots,
 F_{N-1}$ (interior) and $F_N$ (outflow boundary) and reaction terms $r_i$. Then the width-weighted inventory changes by
 
-$$\sum_i \Delta x_i u_i^+ - \sum_i \Delta x_i u_i = \Delta t\,(F_0 - F_N) + \Delta t \sum_i \Delta x_i r_i,$$
+$$\sum_i \Delta x_i u_i^+ - \sum_i \Delta x_i u_i = \Delta t\,(F_0 - F_N) + \Delta t \sum_i \Delta x_i r_i.$$
 
-since every interior flux appears twice with opposite signs. Omitting the widths breaks this identity on unequal cells.
+This is the finite-volume ledger with wells applied with common volume $1$, cell values $\Delta x_i u_i$ and well rates
+$\Delta x_i r_i$: multiplying the update by $\Delta x_i$ gives
+$\Delta x_i u_i^+ = \Delta x_i u_i + \Delta t\,\bigl(-(F_{i+1} - F_i) + \Delta x_i r_i\bigr)$. Omitting the widths breaks this identity on
+unequal cells.
 Convergence is outside this result.
 
 ## Depends on
 
 ## Proof depends on
+
+- [Finite-volume ledger with wells](../../../EarthScience/hydrology-and-surface-processes/part-02/radial-flow-to-wells-well-sources-and-fractional/stock-add-mul-well-cell-rate.md)
 
 ## Sources
 
