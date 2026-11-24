@@ -1003,3 +1003,4 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/Chemistry/chemical-kinetics/residence-time-distributions/tanks-in-series-bolus-response.md"}], "id": "af_932d8559077ca53a5b13d02d", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Chemistry/chemical-kinetics/residence-time-distributions/tanks-in-series-residence-time-distribution-is-gamma.md"}], "id": "af_c704dec7a8af36e292e17e72", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Chemistry/quantum-chemistry-and-spectroscopy/optimal-lieb-oxford-constant.md"}], "id": "af_50b5f7a93e11bdeb9e1acd93", "extensions": {"org.autoform": {"not_ready": true}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Chemistry/chemical-kinetics/plug-flow-reactor/stirred-tank-outperforms-plug-flow-for-autocatalysis.md"}], "id": "af_b3d44976e541760272c8937e", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
