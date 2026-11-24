@@ -1,3 +1,4 @@
-# Exists bound box
+# Continuous functions on ℝ⁵ are bounded on the centred cube of side 2
 
-A continuous function on `ℝ⁵` is bounded on the cube `[-1, 1]⁵`.
+For every continuous function `f : ℝ⁵ → ℝ` there is a real `M` with `|f(a, b, c, d, e)| ≤ M`
+whenever `|a|, |b|, |c|, |d|, |e| ≤ 1`.

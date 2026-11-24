@@ -1,3 +1,4 @@
-# Card support equilibrium Poly One le
+# The equilibrium polynomial for β = 1 has at most four terms
 
-The `β = 1` equilibrium polynomial has at most four nonzero coefficients.
+For all reals `a, b` and `γ ∈ ℕ`, the [equilibrium polynomial](equilibrium-poly-one.md)
+`X^{γ+1} − a X^γ + (1 + b) X − a` has at most four nonzero coefficients.

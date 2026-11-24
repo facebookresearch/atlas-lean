@@ -1,4 +1,5 @@
-# Global existence
+# The method-of-steps construction solves the equation
 
-**Global existence** (method of steps): for `τ > 0` and a history continuous on `[-τ, 0]`,
-`solution r K τ φ` solves the delayed logistic equation on `[-τ, ∞)` (all real `r`, `K`).
+For real numbers `r` and `K`, a delay `τ > 0` and a history `φ` continuous on `[-τ, 0]`, the
+[method-of-steps solution](solution.md) is a [solution](is-solution.md) of the delayed logistic
+equation with history `φ` on `[-τ, ∞)`. This holds for all real `r` and `K`.

@@ -1,5 +1,6 @@
-# Is Strict Nash
+# Strict Nash equilibrium of a bimatrix game
 
-`(p, q)` is a **strict Nash equilibrium** of the bimatrix game `(A, B)`: every other mixed
-strategy of role I earns strictly less than `p` against `q`, and every other mixed strategy of
-role II earns strictly less than `q` against `p`.
+For finite sets `ι` and `κ` and payoff matrices `A : ι × κ → ℝ` and `B : κ × ι → ℝ`, a pair `(p, q)`
+is a strict Nash equilibrium of the bimatrix game `(A, B)` when `p` and `q` are
+[mixed strategies](is-mixed.md), every mixed strategy `p' ≠ p` of role I satisfies
+`p' · A q < p · A q`, and every mixed strategy `q' ≠ q` of role II satisfies `q' · B p < q · B p`.

@@ -1,49 +1,69 @@
 # Genetic toggle switch
 
-- [Hill](hill.md)
-- [Hill Deriv](hill-deriv.md)
-- [U Dot](u-dot.md)
-- [V Dot](v-dot.md)
-- [Is Equilibrium](is-equilibrium.md)
-- [Equilibria](equilibria.md)
-- [Jacobian](jacobian.md)
-- [Loop Gain](loop-gain.md)
-- [Eigenvalues](eigenvalues.md)
-- [Has Saddle Spectrum](has-saddle-spectrum.md)
-- [Nullcline Tangents Parallel](nullcline-tangents-parallel.md)
-- [Nullclines Tangent](nullclines-tangent.md)
-- [Eigenvalues eq](eigenvalues-eq.md)
-- [Nullclines Tangent iff of is Equilibrium](nullclines-tangent-iff-of-is-equilibrium.md)
-- [Cubic](cubic.md)
-- [Cubic Deriv](cubic-deriv.md)
-- [Is Equilibrium iff](is-equilibrium-iff.md)
-- [One sub loop Gain mul](one-sub-loop-gain-mul.md)
-- [Cubic eq of roots](cubic-eq-of-roots.md)
-- [Cubic eq of double root](cubic-eq-of-double-root.md)
-- [Equilibria eq image](equilibria-eq-image.md)
-- [Roots subset](roots-subset.md)
-- [Number of equilibria](ncard-equilibria-mem.md)
-- [Saddle-node point](ncard-equilibria-eq-two-iff.md)
-- [Three equilibria of lt](three-equilibria-of-lt.md)
-- [Bistable regime](three-equilibria.md)
-- [Bistability threshold](ncard-equilibria-eq-three-iff-bistable.md)
-- [Saddle-node bifurcation in `b`](saddle-node-collision.md)
-- [Set Of pos is Root eq](set-of-pos-is-root-eq.md)
-- [Sign Variations add one le card support](sign-variations-add-one-le-card-support.md)
-- [Equilibrium Poly One](equilibrium-poly-one.md)
-- [Eval equilibrium Poly One two](eval-equilibrium-poly-one-two.md)
-- [Degree `γ + 1`](nat-degree-equilibrium-poly-one.md)
-- [Card support equilibrium Poly One le](card-support-equilibrium-poly-one-le.md)
-- [Is Equilibrium one iff](is-equilibrium-one-iff.md)
-- [Ncard equilibria one](ncard-equilibria-one.md)
-- [At most `γ + 1` equilibria](ncard-equilibria-one-le-degree.md)
-- [At most three equilibria](ncard-equilibria-one-le-three.md)
-- [At least one equilibrium](one-le-ncard-equilibria-one.md)
-- [Uniqueness for `γ = 1`](ncard-equilibria-one-one.md)
-- [Equilibrium Poly Two](equilibrium-poly-two.md)
-- [Degree `5`](nat-degree-equilibrium-poly-two.md)
-- [Pos of is Root equilibrium Poly Two](pos-of-is-root-equilibrium-poly-two.md)
-- [Is Equilibrium two iff](is-equilibrium-two-iff.md)
-- [Ncard equilibria two](ncard-equilibria-two.md)
-- [At most five equilibria](ncard-equilibria-two-le-five.md)
-- [At least one equilibrium](one-le-ncard-equilibria-two.md)
+## The model
+
+- [Hill repression function](hill.md)
+- [Derivative of the Hill repression function](hill-deriv.md)
+- [Right-hand side of the u equation](u-dot.md)
+- [Right-hand side of the v equation](v-dot.md)
+- [Equilibrium of the toggle switch in the closed quadrant](is-equilibrium.md)
+- [Set of equilibria of the toggle switch](equilibria.md)
+
+## Linearization
+
+- [Jacobian matrix of the toggle switch](jacobian.md)
+- [Loop gain of the toggle switch](loop-gain.md)
+- [Eigenvalues of the toggle-switch Jacobian](eigenvalues.md)
+- [Saddle spectrum of the toggle-switch Jacobian](has-saddle-spectrum.md)
+- [Parallel nullcline directions](nullcline-tangents-parallel.md)
+- [Tangent nullclines](nullclines-tangent.md)
+- [For nonnegative rates and states, the eigenvalues are −1 ± √P](eigenvalues-eq.md)
+- [At an equilibrium, nullclines are tangent iff the loop gain is 1](nullclines-tangent-iff-of-is-equilibrium.md)
+
+## Hill exponents 1 and 2: the equilibrium cubic
+
+- [Equilibrium cubic for Hill exponents 1 and 2](cubic.md)
+- [Derivative of the equilibrium cubic](cubic-deriv.md)
+- [Equilibria for exponents 1 and 2 correspond to roots of the cubic](is-equilibrium-iff.md)
+- [At an equilibrium, 1 − P is u times the cubic's slope, rescaled](one-sub-loop-gain-mul.md)
+- [Two distinct roots of the cubic give its factorization](cubic-eq-of-roots.md)
+- [Factorization of the cubic at a double root](cubic-eq-of-double-root.md)
+- [The equilibria are the image of the roots of the cubic](equilibria-eq-image.md)
+- [Two distinct roots determine all roots of the cubic](roots-subset.md)
+
+## Hill exponents 1 and 2: number and stability of equilibria
+
+- [For positive rates and exponents 1 and 2, one to three equilibria](ncard-equilibria-mem.md)
+- [Exactly two equilibria at a tangency of the nullclines off the cusp](ncard-equilibria-eq-two-iff.md)
+- [Three roots of the cubic give two stable equilibria and a saddle](three-equilibria-of-lt.md)
+- [With three equilibria, the outer ones are stable, the middle a saddle](three-equilibria.md)
+- [Exactly three equilibria iff two distinct stable equilibria exist](ncard-equilibria-eq-three-iff-bistable.md)
+- [Saddle-node bifurcation in b](saddle-node-collision.md)
+
+## Positive roots and sign changes
+
+- [Positive roots of a nonzero real polynomial form a finite set](set-of-pos-is-root-eq.md)
+- [A polynomial has fewer sign changes than nonzero coefficients](sign-variations-add-one-le-card-support.md)
+
+## Hill exponent 1 for the repression of U
+
+- [Equilibrium polynomial for Hill exponent β = 1](equilibrium-poly-one.md)
+- [For γ = 2 the equilibrium polynomial evaluates to the cubic](eval-equilibrium-poly-one-two.md)
+- [For γ ≥ 1 the equilibrium polynomial has degree γ + 1](nat-degree-equilibrium-poly-one.md)
+- [The equilibrium polynomial for β = 1 has at most four terms](card-support-equilibrium-poly-one-le.md)
+- [For β = 1, equilibria correspond to positive polynomial roots](is-equilibrium-one-iff.md)
+- [For β = 1, equilibria are counted by positive polynomial roots](ncard-equilibria-one.md)
+- [For β = 1 and γ ≥ 1, at most γ + 1 equilibria](ncard-equilibria-one-le-degree.md)
+- [For β = 1, at most three equilibria](ncard-equilibria-one-le-three.md)
+- [For β = 1 and positive rates, at least one equilibrium](one-le-ncard-equilibria-one.md)
+- [For β = γ = 1 and positive rates, exactly one equilibrium](ncard-equilibria-one-one.md)
+
+## Hill exponents 2 and 2
+
+- [Equilibrium quintic for Hill exponents β = γ = 2](equilibrium-poly-two.md)
+- [The equilibrium quintic has degree 5](nat-degree-equilibrium-poly-two.md)
+- [For a > 0, every real root of the equilibrium quintic is positive](pos-of-is-root-equilibrium-poly-two.md)
+- [For β = γ = 2, equilibria correspond to roots of the quintic](is-equilibrium-two-iff.md)
+- [For β = γ = 2, equilibria are counted by positive roots of the quintic](ncard-equilibria-two.md)
+- [For β = γ = 2, at most five equilibria](ncard-equilibria-two-le-five.md)
+- [For β = γ = 2 and positive rates, at least one equilibrium](one-le-ncard-equilibria-two.md)

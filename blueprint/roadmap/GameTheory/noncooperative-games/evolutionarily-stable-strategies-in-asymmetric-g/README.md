@@ -2,19 +2,19 @@
 
 ## Definitions
 
-- [Is Mixed](is-mixed.md)
-- [Role Payoff](role-payoff.md)
-- [Is Role ESS](is-role-ess.md)
-- [Is Strict Nash](is-strict-nash.md)
-- [Symmetrize](symmetrize.md)
-- [Marginals](marginals.md)
-- [Prod Strategy](prod-strategy.md)
+- [Mixed strategy](is-mixed.md)
+- [Payoff of a behavior strategy in a role game](role-payoff.md)
+- [Evolutionarily stable behavior strategy of a role game](is-role-ess.md)
+- [Strict Nash equilibrium of a bimatrix game](is-strict-nash.md)
+- [Symmetrized matrix game of a role game](symmetrize.md)
+- [Marginal behavior strategy of a strategy on pairs](marginals.md)
+- [Product strategy on pairs of role strategies](prod-strategy.md)
 
 ## Mixed strategies and point masses
 
-- [Exists pos of ne single](exists-pos-of-ne-single.md)
-- [Dot Product le](dot-product-le.md)
-- [Dot Product lt](dot-product-lt.md)
+- [A mixed strategy other than a pure one weights another strategy](exists-pos-of-ne-single.md)
+- [A mixed strategy earns at most a common bound on pure payoffs](dot-product-le.md)
+- [A unique best pure reply strictly beats every other mixed strategy](dot-product-lt.md)
 
 ## Strict Nash equilibria
 
@@ -24,13 +24,13 @@
 
 ## Selten's theorem
 
-- [Selten's theorem](is-role-ess-iff-is-strict-nash.md)
-- [Every ESS of a role game is pure](exists-eq-single.md)
-- [No completely mixed ESS in role I](not-pos-left.md)
-- [No completely mixed ESS in role II](not-pos-right.md)
+- [Selten's theorem for role probabilities strictly between 0 and 1](is-role-ess-iff-is-strict-nash.md)
+- [For 0 < ρ < 1 every evolutionarily stable behavior strategy is pure](exists-eq-single.md)
+- [If role I has at least two strategies, no ESS is fully mixed there](not-pos-left.md)
+- [If role II has at least two strategies, no ESS is fully mixed there](not-pos-right.md)
 
 ## The symmetrized matrix game
 
 - [Payoffs in the symmetrized game depend only on marginals](dot-product-symmetrize-mul-vec.md)
-- [Eq single of marginals](eq-single-of-marginals.md)
-- [The symmetric-game ESS of the symmetrized role game](is-ess-symmetrize-iff.md)
+- [A mixed strategy with pure marginals is a point mass](eq-single-of-marginals.md)
+- [Evolutionarily stable states of the symmetrized role game, 0 < ρ < 1](is-ess-symmetrize-iff.md)

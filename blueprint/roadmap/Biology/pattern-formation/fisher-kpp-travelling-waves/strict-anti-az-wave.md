@@ -1,4 +1,4 @@
-# Strict Anti az Wave
+# For D, r, C > 0 the Ablowitz–Zeppetella profile is strictly decreasing
 
-The Ablowitz–Zeppetella profile `(1 + C exp (κ z))⁻²` is strictly decreasing for `C > 0`
-and `D, r > 0`.
+Let $D, r, C > 0$. The [Ablowitz–Zeppetella profile](az-wave.md) $U(z) = (1 + C e^{\kappa z})^{-2}$,
+$\kappa = \sqrt{r/(6D)}$, is strictly decreasing on $\mathbb{R}$.

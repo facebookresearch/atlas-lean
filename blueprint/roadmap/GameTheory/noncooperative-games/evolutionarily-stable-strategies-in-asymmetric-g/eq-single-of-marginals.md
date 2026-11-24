@@ -1,4 +1,5 @@
-# Eq single of marginals
+# A mixed strategy with pure marginals is a point mass
 
-A mixed strategy on `ι × κ` whose marginals are the pure strategies `i` and `k` is the point
-mass at `(i, k)`.
+For finite sets `ι` and `κ`, a [mixed strategy](is-mixed.md) `x` on `ι × κ` and strategies `i ∈ ι`
+and `k ∈ κ`, if the [marginals](marginals.md) of `x` are the point masses at `i` and at `k`, then
+`x` is the point mass at `(i, k)`.

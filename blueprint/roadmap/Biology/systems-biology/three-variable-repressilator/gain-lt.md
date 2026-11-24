@@ -1,3 +1,3 @@
-# Gain lt
+# For n ≥ 1, the loop gain is below the Hill coefficient
 
-The loop gain is below the Hill coefficient: `gain n p < n` for `n ≥ 1`, `p ≥ 0`.
+For `n ≥ 1` and `p ≥ 0`, the [loop gain](gain.md) `a(p) = n pⁿ / (1 + pⁿ)` satisfies `a(p) < n`.

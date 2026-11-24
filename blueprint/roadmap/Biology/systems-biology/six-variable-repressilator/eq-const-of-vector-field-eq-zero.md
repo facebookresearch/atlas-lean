@@ -1,6 +1,7 @@
-# Eq const of vector Field eq zero
+# For n ≥ 1 and β ≠ 0, the only nonnegative equilibrium is symmetric
 
-For `n ≥ 1`, `α > 0`, `β ≠ 0` and an equilibrium level `p ≥ 0` with `α = p (1 + pⁿ)`, the
-symmetric equilibrium `(p, …, p)` is the only equilibrium of (EL) in the closed nonnegative
-orthant. Without `p ≥ 0` this fails: for `n = 1`, `p = -2`, `α = 2`, the nonnegative state
-`(1, …, 1)` is also an equilibrium.
+Let `n ≥ 1`, `α > 0`, `β ≠ 0` and `p ≥ 0` with `p (1 + pⁿ) = α`. If `x ∈ ℝ⁶` has nonnegative entries
+and is an equilibrium of the [six-variable field](vector-field.md) with Hill coefficient `n`, rate
+`α` and ratio `β`, then `x = (p, …, p)`. The hypothesis `p ≥ 0` cannot be dropped: for `n = 1`,
+`β = 1` and `p = −2`, `α = p (1 + p) = 2`, and the nonnegative state `(1, …, 1)` is also an
+equilibrium.

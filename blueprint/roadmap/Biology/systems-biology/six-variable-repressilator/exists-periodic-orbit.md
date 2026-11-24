@@ -1,7 +1,11 @@
-# Periodic orbits of the six-variable repressilator near a Hopf point
+# Periodic orbits near a Hopf point, assuming the Hopf theorem
 
-**Periodic orbits of the six-variable repressilator near a Hopf point** (from the Hopf
-theorem). Let `β > 0` and let `μc > 0` be a Hopf level, `IsHopf (gain n μc) β`, with critical
-rate `αc = μc (1 + μcⁿ)` and Hopf frequency `ω`. Assuming the Hopf theorem on `ℝ⁶`, for every
-`ε > 0` there are a rate `α` with `|α - αc| < ε` and a nonconstant `T`-periodic solution of
-(EL), `|T - 2π/ω| < ε`, staying within `ε` of the symmetric equilibrium.
+Assume the
+[statement of the local Hopf bifurcation theorem](../three-variable-repressilator/hopf-bifurcation-theorem.md)
+on `ℝ⁶`. Let `n ∈ ℕ`, `β > 0` and `μ_c > 0` satisfy the [Hopf condition](is-hopf.md) for the loop
+gain `a(μ_c)`, where `a` is the [loop gain](../three-variable-repressilator/gain.md), and let
+`α_c = μ_c (1 + μ_cⁿ)` and `ω = ω(a(μ_c), β)`, the [Hopf frequency](hopf-freq.md). Then for every
+`ε > 0` there are a rate `α` with `|α − α_c| < ε`, a period `T > 0` with `|T − 2π/ω| < ε` and a
+solution `γ : ℝ → ℝ⁶` of `γ' = F(γ)`, for the [six-variable field](vector-field.md) with Hill
+coefficient `n`, rate `α` and ratio `β`, that is `T`-periodic, not constant, and stays within `ε` of
+`(μ_c, …, μ_c)` in the maximum distance.

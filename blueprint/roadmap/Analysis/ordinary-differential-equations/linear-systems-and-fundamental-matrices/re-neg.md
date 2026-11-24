@@ -1,3 +1,4 @@
-# Re neg
+# Characteristic roots have negative real part when τ < 0 < Δ
 
-If `τ < 0 < Δ`, every characteristic root lies in the open left half-plane.
+For real numbers $\tau$ and $\Delta$ with $\tau < 0 < \Delta$, every
+[characteristic root](is-char-root.md) $z$ of $(\tau, \Delta)$ satisfies $\operatorname{Re} z < 0$.

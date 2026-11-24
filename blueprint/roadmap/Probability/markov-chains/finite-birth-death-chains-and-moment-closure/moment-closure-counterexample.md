@@ -1,8 +1,7 @@
-# Moment closure is not exact
+# Mean-field moment closure is not exact for a nonlinear activation
 
-For `N = 2`, `alpha = 0`,
-and the nonlinear activation `f x = (x / 2) ^ 2`, the exact
-initial mean birth rate under the witness law,
-`sum_i p_i * (2 - i) * f i`, is `0`, while the mean-field closure
-substitution at the mean `E[n] = 1` gives `(2 - 1) * f 1 = 1 / 4`.
-Hence replacing the expectation by the closure is not exact.
+Take `N = 2` and the activation `f(x) = (x / 2)²`, so that the birth rate in state `i` is
+`(2 - i) f(i)`, and the [witness law](moment-witness.md) `w`, half mass at `0` and half at `2`. Then
+the mean birth rate `∑_i w(i) (2 - i) (i / 2)²` is `0`, the mean state `∑_i w(i) i` is `1`, and
+the mean-field closure value at the mean state, `(2 - 1) (1 / 2)² = 1 / 4`, differs from it:
+replacing the mean of the rate by the rate at the mean is not exact.

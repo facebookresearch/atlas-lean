@@ -1,12 +1,20 @@
-# Is Neumann Eigenvalue
+# Neumann eigenvalue of the linearized system on an interval
 
-`μ` is an eigenvalue of the linearization `w ↦ D w_xx + J w` on `[0, L]` with homogeneous
-Neumann boundary conditions: it is an eigenvalue of the mode matrix `J - k_n² D` of some
-admissible Neumann wavenumber `k_n = n π / L`. Only the discrete wavenumbers `k_n` contribute;
-the continuum of wavenumbers `k ∈ ℝ` of the problem on the whole line does not. (That these are
-all eigenvalues of the PDE operator, i.e. completeness of the cosine basis, is not proved here;
-the definition records the spectrum it induces.)
+Let $J = \begin{pmatrix} f_u & f_v \\ g_u & g_v \end{pmatrix}$ be a real $2 \times 2$ matrix (the
+Jacobian of the kinetics at a homogeneous steady state), let $d_u, d_v$ be real and
+$D = \operatorname{diag}(d_u, d_v)$, and let $L$ be real. A complex number $\mu$ is a Neumann
+eigenvalue when it is an eigenvalue of the
+[mode matrix](../../../Biology/pattern-formation/turing-patterns-and-diffusion-driven-instability/mode-matrix.md)
+$J - k_n^2 D$ for some $n \in \mathbb{N}$, where $k_n$ are the
+[Neumann wavenumbers](../../../Biology/pattern-formation/turing-patterns-and-diffusion-driven-instability/neumann-wavenumber.md)
+$k_n = n\pi/L$ ($n \in \mathbb{N}$, all $0$ when $L = 0$): $(J - k_n^2 D)\, v = \mu v$ for some
+nonzero $v \in \mathbb{C}^2$.
 
-The definition is total in `L`, but only `0 < L` is a Neumann domain. With Lean's `x / 0 = 0`
-every `k_n` vanishes at `L = 0`, so the predicate then reduces to `μ` being an eigenvalue of `J`
-itself; for `L < 0` it equals the predicate for `-L`, since only `k_n²` enters.
+For $L > 0$ these are the eigenvalues that the zero-flux Fourier modes $\cos(k_n x)\, v$ give to the
+linearization $w \mapsto D w_{xx} + J w$ on $[0, L]$ with homogeneous Neumann boundary conditions;
+that they are all its eigenvalues rests on the completeness of the cosine modes, which the
+definition does not involve. Only the discrete wavenumbers $k_n$ enter, not every real wavenumber.
+The definition is meaningful for $L > 0$: at $L = 0$ every $k_n$ is $0$, so the Neumann eigenvalues
+are the eigenvalues of $J$, and for $L < 0$ they are those for $-L$, since only $k_n^2$ enters.
+
+In the model $d_u, d_v > 0$; the definition is stated for all real values.

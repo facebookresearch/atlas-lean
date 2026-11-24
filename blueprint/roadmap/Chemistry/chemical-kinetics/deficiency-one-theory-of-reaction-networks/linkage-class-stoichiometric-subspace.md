@@ -1,7 +1,11 @@
-# Linkage Class Stoichiometric Subspace
+# Stoichiometric subspace of a linkage class
 
-The stoichiometric subspace `𝒮_θ` of the linkage class `θ`: the span of the reaction
-vectors `prod r - src r` of its reactions.
+Let `N` be a [chemical reaction network](../../../Dynamics/smooth-dynamics/reaction-network.md) with
+species set `S` and reaction set `ρ`, and let `θ` be a linkage class of `N`. The stoichiometric
+subspace `𝒮_θ` of `θ` is the real linear span in `ℝ^S` of the reaction vectors `prod(r) - src(r)` of
+the [reactions `r` of `θ`](linkage-class-of.md), that is, the
+[stoichiometric subspace](../../../Dynamics/smooth-dynamics/stoichiometric-subspace.md) of the
+[reaction network of `θ`](linkage-class-network.md).
 
 ## Sources
 

@@ -1,3 +1,8 @@
-# The set of front speeds is `(2 √(r D), ∞)`
+# The set of front speeds is the half-line from the minimal speed
 
-**The set of front speeds is `[2 √(r D), ∞)`**, given `hKPP`.
+Let $D > 0$ and $r > 0$. Assume that for every $c' \ge 2\sqrt{rD}$ there is a
+[traveling front](../../../Analysis/ordinary-differential-equations/is-front.md) of speed $c'$ with
+strictly decreasing profile; the [Kolmogorov–Petrovsky–Piskunov theorem](exists-is-front-of-le.md)
+gives this. Then the set of speeds $c$ for which a
+[traveling front](../../../Analysis/ordinary-differential-equations/is-front.md) of speed $c$ exists
+is $[2\sqrt{rD}, \infty)$.

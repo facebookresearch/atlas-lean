@@ -1,4 +1,4 @@
-# Cos nonpos and abs im le
+# Characteristic roots in the closed right half-plane: two bounds
 
-Auxiliary: a characteristic root with `Re z ≥ 0` has `cos (Im z · τ) ≤ 0` and
-`|Im z| ≤ r` (`r > 0`, `τ ≥ 0`).
+For `r > 0`, `τ ≥ 0` and a root `z` of the [characteristic function](char-fun.md)
+`z + r e^{-z τ}` with `Re z ≥ 0`, `cos(Im z · τ) ≤ 0` and `|Im z| ≤ r`.

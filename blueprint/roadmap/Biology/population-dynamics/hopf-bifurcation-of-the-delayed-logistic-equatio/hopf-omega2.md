@@ -1,3 +1,4 @@
-# Hopf Omega2
+# Frequency correction of the approximate Hopf orbit
 
-Frequency correction: `ω(ε) = π / 2 + ω₂ ε²` with `ω₂ = -1 / 20`.
+The real number `ω₂ = -1 / 20`, the coefficient of `ε²` in the frequency
+[`ω(ε) = π / 2 + ω₂ ε²`](hopf-freq.md).

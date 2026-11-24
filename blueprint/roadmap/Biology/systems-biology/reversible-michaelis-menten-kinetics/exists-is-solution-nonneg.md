@@ -1,7 +1,7 @@
-# Global nonnegative trajectories of the reversible Michaelis–Menten system
+# Global nonnegative reversible trajectories exist from nonnegative data
 
-For
-nonnegative rate constants and every nonnegative initial state `(s₀, c₀, e₀, p₀)`, the system
-has a solution with these initial values on `[0, ∞)` such that for all `t ≥ 0` all four
-coordinates are nonnegative, the total enzyme `e + c = e₀ + c₀` and the total substrate
-`s + c + p = s₀ + c₀ + p₀` are conserved.
+Let $k_1, k_{-1}, k_2, k_{-2} \ge 0$ and $s_0, c_0, e_0, p_0 \ge 0$. Then there is a
+[solution](is-solution.md) $(s, c, e, p)$ of the reversible Michaelis–Menten system with
+$(s(0), c(0), e(0), p(0)) = (s_0, c_0, e_0, p_0)$ such that, for every $t \ge 0$, all four
+coordinates are nonnegative, and the total enzyme $e(t) + c(t) = e_0 + c_0$ and the total substrate
+$s(t) + c(t) + p(t) = s_0 + c_0 + p_0$ are conserved.

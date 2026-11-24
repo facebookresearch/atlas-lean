@@ -1,4 +1,7 @@
-# Exists eigenvector iff
+# Eigenvalues of a real 2 × 2 matrix M: roots of μ² − (tr M)μ + det M
 
-A complex number is an eigenvalue of a real `2 × 2` matrix iff it is a root of the
-characteristic polynomial `μ² - (tr M) μ + det M`.
+For a real $2 \times 2$ matrix $M$ and a complex number $\mu$, there is a nonzero
+$v \in \mathbb{C}^2$ with $M v = \mu v$ if and only if $\mu$ is a root of the characteristic
+polynomial:
+
+$$\mu^2 - (\operatorname{tr} M)\, \mu + \det M = 0.$$

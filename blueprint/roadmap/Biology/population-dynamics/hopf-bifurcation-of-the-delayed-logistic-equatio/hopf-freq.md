@@ -1,3 +1,4 @@
-# Hopf Freq
+# Angular frequency of the approximate Hopf orbit
 
-The angular frequency `ω(ε)` of the approximate orbit in scaled time.
+For a real number `ε`, the angular frequency of the approximate orbit in scaled time is
+`ω(ε) = π / 2 - ε² / 20`.

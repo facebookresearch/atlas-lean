@@ -1,5 +1,5 @@
-# Nonnegative equilibria with positive totals are positive
+# With positive rates and totals, nonnegative equilibria are positive
 
-For positive rate constants,
-every nonnegative equilibrium in a class with `E_T > 0`, `S_T > 0` has all four coordinates
-positive.
+Let $k_1, k_{-1}, k_2, k_{-2} > 0$ and $E_T, S_T > 0$. Every zero $(s, c, e, p)$ of the
+[reversible field](rev-field.md) with nonnegative coordinates, $e + c = E_T$ and $s + c + p = S_T$
+has $s, c, e, p > 0$.

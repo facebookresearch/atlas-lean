@@ -1,41 +1,61 @@
 # Deficiency-one theory of reaction networks
 
-- [Linkage Class Of](linkage-class-of.md)
-- [Linkage Class Network](linkage-class-network.md)
-- [Linkage Class Stoichiometric Subspace](linkage-class-stoichiometric-subspace.md)
-- [Linkage Class Deficiency](linkage-class-deficiency.md)
-- [Linkage Class Field](linkage-class-field.md)
+Feinberg's deficiency-one theorem concerns a mass-action system with finitely many species and
+reactions in which (1) every linkage class `θ` has deficiency `δ_θ ≤ 1`, (2) the linkage-class
+deficiencies sum to the deficiency of the network, `∑_θ δ_θ = δ`, and (3) each linkage class
+contains exactly one terminal strong linkage class (a maximal set of complexes mutually reachable
+along directed reaction paths, out of which no reaction leads). For every choice of positive rate
+constants, each positive stoichiometric compatibility class then contains at most one positive
+equilibrium, and exactly one if the network is weakly reversible.
+
+The theorem itself is not proved on these pages: they cover the linear algebra of condition (2). For
+finitely many species and reactions, the linkage-class deficiencies always sum to at most `δ`, with
+equality exactly when the stoichiometric subspaces of the linkage classes are independent; the
+equilibrium equations then decouple across linkage classes, for all real rate constants and
+concentrations.
+
+## Objects attached to a linkage class
+
+- [Linkage class of a reaction](linkage-class-of.md)
+- [Reaction network of a linkage class](linkage-class-network.md)
+- [Stoichiometric subspace of a linkage class](linkage-class-stoichiometric-subspace.md)
+- [Deficiency of a linkage class](linkage-class-deficiency.md)
+- [Mass-action field of a linkage class](linkage-class-field.md)
 
 ## Reactions and linkage classes
 
-- [Linkage Class Of prod](linkage-class-of-prod.md)
-- [Linkage Class Of eq of src mem](linkage-class-of-eq-of-src-mem.md)
-- [Linkage Class Of eq of prod mem](linkage-class-of-eq-of-prod-mem.md)
+- [The product complex of a reaction lies in its linkage class](linkage-class-of-prod.md)
+- [Reactions with source complex in a linkage class belong to it](linkage-class-of-eq-of-src-mem.md)
+- [Reactions with product complex in a linkage class belong to it](linkage-class-of-eq-of-prod-mem.md)
 
-## The stoichiometric subspace is the sum of the linkage-class subspaces
+## Stoichiometric subspaces of linkage classes
 
-- [Reaction Vector mem linkage Class Stoichiometric Subspace](reaction-vector-mem-linkage-class-stoich.md)
-- [The stoichiometric subspace is the sum of the linkage-class stoichiometric subspaces](stoichiometric-subspace-eq-i-sup.md)
+- [Reaction vectors of a linkage class lie in its stoichiometric subspace](reaction-vector-mem-linkage-class-stoich.md)
+- [The stoichiometric subspace is the sum of the linkage-class subspaces](stoichiometric-subspace-eq-i-sup.md)
 
-## Dimension of a finite sum of subspaces
+## Dimension of the stoichiometric subspace
 
-- [Finrank stoichiometric Subspace le sum](finrank-stoichiometric-subspace-le-sum.md)
-- [Finrank stoichiometric Subspace eq sum iff](finrank-stoichiometric-subspace-eq-sum-i.md)
+- [The stoichiometric dimension is at most the sum over linkage classes](finrank-stoichiometric-subspace-le-sum.md)
+- [s = ∑ s_θ iff the linkage-class subspaces are independent](finrank-stoichiometric-subspace-eq-sum-i.md)
 
 ## Linkage-class deficiencies
 
-- [Card complexes eq sum](card-complexes-eq-sum.md)
+- [The number of complexes is the sum of the linkage-class sizes](card-complexes-eq-sum.md)
 - [Each linkage class has nonnegative deficiency](linkage-class-deficiency-nonneg.md)
 - [Deficiency minus the sum of the linkage-class deficiencies](deficiency-sub-sum-linkage-class-deficie.md)
 - [The linkage-class deficiencies sum to at most the deficiency](sum-linkage-class-deficiency-le.md)
-- [`∑_θ δ_θ = δ` iff the linkage-class stoichiometric subspaces are independent](sum-linkage-class-deficiency-eq-iff.md)
-- [Linkage Class Deficiency le deficiency](linkage-class-deficiency-le-deficiency.md)
-- [Linkage Class Deficiency eq zero of deficiency eq zero](linkage-class-deficiency-eq-zero-of-defi.md)
-- [Sum linkage Class Deficiency eq of deficiency eq zero](sum-linkage-class-deficiency-eq-of-defic.md)
+- [∑ δ_θ = δ iff the linkage-class subspaces are independent](sum-linkage-class-deficiency-eq-iff.md)
+- [Each linkage-class deficiency is at most the network deficiency](linkage-class-deficiency-le-deficiency.md)
+- [In a deficiency-zero network every linkage class has deficiency zero](linkage-class-deficiency-eq-zero-of-defi.md)
+- [In a deficiency-zero network the linkage-class deficiencies sum to δ](sum-linkage-class-deficiency-eq-of-defic.md)
 
-## The equilibrium equations decouple across linkage classes
+## Decoupling of the equilibrium equations
 
-- [Sum linkage Class Field](sum-linkage-class-field.md)
-- [Linkage Class Field mem](linkage-class-field-mem.md)
+- [The mass-action field is the sum of the linkage-class fields](sum-linkage-class-field.md)
+- [Each linkage-class field takes values in its stoichiometric subspace](linkage-class-field-mem.md)
 - [The equilibrium equations decouple across independent linkage classes](mass-action-field-eq-zero-iff-of-i-sup-i.md)
-- [Under `∑_θ δ_θ = δ` the equilibrium equations decouple across linkage classes](mass-action-field-eq-zero-iff-of-sum-lin.md)
+- [Under ∑ δ_θ = δ the equilibrium equations decouple by linkage class](mass-action-field-eq-zero-iff-of-sum-lin.md)
+
+## Related topics
+
+- [Complex balancing and the deficiency-zero theorem](../../../Biology/systems-biology/complex-balancing-and-the-deficiency-zero-theore/README.md): linkage classes and the deficiency-zero theorem: for a weakly reversible network of deficiency zero with finitely many species and reactions, every choice of positive rate constants gives exactly one positive equilibrium in each positive stoichiometric compatibility class.

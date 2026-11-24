@@ -1,4 +1,5 @@
-# Charpoly map jacobian
+# Factorization of the characteristic polynomial over ℂ
 
-Over `ℂ` the characteristic polynomial splits as
-`(λ - (-1 - a)) (λ - (-1 + a/2 + i√3 a/2)) (λ - (-1 + a/2 - i√3 a/2))`.
+For every real `a`, the characteristic polynomial `det(X I − J(a))` of the
+[Jacobian matrix](jacobian.md) `J(a)`, with coefficients in `ℂ`, is `(X − λ₀)(X − λ₊)(X − λ₋)` with
+`λ₀ = −1 − a` and `λ± = −1 + a/2 ± i (√3/2) a`.

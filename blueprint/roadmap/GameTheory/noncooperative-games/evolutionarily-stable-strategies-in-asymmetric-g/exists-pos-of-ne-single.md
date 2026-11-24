@@ -1,3 +1,4 @@
-# Exists pos of ne single
+# A mixed strategy other than a pure one weights another strategy
 
-A mixed strategy other than the pure strategy `i` puts positive weight on some `j ≠ i`.
+For a finite set `ι`, a [mixed strategy](is-mixed.md) `p` on `ι` and a strategy `i` with `p`
+different from the point mass at `i`, there is `j ≠ i` with `p_j > 0`.

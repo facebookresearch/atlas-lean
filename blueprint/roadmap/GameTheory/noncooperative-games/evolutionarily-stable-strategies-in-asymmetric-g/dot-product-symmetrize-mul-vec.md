@@ -1,5 +1,6 @@
 # Payoffs in the symmetrized game depend only on marginals
 
-The payoff of `x` against `y`
-in the matrix game `symmetrize ρ A B` is the role-game payoff of their marginal behavior
-strategies.
+For finite sets `ι` and `κ`, a real `ρ`, payoff matrices `A` and `B`, and vectors `x` and `y` on
+`ι × κ`, the payoff `x · S y` in the [symmetrized matrix game](symmetrize.md) `S` equals the
+[role-game payoff](role-payoff.md) of the [marginals](marginals.md) of `x` against the marginals of
+`y`.

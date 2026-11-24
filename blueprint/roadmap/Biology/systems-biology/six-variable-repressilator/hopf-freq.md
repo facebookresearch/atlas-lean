@@ -1,3 +1,4 @@
-# Hopf Freq
+# Hopf frequency
 
-The Hopf frequency `ω = √3 a β / (2 (1 + β))`.
+For real `a` and `β`, `ω(a, β) = √3 a β / (2 (1 + β))`, with the convention `x / 0 = 0`: `ω = 0`
+when `β = −1`. For `a > 0` and `β > 0` it is positive.

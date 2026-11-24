@@ -1,3 +1,4 @@
-# Exists eigenvector iff of det eq zero
+# A singular real 2 × 2 matrix has exactly the eigenvalues 0 and tr M
 
-A singular real `2 × 2` matrix has exactly the eigenvalues `0` and `tr M`.
+For a real $2 \times 2$ matrix $M$ with $\det M = 0$ and a complex number $\mu$, there is a nonzero
+$v \in \mathbb{C}^2$ with $M v = \mu v$ if and only if $\mu = 0$ or $\mu = \operatorname{tr} M$.

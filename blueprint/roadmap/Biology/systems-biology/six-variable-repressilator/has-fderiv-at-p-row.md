@@ -1,3 +1,4 @@
-# Has FDeriv At p Row
+# Derivative of a protein row
 
-Derivative of a protein row `x ↦ -β (x j - x i)`.
+For a real `β`, indices `i, j ∈ {0, …, 5}` and every point of `ℝ⁶`, the function
+`x ↦ −β (x_j − x_i)` has derivative `v ↦ −β (v_j − v_i)` there.

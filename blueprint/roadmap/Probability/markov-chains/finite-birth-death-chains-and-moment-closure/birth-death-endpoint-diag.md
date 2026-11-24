@@ -1,5 +1,5 @@
-# Endpoint diagonal entries
+# Diagonal entries of the birth–death generator at the endpoints
 
-The diagonal at state `0` is
-`-(N * f 0)` (births only), and the diagonal at the top state
-`N` is `-(alpha * N)` (deaths only).
+For a natural number `N`, a real `α` and a function `f : ℕ → ℝ`, the
+[birth–death generator](birth-death-generator.md) `Q` has `Q(0, 0) = -N f(0)` (births only) and
+`Q(N, N) = -α N` (deaths only).

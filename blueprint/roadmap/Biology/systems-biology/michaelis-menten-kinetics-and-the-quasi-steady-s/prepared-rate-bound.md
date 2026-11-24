@@ -1,4 +1,11 @@
-# Prepared Rate Bound
+# Rate-law error bound for prepared data
 
-The explicit rate-law error bound for prepared data on `[0, T]`:
-`k₂ ε (k₁ (s₀ + ε) + kb)/K/(kb + k₂) · (1 + (k₁ (s₀ + ε) + kb) T / K)`.
+For real $k_1, k_b, k_2, s_0, T$ and $\varepsilon$, the rate-law error bound for prepared data is
+
+$$
+P(\varepsilon) = k_2 \varepsilon\, \frac{k_1 (s_0 + \varepsilon) + k_b}{K_M (k_b + k_2)}
+\Bigl(1 + \frac{(k_1 (s_0 + \varepsilon) + k_b)\, T}{K_M}\Bigr),
+$$
+
+with the [Michaelis constant](michaelis-constant.md) $K_M = (k_b + k_2)/k_1$ and quotients by $0$
+read as $0$.

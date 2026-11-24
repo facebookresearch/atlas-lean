@@ -1,10 +1,17 @@
 # Orbital equivalence, replicator to Lotka–Volterra
 
-**Orbital equivalence, replicator to Lotka–Volterra** (Hofbauer–Sigmund 1998,
-§7.5). Let `x` solve the replicator equation of the game `A` with initial state in the
-interior of the simplex. The explicit time change `τ = timeChange x`, `τ(t) = ∫₀ᵗ x_none`, is
-`C¹` with positive derivative `x_none` (orientation preserving) and `τ(0) = 0`; the curve
-`lvTrajectory x` is positive and solves the Lotka–Volterra equation with
-`r = lvGrowth A`, `B = lvInteraction A` at each time `τ(t)`, `t ≥ 0`, where it equals
-`(x_i(t) / x_none(t))_i`. The original times are **not** identified: `τ(t) < t` for `t > 0`
-whenever there are at least two strategies. Boundary states are excluded.
+Let `ι` be a finite nonempty set, so that the strategies `ι ∪ {o}` number at least two, `A` a
+payoff matrix on them, and `x` a [solution](../replicator-dynamics/is-solution.md) of the replicator
+equation of the game, `x_k' = x_k ((A x)_k - f̄(x))` for `t ≥ 0`, starting in the interior of the
+simplex: every `x_k(0) > 0` and `∑_k x_k(0) = 1`. Then, with `τ` the
+[Lotka–Volterra time](time-change.md) and `Y` the [Lotka–Volterra trajectory](lv-trajectory.md)
+(Hofbauer and Sigmund 1998, §7.5):
+
+- `τ(0) = 0`, `τ` is continuously differentiable on `ℝ`, and its derivative at every real `t` is
+  `x_o(max(t, 0)) > 0`, so `τ` preserves orientation;
+- for every `t ≥ 0` and `i ∈ ι`, `Y_i(τ(t)) = x_i(t) / x_o(t) > 0`, and `Y_i` has derivative
+  `F_i(Y(τ(t)))` at `τ(t)`, where `F` is the [Lotka–Volterra field](lv-field.md) with the
+  [growth rates](lv-growth.md) and [interaction matrix](lv-interaction.md) of `A`;
+- `τ(t) < t` for every `t > 0`: the original times are not identified.
+
+All states involved have positive coordinates; boundary states are excluded.

@@ -31,5 +31,5 @@
 
 ## Stability of stopped occupation under uniform limits
 
-- [Integral absorption Time of generator eq neg of tendsto Uniformly On](integral-absorption-time-of-generator-eq-3.md)
-- [Integral absorption Time of generator eq neg of tendsto Uniformly On modified Process](integral-absorption-time-of-generator-eq-2-2.md)
+- [Occupation identity until absorption persists under uniform limits](integral-absorption-time-of-generator-eq-3.md)
+- [Uniform-limit occupation identity for the neutral realization](integral-absorption-time-of-generator-eq-2-2.md)

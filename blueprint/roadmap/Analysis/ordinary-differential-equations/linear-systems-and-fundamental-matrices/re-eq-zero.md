@@ -1,3 +1,4 @@
-# Re eq zero
+# Characteristic roots are purely imaginary when τ = 0 < Δ
 
-If `τ = 0 < Δ`, the characteristic roots are purely imaginary.
+For real $\Delta > 0$ and $\tau = 0$, every [characteristic root](is-char-root.md) $z$ of
+$(\tau, \Delta)$ satisfies $\operatorname{Re} z = 0$.

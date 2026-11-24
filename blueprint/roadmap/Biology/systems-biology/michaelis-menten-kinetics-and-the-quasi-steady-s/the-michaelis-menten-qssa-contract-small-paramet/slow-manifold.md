@@ -1,3 +1,8 @@
-# Slow Manifold
+# Slow manifold in scaled variables
 
-The slow manifold for `v = c / e₀`: `v = u / (κ + u)`.
+For real $k_1, k_b, k_2, s_0$ and $u$, with the [dimensionless Michaelis constant](qssa-kappa.md)
+$\kappa = K_M/s_0$, the slow manifold gives the scaled complex $v = c/e_0$ as
+
+$$h(u) = \frac{u}{\kappa + u},$$
+
+with the quotient read as $0$ when $\kappa + u = 0$.

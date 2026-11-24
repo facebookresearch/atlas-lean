@@ -1,3 +1,4 @@
-# Amplitude law
+# Amplitude law of the approximate Hopf orbits
 
-`ε² = 40 (α(ε) - π / 2) / (3π - 2)`.
+For every real `ε`, `ε² = 40 (α(ε) - π / 2) / (3π - 2)`, where `α(ε)` is the
+[bifurcation parameter](hopf-param.md).

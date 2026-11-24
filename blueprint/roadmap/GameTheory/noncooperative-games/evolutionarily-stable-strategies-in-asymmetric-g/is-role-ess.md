@@ -1,6 +1,7 @@
-# Is Role ESS
+# Evolutionarily stable behavior strategy of a role game
 
-`s` is an **evolutionarily stable behavior strategy** of the role game (Selten 1980): `s` is
-a pair of mixed strategies and every other pair `t` of mixed strategies either does strictly
-worse against `s` than `s` itself, or does equally well against `s` and strictly worse against
-`t` than `s` does.
+For finite sets `ι` and `κ`, a real `ρ` and payoff matrices `A : ι × κ → ℝ` and `B : κ × ι → ℝ`, a
+pair `s = (p, q)` is an evolutionarily stable behavior strategy (Selten 1980) when `p` and `q` are
+[mixed strategies](is-mixed.md) and every other pair `t ≠ s` of mixed strategies satisfies, for the
+[role-game payoff](role-payoff.md) `E`, either `E(t, s) < E(s, s)`, or `E(t, s) = E(s, s)` and
+`E(t, t) < E(s, t)`.

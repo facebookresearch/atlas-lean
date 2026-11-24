@@ -1,4 +1,12 @@
-# Rev Substrate Error Const
+# Constant of the reversible slow-window substrate estimate
 
-The constant of the substrate estimate on the slow window `[0, T]`:
-`(k₁ M + kb) (1 / (kb + k₂) + (F / (kb + k₂)² + kb₂ / (kb + k₂)) T)`.
+For real $k_1, k_{-1}, k_2, k_{-2}$, total mass $M$ and $T$, the constant of the substrate estimate
+on the slow window $[0, T]$ is
+
+$$
+C(T) = (k_1 M + k_{-1}) \Bigl(\frac{1}{k_{-1} + k_2} +
+\Bigl(\frac{F}{(k_{-1} + k_2)^2} + \frac{k_{-2}}{k_{-1} + k_2}\Bigr) T\Bigr),
+$$
+
+with the [forcing constant](complex-forcing-const.md) $F$ and quotients by $0$ read as $0$. It is
+affine in $T$, and nondecreasing in $T$ when $k_1, k_{-1}, k_{-2}, M \ge 0$ and $k_2 > 0$.

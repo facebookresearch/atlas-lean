@@ -1,4 +1,7 @@
-# Lv Trajectory
+# Lotka–Volterra trajectory of a replicator solution
 
-The Lotka–Volterra trajectory of a replicator solution `x`, in Lotka–Volterra time `u`:
-`toLV (x (τ⁻¹ u))` with `τ = timeChange x`.
+For a finite set `ι`, a curve `x` on the strategies `ι ∪ {o}` and a real `u`, the Lotka–Volterra
+trajectory at time `u` is the [Lotka–Volterra coordinate vector](to-lv.md) `(x_i / x_o)_i` of
+`x(τ⁻¹(u))`, where `τ` is the [Lotka–Volterra time](time-change.md) and `τ⁻¹` a chosen inverse of
+`τ`: the true inverse on the range of `τ` when `τ` is injective, and an unspecified value off the
+range.

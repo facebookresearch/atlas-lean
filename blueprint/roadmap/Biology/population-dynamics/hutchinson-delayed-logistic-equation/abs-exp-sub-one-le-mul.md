@@ -1,3 +1,3 @@
-# Abs exp sub one le mul
+# Bound on the exponential minus one for small arguments
 
-`|e^z - 1| ≤ M (1 + M)` for `|z| ≤ M ≤ 1`.
+For real numbers `z` and `M` with `|z| ≤ M ≤ 1`, `|e^z - 1| ≤ M (1 + M)`.

@@ -1,7 +1,14 @@
-# Uniform QSSA for the substrate on a slow window, including `τ = 0`
+# Standard data: reversible substrate error at most C ε for 0 ≤ τ ≤ T
 
-For the standard
-data `s(0) = s₀ = S̄(0)`, `c(0) = 0`, `e(0) = ε > 0`, `p(0) = p₀ ≥ 0`, with `S̄` a solution of the
-reduced equation `S̄' = -v(S̄, s₀ + p₀ - S̄)`,
-`|s(τ/ε) - S̄(τ)| ≤ revSubstrateErrorConst k₁ kb k₂ kb₂ (s₀ + p₀) T · ε` for all
-`τ ∈ [0, T]`.
+Let $k_1 > 0$, $k_{-1}, k_{-2} \ge 0$, $k_2 > 0$, $s_0, p_0 \ge 0$ and $\varepsilon > 0$, and let
+$T$ be real. Let $(s, c, e, p)$ be a [solution](is-solution.md) of the reversible Michaelis–Menten
+system with the standard data $s(0) = s_0$, $c(0) = 0$, $e(0) = \varepsilon$ and $p(0) = p_0$, and
+let $\bar S : \mathbb{R} \to \mathbb{R}$ be differentiable at every $\tau \ge 0$ with
+$\bar S'(\tau) = -v(\bar S(\tau), s_0 + p_0 - \bar S(\tau))$ there, for the
+[reduced rate](reduced-rate.md) at total mass $s_0 + p_0$, with $\bar S(0) = s_0$. Then for every
+$\tau \in [0, T]$, $\tau = 0$ included,
+
+$$|s(\tau/\varepsilon) - \bar S(\tau)| \le C(T)\, \varepsilon,$$
+
+with the [constant of the substrate estimate](rev-substrate-error-const.md) $C(T)$ at
+$M = s_0 + p_0$.

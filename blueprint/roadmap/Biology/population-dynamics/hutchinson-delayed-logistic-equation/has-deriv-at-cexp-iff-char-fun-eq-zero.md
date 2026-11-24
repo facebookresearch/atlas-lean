@@ -1,4 +1,5 @@
-# Characteristic equation
+# Exponential solutions of the linearized equation
 
-`t ↦ e^{z t}` solves the linearized equation
-`u'(t) = -r u(t - τ)` on all of `ℝ` iff `z` is a root of `charFun r τ`.
+For real numbers `r` and `τ` and a complex number `z`, the function `t ↦ e^{z t}` satisfies the
+linearized equation `u'(t) = -r u(t - τ)` at every real `t` if and only if `z` is a root of the
+[characteristic function](char-fun.md), `z + r e^{-z τ} = 0`.

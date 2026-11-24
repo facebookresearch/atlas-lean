@@ -1,16 +1,25 @@
-# Turing pattern branch and sign change of the selected critical eigenvalue
+# Reduced pattern branch and sign change of the critical eigenvalue
 
-Let mode `k`
-be admissible (`0 < f_u k² - d_u k⁴`) with neutral diffusion `d₀ = d_n(k²)` and negative trace
-there, and let `G` be a reduced bifurcation map for this mode: strictly differentiable at
-`(0, d₀)` and equal on the trivial branch to the critical eigenvalue,
-`G (0, d) = leadingEigenvalue (J - k² D(d))` for `d` near `d₀` (the output of a Lyapunov–Schmidt
-reduction, assumed). Then the crossing is transversal (`0 < ∂_d G (0, d₀)`), a unique local
-pattern branch `d = φ(a)` bifurcates from `(0, d₀)`, and the critical eigenvalue of mode `k`
-changes sign there: `G (0, d)` is negative for `d < d₀` and positive for `d > d₀` near `d₀`.
+Let $J = \begin{pmatrix} f_u & f_v \\ g_u & g_v \end{pmatrix}$ be a real $2 \times 2$ matrix (the
+Jacobian of the kinetics at a homogeneous steady state), let $d_u$ and $k$ be real with
+$f_u k^2 - d_u k^4 > 0$ (an admissible mode), let $d_0 = d_n(k^2)$ be its
+[neutral diffusion](neutral-diffusion.md), assume $\operatorname{tr} J - k^2 (d_u + d_0) < 0$, and
+write $D(d) = \operatorname{diag}(d_u, d)$. Let $G : \mathbb{R} \times \mathbb{R} \to \mathbb{R}$ be
+strictly differentiable at $(0, d_0)$ with derivative $G'$, and equal on the trivial branch to the
+critical eigenvalue: $G(0, d) = \lambda_+(J - k^2 D(d))$ for all $d$ near $d_0$, with $\lambda_+$
+the [leading real eigenvalue](leading-eigenvalue.md). Then:
 
-Only mode `k` is controlled. The hypotheses say nothing about the other Neumann modes, so this is
-not an exchange of stability of the homogeneous state on `[0, L]`: another mode may already be
-unstable at `d₀` (for `J₀`, `d_u = 1`, `k = 1/2` on `[0, 8π]`, mode `4` is neutral while mode
-`5` is unstable; see the tests). That stronger conclusion would need every other Neumann mode
-to be stable near `d₀`.
+- the crossing is transversal: $\partial_d G(0, d_0) = G'(0, 1) > 0$;
+- there is $\varphi : \mathbb{R} \to \mathbb{R}$ with $\varphi(0) = d_0$, strictly differentiable at
+  $0$ with derivative $-G'(1, 0)/G'(0, 1)$, such that near $(0, d_0)$, $a\, G(a, d) = 0$ if and only
+  if $a = 0$ or $d = \varphi(a)$;
+- $G(0, d) < 0$ for $d < d_0$ and $G(0, d) > 0$ for $d > d_0$, for $d$ near $d_0$.
+
+In applications $G$ comes from a center-manifold reduction, or from a Lyapunov–Schmidt reduction
+along the $d$-dependent critical eigenvector; a reduction along a fixed kernel vector matches the
+critical eigenvalue only to first order at $d_0$, which is the setting of the
+[Turing pattern branch from the Lyapunov–Schmidt reduction](turing-pattern-branch-of-reduction.md).
+Only the mode $k$ is controlled: another Neumann mode may already be unstable at $d_0$, so this is
+not an exchange of stability of the homogeneous state on $[0, L]$.
+
+In the model $d_u, d_0 > 0$; the statement holds for all real values.

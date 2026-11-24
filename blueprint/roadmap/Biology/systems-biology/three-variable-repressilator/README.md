@@ -2,60 +2,60 @@
 
 ## The model
 
-- [Vector Field](vector-field.md)
-- [Eq Rate](eq-rate.md)
-- [Gain](gain.md)
-- [Jacobian](jacobian.md)
-- [Lin Charpoly](lin-charpoly.md)
+- [Right-hand side of the three-variable repressilator](vector-field.md)
+- [Transcription rate of the symmetric equilibrium of level p](eq-rate.md)
+- [Loop gain at the symmetric equilibrium](gain.md)
+- [Jacobian matrix with loop gain a](jacobian.md)
+- [Characteristic polynomial of a linearization](lin-charpoly.md)
 
 ## The symmetric equilibrium
 
-- [Vector Field const eq zero iff](vector-field-const-eq-zero-iff.md)
-- [Exists Unique eq Level](exists-unique-eq-level.md)
-- [Eq const of vector Field eq zero](eq-const-of-vector-field-eq-zero.md)
+- [For p ≥ 0, (p, p, p) is an equilibrium iff α = p (1 + pⁿ)](vector-field-const-eq-zero-iff.md)
+- [Each positive rate has exactly one positive equilibrium level](exists-unique-eq-level.md)
+- [For n ≥ 1, the only nonnegative equilibrium is symmetric](eq-const-of-vector-field-eq-zero.md)
 
 ## The linearization
 
-- [Has Deriv At repression](has-deriv-at-repression.md)
-- [Jacobian CLM](jacobian-clm.md)
-- [Linearization at the symmetric equilibrium](has-fderiv-at-vector-field.md)
-- [To Matrix' fderiv vector Field](to-matrix-fderiv-vector-field.md)
+- [Slope of the repression function at the symmetric equilibrium](has-deriv-at-repression.md)
+- [Linear map of the Jacobian matrix](jacobian-clm.md)
+- [Linearization at a nonnegative symmetric equilibrium](has-fderiv-at-vector-field.md)
+- [Matrix of the linearization at a nonnegative symmetric equilibrium](to-matrix-fderiv-vector-field.md)
 
 ## The characteristic equation
 
-- [Characteristic equation](charpoly-jacobian.md)
-- [Root Real](root-real.md)
-- [Root Plus](root-plus.md)
-- [Root Minus](root-minus.md)
-- [Charpoly map jacobian](charpoly-map-jacobian.md)
-- [Eigenvalues](is-root-iff.md)
-- [Linear stability below the Hopf point](re-neg-of-is-root.md)
-- [Instability above the Hopf point](exists-re-pos-of-is-root.md)
+- [Characteristic polynomial of the Jacobian matrix](charpoly-jacobian.md)
+- [The real eigenvalue −1 − a](root-real.md)
+- [The eigenvalue −1 + a/2 + i(√3/2)a](root-plus.md)
+- [The eigenvalue −1 + a/2 − i(√3/2)a](root-minus.md)
+- [Factorization of the characteristic polynomial over ℂ](charpoly-map-jacobian.md)
+- [The three eigenvalues of the Jacobian matrix](is-root-iff.md)
+- [For 0 ≤ a < 2, every eigenvalue has negative real part](re-neg-of-is-root.md)
+- [For a > 2, some eigenvalue has positive real part](exists-re-pos-of-is-root.md)
 
 ## The Hopf condition
 
-- [Eigenvalues at the Hopf point](is-root-iff-of-gain-eq-two.md)
-- [Simplicity](root-multiplicity-eq-one.md)
-- [No other eigenvalue on the imaginary axis](eq-of-is-root-of-re-eq-zero.md)
-- [Hopf Eigenvalue](hopf-eigenvalue.md)
-- [Has Deriv At gain](has-deriv-at-gain.md)
-- [Transversality](has-deriv-at-hopf-eigenvalue.md)
-- [Nonzero crossing speed](re-hopf-eigenvalue-deriv-pos.md)
+- [At loop gain 2 the eigenvalues are −3 and ±i√3](is-root-iff-of-gain-eq-two.md)
+- [At loop gain 2, i√3 is a simple eigenvalue](root-multiplicity-eq-one.md)
+- [At loop gain 2, the eigenvalues on the imaginary axis are ±i√3](eq-of-is-root-of-re-eq-zero.md)
+- [Eigenvalue curve through i√3](hopf-eigenvalue.md)
+- [Derivative of the loop gain at a nonnegative level](has-deriv-at-gain.md)
+- [Derivative of the eigenvalue curve at a nonnegative level](has-deriv-at-hopf-eigenvalue.md)
+- [For n ≥ 1 and μ > 0, the eigenvalue curve crosses with positive speed](re-hopf-eigenvalue-deriv-pos.md)
 
 ## Location of the Hopf point
 
-- [Gain lt](gain-lt.md)
-- [No Hopf point for `n ≤ 2`](gain-lt-two-of-le-two.md)
-- [The Hopf point for `n > 2`](gain-eq-two-iff.md)
+- [For n ≥ 1, the loop gain is below the Hill coefficient](gain-lt.md)
+- [For n ≤ 2, the loop gain stays below 2](gain-lt-two-of-le-two.md)
+- [For n > 2, the loop gain is 2 exactly when pⁿ = 2/(n − 2)](gain-eq-two-iff.md)
 
 ## Stability of the symmetric equilibrium
 
-- [Linear stability](re-neg-of-is-root-lin-charpoly.md)
-- [Instability](exists-re-pos-of-is-root-lin-charpoly.md)
-- [No Hopf bifurcation for `n ≤ 2`](re-neg-of-le-two.md)
+- [Linear stability when the loop gain is below 2](re-neg-of-is-root-lin-charpoly.md)
+- [Linear instability when the loop gain exceeds 2](exists-re-pos-of-is-root-lin-charpoly.md)
+- [For n ≤ 2, the symmetric equilibrium is linearly stable](re-neg-of-le-two.md)
 
 ## Periodic orbits from the Hopf theorem
 
-- [The local Hopf bifurcation theorem on `ℝᴺ`](hopf-bifurcation-theorem.md)
-- [Pos Orthant](pos-orthant.md)
-- [Periodic orbits of the repressilator near the Hopf point](exists-periodic-orbit.md)
+- [Statement of the local Hopf bifurcation theorem on ℝᴺ](hopf-bifurcation-theorem.md)
+- [Parameters and states with positive concentrations](pos-orthant.md)
+- [Periodic orbits near a Hopf point, assuming the Hopf theorem](exists-periodic-orbit.md)

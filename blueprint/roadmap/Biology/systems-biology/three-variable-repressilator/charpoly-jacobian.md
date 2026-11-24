@@ -1,3 +1,4 @@
-# Characteristic equation
+# Characteristic polynomial of the Jacobian matrix
 
-`det (λ I - J) = (λ + 1)³ + a³` for `J = -I - a P`.
+For every real `a`, the characteristic polynomial of the [Jacobian matrix](jacobian.md) `J(a)` is
+`det(X I − J(a)) = (X + 1)³ + a³`.

@@ -1,4 +1,4 @@
-# Nonzero crossing speed
+# For n ≥ 1, β > 0 and μ > 0, the crossing speed has positive real part
 
-For `n ≥ 1`, `μ > 0`, `β > 0`, `a(μ) > 0`, the real part of the
-crossing speed is positive.
+For `n ≥ 1`, `β > 0` and `μ > 0`, the [crossing speed](hopf-speed.md) `s(μ)` has positive real part.
+No Hopf condition is assumed; the loop gain `a(μ)` is then positive.

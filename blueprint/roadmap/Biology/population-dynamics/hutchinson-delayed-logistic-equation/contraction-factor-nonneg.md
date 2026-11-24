@@ -1,3 +1,3 @@
-# Contraction Factor nonneg
+# For nonnegative arguments the contraction factor is nonnegative
 
-`ρ(a, m) ≥ 0` for `a, m ≥ 0`.
+For `a ≥ 0` and `m ≥ 0`, the [contraction factor](contraction-factor.md) satisfies `ρ(a, m) ≥ 0`.

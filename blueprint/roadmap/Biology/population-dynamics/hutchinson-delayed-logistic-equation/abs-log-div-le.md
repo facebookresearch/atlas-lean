@@ -1,3 +1,4 @@
-# Abs log div le
+# Log-ratio bound near the carrying capacity
 
-`|x - K| ≤ δ ≤ K / 2` gives `|log (x / K)| ≤ 2 δ / K`.
+For `K > 0` and reals `x` and `δ` with `δ ≤ K / 2` and `|x - K| ≤ δ`, `|log(x / K)| ≤ 2 δ / K`.
+(Then `x ≥ K / 2 > 0`.)

@@ -1,5 +1,13 @@
-# Substrate Error Const
+# Constant of the slow-window substrate estimate
 
-The constant of the substrate estimate on the slow window `[0, T]`:
-`(k₁ s₀ + kb) (1 / (kb + k₂) + (k₁ s₀ + kb) / K / (kb + k₂) · T)`. It grows linearly in
-`T`.
+For real $k_1, k_b, k_2, s_0$ and $T$, the constant of the substrate estimate on the slow window
+$[0, T]$ is
+
+$$
+C(T) = (k_1 s_0 + k_b) \Bigl(\frac{1}{k_b + k_2} +
+\frac{(k_1 s_0 + k_b)\, T}{K_M (k_b + k_2)}\Bigr),
+$$
+
+with the [Michaelis constant](michaelis-constant.md) $K_M = (k_b + k_2)/k_1$ and quotients by $0$
+read as $0$. It is affine in $T$; for $k_1 > 0$, $k_b \ge 0$, $k_2 > 0$ and $s_0 > 0$ it is positive
+at $T = 0$ and increases linearly with $T$.

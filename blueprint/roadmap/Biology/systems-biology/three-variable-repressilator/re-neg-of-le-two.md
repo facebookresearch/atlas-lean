@@ -1,5 +1,8 @@
-# No Hopf bifurcation for `n ≤ 2`
+# For n ≤ 2, the symmetric equilibrium is linearly stable
 
-For every equilibrium level `p ≥ 0` (equivalently every
-`α ≥ 0`), every eigenvalue of the linearization at the symmetric equilibrium has negative real
-part; in particular none lies on the imaginary axis.
+For `n ≤ 2` and every `p ≥ 0`, every complex root `z` of the
+[characteristic polynomial of the linearization](lin-charpoly.md) of the
+[repressilator field](vector-field.md) with Hill coefficient `n` and rate `α = p (1 + pⁿ)` at the
+symmetric state `(p, p, p)` satisfies `Re z < 0`; in particular no eigenvalue lies on the imaginary
+axis. Every `α > 0` equals `p (1 + pⁿ)` for [exactly one](exists-unique-eq-level.md) `p > 0`, and
+`α = 0` corresponds to `p = 0`, so this covers every rate `α ≥ 0`.

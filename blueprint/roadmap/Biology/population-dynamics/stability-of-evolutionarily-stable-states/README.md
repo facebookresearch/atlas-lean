@@ -1,17 +1,25 @@
 # Stability of evolutionarily stable states
 
-- [Is Nash](is-nash.md)
-- [Is ESS](is-ess.md)
-- [Rel Entropy](rel-entropy.md)
-- [Mean Fitness mul Vec](mean-fitness-mul-vec.md)
-- [Is Nash](is-nash-2.md)
+## Nash equilibria and evolutionarily stable states
+
+- [Symmetric Nash equilibrium of a matrix game](is-nash.md)
+- [Evolutionarily stable state of a matrix game](is-ess.md)
+- [An evolutionarily stable state is a Nash equilibrium](is-nash-2.md)
+- [The mean fitness of a matrix game is the payoff against oneself](mean-fitness-mul-vec.md)
 - [Interior Nash equilibria are equalizers](mul-vec-eq-of-pos.md)
-- [Dot Product mul Vec eq of pos](dot-product-mul-vec-eq-of-pos.md)
-- [An interior ESS beats every other state](dot-product-mul-vec-lt-of-pos.md)
-- [Dot Product mul Vec sub nonneg](dot-product-mul-vec-sub-nonneg.md)
-- [The Lyapunov function is positive away from `p`](rel-entropy-pos.md)
-- [Derivative of the Lyapunov function](has-deriv-at-rel-entropy.md)
+- [Against an interior Nash equilibrium all mixed strategies earn alike](dot-product-mul-vec-eq-of-pos.md)
+- [An interior evolutionarily stable state beats all other mixed states](dot-product-mul-vec-lt-of-pos.md)
+- [Payoff advantage of an interior evolutionarily stable state is ≥ 0](dot-product-mul-vec-sub-nonneg.md)
+
+## The relative entropy Lyapunov function
+
+- [Relative entropy Lyapunov function](rel-entropy.md)
+- [The relative entropy is positive away from p](rel-entropy-pos.md)
+- [Derivative of the relative entropy along a replicator solution](has-deriv-at-rel-entropy.md)
+
+## Stability under the replicator dynamics
+
 - [Global forward existence for matrix games](exists-is-solution-mul-vec.md)
-- [Lyapunov stability of an interior ESS](lyapunov-stable.md)
-- [Local attraction of an interior ESS](tendsto-nhds.md)
-- [An interior ESS is locally asymptotically stable](asymptotically-stable.md)
+- [Lyapunov stability of an interior evolutionarily stable state](lyapunov-stable.md)
+- [Local attraction of an interior evolutionarily stable state](tendsto-nhds.md)
+- [An interior evolutionarily stable state is asymptotically stable](asymptotically-stable.md)

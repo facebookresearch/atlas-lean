@@ -1,4 +1,5 @@
-# Is Linearly Unstable
+# Linear instability of a trace–determinant pair
 
-Linear instability of a trace–determinant pair: some root of `z² - τ z + Δ` lies in the open
-right half-plane.
+A pair of real numbers $(\tau, \Delta)$ is linearly unstable if some
+[characteristic root](is-char-root.md) $z$ of $(\tau, \Delta)$, that is, some complex root of
+$z^2 - \tau z + \Delta$, satisfies $\operatorname{Re} z > 0$.

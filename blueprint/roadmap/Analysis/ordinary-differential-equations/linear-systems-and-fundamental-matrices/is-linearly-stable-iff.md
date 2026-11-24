@@ -1,4 +1,5 @@
-# Routh–Hurwitz for planar systems
+# Routh–Hurwitz criterion for planar systems
 
-All roots lie in the open left half-plane iff `τ < 0`
-and `Δ > 0`.
+For real numbers $\tau$ and $\Delta$, the pair $(\tau, \Delta)$ is
+[linearly stable](is-linearly-stable.md), that is, every complex root of $z^2 - \tau z + \Delta$ has
+negative real part, if and only if $\tau < 0$ and $\Delta > 0$.

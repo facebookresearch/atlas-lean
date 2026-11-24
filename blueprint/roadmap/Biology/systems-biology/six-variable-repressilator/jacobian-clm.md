@@ -1,3 +1,4 @@
-# Jacobian CLM
+# Linear map of the six-variable Jacobian matrix
 
-The continuous linear map of `jacobian a β`.
+For real `a` and `β`, the continuous linear map `ℝ⁶ → ℝ⁶`, `v ↦ J(a, β) v`, of the
+[Jacobian matrix](jacobian.md) `J(a, β)`.

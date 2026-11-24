@@ -1,4 +1,8 @@
-# Rev MMRate
+# Reversible Michaelis–Menten rate law
 
-The reversible Michaelis–Menten rate law (per unit total enzyme),
-`v(s, p) = (k₁ k₂ s - kb kb₂ p) / (k₁ s + kb₂ p + kb + k₂)`.
+For real $k_1, k_{-1}, k_2, k_{-2}$ and concentrations $s, p$, the reversible Michaelis–Menten rate
+law per unit total enzyme is
+
+$$v(s, p) = \frac{k_1 k_2 s - k_{-1} k_{-2} p}{k_1 s + k_{-2} p + k_{-1} + k_2},$$
+
+with the quotient read as $0$ when the denominator is $0$.

@@ -1,34 +1,34 @@
-# The Michaelis–Menten QSSA contract: small parameter, slow-time window, initial layer
+# The Michaelis–Menten QSSA contract
 
 ## Nondimensional parameters and time scales
 
-- [Qssa Epsilon](qssa-epsilon.md)
-- [Qssa Kappa](qssa-kappa.md)
-- [Slow Time Scale](slow-time-scale.md)
-- [Fast Time Scale](fast-time-scale.md)
-- [Reduced Field](reduced-field.md)
-- [Slow Manifold](slow-manifold.md)
-- [Qssa Epsilon lt div](qssa-epsilon-lt-div.md)
-- [Time-scale separation](fast-time-scale-div-slow-time-scale.md)
-- [Fast Time Scale div slow Time Scale lt](fast-time-scale-div-slow-time-scale-lt.md)
+- [Segel–Slemrod small parameter](qssa-epsilon.md)
+- [Dimensionless Michaelis constant](qssa-kappa.md)
+- [Slow time scale of substrate depletion](slow-time-scale.md)
+- [Fast time scale of complex formation](fast-time-scale.md)
+- [Reduced vector field in slow time](reduced-field.md)
+- [Slow manifold in scaled variables](slow-manifold.md)
+- [The Segel–Slemrod parameter is below the Heineken–Tsuchiya–Aris one](qssa-epsilon-lt-div.md)
+- [Ratio of the fast to the slow time scale](fast-time-scale-div-slow-time-scale.md)
+- [The fast-to-slow time-scale ratio is below ε](fast-time-scale-div-slow-time-scale-lt.md)
 
 ## The algebraic QSSA relation (elimination, not a limit theorem)
 
-- [Algebraic QSSA, slow manifold](qss-complex-div-eq-slow-manifold.md)
-- [Algebraic QSSA, reduced field](slow-time-scale-mul-substrate-rate-qss.md)
-- [Complex Rate initial pos](complex-rate-initial-pos.md)
+- [In scaled variables the QSS complex is the slow manifold](qss-complex-div-eq-slow-manifold.md)
+- [On the QSS manifold the rescaled substrate rate is the reduced field](slow-time-scale-mul-substrate-rate-qss.md)
+- [At the standard initial data the complex rate is positive](complex-rate-initial-pos.md)
 
 ## Solutions on the slow-time window
 
-- [Is Solution On](is-solution-on.md)
-- [Is Solution On](is-solution-on-2.md)
-- [Is Reduced Solution On](is-reduced-solution-on.md)
+- [Solution of the Michaelis–Menten system on a time window](is-solution-on.md)
+- [A global solution solves the system on every window](is-solution-on-2.md)
+- [Solution of the reduced problem on a slow-time window](is-reduced-solution-on.md)
 
 ## The contract
 
-- [The QSSA contract](qssacontract.md)
+- [QSSA contract for the Michaelis–Menten system](qssacontract.md)
 
 ## Why the initial layer is excluded
 
-- [Initial-layer gap](initial-layer-gap.md)
-- [Not complex le at zero](not-complex-le-at-zero.md)
+- [Initial-layer gap of the complex at slow time zero](initial-layer-gap.md)
+- [When C ε is below the initial-layer gap, the bound fails at θ = 0](not-complex-le-at-zero.md)

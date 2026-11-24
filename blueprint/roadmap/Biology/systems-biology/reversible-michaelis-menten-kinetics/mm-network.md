@@ -1,5 +1,9 @@
-# Mm Network
+# Reversible Michaelis–Menten mechanism as a reaction network
 
-The reversible Michaelis–Menten mechanism `E + S ⇌ C ⇌ E + P` as a mass-action reaction
-network on the species `s, c, e, p` (indices `0, 1, 2, 3`, as in `revField`). Reactions:
-`0 : E + S → C`, `1 : C → E + S`, `2 : C → E + P`, `3 : E + P → C`.
+The reversible Michaelis–Menten mechanism $E + S \rightleftharpoons C \rightleftharpoons E + P$ is
+the [chemical reaction network](../../../Dynamics/smooth-dynamics/reaction-network.md) on the four
+species $s, c, e, p$ (substrate, complex, free enzyme, product) with the four reactions
+
+$$E + S \to C, \qquad C \to E + S, \qquad C \to E + P, \qquad E + P \to C,$$
+
+numbered $0$ to $3$ in this order.

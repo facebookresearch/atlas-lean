@@ -1,4 +1,6 @@
-# Nullclines Tangent
+# Tangent nullclines
 
-The nullclines are **tangent** at `(u, v)`: the point lies on both nullclines (`uDot = 0` and
-`vDot = 0`) and their tangent vectors there are parallel (`NullclineTangentsParallel`).
+For reals `α₁, α₂`, `β, γ ∈ ℕ` and reals `u, v`, the nullclines of the toggle switch
+`u' = α₁ / (1 + v^β) − u`, `v' = α₂ / (1 + u^γ) − v` are tangent at `(u, v)` if both right-hand
+sides vanish at `(u, v)` and the [nullcline directions are parallel](nullcline-tangents-parallel.md)
+there. No sign condition on `u, v` is imposed.

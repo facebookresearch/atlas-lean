@@ -1,8 +1,7 @@
-# Eq of initial
+# Lotka–Volterra solutions with the same positive start agree for t ≥ 0
 
-LV3: `_hα`, `_hβ`, `_hγ`, `_hδ` encode positivity of the real parameters.
-`x y u v : ℝ → ℝ`, with `hx`, `hy`, `hu`, `hv`, encode two solutions with
-both two-sided derivative equations at every real `t ≥ 0`. `_hx0`, `_hy0`
-encode positivity of the first initial pair; `hxu`, `hyv` encode equality of
-both initial coordinates, hence positivity of the second initial pair too.
-The conclusion asserts equality of both coordinates at every nonnegative time.
+Let $\alpha, \beta, \gamma, \delta > 0$, and let $(x, y)$ and $(u, v)$ be pairs of functions
+$\mathbb{R} \to \mathbb{R}$ with two-sided derivatives at every $t \ge 0$ satisfying there
+$x' = \alpha x - \beta x y$, $y' = \delta x y - \gamma y$ and $u' = \alpha u - \beta u v$,
+$v' = \delta u v - \gamma v$. If $x(0) > 0$, $y(0) > 0$, $u(0) = x(0)$ and $v(0) = y(0)$, then
+$x(t) = u(t)$ and $y(t) = v(t)$ for every $t \ge 0$.

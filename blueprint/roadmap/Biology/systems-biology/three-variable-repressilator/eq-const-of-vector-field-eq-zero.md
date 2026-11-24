@@ -1,5 +1,6 @@
-# Eq const of vector Field eq zero
+# For n ≥ 1, the only nonnegative equilibrium is symmetric
 
-For `n ≥ 1` and `α > 0`, the symmetric equilibrium is the only equilibrium of (R) in the
-closed nonnegative orthant: if `x ≥ 0` is an equilibrium and `p ≥ 0` with `p (1 + pⁿ) = α`,
-then `x = (p, p, p)`.
+Let `n ≥ 1`, `α > 0` and `p ≥ 0` with `p (1 + pⁿ) = α`. If `x ∈ ℝ³` has nonnegative entries and
+`F(x) = 0` for the [repressilator field](vector-field.md) with Hill coefficient `n` and rate `α`,
+then `x = (p, p, p)`: the symmetric equilibrium is the only equilibrium in the closed nonnegative
+orthant.

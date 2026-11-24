@@ -1,7 +1,6 @@
-# Forward uniqueness
+# Forward uniqueness of Michaelis–Menten solutions
 
-Two solutions of the Michaelis–Menten system (any real rate
-constants) with the same initial values agree at every time `t ≥ 0`.
-
-Proof: on `[0, t]` both packed curves lie in a common closed ball, on which the polynomial field
-is Lipschitz; apply Mathlib's `ODE_solution_unique_of_mem_Icc_right`.
+For all real $k_1, k_b, k_2$, two [solutions](../is-solution.md) $(s, c, e, p)$ and
+$(s', c', e', p')$ of the Michaelis–Menten mass-action system with the same values at $t = 0$ agree
+at every $t \ge 0$. The proof uses that on $[0, t]$ both packed curves lie in a closed ball, on
+which the polynomial field is Lipschitz.

@@ -1,4 +1,6 @@
-# Loss of stability at the critical delay
+# For r > 0, i r is a characteristic root at the critical delay
 
-At `τ = τ_c` the purely imaginary number
-`i r` is a characteristic root.
+For `r > 0`, the purely imaginary number `i r` is a root of the
+[characteristic function](char-fun.md) `z + r e^{-z τ}` at the
+[critical delay](critical-delay.md) `τ = τ_c = π / (2 r)`, where characteristic roots reach the
+imaginary axis.

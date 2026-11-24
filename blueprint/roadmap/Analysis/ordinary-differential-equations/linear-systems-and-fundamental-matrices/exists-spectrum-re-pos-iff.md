@@ -1,4 +1,5 @@
-# Instability criterion for `2 × 2` matrices
+# Instability criterion for real 2 × 2 matrices
 
-A real `2 × 2` matrix has a complex eigenvalue
-with positive real part iff its trace is positive or its determinant negative.
+For a real $2 \times 2$ matrix $M$, some element of the spectrum of $M$ over $\mathbb{C}$, that is,
+of the complex matrix with the same entries, has positive real part if and only if
+$\operatorname{tr} M > 0$ or $\det M < 0$.

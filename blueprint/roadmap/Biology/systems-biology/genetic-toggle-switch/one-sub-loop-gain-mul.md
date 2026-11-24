@@ -1,3 +1,6 @@
-# One sub loop Gain mul
+# At an equilibrium, 1 − P is u times the cubic's slope, rescaled
 
-At an equilibrium, `(1 - P) · a (1 + u²) = u · cubic' u`.
+For `a > 0` and `b > 0` and an [equilibrium](is-equilibrium.md) `(u, v)` of the toggle switch with
+Hill exponents `β = 1`, `γ = 2` and rates `a = α₁`, `b = α₂`, the [loop gain](loop-gain.md) `P`
+satisfies `(1 − P) · a (1 + u²) = u · c'(u)`, where `c'` is the [derivative](cubic-deriv.md)
+`c'(u) = 3u² − 2a u + (1 + b)`.

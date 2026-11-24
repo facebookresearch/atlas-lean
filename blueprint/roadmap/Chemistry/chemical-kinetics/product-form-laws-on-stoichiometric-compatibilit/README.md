@@ -2,45 +2,49 @@
 
 ## Reaction-closed sets and compatibility classes
 
-- [Compat Class](compat-class.md)
-- [Is Reaction Closed](is-reaction-closed.md)
-- [Reaction Vector mem](reaction-vector-mem.md)
-- [Is Reaction Closed compat Class](is-reaction-closed-compat-class.md)
-- [Src le unfire](src-le-unfire.md)
-- [Total Class](total-class.md)
-- [Is Reaction Closed total Class](is-reaction-closed-total-class.md)
+- [Stoichiometric compatibility class of a state](compat-class.md)
+- [Reaction-closed set of states](is-reaction-closed.md)
+- [Each reaction vector lies in the stoichiometric subspace](reaction-vector-mem.md)
+- [Compatibility classes are reaction-closed](is-reaction-closed-compat-class.md)
+- [The source complex fits into the predecessor of every state](src-le-unfire.md)
+- [States with a given total molecule count](total-class.md)
+- [Total-count sets are reaction-closed when reactions conserve the count](is-reaction-closed-total-class.md)
 
 ## Restricting solutions of the master equation
 
-- [Is Stationary Master Solution indicator](is-stationary-master-solution-indicator.md)
-- [Is Stationary Master Solution div const](is-stationary-master-solution-div-const.md)
+- [Restricting a master-equation solution to a reaction-closed set](is-stationary-master-solution-indicator.md)
+- [Dividing a master-equation solution by a constant gives a solution](is-stationary-master-solution-div-const.md)
 
 ## The conditioned law
 
-- [Class Mass](class-mass.md)
-- [Conditioned Law](conditioned-law.md)
-- [Class Mass pos](class-mass-pos.md)
-- [Has Sum conditioned Law](has-sum-conditioned-law.md)
-- [Conditioned product form solves the master equation](is-stationary-master-solution-conditione.md)
-- [Stationary law on a compatibility class](conditioned-law-spec.md)
-- [Conditioned Law coe finset](conditioned-law-coe-finset.md)
+- [Poisson mass of a set of states](class-mass.md)
+- [Product-form law conditioned on a set of states](conditioned-law.md)
+- [For positive means, a nonempty set of states has positive mass](class-mass-pos.md)
+- [For positive means and a nonempty set, the conditioned law sums to one](has-sum-conditioned-law.md)
+- [Complex balance makes the law on a reaction-closed set stationary](is-stationary-master-solution-conditione.md)
+- [Complex balance at c > 0: a stationary law on each compatibility class](conditioned-law-spec.md)
+- [On a finite set, the conditioned law is the normalized Poisson law](conditioned-law-coe-finset.md)
 
-## The law does not depend on the complex-balanced equilibrium
+## Changing the complex-balanced equilibrium
 
-- [Conditioned Law eq of forall mem](conditioned-law-eq-of-forall-mem.md)
-- [Poisson Weight eq exp](poisson-weight-eq-exp.md)
-- [Conditioned Law compat Class eq of orthogonal](conditioned-law-compat-class-eq-of-ortho.md)
-- [The conditioned law depends only on the class](conditioned-law-compat-class-eq.md)
+- [Weights proportional on a set with a nonzero factor give the same law](conditioned-law-eq-of-forall-mem.md)
+- [Exponential form of the Poisson weight for positive means](poisson-weight-eq-exp.md)
+- [Positive means with log-ratio orthogonal to 𝒮 give the same class laws](conditioned-law-compat-class-eq-of-ortho.md)
+- [For κ > 0, all positive complex-balanced c give the same class law](conditioned-law-compat-class-eq.md)
 
 ## Conservation of the total count: the multinomial law
 
-- [Poisson Weight eq mul](poisson-weight-eq-mul.md)
-- [Prod div prod factorial](prod-div-prod-factorial.md)
-- [Class Mass total Class](class-mass-total-class.md)
-- [Multinomial law on its support](conditioned-law-total-class.md)
-- [Multinomial law, as a law](conditioned-law-total-class-eq-multinomi.md)
+- [Splitting off the exponential factor of the Poisson weight](poisson-weight-eq-mul.md)
+- [Monomial over factorials in terms of the multinomial coefficient](prod-div-prod-factorial.md)
+- [Poisson mass of the states with total count n](class-mass-total-class.md)
+- [Multinomial formula for the law conditioned on a state's total count](conditioned-law-total-class.md)
+- [For each total n, the conditioned law is the multinomial mass function](conditioned-law-total-class-eq-multinomi.md)
 
 ## The conditioned law as a conditional probability
 
-- [Poisson PMF](poisson-pmf.md)
-- [The conditioned law is a conditional probability](cond-poisson-pmf-singleton.md)
+- [Product-form Poisson law as a probability mass function](poisson-pmf.md)
+- [The conditioned law is a conditional probability under the Poisson law](cond-poisson-pmf-singleton.md)
+
+## Related topics
+
+- [Complex balancing and the deficiency-zero theorem](../../../Biology/systems-biology/complex-balancing-and-the-deficiency-zero-theore/README.md): the deterministic theory of complex balancing: complex-balanced states are equilibria of the mass-action system, and a weakly reversible network of deficiency zero with finitely many species and reactions has a complex-balanced state with positive coordinates for every choice of positive rate constants, so the product-form results apply to it.

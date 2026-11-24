@@ -1,3 +1,3 @@
-# Sqrt five sub one div lt critical Delay
+# The nonlinear stability bound lies below the critical delay
 
-`(√5 - 1) / r < τ_c = π / (2 r)` for `r > 0`.
+For `r > 0`, `(√5 - 1) / r < τ_c = π / (2 r)`, the [critical delay](critical-delay.md).

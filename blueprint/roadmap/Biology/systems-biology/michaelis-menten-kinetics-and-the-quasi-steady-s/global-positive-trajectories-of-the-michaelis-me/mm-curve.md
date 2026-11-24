@@ -1,3 +1,4 @@
-# Mm Curve
+# Packed curve of the four concentrations
 
-The curve in `Fin 4 → ℝ` obtained by packing `s`, `c`, `e`, `p`.
+For functions $s, c, e, p : \mathbb{R} \to \mathbb{R}$, the packed curve is
+$t \mapsto (s(t), c(t), e(t), p(t)) \in \mathbb{R}^4$.

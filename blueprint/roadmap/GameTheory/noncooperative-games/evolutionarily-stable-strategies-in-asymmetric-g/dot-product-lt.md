@@ -1,4 +1,4 @@
-# Dot Product lt
+# A unique best pure reply strictly beats every other mixed strategy
 
-If pure strategy `i` is the unique maximizer of `v`, every other mixed strategy earns
-strictly less than `v i`.
+For a finite set `ι`, a payoff vector `v`, a strategy `i` with `v_j < v_i` for every `j ≠ i`, and a
+[mixed strategy](is-mixed.md) `p` different from the point mass at `i`, `p · v < v_i`.

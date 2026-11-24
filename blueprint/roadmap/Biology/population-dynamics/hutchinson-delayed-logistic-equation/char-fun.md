@@ -1,4 +1,4 @@
-# Char Fun
+# Characteristic function of the linearized delayed logistic equation
 
-The characteristic function `z + r e^{-z τ}` of the linearized equation
-`u'(t) = -r u(t - τ)`.
+For real numbers `r` and `τ`, the characteristic function of the linearized equation
+`u'(t) = -r u(t - τ)` is `z ↦ z + r e^{-z τ}` on the complex numbers.

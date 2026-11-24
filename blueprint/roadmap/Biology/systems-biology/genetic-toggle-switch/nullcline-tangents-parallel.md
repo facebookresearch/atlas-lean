@@ -1,6 +1,8 @@
-# Nullcline Tangents Parallel
+# Parallel nullcline directions
 
-The nullcline directions at `(u, v)` are parallel: the tangent vector `(∂_v hill, 1)` of the
-`u`-nullcline `u = α₁ / (1 + v ^ β)` at height `v` and the tangent vector `(1, ∂_u hill)` of the
-`v`-nullcline `v = α₂ / (1 + u ^ γ)` at abscissa `u` are parallel. This does not require `(u, v)`
-to lie on either nullcline; `NullclinesTangent` adds that.
+For reals `α₁, α₂`, `β, γ ∈ ℕ` and reals `u, v`, the nullcline directions at `(u, v)` are parallel
+if `det [[h₁'(v), 1], [1, h₂'(u)]] = 0`, with `h₁'`, `h₂'` the
+[derivative of the Hill repression](hill-deriv.md) functions; that is, if the
+[loop gain](loop-gain.md) `P` equals `1`. The vectors `(h₁'(v), 1)` and `(1, h₂'(u))` are the
+tangent vectors at height `v` of the curve `u = α₁ / (1 + v^β)` and at abscissa `u` of the curve
+`v = α₂ / (1 + u^γ)`. The point `(u, v)` need not lie on either curve.

@@ -1,5 +1,9 @@
-# The pseudo-Helmholtz function is a Lyapunov function for reversible Michaelis–Menten
+# Positive rates and totals: pseudo-Helmholtz function never increases
 
-For positive rate constants, a positive equilibrium `cstar`, nonnegative initial data and
-positive totals, `t ↦ pseudoHelmholtz cstar (s t, c t, e t, p t)` is nonincreasing on
-`[0, ∞)`, also for solutions that start on the boundary of the orthant.
+Let $k_1, k_{-1}, k_2, k_{-2} > 0$, let $c^*$ be a zero of the [reversible field](rev-field.md) with
+positive coordinates, and let $(s, c, e, p)$ be a [solution](is-solution.md) of the reversible
+Michaelis–Menten system with $s(0), c(0), e(0), p(0) \ge 0$, $e(0) + c(0) > 0$ and
+$s(0) + c(0) + p(0) > 0$. Then $t \mapsto G(s(t), c(t), e(t), p(t))$, for the
+[pseudo-Helmholtz function](../complex-balancing-and-the-deficiency-zero-theore/pseudo-helmholtz.md)
+$G$ relative to $c^*$, is nonincreasing on $[0, \infty)$. The solution may start on the boundary of
+the orthant.

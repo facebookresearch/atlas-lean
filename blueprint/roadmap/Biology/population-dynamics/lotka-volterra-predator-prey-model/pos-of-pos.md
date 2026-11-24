@@ -1,6 +1,8 @@
-# Pos of pos
+# Positive initial populations stay positive for t ≥ 0
 
-LV1: `α β γ δ : ℝ` with `_hα`, `_hβ`, `_hγ`, `_hδ` encode positive parameters.
-`x y : ℝ → ℝ` and `hx`, `hy` encode both two-sided derivative equations at every
-`t` with `0 ≤ t`. `hx0`, `hy0` encode positive initial populations. The conclusion
-quantifies over the same nonnegative times and asserts positivity of both coordinates.
+Let $\alpha, \beta, \gamma, \delta > 0$, and let $x, y : \mathbb{R} \to \mathbb{R}$ have two-sided
+derivatives at every $t \ge 0$ with
+
+$$x'(t) = \alpha x(t) - \beta x(t) y(t), \qquad y'(t) = \delta x(t) y(t) - \gamma y(t)$$
+
+there. If $x(0) > 0$ and $y(0) > 0$, then $x(t) > 0$ and $y(t) > 0$ for every $t \ge 0$.

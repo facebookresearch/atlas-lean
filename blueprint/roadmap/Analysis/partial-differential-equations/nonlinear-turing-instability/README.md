@@ -1,41 +1,53 @@
 # Nonlinear Turing instability
 
+From linear to nonlinear instability for the two-species reaction–diffusion system
+$u_t = D u_{xx} + f(u)$ on $[0, L]$ with Neumann boundary conditions, in the phase space
+$C([0, L], \mathbb{R}^2)$ with the sup norm. For $\operatorname{tr} J < 0$ and $d_u, d_v \ge 0$, an
+unstable mode has a real positive growth rate with a real eigenvector. If the C₀ linearized
+semigroup acts on an unstable Neumann mode through its modal ODE and has a growth bound
+$M e^{\omega t}$ with $\omega$ below $p$ times the growth rate, the flow starts at the identity and
+steps by its time-$T$ map along orbits near the steady state, and the nonlinear time-$T$ map equals
+the linear one up to a remainder of order $p > 1$, then the homogeneous steady state is nonlinearly
+unstable. The Neumann heat semigroup and the local flow enter as hypotheses. With $\det J > 0$ as
+well (kinetics stable without diffusion), the unstable mode is non-homogeneous and the instability
+is driven by diffusion.
+
 ## The real growth rate of an unstable mode
 
-- [Growth Rate](growth-rate.md)
-- [Growth Rate pos](growth-rate-pos.md)
-- [Growth Rate sq sub](growth-rate-sq-sub.md)
-- [Exists mul Vec eq growth Rate smul](exists-mul-vec-eq-growth-rate-smul.md)
-- [Unstable modes are real when `tr J < 0`](exists-growth-rate-of-is-unstable-mode.md)
+- [Growth rate of a Fourier mode: the largest real part of an eigenvalue](growth-rate.md)
+- [A negative mode determinant makes the growth rate positive](growth-rate-pos.md)
+- [For τ² − 4δ ≥ 0, the growth rate is a root of μ² − τμ + δ](growth-rate-sq-sub.md)
+- [If δ < 0, the growth rate is an eigenvalue with a real eigenvector](exists-mul-vec-eq-growth-rate-smul.md)
+- [For tr J < 0 and d_u, d_v ≥ 0, unstable modes grow at a real rate](exists-growth-rate-of-is-unstable-mode.md)
 
-## Neumann modes in the phase space `C([0, L]; ℝ²)`
+## Neumann modes on an interval
 
-- [Neumann Mode](neumann-mode.md)
-- [Norm neumann Mode](norm-neumann-mode.md)
-- [Neumann Mode ne zero](neumann-mode-ne-zero.md)
+- [Real Neumann mode x ↦ cos(k_n x) w on an interval](neumann-mode.md)
+- [For L ≥ 0, a Neumann mode has the sup norm of its amplitude](norm-neumann-mode.md)
+- [For L ≥ 0, a Neumann mode with nonzero amplitude is nonzero](neumann-mode-ne-zero.md)
 
 ## The linearized semigroup on a Neumann mode
 
-- [Acts By Modal ODE](acts-by-modal-ode.md)
-- [Eigenfunctions of the linearized semigroup](apply-eigen.md)
-- [Bounded orbits on a stable mode](exists-norm-apply-le.md)
+- [Operators acting on a Neumann mode through the ODE c′ = M c](acts-by-modal-ode.md)
+- [A Neumann mode along an eigenvector of M is an eigenfunction of S(t)](apply-eigen.md)
+- [On a mode acting through a stable matrix, orbits stay bounded](exists-norm-apply-le.md)
 
 ## Nonlinear instability from a time-map expansion
 
 - [Nonlinear instability from an unstable Neumann mode, time-map form](exists-escape-of-is-unstable-mode.md)
-- [Pos of is Unstable Mode neumann Wavenumber](pos-of-is-unstable-mode-neumann-wavenumb.md)
+- [If tr J < 0 < det J, an unstable Neumann mode has n ≥ 1](pos-of-is-unstable-mode-neumann-wavenumb.md)
 - [Nonlinear Turing instability, time-map form](turing-instability-exists-escape.md)
 
 ## The time-map expansion from a differentiable reaction
 
-- [Time-map expansion from a Hölder-differentiable reaction](exists-norm-time-map-sub-le.md)
+- [Time-T map expansion from a Hölder-differentiable reaction](exists-norm-time-map-sub-le.md)
 
-## The Turing reaction term at a homogeneous steady state
+## The reaction term at a homogeneous steady state
 
-- [Pointwise Matrix](pointwise-matrix.md)
-- [Differentiability of the Nemytskii reaction term](norm-nemytskii-sub-le.md)
+- [Pointwise action of a 2 × 2 matrix on fields with values in ℝ²](pointwise-matrix.md)
+- [The reaction term inherits the Hölder remainder of the kinetics](norm-nemytskii-sub-le.md)
 
-## Nonlinear instability in the PDE-01 mild formulation
+## Nonlinear instability in the mild formulation
 
-- [Nonlinear instability from an unstable Neumann mode (mild formulation)](exists-escape-of-is-unstable-mode-of-mil.md)
-- [Nonlinear Turing instability (mild formulation)](turing-instability-exists-escape-of-mild.md)
+- [Nonlinear instability from an unstable Neumann mode, mild formulation](exists-escape-of-is-unstable-mode-of-mil.md)
+- [Nonlinear Turing instability, mild formulation](turing-instability-exists-escape-of-mild.md)

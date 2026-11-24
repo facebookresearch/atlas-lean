@@ -1,3 +1,5 @@
-# Has Deriv At gain
+# Derivative of the loop gain at a nonnegative level
 
-The derivative of the loop gain: `a'(μ) = n² μⁿ⁻¹ / (1 + μⁿ)²`.
+For `n ∈ ℕ` and `μ ≥ 0`, the [loop gain](gain.md) `a(μ) = n μⁿ / (1 + μⁿ)` has derivative
+`a'(μ) = n² μⁿ⁻¹ / (1 + μⁿ)²` at `μ`, where `n − 1` is read as `0` for `n = 0` (the expression is
+then `0`).

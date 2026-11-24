@@ -1,4 +1,5 @@
-# Mm Rate nonneg and le
+# With Vmax ≥ 0, a positive Michaelis constant and s ≥ 0, 0 ≤ v ≤ Vmax
 
-The rate law lies in `[0, V_max]`: `0 ≤ v(s) ≤ V_max` for `s ≥ 0`, `V_max ≥ 0`, `K_M > 0`.
-The upper bound is `mmRate_lt` for `V_max > 0`; at `V_max = 0` the rate is `0`.
+Let $V_{\max} \ge 0$, $K_M > 0$ and $s \ge 0$. The [Michaelis–Menten rate law](mm-rate.md)
+$v(s) = V_{\max} s/(K_M + s)$ satisfies $0 \le v(s) \le V_{\max}$. For $V_{\max} > 0$ the upper
+bound is [strict](mm-rate-lt.md); for $V_{\max} = 0$ the rate is $0$.

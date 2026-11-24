@@ -1,5 +1,6 @@
-# Two-species case
+# Two-species Lotka–Volterra field is the predator–prey field
 
-With `r = ![α, -γ]` and `B = !![0, -β; δ, 0]`, `lvField` is the
-predator–prey field `x' = α x - β x y`, `y' = δ x y - γ y` of
-`Domains.Biology.Dynamics.LotkaVolterra`.
+For real numbers `α`, `β`, `γ`, `δ`, `x` and `y`, the [Lotka–Volterra field](lv-field.md) of two
+species with growth rates `r = (α, -γ)` and interaction matrix `B` with rows `(0, -β)` and
+`(δ, 0)`, at the densities `(x, y)`, is `(α x - β x y, δ x y - γ y)`: the field of the
+[predator–prey model](../lotka-volterra-predator-prey-model/README.md).

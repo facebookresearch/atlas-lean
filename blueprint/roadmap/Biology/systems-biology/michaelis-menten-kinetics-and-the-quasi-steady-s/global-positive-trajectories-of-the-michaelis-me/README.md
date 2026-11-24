@@ -2,25 +2,25 @@
 
 ## The vector field
 
-- [Mm Field](mm-field.md)
-- [Mm Curve](mm-curve.md)
-- [Is Solution iff has Deriv At mm Curve](is-solution-iff-has-deriv-at-mm-curve.md)
-- [Mm Field cont Diff](mm-field-cont-diff.md)
+- [Michaelis–Menten mass-action field on four coordinates](mm-field.md)
+- [Packed curve of the four concentrations](mm-curve.md)
+- [A solution is a curve whose derivative is the field from time zero](is-solution-iff-has-deriv-at-mm-curve.md)
+- [The Michaelis–Menten field is smooth](mm-field-cont-diff.md)
 
 ## Forward-global existence
 
-- [Global positive Michaelis–Menten trajectories](exists-is-solution-nonneg.md)
+- [Global nonnegative trajectories exist from nonnegative data](exists-is-solution-nonneg.md)
 
 ## Forward uniqueness and invariance for every solution
 
-- [Forward uniqueness](eq-of-initial.md)
-- [Invariance of the nonnegative orthant](nonneg.md)
-- [Substrate pos of nonneg](substrate-pos-of-nonneg.md)
-- [Complex pos](complex-pos.md)
-- [Enzyme pos](enzyme-pos.md)
-- [Unprepared initial complex](complex-pos-of-pos.md)
+- [Forward uniqueness of Michaelis–Menten solutions](eq-of-initial.md)
+- [With nonnegative rates and data, every solution stays nonnegative](nonneg.md)
+- [For nonnegative rates and c₀, e₀ ≥ 0, a positive substrate stays so](substrate-pos-of-nonneg.md)
+- [For nonnegative rates and s₀, e₀ ≥ 0, a positive complex stays so](complex-pos.md)
+- [For nonnegative rates and s₀, c₀ ≥ 0, positive free enzyme stays so](enzyme-pos.md)
+- [With k₁ > 0 and s₀, e₀ > 0, the complex is positive at every t > 0](complex-pos-of-pos.md)
 
 ## Zero substrate
 
-- [Zero substrate](is-solution-zero-substrate.md)
-- [Eq zero Substrate](eq-zero-substrate.md)
+- [With no substrate and no complex the state is an equilibrium](is-solution-zero-substrate.md)
+- [A solution starting without substrate or complex stays at rest](eq-zero-substrate.md)

@@ -1,4 +1,6 @@
-# Ncard equilibria two
+# For β = γ = 2, equilibria are counted by positive roots of the quintic
 
-The number of equilibria of the `β = γ = 2` toggle switch is the number of positive roots of
-`equilibriumPolyTwo a b` (all of its real roots are positive).
+For `a > 0` and `b > 0`, the number of [equilibria](is-equilibrium.md) of the toggle switch with
+Hill exponents `β = γ = 2` and rates `a = α₁`, `b = α₂` equals the number of positive real roots of
+the [equilibrium quintic](equilibrium-poly-two.md) `X⁵ − a X⁴ + 2 X³ − 2a X² + (1 + b²) X − a`; all
+of its real roots are positive.

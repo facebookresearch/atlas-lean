@@ -1,4 +1,6 @@
-# Exists is Char Root
+# A characteristic root with real part at least τ / 2
 
-A characteristic root with real part at least `τ / 2`, which is positive when `Δ < 0` and
-nonnegative when `Δ ≤ 0` (an explicit root of the quadratic).
+For all real $\tau$ and $\Delta$ there is a [characteristic root](is-char-root.md) $z$ of
+$(\tau, \Delta)$ with $\operatorname{Re} z \ge \tau / 2$, with $\operatorname{Re} z > 0$ if
+$\Delta < 0$, and with $\operatorname{Re} z \ge 0$ if $\Delta \le 0$. One such root is given
+explicitly by the quadratic formula.
