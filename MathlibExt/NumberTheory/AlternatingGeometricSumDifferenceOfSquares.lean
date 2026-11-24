@@ -22,8 +22,6 @@ the difference of two consecutive integer squares.
 
 namespace MathlibExt.NumberTheory.GeometricSumsTwoSquaresWanted
 
--- The hypotheses on `n` are retained from Proposition 9; the parity argument does not use them.
-set_option linter.unusedVariables false in
 /-- **Alternating geometric sums for primes $p \equiv 3 \pmod 4$ and odd $n$ are differences of
 two squares.** Let $p$ be a prime with $p \equiv 3 \pmod 4$ and let $n$ be a positive odd integer.
 Then there are integers $a, b$ with
@@ -38,8 +36,10 @@ public theorem altGeomSum_eq_sq_sub_sq (p n : ℕ) (hp : p.Prime)
       (∑ j ∈ Finset.range p, (-1 : ℤ) ^ j * (p : ℤ) ^ (n * j)) =
         a ^ 2 - b ^ 2 := by
   have hpOdd : Odd (p : ℤ) := (Int.odd_natCast p).2 (hp.odd_of_ne_two (by omega))
-  have hterm (j : ℕ) : (-1 : ℤ) ^ j * (p : ℤ) ^ (n * j) ≡ 1 [ZMOD 2] :=
-    Int.odd_iff.mp (odd_neg_one.pow.mul hpOdd.pow)
+  have hbase : Odd ((-(p : ℤ)) ^ n) := (Int.odd_pow' hn0.ne').2 hpOdd.neg
+  have hterm (j : ℕ) : (-1 : ℤ) ^ j * (p : ℤ) ^ (n * j) ≡ 1 [ZMOD 2] := by
+    rw [pow_mul, ← mul_pow, ← neg_eq_neg_one_mul, ← hn.neg_pow]
+    exact Int.odd_iff.mp hbase.pow
   have hsum : (∑ j ∈ Finset.range p, (-1 : ℤ) ^ j * (p : ℤ) ^ (n * j)) ≡ (p : ℤ) [ZMOD 2] := by
     simpa only [Finset.sum_const, Finset.card_range, nsmul_one] using
       Int.ModEq.sum (s := Finset.range p) (fun j _ ↦ hterm j)
