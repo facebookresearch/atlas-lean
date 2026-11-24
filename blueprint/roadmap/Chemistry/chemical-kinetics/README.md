@@ -5,9 +5,12 @@ Rates of chemical reactions and well-mixed reactors: integrated rate laws and ha
 - [Arrhenius law](arrhenius-law/README.md)
 - [Conservation laws of reaction networks](conservation-laws-of-reaction-networks/README.md)
 - [Continuous stirred-tank reactor](continuous-stirred-tank-reactor/README.md)
+- [Electrode kinetics](electrode-kinetics/README.md)
 - [Exothermic stirred-tank reactor](exothermic-stirred-tank-reactor/README.md)
 - [First-order decay kinetics](first-order-decay-kinetics/README.md)
+- [Premixed flame fronts](premixed-flame-fronts/README.md)
 - [Rate laws](rate-laws/README.md)
+- [Reaction-diffusion systems](reaction-diffusion-systems/README.md)
 - [Thermal runaway and combustion acoustics](thermal-runaway-and-combustion-acoustics/README.md)
 
 - [Plug-flow reactors](plug-flow-reactor/README.md)
