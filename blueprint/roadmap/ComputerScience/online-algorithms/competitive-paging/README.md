@@ -45,3 +45,5 @@
 - [FIFO is $k$-competitive](fifo-misses-le.md)
 - [FIFO is $k$-competitive against the offline optimum](fifo-misses-le-furthest-in-future.md)
 - [The ratio $k$ is tight for FIFO](fifo-not-competitive-of-lt.md)
+- [Belady's anomaly for FIFO page replacement](belady-s-anomaly-for-fifo-page-replacement.md)
+- [Resource-augmented competitiveness of LRU](resource-augmented-competitiveness-of-lru.md)
