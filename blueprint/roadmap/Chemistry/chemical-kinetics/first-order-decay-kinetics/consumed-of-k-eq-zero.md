@@ -1,3 +1,4 @@
-# Consumed of k eq zero
+# Nothing is consumed at zero rate constant
 
-With rate constant zero, nothing is consumed.
+For all real $c_0$ and $t$, the [consumed concentration](consumed.md) with rate constant $k = 0$ is
+$c_0 - c_0 e^{0} = 0$.

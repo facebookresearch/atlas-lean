@@ -1,5 +1,10 @@
-# Normal equations have AT MOST ONE solution
+# For identifiable $A$ the normal equations have at most one solution
 
-Any two solutions of
-`Aᵀ * A *ᵥ θ = Aᵀ *ᵥ y` agree, by injectivity of the normal matrix. Existence is a
-separate claim and is not asserted here.
+Let $A$ be a real $m \times n$ matrix such that the calibration model $y = A\theta$ is
+[identifiable](identifiable.md), and let $y \in \mathbb{R}^m$. If
+$\theta_1, \theta_2 \in \mathbb{R}^n$ both solve the normal equations
+
+$$(A^\top A)\,\theta = A^\top y,$$
+
+then $\theta_1 = \theta_2$, because the [normal matrix is injective](identifiable-normal-injective.md).
+The statement asserts uniqueness only: the existence of a solution is not part of it.

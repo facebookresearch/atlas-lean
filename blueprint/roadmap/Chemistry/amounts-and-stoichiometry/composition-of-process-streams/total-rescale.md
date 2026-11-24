@@ -1,3 +1,4 @@
-# Total rescale
+# Rescaling a stream multiplies its total flow by the factor
 
-Rescaling scales the total flow by the same factor.
+For a [process stream](stream-flow.md) with species flow rates `ṅ i` and a factor `0 ≤ α`, the
+[rescaled stream](rescale.md) has [total flow](total.md) `∑ i, α * ṅ i = α * ∑ i, ṅ i`.

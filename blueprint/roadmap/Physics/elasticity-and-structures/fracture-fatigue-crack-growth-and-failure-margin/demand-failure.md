@@ -1,3 +1,4 @@
-# Demand Failure
+# Failure event: the demand reaches the allowable
 
-The equality-inclusive failure event: the demand `s` reaches the allowable `A`.
+For real numbers $A$ (the allowable) and $s$ (the demand), the failure event is $A \le s$: the
+demand reaches or exceeds the allowable, equality included.

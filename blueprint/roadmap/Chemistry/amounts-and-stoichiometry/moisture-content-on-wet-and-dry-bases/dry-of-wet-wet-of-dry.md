@@ -1,3 +1,6 @@
-# Dry Of Wet wet Of Dry
+# For $X \ge 0$, converting from dry to wet basis and back returns $X$
 
-The two basis maps are inverse on nonnegative dry basis.
+For every real $X \ge 0$, the [wet basis](wet-of-dry.md) $w = X / (1 + X)$ and the
+[dry basis](dry-of-wet.md) of that $w$ give back $X$:
+
+$$\frac{w}{1 - w} = X \qquad \text{for } w = \frac{X}{1 + X} .$$

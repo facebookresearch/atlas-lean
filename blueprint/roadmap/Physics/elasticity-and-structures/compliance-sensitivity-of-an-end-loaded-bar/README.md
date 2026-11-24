@@ -1,61 +1,74 @@
 # Compliance sensitivity of an end-loaded bar
 
-## A. The bar under a tip force: zero distributed load
+A bar of length $L > 0$ and axial rigidity $EA \ne 0$ (a force; $EA > 0$ in the physical reading),
+fixed at $x = 0$ and loaded at $x = L$ by an end force $F$ along $+x$ with no distributed load, has
+the displacement $u(x) = F x / EA$ on $[0, L]$. As a spring it has the stiffness $k = EA / L$ and
+the tip displacement $u(L) = F / k$, and the compliance $J(F, k) = F \cdot F / k = F^2 / k$ is the
+work of the end force. For $k > 0$ its derivative is $dJ / dk = -F^2 / k^2$, negative for $F \ne 0$.
+The stiffness is then a design variable in an interval $[k_{\min}, k_{\max}]$ with $k_{\min} > 0$.
+For forces of magnitude at most $F_{\max}$ and stiffnesses at least $k_{\min}$ the change of $J$ is
+at most $(2 F_{\max} / k_{\min})\, |F - \hat F| + (F_{\max}^2 / k_{\min}^2)\, |k - \hat k|$, and for
+$k \ge k_{\min}$ a residual of the equilibrium $k\, u_{\mathrm{tip}} = F$ bounds the state and
+compliance errors through the factor $1 / k_{\min}$, while over all $k > 0$ no constant turns it
+into a bound on the state error, nor, for $F \ne 0$, on the compliance error. The quotients $F / k$
+and $EA / L$ are $0$ at $k = 0$ and $L = 0$ by the convention $x / 0 = 0$.
 
-- [Fixed Traction Displacement zero load](fixed-traction-displacement-zero-load.md)
-- [Is Fixed Traction Solution zero load](is-fixed-traction-solution-zero-load.md)
-- [Eq On zero load of is Fixed Traction Solution](eq-on-zero-load-of-is-fixed-traction-sol.md)
+## The bar under an end force with no distributed load
 
-## B. Spring stiffness, tip displacement, load work and the adjoint
+- [With no distributed load the constructed bar displacement is F x / EA](fixed-traction-displacement-zero-load.md)
+- [The linear displacement F x / EA solves the end-loaded bar problem](is-fixed-traction-solution-zero-load.md)
+- [Every solution of the end-loaded bar problem is F x / EA on the bar](eq-on-zero-load-of-is-fixed-traction-sol.md)
 
-- [Axial Stiffness](axial-stiffness.md)
-- [Tip Displacement](tip-displacement.md)
-- [Compliance](compliance.md)
-- [Adjoint Displacement](adjoint-displacement.md)
-- [Axial Stiffness pos](axial-stiffness-pos.md)
-- [Tip eq of is Fixed Traction Solution](tip-eq-of-is-fixed-traction-solution.md)
-- [Stiffness mul adjoint Displacement](stiffness-mul-adjoint-displacement.md)
+## Spring stiffness, tip displacement, compliance and the adjoint
 
-## C. Sensitivity of the compliance
+- [Effective axial stiffness EA / L of a bar](axial-stiffness.md)
+- [Tip displacement F / k of a spring under an end force](tip-displacement.md)
+- [Compliance: the work of the end force on the tip displacement](compliance.md)
+- [Scalar adjoint F / k of the compliance](adjoint-displacement.md)
+- [Positive rigidity and length give a positive axial stiffness](axial-stiffness-pos.md)
+- [The tip displacement of the end-loaded bar is F / k with k = EA / L](tip-eq-of-is-fixed-traction-solution.md)
+- [The scalar adjoint solves k p = F for a nonzero stiffness](stiffness-mul-adjoint-displacement.md)
 
-- [Has Deriv At compliance](has-deriv-at-compliance.md)
-- [Neg adjoint Displacement mul tip Displacement](neg-adjoint-displacement-mul-tip-displac.md)
-- [Has Deriv Within At compliance Icc](has-deriv-within-at-compliance-icc.md)
+## Sensitivity of the compliance
 
-## D. Feasible directions
+- [For k > 0 the compliance derivative is −p times the tip displacement](has-deriv-at-compliance.md)
+- [Minus adjoint times tip displacement is −F²/k², for every k](neg-adjoint-displacement-mul-tip-displac.md)
+- [Compliance derivative −F²/k² within a positive feasible interval](has-deriv-within-at-compliance-icc.md)
 
-- [Feasible Directions](feasible-directions.md)
-- [Feasible Directions left](feasible-directions-left.md)
-- [Feasible Directions right](feasible-directions-right.md)
-- [Feasible Directions interior](feasible-directions-interior.md)
-- [Feasible Directions self](feasible-directions-self.md)
+## Feasible directions
 
-## E. Endpoints: one-sided conditions, not stationarity
+- [Feasible directions at a design in a stiffness interval](feasible-directions.md)
+- [If kmin < kmax, the feasible directions at kmin are the d ≥ 0](feasible-directions-left.md)
+- [If kmin < kmax, the feasible directions at kmax are the d ≤ 0](feasible-directions-right.md)
+- [At an interior design every direction is feasible](feasible-directions-interior.md)
+- [On a degenerate interval only the zero direction is feasible](feasible-directions-self.md)
 
-- [Deriv compliance ne zero](deriv-compliance-ne-zero.md)
-- [Compliance upper endpoint](compliance-upper-endpoint.md)
+## Endpoints: one-sided conditions, not stationarity
 
-## F. Units
+- [For a nonzero force the compliance has no stationary point at k > 0](deriv-compliance-ne-zero.md)
+- [For F ≠ 0 the upper endpoint meets a one-sided first-order condition](compliance-upper-endpoint.md)
 
-- [Axial Stiffness dimension](axial-stiffness-dimension.md)
-- [Tip Displacement dimension](tip-displacement-dimension.md)
-- [Compliance dimension](compliance-dimension.md)
-- [Compliance Sensitivity dimension](compliance-sensitivity-dimension.md)
+## Units
 
-## G. Compliance error: one-parameter steps
+- [A force per length has the translational stiffness dimension M T⁻²](axial-stiffness-dimension.md)
+- [A force over a translational stiffness has the length dimension](tip-displacement-dimension.md)
+- [A force times a length has the energy dimension](compliance-dimension.md)
+- [An energy per translational stiffness has dimension length squared](compliance-sensitivity-dimension.md)
 
-- [Compliance eq sq div](compliance-eq-sq-div.md)
-- [Force step](abs-compliance-sub-force-le.md)
-- [Stiffness step](abs-compliance-sub-stiffness-le.md)
+## Compliance error: one-parameter steps
 
-## H. Compliance error: composition
+- [The compliance equals F² / k, including k = 0 where both vanish](compliance-eq-sq-div.md)
+- [Force step: bound for force magnitudes at most Fmax and k ≥ kmin > 0](abs-compliance-sub-force-le.md)
+- [Stiffness step: compliance bound for stiffnesses at least kmin > 0](abs-compliance-sub-stiffness-le.md)
+
+## Compliance error: composition
 
 - [Compliance error between two admissible parameter points](abs-compliance-sub-compliance-le.md)
-- [Composition with supplied terms](abs-compliance-sub-computed-le.md)
+- [Compliance error bound: parameter steps plus four supplied error terms](abs-compliance-sub-computed-le.md)
 
-## I. Residuals and the stability constant
+## Residuals and the stability constant
 
-- [A residual with a stability constant](abs-sub-le-residual-div.md)
-- [A bare residual is not a state error](not-exists-residual-state-error-bound.md)
-- [A bare residual is not a compliance error](not-exists-residual-compliance-error-bou.md)
-- [A bare residual is not an error](not-exists-residual-error-bound.md)
+- [For k ≥ kmin > 0 the residual bounds state and compliance errors](abs-sub-le-residual-div.md)
+- [No residual bound on the state error uniform in k > 0](not-exists-residual-state-error-bound.md)
+- [For F ≠ 0, no residual bound on the compliance error uniform in k > 0](not-exists-residual-compliance-error-bou.md)
+- [For F ≠ 0, neither error has a residual bound uniform in k > 0](not-exists-residual-error-bound.md)

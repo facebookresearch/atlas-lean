@@ -1,6 +1,11 @@
-# Lipschitz error propagation
+# Lipschitz error bound: output error at most $L$ times the input error
 
-If `f` is Lipschitz with constant `L`
-(`LipschitzWith L f`, so `L : ℝ≥0` per Mathlib), then
-`‖f (x + δ) - f x‖ ≤ L * ‖δ‖`. This is Mathlib's `LipschitzWith.dist_le_mul_of_le` read
-with `dist_eq_norm` and `(x + δ) - x = δ`.
+Let $E$ and $F$ be normed abelian groups (for example normed vector spaces) and let
+$f : E \to F$ be Lipschitz with constant $L \ge 0$: $\|f(u) - f(v)\| \le L\, \|u - v\|$ for all
+$u, v \in E$. Then for every point $x \in E$ and every input error $\delta \in E$,
+
+$$\|f(x + \delta) - f(x)\| \le L\, \|\delta\| .$$
+
+This is the Lipschitz condition at $u = x + \delta$ and $v = x$. It is a deterministic bound on
+the output error, valid for every size of $\delta$, with no probability model and no
+linearisation.

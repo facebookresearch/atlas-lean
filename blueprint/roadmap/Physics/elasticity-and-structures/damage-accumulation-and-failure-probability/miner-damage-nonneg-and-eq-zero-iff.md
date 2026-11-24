@@ -1,5 +1,5 @@
-# Miner Damage nonneg and eq zero iff
+# Nonnegative counts: Miner sum ≥ 0, equal to 0 exactly at zero counts
 
-Damage domain and zero cycles. For nonnegative counts and positive lives, `0 ≤ D`, and
-`D = 0` exactly when every declared count is zero: no cycles give no damage, and every declared
-cycle registers.
+For a finite class type, counts $n_i \ge 0$ and lives $N_i > 0$, the [damage sum](miner-damage.md)
+$D = \sum_i n_i / N_i$ satisfies $D \ge 0$, and $D = 0$ if and only if $n_i = 0$ for every class
+$i$: no cycles give no damage, and every declared cycle registers.

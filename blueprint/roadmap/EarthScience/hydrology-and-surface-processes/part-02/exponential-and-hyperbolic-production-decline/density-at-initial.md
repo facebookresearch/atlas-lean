@@ -1,3 +1,4 @@
-# Density at initial
+# The density law gives the reference density at the reference pressure
 
-The density law returns the reference density at `p0`.
+For all real $\rho_0$, $c_f$ and $p_0$, the [exponential density law](density.md)
+$\rho(p) = \rho_0 e^{c_f (p - p_0)}$ gives $\rho(p_0) = \rho_0$.

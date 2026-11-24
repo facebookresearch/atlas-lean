@@ -1,7 +1,14 @@
-# Bending Torsion Calibrated
+# Functional calibrated on bending–torsion states with a shear factor
 
-A supplied yield functional (tension positive) is calibrated on the bending-torsion states
-with shear factor `c` when `c` is positive and the functional returns `√(σ ^ 2 + c τ ^ 2)` on every
-such state: `c = 3` for the von Mises (distortion-energy) criterion, `c = 4` for the Tresca
-(maximum-shear) criterion. A factor `c ≤ 0` is excluded: `Real.sqrt` truncates negative arguments
-to `0`, so a pure torque would have zero demand.
+Let $\Phi$ be a real function on $3 \times 3$ real stress matrices (tension positive), for example a
+yield functional, and $c$ a real number. Then $\Phi$ is calibrated on the bending–torsion states
+with shear factor $c$ when
+
+- $c > 0$, and
+- for all real $\sigma$ and $\tau$, $\Phi$ takes the value $\sqrt{\sigma^2 + c \tau^2}$ on the
+  [bending–torsion state](bending-torsion-state.md) $S(\sigma, \tau)$.
+
+The von Mises (distortion-energy) equivalent stress has this form with $c = 3$, the Tresca
+(maximum-shear) equivalent stress with $c = 4$. The factor must be positive: for $c \le 0$ a pure
+torque ($\sigma = 0$) would get the value $\sqrt{c \tau^2} = 0$, the square root of a negative
+number being taken as $0$.

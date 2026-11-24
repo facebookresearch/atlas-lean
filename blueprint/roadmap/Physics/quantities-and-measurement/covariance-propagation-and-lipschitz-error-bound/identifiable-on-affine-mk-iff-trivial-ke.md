@@ -1,6 +1,10 @@
-# Identifiable On Affine mk' iff trivial ker
+# Identifiable on $\theta_0 + V$ iff $\ker A \cap V = \{0\}$
 
-Affine identifiability on `theta0 + V` holds iff the kernel
-inside the direction space `V` is trivial: `A *ᵥ v = 0` with
-`v ∈ V` forces `v = 0`. The base point `theta0` cancels; only
-differences matter.
+Let $A$ be a real $m \times n$ matrix, $\theta_0 \in \mathbb{R}^n$ and $V$ a linear subspace of
+$\mathbb{R}^n$. Then $A$ is [identifiable on](identifiable-on-affine.md) the affine subspace
+$\theta_0 + V = \{\theta : \theta - \theta_0 \in V\}$ if and only if
+
+$$v \in V \ \text{ and } \ Av = 0 \implies v = 0 .$$
+
+The base point $\theta_0$ plays no role: two parameters of $\theta_0 + V$ differ by a vector of
+$V$, and only such differences matter.

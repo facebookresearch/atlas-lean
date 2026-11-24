@@ -1,3 +1,4 @@
-# Remaining nonneg
+# A nonnegative initial concentration stays nonnegative
 
-Remaining concentration at time `t`: `c0 * exp (-k * t)`.
+For $c_0 \ge 0$ and all real $k$ and $t$, the remaining concentration of first-order decay satisfies
+$c_0\, e^{-k t} \ge 0$.

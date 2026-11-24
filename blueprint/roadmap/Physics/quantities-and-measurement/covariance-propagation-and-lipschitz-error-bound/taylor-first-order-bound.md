@@ -1,10 +1,13 @@
-# Scalar first-order remainder bound
+# $C^2$ Taylor bound $H\delta^2/2$ when $-H\le f''\le H$ on an interval
 
-For `f` twice continuously differentiable
-(`ContDiff ℝ 2 f`, hence differentiable at every base point including interval
-endpoints) with `|deriv (deriv f) y| ≤ H` on the closed interval `Set.Icc a b`, and
-`x`, `x + δ` both in that interval,
-`|f (x + δ) - f x - deriv f x * δ| ≤ H / 2 * δ ^ 2`. The proof reuses Mathlib's
-`taylor_mean_remainder_lagrange_iteratedDeriv` at `n = 1`. The side conditions are
-exact: global `C²` for the derivative identification at the base point, the
-second-derivative bound only on `Icc a b`, and both endpoints in `Icc a b`.
+Let $f : \mathbb{R} \to \mathbb{R}$ be twice continuously differentiable on $\mathbb{R}$, let
+$a$, $b$ and $H$ be real numbers with $|f''(y)| \le H$, that is $-H \le f''(y) \le H$, for every
+$y \in [a, b]$, and let $x$ and $x + \delta$ both lie in the interval $[a, b]$. Then the error
+of the first-order Taylor approximation satisfies
+
+$$\bigl|f(x + \delta) - f(x) - f'(x)\,\delta\bigr| \le \frac{H}{2}\,\delta^2 .$$
+
+The bound on $f''$ is needed only on $[a, b]$, while the smoothness is assumed on all of
+$\mathbb{R}$; since $x \in [a, b]$, the hypothesis forces $H \ge 0$. For $\delta \ne 0$, Taylor's
+theorem with the Lagrange remainder writes the error as $f''(\xi)\,\delta^2 / 2$ for some $\xi$
+strictly between $x$ and $x + \delta$, a point of $[a, b]$.

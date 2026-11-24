@@ -1,6 +1,11 @@
-# Identifiable mul basis iff trivial ker
+# The product $AP$ is identifiable iff $A(P\xi) = 0$ forces $\xi = 0$
 
-Basis coordinates: with directions `P *ᵥ ξ`, identifiability of
-the restricted matrix `A * P` is triviality of the kernel in the form
-`A *ᵥ (P *ᵥ ξ) = 0 → ξ = 0`. Uses the canonical trivial-kernel
-characterization `identifiable_iff_trivial_ker`.
+For a real $m \times n$ matrix $A$ and a real $n \times d$ matrix $P$, the product $AP$ is
+[identifiable](identifiable.md) ($\xi \mapsto (AP)\,\xi$ injective on $\mathbb{R}^d$) if and only
+if
+
+$$A(P\xi) = 0 \implies \xi = 0 \qquad \text{for every } \xi \in \mathbb{R}^d .$$
+
+No condition is imposed on $P$. In the intended use the columns of $P$ are parameter directions
+and $\xi$ are coordinates along them; the condition says that $P$ maps no nonzero coordinate
+vector $\xi$ into the kernel of $A$, which in particular requires $P\xi = 0$ only for $\xi = 0$.

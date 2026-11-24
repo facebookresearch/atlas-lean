@@ -1,9 +1,16 @@
-# Jacobian propagation is an APPROXIMATION
+# First-order remainder $f(x+\delta) - f(x) - Df(x)\,\delta$
 
-The first-order value of `f` at
-`x + δ` is `f x + fderiv ℝ f x δ`; `jacobianRemainder f x δ` is the leftover
-`f (x + δ) - f x - fderiv ℝ f x δ`, bounded by the lemmas below but NOT zero in
-general: for the square map on `Fin 1 → ℝ` at `x = 0` and `δ = 1 / 2` it is `1 / 4`
-(see the tests). Where `f` is not differentiable at `x`, Mathlib's `fderiv ℝ f x` is `0`
-and the value is just `f (x + δ) - f x`; every bound below assumes differentiability at
-`x`.
+For a map $f : \mathbb{R}^n \to \mathbb{R}^m$ and vectors $x, \delta \in \mathbb{R}^n$, the
+first-order (Jacobian) remainder is
+
+$$R(x, \delta) = f(x + \delta) - f(x) - Df(x)\,\delta \;\in \mathbb{R}^m,$$
+
+where $Df(x)$ is the derivative (Jacobian matrix) of $f$ at $x$, with the convention that it is
+$0$ where $f$ is not differentiable at $x$; there $R(x, \delta) = f(x + \delta) - f(x)$. The
+first-order propagation $f(x + \delta) \approx f(x) + Df(x)\,\delta$ is an approximation: the
+remainder is not zero in general. For example, for the square map $y \mapsto y^2$ on $\mathbb{R}$
+($n = m = 1$), $R(0, \delta) = \delta^2$, which is $1/4$ at $\delta = 1/2$. The componentwise
+bounds on $R$ ([segment bound](jacobian-remainder-component-le.md),
+[scaled segment bound](jacobian-remainder-component-le-of-scale.md),
+[Hessian bound](jacobian-remainder-component-le-of-hessi.md)) all assume that $f$ is
+differentiable at $x$.

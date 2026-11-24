@@ -1,3 +1,3 @@
-# Axial Stiffness pos
+# Positive rigidity and length give a positive axial stiffness
 
-A positive rigidity and a positive length give a positive stiffness.
+If $EA > 0$ and $L > 0$, then the [axial stiffness](axial-stiffness.md) $EA / L$ is positive.

@@ -1,10 +1,10 @@
 # Species balances over process flowsheets
 
-## Flowsheets
+## The flowsheet structure
 
-- [Flowsheet](flowsheet.md)
+- [Process flowsheet with unit holdup balances for each species](flowsheet.md)
 
-## Flowsheet
+## Whole-network species balance
 
-- [Whole-network species balance](species-balance.md)
-- [Species balance closed](species-balance-closed.md)
+- [Total holdup changes only through external flows and generation](species-balance.md)
+- [With zero net supply in every unit, total holdup has zero derivative](species-balance-closed.md)

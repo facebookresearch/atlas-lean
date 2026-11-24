@@ -1,3 +1,8 @@
-# Circle Polar Moment
+# Polar second moment of area of a solid circular section
 
-Polar second moment of area of a solid circular section of diameter `d`: `J = π d ⁴ / 32`.
+For a real number $d$, the polar second moment of area about the center of a solid circular section
+of diameter $d$ is
+
+$$J = \frac{\pi d^4}{32} .$$
+
+In the model $d > 0$; the formula accepts any real $d$.

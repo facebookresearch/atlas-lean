@@ -1,7 +1,7 @@
-# Rank deficiency implies non-identifiability
+# With fewer observations than parameters, $A$ is not identifiable
 
-If `m < n`, the linear map
-`A.mulVecLin : (Fin n → ℝ) →ₗ[ℝ] (Fin m → ℝ)` has a nontrivial kernel by
-`LinearMap.ker_ne_bot_of_finrank_lt` (rank-nullity: `finrank` of source `n` exceeds
-`finrank` of target `m`, via `Module.finrank_fin_fun`), and any nonzero kernel
-vector defeats injectivity.
+For natural numbers $m < n$ and every real $m \times n$ matrix $A$, the calibration model
+$y = A\theta$ is not [identifiable](identifiable.md): the linear map
+$\theta \mapsto A\theta$ from $\mathbb{R}^n$ to $\mathbb{R}^m$ is not injective. By the
+rank–nullity theorem its kernel has dimension at least $n - m > 0$, so it contains a nonzero
+vector, and that vector and $0$ have the same image.

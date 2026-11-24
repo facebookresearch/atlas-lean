@@ -1,3 +1,14 @@
-# Photon Law
+# Photon-count law: independent Poisson counts at the transmitted rates
 
-The independent-Poisson photon count law at attenuation `x`.
+Let the rays form a finite set $\iota$ and the attenuation cells a finite set $\kappa$. For
+nonnegative source intensities $I_{0,j}$, a real $\iota \times \kappa$ matrix $A$ and an attenuation
+vector $x \in \mathbb{R}^{\kappa}$, the photon-count law at $x$ is the product measure
+
+$$P_x = \bigotimes_{j \in \iota} \mathrm{Poisson}\bigl(\lambda_j(x)\bigr)$$
+
+on count vectors $N \in \mathbb{N}^{\iota}$, where $\lambda_j(x) = I_{0,j}\, e^{-(Ax)_j}$ is the
+[transmitted rate](transmitted-rate.md) of ray $j$. It is a probability measure: under it the counts
+$N_j$ are independent and $N_j$ is Poisson with mean $\lambda_j(x)$, that is
+$P_x(N_j = n) = e^{-\lambda_j(x)} \lambda_j(x)^n / n!$ with $0^0 = 1$. A ray with $I_{0,j} = 0$ has
+rate $0$, and its count is $0$ almost surely. The independence of the counts in different rays is an
+assumption of the model, built into the product.

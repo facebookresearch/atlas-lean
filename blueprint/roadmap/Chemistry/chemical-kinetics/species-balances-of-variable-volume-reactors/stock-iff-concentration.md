@@ -1,7 +1,14 @@
-# Stock iff concentration balance
+# The amount balance at an instant holds iff its concentration form does
 
-With supplied derivatives, the
-stock balance `n' = Fin - Fout + G` for species `i` holds exactly when the
-concentration form `V' * c i + V * c' i = Fin - Fout + G` holds. The
-`V' * c i` term is the variable-volume contribution; it does not vanish
-just because the concentration is constant.
+Let $V$ have derivative $V'$ and $c_i$ derivative $c_i'$ at the instant $t$, and let
+$F_{\mathrm{in}}$, $F_{\mathrm{out}}$ and $G$ be real numbers: the inflow and outflow rates of
+species $i$ and its net generation rate, negative for net consumption. Then the amount $n_i = V c_i$
+has derivative $F_{\mathrm{in}} - F_{\mathrm{out}} + G$ at $t$ (the species balance at that instant)
+if and only if
+
+$$V' c_i(t) + V(t)\, c_i' = F_{\mathrm{in}} - F_{\mathrm{out}} + G .$$
+
+Both are statements at the single instant $t$, not a steady state. The term $V' c_i(t)$ is the
+contribution of the changing volume; it remains when $c_i' = 0$. In the physical reading $V > 0$,
+$c_i \ge 0$ and $F_{\mathrm{in}}, F_{\mathrm{out}} \ge 0$; the equivalence holds for all real
+functions and rates.

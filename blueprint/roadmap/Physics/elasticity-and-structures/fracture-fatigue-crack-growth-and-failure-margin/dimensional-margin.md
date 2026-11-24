@@ -1,4 +1,8 @@
-# Dimensional Margin
+# Dimensional margin of a demand against an allowable
 
-The dimensional margin `A - s` of a demand `s` against an allowable `A`, in the unit of the
-demand.
+For real numbers $A$ (the allowable) and $s$ (the demand), the dimensional margin is
+
+$$A - s,$$
+
+expressed in the unit of the demand. In the model the demand is nonnegative and the allowable
+positive; the definition takes any real inputs.

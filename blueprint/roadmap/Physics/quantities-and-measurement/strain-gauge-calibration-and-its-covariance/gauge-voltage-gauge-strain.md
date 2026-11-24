@@ -1,3 +1,8 @@
-# Gauge Voltage gauge Strain
+# Gain times strain plus offset gives back the voltage
 
-A nonzero gain restores the voltage from the strain: `g ε + b = V`.
+For a gain $g \ne 0$, an offset $b$ and a voltage $V$, all real, the [strain](gauge-strain.md)
+$\varepsilon = (V - b)/g$ satisfies
+
+$$
+g\,\varepsilon + b = V.
+$$
