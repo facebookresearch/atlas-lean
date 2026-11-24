@@ -17,9 +17,21 @@ public import MathlibExt.AlgebraicGeometry.RelativeMoriContracts
 # Fixed two-model graded DVR section lattices
 
 Both model schemes and both lines are fixed in every degree. The common
-generic identification is a single actual scheme/line isomorphism.
-All higher-degree comparisons are computed from its native pullback
-power maps and are fixed on every local line generator.
+generic identification is a single actual scheme isomorphism together with a
+chosen line comparison `lineIso`. All higher-degree comparisons are computed
+from these by native pullback power maps and are fixed on every local line
+generator.
+
+The filtrations are attached to the chosen line comparison. Blum--Xu's
+filtration is the one for the comparison induced by the isomorphism of the
+generic log pairs (the canonical identification of the relative
+log-pluricanonical sheaves); that normalization is not encoded here, and
+`LogAnticanonicalModels` does not determine `lineIso`. Another choice differs
+by an automorphism of the first generic line, and the degree-`m` comparison
+then changes by its `m`-th power (`powerIso_withLineAut`): for multiplication
+by `c ∈ Kˣ` the degree-`m` filtration is shifted by `m · v(c)`, which does not
+change the Rees-algebra statements requested downstream (the substitution
+`z ↦ T^(-v(c)) z` identifies the two Rees algebras).
 
 The forward and reverse specialization filtrations are the actual
 DVR lattice intersection/rescaling/reduction operations. A relative
@@ -57,7 +69,9 @@ structure PowerPullback {X Y : Scheme.{0}} (f : Y ⟶ X) where
 variable {R K : Type} [CommRing R] [IsDomain R] [IsDiscreteValuationRing R]
   [Field K] [Algebra R K] [IsFractionRing R K]
 
-/-- Actual fixed models and one generic scheme/line comparison, with no per-degree model choice. -/
+/-- Actual fixed models, one generic scheme isomorphism and one chosen generic line comparison,
+with no per-degree model choice. The filtrations below are relative to `lineIso` (see the module
+docstring for how they depend on it). -/
 structure TwoModels where
   first : Over (Spec (.of R))
   firstLine : first.left.Modules
@@ -82,7 +96,7 @@ structure TwoModels where
 namespace TwoModels
 variable (D : TwoModels (R := R) (K := K))
 
-/-- Every forward module comparison is the power of the same normalized line comparison. -/
+/-- Every forward module comparison is the power of the same chosen line comparison. -/
 def powerIso (m : ℕ) :
     (Scheme.Modules.pullback D.genericIso.hom.left).obj
       (genericModule (K := K) D.second (power D.secondLine m)) ≅
@@ -92,6 +106,25 @@ def powerIso (m : ℕ) :
   (D.genericPowers.powers.comparison m).app (genericModule (K := K) D.second D.secondLine) ≪≫
   (powerFunctor (genericFiber (K := K) D.first).left m).mapIso D.lineIso ≪≫
   ((D.firstPowers.powers.comparison m).app D.firstLine).symm
+
+/-- The same models with the generic line comparison followed by an automorphism `e` of the
+first generic line (for instance multiplication by a unit of the generic fibre). -/
+def withLineAut
+    (e : genericModule (K := K) D.first D.firstLine ≅ genericModule (K := K) D.first D.firstLine) :
+    TwoModels (R := R) (K := K) :=
+  { D with lineIso := D.lineIso ≪≫ e }
+
+/-- Changing the line comparison by an automorphism `e` changes the degree-`m` comparison by the
+`m`-th power of `e`, transported through the power comparison. -/
+theorem powerIso_withLineAut
+    (e : genericModule (K := K) D.first D.firstLine ≅ genericModule (K := K) D.first D.firstLine)
+    (m : ℕ) :
+    (D.withLineAut e).powerIso m = D.powerIso m ≪≫
+      (D.firstPowers.powers.comparison m).app D.firstLine ≪≫
+      (powerFunctor (genericFiber (K := K) D.first).left m).mapIso e ≪≫
+      ((D.firstPowers.powers.comparison m).app D.firstLine).symm := by
+  ext1
+  simp [powerIso, withLineAut]
 
 /-- The inverse line comparison is computed from the original isomorphism and native pasting. -/
 def reverseLineIso :
@@ -157,7 +190,10 @@ end TwoModels
 
 variable [HasDerivedPushforwards.{0}]
 
-/-- Actual relative log-anticanonical lines and exact generic-boundary identification. -/
+/-- Actual relative log-anticanonical lines and exact generic-boundary identification. These
+make both lines relative log-anticanonical; they do not determine the generic line comparison
+`D.lineIso`, whose Blum--Xu normalization (induced by the isomorphism of the generic log pairs)
+is not encoded (see the module docstring). -/
 structure LogAnticanonicalModels (D : TwoModels (R := R) (K := K)) (n : ℕ) where
   firstReference : ProperReference D.first.hom
   secondReference : ProperReference D.second.hom

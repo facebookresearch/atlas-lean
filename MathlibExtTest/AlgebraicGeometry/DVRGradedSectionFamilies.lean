@@ -13,7 +13,9 @@ import MathlibExt.AlgebraicGeometry.DVRGradedSectionFamilies
 # Tests for log-Fano fibres of DVR models
 
 A log-Fano fibre needs a boundary ideal whose restriction to the special fibre is nonzero: the
-zero ideal, like the ideal of the special fibre itself, has none. Its log pair is proper.
+zero ideal, like the ideal of the special fibre itself, has none. Its log pair is proper. The
+two-model comparisons depend on the chosen generic line comparison only through its powers: the
+identity change of comparison changes nothing.
 -/
 
 open _root_.AlgebraicGeometry
@@ -30,3 +32,17 @@ example {X : CategoryTheory.Over (Spec (.of R))} {L : X.left.Modules} {n e : ℕ
 example {X : CategoryTheory.Over (Spec (.of R))} {L : X.left.Modules} {I : X.left.IdealSheafData}
     {n e : ℕ} (F : LogFanoFibre X L I n e) : IsProper F.pair.variety.X.hom :=
   inferInstance
+
+section TwoModels
+
+variable {K : Type} [Field K] [Algebra R K] [IsFractionRing R K]
+
+set_option backward.isDefEq.respectTransparency false in
+/-- Changing the generic line comparison by the identity leaves every power comparison fixed. -/
+example (D : TwoModels (R := R) (K := K)) (m : ℕ) :
+    (D.withLineAut (CategoryTheory.Iso.refl _)).powerIso m = D.powerIso m := by
+  rw [TwoModels.powerIso_withLineAut]
+  ext1
+  simp
+
+end TwoModels
