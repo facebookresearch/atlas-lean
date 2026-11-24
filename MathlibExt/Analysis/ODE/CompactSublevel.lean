@@ -124,6 +124,29 @@ private theorem exists_forward_solution_of_compact_trapping [CompleteSpace E]
   exact ⟨x, hx₀, fun t ht => htrap t (hglobal ht) ht,
     fun t ht => (hx t (hglobal ht)).2⟩
 
+/-- In a complete real normed space, let `F` be locally Lipschitz and `K` compact.
+Fix an initial time `a` and point `x₀`. If every supplied solution through `x₀`
+on each closed interval `Icc a b`, `a ≤ b`, stays in `K`, then there exists a
+forward global solution through `x₀` which stays in `K`. Its ordinary derivative
+is `F (x t)` at every `t ≥ a`, including the initial time. The singleton interval
+case of the invariance premise already forces `x₀ ∈ K`.
+
+This uses the existing compact-trapping continuation theorem. Its classical
+finite-dimensional criterion is Teschl, *Ordinary Differential Equations and
+Dynamical Systems*, §2.6, Corollaries 2.15–2.16. -/
+theorem exists_forward_solution_of_compact_invariant [CompleteSpace E]
+    {F : E → E} {K : Set E} (hF : LocallyLipschitz F) (hK : IsCompact K)
+    (a : ℝ) (x₀ : E)
+    (hinv : ∀ b, a ≤ b → ∀ x : ℝ → E, x a = x₀ →
+      (∀ t ∈ Icc a b, HasDerivWithinAt x (F (x t)) (Icc a b) t) →
+      MapsTo x (Icc a b) K) :
+    ∃ x : ℝ → E, x a = x₀ ∧ (∀ t ∈ Ici a, x t ∈ K) ∧
+      ∀ t ∈ Ici a, HasDerivAt x (F (x t)) t := by
+  apply exists_forward_solution_of_compact_trapping hF hK a x₀
+  intro I x hx₀ ha hI hx t ht hat
+  exact hinv t hat x hx₀
+    (fun s hs => (hx s (hI a ha t ht hs)).hasDerivWithinAt) ⟨hat, le_rfl⟩
+
 /-- A compact Lyapunov sublevel with strict decrease on the level set `V = c`
 contains a forward global solution through each of its points. No sign condition
 is required where `V < c`.
