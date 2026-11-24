@@ -10879,6 +10879,7 @@
   "MathlibExt/Combinatorics/Enumerative/SchreierSparseCount": {"to": "Combinatorics/elementary-enumeration", "title": "Schreier sets"},
   "MathlibExt/Combinatorics/Enumerative/SelfDualMonotoneBoolean": {"to": "Combinatorics/boolean-functions", "title": "Self-dual monotone Boolean functions"},
   "MathlibExt/Combinatorics/Enumerative/SetPartitionPeaks": {"to": "Combinatorics/set-partitions", "title": "Peaks in set partitions"},
+  "MathlibExt/Combinatorics/Enumerative/SetPartitionSymmetricPeaks": {"to": "Combinatorics/set-partitions", "title": "Peaks in set partitions"},
   "MathlibExt/Combinatorics/Enumerative/SetPartitionsByTwoRises": {"to": "Combinatorics/set-partitions", "title": "Rises in set partitions"},
   "MathlibExt/Combinatorics/Enumerative/ShiftedEulerianHankel": {"to": "Combinatorics/stirling-bell-eulerian/eulerian-numbers", "title": "Hankel determinants of Eulerian polynomials"},
   "MathlibExt/Combinatorics/Enumerative/ShiftedRiordanArrayRowSums": {"to": "Combinatorics/riordan-arrays-transforms/riordan-arrays", "title": "Row sums of shifted Riordan arrays"},
