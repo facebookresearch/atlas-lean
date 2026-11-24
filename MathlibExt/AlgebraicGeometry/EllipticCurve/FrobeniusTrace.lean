@@ -45,32 +45,6 @@ variable {R : Type r} {S : Type s} {K : Type v} [CommRing R]
   [CommRing S] [Field K] [DecidableEq K] {W' : Affine R}
   [Algebra R S] [Algebra R K] [Algebra S K] [IsScalarTower R S K]
 
-/-- The Galois action and scalar multiplication on torsion
-commute. -/
-instance instSMulCommClassAlgEquivZModTorsionBy (n : ℕ) :
-    SMulCommClass (K ≃ₐ[S] K) (ZMod n)
-      (Submodule.torsionBy ℤ (W'⁄K).Point n) where
-  smul_comm σ c x :=
-    ZMod.map_smul
-      (DistribSMul.toAddMonoidHom
-        (Submodule.torsionBy ℤ (W'⁄K).Point n) σ) c x
-
-variable (S) in
-/-- The Galois representation on `n`-torsion, as module
-endomorphisms. -/
-noncomputable def galoisRepModuleEnd (W' : Affine R) (n : ℕ) :
-    (K ≃ₐ[S] K) →*
-      Module.End (ZMod n) (Submodule.torsionBy ℤ (W'⁄K).Point n) :=
-  DistribMulAction.toModuleEnd (ZMod n)
-    (Submodule.torsionBy ℤ (W'⁄K).Point n)
-
-/-- The endomorphism attached to `σ` acts as `σ` does on points. -/
-@[simp] theorem galoisRepModuleEnd_apply (W' : Affine R) (n : ℕ)
-    (σ : K ≃ₐ[S] K)
-    (x : Submodule.torsionBy ℤ (W'⁄K).Point n) :
-    galoisRepModuleEnd S W' n σ x = σ • x :=
-  rfl
-
 variable (S) in
 /-- The trace of a Galois element in the representation on
 `n`-torsion, computed in a basis `b` exhibiting the `n`-torsion as a

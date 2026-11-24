@@ -10,8 +10,10 @@ LICENSE file in the root directory of this source tree.
 Portions of this file are adapted from:
 
 `Definitions/Def_FLTPrelim_GaloisRep.lean`
+and
+`Definitions/Def_EllipticCurve_FrobeniusTrace.lean`
 (https://github.com/anthropics/fermats-last-theorem):
-Compared with the source file at commit
+Compared with the source files at commit
 `6e837e75355538c7f80bab5b956861e86c4eacc2`.
 Copyright (c) 2026 Anthropic, PBC. All rights reserved.
 Licensed under the Apache License, Version 2.0
@@ -29,9 +31,11 @@ Mathlib style.
 
 module
 
+public import Mathlib.Algebra.Field.ZMod
 public import Mathlib.Algebra.Module.Torsion.Basic
 public import Mathlib.Algebra.Module.ZMod
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
+public import Mathlib.RepresentationTheory.Irreducible
 
 @[expose] public section
 
@@ -97,22 +101,83 @@ noncomputable instance instModuleZModTorsionBy (n : ℕ) :
     rw [← Nat.cast_smul_eq_nsmul ℤ n x]
     exact Submodule.smul_torsionBy _ x
 
-variable (S) in
-/-- A submodule of the `n`-torsion is Galois-stable if every Galois
-automorphism sends its elements back into it. -/
-public def IsGaloisStable {n : ℕ}
-    (N : Submodule (ZMod n)
-      (Submodule.torsionBy ℤ (W'⁄K).Point n)) : Prop :=
-  ∀ (σ : K ≃ₐ[S] K), ∀ x ∈ N, σ • x ∈ N
+/-- The Galois action and scalar multiplication on torsion
+commute. -/
+instance instSMulCommClassAlgEquivZModTorsionBy (n : ℕ) :
+    SMulCommClass (K ≃ₐ[S] K) (ZMod n)
+      (Submodule.torsionBy ℤ (W'⁄K).Point n) where
+  smul_comm σ c x :=
+    ZMod.map_smul
+      (DistribSMul.toAddMonoidHom
+        (Submodule.torsionBy ℤ (W'⁄K).Point n) σ) c x
 
 variable (S) in
-/-- The Galois representation on `n`-torsion is irreducible if the
-torsion submodule is nontrivial and has no nontrivial proper
-Galois-stable submodule. -/
-public def GaloisRepIsIrreducible (W' : Affine R) (n : ℕ) : Prop :=
-  Nontrivial (Submodule.torsionBy ℤ (W'⁄K).Point n) ∧
-    ∀ N : Submodule (ZMod n)
-        (Submodule.torsionBy ℤ (W'⁄K).Point n),
-      IsGaloisStable S N → N = ⊥ ∨ N = ⊤
+/-- The Galois representation on `n`-torsion, as module
+endomorphisms. -/
+noncomputable def galoisRepModuleEnd (W' : Affine R) (n : ℕ) :
+    Representation (ZMod n) (K ≃ₐ[S] K)
+      (Submodule.torsionBy ℤ (W'⁄K).Point n) :=
+  DistribMulAction.toModuleEnd (ZMod n)
+    (Submodule.torsionBy ℤ (W'⁄K).Point n)
+
+/-- The endomorphism attached to `σ` acts as `σ` does on points. -/
+@[simp] theorem galoisRepModuleEnd_apply (W' : Affine R) (n : ℕ)
+    (σ : K ≃ₐ[S] K)
+    (x : Submodule.torsionBy ℤ (W'⁄K).Point n) :
+    galoisRepModuleEnd S W' n σ x = σ • x :=
+  rfl
+
+variable (S) in
+/-- The Galois representation on `n`-torsion is irreducible: its
+subrepresentations form a simple order, so the `n`-torsion is
+nontrivial and its only Galois-stable submodules are `⊥` and `⊤`
+(`galoisRepIsIrreducible_iff`).
+
+This is the body of `Representation.IsIrreducible`, which Mathlib
+states only over a field; for prime `n` the two agree
+(`galoisRepIsIrreducible_iff_isIrreducible`). -/
+public abbrev GaloisRepIsIrreducible (W' : Affine R) (n : ℕ) : Prop :=
+  IsSimpleOrder (Subrepresentation (galoisRepModuleEnd (K := K) S W' n))
+
+/-- For prime `n`, irreducibility of the Galois representation on
+`n`-torsion is Mathlib's `Representation.IsIrreducible`. -/
+theorem galoisRepIsIrreducible_iff_isIrreducible (W' : Affine R)
+    (n : ℕ) [Fact n.Prime] :
+    GaloisRepIsIrreducible (K := K) S W' n ↔
+      Representation.IsIrreducible (k := ZMod n) (G := K ≃ₐ[S] K)
+        (V := Submodule.torsionBy ℤ (W'⁄K).Point n)
+        (galoisRepModuleEnd (K := K) S W' n) :=
+  Iff.rfl
+
+/-- Irreducibility unfolded: the `n`-torsion is nontrivial and every
+submodule stable under all Galois automorphisms is `⊥` or `⊤`. -/
+theorem galoisRepIsIrreducible_iff (W' : Affine R) (n : ℕ) :
+    GaloisRepIsIrreducible (K := K) S W' n ↔
+      Nontrivial (Submodule.torsionBy ℤ (W'⁄K).Point n) ∧
+        ∀ N : Submodule (ZMod n)
+            (Submodule.torsionBy ℤ (W'⁄K).Point n),
+          (∀ σ : K ≃ₐ[S] K, ∀ x ∈ N, σ • x ∈ N) → N = ⊥ ∨ N = ⊤ := by
+  constructor
+  · intro h
+    refine ⟨?_, fun N hN => ?_⟩
+    · by_contra hV
+      rw [not_nontrivial_iff_subsingleton] at hV
+      have := (Submodule.subsingleton_iff (ZMod n)).mpr hV
+      exact bot_ne_top
+        (Subrepresentation.toSubmodule_injective (Subsingleton.elim
+          (⊥ : Subrepresentation (galoisRepModuleEnd (K := K) S W' n)).toSubmodule
+          (⊤ : Subrepresentation (galoisRepModuleEnd (K := K) S W' n)).toSubmodule))
+    · rcases h.eq_bot_or_eq_top ⟨N, fun σ x hx => hN σ x hx⟩ with h' | h'
+      · exact Or.inl (congrArg Subrepresentation.toSubmodule h')
+      · exact Or.inr (congrArg Subrepresentation.toSubmodule h')
+  · rintro ⟨hV, hN⟩
+    have : Nontrivial
+        (Subrepresentation (galoisRepModuleEnd (K := K) S W' n)) :=
+      ⟨⊥, ⊤, fun h => bot_ne_top (congrArg Subrepresentation.toSubmodule h)⟩
+    refine ⟨fun N => ?_⟩
+    rcases hN N.toSubmodule (fun σ x hx => N.apply_mem_toSubmodule σ hx)
+      with h | h
+    · exact Or.inl (Subrepresentation.toSubmodule_injective h)
+    · exact Or.inr (Subrepresentation.toSubmodule_injective h)
 
 end WeierstrassCurve.Affine.Point

@@ -74,14 +74,47 @@ example {K L : Type*} [Field K] [Field L] [Algebra K L]
     (h : A.IsFrobeniusAt σ q) : σ ∈ A.decompositionSubgroup K :=
   h.mem_decompositionSubgroup
 
-/-- Galois-stable submodules: the full torsion submodule is
-Galois-stable, with the original binders. -/
+/-- Irreducibility, with the original binders, unfolds to the source
+definition: nontrivial `n`-torsion whose only Galois-stable submodules
+are `⊥` and `⊤`. -/
 example {R : Type r} {S : Type s} {K : Type v} [CommRing R]
     [CommRing S] [Field K] [DecidableEq K]
     (W' : WeierstrassCurve.Affine R)
     [Algebra R S] [Algebra R K] [Algebra S K] [IsScalarTower R S K]
     (n : ℕ) :
-    WeierstrassCurve.Affine.Point.IsGaloisStable (K := K) (W' := W') S
-      (⊤ : Submodule (ZMod n)
-        (Submodule.torsionBy ℤ (W'⁄K).Point n)) :=
-  fun σ x _ => Submodule.mem_top
+    WeierstrassCurve.Affine.Point.GaloisRepIsIrreducible (K := K) S W' n ↔
+      Nontrivial (Submodule.torsionBy ℤ (W'⁄K).Point n) ∧
+        ∀ N : Submodule (ZMod n)
+            (Submodule.torsionBy ℤ (W'⁄K).Point n),
+          (∀ σ : K ≃ₐ[S] K, ∀ x ∈ N, σ • x ∈ N) → N = ⊥ ∨ N = ⊤ :=
+  WeierstrassCurve.Affine.Point.galoisRepIsIrreducible_iff W' n
+
+/-- For prime `p`, the generic representation theory API applies: an
+irreducible representation on `p`-torsion is a simple module over the
+group algebra. -/
+example {R : Type r} {S : Type s} {K : Type v} [CommRing R]
+    [CommRing S] [Field K] [DecidableEq K]
+    (W' : WeierstrassCurve.Affine R)
+    [Algebra R S] [Algebra R K] [Algebra S K] [IsScalarTower R S K]
+    (p : ℕ) [Fact p.Prime]
+    (h : WeierstrassCurve.Affine.Point.GaloisRepIsIrreducible (K := K) S W' p) :
+    IsSimpleModule (MonoidAlgebra (ZMod p) (K ≃ₐ[S] K))
+      (WeierstrassCurve.Affine.Point.galoisRepModuleEnd (K := K) S W' p).asModule :=
+  (Representation.irreducible_iff_isSimpleModule_asModule _).mp
+    ((WeierstrassCurve.Affine.Point.galoisRepIsIrreducible_iff_isIrreducible
+      W' p).mp h)
+
+/-- Boundary: the `1`-torsion is trivial, so the representation on it
+is not irreducible. -/
+example {R : Type r} {S : Type s} {K : Type v} [CommRing R]
+    [CommRing S] [Field K] [DecidableEq K]
+    (W' : WeierstrassCurve.Affine R)
+    [Algebra R S] [Algebra R K] [Algebra S K] [IsScalarTower R S K] :
+    ¬ WeierstrassCurve.Affine.Point.GaloisRepIsIrreducible (K := K) S W' 1 := by
+  rw [WeierstrassCurve.Affine.Point.galoisRepIsIrreducible_iff]
+  rintro ⟨⟨x, y, hxy⟩, -⟩
+  apply hxy
+  have hx := (Submodule.mem_torsionBy_iff _ _).mp x.2
+  have hy := (Submodule.mem_torsionBy_iff _ _).mp y.2
+  simp only [Nat.cast_one, one_smul] at hx hy
+  exact Subtype.ext (hx.trans hy.symm)
