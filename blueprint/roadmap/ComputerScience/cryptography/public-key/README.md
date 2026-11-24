@@ -15,3 +15,4 @@ Diffie–Hellman key agreement; ElGamal encryption and its security under the de
 - [RSA cryptosystem](rsa-cryptosystem/README.md)
 - [Security of Diffie–Hellman key exchange](security-of-diffie-hellman-key-exchange/README.md)
 - [Random-oracle constructions](random-oracle-constructions/README.md)
+- [Pairing-based cryptography](advanced-encryption-and-pairings/README.md)
