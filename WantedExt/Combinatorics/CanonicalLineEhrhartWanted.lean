@@ -276,18 +276,6 @@ public def canonicalLineRootSet (d : ℕ) : Set ℂ :=
   {z | z ∈ canonicalLine ∧
     ∃ f : Polynomial ℂ, f.natDegree = d ∧ IsCL f ∧ HasDiamond f ∧ f.IsRoot z}
 
-/-- **Functional equation versus palindromic h-star coefficients.** Let $f$ be a nonzero complex
-polynomial of degree $d$ with $h^*$-coefficients $h^*_0(f), \dots, h^*_d(f)$. Then
-$f(X-1) = (-1)^d f(-X)$ as polynomials if and only if $h^*_i(f) = h^*_{d-i}(f)$ for every
-$i \le d$.
-
-Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Canonical Line*,
-INTEGERS 25 (2025), Article A68, Lemma 1 (quoting Corollary 2.2 in Kölbl's [11]).
--/
-public theorem_wanted functionalEquation_iff_hStar_palindromic (f : Polynomial ℂ) (hf : f ≠ 0) :
-    f.comp (X - 1) = C ((-1 : ℂ) ^ f.natDegree) * f.comp (-X) ↔
-      ∀ i ≤ f.natDegree, hStarCoeff f i = hStarCoeff f (f.natDegree - i)
-
 /-- **$p^d_0$ CL-interlaces $p^{d+1}_0$.** For every natural number $d \ge 1$, the symmetric
 basis polynomial $p^d_0$ CL-interlaces $p^{d+1}_0$.
 

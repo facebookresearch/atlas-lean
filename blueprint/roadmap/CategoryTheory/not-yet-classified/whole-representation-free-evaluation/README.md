@@ -1,0 +1,16 @@
+# Whole Representation Free Evaluation
+
+- [Extend](extend.md)
+- [Extend app](extend-app.md)
+- [Evaluate](evaluate.md)
+- [Evaluate extend](evaluate-extend.md)
+- [Extend evaluate](extend-evaluate.md)
+- [Hom Equiv](hom-equiv.md)
+- [Extend precomp](extend-precomp.md)
+- [Evaluate postcomp](evaluate-postcomp.md)
+- [Adjunction](adjunction.md)
+- [Adjunction hom Equiv](adjunction-hom-equiv.md)
+- [Free Object genuine](free-object-genuine.md)
+- [Free Map genuine](free-map-genuine.md)
+- [Extend genuine](extend-genuine.md)
+- [Evaluate genuine](evaluate-genuine.md)
