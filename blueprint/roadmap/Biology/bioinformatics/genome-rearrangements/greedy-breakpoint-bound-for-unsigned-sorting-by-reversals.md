@@ -6,11 +6,21 @@ This node covers the following result. Let $\pi = (\pi_1, \dots, \pi_n)$ be an u
 
 A good expansion replaces this node by planned pages beside it, each citing the source below:
 
-1. Framed unsigned permutations, breakpoints, strips and decreasing strips, and reversals with their effect on the number of breakpoints.
+1. Reuse the canonical [unsigned permutations](../../../Combinatorics/permutations/permutation-statistics/sorting-by-reversals/uvalid.md), [block reversals](../../../Combinatorics/permutations/permutation-statistics/sorting-by-reversals/rev-block.md) and [unsigned breakpoint count](../../../Combinatorics/permutations/permutation-statistics/sorting-by-reversals/ubreaks.md). The reversal page uses zero-based positions: the block $\pi_k, \dots, \pi_l$ here corresponds to positions $k-1$ through $l-1$, on the valid domain $1 \le k \le l \le n$. The [zero-breakpoint characterization](../../../Combinatorics/permutations/permutation-statistics/sorting-by-reversals/ubreaks-eq-zero-iff.md) already states that the identity is the only unsigned permutation with no breakpoints. Add the remaining definitions of strips and decreasing strips, and any further reversal-effect lemmas the greedy proof needs.
 2. The greedy algorithm with its tie-breaking rule.
 3. The bound of at most $\Phi(\pi)$ reversals.
 
 Nothing beyond the statement above is claimed here.
+
+## Depends on
+
+- [Unsigned permutations](../../../Combinatorics/permutations/permutation-statistics/sorting-by-reversals/uvalid.md)
+- [Block reversals](../../../Combinatorics/permutations/permutation-statistics/sorting-by-reversals/rev-block.md)
+- [Unsigned breakpoint count](../../../Combinatorics/permutations/permutation-statistics/sorting-by-reversals/ubreaks.md)
+
+## Proof depends on
+
+- [Zero-breakpoint characterization](../../../Combinatorics/permutations/permutation-statistics/sorting-by-reversals/ubreaks-eq-zero-iff.md)
 
 ## Sources
 
