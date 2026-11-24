@@ -14,6 +14,14 @@ import MathlibExt.Combinatorics.Enumerative.SubwordShiftSet
 
 namespace MetaMathlibExt
 
+-- Positivity rules out the vacuous singleton even though there is no positive split of zero.
+example : ¬ IsWellBased ({0} : Finset ℕ) := by
+  intro h
+  exact h.1 (by simp)
+
+example : IsWellBased (∅ : Finset ℕ) := by
+  simp [IsWellBased]
+
 example (ω l : ℕ) (hl : l ≤ 1) : subwordShiftSet ω l = ∅ := by
   ext j
   simp only [subwordShiftSet, Finset.mem_filter, Finset.mem_Icc, Finset.notMem_empty,

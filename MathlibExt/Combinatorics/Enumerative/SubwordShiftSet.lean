@@ -16,18 +16,18 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Well-based sets.** A finite set $Q$ of natural numbers is well based (Kitaev;
+/-- **Well-based sets.** A finite set $Q$ of positive integers is well based (Kitaev;
 Valyuzhenich) if for every $x \in Q$ and every natural number $a$ with $0 < a < x$, at least one
 of $a$ and $x - a$ lies in $Q$.
 
-The empty set is well based, as in the paper's equivalent formulation. For a nonempty set $Q$
-of positive integers the condition forces $1 \in Q$.
+The empty set is well based, as in the paper's equivalent formulation. For a nonempty well-based
+set the condition forces $1 \in Q$.
 
 Source: Michael A. Allen, *Connections Between Combinations Without Specified Separations and
 Strongly Restricted Permutations, Compositions, and Bit Strings*, Journal of Integer
 Sequences 28 (2025), Article 25.3.7, Section 5.1. -/
 public def IsWellBased (Q : Finset ℕ) : Prop :=
-  ∀ x ∈ Q, ∀ a, 0 < a → a < x → a ∈ Q ∨ x - a ∈ Q
+  0 ∉ Q ∧ ∀ x ∈ Q, ∀ a, 0 < a → a < x → a ∈ Q ∨ x - a ∈ Q
 
 /-- **The set $\{1, \dots, q\}$ is well based.** For every natural number $q$, the set
 $\{1, 2, \dots, q\}$ is well based.
@@ -36,6 +36,7 @@ Source: Michael A. Allen, *Connections Between Combinations Without Specified Se
 Strongly Restricted Permutations, Compositions, and Bit Strings*, Journal of Integer
 Sequences 28 (2025), Article 25.3.7, Section 5.1. -/
 public theorem isWellBased_Icc (q : ℕ) : IsWellBased (Finset.Icc 1 q) := by
+  refine ⟨by simp [Finset.mem_Icc], ?_⟩
   intro x hx a ha hax
   left
   simp only [Finset.mem_Icc] at hx ⊢
@@ -49,7 +50,7 @@ Strongly Restricted Permutations, Compositions, and Bit Strings*, Journal of Int
 Sequences 28 (2025), Article 25.3.7, Section 5.1. -/
 public theorem not_isWellBased_one_three_four : ¬ IsWellBased {1, 3, 4} := by
   intro h
-  have := h 4 (by decide) 2 (by decide) (by decide)
+  have := h.2 4 (by decide) 2 (by decide) (by decide)
   simp at this
 
 /-- **Shift set of a binary subword.** For natural numbers $\omega$ and $l$, the shift set of
@@ -112,6 +113,7 @@ Strongly Restricted Permutations, Compositions, and Bit Strings*, Journal of Int
 Sequences 28 (2025), Article 25.3.7, Theorem 22. -/
 public theorem isWellBased_subwordShiftSet (ω l : ℕ) (hω : ω < 2 ^ l) :
     IsWellBased (subwordShiftSet ω l) := by
+  refine ⟨by simp [subwordShiftSet, Finset.mem_Icc], ?_⟩
   intro x hx a ha hax
   have hxIcc : x ∈ Finset.Icc 1 (l - 1) := (Finset.mem_filter.mp hx).1
   obtain ⟨hx₁, hxle⟩ := Finset.mem_Icc.mp hxIcc
