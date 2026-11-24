@@ -12340,6 +12340,7 @@
   "MathlibExt/NumberTheory/GesselWord": {"to": "Combinatorics/catalan-numbers-lattice-paths/dyck-paths-lattice-walks", "title": "Gessel words"},
   "MathlibExt/NumberTheory/GibonacciCassini": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Gibonacci numbers"},
   "MathlibExt/NumberTheory/GibonacciNumber": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Gibonacci numbers"},
+  "MathlibExt/NumberTheory/GibonacciPolynomialPowerSums": {"to": "NumberTheory/linear-recurrences/fibonacci-polynomials", "title": "Sums of powers of gibonacci polynomials"},
   "MathlibExt/NumberTheory/GibonacciPolynomialInverseRatio": {"to": "NumberTheory/linear-recurrences/fibonacci-polynomials", "title": "Sums of powers of gibonacci polynomials"},
   "MathlibExt/NumberTheory/GibonacciPolynomialSquareSum": {"to": "NumberTheory/linear-recurrences/fibonacci-polynomials", "title": "Sums of powers of gibonacci polynomials"},
   "MathlibExt/NumberTheory/GiugaNumber": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Giuga numbers"},
