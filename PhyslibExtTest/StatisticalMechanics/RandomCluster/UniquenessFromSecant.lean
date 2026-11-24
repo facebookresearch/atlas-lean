@@ -50,4 +50,12 @@ example (d N : ℕ) (eb : Sym2 (boxVerts d N)) :
                 freeEdgeDensity d 2 (edgeIncl d N eb) p - 2 * ε) * V n) / ε := by
   simp only [FKSecantData, eventually_atTop]
 
+-- The comparison alone suffices, with no hypothesis about finite boxes.
+open Set in
+example (d N : ℕ) (eb : Sym2 (boxVerts d N))
+    (h : ∀ p ∈ Ioo (0 : ℝ) 1, ∀ p' ∈ Ioo (0 : ℝ) 1, p' < p →
+      wiredEdgeDensity d 2 (edgeIncl d N eb) p' ≤ freeEdgeDensity d 2 (edgeIncl d N eb) p) :
+    FKSecantData d N eb :=
+  (fkSecantData_iff_secant d N eb).mpr h
+
 end PhyslibExtTest.StatisticalMechanics.RandomCluster.FKUniquenessClose3

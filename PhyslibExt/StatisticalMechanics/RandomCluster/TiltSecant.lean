@@ -8,44 +8,44 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.UniquenessFromSecant
-/-!
-# Edge-density comparison from a tilted finite-volume bound
+import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
-A volume-growth argument turning a finite-volume tilt bound into the comparison
-`θ^w(p') ≤ θ^f(p)` of wired and free edge densities for `p' < p`, and hence, at `q = 2`,
-uniqueness of the infinite-volume edge marginal off a countable set of `p`.
+/-!
+# An eventual tilt criterion for edge-density comparison
 
 ## i. Overview
 
-Suppose volumes `V n → ∞` and surface terms `S n = o(V n)` satisfy, for every `ε > 0`,
-`ε ≤ q ^ (S n) λ ^ ((b - a - 2ε) V n) / ε` for all sufficiently large `n`, with `0 < λ < 1`.
-Taking logarithms and dividing by `V n` forces `b - a - 2ε ≤ 0`, so `b ≤ a`
-(`secant_b_le_a_of_finiteVolumeData`).
-`FKSecantData d N eb` packages such data for the box edge `eb` with `q = 2`,
-`λ = tiltFactor p p'`, `b` the wired edge density at `p'` and `a` the free edge density at
-`p`. Under that hypothesis `hsecant_discharged` gives `θ^w(p') ≤ θ^f(p)`, and
-`fk_uniqueness_q2_secant_from_finiteVolumeData` feeds this into the countable-exception
-uniqueness theorem `fk_uniqueness_off_countable_q2_full`.
+Suppose `q ≥ 1`, `0 < λ < 1`, and real sequences `V n > 0`, `V n → ∞` and
+`S n / V n → 0` satisfy, for each `ε > 0`,
+`ε ≤ q ^ (S n) λ ^ ((b - a - 2ε) V n) / ε` for all sufficiently large `n`.
+Taking logarithms and dividing by `V n` gives `b - a - 2ε ≤ 0`, so `b ≤ a`.
 
-`FKSecantData` is an assumption here; this file does not construct it.
+`FKSecantData` specializes this abstract criterion to wired and free edge densities at `q = 2`.
+It is equivalent to the comparison `θ^w(p') ≤ θ^f(p)` for all `0 < p' < p < 1`.
+For the converse, `S n = 0` and `V n = n + 1` suffice. These sequences need not be surface and
+volume counts of boxes, and the criterion gives no independent finite-volume proof of the
+comparison.
+The conditional marginal uniqueness result applies `fk_uniqueness_off_countable_q2_full`.
 
 ## ii. Key results
 
 - `StatMech.FK.secant_exponent_le_zero` : the volume-growth lemma.
-- `StatMech.FK.secant_b_le_a_of_finiteVolumeData` : `b ≤ a` from the finite-volume bound.
-- `StatMech.FK.FKSecantData` : the finite-volume hypothesis for one box edge at `q = 2`.
+- `StatMech.FK.secant_b_le_a_of_finiteVolumeData` : `b ≤ a` from the eventual tilt bound.
+- `StatMech.FK.FKSecantData` : the abstract eventual tilt criterion for one box pair at `q = 2`.
 - `StatMech.FK.hsecant_discharged` : `θ^w(p') ≤ θ^f(p)` for `p' < p` under `FKSecantData`.
+- `StatMech.FK.fkSecantData_iff_secant` : equivalence of the criterion and the comparison.
 - `StatMech.FK.fk_uniqueness_q2_secant_from_finiteVolumeData` : uniqueness of the edge
   marginal off a countable set, under `FKSecantData`.
 
 ## iii. Table of contents
 
 - A. The volume-growth lemma
-- B. The finite-volume hypothesis and its consequences
+- B. The eventual tilt criterion and its consequences
 
 ## iv. References
 
-- G. Grimmett, *The Random-Cluster Model*, Springer (2006), Chapter 4.
+- For the finite-volume random-cluster comparison, see G. Grimmett, *The Random-Cluster Model*,
+  Springer (2006), Chapter 4.
 
 -/
 
@@ -133,15 +133,16 @@ lemma secant_b_le_a_of_finiteVolumeData {q lam a b : ℝ}
 
 /-!
 
-## B. The finite-volume hypothesis and its consequences
+## B. The eventual tilt criterion and its consequences
 
 -/
 
-/-- Finite-volume tilt data for the box edge `eb` at `q = 2`: positive volumes `V n → ∞` and
-surface terms `S n = o(V n)` such that, for each `p' < p` in `(0, 1)` and `ε > 0`,
-`ε ≤ 2 ^ (S n) λ ^ ((θ^w(p') - θ^f(p) - 2ε) V n) / ε` for all sufficiently large `n`,
-with `λ = tiltFactor p p'`, where `θ^w` and `θ^f` are the wired and free infinite-volume
-densities of the edge. -/
+/-- Abstract eventual tilt criterion for the box pair `eb` at `q = 2`. There exist real
+sequences `S` and `V` with `V n > 0`, `V n → ∞` and `S n / V n → 0` such that, for each
+`0 < p' < p < 1` and `ε > 0`, eventually
+`ε ≤ 2 ^ (S n) λ ^ ((θ^w(p') - θ^f(p) - 2ε) V n) / ε`, where `λ = tiltFactor p p'` and
+`θ^w`, `θ^f` are the wired and free infinite-volume edge densities. `S` and `V` need not be box
+counts. The criterion is equivalent to the secant comparison, not a finite-box estimate. -/
 def FKSecantData (d N : ℕ) (eb : Sym2 (boxVerts d N)) : Prop :=
   ∃ S V : ℕ → ℝ, (∀ n, 0 < V n)
     ∧ Tendsto (fun n => S n / V n) atTop (𝓝 0)
@@ -152,8 +153,8 @@ def FKSecantData (d N : ℕ) (eb : Sym2 (boxVerts d N)) : Prop :=
               ^ ((wiredEdgeDensity d 2 (edgeIncl d N eb) p'
                     - freeEdgeDensity d 2 (edgeIncl d N eb) p - 2 * ε) * V n) / ε
 
-/-- Under `FKSecantData`, the wired edge density at `p'` is at most the free edge density at
-`p` whenever `p' < p`. -/
+/-- The forward implication of the eventual tilt criterion: under `FKSecantData`, the wired
+edge density at `p'` is at most the free edge density at `p` for `0 < p' < p < 1`. -/
 lemma hsecant_discharged (d N : ℕ) (eb : Sym2 (boxVerts d N))
     (hdata : FKSecantData d N eb) :
     ∀ p ∈ Ioo (0 : ℝ) 1, ∀ p' ∈ Ioo (0 : ℝ) 1, p' < p →
@@ -166,9 +167,37 @@ lemma hsecant_discharged (d N : ℕ) (eb : Sym2 (boxVerts d N))
   exact secant_b_le_a_of_finiteVolumeData (q := (2 : ℝ)) (by norm_num) hlampos hlam1
     hVpos hSV hVinf (hineq p hp p' hp' hlt)
 
-/-- Under `FKSecantData`, at `q = 2` there is a countable set `S` of parameters off which every
-measure `φ` whose box-edge marginal lies between the free and wired ones has the same marginal
-as both. -/
+/-- The abstract eventual tilt criterion for a box pair at $q = 2$ holds exactly when the
+wired edge density at $p'$ is at most the free edge density at $p$ for every $0 < p' < p < 1$.
+In the reverse direction one can take $S_n = 0$ and $V_n = n + 1$. For each parameter pair
+and each positive tolerance, the exponent coefficient is strictly negative, so the tilt power
+tends to infinity. This uses no finite-box FK measures. -/
+lemma fkSecantData_iff_secant (d N : ℕ) (eb : Sym2 (boxVerts d N)) :
+    FKSecantData d N eb ↔
+      ∀ p ∈ Ioo (0 : ℝ) 1, ∀ p' ∈ Ioo (0 : ℝ) 1, p' < p →
+        wiredEdgeDensity d 2 (edgeIncl d N eb) p'
+          ≤ freeEdgeDensity d 2 (edgeIncl d N eb) p := by
+  refine ⟨hsecant_discharged d N eb, fun hsecant => ?_⟩
+  have hV : Tendsto (fun n : ℕ => (n : ℝ) + 1) atTop atTop := by
+    refine tendsto_atTop.mpr fun b => ?_
+    filter_upwards [tendsto_atTop.mp (tendsto_natCast_atTop_atTop (R := ℝ)) b] with n hn
+    linarith
+  refine ⟨fun _ => 0, fun n => (n : ℝ) + 1, fun n => by positivity, ?_, hV, ?_⟩
+  · simpa only [zero_div] using tendsto_const_nhds
+  intro p hp p' hp' hlt ε hε
+  have hlampos : 0 < tiltFactor p p' := tiltFactor_pos hp.1 hp.2 hp'.1 hp'.2
+  have hlam1 : tiltFactor p p' < 1 := tiltFactor_lt_one hp.1 hp.2 hlt
+  have hm : wiredEdgeDensity d 2 (edgeIncl d N eb) p' -
+      freeEdgeDensity d 2 (edgeIncl d N eb) p - 2 * ε < 0 := by
+    linarith [hsecant p hp p' hp' hlt]
+  have htilt := (tendsto_rpow_atBot_of_base_lt_one _ hlampos hlam1).comp
+    (hV.const_mul_atTop_of_neg hm)
+  filter_upwards [tendsto_atTop.mp htilt (ε * ε)] with n hn
+  rwa [le_div_iff₀ hε, Real.rpow_zero, one_mul]
+
+/-- Under `FKSecantData` (equivalently the secant comparison), at `q = 2` there is a countable
+set `S` of parameters off which every measure `φ` whose box-edge marginal lies between the free
+and wired ones has the same marginal as both. -/
 lemma fk_uniqueness_q2_secant_from_finiteVolumeData (d N : ℕ) (eb : Sym2 (boxVerts d N))
     (hdata : FKSecantData d N eb) :
     ∃ S : Set ℝ, S.Countable ∧
