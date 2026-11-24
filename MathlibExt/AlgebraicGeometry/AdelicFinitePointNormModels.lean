@@ -28,9 +28,12 @@ Artinian length times completed-field rank. The target boundary is part of
 the constructed norm model. Vector heights then belong to the same full
 Picard presentation, even when that boundary changes.
 
-Source: Yuan--Zhang, arXiv:2105.13587v9, Sections 3.4 and 5.3.1.
+Modelled on Yuan--Zhang, arXiv:2105.13587v9, Sections 3.4 and 5.3.1.
 No separability, independently supplied norm provider, or assigned height
 function is an input to these construction requests.
+The completion is the fixed-gauge completion of `BoundaryMetricCompletionModels`, not
+Yuan--Zhang's boundary topology: their adelic line bundles and positivity notions are not
+claimed here.
 -/
 
 set_option autoImplicit false
@@ -128,7 +131,7 @@ variable (G : GroundBase (K := K)) (M : LineObject (A := A) (X := X) G)
 structure NormResult where
   boundary : EffectiveBoundary A (BasePoint (K := K))
   isLine : IsLineBundle (normLine (K := K) (pointFibre M.line x.map))
-  metric : AdelicMetric (L := normLine (K := K) (pointFibre M.line x.map)) boundary
+  metric : FixedGaugeAdelicMetric (L := normLine (K := K) (pointFibre M.line x.map)) boundary
   integrable : IsIntegrable G boundary metric
   frame : PointFrame A (BasePoint (K := K))
     (normLine (K := K) (pointFibre M.line x.map)) (𝟙 (BasePoint (K := K)))

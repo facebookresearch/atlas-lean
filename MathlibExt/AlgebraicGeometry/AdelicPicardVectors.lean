@@ -24,8 +24,11 @@ therefore choose its genuine target model boundary while its vector height
 still belongs to the same Picard vector space over the original field.
 No separately supplied Picard carrier or height function is introduced.
 
-Source: Yuan--Zhang, arXiv:2105.13587v9, Sections 2.5--2.6 and 5.3.1.
+Modelled on Yuan--Zhang, arXiv:2105.13587v9, Sections 2.5--2.6 and 5.3.1.
 Provider proofs for normalized geometric operations remain separate.
+The completion is the fixed-gauge completion of `BoundaryMetricCompletionModels`, not
+Yuan--Zhang's boundary topology: their adelic line bundles and positivity notions are not
+claimed here.
 -/
 
 set_option autoImplicit false
@@ -47,7 +50,7 @@ structure LineObject where
   line : X.left.Modules
   isLine : IsLineBundle line
   boundary : EffectiveBoundary A X
-  metric : AdelicMetric (L := line) boundary
+  metric : FixedGaugeAdelicMetric (L := line) boundary
   integrable : IsIntegrable G boundary metric
 
 abbrev FreeVector := LineObject (A := A) (X := X) G →₀ ℚ
@@ -79,7 +82,7 @@ structure TensorComparison (M N T : LineObject (A := A) (X := X) G) where
 
 /-- A fixed-boundary source object enters the same full Picard presentation. -/
 def ofFixedBoundary (L : X.left.Modules) (hLine : IsLineBundle L)
-    (B : EffectiveBoundary A X) (m : AdelicMetric (L := L) B)
+    (B : EffectiveBoundary A X) (m : FixedGaugeAdelicMetric (L := L) B)
     (hIntegrable : IsIntegrable G B m) : LineObject (A := A) (X := X) G :=
   ⟨L, hLine, B, m, hIntegrable⟩
 

@@ -21,7 +21,10 @@ the boundary domination needed to preserve Cauchy convergence.
 
 These are source-normalized construction endpoints; their producers
 belong in the direct Wanted module.
-Source: Yuan--Zhang, arXiv:2105.13587v9, Sections 2.5--2.6 and 3.4.
+Modelled on Yuan--Zhang, arXiv:2105.13587v9, Sections 2.5--2.6 and 3.4.
+The completion is the fixed-gauge completion of `BoundaryMetricCompletionModels`, not
+Yuan--Zhang's boundary topology: their adelic line bundles and positivity notions are not
+claimed here.
 -/
 
 set_option autoImplicit false
@@ -59,19 +62,20 @@ structure AllPlaceIso (e : L ≅ M) where
     map v p (ValuedLineFibres.evaluateSection _ _ _ (placeSection U s v) p hp) =
       ValuedLineFibres.evaluateSection _ _ _ (placeSection U (e.hom.app U s) v) p hp
 
-def IsIsometric (m : AdelicMetric (L := L) B) (n : AdelicMetric (L := M) B) : Prop :=
+def IsIsometric (m : FixedGaugeAdelicMetric (L := L) B) (n : FixedGaugeAdelicMetric (L := M) B) :
+    Prop :=
   ∃ (e : L ≅ M) (F : AllPlaceIso (A := A) (X := X) e),
     ∀ v p z, fibreNorm B n.val v p (F.map v p z) = fibreNorm B m.val v p z
 
 structure TensorResult (F : AllPlaceTensor (A := A) (X := X) (L := L) (M := M))
-    (m : AdelicMetric (L := L) B) (n : AdelicMetric (L := M) B) where
-  metric : AdelicMetric (L := CurvePositivity.moduleTensor X.left L M) B
+    (m : FixedGaugeAdelicMetric (L := L) B) (n : FixedGaugeAdelicMetric (L := M) B) where
+  metric : FixedGaugeAdelicMetric (L := CurvePositivity.moduleTensor X.left L M) B
   normalized : ∀ v p z w, fibreNorm B metric.val v p (F.map v p (z ⊗ₜ w)) =
     fibreNorm B m.val v p z * fibreNorm B n.val v p w
 
-structure PowerResult (m : AdelicMetric (L := L) B) (r : ℕ)
+structure PowerResult (m : FixedGaugeAdelicMetric (L := L) B) (r : ℕ)
     (F : AllPlacePower (A := A) (X := X) (L := L) r) where
-  metric : AdelicMetric (L := CurvePositivity.power L r) B
+  metric : FixedGaugeAdelicMetric (L := CurvePositivity.power L r) B
   normalized : ∀ v p z, fibreNorm B metric.val v p (F.map v p z) =
     fibreNorm B m.val v p z ^ r
 
@@ -97,9 +101,9 @@ structure AllPlaceDual (D : AlgebraicDual (X := X) (L := L)) where
           ((placeScheme A X v).left.evaluation _ p.schemePoint hp
             ((placeProjection A X v).app U (D.evaluation.app U (tensorSectionAt L D.line U s t))))
 
-structure DualResult (m : AdelicMetric (L := L) B) (D : AlgebraicDual (X := X) (L := L))
+structure DualResult (m : FixedGaugeAdelicMetric (L := L) B) (D : AlgebraicDual (X := X) (L := L))
     (F : AllPlaceDual (A := A) D) where
-  metric : AdelicMetric (L := D.line) B
+  metric : FixedGaugeAdelicMetric (L := D.line) B
   normalized : ∀ v p z w, w ≠ 0 → fibreNorm B metric.val v p z =
     ‖F.map v p z w‖ / fibreNorm B m.val v p w
 
@@ -132,9 +136,9 @@ def BoundaryDominated (C : EffectiveBoundary A Y) : Prop :=
     gauge A X B.toBoundary v (MetrizedLineOperationModels.mapPoint _ _ (placeMap f v) p) ≤
       c * gauge A Y C.toBoundary v p
 
-structure PullbackResult (C : EffectiveBoundary A Y) (m : AdelicMetric (L := L) B)
+structure PullbackResult (C : EffectiveBoundary A Y) (m : FixedGaugeAdelicMetric (L := L) B)
     (F : AllPlacePullback (A := A) (L := L) f) where
-  metric : AdelicMetric (L := (Scheme.Modules.pullback f.left).obj L) C
+  metric : FixedGaugeAdelicMetric (L := (Scheme.Modules.pullback f.left).obj L) C
   normalized : ∀ (v : A.places)
     (p : ValuedLineFibres.Point (A.completion v) (placeScheme A Y v))
     (a : ValuedLineFibres.CompletedResidue _ _ p)

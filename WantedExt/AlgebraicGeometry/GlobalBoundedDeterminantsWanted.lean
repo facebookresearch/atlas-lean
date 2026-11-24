@@ -58,6 +58,17 @@ public def_wanted scalarTensorSources {R S : CommRingCat.{0}} (g : R ⟶ S) :
 /-- Transport determinant modules on actual arbitrary-amplitude derived isomorphisms. -/
 public def_wanted boundedTransport (R : Type) [CommRing R] : TransportSystem R
 
+/-- Existence of the left derived functor of actual termwise scalar extension: unbounded
+complexes of modules have K-projective resolutions. This provides the
+`HasDerivedScalarExtensions` hypothesis of the global requests below. -/
+public instance_wanted derivedScalarExtensions_exists :
+    MathlibExt.AlgebraicGeometry.AffineDerivedCoefficientModules.HasDerivedScalarExtensions.{0}
+
+/-- The exterior-annihilator determinant of a finite projective module is invertible: on each
+rank stratum it is the top exterior power. This provides the `ProjectiveSources` hypothesis of
+the global requests below. -/
+public instance_wanted projectiveSources_exists (R : CommRingCat.{0}) : ProjectiveSources R
+
 variable [MathlibExt.AlgebraicGeometry.FourierMukai.HasDerivedPullbacks.{0}]
   [MathlibExt.AlgebraicGeometry.AffineDerivedCoefficientModules.HasDerivedScalarExtensions.{0}]
   [∀ R : CommRingCat.{0}, CategoryTheory.Limits.PreservesFiniteLimits

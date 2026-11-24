@@ -16,7 +16,10 @@ public import MathlibExt.AlgebraicGeometry.CompletedAdelicPointHeights
 
 All outputs use its already computed pointwise limit norms. Height
 convergence retains the actual boundary integrability condition.
-Source: Yuan--Zhang, arXiv:2105.13587v9, Sections 2.5--2.6, 3.4 and 5.3.
+Modelled on Yuan--Zhang, arXiv:2105.13587v9, Sections 2.5--2.6, 3.4 and 5.3.
+The completion is the fixed-gauge completion of `BoundaryMetricCompletionModels`, not
+Yuan--Zhang's boundary topology: their adelic line bundles and positivity notions are not
+claimed here.
 -/
 
 set_option autoImplicit false
@@ -47,10 +50,11 @@ public def_wanted allPlaceIso (e : L ≅ M) : AllPlaceIso (A := A) (X := X) e
 
 /-- Tensor model refinements produce a class in the same boundary completion. -/
 public def_wanted tensor (F : AllPlaceTensor (A := A) (X := X) (L := L) (M := M))
-    (m : AdelicMetric (L := L) B) (n : AdelicMetric (L := M) B) : TensorResult B F m n
+    (m : FixedGaugeAdelicMetric (L := L) B) (n : FixedGaugeAdelicMetric (L := M) B) :
+    TensorResult B F m n
 
 /-- Power norms and rational model denominators are retained on the same quotient. -/
-public def_wanted power (m : AdelicMetric (L := L) B) (r : ℕ)
+public def_wanted power (m : FixedGaugeAdelicMetric (L := L) B) (r : ℕ)
     (F : AllPlacePower (A := A) (X := X) (L := L) r) : PowerResult B m r F
 
 /-- The native algebraic dual retains the full sheaf-Hom evaluation universal property. -/
@@ -62,7 +66,7 @@ public def_wanted allPlaceDual (hL : IsLineBundle L) (D : AlgebraicDual (X := X)
     AllPlaceDual (A := A) D
 
 /-- Dual model norms use the actual functional/value quotient. -/
-public def_wanted dual (m : AdelicMetric (L := L) B) (D : AlgebraicDual (X := X) (L := L))
+public def_wanted dual (m : FixedGaugeAdelicMetric (L := L) B) (D : AlgebraicDual (X := X) (L := L))
     (F : AllPlaceDual (A := A) D) : DualResult B m D F
 
 /-- Native base change fixes every residue-field unit and pulled-back section. -/
@@ -72,7 +76,7 @@ public def_wanted allPlacePullback {Y : Over (Spec (.of K))} (f : Y ⟶ X) :
 /-- Boundary domination preserves Cauchy convergence under the actual scheme pullback. -/
 public def_wanted pullback {Y : Over (Spec (.of K))} (f : Y ⟶ X)
     (C : EffectiveBoundary A Y) (H : BoundaryDominated B f C)
-    (m : AdelicMetric (L := L) B) (F : AllPlacePullback (A := A) (L := L) f) :
+    (m : FixedGaugeAdelicMetric (L := L) B) (F : AllPlacePullback (A := A) (L := L) f) :
     PullbackResult B f C m F
 
 end WantedExt.AlgebraicGeometry.AdelicCompletionOperations

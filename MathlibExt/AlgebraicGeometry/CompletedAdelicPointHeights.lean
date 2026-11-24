@@ -19,7 +19,10 @@ proved scalar formula and the original place measure. The approximation
 condition retains a genuine rational-model representative and an
 integrable boundary gauge; interchange of the integral and limit is a
 separate construction request.
-Source: Yuan--Zhang, arXiv:2105.13587v9, Sections 3.4 and 5.3.
+Modelled on Yuan--Zhang, arXiv:2105.13587v9, Sections 3.4 and 5.3.
+The completion is the fixed-gauge completion of `BoundaryMetricCompletionModels`, not
+Yuan--Zhang's boundary topology: their adelic line bundles and positivity notions are not
+claimed here.
 -/
 
 set_option autoImplicit false
@@ -89,7 +92,7 @@ defined for admissible classes. `height` itself is the raw integral, which is ze
 when the log norm is not integrable. -/
 def pointHeight (_H : IsAdmissible B m F) : ℝ := height B m F (F.basis ())
 
-def adelicPointHeight (m : RationalAdelicModelMetrics.AdelicMetric (L := L) B)
+def adelicPointHeight (m : RationalAdelicModelMetrics.FixedGaugeAdelicMetric (L := L) B)
     (H : IsAdmissible B m.val F) : ℝ :=
   pointHeight B m.val F H
 

@@ -16,7 +16,10 @@ public import MathlibExt.AlgebraicGeometry.AdelicSemipositiveClosures
 The ground base, native curve degrees, whole model hermitian metric,
 original quotient operations and exact positivity predicates are fixed.
 No metric on an arbitrary open is asserted to extend to a model.
-Source: Yuan--Zhang, arXiv:2105.13587v9, Sections 1.1.4, 2.5--2.6 and A.4.1.
+Modelled on Yuan--Zhang, arXiv:2105.13587v9, Sections 1.1.4, 2.5--2.6 and A.4.1.
+The completion is the fixed-gauge completion of `BoundaryMetricCompletionModels`, not
+Yuan--Zhang's boundary topology: their adelic line bundles and positivity notions are not
+claimed here.
 -/
 
 set_option autoImplicit false
@@ -89,29 +92,30 @@ variable {K : Type} [Field K] {A : AdelicField K} {X : Over (Spec (.of K))}
   {L M : X.left.Modules} (G : GroundBase (K := K)) (B : EffectiveBoundary A X)
 
 /-- Strong nefness is invariant under the actual completed algebraic isometry. -/
-public theorem_wanted isometryStronglyNef (m : AdelicMetric (L := L) B)
-    (n : AdelicMetric (L := M) B) (H : IsIsometric B m n) (hm : IsStronglyNef G B m) :
+public theorem_wanted isometryStronglyNef (m : FixedGaugeAdelicMetric (L := L) B)
+    (n : FixedGaugeAdelicMetric (L := M) B) (H : IsIsometric B m n) (hm : IsStronglyNef G B m) :
     IsStronglyNef G B n
 
 /-- Strongly nef model limits satisfy the source's auxiliary-line nef definition. -/
-public theorem_wanted stronglyNefNef (m : AdelicMetric (L := L) B) (H : IsStronglyNef G B m) :
+public theorem_wanted stronglyNefNef (m : FixedGaugeAdelicMetric (L := L) B)
+    (H : IsStronglyNef G B m) :
     IsNef G B m
 
 /-- Strongly nef model limits are isometric differences with the trivial strongly nef line. -/
-public theorem_wanted stronglyNefIntegrable (m : AdelicMetric (L := L) B)
+public theorem_wanted stronglyNefIntegrable (m : FixedGaugeAdelicMetric (L := L) B)
     (H : IsStronglyNef G B m) : IsIntegrable G B m
 
 /-- Native tensor model refinements preserve strong nefness. -/
 public def_wanted stronglyNefTensor
     (F : AllPlaceTensor (A := A) (X := X) (L := L) (M := M))
-    (m : AdelicMetric (L := L) B) (n : AdelicMetric (L := M) B)
+    (m : FixedGaugeAdelicMetric (L := L) B) (n : FixedGaugeAdelicMetric (L := M) B)
     (hm : IsStronglyNef G B m) (hn : IsStronglyNef G B n) :
     {R : TensorResult B F m n // IsStronglyNef G B R.metric}
 
 /-- Integrable tensor products retain their actual difference-of-strongly-nef presentation. -/
 public def_wanted integrableTensor
     (F : AllPlaceTensor (A := A) (X := X) (L := L) (M := M))
-    (m : AdelicMetric (L := L) B) (n : AdelicMetric (L := M) B)
+    (m : FixedGaugeAdelicMetric (L := L) B) (n : FixedGaugeAdelicMetric (L := M) B)
     (hm : IsIntegrable G B m) (hn : IsIntegrable G B n) :
     {R : TensorResult B F m n // IsIntegrable G B R.metric}
 
@@ -123,21 +127,21 @@ projective `K`-scheme; a proper compactification alone does not give the project
 that nef models require) preserves strong nefness under boundary domination. -/
 public def_wanted stronglyNefPullback (D : BoundaryDominated B f C)
     (hY : ∃ (Z : Over (Spec (.of K))) (j : Y ⟶ Z), IsProjectiveOver Z.hom ∧ IsOpenImmersion j.left)
-    (m : AdelicMetric (L := L) B) (H : IsStronglyNef G B m) :
+    (m : FixedGaugeAdelicMetric (L := L) B) (H : IsStronglyNef G B m) :
     {R : PullbackResult B f C m F // IsStronglyNef G C R.metric}
 
 /-- The same actual pullback to a quasi-projective variety preserves the source
 auxiliary-line nef property under boundary domination. -/
 public def_wanted nefPullback (D : BoundaryDominated B f C)
     (hY : ∃ (Z : Over (Spec (.of K))) (j : Y ⟶ Z), IsProjectiveOver Z.hom ∧ IsOpenImmersion j.left)
-    (m : AdelicMetric (L := L) B) (H : IsNef G B m) :
+    (m : FixedGaugeAdelicMetric (L := L) B) (H : IsNef G B m) :
     {R : PullbackResult B f C m F // IsNef G C R.metric}
 
 /-- Actual tensor and dual presentations make integrability stable under scheme pullback to a
 quasi-projective variety, under boundary domination. -/
 public def_wanted integrablePullback (D : BoundaryDominated B f C)
     (hY : ∃ (Z : Over (Spec (.of K))) (j : Y ⟶ Z), IsProjectiveOver Z.hom ∧ IsOpenImmersion j.left)
-    (m : AdelicMetric (L := L) B) (H : IsIntegrable G B m) :
+    (m : FixedGaugeAdelicMetric (L := L) B) (H : IsIntegrable G B m) :
     {R : PullbackResult B f C m F // IsIntegrable G C R.metric}
 
 end WantedExt.AlgebraicGeometry.AdelicSemipositiveClosures

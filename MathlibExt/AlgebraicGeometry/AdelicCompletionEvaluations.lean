@@ -23,7 +23,10 @@ at the zero vector and the exponential of that limit elsewhere.
 Continuity and construction of a metrized line with these exact norms
 are recorded separately. No second completion or unrelated metric
 carrier is introduced.
-Source: Yuan--Zhang, arXiv:2105.13587v9, Sections 2.5 and 3.4.
+Modelled on Yuan--Zhang, arXiv:2105.13587v9, Sections 2.5 and 3.4.
+The completion is the fixed-gauge completion of `BoundaryMetricCompletionModels`, not
+Yuan--Zhang's boundary topology: their adelic line bundles and positivity notions are not
+claimed here.
 -/
 
 set_option autoImplicit false

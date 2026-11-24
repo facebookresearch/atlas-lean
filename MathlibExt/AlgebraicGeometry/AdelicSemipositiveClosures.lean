@@ -12,7 +12,7 @@ public import MathlibExt.AlgebraicGeometry.AdelicCompletionOperations
 public import MathlibExt.AlgebraicGeometry.ProjectiveSpace
 
 /-!
-# Source-normalized strongly nef, nef and integrable adelic lines
+# Strongly nef, nef and integrable fixed-gauge metrics
 
 Models are projective over the fixed integer or field ground base.
 Arithmetic nefness uses the full model hermitian metric, its actual
@@ -21,12 +21,15 @@ weights and arithmetic degrees of all closed integral curves. The
 geometric field ground requires nonarchimedean places trivial on that
 field and uses the literal coherent Euler degrees.
 
-Strongly nef means the actual limit of nef rational models. Nef has
+Strongly nef means the actual limit, in the fixed-gauge completion, of nef rational models. Nef has
 one strongly nef auxiliary line with aL+M strongly nef for every
 positive integer a. Integrable is an actual completed-fibre isometry
 to the difference of two strongly nef lines, using native tensor and
 dual evaluation. These three source definitions remain distinct.
-Source: Yuan--Zhang, arXiv:2105.13587v9, Sections 1.1.4, 2.5 and A.4.1.
+Modelled on Yuan--Zhang, arXiv:2105.13587v9, Sections 1.1.4, 2.5 and A.4.1.
+The completion is the fixed-gauge completion of `BoundaryMetricCompletionModels`, not
+Yuan--Zhang's boundary topology: their adelic line bundles and positivity notions are not
+claimed here.
 -/
 
 set_option autoImplicit false
@@ -104,18 +107,19 @@ def NefModel (G : GroundBase (K := K)) (m : ModelMetric (A := A) (X := X) (L := 
 
 variable (G : GroundBase (K := K)) (B : EffectiveBoundary A X)
 
-def IsStronglyNef (m : AdelicMetric (L := L) B) : Prop :=
+def IsStronglyNef (m : FixedGaugeAdelicMetric (L := L) B) : Prop :=
   ∃ S : ModelSequence (L := L) B, S.class = m.val ∧ ∀ n, Nonempty (NefModel G (S.model n))
 
-def IsNef (m : AdelicMetric (L := L) B) : Prop :=
-  ∃ (N : X.left.Modules) (n : AdelicMetric (L := N) B), IsStronglyNef G B n ∧
+def IsNef (m : FixedGaugeAdelicMetric (L := L) B) : Prop :=
+  ∃ (N : X.left.Modules) (n : FixedGaugeAdelicMetric (L := N) B), IsStronglyNef G B n ∧
     ∀ (a : ℕ), 0 < a → ∃ (F : AllPlacePower (A := A) (X := X) (L := L) a)
       (P : PowerResult B m a F)
       (T : AllPlaceTensor (A := A) (X := X) (L := CurvePositivity.power L a) (M := N))
       (R : TensorResult B T P.metric n), IsStronglyNef G B R.metric
 
-def IsIntegrable (m : AdelicMetric (L := L) B) : Prop :=
-  ∃ (N P : X.left.Modules) (n : AdelicMetric (L := N) B) (p : AdelicMetric (L := P) B),
+def IsIntegrable (m : FixedGaugeAdelicMetric (L := L) B) : Prop :=
+  ∃ (N P : X.left.Modules) (n : FixedGaugeAdelicMetric (L := N) B)
+    (p : FixedGaugeAdelicMetric (L := P) B),
     IsStronglyNef G B n ∧ IsStronglyNef G B p ∧
       ∃ (D : AlgebraicDual (X := X) (L := P)) (F : AllPlaceDual (A := A) D)
         (d : DualResult B p D F)

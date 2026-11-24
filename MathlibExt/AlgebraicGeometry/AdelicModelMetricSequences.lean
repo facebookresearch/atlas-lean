@@ -20,7 +20,10 @@ The sequence uses one arithmetic base and the actual boundary Cauchy
 relation. Completion is the image of these model sequences in the
 already computed boundary metric quotient, not an arbitrary real space.
 
-Reference: Yuan--Zhang, arXiv:2105.13587v9, Sections 2.1--2.2 and A.5.
+Modelled on Yuan--Zhang, arXiv:2105.13587v9, Sections 2.1--2.2 and A.5.
+The completion is the fixed-gauge completion of `BoundaryMetricCompletionModels`, not
+Yuan--Zhang's boundary topology: their adelic line bundles and positivity notions are not
+claimed here.
 -/
 
 set_option autoImplicit false
@@ -67,7 +70,7 @@ def ModelSequence.class {B : EffectiveBoundary A X} (S : ModelSequence (L := L) 
     BoundaryMetricCompletion (L := L) B := Quotient.mk _ S.toCauchy
 
 /-- Model-compatible adelic metrics form the literal image of actual model sequences. -/
-def AdelicMetric (B : EffectiveBoundary A X) :=
+def FixedGaugeAdelicMetric (B : EffectiveBoundary A X) :=
   {m : BoundaryMetricCompletion (L := L) B //
     ∃ S : ModelSequence (L := L) B, S.class = m}
 

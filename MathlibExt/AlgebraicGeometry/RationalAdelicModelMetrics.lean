@@ -24,8 +24,11 @@ computed boundary Cauchy quotient. Integral model sequences are its
 denominator-one subcase, rather than the definition of every rational
 model approximation.
 
-Source: Yuan--Zhang, arXiv:2105.13587v9, Sections 1.1.3--1.1.4,
+Modelled on Yuan--Zhang, arXiv:2105.13587v9, Sections 1.1.3--1.1.4,
 2.1--2.2; the positive integer e is retained explicitly.
+The completion is the fixed-gauge completion of `BoundaryMetricCompletionModels`, not
+Yuan--Zhang's boundary topology: their adelic line bundles and positivity notions are not
+claimed here.
 -/
 
 set_option autoImplicit false
@@ -94,8 +97,10 @@ def ModelSequence.toCauchy {B : EffectiveBoundary A X} (S : ModelSequence (L := 
 def ModelSequence.class {B : EffectiveBoundary A X} (S : ModelSequence (L := L) B) :
     BoundaryMetricCompletion (L := L) B := Quotient.mk _ S.toCauchy
 
-/-- General rational-model adelic metrics are the literal image in this same completion. -/
-def AdelicMetric (B : EffectiveBoundary A X) :=
+/-- Rational-model metrics of the fixed-gauge completion: the literal image of the rational
+model sequences in this same completion (not Yuan--Zhang's adelic metrics, whose boundary
+topology is not used here). -/
+def FixedGaugeAdelicMetric (B : EffectiveBoundary A X) :=
   {m : BoundaryMetricCompletion (L := L) B // ∃ S : ModelSequence (L := L) B, S.class = m}
 
 end MathlibExt.AlgebraicGeometry.RationalAdelicModelMetrics
