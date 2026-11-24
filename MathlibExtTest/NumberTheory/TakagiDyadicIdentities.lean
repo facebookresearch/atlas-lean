@@ -10,9 +10,17 @@ module
 
 import MathlibExt.NumberTheory.TakagiDyadicIdentities
 
-/-! # Tests for D-node counts and binary digit sums -/
+/-! # Tests for dyadic normalization, D-node counts and binary digit sums -/
 
 open MetaMathlibExt
+
+-- The smallest positive integer has exponent zero and mantissa zero.
+example (x : ℚ) (hx : 1 = 1 + x) : x = 0 := by
+  simpa using (dyadic_mantissa_eq 1 0 0 x (by decide) rfl (by simpa using hx)).1
+
+-- Immediately below eight, the remainder three gives the nonintegral mantissa 3/4.
+example (x : ℚ) (hx : 7 = 4 * (1 + x)) : x = 3 / 4 ∧ 1 + x = 7 / 4 :=
+  dyadic_mantissa_eq 7 2 3 x (by decide) rfl hx
 
 -- The stipulated value at zero agrees with the count for a single leaf.
 example : dcDNodes 0 = 0 ∧ dcDNodes 1 = 0 :=

@@ -13,97 +13,21 @@ public import Mathlib.Analysis.Asymptotics.Theta
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Nat.Log
 public import MathlibExt.Combinatorics.InfiniteWord.ThueMorse
+public import MathlibExt.Combinatorics.InfiniteWord.ThueMorseFactors
 public import MathlibExt.Combinatorics.InfiniteWord.WordFactorComplexity
 public import MathlibExt.Combinatorics.Words.BalancedDyadicNestedEventuallyPeriodic
 public import MathlibExt.Combinatorics.Words.BalancedNestedXor
 public import MathlibExt.Combinatorics.Words.CobhamUniformMorphism
+public import MathlibExt.Combinatorics.Words.MetaAutomaticOne
+public import MathlibExt.Combinatorics.Words.MetaAutomaticTwo
 public import MathlibExt.Combinatorics.Words.RegularSequence
+public import MathlibExt.Combinatorics.Words.ThueMorseQuarto
 
 namespace MetaMathlibExt
 
 open Filter Asymptotics
 
 @[expose] public section
-
-/-- **Thue–Morse quarto sequence.** The Thue–Morse quarto sequence
-$\mathcal{Q} : \mathbb{N} \to \{0, 1\}$ (OEIS A298952, with $\mathcal{Q}(0) = 0$) is given by
-$\mathcal{Q}(0) = 0$, $\mathcal{Q}(1) = 1$ and, for every $m \ge 2$, writing $m = 4n + r$ with
-$n \ge 0$ and $0 \le r \le 3$: $\mathcal{Q}(m) = \mathcal{Q}(n)$ if $r = 0$,
-$\mathcal{Q}(m) = 1 - \mathcal{Q}(n)$ if $r = 1$, $\mathcal{Q}(m) = \mathcal{Q}(2n)$ if $r = 2$,
-and $\mathcal{Q}(m) = 1 - \mathcal{Q}(2n)$ if $r = 3$.
-
-Source: John M. Campbell and Benoît Cloitre, *Meta-Automatic Sequences*, Journal of
-Integer Sequences 29 (2026), Article 26.4.1, Section 2.2 (definition of `𝒬`). -/
-public def thueMorseQuarto : ℕ → Bool
-  | 0 => false
-  | 1 => true
-  | n + 2 =>
-    match (n + 2) % 4 with
-    | 0 => thueMorseQuarto ((n + 2) / 4)
-    | 1 => !thueMorseQuarto ((n + 2) / 4)
-    | 2 => thueMorseQuarto (2 * ((n + 2) / 4))
-    | _ => !thueMorseQuarto (2 * ((n + 2) / 4))
-termination_by n => n
-decreasing_by all_goals omega
-
-/-- **The meta-automatic sequence $\mathcal{M}_1$.** The sequence
-$\mathcal{M}_1 : \mathbb{N} \to \{0, 1\}$ (OEIS A392736) is defined by $\mathcal{M}_1(0) = 0$,
-$\mathcal{M}_1(1) = 1$, the recurrences $\mathcal{M}_1(4n) = \mathcal{M}_1(n)$ and
-$\mathcal{M}_1(4n+1) = 1 - \mathcal{M}_1(n)$ for every $n \ge 1$, and the recurrences
-$\mathcal{M}_1(4n+2) = \mathcal{M}_1(2n + 1 - \mathcal{M}_1(n))$ and
-$\mathcal{M}_1(4n+3) = 1 - \mathcal{M}_1(2n + 1 - \mathcal{M}_1(n))$ for every $n \ge 0$.
-
-Source: John M. Campbell and Benoît Cloitre, *Meta-Automatic Sequences*, Journal of
-Integer Sequences 29 (2026), Article 26.4.1, Section 3 (definition of `ℳ₁`). -/
-public def metaAutomaticOne : ℕ → Bool
-  | 0 => false
-  | 1 => true
-  | n + 2 =>
-    match (n + 2) % 4 with
-    | 0 => metaAutomaticOne ((n + 2) / 4)
-    | 1 => !metaAutomaticOne ((n + 2) / 4)
-    | 2 => if metaAutomaticOne ((n + 2) / 4) then metaAutomaticOne (2 * ((n + 2) / 4))
-        else metaAutomaticOne (2 * ((n + 2) / 4) + 1)
-    | _ => !(if metaAutomaticOne ((n + 2) / 4) then metaAutomaticOne (2 * ((n + 2) / 4))
-        else metaAutomaticOne (2 * ((n + 2) / 4) + 1))
-termination_by n => n
-decreasing_by all_goals omega
-
-/-- **The meta-automatic sequence $\mathcal{M}_2$.** The meta-automatic sequence
-$\mathcal{M}_2 : \mathbb{N} \to \{0, 1\}$ (OEIS A391614) is defined by $\mathcal{M}_2(0) = 0$,
-$\mathcal{M}_2(1) = 1$, $\mathcal{M}_2(4n) = \mathcal{M}_2(2n + \mathcal{M}_2(n))$ and
-$\mathcal{M}_2(4n+1) = 1 - \mathcal{M}_2(4n)$ for $n \ge 1$, and
-$\mathcal{M}_2(4n+2) = \mathcal{M}_2(2n + 1 - \mathcal{M}_2(n))$ and
-$\mathcal{M}_2(4n+3) = 1 - \mathcal{M}_2(4n+2)$ for $n \ge 0$.
-
-Source: John M. Campbell and Benoît Cloitre, *Meta-Automatic Sequences*, Journal of
-Integer Sequences 29 (2026), Article 26.4.1, Section 4 (definition of `ℳ₂`). -/
-public def metaAutomaticTwo : ℕ → Bool
-  | 0 => false
-  | 1 => true
-  | n + 2 =>
-    match (n + 2) % 4 with
-    | 0 => if metaAutomaticTwo ((n + 2) / 4) then metaAutomaticTwo (2 * ((n + 2) / 4) + 1)
-        else metaAutomaticTwo (2 * ((n + 2) / 4))
-    | 1 => !(if metaAutomaticTwo ((n + 2) / 4) then metaAutomaticTwo (2 * ((n + 2) / 4) + 1)
-        else metaAutomaticTwo (2 * ((n + 2) / 4)))
-    | 2 => if metaAutomaticTwo ((n + 2) / 4) then metaAutomaticTwo (2 * ((n + 2) / 4))
-        else metaAutomaticTwo (2 * ((n + 2) / 4) + 1)
-    | _ => !(if metaAutomaticTwo ((n + 2) / 4) then metaAutomaticTwo (2 * ((n + 2) / 4))
-        else metaAutomaticTwo (2 * ((n + 2) / 4) + 1))
-termination_by n => n
-decreasing_by all_goals omega
-
-/-- **First sixteen terms of the Thue–Morse quarto sequence.** The values
-$\mathcal{Q}(0), \mathcal{Q}(1), \ldots, \mathcal{Q}(15)$ of the Thue–Morse quarto sequence
-$\mathcal{Q}$ are $0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 1$, in this order.
-
-Source: John M. Campbell and Benoît Cloitre, *Meta-Automatic Sequences*, Journal of
-Integer Sequences 29 (2026), Article 26.4.1, Section 2.2. -/
-public theorem thueMorseQuarto_small : (List.range 16).map thueMorseQuarto =
-    [false, true, false, true, true, false, false, true, false, true, true, false, true,
-      false, false, true] := by
-  simp [List.range_succ, thueMorseQuarto]
 
 /-- **First sixteen terms of $\mathcal{M}_1$.** Writing the values of the meta-automatic sequence
 $\mathcal{M}_1$ as $0$ and $1$, the terms $\mathcal{M}_1(0), \dots, \mathcal{M}_1(15)$ are
@@ -115,102 +39,6 @@ public theorem metaAutomaticOne_small : (List.range 16).map metaAutomaticOne =
     [false, true, true, false, true, false, true, false, true, false, true, false, false,
       true, false, true] := by
   simp [List.range_succ, metaAutomaticOne]
-
-/-- **First sixteen terms of $\mathcal{M}_2$.** The first sixteen terms
-$\mathcal{M}_2(0), \mathcal{M}_2(1), \ldots, \mathcal{M}_2(15)$ of the meta-automatic sequence
-$\mathcal{M}_2$ are $0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1$.
-
-Source: John M. Campbell and Benoît Cloitre, *Meta-Automatic Sequences*, Journal of
-Integer Sequences 29 (2026), Article 26.4.1, Section 4. -/
-public theorem metaAutomaticTwo_small : (List.range 16).map metaAutomaticTwo =
-    [false, true, true, false, false, true, true, false, true, false, false, true, true,
-      false, false, true] := by
-  simp [List.range_succ, metaAutomaticTwo]
-
-/-- **Recurrences of the Thue–Morse quarto sequence.** The Thue–Morse quarto sequence
-$\mathcal{Q}$ satisfies $\mathcal{Q}(4n) = \mathcal{Q}(n)$ and
-$\mathcal{Q}(4n+1) = 1 - \mathcal{Q}(n)$ for every $n \ge 1$, and
-$\mathcal{Q}(4n+2) = \mathcal{Q}(2n)$ and $\mathcal{Q}(4n+3) = 1 - \mathcal{Q}(2n)$ for every
-$n \ge 0$.
-
-Source: John M. Campbell and Benoît Cloitre, *Meta-Automatic Sequences*, Journal of
-Integer Sequences 29 (2026), Article 26.4.1, Section 2.2. -/
-public theorem thueMorseQuarto_rec (n : ℕ) :
-    (1 ≤ n → thueMorseQuarto (4 * n) = thueMorseQuarto n) ∧
-      (1 ≤ n → thueMorseQuarto (4 * n + 1) = !thueMorseQuarto n) ∧
-      thueMorseQuarto (4 * n + 2) = thueMorseQuarto (2 * n) ∧
-      thueMorseQuarto (4 * n + 3) = !thueMorseQuarto (2 * n) := by
-  refine ⟨fun hn => ?_, fun hn => ?_, ?_, ?_⟩
-  · obtain ⟨k, hk⟩ : ∃ k, 4 * n = k + 2 := ⟨4 * n - 2, by omega⟩
-    rw [hk, thueMorseQuarto]
-    simp only [show (k + 2) % 4 = 0 by omega, show (k + 2) / 4 = n by omega]
-  · obtain ⟨k, hk⟩ : ∃ k, 4 * n + 1 = k + 2 := ⟨4 * n - 1, by omega⟩
-    rw [hk, thueMorseQuarto]
-    simp only [show (k + 2) % 4 = 1 by omega, show (k + 2) / 4 = n by omega]
-  · rw [show 4 * n + 2 = 4 * n + 2 from rfl, thueMorseQuarto]
-    simp only [show (4 * n + 2) % 4 = 2 by omega, show (4 * n + 2) / 4 = n by omega]
-  · rw [show 4 * n + 3 = (4 * n + 1) + 2 by omega, thueMorseQuarto]
-    simp only [show (4 * n + 1 + 2) % 4 = 3 by omega, show (4 * n + 1 + 2) / 4 = n by omega]
-
-/-- **Recurrences of the meta-automatic sequence $\mathcal{M}_1$.** Reading the values of the
-meta-automatic sequence $\mathcal{M}_1$ as $0$ and $1$, for every $n \ge 1$ we have
-$\mathcal{M}_1(4n) = \mathcal{M}_1(n)$ and $\mathcal{M}_1(4n+1) = 1 - \mathcal{M}_1(n)$, and for
-every $n \in \mathbb{N}$ we have $\mathcal{M}_1(4n+2) = \mathcal{M}_1(2n + 1 - \mathcal{M}_1(n))$
-and $\mathcal{M}_1(4n+3) = 1 - \mathcal{M}_1(2n + 1 - \mathcal{M}_1(n))$.
-
-Source: John M. Campbell and Benoît Cloitre, *Meta-Automatic Sequences*, Journal of
-Integer Sequences 29 (2026), Article 26.4.1, Section 3, equations (6) and (7). -/
-public theorem metaAutomaticOne_rec (n : ℕ) :
-    (1 ≤ n → metaAutomaticOne (4 * n) = metaAutomaticOne n) ∧
-      (1 ≤ n → metaAutomaticOne (4 * n + 1) = !metaAutomaticOne n) ∧
-      metaAutomaticOne (4 * n + 2) =
-        metaAutomaticOne (2 * n + 1 - (metaAutomaticOne n).toNat) ∧
-      metaAutomaticOne (4 * n + 3) =
-        !metaAutomaticOne (2 * n + 1 - (metaAutomaticOne n).toNat) := by
-  refine ⟨fun hn => ?_, fun hn => ?_, ?_, ?_⟩
-  · obtain ⟨k, hk⟩ : ∃ k, 4 * n = k + 2 := ⟨4 * n - 2, by omega⟩
-    rw [hk, metaAutomaticOne]
-    simp only [show (k + 2) % 4 = 0 by omega, show (k + 2) / 4 = n by omega]
-  · obtain ⟨k, hk⟩ : ∃ k, 4 * n + 1 = k + 2 := ⟨4 * n - 1, by omega⟩
-    rw [hk, metaAutomaticOne]
-    simp only [show (k + 2) % 4 = 1 by omega, show (k + 2) / 4 = n by omega]
-  · rw [show 4 * n + 2 = 4 * n + 2 from rfl, metaAutomaticOne]
-    simp only [show (4 * n + 2) % 4 = 2 by omega, show (4 * n + 2) / 4 = n by omega]
-    cases metaAutomaticOne n <;> simp
-  · rw [show 4 * n + 3 = (4 * n + 1) + 2 by omega, metaAutomaticOne]
-    simp only [show (4 * n + 1 + 2) % 4 = 3 by omega, show (4 * n + 1 + 2) / 4 = n by omega]
-    cases metaAutomaticOne n <;> simp
-
-/-- **Recurrences of $\mathcal{M}_2$.** The meta-automatic sequence $\mathcal{M}_2$, read as
-taking values in $\{0, 1\}$, satisfies $\mathcal{M}_2(4n) = \mathcal{M}_2(2n + \mathcal{M}_2(n))$
-and $\mathcal{M}_2(4n+1) = 1 - \mathcal{M}_2(4n)$ for every $n \ge 1$, and
-$\mathcal{M}_2(4n+2) = \mathcal{M}_2(2n + 1 - \mathcal{M}_2(n))$ and
-$\mathcal{M}_2(4n+3) = 1 - \mathcal{M}_2(4n+2)$ for every $n \ge 0$.
-
-Source: John M. Campbell and Benoît Cloitre, *Meta-Automatic Sequences*, Journal of
-Integer Sequences 29 (2026), Article 26.4.1, Section 4, equations (9) and (10). -/
-public theorem metaAutomaticTwo_rec (n : ℕ) :
-    (1 ≤ n → metaAutomaticTwo (4 * n) =
-        metaAutomaticTwo (2 * n + (metaAutomaticTwo n).toNat)) ∧
-      (1 ≤ n → metaAutomaticTwo (4 * n + 1) = !metaAutomaticTwo (4 * n)) ∧
-      metaAutomaticTwo (4 * n + 2) =
-        metaAutomaticTwo (2 * n + 1 - (metaAutomaticTwo n).toNat) ∧
-      metaAutomaticTwo (4 * n + 3) = !metaAutomaticTwo (4 * n + 2) := by
-  refine ⟨fun hn => ?_, fun hn => ?_, ?_, ?_⟩
-  · obtain ⟨k, hk⟩ : ∃ k, 4 * n = k + 2 := ⟨4 * n - 2, by omega⟩
-    rw [hk, metaAutomaticTwo]
-    simp only [show (k + 2) % 4 = 0 by omega, show (k + 2) / 4 = n by omega]
-    cases metaAutomaticTwo n <;> simp
-  · obtain ⟨k, hk⟩ : ∃ k, 4 * n = k + 2 := ⟨4 * n - 2, by omega⟩
-    rw [hk, show k + 2 + 1 = (k + 1) + 2 by omega, metaAutomaticTwo, metaAutomaticTwo]
-    simp only [show (k + 1 + 2) % 4 = 1 by omega, show (k + 1 + 2) / 4 = n by omega,
-      show (k + 2) % 4 = 0 by omega, show (k + 2) / 4 = n by omega]
-  · rw [show 4 * n + 2 = 4 * n + 2 from rfl, metaAutomaticTwo]
-    simp only [show (4 * n + 2) % 4 = 2 by omega, show (4 * n + 2) / 4 = n by omega]
-    cases metaAutomaticTwo n <;> simp
-  · rw [show 4 * n + 3 = (4 * n + 1) + 2 by omega, metaAutomaticTwo, metaAutomaticTwo]
-    simp only [show (4 * n + 1 + 2) % 4 = 3 by omega, show (4 * n + 1 + 2) / 4 = n by omega,
-      show (4 * n + 2) % 4 = 2 by omega, show (4 * n + 2) / 4 = n by omega]
 
 /-- **Right-special factors.** Let $a$ be an infinite binary word and $n$ a natural number. The
 right-special factors of $a$ of length $n$ are the binary words $u$ of length $n$ such that both
@@ -258,28 +86,6 @@ public theorem_wanted isKAutomaticSequence_of_digit_recurrence {A : Type} [Finty
       U (q ^ (t + 1) * n + j) =
         f j (Sum.elim (fun i => U (n + i - a)) (fun p => U (q ^ p.1.1 * n + p.1.2)))) :
     IsKAutomaticSequence q U
-
-/-- **Thue–Morse quarto sequence from the Thue–Morse sequence.** Let $\mathcal{Q}$ be the
-Thue–Morse quarto sequence and $t$ the Thue–Morse sequence, and let $d(0) = 0$ and
-$d(n) = \lfloor \log_2 n \rfloor \bmod 2$ for $n \ge 1$. Then for every $n \ge 0$,
-$\mathcal{Q}(n) = t(n) \oplus d(n)$, where $\oplus$ is addition modulo $2$.
-
-Source: John M. Campbell and Benoît Cloitre, *Meta-Automatic Sequences*, Journal of
-Integer Sequences 29 (2026), Article 26.4.1, Proposition 8 (`jis-2026-26.4.1-prop-8`). -/
-public theorem_wanted thueMorseQuarto_eq_xor (n : ℕ) :
-    thueMorseQuarto n = xor (thueMorse n) (decide (Nat.log 2 n % 2 = 1))
-
-/-- **The meta-automatic sequence $\mathcal{M}_1$ is balanced.** Reading the values of the
-meta-automatic sequence $\mathcal{M}_1$ as $0$ and $1$, we have
-$\mathcal{M}_1(2n) + \mathcal{M}_1(2n+1) = 1$ for every $n \in \mathbb{N}$.
-
-The paper's lemma also asserts that $\mathcal{M}_1$ is well defined; here that is part of the
-definition of $\mathcal{M}_1$.
-
-Source: John M. Campbell and Benoît Cloitre, *Meta-Automatic Sequences*, Journal of
-Integer Sequences 29 (2026), Article 26.4.1, Lemma 10 (`jis-2026-26.4.1-lem-10`). -/
-public theorem_wanted metaAutomaticOne_balanced (n : ℕ) :
-    (metaAutomaticOne (2 * n)).toNat + (metaAutomaticOne (2 * n + 1)).toNat = 1
 
 /-- **Joint recurrence for $\mathcal{M}_1$ and its nested companion.** Read the values of the
 meta-automatic sequence $\mathcal{M}_1$ as $0$ and $1$, write $\oplus$ for addition modulo $2$,
@@ -334,31 +140,6 @@ public theorem_wanted metaAutomaticOne_morphism_coding :
       (∀ n r, r < 4 → w (4 * n + r) =
         ([[0, 1, 1, 2], [1, 2, 3, 0], [2, 3, 0, 1], [3, 0, 2, 3]].getD (w n) []).getD r 0) ∧
       ∀ n, metaAutomaticOne n = decide (w n % 2 = 1)
-
-/-- **$\mathcal{M}_2$ is balanced.** For every natural number $n$, the meta-automatic sequence
-$\mathcal{M}_2$, read as taking values in $\{0, 1\}$, satisfies
-$\mathcal{M}_2(2n) + \mathcal{M}_2(2n+1) = 1$.
-
-The well-definedness of $\mathcal{M}_2$, also part of the source theorem, holds because its
-defining recursion terminates.
-
-Source: John M. Campbell and Benoît Cloitre, *Meta-Automatic Sequences*, Journal of
-Integer Sequences 29 (2026), Article 26.4.1, Theorem 18 (`jis-2026-26.4.1-thm-18`). -/
-public theorem_wanted metaAutomaticTwo_balanced (n : ℕ) :
-    (metaAutomaticTwo (2 * n)).toNat + (metaAutomaticTwo (2 * n + 1)).toNat = 1
-
-/-- **Recovering the even and odd terms of $\mathcal{M}_2$.** For every natural number $n$, let
-$x = \mathcal{M}_2(n)$ and $y = \mathcal{M}_2(2n + \mathcal{M}_2(n))$, where $\mathcal{M}_2$ is the
-meta-automatic sequence with values in $\{0, 1\}$. Then $\mathcal{M}_2(2n) = x \oplus y$ and
-$\mathcal{M}_2(2n+1) = x \oplus y \oplus 1$, where $\oplus$ is addition modulo $2$.
-
-Source: John M. Campbell and Benoît Cloitre, *Meta-Automatic Sequences*, Journal of
-Integer Sequences 29 (2026), Article 26.4.1, Lemma 19 (`jis-2026-26.4.1-lem-19`). -/
-public theorem_wanted metaAutomaticTwo_recover (n : ℕ) :
-    metaAutomaticTwo (2 * n) = xor (metaAutomaticTwo n)
-        (metaAutomaticTwo (2 * n + (metaAutomaticTwo n).toNat)) ∧
-      metaAutomaticTwo (2 * n + 1) = !xor (metaAutomaticTwo n)
-        (metaAutomaticTwo (2 * n + (metaAutomaticTwo n).toNat))
 
 /-- **Pair recurrence and $4$-automaticity of $\mathcal{M}_2$.** Read the meta-automatic
 sequence $\mathcal{M}_2$ as taking values in $\{0, 1\}$, write $\oplus$ for addition modulo $2$,
@@ -481,16 +262,6 @@ public theorem_wanted rightSpecial_count_regular (k : ℕ) (a : ℕ → Bool)
     IsKRegularSequence k (fun n => ((rightSpecialFactors a n).ncard : ℤ)) ∧
       ∀ C : ℕ, (∀ n, (rightSpecialFactors a n).ncard ≤ C) →
         IsKAutomaticSequence k (fun n => Fin.ofNat (C + 1) (rightSpecialFactors a n).ncard)
-
-/-- **Factors of the Thue–Morse word are closed under complement.** For every natural number
-$n$, if a binary word $v$ of length $n$ is a factor of the Thue–Morse sequence, then so is the
-word obtained from $v$ by exchanging $0$ and $1$ in every position.
-
-Source: John M. Campbell and Benoît Cloitre, *Meta-Automatic Sequences*, Journal of
-Integer Sequences 29 (2026), Article 26.4.1, Lemma 29 (`jis-2026-26.4.1-lem-29`). -/
-public theorem_wanted thueMorse_factor_complement (n : ℕ) (v : Fin n → Bool)
-    (hv : v ∈ InfiniteWord.factorSet thueMorse n) :
-    (fun i => !v i) ∈ InfiniteWord.factorSet thueMorse n
 
 /-- **Factor complexity of the Thue–Morse Quarto word versus Thue–Morse.** Let $\mathcal{Q}$ be
 the Thue–Morse Quarto sequence and $t$ the Thue–Morse sequence, with factor complexities

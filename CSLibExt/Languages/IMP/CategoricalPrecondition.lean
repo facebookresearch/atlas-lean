@@ -41,7 +41,7 @@ theorem derivable_iff_subset_liberalPre (c : Cmd) (P Q : Assertion) :
 
 /-- One backward while step: establish the postcondition on exit, or preserve the assertion. -/
 def whileStep (b : BExp) (c : Cmd) (Q : Assertion) : Set State →o Set State where
-  toFun I := {s | (b.eval s = false → Q s) ∧ (b.eval s = true → wlp c I s)}
+  toFun I := {s | (b.eval s = false → Q s) ∧ (b.eval s = true → wlp c (fun t => t ∈ I) s)}
   monotone' := by
     intro I J h s hs
     exact ⟨hs.1, fun hb t hc => h (hs.2 hb hc)⟩

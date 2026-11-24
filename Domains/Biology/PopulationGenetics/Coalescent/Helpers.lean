@@ -45,7 +45,8 @@ theorem iterate_sub_shift_eq_neg_one_pow_mul_fwdDiff_iter (m : ℕ → ℝ) (c i
     simp only [fwdDiff]
     ring
 
-/-- **Consistency unrolls along a row**: `r (i + 2 + c) (i + 2) = ((I - E) ^ c m) i` with
+/-- **Consistency unrolls along a row**: for an array `r` satisfying Pitman's consistency
+relation for `2 ≤ k ≤ b`, `r (i + 2 + c) (i + 2) = ((I - E) ^ c m) i` with
 `m j = r (j + 2) (j + 2)`. -/
 theorem consistent_eq_iterate_sub_shift (r : ℕ → ℕ → ℝ)
     (hcons : ∀ b k, 2 ≤ k → k ≤ b → r b k = r (b + 1) k + r (b + 1) (k + 1)) (i c : ℕ) :

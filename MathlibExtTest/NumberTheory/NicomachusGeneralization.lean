@@ -41,3 +41,34 @@ example :
     simp [nicomachusU, PowerSeries.coeff_zero_eq_constantCoeff_apply]
   rw [h0]
   norm_num
+
+-- Starting from `u_1 = 1`, the recurrence gives `u_2 = 901`, as `(3 + 2)(23 + 22) = 15²`, and then
+-- `u_3 = 359101`, as `(3 + 2 · 901)(23 + 22 · 901) = 5985²`: the coefficients of `x` and `x²`.
+example : nicomachusU 2 = 901 ∧ nicomachusU 3 = 359101 := by
+  have h1 : nicomachusU 1 = 1 := by
+    simp [nicomachusU, PowerSeries.coeff_zero_eq_constantCoeff_apply]
+  have h2 : (nicomachusU 2 : ℝ) = 901 := by
+    have h := nicomachusU_succ_eq 1 le_rfl
+    rw [h1, show ((3 : ℝ) + 2 * ((1 : ℚ) : ℝ)) * (23 + 22 * ((1 : ℚ) : ℝ)) = 15 ^ 2 by norm_num,
+      Real.sqrt_sq (by norm_num)] at h
+    exact h.trans (by norm_num)
+  have h3 : (nicomachusU 3 : ℝ) = 359101 := by
+    have h := nicomachusU_succ_eq 2 (by norm_num)
+    rw [h2, show ((3 : ℝ) + 2 * 901) * (23 + 22 * 901) = 5985 ^ 2 by norm_num,
+      Real.sqrt_sq (by norm_num)] at h
+    exact h.trans (by norm_num)
+  exact ⟨by exact_mod_cast h2, by exact_mod_cast h3⟩
+
+-- The hypothesis `1 ≤ k` is needed: since `u_0 = u_1 = 1`, the right-hand side of the recurrence
+-- at `k = 0` is `252 + 199 + 30 · 15 = 901`, not `u_1 = 1`.
+example :
+    (nicomachusU (0 + 1) : ℝ) ≠
+      252 + 199 * (nicomachusU 0 : ℝ) +
+        30 * Real.sqrt ((3 + 2 * (nicomachusU 0 : ℝ)) * (23 + 22 * (nicomachusU 0 : ℝ))) := by
+  have h0 : nicomachusU 0 = 1 := by
+    simp [nicomachusU, PowerSeries.coeff_zero_eq_constantCoeff_apply]
+  have h1 : nicomachusU (0 + 1) = 1 := by
+    simp [nicomachusU, PowerSeries.coeff_zero_eq_constantCoeff_apply]
+  rw [h0, h1, show ((3 : ℝ) + 2 * ((1 : ℚ) : ℝ)) * (23 + 22 * ((1 : ℚ) : ℝ)) = 15 ^ 2 by norm_num,
+    Real.sqrt_sq (by norm_num)]
+  norm_num

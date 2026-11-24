@@ -11,9 +11,11 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.Algebra.Order.Ring.Int
+public import MathlibExt.NumberTheory.PrimePairOneAddTwoPowMulPowEqSq
 public import MathlibExt.NumberTheory.PrimePairPowAddPowEqSq
 public import MathlibExt.NumberTheory.PrimePairPowSubTwoPowOddMulPowEqSq
 public import MathlibExt.NumberTheory.PrimePairTwoPowEvenMulPowSubPowEqSq
+public import MathlibExt.NumberTheory.PrimePairTwoPowOddMulPowSubPowEqSq
 public import MathlibExt.NumberTheory.PrimePowAddOneEqSq
 
 /-!
@@ -28,16 +30,6 @@ subtraction are read in `ℤ`.
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Squares of the form $1 + (2^k(2p - 1))^y$ for prime pairs.** Let $p$ be an odd prime such
-that $2p - 1$ is prime, and let $k \ge 1$ be an integer. Then non-negative integers $y$ and $z$
-satisfy $1 + (2^k(2p - 1))^y = z^2$ if and only if $k = 4$, $p = 3$, $y = 1$ and $z = 9$.
-
-Source: Jing Zhang and Yuan Li, *On the Equation (-1)^α p^x + (-1)^β (2^k(2p - 1))^y = z^2 for
-Prime Pairs (p, 2p - 1)*, INTEGERS 24 (2024), Article A64, Lemma 4. -/
-theorem_wanted one_add_two_pow_mul_pow_eq_sq_iff {p k : ℕ} (hp : p.Prime) (hp2 : p ≠ 2)
-    (hq : (2 * p - 1).Prime) (hk : 1 ≤ k) (y z : ℕ) :
-    1 + (2 ^ k * (2 * p - 1)) ^ y = z ^ 2 ↔ (k, p, y, z) = (4, 3, 1, 9)
 
 /-- **Terai's conjecture when $c$ is prime and $b \equiv \pm 5 \pmod 8$.** Let $a, b, c$ be
 natural numbers with $a^2 + b^2 = c^2$, $\gcd(a, b, c) = 1$, $b \equiv \pm 5 \pmod 8$ (that is,
@@ -120,20 +112,6 @@ theorem_wanted prime_pair_pow_sub_pow_eq_sq_iff {p : ℕ} (hp : p.Prime) (hq : (
     (2 * (p : ℤ) - 1) ^ x - (p : ℤ) ^ y = (z : ℤ) ^ 2 ↔
       (x, y, z) = (0, 0, 0) ∨ (p, x, y, z) = (3, 2, 2, 4) ∨
         ∃ t : ℕ, p = 2 * t ^ 2 + 1 ∧ x = 1 ∧ y = 0 ∧ z = 2 * t
-
-/-- **Squares of the form $(2^{2k+1}(2p - 1))^x - p^y$ for prime pairs.** Let $p$ be a prime with
-$p \equiv 5 \pmod 8$ such that $2p - 1$ is prime, and let $k$ be a non-negative integer. Then
-non-negative integers $x$, $y$ and $z$ satisfy $(2^{2k+1}(2p - 1))^x - p^y = z^2$ if and only if
-$(x, y, z) = (0, 0, 0)$, or $k = 0$, $x = 1$, $y = 0$ and $4p = z^2 + 3$.
-
-In the last case the two primes are $p = (z^2 + 3)/4$ and $2p - 1 = (z^2 + 1)/2$.
-
-Source: Jing Zhang and Yuan Li, *On the Equation (-1)^α p^x + (-1)^β (2^k(2p - 1))^y = z^2 for
-Prime Pairs (p, 2p - 1)*, INTEGERS 24 (2024), Article A64, Theorem 7. -/
-theorem_wanted prime_pair_two_pow_odd_mul_pow_sub_pow_eq_sq_iff {p : ℕ} (hp : p.Prime)
-    (hq : (2 * p - 1).Prime) (hp8 : p % 8 = 5) (k x y z : ℕ) :
-    ((2 : ℤ) ^ (2 * k + 1) * (2 * p - 1)) ^ x - (p : ℤ) ^ y = (z : ℤ) ^ 2 ↔
-      (x, y, z) = (0, 0, 0) ∨ (4 * p = z ^ 2 + 3 ∧ k = 0 ∧ x = 1 ∧ y = 0)
 
 /-- **The exponential equations for the prime pair (2, 3).** The six equations
 $(-1)^\alpha 2^x + (-1)^\beta (2^k \cdot 3)^y = z^2$ with $\alpha, \beta, k \in \{0, 1\}$ and

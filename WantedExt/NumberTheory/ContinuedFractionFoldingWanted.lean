@@ -50,17 +50,6 @@ public theorem_wanted finiteContFrac_add_inv_mul_den_sq (a₀ : ℤ) (a : List �
     finiteContFrac (a₀ :: a) + 1 / (x * ((finiteContFrac (a₀ :: a)).den : ℚ) ^ 2) =
       finiteContFrac (a₀ :: a ++ (x : ℤ) :: (a.map (fun b => -b)).reverse)
 
-/-- **A zero partial quotient merges its neighbours.** For all integers $a$ and $b$ and all finite
-lists of integers $u_1, \dots, u_m$ and $v_1, \dots, v_n$ ($m, n \ge 0$), the finite continued
-fractions satisfy $[u_1, \dots, u_m, a, 0, b, v_1, \dots, v_n] =
-[u_1, \dots, u_m, a + b, v_1, \dots, v_n]$.
-
-Source: Daniel J. Hoyt, *The Self-Describing Paperfolding Sequence in Continued Fractions*,
-Journal of Integer Sequences 29 (2026), Article 26.3.6, Lemma 13, equation (`eq:normzero`)
-(`jis-2026-26.3.6-lem-13`). -/
-public theorem_wanted finiteContFrac_zero_merge (l s : List ℤ) (a b : ℤ) :
-    finiteContFrac (l ++ a :: 0 :: b :: s) = finiteContFrac (l ++ (a + b) :: s)
-
 /-- **Terms of the paperfolding sums.** For a sequence $x = (x_k)_{k \ge 0}$ of natural numbers,
 the real numbers $s_k$ are defined by $s_0 = 1$ and $s_{k+1} = s_k^2 / x_k$, where the quotient is
 read as $0$ when $x_k = 0$. They are the terms of the sums $S = \sum_k s_k$.

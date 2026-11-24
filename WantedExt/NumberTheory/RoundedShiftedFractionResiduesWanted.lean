@@ -13,78 +13,18 @@ public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
 public import MathlibExt.NumberTheory.AlternatingReciprocalIntegral
 public import MathlibExt.NumberTheory.AlternatingSumFloorDiv
+public import MathlibExt.NumberTheory.CeilQuotientOddCount
 public import MathlibExt.NumberTheory.DivisorCountBound
+public import MathlibExt.NumberTheory.FloorDivisionCounts
+public import MathlibExt.NumberTheory.FloorQuotientDivisorSummatory
+public import MathlibExt.NumberTheory.FloorQuotientOddCount
+public import MathlibExt.NumberTheory.RoundQuotientOddCount
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
 open Filter Topology
-
-/-- **Floor sequence parity count.** For a natural number $n$, the floor sequence parity count
-$\mathcal{F}_n$ is the number of integers $k$ with $1 \le k \le n$ for which
-$\lfloor n/k \rfloor$ is odd (OEIS A059851).
-
-Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
-Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
-Article 24.2.5, Section 1 (definition of `𝓕_n`). -/
-public def floorQuotientOddCount (n : ℕ) : ℕ :=
-  ((Finset.Icc 1 n).filter (fun k => Odd (n / k))).card
-
-/-- **The floor sequence parity count at $10$.** The number $\mathcal{F}_{10}$ of integers $k$
-with $1 \le k \le 10$ for which $\lfloor 10/k \rfloor$ is odd equals $7$: the quotients
-$\lfloor 10/k \rfloor$ for $k = 1, \dots, 10$ are $10, 5, 3, 2, 2, 1, 1, 1, 1, 1$, and seven of
-them are odd.
-
-Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
-Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
-Article 24.2.5, Section 1 and Figure 1. -/
-public theorem floorQuotientOddCount_ten : floorQuotientOddCount 10 = 7 := by
-  decide
-
-/-- **Ceiling parity count.** For a natural number $n$, the ceiling parity count $\mathcal{C}_n$
-is the number of integers $k$ with $1 \le k \le n$ for which $\lceil n/k \rceil$ is odd
-(OEIS A330926).
-
-Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
-Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
-Article 24.2.5, Section 1 (definition of `𝓒_n`). -/
-public def ceilQuotientOddCount (n : ℕ) : ℕ :=
-  ((Finset.Icc 1 n).filter (fun k : ℕ => Odd ⌈(n : ℚ) / (k : ℚ)⌉)).card
-
-/-- **The ceiling parity count at $9$.** The ceiling parity count $\mathcal{C}_9$, the number of
-integers $k$ with $1 \le k \le 9$ for which $\lceil 9/k \rceil$ is odd, equals $5$.
-
-The ceilings $\lceil 9/k \rceil$ for $k = 1, \dots, 9$ are $9, 5, 3, 3, 2, 2, 2, 2, 1$.
-
-Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
-Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
-Article 24.2.5, Figure 1. -/
-public theorem ceilQuotientOddCount_nine : ceilQuotientOddCount 9 = 5 := by
-  decide +kernel
-
-/-- **Rounding sequence parity count.** For a natural number $n$, the rounding sequence parity
-count $\mathcal R_n$ is the number of integers $k$ with $1 \le k \le n$ for which the nearest
-integer to $n/k$ is odd, where half-integers are rounded up: the nearest integer to a rational
-number $x$ is taken to be $\lfloor x + 1/2 \rfloor$.
-
-Rounding half-integers up is the paper's convention for $\mathrm{nint}$.
-
-Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
-Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
-Article 24.2.5, Section 1 (definition of `𝓡_n` and the footnote on `nint`). -/
-public def roundQuotientOddCount (n : ℕ) : ℕ :=
-  ((Finset.Icc 1 n).filter (fun k : ℕ => Odd (round ((n : ℚ) / (k : ℚ))))).card
-
-/-- **The rounding sequence parity count at $10$.** The number $\mathcal{R}_{10}$ of integers $k$
-with $1 \le k \le 10$ for which the nearest integer to $10/k$ (half-integers rounded up) is odd
-equals $7$.
-
-Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
-Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
-Article 24.2.5, Figure 1. -/
-public theorem roundQuotientOddCount_ten : roundQuotientOddCount 10 = 7 := by
-  decide +kernel
 
 /-- **Residue counts of the shifted floor sequence.** For a natural number $n$, real numbers
 $\alpha$ and $\nu$, an integer $r$ and a natural number $m$, the count
@@ -118,42 +58,6 @@ public theorem shiftedFloorResidueCount_modulus_one (n : ℕ) (α ν : ℝ)
   unfold shiftedFloorResidueCount
   rw [Finset.filter_true_of_mem (fun k _ => by simp [Int.ModEq])]
   simp
-
-/-- **Counting large terms of the floor sequence.** For every natural number $n$ and every
-integer $k \ge 1$, exactly $\lfloor n/k \rfloor$ of the integers $d$ with $1 \le d \le n$
-satisfy $\lfloor n/d \rfloor \ge k$; that is, exactly $\lfloor n/k \rfloor$ terms of the floor
-sequence $\lfloor n/1 \rfloor, \dots, \lfloor n/n \rfloor$ are at least $k$.
-
-Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
-Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
-Article 24.2.5, Lemma 1 (`jis-2024-24.2.5-lem-1`). -/
-public theorem_wanted floor_div_sequence_card_ge (n k : ℕ) (hk : 1 ≤ k) :
-    ((Finset.Icc 1 n).filter (fun d : ℕ => k ≤ n / d)).card = n / k
-
-/-- **The floor parity count as an alternating sum.** Let $\mathcal{F}_n$ be the number of
-integers $k$ with $1 \le k \le n$ for which $\lfloor n/k \rfloor$ is odd. For every natural
-number $n$, $\mathcal{F}_n = \sum_{d=1}^{n} \lfloor n/d \rfloor (-1)^{d+1}$.
-
-Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
-Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
-Article 24.2.5, Proposition 2 (`jis-2024-24.2.5-prop-2`). -/
-public theorem_wanted floorQuotientOddCount_eq_alternating_sum (n : ℕ) :
-    (floorQuotientOddCount n : ℤ) =
-      ∑ d ∈ Finset.Icc 1 n, ((n / d : ℕ) : ℤ) * (-1) ^ (d + 1)
-
-/-- **The floor parity count through the divisor summatory function.** Let $\tau(m)$ be the
-number of positive divisors of $m$, let $D(x) = \sum_{1 \le m \le x} \tau(m)$, and let
-$\mathcal{F}_n$ be the number of integers $k$ with $1 \le k \le n$ for which
-$\lfloor n/k \rfloor$ is odd. For every natural number $n$, $\mathcal{F}_n = D(n) - 2D(n/2)$,
-where $D(n/2) = D(\lfloor n/2 \rfloor)$.
-
-Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
-Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
-Article 24.2.5, Corollary 3 (`jis-2024-24.2.5-cor-3`). -/
-public theorem_wanted floorQuotientOddCount_eq_divisor_summatory_sub (n : ℕ) :
-    (floorQuotientOddCount n : ℤ) =
-      ∑ m ∈ Finset.Icc 1 n, (m.divisors.card : ℤ) -
-        2 * ∑ m ∈ Finset.Icc 1 (n / 2), (m.divisors.card : ℤ)
 
 /-- **Odd floor quotients as a hyperbolic lattice-point difference.** For every natural number
 $n$, the floor sequence parity count $\mathcal{F}_n$ equals the number of integer pairs $(x, y)$
@@ -198,21 +102,6 @@ public theorem_wanted floorQuotientOddCount_asymptotic :
     Tendsto (fun n : ℕ => (floorQuotientOddCount n : ℝ) / n) atTop
       (𝓝 (Real.log 2))
 
-/-- **Ceiling parity count from the floor parity count.** For a natural number $m$, let
-$\mathcal{C}_m$ and $\mathcal{F}_m$ be the numbers of integers $k$ with $1 \le k \le m$ for which
-$\lceil m/k \rceil$, respectively $\lfloor m/k \rfloor$, is odd. Then for every natural number
-$n$, $\mathcal{C}_{n+1} = (n + 1) - \mathcal{F}_n$.
-
-The source prints a second equality $\mathcal{C}_n = \sum_{d=2}^{n} \lfloor n/d \rfloor (-1)^d$,
-which is not part of this statement: it fails at $n = 3$, where $\mathcal{C}_3 = 2$ but the sum
-is $1 - 1 = 0$.
-
-Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
-Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
-Article 24.2.5, Proposition 9 (`jis-2024-24.2.5-prop-9`). -/
-public theorem_wanted ceilQuotientOddCount_succ_eq (n : ℕ) :
-    (ceilQuotientOddCount (n + 1) : ℤ) = (n + 1 : ℤ) - floorQuotientOddCount n
-
 /-- **Asymptotics of the ceiling parity count.** Let $\mathcal{C}_n$ be the number of integers
 $k$ with $1 \le k \le n$ for which $\lceil n/k \rceil$ is odd. There is a real constant $C$ such
 that $|\mathcal{C}_n - (1 - \log 2)\, n| \le C \sqrt{n}$ for every integer $n \ge 1$, and
@@ -243,17 +132,6 @@ public theorem_wanted round_div_sequence_card_ge (n : ℕ) :
         ((Finset.Icc 1 n).filter
             (fun d : ℕ => (k : ℤ) ≤ ⌊(n : ℚ) / (d : ℚ) + 1 / 2⌋)).card =
           2 * n / (2 * k - 1)
-
-/-- **Alternating-sum formula for the rounding sequence parity count.** For every natural
-number $n$, the rounding sequence parity count $\mathcal{R}_n$ satisfies
-$\mathcal{R}_n = -n + \sum_{d=1}^{n} (-1)^{d+1} \lfloor 2n/(2d-1) \rfloor$.
-
-Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
-Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
-Article 24.2.5, Proposition 14 (`jis-2024-24.2.5-prop-14`). -/
-public theorem_wanted roundQuotientOddCount_eq_alternating_sum (n : ℕ) :
-    (roundQuotientOddCount n : ℤ) =
-      -n + ∑ d ∈ Finset.Icc 1 n, ((2 * n / (2 * d - 1) : ℕ) : ℤ) * (-1) ^ (d + 1)
 
 /-- **Divisor-sum formula for the rounding sequence parity count.** For a positive integer $k$
 and $r \in \{1, 3\}$, let $d_{r,4}(k)$ be the number of positive divisors of $k$ congruent to

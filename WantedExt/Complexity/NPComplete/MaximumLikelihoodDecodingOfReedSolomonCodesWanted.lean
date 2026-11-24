@@ -18,7 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Coding.ReedSolomon
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Algebra.Field.ZMod
 public import Mathlib.InformationTheory.Hamming
 public import Mathlib.RingTheory.AdjoinRoot

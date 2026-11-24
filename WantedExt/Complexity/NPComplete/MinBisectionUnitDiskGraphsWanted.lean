@@ -17,7 +17,7 @@ LNCS 8635, 251-262, doi:10.1007/978-3-662-44465-8_22; preprint arXiv:1404.0117).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.MaxCutUnitDiskGraphsWanted

@@ -17,6 +17,8 @@ public import Mathlib.Data.Int.ModEq
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import MathlibExt.NumberTheory.ChooseAddModEqPrime
+public import MathlibExt.NumberTheory.GeneralizedTau
+public import MathlibExt.NumberTheory.NineRegularPartitionIteration
 
 /-!
 # Regular partition functions and a generalized tau function
@@ -34,79 +36,7 @@ and the generalized pentagonal numbers `(3r² ± r)/2` are Mathlib's `pentagonal
 
 namespace MetaMathlibExt
 
-open PowerSeries
-
 @[expose] public section
-
-/-- **Euler's product has constant term $1$.** The constant coefficient of the integer power
-series $\prod_{m \ge 1} (1 - X^m)$ in $\mathbb{Z}[[X]]$ is $1$.
-
-Source: Euler's pentagonal number theorem as used in Sriram and Christopher, *Congruences
-Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function
-Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, identity (1). -/
-public theorem constantCoeff_pentagonalSeries_int :
-    constantCoeff (pentagonalSeries ℤ) = 1 := by
-  rw [← coeff_zero_eq_constantCoeff_apply]
-  have h := coeff_pentagonalSeries_pentagonal (R := ℤ) 0
-  have h0 : pentagonal 0 = 0 := by simp [pentagonal_def]
-  rw [h0] at h
-  simp [h]
-
-/-- **Euler's product is a unit in $\mathbb{Z}[[X]]$.** Euler's pentagonal series
-$\sum_{k \in \mathbb{Z}} (-1)^k X^{k(3k - 1)/2}$, which equals $\prod_{m \ge 1} (1 - X^m)$, is a
-unit of the ring $\mathbb{Z}[[X]]$ of formal power series with integer coefficients, so all its
-integer powers are defined.
-
-Source: Sriram and Christopher, *Congruences Relating Regular Partition Functions, a Generalized
-Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article
-A39, Definition 1.1 (negative exponents). -/
-public theorem isUnit_pentagonalSeries_int : IsUnit (pentagonalSeries ℤ) := by
-  rw [isUnit_iff_constantCoeff, constantCoeff_pentagonalSeries_int]
-  exact isUnit_one
-
-/-- **Generalized tau function.** For an integer $k$ and a natural number $n$, the generalized tau
-function $\tau_k(n)$ is the coefficient of $q^n$ in the integer power series
-$q \prod_{m \ge 1} (1 - q^m)^k$. For negative $k$ the power is taken in the group of units of
-$\mathbb{Z}[[q]]$, where $\prod_{m \ge 1} (1 - q^m)$ is invertible because its constant term is $1$.
-
-The paper requires $k \ne 0$; $k = 0$ gives $\tau_0(1) = 1$ and $\tau_0(n) = 0$ for $n \ne 1$.
-$\tau_{24}$ is Ramanujan's tau function, and $\tau_1(n + 1)$ is Euler's $\omega(n)$, the
-coefficient of $q^n$ in $\prod_{m \ge 1} (1 - q^m)$.
-
-Source: Sriram and Christopher, *Congruences Relating Regular Partition Functions, a Generalized
-Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article
-A39, Definition 1.1, equation (2). -/
-public noncomputable def generalizedTau (k : ℤ) (n : ℕ) : ℤ :=
-  coeff n (X * ((isUnit_pentagonalSeries_int.unit ^ k : ℤ⟦X⟧ˣ) : ℤ⟦X⟧))
-
-/-- **Generalized tau function at zero.** For every integer $k$, $\tau_k(0) = 0$, where $\tau_k$
-is the generalized tau function: the series $q \prod_{m \ge 1} (1 - q^m)^k$ has no constant term.
-
-Source: Sriram and Christopher, INTEGERS 24 (2024), Article A39, Definition 1.1. -/
-public theorem generalizedTau_zero (k : ℤ) : generalizedTau k 0 = 0 := by
-  simp [generalizedTau]
-
-/-- **The generalized tau function at $1$.** For every integer $k$, $\tau_k(1) = 1$.
-
-Source: Sriram and Christopher, INTEGERS 24 (2024), Article A39, Definition 1.1. -/
-public theorem generalizedTau_one (k : ℤ) : generalizedTau k 1 = 1 := by
-  rw [generalizedTau, coeff_succ_X_mul, coeff_zero_eq_constantCoeff_apply]
-  have hu : Units.map (constantCoeff (R := ℤ)).toMonoidHom isUnit_pentagonalSeries_int.unit
-      = 1 := by
-    ext
-    simp [constantCoeff_pentagonalSeries_int]
-  have h := congrArg (fun u : ℤˣ => (u : ℤ)) (congrArg (· ^ k) hu)
-  simp only [one_zpow, Units.val_one, ← map_zpow, Units.coe_map] at h
-  exact h
-
-/-- **The generalized tau function for natural exponents.** For natural numbers $k$ and $n$,
-$\tau_k(n)$ is the coefficient of $q^n$ in the integer power series
-$q \bigl(\prod_{m \ge 1} (1 - q^m)\bigr)^k$.
-
-Source: Sriram and Christopher, INTEGERS 24 (2024), Article A39, Definition 1.1. -/
-public theorem generalizedTau_natCast (k n : ℕ) :
-    generalizedTau k n = coeff n (X * pentagonalSeries ℤ ^ k) := by
-  simp [generalizedTau]
 
 /-- **Partition formulas for the generalized tau function.** Let $k \ge 1$ and $n \ge 0$ be natural
 numbers. For a partition $\lambda$ of $n$ and a part $a$ of $\lambda$, write $f_a$ for the number
@@ -406,20 +336,6 @@ public theorem_wanted generalizedTau_two_mul_prime_succ_modEq (p : ℕ) (hp : p.
         if n = p * (pentagonal r + pentagonal s) then ((r + s).negOnePow : ℤ) else 0
       [ZMOD p]
 
-/-- **$\tau_{2p}(n + 1)$ vanishes modulo $p$ when $p \nmid n$.** Let $p$ be an odd prime and $n$ a
-natural number not divisible by $p$. Then $\tau_{2p}(n + 1) \equiv 0 \pmod{p}$.
-
-The record prints the hypothesis as $p \nmid n + 1$; that is false, and the corollary follows from
-Theorem 3.26 (the record's Theorem 16) in its corrected form, which forces $p \mid n$ for a nonzero
-residue.
-
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
-Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
-Article A39, Corollary 4 (`integers-2024-A39-cor-4`). -/
-public theorem_wanted generalizedTau_two_mul_prime_succ_modEq_zero (p : ℕ) (hp : p.Prime)
-    (hodd : Odd p) (n : ℕ) (hn : ¬ p ∣ n) :
-    generalizedTau (2 * p) (n + 1) ≡ 0 [ZMOD p]
-
 /-- **Generalized tau at $2p + 1$ modulo $p$.** Let $p$ be an odd prime and $n$ a natural number,
 and for an integer $j$ let $P(j) = j(3j - 1)/2$ be the generalized pentagonal number. Then
 $\tau_{2p + 1}(n + 1)$ is congruent modulo $p$ to the sum of $(-1)^{r + s + t}$ over the triples
@@ -469,23 +385,6 @@ Article A39, Theorem 19 (`integers-2024-A39-thm-19`). -/
 public theorem_wanted card_nine_regular_four_mul_add_one_modEq (n : ℕ) (hn : 0 < n) :
     ((Nat.Partition.restricted (4 * n + 1) (¬ 9 ∣ ·)).card : ℤ)
     ≡ ((Nat.Partition.restricted (n) (¬ 9 ∣ ·)).card : ℤ) [ZMOD 3]
-
-/-- **Iterated congruences for 9-regular partitions modulo 3.** Let $R_9(m)$ denote the number of
-partitions of $m$ in which no part is divisible by $9$, and let $N_s = (4^s - 1)/3$. For all
-positive integers $r$ and $s$, $R_9((r - 1) 4^{s-1} + N_s) \equiv R_9(r) \pmod 3$,
-$R_9(N_s) \equiv 1 \pmod 3$, $R_9(4^{s-1} + N_s) \equiv 2 \pmod 3$ and
-$R_9(2 \cdot 4^{s-1} + N_s) \equiv 0 \pmod 3$.
-
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
-Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
-Article A39, Corollary 5 (`integers-2024-A39-cor-5`). -/
-public theorem_wanted card_nine_regular_iterate_modEq (r s : ℕ) (hr : 0 < r) (hs : 0 < s) :
-    ((Nat.Partition.restricted ((r - 1) * 4 ^ (s - 1) + (4 ^ s - 1) / 3) (¬ 9 ∣ ·)).card : ℤ)
-        ≡ ((Nat.Partition.restricted (r) (¬ 9 ∣ ·)).card : ℤ) [ZMOD 3] ∧
-      ((Nat.Partition.restricted ((4 ^ s - 1) / 3) (¬ 9 ∣ ·)).card : ℤ) ≡ 1 [ZMOD 3] ∧
-      ((Nat.Partition.restricted (4 ^ (s - 1) + (4 ^ s - 1) / 3) (¬ 9 ∣ ·)).card : ℤ) ≡ 2 [ZMOD 3] ∧
-      ((Nat.Partition.restricted (2 * 4 ^ (s - 1) + (4 ^ s - 1) / 3) (¬ 9 ∣ ·)).card : ℤ)
-          ≡ 0 [ZMOD 3]
 
 /-- **Prime-regular partitions and the generalized tau function.** Let $p$ be a prime and $n$ a
 natural number. Let $R_p(n)$ be the number of partitions of $n$ in which no part is divisible by

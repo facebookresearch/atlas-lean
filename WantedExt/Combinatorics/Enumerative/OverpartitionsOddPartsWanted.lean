@@ -12,6 +12,8 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Data.Int.Interval
 public import Mathlib.SetTheory.Cardinal.Finite
 public import MathlibExt.Combinatorics.Enumerative.Partition.Overpartition
+public import MathlibExt.Combinatorics.Enumerative.Partition.OddDistinctsPentagonalRecurrence
+public import MathlibExt.Combinatorics.Enumerative.Partition.PentagonalRecurrenceParity
 
 /-!
 # Linear relations for overpartitions into odd parts (statements)
@@ -25,6 +27,8 @@ sums over the `k` whose shifted argument is nonnegative. The paper's `p̄(m)` (o
 `(Nat.Partition.distincts m).card` and `(Nat.Partition.oddDistincts m).card`. Statements of
 Theorems 1-2, 6, 8-14 and Corollaries 1, 3-5 were checked against the arXiv version
 (arXiv:2403.05866v1, numbered Theorems 1.1-1.2 and 3.1-3.9, Corollaries 3.1-3.5).
+Corollary 4 is proved in
+`MathlibExt.Combinatorics.Enumerative.Partition.OddDistinctsPentagonalRecurrence`.
 -/
 
 namespace MetaMathlibExt
@@ -106,16 +110,6 @@ public theorem_wanted overpartitionOdd_eq_sum_partition_pentagonal (n : ℕ) :
       = ∑ k ∈ (Finset.Icc (-(n : ℤ)) n).filter (fun k : ℤ => k * (3 * k + 1) / 2 ≤ (n : ℤ)),
           (-1 : ℤ) ^ ((k + 1) / 2).natAbs
             * (Fintype.card (Nat.Partition (n - (k * (3 * k + 1) / 2).toNat)) : ℤ)
-
-/-- **Parity form of Euler's pentagonal recurrence.** Write $p(m)$ for the number of partitions
-of $m$. For every positive integer $n$, the sum
-$\sum_{k \in \mathbb{Z},\ k(3k+1)/2 \le n} p(n - k(3k+1)/2)$ is even.
-
-Source: Deepthi G. and S. Chandankumar, *Linear Relations for Overpartitions into Odd
-Parts*, INTEGERS 26 (2026), Article A60, Corollary 2 (`integers-2026-A60-cor-2`). -/
-public theorem_wanted partition_pentagonal_sum_even (n : ℕ) (hn : 0 < n) :
-    Even (∑ k ∈ (Finset.Icc (-(n : ℤ)) n).filter (fun k : ℤ => k * (3 * k + 1) / 2 ≤ (n : ℤ)),
-      Fintype.card (Nat.Partition (n - (k * (3 * k + 1) / 2).toNat)))
 
 /-- **Partitions whose even parts are distinct.** For a natural number $n$, $\mathrm{ped}(n)$ is
 the number of partitions of $n$ in which every even part occurs exactly once; the odd parts are
@@ -335,20 +329,6 @@ public theorem_wanted overpartitionOdd_pentagonal_sum_eq_oddDistincts (n : ℕ) 
       = ∑ k ∈ (Finset.Icc (-(n : ℤ)) n).filter (fun k : ℤ => k * (3 * k + 1) ≤ (n : ℤ)),
           (-1 : ℤ) ^ k.natAbs
             * ((Nat.Partition.oddDistincts (n - (k * (3 * k + 1)).toNat)).card : ℤ)
-
-/-- **Pentagonal recurrence for partitions into distinct odd parts.** Let $\operatorname{pdo}(m)$
-be the number of partitions of $m$ into distinct odd parts. For every $n \ge 0$, the sum
-$\sum_k (-1)^k \operatorname{pdo}(n - k(3k+1))$ over the integers $k$ with $k(3k+1) \le n$
-equals $(-1)^{\lceil m/2 \rceil}$ if $n = m(3m+1)/2$ for some integer $m$, and $0$ otherwise.
-
-Source: Deepthi G. and S. Chandankumar, *Linear Relations for Overpartitions into Odd
-Parts*, INTEGERS 26 (2026), Article A60, Corollary 4 (`integers-2026-A60-cor-4`). -/
-public theorem_wanted oddDistincts_pentagonal_recurrence (n : ℕ) :
-    ∑ k ∈ (Finset.Icc (-(n : ℤ)) n).filter (fun k : ℤ => k * (3 * k + 1) ≤ (n : ℤ)),
-        (-1 : ℤ) ^ k.natAbs
-          * ((Nat.Partition.oddDistincts (n - (k * (3 * k + 1)).toNat)).card : ℤ)
-      = ∑ m ∈ Finset.Icc (-(n : ℤ)) n,
-          if m * (3 * m + 1) / 2 = n then (-1 : ℤ) ^ ((m + 1) / 2).natAbs else 0
 
 /-- **Overpartitions into odd parts and partitions into distinct parts.** Write $\mathrm{po}(m)$
 for the number of overpartitions of $m$ into odd parts and $\mathrm{pd}(m)$ for the number of

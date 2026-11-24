@@ -65,7 +65,7 @@ namespace EarthScience
 
 /-- Buoyancy acceleration of a Boussinesq parcel displaced by `zeta` in
 background `rho(z) = rho0 - beta * z`: the parcel keeps density `rho0`,
-the ambient density at `zeta` is `rho0 - beta * zeta`, so the
+the ambient density at `zeta` is `rho0 - beta * zeta`, so for `rho0 ≠ 0` the
 acceleration is `-(g * beta / rho0) * zeta`. -/
 theorem boussinesq_buoyancy_accel {g beta rho0 zeta : ℝ} (hrho : rho0 ≠ 0) :
     -g * (rho0 - (rho0 - beta * zeta)) / rho0 = -(g * beta / rho0) * zeta := by
@@ -80,7 +80,7 @@ theorem brunt_vaisala_sq_pos {g beta rho0 : ℝ} (hg : 0 < g) (hbeta : 0 < beta)
 
 /-! ## B. Parcel oscillator -/
 
-/-- Parcel oscillator: if `v` is the parcel velocity, `zeta' = v` near
+/-- Parcel oscillator: for `rho0 ≠ 0`, if `v` is the parcel velocity, `zeta' = v` near
 `t` (`hzeta`), and the acceleration `v'` at `t` is the buoyancy
 acceleration from the density contrast (`hbuoy`), then the displacement
 satisfies the oscillator equation `zeta'' t = -(g * beta / rho0) * zeta t`,
