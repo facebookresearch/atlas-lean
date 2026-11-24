@@ -32,6 +32,10 @@ How far the gradient update $G(w) = w - \alpha \nabla f(w)$ can move two points 
 - [The gradient update of a convex smooth function is non-expansive](norm-gradient-step-sub-le.md)
 - [The gradient update of a Lipschitz function is $\alpha L$-bounded](norm-smul-gradient-le.md)
 
+## Nonconvex stochastic gradients
+
+- [Nonconvex stochastic gradients: unbiased oracles and ABC expected smoothness](nonconvex-stochastic-gradients/README.md)
+
 ## Related topics
 
 - [First-order conditions for convexity and optimality](../first-order-conditions-for-convexity/README.md)
