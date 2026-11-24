@@ -60,6 +60,7 @@
 - [Violations of parallel trends and their dependence on the outcome scale](parallel-trends-violations-and-scale-dependence.md)
 - [A discontinuous untreated mean produces a jump with no treatment effect](discontinuous-untreated-mean-in-regression-discontinuity.md)
 - [Worst-case bounds for a mean with missing outcomes](worst-case-bounds-for-a-mean-with-missing-outcomes.md)
+- [A defier model in which the Wald ratio is not the complier effect](wald-ratio-with-defiers.md)
 
 ## Related topics
 
