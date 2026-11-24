@@ -7,3 +7,6 @@
 - [Weil groups and Weil–Deligne representations](weil-deligne-representations/README.md)
 - [p-adic Hodge theory](p-adic-hodge-theory/README.md)
 - [Cyclotomic character and Tate twists](cyclotomic-character-and-tate-twists.md)
+- [Galois representations attached to polarized regular algebraic cuspidal representations over CM fields](galois-representations-attached-to-polarized-cuspidal-representations.md)
+- [Window bound for Tate–Shafarevich groups of Tate twists over subfields of cyclotomic fields](tate-shafarevich-window-bound-over-cyclotomic-subfields.md)
+- [Derivation of the Tate–Shafarevich window bound from automorphic Galois representations](derivation-of-the-tate-shafarevich-window-bound.md)
