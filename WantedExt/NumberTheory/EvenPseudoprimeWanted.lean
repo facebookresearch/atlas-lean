@@ -14,6 +14,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.NumberTheory.SmoothNumbers
 public import MathlibExt.NumberTheory.EvenPseudoprime
 public import MathlibExt.NumberTheory.EvenPseudoprimeWieferich
+public import MathlibExt.NumberTheory.RankinSmoothReciprocal
 
 /-!
 # The reciprocal sum of even pseudoprimes
@@ -94,24 +95,6 @@ public theorem_wanted sum_inv_modEq_orderOf_mod_sixteen_le {p : ℕ} (hp : p.Pri
     (16 * p * orderOf (2 : ZMod p) ≤ Real.exp k → S ≤ 1 / (4 * p * orderOf (2 : ZMod p))) ∧
       S ≤ (1 / 8 + 4 * Real.exp (-k) * p * orderOf (2 : ZMod p)) / (p * orderOf (2 : ZMod p))
 
-
-/-- **Rankin's bound for reciprocal sums of smooth numbers.** Let $x, y, s$ be real numbers with
-$2 \le y < x$ and $0 < s < 1$. Call a positive integer $y$-smooth if all its prime factors are
-at most $y$ (so $1$ is $y$-smooth). Let $S(x, y)$ be the sum of $1/n$ over the $y$-smooth
-integers $n > x$, and let $\zeta(\sigma, y)$ be the sum of $n^{-\sigma}$ over all $y$-smooth
-integers $n$. Then $S(x, y) \le x^{-s} \zeta(1 - s, y)$.
-
-Both sums are unconditional sums of real numbers, which take the value $0$ for a family that is
-not summable; the statement asserts only the inequality between these values, not that the
-series converge.
-
-Source: Cheng, Kinlaw and Nguyen, *The Reciprocal Sum of Even Pseudoprimes*, Journal of
-Integer Sequences 29 (2026), Article 26.1.3, Lemma 8, display (smooth1)
-(`jis-2026-26.1.3-lem-8`). -/
-public theorem_wanted smoothReciprocalTail_le_rpow_mul_smoothZeta {x y s : ℝ} (hy : 2 ≤ y)
-    (hyx : y < x) (hs0 : 0 < s) (hs1 : s < 1) :
-    ∑' n : {n : ℕ // n ∈ Nat.smoothNumbers (⌊y⌋₊ + 1) ∧ x < n}, (1 : ℝ) / n ≤
-      x ^ (-s) * ∑' n : Nat.smoothNumbers (⌊y⌋₊ + 1), (n : ℝ) ^ (-(1 - s))
 
 /-- **Nguyen–Pomerance bound for reciprocal sums of smooth numbers.** Let $x, y$ be real numbers
 with $2 \le y < x$. Call a positive integer $y$-smooth if all its prime factors are at most $y$,
