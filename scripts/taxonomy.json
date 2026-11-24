@@ -13825,6 +13825,7 @@
   "MathlibExt/Topology/ScottishBook42": {"to": "Topology/continua-infinite-dimensional", "title": "Fixed points on hyperspaces of convex sets"},
   "MathlibExt/Topology/ScottishBook136": {"to": "Topology/general-topology", "title": "Dimension-raising open maps"},
   "MathlibExt/Topology/TDA/Mapper": {"to": "Topology/algebraic-topology", "title": "Mapper"},
+  "MathlibExt/Topology/TDA/PersistenceConverseStability": {"to": "Topology/algebraic-topology", "title": "Persistence modules and barcodes"},
   "MathlibExt/Topology/TDA/PersistenceModule": {"to": "Topology/algebraic-topology", "title": "Persistence modules and barcodes"},
   "MathlibExt/Topology/TDA/RipsCech": {"to": "Topology/algebraic-topology", "title": "Simplicial complexes from point clouds"},
   "MathlibExt/Topology/TDA/SingleLinkage": {"to": "ComputerScience/machine-learning/unsupervised-learning", "title": "Single-linkage hierarchical clustering"},
