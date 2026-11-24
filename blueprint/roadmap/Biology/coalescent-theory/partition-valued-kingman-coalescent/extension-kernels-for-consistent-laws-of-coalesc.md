@@ -23,7 +23,9 @@ restrictions sample size by sample size.
 - [Path laws of Kingman's coalescent on a finite sample are consistent under restriction](strong-path-level-restriction-consistency-of-the.md)
 
 For an explicit $n=1$ to $n=2$ example at one time $t\ge0$, the one-lineage space has only one state $\rho$. Writing $S$ for two singletons and $C$ for their merger,
+
 $$\kappa_1(\rho,S)=e^{-t},\qquad \kappa_1(\rho,C)=1-e^{-t}.$$
+
 At a grid containing time $0$, a nonsingleton initial state has zero probability; a path that splits blocks also has zero probability. Both still receive the specified compatible point-mass row, so the kernel is defined on all inputs.
 
 ## Sources
