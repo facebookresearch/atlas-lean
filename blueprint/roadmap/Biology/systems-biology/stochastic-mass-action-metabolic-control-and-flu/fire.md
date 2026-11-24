@@ -4,3 +4,7 @@ Let $N$ be a [chemical reaction network](../../../Dynamics/smooth-dynamics/react
 one firing of $r$ is $x - \mathrm{src}(r) + \mathrm{prod}(r)$, computed coordinatewise with natural-number
 subtraction truncated at $0$. It is meaningful when $\mathrm{src}(r) \le x$, the only case in which the
 [propensity](propensity.md) can be nonzero.
+
+For a [stochastic chemical reaction network](../../../Chemistry/chemical-kinetics/non-explosion-of-stochastic-reaction-networks/stochastic-crn.md)
+on any sets of species and reactions, the state after $r$ fires is the same map for its underlying
+network: coordinatewise $\max(x_s - \mathrm{src}(r)_s, 0) + \mathrm{prod}(r)_s$.

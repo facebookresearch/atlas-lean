@@ -8,7 +8,7 @@ for `κ`. For every [reaction-closed](is-reaction-closed.md) set `Γ ⊆ ℕ^S`,
 [conditioned law](conditioned-law.md) `π_c(· | Γ)` solves the
 [stationary master equation](../ergodic-theorem-for-complex-balanced-reaction-ne/is-stationary-master-solution.md)
 for `κ` at every state of `ℕ^S`. The Poisson weights `π_c` solve it by the
-[Anderson–Craciun–Kurtz theorem](../ergodic-theorem-for-complex-balanced-reaction-ne/is-stationary-master-solution-poisson-we.md),
+[Anderson–Craciun–Kurtz theorem](../../../Biology/systems-biology/stochastic-mass-action-metabolic-control-and-flu/poisson-weight-mul-sum-propensity.md),
 and [restricting](is-stationary-master-solution-indicator.md) them to `Γ` and
 [dividing](is-stationary-master-solution-div-const.md) by the constant `π_c(Γ)` keeps a solution.
 

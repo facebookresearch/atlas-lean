@@ -42,7 +42,6 @@
 ## Stochastic reaction networks and their jump–hold chain
 
 - [Stochastic chemical reaction network](stochastic-crn.md)
-- [State after one firing of a reaction](jump.md)
 - [Total propensity of a stochastic reaction network](total-rate.md)
 - [Holding rate, with a fictitious rate one at absorbing states](hold-rate.md)
 - [Generator of a stochastic reaction network](generator.md)

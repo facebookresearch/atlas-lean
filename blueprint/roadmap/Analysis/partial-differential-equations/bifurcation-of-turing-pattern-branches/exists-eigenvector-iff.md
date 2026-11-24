@@ -5,3 +5,7 @@ $v \in \mathbb{C}^2$ with $M v = \mu v$ if and only if $\mu$ is a root of the ch
 polynomial:
 
 $$\mu^2 - (\operatorname{tr} M)\, \mu + \det M = 0.$$
+
+Equivalently, $\mu$ is a
+[characteristic root](../../ordinary-differential-equations/linear-systems-and-fundamental-matrices/is-char-root.md)
+of $(\operatorname{tr} M, \det M)$.

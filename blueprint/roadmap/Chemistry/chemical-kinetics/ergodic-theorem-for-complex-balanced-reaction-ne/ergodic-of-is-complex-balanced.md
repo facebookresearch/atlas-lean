@@ -25,7 +25,7 @@ an absolutely convergent series; the exceptional null set may depend on `f`. "Er
 these two conclusions. The statement concerns bounded observables only, and says nothing about
 the convergence of `P(X_t = x)`.
 
-By [complex balance](is-stationary-master-solution-poisson-we.md) and
+By the [Anderson–Craciun–Kurtz theorem](../../../Biology/systems-biology/stochastic-mass-action-metabolic-control-and-flu/poisson-weight-mul-sum-propensity.md) and
 [normalisation](has-sum-poisson-weight.md), `π_c` is a probability mass function solving the
 stationary master equation, and `π_c(x₀) > 0` because `c > 0`. Given the first and third
 hypotheses, the second holds if and only if `X_t` has law `μ_{π_c}` for every `t ≥ 0`: it is used

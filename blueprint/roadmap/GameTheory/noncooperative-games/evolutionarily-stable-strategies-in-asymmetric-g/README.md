@@ -2,7 +2,6 @@
 
 ## Definitions
 
-- [Mixed strategy](is-mixed.md)
 - [Payoff of a behavior strategy in a role game](role-payoff.md)
 - [Evolutionarily stable behavior strategy of a role game](is-role-ess.md)
 - [Strict Nash equilibrium of a bimatrix game](is-strict-nash.md)

@@ -25,7 +25,6 @@
 - [Characteristic roots are real when 4Δ ≤ τ²](im-eq-zero.md)
 - [Characteristic roots are not real when τ² < 4Δ](im-ne-zero.md)
 - [A characteristic root with real part at least τ / 2](exists-is-char-root.md)
-- [A real 2 × 2 matrix has an eigenvector exactly at characteristic roots](exists-mul-vec-eq-smul-iff-is-char-root.md)
 - [The spectrum of a real 2 × 2 matrix is its set of characteristic roots](mem-spectrum-iff-is-char-root.md)
 - [The spectrum of a real 2 × 2 matrix through complex eigenvectors](mem-spectrum-iff-exists-mul-vec-eq-smul.md)
 - [Linear stability of a trace–determinant pair](is-linearly-stable.md)

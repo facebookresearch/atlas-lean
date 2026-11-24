@@ -14,6 +14,6 @@ $$\sum_{x \in \mathbb{N}^S} \pi_c(x)\, q(x)\, K(x, y) = \pi_c(y)\, q(y),$$
 
 a sum of nonnegative terms in $[0, \infty]$, finite by the identity. This is the stationary
 master equation of the
-[Anderson–Craciun–Kurtz theorem](../ergodic-theorem-for-complex-balanced-reaction-ne/is-stationary-master-solution-poisson-we.md)
+[Anderson–Craciun–Kurtz theorem](../../../Biology/systems-biology/stochastic-mass-action-metabolic-control-and-flu/poisson-weight-mul-sum-propensity.md)
 written for the jump–hold chain, in which an absorbing state (total propensity $0$) has the
 fictitious rate $1$ and jumps to itself.

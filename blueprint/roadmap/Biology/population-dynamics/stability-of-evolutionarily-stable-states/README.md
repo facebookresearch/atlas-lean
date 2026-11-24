@@ -13,7 +13,6 @@
 
 ## The relative entropy Lyapunov function
 
-- [Relative entropy Lyapunov function](rel-entropy.md)
 - [The relative entropy is positive away from p](rel-entropy-pos.md)
 - [Derivative of the relative entropy along a replicator solution](has-deriv-at-rel-entropy.md)
 

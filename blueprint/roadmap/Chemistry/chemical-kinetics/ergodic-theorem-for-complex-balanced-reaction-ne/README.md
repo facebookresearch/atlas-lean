@@ -15,7 +15,6 @@ observable its time averages converge almost surely to the observable's mean und
 
 - [Unique predecessor along a reaction among states containing its source](fire-eq-iff.md)
 - [Stationary chemical master equation](is-stationary-master-solution.md)
-- [Complex-balanced Poisson weights solve the stationary master equation](is-stationary-master-solution-poisson-we.md)
 - [For nonnegative means, the Poisson weights sum to one over all states](has-sum-poisson-weight.md)
 
 ## Deterministic renewal lemmas
