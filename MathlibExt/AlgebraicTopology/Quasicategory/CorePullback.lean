@@ -184,23 +184,27 @@ theorem Edge.isEquivalence_pullback_iff (p : X ⟶ S) (q : Y ⟶ S)
   obtain ⟨v, ⟨hv⟩⟩ := exists_left_inverse_in_pullback p q e heX heY
   have hvEquiv {Z : SSet.{u}} (π : pullback p q ⟶ Z)
       (he : (e.map π).IsEquivalence) : (v.map π).IsEquivalence := by
-    have : IsIso (e.map π).toHoHom := he
-    have : IsIso ((v.map π).toHoHom ≫ (e.map π).toHoHom) := by
-      rw [Edge.toHoHom_comp (hv.map π), Edge.map_id, Edge.toHoHom_id]
+    have : IsIso (HomotopyCategory.homMk (e.map π)) := he
+    have : IsIso (HomotopyCategory.homMk (v.map π) ≫ HomotopyCategory.homMk (e.map π)) := by
+      rw [HomotopyCategory.homMk_comp_homMk (hv.map π), Edge.map_id, HomotopyCategory.homMk_id]
       infer_instance
-    exact IsIso.of_isIso_comp_right (v.map π).toHoHom (e.map π).toHoHom
+    exact IsIso.of_isIso_comp_right (HomotopyCategory.homMk (v.map π))
+      (HomotopyCategory.homMk (e.map π))
   obtain ⟨w, ⟨hw⟩⟩ := exists_left_inverse_in_pullback p q v
     (hvEquiv _ heX) (hvEquiv _ heY)
-  have hve : v.toHoHom ≫ e.toHoHom = 𝟙 _ := by
-    rw [Edge.toHoHom_comp hv, Edge.toHoHom_id]
-  have hwv : w.toHoHom ≫ v.toHoHom = 𝟙 _ := by
-    rw [Edge.toHoHom_comp hw, Edge.toHoHom_id]
-  have hew : e.toHoHom = w.toHoHom := by
+  have hve : HomotopyCategory.homMk v ≫ HomotopyCategory.homMk e = 𝟙 _ := by
+    rw [HomotopyCategory.homMk_comp_homMk hv, HomotopyCategory.homMk_id]
+  have hwv : HomotopyCategory.homMk w ≫ HomotopyCategory.homMk v = 𝟙 _ := by
+    rw [HomotopyCategory.homMk_comp_homMk hw, HomotopyCategory.homMk_id]
+  have hew : HomotopyCategory.homMk e = HomotopyCategory.homMk w := by
     calc
-      e.toHoHom = (w.toHoHom ≫ v.toHoHom) ≫ e.toHoHom := by rw [hwv, Category.id_comp]
-      _ = w.toHoHom ≫ (v.toHoHom ≫ e.toHoHom) := Category.assoc _ _ _
-      _ = w.toHoHom := by rw [hve, Category.comp_id]
-  exact ⟨⟨v.toHoHom, by rw [hew]; exact hwv, hve⟩⟩
+      HomotopyCategory.homMk e =
+          (HomotopyCategory.homMk w ≫ HomotopyCategory.homMk v) ≫ HomotopyCategory.homMk e := by
+        rw [hwv, Category.id_comp]
+      _ = HomotopyCategory.homMk w ≫ (HomotopyCategory.homMk v ≫ HomotopyCategory.homMk e) :=
+        Category.assoc _ _ _
+      _ = HomotopyCategory.homMk w := by rw [hve, Category.comp_id]
+  exact ⟨⟨HomotopyCategory.homMk v, by rw [hew]; exact hwv, hve⟩⟩
 
 /-- Cores preserve the strict pullback of an inner fibration with
 quasicategory base along any map with quasicategory source. -/

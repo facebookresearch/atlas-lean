@@ -53,24 +53,24 @@ theorem isIsofibration_hoFunctor_map_iff_hasStrictEquivalenceLifting
     apply (hasStrictEquivalenceLifting_iff p).mpr
     intro x₀ y₁ g hg
     have : IsIso (show (mapHomotopyCategory p).obj (HomotopyCategory.mk x₀) ⟶
-        HomotopyCategory.mk y₁ from g.toHoHom) := (Edge.isEquivalence_iff g).mp hg
+        HomotopyCategory.mk y₁ from HomotopyCategory.homMk g) := (Edge.isEquivalence_iff g).mp hg
     obtain ⟨a₁, f, hobj, hf, hmap⟩ :=
       (mapHomotopyCategory p).exists_lift_hom (show
         (mapHomotopyCategory p).obj (HomotopyCategory.mk x₀) ⟶
-          HomotopyCategory.mk y₁ from g.toHoHom)
+          HomotopyCategory.mk y₁ from HomotopyCategory.homMk g)
     cases a₁ using HomotopyCategory.rec with
     | mk x₁ =>
       have hx₁ : p.app (op ⦋0⦌) x₁ = y₁ :=
         congrArg (HomotopyCategory.objEquiv (X := Y)) hobj
       subst y₁
-      have hmap' : (mapHomotopyCategory p).map f = g.toHoHom :=
+      have hmap' : (mapHomotopyCategory p).map f = HomotopyCategory.homMk g :=
         eq_of_heq ((comp_eqToHom_heq _ hobj).symm.trans (heq_of_eq hmap))
-      obtain ⟨e, he⟩ := Edge.exists_toHoHom_eq f
+      obtain ⟨e, he⟩ := Edge.exists_homMk_eq f
       have heq : e.IsEquivalence := by
         rw [Edge.isEquivalence_iff, he]
         exact hf
-      have hclasses : g.toHoHom = (e.map p).toHoHom := by
-        rw [Edge.toHoHom_map, he, hmap']
+      have hclasses : HomotopyCategory.homMk g = HomotopyCategory.homMk (e.map p) := by
+        rw [← mapHomotopyCategory_map_homMk, he, hmap']
       obtain ⟨e', he', hstrict⟩ :=
         exists_edge_correction_of_innerFibration p inferInstance e g hclasses
       refine ⟨x₁, rfl, e', ?_, hstrict⟩
@@ -83,7 +83,7 @@ theorem isIsofibration_hoFunctor_map_iff_hasStrictEquivalenceLifting
     | mk x₀ =>
       cases a₁ using HomotopyCategory.rec with
       | mk y₁ =>
-        obtain ⟨e, he⟩ := Edge.exists_toHoHom_eq (show
+        obtain ⟨e, he⟩ := Edge.exists_homMk_eq (show
           HomotopyCategory.mk (p.app (op ⦋0⦌) x₀) ⟶ HomotopyCategory.mk y₁ from g)
         have heq : e.IsEquivalence := by
           rw [Edge.isEquivalence_iff, he]
@@ -92,9 +92,9 @@ theorem isIsofibration_hoFunctor_map_iff_hasStrictEquivalenceLifting
           (hasStrictEquivalenceLifting_iff p).mp hStrict e heq
         subst y₁
         have hmap' : f.map p = e := Edge.ext hmap
-        refine ⟨HomotopyCategory.mk x₁, f.toHoHom, rfl,
+        refine ⟨HomotopyCategory.mk x₁, HomotopyCategory.homMk f, rfl,
           (Edge.isEquivalence_iff f).mp hf, ?_⟩
-        change (mapHomotopyCategory p).map f.toHoHom = g
-        rw [← Edge.toHoHom_map, hmap', he]
+        change (mapHomotopyCategory p).map (HomotopyCategory.homMk f) = g
+        rw [mapHomotopyCategory_map_homMk, hmap', he]
 
 end SSet

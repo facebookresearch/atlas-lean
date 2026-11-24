@@ -103,11 +103,11 @@ theorem HasStrictEquivalenceLifting.exists_lift_target {X Y : SSet.{u}}
   let a : Edge x' x := a₀.ofEq hz₀ hz₁
   have ca : Edge.CompStruct a f (Edge.id x') := c.ofEq rfl hf₀ hh
   have ha : a.IsEquivalence := by
-    have : IsIso f.toHoHom := hf
-    have : IsIso (a.toHoHom ≫ f.toHoHom) := by
-      rw [Edge.toHoHom_comp ca, Edge.toHoHom_id]
+    have : IsIso (HomotopyCategory.homMk f) := hf
+    have : IsIso (HomotopyCategory.homMk a ≫ HomotopyCategory.homMk f) := by
+      rw [HomotopyCategory.homMk_comp_homMk ca, HomotopyCategory.homMk_id]
       infer_instance
-    exact IsIso.of_isIso_comp_right a.toHoHom f.toHoHom
+    exact IsIso.of_isIso_comp_right (HomotopyCategory.homMk a) (HomotopyCategory.homMk f)
   have hBase : p.app (op ⦋2⦌) (yonedaEquiv σ) = I.homInvId.simplex := by
     simpa only [B, yonedaEquiv_comp, Equiv.apply_symm_apply] using
       congrArg yonedaEquiv hσbase

@@ -36,10 +36,12 @@ example : IsLocallyPresentable.{1} SSet.{1} :=
 example : IsLocallyPresentable.{0} SSet.{0} :=
   SSet.isLocallyPresentable
 
-example : True := by
-  fail_if_success
-    let _ : IsLocallyPresentable.{u} SSet.{u} := inferInstance
-  trivial
+/-- Pinned Mathlib also infers local presentability through its presheaf
+instance for essentially small index categories; the named theorem is the
+same proposition. -/
+example : (inferInstance : IsLocallyPresentable.{u} SSet.{u}) =
+    SSet.isLocallyPresentable :=
+  rfl
 
 example : IsLocallyPresentable.{u} SSet.{u} := by
   let _ : IsLocallyPresentable.{u} SSet.{u} :=

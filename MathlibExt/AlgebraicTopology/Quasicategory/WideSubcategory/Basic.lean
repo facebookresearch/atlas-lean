@@ -49,7 +49,7 @@ theorem morphismProperty_iff_of_edge_eq
     (P : MorphismProperty (hoFunctor.obj X))
     {a b c d : X _⦋0⦌} {e : Edge a b} {e' : Edge c d}
     (h : e.edge = e'.edge) :
-    P e.toHoHom ↔ P e'.toHoHom := by
+    P (HomotopyCategory.homMk e) ↔ P (HomotopyCategory.homMk e') := by
   have ha : a = c := by rw [← e.src_eq, ← e'.src_eq, h]
   have hb : b = d := by rw [← e.tgt_eq, ← e'.tgt_eq, h]
   subst c
@@ -65,7 +65,7 @@ namespace Subcomplex
 No truncation or quotient of the original higher simplices is taken. -/
 def ofMorphismProperty (P : MorphismProperty (hoFunctor.obj X)) : X.Subcomplex where
   obj Δ := {x | ∀ φ : ⦋1⦌ ⟶ Δ.unop,
-    P (Edge.mk' (X.map φ.op x)).toHoHom}
+    P (HomotopyCategory.homMk (Edge.mk' (X.map φ.op x)))}
   map {Δ Δ'} f x hx φ := by
     have h := hx (φ ≫ f.unop)
     rwa [op_comp, X.map_comp] at h
@@ -75,23 +75,23 @@ def ofMorphismProperty (P : MorphismProperty (hoFunctor.obj X)) : X.Subcomplex w
     (P : MorphismProperty (hoFunctor.obj X)) {Δ : SimplexCategoryᵒᵖ}
     {x : X.obj Δ} :
     x ∈ (ofMorphismProperty P).obj Δ ↔
-      ∀ φ : ⦋1⦌ ⟶ Δ.unop, P (Edge.mk' (X.map φ.op x)).toHoHom :=
+      ∀ φ : ⦋1⦌ ⟶ Δ.unop, P (HomotopyCategory.homMk (Edge.mk' (X.map φ.op x))) :=
   Iff.rfl
 
 /-- The edge of a degenerate simplex represents an identity. -/
 theorem property_degenerate (P : MorphismProperty (hoFunctor.obj X))
     [P.ContainsIdentities] (x : X _⦋0⦌) :
-    P (Edge.mk' (X.σ (0 : Fin 1) x)).toHoHom := by
+    P (HomotopyCategory.homMk (Edge.mk' (X.σ (0 : Fin 1) x))) := by
   apply (Edge.morphismProperty_iff_of_edge_eq P
     (e := Edge.id x) (e' := Edge.mk' (X.σ (0 : Fin 1) x)) rfl).mp
-  rw [Edge.toHoHom_id]
+  rw [HomotopyCategory.homMk_id]
   exact P.id_mem _
 
 /-- Constant edge restrictions are the degenerate edges of original vertices. -/
 theorem property_map_const (P : MorphismProperty (hoFunctor.obj X))
     [P.ContainsIdentities] {Δ : SimplexCategory} (x : X.obj (op Δ))
     (i : Fin (Δ.len + 1)) :
-    P (Edge.mk' (X.map (SimplexCategory.const ⦋1⦌ Δ i).op x)).toHoHom := by
+    P (HomotopyCategory.homMk (Edge.mk' (X.map (SimplexCategory.const ⦋1⦌ Δ i).op x))) := by
   have hs : SimplexCategory.σ (0 : Fin 1) =
       SimplexCategory.const ⦋1⦌ ⦋0⦌ 0 :=
     SimplexCategory.eq_const_to_zero _
@@ -115,7 +115,7 @@ theorem property_map_const (P : MorphismProperty (hoFunctor.obj X))
 theorem mem_ofMorphismProperty_obj_one
     (P : MorphismProperty (hoFunctor.obj X)) [P.ContainsIdentities]
     {e : X _⦋1⦌} :
-    e ∈ (ofMorphismProperty P).obj (op ⦋1⦌) ↔ P (Edge.mk' e).toHoHom := by
+    e ∈ (ofMorphismProperty P).obj (op ⦋1⦌) ↔ P (HomotopyCategory.homMk (Edge.mk' e)) := by
   constructor
   · intro h
     have h1 := h (𝟙 ⦋1⦌)
@@ -154,9 +154,9 @@ theorem ofMorphismProperty_σ_val
 theorem mem_ofMorphismProperty_obj_two_of_faces
     (P : MorphismProperty (hoFunctor.obj X)) [P.ContainsIdentities]
     {s : X _⦋2⦌}
-    (h0 : P (Edge.mk' (X.δ 0 s)).toHoHom)
-    (h1 : P (Edge.mk' (X.δ 1 s)).toHoHom)
-    (h2 : P (Edge.mk' (X.δ 2 s)).toHoHom) :
+    (h0 : P (HomotopyCategory.homMk (Edge.mk' (X.δ 0 s))))
+    (h1 : P (HomotopyCategory.homMk (Edge.mk' (X.δ 1 s))))
+    (h2 : P (HomotopyCategory.homMk (Edge.mk' (X.δ 2 s)))) :
     s ∈ (ofMorphismProperty P).obj (op ⦋2⦌) := by
   intro φ
   have trich : ∀ a : Fin 3, a = 0 ∨ a = 1 ∨ a = 2 := by

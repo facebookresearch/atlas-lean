@@ -34,7 +34,7 @@ theorem forwardInInterval :
 /-- An arbitrary target needs only the exact extension equation. -/
 theorem arbitraryTarget {X : SSet.{u}} {x₀ x₁ : X _⦋0⦌} (e : Edge x₀ x₁)
     (t : joyalInterval.{u} ⟶ X)
-    (ht : joyalInterval.forward ≫ t = yonedaEquiv.symm e.edge) : IsIso e.toHoHom :=
+    (ht : joyalInterval.forward ≫ t = yonedaEquiv.symm e.edge) : IsIso (HomotopyCategory.homMk e) :=
   Edge.isEquivalence_of_joyalInterval_extension ht
 
 /-- Chosen inverse data retain both complete triangles even without a QC premise. -/

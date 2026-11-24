@@ -69,7 +69,7 @@ theorem toHoHom_eq_id_of_cancellationHorn_fill {X : SSet.{u}} {x y : X _⦋0⦌}
     {e : Edge x y} {h : Edge x x} (H : Edge.CompStruct h e e)
     (T : (Δ[3] : SSet.{u}) ⟶ X)
     (hT : Λ[3, Fin.last 3].ι ≫ T = cancellationHorn H) :
-    h.toHoHom = 𝟙 (HomotopyCategory.mk x : hoFunctor.obj X) := by
+    HomotopyCategory.homMk h = 𝟙 (HomotopyCategory.mk x : hoFunctor.obj X) := by
   let U := Edge.CompStruct.idComp e
   have hT₀ : stdSimplex.δ (0 : Fin 4) ≫ T = yonedaEquiv.symm H.simplex := by
     rw [← horn.ι_ι_assoc (Fin.last 3) (0 : Fin 4) (by decide), hT,
@@ -106,7 +106,7 @@ theorem toHoHom_eq_id_of_cancellationHorn_fill {X : SSet.{u}} {x y : X _⦋0⦌}
     rw [hi, d₂, U.d₂]
   let K : Edge.CompStruct (Edge.id x) h (Edge.id x) :=
     Edge.CompStruct.mk (X.δ (3 : Fin 4) (yonedaEquiv T)) face₂ face₀ face₁
-  have hh := Edge.toHoHom_comp K
-  simpa only [Edge.toHoHom_id, Category.id_comp] using hh
+  have hh := HomotopyCategory.homMk_comp_homMk K
+  simpa only [HomotopyCategory.homMk_id, Category.id_comp] using hh
 
 end SSet.CartesianEdge

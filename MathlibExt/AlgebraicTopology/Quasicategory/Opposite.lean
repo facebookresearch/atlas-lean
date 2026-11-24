@@ -81,13 +81,13 @@ def InvStruct.unop {x₀ x₁ : X.op _⦋0⦌} {e : Edge x₀ x₁}
 source quasicategory hypothesis is needed. -/
 theorem IsEquivalence.op [Quasicategory X] {e : Edge x₀ x₁}
     (h : e.IsEquivalence) : e.op.IsEquivalence :=
-  isEquivalence_of_invStruct (nonempty_invStruct_of_isEquivalence h).some.op
+  InvStruct.isEquivalence h.nonempty_invStruct.some.op
 
 /-- An equivalence edge in the opposite comes from an equivalence
 edge. Only the opposite quasicategory hypothesis is needed. -/
 theorem IsEquivalence.unop [Quasicategory X.op] {x₀ x₁ : X.op _⦋0⦌}
     {e : Edge x₀ x₁} (h : e.IsEquivalence) : e.unop.IsEquivalence :=
-  isEquivalence_of_invStruct (nonempty_invStruct_of_isEquivalence h).some.unop
+  InvStruct.isEquivalence h.nonempty_invStruct.some.unop
 
 end Edge
 section InnerFibrationOp

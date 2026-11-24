@@ -119,16 +119,19 @@ theorem isEquivalence_of_joyalInterval_extension {X : SSet.{u}} {x₀ x₁ : X _
       congrArg yonedaEquiv h
   obtain ⟨g, ⟨hg⟩⟩ := leftUnit e _ hL₂ hL₁
   obtain ⟨h, ⟨hh⟩⟩ := rightUnit e _ hR₀ hR₁
-  have hfg : e.toHoHom ≫ g.toHoHom = 𝟙 _ := by
-    rw [toHoHom_comp hg, toHoHom_id]
-  have hhf : h.toHoHom ≫ e.toHoHom = 𝟙 _ := by
-    rw [toHoHom_comp hh, toHoHom_id]
-  have hgh : g.toHoHom = h.toHoHom := by
+  have hfg : HomotopyCategory.homMk e ≫ HomotopyCategory.homMk g = 𝟙 _ := by
+    rw [HomotopyCategory.homMk_comp_homMk hg, HomotopyCategory.homMk_id]
+  have hhf : HomotopyCategory.homMk h ≫ HomotopyCategory.homMk e = 𝟙 _ := by
+    rw [HomotopyCategory.homMk_comp_homMk hh, HomotopyCategory.homMk_id]
+  have hgh : HomotopyCategory.homMk g = HomotopyCategory.homMk h := by
     calc
-      g.toHoHom = (h.toHoHom ≫ e.toHoHom) ≫ g.toHoHom := by rw [hhf, Category.id_comp]
-      _ = h.toHoHom ≫ (e.toHoHom ≫ g.toHoHom) := Category.assoc _ _ _
-      _ = h.toHoHom := by rw [hfg, Category.comp_id]
-  exact ⟨⟨g.toHoHom, hfg, by rw [hgh]; exact hhf⟩⟩
+      HomotopyCategory.homMk g =
+          (HomotopyCategory.homMk h ≫ HomotopyCategory.homMk e) ≫ HomotopyCategory.homMk g := by
+        rw [hhf, Category.id_comp]
+      _ = HomotopyCategory.homMk h ≫ (HomotopyCategory.homMk e ≫ HomotopyCategory.homMk g) :=
+        Category.assoc _ _ _
+      _ = HomotopyCategory.homMk h := by rw [hfg, Category.comp_id]
+  exact ⟨⟨HomotopyCategory.homMk g, hfg, by rw [hgh]; exact hhf⟩⟩
 
 /-- Every equivalence edge in a quasicategory has a strict finite-interval extension. -/
 theorem IsEquivalence.exists_joyalInterval_extension {X : SSet.{u}} [Quasicategory X]

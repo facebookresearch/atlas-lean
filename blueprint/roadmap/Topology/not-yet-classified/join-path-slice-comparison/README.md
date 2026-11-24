@@ -1,0 +1,16 @@
+# Join Path Slice Comparison
+
+- [Path Of Join Cone](path-of-join-cone.md)
+- [Path Of Join Cone zero](path-of-join-cone-zero.md)
+- [Path Of Join Cone one](path-of-join-cone-one.md)
+- [Path Of Join Cone precomp](path-of-join-cone-precomp.md)
+- [Path Of Join Cone postcomp](path-of-join-cone-postcomp.md)
+- [Join To Path](join-to-path.md)
+- [Join To Path fst](join-to-path-fst.md)
+- [Join To Path proj](join-to-path-proj.md)
+- [Join Slice map evaluation](join-slice-map-evaluation.md)
+- [Join To Path naturality](join-to-path-naturality.md)
+- [Simplex Collapse zero dim](simplex-collapse-zero-dim.md)
+- [Path Of Join Cone point name](path-of-join-cone-point-name.md)
+- [Path Of Join Cone point](path-of-join-cone-point.md)
+- [Join To Path point](join-to-path-point.md)

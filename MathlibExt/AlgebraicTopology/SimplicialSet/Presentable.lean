@@ -23,8 +23,9 @@ universes match the value universe, applies presheaf presentability there,
 and transports the result back along the induced functor-category
 equivalence.
 
-The result is a theorem rather than a global instance so downstream model
-structures can install it only in their intended scope.
+Pinned Mathlib also infers this through its presheaf instance for essentially
+small index categories; the theorem names the result and records this
+universe-matching proof.
 -/
 
 @[expose] public section
