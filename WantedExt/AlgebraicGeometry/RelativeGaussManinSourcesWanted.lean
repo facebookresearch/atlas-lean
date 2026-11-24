@@ -193,7 +193,7 @@ variable [IsIso (constantInverseMap (J := proTopology p Y.left PY) (T := proTopo
   Q.functor (BaseField.carrier p K))]
 
 include H
-public proof_wanted originalKScalarCompatibility (h : RelativeScope p B X Y f) :
+public theorem_wanted originalKScalarCompatibility (h : RelativeScope p B X Y f) :
   ScalarCompatibility (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f)
     (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (H := H)
 
@@ -286,19 +286,19 @@ public def_wanted originalGaussManinFactory (h : RelativeScope p B X Y f)
     (hForms : LocallyFiniteForms (ProEtaleDeRhamSources.forms (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (SX := SX) (Ω := Ω))) :
   GaussManinFactory (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (Ω := Ω) (M := M) (D := D) (DS := DS) (FS := FS) (H := H)
 
-public proof_wanted nativeFiniteFormsProjection (h : RelativeScope p B X Y f)
+public theorem_wanted nativeFiniteFormsProjection (h : RelativeScope p B X Y f)
     (hForms : FiniteForms (ProEtaleDeRhamSources.forms (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (SX := SX) (Ω := Ω))) (i : ℤ) :
   IsIso (gaussManinTarget (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (FX := FX) (IX := IX) (T := T) (TQ := TQ) (L := L) (Ω := Ω) (M := M) (D := D) (H := H) (RS := RS) (NS := NS) (AO := AO) i)
 
 /-- Native sheaf gluing retains locally varying form bounds over a non-quasi-compact base. -/
-public proof_wanted nativeLocallyFiniteFormsProjection (h : RelativeScope p B X Y f)
+public theorem_wanted nativeLocallyFiniteFormsProjection (h : RelativeScope p B X Y f)
     (hForms : LocallyFiniteForms (ProEtaleDeRhamSources.forms (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (SX := SX) (Ω := Ω))) (i : ℤ) :
   IsIso (gaussManinTarget (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (FX := FX) (IX := IX) (T := T) (TQ := TQ) (L := L) (Ω := Ω) (M := M) (D := D) (H := H) (RS := RS) (NS := NS) (AO := AO) i)
 
 variable (i : ℤ) [IsIso (gaussManinTarget (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (FX := FX) (IX := IX) (T := T) (TQ := TQ) (L := L) (Ω := Ω) (M := M) (D := D) (H := H) (RS := RS) (NS := NS) (AO := AO) i)]
 include CQ
 
-public proof_wanted higherGaussManinLeibniz (hBase : BaseData (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f)
+public theorem_wanted higherGaussManinLeibniz (hBase : BaseData (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f)
   (PX := PX) (PY := PY) (SX := SX) (SY := SY)
   (FX := FX) (IX := IX) (T := T) (TQ := TQ) (L := L) (Ω := Ω) (M := M))
     (hCotangent : CotangentNormalization (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f)
@@ -313,7 +313,7 @@ variable (D₁ : BaseOneFormType (p := p) (K := K) (B := B) (X := X) (Y := Y) (f
   (W₁ : MathlibExt.CategoryTheory.NativeConnectionProperties.WedgeSource SY.regular (MathlibExt.AlgebraicGeometry.RelativeDeRhamHigherSources.higherDeRham (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (Ω := Ω) (M := M) (D := D) i) (AnalyticAbsoluteDeRhamSources.forms p K B Y PY SY H.absoluteFormsY))
   (N₁ : MathlibExt.CategoryTheory.NativeConnectionProperties.ExtensionSource (AnalyticAbsoluteDeRhamSources.constantK p K B Y PY) SY.regular (AnalyticAbsoluteDeRhamSources.proKScalar p K B Y PY SY H.scalarY) (MathlibExt.AlgebraicGeometry.RelativeDeRhamHigherSources.higherDeRham (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (Ω := Ω) (M := M) (D := D) i) (AnalyticAbsoluteDeRhamSources.forms p K B Y PY SY H.absoluteFormsY) (higherConnection (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (FX := FX) (IX := IX) (T := T) (TQ := TQ) (L := L) (Ω := Ω) (M := M) (D := D) (H := H) (CB := CB) (RS := RS) (NS := NS) (AO := AO) i) (MathlibExt.CategoryTheory.NativeConnectionProperties.FormDifferentialSource.sections (AnalyticAbsoluteDeRhamSources.constantK p K B Y PY) SY.regular (AnalyticAbsoluteDeRhamSources.proKScalar p K B Y PY SY H.scalarY) (AnalyticAbsoluteDeRhamSources.forms p K B Y PY SY H.absoluteFormsY) H.formSourceY.differential D₁.native) W₁)
 
-public proof_wanted higherGaussManinIntegrable (hBase : BaseData (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f)
+public theorem_wanted higherGaussManinIntegrable (hBase : BaseData (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f)
   (PX := PX) (PY := PY) (SX := SX) (SY := SY)
   (FX := FX) (IX := IX) (T := T) (TQ := TQ) (L := L) (Ω := Ω) (M := M))
     (hCotangent : CotangentNormalization (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f)
@@ -326,7 +326,7 @@ public proof_wanted higherGaussManinIntegrable (hBase : BaseData (p := p) (K := 
 variable (HF : HigherFiltrationType (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f)
   (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (Ω := Ω) (M := M) (D := D) i)
 
-public proof_wanted higherGaussManinGriffiths (hBase : BaseData (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f)
+public theorem_wanted higherGaussManinGriffiths (hBase : BaseData (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f)
   (PX := PX) (PY := PY) (SX := SX) (SY := SY)
   (FX := FX) (IX := IX) (T := T) (TQ := TQ) (L := L) (Ω := Ω) (M := M))
     (hCotangent : CotangentNormalization (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f)

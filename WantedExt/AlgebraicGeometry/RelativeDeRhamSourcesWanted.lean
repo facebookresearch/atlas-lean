@@ -81,7 +81,7 @@ public def_wanted etaleBaseChange (h : RelativeScope p B X Y f) : EtaleBaseChang
 
 public def_wanted fullProBaseChange (h : RelativeScope p B X Y f) : ProBaseChangeSource p f.left E
 
-public proof_wanted fullProContinuous (h : RelativeScope p B X Y f) :
+public theorem_wanted fullProContinuous (h : RelativeScope p B X Y f) :
   Q.functor.IsContinuous (proTopology p Y.left PY) (proTopology p X.left PX)
 
 /-- Every original ring unit and every full-pro presentation is retained by this source square. -/
@@ -94,7 +94,7 @@ public def_wanted originalRingInverseSquare (h : RelativeScope p B X Y f) :
 public def_wanted fullProPointProjection (h : RelativeScope p B X Y f) :
   PointProjectionSource p K B X Y f PX PY E Q N
 
-public proof_wanted originalPositivePreservation (h : RelativeScope p B X Y f) :
+public theorem_wanted originalPositivePreservation (h : RelativeScope p B X Y f) :
   PositivePreservation p K B X Y f PX PY SX SY E
 
 public def_wanted naturalPeriodMaps (h : RelativeScope p B X Y f)
@@ -121,7 +121,7 @@ public def_wanted relativeFromAbsolute (h : RelativeScope p B X Y f)
 variable (Ω : AnalyticRelativeDeRhamSources.DifferentialSource p f.left SX.regularSheaf)
   (M : AnalyticRelativeDeRhamSources.BaseCoefficientInput p f.left SX.regularSheaf Ω)
 
-public proof_wanted locallyFiniteRelativeForms (h : RelativeScope p B X Y f) :
+public theorem_wanted locallyFiniteRelativeForms (h : RelativeScope p B X Y f) :
   MathlibExt.CategoryTheory.NativeFilteredDeRhamOutputs.LocallyFiniteForms Ω.oneForms
 
 /-- Actual coefficient cochains, original image filtration and public native extended connection. -/
@@ -147,7 +147,7 @@ variable (D : AnalyticRelativeDeRhamSources.FilteredDeRhamSource p f.left E SX.r
       E.functor Q.functor (etaleInclusion p Y.left) (etaleInclusion p X.left) N
         (regularEtale p Y.left SY.regularSheaf))).IsRightAdjoint]
 
-public proof_wanted cochainInverseImageMono (h : RelativeScope p B X Y f) :
+public theorem_wanted cochainInverseImageMono (h : RelativeScope p B X Y f) :
   (cochainTransfer (J₁ := AnalyticDiamondEtaleSites.analyticEtaleTopology p Y.left)
     (T₁ := AnalyticDiamondEtaleSites.analyticEtaleTopology p X.left)
     (J₂ := proTopology p Y.left PY) (T₂ := proTopology p X.left PX)

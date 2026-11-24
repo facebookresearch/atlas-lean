@@ -35,7 +35,7 @@ variable (A B : Type u) [CommRing A] [CommRing B] [Algebra A B]
   (Q : ContinuousQuotient A B) (M : Type u) [AddCommGroup M] [Module B M]
   (nabla : Q.NativeConnection M)
 
-public proof_wanted extendedConnectionSquareZero (h : Q.IsIntegrable M nabla) :
+public theorem_wanted extendedConnectionSquareZero (h : Q.IsIntegrable M nabla) :
   Q.ExtensionSquareZero M nabla
 
 end WantedExt.RingTheory.ContinuousDeRhamQuotients

@@ -57,10 +57,10 @@ include hX
 
 public def_wanted integralStructure (hNoeth : AnalyticProObjectSites.IsLocallyNoetherian p X) : IntegralStructure p X
 
-public proof_wanted regularEtaleSheaf (hNoeth : AnalyticProObjectSites.IsLocallyNoetherian p X) :
+public theorem_wanted regularEtaleSheaf (hNoeth : AnalyticProObjectSites.IsLocallyNoetherian p X) :
   Presheaf.IsSheaf (AnalyticDiamondEtaleSites.analyticEtaleTopology p X) (etaleRingsLarge p X)
 
-public proof_wanted positiveEtaleSheaf (hNoeth : AnalyticProObjectSites.IsLocallyNoetherian p X) (I : IntegralStructure p X) :
+public theorem_wanted positiveEtaleSheaf (hNoeth : AnalyticProObjectSites.IsLocallyNoetherian p X) (I : IntegralStructure p X) :
   Presheaf.IsSheaf (AnalyticDiamondEtaleSites.analyticEtaleTopology p X) (I.presheaf ⋙ liftRings)
 
 variable (P : AnalyticProObjectSites.PointRealization p X)
@@ -75,7 +75,7 @@ variable [HasSheafify (AnalyticDiamondEtaleSites.analyticEtaleTopology p X) Comm
     (AnalyticDiamondEtaleSites.analyticEtaleTopology p X) (proTopology p X P)).IsRightAdjoint]
 
 /-- The native constant inverse-image map; its construction already lives in MathlibExt. -/
-public proof_wanted constantInverseImageIso (hNoeth : AnalyticProObjectSites.IsLocallyNoetherian p X) (R : Type) [CommRing R] :
+public theorem_wanted constantInverseImageIso (hNoeth : AnalyticProObjectSites.IsLocallyNoetherian p X) (R : Type) [CommRing R] :
   IsIso (NativeRingInverseImages.constantInverseMap
     (J := AnalyticDiamondEtaleSites.analyticEtaleTopology p X) (T := proTopology p X P)
       (etaleInclusion p X) R)
@@ -94,7 +94,7 @@ public def_wanted integralWittSource (hNoeth : AnalyticProObjectSites.IsLocallyN
 /-- Full Qhat is the sheafified p-inversion; no global lattice is a parameter. -/
 public def_wanted rationalInversionSource (hNoeth : AnalyticProObjectSites.IsLocallyNoetherian p X) : RationalInversionSource p X P
 
-public proof_wanted absoluteThetaLine (hNoeth : AnalyticProObjectSites.IsLocallyNoetherian p X)
+public theorem_wanted absoluteThetaLine (hNoeth : AnalyticProObjectSites.IsLocallyNoetherian p X)
     (A : UntiltingData p (originalPositive p X P I hI)) :
   IsLocallyThetaLine A.deRhamPositive (completedRegular p (originalPositive p X P I hI)) A.completedTheta
 
@@ -134,7 +134,7 @@ public def_wanted originalRegularLocalization
   RegularLocalizationSource p (originalStructure p Z.left Q hO) (originalPositive p Z.left Q I hI)
     (AnalyticBaseWittScalarSources.positiveInclusion p K B Z Q I hI hO)
 
-public proof_wanted originalWittThetaSquare
+public theorem_wanted originalWittThetaSquare
     (hO : Presheaf.IsSheaf (AnalyticDiamondEtaleSites.analyticEtaleTopology p Z.left) (etaleRingsLarge p Z.left))
     (R : QualifiedResidueSource p K B Z Q I hI C S)
     (L : RegularLocalizationSource p (originalStructure p Z.left Q hO) (originalPositive p Z.left Q I hI)

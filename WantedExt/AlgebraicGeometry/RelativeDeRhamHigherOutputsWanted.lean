@@ -182,7 +182,7 @@ variable (H : BaseData (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f)
 
 include H
 
-public proof_wanted higherDeRhamFiniteLocallyFree (hBase : BaseData (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f)
+public theorem_wanted higherDeRhamFiniteLocallyFree (hBase : BaseData (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f)
   (PX := PX) (PY := PY) (SX := SX) (SY := SY)
   (FX := FX) (IX := IX) (T := T) (TQ := TQ) (L := L) (Ω := Ω) (M := M)) (h : RelativeScope p B X Y f) (i : ℤ)
     (hHigher : HigherLisseAt (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f)
@@ -192,7 +192,7 @@ public proof_wanted higherDeRhamFiniteLocallyFree (hBase : BaseData (p := p) (K 
       (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N)
       (Ω := Ω) (M := M) (D := D) i)
 
-public proof_wanted higherHodgeFiniteLocallyFree (hBase : BaseData (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f)
+public theorem_wanted higherHodgeFiniteLocallyFree (hBase : BaseData (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f)
   (PX := PX) (PY := PY) (SX := SX) (SY := SY)
   (FX := FX) (IX := IX) (T := T) (TQ := TQ) (L := L) (Ω := Ω) (M := M)) (h : RelativeScope p B X Y f) (i j : ℤ)
     (hHigher : HigherLisseAt (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f)
@@ -211,7 +211,7 @@ public def_wanted higherImageFiltration (hBase : BaseData (p := p) (K := K) (B :
     (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N)
     (Ω := Ω) (M := M) (D := D) i
 
-public proof_wanted nativeHodgeE1Degeneration (hBase : BaseData (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f)
+public theorem_wanted nativeHodgeE1Degeneration (hBase : BaseData (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f)
   (PX := PX) (PY := PY) (SX := SX) (SY := SY)
   (FX := FX) (IX := IX) (T := T) (TQ := TQ) (L := L) (Ω := Ω) (M := M)) (h : RelativeScope p B X Y f) (i j : ℤ)
     (hHigher : HigherLisseAt (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f)

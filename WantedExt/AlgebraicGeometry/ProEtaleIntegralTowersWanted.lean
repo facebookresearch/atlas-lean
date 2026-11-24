@@ -62,7 +62,7 @@ variable [HasSheafify (proTopology p X P) CommRingCat.{1}]
 public def_wanted integralRealization (hNoeth : IsLocallyNoetherian p X) : IntegralRealizationSource p X P T Q
 
 /-- Vanishing concerns the ACTUAL resolved finite-image Milnor fibre. -/
-public proof_wanted derivedIntegralRealizationConcentrated (hNoeth : IsLocallyNoetherian p X) (i : ℤ) (hi : i ≠ 0) :
+public theorem_wanted derivedIntegralRealizationConcentrated (hNoeth : IsLocallyNoetherian p X) (i : ℤ) (hi : i ≠ 0) :
   IsZero ((DerivedCategory.homologyFunctor (ProCoefficients p X P) i).obj
     (derivedRealization p X P T Q))
 

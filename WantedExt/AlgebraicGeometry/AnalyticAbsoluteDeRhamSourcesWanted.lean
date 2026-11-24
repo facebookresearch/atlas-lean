@@ -76,7 +76,7 @@ public def_wanted absoluteCoefficientCochains (hSmooth : IsSmooth p X.hom) :
 
 variable (A : AbsoluteComplexSource p K B X P S Ω M k)
 
-public proof_wanted absoluteCoefficientConnectionLeibniz (hSmooth : IsSmooth p X.hom) :
+public theorem_wanted absoluteCoefficientConnectionLeibniz (hSmooth : IsSmooth p X.hom) :
   IsConnection (constantK p K B X P) S.regular (proKScalar p K B X P S k)
     (coefficient p K B X P S Ω M) (forms p K B X P S Ω) AΩ.differential A.connectionMap
 
@@ -85,13 +85,13 @@ variable (D₁ : OneFormSource p K B X P S Ω k AΩ)
   (N : ExtensionSource (constantK p K B X P) S.regular (proKScalar p K B X P S k)
     (coefficient p K B X P S Ω M) (forms p K B X P S Ω) A.connectionMap D₁.native.sections W)
 
-public proof_wanted absoluteCoefficientIntegrable (hSmooth : IsSmooth p X.hom) :
+public theorem_wanted absoluteCoefficientIntegrable (hSmooth : IsSmooth p X.hom) :
   IsIntegrable (constantK p K B X P) S.regular (proKScalar p K B X P S k)
     (coefficient p K B X P S Ω M) (forms p K B X P S Ω) A.connectionMap D₁.native.sections W N
 
 variable (F : FiltrationSource p K B X P S Ω M)
 
-public proof_wanted absoluteCoefficientGriffiths (hSmooth : IsSmooth p X.hom) :
+public theorem_wanted absoluteCoefficientGriffiths (hSmooth : IsSmooth p X.hom) :
   Griffiths (constantK p K B X P) S.regular (proKScalar p K B X P S k)
     (coefficient p K B X P S Ω M) (forms p K B X P S Ω) A.connectionMap F.filtration
 

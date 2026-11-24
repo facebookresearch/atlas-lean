@@ -68,13 +68,13 @@ public def_wanted absoluteProFormSource (hSmooth : IsSmooth p X.hom) :
 
 variable (AΩ : AbsoluteFormSource p K B X P S Ω)
 
-public proof_wanted affinePerfectoidToricCover (hSmooth : IsSmooth p X.hom) :
+public theorem_wanted affinePerfectoidToricCover (hSmooth : IsSmooth p X.hom) :
   HasToricCover p K B X P S (absoluteForms p K B X P S Ω) AΩ.differential
 
 variable (C : ToricChart p K B X P S (absoluteForms p K B X P S Ω) AΩ.differential)
 
 /-- Each u_i belongs to the ORIGINAL structural theta kernel before completion. -/
-public proof_wanted toricStructuralThetaKernel (i : Fin C.dimension) :
+public theorem_wanted toricStructuralThetaKernel (i : Fin C.dimension) :
   ((S.scalars.structuralTheta.hom.app (op C.boundary.formal)).hom)
     (ToricChart.infCoordinate p K B X P S (absoluteForms p K B X P S Ω) AΩ.differential C i) = 0
 
