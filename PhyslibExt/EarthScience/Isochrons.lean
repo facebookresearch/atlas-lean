@@ -52,7 +52,8 @@ theorem isochron_slope_eq (lam t b x1 x2 y1 y2 : ℝ) (hx : x1 ≠ x2)
       = ((x2 - x1) * (Real.exp (lam * t) - 1)) / (x2 - x1) := by rw [hdiff]
     _ = Real.exp (lam * t) - 1 := by field_simp
 
-/-- Isochron age: the slope identifies the age `t = log(1+m)/λ`. -/
+/-- Isochron age: for `λ > 0`, the slope `m = (y₂ - y₁)/(x₂ - x₁)` of two samples with distinct
+parent ratios on the isochron `yᵢ = b + xᵢ*(exp(λ*t)-1)` identifies the age `t = log(1+m)/λ`. -/
 theorem isochron_age_eq (lam t b x1 x2 y1 y2 : ℝ) (hlam : 0 < lam) (hx : x1 ≠ x2)
     (hy1 : y1 = b + x1 * (Real.exp (lam * t) - 1))
     (hy2 : y2 = b + x2 * (Real.exp (lam * t) - 1)) :

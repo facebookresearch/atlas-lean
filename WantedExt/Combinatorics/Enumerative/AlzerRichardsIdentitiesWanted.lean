@@ -15,7 +15,13 @@ public import Mathlib.NumberTheory.Bernoulli
 public import Mathlib.RingTheory.Binomial
 public import Mathlib.RingTheory.Polynomial.Pochhammer
 public import MathlibExt.Analysis.Ramanujan.Part1Ch5Entry10bEuleriansymmetry
+public import MathlibExt.Combinatorics.Enumerative.AlzerRichardsBernoulliSum
+public import MathlibExt.Combinatorics.Enumerative.AlzerRichardsEvenBinomialSum
+public import MathlibExt.Combinatorics.Enumerative.AlzerRichardsHypergeometricSum
 public import MathlibExt.Combinatorics.Enumerative.AlzerRichardsIdentities
+public import MathlibExt.Combinatorics.Enumerative.AlzerRichardsReciprocalSum
+public import MathlibExt.Combinatorics.Enumerative.AlzerRichardsSabarIdentity
+public import MathlibExt.Combinatorics.Enumerative.AlzerRichardsSignedStirlingSum
 public import MathlibExt.Combinatorics.Enumerative.FubiniNumber
 public import MathlibExt.Combinatorics.Enumerative.SignedStirlingFirst
 
@@ -39,31 +45,6 @@ namespace MetaMathlibExt
 
 open Finset Polynomial
 open MathlibExt.Analysis.Ramanujan.Part1Ch5.Entry10bEuleriansymmetry (chapter5EulerEven)
-
-/-- **Alternating Stirling sums with $\binom{n+1}{k+1}$ give Bernoulli numbers.** Write $S(n, k)$
-for the Stirling numbers of the second kind and $B_n$ for the Bernoulli numbers, with
-$B_1 = -1/2$. Let $n$ be a natural number. Then for every natural number $r \le n$,
-$$
-\sum_{k=0}^{n} (-1)^k \frac{\binom{n+1}{k+1}}{\binom{r+k}{k}} S(r+k, k) = B_r,
-$$
-and
-$$
-\sum_{k=0}^{n} (-1)^k \frac{\binom{n+1}{k+1}}{\binom{n+1+k}{k}} S(n+1+k, k) =
-B_{n+1} - (-1/2)^{n+1} (n+1)!.
-$$
-
-The case $r = n$ is Muthumalai's formula.
-
-Source: Horst Alzer and Kendall C. Richards, *Extensions of Some Combinatorial Identities and
-Various Related Results*, INTEGERS 25 (2025), Article A61, Theorem 2, Equation (4). -/
-theorem_wanted sum_choose_div_choose_mul_stirlingSecond_eq_bernoulli (n : ℕ) :
-    (∀ r ≤ n, ∑ k ∈ range (n + 1), (-1 : ℚ) ^ k *
-        (((n + 1).choose (k + 1) : ℚ) / ((r + k).choose k : ℚ)) *
-          (Nat.stirlingSecond (r + k) k : ℚ) = bernoulli r) ∧
-      ∑ k ∈ range (n + 1), (-1 : ℚ) ^ k *
-          (((n + 1).choose (k + 1) : ℚ) / ((n + 1 + k).choose k : ℚ)) *
-            (Nat.stirlingSecond (n + 1 + k) k : ℚ) =
-        bernoulli (n + 1) - (-1 / 2 : ℚ) ^ (n + 1) * ((n + 1).factorial : ℚ)
 
 /-- **Vanishing alternating Stirling sums with $\binom{r+m}{k}$.** Write $S(n, k)$ for the
 Stirling numbers of the second kind. For every natural number $m \ge 1$ and every natural number
@@ -104,29 +85,6 @@ theorem_wanted sum_choose_add_two_div_choose_mul_stirlingSecond {n : ℕ} (hn : 
             (Nat.stirlingSecond (n + 1 + k) k : ℚ) =
         (-1 / 2 : ℚ) ^ (n + 1) * ((n + 1).factorial : ℚ) + (n + 1) * bernoulli n +
           (2 * n + 1) * bernoulli (n + 1)
-
-/-- **Alternating sums of signed Stirling numbers of the first kind.** Write $s(n, k)$ for the
-signed Stirling numbers of the first kind. For all natural numbers $j$ and $n$ and every natural
-number $r \le n$,
-$$
-\sum_{k=0}^{n+1} (-1)^k \frac{\binom{n+1}{k}}{\binom{k+j+r}{r}} s(k+j+r, k+j) = 0,
-$$
-and
-$$
-\sum_{k=0}^{n+1} (-1)^k \frac{\binom{n+1}{k}}{\binom{k+j+n+1}{n+1}} s(k+j+n+1, k+j) =
-\frac{(n+1)!}{2^{n+1}}.
-$$
-
-Source: Horst Alzer and Kendall C. Richards, *Extensions of Some Combinatorial Identities and
-Various Related Results*, INTEGERS 25 (2025), Article A61, Theorem 5, Equation (7). -/
-theorem_wanted sum_choose_div_choose_mul_signedStirlingFirst (j n : ℕ) :
-    (∀ r ≤ n, ∑ k ∈ range (n + 2), (-1 : ℚ) ^ k *
-        (((n + 1).choose k : ℚ) / ((k + j + r).choose r : ℚ)) *
-          (signedStirlingFirst (k + j + r) (k + j) : ℚ) = 0) ∧
-      ∑ k ∈ range (n + 2), (-1 : ℚ) ^ k *
-          (((n + 1).choose k : ℚ) / ((k + j + n + 1).choose (n + 1) : ℚ)) *
-            (signedStirlingFirst (k + j + n + 1) (k + j) : ℚ) =
-        ((n + 1).factorial : ℚ) / 2 ^ (n + 1)
 
 /-- **Alzer–Richards identity for Euler numbers.** Let $n \ge 1$ be an integer. For integers
 $k, i \ge 0$ let $T(k, i) = 2^{-k} \sum_{j=0}^{k} \binom{k}{j} (k-2j)^i$ (with $0^0 = 1$), and
@@ -170,66 +128,6 @@ theorem_wanted sum_fubiniNumber_mul_sum_alternatingStirling {n : ℕ} (hn : 1 �
       (2 ^ (n + 1) - 1) * fubiniNumber n =
     ∑ k ∈ range (n + 1), ((n + 1).choose (k + 1) : ℤ) * A n k
 
-/-- **Sabar's identity for complex arguments.** For a complex number $w$ and a natural number $j$
-write $\binom{w}{j} = w(w-1)\cdots(w-j+1)/j!$. For every natural number $p \ge 1$ and every
-complex number $z$,
-$$
-z^p - z(z-1)\cdots(z-p+1) =
-\sum_{k=0}^{p-1} (-1)^{p-k-1} k^p \binom{z}{k} \binom{z-k-1}{p-k-1}.
-$$
-
-Sabar proved this formula for natural numbers $z = n \ge p$; here it is extended to complex $z$.
-
-Source: Horst Alzer and Kendall C. Richards, *Extensions of Some Combinatorial Identities and
-Various Related Results*, INTEGERS 25 (2025), Article A61, Theorem 8, Equation (9). -/
-theorem_wanted pow_sub_descPochhammer_eq_sum_choose {p : ℕ} (hp : 1 ≤ p) (z : ℂ) :
-    z ^ p - (descPochhammer ℂ p).eval z =
-      ∑ k ∈ range p, (-1 : ℂ) ^ (p - k - 1) * (k : ℂ) ^ p * Ring.choose z k *
-        Ring.choose (z - k - 1) (p - k - 1)
-
-/-- **A reciprocal-sum identity for generalized binomial coefficients.** For a complex number $w$
-and a natural number $j$ write $\binom{w}{j} = w(w-1)\cdots(w-j+1)/j!$. Let $p \ge 1$ be a
-natural number and let $z$ be a complex number with $z \ne k$ for every natural number $k < p$.
-Then
-$$
-p z^{p-1} - z^p \sum_{k=0}^{p-1} \frac{1}{z-k} =
-\sum_{k=0}^{p-1} \frac{(-1)^{p-k} k^p}{z-k} \binom{z}{k} \binom{z-k-1}{p-k-1}.
-$$
-
-Source: Horst Alzer and Kendall C. Richards, *Extensions of Some Combinatorial Identities and
-Various Related Results*, INTEGERS 25 (2025), Article A61, Corollary 1, Equation (10). -/
-theorem_wanted mul_pow_pred_sub_pow_mul_sum_inv_eq_sum_choose {p : ℕ} (hp : 1 ≤ p) {z : ℂ}
-    (hz : ∀ k < p, z ≠ k) :
-    p * z ^ (p - 1) - z ^ p * ∑ k ∈ range p, 1 / (z - k) =
-      ∑ k ∈ range p, (-1 : ℂ) ^ (p - k) * (k : ℂ) ^ p / (z - k) * Ring.choose z k *
-        Ring.choose (z - k - 1) (p - k - 1)
-
-/-- **The Alzer–Richards binomial sum as a ${}_3F_2$ series.** Let $m \ge 1$ be an integer and
-let $p, x$ be complex numbers with $p \ne -j$ and $x \ne -j$ for every integer $j$ with
-$1 \le j \le \lfloor m/2 \rfloor$. Write $\binom{z}{k} = z(z-1)\cdots(z-k+1)/k!$ for complex $z$
-and $(z)_n = z(z+1)\cdots(z+n-1)$ for the rising factorial. Then
-$$
-\sum_{k=0}^{\lfloor m/2 \rfloor} \frac{\binom{m-k}{k} \binom{m+x}{m-k}}{2^{2k} \binom{k+p}{k}} =
-\frac{(x+1)_m}{m!} \sum_{n=0}^{\lfloor m/2 \rfloor}
-\frac{(-m/2)_n \, ((1-m)/2)_n}{(p+1)_n \, (x+1)_n}.
-$$
-
-The sum on the right is the terminating hypergeometric series
-${}_3F_2(-m/2, (1-m)/2, 1; p+1, x+1; 1)$, written out up to $n = \lfloor m/2 \rfloor$, beyond
-which its terms vanish.
-
-Source: Horst Alzer and Kendall C. Richards, *Extensions of Some Combinatorial Identities and
-Various Related Results*, INTEGERS 25 (2025), Article A61, Theorem 9 (i), Equation (15). -/
-theorem_wanted sum_choose_mul_choose_div_choose_eq_hypergeometric3F2 {m : ℕ} (hm : 1 ≤ m)
-    {p x : ℂ} (hp : ∀ j : ℕ, 1 ≤ j → j ≤ m / 2 → p ≠ -j)
-    (hx : ∀ j : ℕ, 1 ≤ j → j ≤ m / 2 → x ≠ -j) :
-    ∑ k ∈ range (m / 2 + 1), ((m - k).choose k : ℂ) * Ring.choose ((m : ℂ) + x) (m - k) /
-        (2 ^ (2 * k) * Ring.choose ((k : ℂ) + p) k) =
-      (ascPochhammer ℂ m).eval (x + 1) / (m.factorial : ℂ) *
-        ∑ n ∈ range (m / 2 + 1), (ascPochhammer ℂ n).eval (-(m : ℂ) / 2) *
-          (ascPochhammer ℂ n).eval ((1 - (m : ℂ)) / 2) /
-            ((ascPochhammer ℂ n).eval (p + 1) * (ascPochhammer ℂ n).eval (x + 1))
-
 /-- **A binomial sum as a terminating ${}_2F_1$ series.** Write
 $x^{\overline{n}} = x(x+1)\cdots(x+n-1)$ for the rising factorial of a complex number $x$, and
 $\binom{w}{k} = w(w-1)\cdots(w-k+1)/k!$ for a complex number $w$ and a natural number $k$. Let
@@ -259,28 +157,6 @@ theorem_wanted sum_choose_mul_choose_div_choose_eq_hypergeometric2F1 {m ν : ℕ
         ∑ n ∈ range (m / 2 - ν + 1), (ascPochhammer ℂ n).eval ((ν : ℂ) - m / 2) *
           (ascPochhammer ℂ n).eval ((ν : ℂ) - ((m : ℂ) - 1) / 2) /
             ((ascPochhammer ℂ n).eval ((ν : ℂ) + p + 1) * (n.factorial : ℂ))
-
-/-- **Closed form of the Alzer–Richards binomial sum for even $m$.** Let $m \ge 2$ be an even
-integer and $x$ a complex number, and write $\binom{z}{k} = z(z-1)\cdots(z-k+1)/k!$ for complex
-$z$. Put
-$$
-S(x) = \sum_{k=0}^{m/2} \frac{\binom{m-k}{k} \binom{m+x}{m-k}}{2^{2k} \binom{k-m/2-1/2}{k}}.
-$$
-If $x \ne -m/2$, then $S(x) = \frac{x}{x+m/2} \binom{x+m}{m}$; if $x = -m/2$, then
-$S(x) = \frac{(-1)^{m/2}}{2^m \binom{(m-1)/2}{m/2}}$.
-
-Source: Horst Alzer and Kendall C. Richards, *Extensions of Some Combinatorial Identities and
-Various Related Results*, INTEGERS 25 (2025), Article A61, Corollary 2 (i), Equation (19). -/
-theorem_wanted sum_choose_mul_choose_div_choose_of_even {m : ℕ} (hm : 2 ≤ m) (hme : Even m)
-    (x : ℂ) :
-    (x ≠ -(m : ℂ) / 2 →
-      ∑ k ∈ range (m / 2 + 1), ((m - k).choose k : ℂ) * Ring.choose ((m : ℂ) + x) (m - k) /
-          (2 ^ (2 * k) * Ring.choose ((k : ℂ) - m / 2 - 1 / 2) k) =
-        x / (x + m / 2) * Ring.choose (x + m) m) ∧
-    (x = -(m : ℂ) / 2 →
-      ∑ k ∈ range (m / 2 + 1), ((m - k).choose k : ℂ) * Ring.choose ((m : ℂ) + x) (m - k) /
-          (2 ^ (2 * k) * Ring.choose ((k : ℂ) - m / 2 - 1 / 2) k) =
-        (-1 : ℂ) ^ (m / 2) / (2 ^ m * Ring.choose (((m : ℂ) - 1) / 2) (m / 2)))
 
 /-- **Closed form of the Alzer–Richards binomial sum for odd $m$.** Let $m$ be an odd positive
 integer and $x$ a complex number, and write $\binom{z}{k} = z(z-1)\cdots(z-k+1)/k!$ for complex

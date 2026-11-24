@@ -3,7 +3,6 @@
 A real matrix is totally nonnegative (totally positive) if all its minors are nonnegative (positive). Fomin and Zelevinsky's account (*Total positivity: tests and parametrizations*, Math. Intelligencer 22 (2000), arXiv:math/9912128v1) starts from planar networks: by Lindström's lemma every minor of the weight matrix of a planar network is a sum of weights of families of vertex-disjoint paths, so nonnegative weights give a totally nonnegative matrix (Corollary 2) and positive weights on a totally connected network give a totally positive one (Corollary 3); conversely every totally positive matrix arises this way (Theorem 5), which yields the test by $n^2$ initial minors (Theorem 9, due to Gasca and Peña). Here the two corollaries follow from a weighted Lindström–Gessel–Viennot lemma; the pages also compare nonnegative minors of rectangular matrices with total nonnegativity of square matrices, and state the initial-minor test.
 
 - [Totally positive matrices](totally-positive-matrices/README.md)
-- [Generalized hyper-Fibonacci numbers](hyper-fibonacci-numbers/README.md)
 - [Total positivity of hyper-Fibonacci Toeplitz matrices](hyper-fibonacci-toeplitz-matrices/README.md)
 - [Total nonnegativity of planar networks](planar-networks/README.md)
 

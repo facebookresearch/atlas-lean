@@ -37,7 +37,7 @@ public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.Data.Nat.Prime.Basic
 public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.NumberTheory.Divisors
-public import MathlibExt.NumberTheory.Composite
+public import MathlibExt.NumberTheory.FibonacciSquareAddOne
 public import MathlibExt.NumberTheory.TripSternTree
 
 set_option autoImplicit false
@@ -140,19 +140,6 @@ Source: Anton Shakov, "A 2-Regular Sequence That
 Counts The Divisors of `n^2 + 1`", Proposition 9. -/
 theorem_wanted shakovSeq_shakovA (n : ℕ) (hn : 1 ≤ n) :
     shakovSeq (shakovA n).toNat = (Nat.fib (n - 1) : ℤ)
-
-/-- **Fibonacci squares plus one are eventually composite.** Let $F_k$ denote the $k$-th
-Fibonacci number, with $F_0 = 0$ and $F_1 = 1$. For every natural number $k \ge 4$, the number
-$F_k^2 + 1$ is composite.
-
-In the source's numbering of the Fibonacci numbers, which is shifted by one, this reads
-"$F_n^2 + 1$ is composite for $n > 4$".
-
-Source: Anton Shakov, "A 2-Regular Sequence That
-Counts The Divisors of `n^2 + 1`", Corollary 10. -/
-theorem_wanted fib_sq_add_one_composite (k : ℕ) (hk : 4 ≤ k) :
-    Nat.IsComposite (Nat.fib k ^ 2 + 1)
-
 
 /-- The integer pair tree as a `TripSternTree (ℚ × ℚ)`: the
 root is `(1, 0)` and each pair `(d, m)` has children

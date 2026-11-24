@@ -12,7 +12,8 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Set.Card
 public import Mathlib.Topology.Instances.Real.Lemmas
-public import MathlibExt.Combinatorics.Sequences.ThrowbackSequences
+public import MathlibExt.Combinatorics.Sequences.ThrowbackFrequency
+public import MathlibExt.Combinatorics.Sequences.ThrowbackUniformRecurrence
 
 /-!
 # Throwback sequences of positive integers (Darnell, Dribus)
@@ -88,21 +89,6 @@ public theorem_wanted throwbackSequence_limiting_frequency (X : ℕ → ℕ) (hX
             ((w : ℝ) - Set.ncard {i | X i < w}) / ((w : ℝ) - Set.ncard {i | X i < w} + 1)
           else 1))
 
-/-- **Every term has a nonzero limiting frequency.** Let $X = (x_0, x_1, \dots)$ be a sequence of
-pairwise distinct positive integers, and let $T(X) = (t_0, t_1, \dots)$ be its throwback
-sequence. Then for every $j$, the proportion $\#\{k < N : t_k = x_j\} / N$ of terms equal to
-$x_j$ among the first $N$ terms of $T(X)$ converges, as $N \to \infty$, to a nonzero real number.
-
-Source: Jesiah Darnell and Benjamin F. Dribus, *Throwback Sequences of Positive Integers*,
-Journal of Integer Sequences 28 (2025), Article 25.5.1, Corollary 5
-(`jis-2025-25.5.1-cor-5`). -/
-public theorem_wanted throwbackSequence_limiting_frequency_ne_zero (X : ℕ → ℕ)
-    (hX : ∀ n, 0 < X n) (hinj : Function.Injective X) (j : ℕ) :
-    ∃ c : ℝ, c ≠ 0 ∧ Filter.Tendsto
-      (fun N : ℕ =>
-        ((((Finset.range N).filter fun k => throwbackSequence X k = X j).card : ℕ) : ℝ) / N)
-      Filter.atTop (nhds c)
-
 /-- **Partial placement sequences are periodic.** Let $X = (x_0, x_1, \dots)$ be a strictly
 increasing sequence of positive integers and let $n \ge 0$. Then the partial placement sequence
 $P_n(X)$ is periodic: there is an integer $p > 0$ such that for every position
@@ -114,20 +100,6 @@ Journal of Integer Sequences 28 (2025), Article 25.5.1, Lemma 6 (`jis-2025-25.5.
 public theorem_wanted partialPlacement_periodic (X : ℕ → ℕ) (hX : StrictMono X)
     (hX0 : 0 < X 0) (n : ℕ) :
     ∃ p : ℤ, 0 < p ∧ ∀ z, partialPlacement X n (z + p) = partialPlacement X n z
-
-/-- **Throwback sequences of increasing sequences are uniformly recurrent.** Let
-$X = (x_0, x_1, \dots)$ be a strictly increasing sequence of positive integers with throwback
-sequence $T(X) = (t_0, t_1, \dots)$. Then every block of consecutive terms of $T(X)$ recurs with
-bounded gaps: for all natural numbers $i$ and $L$ there is a natural number $G$ such that for
-every natural number $m$ there is an index $j$ with $m \le j \le m + G$ and $t_{j+s} = t_{i+s}$
-for all $s < L$.
-
-Source: Jesiah Darnell and Benjamin F. Dribus, *Throwback Sequences of Positive Integers*,
-Journal of Integer Sequences 28 (2025), Article 25.5.1, Theorem 7 (`jis-2025-25.5.1-thm-7`). -/
-public theorem_wanted throwbackSequence_uniformly_recurrent (X : ℕ → ℕ) (hX : StrictMono X)
-    (hX0 : 0 < X 0) (i L : ℕ) :
-    ∃ G, ∀ m, ∃ j, m ≤ j ∧ j ≤ m + G ∧
-      ∀ t < L, throwbackSequence X (j + t) = throwbackSequence X (i + t)
 
 /-- **Minimal complete blocks of partial placements match configurations.** Let
 $X = (x_0, x_1, \dots)$ be a strictly increasing sequence of positive integers, let $\tau$ be
