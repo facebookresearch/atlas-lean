@@ -1,0 +1,15 @@
+# Addition chains and generator sequences
+
+- [Instances of ADDITION CHAIN FOR A SEQUENCE](addition-chain-sequence-instance.md)
+- [Addition chains](is-addition-chain.md)
+- [Well-formed instances of ADDITION CHAIN FOR A SEQUENCE](well-formed.md)
+- [Feasible instances of ADDITION CHAIN FOR A SEQUENCE](addition-chain-sequence-feasible.md)
+- [ADDITION CHAIN FOR A SEQUENCE as a decision problem](addition-chain-sequence-dec.md)
+- [ADDITION CHAIN FOR A SEQUENCE is NP-complete](addition-chain-sequence-np-complete.md)
+- [Instances of MINIMUM LENGTH GENERATOR SEQUENCE](minimum-length-generator-sequence-instan.md)
+- [Product of a generator word](product.md)
+- [Generator words with a given product](generates.md)
+- [Well-formed instances of MINIMUM LENGTH GENERATOR SEQUENCE](well-formed-2.md)
+- [Feasible instances of MINIMUM LENGTH GENERATOR SEQUENCE](minimum-length-generator-sequence-feasib.md)
+- [MINIMUM LENGTH GENERATOR SEQUENCE as a decision problem](minimum-length-generator-sequence-dec.md)
+- [MINIMUM LENGTH GENERATOR SEQUENCE is NP-complete](minimum-length-generator-sequence-np-com.md)
