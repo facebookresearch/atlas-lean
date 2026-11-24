@@ -9,7 +9,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.Combinatorics.Enumerative.BinomialSumRecurrences
+import Mathlib.Algebra.Field.Rat
 import Mathlib.Tactic.IntervalCases
+import Mathlib.Tactic.NormNum
 
 namespace MetaMathlibExt
 
@@ -60,5 +62,32 @@ example (n : ℕ) (hn : 4 < n) :
       x n = ∑ i ∈ Finset.Icc 1 3, a i * x (n - i) := by
     interval_cases n <;> decide
   exact linearRecurrence_of_finite_window x A a 2 3 4 hA (by decide) ha n (by omega)
+
+open PowerSeries
+
+local notation "Xq" => (X : PowerSeries ℚ)
+
+-- For the identity Riordan array, the two residues modulo two select separate monomials.
+example : coeff 4 ((1 - Xq ^ 2)⁻¹) = 1 := by
+  have h := riordan_stepSum_coeff (1 : PowerSeries ℚ) Xq (by simp) 2 0
+    (by decide) (by decide) 4
+  simp only [Nat.add_zero, pow_zero, one_mul, mul_one] at h
+  rw [← h]
+  norm_num [Finset.sum_range_succ, coeff_X_pow]
+  decide
+
+example : coeff 3 (Xq * (1 - Xq ^ 2)⁻¹) = 1 := by
+  have h := riordan_stepSum_coeff (1 : PowerSeries ℚ) Xq (by simp) 2 1
+    (by decide) (by decide) 3
+  simp only [pow_one, one_mul] at h
+  rw [← h]
+  norm_num [Finset.sum_range_succ, coeff_X_pow]
+
+example : coeff 0 (Xq * (1 - Xq ^ 2)⁻¹) = 0 := by
+  have h := riordan_stepSum_coeff (1 : PowerSeries ℚ) Xq (by simp) 2 1
+    (by decide) (by decide) 0
+  simp only [pow_one, one_mul] at h
+  rw [← h]
+  norm_num [Finset.sum_range_succ, coeff_X_pow]
 
 end MetaMathlibExt

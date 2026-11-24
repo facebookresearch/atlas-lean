@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
-public import MathlibExt.GameTheory.Matching.StableMechanism
+public import MathlibExt.GameTheory.Matching.StableMechanismIncentives
 
 /-! # Incentives of the man-optimal stable mechanism (wanted)
 
@@ -23,7 +23,8 @@ Roth, "The economics of matching: stability and incentives", *Mathematics of Ope
   conclusions were developed independently by Dubins and Freedman (published as "Machiavelli and
   the Gale–Shapley algorithm", *Amer. Math. Monthly* 88 (1981); not consulted here).
 * Theorem 6: no perfect matching, stable or not, is strictly preferred by every man to the
-  man-optimal stable matching.
+  man-optimal stable matching. This result is proved in
+  `MathlibExt.GameTheory.Matching.StableMechanismIncentives`.
 
 Roth's proofs run the men-proposing deferred-acceptance algorithm step by step; the repository's
 executable algorithm is `Cslib.Algorithms.Lean.Matching.GaleShapley.gsMatching`, which is stable
@@ -49,15 +50,5 @@ theorem_wanted isTruthfulDominantForMan_of_isManOptimalStable {M W : Type*} [Fin
     [Fintype W] [DecidableEq M] (h : MatchingMechanism M W)
     (hh : ∀ mp wp, IsManOptimalStable mp wp (h mp wp)) (m : M) :
     IsTruthfulDominantForMan h m
-
-/-- **Weak Pareto optimality of the man-optimal stable matching for the men** (Roth, *Math. Oper.
-Res.* 7 (1982), Theorem 6). No perfect matching gives every man a partner he strictly prefers to
-his partner in the man-optimal stable matching. The hypothesis `Nonempty M` excludes the empty
-market, where "every man strictly prefers" holds vacuously. Roth's example after Corollary 5.1
-shows that strong Pareto optimality fails. -/
-theorem_wanted not_forall_lt_of_isManOptimalStable {M W : Type*} [Fintype M] [Fintype W]
-    [Nonempty M] (mp : MPrefs M W) (wp : WPrefs M W) {μ : PerfectMatching M W}
-    (hμ : IsManOptimalStable mp wp μ) (ν : PerfectMatching M W) :
-    ¬ ∀ m, (mp m).lt (ν m) (μ m)
 
 end MathlibExt.GameTheory.Matching.StableMechanismIncentivesWanted
