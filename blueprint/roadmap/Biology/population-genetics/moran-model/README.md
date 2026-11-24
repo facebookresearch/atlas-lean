@@ -20,3 +20,5 @@
 - [Loss probability of the chain](tendsto-mat-pow-moran-matrix-zero.md)
 - [Closed form of Kimura's fixation probability](kimura-fixation-half.md)
 - [Diffusion limit of the Moran fixation probability](tendsto-moran-fixation-diffusion.md)
+
+- [Neutral Moran genealogy as a relabeled Cannings model](moran-model-genealogy-per-step-c-2-n-2-and-time.md)
