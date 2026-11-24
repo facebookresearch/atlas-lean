@@ -10548,6 +10548,7 @@
   "MathlibExt/Combinatorics/Enumerative/CentralBinomHarmonicSums": {"to": "Combinatorics/binomial-coefficients/central-binomial-harmonic-sums", "title": "Central binomial sums with harmonic numbers"},
   "MathlibExt/Combinatorics/Enumerative/CentralBinomialBernstein": {"to": "Combinatorics/binomial-coefficients/binomial-sums", "title": "Knuth's old sum"},
   "MathlibExt/Combinatorics/Enumerative/CentralBinomialHarmonicGeneratingFunction": {"to": "Combinatorics/binomial-coefficients/central-binomial-harmonic-sums", "title": "Central binomial and Catalan–harmonic generating functions"},
+  "MathlibExt/Combinatorics/Enumerative/CentralBinomialReciprocalLinearMultisection": {"to": "Combinatorics/binomial-coefficients/central-binomial-harmonic-sums", "title": "Series of reciprocal central binomial coefficients"},
   "MathlibExt/Combinatorics/Enumerative/CentralBinomialReciprocalMultisection": {"to": "Combinatorics/binomial-coefficients/central-binomial-harmonic-sums", "title": "Series of reciprocal central binomial coefficients"},
   "MathlibExt/Combinatorics/Enumerative/CentralTrinomialLegendre": {"to": "Combinatorics/binomial-coefficients/generalized-binomial-coefficients", "title": "Central trinomial coefficients"},
   "MathlibExt/Combinatorics/Enumerative/CentralTrinomialRecurrence": {"to": "Combinatorics/binomial-coefficients/generalized-binomial-coefficients", "title": "Central trinomial coefficients"},
