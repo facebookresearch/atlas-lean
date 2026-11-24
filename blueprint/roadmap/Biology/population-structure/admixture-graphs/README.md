@@ -51,3 +51,6 @@
 - [Three-population statistic at an admixture node with proportion zero](f3-admixture-of-prop-eq-zero.md)
 - [Drift on the edge to a single parent adds its length to f3](f3-of-parents-eq-singleton.md)
 - [Three-population statistic of an admixture followed by private drift](f3-admixture-of-parents-eq-singleton.md)
+
+- [Single-root stochastic admixture graphs realize the drift model](admixture-graphs-as-graphical-models-soraggi-wiu.md)
+- [A pulse followed by binomial resampling realizes the drift model](neutral-wright-fisher-on-an-admixture-graph-real.md)

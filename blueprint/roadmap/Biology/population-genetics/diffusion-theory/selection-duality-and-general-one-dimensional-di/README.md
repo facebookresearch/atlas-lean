@@ -49,6 +49,7 @@
 - [Dirichlet condition of the Green's function at zero](integral-green-function-zero-left.md)
 - [Dirichlet condition of the Green's function at one](integral-green-function-one-left.md)
 - [Uniqueness of the Green integral solution of L u = −g](eq-integral-green-function-of-diffusion.md)
+- [Regular coefficients with natural analytic boundary tests](regularity-hypotheses-do-not-imply-accessibility.md)
 
 ## Genic selection and dominance
 

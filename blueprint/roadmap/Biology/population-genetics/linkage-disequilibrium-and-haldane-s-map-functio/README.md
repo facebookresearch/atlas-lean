@@ -26,6 +26,7 @@
 - [Distant loci are unlinked in the limit](tendsto-haldane-at-top.md)
 - [Inverse Haldane map function recovers map distance](neg-half-log-haldane.md)
 - [Every recombination fraction below one half is attained](haldane-neg-half-log.md)
+- [Kosambi's map function](kosambi-map-function.md)
 
 ## Multiallelic two-locus linkage disequilibrium
 

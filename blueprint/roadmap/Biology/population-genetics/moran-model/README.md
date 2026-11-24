@@ -23,3 +23,6 @@
 
 - [Minimum fixation probability of the Moran process on graphs](minimum-fixation-probability-on-graphs.md)
 - [Worst-case absorption time of the Moran process on graphs](worst-case-absorption-time-on-graphs.md)
+
+- [Fixation probability in a frequency-dependent Moran process](frequency-dependent-moran-fixation-product-formu.md)
+- [The one-third rule for weak selection in the Moran process](one-third-rule-under-weak-selection.md)
