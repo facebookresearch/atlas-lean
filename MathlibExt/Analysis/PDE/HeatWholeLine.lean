@@ -91,7 +91,7 @@ private theorem nonpos_on_rectangle {u ut : ℝ → ℝ → ℝ} {ν T R : ℝ}
     (ht : ∀ t ∈ Ioc 0 T, ∀ x ∈ Ioo (-R) R,
       HasDerivWithinAt (fun s => u s x) (ut t x) (Iic t) t)
     (hpde : ∀ t ∈ Ioc 0 T, ∀ x ∈ Ioo (-R) R,
-      ut t x - ν * iteratedDeriv 2 (u t) x < 0)
+      0 < u t x → ut t x - ν * iteratedDeriv 2 (u t) x < 0)
     (h₀ : ∀ x ∈ Icc (-R) R, u 0 x ≤ 0)
     (hside : ∀ t ∈ Icc 0 T, u t (-R) ≤ 0 ∧ u t R ≤ 0) :
     ∀ t ∈ Icc 0 T, ∀ x ∈ Icc (-R) R, u t x ≤ 0 := by
@@ -121,7 +121,7 @@ private theorem nonpos_on_rectangle {u ut : ℝ → ℝ → ℝ} {ν T R : ℝ}
       ⟨⟨hs.1, hs.2.trans hp.1.2⟩, hp.2⟩)
   have hdt := time_derivative_nonneg hp0 htime (ht p.1 ⟨hp0, hp.1.2⟩ p.2 ⟨hpl, hpr⟩)
   have hmul := mul_nonpos_of_nonneg_of_nonpos hν hd2
-  linarith [hpde p.1 ⟨hp0, hp.1.2⟩ p.2 ⟨hpl, hpr⟩]
+  linarith [hpde p.1 ⟨hp0, hp.1.2⟩ p.2 ⟨hpl, hpr⟩ hpx]
 
 private noncomputable def barrier (ν k t x : ℝ) : ℝ :=
   exp ((ν * k ^ 2 + 1) * t) * (exp (k * x) + exp (-k * x))
@@ -161,13 +161,15 @@ private theorem barrier_lower {ν t : ℝ} (hν : 0 ≤ ν) (ht : 0 ≤ t) (k x 
   exact he.trans (le_mul_of_one_le_left (by positivity)
     (one_le_exp_iff.mpr (mul_nonneg (by positivity) ht)))
 
-/-- A whole-line heat subsolution with a uniform one-sided exponential strip bound
-and nonpositive initial data is nonpositive throughout the closed strip. -/
-theorem nonpos_of_heat_subsolution_of_le_exp {u ut : ℝ → ℝ → ℝ} {ν T : ℝ}
+/-- Whole-line maximum principle requiring the heat-subsolution inequality only
+where the field is positive. A one-sided exponential strip bound and nonpositive
+initial data suffice for nonpositivity on the whole closed strip. -/
+theorem nonpos_of_heat_subsolution_on_pos_of_le_exp {u ut : ℝ → ℝ → ℝ} {ν T : ℝ}
     (hν : 0 ≤ ν) (hc : ContinuousOn (Function.uncurry u) (Icc 0 T ×ˢ univ))
     (hx : ∀ t ∈ Ioc 0 T, ∀ x, ContDiffAt ℝ 2 (u t) x)
     (ht : ∀ t ∈ Ioc 0 T, ∀ x, HasDerivWithinAt (fun s => u s x) (ut t x) (Iic t) t)
-    (hsub : ∀ t ∈ Ioc 0 T, ∀ x, ut t x - ν * iteratedDeriv 2 (u t) x ≤ 0)
+    (hsub : ∀ t ∈ Ioc 0 T, ∀ x, 0 < u t x →
+      ut t x - ν * iteratedDeriv 2 (u t) x ≤ 0)
     (hg : ∃ M c : ℝ, 0 ≤ M ∧ 0 ≤ c ∧
       ∀ t ∈ Icc 0 T, ∀ x, u t x ≤ M * exp (c * |x|))
     (h₀ : ∀ x, u 0 x ≤ 0) : ∀ t ∈ Icc 0 T, ∀ x, u t x ≤ 0 := by
@@ -196,12 +198,13 @@ theorem nonpos_of_heat_subsolution_of_le_exp {u ut : ℝ → ℝ → ℝ} {ν T 
       exact contDiffAt_const.mul (barrier_contDiff ν (c + 1) s).contDiffAt),
       iteratedDeriv_fun_const_smul_field, barrier_space]
     rfl
-  have hvsub (s : ℝ) (hs : s ∈ Ioc 0 T) (y : ℝ) :
+  have hvsub (s : ℝ) (hs : s ∈ Ioc 0 T) (y : ℝ) (hpos : 0 < v s y) :
       vt s y - ν * iteratedDeriv 2 (v s) y < 0 := by
     rw [hvd s hs y]
     dsimp [vt]
     have hb := mul_pos hε (barrier_pos ν (c + 1) s y)
-    nlinarith [hsub s hs y]
+    have hu : 0 < u s y := by dsimp [v] at hpos; linarith
+    nlinarith [hsub s hs y hu]
   have hbnd (s y : ℝ) (hs : s ∈ Icc 0 T) (hy : |y| = R) : v s y ≤ 0 := by
     have hMe : M ≤ ε * exp R := by
       have hr : M / ε ≤ R := by dsimp [R]; linarith [abs_nonneg x]
@@ -219,13 +222,26 @@ theorem nonpos_of_heat_subsolution_of_le_exp {u ut : ℝ → ℝ → ℝ} {ν T 
     (fun s hs y _ => (hx s hs y).sub
       (contDiffAt_const.mul (barrier_contDiff ν (c + 1) s).contDiffAt))
     (fun s hs y _ => (ht s hs y).sub ((barrier_time ν (c + 1) s y).const_mul ε).hasDerivWithinAt)
-    (fun s hs y _ => hvsub s hs y)
+    (fun s hs y _ hp => hvsub s hs y hp)
     (fun y _ => sub_nonpos.mpr ((h₀ y).trans (mul_pos hε (barrier_pos _ _ _ _)).le))
     (fun s hs => ⟨hbnd s (-R) hs (by rw [abs_neg, abs_of_pos hR]),
       hbnd s R hs (abs_of_pos hR)⟩) t htm x hRx
   have heq : ε * barrier ν (c + 1) t x = δ := div_mul_cancel₀ _ (ne_of_gt (barrier_pos _ _ _ _))
   dsimp [v] at hvle
   linarith
+
+/-- A whole-line heat subsolution with a uniform one-sided exponential strip bound
+and nonpositive initial data is nonpositive throughout the closed strip. -/
+theorem nonpos_of_heat_subsolution_of_le_exp {u ut : ℝ → ℝ → ℝ} {ν T : ℝ}
+    (hν : 0 ≤ ν) (hc : ContinuousOn (Function.uncurry u) (Icc 0 T ×ˢ univ))
+    (hx : ∀ t ∈ Ioc 0 T, ∀ x, ContDiffAt ℝ 2 (u t) x)
+    (ht : ∀ t ∈ Ioc 0 T, ∀ x, HasDerivWithinAt (fun s => u s x) (ut t x) (Iic t) t)
+    (hsub : ∀ t ∈ Ioc 0 T, ∀ x, ut t x - ν * iteratedDeriv 2 (u t) x ≤ 0)
+    (hg : ∃ M c : ℝ, 0 ≤ M ∧ 0 ≤ c ∧
+      ∀ t ∈ Icc 0 T, ∀ x, u t x ≤ M * exp (c * |x|))
+    (h₀ : ∀ x, u 0 x ≤ 0) : ∀ t ∈ Icc 0 T, ∀ x, u t x ≤ 0 := by
+  exact nonpos_of_heat_subsolution_on_pos_of_le_exp hν hc hx ht
+    (fun t ht x _ => hsub t ht x) hg h₀
 
 /-- Maximum principle in the two-sided exponential-growth class. -/
 theorem nonpos_of_heat_subsolution {u ut : ℝ → ℝ → ℝ} {ν T : ℝ} (hν : 0 ≤ ν)

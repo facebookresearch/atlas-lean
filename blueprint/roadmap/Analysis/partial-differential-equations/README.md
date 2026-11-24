@@ -22,4 +22,6 @@ PDE existence, regularity and qualitative results: Cauchy–Kovalevskaya, heat a
 - [Viscosity solutions of Hamilton–Jacobi equations](viscosity-solutions-of-hamilton-jacobi-equations/README.md)
 - [Weak solutions of elliptic equations](weak-solutions-of-elliptic-equations/README.md)
 - [Weighted heat gradient estimates](weighted-heat-gradient-estimates/README.md)
+- [Whole-line heat comparison](whole-line-heat-comparison/README.md)
+- [Whole-line potential-heat comparison](whole-line-potential-heat-comparison/README.md)
 - [Analytic elliptic regularity](analytic-elliptic-regularity.md)
