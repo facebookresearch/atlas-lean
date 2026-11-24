@@ -34,7 +34,7 @@ namespace Cslib.IMP.wp
 
 /-- One total-correctness step: exit with the postcondition, or terminate the body safely. -/
 def whileStep (b : BExp) (c : Cmd) (Q : Assertion) : Set State →o Set State where
-  toFun I := {s | (b.eval s = false ∧ Q s) ∨ (b.eval s = true ∧ wp c I s)}
+  toFun I := {s | (b.eval s = false ∧ Q s) ∨ (b.eval s = true ∧ wp c (fun t => t ∈ I) s)}
   monotone' := by
     intro I J h s hs
     rcases hs with h | ⟨hb, hc⟩

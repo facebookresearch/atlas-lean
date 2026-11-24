@@ -11,7 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Gamma.Digamma
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
-public import MathlibExt.NumberTheory.DowkerHalfSum
+public import MathlibExt.NumberTheory.WatsonAlternatingBounds
 
 namespace MetaMathlibExt
 
@@ -145,24 +145,6 @@ public theorem_wanted watson_alternating_sharp_bounds
         watsonAlternatingCosecantSum n ∧
       watsonAlternatingCosecantSum n <
         2 * (n : ℝ) * Real.log 2 / Real.pi + Real.pi / (12 * (n : ℝ))
-
-/--
-**Decimal bounds for Watson's alternating cosecant sum.** For every even natural number
-$n \ge 4$, the alternating cosecant sum $C_n = \sum_{l=1}^{n-1} (-1)^{l+1} / \sin(\pi l / n)$
-satisfies the strict inequalities
-$$
-\frac{2 n \log 2}{\pi} + \frac{0.252}{n} < C_n < \frac{2 n \log 2}{\pi} + \frac{0.262}{n}.
-$$
-
-Source: Iaroslav V. Blagouchine, *On a Generalization of Watson’s Trigonometric Sum (On Dowker’s Sum
-of Order One Half)*, INTEGERS 25 (2025), Article A30, Corollary 3.
--/
-public theorem_wanted watson_alternating_simple_bounds
-    (n : ℕ) (heven : Even n) (hn : 4 ≤ n) :
-    2 * (n : ℝ) * Real.log 2 / Real.pi + (0.252 : ℝ) / (n : ℝ) <
-        watsonAlternatingCosecantSum n ∧
-      watsonAlternatingCosecantSum n <
-        2 * (n : ℝ) * Real.log 2 / Real.pi + (0.262 : ℝ) / (n : ℝ)
 
 /--
 **Vanishing limits of Watson's cosine sum at one sixth and five sixths.** For natural numbers

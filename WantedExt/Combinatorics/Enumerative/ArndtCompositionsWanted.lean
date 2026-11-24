@@ -39,6 +39,9 @@ public import Mathlib.RingTheory.MvPowerSeries.Inverse
 public import Mathlib.RingTheory.MvPowerSeries.PiTopology
 public import Mathlib.RingTheory.MvPowerSeries.Substitution
 public import Mathlib.RingTheory.PowerSeries.Basic
+public import MathlibExt.Combinatorics.Enumerative.ArndtCompositions
+public import MathlibExt.Combinatorics.Enumerative.ArndtSmallPartCounts
+public import MathlibExt.Combinatorics.Enumerative.ColoredArndt
 public import MathlibExt.Combinatorics.Enumerative.NarayanaSequence
 public import MathlibExt.NumberTheory.PadovanSequence
 
@@ -47,51 +50,6 @@ open scoped MvPowerSeries.WithPiTopology
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Number of Arndt compositions with parts in a set.** For a set $S$ of natural numbers and
-natural numbers $n$ and $k$, $a_S(n, k)$ is the number of $k$-tuples $(c_1, \dots, c_k)$ of
-positive integers such that $c_1 + \dots + c_k = n$, every $c_i$ lies in $S$, and
-$c_{2i-1} > c_{2i}$ for every $i$ with $2i \le k$. These tuples are the Arndt compositions of
-$n$ with $k$ parts in $S$.
-
-Source: Mohammed L. Nadji, Moussa Ahmia, Daniel F. Checa, and José L. Ramírez, *Arndt
-Compositions with Restricted Parts, Palindromes, and Colored Variants*, Journal of Integer
-Sequences 28 (2025), Article 25.3.6, Section 1 (definition of Arndt compositions, after
-D. F. Checa and J. L. Ramírez, arXiv:2311.15388, Section 1). -/
-def arndtCompositionCount (S : ℕ → Prop) [DecidablePred S] (n k : ℕ) : ℕ :=
-  ((Finset.Nat.antidiagonalTuple k n).filter fun c =>
-    (∀ i, 0 < c i ∧ S (c i)) ∧
-      ∀ i j : Fin k, (i : ℕ) % 2 = 0 → (j : ℕ) = i + 1 → c j < c i).card
-
-/-- **Arndt compositions of 6 with two parts.** There are exactly $2$ Arndt compositions of $6$
-with two parts.
-
-They are $(5, 1)$ and $(4, 2)$.
-
-Source: D. F. Checa and J. L. Ramírez, *Arndt compositions: a generating functions approach*,
-arXiv:2311.15388, Section 1 (list of the Arndt compositions of `6`). -/
-theorem arndtCompositionCount_six_two : arndtCompositionCount (fun _ => True) 6 2 = 2 := by
-  decide
-
-/-- **Arndt compositions of 6 with three parts.** There are exactly $4$ Arndt compositions of $6$
-with three parts.
-
-They are $(4, 1, 1)$, $(3, 2, 1)$, $(3, 1, 2)$ and $(2, 1, 3)$.
-
-Source: D. F. Checa and J. L. Ramírez, *Arndt compositions: a generating functions approach*,
-arXiv:2311.15388, Section 1 (list of the Arndt compositions of `6`). -/
-theorem arndtCompositionCount_six_three : arndtCompositionCount (fun _ => True) 6 3 = 4 := by
-  decide
-
-/-- **Arndt compositions of 6 with four parts.** There is exactly one Arndt composition of $6$
-with four parts.
-
-It is $(2, 1, 2, 1)$.
-
-Source: D. F. Checa and J. L. Ramírez, *Arndt compositions: a generating functions approach*,
-arXiv:2311.15388, Section 1 (list of the Arndt compositions of `6`). -/
-theorem arndtCompositionCount_six_four : arndtCompositionCount (fun _ => True) 6 4 = 1 := by
-  decide
 
 /-- **Generating function of Arndt compositions with parts in a set.** An Arndt composition is a
 finite sequence $(\sigma_1, \dots, \sigma_k)$ of positive integers such that
@@ -198,19 +156,6 @@ Sequences 28 (2025), Article 25.3.6, Theorem 2 (`jis-2025-25.3.6-thm-2`). -/
 public theorem_wanted sum_arndtCompositionCount_le_three (n : ℕ) :
     ∑ k ∈ Finset.range (n + 1), arndtCompositionCount (fun i => i ≤ 3) n k =
       shiftedPadovanSequence (n + 2)
-
-/-- **Arndt compositions with parts at most 4 and Narayana's cows sequence.** For every
-$n \ge 0$, the number of Arndt compositions of $n$ (compositions $(\sigma_1, \dots, \sigma_k)$
-with $\sigma_{2i-1} > \sigma_{2i}$ whenever $2i \le k$) with all parts in $\{1, 2, 3, 4\}$,
-counting the empty composition when $n = 0$, equals $N_{n+1}$, where $(N_m)$ is Narayana's cows
-sequence: $N_0 = 0$, $N_1 = N_2 = 1$ and $N_m = N_{m-1} + N_{m-3}$ for $m \ge 3$.
-
-Source: Mohammed L. Nadji, Moussa Ahmia, Daniel F. Checa, and José L. Ramírez, *Arndt
-Compositions with Restricted Parts, Palindromes, and Colored Variants*, Journal of Integer
-Sequences 28 (2025), Article 25.3.6, Theorem 4 (`jis-2025-25.3.6-thm-4`). -/
-public theorem_wanted sum_arndtCompositionCount_le_four (n : ℕ) :
-    ∑ k ∈ Finset.range (n + 1), arndtCompositionCount (fun i => i ≤ 4) n k =
-      narayanaCowsSequence (n + 1)
 
 /-- **Generating function of Arndt compositions with bounded largest part.** For a natural number
 $\ell$, let $A(x, y; \ell)$ be the formal power series in $x$ over $\mathbb{Z}[y]$ whose
@@ -484,69 +429,6 @@ public theorem_wanted palindromicArndtGF_eq :
             MvPowerSeries.X 0 ^ 3 * MvPowerSeries.X 2] downUpEvenGF
 
 /-! ### Colored Arndt compositions (Section 4) -/
-
-/-- **Colored Arndt compositions.** An Arndt composition of $n$ with $k$ parts is a sequence
-$(\sigma_1, \dots, \sigma_k)$ of positive integers with sum $n$ such that
-$\sigma_{2i-1} > \sigma_{2i}$ for every $i$ with $2i \le k$. In a colored Arndt composition, each
-part of size $m$ carries one of $m$ colors. The number $c(n, k)$ of colored Arndt compositions of
-$n$ with $k$ parts is therefore the sum of $\sigma_1 \sigma_2 \cdots \sigma_k$ over all Arndt
-compositions $(\sigma_1, \dots, \sigma_k)$ of $n$ with $k$ parts.
-
-Source: Mohammed L. Nadji, Moussa Ahmia, Daniel F. Checa, and José L. Ramírez, *Arndt
-Compositions with Restricted Parts, Palindromes, and Colored Variants*, Journal of Integer
-Sequences 28 (2025), Article 25.3.6, Section 4 (definition of colored Arndt compositions). -/
-def coloredArndtCount (n k : ℕ) : ℕ :=
-  ∑ c ∈ (Finset.Nat.antidiagonalTuple k n).filter (fun c =>
-      (∀ i, 0 < c i) ∧ ∀ i j : Fin k, (i : ℕ) % 2 = 0 → (j : ℕ) = i + 1 → c j < c i),
-    ∏ i, c i
-
-/-- **Colored Arndt compositions of 4.** Write $m_a$ for a part of size $m$ with color
-$a \in \{1, \dots, m\}$. The colored Arndt compositions of $4$ are $(4_1)$, $(4_2)$, $(4_3)$,
-$(4_4)$, $(3_a, 1_1)$ for $a \le 3$, and $(2_a, 1_1, 1_1)$ for $a \le 2$. Hence the numbers of
-colored Arndt compositions of $4$ with $1$, $2$ and $3$ parts are $c(4, 1) = 4$, $c(4, 2) = 3$
-and $c(4, 3) = 2$.
-
-Source: Mohammed L. Nadji, Moussa Ahmia, Daniel F. Checa, and José L. Ramírez, *Arndt
-Compositions with Restricted Parts, Palindromes, and Colored Variants*, Journal of Integer
-Sequences 28 (2025), Article 25.3.6, Section 4, list (6). -/
-theorem coloredArndtCount_four : coloredArndtCount 4 1 = 4 ∧ coloredArndtCount 4 2 = 3 ∧
-    coloredArndtCount 4 3 = 2 := by
-  decide
-
-/-- **Generating function of colored Arndt compositions.** The bivariate generating function of
-colored Arndt compositions, by weight ($x$) and number of parts ($y$), is the power series
-$C(x, y) = \sum_{n \ge 0} \left(\sum_{k=0}^{n} c(n, k)\, y^k\right) x^n$ in $\mathbb{Z}[y][[x]]$,
-where $c(n, k)$ is the number of colored Arndt compositions of $n$ with $k$ parts.
-
-Source: Mohammed L. Nadji, Moussa Ahmia, Daniel F. Checa, and José L. Ramírez, *Arndt
-Compositions with Restricted Parts, Palindromes, and Colored Variants*, Journal of Integer
-Sequences 28 (2025), Article 25.3.6, Section 4 (definition of `C(x, y)`). -/
-noncomputable def coloredArndtGF : PowerSeries (Polynomial ℤ) :=
-  PowerSeries.mk fun n =>
-    ∑ k ∈ Finset.range (n + 1), (coloredArndtCount n k : Polynomial ℤ) * Polynomial.X ^ k
-
-/-- **Closed form of the generating function of colored Arndt compositions.** Let
-$C(x, y) = \sum_{n, k} c(n, k)\, x^n y^k$ in $\mathbb{Z}[y][[x]]$, where $c(n, k)$ is the number
-of colored Arndt compositions of $n$ with $k$ parts. Then
-$C(x, y) \cdot (1 - x - 3x^2 - x^3(2y^2 - 3) - x^4(y^2 - 3) - x^5(3 + y^2) - x^6 + x^7) =
-(1 - x)^2 (1 + x)^3 (1 + x^2 + x(y - 2))$.
-
-Since the second factor on the left has constant term $1$, this says that
-$C(x, y) = \frac{(1 - x)^2 (1 + x)^3 (1 + x^2 + x(y - 2))}{1 - x - 3x^2 - x^3(2y^2 - 3) -
-x^4(y^2 - 3) - x^5(3 + y^2) - x^6 + x^7}$.
-
-Source: Mohammed L. Nadji, Moussa Ahmia, Daniel F. Checa, and José L. Ramírez, *Arndt
-Compositions with Restricted Parts, Palindromes, and Colored Variants*, Journal of Integer
-Sequences 28 (2025), Article 25.3.6, Theorem 17 (`jis-2025-25.3.6-thm-17`). -/
-public theorem_wanted coloredArndtGF_mul :
-    coloredArndtGF *
-        (1 - PowerSeries.X - 3 * PowerSeries.X ^ 2 -
-          PowerSeries.X ^ 3 * (2 * PowerSeries.C (Polynomial.X ^ 2) - 3) -
-          PowerSeries.X ^ 4 * (PowerSeries.C (Polynomial.X ^ 2) - 3) -
-          PowerSeries.X ^ 5 * (3 + PowerSeries.C (Polynomial.X ^ 2)) -
-          PowerSeries.X ^ 6 + PowerSeries.X ^ 7) =
-      (1 - PowerSeries.X) ^ 2 * (1 + PowerSeries.X) ^ 3 *
-        (1 + PowerSeries.X ^ 2 + PowerSeries.X * (PowerSeries.C Polynomial.X - 2))
 
 /-- **Generating function for the total number of colored Arndt compositions.** For $n \ge 0$ let
 $c(n, k)$ be the number of colored Arndt compositions of $n$ with $k$ parts, and let

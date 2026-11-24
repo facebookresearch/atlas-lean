@@ -29,7 +29,6 @@ private def spin : Cmd := .while (.truth true) .skip
 private theorem spin_step (Q : Assertion) : wp.whileStep (.truth true) .skip Q = OrderHom.id := by
   ext I s
   simp [wp.whileStep, wp, BigStep.skip_iff, BExp.eval]
-  rfl
 
 -- Greatest versus least matters: this loop has every assertion as a fixed point.
 example (Q : Assertion) : (wp.whileStep (.truth true) .skip Q).lfp = ∅ := by

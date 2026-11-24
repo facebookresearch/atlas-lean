@@ -77,7 +77,7 @@ noncomputable def A0 : Matrix (Fin 2) (Fin 2) ℝ := !![1 / 4, -1 / 4; -1 / 4, 1
 theorem gram_X0 : X0ᵀ * (1 : Matrix (Fin 2) (Fin 2) ℝ)⁻¹ * X0 = !![2] := by
   ext i j
   fin_cases i; fin_cases j
-  simp [X0, mul_apply, Fin.sum_univ_two]
+  simp [X0, Matrix.mul_apply, Fin.sum_univ_two, -Matrix.transpose_of]
   norm_num
 
 theorem isUnit_X0 : IsUnit (X0ᵀ * (1 : Matrix (Fin 2) (Fin 2) ℝ)⁻¹ * X0) := by
@@ -92,7 +92,7 @@ theorem glsMatrix_X0 : glsMatrix X0 1 = !![1 / 2, 1 / 2] := by
     simp
   rw [glsMatrix, gram_X0, hinv, inv_one, Matrix.mul_one]
   ext i j
-  fin_cases i; fin_cases j <;> simp [X0, vecMul, dotProduct]
+  fin_cases i; fin_cases j <;> simp [X0, vecMul, dotProduct, -Matrix.transpose_of]
 
 theorem projP_X0 : projP X0 1 = P0 := by
   rw [projP, glsMatrix_X0, inv_one, Matrix.one_mul]
@@ -122,13 +122,15 @@ example : variantScore X0 1 G0 ![3, 1] 0 = 1 := by
 
 theorem skatKernel_example : skatKernel G0 w0 = !![1, 0; 0, 0] := by
   ext i j
-  fin_cases i <;> fin_cases j <;> simp [skatKernel, G0, w0, mul_apply, vecMul_diagonal]
+  fin_cases i <;> fin_cases j <;>
+    simp [skatKernel, G0, w0, Matrix.mul_apply, vecMul_diagonal, -Matrix.transpose_of]
 
 theorem skatMixtureMatrix_example : skatMixtureMatrix X0 1 G0 w0 1 = A0 := by
   rw [skatMixtureMatrix, CFC.sqrt_one, Matrix.mul_one, projP_X0]
   ext i j
   fin_cases i <;> fin_cases j <;>
-    simp [skatKernel_example, P0, A0, mul_apply, Fin.sum_univ_two] <;> norm_num
+    simp [skatKernel_example, P0, A0, Matrix.mul_apply, Fin.sum_univ_two, -Matrix.transpose_of] <;>
+      norm_num
 
 /-- `1/√2`. -/
 noncomputable def c : ℝ := √(1 / 2)
@@ -293,7 +295,7 @@ theorem alt_mean_example {τ : ℝ} (hτ : 0 ≤ τ) (α : Fin 1 → ℝ) :
     ∫ y, skatQ X0 1 G0 w0 (ofLp y) ∂multivariateGaussian (toLp 2 (X0 *ᵥ α)) (altCov 1 G0 w0 τ) =
       1 / 2 + τ / 4 := by
   rw [integral_skatQ_altCov PosDef.one isUnit_X0 w0_nonneg hτ, projP_X0, skatKernel_example]
-  simp [trace, P0, vecMul, dotProduct, Fin.sum_univ_two]
+  simp [trace, P0, vecMul, dotProduct, Fin.sum_univ_two, -Matrix.transpose_of]
   ring
 
 example {τ : ℝ} (hτ : 0 ≤ τ) (α : Fin 1 → ℝ) :

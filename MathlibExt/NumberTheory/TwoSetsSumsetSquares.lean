@@ -12,19 +12,25 @@ public import Mathlib.Algebra.Group.Even
 public import Mathlib.Algebra.Ring.Int.Defs
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Data.Rat.Defs
+import Mathlib.Data.Rat.Lemmas
 import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Ring.Basic
 
 /-!
 # Two sets whose sumset elements are squares
 
-Ajai Choudhry's triples (3.3) and quadruples (5.1) have square pairwise sums.
-The proofs give tables of integer square roots, one for each choice of summands.
+Ajai Choudhry's integer triples and quadruples and his first three-parameter family of rational
+quadruples have square pairwise sums. The proofs give a square root for each choice of summands.
+His Lemma 1, `exists_int_pairwiseSumsSquares_scale_translate`, scales two rational families with
+square pairwise sums by $k^2$ and shifts them by $-t$ and $+t$: when the results are integers,
+their pairwise sums are squares of integers.
 
 ## References
 
 * Ajai Choudhry, [*Two Sets of Integers Such That All Elements of the Sumset of the Two Sets
-  Are Perfect Squares*](https://arxiv.org/abs/2508.07806), Theorems 1 and 3.
+  Are Perfect Squares*](https://arxiv.org/abs/2508.07806), Lemma 1 and Theorems 1, 3 and 4.
 -/
 
 @[expose] public section
@@ -48,6 +54,37 @@ def IsSemiMagicRoots (e : Fin 3 → Fin 3 → ℤ) : Prop :=
   ∃ S : ℤ,
     (∀ i : Fin 3, ∑ j : Fin 3, (e i j) ^ 2 = S) ∧
       ∀ j : Fin 3, ∑ i : Fin 3, (e i j) ^ 2 = S
+
+/-- **Scaling rational families with square pairwise sums to integers.** Let $a_1, \dots, a_m$
+and $b_1, \dots, b_n$ be rational numbers such that every sum $a_i + b_j$ is the square of a
+rational number, and let $t$ be an integer and $k$ a rational number such that $k^2 a_i - t$ is an
+integer for every $i$ and $k^2 b_j + t$ is an integer for every $j$. Then the integers
+$a_i' = k^2 a_i - t$ and $b_j' = k^2 b_j + t$ are such that every sum $a_i' + b_j'$ is the square
+of an integer.
+
+Source: Ajai Choudhry, "Two Sets of Integers Such That All
+Elements of the Sumset of the Two Sets Are Perfect Squares",
+Lemma 1. -/
+theorem exists_int_pairwiseSumsSquares_scale_translate
+    (m n : ℕ) (a : Fin m → ℚ) (b : Fin n → ℚ)
+    (hab : PairwiseSumsSquares a b)
+    (t : ℤ) (k : ℚ)
+    (ha : ∀ i, ∃ z : ℤ, (z : ℚ) = k ^ 2 * a i - (t : ℚ))
+    (hb : ∀ j, ∃ z : ℤ, (z : ℚ) = k ^ 2 * b j + (t : ℚ)) :
+    ∃ a' : Fin m → ℤ, ∃ b' : Fin n → ℤ,
+      (∀ i, (a' i : ℚ) = k ^ 2 * a i - (t : ℚ)) ∧
+        (∀ j, (b' j : ℚ) = k ^ 2 * b j + (t : ℚ)) ∧
+        PairwiseSumsSquares a' b' := by
+  choose a' ha' using ha
+  choose b' hb' using hb
+  refine ⟨a', b', ha', hb', fun i j ↦ ?_⟩
+  -- The shifts cancel: `a' i + b' j = k ^ 2 * (a i + b j) = (k * r) ^ 2`, and a rational square
+  -- that is an integer is the square of an integer.
+  obtain ⟨r, hr⟩ := hab i j
+  refine Rat.isSquare_intCast_iff.mp ⟨k * r, ?_⟩
+  push_cast
+  rw [ha' i, hb' j]
+  linear_combination k ^ 2 * hr
 
 /-- **Four-parameter triples with square pairwise sums, family (3.3).** For all integers
 $p, q, r, s$, put $a_1 = 4(ps - qr)^2$, $a_2 = 4(ps + qr)^2$, $a_3 = (p^2 - q^2 - r^2 + s^2)^2$
@@ -151,5 +188,87 @@ theorem pairwiseSumsSquares_quadruple_family51
   refine ⟨roots i j, ?_⟩
   fin_cases i <;> dsimp [roots, Matrix.cons_val] <;>
     fin_cases j <;> dsimp [Matrix.cons_val, s, d, t, w, x, y, z] <;> ring1
+
+/-- **First three-parameter family of rational quadruples with square pairwise sums.** For
+rational numbers $m, q, r$, let
+$a_1 = 16 m^2 (m^4 - 1)^2 \bigl((5m^4 - 2m^2 + 1) q^2 - 2(m^4 - 6m^2 + 1) q r +
+(m^4 - 2m^2 + 5) r^2\bigr)^2$,
+$a_2 = 16 m^2 (m^4 - 1)^2 \bigl((5m^4 - 2m^2 + 1) q^2 - (m^4 - 2m^2 + 5) r^2\bigr)^2$,
+$a_3 = 16 m^2 (m^4 - 1)^2 \bigl((7m^4 - 2m^2 - 1) q^2 - (2m^4 - 12m^2 + 2) q r -
+(m^4 + 2m^2 - 7) r^2\bigr)^2$,
+$a_4 = (m^2 - 1)^2 \bigl((3m^8 + 40m^6 - 26m^4 - 1) q^2 + 2(m^4 - 6m^2 + 1)^2 q r -
+(m^8 + 26m^4 - 40m^2 - 3) r^2\bigr)^2$,
+$b_1 = 0$,
+$b_2 = -4 m^2 \bigl((m^4 + 6m^2 - 3) q + (m^4 - 2m^2 + 5) r\bigr)
+\bigl((3m^4 - 6m^2 - 1) q - (m^4 - 2m^2 + 5) r\bigr)
+\bigl((5m^4 - 2m^2 + 1) q - (3m^4 - 6m^2 - 1) r\bigr)
+\bigl((5m^4 - 2m^2 + 1) q + (m^4 + 6m^2 - 3) r\bigr)$,
+$b_3 = -128 m^2 (m^4 - 1)^3 (q^2 - r^2)(3m^2 q - m^2 r - q + 3r)(m^2 q + r)$ and
+$b_4 = 16 (m^2 + 1)^2 (m^2 - 1)^3 (m^2 q^2 - r^2)
+\bigl((m^4 + 6m^3 - 2m - 1) q - (m^4 + 2m^3 - 6m - 1) r\bigr)
+\bigl((m^4 - 6m^3 + 2m - 1) q - (m^4 - 2m^3 + 6m - 1) r\bigr)$.
+Then $a_i + b_j$ is the square of a rational number for all $1 \le i, j \le 4$.
+
+Source: Ajai Choudhry, "Two Sets of Integers Such That All
+Elements of the Sumset of the Two Sets Are Perfect Squares",
+Theorem 4. -/
+theorem pairwiseSumsSquares_quadruple_family58
+    (m q r : ℚ) :
+    PairwiseSumsSquares
+      ![16 * m ^ 2 * (m ^ 4 - 1) ^ 2 *
+            ((5 * m ^ 4 - 2 * m ^ 2 + 1) * q ^ 2 -
+              2 * (m ^ 4 - 6 * m ^ 2 + 1) * q * r +
+              (m ^ 4 - 2 * m ^ 2 + 5) * r ^ 2) ^ 2,
+          16 * m ^ 2 * (m ^ 4 - 1) ^ 2 *
+            ((5 * m ^ 4 - 2 * m ^ 2 + 1) * q ^ 2 -
+              (m ^ 4 - 2 * m ^ 2 + 5) * r ^ 2) ^ 2,
+          16 * m ^ 2 * (m ^ 4 - 1) ^ 2 *
+            ((7 * m ^ 4 - 2 * m ^ 2 - 1) * q ^ 2 -
+              (2 * m ^ 4 - 12 * m ^ 2 + 2) * q * r -
+              (m ^ 4 + 2 * m ^ 2 - 7) * r ^ 2) ^ 2,
+          (m ^ 2 - 1) ^ 2 *
+            ((3 * m ^ 8 + 40 * m ^ 6 - 26 * m ^ 4 - 1) * q ^ 2 +
+              2 * (m ^ 4 - 6 * m ^ 2 + 1) ^ 2 * q * r -
+              (m ^ 8 + 26 * m ^ 4 - 40 * m ^ 2 - 3) * r ^ 2) ^ 2]
+      ![0,
+        -4 * m ^ 2 * ((m ^ 4 + 6 * m ^ 2 - 3) * q +
+              (m ^ 4 - 2 * m ^ 2 + 5) * r) *
+          ((3 * m ^ 4 - 6 * m ^ 2 - 1) * q -
+            (m ^ 4 - 2 * m ^ 2 + 5) * r) *
+          ((5 * m ^ 4 - 2 * m ^ 2 + 1) * q -
+            (3 * m ^ 4 - 6 * m ^ 2 - 1) * r) *
+          ((5 * m ^ 4 - 2 * m ^ 2 + 1) * q +
+            (m ^ 4 + 6 * m ^ 2 - 3) * r),
+        -128 * m ^ 2 * (m ^ 4 - 1) ^ 3 * (q ^ 2 - r ^ 2) *
+          (3 * m ^ 2 * q - m ^ 2 * r - q + 3 * r) * (m ^ 2 * q + r),
+        16 * (m ^ 2 + 1) ^ 2 * (m ^ 2 - 1) ^ 3 *
+          (m ^ 2 * q ^ 2 - r ^ 2) *
+          ((m ^ 4 + 6 * m ^ 3 - 2 * m - 1) * q -
+            (m ^ 4 + 2 * m ^ 3 - 6 * m - 1) * r) *
+          ((m ^ 4 - 6 * m ^ 3 + 2 * m - 1) * q -
+            (m ^ 4 - 2 * m ^ 3 + 6 * m - 1) * r)] := by
+  let d := m ^ 2 - 1
+  let s := m ^ 2 + 1
+  let c := m ^ 4 - 6 * m ^ 2 + 1
+  let k := 4 * m * d * s
+  -- Each root is a linear combination of these three quadratic forms in x and y.
+  let x := 2 * (m ^ 2 * q + r)
+  let y := d * (q - r)
+  let u := x ^ 2 - y ^ 2
+  let v := 2 * x * y
+  let w := x ^ 2 + y ^ 2
+  let roots : Fin 4 → Fin 4 → ℚ :=
+    ![![k * w, 2 * m * (s ^ 2 * u - 2 * d ^ 2 * v),
+        k * (u - v), d * (8 * m ^ 2 * u - s ^ 2 * v)],
+      ![2 * m * (2 * d ^ 2 * u + s ^ 2 * v), 2 * m * c * w,
+        2 * m * (2 * d ^ 2 * u - s ^ 2 * v), s * c * v],
+      ![k * (u + v), 2 * m * (s ^ 2 * u + 2 * d ^ 2 * v),
+        k * w, d * (8 * m ^ 2 * u + s ^ 2 * v)],
+      ![d * (s ^ 2 * u + 8 * m ^ 2 * v), s * c * u,
+        d * (s ^ 2 * u - 8 * m ^ 2 * v), d * c * w]]
+  intro i j
+  refine ⟨roots i j, ?_⟩
+  fin_cases i <;> dsimp [roots, Matrix.cons_val] <;>
+    fin_cases j <;> dsimp [Matrix.cons_val, u, v, w, x, y, k, c, d, s] <;> grobner
 
 end MathlibExt.NumberTheory.TwoSetsSumsetSquaresWanted

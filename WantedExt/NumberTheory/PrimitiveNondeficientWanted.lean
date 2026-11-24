@@ -44,37 +44,15 @@ public import Mathlib.Data.Nat.Factorization.Basic
 public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.Data.Rat.Defs
 public import MathlibExt.NumberTheory.ArithmeticFunction.AbundancyIndexDiv
+public import MathlibExt.NumberTheory.ArithmeticFunction.PrimitiveNondeficientRadical
+public import MathlibExt.NumberTheory.ArithmeticFunction.PrimitiveNondeficientTwoPowMulPrime
+public import MathlibExt.NumberTheory.OddTwoPrimeFactorsDeficient
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.PrimitiveNondeficientWanted
-
-/-- **Even primitive non-deficient numbers with two prime factors.** Let $p$ be an odd prime and
-$a$ a natural number. Then $2^a p$ is primitive non-deficient if and only if
-$2^a < p \le 2^{a+1} - 1$.
-
-Source: Joshua Zelinsky, "Must a Primitive Non-Deficient Number
-Always Have a Small Component?", Lemma
-(label `Classificationofprimitivenondeficientwhenkis2`), first
-part. -/
-theorem_wanted isPrimitiveNondeficient_two_pow_mul_prime_iff
-    (a p : ℕ) (hp : p.Prime) (hpo : p ≠ 2) :
-    IsPrimitiveNondeficient (2 ^ a * p) ↔
-      2 ^ a < p ∧ p ≤ 2 ^ (a + 1) - 1
-
-/-- **Odd numbers with two prime factors are deficient.** If $n$ is an odd natural number with
-exactly two distinct prime divisors, then $\sigma(n) < 2n$, where $\sigma(n)$ is the sum of the
-positive divisors of $n$.
-
-Source: Joshua Zelinsky, "Must a Primitive Non-Deficient Number
-Always Have a Small Component?", Lemma
-(label `Classificationofprimitivenondeficientwhenkis2`), second
-part. -/
-theorem_wanted deficient_of_odd_card_primeFactors_eq_two
-    (n : ℕ) (hno : Odd n) (hk : n.primeFactors.card = 2) :
-    ∑ d ∈ Nat.divisors n, d < 2 * n
 
 /-- **Small component for odd primitive non-deficient numbers with three or four prime factors.**
 Let $n$ be an odd primitive non-deficient number with exactly $3$ or exactly $4$ distinct prime
@@ -102,20 +80,6 @@ theorem_wanted grun_bounds_of_isNondeficient
     (hmin : ∀ q ∈ n.primeFactors, p₁ ≤ q) :
     (3 : ℚ) / 2 * (p₁ : ℚ) - 2 < (n.primeFactors.card : ℚ) ∧
       (5 ≤ p₁ → p₁ + 2 ≤ n.primeFactors.card)
-
-/-- **The power of 2 in an even primitive non-deficient number is below its radical.** Let $n$
-be an even primitive non-deficient number, that is, a positive integer with $\sigma(n) \ge 2n$
-all of whose proper divisors $m$ satisfy $\sigma(m) < 2m$, where $\sigma$ is the sum of divisors.
-If $2^a$ is the largest power of $2$ dividing $n$ and $R$ is the product of the distinct primes
-dividing $n$, then $2^{a+1} < R$.
-
-Source: Joshua Zelinsky, "Must a Primitive Non-Deficient Number
-Always Have a Small Component?", Proposition
-(label `evenprimitivenondeficientshaveatightbound`). -/
-theorem_wanted two_pow_factorization_add_one_lt_radical
-    (n : ℕ) (hne : Even n)
-    (hn : IsPrimitiveNondeficient n) :
-    2 ^ (n.factorization 2 + 1) < ∏ q ∈ n.primeFactors, q
 
 /-- **Generalized Puchta lemma.** Let $n$ be a primitive non-deficient number with $k$ distinct
 prime factors, the least of which is $p_1$, and suppose that $(p_1, k) \ne (3, 3)$. Let $\alpha$

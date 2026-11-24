@@ -411,7 +411,7 @@ public theorem isParabolic_iff_discr_eq_zero (g : GL (Fin 2) ℂ) :
       cases x with
       | infty =>
         refine smul_infty_eq_self_iff.mpr ?_
-        simpa [GeneralLinearGroup.fixpointPolynomial] using congr(Polynomial.coeff $hP 2)
+        simpa [GeneralLinearGroup.fixpointPolynomial] using congrArg (·.coeff 2) hP
       | coe z =>
         rw [← GeneralLinearGroup.fixpointPolynomial_aeval_eq_zero_iff, hP, map_zero]
     · have hpar : GeneralLinearGroup.IsParabolic g := ⟨hs, hd⟩

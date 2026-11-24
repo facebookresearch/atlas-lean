@@ -11,9 +11,9 @@ Portions of this file are adapted from:
 
 `SqueezeBench/Problems/Schur/Def.lean` and `SqueezeBench/Problems/Schur/README.md`
 (leansolving/SqueezeBench), at commit e2e19eef093a77882da57f348def029533ec2d5e: the definitions
-`schurForces` and `schurNumber` (SqueezeBench's `Forces` and `f`) and the statement of
-`le_schurNumber_six` (the bound `536 ≤ S(6)` of the README's "Known values" table), with the
-docstrings they had in the wanted module `WantedExt/Combinatorics/SchurNumbersWanted.lean`.
+`schurForces` and `schurNumber` (SqueezeBench's `Forces` and `f`) and the statements of
+`schurNumber_two`, `schurNumber_three` and `le_schurNumber_six` (from the README's "Known values"
+table), with their docstrings from `WantedExt/Combinatorics/SchurNumbersWanted.lean`.
 Copyright the SqueezeBench contributors.
 Authors: P. Manrique, H. Xia, S. Szeider.
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use these portions
@@ -28,13 +28,13 @@ the License. SqueezeBench ships no `NOTICE` file.
 
 Modification notice (Apache License 2.0, Section 4). Changes made: renamed `Forces`/`f` to
 `schurForces`/`schurNumber`, inlined `nMin = 1`, dropped the helper lemmas, and turned the README
-value, which SqueezeBench marks as reporting only, into a Batteries `theorem_wanted` declaration.
-Later change (ATLAS, 2026): the statement was proved, and the two definitions and the statement
+values, which SqueezeBench marks as reporting only, into Batteries `theorem_wanted` declarations.
+Later change (ATLAS, 2026): the statements were proved, and the two definitions and the statements
 moved from `WantedExt/Combinatorics/SchurNumbersWanted.lean` to this `MathlibExt` module with
 unchanged names, statements and docstrings.
 
-The rest of this file is new ATLAS work, not adapted from SqueezeBench: the proof of
-`le_schurNumber_six`, the private definitions and lemmas it uses, and the module documentation.
+ATLAS contributed the proofs, their private auxiliary definitions and lemmas, and the module
+documentation.
 -/
 module
 
@@ -49,10 +49,12 @@ import MathlibExt.Combinatorics.SchurRamsey
 For natural numbers `k` and `N`, `schurForces k N` says that every colouring of the natural
 numbers with `k` colours has a monochromatic solution of `x + y = z` with `x, y, z ∈ [1, N]`, and
 `schurNumber k` is the Schur number `S(k)`, one less than the least such `N` (and `0` for
-`k = 0`). This file proves the lower bound `536 ≤ S(6)` (`le_schurNumber_six`), due to
-Fredricksen and Sweet (see the docstring of `le_schurNumber_six` for the citation).
+`k = 0`). This file proves `S(2) = 4` and `S(3) = 13` by finite checks. For three colours, it
+exhibits a sum-free partition of `[1, 13]` and checks that no sum-free prefix extends to length 14.
+It also proves the lower bound `536 ≤ S(6)` due to Fredricksen and Sweet (see
+`le_schurNumber_six`).
 
-## Proof outline
+## Proof of the lower bound for six colours
 
 By Schur's theorem (`MetaMathlibExt.schur_ramsey`) some `N` forces a monochromatic solution in
 six colours, so the infimum in `schurNumber 6` is attained. Forcing is monotone in `N`, so it
@@ -104,6 +106,92 @@ private theorem schurForces_mono {k N M : ℕ} (h : schurForces k N) (hNM : N �
   obtain ⟨x, hx, y, hy, z, hz, hxyz⟩ := h c
   have hsub : Icc 1 N ⊆ Icc 1 M := Icc_subset_Icc_right hNM
   exact ⟨x, hsub hx, y, hsub hy, z, hsub hz, hxyz⟩
+
+/-- The classes `{1, 4}` and `{2, 3}` are sum-free. -/
+private theorem not_schurForces_two_four : ¬ schurForces 2 4 := by
+  let c (n : ℕ) : Fin 2 := if n = 1 ∨ n = 4 then 0 else 1
+  have h : ∀ x ∈ Icc 1 4, ∀ y ∈ Icc 1 4, x + y ≤ 4 → c x = c y → c y ≠ c (x + y) := by
+    decide
+  intro hf
+  obtain ⟨x, hx, y, hy, _, hz, rfl, hxy, hyz⟩ := hf c
+  exact h x hx y hy (mem_Icc.mp hz).2 hxy hyz
+
+/-- Every two-colouring of `{1, …, 5}` makes at least one of the sums
+`1 + 1`, `2 + 2`, `1 + 3`, `1 + 4`, or `2 + 3` a monochromatic triple. -/
+private theorem schurForces_two_five : schurForces 2 5 := by
+  intro c
+  have cover : ∀ a b c d e : Fin 2,
+      a = b ∨ b = d ∨ (a = c ∧ c = d) ∨ (a = d ∧ d = e) ∨ (b = c ∧ c = e) := by
+    decide
+  rcases cover (c 1) (c 2) (c 3) (c 4) (c 5) with h | h | ⟨h, h'⟩ | ⟨h, h'⟩ | ⟨h, h'⟩
+  · exact ⟨1, by decide, 1, by decide, 2, by decide, rfl, rfl, h⟩
+  · exact ⟨2, by decide, 2, by decide, 4, by decide, rfl, rfl, h⟩
+  · exact ⟨1, by decide, 3, by decide, 4, by decide, rfl, h, h'⟩
+  · exact ⟨1, by decide, 4, by decide, 5, by decide, rfl, h, h'⟩
+  · exact ⟨2, by decide, 3, by decide, 5, by decide, rfl, h, h'⟩
+
+/-- **The second Schur number.** The Schur number $S(2)$ equals $4$.
+
+Source: exhaustive check; OEIS A045652; listed in leansolving/SqueezeBench
+`SqueezeBench/Problems/Schur/README.md`. -/
+theorem schurNumber_two : schurNumber 2 = 4 := by
+  have hinf : sInf {N | schurForces 2 N} = 4 + 1 :=
+    (Nat.sInf_upward_closed_eq_succ_iff (fun _ _ hNM h => schurForces_mono h hNM) 4).2
+      ⟨schurForces_two_five, not_schurForces_two_four⟩
+  simp [schurNumber, hinf]
+
+/-- A partition of `[1, 13]` into three sum-free classes. -/
+private theorem not_schurForces_three_thirteen : ¬ schurForces 3 13 := by
+  let c (n : ℕ) : Fin 3 :=
+    if n ∈ ({1, 4, 10, 13} : Finset ℕ) then 0
+    else if n ∈ ({2, 3, 11, 12} : Finset ℕ) then 1 else 2
+  have h : ∀ x ∈ Icc 1 13, ∀ y ∈ Icc 1 13, x + y ≤ 13 → c x = c y → c y ≠ c (x + y) := by
+    decide +kernel
+  intro hf
+  obtain ⟨x, hx, y, hy, _, hz, rfl, hxy, hyz⟩ := hf c
+  exact h x hx y hy (mem_Icc.mp hz).2 hxy hyz
+
+/-- All three-colourings of `[1, n]` that avoid a monochromatic Schur triple, in interval order.
+To append colour `a` at `n + 1`, check the summands `i + 1` and `n - i` for each `i < n`.
+Their colours are entries `i` and `n - 1 - i` of the prefix. -/
+private def sumFreePrefixes : ℕ → List (List (Fin 3))
+  | 0 => [[]]
+  | n + 1 => (sumFreePrefixes n).flatMap fun p =>
+      ((List.finRange 3).filter fun a => (List.range n).all fun i =>
+        decide (p[i]? = some a → p[n - 1 - i]? ≠ some a)).map fun a => p ++ [a]
+
+/-- Every three-colouring of `[1, 14]` contains a monochromatic Schur triple. -/
+private theorem schurForces_three_fourteen : schurForces 3 14 := by
+  intro c
+  by_contra h
+  have mem (n : ℕ) (hn : n ≤ 14) :
+      ((List.range n).map fun i => c (i + 1)) ∈ sumFreePrefixes n := by
+    induction n with
+    | zero => simp [sumFreePrefixes]
+    | succ n ih =>
+      simp only [sumFreePrefixes, List.mem_flatMap, List.mem_map, List.mem_filter]
+      refine ⟨_, ih (by omega), c (n + 1), ⟨by simp, ?_⟩, ?_⟩
+      · simp only [List.all_eq_true, List.mem_range, decide_eq_true_eq]
+        intro i hi
+        have hj : n - 1 - i < n := by omega
+        simp only [List.getElem?_map, List.getElem?_range hi, List.getElem?_range hj,
+          Option.map_some, ne_eq, Option.some.injEq]
+        intro h₁ h₂
+        refine h ⟨i + 1, ?_, n - 1 - i + 1, ?_, n + 1, ?_, by omega, h₁.trans h₂.symm, h₂⟩ <;>
+          rw [mem_Icc] <;> omega
+      · simp [List.range_succ]
+  have empty : sumFreePrefixes 14 = [] := by decide +kernel
+  simpa [empty] using mem 14 le_rfl
+
+/-- **The third Schur number.** The Schur number $S(3)$ equals $13$.
+
+Source: exhaustive check; OEIS A045652; listed in SqueezeBench
+`SqueezeBench/Problems/Schur/README.md`. -/
+theorem schurNumber_three : schurNumber 3 = 13 := by
+  have hinf : sInf {N | schurForces 3 N} = 13 + 1 :=
+    (Nat.sInf_upward_closed_eq_succ_iff (fun _ _ hNM h => schurForces_mono h hNM) 13).2
+      ⟨schurForces_three_fourteen, not_schurForces_three_thirteen⟩
+  simp [schurNumber, hinf]
 
 /-- The six classes of the partition of `{1, …, 537}` into sum-free sets listed in the proof of
 Theorem 1 of Chen, Zhu and Long (arXiv:2610.31362v1), in the paper's order: class `j` here is

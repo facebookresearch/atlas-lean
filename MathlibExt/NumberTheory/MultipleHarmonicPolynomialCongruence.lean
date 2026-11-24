@@ -633,7 +633,7 @@ theorem multiple_harmonic_polynomial_congruence (n p : ℕ) (hn : 0 < n)
       Polynomial.C (multipleHarmonic p (k - 1) m * (((k : ZMod p))⁻¹)) *
         (Polynomial.X : Polynomial (ZMod p)) ^ k) : Polynomial (ZMod p)).coeff j) =
       (if j ∈ Finset.Icc 1 (p - 1) then multipleHarmonic p (j - 1) m * (((j : ZMod p))⁻¹) else 0) := by
-    rw [Polynomial.finset_sum_coeff]
+    rw [Polynomial.finsetSum_coeff]
     have hterm : ∀ k ∈ Finset.Icc 1 (p - 1),
         ((Polynomial.C (multipleHarmonic p (k - 1) m * (((k : ZMod p))⁻¹)) *
           (Polynomial.X : Polynomial (ZMod p)) ^ k).coeff j) =
@@ -650,7 +650,7 @@ theorem multiple_harmonic_polynomial_congruence (n p : ℕ) (hn : 0 < n)
         ((((k : ZMod p))⁻¹) ^ (m + 1)) * ((-1 : ZMod p) ^ j * (((k.choose j : ℕ)) : ZMod p)) := by
     rw [Polynomial.coeff_C_mul]
     congr 1
-    rw [Polynomial.finset_sum_coeff]
+    rw [Polynomial.finsetSum_coeff]
     apply Finset.sum_congr rfl
     intro k _
     rw [Polynomial.coeff_C_mul, coeff_one_sub_X_pow]

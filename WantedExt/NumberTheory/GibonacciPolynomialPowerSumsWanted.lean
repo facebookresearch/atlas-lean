@@ -22,7 +22,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Polynomial.AlgebraMap
 public import Mathlib.Topology.Algebra.InfiniteSum.Real
-public import MathlibExt.NumberTheory.GeneralizedFibonacciPolynomial
+public import MathlibExt.NumberTheory.GibonacciPolynomialPowerSums
 public import MathlibExt.NumberTheory.LucasSequence
 
 namespace MetaMathlibExt
@@ -68,25 +68,6 @@ Lemma 2.1 (`fq-2024-linzhou02172024-lem-2.1`). -/
 public theorem_wanted gibonacciPoly_mul_sub_sq {n k : ℕ} (hk : k ≤ n) :
     𝔣 (n + k) * 𝔣 (n - k) - 𝔣 n ^ 2 = (-1) ^ (n + k + 1) * 𝔣 k ^ 2 ∧
       𝔩 (n + k) * 𝔩 (n - k) - 𝔩 n ^ 2 = (-1) ^ (n + k) * (X ^ 2 + 4) * 𝔣 k ^ 2
-
-/-- **Telescoping inverse-power series of gibonacci polynomials at odd indices, odd shift.**
-Let $x > 0$ be real, and let $g_n$ denote either the Fibonacci polynomials, given by $g_0 = 0$ and
-$g_1 = 1$, or the Lucas polynomials, given by $g_0 = 2$ and $g_1 = x$, both satisfying
-$g_{n+2} = x g_{n+1} + g_n$ and evaluated at $x$. Let $k$ be an odd natural number and
-$\lambda$ a positive integer. Then
-$$\sum_{n=0}^{\infty} \left(\frac{1}{g_{2n+1}^{\lambda}} - \frac{1}{g_{2n+1+2k}^{\lambda}}\right) =
-\sum_{r=1}^{k} \frac{1}{g_{2r-1}^{\lambda}}.$$
-
-The source quotes this lemma from Koshy as the sum over $n \ge (k + 1)/2$ of
-$1/g_{2n-k}^{\lambda} - 1/g_{2n+k}^{\lambda}$; here the summation index is shifted to start at $0$.
-
-Source: Yinqi Lin and Bo Zhou, *Infinite Sums Involving Powers of Gibonacci Polynomials*,
-The Fibonacci Quarterly 62 (2024), Article linzhou02172024,
-Lemma 2.2 (`fq-2024-linzhou02172024-lem-2.2`). -/
-public theorem_wanted tsum_inv_pow_gibonacciPoly_sub_odd {x : ℝ} (hx : 0 < x)
-    {g : ℕ → ℤ[X]} (hg : g = 𝔣 ∨ g = 𝔩) {k lam : ℕ} (hk : Odd k) (hlam : 0 < lam) :
-    ∑' n : ℕ, (1 / aeval x (g (2 * n + 1)) ^ lam - 1 / aeval x (g (2 * n + 1 + 2 * k)) ^ lam) =
-      ∑ r ∈ Finset.Icc 1 k, 1 / aeval x (g (2 * r - 1)) ^ lam
 
 /-- **Telescoping inverse-power series of gibonacci polynomials at even indices, even shift.**
 Let $x > 0$ be real, and let $g_n$ denote either the Fibonacci polynomials, given by $g_0 = 0$ and
