@@ -269,6 +269,9 @@ class ParallelAuditTests(unittest.TestCase):
         # SIGINT reaches the coordinating thread while the only batch runs; that batch is killed.
         previous = signal.signal(signal.SIGINT, signal.default_int_handler)  # even if started ignored
         self.addCleanup(signal.signal, signal.SIGINT, previous)
+        if hasattr(signal, 'pthread_sigmask'):  # or blocked
+            mask = signal.pthread_sigmask(signal.SIG_UNBLOCK, {signal.SIGINT})
+            self.addCleanup(signal.pthread_sigmask, signal.SIG_SETMASK, mask)
         never = threading.Event()
         fake = FakeLean(hold={'L.M000': never},
                         launched=lambda calls: threading.Timer(0.2, os.kill, (os.getpid(), signal.SIGINT)).start())
@@ -305,7 +308,7 @@ class ParallelAuditTests(unittest.TestCase):
                 admission.launch(index, first_batch, lambda: FakeProcess(None, []))
 
     def test_a_failure_stops_the_later_groups_running_batches(self):
-        # Group 1 runs (and would run for ever) when group 0 fails; group 2 runs to its end.
+        # Group 1 fails while group 2 runs (and would run for ever); group 0 runs to its end.
         modules = names(24, 2, bad=[(8, 'L.Bad')])
         never, started = threading.Event(), threading.Event()
         fake = FakeLean(hold={'L.Bad': started, 'L.M16': never}, launched=lambda calls: calls == 3 and started.set())
@@ -348,7 +351,7 @@ class ParallelAuditTests(unittest.TestCase):
 
             def run(command, **kwargs):
                 if command == ['lake', 'env', 'env', '-0']:
-                    kwargs['stdout'].write(listing({'LEAN': str(lean)}))
+                    kwargs['stdout'].write(listing({**os.environ, 'LEAN': str(lean)}))  # as Lake lists it
                     return subprocess.CompletedProcess(command, 0, None, b'')
                 return real_run(command, **kwargs)
 
@@ -404,6 +407,19 @@ class ParallelAuditTests(unittest.TestCase):
             time.sleep(1.5)
             self.assertFalse(marker.exists(), "the batch's child outlived it")
 
+
+    def test_termination_signals_interrupt_the_audit(self):
+        saved = {number: signal.getsignal(number) for number in (signal.SIGTERM, signal.SIGHUP)}
+        for number, handler in saved.items():
+            self.addCleanup(signal.signal, number, handler)
+        signal.signal(signal.SIGTERM, signal.SIG_DFL)
+        signal.signal(signal.SIGHUP, signal.SIG_IGN)  # as under nohup
+        audit.interrupt_on_termination()
+        self.assertIs(signal.getsignal(signal.SIGTERM), signal.default_int_handler)
+        self.assertIs(signal.getsignal(signal.SIGHUP), signal.SIG_IGN)
+        with self.assertRaises(KeyboardInterrupt):
+            os.kill(os.getpid(), signal.SIGTERM)
+            time.sleep(5)
 
     def test_override_of_one_runs_the_batches_one_by_one(self):
         fake = FakeLean(PAIRS, delay=0.02)

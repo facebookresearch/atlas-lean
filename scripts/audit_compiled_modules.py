@@ -139,9 +139,10 @@ def cgroup_headroom() -> int | None:
     limit applies (no procfs, or no cgroup v2 membership). 0 when one may apply
     but cannot be read: a cgroup v1 memory controller, an ambiguous or
     unresolvable membership, a membership no mount shows, a missing or
-    unreadable cgroup directory or interface file, or a malformed number. A
-    level without memory.max and memory.high has no memory controller and sets
-    no limit.
+    unreadable cgroup directory, memory.max, memory.high or memory.current,
+    or a malformed number. An unreadable memory.stat only counts no page as
+    reclaimable. A level without memory.max and memory.high has no memory
+    controller and sets no limit.
     """
     try:
         try:
@@ -507,7 +508,19 @@ def audit(root: Path, modules: list[str], checker: str, *, batch_size: int = BAT
             'checkedModules': checked}
 
 
+def interrupt_on_termination() -> None:
+    """Make SIGTERM and SIGHUP interrupt the audit as SIGINT does, so its running batches are killed.
+
+    A signal the caller already ignores, as `nohup` does SIGHUP, stays ignored.
+    """
+    for name in ('SIGTERM', 'SIGHUP'):
+        number = getattr(signal, name, None)
+        if number is not None and signal.getsignal(number) is signal.SIG_DFL:
+            signal.signal(number, signal.default_int_handler)
+
+
 def main() -> int:
+    interrupt_on_termination()
     root = Path(__file__).resolve().parent.parent
     try:
         result = audit(root, inventory(root), (root / 'scripts/check_axioms.lean').read_text())

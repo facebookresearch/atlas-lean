@@ -16,6 +16,9 @@ their own even when they declare the same name; this check fails on such a colli
 and names the declaration and both modules. Keep one declaration and import its module
 where the other was used. It also rejects a module whose directory or file name is not
 a Lean identifier, since Lean tools cannot import such a module by name.
+The compiled audit runs its batches in parallel, as many as the available memory
+holds at 6 GiB each; on a shared machine, `ATLAS_AUDIT_WORKERS=N` sets the count
+(`1` runs them one after another).
 Preflight also validates the semantic Lake target graph so the archived `v1/`
 package cannot enter the root build through a glob, dependency, or extra target.
 The approved `theorem_wanted` and `def_wanted` source forms are enforced in
