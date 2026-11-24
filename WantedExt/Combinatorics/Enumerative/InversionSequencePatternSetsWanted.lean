@@ -9,10 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Order.Hom.Basic
-public import Mathlib.RingTheory.PowerSeries.Basic
-public import Mathlib.SetTheory.Cardinal.Finite
-public import Mathlib.Data.Fintype.Card
+public import MathlibExt.Combinatorics.Enumerative.InversionSequencePatternSets
 public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 
 /-!
@@ -34,92 +31,6 @@ namespace MetaMathlibExt
 open PowerSeries
 
 @[expose] public section
-
-/-- **Containment of a length-3 pattern.** A sequence $e = e_0 e_1 \cdots e_{n-1}$ of natural
-numbers contains the length-3 pattern $p = p_0 p_1 p_2$ of natural numbers when there are
-positions $i_0 < i_1 < i_2$ in $\{0, \dots, n - 1\}$ such that, for all $a, b \in \{0, 1, 2\}$,
-$e_{i_a} < e_{i_b}$ if and only if $p_a < p_b$; that is, the subsequence $e_{i_0} e_{i_1} e_{i_2}$
-is order-isomorphic to $p$.
-
-Source: Toufik Mansour, *Inversion Sequences Avoiding a Set of Length-3 Patterns*, INTEGERS 24
-(2024), Article A76, Introduction. -/
-def InvSeqContainsPattern {n : ℕ} (e : Fin n → ℕ) (p : Fin 3 → ℕ) : Prop :=
-  ∃ f : Fin 3 ↪o Fin n, ∀ a b, e (f a) < e (f b) ↔ p a < p b
-
-/-- **Short sequences contain no length-3 pattern.** If $n < 3$, then no sequence
-$e_0 e_1 \cdots e_{n-1}$ of natural numbers contains a length-3 pattern $p$.
-
-Source: Toufik Mansour, *Inversion Sequences Avoiding a Set of Length-3 Patterns*, INTEGERS 24
-(2024), Article A76, Introduction. -/
-theorem not_invSeqContainsPattern_of_lt {n : ℕ} (hn : n < 3) (e : Fin n → ℕ)
-    (p : Fin 3 → ℕ) : ¬ InvSeqContainsPattern e p := by
-  rintro ⟨f, -⟩
-  have := Fintype.card_le_of_embedding f.toEmbedding
-  simp at this
-  omega
-
-/-- **Number of inversion sequences avoiding a set of patterns.** An inversion sequence of length
-$n$ is a sequence $e = e_0 e_1 \cdots e_{n-1}$ of natural numbers with $e_i \le i$ for every $i$.
-It contains a length-3 pattern $p = p_0 p_1 p_2$ (a triple of natural numbers) when some
-subsequence $e_a e_b e_c$ with $a < b < c$ is order-isomorphic to $p$. For a set $B$ of length-3
-patterns, $|I_n(B)|$ is the number of inversion sequences of length $n$ that contain no pattern
-of $B$.
-
-Source: Toufik Mansour, *Inversion Sequences Avoiding a Set of Length-3 Patterns*, INTEGERS 24
-(2024), Article A76, Introduction. -/
-noncomputable def invSeqAvoidCount (B : Set (Fin 3 → ℕ)) (n : ℕ) : ℕ :=
-  Nat.card {e : Fin n → ℕ // (∀ i, e i ≤ i) ∧ ∀ p ∈ B, ¬ InvSeqContainsPattern e p}
-
-/-- **One inversion sequence of length one.** For every set $B$ of length-3 patterns, the number
-$|I_1(B)|$ of inversion sequences of length one that avoid every pattern in $B$ equals $1$: the
-only inversion sequence of length one is $0$, and it avoids every length-3 pattern.
-
-Source: Toufik Mansour, *Inversion Sequences Avoiding a Set of Length-3 Patterns*, INTEGERS 24
-(2024), Article A76, Introduction. -/
-theorem invSeqAvoidCount_one (B : Set (Fin 3 → ℕ)) : invSeqAvoidCount B 1 = 1 := by
-  rw [invSeqAvoidCount, Nat.card_eq_one_iff_unique]
-  refine ⟨⟨fun e e' => Subtype.ext (funext fun i => ?_)⟩, ⟨⟨fun _ => 0, ?_⟩⟩⟩
-  · have h := e.2.1 i
-    have h' := e'.2.1 i
-    have hi : (i : ℕ) = 0 := by omega
-    omega
-  · exact ⟨fun i => Nat.zero_le _, fun p _ => not_invSeqContainsPattern_of_lt (by omega) _ p⟩
-
-/-- **Generating function of inversion sequences avoiding a set of patterns.** For a set $B$ of
-length-3 patterns, $F_B(x) = \sum_{n \ge 1} |I_n(B)| x^n$ is the formal power series in
-$\mathbb{Q}[[x]]$ with constant coefficient $0$ whose coefficient of $x^n$, for $n \ge 1$, is the
-number $|I_n(B)|$ of inversion sequences of length $n$ that avoid every pattern in $B$.
-
-Source: Toufik Mansour, *Inversion Sequences Avoiding a Set of Length-3 Patterns*, INTEGERS 24
-(2024), Article A76, Section 2. -/
-noncomputable def invSeqAvoidGF (B : Set (Fin 3 → ℕ)) : ℚ⟦X⟧ :=
-  PowerSeries.mk fun n => if n = 0 then 0 else (invSeqAvoidCount B n : ℚ)
-
-/-- **Coefficients of the generating function of pattern-avoiding inversion sequences.** For
-every set $B$ of length-3 patterns and every $n \ge 0$, the generating function
-$F_B(x) = \sum_{m \ge 1} |I_m(B)| x^m \in \mathbb{Q}[[x]]$ has constant coefficient $0$, and its
-coefficient of $x^{n+1}$ is $|I_{n+1}(B)|$, the number of inversion sequences of length $n + 1$
-that avoid every pattern in $B$.
-
-Source: Toufik Mansour, *Inversion Sequences Avoiding a Set of Length-3 Patterns*, INTEGERS 24
-(2024), Article A76, Section 2. -/
-theorem coeff_invSeqAvoidGF (B : Set (Fin 3 → ℕ)) (n : ℕ) :
-    coeff 0 (invSeqAvoidGF B) = 0 ∧
-      coeff (n + 1) (invSeqAvoidGF B) = (invSeqAvoidCount B (n + 1) : ℚ) := by
-  simp [invSeqAvoidGF]
-
-/-- **I-Wilf equivalence of $\{000, 010, 100, 101, 120\}$ and $\{000, 010, 100, 110, 120\}$.**
-Write length-3 patterns as digit strings ($101$ is the pattern $(1, 0, 1)$) and let $|I_n(B)|$ be
-the number of inversion sequences of length $n$ that avoid every pattern in the set $B$. Then for
-every $n \ge 0$, $|I_n(\{000, 010, 100, 101, 120\})| = |I_n(\{000, 010, 100, 110, 120\})|$.
-
-Source: Toufik Mansour, *Inversion Sequences Avoiding a Set of Length-3 Patterns*, INTEGERS 24
-(2024), Article A76, Theorem 4 (`integers-2024-A76-thm-4`). -/
-public theorem_wanted invSeq_wilf_000_010_100_120_101_110 :
-    invSeqAvoidCount ({![0, 0, 0], ![0, 1, 0], ![1, 0, 0], ![1, 0, 1], ![1, 2, 0]}
-        : Set (Fin 3 → ℕ)) =
-      invSeqAvoidCount ({![0, 0, 0], ![0, 1, 0], ![1, 0, 0], ![1, 1, 0], ![1, 2, 0]}
-          : Set (Fin 3 → ℕ))
 
 /-- **Three I-Wilf-equivalent sets of five patterns containing $000$, $010$ and $120$.** Write
 length-3 patterns as digit strings ($101$ is the pattern $(1, 0, 1)$) and let $|I_n(B)|$ be the
