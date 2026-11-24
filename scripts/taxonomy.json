@@ -9449,6 +9449,7 @@
   "MathlibExt/Analysis/Control/NonlinearControl": {"to": "Analysis/control-theory", "title": "Nonlinear controllability and stabilisation"},
   "MathlibExt/Analysis/Control/PolePlacement": {"to": "Analysis/control-theory", "title": "Pole placement"},
   "MathlibExt/Analysis/Control/RecursiveLeastSquares": {"to": "Analysis/control-theory", "title": "Recursive least squares"},
+  "MathlibExt/Analysis/Control/RecursiveLeastSquaresRate": {"to": "Analysis/control-theory", "title": "Recursive least squares"},
   "MathlibExt/Analysis/Convex/AcceleratedGradient": {"to": "Analysis/convex-analysis-and-variations", "title": "Accelerated gradient methods"},
   "MathlibExt/Analysis/Convex/AcceleratedGradientFlow": {"to": "Analysis/convex-analysis-and-variations", "title": "Accelerated gradient methods"},
   "MathlibExt/Analysis/Convex/Choquet": {"to": "Analysis/banach-spaces/duality-and-weak-topologies", "title": "Choquet theory"},
