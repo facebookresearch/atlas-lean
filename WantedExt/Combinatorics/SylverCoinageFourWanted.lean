@@ -25,21 +25,12 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Ring.Parity
 public import Mathlib.Data.Nat.ModEq
 public import Mathlib.Data.Nat.Prime.Defs
-public import MathlibExt.Combinatorics.SylverCoinage
+public import MathlibExt.Combinatorics.SylverCoinagePrimeOpening
 public import MathlibExt.NumberTheory.TwoGeneratedNumericalSemigroup
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Hutchings' theorem.** For every prime $p > 3$, the position $\{p\}$ of Sylver Coinage is a
-P-position: a first player who opens with $p$ wins.
-
-Source: Morgan Boyers, Natalie Burton, Jeff Rushall, James Warner and Tara Zurick, *On Winning
-Strategies in Sylver Coinage When 4 Has Been Chosen*, INTEGERS 24 (2024), Article G2,
-Theorem 1 (`integers-2024-G2-thm-1`). -/
-public theorem_wanted isSylverPPosition_prime_opening {p : ℕ} (hp : p.Prime) (h3 : 3 < p) :
-    IsSylverPPosition {p}
 
 /-- **Enders with largest legal move above 1 are N-positions.** Let $M$ be a position of Sylver
 Coinage whose set of legal moves $L(M)$ has a greatest element $F$ with $F > 1$. If every end of
