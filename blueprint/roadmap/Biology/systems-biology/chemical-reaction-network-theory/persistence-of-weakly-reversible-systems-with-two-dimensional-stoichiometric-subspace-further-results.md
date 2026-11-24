@@ -2,6 +2,10 @@
 
 Pantea (2012) proves, beyond the [persistence of weakly reversible systems with two-dimensional stoichiometric subspace](persistence-of-weakly-reversible-systems-with-two-dimensional-stoichiometric-subspace.md), two further results. (1) In any $\kappa$-variable mass-action system — mass action in which each rate parameter may vary in time within a compact subset of $(0, \infty)$ — with two-dimensional stoichiometric subspace and lower-endotactic stoichiometric subnetworks (unions of connected components of the reaction graph), all bounded trajectories are persistent (his Theorem 5.1); weak reversibility implies the lower-endotactic hypothesis, which gives the candidate statement as a corollary. (2) The global attractor conjecture holds in dimension three: for a complex-balanced weakly reversible mass-action system with three-dimensional stoichiometric compatibility classes, every solution with positive initial condition $c_0$ converges to the unique positive equilibrium stoichiometrically compatible with $c_0$ (his Theorem 6.3).
 
+## Depends on
+
+- [Persistence of weakly reversible systems with two-dimensional stoichiometric subspace](persistence-of-weakly-reversible-systems-with-two-dimensional-stoichiometric-subspace.md)
+
 ## Expansion
 
 1. $\kappa$-variable mass-action systems, stoichiometric subnetworks and the lower-endotactic property (his Definitions 2.6, 2.8 and 3.4).

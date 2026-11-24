@@ -4,6 +4,10 @@ Allman and Rhodes (2008) prove more than the [rank bound for split flattenings](
 
 A separate target, not part of the results of that paper, is the four-taxon question whether the rank conditions on flattenings identify the tree topology: the flattening along the tree's split has rank at most $\kappa$, and the question is whether the flattenings along the other two splits have larger rank for generic parameters.
 
+## Depends on
+
+- [Edge flattenings of the general Markov model have rank at most the number of states](flattening-rank-bound-for-the-general-markov-model.md)
+
 ## Expansion
 
 1. The general Markov model, its parametrization, and the ideal and variety of phylogenetic invariants.

@@ -2,6 +2,10 @@
 
 Two clauses accompany [Bernstein's triple-allele law](bernsteins-triple-allele-law-for-the-abo-blood-groups.md). (1) Under the three-allele Hardy–Weinberg model with allele frequencies $p, q, r$ of $A, B, O$, the three expressions $1 - \sqrt{f_O + f_B}$, $1 - \sqrt{f_O + f_A}$ and $\sqrt{f_O}$ computed from the population phenotype frequencies sum exactly to $1$, because $f_O + f_B = (q + r)^2$ and $f_O + f_A = (p + r)^2$. (2) The data reject the earlier two-locus hypothesis: under two independent loci with Hardy–Weinberg proportions and linkage equilibrium, the phenotype proportions satisfy $(A + AB)(B + AB) = AB$; for the sample in Crow's Table 1 (502 Japanese living in Korea, from Bernstein 1925) the left side is $(0.500)(0.284) = 0.142$, about twice the observed proportion of $AB$, $0.078$ (Crow 1993, p. 4–5).
 
+## Depends on
+
+- [Bernstein's triple-allele law for the ABO blood groups](bernsteins-triple-allele-law-for-the-abo-blood-groups.md)
+
 ## Expansion
 
 1. The three-allele Hardy–Weinberg phenotype frequencies of the ABO system, and the identity of clause (1).

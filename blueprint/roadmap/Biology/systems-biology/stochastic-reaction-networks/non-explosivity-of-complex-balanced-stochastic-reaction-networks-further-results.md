@@ -2,6 +2,10 @@
 
 Besides the [non-explosivity of complex-balanced stochastic reaction networks](non-explosivity-of-complex-balanced-stochastic-reaction-networks.md), Anderson, Cappelletti, Koyama and Kurtz (2018) prove a general criterion. Let $(X_t)$ be a process on a countable state space $E \subset \mathbb{Z}^d$ with transition rates $q(x, y)$ satisfying their Condition 1 (finite rates, finite total exit rate $q(x) = \sum_{y \ne x}q(x, y)$ from each state, and bounded entrance rates into each state). If a probability distribution $\pi$ is a constant solution of the Kolmogorov forward equation ($\sum_y\pi(y)q(y, x) = \pi(x)q(x)$ for all $x$) and $\sum_x\pi(x)q(x) < \infty$, then the process is non-explosive whenever the support of the initial distribution is contained in the support of $\pi$ (their Theorem 2). The summability condition holds if and only if the embedded discrete-time chain is positive recurrent on the support of $\pi$ (their Remark 1). For a stochastic reaction system the condition reads $\sum_x\pi(x)\sum_k\lambda_k(x) < \infty$ (their Corollary 1), and the product-form Poisson distribution of a complex-balanced system satisfies it, giving non-explosivity for every initial distribution (their Theorem 3).
 
+## Depends on
+
+- [Non-explosivity of complex-balanced stochastic reaction networks](non-explosivity-of-complex-balanced-stochastic-reaction-networks.md)
+
 ## Expansion
 
 1. Condition 1 on the rates, explosion, and the minimal process.
