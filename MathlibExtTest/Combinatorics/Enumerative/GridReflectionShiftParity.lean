@@ -8,9 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import MathlibExt.Combinatorics.Enumerative.GridReflectionTilings
+import MathlibExt.Combinatorics.Enumerative.GridCylinderTorusTilings
 
-/-! # Tests for the parity obstruction to shifted reflection fixed points -/
+/-! # Tests for the parity of shifted reflection fixed points -/
 
 namespace MetaMathlibExt
 
@@ -21,6 +21,13 @@ example : {x : ZMod 2 | x = -1 - x - 0} = ∅ :=
 -- A composite even modulus, with nonzero even shift.
 example : {x : ZMod 6 | x = -1 - x - 2} = ∅ :=
   reflection_shift_solutions_even_even (n := 6) (a := 2) (hn := by decide) (ha := by decide)
+
+-- The two other parity cases are available from the same module.
+example : {x : ZMod 3 | x = -1 - x - 1} = {2} :=
+  reflection_shift_solutions_odd (n := 3) (a := 1) (hn := by decide)
+
+example : {x : ZMod 6 | x = -1 - x - 1} = {5, 2} :=
+  reflection_shift_solutions_even_odd (n := 6) (a := 1) (hn := by decide) (ha := by decide)
 
 -- At the same modulus, an odd shift can have a fixed point.
 example : (2 : ZMod 6) ∈ {x : ZMod 6 | x = -1 - x - 1} := by
