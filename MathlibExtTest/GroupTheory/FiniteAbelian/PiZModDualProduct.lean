@@ -18,7 +18,7 @@ open scoped BigOperators
 
 /-- Consumer with the original binders, generalised to an arbitrary
 universe for `L`. -/
-theorem exactSource
+private theorem exactSource
     {g d : ℕ} (δ : Fin g → ℕ) [∀ i, NeZero (δ i)] (hδd : ∏ i, δ i = d)
     (L : Type u) [AddCommGroup L] [Finite L]
     (e : L × (L →+ ZMod d) ≃+ (((i : Fin g) → ZMod (δ i)) × ((i : Fin g) → ZMod (δ i)))) :

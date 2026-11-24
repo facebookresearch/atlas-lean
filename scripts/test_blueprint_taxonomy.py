@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Keep newer library roots visible in the curated blueprint taxonomy."""
 
+import json
 import re
 import tempfile
 import unittest
@@ -13,6 +14,69 @@ from scripts import sync_wiki
 
 
 class BlueprintTaxonomyTests(unittest.TestCase):
+    # A PR that changes only scripts/taxonomy.json or scripts/wiki-sync.json skips the site's build and runs these
+    # tests alone: the next ones read the committed files as the build and the declarations sync do.
+    def test_every_committed_placement_names_a_field_or_subfield_of_its_subject(self):
+        # The generator and the importer read every placement's `to` and `title` (placement, topic_folders), the
+        # title being a topic's one-line name, and the generator refuses a subject that places topics in fields it does
+        # not have (subject_tree); a topic may also wait in its subject's not-yet-classified folder.
+        taxonomy = wiki.load_taxonomy()
+        wrong = []
+        for key, spot in sorted(taxonomy["placements"].items()):
+            title = spot.get("title")
+            if not isinstance(spot.get("to"), str) or not isinstance(title, str) or not title.strip() \
+                    or title.splitlines() != [title]:
+                wrong.append((key, "a `to` and a one-line `title`"))
+                continue
+            subject, _, rest = spot["to"].partition("/")
+            if subject not in taxonomy["subjects"]:
+                wrong.append((key, spot["to"]))
+                continue
+            fields = taxonomy["subjects"][subject].get("fields", [])
+            known = {wiki.UNPLACED["slug"], *(field["slug"] for field in fields),
+                     *(f"{field['slug']}/{sub['slug']}" for field in fields for sub in field.get("subfields", []))}
+            if rest not in known:
+                wrong.append((key, spot["to"]))
+        self.assertEqual(wrong, [])
+
+    def test_every_subject_field_and_subfield_names_a_path_of_the_site_and_describes_itself(self):
+        # Each names a folder of the wiki and a page of the site, in the grammar of docs/mathgraph-import.md's page
+        # folders (a subject's capital also keeps it apart from the Mathlib pages' own `outside` page), and the
+        # generator reads its `description` (subject_tree), which may be empty.
+        taxonomy = wiki.load_taxonomy()
+
+        def named(component, grammar, spec, suffix=""):
+            # A file or folder name is at most 255 bytes: a subject's annotations are `<subject>.jsonl`
+            # (sync_wiki.links_file).
+            return bool(re.fullmatch(grammar, component)) and len((component + suffix).encode()) <= 255 \
+                and isinstance(spec.get("description"), str)
+
+        slug = r"[a-z0-9]+(?:-[a-z0-9]+)*"
+        wrong = []
+        for subject, entry in taxonomy["subjects"].items():
+            if not named(subject, r"[A-Z][A-Za-z]*", entry, ".jsonl"):
+                wrong.append(subject)
+            for field in entry.get("fields", []):
+                path = f"{subject}/{field['slug']}"
+                if not named(field["slug"], slug, field):
+                    wrong.append(path)
+                wrong += [f"{path}/{sub['slug']}" for sub in field.get("subfields", [])
+                          if not named(sub["slug"], slug, sub)]
+        self.assertEqual(wrong, [])
+
+    def test_the_committed_taxonomy_writes_as_utf8(self):
+        # The build writes its titles, descriptions and reasons into UTF-8 files: a lone surrogate would stop it.
+        json.dumps(wiki.load_taxonomy(), ensure_ascii=False).encode("utf-8")
+
+    def test_the_committed_docstring_baseline_reads_as_the_sync_reads_it(self):
+        # The declarations sync, which Graph sync runs on every PR, reads json.loads(STATE.read_text())["docstrings"]:
+        # declaration names mapped to strings.
+        state = json.loads(sync_wiki.STATE.read_text())["docstrings"]
+        self.assertIsInstance(state, dict)
+        self.assertEqual([key for key, value in state.items() if not isinstance(value, str)], [])
+        # The sync writes it back as UTF-8.
+        json.dumps(state, ensure_ascii=False).encode("utf-8")
+
     def test_new_library_roots_have_valid_fallback_subjects(self):
         taxonomy = wiki.load_taxonomy()
         cases = {
