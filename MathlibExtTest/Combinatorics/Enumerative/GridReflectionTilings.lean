@@ -10,9 +10,18 @@ module
 
 import MathlibExt.Combinatorics.Enumerative.GridReflectionTilings
 
-/-! # Tests for reflection-fixed tilings of odd-width grids -/
+/-! # Tests for reflection-fixed tilings of rectangular grids -/
 
 namespace MetaMathlibExt
+
+-- The swap fixes no design, but each of the six reflected pairs still has two choices.
+example : fixedTilingCount (cellF 4 3) (Equiv.swap (0 : Fin 2) 1) = 64 := by
+  rw [rectangularGrid_f_even 4 3 _ (by simp [sq]) (by decide)]
+  decide
+
+-- Even the smallest even-width grid needs a tile for its one reflected pair.
+example : fixedTilingCount (cellF 2 1) (1 : Equiv.Perm (Fin 0)) = 0 := by
+  decide
 
 -- On a single column every cell has to carry a fixed tile.
 example {T : Type*} [Fintype T] [DecidableEq T] (m : ℕ) [NeZero m]
