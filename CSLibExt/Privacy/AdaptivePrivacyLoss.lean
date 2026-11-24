@@ -1238,9 +1238,9 @@ theorem transcript_isApproxDP_of_tail {C Y Database : Type*} [Fintype C]
       · rw [Set.indicator_of_mem ((Set.mem_inter_iff ω s G).mpr ⟨hωs, hωG⟩),
           Set.indicator_of_mem hωs]
         exact hpt ω hωG
-      · rw [Set.indicator_of_notMem (fun h => hωs h.1),
+      · rw [Set.indicator_of_notMem (fun h => hωs ((Set.mem_inter_iff ω s G).mp h).1),
           Set.indicator_of_notMem hωs, mul_zero]
-    · rw [Set.indicator_of_notMem (fun h => hωG h.2)]
+    · rw [Set.indicator_of_notMem (fun h => hωG ((Set.mem_inter_iff ω s G).mp h).2)]
       by_cases hωs : ω ∈ s
       · rw [Set.indicator_of_mem hωs]
         exact zero_le
