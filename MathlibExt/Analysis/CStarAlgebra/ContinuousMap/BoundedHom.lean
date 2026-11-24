@@ -41,7 +41,7 @@ private theorem nonUnitalStarAlgHom_lipschitz
   refine AddMonoidHomClass.lipschitz_of_bound_nnnorm φ 1 ?_
   intro a
   simpa only [one_mul] using
-    NonUnitalStarAlgHom.nnnorm_apply_le φ a
+    NonUnitalStarAlgHom.nnNorm_apply_le φ a
 
 /-- Pointwise coefficient postcomposition on bounded continuous functions. -/
 @[no_expose]

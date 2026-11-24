@@ -12,7 +12,7 @@ Author: @toskua
 module
 
 public import Mathlib.Analysis.CStarAlgebra.ContinuousLinearMap
-public import Mathlib.Analysis.Normed.Operator.Compact
+public import Mathlib.Analysis.Normed.Operator.Compact.Basic
 public import Mathlib.Basic.Nontrivial.Defs
 public import Mathlib.Topology.Algebra.Module.ContinuousLinearMap.Idempotent
 
