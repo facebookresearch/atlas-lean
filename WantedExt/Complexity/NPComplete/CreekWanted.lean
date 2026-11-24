@@ -16,7 +16,7 @@ of Information Processing 28 (2020), 911-918, doi:10.2197/ipsjjip.28.911, Theore
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected

@@ -30,3 +30,34 @@ example : bishopsSquare 3 5 = 0 := by
 
 -- The extension uses unsigned first-kind numbers for negative arguments.
 example : extStirlingSecond (-1) (-3) = 2 ∧ extStirlingSecond 0 (-1) = 0 := by decide
+
+-- The boundary clauses include the empty board, no pieces, and both sides of the diagonal.
+example : anassasBelow 0 0 0 = 1 := by
+  simpa using (anassasBelow_recurrence (m := 0) (k := 0) (p := 0)).2.1
+
+example : anassasBelow 0 1 0 = 0 := by
+  simpa using (anassasBelow_recurrence (m := 2) (k := 1) (p := 0)).2.1
+
+example : anassasBelow 2 0 1 = 0 := by
+  simpa using (anassasBelow_recurrence (m := 2) (k := 0) (p := 1)).2.2.1
+
+example : anassasBelow 3 1 0 = 6 ∧ anassasBelow 3 1 1 = 3 ∧ anassasBelow 3 1 2 = 0 := by
+  refine ⟨(anassasBelow_recurrence 3 0 0).2.2.2.1.trans (by decide),
+    (anassasBelow_recurrence 3 0 1).2.2.2.1.trans (by decide),
+    (anassasBelow_recurrence 3 0 2).2.2.2.1.trans (by decide)⟩
+
+example : anassasBelow 3 2 0 = 7 := by
+  exact (anassasBelow_recurrence 3 2 0).2.2.2.2.trans (by decide)
+
+-- All four terms of the recurrence contribute here. Also check against enumeration.
+example : anassasBelow 3 2 1 = 14 := by decide
+
+example : (anassasBelow 3 2 1 : ℤ) = 14 :=
+  (anassasBelow_recurrence 2 0 0).1.trans (by decide)
+
+-- Impossible counts kill the terms with negative integer coefficients.
+example : (anassasBelow 2 4 1 : ℤ) = 0 :=
+  (anassasBelow_recurrence 1 2 0).1.trans (by decide)
+
+example : (anassasBelow 2 2 3 : ℤ) = 0 :=
+  (anassasBelow_recurrence 1 0 2).1.trans (by decide)
