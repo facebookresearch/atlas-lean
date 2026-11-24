@@ -125,9 +125,10 @@ class BumpCacheWorkflowTest(unittest.TestCase):
     def test_large_runner_builds_the_heavy_modules_with_the_rest(self) -> None:
         # ci.yml builds its memory-heavy modules one at a time on the 16 GB standard
         # runner; the warm-up's 64-core runner has the memory to build them with the rest.
-        self.assertEqual(len(heavy_modules(self.ci)), 1, "ci.yml's memory-heavy module list moved; update this test")
-        self.assertIn("    runs-on: ubuntu-24.04\n", job(self.ci, "build"), "ci.yml's build job left the standard runner")
-        self.assertEqual(re.findall(r"(?m)^    runs-on: (\S+)$", self.warm), ["64-core-ubuntu"])
+        build, warm = job(self.ci, "build"), job(self.warm, "warm")
+        self.assertEqual(len(heavy_modules(build)), 1, "ci.yml's build job moved its memory-heavy list; update this test")
+        self.assertIn("    runs-on: ubuntu-24.04\n", build, "ci.yml's build job left the standard runner")
+        self.assertIn("    runs-on: 64-core-ubuntu\n", warm)
         self.assertEqual(heavy_modules(self.warm), [], "a serial heavy step leaves the 64-core runner idle")
         self.assertNotIn("swapon", self.warm)
 
@@ -252,11 +253,14 @@ class BuildStepTest(unittest.TestCase):
         self.assertEqual((status, calls), ("timeout", []))
 
     def test_the_deadline_leaves_time_to_save(self) -> None:
-        job = re.search(r"(?m)^    timeout-minutes: (\d+)$", WARM.read_text(encoding="utf-8"))
+        limit = re.search(r"(?m)^    timeout-minutes: (\d+)$", job(WARM.read_text(encoding="utf-8"), "warm"))
         deadline = re.search(r"deadline=\$\(\( START \+ (\d+) \* 60 \)\)", self.script)
-        self.assertIsNotNone(job)
+        grace = re.search(r"--kill-after=(\d+)m", self.script)
+        self.assertIsNotNone(limit)
         self.assertIsNotNone(deadline)
-        self.assertGreaterEqual(int(job.group(1)) - int(deadline.group(1)), 15,
+        self.assertIsNotNone(grace)
+        # A command killed at the deadline may run for the grace period after it.
+        self.assertGreaterEqual(int(limit.group(1)) - int(deadline.group(1)) - int(grace.group(1)), 15,
                                 "leave at least 15 minutes to save the build")
 
 

@@ -138,9 +138,10 @@ merge of main a few minutes. A maintainer decides when to queue the bump.
    build and rebuild only what changed since.
 
    It runs on a 64-core runner, which GitHub bills at about $0.16 a minute:
-   about $8 for a cold build. The bump's own CI stays on the standard runner,
-   so a run of it that started before the warm-up saved is a cold build of
-   several hours: re-run it once the warm-up reports `Saved`.
+   about $8 for a cold build. The bump's own CI stays on the standard runner:
+   a run of it whose "Restore local build" step found no build on the new pins
+   is a cold build of several hours, so re-run it once the warm-up reports
+   `Saved`.
 
    - Dispatch first as soon as the bump's head passes the guard. That run is a
      cold build, about 50 minutes, and nobody needs to wait for it. A run that
