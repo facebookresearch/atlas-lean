@@ -54,27 +54,6 @@ public theorem_wanted nontrivial_sumset_card_of_last_gap_ne_nsmul
     (hcb : ∀ d : ℕ, 1 ≤ d → c ≠ d • b) :
     h - 1 ≤ (h • (Finset.range k).image a \ sumsetTrivialElements h k a).card
 
-/-- **Many nontrivial sums when the last gap is a proper multiple of the previous one.** Let $G$
-be a linearly ordered additive commutative group, let $h$ and $k \ge 4$ be natural numbers, and
-let $a_0, a_1, \ldots$ be a sequence in $G$ with $0 = a_0 < a_1 < \cdots < a_{k-3}$. Suppose
-that $a_{k-2} = a_{k-3} + b$ and $a_{k-1} = a_{k-3} + b + db$, where $b \in G$ satisfies
-$b > 0$ and $d > 1$ is an integer. Then at least $h - 1$ elements of the $h$-fold sumset
-$h\{a_0, \ldots, a_{k-1}\}$ (the set of sums of $h$ elements of $\{a_0, \ldots, a_{k-1}\}$)
-are not trivial elements of the $h$-fold sumset of $a_0, \ldots, a_{k-1}$.
-
-The paper's last gap $c$ is written as $db$ (its positivity follows). The paper takes $h > 1$;
-the bound is vacuous for $h \le 1$.
-
-Source: Vincent Schinina, *On the Sumset of Sets of Size k*, INTEGERS 26 (2026),
-Article A31, Theorem 2 (`integers-2026-A31-thm-2`; arXiv:2505.07679v2,
-Theorem 3.4). -/
-public theorem_wanted nontrivial_sumset_card_of_last_gap_eq_nsmul
-    {G : Type*} [AddCommGroup G] [LinearOrder G] [IsOrderedAddMonoid G]
-    (h k : ℕ) (hk : 4 ≤ k) (a : ℕ → G) (ha0 : a 0 = 0)
-    (ha : ∀ i, i + 1 ≤ k - 3 → a i < a (i + 1)) (b : G) (hb : 0 < b) (d : ℕ) (hd : 1 < d)
-    (hb' : a (k - 2) = a (k - 3) + b) (hc' : a (k - 1) = a (k - 3) + b + d • b) :
-    h - 1 ≤ (h • (Finset.range k).image a \ sumsetTrivialElements h k a).card
-
 /-- **Equal last two gaps: an arithmetic progression or many nontrivial sums.** Let $G$ be a
 linearly ordered additive commutative group, let $h$ and $k \ge 4$ be natural numbers, and let
 $a_0, a_1, \ldots$ be a sequence in $G$ with $0 = a_0 < a_1 < \cdots < a_{k-1}$ and

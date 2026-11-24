@@ -137,22 +137,6 @@ public theorem_wanted antiRecurrence_unique (a : List ℕ) (ha : ∀ x ∈ a, 0 
         ∀ i, A i = ∑ j : Fin a.length, a[j] * B (i * a.length + j)) ↔
       (A = fun i => antiRecurrence a (i + 1)) ∧ B = fun i => antiRecurrenceComplement a (i + 1)
 
-/-- **Lower bound for the first anti-recurrence number.** Let $a = (a_1, \dots, a_k)$ be a linear
-form with positive integer coefficients, of trace $\tau = a_1 + \dots + a_k$, and let $A_1$ be its
-first anti-recurrence number. Then $\tau + (k - 1)k/2 \le A_1$, and the inequality is strict if
-and only if $a_j > 1$ for some $j$ with $2 \le j \le k$.
-
-This corrects the printed strictness condition ("$k > 2$ and not anti-bonacci"), which fails for
-$a = (2, 1, 1)$: there $A_1 = 2 + 2 + 3 = 7 = \tau + 3$. The correction follows the paper's
-proof, $A_1 = \tau + \sum_j (j - 1) a_j$. The paper's hypothesis $k > 1$ is not needed.
-
-Source: Robbert Fokkink and Gandhar Joshi, *Anti-Recurrence Sequences*, INTEGERS 26 (2026),
-Article A24, Lemma 4 (`integers-2026-A24-lem-4`). -/
-public theorem_wanted antiRecurrence_one_ge (a : List ℕ) (ha : ∀ x ∈ a, 0 < x) :
-    a.sum + (a.length - 1) * a.length / 2 ≤ antiRecurrence a 1 ∧
-      (a.sum + (a.length - 1) * a.length / 2 < antiRecurrence a 1 ↔
-        ∃ j : Fin a.length, 1 ≤ (j : ℕ) ∧ 1 < a[j])
-
 /-- **Interval location of anti-recurrence numbers for bounded forms.** Let
 $a = (a_1, \dots, a_k)$ be a linear form with positive integer coefficients and $k > 1$, of trace
 $\tau = a_1 + \dots + a_k$, with anti-recurrence numbers $A_1, A_2, \dots$ and non-anti-recurrence
