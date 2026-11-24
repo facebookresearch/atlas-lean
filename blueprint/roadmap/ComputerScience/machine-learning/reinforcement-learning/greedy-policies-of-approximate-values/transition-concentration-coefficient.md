@@ -21,6 +21,10 @@ $0/0=0$ and $u/0=+\infty$ for every positive numerator $u$.
 - [Markov decision process](../../../heuristic-search-and-planning/value-iteration/mdp.md)
 - [Stochastic Markov decision process](../../../heuristic-search-and-planning/value-iteration/stochastic.md)
 
+## Proof depends on
+
+None beyond the statement prerequisites; this page is a definition.
+
 ## Sources
 
 - R. Munos, *Performance Bounds in Lp-norm for Approximate Value Iteration*, SIAM Journal on Control and Optimization 46(2), 541–561 (2007). [Author manuscript, HAL inria-00124685 v1](https://inria.hal.science/inria-00124685v1/document), §5.1, Definition 5.1 (manuscript p. 9).

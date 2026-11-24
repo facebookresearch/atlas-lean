@@ -33,6 +33,10 @@ The ratio formula is only for positive times.
 - [Stochastic Markov decision process](../../../heuristic-search-and-planning/value-iteration/stochastic.md)
 - [Transition matrix of a stationary policy](../../../heuristic-search-and-planning/stochastic-shortest-path-problems/transition-matrix.md)
 
+## Proof depends on
+
+None beyond the statement prerequisites; this page is a definition.
+
 ## Sources
 
 - R. Munos, *Performance Bounds in Lp-norm for Approximate Value Iteration*, SIAM Journal on Control and Optimization 46(2), 541–561 (2007). [Author manuscript, HAL inria-00124685 v1](https://inria.hal.science/inria-00124685v1/document), §5.1, Definition 5.1, equation (5.1) and the following convention (manuscript p. 9).
