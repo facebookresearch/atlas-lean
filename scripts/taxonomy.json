@@ -12056,6 +12056,7 @@
   "MathlibExt/NumberTheory/CoveringSystem": {"to": "NumberTheory/congruences/covering-systems", "title": "Covering systems"},
   "MathlibExt/NumberTheory/CoveringSystem/ExactCover": {"to": "NumberTheory/congruences/covering-systems", "title": "Exact covering systems"},
   "MathlibExt/NumberTheory/Cyclotomic/CommonPrimeDivisorEvalPow": {"to": "NumberTheory/algebraic-number-theory/cyclotomic-fields", "title": "Prime divisor bounds for cyclotomic values"},
+  "MathlibExt/NumberTheory/Cyclotomic/ComposedFactorization": {"to": "NumberTheory/algebraic-number-theory/cyclotomic-fields", "title": "Prime divisor bounds for cyclotomic values"},
   "MathlibExt/NumberTheory/CoveringSystem/DiscardPrimePower": {"to": "NumberTheory/congruences/covering-systems", "title": "Minimum modulus of covering systems"},
   "MathlibExt/NumberTheory/CoveringSystem/SwapResidues": {"to": "NumberTheory/congruences/covering-systems", "title": "Minimum modulus of covering systems"},
   "MathlibExt/NumberTheory/CoveringSystem/Translate": {"to": "NumberTheory/congruences/covering-systems", "title": "Minimum modulus of covering systems"},
