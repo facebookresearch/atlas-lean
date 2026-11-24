@@ -96,10 +96,11 @@ fi
 
 if [[ "$scope" == all || "$scope" == build ]]; then
   run_check "compiler diagnostics" scripts/check_diagnostics.sh
-  # Imports every v2 module at once, as the wiki does, so it fails within seconds on a
-  # name that two modules both declare. It reads only the .olean files the build above
-  # wrote, so it runs before the compiled-policy audit, which takes minutes and splits
-  # an import group on such a collision instead of failing.
+  # This check loads every module the compiled-policy audit checks into one environment,
+  # so that modules which do not load together fail the build. It needs the .olean files
+  # that the build above writes and nothing that the audit produces, so it runs first: the
+  # audit takes longer, and imports modules in groups, where a name that two modules
+  # declare can make it split a group, which only slows it down.
   run_check "declaration collisions" scripts/check_declaration_collisions.sh
   run_check "compiled environment policy" scripts/check_axioms.sh
 fi
