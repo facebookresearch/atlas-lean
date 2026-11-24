@@ -84,8 +84,8 @@ theorem shallow_water_potential_vorticity_hasDerivAt_zero {f : ℝ} {ζ h D : �
   convert hq using 1
   exact hval.symm
 
-/-- Potential vorticity is conserved along a parcel trajectory under the
-shallow-water continuity and vorticity hypotheses above. -/
+/-- Potential vorticity is conserved along a parcel trajectory when, at every time, the
+depth is nonzero and the shallow-water continuity and vorticity hypotheses above hold. -/
 theorem shallow_water_potential_vorticity_conserved {f : ℝ} {ζ h D : ℝ → ℝ}
     (hh : ∀ t, h t ≠ 0)
     (hh' : ∀ t, HasDerivAt h (-(h t * D t)) t)

@@ -10,7 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.Analysis.SpecialFunctions.QPochhammer
-public import MathlibExt.Combinatorics.Enumerative.Partition.Overpartition
+public import MathlibExt.Combinatorics.Enumerative.Partition.OverpartitionMex
 
 /-!
 # A minimal excludant over overpartitions (statements)
@@ -27,133 +27,8 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Number of overpartitions.** For a natural number $n$, $\overline{p}(n)$ is the number of
-overpartitions of $n$, that is, of pairs consisting of a partition $p$ of $n$ and a set of
-overlined part sizes, each of which occurs as a part of $p$. For example, $\overline{p}(3) = 8$.
-
-Source: Victor Manuel R. Aricheta, Judy Ann L. Donato, *A Minimal Excludant over Overpartitions*,
-Journal of Integer Sequences 27 (2024), Article 24.7.1, Section 1. -/
-public noncomputable def overpartitionCount (n : ℕ) : ℕ :=
-  Fintype.card (Nat.Overpartition n)
-
-
 open Filter
 open QPochhammer
-
-/--
-**Number of non-overlined copies of a part size.** For an overpartition $O$ of $n$ and a natural
-number $a$, the number of non-overlined parts of size $a$ in $O$ is the multiplicity of $a$ in the
-underlying partition of $O$, minus $1$ if $a$ is overlined in $O$ and minus $0$ otherwise.
-
-This matches the convention that only the first occurrence of a part size may be overlined: an
-overpartition records each overlined size once.
-
-Source: Victor Manuel R. Aricheta, Judy Ann L. Donato, *A Minimal Excludant over Overpartitions*,
-Journal of Integer Sequences 27 (2024), Article 24.7.1, Definition of `mex̄_r`.
--/
-public def nonOverlinedCount {n : ℕ} (O : Nat.Overpartition n) (a : ℕ) : ℕ :=
-  O.toPartition.parts.count a - if a ∈ O.overlines then 1 else 0
-
-/--
-**Minimal excludant of an overpartition with a multiplicity bound.** For natural numbers $r \ge 1$
-and $n$ and an overpartition $O$ of $n$, $\overline{\mathrm{mex}}_r(O)$ is the least positive
-integer $k$ that occurs fewer than $r$ times among the non-overlined parts of $O$. Such a $k$
-exists, since $n + 1$ is not a part of $O$. For $r = 0$, which the paper does not use, the value
-is $0$ by convention.
-
-Source: Victor Manuel R. Aricheta, Judy Ann L. Donato, *A Minimal Excludant over Overpartitions*,
-Journal of Integer Sequences 27 (2024), Article 24.7.1, Definition of `mex̄_r`.
--/
-public def leastGapOverpartition (r : ℕ) {n : ℕ} (O : Nat.Overpartition n) : ℕ :=
-  if hr : r = 0 then 0
-  else
-    Nat.find (show ∃ k : ℕ,
-        1 ≤ k ∧ nonOverlinedCount O k < r from by
-      have hrpos : 0 < r := Nat.pos_of_ne_zero hr
-      have hnotmem : n + 1 ∉ O.toPartition.parts := by
-        intro hmem
-        have hle : n + 1 ≤ O.toPartition.parts.sum :=
-          Multiset.le_sum_of_mem hmem
-        rw [O.toPartition.parts_sum] at hle
-        omega
-      have hcount : O.toPartition.parts.count (n + 1) = 0 :=
-        Multiset.count_eq_zero.mpr hnotmem
-      exact ⟨n + 1, Nat.zero_lt_succ n, by
-        simp [nonOverlinedCount, hcount, hrpos]⟩)
-
-/--
-**Three-colored distinct-part partitions.** For a natural number $n$, $D_3(n)$ is the number of
-triples $(A, B, C)$ of subsets of $\{1, \dots, n\}$ such that the sum of the elements of $A$, the
-sum of the elements of $B$ and the sum of the elements of $C$ add up to $n$. Here $A$, $B$, $C$
-are the parts of the three colors of a partition of $n$ whose parts of each color are distinct.
-
-A size may occur in several colors but at most once in each, as in the product
-$\prod_{m \ge 1} (1 + q^m)^3$.
-
-Source: Victor Manuel R. Aricheta, Judy Ann L. Donato, *A Minimal Excludant over Overpartitions*,
-Journal of Integer Sequences 27 (2024), Article 24.7.1, Definition of `D_3(n)`.
--/
-public def D3 (n : ℕ) : ℕ :=
-  ((((Finset.Icc 1 n).powerset.product (Finset.Icc 1 n).powerset).product
-    (Finset.Icc 1 n).powerset).filter fun p =>
-      p.1.1.sum id + p.1.2.sum id + p.2.sum id = n).card
-
-/-- **Sums of minimal excludants over overpartitions.** For natural numbers $r$ and $n$,
-$\sigma_r\overline{\mathrm{mex}}(n)$ is the sum, over all overpartitions $\pi$ of $n$, of
-$\overline{\mathrm{mex}}_r(\pi)$, the least positive integer occurring fewer than $r$ times
-among the non-overlined parts of $\pi$; for $r = 0$ the value $\overline{\mathrm{mex}}_0(\pi)$
-is $0$ by convention, so $\sigma_0\overline{\mathrm{mex}}(n) = 0$. We write
-$\sigma\overline{\mathrm{mex}}(n) = \sigma_1\overline{\mathrm{mex}}(n)$.
-
-By direct enumeration, $\sigma\overline{\mathrm{mex}}(n) = 1, 3, 6, 13, 24$ for $n = 0, \dots, 4$,
-and $\sigma_2\overline{\mathrm{mex}}(2) = 5$.
-
-Source: Victor Manuel R. Aricheta, Judy Ann L. Donato, *A Minimal Excludant over Overpartitions*,
-Journal of Integer Sequences 27 (2024), Article 24.7.1, Definitions of `σmex̄` and `σ_r mex̄`. -/
-public noncomputable def sigmaMexOverpartition (r n : ℕ) : ℕ :=
-  ∑ O : Nat.Overpartition n, leastGapOverpartition r O
-
-/-- **The number of overpartitions of zero.** The number $\overline{p}(0)$ of overpartitions of
-$0$ equals $1$: the empty overpartition is the only one.
-
-Source: Victor Manuel R. Aricheta, Judy Ann L. Donato, *A Minimal Excludant over Overpartitions*,
-Journal of Integer Sequences 27 (2024), Article 24.7.1, Section 1 (`p̄(0) = 1`). -/
-public theorem overpartitionCount_zero : overpartitionCount 0 = 1 :=
-  Fintype.card_eq_one_iff.mpr ⟨Nat.Overpartition.ofPartition default, fun _ =>
-    Nat.Overpartition.eq_of_zero _ _⟩
-
-/--
-**Three-colored distinct-part partitions of $0$.** The number $D_3(0)$ of partitions of $0$ into
-parts of three colors, with the parts of each color distinct, equals $1$: the empty partition is
-the only one.
-
-Source: Victor Manuel R. Aricheta, Judy Ann L. Donato, *A Minimal Excludant over Overpartitions*,
-Journal of Integer Sequences 27 (2024), Article 24.7.1, Definition of `D_3(n)`.
--/
-public theorem D3_zero : D3 0 = 1 := by
-  decide
-
-/--
-**Three-colored distinct-part partitions of $1$.** The number $D_3(1)$ of partitions of $1$ into
-parts of three colors, with the parts of each color distinct, equals $3$: the single part $1$
-takes one of the three colors.
-
-Source: Victor Manuel R. Aricheta, Judy Ann L. Donato, *A Minimal Excludant over Overpartitions*,
-Journal of Integer Sequences 27 (2024), Article 24.7.1, Definition of `D_3(n)`.
--/
-public theorem D3_one : D3 1 = 3 := by
-  decide
-
-/--
-**Three-colored distinct-part partitions of $2$.** The number $D_3(2)$ of partitions of $2$ into
-parts of three colors, with the parts of each color distinct, equals $6$: the single part $2$ in
-one of three colors, or two parts $1$ in two different colors.
-
-Source: Victor Manuel R. Aricheta, Judy Ann L. Donato, *A Minimal Excludant over Overpartitions*,
-Journal of Integer Sequences 27 (2024), Article 24.7.1, Definition of `D_3(n)`.
--/
-public theorem D3_two : D3 2 = 6 := by
-  decide
 
 /--
 **The overpartition mex sum counts three-colored distinct-part partitions.** For an
@@ -185,23 +60,6 @@ public theorem_wanted sigmaMexOverpartition_asymptotic :
       (fun n : ℕ => (sigmaMexOverpartition 1 n : ℝ))
       (fun n => Real.exp (Real.pi * Real.sqrt n) /
         (8 * (n : ℝ) ^ ((3 : ℝ) / 4)))
-
-/--
-**Parity of the overpartition mex sum.** For an overpartition $\pi$, let
-$\overline{\mathrm{mex}}(\pi)$ be the least positive integer that does not occur among the
-non-overlined parts of $\pi$, and let $\sigma\overline{\mathrm{mex}}(n)$ be the sum of
-$\overline{\mathrm{mex}}(\pi)$ over all overpartitions $\pi$ of $n$. For every positive integer
-$n$, $\sigma\overline{\mathrm{mex}}(n)$ is odd if $n = j(j+1)/2$ is a triangular number for some
-natural number $j$, and even otherwise.
-
-Source: Victor Manuel R. Aricheta, Judy Ann L. Donato, *A Minimal Excludant over Overpartitions*,
-Journal of Integer Sequences 27 (2024), Article 24.7.1, Theorem 4.
--/
-public theorem_wanted sigmaMexOverpartition_parity (n : ℕ) (hn : 0 < n) :
-    ((∃ j : ℕ, n = (j * (j + 1) / 2)) →
-      Nat.ModEq 2 (sigmaMexOverpartition 1 n) 1) ∧
-    ((¬∃ j : ℕ, n = (j * (j + 1) / 2)) →
-      Nat.ModEq 2 (sigmaMexOverpartition 1 n) 0)
 
 /--
 **Generating function of the overpartition r-mex sums.** Let $r$ be a positive integer and $q$

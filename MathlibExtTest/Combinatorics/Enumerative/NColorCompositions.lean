@@ -58,4 +58,15 @@ example : trib 32 + trib 30 =
     2 + 2 * ∑ i ∈ Finset.range 10, trib (3 * ((10 : ℕ) : ℤ) + 2 - 3 * (i : ℤ) - 1) := by
   simpa using trib_add_two_sub_three_mul_add_two 10 (by decide)
 
+-- At `k = 0` the sole summand uses the two negative indices.
+example : trib 0 = 1 + (trib (-1) + trib (-2)) := by
+  simpa [Finset.sum_range_one] using trib_three_mul (k := 0)
+
+-- At `k = 2` the sum has two nonnegative index pairs and one negative pair.
+example :
+    trib 6 = 1 + ((trib 5 + trib 4) + (trib 2 + trib 1) + (trib (-1) + trib (-2))) ∧
+      trib 6 = 11 := by
+  refine ⟨?_, by decide⟩
+  simpa [Finset.sum_range_succ] using trib_three_mul (k := 2)
+
 end MathlibExtTest.NColorCompositions
