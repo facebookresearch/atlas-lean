@@ -3,7 +3,8 @@
 Let $\mathcal{A}$ be a timed automaton with locations $S$, initial locations $S_0$, clocks $C$ and edges $(s, s', a, \lambda, \delta)$ carrying
 a clock constraint $\delta$ and a set $\lambda \subseteq C$ of clocks to reset, and use the
 [clock regions](clock-regions-of-timed-automata.md) of $\mathcal{A}$. A region $\alpha'$ is a *time-successor* of a region $\alpha$ if for each
-$\nu \in \alpha$ there is $t \ge 0$ with $\nu + t \in \alpha'$. The *region automaton* $R(\mathcal{A})$ has states $(s, \alpha)$, initial states $(s_0, [\mathbf{0}])$
+$\nu \in \alpha$ there is a positive $t \in \mathbb{R}$ with $\nu + t \in \alpha'$, matching the strictly increasing time
+sequences of timed runs. The *region automaton* $R(\mathcal{A})$ has states $(s, \alpha)$, initial states $(s_0, [\mathbf{0}])$
 for $s_0 \in S_0$, and an $a$-labelled edge from $(s, \alpha)$ to $(s', \alpha')$ whenever $\mathcal{A}$ has an edge $(s, s', a, \lambda, \delta)$ and a
 time-successor $\alpha''$ of $\alpha$ satisfies $\delta$ and $\alpha' = [\lambda \mapsto 0]\alpha''$.
 
