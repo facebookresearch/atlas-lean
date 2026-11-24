@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Crypto.Framework.Advantage
+public import Mathlib.Algebra.Field.ZMod
 public import Mathlib.Algebra.Group.TypeTags.Basic
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.Probability.ProbabilityMassFunction.Constructions
@@ -355,6 +356,131 @@ exponent witnesses expose decoders. -/
 def sxdhAdvBound (B : BilinearGroupData) (D₁ : B.G1 → B.G1 → B.G1 → PMF Bool)
     (D₂ : B.G2 → B.G2 → B.G2 → PMF Bool) (ε : ℝ) : Prop :=
   B.ddh1Advantage D₁ ≤ ε ∧ B.ddh2Advantage D₂ ≤ ε
+
+open Classical in
+/-- The q-SDH win experiment at a fixed secret exponent: run the randomized
+adversary on the `G1` power tuple `i ↦ exp1 (x ^ i)`, on `g2` and on `exp2 x`,
+and test whether its output `(c, h)` satisfies the pairing check
+`e h (exp2 (x + c)) = e g1 g2`.
+
+SDH is standardly a prime-order assumption; this game is stated for the file's
+general cyclic interface, with the inverse-exponent characterization of the win
+check under `[Fact B.q.Prime]` (`sdhCheck_iff`). The win predicate uses the
+pairing-check form rather than `(x + c)⁻¹`: at composite order the reciprocal
+equation is satisfiable where no inverse exists. -/
+noncomputable def sdhWin (B : BilinearGroupData) (t : ℕ)
+    (A : (Fin (t + 1) → B.G1) → B.G2 → B.G2 → PMF (ZMod B.q × B.G1))
+    (x : ZMod B.q) : PMF Bool :=
+  (A (fun i => B.exp1 (Multiplicative.ofAdd (x ^ (i : ℕ)))) B.g2
+    (B.exp2 (Multiplicative.ofAdd x))).map fun (c, h) =>
+    if B.e h (B.exp2 (Multiplicative.ofAdd (x + c))) = B.e B.g1 B.g2 then true
+    else false
+
+/-- The q-SDH game: sample `x` uniformly over all residues of `ZMod q`
+(matching the BDH and DDH games) and run the win experiment, sampling the
+adversary's coins via `PMF.bind`. -/
+noncomputable def sdhGame (B : BilinearGroupData) (t : ℕ)
+    (A : (Fin (t + 1) → B.G1) → B.G2 → B.G2 → PMF (ZMod B.q × B.G1)) :
+    PMF Bool :=
+  (Cslib.Probability.PMF.uniformOfFintype (ZMod B.q)).bind fun x =>
+    B.sdhWin t A x
+
+/-- The q-SDH advantage: the winning probability of the q-SDH game. -/
+noncomputable def sdhAdvantage (B : BilinearGroupData) (t : ℕ)
+    (A : (Fin (t + 1) → B.G1) → B.G2 → B.G2 → PMF (ZMod B.q × B.G1)) : ℝ :=
+  winProb (B.sdhGame t A)
+
+/-- At prime order, away from `c = -x`, the pairing check holds iff `h` is the
+inverse-exponent group element `exp1 ((x + c)⁻¹)`. -/
+theorem sdhCheck_iff (B : BilinearGroupData) [Fact B.q.Prime] (x c : ZMod B.q)
+    (hc : c ≠ -x) (h : B.G1) :
+    B.e h (B.exp2 (Multiplicative.ofAdd (x + c))) = B.e B.g1 B.g2 ↔
+      h = B.exp1 (Multiplicative.ofAdd ((x + c)⁻¹)) := by
+  obtain ⟨a, rfl⟩ := B.exp1.surjective h
+  rw [← ofAdd_toAdd a, B.compat, B.e_g1_g2]
+  have hT : B.expT (Multiplicative.ofAdd (a.toAdd * (x + c))) = B.gT ↔
+      a.toAdd * (x + c) = 1 := by
+    have hgT : B.gT = B.expT (Multiplicative.ofAdd (1 : ZMod B.q)) := rfl
+    rw [hgT]
+    constructor
+    · intro heq
+      have hinj := B.expT.injective heq
+      simpa using congrArg Multiplicative.toAdd hinj
+    · intro heq
+      rw [heq]
+  have h1 : B.exp1 (Multiplicative.ofAdd a.toAdd) =
+      B.exp1 (Multiplicative.ofAdd ((x + c)⁻¹)) ↔ a.toAdd = (x + c)⁻¹ := by
+    constructor
+    · intro heq
+      have hinj := B.exp1.injective heq
+      simpa using congrArg Multiplicative.toAdd hinj
+    · intro heq
+      rw [heq]
+  rw [hT, h1]
+  have hxc : x + c ≠ 0 := fun h0 => hc (eq_neg_of_add_eq_zero_right h0)
+  constructor
+  · intro hmul
+    exact eq_inv_of_mul_eq_one_left hmul
+  · intro ha
+    rw [ha]
+    exact inv_mul_cancel₀ hxc
+
+/-- An adversary that always wins induces the constantly-`true` game. -/
+theorem sdhGame_eq_pure_true (B : BilinearGroupData) (t : ℕ)
+    (A : (Fin (t + 1) → B.G1) → B.G2 → B.G2 → PMF (ZMod B.q × B.G1))
+    (h : ∀ x, B.sdhWin t A x = PMF.pure true) :
+    B.sdhGame t A = PMF.pure true := by
+  unfold sdhGame
+  simp only [h, PMF.bind_const]
+
+/-- Decoding adversary for q-SDH: ignores the power tuple and `g2`, decodes
+`x` from the supplied `G2` element with `exp2.symm`, and outputs `(1 - x, g1)`
+as a `PMF` via `PMF.pure`. In the toy model this reads `Multiplicative.toAdd`;
+in any instance the same attack decodes with `exp.symm`, exhibiting the
+insecurity of every instance against unrestricted adversaries. It works at
+every `t`, including `t = 0`. -/
+noncomputable def sdhDecodingAdversary (B : BilinearGroupData) (t : ℕ) :
+    (Fin (t + 1) → B.G1) → B.G2 → B.G2 → PMF (ZMod B.q × B.G1) :=
+  fun _ _ gx => PMF.pure (1 - (B.exp2.symm gx).toAdd, B.g1)
+
+/-- The decoding adversary always wins, in every instance. -/
+theorem sdhWin_decoding (B : BilinearGroupData) (t : ℕ) (x : ZMod B.q) :
+    B.sdhWin t (sdhDecodingAdversary B t) x = PMF.pure true := by
+  classical
+  have hcond : (sdhDecodingAdversary B t)
+      (fun i => B.exp1 (Multiplicative.ofAdd (x ^ (i : ℕ)))) B.g2
+      (B.exp2 (Multiplicative.ofAdd x)) = PMF.pure (1 - x, B.g1) := by
+    simp [sdhDecodingAdversary]
+  unfold sdhWin
+  rw [hcond, PMF.pure_map]
+  have h1 : x + (1 - x) = 1 := by ring
+  show PMF.pure (if B.e B.g1 (B.exp2 (Multiplicative.ofAdd (x + (1 - x)))) =
+    B.e B.g1 B.g2 then true else false) = PMF.pure true
+  rw [h1]
+  exact congrArg PMF.pure (ite_eq_left rfl)
+
+/-- The decoding adversary wins the q-SDH game with probability one, in every
+instance, exhibiting the insecurity of the interface against decoding
+adversaries. -/
+theorem sdhAdvantage_decoding_eq_one (B : BilinearGroupData) (t : ℕ) :
+    B.sdhAdvantage t (sdhDecodingAdversary B t) = 1 := by
+  have h :=
+    sdhGame_eq_pure_true B t (sdhDecodingAdversary B t) (sdhWin_decoding B t)
+  unfold sdhAdvantage
+  rw [h]
+  simp [winProb_pure]
+
+/-- The q-SDH advantage is nonnegative. -/
+theorem sdhAdvantage_nonneg (B : BilinearGroupData) (t : ℕ)
+    (A : (Fin (t + 1) → B.G1) → B.G2 → B.G2 → PMF (ZMod B.q × B.G1)) :
+    0 ≤ B.sdhAdvantage t A :=
+  winProb_nonneg _
+
+/-- The q-SDH advantage is at most one. -/
+theorem sdhAdvantage_le_one (B : BilinearGroupData) (t : ℕ)
+    (A : (Fin (t + 1) → B.G1) → B.G2 → B.G2 → PMF (ZMod B.q × B.G1)) :
+    B.sdhAdvantage t A ≤ 1 :=
+  winProb_le_one _
 
 end BilinearGroupData
 

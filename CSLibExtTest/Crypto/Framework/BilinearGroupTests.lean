@@ -247,4 +247,86 @@ theorem winProb_twoCoins : winProb (toy7.ddh1RealGame ddh1TwoCoins) = 1 / 4 := b
 #print axioms ddh1Advantage_twoCoins
 #print axioms winProb_twoCoins
 
+/-- The toy q-SDH insecurity witness at `q = 7`: the decoding adversary wins
+with probability one. -/
+example (t : ℕ) :
+    toy7.sdhAdvantage t (BilinearGroupData.sdhDecodingAdversary toy7 t) = 1 :=
+  BilinearGroupData.sdhAdvantage_decoding_eq_one toy7 t
+
+/-- An always-losing q-SDH adversary: outputs `(0, 1)` regardless of input. -/
+noncomputable def sdhLosing (t : ℕ) :
+    (Fin (t + 1) → toy7.G1) → toy7.G2 → toy7.G2 → PMF (ZMod toy7.q × toy7.G1) :=
+  fun _ _ _ => PMF.pure (0, 1)
+
+/-- The always-losing adversary loses at every secret exponent: the identity
+output fails the pairing check. -/
+theorem sdhWin_losing (t : ℕ) (x : ZMod toy7.q) :
+    toy7.sdhWin t (sdhLosing t) x = PMF.pure false := by
+  classical
+  have hcond : (sdhLosing t)
+      (fun i => toy7.exp1 (Multiplicative.ofAdd (x ^ (i : ℕ)))) toy7.g2
+      (toy7.exp2 (Multiplicative.ofAdd x)) = PMF.pure (0, 1) := rfl
+  unfold BilinearGroupData.sdhWin
+  rw [hcond, PMF.pure_map]
+  dsimp only
+  have hne : toy7.e 1 (toy7.exp2 (Multiplicative.ofAdd (x + 0))) ≠
+      toy7.e toy7.g1 toy7.g2 := by
+    intro hcon
+    rw [BilinearGroupData.e_one_left] at hcon
+    exact BilinearGroupData.e_g1_g2_ne_one toy7 hcon.symm
+  rw [ite_eq_right hne]
+
+/-- The q-SDH game against the always-losing adversary is constantly `false`. -/
+theorem sdhGame_losing (t : ℕ) :
+    toy7.sdhGame t (sdhLosing t) = PMF.pure false := by
+  unfold BilinearGroupData.sdhGame
+  simp only [sdhWin_losing, PMF.bind_const]
+
+/-- The always-losing adversary has q-SDH advantage zero. -/
+theorem sdhAdvantage_losing (t : ℕ) :
+    toy7.sdhAdvantage t (sdhLosing t) = 0 := by
+  unfold BilinearGroupData.sdhAdvantage
+  rw [sdhGame_losing]
+  simp [winProb_pure]
+
+/-- The toy model at `q = 5`. -/
+def toy5 : BilinearGroupData := BilinearGroupData.toyModel 5 (by decide)
+
+/-- `5` is prime. -/
+instance toy5FactPrime : Fact (Nat.Prime toy5.q) := ⟨by show Nat.Prime 5; decide⟩
+
+/-- At `q = 5`, the inverse exponent `(2 + 1)⁻¹` is `2`. -/
+theorem sdhInvExponent_toy5 : (2 : ZMod toy5.q) = (2 + 1)⁻¹ := by
+  have h3 : (2 : ZMod toy5.q) * (2 + 1) = 1 := by
+    show (2 : ZMod 5) * (2 + 1) = 1
+    decide
+  exact eq_inv_of_mul_eq_one_left h3
+
+/-- At `q = 5`, `x = 2`, `c = 1`: `exp1 (ofAdd 2)` satisfies the pairing check. -/
+theorem sdhWinner_toy5 : toy5.e (toy5.exp1 (Multiplicative.ofAdd (2 : ZMod toy5.q)))
+    (toy5.exp2 (Multiplicative.ofAdd ((2 : ZMod toy5.q) + 1))) =
+    toy5.e toy5.g1 toy5.g2 :=
+  (BilinearGroupData.sdhCheck_iff toy5 2 1
+    (by show (1 : ZMod 5) ≠ -(2 : ZMod 5); decide) _).mpr
+    (congrArg (fun a : ZMod toy5.q => toy5.exp1 (Multiplicative.ofAdd a))
+      sdhInvExponent_toy5)
+
+/-- At `q = 5`, `x = 2`, `c = 1`: `exp1 (ofAdd 3)` fails the pairing check. -/
+theorem sdhNonWinner_toy5 : toy5.e (toy5.exp1 (Multiplicative.ofAdd (3 : ZMod toy5.q)))
+    (toy5.exp2 (Multiplicative.ofAdd ((2 : ZMod toy5.q) + 1))) ≠
+    toy5.e toy5.g1 toy5.g2 := by
+  intro hcon
+  have h := (BilinearGroupData.sdhCheck_iff toy5 2 1
+    (by show (1 : ZMod 5) ≠ -(2 : ZMod 5); decide) _).mp hcon
+  have hinj := toy5.exp1.injective h
+  have h3 : (3 : ZMod toy5.q) = (2 + 1)⁻¹ := by
+    simpa using congrArg Multiplicative.toAdd hinj
+  have hne : (3 : ZMod toy5.q) ≠ (2 + 1)⁻¹ := by
+    rw [← sdhInvExponent_toy5]
+    show (3 : ZMod 5) ≠ 2
+    decide
+  exact hne h3
+
+#print axioms BilinearGroupData.sdhAdvantage_decoding_eq_one
+
 end Cslib.Crypto.Framework
