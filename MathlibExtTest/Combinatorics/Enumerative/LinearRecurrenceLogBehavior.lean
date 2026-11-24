@@ -65,4 +65,11 @@ example (A : ℕ → ℝ) (h0 : A 0 = 1) (h1 : A 1 = 1)
   rw [div_lt_iff₀ (by positivity)]
   linarith
 
+-- At the first admissible index, the neighboring powered terms are 1, 16, and 3375.
+example :
+    let z (m : ℕ) := ((m : ℝ) * a005773Seq m) ^ m
+    z 1 = 1 ∧ z 2 = 16 ∧ z 3 = 3375 ∧ z 2 ^ 2 ≤ z 1 * z 3 := by
+  refine ⟨?_, ?_, ?_, a005773Recurrence_pow_logConvex a005773Seq rfl rfl a005773Seq_rec 2
+    (by decide)⟩ <;> norm_num [a005773Seq]
+
 end MetaMathlibExt

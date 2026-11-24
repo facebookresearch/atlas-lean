@@ -15,6 +15,7 @@ public import Mathlib.NumberTheory.Bernoulli
 public import Mathlib.RingTheory.Binomial
 public import Mathlib.RingTheory.Polynomial.Pochhammer
 public import MathlibExt.Analysis.Ramanujan.Part1Ch5Entry10bEuleriansymmetry
+public import MathlibExt.Combinatorics.Enumerative.AlzerRichardsEvenBinomialSum
 public import MathlibExt.Combinatorics.Enumerative.AlzerRichardsIdentities
 public import MathlibExt.Combinatorics.Enumerative.FubiniNumber
 public import MathlibExt.Combinatorics.Enumerative.SignedStirlingFirst
@@ -259,28 +260,6 @@ theorem_wanted sum_choose_mul_choose_div_choose_eq_hypergeometric2F1 {m ν : ℕ
         ∑ n ∈ range (m / 2 - ν + 1), (ascPochhammer ℂ n).eval ((ν : ℂ) - m / 2) *
           (ascPochhammer ℂ n).eval ((ν : ℂ) - ((m : ℂ) - 1) / 2) /
             ((ascPochhammer ℂ n).eval ((ν : ℂ) + p + 1) * (n.factorial : ℂ))
-
-/-- **Closed form of the Alzer–Richards binomial sum for even $m$.** Let $m \ge 2$ be an even
-integer and $x$ a complex number, and write $\binom{z}{k} = z(z-1)\cdots(z-k+1)/k!$ for complex
-$z$. Put
-$$
-S(x) = \sum_{k=0}^{m/2} \frac{\binom{m-k}{k} \binom{m+x}{m-k}}{2^{2k} \binom{k-m/2-1/2}{k}}.
-$$
-If $x \ne -m/2$, then $S(x) = \frac{x}{x+m/2} \binom{x+m}{m}$; if $x = -m/2$, then
-$S(x) = \frac{(-1)^{m/2}}{2^m \binom{(m-1)/2}{m/2}}$.
-
-Source: Horst Alzer and Kendall C. Richards, *Extensions of Some Combinatorial Identities and
-Various Related Results*, INTEGERS 25 (2025), Article A61, Corollary 2 (i), Equation (19). -/
-theorem_wanted sum_choose_mul_choose_div_choose_of_even {m : ℕ} (hm : 2 ≤ m) (hme : Even m)
-    (x : ℂ) :
-    (x ≠ -(m : ℂ) / 2 →
-      ∑ k ∈ range (m / 2 + 1), ((m - k).choose k : ℂ) * Ring.choose ((m : ℂ) + x) (m - k) /
-          (2 ^ (2 * k) * Ring.choose ((k : ℂ) - m / 2 - 1 / 2) k) =
-        x / (x + m / 2) * Ring.choose (x + m) m) ∧
-    (x = -(m : ℂ) / 2 →
-      ∑ k ∈ range (m / 2 + 1), ((m - k).choose k : ℂ) * Ring.choose ((m : ℂ) + x) (m - k) /
-          (2 ^ (2 * k) * Ring.choose ((k : ℂ) - m / 2 - 1 / 2) k) =
-        (-1 : ℂ) ^ (m / 2) / (2 ^ m * Ring.choose (((m : ℂ) - 1) / 2) (m / 2)))
 
 /-- **Closed form of the Alzer–Richards binomial sum for odd $m$.** Let $m$ be an odd positive
 integer and $x$ a complex number, and write $\binom{z}{k} = z(z-1)\cdots(z-k+1)/k!$ for complex
