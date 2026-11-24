@@ -10,6 +10,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.Homology.ShortComplex.FunctorEquivalence
+public import Mathlib.Algebra.Homology.ShortComplex.Abelian
 public import Mathlib.Algebra.Homology.ShortComplex.PreservesHomology
 public import Mathlib.CategoryTheory.Abelian.GrothendieckAxioms.Basic
 

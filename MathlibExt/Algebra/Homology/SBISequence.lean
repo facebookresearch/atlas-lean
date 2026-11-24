@@ -360,7 +360,7 @@ theorem Hom.isIso_hcMap_of_isIso_hMap_le
     (cD : D.ConnectiveBoundary) (cD' : D'.ConnectiveBoundary) (n : ℕ) :
     (∀ m : ℕ, m ≤ n → IsIso (F.hMap m)) → IsIso (F.hcMap n) := by
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
       intro h
       rcases n with _ | n
       · let _ : IsIso (F.hMap 0) := h 0 le_rfl
@@ -407,7 +407,7 @@ theorem Hom.isIso_hMap_zero_of_isIso_I
     {D D' : NatSBIDiagram (A := A)} (F : D ⟶ D')
     [IsIso (D.I 0)] [IsIso (D'.I 0)] [IsIso (F.hcMap 0)] :
     IsIso (F.hMap 0) := by
-  letI : IsIso (F.hMap 0 ≫ D'.I 0) := by
+  let : IsIso (F.hMap 0 ≫ D'.I 0) := by
     rw [← F.I_naturality 0]
     infer_instance
   exact IsIso.of_isIso_comp_right (F.hMap 0) (D'.I 0)
@@ -416,8 +416,8 @@ theorem Hom.isIso_hMap_zero_of_isIso_I
 theorem Hom.isIso_hMap_zero {D D' : NatSBIDiagram (A := A)}
     (F : D ⟶ D') (cD : D.ConnectiveBoundary) (cD' : D'.ConnectiveBoundary)
     [IsIso (F.hcMap 0)] : IsIso (F.hMap 0) := by
-  letI : IsIso (D.I 0) := cD.isIso_I_zero
-  letI : IsIso (D'.I 0) := cD'.isIso_I_zero
+  let : IsIso (D.I 0) := cD.isIso_I_zero
+  let : IsIso (D'.I 0) := cD'.isIso_I_zero
   exact F.isIso_hMap_zero_of_isIso_I
 
 end ReverseZero
@@ -487,8 +487,8 @@ theorem Hom.isIso_hMap_one {D D' : NatSBIDiagram (A := A)}
     (cD : D.ConnectiveBoundary) (cD' : D'.ConnectiveBoundary)
     [Epi (F.hcMap 2)] [IsIso (F.hcMap 0)] [IsIso (F.hcMap 1)] :
     IsIso (F.hMap 1) := by
-  letI : Epi (D.I 1) := cD.epi_I_one
-  letI : Epi (D'.I 1) := cD'.epi_I_one
+  let : Epi (D.I 1) := cD.epi_I_one
+  let : Epi (D'.I 1) := cD'.epi_I_one
   exact F.isIso_hMap_one_of_exact (hD.exact_SB 0) (hD'.exact_SB 0)
     (hD.exact_BI 0) (hD'.exact_BI 0)
 
@@ -549,17 +549,17 @@ theorem Hom.isIso_hMap_of_isIso_hcMap_le
     (cD : D.ConnectiveBoundary) (cD' : D'.ConnectiveBoundary) (n : ℕ)
     (h : ∀ m : ℕ, m ≤ n + 1 → IsIso (F.hcMap m)) : IsIso (F.hMap n) := by
   rcases n with _ | n
-  · letI : IsIso (F.hcMap 0) := h 0 (by omega)
+  · let : IsIso (F.hcMap 0) := h 0 (by omega)
     exact F.isIso_hMap_zero cD cD'
   · rcases n with _ | n
-    · letI : IsIso (F.hcMap 0) := h 0 (by omega)
-      letI : IsIso (F.hcMap 1) := h 1 (by omega)
-      letI : IsIso (F.hcMap 2) := h 2 le_rfl
+    · let : IsIso (F.hcMap 0) := h 0 (by omega)
+      let : IsIso (F.hcMap 1) := h 1 (by omega)
+      let : IsIso (F.hcMap 2) := h 2 le_rfl
       exact F.isIso_hMap_one hD hD' cD cD'
-    · letI : IsIso (F.hcMap n) := h n (by omega)
-      letI : IsIso (F.hcMap (n + 1)) := h (n + 1) (by omega)
-      letI : IsIso (F.hcMap (n + 2)) := h (n + 2) (by omega)
-      letI : IsIso (F.hcMap (n + 3)) := h (n + 3) le_rfl
+    · let : IsIso (F.hcMap n) := h n (by omega)
+      let : IsIso (F.hcMap (n + 1)) := h (n + 1) (by omega)
+      let : IsIso (F.hcMap (n + 2)) := h (n + 2) (by omega)
+      let : IsIso (F.hcMap (n + 3)) := h (n + 3) le_rfl
       exact F.isIso_hMap_add_two hD hD' n
 
 /-- Isomorphisms on all actual nonnegative HC maps give isomorphisms on all ordinary maps. -/

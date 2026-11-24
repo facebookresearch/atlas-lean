@@ -66,7 +66,8 @@ theorem isPreservedBy_comp {S : ShortComplex C} (h : S.LeftHomologyData)
 
 end ShortComplex.LeftHomologyData
 
-/-- Composite preservation is inferred from preservation of the short complex and its image, with no global exactness assumption. -/
+/-- Composite preservation follows from preservation of the short complex and its image,
+without a global exactness assumption. -/
 instance (priority := 100) Functor.preservesLeftHomologyOf_comp
     (S : ShortComplex C) (F : C ⥤ D) (G : D ⥤ E)
     [F.PreservesZeroMorphisms] [G.PreservesZeroMorphisms]
@@ -85,7 +86,6 @@ private theorem map_comp_hasHomology (S : ShortComplex C) (F : C ⥤ D) (G : D �
   exact h
 
 -- The two mapped data have the same actual objects G(F(K)) and G(F(H)).
-attribute [local implicit_reducible] LeftHomologyData.map
 
 /-- The native comparison for a composite functor equals the two native
 comparisons in their actual order. The homology assumptions are individual. -/
