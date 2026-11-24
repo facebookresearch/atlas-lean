@@ -52,7 +52,8 @@ variable [HasPushouts C] [HasCoproducts.{w} C]
 coordinate chain. Both supplied cofan isomorphisms and the actual attachment
 square are retained, and the endpoint arrow is literally the original f. -/
 def attachmentCoordinateChain :
-    (isomorphisms C ⊔ I.pushouts).TransfiniteCompositionOfShape (CoproductCells.cellOrder c.ι) f := by
+    (isomorphisms C ⊔ I.pushouts).TransfiniteCompositionOfShape (CoproductCells.cellOrder c.ι) f :=
+      by
   let A' : c.ι → C := fun i => A (c.π i)
   let B' : c.ι → C := fun i => B (c.π i)
   let g' : ∀ i : c.ι, A' i ⟶ B' i := fun i => g (c.π i)

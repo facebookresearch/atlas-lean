@@ -10,7 +10,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.CategoryTheory.Presentable.CompactDiagramRoot
-public import MathlibExt.CategoryTheory.SmallObject.GoodCellTree.CompactRetract.CompactPushoutPresentability
+public import MathlibExt.CategoryTheory.SmallObject.GoodCellTree.RelativePresentability
 public import MathlibExt.CategoryTheory.SmallObject.GoodCellTree.DiagramActionConstraintBounds
 
 /-!
@@ -104,11 +104,7 @@ private noncomputable abbrev evaluatedApproximation
   let : Small.{w} (Arrow D) := hD.small
   let : Small.{w} D := small_of_small_arrow D
   let : LocallySmall.{w} D := locallySmall_of_small_arrow D
-  let size : Functor.SmallIndexData.{w} D C :=
-    { smallIndex := inferInstance
-      locallySmallIndex := inferInstance
-      locallySmallCoefficient := inferInstance }
-  let idx := size.toEssential
+  let idx := equivSmallModel.{w} D
   let ev := (evaluation D C).obj d
   refine
     { index := A.index
@@ -615,12 +611,9 @@ private theorem wholeDiagramPresentable
   let : Small.{w} D := small_of_small_arrow D
   let : LocallySmall.{w} D := locallySmall_of_small_arrow D
   let : Small.{w} (ShrinkHoms D) := inferInstanceAs (Small.{w} D)
-  let idx : Functor.EssentialIndexData.{w} D C :=
-    { index := Shrink.{w} (ShrinkHoms D)
-      indexCategory := inferInstance
-      equivalence := (ShrinkHoms.equivalence D).trans (Shrink.equivalence (ShrinkHoms D))
-      locallySmallCoefficient := inferInstance }
-  have hb : HasCardinalLT (Arrow idx.index) chi :=
+  let idx : D ≌ Shrink.{w} (ShrinkHoms D) :=
+    (ShrinkHoms.equivalence D).trans (Shrink.equivalence (ShrinkHoms D))
+  have hb : HasCardinalLT (Arrow (Shrink.{w} (ShrinkHoms D))) chi :=
     (hasCardinalLT_arrow_shrink_iff (ShrinkHoms D) chi).2
       ((hasCardinalLT_arrow_shrinkHoms_iff D chi).2 hD)
   exact FunctorPresentability.diagram_presentable C chi idx chi hb F hF
@@ -672,7 +665,8 @@ private theorem compactTargetOverRoot
     let : IsCardinalPresentable (B d) chi := hB d
     let : IsCardinalPresentable (T.obj d) chi :=
       (evaluatedApproximation chi hD F A d).presentable k.right
-    exact SmallObject.CompactPushoutPresentability.presentable (g d) (t.app d) chi
+    exact SmallObject.RelativeCellPresentability.ofPushout chi
+      (IsPushout.of_hasPushout (g d) (t.app d))
   have hWhole : IsCardinalPresentable G0 chi := wholeDiagramPresentable chi hD G0 hValue
   have hOriginal (d : D) :
       IsPushout (u.app d) (f0.app d) (f.app d) (v.app d) := by
@@ -712,12 +706,8 @@ theorem existsCompactDiagramCellTarget
   let : Small.{w} (Arrow D) := hD.small
   let : Small.{w} D := small_of_small_arrow D
   let : LocallySmall.{w} D := locallySmall_of_small_arrow D
-  let size : Functor.SmallIndexData.{w} D C :=
-    { smallIndex := inferInstance
-      locallySmallIndex := inferInstance
-      locallySmallCoefficient := inferInstance }
   let : IsCardinalLocallyPresentable (D ⥤ C) chi :=
-    HomPowerAccessibility.diagramLocallyPresentable C chi size.toEssential
+    HomPowerAccessibility.diagramLocallyPresentable C chi (equivSmallModel.{w} D)
   let A := compactApproximation chi F
   let : IsCardinalPresentable Froot chi := hFroot
   obtain ⟨i, e, he⟩ :=
@@ -743,7 +733,8 @@ theorem existsCompactDiagramCellTarget
     let : IsCardinalPresentable (Y d) chi := hY d
     let : IsCardinalPresentable ((A.presentation.diag.obj i).obj d) chi :=
       (evaluatedApproximation chi hD F A d).presentable i
-    exact SmallObject.CompactPushoutPresentability.presentable (g d) (x0 d) chi
+    exact SmallObject.RelativeCellPresentability.ofPushout chi
+      (IsPushout.of_hasPushout (g d) (x0 d))
   have hStage (d : D) : IsPushout (gStage d) (ui.app d) (q d) (f.app d) := by
     have hout : IsPushout (g d) (x0 d ≫ ui.app d)
         (pushout.inl (g d) (x0 d) ≫ q d) (f.app d) := by

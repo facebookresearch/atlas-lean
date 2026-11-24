@@ -44,10 +44,9 @@ def I (_ : PUnit.{1}) : Arrow (Type) := Arrow.mk fold
 def J (_ : PUnit.{1}) : Arrow (Type) := Arrow.mk (↾fun _ : PUnit.{1} => (0 : Fin 2))
 
 /-- The actual nonthin original index has its genuine original size dictionaries. -/
-theorem nonthinIndex : Functor.SmallIndexData.{0} WalkingParallelPair (Type) where
-  smallIndex := inferInstance
-  locallySmallIndex := inferInstance
-  locallySmallCoefficient := inferInstance
+local instance nonthinIndex : Small.{0} WalkingParallelPair := inferInstance
+
+local instance nonthinIndexLocallySmall : LocallySmall.{0} WalkingParallelPair := inferInstance
 
 local instance baseRegular : Fact (originalBaseRank (C := Type)).IsRegular :=
   originalBaseRank_regular (C := Type)
@@ -56,8 +55,8 @@ local instance baseLP : IsCardinalLocallyPresentable (Type) (originalBaseRank (C
   originalBaseRank_locallyPresentable (C := Type)
 
 /-- Every actual bound is selected internally for the original nonthin index and both families. -/
-def profile : Profile (originalBaseRank (C := Type)) nonthinIndex I J PUnit.{1} 0 :=
-  scaleFromLocallyPresentable nonthinIndex I J PUnit.{1} 0
+def profile : Profile (originalBaseRank (C := Type)) (D := WalkingParallelPair) I J PUnit.{1} 0 :=
+  scaleFromLocallyPresentable (D := WalkingParallelPair) I J PUnit.{1} 0
 
 local instance profileRegular : Fact profile.chi.IsRegular := profile.regular
 
@@ -117,8 +116,10 @@ theorem originalArrow_nonmono : ¬ Mono originalArrow := by
   norm_num at hSource
 
 /-- The actual constructor chooses its rank and constructs every original compact-root value. -/
-def result : SelectedCompactRoot (originalBaseRank (C := Type)) nonthinIndex I J originalTree 0 :=
-  compactRootFromLocallyPresentable nonthinIndex I J originalTree 0
+def result :
+    SelectedCompactRoot (originalBaseRank (C := Type)) (D := WalkingParallelPair)
+      I J originalTree 0 :=
+  compactRootFromLocallyPresentable (D := WalkingParallelPair) I J originalTree 0
 
 local instance resultRegular : Fact result.profile.chi.IsRegular := result.profile.regular
 
@@ -267,8 +268,9 @@ theorem result_endpoint_pushout :
   result.presentation.endpoint_isPushout
 
 /-- The empty-tree profile is selected independently of its own arbitrary original root. -/
-def emptyProfile : Profile (originalBaseRank (C := Type)) nonthinIndex I J PEmpty.{1} 0 :=
-  scaleFromLocallyPresentable nonthinIndex I J PEmpty.{1} 0
+def emptyProfile :
+    Profile (originalBaseRank (C := Type)) (D := WalkingParallelPair) I J PEmpty.{1} 0 :=
+  scaleFromLocallyPresentable (D := WalkingParallelPair) I J PEmpty.{1} 0
 
 local instance emptyRegular : Fact emptyProfile.chi.IsRegular := emptyProfile.regular
 
@@ -294,10 +296,11 @@ theorem emptyEndpoint_noncompact :
 
 /-- The full constructor handles the actual empty original carrier and nonpresentable root. -/
 def emptyResult :
-    SelectedCompactRoot (originalBaseRank (C := Type)) nonthinIndex I J emptyTree 0 :=
-  compactRootFromLocallyPresentable nonthinIndex I J emptyTree 0
+    SelectedCompactRoot (originalBaseRank (C := Type)) (D := WalkingParallelPair) I J emptyTree 0 :=
+  compactRootFromLocallyPresentable (D := WalkingParallelPair) I J emptyTree 0
 
-local instance emptyResultRegular : Fact emptyResult.profile.chi.IsRegular := emptyResult.profile.regular
+local instance emptyResultRegular : Fact emptyResult.profile.chi.IsRegular :=
+  emptyResult.profile.regular
 
 /-- Empty-tree cardinal selection retains the same independently constructed original profile. -/
 theorem emptyResult_profile : emptyResult.profile = emptyProfile := rfl
@@ -318,14 +321,13 @@ theorem emptyAdjoined_star : emptyAdjoined.cocone.ι.app WithInitial.star =
   UnderColimits.adjoined_star emptyResult.presentation.tree.endpoint.cocone
 
 /-- The infinite original index retains its actual object, Hom and coefficient size proofs. -/
-theorem infiniteIndex : Functor.SmallIndexData.{0} (Discrete ℕ) (Type) where
-  smallIndex := inferInstance
-  locallySmallIndex := inferInstance
-  locallySmallCoefficient := inferInstance
+local instance infiniteIndex : Small.{0} (Discrete ℕ) := inferInstance
+
+local instance infiniteIndexLocallySmall : LocallySmall.{0} (Discrete ℕ) := inferInstance
 
 /-- The actual infinite original index and total infinite cell carrier share the produced rank. -/
-def infiniteProfile : Profile (originalBaseRank (C := Type)) infiniteIndex I J ℕ 0 :=
-  scaleFromLocallyPresentable infiniteIndex I J ℕ 0
+def infiniteProfile : Profile (originalBaseRank (C := Type)) (D := Discrete ℕ) I J ℕ 0 :=
+  scaleFromLocallyPresentable (D := Discrete ℕ) I J ℕ 0
 
 /-- Every actual original natural-number cell belongs to the same total-carrier bound. -/
 theorem infinite_cell_bound : HasCardinalLT ℕ infiniteProfile.chi := infiniteProfile.cell_bound
@@ -334,7 +336,8 @@ theorem infinite_cell_bound : HasCardinalLT ℕ infiniteProfile.chi := infiniteP
 theorem infinite_arrow_bound : HasCardinalLT (Arrow (Discrete ℕ)) infiniteProfile.chi :=
   infiniteProfile.arrow_bound
 
-/-- Every actual lower subset of the infinite original cell carrier retains its full object bound. -/
+/-- Every actual lower subset of the infinite original cell carrier retains its full object bound.
+-/
 theorem infinite_lower_object_bound (B : LowerSet ℕ) : HasCardinalLT B infiniteProfile.chi :=
   infiniteProfile.lower_object_bound B
 

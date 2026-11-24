@@ -25,9 +25,11 @@ open CategoryTheory Limits TypeCat MorphismProperty
 namespace MathlibExtTest.DiagramTaggedLiftingTest
 
 private theorem point_component_iff (p : Arrow (Type w)) :
-    (MorphismProperty.ofHoms (fun k => (TaggedLiftingTest.pointFamily.{w, w + 1} k).hom)).rlp p.hom ↔
+    (MorphismProperty.ofHoms (fun k => (TaggedLiftingTest.pointFamily.{w,
+        w + 1} k).hom)).rlp p.hom ↔
       Function.Surjective p.hom :=
-  (LiftingTest.smallFunctor_surjective_iff.{w} TaggedLiftingTest.pointFamily.{w, w + 1} p).symm.trans
+  (LiftingTest.smallFunctor_surjective_iff.{w} TaggedLiftingTest.pointFamily.{w,
+      w + 1} p).symm.trans
     (TaggedLiftingTest.point_small_surjective_iff p)
 
 private theorem fold_component_iff (p : Arrow (Type w)) :
@@ -62,7 +64,8 @@ private theorem empty_index_test
     {C : Type u} [Category.{v} C] {ι : Type s} [Small.{w} ι] [LocallySmall.{w} C]
     (f : ι → Arrow C) (p : Arrow (Discrete PEmpty ⥤ C)) :
     Function.Surjective
-      ((LiftingTest.diagramFunctor.{w} (CategoryTheory.Equivalence.refl (C := Discrete PEmpty)) f).obj p).hom := by
+      ((LiftingTest.diagramFunctor.{w} (CategoryTheory.Equivalence.refl (C :=
+        Discrete PEmpty)) f).obj p).hom := by
   rw [LiftingTest.diagramFunctor_surjective_iff.{w}]
   intro d
   cases d.as
@@ -223,9 +226,11 @@ private theorem normalized_representative_source_tags_distinct
       TaggedLiftingTest.pointFamily.{w, w + 1} ⟨false⟩).obj p).left)
     (b : ((LiftingTest.componentFunctor.{w} (CategoryTheory.Equivalence.refl (C := Discrete Bool))
       TaggedLiftingTest.pointFamily.{w, w + 1} ⟨true⟩).obj p).left) :
-    equivShrink ((LiftingTest.diagramCollection.{w} (CategoryTheory.Equivalence.refl (C := Discrete Bool))
+    equivShrink ((LiftingTest.diagramCollection.{w} (CategoryTheory.Equivalence.refl (C :=
+      Discrete Bool))
       TaggedLiftingTest.pointFamily.{w, w + 1}).obj p).left ⟨⟨false⟩, a⟩ ≠
-    equivShrink ((LiftingTest.diagramCollection.{w} (CategoryTheory.Equivalence.refl (C := Discrete Bool))
+    equivShrink ((LiftingTest.diagramCollection.{w} (CategoryTheory.Equivalence.refl (C :=
+      Discrete Bool))
       TaggedLiftingTest.pointFamily.{w, w + 1}).obj p).left ⟨⟨true⟩, b⟩ := by
   intro h
   exact original_representative_source_tags_distinct p a b
@@ -236,9 +241,11 @@ private theorem normalized_representative_target_tags_distinct
       TaggedLiftingTest.pointFamily.{w, w + 1} ⟨false⟩).obj p).right)
     (b : ((LiftingTest.componentFunctor.{w} (CategoryTheory.Equivalence.refl (C := Discrete Bool))
       TaggedLiftingTest.pointFamily.{w, w + 1} ⟨true⟩).obj p).right) :
-    equivShrink ((LiftingTest.diagramCollection.{w} (CategoryTheory.Equivalence.refl (C := Discrete Bool))
+    equivShrink ((LiftingTest.diagramCollection.{w} (CategoryTheory.Equivalence.refl (C :=
+      Discrete Bool))
       TaggedLiftingTest.pointFamily.{w, w + 1}).obj p).right ⟨⟨false⟩, a⟩ ≠
-    equivShrink ((LiftingTest.diagramCollection.{w} (CategoryTheory.Equivalence.refl (C := Discrete Bool))
+    equivShrink ((LiftingTest.diagramCollection.{w} (CategoryTheory.Equivalence.refl (C :=
+      Discrete Bool))
       TaggedLiftingTest.pointFamily.{w, w + 1}).obj p).right ⟨⟨true⟩, b⟩ := by
   intro h
   exact original_representative_target_tags_distinct p a b

@@ -30,7 +30,7 @@ variable {Γ : Type w} [DecidableEq Γ]
 
 /-- Apply the original action to the finite union of the supplied indices. -/
 def actionConstraint (a : Γ → Γ) (_ : PUnit.{1}) (xs : List (Finset Γ)) : Finset Γ :=
-  (xs.foldr (· ∪ ·) ∅).image a
+  (xs.foldr (fun s t : Finset Γ => s ∪ t) ∅).image a
 
 /-- The entire carrier can be large; only the produced compatible index family is bounded. -/
 example (κ : Cardinal.{w}) [Fact κ.IsRegular]

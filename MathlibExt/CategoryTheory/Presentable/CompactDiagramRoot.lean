@@ -53,11 +53,7 @@ theorem existsCompactDiagramRoot
   let : Small.{w} (Arrow D) := hD.small
   let : Small.{w} D := small_of_small_arrow D
   let : LocallySmall.{w} D := locallySmall_of_small_arrow D
-  let size : Functor.SmallIndexData.{w} D C :=
-    { smallIndex := inferInstance
-      locallySmallIndex := inferInstance
-      locallySmallCoefficient := inferInstance }
-  let index := size.toEssential
+  let index := equivSmallModel.{w} D
   let : IsCardinalLocallyPresentable (D ⥤ C) χ :=
     HomPowerAccessibility.diagramLocallyPresentable C χ index
   let A := compactApproximation χ F

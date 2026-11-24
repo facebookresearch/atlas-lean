@@ -199,7 +199,8 @@ private theorem duplicate_small_lift_tags_distinct (p : Arrow (Type w))
     LiftingTest.liftsEquiv.{w} duplicateFamily p ⟨false, l⟩ ≠
       LiftingTest.liftsEquiv.{w} duplicateFamily p ⟨true, l⟩ := by
   intro h
-  exact duplicate_lift_tags_distinct p l ((LiftingTest.liftsEquiv.{w} duplicateFamily p).injective h)
+  exact duplicate_lift_tags_distinct p l
+      ((LiftingTest.liftsEquiv.{w} duplicateFamily p).injective h)
 
 private theorem duplicate_small_square_tags_distinct (p : Arrow (Type w))
     (l : PUnit.{w + 1} ⟶ p.left) :

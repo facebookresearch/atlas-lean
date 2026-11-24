@@ -42,9 +42,11 @@ def overFactorizationData {X Y : Over S} (f : X ⟶ Y)
   hi := r.hi
   hp := r.hp
 
-/-- The actual original weak factorization system induces its native inverse-image classes in every slice. -/
+/-- The actual original weak factorization system induces its native inverse-image classes in every
+slice. -/
 theorem IsWeakFactorizationSystem.over [IsWeakFactorizationSystem W₁ W₂] :
-    IsWeakFactorizationSystem (W₁.inverseImage (Over.forget S)) (W₂.inverseImage (Over.forget S)) := by
+    IsWeakFactorizationSystem (W₁.inverseImage (Over.forget S)) (W₂.inverseImage (Over.forget S)) :=
+      by
   let _ : W₁.IsStableUnderRetracts := by
     rw [← llp_eq_of_wfs W₁ W₂]
     infer_instance
@@ -55,7 +57,8 @@ theorem IsWeakFactorizationSystem.over [IsWeakFactorizationSystem W₁ W₂] :
     ⟨fun f => ⟨overFactorizationData W₁ W₂ S f (factorizationData W₁ W₂ f.left)⟩⟩
   apply IsWeakFactorizationSystem.mk' _ _
   intro A D X Y i p hi hp
-  let _ : HasLiftingProperty i.left p.left := hasLiftingProperty_of_wfs (W₁ := W₁) (W₂ := W₂) i.left p.left hi hp
+  let _ : HasLiftingProperty i.left p.left := hasLiftingProperty_of_wfs (W₁ := W₁) (W₂ :=
+    W₂) i.left p.left hi hp
   exact HasLiftingProperty.over i p
 
 end CategoryTheory.MorphismProperty

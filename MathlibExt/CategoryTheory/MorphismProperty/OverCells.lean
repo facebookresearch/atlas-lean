@@ -60,7 +60,8 @@ theorem overCells_le_monomorphisms (hm : ∀ s : I, Mono (i s).hom) :
   let _ : Mono (overCell i S s).left := hm s.1
   exact Over.mono_of_mono_left _
 
-/-- Lifting all actual base-indexed cells is exactly the original underlying indexed right lifting condition. -/
+/-- Lifting all actual base-indexed cells is exactly the original underlying indexed right lifting
+condition. -/
 theorem overCells_rlp_iff {U V : Over S} (p : U ⟶ V) :
     (overCells i S).rlp p ↔ (ofHoms (fun s : I => (i s).hom)).rlp p.left := by
   constructor

@@ -75,7 +75,7 @@ section OriginalScale
 
 variable (baseRank : Cardinal.{w}) [Fact baseRank.IsRegular]
   [IsCardinalLocallyPresentable C baseRank]
-  (s : Functor.SmallIndexData.{w} D C)
+  [Small.{w} D] [LocallySmall.{w} D]
   (I : iota → Arrow C) (J : jota → Arrow C)
   (P : Type uP) (lowerRank : Cardinal.{w})
 
@@ -100,7 +100,7 @@ structure Profile where
   /-- The actual entire original Arrow carrier is bounded. -/
   arrow_bound : HasCardinalLT (Arrow D) chi
   /-- The actual internally chosen small-model Arrow carrier is also bounded. -/
-  representative_arrow_bound : HasCardinalLT (Arrow s.toEssential.index) chi
+  representative_arrow_bound : HasCardinalLT (Arrow (SmallModel.{w} D)) chi
   /-- Every original generator label, including unused original labels, remains bounded. -/
   generator_label_bound : HasCardinalLT (iota ⊕ jota) chi
   /-- The actual total original cell carrier is bounded. -/
@@ -114,11 +114,11 @@ structure Profile where
   /-- The actual cofree functors are returned on all original labels. -/
   cofree : D → C ⥤ D ⥤ C
   /-- The entire cofree function equals the original native function at baseRank. -/
-  cofree_original : cofree = Completeness.cofree C baseRank s.toEssential
+  cofree_original : cofree = Completeness.cofree C baseRank (equivSmallModel.{w} D)
   /-- The actual Hom-power functors are returned on all pairs of original labels. -/
   power : D → D → C ⥤ C
   /-- The entire power function equals the original native function at baseRank. -/
-  power_original : power = Completeness.homPower C baseRank s.toEssential
+  power_original : power = Completeness.homPower C baseRank (equivSmallModel.{w} D)
   /-- Every same original cofree value preserves the required filtered colimits. -/
   cofree_accessible (d : D) : (cofree d).IsCardinalAccessible chi
   /-- Every same original Hom-power value preserves the required filtered colimits. -/
@@ -126,7 +126,7 @@ structure Profile where
 
 /-- Select every original diagram, endpoint and total-cell bound at one regular cardinal. -/
 theorem exists_profile [Small.{w} iota] [Small.{w} jota] [Small.{w} P] :
-    Nonempty (Profile baseRank s I J P lowerRank) := by
+    Nonempty (Profile baseRank (D := D) I J P lowerRank) := by
   let : IsAccessibleCategory.{w} C := ⟨baseRank, inferInstance, inferInstance⟩
   let Q : ObjectProperty C := ObjectProperty.ofObj (generatorEndpoint I J)
   let : ObjectProperty.Small.{w} Q := inferInstance
@@ -135,12 +135,11 @@ theorem exists_profile [Small.{w} iota] [Small.{w} jota] [Small.{w} P] :
     ObjectProperty.le_isCardinalPresentable Q
   let : Fact endpointRank.IsRegular := hEndpointRegular
   obtain ⟨powerRank, hPowerRegular, hBase, hRepresentative, hCoefficient, hDiagram,
-      _, hCofree, hPower⟩ := HomPowerAccessibility.bounded_common_rank C baseRank s.toEssential
+      _, hCofree, hPower⟩ :=
+    HomPowerAccessibility.bounded_common_rank C baseRank (equivSmallModel.{w} D)
   let : Fact powerRank.IsRegular := hPowerRegular
   obtain ⟨carrierRank, _, hCarrier⟩ :=
     HasCardinalLT.exists_regular_cardinal.{w} ((iota ⊕ jota) ⊕ P)
-  let : Small.{w} D := s.smallIndex
-  let : LocallySmall.{w} D := s.locallySmallIndex
   obtain ⟨chi, hRegular, hUncountable, hRanks, hArrow, hObjects, hHoms⟩ :=
     Functor.OriginalArrowBounds.existsRegularBoundAbove (D := D)
       (max powerRank (max endpointRank (max carrierRank lowerRank)))
@@ -172,14 +171,14 @@ theorem exists_profile [Small.{w} iota] [Small.{w} jota] [Small.{w} P] :
       hEndpoints _ (ObjectProperty.ofObj_apply (generatorEndpoint I J) (k, true))
     exact isCardinalPresentable_of_le (generatorEndpoint I J (k, true)) hEndpointLe
   have hCofreeChi (d : D) :
-      (Completeness.cofree C baseRank s.toEssential d).IsCardinalAccessible chi := by
-    let : (Completeness.cofree C baseRank s.toEssential d).IsCardinalAccessible powerRank :=
-      hCofree d
+      (Completeness.cofree C baseRank (equivSmallModel.{w} D) d).IsCardinalAccessible chi := by
+    let : (Completeness.cofree C baseRank (equivSmallModel.{w} D) d).IsCardinalAccessible
+        powerRank := hCofree d
     exact Functor.isCardinalAccessible_of_le _ hPowerLe
   have hPowerChi (d e : D) :
-      (Completeness.homPower C baseRank s.toEssential d e).IsCardinalAccessible chi := by
-    let : (Completeness.homPower C baseRank s.toEssential d e).IsCardinalAccessible powerRank :=
-      hPower d e
+      (Completeness.homPower C baseRank (equivSmallModel.{w} D) d e).IsCardinalAccessible chi := by
+    let : (Completeness.homPower C baseRank (equivSmallModel.{w} D) d e).IsCardinalAccessible
+        powerRank := hPower d e
     exact Functor.isCardinalAccessible_of_le _ hPowerLe
   exact ⟨{
     chi := chi
@@ -197,21 +196,21 @@ theorem exists_profile [Small.{w} iota] [Small.{w} jota] [Small.{w} P] :
     source_presentable := hSource
     target_presentable := hTarget
     hom_bound := hHoms
-    cofree := Completeness.cofree C baseRank s.toEssential
+    cofree := Completeness.cofree C baseRank (equivSmallModel.{w} D)
     cofree_original := rfl
-    power := Completeness.homPower C baseRank s.toEssential
+    power := Completeness.homPower C baseRank (equivSmallModel.{w} D)
     power_original := rfl
     cofree_accessible := hCofreeChi
     power_accessible := hPowerChi }⟩
 
 /-- The entire original scale is chosen from the proved existence theorem internally. -/
 def chosenProfile [Small.{w} iota] [Small.{w} jota] [Small.{w} P] :
-    Profile baseRank s I J P lowerRank :=
-  Classical.choice (exists_profile baseRank s I J P lowerRank)
+    Profile baseRank (D := D) I J P lowerRank :=
+  Classical.choice (exists_profile baseRank (D := D) I J P lowerRank)
 
 namespace Profile
 
-variable {baseRank s I J P lowerRank} (p : Profile baseRank s I J P lowerRank)
+variable {baseRank I J P lowerRank} (p : Profile baseRank (D := D) I J P lowerRank)
 
 /-- The selected rank really gives accessibility of the original coefficient category. -/
 theorem base_accessible : letI := p.regular; IsCardinalAccessibleCategory C p.chi := by
@@ -230,7 +229,7 @@ theorem presentable_iff_components (F : D ⥤ C) :
     letI := p.regular
     IsCardinalPresentable F p.chi ↔ ∀ d : D, IsCardinalPresentable (F.obj d) p.chi := by
   let : Fact p.chi.IsRegular := p.regular
-  exact FunctorPresentability.presentable_iff_components C baseRank s.toEssential p.chi
+  exact FunctorPresentability.presentable_iff_components C baseRank (equivSmallModel.{w} D) p.chi
     p.base_le p.representative_arrow_bound F
 
 /-- Every actual incoming object, incoming pair and native two-arrow carrier is bounded. -/
@@ -252,23 +251,25 @@ theorem relative_diagram_presentable (F : D ⥤ C) (U : Under F)
   exact UnderFunctorPresentability.relative_diagram_presentable F p.chi p.arrow_bound U hU
 
 /-- The actual full power comparison comes from equality of the entire original functors. -/
-def powerComparison (d e : D) : p.power d e ≅ Completeness.homPower C baseRank s.toEssential d e :=
+def powerComparison (d e : D) :
+    p.power d e ≅ Completeness.homPower C baseRank (equivSmallModel.{w} D) d e :=
   eqToIso (congrFun (congrFun p.power_original d) e)
 
 /-- The actual full cofree comparison comes from equality of the entire original functors. -/
-def cofreeComparison (d : D) : p.cofree d ≅ Completeness.cofree C baseRank s.toEssential d :=
+def cofreeComparison (d : D) :
+    p.cofree d ≅ Completeness.cofree C baseRank (equivSmallModel.{w} D) d :=
   eqToIso (congrFun p.cofree_original d)
 
 /-- Every native whole power map retains its original typed coefficient-map equation. -/
 theorem power_map (d e : D) {X Y : C} (f : X ⟶ Y) :
     (p.power d e).map f ≫ (p.powerComparison d e).hom.app Y =
       (p.powerComparison d e).hom.app X ≫
-        (Completeness.homPower C baseRank s.toEssential d e).map f :=
+        (Completeness.homPower C baseRank (equivSmallModel.{w} D) d e).map f :=
   (p.powerComparison d e).hom.naturality f
 
 /-- The inverse whole power comparison retains the same original coefficient-map function. -/
 theorem power_map_inv (d e : D) {X Y : C} (f : X ⟶ Y) :
-    (Completeness.homPower C baseRank s.toEssential d e).map f ≫
+    (Completeness.homPower C baseRank (equivSmallModel.{w} D) d e).map f ≫
         (p.powerComparison d e).inv.app Y =
       (p.powerComparison d e).inv.app X ≫ (p.power d e).map f :=
   (p.powerComparison d e).inv.naturality f
@@ -277,19 +278,19 @@ theorem power_map_inv (d e : D) {X Y : C} (f : X ⟶ Y) :
 theorem power_map_transport (d e : D) {X Y : C} (f : X ⟶ Y) :
     (p.powerComparison d e).inv.app X ≫ (p.power d e).map f ≫
         (p.powerComparison d e).hom.app Y =
-      (Completeness.homPower C baseRank s.toEssential d e).map f := by
+      (Completeness.homPower C baseRank (equivSmallModel.{w} D) d e).map f := by
   rw [p.power_map, ← Category.assoc, Iso.inv_hom_id_app, Category.id_comp]
 
 /-- Every original cofree action keeps the whole original typed index-action map. -/
 theorem cofree_action (d : D) {e e' : D} (a : e ⟶ e') (X : C) :
     ((p.cofree d).obj X).map a ≫ ((p.cofreeComparison d).hom.app X).app e' =
       ((p.cofreeComparison d).hom.app X).app e ≫
-        ((Completeness.cofree C baseRank s.toEssential d).obj X).map a :=
+        ((Completeness.cofree C baseRank (equivSmallModel.{w} D) d).obj X).map a :=
   ((p.cofreeComparison d).hom.app X).naturality a
 
 /-- The inverse cofree comparison retains every whole original index-action map. -/
 theorem cofree_action_inv (d : D) {e e' : D} (a : e ⟶ e') (X : C) :
-    ((Completeness.cofree C baseRank s.toEssential d).obj X).map a ≫
+    ((Completeness.cofree C baseRank (equivSmallModel.{w} D) d).obj X).map a ≫
         ((p.cofreeComparison d).inv.app X).app e' =
       ((p.cofreeComparison d).inv.app X).app e ≫ ((p.cofree d).obj X).map a :=
   ((p.cofreeComparison d).inv.app X).naturality a
@@ -298,12 +299,12 @@ theorem cofree_action_inv (d : D) {e e' : D} (a : e ⟶ e') (X : C) :
 theorem cofree_coefficient (d e : D) {X Y : C} (f : X ⟶ Y) :
     ((p.cofree d).map f).app e ≫ ((p.cofreeComparison d).hom.app Y).app e =
       ((p.cofreeComparison d).hom.app X).app e ≫
-        ((Completeness.cofree C baseRank s.toEssential d).map f).app e :=
+        ((Completeness.cofree C baseRank (equivSmallModel.{w} D) d).map f).app e :=
   NatTrans.congr_app ((p.cofreeComparison d).hom.naturality f) e
 
 /-- The inverse cofree comparison retains the complete original coefficient-map function. -/
 theorem cofree_coefficient_inv (d e : D) {X Y : C} (f : X ⟶ Y) :
-    ((Completeness.cofree C baseRank s.toEssential d).map f).app e ≫
+    ((Completeness.cofree C baseRank (equivSmallModel.{w} D) d).map f).app e ≫
         ((p.cofreeComparison d).inv.app Y).app e =
       ((p.cofreeComparison d).inv.app X).app e ≫ ((p.cofree d).map f).app e :=
   NatTrans.congr_app ((p.cofreeComparison d).inv.naturality f) e
@@ -340,7 +341,7 @@ section SelectedOriginalCompactRoot
 
 variable (baseRank : Cardinal.{w}) [Fact baseRank.IsRegular]
   [IsCardinalLocallyPresentable C baseRank]
-  (s : Functor.SmallIndexData.{w} D C)
+  [Small.{w} D] [LocallySmall.{w} D]
   (I : iota → Arrow C) (J : jota → Arrow C)
   [Small.{w} iota] [Small.{w} jota]
   {P : Type w} [PartialOrder P] {X : C}
@@ -350,14 +351,14 @@ variable (baseRank : Cardinal.{w}) [Fact baseRank.IsRegular]
 /-- The actual entire compact-root result, with its internally selected original scale. -/
 structure SelectedCompactRoot where
   /-- The complete scale is an output, with no incoming desired-cardinal premise. -/
-  profile : Profile baseRank s I J P lowerRank
+  profile : Profile baseRank (D := D) I J P lowerRank
   /-- Every whole original tree, lower UP and function is returned by the genuine supplier. -/
   presentation : letI := profile.regular
     CompactRootBaseChange.CompactRootPresentation profile.chi T
 
 /-- Select the regular cardinal and construct the whole original compact-root tree internally. -/
-def selectedCompactRoot : SelectedCompactRoot baseRank s I J T lowerRank := by
-  let p := chosenProfile baseRank s I J P lowerRank
+def selectedCompactRoot : SelectedCompactRoot baseRank (D := D) I J T lowerRank := by
+  let p := chosenProfile baseRank (D := D) I J P lowerRank
   let : Fact p.chi.IsRegular := p.regular
   let : IsCardinalLocallyPresentable C p.chi := p.base_locallyPresentable
   exact {
@@ -372,11 +373,11 @@ section WholeOriginalValues
 
 variable {baseRank : Cardinal.{w}} [Fact baseRank.IsRegular]
   [IsCardinalLocallyPresentable C baseRank]
-  {s : Functor.SmallIndexData.{w} D C}
+  [Small.{w} D] [LocallySmall.{w} D]
   {I : iota → Arrow C} {J : jota → Arrow C}
   {P : Type w} [PartialOrder P] {X : C} [HasPushouts C]
   {T : CellTree (combinedFamily I J) X (P := P)} {lowerRank : Cardinal.{w}}
-  (R : SelectedCompactRoot baseRank s I J T lowerRank)
+  (R : SelectedCompactRoot baseRank (D := D) I J T lowerRank)
 
 namespace SelectedCompactRoot
 
@@ -536,32 +537,32 @@ theorem original_hasPushouts : HasPushouts C := by
   infer_instance
 
 /-- Choose the entire original bounded profile without a supplied cardinal or accessibility rank. -/
-def scaleFromLocallyPresentable (s : Functor.SmallIndexData.{w} D C)
+def scaleFromLocallyPresentable [Small.{w} D] [LocallySmall.{w} D]
     (I : iota → Arrow C) (J : jota → Arrow C)
     [Small.{w} iota] [Small.{w} jota] (P : Type uP) [Small.{w} P]
     (lowerRank : Cardinal.{w}) :
     letI := originalBaseRank_regular (C := C)
     letI := originalBaseRank_locallyPresentable (C := C)
-    Profile (originalBaseRank (C := C)) s I J P lowerRank := by
+    Profile (originalBaseRank (C := C)) (D := D) I J P lowerRank := by
   let : Fact (originalBaseRank (C := C)).IsRegular := originalBaseRank_regular (C := C)
   let : IsCardinalLocallyPresentable C (originalBaseRank (C := C)) :=
     originalBaseRank_locallyPresentable (C := C)
-  exact chosenProfile (originalBaseRank (C := C)) s I J P lowerRank
+  exact chosenProfile (originalBaseRank (C := C)) (D := D) I J P lowerRank
 
 /-- Actual LP, original small labels and the original tree produce its whole compact-root result. -/
-def compactRootFromLocallyPresentable (s : Functor.SmallIndexData.{w} D C)
+def compactRootFromLocallyPresentable [Small.{w} D] [LocallySmall.{w} D]
     (I : iota → Arrow C) (J : jota → Arrow C)
     [Small.{w} iota] [Small.{w} jota] {P : Type w} [PartialOrder P] {X : C}
     (T : CellTree (combinedFamily I J) X (P := P)) (lowerRank : Cardinal.{w}) :
     letI := original_hasPushouts (C := C)
     letI := originalBaseRank_regular (C := C)
     letI := originalBaseRank_locallyPresentable (C := C)
-    SelectedCompactRoot (originalBaseRank (C := C)) s I J T lowerRank := by
+    SelectedCompactRoot (originalBaseRank (C := C)) (D := D) I J T lowerRank := by
   let : HasPushouts C := original_hasPushouts (C := C)
   let : Fact (originalBaseRank (C := C)).IsRegular := originalBaseRank_regular (C := C)
   let : IsCardinalLocallyPresentable C (originalBaseRank (C := C)) :=
     originalBaseRank_locallyPresentable (C := C)
-  exact selectedCompactRoot (originalBaseRank (C := C)) s I J T lowerRank
+  exact selectedCompactRoot (originalBaseRank (C := C)) (D := D) I J T lowerRank
 
 end ExistentialOriginalBase
 
@@ -570,7 +571,7 @@ section OriginalMorphismFamilies
 open MorphismProperty
 
 variable [IsLocallyPresentable.{w} C]
-  (s : Functor.SmallIndexData.{w} D C) (I J : MorphismProperty C)
+  [Small.{w} D] [LocallySmall.{w} D] (I J : MorphismProperty C)
   [I.IsSmall.{w}] [J.IsSmall.{w}]
   (P : Type uP) [Small.{w} P] (lowerRank : Cardinal.{w})
 
@@ -578,9 +579,9 @@ variable [IsLocallyPresentable.{w} C]
 def scaleForMorphismProperties :
     letI := originalBaseRank_regular (C := C)
     letI := originalBaseRank_locallyPresentable (C := C)
-    Profile (originalBaseRank (C := C)) s
+    Profile (originalBaseRank (C := C)) (D := D)
       (fun i : I.toSet => i.1) (fun j : J.toSet => j.1) P lowerRank :=
-  scaleFromLocallyPresentable s (fun i : I.toSet => i.1) (fun j : J.toSet => j.1) P lowerRank
+  scaleFromLocallyPresentable (D := D) (fun i : I.toSet => i.1) (fun j : J.toSet => j.1) P lowerRank
 
 /-- The same produced cardinal has an actual native ordinal bottom. -/
 @[instance_reducible]
@@ -616,7 +617,7 @@ structure OriginalSmallObjectScale where
   /-- Its actual original local-presentability dictionary belongs to the same witness. -/
   [baseLocallyPresentable : IsCardinalLocallyPresentable C (originalBaseRank (C := C))]
   /-- The profile is produced internally from actual base/index/generator data. -/
-  profile : Profile (originalBaseRank (C := C)) s
+  profile : Profile (originalBaseRank (C := C)) (D := D)
       (fun i : I.toSet => i.1) (fun j : J.toSet => j.1) P lowerRank
   /-- The actual ordinal bottom belongs to the selected cardinal. -/
   bottom : OrderBot profile.chi.ord.ToType
@@ -630,11 +631,11 @@ structure OriginalSmallObjectScale where
     J.IsCardinalForSmallObjectArgument profile.chi
 
 /-- Choose both endpoint families and construct the whole original common SOA profile. -/
-def originalSmallObjectScale : OriginalSmallObjectScale s I J P lowerRank := by
+def originalSmallObjectScale : OriginalSmallObjectScale (D := D) I J P lowerRank := by
   let : Fact (originalBaseRank (C := C)).IsRegular := originalBaseRank_regular (C := C)
   let : IsCardinalLocallyPresentable C (originalBaseRank (C := C)) :=
     originalBaseRank_locallyPresentable (C := C)
-  let p := scaleForMorphismProperties s I J P lowerRank
+  let p := scaleForMorphismProperties (D := D) I J P lowerRank
   let : Fact p.chi.IsRegular := p.regular
   let : IsCardinalLocallyPresentable C p.chi := p.base_locallyPresentable
   let b := regularOrdinalBottom p.chi
@@ -654,7 +655,7 @@ end OriginalMorphismFamilies
 section OriginalPropertyCompactRoot
 
 variable [IsLocallyPresentable.{w} C]
-  (s : Functor.SmallIndexData.{w} D C) (I J : MorphismProperty C)
+  [Small.{w} D] [LocallySmall.{w} D] (I J : MorphismProperty C)
   [I.IsSmall.{w}] [J.IsSmall.{w}]
   {P : Type w} [PartialOrder P] {X : C}
   (T : CellTree (combinedFamily (fun i : I.toSet => i.1) (fun j : J.toSet => j.1)) X (P := P))
@@ -665,9 +666,10 @@ def compactRootForMorphismProperties :
     letI := original_hasPushouts (C := C)
     letI := originalBaseRank_regular (C := C)
     letI := originalBaseRank_locallyPresentable (C := C)
-    SelectedCompactRoot (originalBaseRank (C := C)) s
+    SelectedCompactRoot (originalBaseRank (C := C)) (D := D)
       (fun i : I.toSet => i.1) (fun j : J.toSet => j.1) T lowerRank :=
-  compactRootFromLocallyPresentable s (fun i : I.toSet => i.1) (fun j : J.toSet => j.1) T lowerRank
+  compactRootFromLocallyPresentable (D := D)
+    (fun i : I.toSet => i.1) (fun j : J.toSet => j.1) T lowerRank
 
 end OriginalPropertyCompactRoot
 

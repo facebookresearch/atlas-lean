@@ -189,7 +189,8 @@ theorem originalCell_occurrence
       cast (congrArg (fun q => q.ι)
         (normalizedAttachment_inner g outer c emptySource emptyTarget hSource hTarget
           (ofLex a.j).1 (ofLex a.j).2 a.hj
-          (normalizedCell_inner_notMax g outer c emptySource emptyTarget hSource hTarget a))) a.k := rfl
+          (normalizedCell_inner_notMax g outer c emptySource emptyTarget hSource hTarget a))) a.k :=
+            rfl
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
@@ -215,7 +216,8 @@ theorem originalCell_endpoint
       (originalCell g outer c emptySource emptyTarget hSource hTarget a).2.ι ≫
         outer.incl.app (Order.succ (ofLex a.j).1) := by
   let hk := normalizedCell_inner_notMax g outer c emptySource emptyTarget hSource hTarget a
-  let T := (normalizedComplex g outer c emptySource emptyTarget hSource hTarget).attachCells a.j a.hj
+  let T :=
+    (normalizedComplex g outer c emptySource emptyTarget hSource hTarget).attachCells a.j a.hj
   let U := innerAttachment g outer c (ofLex a.j).1 (ofLex a.j).2 hk
   let hTU : T = U := normalizedAttachment_inner g outer c emptySource emptyTarget hSource hTarget
     (ofLex a.j).1 (ofLex a.j).2 a.hj hk
@@ -225,7 +227,8 @@ theorem originalCell_endpoint
   have hcell : T.cell a.k = eqToHom (congrArg (B (ofLex a.j).1) e).symm ≫ U.cell z' :=
     attachment_cell_transport g (ofLex a.j).1 T U hTU a.k
   have hinner : U.cell z' ≫
-      (normalizedComplex g outer c emptySource emptyTarget hSource hTarget).incl.app (Order.succ a.j) =
+      (normalizedComplex g outer c emptySource emptyTarget hSource hTarget).incl.app
+          (Order.succ a.j) =
       (originalCell g outer c emptySource emptyTarget hSource hTarget a).2.ι ≫
         outer.incl.app (Order.succ (ofLex a.j).1) := by
     change (innerAttachment g outer c (ofLex a.j).1 (ofLex a.j).2 hk).cell z' ≫
@@ -237,17 +240,22 @@ theorem originalCell_endpoint
     exact (innerAttachment_cell_endpoint g outer c (ofLex a.j).1 (ofLex a.j).2 hk z').trans
       (Category.assoc _ _ _).symm
   change T.cell a.k ≫
-    (normalizedComplex g outer c emptySource emptyTarget hSource hTarget).incl.app (Order.succ a.j) = _
+    (normalizedComplex g outer c emptySource emptyTarget hSource hTarget).incl.app (Order.succ a.j)
+        = _
   calc
     T.cell a.k ≫
-        (normalizedComplex g outer c emptySource emptyTarget hSource hTarget).incl.app (Order.succ a.j) =
+        (normalizedComplex g outer c emptySource emptyTarget hSource hTarget).incl.app
+            (Order.succ a.j) =
       (eqToHom (congrArg (B (ofLex a.j).1) e).symm ≫ U.cell z') ≫
-        (normalizedComplex g outer c emptySource emptyTarget hSource hTarget).incl.app (Order.succ a.j) :=
+        (normalizedComplex g outer c emptySource emptyTarget hSource hTarget).incl.app
+            (Order.succ a.j) :=
           congrArg (fun q => q ≫
-            (normalizedComplex g outer c emptySource emptyTarget hSource hTarget).incl.app (Order.succ a.j)) hcell
+            (normalizedComplex g outer c emptySource emptyTarget hSource hTarget).incl.app
+                (Order.succ a.j)) hcell
     _ = eqToHom (congrArg (B (ofLex a.j).1) e).symm ≫
         (U.cell z' ≫
-          (normalizedComplex g outer c emptySource emptyTarget hSource hTarget).incl.app (Order.succ a.j)) :=
+          (normalizedComplex g outer c emptySource emptyTarget hSource hTarget).incl.app
+              (Order.succ a.j)) :=
             Category.assoc _ _ _
     _ = eqToHom (congrArg (B (ofLex a.j).1) e).symm ≫
         (originalCell g outer c emptySource emptyTarget hSource hTarget a).2.ι ≫

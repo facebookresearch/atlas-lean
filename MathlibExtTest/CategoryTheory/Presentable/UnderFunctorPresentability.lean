@@ -41,7 +41,8 @@ abbrev originalIdentityUnder : Under originalSource := Under.mk (𝟙 originalSo
 
 /-- Its every component is compact under its own original coefficient root. -/
 theorem originalIdentityComponents (d : OriginalIndex) :
-    IsCardinalPresentable ((relativeEvaluation originalSource d).obj originalIdentityUnder) chi := by
+    IsCardinalPresentable ((relativeEvaluation originalSource d).obj originalIdentityUnder) chi :=
+      by
   have hB : HasCardinalLT ((⊥ : LowerSet (originalLabels d)) : Set (originalLabels d)) chi := by
     change HasCardinalLT (∅ : Set (originalLabels d)) chi
     exact hasCardinalLT_of_finite _ chi chi_regular.aleph0_le
@@ -118,7 +119,8 @@ variable {D : Type uD} [Category.{vD} D] {C : Type uC} [Category.{vC} C]
   (U : Under F) (hU : ∀ d, IsCardinalPresentable (Under.mk (U.hom.app d)) k)
 
 include hArrow hU in
-/-- The expected whole relative TYPE keeps all original object, Hom and working universes independent. -/
+/-- The expected whole relative TYPE keeps all original object, Hom and working universes
+independent. -/
 theorem independentOriginalRelativeCompactness : IsCardinalPresentable U k :=
   relative_diagram_presentable F k hArrow U hU
 

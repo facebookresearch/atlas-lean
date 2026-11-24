@@ -97,7 +97,7 @@ private theorem subset_enlargement (A : Set X) : A ⊆ enlargement h ops hσ A :
   · simp [enlargement, hA]
 
 private def stage (A : Set X) (j : μ.ord.ToType) : Set X :=
-  transfiniteIterate (enlargement h ops hσ) j A
+  supTransfiniteIterate (enlargement h ops hσ) j A
 
 private theorem stage_small (A : Set X) (hA : HasCardinalLT A κ) (j : μ.ord.ToType) :
     HasCardinalLT (stage h ops hσ A j) κ := by
@@ -105,12 +105,12 @@ private theorem stage_small (A : Set X) (hA : HasCardinalLT A κ) (j : μ.ord.To
     (c := μ) (Cardinal.IsRegular.ne_zero Fact.out)
   let : OrderBot μ.ord.ToType := WellFoundedLT.toOrderBot _
   induction j using SuccOrder.limitRecOn with
-  | isMin j hj => simpa [stage, hj.eq_bot] using hA
+  | isMin j hj => simpa only [stage, supTransfiniteIterate_of_isMin _ _ hj] using hA
   | succ j hj ih =>
-    rw [stage, transfiniteIterate_succ _ _ _ hj]
+    rw [stage, supTransfiniteIterate_succ_of_not_isMax _ _ hj]
     exact (enlargement_spec h ops hσ _ ih).2.2
   | isSuccLimit j hj ih =>
-    rw [stage, transfiniteIterate_limit _ _ _ hj, Set.iSup_eq_iUnion]
+    rw [stage, supTransfiniteIterate_limit _ _ hj, Set.iSup_eq_iUnion]
     apply hasCardinalLT_iUnion
     · apply HasCardinalLT.of_injective _ _ Subtype.val_injective
       simpa [hasCardinalLT_iff_cardinal_mk_lt] using h.lt
@@ -121,13 +121,13 @@ private theorem stage_monotone (A : Set X) : Monotone (stage h ops hσ A) := by
   have : Nonempty μ.ord.ToType := Cardinal.nonempty_ord_toType
     (c := μ) (Cardinal.IsRegular.ne_zero Fact.out)
   let : OrderBot μ.ord.ToType := WellFoundedLT.toOrderBot _
-  exact monotone_transfiniteIterate _ _ (subset_enlargement h ops hσ)
+  exact supTransfiniteIterate_monotone _ (subset_enlargement h ops hσ)
 
 private theorem stage_succ (A : Set X) (j : μ.ord.ToType) :
     stage h ops hσ A (Order.succ j) = enlargement h ops hσ (stage h ops hσ A j) := by
   have : NoMaxOrder μ.ord.ToType := Cardinal.noMaxOrder
     (Cardinal.IsRegular.aleph0_le (Fact.out : μ.IsRegular))
-  exact transfiniteIterate_succ _ _ _ (not_isMax j)
+  exact supTransfiniteIterate_succ _ _ j
 
 include h hσ in
 /-- Produce bounded filtered indices satisfying every specified finite constraint. -/

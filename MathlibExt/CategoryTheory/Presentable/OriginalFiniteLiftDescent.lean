@@ -31,7 +31,8 @@ variable {C : Type u} [Category.{v} C] {J : Type w} [SmallCategory J] [IsFiltere
 
 include hc h
 
-/-- The SAME whole original ambient lift descends to an actual later original stage with its full boundary equality. -/
+/-- The SAME whole original ambient lift descends to an actual later original stage with its full
+boundary equality. -/
 theorem exists_lift : ∃ (k : J) (u : j ⟶ k) (l : B ⟶ F.obj k),
     i ≫ l = top ≫ F.map u ∧ l ≫ c.ι.app k = ambient := by
   obtain ⟨k₀, l₀, hl₀⟩ := IsFinitelyPresentable.exists_hom_of_isColimit hc ambient

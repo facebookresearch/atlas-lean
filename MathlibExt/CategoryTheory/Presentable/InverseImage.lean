@@ -636,7 +636,7 @@ private theorem exists_good_subset (S : Set J) (hS : HasCardinalLT S κ) :
 /-- Exactly the native bounded indices whose actual colimit comparison is invertible. -/
 private def goodSets :
     Set (Subtype (Cardinal.SharplyLT.IsCardinalFilteredAndHasCardinalLT μ κ J)) :=
-  fun B => IsIso (piece μ F G p κ B).hom
+  {B | IsIso (piece μ F G p κ B).hom}
 
 include h in
 private theorem goodSets_filtered : IsCardinalFiltered (goodSets μ F G p κ) κ := by

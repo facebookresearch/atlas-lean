@@ -11,7 +11,7 @@ module
 
 public import MathlibExt.CategoryTheory.Presentable.AccessibleAdjunction
 public import MathlibExt.CategoryTheory.Presentable.Completeness
-public import MathlibExt.CategoryTheory.Presentable.FunctorCategory
+public import Mathlib.CategoryTheory.Presentable.Presheaf
 public import Mathlib.CategoryTheory.Presentable.Type
 public import Mathlib.CategoryTheory.SingleObj
 
@@ -121,29 +121,29 @@ abbrev Nonthin := SingleObj ℕ
 example (d : Nonthin) :
     Functor.IsAccessible.{0}
       (Completeness.cofree (Type) Cardinal.aleph0.{0}
-        (Functor.EssentialIndexData.ofEssentiallySmall (D := Nonthin) (M := Type)) d) := by
+        (equivSmallModel.{0} Nonthin) d) := by
   let : HasPullbacks (Type) := inferInstance
   let : IsCardinalLocallyPresentable (Nonthin ⥤ Type) Cardinal.aleph0.{0} :=
-    Functor.isCardinalLocallyPresentable_of_essentiallySmall _
+    inferInstance
   let : IsAccessibleCategory.{0} (Nonthin ⥤ Type) :=
     ⟨Cardinal.aleph0, inferInstance, inferInstance⟩
   exact right_isAccessible_of_accessible
     (Completeness.evaluationCofreeAdjunction (Type) Cardinal.aleph0.{0}
-      (Functor.EssentialIndexData.ofEssentiallySmall (D := Nonthin) (M := Type)) d)
+      (equivSmallModel.{0} Nonthin) d)
 
 example : IsAccessibleCategory.{0} (Discrete PEmpty.{1} ⥤ Type) := by
   let : IsCardinalLocallyPresentable (Discrete PEmpty.{1} ⥤ Type) Cardinal.aleph0.{0} :=
-    Functor.isCardinalLocallyPresentable_of_essentiallySmall _
+    inferInstance
   exact ⟨Cardinal.aleph0, inferInstance, inferInstance⟩
 
 example : IsAccessibleCategory.{0} (Discrete ℕ ⥤ Type) := by
   let : IsCardinalLocallyPresentable (Discrete ℕ ⥤ Type) Cardinal.aleph0.{0} :=
-    Functor.isCardinalLocallyPresentable_of_essentiallySmall _
+    inferInstance
   exact ⟨Cardinal.aleph0, inferInstance, inferInstance⟩
 
 example : IsAccessibleCategory.{0} (Discrete (ULift.{1} ℕ) ⥤ Type) := by
   let : IsCardinalLocallyPresentable (Discrete (ULift.{1} ℕ) ⥤ Type) Cardinal.aleph0.{0} :=
-    Functor.isCardinalLocallyPresentable_of_essentiallySmall _
+    inferInstance
   exact ⟨Cardinal.aleph0, inferInstance, inferInstance⟩
 
 end Concrete
