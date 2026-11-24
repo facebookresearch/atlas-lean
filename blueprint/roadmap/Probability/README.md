@@ -54,3 +54,5 @@ Kaplan–Meier estimator and the Cox proportional hazards model.
 - [Linear models and multivariate analysis](linear-models-multivariate/README.md)
 - [Nonparametric statistics and survival analysis](nonparametric-survival/README.md)
 - [Bayesian statistics](bayesian-statistics/README.md)
+
+- [Queueing theory](queueing-theory/README.md)

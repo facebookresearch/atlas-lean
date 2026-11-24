@@ -3148,3 +3148,7 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/Biology/population-dynamics/leslie-matrix-model/README.md"}], "id": "af_3bdd68c673affc37b3b6a04e", "extensions": {"org.autoform": {"navigation": "module"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Biology/quantitative-genetics/gene-dropping-and-identity-by-descent/README.md"}], "id": "af_d9b831bdb40bddc35a5cedbf", "extensions": {"org.autoform": {"navigation": "module"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Biology/statistical-genetics/transmission-disequilibrium-test/README.md"}], "id": "af_9b7cab5eb33ab8e24f99a437", "extensions": {"org.autoform": {"navigation": "module"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Biology/population-dynamics/chemostat/chemostat-total-substrate-reduction.md"}], "id": "af_ad2c2375fd7d6b1faefadca0", "extensions": {"org.atlas-wiki": {"kind": "lemma"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Biology/population-dynamics/chemostat/README.md"}], "id": "af_a7a84432ac9f44f3158ece4d"}
+{"subject": [{"type": "generic", "uri": "../roadmap/Biology/population-dynamics/chemostat/chemostat-equilibria-and-washout.md"}], "id": "af_e21e374cae92adf79ede3691", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Biology/population-dynamics/chemostat/exponential-attraction-to-chemostat-washout.md"}], "id": "af_a6226fce875173e631195305", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}

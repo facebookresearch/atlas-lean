@@ -7,3 +7,5 @@ Differential-equation models of population growth, species interaction and evolu
 - [Logistic growth equation](logistic-growth-equation/README.md)
 - [Lotka–Volterra predator–prey model](lotka-volterra-predator-prey-model/README.md)
 - [Replicator dynamics](replicator-dynamics/README.md)
+
+- [Chemostat dynamics](chemostat/README.md)

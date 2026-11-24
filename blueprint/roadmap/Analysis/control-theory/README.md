@@ -7,6 +7,9 @@ Mathematical control theory of finite-dimensional systems: controllability of li
 - [Nonlinear controllability and stabilisation](nonlinear-controllability-and-stabilisation/README.md)
 - [Recursive least squares](recursive-least-squares/README.md)
 - [Capability and limits of feedback](capability-and-limits-of-feedback/README.md)
+- [Observability of linear systems](observability-of-linear-systems/README.md)
+- [Realization theory](realization-theory/README.md)
+- [Sampled-data systems](sampled-data-systems/README.md)
 
 ## Single-input single-output linear systems
 

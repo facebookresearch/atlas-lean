@@ -6,3 +6,7 @@ Rates of chemical reactions and well-mixed reactors: integrated rate laws and ha
 - [Exothermic stirred-tank reactor](exothermic-stirred-tank-reactor/README.md)
 - [Rate laws](rate-laws/README.md)
 - [Thermal runaway and combustion acoustics](thermal-runaway-and-combustion-acoustics/README.md)
+
+- [Plug-flow reactors](plug-flow-reactor/README.md)
+- [Residence-time distributions](residence-time-distributions/README.md)
+- [Diffusion and reaction in catalyst pellets](catalyst-pellet-diffusion-and-reaction/README.md)
