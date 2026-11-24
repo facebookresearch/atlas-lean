@@ -69,10 +69,8 @@ the deficiency-one theorem is proved: not uniqueness of positive equilibria in a
 stoichiometric compatibility class, and not existence in the weakly reversible case.
 Uniqueness needs the general kernel theory of the Laplacian of the weighted reaction digraph:
 its kernel is spanned by nonnegative vectors supported on the terminal strong linkage classes,
-one per class. Only the weakly reversible case is proved so far (step 1 of
-`Domains.Biology.Dynamics.DeficiencyZero.Existence`: a positive kernel vector). The general
-theory would also give the open non-weakly-reversible half of the deficiency-zero theorem,
-`not_exists_positive_equilibrium` in `WantedExt/Biology/Dynamics/DeficiencyZeroWanted.lean`.
+one per class. The weakly reversible case has a positive kernel vector, as shown in
+`Domains.Biology.Dynamics.DeficiencyZero.Existence`.
 
 ## References
 
