@@ -28,6 +28,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Data.Int.ModEq
 public import Mathlib.Order.Interval.Finset.Nat
 public import MathlibExt.Combinatorics.Enumerative.DelannoyConstructions
+public import MathlibExt.Combinatorics.Enumerative.DelannoyRowsParity
 public import MathlibExt.LinearAlgebra.Matrix.OrdinaryRiordanPascalLikeMatrix
 
 set_option autoImplicit false
@@ -50,31 +51,6 @@ of Integer Sequences 27 (2024), Article 24.1.8, Theorem 8
 public theorem_wanted delannoy_eq_sum_choose_mul_choose_two_pow (m n : ℕ) :
     ordinaryRiordanPascalLikeMatrix (m + n) m 1 =
       ∑ j ∈ range (min m n + 1), (m.choose j : ℤ) * (n.choose j : ℤ) * 2 ^ j
-
-/-- **Vertical sum identity for the upper generalized Delannoy numbers.**
-For natural numbers $k$, $m$ and $n$, write
-$D^k(m, n) = \sum_{j=0}^{n} \binom{m + n + k - j}{n + k} \binom{n}{j}$ for the upper
-generalized Delannoy numbers. For all natural numbers $k$, $m$ and $n$ with $k \ge 1$,
-$D^k(m, n) + D^k(m + 1, n) = D^{k-1}(m + 1, n + 1)$.
-
-Source: Steven Edwards and William Griffiths, *Delannoy Constructions*, Journal
-of Integer Sequences 27 (2024), Article 24.1.8, Theorem 4
-(`jis-2024-24.1.8-thm-4`). -/
-public theorem_wanted genDelannoyUpper_add_succ_left (k m n : ℕ) (hk : 1 ≤ k) :
-    genDelannoyUpper k m n + genDelannoyUpper k (m + 1) n = genDelannoyUpper (k - 1) (m + 1) (n + 1)
-
-/-- **Horizontal difference identity for the upper generalized Delannoy numbers.**
-For natural numbers $k$, $m$ and $n$, write
-$D^k(m, n) = \sum_{j=0}^{n} \binom{m + n + k - j}{n + k} \binom{n}{j}$ for the upper
-generalized Delannoy numbers. For all natural numbers $k$, $m$ and $n$ with $m \ge 1$,
-$D^k(m, n + 1) - D^k(m, n) = 2 D^{k+1}(m - 1, n)$.
-
-Source: Steven Edwards and William Griffiths, *Delannoy Constructions*, Journal
-of Integer Sequences 27 (2024), Article 24.1.8, Corollary 5
-(`jis-2024-24.1.8-cor-5`). -/
-public theorem_wanted genDelannoyUpper_succ_right_sub (k m n : ℕ) (hm : 1 ≤ m) :
-    (genDelannoyUpper k m (n + 1) : ℤ) - genDelannoyUpper k m n =
-      2 * genDelannoyUpper (k + 1) (m - 1) n
 
 /-- **Vertical difference identity for the upper generalized Delannoy numbers.**
 For natural numbers $k$, $m$ and $n$, write
@@ -144,20 +120,6 @@ public theorem_wanted genDelannoy_eq_sum_two_pow_unified (k m n : ℕ) :
     (k ≤ m → k ≤ n → genDelannoyLower k m n =
         ∑ j ∈ Ico k (min m n + 1), (m - k).choose (j - k) * n.choose j * 2 ^ j) ∧
       genDelannoyUpper k m n = ∑ j ∈ range (min m n + 1), (m + k).choose (j + k) * n.choose j * 2 ^ j
-
-/-- **Parity of adjacent rows of a Delannoy array.** Let $R(m, n)$, for $m, n \in \mathbb{N}$, be
-integers with $R(m+1, n+1) = R(m, n+1) + R(m+1, n) + R(m, n)$ for all $m, n$, and let
-$m \in \mathbb{N}$. If $R(m, 0) \equiv R(m+1, 0) \pmod 2$, then $R(m, i) \equiv R(m+1, i) \pmod 2$
-for all $i$; if $R(m, 0) \not\equiv R(m+1, 0) \pmod 2$, then
-$R(m, i) \not\equiv R(m+1, i) \pmod 2$ for all $i$.
-
-Source: Steven Edwards and William Griffiths, *Delannoy Constructions*, Journal
-of Integer Sequences 27 (2024), Article 24.1.8, Theorem 13
-(`jis-2024-24.1.8-thm-13`). -/
-public theorem_wanted delannoyArray_rows_parity (R : ℕ → ℕ → ℤ)
-    (hR : ∀ m n, R (m + 1) (n + 1) = R m (n + 1) + R (m + 1) n + R m n) (m : ℕ) :
-    (R m 0 ≡ R (m + 1) 0 [ZMOD 2] → ∀ i, R m i ≡ R (m + 1) i [ZMOD 2]) ∧
-      (¬ R m 0 ≡ R (m + 1) 0 [ZMOD 2] → ∀ i, ¬ R m i ≡ R (m + 1) i [ZMOD 2])
 
 /-- **Powers of two dividing iterated horizontal sums of a Delannoy array.** Let $R(m, n)$, for
 $m, n \in \mathbb{N}$, be integers with $R(m+1, n+1) = R(m, n+1) + R(m+1, n) + R(m, n)$ for all

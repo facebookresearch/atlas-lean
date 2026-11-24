@@ -32,7 +32,7 @@ Induction on `n`; for `n = 0` both sides vanish. Write `a = T (n - 1)`, `b = T n
 
 `four_mul_sum_tribonacci_sq` keeps the full name, the statement and the docstring it had as a
 wanted theorem in `WantedExt.NumberTheory.Recurrences.TribonacciTetranacciSumsOfSquaresWanted`, so
-its namespace reads `TribonacciTetranacciSumsOfSquaresWanted`; that module imports this one.
+its namespace reads `TribonacciTetranacciSumsOfSquaresWanted`.
 -/
 
 @[expose] public section

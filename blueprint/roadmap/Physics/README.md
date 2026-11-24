@@ -4,6 +4,8 @@ Mathematical physics describes mechanical, electromagnetic and quantum systems t
 
 - [Acoustics](acoustics/README.md)
 - [Quantities, units and measurement](quantities-and-measurement/README.md)
+- [Classical mechanics](classical-mechanics/README.md)
 - [Elasticity and structural mechanics](elasticity-and-structures/README.md)
 - [Fluid mechanics](fluid-mechanics/README.md)
+- [Waves and acoustics](waves-and-acoustics/README.md)
 - [Quantum mechanics](quantum-mechanics/README.md)
