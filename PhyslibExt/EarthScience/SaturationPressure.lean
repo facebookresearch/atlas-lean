@@ -88,7 +88,8 @@ theorem hasDerivAt_saturation_pressure {es0 L Rv T0 : ℝ} {T : ℝ} (hT : 0 < T
 
 /-- The saturation-pressure derivative is positive at `T > 0` for `es0, L, Rv > 0`
 and every real `T0`. For `T0 = 0`, `1 / T0 = 0` by the convention `x / 0 = 0`, so that
-`es(T) = es0 * exp (-L / (Rv * T))`. -/
+`es(T) = es0 * exp (-L / (Rv * T))`. In the physical reading `T0 > 0` is a reference absolute
+temperature, at which `es(T0) = es0`. -/
 theorem saturation_pressure_deriv_pos {es0 L Rv T0 : ℝ} (hes0 : 0 < es0)
     (hL : 0 < L) (hRv : 0 < Rv) {T : ℝ} (hT : 0 < T) :
     0 < (es0 * Real.exp ((L / Rv) * (1 / T0 - 1 / T))) * L / (Rv * T ^ 2) := by
@@ -98,7 +99,8 @@ theorem saturation_pressure_deriv_pos {es0 L Rv T0 : ℝ} (hes0 : 0 < es0)
 
 /-- Saturation pressure is strictly increasing on positive temperatures, for
 `es0, L, Rv > 0` and every real `T0`. For `T0 = 0`, `1 / T0 = 0` by the convention `x / 0 = 0`, so
-that `es(T) = es0 * exp (-L / (Rv * T))`. -/
+that `es(T) = es0 * exp (-L / (Rv * T))`. In the physical reading `T0 > 0` is a reference absolute
+temperature, at which `es(T0) = es0`. -/
 theorem saturation_pressure_strictMono {es0 L Rv T0 : ℝ} (hes0 : 0 < es0)
     (hL : 0 < L) (hRv : 0 < Rv) :
     StrictMonoOn (fun T => es0 * Real.exp ((L / Rv) * (1 / T0 - 1 / T)))

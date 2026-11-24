@@ -804,7 +804,9 @@ noncomputable def upwindStep (μo μw ν sIn : ℝ) {n : ℕ} (s : Fin (n + 1) �
 
 /-- One physical step of the water saturations `S` with inflow saturation `Sin`: the water volume
 of cell `i` changes by `Q dt (f s_(i-1) - f s_i)`, so `S i` changes by that amount over the pore
-volume `φ A dx`. With `x / 0 = 0` the saturations are unchanged when `φ A dx = 0`. -/
+volume `φ A dx`. With `x / 0 = 0` the saturations are unchanged when `φ A dx = 0`, and also when
+`ΔS = 1 - Sor - Swc = 0`, since every normalized saturation is then `0` and the face flows are
+equal. -/
 noncomputable def satStep (μo μw Swc Sor Q dt φ A dx Sin : ℝ) {n : ℕ} (S : Fin (n + 1) → ℝ)
     (i : Fin (n + 1)) : ℝ :=
   S i - Q * dt / (φ * A * dx) * (fracFlow μo μw (normSat Swc Sor (S i)) -

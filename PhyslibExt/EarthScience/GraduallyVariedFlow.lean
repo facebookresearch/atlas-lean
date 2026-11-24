@@ -95,9 +95,9 @@ noncomputable def frictionSlope (n b Q y : ℝ) : ℝ :=
 /-- Right-hand side of the declared steady gradually-varied-flow
 equation in a rectangular channel (Chow 1959, `α = 1`):
 `(S0 - Sf y) / (1 - (Q / b) ^ 2 / (g * y ^ 3))`. Physical for
-`0 < b`, `0 < n`, `0 < S0`, `0 < g`, `0 < y`, `y ≠ yc`; at
-`y = yc` the totalized division returns `0`, which is not a
-physical slope. With the convention `a / 0 = 0`, the term
+`0 < b`, `0 < n`, `0 < S0`, `0 < g`, `0 < y`, `y ≠ yc`; at a
+positive critical depth `y = yc` (with `b, g > 0`) the totalized
+division returns `0`, which is not a physical slope. With the convention `a / 0 = 0`, the term
 `(Q / b) ^ 2 / (g * y ^ 3)` is `0` when `b = 0`, `g = 0` or `y = 0`. Inside `Sf`, a negative
 hydraulic radius `R = (b * y) / (b + 2 * y)` enters as `R ^ (2 / 3) = -|R| ^ (2 / 3) / 2`, by the
 convention `a ^ r = |a| ^ r * cos (π r)` for `a < 0`. -/
