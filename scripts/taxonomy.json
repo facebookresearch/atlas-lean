@@ -11921,6 +11921,7 @@
   "MathlibExt/NumberTheory/ArithmeticFunction/GcdSumTotient": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Pillai's gcd-sum function"},
   "MathlibExt/NumberTheory/ArithmeticFunction/GronwallSigmaLimsup": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Maximal order of the sum-of-divisors function"},
   "MathlibExt/NumberTheory/ArithmeticFunction/HBCCalibrating": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Odd perfect numbers"},
+  "MathlibExt/NumberTheory/ArithmeticFunction/HBCFirstElementBounds": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Odd perfect numbers"},
   "MathlibExt/NumberTheory/ArithmeticFunction/HyperbolicFloorSum": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Hyperbolic floor sums of arithmetic functions"},
   "MathlibExt/NumberTheory/ArithmeticFunction/JordanTotient": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Jordan's totient function"},
   "MathlibExt/NumberTheory/ArithmeticFunction/LiouvilleDivisorIdentity": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Liouville's divisor-function identity"},
