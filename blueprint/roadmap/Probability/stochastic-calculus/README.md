@@ -12,6 +12,7 @@ Continuous-time processes with continuous paths or independent increments: the c
 - [Itô integral](it-integral/README.md)
 - [Adapted continuous versions of the Itô integral](adapted-continuous-versions-of-the-it-integral/README.md)
 - [Lipschitz stochastic integrands](lipschitz-stochastic-integrands/README.md)
+- [Ordinary integrals of progressive processes](ordinary-integrals-of-progressive-processes/README.md)
 - [Itô's formula](it-s-formula/README.md)
 - [Girsanov's theorem for a constant drift](has-law-sub-drift-with-density.md)
 - [Strong solutions of SDEs with Lipschitz coefficients](sde-lipschitz-exists-unique.md)

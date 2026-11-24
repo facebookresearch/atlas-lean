@@ -13198,6 +13198,7 @@
   "MathlibExt/Probability/SDE/LipschitzIntegrands": {"to": "Probability/stochastic-calculus", "title": "Lipschitz stochastic integrands"},
   "MathlibExt/Probability/ItoIntegralContinuous": {"to": "Probability/stochastic-calculus", "title": "Itô integral"},
   "MathlibExt/Probability/ItoIntegralProperties": {"to": "Probability/stochastic-calculus", "title": "Itô integral"},
+  "MathlibExt/Probability/SDE/TimeIntegrals": {"to": "Probability/stochastic-calculus", "title": "Ordinary integrals of progressive processes"},
   "MathlibExt/Probability/ItoRiemannSums": {"to": "Probability/stochastic-calculus", "title": "Itô integral"},
   "MathlibExt/Probability/JointLaw": {"to": "Probability/distributions/distribution-functions", "title": "Joint distribution"},
   "MathlibExt/Probability/KernelMeanEmbedding": {"to": "Probability/convergence-of-measures", "title": "Kernel mean embeddings and maximum mean discrepancy"},
