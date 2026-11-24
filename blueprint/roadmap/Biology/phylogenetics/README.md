@@ -26,13 +26,7 @@ Reconstruction of evolutionary trees from sequence data: substitution models, li
 - [Quartet support and determination of trees by quartets](quartet-support-and-determination-of-trees-by-qu/README.md)
 - [Sampling model for log-det estimation of the GTR rate matrix](sampling-model-for-log-det-estimation-of-the-gtr/README.md)
 
-- [Maximum agreement subtree of two random binary trees](maximum-agreement-subtree-of-random-trees.md)
-- [Sample complexity of maximum parsimony](sample-complexity-of-maximum-parsimony.md)
-- [Admissibility of maximum-likelihood tree estimation](admissibility-of-maximum-likelihood-tree-estimation.md)
-- [Phylogenetic complexity of group-based models](phylogenetic-complexity-of-group-based-models.md)
+- [Phylogenetic inference and comparison](inference-and-comparison/README.md)
 
 - [Phylogenetic diversity](phylogenetic-diversity/README.md)
 - [Phylogenetic invariants](phylogenetic-invariants/README.md)
-
-- [Identifiability of phylogenetic networks under the multispecies coalescent](identifiability-of-phylogenetic-networks-under-the-coalescent.md)
-- [Information requirements for CRISPR lineage tracing](information-requirements-for-crispr-lineage-tracing.md)

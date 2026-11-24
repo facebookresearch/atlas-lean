@@ -16,13 +16,13 @@ whose denominator is positive whenever $s < 1$ or $p > 0$.
 - If $m \ge s$, then $p_t \to 0$: immigration swamps the locally favoured allele.
 
 For $m < 1$ the recursion is that of
-[haploid mutation–selection balance](../mutation-selection-balance/haploid-mutation-selection-balance.md)
+[haploid mutation–selection balance](../../mutation-selection-balance/haploid-mutation-selection-balance.md)
 with the mutation probability $u$ replaced by $m$, and both statements are that page's convergence
 statements. For $m = 1$ (so $s < 1$), $p_1 = 0$ and $p_t = 0$ for all $t \ge 1$.
 
 ## Proof depends on
 
-- [Mutation–selection balance in a haploid population](../mutation-selection-balance/haploid-mutation-selection-balance.md)
+- [Mutation–selection balance in a haploid population](../../mutation-selection-balance/haploid-mutation-selection-balance.md)
 
 ## Sources
 
