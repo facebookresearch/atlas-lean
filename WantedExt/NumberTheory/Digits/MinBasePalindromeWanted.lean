@@ -19,6 +19,7 @@ public import MathlibExt.NumberTheory.Digits.DigitsPowAndPowAddOne
 public import MathlibExt.NumberTheory.Digits.MinBasePalindrome
 public import MathlibExt.NumberTheory.Digits.OneCOneTwoPow
 public import MathlibExt.NumberTheory.Digits.ThreeDigitBinomialForm
+public import MathlibExt.NumberTheory.Digits.ThreeDigitPalindromeTwoPow
 
 /-!
 # Minimum-base palindromic representations of powers of 2
@@ -114,21 +115,6 @@ Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Corollary 1
 (`integers-2024-A69-cor-1`). -/
 public theorem_wanted hasBinomialForm_two_pow (n x k r : ℕ) (hk : 1 ≤ k) (hn : n = x * k + r)
     (h : 2 ^ r * k.choose ((k + 1) / 2) < 2 ^ x - 1) : HasBinomialForm (2 ^ x - 1) (2 ^ n)
-
-/-- **Three-digit palindromic powers of two.** Let $n$ be a natural number, let $b \ge 2$ be a
-base, and let $c = 2^n \bmod b$. The base-$b$ representation of $2^n$ is a palindrome with exactly
-three digits if and only if $b^2 + 1 \le 2^n \le b^3 - 1$, $c \ne 0$, and
-$\frac{1}{b} \lfloor 2^n / b \rfloor - \frac{b - 1}{b} \le c \le
-\frac{1}{b} \lfloor 2^n / b \rfloor$.
-
-Source: D. L. Kreher and D. R. Stinson, *On Minimum-Base Palindromic
-Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Theorem 2
-(`integers-2024-A69-thm-2`). -/
-public theorem_wanted three_digit_palindrome_two_pow_iff (n b : ℕ) (hb : 2 ≤ b) :
-    ((Nat.digits b (2 ^ n)).Palindrome ∧ (Nat.digits b (2 ^ n)).length = 3) ↔
-      b ^ 2 + 1 ≤ 2 ^ n ∧ 2 ^ n ≤ b ^ 3 - 1 ∧ 2 ^ n % b ≠ 0 ∧
-        ((2 ^ n / b : ℕ) : ℚ) / b - ((b : ℚ) - 1) / b ≤ ((2 ^ n % b : ℕ) : ℚ) ∧
-        ((2 ^ n % b : ℕ) : ℚ) ≤ ((2 ^ n / b : ℕ) : ℚ) / b
 
 /-- **Palindromic powers of two in a base one less than a power of two.** Let $x \ge 2$ and
 $n \ge 1$ be natural numbers, let $b = 2^x - 1$, and suppose that the base-$b$ representation

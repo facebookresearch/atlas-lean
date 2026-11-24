@@ -47,7 +47,7 @@ def canonicalLine (C : ComplexScheme) : C.left.Modules := IntegrableHiggsBundles
 class CurveSource (C : ComplexScheme) extends PerverseSheaves.IsComplexVariety C where
   smooth : Smooth C.hom
   connected : ConnectedSpace C.left
-  projective : ProjectiveLineSystems.IsProjectiveVariety C
+  projective : ProjectiveSpace.IsProjective C
   cotangentLine : IsLineBundle (canonicalLine C)
   [smoothCurve : SmoothOfRelativeDimension 1 C.hom]
   [properCurve : IsProperCurve C.hom]

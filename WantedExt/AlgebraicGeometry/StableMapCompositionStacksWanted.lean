@@ -31,21 +31,21 @@ open MathlibExt.AlgebraicGeometry.MapModuliCharts
 open MathlibExt.AlgebraicGeometry.ProjectiveLineSystems
 
 def_wanted actualStableMapStabilization (k : Type) [Field k] [CharZero k]
-    (V Y T : Over (Spec (.of k))) (projectiveV : IsProjectiveVariety V)
-    (projectiveY : IsProjectiveVariety Y) (h : V ⟶ Y) (n m g : ℕ)
+    (V Y T : Over (Spec (.of k))) (projectiveV : ProjectiveSpace.IsProjective V)
+    (projectiveY : ProjectiveSpace.IsProjective Y) (h : V ⟶ Y) (n m g : ℕ)
     (a : Fin m → Fin n) (injective : Function.Injective a)
     (F : Family V.hom n g T.left T.hom)
     (stable : IsGeometricallyStable F) (admissible : IsStabilizable F h.left m) :
     Stabilization F h.left (Over.w h) a injective
 
 def_wanted actualCompositionDomain (k : Type) [Field k] [CharZero k]
-    (V Y : Over (Spec (.of k))) (projectiveV : IsProjectiveVariety V)
-    (projectiveY : IsProjectiveVariety Y) (h : V ⟶ Y) (n m g : ℕ) :
+    (V Y : Over (Spec (.of k))) (projectiveV : ProjectiveSpace.IsProjective V)
+    (projectiveY : ProjectiveSpace.IsProjective Y) (h : V ⟶ Y) (n m g : ℕ) :
     (D : CompositionDomain V.hom h.left n m g) × DomainBaseChange D
 
 def_wanted actualStableMapStackComposition (k : Type) [Field k] [CharZero k]
-    (V Y : Over (Spec (.of k))) (projectiveV : IsProjectiveVariety V)
-    (projectiveY : IsProjectiveVariety Y) (h : V ⟶ Y) (n m g : ℕ)
+    (V Y : Over (Spec (.of k))) (projectiveV : ProjectiveSpace.IsProjective V)
+    (projectiveY : ProjectiveSpace.IsProjective Y) (h : V ⟶ Y) (n m g : ℕ)
     (a : Fin m → Fin n) (injective : Function.Injective a)
     (D : CompositionDomain V.hom h.left n m g) (B : DomainBaseChange D)
     (M : VaryingModel Y.hom m g) : CompositionModel D B M a injective (Over.w h)
