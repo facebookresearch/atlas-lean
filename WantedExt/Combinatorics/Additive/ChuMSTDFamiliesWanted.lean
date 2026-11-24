@@ -24,7 +24,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Group.Pointwise.Finset.Basic
 public import Mathlib.Data.Fin.VecNotation
-public import Mathlib.Order.Interval.Finset.Nat
+public import MathlibExt.Combinatorics.Additive.ChuMSTDFamilies
 
 namespace MetaMathlibExt
 
@@ -32,48 +32,10 @@ namespace MetaMathlibExt
 
 open Pointwise
 
-/-- The finset of partial sums `(a | g₁, …, g_r) = {a, a + g₁, a + g₁ + g₂, …, a + g₁ + ⋯ + g_r}`.
-When every gap `gᵢ` is positive (as in all uses below) its sorted sequence of consecutive
-differences is `g₁, …, g_r`; a zero gap repeats a partial sum, which the finset records once.
-
-Source: Manish Kumar, Mohan and Ram Krishna Pandey, *A Conjecture of Chu et al. and a New
-Family of MSTD Sets*, INTEGERS 24 (2024), Article A32, Section 1 (Spohn's notation). -/
-public def setOfConsecutiveDifferences : ℤ → List ℕ → Finset ℤ
-  | a, [] => {a}
-  | a, g :: l => insert a (setOfConsecutiveDifferences (a + g) l)
-
-/-- Prepending a difference `g` to `(a + g | l)` inserts `a` (the new minimum when `g > 0`).
-
-Source: Manish Kumar, Mohan and Ram Krishna Pandey, *A Conjecture of Chu et al. and a New
-Family of MSTD Sets*, INTEGERS 24 (2024), Article A32, Section 1 (Spohn's notation). -/
-public theorem setOfConsecutiveDifferences_cons (a : ℤ) (g : ℕ) (l : List ℕ) :
-    setOfConsecutiveDifferences a (g :: l) = insert a (setOfConsecutiveDifferences (a + g) l) :=
-  rfl
-
-/-- The paper's example: `(0 | 1, 5, 1, 1, 9, 7) = {0, 1, 6, 7, 8, 17, 24}`.
-
-Source: Manish Kumar, Mohan and Ram Krishna Pandey, *A Conjecture of Chu et al. and a New
-Family of MSTD Sets*, INTEGERS 24 (2024), Article A32, Section 1 (Spohn's notation). -/
-public theorem setOfConsecutiveDifferences_example :
-    setOfConsecutiveDifferences 0 [1, 5, 1, 1, 9, 7] = {0, 1, 6, 7, 8, 17, 24} := by
-  decide
-
-/-- The difference block `M^k = 1, 4, …, 4, 3` with `k` fours.
-
-Source: Manish Kumar, Mohan and Ram Krishna Pandey, *A Conjecture of Chu et al. and a New
-Family of MSTD Sets*, INTEGERS 24 (2024), Article A32, Section 1 (definition of `M^k`). -/
-public def chuBlock (k : ℕ) : List ℕ :=
-  1 :: List.replicate k 4 ++ [3]
-
-/-- `M^1 = 1, 4, 3` and `M^2 = 1, 4, 4, 3`.
-
-Source: Manish Kumar, Mohan and Ram Krishna Pandey, *A Conjecture of Chu et al. and a New
-Family of MSTD Sets*, INTEGERS 24 (2024), Article A32, Section 1 (definition of `M^k`). -/
-public theorem chuBlock_one_two : chuBlock 1 = [1, 4, 3] ∧ chuBlock 2 = [1, 4, 4, 3] :=
-  ⟨rfl, rfl⟩
-
-/-- Theorem 1: for every positive integer `k`, `A = (0 | 1, 1, 2, M^k, M^{k+1}, 1, 1)` is
-balanced: `|A + A| = |A - A|`.
+/-- **A balanced family of Chu et al.** Let $k$ be a positive integer and let
+$A = (0 \mid 1, 1, 2, M^k, M^{k+1}, 1, 1) \subseteq \mathbb{Z}$ be the set of partial sums,
+starting at $0$, of the difference sequence formed by $1, 1, 2$, the Chu difference blocks $M^k$
+and $M^{k+1}$, and $1, 1$. Then $A$ is balanced: $|A + A| = |A - A|$.
 
 Source: Manish Kumar, Mohan and Ram Krishna Pandey, *A Conjecture of Chu et al. and a New
 Family of MSTD Sets*, INTEGERS 24 (2024), Article A32, Theorem 1 (`integers-2024-A32-thm-1`). -/
@@ -81,9 +43,11 @@ public theorem_wanted chu_family_balanced {k : ℕ} (hk : 0 < k) :
     let A := setOfConsecutiveDifferences 0 ([1, 1, 2] ++ chuBlock k ++ chuBlock (k + 1) ++ [1, 1])
     (A + A).card = (A - A).card
 
-/-- Theorem 2: for every positive integer `k`,
-`A = (0 | 1, 1, 2, M^k, M^{k+1}, M^{k+1}, 1, 1)` is difference-dominated:
-`|A + A| < |A - A|`.
+/-- **A difference-dominated family of Chu et al.** Let $k$ be a positive integer and let
+$A = (0 \mid 1, 1, 2, M^k, M^{k+1}, M^{k+1}, 1, 1) \subseteq \mathbb{Z}$ be the set of partial
+sums, starting at $0$, of the difference sequence formed by $1, 1, 2$, the Chu difference blocks
+$M^k$, $M^{k+1}$ and $M^{k+1}$, and $1, 1$. Then $A$ is difference-dominated:
+$|A + A| < |A - A|$.
 
 Source: Manish Kumar, Mohan and Ram Krishna Pandey, *A Conjecture of Chu et al. and a New
 Family of MSTD Sets*, INTEGERS 24 (2024), Article A32, Theorem 2 (`integers-2024-A32-thm-2`). -/
@@ -92,8 +56,11 @@ public theorem_wanted chu_family_difference_dominated {k : ℕ} (hk : 0 < k) :
       ([1, 1, 2] ++ chuBlock k ++ chuBlock (k + 1) ++ chuBlock (k + 1) ++ [1, 1])
     (A + A).card < (A - A).card
 
-/-- Theorem 3: for every positive integer `k` and `M₁ ∈ {(1, 1, 2), (1, 1, 2, 1)}`,
-`A = (0 | 1, 1, 2, M^k, M^{k+1}, M₁)` is MSTD: `|A - A| < |A + A|`.
+/-- **MSTD sets with $M^k$ before $M^{k+1}$ (Theorem 3).** Let $k$ be a positive integer, let
+$M^n$ denote the block $1, 4, \dots, 4, 3$ with $n$ fours, and let $M_1$ be one of the
+sequences $(1, 1, 2)$, $(1, 1, 2, 1)$. Let $A = (0 \mid 1, 1, 2, M^k, M^{k+1}, M_1)$ be the set
+of partial sums, starting from $0$, of the concatenated sequence $1, 1, 2, M^k, M^{k+1}, M_1$.
+Then $A$ is sum-dominated: $|A - A| < |A + A|$.
 
 Source: Manish Kumar, Mohan and Ram Krishna Pandey, *A Conjecture of Chu et al. and a New
 Family of MSTD Sets*, INTEGERS 24 (2024), Article A32, Theorem 3 (`integers-2024-A32-thm-3`). -/
@@ -102,9 +69,11 @@ public theorem_wanted chu_family_mstd_increasing {k : ℕ} (hk : 0 < k) {M₁ : 
     let A := setOfConsecutiveDifferences 0 ([1, 1, 2] ++ chuBlock k ++ chuBlock (k + 1) ++ M₁)
     (A - A).card < (A + A).card
 
-/-- Theorem 4: for every positive integer `k` and
-`M₁ ∈ {(1, 1), (1, 1, 2), (1, 1, 2, 1)}`, `A = (0 | 1, 1, 2, M^{k+1}, M^k, M₁)` is MSTD:
-`|A - A| < |A + A|`.
+/-- **MSTD sets with $M^{k+1}$ before $M^k$ (Theorem 4).** Let $k$ be a positive integer, let
+$M^n$ denote the block $1, 4, \dots, 4, 3$ with $n$ fours, and let $M_1$ be one of the
+sequences $(1, 1)$, $(1, 1, 2)$, $(1, 1, 2, 1)$. Let $A = (0 \mid 1, 1, 2, M^{k+1}, M^k, M_1)$
+be the set of partial sums, starting from $0$, of the concatenated sequence
+$1, 1, 2, M^{k+1}, M^k, M_1$. Then $A$ is sum-dominated: $|A - A| < |A + A|$.
 
 Source: Manish Kumar, Mohan and Ram Krishna Pandey, *A Conjecture of Chu et al. and a New
 Family of MSTD Sets*, INTEGERS 24 (2024), Article A32, Theorem 4 (`integers-2024-A32-thm-4`). -/
@@ -113,30 +82,10 @@ public theorem_wanted chu_family_mstd_decreasing {k : ℕ} (hk : 0 < k) {M₁ : 
     let A := setOfConsecutiveDifferences 0 ([1, 1, 2] ++ chuBlock (k + 1) ++ chuBlock k ++ M₁)
     (A - A).card < (A + A).card
 
-/-- The family of Section 3: `A = (0 | 1, 1, 2, M^k, …, M^k, …, 1, 1, 2, M^k, …, M^k, 1, 1, 2, 1)`,
-where each run `M^k, …, M^k` has `l` copies and the block `1, 1, 2, M^k, …, M^k` is repeated `t`
-times. (Each block spans `4(kl + l + 1)`, matching the bounds `t(kl + l + 1)` printed in
-Lemmas 1-7.)
-
-Source: Manish Kumar, Mohan and Ram Krishna Pandey, *A Conjecture of Chu et al. and a New
-Family of MSTD Sets*, INTEGERS 24 (2024), Article A32, Section 3 (the set of Lemmas 1-7 and
-Theorems 6-7). -/
-public def chuFamilyKLT (k l t : ℕ) : Finset ℤ :=
-  setOfConsecutiveDifferences 0
-    ((List.replicate t ([1, 1, 2] ++ (List.replicate l (chuBlock k)).flatten)).flatten ++
-      [1, 1, 2, 1])
-
-/-- Smallest case: `k = l = t = 1` gives `(0 | 1, 1, 2, 1, 4, 3, 1, 1, 2, 1)`.
-
-Source: Manish Kumar, Mohan and Ram Krishna Pandey, *A Conjecture of Chu et al. and a New
-Family of MSTD Sets*, INTEGERS 24 (2024), Article A32, Section 3 (the set of Lemmas 1-7 and
-Theorems 6-7). -/
-public theorem chuFamilyKLT_one_one_one :
-    chuFamilyKLT 1 1 1 = {0, 1, 2, 4, 5, 9, 12, 13, 14, 16, 17} := by
-  decide
-
-/-- Lemma 1: with `T = t(kl + l + 1)`, the positive differences of `A` include `4i` and
-`1 + 4i` for `1 ≤ i ≤ 1 + T`, and `3 + 4i` for `0 ≤ i ≤ T`.
+/-- **Differences in the Kumar–Mohan–Pandey sets (Lemma 1).** Let $k$, $l$, $t$ be positive
+integers, let $A = A_{k,l,t}$ be the Kumar–Mohan–Pandey set, and put $T = t(kl + l + 1)$. Then
+the difference set $A - A$ contains $4i$ and $1 + 4i$ for every integer $i$ with
+$1 \le i \le 1 + T$, and contains $3 + 4i$ for every integer $i$ with $0 \le i \le T$.
 
 Source: Manish Kumar, Mohan and Ram Krishna Pandey, *A Conjecture of Chu et al. and a New
 Family of MSTD Sets*, INTEGERS 24 (2024), Article A32, Lemma 1 (`integers-2024-A32-lem-1`). -/
@@ -147,8 +96,11 @@ public theorem_wanted chuFamilyKLT_mem_sub {k l t : ℕ} (hk : 0 < k) (hl : 0 < 
       ∀ i : ℕ, i ≤ t * (k * l + l + 1) →
         3 + 4 * (i : ℤ) ∈ chuFamilyKLT k l t - chuFamilyKLT k l t
 
-/-- Lemma 3: `(A - A)⁺` contains exactly `lt + t` elements of the form `6 + 4m`, `m ≥ 0`
-(written `6 ≤ d ∧ d % 4 = 2`).
+/-- **Positive differences of the form 6 + 4m in the Chu family set.** Let $k$, $l$, $t$ be
+positive integers and let $A \subseteq \mathbb{Z}$ be the Chu family set with parameters $k$, $l$,
+$t$. Then exactly $lt + t$ elements $d$ of $A - A$ satisfy $d \ge 6$ and $d \equiv 2 \pmod 4$;
+that is, exactly $lt + t$ positive differences of $A$ have the form $6 + 4m$ with $m \ge 0$ an
+integer.
 
 Source: Manish Kumar, Mohan and Ram Krishna Pandey, *A Conjecture of Chu et al. and a New
 Family of MSTD Sets*, INTEGERS 24 (2024), Article A32, Lemma 3 (`integers-2024-A32-lem-3`). -/
@@ -157,18 +109,10 @@ public theorem_wanted chuFamilyKLT_card_sub_six_add_four_mul {k l t : ℕ} (hk :
     ((chuFamilyKLT k l t - chuFamilyKLT k l t).filter
         fun d => 6 ≤ d ∧ d % 4 = 2).card = l * t + t
 
-/-- Lemma 4: with `T = t(kl + l + 1)`, `1 + 4i ∈ A` for `0 ≤ i ≤ 1 + T`, and `2 + 4T`,
-`4 + 4T ∈ A`.
-
-Source: Manish Kumar, Mohan and Ram Krishna Pandey, *A Conjecture of Chu et al. and a New
-Family of MSTD Sets*, INTEGERS 24 (2024), Article A32, Lemma 4 (`integers-2024-A32-lem-4`). -/
-public theorem_wanted chuFamilyKLT_mem {k l t : ℕ} (hk : 0 < k) (hl : 0 < l) (ht : 0 < t) :
-    (∀ i : ℕ, i ≤ 1 + t * (k * l + l + 1) → 1 + 4 * (i : ℤ) ∈ chuFamilyKLT k l t) ∧
-      2 + 4 * ((t * (k * l + l + 1) : ℕ) : ℤ) ∈ chuFamilyKLT k l t ∧
-      4 + 4 * ((t * (k * l + l + 1) : ℕ) : ℤ) ∈ chuFamilyKLT k l t
-
-/-- Lemma 5: with `T = t(kl + l + 1)`, `1 + 4i, 2 + 4i ∈ A + A` for `0 ≤ i ≤ 2 + 2T` and
-`3 + 4i ∈ A + A` for `0 ≤ i ≤ 1 + 2T`.
+/-- **Elements of the sumset of the Chu family set.** Let $k$, $l$, $t$ be positive integers, let
+$A \subseteq \mathbb{Z}$ be the Chu family set with parameters $k$, $l$, $t$, and let
+$T = t(kl + l + 1)$. Then $1 + 4i$ and $2 + 4i$ lie in $A + A$ for every integer $i$ with
+$0 \le i \le 2 + 2T$, and $3 + 4i$ lies in $A + A$ for every integer $i$ with $0 \le i \le 1 + 2T$.
 
 Source: Manish Kumar, Mohan and Ram Krishna Pandey, *A Conjecture of Chu et al. and a New
 Family of MSTD Sets*, INTEGERS 24 (2024), Article A32, Lemma 5 (`integers-2024-A32-lem-5`). -/
@@ -179,7 +123,10 @@ public theorem_wanted chuFamilyKLT_mem_add {k l t : ℕ} (hk : 0 < k) (hl : 0 < 
       ∀ i : ℕ, i ≤ 1 + 2 * (t * (k * l + l + 1)) →
         3 + 4 * (i : ℤ) ∈ chuFamilyKLT k l t + chuFamilyKLT k l t
 
-/-- Lemma 6: `4 + (4k + 4)i + (4kl + 4l + 4)j ∈ A` for `0 ≤ i ≤ l` and `0 ≤ j ≤ t - 1`.
+/-- **Block starting points of the Chu family set.** Let $k$, $l$, $t$ be positive integers and
+let $A \subseteq \mathbb{Z}$ be the Chu family set with parameters $k$, $l$, $t$. Then
+$4 + (4k + 4)i + (4kl + 4l + 4)j \in A$ for all integers $i$, $j$ with $0 \le i \le l$ and
+$0 \le j \le t - 1$.
 
 Source: Manish Kumar, Mohan and Ram Krishna Pandey, *A Conjecture of Chu et al. and a New
 Family of MSTD Sets*, INTEGERS 24 (2024), Article A32, Lemma 6 (`integers-2024-A32-lem-6`). -/
@@ -187,25 +134,35 @@ public theorem_wanted chuFamilyKLT_mem_block_starts {k l t : ℕ} (hk : 0 < k) (
     (ht : 0 < t) (i j : ℕ) (hi : i ≤ l) (hj : j < t) :
     4 + (4 * k + 4) * (i : ℤ) + (4 * k * l + 4 * l + 4) * (j : ℤ) ∈ chuFamilyKLT k l t
 
-/-- Theorem 6: `|A - A| = 11 + 6klt + 8lt + 8t`.
+/-- **Size of the difference set of the Chu family set.** Let $k$, $l$, $t$ be positive integers
+and let $A \subseteq \mathbb{Z}$ be the Chu family set with parameters $k$, $l$, $t$. Then
+$|A - A| = 11 + 6klt + 8lt + 8t$.
 
 Source: Manish Kumar, Mohan and Ram Krishna Pandey, *A Conjecture of Chu et al. and a New
 Family of MSTD Sets*, INTEGERS 24 (2024), Article A32, Theorem 6 (`integers-2024-A32-thm-6`). -/
 public theorem_wanted chuFamilyKLT_card_sub {k l t : ℕ} (hk : 0 < k) (hl : 0 < l) (ht : 0 < t) :
     (chuFamilyKLT k l t - chuFamilyKLT k l t).card = 11 + 6 * k * l * t + 8 * l * t + 8 * t
 
-/-- Theorem 7: `|A + A| ≥ 11 + 6klt + 10lt + 8t`; with Theorem 6, `A` is MSTD.
+/-- **Lower bound for the sumset of the Chu family set.** Let $k$, $l$, $t$ be positive integers
+and let $A \subseteq \mathbb{Z}$ be the Chu family set with parameters $k$, $l$, $t$. Then
+$|A + A| \ge 11 + 6klt + 10lt + 8t$.
+
+Together with $|A - A| = 11 + 6klt + 8lt + 8t$ (Theorem 6), this shows that $A$ is sum-dominated
+(MSTD): $|A + A| > |A - A|$.
 
 Source: Manish Kumar, Mohan and Ram Krishna Pandey, *A Conjecture of Chu et al. and a New
 Family of MSTD Sets*, INTEGERS 24 (2024), Article A32, Theorem 7 (`integers-2024-A32-thm-7`). -/
 public theorem_wanted chuFamilyKLT_card_add {k l t : ℕ} (hk : 0 < k) (hl : 0 < l) (ht : 0 < t) :
     11 + 6 * k * l * t + 10 * l * t + 8 * t ≤ (chuFamilyKLT k l t + chuFamilyKLT k l t).card
 
-/-- Lemma 7: with `P = 8kl + 8l + 8`, the sumset `A + A` contains `{0, 4, 8}` and the six
-families `X₁ = {Pj + (4k + 4)i + 4}`, `X₂ = {Pj + (4k + 4)i + 8}`, `X₃ = {Pj + 4kl + 4l + 12}`,
-`X₄ = {Pj + 4kl + 4l + (4k + 4)i + 8}`, `X₅ = {Pj + 4kl + 4l + (4k + 4)i + 12}` and
-`X₆ = {Pj + 8kl + 8l + 16}` (`1 ≤ i ≤ l`, `0 ≤ j ≤ t - 1`), and the six families are pairwise
-disjoint.
+/-- **Six disjoint families in the sumset of the Chu family set.** Let $k$, $l$, $t$ be positive
+integers, let $A \subseteq \mathbb{Z}$ be the Chu family set with parameters $k$, $l$, $t$, and
+let $P = 8kl + 8l + 8$. Let $X_1$, $X_2$, $X_4$, $X_5$ be the sets of the integers
+$Pj + (4k + 4)i + 4$, $Pj + (4k + 4)i + 8$, $Pj + 4kl + 4l + (4k + 4)i + 8$ and
+$Pj + 4kl + 4l + (4k + 4)i + 12$ respectively, for $1 \le i \le l$ and $0 \le j \le t - 1$, and
+let $X_3$, $X_6$ be the sets of the integers $Pj + 4kl + 4l + 12$ and $Pj + 8kl + 8l + 16$
+respectively, for $0 \le j \le t - 1$. Then $A + A$ contains $\{0, 4, 8\}$ and each of
+$X_1, \ldots, X_6$, and the sets $X_1, \ldots, X_6$ are pairwise disjoint.
 
 Source: Manish Kumar, Mohan and Ram Krishna Pandey, *A Conjecture of Chu et al. and a New
 Family of MSTD Sets*, INTEGERS 24 (2024), Article A32, Lemma 7 (`integers-2024-A32-lem-7`). -/
@@ -225,23 +182,6 @@ public theorem_wanted chuFamilyKLT_add_supset_six_families {k l t : ℕ} (hk : 0
     {0, 4, 8} ∪ X₁ ∪ X₂ ∪ X₃ ∪ X₄ ∪ X₅ ∪ X₆ ⊆ chuFamilyKLT k l t + chuFamilyKLT k l t ∧
       Pairwise fun a b : Fin 6 =>
         Disjoint (![X₁, X₂, X₃, X₄, X₅, X₆] a) (![X₁, X₂, X₃, X₄, X₅, X₆] b)
-
-/-- Proposition 1: in the set of Lemma 2, the runs
-`(R₁) = 1, 1, (2, M^k, …, M^k, 1, 1) × j` and `(R₃) = 2, (M^k, …, M^k, 1, 1, 2) × j`
-(`j ∈ [1, t]`, each `M^k, …, M^k` with `l` copies, read from the paper's display) give the same
-elements of `(A - A)⁺`, that is, the same set of run sums. The paper's `k, l, t ≥ 1` are not
-needed.
-
-Source: Manish Kumar, Mohan and Ram Krishna Pandey, *A Conjecture of Chu et al. and a New
-Family of MSTD Sets*, INTEGERS 24 (2024), Article A32, Proposition 1
-(`integers-2024-A32-prop-1`). -/
-public theorem_wanted chuFamilyKLT_run_sums_R1_eq_R3 (k l t : ℕ) :
-    (Finset.Icc 1 t).image (fun j =>
-        ([1, 1] ++ (List.replicate j
-          (2 :: (List.replicate l (chuBlock k)).flatten ++ [1, 1])).flatten).sum) =
-      (Finset.Icc 1 t).image (fun j =>
-        (2 :: (List.replicate j
-          ((List.replicate l (chuBlock k)).flatten ++ [1, 1, 2])).flatten).sum)
 
 end
 

@@ -27,7 +27,9 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The number `p̄(n)` of overpartitions of `n` (`p̄(3) = 8`).
+/-- **Number of overpartitions.** For a natural number $n$, $\overline{p}(n)$ is the number of
+overpartitions of $n$, that is, of pairs consisting of a partition $p$ of $n$ and a set of
+overlined part sizes, each of which occurs as a part of $p$. For example, $\overline{p}(3) = 8$.
 
 Source: Victor Manuel R. Aricheta, Judy Ann L. Donato, *A Minimal Excludant over Overpartitions*,
 Journal of Integer Sequences 27 (2024), Article 24.7.1, Section 1. -/
@@ -39,11 +41,12 @@ open Filter
 open QPochhammer
 
 /--
-`nonOverlinedCount O a` is the multiplicity of `a` among the non-overlined
-parts of `O`: it subtracts one exactly when the size `a` is selected in
-`O.overlines`.  This maps the paper's “first occurrence may be overlined”
-convention to the repository representation, where overlining is stored once
-per distinct size.
+**Number of non-overlined copies of a part size.** For an overpartition $O$ of $n$ and a natural
+number $a$, the number of non-overlined parts of size $a$ in $O$ is the multiplicity of $a$ in the
+underlying partition of $O$, minus $1$ if $a$ is overlined in $O$ and minus $0$ otherwise.
+
+This matches the convention that only the first occurrence of a part size may be overlined: an
+overpartition records each overlined size once.
 
 Source: Victor Manuel R. Aricheta, Judy Ann L. Donato, *A Minimal Excludant over Overpartitions*,
 Journal of Integer Sequences 27 (2024), Article 24.7.1, Definition of `mex̄_r`.
@@ -52,11 +55,11 @@ public def nonOverlinedCount {n : ℕ} (O : Nat.Overpartition n) (a : ℕ) : ℕ
   O.toPartition.parts.count a - if a ∈ O.overlines then 1 else 0
 
 /--
-`leastGapOverpartition r O` is the least positive size occurring fewer than
-`r` times among the non-overlined parts of `O`, formalizing `mex̄_r(O)`.
-For positive `r`, existence uses `n + 1`, which cannot occur in a partition
-of `n`.  The paper only uses positive `r`; the otherwise undefined case
-`r = 0` is totalized to `0`.
+**Minimal excludant of an overpartition with a multiplicity bound.** For natural numbers $r \ge 1$
+and $n$ and an overpartition $O$ of $n$, $\overline{\mathrm{mex}}_r(O)$ is the least positive
+integer $k$ that occurs fewer than $r$ times among the non-overlined parts of $O$. Such a $k$
+exists, since $n + 1$ is not a part of $O$. For $r = 0$, which the paper does not use, the value
+is $0$ by convention.
 
 Source: Victor Manuel R. Aricheta, Judy Ann L. Donato, *A Minimal Excludant over Overpartitions*,
 Journal of Integer Sequences 27 (2024), Article 24.7.1, Definition of `mex̄_r`.
@@ -79,11 +82,13 @@ public def leastGapOverpartition (r : ℕ) {n : ℕ} (O : Nat.Overpartition n) :
         simp [nonOverlinedCount, hcount, hrpos]⟩)
 
 /--
-`D3 n` counts three-colored distinct-part partitions of `n` as triples
-`(A, B, C)` of subsets of `{1, …, n}`, one set per color, whose three sums
-add to `n`.  Distinctness is enforced within each color by `Finset`; the
-same size may occur in different colors, exactly as in the product
-`(-q;q)_∞^3`.
+**Three-colored distinct-part partitions.** For a natural number $n$, $D_3(n)$ is the number of
+triples $(A, B, C)$ of subsets of $\{1, \dots, n\}$ such that the sum of the elements of $A$, the
+sum of the elements of $B$ and the sum of the elements of $C$ add up to $n$. Here $A$, $B$, $C$
+are the parts of the three colors of a partition of $n$ whose parts of each color are distinct.
+
+A size may occur in several colors but at most once in each, as in the product
+$\prod_{m \ge 1} (1 + q^m)^3$.
 
 Source: Victor Manuel R. Aricheta, Judy Ann L. Donato, *A Minimal Excludant over Overpartitions*,
 Journal of Integer Sequences 27 (2024), Article 24.7.1, Definition of `D_3(n)`.
@@ -93,17 +98,23 @@ public def D3 (n : ℕ) : ℕ :=
     (Finset.Icc 1 n).powerset).filter fun p =>
       p.1.1.sum id + p.1.2.sum id + p.2.sum id = n).card
 
-/-- `σ_r mex̄(n) = Σ_{π ∈ P̄(n)} mex̄_r(π)`; `σmex̄(n)` is `r = 1`. For positive `r`, the
-empty overpartition gives `σ_r mex̄(0) = 1`; for the totalized `r = 0`, every value is `0`.
-Values (by direct enumeration): `σmex̄(0..4) = 1, 3, 6, 13, 24` (the paper's
-`σmex̄(3) = 13`), `σ_2 mex̄(2) = 5`.
+/-- **Sums of minimal excludants over overpartitions.** For natural numbers $r$ and $n$,
+$\sigma_r\overline{\mathrm{mex}}(n)$ is the sum, over all overpartitions $\pi$ of $n$, of
+$\overline{\mathrm{mex}}_r(\pi)$, the least positive integer occurring fewer than $r$ times
+among the non-overlined parts of $\pi$; for $r = 0$ the value $\overline{\mathrm{mex}}_0(\pi)$
+is $0$ by convention, so $\sigma_0\overline{\mathrm{mex}}(n) = 0$. We write
+$\sigma\overline{\mathrm{mex}}(n) = \sigma_1\overline{\mathrm{mex}}(n)$.
+
+By direct enumeration, $\sigma\overline{\mathrm{mex}}(n) = 1, 3, 6, 13, 24$ for $n = 0, \dots, 4$,
+and $\sigma_2\overline{\mathrm{mex}}(2) = 5$.
 
 Source: Victor Manuel R. Aricheta, Judy Ann L. Donato, *A Minimal Excludant over Overpartitions*,
 Journal of Integer Sequences 27 (2024), Article 24.7.1, Definitions of `σmex̄` and `σ_r mex̄`. -/
 public noncomputable def sigmaMexOverpartition (r n : ℕ) : ℕ :=
   ∑ O : Nat.Overpartition n, leastGapOverpartition r O
 
-/-- There is exactly one overpartition of `0`.
+/-- **The number of overpartitions of zero.** The number $\overline{p}(0)$ of overpartitions of
+$0$ equals $1$: the empty overpartition is the only one.
 
 Source: Victor Manuel R. Aricheta, Judy Ann L. Donato, *A Minimal Excludant over Overpartitions*,
 Journal of Integer Sequences 27 (2024), Article 24.7.1, Section 1 (`p̄(0) = 1`). -/
@@ -112,8 +123,9 @@ public theorem overpartitionCount_zero : overpartitionCount 0 = 1 :=
     Nat.Overpartition.eq_of_zero _ _⟩
 
 /--
-The empty triple of colored distinct-part sets is the unique object counted by
-`D_3(0)`, so the finite-set encoding `D3 0` equals `1`.
+**Three-colored distinct-part partitions of $0$.** The number $D_3(0)$ of partitions of $0$ into
+parts of three colors, with the parts of each color distinct, equals $1$: the empty partition is
+the only one.
 
 Source: Victor Manuel R. Aricheta, Judy Ann L. Donato, *A Minimal Excludant over Overpartitions*,
 Journal of Integer Sequences 27 (2024), Article 24.7.1, Definition of `D_3(n)`.
@@ -122,8 +134,9 @@ public theorem D3_zero : D3 0 = 1 := by
   decide
 
 /--
-A partition of `1` into three-colored distinct parts chooses one of three
-colors, so the finite-set encoding `D3 1` equals `3`.
+**Three-colored distinct-part partitions of $1$.** The number $D_3(1)$ of partitions of $1$ into
+parts of three colors, with the parts of each color distinct, equals $3$: the single part $1$
+takes one of the three colors.
 
 Source: Victor Manuel R. Aricheta, Judy Ann L. Donato, *A Minimal Excludant over Overpartitions*,
 Journal of Integer Sequences 27 (2024), Article 24.7.1, Definition of `D_3(n)`.
@@ -132,8 +145,9 @@ public theorem D3_one : D3 1 = 3 := by
   decide
 
 /--
-The coefficient of `q^2` in `(-q;q)_∞^3` is `6`, represented by the six
-triples of colored distinct-part sets in the finite-set encoding `D3 2`.
+**Three-colored distinct-part partitions of $2$.** The number $D_3(2)$ of partitions of $2$ into
+parts of three colors, with the parts of each color distinct, equals $6$: the single part $2$ in
+one of three colors, or two parts $1$ in two different colors.
 
 Source: Victor Manuel R. Aricheta, Judy Ann L. Donato, *A Minimal Excludant over Overpartitions*,
 Journal of Integer Sequences 27 (2024), Article 24.7.1, Definition of `D_3(n)`.
@@ -142,10 +156,13 @@ public theorem D3_two : D3 2 = 6 := by
   decide
 
 /--
-For every positive `n`, the sum `σmex̄(n)`, encoded as
-`sigmaMexOverpartition 1 n`, equals the number `D_3(n)` of three-colored
-distinct-part partitions, encoded as `D3 n`.  This is a direct equality with
-no deviation from the theorem.
+**The overpartition mex sum counts three-colored distinct-part partitions.** For an
+overpartition $\pi$, let $\overline{\mathrm{mex}}(\pi)$ be the least positive integer that does
+not occur among the non-overlined parts of $\pi$, and let $\sigma\overline{\mathrm{mex}}(n)$ be
+the sum of $\overline{\mathrm{mex}}(\pi)$ over all overpartitions $\pi$ of $n$. For every
+positive integer $n$, $\sigma\overline{\mathrm{mex}}(n) = D_3(n)$, the number of partitions of
+$n$ into distinct parts in three colors: the number of triples $(A, B, C)$ of subsets of
+$\{1, \dots, n\}$ whose three element sums add up to $n$.
 
 Source: Victor Manuel R. Aricheta, Judy Ann L. Donato, *A Minimal Excludant over Overpartitions*,
 Journal of Integer Sequences 27 (2024), Article 24.7.1, Theorem 2.
@@ -154,10 +171,11 @@ public theorem_wanted sigmaMexOverpartition_eq_D3 (n : ℕ) (hn : 0 < n) :
     sigmaMexOverpartition 1 n = D3 n
 
 /--
-As `n → ∞`, `σmex̄(n)` is asymptotic to
-`exp(π√n) / (8 n^(3/4))`.  The limit is encoded by
-`Asymptotics.IsEquivalent atTop`, with natural values coerced to reals;
-there is no mathematical deviation.
+**Asymptotic formula for the overpartition mex sum.** Let $\sigma\overline{\mathrm{mex}}(n)$ be
+the sum, over all overpartitions $\pi$ of $n$, of $\overline{\mathrm{mex}}(\pi)$, the least
+positive integer that does not occur among the non-overlined parts of $\pi$. Then
+$\sigma\overline{\mathrm{mex}}(n) \sim e^{\pi\sqrt{n}} / (8 n^{3/4})$ as $n \to \infty$, that is,
+the ratio of the two sides tends to $1$.
 
 Source: Victor Manuel R. Aricheta, Judy Ann L. Donato, *A Minimal Excludant over Overpartitions*,
 Journal of Integer Sequences 27 (2024), Article 24.7.1, Theorem 3.
@@ -169,11 +187,12 @@ public theorem_wanted sigmaMexOverpartition_asymptotic :
         (8 * (n : ℝ) ^ ((3 : ℝ) / 4)))
 
 /--
-For positive `n`, `σmex̄(n)` is odd exactly when `n = T_j` for some
-`j : ℕ`, and is even otherwise.  The two implications encode the
-triangular and non-triangular cases without requiring a classical decision
-procedure for the unbounded existential; `j * (j + 1) / 2` (the triangular number `T_j`) encodes
-`j(j+1)/2`.
+**Parity of the overpartition mex sum.** For an overpartition $\pi$, let
+$\overline{\mathrm{mex}}(\pi)$ be the least positive integer that does not occur among the
+non-overlined parts of $\pi$, and let $\sigma\overline{\mathrm{mex}}(n)$ be the sum of
+$\overline{\mathrm{mex}}(\pi)$ over all overpartitions $\pi$ of $n$. For every positive integer
+$n$, $\sigma\overline{\mathrm{mex}}(n)$ is odd if $n = j(j+1)/2$ is a triangular number for some
+natural number $j$, and even otherwise.
 
 Source: Victor Manuel R. Aricheta, Judy Ann L. Donato, *A Minimal Excludant over Overpartitions*,
 Journal of Integer Sequences 27 (2024), Article 24.7.1, Theorem 4.
@@ -185,11 +204,15 @@ public theorem_wanted sigmaMexOverpartition_parity (n : ℕ) (hn : 0 < n) :
       Nat.ModEq 2 (sigmaMexOverpartition 1 n) 0)
 
 /--
-For positive `r` and complex `q` with `‖q‖ < 1`, the generating series
-of `σ_r mex̄(n)` equals
-`(-q;q)_∞ (q^(2r);q^(2r))_∞ / ((q;q)_∞ (q^r;q^(2r))_∞)`.
-Each infinite product is represented by `qPochhammerInfRaw`, and the left
-side by a complex `tsum`; these are the requested analytic encodings.
+**Generating function of the overpartition r-mex sums.** Let $r$ be a positive integer and $q$
+a complex number with $|q| < 1$. Write $(a;q)_\infty = \prod_{j \ge 0} (1 - a q^j)$, and let
+$\sigma_r\overline{\mathrm{mex}}(n)$ be the sum over all overpartitions $\pi$ of $n$ of
+$\overline{\mathrm{mex}}_r(\pi)$, the least positive integer occurring fewer than $r$ times among
+the non-overlined parts of $\pi$. Then
+$$
+\sum_{n \ge 0} \sigma_r\overline{\mathrm{mex}}(n)\, q^n =
+\frac{(-q;q)_\infty\,(q^{2r};q^{2r})_\infty}{(q;q)_\infty\,(q^r;q^{2r})_\infty}.
+$$
 
 Source: Victor Manuel R. Aricheta, Judy Ann L. Donato, *A Minimal Excludant over Overpartitions*,
 Journal of Integer Sequences 27 (2024), Article 24.7.1, Theorem 6.
@@ -202,11 +225,14 @@ public theorem_wanted sigmaMexOverpartition_generating_function
           qPochhammerInfRaw (q ^ r) (q ^ (2 * r)))
 
 /--
-For every positive `r`, `σ_r mex̄(n)` is asymptotic to
-`exp(π√n) / (8 √r n^(3/4))` as `n → ∞`.  This uses the published
-`√r` denominator (also supported by the requester's numerical check), not
-the `r` denominator printed in arXiv v1; the limit is formalized with
-`Asymptotics.IsEquivalent atTop`.
+**Asymptotic formula for the overpartition r-mex sums.** Let $r$ be a positive integer and let
+$\sigma_r\overline{\mathrm{mex}}(n)$ be the sum over all overpartitions $\pi$ of $n$ of
+$\overline{\mathrm{mex}}_r(\pi)$, the least positive integer occurring fewer than $r$ times among
+the non-overlined parts of $\pi$. Then
+$\sigma_r\overline{\mathrm{mex}}(n) \sim e^{\pi\sqrt{n}} / (8 \sqrt{r}\, n^{3/4})$ as
+$n \to \infty$, that is, the ratio of the two sides tends to $1$.
+
+The denominator $8\sqrt{r}$ follows the published version of the paper; arXiv v1 prints $8r$.
 
 Source: Victor Manuel R. Aricheta, Judy Ann L. Donato, *A Minimal Excludant over Overpartitions*,
 Journal of Integer Sequences 27 (2024), Article 24.7.1, Theorem 7.
@@ -218,10 +244,13 @@ public theorem_wanted sigmaMexOverpartition_r_asymptotic (r : ℕ) (hr : 0 < r) 
         (8 * Real.sqrt r * (n : ℝ) ^ ((3 : ℝ) / 4)))
 
 /--
-When `r = 2^m 3^e` with `m,e ≥ 0` and `k ≥ 1`, the natural density of
-`n` for which `σ_r mex̄(n) ≡ 0 (mod 2^k)` is one.  Naturality makes the
-nonnegativity of `m,e` implicit; `Finset.range (X+1)` encodes `0 ≤ n ≤ X`,
-and `Tendsto ... atTop (nhds 1)` encodes the density limit.
+**Density of overpartition r-mex sums divisible by powers of two.** Let $m$, $e$ and $k$ be
+natural numbers with $k \ge 1$, let $r = 2^m 3^e$, and let
+$\sigma_r\overline{\mathrm{mex}}(n)$ be the sum over all overpartitions $\pi$ of $n$ of
+$\overline{\mathrm{mex}}_r(\pi)$, the least positive integer occurring fewer than $r$ times among
+the non-overlined parts of $\pi$. Then the natural numbers $n$ with
+$2^k \mid \sigma_r\overline{\mathrm{mex}}(n)$ have natural density $1$: the number of such $n$
+with $n \le X$, divided by $X$, tends to $1$ as $X \to \infty$.
 
 Source: Victor Manuel R. Aricheta, Judy Ann L. Donato, *A Minimal Excludant over Overpartitions*,
 Journal of Integer Sequences 27 (2024), Article 24.7.1, Theorem 8.
@@ -236,13 +265,19 @@ public theorem_wanted sigmaMexOverpartition_power_density
       atTop (nhds 1)
 
 /--
-Ingham's quoted Tauberian theorem: `A` is represented by coefficients `a`;
-“radius of convergence one” is encoded by summability/identification for
-`‖q‖ < 1` and nonsummability for `1 < ‖q‖`; `a` is nonnegative and
-weakly increasing; the positive-real asymptotic and every conical complex
-big-O bound are stated with `nhdsWithin`; and the conclusion is the stated
-coefficient asymptotic.  Boundary convergence at `‖q‖ = 1` is intentionally
-left unspecified, as radius one permits either behavior.
+**Ingham's Tauberian theorem.** Let $a : \mathbb{N} \to \mathbb{R}$ be nonnegative and weakly
+increasing, let $A : \mathbb{C} \to \mathbb{C}$ be a function, and let $\alpha$, $\beta$, $C$
+be real numbers with $C > 0$. Suppose that for every complex $q$ with $|q| < 1$ the series
+$\sum_{n \ge 0} a(n) q^n$ is summable with sum $A(q)$, and that for every complex $q$ with
+$|q| > 1$ it is not summable. Suppose also that $A(e^{-t}) \sim \alpha t^\beta e^{C/t}$ as
+$t \to 0^+$ through positive reals, and that for every $\Delta > 0$,
+$A(e^{-z}) = O(|z|^\beta e^{C/|z|})$ as $z \to 0$ within the cone
+$\{z \in \mathbb{C} : \mathrm{Re}\, z > 0,\ |\mathrm{Im}\, z| \le \Delta\, \mathrm{Re}\, z\}$.
+Then, as $n \to \infty$,
+$$a(n) \sim \frac{\alpha}{2\sqrt{\pi}} C^{(2\beta + 1)/4} n^{-(2\beta + 3)/4} e^{2\sqrt{Cn}}.$$
+
+Nothing is assumed about the series on the circle $|q| = 1$, since radius of convergence one
+permits either behavior there.
 
 Source: Victor Manuel R. Aricheta, Judy Ann L. Donato, *A Minimal Excludant over Overpartitions*,
 Journal of Integer Sequences 27 (2024), Article 24.7.1, Proposition 9.
@@ -271,10 +306,12 @@ public theorem_wanted ingham_tauberian
           Real.exp (2 * Real.sqrt (C * n)))
 
 /--
-For `n ≥ 0` and `r ≥ 1`, summing `p̄(n-rT_k)` over exactly the indices
-`k` satisfying `rT_k ≤ n` gives `σ_r mex̄(n)`.  The finite filtered sum
-implements the infinite sum with negative arguments omitted; `k ≤ n`
-suffices because `r ≥ 1`.  (`n ≥ 0` is automatic for `n : ℕ`.)
+**The r-mex sum of overpartitions as a sum of overpartition counts.** Let $n$ and $r$ be
+natural numbers with $r \ge 1$, let $\overline{p}(m)$ be the number of overpartitions of $m$, let
+$T_k = k(k+1)/2$ be the $k$-th triangular number, and let $\sigma_r\overline{\mathrm{mex}}(n)$ be
+the sum over all overpartitions $\pi$ of $n$ of $\overline{\mathrm{mex}}_r(\pi)$, the least
+positive integer occurring fewer than $r$ times among the non-overlined parts of $\pi$. Then
+$$\sigma_r\overline{\mathrm{mex}}(n) = \sum_{k \ge 0,\; rT_k \le n} \overline{p}(n - rT_k).$$
 
 Source: Victor Manuel R. Aricheta, Judy Ann L. Donato, *A Minimal Excludant over Overpartitions*,
 Journal of Integer Sequences 27 (2024), Article 24.7.1, Proposition 10.
@@ -287,12 +324,17 @@ public theorem_wanted sigmaMexOverpartition_eq_sum_shifted_count
       sigmaMexOverpartition r n
 
 /--
-For positive `r` and `k`, the eta-quotient congruence is encoded without
-modular-form infrastructure.  The raw factors `f_d(q) = (q^d;q^d)_∞` use
-`qPochhammerInfRaw`; an integer sequence `c` supplies the power-series
-coefficients; the prefactor is `q^(3r)`; and `Int.ModEq (2^k)` states that
-only exponents `24n+3r` carry `σ_r mex̄(n)`.  The denominator exponent is
-an integer power, so at `k=1` its value `-1` is represented by `zpow`.
+**Eta-quotient congruence for sums of overpartition minimal excludants.** Let $r \ge 1$ and
+$k \ge 1$ be integers, and for $n \ge 0$ let $\sigma_r \overline{\mathrm{mex}}(n)$ be the sum, over
+all overpartitions of $n$, of the least positive integer occurring fewer than $r$ times among the
+non-overlined parts. Then there are integers $c_0, c_1, c_2, \dots$ such that for every complex $q$
+with $|q| < 1$, writing $f_d = (q^d; q^d)_\infty = \prod_{m \ge 1} (1 - q^{dm})$,
+$$q^{3r} \frac{f_{48} f_{24r}^{2^k - 1}}{f_{24}^2 f_{48r}^{2^{k-1} - 2}} = \sum_{j \ge 0} c_j q^j,$$
+and for every $j \ge 0$ we have $c_j \equiv \sigma_r \overline{\mathrm{mex}}(n) \pmod{2^k}$ when
+$j = 24n + 3r$ with $n \ge 0$, and $c_j \equiv 0 \pmod{2^k}$ otherwise.
+
+The exponent $2^{k-1} - 2$ is an integer; at $k = 1$ it equals $-1$, so $f_{48r}$ then appears
+in the numerator.
 
 Source: Victor Manuel R. Aricheta, Judy Ann L. Donato, *A Minimal Excludant over Overpartitions*,
 Journal of Integer Sequences 27 (2024), Article 24.7.1, Proposition 16.

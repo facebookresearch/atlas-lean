@@ -39,7 +39,12 @@ and every `#P` function is computable from it by a polynomial-time oracle comput
 -/
 
 
-/-- The permanent of a 0-1 matrix, from a bitstring decoding `(n, entries)` in row-major order. -/
+/-- **Permanent of an encoded 0-1 matrix.** For a bitstring $x$ that decodes to a pair $(n, e)$ of
+a natural number $n$ and a list $e = (e_0, \dots, e_{m-1})$ of natural numbers with $m = n^2$
+and every $e_j \le 1$, the value at $x$ is the permanent
+$\sum_{\sigma} \prod_{i < n} e_{in + \sigma(i)}$ of the $n \times n$ matrix with entries $e$ in
+row-major order, the sum running over all permutations $\sigma$ of $\{0, \dots, n - 1\}$. For
+every other bitstring the value is $0$. -/
 noncomputable def permFun (x : List Bool) : ℕ :=
   match MetaMathlibExt.BitstringEncoding.bitDecode (α := ℕ × List ℕ) x with
   | some (n, entries) =>
@@ -50,8 +55,11 @@ noncomputable def permFun (x : List Bool) : ℕ :=
     else 0
   | none => 0
 
-/-- **The permanent is #P-complete (Valiant).** Source: L. G. Valiant, "The complexity of
-computing the permanent", Theoretical Computer Science 8 (1979), 189-201. -/
+/-- **The permanent is #P-complete (Valiant).** The function that sends a bitstring encoding a
+square 0-1 matrix to its permanent, and every other bitstring to $0$, is $\#P$-complete.
+
+Source: L. G. Valiant, "The complexity of computing the permanent", Theoretical Computer
+Science 8 (1979), 189-201. -/
 public theorem_wanted permanent_sharpP_complete :
     SharpPComplete permFun
 

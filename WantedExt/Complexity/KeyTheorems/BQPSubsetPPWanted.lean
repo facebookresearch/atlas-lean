@@ -45,7 +45,9 @@ polynomial-time verifier whose accepting-coin count implements that gap;
 none of that follows from the `BQP` definition alone.
 -/
 
-/-- **BQP is contained in PP.** Source: E. Bernstein and U. Vazirani, "Quantum
+/-- **BQP is contained in PP.** Every decision problem in BQP lies in PP.
+
+Source: E. Bernstein and U. Vazirani, "Quantum
 complexity theory", SIAM Journal on Computing 26 (1997), 1411-1473 (BQP ⊆ PP);
 L. Adleman, J. DeMarrais, and M.-D. Huang, "Quantum computability", SIAM
 Journal on Computing 26 (1997), 1524-1540; S. Arora and B. Barak, Computational

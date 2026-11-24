@@ -19,7 +19,9 @@ public import Mathlib.Tactic.Ring
 ## i. Overview
 
 Linear 1D shallow water, `ηt + H * ux = 0` and `ut + g * ηx = 0` with `g, H > 0`, implies the wave
-  equation `ηtt = g * H * ηxx` and wave speed `√(gH)`. The spatial partial derivatives `ηx, ux` are
+  equation `ηtt = g * H * ηxx` and wave speed `√(gH)`. This system is the linearization, about
+  `h = H` and `u = 0`, of the nonlinear primitive form in
+  `PhyslibExt.EarthScience.ShallowWaterNonlinear`. The spatial partial derivatives `ηx, ux` are
   given as `HasDerivAt` witnesses for the space slices, the PDEs are stated as `HasDerivAt` for the
   time slices, and mixed-derivative commutation and second-`x`-derivative differentiability are
   explicit hypotheses. The algebraic core `wave_eq_of_deriv_system` uses Lean's totalized `deriv`

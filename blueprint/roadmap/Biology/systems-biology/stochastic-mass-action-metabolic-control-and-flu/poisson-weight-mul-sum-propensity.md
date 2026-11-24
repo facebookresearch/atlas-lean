@@ -1,6 +1,6 @@
 # Global balance of the product-form Poisson weights
 
-Let $N$ be a [chemical reaction network](../complex-balancing-and-the-deficiency-zero-theore/reaction-network.md) with finite species set $S$ and finite reaction set $\rho$, let $k \in \mathbb{R}^\rho$ and $c \in \mathbb{R}^S$ with $c$ [complex balanced](../complex-balancing-and-the-deficiency-zero-theore/is-complex-balanced.md) for $k$, and let
+Let $N$ be a [chemical reaction network](../../../Dynamics/smooth-dynamics/reaction-network.md) with finite species set $S$ and finite reaction set $\rho$, let $k \in \mathbb{R}^\rho$ and $c \in \mathbb{R}^S$ with $c$ [complex balanced](../complex-balancing-and-the-deficiency-zero-theore/is-complex-balanced.md) for $k$, and let
 $\pi(x) = \prod_s c_s^{x_s} e^{-c_s}/x_s!$ be the [Poisson weights](poisson-weight.md). Then at every state
 $x \in \mathbb{N}^S$ the total outflow equals the total inflow:
 

@@ -49,25 +49,33 @@ variable {α : Type*} [Primcodable α]
 
 /-! ### Boolean closure -/
 
-/-- Decidable predicates are closed under conjunction. -/
+/-- **Decidable predicates are closed under conjunction.** Let $p$ and $q$ be predicates on a
+type $\alpha$ with a primitive recursive encoding. If $p$ and $q$ are both decidable by
+multi-stack machines, then so is the predicate $a \mapsto p(a) \wedge q(a)$. -/
 theorem TM2Decidable.and {p q : α → Prop} (hp : TM2Decidable p) (hq : TM2Decidable q) :
     TM2Decidable fun a ↦ p a ∧ q a :=
   tm2Decidable_iff_computablePred.mpr (MetaMathlibExt.ComputablePred.and
     (tm2Decidable_iff_computablePred.mp hp) (tm2Decidable_iff_computablePred.mp hq))
 
-/-- Decidable predicates are closed under disjunction. -/
+/-- **Decidable predicates are closed under disjunction.** Let $\alpha$ be a type with a
+primitive recursive encoding. If $p$ and $q$ are predicates on $\alpha$ that are decidable by a
+multi-stack Turing machine, then so is the predicate $a \mapsto p(a) \lor q(a)$. -/
 theorem TM2Decidable.or {p q : α → Prop} (hp : TM2Decidable p) (hq : TM2Decidable q) :
     TM2Decidable fun a ↦ p a ∨ q a :=
   tm2Decidable_iff_computablePred.mpr (MetaMathlibExt.ComputablePred.or
     (tm2Decidable_iff_computablePred.mp hp) (tm2Decidable_iff_computablePred.mp hq))
 
-/-- Recognizable predicates are closed under conjunction. -/
+/-- **Recognizable predicates are closed under conjunction.** Let $p$ and $q$ be predicates
+on a type $\alpha$ with a primitive recursive encoding. If $p$ and $q$ are both recognizable
+by multi-stack machines, then so is the predicate $a \mapsto p(a) \wedge q(a)$. -/
 theorem TM2Recognizable.and {p q : α → Prop} (hp : TM2Recognizable p) (hq : TM2Recognizable q) :
     TM2Recognizable fun a ↦ p a ∧ q a :=
   tm2Recognizable_iff_rePred.mpr (MetaMathlibExt.REPred.and
     (tm2Recognizable_iff_rePred.mp hp) (tm2Recognizable_iff_rePred.mp hq))
 
-/-- Recognizable predicates are closed under disjunction. -/
+/-- **Recognizable predicates are closed under disjunction.** Let $\alpha$ be a type with a
+primitive recursive encoding. If $p$ and $q$ are predicates on $\alpha$ that are recognizable by
+a multi-stack Turing machine, then so is the predicate $a \mapsto p(a) \lor q(a)$. -/
 theorem TM2Recognizable.or {p q : α → Prop} (hp : TM2Recognizable p) (hq : TM2Recognizable q) :
     TM2Recognizable fun a ↦ p a ∨ q a :=
   tm2Recognizable_iff_rePred.mpr (MetaMathlibExt.REPred.or
@@ -77,20 +85,27 @@ theorem TM2Recognizable.or {p q : α → Prop} (hp : TM2Recognizable p) (hq : TM
 
 variable {σ : Type*}
 
-/-- The language where a Boolean test is `true`. -/
+/-- **Language of a Boolean test.** For a Boolean-valued function $f$ on words over an
+alphabet $\sigma$, the language of $f$ is the set of words $u$ over $\sigma$ with
+$f(u) = \mathrm{true}$. -/
 def boolLang (f : List σ → Bool) : Language σ := {u | f u = true}
 
 @[simp] theorem mem_boolLang {f : List σ → Bool} {u : List σ} : u ∈ boolLang f ↔ f u = true :=
   Iff.rfl
 
-/-- Membership in a concatenation `L₁ * L₂`, as a split `w = u ++ v`. -/
+/-- **Membership in a concatenation of languages.** For languages $L_1$ and $L_2$ over an
+alphabet $\sigma$ and a word $w$ over $\sigma$, $w$ lies in the concatenation $L_1 L_2$ if and
+only if there are words $u$ and $v$ with $w = uv$, $u \in L_1$ and $v \in L_2$. -/
 theorem mem_mul_iff_exists_append {L₁ L₂ : Language σ} {w : List σ} :
     w ∈ L₁ * L₂ ↔ ∃ u v, w = u ++ v ∧ u ∈ L₁ ∧ v ∈ L₂ := by
   rw [Language.mem_mul]
   exact ⟨fun ⟨u, hu, v, hv, h⟩ ↦ ⟨u, v, h.symm, hu, hv⟩,
     fun ⟨u, v, h, hu, hv⟩ ↦ ⟨u, hu, v, hv, h.symm⟩⟩
 
-/-- A split test: some split point `i < n` of `w` has its prefix in `f` and suffix in `g`. -/
+/-- **Bounded split test.** Given Boolean tests $f$ and $g$ on words over $\sigma$, a word $w$ and
+a natural number $n$, the split test is the Boolean value that is true exactly when there is some
+$i < n$ such that $f$ is true on the prefix of $w$ of length $\min(i, |w|)$ and $g$ is true on
+the remaining suffix of $w$. -/
 def splitTest (f g : List σ → Bool) (w : List σ) (n : ℕ) : Bool :=
   Nat.rec false (fun i acc ↦ acc || (f (w.take i) && g (w.drop i))) n
 
@@ -124,14 +139,22 @@ theorem mem_mul_iff_splitTest {f g : List σ → Bool} (w : List σ) :
 
 variable [Primcodable σ]
 
-/-- A decidable language is the set where a computable test is `true`. -/
+/-- **Decidable languages have computable membership tests.** Let $L$ be a language over an
+alphabet $\sigma$ with a primitive recursive encoding. If membership in $L$ is decidable by a
+multi-stack machine, then there is a computable function $f$ from words over $\sigma$ to
+Booleans such that $L$ is the language of $f$, that is, the set of words $u$ with
+$f(u) = \mathrm{true}$. -/
 theorem TM2Decidable.exists_computable {L : Language σ} (h : TM2Decidable (· ∈ L)) :
     ∃ f : List σ → Bool, Computable f ∧ L = boolLang f := by
   obtain ⟨f, hf, hfeq⟩ :=
     ComputablePred.computable_iff.mp (tm2Decidable_iff_computablePred.mp h)
   exact ⟨f, hf, Set.ext fun u ↦ Iff.of_eq (congrFun hfeq u)⟩
 
-/-- **Decidable languages are closed under concatenation.** -/
+/-- **Decidable languages are closed under concatenation.** Let $\sigma$ be an alphabet with a
+primitive recursive encoding. If $L_1$ and $L_2$ are languages over $\sigma$ whose membership
+predicates are decidable by a multi-stack Turing machine, then the membership predicate of their
+concatenation $L_1 L_2 = \{uv : u \in L_1, v \in L_2\}$ is also decidable by a multi-stack
+Turing machine. -/
 theorem TM2Decidable.mul {L₁ L₂ : Language σ} (h₁ : TM2Decidable (· ∈ L₁))
     (h₂ : TM2Decidable (· ∈ L₂)) : TM2Decidable (· ∈ L₁ * L₂) := by
   obtain ⟨f, hf, rfl⟩ := h₁.exists_computable
@@ -151,7 +174,10 @@ theorem TM2Decidable.mul {L₁ L₂ : Language σ} (h₁ : TM2Decidable (· ∈ 
   · funext w
     exact propext (mem_mul_iff_splitTest w)
 
-/-- The split points of a word. -/
+/-- **Splits of a word.** For a word $w$ over $\sigma$ of length $n$, this is the list of the
+$n + 1$ pairs $(u, v)$ of words with $uv = w$, ordered by the length of $u$: for each
+$i = 0, 1, \dots, n$ it contains the prefix of $w$ of length $i$ paired with the remaining
+suffix. -/
 def splits (w : List σ) : List (List σ × List σ) :=
   (List.range (w.length + 1)).map fun i ↦ (w.take i, w.drop i)
 
@@ -176,7 +202,10 @@ theorem mem_mul_iff_exists_mem_splits {L₁ L₂ : Language σ} (w : List σ) :
     obtain ⟨rfl, rfl⟩ := he
     exact ⟨w.take i, w.drop i, (List.take_append_drop i w).symm, hu, hv⟩
 
-/-- **Recognizable languages are closed under concatenation.** -/
+/-- **Recognizable languages are closed under concatenation.** Let $L_1$ and $L_2$ be
+languages over an alphabet $\sigma$ with a primitive recursive encoding. If membership in $L_1$
+and membership in $L_2$ are recognizable by multi-stack machines, then so is membership in the
+concatenation $L_1 L_2$, the set of words $uv$ with $u \in L_1$ and $v \in L_2$. -/
 theorem TM2Recognizable.mul {L₁ L₂ : Language σ} (h₁ : TM2Recognizable (· ∈ L₁))
     (h₂ : TM2Recognizable (· ∈ L₂)) : TM2Recognizable (· ∈ L₁ * L₂) := by
   have h₁' : TM2Recognizable fun q : List σ × (List σ × List σ) ↦ q.2.1 ∈ L₁ :=
@@ -194,11 +223,17 @@ theorem TM2Recognizable.mul {L₁ L₂ : Language σ} (h₁ : TM2Recognizable (�
 /-! ### Kleene star -/
 
 
-/-- One letter more: start a new piece, or extend the first piece. -/
+/-- **Extending a list of pieces by a letter.** Given a letter $a$ and a list
+$\pi = [u_1, \dots, u_k]$ of words, the extensions of $\pi$ by $a$ are listed as follows: first
+$[[a], u_1, \dots, u_k]$, which starts a new piece $[a]$, and then, only when $k \ge 1$, also
+$[a u_1, u_2, \dots, u_k]$, which puts the letter $a$ in front of the first piece. -/
 def extendPartitions (a : σ) (ws : List (List σ)) : List (List (List σ)) :=
   ([a] :: ws) :: ws.head?.elim [] fun u ↦ [(a :: u) :: ws.tail]
 
-/-- All partitions of a word into nonempty pieces. -/
+/-- **Partitions of a word into nonempty factors.** For a word $w$ over $\sigma$, this is the
+list of all ways to write $w$ as a concatenation $w = u_1 u_2 \cdots u_k$ of nonempty words
+$u_1, \dots, u_k$, each recorded as the list $[u_1, \dots, u_k]$. The empty word has exactly one
+such partition, the empty list. -/
 def partitions (w : List σ) : List (List (List σ)) :=
   w.foldr (fun a acc ↦ acc.flatMap (extendPartitions a)) [[]]
 
@@ -297,7 +332,10 @@ theorem primrec_partitions : Primrec (partitions (σ := σ)) := by
     (Primrec.list_flatMap (Primrec.snd.comp Primrec.snd)
       (hext.comp (Primrec.fst.comp (Primrec.snd.comp Primrec.fst)) Primrec.snd).to₂).to₂
 
-/-- **Recognizable languages are closed under Kleene star.** -/
+/-- **Recognizable languages are closed under Kleene star.** Let $L$ be a language over an
+alphabet $\sigma$ with a primitive recursive encoding. If membership in $L$ is recognizable by
+a multi-stack machine, then so is membership in the Kleene star $L^*$, the set of all
+concatenations $u_1 \cdots u_k$ with $k \ge 0$ and $u_1, \dots, u_k \in L$. -/
 theorem TM2Recognizable.kstar {L : Language σ} (h : TM2Recognizable (· ∈ L)) :
     TM2Recognizable (· ∈ L∗) := by
   have hL : REPred fun q : List (List σ) × List σ ↦ q.2 ∈ L :=
@@ -312,7 +350,10 @@ theorem TM2Recognizable.kstar {L : Language σ} (h : TM2Recognizable (· ∈ L))
       (R := fun (_ : List σ) (ws : List (List σ)) ↦ ∀ u ∈ ws, u ∈ L) hall'
       primrec_partitions).of_eq fun w ↦ (mem_kstar_iff_exists_mem_partitions w).symm)
 
-/-- **Decidable languages are closed under Kleene star.** -/
+/-- **Decidable languages are closed under Kleene star.** Let $L$ be a language over an
+alphabet $\sigma$ with a primitive recursive encoding. If membership in $L$ is decidable by a
+multi-stack machine, then so is membership in the Kleene star $L^*$, the set of all
+concatenations $u_1 \cdots u_k$ with $k \ge 0$ and $u_1, \dots, u_k \in L$. -/
 theorem TM2Decidable.kstar {L : Language σ} (h : TM2Decidable (· ∈ L)) :
     TM2Decidable (· ∈ L∗) := by
   obtain ⟨f, hf, rfl⟩ := h.exists_computable
@@ -332,9 +373,15 @@ theorem TM2Decidable.kstar {L : Language σ} (h : TM2Decidable (· ∈ L)) :
 
 /-! ### Alphabet maps -/
 
-/-- **Recognizable languages are closed under alphabet maps** (`Language.map`): search for a
-preimage word, by the unbounded dovetailing of `MetaMathlibExt.REPred.exists`. The map is
-primitive recursive, as every map between finite alphabets is. -/
+/-- **Recognizable languages are closed under alphabet maps.** Let $\sigma$ and $\tau$ be
+alphabets with primitive recursive encodings, let $f : \sigma \to \tau$ be primitive recursive,
+and let $L$ be a language over $\sigma$. If membership in $L$ is recognizable by a multi-stack
+machine, then so is membership in the image language
+$f(L) = \{f(a_1) \cdots f(a_n) : a_1 \cdots a_n \in L\}$, obtained by applying $f$ letter by
+letter to the words of $L$.
+
+The recognizer searches for a preimage word by unbounded dovetailing. Every map between finite
+alphabets is primitive recursive. -/
 theorem TM2Recognizable.map {τ : Type*} [Primcodable τ] {f : σ → τ} (hf : Primrec f)
     {L : Language σ} (h : TM2Recognizable (· ∈ L)) :
     TM2Recognizable (· ∈ Language.map f L) := by

@@ -41,12 +41,12 @@ public import Mathlib
 
 namespace MathlibExt.Analysis.Calculus.BesselTypeOdeInfinitelyManyZerosWanted
 
-/-- Consider the following second order linear equation for $u=u(x)$:
-\[
-x\frac{d^2u}{dx^2}+2\frac{du}{dx}+u=0.
-\]
-
-Prove that all nontrivial real-valued solutions have infinite number of zeroes on $(1,\infty)$.
+/-- **Solutions of $xu''+2u'+u=0$ have infinitely many zeros.** Let $u : \mathbb{R} \to \mathbb{R}$
+be twice continuously differentiable on $(0,\infty)$ and satisfy
+$$
+x\,u''(x)+2u'(x)+u(x)=0 \quad \text{for all } x>0.
+$$
+If $u(x) \ne 0$ for some $x>0$, then $u$ has infinitely many zeros in $(1,\infty)$.
 
 Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level II (Operator theory; Ordinary
 differential operators), `benchmark/level2/ma_proofbench_l2_83.lean` at

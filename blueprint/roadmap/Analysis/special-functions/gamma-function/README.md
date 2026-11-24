@@ -7,3 +7,4 @@ The gamma, digamma and trigamma functions: series and integral representations, 
 - [Series and integrals for the digamma function](series-and-integrals-for-the-digamma-function/README.md)
 - [Ramanujan's asymptotic expansion of $((x + 1/2)/e^{\psi(x+1)})^{4n}$](ramanujan-part1-ch8-entry15-doublegamma.md)
 - [Ramanujan's multiplication formula for the series $\sum_k (\log k/k - \log(k+x)/(k+x))$](ramanujan-part1-ch8-entry17-loggammainte.md)
+- [The complex gamma function has no zeros away from its poles](gamma-function-no-zeros.md)

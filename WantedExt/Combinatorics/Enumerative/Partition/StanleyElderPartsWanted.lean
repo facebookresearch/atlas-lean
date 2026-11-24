@@ -37,10 +37,13 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Elder's theorem: for `k ≥ 1`, the total number of appearances of the part `k` in the
-partitions of `n` equals the number of distinct parts appearing at least `k` times in a
-partition of `n`, summed over all partitions of `n`. The hypothesis `k ≥ 1` (parts are
-positive) is needed: for `k = 0`, `n = 1` the left side is `0` and the right side `1`.
+/-- **Elder's theorem.** Let $n$ and $k$ be natural numbers with $k \ge 1$. The total number of
+times the part $k$ occurs, counted with multiplicity, over all partitions of $n$ equals the sum,
+over all partitions $\lambda$ of $n$, of the number of distinct parts of $\lambda$ that occur at
+least $k$ times in $\lambda$.
+
+The hypothesis $k \ge 1$ is needed: for $k = 0$ and $n = 1$ the left side is $0$ and the right
+side is $1$.
 
 Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
 INTEGERS 25 (2025), Article A94, Theorem 2 (Elder's theorem). -/
@@ -48,8 +51,9 @@ public theorem_wanted sum_count_eq_sum_card_parts_count_ge (n k : ℕ) (hk : 1 �
     ∑ p : Nat.Partition n, p.parts.count k =
       ∑ p : Nat.Partition n, (p.parts.toFinset.filter fun i => k ≤ p.parts.count i).card
 
-/-- Stanley's theorem: the total number of `1`s in the partitions of `n` equals the number of
-distinct parts of a partition of `n`, summed over all partitions of `n`.
+/-- **Stanley's theorem.** For every natural number $n$, the total number of parts equal to $1$,
+counted with multiplicity, over all partitions of $n$ equals the sum, over all partitions
+$\lambda$ of $n$, of the number of distinct parts of $\lambda$.
 
 Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
 INTEGERS 25 (2025), Article A94, Theorem 1 (Stanley's theorem). -/
@@ -65,15 +69,19 @@ size `k` comes in `k` colors `k_1, …, k_k`. It is encoded as a multiset of col
 repeats, "odd parts" means every size `k` is odd, and the number of parts counts colored parts
 with multiplicity. -/
 
-/-- The colored parts `k_j` (pairs `(k, j)` with `1 ≤ j ≤ k ≤ m`) of size at most `m`, listed
-in the order `1_1, 2_1, 2_2, 3_1, …`.
+/-- **The list of colored parts of size at most $m$.** For $m \ge 0$, this is the list of the
+colored parts $k_j$, that is, the pairs $(k, j)$ of natural numbers with $1 \le j \le k \le m$,
+each listed once, in the order $1_1, 2_1, 2_2, 3_1, 3_2, 3_3, \dots$ (by size $k$, then by
+color $j$).
 
 Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
 INTEGERS 25 (2025), Article A94, Section 1 (`n`-color partitions). -/
 public def nColorPartsUpTo (m : ℕ) : List (ℕ × ℕ) :=
   (List.range m).flatMap fun k => (List.range (k + 1)).map fun j => (k + 1, j + 1)
 
-/-- Membership in `nColorPartsUpTo m`: `(k, j)` is listed exactly when `1 ≤ j ≤ k ≤ m`.
+/-- **Membership in the colored parts of bounded size.** For all natural numbers $m$, $k$ and
+$j$, the pair $(k, j)$ appears in the list of colored parts of size at most $m$ if and only if
+$1 \le j \le k \le m$.
 
 Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
 INTEGERS 25 (2025), Article A94, Section 1 (`n`-color partitions). -/
@@ -85,9 +93,15 @@ public theorem mem_nColorPartsUpTo (m : ℕ) (x : ℕ × ℕ) :
   · rintro ⟨a, ha, b, hb, rfl, rfl⟩; omega
   · rintro ⟨h1, h2, h3⟩; exact ⟨k - 1, by omega, j - 1, by omega, by omega, by omega⟩
 
-/-- The multisets of colored parts drawn from the list `L` whose sizes sum to `n`, generated
-part by part (choose how many copies of the head, then recurse on the tail), so only multisets
-of the right total are built.
+/-- **Multisets of parts with a given size sum.** For a list $L$ of pairs of natural numbers, where
+the size of a pair $(k, j)$ is $k$, and a natural number $n$, this is the finite set of multisets
+of pairs defined by recursion on $L$. For the empty list it is the set containing only the empty
+multiset when $n = 0$, and the empty set otherwise. For a list with head $c$ of size $k$ and tail
+$L'$, it is the set of all multisets obtained by adding $i$ copies of $c$ to a member of the set
+for $L'$ and $n - ik$, where $i$ ranges over the natural numbers with $i \le n$ and $ik \le n$.
+
+When every pair in $L$ has positive size, this is exactly the set of multisets whose elements all
+lie in $L$ and whose sizes, counted with multiplicity, sum to $n$.
 
 Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
 INTEGERS 25 (2025), Article A94, Section 1 (`n`-color partitions; helper for `C(m)`). -/
@@ -98,8 +112,11 @@ public def multisetsWithSizeSum : List (ℕ × ℕ) → ℕ → Finset (Multiset
         (multisetsWithSizeSum cs (n - i * c.1)).image (Multiset.replicate i c + ·)
       else ∅
 
-/-- Membership in `multisetsWithSizeSum L n` when every listed part has positive size: the
-multisets whose elements all lie in `L` and whose sizes sum to `n`.
+/-- **Membership in the multisets with a given size sum.** Let $L$ be a list of pairs of natural
+numbers in which every pair $(k, j)$ has size $k \ge 1$, and let $n$ be a natural number. A
+multiset $s$ of pairs belongs to the set of multisets drawn from $L$ with size sum $n$ if and only
+if every element of $s$ lies in $L$ and the sizes of the elements of $s$, counted with
+multiplicity, sum to $n$.
 
 Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
 INTEGERS 25 (2025), Article A94, Section 1 (`n`-color partitions; helper for `C(m)`). -/
@@ -156,16 +173,20 @@ public theorem mem_multisetsWithSizeSum (L : List (ℕ × ℕ)) (hL : ∀ c ∈ 
         · exact Finset.mem_image.mpr ⟨t, (ih hcs _ t).mpr ⟨htmem, by omega⟩, hsplit.symm⟩
         · omega
 
-/-- The `n`-color partitions of `m`: multisets of colored parts `(k, j)`, `1 ≤ j ≤ k`, whose
-sizes sum to `m` (see `mem_nColorPartitions`).
+/-- **n-color partitions.** For a natural number $m$, the $n$-color partitions of $m$ form the
+finite set of multisets of colored parts $k_j$, that is pairs $(k, j)$ of natural numbers with
+$1 \le j \le k$ (a part of size $k$ comes in $k$ colors), whose sizes $k$, counted with
+multiplicity, sum to $m$.
 
 Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
 INTEGERS 25 (2025), Article A94, Section 1 (`n`-color partitions; `C(m)` is their number). -/
 public def nColorPartitions (m : ℕ) : Finset (Multiset (ℕ × ℕ)) :=
   multisetsWithSizeSum (nColorPartsUpTo m) m
 
-/-- Membership in `nColorPartitions m`: every colored part `(k, j)` has `1 ≤ j ≤ k`, and the
-sizes `k` sum to `m`.
+/-- **Characterization of $n$-color partitions.** For every natural number $m$, a multiset $s$ of
+pairs of natural numbers is an $n$-color partition of $m$ if and only if every element $(k, j)$ of
+$s$ satisfies $1 \le j \le k$ and the sizes $k$ of the elements of $s$, counted with
+multiplicity, sum to $m$.
 
 Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
 INTEGERS 25 (2025), Article A94, Section 1 (`n`-color partitions). -/
@@ -181,8 +202,10 @@ public theorem mem_nColorPartitions (m : ℕ) (s : Multiset (ℕ × ℕ)) :
     rw [← hs]
     exact Multiset.le_sum_of_mem (Multiset.mem_map_of_mem Prod.fst hx)
 
-/-- Characteristic values: `C(0) = C(1) = 1`, `C(2) = 3` (`2_1`, `2_2`, `1_1 + 1_1`),
-`C(3) = 6`, and the `n`-color partitions of `2` listed explicitly.
+/-- **Small values of the number of n-color partitions.** Let $C(m)$ be the number of $n$-color
+partitions of $m$, and write $k_j$ for the colored part of size $k$ and color $j$. Then
+$C(0) = C(1) = 1$, $C(2) = 3$ and $C(3) = 6$, and the $n$-color partitions of $2$ are exactly
+$2_1$, $2_2$ and $1_1 + 1_1$.
 
 Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
 INTEGERS 25 (2025), Article A94, Section 1 (`C(m)`, generating function
@@ -193,20 +216,24 @@ public theorem nColorPartitions_card_small :
       nColorPartitions 2 = {{(1, 1), (1, 1)}, {(2, 1)}, {(2, 2)}} := by
   decide +kernel
 
-/-- The sum of the odd divisors of `k` (`σ_odd`).
+/-- **Sum of odd divisors.** For a natural number $k$, $\sigma_{\mathrm{odd}}(k)$ is the sum of
+the odd positive divisors of $k$. By convention $\sigma_{\mathrm{odd}}(0) = 0$.
 
 Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
 INTEGERS 25 (2025), Article A94, Corollaries 2, 4, 7, 10, 12 (`σ_odd`). -/
 public def sigmaOdd (k : ℕ) : ℕ := ∑ d ∈ k.divisors.filter Odd, d
 
-/-- The sum of the even divisors of `k` (`σ_even`).
+/-- **Sum of the even divisors.** For a natural number $k$, $\sigma_{\mathrm{even}}(k)$ is the
+sum of the even divisors of $k$ (so $\sigma_{\mathrm{even}}(0) = 0$).
 
 Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
 INTEGERS 25 (2025), Article A94, Corollary 3 (`σ_even`). -/
 public def sigmaEven (k : ℕ) : ℕ := ∑ d ∈ k.divisors.filter Even, d
 
-/-- Characteristic values: `σ_odd(12) = 1 + 3 = 4`, `σ_even(12) = 2 + 4 + 6 + 12 = 24`,
-`σ_odd(9) = 13`, `σ_even(9) = 0`.
+/-- **Odd and even divisor sums of 12 and 9.** The sums of the odd and of the even divisors
+of $12$ and $9$ are $\sigma_{\mathrm{odd}}(12) = 1 + 3 = 4$,
+$\sigma_{\mathrm{even}}(12) = 2 + 4 + 6 + 12 = 24$, $\sigma_{\mathrm{odd}}(9) = 1 + 3 + 9 = 13$
+and $\sigma_{\mathrm{even}}(9) = 0$.
 
 Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
 INTEGERS 25 (2025), Article A94, Corollaries 3 and 4. -/
@@ -214,10 +241,12 @@ public theorem sigmaOdd_sigmaEven_small :
     sigmaOdd 12 = 4 ∧ sigmaEven 12 = 24 ∧ sigmaOdd 9 = 13 ∧ sigmaEven 9 = 0 := by
   decide
 
-/-- Corollary 1: for `m ≥ 1`, `T_o(m) + T_e(m) = ∑_{k=1}^{m} σ(k) C(m-k)`, where `T_o(m)`
-(resp. `T_e(m)`) is the total number of parts over the `n`-color partitions of `m` with an odd
-(resp. even) number of parts, `C(m)` the number of `n`-color partitions of `m`, and `σ` the
-divisor sum.
+/-- **Total number of parts of $n$-color partitions via the divisor sum.** For $r \ge 0$ let
+$C(r)$ be the number of $n$-color partitions of $r$, and let $T_o(r)$ (resp. $T_e(r)$) be the
+total number of parts, counted with multiplicity, over the $n$-color partitions of $r$ having an
+odd (resp. even) number of parts. Then for every $m \ge 1$,
+$$T_o(m) + T_e(m) = \sum_{k=1}^{m} \sigma(k)\, C(m-k),$$
+where $\sigma(k)$ is the sum of the divisors of $k$.
 
 Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
 INTEGERS 25 (2025), Article A94, Corollary 1 (`integers-2025-A94-cor-1`). -/
@@ -226,9 +255,12 @@ public theorem_wanted nColor_totalParts_eq_sum_sigma (m : ℕ) (hm : 1 ≤ m) :
         ∑ s ∈ (nColorPartitions m).filter (fun s => Even s.card), s.card =
       ∑ k ∈ Finset.Icc 1 m, ArithmeticFunction.sigma 1 k * (nColorPartitions (m - k)).card
 
-/-- Corollary 2: for `m ≥ 1`, `σ_odd(m) = ∑_{k=1}^{m} (T_o(k) - T_e(k)) C(D, m-k)`, with
-`T_o`, `T_e` as in Corollary 1 and `C(D, m)` the number of `n`-color partitions of `m` into
-distinct parts.
+/-- **Odd-divisor sum via the total number of parts of $n$-color partitions.** For $r \ge 0$
+let $T_o(r)$ (resp. $T_e(r)$) be the total number of parts, counted with multiplicity, over the
+$n$-color partitions of $r$ having an odd (resp. even) number of parts, and let $C(D, r)$ be the
+number of $n$-color partitions of $r$ into distinct colored parts. Then for every $m \ge 1$,
+$$\sigma_{\mathrm{odd}}(m) = \sum_{k=1}^{m} \bigl(T_o(k) - T_e(k)\bigr)\, C(D, m-k),$$
+where $\sigma_{\mathrm{odd}}(m)$ is the sum of the odd divisors of $m$.
 
 Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
 INTEGERS 25 (2025), Article A94, Corollary 2 (`integers-2025-A94-cor-2`). -/
@@ -239,8 +271,12 @@ public theorem_wanted sigmaOdd_eq_sum_nColor_partsDiff_mul_distinct (m : ℕ) (h
             ((∑ s ∈ (nColorPartitions k).filter (fun s => Even s.card), s.card : ℕ) : ℤ)) *
           ((nColorPartitions (m - k)).filter fun s => s.Nodup).card
 
-/-- Corollary 3: for `m ≥ 1`, `A_e(m) = ∑_{k=1}^{m} σ_even(k) C(m-k)`, where `A_e(m)` is the
-total number of even parts over the `n`-color partitions of `m`.
+/-- **Even divisor sums count the even parts of $n$-color partitions.** For $m \ge 1$, let
+$A_e(m)$ be the total number of parts of even size, counted with multiplicity, over the
+$n$-color partitions of $m$, and for $r \ge 0$ let $C(r)$ be the number of $n$-color partitions
+of $r$. Then
+$$A_e(m) = \sum_{k=1}^{m} \sigma_{\mathrm{even}}(k) \, C(m - k),$$
+where $\sigma_{\mathrm{even}}(k)$ is the sum of the even divisors of $k$.
 
 Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
 INTEGERS 25 (2025), Article A94, Corollary 3 (`integers-2025-A94-cor-3`). -/
@@ -248,8 +284,14 @@ public theorem_wanted nColor_evenParts_eq_sum_sigmaEven (m : ℕ) (hm : 1 ≤ m)
     ∑ s ∈ nColorPartitions m, (s.filter fun p => Even p.1).card =
       ∑ k ∈ Finset.Icc 1 m, sigmaEven k * (nColorPartitions (m - k)).card
 
-/-- Corollary 4: for `m ≥ 1`, `A_o(m) = ∑_{k=1}^{m} σ_odd(k) C(m-k)`, where `A_o(m)` is the
-total number of odd parts over the `n`-color partitions of `m`.
+/-- **Number of odd parts in n-color partitions as a divisor sum.** For $i \ge 0$ let $A_o(i)$ be
+the total number of odd parts (parts of odd size, counted with multiplicity) over the $n$-color
+partitions of $i$, and let $C(i)$ be the number of $n$-color partitions of $i$. Then for every
+$m \ge 1$,
+$$
+A_o(m) = \sum_{k=1}^{m} \sigma_{\mathrm{odd}}(k)\, C(m-k),
+$$
+where $\sigma_{\mathrm{odd}}(k)$ is the sum of the odd divisors of $k$.
 
 Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
 INTEGERS 25 (2025), Article A94, Corollary 4 (`integers-2025-A94-cor-4`). -/
@@ -257,9 +299,13 @@ public theorem_wanted nColor_oddParts_eq_sum_sigmaOdd (m : ℕ) (hm : 1 ≤ m) :
     ∑ s ∈ nColorPartitions m, (s.filter fun p => Odd p.1).card =
       ∑ k ∈ Finset.Icc 1 m, sigmaOdd k * (nColorPartitions (m - k)).card
 
-/-- Corollary 5: for `m ≥ t ≥ 1`, `N^t(m) = ∑_{k=1}^{⌊m/t⌋} k C(m - tk)`, where `N^t(m)` is
-the number of distinct colored parts with multiplicity at least `t`, summed over the `n`-color
-partitions of `m`.
+/-- **Parts of multiplicity at least t in n-color partitions.** Let $t \ge 1$. For $i \ge 0$ let
+$N^t(i)$ be the number of distinct colored parts occurring at least $t$ times in an $n$-color
+partition of $i$, summed over all $n$-color partitions of $i$, and let $C(i)$ be the number of
+$n$-color partitions of $i$. Then for every $m \ge t$,
+$$
+N^t(m) = \sum_{k=1}^{\lfloor m/t \rfloor} k\, C(m - tk).
+$$
 
 Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
 INTEGERS 25 (2025), Article A94, Corollary 5 (`integers-2025-A94-cor-5`). -/
@@ -267,10 +313,14 @@ public theorem_wanted nColor_partsMultiplicityGe_eq_sum (m t : ℕ) (ht : 1 ≤ 
     ∑ s ∈ nColorPartitions m, (s.toFinset.filter fun p => t ≤ s.count p).card =
       ∑ k ∈ Finset.Icc 1 (m / t), k * (nColorPartitions (m - t * k)).card
 
-/-- Corollary 6: for `m ≥ 1`, `r ≥ 1` and `0 < k < r`,
-`C(k mod r, m) = ∑_{j=1}^{m} (∑_{rd+k ∣ j} (rd+k)) C(m-j)`, where `C(k mod r, m)` is the
-total number of parts of size `≡ k (mod r)` over the `n`-color partitions of `m`; the inner sum
-runs over the divisors of `j` that are `≡ k (mod r)`.
+/-- **Parts in a residue class over n-color partitions as a divisor sum.** Let $r$ and $k$ be
+natural numbers with $0 < k < r$. For $i \ge 0$ let $C(k \bmod r, i)$ be the total number of
+parts of size congruent to $k$ modulo $r$, counted with multiplicity, over the $n$-color
+partitions of $i$, and let $C(i)$ be the number of $n$-color partitions of $i$. Then for every
+$m \ge 1$,
+$$
+C(k \bmod r, m) = \sum_{j=1}^{m} \Bigl(\sum_{d \mid j,\ d \equiv k \pmod{r}} d\Bigr) C(m-j).
+$$
 
 Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
 INTEGERS 25 (2025), Article A94, Corollary 6 (`integers-2025-A94-cor-6`). -/
@@ -280,10 +330,13 @@ public theorem_wanted nColor_partsModEq_eq_sum (m r k : ℕ) (hm : 1 ≤ m) (hk 
       ∑ j ∈ Finset.Icc 1 m,
         (∑ d ∈ j.divisors.filter (fun d => d % r = k), d) * (nColorPartitions (m - j)).card
 
-/-- Corollary 7: for `m ≥ 1`, `C_o(D, m) + C_e(D, m) = ∑_{k=1}^{m} σ_odd(k) C(D, m-k)`, where
-`C_o(D, m)` (resp. `C_e(D, m)`) is the total number of parts over the `n`-color partitions of
-`m` into an odd (resp. even) number of distinct parts, and `C(D, m)` the number of `n`-color
-partitions of `m` into distinct parts.
+/-- **Odd divisor sums count the parts of distinct $n$-color partitions.** Call an $n$-color
+partition distinct when no colored part occurs more than once. For $m \ge 1$, let $C_o(D, m)$
+(resp. $C_e(D, m)$) be the total number of parts over the distinct $n$-color partitions of $m$
+with an odd (resp. even) number of parts, and for $r \ge 0$ let $C(D, r)$ be the number of
+distinct $n$-color partitions of $r$. Then
+$$C_o(D, m) + C_e(D, m) = \sum_{k=1}^{m} \sigma_{\mathrm{odd}}(k) \, C(D, m - k),$$
+where $\sigma_{\mathrm{odd}}(k)$ is the sum of the odd divisors of $k$.
 
 Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
 INTEGERS 25 (2025), Article A94, Corollary 7 (`integers-2025-A94-cor-7`). -/
@@ -292,8 +345,12 @@ public theorem_wanted nColor_distinctTotalParts_eq_sum_sigmaOdd (m : ℕ) (hm : 
         ∑ s ∈ (nColorPartitions m).filter (fun s => s.Nodup ∧ Even s.card), s.card =
       ∑ k ∈ Finset.Icc 1 m, sigmaOdd k * ((nColorPartitions (m - k)).filter fun s => s.Nodup).card
 
-/-- Corollary 8: for `m ≥ 1`, `σ(m) = ∑_{k=1}^{m} (C_o(D, k) - C_e(D, k)) C(m-k)`, with
-`C_o(D, ·)`, `C_e(D, ·)` as in Corollary 7.
+/-- **Divisor sum via distinct $n$-color partitions.** For $r \ge 0$ let $C(r)$ be the number
+of $n$-color partitions of $r$, and let $C_o(D, r)$ (resp. $C_e(D, r)$) be the total number of
+parts over the $n$-color partitions of $r$ into an odd (resp. even) number of distinct colored
+parts. Then for every $m \ge 1$,
+$$\sigma(m) = \sum_{k=1}^{m} \bigl(C_o(D, k) - C_e(D, k)\bigr)\, C(m-k),$$
+where $\sigma(m)$ is the sum of the divisors of $m$.
 
 Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
 INTEGERS 25 (2025), Article A94, Corollary 8 (`integers-2025-A94-cor-8`). -/
@@ -305,9 +362,14 @@ public theorem_wanted sigma_eq_sum_nColor_distinctPartsDiff (m : ℕ) (hm : 1 �
               ℤ)) *
           (nColorPartitions (m - k)).card
 
-/-- Corollary 10: for `m ≥ 1`, `Q(O, m) = ∑_{k=1}^{m} σ_odd(k) C(O, m-k)`, where `Q(O, m)` is
-the total number of parts over the `n`-color partitions of `m` into odd parts and `C(O, m)` the
-number of such partitions.
+/-- **Number of parts in n-color partitions into odd parts as a divisor sum.** For $i \ge 0$ let
+$Q(O, i)$ be the total number of parts, counted with multiplicity, over the $n$-color partitions
+of $i$ into odd parts (every part has odd size), and let $C(O, i)$ be the number of such
+partitions. Then for every $m \ge 1$,
+$$
+Q(O, m) = \sum_{k=1}^{m} \sigma_{\mathrm{odd}}(k)\, C(O, m-k),
+$$
+where $\sigma_{\mathrm{odd}}(k)$ is the sum of the odd divisors of $k$.
 
 Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
 INTEGERS 25 (2025), Article A94, Corollary 10 (`integers-2025-A94-cor-10`). -/
@@ -316,9 +378,13 @@ public theorem_wanted nColor_oddPartitionParts_eq_sum_sigmaOdd (m : ℕ) (hm : 1
       ∑ k ∈ Finset.Icc 1 m,
         sigmaOdd k * ((nColorPartitions (m - k)).filter fun s => ∀ p ∈ s, Odd p.1).card
 
-/-- Corollary 12: for `m ≥ 1`, `U_o(m) + U_e(m) = ∑_{k=1}^{m} σ_odd(k) C(O, m-k)`, where
-`U_o(m) + U_e(m)` is the total number of parts over the `n`-color partitions of `m` into odd
-parts, split by the parity of the number of parts, and `C(O, m)` as in Corollary 10.
+/-- **Odd divisor sums count the parts of $n$-color partitions into odd parts.** Say that an
+$n$-color partition has odd parts when every part has odd size. For $m \ge 1$, let $U_o(m)$
+(resp. $U_e(m)$) be the total number of parts over the $n$-color partitions of $m$ with odd parts
+and an odd (resp. even) number of parts, and for $r \ge 0$ let $C(O, r)$ be the number of
+$n$-color partitions of $r$ with odd parts. Then
+$$U_o(m) + U_e(m) = \sum_{k=1}^{m} \sigma_{\mathrm{odd}}(k) \, C(O, m - k),$$
+where $\sigma_{\mathrm{odd}}(k)$ is the sum of the odd divisors of $k$.
 
 Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
 INTEGERS 25 (2025), Article A94, Corollary 12 (`integers-2025-A94-cor-12`). -/
@@ -329,10 +395,15 @@ public theorem_wanted nColor_oddPartitionParts_byParity_eq_sum_sigmaOdd (m : ℕ
         sigmaOdd k * ((nColorPartitions (m - k)).filter fun s => ∀ p ∈ s, Odd p.1).card
 
 
-/-- Theorem 3: with `T_o(m)` (resp. `T_e(m)`) the total number of parts over the `n`-color
-partitions of `m` with an odd (resp. even) number of parts,
-`∑_{m ≥ 1} m q^m / (1 ∓ q^m) = ∏_{m ≥ 1} (1 ∓ q^m)^m ∑_{m ≥ 1} (T_o(m) ± T_e(m)) q^m`; both
-sign choices, as a conjunction (upper signs first).
+/-- **Generating functions for the total number of parts of $n$-color partitions.** For
+$m \ge 0$ let $T_o(m)$ (resp. $T_e(m)$) be the total number of parts, counted with
+multiplicity, over the $n$-color partitions of $m$ having an odd (resp. even) number of parts.
+Then, as formal power series in $q$ with rational coefficients,
+$$\sum_{m \ge 1} \frac{m q^m}{1 - q^m} =
+\prod_{m \ge 1} (1 - q^m)^m \sum_{m \ge 0} \bigl(T_o(m) + T_e(m)\bigr) q^m$$
+and
+$$\sum_{m \ge 1} \frac{m q^m}{1 + q^m} =
+\prod_{m \ge 1} (1 + q^m)^m \sum_{m \ge 0} \bigl(T_o(m) - T_e(m)\bigr) q^m.$$
 
 Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
 INTEGERS 25 (2025), Article A94, Theorem 3 (`integers-2025-A94-thm-3`). -/
@@ -348,8 +419,14 @@ public theorem_wanted nColor_totalParts_generatingFunction :
             ((∑ s ∈ (nColorPartitions n).filter (fun s => Odd s.card), s.card : ℕ) : ℚ) -
               ((∑ s ∈ (nColorPartitions n).filter (fun s => Even s.card), s.card : ℕ) : ℚ)
 
-/-- Theorem 4: with `A_e(m)` the total number of even parts over the `n`-color partitions of `m`,
-`∑_{m ≥ 1} 2m q^{2m} / (1 - q^{2m}) = ∏_{m ≥ 1} (1 - q^m)^m ∑_{m ≥ 1} A_e(m) q^m`.
+/-- **Generating function for the even parts of $n$-color partitions.** Let $A_e(m)$ be the total
+number of parts of even size, counted with multiplicity, over the $n$-color partitions of $m$.
+Then, as formal power series in $q$ over $\mathbb{Q}$, with infinite sums and products taken
+coefficientwise,
+$$
+\sum_{m \ge 1} \frac{2m \, q^{2m}}{1 - q^{2m}} =
+\Big(\prod_{m \ge 1} (1 - q^m)^m\Big) \sum_{m \ge 0} A_e(m) \, q^m.
+$$
 
 Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
 INTEGERS 25 (2025), Article A94, Theorem 4 (`integers-2025-A94-thm-4`). -/
@@ -358,8 +435,14 @@ public theorem_wanted nColor_evenParts_generatingFunction :
       (∏' m : ℕ, (1 - X ^ (m + 1)) ^ (m + 1) : ℚ⟦X⟧) *
         PowerSeries.mk fun n => ((∑ s ∈ nColorPartitions n, (s.filter fun p => Even p.1).card : ℕ) : ℚ)
 
-/-- Theorem 5: with `A_o(m)` the total number of odd parts over the `n`-color partitions of `m`,
-`∑_{m ≥ 1} (2m-1) q^{2m-1} / (1 - q^{2m-1}) = ∏_{m ≥ 1} (1 - q^m)^m ∑_{m ≥ 1} A_o(m) q^m`.
+/-- **Generating function for the number of odd parts in n-color partitions.** For $i \ge 0$ let
+$A_o(i)$ be the total number of odd parts (parts of odd size, counted with multiplicity) over the
+$n$-color partitions of $i$. Then in the ring $\mathbb{Q}[[q]]$ of formal power series, with
+infinite sums and products taken coefficientwise,
+$$
+\sum_{m \ge 0} \frac{(2m+1)\,q^{2m+1}}{1 - q^{2m+1}} =
+\prod_{m \ge 1} (1 - q^m)^m \sum_{i \ge 0} A_o(i)\, q^i.
+$$
 
 Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
 INTEGERS 25 (2025), Article A94, Theorem 5 (`integers-2025-A94-thm-5`). -/
@@ -368,9 +451,11 @@ public theorem_wanted nColor_oddParts_generatingFunction :
       (∏' m : ℕ, (1 - X ^ (m + 1)) ^ (m + 1) : ℚ⟦X⟧) *
         PowerSeries.mk fun n => ((∑ s ∈ nColorPartitions n, (s.filter fun p => Odd p.1).card : ℕ) : ℚ)
 
-/-- Theorem 6: for `t ≥ 1`, with `N^t(m)` the number of distinct colored parts of multiplicity at
-least `t`, summed over the `n`-color partitions of `m`,
-`∑_{m ≥ 1} m q^{mt} = ∏_{m ≥ 1} (1 - q^m)^m ∑_{m ≥ 1} N^t(m) q^m`.
+/-- **Generating function for colored parts of multiplicity at least $t$.** Let $t \ge 1$. For
+$m \ge 0$ let $N^t(m)$ be the sum, over all $n$-color partitions of $m$, of the number of
+distinct colored parts that occur at least $t$ times. Then, as formal power series in $q$ with
+rational coefficients,
+$$\sum_{m \ge 1} m q^{mt} = \prod_{m \ge 1} (1 - q^m)^m \sum_{m \ge 0} N^t(m) q^m.$$
 
 Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
 INTEGERS 25 (2025), Article A94, Theorem 6 (`integers-2025-A94-thm-6`). -/
@@ -380,9 +465,15 @@ public theorem_wanted nColor_partsMultiplicityGe_generatingFunction (t : ℕ) (h
         PowerSeries.mk fun n =>
           ((∑ s ∈ nColorPartitions n, (s.toFinset.filter fun p => t ≤ s.count p).card : ℕ) : ℚ)
 
-/-- Theorem 7: for `0 < k < r`, with `C(k mod r, m)` the total number of parts of size `≡ k (mod r)`
-over the `n`-color partitions of `m`,
-`∑_{m ≥ 0} (rm+k) q^{rm+k} / (1 - q^{rm+k}) = ∏_{m ≥ 1} (1 - q^m)^m ∑_{m ≥ 1} C(k mod r, m) q^m`.
+/-- **Generating function for parts in a residue class over n-color partitions.** Let $r$ and
+$k$ be natural numbers with $0 < k < r$, and for $i \ge 0$ let $C(k \bmod r, i)$ be the total
+number of parts of size congruent to $k$ modulo $r$, counted with multiplicity, over the
+$n$-color partitions of $i$. Then in the ring $\mathbb{Q}[[q]]$ of formal power series, with
+infinite sums and products taken coefficientwise,
+$$
+\sum_{m \ge 0} \frac{(rm+k)\,q^{rm+k}}{1 - q^{rm+k}} =
+\prod_{m \ge 1} (1 - q^m)^m \sum_{i \ge 0} C(k \bmod r, i)\, q^i.
+$$
 
 Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
 INTEGERS 25 (2025), Article A94, Theorem 7 (`integers-2025-A94-thm-7`). -/
@@ -392,10 +483,21 @@ public theorem_wanted nColor_partsModEq_generatingFunction (r k : ℕ) (hk : 0 <
         PowerSeries.mk fun n =>
           ((∑ s ∈ nColorPartitions n, (s.filter fun p => p.1 % r = k).card : ℕ) : ℚ)
 
-/-- Theorem 8: with `C_o(D, m)` (resp. `C_e(D, m)`) the total number of parts over the `n`-color
-partitions of `m` into an odd (resp. even) number of distinct colored parts,
-`∑_{m ≥ 1} m q^m / (1 ± q^m) = (∏_{m ≥ 1} (1 ± q^m)^m)⁻¹ ∑_{m ≥ 1} (C_o(D, m) ± C_e(D, m)) q^m`;
-both sign choices, as a conjunction (upper signs first).
+/-- **Generating functions for the parts of distinct $n$-color partitions.** Call an $n$-color
+partition distinct when no colored part occurs more than once, and let $C_o(D, m)$ (resp.
+$C_e(D, m)$) be the total number of parts over the distinct $n$-color partitions of $m$ with an
+odd (resp. even) number of parts. Then, as formal power series in $q$ over $\mathbb{Q}$, with
+infinite sums and products taken coefficientwise, both
+$$
+\sum_{m \ge 1} \frac{m q^m}{1 + q^m} =
+\Big(\prod_{m \ge 1} (1 + q^m)^m\Big)^{-1} \sum_{m \ge 0} \big(C_o(D, m) + C_e(D, m)\big) q^m
+$$
+and
+$$
+\sum_{m \ge 1} \frac{m q^m}{1 - q^m} =
+\Big(\prod_{m \ge 1} (1 - q^m)^m\Big)^{-1} \sum_{m \ge 0} \big(C_o(D, m) - C_e(D, m)\big) q^m
+$$
+hold.
 
 Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
 INTEGERS 25 (2025), Article A94, Theorem 8 (`integers-2025-A94-thm-8`). -/
@@ -411,11 +513,20 @@ public theorem_wanted nColor_distinctTotalParts_generatingFunction :
             ((∑ s ∈ (nColorPartitions n).filter (fun s => s.Nodup ∧ Odd s.card), s.card : ℕ) : ℚ) -
               ((∑ s ∈ (nColorPartitions n).filter (fun s => s.Nodup ∧ Even s.card), s.card : ℕ) : ℚ)
 
-/-- Corollary 9, in the reading given by the paper's derivation from Theorem 8 and Eq. (3):
-for `m ≥ 1`, `σ_odd(m) = ∑_{k=1}^{m} (C_o(D, k) + C_e(D, k)) C_{e-o}(m-k)`, where
-`C_{e-o}(n) = ∑ (-1)^{#parts}` over the `n`-color partitions of `n`. As printed, with the number
-`C(D, k)` of distinct `n`-color partitions in place of `C_o(D, k) + C_e(D, k)`, it fails at
-`m = 3`: `σ_odd(3) = 4` but `∑_{k=1}^{3} C(D, k) C_{e-o}(3-k) = 1·(-1) + 2·(-1) + 5·1 = 2`.
+/-- **Odd-divisor sum via distinct $n$-color partitions and signed partition counts.** For
+$r \ge 0$ let $C_o(D, r)$ (resp. $C_e(D, r)$) be the total number of parts over the $n$-color
+partitions of $r$ into an odd (resp. even) number of distinct colored parts, and let
+$C_{e-o}(r) = \sum_\lambda (-1)^{\ell(\lambda)}$, the sum running over all $n$-color partitions
+$\lambda$ of $r$, where $\ell(\lambda)$ is the number of parts of $\lambda$ counted with
+multiplicity. Then for every $m \ge 1$,
+$$\sigma_{\mathrm{odd}}(m) =
+\sum_{k=1}^{m} \bigl(C_o(D, k) + C_e(D, k)\bigr)\, C_{e-o}(m-k),$$
+where $\sigma_{\mathrm{odd}}(m)$ is the sum of the odd divisors of $m$.
+
+This is the reading given by the paper's derivation from Theorem 8 and Eq. (3). As printed,
+with the number $C(D, k)$ of $n$-color partitions of $k$ into distinct colored parts in place
+of $C_o(D, k) + C_e(D, k)$, it fails at $m = 3$: $\sigma_{\mathrm{odd}}(3) = 4$, but
+$\sum_{k=1}^{3} C(D, k)\, C_{e-o}(3-k) = 1 \cdot (-1) + 2 \cdot (-1) + 5 \cdot 1 = 2$.
 
 Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
 INTEGERS 25 (2025), Article A94, Corollary 9 (`integers-2025-A94-cor-9`). -/
@@ -426,9 +537,14 @@ public theorem_wanted sigmaOdd_eq_sum_nColor_distinctTotalParts_mul_signed (m : 
             ∑ s ∈ (nColorPartitions k).filter (fun s => s.Nodup ∧ Even s.card), s.card : ℕ) : ℤ) *
           ∑ s ∈ nColorPartitions (m - k), (-1 : ℤ) ^ s.card
 
-/-- Theorem 9: with `Q(O, m)` the total number of parts over the `n`-color partitions of `m` into
-odd parts,
-`∑_{m ≥ 1} (2m-1) q^{2m-1} / (1 - q^{2m-1}) = ∏_{m ≥ 1} (1 - q^{2m-1})^{2m-1} ∑_{m ≥ 1} Q(O, m) q^m`.
+/-- **Generating function for the number of parts in n-color partitions into odd parts.** For
+$i \ge 0$ let $Q(O, i)$ be the total number of parts, counted with multiplicity, over the
+$n$-color partitions of $i$ into odd parts (every part has odd size). Then in the ring
+$\mathbb{Q}[[q]]$ of formal power series, with infinite sums and products taken coefficientwise,
+$$
+\sum_{m \ge 0} \frac{(2m+1)\,q^{2m+1}}{1 - q^{2m+1}} =
+\prod_{m \ge 0} (1 - q^{2m+1})^{2m+1} \sum_{i \ge 0} Q(O, i)\, q^i.
+$$
 
 Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
 INTEGERS 25 (2025), Article A94, Theorem 9 (`integers-2025-A94-thm-9`). -/
@@ -438,10 +554,14 @@ public theorem_wanted nColor_oddPartitionParts_generatingFunction :
         PowerSeries.mk fun n =>
           ((∑ s ∈ (nColorPartitions n).filter (fun s => ∀ p ∈ s, Odd p.1), s.card : ℕ) : ℚ)
 
-/-- Theorem 11: for every `j`, with `Q(D, j, m)` the total number of parts of size `j` (any color)
-over the `n`-color partitions of `m` into distinct colored parts and `C(D, m)` the number of such
-partitions, `∑_{m ≥ 1} Q(D, j, m) q^m = j q^j / (1 + q^j) ∑_{m ≥ 0} C(D, m) q^m`. The paper
-assumes `j ≥ 1`; for `j = 0` both sides vanish.
+/-- **Generating function for parts of a given size in distinct $n$-color partitions.** Call an
+$n$-color partition distinct when no colored part occurs more than once. For a natural number
+$j$, let $Q(D, j, m)$ be the total number of parts of size $j$ (of any color) over the distinct
+$n$-color partitions of $m$, and let $C(D, m)$ be the number of distinct $n$-color partitions of
+$m$. Then, as formal power series in $q$ over $\mathbb{Q}$,
+$$\sum_{m \ge 0} Q(D, j, m) \, q^m = \frac{j q^j}{1 + q^j} \sum_{m \ge 0} C(D, m) \, q^m.$$
+
+The paper assumes $j \ge 1$; for $j = 0$ both sides vanish.
 
 Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
 INTEGERS 25 (2025), Article A94, Theorem 11 (`integers-2025-A94-thm-11`). -/
@@ -452,13 +572,24 @@ public theorem_wanted nColor_distinctPartsCountOf_generatingFunction (j : ℕ) :
       (j : ℚ⟦X⟧) * X ^ j * (1 + X ^ j)⁻¹ *
         PowerSeries.mk fun n => (((nColorPartitions n).filter fun s => s.Nodup).card : ℚ)
 
-/-- Theorem 12, with `U_o(m)` (resp. `U_e(m)`) the total number of parts over the `n`-color
-partitions of `m` into odd parts having an odd (resp. even) number of parts, the convention of
-`T_o`, `T_e` (Theorem 3) and `C_o(D, ·)`, `C_e(D, ·)` (Theorem 8):
-`∑_{m ≥ 1} (2m-1) q^{2m-1} / (1 ∓ q^{2m-1}) = ∏_{m ≥ 1} (1 ∓ q^{2m-1})^{2m-1} ∑_{m ≥ 1} (U_o(m) ± U_e(m)) q^m`;
-both sign choices, as a conjunction (upper signs first). The printed definition swaps the
-subscripts (`U_e` for an odd number of parts); with it the lower-sign identity fails at `q^1`:
-the left side has coefficient `1`, the right side `U_o(1) - U_e(1) = 0 - 1 = -1`.
+/-- **Parts of n-color partitions into odd parts, by parity of the number of parts.** For
+$i \ge 0$ let $U_o(i)$ (resp. $U_e(i)$) be the total number of parts, counted with multiplicity,
+over the $n$-color partitions of $i$ into odd parts (every part has odd size) that have an odd
+(resp. even) number of parts. Then in the ring $\mathbb{Q}[[q]]$ of formal power series, with
+infinite sums and products taken coefficientwise,
+$$
+\sum_{m \ge 0} \frac{(2m+1)\,q^{2m+1}}{1 - q^{2m+1}} =
+\prod_{m \ge 0} (1 - q^{2m+1})^{2m+1} \sum_{i \ge 0} \bigl(U_o(i) + U_e(i)\bigr) q^i
+$$
+and
+$$
+\sum_{m \ge 0} \frac{(2m+1)\,q^{2m+1}}{1 + q^{2m+1}} =
+\prod_{m \ge 0} (1 + q^{2m+1})^{2m+1} \sum_{i \ge 0} \bigl(U_o(i) - U_e(i)\bigr) q^i.
+$$
+
+The paper's printed definition swaps the subscripts ($U_e$ for an odd number of parts); with it
+the second identity fails at $q^1$: the left side has coefficient $1$, the right side
+$U_o(1) - U_e(1) = 0 - 1 = -1$.
 
 Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
 INTEGERS 25 (2025), Article A94, Theorem 12 (`integers-2025-A94-thm-12`). -/
@@ -478,11 +609,18 @@ public theorem_wanted nColor_oddPartitionParts_byParity_generatingFunction :
             ((∑ s ∈ (nColorPartitions n).filter (fun s => (∀ p ∈ s, Odd p.1) ∧ Even s.card), s.card :
               ℕ) : ℚ)
 
-/-- Corollary 13: for `m ≥ 1`,
-`(-1)^{m+1} σ_odd(m) = ∑_{k=1}^{m} (U_o(k) - U_e(k)) C(O, D, m-k)`, with `U_o`, `U_e` as in
-`nColor_oddPartitionParts_byParity_generatingFunction` (subscript = parity of the number of
-parts) and `C(O, D, m)` the number of `n`-color partitions of `m` into distinct odd colored parts.
-With the printed (swapped) definition of `U_o`, `U_e` it fails at `m = 1`: `1` vs `(0 - 1)·1 = -1`.
+/-- **Signed odd-divisor sum via $n$-color partitions into odd parts.** For $r \ge 0$ let
+$U_o(r)$ (resp. $U_e(r)$) be the total number of parts, counted with multiplicity, over the
+$n$-color partitions of $r$ in which every part has odd size and the number of parts is odd
+(resp. even), and let $C(O, D, r)$ be the number of $n$-color partitions of $r$ into distinct
+colored parts all of odd size. Then for every $m \ge 1$,
+$$(-1)^{m+1} \sigma_{\mathrm{odd}}(m) =
+\sum_{k=1}^{m} \bigl(U_o(k) - U_e(k)\bigr)\, C(O, D, m-k),$$
+where $\sigma_{\mathrm{odd}}(m)$ is the sum of the odd divisors of $m$.
+
+The subscripts of $U_o$ and $U_e$ give the parity of the number of parts. With the printed
+(swapped) definition of $U_o$ and $U_e$ the identity fails at $m = 1$: the left side is $1$
+and the right side is $(0 - 1) \cdot 1 = -1$.
 
 Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
 INTEGERS 25 (2025), Article A94, Corollary 13 (`integers-2025-A94-cor-13`). -/

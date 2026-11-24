@@ -1,7 +1,7 @@
 # Horn–Feinberg: complex balancing for every choice of rate constants
 
-Let $N$ be a [chemical reaction network](reaction-network.md) with finite species set $S$ and finite reaction set $\rho$. If $N$ has [deficiency](deficiency.md) zero and is
-[weakly reversible](is-weakly-reversible.md), then for every choice of rate constants $k_r > 0$ there
+Let $N$ be a [chemical reaction network](../../../Dynamics/smooth-dynamics/reaction-network.md) with finite species set $S$ and finite reaction set $\rho$. If $N$ has [deficiency](../../../Dynamics/smooth-dynamics/deficiency.md) zero and is
+[weakly reversible](../../../Dynamics/smooth-dynamics/is-weakly-reversible.md), then for every choice of rate constants $k_r > 0$ there
 is a concentration vector $c \in \mathbb{R}_{>0}^S$ that is [complex balanced](is-complex-balanced.md)
 for $k$. Together with the [Horn–Jackson theorem](exists-unique-equilibrium-of-is-complex.md) this gives
 the [deficiency-zero theorem](exists-unique-equilibrium.md).

@@ -28,7 +28,7 @@ public import CSLibExt.Algorithms.SAT.Horn.Basic
 
 namespace MetaMathlibExt.Complexity.NPComplete.StableModelExistence
 
-open Cslib.Logic.PL (CNF)
+open Cslib.Logic.LegacyPL (CNF)
 
 /-!
 # STABLE MODEL EXISTENCE is NP-complete

@@ -34,15 +34,19 @@ set_option autoImplicit false
 
 namespace MathlibExt.Combinatorics.Enumerative.PermutationFixedPointIdentitiesWanted
 
-/-- Pain's Theorem 2, with the paper's implicit parameter domain made
-explicit: for `n ≥ 2`, `1 ≤ k`, and `k + 1 ≤ n`, the signed falling
-fixed-point moment is
-`(x - 1) ^ (n - k - 1) * n ! * (x + n - k - 1) / (n - k)!`.
+/-- **Pain's signed falling-factorial identity for fixed points.** Let $n$ and $k$ be natural
+numbers with $n \ge 2$, $k \ge 1$ and $k + 1 \le n$, and let $x$ be a real number. For a
+permutation $\sigma$ of $\lbrace 0, 1, \dots, n-1 \rbrace$, write $\operatorname{sgn}(\sigma)$ for
+its sign and $\operatorname{fix}(\sigma)$ for its number of fixed points, and for a natural number
+$m$ write $(m)_k = m(m-1)\cdots(m-k+1)$ for the falling factorial. Then, summing over all
+permutations $\sigma$ of this set,
+$$\sum_{\sigma} \operatorname{sgn}(\sigma) (\operatorname{fix}(\sigma))_k
+x^{\operatorname{fix}(\sigma) - k} = \frac{n!}{(n-k)!} (x-1)^{n-k-1} (x + n - k - 1),$$
+where a term with $\operatorname{fix}(\sigma) < k$ is $0$ because then
+$(\operatorname{fix}(\sigma))_k = 0$.
 
-The falling factor is written as a product over `Finset.range k`.
-Together with the natural subtraction in `x ^ (fix σ - k)`, this gives
-the polynomial derivative term also when `fix σ < k` (the product then
-contains a zero factor).
+The left side is the $k$-th derivative in $x$ of
+$\sum_{\sigma} \operatorname{sgn}(\sigma) x^{\operatorname{fix}(\sigma)}$.
 
 Source: Jean-Christophe Pain, "Identities for Permutations with Fixed
 Points", Theorem 2. -/
@@ -57,9 +61,14 @@ theorem_wanted sum_perm_sign_falling_fixedPoints_mul_pow
         (Nat.factorial n : ℝ) * (x + n - k - 1) /
           (Nat.factorial (n - k) : ℝ)
 
-/-- Pain's Theorem 3: for `n ≥ 2` and positive `k`, the signed sum of
-`fix σ ! / (fix σ + k)!` over all permutations of `Fin n` has the
-displayed closed form.
+/-- **Pain's signed factorial-ratio identity for fixed points.** Let $n$ and $k$ be natural
+numbers with $n \ge 2$ and $k \ge 1$. For a permutation $\sigma$ of
+$\lbrace 0, 1, \dots, n-1 \rbrace$, write $\operatorname{sgn}(\sigma)$ for its sign and
+$\operatorname{fix}(\sigma)$ for its number of fixed points. Then, summing over all permutations
+$\sigma$ of this set,
+$$\sum_{\sigma} \operatorname{sgn}(\sigma)
+\frac{\operatorname{fix}(\sigma)!}{(\operatorname{fix}(\sigma) + k)!} =
+\frac{(-1)^{n+1} \left(n^2 + (k-1)n - (k-1)\right)}{(k-1)! (n+k-1)(n+k)}.$$
 
 Source: Jean-Christophe Pain, "Identities for Permutations with Fixed
 Points", Theorem 3. -/

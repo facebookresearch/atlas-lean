@@ -35,28 +35,38 @@ up to isomorphism in (a) is a bound on the order. In (b) "this condition" is the
 for some `n`.
 -/
 
-/-- The involutions of `G` that commute with `t`. -/
+/-- **Involutions commuting with an element.** For an element $t$ of a group $G$, this is the
+set of involutions of $G$ that commute with $t$: the elements $s \in G$ of order $2$ with
+$st = ts$. -/
 def commutingInvolutions {G : Type*} [Group G] (t : G) : Set G :=
   {s | orderOf s = 2 ∧ s * t = t * s}
 
-/-- Kourovka 11.96(a) (S. P. Strunkov): for each `n` there are only finitely many finite simple
-groups containing an involution that commutes with at most `n` involutions. "Finitely many" up to
-isomorphism is stated as a bound on the order. -/
+/-- **Strunkov's finiteness question for simple groups (Kourovka 11.96(a)).** This is the statement
+that for every natural number $n$ there is a bound $N$ such that every finite simple group $G$
+containing an involution $t$ that commutes with at most $n$ involutions of $G$ (counting $t$
+itself) has order at most $N$. Bounding the order expresses "only finitely many such groups up to
+isomorphism". -/
 def finitelyManySimpleFewCommutingInvolutions : Prop :=
   ∀ n : ℕ, ∃ N : ℕ, ∀ (G : Type) [Group G] [Finite G], IsSimpleGroup G →
     (∃ t : G, orderOf t = 2 ∧ (commutingInvolutions t).encard ≤ n) → Nat.card G ≤ N
 
-/-- Kourovka 11.96(b) (S. P. Strunkov): no infinite simple group contains an involution that
-commutes with at most `n` involutions (for any `n`). -/
+/-- **Strunkov's question on infinite simple groups (Kourovka 11.96(b)).** This is the statement
+that for every natural number $n$, no infinite simple group $G$ contains an involution $t$ that
+commutes with at most $n$ involutions of $G$ (counting $t$ itself). -/
 def noInfiniteSimpleFewCommutingInvolutions : Prop :=
   ∀ n : ℕ, ∀ (G : Type) [Group G], Infinite G → IsSimpleGroup G →
     ¬ ∃ t : G, orderOf t = 2 ∧ (commutingInvolutions t).encard ≤ n
 
 /--
-Resolved true (modulo the classification of finite simple groups, as accepted by the Kourovka
-Notebook): Skresanov proves that a locally finite group with an involution commuting with at most
-`n` involutions is finite of `n`-bounded order, so in particular there are only finitely many such
-finite simple groups; the Kourovka Notebook (21st issue) marks 11.96(a) solved, "Yes". Source: E. I.
+**Finitely many finite simple groups with an involution commuting with few involutions.** For
+every natural number $n$ there is a bound $N$ such that every finite simple group $G$ containing
+an involution $t$ that commutes with at most $n$ involutions of $G$ (counting $t$ itself) has
+order at most $N$.
+
+This answers Kourovka Problem 11.96(a) in the affirmative; the Kourovka Notebook (21st issue)
+marks it solved, "Yes", modulo the classification of finite simple groups.
+
+Source: E. I.
 Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st
 issue, arXiv:1401.0300v49 (2026), Problem 11.96 (S. P. Strunkov); resolution: S. V. Skresanov, J.
 Group Theory 27, no. 6 (2024), 1197-1202, the Kourovka Notebook (21st issue) marks 11.96 solved: (a)
@@ -68,9 +78,16 @@ public theorem_wanted finitelyManySimpleFewCommutingInvolutions_holds :
     finitelyManySimpleFewCommutingInvolutions
 
 /--
-Resolved false: `PSL_2(ℝ)` is an infinite simple group that contains an involution but no Klein
-four-subgroup, so each of its involutions commutes with no involution but itself (`n = 1`); the
-Kourovka Notebook (21st issue) marks 11.96(b) solved, "No", citing Skresanov. Source: E. I. Khukhro
+**An infinite simple group with an involution commuting with few involutions.** There exist a
+natural number $n$ and an infinite simple group $G$ containing an involution $t$ that commutes
+with at most $n$ involutions of $G$ (counting $t$ itself). This answers Kourovka Problem 11.96(b)
+in the negative.
+
+For example, $\mathrm{PSL}_2(\mathbb{R})$ is an infinite simple group that contains an involution
+but no Klein four-subgroup, so each of its involutions commutes with no involution other than
+itself ($n = 1$); the Kourovka Notebook (21st issue) marks 11.96(b) solved, "No", citing Skresanov.
+
+Source: E. I. Khukhro
 and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue,
 arXiv:1401.0300v49 (2026), Problem 11.96 (S. P. Strunkov); resolution: S. V. Skresanov, J. Group
 Theory 27, no. 6 (2024), 1197-1202, the Kourovka Notebook (21st issue) marks 11.96 solved: (a) yes

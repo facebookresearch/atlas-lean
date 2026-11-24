@@ -25,7 +25,14 @@ under the end force `F = 2`, and the feasible stiffness interval `[1, 4]`.
   interval; at the upper endpoint `k = 4` they are `d ≤ 0` and `dJ/dk = -1/4`; a degenerate
   interval admits only `d = 0`;
 * the singularity at `k = 0` and the absence of an unconstrained minimizer;
-* units: `J = F * (F / k)` has the energy dimension.
+* units: `J = F * (F / k)` has the energy dimension;
+* error composition: the design `F = 2`, `k = 2` against the estimate `Fhat = 3/2`, `khat = 3`
+  with `Fmax = 2`, `kmin = 2`, the intermediate compliance `9/8`, the composed bound `2`, and the
+  composition with a supplied model term;
+* residuals: with `kmin = 1` the trial `u = 3/2` at `k = 2`, `F = 2` has residual `1`, state error
+  `1/2` and compliance error `1`; without a lower stiffness bound, no constant turns the residual
+  into a bound on the compliance error for the nonzero force `F = 2`, nor into a bound on the
+  state error even for `F = 0`, where the compliance error vanishes and the constant `0` bounds it.
 -/
 
 @[expose] public section
@@ -170,6 +177,60 @@ example : forceDim * (forceDim / translationalStiffnessDim) = energyDim := by
   rw [tipDisplacement_dimension, compliance_dimension]
 
 end Units
+
+/-- **Nonzero force and stiffness errors.** The design `F = 2`, `k = 2` (compliance `2`) and the
+estimate `Fhat = 3/2`, `khat = 3` (compliance `3/4`) are admissible for `Fmax = 2` and the
+positive lower stiffness bound `kmin = 2`. The intermediate compliance `J(3/2, 2) = 9/8` splits
+the error `5/4` into the force step `7/8` and the stiffness step `3/8`, and the composed bound
+`(2 Fmax / kmin) |F - Fhat| + (Fmax² / kmin²) |k - khat|` evaluates to `2`. -/
+lemma compliance_error_fixture :
+    compliance 2 2 = 2 ∧ compliance (3 / 2) 3 = 3 / 4 ∧ compliance (3 / 2) 2 = 9 / 8 ∧
+      |compliance 2 2 - compliance (3 / 2) 3| ≤
+        (2 * 2 / 2) * |(2 : ℝ) - 3 / 2| + (2 ^ 2 / 2 ^ 2) * |(2 : ℝ) - 3| ∧
+      (2 * 2 / 2) * |(2 : ℝ) - 3 / 2| + (2 ^ 2 / 2 ^ 2) * |(2 : ℝ) - 3| = 2 := by
+  refine ⟨?_, ?_, ?_, ?_, ?_⟩
+  · unfold compliance tipDisplacement
+    norm_num
+  · unfold compliance tipDisplacement
+    norm_num
+  · unfold compliance tipDisplacement
+    norm_num
+  · exact abs_compliance_sub_compliance_le (Fmax := 2) (kmin := 2) (F := 2) (Fhat := 3 / 2)
+      (k := 2) (khat := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+  · norm_num
+
+-- A supplied model term: the analysis-model compliance `1` lies within `1/4` of the compliance
+-- `3/4` at the estimated inputs, and the discretized, solved and computed values equal it; the
+-- reference compliance `2` is then within `2 + 1/4` of the computed value `1`.
+example : |compliance 2 2 - 1| ≤
+    (2 * 2 / 2) * |(2 : ℝ) - 3 / 2| + (2 ^ 2 / 2 ^ 2) * |(2 : ℝ) - 3| + 1 / 4 + 0 + 0 + 0 := by
+  refine abs_compliance_sub_computed_le (Fmax := 2) (kmin := 2) (F := 2) (Fhat := 3 / 2) (k := 2)
+    (khat := 3) (Jmodel := 1) (Jdisc := 1) (Jsolve := 1) (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num) ?_ (by norm_num) (by norm_num) (by norm_num)
+  rw [(compliance_error_fixture).2.1]
+  norm_num
+
+-- A residual with the stability constant `1 / kmin`: for `kmin = 1`, `k = 2`, `F = 2` and the
+-- trial `u = 3/2` the residual is `1`, the state error is `1/2 ≤ 1` and the compliance error is
+-- `1 ≤ 2`.
+example : |tipDisplacement 2 2 - 3 / 2| ≤ |2 * (3 / 2) - 2| / 1 ∧
+    |compliance 2 2 - 2 * (3 / 2)| ≤ |(2 : ℝ)| * |2 * (3 / 2) - 2| / 1 :=
+  abs_sub_le_residual_div (by norm_num) (by norm_num)
+
+-- A bare residual is not a compliance error: for `F = 2`, no constant `C` bounds the compliance
+-- error by `C` times the residual over all stiffnesses `k > 0`.
+example : ¬ ∃ C : ℝ, ∀ k u : ℝ, 0 < k → |compliance 2 k - 2 * u| ≤ C * |k * u - 2| :=
+  (not_exists_residual_error_bound (by norm_num)).2
+
+-- The state-error half needs no condition on the force: even for `F = 0`, no constant `C` bounds
+-- the state error by `C` times the residual over all stiffnesses `k > 0`.
+example : ¬ ∃ C : ℝ, ∀ k u : ℝ, 0 < k → |tipDisplacement 0 k - u| ≤ C * |k * u - 0| :=
+  not_exists_residual_state_error_bound 0
+
+-- The compliance half does need `F ≠ 0`: at `F = 0` the compliance error vanishes, so the constant
+-- `0` bounds it by the residual.
+example : ∃ C : ℝ, ∀ k u : ℝ, 0 < k → |compliance 0 k - 0 * u| ≤ C * |k * u - 0| :=
+  ⟨0, fun _ _ _ => by simp [compliance, tipDisplacement]⟩
 
 end PhyslibExtTest.Statistics.DesignSensitivity
 

@@ -33,8 +33,16 @@ open Cslib.Algorithms.Lean
 namespace Batteries.UnionFind
 
 namespace Internal
-/-- Source refinement only: every visited root test and every carried parent write is ticked.
-The canonical array and `FindAux` representation are unchanged. -/
+/-- **Cost-counted FIND auxiliary.** For a union-find structure $S$ with node array $A$ and a
+node $x < |S|$, this is the recursive path-compression routine of FIND, paired with a cost in
+$\mathbb{N} \times \mathbb{N}$. It charges $(1, 0)$ for testing whether $x$ is a root. If the
+parent $y$ of $x$ in $A$ equals $x$, it returns $A$ and the root $x$. Otherwise it runs on $y$,
+obtaining an array $A'$ and a root $r$, charges $(0, 1)$ for one parent write, and returns $A'$
+with the parent of $x$ set to $r$, together with $r$. The first cost coordinate thus counts root
+tests and the second counts parent writes.
+
+The returned array and root are exactly those of the Batteries FIND auxiliary; only the costs
+are added. -/
 @[no_expose] def countedAux (self : UnionFind) (x : Fin self.size) :
     TimeM (Nat × Nat) (UnionFind.FindAux self.size) := do
   TimeM.tick (1, 0)
@@ -49,7 +57,10 @@ The canonical array and `FindAux` representation are unchanged. -/
       result.root, by simp [result.size_eq]⟩
 termination_by self.rankMax - self.rank x
 
-/-- Erasing the actual visit/write events recovers the canonical recursive result. -/
+/-- **The cost-counted FIND auxiliary returns the uncounted result.** For a union-find
+structure $S$ and a node $x < |S|$, the value returned by the cost-counted FIND auxiliary on $x$
+(the compressed node array together with the root of $x$), with its cost discarded, equals the
+result of the Batteries path-compression auxiliary routine of FIND on $x$. -/
 theorem countedAux_ret (self : UnionFind) (x : Fin self.size) :
     (countedAux self x).ret = self.findAux x := by
   rw [countedAux, UnionFind.findAux]
@@ -61,13 +72,18 @@ theorem countedAux_ret (self : UnionFind) (x : Fin self.size) :
     rw [countedAux_ret self ⟨_, self.parent'_lt _ x.isLt⟩]
 termination_by self.rankMax - self.rank x
 
-/-- A root still executes one source conditional and performs no parent assignment. -/
+/-- **Cost of the FIND auxiliary at a root.** Let $S$ be a union-find structure and $x < |S|$
+a node. If the parent of $x$ in $S$ is $x$ itself, then the cost-counted FIND auxiliary on $x$
+has cost $(1, 0)$: one root test and no parent writes. -/
 theorem countedAux_time_root (self : UnionFind) (x : Fin self.size)
     (h : self.arr[x.val].parent = x) : (countedAux self x).time = (1, 0) := by
   rw [countedAux]
   simp [h]
 
-/-- Nonroots execute the recursive source call, then one carried-record parent assignment. -/
+/-- **Cost recurrence of the FIND auxiliary at a non-root.** Let $S$ be a union-find structure
+and $x < |S|$ a node whose parent $y$ in $S$ differs from $x$. If $c_x$ and $c_y$ are the costs
+of the cost-counted FIND auxiliary on $x$ and on $y$, then $c_x = (1, 0) + (c_y + (0, 1))$:
+one root test at $x$, then the run on $y$, then one parent write. -/
 theorem countedAux_time_step (self : UnionFind) (x : Fin self.size)
     (h : self.arr[x.val].parent ≠ x) :
     (countedAux self x).time = (1, 0) +
@@ -76,7 +92,9 @@ theorem countedAux_time_step (self : UnionFind) (x : Fin self.size)
   rw [countedAux]
   simp [h]
 
-/-- Every actual execution has exactly one more source test than parent writes. -/
+/-- **Root tests exceed parent writes by one.** For a union-find structure $S$ and a node
+$x < |S|$, if the cost-counted FIND auxiliary on $x$ has cost $(t, w)$, where $t$ counts root
+tests and $w$ counts parent writes, then $t = w + 1$. -/
 theorem countedAux_time_balance (self : UnionFind) (x : Fin self.size) :
     (countedAux self x).time.1 = (countedAux self x).time.2 + 1 := by
   if h : self.arr[x.val].parent = x then
@@ -101,7 +119,12 @@ theorem result_ext {n : Nat}
     apply Subtype.ext
     exact Fin.ext hr
 
-/-- This packages the same carried array and root; it does not run canonical FIND a second time. -/
+/-- **Cost-counted FIND.** For a union-find structure $S$ and a node $x < |S|$, this runs the
+cost-counted FIND auxiliary on $x$, obtaining a node array $A'$, a root $r$ and a cost $(t, w)$.
+It returns the union-find structure with node array $A'$, together with $r$ as a node of that
+structure (whose size equals $|S|$), at cost $(t, w)$.
+
+It reuses the array and root of that single run; FIND is not run a second time. -/
 @[no_expose] def countedFind (self : UnionFind) (x : Fin self.size) :
     TimeM (Nat × Nat) ((s : UnionFind) × {_root : Fin s.size // s.size = self.size}) :=
   let result := countedAux self x
@@ -123,14 +146,22 @@ theorem result_ext {n : Nat}
      2.1.isLt := show _ < r.s.size by rw [r.size_eq]; exact r.root.isLt
      2.2 := by simp [UnionFind.size, r.size_eq] }, result.time⟩
 
-/-- Full dependent result equality includes the saved store and returned valid representative. -/
+/-- **The cost-counted FIND returns the FIND result.** For a union-find structure $S$ and a node
+$x < |S|$, the value returned by the cost-counted FIND on $x$ (the compressed union-find
+structure together with the root of $x$), with its cost discarded, equals the result of the
+Batteries FIND with path compression on $x$. -/
 theorem countedFind_ret (self : UnionFind) (x : Fin self.size) :
     (countedFind self x).ret = self.find x := by
   apply result_ext
   · exact congrArg UnionFind.FindAux.s (countedAux_ret self x)
   · exact congrArg (fun r ↦ r.root.val) (countedAux_ret self x)
 
-/-- A finite per-call rank-gap bound, not a logarithmic or amortized alpha bound. -/
+/-- **Parent writes are bounded by the rank gap.** Let $S$ be a union-find structure, let $R$
+be one more than the maximum rank of a node of $S$, and let $x < |S|$ be a node. The number of
+parent writes performed by the cost-counted FIND auxiliary on $x$ (the second coordinate of its
+cost) is at most $R - \operatorname{rank}(x)$.
+
+This is a per-call bound, not a logarithmic or amortized inverse-Ackermann bound. -/
 theorem countedAux_writes_rank (self : UnionFind) (x : Fin self.size) :
     (countedAux self x).time.2 ≤ self.rankMax - self.rank x := by
   if h : self.arr[x.val].parent = x then
@@ -194,7 +225,11 @@ termination_by self.rankMax - self.rank x
 end Internal
 
 open Classical in
-/-- FIND compresses every identity in the original parent chain and no other parent. -/
+/-- **FIND compresses exactly the original path to the root.** Let $S$ be a union-find structure
+with parent map $p$ (where $p(i) = i$ for $i \ge |S|$), let $x < |S|$, and let $p'$ be the parent
+map of the structure produced by FIND with path compression on $x$. Then for every natural number
+$i$, $p'(i)$ is the root of $x$ if $i = p^k(x)$ for some $k \ge 0$, and $p'(i) = p(i)$
+otherwise. -/
 public theorem find_parent_eq_ite_iterate (self : UnionFind)
     (x : Fin self.size) (i : Nat) :
     (self.find x).1.parent i =
@@ -203,7 +238,11 @@ public theorem find_parent_eq_ite_iterate (self : UnionFind)
   exact Internal.parent_aux self x i
 
 open Classical in
-/-- FIND preserves every rank and changes exactly the original-chain parent fields. -/
+/-- **Effect of path-compressing find on each node.** Let $s$ be a union-find structure on the
+indices $0, \dots, n-1$ with parent function $p$, let $x < n$, and let $r$ be the root of $x$ in
+$s$. After find with path compression is run on $x$, for every index $i < n$ the node at $i$ in
+the resulting array keeps its rank from $s$, and its parent is $r$ if $i = p^k(x)$ for some
+$k \ge 0$, and is its original parent $p(i)$ otherwise. -/
 public theorem getElem_find (self : UnionFind) (x : Fin self.size)
     (i : Nat) (hi : i < self.size) :
     (self.find x).1.arr[i]'(by simpa using hi) =
@@ -330,7 +369,9 @@ theorem exactSourceCount (self : UnionFind) (x : Fin self.size) :
 
 end Internal
 
-/-- The first original-parent-chain root occurs strictly before the allocated size. -/
+/-- **The root is reached in fewer parent steps than there are nodes.** Let $S$ be a
+union-find structure with $n$ nodes and parent map $p$, and let $x < n$. Then there is $d < n$
+such that $p^d(x)$ is the root of $x$ and $p^k(x)$ is not the root of $x$ for every $k < d$. -/
 public theorem exists_first_iterate_rootD (self : UnionFind) (x : Fin self.size) :
     ∃ d : Nat,
       Nat.iterate self.parent d x.val = self.rootD x.val ∧

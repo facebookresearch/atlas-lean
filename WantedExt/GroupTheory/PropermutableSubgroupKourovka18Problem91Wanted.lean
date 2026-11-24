@@ -40,30 +40,40 @@ Corollary 1.3, which the paper says answers 18.91(b) (the literal range `1 < k` 
 
 open scoped Pointwise
 
-/-- `H` permutes with `X`: `HX = XH` as sets. -/
+/-- **Permuting subgroups.** Let $H$ and $X$ be subgroups of a group $G$. Then $H$ permutes
+with $X$ when $HX = XH$ as subsets of $G$, where $HX = \{hx : h \in H, x \in X\}$ and
+$XH = \{xh : x \in X, h \in H\}$. -/
 def Permutes {G : Type} [Group G] (H X : Subgroup G) : Prop :=
   (H : Set G) * (X : Set G) = (X : Set G) * (H : Set G)
 
-/-- `H` is propermutable in `G`: there is a subgroup `B` with `G = N_G(H) B` such that `H` permutes
-with every subgroup of `B`. -/
+/-- **Propermutable subgroups.** A subgroup $H$ of a group $G$ is propermutable in $G$ when there
+is a subgroup $B$ of $G$ with $G = N_G(H)B$ (every element of $G$ is a product $nb$ with $n$ in
+the normalizer $N_G(H)$ of $H$ and $b \in B$) such that $H$ permutes with every subgroup $X$ of
+$B$, that is, $HX = XH$. -/
 def IsPropermutable {G : Type} [Group G] (H : Subgroup G) : Prop :=
   ∃ B : Subgroup G, (Subgroup.normalizer (H : Set G) : Set G) * (B : Set G) = Set.univ ∧
     ∀ X : Subgroup G, X ≤ B → Permutes H X
 
-/-- `G` is 2-nilpotent: it has a normal subgroup of odd order whose index is a power of `2`. -/
+/-- **2-nilpotent groups.** A group $G$ is $2$-nilpotent when it has a normal subgroup $N$ of
+finite odd order whose index in $G$ is $2^k$ for some natural number $k$. -/
 def IsTwoNilpotent (G : Type) [Group G] : Prop :=
   ∃ N : Subgroup G, N.Normal ∧ Odd (Nat.card N) ∧ ∃ k : ℕ, N.index = 2 ^ k
 
-/-- Kourovka 18.91(a) (A. N. Skiba): there are a finite group `G` and subgroups `A ≤ B ≤ G` such
-that `A` is propermutable in `G` but not in `B`. -/
+/-- **Kourovka Problem 18.91(a) (statement).** The statement of Kourovka Problem 18.91(a)
+(A. N. Skiba): there exist a finite group $G$ and subgroups $A \le B \le G$ such that $A$ is
+propermutable in $G$ but $A$, regarded as a subgroup of $B$, is not propermutable in $B$. -/
 def propermutableNotInIntermediate : Prop :=
   ∃ (G : Type) (_ : Group G) (_ : Finite G) (A B : Subgroup G),
     A ≤ B ∧ IsPropermutable A ∧ ¬ IsPropermutable (A.subgroupOf B)
 
-/-- Kourovka 18.91(b) (A. N. Skiba): let `P` be a non-abelian Sylow 2-subgroup of a finite group
-`G`, `|P| = 2ⁿ`, and let `1 ≤ k < n`. If every subgroup of `P` of order `2ᵏ` is propermutable in
-`G`, and, when `k = 1`, every cyclic subgroup of `P` of order `4` is propermutable in `G`, then `G`
-is 2-nilpotent. -/
+/-- **Kourovka Problem 18.91(b) (statement).** The statement of Kourovka Problem 18.91(b)
+(A. N. Skiba), with the range $1 \le k < n$: let $G$ be a finite group and $P$ a non-abelian
+Sylow $2$-subgroup of $G$, with $|P| = 2^n$, and let $k$ be a natural number with $1 \le k < n$.
+If every subgroup of $P$ of order $2^k$ is propermutable in $G$, and, when $k = 1$, every cyclic
+subgroup of $P$ of order $4$ is propermutable in $G$, then $G$ is $2$-nilpotent.
+
+The printed problem has $1 < k < n$, which contradicts its clause for $k = 1$; the range
+$1 \le k < n$ is the one of Al-Sharo's Corollary 1.3. -/
 def propermutableSylowSubgroupsTwoNilpotent : Prop :=
   ∀ (G : Type) [Group G] [Finite G] (P : Sylow 2 G),
     (∃ x ∈ (P : Subgroup G), ∃ y ∈ (P : Subgroup G), x * y ≠ y * x) →
@@ -73,31 +83,47 @@ def propermutableSylowSubgroupsTwoNilpotent : Prop :=
       IsTwoNilpotent G
 
 /--
-Resolved true: the Kourovka Archive answers 18.91(a) "Yes, there is" (A. A. Pypka and D. Yu.
-Storozhenko, 2017). Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group
-Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems,
-Problem 18.91 (A. N. Skiba); resolution: (a) A. A. Pypka and D. Yu. Storozhenko, Dopov. Nac. Akad.
-Nauk Ukrain. 2017, no. 7, 18-20 (Ukrainian); (b) Kh. A. Al-Sharo, Finite groups with given systems
-of weakly S-propermutable subgroups, J. Group Theory 19 (2016), no. 5, 871-887, Kourovka Archive,
-Problem 18.91: a) Yes, there is; b) Yes, it is. Al-Sharo, Corollary 1.3: if X ⊴ G, P ∈ Syl_p(X), (p
-- 1, |X|) = 1, and for some 1 < D < P every subgroup of P of order |D| (and, when P is non-abelian
-and |D| = 2, every cyclic subgroup of order 4) is S-propermutable in G, then X is p-nilpotent,
-https://doi.org/10.1515/jgth-2016-0017.
+**Propermutability is not inherited by intermediate subgroups.** There exist a finite group $G$
+and subgroups $A \le B \le G$ such that $A$ is propermutable in $G$ but $A$, regarded as a
+subgroup of $B$, is not propermutable in $B$. This is the positive answer to
+Kourovka Problem 18.91(a).
+
+The Kourovka Archive answers 18.91(a) "Yes, there is" (A. A. Pypka and D. Yu. Storozhenko, 2017).
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
+Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 18.91 (A. N.
+Skiba); resolution: (a) A. A. Pypka and D. Yu. Storozhenko, Dopov. Nac. Akad. Nauk Ukrain. 2017,
+no. 7, 18-20 (Ukrainian); (b) Kh. A. Al-Sharo, Finite groups with given systems of weakly
+S-propermutable subgroups, J. Group Theory 19 (2016), no. 5, 871-887, Kourovka Archive,
+Problem 18.91: a) Yes, there is; b) Yes, it is. Al-Sharo, Corollary 1.3: if X ⊴ G, P ∈ Syl_p(X),
+(p - 1, |X|) = 1, and for some 1 < D < P every subgroup of P of order |D| (and, when P is
+non-abelian and |D| = 2, every cyclic subgroup of order 4) is S-propermutable in G, then X is
+p-nilpotent, https://doi.org/10.1515/jgth-2016-0017.
 -/
 public theorem_wanted propermutableNotInIntermediate_holds : propermutableNotInIntermediate
 
 /--
-Resolved true: the Kourovka Archive answers 18.91(b) "Yes, it is" (Kh. A. Al-Sharo, 2016). Corollary
-1.3 of Al-Sharo with `X = G` and `p = 2` (where `(p - 1, |G|) = 1`) gives 2-nilpotency already when
-the subgroups in question are `S`-propermutable (permuting with the Sylow subgroups of `B`), a
-weaker condition than propermutability. Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved
-Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of
-Solved Problems, Problem 18.91 (A. N. Skiba); resolution: (a) A. A. Pypka and D. Yu. Storozhenko,
-Dopov. Nac. Akad. Nauk Ukrain. 2017, no. 7, 18-20 (Ukrainian); (b) Kh. A. Al-Sharo, Finite groups
-with given systems of weakly S-propermutable subgroups, J. Group Theory 19 (2016), no. 5, 871-887,
-Kourovka Archive, Problem 18.91: a) Yes, there is; b) Yes, it is. Al-Sharo, Corollary 1.3: if X ⊴ G,
-P ∈ Syl_p(X), (p - 1, |X|) = 1, and for some 1 < D < P every subgroup of P of order |D| (and, when P
-is non-abelian and |D| = 2, every cyclic subgroup of order 4) is S-propermutable in G, then X is
+**Propermutable subgroups of a non-abelian Sylow 2-subgroup force 2-nilpotency.** Let $G$
+be a finite group and $P$ a non-abelian Sylow $2$-subgroup of $G$, with $|P| = 2^n$, and let $k$
+be a natural number with $1 \le k < n$. If every subgroup of $P$ of order $2^k$ is propermutable
+in $G$, and, when $k = 1$, every cyclic subgroup of $P$ of order $4$ is propermutable in $G$, then
+$G$ is $2$-nilpotent. This is the positive answer to Kourovka Problem 18.91(b).
+
+The Kourovka Archive answers 18.91(b) "Yes, it is" (Kh. A. Al-Sharo, 2016). Al-Sharo's
+Corollary 1.3 (quoted below), applied to the normal subgroup $X = G$ with $p = 2$ (where
+$(p - 1, |G|) = 1$ holds), gives 2-nilpotency already when the subgroups in question are only
+$S$-propermutable, a weaker condition than propermutability: a subgroup $H$ of $G$ is
+$S$-propermutable in $G$ when there is a subgroup $B$ of $G$ with $G = N_G(H)B$ such that $H$
+permutes with every Sylow subgroup of $B$.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
+Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 18.91 (A. N.
+Skiba); resolution: (a) A. A. Pypka and D. Yu. Storozhenko, Dopov. Nac. Akad. Nauk Ukrain. 2017,
+no. 7, 18-20 (Ukrainian); (b) Kh. A. Al-Sharo, Finite groups with given systems of weakly
+S-propermutable subgroups, J. Group Theory 19 (2016), no. 5, 871-887, Kourovka Archive,
+Problem 18.91: a) Yes, there is; b) Yes, it is. Al-Sharo, Corollary 1.3: if X ⊴ G, P ∈ Syl_p(X),
+(p - 1, |X|) = 1, and for some 1 < D < P every subgroup of P of order |D| (and, when P is
+non-abelian and |D| = 2, every cyclic subgroup of order 4) is S-propermutable in G, then X is
 p-nilpotent, https://doi.org/10.1515/jgth-2016-0017.
 -/
 public theorem_wanted propermutableSylowSubgroupsTwoNilpotent_holds :

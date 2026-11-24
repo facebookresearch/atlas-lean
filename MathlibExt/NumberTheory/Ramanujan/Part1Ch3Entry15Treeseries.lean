@@ -1076,10 +1076,15 @@ private lemma rhs_eq_exp {x u : ℝ} (hu_pos : 0 < u)
   rw [hc, Real.exp_sub, Real.exp_log hu_pos]
   field_simp
 
-/-- Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, Entry 15, formulas (15.1)-(15.2),
-    printed p. 73; scan PDF p. 83.
+/-- **Ramanujan's tree-function series (Chapter 3, Entry 15).** Let $x$ and $u$ be real numbers
+with $0 < u < 1$ and $u - \log u = 1 + x^2/2$. Then the series
+$$\sum_{k=0}^{\infty} \frac{(k+1)^{k-1}}{k!}\, e^{-k(1 + x^2/2)}$$
+converges to $u\, e^{1 + x^2/2}$.
 
 Proves `Wanted` entry `ramanujan_part1_ch3_entry15_treeseries`.
+
+Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, Entry 15, formulas (15.1)-(15.2),
+    printed p. 73; scan PDF p. 83.
 -/
 theorem ramanujan_part1_ch3_entry15_treeseries (x : ℝ)
     (u : ℝ) (hu_pos : 0 < u) (hu_lt : u < 1)

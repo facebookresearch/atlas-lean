@@ -51,7 +51,12 @@ arbitrary 0-1 permanents. The input decodes to `(dimension, row-major entries)` 
 entries in `{0, 1}`; malformed inputs have permanent `0`.
 -/
 
-/-- The permanent of the 0-1 matrix decoded from `x` (`0` on malformed inputs). -/
+/-- **Permanent of an encoded 0-1 matrix.** For a bitstring $x$: if $x$ decodes, under the
+canonical bitstring encoding, to a pair $(n, e)$ of a natural number $n$ and a list
+$e = (e_0, \dots, e_{n^2 - 1})$ of $n^2$ natural numbers each at most $1$, the value at $x$ is the
+permanent $\sum_{\sigma} \prod_{i=0}^{n-1} e_{in + \sigma(i)}$ of the $n \times n$ matrix with
+row-major entries $e$, where $\sigma$ ranges over the permutations of $\{0, \dots, n - 1\}$;
+otherwise the value is $0$. -/
 noncomputable def permOf (x : List Bool) : ℕ :=
   match MetaMathlibExt.BitstringEncoding.bitDecode (α := ℕ × List ℕ) x with
   | some (n, entries) =>
@@ -62,7 +67,18 @@ noncomputable def permOf (x : List Bool) : ℕ :=
     else 0
   | none => 0
 
-/-- **Jerrum-Sinclair-Vigoda: FPRAS for the permanent.** Source: M. Jerrum, A. Sinclair,
+/-- **Jerrum-Sinclair-Vigoda: FPRAS for the permanent.** For a bitstring $x$, let
+$\operatorname{perm}(x)$ be the permanent of the 0-1 matrix encoded by $x$: if $x$ decodes, under
+the canonical bitstring encoding, to a pair $(k, e)$ of a natural number $k$ and a list $e$ of
+$k^2$ natural numbers each at most $1$, then $\operatorname{perm}(x)$ is the permanent of the
+$k \times k$ matrix with row-major entries $e$, and otherwise $\operatorname{perm}(x) = 0$. There
+are a polynomial $p$ with natural-number coefficients and a polynomial-time computable function
+$E$ from triples of bitstrings to natural numbers such that for all bitstrings $x$ and $w$ with
+$n = |w| \ge 1$ (the precision, given in unary), at least two thirds of the bitstrings $r$ of
+length $p(|x| + n)$ satisfy
+$|E(x, r, w) - \operatorname{perm}(x)| \le \operatorname{perm}(x) / n$.
+
+Source: M. Jerrum, A. Sinclair,
 and E. Vigoda, "A polynomial-time approximation algorithm for the permanent of a matrix
 with nonnegative entries", Journal of the ACM 51 (2004), 671-697 (STOC 2001); M. Jerrum
 and A. Sinclair, "Approximating the permanent", SIAM Journal on Computing 18 (1989),

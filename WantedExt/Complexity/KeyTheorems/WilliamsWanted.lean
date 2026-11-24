@@ -38,7 +38,10 @@ class, defined as the union over fixed moduli `m` of `AC0[mod m]` - one fixed mo
 circuit family.
 -/
 
-/-- **Williams: NEXP is not contained in ACC0.** Source: R. Williams, "Non-uniform ACC circuit
+/-- **Williams: NEXP is not contained in ACC0.** Some decision problem lies in NEXP but not in
+$\mathsf{ACC}^0$.
+
+Source: R. Williams, "Non-uniform ACC circuit
 lower bounds", Journal of the ACM 61 (2014), 1-32 (CCC 2011). -/
 public theorem_wanted williams_nexp_not_in_acc0 :
     ∃ L : MetaMathlibExt.ComplexityTheory.DecisionProblem, L ∈ NEXP ∧ L ∉ ACC0

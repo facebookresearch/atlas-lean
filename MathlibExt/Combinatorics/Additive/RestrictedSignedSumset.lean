@@ -33,9 +33,13 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- `restrictedSumset h A` is the finset of sums of `h` distinct elements of `A`,
-implemented by imaging the `h`-element subsets of `A` under summation. It is stated for
-finsets of any additive commutative monoid (so `0^∧ A = {0}`); the paper works in `ℤ`.
+/-- **Restricted sumset.** For a natural number $h$ and a finite subset $A$ of an additive
+commutative monoid $G$, the restricted sumset $h^{\wedge} A$ is the set of all sums
+$\sum_{a \in B} a$ with $B$ an $h$-element subset of $A$, that is, the sums of $h$ distinct
+elements of $A$. In particular $0^{\wedge} A = \{0\}$.
+
+The source works in the integers; here $G$ is an arbitrary additive commutative monoid.
+
 Source: Mohan, Raj Kumar Mistri, Ram Krishna Pandey, *Some Direct and Inverse Problems for the
 Restricted Signed Sumset in the Set of Integers*, INTEGERS 24 (2024), Article A81, Definition of
 restricted sumset. -/
@@ -43,9 +47,12 @@ public def restrictedSumset {G : Type*} [AddCommMonoid G] [DecidableEq G] (h : �
     (A : Finset G) : Finset G :=
   (A.powersetCard h).image (fun B => ∑ a ∈ B, a)
 
-/-- `restrictedSignedSumset h A` is the finset of signed sums supported on `h` distinct
-elements of `A`: `B` is the support and `N ⊆ B` is the subset given negative sign, so
-the displayed value is `∑ a ∈ B, a - 2 * ∑ a ∈ N, a`.
+/-- **Restricted signed sumset.** For a natural number $h$ and a finite set $A$ of integers, the
+restricted signed sumset $h^{\wedge}_{\pm} A$ is the set of all integers
+$\sum_{a \in B} a - 2 \sum_{a \in N} a$, where $B$ ranges over the $h$-element subsets of $A$ and
+$N$ ranges over the subsets of $B$. These are the sums of the elements of $B$ in which the
+elements of $N$ are given a negative sign.
+
 Source: Mohan, Raj Kumar Mistri, Ram Krishna Pandey, *Some Direct and Inverse Problems for the
 Restricted Signed Sumset in the Set of Integers*, INTEGERS 24 (2024), Article A81, Definition of
 restricted signed sumset. -/
@@ -54,9 +61,11 @@ public def restrictedSignedSumset (h : ℕ) (A : Finset ℤ) : Finset ℤ :=
     (fun p => ∑ a ∈ p.1, a - 2 * ∑ a ∈ p.2, a)
 
 
-/-- Membership in `restrictedSumset` is equivalent to the paper's coefficient definition:
-on `A`, every `c a` is `0` or `1`, their sum is `h`, and `x` is the corresponding
-weighted sum. No deviation from the paper's definition is made.
+/-- **Coefficient description of the restricted sumset.** For a natural number $h$, a finite set
+$A$ of integers and an integer $x$, $x$ lies in the restricted sumset $h^{\wedge} A$ if and only
+if there is a function $c : \mathbb{Z} \to \mathbb{Z}$ with $c(a) \in \{0, 1\}$ for every
+$a \in A$, $\sum_{a \in A} c(a) = h$ and $x = \sum_{a \in A} c(a)\, a$.
+
 Source: Mohan, Raj Kumar Mistri, Ram Krishna Pandey, *Some Direct and Inverse Problems for the
 Restricted Signed Sumset in the Set of Integers*, INTEGERS 24 (2024), Article A81, Definition of
 restricted sumset. -/
@@ -99,9 +108,12 @@ public theorem mem_restrictedSumset_iff (h : ℕ) (A : Finset ℤ) (x : ℤ) :
     rw [Finset.sum_congr rfl fun a ha => congrArg (fun z => z * a) (hcoeff a ha)]
     simp [hAB]
 
-/-- Membership in `restrictedSignedSumset` is equivalent to the paper's coefficient
-definition: coefficients on `A` lie in `{-1,0,1}`, their absolute values sum to `h`, and
-`x` is their weighted sum. No deviation from the paper's definition is made.
+/-- **Coefficient description of the restricted signed sumset.** For a natural number $h$, a
+finite set $A$ of integers and an integer $x$, $x$ lies in the restricted signed sumset
+$h^{\wedge}_{\pm} A$ if and only if there is a function $c : \mathbb{Z} \to \mathbb{Z}$ with
+$c(a) \in \{-1, 0, 1\}$ for every $a \in A$, $\sum_{a \in A} |c(a)| = h$ and
+$x = \sum_{a \in A} c(a)\, a$.
+
 Source: Mohan, Raj Kumar Mistri, Ram Krishna Pandey, *Some Direct and Inverse Problems for the
 Restricted Signed Sumset in the Set of Integers*, INTEGERS 24 (2024), Article A81, Definition of
 restricted signed sumset. -/

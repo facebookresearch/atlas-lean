@@ -35,7 +35,10 @@ Every `NP` language is in `PP`: guess a witness at random, accept if it verifies
 accept with probability `1/2`; the acceptance probability is `> 1/2` exactly on yes-instances.
 -/
 
-/-- **NP is contained in PP.** Source: J. Gill, "Computational complexity of probabilistic
+/-- **NP is contained in PP.** Every decision problem in NP also belongs to PP, the class of
+decision problems decided in probabilistic polynomial time with unbounded error.
+
+Source: J. Gill, "Computational complexity of probabilistic
 Turing machines" (1977). -/
 public theorem_wanted np_subset_pp :
     MetaMathlibExt.ComplexityTheory.NP ⊆ PP

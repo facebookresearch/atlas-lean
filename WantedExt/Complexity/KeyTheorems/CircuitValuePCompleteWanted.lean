@@ -42,24 +42,35 @@ input variable (refs `[i]`), kind `1` a constant (refs `[b]`, true iff `b = 1`),
 negation, kind `3` conjunction, kind `4` disjunction; other kinds evaluate to `false`.
 -/
 
-/-- A gate of a flat Boolean circuit, encoded as `(kind, refs)`: the shared
-serial encoding of `Cslib.Complexity.Classes.acGateOfPair`/`acGateToPair`
-(see `CSLibExt/Computability/Complexity/Classes.lean`). -/
+/-- **Encoded circuit gates.** An encoded gate of a flat Boolean circuit is a pair $(k, r)$ of a
+natural number $k$, the kind of the gate, and a list $r$ of natural numbers, its references.
+
+Such a pair is read as a gate by the shared (kind, references) decoding of flat circuit gates. -/
 abbrev CVGate := ℕ × List ℕ
 
-/-- Values of all gates of an encoded circuit, in order: the shared typed
-evaluator `circuitEval` on the decoded gates. The typed assignment is the
-`List Bool` assignment restricted to the declared input count. -/
+/-- **Evaluation of an encoded Boolean circuit.** Let $n$ be a number of inputs, let $C$ be a
+list of gates, each encoded as a (kind, references) pair, and let $a = (a_0, a_1, \dots)$ be a
+list of booleans. The evaluation of $C$ on $a$ is the list of values of all gates, in order, of
+the flat Boolean circuit on $n$ inputs obtained by decoding each pair of $C$, under the
+assignment that sends each input $i < n$ to $a_i$, or to false when $i$ is at least the length
+of $a$. -/
 def cvCircuitEval {n : ℕ} (C : List CVGate) (assign : List Bool) : List Bool :=
   circuitEval (C.map (acGateOfPair (n := n))) (fun i => assign.getD i.val false)
 
-/-- Well-formedness: the decoded circuit is a `WellFormedCircuit`. -/
+/-- **Well-formed encoded circuits.** A list $C$ of encoded gates, each a (kind, references)
+pair, is well formed as a circuit on $n$ inputs when the flat Boolean circuit on $n$ inputs
+obtained by decoding each pair of $C$ is well formed: every decoded gate references only strictly
+earlier gates. -/
 def CVWellFormed {n : ℕ} (C : List CVGate) : Prop :=
   WellFormedCircuit (C.map (acGateOfPair (n := n)))
 
 open Classical in
-/-- The Circuit Value Problem as a decision problem over bitstrings,
-decoding to `(input count, gates, assignment)`. -/
+/-- **The Circuit Value Problem.** The Circuit Value Problem is the decision problem that accepts
+a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of such triples,
+to a triple $(n, C, a)$ of a natural number $n$, a list $C$ of encoded gates and a list $a$ of
+booleans such that the flat Boolean circuit on $n$ inputs obtained by decoding the gates of $C$
+is well formed, $a$ has length $n$, and the evaluation of $C$ on $a$ is a nonempty list whose
+last entry is true. It rejects every bitstring that does not decode. -/
 noncomputable def cvpDec : MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
       (α := ℕ × List CVGate × List Bool) x with
@@ -67,7 +78,10 @@ noncomputable def cvpDec : MetaMathlibExt.ComplexityTheory.DecisionProblem := fu
       (cvCircuitEval (n := i.1) i.2.1 i.2.2).getLast? = some true)
   | none => false
 
-/-- **The Circuit Value Problem is P-complete.** Source: R. E. Ladner, "The circuit value
+/-- **The Circuit Value Problem is P-complete.** The Circuit Value Problem is in P, and every
+decision problem in P is log-space many-one reducible to the Circuit Value Problem.
+
+Source: R. E. Ladner, "The circuit value
 problem is log space complete for P", SIGACT News 7 (1975), 18-20; S. A. Cook, "A hierarchy
 for nondeterministic time complexity", Journal of Computer and System Sciences 7 (1973),
 343-353. -/

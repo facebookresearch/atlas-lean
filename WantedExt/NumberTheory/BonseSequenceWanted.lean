@@ -42,22 +42,28 @@ namespace MathlibExt.NumberTheory.BonseWanted
 
 open Filter Topology
 
-/-- The `m`-th prime, 1-based (`primeNth 1 = 2`); junk
-value `Nat.nth Nat.Prime 0 = 2` at `m = 0` is unused. -/
+/-- **The $m$-th prime, counted from one.** For $m \ge 1$, $p_m$ is the $m$-th prime, so that
+$p_1 = 2$, $p_2 = 3$, $p_3 = 5$; at $m = 0$ the value is also $2$. -/
 noncomputable def primeNth (m : ℕ) : ℕ := Nat.nth Nat.Prime (m - 1)
 
-/-- Bonse sequence in the paper's sense: eventually
-`∏_{k < n} p_{a_k} > p_{a_n}²` (0-based indexing, see the
-module docstring). -/
+/-- **Bonse sequence of prime indices.** For $m \ge 1$ let $p_m$ be the $m$-th prime, so that
+$p_1 = 2$, and set $p_0 = 2$. A sequence $a_0, a_1, a_2, \ldots$ of natural numbers is a Bonse
+sequence if $p_{a_n}^2 < p_{a_0} p_{a_1} \cdots p_{a_{n-1}}$ for all sufficiently large $n$.
+
+In the paper's 1-based indexing the condition reads $p_{a_1} \cdots p_{a_n} > p_{a_{n+1}}^2$ for
+all sufficiently large $n$. -/
 def IsBonseSeq (a : ℕ → ℕ) : Prop :=
   ∀ᶠ n in atTop, (primeNth (a n) : ℝ) ^ 2 <
     ∏ k ∈ Finset.range n, (primeNth (a k) : ℝ)
 
-/-- **Theorem 1**: if
-`liminf (log Aₙ / log a_{n+1}) > 2` (stated with a finite
-margin, which also covers the paper's `+∞` case: some
-`c > 2` is eventually below the quotient), then `a` is
-a Bonse sequence.
+/-- **A sufficient condition for a Bonse sequence.** Let $a_0 < a_1 < a_2 < \cdots$ be a strictly
+increasing sequence of positive integers and write $A_n = a_0 a_1 \cdots a_{n-1}$ for the product
+of its first $n$ terms. If there is a real number $c > 2$ such that $\log A_n / \log a_n > c$ for
+all sufficiently large $n$, then $a$ is a Bonse sequence.
+
+The hypothesis is equivalent to $\liminf_n \log A_n / \log a_n > 2$, an infinite limit inferior
+included. In the paper's 1-based indexing it reads $\liminf \log A_n / \log a_{n+1} > 2$ with
+$A_n = a_1 \cdots a_n$.
 
 Source: Diego Marques, "Bonse's Inequality along
 Subsequences of Primes", Theorem 1. -/
@@ -68,11 +74,15 @@ theorem_wanted isBonseSeq_of_liminf_gt (a : ℕ → ℕ)
         Real.log (a n)) :
     IsBonseSeq a
 
-/-- **Theorem 2**: if
-`(n log log aₙ) / log a_{n+1} → 0` and
-`liminf (log Aₙ / log a_{n+1}) < 2` (stated as: the
-quotient is frequently below some `c < 2`), then `a` is
-not a Bonse sequence.
+/-- **A sufficient condition for a non-Bonse sequence.** Let $a_0 < a_1 < a_2 < \cdots$ be a
+strictly increasing sequence of positive integers and write $A_n = a_0 a_1 \cdots a_{n-1}$ for the
+product of its first $n$ terms. Suppose that $(n + 1) \log \log a_n / \log a_{n+1} \to 0$ as
+$n \to \infty$, and that there is a real number $c < 2$ such that $\log A_n / \log a_n < c$ for
+infinitely many $n$. Then $a$ is not a Bonse sequence.
+
+The second hypothesis is equivalent to $\liminf_n \log A_n / \log a_n < 2$. In the paper's
+1-based indexing the hypotheses read $n \log \log a_n / \log a_{n+1} \to 0$ and
+$\liminf \log A_n / \log a_{n+1} < 2$ with $A_n = a_1 \cdots a_n$.
 
 Source: Diego Marques, "Bonse's Inequality along
 Subsequences of Primes", Theorem 2. -/

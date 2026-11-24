@@ -69,6 +69,46 @@ example : ∑ i, ftcsStep (m := 3) (1 / 2 : ℝ) (![1, 2, 3] : Fin 3 → ℝ) i 
     ∑ i, (![1, 2, 3] : Fin 3 → ℝ) i :=
   ftcsStep_conserves_sum (m := 3) (1 / 2) ![1, 2, 3]
 
+-- Defects through the ten-step decay recurrence `e_{j+1} = (9 / 10) e_j + η_j`.
+
+section DefectRecurrence
+
+open Finset
+
+/-- **Early and late defects weigh differently.** From a zero initial defect, a unit residual at
+the first step leaves `e_10 = (9 / 10) ^ 9`, and a unit residual at the last step leaves
+`e_10 = 1`. -/
+lemma tenStep_defect_weights_differ {e e' : ℕ → ℝ} (h0 : e 0 = 0) (h0' : e' 0 = 0)
+    (h : ∀ j < 10, e (j + 1) = 9 / 10 * e j + if j = 0 then 1 else 0)
+    (h' : ∀ j < 10, e' (j + 1) = 9 / 10 * e' j + if j = 9 then 1 else 0) :
+    e 10 = (9 / 10) ^ 9 ∧ e' 10 = 1 ∧ e 10 < e' 10 := by
+  have ha := tenStep_defect_eq (η := fun j => if j = 0 then 1 else 0) h
+  have hb := tenStep_defect_eq (η := fun j => if j = 9 then 1 else 0) h'
+  rw [h0] at ha
+  rw [h0'] at hb
+  simp only [sum_range_succ, sum_range_zero] at ha hb
+  norm_num at ha hb
+  refine ⟨by rw [ha]; norm_num, hb, by rw [ha, hb]; norm_num⟩
+
+-- A unit residual at the first step from a zero initial defect: the weighted bound `(9 / 10) ^ 9`
+-- is attained, while the unweighted bound only gives `1`.
+example {e : ℕ → ℝ} (h0 : e 0 = 0)
+    (h : ∀ j < 10, e (j + 1) = 9 / 10 * e j + if j = 0 then 1 else 0) :
+    |e 10| ≤ (9 / 10) ^ 9 ∧ |e 10| ≤ 1 ∧ |e 10| = (9 / 10) ^ 9 := by
+  have hw := tenStep_defect_le h
+  have hu := tenStep_defect_le_unweighted h
+  have he : e 10 = (9 / 10) ^ 9 := by
+    have := tenStep_defect_eq h
+    rw [h0] at this
+    norm_num [sum_range_succ] at this
+    rw [this]
+    norm_num
+  rw [h0] at hw hu
+  norm_num [sum_range_succ] at hw hu
+  refine ⟨by linarith, by linarith, by rw [he]; norm_num⟩
+
+end DefectRecurrence
+
 #print axioms decay_local_truncation_le
 #print axioms decay_global_convergence
 #print axioms eulerStep
@@ -87,3 +127,7 @@ example : ∑ i, ftcsStep (m := 3) (1 / 2 : ℝ) (![1, 2, 3] : Fin 3 → ℝ) i 
 #print axioms norm_altMode_lt_norm_ftcsStep
 #print axioms decay_euler_error_le
 #print axioms decay_euler_numeric_bound
+#print axioms tenStep_defect_eq
+#print axioms tenStep_defect_le
+#print axioms tenStep_defect_le_unweighted
+#print axioms tenStep_defect_weights_differ

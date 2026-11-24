@@ -50,8 +50,11 @@ open _root_.SimpleGraph
 `Fin n` with no (not necessarily induced) four-cycle (OEIS A006855).
 -/
 
-/-- `ex(n; C₄)` for `1 ≤ n ≤ 20`:
-`0, 1, 3, 4, 6, 7, 9, 11, 13, 16, 18, 21, 24, 27, 30, 33, 36, 39, 42, 46`.
+/-- **Extremal numbers of the four-cycle up to twenty vertices.** For a natural number $n$, let
+$\mathrm{ex}(n; C_4)$ be the largest number of edges of a simple graph on $n$ vertices that
+contains no four-cycle $C_4$ as a (not necessarily induced) subgraph. For
+$n = 1, 2, \dots, 20$ the values of $\mathrm{ex}(n; C_4)$ are, in order,
+$0, 1, 3, 4, 6, 7, 9, 11, 13, 16, 18, 21, 24, 27, 30, 33, 36, 39, 42, 46$.
 
 Source: C. R. J. Clapham, A. Flockhart, and J. Sheehan, *Graphs without
 four-cycles*, J. Graph Theory 13 (1989), 29–47 (`n ≤ 21`); OEIS A006855;
@@ -60,9 +63,13 @@ public theorem_wanted extremalNumber_cycleGraph_four_one_to_twenty :
     (List.range 20).map (fun i => extremalNumber (i + 1) (cycleGraph 4)) =
       [0, 1, 3, 4, 6, 7, 9, 11, 13, 16, 18, 21, 24, 27, 30, 33, 36, 39, 42, 46]
 
-/-- Füredi's theorem: for every prime power `q > 13`,
-`ex(q² + q + 1; C₄) = q (q + 1)² / 2`, attained by the polarity graph of the
-projective plane of order `q`.
+/-- **Füredi's theorem on four-cycle-free graphs.** For a natural number $n$, let
+$\mathrm{ex}(n; C_4)$ be the largest number of edges of a simple graph on $n$ vertices that
+contains no four-cycle $C_4$ as a (not necessarily induced) subgraph. For every prime power
+$q > 13$, $\mathrm{ex}(q^2 + q + 1; C_4) = q (q + 1)^2 / 2$; the division is exact because
+$q (q + 1)$ is even.
+
+The bound is attained by the polarity graph of the projective plane of order $q$.
 
 Source: Z. Füredi, *On the number of edges of quadrilateral-free graphs*,
 J. Combin. Theory Ser. B 68 (1996), 1–6; listed in SqueezeBench

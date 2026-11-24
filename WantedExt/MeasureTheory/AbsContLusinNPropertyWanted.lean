@@ -41,8 +41,10 @@ public import Mathlib
 
 namespace MathlibExt.MeasureTheory.AbsContLusinNPropertyWanted
 
-/-- Show that if $f:\mathbb{R}\to\mathbb{R}$ is absolutely continuous, then $f$ maps sets of measure
-zero to sets of measure zero.
+/-- **Absolutely continuous functions have the Lusin N property.** Let $f : \mathbb{R} \to
+\mathbb{R}$ be absolutely continuous on every closed bounded interval $[a, b]$. Then $f$ maps
+Lebesgue null sets to null sets: for every set $s \subseteq \mathbb{R}$ of Lebesgue outer measure
+zero, the image $f(s)$ has Lebesgue outer measure zero.
 
 Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level I (Real functions; Functions of
 one variable), `benchmark/level1/ma_proofbench_l1_75.lean` at openbmb/ma-proofbench@31bab4c.

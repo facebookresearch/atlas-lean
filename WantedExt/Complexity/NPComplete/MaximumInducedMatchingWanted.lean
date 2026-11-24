@@ -44,14 +44,22 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- A maximum-induced-matching instance: vertex count, edge list, bound. -/
+/-- **Maximum-induced-matching instances.** A maximum-induced-matching instance is a triple
+$(n, E, K)$ of a natural number $n$ (the vertex count), a list $E$ of pairs of natural numbers
+(the edges) and a natural number $K$ (the bound). -/
 abbrev MaximumInducedMatchingInstance := ℕ × List (ℕ × ℕ) × ℕ
 
-/-- Well-formedness of an instance. -/
+/-- **Well-formed maximum-induced-matching instances.** A maximum-induced-matching instance
+$(n, E, K)$ is well formed when the edge list $E$ has no repeated entries and every pair $(u, v)$
+in $E$ satisfies $u < n$, $v < n$ and $u \ne v$, with the reverse pair $(v, u)$ not in $E$. -/
 def WellFormed (i : MaximumInducedMatchingInstance) : Prop :=
   i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1
 
-/-- An induced matching of at least `K` edges. -/
+/-- **Feasible maximum-induced-matching instances.** A maximum-induced-matching instance
+$(n, E, K)$, with vertex count $n$, edge list $E$ of pairs of natural numbers and bound $K$, is
+feasible when there is a sublist $M$ of $E$ of length at least $K$ such that any two distinct
+pairs in $M$ share no endpoint, and no pair in $E$ joins an endpoint of one pair in $M$ to an
+endpoint of a different pair in $M$. -/
 def MaximumInducedMatchingFeasible
     (i : MaximumInducedMatchingInstance) : Prop :=
   ∃ M : List (ℕ × ℕ), M.Sublist i.2.1 ∧ i.2.2 ≤ M.length ∧
@@ -62,7 +70,14 @@ def MaximumInducedMatchingFeasible
         (e.2 = e1.1 ∨ e.2 = e1.2) ∧ (e.1 = e2.1 ∨ e.1 = e2.2))
 
 open Classical in
-/-- MAXIMUM INDUCED MATCHING as a decision problem over bitstrings. -/
+/-- **The MAXIMUM INDUCED MATCHING decision problem.** MAXIMUM INDUCED MATCHING is the decision
+problem that accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring
+encoding, to a maximum-induced-matching instance $(n, E, K)$ that is well formed and feasible:
+the edge list $E$ has no repeated entries, every pair $(u, v)$ in $E$ satisfies $u < n$, $v < n$
+and $u \ne v$ with $(v, u)$ not in $E$, and some sublist $M$ of $E$ of length at least $K$ is an
+induced matching, meaning that any two distinct pairs in $M$ share no endpoint and no pair in $E$
+joins an endpoint of one pair in $M$ to an endpoint of a different pair in $M$. Bitstrings that
+do not decode are rejected. -/
 noncomputable def maximumInducedMatchingDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
@@ -70,7 +85,11 @@ noncomputable def maximumInducedMatchingDec :
   | some i => decide (WellFormed i ∧ MaximumInducedMatchingFeasible i)
   | none => false
 
-/-- **MAXIMUM INDUCED MATCHING is NP-complete.** Source: L. J. Stockmeyer and V. V. Vazirani,
+/-- **MAXIMUM INDUCED MATCHING is NP-complete.** The MAXIMUM INDUCED MATCHING decision problem
+belongs to NP, and every decision problem in NP reduces to it by a polynomial-time many-one
+reduction.
+
+Source: L. J. Stockmeyer and V. V. Vazirani,
 "NP-completeness of some generalizations of the maximum matching problem", Information
 Processing Letters 15 (1982), 14-19; K. Cameron, "Induced matchings", Discrete Applied
 Mathematics 24 (1989), 97-102 (NP-completeness for bipartite graphs, polynomial for

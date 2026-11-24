@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.Calculus.Deriv.Basic
+public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Order.Monotone.Defs
 public import MathlibExt.Analysis.ODE.ContinuumBalances
 public import PhyslibExt.ContinuumMechanics.ControlVolumes
 public import PhyslibExt.EarthScience.ThiemWellFlow
@@ -22,12 +24,14 @@ import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
 
 /-!
-# Radial Darcy head profile and well sources in a finite-volume energy ledger
+# Radial Darcy head profile, well sources in a finite-volume ledger, and fractional flow
 
 The steady radial Darcy discharge of a confined aquifer integrates to the logarithmic head
 profile on an annulus around a well; with the sign of its rate reversed, this is the Thiem
 profile. On a fixed chain of finite volumes, wells and open boundary faces enter an exact mass and
-energy ledger.
+energy ledger. An explicit upwind fractional-flow update of a water-oil displacement with an
+inflow boundary keeps the mobile saturation range under its CFL condition, and its water volume
+changes by the inflow minus the outflow.
 
 ## i. Overview
 
@@ -73,6 +77,25 @@ stocks, monotonicity or convergence is claimed. The no-flux specialization
 `sum_add_mul_discreteBalance_of_noFlux` conserves the stock and so cannot represent an open chain
 with wells and an outlet.
 
+Fractional flow (sections F-H). One-dimensional water-oil displacement through a chain of `n + 1`
+cells of length `dx`, cross-section `A` and porosity `φ` (pore volume `φ * A * dx > 0` per cell),
+at total volumetric rate `Q ≥ 0` towards increasing index. The water saturation `S` is normalized
+on the mobile range `[Swc, 1 - Sor]` (connate water `Swc`, residual oil `Sor`,
+`ΔS = 1 - Sor - Swc > 0`) as `s = (S - Swc) / ΔS`. With the relative permeabilities `s ^ 2`
+(water) and `(1 - s) ^ 2` (oil) and positive viscosities `μo`, `μw`, the water fractional flow
+`f s = μo * s ^ 2 / (μo * s ^ 2 + μw * (1 - s) ^ 2)` increases on `[0, 1]` from `f 0 = 0` to
+`f 1 = 1`, with derivative at most `B = (μo + μw) ^ 2 / (2 μo μw)`. The explicit upwind step moves
+the water volume `Q dt f` through each face from the cell on its left; the left boundary face
+carries the inflow state. In normalized variables cell `i` updates by
+`s_i ↦ s_i - ν (f s_i - f s_(i-1))`, with `s_(-1)` the inflow state and
+`ν = Q dt / (φ A dx ΔS)`; the `ΔS` comes from the normalization. Under `0 ≤ ν B ≤ 1` the update is
+monotone in both arguments and keeps `[0, 1]`, equivalently `[Swc, 1 - Sor]`. The step is the
+finite-volume step with upwind face fluxes, so the interior fluxes cancel
+(`totalDiscreteChange_eq`) and the water volume changes by the inlet water volume `Q dt f (s_in)`
+minus the outlet water volume `Q dt f (s_out)`; a periodic conservation identity would miss both
+boundary terms. This is a model statement: no convergence, entropy condition or capillary
+pressure is claimed.
+
 ## ii. Key results
 
 - `EarthScience.radialDarcy_head_sub`: the radial Darcy head difference on the annulus.
@@ -90,6 +113,17 @@ with wells and an outlet.
   energy, the porosity and the cell pressure.
 - `EarthScience.well_boundary_ledger`: the mass and the energy ledger with shared face fluxes and
   production at the production mass rate with the enthalpy of the stored cell state.
+- `EarthScience.fracFlow_zero_one`, `EarthScience.hasDerivAt_fracFlow`,
+  `EarthScience.fracFlowDeriv_mem_Icc`, `EarthScience.fracFlow_sub_mem_Icc`,
+  `EarthScience.monotoneOn_fracFlow`: end values, derivative, derivative bound, Lipschitz bound and
+  monotonicity of the fractional flow on `[0, 1]`.
+- `EarthScience.upwindUpdate_mono`, `EarthScience.upwindStep_mem_Icc`: the update is monotone and
+  keeps `[0, 1]` under `0 ≤ ν B ≤ 1`.
+- `EarthScience.normSat_mem_Icc_iff`, `EarthScience.normSat_satStep`,
+  `EarthScience.satStep_mem_Icc`: the physical step normalizes to the update with
+  `ν = Q dt / (φ A dx ΔS)` and keeps `[Swc, 1 - Sor]`.
+- `EarthScience.upwindStep_eq_discreteBalance`, `EarthScience.sum_upwindStep`,
+  `EarthScience.satStep_volume_balance`: the conservative form and the inlet-minus-outlet balance.
 
 ## iii. Table of contents
 
@@ -98,6 +132,9 @@ with wells and an outlet.
 - C. Rejected inputs
 - D. Cells with wells
 - E. Mass and energy ledgers
+- F. Fractional flow
+- G. Normalized saturation and the CFL number
+- H. The upwind step: monotonicity, interval and balance
 
 ## iv. References
 
@@ -107,7 +144,13 @@ with wells and an outlet.
 - J. Bear, *Dynamics of Fluids in Porous Media*, American Elsevier (1972): mass and energy
   balances with sources and sinks in porous media.
 - R. J. LeVeque, *Finite Volume Methods for Hyperbolic Problems*, Cambridge University Press
-  (2002), ch. 4: conservative finite-volume updates, whose interior fluxes cancel in the total.
+  (2002), ch. 4: conservative finite-volume updates, whose interior fluxes cancel in the total;
+  ch. 12: upwind methods for nonlinear scalar conservation laws, the CFL condition and monotone
+  methods.
+- S. E. Buckley and M. C. Leverett, *Mechanism of fluid displacement in sands*, Trans. AIME 146
+  (1942): fractional flow and one-dimensional displacement.
+- L. P. Dake, *Fundamentals of Reservoir Engineering*, Elsevier (1978), ch. 10: fractional flow
+  with normalized saturation and relative permeabilities.
 - `MathlibExt.Analysis.ODE.ContinuumBalances.totalDiscreteChange_eq`
   (`MathlibExt.Analysis.ODE.ContinuumBalances`) and `ControlVolumes.specificEnthalpy`
   (`PhyslibExt.ContinuumMechanics.ControlVolumes`).
@@ -506,5 +549,452 @@ lemma well_boundary_ledger {n : ℕ} (Δx : {x : ℝ // 0 < x}) (dt : ℝ) (m E 
     Finset.sum_congr rfl fun i _ => wellEnergyRate_eq_stored hρc hφ hm hE i]
 
 end WellLedger
+
+section FractionalFlow
+
+open MathlibExt.Analysis.ODE.ContinuumBalances
+
+/-! ## F. Fractional flow -/
+
+private lemma denom_pos {μo μw s : ℝ} (hμo : 0 < μo) (hμw : 0 < μw) :
+    0 < μo * s ^ 2 + μw * (1 - s) ^ 2 := by
+  have h1 : 0 ≤ μo * s ^ 2 := by positivity
+  have h2 : 0 ≤ μw * (1 - s) ^ 2 := by positivity
+  by_cases hs : s = 0
+  · subst hs
+    simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, mul_zero,
+      zero_add]
+    have : (0 : ℝ) < μw * 1 := by positivity
+    simpa using this
+  · have hs2 : 0 < s ^ 2 := by positivity
+    have hpos : 0 < μo * s ^ 2 := mul_pos hμo hs2
+    linarith
+
+/-- Water fractional flow `μo s ^ 2 / (μo s ^ 2 + μw (1 - s) ^ 2)` at normalized saturation `s`,
+from the relative permeabilities `s ^ 2` (water) and `(1 - s) ^ 2` (oil) and the oil and water
+viscosities `μo`, `μw`. -/
+noncomputable def fracFlow (μo μw s : ℝ) : ℝ :=
+  μo * s ^ 2 / (μo * s ^ 2 + μw * (1 - s) ^ 2)
+
+/-- Derivative of the fractional flow: `2 μo μw s (1 - s) / (μo s ^ 2 + μw (1 - s) ^ 2) ^ 2`. -/
+noncomputable def fracFlowDeriv (μo μw s : ℝ) : ℝ :=
+  2 * μo * μw * s * (1 - s) / (μo * s ^ 2 + μw * (1 - s) ^ 2) ^ 2
+
+/-- Derivative bound `B = (μo + μw) ^ 2 / (2 μo μw)` of the fractional flow on `[0, 1]`. -/
+noncomputable def fracFlowBound (μo μw : ℝ) : ℝ :=
+  (μo + μw) ^ 2 / (2 * μo * μw)
+
+private lemma fracFlowBound_pos {μo μw : ℝ} (hμo : 0 < μo) (hμw : 0 < μw) :
+    0 < fracFlowBound μo μw := by
+  simp only [fracFlowBound]
+  positivity
+
+/-- Endpoint values: no water flows at connate water, `f 0 = 0`, and only water flows at
+residual oil, `f 1 = 1`. -/
+lemma fracFlow_zero_one {μo : ℝ} (μw : ℝ) (hμo : 0 < μo) :
+    fracFlow μo μw 0 = 0 ∧ fracFlow μo μw 1 = 1 := by
+  have hμo' : μo ≠ 0 := ne_of_gt hμo
+  constructor
+  · simp [fracFlow]
+  · simp [fracFlow, hμo']
+
+/-- The fractional flow has derivative `fracFlowDeriv μo μw s` at every `s`, for positive
+viscosities (the denominator never vanishes). -/
+lemma hasDerivAt_fracFlow {μo μw : ℝ} (hμo : 0 < μo) (hμw : 0 < μw) (s : ℝ) :
+    HasDerivAt (fracFlow μo μw) (fracFlowDeriv μo μw s) s := by
+  have hDpos : 0 < μo * s ^ 2 + μw * (1 - s) ^ 2 := denom_pos hμo hμw
+  have hDne : μo * s ^ 2 + μw * (1 - s) ^ 2 ≠ 0 := ne_of_gt hDpos
+  have hPow : HasDerivAt (fun x : ℝ => x ^ 2) (2 * s) s := by
+    simpa using hasDerivAt_pow 2 s
+  have hN : HasDerivAt (fun x : ℝ => μo * x ^ 2) (μo * (2 * s)) s :=
+    HasDerivAt.const_mul μo hPow
+  have hSub : HasDerivAt (fun x : ℝ => 1 - x) (-1) s := by
+    have h1 : HasDerivAt (fun _ : ℝ => (1 : ℝ)) 0 s := hasDerivAt_const s 1
+    have h2 : HasDerivAt (fun x : ℝ => x) 1 s := hasDerivAt_id s
+    have h := HasDerivAt.sub h1 h2
+    have hEq : (fun x : ℝ => 1 - x) = (fun _ : ℝ => (1 : ℝ)) - (fun x : ℝ => x) := by
+      funext x
+      rfl
+    have hEq2 : (-1 : ℝ) = 0 - 1 := by norm_num
+    rw [hEq, hEq2]
+    exact h
+  have hPow2 : HasDerivAt (fun x : ℝ => (1 - x) ^ 2) (2 * (1 - s) * (-1)) s := by
+    have h := HasDerivAt.pow hSub 2
+    have hEq : (fun x : ℝ => (1 - x) ^ 2) = ((fun x : ℝ => 1 - x) ^ 2) := by
+      funext x
+      rfl
+    have hDeriv : (2 : ℝ) * (1 - s) * (-1) = 2 * (1 - s) ^ (2 - 1) * (-1) := by
+      norm_num
+    rw [hEq, hDeriv]
+    exact h
+  have hM : HasDerivAt (fun x : ℝ => μw * (1 - x) ^ 2) (μw * (2 * (1 - s) * (-1))) s :=
+    HasDerivAt.const_mul μw hPow2
+  have hD : HasDerivAt (fun x : ℝ => μo * x ^ 2 + μw * (1 - x) ^ 2)
+      (μo * (2 * s) + μw * (2 * (1 - s) * (-1))) s := by
+    have h := HasDerivAt.add hN hM
+    have hEq : (fun x : ℝ => μo * x ^ 2 + μw * (1 - x) ^ 2)
+        = (fun x : ℝ => μo * x ^ 2) + (fun x : ℝ => μw * (1 - x) ^ 2) := by
+      funext x
+      rfl
+    rw [hEq]
+    exact h
+  have hDiv := HasDerivAt.div hN hD hDne
+  have hEq : fracFlow μo μw
+      = (fun x : ℝ => μo * x ^ 2) / (fun x : ℝ => μo * x ^ 2 + μw * (1 - x) ^ 2) := by
+    funext x
+    rfl
+  have hDeriv : fracFlowDeriv μo μw s
+      = (μo * (2 * s) * (μo * s ^ 2 + μw * (1 - s) ^ 2)
+          - μo * s ^ 2 * (μo * (2 * s) + μw * (2 * (1 - s) * (-1))))
+        / (μo * s ^ 2 + μw * (1 - s) ^ 2) ^ 2 := by
+    simp only [fracFlowDeriv]
+    ring
+  rw [hEq, hDeriv]
+  exact hDiv
+
+/-- Finite derivative bound: on `[0, 1]` the derivative lies in `[0, B]`,
+`B = (μo + μw) ^ 2 / (2 μo μw)`. -/
+lemma fracFlowDeriv_mem_Icc {μo μw s : ℝ} (hμo : 0 < μo) (hμw : 0 < μw)
+    (hs : s ∈ Set.Icc (0 : ℝ) 1) :
+    fracFlowDeriv μo μw s ∈ Set.Icc 0 (fracFlowBound μo μw) := by
+  obtain ⟨hs0, hs1⟩ := hs
+  have hDpos : 0 < μo * s ^ 2 + μw * (1 - s) ^ 2 := denom_pos hμo hμw
+  have hD2pos : 0 < (μo * s ^ 2 + μw * (1 - s) ^ 2) ^ 2 := by positivity
+  have h1s : 0 ≤ (1 : ℝ) - s := by linarith
+  have hNum : 0 ≤ 2 * μo * μw * s * (1 - s) := by positivity
+  have hLower : 0 ≤ fracFlowDeriv μo μw s := by
+    simp only [fracFlowDeriv]
+    exact div_nonneg hNum (le_of_lt hD2pos)
+  have hSumPos : 0 < μo + μw := add_pos hμo hμw
+  have hId : (μo + μw) * (μo * s ^ 2 + μw * (1 - s) ^ 2)
+      = μo * μw + (μo * s - μw * (1 - s)) ^ 2 := by ring
+  have hSq : 0 ≤ (μo * s - μw * (1 - s)) ^ 2 := sq_nonneg _
+  have hMulGe : μo * μw ≤ (μo * s ^ 2 + μw * (1 - s) ^ 2) * (μo + μw) := by
+    have h' : μo * μw ≤ (μo + μw) * (μo * s ^ 2 + μw * (1 - s) ^ 2) := by
+      rw [hId]
+      exact le_add_of_nonneg_right hSq
+    rw [mul_comm (μo * s ^ 2 + μw * (1 - s) ^ 2) (μo + μw)]
+    exact h'
+  have hDge : μo * μw / (μo + μw) ≤ μo * s ^ 2 + μw * (1 - s) ^ 2 := by
+    rw [div_le_iff₀ hSumPos]
+    exact hMulGe
+  have hD0nonneg : 0 ≤ μo * μw / (μo + μw) := by positivity
+  have hD2ge : (μo * μw / (μo + μw)) ^ 2 ≤ (μo * s ^ 2 + μw * (1 - s) ^ 2) ^ 2 := by
+    nlinarith [hDge, hD0nonneg, hDpos,
+      sq_nonneg (μo * s ^ 2 + μw * (1 - s) ^ 2 - μo * μw / (μo + μw))]
+  have hBpos : 0 < fracFlowBound μo μw := fracFlowBound_pos hμo hμw
+  have hBmono : fracFlowBound μo μw * (μo * μw / (μo + μw)) ^ 2
+      ≤ fracFlowBound μo μw * (μo * s ^ 2 + μw * (1 - s) ^ 2) ^ 2 :=
+    mul_le_mul_of_nonneg_left hD2ge (le_of_lt hBpos)
+  have hμo' : μo ≠ 0 := ne_of_gt hμo
+  have hμw' : μw ≠ 0 := ne_of_gt hμw
+  have hSumNe : μo + μw ≠ 0 := ne_of_gt hSumPos
+  have hBD0 : fracFlowBound μo μw * (μo * μw / (μo + μw)) ^ 2 = μo * μw / 2 := by
+    simp only [fracFlowBound]
+    field_simp
+  have hS : s * (1 - s) ≤ 1 / 4 := by
+    nlinarith [sq_nonneg (s - 1 / 2)]
+  have hμwμo : 0 ≤ μo * μw := by positivity
+  have hNle : 2 * μo * μw * s * (1 - s) ≤ μo * μw / 2 := by
+    have h2 : 2 * (s * (1 - s)) ≤ 1 / 2 := by linarith
+    have hEq1 : 2 * μo * μw * s * (1 - s) = (μo * μw) * (2 * (s * (1 - s))) := by ring
+    have hEq2 : μo * μw / 2 = (μo * μw) * (1 / 2) := by ring
+    rw [hEq1, hEq2]
+    exact mul_le_mul_of_nonneg_left h2 hμwμo
+  have hNleB : 2 * μo * μw * s * (1 - s)
+      ≤ fracFlowBound μo μw * (μo * s ^ 2 + μw * (1 - s) ^ 2) ^ 2 := by
+    calc 2 * μo * μw * s * (1 - s) ≤ μo * μw / 2 := hNle
+      _ = fracFlowBound μo μw * (μo * μw / (μo + μw)) ^ 2 := hBD0.symm
+      _ ≤ fracFlowBound μo μw * (μo * s ^ 2 + μw * (1 - s) ^ 2) ^ 2 := hBmono
+  have hUpper : fracFlowDeriv μo μw s ≤ fracFlowBound μo μw := by
+    simp only [fracFlowDeriv]
+    rw [div_le_iff₀ hD2pos]
+    exact hNleB
+  exact ⟨hLower, hUpper⟩
+
+/-- Lipschitz bound with monotone increment: for `t ≤ s` in `[0, 1]`,
+`0 ≤ f s - f t ≤ B (s - t)`. -/
+lemma fracFlow_sub_mem_Icc {μo μw s t : ℝ} (hμo : 0 < μo) (hμw : 0 < μw)
+    (hs : s ∈ Set.Icc (0 : ℝ) 1) (ht : t ∈ Set.Icc (0 : ℝ) 1) (hts : t ≤ s) :
+    fracFlow μo μw s - fracFlow μo μw t ∈ Set.Icc 0 (fracFlowBound μo μw * (s - t)) := by
+  rcases eq_or_lt_of_le hts with hEq | hLt
+  · subst hEq
+    simp
+  · have hCont : ContinuousOn (fracFlow μo μw) (Set.Icc t s) := fun x _ =>
+      (hasDerivAt_fracFlow hμo hμw x).continuousAt.continuousWithinAt
+    have hDeriv : ∀ x ∈ Set.Ioo t s,
+        HasDerivAt (fracFlow μo μw) (fracFlowDeriv μo μw x) x :=
+      fun x _ => hasDerivAt_fracFlow hμo hμw x
+    obtain ⟨c, hcMem, hcEq⟩ := exists_hasDerivAt_eq_slope
+      (fracFlow μo μw) (fracFlowDeriv μo μw) hLt hCont hDeriv
+    have hc01 : c ∈ Set.Icc (0 : ℝ) 1 :=
+      ⟨le_trans ht.1 (le_of_lt hcMem.1), le_trans (le_of_lt hcMem.2) hs.2⟩
+    obtain ⟨hLo, hHi⟩ := fracFlowDeriv_mem_Icc hμo hμw hc01
+    have hPos : 0 < s - t := sub_pos.mpr hLt
+    have hNe : s - t ≠ 0 := ne_of_gt hPos
+    have hEq : fracFlowDeriv μo μw c * (s - t)
+        = fracFlow μo μw s - fracFlow μo μw t := by
+      rw [hcEq, div_mul_cancel₀ _ hNe]
+    have hNonneg : 0 ≤ s - t := le_of_lt hPos
+    have hLower : 0 ≤ fracFlow μo μw s - fracFlow μo μw t := by
+      rw [← hEq]
+      exact mul_nonneg hLo hNonneg
+    have hUpper : fracFlow μo μw s - fracFlow μo μw t
+        ≤ fracFlowBound μo μw * (s - t) := by
+      rw [← hEq]
+      exact mul_le_mul_of_nonneg_right hHi hNonneg
+    exact ⟨hLower, hUpper⟩
+
+/-- Monotonicity of the fractional flow on `[0, 1]`. -/
+lemma monotoneOn_fracFlow {μo μw : ℝ} (hμo : 0 < μo) (hμw : 0 < μw) :
+    MonotoneOn (fracFlow μo μw) (Set.Icc 0 1) := by
+  intro a ha b hb hab
+  have h := (fracFlow_sub_mem_Icc hμo hμw hb ha hab).1
+  linarith
+
+/-! ## G. Normalized saturation and the CFL number -/
+
+/-- Normalized saturation `s = (S - Swc) / ΔS` on the mobile range, `ΔS = 1 - Sor - Swc`. -/
+noncomputable def normSat (Swc Sor S : ℝ) : ℝ :=
+  (S - Swc) / (1 - Sor - Swc)
+
+/-- CFL number of the normalized update, `ν = Q dt / (φ A dx ΔS)`. -/
+noncomputable def cflNumber (Q dt φ A dx ΔS : ℝ) : ℝ :=
+  Q * dt / (φ * A * dx * ΔS)
+
+/-- For `ΔS > 0` the normalized saturation lies in `[0, 1]` exactly when `S ∈ [Swc, 1 - Sor]`. -/
+lemma normSat_mem_Icc_iff {Swc Sor : ℝ} (hΔS : 0 < 1 - Sor - Swc) (S : ℝ) :
+    normSat Swc Sor S ∈ Set.Icc 0 1 ↔ S ∈ Set.Icc Swc (1 - Sor) := by
+  simp only [normSat, Set.mem_Icc]
+  rw [le_div_iff₀ hΔS, div_le_iff₀ hΔS, zero_mul, one_mul]
+  constructor
+  · intro h
+    obtain ⟨h0, h1⟩ := h
+    constructor <;> linarith
+  · intro h
+    obtain ⟨h0, h1⟩ := h
+    constructor <;> linarith
+
+/-! ## H. The upwind step: monotonicity, interval and balance -/
+
+/-- Local upwind update of a cell with normalized saturation `a` whose left neighbor (upwind
+state) is `b`: `a - ν (f a - f b)`. -/
+noncomputable def upwindUpdate (μo μw ν a b : ℝ) : ℝ :=
+  a - ν * (fracFlow μo μw a - fracFlow μo μw b)
+
+/-- One normalized upwind step on the chain `s : Fin (n + 1) → ℝ` with inflow state `sIn` at the
+left boundary: cell `i` uses `Matrix.vecCons sIn s i.castSucc`, which is `sIn` for the first cell
+and `s (i - 1)` otherwise. -/
+noncomputable def upwindStep (μo μw ν sIn : ℝ) {n : ℕ} (s : Fin (n + 1) → ℝ)
+    (i : Fin (n + 1)) : ℝ :=
+  upwindUpdate μo μw ν (s i) (Matrix.vecCons sIn s i.castSucc)
+
+/-- One physical step of the water saturations `S` with inflow saturation `Sin`: the water volume
+of cell `i` changes by `Q dt (f s_(i-1) - f s_i)`, so `S i` changes by that amount over the pore
+volume `φ A dx`. -/
+noncomputable def satStep (μo μw Swc Sor Q dt φ A dx Sin : ℝ) {n : ℕ} (S : Fin (n + 1) → ℝ)
+    (i : Fin (n + 1)) : ℝ :=
+  S i - Q * dt / (φ * A * dx) * (fracFlow μo μw (normSat Swc Sor (S i)) -
+    fracFlow μo μw (normSat Swc Sor (Matrix.vecCons Sin S i.castSucc)))
+
+/-- **Monotone scheme.** Under `0 ≤ ν B ≤ 1` the update `a - ν (f a - f b)` is nondecreasing in
+the cell state `a` and in the upwind state `b` on `[0, 1]`. -/
+lemma upwindUpdate_mono {μo μw ν a a' b b' : ℝ} (hμo : 0 < μo) (hμw : 0 < μw)
+    (hν0 : 0 ≤ ν * fracFlowBound μo μw) (hν1 : ν * fracFlowBound μo μw ≤ 1)
+    (ha : a ∈ Set.Icc (0 : ℝ) 1) (ha' : a' ∈ Set.Icc (0 : ℝ) 1) (hb : b ∈ Set.Icc (0 : ℝ) 1)
+    (hb' : b' ∈ Set.Icc (0 : ℝ) 1) (haa' : a ≤ a') (hbb' : b ≤ b') :
+    upwindUpdate μo μw ν a b ≤ upwindUpdate μo μw ν a' b' := by
+  have hBpos : 0 < fracFlowBound μo μw := fracFlowBound_pos hμo hμw
+  have hν : 0 ≤ ν := nonneg_of_mul_nonneg_left hν0 hBpos
+  obtain ⟨_, hDaB⟩ := fracFlow_sub_mem_Icc hμo hμw ha' ha haa'
+  obtain ⟨hDb0, _⟩ := fracFlow_sub_mem_Icc hμo hμw hb' hb hbb'
+  have hΔa : 0 ≤ a' - a := sub_nonneg.mpr haa'
+  have hνDb : 0 ≤ ν * (fracFlow μo μw b' - fracFlow μo μw b) :=
+    mul_nonneg hν hDb0
+  have hνDa_le : ν * (fracFlow μo μw a' - fracFlow μo μw a)
+      ≤ ν * (fracFlowBound μo μw * (a' - a)) :=
+    mul_le_mul_of_nonneg_left hDaB hν
+  have hνB : ν * (fracFlowBound μo μw * (a' - a))
+      = (ν * fracFlowBound μo μw) * (a' - a) := by ring
+  have hνB_le : (ν * fracFlowBound μo μw) * (a' - a) ≤ 1 * (a' - a) :=
+    mul_le_mul_of_nonneg_right hν1 hΔa
+  have hνDa_le_Δ : ν * (fracFlow μo μw a' - fracFlow μo μw a) ≤ a' - a := by
+    calc ν * (fracFlow μo μw a' - fracFlow μo μw a)
+        ≤ ν * (fracFlowBound μo μw * (a' - a)) := hνDa_le
+      _ = (ν * fracFlowBound μo μw) * (a' - a) := hνB
+      _ ≤ 1 * (a' - a) := hνB_le
+      _ = a' - a := one_mul _
+  simp only [upwindUpdate]
+  have heq : ν * (fracFlow μo μw a' - fracFlow μo μw b')
+      - ν * (fracFlow μo μw a - fracFlow μo μw b)
+      = ν * (fracFlow μo μw a' - fracFlow μo μw a)
+        - ν * (fracFlow μo μw b' - fracFlow μo μw b) := by ring
+  linarith [hνDa_le_Δ, hνDb, heq]
+
+/-- **Interval preservation.** If the inflow state and every cell lie in `[0, 1]` and
+`0 ≤ ν B ≤ 1`, every cell of the upwind step lies in `[0, 1]`. -/
+lemma upwindStep_mem_Icc {μo μw ν sIn : ℝ} {n : ℕ} {s : Fin (n + 1) → ℝ} (hμo : 0 < μo)
+    (hμw : 0 < μw) (hν0 : 0 ≤ ν * fracFlowBound μo μw) (hν1 : ν * fracFlowBound μo μw ≤ 1)
+    (hIn : sIn ∈ Set.Icc (0 : ℝ) 1) (hs : ∀ i, s i ∈ Set.Icc (0 : ℝ) 1) (i : Fin (n + 1)) :
+    upwindStep μo μw ν sIn s i ∈ Set.Icc 0 1 := by
+  have hUp : Matrix.vecCons sIn s i.castSucc ∈ Set.Icc (0 : ℝ) 1 := by
+    have hAll : ∀ k : Fin (n + 2), Matrix.vecCons sIn s k ∈ Set.Icc (0 : ℝ) 1 := by
+      intro k
+      cases k using Fin.cases with
+      | zero =>
+        simpa [Matrix.cons_val_zero] using hIn
+      | succ j =>
+        simpa [Matrix.cons_val_succ] using hs j
+    exact hAll _
+  have h0 : fracFlow μo μw 0 = 0 := (fracFlow_zero_one μw hμo).1
+  have h1 : fracFlow μo μw 1 = 1 := (fracFlow_zero_one μw hμo).2
+  have h00 : upwindUpdate μo μw ν 0 0 = 0 := by simp [upwindUpdate, h0]
+  have h11 : upwindUpdate μo μw ν 1 1 = 1 := by simp [upwindUpdate, h1]
+  have h0mem : (0 : ℝ) ∈ Set.Icc (0 : ℝ) 1 := ⟨le_rfl, zero_le_one⟩
+  have h1mem : (1 : ℝ) ∈ Set.Icc (0 : ℝ) 1 := ⟨zero_le_one, le_rfl⟩
+  have hLo : upwindUpdate μo μw ν 0 0
+      ≤ upwindUpdate μo μw ν (s i) (Matrix.vecCons sIn s i.castSucc) :=
+    upwindUpdate_mono hμo hμw hν0 hν1 h0mem (hs i) h0mem hUp (hs i).1 hUp.1
+  have hHi : upwindUpdate μo μw ν (s i) (Matrix.vecCons sIn s i.castSucc)
+      ≤ upwindUpdate μo μw ν 1 1 :=
+    upwindUpdate_mono hμo hμw hν0 hν1 (hs i) h1mem hUp h1mem (hs i).2 hUp.2
+  rw [h00] at hLo
+  rw [h11] at hHi
+  exact ⟨hLo, hHi⟩
+
+/-- **Rescaling.** The physical step normalizes to the upwind step with the CFL number
+`ν = Q dt / (φ A dx ΔS)`, `ΔS = 1 - Sor - Swc`, and the normalized inflow state. -/
+lemma normSat_satStep (μo μw Swc Sor Q dt φ A dx Sin : ℝ) {n : ℕ} (S : Fin (n + 1) → ℝ)
+    (i : Fin (n + 1)) :
+    normSat Swc Sor (satStep μo μw Swc Sor Q dt φ A dx Sin S i) =
+      upwindStep μo μw (cflNumber Q dt φ A dx (1 - Sor - Swc)) (normSat Swc Sor Sin)
+        (fun j => normSat Swc Sor (S j)) i := by
+  have hVec : ∀ k : Fin (n + 2), normSat Swc Sor (Matrix.vecCons Sin S k)
+      = Matrix.vecCons (normSat Swc Sor Sin) (fun j => normSat Swc Sor (S j)) k := by
+    intro k
+    cases k using Fin.cases with
+    | zero => simp [Matrix.cons_val_zero]
+    | succ j => simp [Matrix.cons_val_succ]
+  have hRing : ∀ (S Swc Q dt pv ΔS Δf : ℝ),
+      (S - Q * dt / pv * Δf - Swc) / ΔS
+        = (S - Swc) / ΔS - (Q * dt / (pv * ΔS)) * Δf := by
+    intro S Swc Q dt pv ΔS Δf
+    ring
+  simp only [satStep, upwindStep, upwindUpdate, cflNumber]
+  rw [← hVec i.castSucc]
+  simp only [normSat]
+  exact hRing _ _ _ _ _ _ _
+
+/-- **Interval preservation for the saturations.** With positive viscosities, `ΔS > 0`,
+positive pore volume, `Q ≥ 0`, `dt ≥ 0` and the evaluated CFL bound `ν B ≤ 1` for
+`ν = Q dt / (φ A dx ΔS)`, a step from saturations in `[Swc, 1 - Sor]` with inflow saturation in
+that range stays in `[Swc, 1 - Sor]`. -/
+lemma satStep_mem_Icc {μo μw Swc Sor Q dt φ A dx Sin : ℝ} {n : ℕ} {S : Fin (n + 1) → ℝ}
+    (hμo : 0 < μo) (hμw : 0 < μw) (hΔS : 0 < 1 - Sor - Swc) (hpv : 0 < φ * A * dx)
+    (hQ : 0 ≤ Q) (hdt : 0 ≤ dt)
+    (hcfl : cflNumber Q dt φ A dx (1 - Sor - Swc) * fracFlowBound μo μw ≤ 1)
+    (hIn : Sin ∈ Set.Icc Swc (1 - Sor)) (hS : ∀ i, S i ∈ Set.Icc Swc (1 - Sor))
+    (i : Fin (n + 1)) :
+    satStep μo μw Swc Sor Q dt φ A dx Sin S i ∈ Set.Icc Swc (1 - Sor) := by
+  have hBpos : 0 < fracFlowBound μo μw := fracFlowBound_pos hμo hμw
+  have hνnonneg : 0 ≤ cflNumber Q dt φ A dx (1 - Sor - Swc) := by
+    simp only [cflNumber]
+    exact div_nonneg (mul_nonneg hQ hdt) (le_of_lt (mul_pos hpv hΔS))
+  have hν0 : 0 ≤ cflNumber Q dt φ A dx (1 - Sor - Swc) * fracFlowBound μo μw :=
+    mul_nonneg hνnonneg (le_of_lt hBpos)
+  have hInN : normSat Swc Sor Sin ∈ Set.Icc (0 : ℝ) 1 :=
+    (normSat_mem_Icc_iff hΔS _).mpr hIn
+  have hSN : ∀ j, (fun j => normSat Swc Sor (S j)) j ∈ Set.Icc (0 : ℝ) 1 :=
+    fun j => (normSat_mem_Icc_iff hΔS _).mpr (hS j)
+  have hUp := upwindStep_mem_Icc hμo hμw hν0 hcfl hInN hSN i
+  have hNorm : normSat Swc Sor (satStep μo μw Swc Sor Q dt φ A dx Sin S i)
+      ∈ Set.Icc (0 : ℝ) 1 := by
+    rw [normSat_satStep]
+    exact hUp
+  exact (normSat_mem_Icc_iff hΔS _).mp hNorm
+
+/-- **Conservative form.** The upwind step is the finite-volume step with unit cell width and
+time step `ν` for the face fluxes `f (Matrix.vecCons sIn s j)`: face `j` carries the fractional
+flow of its left (upwind) state, the inflow state at the boundary face `0`. -/
+lemma upwindStep_eq_discreteBalance (μo μw ν sIn : ℝ) {n : ℕ} (s : Fin (n + 1) → ℝ)
+    (i : Fin (n + 1)) :
+    upwindStep μo μw ν sIn s i =
+      s i + ν * discreteBalance ⟨1, one_pos⟩
+        (fun j => fracFlow μo μw (Matrix.vecCons sIn s j)) i := by
+  have hSucc : Matrix.vecCons sIn s i.succ = s i := Matrix.cons_val_succ _ _ _
+  simp only [upwindStep, upwindUpdate, discreteBalance, hSucc]
+  ring
+
+/-- **Inlet-minus-outlet balance (normalized).** The interior fluxes cancel: the sum of the
+normalized saturations changes by `ν (f sIn - f s_out)`, `s_out = s (Fin.last n)` the outlet
+cell. -/
+lemma sum_upwindStep (μo μw ν sIn : ℝ) {n : ℕ} (s : Fin (n + 1) → ℝ) :
+    ∑ i, upwindStep μo μw ν sIn s i =
+      ∑ i, s i + ν * (fracFlow μo μw sIn - fracFlow μo μw (s (Fin.last n))) := by
+  have hF0 : fracFlow μo μw (Matrix.vecCons sIn s 0) = fracFlow μo μw sIn := by
+    rw [Matrix.cons_val_zero]
+  have hLast : Fin.last (n + 1) = (Fin.last n).succ := (Fin.succ_last n).symm
+  have hFlast : fracFlow μo μw (Matrix.vecCons sIn s (Fin.last (n + 1)))
+      = fracFlow μo μw (s (Fin.last n)) := by
+    rw [hLast, Matrix.cons_val_succ]
+  simp only [upwindStep_eq_discreteBalance]
+  rw [sum_add_mul_discreteBalance, totalDiscreteChange_eq, hF0, hFlast]
+  ring
+
+/-- **Inlet-minus-outlet water volume balance.** For positive pore volume `φ A dx`, one physical
+step changes the water volume `φ A dx ∑ i, S i` by the inlet water volume `Q dt f (s_in)` minus
+the outlet water volume `Q dt f (s_out)`. -/
+lemma satStep_volume_balance {μo μw Swc Sor Q dt φ A dx Sin : ℝ} {n : ℕ} (S : Fin (n + 1) → ℝ)
+    (hpv : 0 < φ * A * dx) :
+    φ * A * dx * ∑ i, satStep μo μw Swc Sor Q dt φ A dx Sin S i =
+      φ * A * dx * ∑ i, S i + Q * dt * (fracFlow μo μw (normSat Swc Sor Sin) -
+        fracFlow μo μw (normSat Swc Sor (S (Fin.last n)))) := by
+  have hpvne : φ * A * dx ≠ 0 := ne_of_gt hpv
+  have hEq : ∀ i : Fin (n + 1), satStep μo μw Swc Sor Q dt φ A dx Sin S i
+      = S i + (Q * dt / (φ * A * dx)) * discreteBalance ⟨1, one_pos⟩
+        (fun j => fracFlow μo μw (normSat Swc Sor (Matrix.vecCons Sin S j))) i := by
+    intro i
+    have hSucc : Matrix.vecCons Sin S i.succ = S i := Matrix.cons_val_succ _ _ _
+    simp only [satStep, discreteBalance, hSucc]
+    ring
+  have hF0 : fracFlow μo μw (normSat Swc Sor (Matrix.vecCons Sin S 0))
+      = fracFlow μo μw (normSat Swc Sor Sin) := by
+    rw [Matrix.cons_val_zero]
+  have hLast : Fin.last (n + 1) = (Fin.last n).succ := (Fin.succ_last n).symm
+  have hFlast : fracFlow μo μw (normSat Swc Sor (Matrix.vecCons Sin S (Fin.last (n + 1))))
+      = fracFlow μo μw (normSat Swc Sor (S (Fin.last n))) := by
+    rw [hLast, Matrix.cons_val_succ]
+  have hSum : ∑ i, satStep μo μw Swc Sor Q dt φ A dx Sin S i
+      = ∑ i, S i + (Q * dt / (φ * A * dx)) * totalDiscreteChange ⟨1, one_pos⟩
+        (fun j => fracFlow μo μw (normSat Swc Sor (Matrix.vecCons Sin S j))) := by
+    simp only [hEq]
+    rw [sum_add_mul_discreteBalance]
+  have hTotal : totalDiscreteChange ⟨1, one_pos⟩
+        (fun j => fracFlow μo μw (normSat Swc Sor (Matrix.vecCons Sin S j)))
+      = fracFlow μo μw (normSat Swc Sor Sin)
+        - fracFlow μo μw (normSat Swc Sor (S (Fin.last n))) := by
+    rw [totalDiscreteChange_eq, hF0, hFlast]
+    ring
+  rw [hTotal] at hSum
+  have hED : φ * A * dx * (Q * dt / (φ * A * dx)) = Q * dt := by
+    rw [mul_comm (φ * A * dx) (Q * dt / (φ * A * dx)), div_mul_cancel₀ _ hpvne]
+  calc φ * A * dx * ∑ i, satStep μo μw Swc Sor Q dt φ A dx Sin S i
+      = φ * A * dx * (∑ i, S i + (Q * dt / (φ * A * dx))
+        * (fracFlow μo μw (normSat Swc Sor Sin)
+          - fracFlow μo μw (normSat Swc Sor (S (Fin.last n))))) := by rw [hSum]
+    _ = φ * A * dx * ∑ i, S i + Q * dt * (fracFlow μo μw (normSat Swc Sor Sin)
+        - fracFlow μo μw (normSat Swc Sor (S (Fin.last n)))) := by
+      rw [mul_add]
+      congr 1
+      calc φ * A * dx * ((Q * dt / (φ * A * dx))
+            * (fracFlow μo μw (normSat Swc Sor Sin)
+              - fracFlow μo μw (normSat Swc Sor (S (Fin.last n)))))
+          = (φ * A * dx * (Q * dt / (φ * A * dx)))
+            * (fracFlow μo μw (normSat Swc Sor Sin)
+              - fracFlow μo μw (normSat Swc Sor (S (Fin.last n)))) := by ring
+        _ = Q * dt * (fracFlow μo μw (normSat Swc Sor Sin)
+            - fracFlow μo μw (normSat Swc Sor (S (Fin.last n)))) := by rw [hED]
+
+end FractionalFlow
 
 end EarthScience

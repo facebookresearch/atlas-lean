@@ -51,60 +51,72 @@ namespace MathlibExt.Combinatorics.ReducedComplexitiesWanted
 
 open MetaMathlibExt
 
-/-- The paper's reduction: collapse each run of `w` to a
-single letter. -/
+/-- **Reduction of a binary word.** The reduction $\operatorname{red}(w)$ of a binary word $w$ is
+the word obtained by collapsing each maximal run of equal consecutive letters of $w$ to a single
+letter; for example $\operatorname{red}(0011101) = 0101$. -/
 def redWord : List Bool → List Bool
   | [] => []
   | [x] => [x]
   | x :: y :: xs =>
       if x = y then redWord (y :: xs) else x :: redWord (y :: xs)
 
-/-- The paper's number of alternations: occurrences of `01`
-and `10`, i.e. adjacent unequal pairs. -/
+/-- **Alternations of a binary word.** The number of alternations of a binary word $w$ is the
+number of occurrences of the factors $01$ and $10$ in $w$, that is, the number of positions $i$
+with $w_i \ne w_{i+1}$. -/
 def alternations (w : List Bool) : ℕ :=
   (w.zip w.tail).countP (fun p => decide (p.1 ≠ p.2))
 
-/-- The morphism `μ` (`0 ↦ 01`, `1 ↦ 10`) extended to words. -/
+/-- **Extension of the Thue–Morse substitution to binary words.** The morphism $\mu$ sends each
+letter to a word of length two, $\mu(0) = 01$ and $\mu(1) = 10$, and a binary word
+$w_1 w_2 \cdots w_k$ to the concatenation $\mu(w_1) \mu(w_2) \cdots \mu(w_k)$. -/
 def muWord (w : List Bool) : List Bool :=
   w.flatMap thueMorseSubstitution
 
-/-- The regular paperfolding sequence (zero-indexed): with
-`i + 1 = m · 2^k`, `m` odd, the value is `0` iff
-`m ≡ 1 (mod 4)`. -/
+/-- **Regular paperfolding sequence.** The regular paperfolding sequence $f = f_0 f_1 f_2 \cdots$
+over $\{0, 1\}$ is indexed from $0$: for each $i$, write $i + 1 = m \cdot 2^k$ with $m$ odd; then
+$f_i = 0$ if $m \equiv 1 \pmod 4$ and $f_i = 1$ if $m \equiv 3 \pmod 4$. -/
 def paperfoldingSeq (i : ℕ) : Bool :=
   decide ((i + 1) / 2 ^ (Nat.factorization (i + 1) 2) % 4 ≠ 1)
 
-/-- The paper's reduced factor complexity `ρ^red_x(n)`, on
-the canonical `InfiniteWord.factorSet` (factors as
-`Fin n → Bool`, turned into lists by `List.ofFn`). -/
+/-- **Reduced factor complexity.** For a finite binary word $w$, let $\mathrm{red}(w)$ be the
+word obtained from $w$ by collapsing each run of equal letters to a single letter. For an
+infinite binary word $x = x_0 x_1 x_2 \cdots$ and a natural number $n$, the reduced factor
+complexity $\rho^{\mathrm{red}}_x(n)$ is the number of distinct words $\mathrm{red}(w)$ as $w$
+ranges over the length-$n$ factors of $x$. -/
 noncomputable def rhoRed (x : ℕ → Bool) (n : ℕ) : ℕ :=
   Set.ncard ((fun v => redWord (List.ofFn v)) ''
     InfiniteWord.factorSet x n)
 
-/-- The paper's reduced abelian complexity `ρ^{ab,red}_x(n)`:
-reductions counted up to rearrangement, i.e. by length and
-number of `0`s. -/
+/-- **Reduced abelian complexity.** For a binary sequence $x = x_0 x_1 x_2 \cdots$ and
+$n \in \mathbb{N}$, the reduced abelian complexity $\rho^{\mathrm{ab,red}}_x(n)$ is the number of
+distinct pairs $(|\mathrm{red}(v)|, |\mathrm{red}(v)|_0)$, where $v$ ranges over the length-$n$
+factors of $x$, $\mathrm{red}(v)$ is the reduction of $v$ (each run of equal letters collapsed to
+a single letter) and $|w|_0$ is the number of letters $0$ in $w$. Equivalently, it counts the
+reductions of length-$n$ factors of $x$ up to rearrangement of their letters. -/
 noncomputable def rhoAbRed (x : ℕ → Bool) (n : ℕ) : ℕ :=
   Set.ncard
     ((fun v => ((redWord (List.ofFn v)).length,
       (redWord (List.ofFn v)).count false)) ''
     InfiniteWord.factorSet x n)
 
-/-- The paper's `m_n`: minimum alternations over length-`n`
-factors of the Thue-Morse word. -/
+/-- **Minimum number of alternations in Thue–Morse factors.** For a natural number $n$, $m_n$ is
+the least number of alternations (positions where two adjacent letters differ) among the
+length-$n$ factors of the Thue–Morse sequence. -/
 noncomputable def minAlt (n : ℕ) : ℕ :=
   sInf ((fun v => alternations (List.ofFn v)) ''
     InfiniteWord.factorSet thueMorse n)
 
-/-- The paper's `M_n`: maximum alternations over length-`n`
-factors of the Thue-Morse word. -/
+/-- **Maximum number of alternations in Thue–Morse factors.** For a natural number $n$, $M_n$ is
+the largest number of alternations (positions where two adjacent letters differ) among the
+length-$n$ factors of the Thue–Morse sequence. -/
 noncomputable def maxAlt (n : ℕ) : ℕ :=
   sSup ((fun v => alternations (List.ofFn v)) ''
     InfiniteWord.factorSet thueMorse n)
 
-/-- **Lemma 1**: if the nonempty word `w` contains `α`
-alternations, then `μ(w)` contains `2|w| - 1 - α`
-alternations.
+/-- **Alternations of the Thue–Morse image of a word.** Let $\mu$ be the morphism on binary words
+with $\mu(0) = 01$ and $\mu(1) = 10$. If $w$ is a nonempty binary word of length $|w|$ with
+$\alpha$ alternations (positions where two adjacent letters differ), then $\mu(w)$ has exactly
+$2|w| - 1 - \alpha$ alternations.
 
 Source: John M. Campbell, James D. Currie, and Narad
 Rampersad, "Reduced Complexities for Sequences Over Finite
@@ -113,9 +125,11 @@ theorem_wanted alternations_muWord (w : List Bool) (hw : w ≠ []) :
     (alternations (muWord w) : ℤ) =
       2 * (w.length : ℤ) - 1 - (alternations w : ℤ)
 
-/-- **Lemma 2**: for `n ≥ 2`,
-`m_{2n} = 2n - 1 - M_{n+1}`, `M_{2n} = 2n - 1 - m_n`,
-`m_{2n+1} = 2n - M_{n+1}`, and `M_{2n+1} = 2n - m_{n+1}`.
+/-- **Doubling recurrences for Thue–Morse alternation extrema.** For a natural number $k$, let
+$m_k$ and $M_k$ be the least and the largest number of alternations (positions where two adjacent
+letters differ) among the length-$k$ factors of the Thue–Morse sequence. Then for every $n \ge 2$,
+$m_{2n} = 2n - 1 - M_{n+1}$, $M_{2n} = 2n - 1 - m_n$, $m_{2n+1} = 2n - M_{n+1}$ and
+$M_{2n+1} = 2n - m_{n+1}$.
 
 Source: John M. Campbell, James D. Currie, and Narad
 Rampersad, "Reduced Complexities for Sequences Over Finite
@@ -126,9 +140,11 @@ theorem_wanted minAlt_maxAlt_two_mul (n : ℕ) (hn : 2 ≤ n) :
       (minAlt (2 * n + 1) : ℤ) = 2 * n - maxAlt (n + 1) ∧
       (maxAlt (2 * n + 1) : ℤ) = 2 * n - minAlt (n + 1)
 
-/-- **Lemma 3**: for `n ≥ 1`,
-`m_{4n} = 2n - 1 + m_{n+1}`, `M_{4n} = 2n + M_{n+1}`,
-`m_{4n+2} = 2n + m_{n+1}`, and `M_{4n+2} = 2n + 1 + M_{n+1}`.
+/-- **Quadrupling recurrences for Thue–Morse alternation extrema.** For a natural number $k$, let
+$m_k$ and $M_k$ be the least and the largest number of alternations (positions where two adjacent
+letters differ) among the length-$k$ factors of the Thue–Morse sequence. Then for every $n \ge 1$,
+$m_{4n} = 2n - 1 + m_{n+1}$, $M_{4n} = 2n + M_{n+1}$, $m_{4n+2} = 2n + m_{n+1}$ and
+$M_{4n+2} = 2n + 1 + M_{n+1}$.
 
 Source: John M. Campbell, James D. Currie, and Narad
 Rampersad, "Reduced Complexities for Sequences Over Finite
@@ -139,8 +155,9 @@ theorem_wanted minAlt_maxAlt_four_mul (n : ℕ) (hn : 1 ≤ n) :
       (minAlt (4 * n + 2) : ℤ) = 2 * n + minAlt (n + 1) ∧
       (maxAlt (4 * n + 2) : ℤ) = 2 * n + 1 + maxAlt (n + 1)
 
-/-- **Theorem 1**, odd case: for odd `n`,
-`ρ^red_t(n) = ρ^red_t((n+1)/2)`.
+/-- **Reduced complexity of the Thue–Morse word at odd lengths.** Let $t$ be the Thue–Morse
+sequence and $\rho^{\mathrm{red}}_t$ its reduced factor complexity. For every odd natural
+number $n$, $\rho^{\mathrm{red}}_t(n) = \rho^{\mathrm{red}}_t((n+1)/2)$.
 
 Source: John M. Campbell, James D. Currie, and Narad
 Rampersad, "Reduced Complexities for Sequences Over Finite
@@ -148,8 +165,10 @@ Alphabets", Theorem 1. -/
 theorem_wanted rhoRed_thueMorse_odd (n : ℕ) (hn : Odd n) :
     rhoRed thueMorse n = rhoRed thueMorse ((n + 1) / 2)
 
-/-- **Theorem 1**, even cases: for `n = 4m` (`m ≥ 1`) or
-`n = 4m + 2`, `ρ^red_t(n) = ρ^red_t(m+1) + 2`.
+/-- **Reduced complexity of the Thue–Morse word at even lengths.** Let $t$ be the Thue–Morse
+sequence and $\rho^{\mathrm{red}}_t$ its reduced factor complexity. For every natural number
+$m \ge 1$, $\rho^{\mathrm{red}}_t(4m) = \rho^{\mathrm{red}}_t(m+1) + 2$, and for every natural
+number $m \ge 0$, $\rho^{\mathrm{red}}_t(4m+2) = \rho^{\mathrm{red}}_t(m+1) + 2$.
 
 Source: John M. Campbell, James D. Currie, and Narad
 Rampersad, "Reduced Complexities for Sequences Over Finite
@@ -158,10 +177,13 @@ theorem_wanted rhoRed_thueMorse_even (m : ℕ) :
     rhoRed thueMorse (4 * (m + 1)) = rhoRed thueMorse (m + 2) + 2 ∧
       rhoRed thueMorse (4 * m + 2) = rhoRed thueMorse (m + 1) + 2
 
-/-- **Lemma 4**: any binary word of length `2n+1` whose even
-positions alternate (`a?b?a?b? ⋯` or `b?a?b?a? ⋯`, the `?`
-arbitrary) has `n + 1` runs; the paper applies this to
-factors of the paperfolding word.
+/-- **Runs in a word whose even-position letters alternate.** Let $n$ be a natural number and let
+$w = w_0 w_1 \cdots w_{2n}$ be a binary word of length $2n + 1$ with $w_{2i} \ne w_{2i+2}$ for
+every $i < n$, so that its even positions read $abab\cdots$ with $a \ne b$ and its odd positions
+are arbitrary. Then the reduction of $w$, the word obtained by collapsing each maximal run of
+equal letters of $w$ to a single letter, has length $n + 1$; that is, $w$ has exactly $n + 1$ runs.
+
+The paper applies this to factors of the paperfolding word.
 
 Source: John M. Campbell, James D. Currie, and Narad
 Rampersad, "Reduced Complexities for Sequences Over Finite
@@ -172,7 +194,9 @@ theorem_wanted redWord_length_alternating_even (n : ℕ)
       w ⟨2 * i.val, by omega⟩ ≠ w ⟨2 * (i.val + 1), by omega⟩) :
     (redWord (List.ofFn w)).length = n + 1
 
-/-- **Lemma 5**: `ρ^red_f(2n) = 4` for positive `n`.
+/-- **Reduced complexity of the paperfolding word at even lengths.** Let $f$ be the regular
+paperfolding sequence and let $\rho^{\mathrm{red}}_f(n)$ be the number of distinct reductions of
+length-$n$ factors of $f$. For every $n \ge 1$, $\rho^{\mathrm{red}}_f(2n) = 4$.
 
 Source: John M. Campbell, James D. Currie, and Narad
 Rampersad, "Reduced Complexities for Sequences Over Finite
@@ -180,7 +204,9 @@ Alphabets", Lemma 5. -/
 theorem_wanted rhoRed_paperfolding_two_mul (n : ℕ) (hn : 1 ≤ n) :
     rhoRed paperfoldingSeq (2 * n) = 4
 
-/-- **Lemma 6**: `ρ^red_f(8n+1) = 4` for positive `n`.
+/-- **Reduced complexity of the paperfolding word at lengths 8n + 1.** Let $f$ be the regular
+paperfolding sequence and let $\rho^{\mathrm{red}}_f(n)$ be the number of distinct reductions of
+length-$n$ factors of $f$. For every $n \ge 1$, $\rho^{\mathrm{red}}_f(8n+1) = 4$.
 
 Source: John M. Campbell, James D. Currie, and Narad
 Rampersad, "Reduced Complexities for Sequences Over Finite
@@ -189,7 +215,9 @@ theorem_wanted rhoRed_paperfolding_eight_mul_add_one (n : ℕ)
     (hn : 1 ≤ n) :
     rhoRed paperfoldingSeq (8 * n + 1) = 4
 
-/-- **Lemma 7**: `ρ^red_f(8n+3) = 6` for nonnegative `n`.
+/-- **Reduced complexity of the paperfolding word at lengths 8n + 3.** Let $f$ be the regular
+paperfolding sequence and let $\rho^{\mathrm{red}}_f(n)$ be the number of distinct reductions of
+length-$n$ factors of $f$. For every natural number $n$, $\rho^{\mathrm{red}}_f(8n+3) = 6$.
 
 Source: John M. Campbell, James D. Currie, and Narad
 Rampersad, "Reduced Complexities for Sequences Over Finite
@@ -197,7 +225,9 @@ Alphabets", Lemma 7. -/
 theorem_wanted rhoRed_paperfolding_eight_mul_add_three (n : ℕ) :
     rhoRed paperfoldingSeq (8 * n + 3) = 6
 
-/-- **Lemma 8**: `ρ^red_f(8n+5) = 6` for nonnegative `n`.
+/-- **Reduced complexity of the paperfolding word at lengths 8n + 5.** Let $f$ be the regular
+paperfolding sequence and let $\rho^{\mathrm{red}}_f(n)$ be the number of distinct reductions of
+length-$n$ factors of $f$. For every natural number $n$, $\rho^{\mathrm{red}}_f(8n+5) = 6$.
 
 Source: John M. Campbell, James D. Currie, and Narad
 Rampersad, "Reduced Complexities for Sequences Over Finite
@@ -205,7 +235,9 @@ Alphabets", Lemma 8. -/
 theorem_wanted rhoRed_paperfolding_eight_mul_add_five (n : ℕ) :
     rhoRed paperfoldingSeq (8 * n + 5) = 6
 
-/-- **Lemma 9**: `ρ^red_f(8n+7) = 6` for nonnegative `n`.
+/-- **Reduced complexity of the paperfolding word at lengths 8n + 7.** Let $f$ be the regular
+paperfolding sequence and let $\rho^{\mathrm{red}}_f(n)$ be the number of distinct reductions of
+length-$n$ factors of $f$. For every natural number $n$, $\rho^{\mathrm{red}}_f(8n+7) = 6$.
 
 Source: John M. Campbell, James D. Currie, and Narad
 Rampersad, "Reduced Complexities for Sequences Over Finite
@@ -213,9 +245,12 @@ Alphabets", Lemma 9. -/
 theorem_wanted rhoRed_paperfolding_eight_mul_add_seven (n : ℕ) :
     rhoRed paperfoldingSeq (8 * n + 7) = 6
 
-/-- **Theorem 2**: for `n ≥ 2` (at `n = 1` the value is `2`),
-`ρ^red_f(n) = 4` if `n ≡ 0, 1, 2, 4, 6 (mod 8)` and `6` if
-`n ≡ 3, 5, 7 (mod 8)`.
+/-- **Reduced complexity of the paperfolding word.** Let $f$ be the regular paperfolding
+sequence and let $\rho^{\mathrm{red}}_f(n)$ be the number of distinct reductions of length-$n$
+factors of $f$. For every $n \ge 2$, $\rho^{\mathrm{red}}_f(n) = 4$ if $n \equiv 0, 1, 2, 4$ or
+$6 \pmod 8$, and $\rho^{\mathrm{red}}_f(n) = 6$ if $n \equiv 3, 5$ or $7 \pmod 8$.
+
+The bound $n \ge 2$ is needed: $\rho^{\mathrm{red}}_f(1) = 2$.
 
 Source: John M. Campbell, James D. Currie, and Narad
 Rampersad, "Reduced Complexities for Sequences Over Finite
@@ -226,8 +261,10 @@ theorem_wanted rhoRed_paperfolding_mod_eight (n : ℕ) (hn : 2 ≤ n) :
     (n % 8 = 3 ∨ n % 8 = 5 ∨ n % 8 = 7 →
       rhoRed paperfoldingSeq n = 6)
 
-/-- **Theorem 3**, even case: `ρ^{ab,red}_f(n) = 3` for even
-positive `n`.
+/-- **Reduced abelian complexity of the paperfolding word at even lengths.** Let $f$ be the
+regular paperfolding sequence and let $\rho^{\mathrm{ab,red}}_f(n)$ be the number of reductions
+of length-$n$ factors of $f$, counted up to rearrangement of their letters. For every even
+$n > 0$, $\rho^{\mathrm{ab,red}}_f(n) = 3$.
 
 Source: John M. Campbell, James D. Currie, and Narad
 Rampersad, "Reduced Complexities for Sequences Over Finite
@@ -236,8 +273,10 @@ theorem_wanted rhoAbRed_paperfolding_even (n : ℕ) (hn : 0 < n)
     (he : Even n) :
     rhoAbRed paperfoldingSeq n = 3
 
-/-- **Theorem 3**, case `n ≡ 1 (mod 4)`: `ρ^{ab,red}_f(n) = 4`
-for `n > 1`.
+/-- **Reduced abelian complexity of the paperfolding word at lengths 1 mod 4.** Let $f$ be the
+regular paperfolding sequence and let $\rho^{\mathrm{ab,red}}_f(n)$ be the number of reductions
+of length-$n$ factors of $f$, counted up to rearrangement of their letters. For every $n > 1$
+with $n \equiv 1 \pmod 4$, $\rho^{\mathrm{ab,red}}_f(n) = 4$.
 
 Source: John M. Campbell, James D. Currie, and Narad
 Rampersad, "Reduced Complexities for Sequences Over Finite
@@ -246,7 +285,10 @@ theorem_wanted rhoAbRed_paperfolding_mod_four_one (n : ℕ)
     (hn : 1 < n) (h : n % 4 = 1) :
     rhoAbRed paperfoldingSeq n = 4
 
-/-- **Theorem 3**, case `n ≡ 3 (mod 4)`: `ρ^{ab,red}_f(n) = 5`.
+/-- **Reduced abelian complexity of the paperfolding word at lengths 3 mod 4.** Let $f$ be the
+regular paperfolding sequence and let $\rho^{\mathrm{ab,red}}_f(n)$ be the number of reductions
+of length-$n$ factors of $f$, counted up to rearrangement of their letters. For every natural
+number $n \equiv 3 \pmod 4$, $\rho^{\mathrm{ab,red}}_f(n) = 5$.
 
 Source: John M. Campbell, James D. Currie, and Narad
 Rampersad, "Reduced Complexities for Sequences Over Finite

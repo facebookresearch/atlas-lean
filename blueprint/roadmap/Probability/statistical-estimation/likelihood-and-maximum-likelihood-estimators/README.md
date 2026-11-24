@@ -14,3 +14,9 @@
 - [Maximum likelihood estimator](is-maximum-likelihood-estimator.md)
 - [Characterization of maximum likelihood estimators](is-maximum-likelihood-estimator-iff.md)
 - [Induced likelihood](induced-likelihood.md)
+
+## Likelihood of independent Poisson counts
+
+- [Poisson log-likelihood of counts](poisson-log-lik.md)
+- [Probability of a count vector under independent Poisson laws](pi-poisson-measure-real-singleton.md)
+- [The Poisson-random-field log-likelihood](log-pi-poisson-measure-real-singleton.md)

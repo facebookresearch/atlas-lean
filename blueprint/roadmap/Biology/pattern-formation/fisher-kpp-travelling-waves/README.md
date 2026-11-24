@@ -1,7 +1,7 @@
 # Fisher–KPP travelling waves
 
-- [Traveling-wave profile of the Fisher–KPP equation](is-wave-profile.md)
-- [Traveling front of the Fisher–KPP equation](is-front.md)
+- [Traveling-wave profile of the Fisher–KPP equation](../../../Analysis/ordinary-differential-equations/is-wave-profile.md)
+- [Traveling front of the Fisher–KPP equation](../../../Analysis/ordinary-differential-equations/is-front.md)
 - [Time derivative of a traveling wave](has-deriv-at-wave-t.md)
 - [Space derivative of a traveling wave](has-deriv-at-wave-x.md)
 - [Traveling wave solves the Fisher–KPP equation](has-deriv-at-wave-xx.md)

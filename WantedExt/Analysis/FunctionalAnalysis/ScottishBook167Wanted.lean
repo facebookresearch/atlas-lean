@@ -17,10 +17,10 @@ public import Mathlib.Topology.MetricSpace.Pseudo.Defs
 
 namespace MathlibExt.Analysis.FunctionalAnalysis.ScottishBook167Wanted
 
-/-- Ulam's Problem 167 from the Scottish Book, in its original form: for the
-surface `S` of the unit sphere in a Hilbert space, finitely many continuous
-real functions `f i` on `S`, and a continuous map `T` of `S` into itself,
-there is a point `p0` with `f i (T p0) = f i p0` for every `i`. -/
+/-- **Scottish Book Problem 167.** Ulam's claim that for every infinite-dimensional real Hilbert
+space $H$ with unit sphere $S = \{p \in H : \|p\| = 1\}$, every $n \in \mathbb{N}$, all
+continuous functions $f_1, \dots, f_n : S \to \mathbb{R}$ and every continuous map
+$T : S \to S$, there is a point $p_0 \in S$ with $f_i(T(p_0)) = f_i(p_0)$ for every $i$. -/
 def ScottishBookProblem167Claim : Prop :=
   ∀ (E : Type) [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteSpace E],
     ¬ Module.Finite ℝ E →
@@ -30,7 +30,13 @@ def ScottishBookProblem167Claim : Prop :=
       ∃ p0 : ↥(Metric.sphere (0 : E) 1), ∀ i, f i (T p0) = f i p0
 
 /--
-Ulam's Problem 167 is false: the claim above fails already for one function.
+**Negative answer to Scottish Book Problem 167.** Ulam's claim in Problem 167 is false: there
+are an infinite-dimensional real Hilbert space $H$ with unit sphere $S$, a number
+$n \in \mathbb{N}$, continuous functions $f_1, \dots, f_n : S \to \mathbb{R}$ and a continuous map
+$T : S \to S$ such that no point $p_0 \in S$ satisfies $f_i(T(p_0)) = f_i(p_0)$ for every $i$.
+
+The claim fails already for one function.
+
 Source: S. Ulam, Problem 167 of the Scottish Book; refuted via V. Klee's
 homeomorphism of the Hilbert sphere onto the whole Hilbert space: composing
 that homeomorphism with a translation gives a continuous `T` and a continuous

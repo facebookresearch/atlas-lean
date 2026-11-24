@@ -35,20 +35,30 @@ namespace MetaMathlibExt
 
 variable (R : Type*) [CommRing R] [Algebra ℚ R]
 
-/-- The second generating series `t + r * t^2 / 2` in the exponential Pascal-type pair. -/
+/-- **Second series of the exponential Pascal-type pair.** Let $R$ be a commutative ring
+that is a $\mathbb{Q}$-algebra and let $r \in \mathbb{Q}$. This is the formal power series
+$t + \frac{r}{2} t^2$ over $R$, the second component of the generating pair
+$[e^t, t + r t^2/2]$ of the exponential Pascal-type matrix. -/
 noncomputable def exponentialPascalTypeSeries (r : ℚ) : PowerSeries R :=
   PowerSeries.X +
     PowerSeries.C (algebraMap ℚ R (r / 2)) * PowerSeries.X ^ 2
 
-/-- The generating-function pair `[e^t, t + r * t^2 / 2]` for an exponential
-Pascal-type matrix. -/
+/-- **Generating pair of the exponential Pascal-type matrix.** Let $R$ be a commutative ring
+that is a $\mathbb{Q}$-algebra and let $r \in \mathbb{Q}$. This is the pair of formal power
+series $\left(e^t, t + \frac{r}{2} t^2\right)$ over $R$, written $[e^t, t + r t^2/2]$ in
+exponential Riordan array notation. -/
 noncomputable def exponentialPascalTypePair (r : ℚ) : PowerSeries R × PowerSeries R :=
   (PowerSeries.exp R, exponentialPascalTypeSeries R r)
 
-/-- The exponential Riordan matrix represented by `[e^t, t + r * t^2 / 2]`.
+/-- **Exponential Pascal-type matrix.** Let $R$ be a commutative ring that is a
+$\mathbb{Q}$-algebra and let $r \in \mathbb{Q}$. The exponential Pascal-type matrix with
+parameter $r$ is the exponential Riordan array $[e^t, t + r t^2/2]$ over $R$: the matrix with
+rows and columns indexed by the natural numbers whose $(n, k)$ entry is
 
-The factor `n! / k!` converts the coefficient of the `k`-th column's generating series
-into the `(n, k)` matrix entry. -/
+$$\frac{n!}{k!} \, [t^n] \, e^t \left(t + \frac{r}{2} t^2\right)^k,$$
+
+where $[t^n]$ takes the coefficient of $t^n$ in a formal power series over $R$ and the
+rational number $n!/k!$ acts on $R$ through its $\mathbb{Q}$-algebra structure. -/
 noncomputable def exponentialPascalTypeMatrix (r : ℚ) : Matrix ℕ ℕ R :=
   fun n k =>
     algebraMap ℚ R ((n.factorial : ℚ) / k.factorial) *

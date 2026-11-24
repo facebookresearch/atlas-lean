@@ -29,17 +29,21 @@ set_option autoImplicit false
 
 namespace MathlibExt.Combinatorics.Enumerative.Partition.MultisetReconstructionPairwiseProductsWanted
 
-/-- The multiset of pairwise products of elements of a multiset of
-natural numbers: one product for each two-element submultiset. This
-is the parts multiset of the paper's `pre₂`. -/
+/-- **Pairwise products of a multiset.** If a multiset $s$ of natural numbers consists of
+$x_1, \dots, x_k$, listed with multiplicity, then the pairwise products of $s$ form the multiset
+of the products $x_i x_j$ over all pairs of indices $1 \le i < j \le k$; equal elements at
+different positions give separate products, and the result is empty when $k < 2$.
+
+Applied to the parts of a partition $\lambda$, this gives the parts of the partition
+$\mathrm{pre}_2(\lambda)$ of Li's note on multiset reconstruction. -/
 def pairwiseProducts (s : Multiset ℕ) : Multiset ℕ :=
   (s.powersetCard 2).map Multiset.prod
 
-/-- Li's Lemma 1: partitions of the same positive integer with the
-same largest part and the same pairwise-product multiset are equal.
-
-The common largest part `λ₁ = μ₁` is expressed by a common element
-maximal in both parts multisets.
+/-- **Li's lemma: reconstruction from the largest part and pairwise products.** Let $n$ be a
+positive integer and let $\lambda$ and $\mu$ be partitions of $n$ with a common largest part,
+that is, some $a$ is a part of both $\lambda$ and $\mu$ and no part of either exceeds $a$. If the
+pairwise products of the parts of $\lambda$ and the pairwise products of the parts of $\mu$ form
+the same multiset, then $\lambda = \mu$.
 
 Source: Stella Jiahui Li, "A Note on Multiset Reconstruction from
 Pairwise Products and Total Sum", Lemma 1. -/
@@ -50,9 +54,10 @@ theorem_wanted partition_eq_of_pairwiseProducts_eq_of_max_eq
     (hpre : pairwiseProducts lam.parts = pairwiseProducts mu.parts) :
     lam = mu
 
-/-- Li's Theorem 1: for partitions of the same positive integer,
-equality of the pairwise-product multisets is equivalent to equality
-of the partitions.
+/-- **Li's theorem: partitions are determined by their pairwise products.** Let $n$ be a positive
+integer and let $\lambda$ and $\mu$ be partitions of $n$. The pairwise products of the parts of
+$\lambda$ and the pairwise products of the parts of $\mu$ form the same multiset if and only if
+$\lambda = \mu$.
 
 Source: Stella Jiahui Li, "A Note on Multiset Reconstruction from
 Pairwise Products and Total Sum", Theorem 1. -/

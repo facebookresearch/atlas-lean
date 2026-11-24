@@ -75,18 +75,29 @@ make the absolute inverse-polynomial gap exponentially small after normalization
 the usual QMA verifier would not establish the promise pair.
 -/
 
-/-- The initial state of the verifier: input `x`, witness `ψ` on `m` qubits, `a`
-ancilla qubits in state `0`. -/
+/-- **Initial state of a QMA verifier.** For a bitstring $x = (x_0, \dots, x_{n-1})$, with true
+read as $1$ and false as $0$, numbers $m$ and $a$, and a vector $\psi \in \mathbb{C}^{2^m}$ (the
+witness on $m$ qubits), the initial state is the tensor product of the computational basis state
+of $x$, the vector $\psi$ and the all-zero state on $a$ ancilla qubits, in this order. It is the
+vector on $\{0, \dots, 2^{n+m+a} - 1\}$ whose value at $s$ is $\psi(\lfloor s / 2^n \rfloor)$ if
+$s < 2^{n+m}$ and $s \bmod 2^n = \sum_{k < n} x_k 2^k$, and $0$ otherwise. So $x$ occupies the
+$n$ low-order bits of the index, the witness the next $m$ bits and the ancillas the $a$
+high-order bits. -/
 def initState (x : List Bool) (m a : ℕ) (ψ : Fin (2 ^ m) → ℂ) :
     Fin (2 ^ (x.length + m + a)) → ℂ :=
   tensorProd (tensorProd (basisState x) ψ) (zeroState a)
 
-/-- `QMA` for promise problems: a promise problem `(Yes, No)` (disjoint sets of
-instances) is in `QMA` if there is a uniform family of polynomial-size quantum verifier
-circuits (2-local unitary gates with rational entries, generated in polynomial time)
-such that, on a yes-instance, some poly-size quantum witness state makes the verifier
-accept with probability `≥ 2/3`, while on a no-instance every witness makes it accept
-with probability `≤ 1/3`. No condition is imposed outside the promise. -/
+/-- **QMA for promise problems.** A pair $(\Pi_{\mathrm{yes}}, \Pi_{\mathrm{no}})$ of sets of
+bitstrings is in QMA when there are polynomials $m$, $a$ and $s$ with natural-number coefficients
+and a polynomial-time computable map sending each bitstring $x$ to a list of encoded 2-local
+quantum gates such that, for every bitstring $x$, writing $N = |x| + m(|x|) + a(|x|)$: the list
+has at most $s(|x|)$ gates, each well-formed on $N$ qubits; if $x \in \Pi_{\mathrm{yes}}$, some
+state $\psi$ on $m(|x|)$ qubits with squared norm $1$ makes the acceptance probability of the
+circuit, applied to the tensor product of the basis state of $x$, $\psi$ and the all-zero state
+on $a(|x|)$ qubits, at least $2/3$; and if $x \in \Pi_{\mathrm{no}}$, every state $\psi$ on
+$m(|x|)$ qubits with squared norm $1$ makes this acceptance probability at most $1/3$.
+
+No condition is imposed on bitstrings outside $\Pi_{\mathrm{yes}} \cup \Pi_{\mathrm{no}}$. -/
 def QMAPromise (Yes No : Set (List Bool)) : Prop :=
   ∃ (m a s : Polynomial ℕ) (gates : List Bool → List QGate),
     IsPolyTime gates ∧
@@ -104,18 +115,34 @@ def QMAPromise (Yes No : Set (List Bool)) : Prop :=
           (applyCircuit (x.length + m.eval x.length + a.eval x.length)
             (gates x) (initState x (m.eval x.length) (a.eval x.length) ψ)) ≤ 1 / 3)
 
-/-- A polynomial-time reduction between promise problems: a poly-time map sending
-yes-instances to yes-instances and no-instances to no-instances. -/
+/-- **Polynomial-time reduction between promise problems.** A promise problem $(Y_1, N_1)$,
+given by sets $Y_1$ and $N_1$ of bitstrings, reduces to another such promise problem $(Y_2, N_2)$
+when there is a polynomial-time computable map $f$ from bitstrings to bitstrings with
+$f(x) \in Y_2$ for every $x \in Y_1$ and $f(x) \in N_2$ for every $x \in N_1$. -/
 def PromiseReduces (Yes₁ No₁ Yes₂ No₂ : Set (List Bool)) : Prop :=
   ∃ f : List Bool → List Bool, IsPolyTime f ∧
     (∀ x ∈ Yes₁, f x ∈ Yes₂) ∧ (∀ x ∈ No₁, f x ∈ No₂)
 
-/-- A 2-local Hamiltonian term: the two qubits it acts on, and its `4 × 4` Hermitian
-matrix (as a list of 16 rational pairs). -/
+/-- **Encoded 2-local Hamiltonian term.** A 2-local Hamiltonian term is encoded as a triple
+$(i, j, e)$ of natural numbers $i$ and $j$, the qubits it acts on, and a list $e$ of pairs of
+encoded rational numbers, the real and imaginary parts of the entries of its $4 \times 4$ matrix
+in row-major order.
+
+The encoding itself does not require $e$ to have $16$ entries or the matrix to be Hermitian; the
+qubit bounds, the number of entries and positive semidefiniteness (hence Hermiticity) are part of
+the validity of a term. -/
 abbrev LocalTerm := ℕ × ℕ × List (RatEnc × RatEnc)
 
 open Classical in
-/-- A 2-local term embedded into the full `n`-qubit Hilbert space. -/
+/-- **Embedding of a 2-local term into $n$ qubits.** Let a 2-local term act on qubits $i$ and $j$,
+and let $M$ be the $4 \times 4$ complex matrix encoded by its list of entries, with rows and
+columns indexed by pairs of bits. Its embedding into $n$ qubits is the $2^n \times 2^n$ complex
+matrix whose entry at basis indices $s, t \in \{0, \dots, 2^n - 1\}$ is
+$M_{(s_i, s_j), (t_i, t_j)}$ if $s_k = t_k$ for every $k \ne i, j$, and $0$ otherwise, where
+$s_k = \lfloor s / 2^k \rfloor \bmod 2$ is bit $k$ of $s$.
+
+When $i \ne j$ and $i, j < n$, this is $M$ acting on qubits $i$ and $j$, tensored with the
+identity on the other qubits. -/
 noncomputable def embedTerm (n : ℕ) (term : LocalTerm) :
     Matrix (Fin (2 ^ n)) (Fin (2 ^ n)) ℂ :=
   fun s t =>
@@ -124,21 +151,29 @@ noncomputable def embedTerm (n : ℕ) (term : LocalTerm) :
         (qBit term.1 t.val, qBit term.2.1 t.val)
     else 0
 
-/-- The Hamiltonian of a list of 2-local terms: their sum. -/
+/-- **Hamiltonian of a list of 2-local terms.** For a number $n$ of qubits and a list
+$h_1, \dots, h_m$ of 2-local terms, the Hamiltonian is the $2^n \times 2^n$ complex matrix
+$\tilde h_1 + \dots + \tilde h_m$, where $\tilde h_l$ is the embedding of $h_l$ into $n$ qubits;
+for the empty list it is the zero matrix. -/
 noncomputable def hamiltonian (n : ℕ) (terms : List LocalTerm) :
     Matrix (Fin (2 ^ n)) (Fin (2 ^ n)) ℂ :=
   (terms.map (embedTerm n)).foldl (· + ·) 0
 
 open Classical in
-/-- The ground energy of a Hermitian matrix: its smallest eigenvalue. -/
+/-- **Ground energy of a Hermitian matrix.** For a natural number $n$, the ground energy of a
+Hermitian $2^n \times 2^n$ complex matrix $H$ is the smallest eigenvalue of $H$. -/
 noncomputable def groundEnergy {n : ℕ} (H : Matrix (Fin (2 ^ n)) (Fin (2 ^ n)) ℂ)
     (hH : H.IsHermitian) : ℝ :=
   Finset.min' (Finset.univ.image hH.eigenvalues)
     (Finset.image_nonempty.mpr Finset.univ_nonempty)
 
-/-- A 2-local term is valid: it addresses two distinct qubits below `n`, has exactly
-16 entries with nonzero denominators, is positive semidefinite, and has Frobenius
-norm at most `1` (so operator norm at most `1`). -/
+/-- **Valid 2-local Hamiltonian term.** A 2-local term acting on qubits $i$ and $j$ with entry
+list $e$ is valid on $n$ qubits when $i < j < n$, the list $e$ has exactly $16$ entries, each
+entry has nonzero denominators in the encodings of both its real and its imaginary part, the
+$4 \times 4$ complex matrix $M$ encoded by $e$ is positive semidefinite, and
+$\sum_{p, q} |M_{pq}|^2 \le 1$, that is, $M$ has Frobenius norm at most $1$.
+
+In particular $M$ is Hermitian and has operator norm at most $1$. -/
 def localTermValid (n : ℕ) (term : LocalTerm) : Prop :=
   term.1 < term.2.1 ∧ term.2.1 < n ∧ term.2.2.length = 16 ∧
   (∀ e ∈ term.2.2, e.1.2.2 ≠ 0 ∧ e.2.2.2 ≠ 0) ∧
@@ -148,10 +183,12 @@ def localTermValid (n : ℕ) (term : LocalTerm) : Prop :=
       ((matrixOfEntries term.2.2) p q).im ^ 2))) ≤ (1 : ℝ)
 
 open Classical in
-/-- The yes-instances of the Local Hamiltonian promise problem: instances decoding
-to `(n, terms, a, b)` with valid 2-local terms (see `localTermValid`) and an
-inverse-polynomial promise gap `b - a ≥ 1 / (number of terms + 1)`, whose ground
-energy is at most `a`. -/
+/-- **Yes-instances of the 2-local Hamiltonian problem.** A bitstring $x$ is a yes-instance when
+decoding it under the canonical bitstring encoding gives a tuple $(n, (h_1, \dots, h_m), a, b)$ of
+a natural number $n$, a list of 2-local terms $h_1, \dots, h_m$ and two encoded rational numbers,
+whose values we also write $a$ and $b$, such that every $h_l$ is valid on $n$ qubits,
+$b - a \ge 1/(m + 1)$, and the Hamiltonian $H$ of $h_1, \dots, h_m$ on $n$ qubits is Hermitian
+and has ground energy at most $a$. -/
 def LocalHamYes : Set (List Bool) :=
   {x | ∃ (n : ℕ) (terms : List LocalTerm) (a b : RatEnc),
     MetaMathlibExt.BitstringEncoding.bitDecode x = some (n, terms, a, b) ∧
@@ -160,8 +197,12 @@ def LocalHamYes : Set (List Bool) :=
     ∃ hH : (hamiltonian n terms).IsHermitian,
       groundEnergy (hamiltonian n terms) hH ≤ ((toRat a : ℚ) : ℝ)}
 
-/-- The no-instances of the Local Hamiltonian promise problem: as in `LocalHamYes`,
-but with ground energy at least `b`. -/
+/-- **No-instances of the 2-local Hamiltonian problem.** A bitstring $x$ is a no-instance when
+decoding it under the canonical bitstring encoding gives a tuple $(n, (h_1, \dots, h_m), a, b)$ of
+a natural number $n$, a list of 2-local terms $h_1, \dots, h_m$ and two encoded rational numbers,
+whose values we also write $a$ and $b$, such that every $h_l$ is valid on $n$ qubits,
+$b - a \ge 1/(m + 1)$, and the Hamiltonian $H$ of $h_1, \dots, h_m$ on $n$ qubits is Hermitian
+and has ground energy at least $b$. -/
 def LocalHamNo : Set (List Bool) :=
   {x | ∃ (n : ℕ) (terms : List LocalTerm) (a b : RatEnc),
     MetaMathlibExt.BitstringEncoding.bitDecode x = some (n, terms, a, b) ∧
@@ -170,7 +211,17 @@ def LocalHamNo : Set (List Bool) :=
     ∃ hH : (hamiltonian n terms).IsHermitian,
       ((toRat b : ℚ) : ℝ) ≤ groundEnergy (hamiltonian n terms) hH}
 
-/-- **The Local Hamiltonian problem is QMA-complete.** Source: A. Y. Kitaev, "Quantum
+/-- **The 2-local Hamiltonian problem is QMA-complete.** The 2-local Hamiltonian promise
+problem, given by its yes-instances and no-instances, is in QMA, and every promise problem in QMA
+whose sets of yes-instances and no-instances are disjoint sets of bitstrings has a polynomial-time
+reduction to it.
+
+Here an instance encodes a number $n$ of qubits, a list of $m$ valid 2-local terms on $n$ qubits
+and encoded rationals $a$ and $b$ with $b - a \ge 1/(m + 1)$; it is a yes-instance when the
+Hamiltonian of the terms on $n$ qubits is Hermitian with ground energy at most $a$, and a
+no-instance when it is Hermitian with ground energy at least $b$.
+
+Source: A. Y. Kitaev, "Quantum
 NP", talk at AQIP 1999; A. Y. Kitaev, A. H. Shen, and M. N. Vyalyi, Classical and Quantum
 Computation, American Mathematical Society, 2002, Section 14.4; J. Kempe, A. Y. Kitaev,
 and O. Regev, "The complexity of the local Hamiltonian problem", SIAM Journal on

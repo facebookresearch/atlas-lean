@@ -1,0 +1,50 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+import MathlibExt.Combinatorics.EuclideanChainLength
+meta import MathlibExt.Combinatorics.EuclideanChainLength
+
+/-!
+# Tests for the Euclidean chain function
+
+The two values of `euclideanChainLength_one_left_and_one_right` at small arguments, checked
+against the defining recursion and the compiled function, with the edge cases $y = 0$ and $x = 0$.
+-/
+
+open MetaMathlibExt
+
+namespace MathlibExtTest.Combinatorics.EuclideanChainLength
+
+-- The chain `1, 5, 4, 3, 2, 1, 0` has six positive terms.
+example : euclideanChainLength 1 5 = 6 :=
+  (euclideanChainLength_one_left_and_one_right 5 Nat.one_pos).1
+
+-- The defining recursion alone gives the same value.
+example : euclideanChainLength 1 5 = 6 := by
+  simp [euclideanChainLength_of_ne_zero, euclideanChainLength_zero]
+
+-- `y = 0` is allowed: the chain `1, 0` has one positive term.
+example : euclideanChainLength 1 0 = 1 :=
+  (euclideanChainLength_one_left_and_one_right 0 Nat.one_pos).1
+
+-- The chain `7, 1, 0` has two positive terms.
+example : euclideanChainLength 7 1 = 2 :=
+  (euclideanChainLength_one_left_and_one_right 0 (by decide : 0 < 7)).2
+
+-- The recursion also gives `F(0, 1) = 2`, so the second value does not need `0 < x`.
+example : euclideanChainLength 0 1 = 2 := by
+  simp [euclideanChainLength_of_ne_zero, euclideanChainLength_zero]
+
+-- The compiled function agrees with both values on small arguments and with `F(13, 60) = 8`.
+#guard (List.range 50).all fun y => euclideanChainLength 1 y == y + 1
+#guard (List.range 50).all fun x => euclideanChainLength x 1 == 2
+#guard euclideanChainLength 13 60 = 8
+
+end MathlibExtTest.Combinatorics.EuclideanChainLength

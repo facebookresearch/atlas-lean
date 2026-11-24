@@ -41,14 +41,33 @@ the outset, so a path never repeats a vertex; edge endpoints and the start are r
 -/
 
 
-/-- Winning positions in Geography, by recursion on the fuel (at most `n` moves remain). -/
+/-- **Winning positions in Geography.** Let $E$ be a list of pairs of natural numbers, read as
+directed edges, let $v$ be a natural number (the current vertex) and let $V$ be a list of natural
+numbers (the visited vertices). For a natural number $k$ (the fuel), the predicate
+$\mathrm{GeoWins}(k, E, v, V)$ is defined by recursion on $k$: $\mathrm{GeoWins}(0, E, v, V)$ is
+false, and $\mathrm{GeoWins}(k + 1, E, v, V)$ holds exactly when there is a natural number $w$
+with $(v, w) \in E$ and $w \notin V$ such that $\mathrm{GeoWins}(k, E, w, V')$ is false, where
+$V'$ is the list $V$ with $w$ added at the front.
+
+Read as a game, the player to move wins when they can move the token along an edge of $E$ to a
+vertex not in $V$ from which the opponent does not win; a player with no such move, or with no
+fuel left, loses. -/
 def GeoWins : ℕ → List (ℕ × ℕ) → ℕ → List ℕ → Prop
   | 0, _, _, _ => False
   | fuel + 1, edges, pos, visited =>
     ∃ nxt, (pos, nxt) ∈ edges ∧ nxt ∉ visited ∧ ¬ GeoWins fuel edges nxt (nxt :: visited)
 
 open Classical in
-/-- Geography as a decision problem over bitstrings. -/
+/-- **Geography as a decision problem.** The Geography decision problem accepts a bitstring $x$
+exactly when $x$ decodes, under the canonical bitstring encoding of triples $(n, E, s)$ of a
+natural number, a list of pairs of natural numbers and a natural number, to a triple with
+$s < n$, with both entries of every pair in $E$ less than $n$, and with
+$\mathrm{GeoWins}(n + 1, E, s, [s])$, where $[s]$ is the list whose only entry is $s$.
+Bitstrings that do not decode are rejected.
+
+A play never revisits one of the $n$ vertices, so the fuel $n + 1$ never runs out: the condition
+says that the player who moves first wins Geography on the directed graph with vertices
+$0, \ldots, n - 1$ and edge list $E$, with the token starting on $s$ and $s$ marked visited. -/
 noncomputable def geographyDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
@@ -58,7 +77,10 @@ noncomputable def geographyDec :
       GeoWins (i.1 + 1) i.2.1 i.2.2 [i.2.2])
   | none => false
 
-/-- **Geography is PSPACE-complete.** Source: T. J. Schaefer, "On the complexity of some two-
+/-- **Geography is PSPACE-complete.** The Geography decision problem belongs to PSPACE, and every
+decision problem in PSPACE has a polynomial-time many-one reduction to it.
+
+Source: T. J. Schaefer, "On the complexity of some two-
 person perfect-information games", Journal of Computer and System Sciences 16 (1978),
 185-225. -/
 public theorem_wanted geography_pspace_complete :

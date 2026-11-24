@@ -43,31 +43,36 @@ DeepMind prover agent; the basis there is `A ∪ {0}` of exact order 2; no code 
 
 open scoped Pointwise
 
-/-- Erdős Problem 741, first question (upper-density reading): if `A ⊆ ℕ` and `A + A` has positive
-upper density, then `A = A₁ ⊔ A₂` with `A₁ + A₁` and `A₂ + A₂` both of positive upper density. -/
+/-- **Erdős Problem 741, upper-density question.** This proposition asserts that for every set
+$A \subseteq \mathbb{N}$ whose sumset $A + A = \{a + b : a, b \in A\}$ has positive upper density
+there are disjoint sets $A_1, A_2 \subseteq \mathbb{N}$ with $A_1 \cup A_2 = A$ such that both
+$A_1 + A_1$ and $A_2 + A_2$ have positive upper density. -/
 def upperDensitySumsetSplits : Prop :=
   ∀ A : Set ℕ, 0 < (A + A).upperDensity → ∃ A₁ A₂ : Set ℕ, Disjoint A₁ A₂ ∧ A₁ ∪ A₂ = A ∧
     0 < (A₁ + A₁).upperDensity ∧ 0 < (A₂ + A₂).upperDensity
 
-/-- `S ⊆ ℕ` has bounded gaps (is syndetic): some `g` is such that every interval `[n, n + g)`
-meets `S`. -/
+/-- **Sets with bounded gaps.** A set $S \subseteq \mathbb{N}$ has bounded gaps (is syndetic) if
+there is a natural number $g$ such that for every natural number $n$ some $s \in S$ satisfies
+$n \le s < n + g$. -/
 def HasBoundedGaps (S : Set ℕ) : Prop :=
   ∃ g : ℕ, ∀ n : ℕ, ∃ s ∈ S, n ≤ s ∧ s < n + g
 
-/-- Erdős Problem 741, second question: there is a basis `A` of order `2` (every sufficiently large
-integer is a sum of two elements of `A`) such that for every partition `A = A₁ ⊔ A₂` the sumsets
-`A₁ + A₁` and `A₂ + A₂` do not both have bounded gaps. -/
+/-- **Erdős Problem 741, bounded-gaps question.** This proposition asserts that there is a set
+$A \subseteq \mathbb{N}$ that is an asymptotic additive basis of order $2$ (all but finitely many
+natural numbers are sums of two elements of $A$) such that for all disjoint sets
+$A_1, A_2 \subseteq \mathbb{N}$ with $A_1 \cup A_2 = A$, the sumsets
+$A_1 + A_1 = \{a + b : a, b \in A_1\}$ and $A_2 + A_2$ do not both have bounded gaps. -/
 def basisWithoutBoundedGapSplit : Prop :=
   ∃ A : Set ℕ, A.IsAsymptoticAddBasisOfOrder 2 ∧
     ∀ A₁ A₂ : Set ℕ, Disjoint A₁ A₂ → A₁ ∪ A₂ = A →
       ¬ (HasBoundedGaps (A₁ + A₁) ∧ HasBoundedGaps (A₂ + A₂))
 
-/--
-Resolved true: erdosproblems.com/741 records DeepMind's positive answer to the upper-density
-question: if `A + A` has positive upper density then `A = A₁ ⊔ A₂` with `A₁ + A₁` and `A₂ + A₂` both
-of positive upper density (proof sketched in the page's comments; formal-conjectures marks this
-statement solved with a formal proof by the DeepMind prover agent, not checked here); the page lists
-the problem as solved. Source: T. F. Bloom, Erdős Problems, Problem #741,
+/-- **Splitting a set whose sumset has positive upper density.** For every set
+$A \subseteq \mathbb{N}$ whose sumset $A + A = \{a + b : a, b \in A\}$ has positive upper density,
+there are disjoint sets $A_1, A_2 \subseteq \mathbb{N}$ with $A_1 \cup A_2 = A$ such that both
+$A_1 + A_1$ and $A_2 + A_2$ have positive upper density.
+
+Source: T. F. Bloom, Erdős Problems, Problem #741,
 https://www.erdosproblems.com/741 (status SOLVED (LEAN)); resolution: B. Alexeev, M. Putterman, M.
 Sawhney, M. Sellke and G. Valiant, Short proofs in combinatorics and number theory, arXiv:2603.29961
 (2026); erdosproblems.com/741 (DeepMind), Theorem 3.1 of arXiv:2603.29961 (proof due to an internal
@@ -78,10 +83,14 @@ https://arxiv.org/abs/2603.29961.
 -/
 public theorem_wanted upperDensitySumsetSplits_holds : upperDensitySumsetSplits
 
-/--
-Resolved true: Alexeev, Putterman, Sawhney, Sellke and Valiant (Theorem 3.1, proof by an internal
-OpenAI model; DeepMind found a construction independently) give an explicit basis `A` of order `2`
-such that for every partition `A = A₁ ⊔ A₂` one of `A₁ + A₁`, `A₂ + A₂` does not have bounded gaps.
+/-- **An asymptotic basis of order 2 admitting no bounded-gap splitting.** There is a set
+$A \subseteq \mathbb{N}$ that is an asymptotic additive basis of order $2$ (all but finitely many
+natural numbers are sums of two elements of $A$) such that for all disjoint sets
+$A_1, A_2 \subseteq \mathbb{N}$ with $A_1 \cup A_2 = A$, the sumsets
+$A_1 + A_1 = \{a + b : a, b \in A_1\}$ and $A_2 + A_2$ do not both have bounded gaps, where a set
+$S \subseteq \mathbb{N}$ has bounded gaps if for some $g \in \mathbb{N}$ every interval
+$[n, n + g)$ with $n \in \mathbb{N}$ meets $S$.
+
 Source: T. F. Bloom, Erdős Problems, Problem #741, https://www.erdosproblems.com/741 (status SOLVED
 (LEAN)); resolution: B. Alexeev, M. Putterman, M. Sawhney, M. Sellke and G. Valiant, Short proofs in
 combinatorics and number theory, arXiv:2603.29961 (2026); erdosproblems.com/741 (DeepMind), Theorem

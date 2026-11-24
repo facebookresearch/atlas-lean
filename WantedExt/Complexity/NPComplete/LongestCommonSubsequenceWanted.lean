@@ -43,16 +43,24 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An LCS instance: binary strings, bound. -/
+/-- **Longest-common-subsequence instances.** A longest-common-subsequence instance is a pair
+$(R, K)$ of a finite list $R$ of binary strings (finite lists of booleans) and a natural number
+$K$. -/
 abbrev LongestCommonSubsequenceInstance := List (List Bool) × ℕ
 
-/-- A common subsequence of length at least `K`. -/
+/-- **Feasible longest-common-subsequence instances.** A longest-common-subsequence instance
+$(R, K)$ is feasible when there is a binary string $w$ of length at least $K$ that is a
+subsequence of every string in $R$, that is, $w$ is obtained from each string in $R$ by deleting
+some of its entries. -/
 def LongestCommonSubsequenceFeasible
     (i : LongestCommonSubsequenceInstance) : Prop :=
   ∃ common : List Bool, i.2 ≤ common.length ∧ ∀ s ∈ i.1, common.Sublist s
 
 open Classical in
-/-- LONGEST COMMON SUBSEQUENCE as a decision problem over bitstrings. -/
+/-- **The LONGEST COMMON SUBSEQUENCE decision problem.** LONGEST COMMON SUBSEQUENCE is the
+decision problem that accepts a bitstring $x$ exactly when $x$ decodes, under the canonical
+bitstring encoding, to a feasible longest-common-subsequence instance. Bitstrings that do not
+decode are rejected. -/
 noncomputable def longestCommonSubsequenceDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
@@ -60,7 +68,11 @@ noncomputable def longestCommonSubsequenceDec :
   | some i => decide (LongestCommonSubsequenceFeasible i)
   | none => false
 
-/-- **LONGEST COMMON SUBSEQUENCE is NP-complete.** Source: M. R. Garey and D. S. Johnson,
+/-- **LONGEST COMMON SUBSEQUENCE is NP-complete.** The LONGEST COMMON SUBSEQUENCE decision
+problem, over binary strings, belongs to NP, and every decision problem in NP reduces to it by a
+polynomial-time many-one reduction.
+
+Source: M. R. Garey and D. S. Johnson,
 *Computers and Intractability* (1979), LONGEST COMMON SUBSEQUENCE; D. Maier, "The
 complexity of some problems on subsequences and supersequences" (1978). -/
 public theorem_wanted longestCommonSubsequence_npComplete :

@@ -57,40 +57,56 @@ states the composed step explicitly: `Tred ∘ Tamp` maps base-alphabet instance
 base-alphabet instances with gap `δ ↦ min α' (c' * min α (c * δ))`.
 -/
 
-/-- A 2CSP instance: variable count, alphabet size, and the list of binary constraints. -/
+/-- **2CSP instances.** A 2CSP instance is a triple $(n, \Sigma, C)$ of a natural number $n$ (the
+number of variables), a natural number $\Sigma$ (the alphabet size) and a finite list $C$ of
+constraints, where each constraint is a triple $(u, v, P)$ of natural numbers $u$ and $v$ (the
+variables it mentions) and a finite list $P$ of pairs of natural numbers (the allowed label
+pairs). -/
 abbrev CSPInstance := ℕ × ℕ × List (ℕ × ℕ × List (ℕ × ℕ))
 
-/-- A 2CSP instance is well-formed: every constraint mentions variables below the
-variable count, and every allowed pair has labels below the alphabet size. -/
+/-- **Well-formed 2CSP instances.** A 2CSP instance $(n, \Sigma, C)$ is well-formed when every
+constraint $(u, v, P)$ in $C$ satisfies $u < n$ and $v < n$, and every allowed pair $(a, b)$ in
+$P$ satisfies $a < \Sigma$ and $b < \Sigma$. -/
 def CSPWellFormed (I : CSPInstance) : Prop :=
   ∀ c ∈ I.2.2, c.1 < I.1 ∧ c.2.1 < I.1 ∧
     ∀ p ∈ c.2.2, p.1 < I.2.1 ∧ p.2 < I.2.1
 
-/-- A constraint is satisfied by an assignment: its variable indices are in range
-and the assigned label pair is allowed. -/
+/-- **Satisfied constraint of a 2CSP instance.** Let $I = (n, \Sigma, C)$ be a 2CSP instance and
+$\sigma$ an assignment of a label less than $\Sigma$ to each variable less than $n$. A constraint
+$(u, v, P)$ is satisfied by $\sigma$ when $u < n$, $v < n$ and the pair $(\sigma(u), \sigma(v))$
+belongs to $P$. -/
 def cspConstraintSat (I : CSPInstance) (assign : Fin I.1 → Fin I.2.1)
     (c : ℕ × ℕ × List (ℕ × ℕ)) : Prop :=
   ∃ hu : c.1 < I.1, ∃ hv : c.2.1 < I.1,
     ((assign ⟨c.1, hu⟩).val, (assign ⟨c.2.1, hv⟩).val) ∈ c.2.2
 
 open Classical in
-/-- The value of a 2CSP instance under an assignment: the fraction of satisfied constraints. -/
+/-- **Value of a 2CSP instance under an assignment.** Let $I = (n, \Sigma, C)$ be a 2CSP
+instance and $\sigma$ an assignment of a label less than $\Sigma$ to each variable less than $n$.
+The value of $I$ under $\sigma$ is the rational number $1$ if $C$ is empty, and otherwise the
+number of entries of the list $C$ that are constraints satisfied by $\sigma$, divided by the
+length of $C$. -/
 noncomputable def cspVal (I : CSPInstance) (assign : Fin I.1 → Fin I.2.1) : ℚ :=
   if I.2.2 = [] then 1
   else ((I.2.2.filter (fun c => decide (cspConstraintSat I assign c))).length : ℚ) /
     (I.2.2.length : ℚ)
 
-/-- The degree of a variable in a 2CSP instance: the number of constraints mentioning it. -/
+/-- **Degree of a variable in a 2CSP instance.** For a 2CSP instance $(n, \Sigma, C)$ and a
+natural number $v$, the degree of $v$ is the number of entries $(u, w, P)$ of the list $C$ with
+$u = v$ or $w = v$. -/
 def cspDegree (I : CSPInstance) (v : ℕ) : ℕ :=
   (I.2.2.filter (fun c => c.1 = v ∨ c.2.1 = v)).length
 
-/-- Gap amplification with explicit constants `c α d D e`: a transformation keeping
-the variables, preserving well-formedness, with constant constraint blowup and
-constant-factor degree blowup, alphabet size at most `Sigma ^ e` for the exponent `e`
-(the local-view alphabet of graph powering), preserving satisfiability and
-amplifying every gap `δ` by a constant factor `c > 1`, capped at a fixed constant
-`α < 1`. The constants are parameters (not existentially quantified inside) so
-that the theorem below can share them with alphabet reduction. -/
+/-- **Gap amplification with given constants.** Let $c, \alpha$ be rationals and $d, D, e$ natural
+numbers. A map $T$ from 2CSP instances to 2CSP instances is a gap amplification with constants
+$c, \alpha, d, D, e$ when $c > 1$, $0 < \alpha < 1$, $d \ge 1$, $D \ge 1$, and for every 2CSP
+instance $I$ with $n$ variables, alphabet size $\Sigma$ and $m$ constraints: $T(I)$ has exactly $n$
+variables, alphabet size at most $\Sigma^e$ and at most $d m$ constraints; if $I$ is well-formed
+then so is $T(I)$; for every natural number $v$, if $v$ has degree $k$ in $I$, then $v$ has degree
+at most $D(k + 1)$ in $T(I)$; if some assignment gives $I$ value $1$ then some assignment
+gives $T(I)$ value $1$; and for every rational $\delta$ with $0 < \delta \le 1$, if every assignment
+gives $I$ value at most $1 - \delta$, then every assignment gives $T(I)$ value at most
+$1 - \min(\alpha, c\delta)$. -/
 def gapAmplification (c α : ℚ) (d D e : ℕ) (T : CSPInstance → CSPInstance) : Prop :=
   1 < c ∧ 0 < α ∧ α < 1 ∧ 1 ≤ d ∧ 1 ≤ D ∧
     ∀ I : CSPInstance, (T I).1 = I.1 ∧ (T I).2.1 ≤ I.2.1 ^ e ∧
@@ -102,21 +118,18 @@ def gapAmplification (c α : ℚ) (d D e : ℕ) (T : CSPInstance → CSPInstance
         (∀ assign, cspVal I assign ≤ 1 - δ) →
           ∀ assign, cspVal (T I) assign ≤ 1 - min α (c * δ)
 
-/-- Alphabet reduction with explicit constants, parameterized by the amplifier's
-base alphabet `S0` and exponent `e`: a transformation applying to instances whose
-alphabet is at most `S0 ^ e` (exactly the amplifier's output bound when starting
-from base alphabet `S0`), reducing the alphabet back to `S0`, preserving
-satisfiability and losing at most a constant factor `c' ≤ 1` in the gap (gap `δ`
-becomes at least `min (c' * δ, α')`). The variable set may expand by a constant
-factor: each old variable is replaced by at most `V` new variables (the reduction
-adorns variables with auxiliary code symbols), so `(T I).1 ≤ V * (I.1 + 1)`, and the
-constraint count grows by at most a constant factor. The nondegenerate bounds
-`2 ≤ S0` and `2 ≤ e` are essential: with `S0 = 0` the premise would cover only
-zero-alphabet instances and `T = id` would vacuously satisfy the statement, and
-with `e = 1` the reduction would not need to shrink the alphabet at all; with
-`2 ≤ S0` and `2 ≤ e` we have `S0 ^ e > S0`, so the reduction must genuinely shrink
-the alphabet. The constants are parameters (not existentially quantified inside) so
-that the theorem below shares `S0` and `e` with gap amplification. -/
+/-- **Alphabet reduction with given constants.** Let $S_0, e, d', V$ be natural numbers and
+$c', \alpha'$ rationals. A map $T$ from 2CSP instances to 2CSP instances is an alphabet reduction
+with constants $S_0, e, c', \alpha', d', V$ when $S_0 \ge 2$, $e \ge 2$, $0 < c' \le 1$,
+$0 < \alpha' < 1$, $d' \ge 1$, $V \ge 1$, and for every 2CSP instance $I$ with $n$ variables,
+alphabet size at most $S_0^e$ and $m$ constraints: $T(I)$ has at most $V(n + 1)$ variables,
+alphabet size at most $S_0$ and at most $d' m$ constraints; if $I$ is well-formed then so is
+$T(I)$; if some assignment gives $I$ value $1$ then some assignment gives $T(I)$ value $1$; and
+for every rational $\delta$ with $0 < \delta \le 1$, if every assignment gives $I$ value at most
+$1 - \delta$, then every assignment gives $T(I)$ value at most $1 - \min(\alpha', c'\delta)$.
+
+The bounds $S_0 \ge 2$ and $e \ge 2$ give $S_0^e > S_0$, so the reduction must genuinely shrink
+the alphabet. -/
 def alphabetReduction (S0 e : ℕ) (c' α' : ℚ) (d' V : ℕ)
     (T : CSPInstance → CSPInstance) : Prop :=
   2 ≤ S0 ∧ 2 ≤ e ∧ 0 < c' ∧ c' ≤ 1 ∧ 0 < α' ∧ α' < 1 ∧ 1 ≤ d' ∧ 1 ≤ V ∧
@@ -129,7 +142,25 @@ def alphabetReduction (S0 e : ℕ) (c' α' : ℚ) (d' V : ℕ)
         (∀ assign, cspVal I assign ≤ 1 - δ) →
           ∀ assign, cspVal (T I) assign ≤ 1 - min α' (c' * δ)
 
-/-- **Dinur's gap amplification: the combinatorial PCP theorem.** Source: I. Dinur, "The
+/-- **Dinur's gap amplification and alphabet reduction.** There exist natural numbers
+$S_0, e, d, D, d', V$ and rationals $c, \alpha, c', \alpha'$ with $S_0 \ge 2$, $e \ge 2$, $c > 1$,
+$0 < \alpha < 1$, $d \ge 1$, $D \ge 1$, $0 < c' \le 1$, $0 < \alpha' < 1$, $d' \ge 1$ and $V \ge 1$,
+and maps $A$ and $R$ from 2CSP instances to 2CSP instances, with the following properties.
+Both maps are polynomial-time computable: for each $T \in \{A, R\}$ there is a polynomial-time
+computable function $f$ from lists of booleans to lists of booleans such that, for every 2CSP
+instance $I$, decoding $f$ applied to the bitstring encoding of $I$ succeeds and returns $T(I)$.
+The map $A$ is a gap amplification with constants $c, \alpha, d, D, e$, and $R$ is an alphabet
+reduction with constants $S_0, e, c', \alpha', d', V$. Finally, for every 2CSP instance $I$ with
+alphabet size at most $S_0$, the instance $J = R(A(I))$ has alphabet size at most $S_0$; if $I$
+is well-formed then so is $J$; if some assignment gives $I$ value $1$ then some assignment gives
+$J$ value $1$; and for every rational $\delta$ with $0 < \delta \le 1$, if every assignment gives
+$I$ value at most $1 - \delta$, then every assignment gives $J$ value at most
+$1 - \min(\alpha', c' \min(\alpha, c\delta))$.
+
+The constants $c$ and $c'$ are not tied together: the statement does not assert $c' c > 1$, so
+the composed map $R \circ A$ need not enlarge the gap.
+
+Source: I. Dinur, "The
 PCP theorem by gap amplification", Journal of the ACM 54 (2007), 12:1-12:44 (Proceedings
 of the Thirty-Eighth Annual ACM Symposium on Theory of Computing, STOC 2006, 241-250). -/
 public theorem_wanted dinur_gap_amplification :

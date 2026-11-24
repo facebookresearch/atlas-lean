@@ -21,10 +21,12 @@ namespace MathlibExt.LinearAlgebra.Matrix.JacobiIterationWanted
 variable {n : Type*} [Fintype n] [DecidableEq n]
 
 /--
-The Jacobi iteration converges for strictly diagonally dominant systems: if
-`∑_{j ≠ i} |A i j| < |A i i|` for every `i`, then `A x = b` has a solution `xStar` and
-the Jacobi iterates converge to `xStar` from any starting point. One Jacobi sweep maps `x`
-to the vector whose `i`-th entry is `(b i - ∑_{j ≠ i} A i j * x j) / A i i`.
+**Convergence of the Jacobi method for strictly diagonally dominant matrices.** Let $A$ be a
+real square matrix with rows and columns indexed by a finite type, and let $b$ be a real vector.
+Suppose $A$ is strictly diagonally dominant: $\sum_{j \ne i} |A_{ij}| < |A_{ii}|$ for every $i$.
+Define the Jacobi sweep $J$ by $J(x)_i = \bigl(b_i - \sum_{j \ne i} A_{ij} x_j\bigr) / A_{ii}$.
+Then there is a vector $x^*$ with $A x^* = b$ such that, for every starting vector $x_0$, the
+iterates $J^k(x_0)$ converge to $x^*$ as $k \to \infty$.
 
 Sources: Mathlib repository, `docs/undergrad.yaml` (the undergraduate curriculum list),
 section "Numerical Analysis" / "Iterative methods" / "Jacobian";

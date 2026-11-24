@@ -18,13 +18,13 @@ open scoped BigOperators
 
 namespace MathlibExt.Analysis.Calculus.TaylorLittleoRemainderWanted
 
-/-- Taylor's theorem with little-o remainder, multivariable form: for a map that
-is `C^n` near `x₀` the Taylor polynomial of order `n` approximates `f` up to an
-error that is little-o of `‖x - x₀‖^n`. The hypothesis is local, as in the
-canonical result; the global form follows via `ContDiff.contDiffAt`.
-The one-variable case is already in Mathlib as
-`taylor_isLittleO` / `taylor_isLittleO_univ`; only the multivariable form below
-is wanted.
+/-- **Taylor's theorem with little-o remainder in several variables.** Let $E$ and $F$ be normed
+vector spaces over $\mathbb{R}$, let $n$ be a natural number, and let $f : E \to F$ be $n$ times
+continuously differentiable on a neighbourhood of a point $x_0 \in E$. Write $D^k f(x_0)$ for the
+$k$-th Fréchet derivative of $f$ at $x_0$, a continuous $k$-linear map from $E^k$ to $F$. Then, as
+$x$ tends to $x_0$,
+$$f(x) - \sum_{k=0}^{n} \frac{1}{k!}\, D^k f(x_0)(x - x_0, \ldots, x - x_0) =
+o\bigl(\|x - x_0\|^n\bigr).$$
 
 Sources:
 - Mathlib `docs/undergrad.yaml`, section "Multivariable calculus / Differential

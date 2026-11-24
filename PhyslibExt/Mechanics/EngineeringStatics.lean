@@ -8,16 +8,21 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.LinearAlgebra.CrossProduct
+public import MathlibExt.LinearAlgebra.Matrix.RoucheCapelli
 public import PhyslibExt.Mechanics.HarmonicMechanics
+public import PhyslibExt.Mechanics.TrussEquilibrium
+import MathlibExt.LinearAlgebra.Matrix.FullRankLinearSystem
 import Mathlib.Algebra.BigOperators.Pi
+import Mathlib.Data.Fintype.EquivFin
 import Mathlib.Tactic.Abel
 import Mathlib.Tactic.FinCases
 
 /-!
-# Three-dimensional wrench origin transport
+# Three-dimensional wrench origin transport and truss solvability
 
 The moment of a finite three-dimensional load system about a reference point, the wrench it
-defines, and the change of reference point.
+defines, and the change of reference point; and when the force-only equilibrium of a pin-jointed
+planar truss has a solution, and when that solution is unique.
 
 ## i. Overview
 
@@ -46,8 +51,29 @@ the origin, which is the planar moment of the projected forces; its shift law is
 `PhyslibExt.Mechanics.HarmonicMechanics.moment2D_shift`. A force normal to that plane can carry a
 nonzero moment that the projection loses.
 
-Non-goals: equilibrium of a constrained body, reactions, distributed loads, the central axis of a
-wrench, and any empirical adequacy or system safety claim.
+Truss equilibrium (section E) uses the planar truss of `PhyslibExt.Mechanics.TrussEquilibrium`,
+given in its current configuration: joints at the positions `r`, straight two-force members from
+`a e` to `b e` with axial forces `N e` (tension positive, ideal pins), support reactions `ρ s`
+acting at the joint `sj s` along the given direction `sd s`, and loads `f` at the joint coordinates
+only. Joint balance `JointBalance r a b sj sd f N ρ` is the matrix equation
+`equilibriumMatrix r a b sj sd *ᵥ Sum.elim N ρ = f` (`jointBalance_iff_mulVec`): for `j` joints, `m`
+members and `r` reaction components, `2 j` equations in `m + r` unknowns. With the current geometry
+the balance is exact; substituting the reference geometry needs small displacements. When
+`m + r = 2 j` and the equilibrium matrix has injective `mulVec`, every load has exactly one balance
+(`Matrix.exists_unique_mulVec_eq` after renumbering the equations). In general a load has a balance
+exactly when the equilibrium matrix and the augmented matrix `(A | f)` have equal rank
+(`MetaMathlibExt.rouche_capelli`). Injectivity alone (full column rank) gives at most one balance,
+not one for every load, and it rules out members with coincident endpoints: their unit column is
+zero, so a unit force in such a member would balance zero loads, a spurious state of self-stress.
+The count `m + r = 2 j` alone is not enough. A collinear chain pinned at both ends has a state of
+self-stress (member forces and reactions that balance zero loads), so the balance of an axial load
+at the middle joint is not unique but a one-parameter family. Its square equilibrium matrix is then
+not surjective either: a transverse load at the middle joint has no balance, because neither member
+has a transverse component there; that joint can move transversally without stretching either member
+to first order, an infinitesimal mechanism.
+
+Non-goals: equilibrium of a general constrained rigid body, distributed loads, the central axis of
+a wrench, and any empirical adequacy or system safety claim.
 
 ## ii. Key results
 
@@ -60,6 +86,12 @@ wrench, and any empirical adequacy or system safety claim.
   factor and the moment with the product.
 - `moment2D_planarPart` : for the forces alone, free couples discarded, the planar moment of the
   projected forces is the third component of their moment about the origin.
+- `jointBalance_existsUnique_of_injective` : with `m + r = 2 j` and an injective equilibrium
+  matrix, every joint load has exactly one balance.
+- `exists_jointBalance_iff_rank` : a joint load has a balance exactly when the equilibrium matrix
+  and the augmented matrix have equal rank.
+- `jointBalance_unique_of_injective`, `endpoints_ne_of_injective` : an injective equilibrium
+  matrix gives at most one balance and noncoincident member endpoints.
 
 ## iii. Table of contents
 
@@ -67,6 +99,7 @@ wrench, and any empirical adequacy or system safety claim.
 - B. Origin transport and origin invariance
 - C. Units
 - D. Planar projection of the forces
+- E. Truss equilibrium: solvability and uniqueness
 
 ## iv. References
 
@@ -74,6 +107,13 @@ wrench, and any empirical adequacy or system safety claim.
   chapter 3 (equivalent systems of forces; moving a force-couple system to another point).
 - J. L. Meriam and L. G. Kraige, *Engineering Mechanics: Statics*, chapter 2 (moments and
   couples in three dimensions; resultants and the wrench).
+- F. P. Beer, E. R. Johnston Jr. and D. F. Mazurek, *Vector Mechanics for Engineers: Statics*,
+  chapter 6 (method of joints; determinate, indeterminate and improperly constrained trusses).
+- S. Pellegrino and C. R. Calladine, *Matrix analysis of statically and kinematically
+  indeterminate frameworks*, International Journal of Solids and Structures 22 (1986):
+  equilibrium matrix, states of self-stress and mechanisms.
+- `PhyslibExt.Mechanics.TrussEquilibrium` (truss equilibrium matrix and joint balance),
+  `MetaMathlibExt.rouche_capelli` and `Matrix.exists_unique_mulVec_eq`.
 -/
 
 @[expose] public section
@@ -215,6 +255,110 @@ lemma moment2D_planarPart (r F : ι → Fin 3 → ℝ) :
   rw [Finset.sum_apply]
   refine Finset.sum_congr rfl fun i _ => ?_
   simp [cross_apply]
+
+/-! ## E. Truss equilibrium: solvability and uniqueness -/
+
+section TrussSolvability
+
+open Matrix Mechanics.TrussCompatibility Mechanics.TrussEquilibrium
+
+/-- **Square and injective.** If `m + r = 2 j` and the equilibrium matrix has injective `mulVec`,
+every joint load `f` has exactly one balancing pair of member forces and reactions. -/
+lemma jointBalance_existsUnique_of_injective {J M R : Type*} [Fintype J] [DecidableEq J]
+    [Fintype M] [Fintype R] (r : J → (Fin 2 → ℝ)) (a b : M → J) (sj : R → J)
+    (sd : R → (Fin 2 → ℝ)) (hsq : Fintype.card M + Fintype.card R = 2 * Fintype.card J)
+    (hinj : Function.Injective (equilibriumMatrix r a b sj sd).mulVec) (f : J × Fin 2 → ℝ) :
+    ∃! p : (M → ℝ) × (R → ℝ), JointBalance r a b sj sd f p.1 p.2 := by
+  set A := equilibriumMatrix r a b sj sd with hAdef
+  have hcard : Fintype.card (J × Fin 2) = Fintype.card (M ⊕ R) := by
+    rw [Fintype.card_prod, Fintype.card_fin, Fintype.card_sum, hsq]
+    ring
+  set σ : (J × Fin 2) ≃ (M ⊕ R) := Fintype.equivOfCardEq hcard
+  have hA' : ∀ y, A.submatrix id σ *ᵥ y = A *ᵥ (y ∘ σ.symm) := fun y => by
+    rw [Matrix.submatrix_mulVec_equiv]
+    rfl
+  have hinj' : Function.Injective (A.submatrix id σ).mulVec := by
+    intro y₁ y₂ h
+    change A.submatrix id σ *ᵥ y₁ = A.submatrix id σ *ᵥ y₂ at h
+    rw [hA', hA'] at h
+    have h2 := hinj h
+    funext c
+    have := congrFun h2 (σ c)
+    simpa using this
+  obtain ⟨y, hy, huniq⟩ := Matrix.exists_unique_mulVec_eq hinj' f
+  have hx₀ : A *ᵥ (y ∘ σ.symm) = f := by
+    rw [← hA']
+    exact hy
+  have huniqA : ∀ x, A *ᵥ x = f → x = y ∘ σ.symm := fun x hx => by
+    have hcomp : (x ∘ σ) ∘ σ.symm = x := by
+      funext j
+      simp
+    have hxσ : x ∘ σ = y := huniq (x ∘ σ) (show A.submatrix id σ *ᵥ (x ∘ σ) = f by
+      rw [hA', hcomp]
+      exact hx)
+    funext j
+    have := congrFun hxσ (σ.symm j)
+    simpa using this
+  refine ⟨((y ∘ σ.symm) ∘ Sum.inl, (y ∘ σ.symm) ∘ Sum.inr), ?_, ?_⟩
+  · change JointBalance r a b sj sd f ((y ∘ σ.symm) ∘ Sum.inl) ((y ∘ σ.symm) ∘ Sum.inr)
+    rw [jointBalance_iff_mulVec, Sum.elim_comp_inl_inr]
+    exact hx₀
+  · rintro ⟨N, ρ⟩ h
+    have hx := huniqA _ ((jointBalance_iff_mulVec r a b sj sd f N ρ).1 h)
+    refine Prod.ext (funext fun m => ?_) (funext fun s => ?_)
+    · simpa using congrFun hx (Sum.inl m)
+    · simpa using congrFun hx (Sum.inr s)
+
+set_option linter.unusedFintypeInType false in
+/-- **Rank test.** A joint load `f` has a balancing pair exactly when the equilibrium matrix and
+the augmented matrix `(A | f)` have equal rank. -/
+lemma exists_jointBalance_iff_rank {J M R : Type*} [Fintype J] [DecidableEq J] [Fintype M]
+    [Fintype R] (r : J → (Fin 2 → ℝ)) (a b : M → J) (sj : R → J) (sd : R → (Fin 2 → ℝ))
+    (f : J × Fin 2 → ℝ) :
+    (∃ (N : M → ℝ) (ρ : R → ℝ), JointBalance r a b sj sd f N ρ) ↔
+      (equilibriumMatrix r a b sj sd).rank =
+        (Matrix.of (fun i => Sum.elim (equilibriumMatrix r a b sj sd i) (fun _ : Fin 1 => f i)) :
+          Matrix (J × Fin 2) ((M ⊕ R) ⊕ Fin 1) ℝ).rank := by
+  rw [← MetaMathlibExt.rouche_capelli]
+  constructor
+  · rintro ⟨N, ρ, h⟩
+    exact ⟨Sum.elim N ρ, (jointBalance_iff_mulVec r a b sj sd f N ρ).1 h⟩
+  · rintro ⟨x, hx⟩
+    refine ⟨x ∘ Sum.inl, x ∘ Sum.inr, ?_⟩
+    rw [jointBalance_iff_mulVec, Sum.elim_comp_inl_inr]
+    exact hx
+
+set_option linter.unusedFintypeInType false in
+/-- **At most one balance.** If the equilibrium matrix has injective `mulVec` (full column rank),
+two balancing pairs for the same loads coincide; existence for every load needs more. -/
+lemma jointBalance_unique_of_injective {J M R : Type*} [Fintype J] [DecidableEq J] [Fintype M]
+    [Fintype R] {r : J → (Fin 2 → ℝ)} {a b : M → J} {sj : R → J} {sd : R → (Fin 2 → ℝ)}
+    (hinj : Function.Injective (equilibriumMatrix r a b sj sd).mulVec) {f : J × Fin 2 → ℝ}
+    {N N' : M → ℝ} {ρ ρ' : R → ℝ} (h : JointBalance r a b sj sd f N ρ)
+    (h' : JointBalance r a b sj sd f N' ρ') : N = N' ∧ ρ = ρ' := by
+  have hx := hinj (((jointBalance_iff_mulVec r a b sj sd f N ρ).1 h).trans
+    ((jointBalance_iff_mulVec r a b sj sd f N' ρ').1 h').symm)
+  exact ⟨funext fun m => by simpa using congrFun hx (Sum.inl m),
+    funext fun s => by simpa using congrFun hx (Sum.inr s)⟩
+
+/-- **Nonzero member lengths.** An injective equilibrium matrix has noncoincident endpoints for
+every member, the two-force-member domain of `memberLength_pos_of_ne`: coincident endpoints give
+a zero unit column (Lean's `x / 0 = 0`), so a unit force in that member balances zero loads, a
+spurious state of self-stress. -/
+lemma endpoints_ne_of_injective {J M R : Type*} [DecidableEq J] [Fintype M] [Fintype R]
+    {r : J → (Fin 2 → ℝ)} {a b : M → J} {sj : R → J} {sd : R → (Fin 2 → ℝ)}
+    (hinj : Function.Injective (equilibriumMatrix r a b sj sd).mulVec) (e : M) :
+    r (a e) ≠ r (b e) := by
+  classical
+  intro heq
+  have hcol : equilibriumMatrix r a b sj sd *ᵥ Pi.single (Sum.inl e) 1 = 0 := by
+    funext q
+    simp [Matrix.mulVec_single, equilibriumMatrix, axialCompatibilityUnit, axialCompatibility,
+      heq]
+  have := congrFun (hinj (hcol.trans (Matrix.mulVec_zero _).symm)) (Sum.inl e)
+  simp at this
+
+end TrussSolvability
 
 end Mechanics.EngineeringStatics
 

@@ -11,6 +11,8 @@ import PhyslibExt.Numerical.AdvectionError
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Data.Fin.VecNotation
 import Mathlib.Tactic.FinCases
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
+import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
 
@@ -21,7 +23,10 @@ Concrete consumers of `PhyslibExt.Numerical.AdvectionError`: a nonuniform nonneg
 three cells at Courant number `1/2`, and the state `(1, 0)` on two cells at Courant number `3/2`,
 where the step conserves the total but produces a negative cell; and the traveling wave
 `2 + sin(2π (x - t))`, with its values, slope, period, positivity and derivative bounds, together
-with the failure of positivity at mean `1`.
+with the failure of positivity at mean `1`; and the same wave sampled on four cells at Courant
+number `1/2`, with a nonzero truncation error at the wrapped node inside the truncation bound,
+the accumulated-error bound after eight steps, and the loss of max-norm nonexpansiveness at
+Courant number `3/2`.
 
 ## i. Overview
 
@@ -35,6 +40,7 @@ No new definitions or results are introduced here.
 
 - A. Below and above the CFL limit
 - B. A positive traveling wave
+- C. Nodal error of the upwind update for the wave
 
 ## iv. References
 
@@ -178,3 +184,153 @@ example (t x : ℝ) :
       _ = 4 * Real.pi ^ 2 := by
         rw [abs_one]
         ring
+
+/-! ## C. Nodal error of the upwind update for the wave -/
+
+/-- Nonzero amplitude, speed and spacing: `c₀ = 2`, `a = 1`, `v = 1`, `L = 1` on four cells
+(`dx = 1 / 4`) with `dt = 1 / 8`, so `ν = v * dt / dx = 1 / 2`. At the wrapped node `j = 0`,
+whose upstream sample is the last node `x = 3 / 4`, the first-step truncation error is
+`1 / 2 - √2 / 2 ≠ 0`, inside the bound `dt * M * (v² dt + v dx) / 2 = 3 π² / 32`. -/
+example :
+    (1 : ℝ) * (1 / 8) / (1 / ((4 : ℕ) : ℝ)) = 1 / 2 ∧
+      sampledWave 2 1 1 1 (1 / 8) 4 1 0 -
+          ((1 - 1 / 2) * sampledWave 2 1 1 1 (1 / 8) 4 0 0 +
+            1 / 2 * sampledWave 2 1 1 1 (1 / 8) 4 0 (0 - 1)) = 1 / 2 - √2 / 2 ∧
+      1 / 2 - √2 / 2 ≠ (0 : ℝ) ∧
+      (1 / 8 : ℝ) * (|1| * (2 * Real.pi / 1) ^ 2) *
+          (1 ^ 2 * (1 / 8) + 1 * (1 / ((4 : ℕ) : ℝ))) / 2 = 3 * Real.pi ^ 2 / 32 ∧
+      |1 / 2 - √2 / 2| ≤ 3 * Real.pi ^ 2 / (32 : ℝ) := by
+  have h1 : (1 : ℝ) * (1 / 8) / (1 / ((4 : ℕ) : ℝ)) = 1 / 2 := by norm_num
+  have hw10 : sampledWave 2 1 1 1 (1 / 8) 4 1 0 = 2 - √2 / 2 := by
+    unfold sampledWave
+    rw [ZMod.val_zero]
+    unfold travelingWave
+    have harg : 2 * Real.pi * ((((0 : ℕ) : ℝ)) * (1 / ((4 : ℕ) : ℝ))
+        - 1 * (((1 : ℕ) : ℝ) * (1 / 8))) / 1 = -(Real.pi / 4) := by
+      push_cast
+      ring
+    rw [harg, Real.sin_neg, Real.sin_pi_div_four]
+    ring
+  have hw00 : sampledWave 2 1 1 1 (1 / 8) 4 0 0 = 2 := by
+    unfold sampledWave
+    rw [ZMod.val_zero]
+    unfold travelingWave
+    have harg : 2 * Real.pi * ((((0 : ℕ) : ℝ)) * (1 / ((4 : ℕ) : ℝ))
+        - 1 * (((0 : ℕ) : ℝ) * (1 / 8))) / 1 = 0 := by
+      push_cast
+      ring
+    rw [harg, Real.sin_zero]
+    ring
+  have hw0m1 : sampledWave 2 1 1 1 (1 / 8) 4 0 (0 - 1) = 1 := by
+    rw [sampledWave_sub_one (show (1 : ℝ) ≠ 0 by norm_num) 2 1 1 (1 / 8) 0 0]
+    rw [ZMod.val_zero]
+    unfold travelingWave
+    have harg : 2 * Real.pi * ((((0 : ℕ) : ℝ)) * (1 / ((4 : ℕ) : ℝ))
+        - 1 / ((4 : ℕ) : ℝ) - 1 * (((0 : ℕ) : ℝ) * (1 / 8))) / 1 = -(Real.pi / 2) := by
+      push_cast
+      ring
+    rw [harg, Real.sin_neg, Real.sin_pi_div_two]
+    ring
+  have h2 : sampledWave 2 1 1 1 (1 / 8) 4 1 0 -
+        ((1 - 1 / 2) * sampledWave 2 1 1 1 (1 / 8) 4 0 0 +
+          1 / 2 * sampledWave 2 1 1 1 (1 / 8) 4 0 (0 - 1)) = 1 / 2 - √2 / 2 := by
+    rw [hw10, hw00, hw0m1]
+    ring
+  have hsq : (√2) ^ 2 = 2 := Real.sq_sqrt (by norm_num)
+  have hnn : 0 ≤ √2 := Real.sqrt_nonneg 2
+  have hsqrt2 : 1 < √2 := by nlinarith [hsq, hnn]
+  have h3 : 1 / 2 - √2 / 2 ≠ (0 : ℝ) := by
+    intro hcon
+    linarith [hcon, hsqrt2]
+  have h4 : (1 / 8 : ℝ) * (|1| * (2 * Real.pi / 1) ^ 2) *
+      (1 ^ 2 * (1 / 8) + 1 * (1 / ((4 : ℕ) : ℝ))) / 2 = 3 * Real.pi ^ 2 / 32 := by
+    simp only [abs_one, Nat.cast_ofNat]
+    ring
+  have h5 : |1 / 2 - √2 / 2| ≤ 3 * Real.pi ^ 2 / (32 : ℝ) := by
+    have hneg : (1 : ℝ) / 2 - √2 / 2 < 0 := by linarith [hsqrt2]
+    rw [abs_of_neg hneg]
+    have hpi2 : (4 : ℝ) ≤ Real.pi ^ 2 := by
+      have hcos := Real.one_sub_sq_div_two_le_cos (x := Real.pi)
+      rw [Real.cos_pi] at hcos
+      linarith [hcos]
+    have hsq2ub : √2 ≤ 7 / 4 := by nlinarith [hsq, hnn]
+    linarith [hpi2, hsq2ub]
+  exact ⟨h1, h2, h3, h4, h5⟩
+
+/-- CFL failure: at `ν = 3 / 2` the update is not nonexpansive. On two cells it maps the
+alternating state `(1, -1)`, of maximum norm `1`, to `(-2, 2)`, of maximum norm `2`. -/
+example :
+    ‖fun j : ZMod 2 => if j = 0 then (1 : ℝ) else -1‖ = 1 ∧
+      ‖fun j : ZMod 2 => (1 - 3 / 2) * (if j = 0 then (1 : ℝ) else -1) +
+        3 / 2 * (if j - 1 = 0 then (1 : ℝ) else -1)‖ = 2 := by
+  have hall : ∀ j : ZMod 2, j = 0 ∨ j = 1 := by decide
+  have hf1 : ‖fun j : ZMod 2 => if j = 0 then (1 : ℝ) else -1‖ = 1 := by
+    apply le_antisymm
+    · apply (pi_norm_le_iff_of_nonneg (by norm_num)).mpr
+      intro j
+      show ‖(if j = 0 then (1 : ℝ) else -1)‖ ≤ 1
+      split_ifs with hj
+      · rw [Real.norm_eq_abs]; norm_num
+      · rw [Real.norm_eq_abs]; norm_num
+    · have h0 := norm_le_pi_norm (fun j : ZMod 2 => if j = 0 then (1 : ℝ) else -1) 0
+      have h0' : ‖(if (0 : ZMod 2) = 0 then (1 : ℝ) else -1)‖ ≤
+          ‖fun j : ZMod 2 => if j = 0 then (1 : ℝ) else -1‖ := h0
+      have hif : (if (0 : ZMod 2) = 0 then (1 : ℝ) else -1) = 1 := by simp
+      rw [hif, Real.norm_eq_abs] at h0'
+      norm_num at h0'
+      exact h0'
+  have hg2 : ‖fun j : ZMod 2 => (1 - 3 / 2) * (if j = 0 then (1 : ℝ) else -1) +
+      3 / 2 * (if j - 1 = 0 then (1 : ℝ) else -1)‖ = 2 := by
+    apply le_antisymm
+    · apply (pi_norm_le_iff_of_nonneg (by norm_num)).mpr
+      intro j
+      rcases hall j with rfl | rfl
+      · show ‖(1 - 3 / 2) * (if (0 : ZMod 2) = 0 then (1 : ℝ) else -1) +
+            3 / 2 * (if (0 - 1 : ZMod 2) = 0 then (1 : ℝ) else -1)‖ ≤ 2
+        have e1 : (if (0 : ZMod 2) = 0 then (1 : ℝ) else -1) = 1 := by simp
+        have e2 : (if (0 - 1 : ZMod 2) = 0 then (1 : ℝ) else -1) = -1 := by simp
+        rw [e1, e2, Real.norm_eq_abs]
+        norm_num
+      · show ‖(1 - 3 / 2) * (if (1 : ZMod 2) = 0 then (1 : ℝ) else -1) +
+            3 / 2 * (if (1 - 1 : ZMod 2) = 0 then (1 : ℝ) else -1)‖ ≤ 2
+        have e1 : (if (1 : ZMod 2) = 0 then (1 : ℝ) else -1) = -1 := by simp
+        have e2 : (if (1 - 1 : ZMod 2) = 0 then (1 : ℝ) else -1) = 1 := by simp
+        rw [e1, e2, Real.norm_eq_abs]
+        norm_num
+    · have h1 := norm_le_pi_norm (fun j : ZMod 2 => (1 - 3 / 2)
+          * (if j = 0 then (1 : ℝ) else -1) + 3 / 2 * (if j - 1 = 0 then (1 : ℝ) else -1)) 1
+      have h1' : ‖(1 - 3 / 2) * (if (1 : ZMod 2) = 0 then (1 : ℝ) else -1) +
+          3 / 2 * (if (1 - 1 : ZMod 2) = 0 then (1 : ℝ) else -1)‖ ≤
+          ‖fun j : ZMod 2 => (1 - 3 / 2) * (if j = 0 then (1 : ℝ) else -1) +
+            3 / 2 * (if j - 1 = 0 then (1 : ℝ) else -1)‖ := h1
+      have e1 : (if (1 : ZMod 2) = 0 then (1 : ℝ) else -1) = -1 := by simp
+      have e2 : (if (1 - 1 : ZMod 2) = 0 then (1 : ℝ) else -1) = 1 := by simp
+      rw [e1, e2, Real.norm_eq_abs] at h1'
+      rw [show (1 - 3 / 2) * (-1 : ℝ) + 3 / 2 * 1 = 2 by norm_num] at h1'
+      rw [show |(2 : ℝ)| = 2 by norm_num] at h1'
+      exact h1'
+  exact ⟨hf1, hg2⟩
+
+/-- The accumulated-error bound on the same grid (`ν = 1 / 2`): for every numerical solution of
+the upwind recurrence, after `8` steps of length `1 / 8` (final time `T = 1`) the nodal error has
+grown by at most `T * M * (v² dt + v dx) / 2 = 3 π² / 4`. -/
+example (u : ℕ → ZMod 4 → ℝ)
+    (hu : ∀ k j, u (k + 1) j = (1 - 1 / 2) * u k j + 1 / 2 * u k (j - 1)) :
+    ‖fun j => u 8 j - sampledWave 2 1 1 1 (1 / 8) 4 8 j‖ ≤
+      ‖fun j => u 0 j - sampledWave 2 1 1 1 (1 / 8) 4 0 j‖ + 3 * Real.pi ^ 2 / 4 := by
+  have hν : (1 : ℝ) * (1 / 8) / (1 / ((4 : ℕ) : ℝ)) = 1 / 2 := by norm_num
+  have hu' : ∀ k j, u (k + 1) j = (1 - (1 : ℝ) * (1 / 8) / (1 / ((4 : ℕ) : ℝ))) * u k j +
+      (1 : ℝ) * (1 / 8) / (1 / ((4 : ℕ) : ℝ)) * u k (j - 1) := by
+    intro k j
+    rw [hν]
+    exact hu k j
+  have h := upwind_error_le_of_mul_le (c₀ := 2) (a := 1) (ncells := 4) (v := 1) (L := 1)
+    (dt := 1 / 8) one_pos (by norm_num) (by rw [hν]; norm_num) (by rw [hν]; norm_num) u hu' 8
+    (T := 1) (by norm_num)
+  have hb : (1 : ℝ) * (|(1 : ℝ)| * (2 * Real.pi / 1) ^ 2) *
+      ((1 : ℝ) ^ 2 * (1 / 8) + 1 * (1 / ((4 : ℕ) : ℝ))) / 2 = 3 * Real.pi ^ 2 / 4 := by
+    rw [abs_one]
+    push_cast
+    ring
+  rw [hb] at h
+  exact h

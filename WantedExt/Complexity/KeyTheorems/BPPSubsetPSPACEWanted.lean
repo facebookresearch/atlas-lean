@@ -35,7 +35,9 @@ Every bounded-error probabilistic polynomial-time language is in polynomial spac
 enumerating random strings in polynomial space.
 -/
 
-/-- **BPP is contained in PSPACE.** Source: S. Arora and B. Barak, Computational Complexity: A
+/-- **BPP is contained in PSPACE.** Every decision problem in BPP lies in PSPACE.
+
+Source: S. Arora and B. Barak, Computational Complexity: A
 Modern Approach, 2009 (BPP ⊆ PSPACE). -/
 public theorem_wanted bpp_subset_pspace :
     BPP ⊆ PSPACE

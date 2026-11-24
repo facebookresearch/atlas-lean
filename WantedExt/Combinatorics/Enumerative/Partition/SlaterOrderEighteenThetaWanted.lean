@@ -35,9 +35,13 @@ namespace MetaMathlibExt
 
 open MetaMathlibExt.QPochhammer
 
-/-- First identity of Lemma 2 (Berndt, Entry 29(i)): if `ab = cd` and `‖ab‖ < 1`, then
-`f(a, b) f(c, d) + f(-a, -b) f(-c, -d) = 2 f(ac, bd) f(ad, bc)`. The convergence hypothesis
-`‖ab‖ < 1` is the domain of Ramanujan's `f`.
+/-- **Ramanujan's theta function: sum of products when $ab = cd$.** Let
+$f(a,b) = \sum_{n \in \mathbb{Z}} a^{n(n+1)/2} b^{n(n-1)/2}$ be Ramanujan's theta function. For
+complex numbers $a, b, c, d$ with $ab = cd$ and $|ab| < 1$,
+$f(a,b) f(c,d) + f(-a,-b) f(-c,-d) = 2 f(ac,bd) f(ad,bc)$.
+
+This is Entry 29(i) of Berndt's *Ramanujan's Notebooks*; the hypothesis $|ab| < 1$ makes all
+the theta series converge.
 
 Source: A. Vanitha, M. P. Chaudhary, and Madiha Khanum, *Modular Relations for the
 Rogers-Ramanujan-Slater Type Functions of Order Eighteen with Applications to Partitions*,
@@ -48,11 +52,13 @@ public theorem_wanted ramanujanTheta_mul_add_mul_neg {a b c d : ℂ} (habcd : a 
         ramanujanThetaRaw (-a) (-b) * ramanujanThetaRaw (-c) (-d) =
       2 * ramanujanThetaRaw (a * c) (b * d) * ramanujanThetaRaw (a * d) (b * c)
 
-/-- Second identity of Lemma 2 (Berndt, Entry 29(ii)): if `ab = cd`, `‖ab‖ < 1` and
-`c, d ≠ 0`, then
-`f(a, b) f(c, d) - f(-a, -b) f(-c, -d) = 2a f(b/c, (c/b)abcd) f(b/d, (d/b)abcd)`, written with
-`(c/b)abcd = ac²d` and `(d/b)abcd = acd²`. The hypotheses `c ≠ 0`, `d ≠ 0` make the quotients
-`b/c`, `b/d` meaningful.
+/-- **Ramanujan's theta function: difference of products when $ab = cd$.** Let
+$f(a,b) = \sum_{n \in \mathbb{Z}} a^{n(n+1)/2} b^{n(n-1)/2}$ be Ramanujan's theta function. For
+complex numbers $a, b, c, d$ with $ab = cd$, $|ab| < 1$, $c \ne 0$ and $d \ne 0$,
+$f(a,b) f(c,d) - f(-a,-b) f(-c,-d) = 2a \, f(b/c, ac^2 d) \, f(b/d, acd^2)$.
+
+This is Entry 29(ii) of Berndt's *Ramanujan's Notebooks*, where the second arguments are written
+$(c/b)abcd = ac^2 d$ and $(d/b)abcd = acd^2$.
 
 Source: A. Vanitha, M. P. Chaudhary, and Madiha Khanum, *Modular Relations for the
 Rogers-Ramanujan-Slater Type Functions of Order Eighteen with Applications to Partitions*,
@@ -64,7 +70,11 @@ public theorem_wanted ramanujanTheta_mul_sub_mul_neg {a b c d : ℂ} (habcd : a 
       2 * a * ramanujanThetaRaw (b / c) (a * c ^ 2 * d) *
         ramanujanThetaRaw (b / d) (a * c * d ^ 2)
 
-/-- `f(q, q⁵) = χ(q) ψ(-q³)` for `‖q‖ < 1`.
+/-- **Ramanujan's theta function at $(q, q^5)$.** Let
+$f(a,b) = \sum_{n \in \mathbb{Z}} a^{n(n+1)/2} b^{n(n-1)/2}$ be Ramanujan's theta function and
+$(a;q)_\infty = \prod_{n \ge 0} (1 - a q^n)$. For every complex number $q$ with $|q| < 1$,
+$f(q,q^5) = (-q;q^2)_\infty \, f(-q^3,-q^9)$, that is, $f(q,q^5) = \chi(q) \psi(-q^3)$ with
+$\chi(q) = (-q;q^2)_\infty$ and $\psi(q) = f(q,q^3)$.
 
 Source: A. Vanitha, M. P. Chaudhary, and Madiha Khanum, *Modular Relations for the
 Rogers-Ramanujan-Slater Type Functions of Order Eighteen with Applications to Partitions*,
@@ -73,8 +83,11 @@ public theorem_wanted ramanujanTheta_one_five {q : ℂ} (hq : ‖q‖ < 1) :
     ramanujanThetaRaw q (q ^ 5) =
       qPochhammerInfRaw (-q) (q ^ 2) * ramanujanThetaRaw (-q ^ 3) ((-q ^ 3) ^ 3)
 
-/-- `f(-q, -q⁸) f(-q², -q⁷) f(-q⁴, -q⁵) = f(-q) f³(-q⁹) / f(-q³)` for `‖q‖ < 1`, stated with
-`f(-q³)` cleared.
+/-- **Product of the nonic theta functions.** Let
+$f(a,b) = \sum_{n \in \mathbb{Z}} a^{n(n+1)/2} b^{n(n-1)/2}$ be Ramanujan's theta function and
+write $f(-x) = f(-x,-x^2)$. For every complex number $q$ with $|q| < 1$,
+$f(-q,-q^8) f(-q^2,-q^7) f(-q^4,-q^5) f(-q^3) = f(-q) f(-q^9)^3$, that is,
+$f(-q,-q^8) f(-q^2,-q^7) f(-q^4,-q^5) = f(-q) f^3(-q^9)/f(-q^3)$ with the denominator cleared.
 
 Source: A. Vanitha, M. P. Chaudhary, and Madiha Khanum, *Modular Relations for the
 Rogers-Ramanujan-Slater Type Functions of Order Eighteen with Applications to Partitions*,
@@ -84,7 +97,11 @@ public theorem_wanted ramanujanTheta_order_nine_product {q : ℂ} (hq : ‖q‖ 
         ramanujanThetaRaw (-q ^ 4) (-q ^ 5) * ramanujanThetaRaw (-q ^ 3) (-(q ^ 3) ^ 2) =
       ramanujanThetaRaw (-q) (-q ^ 2) * ramanujanThetaRaw (-q ^ 9) (-(q ^ 9) ^ 2) ^ 3
 
-/-- `f(q, q²) = φ(-q³) / χ(-q)` for `‖q‖ < 1`, stated with `χ(-q) = (q; q²)_∞` cleared.
+/-- **Ramanujan's theta function at $(q, q^2)$.** Let
+$f(a,b) = \sum_{n \in \mathbb{Z}} a^{n(n+1)/2} b^{n(n-1)/2}$ be Ramanujan's theta function and
+$(a;q)_\infty = \prod_{n \ge 0} (1 - a q^n)$. For every complex number $q$ with $|q| < 1$,
+$f(q,q^2) \, (q;q^2)_\infty = f(-q^3,-q^3)$, that is, $f(q,q^2) = \varphi(-q^3)/\chi(-q)$ with
+the denominator cleared, where $\varphi(q) = f(q,q)$ and $\chi(-q) = (q;q^2)_\infty$.
 
 Source: A. Vanitha, M. P. Chaudhary, and Madiha Khanum, *Modular Relations for the
 Rogers-Ramanujan-Slater Type Functions of Order Eighteen with Applications to Partitions*,
@@ -93,12 +110,17 @@ public theorem_wanted ramanujanTheta_one_two {q : ℂ} (hq : ‖q‖ < 1) :
     ramanujanThetaRaw q (q ^ 2) * qPochhammerInfRaw q (q ^ 2) =
       ramanujanThetaRaw (-q ^ 3) (-q ^ 3)
 
-/-- Lemma 1, the classical eta-quotients of Ramanujan's functions: with
-`f_k = (q^k; q^k)_∞`, for `‖q‖ < 1`,
-`φ(q) = f₂⁵ / (f₁² f₄²)`, `ψ(q) = f₂² / f₁`, `φ(-q) = f₁² / f₂`, `ψ(-q) = f₁ f₄ / f₂`,
-`f(q) = f₂³ / (f₁ f₄)`, `χ(q) = f₂² / (f₁ f₄)`, and `χ(-q) = f₁ / f₂`, each stated with the
-denominator cleared. Here `f(q) = f(q, -q²)` and `χ(-q) = (q; q²)_∞`, the `q ↦ -q` images of
-`f(-q)` and `χ(q)`.
+/-- **Eta-quotients of Ramanujan's theta functions.** Let $q$ be a complex number with
+$|q| < 1$. Write $(a;q)_\infty = \prod_{n \ge 0} (1 - a q^n)$ and $f_k = (q^k;q^k)_\infty$, and
+let $f(a,b) = \sum_{n \in \mathbb{Z}} a^{n(n+1)/2} b^{n(n-1)/2}$ be Ramanujan's theta function.
+Then $f(q,q) f_1^2 f_4^2 = f_2^5$, $f(q,q^3) f_1 = f_2^2$, $f(-q,-q) f_2 = f_1^2$,
+$f(-q,-q^3) f_2 = f_1 f_4$, $f(q,-q^2) f_1 f_4 = f_2^3$, $(-q;q^2)_\infty f_1 f_4 = f_2^2$ and
+$(q;q^2)_\infty f_2 = f_1$.
+
+These are the classical eta-quotients $\varphi(q) = f_2^5/(f_1^2 f_4^2)$, $\psi(q) = f_2^2/f_1$,
+$\varphi(-q) = f_1^2/f_2$, $\psi(-q) = f_1 f_4/f_2$, $f(q) = f_2^3/(f_1 f_4)$,
+$\chi(q) = f_2^2/(f_1 f_4)$ and $\chi(-q) = f_1/f_2$ with the denominators cleared, where
+$\varphi(q) = f(q,q)$, $\psi(q) = f(q,q^3)$, $f(q) = f(q,-q^2)$ and $\chi(q) = (-q;q^2)_\infty$.
 
 Source: A. Vanitha, M. P. Chaudhary, and Madiha Khanum, *Modular Relations for the
 Rogers-Ramanujan-Slater Type Functions of Order Eighteen with Applications to Partitions*,
@@ -115,16 +137,49 @@ public theorem_wanted ramanujanTheta_eta_quotients {q : ℂ} (hq : ‖q‖ < 1) 
       qPochhammerInfRaw (-q) (q ^ 2) * (f₁ * f₄) = f₂ ^ 2 ∧
       qPochhammerInfRaw q (q ^ 2) * f₂ = f₁
 
-/-- Theorem 1, the seven modular relations (12)-(18) for the order-eighteen
-Rogers-Ramanujan-Slater type functions. With `f_k = (q^k; q^k)_∞` and, following the paper's
-Equations (2)-(4), `P(q) = f(-q⁷, -q¹¹) / f(-q⁶)`, `Q(q) = f(-q⁵, -q¹³) / f(-q⁶)`,
-`R(q) = f(-q, -q¹⁷) / f(-q⁶)`, write `P_n = P(q^n)`, `Q_n = Q(q^n)`, `R_n = R(q^n)`; here
-`f(-q^{6n}) = f_{6n}`. The hypothesis `q ≠ 0` is needed for the factor `1 / q` on the right.
+/-- **Modular relations for the order-eighteen Rogers–Ramanujan–Slater functions.** Let $q$ be
+a complex number with $0 < |q| < 1$. Write $(a;q)_\infty = \prod_{n \ge 0} (1 - a q^n)$ and
+$f_k = (q^k;q^k)_\infty$, let $f(a,b) = \sum_{n \in \mathbb{Z}} a^{n(n+1)/2} b^{n(n-1)/2}$ be
+Ramanujan's theta function, and set $P_n = f(-q^{7n},-q^{11n})/f_{6n}$,
+$Q_n = f(-q^{5n},-q^{13n})/f_{6n}$ and $R_n = f(-q^n,-q^{17n})/f_{6n}$. Then the following seven
+relations hold.
 
-Deviation: in (14) the paper prints `f₄₈` in the last denominator; that is false
-(the `q⁵⁶` coefficients of the two sides are `0` and `-1`). The statement uses `f₅₄`, the
-`f_{6n}` factor that (12), (13) and (15) carry at this place (`f₄₈ = f_{6·8}` is the value from
-(12)); with `f₅₄` the relation checks exactly through `q¹⁹⁸`.
+$$P_1 P_8 + q^3 Q_1 Q_8 + q^{15} R_1 R_8 = \frac{1}{2q f_6 f_{48}} \left(
+\frac{f_2^5 f_8^2}{f_1^2 f_4^2 f_{16}} - \frac{f_9^2 f_{72}^2}{f_{18} f_{144}}\right) -
+q^8 \frac{f_3 f_{18}^2 f_{24} f_{144}^2}{f_6^2 f_9 f_{48}^2 f_{72}}$$
+
+$$P_2 P_7 + q^3 Q_2 Q_7 + q^{15} R_2 R_7 = \frac{1}{2q f_{12} f_{42}} \left(
+\frac{f_2^5 f_{14}^2}{f_1^2 f_4^2 f_{28}} - \frac{f_{18}^2 f_{63}^2}{f_{36} f_{126}}\right) -
+q^8 \frac{f_6 f_{21} f_{36}^2 f_{126}^2}{f_{12}^2 f_{18} f_{42}^2 f_{63}}$$
+
+$$P_3 P_6 + q^3 Q_3 Q_6 + q^{15} R_3 R_6 = \frac{1}{2q} \left(
+\frac{f_2^5 f_{18}}{f_1^2 f_4^2 f_{36}^2} - \frac{f_{27}^2 f_{54}^2}{f_{18} f_{36} f_{54} f_{108}}
+\right) - q^8 \frac{f_9 f_{54}^2 f_{108}^2}{f_{18} f_{27} f_{36}^2 f_{54}}$$
+
+$$P_4 P_5 + q^3 Q_4 Q_5 + q^{15} R_4 R_5 = \frac{1}{2q f_{24} f_{30}} \left(
+\frac{f_2^5 f_{20}^2}{f_1^2 f_4^2 f_{40}} - \frac{f_{36}^2 f_{45}^2}{f_{72} f_{90}}\right) -
+q^8 \frac{f_{12} f_{15} f_{72}^2 f_{90}^2}{f_{24}^2 f_{30}^2 f_{36} f_{45}}$$
+
+$$P_1 Q_2 - q^3 Q_1 R_2 + q R_1 P_2 = \frac{1}{2q f_6 f_{12}} \left(
+\frac{f_9^2 f_{18}}{f_{36}} - \frac{f_1^2 f_2}{f_4}\right) +
+q^2 \frac{f_3 f_{18} f_{36}^2}{f_6 f_9 f_{12}^2}$$
+
+$$q^5 P_1 Q_{20} - q^{32} Q_1 R_{20} + R_1 P_{20} = \frac{1}{2q^4 f_6 f_{120}} \left(
+\frac{f_9^2 f_{180}^2}{f_{18} f_{360}} - \frac{f_4^2 f_{10}^5}{f_5^2 f_8 f_{20}^2}\right) +
+q^{17} \frac{f_3 f_{18}^2 f_{60} f_{360}^2}{f_6^2 f_9 f_{120}^2 f_{180}}$$
+
+$$q^{23} P_1 R_{14} + Q_1 P_{14} - q^6 R_1 Q_{14} = \frac{1}{2q^2 f_6 f_{84}} \left(
+\frac{f_9^2 f_{126}^2}{f_{18} f_{252}} - \frac{f_2^2 f_{14}^5}{f_4 f_7^2 f_{28}^2}\right) +
+q^{13} \frac{f_3 f_{18}^2 f_{42} f_{252}^2}{f_6^2 f_9 f_{84}^2 f_{126}}$$
+
+These are the source's relations (12)–(18), in order, for $P_n = P(q^n)$, $Q_n = Q(q^n)$ and
+$R_n = R(q^n)$, where $P(q) = f(-q^7,-q^{11})/f(-q^6)$, $Q(q) = f(-q^5,-q^{13})/f(-q^6)$ and
+$R(q) = f(-q,-q^{17})/f(-q^6)$ are the order-eighteen functions and $f(-q^6) = f_6$.
+
+Deviation: in (14), the third relation, the paper prints $f_{48}$ in the last denominator; that
+is false (the coefficients of $q^{56}$ of the two sides are $0$ and $-1$). The statement uses
+$f_{54}$, the $f_{6n}$ factor that (12), (13) and (15) carry at this place ($f_{48} = f_{6 \cdot 8}$
+is the value from (12)); with $f_{54}$ the relation checks exactly through $q^{198}$.
 
 Source: A. Vanitha, M. P. Chaudhary, and Madiha Khanum, *Modular Relations for the
 Rogers-Ramanujan-Slater Type Functions of Order Eighteen with Applications to Partitions*,
@@ -167,11 +222,30 @@ public theorem_wanted slaterOrderEighteen_modular_relations {q : ℂ} (hq : ‖q
             (f 9 ^ 2 * f 126 ^ 2 / (f 18 * f 252) - f 2 ^ 2 * f 14 ^ 5 / (f 4 * f 7 ^ 2 * f 28 ^ 2)) +
           q ^ 13 * (f 3 * f 18 ^ 2 * f 42 * f 252 ^ 2 / (f 6 ^ 2 * f 9 * f 84 ^ 2 * f 126)))
 
-/-- Theorem 2, relations (21)-(27) between the order-eighteen functions `P, Q, R` of Theorem 1
-and the nonic Rogers-Ramanujan functions `A(q) = f(-q⁴, -q⁵) / f(-q³)`,
-`B(q) = f(-q², -q⁷) / f(-q³)`, `C(q) = f(-q, -q⁸) / f(-q³)` (the product forms the paper quotes
-from Baruah and Bora), with `X_n = X(q^n)`, `f_k = (q^k; q^k)_∞` and
-`χ(-q) = (q; q²)_∞`.
+/-- **Relations between the order-eighteen and the nonic Rogers–Ramanujan functions.** Let $q$
+be a complex number with $|q| < 1$. Write $(a;q)_\infty = \prod_{n \ge 0} (1 - a q^n)$ and
+$f_k = (q^k;q^k)_\infty$, let $f(a,b) = \sum_{n \in \mathbb{Z}} a^{n(n+1)/2} b^{n(n-1)/2}$ be
+Ramanujan's theta function, and set $P_n = f(-q^{7n},-q^{11n})/f_{6n}$,
+$Q_n = f(-q^{5n},-q^{13n})/f_{6n}$, $R_n = f(-q^n,-q^{17n})/f_{6n}$,
+$A_n = f(-q^{4n},-q^{5n})/f_{3n}$, $B_n = f(-q^{2n},-q^{7n})/f_{3n}$ and
+$C_n = f(-q^n,-q^{8n})/f_{3n}$. Then
+
+$$P_1 Q_1 R_1 = \frac{(q;q^2)_\infty \, f_{18}^3}{(q^3;q^6)_\infty \, f_6^3},$$
+
+$$\frac{P_1 A_2 + q^3 R_1 C_2}{A_1} = \frac{Q_1 A_2 - q^2 R_1 B_2}{B_1} =
+\frac{P_1 B_2 - q Q_1 C_2}{C_1} = \frac{f_9^2}{f_6 f_{18}}$$
+
+and
+
+$$\frac{P_1 A_2 + Q_1 B_2 + q^3 R_1 C_2}{A_1} = \frac{Q_1 A_2 - q^2 R_1 B_2 + P_1 C_2}{B_1} =
+\frac{R_1 A_2 + P_1 B_2 - q Q_1 C_2}{C_1} = \frac{f_9^2}{f_6 f_{18}} +
+\frac{f_3 f_{18}^2}{f_6^2 f_9}.$$
+
+These are the source's relations (21)–(27). Here $P_n$, $Q_n$, $R_n$ are the order-eighteen
+functions of Theorem 1 and $A_n$, $B_n$, $C_n$ the nonic Rogers–Ramanujan functions
+$A(q) = f(-q^4,-q^5)/f(-q^3)$, $B(q) = f(-q^2,-q^7)/f(-q^3)$, $C(q) = f(-q,-q^8)/f(-q^3)$
+evaluated at $q^n$, with $f(-q^3) = f_3$; the first relation reads
+$P_1 Q_1 R_1 = \chi(-q) f_{18}^3 / (\chi(-q^3) f_6^3)$ with $\chi(-q) = (q;q^2)_\infty$.
 
 Source: A. Vanitha, M. P. Chaudhary, and Madiha Khanum, *Modular Relations for the
 Rogers-Ramanujan-Slater Type Functions of Order Eighteen with Applications to Partitions*,

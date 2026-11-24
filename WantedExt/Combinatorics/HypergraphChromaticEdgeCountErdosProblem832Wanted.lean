@@ -37,9 +37,11 @@ The complete hypergraph on `S` is `S.powersetCard r`. Compared with the formal-c
 
 open MathlibExt.Combinatorics.HypergraphColoringShared
 
-/-- Erdős Problem 832: for every `r ≥ 3` and all large `k`, every `r`-uniform hypergraph with
-chromatic number `k` has at least `C((r - 1)(k - 1) + 1, r)` edges, with equality only for the
-complete `r`-uniform hypergraph on `(r - 1)(k - 1) + 1` vertices. -/
+/-- **Erdős Problem 832.** The statement that for every integer $r \ge 3$ there is a $K$ such that
+for every $k \ge K$, every $n$ and every $r$-uniform hypergraph $H$ on the vertex set
+$\{0, \dots, n-1\}$ with chromatic number $k$ (it is $k$-colorable but not $(k-1)$-colorable),
+$H$ has at least $\binom{(r-1)(k-1)+1}{r}$ edges, and if it has exactly that many edges then it is
+the complete $r$-uniform hypergraph on some set of $(r-1)(k-1)+1$ of its vertices. -/
 def chromaticEdgeLowerBound : Prop :=
   ∀ r : ℕ, 3 ≤ r → ∀ᶠ k : ℕ in Filter.atTop, ∀ (n : ℕ) (H : Finset (Finset (Fin n))),
     (∀ e ∈ H, e.card = r) → HypergraphColorable H k → ¬ HypergraphColorable H (k - 1) →
@@ -47,12 +49,19 @@ def chromaticEdgeLowerBound : Prop :=
         (H.card = ((r - 1) * (k - 1) + 1).choose r →
           ∃ S : Finset (Fin n), S.card = (r - 1) * (k - 1) + 1 ∧ H = S.powersetCard r)
 
-/--
-Resolved false: Alon disproved it using Turán numbers (Proposition 1): for an absolute `C`, `r ≥ C`
-and `k ≥ C r` some `r`-uniform hypergraph with chromatic number at least `k` has at most `(7/8)^r
-C((r - 1)(k - 1) + 1, r)` edges, and an edge-minimal one among these has chromatic number exactly
-`k`. erdosproblems.com/832 lists the problem as disproved, for every `r ≥ 4` by known Turán bounds
-(the case `r = 3` is open). Source: T. F. Bloom, Erdős Problems, Problem #832,
+/-- **Alon's refutation of Erdős Problem 832.** There is an integer $r \ge 3$ such that for
+infinitely many $k$ there are an $n$ and an $r$-uniform hypergraph $H$ on the vertex set
+$\{0, \dots, n-1\}$ with chromatic number $k$ (it is $k$-colorable but not $(k-1)$-colorable)
+that either has fewer than $\binom{(r-1)(k-1)+1}{r}$ edges, or has exactly that many edges but is
+not the complete $r$-uniform hypergraph on any set of $(r-1)(k-1)+1$ of its vertices.
+
+Alon deduced this from an upper bound through Turán numbers: for an absolute constant $C$, every
+$r \ge C$ and every $k \ge Cr$, some $r$-uniform hypergraph with chromatic number at least $k$ has
+at most $(7/8)^r \binom{(r-1)(k-1)+1}{r}$ edges, and an edge-minimal one among these has
+chromatic number exactly $k$. Known Turán bounds disprove the conjecture for every $r \ge 4$; the
+case $r = 3$ is open.
+
+Source: T. F. Bloom, Erdős Problems, Problem #832,
 https://www.erdosproblems.com/832 (status DISPROVED); resolution: N. Alon, Hypergraphs with high
 chromatic number, Graphs Combin. 1 (1985), 387-389, with f(k, s) the least number of edges of a
 k-uniform hypergraph of chromatic number at least s: 'Erdős and Hajnal conjectured that for every

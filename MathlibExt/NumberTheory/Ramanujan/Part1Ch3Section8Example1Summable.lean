@@ -28,10 +28,15 @@ def sector (lam : Option ℝ) (eps : ℝ) (z : ℂ) : Prop :=
   | some l => |Complex.arg (z - (l : ℂ))| ≤ Real.pi / 2 - eps
   | none => |Complex.arg z| ≤ Real.pi - eps
 
-/-- If the alternating series `∑ (-1)ʲ aⱼ / ((z + 1)(z + 2)⋯(z + j + 1))` converges at every
-`z` off the poles (and right of `lam` when `lam = some l`), it converges on the part of `sector lam
-eps z` beyond some radius, for every `eps > 0`; `ramanujan_part1_ch3_section8_example1_summable`
-is the source-shaped form. -/
+/-- **Convergence of a factorial series in a sector, general form.** Let $a_0, a_1, \ldots$ be
+complex numbers, let $\lambda$ be either a real number or $-\infty$, and let $\varepsilon > 0$.
+Suppose that the series
+$$\sum_{j=0}^{\infty} \frac{(-1)^j a_j}{(z + 1)(z + 2) \cdots (z + j + 1)}$$
+converges absolutely for every complex $z$ that is not a negative integer and satisfies
+$\operatorname{Re} z > \lambda$. Then there is a real number $R$ such that the series converges
+absolutely for every complex $z$ with $|z| > R$ that lies in the sector
+$|\arg(z - \lambda)| \le \pi/2 - \varepsilon$ when $\lambda$ is real, or
+$|\arg z| \le \pi - \varepsilon$ when $\lambda = -\infty$. -/
 theorem ramanujan_part1_ch3_section8_example1_summable_general
     (a : ℕ → ℂ) (lam : Option ℝ) (eps : ℝ) (heps_pos : 0 < eps)
     (hSumm : ∀ z : ℂ, (∀ n : ℕ, z ≠ -((n + 1 : ℕ) : ℂ)) →
@@ -107,7 +112,18 @@ theorem ramanujan_part1_ch3_section8_example1_summable_general
       exact hRe
 
 set_option linter.unusedVariables false in
-/-- Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, Section 8, Example 1, formula
+/-- **Convergence of a factorial series in a sector.** Let $a_0, a_1, \ldots$ be complex numbers,
+let $\lambda$ be either a real number or $-\infty$, and let $\varepsilon > 0$, with
+$\varepsilon < \pi/2$ when $\lambda$ is real and $\varepsilon < \pi$ when $\lambda = -\infty$.
+Suppose that the series
+$$\sum_{j=0}^{\infty} \frac{(-1)^j a_j}{(z + 1)(z + 2) \cdots (z + j + 1)}$$
+converges absolutely for every complex $z$ that is not a negative integer and satisfies
+$\operatorname{Re} z > \lambda$. Then there is a real number $R$ such that the series converges
+absolutely for every complex $z$ with $|z| > R$ that lies in the sector
+$|\arg(z - \lambda)| \le \pi/2 - \varepsilon$ when $\lambda$ is real, or
+$|\arg z| \le \pi - \varepsilon$ when $\lambda = -\infty$.
+
+Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, Section 8, Example 1, formula
     (8.1), printed p. 50 / PDF p. 60.
 Proves `Wanted` entry `ramanujan_part1_ch3_section8_example1_summable`. It follows from
 `ramanujan_part1_ch3_section8_example1_summable_general`; the upper bound `heps_lt` is unused and

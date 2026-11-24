@@ -18,11 +18,14 @@ public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 
 namespace MathlibExt.Probability.ScottishBook180Wanted
 
-/-- Stationarity in the sense of Slutsky and Khinchin, as stated:
-mean zero, constant mean square, and `E[v(t) v(t+h)]` depending only
-on `h`. The constant mean square and the covariance function are
-existentially quantified. Integrability of the products is left
-implicit in the Bochner-integral notation; see gaps. -/
+/-- **Stationary random functions (Slutsky–Khinchin).** Let $\mu$ be a measure on a measurable
+space $\Omega$, and let $v$ assign to each real $t$ a function $v_t : \Omega \to \mathbb{R}$.
+Then $v$ is stationary if there are a real number $c$ and a function $R : \mathbb{R} \to \mathbb{R}$
+such that for all real $t$ and $h$, $\int v_t \, d\mu = 0$, $\int v_t^2 \, d\mu = c$ and
+$\int v_t \, v_{t+h} \, d\mu = R(h)$.
+
+The integrals are Bochner integrals, which are $0$ for non-integrable functions, so integrability
+of $v_t$, $v_t^2$ and $v_t v_{t+h}$ is not required. -/
 def IsStationary (Ω : Type*) [MeasurableSpace Ω] (μ : MeasureTheory.Measure Ω)
     (v : ℝ → Ω → ℝ) : Prop :=
   ∃ (c : ℝ) (R : ℝ → ℝ),
@@ -30,20 +33,20 @@ def IsStationary (Ω : Type*) [MeasurableSpace Ω] (μ : MeasureTheory.Measure �
     (∀ t : ℝ, ∫ ω, (v t ω) ^ 2 ∂μ = c) ∧
     ∀ t h : ℝ, ∫ ω, v t ω * v (t + h) ω ∂μ = R h
 
-/-- Scottish Book Problem 180: given a stationary random function `v`
-(in the Slutsky-Khinchin sense), does there exist a random variable `A`,
-uniformly distributed on `[0,1]` with `Prob(A < α) = α`, and a map
-`φ` linking the uniform variable to the event, i.e. `A(φ α) = α` for
-`α ∈ [0,1]` (condition (1), `E = φ(α)` as printed), such that for every
-`t₁ ≠ t₂` the functions `v(t₁, φ(α))` and `v(t₂, φ(α))` are independent
-in the sense of Steinhaus (condition (2))? Independence is read as
-`ProbabilityTheory.IndepFun` of the two `α`-variables under the uniform
-law on `[0,1]`. `A` stays on the original space `Ω` (it is not moved to
-a newly constructed space). It is assumed that `Ω` already carries some
-uniform variable `U`; this is the weakest hypothesis excluding
-purely space-pathology refutations, and it does not trivialize the
-conclusion, since `U` need not admit a section `φ` with the required
-independence property. -/
+/-- **Scottish Book Problem 180 (Kampé de Fériet's claim).** The claim that for every probability
+space $(\Omega, \mu)$ that carries a measurable random variable $U : \Omega \to \mathbb{R}$
+uniformly distributed on $[0, 1]$, and every stationary random function $v$ on $\Omega$ (in the
+sense of Slutsky and Khinchin) such that each $v_t : \Omega \to \mathbb{R}$ is measurable, there
+exist a measurable random variable $A : \Omega \to \mathbb{R}$ uniformly distributed on $[0, 1]$
+and a map $\varphi : \mathbb{R} \to \Omega$ such that $A(\varphi(\alpha)) = \alpha$ for every
+$\alpha \in [0, 1]$, and such that for all real $t_1 \ne t_2$ the functions
+$\alpha \mapsto v_{t_1}(\varphi(\alpha))$ and $\alpha \mapsto v_{t_2}(\varphi(\alpha))$ are
+independent with respect to Lebesgue measure on $[0, 1]$.
+
+Here a variable is uniformly distributed on $[0, 1]$ when its law is Lebesgue measure restricted
+to $[0, 1]$. The equation $A(\varphi(\alpha)) = \alpha$ is condition (1) of the problem and the
+independence, in the sense of Steinhaus, is condition (2). The existence of $U$ is an added
+hypothesis; it rules out refutations that only exploit a space carrying no uniform variable. -/
 def ScottishBookProblem180Claim : Prop :=
   ∀ (Ω : Type*) [MeasurableSpace Ω] (μ : MeasureTheory.Measure Ω),
     MeasureTheory.IsProbabilityMeasure μ →
@@ -61,24 +64,22 @@ def ScottishBookProblem180Claim : Prop :=
           (MeasureTheory.volume.restrict (Set.Icc (0 : ℝ) 1))
 
 /--
-Scottish Book Problem 180 is false as stated. Counterexample: take
-`Ω = ℝ` (Borel), `μ = volume.restrict (Set.Icc 0 1)`, and the
-constant-in-time process `v t ω = ω - 1 / 2` for all `t`. It is
-stationary with `c = 1 / 12`, `R ≡ 1 / 12`, by genuine finite
-integrals (`∫₀¹ (ω - 1/2) dω = 0`, `∫₀¹ (ω - 1/2)² dω = 1 / 12`), and
-the uniform-variable hypothesis holds with `U = id`. The process is
-bounded, hence integrable with finite moments, so the totalization
-loophole for Bochner integrals plays no role here. If witnesses
-`A, φ` existed, then `A (φ α) = α` for `α ∈ [0,1]` would make `φ`
-injective on `[0,1]`. But for `t₁ ≠ t₂` both `α`-functions are the
-same function `f α = φ α - 1 / 2`, so the conclusion demands
-`IndepFun f f` under Lebesgue measure on `[0,1]`; Mathlib's
-characterisation (`indepFun_iff_measure_inter_preimage_eq_mul`, no
-measurability hypothesis) then gives, for every Borel `S`,
-`μ (f ⁻¹' S) ∈ {0, 1}`, and a dyadic-interval argument gives a `c`
-with `f` a.e. constant, contradicting injectivity of `φ`, hence of
-`f`. No non-degeneracy hypothesis is added: the source asks for none,
-and such a hypothesis would be a new problem, not a transcription fix.
+**Scottish Book Problem 180 fails.** The claim of Scottish Book Problem 180 is false: there are a
+probability space $(\Omega, \mu)$ carrying a measurable random variable uniformly distributed on
+$[0, 1]$ and a stationary random function $v$ on $\Omega$ with every $v_t$ measurable, such that
+no measurable random variable $A : \Omega \to \mathbb{R}$ uniformly distributed on $[0, 1]$ and no
+map $\varphi : \mathbb{R} \to \Omega$ satisfy both $A(\varphi(\alpha)) = \alpha$ for every
+$\alpha \in [0, 1]$ and, for all real $t_1 \ne t_2$, the independence of
+$\alpha \mapsto v_{t_1}(\varphi(\alpha))$ and $\alpha \mapsto v_{t_2}(\varphi(\alpha))$ with
+respect to Lebesgue measure on $[0, 1]$.
+
+A counterexample is $\Omega = \mathbb{R}$ with $\mu$ Lebesgue measure restricted to $[0, 1]$, the
+identity as uniform variable, and $v_t(\omega) = \omega - 1/2$ for every $t$, which is stationary
+with $c = R(h) = 1/12$. If $A$ and $\varphi$ existed, $\varphi$ would be injective on $[0, 1]$,
+while both functions in the independence condition equal $f(\alpha) = \varphi(\alpha) - 1/2$. A
+function independent of itself is almost everywhere constant, and an injective function on
+$[0, 1]$ is not. No non-degeneracy hypothesis is added, since the source asks for none.
+
 Source: J. Kampe de Feriet, Problem 180 of the Scottish Book,
 typescript PDF pp. 82-83, printed pp. 79-80; see the commentary in
 R. D. Mauldin (ed.), The Scottish Book, 2nd ed. (Birkhäuser, 2015).

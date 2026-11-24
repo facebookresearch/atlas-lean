@@ -87,8 +87,12 @@ set_option quotPrecheck false in
 local notation "IsUnitMulSq" Q:max r:max => ∃ U ∈ 𝐇, Quaternion.normSq U = 1 ∧
   ∃ R ∈ 𝐇, Quaternion.normSq R = ((r : ℕ) : ℚ) ∧ Q = U * R ^ 2
 
-/-- For every positive integer `N`, the number of Hurwitz quaternions of norm `N` is
-`24 σ_odd(N)`, where `σ_odd(N)` is the sum of the odd divisors of `N`.
+/-- **Number of Hurwitz quaternions of a given norm.** A Hurwitz quaternion is a quaternion
+$q = x_0 + x_1 i + x_2 j + x_3 k$ whose rational coordinates $x_0, x_1, x_2, x_3$ are either all
+integers or all halves of odd integers, and its norm is
+$\mathrm{Nm}(q) = x_0^2 + x_1^2 + x_2^2 + x_3^2$. For every positive integer $N$, the number of
+Hurwitz quaternions of norm $N$ is $24 \sum_{d \mid N,\ d \text{ odd}} d$, that is, $24$ times
+the sum of the odd divisors of $N$.
 
 Source: Asada, Fang, Fourakis, Manski, McNew, Miller, Moreland, Yamin, and Zhang, *Avoiding
 3-Term Geometric Progressions in Hurwitz Quaternions*, J. Integer Seq. 27 (2024), Article
@@ -97,10 +101,20 @@ public theorem_wanted card_hurwitz_norm_eq (N : ℕ) (hN : 0 < N) :
     (Set.ofPred fun q : Quaternion ℚ => q ∈ 𝐇 ∧ Quaternion.normSq q = (N : ℚ)).ncard =
       24 * ∑ d ∈ N.divisors with Odd d, d
 
-/-- (a) The number of nonzero Hurwitz quaternions of norm at most `N` is
-`π² N² + O(N log N)`. (b) For a fixed positive integer `M`, the number of those whose norm is
-coprime to `M` is `π² N² · (φ(2M)/M) ∏_{p ∣ M} (1 - p⁻²) + O(N log N)`. The `O`-terms are
-explicit constants valid for `N ≥ 2`.
+/-- **Counting Hurwitz quaternions of bounded norm.** A Hurwitz quaternion is a quaternion whose
+four rational coordinates are either all integers or all halves of odd integers; its norm is the
+sum of the squares of its coordinates. For a natural number $N$ let $S(N)$ be the set of nonzero
+Hurwitz quaternions of norm at most $N$.
+
+(a) There is a real constant $C$ such that $\bigl| |S(N)| - \pi^2 N^2 \bigr| \le C N \log N$ for
+every natural number $N \ge 2$.
+
+(b) For every positive integer $M$ there is a real constant $C$ such that, for every natural
+number $N \ge 2$, the number $c_M(N)$ of Hurwitz quaternions whose norm is a positive integer
+$n \le N$ coprime to $M$ satisfies
+$$\Bigl| c_M(N) - \pi^2 N^2 \cdot \frac{\varphi(2M)}{M}
+\prod_{p \mid M} \Bigl(1 - \frac{1}{p^2}\Bigr) \Bigr| \le C N \log N,$$
+where $\varphi$ is Euler's totient function and the product runs over the primes $p$ dividing $M$.
 
 Source: Asada, Fang, Fourakis, Manski, McNew, Miller, Moreland, Yamin, and Zhang, *Avoiding
 3-Term Geometric Progressions in Hurwitz Quaternions*, J. Integer Seq. 27 (2024), Article
@@ -114,10 +128,16 @@ public theorem_wanted card_hurwitz_norm_le_asymptotic :
           Real.pi ^ 2 * (N : ℝ) ^ 2 * ((Nat.totient (2 * M) : ℝ) / M) *
             ∏ p ∈ M.primeFactors, (1 - 1 / (p : ℝ) ^ 2)| ≤ C * N * Real.log N
 
-/-- Let `A ⊆ ℕ` and `G = {n ≥ 1 : ν_p(n) ∈ A for all primes p}`. Then the set `S(G)` of
-Hurwitz quaternions with norm in `G` has density
-`(1/ζ(2)) (∑_{k ∈ A} 2^{-2k}) ∏_{p > 2} (∑_{k ∈ A} p^{-k} - p⁻¹ ∑_{k ∈ A} p^{-2k})`,
-with `1/ζ(2)` written as `6/π²`.
+/-- **Density of Hurwitz quaternions whose norm has prescribed prime exponents.** A Hurwitz
+quaternion is a quaternion whose four rational coordinates are either all integers or all halves
+of odd integers; its norm is the sum of the squares of its coordinates. For a natural number $N$
+let $S(N)$ be the set of nonzero Hurwitz quaternions of norm at most $N$. Let $A$ be a set of
+natural numbers, let $G$ be the set of positive integers $n$ such that for every prime $p$ the
+exponent $\nu_p(n)$ of $p$ in $n$ lies in $A$, and let $H_G$ be the set of Hurwitz quaternions
+whose norm lies in $G$. Then the ratio $|H_G \cap S(N)| / |S(N)|$ tends, as $N \to \infty$, to
+$$\frac{6}{\pi^2} \Bigl( \sum_{k \in A} 2^{-2k} \Bigr)
+\prod_{p > 2} \Bigl( \sum_{k \in A} p^{-k} - \frac{1}{p} \sum_{k \in A} p^{-2k} \Bigr),$$
+the product running over the odd primes $p$. Here $6/\pi^2 = 1/\zeta(2)$.
 
 Source: Asada, Fang, Fourakis, Manski, McNew, Miller, Moreland, Yamin, and Zhang, *Avoiding
 3-Term Geometric Progressions in Hurwitz Quaternions*, J. Integer Seq. 27 (2024), Article
@@ -132,10 +152,20 @@ public theorem_wanted density_hurwitz_norm_valuations_in (A : Set ℕ) :
           (∑' k : A, 1 / ((p : ℕ) : ℝ) ^ (k : ℕ) -
             1 / ((p : ℕ) : ℝ) * ∑' k : A, 1 / ((p : ℕ) : ℝ) ^ (2 * (k : ℕ)))))
 
-/-- The set `S(G₃*(ℕ₊))` of Hurwitz quaternions whose norm lies in Rankin's greedy set has
-density `(f(2²)/ζ(2)) ∏_{p > 2} (f(p) - f(p²)/p)`, where `f(x) = ∏_{i ≥ 0} (1 + x^{-3^i})`
-and `1/ζ(2)` is written as `6/π²`. The paper's numerical value `≈ 0.782643` is not part of the
-statement.
+/-- **Density of Hurwitz quaternions with norm in Rankin's greedy set.** A Hurwitz quaternion is a
+quaternion whose four rational coordinates are either all integers or all halves of odd integers;
+its norm is the sum of the squares of its coordinates. For a natural number $N$ let $S(N)$ be the
+set of nonzero Hurwitz quaternions of norm at most $N$. Let $G$ be the set of positive integers
+$n$ such that, for every prime $p$, the base-$3$ digits of the exponent $\nu_p(n)$ of $p$ in $n$
+include no $2$ (this is Rankin's greedy set of positive integers avoiding 3-term geometric
+progressions), and let $H_G$ be the set of Hurwitz quaternions whose norm lies in $G$. With
+$f(x) = \prod_{i \ge 0} \bigl(1 + x^{-3^i}\bigr)$, the ratio $|H_G \cap S(N)| / |S(N)|$ tends,
+as $N \to \infty$, to
+$$\frac{6}{\pi^2} \, f(4) \prod_{p > 2} \Bigl( f(p) - \frac{f(p^2)}{p} \Bigr),$$
+the product running over the odd primes $p$.
+
+The paper writes this constant as $(f(2^2)/\zeta(2)) \prod_{p > 2} (f(p) - f(p^2)/p)$, using
+$1/\zeta(2) = 6/\pi^2$, and gives its value as approximately $0.782643$.
 
 Source: Asada, Fang, Fourakis, Manski, McNew, Miller, Moreland, Yamin, and Zhang, *Avoiding
 3-Term Geometric Progressions in Hurwitz Quaternions*, J. Integer Seq. 27 (2024), Article
@@ -147,10 +177,17 @@ public theorem_wanted density_hurwitz_norm_in_rankin_greedy :
           ((∏' i : ℕ, (1 + 1 / ((p : ℕ) : ℝ) ^ (3 ^ i))) -
             (∏' i : ℕ, (1 + 1 / (((p : ℕ) : ℝ) ^ 2) ^ (3 ^ i))) / ((p : ℕ) : ℝ))))
 
-/-- Let `T_N` be the set of positive integers in
-`(N/48, N/45] ∪ (N/40, N/36] ∪ (N/32, N/27] ∪ (N/24, N/12] ∪ (N/9, N/8] ∪ (N/4, N]` and let
-`𝒮 = ⋃_{i ≥ 1} T_{N_i}` with `N_i = 48^{2^i}`. Then the upper density of `S(𝒮)` in `Q_Hur` is
-`17665627/18662400`.
+/-- **Upper density of Hurwitz quaternions with norms in a lacunary union of intervals.** Let
+$Q_{\mathrm{Hur}}$ be the set of Hurwitz quaternions, the rational quaternions whose four
+coordinates are all integers or all lie in $\mathbb{Z} + \tfrac12$, and let $\mathrm{Nm}(q)$ be
+the sum of the squares of the coordinates of $q$. For $N \in \mathbb{N}$ let $S(N)$ be the set of
+nonzero $q \in Q_{\mathrm{Hur}}$ with $\mathrm{Nm}(q) \le N$, and define the upper density of a
+set $A$ of quaternions as $\limsup_{N \to \infty} |A \cap S(N)| / |S(N)|$. For a natural number
+$M$ let $T_M$ be the set of positive integers in $(M/48, M/45] \cup (M/40, M/36] \cup
+(M/32, M/27] \cup (M/24, M/12] \cup (M/9, M/8] \cup (M/4, M]$, and let
+$\mathcal{S} = \bigcup_{i \ge 1} T_{N_i}$ with $N_i = 48^{2^i}$. Then the set of
+$q \in Q_{\mathrm{Hur}}$ with $\mathrm{Nm}(q) \in \mathcal{S}$ has upper density
+$17665627/18662400$.
 
 Source: Asada, Fang, Fourakis, Manski, McNew, Miller, Moreland, Yamin, and Zhang, *Avoiding
 3-Term Geometric Progressions in Hurwitz Quaternions*, J. Integer Seq. 27 (2024), Article
@@ -164,10 +201,17 @@ public theorem_wanted upperDensity_hurwitz_norm_in_interval_union :
             (M / 9 < n ∧ (n : ℚ) ≤ M / 8) ∨ (M / 4 < n ∧ (n : ℚ) ≤ M))) N) Filter.atTop =
       17665627 / 18662400
 
-/-- Fix a Hurwitz quaternion `R` of norm `2`, and for `n : ℕ` let `E_n(N)` be the set of triples
-`(b R^{3n}, b R^{3n+1}, b R^{3n+2})` with `b ∈ Q_Hur`, `Nm(b)` odd and
-`Nm(b) ≤ N / 2^{3n+2}`. The union `E(N) = ⋃_n E_n(N)` consists of pairwise disjoint 3-term
-geometric progressions contained in `S(N)³`, and `|E(N)| = π² N²/21 + O(N (log N)²)`.
+/-- **Many disjoint geometric progressions among Hurwitz quaternions.** A Hurwitz quaternion is a
+quaternion whose four rational coordinates are either all integers or all halves of odd integers;
+its norm is the sum of the squares of its coordinates. For a natural number $N$ let $S(N)$ be the
+set of nonzero Hurwitz quaternions of norm at most $N$. Fix a Hurwitz quaternion $R$ of norm $2$,
+and for a natural number $N$ let $E(N)$ be the set of triples $(bR^{3n}, bR^{3n+1}, bR^{3n+2})$,
+where $n$ is a natural number and $b$ is a Hurwitz quaternion whose norm is an odd integer at
+most $N / 2^{3n+2}$. Then for every $N$, every triple in $E(N)$ has the form $(a, aR, aR^2)$ with
+all three entries in $S(N)$, and two distinct triples in $E(N)$ have no entry in common.
+Moreover there is a real constant $C$ such that
+$$\Bigl| |E(N)| - \frac{\pi^2 N^2}{21} \Bigr| \le C N (\log N)^2$$
+for every natural number $N \ge 2$.
 
 Source: Asada, Fang, Fourakis, Manski, McNew, Miller, Moreland, Yamin, and Zhang, *Avoiding
 3-Term Geometric Progressions in Hurwitz Quaternions*, J. Integer Seq. 27 (2024), Article
@@ -185,8 +229,14 @@ public theorem_wanted disjoint_progressions_hurwitz_card (R : Quaternion ℚ) (h
     ∃ C : ℝ, ∀ N : ℕ, 2 ≤ N →
       |((E N).ncard : ℝ) - Real.pi ^ 2 * (N : ℝ) ^ 2 / 21| ≤ C * N * Real.log N ^ 2
 
-/-- Every set of Hurwitz quaternions avoiding 3-term geometric progressions has upper density
-at most `20/21`.
+/-- **Upper bound for geometric-progression-free Hurwitz sets.** Let $Q_{\mathrm{Hur}}$ be the
+set of Hurwitz quaternions, the rational quaternions whose four coordinates are all integers or
+all lie in $\mathbb{Z} + \tfrac12$, and let $\mathrm{Nm}(q)$ be the sum of the squares of the
+coordinates of $q$. For $N \in \mathbb{N}$ let $S(N)$ be the set of nonzero
+$q \in Q_{\mathrm{Hur}}$ with $\mathrm{Nm}(q) \le N$. Let $A \subseteq Q_{\mathrm{Hur}}$ be free
+of 3-term geometric progressions: there are no $a, r \in Q_{\mathrm{Hur}}$ with $a \ne 0$,
+$r \ne 0$ and $\mathrm{Nm}(r) \ne 1$ such that $a$, $ar$ and $ar^2$ all lie in $A$. Then the
+upper density $\limsup_{N \to \infty} |A \cap S(N)| / |S(N)|$ of $A$ is at most $20/21$.
 
 Source: Asada, Fang, Fourakis, Manski, McNew, Miller, Moreland, Yamin, and Zhang, *Avoiding
 3-Term Geometric Progressions in Hurwitz Quaternions*, J. Integer Seq. 27 (2024), Article
@@ -195,9 +245,16 @@ public theorem_wanted upperDensity_le_of_hurwitz_gpFree (A : Set (Quaternion ℚ
     (hA : GPFree A) :
     Filter.limsup (fun N : ℕ => ρ A N) Filter.atTop ≤ 20 / 21
 
-/-- The supremum `m̄_Hur` of the upper densities of sets of Hurwitz quaternions avoiding 3-term
-geometric progressions satisfies `17665627/18662400 ≤ m̄_Hur ≤ 20/21`. The paper's decimal
-approximations are not part of the statement.
+/-- **Bounds on the supremum of upper densities of geometric-progression-free Hurwitz sets.** Let
+$Q_{\mathrm{Hur}}$ be the set of Hurwitz quaternions, the rational quaternions whose four
+coordinates are all integers or all lie in $\mathbb{Z} + \tfrac12$, and let $\mathrm{Nm}(q)$ be
+the sum of the squares of the coordinates of $q$. For $N \in \mathbb{N}$ let $S(N)$ be the set of
+nonzero $q \in Q_{\mathrm{Hur}}$ with $\mathrm{Nm}(q) \le N$, and define the upper density of a
+set $A$ of quaternions as $\limsup_{N \to \infty} |A \cap S(N)| / |S(N)|$. Call
+$A \subseteq Q_{\mathrm{Hur}}$ free of 3-term geometric progressions if there are no
+$a, r \in Q_{\mathrm{Hur}}$ with $a \ne 0$, $r \ne 0$ and $\mathrm{Nm}(r) \ne 1$ such that $a$,
+$ar$ and $ar^2$ all lie in $A$. Let $\bar m_{\mathrm{Hur}}$ be the supremum of the upper
+densities of such sets. Then $17665627/18662400 \le \bar m_{\mathrm{Hur}} \le 20/21$.
 
 Source: Asada, Fang, Fourakis, Manski, McNew, Miller, Moreland, Yamin, and Zhang, *Avoiding
 3-Term Geometric Progressions in Hurwitz Quaternions*, J. Integer Seq. 27 (2024), Article
@@ -207,8 +264,17 @@ public theorem_wanted sSup_upperDensity_hurwitz_gpFree_bounds :
       Filter.limsup (fun N : ℕ => ρ A N) Filter.atTop = x)
     17665627 / 18662400 ≤ m ∧ m ≤ 20 / 21
 
-/-- The quaternion greedy set contains every Hurwitz quaternion of squarefree norm, and its
-lower density is at least `60 / (7 π² ζ(3))`, with `ζ(3) = ∑_{n ≥ 1} n⁻³`.
+/-- **Squarefree norms and the lower density of the quaternion greedy set.** A Hurwitz quaternion is
+a quaternion whose four rational coordinates are either all integers or all halves of odd integers;
+the norm $\mathrm{Nm}(q)$ of a quaternion $q$ is the sum of the squares of its coordinates. For a
+natural number $N$ let $S(N)$ be the set of nonzero Hurwitz quaternions of norm at most $N$. Let
+$\mathcal{G}$ be a set of quaternions such that a quaternion $q$ lies in $\mathcal{G}$ if and only
+if $q$ is a nonzero Hurwitz quaternion and there are no $a \in \mathcal{G}$ and Hurwitz quaternion
+$r \ne 0$ with norm $\mathrm{Nm}(r) \ne 1$, $ar \in \mathcal{G}$ and $q = ar^2$ (this recursion on
+the norm characterizes the quaternion greedy set). Then $\mathcal{G}$ contains every Hurwitz
+quaternion whose norm is a squarefree natural number, and
+$$\liminf_{N \to \infty} \frac{|\mathcal{G} \cap S(N)|}{|S(N)|} \ge \frac{60}{7 \pi^2 \zeta(3)},$$
+where $\zeta(3) = \sum_{n \ge 1} n^{-3}$.
 
 Source: Asada, Fang, Fourakis, Manski, McNew, Miller, Moreland, Yamin, and Zhang, *Avoiding
 3-Term Geometric Progressions in Hurwitz Quaternions*, J. Integer Seq. 27 (2024), Article
@@ -219,7 +285,14 @@ public theorem_wanted quaternionGreedy_squarefree_norm_and_lowerDensity
       60 / (7 * Real.pi ^ 2 * ∑' n : ℕ, 1 / ((n : ℝ) + 1) ^ 3) ≤
         Filter.liminf (fun N : ℕ => ρ Gq N) Filter.atTop
 
-/-- The quaternion greedy set is not of the form `S(G)` for any set `G` of positive integers.
+/-- **The quaternion greedy set is not determined by norms.** A Hurwitz quaternion is a quaternion
+whose four rational coordinates are either all integers or all halves of odd integers; the norm
+$\mathrm{Nm}(q)$ of a quaternion $q$ is the sum of the squares of its coordinates. Let
+$\mathcal{G}$ be a set of quaternions such that a quaternion $q$ lies in $\mathcal{G}$ if and only
+if $q$ is a nonzero Hurwitz quaternion and there are no $a \in \mathcal{G}$ and Hurwitz quaternion
+$r \ne 0$ with norm $\mathrm{Nm}(r) \ne 1$, $ar \in \mathcal{G}$ and $q = ar^2$ (this recursion on
+the norm characterizes the quaternion greedy set). Then for every set $G$ of positive integers,
+$\mathcal{G}$ is not the set of Hurwitz quaternions whose norm lies in $G$.
 
 Source: Asada, Fang, Fourakis, Manski, McNew, Miller, Moreland, Yamin, and Zhang, *Avoiding
 3-Term Geometric Progressions in Hurwitz Quaternions*, J. Integer Seq. 27 (2024), Article
@@ -229,8 +302,17 @@ public theorem_wanted quaternionGreedy_ne_norm_preimage
     (hG : ∀ n ∈ G, 0 < n) :
     Gq ≠ 𝐒ᴳ G
 
-/-- Both differences `G₃*(Q_Hur ∖ {0}) ∖ S(G₃*(ℕ₊))` and `S(G₃*(ℕ₊)) ∖ G₃*(Q_Hur ∖ {0})`
-between the quaternion greedy set and the norm preimage of Rankin's greedy set are infinite.
+/-- **The quaternion greedy set and the norm preimage of Rankin's set differ infinitely.** A
+Hurwitz quaternion is a quaternion whose four rational coordinates are either all integers or all
+halves of odd integers; the norm $\mathrm{Nm}(q)$ of a quaternion $q$ is the sum of the squares of
+its coordinates. Let $\mathcal{G}$ be a set of quaternions such that a quaternion $q$ lies in
+$\mathcal{G}$ if and only if $q$ is a nonzero Hurwitz quaternion and there are no
+$a \in \mathcal{G}$ and Hurwitz quaternion $r \ne 0$ with norm $\mathrm{Nm}(r) \ne 1$,
+$ar \in \mathcal{G}$ and $q = ar^2$ (this recursion on the norm characterizes the quaternion
+greedy set). Let $G^*_3$ be Rankin's greedy set, the set of positive integers $n$ such that for
+every prime $p$ the base-$3$ digits of the exponent of $p$ in $n$ include no digit $2$, and let
+$S(G^*_3)$ be the set of Hurwitz quaternions whose norm lies in $G^*_3$. Then both
+$\mathcal{G} \setminus S(G^*_3)$ and $S(G^*_3) \setminus \mathcal{G}$ are infinite.
 
 Source: Asada, Fang, Fourakis, Manski, McNew, Miller, Moreland, Yamin, and Zhang, *Avoiding
 3-Term Geometric Progressions in Hurwitz Quaternions*, J. Integer Seq. 27 (2024), Article
@@ -239,9 +321,14 @@ public theorem_wanted quaternionGreedy_diff_rankin_infinite
     (Gq : Set (Quaternion ℚ)) (hGq : IsQuaternionGreedy Gq) :
     (Gq \ 𝐒ᴳ 𝐆ʳ).Infinite ∧ (𝐒ᴳ 𝐆ʳ \ Gq).Infinite
 
-/-- If a positive integer `r` is not a sum of three integer squares, or is divisible by an odd
-integer greater than `24`, then some Hurwitz quaternion `Q` of norm `r²` is not of the form
-`U R²` with `U` a unit and `Nm(R) = r`; in the first case `Q = r` works.
+/-- **Hurwitz quaternions of square norm that are not a unit times a square.** A Hurwitz
+quaternion is a quaternion whose four rational coordinates are either all integers or all halves
+of odd integers; its norm is the sum of the squares of its coordinates, and a Hurwitz unit is a
+Hurwitz quaternion of norm $1$. Let $r$ be a positive integer that is not a sum of three squares
+of integers, or that is divisible by an odd integer greater than $24$. Then some Hurwitz
+quaternion $Q$ of norm $r^2$ cannot be written as $Q = UR^2$ with $U$ a Hurwitz unit and $R$ a
+Hurwitz quaternion of norm $r$. If $r$ is not a sum of three squares of integers, then $Q = r$,
+viewed as a quaternion with zero imaginary part, is such a quaternion.
 
 Source: Asada, Fang, Fourakis, Manski, McNew, Miller, Moreland, Yamin, and Zhang, *Avoiding
 3-Term Geometric Progressions in Hurwitz Quaternions*, J. Integer Seq. 27 (2024), Article
@@ -252,9 +339,19 @@ public theorem_wanted exists_hurwitz_norm_sq_not_unit_mul_sq (r : ℕ) (hr : 0 <
       ((¬ ∃ a b c : ℕ, r = a ^ 2 + b ^ 2 + c ^ 2) →
         ¬ IsUnitMulSq ((r : ℚ) : Quaternion ℚ) r)
 
-/-- Let `p` be a prime and `Q` a Hurwitz quaternion of norm `p²` that is not of the form `U R²`
-with `U` a unit and `Nm(R) = p`. Then `Q` lies in the quaternion greedy set but not in
-`S(G₃*(ℕ₊))`, and `Q²` lies in `S(G₃*(ℕ₊))` but not in the quaternion greedy set.
+/-- **Quaternions of prime-square norm separating the greedy set from Rankin's set.** A Hurwitz
+quaternion is a quaternion whose four rational coordinates are either all integers or all halves
+of odd integers; its norm $\mathrm{Nm}(q)$ is the sum of the squares of its coordinates, and a
+Hurwitz unit is a Hurwitz quaternion of norm $1$. Let $\mathcal{G}$ be a set of quaternions such
+that a quaternion $q$ lies in $\mathcal{G}$ if and only if $q$ is a nonzero Hurwitz quaternion
+and there are no $a \in \mathcal{G}$ and Hurwitz quaternion $r \ne 0$ with $\mathrm{Nm}(r) \ne 1$,
+$ar \in \mathcal{G}$ and $q = ar^2$ (this recursion on the norm characterizes the quaternion
+greedy set). Let $G^*_3$ be Rankin's greedy set, the set of positive integers $n$ such that for
+every prime $\ell$ the base-$3$ digits of the exponent of $\ell$ in $n$ include no digit $2$, and
+let $S(G^*_3)$ be the set of Hurwitz quaternions whose norm lies in $G^*_3$. Let $p$ be a prime
+and $Q$ a Hurwitz quaternion of norm $p^2$ that cannot be written as $Q = UR^2$ with $U$ a
+Hurwitz unit and $R$ a Hurwitz quaternion of norm $p$. Then
+$Q \in \mathcal{G} \setminus S(G^*_3)$ and $Q^2 \in S(G^*_3) \setminus \mathcal{G}$.
 
 Source: Asada, Fang, Fourakis, Manski, McNew, Miller, Moreland, Yamin, and Zhang, *Avoiding
 3-Term Geometric Progressions in Hurwitz Quaternions*, J. Integer Seq. 27 (2024), Article

@@ -7,3 +7,4 @@ Representations of infinite groups and Lie algebras: continuous and unitary repr
 - [Schur–Weyl duality](schur-weyl-duality/README.md)
 - [Tensor squares of exceptional Lie algebra representations](tensor-squares-of-exceptional-lie-algebra-repres/README.md)
 - [Continuous semilinear representation](is-continuous-semilinear-representation.md)
+- [Branching from $\mathrm{GL}_{n+1}(\mathbb{C})$ to $\mathrm{GL}_n(\mathbb{C})$](gl-branching-rule.md)

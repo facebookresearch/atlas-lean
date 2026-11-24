@@ -23,48 +23,68 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Normal second-order number sequence with nonzero integer coefficients:
-`u_1 = 1`, `u_2 = a1`, `u_(n+2) = a1 * u_(n+1) + a2 * u_n`.
-Concept `jis_sem_341d671b9a22383202776b02`;
-source `jis_source_6670e6fe84c03e3ab211c809`.
-The Lean totalization sets `u_0 = 0`; source indices `u_1`, `u_2` are unshifted. -/
+/-- **Normal second-order number sequence.** For integers $a_1$ and $a_2$, the normal
+second-order number sequence $(u_n)_{n \ge 0}$ with coefficients $a_1, a_2$ is the integer
+sequence defined by $u_0 = 0$, $u_1 = 1$ and $u_{n+2} = a_1 u_{n+1} + a_2 u_n$ for every
+$n \ge 0$.
+
+The source requires $a_1$ and $a_2$ to be nonzero and starts the sequence at $u_1$; the value
+$u_0 = 0$ extends it, and the indices $u_1, u_2, \dots$ agree with the source.
+
+Source: concept `jis_sem_341d671b9a22383202776b02`; source
+`jis_source_6670e6fe84c03e3ab211c809`. -/
 def normalSeq (a1 a2 : ℤ) : ℕ → ℤ
   | 0 => 0
   | 1 => 1
   | (n + 2) => a1 * normalSeq a1 a2 (n + 1) + a2 * normalSeq a1 a2 n
 
-/-- First source term `u_1 = 1` (the source assumes nonzero coefficients).
-Concept `jis_sem_341d671b9a22383202776b02`;
-source `jis_source_6670e6fe84c03e3ab211c809`. -/
+/-- **First term of a normal number sequence.** For all integers $a_1$ and $a_2$, the normal
+second-order number sequence $(u_n)_{n \ge 0}$ with coefficients $a_1, a_2$ has $u_1 = 1$.
+
+Source: concept `jis_sem_341d671b9a22383202776b02`; source
+`jis_source_6670e6fe84c03e3ab211c809`. -/
 theorem normalSeq_one (a1 a2 : ℤ) :
     normalSeq a1 a2 1 = 1 := by
   simp [normalSeq]
 
-/-- Second source term `u_2 = a1` (the source assumes nonzero coefficients).
-Concept `jis_sem_341d671b9a22383202776b02`;
-source `jis_source_6670e6fe84c03e3ab211c809`. -/
+/-- **Second term of a normal number sequence.** For all integers $a_1$ and $a_2$, the normal
+second-order number sequence $(u_n)_{n \ge 0}$ with coefficients $a_1, a_2$ has $u_2 = a_1$.
+
+Source: concept `jis_sem_341d671b9a22383202776b02`; source
+`jis_source_6670e6fe84c03e3ab211c809`. -/
 theorem normalSeq_two (a1 a2 : ℤ) :
     normalSeq a1 a2 2 = a1 := by
   simp [normalSeq]
 
-/-- General second-order recurrence (the source assumes nonzero coefficients).
-Concept `jis_sem_341d671b9a22383202776b02`;
-source `jis_source_6670e6fe84c03e3ab211c809`. -/
+/-- **Recurrence for a normal number sequence.** For all integers $a_1$ and $a_2$ and every
+natural number $n$, the normal second-order number sequence $(u_n)_{n \ge 0}$ with coefficients
+$a_1, a_2$ satisfies $u_{n+2} = a_1 u_{n+1} + a_2 u_n$.
+
+Source: concept `jis_sem_341d671b9a22383202776b02`; source
+`jis_source_6670e6fe84c03e3ab211c809`. -/
 theorem normalSeq_recurrence (a1 a2 : ℤ) (n : ℕ) :
     normalSeq a1 a2 (n + 2) =
       a1 * normalSeq a1 a2 (n + 1) + a2 * normalSeq a1 a2 n := by
   simp [normalSeq]
 
-/-- Specialization `a1 = a`, `a2 = 1` with `a` a nonzero integer.
-Concept `jis_sem_341d671b9a22383202776b02`;
-source `jis_source_6670e6fe84c03e3ab211c809`. -/
+/-- **Normal number sequence with second coefficient one.** For an integer $a$, this sequence is
+the normal second-order number sequence $(u_n)_{n \ge 0}$ with coefficients $a_1 = a$ and
+$a_2 = 1$; that is, $u_0 = 0$, $u_1 = 1$ and $u_{n+2} = a u_{n+1} + u_n$ for every $n \ge 0$.
+
+The source takes $a$ to be a nonzero integer; the definition allows every integer $a$.
+
+Source: concept `jis_sem_341d671b9a22383202776b02`; source
+`jis_source_6670e6fe84c03e3ab211c809`. -/
 def normalSeqFib (a : ℤ) : ℕ → ℤ :=
   fun n => normalSeq a 1 n
 
-/-- Addition formula for the specialized sequence; directly supports the
-odd-index identity.
-Concept `jis_sem_341d671b9a22383202776b02`;
-source `jis_source_6670e6fe84c03e3ab211c809`. -/
+/-- **Addition formula for the normal sequence with second coefficient one.** Let $a$ be an
+integer and let $(u_n)_{n \ge 0}$ be the normal second-order number sequence with coefficients
+$a_1 = a$ and $a_2 = 1$. Then $u_{m+n+1} = u_{m+1} u_{n+1} + u_m u_n$ for all natural numbers
+$m$ and $n$.
+
+Source: concept `jis_sem_341d671b9a22383202776b02`; source
+`jis_source_6670e6fe84c03e3ab211c809`. -/
 theorem normalSeqFib_add (a : ℤ) (m n : ℕ) :
     normalSeqFib a (m + n + 1) =
       normalSeqFib a (m + 1) * normalSeqFib a (n + 1) +
@@ -120,12 +140,15 @@ theorem normalSeqFib_add (a : ℤ) (m n : ℕ) :
         ring
   exact (key m).1 n
 
-/-- Odd-index identity `u_(2n-1) = u_n ^ 2 + u_(n-1) ^ 2` for the specialized
-    sequence and `n ≥ 2` (so `2n - 1 ≥ 3`). It remains valid without the
-    source's assumption `a ≠ 0`.
-Concept `jis_sem_341d671b9a22383202776b02`;
-source `jis_source_6670e6fe84c03e3ab211c809`;
-statement `jis_225330004269597626fa0967`. -/
+/-- **Odd-index sum of two squares for the normal sequence with second coefficient one.**
+Let $a$ be an integer and let $(u_n)_{n \ge 0}$ be the normal second-order number sequence with
+coefficients $a_1 = a$ and $a_2 = 1$. Then $u_{2n-1} = u_n^2 + u_{n-1}^2$ for every natural
+number $n \ge 2$.
+
+The source assumes $a \ne 0$; the identity holds for every integer $a$.
+
+Source: concept `jis_sem_341d671b9a22383202776b02`; source
+`jis_source_6670e6fe84c03e3ab211c809`; statement `jis_225330004269597626fa0967`. -/
 theorem normalSeq_odd_identity (a : ℤ) (n : ℕ) (hn : 2 ≤ n) :
     normalSeqFib a (2 * n - 1) =
       (normalSeqFib a n) ^ 2 + (normalSeqFib a (n - 1)) ^ 2 := by

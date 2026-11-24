@@ -141,7 +141,7 @@ variable {x : ℕ → ℝ}
 
 theorem descLadderEpoch_spec (h : HasDescLadder x) :
     0 < descLadderEpoch x ∧ ∑ i ∈ range (descLadderEpoch x), x i < 0 :=
-  Nat.sInf_mem h
+  Nat.sInf_mem (s := {k | 0 < k ∧ ∑ i ∈ range k, x i < 0}) h
 
 theorem descLadderEpoch_pos (h : HasDescLadder x) : 0 < descLadderEpoch x :=
   (descLadderEpoch_spec h).1

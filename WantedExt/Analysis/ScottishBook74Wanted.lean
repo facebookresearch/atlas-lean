@@ -23,19 +23,33 @@ open scoped BigOperators
 
 namespace MathlibExt.Analysis.ScottishBook74Wanted
 
-/-- Evaluation of the homogeneous polynomial with coefficient function
-`a` at `t`, summing over exponent multi-indices of total degree `n`.
+/-- **Evaluation of a homogeneous polynomial.** Given a natural number $n$, real coefficients
+$a_k$ indexed by multi-indices $k = (k_1, \dots, k_n) \in \mathbb{N}^n$, and a point
+$t = (t_1, \dots, t_n) \in \mathbb{R}^n$, the value is
+
+$$\sum_{k_1 + \cdots + k_n = n} a_k \, t_1^{k_1} \cdots t_n^{k_n},$$
+
+the value at $t$ of the homogeneous polynomial of degree $n$ in $n$ variables with these
+coefficients. The sum runs over all $k \in \mathbb{N}^n$ with $k_1 + \cdots + k_n = n$;
+coefficients of other multi-indices do not enter.
+
 Source: Scottish Book Problem 74. -/
 def EvalPoly (n : ℕ) (a : (Fin n → ℕ) → ℝ) (t : Fin n → ℝ) : ℝ :=
   ∑ k ∈ (Fintype.piFinset fun _ : Fin n => Finset.range (n + 1)).filter
       (fun k => ∑ i, k i = n),
     a k * ∏ i, t i ^ k i
 
-/-- Scottish Book Problem 74, resolved upper bound: if a homogeneous
-polynomial of degree `n` is bounded by `1` on the ℓ¹ unit ball, then
-every coefficient satisfies `|a_k| ≤ nⁿ / (k₁! ⋯ kₙ!)`. This is the
-upper-bound part of Problem 74 only; the open best-constant question
-is not formalized here (see `scottishBook74_holds`). -/
+/-- **The coefficient bound of Scottish Book Problem 74.** This is the statement that for every
+$n \ge 1$ and all real coefficients $a_k$ indexed by multi-indices
+$k = (k_1, \dots, k_n) \in \mathbb{N}^n$ the following holds. Let
+$P(t) = \sum_{k_1 + \cdots + k_n = n} a_k \, t_1^{k_1} \cdots t_n^{k_n}$ be the corresponding
+homogeneous polynomial of degree $n$ on $\mathbb{R}^n$. If $|P(t)| \le 1$ for every
+$t \in \mathbb{R}^n$ with $|t_1| + \cdots + |t_n| \le 1$, then
+$|a_k| \le n^n / (k_1! \cdots k_n!)$ for every $k \in \mathbb{N}^n$ with
+$k_1 + \cdots + k_n = n$.
+
+This is only the upper-bound part of Problem 74; the open question of the best constant is not
+formalized here. -/
 def ScottishBookProblem74Claim : Prop :=
   ∀ n : ℕ, 1 ≤ n →
     ∀ a : (Fin n → ℕ) → ℝ,
@@ -44,8 +58,15 @@ def ScottishBookProblem74Claim : Prop :=
         |a k| ≤ (n : ℝ) ^ n / ∏ i, (Nat.factorial (k i) : ℝ)
 
 /--
-The resolved upper bound of Scottish Book Problem 74 holds
-(solved-positive). Source: S. Mazur and W. Orlicz, Problem 74 of the
+**Scottish Book Problem 74: the coefficient bound holds.** Let $n \ge 1$, let $a_k$ be real
+coefficients indexed by multi-indices $k = (k_1, \dots, k_n) \in \mathbb{N}^n$, and let
+$P(t) = \sum_{k_1 + \cdots + k_n = n} a_k \, t_1^{k_1} \cdots t_n^{k_n}$ be the corresponding
+homogeneous polynomial of degree $n$ on $\mathbb{R}^n$. If $|P(t)| \le 1$ for every
+$t \in \mathbb{R}^n$ with $|t_1| + \cdots + |t_n| \le 1$, then
+$|a_k| \le n^n / (k_1! \cdots k_n!)$ for every $k \in \mathbb{N}^n$ with
+$k_1 + \cdots + k_n = n$.
+
+Source: S. Mazur and W. Orlicz, Problem 74 of the
 Scottish Book; typescript PDF p.36, printed p.33; see the commentary
 in R. D. Mauldin (ed.), The Scottish Book, 2nd ed. (Birkhäuser, 2015).
 Proved by the classical polarization identity; the Rademacher form

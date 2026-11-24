@@ -38,14 +38,21 @@ no-instances. This is the AKS theorem: primality testing is in P.
 -/
 
 open Classical in
-/-- The primality decision problem over bitstrings. -/
+/-- **The primality decision problem.** The primality decision problem is the decision problem
+that accepts a bitstring $x$ exactly when decoding $x$ with the canonical bitstring encoding of
+the natural numbers (Mathlib's binary encoding) yields a prime number, and rejects $x$ otherwise.
+-/
 noncomputable def primesDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode (α := ℕ) x with
   | some n => decide (Nat.Prime n)
   | none => false
 
-/-- **PRIMES is in P.** Source: M. Agrawal, N. Kayal, and N. Saxena, "PRIMES is in P", Annals
+/-- **PRIMES is in P.** The primality decision problem, which accepts a bitstring exactly when it
+decodes to a prime number under the canonical bitstring encoding of the natural numbers, belongs
+to the complexity class P.
+
+Source: M. Agrawal, N. Kayal, and N. Saxena, "PRIMES is in P", Annals
 of Mathematics 160 (2004), 781-793. -/
 public theorem_wanted primes_in_P :
     primesDec ∈ MetaMathlibExt.ComplexityTheory.P

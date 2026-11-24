@@ -38,7 +38,11 @@ computation paths; the simulation works by depth-first traversal of the computat
 reusing `O(T)` space, so the space used is exponential.
 -/
 
-/-- **NEXP is contained in EXPSPACE.** Source: S. Arora and B. Barak, Computational
+/-- **NEXP is contained in EXPSPACE.** Every decision problem in NEXP, the class of
+nondeterministic exponential time, also belongs to EXPSPACE, the class of deterministic
+exponential space.
+
+Source: S. Arora and B. Barak, Computational
 Complexity: A Modern Approach, 2009 (NEXP ⊆ EXPSPACE by exhaustive simulation). -/
 public theorem_wanted nexp_subset_expspace :
     NEXP ⊆ EXPSPACE

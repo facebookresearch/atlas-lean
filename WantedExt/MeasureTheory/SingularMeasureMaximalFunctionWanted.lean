@@ -41,12 +41,14 @@ public import Mathlib
 
 namespace MathlibExt.MeasureTheory.SingularMeasureMaximalFunctionWanted
 
-/-- Let $\mu$ be a Borel measure on $\mathbb{R}^n$. Suppose that $\mu$ is singular with respect to
-the Lebesgue measure $m_n$ and define
-\[
+/-- **The maximal function of a singular measure is infinite almost everywhere for that
+measure.** Let $n$ be a natural number and let $\mu$ be a Borel measure on $\mathbb{R}^n$ that is
+mutually singular with respect to Lebesgue measure $m_n$. Write $B(x, r)$ for the open ball of
+radius $r$ about $x$ and define $M_\mu : \mathbb{R}^n \to [0, \infty]$ by
+$$
 M_\mu(x) = \sup_{r>0} \frac{\mu(B(x, r))}{m_n(B(x, r))}.
-\]
-Prove that $\mu\{x : M_\mu(x) < \infty\} = 0$.
+$$
+Then $\mu(\{x \in \mathbb{R}^n : M_\mu(x) < \infty\}) = 0$.
 
 Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level II (Measure and integration;
 Classical measure theory), `benchmark/level2/ma_proofbench_l2_44.lean` at

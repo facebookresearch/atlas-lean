@@ -22,26 +22,36 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- A sequence of non-negative integers is almost realizable if some positive integer multiple
-of it is realizable (Miska and Ward). Realizability is `MetaMathlibExt.doldRealizable` of the
-integer cast: `(μ * a)(n)` is non-negative and divisible by `n` for every `n ≥ 1` (the paper's
-Definition 1 (2); the divisor involution `d ↦ n / d` turns the paper's `∑_{d ∣ n} μ(n/d) a(d)`
-into `doldRealizable`'s `∑_{d ∣ n} μ(d) a(n/d)`). The value `a 0` is not used.
+/-- **Almost realizable sequences.** A sequence $a$ of natural numbers $a(0), a(1), \dots$ is
+almost realizable when there is an integer $m \ge 1$ such that the integer sequence
+$(m\, a(n))_{n \ge 0}$ is Dold realizable: for every $n \ge 1$, the sum
+$\sum_{d \mid n} \mu(d)\, m\, a(n/d)$ over the positive divisors $d$ of $n$, where $\mu$ is the
+Möbius function, is non-negative and divisible by $n$.
+
+This is Miska and Ward's notion that some positive integer multiple of $a$ is realizable. The
+value $a(0)$ is not used.
 
 Source: Geng-Rui Zhang, *Realizability of Some Combinatorial Sequences*, Journal of Integer
 Sequences 27 (2024), Article 24.3.3, Definition 3. -/
 def IsAlmostRealizableSeq (a : ℕ → ℕ) : Prop :=
   ∃ m : ℕ, 0 < m ∧ doldRealizable fun n => ((m * a n : ℕ) : ℤ)
 
-/-- The zero sequence is almost realizable (by the self-map of the empty set, with `m = 1`).
+/-- **The zero sequence is almost realizable.** The constant sequence $a(n) = 0$ is almost
+realizable.
+
+It is realized by the self-map of the empty set, with multiplier $m = 1$.
 
 Source: Geng-Rui Zhang, *Realizability of Some Combinatorial Sequences*, Journal of Integer
 Sequences 27 (2024), Article 24.3.3, Definition 3. -/
 theorem isAlmostRealizableSeq_zero : IsAlmostRealizableSeq fun _ => 0 :=
   ⟨1, one_pos, fun n _ => by simp⟩
 
-/-- A realizable sequence is almost realizable (take `m = 1`); for example the binomial-power
-sequences `A(n,r,s)` of Theorem 13 (`MetaMathlibExt.binomial_power_sequence_dold_realizable`).
+/-- **Binomial-power sequences are almost realizable.** For all natural numbers $r \ge 1$ and $s$,
+the binomial-power sequence $n \mapsto \sum_{k=0}^{n} \binom{n}{k}^r \binom{n+k}{k}^s$ is almost
+realizable.
+
+Every Dold realizable sequence is almost realizable (take the multiplier $m = 1$), and the
+binomial-power sequences are Dold realizable.
 
 Source: Geng-Rui Zhang, *Realizability of Some Combinatorial Sequences*, Journal of Integer
 Sequences 27 (2024), Article 24.3.3, Definition 3 and Theorem 13. -/
@@ -49,18 +59,20 @@ theorem isAlmostRealizableSeq_binomialPowerSeq (r s : ℕ) (hr : 0 < r) :
     IsAlmostRealizableSeq fun n => binomialPowerSeq r s n :=
   ⟨1, one_pos, by simpa using binomial_power_sequence_dold_realizable r s hr⟩
 
-/-- For every `s, t ≥ 0` and `r ≥ 1`, the sequence `(D(n, r, s, t))_{n ≥ 1}` is realizable, with
-`D(n,r,s,t) = ∑_k C(n,k)^r C(2k,k)^s C(2(n-k),n-k)^t` (`MetaMathlibExt.dombTypeSum`, Definition 7)
-and realizability `MetaMathlibExt.doldRealizable`.
+/-- **Domb-type sums are Dold realizable.** For all natural numbers $r \ge 1$, $s$ and $t$, the
+integer sequence $(D(n, r, s, t))_{n \ge 0}$ of Domb-type sums
+$D(n, r, s, t) = \sum_{k=0}^{n} \binom{n}{k}^r \binom{2k}{k}^s \binom{2(n-k)}{n-k}^t$ is Dold
+realizable.
 
 Source: Geng-Rui Zhang, *Realizability of Some Combinatorial Sequences*, Journal of Integer
 Sequences 27 (2024), Article 24.3.3, Theorem 15 (`jis-2024-24.3.3-thm-15`). -/
 public theorem_wanted doldRealizable_dombTypeSum (r s t : ℕ) (hr : 1 ≤ r) :
     doldRealizable fun n => ((dombTypeSum n r s t : ℕ) : ℤ)
 
-/-- The Catalan numbers, the Motzkin numbers, and the large Schröder numbers (Mathlib's
-`largeSchroder`, OEIS A006318) are not almost realizable; the Motzkin numbers are
-`MetaMathlibExt.motzkinNumber`.
+/-- **The Catalan, Motzkin and large Schröder numbers are not almost realizable.** None of the
+following three sequences of non-negative integers is almost realizable: the Catalan numbers
+$C_n = \frac{1}{n+1}\binom{2n}{n}$, the Motzkin numbers $M(n)$, and the large Schröder numbers
+$S(n)$ (OEIS A006318), given by $S(0) = 1$ and $S(n+1) = S(n) + \sum_{i=0}^{n} S(i) S(n-i)$.
 
 Source: Geng-Rui Zhang, *Realizability of Some Combinatorial Sequences*, Journal of Integer
 Sequences 27 (2024), Article 24.3.3, Theorem 21 (`jis-2024-24.3.3-thm-21`). -/
@@ -68,8 +80,10 @@ public theorem_wanted not_isAlmostRealizableSeq_catalan_motzkin_schroder :
     ¬ IsAlmostRealizableSeq catalan ∧ ¬ IsAlmostRealizableSeq motzkinNumber ∧
       ¬ IsAlmostRealizableSeq Nat.largeSchroder
 
-/-- Helou and Terjanian, prime `p ≥ 5`: for `0 < m < n`,
-`C(np, mp) ≡ C(n, m) (mod p^{3 + max(ν_p(m), ν_p(n-m)) + ν_p(C(n,m))})`.
+/-- **Helou–Terjanian congruence for primes $p \ge 5$.** Let $p \ge 5$ be a prime and let $m$ and
+$n$ be integers with $0 < m < n$. Then $\binom{np}{mp} \equiv \binom{n}{m} \pmod{p^e}$, where
+$e = 3 + \max(\nu_p(m), \nu_p(n - m)) + \nu_p\big(\binom{n}{m}\big)$ and $\nu_p$ is the $p$-adic
+valuation.
 
 Source: Geng-Rui Zhang, *Realizability of Some Combinatorial Sequences*, Journal of Integer
 Sequences 27 (2024), Article 24.3.3, Lemma 26 (1) (`jis-2024-24.3.3-lem-26`). -/
@@ -79,8 +93,10 @@ public theorem_wanted choose_mul_prime_modEq_of_five_le (p n m : ℕ) (hp : p.Pr
       [MOD p ^ (3 + max (padicValNat p m) (padicValNat p (n - m)) +
         padicValNat p (n.choose m))]
 
-/-- Helou and Terjanian, `p = 3`: for `0 < m < n`,
-`C(3n, 3m) ≡ C(n, m) (mod 3^{2 + max(ν_3(m), ν_3(n-m)) + ν_3(C(n,m))})`.
+/-- **Helou–Terjanian congruence for $p = 3$.** Let $m$ and $n$ be integers with $0 < m < n$.
+Then $\binom{3n}{3m} \equiv \binom{n}{m} \pmod{3^e}$, where
+$e = 2 + \max(\nu_3(m), \nu_3(n - m)) + \nu_3\big(\binom{n}{m}\big)$ and $\nu_3$ is the $3$-adic
+valuation.
 
 Source: Geng-Rui Zhang, *Realizability of Some Combinatorial Sequences*, Journal of Integer
 Sequences 27 (2024), Article 24.3.3, Lemma 26 (2) (`jis-2024-24.3.3-lem-26`). -/
@@ -89,8 +105,10 @@ public theorem_wanted choose_three_mul_modEq (n m : ℕ) (hm : 0 < m) (hmn : m <
       [MOD 3 ^ (2 + max (padicValNat 3 m) (padicValNat 3 (n - m)) +
         padicValNat 3 (n.choose m))]
 
-/-- Helou and Terjanian, `p = 2`: for `0 < m < n`,
-`C(2n, 2m) ≡ C(n, m) (mod 2^{1 + max(ν_2(m), ν_2(n-m)) + ν_2(C(n,m))})`.
+/-- **Helou–Terjanian congruence for $p = 2$.** Let $m$ and $n$ be integers with $0 < m < n$.
+Then $\binom{2n}{2m} \equiv \binom{n}{m} \pmod{2^e}$, where
+$e = 1 + \max(\nu_2(m), \nu_2(n - m)) + \nu_2\big(\binom{n}{m}\big)$ and $\nu_2$ is the $2$-adic
+valuation.
 
 Source: Geng-Rui Zhang, *Realizability of Some Combinatorial Sequences*, Journal of Integer
 Sequences 27 (2024), Article 24.3.3, Lemma 26 (3) (`jis-2024-24.3.3-lem-26`). -/
@@ -99,9 +117,15 @@ public theorem_wanted choose_two_mul_modEq (n m : ℕ) (hm : 0 < m) (hmn : m < n
       [MOD 2 ^ (1 + max (padicValNat 2 m) (padicValNat 2 (n - m)) +
         padicValNat 2 (n.choose m))]
 
-/-- For a prime `p` dividing `n > 0` and every `λ ≥ 0` with `λ p ≠ n`,
-`C(n, λp) ≡ C(n/p, λ) (mod p^{max(ν_p(n), ν_p(n - λp))})`, where `ν_p(n - λp)` is the valuation
-of the integer `n - λp`.
+/-- **Binomial coefficients at multiples of a prime divisor.** Let $p$ be a prime and let
+$n \ge 1$ be an integer divisible by $p$. Then for every integer $\lambda \ge 0$ with
+$\lambda p \ne n$,
+
+$$\binom{n}{\lambda p} \equiv \binom{n/p}{\lambda} \pmod{p^e},$$
+
+where $e = \max(\nu_p(n), \nu_p(n - \lambda p))$ and $\nu_p$ is the $p$-adic valuation; the
+integer $n - \lambda p$ may be negative, and $\nu_p(n - \lambda p)$ is the valuation of its
+absolute value.
 
 Source: Geng-Rui Zhang, *Realizability of Some Combinatorial Sequences*, Journal of Integer
 Sequences 27 (2024), Article 24.3.3, Lemma 27 (`jis-2024-24.3.3-lem-27`). -/
@@ -110,8 +134,12 @@ public theorem_wanted choose_mul_prime_modEq_choose_div (n p l : ℕ) (hp : p.Pr
     (n.choose (l * p) : ℤ) ≡ ((n / p).choose l : ℤ)
       [ZMOD (p : ℤ) ^ max (padicValNat p n) (padicValInt p ((n : ℤ) - l * p))]
 
-/-- If `b(n) ≥ 0` and `b(n+1) ≥ C b(n)` for all `n ≥ 1`, with a constant `C ≥ 1.221`, then
-`(μ * b)(n) ≥ 0` for every `n ≥ 1`.
+/-- **Möbius transforms of sequences growing by a factor of at least $1.221$ are nonnegative.**
+Let $b$ be a sequence of real numbers and $C \ge 1.221$ a real number such that $b(n) \ge 0$ and
+$b(n+1) \ge C\, b(n)$ for every $n \ge 1$. Then for every $n \ge 1$, with $\mu$ the Möbius
+function,
+$$\sum_{d \mid n} \mu(n/d)\, b(d) \ge 0,$$
+that is, the Dirichlet convolution $\mu * b$ is nonnegative at $n$.
 
 Source: Geng-Rui Zhang, *Realizability of Some Combinatorial Sequences*, Journal of Integer
 Sequences 27 (2024), Article 24.3.3, Lemma 28 (`jis-2024-24.3.3-lem-28`). -/
@@ -120,9 +148,10 @@ public theorem_wanted moebius_conv_nonneg_of_geometric_growth (b : ℕ → ℝ)
     (hgrowth : ∀ n, 1 ≤ n → C * b n ≤ b (n + 1)) (n : ℕ) (hn : 1 ≤ n) :
     0 ≤ ∑ d ∈ n.divisors, (ArithmeticFunction.moebius (n / d) : ℝ) * b d
 
-/-- For an integer sequence `(V(n))_{n ≥ 1}`, the congruences
-`V(n p^m) ≡ V(n p^{m-1}) (mod p^m)` for all `n, m ≥ 1` and primes `p` hold if and only if `V`
-satisfies the Dold condition `(μ * V)(n) ≡ 0 (mod n)` for all `n ≥ 1`.
+/-- **Dold congruences via prime-power congruences.** Let $(V(n))_{n \ge 1}$ be a sequence of
+integers and let $\mu$ denote the Möbius function. Then
+$V(n p^m) \equiv V(n p^{m-1}) \pmod{p^m}$ holds for all integers $n, m \ge 1$ and all primes $p$
+if and only if $n$ divides $\sum_{d \mid n} \mu(n/d) V(d)$ for every integer $n \ge 1$.
 
 Source: Geng-Rui Zhang, *Realizability of Some Combinatorial Sequences*, Journal of Integer
 Sequences 27 (2024), Article 24.3.3, Lemma 30 (`jis-2024-24.3.3-lem-30`). -/
@@ -132,11 +161,15 @@ public theorem_wanted prime_power_congruence_iff_dold (V : ℕ → ℤ) :
       ∀ n : ℕ, 1 ≤ n →
         (n : ℤ) ∣ ∑ d ∈ n.divisors, (ArithmeticFunction.moebius (n / d) : ℤ) * V d
 
-/-- For `r ≥ 1` and `s, t, u ≥ 0` with `t + u ≥ 1`, the sequence `(T(n,r,s,t,u))_{n ≥ 1}` is
-realizable (`MetaMathlibExt.doldRealizable`), where
-`T(n,r,s,t,u) = ∑_{k=0}^n C(n,2k)^r C(n+k,k)^s C(2k,k)^t C(2(n-k),n-k)^u`. Added hypothesis
-`t + u ≥ 1`: for `t = u = 0`, `(μ * T)(2) = T(2) - T(1) = 3^s` is odd, so the sequence is not
-realizable.
+/-- **Even-binomial-type sums are Dold realizable.** Let $r \ge 1$, $s$, $t$ and $u$ be natural
+numbers with $t + u \ge 1$, and let
+
+$$T(n) = \sum_{k=0}^{n} \binom{n}{2k}^r \binom{n+k}{k}^s \binom{2k}{k}^t \binom{2(n-k)}{n-k}^u.$$
+
+Then the integer sequence $(T(n))_{n \ge 0}$ is Dold realizable.
+
+The hypothesis $t + u \ge 1$ is added to the source: for $t = u = 0$ the Möbius transform at
+$n = 2$ is $T(2) - T(1) = 3^s$, which is odd, so the sequence is not Dold realizable.
 
 Source: Geng-Rui Zhang, *Realizability of Some Combinatorial Sequences*, Journal of Integer
 Sequences 27 (2024), Article 24.3.3, Theorem 18 (`jis-2024-24.3.3-thm-18`). -/

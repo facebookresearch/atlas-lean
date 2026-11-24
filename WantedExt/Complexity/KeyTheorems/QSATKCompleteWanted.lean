@@ -50,17 +50,23 @@ to quantify each variable `0, …, m - 1` exactly once, every formula variable t
 quantified, and the prefix to have exactly `k` blocks.
 -/
 
-/-- A gate of the matrix circuit: `(kind, refs)` with kinds `0` variable (refs `[v]`),
-`1` constant (refs `[b]`, true iff `b = 1`), `2` negation, `3` conjunction, `4`
-disjunction. A circuit matrix is an unrestricted Boolean formula (with sharing), not a
-CNF: see above. -/
+/-- **Gates of a quantified Boolean formula matrix.** A gate of a matrix circuit is a pair $(t, r)$
+of a natural number $t$, its kind, and a list $r$ of natural numbers, its references. The kinds
+are read as follows: kind $0$ with $r = [v]$ is the variable $v$, kind $1$ with $r = [b]$ is the
+constant true if $b = 1$ and false otherwise, kind $2$ is a negation, kind $3$ a conjunction and
+kind $4$ a disjunction, where for kinds $2$, $3$ and $4$ the references are indices of gates.
+
+A circuit matrix is thus an unrestricted Boolean formula with sharing, not a formula in
+conjunctive normal form. -/
 abbrev QBFMatrixGate := ℕ × List ℕ
 
-/-- Value of one matrix-circuit gate, given the values of earlier gates and the
-variable assignment. This evaluator stays local (it does not use the shared
-`circuitEval`): the assignment here is `ℕ → Bool`, with unbounded variable
-indices coming from the quantifier prefix, so the typed `Fin n` evaluator
-does not apply directly. -/
+/-- **Evaluation of a QBF matrix gate.** Given a list $s$ of truth values (the values of the earlier
+gates) and an assignment $\alpha$ of a truth value to every natural number, the value of a gate
+$(t, r)$ is computed as follows, where $s_a$ is the $a$-th entry of $s$ if $a$ is less than the
+length of $s$ and false otherwise: if $t = 0$ and $r = [v]$, it is $\alpha(v)$; if $t = 1$ and
+$r = [b]$, it is true exactly when $b = 1$; if $t = 2$ and $r = [a]$, it is the negation of $s_a$;
+if $t = 3$, it is true exactly when $s_a$ is true for every $a$ in $r$; if $t = 4$, it is true
+exactly when $s_a$ is true for some $a$ in $r$; for every other gate it is false. -/
 def qbfGateEval (vs : List Bool) (assign : ℕ → Bool) : QBFMatrixGate → Bool
   | (0, [v]) => assign v
   | (1, [b]) => b = 1
@@ -69,21 +75,35 @@ def qbfGateEval (vs : List Bool) (assign : ℕ → Bool) : QBFMatrixGate → Boo
   | (4, l) => l.any (fun a => vs.getD a false)
   | _ => false
 
-/-- Values of all gates of a matrix circuit, in order. -/
+/-- **Evaluation of a QBF matrix circuit.** Given a matrix circuit $C = (g_0, \dots, g_{m-1})$, a
+list of gates, and an assignment $\alpha$ of a truth value to every natural number, the list
+$(s_0, \dots, s_{m-1})$ of the values of the gates of $C$, where $s_i$ is the value of the gate
+$g_i$ given the values $(s_0, \dots, s_{i-1})$ of the earlier gates and the assignment $\alpha$. -/
 def qbfCircuitEval (C : List QBFMatrixGate) (assign : ℕ → Bool) : List Bool :=
   C.foldl (fun vs g => vs ++ [qbfGateEval vs assign g]) []
 
-/-- Variables occurring in a matrix circuit. -/
+/-- **Variables of a QBF matrix circuit.** For a matrix circuit $C$, a list of gates, the list of
+the variables $v$ of the gates of $C$ of the form $(0, [v])$, in the order of the gates of $C$ and
+with repetitions. -/
 def qbfCircuitVars (C : List QBFMatrixGate) : List ℕ :=
   C.flatMap (fun g => match g with | (0, [v]) => [v] | _ => [])
 
-/-- Well-formedness of a matrix circuit: every non-variable, non-constant gate
-references only strictly earlier gates. -/
+/-- **Well-formed QBF matrix circuits.** A matrix circuit $C = (g_0, \dots, g_{m-1})$, a list of
+gates, is well formed when for every $j < m$ whose gate $g_j = (t, r)$ has kind $t \in \{2, 3, 4\}$
+(negation, conjunction or disjunction), every reference $a$ in $r$ satisfies $a < j$. -/
 def qbfCircuitWellFormed (C : List QBFMatrixGate) : Prop :=
   ∀ j (h : j < C.length), ∀ a ∈ (C[j]'h).2,
     (C[j]'h).1 = 2 ∨ (C[j]'h).1 = 3 ∨ (C[j]'h).1 = 4 → a < j
 
-/-- Evaluation of a quantified Boolean formula over an assignment. -/
+/-- **Truth of a quantified Boolean formula with circuit matrix.** Let $P$ be a quantifier prefix,
+a list of pairs $(q, v)$ of a quantifier $q$, $\exists$ (true) or $\forall$ (false), and a
+variable $v \in \mathbb{N}$; let $\varphi$ be a matrix circuit and $\alpha$ an assignment of a
+truth value to every natural number. Truth of $(P, \varphi)$ under $\alpha$ is defined by
+recursion on $P$. If $P$ is empty, it means that $\varphi$ is nonempty and the value of its last
+gate under $\alpha$ is true. If $P$ starts with $(q, v)$ followed by the prefix $P'$, it means that
+$(P', \varphi)$ is true under $\alpha[v \mapsto \mathrm{true}]$ or under
+$\alpha[v \mapsto \mathrm{false}]$ when $q$ is $\exists$, and under both when $q$ is $\forall$,
+where $\alpha[v \mapsto b]$ agrees with $\alpha$ except that it sends $v$ to $b$. -/
 def EvalQBFK (pref : List (Bool × ℕ)) (φ : List QBFMatrixGate)
     (assign : ℕ → Bool) : Prop :=
   match pref with
@@ -96,18 +116,29 @@ def EvalQBFK (pref : List (Bool × ℕ)) (φ : List QBFMatrixGate)
       EvalQBFK rest φ (Function.update assign v true) ∧
         EvalQBFK rest φ (Function.update assign v false)
 
-/-- Number of blocks of the current quantifier run, given the previous quantifier. -/
+/-- **Quantifier alternations after a given quantifier.** For a quantifier $p$ and a quantifier
+prefix $(q_1, v_1), \dots, (q_n, v_n)$, the number of indices $1 \le i \le n$ with
+$q_i \ne q_{i-1}$, where $q_0 = p$. -/
 def blockCountAux (prev : Bool) : List (Bool × ℕ) → ℕ
   | [] => 0
   | (b, _) :: rest => (if b = prev then 0 else 1) + blockCountAux b rest
 
-/-- Number of alternating quantifier blocks in a prefix. -/
+/-- **Number of quantifier blocks.** The number of maximal blocks of consecutive equal quantifiers
+in a quantifier prefix $(q_1, v_1), \dots, (q_n, v_n)$: it is $0$ if $n = 0$, and otherwise $1$
+plus the number of indices $2 \le i \le n$ with $q_i \ne q_{i-1}$. -/
 def blockCount : List (Bool × ℕ) → ℕ
   | [] => 0
   | (b, _) :: rest => 1 + blockCountAux b rest
 
 open Classical in
-/-- `QSAT_k` as a decision problem over bitstrings, decoding to `(prefix, φ)`. -/
+/-- **The decision problem $\mathrm{QSAT}_k$.** For a natural number $k$, $\mathrm{QSAT}_k$ accepts
+a bitstring $x$ exactly when $x$ decodes, under the standard bitstring encoding, to a pair
+$(P, \varphi)$ of a quantifier prefix $P = (q_1, v_1), \dots, (q_n, v_n)$, where each $q_i$ is
+$\exists$ (true) or $\forall$ (false) and each $v_i$ is a natural number, and a matrix circuit
+$\varphi$, such that: $P$ is nonempty and $q_1$ is $\exists$; $(v_1, \dots, v_n)$ is a
+permutation of $(0, \dots, n - 1)$; every variable of $\varphi$ is less than $n$; $\varphi$ is
+well formed; $P$ has exactly $k$ quantifier blocks; and $(P, \varphi)$ is true under the
+assignment that sends every variable to false. A bitstring that does not decode is rejected. -/
 noncomputable def qsatKDec (k : ℕ) :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
@@ -120,10 +151,13 @@ noncomputable def qsatKDec (k : ℕ) :
       EvalQBFK i.1 i.2 (fun _ => false))
   | none => false
 
-/-- **QSAT_k is Sigma_k^P-complete, uniformly in k.** Source: L. J. Stockmeyer, "The
-polynomial-time hierarchy", Theoretical Computer Science 3 (1977), 1-22; A. R. Meyer, "A
-polynomial hierarchy" (see also S. Arora and B. Barak, Computational Complexity: A Modern
-Approach, 2009, Chapter 5). -/
+/-- **$\mathrm{QSAT}_k$ is $\Sigma_k^p$-complete, uniformly in $k$.** For every natural number
+$k \ge 1$, the decision problem $\mathrm{QSAT}_k$ lies in $\Sigma_k^p$, and every decision problem
+$L$ in $\Sigma_k^p$ reduces to $\mathrm{QSAT}_k$ by a polynomial-time many-one reduction.
+
+Source: L. J. Stockmeyer, "The polynomial-time hierarchy", Theoretical Computer Science 3
+(1977), 1-22; A. R. Meyer, "A polynomial hierarchy" (see also S. Arora and B. Barak,
+Computational Complexity: A Modern Approach, 2009, Chapter 5). -/
 public theorem_wanted qsat_k_sigma_k_complete :
     ∀ k : ℕ, qsatKDec (k + 1) ∈ SigmaK (k + 1) ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

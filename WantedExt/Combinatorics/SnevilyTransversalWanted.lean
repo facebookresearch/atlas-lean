@@ -23,14 +23,15 @@ namespace MathlibExt.Combinatorics.SnevilyTransversalWanted
 
 /-! Source record `OPG-655`. -/
 
-/-- [OPG-655] Snevily's conjecture: in an abelian group of odd order, any
-two equally sized finite subsets can be paired so the sums are distinct.
+/-- **Snevily's conjecture.** The statement that for every finite abelian group $G$ of odd order,
+written additively, and all subsets $A, B \subseteq G$ with $|A| = |B|$, there is a bijection
+$f \colon A \to B$ such that the sums $a + f(a)$, for $a \in A$, are pairwise distinct.
 
-The orderings `aᵢ`, `bᵢ` with pairwise distinct sums `aᵢ + bᵢ` are rendered
-as a bijection `f : A → B` such that `a ↦ a + f a` is injective: given the
-orderings, `f` maps the `i`-th element of `A` to the `i`-th element of `B`,
-and conversely any bijection `f` yields orderings by enumerating `A` and
-transporting along `f`. -/
+Equivalently, $A$ and $B$ can be enumerated as $a_1, \dots, a_k$ and $b_1, \dots, b_k$ so that
+the sums $a_i + b_i$ are pairwise distinct: given such enumerations, send $a_i$ to $b_i$;
+conversely, enumerate $A$ and transport the enumeration along $f$.
+
+Source: OPG-655. -/
 def conjecture : Prop :=
   ∀ (G : Type) [AddCommGroup G] [Fintype G],
     Odd (Fintype.card G) →
@@ -40,8 +41,11 @@ def conjecture : Prop :=
             (a₁ : G) + (f a₁ : G) = (a₂ : G) + (f a₂ : G) → a₁ = a₂
 
 /--
-Resolved true: Snevily's conjecture for odd-order abelian groups was proved by Boris Arsovski,
-'A proof of Snevily's conjecture', Israel Journal of Mathematics 182 (2011), 505-508. Source:
+**Snevily's conjecture is true.** Let $G$ be a finite abelian group of odd order, written
+additively, and let $A, B \subseteq G$ be subsets with $|A| = |B|$. Then there is a bijection
+$f \colon A \to B$ such that the sums $a + f(a)$, for $a \in A$, are pairwise distinct.
+
+Source:
 Boris Arsovski, A proof of Snevily's conjecture, Israel J. Math. 182 (2011), 505-508. Moved from
 `OpenConjectures/Combinatorics/SnevilyTransversal`.
 -/

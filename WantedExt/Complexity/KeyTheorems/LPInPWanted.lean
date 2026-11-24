@@ -40,12 +40,21 @@ instances.
 -/
 
 
-/-- Decode an `(magnitude, sign)` pair to an integer. -/
+/-- **Signed integer from a magnitude–sign pair.** The integer decoded from a pair $(k, s)$ of a
+natural number $k$ and a boolean $s$ is $k$ if $s$ is true and $-k$ if $s$ is false. -/
 def decodeInt (p : ℕ × Bool) : ℤ :=
   if p.2 then (p.1 : ℤ) else -(p.1 : ℤ)
 
 open Classical in
-/-- Rational linear-program feasibility as a decision problem over bitstrings. -/
+/-- **Rational linear-program feasibility.** The decision problem of rational linear-program
+feasibility accepts a bitstring $w$ exactly when $w$ decodes, under the canonical bitstring
+encoding, to a pair $(A, b)$ of a list $A$ of $m$ rows, each a list of magnitude–sign pairs, and
+a list $b$ of $m'$ magnitude–sign pairs, such that every row of $A$ has the length $n$ of the
+first row ($n = 0$ when $m = 0$), $m' = m$, and some $x \in \mathbb{Q}^n$ satisfies
+$\sum_{j<n} A_{rj} x_j \le b_r$ for every $r < m$. Here a magnitude–sign pair $(k, s)$ of a
+natural number $k$ and a boolean $s$ stands for the integer $k$ if $s$ is true and $-k$ if $s$ is
+false, $A_{rj}$ is the integer given by the $j$-th entry of the $r$-th row and $b_r$ is the
+integer given by the $r$-th entry of $b$. Bitstrings that do not decode are rejected. -/
 noncomputable def lpDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
@@ -60,7 +69,16 @@ noncomputable def lpDec :
               (decodeInt (i.2.getD r (0, true)) : ℚ))
   | none => false
 
-/-- **Linear programming is in P (Khachiyan).** Source: L. G. Khachiyan, "A polynomial
+/-- **Linear programming is in P (Khachiyan).** The decision problem of rational linear-program
+feasibility is in the complexity class P. This problem accepts exactly the bitstrings that decode,
+under the canonical bitstring encoding, to a list $A$ of $m$ rows of integers, all of the same
+length $n$, and a list $b$ of $m$ integers, for which some $x \in \mathbb{Q}^n$ satisfies
+$\sum_{j<n} A_{rj} x_j \le b_r$ for every $r < m$, where $A_{rj}$ is the $j$-th entry of the
+$r$-th row of $A$ and $b_r$ is the $r$-th entry of $b$. Each integer is given as a magnitude–sign
+pair $(k, s)$ of a natural number $k$ and a boolean $s$, standing for $k$ if $s$ is true and $-k$
+if $s$ is false.
+
+Source: L. G. Khachiyan, "A polynomial
 algorithm in linear programming", Soviet Mathematics Doklady 20 (1979), 191-194. -/
 public theorem_wanted lp_in_p :
     lpDec ∈ MetaMathlibExt.ComplexityTheory.P

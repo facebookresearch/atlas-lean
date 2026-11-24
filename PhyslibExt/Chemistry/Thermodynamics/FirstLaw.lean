@@ -151,7 +151,8 @@ def heatCoeffT (Cv : ℝ) : ℝ → ℝ → ℝ := fun _ _ => Cv
 
 /-- Line integral of the 1-form `P dV + Q dT` around the axis-aligned rectangle
 with volume range `[V₁, V₂]` and temperature range `[T₁, T₂]`, traversed
-counterclockwise from `(V₁, T₁)`. -/
+counterclockwise from `(V₁, T₁)`. Each of the four legs is an interval integral; a leg whose
+integrand is not integrable contributes `0` by convention. -/
 noncomputable def rectLoopIntegral (P Q : ℝ → ℝ → ℝ) (V₁ V₂ T₁ T₂ : ℝ) : ℝ :=
   (∫ V in V₁..V₂, P V T₁ ∂MeasureTheory.volume) +
     (∫ T in T₁..T₂, Q V₂ T ∂MeasureTheory.volume) +
@@ -159,13 +160,15 @@ noncomputable def rectLoopIntegral (P Q : ℝ → ℝ → ℝ) (V₁ V₂ T₁ T
     (∫ T in T₂..T₁, Q V₁ T ∂MeasureTheory.volume)
 
 /-- Line integral of `P dV + Q dT` from `(V₁, T₁)` to `(V₂, T₂)` along the
-"right then up" path: first at constant `T₁`, then at constant `V₂`. -/
+"right then up" path: first at constant `T₁`, then at constant `V₂`. Each leg is an interval
+integral; a leg whose integrand is not integrable contributes `0` by convention. -/
 noncomputable def pathRightUp (P Q : ℝ → ℝ → ℝ) (V₁ V₂ T₁ T₂ : ℝ) : ℝ :=
   (∫ V in V₁..V₂, P V T₁ ∂MeasureTheory.volume) +
     (∫ T in T₁..T₂, Q V₂ T ∂MeasureTheory.volume)
 
 /-- Line integral of `P dV + Q dT` from `(V₁, T₁)` to `(V₂, T₂)` along the
-"up then right" path: first at constant `V₁`, then at constant `T₂`. -/
+"up then right" path: first at constant `V₁`, then at constant `T₂`. Each leg is an interval
+integral; a leg whose integrand is not integrable contributes `0` by convention. -/
 noncomputable def pathUpRight (P Q : ℝ → ℝ → ℝ) (V₁ V₂ T₁ T₂ : ℝ) : ℝ :=
   (∫ T in T₁..T₂, Q V₁ T ∂MeasureTheory.volume) +
     (∫ V in V₁..V₂, P V T₂ ∂MeasureTheory.volume)
@@ -181,7 +184,8 @@ private lemma integral_const_div (c V₁ V₂ : ℝ) (hV₁ : 0 < V₁) (hV : V�
     rw [div_eq_mul_inv]
   rw [hfun, intervalIntegral.integral_const_mul c _, hinv]
 
-/-- The loop integral of an exact energy differential vanishes (path independence). -/
+/-- The rectangular loop integral of an exact energy differential vanishes (path independence),
+given the partial derivatives of `U` and their integrability along the edges of the rectangle. -/
 lemma exact_loopIntegral_eq_zero (U dUdV dUdT : ℝ → ℝ → ℝ) (V₁ V₂ T₁ T₂ : ℝ)
     (hPderiv : ∀ T ∈ ({T₁, T₂} : Set ℝ), ∀ V ∈ Set.uIcc V₁ V₂,
       HasDerivAt (fun V => U V T) (dUdV V T) V)
@@ -232,7 +236,8 @@ private lemma loop_eq_paths_sub (P Q : ℝ → ℝ → ℝ) (V₁ V₂ T₁ T₂
   rw [hT, hL]
   ring
 
-/-- Exact energy differentials are path independent: the two spanning paths agree. -/
+/-- Exact energy differentials are path independent: the two spanning paths agree, given the
+partial derivatives of `U` and their integrability along the edges of the rectangle. -/
 lemma exact_twoPaths_equal (U dUdV dUdT : ℝ → ℝ → ℝ) (V₁ V₂ T₁ T₂ : ℝ)
     (hPderiv : ∀ T ∈ ({T₁, T₂} : Set ℝ), ∀ V ∈ Set.uIcc V₁ V₂,
       HasDerivAt (fun V => U V T) (dUdV V T) V)
@@ -273,11 +278,11 @@ lemma heat_loopIntegral_eq (n R Cv T₁ T₂ V₁ V₂ : ℝ) (hV₁ : 0 < V₁)
   rw [eB, eT, eR, eL]
   ring
 
-/-- The heat 1-form is path dependent: its rectangular loop integral is nonzero. It assumes
-nothing about the temperatures beyond `T₁ ≠ T₂` and nothing about `Cv`, so it also holds for
-nonpositive temperatures outside the physical domain, where it is a fact about the 1-form
-`n * R * T / V dV + Cv dT` rather than about a gas. The physical heat-path statement is the
-case `0 < T₁`, `0 < T₂`, `0 < Cv`. -/
+/-- The heat 1-form is path dependent: for `0 < n`, `0 < R` and `0 < V₁ < V₂`, its rectangular
+loop integral is nonzero. It assumes nothing about the temperatures beyond `T₁ ≠ T₂` and nothing
+about `Cv`, so it also holds for nonpositive temperatures outside the physical domain, where it is
+a fact about the 1-form `n * R * T / V dV + Cv dT` rather than about a gas. The physical
+heat-path statement is the case `0 < T₁`, `0 < T₂`, `0 < Cv`. -/
 lemma heat_pathDependent (n R Cv T₁ T₂ V₁ V₂ : ℝ) (hn : 0 < n) (hR : 0 < R)
     (hT : T₁ ≠ T₂) (hV₁ : 0 < V₁) (hV : V₁ < V₂) :
     rectLoopIntegral (heatCoeffV n R) (heatCoeffT Cv) V₁ V₂ T₁ T₂ ≠ 0 := by
@@ -290,10 +295,10 @@ lemma heat_pathDependent (n R Cv T₁ T₂ V₁ V₂ : ℝ) (hn : 0 < n) (hR : 0
   exact mul_ne_zero
     (mul_ne_zero (mul_ne_zero (ne_of_gt hn) (ne_of_gt hR)) (sub_ne_zero.mpr hT)) hlog
 
-/-- Heat is path dependent: the two spanning path integrals differ. Like `heat_pathDependent`,
-it holds for all real `T₁ ≠ T₂` and every `Cv`, nonpositive temperatures included, where it
-describes the 1-form rather than a gas; the physical statement is the case `0 < T₁`, `0 < T₂`,
-`0 < Cv`. -/
+/-- Heat is path dependent: for `0 < n`, `0 < R` and `0 < V₁ < V₂`, the two spanning path
+integrals differ. Like `heat_pathDependent`, it holds for all real `T₁ ≠ T₂` and every `Cv`,
+nonpositive temperatures included, where it describes the 1-form rather than a gas; the physical
+statement is the case `0 < T₁`, `0 < T₂`, `0 < Cv`. -/
 lemma heat_twoPaths_differ (n R Cv T₁ T₂ V₁ V₂ : ℝ) (hn : 0 < n) (hR : 0 < R)
     (hT : T₁ ≠ T₂) (hV₁ : 0 < V₁) (hV : V₁ < V₂) :
     pathRightUp (heatCoeffV n R) (heatCoeffT Cv) V₁ V₂ T₁ T₂
@@ -374,8 +379,9 @@ lemma gamma_sub_one (Cp Cv nR γ : ℝ) (hCv : Cv ≠ 0)
     field_simp
   rw [hC, hCpCv]
 
-/-- Along a reversible adiabatic path, the log-invariant has vanishing
-derivative: the separated ODE `Cv * dT / T + nR * dV / V = 0`. -/
+/-- Along a reversible adiabatic path, the log-invariant `log T + (γ - 1) * log V` has vanishing
+derivative at a time where the separated ODE `Cv * dT / T + nR * dV / V = 0` holds, for `T, V > 0`,
+`Cv ≠ 0` and `γ - 1 = nR / Cv`. -/
 lemma adiabatic_invariant_hasDerivAt (T V T' V' : ℝ → ℝ) (Cv nR γ t : ℝ)
     (hT : HasDerivAt T (T' t) t) (hV : HasDerivAt V (V' t) t)
     (hTpos : 0 < T t) (hVpos : 0 < V t)
@@ -438,7 +444,9 @@ lemma adiabatic_path_integrated (T V T' V' : ℝ → ℝ) (Cv nR : ℝ)
   have hV1 : V 1 ≠ 0 := ne_of_gt (hVpos 1 h1)
   rw [Real.log_div hT1 hT0, Real.log_div hV1 hV0, ← hsplit, hzero]
 
-/-- Reversible adiabatic invariant in ratio form: `T₂ / T₁ = (V₁ / V₂) ^ (γ - 1)`. -/
+/-- Reversible adiabatic invariant in ratio form: for positive temperatures and volumes, `Cv ≠ 0`,
+`γ - 1 = nR / Cv` and `Cv * log (T₂ / T₁) + nR * log (V₂ / V₁) = 0`,
+`T₂ / T₁ = (V₁ / V₂) ^ (γ - 1)`. -/
 lemma adiabatic_invariant_ratio_T (T₁ T₂ V₁ V₂ Cv nR γ : ℝ)
     (hT₁ : 0 < T₁) (hT₂ : 0 < T₂) (hV₁ : 0 < V₁) (hV₂ : 0 < V₂)
     (hCv : Cv ≠ 0)
@@ -464,7 +472,9 @@ lemma adiabatic_invariant_ratio_T (T₁ T₂ V₁ V₂ Cv nR γ : ℝ)
     _ = Real.exp ((γ - 1) * Real.log (V₁ / V₂)) := by rw [hlogT]
     _ = (V₁ / V₂) ^ (γ - 1) := hrpow
 
-/-- Reversible adiabatic invariant: `T * V ^ (γ - 1)` is constant across states. -/
+/-- Reversible adiabatic invariant: for positive temperatures and volumes, `Cv ≠ 0`,
+`γ - 1 = nR / Cv` and `Cv * log (T₂ / T₁) + nR * log (V₂ / V₁) = 0`, `T * V ^ (γ - 1)` takes the
+same value at both states. -/
 lemma adiabatic_invariant_TV (T₁ T₂ V₁ V₂ Cv nR γ : ℝ)
     (hT₁ : 0 < T₁) (hT₂ : 0 < T₂) (hV₁ : 0 < V₁) (hV₂ : 0 < V₂)
     (hCv : Cv ≠ 0)
@@ -482,11 +492,12 @@ lemma adiabatic_invariant_TV (T₁ T₂ V₁ V₂ Cv nR γ : ℝ)
   field_simp at hratio ⊢
   linear_combination hratio
 
-/-- Pressure ratio of the ideal-gas model `idealGasP n R` between two states related by
-`Cv * log (T₂ / T₁) + k * log (V₂ / V₁) = 0` with `γ - 1 = k / Cv`, for an arbitrary
-coefficient `k`: `p₂ / p₁ = (V₁ / V₂) ^ γ`. This is an algebraic identity, not the physical
-adiabat: `n * R` cancels from the pressure ratio, so `k` need not be the `n * R` of the
-pressure model. The physical statement, with `k = n * R`, is `adiabatic_invariant_ratio_p`. -/
+/-- Pressure ratio of the ideal-gas model `idealGasP n R` between two states with positive
+temperatures and volumes related by `Cv * log (T₂ / T₁) + k * log (V₂ / V₁) = 0` with
+`γ - 1 = k / Cv`, for an arbitrary coefficient `k`: `p₂ / p₁ = (V₁ / V₂) ^ γ`. This is an
+algebraic identity, not the physical adiabat: `n * R` cancels from the pressure ratio, so `k` need
+not be the `n * R` of the pressure model. The physical statement, with `k = n * R`, is
+`adiabatic_invariant_ratio_p`. -/
 lemma idealGasP_ratio_of_log_relation (n R T₁ T₂ V₁ V₂ Cv k γ : ℝ)
     (hn : 0 < n) (hR : 0 < R)
     (hT₁ : 0 < T₁) (hT₂ : 0 < T₂) (hV₁ : 0 < V₁) (hV₂ : 0 < V₂)
@@ -527,10 +538,10 @@ lemma adiabatic_invariant_ratio_p (n R T₁ T₂ V₁ V₂ Cv γ : ℝ)
   idealGasP_ratio_of_log_relation n R T₁ T₂ V₁ V₂ Cv (n * R) γ
     hn hR hT₁ hT₂ hV₁ hV₂ hCv hγ had
 
-/-- The ideal-gas `p * V ^ γ` takes equal values at two states related by
-`Cv * log (T₂ / T₁) + k * log (V₂ / V₁) = 0` with `γ - 1 = k / Cv`, for an arbitrary
-coefficient `k`. Like `idealGasP_ratio_of_log_relation`, this is an algebraic identity: `k`
-need not be the `n * R` of `idealGasP n R`. The physical statement, with `k = n * R`, is
+/-- The ideal-gas `p * V ^ γ` takes equal values at two states with positive temperatures and
+volumes related by `Cv * log (T₂ / T₁) + k * log (V₂ / V₁) = 0` with `γ - 1 = k / Cv`, for an
+arbitrary coefficient `k`. Like `idealGasP_ratio_of_log_relation`, this is an algebraic identity:
+`k` need not be the `n * R` of `idealGasP n R`. The physical statement, with `k = n * R`, is
 `adiabatic_invariant_pV`. -/
 lemma idealGasP_mul_rpow_of_log_relation (n R T₁ T₂ V₁ V₂ Cv k γ : ℝ)
     (hn : 0 < n) (hR : 0 < R)
@@ -620,8 +631,8 @@ lemma hasDerivAt_enthalpyOf_internalEnergy (Cv nR U₀ T₀ T : ℝ) :
 `V₁` to `V₂`: `w = -(p_ext * (V₂ - V₁))`. -/
 def irreversibleWorkOn (p_ext V₁ V₂ : ℝ) : ℝ := -(p_ext * (V₂ - V₁))
 
-/-- For isothermal expansion between the same end states with admissible
-constant `p_ext ≤ p_final`: `|w_irr| ≤ |w_rev|`. No unrestricted
+/-- For isothermal expansion (`0 < V₁ ≤ V₂`, positive `n`, `R`, `T`) between the same end states
+with admissible constant `0 ≤ p_ext ≤ p_final`: `|w_irr| ≤ |w_rev|`. No unrestricted
 irreversible-work comparison is claimed: the side hypotheses are essential. -/
 lemma irreversible_le_reversible (n R T V₁ V₂ p_ext : ℝ)
     (hn : 0 < n) (hR : 0 < R) (hT : 0 < T)

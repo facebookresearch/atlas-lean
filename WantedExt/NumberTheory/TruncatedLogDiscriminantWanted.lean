@@ -33,35 +33,46 @@ namespace MetaMathlibExt
 
 open Polynomial
 
-/-- The truncated logarithmic polynomial `F_n(x) = 1 + x + x²/2 + ⋯ + xⁿ/n`.
+/-- **Truncated logarithmic polynomial.** For a natural number $n$, the truncated logarithmic
+polynomial is $F_n(x) = 1 + x + \frac{x^2}{2} + \dots + \frac{x^n}{n} \in \mathbb{Q}[x]$.
 
 Source: Cullinan and Gajek-Leonard, *On the Discriminants of Truncated
 Logarithmic Polynomials*, INTEGERS 25 (2025), Article A39, Section 1. -/
 public noncomputable def truncatedLogPolynomial (n : ℕ) : ℚ[X] :=
   1 + ∑ j ∈ Finset.Icc 1 n, C ((j : ℚ)⁻¹) * X ^ j
 
-/-- `L_n = lcm(1, 2, …, n)`.
+/-- **Least common multiple of $1, \dots, n$.** For a natural number $n$, $L_n$ is the least common
+multiple $\operatorname{lcm}(1, 2, \dots, n)$ of the integers from $1$ to $n$; in particular
+$L_0 = 1$.
 
 Source: Cullinan and Gajek-Leonard, *On the Discriminants of Truncated
 Logarithmic Polynomials*, INTEGERS 25 (2025), Article A39, Section 1. -/
 public def truncatedLogLcm (n : ℕ) : ℕ :=
   (Finset.Icc 1 n).lcm id
 
-/-- `L_4 = 12`.
+/-- **Least common multiple of $1, 2, 3, 4$.** The least common multiple of the integers from $1$
+to $4$ is $L_4 = \operatorname{lcm}(1, 2, 3, 4) = 12$.
 
 Source: Cullinan and Gajek-Leonard, *On the Discriminants of Truncated
 Logarithmic Polynomials*, INTEGERS 25 (2025), Article A39, Section 1. -/
 public theorem truncatedLogLcm_four : truncatedLogLcm 4 = 12 := by
   decide
 
-/-- The integer polynomial `F̃_n = L_n F_n = L_n + ∑_{j=1}^n (L_n / j) x^j`.
+/-- **Scaled truncated logarithmic polynomial.** For a natural number $n$, let
+$L_n = \operatorname{lcm}(1, 2, \dots, n)$. The scaled truncated logarithmic polynomial is the
+integer polynomial $\tilde F_n(x) = L_n + \sum_{j=1}^{n} (L_n / j)\, x^j$, where each quotient
+$L_n / j$ is an integer.
 
 Source: Cullinan and Gajek-Leonard, *On the Discriminants of Truncated
 Logarithmic Polynomials*, INTEGERS 25 (2025), Article A39, Section 1. -/
 public noncomputable def scaledTruncatedLogPolynomial (n : ℕ) : ℤ[X] :=
   C (truncatedLogLcm n : ℤ) + ∑ j ∈ Finset.Icc 1 n, C ((truncatedLogLcm n / j : ℕ) : ℤ) * X ^ j
 
-/-- `F̃_n` maps to `L_n F_n` in `ℚ[x]`.
+/-- **The scaled truncated logarithmic polynomial is $L_n F_n$.** For a natural number $n$, let
+$L_n = \operatorname{lcm}(1, 2, \dots, n)$, let $F_n(x) = 1 + x + x^2/2 + \cdots + x^n/n$ be the
+truncated logarithmic polynomial and let $\tilde F_n \in \mathbb{Z}[x]$ be the scaled truncated
+logarithmic polynomial. Mapping the coefficients of $\tilde F_n$ from $\mathbb{Z}$ to
+$\mathbb{Q}$ gives the polynomial $L_n F_n$ in $\mathbb{Q}[x]$.
 
 Source: Cullinan and Gajek-Leonard, *On the Discriminants of Truncated
 Logarithmic Polynomials*, INTEGERS 25 (2025), Article A39, Section 1. -/
@@ -80,17 +91,24 @@ public theorem map_scaledTruncatedLogPolynomial (n : ℕ) :
   simp only [eq_intCast, Int.cast_natCast]
   rw [Nat.cast_div hdvd hj0, div_eq_mul_inv]
 
-/-- `𝒫_n = ∏_{θ : F_n'(θ) = 0} F̃_n(θ)`, as the resultant
-`Res(1 + x + ⋯ + x^{n-1}, F̃_n)`.
+/-- **Resultant product for truncated logarithmic polynomials.** For a natural number $n$, let
+$F_n(x) = 1 + x + \frac{x^2}{2} + \dots + \frac{x^n}{n}$, let
+$L_n = \operatorname{lcm}(1, \dots, n)$, and let $\tilde F_n = L_n F_n \in \mathbb{Z}[x]$. The
+integer $\mathcal{P}_n$ is the resultant $\operatorname{Res}(1 + x + \dots + x^{n-1}, \tilde F_n)$.
+For $n \ge 1$ the polynomial $1 + x + \dots + x^{n-1} = F_n'$ is monic, so
+$\mathcal{P}_n = \prod_{\theta} \tilde F_n(\theta)$, the product over the roots $\theta$ of $F_n'$.
 
 Source: Cullinan and Gajek-Leonard, *On the Discriminants of Truncated
 Logarithmic Polynomials*, INTEGERS 25 (2025), Article A39, Equation (5). -/
 public noncomputable def truncatedLogResultantProduct (n : ℕ) : ℤ :=
   resultant (∑ k ∈ Finset.range n, (X : ℤ[X]) ^ k) (scaledTruncatedLogPolynomial n)
 
-/-- `X(m) = ∏_{k=1}^{m-1} (1/m + ω^k + ω^{2k}/2 + ⋯ + ω^{(m-1)k}/(m-1))` for a
-primitive `m`-th root of unity `ω`, as the resultant of `1 + x + ⋯ + x^{m-1}`
-with `1/m + x + x²/2 + ⋯ + x^{m-1}/(m-1)`.
+/-- **Auxiliary product for truncated logarithmic discriminants.** For a natural number $m$, let
+$f_m(x) = \sum_{k=0}^{m-1} x^k$ and $g_m(x) = c_m + \sum_{j=1}^{m-1} \frac{x^j}{j}$ in
+$\mathbb{Q}[x]$, where $c_m = \frac{1}{m}$ for $m \ge 1$ and $c_0 = 0$. The rational number $X(m)$
+is the resultant $\operatorname{Res}(f_m, g_m)$. For $m \ge 1$, since $f_m$ is monic with roots
+$\omega^k$ for $1 \le k \le m-1$, where $\omega$ is a primitive $m$-th root of unity, this is
+$X(m) = \prod_{k=1}^{m-1} g_m(\omega^k)$.
 
 Source: Cullinan and Gajek-Leonard, *On the Discriminants of Truncated
 Logarithmic Polynomials*, INTEGERS 25 (2025), Article A39, Section 4. -/
@@ -98,24 +116,30 @@ public noncomputable def truncatedLogAuxProduct (m : ℕ) : ℚ :=
   resultant (∑ k ∈ Finset.range m, (X : ℚ[X]) ^ k)
     (C ((m : ℚ)⁻¹) + ∑ j ∈ Finset.Icc 1 (m - 1), C ((j : ℚ)⁻¹) * X ^ j)
 
-/-- `X(1) = 1` (an empty product).
+/-- **Auxiliary product at $m = 1$.** The auxiliary product $X(m)$ takes the value $X(1) = 1$ at
+$m = 1$; it is an empty product.
 
 Source: Cullinan and Gajek-Leonard, *On the Discriminants of Truncated
 Logarithmic Polynomials*, INTEGERS 25 (2025), Article A39, Section 4. -/
 public theorem truncatedLogAuxProduct_one : truncatedLogAuxProduct 1 = 1 := by
   simp [truncatedLogAuxProduct]
 
-/-- `𝒫_1 = 1` (an empty product).
+/-- **Resultant product at $n = 1$.** The resultant product satisfies $\mathcal{P}_1 = 1$; it is an
+empty product.
 
 Source: Cullinan and Gajek-Leonard, *On the Discriminants of Truncated
 Logarithmic Polynomials*, INTEGERS 25 (2025), Article A39, Equation (5). -/
 public theorem truncatedLogResultantProduct_one : truncatedLogResultantProduct 1 = 1 := by
   simp [truncatedLogResultantProduct]
 
-/-- The exceptional set `E_m`: primes `ℓ` dividing `X(m)` or `Y(m) = H_m` (positive
-`ℓ`-adic valuation) with `m ℓ ≡ 1 (mod 4)`. The source's display joins the two
-valuation conditions with "and", but its text ("all prime divisors of `X(m)` and
-`Y(m)`") and its table (`E_3 = {11}` with `11 ∤ X(3) = 13/36`) use the union.
+/-- **Exceptional primes for truncated logarithmic discriminants.** For a natural number $m$, the
+exceptional set $E_m$ is the set of primes $\ell$ with $m\ell \equiv 1 \pmod 4$ such that the
+$\ell$-adic valuation of the auxiliary product $X(m)$ is positive or the $\ell$-adic valuation of
+the harmonic number $Y(m) = H_m = 1 + \frac{1}{2} + \dots + \frac{1}{m}$ is positive.
+
+The source's display joins the two valuation conditions with "and", but its text ("all prime
+divisors of $X(m)$ and $Y(m)$") and its table ($E_3 = \{11\}$ with $11 \nmid X(3) = 13/36$) use
+the union.
 
 Source: Cullinan and Gajek-Leonard, *On the Discriminants of Truncated
 Logarithmic Polynomials*, INTEGERS 25 (2025), Article A39, Section 4. -/
@@ -123,7 +147,8 @@ public def truncatedLogExceptionalPrimes (m : ℕ) : Set ℕ :=
   {ℓ | ℓ.Prime ∧ (0 < padicValRat ℓ (truncatedLogAuxProduct m) ∨
     0 < padicValRat ℓ (_root_.harmonic m)) ∧ m * ℓ % 4 = 1}
 
-/-- `𝒫_n` is positive (for `n ≥ 1`).
+/-- **Positivity of the resultant product.** For every natural number $n \ge 1$, the resultant
+product $\mathcal{P}_n$ is a positive integer.
 
 Source: Cullinan and Gajek-Leonard, *On the Discriminants of Truncated
 Logarithmic Polynomials*, INTEGERS 25 (2025), Article A39, Lemma 1
@@ -131,7 +156,10 @@ Logarithmic Polynomials*, INTEGERS 25 (2025), Article A39, Lemma 1
 public theorem_wanted truncatedLogResultantProduct_pos {n : ℕ} (hn : 1 ≤ n) :
     0 < truncatedLogResultantProduct n
 
-/-- If `n ≡ 0, 2, 3 (mod 4)` (`n ≥ 1`), then `disc(F_n)` is not a rational square.
+/-- **Nonsquare discriminants of $F_n$ for positive $n \equiv 0, 2, 3 \pmod 4$.** Let
+$F_n(x) = 1 + x + x^2/2 + \cdots + x^n/n$ be the truncated logarithmic polynomial and let
+$n \ge 1$ be a natural number with $n \equiv 0$, $2$ or $3 \pmod 4$. Then the discriminant of
+$F_n$ is not a square in $\mathbb{Q}$.
 
 Source: Cullinan and Gajek-Leonard, *On the Discriminants of Truncated
 Logarithmic Polynomials*, INTEGERS 25 (2025), Article A39, Proposition 1
@@ -140,8 +168,10 @@ public theorem_wanted not_isSquare_discr_truncatedLog_of_mod_four {n : ℕ} (hn 
     (h : n % 4 = 0 ∨ n % 4 = 2 ∨ n % 4 = 3) :
     ¬ IsSquare (truncatedLogPolynomial n).discr
 
-/-- If `n ≡ 0, 2, 3 (mod 4)` (`n ≥ 1`), or `n ≡ 1 (mod 4)` is an odd power of a
-prime, then `disc(F_n)` is not a rational square.
+/-- **Nonsquare discriminants of truncated logarithmic polynomials.** Let
+$F_n(x) = 1 + x + x^2/2 + \cdots + x^n/n$ be the truncated logarithmic polynomial and let
+$n \ge 1$. If $n \equiv 0$, $2$ or $3 \pmod 4$, or if $n \equiv 1 \pmod 4$ and $n = p^e$ for a
+prime $p$ and an odd $e$, then the discriminant of $F_n$ is not a square in $\mathbb{Q}$.
 
 Source: Cullinan and Gajek-Leonard, *On the Discriminants of Truncated
 Logarithmic Polynomials*, INTEGERS 25 (2025), Article A39, Theorem 1
@@ -151,7 +181,9 @@ public theorem_wanted not_isSquare_discr_truncatedLog {n : ℕ} (hn : 1 ≤ n)
       (n % 4 = 1 ∧ ∃ p e : ℕ, p.Prime ∧ Odd e ∧ n = p ^ e)) :
     ¬ IsSquare (truncatedLogPolynomial n).discr
 
-/-- If `n = p^{2e}` for an odd prime `p` and `e ≥ 1`, then `𝒫_n` is coprime to `p`.
+/-- **An odd prime $p$ does not divide $\mathcal{P}_{p^{2e}}$.** Let $p$ be an odd prime, let
+$e \ge 1$, and let $\mathcal{P}_n$ be the truncated logarithmic resultant product. Then $p$ does
+not divide $\mathcal{P}_{p^{2e}}$.
 
 Source: Cullinan and Gajek-Leonard, *On the Discriminants of Truncated
 Logarithmic Polynomials*, INTEGERS 25 (2025), Article A39, Theorem 2
@@ -160,8 +192,10 @@ public theorem_wanted not_dvd_truncatedLogResultantProduct_of_even_power {p e : 
     (hp : p.Prime) (hp2 : p ≠ 2) (he : 1 ≤ e) :
     ¬ (p : ℤ) ∣ truncatedLogResultantProduct (p ^ (2 * e))
 
-/-- For `m ≥ 1`, all but finitely many primes `q` with `m q ≡ 1 (mod 4)` have
-`disc(F_{mq})` not a rational square.
+/-- **Finiteness of square discriminants of $F_{mq}$ with $mq \equiv 1 \pmod 4$.** Let
+$F_n(x) = 1 + x + x^2/2 + \cdots + x^n/n$ be the truncated logarithmic polynomial and let
+$m \ge 1$ be a natural number. Then there are only finitely many primes $q$ with
+$mq \equiv 1 \pmod 4$ such that the discriminant of $F_{mq}$ is a square in $\mathbb{Q}$.
 
 Source: Cullinan and Gajek-Leonard, *On the Discriminants of Truncated
 Logarithmic Polynomials*, INTEGERS 25 (2025), Article A39, Theorem 3
@@ -169,7 +203,9 @@ Logarithmic Polynomials*, INTEGERS 25 (2025), Article A39, Theorem 3
 public theorem_wanted finite_primes_isSquare_discr_truncatedLog {m : ℕ} (hm : 1 ≤ m) :
     {q : ℕ | q.Prime ∧ m * q % 4 = 1 ∧ IsSquare (truncatedLogPolynomial (m * q)).discr}.Finite
 
-/-- If `p ≡ 1 (mod 4)` is prime, `e ≥ 1`, and `n = p^e`, then `𝒫_n` is coprime to `p`.
+/-- **A prime $p \equiv 1 \pmod 4$ does not divide $\mathcal{P}_{p^e}$.** Let $p$ be a prime with
+$p \equiv 1 \pmod 4$, let $e \ge 1$, and let $\mathcal{P}_n$ be the truncated logarithmic
+resultant product. Then $p$ does not divide $\mathcal{P}_{p^e}$.
 
 Source: Cullinan and Gajek-Leonard, *On the Discriminants of Truncated
 Logarithmic Polynomials*, INTEGERS 25 (2025), Article A39, Theorem 4
@@ -178,9 +214,12 @@ public theorem_wanted not_dvd_truncatedLogResultantProduct_of_prime_power {p e :
     (hp : p.Prime) (hp4 : p % 4 = 1) (he : 1 ≤ e) :
     ¬ (p : ℤ) ∣ truncatedLogResultantProduct (p ^ e)
 
-/-- If `p ≡ 1 (mod 4)` is prime, `e ≥ 1`, and `n = p^e`: for odd `e`, `disc(F_n)` is not
-a rational square; for even `e`, it is not a rational square if and only if `𝒫_n` is
-not.
+/-- **Discriminants of $F_{p^e}$ for primes $p \equiv 1 \pmod 4$.** Let $p$ be a prime with
+$p \equiv 1 \pmod 4$, let $e \ge 1$, let $F_n(x) = 1 + x + x^2/2 + \cdots + x^n/n$ be the
+truncated logarithmic polynomial and let $\mathcal{P}_n$ be the truncated logarithmic resultant
+product. If $e$ is odd, the discriminant of $F_{p^e}$ is not a square in $\mathbb{Q}$. If $e$ is
+even, the discriminant of $F_{p^e}$ is not a square in $\mathbb{Q}$ if and only if the integer
+$\mathcal{P}_{p^e}$ is not a square in $\mathbb{Q}$.
 
 Source: Cullinan and Gajek-Leonard, *On the Discriminants of Truncated
 Logarithmic Polynomials*, INTEGERS 25 (2025), Article A39, Corollary 1
@@ -191,8 +230,11 @@ public theorem_wanted discr_truncatedLog_prime_power {p e : ℕ} (hp : p.Prime)
       (Even e → (¬ IsSquare (truncatedLogPolynomial (p ^ e)).discr ↔
         ¬ IsSquare ((truncatedLogResultantProduct (p ^ e) : ℤ) : ℚ)))
 
-/-- For a prime `q ∉ E_m` with `q > m` and `n = m q ≡ 1 (mod 4)`, `disc(F_n)` is not a
-rational square.
+/-- **Nonsquare discriminants of $F_{mq}$ for non-exceptional primes $q > m$.** Let $m$ be a
+natural number, let $E_m$ be the set of exceptional primes for truncated logarithmic
+discriminants, and let $F_n(x) = 1 + x + x^2/2 + \cdots + x^n/n$ be the truncated logarithmic
+polynomial. If $q$ is a prime with $q \notin E_m$, $q > m$ and $mq \equiv 1 \pmod 4$, then the
+discriminant of $F_{mq}$ is not a square in $\mathbb{Q}$.
 
 Source: Cullinan and Gajek-Leonard, *On the Discriminants of Truncated
 Logarithmic Polynomials*, INTEGERS 25 (2025), Article A39, Theorem 5
@@ -201,8 +243,10 @@ public theorem_wanted not_isSquare_discr_truncatedLog_mul_prime {m q : ℕ} (hq 
     (hE : q ∉ truncatedLogExceptionalPrimes m) (hmq : m < q) (h4 : m * q % 4 = 1) :
     ¬ IsSquare (truncatedLogPolynomial (m * q)).discr
 
-/-- For every prime `q`, if `n = 3q`, `5q`, or `7q`, then `disc(F_n)` is not a rational
-square.
+/-- **Nonsquare discriminants of $F_{3q}$, $F_{5q}$ and $F_{7q}$.** Let
+$F_n(x) = 1 + x + x^2/2 + \cdots + x^n/n$ be the truncated logarithmic polynomial. For every
+prime $q$, if $n = 3q$, $n = 5q$ or $n = 7q$, then the discriminant of $F_n$ is not a square in
+$\mathbb{Q}$.
 
 Source: Cullinan and Gajek-Leonard, *On the Discriminants of Truncated
 Logarithmic Polynomials*, INTEGERS 25 (2025), Article A39, Proposition 2

@@ -34,17 +34,30 @@ A colouring is any `f : ℕ → Fin k`; only its values on `{1, …, N}` matter.
 no code imported).
 -/
 
-/-- Erdős Problem 484 (Roth): there is an absolute `c > 0` such that for every `k ≥ 1` and all
-`N` large in terms of `k`, every `k`-colouring of `{1, …, N}` leaves at least `c N` integers
-`n ∈ {1, …, N}` of the form `a + b` with `a ≠ b` in `{1, …, N}` of the same colour. -/
+/-- **Erdős Problem 484: linearly many monochromatic sums.** This is the statement that there is a
+real constant $c > 0$ such that for every integer $k \ge 1$ there is an $N_0 \in \mathbb{N}$ with
+the following property: for every $N \ge N_0$ and every colouring
+$f : \mathbb{N} \to \{0, \dots, k-1\}$, at least $cN$ of the integers $n \in \{1, \dots, N\}$ can
+be written as $n = a + b$ with $a, b \in \{1, \dots, N\}$, $a \ne b$ and $f(a) = f(b)$.
+
+Only the colours of $1, \dots, N$ matter, so this is a statement about $k$-colourings of
+$\{1, \dots, N\}$; $c$ does not depend on $k$, while $N_0$ may. -/
 def monochromaticSumsLinearCount : Prop :=
   ∃ c : ℝ, 0 < c ∧ ∀ k : ℕ, 0 < k → ∃ N₀ : ℕ, ∀ N : ℕ, N₀ ≤ N → ∀ f : ℕ → Fin k,
     c * N ≤ ({n : ℕ | n ∈ Finset.Icc 1 N ∧
       ∃ a ∈ Finset.Icc 1 N, ∃ b ∈ Finset.Icc 1 N, a ≠ b ∧ f a = f b ∧ a + b = n}.ncard : ℝ)
 
 /--
-Resolved true: Erdős, Sárközy and Sós proved that at least `N/2 - O(N ^ (1 - 1/2^(k+1)))` even
-numbers in `{1, …, N}` are monochromatic sums, so any `c < 1/2` works. Source: T. F. Bloom, Erdős
+**Erdős–Sárközy–Sós theorem on monochromatic sums (Erdős Problem 484).** There is a real constant
+$c > 0$ such that for every integer $k \ge 1$ there is an $N_0 \in \mathbb{N}$ such that for every
+$N \ge N_0$ and every colouring $f : \mathbb{N} \to \{0, \dots, k-1\}$, at least $cN$ of the
+integers $n \in \{1, \dots, N\}$ can be written as $n = a + b$ with $a, b \in \{1, \dots, N\}$,
+$a \ne b$ and $f(a) = f(b)$.
+
+Erdős, Sárközy and Sós proved that at least $N/2 - O(N^{1 - 1/2^{k+1}})$ even numbers in
+$\{1, \dots, N\}$ are such monochromatic sums, so any $c < 1/2$ works.
+
+Source: T. F. Bloom, Erdős
 Problems, Problem #484, https://www.erdosproblems.com/484 (status PROVED (LEAN)); resolution: P.
 Erdős, A. Sárközy and V. T. Sós, On a conjecture of Roth and some related problems. I (1989), 47-59,
 erdosproblems.com/484: at least N/2 - O(N^{1 - 1/2^{k+1}}) even numbers are monochromatic sums,

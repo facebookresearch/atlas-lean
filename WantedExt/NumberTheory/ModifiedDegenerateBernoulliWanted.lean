@@ -35,9 +35,13 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The modified degenerate Bernoulli polynomial `𝔅_{n,λ}(x) = c^{n-1} B_n(x)` with
-`c = log (1+λ) / λ` (principal branch), where `B_n` is the Bernoulli polynomial
-(`Polynomial.bernoulli`, with `B_1(x) = x - 1/2`).
+/-- **Modified degenerate Bernoulli polynomials.** For a complex number $\lambda$, a natural number
+$n$ and a complex number $x$, the modified degenerate Bernoulli polynomial is
+$\mathfrak{B}_{n,\lambda}(x) = c^{n-1} B_n(x)$, where $c = \log(1+\lambda)/\lambda$ with the
+principal branch of the logarithm, $B_n$ is the $n$-th Bernoulli polynomial (with
+$B_1(x) = x - 1/2$), and the exponent $n - 1$ is an integer, so that
+$\mathfrak{B}_{0,\lambda}(x) = c^{-1}$. At $\lambda = 0$ and $\lambda = -1$, where this quotient is
+undefined, $c$ is taken to be $0$, with $0^{-1} = 0$ and $0^0 = 1$.
 
 Source: Qi-Peng Su and Hao Pan, *Symmetric Identities on Modified Degenerate Bernoulli
 Polynomials*, Journal of Integer Sequences 27 (2024), Article 24.5.4, Section 1 (generating
@@ -45,9 +49,18 @@ function of Dolgy, Kim, Kwon and Seo). -/
 noncomputable def modifiedDegenerateBernoulli (lam : ℂ) (n : ℕ) (x : ℂ) : ℂ :=
   (Complex.log (1 + lam) / lam) ^ ((n : ℤ) - 1) * Polynomial.aeval x (Polynomial.bernoulli n)
 
-/-- The paper's generating function: with `c = log (1+λ) / λ ≠ 0`,
-`(∑ 𝔅_{n,λ}(x) tⁿ / n!) · (e^{ct} - 1) = t e^{cxt}`, i.e.
-`(∑ 𝔅_{n,λ}(x) tⁿ / n!) · ((1+λ)^{t/λ} - 1) = t (1+λ)^{xt/λ}`.
+/-- **Generating function of the modified degenerate Bernoulli polynomials.** Let $\lambda$ and $x$
+be complex numbers such that $c = \log(1+\lambda)/\lambda$ (principal branch) is nonzero, and write
+$\mathfrak{B}_{n,\lambda}(x)$ for the modified degenerate Bernoulli polynomials. Then, as formal
+power series in $t$ over $\mathbb{C}$,
+
+$$
+\Bigl(\sum_{n \ge 0} \mathfrak{B}_{n,\lambda}(x) \frac{t^n}{n!}\Bigr) \bigl(e^{ct} - 1\bigr) =
+t\, e^{cxt}.
+$$
+
+With $(1+\lambda)^w = e^{w \log(1+\lambda)}$, this says that the series times
+$(1+\lambda)^{t/\lambda} - 1$ equals $t\,(1+\lambda)^{xt/\lambda}$.
 
 Source: Qi-Peng Su and Hao Pan, *Symmetric Identities on Modified Degenerate Bernoulli
 Polynomials*, Journal of Integer Sequences 27 (2024), Article 24.5.4, Section 1. -/
@@ -73,7 +86,9 @@ theorem modifiedDegenerateBernoulli_generating_function (lam x : ℂ)
   rw [hmk, mul_assoc, key, ← mul_assoc, ← mul_assoc, ← map_mul, inv_mul_cancel₀ h, map_one,
     one_mul, mul_comm x c]
 
-/-- `𝔅_{1,λ}(x) = x - 1/2`.
+/-- **The first modified degenerate Bernoulli polynomial.** For all complex numbers $\lambda$ and
+$x$, the modified degenerate Bernoulli polynomial $\mathfrak{B}_{1,\lambda}$ of index $1$ satisfies
+$\mathfrak{B}_{1,\lambda}(x) = x - 1/2$.
 
 Source: Qi-Peng Su and Hao Pan, *Symmetric Identities on Modified Degenerate Bernoulli
 Polynomials*, Journal of Integer Sequences 27 (2024), Article 24.5.4, Section 1. -/
@@ -81,10 +96,22 @@ theorem modifiedDegenerateBernoulli_one (lam x : ℂ) :
     modifiedDegenerateBernoulli lam 1 x = x - 1 / 2 := by
   simp [modifiedDegenerateBernoulli, Polynomial.bernoulli_one]
 
-/-- Theorem 1: for integers `m ≥ 2`, `n ≥ 1`, complex `r_1, …, r_m`, `x_1, …, x_m` and
-`r₀ = n - r_1 - ⋯ - r_m`,
-`r₀ ∑_{k_1+⋯+k_m=n} ∏_j C(r_j, k_j) 𝔅_{k_j,λ}(x_j) = -∑_i r_i ∑_{k_1+⋯+k_m=n} C(r₀, k_i)
-𝔅_{k_i,λ}(1 - x_i) ∏_{j ≠ i} C(r_j, k_j) 𝔅_{k_j,λ}(x_j - x_i + 1_{j>i})`, for `λ ≠ 0, -1`.
+/-- **Symmetric identity for modified degenerate Bernoulli polynomials.** Let $m \ge 2$ and
+$n \ge 1$ be integers, let $\lambda$ be a complex number with $\lambda \ne 0$ and $\lambda \ne -1$,
+let $r_1, \ldots, r_m$ and $x_1, \ldots, x_m$ be complex numbers, write
+$\mathfrak{B}_{k,\lambda}(x)$ for the modified degenerate Bernoulli polynomials, and put
+$r_0 = n - r_1 - \cdots - r_m$. Then
+
+$$
+r_0 \sum_{k_1 + \cdots + k_m = n} \prod_{j=1}^{m} \binom{r_j}{k_j} \mathfrak{B}_{k_j,\lambda}(x_j)
+= -\sum_{i=1}^{m} r_i \sum_{k_1 + \cdots + k_m = n} \binom{r_0}{k_i}
+\mathfrak{B}_{k_i,\lambda}(1 - x_i)
+\prod_{j \ne i} \binom{r_j}{k_j} \mathfrak{B}_{k_j,\lambda}(x_j - x_i + [j > i]),
+$$
+
+where $k_1, \ldots, k_m$ range over nonnegative integers, $\binom{w}{k} = w(w-1) \cdots
+(w-k+1)/k!$ is the binomial coefficient with a complex upper argument, and $[j > i]$ is $1$ if
+$j > i$ and $0$ otherwise.
 
 Source: Qi-Peng Su and Hao Pan, *Symmetric Identities on Modified Degenerate Bernoulli
 Polynomials*, Journal of Integer Sequences 27 (2024), Article 24.5.4, Theorem 1
@@ -98,10 +125,16 @@ public theorem_wanted modifiedDegenerateBernoulli_symmetric_identity (m n : ℕ)
           ∏ j ∈ univ.erase i, Ring.choose (r j) (k j) *
             modifiedDegenerateBernoulli lam (k j) (x j - x i + if i < j then 1 else 0)
 
-/-- Corollary 2, three-term identity: with
-`𝔇_{s,t,λ}(x, y) = ∑_{k=0}^n (-1)^k C(s, k) C(t, n-k) 𝔅_{n-k,λ}(x) 𝔅_{k,λ}(y)`, for `n ≥ 1`,
-`r + s + t = n` and `x + y + z = 1`,
-`r 𝔇_{s,t,λ}(x, y) + s 𝔇_{t,r,λ}(y, z) + t 𝔇_{r,s,λ}(z, x) = 0`, for `λ ≠ 0, -1`.
+/-- **Three-term identity for modified degenerate Bernoulli polynomials.** Let $n \ge 1$, let
+$\lambda$ be a complex number with $\lambda \ne 0$ and $\lambda \ne -1$, write
+$\mathfrak{B}_{k,\lambda}(x)$ for the modified degenerate Bernoulli polynomials, and for complex
+numbers $s, t, x, y$ put
+$\mathfrak{D}_{s,t,\lambda}(x, y) = \sum_{k=0}^{n} (-1)^k \binom{s}{k} \binom{t}{n-k}
+\mathfrak{B}_{n-k,\lambda}(x) \mathfrak{B}_{k,\lambda}(y)$, where
+$\binom{w}{k} = w(w-1) \cdots (w-k+1)/k!$ is the binomial coefficient with a complex upper
+argument. If $r, s, t, x, y, z$ are complex numbers with $r + s + t = n$ and $x + y + z = 1$, then
+$r\, \mathfrak{D}_{s,t,\lambda}(x, y) + s\, \mathfrak{D}_{t,r,\lambda}(y, z) +
+t\, \mathfrak{D}_{r,s,\lambda}(z, x) = 0$.
 
 Source: Qi-Peng Su and Hao Pan, *Symmetric Identities on Modified Degenerate Bernoulli
 Polynomials*, Journal of Integer Sequences 27 (2024), Article 24.5.4, Corollary 2, equation
@@ -114,9 +147,20 @@ public theorem_wanted modifiedDegenerateBernoulli_three_term (n : ℕ) (hn : 1 �
         modifiedDegenerateBernoulli lam (n - k) x * modifiedDegenerateBernoulli lam k y
     r * D s t x y + s * D t r y z + t * D r s z x = 0
 
-/-- Corollary 2, Miki-type identity: for `n ≥ 4` and `𝔅_{k,λ} = 𝔅_{k,λ}(0)`,
-`∑_{k=1}^{n-1} 𝔅_{k,λ} 𝔅_{n-k,λ} / k - ∑_{k=1}^{n-1} C(n, k) 𝔅_{k,λ} 𝔅_{n-k,λ} / k =
-λ / log (1+λ) · H_n 𝔅_{n,λ} + n/2 · 𝔅_{n-1,λ}`, for `λ ≠ 0, -1`.
+/-- **Miki-type identity for modified degenerate Bernoulli numbers.** Let $n \ge 4$, let $\lambda$
+be a complex number with $\lambda \ne 0$ and $\lambda \ne -1$, write
+$\mathfrak{B}_{k,\lambda} = \mathfrak{B}_{k,\lambda}(0)$ for the value at $0$ of the modified
+degenerate Bernoulli polynomial $\mathfrak{B}_{k,\lambda}(x)$, and let $H_n = \sum_{k=1}^{n} 1/k$
+be the $n$-th harmonic number. Then
+
+$$
+\sum_{k=1}^{n-1} \frac{\mathfrak{B}_{k,\lambda} \mathfrak{B}_{n-k,\lambda}}{k} -
+\sum_{k=1}^{n-1} \binom{n}{k} \frac{\mathfrak{B}_{k,\lambda} \mathfrak{B}_{n-k,\lambda}}{k} =
+\frac{\lambda}{\log(1+\lambda)}\, H_n\, \mathfrak{B}_{n,\lambda} +
+\frac{n}{2}\, \mathfrak{B}_{n-1,\lambda},
+$$
+
+where $\log$ is the principal branch.
 
 Source: Qi-Peng Su and Hao Pan, *Symmetric Identities on Modified Degenerate Bernoulli
 Polynomials*, Journal of Integer Sequences 27 (2024), Article 24.5.4, Corollary 2, equation
@@ -130,9 +174,18 @@ public theorem_wanted modifiedDegenerateBernoulli_miki (n : ℕ) (hn : 4 ≤ n) 
       lam / Complex.log (1 + lam) * (harmonic n : ℂ) * modifiedDegenerateBernoulli lam n 0 +
         n / 2 * modifiedDegenerateBernoulli lam (n - 1) 0
 
-/-- Corollary 2, Matiyasevich-Dunne-Schubert-type identity: for `n ≥ 4` and
-`𝔅_{k,λ} = 𝔅_{k,λ}(0)`, `(n+2) ∑_{k=2}^{n-2} 𝔅_{k,λ} 𝔅_{n-k,λ} =
-2 ∑_{k=2}^{n-2} C(n+2, k) 𝔅_{k,λ} 𝔅_{n-k,λ} + λ / log (1+λ) · n(n+1) 𝔅_{n,λ}`, for `λ ≠ 0, -1`.
+/-- **Matiyasevich-type identity for modified degenerate Bernoulli numbers.** Let $n \ge 4$, let
+$\lambda$ be a complex number with $\lambda \ne 0$ and $\lambda \ne -1$, and write
+$\mathfrak{B}_{k,\lambda} = \mathfrak{B}_{k,\lambda}(0)$ for the value at $0$ of the modified
+degenerate Bernoulli polynomial $\mathfrak{B}_{k,\lambda}(x)$. Then
+
+$$
+(n+2) \sum_{k=2}^{n-2} \mathfrak{B}_{k,\lambda} \mathfrak{B}_{n-k,\lambda} =
+2 \sum_{k=2}^{n-2} \binom{n+2}{k} \mathfrak{B}_{k,\lambda} \mathfrak{B}_{n-k,\lambda} +
+\frac{\lambda}{\log(1+\lambda)}\, n(n+1)\, \mathfrak{B}_{n,\lambda},
+$$
+
+where $\log$ is the principal branch.
 
 Source: Qi-Peng Su and Hao Pan, *Symmetric Identities on Modified Degenerate Bernoulli
 Polynomials*, Journal of Integer Sequences 27 (2024), Article 24.5.4, Corollary 2, equation
@@ -145,11 +198,21 @@ public theorem_wanted modifiedDegenerateBernoulli_matiyasevich (n : ℕ) (hn : 4
           modifiedDegenerateBernoulli lam k 0 * modifiedDegenerateBernoulli lam (n - k) 0 +
         lam / Complex.log (1 + lam) * (n * (n + 1)) * modifiedDegenerateBernoulli lam n 0
 
-/-- Lemma 3: for `m ≥ 2` and nonnegative integers `s_1, …, s_m` with `S = s_1 + ⋯ + s_m`,
-`∑_i s_i 𝔅_{s_i-1,λ}(x_i) ∏_{j ≠ i} 𝔅_{s_j,λ}(x_j) = ∑_i s_i ∑_{k_1+⋯+k_m=S} 𝔅_{k_i-1,λ}(x_i)
-∏_{j ≠ i} C(s_j, k_j) 𝔅_{k_j,λ}(x_j - x_i + 1_{j>i})`, with the paper's convention
-`𝔅_{-1,λ} = 0` (written as the `k_i = 0` case; on the left the factor `s_i` vanishes there), for
-`λ ≠ 0, -1`.
+/-- **A convolution lemma for modified degenerate Bernoulli polynomials.** Let $m \ge 2$, let
+$\lambda$ be a complex number with $\lambda \ne 0$ and $\lambda \ne -1$, let $s_1, \ldots, s_m$ be
+nonnegative integers with $S = s_1 + \cdots + s_m$, and let $x_1, \ldots, x_m$ be complex numbers.
+Writing $\mathfrak{B}_{n,\lambda}(x)$ for the modified degenerate Bernoulli polynomials,
+
+$$
+\sum_{i=1}^{m} s_i\, \mathfrak{B}_{s_i-1,\lambda}(x_i)
+\prod_{j \ne i} \mathfrak{B}_{s_j,\lambda}(x_j) =
+\sum_{i=1}^{m} s_i \sum_{k_1 + \cdots + k_m = S} \mathfrak{B}_{k_i-1,\lambda}(x_i)
+\prod_{j \ne i} \binom{s_j}{k_j} \mathfrak{B}_{k_j,\lambda}(x_j - x_i + [j > i]),
+$$
+
+where $k_1, \ldots, k_m$ range over nonnegative integers, $[j > i]$ is $1$ if $j > i$ and $0$
+otherwise, and $\mathfrak{B}_{-1,\lambda}$ is read as $0$ (on the left this term has the factor
+$s_i = 0$).
 
 Source: Qi-Peng Su and Hao Pan, *Symmetric Identities on Modified Degenerate Bernoulli
 Polynomials*, Journal of Integer Sequences 27 (2024), Article 24.5.4, Lemma 3

@@ -37,30 +37,39 @@ hypothesis, so the refutation is the strongest one; such a partition has infinit
 cells.
 -/
 
-/-- A sequence of pairwise disjoint finite sets `F n` is expansive if every nonempty open set meets
-`F n` for all large `n`. -/
+/-- **Expansive sequence.** In a topological space $G$, a sequence $(F_n)_{n \in \mathbb{N}}$ of
+finite subsets of $G$ is expansive if the sets $F_n$ are pairwise disjoint and for every nonempty
+open set $U \subseteq G$ there is $m \in \mathbb{N}$ such that $F_n$ meets $U$ for all $n > m$. -/
 def IsExpansiveSequence {G : Type*} [TopologicalSpace G] (F : ℕ → Finset G) : Prop :=
   Pairwise (fun i j => Disjoint (F i) (F j)) ∧
     ∀ U : Set G, IsOpen U → U.Nonempty → ∃ m : ℕ, ∀ n, m < n → ∃ x ∈ F n, x ∈ U
 
-/-- Kourovka 15.80 (I. V. Protasov): every topological group that can be partitioned into countably
-many dense subsets has an expansive sequence. -/
+/-- **Kourovka Problem 15.80: dense partitions and expansive sequences.** Every topological group
+$G$ admitting a sequence $(P_i)_{i \in \mathbb{N}}$ of pairwise disjoint dense subsets with union
+$G$ has an expansive sequence. -/
 def countableDensePartitionHasExpansiveSequence : Prop :=
   ∀ (G : Type) [Group G] [TopologicalSpace G] [IsTopologicalGroup G],
     (∃ P : ℕ → Set G, Pairwise (fun i j => Disjoint (P i) (P j)) ∧ (⋃ i, P i) = Set.univ ∧
       ∀ i, Dense (P i)) → ∃ F : ℕ → Finset G, IsExpansiveSequence F
 
 /--
-Resolved false: the Kourovka Notebook (21st issue) answers 15.80 "Not necessarily" (S. Corson): `∏_ℕ
-ℝ` with the box topology has no countable dense subset, hence no expansive sequence (the union of
-one is countable and dense), but its base of `2^ℵ₀` open sets of size `2^ℵ₀` lets a transfinite
-induction partition it into countably many dense subsets. Source: E. I. Khukhro and V. D. Mazurov
-(eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49
-(2026), Problem 15.80 (I. V. Protasov); resolution: S. Corson, letter of 19 May 2025, as recorded in
-the Kourovka Notebook (21st issue), Problem 15.80, G = ∏_ℕ ℝ with the box topology: not separable,
-hence without expansive sequences, but partitionable into countably many dense subsets by
-transfinite induction; the Kourovka Notebook (21st issue) marks 15.80 solved (answer: Not
-necessarily), https://arxiv.org/abs/1401.0300v49.
+**Kourovka Problem 15.80 has a negative answer.** It is not true that every topological group $G$
+admitting a sequence $(P_i)_{i \in \mathbb{N}}$ of pairwise disjoint dense subsets with union $G$
+has an expansive sequence, that is, a sequence $(F_n)_{n \in \mathbb{N}}$ of pairwise disjoint
+finite subsets of $G$ such that every nonempty open set $U \subseteq G$ meets $F_n$ for all $n$
+larger than some $m$.
+
+S. Corson's counterexample: $\prod_{\mathbb{N}} \mathbb{R}$ with the box topology has no countable
+dense subset, hence no expansive sequence (the union of one is countable and dense), but its base
+of $2^{\aleph_0}$ open sets of size $2^{\aleph_0}$ lets a transfinite induction partition it into
+countably many dense subsets.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
+Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 15.80 (I. V. Protasov); resolution: S.
+Corson, letter of 19 May 2025, as recorded in the Kourovka Notebook (21st issue), Problem 15.80, G =
+∏_ℕ ℝ with the box topology: not separable, hence without expansive sequences, but partitionable
+into countably many dense subsets by transfinite induction; the Kourovka Notebook (21st issue)
+marks 15.80 solved (answer: Not necessarily), https://arxiv.org/abs/1401.0300v49.
 -/
 public theorem_wanted countableDensePartitionHasExpansiveSequence_refuted :
     ¬ countableDensePartitionHasExpansiveSequence

@@ -37,7 +37,10 @@ algorithm's random coins can be fixed to a single polynomial-length advice strin
 for all inputs of each length, by the probabilistic method.
 -/
 
-/-- **Adleman's theorem: BPP is contained in P/poly.** Source: L. Adleman, "Two theorems on
+/-- **Adleman's theorem: BPP is contained in P/poly.** Every decision problem in BPP lies in
+P/poly.
+
+Source: L. Adleman, "Two theorems on
 random polynomial time", Proceedings of the Nineteenth Annual Symposium on Foundations of
 Computer Science (FOCS 1978), 75-83. -/
 public theorem_wanted adleman :

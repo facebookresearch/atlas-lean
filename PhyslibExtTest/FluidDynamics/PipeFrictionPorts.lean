@@ -32,7 +32,10 @@ equation on its whole validity set; at the relative roughness `1/1000` it applie
 in a pipe of that roughness and rejects the smooth request with the same Reynolds number, and the
 smooth Blasius record rejects the rough request and a noncircular duct. A request with a negative
 relative roughness gets no factor from any record, a pipe with `ε / D = 1/10` gets none from any
-Haaland record, and at `ε / D = 3.7` the right side of the Haaland equation is negative.
+Haaland record, and at `ε / D = 3.7` the right side of the Haaland equation is negative. The
+Darcy factor of an oriented pressure drop keeps its positive value `2` when the flow and the drop
+are reversed together, and in a unit duct it returns the factor `2` from the reverse drop `-1` of
+the loss with that factor.
 
 ## i. Overview
 
@@ -48,6 +51,7 @@ section B defines the rough-pipe record and request.
 
 - A. The Blasius smooth-pipe law
 - B. A rough pipe
+- C. The Darcy factor of a pressure drop
 
 ## iv. References
 
@@ -327,5 +331,33 @@ example : ControlVolumes.portEnergyRate 1000 1 1 (649 / 1000) 0 10 0 ![(1 : ℝ)
     ControlVolumes.portEnergyRate 1000 1 (-1) 0 649 10 0 ![(1 : ℝ)] = 0 :=
   (portEnergyRate_add_eq_zero_iff (ρ := 1000) (A := 1) (V := 1) (ein := 0) (eout := 649 / 1000)
     (pin := 649) (pout := 0) (g := 10) (z := 0) ![1]).mpr (by norm_num)
+
+/-! ## C. The Darcy factor of a pressure drop -/
+
+-- Reversing both the flow and the pressure drop keeps the factor: `Δp = -1` at `V = -1` and
+-- `Δp = 1` at `V = 1` both give the positive factor `2` for `L = D = ρ = 1`. The domain arguments
+-- `0 < L`, `0 < D`, `0 < ρ` and `0 < Δp V` are discharged by `norm_num`; at `V = 0`, or for a drop
+-- against the flow such as `Δp = 1` at `V = -1`, no factor is defined.
+example :
+    darcyFactorOfDrop (-1) 1 1 1 (-1) (by norm_num) (by norm_num) (by norm_num) (by norm_num) =
+        2 ∧
+      darcyFactorOfDrop 1 1 1 1 1 (by norm_num) (by norm_num) (by norm_num) (by norm_num) = 2 ∧
+      0 < darcyFactorOfDrop (-1) 1 1 1 (-1) (by norm_num) (by norm_num) (by norm_num)
+        (by norm_num) := by
+  refine ⟨by norm_num [darcyFactorOfDrop], by norm_num [darcyFactorOfDrop],
+    darcyFactorOfDrop_pos _ _ _ _⟩
+
+-- Inversion in the reverse direction: in a unit duct the loss with the factor `2` gives the drop
+-- `-1` at the flow rate `Q = 1 · (-1)`, in the direction of the flow, and the Darcy factor of that
+-- drop is `2` again.
+example :
+    frictionPressureDrop (darcyCoefficient 2 1 1 1 1) (1 * -1) = -1 ∧
+      darcyFactorOfDrop (frictionPressureDrop (darcyCoefficient 2 1 1 1 1) (1 * -1)) 1 1 1 (-1)
+        (by norm_num) (by norm_num) (by norm_num)
+        (frictionPressureDrop_mul_velocity_pos (by norm_num) (by norm_num) (by norm_num)
+          (by norm_num) (by norm_num) (by norm_num)) = 2 := by
+  refine ⟨by norm_num [frictionPressureDrop, darcyCoefficient], ?_⟩
+  exact darcyFactorOfDrop_frictionPressureDrop (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num)
 
 end PhyslibExtTest.FluidDynamics.PipeFrictionPorts

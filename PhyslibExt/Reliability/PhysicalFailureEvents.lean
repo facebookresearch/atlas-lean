@@ -13,6 +13,7 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.Basic.Sign.Basic
+public import Mathlib.LinearAlgebra.Matrix.Notation
 public import Mathlib.Probability.Process.HittingTime
 public import MathlibExt.Probability.Reliability.SystemLifetime
 public import PhyslibExt.Elasticity.PrismaticMembers
@@ -24,7 +25,7 @@ import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
 
 /-!
-# Physical failure events: LEFM crack failure, demand margins, damage lifetimes and Paris lifetimes
+# Physical failure events: LEFM crack failure, demand margins, lifetimes and shaft sizing
 
 ## i. Overview
 
@@ -94,6 +95,26 @@ failure the crack in time solves the Paris law at `f` cycles per unit
 time, and for `m > 2` the failure time `Nf / f` is strictly before the
 blow-up time.
 
+A solid circular shaft of diameter `d > 0` under a declared bending
+moment `M` and torque `T` has, by the flexure and torsion formulas with
+`I = π d ⁴ / 64` and `J = π d ⁴ / 32`, the outer-fiber stresses
+`σ = 32 M / (π d ³)` and `τ = 16 T / (π d ³)` at the critical surface
+point, whose stress state carries only the axial normal stress `σ` and the
+axial-circumferential shear `τ`. A supplied functional calibrated on these
+bending-torsion states with a positive shear factor `c` (it returns
+`√(σ ^ 2 + c τ ^ 2)` there: `c = 3` for von Mises, `c = 4` for Tresca) is
+in particular calibrated by the tensile test, and turns them into the
+demand `16 √(4 M ^ 2 + c T ^ 2) / (π d ³)`. The factor must be positive:
+for `c ≤ 0` the square root would give a pure torque zero demand, and the
+sizing results would accept every diameter. Against a positive allowable
+`A` the demand stays within `A` exactly when
+`d ≥ (16 √(4 M ^ 2 + c T ^ 2) / (π A)) ^ (1 / 3)`, and the shaft does not
+fail exactly when `d` exceeds this minimum. At `d = 0` Lean's `x / 0 = 0`
+would report zero demand, so `0 < d` is a hypothesis; at the nominal
+minimum diameter a bending stress-concentration factor `K > 1` pushes the
+demand above the allowable, so the nominal sizing covers a plain shaft
+only. Fasteners, preload, fatigue and transverse shear are not modeled.
+
 ## ii. Key results
 
 - `Reliability.criticalCrackLength_pos`: the critical crack length is
@@ -148,6 +169,16 @@ blow-up time.
 - `Reliability.saturatedCrackPath_pow_base_pos` and
   `Reliability.failureTime_lt_blowupTime`: the event path stays on the
   power-branch domain and fails before blow-up.
+- `Reliability.shaftStresses_eq`, `Reliability.shaftDemand_eq`: the
+  outer-fiber stresses of a solid circular shaft and its demand through a
+  supplied functional calibrated on bending-torsion states with a positive
+  shear factor (`Reliability.BendingTorsionCalibrated`).
+- `Reliability.shaftDemand_le_iff`, `Reliability.not_demandFailure_iff`,
+  `Reliability.shaftMinDiameter_pos`: the sizing inequality
+  `shaftMinDiameter c M T A ≤ d` and the minimum diameter.
+- `Reliability.zero_diameter_misreports`,
+  `Reliability.stressConcentration_exceeds_at_minDiameter`: the zero
+  diameter and an unsupported stress concentration are not covered.
 
 ## iii. Table of contents
 
@@ -160,6 +191,8 @@ blow-up time.
 - G. The saturated crack event path
 - H. The Paris lifetime: power branch
 - I. The Paris lifetime: logarithmic branch and initial failure
+- J. A solid circular shaft under bending and torsion
+- K. Shaft sizing: boundary examples
 
 ## iv. References
 
@@ -181,6 +214,13 @@ blow-up time.
 - W. Q. Meeker and L. A. Escobar, *Statistical Methods for Reliability
   Data*, Wiley (1998), degradation chapters: failure when a degradation
   path reaches a threshold (sections E and G to I).
+- R. G. Budynas and J. K. Nisbett, *Shigley's Mechanical Engineering
+  Design*, 10th ed., McGraw-Hill (2015): shaft design for stress, with the
+  distortion-energy and maximum-shear-stress theories for combined bending
+  and torsion (sections J and K).
+- J. M. Gere and B. J. Goodno, *Mechanics of Materials*, 8th ed., Cengage
+  (2013): the flexure and torsion formulas and the section properties of a
+  circle.
 
 ## A. Mode-I stress intensity and the critical crack length
 
@@ -1336,5 +1376,195 @@ lemma damageLifetime_initiallyFailed {a0 KIC Y σ : ℝ} (hfail : criticalCrackL
     (ω : Ω) :
     damageLifetime (fun (_ : Ω) (_ : ℝ≥0) => a0) (fun _ => criticalCrackLength KIC Y σ) ω = 0 := by
   exact damageLifetime_eq_zero hfail
+
+/-! ## J. A solid circular shaft under bending and torsion -/
+
+/-- Second moment of area of a solid circular section of diameter `d` about a diameter:
+`I = π d ⁴ / 64`. -/
+noncomputable def circleSecondMoment (d : ℝ) : ℝ := Real.pi * d ^ 4 / 64
+
+/-- Polar second moment of area of a solid circular section of diameter `d`: `J = π d ⁴ / 32`. -/
+noncomputable def circlePolarMoment (d : ℝ) : ℝ := Real.pi * d ^ 4 / 32
+
+/-- Flexure formula at the outer fiber `y = d / 2` of a solid circular shaft under the bending
+moment `M`: `σ = M (d / 2) / I`, tension positive on the fiber that `M` stretches. -/
+noncomputable def shaftBendingStress (M d : ℝ) : ℝ := M * (d / 2) / circleSecondMoment d
+
+/-- Torsion formula at the surface `r = d / 2` of a solid circular shaft under the torque `T`:
+`τ = T (d / 2) / J`. -/
+noncomputable def shaftShearStress (T d : ℝ) : ℝ := T * (d / 2) / circlePolarMoment d
+
+/-- For a nonzero diameter the two formulas are `σ = 32 M / (π d ³)` and `τ = 16 T / (π d ³)`. -/
+lemma shaftStresses_eq {d : ℝ} (hd : d ≠ 0) (M T : ℝ) :
+    shaftBendingStress M d = 32 * M / (Real.pi * d ^ 3) ∧
+      shaftShearStress T d = 16 * T / (Real.pi * d ^ 3) := by
+  unfold shaftBendingStress shaftShearStress circleSecondMoment circlePolarMoment
+  have hπ : Real.pi ≠ 0 := Real.pi_ne_zero
+  constructor
+  · field_simp
+    ring
+  · field_simp
+    ring
+
+/-- The stress state at the critical surface point, index `0` along the shaft axis and index `1`
+circumferential: axial normal stress `σ` and shear `τ`. -/
+def bendingTorsionState (σ τ : ℝ) : Matrix (Fin 3) (Fin 3) ℝ :=
+  !![σ, τ, 0; τ, 0, 0; 0, 0, 0]
+
+/-- A supplied yield functional (tension positive) is calibrated on the bending-torsion states
+with shear factor `c` when `c` is positive and the functional returns `√(σ ^ 2 + c τ ^ 2)` on every
+such state: `c = 3` for the von Mises (distortion-energy) criterion, `c = 4` for the Tresca
+(maximum-shear) criterion. A factor `c ≤ 0` is excluded: `Real.sqrt` truncates negative arguments
+to `0`, so a pure torque would have zero demand. -/
+structure BendingTorsionCalibrated (Φ : Matrix (Fin 3) (Fin 3) ℝ → ℝ) (c : ℝ) : Prop where
+  /-- The shear factor is positive. -/
+  shearFactor_pos : 0 < c
+  /-- The functional returns `√(σ ^ 2 + c τ ^ 2)` on every bending-torsion state. -/
+  eq_sqrt : ∀ σ τ : ℝ, Φ (bendingTorsionState σ τ) = Real.sqrt (σ ^ 2 + c * τ ^ 2)
+
+/-- The bending-torsion calibration contains the tensile-test calibration: at `τ = 0` the state
+is uniaxial and the functional returns `|σ|`. -/
+lemma BendingTorsionCalibrated.uniaxialCalibrated {Φ : Matrix (Fin 3) (Fin 3) ℝ → ℝ} {c : ℝ}
+    (hΦ : BendingTorsionCalibrated Φ c) : Reliability.UniaxialCalibrated Φ := by
+  intro σ
+  have h : Matrix.diagonal ![σ, 0, 0] = bendingTorsionState σ 0 := by
+    ext i j
+    fin_cases i <;> fin_cases j <;> simp [bendingTorsionState]
+  rw [h, hΦ.eq_sqrt]
+  simp [Real.sqrt_sq_eq_abs]
+
+/-- The demand at the critical point of a shaft of diameter `d > 0` under `M` and `T`:
+`16 √(4 M ^ 2 + c T ^ 2) / (π d ³)`. -/
+lemma shaftDemand_eq {Φ : Matrix (Fin 3) (Fin 3) ℝ → ℝ} {c : ℝ}
+    (hΦ : BendingTorsionCalibrated Φ c) {d : ℝ} (hd : 0 < d) (M T : ℝ) :
+    Φ (bendingTorsionState (shaftBendingStress M d) (shaftShearStress T d)) =
+      16 * Real.sqrt (4 * M ^ 2 + c * T ^ 2) / (Real.pi * d ^ 3) := by
+  rw [hΦ.eq_sqrt, (shaftStresses_eq hd.ne' M T).1, (shaftStresses_eq hd.ne' M T).2]
+  have hπ : 0 < Real.pi := Real.pi_pos
+  have hD : 0 < Real.pi * d ^ 3 := by positivity
+  have key : (32 * M / (Real.pi * d ^ 3)) ^ 2 + c * (16 * T / (Real.pi * d ^ 3)) ^ 2 =
+      (16 / (Real.pi * d ^ 3)) ^ 2 * (4 * M ^ 2 + c * T ^ 2) := by
+    field_simp
+    ring
+  rw [key, Real.sqrt_mul (by positivity), Real.sqrt_sq (by positivity)]
+  field_simp
+
+/-- Minimum diameter for the allowable `A`: `(16 √(4 M ^ 2 + c T ^ 2) / (π A)) ^ (1 / 3)`. -/
+noncomputable def shaftMinDiameter (c M T A : ℝ) : ℝ :=
+  (16 * Real.sqrt (4 * M ^ 2 + c * T ^ 2) / (Real.pi * A)) ^ (1 / 3 : ℝ)
+
+/-- The sizing inequality: for `d > 0` and a positive allowable `A`, the demand stays within `A`
+exactly when `d` is at least the minimum diameter. -/
+lemma shaftDemand_le_iff {Φ : Matrix (Fin 3) (Fin 3) ℝ → ℝ} {c : ℝ}
+    (hΦ : BendingTorsionCalibrated Φ c) {d A : ℝ} (hd : 0 < d) (hA : 0 < A) (M T : ℝ) :
+    Φ (bendingTorsionState (shaftBendingStress M d) (shaftShearStress T d)) ≤ A ↔
+      shaftMinDiameter c M T A ≤ d := by
+  rw [shaftDemand_eq hΦ hd M T]
+  unfold shaftMinDiameter
+  have hπ : 0 < Real.pi := Real.pi_pos
+  have hD : 0 < Real.pi * d ^ 3 := by positivity
+  have hπA : 0 < Real.pi * A := by positivity
+  have hS : 0 ≤ Real.sqrt (4 * M ^ 2 + c * T ^ 2) := Real.sqrt_nonneg _
+  rw [show (1 / 3 : ℝ) = (3 : ℝ)⁻¹ by norm_num,
+    Real.rpow_inv_le_iff_of_pos (by positivity) hd.le (by norm_num),
+    show d ^ (3 : ℝ) = d ^ 3 from by exact_mod_cast Real.rpow_natCast d 3,
+    div_le_iff₀ hD, div_le_iff₀ hπA]
+  constructor <;> intro h <;> linarith
+
+/-- With the equality-inclusive failure event, the shaft does not fail exactly when `d` exceeds
+the minimum diameter. -/
+lemma not_demandFailure_iff {Φ : Matrix (Fin 3) (Fin 3) ℝ → ℝ} {c : ℝ}
+    (hΦ : BendingTorsionCalibrated Φ c) {d A : ℝ} (hd : 0 < d) (hA : 0 < A) (M T : ℝ) :
+    ¬ Reliability.demandFailure A
+        (Φ (bendingTorsionState (shaftBendingStress M d) (shaftShearStress T d))) ↔
+      shaftMinDiameter c M T A < d := by
+  unfold Reliability.demandFailure
+  rw [not_le, shaftDemand_eq hΦ hd M T]
+  unfold shaftMinDiameter
+  have hπ : 0 < Real.pi := Real.pi_pos
+  have hD : 0 < Real.pi * d ^ 3 := by positivity
+  have hπA : 0 < Real.pi * A := by positivity
+  have hS : 0 ≤ Real.sqrt (4 * M ^ 2 + c * T ^ 2) := Real.sqrt_nonneg _
+  rw [show (1 / 3 : ℝ) = (3 : ℝ)⁻¹ by norm_num,
+    Real.rpow_inv_lt_iff_of_pos (by positivity) hd.le (by norm_num),
+    show d ^ (3 : ℝ) = d ^ 3 from by exact_mod_cast Real.rpow_natCast d 3,
+    div_lt_iff₀ hD, div_lt_iff₀ hπA]
+  constructor <;> intro h <;> linarith
+
+/-- For a nonzero load, a positive shear factor and a positive allowable the minimum diameter is
+positive, so a zero diameter never meets the sizing inequality. -/
+lemma shaftMinDiameter_pos {c M T A : ℝ} (hc : 0 < c) (hA : 0 < A) (hMT : M ≠ 0 ∨ T ≠ 0) :
+    0 < shaftMinDiameter c M T A := by
+  unfold shaftMinDiameter
+  apply Real.rpow_pos_of_pos
+  have h4 : 0 < 4 * M ^ 2 + c * T ^ 2 := by
+    rcases hMT with h | h
+    · have : 0 < M ^ 2 := by positivity
+      nlinarith [sq_nonneg T]
+    · have : 0 < T ^ 2 := by positivity
+      nlinarith [sq_nonneg M]
+  have := Real.sqrt_pos.mpr h4
+  have := Real.pi_pos
+  positivity
+
+/-! ## K. Shaft sizing: boundary examples -/
+
+/-- The zero diameter is rejected, not covered: at `d = 0` Lean's `x / 0 = 0` makes both stress
+formulas vanish, so every calibrated functional reports zero demand and no failure for every
+load. The hypothesis `0 < d` of the sizing results cannot be dropped. -/
+lemma zero_diameter_misreports {Φ : Matrix (Fin 3) (Fin 3) ℝ → ℝ} {c : ℝ}
+    (hΦ : BendingTorsionCalibrated Φ c) {A : ℝ} (hA : 0 < A) (M T : ℝ) :
+    Φ (bendingTorsionState (shaftBendingStress M 0) (shaftShearStress T 0)) = 0 ∧
+      ¬ Reliability.demandFailure A
+        (Φ (bendingTorsionState (shaftBendingStress M 0) (shaftShearStress T 0))) := by
+  have h0 : shaftBendingStress M 0 = 0 ∧ shaftShearStress T 0 = 0 := by
+    simp [shaftBendingStress, shaftShearStress, circleSecondMoment, circlePolarMoment]
+  rw [h0.1, h0.2, hΦ.eq_sqrt]
+  simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, mul_zero, add_zero,
+    Real.sqrt_zero, Reliability.demandFailure, not_le, true_and]
+  exact hA
+
+/-- An unsupported stress-concentration assumption is rejected: at the nominal minimum diameter
+the nominal demand equals the allowable, and a bending stress-concentration factor `K > 1`
+(with `M ≠ 0`) raises the demand strictly above it. The nominal sizing inequality covers a plain
+shaft only; a notch or shoulder needs its factor as a supplied input. -/
+lemma stressConcentration_exceeds_at_minDiameter {Φ : Matrix (Fin 3) (Fin 3) ℝ → ℝ} {c : ℝ}
+    (hΦ : BendingTorsionCalibrated Φ c) {M A K : ℝ} (hM : M ≠ 0) (hA : 0 < A) (hK : 1 < K)
+    (T : ℝ) :
+    Φ (bendingTorsionState (shaftBendingStress M (shaftMinDiameter c M T A))
+        (shaftShearStress T (shaftMinDiameter c M T A))) = A ∧
+      A < Φ (bendingTorsionState (K * shaftBendingStress M (shaftMinDiameter c M T A))
+        (shaftShearStress T (shaftMinDiameter c M T A))) := by
+  set dm := shaftMinDiameter c M T A with hdm
+  have hc : 0 ≤ c := hΦ.shearFactor_pos.le
+  have hπ : 0 < Real.pi := Real.pi_pos
+  have hM2 : 0 < M ^ 2 := by positivity
+  have hS : 0 < 4 * M ^ 2 + c * T ^ 2 := by nlinarith [sq_nonneg T]
+  have hsq : 0 < Real.sqrt (4 * M ^ 2 + c * T ^ 2) := Real.sqrt_pos.mpr hS
+  have hbase : 0 < 16 * Real.sqrt (4 * M ^ 2 + c * T ^ 2) / (Real.pi * A) := by positivity
+  have hdm_pos : 0 < dm := Real.rpow_pos_of_pos hbase _
+  have hcube : dm ^ 3 = 16 * Real.sqrt (4 * M ^ 2 + c * T ^ 2) / (Real.pi * A) := by
+    rw [hdm]
+    unfold shaftMinDiameter
+    rw [← Real.rpow_natCast, ← Real.rpow_mul hbase.le]
+    norm_num
+  have hnom : Φ (bendingTorsionState (shaftBendingStress M dm) (shaftShearStress T dm)) = A := by
+    rw [shaftDemand_eq hΦ hdm_pos M T, hcube]
+    field_simp
+  refine ⟨hnom, ?_⟩
+  have hA' := hnom
+  rw [hΦ.eq_sqrt] at hA'
+  rw [hΦ.eq_sqrt, ← hA']
+  have hσ : shaftBendingStress M dm ≠ 0 := by
+    rw [(shaftStresses_eq hdm_pos.ne' M T).1]
+    have : 0 < Real.pi * dm ^ 3 := by positivity
+    exact div_ne_zero (mul_ne_zero (by norm_num) hM) this.ne'
+  have hσ2 : 0 < shaftBendingStress M dm ^ 2 := by positivity
+  have hK2 : 1 < K ^ 2 := by nlinarith
+  apply Real.sqrt_lt_sqrt (by positivity)
+  have : shaftBendingStress M dm ^ 2 < (K * shaftBendingStress M dm) ^ 2 := by
+    rw [mul_pow]
+    nlinarith
+  linarith
 
 end Reliability

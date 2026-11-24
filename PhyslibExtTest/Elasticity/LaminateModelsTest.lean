@@ -11,6 +11,7 @@ public import PhyslibExt.Elasticity.LaminateModels
 public import PhyslibExt.Units.EngineeringFrames
 import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
 
@@ -23,7 +24,13 @@ import Mathlib.Tactic.Ring
   `1`;
 * an orthotropic lamina `Q₁₁ = 4`, `Q₁₂ = 1`, `Q₂₂ = 2`, `Q₆₆ = 1`: positive definite, with the
   45-degree global stiffness of shear coupling `1 / 2`, positive definite again, reproducing the
-  material law, and given by the inverse-congruence formula only with the MATERIAL-to-GLOBAL map.
+  material law, and given by the inverse-congruence formula only with the MATERIAL-to-GLOBAL map;
+* two plies of that lamina on `[-1, 0]` and `[0, 1]`: a reflected stack with `A = 2 Q`, `B = 0`,
+  `D = (2 / 3) Q` and a positive definite block stiffness; under unit curvature no force, the
+  moment `(8 / 3, 2 / 3, 0)` and the energy `8 / 3`, the sum of the two ply terms;
+* a reflected three-ply stack carries no bending moment under in-plane strain;
+* the balanced `±45°` pair that is not reflected has `A₁₆ = 0` but `B₁₆ = -1 / 2`: in-plane
+  shear strain produces a bending moment.
 -/
 
 @[expose] public section
@@ -228,6 +235,192 @@ example :
     ((strainMap (-degToRad 45))⁻¹)ᵀ * exampleStiffness * (strainMap (-degToRad 45))⁻¹ =
       !![3, 1, 1 / 2; 1, 3, 1 / 2; 1 / 2, 1 / 2, 1] := by
   rw [← globalStiffness_eq_inv_congr, globalStiffness_example]
+
+/-! ## D. Laminates of the example lamina -/
+
+/-- Symmetric two-ply fixture: two equal plies of the example lamina on `[-1, 0]` and `[0, 1]`.
+The stack is reflected, `A = 2 Q`, `B = 0`, `D = (2 / 3) Q`, and the block stiffness is
+positive definite. -/
+lemma symmetricTwoPly_fixture :
+    IsReflectedStack ![-1, 0, 1] ![orthotropicStiffness 4 1 2 1, orthotropicStiffness 4 1 2 1] ∧
+      extensionalStiffness ![-1, 0, 1]
+          ![orthotropicStiffness 4 1 2 1, orthotropicStiffness 4 1 2 1] =
+        (2 : ℝ) • orthotropicStiffness 4 1 2 1 ∧
+      couplingStiffness ![-1, 0, 1]
+          ![orthotropicStiffness 4 1 2 1, orthotropicStiffness 4 1 2 1] = 0 ∧
+      bendingStiffness ![-1, 0, 1]
+          ![orthotropicStiffness 4 1 2 1, orthotropicStiffness 4 1 2 1] =
+        (2 / 3 : ℝ) • orthotropicStiffness 4 1 2 1 ∧
+      (abdMatrix ![-1, 0, 1]
+          ![orthotropicStiffness 4 1 2 1, orthotropicStiffness 4 1 2 1]).PosDef := by
+  have s0 : (0 : Fin 2).succ = 1 := by decide
+  have c0 : (0 : Fin 2).castSucc = 0 := by decide
+  have s1 : (1 : Fin 2).succ = 2 := by decide
+  have c1 : (1 : Fin 2).castSucc = 1 := by decide
+  have hrefl : IsReflectedStack ![-1, 0, 1]
+      ![orthotropicStiffness 4 1 2 1, orthotropicStiffness 4 1 2 1] := by
+    refine ⟨?_, ?_⟩
+    · intro k
+      fin_cases k <;> simp
+    · intro i
+      fin_cases i <;> simp
+  have hA : extensionalStiffness ![-1, 0, 1]
+        ![orthotropicStiffness 4 1 2 1, orthotropicStiffness 4 1 2 1] =
+      (2 : ℝ) • orthotropicStiffness 4 1 2 1 := by
+    simp only [extensionalStiffness, Fin.sum_univ_two, s0, c0, s1, c1]
+    simp
+    exact (two_smul ℝ _).symm
+  have hB : couplingStiffness ![-1, 0, 1]
+        ![orthotropicStiffness 4 1 2 1, orthotropicStiffness 4 1 2 1] = 0 :=
+    couplingStiffness_eq_zero_of_isReflectedStack hrefl
+  have hD : bendingStiffness ![-1, 0, 1]
+        ![orthotropicStiffness 4 1 2 1, orthotropicStiffness 4 1 2 1] =
+      (2 / 3 : ℝ) • orthotropicStiffness 4 1 2 1 := by
+    simp only [bendingStiffness, Fin.sum_univ_two, s0, c0, s1, c1]
+    simp
+    have w1 : (-(-1 : ℝ) ^ 3 / 3) = 1 / 3 := by norm_num
+    have w2 : ((3 : ℝ)⁻¹) = 1 / 3 := by norm_num
+    rw [w1, w2, ← add_smul]
+    congr 1
+    norm_num
+  have hz : StrictMono (![-1, 0, 1] : Fin 3 → ℝ) := by
+    intro a b hab
+    fin_cases a <;> fin_cases b <;> simp_all
+  have hQ2 : ∀ i : Fin 2,
+      (![orthotropicStiffness 4 1 2 1, orthotropicStiffness 4 1 2 1] i).PosDef := by
+    intro i
+    fin_cases i <;> simp_all
+    · exact exampleStiffness_posDef
+    · exact exampleStiffness_posDef
+  have hP : (abdMatrix ![-1, 0, 1]
+      ![orthotropicStiffness 4 1 2 1, orthotropicStiffness 4 1 2 1]).PosDef :=
+    abdMatrix_posDef (by norm_num) hz hQ2
+  exact ⟨hrefl, hA, hB, hD, hP⟩
+
+/-- Balanced but not symmetric: the example lamina at `+45°` on `[-1, 0]` and at `-45°` on
+`[0, 1]`. The angle counts balance, so the shear-extension term `A₁₆` vanishes, but the stack
+is not reflected and the coupling term `B₁₆` is `-1/2`. -/
+lemma balancedAngleTwoPly_fixture :
+    extensionalStiffness ![-1, 0, 1]
+        ![globalStiffness (orthotropicStiffness 4 1 2 1) (Real.pi / 4),
+          globalStiffness (orthotropicStiffness 4 1 2 1) (-(Real.pi / 4))] 0 2 = 0 ∧
+      couplingStiffness ![-1, 0, 1]
+        ![globalStiffness (orthotropicStiffness 4 1 2 1) (Real.pi / 4),
+          globalStiffness (orthotropicStiffness 4 1 2 1) (-(Real.pi / 4))] 0 2 = -1 / 2 ∧
+      ¬ IsReflectedStack ![-1, 0, 1]
+        ![globalStiffness (orthotropicStiffness 4 1 2 1) (Real.pi / 4),
+          globalStiffness (orthotropicStiffness 4 1 2 1) (-(Real.pi / 4))] := by
+  have s0 : (0 : Fin 2).succ = 1 := by decide
+  have c0 : (0 : Fin 2).castSucc = 0 := by decide
+  have s1 : (1 : Fin 2).succ = 2 := by decide
+  have c1 : (1 : Fin 2).castSucc = 1 := by decide
+  have hentry : ∀ θ : ℝ, globalStiffness (orthotropicStiffness 4 1 2 1) θ 0 2
+      = Real.cos θ * Real.sin θ := by
+    intro θ
+    simp [globalStiffness, strainMap, orthotropicStiffness, Matrix.mul_apply,
+      Fin.sum_univ_three, Matrix.transpose_apply]
+    linear_combination (Real.cos θ * Real.sin θ) * Real.cos_sq_add_sin_sq θ
+  have hcs : Real.cos (Real.pi / 4) * Real.sin (Real.pi / 4) = 1 / 2 := by
+    rw [Real.cos_pi_div_four, Real.sin_pi_div_four, div_mul_div_comm,
+      Real.mul_self_sqrt (by norm_num : (0 : ℝ) ≤ 2)]
+    norm_num
+  have hplus : globalStiffness (orthotropicStiffness 4 1 2 1) (Real.pi / 4) 0 2 = 1 / 2 := by
+    rw [hentry]
+    exact hcs
+  have hminus : globalStiffness (orthotropicStiffness 4 1 2 1) (-(Real.pi / 4)) 0 2
+      = -(1 / 2) := by
+    rw [hentry, Real.cos_neg, Real.sin_neg, mul_neg, hcs]
+  have hA : extensionalStiffness ![-1, 0, 1]
+        ![globalStiffness (orthotropicStiffness 4 1 2 1) (Real.pi / 4),
+          globalStiffness (orthotropicStiffness 4 1 2 1) (-(Real.pi / 4))] 0 2 = 0 := by
+    simp only [extensionalStiffness, Fin.sum_univ_two, s0, c0, s1, c1,
+      Matrix.add_apply, Matrix.smul_apply, smul_eq_mul]
+    simp
+    rw [hplus, hminus]
+    norm_num
+  have hB : couplingStiffness ![-1, 0, 1]
+        ![globalStiffness (orthotropicStiffness 4 1 2 1) (Real.pi / 4),
+          globalStiffness (orthotropicStiffness 4 1 2 1) (-(Real.pi / 4))] 0 2 = -1 / 2 := by
+    simp only [couplingStiffness, Fin.sum_univ_two, s0, c0, s1, c1,
+      Matrix.add_apply, Matrix.smul_apply, smul_eq_mul]
+    simp
+    rw [hplus, hminus]
+    norm_num
+  have hnot : ¬ IsReflectedStack ![-1, 0, 1]
+        ![globalStiffness (orthotropicStiffness 4 1 2 1) (Real.pi / 4),
+          globalStiffness (orthotropicStiffness 4 1 2 1) (-(Real.pi / 4))] := by
+    intro h
+    obtain ⟨hz, hQ⟩ := h
+    have r0 : (0 : Fin 2).rev = 1 := by decide
+    have h0 := hQ 0
+    rw [r0] at h0
+    simp only [Matrix.cons_val_zero, Matrix.cons_val_one] at h0
+    have h02 : globalStiffness (orthotropicStiffness 4 1 2 1) (-(Real.pi / 4)) 0 2
+        = globalStiffness (orthotropicStiffness 4 1 2 1) (Real.pi / 4) 0 2 := by
+      rw [h0]
+    rw [hminus, hplus] at h02
+    norm_num at h02
+  exact ⟨hA, hB, hnot⟩
+
+-- Under unit curvature the symmetric two-ply laminate carries no force resultant and the moment
+-- `D κ = (2 / 3) (4, 1, 0)`.
+example :
+    forceResultant ![-1, 0, 1] ![exampleStiffness, exampleStiffness] 0 ![1, 0, 0] = 0 ∧
+      momentResultant ![-1, 0, 1] ![exampleStiffness, exampleStiffness] 0 ![1, 0, 0] =
+        ![8 / 3, 2 / 3, 0] := by
+  obtain ⟨-, -, hB, hD, -⟩ := symmetricTwoPly_fixture
+  simp only [exampleStiffness]
+  rw [forceResultant_eq, momentResultant_eq, hB, hD]
+  refine ⟨by simp, ?_⟩
+  ext i
+  fin_cases i <;> norm_num [orthotropicStiffness]
+
+-- Its energy under unit curvature is `8 / 3`, the sum of the two ply terms
+-- `1 · (1 / 2)² · 4 + 1³ · 4 / 12 = 4 / 3`.
+example :
+    Sum.elim 0 ![1, 0, 0] ⬝ᵥ
+        (abdMatrix ![-1, 0, 1] ![exampleStiffness, exampleStiffness] *ᵥ Sum.elim 0 ![1, 0, 0]) =
+      8 / 3 := by
+  have hsym : exampleStiffnessᵀ = exampleStiffness := by
+    have h := exampleStiffness_posDef.isHermitian
+    rwa [Matrix.IsHermitian, Matrix.conjTranspose_eq_transpose_of_trivial] at h
+  rw [abdMatrix_energy_eq _ (fun i => by fin_cases i <;> exact hsym)]
+  simp [Fin.sum_univ_two, plyThickness, plyMidplane, exampleStiffness, orthotropicStiffness,
+    Matrix.mulVec, dotProduct, Fin.sum_univ_three]
+  norm_num
+
+-- Every nonzero curvature costs positive energy in the symmetric two-ply laminate.
+example {κ : Fin 3 → ℝ} (hκ : κ ≠ 0) :
+    0 < Sum.elim 0 κ ⬝ᵥ
+      (abdMatrix ![-1, 0, 1] ![exampleStiffness, exampleStiffness] *ᵥ Sum.elim 0 κ) := by
+  refine abdMatrix_energy_pos (by norm_num) ?_ (fun i => ?_) (Or.inr hκ)
+  · refine Fin.strictMono_iff_lt_succ.2 fun i => ?_
+    fin_cases i <;> norm_num
+  · fin_cases i <;> exact exampleStiffness_posDef
+
+-- A reflected three-ply stack (outer plies the example lamina, middle ply its own mirror) has
+-- `B = 0`, so in-plane strain alone produces no bending moment.
+example (ε : Fin 3 → ℝ) :
+    momentResultant ![-3 / 2, -1 / 2, 1 / 2, 3 / 2]
+      ![exampleStiffness, orthotropicStiffness 2 1 4 1, exampleStiffness] ε 0 = 0 := by
+  have hrefl : IsReflectedStack ![-3 / 2, -1 / 2, 1 / 2, 3 / 2]
+      ![exampleStiffness, orthotropicStiffness 2 1 4 1, exampleStiffness] := by
+    refine ⟨fun k => ?_, fun i => ?_⟩
+    · fin_cases k <;> simp <;> norm_num
+    · fin_cases i <;> simp
+  rw [momentResultant_eq, couplingStiffness_eq_zero_of_isReflectedStack hrefl]
+  simp
+
+-- In the balanced but unreflected `±45°` pair, in-plane shear strain produces the bending moment
+-- `M₁ = B₁₆ = -1 / 2`.
+example :
+    momentResultant ![-1, 0, 1]
+        ![globalStiffness exampleStiffness (Real.pi / 4),
+          globalStiffness exampleStiffness (-(Real.pi / 4))] ![0, 0, 1] 0 0 = -1 / 2 := by
+  obtain ⟨-, hB, -⟩ := balancedAngleTwoPly_fixture
+  simp only [exampleStiffness]
+  rw [momentResultant_eq]
+  simpa [Matrix.mulVec, dotProduct, Fin.sum_univ_three] using hB
 
 end PhyslibExtTest.Elasticity.LaminateModels
 

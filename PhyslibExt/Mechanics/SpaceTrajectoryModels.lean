@@ -28,15 +28,15 @@ import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
 
 /-!
-# Space trajectory models: restricted three-body equilibria and a thrust-only rendezvous
+# Space trajectory models: the restricted three-body problem and a thrust-only rendezvous
 
 Two models in normalized units: the circular restricted three-body problem in the frame that
-rotates with its primaries (sections A-C), and a gravity-free, collinear thrust-only rendezvous
-with independent terminal data (sections D-F).
+rotates with its primaries (sections A-F), and a gravity-free, collinear thrust-only rendezvous
+with independent terminal data (sections G-I).
 
 ## i. Overview
 
-The restricted three-body problem (sections A-C). Two primaries of masses `1 - μ` and `μ` move on
+The restricted three-body problem (sections A-F). Two primaries of masses `1 - μ` and `μ` move on
 circles about their barycenter, at unit separation and unit angular speed (gravitational constant
 one). In the frame that rotates with them, `R(t) = rotZ t` about the third axis, the first
 primary (mass `1 - μ`) sits at `(-μ, 0, 0)` and the second (mass `μ`) at `(1 - μ, 0, 0)`. A
@@ -55,14 +55,26 @@ that solves the inertial equations of motion. The primaries' own circular motion
 two-body equations, so unit angular speed is consistent with unit separation and unit total
 mass.
 
-Model inputs of sections A-C: the test particle is massless (it does not move the primaries); the
-motion is in the primaries' orbital plane; collisions are excluded by `r₁, r₂ > 0`. The
-literature names the primaries larger and smaller under the convention `0 < μ ≤ 1/2`; this module
-calls them first and second, and its lemmas hold for every real `μ`, since no proof uses a range.
-Not covered: stability of the triangular points, the collinear points, the Jacobi integral, the
-spatial problem, and any limit from three positive masses.
+The Jacobi function of a rotating-frame state with position `(x, y)` and velocity `(x', y')` is
+`C = 2 Ω - (x'² + y'²)`. The Coriolis acceleration `-2 e₃ × v = (2 y', -2 x', 0)` of the
+unit-rate rotation is perpendicular to the velocity `v = (x', y', 0)`, so its power vanishes, and
+along a `C²` path that obeys the rotating equations with a thrust acceleration `(a_x, a_y)` the
+derivative of `C` is `-2 (x' a_x + y' a_y)`, minus twice the thrust power. Without thrust `C` is
+constant on every time interval on which the path avoids both primaries, in particular along the
+inertial solutions of the two-primary field. Since `x'² + y'² ≥ 0`, an unforced trajectory with
+Jacobi constant `C` stays in the region `2 Ω ≥ C`: a point with `2 Ω < C` is never reached on
+it. For equal masses the state at the barycenter with velocity `(1, 0)` has `C = 3`, while the
+triangular point `(0, √3/2)` has `2 Ω = 11/4`; a thrusting path from that state reaches the
+triangular point, so the thrust-free hypothesis cannot be dropped.
 
-The thrust-only rendezvous (sections D-F).
+Model inputs of sections A-F: the test particle is massless (it does not move the primaries); the
+motion is in the primaries' orbital plane; collisions are excluded by `r₁, r₂ > 0`; the Jacobi
+integral assumes no thrust or dissipation. The literature names the primaries larger and smaller
+under the convention `0 < μ ≤ 1/2`; this module calls them first and second, and its lemmas hold
+for every real `μ`, since no proof uses a range. Not covered: stability of the triangular points,
+the collinear points, the spatial problem, and any limit from three positive masses.
+
+The thrust-only rendezvous (sections G-I).
 A gravity-free, collinear pilot of a thrust-only rendezvous in normalized units. The vehicle
 starts from rest at the origin with mass `2`, expels propellant at the constant mass flow `1`
 with exhaust speed `1` on the burn interval `[0, 1]`, so `m t = 2 - t` and the thrust is `1`.
@@ -87,7 +99,7 @@ equal velocity `log 2`, while the mass stays positive.
 Signs: positions and velocities are measured along the thrust direction; the exhaust leaves
 backward, `m' = -1 < 0`, and the vehicle speeds up, `v' = 1 / (2 - t) > 0`.
 
-Model inputs of sections D-F: no gravity, drag or other external force; one line of motion; the
+Model inputs of sections G-I: no gravity, drag or other external force; one line of motion; the
 mass history, exhaust speed and target are fixed explicitly. This is not a general orbital
 rendezvous, not a guidance law and not an optimality result; no empirical adequacy or vehicle
 safety claim.
@@ -102,6 +114,13 @@ safety claim.
 - `triangular_equilibrium`, `triangular_inertial_orbit`, `primaries_two_body`: the triangular
   points are collision-free equilibria and co-rotate on solutions of the inertial equations, and
   the primaries' circles solve their two-body equations.
+- `jacobiConstant`, `coriolis_power_eq_zero`, `hasDerivAt_jacobiConstant`: the Jacobi function,
+  the zero power of the Coriolis acceleration, and the rate `-2 (x' a_x + y' a_y)` of `C` under a
+  thrust acceleration.
+- `jacobiConstant_eq_of_rotating_equations`, `jacobiConstant_eq_of_newton`: the Jacobi integral
+  along unforced solutions of the rotating equations and along inertial solutions.
+- `jacobiConstant_le_two_effectivePotential`, `not_reach_of_two_effectivePotential_lt`: an
+  unforced trajectory stays in `2 Ω ≥ C` and never reaches a point with `2 Ω < C`.
 - `burnMass`, `burnVelocity`, `burnPosition`, `targetPosition`: the prescribed histories.
 - `hasDerivAt_burnMass`, `burnMass_pos`, `hasDerivAt_burnVelocity`, `burn_law`: mass flow `1`,
   positive mass, the law with exhaust speed `1` and thrust `1`.
@@ -111,7 +130,8 @@ safety claim.
 - `hasDerivAt_targetPosition`, `rendezvous`: the target's constant speed and the matched
   terminal position and velocity at `t = 1`.
 - The triangular points for `μ = 1/10`, the collision boundary, a non-equilibrium point, the
-  nonzero burn and the excluded depletion time are checked in
+  Jacobi constant of a nonzero-velocity state with a point forbidden to it, a thrusting path that
+  reaches that point, the nonzero burn and the excluded depletion time are checked in
   `PhyslibExtTest.Mechanics.SpaceTrajectoryModelsTest`.
 
 ## iii. Table of contents
@@ -121,16 +141,19 @@ safety claim.
   - B.1. Private helpers
   - B.2. Derivation from the inertial field
 - C. The triangular equilibria
-- D. The prescribed burn
-- E. Velocity and position histories
-- F. The target and the rendezvous
+- D. The Jacobi function and the Coriolis power
+- E. Conservation along unforced solutions
+- F. The forbidden region
+- G. The prescribed burn
+- H. Velocity and position histories
+- I. The target and the rendezvous
 
 ## iv. References
 
 - V. Szebehely, *Theory of Orbits: The Restricted Problem of Three Bodies*, ch. 1 and 4.
 - C. D. Murray and S. F. Dermott, *Solar System Dynamics*, ch. 3: the circular restricted
-  three-body problem, `Ω`, the equations of motion in the rotating frame and the Lagrangian
-  points.
+  three-body problem, `Ω`, the equations of motion in the rotating frame, the Jacobi constant,
+  zero-velocity curves and the Lagrangian points.
 - G. P. Sutton and O. Biblarz, *Rocket Propulsion Elements*, 9th edition, chapters 2 and 4
   (thrust, effective exhaust velocity, ideal rocket equation).
 - H. D. Curtis, *Orbital Mechanics for Engineering Students*, ch. 2 (the restricted three-body
@@ -501,7 +524,200 @@ lemma primaries_two_body (μ t : ℝ) :
     ext k
     fin_cases k <;> simp <;> ring
 
-/-! ## D. The prescribed burn -/
+/-! ## D. The Jacobi function and the Coriolis power -/
+
+/-- The Jacobi function `C = 2 Ω - (vx² + vy²)` of the rotating-frame state with position
+`(x, y)` and velocity `(vx, vy)`. -/
+noncomputable def jacobiConstant (μ x y vx vy : ℝ) : ℝ :=
+  2 * effectivePotential μ x y - (vx ^ 2 + vy ^ 2)
+
+/-- **The Coriolis power cancels.** For the unit angular velocity `e₃` of the rotating frame and
+a velocity `v = (vx, vy, 0)` in the orbital plane, the Coriolis acceleration `-2 e₃ × v` is
+`(2 vy, -2 vx, 0)`, the velocity terms of the rotating equations, and its power `v ⬝ (-2 e₃ × v)`
+vanishes. -/
+lemma coriolis_power_eq_zero (vx vy : ℝ) :
+    -(2 : ℝ) • (![(0 : ℝ), 0, 1] ⨯₃ ![vx, vy, 0]) = ![2 * vy, -(2 * vx), 0] ∧
+      ![vx, vy, 0] ⬝ᵥ (-(2 : ℝ) • (![(0 : ℝ), 0, 1] ⨯₃ ![vx, vy, 0])) = 0 := by
+  constructor
+  · rw [cross_apply]
+    ext k
+    fin_cases k <;> simp
+  · have h := dot_cross_self ![(0 : ℝ), 0, 1] ![vx, vy, 0]
+    rw [dotProduct_smul, h]
+    simp
+
+/-- **Jacobi derivative.** Let `x`, `y` be `C²` and let the particle avoid both primaries at time
+`t`, where it obeys the rotating equations with the thrust acceleration `(ax, ay)`:
+`x'' - 2 y' = Ω_x + ax` and `y'' + 2 x' = Ω_y + ay`. Then the Jacobi function along the path has
+the derivative `-2 (x' ax + y' ay)` at `t`: the Coriolis power cancels, and only the thrust power
+changes `C`. -/
+lemma hasDerivAt_jacobiConstant {μ t ax ay : ℝ} {x y : ℝ → ℝ} (hx : ContDiff ℝ 2 x)
+    (hy : ContDiff ℝ 2 y) (h₁ : 0 < primaryDistOne μ (x t) (y t))
+    (h₂ : 0 < primaryDistTwo μ (x t) (y t))
+    (hfx : deriv (deriv x) t - 2 * deriv y t =
+      deriv (fun ξ => effectivePotential μ ξ (y t)) (x t) + ax)
+    (hfy : deriv (deriv y) t + 2 * deriv x t =
+      deriv (fun η => effectivePotential μ (x t) η) (y t) + ay) :
+    HasDerivAt (fun s => jacobiConstant μ (x s) (y s) (deriv x s) (deriv y s))
+      (-2 * (deriv x t * ax + deriv y t * ay)) t := by
+  have hx1 : HasDerivAt x (deriv x t) t := (hx.differentiable (by norm_num) t).hasDerivAt
+  have hy1 : HasDerivAt y (deriv y t) t := (hy.differentiable (by norm_num) t).hasDerivAt
+  have hx2 : HasDerivAt (deriv x) (deriv (deriv x) t) t :=
+    (hx.differentiable_deriv_two t).hasDerivAt
+  have hy2 : HasDerivAt (deriv y) (deriv (deriv y) t) t :=
+    (hy.differentiable_deriv_two t).hasDerivAt
+  have hq1 : (x t + μ) ^ 2 + (y t) ^ 2 ≠ 0 := by
+    intro h
+    unfold primaryDistOne at h₁
+    rw [h, Real.sqrt_zero] at h₁
+    exact lt_irrefl 0 h₁
+  have hq2 : (x t - (1 - μ)) ^ 2 + (y t) ^ 2 ≠ 0 := by
+    intro h
+    unfold primaryDistTwo at h₂
+    rw [h, Real.sqrt_zero] at h₂
+    exact lt_irrefl 0 h₂
+  have hΩ : HasDerivAt (fun s => effectivePotential μ (x s) (y s))
+      (deriv (fun ξ => effectivePotential μ ξ (y t)) (x t) * deriv x t +
+        deriv (fun η => effectivePotential μ (x t) η) (y t) * deriv y t) t := by
+    have hd1 : HasDerivAt (fun s => (x s + μ) ^ 2 + (y s) ^ 2)
+        (2 * (x t + μ) * deriv x t + 2 * (y t) * deriv y t) t := by
+      have h := ((hx1.add_const μ).pow 2).add (hy1.pow 2)
+      convert h using 1; simp
+    have hd2 : HasDerivAt (fun s => (x s - (1 - μ)) ^ 2 + (y s) ^ 2)
+        (2 * (x t - (1 - μ)) * deriv x t + 2 * (y t) * deriv y t) t := by
+      have h := ((hx1.sub_const (1 - μ)).pow 2).add (hy1.pow 2)
+      convert h using 1; simp
+    have hs1 : HasDerivAt (fun s => primaryDistOne μ (x s) (y s))
+        ((2 * (x t + μ) * deriv x t + 2 * (y t) * deriv y t) /
+          (2 * primaryDistOne μ (x t) (y t))) t := hd1.sqrt hq1
+    have hs2 : HasDerivAt (fun s => primaryDistTwo μ (x s) (y s))
+        ((2 * (x t - (1 - μ)) * deriv x t + 2 * (y t) * deriv y t) /
+          (2 * primaryDistTwo μ (x t) (y t))) t := hd2.sqrt hq2
+    have hp : HasDerivAt (fun s => ((x s) ^ 2 + (y s) ^ 2) / 2)
+        ((x t) * deriv x t + (y t) * deriv y t) t := by
+      have h := ((hx1.pow 2).add (hy1.pow 2)).div_const 2
+      convert h using 1
+      ring
+    have h := (hp.add ((hasDerivAt_const t (1 - μ)).div hs1 h₁.ne')).add
+      ((hasDerivAt_const t μ).div hs2 h₂.ne')
+    have hOx := (hasDerivAt_effectivePotential_fst h₁ h₂).deriv
+    have hOy := (hasDerivAt_effectivePotential_snd h₁ h₂).deriv
+    rw [hOx, hOy]
+    unfold effectivePotential
+    convert h using 1
+    have h₁' := h₁.ne'
+    have h₂' := h₂.ne'
+    field_simp
+    ring
+  have hv : HasDerivAt (fun s => (deriv x s) ^ 2 + (deriv y s) ^ 2)
+      (2 * deriv x t * deriv (deriv x) t + 2 * deriv y t * deriv (deriv y) t) t := by
+    have h := (hx2.pow 2).add (hy2.pow 2)
+    convert h using 1; simp
+  have hC : HasDerivAt (fun s => 2 * effectivePotential μ (x s) (y s) -
+      ((deriv x s) ^ 2 + (deriv y s) ^ 2))
+      (2 * (deriv (fun ξ => effectivePotential μ ξ (y t)) (x t) * deriv x t +
+        deriv (fun η => effectivePotential μ (x t) η) (y t) * deriv y t) -
+        (2 * deriv x t * deriv (deriv x) t + 2 * deriv y t * deriv (deriv y) t)) t :=
+    (hΩ.const_mul 2).sub hv
+  have hcor := coriolis_power_eq_zero (deriv x t) (deriv y t)
+  have hpow := hcor.2
+  rw [hcor.1] at hpow
+  simp [dotProduct, Fin.sum_univ_three] at hpow
+  unfold jacobiConstant
+  convert hC using 1
+  linear_combination (2 * deriv x t) * hfx + (2 * deriv y t) * hfy + 2 * hpow
+
+/-! ## E. Conservation along unforced solutions -/
+
+/-- **The Jacobi integral.** Let `x`, `y` be `C²`, avoid both primaries and obey the rotating
+equations `x'' - 2 y' = Ω_x`, `y'' + 2 x' = Ω_y` at every time of `[t₀, t₁]`. Then the Jacobi
+function is constant on `[t₀, t₁]`. -/
+lemma jacobiConstant_eq_of_rotating_equations {μ t₀ t₁ : ℝ} {x y : ℝ → ℝ}
+    (hx : ContDiff ℝ 2 x) (hy : ContDiff ℝ 2 y)
+    (h₁ : ∀ t ∈ Icc t₀ t₁, 0 < primaryDistOne μ (x t) (y t))
+    (h₂ : ∀ t ∈ Icc t₀ t₁, 0 < primaryDistTwo μ (x t) (y t))
+    (hrot : ∀ t ∈ Icc t₀ t₁,
+      deriv (deriv x) t - 2 * deriv y t = deriv (fun ξ => effectivePotential μ ξ (y t)) (x t) ∧
+        deriv (deriv y) t + 2 * deriv x t =
+          deriv (fun η => effectivePotential μ (x t) η) (y t)) :
+    ∀ t ∈ Icc t₀ t₁, jacobiConstant μ (x t) (y t) (deriv x t) (deriv y t) =
+      jacobiConstant μ (x t₀) (y t₀) (deriv x t₀) (deriv y t₀) := by
+  have hC0 : ∀ t ∈ Icc t₀ t₁,
+      HasDerivAt (fun s => jacobiConstant μ (x s) (y s) (deriv x s) (deriv y s)) 0 t := by
+    intro t ht
+    have h := hasDerivAt_jacobiConstant hx hy (h₁ t ht) (h₂ t ht)
+      (show deriv (deriv x) t - 2 * deriv y t =
+        deriv (fun ξ => effectivePotential μ ξ (y t)) (x t) + 0 by
+        rw [add_zero]; exact (hrot t ht).1)
+      (show deriv (deriv y) t + 2 * deriv x t =
+        deriv (fun η => effectivePotential μ (x t) η) (y t) + 0 by
+        rw [add_zero]; exact (hrot t ht).2)
+    simpa using h
+  have hcont : ContinuousOn
+      (fun s => jacobiConstant μ (x s) (y s) (deriv x s) (deriv y s)) (Icc t₀ t₁) :=
+    fun t ht => (hC0 t ht).continuousAt.continuousWithinAt
+  have hderiv : ∀ u ∈ Ico t₀ t₁, HasDerivWithinAt
+      (fun s => jacobiConstant μ (x s) (y s) (deriv x s) (deriv y s)) 0 (Ici u) u :=
+    fun u hu => (hC0 u (Ico_subset_Icc_self hu)).hasDerivWithinAt
+  exact constant_of_has_deriv_right_zero hcont hderiv
+
+/-- **The Jacobi integral of an inertial solution.** Let `x`, `y` be `C²` and avoid both
+primaries on `[t₀, t₁]`, and let the inertial position `X(s) = R(s) (x(s), y(s), 0)` obey
+Newton's law under the attraction of the two primaries at every time of `[t₀, t₁]`. Then the
+Jacobi function of the rotating coordinates is constant on `[t₀, t₁]`. -/
+lemma jacobiConstant_eq_of_newton {μ t₀ t₁ : ℝ} {x y : ℝ → ℝ} (hx : ContDiff ℝ 2 x)
+    (hy : ContDiff ℝ 2 y) (h₁ : ∀ t ∈ Icc t₀ t₁, 0 < primaryDistOne μ (x t) (y t))
+    (h₂ : ∀ t ∈ Icc t₀ t₁, 0 < primaryDistTwo μ (x t) (y t))
+    (hN : ∀ t ∈ Icc t₀ t₁, deriv (deriv fun s => rotatingToInertial ![x s, y s, 0] s) t =
+      primaryGravity μ t (rotatingToInertial ![x t, y t, 0] t)) :
+    ∀ t ∈ Icc t₀ t₁, jacobiConstant μ (x t) (y t) (deriv x t) (deriv y t) =
+      jacobiConstant μ (x t₀) (y t₀) (deriv x t₀) (deriv y t₀) := by
+  exact jacobiConstant_eq_of_rotating_equations hx hy h₁ h₂
+    (fun t ht => rotating_equations hx hy (h₁ t ht) (h₂ t ht) (hN t ht))
+
+/-! ## F. The forbidden region -/
+
+/-- **Zero-velocity bound.** Under the hypotheses of `jacobiConstant_eq_of_rotating_equations`,
+the trajectory stays in the region `2 Ω ≥ C` of its initial Jacobi constant `C`. -/
+lemma jacobiConstant_le_two_effectivePotential {μ t₀ t₁ : ℝ} {x y : ℝ → ℝ}
+    (hx : ContDiff ℝ 2 x) (hy : ContDiff ℝ 2 y)
+    (h₁ : ∀ t ∈ Icc t₀ t₁, 0 < primaryDistOne μ (x t) (y t))
+    (h₂ : ∀ t ∈ Icc t₀ t₁, 0 < primaryDistTwo μ (x t) (y t))
+    (hrot : ∀ t ∈ Icc t₀ t₁,
+      deriv (deriv x) t - 2 * deriv y t = deriv (fun ξ => effectivePotential μ ξ (y t)) (x t) ∧
+        deriv (deriv y) t + 2 * deriv x t =
+          deriv (fun η => effectivePotential μ (x t) η) (y t)) :
+    ∀ t ∈ Icc t₀ t₁, jacobiConstant μ (x t₀) (y t₀) (deriv x t₀) (deriv y t₀) ≤
+      2 * effectivePotential μ (x t) (y t) := by
+  intro t ht
+  have hC := jacobiConstant_eq_of_rotating_equations hx hy h₁ h₂ hrot t ht
+  have hsq : (0 : ℝ) ≤ (deriv x t) ^ 2 + (deriv y t) ^ 2 :=
+    add_nonneg (sq_nonneg _) (sq_nonneg _)
+  unfold jacobiConstant at hC ⊢
+  linarith
+
+/-- **A forbidden point is not reached.** Under the hypotheses of
+`jacobiConstant_eq_of_rotating_equations`, a point `(a, b)` with `2 Ω(a, b) < C`, for the
+initial Jacobi constant `C`, is not the position at any time of `[t₀, t₁]`; in particular it is
+not the terminal point. -/
+lemma not_reach_of_two_effectivePotential_lt {μ t₀ t₁ a b : ℝ} {x y : ℝ → ℝ}
+    (hx : ContDiff ℝ 2 x) (hy : ContDiff ℝ 2 y)
+    (h₁ : ∀ t ∈ Icc t₀ t₁, 0 < primaryDistOne μ (x t) (y t))
+    (h₂ : ∀ t ∈ Icc t₀ t₁, 0 < primaryDistTwo μ (x t) (y t))
+    (hrot : ∀ t ∈ Icc t₀ t₁,
+      deriv (deriv x) t - 2 * deriv y t = deriv (fun ξ => effectivePotential μ ξ (y t)) (x t) ∧
+        deriv (deriv y) t + 2 * deriv x t =
+          deriv (fun η => effectivePotential μ (x t) η) (y t))
+    (hab : 2 * effectivePotential μ a b <
+      jacobiConstant μ (x t₀) (y t₀) (deriv x t₀) (deriv y t₀)) :
+    ∀ t ∈ Icc t₀ t₁, ¬ (x t = a ∧ y t = b) := by
+  intro t ht hcon
+  obtain ⟨hxt, hyt⟩ := hcon
+  have hle := jacobiConstant_le_two_effectivePotential hx hy h₁ h₂ hrot t ht
+  rw [hxt, hyt] at hle
+  linarith
+
+/-! ## G. The prescribed burn -/
 
 /-- The mass history `m t = 2 - t` of the normalized burn: initial mass `2` and propellant mass
 flow `1`, so the mass falls from `2` to `1` on the burn interval `[0, 1]`. -/
@@ -566,7 +782,7 @@ lemma burn_law {t : ℝ} (ht : t ∈ Icc (0 : ℝ) 1) :
   have h' : burnMass t * (1 / (2 - t)) = 1 := h
   exact ⟨by rw [h']; norm_num, h'⟩
 
-/-! ## E. Velocity and position histories -/
+/-! ## H. Velocity and position histories -/
 
 /-- The burn starts from rest at the origin: `x 0 = 0` and `v 0 = 0`. -/
 lemma burn_initial : burnPosition 0 = 0 ∧ burnVelocity 0 = 0 := by
@@ -646,7 +862,7 @@ lemma burnPosition_sub_eq_integral :
   have hFTC := intervalIntegral.integral_eq_sub_of_hasDerivAt hderiv hint
   exact hFTC.symm
 
-/-! ## F. The target and the rendezvous -/
+/-! ## I. The target and the rendezvous -/
 
 /-- The target coasts at the constant speed `log 2`. -/
 lemma hasDerivAt_targetPosition (t : ℝ) : HasDerivAt targetPosition (Real.log 2) t := by

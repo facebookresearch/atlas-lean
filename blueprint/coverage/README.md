@@ -16,10 +16,44 @@ counts cover only the decomposed rows below; they are not repository-wide covera
 | Area | Coverage | Evidence |
 | --- | --- | --- |
 | v2 / MathlibExt | DECOMPOSED | [28609 documented public non-instance declarations](../roadmap/README.md) across 28 subjects; 363 instances and 5972 undocumented public non-instance declarations are not articles. |
-| v2 / CSLibExt | DECOMPOSED | [18591 documented public non-instance declarations](../roadmap/README.md) across 10 subjects; 338 instances and 4645 undocumented public non-instance declarations are not articles. |
-| v2 / PhyslibExt | DECOMPOSED | [6925 documented public non-instance declarations](../roadmap/README.md) across 7 subjects; 114 instances and 5254 undocumented public non-instance declarations are not articles. |
+| v2 / CSLibExt | DECOMPOSED | [18592 documented public non-instance declarations](../roadmap/README.md) across 10 subjects; 338 instances and 4645 undocumented public non-instance declarations are not articles. |
+| v2 / PhyslibExt | DECOMPOSED | [6933 documented public non-instance declarations](../roadmap/README.md) across 7 subjects; 114 instances and 5254 undocumented public non-instance declarations are not articles. |
 | v2 / WantedExt | DECOMPOSED | [28584 documented public non-instance declarations](../roadmap/README.md) across 27 subjects; 165 instances and 113 undocumented public non-instance declarations are not articles. |
 | v2 tests (MathlibExtTest, CSLibExtTest, PhyslibExtTest) | OUT | Tests and diagnostics rather than mathematical results. |
 | Atlas/StatisticalMechanics | MAPPED | Standalone Lean files; no roadmap articles yet. |
 | Atlas/FC | MAPPED | Standalone Lean files; no roadmap articles yet. |
 | Atlas/CPythonListsort | OUT | Maintained as its own Autoform blueprint inside Atlas/CPythonListsort. |
+
+## Library navigation
+
+These code-library entry points link to the same canonical articles as the
+subject-organized roadmap. They do not create another graph, change a result's
+credit, or give a library's progress totals. A result stays in its mathematical
+subject even when its source module belongs to a different code library.
+
+### Domains
+
+Application-specific models. **Implemented examples** below name their current
+source modules; planned destinations are listed separately when added.
+
+- [The copy ratio is affine in the copy number](../roadmap/Biology/cancer-genomics/tumour-purity-ploidy-and-copy-ratio-algebra/copy-ratio-eq-slope-mul-add-intercept.md),
+  in `Domains/Biology/CancerGenomics/Absolute.lean`.
+
+### CSLibExt
+
+Computer-science developments, including algorithms applied to other domains.
+**Implemented examples:**
+
+- [Gotoh with equal gap scores is Needleman–Wunsch](../roadmap/Biology/bioinformatics/sequence-alignment/gotoh-affine-gap-alignment/gotoh-score-eq-nw-score.md),
+  in `CSLibExt/Algorithms/Lean/DynamicProgramming/AffineAlignment.lean`.
+  Its mathematical home is bioinformatics, not a second copy under computer science.
+
+### PhyslibExt
+
+Physics developments. **Implemented examples:**
+
+- [Uniqueness of pipe-network flows and heads with one anchored head](../roadmap/Physics/fluid-mechanics/pipe-flow-networks/pipe-flow-equations-unique-of-anchor.md),
+  in `PhyslibExt/FluidDynamics/Hydraulics/PipeNetworkHeads.lean`.
+
+Shared mathematical prerequisites retain their own canonical pages. Appearing
+as a prerequisite does not make them members of the dependent result's library.

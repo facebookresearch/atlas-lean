@@ -39,9 +39,12 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Gasca–Peña criterion: a real square matrix is totally positive if and only if all its
-initial minors are positive; an initial minor has rows `i₀, …, i₀ + k - 1` and columns
-`j₀, …, j₀ + k - 1` with `i₀ = 0` or `j₀ = 0`.
+/-- **Gasca–Peña criterion for total positivity.** Let $A$ be a real $n \times n$ matrix whose
+rows and columns are indexed by $0, \dots, n - 1$. Then $A$ is totally positive (has positive
+minors) if and only if all its initial minors are positive: for all natural numbers $k$, $i_0$
+and $j_0$ with $i_0 + k \le n$, $j_0 + k \le n$ and $i_0 = 0$ or $j_0 = 0$, the $k \times k$
+submatrix of $A$ with rows $i_0, \dots, i_0 + k - 1$ and columns $j_0, \dots, j_0 + k - 1$ has
+positive determinant.
 
 Source: Abdelhak Taane, Ihab-Eddine Djellas and Mohammed Mekkaoui, *Total Positivity of Toeplitz
 Matrices Involving Generalized Hyper-Fibonacci Numbers*, Journal of Integer Sequences 29 (2026),
@@ -53,8 +56,9 @@ public theorem_wanted hasPositiveMinors_iff_initial_minors_pos {n : ℕ}
         0 < (A.submatrix (fun r : Fin k => (⟨i₀ + r, by omega⟩ : Fin n))
           (fun c : Fin k => (⟨j₀ + c, by omega⟩ : Fin n))).det
 
-/-- The generalized Fibonacci sequence `W_{p,n}`: `W_{p,0} = a`, `W_{p,1} = b`,
-`W_{p,n} = p W_{p,n-1} + W_{p,n-2}` for `n ≥ 2`.
+/-- **Generalized $p$-Fibonacci sequence.** For integers $p$, $a$ and $b$, the generalized
+Fibonacci sequence $(W_{p,n})_{n \ge 0}$ of integers is defined by $W_{p,0} = a$, $W_{p,1} = b$
+and $W_{p,n} = p W_{p,n-1} + W_{p,n-2}$ for $n \ge 2$.
 
 Source: Abdelhak Taane, Ihab-Eddine Djellas and Mohammed Mekkaoui, *Total Positivity of
 Toeplitz Matrices Involving Generalized Hyper-Fibonacci Numbers*, Journal of Integer
@@ -64,7 +68,9 @@ public def generalizedPFibonacci (p a b : ℤ) : ℕ → ℤ
   | 1 => b
   | n + 2 => p * generalizedPFibonacci p a b (n + 1) + generalizedPFibonacci p a b n
 
-/-- The `p`-Fibonacci numbers (`(a, b) = (0, 1)`) are the Lucas sequence `U(p, -1)`.
+/-- **$p$-Fibonacci numbers as a Lucas sequence.** For every integer $p$, the generalized
+Fibonacci sequence $W_{p,n}$ with initial values $a = 0$ and $b = 1$ (the $p$-Fibonacci numbers
+$F_{p,n}$) is the Lucas sequence $U(p, -1)$: $W_{p,n} = U_n(p, -1)$ for every natural number $n$.
 
 Source: Abdelhak Taane, Ihab-Eddine Djellas and Mohammed Mekkaoui, *Total Positivity of
 Toeplitz Matrices Involving Generalized Hyper-Fibonacci Numbers*, Journal of Integer
@@ -79,7 +85,10 @@ public theorem generalizedPFibonacci_zero_one (p : ℤ) (n : ℕ) :
     simp only [generalizedPFibonacci, lucasU, ih1, ih2]
     ring
 
-/-- The `p`-Lucas numbers (`(a, b) = (2, p)`) are the companion Lucas sequence `V(p, -1)`.
+/-- **$p$-Lucas numbers as a companion Lucas sequence.** For every integer $p$, the generalized
+Fibonacci sequence $W_{p,n}$ with initial values $a = 2$ and $b = p$ (the $p$-Lucas numbers
+$L_{p,n}$) is the companion Lucas sequence $V(p, -1)$: $W_{p,n} = V_n(p, -1)$ for every natural
+number $n$.
 
 Source: Abdelhak Taane, Ihab-Eddine Djellas and Mohammed Mekkaoui, *Total Positivity of
 Toeplitz Matrices Involving Generalized Hyper-Fibonacci Numbers*, Journal of Integer
@@ -94,8 +103,11 @@ public theorem generalizedPFibonacci_two_p (p : ℤ) (n : ℕ) :
     simp only [generalizedPFibonacci, lucasV, ih1, ih2]
     ring
 
-/-- The generalized hyper-Fibonacci numbers `W_{p,n}^{(r)}`: `W_{p,n}^{(0)} = W_{p,n}` and
-`W_{p,n}^{(r)} = ∑_{k=0}^{n} p^{n-k} W_{p,k}^{(r-1)}` for `r ≥ 1`.
+/-- **Generalized hyper-Fibonacci numbers.** Let $p, a, b$ be integers and let $W_{p,n}$ denote the
+generalized Fibonacci sequence, with $W_{p,0} = a$, $W_{p,1} = b$ and
+$W_{p,n+2} = p W_{p,n+1} + W_{p,n}$. The generalized hyper-Fibonacci numbers $W^{(r)}_{p,n}$, for
+natural numbers $r$ and $n$, are the integers defined by $W^{(0)}_{p,n} = W_{p,n}$ and, for
+$r \ge 1$, by $W^{(r)}_{p,n} = \sum_{k=0}^{n} p^{n-k} W^{(r-1)}_{p,k}$.
 
 Source: Abdelhak Taane, Ihab-Eddine Djellas and Mohammed Mekkaoui, *Total Positivity of
 Toeplitz Matrices Involving Generalized Hyper-Fibonacci Numbers*, Journal of Integer
@@ -105,8 +117,9 @@ public def generalizedHyperFibonacci (p a b : ℤ) : ℕ → ℕ → ℤ
   | r + 1 => fun n =>
       ∑ k ∈ Finset.range (n + 1), p ^ (n - k) * generalizedHyperFibonacci p a b r k
 
-/-- Initial values `W_{p,0}^{(r)} = a` and `W_{p,1}^{(r)} = par + b`, as listed in the
-definition.
+/-- **Initial values of generalized hyper-Fibonacci numbers.** Let $p, a, b$ be integers and let
+$W^{(r)}_{p,n}$ denote the generalized hyper-Fibonacci numbers. For every natural number $r$,
+$W^{(r)}_{p,0} = a$ and $W^{(r)}_{p,1} = p \cdot a \cdot r + b$.
 
 Source: Abdelhak Taane, Ihab-Eddine Djellas and Mohammed Mekkaoui, *Total Positivity of
 Toeplitz Matrices Involving Generalized Hyper-Fibonacci Numbers*, Journal of Integer
@@ -124,8 +137,9 @@ public theorem generalizedHyperFibonacci_zero_one (p a b : ℤ) (r : ℕ) :
       push_cast
       ring
 
-/-- For `r ≥ 1` and `n ≥ 1`, `W_{p,n}^{(r)} = p W_{p,n-1}^{(r)} + W_{p,n}^{(r-1)}`, stated for
-all integers `p`, `a`, `b`.
+/-- **Recurrence for generalized hyper-Fibonacci numbers.** Let $p, a, b$ be integers and let
+$W^{(r)}_{p,n}$ denote the generalized hyper-Fibonacci numbers. For all natural numbers $r \ge 1$
+and $n \ge 1$, $W^{(r)}_{p,n} = p W^{(r)}_{p,n-1} + W^{(r-1)}_{p,n}$.
 
 Source: Abdelhak Taane, Ihab-Eddine Djellas and Mohammed Mekkaoui, *Total Positivity of
 Toeplitz Matrices Involving Generalized Hyper-Fibonacci Numbers*, Journal of Integer
@@ -135,9 +149,13 @@ public theorem_wanted generalizedHyperFibonacci_succ_succ (p a b : ℤ) (r n : �
     generalizedHyperFibonacci p a b (r + 1) (n + 1) =
       p * generalizedHyperFibonacci p a b (r + 1) n + generalizedHyperFibonacci p a b r (n + 1)
 
-/-- For `r ≥ 1` and `n ≥ r`, `W_{p,n-r}^{(r)} = W_{p,n+r} - S_r` with
-`S_r = p^n ∑_{k=0}^{r-1} C(n-k-1, r-k-1) W_{p,2k+1} / p^{r-1}`; stated over `ℚ` for all
-integers `a`, `b` and all `p ≠ 0`.
+/-- **A binomial-sum formula for generalized hyper-Fibonacci numbers.** Let $p, a, b$ be integers
+with $p \ne 0$, let $W_{p,n}$ denote the generalized Fibonacci sequence and $W^{(r)}_{p,n}$ the
+generalized hyper-Fibonacci numbers. For all natural numbers $r$ and $n$ with $1 \le r \le n$, the
+following identity of rational numbers holds:
+$$
+W^{(r)}_{p,n-r} = W_{p,n+r} - \frac{p^n}{p^{r-1}} \sum_{k=0}^{r-1} \binom{n-k-1}{r-k-1} W_{p,2k+1}.
+$$
 
 Source: Abdelhak Taane, Ihab-Eddine Djellas and Mohammed Mekkaoui, *Total Positivity of
 Toeplitz Matrices Involving Generalized Hyper-Fibonacci Numbers*, Journal of Integer
@@ -151,9 +169,11 @@ public theorem_wanted generalizedHyperFibonacci_sub_eq_sub (p a b : ℤ) (hp : p
           ((n - k - 1).choose (r - k - 1) : ℚ) * generalizedPFibonacci p a b (2 * k + 1)) /
           (p : ℚ) ^ (r - 1)
 
-/-- For `r, n ≥ 0`, the Hankel matrix `H_{r,n} = (W_{p,n+i+j}^{(r)})_{0 ≤ i, j ≤ r+1}` of order
-`r + 2` has `det H_{r,n} = (-1)^{n+1+⌊(r+3)/2⌋} p^{nr+r²} b^r Δ` with `Δ = a² + pab - b²`;
-stated for all integers `p`, `a`, `b`.
+/-- **Hankel determinants of generalized hyper-Fibonacci numbers.** Let $p, a, b$ be integers, let
+$W^{(r)}_{p,n}$ denote the generalized hyper-Fibonacci numbers and put $\Delta = a^2 + pab - b^2$.
+For all natural numbers $r$ and $n$, the $(r+2) \times (r+2)$ Hankel matrix
+$H_{r,n} = (W^{(r)}_{p,n+i+j})_{0 \le i, j \le r+1}$ has determinant
+$\det H_{r,n} = (-1)^{n+1+\lfloor (r+3)/2 \rfloor} p^{nr+r^2} b^r \Delta$.
 
 Source: Abdelhak Taane, Ihab-Eddine Djellas and Mohammed Mekkaoui, *Total Positivity of
 Toeplitz Matrices Involving Generalized Hyper-Fibonacci Numbers*, Journal of Integer
@@ -164,7 +184,11 @@ public theorem_wanted generalizedHyperFibonacci_hankel_det (p a b : ℤ) (r n : 
         generalizedHyperFibonacci p a b r (n + i + j)).det =
       (-1) ^ (n + 1 + (r + 3) / 2) * p ^ (n * r + r ^ 2) * b ^ r * (a ^ 2 + p * a * b - b ^ 2)
 
-/-- For `m ≥ 1`, `det T_{m,n}^{(m-1)} > 0` for all sufficiently large `n`.
+/-- **Eventual positivity of hyper-Fibonacci Toeplitz determinants.** Let $p, a, b$ be integers
+with $p \ge 1$, $a \ge 0$ and $b > 0$, and let $W^{(r)}_{p,n}$ denote the generalized
+hyper-Fibonacci numbers. For every natural number $m \ge 1$ there is a natural number $N$ such
+that for every $n \ge N$ the $m \times m$ Toeplitz matrix with entry $W^{(m-1)}_{p,n+i-j}$ in row
+$i$ and column $j$ ($0 \le i, j < m$) has positive determinant.
 
 Source: Abdelhak Taane, Ihab-Eddine Djellas and Mohammed Mekkaoui, *Total Positivity of
 Toeplitz Matrices Involving Generalized Hyper-Fibonacci Numbers*, Journal of Integer
@@ -174,7 +198,12 @@ public theorem_wanted generalizedHyperFibonacci_toeplitz_det_eventually_pos (p a
     ∃ N : ℕ, ∀ n ≥ N, 0 < (Matrix.of fun i j : Fin m =>
       generalizedHyperFibonacci p a b (m - 1) (n + i - j)).det
 
-/-- For `r ≥ 1` and `1 ≤ m ≤ r + 1`, `det T_{m,n}^{(r)} > 0` for all sufficiently large `n`.
+/-- **Eventual positivity of lower-order hyper-Fibonacci Toeplitz determinants.** Let $p, a, b$ be
+integers with $p \ge 1$, $a \ge 0$ and $b > 0$, and let $W^{(r)}_{p,n}$ denote the generalized
+hyper-Fibonacci numbers. For natural numbers $r$, $m$ and $n$ write $T^{(r)}_{m,n}$ for the
+$m \times m$ Toeplitz matrix with entry $W^{(r)}_{p,n+i-j}$ in row $i$ and column $j$
+($0 \le i, j < m$). If $r \ge 1$ and $1 \le m \le r + 1$, then there is a natural number $N$ such
+that $\det T^{(r)}_{m,n} > 0$ for every $n \ge N$.
 
 Source: Abdelhak Taane, Ihab-Eddine Djellas and Mohammed Mekkaoui, *Total Positivity of
 Toeplitz Matrices Involving Generalized Hyper-Fibonacci Numbers*, Journal of Integer
@@ -185,8 +214,11 @@ public theorem_wanted generalizedHyperFibonacci_toeplitz_det_eventually_pos_of_l
     ∃ N : ℕ, ∀ n ≥ N, 0 < (Matrix.of fun i j : Fin m =>
       generalizedHyperFibonacci p a b r (n + i - j)).det
 
-/-- For `r ≥ 1`, `(W_{p,n}^{(r)})_n` is eventually log-concave: for all large `n` the terms
-are positive and `W_{p,n}^{(r)} W_{p,n+2}^{(r)} ≤ (W_{p,n+1}^{(r)})²`.
+/-- **Eventual log-concavity of generalized hyper-Fibonacci numbers.** Let $p, a, b$ be integers
+with $p \ge 1$, $a \ge 0$ and $b > 0$, let $W^{(r)}_{p,n}$ denote the generalized hyper-Fibonacci
+numbers, and let $r \ge 1$ be a natural number. Then there is a natural number $N$ such that for
+every $n \ge N$ we have $W^{(r)}_{p,n} > 0$ and
+$W^{(r)}_{p,n} W^{(r)}_{p,n+2} \le (W^{(r)}_{p,n+1})^2$.
 
 Source: Abdelhak Taane, Ihab-Eddine Djellas and Mohammed Mekkaoui, *Total Positivity of
 Toeplitz Matrices Involving Generalized Hyper-Fibonacci Numbers*, Journal of Integer
@@ -197,9 +229,14 @@ public theorem_wanted generalizedHyperFibonacci_eventually_logConcave (p a b : �
       generalizedHyperFibonacci p a b r n * generalizedHyperFibonacci p a b r (n + 2) ≤
         generalizedHyperFibonacci p a b r (n + 1) ^ 2
 
-/-- For `r ≥ 1` and `p ≥ 1`, the hyper `p`-Fibonacci numbers `F_{p,n}^{(r)}` (`(a, b) = (0, 1)`)
-and the hyper `p`-Lucas numbers `L_{p,n}^{(r)}` (`(a, b) = (2, p)`) are eventually log-concave
-(eventually positive, with `x_n x_{n+2} ≤ x_{n+1}²`).
+/-- **Eventual log-concavity of hyper $p$-Fibonacci and hyper $p$-Lucas numbers.** Let
+$p \ge 1$ be an integer and $r \ge 1$ a natural number, and let $F_{p,n}^{(r)}$ and
+$L_{p,n}^{(r)}$ be the generalized hyper-Fibonacci numbers $W_{p,n}^{(r)}$ with initial values
+$(a, b) = (0, 1)$ and $(a, b) = (2, p)$ respectively (the hyper $p$-Fibonacci and hyper
+$p$-Lucas numbers). Both sequences are eventually log-concave: there is $N$ such that for all
+$n \ge N$, $F_{p,n}^{(r)} > 0$ and $F_{p,n}^{(r)} F_{p,n+2}^{(r)} \le (F_{p,n+1}^{(r)})^2$, and
+there is $N'$ such that for all $n \ge N'$, $L_{p,n}^{(r)} > 0$ and
+$L_{p,n}^{(r)} L_{p,n+2}^{(r)} \le (L_{p,n+1}^{(r)})^2$.
 
 Source: Abdelhak Taane, Ihab-Eddine Djellas and Mohammed Mekkaoui, *Total Positivity of
 Toeplitz Matrices Involving Generalized Hyper-Fibonacci Numbers*, Journal of Integer
@@ -213,8 +250,14 @@ public theorem_wanted hyperPFibonacci_hyperPLucas_eventually_logConcave (p : ℤ
       generalizedHyperFibonacci p 2 p r n * generalizedHyperFibonacci p 2 p r (n + 2) ≤
         generalizedHyperFibonacci p 2 p r (n + 1) ^ 2)
 
-/-- For `r ≥ 1` and `Δ = a² + pab - b²`: if `Δ > 0`, the Toeplitz matrix `T_{r+2,2n}^{(r)}` is
-totally positive for all large `n`; if `Δ < 0`, so is `T_{r+2,2n+1}^{(r)}`.
+/-- **Eventual total positivity of hyper-Fibonacci Toeplitz matrices.** Let $p, a, b$ be integers
+with $p \ge 1$, $a \ge 0$ and $b > 0$, put $\Delta = a^2 + pab - b^2$, let $W^{(r)}_{p,n}$
+denote the generalized hyper-Fibonacci numbers, and let $r \ge 1$ be a natural number. For a
+natural number $s$ write $T_s$ for the real $(r+2) \times (r+2)$ Toeplitz matrix with entry
+$W^{(r)}_{p,s+i-j}$ in row $i$ and column $j$ ($0 \le i, j \le r+1$). If $\Delta > 0$, there is a
+natural number $N$ such that $T_{2n}$ has positive minors (is totally positive) for every
+$n \ge N$; if $\Delta < 0$, there is a natural number $N$ such that $T_{2n+1}$ has positive
+minors for every $n \ge N$.
 
 Source: Abdelhak Taane, Ihab-Eddine Djellas and Mohammed Mekkaoui, *Total Positivity of
 Toeplitz Matrices Involving Generalized Hyper-Fibonacci Numbers*, Journal of Integer
@@ -228,8 +271,15 @@ public theorem_wanted generalizedHyperFibonacci_toeplitz_hasPositiveMinors (p a 
       Matrix.HasPositiveMinors (Matrix.of fun i j : Fin (r + 2) =>
         (generalizedHyperFibonacci p a b r (2 * n + 1 + i - j) : ℝ)))
 
-/-- For `r ≥ 1`, `T_{r+2,n}^{(r)}` is `TP_{r+1}` (every minor of order at most `r + 1`
-positive) for all large `n`.
+/-- **Eventually positive bounded-order minors of hyper-Fibonacci Toeplitz matrices.** Let
+$p, a, b$ be integers with $p \ge 1$, $a \ge 0$ and $b > 0$, let $W^{(r)}_{p,n}$ denote the
+generalized hyper-Fibonacci numbers, and let $r \ge 1$ be a natural number. For a natural number
+$n$ let $T_n$ be the real $(r+2) \times (r+2)$ Toeplitz matrix with entry $W^{(r)}_{p,n+i-j}$ in
+row $i$ and column $j$ ($0 \le i, j \le r+1$). Then there is a natural number $N$ such that for
+every $n \ge N$, every natural number $k \le r + 1$ and all strictly increasing maps
+$\rho, \gamma : \{0, \dots, k-1\} \to \{0, \dots, r+1\}$, the $k \times k$ submatrix
+$((T_n)_{\rho(u), \gamma(v)})_{0 \le u, v < k}$ has positive determinant; that is, every minor
+of $T_n$ of order at most $r + 1$ is positive.
 
 Source: Abdelhak Taane, Ihab-Eddine Djellas and Mohammed Mekkaoui, *Total Positivity of
 Toeplitz Matrices Involving Generalized Hyper-Fibonacci Numbers*, Journal of Integer
@@ -241,9 +291,14 @@ public theorem_wanted generalizedHyperFibonacci_toeplitz_positiveMinors_le (p a 
         0 < ((Matrix.of fun i j : Fin (r + 2) =>
           (generalizedHyperFibonacci p a b r (n + i - j) : ℝ)).submatrix rows cols).det
 
-/-- For `r ≥ 1` and `p ≥ 1`, with the hyper `p`-Fibonacci numbers `F_{p,n}^{(r)}`
-(`(a, b) = (0, 1)`): the Toeplitz matrix `(F_{p,2n+1+i-j}^{(r)})` of order `r + 2` is totally
-positive for all large `n`, and `(F_{p,n+i-j}^{(r)})` is `TP_{r+1}` for all large `n`.
+/-- **Total positivity of hyper $p$-Fibonacci Toeplitz matrices.** Let $p \ge 1$ be an integer
+and $r \ge 1$ a natural number, and let $F_{p,n}^{(r)}$ be the hyper $p$-Fibonacci numbers, the
+generalized hyper-Fibonacci numbers $W_{p,n}^{(r)}$ with initial values $a = 0$ and $b = 1$.
+Consider real $(r + 2) \times (r + 2)$ matrices with rows and columns indexed by
+$0, \dots, r + 1$. For all sufficiently large $n$, the Toeplitz matrix with entry
+$F_{p,2n+1+i-j}^{(r)}$ in row $i$ and column $j$ is totally positive. Moreover, for all
+sufficiently large $n$, the Toeplitz matrix with entry $F_{p,n+i-j}^{(r)}$ in row $i$ and
+column $j$ is $\mathrm{TP}_{r+1}$: each of its minors of order at most $r + 1$ is positive.
 
 Source: Abdelhak Taane, Ihab-Eddine Djellas and Mohammed Mekkaoui, *Total Positivity of
 Toeplitz Matrices Involving Generalized Hyper-Fibonacci Numbers*, Journal of Integer
@@ -257,9 +312,14 @@ public theorem_wanted hyperPFibonacci_toeplitz_hasPositiveMinors (p : ℤ) (hp :
         0 < ((Matrix.of fun i j : Fin (r + 2) =>
           (generalizedHyperFibonacci p 0 1 r (n + i - j) : ℝ)).submatrix rows cols).det)
 
-/-- For `r ≥ 1` and `p ≥ 1`, with the hyper `p`-Lucas numbers `L_{p,n}^{(r)}`
-(`(a, b) = (2, p)`): the Toeplitz matrix `(L_{p,2n+i-j}^{(r)})` of order `r + 2` is totally
-positive for all large `n`, and `(L_{p,n+i-j}^{(r)})` is `TP_{r+1}` for all large `n`.
+/-- **Total positivity of hyper $p$-Lucas Toeplitz matrices.** Let $p \ge 1$ be an integer and
+$r \ge 1$ a natural number, and let $L_{p,n}^{(r)}$ be the hyper $p$-Lucas numbers, the
+generalized hyper-Fibonacci numbers $W_{p,n}^{(r)}$ with initial values $a = 2$ and $b = p$.
+Consider real $(r + 2) \times (r + 2)$ matrices with rows and columns indexed by
+$0, \dots, r + 1$. For all sufficiently large $n$, the Toeplitz matrix with entry
+$L_{p,2n+i-j}^{(r)}$ in row $i$ and column $j$ is totally positive. Moreover, for all
+sufficiently large $n$, the Toeplitz matrix with entry $L_{p,n+i-j}^{(r)}$ in row $i$ and
+column $j$ is $\mathrm{TP}_{r+1}$: each of its minors of order at most $r + 1$ is positive.
 
 Source: Abdelhak Taane, Ihab-Eddine Djellas and Mohammed Mekkaoui, *Total Positivity of
 Toeplitz Matrices Involving Generalized Hyper-Fibonacci Numbers*, Journal of Integer

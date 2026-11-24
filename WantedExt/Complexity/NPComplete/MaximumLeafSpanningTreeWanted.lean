@@ -44,14 +44,24 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: vertex count, edge list, bound. -/
+/-- **Instances of MAXIMUM LEAF SPANNING TREE.** An instance of MAXIMUM LEAF SPANNING TREE is a
+triple $(n, es, K)$ of a natural number $n$ (the number of vertices), a list $es$ of pairs of
+natural numbers (the edge list) and a natural number $K$ (the bound on the number of leaves). -/
 abbrev MaximumLeafSpanningTreeInstance := ℕ × List (ℕ × ℕ) × ℕ
 
-/-- Well-formedness of an instance. -/
+/-- **Well-formed MAXIMUM LEAF SPANNING TREE instances.** An instance $(n, es, K)$ of MAXIMUM LEAF
+SPANNING TREE is well formed when $n > 0$, the list $es$ has no repeated entries, and every entry
+$(u, v)$ of $es$ satisfies $u < n$, $v < n$ and $u \ne v$, and $(v, u)$ is not an entry of
+$es$. -/
 def WellFormed (i : MaximumLeafSpanningTreeInstance) : Prop :=
   0 < i.1 ∧ i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1
 
-/-- A spanning tree with at least `K` leaves. -/
+/-- **Feasible MAXIMUM LEAF SPANNING TREE instances.** An instance $(n, es, K)$ of MAXIMUM LEAF
+SPANNING TREE is feasible when there are a sublist $T$ of $es$ (a list obtained from $es$ by
+deleting entries) with no repeated entries and exactly $n - 1$ entries, and a set $L$ of at least
+$K$ vertices in $\{0, \dots, n - 1\}$, such that the simple graph on $\{0, \dots, n - 1\}$ in
+which distinct vertices $i$ and $j$ are adjacent when $(i, j)$ or $(j, i)$ is an entry of $T$ is
+connected, and each vertex in $L$ is an endpoint of exactly one entry of $T$. -/
 def MaximumLeafSpanningTreeFeasible
     (i : MaximumLeafSpanningTreeInstance) : Prop :=
   ∃ T : List (ℕ × ℕ), T.Sublist i.2.1 ∧ T.Nodup ∧ T.length = i.1 - 1 ∧
@@ -60,7 +70,11 @@ def MaximumLeafSpanningTreeFeasible
       ∀ v ∈ leaves, ∃! e ∈ T, e.1 = (v : ℕ) ∨ e.2 = (v : ℕ)
 
 open Classical in
-/-- MAXIMUM LEAF SPANNING TREE as a decision problem over bitstrings. -/
+/-- **The decision problem MAXIMUM LEAF SPANNING TREE.** The decision problem MAXIMUM LEAF
+SPANNING TREE accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring
+encoding of instances, to an instance $(n, es, K)$ of MAXIMUM LEAF SPANNING TREE that is well
+formed and feasible (its graph has a spanning tree with at least $K$ leaves). Bitstrings that do
+not decode are rejected. -/
 noncomputable def maximumLeafSpanningTreeDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
@@ -68,7 +82,11 @@ noncomputable def maximumLeafSpanningTreeDec :
   | some i => decide (WellFormed i ∧ MaximumLeafSpanningTreeFeasible i)
   | none => false
 
-/-- **MAXIMUM LEAF SPANNING TREE is NP-complete.** Source: M. R. Garey and D. S. Johnson,
+/-- **MAXIMUM LEAF SPANNING TREE is NP-complete.** The decision problem MAXIMUM LEAF SPANNING TREE
+belongs to NP, and every decision problem in NP reduces to it by a polynomial-time many-one
+reduction.
+
+Source: M. R. Garey and D. S. Johnson,
 *Computers and Intractability* (1979), MAXIMUM LEAF SPANNING TREE. -/
 public theorem_wanted maximumLeafSpanningTree_npComplete :
     maximumLeafSpanningTreeDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧

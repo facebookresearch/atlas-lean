@@ -13,222 +13,25 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.SetTheory.Cardinal.Finite
 public import MathlibExt.Order.BooleanFunction.SelfDual
+public import MathlibExt.Combinatorics.Enumerative.BooleanFunctionInclusionExclusion
+public import MathlibExt.Combinatorics.Enumerative.UnateMonotoneBoolean
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
-/-! Boolean functions on `n` variables are `(Fin n → Bool) → Bool`; monotone
-means Mathlib's `Monotone` for the coordinatewise order with `false ≤ true`.
-The paper's variable `x₁` (the top bit of the truth table) is index `0`. -/
+/-- **Counting Boolean functions by their non-degenerate restrictions.** Let $P$ be a property
+of Boolean functions on any number of variables that is invariant under renaming variables
+along injections: for all $m, n$, every injective map $e$ from $\{1, \dots, m\}$ to
+$\{1, \dots, n\}$ and every $m$-variable function $g$, the $n$-variable function
+$x \mapsto g(x_{e(1)}, \dots, x_{e(m)})$ has $P$ if and only if $g$ has $P$. Write $P_n$ for the
+number of $n$-variable Boolean functions with $P$ and $\mathrm{nd}\text{-}P_i$ for the number of
+non-degenerate $i$-variable Boolean functions with $P$. Then for every $n \ge 0$,
 
-/-- The weight `wt(f)` of an `n`-variable Boolean function: the size of its
-support `{x | f x = true}`.
+$$P_n = \sum_{i=0}^{n} \binom{n}{i} \, \mathrm{nd}\text{-}P_i.$$
 
-Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
-under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
-Sequences 28 (2025), Article 25.3.4, Section 2. -/
-public def boolFunWeight {n : ℕ} (f : (Fin n → Bool) → Bool) : ℕ :=
-  (Finset.univ.filter fun x => f x = true).card
-
-/-- The constant function `1` on `n` variables has weight `2 ^ n`.
-
-Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
-under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
-Sequences 28 (2025), Article 25.3.4, Section 2. -/
-public theorem boolFunWeight_const_true (n : ℕ) :
-    boolFunWeight (fun _ : Fin n → Bool => true) = 2 ^ n := by
-  simp [boolFunWeight]
-
-/-- `f` is monotone increasing in the variable `i`: setting `x i` from
-`false` to `true` never decreases the value.
-
-Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
-under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
-Sequences 28 (2025), Article 25.3.4, Section 2. -/
-public def IsBoolFunIncreasingIn {n : ℕ} (f : (Fin n → Bool) → Bool) (i : Fin n) :
-    Prop :=
-  ∀ x : Fin n → Bool, x i = false → f x ≤ f (Function.update x i true)
-
-/-- `f` is monotone decreasing in the variable `i`: setting `x i` from
-`false` to `true` never increases the value.
-
-Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
-under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
-Sequences 28 (2025), Article 25.3.4, Section 2. -/
-public def IsBoolFunDecreasingIn {n : ℕ} (f : (Fin n → Bool) → Bool) (i : Fin n) :
-    Prop :=
-  ∀ x : Fin n → Bool, x i = false → f (Function.update x i true) ≤ f x
-
-/-- A unate Boolean function: monotone increasing or monotone decreasing in
-each variable.
-
-Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
-under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
-Sequences 28 (2025), Article 25.3.4, Section 1. -/
-public def IsUnateBoolFun {n : ℕ} (f : (Fin n → Bool) → Bool) : Prop :=
-  ∀ i : Fin n, IsBoolFunIncreasingIn f i ∨ IsBoolFunDecreasingIn f i
-
-/-- Every monotone Boolean function is unate (increasing in every variable).
-
-Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
-under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
-Sequences 28 (2025), Article 25.3.4, Section 1. -/
-public theorem isUnateBoolFun_of_monotone {n : ℕ} {f : (Fin n → Bool) → Bool}
-    (hf : Monotone f) : IsUnateBoolFun f := by
-  intro i
-  left
-  intro x _
-  apply hf
-  intro j
-  rcases eq_or_ne j i with rfl | h
-  · simp
-  · simp [Function.update_of_ne h]
-
-/-- `f` is non-degenerate on the variable `i`: flipping `x i` changes the
-value of `f` at some input `x`.
-
-Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
-under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
-Sequences 28 (2025), Article 25.3.4, Section 2. -/
-public def IsBoolFunNondegenerateOn {n : ℕ} (f : (Fin n → Bool) → Bool) (i : Fin n) :
-    Prop :=
-  ∃ x : Fin n → Bool, f x ≠ f (Function.update x i (!x i))
-
-/-- A non-degenerate Boolean function: non-degenerate on every variable
-(vacuous for `n = 0`, matching the paper's convention that the two
-`0`-variable functions are non-degenerate).
-
-Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
-under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
-Sequences 28 (2025), Article 25.3.4, Section 2 and Remark 2. -/
-public def IsNondegenerateBoolFun {n : ℕ} (f : (Fin n → Bool) → Bool) : Prop :=
-  ∀ i : Fin n, IsBoolFunNondegenerateOn f i
-
-/-- The projection `x ↦ x i` is non-degenerate on `i`.
-
-Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
-under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
-Sequences 28 (2025), Article 25.3.4, Section 2. -/
-public theorem isBoolFunNondegenerateOn_proj {n : ℕ} (i : Fin n) :
-    IsBoolFunNondegenerateOn (fun x : Fin n → Bool => x i) i :=
-  ⟨fun _ => false, by simp⟩
-
-/-- The concatenation `f = g || h` of two `n`-variable functions: the
-`(n+1)`-variable function whose truth table is that of `g` followed by that
-of `h`, i.e. `f(x₁, …, x_{n+1}) = x̄₁ g(x₂, …) ⊕ x₁ h(x₂, …)`; here `x₁` is
-the coordinate `0`.
-
-Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
-under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
-Sequences 28 (2025), Article 25.3.4, Section 2, equation (1). -/
-public def boolFunConcat {n : ℕ} (g h : (Fin n → Bool) → Bool) :
-    (Fin (n + 1) → Bool) → Bool :=
-  fun x => cond (x 0) (h (Fin.tail x)) (g (Fin.tail x))
-
-/-- Evaluation of `g || h`: the first variable selects `g` (when `false`) or
-`h` (when `true`).
-
-Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
-under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
-Sequences 28 (2025), Article 25.3.4, Section 2, equation (1). -/
-public theorem boolFunConcat_cons {n : ℕ} (g h : (Fin n → Bool) → Bool) (b : Bool)
-    (x : Fin n → Bool) : boolFunConcat g h (Fin.cons b x) = cond b (h x) (g x) := by
-  simp [boolFunConcat]
-
-/-- Equivalence of `n`-variable Boolean functions: `g` is obtained from `f`
-by a permutation of the variables.
-
-Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
-under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
-Sequences 28 (2025), Article 25.3.4, Section 2.1. -/
-public def IsBoolFunVarPermEquiv {n : ℕ} (f g : (Fin n → Bool) → Bool) : Prop :=
-  ∃ σ : Equiv.Perm (Fin n), ∀ x : Fin n → Bool, g x = f (x ∘ σ)
-
-/-- Every Boolean function is permutation-equivalent to itself.
-
-Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
-under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
-Sequences 28 (2025), Article 25.3.4, Section 2.1. -/
-public theorem isBoolFunVarPermEquiv_refl {n : ℕ} (f : (Fin n → Bool) → Bool) :
-    IsBoolFunVarPermEquiv f f :=
-  ⟨1, fun x => by simp⟩
-
-/-- NN-equivalence: `g` is obtained from `f` by negating a subset of the
-inputs (the positions where `a i = true`) and possibly the output (`c`).
-
-Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
-under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
-Sequences 28 (2025), Article 25.3.4, Proposition 13. -/
-public def IsBoolFunNNEquiv {n : ℕ} (f g : (Fin n → Bool) → Bool) : Prop :=
-  ∃ (a : Fin n → Bool) (c : Bool), ∀ x : Fin n → Bool,
-    g x = xor (f fun i => xor (x i) (a i)) c
-
-/-- Every Boolean function is NN-equivalent to itself.
-
-Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
-under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
-Sequences 28 (2025), Article 25.3.4, Proposition 13. -/
-public theorem isBoolFunNNEquiv_refl {n : ℕ} (f : (Fin n → Bool) → Bool) :
-    IsBoolFunNNEquiv f f :=
-  ⟨fun _ => false, false, fun x => by simp⟩
-
-/-- NPN-equivalence: `g` is obtained from `f` by a permutation of the
-variables, negation of a subset of the inputs, and possibly negation of the
-output.
-
-Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
-under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
-Sequences 28 (2025), Article 25.3.4, Proposition 14. -/
-public def IsBoolFunNPNEquiv {n : ℕ} (f g : (Fin n → Bool) → Bool) : Prop :=
-  ∃ (σ : Equiv.Perm (Fin n)) (a : Fin n → Bool) (c : Bool), ∀ x : Fin n → Bool,
-    g x = xor (f fun i => xor (x (σ i)) (a i)) c
-
-/-- Every Boolean function is NPN-equivalent to itself.
-
-Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
-under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
-Sequences 28 (2025), Article 25.3.4, Proposition 14. -/
-public theorem isBoolFunNPNEquiv_refl {n : ℕ} (f : (Fin n → Bool) → Bool) :
-    IsBoolFunNPNEquiv f f :=
-  ⟨1, fun _ => false, false, fun x => by simp⟩
-
-/-- The number of `R`-inequivalent `n`-variable functions with property `P`:
-the number of distinct classes `{g | P g ∧ R f g}` over `f` with `P f`
-(for an equivalence relation `R`, the number of equivalence classes of the
-set `P`). The paper's `[P]_n` is this count for `IsBoolFunVarPermEquiv`.
-
-Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
-under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
-Sequences 28 (2025), Article 25.3.4, Section 2.1. -/
-public noncomputable def boolFunClassCount {n : ℕ}
-    (R : ((Fin n → Bool) → Bool) → ((Fin n → Bool) → Bool) → Prop)
-    (P : ((Fin n → Bool) → Bool) → Prop) : ℕ :=
-  Nat.card {S : Set ((Fin n → Bool) → Bool) // ∃ f, P f ∧ S = {g | P g ∧ R f g}}
-
-/-- An empty property has no classes.
-
-Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
-under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
-Sequences 28 (2025), Article 25.3.4, Section 2.1. -/
-public theorem boolFunClassCount_false {n : ℕ}
-    (R : ((Fin n → Bool) → Bool) → ((Fin n → Bool) → Bool) → Prop) :
-    boolFunClassCount R (fun _ => False) = 0 := by
-  rw [boolFunClassCount, Nat.card_eq_zero]
-  left
-  exact ⟨fun ⟨_, f, hf, _⟩ => hf⟩
-
-/-- Proposition 1: for a property `P` of Boolean functions,
-`P_n = ∑_{i=0}^n binom(n, i) nd-P_i`, where `nd-P_i` counts the non-degenerate
-`i`-variable functions with `P`.
-
-Deviation: the paper says "every property"; that is false for properties
-that depend on the number of variables (if `P` holds exactly for the four
-`1`-variable functions, then `P_1 = 4` but the sum is `0 + 2 = 2`). The
-hypothesis `hP` (the paper's counting argument, which identifies a function
-with its restriction to the variables it depends on) requires `P` to be
-invariant under renaming variables along an injection; balanced, monotone,
-unate and their intersections satisfy it.
+The invariance hypothesis cannot be dropped: if $P$ holds exactly for the four $1$-variable
+functions, then $P_1 = 4$ but the right-hand side is $0 + 2 = 2$.
 
 Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
 under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
@@ -242,26 +45,13 @@ public theorem_wanted card_boolFun_eq_sum_choose_card_nondegenerate
       = ∑ i ∈ Finset.range (n + 1),
           n.choose i * Nat.card {f : (Fin i → Bool) → Bool // IsNondegenerateBoolFun f ∧ P i f}
 
-/-- Proposition 1, inverse form: `nd-P_n = ∑_{i=0}^n (-1)^{n-i} binom(n, i) P_i`,
-under the same renaming-invariance hypothesis as
-`card_boolFun_eq_sum_choose_card_nondegenerate`.
-
-Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
-under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
-Sequences 28 (2025), Article 25.3.4, Proposition 1 (`jis-2025-25.3.4-prop-1`). -/
-public theorem_wanted card_nondegenerate_boolFun_eq_alternating_sum
-    (P : ∀ n : ℕ, ((Fin n → Bool) → Bool) → Prop)
-    (hP : ∀ (m n : ℕ) (e : Fin m ↪ Fin n) (g : (Fin m → Bool) → Bool),
-      P n (fun x => g (x ∘ e)) ↔ P m g)
-    (n : ℕ) :
-    (Nat.card {f : (Fin n → Bool) → Bool // IsNondegenerateBoolFun f ∧ P n f} : ℤ)
-      = ∑ i ∈ Finset.range (n + 1),
-          (-1) ^ (n - i) * (n.choose i : ℤ) * Nat.card {f : (Fin i → Bool) → Bool // P i f}
-
-/-- Proposition 3: `nd-U_n = 2^n nd-M_n`, `nd-BU_n = 2^n nd-BM_n`,
-`U_n ≤ 2^n M_n` and `BU_n ≤ 2^n BM_n`, where `U`, `M` count unate and
-monotone functions, `B` adds balancedness (`2 wt(f) = 2^n`) and `nd-`
-restricts to non-degenerate functions.
+/-- **Unate versus monotone Boolean function counts.** For $n \ge 0$, write $U_n$ and $M_n$ for
+the numbers of unate and of monotone $n$-variable Boolean functions, $BU_n$ and $BM_n$ for the
+numbers of those that are moreover balanced, that is, twice their weight equals $2^n$, and write
+the prefix $\mathrm{nd}\text{-}$ for the same counts restricted to non-degenerate functions.
+Then $\mathrm{nd}\text{-}U_n = 2^n \, \mathrm{nd}\text{-}M_n$,
+$\mathrm{nd}\text{-}BU_n = 2^n \, \mathrm{nd}\text{-}BM_n$, $U_n \le 2^n M_n$ and
+$BU_n \le 2^n BM_n$.
 
 Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
 under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
@@ -280,8 +70,11 @@ public theorem_wanted card_unate_boolFun_relations (n : ℕ) :
         ≤ 2 ^ n * Nat.card {f : (Fin n → Bool) → Bool //
             Monotone f ∧ 2 * boolFunWeight f = 2 ^ n}
 
-/-- Proposition 4 (Bakoev): `g || h` is monotone if and only if `g` and `h`
-are monotone and `g ≤ h` pointwise.
+/-- **Monotone concatenations of Boolean functions (Bakoev).** Let $g$ and $h$ be Boolean
+functions on $n$ variables, and let $g \parallel h$ be their concatenation, the function on
+$n + 1$ variables that equals $g$ of the remaining variables when its first variable is $0$ and
+$h$ of them when it is $1$. Then $g \parallel h$ is monotone if and only if $g$ and $h$ are both
+monotone and $g(x) \le h(x)$ for every $x \in \{0,1\}^n$.
 
 Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
 under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
@@ -290,9 +83,12 @@ quoting Bakoev. -/
 public theorem_wanted monotone_boolFunConcat_iff {n : ℕ} (g h : (Fin n → Bool) → Bool) :
     Monotone (boolFunConcat g h) ↔ Monotone g ∧ Monotone h ∧ g ≤ h
 
-/-- Proposition 6: `g || h` is unate if and only if `g` and `h` are unate,
-(a) for each variable both are increasing or both are decreasing, and
-(b) `g ≤ h` or `h ≤ g`.
+/-- **Unateness of a concatenation.** Let $g$ and $h$ be $n$-variable Boolean functions and let
+$g \| h$ be their concatenation, the $(n+1)$-variable function equal to $g$ of the remaining
+variables when the first variable is $0$ and to $h$ of them when it is $1$. Then $g \| h$ is
+unate if and only if $g$ and $h$ are unate, for each variable $x_i$ either both $g$ and $h$
+are monotone increasing in $x_i$ or both are monotone decreasing in $x_i$, and $g \le h$
+pointwise or $h \le g$ pointwise.
 
 Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
 under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
@@ -305,28 +101,11 @@ public theorem_wanted isUnateBoolFun_boolFunConcat_iff {n : ℕ}
           (IsBoolFunDecreasingIn g i ∧ IsBoolFunDecreasingIn h i)) ∧
         (g ≤ h ∨ h ≤ g)
 
-/-- Proposition 7: the negation of a unate function is unate.
+/-- **Weight symmetry of unate Boolean functions.** For all $n \ge 0$ and all $w$ with
+$0 \le w \le 2^n$, the number of unate $n$-variable Boolean functions of weight $w$ equals the
+number of unate $n$-variable Boolean functions of weight $2^n - w$.
 
-Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
-under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
-Sequences 28 (2025), Article 25.3.4, Proposition 7 (`jis-2025-25.3.4-prop-7`). -/
-public theorem_wanted isUnateBoolFun_not {n : ℕ} {f : (Fin n → Bool) → Bool}
-    (hf : IsUnateBoolFun f) : IsUnateBoolFun fun x => !f x
-
-/-- Proposition 8: `M_{n,w} = M_{n,2^n-w}` for `0 ≤ w ≤ 2^n`, where `M_{n,w}`
-counts monotone `n`-variable functions of weight `w`. The paper assumes
-`n ≥ 1`; the statement also holds for `n = 0` and is stated for all `n`.
-
-Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
-under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
-Sequences 28 (2025), Article 25.3.4, Proposition 8 (`jis-2025-25.3.4-prop-8`). -/
-public theorem_wanted card_monotone_boolFun_weight_symm (n w : ℕ) (hw : w ≤ 2 ^ n) :
-    Nat.card {f : (Fin n → Bool) → Bool // Monotone f ∧ boolFunWeight f = w}
-      = Nat.card {f : (Fin n → Bool) → Bool // Monotone f ∧ boolFunWeight f = 2 ^ n - w}
-
-/-- Proposition 9: `U_{n,w} = U_{n,2^n-w}` for `0 ≤ w ≤ 2^n`, where `U_{n,w}`
-counts unate `n`-variable functions of weight `w`. The paper assumes
-`n ≥ 1`; the statement also holds for `n = 0` and is stated for all `n`.
+The source assumes $n \ge 1$; the case $n = 0$ is included here.
 
 Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
 under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
@@ -335,16 +114,19 @@ public theorem_wanted card_unate_boolFun_weight_symm (n w : ℕ) (hw : w ≤ 2 ^
     Nat.card {f : (Fin n → Bool) → Bool // IsUnateBoolFun f ∧ boolFunWeight f = w}
       = Nat.card {f : (Fin n → Bool) → Bool // IsUnateBoolFun f ∧ boolFunWeight f = 2 ^ n - w}
 
-/-- Proposition 11: for a property `P` closed under renaming variables,
-`[P]_n = ∑_{i=0}^n nd-[P]_i`, where `[P]_n` is the number of classes of
-`n`-variable functions with `P` under permutation of variables and `nd-[P]_i`
-the same for non-degenerate functions.
+/-- **Permutation classes counted by non-degenerate ones.** Let $(P_n)_{n \ge 0}$ be a family of
+properties, $P_n$ a property of $n$-variable Boolean functions, that is invariant under renaming
+variables: for all $m$ and $n$, every injection $e$ from $\{1, \dots, m\}$ to $\{1, \dots, n\}$
+and every $m$-variable function $g$, the $n$-variable function $x \mapsto g(x \circ e)$ has $P_n$
+if and only if $g$ has $P_m$. Write $[P]_n$ for the number of classes of $n$-variable functions
+with $P_n$ under permutation of the variables, and $\mathrm{nd}[P]_n$ for the same count over the
+non-degenerate $n$-variable functions with $P_n$. Then for every $n$,
+$$[P]_n = \sum_{i=0}^{n} \mathrm{nd}[P]_i.$$
 
-Deviation: the paper assumes only closure under permutations of variables;
-the counting argument also needs invariance under adding or removing dummy
-variables, so `hP` asks for invariance under renaming along any injection.
-Closure under permutations alone is not enough: if `P` holds exactly for the
-four `1`-variable functions, then `[P]_1 = 4` but the sum is `0 + 2 = 2`.
+The paper assumes only closure under permutations of the variables; the counting argument also
+needs invariance under adding or removing dummy variables. Closure under permutations alone is not
+enough: if $P_1$ holds for all four $1$-variable functions and $P_n$ holds for none when
+$n \ne 1$, then $[P]_1 = 4$ but $\mathrm{nd}[P]_0 + \mathrm{nd}[P]_1 = 0 + 2 = 2$.
 
 Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
 under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
@@ -358,9 +140,19 @@ public theorem_wanted boolFunClassCount_varPerm_eq_sum_nondegenerate
       = ∑ i ∈ Finset.range (n + 1),
           boolFunClassCount IsBoolFunVarPermEquiv (fun f => IsNondegenerateBoolFun f ∧ P i f)
 
-/-- Proposition 11, difference form: `nd-[P]_{n+1} = [P]_{n+1} - [P]_n` (the
-paper's `nd-[P]_n = [P]_n - [P]_{n-1}` for `n ≥ 1`), under the same hypothesis
-as `boolFunClassCount_varPerm_eq_sum_nondegenerate`.
+/-- **Non-degenerate permutation classes as a difference.** Let $(P_n)_{n \ge 0}$ be a family of
+properties, $P_n$ a property of $n$-variable Boolean functions, that is invariant under renaming
+variables: for all $m$ and $n$, every injection $e$ from $\{1, \dots, m\}$ to $\{1, \dots, n\}$
+and every $m$-variable function $g$, the $n$-variable function $x \mapsto g(x \circ e)$ has $P_n$
+if and only if $g$ has $P_m$. Write $[P]_n$ for the number of classes of $n$-variable functions
+with $P_n$ under permutation of the variables, and $\mathrm{nd}[P]_n$ for the same count over the
+non-degenerate $n$-variable functions with $P_n$. Then for every $n$,
+$$\mathrm{nd}[P]_{n+1} = [P]_{n+1} - [P]_n,$$
+where the subtraction is truncated at $0$; this is the paper's
+$\mathrm{nd}[P]_n = [P]_n - [P]_{n-1}$ for $n \ge 1$.
+
+The paper assumes only closure under permutations of the variables, which is not enough; see the
+summation form of Proposition 11.
 
 Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
 under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
@@ -374,9 +166,14 @@ public theorem_wanted boolFunClassCount_varPerm_nondegenerate_eq_sub
       = boolFunClassCount IsBoolFunVarPermEquiv (P (n + 1))
         - boolFunClassCount IsBoolFunVarPermEquiv (P n)
 
-/-- Proposition 12: with `[·]` counting classes under permutation of
-variables, `nd-[U]_n ≤ 2^n nd-[M]_n`, `nd-[BU]_n ≤ 2^n nd-[BM]_n`,
-`[U]_n ≤ 2^n [M]_n` and `[BU]_n ≤ 2^n [BM]_n`.
+/-- **Unate versus monotone permutation classes.** Write $[Q]_n$ for the number of classes of
+$n$-variable Boolean functions with property $Q$ under permutation of the variables. Let $U$, $M$,
+$B$ and $\mathrm{nd}$ be the properties of being unate, monotone (nondecreasing for the
+coordinatewise order with $0 < 1$), balanced (true of a function $f$ when $2\,\mathrm{wt}(f) = 2^n$,
+where $\mathrm{wt}(f)$ is the weight of $f$) and non-degenerate, and write juxtaposition for
+conjunction, so that $BU$ is the property of being balanced and unate. Then for every $n$,
+$[\mathrm{nd}\,U]_n \le 2^n [\mathrm{nd}\,M]_n$, $[\mathrm{nd}\,BU]_n \le 2^n [\mathrm{nd}\,BM]_n$,
+$[U]_n \le 2^n [M]_n$ and $[BU]_n \le 2^n [BM]_n$.
 
 Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
 under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
@@ -397,13 +194,14 @@ public theorem_wanted boolFunClassCount_varPerm_unate_le (n : ℕ) :
       ≤ 2 ^ n * boolFunClassCount (n := n) IsBoolFunVarPermEquiv
         (fun f => Monotone f ∧ 2 * boolFunWeight f = 2 ^ n)
 
-/-- Proposition 13: two monotone functions `f`, `g` are NN-equivalent if and
-only if `g = f` or `g` is obtained from `f` by negating the output and all
-variables on which `f` is non-degenerate (the positions `a i = true`).
+/-- **NN-equivalence of monotone Boolean functions.** Let $f$ and $g$ be monotone $n$-variable
+Boolean functions. Then $f$ and $g$ are NN-equivalent ($g$ is obtained from $f$ by negating
+some inputs and possibly the output) if and only if either $g = f$, or $g(x) = \lnot f(x \oplus a)$
+for all $x$, where $a \in \{0,1\}^n$ has $a_i = 1$ exactly for the variables $x_i$ on which $f$
+is non-degenerate and $\oplus$ is coordinatewise exclusive or.
 
-Omitted: the printed consequence that every NN-class of monotone functions
-has exactly two elements is false for self-dual cases: for `n = 1` and
-`f x = x₁`, the only monotone function NN-equivalent to `f` is `f` itself.
+This does not mean that every NN-class of monotone functions has two elements: for $n = 1$
+and $f(x) = x_1$, the only monotone function NN-equivalent to $f$ is $f$ itself.
 
 Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
 under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
@@ -414,8 +212,11 @@ public theorem_wanted isBoolFunNNEquiv_monotone_iff {n : ℕ}
       g = f ∨ ∃ a : Fin n → Bool, (∀ i, a i = true ↔ IsBoolFunNondegenerateOn f i) ∧
         ∀ x : Fin n → Bool, g x = !f fun i => xor (x i) (a i)
 
-/-- Proposition 14(a): the numbers of NN-inequivalent (resp. NPN-inequivalent)
-`n`-variable unate and monotone functions are equal.
+/-- **Unate and monotone functions have equally many NN- and NPN-classes.** For every $n$, the
+number of NN-inequivalent unate $n$-variable Boolean functions equals the number of
+NN-inequivalent monotone ones, and the number of NPN-inequivalent unate $n$-variable Boolean
+functions equals the number of NPN-inequivalent monotone ones. Here monotone means nondecreasing
+for the coordinatewise order with $0 < 1$.
 
 Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
 under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
@@ -426,8 +227,13 @@ public theorem_wanted boolFunClassCount_unate_eq_monotone (n : ℕ) :
       boolFunClassCount (n := n) IsBoolFunNPNEquiv IsUnateBoolFun
         = boolFunClassCount (n := n) IsBoolFunNPNEquiv Monotone
 
-/-- Proposition 14(b): the numbers of NN-inequivalent (resp. NPN-inequivalent)
-`n`-variable balanced unate and balanced monotone functions are equal.
+/-- **Balanced unate and balanced monotone functions have equally many NN- and NPN-classes.**
+For every $n$, call an $n$-variable Boolean function $f$ balanced when $2\,\mathrm{wt}(f) = 2^n$,
+where $\mathrm{wt}(f)$ is the weight of $f$. The number of NN-inequivalent balanced unate
+$n$-variable Boolean functions equals the number of NN-inequivalent balanced monotone ones, and
+the number of NPN-inequivalent balanced unate $n$-variable Boolean functions equals the number of
+NPN-inequivalent balanced monotone ones. Here monotone means nondecreasing for the coordinatewise
+order with $0 < 1$.
 
 Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
 under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer

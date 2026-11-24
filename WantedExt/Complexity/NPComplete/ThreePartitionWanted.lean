@@ -42,14 +42,19 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- A 3-partition instance: numbers (a multiple of 3 of them), target. -/
+/-- **3-partition instances.** An instance of 3-PARTITION is a pair $(a, B)$ of a finite list $a$
+of natural numbers and a natural number $B$, the target sum. -/
 abbrev ThreePartitionInstance := List ℕ × ℕ
 
-/-- Well-formedness of an instance. -/
+/-- **Well-formed 3-partition instances.** A 3-partition instance $(a, B)$ is well formed when the
+length of the list $a$ is a multiple of $3$. -/
 def WellFormed (i : ThreePartitionInstance) : Prop :=
   i.1.length % 3 = 0
 
-/-- A split into triples each summing to the target. -/
+/-- **Feasible 3-partition instances.** Let $(a, B)$ be a 3-partition instance with
+$a = (a_0, \dots, a_{N-1})$, and let $m = \lfloor N/3 \rfloor$. The instance is feasible when
+there is a map $g : \{0, \dots, N-1\} \to \{0, \dots, m-1\}$ such that for every $t < m$ exactly
+three indices $j$ satisfy $g(j) = t$, and the sum of $a_j$ over these indices equals $B$. -/
 def ThreePartitionFeasible
     (i : ThreePartitionInstance) : Prop :=
   ∃ assign : List ℕ, assign.length = i.1.length ∧
@@ -60,7 +65,11 @@ def ThreePartitionFeasible
         (fun j => if assign.getD j 0 = t then i.1.getD j 0 else 0) = i.2
 
 open Classical in
-/-- 3-PARTITION as a decision problem over bitstrings. -/
+/-- **3-PARTITION as a decision problem.** The decision problem 3-PARTITION accepts a bitstring
+$x$ exactly when $x$ decodes, under the canonical bitstring encoding, to a 3-partition instance
+$(a, B)$ that is well formed (the length of the list $a$ is a multiple of $3$) and feasible (the
+entries of $a$ can be split into triples each summing to $B$). Bitstrings that do not decode to
+an instance are rejected. -/
 noncomputable def threePartitionDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
@@ -68,7 +77,10 @@ noncomputable def threePartitionDec :
   | some i => decide (WellFormed i ∧ ThreePartitionFeasible i)
   | none => false
 
-/-- **3-PARTITION is NP-complete.** Source: M. R. Garey and D. S. Johnson, *Computers and
+/-- **3-PARTITION is NP-complete.** The decision problem 3-PARTITION on bitstrings is in NP, and
+every decision problem in NP reduces to it by a polynomial-time many-one reduction.
+
+Source: M. R. Garey and D. S. Johnson, *Computers and
 Intractability* (1979), 3-PARTITION (strongly NP-complete). -/
 public theorem_wanted threePartition_npComplete :
     threePartitionDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧

@@ -48,12 +48,18 @@ estimate has binary output length `Ω(n)`, which no polynomial-time estimator
 receiving only polynomially many random bits in `|x|` could emit.
 -/
 
-/-- A DNF formula, given by an assignment, is satisfied if some term's literals all hold. -/
+/-- **Satisfaction of a DNF formula.** A DNF formula is a list of terms, each a list of literals
+$(v, b)$ of a natural number $v$ (the variable) and a boolean $b$ (the polarity). An assignment $a$
+of booleans to the natural numbers satisfies the formula when some term of it has $a(v) = b$ for
+every literal $(v, b)$ of that term. -/
 def dnfSat (assign : ℕ → Bool) (φ : List (List (ℕ × Bool))) : Prop :=
   ∃ term ∈ φ, ∀ p ∈ term, assign p.1 = p.2
 
-/-- The number of satisfying assignments of the DNF formula decoded from `x`
-(`0` on malformed inputs). -/
+/-- **Number of satisfying assignments of an encoded DNF formula.** For a bitstring $x$: if $x$
+decodes, under the canonical bitstring encoding, to a pair $(u, \varphi)$ of a bitstring $u$ of
+length $m$ and a DNF formula $\varphi$ all of whose literals have variables less than $m$, the
+value at $x$ is the number of assignments of booleans to the variables $0, \dots, m - 1$ that
+satisfy $\varphi$; otherwise the value is $0$. -/
 noncomputable def dnfCountOf (x : List Bool) : ℕ :=
   match MetaMathlibExt.BitstringEncoding.bitDecode
       (α := List Bool × List (List (ℕ × Bool))) x with
@@ -64,7 +70,17 @@ noncomputable def dnfCountOf (x : List Bool) : ℕ :=
     else 0
   | none => 0
 
-/-- **Karp-Luby: FPRAS for DNF counting.** Source: R. M. Karp and M. Luby, "Monte-Carlo
+/-- **Karp-Luby: FPRAS for DNF counting.** For a bitstring $x$, let $N(x)$ be the number of
+satisfying assignments of the DNF formula encoded by $x$: if $x$ decodes, under the canonical
+bitstring encoding, to a pair $(u, \varphi)$ of a bitstring $u$ of length $m$ and a DNF formula
+$\varphi$ whose variables are all less than $m$, then $N(x)$ is the number of assignments of
+booleans to the variables $0, \dots, m - 1$ that satisfy $\varphi$, and otherwise $N(x) = 0$.
+There are a polynomial $p$ with natural-number coefficients and a polynomial-time computable
+function $E$ from triples of bitstrings to natural numbers such that for all bitstrings $x$ and
+$w$ with $n = |w| \ge 1$ (the precision, given in unary), at least two thirds of the bitstrings
+$r$ of length $p(|x| + n)$ satisfy $|E(x, r, w) - N(x)| \le N(x) / n$.
+
+Source: R. M. Karp and M. Luby, "Monte-Carlo
 algorithms for enumeration and reliability problems", Proceedings of the Twenty-Fourth
 Annual Symposium on Foundations of Computer Science (FOCS 1983), 56-64. -/
 public theorem_wanted karp_luby_dnf_counting :

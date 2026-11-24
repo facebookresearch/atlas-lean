@@ -46,46 +46,66 @@ set_option autoImplicit false
 
 namespace MathlibExt.NumberTheory.FkPerfectWanted
 
-/-- The paper's deficient equation with a specified proper
-divisor `d`: `σₖ(n) + d^k = n^k + ℓn`. -/
+/-- **$[k,\ell]$-deficient-perfect with a given divisor.** For natural numbers $k$, $\ell$, $n$
+and $d$, the number $n$ is $[k,\ell]$-deficient-perfect with divisor $d$ when $d$ is a proper
+divisor of $n$ ($d \mid n$ and $d < n$) and $\sigma_k(n) + d^k = n^k + \ell n$, where
+$\sigma_k(n) = \sum_{e \mid n} e^k$ is the sum of the $k$-th powers of the divisors of $n$. -/
 def KLDeficientPerfectWith (k l n d : ℕ) : Prop :=
   d ∣ n ∧ d < n ∧
     (∑ e ∈ n.divisors, e ^ k) + d ^ k = n ^ k + l * n
 
-/-- The paper's `[k,ℓ]`-deficient-perfect numbers. -/
+/-- **$[k,\ell]$-deficient-perfect numbers.** For natural numbers $k$, $\ell$ and $n$, write
+$\sigma_k(n) = \sum_{e \mid n} e^k$. The number $n$ is $[k,\ell]$-deficient-perfect when there is a
+divisor $d$ of $n$ with $d < n$ such that $\sigma_k(n) + d^k = n^k + \ell n$. -/
 def IsKLDeficientPerfect (k l n : ℕ) : Prop :=
   ∃ d, KLDeficientPerfectWith k l n d
 
-/-- The paper's near equation with a specified proper
-divisor `d`: `σₖ(n) = n^k + d^k + ℓn`. -/
+/-- **$[k,\ell]$-near-perfect with a given divisor.** For natural numbers $k$, $\ell$, $n$ and
+$d$, the number $n$ is $[k,\ell]$-near-perfect with divisor $d$ when $d$ is a proper divisor of
+$n$ ($d \mid n$ and $d < n$) and $\sigma_k(n) = n^k + d^k + \ell n$, where
+$\sigma_k(n) = \sum_{e \mid n} e^k$ is the sum of the $k$-th powers of the divisors of $n$. -/
 def KLNearPerfectWith (k l n d : ℕ) : Prop :=
   d ∣ n ∧ d < n ∧
     (∑ e ∈ n.divisors, e ^ k) = n ^ k + d ^ k + l * n
 
-/-- The paper's `[k,ℓ]`-near-perfect numbers. -/
+/-- **$[k,\ell]$-near-perfect numbers.** For natural numbers $k$, $\ell$ and $n$, write
+$\sigma_k(n) = \sum_{e \mid n} e^k$. The number $n$ is $[k,\ell]$-near-perfect when there is a
+divisor $d$ of $n$ with $d < n$ such that $\sigma_k(n) = n^k + d^k + \ell n$. -/
 def IsKLNearPerfect (k l n : ℕ) : Prop :=
   ∃ d, KLNearPerfectWith k l n d
 
-/-- The paper's deficient `F_k`-perfect numbers (`ℓ = 3`). -/
+/-- **Deficient $F_k$-perfect numbers.** For natural numbers $k$ and $n$, write
+$\sigma_k(n) = \sum_{e \mid n} e^k$. The number $n$ is deficient $F_k$-perfect when it is
+$[k,3]$-deficient-perfect, that is, when there is a divisor $d$ of $n$ with $d < n$ such that
+$\sigma_k(n) + d^k = n^k + 3n$. -/
 def IsDeficientFkPerfect (k n : ℕ) : Prop :=
   IsKLDeficientPerfect k 3 n
 
-/-- The paper's near `F_k`-perfect numbers (`ℓ = 3`). -/
+/-- **Near $F_k$-perfect numbers.** For natural numbers $k$ and $n$, the number $n$ is near
+$F_k$-perfect when it is $[k,3]$-near-perfect, that is, when some proper divisor $d$ of $n$
+($d \mid n$ and $d < n$) satisfies $\sigma_k(n) = n^k + d^k + 3n$, where
+$\sigma_k(n) = \sum_{e \mid n} e^k$ is the sum of the $k$-th powers of the divisors of $n$.
+
+No condition $k > 1$ is imposed here; the results that need it assume it. -/
 def IsNearFkPerfect (k n : ℕ) : Prop :=
   IsKLNearPerfect k 3 n
 
-/-- The paper's deficient `F`-perfect numbers (`k = 2`,
-`ℓ = 3`). -/
+/-- **Deficient $F$-perfect numbers.** For a natural number $n$, write
+$\sigma_2(n) = \sum_{e \mid n} e^2$. The number $n$ is deficient $F$-perfect when it is
+$[2,3]$-deficient-perfect, that is, when there is a divisor $d$ of $n$ with $d < n$ such that
+$\sigma_2(n) + d^2 = n^2 + 3n$. -/
 def IsDeficientFPerfect (n : ℕ) : Prop :=
   IsKLDeficientPerfect 2 3 n
 
-/-- The paper's near `F`-perfect numbers (`k = 2`,
-`ℓ = 3`). -/
+/-- **Near $F$-perfect numbers.** A natural number $n$ is near $F$-perfect when it is
+$[2,3]$-near-perfect, that is, when some proper divisor $d$ of $n$ ($d \mid n$ and $d < n$)
+satisfies $\sigma_2(n) = n^2 + d^2 + 3n$, where $\sigma_2(n) = \sum_{e \mid n} e^2$ is the sum
+of the squares of the divisors of $n$. -/
 def IsNearFPerfect (n : ℕ) : Prop :=
   IsKLNearPerfect 2 3 n
 
-/-- **Proposition 1**: an odd prime is not
-`[k,ℓ]`-deficient-perfect.
+/-- **Odd primes are not $[k,\ell]$-deficient-perfect.** Let $p$ be an odd prime. Then for all
+natural numbers $k$ and $\ell$, $p$ is not $[k,\ell]$-deficient-perfect.
 
 Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
 and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
@@ -94,8 +114,10 @@ theorem_wanted not_isKLDeficientPerfect_of_prime_odd
     (k l p : ℕ) (hp : p.Prime) (hpo : Odd p) :
     ¬ IsKLDeficientPerfect k l p
 
-/-- **Corollary 1**: `2` is `[k,1]`-deficient-perfect for
-every `k` (with `d = 1`).
+/-- **$2$ is $[k,1]$-deficient-perfect.** For every natural number $k$, the number $2$ is
+$[k,1]$-deficient-perfect.
+
+The divisor is $d = 1$, since $1 + 2^k + 1^k = 2^k + 1 \cdot 2$.
 
 Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
 and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
@@ -103,7 +125,8 @@ and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
 theorem_wanted isKLDeficientPerfect_two (k : ℕ) :
     IsKLDeficientPerfect k 1 2
 
-/-- **Corollary 2**: no prime is deficient `F`-perfect.
+/-- **No prime is deficient $F$-perfect.** If $p$ is a prime, then $p$ is not deficient
+$F$-perfect.
 
 Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
 and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
@@ -112,8 +135,8 @@ theorem_wanted not_isDeficientFPerfect_of_prime (p : ℕ)
     (hp : p.Prime) :
     ¬ IsDeficientFPerfect p
 
-/-- **Proposition 2**: a prime is not
-`[k,ℓ]`-near-perfect (for `ℓ ≥ 1`).
+/-- **Primes are not $[k,\ell]$-near-perfect.** Let $k$ and $\ell$ be natural numbers with
+$\ell \ge 1$ and let $p$ be a prime. Then $p$ is not $[k,\ell]$-near-perfect.
 
 Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
 and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
@@ -122,8 +145,11 @@ theorem_wanted not_isKLNearPerfect_of_prime (k l p : ℕ)
     (hl : 1 ≤ l) (hp : p.Prime) :
     ¬ IsKLNearPerfect k l p
 
-/-- **Theorem 1**: no prime power `p^a` is deficient
-`F`-perfect or near `F`-perfect.
+/-- **No prime power is deficient $F$-perfect or near $F$-perfect.** For every prime $p$ and
+every natural number $a$, the number $n = p^a$ is neither deficient $F$-perfect nor near
+$F$-perfect: there is no divisor $d$ of $n$ with $d < n$ and $\sigma_2(n) + d^2 = n^2 + 3n$, and
+no divisor $d$ of $n$ with $d < n$ and $\sigma_2(n) = n^2 + d^2 + 3n$, where $\sigma_2(n)$ is the
+sum of the squares of the divisors of $n$.
 
 Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
 and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
@@ -132,9 +158,10 @@ theorem_wanted prime_pow_not_fPerfect (p a : ℕ)
     (hp : p.Prime) :
     ¬ IsDeficientFPerfect (p ^ a) ∧ ¬ IsNearFPerfect (p ^ a)
 
-/-- **Theorem 2**: `p^a` is `[2,ℓ]`-near-perfect with
-divisor `d` if and only if `a = 2`, `ℓ = 1`, and `d = 1`
-(for `ℓ ≥ 1`).
+/-- **Prime powers that are $[2,\ell]$-near-perfect.** Let $p$ be a prime, let $a$, $\ell$ and
+$d$ be natural numbers with $\ell \ge 1$, and write $\sigma_2(m)$ for the sum of the squares of
+the divisors of $m$. Then $d$ is a proper divisor of $p^a$ ($d \mid p^a$ and $d < p^a$) with
+$\sigma_2(p^a) = (p^a)^2 + d^2 + \ell p^a$ if and only if $a = 2$, $\ell = 1$ and $d = 1$.
 
 Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
 and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
@@ -144,11 +171,12 @@ theorem_wanted klNearPerfectWith_prime_pow_two_iff
     KLNearPerfectWith 2 l (p ^ a) d ↔
       a = 2 ∧ l = 1 ∧ d = 1
 
-/-- **Theorem 3** (corrected): if `p^a` is
-`[2,ℓ]`-deficient-perfect then `ℓ = 1` and (`a = 2` or
-`p^a = 2`); the printed exception `a = 2`, `ℓ = 1` omits
-the solution `p = 2`, `a = 1`, `ℓ = 1`, `d = 1` (the
-number `2` of Corollary 1).
+/-- **$[2,\ell]$-deficient-perfect prime powers (corrected).** Let $p$ be a prime and let $a$ and
+$\ell$ be natural numbers. If $p^a$ is $[2,\ell]$-deficient-perfect, then $\ell = 1$, and either
+$a = 2$, or $p = 2$ and $a = 1$.
+
+The printed statement allows only the exception $a = 2$, $\ell = 1$, and so omits the solution
+$p = 2$, $a = 1$, $\ell = 1$, $d = 1$ (the number $2$ of Corollary 1).
 
 Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
 and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
@@ -158,15 +186,15 @@ theorem_wanted isKLDeficientPerfect_prime_pow_two_imp
     IsKLDeficientPerfect 2 l (p ^ a) →
       l = 1 ∧ (a = 2 ∨ (p = 2 ∧ a = 1))
 
-/-- **Theorem 4** (corrected): `p^a` is
-`[k,ℓ]`-near-perfect with divisor `d` if and only if
-`2 ≤ a ≤ k`, `d = 1`, and
-`ℓ = p^{k-a} (1 + p^k + ⋯ + p^{(a-2)k})` (for `k, ℓ ≥ 1`).
-The printed conclusion `a = k` is false: at `p = 2`,
-`a = 2`, `k = 3`, `ℓ = 2`, `d = 1` one has
-`σ₃(4) = 73 = 4³ + 1³ + 2·4` with `a ≠ k`; the printed
-form is the case `a = k` of the identity
-`∑_{i=1}^{a-1} p^{ik} = ℓ p^a`.
+/-- **Prime powers that are $[k,\ell]$-near-perfect.** Let $p$ be a prime, let $a$, $k$, $\ell$
+and $d$ be natural numbers with $k \ge 1$ and $\ell \ge 1$, and write
+$\sigma_k(m) = \sum_{e \mid m} e^k$. Then $d$ is a proper divisor of $p^a$ ($d \mid p^a$ and
+$d < p^a$) with $\sigma_k(p^a) = (p^a)^k + d^k + \ell p^a$ if and only if $2 \le a \le k$,
+$d = 1$ and $\ell = p^{k-a} \sum_{i=0}^{a-2} p^{ik}$.
+
+The source prints the conclusion $a = k$, which is false: for $p = 2$, $a = 2$, $k = 3$,
+$\ell = 2$, $d = 1$ one has $\sigma_3(4) = 73 = 4^3 + 1^3 + 2 \cdot 4$ with $a \ne k$. The
+printed form is the case $a = k$ of the identity $\sum_{i=1}^{a-1} p^{ik} = \ell p^a$.
 
 Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
 and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
@@ -178,9 +206,9 @@ theorem_wanted klNearPerfectWith_prime_pow_iff
         l = p ^ (k - a) *
           ∑ i ∈ Finset.range (a - 1), p ^ (i * k)
 
-/-- **Theorem 5**, `k ≥ 2` part: if `p^a` is
-`[k,ℓ]`-deficient-perfect with `k ≥ 2`, then `p = 2` and
-`a = 1`.
+/-- **$[k,\ell]$-deficient-perfect prime powers for $k \ge 2$.** Let $p$ be a prime and let $a$,
+$k$ and $\ell$ be natural numbers with $k \ge 2$. If $p^a$ is $[k,\ell]$-deficient-perfect, then
+$p = 2$ and $a = 1$.
 
 Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
 and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
@@ -189,9 +217,12 @@ theorem_wanted isKLDeficientPerfect_prime_pow_imp
     (p a k l : ℕ) (hp : p.Prime) (hk : 2 ≤ k) :
     IsKLDeficientPerfect k l (p ^ a) → p = 2 ∧ a = 1
 
-/-- **Theorem 5**, `k = 1` part: `p^a` is
-`[1,ℓ]`-deficient-perfect with divisor `d` if and only if
-`p = 2`, `ℓ = 1`, `d = 1` (and `a ≥ 1`).
+/-- **Prime powers that are $[1,\ell]$-deficient-perfect with a given divisor.** Let $p$ be a
+prime, let $a$, $\ell$ and $d$ be natural numbers, and write $\sigma_1(m)$ for the sum of the
+divisors of $m$. Then $d$ is a proper divisor of $p^a$ ($d \mid p^a$ and $d < p^a$) with
+$\sigma_1(p^a) + d = p^a + \ell p^a$ if and only if $p = 2$, $\ell = 1$, $d = 1$ and $a \ge 1$.
+
+This is the $k = 1$ part of Theorem 5 of the source.
 
 Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
 and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
@@ -201,8 +232,8 @@ theorem_wanted klDeficientPerfectWith_one_prime_pow_iff
     KLDeficientPerfectWith 1 l (p ^ a) d ↔
       p = 2 ∧ l = 1 ∧ d = 1 ∧ 1 ≤ a
 
-/-- **Theorem 6**: `2p` is not `[k,ℓ]`-near-perfect for an
-odd prime `p` (and `ℓ ≥ 1`).
+/-- **Twice an odd prime is not $[k,\ell]$-near-perfect.** Let $k$ and $\ell$ be natural numbers
+with $\ell \ge 1$ and let $p$ be an odd prime. Then $2p$ is not $[k,\ell]$-near-perfect.
 
 Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
 and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
@@ -211,9 +242,10 @@ theorem_wanted not_isKLNearPerfect_two_mul_prime (k l p : ℕ)
     (hl : 1 ≤ l) (hp : p.Prime) (hpo : Odd p) :
     ¬ IsKLNearPerfect k l (2 * p)
 
-/-- **Theorem 7**: the only deficient `F`-perfect number
-of the form `2^a p` has `p = 3` and `a = 1` (the number
-`6`, which is deficient `F`-perfect with `d = 2`).
+/-- **Deficient $F$-perfect numbers of the form $2^a p$.** Let $p$ be a prime and $a$ a natural
+number. If $2^a p$ is deficient $F$-perfect, then $p = 3$ and $a = 1$, so the number is $6$.
+
+The number $6$ is indeed deficient $F$-perfect, with $d = 2$.
 
 Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
 and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
@@ -222,8 +254,12 @@ theorem_wanted isDeficientFPerfect_two_pow_mul_prime_imp
     (p a : ℕ) (hp : p.Prime) :
     IsDeficientFPerfect (2 ^ a * p) → p = 3 ∧ a = 1
 
-/-- **Theorem 8**: `2^a p` (`p` an odd prime) is not
-`[k,ℓ]`-deficient-perfect with divisor `d = 1` or `d = p`.
+/-- **$2^a p$ is not $[k,\ell]$-deficient-perfect with divisor $1$ or $p$.** Let $k$, $\ell$, $a$
+be natural numbers with $\ell \ge 1$ and let $p$ be an odd prime. Call $n$
+$[k,\ell]$-deficient-perfect with divisor $d$ when $d$ divides $n$, $d < n$ and
+$\sigma_k(n) + d^k = n^k + \ell n$, where $\sigma_k(n)$ is the sum of the $k$-th powers of the
+divisors of $n$. Then $2^a p$ is not $[k,\ell]$-deficient-perfect with divisor $1$, and not with
+divisor $p$.
 
 Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
 and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
@@ -233,8 +269,10 @@ theorem_wanted not_klDeficientPerfectWith_two_pow_mul
     ¬ KLDeficientPerfectWith k l (2 ^ a * p) 1 ∧
       ¬ KLDeficientPerfectWith k l (2 ^ a * p) p
 
-/-- **Theorem 9**: there is no near `F`-perfect number of
-the form `2^a p`.
+/-- **No near $F$-perfect number of the form $2^a p$.** For every prime $p$ and every natural
+number $a$, the number $n = 2^a p$ is not near $F$-perfect: there is no divisor $d$ of $n$ with
+$d < n$ and $\sigma_2(n) = n^2 + d^2 + 3n$, where $\sigma_2(n)$ is the sum of the squares of the
+divisors of $n$.
 
 Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
 and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
@@ -243,8 +281,9 @@ theorem_wanted not_isNearFPerfect_two_pow_mul_prime
     (p a : ℕ) (hp : p.Prime) :
     ¬ IsNearFPerfect (2 ^ a * p)
 
-/-- **Theorem 10**: `2^a p` (`p` an odd prime) is not
-`[2,ℓ]`-near-perfect.
+/-- **No $[2,\ell]$-near-perfect number of the form $2^a p$.** Let $\ell$ and $a$ be natural
+numbers with $\ell \ge 1$, and let $p$ be an odd prime. Then $2^a p$ is not
+$[2,\ell]$-near-perfect.
 
 Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
 and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
@@ -253,9 +292,12 @@ theorem_wanted not_isKLNearPerfect_two_two_pow_mul
     (l p a : ℕ) (hl : 1 ≤ l) (hp : p.Prime) (hpo : Odd p) :
     ¬ IsKLNearPerfect 2 l (2 ^ a * p)
 
-/-- **Theorem 11**: for `a > 1` and an odd prime `p`,
-`2^a p` is not `[k,ℓ]`-near-perfect with divisor `d = 1`
-or `d = p`.
+/-- **For $a \ge 2$, $2^a p$ is not $[k,\ell]$-near-perfect with divisor $1$ or $p$.** Let $k$,
+$\ell$, $a$ be natural numbers with $\ell \ge 1$ and $a \ge 2$, and let $p$ be an odd prime. Call
+$n$ $[k,\ell]$-near-perfect with divisor $d$ when $d$ divides $n$, $d < n$ and
+$\sigma_k(n) = n^k + d^k + \ell n$, where $\sigma_k(n)$ is the sum of the $k$-th powers of the
+divisors of $n$. Then $2^a p$ is not $[k,\ell]$-near-perfect with divisor $1$, and not with
+divisor $p$.
 
 Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
 and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
@@ -266,8 +308,11 @@ theorem_wanted not_klNearPerfectWith_two_pow_mul
     ¬ KLNearPerfectWith k l (2 ^ a * p) 1 ∧
       ¬ KLNearPerfectWith k l (2 ^ a * p) p
 
-/-- **Theorem 12**: the only deficient `F`-perfect number
-of the form `2p^a` is `6` (and `6` is one, with `d = 2`).
+/-- **The only deficient $F$-perfect number of the form $2p^a$ is $6$.** The number $6$ is deficient
+$F$-perfect, and for every prime $p$ and every natural number $a$, if $2p^a$ is deficient
+$F$-perfect then $2p^a = 6$.
+
+The divisor for $6$ is $d = 2$.
 
 Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
 and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
@@ -277,8 +322,10 @@ theorem_wanted isDeficientFPerfect_two_mul_prime_pow
     IsDeficientFPerfect 6 ∧
       (IsDeficientFPerfect (2 * p ^ a) → 2 * p ^ a = 6)
 
-/-- **Theorem 13**: there is no near `F`-perfect number of
-the form `2p^a`.
+/-- **No near $F$-perfect number of the form $2p^a$.** For every prime $p$ and every natural
+number $a$, the number $n = 2p^a$ is not near $F$-perfect: there is no divisor $d$ of $n$ with
+$d < n$ and $\sigma_2(n) = n^2 + d^2 + 3n$, where $\sigma_2(n)$ is the sum of the squares of the
+divisors of $n$.
 
 Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
 and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
@@ -287,9 +334,13 @@ theorem_wanted not_isNearFPerfect_two_mul_prime_pow
     (p a : ℕ) (hp : p.Prime) :
     ¬ IsNearFPerfect (2 * p ^ a)
 
-/-- **Theorem 14**, part 1: the only `[1,ℓ]`-near-perfect
-number of the form `2p^a` (any `ℓ ≥ 1`) is `18` (and `18`
-is one, for `ℓ = 1` with `d = 3`).
+/-- **The only $[1,\ell]$-near-perfect number of the form $2p^a$ is $18$.** For natural numbers
+$\ell$ and $n$, say that $n$ is $[1,\ell]$-near-perfect when some divisor $d$ of $n$ with $d < n$
+satisfies $\sigma(n) = n + d + \ell n$, where $\sigma(n)$ is the sum of the divisors of $n$. Then
+$18$ is $[1,1]$-near-perfect, and for every odd prime $p$ and all natural numbers $a$ and
+$\ell \ge 1$, if $2p^a$ is $[1,\ell]$-near-perfect then $2p^a = 18$.
+
+The divisor for $18$ is $d = 3$. This is part 1 of Theorem 14 of the source.
 
 Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
 and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
@@ -299,9 +350,13 @@ theorem_wanted isKLNearPerfect_one_two_mul_prime_pow
     IsKLNearPerfect 1 1 18 ∧
       (IsKLNearPerfect 1 l (2 * p ^ a) → 2 * p ^ a = 18)
 
-/-- **Theorem 14**, part 2: if `2p^a` (`p` an odd prime)
-is `[k,ℓ]`-near-perfect with divisor `d` and `k > 1`, then
-`p² ∣ 1 + 2^k`, and `a` is even if and only if `d` is odd.
+/-- **A divisibility condition for near-perfect numbers $2p^a$.** Let $p$ be an odd prime, let
+$a$, $k$, $\ell$ and $d$ be natural numbers with $k > 1$ and $\ell \ge 1$, and write
+$\sigma_k(m) = \sum_{e \mid m} e^k$. If $d$ is a proper divisor of $2p^a$ ($d \mid 2p^a$ and
+$d < 2p^a$) with $\sigma_k(2p^a) = (2p^a)^k + d^k + \ell \cdot 2p^a$, then $p^2 \mid 1 + 2^k$,
+and $a$ is even if and only if $d$ is odd.
+
+This is part 2 of Theorem 14 of the source.
 
 Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
 and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
@@ -312,8 +367,10 @@ theorem_wanted klNearPerfectWith_two_mul_prime_pow_imp
     KLNearPerfectWith k l (2 * p ^ a) d →
       p ^ 2 ∣ 1 + 2 ^ k ∧ (Even a ↔ Odd d)
 
-/-- **Theorem 15**: there is no near `F`-perfect number
-of the form `2^a p^b` with `b` even.
+/-- **No near $F$-perfect number of the form $2^a p^b$ with $b$ even.** For every prime $p$ and
+all natural numbers $a$ and $b$ with $b$ even, the number $n = 2^a p^b$ is not near $F$-perfect:
+there is no divisor $d$ of $n$ with $d < n$ and $\sigma_2(n) = n^2 + d^2 + 3n$, where
+$\sigma_2(n)$ is the sum of the squares of the divisors of $n$.
 
 Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
 and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
@@ -322,9 +379,9 @@ theorem_wanted not_isNearFPerfect_two_pow_mul_prime_pow
     (p a b : ℕ) (hp : p.Prime) (hb : Even b) :
     ¬ IsNearFPerfect (2 ^ a * p ^ b)
 
-/-- **Theorem 16**: there is no deficient `F_k`-perfect
-number of the form `p₁^a p₂` for distinct odd primes
-`p₁, p₂` (and `k > 1`).
+/-- **No deficient $F_k$-perfect number $p_1^a p_2$ with distinct odd primes.** Let $k > 1$ be
+a natural number, let $p_1 \ne p_2$ be odd primes and let $a$ be a natural number. Then
+$p_1^a p_2$ is not deficient $F_k$-perfect.
 
 Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
 and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
@@ -335,9 +392,8 @@ theorem_wanted not_isDeficientFkPerfect_prime_pow_mul
     (hne : p₁ ≠ p₂) :
     ¬ IsDeficientFkPerfect k (p₁ ^ a * p₂)
 
-/-- **Theorem 17**: there is no near `F_k`-perfect number
-of the form `p₁^a p₂` for distinct odd primes `p₁, p₂`
-(and `k > 1`).
+/-- **No near $F_k$-perfect number of the form $p_1^a p_2$.** Let $k > 1$, let $p_1$ and $p_2$ be
+distinct odd primes and let $a$ be a natural number. Then $p_1^a p_2$ is not near $F_k$-perfect.
 
 Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
 and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
@@ -348,9 +404,8 @@ theorem_wanted not_isNearFkPerfect_prime_pow_mul
     (hne : p₁ ≠ p₂) :
     ¬ IsNearFkPerfect k (p₁ ^ a * p₂)
 
-/-- **Theorem 18**: there is no deficient `F_k`-perfect
-number of the form `2p^a` when `k > 2` and `p` is an odd
-prime.
+/-- **No deficient $F_k$-perfect number of the form $2p^a$ for $k > 2$.** Let $k > 2$, let $p$ be
+an odd prime and let $a$ be a natural number. Then $2p^a$ is not deficient $F_k$-perfect.
 
 Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
 and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
@@ -359,10 +414,11 @@ theorem_wanted not_isDeficientFkPerfect_two_mul_pow
     (k p a : ℕ) (hk : 2 < k) (hp : p.Prime) (hpo : Odd p) :
     ¬ IsDeficientFkPerfect k (2 * p ^ a)
 
-/-- **Theorem 19**: there is no deficient `F_k`-perfect
-number of the form `p₁^a p₂^b` (distinct odd primes,
-`k > 1`, `a, b ≥ 1`) when `a + b` is odd or both `a` and
-`b` are odd.
+/-- **No deficient $F_k$-perfect number $p_1^a p_2^b$ with $a + b$ odd or $a, b$ both odd.** Let
+$k > 1$ be a natural number, let $p_1 \ne p_2$ be odd primes and let $a, b \ge 1$ be natural
+numbers such that $a + b$ is odd or both $a$ and $b$ are odd. Then $n = p_1^a p_2^b$ is not
+deficient $F_k$-perfect: there is no divisor $d$ of $n$ with $d < n$ and
+$\sigma_k(n) + d^k = n^k + 3n$, where $\sigma_k(n) = \sum_{e \mid n} e^k$.
 
 Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
 and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
@@ -374,10 +430,9 @@ theorem_wanted not_isDeficientFkPerfect_pow_mul_pow
     (hpar : Odd (a + b) ∨ (Odd a ∧ Odd b)) :
     ¬ IsDeficientFkPerfect k (p₁ ^ a * p₂ ^ b)
 
-/-- **Theorem 20**: there is no near `F_k`-perfect number
-of the form `p₁^a p₂^b` (distinct odd primes, `k > 1`,
-`a, b ≥ 1`) when `a + b` is odd or both `a` and `b` are
-odd.
+/-- **No near $F_k$-perfect number $p_1^a p_2^b$ with $a + b$ odd or $a, b$ both odd.** Let
+$k > 1$, let $p_1 \ne p_2$ be odd primes and let $a, b \ge 1$ be natural numbers such that
+$a + b$ is odd or both $a$ and $b$ are odd. Then $p_1^a p_2^b$ is not near $F_k$-perfect.
 
 Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
 and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
@@ -389,8 +444,8 @@ theorem_wanted not_isNearFkPerfect_pow_mul_pow
     (hpar : Odd (a + b) ∨ (Odd a ∧ Odd b)) :
     ¬ IsNearFkPerfect k (p₁ ^ a * p₂ ^ b)
 
-/-- **Theorem 21**: no product of distinct odd primes is
-deficient `F_k`-perfect (for `k > 1`).
+/-- **No product of distinct odd primes is deficient $F_k$-perfect.** Let $k > 1$ and let $s$ be a
+finite set of odd primes. Then $\prod_{p \in s} p$ is not deficient $F_k$-perfect.
 
 Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
 and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
@@ -400,8 +455,8 @@ theorem_wanted not_isDeficientFkPerfect_prod_primes
     (hs : ∀ p ∈ s, p.Prime ∧ Odd p) :
     ¬ IsDeficientFkPerfect k (∏ p ∈ s, p)
 
-/-- **Theorem 22**: no product of distinct odd primes is
-near `F_k`-perfect (for `k > 1`).
+/-- **No product of distinct odd primes is near $F_k$-perfect.** Let $k > 1$ and let $s$ be a
+finite set of odd primes. Then $\prod_{p \in s} p$ is not near $F_k$-perfect.
 
 Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
 and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
