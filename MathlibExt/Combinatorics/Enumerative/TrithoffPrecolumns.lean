@@ -8,8 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import MathlibExt.NumberTheory.TribonacciSequenceWithInitialValues001
+public import MathlibExt.Combinatorics.Enumerative.TrithoffRowDifference
 
 /-!
 # Precolumns of the Trithoff array
@@ -18,36 +17,6 @@ The three entries preceding a first-column entry can be read from its Tribonacci
 -/
 
 namespace MetaMathlibExt
-
-/-- **Tribonacci representation.** Let $T_n$ be the Tribonacci numbers, $T_0 = T_1 = 0$,
-$T_2 = 1$ and $T_{n+3} = T_{n+2} + T_{n+1} + T_n$. A list $w = (w_0, \dots, w_{\ell-1})$ of
-natural numbers, read least significant digit first, is a Tribonacci representation of a
-natural number $n$ when every digit $w_i$ is $0$ or $1$, no three consecutive entries of $w$
-are all equal to $1$, and $n = \sum_{i=0}^{\ell-1} w_i T_{i+3}$. Leading zeros (trailing
-entries of $w$) are allowed.
-
-Source: E. Chen et al., *Generalizing the Wythoff Array and Other Fibonacci Facts to
-Tribonacci Numbers*, Journal of Integer Sequences 28 (2025), Article 25.5.4,
-Section 2.3 (Tribonacci representation). -/
-@[expose] public def IsTribonacciRepr (w : List ℕ) (n : ℕ) : Prop :=
-  (∀ d ∈ w, d ≤ 1) ∧ ¬ [1, 1, 1] <:+: w ∧
-    ∑ i ∈ Finset.range w.length, w.getD i 0 * tribonacci (i + 3) = n
-
-/-- **Tribonacci value of a digit word.** Let $T_0 = T_1 = 0$, $T_2 = 1$ and
-$T_{k+3} = T_{k+2} + T_{k+1} + T_k$ be the Tribonacci numbers. The Tribonacci value of a finite
-word $w$ of natural-number digits $w_0, w_1, \dots, w_{\ell-1}$, listed from the least
-significant digit, is $[w]_T = \sum_{i=0}^{\ell-1} w_i T_{i+3}$, so the digits weigh
-$1, 2, 4, 7, 13, \dots$. Digits may exceed $1$ and three consecutive ones are allowed, so this
-also evaluates the paper's non-canonical and improper representations.
-
-For a Tribonacci representation $w$ of $n$, the value of $w$ followed by a new least
-significant digit $0$ is the Tribonacci successor $\mathrm{out}(n)$.
-
-Source: E. Chen et al., *Generalizing the Wythoff Array and Other Fibonacci Facts to
-Tribonacci Numbers*, Journal of Integer Sequences 28 (2025), Article 25.5.4,
-Sections 2.3, 5 and 6.1. -/
-@[expose] public def tribonacciValue (w : List ℕ) : ℕ :=
-  ∑ i ∈ Finset.range w.length, w.getD i 0 * tribonacci (i + 3)
 
 namespace trithoff_precolumns
 

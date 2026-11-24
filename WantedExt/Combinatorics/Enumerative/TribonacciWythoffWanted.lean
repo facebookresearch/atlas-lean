@@ -16,7 +16,9 @@ public import Mathlib.Data.Set.Card
 public import MathlibExt.Combinatorics.Enumerative.ExtraTribLeftExtension
 public import MathlibExt.Combinatorics.Enumerative.FibternarySums
 public import MathlibExt.Combinatorics.Enumerative.TrithoffPrecolumns
+public import MathlibExt.Combinatorics.Enumerative.TrithoffRowDifference
 public import MathlibExt.Combinatorics.InfiniteWord.Tribonacci
+public import MathlibExt.NumberTheory.TribonacciSequenceWithInitialValues001
 
 /-!
 # Tribonacci analogues of Wythoff-array facts (statements)
@@ -280,30 +282,6 @@ public theorem_wanted trithoff_row_number_eq (a : List ℕ) (n : ℕ)
         IsTribonacciRepr w m ∧ w.getD 0 0 = 1) (n - tribonacciValue a - 1) = n ∧
       n - tribonacciValue a = 1 + ∑ i ∈ Finset.range (a.length + 1),
         (1 :: a).getD i 0 * (tribonacci i + tribonacci (i + 1))
-
-/-- **Differences along a Trithoff row.** Let $T_0 = T_1 = 0$, $T_2 = 1$ and
-$T_{m+3} = T_{m+2} + T_{m+1} + T_m$ be the Tribonacci numbers, and for a finite word
-$w = (w_0, \dots, w_{\ell-1})$ of natural-number digits, listed from the least significant
-digit, let $[w]_T = \sum_{i=0}^{\ell-1} w_i T_{i+3}$ be its Tribonacci value. Let
-$a = (a_0, \dots, a_{\ell-1})$ be a Tribonacci representation of a natural number $n$ (all
-digits $0$ or $1$, no three consecutive ones, and $[a]_T = n$), and let
-$b = (b_0, \dots, b_\ell)$ be the word with $b_i = a_i + a_{i-1}$, where $a_{-1} = a_\ell = 0$
-(the product $11 \cdot a$ computed digit-wise without carries). For $k \ge 0$ write $0^k a$ for
-the word $(0, \dots, 0, a_0, \dots, a_{\ell-1})$ with $k$ zeros placed before $a_0$, that is, at
-the least significant end. Then there is a natural number $k$ with
-$[0^{k+1} a]_T - [0^k a]_T = [b]_T$.
-
-The entries of the Trithoff row of $n$ from $n$ onwards are $[0^k a]_T$ for $k \ge 0$, so
-$[b]_T$ is the difference of two consecutive entries of that row.
-
-Source: E. Chen et al., *Generalizing the Wythoff Array and Other Fibonacci Facts to
-Tribonacci Numbers*, Journal of Integer Sequences 28 (2025), Article 25.5.4,
-Proposition 8 (`jis-2025-25.5.4-prop-8`). -/
-public theorem_wanted exists_trithoff_row_difference_eq (a : List ℕ) (n : ℕ)
-    (h : IsTribonacciRepr a n) :
-    ∃ k : ℕ, (tribonacciValue (List.replicate (k + 1) 0 ++ a) : ℤ) -
-        tribonacciValue (List.replicate k 0 ++ a) =
-      tribonacciValue ((List.range (a.length + 1)).map fun i => a.getD i 0 + (0 :: a).getD i 0)
 
 /-- **Appending a zero to a non-canonical Tribonacci representation.** Let $T_0 = T_1 = 0$,
 $T_2 = 1$ and $T_{k+3} = T_{k+2} + T_{k+1} + T_k$ be the Tribonacci numbers, and for a digit
