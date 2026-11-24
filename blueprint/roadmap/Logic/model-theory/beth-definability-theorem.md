@@ -1,10 +1,6 @@
 # Beth's definability theorem
 
-Let $P$ and $P'$ be predicate symbols of the same arity $n$, let $\Gamma(P)$ be a set of first-order sentences in which $P'$ does not occur, and let $\Gamma(P')$ be the result of replacing every occurrence of $P$ by $P'$. Say that $\Gamma(P)$ *implicitly defines* $P$ if $\Gamma(P) \cup \Gamma(P') \models \forall \bar x\, (P(\bar x) \leftrightarrow P'(\bar x))$, and that it *explicitly defines* $P$ if there is a formula $A(\bar x)$ in which neither $P$ nor $P'$ occurs such that $\Gamma(P) \models \forall \bar x\, (A(\bar x) \leftrightarrow P(\bar x))$. Then $\Gamma(P)$ implicitly defines $P$ if and only if it explicitly defines $P$. Implicit definability is a property of the theory, not of one model: a predicate determined uniquely in a single model need not be implicitly defined by that model's theory.
-
-## Proof depends on
-
-- [Craig interpolation for first-order logic](../proof-theory/craig-interpolation-for-first-order-logic.md)
+Let $T$ be a theory in a first-order language $L$ and $R$ an $n$-ary relation symbol of $L$. Say that $T$ *implicitly defines* $R$ if for all models $M$ and $N$ of $T$, every bijection $e : M \to N$ that preserves every function symbol and every relation symbol other than $R$ also preserves $R$. Then there is a formula $\theta(x_1, \dots, x_n)$ of $L$ in which $R$ does not occur such that every model of $T$ satisfies $\forall \bar x\, (R(\bar x) \leftrightarrow \theta(\bar x))$: $T$ *explicitly defines* $R$. The converse is immediate. Implicit definability is a property of the theory, not of one model: a relation determined uniquely in a single model need not be implicitly defined by that model's theory.
 
 ## Sources
 

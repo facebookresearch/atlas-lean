@@ -1,10 +1,6 @@
 # Craig interpolation for first-order logic
 
-Work in first-order logic without equality, extended with the logical constants $\top$ and $\bot$, and for a formula or list of formulas $X$ let $L(X)$ be the set of constant, function and predicate symbols and free variables occurring in $X$. If $A \to B$ is valid, there is a formula $C$ with $L(C) \subseteq L(A) \cap L(B)$ such that $A \to C$ and $C \to B$ are both valid. More generally, if the sequent $\Gamma_1, \Gamma_2 \to \Delta_1, \Delta_2$ is valid, there is a formula $C$ with $L(C) \subseteq L(\Gamma_1, \Delta_1) \cap L(\Gamma_2, \Delta_2)$ such that $\Gamma_1 \to \Delta_1, C$ and $C, \Gamma_2 \to \Delta_2$ are both valid; the interpolant is obtained by induction on a cut-free LK-proof.
-
-## Proof depends on
-
-- [Cut elimination for the classical sequent calculus LK](cut-elimination-for-the-classical-sequent-calculus.md)
+Let $\varphi$ and $\psi$ be sentences of a first-order language $L$ with equality. If every $L$-structure that satisfies $\varphi$ satisfies $\psi$, then there is a sentence $\theta$ such that every structure satisfying $\varphi$ satisfies $\theta$, every structure satisfying $\theta$ satisfies $\psi$, and every function and relation symbol of $\theta$ occurs in both $\varphi$ and $\psi$. Without equality, Buss proves the theorem from cut elimination in the more general sequent form: if $\Gamma_1, \Gamma_2 \to \Delta_1, \Delta_2$ is valid, there is a formula $C$ whose nonlogical symbols and free variables occur in both $\Gamma_1, \Delta_1$ and $\Gamma_2, \Delta_2$ such that $\Gamma_1 \to \Delta_1, C$ and $C, \Gamma_2 \to \Delta_2$ are valid.
 
 ## Sources
 

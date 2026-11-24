@@ -1,6 +1,6 @@
 # Mack's estimator of the mean squared error of prediction of the chain-ladder reserve
 
-In the setting of the [chain-ladder forecast under Mack's assumptions](mack-chain-ladder-conditional-forecast.md), with cumulative claims $C_{i,k}$, $0 \le i, k \le n$, observed for $i + k \le n$, add Mack's variance assumption $\operatorname{Var}(C_{i,k+1} \mid C_{i,0}, \dots, C_{i,k}) = \sigma_k^2\, C_{i,k}$. Define the chain-ladder factors and variance parameters
+In the setting of the [chain-ladder forecast under Mack's assumptions](mack-chain-ladder-conditional-forecast.md), with cumulative claims $C_{i,k}$, $0 \le i, k \le n$, observed for $i + k \le n$, add Mack's variance assumption $\operatorname{Var}(C_{i,k+1} \mid C_{i,0}, \dots, C_{i,k}) = \sigma_k^2\, C_{i,k}$. Assume $n \ge 3$, that every observed $C_{i,k}$ is positive, so that every $\hat f_k$ and every forecast $\hat C_{i,k}$ below is positive and every denominator is nonzero, and that $\hat\sigma_{n-3}^2 > 0$, so that the extrapolation below is defined. Define the chain-ladder factors and variance parameters
 
 $$\hat f_k = \frac{\sum_{j=0}^{n-k-1} C_{j,k+1}}{\sum_{j=0}^{n-k-1} C_{j,k}}, \qquad \hat\sigma_k^2 = \frac{1}{n-k-1} \sum_{j=0}^{n-k-1} C_{j,k} \Bigl(\frac{C_{j,k+1}}{C_{j,k}} - \hat f_k\Bigr)^2 \quad (k \le n-2),$$
 
