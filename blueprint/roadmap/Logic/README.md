@@ -39,3 +39,4 @@ transcendental part of a definable set by a polynomial in $g$ and $\log H$.
 - [Modal logic](modal-logic/README.md)
 - [Temporal logic and model checking](temporal-logic/README.md)
 - [Model theory](model-theory/README.md)
+- [Not yet classified](not-yet-classified/README.md)
