@@ -8,29 +8,25 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Analysis.Calculus.BumpFunction.Normed
-public import Mathlib.Analysis.Calculus.BumpFunction.InnerProduct
-public import Mathlib.Analysis.InnerProductSpace.PiL2
-public import Mathlib.MeasureTheory.Integral.Bochner.Basic
-public import Mathlib.MeasureTheory.Measure.Haar.InnerProductSpace
+import Mathlib.Analysis.Calculus.BumpFunction.Normed
+import Mathlib.Analysis.Calculus.BumpFunction.InnerProduct
+import MathlibExt.Analysis.FunctionSpaces.LiebThirring
 
 /-!
-# Non-vacuity of the hypotheses of the wanted Lieb–Thirring inequality
+# Tests for the Lieb–Thirring kinetic energy inequality
 
-`WantedExt.Analysis.FunctionSpaces.LiebThirringWanted.lieb_thirring_kinetic` quantifies over
-families of smooth compactly supported functions on `ℝ^d` that are orthonormal in `L²`. This test
-exhibits such a family with `N = 1` in dimension `3`: a bump function rescaled to unit `L²` norm.
-So the hypotheses are jointly satisfiable and the wanted statement is not vacuous.
+A normalized smooth compactly supported function gives a one-member orthonormal family
+to which the kinetic energy inequality applies.
 -/
 
 open MeasureTheory
 open scoped ContDiff
 
-namespace MathlibExtTest.Analysis.FunctionSpaces.LiebThirringHypotheses
+namespace MathlibExtTest.Analysis.FunctionSpaces.LiebThirring
 
 /-- A smooth compactly supported complex function on `ℝ³` with `∫ |u|² = 1` exists. -/
-example : ∃ u : EuclideanSpace ℝ (Fin 3) → ℂ, ContDiff ℝ ∞ u ∧ HasCompactSupport u ∧
-    ∫ x, star (u x) * u x = 1 := by
+private theorem normalizedBump : ∃ u : EuclideanSpace ℝ (Fin 3) → ℂ,
+    ContDiff ℝ ∞ u ∧ HasCompactSupport u ∧ ∫ x, star (u x) * u x = 1 := by
   let b : ContDiffBump (0 : EuclideanSpace ℝ (Fin 3)) := ⟨1, 2, one_pos, one_lt_two⟩
   set c : ℝ := ∫ x, b x ^ 2 with hc
   have hcs : HasCompactSupport (fun x => b x ^ 2) := by
@@ -57,4 +53,19 @@ example : ∃ u : EuclideanSpace ℝ (Fin 3) → ℂ, ContDiff ℝ ∞ u ∧ Has
     rw [integral_complex_ofReal, integral_const_mul, ← hc, inv_mul_cancel₀ hcpos.ne',
       Complex.ofReal_one]
 
-end MathlibExtTest.Analysis.FunctionSpaces.LiebThirringHypotheses
+open MathlibExt.Analysis.FunctionSpaces.LiebThirringWanted
+
+example : ∃ K : ℝ, 0 < K ∧ ∃ u : EuclideanSpace ℝ (Fin 3) → ℂ,
+    ContDiff ℝ ∞ u ∧ HasCompactSupport u ∧ (∫ x, star (u x) * u x) = 1 ∧
+    K * (∫ x, (‖u x‖ ^ 2) ^ (5 / 3 : ℝ)) ≤
+      ∫ x, ∑ k, ‖fderiv ℝ u x (EuclideanSpace.single k 1)‖ ^ 2 := by
+  obtain ⟨K, hK, h⟩ := lieb_thirring_kinetic 3 (by decide)
+  obtain ⟨u, hu, huc, huo⟩ := normalizedBump
+  refine ⟨K, hK, u, hu, huc, huo, ?_⟩
+  have hortho : ∀ i j : Fin 1, ∫ x, star (u x) * u x = if i = j then 1 else 0 := by
+    intro i j
+    simpa only [ite_eq_left (Subsingleton.elim i j)] using huo
+  simpa only [Fin.sum_univ_one, Nat.cast_ofNat, show (1 + 2 / 3 : ℝ) = 5 / 3 by norm_num] using
+    h 1 (fun _ => u) (fun _ => hu) (fun _ => huc) hortho
+
+end MathlibExtTest.Analysis.FunctionSpaces.LiebThirring
