@@ -40,6 +40,9 @@ namespace CategoryTheory.Functor
 variable {C : Type u₁} [Category.{v₁} C] [Abelian C] [HasProjectiveResolutions C]
 variable {D : Type u₂} [Category.{v₂} D] [Abelian D]
 
+local instance : ChainComplex.kernelTailEmbedding.IsRelIff :=
+  ComplexShape.instIsRelIffEmbeddingDown'Add 1 1
+
 /-- A left-derived object computed from a augmented acyclic complex. -/
 noncomputable def leftDerivedObjIsoHomologyOfAcyclicResolution
     (F : C ⥤ D) [F.Additive] [PreservesFiniteColimits F]

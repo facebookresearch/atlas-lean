@@ -30,7 +30,6 @@ open CategoryTheory CategoryTheory.Limits
 
 universe u v u' v'
 
-attribute [local implicit_reducible] HomologicalComplex.homologyFunctor
 
 namespace CategoryTheory.ProjectiveResolution
 
