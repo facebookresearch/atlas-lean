@@ -780,8 +780,8 @@ theorem exists_re_pos_standardRegime {p : ℝ} (hp : 0 < p) (hpα : eqRate 2 p =
 
 /-! ### Periodic orbits from the Hopf theorem -/
 
-/-- The set of `(μ, x)` with every `x j > 0` (the parameter `μ` is arbitrary), an open set on which
-(EL) is smooth in `(μ, x)`. -/
+/-- The set of `(μ, x)` with every `x j > 0` (the parameter `μ` is arbitrary), on which the proof of
+the periodic-orbit theorem applies the Hopf theorem to (EL). -/
 def posOrthant : Set (ℝ × (Fin 6 → ℝ)) := {q | ∀ j, 0 < q.2 j}
 
 lemma isOpen_posOrthant : IsOpen posOrthant := by

@@ -4,6 +4,4 @@ Let $N$ be a [stochastic chemical reaction network](stochastic-crn.md) on a set 
 a finite set $\rho$ of reactions and propensities $\lambda_r$. Its total propensity at a state
 $x \in \mathbb{N}^S$ is
 
-$$\lambda(x) = \sum_{r \in \rho} \lambda_r(x),$$
-
-which is nonnegative because every propensity is.
+$$\lambda(x) = \sum_{r \in \rho} \lambda_r(x).$$

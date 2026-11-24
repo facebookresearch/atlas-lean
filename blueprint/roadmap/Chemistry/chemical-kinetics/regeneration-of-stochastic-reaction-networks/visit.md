@@ -9,5 +9,4 @@ $$V_k(x_0, x, \omega) = \min\{\, n \in \mathbb{N} : Y_n(x, \omega) = x_0,\ N_n =
 
 where $N_n$ is the [number of visits](n-visits.md) to $x_0$ before step $n$ and the minimum of the
 empty set is $\infty$. [At most one step](eq-of-visit.md) satisfies both conditions, so $V_k$ is
-the step of the $(k+1)$-st visit to $x_0$: $V_0$ is the first visit ($V_0 = 0$ when $x = x_0$),
-and $V_k = \infty$ exactly when the chain visits $x_0$ at most $k$ times in all.
+the step of the $(k+1)$-st visit to $x_0$.

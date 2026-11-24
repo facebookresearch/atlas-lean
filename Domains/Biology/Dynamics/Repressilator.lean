@@ -534,8 +534,8 @@ def HopfBifurcationTheorem (N : ℕ) : Prop :=
       IsIntegralCurve γ (fun _ x => F μ x) ∧ (∀ t, γ (t + T) = γ t) ∧ (∃ t, γ t ≠ γ 0) ∧
       ∀ t, dist (γ t) (xe μ₀) < ε
 
-/-- The set of `(μ, x)` with every `x j > 0` (the parameter `μ` is arbitrary), an open set on which
-(R) is smooth in `(μ, x)`. -/
+/-- The set of `(μ, x)` with every `x j > 0` (the parameter `μ` is arbitrary), on which the proof of
+the periodic-orbit theorem applies the Hopf theorem to (R). -/
 def posOrthant : Set (ℝ × (Fin 3 → ℝ)) := {q | ∀ j, 0 < q.2 j}
 
 lemma isOpen_posOrthant : IsOpen posOrthant := by
