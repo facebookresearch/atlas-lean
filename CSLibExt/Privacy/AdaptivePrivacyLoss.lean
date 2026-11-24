@@ -10,6 +10,7 @@ module
 
 public import CSLibExt.Privacy.ApproximateDifferentialPrivacy
 public import CSLibExt.Privacy.DifferentialPrivacy
+public import CSLibExt.Privacy.MaxDivergenceDecomposition
 public import CSLibExt.Privacy.PrivacyLoss
 public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
@@ -1377,5 +1378,95 @@ theorem transcript_isApproxDP_advanced_composition_pure {C Y Database : Type*}
           one_div, inv_inv]
       rw [hE, hδ] at hmain
       exact hmain
+
+/-- Domination transport: per-stage domination scales to transcript laws. -/
+theorem transcript_domination {C Y D E : Type*} [Fintype C] [Fintype Y]
+    (R : PMF C) (K : (n : ℕ) → Hist C Y n → D → PMF Y)
+    (L : (n : ℕ) → Hist C Y n → E → PMF Y) (d : D) (e : E) (k : ℕ)
+    (m : ℝ) (hm : 0 ≤ m) (hm_one : m ≤ 1)
+    (hstage : ∀ n, n < k → ∀ (h : Hist C Y n) (y : Y),
+      m * (L n h e y).toReal ≤ (K n h d y).toReal) :
+    ∀ w : Hist C Y k,
+      m ^ k * (transcript R L k e w).toReal
+        ≤ (transcript R K k d w).toReal := by
+  intro w
+  rw [transcript_toReal_factor R L k e w, transcript_toReal_factor R K k d w]
+  have hpow : (∏ _i : Fin k, m) = m ^ k := by
+    rw [Finset.prod_const, Finset.card_univ, Fintype.card_fin]
+  have hle : (∏ i : Fin k, m * (L i.val (histPrefix i w) e (histOut i w)).toReal)
+      ≤ ∏ i : Fin k, (K i.val (histPrefix i w) d (histOut i w)).toReal :=
+    Finset.prod_le_prod₀ (fun i _ => mul_nonneg hm ENNReal.toReal_nonneg)
+      (fun i _ => hstage i.val i.isLt _ _)
+  calc m ^ k * ((R w.1).toReal
+          * ∏ i : Fin k, (L i.val (histPrefix i w) e (histOut i w)).toReal)
+      = (R w.1).toReal * ((∏ _i : Fin k, m)
+          * ∏ i : Fin k, (L i.val (histPrefix i w) e (histOut i w)).toReal) := by
+        rw [hpow]
+        ring
+    _ = (R w.1).toReal
+          * ∏ i : Fin k, m * (L i.val (histPrefix i w) e (histOut i w)).toReal := by
+        rw [Finset.prod_mul_distrib]
+    _ ≤ (R w.1).toReal
+          * ∏ i : Fin k, (K i.val (histPrefix i w) d (histOut i w)).toReal :=
+        mul_le_mul_of_nonneg_left hle ENNReal.toReal_nonneg
+
+open CSLibExt.Privacy.MaxDivergenceDecomposition
+
+instance Hist.nonempty {C Y : Type*} [Nonempty C] [Nonempty Y] (k : ℕ) :
+    Nonempty (Hist C Y k) := by
+  obtain ⟨c⟩ := (inferInstance : Nonempty C)
+  obtain ⟨y⟩ := (inferInstance : Nonempty Y)
+  refine ⟨?_⟩
+  show C × (Fin k → Y)
+  exact (c, fun _ => y)
+
+private theorem isDP_bool_of_maxDivLE_both {Y : Type*} [Fintype Y] [Nonempty Y]
+    (P Q : PMF Y) (eps : ℝ) (heps : 0 ≤ eps)
+    (hPQ : maxDivLE P Q eps) (hQP : maxDivLE Q P eps) :
+    IsDP (fun b : Bool => if b = false then P else Q) (fun b b' => b ≠ b') eps := by
+  have hconv : ∀ A B : PMF Y, maxDivLE A B eps →
+      ∀ o, A o ≤ ENNReal.ofReal (Real.exp eps) * B o := by
+    intro A B h o
+    have hAfin : A o ≠ ⊤ := (A.apply_ne_top o)
+    have hBfin : B o ≠ ⊤ := (B.apply_ne_top o)
+    conv_lhs => rw [← ENNReal.ofReal_toReal hAfin]
+    rw [← ENNReal.ofReal_toReal hBfin, ← ENNReal.ofReal_mul (Real.exp_nonneg eps)]
+    exact ENNReal.ofReal_le_ofReal (h o)
+  refine ⟨heps, fun b b' hadj o => ?_⟩
+  cases b <;> cases b'
+  · exact (hadj rfl).elim
+  · simpa using hconv P Q hPQ o
+  · simpa using hconv Q P hQP o
+  · exact (hadj rfl).elim
+
+theorem transcript_approxMaxDivLE_advanced_composition_pair {C Y : Type*}
+    [Fintype C] [Fintype Y] [Nonempty C] [Nonempty Y]
+    (R : PMF C) (L : (n : ℕ) → Hist C Y n → Bool → PMF Y) (eps : ℝ) (k : ℕ)
+    (delta' : ℝ) (heps : 0 ≤ eps)
+    (hL : ∀ n h, maxDivLE (L n h false) (L n h true) eps ∧
+      maxDivLE (L n h true) (L n h false) eps)
+    (hdelta'pos : 0 < delta') (hdelta'lt : delta' < 1) :
+    approxMaxDivLE (transcript R L k false) (transcript R L k true)
+        (eps * Real.sqrt (2 * (k : ℝ) * Real.log (1 / delta')) +
+          (k : ℝ) * (eps * (Real.exp eps - 1))) delta' ∧
+      approxMaxDivLE (transcript R L k true) (transcript R L k false)
+        (eps * Real.sqrt (2 * (k : ℝ) * Real.log (1 / delta')) +
+          (k : ℝ) * (eps * (Real.exp eps - 1))) delta' := by
+  have hK : ∀ (n : ℕ) (h : Hist C Y n),
+      IsDP (fun d => L n h d) (fun b b' => b ≠ b') eps := by
+    intro n h
+    obtain ⟨h1, h2⟩ := hL n h
+    have hfun : (fun b : Bool => if b = false then L n h false else L n h true) =
+        fun d => L n h d := by
+      funext b
+      cases b <;> simp
+    rw [← hfun]
+    exact isDP_bool_of_maxDivLE_both (L n h false) (L n h true) eps heps h1 h2
+  have hadj_symm : ∀ d d' : Bool, d ≠ d' → d' ≠ d := fun d d' h => Ne.symm h
+  have hmain := transcript_isApproxDP_advanced_composition_pure R L
+    (fun b b' => b ≠ b') eps k delta' hK heps hadj_symm hdelta'pos hdelta'lt
+  constructor
+  · exact approxMaxDivLE_of_isApproxDP hmain (by decide : false ≠ true)
+  · exact approxMaxDivLE_of_isApproxDP hmain (by decide : true ≠ false)
 
 end CSLibExt.Privacy.DifferentialPrivacy

@@ -19,6 +19,17 @@ example (a b : ℤ) : IsGibonacciGood a b 0 := by
 example (a b : ℤ) : IsGibonacciGood a b (2 / 3) :=
   isGibonacciGood_fib_div a b 3
 
+-- For seeds (2, -2), the second family includes zero and resumes after the zero term.
+example : IsGibonacciGood 2 (-2) 0 := by
+  have h := (isGibonacciGood_standard_values 2 (-2)).2 1 (by decide)
+  norm_num [gibonacciNumber] at h ⊢
+  exact h
+
+example : IsGibonacciGood 2 (-2) (-(3 / 2)) := by
+  have h := (isGibonacciGood_standard_values 2 (-2)).2 5 (by decide)
+  norm_num [gibonacciNumber] at h ⊢
+  exact h
+
 -- Both steps from 1/3 must preserve integrality with quadratic denominator 5.
 example : IsGibonacciGood 1 3 (3 / 4) ∧ IsGibonacciGood 1 3 2 := by
   have h : IsGibonacciGood 1 3 (1 / 3) :=
