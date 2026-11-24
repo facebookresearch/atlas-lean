@@ -27,7 +27,7 @@ import subprocess
 import sys
 import time
 from collections import Counter
-from collections.abc import Iterable, Iterator
+from collections.abc import Callable, Iterable, Iterator
 from contextlib import contextmanager
 from contextvars import ContextVar
 from copy import deepcopy
@@ -42,6 +42,25 @@ from generate_import_inventory import (
 
 ARTIFACT_SUFFIXES = (".olean", ".olean.private", ".olean.server", ".ir", ".ir.sig", ".ilean", ".c")
 LEGACY_ARTIFACT_SUFFIXES = (".olean", ".ilean", ".c")
+DEFAULT_LEAN_THREADS = 2
+DEFAULT_LAKE_JOBS = 1
+MAX_THREAD_COUNT = 1024
+
+
+def validate_thread_count(name: str, value: object) -> int:
+    """Accept only a plain integer in 1..MAX_THREAD_COUNT; bool is not a count."""
+    if type(value) is not int or not 1 <= value <= MAX_THREAD_COUNT:
+        raise ValueError(f"{name} must be an integer from 1 to {MAX_THREAD_COUNT}")
+    return value
+
+
+def thread_count_argument(text: str) -> int:
+    if re.fullmatch(r"[1-9][0-9]{0,3}", text) is None:
+        raise argparse.ArgumentTypeError(f"expected an integer from 1 to {MAX_THREAD_COUNT}")
+    try:
+        return validate_thread_count("thread count", int(text))
+    except ValueError as error:
+        raise argparse.ArgumentTypeError(str(error)) from None
 
 
 @dataclass(frozen=True)
@@ -510,12 +529,84 @@ _guarded_inventory_canonical_paths: ContextVar[frozenset[Path]] = ContextVar(
     "guarded_inventory_canonical_paths", default=frozenset())
 
 
+# Filesystem facts read by a recorded whole-batch input derivation (see
+# `PreparedInputs`); `None` while nothing is being recorded.
+_recorded_input_facts: ContextVar[dict[tuple[str, str], object] | None] = ContextVar(
+    "recorded_input_facts", default=None)
+
+
+def read_input_fact(kind: str, path: Path) -> object:
+    if kind == "exists":
+        return path.exists()
+    if kind == "is_file":
+        return path.is_file()
+    if kind == "is_dir":
+        return path.is_dir()
+    if kind == "inventory_resolve" and sys.platform == "linux" and \
+            path in _guarded_inventory_canonical_paths.get():
+        # An active Linux inventory guard proved every component of this
+        # path canonical (no symlink, no `..`) and watches it for moves.
+        return str(path)
+    if kind in ("resolve", "inventory_resolve"):
+        try:
+            return str(path.resolve() if kind == "resolve" else resolve_inventory_path(path))
+        except OSError as error:
+            return ("OSError", error.errno)
+    if kind == "children":
+        try:
+            return ("entries", tuple(sorted(os.listdir(path))))
+        except OSError as error:
+            return ("OSError", error.errno)
+    raise ValueError(f"Unknown compilation input fact: {kind}")
+
+
+def input_fact(kind: str, path: Path) -> object:
+    value = read_input_fact(kind, path)
+    facts = _recorded_input_facts.get()
+    if facts is not None and facts.setdefault((kind, str(path)), value) != value:
+        raise ValueError(f"Compilation input changed while its inputs were derived: {path}")
+    return value
+
+
+def fact_exists(path: Path) -> bool:
+    return cast(bool, input_fact("exists", path))
+
+
+def fact_is_file(path: Path) -> bool:
+    return cast(bool, input_fact("is_file", path))
+
+
+def fact_is_dir(path: Path) -> bool:
+    return cast(bool, input_fact("is_dir", path))
+
+
+def _resolved_fact(path: Path, value: object) -> Path:
+    if isinstance(value, tuple):
+        raise OSError(value[1], "Could not resolve compilation input path", str(path))
+    return Path(cast(str, value))
+
+
+def fact_resolve(path: Path) -> Path:
+    return _resolved_fact(path, input_fact("resolve", path))
+
+
+def fact_inventory_resolve(path: Path) -> Path:
+    return _resolved_fact(path, input_fact("inventory_resolve", path))
+
+
+def fact_children(path: Path) -> list[Path]:
+    """Sorted directory entries, as `sorted(path.iterdir())` returns them."""
+    kind, value = cast(tuple[str, object], input_fact("children", path))
+    if kind != "entries":
+        raise OSError(value, "Could not list compilation input directory", str(path))
+    return [path / name for name in cast(tuple[str, ...], value)]
+
+
 def inventory_path_outside_output(path: Path, output_parts: tuple[str, ...]) -> bool:
-    if sys.platform == "linux" and path in _guarded_inventory_canonical_paths.get():
-        resolved = path
-    else:
-        resolved = resolve_inventory_path(path)
-    return resolved.parts[:len(output_parts)] != output_parts
+    # Inside a Linux inventory guard the fact read returns the guarded
+    # canonical path itself; a recorded fact is re-read, with or without
+    # a guard, before its derivation is reused.
+    return fact_inventory_resolve(path).parts[:len(output_parts)] != output_parts
 
 
 @dataclass(frozen=True)
@@ -529,6 +620,11 @@ class Tools:
     timeout: int
     time_binary: Path = Path("/usr/bin/time")
     lake_config: Path | None = None
+    # Threads per Lean compiler or helper process (`lean -jN`).
+    lean_threads: int = DEFAULT_LEAN_THREADS
+    # Lake's build scheduler threads, passed to every child as
+    # LEAN_NUM_THREADS. The Lean frontend does not read that variable.
+    lake_jobs: int = DEFAULT_LAKE_JOBS
     file_cache: SourceCache = field(default_factory=dict, compare=False, repr=False)
     input_manifests: dict[tuple[str, ...], tuple[dict[str, object], list[dict[str, object]]]] = field(
         default_factory=dict, compare=False, repr=False)
@@ -538,6 +634,7 @@ class Tools:
         default_factory=dict, compare=False, repr=False)
     validated_snapshot_groups: dict[str, dict[str, list[ValidatedSnapshotGroup]]] = field(
         default_factory=dict, compare=False, repr=False)
+    prepared_inputs: dict[str, PreparedInputs] = field(default_factory=dict, compare=False, repr=False)
     # Lake-manifest bytes pinned before Lake's environment is
     # captured (production `main` passes them in explicitly; other
     # callers pin at first derivation in `__post_init__`).
@@ -549,7 +646,9 @@ class Tools:
         default_factory=dict, compare=False, repr=False)
 
     def __post_init__(self) -> None:
-        object.__setattr__(self, "root", self.root.resolve())
+        validate_thread_count("lean_threads", self.lean_threads)
+        validate_thread_count("lake_jobs", self.lake_jobs)
+        object.__setattr__(self, "root", fact_resolve(self.root))
         roots = canonical_artifact_roots(self)
         library = standard_library_root(self)
         if library is not None:
@@ -562,17 +661,24 @@ class Tools:
         # discovery trust call sites.
         reject_output_nested_in_roots(self, roots, _during_post_init=True)
 
+    @property
+    def lean_thread_argument(self) -> str:
+        return f"-j{self.lean_threads}"
+
     def lake_command(self, *arguments: str) -> list[str]:
         config = ["-f", str(self.lake_config)] if self.lake_config is not None else []
         return [str(self.lake), "--no-cache", *config, *arguments]
 
     def run(self, argv: list[str], label: Path,
             environment: dict[str, str] | None = None) -> dict[str, object]:
+        prepared = self.prepared_inputs.get("phase")
+        if prepared is not None:
+            prepared.new_window()
         revalidate_analysis_inputs(self)
+        child_environment = {**(self.environment if environment is None else environment),
+                             "LEAN_NUM_THREADS": str(self.lake_jobs)}
         try:
-            return run_command(argv, self.root, label,
-                               self.environment if environment is None else environment,
-                               self.timeout)
+            return run_command(argv, self.root, label, child_environment, self.timeout)
         finally:
             cached = self.validated_analysis_inputs.get("phase")
             if cached is not None:
@@ -580,17 +686,135 @@ class Tools:
             groups = self.validated_snapshot_groups.get("phase")
             if groups is not None:
                 groups.clear()
+            if prepared is not None:
+                prepared.new_window()
 
 
-def bounded_lake_config(root: Path) -> Path:
+class PreparedInputs:
+    """Phase-scoped reuse of whole-batch compilation input derivations.
+
+    Rechecking a shared Shake bundle rebuilds every member's compilation
+    input paths: optional-artifact probes, strict root selection, canonical
+    path resolution and namespace inventories over each dependency closure.
+    That cost scales with the whole batch and was paid before every native
+    command.
+
+    A derivation is stored with every filesystem fact it read
+    (`input_fact`, plus each namespace or library inventory as one fact
+    checked through its directory identities). It is reused only when each
+    of those facts, read again, still has its recorded value: the
+    derivation is deterministic in its key (setup metadata and the `Tools`
+    configuration) and those facts, so it would follow the same path and
+    return the same paths. Anything else derives again from scratch.
+
+    A fact read is shared only within one window. A window ends at every
+    native boundary, before the boundary's revalidation and after its
+    child, and before a phase's closing revalidation: the same points that
+    already drop the phase's validated bundles. File pins and inventory
+    directory identities from input manifests are deduplicated the same
+    way. Only saved-evidence validation in an open phase uses this object:
+    Shake bundle checks, boundary revalidation and saved candidates.
+    """
+
+    def __init__(self, tools: Tools) -> None:
+        self.tools = tools
+        self.derivations: dict[tuple[object, ...],
+                               tuple[tuple[str, ...], dict[tuple[str, str], object]]] = {}
+        self.window: dict[tuple[str, str], object] = {}
+
+    def new_window(self) -> None:
+        self.window.clear()
+
+    def fact(self, kind: str, path: str) -> object:
+        key = (kind, path)
+        if key not in self.window:
+            self.window[key] = self.read(kind, Path(path))
+        return self.window[key]
+
+    def read(self, kind: str, path: Path) -> object:
+        unreadable = object()
+        try:
+            if kind == "inventory":
+                cached = self.tools.library_inventories.get(path)
+                if cached is None:
+                    return unreadable
+                self.verify_directories(cached[1])
+                return cached[0]
+            if kind == "volatile":
+                return unreadable
+            return read_input_fact(kind, path)
+        except (OSError, RuntimeError, ValueError):
+            return unreadable
+
+    def derive(self, key: tuple[object, ...],
+               derivation: Callable[[], tuple[str, ...]]) -> tuple[str, ...]:
+        stored = self.derivations.pop(key, None)
+        if stored is not None and all(self.fact(kind, path) == value
+                                      for (kind, path), value in stored[1].items()):
+            self.derivations[key] = stored
+            return stored[0]
+        facts: dict[tuple[str, str], object] = {}
+        token = _recorded_input_facts.set(facts)
+        try:
+            result = derivation()
+        finally:
+            _recorded_input_facts.reset(token)
+        self.derivations[key] = (result, facts)
+        return result
+
+    def verify_pin(self, receipt: object) -> None:
+        key = ("pin", str(receipt.get("path"))) if isinstance(receipt, dict) else None
+        if key is not None and self.window.get(key) == receipt:
+            return
+        verify_file_pin(receipt, cache=self.tools.file_cache)
+        self.window[cast(tuple[str, str], key)] = dict(cast(dict[str, object], receipt))
+
+    def verify_directories(self, directories: dict[Path, SourceIdentity]) -> None:
+        for path, identity in directories.items():
+            key = ("identity", str(path))
+            if self.window.get(key) != identity:
+                if source_identity(path) != identity:
+                    raise ValueError(f"Compiler standard-library inventory changed: {path}")
+                self.window[key] = identity
+
+
+_active_prepared_inputs: ContextVar[PreparedInputs | None] = ContextVar(
+    "active_prepared_inputs", default=None)
+
+
+@contextmanager
+def using_prepared_inputs(tools: Tools) -> Iterator[None]:
+    token = _active_prepared_inputs.set(tools.prepared_inputs.get("phase"))
+    try:
+        yield
+    finally:
+        _active_prepared_inputs.reset(token)
+
+
+def new_prepared_window(tools: Tools) -> None:
+    """Re-read every fact before the next reuse, as at a native boundary."""
+    prepared = tools.prepared_inputs.get("phase")
+    if prepared is not None:
+        prepared.new_window()
+
+
+def active_prepared_inputs(tools: Tools | None) -> PreparedInputs | None:
+    prepared = _active_prepared_inputs.get()
+    return prepared if prepared is not None and tools is prepared.tools else None
+
+
+def bounded_lake_config(root: Path, lean_threads: int = DEFAULT_LEAN_THREADS) -> Path:
+    validate_thread_count("lean_threads", lean_threads)
     original = (root / "lakefile.toml").read_bytes()
     if re.search(rb"(?m)^\s*moreLeanArgs\s*=", original):
         raise ValueError("Existing moreLeanArgs require an explicit bounded configuration")
     first, separator, rest = original.partition(b"\n")
     if not separator or first.lstrip().startswith(b"["):
         raise ValueError("Lake configuration needs a root section before compiler arguments")
-    content = first + separator + b'moreLeanArgs = ["-j2"]\n' + rest
-    path = root / ".lake/lakefile-lean-j2.toml"
+    content = first + separator + f'moreLeanArgs = ["-j{lean_threads}"]\n'.encode() + rest
+    # One file per thread count, so a run never rewrites the configuration
+    # another thread setting's saved Lake commands name.
+    path = root / f".lake/lakefile-lean-j{lean_threads}.toml"
     if not path.exists() or path.read_bytes() != content:
         path.write_bytes(content)
     return path
@@ -688,11 +912,11 @@ def setup_input_paths(metadata: dict[str, object], root: Path) -> tuple[str, ...
 
 
 def standard_library_root(tools: Tools) -> Path | None:
-    sysroot = Path(tools.environment.get("LEAN_SYSROOT", str(tools.lean.resolve().parent.parent)))
+    sysroot = Path(tools.environment.get("LEAN_SYSROOT", str(fact_resolve(tools.lean).parent.parent)))
     library = sysroot / "lib/lean"
-    if library in tools.library_inventories and not library.is_dir():
+    if library in tools.library_inventories and not fact_is_dir(library):
         raise ValueError("Compiler standard-library inventory changed")
-    return library if library.is_dir() else None
+    return library if fact_is_dir(library) else None
 
 
 def verify_library_directories(directories: dict[Path, SourceIdentity],
@@ -707,6 +931,27 @@ def verify_library_directories(directories: dict[Path, SourceIdentity],
 
 
 def standard_library_paths(library: Path, tools: Tools | None = None) -> tuple[str, ...]:
+    facts = _recorded_input_facts.get()
+    if facts is None:
+        return _standard_library_paths(library, tools)
+    # A recorded derivation keeps a whole inventory as one fact. Reading it
+    # again verifies its cached directory identities, exactly as this
+    # function does for a cached inventory; an uncached result is volatile.
+    token = _recorded_input_facts.set(None)
+    try:
+        result = _standard_library_paths(library, tools)
+    finally:
+        _recorded_input_facts.reset(token)
+    cached = tools.library_inventories.get(library) if tools is not None else None
+    if cached is not None and cached[0] == result:
+        if facts.setdefault(("inventory", str(library)), result) != result:
+            raise ValueError(f"Compilation input changed while its inputs were derived: {library}")
+    else:
+        facts[("volatile", str(library))] = object()
+    return result
+
+
+def _standard_library_paths(library: Path, tools: Tools | None = None) -> tuple[str, ...]:
     if not library.is_absolute() or not library.is_dir():
         raise ValueError("Saved compiler standard library is missing")
     cached = tools.library_inventories.get(library) if tools is not None else None
@@ -770,10 +1015,10 @@ def full_import_artifacts(metadata: dict[str, object], root: Path) -> dict[str, 
                                           (".ir.sig", ".ir"))):
             prefix = (prefixes[index] or prefixes[1 - index]) if not groups[index] or prefixes[index] else None
             if prefix is not None:
-                if not groups[index] and not Path(prefix + suffixes[0]).exists():
+                if not groups[index] and not fact_exists(Path(prefix + suffixes[0])):
                     continue
                 groups[index] = list(dict.fromkeys([*groups[index],
-                    *(prefix + suffix for suffix in suffixes if Path(prefix + suffix).exists())]))
+                    *(prefix + suffix for suffix in suffixes if fact_exists(Path(prefix + suffix)))]))
                 if index == 0 and prefix + ".olean.private" in groups[index] and prefix + ".olean.server" not in groups[index]:
                     raise ValueError("Snapshot private input has no server artifact")
                 if index == 0 and prefix + ".olean.server" in groups[index] and prefix + ".olean.private" not in groups[index]:
@@ -791,7 +1036,7 @@ def selected_namespace_artifact_paths(metadata: dict[str, object], root: Path,
     # explicitly captured search root does not make its containing
     # directory a trusted namespace inventory.
     strict_roots = {
-        str(Path(candidate).resolve())
+        str(fact_resolve(Path(candidate)))
         for candidate in selected_artifact_roots(
             metadata, root, strict=True,
             search_roots=private_search_roots(tools) if tools is not None else ())
@@ -801,13 +1046,13 @@ def selected_namespace_artifact_paths(metadata: dict[str, object], root: Path,
         if not groups[0]:
             continue
         relative = private_module_olean_path(module)
-        path = resolve_inventory_path(Path(groups[0][0]))
+        path = fact_inventory_resolve(Path(groups[0][0]))
         if path.parts[-len(relative.parts):] != relative.parts:
             continue
         selected = path.parents[len(relative.parts) - 1]
         if str(selected) not in strict_roots:
             continue
-        if library is None or selected != resolve_inventory_path(library):
+        if library is None or selected != fact_inventory_resolve(library):
             namespaces.add(selected / private_module_components(module)[0])
     paths: set[str] = set()
     for namespace in namespaces:
@@ -817,14 +1062,14 @@ def selected_namespace_artifact_paths(metadata: dict[str, object], root: Path,
 
 def namespace_artifact_paths(namespace: Path, tools: Tools | None = None) -> set[str]:
     paths: set[str] = set()
-    if namespace.is_dir():
+    if fact_is_dir(namespace):
         paths.update(standard_library_paths(namespace, tools))
     for suffix in (".olean", ".olean.private", ".olean.server", ".ir", ".ir.sig", ".so", ".dylib"):
         path = Path(str(namespace) + suffix)
-        if path.is_file():
+        if fact_is_file(path):
             paths.add(str(path))
     if tools is not None:
-        output_parts = resolve_inventory_path(tools.output).parts
+        output_parts = fact_inventory_resolve(tools.output).parts
         paths = {path for path in paths
                  if inventory_path_outside_output(Path(path), output_parts)}
     return paths
@@ -846,7 +1091,7 @@ def selected_root_artifact_paths(metadata: dict[str, object], root: Path,
     the optimizer's mutable output tree is recursively inventoried.
     """
     paths: set[str] = set()
-    output = resolve_inventory_path(tools.output) if tools is not None else None
+    output = fact_inventory_resolve(tools.output) if tools is not None else None
     output_parts = output.parts if output is not None else ()
     search_roots = private_search_roots(tools) if tools is not None else ()
     for selected in selected_artifact_roots(metadata, root, strict=True,
@@ -855,29 +1100,29 @@ def selected_root_artifact_paths(metadata: dict[str, object], root: Path,
         if output is not None and root_path.parts[:len(output_parts)] == output_parts:
             continue
         try:
-            children = sorted(root_path.iterdir())
+            children = fact_children(root_path)
         except OSError:
             continue
         root_paths: set[str] = set()
         for child in children:
-            if child.is_dir():
+            if fact_is_dir(child):
                 namespace = child
-            elif (child.is_file() and child.name.endswith(".olean") and
+            elif (fact_is_file(child) and child.name.endswith(".olean") and
                     not child.name.endswith((".olean.server", ".olean.private"))):
                 namespace = Path(str(child).removesuffix(".olean"))
             else:
                 continue
             if output is not None:
-                resolved = resolve_inventory_path(namespace)
+                resolved = fact_inventory_resolve(namespace)
                 if resolved.parts[:len(output_parts)] == output_parts:
                     continue
             root_paths.update(namespace_artifact_paths(namespace, tools))
-        if tools is not None and not root_paths and root_path.is_dir():
+        if tools is not None and not root_paths and fact_is_dir(root_path):
             # A fileless selected root would otherwise cache no
             # directory at all, even though the forced compile still
             # searches it. Cache the root itself for custody without
             # changing nonempty roots' namespace-only custody.
-            root_paths.update(standard_library_paths(resolve_inventory_path(root_path), tools))
+            root_paths.update(standard_library_paths(fact_inventory_resolve(root_path), tools))
         paths.update(root_paths)
     return tuple(sorted(paths))
 
@@ -901,13 +1146,13 @@ def canonical_namespace_artifact_paths(root: Path, library: Path | None,
         # project's own build root belongs to the selected corpus.
         artifact_roots = []
         project_root = root / ".lake/build/lib/lean"
-        if project_root.is_dir():
-            artifact_roots.append(project_root.resolve())
+        if fact_is_dir(project_root):
+            artifact_roots.append(fact_resolve(project_root))
     paths: set[str] = set()
-    output = resolve_inventory_path(tools.output) if tools is not None else None
+    output = fact_inventory_resolve(tools.output) if tools is not None else None
     output_parts = output.parts if output is not None else ()
     for artifact_root in artifact_roots:
-        if library is not None and artifact_root == resolve_inventory_path(library):
+        if library is not None and artifact_root == fact_inventory_resolve(library):
             continue
         if output is not None and artifact_root.parts[:len(output_parts)] == output_parts:
             # The optimizer's mutable output tree must never become
@@ -916,13 +1161,13 @@ def canonical_namespace_artifact_paths(root: Path, library: Path | None,
             # roots still scan normally below, skipping output children.
             continue
         try:
-            children = sorted(artifact_root.iterdir())
+            children = fact_children(artifact_root)
         except OSError:
             continue
         root_paths: set[str] = set()
         for child in children:
-            if child.is_dir():
-                resolved_child = resolve_inventory_path(child)
+            if fact_is_dir(child):
+                resolved_child = fact_inventory_resolve(child)
                 if output is not None and resolved_child == output:
                     continue
                 # If this namespace contains the output directory,
@@ -932,7 +1177,7 @@ def canonical_namespace_artifact_paths(root: Path, library: Path | None,
                 # compilation/discovery flows separately reject this
                 # placement before trusting the inventory.
                 namespace = child
-            elif (child.is_file() and child.name.endswith(".olean") and
+            elif (fact_is_file(child) and child.name.endswith(".olean") and
                     not child.name.endswith((".olean.server", ".olean.private"))):
                 namespace = Path(str(child).removesuffix(".olean"))
             else:
@@ -941,7 +1186,7 @@ def canonical_namespace_artifact_paths(root: Path, library: Path | None,
         if output is not None:
             root_paths = {path for path in root_paths
                           if inventory_path_outside_output(Path(path), output_parts)}
-        if tools is not None and not root_paths and artifact_root.is_dir():
+        if tools is not None and not root_paths and fact_is_dir(artifact_root):
             # Namespace scans alone never name a completely fileless
             # canonical root, yet LEAN_PATH still searches it during
             # compilation. Cache that root itself for custody;
@@ -964,21 +1209,47 @@ def computation_paths_without_output(tools: Tools) -> Tools:
     compilation/fallback/discovery surfaces keep using the original
     `tools` and reject trusted roots beneath real output.
     """
-    if tools.output.resolve() != tools.root.resolve():
+    if fact_resolve(tools.output) != fact_resolve(tools.root):
         return tools
-    placeholder = tools.root.resolve().parent / (tools.root.resolve().name + ".saved-fixture-no-output")
+    placeholder = fact_resolve(tools.root).parent / (fact_resolve(tools.root).name + ".saved-fixture-no-output")
     return Tools(
         tools.root, placeholder, tools.lake, tools.lean, tools.helpers,
         tools.environment, tools.timeout, tools.time_binary, tools.lake_config,
+        lean_threads=tools.lean_threads, lake_jobs=tools.lake_jobs,
         file_cache=tools.file_cache, input_manifests=tools.input_manifests,
         library_inventories=tools.library_inventories,
         validated_analysis_inputs=tools.validated_analysis_inputs,
         validated_snapshot_groups=tools.validated_snapshot_groups,
-        lake_manifest_bytes=tools.lake_manifest_bytes)
+        prepared_inputs=tools.prepared_inputs, lake_manifest_bytes=tools.lake_manifest_bytes)
+
+
+def prepared_derivation(kind: str, metadata: dict[str, object], root: Path, library: Path | None,
+                        tools: Tools | None, derivation: Callable[[], tuple[str, ...]]) -> tuple[str, ...]:
+    prepared = active_prepared_inputs(tools)
+    if prepared is None or tools is None:
+        return derivation()
+    # The key holds every in-memory input of the derivation (capture the
+    # pinned manifest bytes first); everything else it reads is a recorded
+    # filesystem fact.
+    pinned_lake_manifest_bytes(tools)
+    try:
+        key = (kind, json.dumps(metadata, sort_keys=True, ensure_ascii=False), str(root),
+               None if library is None else str(library), str(tools.root), str(tools.output),
+               str(tools.lean), tuple(sorted(tools.environment.items())),
+               tuple(sorted((str(path), raw) for path, raw in tools.lake_manifest_bytes.items())))
+    except (TypeError, ValueError):
+        return derivation()
+    return prepared.derive(key, derivation)
 
 
 def compilation_input_paths(metadata: dict[str, object], root: Path,
-                             library: Path | None, tools: Tools | None = None) -> tuple[str, ...]:
+                            library: Path | None, tools: Tools | None = None) -> tuple[str, ...]:
+    return prepared_derivation("compilation_inputs", metadata, root, library, tools,
+                               lambda: derive_compilation_input_paths(metadata, root, library, tools))
+
+
+def derive_compilation_input_paths(metadata: dict[str, object], root: Path,
+                                   library: Path | None, tools: Tools | None = None) -> tuple[str, ...]:
     path_tools = tools
     if tools is not None:
         path_tools = computation_paths_without_output(tools)
@@ -1024,11 +1295,18 @@ def verify_input_manifest(record: object, paths: tuple[str, ...], output: Path,
                 any(not isinstance(row, dict) or not isinstance(row.get("path"), str) for row in files) or
                 tuple(row["path"] for row in files) != paths):
             raise ValueError("Saved compilation input manifest has a different setup path set")
+    prepared = active_prepared_inputs(tools)
     for receipt in files:
-        verify_file_pin(receipt, cache=cache)
+        if prepared is None:
+            verify_file_pin(receipt, cache=cache)
+        else:
+            prepared.verify_pin(receipt)
     if tools is not None:
         for inventory_paths, directories in tools.library_inventories.values():
-            verify_library_directories(directories, inventory_paths)
+            if prepared is None:
+                verify_library_directories(directories, inventory_paths)
+            else:
+                prepared.verify_directories(directories)
         tools.input_manifests[paths] = (cast(dict[str, object], record), files)
     return files
 
@@ -1061,6 +1339,11 @@ def pin_setup_inputs(tools: Tools, metadata: dict[str, object]) -> dict[str, obj
 
 
 def private_fallback_artifact_paths(tools: Tools, metadata: dict[str, object]) -> tuple[str, ...]:
+    return prepared_derivation("private_fallback", metadata, tools.root, None, tools,
+                               lambda: derive_private_fallback_artifact_paths(tools, metadata))
+
+
+def derive_private_fallback_artifact_paths(tools: Tools, metadata: dict[str, object]) -> tuple[str, ...]:
     """Exact pre-compilation fallback inventory for private resolution.
 
     Unions the canonical LEAN_PATH-selected namespace inventories with
@@ -1387,7 +1670,7 @@ def lake_package_artifact_roots(tools: Tools) -> set[Path]:
         if package_dir is None:
             continue
         try:
-            roots.add((package_dir / ".lake/build/lib/lean").resolve())
+            roots.add(fact_resolve(package_dir / ".lake/build/lib/lean"))
         except OSError:
             continue
     return roots
@@ -1417,15 +1700,15 @@ def canonical_artifact_roots(tools: Tools) -> list[Path]:
 
     def add(path: Path) -> None:
         try:
-            resolved = path.resolve()
+            resolved = fact_resolve(path)
         except OSError:
             return
-        if resolved.is_dir() and resolved not in result:
+        if fact_is_dir(resolved) and resolved not in result:
             result.append(resolved)
 
     def is_canonical(path: Path) -> bool:
         try:
-            resolved = path.resolve()
+            resolved = fact_resolve(path)
         except OSError:
             return False
         if resolved in manifest_roots:
@@ -1503,7 +1786,7 @@ def private_search_roots(tools: Tools) -> list[Path]:
         if not path.is_absolute():
             path = tools.root / path
         try:
-            resolved = path.resolve()
+            resolved = fact_resolve(path)
         except OSError:
             continue
         if resolved not in result:
@@ -1525,7 +1808,7 @@ def selected_artifact_roots(metadata: dict[str, object], root: Path,
     to a wholesale namespace inventory. The tolerant mode retains
     flat-artifact containment only for legacy discovery callers.
     """
-    explicit_search_roots = {str(Path(candidate).resolve()) for candidate in search_roots}
+    explicit_search_roots = {str(fact_resolve(Path(candidate))) for candidate in search_roots}
     roots: list[str] = []
     for module, groups in cast(dict[str, list[list[str]]], metadata.get("importArts", {})).items():
         if targets is not None and module in targets:
@@ -1536,7 +1819,7 @@ def selected_artifact_roots(metadata: dict[str, object], root: Path,
         path = Path(groups[0][0])
         if not path.is_absolute():
             path = root / path
-        path = path.resolve()
+        path = fact_resolve(path)
         if (strict and len(relative.parts) <= 1 and
                 str(path.parent) not in explicit_search_roots):
             continue
@@ -1575,23 +1858,23 @@ def ordered_trusted_roots(tools: Tools, selected_roots: list[str]) -> list[str]:
     order differs from its discovery order.
     """
     search = [str(path) for path in private_search_roots(tools)]
-    rank = {str(Path(root).resolve()) for root in search}
+    rank = {str(fact_resolve(Path(root))) for root in search}
     canonical = canonical_artifact_roots(tools)
     library = standard_library_root(tools)
-    trusted: set[str] = {str(Path(root).resolve()) for root in selected_roots}
+    trusted: set[str] = {str(fact_resolve(Path(root))) for root in selected_roots}
     for path in canonical:
-        trusted.add(str(path.resolve()))
+        trusted.add(str(fact_resolve(path)))
     if library is not None:
-        trusted.add(str(library.resolve()))
+        trusted.add(str(fact_resolve(library)))
     ordered: list[str] = []
     for root in search:
-        if str(Path(root).resolve()) in trusted and root not in ordered:
+        if str(fact_resolve(Path(root))) in trusted and root not in ordered:
             ordered.append(root)
-    extra = [root for root in selected_roots if str(Path(root).resolve()) not in rank]
+    extra = [root for root in selected_roots if str(fact_resolve(Path(root))) not in rank]
     extra += [str(path) for path in canonical
-              if str(path.resolve()) not in rank and str(path) not in extra]
-    if library is not None and str(library.resolve()) not in rank:
-        extra.append(str(library.resolve()))
+              if str(fact_resolve(path)) not in rank and str(path) not in extra]
+    if library is not None and str(fact_resolve(library)) not in rank:
+        extra.append(str(fact_resolve(library)))
     for root in extra:
         if root not in ordered:
             ordered.append(root)
@@ -1611,10 +1894,10 @@ def reject_output_nested_in_roots(tools: Tools, roots: Iterable[Path | str],
     consumed artifacts could never have been pinned. Reject both
     directions before compilation, fallback pinning, or discovery.
     """
-    output = tools.output.resolve()
+    output = fact_resolve(tools.output)
     for root in roots:
         try:
-            resolved = Path(root).resolve()
+            resolved = fact_resolve(Path(root))
         except OSError:
             continue
         if output == resolved or output.is_relative_to(resolved):
@@ -1641,7 +1924,7 @@ def private_inventory_roots(tools: Tools, metadata: dict[str, object]) -> list[P
 
     def add(path: Path) -> None:
         try:
-            resolved = path.resolve()
+            resolved = fact_resolve(path)
         except OSError:
             return
         if resolved not in roots:
@@ -1949,7 +2232,7 @@ def verify_private_snapshot_dependencies(tools: Tools, value: dict[str, object],
         require_success(command)
         if (not isinstance(evidence, dict) or evidence.get("kind") != "private_imports" or
                 evidence.get("inputs") != inputs or
-                command.get("argv") != [str(tools.lean), "-j2", "--run", str(helper),
+                command.get("argv") != [str(tools.lean), tools.lean_thread_argument, "--run", str(helper),
                                         str(original), str(roots_path), *modules]):
             raise ValueError("Snapshot private closure command identity changed")
         output = json.loads(verify_file_pin(evidence["stdout"], tools.output, tools.file_cache).read_text())
@@ -2018,7 +2301,7 @@ def verify_private_snapshot_dependencies(tools: Tools, value: dict[str, object],
             request.get("inputs") != {"compiler": inputs["compiler"],
                                       "helper": file_pin(snapshot_helper, tools.file_cache),
                                       "setup": record["original_setup"]} or
-            command.get("argv") != [str(tools.lean), "-j2", "--run", str(snapshot_helper),
+            command.get("argv") != [str(tools.lean), tools.lean_thread_argument, "--run", str(snapshot_helper),
                                     str(original), *modules] or not missing_private_import(command, value)):
         raise ValueError("Snapshot private import request identity changed")
     return arts
@@ -2078,7 +2361,7 @@ def complete_private_snapshot_setup(tools: Tools, artifact_root: Path,
         singleton_value = cast(dict[str, object], closure["value"])
         singleton_roots = cast(dict[str, list[str]], closure["roots"])
         context = cast(dict[str, object], closure["context"])
-        context_argv = [str(tools.lean), "-j2", "--run", str(helper),
+        context_argv = [str(tools.lean), tools.lean_thread_argument, "--run", str(helper),
                         str(closure["setup"]), str(closure["roots_path"]), str(context["module"])]
         with guard_path_component_moves(identities, mutable_roots={tools.output, directory},
                                         inventory_roots=snapshot_private_inventory_roots(
@@ -2096,7 +2379,7 @@ def complete_private_snapshot_setup(tools: Tools, artifact_root: Path,
                     if context_pins.get(path) != file_pin(Path(path), tools.file_cache):
                         raise ValueError("Snapshot private artifact was not pinned before compilation")
         context_maps.append(context_arts)
-    argv = [str(tools.lean), "-j2", "--run", str(helper), str(setup), str(roots_path), *modules]
+    argv = [str(tools.lean), tools.lean_thread_argument, "--run", str(helper), str(setup), str(roots_path), *modules]
     with guard_path_component_moves(identities, mutable_roots={tools.output, directory},
                                     inventory_roots=snapshot_private_inventory_roots(tools, value)):
         discovery = tools.run(argv, directory / "discovery", {**tools.environment, "LEAN_PATH": ""})
@@ -2172,7 +2455,7 @@ def snapshot_setup_value(tools: Tools, artifact_root: Path,
             if not files:
                 raise ValueError("Snapshot compilation input manifest is empty")
             for module, parts in full_import_artifacts(metadata, tools.root).items():
-                canonical = [[str(resolve_inventory_path(Path(path))) for path in group] for group in parts]
+                canonical = [[str(fact_inventory_resolve(Path(path))) for path in group] for group in parts]
                 if module in arts and arts[module] != canonical:
                     raise ValueError("Snapshot compilation inputs disagree on a dependency")
                 arts[module] = canonical
@@ -2378,7 +2661,7 @@ def check_saved_snapshot_group(tools: Tools, evidence: dict[str, object]) -> Val
         require_success(command)
         scratch = directory / f"resolve-{index}.lean"
         if (dependency.get("kind") != "deps" or
-                command.get("argv") != [str(tools.lean), "-j2", "--deps", str(scratch)] or
+                command.get("argv") != [str(tools.lean), tools.lean_thread_argument, "--deps", str(scratch)] or
                 scratch.read_text() != f"import all {member['module']}\n" or
                 str(Path(member["compilation"]["artifact_root"]) / Path(member["path"]).with_suffix(".olean"))
                 not in Path(command["stdout"]).read_text().splitlines()):
@@ -2387,7 +2670,7 @@ def check_saved_snapshot_group(tools: Tools, evidence: dict[str, object]) -> Val
     command, _ = read_analysis(tools, snapshot_evidence)
     require_success(command)
     if (not isinstance(snapshot_evidence, dict) or snapshot_evidence.get("kind") != "snapshot" or
-            command.get("argv") != [str(tools.lean), "-j2", "--run",
+            command.get("argv") != [str(tools.lean), tools.lean_thread_argument, "--run",
                                     str(tools.helpers / "declarations_batch.lean"), str(setup), *modules]):
         raise ValueError("Saved shared snapshot command identity changed")
     records = [json.loads(line) for line in Path(command["stdout"]).read_text().splitlines() if line]
@@ -2782,7 +3065,10 @@ def guarded_inventory_components(paths: set[Path], mutable_roots: Iterable[Path]
                     not stat.S_ISLNK(identities[path][5]) and
                     (path.parent == path or path.parent in canonical)):
                 canonical.add(path)
-        token = _guarded_inventory_canonical_paths.set(frozenset(canonical))
+        # Enclosing guards stay armed until this one exits, so their
+        # canonical paths remain proven here as well.
+        token = _guarded_inventory_canonical_paths.set(
+            frozenset(canonical) | _guarded_inventory_canonical_paths.get())
         try:
             yield
             for path, expected in identities.items():
@@ -2862,7 +3148,11 @@ def guarded_snapshot_metadata(tools: Tools, setup: Path,
 
 def verify_snapshot_dependencies(tools: Tools, artifact_root: Path, setup: Path,
                                  identities: dict[Path, SourceIdentity]) -> None:
-    with guarded_snapshot_metadata(tools, setup, identities) as value:
+    # A post-command check: inside a phase it reuses recorded derivations
+    # only after re-reading their facts in a new window; the identity sweep
+    # below stays whole.
+    new_prepared_window(tools)
+    with using_prepared_inputs(tools), guarded_snapshot_metadata(tools, setup, identities) as value:
         inventory_roots = snapshot_private_inventory_roots(tools, value)
         with guarded_inventory_components(set(identities), mutable_roots={tools.output}, inventory_roots=inventory_roots):
             output = resolve_inventory_path(tools.output)
@@ -2910,7 +3200,7 @@ def compilation_argv(tools: Tools, relative: Path, directory: Path,
     source_root = directory / "source"
     return [str(tools.time_binary), "-f",
             '{"wall_seconds":%e,"user_seconds":%U,"system_seconds":%S,"max_rss_kib":%M}',
-            "-o", str(directory / "time.json"), str(tools.lean), "-j2", "-R", str(source_root),
+            "-o", str(directory / "time.json"), str(tools.lean), tools.lean_thread_argument, "-R", str(source_root),
             str(source_root / relative), "--setup", str(directory / "setup.json"),
             "-o", str(prefix) + ".olean", "-i", str(prefix) + ".ilean", "-c", str(prefix) + ".c"]
 
@@ -3072,7 +3362,7 @@ def snapshot_arm(tools: Tools, module: str, relative: Path,
     with guard_path_component_moves(dependency_identities,
                                     mutable_roots={tools.output, evidence},
                                     inventory_roots=inventory_roots):
-        dependencies = tools.run([str(tools.lean), "-j2", "--deps", str(scratch)],
+        dependencies = tools.run([str(tools.lean), tools.lean_thread_argument, "--deps", str(scratch)],
                                  evidence / "deps", environment)
     require_success(dependencies)
     verify_snapshot_inputs(snapshot_inputs, artifacts, tools.output, tools, input_identities)
@@ -3086,7 +3376,7 @@ def snapshot_arm(tools: Tools, module: str, relative: Path,
                                     mutable_roots={tools.output, evidence},
                                     inventory_roots=inventory_roots):
         command = tools.run(
-            [str(tools.lean), "-j2", "--run", str(tools.helpers / "declarations.lean"), str(setup), module],
+            [str(tools.lean), tools.lean_thread_argument, "--run", str(tools.helpers / "declarations.lean"), str(setup), module],
             snapshot_label, environment,
         )
     if missing_private_import(command, read_json(verify_file_pin(
@@ -3103,7 +3393,7 @@ def snapshot_arm(tools: Tools, module: str, relative: Path,
         with guard_path_component_moves(dependency_identities,
                                         mutable_roots={tools.output, evidence},
                                         inventory_roots=inventory_roots):
-            command = tools.run([str(tools.lean), "-j2", "--run", str(tools.helpers / "declarations.lean"),
+            command = tools.run([str(tools.lean), tools.lean_thread_argument, "--run", str(tools.helpers / "declarations.lean"),
                                  str(setup), module], snapshot_label, environment)
     require_success(command)
     verify_snapshot_inputs(snapshot_inputs, artifacts, tools.output, tools, input_identities)
@@ -3188,12 +3478,17 @@ def snapshot_batch(tools: Tools, rows: list[dict[str, object]], artifact_root: P
         inventory_roots = snapshot_private_inventory_roots(tools, value)
 
     def verify_inputs() -> None:
-        for name in names:
-            verify_snapshot_inputs(snapshot_inputs[name], roots[name], tools.output, tools, input_identities[name])
-        verify_snapshot_dependencies(tools, roots[names[0]], setup, dependency_identities)
-        if group is not None:
-            for member in read_json(verify_file_pin(group, tools.output, tools.file_cache))["members"]:
-                verify_snapshot_group_member(tools, member)
+        with using_prepared_inputs(tools):
+            for name in names:
+                verify_snapshot_inputs(snapshot_inputs[name], roots[name], tools.output, tools,
+                                       input_identities[name])
+            verify_snapshot_dependencies(tools, roots[names[0]], setup, dependency_identities)
+            if group is not None:
+                for member in read_json(verify_file_pin(group, tools.output, tools.file_cache))["members"]:
+                    # Each member check re-reads facts, so a change after
+                    # an earlier check is seen exactly where it was before.
+                    new_prepared_window(tools)
+                    verify_snapshot_group_member(tools, member)
 
     dependencies_evidence = []
     for name, scratch, label in probes:
@@ -3201,7 +3496,7 @@ def snapshot_batch(tools: Tools, rows: list[dict[str, object]], artifact_root: P
         with guard_path_component_moves(dependency_identities,
                                         mutable_roots={tools.output, evidence},
                                         inventory_roots=inventory_roots):
-            dependencies = tools.run([str(tools.lean), "-j2", "--deps", str(scratch)], label, environment)
+            dependencies = tools.run([str(tools.lean), tools.lean_thread_argument, "--deps", str(scratch)], label, environment)
         require_success(dependencies)
         verify_inputs()
         resolved = Path(str(label) + ".stdout").read_text().splitlines()
@@ -3213,7 +3508,7 @@ def snapshot_batch(tools: Tools, rows: list[dict[str, object]], artifact_root: P
     with guard_path_component_moves(dependency_identities,
                                     mutable_roots={tools.output, evidence},
                                     inventory_roots=inventory_roots):
-        command = tools.run([str(tools.lean), "-j2", "--run",
+        command = tools.run([str(tools.lean), tools.lean_thread_argument, "--run",
                              str(tools.helpers / "declarations_batch.lean"), str(setup), *modules],
                             snapshot_label, {**tools.environment, "LEAN_PATH": ""})
     if missing_private_import(command, read_json(verify_file_pin(
@@ -3229,7 +3524,7 @@ def snapshot_batch(tools: Tools, rows: list[dict[str, object]], artifact_root: P
         with guard_path_component_moves(dependency_identities,
                                         mutable_roots={tools.output, evidence},
                                         inventory_roots=inventory_roots):
-            command = tools.run([str(tools.lean), "-j2", "--run",
+            command = tools.run([str(tools.lean), tools.lean_thread_argument, "--run",
                                  str(tools.helpers / "declarations_batch.lean"), str(setup), *modules],
                                 snapshot_label, {**tools.environment, "LEAN_PATH": ""})
     require_success(command)
@@ -3282,6 +3577,17 @@ def snapshot_batch(tools: Tools, rows: list[dict[str, object]], artifact_root: P
 
 def verify_saved_candidate(result: dict[str, object], output: Path,
                            tools: Tools | None = None) -> None:
+    # Both arms and the snapshot evidence re-derive the inputs of the
+    # bundle's own setup; inside a phase they share its derivations.
+    if tools is None:
+        _verify_saved_candidate(result, output, tools)
+        return
+    with using_prepared_inputs(tools):
+        _verify_saved_candidate(result, output, tools)
+
+
+def _verify_saved_candidate(result: dict[str, object], output: Path,
+                            tools: Tools | None = None) -> None:
     if tools is None or tools.output != output:
         raise ValueError("Saved candidates require their complete validation tools")
     directory = Path(str(result["attempt_directory"])).resolve()
@@ -3415,7 +3721,7 @@ def verify_saved_candidate(result: dict[str, object], output: Path,
             helper = tools.helpers / ("declarations_batch.lean" if value["snapshot_kind"] == "batch"
                                       else "declarations.lean")
             if (not isinstance(evidence, dict) or evidence.get("kind") != "snapshot" or
-                    command.get("argv") != [str(tools.lean), "-j2", "--run", str(helper), str(setup), *modules] or
+                    command.get("argv") != [str(tools.lean), tools.lean_thread_argument, "--run", str(helper), str(setup), *modules] or
                     read_json(verify_file_pin(evidence["stdout"], output, cache)) != snapshot):
                 raise ValueError("Saved private snapshot output differs from its command")
         if value["snapshot_kind"] == "batch":
@@ -3451,6 +3757,7 @@ def analysis_inputs(tools: Tools, rows: list[dict[str, object]]) -> dict[str, ob
             "compiled_inputs": compiled_inputs,
             "manifest_sha256": read_json(run)["manifest_sha256"] if run.exists() else None,
             "compiler_sha256": sha256(tools.lean),
+            "lean_threads": tools.lean_threads, "lake_jobs": tools.lake_jobs,
             "effective_config_sha256": sha256(tools.lake_config) if tools.lake_config else None}
 
 
@@ -3498,7 +3805,9 @@ def check_shake_inputs(tools: Tools, inputs: object) -> list[dict[str, object]]:
     if len({row["module"] for row in rows}) != len(rows):
         raise ValueError("Saved Shake inputs contain duplicate module identities")
     validate_inventory_sources(tools.root, rows, tools.file_cache)
-    if analysis_inputs(tools, rows) != inputs:
+    with using_prepared_inputs(tools):
+        current = analysis_inputs(tools, rows)
+    if current != inputs:
         raise ValueError("Saved Shake proposal inputs changed")
     return rows
 
@@ -3516,6 +3825,11 @@ def verify_shake_inputs(tools: Tools, inputs: object) -> list[dict[str, object]]
 
 
 def revalidate_analysis_inputs(tools: Tools) -> None:
+    with using_prepared_inputs(tools):
+        _revalidate_analysis_inputs(tools)
+
+
+def _revalidate_analysis_inputs(tools: Tools) -> None:
     cached = tools.validated_analysis_inputs.get("phase")
     if cached is not None:
         tools.validated_analysis_inputs["phase"] = []
@@ -3535,14 +3849,17 @@ def analysis_validation_phase(tools: Tools) -> Iterator[None]:
         raise ValueError("Analysis validation phases may not nest")
     tools.validated_analysis_inputs["phase"] = []
     tools.validated_snapshot_groups["phase"] = {}
+    tools.prepared_inputs["phase"] = PreparedInputs(tools)
     try:
         yield
     finally:
         try:
+            tools.prepared_inputs["phase"].new_window()
             revalidate_analysis_inputs(tools)
         finally:
             tools.validated_analysis_inputs.pop("phase", None)
             tools.validated_snapshot_groups.pop("phase", None)
+            tools.prepared_inputs.pop("phase", None)
 
 
 def derive_snapshot_failure_error(tools: Tools, arms: dict[str, object]) -> str | None:
@@ -3822,7 +4139,7 @@ def verify_saved_proposal(result: dict[str, object], tools: Tools
             proposal = parse_shake_output(output, cast(int, command["exit_code"]), source, tools.root)
         elif kind == "legacy":
             require_success(command)
-            if header.is_module or argv != [str(tools.lean), "-j2", "--run", str(tools.helpers / "legacy.lean"), module]:
+            if header.is_module or argv != [str(tools.lean), tools.lean_thread_argument, "--run", str(tools.helpers / "legacy.lean"), module]:
                 raise ValueError("Saved legacy proposal command changed")
             backend = read_json(Path(str(cast(dict[str, object], evidence["stdout"])["path"])))
             modules = backend.get("required_modules")
@@ -3854,7 +4171,7 @@ def legacy_proposal(tools: Tools, module: str, header: Header,
     helper = tools.helpers / "legacy.lean"
     if not helper.is_file():
         raise ValueError("Legacy ImportGraph backend is unavailable")
-    command = tools.run([str(tools.lean), "-j2", "--run", str(helper), module],
+    command = tools.run([str(tools.lean), tools.lean_thread_argument, "--run", str(helper), module],
                         directory / "legacy")
     require_success(command)
     result = read_json(Path(str(directory / "legacy") + ".stdout"))
@@ -4173,7 +4490,7 @@ def native_headers(tools: Tools, rows: list[dict[str, object]]) -> dict[str, dic
                           for row in batch}
             label = tools.output / "headers" / str(offset)
             command = tools.run(
-                [str(tools.lean), "-j2", "--run", str(tools.helpers / "header.lean"),
+                [str(tools.lean), tools.lean_thread_argument, "--run", str(tools.helpers / "header.lean"),
                  *(str(source_path(tools.root, str(row["path"]))) for row in batch)], label,
             )
             require_completion(command)
@@ -4248,6 +4565,20 @@ def verify_resume_executables(run: Path, lake: Path, lean: Path, time_binary: Pa
                 raise ValueError(message)
     except (OSError, RuntimeError) as error:
         raise ValueError(message) from error
+
+
+def verify_resume_thread_settings(run: Path, lean_threads: int, lake_jobs: int) -> None:
+    """Reject changed concurrency before any child runs or Lake config is written."""
+    if not run.exists():
+        return
+    saved = read_json(run)
+    requested = {"lean_threads": lean_threads, "lake_scheduler_threads": lake_jobs}
+    if any(type(saved.get(key)) is not int or saved.get(key) != value
+           for key, value in requested.items()):
+        raise ValueError(
+            "Resume thread settings differ from the saved run: saved --lean-threads "
+            f"{saved.get('lean_threads')!r} and --lake-jobs {saved.get('lake_scheduler_threads')!r}, "
+            f"requested {lean_threads} and {lake_jobs}")
 
 
 def run_headers(tools: Tools, rows: list[dict[str, object]], supplied: Path | None,
@@ -4369,6 +4700,12 @@ def main() -> int:
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--retry-blocked", action="store_true",
                         help="Retry failed files when resuming the same frozen inputs")
+    parser.add_argument("--lean-threads", type=thread_count_argument, default=DEFAULT_LEAN_THREADS,
+                        help="Threads for each Lean compiler or helper process, including "
+                             "root-package modules Lake builds (default: %(default)s)")
+    parser.add_argument("--lake-jobs", type=thread_count_argument, default=DEFAULT_LAKE_JOBS,
+                        help="Concurrent Lake build jobs, set through LEAN_NUM_THREADS "
+                             "(default: %(default)s)")
     options = parser.parse_args()
     root, output = options.root.resolve(), options.output.resolve()
     if (options.lake is None or options.timeout <= 0 or options.batch_size <= 0 or
@@ -4394,6 +4731,7 @@ def main() -> int:
         lean = lake.with_name("lean")
         time_binary = options.time.absolute()
         verify_resume_executables(output / "run.json", lake, lean, time_binary)
+        verify_resume_thread_settings(output / "run.json", options.lean_threads, options.lake_jobs)
         try:
             version = subprocess.check_output([str(time_binary), "--version"], stderr=subprocess.STDOUT)
         except (OSError, subprocess.CalledProcessError) as error:
@@ -4401,10 +4739,10 @@ def main() -> int:
         if b"GNU" not in version:
             raise ValueError("The measurement executable is not GNU time")
         helpers = Path(__file__).resolve().parent / "import_optimizer"
-        lake_config = bounded_lake_config(root)
+        lake_config = bounded_lake_config(root, options.lean_threads)
         environment = dict(os.environ)
         environment["PATH"] = str(lake.parent) + os.pathsep + environment.get("PATH", "")
-        environment["LEAN_NUM_THREADS"] = "1"
+        environment["LEAN_NUM_THREADS"] = str(options.lake_jobs)
         # Pin the Lake manifest before `lake env` runs: the captured
         # LEAN_PATH is derived from the manifest Lake reads, so the
         # bytes authorizing package roots must be the pre-capture
@@ -4426,7 +4764,8 @@ def main() -> int:
         environment.update(cast(dict[str, str], augmented))
         verify_lake_manifest_bytes(root, lake_manifest_pinned)
         tools = Tools(root, output, lake, lean, helpers, environment, options.timeout,
-                      time_binary, lake_config, file_cache=source_cache,
+                      time_binary, lake_config, lean_threads=options.lean_threads,
+                      lake_jobs=options.lake_jobs, file_cache=source_cache,
                       lake_manifest_bytes={
                           root / "lake-manifest.json": lake_manifest_pinned})
         # Independently bind the captured environment to the pinned
@@ -4448,12 +4787,12 @@ def main() -> int:
             "project_pins": {name: sha256(root / name) for name in
                              ("lean-toolchain", "lakefile.toml", "lake-manifest.json", "atlas.lock.json")
                              if name != "atlas.lock.json" or (root / name).is_file()},
-            "compiler": str(lean), "compiler_sha256": sha256(lean), "lean_threads": 2,
+            "compiler": str(lean), "compiler_sha256": sha256(lean), "lean_threads": tools.lean_threads,
             "compiler_launcher": str(lean.resolve()),
             "compiler_binary": str(compiler_binary), "compiler_binary_sha256": sha256(compiler_binary),
             "lake_launcher": str(lake_launcher), "lake_launcher_sha256": sha256(lake_launcher),
             "lake_binary": str(lake_binary), "lake_binary_sha256": sha256(lake_binary),
-            "lake_scheduler_threads": 1, "effective_lake_config_sha256": sha256(lake_config),
+            "lake_scheduler_threads": tools.lake_jobs, "effective_lake_config_sha256": sha256(lake_config),
             "time_binary": str(time_binary), "time_binary_sha256": sha256(time_binary),
             "time_binary_resolved": str(time_binary.resolve()),
             "headers_input_sha256": sha256(options.headers) if options.headers else None,

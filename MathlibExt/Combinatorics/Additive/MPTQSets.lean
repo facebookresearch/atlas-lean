@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.Algebra.Ring.Pointwise.Finset
 public import Mathlib.Algebra.Group.Pointwise.Finset.Basic
 public import Mathlib.Basic.Real.Basic
 
@@ -92,5 +93,77 @@ theorem mul_ne_of_mul_eq_of_distinct {a b c d : ℝ} (ha : 0 < a) (hb : 0 < b)
     apply mul_right_cancel₀ (add_pos hb hc).ne'
     rw [mul_add, mul_add, h, hacbd]
     ac_rfl
+
+private theorem card_union_neg_of_pos {s : Finset ℝ} (hs : ∀ x ∈ s, 0 < x) :
+    (s ∪ -s).card = 2 * s.card := by
+  have hd : Disjoint s (-s) := by
+    refine Finset.disjoint_left.2 ?_
+    intro x hx hx'
+    exact (not_lt_of_ge (hs x hx).le) (neg_pos.mp (hs (-x) (Finset.mem_neg'.mp hx')))
+  rw [Finset.card_union_of_disjoint hd, Finset.card_neg, two_mul]
+
+private theorem union_neg_mul_union_neg (A B : Finset ℝ) :
+    (A ∪ -A) * (B ∪ -B) = (A * B) ∪ -(A * B) := by
+  rw [Finset.union_mul, Finset.mul_union, Finset.mul_union, mul_neg, neg_mul, mul_neg,
+    neg_mul, neg_neg]
+  ext x
+  simp only [Finset.mem_union, or_comm, or_self]
+
+/-- **Adjoining negatives preserves the MPTQ property.** Let $A$ be a finite set of positive real
+numbers and $-A = \{-a : a \in A\}$. Then $A \cup (-A)$ is an MPTQ set if and only if $A$ is an
+MPTQ set.
+
+Source: Anupriya Shetty and B. R. Shankar, *On The Minimum Cardinality of MPTQ Sets*,
+INTEGERS 24 (2024), Article A96, Proposition 1 (`integers-2024-A96-prop-1`). -/
+theorem isMPTQSet_union_neg_iff {A : Finset ℝ} (hpos : ∀ a ∈ A, 0 < a) :
+    IsMPTQSet (A ∪ -A) ↔ IsMPTQSet A := by
+  have hA : (0 : ℝ) ∉ A := fun h => (lt_irrefl 0) (hpos 0 h)
+  have hA' : (0 : ℝ) ∉ A ∪ -A := by
+    simpa only [Finset.mem_union, Finset.mem_neg', neg_zero, or_self] using hA
+  have hprod : ∀ x ∈ A * A, 0 < x := by
+    intro x hx
+    obtain ⟨a, ha, b, hb, rfl⟩ := Finset.mem_mul.mp hx
+    exact mul_pos (hpos a ha) (hpos b hb)
+  have hquot : ∀ x ∈ A / A, 0 < x := by
+    intro x hx
+    obtain ⟨a, ha, b, hb, rfl⟩ := Finset.mem_div.mp hx
+    exact div_pos (hpos a ha) (hpos b hb)
+  have hinv : (A ∪ -A)⁻¹ = (A⁻¹) ∪ -(A⁻¹) := by
+    ext x
+    simp only [Finset.mem_inv', Finset.mem_union, Finset.mem_neg', inv_neg]
+  have hdiv : (A ∪ -A) / (A ∪ -A) = (A / A) ∪ -(A / A) := by
+    simp only [div_eq_mul_inv, hinv, union_neg_mul_union_neg]
+  simp only [IsMPTQSet, hA, hA', not_false_eq_true, true_and, hdiv, union_neg_mul_union_neg,
+    card_union_neg_of_pos hquot, card_union_neg_of_pos hprod]
+  exact Nat.mul_lt_mul_left (by decide : 0 < 2)
+
+/-- **At most one square is the product of the other two.**
+Let $a$, $b$, $c$ be pairwise distinct positive real numbers. Then at most one
+of the equations $a^2 = bc$, $b^2 = ac$ and $c^2 = ab$ holds; that is, no two of
+them hold simultaneously.
+
+Source: Anupriya Shetty and B. R. Shankar,
+*On The Minimum Cardinality of MPTQ Sets*, INTEGERS 24 (2024), Article A96,
+Lemma 3 (`integers-2024-A96-lem-3`). -/
+theorem at_most_one_sq_eq_mul_of_distinct {a b c : ℝ} (ha : 0 < a) (hb : 0 < b)
+    (hc : 0 < c) (hab : a ≠ b) (hac : a ≠ c) (hbc : b ≠ c) :
+    ¬ (a ^ 2 = b * c ∧ b ^ 2 = a * c) ∧ ¬ (a ^ 2 = b * c ∧ c ^ 2 = a * b) ∧
+      ¬ (b ^ 2 = a * c ∧ c ^ 2 = a * b) := by
+  have incompatible {x y z : ℝ} (hx : 0 < x) (hy : 0 < y) (hz : 0 < z)
+      (hxy : x ≠ y) : ¬ (x ^ 2 = y * z ∧ y ^ 2 = x * z) := by
+    rintro ⟨hx_sq, hy_sq⟩
+    apply hxy
+    -- Both products with the same positive sum are equal.
+    apply mul_right_cancel₀ (add_pos (add_pos hx hy) hz).ne'
+    simp only [mul_add, ← pow_two, hx_sq, hy_sq]
+    ac_rfl
+  refine ⟨incompatible ha hb hc hab, ?_, ?_⟩
+  · rintro ⟨ha_sq, hc_sq⟩
+    exact incompatible ha hc hb hac
+      ⟨by simpa only [mul_comm c b] using ha_sq, hc_sq⟩
+  · rintro ⟨hb_sq, hc_sq⟩
+    exact incompatible hb hc ha hbc
+      ⟨by simpa only [mul_comm c a] using hb_sq,
+        by simpa only [mul_comm b a] using hc_sq⟩
 
 end MetaMathlibExt

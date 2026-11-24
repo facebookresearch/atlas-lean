@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.FieldTheory.Finite.GaloisField
 public import MathlibExt.Combinatorics.Additive.BoseChowlaSubgroup
+public import MathlibExt.Combinatorics.Additive.FiniteFieldDifferenceBases
 public import MathlibExt.Combinatorics.Additive.GDifferenceBasisScaling
 public import MathlibExt.Combinatorics.Additive.ZModDifferenceBasis
 
@@ -19,18 +20,6 @@ namespace MetaMathlibExt
 open Filter Topology
 
 @[expose] public section
-
-/-- **Rédei–Rényi difference basis.** Let $n \ge 1$ and $k = \lceil \sqrt{n} \rceil$. The set
-of integers $B_n = \{1, \dots, k - 1\} \cup \{k, 2k, \dots, k^2, (k + 1)k\}$ has $2k$ elements,
-and every $x \in \{1, \dots, n\}$ is a difference $b - b'$ of two elements of $B_n$.
-
-Source: Eric Schmutz and Michael Tait, *Cardinalities of g-Difference Sets*, INTEGERS 25
-(2025), Article A77, Lemma 2 (`integers-2025-A77-lem-2`). -/
-public theorem_wanted redeiRenyi_diffBasis (n : ℕ) (hn : 0 < n) :
-    let k : ℕ := ⌈Real.sqrt n⌉₊
-    let B : Finset ℤ :=
-      Finset.Icc 1 ((k : ℤ) - 1) ∪ (Finset.Icc (1 : ℤ) (k + 1)).image (· * (k : ℤ))
-    B.card = 2 * k ∧ ∀ x ∈ Finset.Icc (1 : ℤ) n, 1 ≤ subRepCount B x
 
 /-- **Upper bound for the $g$-difference basis number.** For natural numbers $g$ and $n$, let
 $\eta_g(n)$ be the least size of a finite set $A \subseteq \mathbb{Z}$ such that every
@@ -81,32 +70,6 @@ public theorem_wanted singer_product_diffBasis (g q v : ℕ) (a : Fin (q + 1) �
     ∀ s ∈ Finset.Icc (1 : ℤ) ((q ^ 2 + q + 1) * v),
       g ≤ subRepCount
         ((Finset.univ ×ˢ B).image fun ib : Fin (q + 1) × ℤ => a ib.1 + (q ^ 2 + q + 1) * ib.2) s
-
-/-- **Products of difference bases.** Let $G_1, G_2$ be abelian groups, $g_1, g_2 \in \mathbb{N}$,
-and $A_1 \subseteq G_1$, $A_2 \subseteq G_2$ finite sets. If every element of $G_1$ equals $a - a'$
-for at least $g_1$ ordered pairs $(a, a') \in A_1 \times A_1$, and every element of $G_2$ equals
-$a - a'$ for at least $g_2$ ordered pairs $(a, a') \in A_2 \times A_2$, then every element of
-$G_1 \times G_2$ equals $z - z'$ for at least $g_1 g_2$ ordered pairs
-$(z, z') \in (A_1 \times A_2) \times (A_1 \times A_2)$.
-
-Source: Eric Schmutz and Michael Tait, *Cardinalities of g-Difference Sets*, INTEGERS 25
-(2025), Article A77, Lemma 5 (`integers-2025-A77-lem-5`). -/
-public theorem_wanted subRepCount_prod_ge {G₁ G₂ : Type*} [AddCommGroup G₁] [AddCommGroup G₂]
-    [DecidableEq G₁] [DecidableEq G₂] (g₁ g₂ : ℕ) (A₁ : Finset G₁) (A₂ : Finset G₂)
-    (h₁ : ∀ x, g₁ ≤ subRepCount A₁ x) (h₂ : ∀ x, g₂ ≤ subRepCount A₂ x) :
-    ∀ x : G₁ × G₂, g₁ * g₂ ≤ subRepCount (A₁ ×ˢ A₂) x
-
-/-- **Difference bases of the square of a finite field.** For an abelian group $G$ let
-$\eta_1(G)$ be the least size of a set $A \subseteq G$ such that every element of $G$ is a
-difference $a - a'$ of two elements of $A$. If $K$ is a finite field with $q$ elements whose
-characteristic is not $2$, then $\eta_1(K \times K) \le q + \eta_1(K)$, where $K$ and
-$K \times K$ are taken as additive groups.
-
-Source: Eric Schmutz and Michael Tait, *Cardinalities of g-Difference Sets*, INTEGERS 25
-(2025), Article A77, Lemma 6 (`integers-2025-A77-lem-6`). -/
-public theorem_wanted groupDiffBasisNumber_prod_self_le {K : Type*} [Field K] [Finite K]
-    [DecidableEq K] (hK : ringChar K ≠ 2) :
-    groupDiffBasisNumber 1 (K × K) ≤ Nat.card K + groupDiffBasisNumber 1 K
 
 /-- **Square-root bound for difference bases of finite fields.** For every finite field $K$ with
 $q$ elements, the least size $\eta_1(K)$ of a set $A \subseteq K$ such that every element of $K$
