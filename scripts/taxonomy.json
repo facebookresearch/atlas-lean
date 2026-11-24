@@ -11736,6 +11736,7 @@
   "MathlibExt/NumberTheory/ArithmeticFunction/BiunitaryDivisor": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Biunitary divisors"},
   "MathlibExt/NumberTheory/ArithmeticFunction/BiunitaryFortyOne": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Biunitary triperfect numbers"},
   "MathlibExt/NumberTheory/ArithmeticFunction/CompletelyMultiplicative": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Completely multiplicative functions"},
+  "MathlibExt/NumberTheory/ArithmeticFunction/CoprimalityIndicatorMultiplicativity": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Tuples coprime along the edges of a graph"},
   "MathlibExt/NumberTheory/ArithmeticFunction/DedekindPsi": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Dedekind psi function"},
   "MathlibExt/NumberTheory/ArithmeticFunction/EulerProductMeanValue": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Wintner's mean-value theorem"},
   "MathlibExt/NumberTheory/ArithmeticFunction/FourTriangularNumbers": {"to": "NumberTheory/quadratic-forms-sums-of-squares/waring-figurate", "title": "Sums of four triangular numbers"},
