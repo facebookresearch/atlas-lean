@@ -10276,6 +10276,7 @@
   "MathlibExt/Combinatorics/Enumerative/InvertTransform": {"to": "Combinatorics/riordan-arrays-transforms/sequence-transforms", "title": "INVERT transform"},
   "MathlibExt/Combinatorics/Enumerative/JacobiStirlingFirstKind": {"to": "Combinatorics/stirling-bell-eulerian/generalized-stirling-numbers", "title": "Jacobi–Stirling and Legendre–Stirling numbers"},
   "MathlibExt/Combinatorics/Enumerative/JosephusFunction": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Josephus problem"},
+  "MathlibExt/Combinatorics/Enumerative/KNaplesParkingInt": {"to": "Combinatorics/parking-functions", "title": "k-Naples parking functions"},
   "MathlibExt/Combinatorics/Enumerative/KBoxPaths": {"to": "Combinatorics/catalan-numbers-lattice-paths/dyck-paths-lattice-walks", "title": "k-box paths and skew Dyck paths"},
   "MathlibExt/Combinatorics/Enumerative/KlamkinBinomialReciprocal": {"to": "Combinatorics/binomial-coefficients/binomial-sums", "title": "Sums of reciprocals of binomial coefficients"},
   "MathlibExt/Combinatorics/Enumerative/LGridDominoTilings": {"to": "Combinatorics/tilings-board-placements", "title": "Domino tilings of L-shaped grids"},
