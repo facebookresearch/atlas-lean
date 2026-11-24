@@ -13132,6 +13132,7 @@
   "MathlibExt/RingTheory/Localization/Submodule": {"to": "RingTheory/ideals-and-constructions", "title": "Localization of ideals and submodules"},
   "MathlibExt/RingTheory/MarkovBasis": {"to": "RingTheory/ideals-and-constructions", "title": "Toric ideals and Markov bases"},
   "MathlibExt/RingTheory/MvPolynomial/Bernstein": {"to": "Analysis/approximation-theory", "title": "Multivariate Bernstein conversion"},
+  "MathlibExt/RingTheory/MvPolynomial/BernsteinBounds": {"to": "Analysis/approximation-theory", "title": "Bernstein coefficient bounds on boxes"},
   "MathlibExt/RingTheory/MvPolynomial/BuchbergerCriterion": {"to": "RingTheory/ideals-and-constructions", "title": "Gröbner bases"},
   "MathlibExt/RingTheory/MvPolynomial/Elimination": {"to": "RingTheory/ideals-and-constructions", "title": "Gröbner bases"},
   "MathlibExt/RingTheory/MvPolynomial/GroebnerBasis": {"to": "RingTheory/ideals-and-constructions", "title": "Gröbner bases"},
