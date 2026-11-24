@@ -22,6 +22,8 @@ An open substack is tested after every actual derived affine family by
 the native homotopy fibre and its comparison to this open functor, with
 the projection fixed. Local geometricity permits an open cover with
 different finite Artin levels; it imposes no single global level bound.
+The cover condition is joint surjectivity on the `π₀`-schemes of all
+affine families, as for étale covers.
 
 References: HAG II, Part 2, §2.2; Toën--Vaquié,
 arXiv:math/0503269v5, §2.1 and Theorem3.6.
@@ -128,13 +130,23 @@ def IsOpenImmersion {Q : AlgebraReplacementFunctor k} {F G : DerivedStack Q}
     (∀ B : SAlg k, WeakEquivalence (a.app B)) ∧
       a ≫ second V = affineOpenInclusion Q A U ≫ M.augmentation
 
-/-- Local geometricity is an actual open cover by possibly different finite Artin levels. -/
+/-- Local geometricity: an open cover of `F` by derived Artin stacks, possibly of different finite
+Artin levels. The cover condition is tested on every affine family `x` of `F` (an augmented derived
+affine `M` of `A` with a map to `F`): every point `p` of the `π₀`-scheme of `A` lies in the open `U`
+by which some `G i` restricts to `x`. This is the joint surjectivity on `π₀`-schemes used for étale
+covers (`IsEtaleCover`), applied to open immersions, so the family is a Zariski cover.
+
+Over the zero base ring every `π₀`-scheme is empty, so the empty family covers. This is correct:
+there the empty presieve covers every algebra, so hyperdescent makes every derived stack
+contractible, hence affine, and every stack is locally geometric. -/
 def IsLocallyGeometric {Q : AlgebraReplacementFunctor k} (F : DerivedStack Q) : Prop :=
   ∃ (I : Type (u + 1)) (G : I → DerivedStack Q) (a : ∀ i, StackMap (G i) F),
     (∀ i, IsDerivedArtin (G i) ∧ IsOpenImmersion (a i)) ∧
-      ∀ (L : Type u) [Field L] [Algebra k L] [IsAlgClosed L],
-        ∀ y : SSet.toTop.obj (F.functor.obj (fieldAlgebra (k := k) L)),
-          ∃ (i : I) (x : SSet.toTop.obj ((G i).functor.obj (fieldAlgebra (k := k) L))),
-            Joined (SSet.toTop.map ((a i).app (fieldAlgebra (k := k) L)) x) y
+      ∀ (A : SAlg k) (M : AffineStackModel Q A) (x : StackMap M.stack F)
+        (P : NaturalPathModel F) (p : piZeroScheme (Q.functor.obj A)),
+        ∃ (i : I) (V : FibreStackModel P (a i) x) (U : (piZeroScheme (Q.functor.obj A)).Opens)
+          (b : affineOpenFunctor Q A U ⟶ V.stack.functor),
+          (∀ B : SAlg k, WeakEquivalence (b.app B)) ∧
+            b ≫ second V = affineOpenInclusion Q A U ≫ M.augmentation ∧ p ∈ U
 
 end MathlibExt.AlgebraicGeometry.DerivedOpenSubstacks
