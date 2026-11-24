@@ -692,8 +692,8 @@ binary word $0^a 1 0^b$ ($a$ zeros, then a one, then $b$ zeros) is an Ulam word 
 the binomial coefficient $\binom{a + b}{a}$ is odd.
 
 Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
-*Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Theorem 8
-(Theorem 3.3 of Bade, Cui, Labelle, and Li). -/
+*Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Theorem 8;
+Bade, Cui, Labelle, and Li, *Ulam Sets in New Settings*, arXiv:2008.02762v2, Theorem 3.3. -/
 public theorem isUlamWord_zeros_one_zeros_iff (a b : ℕ) :
     IsUlamWord (List.replicate a false ++ [true] ++ List.replicate b false) ↔
       Odd ((a + b).choose a) := by
