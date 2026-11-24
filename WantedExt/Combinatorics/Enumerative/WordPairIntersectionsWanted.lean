@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Combinatorics.Enumerative.Stirling
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import Mathlib.RingTheory.MvPowerSeries.Inverse
+public import MathlibExt.Combinatorics.Enumerative.WordPairIntersections
 
 /-!
 # Intersections in pairs of words
@@ -34,29 +35,6 @@ open PowerSeries
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Non-intersecting pairs of words.** Fix natural numbers $k$, $n \ge 1$ and $r \ge 1$, and call
-a pair of words over an alphabet of $k$ letters non-intersecting when no letter occurs in both.
-Write $[x^m] F$ for the coefficient of $x^m$ in a formal power series $F$ over $\mathbb{Q}$ and
-$S(m, j)$ for the Stirling numbers of the second kind. Let $N$ be the number of non-intersecting
-pairs $(u, v)$ with $u$ of length $n$ and $v$ of length $r$. Then
-$N = \sum_{j=1}^{k-1} \binom{k}{j} \,
-[x^n]\Bigl(j! \, x^j \bigl(\prod_{i=1}^{j} (1 - i x)\bigr)^{-1}\Bigr) \,
-[x^r]\bigl((k-j) x \, (1 - (k-j) x)^{-1}\bigr)$
-and
-$N = \sum_{j=1}^{k-1} \binom{k}{j} \, j! \, S(n, j) \,
-[x^r]\bigl((k-j) x \, (1 - (k-j) x)^{-1}\bigr)$.
-
-Source: Aubrey Blecher and Arnold Knopfmacher, *Intersections in Pairs of Words*, INTEGERS 24 (2024),
-Article A107, Theorem 1 (`integers-2024-A107-thm-1`). -/
-public theorem_wanted nonIntersectingWordPairs_card_eq_coeff (k n r : ℕ) (hn : 1 ≤ n) (hr : 1 ≤ r) :
-    (((Finset.univ : Finset ((Fin n → Fin k) × (Fin r → Fin k))).filter fun p => Disjoint (Finset.univ.image p.1) (Finset.univ.image p.2)).card : ℚ) =
-        ∑ j ∈ Finset.Icc 1 (k - 1), (k.choose j : ℚ) *
-          coeff n ((j.factorial : ℚ⟦X⟧) * X ^ j * (∏ i ∈ Finset.Icc 1 j, (1 - (i : ℚ⟦X⟧) * X))⁻¹) *
-          coeff r (((k - j : ℕ) : ℚ⟦X⟧) * X * (1 - ((k - j : ℕ) : ℚ⟦X⟧) * X)⁻¹) ∧
-      (((Finset.univ : Finset ((Fin n → Fin k) × (Fin r → Fin k))).filter fun p => Disjoint (Finset.univ.image p.1) (Finset.univ.image p.2)).card : ℚ) =
-        ∑ j ∈ Finset.Icc 1 (k - 1), (k.choose j : ℚ) * j.factorial * Nat.stirlingSecond n j *
-          coeff r (((k - j : ℕ) : ℚ⟦X⟧) * X * (1 - ((k - j : ℕ) : ℚ⟦X⟧) * X)⁻¹)
 
 /-- **Generating function of non-intersecting pairs of words of equal length.** Let $k$ be a
 natural number, let $S(n, j)$ denote the Stirling numbers of the second kind, and for $n \ge 1$ let

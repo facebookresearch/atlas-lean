@@ -12,7 +12,9 @@ of dimension $m$ over $E$ and $(W, \langle\ ,\ \rangle)$ a non-degenerate skew-H
 dimension $n$, both forms $E$-linear in the first variable and conjugate-linear in the second, and let
 $\mathrm{U}(V)$ and $\mathrm{U}(W)$ be their isometry groups. On the $F$-vector space
 $\mathbb{W} = V \otimes_E W$ of dimension $2mn$ (with $av \otimes w = v \otimes aw$ for $a \in E$), the form
+
 $$\langle\langle v_1 \otimes w_1, v_2 \otimes w_2 \rangle\rangle = \tfrac12 \mathrm{tr}_{E/F}\bigl((v_1, v_2)\, \langle w_1, w_2 \rangle\bigr)$$
+
 is well defined, $F$-bilinear, alternating and non-degenerate. If $m, n \ge 1$, $\mathrm{U}(V)$ and
 $\mathrm{U}(W)$ embed in $\mathrm{Sp}(\mathbb{W})$ as a reductive dual pair: each group is the centralizer of the
 other. If $E = F \times F$, then $V = V_0 \times V_0^\vee$ and $W = W_0 \times W_0^\vee$ for $F$-vector spaces
