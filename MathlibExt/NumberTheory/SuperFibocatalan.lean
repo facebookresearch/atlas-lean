@@ -12,7 +12,12 @@ public import Mathlib.Algebra.MvPolynomial.Basic
 public import Mathlib.Data.Nat.Fib.Basic
 import Mathlib.Tactic.LinearCombination
 
-/-! # Fibonacci and Lucas polynomial identities for super FiboCatalan numbers -/
+/-!
+# Fibonacci and Lucas polynomial identities for super FiboCatalan numbers
+
+This module proves the Fibonacci and Lucas cross-product identities and uses the Lucas identity
+to relate consecutive Lucas Catalan numbers after clearing denominators.
+-/
 
 public section
 
@@ -74,5 +79,35 @@ theorem lucasPoly_mul_sub_mul (n : ℕ) :
       linear_combination -(X 1) * ih
   simp only [two_mul, lucasPoly, mul_one, mul_zero, add_zero]
   linear_combination X 0 * shift n
+
+/-- **Lucas factorial.** For a natural number $n$, the Lucas factorial $\{n\}!$ is the product
+$\{n\}! = \{1\}\{2\} \cdots \{n\}$ of the Lucas polynomials $\{i\}$ in $s$ and $t$ for
+$1 \le i \le n$, a polynomial with integer coefficients; in particular $\{0\}! = 1$, the empty
+product. -/
+@[expose] noncomputable def lucasFactorial (n : ℕ) : MvPolynomial (Fin 2) ℤ :=
+  ∏ i ∈ Finset.Icc 1 n, lucasPoly i
+
+/-- **Lucas analogue of the FiboCatalan identity, cleared of denominators.** Let $\{k\}$ be
+the Lucas polynomials in $s$ and $t$ ($\{0\} = 0$, $\{1\} = 1$, $\{k+2\} = s\{k+1\} + t\{k\}$)
+and let $\{k\}! = \{1\}\{2\} \cdots \{k\}$ be the Lucas factorial. For every natural number
+$n$, in $\mathbb{Z}[s, t]$,
+$$(\{2n+1\} \{2n\} \{n+2\} - \{2n+2\} \{2n+1\} \{n\}) \, \{2n\}!
+= (-1)^n t^n \{2\} \{n\} \{2n+1\} \, \{2n\}!.$$
+
+With the Lucas Catalan numbers $C_{\{k\}} = \{2k\}!/(\{k\}! \, \{k+1\}!)$, this is the identity
+$$\{2n+1\} \{2n\} C_{\{n\}} - \{n+1\} \{n\} C_{\{n+1\}}
+= (-1)^n t^n \{2\} \{n\} \{2n+1\} \frac{\{2n\}!}{\{n+2\}! \, \{n\}!}$$
+multiplied through by $\{n+2\}! \, \{n\}!$.
+
+Source: Kendra Killpatrick, "Super FiboCatalan Numbers and
+Their Lucas Analogues", Theorem 11. -/
+theorem lucasCatalan_identity_mul_factorial (n : ℕ) :
+    (lucasPoly (2 * n + 1) * lucasPoly (2 * n) * lucasPoly (n + 2) -
+        lucasPoly (2 * n + 2) * lucasPoly (2 * n + 1) *
+          lucasPoly n) * lucasFactorial (2 * n) =
+      (-1) ^ n * MvPolynomial.X 1 ^ n * lucasPoly 2 *
+        lucasPoly n * lucasPoly (2 * n + 1) *
+        lucasFactorial (2 * n) := by
+  linear_combination lucasPoly (2 * n + 1) * lucasFactorial (2 * n) * lucasPoly_mul_sub_mul n
 
 end MathlibExt.NumberTheory.SuperFibocatalanWanted
