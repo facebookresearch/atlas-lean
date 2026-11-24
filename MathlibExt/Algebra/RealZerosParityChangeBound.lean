@@ -7,11 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# Real zeros bounded by coefficient parity changes (AMR-021-0014)
+# Refuting the parity-change bound on real zeros (AMR-021-0014)
 
-For a polynomial with positive coefficients, the number of (distinct) real
-zeros does not exceed the number of parity changes in the positive-`c̃`
-index sequence.
+The conjecture bounds the number of distinct real zeros of a polynomial with
+positive coefficients by the number of parity changes in its positive-`c̃`
+index sequence. This module defines the bound and refutes it with an explicit
+polynomial.
 -/
 module
 
