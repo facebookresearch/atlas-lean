@@ -13,6 +13,7 @@ public import Mathlib.Algebra.Polynomial.Coeff
 public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.Data.Nat.Log
 import Mathlib.Data.List.Infix
+public import MathlibExt.Combinatorics.Enumerative.AntiBonacci
 public import MathlibExt.Combinatorics.Enumerative.UpperWythoffUnsumPalindrome
 
 /-!
@@ -31,16 +32,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Least positive integer missing from a finite set.** For a finite set $s$ of natural numbers,
-this is the least positive integer not in $s$ (the source's $\mathrm{mex}$ over the positive
-integers, used to build the anti-Tribonacci sequence). It always lies among $1, \dots, |s| + 1$.
-
-Source: Bosma, Bruin, Fokkink, Grube, Reuijl, and Tromp, *Using Walnut to Solve
-Problems from the OEIS*, Journal of Integer Sequences 28 (2025), Article 25.3.8,
-Section 4. -/
-public def antiTribonacciMex (s : Finset ℕ) : ℕ :=
-  ((List.range (s.card + 2)).find? fun m => decide (0 < m ∧ m ∉ s)).getD 0
-
 /-- **Mex of $\{1, 2, 3, 6\}$.** The least positive integer not in $\{1, 2, 3, 6\}$ is $4$.
 
 Source: Bosma, Bruin, Fokkink, Grube, Reuijl, and Tromp, *Using Walnut to Solve
@@ -48,64 +39,6 @@ Problems from the OEIS*, Journal of Integer Sequences 28 (2025), Article 25.3.8,
 Section 4. -/
 public theorem antiTribonacciMex_example : antiTribonacciMex {1, 2, 3, 6} = 4 := by
   decide +kernel
-
-private theorem antiTribonacciMex_spec (s : Finset ℕ) :
-    0 < antiTribonacciMex s ∧ antiTribonacciMex s ∉ s ∧
-      ∀ m, 0 < m → m ∉ s → antiTribonacciMex s ≤ m := by
-  have hex : ∃ m ∈ List.range (s.card + 2), 0 < m ∧ m ∉ s := by
-    by_contra h
-    push Not at h
-    have hsub : Finset.Icc 1 (s.card + 1) ⊆ s := by
-      intro m hm
-      rw [Finset.mem_Icc] at hm
-      exact h m (List.mem_range.mpr (by omega)) (by omega)
-    have := Finset.card_le_card hsub
-    simp at this
-  obtain ⟨m0, hm0, hp0⟩ := hex
-  have hsome : ((List.range (s.card + 2)).find? fun m => decide (0 < m ∧ m ∉ s)).isSome :=
-    List.find?_isSome.mpr ⟨m0, hm0, by simpa using hp0⟩
-  obtain ⟨b, hb⟩ := Option.isSome_iff_exists.mp hsome
-  have hval : antiTribonacciMex s = b := by unfold antiTribonacciMex; rw [hb]; rfl
-  rw [List.find?_eq_some_iff_getElem] at hb
-  obtain ⟨hpb, i, hi, hib, hmin⟩ := hb
-  simp only [List.getElem_range] at hib
-  subst hib
-  simp only [decide_eq_true_eq] at hpb
-  refine ⟨hval ▸ hpb.1, hval ▸ hpb.2, fun m hm hms => ?_⟩
-  rw [hval]
-  by_contra hlt
-  push Not at hlt
-  have := hmin m hlt
-  simp [hm, hms] at this
-
-/-- **The mex of a finite set is positive.** Write $\mathrm{mex}(s)$ for the least positive integer
-not in a finite set $s$ of natural numbers. For every such $s$, $\mathrm{mex}(s) > 0$.
-
-Source: Bosma, Bruin, Fokkink, Grube, Reuijl, and Tromp, *Using Walnut to Solve
-Problems from the OEIS*, Journal of Integer Sequences 28 (2025), Article 25.3.8,
-Section 4. -/
-public theorem antiTribonacciMex_pos (s : Finset ℕ) : 0 < antiTribonacciMex s :=
-  (antiTribonacciMex_spec s).1
-
-/-- **The mex of a finite set lies outside the set.** Write $\mathrm{mex}(s)$ for the least positive
-integer not in a finite set $s$ of natural numbers. For every such $s$, $\mathrm{mex}(s) \notin s$.
-
-Source: Bosma, Bruin, Fokkink, Grube, Reuijl, and Tromp, *Using Walnut to Solve
-Problems from the OEIS*, Journal of Integer Sequences 28 (2025), Article 25.3.8,
-Section 4. -/
-public theorem antiTribonacciMex_notMem (s : Finset ℕ) : antiTribonacciMex s ∉ s :=
-  (antiTribonacciMex_spec s).2.1
-
-/-- **The mex is at most every missing positive integer.** Write $\mathrm{mex}(s)$ for the least
-positive integer not in a finite set $s$ of natural numbers. If $m$ is a positive integer with
-$m \notin s$, then $\mathrm{mex}(s) \le m$.
-
-Source: Bosma, Bruin, Fokkink, Grube, Reuijl, and Tromp, *Using Walnut to Solve
-Problems from the OEIS*, Journal of Integer Sequences 28 (2025), Article 25.3.8,
-Section 4. -/
-public theorem antiTribonacciMex_le_of_notMem (s : Finset ℕ) {m : ℕ} (hm : 0 < m)
-    (hms : m ∉ s) : antiTribonacciMex s ≤ m :=
-  (antiTribonacciMex_spec s).2.2 m hm hms
 
 /-- **Anti-Tribonacci construction.** Write $\mathrm{mex}(U)$ for the least positive integer not in
 a finite set $U$ of natural numbers. Set $(A_1, B_1, C_1, D_1) = (1, 2, 3, 6)$ and
