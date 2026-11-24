@@ -49,6 +49,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.GCD.Basic
 public import Mathlib.Data.Nat.Prime.Basic
 public import MathlibExt.NumberTheory.PowAddPowEqSq
+public import MathlibExt.NumberTheory.PowAddPowEqSqEvenExponent
 public import MathlibExt.NumberTheory.PowAddPowEqSqModFourOne
 public import MathlibExt.NumberTheory.PowAddPowEqSqOppositeParity
 public import MathlibExt.NumberTheory.ThreePowAddThirtyfivePow
@@ -69,17 +70,6 @@ Source: Suton Tadee, "On the Diophantine Equation
 theorem_wanted pow_add_one_eq_sq (n x z : ℕ) (hn : 1 ≤ n)
     (hn2 : n ≠ 2) :
     n ^ x + 1 = z ^ 2 ↔ x = 1 ∧ z ^ 2 = n + 1
-
-/-- **Evenness of $x$ in $n^x + (5p)^y = z^2$ when $n \equiv 2, 3 \pmod 5$.** Let $p$ be a prime
-and $n$ a natural number with $n \equiv 2 \pmod 5$ or $n \equiv 3 \pmod 5$. If natural numbers
-$x$, $y$, $z$ with $y > 0$ satisfy $n^x + (5p)^y = z^2$, then $x$ is even.
-
-Source: Suton Tadee, "On the Diophantine Equation
-`n^x + (5p)^y = z^2`", Lemma 2. -/
-theorem_wanted even_of_pos_exp (n p x y z : ℕ) (hp : p.Prime)
-    (hn : n % 5 = 2 ∨ n % 5 = 3) (hy : 0 < y)
-    (h : n ^ x + (5 * p) ^ y = z ^ 2) :
-    Even x
 
 /-- **Corollary 2** (Moonchaisook et al.): the
 Diophantine equation `(5^n)^x + (4^m p + 1)^y = z^2`

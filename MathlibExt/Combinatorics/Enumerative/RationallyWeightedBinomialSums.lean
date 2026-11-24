@@ -17,6 +17,7 @@ public import Mathlib.Data.Rat.Defs
 public import Mathlib.NumberTheory.Harmonic.Defs
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Algebra.BigOperators.Field
+import Mathlib.Algebra.BigOperators.Intervals
 import Mathlib.Algebra.Order.Field.Rat
 import Mathlib.Order.Fin.Basic
 import Mathlib.RingTheory.Polynomial.Bernstein
@@ -212,6 +213,76 @@ public theorem sum_neg_one_pow_choose_div_sq_eq_sum_harmonic (n : ℕ) :
       rw [Fin.sum_univ_eq_sum_range (fun j => harmonic (j + 1) / ↑(j + 1)),
         ← Finset.Ico_add_one_right_eq_Icc, Finset.sum_Ico_eq_sum_range]
       simp [Nat.add_comm]
+
+private noncomputable def weightedBinomialSum (x : ℝ) (p n : ℕ) : ℝ :=
+  ∑ k ∈ Finset.Icc 1 n, (n.choose k : ℝ) * x ^ k / (k : ℝ) ^ p
+
+private theorem weightedBinomialSum_zero_pow (x : ℝ) (n : ℕ) :
+    weightedBinomialSum x 0 n = (1 + x) ^ n - 1 := by
+  have h := add_pow x (1 : ℝ) n
+  rw [Finset.range_eq_Ico, Finset.sum_eq_sum_Ico_succ_bot (Nat.succ_pos n),
+    Nat.succ_eq_add_one, Finset.Ico_add_one_right_eq_Icc] at h
+  rw [weightedBinomialSum, eq_sub_iff_add_eq]
+  simpa only [one_pow, mul_one, pow_zero, div_one, Nat.choose_zero_right, Nat.cast_one,
+    mul_comm, add_comm] using h.symm
+
+-- Pascal's identity and absorption lower the denominator exponent by one.
+private theorem weightedBinomialSum_succ (x : ℝ) (p n : ℕ) :
+    weightedBinomialSum x (p + 1) (n + 1) =
+      weightedBinomialSum x (p + 1) n + weightedBinomialSum x p (n + 1) / (n + 1 : ℕ) := by
+  -- Extend the old row by its zero coefficient at `n + 1`.
+  have hext : (∑ k ∈ Finset.Icc 1 (n + 1), (n.choose k : ℝ) * x ^ k / (k : ℝ) ^ (p + 1)) =
+      weightedBinomialSum x (p + 1) n := by
+    rw [Finset.sum_Icc_succ_top (Nat.succ_pos n)]
+    simp [weightedBinomialSum]
+  rw [← hext, weightedBinomialSum, weightedBinomialSum, Finset.sum_div,
+    ← Finset.sum_add_distrib]
+  refine Finset.sum_congr rfl fun k hk => ?_
+  have hk' : 0 < k := (Finset.mem_Icc.mp hk).1
+  nth_rw 1 [Nat.choose_succ_left n k hk']
+  rw [Nat.cast_add, add_mul, add_div, add_comm]
+  congr 1
+  have habsorb : (n.choose (k - 1) : ℝ) / k = ((n + 1).choose k : ℝ) / (n + 1 : ℕ) := by
+    rw [div_eq_div_iff (Nat.cast_ne_zero.mpr (Nat.ne_of_gt hk'))
+      (Nat.cast_ne_zero.mpr (Nat.succ_ne_zero n))]
+    have h := Nat.add_one_mul_choose_eq n (k - 1)
+    rw [Nat.sub_add_cancel hk'] at h
+    exact_mod_cast (Nat.mul_comm _ _).trans h
+  calc
+    _ = (n.choose (k - 1) : ℝ) / k * (x ^ k / (k : ℝ) ^ p) := by
+      simp only [pow_succ, div_eq_mul_inv, mul_inv_rev]
+      ac_rfl
+    _ = _ := by
+      rw [habsorb]
+      simp only [div_eq_mul_inv]
+      ac_rfl
+
+private theorem weightedBinomialSum_succ_pow (x : ℝ) (p n : ℕ) :
+    weightedBinomialSum x (p + 1) n =
+      ∑ k ∈ Finset.Icc 1 n, weightedBinomialSum x p k / k := by
+  induction n with
+  | zero => simp [weightedBinomialSum]
+  | succ n ih =>
+    rw [weightedBinomialSum_succ, ih, Finset.sum_Icc_succ_top (Nat.succ_pos n)]
+
+/-- **Binomial sums weighted by $x^k/k^2$.** For every natural number $n$ and every real number
+$x$,
+
+$$\sum_{k=1}^{n} \binom{n}{k} \frac{x^k}{k^2} =
+\sum_{k=1}^{n} \frac{1}{k} \sum_{j=1}^{k} \frac{(1+x)^j}{j} -
+\sum_{k=1}^{n} \frac{1}{k} \sum_{j=1}^{k} \frac{1}{j}.$$
+
+Source: Andreea M. Stănică, Gabriela N. Stănică, and Pantelimon Stănică, *An Evaluation of
+Rationally Weighted Binomial Sums Via Some Differential and Integral Operators*, The Fibonacci
+Quarterly 62 (2024), Article 62-1/stanica09202023, Corollary 3.2. -/
+public theorem sum_choose_mul_pow_div_sq (n : ℕ) (x : ℝ) :
+    ∑ k ∈ Finset.Icc 1 n, (n.choose k : ℝ) * x ^ k / (k : ℝ) ^ 2 =
+      ∑ k ∈ Finset.Icc 1 n, 1 / (k : ℝ) * ∑ j ∈ Finset.Icc 1 k, (1 + x) ^ j / j -
+        ∑ k ∈ Finset.Icc 1 n, 1 / (k : ℝ) * ∑ j ∈ Finset.Icc 1 k, 1 / (j : ℝ) := by
+  change weightedBinomialSum x 2 n = _
+  rw [weightedBinomialSum_succ_pow x 1 n]
+  simp_rw [weightedBinomialSum_succ_pow x 0, weightedBinomialSum_zero_pow]
+  simp only [Finset.sum_sub_distrib, div_eq_inv_mul, mul_one, mul_sub]
 
 -- Absorbing one falling-factorial factor lowers the binomial row and shifts the Fibonacci index.
 private theorem sum_descFactorial_mul_choose_mul_fib_add (n i m : ℕ) :
