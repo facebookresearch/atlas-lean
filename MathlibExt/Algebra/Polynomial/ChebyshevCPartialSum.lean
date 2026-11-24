@@ -208,7 +208,7 @@ $$F_n = \sum_{m=0}^{\lfloor n/2 \rfloor} (-1)^m \binom{n-m}{m} X^{n-2m} +
 \sum_{m=0}^{\lfloor (n-1)/2 \rfloor} (-1)^m \binom{n-m-1}{m} X^{n-2m-1}.$$
 
 Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
-Journal of Integer Sequences 29 (2026), Article 26.4.4, Proposition 3.4
+Journal of Integer Sequences 29 (2026), Article 26.4.4, Proposition 9
 (`jis-2026-26.4.4-prop-9`). -/
 public theorem chebyshevCPartialSum_eq_binomial_sum (n : ℕ) (hn : 1 ≤ n) :
     chebyshevCPartialSum n =
