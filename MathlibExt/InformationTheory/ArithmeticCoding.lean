@@ -10,6 +10,7 @@ module
 
 public import MathlibExt.InformationTheory.PrefixFree
 public import Mathlib.Analysis.SpecialFunctions.Log.Base
+public import MathlibExt.Data.BitEncoding
 
 /-!
 # Arithmetic coding
@@ -25,8 +26,8 @@ injective and uniquely decodable, and every codeword has the stated length
 bound.
 
 Source: Y. Polyanskiy and Y. Wu, Information Theory: From Coding to
-Learning, Cambridge University Press, 2025, Chapter 13; E. Arikan et al.,
-MIT 6.441 course notes, Chapter 9.1.
+Learning, Cambridge University Press, 2025, Chapter 13; Y. Polyanskiy and
+Y. Wu, MIT 6.441 Information Theory course notes, Spring 2016, Section 9.1.
 -/
 
 @[expose] public section
@@ -54,10 +55,10 @@ noncomputable def codeInt (i : ι) : ℕ :=
   ⌈cum q i * 2 ^ codeLen q i⌉₊
 
 /-- The arithmetic codeword of `i`: the `codeLen q i` binary digits of
-`codeInt q i`, most significant bit first. -/
+`codeInt q i`, most significant bit first. It is the canonical fixed-width
+big-endian codec `Nat.toBitsBE`. -/
 noncomputable def arithCode (i : ι) : List Bool :=
-  (List.finRange (codeLen q i)).map
-    (fun j => Nat.testBit (codeInt q i) (codeLen q i - 1 - j))
+  Nat.toBitsBE (codeLen q i) (codeInt q i)
 
 /-- The binary-fraction value of a bit list, most significant bit first. -/
 def fracVal : List Bool → ℚ
@@ -145,83 +146,24 @@ private theorem fracVal_lt_one (l : List Bool) : fracVal l < 1 := by
     have hnn := fracVal_nonneg s
     simp only [fracVal]
     cases b <;> simp <;> linarith
-private theorem fracVal_bits_aux (ℓ n : ℕ) :
-    (List.finRange (ℓ+1)).map (fun j : Fin (ℓ+1) => Nat.testBit n (ℓ+1 - 1 - (j : ℕ))) =
-    Nat.testBit n ℓ :: (List.finRange ℓ).map (fun j : Fin ℓ => Nat.testBit (n % 2^ℓ) (ℓ - 1 - (j : ℕ))) := by
-  rw [List.finRange_succ, List.map_cons, List.map_map]
-  have hhead : Nat.testBit n (ℓ+1 - 1 - ((0 : Fin (ℓ+1)) : ℕ)) = Nat.testBit n ℓ := by
-    simp
-  rw [hhead]
-  congr 1
-  apply List.map_congr_left
-  intro j hj
-  have hjlt : (j : ℕ) < ℓ := j.isLt
-  have hval : ((j.succ : Fin (ℓ+1)) : ℕ) = (j : ℕ) + 1 := Fin.val_succ j
-  simp only [Function.comp_apply]
-  rw [hval]
-  have heq : ℓ + 1 - 1 - ((j : ℕ) + 1) = ℓ - 1 - (j : ℕ) := by omega
-  rw [heq]
-  have hlt : ℓ - 1 - (j : ℕ) < ℓ := by omega
-  have hmod := Nat.testBit_mod_two_pow n ℓ (ℓ - 1 - (j : ℕ))
-  rw [decide_eq_true hlt, Bool.true_and] at hmod
-  exact hmod.symm
-private theorem fracVal_bits (ℓ n : ℕ) (hn : n < 2 ^ ℓ) :
-    fracVal ((List.finRange ℓ).map (fun j : Fin ℓ => Nat.testBit n (ℓ - 1 - (j : ℕ)))) =
-    (n : ℚ) / 2 ^ ℓ := by
-  induction ℓ generalizing n with
-  | zero =>
-    simp only [List.finRange_zero, List.map_nil, fracVal] at ⊢
-    simp at hn
-    subst hn
-    simp
-  | succ ℓ ih =>
-    have hmod_lt : n % 2^ℓ < 2^ℓ := Nat.mod_lt n (Nat.pow_pos (by norm_num : 0 < 2))
-    have ih_eq := ih (n % 2^ℓ) hmod_lt
-    rw [fracVal_bits_aux, fracVal, ih_eq]
-    have hpow_pos : (0:ℕ) < 2^ℓ := Nat.pow_pos (by norm_num : 0 < 2)
-    have hdiv_lt : n / 2^ℓ < 2 := by
-      rw [Nat.div_lt_iff_lt_mul hpow_pos]
-      calc n < 2^(ℓ+1) := hn
-        _ = 2 * 2^ℓ := by rw [pow_succ, mul_comm]
-    have htest_eq : Nat.testBit n ℓ = decide (n / 2^ℓ = 1) := by
-      rw [Nat.testBit_eq_decide_div_mod_eq, Nat.mod_eq_of_lt hdiv_lt]
-    have hdivmod : n = 2^ℓ * (n / 2^ℓ) + n % 2^ℓ := (Nat.div_add_mod n (2^ℓ)).symm
-    have hpowQ_ne : (2:ℚ)^ℓ ≠ 0 := by positivity
-    by_cases h : n / 2^ℓ = 1
-    · have ht : Nat.testBit n ℓ = true := by rw [htest_eq, decide_eq_true h]
-      simp [ht]
-      rw [h] at hdivmod
-      simp only [mul_one] at hdivmod
-      have hdivmodQ : (n:ℚ) = 2^ℓ + (n % 2^ℓ : ℕ) := by exact_mod_cast hdivmod
-      rw [hdivmodQ]
-      have hpow_succ : (2:ℚ)^(ℓ+1) = 2 * 2^ℓ := by rw [pow_succ, mul_comm]
-      rw [hpow_succ]
-      field_simp
-    · have hle : n / 2^ℓ ≤ 1 := Nat.le_of_lt_succ hdiv_lt
-      have hlt1 : n / 2^ℓ < 1 := lt_of_le_of_ne hle h
-      have h0 : n / 2^ℓ = 0 := Nat.lt_one_iff.mp hlt1
-      have ht : Nat.testBit n ℓ = false := by rw [htest_eq, decide_eq_false h]
-      simp [ht]
-      rw [h0] at hdivmod
-      simp only [mul_zero, zero_add] at hdivmod
-      have hdivmodQ : (n:ℚ) = ((n % 2^ℓ : ℕ) : ℚ) := by exact_mod_cast hdivmod
-      rw [hdivmodQ]
-      have hpow_succ : (2:ℚ)^(ℓ+1) = 2 * 2^ℓ := by rw [pow_succ, mul_comm]
-      rw [hpow_succ]
-      field_simp
-private theorem arithCode_eq_finMap (i : ι) :
-    arithCode q i = (List.finRange (codeLen q i)).map
-      (fun j : Fin (codeLen q i) => Nat.testBit (codeInt q i) (codeLen q i - 1 - (j : ℕ))) := by
-  simp [arithCode]
-  rw [List.map_flatMap]
-  simp only [List.map_singleton]
-  rw [← List.map_eq_flatMap]
+
+/-- The binary-fraction value of a bit list is its big-endian value over
+`2 ^ l.length`. -/
+theorem fracVal_eq_ofBitsBE (l : List Bool) :
+    fracVal l = (Nat.ofBitsBE l : ℚ) / 2 ^ l.length := by
+  induction l with
+  | nil => simp [fracVal, Nat.ofBitsBE, BitVec.ofBoolListBE.eq_1]
+  | cons b t ih =>
+    have h2 : (2 : ℚ) ^ t.length ≠ 0 := by positivity
+    simp only [fracVal, Nat.ofBitsBE, BitVec.ofBoolListBE.eq_2,
+      BitVec.toNat_cons', Nat.shiftLeft_eq, Bool.toNat, List.length_cons, pow_succ]
+    cases b <;> simp <;> rw [ih] <;> simp only [Nat.ofBitsBE] <;> field_simp
 
 /-- Codewords have exactly the stated length, which is the concept's bound
 `⌈log₂ (1 / q i)⌉ + 1`. -/
 theorem arithCode_length (i : ι) :
     (arithCode q i).length = codeLen q i := by
-  simp [arithCode]
+  simp only [arithCode, Nat.length_toBitsBE]
 
 /-- The dyadic numerator fits in `codeLen q i` bits. -/
 theorem codeInt_lt_two_pow (hqpos : ∀ i, 0 < q i) (hqsum : ∑ i, q i = 1)
@@ -254,8 +196,9 @@ theorem fracVal_arithCode (hqpos : ∀ i, 0 < q i) (hqsum : ∑ i, q i = 1)
     (i : ι) :
     fracVal (arithCode q i) = codeInt q i / 2 ^ codeLen q i := by
   have hlt := codeInt_lt_two_pow q hqpos hqsum i
-  rw [arithCode_eq_finMap]
-  exact fracVal_bits (codeLen q i) (codeInt q i) hlt
+  simp only [arithCode, fracVal_eq_ofBitsBE, Nat.length_toBitsBE]
+  rw [Nat.ofBitsBE_toBitsBE_of_lt]
+  exact hlt
 
 /-- The codeword's dyadic interval lies inside the symbol's cumulative
 interval. -/
