@@ -3,6 +3,7 @@
 PDE existence, regularity and qualitative results: Cauchy–Kovalevskaya, heat and Airy equations, weak solutions and elliptic regularity, Euler singularity formation, σ₂ Hessian estimates, radial symmetry, viscosity solutions, Dirichlet and Neumann spectra of the Laplacian.
 
 - [Airy equation and Kato smoothing](airy-equation-and-kato-smoothing/README.md)
+- [Bounded classical uniqueness for forced Burgers](bounded-classical-uniqueness-for-forced-burgers/README.md)
 - [Cauchy–Kovalevskaya theorem](cauchy-kovalevskaya-theorem/README.md)
 - [Duhamel spatial smoothing](duhamel-spatial-smoothing/README.md)
 - [Forced Burgers initial-value construction](forced-burgers-initial-value-construction/README.md)
