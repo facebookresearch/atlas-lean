@@ -31,20 +31,25 @@ Bellman residual of $W$ and does not require knowing $V^*$ to compute it.
 ## Proof depends on
 
 - [Componentwise Bellman residual bound for a greedy policy](componentwise-bellman-residual-bound.md)
+- [A greedy policy for the optimal value is optimal](../../../heuristic-search-and-planning/value-iteration/policy-value-greedy.md)
 - [Value of a Markov reward process](../stochastic-policies-and-discounted-occupancy/mrp-value.md)
+- [The value of a Markov reward process solves its Bellman equation](../stochastic-policies-and-discounted-occupancy/mrp-value-eq.md)
 - [A constant reward has constant value](../stochastic-policies-and-discounted-occupancy/mrp-value-const.md)
 - [A nonnegative reward has a nonnegative value](../stochastic-policies-and-discounted-occupancy/mrp-value-nonneg.md)
 
 ## Proof
 
-For any row-stochastic policy matrix $P_\sigma$, write
-$R_\sigma=(I-\gamma P_\sigma)^{-1}$. As a Markov reward process value
-operator it is entrywise nonnegative (apply it to indicator rewards), and
-it sends the all-ones vector $\mathbf 1$ to $(1-\gamma)^{-1}\mathbf 1$.
-Thus its row sums and its induced sup operator norm are exactly
-$1/(1-\gamma)$: the row sums bound its action on any vector in the unit
-ball, and $\mathbf 1$ attains the bound. Apply the componentwise bound
-with any deterministic stationary optimal policy $\pi^*$. Each resolvent
+For any row-stochastic policy matrix $P_\sigma$ and real reward vector $c$,
+its Markov reward process value $V_c$ satisfies
+$(I-\gamma P_\sigma)V_c=c$. The square matrix $I-\gamma P_\sigma$ is thus
+surjective and invertible, so $R_\sigma c=V_c$ for
+$R_\sigma=(I-\gamma P_\sigma)^{-1}$. It is entrywise nonnegative by
+applying it to indicator rewards, and it sends the all-ones vector
+$\mathbf 1$ to $(1-\gamma)^{-1}\mathbf 1$. Thus its row sums and its induced
+sup operator norm are exactly $1/(1-\gamma)$: the row sums bound its action
+on any vector in the unit ball, and $\mathbf 1$ attains the bound. Choose a
+policy $\pi^*$ greedy for $V^*$, which exists since the action set is finite
+and nonempty. It is optimal, so the componentwise bound applies. Each resolvent
 term acting on $|TW-W|$ is at most
 $\|TW-W\|_\infty\mathbf 1/(1-\gamma)$, and the loss is nonnegative in each
 state. Taking the maximum gives (4.5).
