@@ -56,3 +56,18 @@ example : ¬ ∀ p : Ultrafilter Bool, ∀ q ∈ betaFamily {A : Set Bool | true
 end
 
 end MetaMathlibExt.betaFamily_isLeftIdeal_iff.Tests
+
+namespace MetaMathlibExt.isRamseyFamily_and_betaFamily_eq_of_isClosed.Tests
+
+-- A principal singleton gives exactly the sets containing its point.
+example : IsRamseyFamily {A : Set Bool | true ∈ A} ∧
+    betaFamily {A : Set Bool | true ∈ A} = {pure true} := by
+  simpa using isRamseyFamily_and_betaFamily_eq_of_isClosed
+    (isClosed_singleton (x := (pure true : Ultrafilter Bool))) (Set.singleton_nonempty _)
+
+-- The empty closed set gives an empty family, so nonemptiness is essential.
+example : ¬ IsRamseyFamily {A : Set Bool | ∃ p ∈ (∅ : Set (Ultrafilter Bool)), A ∈ p} := by
+  rintro ⟨⟨A, p, hp, _⟩, _⟩
+  exact hp
+
+end MetaMathlibExt.isRamseyFamily_and_betaFamily_eq_of_isClosed.Tests
