@@ -41,10 +41,8 @@ noncomputable section
 
 namespace MathlibExt.Analysis.FunctionalAnalysis.ScottishBook51Wanted
 
-/-- Restrict Lebesgue measure to `[0, 1]`, so functions on `[0, 1]` can be
-integrated. Mathlib deliberately does not register this as a global instance
-(other choices, e.g. the normalized restriction, are also natural); this
-file supplies the restricted-Lebesgue instance for `[0, 1]` only. -/
+/-- Retain the original local restricted-Lebesgue instance on `[0, 1]` so the
+exposed definitions use the same measure as their wanted versions. -/
 noncomputable local instance scottishBook51MeasureSpace :
     MeasureTheory.MeasureSpace ↥(Set.Icc (0 : ℝ) 1) :=
   MeasureTheory.Measure.Subtype.measureSpace
