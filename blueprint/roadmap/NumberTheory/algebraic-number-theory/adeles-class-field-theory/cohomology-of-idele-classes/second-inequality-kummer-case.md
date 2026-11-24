@@ -23,7 +23,9 @@ $L_w = K_v$ and the Frobenius element of $w$ over $L$ is its Frobenius element o
 extension $M/L$, there are primes $w_1, \dots, w_t$ of $M$, above places of $K$ outside $S$, whose Frobenius
 elements over $L$ form a basis of $\mathrm{Gal}(M/L)$; these are nontrivial, so $M_{w_i} \ne L_{w_i}$, and
 the places of $K$ below the $w_i$ form the set $T$. The group
+
 $$E = \prod_{v \in S} K_v^{\times p} \times \prod_{v \in T} K_v^\times \times \prod_{v \notin S \cup T} \mathcal{O}_v^\times$$
+
 is contained in $\mathrm{Nm}_{L/K}(\mathbb{I}_L)$ (Lemma VII.6.4): at $v \in S$ because
 $K_v^\times / \mathrm{Nm}_{L_w/K_v}(L_w^\times) \cong \mathrm{Gal}(L_w/K_v)$ is killed by $p$, by the
 [local Artin map](../../../p-adic-numbers/local-class-field-theory.md) (at a real place,
