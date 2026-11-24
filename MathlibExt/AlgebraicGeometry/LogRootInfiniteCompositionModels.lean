@@ -19,6 +19,10 @@ square is fixed by the identity underlying scheme map, every finite
 comparison cell and the native projection naturality. Finite comparison
 cells themselves are fixed on every original root line.
 Source: Talpo--Vistoli1410.1164v2, Sections3--6.
+Constructing the composite of canonical arrows for arbitrary root
+realizations is left to a separate development: it needs realizations whose
+evaluated root comparisons are coherent over the whole tower, which they do
+not record.
 -/
 
 set_option autoImplicit false
