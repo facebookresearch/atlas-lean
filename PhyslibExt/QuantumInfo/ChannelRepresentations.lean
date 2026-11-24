@@ -11,16 +11,16 @@ module
 public import PhyslibExt.QuantumInfo.Channels
 
 /-!
-# Channel representations: Kraus, Choi, and Stinespring forms
+# Channel representations: Kraus and Choi forms
 
 ## i. Overview
 
-The channel representation theorem (Watrous, Corollary 2.27, stating the
-trace-preserving case of Theorem 2.26) assembled over Physlib's `CPTPMap`:
+The channel representation theorem (Watrous, Corollary 2.27, combining
+Theorems 2.22 and 2.26) assembled over Physlib's `CPTPMap`:
 a linear map between matrix spaces underlies a channel exactly when it has
 a Kraus representation whose operators satisfy the completeness relation,
-and exactly when its Choi matrix is positive semidefinite with input
-partial trace the identity. The underlying complete-positivity
+and exactly when its Choi matrix is positive semidefinite with
+partial trace over the output factor the identity. The underlying complete-positivity
 characterization is Watrous Theorem 2.22. The unitary-with-ancilla
 realization (the unitary form of Stinespring's dilation theorem) is
 Physlib's purification `CPTPMap.exists_purify`, not proved here.
@@ -61,8 +61,9 @@ negative eigenvalue.
 ## iv. References
 
 John Watrous, The Theory of Quantum Information, Cambridge University
-Press, 2018, Theorem 2.22 (complete positivity), Theorem 2.26 and
-Corollary 2.27 (channel representations), and Section 2.2 (dilations).
+Press, 2018, Theorem 2.22 (complete positivity), Theorem 2.26
+(trace preservation), Corollary 2.27 (channel representations combining
+Theorems 2.22 and 2.26), and Section 2.2 (dilations).
 -/
 
 @[expose] public section
@@ -148,6 +149,7 @@ linear map underlies a `CPTPMap` exactly when it is the Kraus map of a
 family satisfying the completeness relation. -/
 lemma exists_cptpMap_iff_kraus {dIn dOut : Type*} [Fintype dIn]
     [Fintype dOut] [DecidableEq dIn] [DecidableEq dOut]
+    [Nonempty dIn] [Nonempty dOut]
     (Φ : MatrixMap dIn dOut ℂ) :
     (∃ Λ : CPTPMap dIn dOut, Λ.map = Φ) ↔
       ∃ K : (dOut × dIn) → Matrix dOut dIn ℂ,
@@ -163,9 +165,10 @@ lemma exists_cptpMap_iff_kraus {dIn dOut : Type*} [Fintype dIn]
 
 /-- **Choi characterization of channels** (Watrous, Corollary 2.27): a linear
 map underlies a `CPTPMap` exactly when its Choi matrix is positive
-semidefinite and its input partial trace is the identity. -/
+semidefinite and its partial trace over the output factor is the identity. -/
 lemma exists_cptpMap_iff_choi {dIn dOut : Type*} [Fintype dIn]
     [Fintype dOut] [DecidableEq dIn] [DecidableEq dOut]
+    [Nonempty dIn] [Nonempty dOut]
     (Φ : MatrixMap dIn dOut ℂ) :
     (∃ Λ : CPTPMap dIn dOut, Λ.map = Φ) ↔
       Φ.choi_matrix.PosSemidef ∧ Φ.choi_matrix.traceLeft = 1 := by
