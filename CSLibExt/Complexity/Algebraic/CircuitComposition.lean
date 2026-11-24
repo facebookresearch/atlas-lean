@@ -11,6 +11,7 @@ module
 public import CSLibExt.Complexity.Algebraic.ArithmeticCircuit
 public import Mathlib.Logic.Equiv.Fin.Basic
 public import Mathlib.LinearAlgebra.Matrix.Defs
+public import MathlibExt.LinearAlgebra.Matrix.FinPowReindex
 
 /-!
 # Arithmetic circuit composition and block reindexing
@@ -242,24 +243,6 @@ theorem evaluate_subst {F : Type u} {A : Type v} {A' : Type v'} {B : Type w}
     (fun k hk => hD k hk) (fun k hk => hC k hk)
 
 end ArithmeticCircuit
-
-/-- Block reindexing of `Fin (q ^ (k + 1))` as `Fin q × Fin (q ^ k)` via `(i / q ^ k, i % q ^ k)`. -/
-def finPowSuccEquiv (q k : ℕ) : Fin (q ^ (k + 1)) ≃ Fin q × Fin (q ^ k) :=
-  (finCongr (by rw [Nat.pow_succ'])).trans finProdFinEquiv.symm
-
-/-- Reindex both matrix indices along block reindexing. -/
-def matrixFinPowSuccEquiv {F : Type u} (q k : ℕ) :
-    Matrix (Fin (q ^ (k + 1))) (Fin (q ^ (k + 1))) F ≃
-    Matrix (Fin q × Fin (q ^ k)) (Fin q × Fin (q ^ k)) F :=
-  Matrix.reindex (finPowSuccEquiv q k) (finPowSuccEquiv q k)
-
-/-- Value of a reindexed matrix at a pair of block indices. -/
-theorem matrixFinPowSuccEquiv_apply {F : Type u} (q k : ℕ)
-    (M : Matrix (Fin (q ^ (k + 1))) (Fin (q ^ (k + 1))) F)
-    (i j : Fin q × Fin (q ^ k)) :
-    (matrixFinPowSuccEquiv q k M) i j =
-      M ((finPowSuccEquiv q k).symm i) ((finPowSuccEquiv q k).symm j) := by
-  simp [matrixFinPowSuccEquiv, Matrix.reindex_apply, Matrix.submatrix_apply]
 
 end
 

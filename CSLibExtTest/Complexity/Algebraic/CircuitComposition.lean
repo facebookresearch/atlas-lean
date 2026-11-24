@@ -11,9 +11,9 @@ module
 public import CSLibExt.Complexity.Algebraic.CircuitComposition
 
 /-!
-# Tests for arithmetic circuit composition and block reindexing
+# Tests for arithmetic circuit composition
 
-Concrete examples over integers exercising substitution and reindexing.
+Concrete examples over integers exercising substitution.
 -/
 
 set_option autoImplicit false
@@ -108,33 +108,6 @@ example : (testC2.subst testD).evaluate (fun i => if i.val = 0 then 2 else 3) 0 
     ArithmeticGate.evaluate]
 
 end ArithmeticCircuit
-
-private def testM : Matrix (Fin 4) (Fin 4) ℤ :=
-  ![![0, 1, 2, 3], ![4, 5, 6, 7], ![8, 9, 10, 11], ![12, 13, 14, 15]]
-
-example : (finPowSuccEquiv 2 1) 0 = (0, 0) := by decide
-
-example : (finPowSuccEquiv 2 1) 1 = (0, 1) := by decide
-
-example : (finPowSuccEquiv 2 1) 2 = (1, 0) := by decide
-
-example : (finPowSuccEquiv 2 1) 3 = (1, 1) := by decide
-
-example : (matrixFinPowSuccEquiv 2 1 testM) (0, 1) (1, 0) = 6 := by decide
-
-example : (matrixFinPowSuccEquiv 2 1 testM) (0, 1) (1, 0) =
-    testM ((finPowSuccEquiv 2 1).symm (0, 1)) ((finPowSuccEquiv 2 1).symm (1, 0)) :=
-  matrixFinPowSuccEquiv_apply 2 1 testM (0, 1) (1, 0)
-
-example : (finPowSuccEquiv 2 0) 0 = (0, 0) := by decide
-
-example : (finPowSuccEquiv 2 0) 1 = (1, 0) := by decide
-
-example : Fin (0 ^ (1 + 1)) ≃ Fin 0 × Fin (0 ^ 1) := finPowSuccEquiv 0 1
-
-example : Fin (1 ^ (1 + 1)) ≃ Fin 1 × Fin (1 ^ 1) := finPowSuccEquiv 1 1
-
-example : (finPowSuccEquiv 1 0) 0 = (0, 0) := by decide
 
 end
 
