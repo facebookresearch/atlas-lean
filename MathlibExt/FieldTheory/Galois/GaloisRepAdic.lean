@@ -55,6 +55,7 @@ public import MathlibExt.FieldTheory.Galois.ResidualGaloisRep
 public import MathlibExt.RingTheory.Valuation.InertiaRootsOfUnity
 public import MathlibExt.RingTheory.Valuation.LiesOverPrime
 public import Mathlib.RingTheory.TensorProduct.Basic
+public import Mathlib.RepresentationTheory.Intertwining
 import Mathlib.Algebra.Algebra.Operations
 import Mathlib.Algebra.Module.ZMod
 import Mathlib.Analysis.Normed.Unbundled.SpectralNorm
@@ -463,44 +464,16 @@ namespace ResidualGaloisRep
 
 variable {k : Type u} [Field k]
 
-/-- An equivalence of residual Galois representations: a linear equivalence
-of the representation spaces intertwining the Galois actions. -/
-public structure Equiv (ρ₁ ρ₂ : ResidualGaloisRep k) where
-  /-- The linear equivalence of representation spaces. -/
-  toLinearEquiv : ρ₁.V ≃ₗ[k] ρ₂.V
-  /-- The equivalence intertwines the Galois actions. -/
-  map_apply : ∀ (σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) (x : ρ₁.V),
-    toLinearEquiv (ρ₁.ρ σ x) = ρ₂.ρ σ (toLinearEquiv x)
+/-- An equivalence of residual Galois representations: an equivalence of the
+underlying representations of the absolute Galois group of `ℚ`, with the
+standard `refl`, `symm` and `trans` of `Representation.Equiv`. -/
+public abbrev Equiv (ρ₁ ρ₂ : ResidualGaloisRep k) : Type _ :=
+  Representation.Equiv ρ₁.ρ ρ₂.ρ
 
 /-- Two residual Galois representations are equivalent when there is an
 equivalence between them. -/
 public def IsEquiv (ρ₁ ρ₂ : ResidualGaloisRep k) : Prop :=
   Nonempty (Equiv ρ₁ ρ₂)
-
-namespace Equiv
-
-/-- The identity equivalence of a residual Galois representation. -/
-public def refl (ρ : ResidualGaloisRep k) : Equiv ρ ρ where
-  toLinearEquiv := LinearEquiv.refl k ρ.V
-  map_apply _ _ := rfl
-
-/-- The inverse of an equivalence of residual Galois representations. -/
-public def symm {ρ₁ ρ₂ : ResidualGaloisRep k} (e : Equiv ρ₁ ρ₂) :
-    Equiv ρ₂ ρ₁ where
-  toLinearEquiv := e.toLinearEquiv.symm
-  map_apply σ x := by
-    apply e.toLinearEquiv.injective
-    rw [e.map_apply, LinearEquiv.apply_symm_apply, LinearEquiv.apply_symm_apply]
-
-/-- The composite of equivalences of residual Galois representations. -/
-public def trans {ρ₁ ρ₂ ρ₃ : ResidualGaloisRep k} (e₁₂ : Equiv ρ₁ ρ₂)
-    (e₂₃ : Equiv ρ₂ ρ₃) : Equiv ρ₁ ρ₃ where
-  toLinearEquiv := e₁₂.toLinearEquiv.trans e₂₃.toLinearEquiv
-  map_apply σ x := by
-    rw [LinearEquiv.trans_apply, e₁₂.map_apply, e₂₃.map_apply,
-      LinearEquiv.trans_apply]
-
-end Equiv
 
 end ResidualGaloisRep
 
@@ -605,13 +578,11 @@ public noncomputable def residual (ρ : GaloisRepAdic A) :
         exact hkill _ (h1 σ hσ v) c
       | add x y hx hy => rw [map_add, map_add, hx, hy] }
 
-/-- An equivalence of adic Galois representations. -/
-public structure Equiv (ρ₁ ρ₂ : GaloisRepAdic A) where
-  /-- The linear equivalence of representation spaces. -/
-  toLinearEquiv : ρ₁.V ≃ₗ[A] ρ₂.V
-  /-- The equivalence intertwines the Galois actions. -/
-  map_apply : ∀ (σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) (x : ρ₁.V),
-    toLinearEquiv (ρ₁.ρ σ x) = ρ₂.ρ σ (toLinearEquiv x)
+/-- An equivalence of adic Galois representations: an equivalence of the
+underlying representations of the absolute Galois group of `ℚ`, with the
+standard `refl`, `symm` and `trans` of `Representation.Equiv`. -/
+public abbrev Equiv (ρ₁ ρ₂ : GaloisRepAdic A) : Type _ :=
+  Representation.Equiv ρ₁.ρ ρ₂.ρ
 
 /-- Two adic Galois representations are equivalent when there is an
 equivalence between them. -/
@@ -620,51 +591,30 @@ public def IsEquiv (ρ₁ ρ₂ : GaloisRepAdic A) : Prop :=
 
 namespace Equiv
 
-/-- The identity equivalence of an adic Galois representation. -/
-public def refl (ρ : GaloisRepAdic A) : Equiv ρ ρ :=
-  { toLinearEquiv := LinearEquiv.refl A ρ.V
-    map_apply := fun _ _ => rfl }
-
-/-- The inverse of an equivalence of adic Galois representations. -/
-public def symm {ρ₁ ρ₂ : GaloisRepAdic A} (e : Equiv ρ₁ ρ₂) : Equiv ρ₂ ρ₁ :=
-  { toLinearEquiv := e.toLinearEquiv.symm
-    map_apply := fun σ y => e.toLinearEquiv.injective (by
-      rw [LinearEquiv.apply_symm_apply, e.map_apply,
-        LinearEquiv.apply_symm_apply]) }
-
-/-- The composite of equivalences of adic Galois representations. -/
-public def trans {ρ₁ ρ₂ ρ₃ : GaloisRepAdic A} (e : Equiv ρ₁ ρ₂)
-    (e' : Equiv ρ₂ ρ₃) : Equiv ρ₁ ρ₃ :=
-  { toLinearEquiv := e.toLinearEquiv.trans e'.toLinearEquiv
-    map_apply := fun σ x => by
-      rw [LinearEquiv.trans_apply, LinearEquiv.trans_apply, e.map_apply,
-        e'.map_apply] }
-
 /-- Base change of an equivalence of adic Galois representations. -/
 public noncomputable def baseChangeAlong {B : Type v} [CommRing B]
     [IsLocalRing B] (φ : A →+* B) (hφ : IsLocalHom φ)
     {ρ₁ ρ₂ : GaloisRepAdic A} (e : Equiv ρ₁ ρ₂) :
     Equiv (ρ₁.baseChangeAlong φ hφ) (ρ₂.baseChangeAlong φ hφ) :=
   letI : Algebra A B := φ.toAlgebra
-  { toLinearEquiv := e.toLinearEquiv.baseChange A B ρ₁.V ρ₂.V
-    map_apply := fun σ x => by
-      show e.toLinearEquiv.baseChange A B ρ₁.V ρ₂.V ((ρ₁.ρ σ).baseChange B x) =
-        (ρ₂.ρ σ).baseChange B (e.toLinearEquiv.baseChange A B ρ₁.V ρ₂.V x)
-      induction x using TensorProduct.induction_on with
-      | zero => simp only [map_zero]
-      | tmul b v =>
-        rw [LinearMap.baseChange_tmul, LinearEquiv.baseChange_tmul,
-          LinearEquiv.baseChange_tmul, LinearMap.baseChange_tmul, e.map_apply]
-      | add x y hx hy => simp only [map_add, hx, hy] }
+  .mk (e.toLinearEquiv.baseChange A B ρ₁.V ρ₂.V) fun σ => LinearMap.ext fun x => by
+    show e.toLinearEquiv.baseChange A B ρ₁.V ρ₂.V ((ρ₁.ρ σ).baseChange B x) =
+      (ρ₂.ρ σ).baseChange B (e.toLinearEquiv.baseChange A B ρ₁.V ρ₂.V x)
+    induction x using TensorProduct.induction_on with
+    | zero => simp only [map_zero]
+    | tmul b v =>
+      rw [LinearMap.baseChange_tmul, LinearEquiv.baseChange_tmul,
+        LinearEquiv.baseChange_tmul, LinearMap.baseChange_tmul]
+      exact congrArg (b ⊗ₜ[A] ·) (e.toIntertwiningMap.isIntertwining _ _ σ v)
+    | add x y hx hy => simp only [map_add, hx, hy]
 
 /-- The residual equivalence induced by an equivalence of adic Galois
 representations. -/
 public noncomputable def residual {ρ₁ ρ₂ : GaloisRepAdic A}
     (e : Equiv ρ₁ ρ₂) :
     ResidualGaloisRep.Equiv ρ₁.residual ρ₂.residual :=
-  { toLinearEquiv :=
-      e.toLinearEquiv.baseChange A (IsLocalRing.ResidueField A) ρ₁.V ρ₂.V
-    map_apply := fun σ x => by
+  .mk (e.toLinearEquiv.baseChange A (IsLocalRing.ResidueField A) ρ₁.V ρ₂.V)
+    fun σ => LinearMap.ext fun x => by
       show e.toLinearEquiv.baseChange A (IsLocalRing.ResidueField A) ρ₁.V ρ₂.V
           ((ρ₁.ρ σ).baseChange (IsLocalRing.ResidueField A) x) =
         (ρ₂.ρ σ).baseChange (IsLocalRing.ResidueField A)
@@ -673,8 +623,9 @@ public noncomputable def residual {ρ₁ ρ₂ : GaloisRepAdic A}
       | zero => simp only [map_zero]
       | tmul b v =>
         rw [LinearMap.baseChange_tmul, LinearEquiv.baseChange_tmul,
-          LinearEquiv.baseChange_tmul, LinearMap.baseChange_tmul, e.map_apply]
-      | add x y hx hy => simp only [map_add, hx, hy] }
+          LinearEquiv.baseChange_tmul, LinearMap.baseChange_tmul]
+        exact congrArg (b ⊗ₜ[A] ·) (e.toIntertwiningMap.isIntertwining _ _ σ v)
+      | add x y hx hy => simp only [map_add, hx, hy]
 
 end Equiv
 

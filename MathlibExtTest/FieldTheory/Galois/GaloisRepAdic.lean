@@ -70,11 +70,13 @@ example {k : Type} [Field k] (ρ : GaloisRepAdic k)
   let _ := GaloisRepAdic.ofResidualGaloisRep τ
   trivial
 
-/-- Equivalences of adic representations are reflexive, and induce
+/-- Equivalences of adic representations are equivalences of the underlying
+representations: they use the standard `refl`, `symm` and `trans`, and induce
 equivalences of residual representations. -/
 example {A : Type} [CommRing A] [IsLocalRing A] (ρ : GaloisRepAdic A) :
     True := by
-  let e := GaloisRepAdic.Equiv.refl ρ
+  let e : GaloisRepAdic.Equiv ρ ρ := Representation.Equiv.refl ρ.ρ
+  let _ : GaloisRepAdic.Equiv ρ ρ := e.symm.trans e
   let _ := e.residual
   let _ : GaloisRepAdic.IsEquiv ρ ρ := ⟨e⟩
   trivial

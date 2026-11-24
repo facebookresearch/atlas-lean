@@ -31,27 +31,13 @@ public import Mathlib.NumberTheory.ModularForms.Basic
 public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
 public import Mathlib.NumberTheory.ModularForms.QExpansion
 public import Mathlib.NumberTheory.LSeries.Dirichlet
+public import MathlibExt.NumberTheory.ModularForms.CuspFormConj
 
 @[expose] public section
 
 open CongruenceSubgroup ModularFormClass UpperHalfPlane
 
 open scoped MatrixGroups
-
-namespace ModularFormClass
-
-/-- The `n`-th Fourier coefficient of a modular form, read from its
-`q`-expansion at the cusp of width `1`. -/
-public noncomputable def qCoeff (f : ℍ → ℂ) (n : ℕ) : ℂ :=
-  (UpperHalfPlane.qExpansion 1 f).coeff n
-
-/-- The `n`-th Fourier coefficient is the `n`-th coefficient of the
-`q`-expansion. -/
-public theorem qCoeff_eq (f : ℍ → ℂ) (n : ℕ) :
-    qCoeff f n = (UpperHalfPlane.qExpansion 1 f).coeff n :=
-  rfl
-
-end ModularFormClass
 
 namespace CuspForm
 
