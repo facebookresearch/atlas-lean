@@ -12,13 +12,14 @@ public import CSLibExt.Complexity.Algebraic.ArithmeticCircuit
 public import Mathlib.Logic.Equiv.Fin.Basic
 public import Mathlib.LinearAlgebra.Matrix.Defs
 public import MathlibExt.LinearAlgebra.Matrix.FinPowReindex
+public import Mathlib.Data.Fintype.BigOperators
 
 /-!
 # Arithmetic circuit composition and block reindexing
 
-Substitution of subcircuits into circuit inputs and parallel copies of a circuit,
-with evaluation and size lemmas, plus block reindexing of matrices for recursive
-constructions.
+Substitution of subcircuits into circuit inputs, parallel copies of a circuit, and
+linear-combination circuits, with evaluation and size lemmas, plus block reindexing of
+matrices for recursive constructions.
 -/
 
 set_option autoImplicit false
@@ -295,7 +296,8 @@ def parallel {F : Type u} {A : Type v} {B : Type w}
     match tb with
     | (t, b) =>
       parallelOperand c r t (Nat.le_refl c.size)
-        (fun j => (finProdFinEquiv (t, ⟨j.val, Nat.lt_of_lt_of_le j.isLt (Nat.le_refl c.size)⟩)).isLt)
+        (fun j => (finProdFinEquiv (t,
+          ⟨j.val, Nat.lt_of_lt_of_le j.isLt (Nat.le_refl c.size)⟩)).isLt)
         (c.output b)
 
 /-- Size of parallel copies is the number of copies times the size. -/
@@ -369,7 +371,8 @@ private theorem evaluateNode_parallel_aux {F : Type u} {A : Type v} {B : Type w}
       rw [hS, hC]
       have hn : (finProdFinEquiv.symm i).2.val ≤ c.size :=
         Nat.le_of_lt (finProdFinEquiv.symm i).2.isLt
-      have hval : (finProdFinEquiv ((finProdFinEquiv.symm i).1, (finProdFinEquiv.symm i).2)).val = i.val := by
+      have hval : (finProdFinEquiv ((finProdFinEquiv.symm i).1,
+          (finProdFinEquiv.symm i).2)).val = i.val := by
         have h : finProdFinEquiv (finProdFinEquiv.symm i) = i :=
           Equiv.apply_symm_apply _ _
         have hp : (finProdFinEquiv.symm i) =
@@ -396,7 +399,7 @@ private theorem evaluateNode_parallel_aux {F : Type u} {A : Type v} {B : Type w}
       rw [hgate]
       apply eval_parallelGate
       intro j
-      show (c.parallel r).evaluateNode x
+      change (c.parallel r).evaluateNode x
           ⟨(finProdFinEquiv ((finProdFinEquiv.symm i).1,
             ⟨j.val, Nat.lt_of_lt_of_le j.isLt hn⟩)).val,
             Nat.lt_trans (hN j) i.isLt⟩ =
@@ -446,13 +449,338 @@ theorem evaluate_parallel {F : Type u} {A : Type v} {B : Type w}
     exact hih
   have hout : (c.parallel r).output (t, b) =
       parallelOperand c r t (Nat.le_refl c.size)
-        (fun j => (finProdFinEquiv (t, ⟨j.val, Nat.lt_of_lt_of_le j.isLt (Nat.le_refl c.size)⟩)).isLt)
+        (fun j => (finProdFinEquiv (t,
+          ⟨j.val, Nat.lt_of_lt_of_le j.isLt (Nat.le_refl c.size)⟩)).isLt)
         (c.output b) := rfl
   simp only [evaluate, hout]
   exact eval_parallelOperand c r t (Nat.le_refl c.size)
     (fun j => (finProdFinEquiv (t, ⟨j.val, Nat.lt_of_lt_of_le j.isLt (Nat.le_refl c.size)⟩)).isLt)
     x (c.output b) ((c.parallel r).evaluateNode x) (c.evaluateNode (fun a => x (t, a)))
     (fun j => h ⟨j.val, Nat.lt_of_lt_of_le j.isLt (Nat.le_refl c.size)⟩ _)
+
+/-- Linear-combination circuit: output `b` computes `∑ s, coeff b s * x (src b s)`,
+one block of alternating multiply/add gates per output, blocks in `Fintype.equivFin`
+order. -/
+noncomputable def linearCombination {F : Type u} {A : Type v} {B : Type w}
+    {S : Type v'} [Ring F] [Fintype B] [Fintype S]
+    (coeff : B → S → F) (src : B → S → A) :
+    ArithmeticCircuit F A B where
+  size := Fintype.card B * (2 * Fintype.card S)
+  gate := fun i =>
+    let bi := (finProdFinEquiv.symm i).1
+    let p := (finProdFinEquiv.symm i).2
+    have hp : p.val < 2 * Fintype.card S := p.isLt
+    have hval : (finProdFinEquiv (bi, p)).val = i.val := by
+      have h : finProdFinEquiv (finProdFinEquiv.symm i) = i :=
+        Equiv.apply_symm_apply _ _
+      have hpeta : (finProdFinEquiv.symm i) = (bi, p) := (Prod.eta _).symm
+      rw [hpeta] at h
+      exact congrArg Fin.val h
+    have hlt : ∀ q : ℕ, ∀ hq : q < p.val,
+        (finProdFinEquiv (bi,
+          (⟨q, by omega⟩ : Fin (2 * Fintype.card S)))).val < i.val := by
+      intro q hq
+      have hlt' : (finProdFinEquiv (bi,
+            (⟨q, by omega⟩ : Fin (2 * Fintype.card S)))).val <
+          (finProdFinEquiv (bi, p)).val := by
+        show q + (2 * Fintype.card S) * bi.val <
+          p.val + (2 * Fintype.card S) * bi.val
+        exact Nat.add_lt_add_right hq _
+      rw [hval] at hlt'
+      exact hlt'
+    have hj : p.val / 2 < Fintype.card S := by omega
+    let b := (Fintype.equivFin B).symm bi
+    let s := (Fintype.equivFin S).symm ⟨p.val / 2, hj⟩
+    if hpar : p.val % 2 = 0 then
+      .mul (.constant (coeff b s)) (.input (src b s))
+    else
+      have hodd : p.val % 2 = 1 := by omega
+      have hpos : 1 ≤ p.val := by omega
+      have hm : (finProdFinEquiv (bi,
+          (⟨p.val - 1, by omega⟩ : Fin (2 * Fintype.card S)))).val < i.val :=
+        hlt _ (by omega)
+      let m : Fin i.val :=
+        ⟨(finProdFinEquiv (bi,
+          (⟨p.val - 1, by omega⟩ : Fin (2 * Fintype.card S)))).val, hm⟩
+      let prev : ArithmeticOperand F A i.val :=
+        if hj0 : p.val / 2 = 0 then .constant 0
+        else .node ⟨(finProdFinEquiv (bi,
+          (⟨p.val - 2, by omega⟩ : Fin (2 * Fintype.card S)))).val,
+          hlt _ (by omega)⟩
+      .add prev (.node m)
+  output := fun b =>
+    let bi := (Fintype.equivFin B) b
+    if hnS : Fintype.card S = 0 then .constant 0
+    else .node (finProdFinEquiv (bi,
+      (⟨2 * Fintype.card S - 1, by omega⟩ : Fin (2 * Fintype.card S))))
+
+/-- Size of a linear-combination circuit: two gates (multiply, add) per
+(output, source) pair. -/
+theorem size_linearCombination {F : Type u} {A : Type v} {B : Type w}
+    {S : Type v'} [Ring F] [Fintype B] [Fintype S]
+    (coeff : B → S → F) (src : B → S → A) :
+    (linearCombination coeff src).size = Fintype.card B * (2 * Fintype.card S) :=
+  rfl
+
+private noncomputable def linCombTerm {F : Type u} {A : Type v} {B : Type w}
+    {S : Type v'} [Ring F] [Fintype B] [Fintype S]
+    (coeff : B → S → F) (src : B → S → A) (x : A → F) (b : B) : ℕ → F :=
+  fun k => if hk : k < Fintype.card S then
+    coeff b ((Fintype.equivFin S).symm ⟨k, hk⟩) *
+      x (src b ((Fintype.equivFin S).symm ⟨k, hk⟩)) else 0
+
+private theorem linCombTerm_eq {F : Type u} {A : Type v} {B : Type w}
+    {S : Type v'} [Ring F] [Fintype B] [Fintype S]
+    (coeff : B → S → F) (src : B → S → A) (x : A → F) (b : B)
+    (k : ℕ) (hk : k < Fintype.card S) :
+    linCombTerm coeff src x b k =
+      coeff b ((Fintype.equivFin S).symm ⟨k, hk⟩) *
+        x (src b ((Fintype.equivFin S).symm ⟨k, hk⟩)) := by
+  simp [linCombTerm, hk]
+
+private theorem evaluateNode_linearCombination_aux {F : Type u} {A : Type v}
+    {B : Type w} {S : Type v'} [Ring F] [Fintype B] [Fintype S]
+    (coeff : B → S → F) (src : B → S → A)
+    (x : A → F) (n : ℕ) :
+    ∀ (i : Fin (linearCombination coeff src).size), i.val < n →
+      (∀ _ : (finProdFinEquiv.symm i).2.val % 2 = 0,
+        (linearCombination coeff src).evaluateNode x i =
+          linCombTerm coeff src x
+            ((Fintype.equivFin B).symm (finProdFinEquiv.symm i).1)
+            ((finProdFinEquiv.symm i).2.val / 2)) ∧
+      (∀ _ : (finProdFinEquiv.symm i).2.val % 2 = 1,
+        (linearCombination coeff src).evaluateNode x i =
+          ∑ k ∈ Finset.range ((finProdFinEquiv.symm i).2.val / 2 + 1),
+            linCombTerm coeff src x
+              ((Fintype.equivFin B).symm (finProdFinEquiv.symm i).1) k) := by
+  induction n with
+  | zero =>
+    intro i hi
+    exact absurd hi (Nat.not_lt_zero _)
+  | succ n ih =>
+    intro i hi
+    by_cases hlt : i.val < n
+    · exact ih i hlt
+    · have heq : i.val = n := by omega
+      have hS := evaluateNode.eq_1 (linearCombination coeff src) x i
+      have hp : (finProdFinEquiv.symm i).2.val < 2 * Fintype.card S :=
+        (finProdFinEquiv.symm i).2.isLt
+      have hj : (finProdFinEquiv.symm i).2.val / 2 < Fintype.card S := by omega
+      have hval : (finProdFinEquiv ((finProdFinEquiv.symm i).1,
+          (finProdFinEquiv.symm i).2)).val = i.val := by
+        have h : finProdFinEquiv (finProdFinEquiv.symm i) = i :=
+          Equiv.apply_symm_apply _ _
+        have hpeta : (finProdFinEquiv.symm i) =
+            ((finProdFinEquiv.symm i).1, (finProdFinEquiv.symm i).2) :=
+          (Prod.eta _).symm
+        rw [hpeta] at h
+        exact congrArg Fin.val h
+      have hlt : ∀ q : ℕ, ∀ hq : q < (finProdFinEquiv.symm i).2.val,
+          (finProdFinEquiv ((finProdFinEquiv.symm i).1,
+            (⟨q, by omega⟩ : Fin (2 * Fintype.card S)))).val < i.val := by
+        intro q hq
+        have hlt' : (finProdFinEquiv ((finProdFinEquiv.symm i).1,
+              (⟨q, by omega⟩ : Fin (2 * Fintype.card S)))).val <
+            (finProdFinEquiv ((finProdFinEquiv.symm i).1,
+              (finProdFinEquiv.symm i).2)).val := by
+          show q + (2 * Fintype.card S) * (finProdFinEquiv.symm i).1.val <
+            (finProdFinEquiv.symm i).2.val + (2 * Fintype.card S) *
+              (finProdFinEquiv.symm i).1.val
+          exact Nat.add_lt_add_right hq _
+        rw [hval] at hlt'
+        exact hlt'
+      constructor
+      · -- multiply gate: value is the single term
+        intro hpar
+        rw [hS]
+        have hgate : (linearCombination coeff src).gate i =
+            .mul (.constant (coeff
+              ((Fintype.equivFin B).symm (finProdFinEquiv.symm i).1)
+              ((Fintype.equivFin S).symm
+                ⟨(finProdFinEquiv.symm i).2.val / 2, hj⟩)))
+              (.input (src
+                ((Fintype.equivFin B).symm (finProdFinEquiv.symm i).1)
+                ((Fintype.equivFin S).symm
+                  ⟨(finProdFinEquiv.symm i).2.val / 2, hj⟩))) := by
+          simp [linearCombination, hpar]
+        rw [hgate]
+        simp only [ArithmeticGate.evaluate, ArithmeticOperand.evaluate]
+        rw [linCombTerm_eq _ _ _ _ _ hj]
+      · -- add gate: value is the partial sum
+        intro hpar
+        have hpos : 1 ≤ (finProdFinEquiv.symm i).2.val := by omega
+        have h1 : (finProdFinEquiv.symm i).2.val - 1 <
+            (finProdFinEquiv.symm i).2.val := by omega
+        have hm : (finProdFinEquiv ((finProdFinEquiv.symm i).1,
+            (⟨(finProdFinEquiv.symm i).2.val - 1, by omega⟩ :
+              Fin (2 * Fintype.card S)))).val < i.val := hlt _ h1
+        have h1lt : (finProdFinEquiv ((finProdFinEquiv.symm i).1,
+            (⟨(finProdFinEquiv.symm i).2.val - 1, by omega⟩ :
+              Fin (2 * Fintype.card S)))).val < n :=
+          Nat.lt_of_lt_of_le hm (le_of_eq heq)
+        have h1ltS : (finProdFinEquiv ((finProdFinEquiv.symm i).1,
+            (⟨(finProdFinEquiv.symm i).2.val - 1, by omega⟩ :
+              Fin (2 * Fintype.card S)))).val <
+            (linearCombination coeff src).size :=
+          (finProdFinEquiv ((finProdFinEquiv.symm i).1,
+            (⟨(finProdFinEquiv.symm i).2.val - 1, by omega⟩ :
+              Fin (2 * Fintype.card S)))).isLt
+        let g1 : Fin (linearCombination coeff src).size :=
+          ⟨(finProdFinEquiv ((finProdFinEquiv.symm i).1,
+            (⟨(finProdFinEquiv.symm i).2.val - 1, by omega⟩ :
+              Fin (2 * Fintype.card S)))).val, h1ltS⟩
+        have h1peq : g1 = (finProdFinEquiv ((finProdFinEquiv.symm i).1,
+            (⟨(finProdFinEquiv.symm i).2.val - 1, by omega⟩ :
+              Fin (2 * Fintype.card S))) :
+            Fin (Fintype.card B * (2 * Fintype.card S))) := Fin.ext rfl
+        have h1sym : finProdFinEquiv.symm g1 =
+            ((finProdFinEquiv.symm i).1,
+              (⟨(finProdFinEquiv.symm i).2.val - 1, by omega⟩ :
+                Fin (2 * Fintype.card S))) := by
+          rw [h1peq]
+          exact Equiv.symm_apply_apply _ _
+        have hpar1 : (finProdFinEquiv.symm g1).2.val % 2 = 0 := by
+          rw [h1sym]
+          show ((finProdFinEquiv.symm i).2.val - 1) % 2 = 0
+          omega
+        have hIH1 := (ih g1 h1lt).1 hpar1
+        simp only [h1sym] at hIH1
+        have hdiv1 : ((finProdFinEquiv.symm i).2.val - 1) / 2 =
+            (finProdFinEquiv.symm i).2.val / 2 := by omega
+        rw [hdiv1] at hIH1
+        by_cases hj0 : (finProdFinEquiv.symm i).2.val / 2 = 0
+        · -- first source: previous sum is zero
+          rw [hS]
+          have hgate0 : (linearCombination coeff src).gate i =
+              .add (.constant 0)
+                (.node ⟨(finProdFinEquiv ((finProdFinEquiv.symm i).1,
+                  (⟨(finProdFinEquiv.symm i).2.val - 1, by omega⟩ :
+                    Fin (2 * Fintype.card S)))).val, hm⟩) := by
+            simp [linearCombination, hpar, hj0]
+          rw [hgate0]
+          simp only [ArithmeticGate.evaluate, ArithmeticOperand.evaluate]
+          rw [hj0] at hIH1 ⊢
+          rw [Finset.sum_range_succ, Finset.sum_range_zero]
+          congr 1
+        · -- later source: add onto the previous partial sum
+          have h2 : (finProdFinEquiv.symm i).2.val - 2 <
+              (finProdFinEquiv.symm i).2.val := by omega
+          have hm2 : (finProdFinEquiv ((finProdFinEquiv.symm i).1,
+              (⟨(finProdFinEquiv.symm i).2.val - 2, by omega⟩ :
+                Fin (2 * Fintype.card S)))).val < i.val := hlt _ h2
+          have h2lt : (finProdFinEquiv ((finProdFinEquiv.symm i).1,
+              (⟨(finProdFinEquiv.symm i).2.val - 2, by omega⟩ :
+                Fin (2 * Fintype.card S)))).val < n :=
+            Nat.lt_of_lt_of_le hm2 (le_of_eq heq)
+          have h2ltS : (finProdFinEquiv ((finProdFinEquiv.symm i).1,
+              (⟨(finProdFinEquiv.symm i).2.val - 2, by omega⟩ :
+                Fin (2 * Fintype.card S)))).val <
+              (linearCombination coeff src).size :=
+            (finProdFinEquiv ((finProdFinEquiv.symm i).1,
+              (⟨(finProdFinEquiv.symm i).2.val - 2, by omega⟩ :
+                Fin (2 * Fintype.card S)))).isLt
+          let g2 : Fin (linearCombination coeff src).size :=
+            ⟨(finProdFinEquiv ((finProdFinEquiv.symm i).1,
+              (⟨(finProdFinEquiv.symm i).2.val - 2, by omega⟩ :
+                Fin (2 * Fintype.card S)))).val, h2ltS⟩
+          have h2peq : g2 = (finProdFinEquiv ((finProdFinEquiv.symm i).1,
+              (⟨(finProdFinEquiv.symm i).2.val - 2, by omega⟩ :
+                Fin (2 * Fintype.card S))) :
+              Fin (Fintype.card B * (2 * Fintype.card S))) := Fin.ext rfl
+          have h2sym : finProdFinEquiv.symm g2 =
+              ((finProdFinEquiv.symm i).1,
+                (⟨(finProdFinEquiv.symm i).2.val - 2, by omega⟩ :
+                  Fin (2 * Fintype.card S))) := by
+            rw [h2peq]
+            exact Equiv.symm_apply_apply _ _
+          have hpar2 : (finProdFinEquiv.symm g2).2.val % 2 = 1 := by
+            rw [h2sym]
+            show ((finProdFinEquiv.symm i).2.val - 2) % 2 = 1
+            omega
+          have hIH2 := (ih g2 h2lt).2 hpar2
+          simp only [h2sym] at hIH2
+          have hdiv2 : ((finProdFinEquiv.symm i).2.val - 2) / 2 + 1 =
+              (finProdFinEquiv.symm i).2.val / 2 := by omega
+          rw [hdiv2] at hIH2
+          rw [hS]
+          have hgate1 : (linearCombination coeff src).gate i =
+              .add (.node ⟨(finProdFinEquiv ((finProdFinEquiv.symm i).1,
+                  (⟨(finProdFinEquiv.symm i).2.val - 2, by omega⟩ :
+                    Fin (2 * Fintype.card S)))).val, hm2⟩)
+                (.node ⟨(finProdFinEquiv ((finProdFinEquiv.symm i).1,
+                  (⟨(finProdFinEquiv.symm i).2.val - 1, by omega⟩ :
+                    Fin (2 * Fintype.card S)))).val, hm⟩) := by
+            simp [linearCombination, hpar, hj0]
+          rw [hgate1]
+          simp only [ArithmeticGate.evaluate, ArithmeticOperand.evaluate]
+          rw [Finset.sum_range_succ]
+          congr 1
+
+/-- Evaluation of a linear-combination circuit is the stated sum. -/
+theorem evaluate_linearCombination {F : Type u} {A : Type v} {B : Type w}
+    {S : Type v'} [Ring F] [Fintype B] [Fintype S]
+    (coeff : B → S → F) (src : B → S → A) (x : A → F) (b : B) :
+    (linearCombination coeff src).evaluate x b = ∑ s, coeff b s * x (src b s) := by
+  by_cases hnS : Fintype.card S = 0
+  · -- empty source type: output is constant zero and the sum is empty
+    have hout : (linearCombination coeff src).output b = .constant 0 := by
+      simp [linearCombination, hnS]
+    simp only [evaluate, hout, ArithmeticOperand.evaluate]
+    symm
+    have hpos : ¬ 0 < Fintype.card S := by omega
+    rw [Fintype.card_pos_iff] at hpos
+    let : IsEmpty S := ⟨fun s => hpos ⟨s⟩⟩
+    rw [Finset.univ_eq_empty]
+    exact Finset.sum_empty
+  · -- nonempty: the output is the last add gate, a complete partial sum
+    have hk : (finProdFinEquiv ((Fintype.equivFin B) b,
+        (⟨2 * Fintype.card S - 1, by omega⟩ : Fin (2 * Fintype.card S)))).val <
+        (linearCombination coeff src).size :=
+      (finProdFinEquiv ((Fintype.equivFin B) b,
+        (⟨2 * Fintype.card S - 1, by omega⟩ : Fin (2 * Fintype.card S)))).isLt
+    let gL : Fin (linearCombination coeff src).size :=
+      ⟨(finProdFinEquiv ((Fintype.equivFin B) b,
+        (⟨2 * Fintype.card S - 1, by omega⟩ : Fin (2 * Fintype.card S)))).val,
+        hk⟩
+    have hmap : gL.val < (linearCombination coeff src).size + 1 :=
+      Nat.lt_of_lt_of_le hk (Nat.le_succ _)
+    have hpeq : gL = (finProdFinEquiv ((Fintype.equivFin B) b,
+        (⟨2 * Fintype.card S - 1, by omega⟩ : Fin (2 * Fintype.card S))) :
+        Fin (Fintype.card B * (2 * Fintype.card S))) := Fin.ext rfl
+    have hsym : finProdFinEquiv.symm gL = ((Fintype.equivFin B) b,
+        (⟨2 * Fintype.card S - 1, by omega⟩ : Fin (2 * Fintype.card S))) := by
+      rw [hpeq]
+      exact Equiv.symm_apply_apply _ _
+    have hpar1 : (finProdFinEquiv.symm gL).2.val % 2 = 1 := by
+      rw [hsym]
+      show (2 * Fintype.card S - 1) % 2 = 1
+      omega
+    have hall := evaluateNode_linearCombination_aux coeff src x
+      ((linearCombination coeff src).size + 1)
+    have hIH := (hall gL hmap).2 hpar1
+    simp only [hsym] at hIH
+    have hdiv : (2 * Fintype.card S - 1) / 2 + 1 = Fintype.card S := by omega
+    rw [hdiv] at hIH
+    simp only [Equiv.symm_apply_apply] at hIH
+    have hout : (linearCombination coeff src).output b =
+        .node (finProdFinEquiv ((Fintype.equivFin B) b,
+          (⟨2 * Fintype.card S - 1, by omega⟩ :
+            Fin (2 * Fintype.card S)))) := by
+      simp [linearCombination, hnS]
+    simp only [evaluate, hout, ArithmeticOperand.evaluate]
+    refine hIH.trans ?_
+    calc (∑ k ∈ Finset.range (Fintype.card S), linCombTerm coeff src x b k)
+        = ∑ i : Fin (Fintype.card S), linCombTerm coeff src x b ↑i :=
+          (Fin.sum_univ_eq_sum_range _ _).symm
+      _ = ∑ i : Fin (Fintype.card S),
+          coeff b ((Fintype.equivFin S).symm i) *
+            x (src b ((Fintype.equivFin S).symm i)) := by
+          apply Finset.sum_congr rfl
+          intro i _
+          rw [linCombTerm_eq _ _ _ _ _ i.isLt]
+      _ = ∑ s, coeff b s * x (src b s) :=
+        Equiv.sum_comp (Fintype.equivFin S).symm
+          (fun s => coeff b s * x (src b s))
 
 end ArithmeticCircuit
 
