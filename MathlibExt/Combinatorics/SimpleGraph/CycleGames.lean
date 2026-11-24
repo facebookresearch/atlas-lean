@@ -8,16 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Algebra.Group.Subgroup.Lattice
-public import Mathlib.Combinatorics.SimpleGraph.Cayley
-public import Mathlib.Combinatorics.SimpleGraph.CycleGraph
-public import Mathlib.Combinatorics.SimpleGraph.Hasse
-public import Mathlib.Combinatorics.SimpleGraph.Prod
+public import Mathlib.Combinatorics.SimpleGraph.Basic
 public import Mathlib.Combinatorics.SimpleGraph.Sum
-public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
-public import Mathlib.Combinatorics.SimpleGraph.Matching
-public import MathlibExt.Combinatorics.Matching.GallaiEdmonds
-public import MathlibExt.Combinatorics.SimpleGraph.VertexTransitive
+public import Mathlib.Tactic.FinCases
 
 namespace MetaMathlibExt
 
