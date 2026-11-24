@@ -10485,6 +10485,7 @@
   "MathlibExt/Combinatorics/Enumerative/ArndtLastPart": {"to": "Combinatorics/integer-compositions", "title": "Arndt compositions"},
   "MathlibExt/Combinatorics/Enumerative/ArndtV": {"to": "Combinatorics/integer-compositions", "title": "Arndt compositions"},
   "MathlibExt/Combinatorics/Enumerative/ArndtLastPartBounds": {"to": "Combinatorics/integer-compositions", "title": "Arndt compositions"},
+  "MathlibExt/Combinatorics/Enumerative/ArndtSmallPartCounts": {"to": "Combinatorics/integer-compositions", "title": "Arndt compositions"},
   "MathlibExt/Combinatorics/Enumerative/AscentSequenceBinomialFibonacci": {"to": "Combinatorics/permutations/permutation-patterns", "title": "Pattern avoidance in weak ascent sequences"},
   "MathlibExt/Combinatorics/Enumerative/BAryBinomialCoefficient": {"to": "Combinatorics/binomial-coefficients/generalized-binomial-coefficients", "title": "Base-b digitwise binomial and multinomial coefficients"},
   "MathlibExt/Combinatorics/Enumerative/BAryBinomialGeneratingFunction": {"to": "Combinatorics/binomial-coefficients/generalized-binomial-coefficients", "title": "Base-b digitwise binomial and multinomial coefficients"},
