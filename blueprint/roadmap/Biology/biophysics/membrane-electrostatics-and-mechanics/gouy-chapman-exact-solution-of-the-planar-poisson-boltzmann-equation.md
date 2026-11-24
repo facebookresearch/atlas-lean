@@ -1,7 +1,9 @@
 # Gouy–Chapman solution of the planar Poisson–Boltzmann equation
 
 For a planar charged surface in a symmetric 1:1 electrolyte with Debye length $\lambda_D > 0$ and Bjerrum length $l_B > 0$, write the potential in thermal units, $\Phi = e\phi/k_B T$, and distance from the surface in Debye lengths, $x$. The Poisson–Boltzmann equation becomes $\Phi'' = \sinh\Phi$ on $x > 0$ (Tokmakoff, Sec. 6.7). Its solutions with $\Phi(x) \to 0$ and $\Phi'(x) \to 0$ as $x \to \infty$ and surface value $\Phi(0) = \Phi_0$ are
+
 $$\Phi(x) = 2\ln\frac{1 + g e^{-x}}{1 - g e^{-x}}, \qquad g = \tanh(\Phi_0/4) \in (-1, 1),$$
+
 equivalently $\tanh(\Phi(x)/4) = g e^{-x}$. If the surface carries number charge density $\sigma > 0$ (charge density $e\sigma$), the boundary condition $\Phi'(0) = -2\lambda_D/b$ with the Gouy–Chapman length $b = 1/(2\pi l_B \sigma)$ gives $g = -b/\lambda_D + \sqrt{1 + (b/\lambda_D)^2}$, which is the source's formula with $x_0 = e/(2\pi l_B \sigma_{\text{charge}}) = b$. For $\sigma < 0$ the solution is the negative of the one for $|\sigma|$, and for $\sigma = 0$ it is $\Phi \equiv 0$ ($g = 0$); neither case is given by the formula in $b$.
 
 ## Expansion

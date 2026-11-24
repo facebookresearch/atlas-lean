@@ -1,7 +1,9 @@
 # Permanence of replicator equations by average Lyapunov functions
 
 The replicator equation $\dot x_i = x_i((Ax)_i - x\cdot Ax)$ on $S_n$ is permanent if there is a compact set $K$ in the interior of $S_n$ such that every interior orbit eventually stays in $K$. Hofbauer and Sigmund (2003, Theorem 5) state the criterion: the replicator equation is permanent if there exists $p$ in the interior of $S_n$ with
+
 $$p\cdot Ab > b\cdot Ab$$
+
 for all rest points $b$ on the boundary of $S_n$. Since the rest points on the boundary form a finite union of convex sets, it suffices to check the inequality at their extreme points, which gives a finite system of linear inequalities for $p$. For monocyclic payoff matrices ($a_{ii} = 0$, $a_{ij} > 0$ if $i = j + 1 \bmod n$, $a_{ij} \le 0$ otherwise) the replicator equation is permanent if and only if there is an interior rest point $z$ with $z\cdot Az > 0$ (their Theorem 6).
 
 ## Expansion

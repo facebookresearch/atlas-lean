@@ -1,7 +1,9 @@
 # Ott–Antonsen invariant manifold for globally coupled phase oscillators
 
 For the continuum limit of the Kuramoto model of globally coupled phase oscillators, and the extensions treated by Ott and Antonsen (2008), describe the state by a density $f(\omega, \theta, t)$ of oscillators with natural frequency $\omega$, distributed with density $g$, and phase $\theta$. The source considers densities of the form
+
 $$f = \frac{g(\omega)}{2\pi}\Bigl[1 + \sum_{n \ge 1}\bigl(\alpha(\omega, t)^n e^{in\theta} + \text{c.c.}\bigr)\Bigr] \qquad \text{(Eq. (8))},$$
+
 for which the evolution equation reduces to the single equation $\partial_t\alpha + (K/2)(r\alpha^2 - r^*) + i\omega\alpha = 0$ (Eq. (6)), independent of the Fourier mode, where $r$ is the order parameter. It shows that $|\alpha| \le 1$ is preserved, and defines $M$ as the set of such densities with $|\alpha(\omega, t)| \le 1$ for real $\omega$ and $\alpha$ analytically continuable into the lower half $\omega$-plane, without singularities there and with $|\alpha| \to 0$ as $\operatorname{Im}\omega \to -\infty$; these conditions are preserved by Eq. (6), so $M$ is invariant under the dynamics. For a Lorentzian $g$ the order parameter on $M$ obeys a closed low-dimensional ordinary differential equation (Eq. (14)), which gives an exact solution for the macroscopic nonlinear dynamics of the Kuramoto model.
 
 ## Expansion

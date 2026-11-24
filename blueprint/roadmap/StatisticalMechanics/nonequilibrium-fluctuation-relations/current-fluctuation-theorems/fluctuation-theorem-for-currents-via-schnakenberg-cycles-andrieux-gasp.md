@@ -1,7 +1,9 @@
 # Fluctuation theorem for currents via Schnakenberg cycles
 
 Let $X$ be an irreducible continuous-time Markov jump process on a finite state space whose transition graph is connected and in which every transition has a reverse transition, in its stationary state. Orient the edges, choose a spanning tree, and let each chord $e_c$ outside the tree define an oriented fundamental cycle $c$ (Schnakenberg's construction), with affinity $A_c = \ln \prod_{e \in c} r(e)/r(-e)$, the products taken along the cycle in its orientation. Let $J_c(t)$ be the integrated current through the chord of $c$ up to time $t$ (net number of jumps along it) and $j_c(t) = J_c(t)/t$ the empirical current. Andrieux and Gaspard (2007) prove that the scaled cumulant generating function
+
 $$Q(\eta) = -\lim_{t\to\infty} \frac1t \ln E\bigl[e^{-\eta\cdot J(t)}\bigr]$$
+
 satisfies $Q(\eta) = Q(A - \eta)$ for all $\eta$; with this convention $-Q(\eta)$ is the dominant eigenvalue of the tilted generator (their Eq. (47)). Consequently the large deviation rate function $I$ of the empirical currents satisfies $I(-j) - I(j) = A \cdot j$, that is, the probability of $j(t)$ near $j$ and of $j(t)$ near $-j$ have logarithmic ratio $t\, A\cdot j$ as $t \to \infty$.
 
 ## Expansion

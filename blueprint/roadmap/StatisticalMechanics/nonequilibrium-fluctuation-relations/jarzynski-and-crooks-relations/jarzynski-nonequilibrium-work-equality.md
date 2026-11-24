@@ -1,7 +1,9 @@
 # Jarzynski nonequilibrium work equality for isolated Hamiltonian dynamics
 
 Let $\Gamma$ be a phase space with Liouville measure $dz$ and $H_\lambda : \Gamma \to \mathbb{R}$, $\lambda \in [0, 1]$, a family of Hamiltonians; fix $\beta > 0$ and assume the partition functions $Z_\lambda = \int_\Gamma e^{-\beta H_\lambda(z)}\, dz$ are finite and positive for $\lambda = 0, 1$, with free energies $F_\lambda = -\beta^{-1}\ln Z_\lambda$. Let a protocol $\lambda(t)$ switch from $0$ to $1$ over $[0, t_s]$, and suppose the flow $\phi$ of the time-dependent Hamiltonian $H_{\lambda(t)}$ from time $0$ to $t_s$ is defined for every initial point, invertible and volume-preserving (Liouville). Draw $z_0$ from the canonical law $Z_0^{-1} e^{-\beta H_0}\, dz$ and let $W = H_1(\phi(z_0)) - H_0(z_0)$, the work done along the trajectory. Then
+
 $$E\bigl[e^{-\beta W}\bigr] = \frac{Z_1}{Z_0} = e^{-\beta (F_1 - F_0)},$$
+
 independently of the protocol (Jarzynski 1997, Eq. (2a)), by the change of variables $z = \phi(z_0)$.
 
 ## Expansion

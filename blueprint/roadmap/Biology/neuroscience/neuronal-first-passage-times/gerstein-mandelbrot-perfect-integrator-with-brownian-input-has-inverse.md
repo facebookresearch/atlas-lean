@@ -1,7 +1,9 @@
 # Inverse-Gaussian interspike intervals of the perfect integrator
 
 Gerstein and Mandelbrot (1964) model the membrane state between spikes as a diffusion with unit diffusion coefficient (increment variance $2T$ over time $T$) and constant drift, started at distance $z_0 > 0$ from an absorbing threshold and reset to that distance after each spike. Write $\mu$ for the drift velocity toward the threshold. The interspike interval is the first-passage time to the threshold, with density
+
 $$I(T) = \frac{z_0}{\sqrt{4\pi}}\, T^{-3/2} \exp\Bigl(-\frac{(z_0 - \mu T)^2}{4T}\Bigr), \qquad T > 0,$$
+
 which is the source's equation (9) with its drift parameter $c = -\mu$ (coordinates with the threshold at the origin), and successive intervals are independent (the source states this for the model with drift). For $\mu = 0$ the density reduces to the source's equation (6), $z_0 (4\pi)^{-1/2} T^{-3/2} e^{-z_0^2/(4T)}$, under which the mean interval is infinite (the source says the interval has no population moments of any order); in fact, since the density decays like $T^{-3/2}$, $E[T^\alpha] < \infty$ exactly for $\alpha < \tfrac12$, so the interval has no finite moment of order $\ge \tfrac12$. For $\mu > 0$ this is an inverse-Gaussian law with mean $z_0/\mu$, the first-passage law of Brownian motion with positive drift to a fixed level.
 
 ## Expansion

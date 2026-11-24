@@ -1,7 +1,9 @@
 # The ideal free distribution is an evolutionarily stable state
 
 A single species with total density $M > 0$ distributes over $H$ patches according to $p$ in the simplex $\Delta_H$, and an individual in patch $i$ receives payoff $V_i(p_i M)$, where each $V_i$ is strictly decreasing. With the patches ordered so that $V_1(0) \ge \dots \ge V_H(0)$, the ideal free distribution (IFD) $p^*$ at density $M$ occupies patches $1, \dots, k$ with equal payoffs $V_1(p_1^* M) = \dots = V_k(p_k^* M) = V^* \ge V_{k+1}(0)$, so that no individual can gain by moving. Cressman and Křivan (2006, Appendix A) prove that the IFD is an evolutionarily stable state in the nonlinear sense: for every $p \in \Delta_H$ with $p \ne p^*$,
+
 $$\sum_i p_i^*\, V_i(p_i M) > \sum_i p_i\, V_i(p_i M).$$
+
 When all patches are occupied the proof writes the difference as $\sum_i (p_i^* - p_i)[V_i(p_i M) - V_i(p_i^* M)]$, each term of which is nonnegative and positive unless $p_i = p_i^*$, because $V_i$ is strictly decreasing; the case of unoccupied patches uses $V^* \ge V_i(0)$ for $i > k$.
 
 ## Expansion

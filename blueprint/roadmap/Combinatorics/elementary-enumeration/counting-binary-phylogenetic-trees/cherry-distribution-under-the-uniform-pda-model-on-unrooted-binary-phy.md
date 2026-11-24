@@ -1,7 +1,9 @@
 # Cherry distribution of uniformly random unrooted binary trees
 
 Let $C_n$ be the number of cherries (pairs of leaves adjacent to a common vertex) of an unrooted binary phylogenetic tree on $n \ge 4$ labelled leaves drawn uniformly from all $(2n - 5)!!$ such trees. McKenzie and Steel (2000, Theorem 4) state, for $k \ge 2$,
+
 $$P[C_n = k] = \frac{n!\,(n-2)!\,(n-4)!\; 2^{n-2k}}{(n-2k)!\,(2n-4)!\,k!\,(k-2)!},$$
+
 $E[C_n] = \frac{n(n-1)}{2(2n-5)}$ and $\mathrm{Var}[C_n] = \frac{n(n-1)(n-4)(n-5)}{2(2n-5)^2(2n-7)}$; they attribute the exact distribution to Hendy and Penny and the mean to Steel and Penny, and derive the variance from Steel's formula for the factorial moments. Their Corollary 5 gives $(C_n - n/4)/\sqrt{n/16} \to N(0, 1)$ in distribution, proved by realizing the uniform model (Section 4.3: each new leaf is attached to a uniformly chosen edge) as an extended Pólya urn with black, white and red balls for cherry pendant edges, other pendant edges and interior edges, and applying the urn central limit theorem of their Section 3.
 
 ## Depends on

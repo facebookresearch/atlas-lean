@@ -1,7 +1,9 @@
 # Asymptotic speed of propagation for the spatial Kermack–McKendrick epidemic
 
 Diekmann (1979) studies the nonlinear integral equation
+
 $$u(t, x) = \int_0^t A(t - \tau)\int_{\mathbb{R}^n} g(u(\tau, \xi))\,V(x - \xi)\,d\xi\,d\tau + f(t, x), \qquad t \ge 0,\ x \in \mathbb{R}^n,$$
+
 which models the spatio-temporal spread of an epidemic (Eq. (1.1)), under hypotheses on the data: $A \ge 0$ and $V \ge 0$ are integrable with integral $1$, $V$ is radial with exponentially decaying tails, $g$ is continuously differentiable with $g(0) = 0$, $g'(0) > 1$, $0 < g' < C$ and a positive fixed point $p$, and $f \ge 0$ is not identically zero (Section 2). From the characteristic equation of the linearized wave equation the source defines a minimal wave speed $c_0 \in (0, \infty)$ (Eq. (2.8)) and recalls from earlier work of Diekmann and of Diekmann and Kaper that travelling waves of speed $c$ exist for $c \ge c_0$ and do not exist for $0 \le c < c_0$. It proves that $c_0$ is the asymptotic speed of propagation: if $f$ is bounded with uniformly compact support in $x$ and $g(x) \le g'(0)x$, then $\sup\{u(t, x) : |x| \ge ct\} \to 0$ for every $c > c_0$ (Theorem 1); and for every $c \in (0, c_0)$, $u$ stays bounded away from zero uniformly on $\{|x| \le ct\}$ for large $t$ (Theorem 2).
 
 ## Expansion

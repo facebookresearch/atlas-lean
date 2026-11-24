@@ -1,7 +1,9 @@
 # Manski bounds on the average treatment effect without assumptions
 
 Let $Z \in \{0, 1\}$ be the treatment received, $Y(1), Y(0) \in [0, 1]$ potential outcomes and $Y = Y(Z)$ the observed outcome, with $0 < \Pr[Z = 1] < 1$. The observed data identify $E[Y(z) \mid Z = z]$ and $\Pr[Z = z]$ but give no information about $E[Y(z) \mid Z = 1 - z] \in [0, 1]$. Setting these unidentified terms to their extreme values in $E[Y(1) - Y(0)] = \sum_z \bigl(E[Y(1) \mid Z = z] - E[Y(0) \mid Z = z]\bigr)\Pr[Z = z]$ gives the bounds
+
 $$E[Y(1) \mid Z = 1]\Pr[Z = 1] - E[Y(0) \mid Z = 0]\Pr[Z = 0] - \Pr[Z = 1] \le E[Y(1) - Y(0)] \le E[Y(1) \mid Z = 1]\Pr[Z = 1] - E[Y(0) \mid Z = 0]\Pr[Z = 0] + \Pr[Z = 0],$$
+
 derived independently by Robins (1989) and Manski (1990). They are sharp: no narrower bounds follow without additional assumptions. The interval lies in $[-1, 1]$, has width exactly $1$, and always contains $0$, so without further assumptions the sign of the treatment effect cannot be determined (Richardson, Hudgens, Gilbert and Fine 2014, equations (1)–(3)). If $Y(0)$ and $Y(1)$ are unbounded the bounds are uninformative; outcomes in a bounded interval reduce to $[0, 1]$ by rescaling.
 
 ## Depends on

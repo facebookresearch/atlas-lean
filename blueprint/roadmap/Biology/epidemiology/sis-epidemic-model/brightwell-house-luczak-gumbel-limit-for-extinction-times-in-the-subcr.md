@@ -1,7 +1,9 @@
 # Gumbel limit for extinction times in the subcritical SIS logistic epidemic
 
 In the stochastic SIS logistic epidemic on a population of $N$ individuals, each infective infects each susceptible at rate $\lambda/N$ and recovers at rate $\mu$; let $X_N(t)$ be the number of infectives and $T_N$ the extinction time. Brightwell, House and Luczak (2018, Theorem 1.1) prove: if $\mu = \mu(N)$ and $\lambda = \lambda(N)$ are bounded away from $0$ and $\infty$, $(\mu - \lambda)N^{1/2} \to \infty$, $X_N(0)$ is non-random and $X_N(0)(\mu - \lambda) \to \infty$, then
+
 $$(\mu - \lambda)T_N - \log N + 2\log(\mu - \lambda) - \log\Bigl(1 + \frac{(\mu - \lambda)N}{\lambda X_N(0)}\Bigr) - \log\mu - \log\lambda \;\to\; W$$
+
 in distribution, where $W$ has the standard Gumbel law $P(W \le w) = e^{-e^{-w}}$ (Eq. (1.4)). This covers both fixed $\lambda < \mu$ and the near-critical regime in which $\mu - \lambda \to 0$ more slowly than $N^{-1/2}$.
 
 ## Expansion

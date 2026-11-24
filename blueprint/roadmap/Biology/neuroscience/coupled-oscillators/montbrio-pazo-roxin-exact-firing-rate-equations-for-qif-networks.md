@@ -1,7 +1,9 @@
 # Exact firing-rate equations for networks of quadratic integrate-and-fire neurons
 
 Consider $N$ globally coupled quadratic integrate-and-fire neurons $\dot V_j = V_j^2 + \eta_j + J r(t) + I(t)$, in units where time and voltage are rescaled to absorb the coefficients, with reset from $V_p$ to $V_r$ in the limit $V_p = -V_r \to \infty$, where $r$ is the population firing rate (fast synapses), $I$ a common input, and the excitabilities $\eta_j$ are drawn from a Lorentzian density with centre $\bar\eta$ and half-width $\Delta$. Montbrió, Pazó and Roxin (2015) show that, in the limit $N \to \infty$, the continuity equation for the density of membrane potentials conditioned on $\eta$ is solved exactly by Lorentzian conditional densities (the Lorentzian ansatz), and that on this family the firing rate $r$ and the mean membrane potential $v$ satisfy exactly the two ordinary differential equations
+
 $$\dot r = \frac{\Delta}{\pi} + 2 r v, \qquad \dot v = v^2 + \bar\eta + J r + I(t) - \pi^2 r^2$$
+
 (equations (12a) and (12b) of the source), obtained by evaluating the conditional centre and half-width at the pole $\eta = \bar\eta - i\Delta$ of the Lorentzian density: $\pi r + i v = w(\bar\eta - i\Delta, t)$.
 
 ## Expansion

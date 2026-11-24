@@ -1,7 +1,9 @@
 # Hannenhalli–Pevzner duality theorem for signed reversal distance
 
 For a signed permutation $\pi$ of $\{1, \dots, n\}$, framed by $0$ and $n + 1$, let $d(\pi)$ be its reversal distance, the minimum number of reversals of signed segments transforming $\pi$ into the identity. Replace each element $+x$ by $2x - 1, 2x$ and each $-x$ by $2x, 2x - 1$ to obtain the unsigned image of $\pi$, whose breakpoint graph $G(\pi)$ has all degrees at most $2$, so that its decomposition into alternating cycles is unique. Let $b(\pi)$ be the number of breakpoints, $c(\pi)$ the number of cycles, and $h(\pi)$ the number of hurdles, the unoriented components of the interleaving graph that are minimal for containment of their extents, together with the greatest unoriented component when it does not separate two other hurdles; a fortress is a permutation with an odd number of hurdles, all of them superhurdles. Hannenhalli and Pevzner (1999, Theorem 5) prove
+
 $$d(\pi) = \begin{cases} b(\pi) - c(\pi) + h(\pi) + 1 & \text{if } \pi \text{ is a fortress},\\ b(\pi) - c(\pi) + h(\pi) & \text{otherwise}, \end{cases}$$
+
 and their algorithm Reversal_Sort sorts $\pi$ optimally in $O(n^4)$ time (Theorem 6). The lower bound $d(\pi) \ge b(\pi) - c(\pi) + h(\pi)$ (Theorem 1) uses the fact, due to Bafna and Pevzner, that one reversal decreases $b - c$ by at most $1$.
 
 ## Expansion

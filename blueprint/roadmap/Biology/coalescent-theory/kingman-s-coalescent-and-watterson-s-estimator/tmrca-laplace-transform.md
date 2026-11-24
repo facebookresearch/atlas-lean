@@ -1,7 +1,9 @@
 # Laplace transform of the time to the most recent common ancestor in Kingman's coalescent
 
 In Kingman's coalescent with $n \ge 2$ lineages the holding times $T_k \sim \mathrm{Exp}\bigl(\binom k2\bigr)$, $2 \le k \le n$, are independent (Tavaré 2004, Sec. 2.3), so the time to the most recent common ancestor $T_{\mathrm{MRCA},n} = \sum_{k=2}^n T_k$ has
+
 $$E\bigl[e^{-sT_{\mathrm{MRCA},n}}\bigr] = \prod_{k=2}^n \frac{\binom k2}{\binom k2 + s}, \qquad s > -1,$$
+
 and $E[e^{-sT_{\mathrm{MRCA},n}}] = \infty$ for $s \le -1$, since the smallest rate is $\binom22 = 1$. For every $s > -1$, as $n \to \infty$ these transforms converge to the finite product $\prod_{k \ge 2}\binom k2/(\binom k2 + s)$, which is the Laplace transform of $T_\infty = \sum_{k \ge 2}T_k$ (by monotone convergence, since $T_{\mathrm{MRCA},n} \uparrow T_\infty$).
 
 ## Expansion

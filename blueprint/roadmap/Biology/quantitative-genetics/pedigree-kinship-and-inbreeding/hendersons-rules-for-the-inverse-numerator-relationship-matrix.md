@@ -1,7 +1,9 @@
 # Henderson's rules for the inverse numerator relationship matrix
 
 Order a pedigree with parents before offspring, let $A$ be its numerator relationship matrix, and write each breeding value as $u_i = \frac12 u_s + \frac12 u_d + m_i$, the parent average plus an independent Mendelian sampling term, so that $u = P u + m$ with $P$ holding the entries $\frac12$ at (offspring, known parent) positions. Then $u = L m$ with $L = (I - P)^{-1}$ unit lower triangular, $\operatorname{var}(m) = D \sigma_u^2$ with $D$ diagonal, and $A = L D L^\top$, where
+
 $$d_i = \tfrac12 - \tfrac14 (F_s + F_d) \ \text{(both parents known)}, \qquad d_i = \tfrac34 - \tfrac14 F_s \ \text{(only parent $s$ known)}, \qquad d_i = 1 \ \text{(neither known)},$$
+
 with $F$ the inbreeding coefficients of the parents. Hence $A^{-1} = (L^{-1})^\top D^{-1} L^{-1}$ with $L^{-1} = I - P$, and $A^{-1}$ is assembled by adding, for each individual $i$, $d_i^{-1}$ times $1$ at $(i, i)$, $-\frac12$ at the (individual, known parent) positions and $\frac14$ at the positions indexed by pairs of known parents. Without inbreeding these are Henderson's rules: add $2$, $-1$, $\frac12$ when both parents are known, $\frac43$, $-\frac23$, $\frac13$ when one is known, and $1$ when neither is.
 
 ## Depends on

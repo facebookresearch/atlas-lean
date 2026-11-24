@@ -1,7 +1,9 @@
 # The theta model of type I excitability
 
 The theta model, or Ermentrout–Kopell canonical model, is the equation
+
 $$\dot\theta = 1 - \cos\theta + (1 + \cos\theta)\, I, \qquad \theta \in S^1,$$
+
 in which a spike is the passage of $\theta$ through $\pi$; it has a single saddle-node bifurcation and is the normal form of the saddle-node on a limit cycle (SNIC) bifurcation, derived by Ermentrout and Kopell (1986) through a change of coordinates under which a general parabolic bursting system converges to it away from $\theta = \pi$ (Wikipedia, Theta model, sections Model equations and properties and Derivation). For $I < 0$ the system is excitable, and for $I > 0$ every orbit is periodic. Explicitly, the fixed points solve $\tan^2(\theta/2) = -I$, so for $I < 0$ there are two of them, one stable and one unstable, which merge at $\theta = 0$ when $I = 0$. On $\theta \ne \pi$ the substitution $V = \tan(\theta/2)$ gives $\dot V = \frac{\dot\theta}{1 + \cos\theta} = V^2 + I$, the quadratic integrate-and-fire equation, with the passage through $\theta = \pi$ corresponding to escape of $V$ to $+\infty$ and reset to $-\infty$; hence for $I > 0$ the period is $\int_{-\infty}^{\infty} dV/(V^2 + I) = \pi/\sqrt I$, as stated in the source, and the frequency $\sqrt I/\pi$ tends to $0$ as $I \to 0^+$.
 
 ## Expansion

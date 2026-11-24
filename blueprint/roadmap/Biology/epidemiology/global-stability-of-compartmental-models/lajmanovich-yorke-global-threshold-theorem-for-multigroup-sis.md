@@ -1,7 +1,9 @@
 # Lajmanovich–Yorke threshold theorem for multigroup SIS
 
 In the Lajmanovich–Yorke SIS model with $d$ groups, $x_i \in [0, 1]$ is the proportion of infected individuals in group $i$ and
+
 $$\dot x_i = (1 - x_i)\sum_j C_{ij} x_j - D_i x_i,$$
+
 with infection rates $C_{ij} \ge 0$ and cure rates $D_i > 0$. Suppose $C$ is irreducible, let $A = C - \mathrm{diag}(D_i)$ and let $\lambda(A)$ be the largest real part of the eigenvalues of $A$. The theorem of Lajmanovich and Yorke (1976), as stated by Benaïm in lecture slides on the model, says: if $\lambda(A) \le 0$, the disease-free equilibrium $0$ is a global attractor; if $\lambda(A) > 0$, there is another equilibrium $x^* \gg 0$ and every nonzero trajectory converges to $x^*$, which is therefore the unique equilibrium with positive coordinates.
 
 ## Expansion

@@ -1,7 +1,9 @@
 # Population attributable fraction: the Levin and Miettinen formulas
 
 Let a binary exposure have population prevalence $p_e = P(E)$, let $\mathrm{RR} = P(D \mid E)/P(D \mid \bar E)$, and suppose $\mathrm{RR}$ is causal: removing the exposure would bring the risk of the exposed to $P(D \mid \bar E)$. The population attributable fraction, the proportion of cases that would not have occurred had the exposure been eliminated, is then
+
 $$\mathrm{PAF} = \frac{P(D) - P(D \mid \bar E)}{P(D)} = \frac{p_e (\mathrm{RR} - 1)}{1 + p_e(\mathrm{RR} - 1)} = p_c\, \frac{\mathrm{RR} - 1}{\mathrm{RR}},$$
+
 the first form being Levin's formula and the second Miettinen's, with $p_c = P(E \mid D) = p_e \mathrm{RR}/(1 + p_e(\mathrm{RR} - 1))$ the prevalence of exposure among cases; both follow from $P(D) = P(D \mid \bar E)(1 + p_e(\mathrm{RR} - 1))$ and Bayes' rule. When the association is confounded, the Miettinen formula with a confounding-adjusted relative risk (or its generalization over strata or exposure levels) gives a confounding-adjusted attributable fraction, whereas Levin's formula with the adjusted relative risk does not; Khosravi et al. (2021) report that of 43 textbooks, 29 propose Levin's formula and only 4 recommend Miettinen's for confounding adjustment.
 
 ## Expansion

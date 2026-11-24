@@ -1,7 +1,9 @@
 # Good–Turing estimate of the missing mass
 
 Draw an i.i.d. sample of size $N$ from a distribution $(p_s)$ on a countable set of species, let $n_r(N)$ be the number of species seen exactly $r$ times, and let $M_0(N) = \sum_s p_s \mathbf 1\{s \text{ unseen}\}$ be the missing mass. The Good–Turing estimate of the missing mass is $n_1(N)/N$, and its bias is at most $1/N$ in absolute value (Rajaraman, Thangaraj and Suresh 2017, equation (2), citing McAllester and Schapire). Exactly, $E[M_0(N)] = \sum_s p_s (1 - p_s)^N$ and $E[n_1(N+1)] = (N+1) \sum_s p_s (1 - p_s)^N$, so
+
 $$E[M_0(N)] = \frac{E[n_1(N+1)]}{N+1},$$
+
 and the bias is $E[n_1(N)/N] - E[M_0(N)] = \sum_s p_s^2 (1 - p_s)^{N-1} \in [0, 1/N]$, since $\sum_s p_s \cdot p_s(1 - p_s)^{N-1} \le \max_p p(1 - p)^{N-1} \le 1/N$. More generally the expected total mass of species seen $r$ times is $\binom{N}{r}\sum_s p_s^{r+1}(1 - p_s)^{N-r} = \frac{r+1}{N+1} E[n_{r+1}(N+1)]$, which underlies the Good–Turing estimate $(r+1) S(n_{r+1})/(N\, S(n_r))$ for the probability of each species seen $r$ times, with $S(\cdot)$ a smoothed frequency (Good–Turing frequency estimation, Wikipedia).
 
 ## Expansion

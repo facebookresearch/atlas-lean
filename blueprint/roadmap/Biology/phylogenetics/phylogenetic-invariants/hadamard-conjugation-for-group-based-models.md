@@ -1,7 +1,9 @@
 # Hadamard conjugation for group-based models
 
 Let $T$ be a phylogenetic tree with leaves $0, 1, \dots, n$ in which each edge $e$ carries Kimura three-substitution-type (K3ST) parameters $q_e(\alpha), q_e(\beta), q_e(\gamma)$, the substitutions forming the Klein group $\mathbb{Z}_2 \times \mathbb{Z}_2$. Index rows and columns of $2^n \times 2^n$ matrices by subsets of $[n] = \{1, \dots, n\}$. The edge-length spectrum $Q_T$ has, for each edge $e_C$ inducing the split with part $C \subseteq [n]$, entries $Q_{\emptyset, C} = q_{e_C}(\alpha)$, $Q_{C, \emptyset} = q_{e_C}(\beta)$, $Q_{C, C} = q_{e_C}(\gamma)$, the entry $Q_{\emptyset,\emptyset} = -K$ with $K$ the sum of all edge parameters, and zeros elsewhere; the sequence probability spectrum $P_T$ has entry $p_{A,B}$, the probability of the site pattern coded by $(A, B)$. Let $H_n$ be the Sylvester Hadamard matrix of order $2^n$, so $H_n^{-1} = 2^{-n}H_n$. Hendy and Snir (2005, Theorem 7, equations (8) and (9)) prove that $P_T$ is determined by $Q_T$ through an entrywise exponential after Hadamard conjugation, and that $Q_T$ is recovered from $P_T$ by the entrywise logarithm when its arguments are positive; written in the form used in their proof and in their equation (9),
+
 $$H_nP_TH_n = \mathrm{Exp}(H_nQ_TH_n), \qquad Q_T = H_n^{-1}\,\mathrm{Ln}(H_nP_TH_n)\,H_n^{-1}.$$
+
 Hence the tree (the support of $Q_T$) and all edge parameters are recovered from the expected pattern frequencies. This is the invertible relationship between a tree with K3ST edge parameters and the expected nucleotide pattern frequencies reported by Hendy, Penny and Steel (1994), extending the transform for the two-state Cavender–Farris model.
 
 ## Expansion

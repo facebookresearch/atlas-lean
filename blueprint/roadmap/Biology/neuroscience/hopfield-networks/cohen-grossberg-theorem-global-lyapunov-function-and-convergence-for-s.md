@@ -1,11 +1,17 @@
 # Cohen–Grossberg Lyapunov function for competitive networks
 
 Cohen and Grossberg (1983) study competitive systems
+
 $$\dot x_i = a_i(x_i)\Bigl[b_i(x_i) - \sum_{k=1}^n c_{ik}\, d_k(x_k)\Bigr], \qquad i = 1, \dots, n \qquad \text{(Eq. (1))},$$
+
 with a symmetric matrix $C = (c_{ik})$; additive and shunting neural networks and Volterra–Lotka systems are special cases (Section I). They show (Section III) that
+
 $$V(x) = -\sum_{i=1}^n \int_0^{x_i} b_i(\xi)\, d_i'(\xi)\, d\xi + \tfrac12 \sum_{j,k=1}^n c_{jk}\, d_j(x_j)\, d_k(x_k)$$
+
 is a global Lyapunov function, because along solutions
+
 $$\dot V = -\sum_{i=1}^n a_i(x_i)\, d_i'(x_i)\Bigl[b_i(x_i) - \sum_{k=1}^n c_{ik} d_k(x_k)\Bigr]^2,$$
+
 which is $\le 0$ as long as every $a_i \ge 0$ and every $d_i$ is monotone nondecreasing; if every $d_i$ is strictly increasing the system can be written in gradient form $\dot x = A(x)\nabla B(x)$ with $B = -V$. With the LaSalle invariance principle, each bounded trajectory converges to the largest invariant set in $\{\dot V = 0\}$, and the paper uses this, together with an analysis of the equilibrium set (which may be infinite but totally disconnected), to prove approach to equilibria for broad classes of such networks under its stated regularity, positivity and boundedness hypotheses (Sections IV–V).
 
 ## Expansion

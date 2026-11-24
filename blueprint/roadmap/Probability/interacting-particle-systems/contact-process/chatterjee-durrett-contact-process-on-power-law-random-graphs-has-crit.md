@@ -1,7 +1,9 @@
 # Contact processes on power-law random graphs have critical value zero
 
 Let $G_n$ be a Newman–Strogatz–Watts random graph (configuration model) on $\{1, \dots, n\}$ whose degrees satisfy $P(d_i = k) \sim Ck^{-\alpha}$ as $k \to \infty$ for some $C > 0$ and $\alpha > 3$, and $P(d_i \le 2) = 0$. Let $\xi^1_t$ be the contact process on $G_n$ with infection rate $\lambda$ and recovery rate $1$, started with every vertex infected. Chatterjee and Durrett (2009, Theorem 1) prove that for every $\lambda > 0$ there is $p(\lambda) > 0$ such that for every $\delta > 0$,
+
 $$\inf_{t \le \exp(n^{1-\delta})} P\bigl(|\xi^1_t|/n \ge p(\lambda)\bigr) \to 1 \quad (n \to \infty).$$
+
 So for every positive infection rate the process keeps a positive density of infected vertices for a time at least $\exp(n^{1-\delta})$: the critical value is $0$ for every $\alpha > 3$, whereas mean-field calculations suggest a positive critical value in this range (abstract of the source).
 
 ## Expansion

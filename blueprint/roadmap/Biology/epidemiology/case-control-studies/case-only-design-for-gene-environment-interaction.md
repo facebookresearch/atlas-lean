@@ -1,7 +1,9 @@
 # Case-only design for gene–environment interaction
 
 Let $G$ and $E$ be binary exposures and $D$ a binary disease, and arrange a cohort as in a $2 \times 2 \times 2$ table with cases $a, c, e, g$ and non-cases $b, d, f, h$ in the cells $(G, E) = (0,0), (1,0), (0,1), (1,1)$. With the risk ratios $\mathrm{RR}_g$, $\mathrm{RR}_e$, $\mathrm{RR}_{ge}$ relative to the doubly unexposed cell, the multiplicative interaction on the risk-ratio scale is $S_{RR} = \mathrm{RR}_{ge}/(\mathrm{RR}_g \mathrm{RR}_e)$. If $G$ and $E$ are independent in the population, $(g + h)(a + b) = (c + d)(e + f)$, then
+
 $$S_{RR} = \frac{a g}{c e},$$
+
 the odds ratio relating $G$ and $E$ among cases, so a case-only study estimates the multiplicative interaction for risk ratios (Yang et al.; Schmidt and Schaid; as stated by VanderWeele, Hernández-Díaz and Hernán 2010). For diseases that are rare at all exposure levels, $ag/(ce)$ is approximately the odds-ratio interaction $S_{OR} = \mathrm{OR}_{ge}/(\mathrm{OR}_g \mathrm{OR}_e)$ of a case-control study (Piegorsch et al. 1994). The identity follows from $S_{RR} = \frac{g/(g+h) \cdot a/(a+b)}{c/(c+d) \cdot e/(e+f)}$, in which the cell totals cancel by independence; when $G$ and $E$ are associated in the population, $ag/(ce)$ equals $S_{RR}$ times their population odds ratio $\frac{(g+h)(a+b)}{(c+d)(e+f)}$, and the design can then wrongly indicate a multiplicative interaction.
 
 ## Expansion

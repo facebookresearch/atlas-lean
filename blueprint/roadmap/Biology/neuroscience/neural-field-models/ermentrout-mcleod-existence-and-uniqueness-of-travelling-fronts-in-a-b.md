@@ -1,7 +1,9 @@
 # Existence of travelling fronts in a scalar neural field
 
 Consider the scalar neural field
+
 $$\partial_t u(x, t) = -u + \int_{-\infty}^{\infty} J(x - y)\, S(u(y, t))\, dy$$
+
 with a symmetric positive weight function $J$ and a positive, bounded, increasing firing rate $S$. Ermentrout and McLeod proved the existence of travelling fronts $u(x, t) = U(x - ct)$, with $U$ monotone, for a wide variety of such $J$ and $S$; since the equation has no negative feedback, its travelling waves are fronts rather than pulses (Hastings 2015, Section 1, equation (1.4)).
 
 ## Expansion

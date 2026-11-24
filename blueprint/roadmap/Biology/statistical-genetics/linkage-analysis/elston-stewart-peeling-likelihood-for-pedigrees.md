@@ -1,7 +1,9 @@
 # Elston–Stewart peeling for pedigree likelihoods
 
 For a pedigree with a founder genotype law, Mendelian transmission from parents to children and phenotypes conditionally independent given genotypes, the likelihood is
+
 $$L = \sum_{g} \prod_{\text{founders } f} P(g_f) \prod_{\text{non-founders } o} P(g_o \mid g_{m(o)}, g_{p(o)}) \prod_{i} P(x_i \mid g_i).$$
+
 In a nuclear family the offspring are conditionally independent given the parental genotypes, so the sum over offspring genotypes factorizes and the cost grows linearly with the number of offspring. Elston and Stewart (1971) extended this to special pedigrees, in which every person is either related to someone in the previous generation or marries into the pedigree and there are no consanguineous marriages: starting at the bottom of the pedigree, each nuclear family is processed by fixing the genotype of one parent and summing over the spouse's and the offspring's genotypes, giving conditional probabilities $H(g)$ (with $H = 1$ for individuals without descendants), and after all nuclear families are processed the likelihood is the sum over founder genotypes $\sum_g P(x \mid g) H(g) P(g)$ (Biostatistics 666 notes). For a fixed finite genotype alphabet each step sums over a bounded number of genotype pairs, so the total cost is linear in the number of nuclear families, while it grows exponentially with the number of jointly analyzed loci.
 
 ## Expansion

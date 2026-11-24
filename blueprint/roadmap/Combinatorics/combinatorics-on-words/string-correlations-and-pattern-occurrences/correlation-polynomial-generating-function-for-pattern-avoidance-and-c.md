@@ -1,7 +1,9 @@
 # Correlation-polynomial generating function for pattern avoidance
 
 For words $X, Y$, the correlation $XY$ is the binary string of the length of $X$ whose $i$-th bit is $1$ when $Y$, placed under $X$ starting at the $i$-th character of $X$, agrees with $X$ on their overlap; it is read as a polynomial $XY_z$ in $z$ with the leftmost bit most significant, and $AA$ is the autocorrelation of $A$. Thus $AA_z = \sum_r z^{r-1}$ over the lengths $r \in \{1, \dots, |A|\}$ for which the prefix of $A$ of length $r$ equals its suffix of length $r$. Let $A$ be a word over an alphabet of $q \ge 2$ letters, let $f(n)$ be the number of strings of length $n$ containing no occurrence of $A$, with $f(0) = 1$, and let $F(z) = \sum_{n \ge 0} f(n) z^{-n}$. Odlyzko (1985, equation (4.2)), presenting joint work with Guibas, proves
+
 $$F(z) = \frac{z\, AA_z}{1 + (z - q)\, AA_z},$$
+
 by solving the relations $(z - q)F(z) + zF_A(z) = z$ and $F(z) = zAA_zF_A(z)$ (equations (4.4a)–(4.4b)) for the generating function $F_A$ of strings that end with their first occurrence of $A$; he notes that the formula appears, in a different form, in earlier work of Solov'ev. For fair coin tossing the expected number of tosses until $A$ first appears is $F(2) = 2AA_2$ (Section 5.1), and for i.i.d. uniform letters from $q$ symbols the same argument gives $F(q) = q\,AA_q$; for example $6$ for the pattern $HH$, where $AA = 11$ and $AA_2 = 3$. For two patterns $A, B$ of the same length in Penney's game, the odds that the player choosing $B$ wins are $(AA_2 - AB_2)/(BB_2 - BA_2)$ (equation (5.3)), a formula first proved by Conway.
 
 ## Expansion

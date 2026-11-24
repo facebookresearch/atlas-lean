@@ -1,7 +1,9 @@
 # Eyring–Kramers formula for reversible diffusions
 
 Let $X$ solve $dX(t) = -\nabla F(X(t))\,dt + \sqrt{2\varepsilon}\, dW(t)$ in a domain of $\mathbb{R}^d$, where $F$ satisfies the growth condition (1.3) and the assumptions (H1), (ND) and (IB) of Bovier, Eckhoff, Gayrard and Klein (2004): finitely many local minima, saddle points between minima that are finite sets of isolated points, and non-degenerate Hessians at minima and saddle points. For a local minimum $x_i$, let $D$ be a closed set containing small balls around all minima $y_j$ with $F(y_j) \le F(x_i)$ and staying a fixed distance from the relevant saddle points. Theorem 3.2 of the source gives the mean hitting time $E_{x_i}\tau_D$ in terms of the saddle points; when there is a single saddle point $z^*$, with negative Hessian eigenvalue $\lambda_1^*(z^*)$, it reduces to the Eyring formula (Eq. (3.3))
+
 $$E_{x_i}\tau_D = \frac{2\pi}{|\lambda_1^*(z^*)|}\sqrt{\frac{|\det\nabla^2 F(z^*)|}{\det\nabla^2 F(x_i)}}\; e^{[F(z^*) - F(x_i)]/\varepsilon}\,\bigl(1 + O(\varepsilon^{1/2}|\ln\varepsilon|)\bigr).$$
+
 The proof rests on the sharp capacity estimate of Theorem 3.1 and the representation of mean hitting times through capacities and equilibrium potentials (Section 2).
 
 ## Expansion

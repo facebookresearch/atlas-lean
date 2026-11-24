@@ -1,7 +1,9 @@
 # Chen–Stein Poisson approximation: two moments suffice
 
 Let $(X_\alpha)_{\alpha \in I}$ be Bernoulli random variables with $p_\alpha = EX_\alpha > 0$, $W = \sum_\alpha X_\alpha$ and $\lambda = EW \in (0, \infty)$, and choose for each $\alpha$ a neighbourhood of dependence $B_\alpha \ni \alpha$. Define $b_1 = \sum_\alpha\sum_{\beta \in B_\alpha} p_\alpha p_\beta$, $b_2 = \sum_\alpha\sum_{\beta \in B_\alpha, \beta \ne \alpha} E[X_\alpha X_\beta]$ and $b_3 = \sum_\alpha E\bigl|E[X_\alpha - p_\alpha \mid \sigma(X_\beta : \beta \in I \setminus B_\alpha)]\bigr|$. With $Z$ Poisson with mean $\lambda$ and $\|\mathcal L(W) - \mathcal L(Z)\| = \sup_{\|h\| = 1}|Eh(W) - Eh(Z)| = 2\sup_A|P(W \in A) - P(Z \in A)|$, Arratia, Goldstein and Gordon (1989, Theorem 1) prove
+
 $$\|\mathcal L(W) - \mathcal L(Z)\| \le 2\Bigl[(b_1 + b_2)\frac{1 - e^{-\lambda}}{\lambda} + b_3\,(1 \wedge 1.4\lambda^{-1/2})\Bigr] \le 2(b_1 + b_2 + b_3)$$
+
 and $|P(W = 0) - e^{-\lambda}| \le (1 \wedge \lambda^{-1})(b_1 + b_2 + b_3)$. Their Theorem 2 gives the process version: the total variation distance between the law of $(X_\alpha)_{\alpha \in I}$ and that of independent Poisson variables with means $p_\alpha$ is at most $2(2b_1 + 2b_2 + b_3)$.
 
 ## Expansion

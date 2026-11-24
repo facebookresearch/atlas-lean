@@ -1,9 +1,13 @@
 # Ou-Yang–Helfrich shape equation and the stability of spherical vesicles
 
 For a closed lipid vesicle with bending modulus $k_c > 0$, spontaneous curvature $c_0$, surface tension $\lambda$ and pressure difference $p = p_{\text{out}} - p_{\text{in}}$, take the free energy $F = \frac{k_c}{2}\oint (2H + c_0)^2\, dA + \lambda A + p V$, with mean curvature $H$ and Gaussian curvature $K$ in the convention where a sphere of radius $R$ has $H = -1/R$, $K = 1/R^2$. Equilibrium shapes satisfy the Ou-Yang–Helfrich shape equation
+
 $$p - 2\lambda H + k_c (2H + c_0)(2H^2 - c_0 H - 2K) + 2 k_c \nabla^2 H = 0,$$
+
 and a sphere of radius $R > 0$ is an equilibrium exactly when $pR^2 + 2\lambda R - k_c c_0(2 - c_0 R) = 0$ (Tu and Ou-Yang, Eqs. (77), (78)). For a normal perturbation expanded in spherical harmonics $Y_{lm}$, the second variation at such a sphere has, for $l \ge 1$, the coefficient
+
 $$\frac{R}{2}\bigl[l(l+1) - 2\bigr]\Bigl\{\frac{2k_c\bigl[l(l+1) - c_0 R\bigr]}{R^3} - p\Bigr\}$$
+
 (from the source's Eq. (82)): it vanishes for $l = 1$ (translations), is positive for every $l \ge 2$ when $p < p_c = 2k_c(6 - c_0 R)/R^3$ (Eq. (83)), vanishes for $l = 2$ at $p = p_c$, and is negative for $l = 2$ when $p > p_c$. The radial mode $l = 0$ has the separate coefficient $Rp + 2k_c c_0/R$; the statement "stable for $p < p_c$" refers to perturbations without an $l = 0$ component, for example under constraints fixing the volume or the area, and fails otherwise ($k_c = R = 1$, $c_0 = 0$, $p = -1$, $\lambda = 1/2$ is an equilibrium with $p < p_c = 12$ but $F''(R) = -4\pi$ for radial changes).
 
 ## Expansion

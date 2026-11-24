@@ -1,7 +1,9 @@
 # Charnov's marginal value theorem
 
 Charnov's (1976) rule, in his formulation, is that "the predator should leave the patch it is presently in when the marginal capture rate in the patch drops to the average capture rate for the habitat"; graphically, the optimal residence time is where the line from the expected travel time is tangent to the gain curve (marginal value theorem article). In the multi-patch form: a forager meets patches of types $i = 1, \dots, k$ with probabilities $p_i > 0$, spends a mean travel time $\tau > 0$ between patches, and gains $g_i(t)$ from residence time $t$ in a patch of type $i$, where each $g_i : [0, \infty) \to [0, \infty)$ is differentiable, increasing and concave with $g_i(0) = 0$. Its long-run intake rate is
+
 $$E(t_1, \dots, t_k) = \frac{\sum_i p_i\, g_i(t_i)}{\tau + \sum_i p_i t_i}.$$
+
 Since $\partial_{t_i} E = p_i\,(g_i'(t_i) - E)/(\tau + \sum_j p_j t_j)$, every maximizer with all $t_i^* > 0$ satisfies $g_i'(t_i^*) = E^* = E(t^*)$ for every $i$: the marginal gain in each patch equals the maximal average rate. Conversely, concavity makes this condition sufficient: $E \le E^*$ is equivalent to $\sum_i p_i (g_i(t_i) - E^* t_i) \le E^*\tau$, and the left side is a concave function of $(t_i)$ maximized where $g_i' = E^*$; strict concavity makes the maximizer unique.
 
 ## Expansion

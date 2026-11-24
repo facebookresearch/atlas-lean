@@ -1,7 +1,9 @@
 # Center-star alignment approximates sum-of-pairs within 2 − 2/k
 
 Let $v_1, \dots, v_k$ be strings and let $\delta$ be a symbol cost on the alphabet extended by the gap symbol that satisfies the triangle inequality $\delta(x, z) \le \delta(x, y) + \delta(y, z)$; let $D(v_i, v_j)$ be the optimal pairwise alignment cost. The center string $v_c$ minimizes $\sum_i D(v_c, v_i)$, and the center-star alignment $A_c$ is a multiple alignment consistent with the star tree centered at $v_c$, that is, inducing an optimal pairwise alignment of $v_c$ with each $v_j$; such an alignment consistent with any tree on the $k$ strings is computed in $O(k^2n^2)$ time for strings of length at most $n$. With $d(A)$ the sum-of-pairs cost and $A^*$ an optimal multiple alignment, the lecture notes of El-Kebir (Theorem 2), which present the result following Gusfield, prove
+
 $$\frac{d(A_c)}{d(A^*)} \le \frac{2(k-1)}{k} < 2.$$
+
 The proof combines Lemma 1, $d_{A_c}(v_i, v_j) \le D(v_i, v_c) + D(v_c, v_j)$ by the triangle inequality applied column by column, which gives $2d(A_c) \le 2(k-1)\sum_j D(v_c, v_j)$, with $2d(A^*) \ge \sum_i\sum_j D(v_i, v_j) \ge k\sum_j D(v_c, v_j)$ by the choice of the center.
 
 ## Proof depends on

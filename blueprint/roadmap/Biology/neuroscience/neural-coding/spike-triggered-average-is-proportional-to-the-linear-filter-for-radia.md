@@ -1,7 +1,9 @@
 # The spike-triggered average recovers the filter for spherically symmetric stimuli
 
 Let a linear–nonlinear neuron fire with probability $N(w\cdot s)$ given a stimulus $s \in \mathbb{R}^d$, where $N \ge 0$ is measurable and $w \ne 0$, and let the stimulus distribution be radially symmetric about the origin (stimuli of equal length are equally probable), with $E|s| N(w\cdot s) < \infty$ and $E[N(w\cdot s)] > 0$. Chichilnisky (2001) shows that the spike-triggered average is then proportional to $w$: pairing each stimulus $s$ with its mirror image $s^*$ about the line through $w$, which has the same probability and the same projection $w\cdot s^* = w\cdot s$, makes $s + s^*$ proportional to $w$. Writing the constant explicitly,
+
 $$E[s \mid \text{spike}] = \frac{E[s\, N(w\cdot s)]}{E[N(w\cdot s)]} = \kappa\, w, \qquad \kappa = \frac{E[(w\cdot s)\, N(w\cdot s)]}{|w|^2\, E[N(w\cdot s)]},$$
+
 which follows by taking the inner product with $w$. So the spike-triggered average recovers the linear filter up to scale whenever $\kappa \ne 0$; if $\kappa = 0$, for example for an even nonlinearity $N(-x) = N(x)$, it is $0$ and carries no information about $w$.
 
 ## Expansion

@@ -1,7 +1,9 @@
 # Integral fluctuation theorem for total entropy production
 
 Consider a master equation on a finite state space with time-dependent rates $r_{\lambda(\tau)}(n, m)$, $0 \le \tau \le t$, such that $r_\lambda(m, n) > 0$ whenever $r_\lambda(n, m) > 0$, and let $p(n, \tau)$ be its solution from the initial law $p_0$. Along a trajectory $n(\tau)$ let $\Delta s = -\ln p(n(t), t) + \ln p_0(n(0))$ be the change of system entropy and $\Delta s_m = \sum_{\text{jumps } n \to m} \ln\frac{r(n, m)}{r(m, n)}$ the medium entropy (equal to the heat dissipated divided by $T$, in units $k_B = 1$, under local detailed balance), and $\Delta s_{\mathrm{tot}} = \Delta s + \Delta s_m$. If the path law of the process reversed in time, with reversed protocol and started from $p(\cdot, t)$, is absolutely continuous with respect to the forward path law (for example, if $p_0$ charges every state), then
+
 $$E\bigl[e^{-\Delta s_{\mathrm{tot}}}\bigr] = 1$$
+
 for every driving over a finite time interval (Seifert 2005). Without the support condition the expectation is the mass of the absolutely continuous part and can be smaller: for two states with rate $1$ in each direction, $p_0 = (1, 0)$ and $t = (\ln 2)/2$, one gets $p(\cdot, t) = (3/4, 1/4)$, $\Delta s_m = 0$ and $E[e^{-\Delta s_{\mathrm{tot}}}] = 5/8$.
 
 ## Expansion

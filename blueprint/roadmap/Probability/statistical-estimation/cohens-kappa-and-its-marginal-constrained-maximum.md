@@ -1,7 +1,9 @@
 # Cohen's kappa and its maximum for fixed margins
 
 Let two raters classify items into $k$ categories with joint proportions $p_{ij}$ and margins $p_{i\cdot}$, $p_{\cdot j}$, let $p_o = \sum_i p_{ii}$ be the observed agreement and $p_e = \sum_i p_{i\cdot}\, p_{\cdot i}$ the agreement expected from the margins, with $p_e < 1$. Cohen's kappa is $\kappa = (p_o - p_e)/(1 - p_e)$; it equals $1$ under complete agreement, $0$ when agreement is what the margins alone give, and can be negative (Cohen's kappa, Wikipedia). Since $p_{ii} \le \min(p_{i\cdot}, p_{\cdot i})$,
+
 $$\kappa \le \kappa_{\max} = \frac{\sum_i \min(p_{i\cdot}, p_{\cdot i}) - p_e}{1 - p_e},$$
+
 and the bound is attained by a joint table with the given margins: put $\min(p_{i\cdot}, p_{\cdot i})$ on the diagonal; the residual row sum of category $i$ is positive only if $p_{i\cdot} > p_{\cdot i}$, in which case its residual column sum is zero, so the rows and columns with positive residuals are disjoint and can be filled off the diagonal (for example by the product of the residual margins divided by their common total).
 
 ## Expansion

@@ -1,7 +1,9 @@
 # Exact solution of the chemical master equation for monomolecular networks
 
 Consider a monomolecular reaction network on species $S_1, \dots, S_n$, with conversions $S_j \to S_k$ at rate $c_{jk}(t)$, inflows $\emptyset \to S_k$ at rate $c_{0k}(t)$ and degradations $S_k \to \emptyset$ at rate $c_{k0}(t)$, and let $A(t)$, $b(t)$ be the matrix and vector of the linear reaction-rate equations $\dot x = A(t)x + b(t)$ (Vastola 2019, Eqs. (18)–(20)). Let $\lambda$ solve $\dot\lambda = A(t)\lambda + b(t)$, $\lambda(t_0) = 0$, and $w^{(k)}$ solve $\dot w^{(k)} = A(t)w^{(k)}$, $w^{(k)}(t_0) = \epsilon_k$. Theorem 1 of Jahnke and Huisinga (2007), restated as Theorem 2 of Vastola, states: if $P(x, t_0) = \delta(x - \xi)$ for some $\xi \in \mathbb{N}^n$, then the solution of the chemical master equation is
+
 $$P(x, t) = \mathcal P(x, \lambda(t)) \star \mathcal M(x, \xi_1, w^{(1)}(t)) \star \cdots \star \mathcal M(x, \xi_n, w^{(n)}(t)),$$
+
 the convolution of a product Poisson law with parameter $\lambda(t)$ and multinomial laws with $\xi_k$ trials and cell probabilities $w^{(k)}(t)$; in particular $E[x_j(t)] = \sum_k \xi_k w^{(k)}_j(t) + \lambda_j(t)$.
 
 ## Expansion

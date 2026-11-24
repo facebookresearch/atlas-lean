@@ -1,7 +1,9 @@
 # First-coalescence means of the variable-size coalescent
 
 In the variable-size coalescent with clock $R$, for a sample of $m \ge 2$ lineages the time $T_{m,m}$ until the first coalescence satisfies $P(T_{m,m} > t) = \exp(-\binom m2 R(t))$, since the $\binom m2$ pairs each coalesce at rate $1/\eta$ until the first event; hence the first-coalescence mean is
+
 $$c_m = E[T_{m,m}] = \int_0^\infty \exp\Bigl(-\binom m2 R(t)\Bigr)\, dt$$
+
 (Polanski and Kimmel 2003; Bhaskar and Song 2014, eq. (3), which obtains it by integration by parts when $E[T_{m,m}] < \infty$). This connects the analytic definition of $c_m$ to the genealogical process.
 
 ## Expansion

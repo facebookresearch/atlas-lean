@@ -1,7 +1,9 @@
 # Sib transmission/disequilibrium test
 
 Spielman and Ewens (1998) introduce the sib transmission/disequilibrium test (S-TDT), which applies the principle of the transmission/disequilibrium test to sibships without parental data by comparing the marker genotypes of affected sibs with those of their unaffected sibs, and show how TDT families and S-TDT sibships can be combined in one overall test of linkage in the presence of association. The conditional null distribution on which it rests is the following exchangeability statement. Fix a marker allele $M$ and, in a sibship with $a$ affected and $u$ unaffected sibs, condition on the multiset of the sibs' marker genotypes. If, under the null hypothesis, every assignment of these genotypes to the sibs is equally likely given the affection statuses, then the number $Y$ of copies of $M$ carried by the affected sibs is the total of a sample of size $a$ drawn without replacement from the $t = a + u$ copy numbers $c_1, \dots, c_t \in \{0, 1, 2\}$, so
+
 $$E[Y] = a \bar c, \qquad \operatorname{Var}(Y) = \frac{a u}{t (t - 1)} \sum_{j=1}^t (c_j - \bar c)^2, \qquad \bar c = \frac1t \sum_j c_j .$$
+
 Summing $Y - E[Y]$ and the variances over independent sibships gives a standardized statistic whose conditional null law does not depend on the population allele frequencies, because each sibship is compared only with itself.
 
 ## Depends on

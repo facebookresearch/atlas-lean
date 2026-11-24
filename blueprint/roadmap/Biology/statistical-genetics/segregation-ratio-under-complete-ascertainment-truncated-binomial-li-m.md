@@ -1,9 +1,13 @@
 # Segregation ratio under complete ascertainment
 
 Sibships are ascertained through at least one affected child (complete, or truncate, ascertainment), and each child is affected independently with probability $p \in (0, 1)$. With $T$ the total number of children, $A$ the total number of affected children and $A_1$ the number of sibships with exactly one affected child, all over the ascertained sibships, the singles-method estimate of the segregation ratio is
+
 $$\hat p = \frac{A - A_1}{T - A_1}$$
+
 (Singles-method notes, Section 5.7). It is consistent: in a sibship of size $s$ the number $a$ of affected children is zero-truncated binomial, with $E[a] = sp/(1 - q^s)$ and $P(a = 1) = s p q^{s-1}/(1 - q^s)$, $q = 1 - p$, so that
+
 $$E[a] - P(a = 1) = \frac{sp(1 - q^{s-1})}{1 - q^s} = p\,\bigl(s - P(a = 1)\bigr)$$
+
 for every $s$. Summing over independent ascertained sibships and applying the strong law of large numbers to numerator and denominator gives $\hat p \to p$ almost surely as the number of sibships grows, whatever the mix of sibship sizes, provided the sizes are bounded and sizes $s \ge 2$ occur with positive limiting frequency.
 
 ## Expansion

@@ -1,7 +1,9 @@
 # Pearson–Aitken selection formulas
 
 Let $z = (x, y)$ be a random vector with mean $(\mu_x, \mu_y)$ and covariance blocks $V_x$ (invertible), $C_{xy} = C_{yx}^\top$ and $V_y$, and suppose the relationship among the variables is linear and homoscedastic: $E[y \mid x] = \mu_y + C_{yx} V_x^{-1}(x - \mu_x)$ and $\operatorname{Var}(y \mid x)$ does not depend on $x$, as for jointly normal vectors. If selection acts on $x$ only, changing its mean to $\tilde\mu_x$ and its covariance to $\tilde V_x$ while leaving the conditional law of $y$ given $x$ unchanged, then after selection
+
 $$\tilde\mu_y = \mu_y + C_{yx} V_x^{-1}(\tilde\mu_x - \mu_x), \qquad \tilde C_{xy} = \tilde V_x V_x^{-1} C_{xy}, \qquad \tilde V_y = V_y - C_{yx}\bigl(V_x^{-1} - V_x^{-1} \tilde V_x V_x^{-1}\bigr) C_{xy}.$$
+
 These are the Pearson–Aitken selection formulas (Carey, handout). They follow from the laws of total expectation and total covariance: with $B = C_{yx} V_x^{-1}$ and $\Sigma = \operatorname{Var}(y \mid x) = V_y - B C_{xy}$, selection gives $\tilde C_{yx} = B \tilde V_x$ and $\tilde V_y = \Sigma + B \tilde V_x B^\top$.
 
 

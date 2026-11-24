@@ -1,7 +1,9 @@
 # Holmans' possible triangle for affected sib pairs
 
 For a pair of affected sibs, let $(z_0, z_1, z_2)$ be the probabilities that they share $0$, $1$ or $2$ alleles identical by descent at a disease-susceptibility locus; without linkage $(z_0, z_1, z_2) = (1/4, 1/2, 1/4)$. For a single disease-susceptibility locus, under random mating and Hardy–Weinberg equilibrium at that locus, the sharing probabilities satisfy the triangle constraints
+
 $$z_1 \le \tfrac12, \qquad 2 z_0 \le z_1$$
+
 (Suarez et al.; Holmans 1993; as stated by Dudoit and Speed 1998). The region they cut out of the simplex is the possible triangle with vertices $(1/4, 1/2, 1/4)$, $(0, 1/2, 1/2)$ and $(0, 0, 1)$. Holmans (1993) showed that restricting maximization of the affected-sib-pair likelihood to the possible triangle improves the power of Risch's likelihood-ratio test, and derived the asymptotic distributions of the resulting statistics.
 
 ## Expansion

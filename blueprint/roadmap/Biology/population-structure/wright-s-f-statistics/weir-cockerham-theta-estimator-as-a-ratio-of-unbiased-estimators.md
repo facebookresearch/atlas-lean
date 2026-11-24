@@ -1,9 +1,13 @@
 # Weir–Cockerham estimator of F_ST as a ratio of unbiased estimators
 
 Sample $n_i$ alleles from each of $r$ populations, let $\tilde p_{iu}$ be the sample frequency of allele $A_u$ in population $i$ and $\bar p_u$ the sample-size-weighted average, and suppose that within populations the sample frequencies have multinomial moments, and among populations the frequencies $p_{iu}$ have mean $p_u$ and variance $p_u(1 - p_u)\theta$ with no coancestry between populations. With the mean squares
+
 $$\mathrm{MSP}_u = \frac{1}{r - 1}\sum_{i=1}^r n_i (\tilde p_{iu} - \bar p_u)^2, \qquad \mathrm{MSG}_u = \frac{1}{\sum_i (n_i - 1)} \sum_{i=1}^r n_i\, \tilde p_{iu}(1 - \tilde p_{iu}),$$
+
 one has $E(\mathrm{MSP}_u) = \pi_u[(1 - \theta) + n_c\theta]$ and $E(\mathrm{MSG}_u) = \pi_u(1 - \theta)$ with $\pi_u = p_u(1 - p_u)$ and $n_c = \frac{1}{r - 1}\bigl(\sum_i n_i - \sum_i n_i^2 / \sum_i n_i\bigr)$ (Weir and Hill 2002, restating Weir and Cockerham 1984). Hence $\mathrm{MSP}_u - \mathrm{MSG}_u$ and $\mathrm{MSP}_u + (n_c - 1)\mathrm{MSG}_u$ are unbiased for $n_c \pi_u \theta$ and $n_c \pi_u$, and the Weir–Cockerham moment estimator
+
 $$\hat\theta = \frac{\sum_u (\mathrm{MSP}_u - \mathrm{MSG}_u)}{\sum_u [\mathrm{MSP}_u + (n_c - 1)\mathrm{MSG}_u]},$$
+
 with numerator and denominator summed over alleles (and over loci when $\theta$ is common to them), is a ratio of unbiased estimators of $\theta$ times a common factor and of that factor. It is unbiased only to the extent that the expectation of the ratio equals the ratio of the expectations.
 
 

@@ -3,7 +3,9 @@
 Kong and Cox (1997) start from an allele-sharing test statistic for linkage and propose an associated one-parameter model which, under general missing-data patterns, allows exact calculation of likelihood ratios and LOD scores and hence accurate linkage tests; they also suggest an alternative model that requires additional computation. Under the no-linkage hypothesis the parameter, written $\delta$, is $0$, and larger $\delta$ means more allele sharing among affected relatives (Margaritte-Jeannin et al. 2007, who use the exponential form).
 
 A linear one-parameter family shows why the likelihood ratios are exact. Let $Z$ be an allele-sharing score on the inheritance vectors $v$ of a pedigree, normalized to have mean $0$ and variance $1$ under the no-linkage law $P_0$ of $v$, and set $P_\delta(v) = P_0(v)(1 + \delta Z(v))$. This is a probability law exactly when $1 + \delta Z \ge 0$ on the support, that is for $\delta \in [-1/\max Z, -1/\min Z]$. With marker data $x$, the likelihood is
+
 $$L(\delta) = \sum_v P(x \mid v) P_\delta(v) = L(0)\,\bigl(1 + \delta\, E_0[Z \mid x]\bigr),$$
+
 so the likelihood ratio against $\delta = 0$ is the explicit function $1 + \delta E_0[Z \mid x]$ of the conditional expected score, whatever the pattern of missing marker information, and its derivative at $\delta = 0$ is $E_0[Z \mid x]$.
 
 ## Expansion

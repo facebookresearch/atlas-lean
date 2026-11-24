@@ -1,7 +1,9 @@
 # Hamilton's force of selection on age-specific survival
 
 Consider continuous age $x$ with mortality rate $\mu(x)$, survivorship $l(x) = \exp(-\int_0^x \mu)$, maternity function $m(x)$, population growth rate $r$ given by the Euler–Lotka equation $\int_0^\infty e^{-ra} l(a) m(a)\, da = 1$, and generation time $\bar A = \int_0^\infty a\, e^{-ra} l(a) m(a)\, da > 0$. Implicit differentiation of the Euler–Lotka equation gives Hamilton's sensitivities (Caswell 2019, eqs. (3.11) and (3.22)):
+
 $$\frac{dr}{d\mu(x)} = -\frac{1}{\bar A}\int_x^\infty e^{-ra} l(a) m(a)\, da, \qquad \frac{dr}{dm(x)} = \frac{e^{-rx} l(x)}{\bar A},$$
+
 where $dr/d\mu(x)$ is the response of $r$ to a unit impulse of mortality at age $x$. The magnitude $|dr/d\mu(x)|$ equals $1/\bar A$ for every age $x$ before the first age at which $m > 0$, is non-increasing in $x$, and decreases strictly on every interval where $e^{-ra} l(a) m(a)$ is not almost everywhere zero: the force of selection on survival declines with age once reproduction has begun (Hamilton 1966, as presented by Caswell 2019, Sec. 3.2).
 
 ## Expansion

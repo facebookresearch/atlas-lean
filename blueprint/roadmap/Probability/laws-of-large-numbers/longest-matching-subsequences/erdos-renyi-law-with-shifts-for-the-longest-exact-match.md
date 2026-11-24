@@ -1,7 +1,9 @@
 # Erdős–Rényi law with shifts for the longest exact match
 
 Let $X_1, X_2, \dots$ and $Y_1, Y_2, \dots$ be independent sequences with the same distribution, and let $M_n = \max\{m : X_{i+k} = Y_{j+k} \text{ for } k = 1, \dots, m, \text{ for some } 0 \le i, j \le n - m\}$ be the length of the longest common contiguous match between $X_1 \cdots X_n$ and $Y_1 \cdots Y_n$, allowing shifts. Arratia and Waterman (1985, Theorem 2) prove that if the letters are i.i.d. with $0 < p = P(X_1 = Y_1) < 1$ (so $p = \sum_a q_a^2$ for letter distribution $q$), then for every $\varepsilon > 0$, almost surely
+
 $$\frac{M_n - 2\log_{1/p} n}{\log_{1/p}\log_{1/p} n} \in (-4 - \varepsilon,\ 1 + \varepsilon) \quad \text{eventually};$$
+
 in particular $P(\lim_n M_n/\log_{1/p} n = 2) = 1$, twice the Erdős–Rényi growth of the longest head run without shifts. Theorem 3 gives the analogous result for independent irreducible aperiodic Markov chains on a finite alphabet, with $p$ the largest eigenvalue of the matrix of squared transition probabilities. Corollary 1, deduced from the result for deletions only (Theorem 4), shows that the longest match allowing shifts and at most $k$ deletions, insertions, substitutions or transpositions, divided by $\log_{1/p} n$, still tends to $2$ in probability when $k = o(\log n/\log\log n)$; Section 4 treats sequences of unequal lengths.
 
 ## Expansion

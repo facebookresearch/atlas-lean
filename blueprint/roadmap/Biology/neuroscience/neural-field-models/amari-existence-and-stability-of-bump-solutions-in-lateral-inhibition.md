@@ -1,7 +1,9 @@
 # Stationary bumps in lateral-inhibition neural fields
 
 Consider the one-dimensional neural field $\partial_t u(x, t) = -u + \int_{\mathbb{R}} w(x - y)\, H(u(y, t) - h)\, dy + s$ with Heaviside firing rate $H$, threshold $h$ and constant input $s$, where the kernel $w$ is continuous, integrable and even, with $w(0) > 0$ and exactly one positive zero (lateral inhibition). A bump is a stationary solution whose excited region $\{u > h\}$ is an interval. Amari (1977) showed that this model has both stable and unstable bumps (as restated by Kostrykin and Oleynik). If the excited region is an interval of length $a > 0$, the stationary equation gives $u(x) = s + \int_{x_1}^{x_1 + a} w(x - y)\, dy$, and the threshold condition at the endpoints is the self-consistency condition
+
 $$s = h - \int_0^a w(x)\, dx$$
+
 (Gerstner, Kistler, Naud and Paninski, Section 18.3.1, equation (18.34), with $s$ written $I^{\mathrm{ext}}$ and $h$ written $\vartheta$); the width of such a bump is stable if $w(a) < 0$.
 
 ## Expansion

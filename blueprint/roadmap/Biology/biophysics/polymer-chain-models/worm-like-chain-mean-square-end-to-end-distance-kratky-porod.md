@@ -1,7 +1,9 @@
 # Mean-square end-to-end distance of the worm-like chain
 
 Model a semiflexible polymer of contour length $L_c > 0$ as a curve $r(s)$, $0 \le s \le L_c$, with a jointly measurable random unit tangent field $u(s) = r'(s)$ whose correlations decay with persistence length $L_p > 0$: $E[u(s) \cdot u(s')] = e^{-|s - s'|/L_p}$ (the Kratky–Porod worm-like chain). The end-to-end vector $R = \int_0^{L_c} u(s)\, ds$ then satisfies
+
 $$E[R^2] = \int_0^{L_c}\!\!\int_0^{L_c} e^{-|s - s'|/L_p}\, ds\, ds' = 2 L_p L_c - 2 L_p^2 \bigl(1 - e^{-L_c/L_p}\bigr),$$
+
 so $E[R^2]/L_c^2 \to 1$ as $L_c/L_p \to 0$ (rigid rod) and $E[R^2]/(2 L_p L_c) \to 1$ as $L_c/L_p \to \infty$ (flexible coil); see Tokmakoff, Eq. (9.3.8).
 
 ## Expansion

@@ -1,7 +1,9 @@
 # The Griffiths–Tavaré sampling recursion
 
 In the $K$-allele model with mutation matrix $\Gamma = (\gamma_{ij})$, mutation rate $\theta/2$ per lineage and coalescent genealogy, let $q(\mathbf n)$ be the probability that a sample of $n$ genes has type configuration $\mathbf n = (n_1, \dots, n_K)$, and let $\mathbf e_i$ be the unit vectors. Conditioning on the first event back in time (a mutation with probability $\theta/(n + \theta - 1)$, a coalescence otherwise) gives
+
 $$q(\mathbf n) = \frac{\theta}{n + \theta - 1}\Bigl[\sum_{i=1}^K \frac{n_i}{n}\gamma_{ii}\,q(\mathbf n) + \sum_{i \ne j,\ n_j > 0}\frac{n_i + 1}{n}\gamma_{ij}\,q(\mathbf n + \mathbf e_i - \mathbf e_j)\Bigr] + \frac{n - 1}{n + \theta - 1}\sum_{j:\ n_j > 0}\frac{n_j - 1}{n - 1}\,q(\mathbf n - \mathbf e_j),$$
+
 with boundary conditions $q(\mathbf e_i) = \pi_i^*$, the probability that the most recent common ancestor has type $i$ (Tavaré 2004, Theorem 9.1, eqs. (9.3.1)–(9.3.2)). The recursion is on the sample size: given all $q(\mathbf m)$ with $|\mathbf m| < n$, the linear equations for the $q(\mathbf m)$ with $|\mathbf m| = n$ are non-singular. The infinite-alleles analogue is the recursion for the Ewens sampling formula (Tavaré 2004, Sec. 3.5).
 
 ## Expansion

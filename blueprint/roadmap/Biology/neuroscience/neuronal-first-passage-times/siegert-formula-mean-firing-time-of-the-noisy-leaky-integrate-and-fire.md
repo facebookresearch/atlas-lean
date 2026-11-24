@@ -1,7 +1,9 @@
 # Siegert formula for the mean firing time of the noisy leaky integrate-and-fire neuron
 
 Let the subthreshold membrane potential of a leaky integrate-and-fire neuron be the Ornstein–Uhlenbeck process $dX(t) = (\mu - \kappa X(t))\, dt + \sigma\, dW(t)$ with $\kappa, \sigma > 0$, started after each spike at the reset value $y < \theta$, where $\theta$ is the firing threshold. The mean first-passage time from $y$ to $\theta$ is
+
 $$m_1(\theta, y) = \frac{\sqrt\pi}{\kappa} \int_{(\kappa y - \mu)/(\sigma\sqrt\kappa)}^{(\kappa\theta - \mu)/(\sigma\sqrt\kappa)} e^{z^2} \bigl(1 + \operatorname{erf} z\bigr)\, dz,$$
+
 and with an absolute refractory period $T_r \ge 0$ after each spike the mean time to fire is $T_r + m_1(\theta, y)$ and the average firing rate is $\rho = 1/(T_r + m_1(\theta, y))$. This is the first-moment case of Siegert's formula (1951); Kreutz-Delgado (2015) derives it from the general Siegert recursion for the moments of the first-passage time (equation (51) there, with the model in equation (9)).
 
 

@@ -5,8 +5,10 @@ In the continuum limit of the Kuramoto model with natural-frequency density $g$ 
 1. (Theorem 1.1) If $g$ is even, unimodal and continuous and $K > K_c$, the trivial state is linearly unstable; this linear instability was essentially obtained by Strogatz and Mirollo.
 2. (Theorem 1.2) If $g$ is the Gaussian density or an even, unimodal rational function bounded on $\mathbb{R}$, and $0 < K < K_c$, there is $\delta > 0$ such that if the Fourier coefficients $\bigl|\int_0^{2\pi} e^{ij\theta} h(\theta)\, d\theta\bigr|$ of the initial condition are at most $\delta$ for $j = 1, 2, \dots$, then $\eta(t)$ decays to zero exponentially; the stability holds in the topology of a rigged Hilbert space.
 3. (Theorem 1.3) For the same $g$ there are $\varepsilon_0, \delta > 0$ such that if $K_c < K < K_c + \varepsilon_0$ and the initial Fourier coefficients are smaller than $\delta$, then
-$$r(t) = |\eta(t)| \to \sqrt{\frac{-16}{\pi K_c^4\, g''(0)}}\, \sqrt{K - K_c} + O(K - K_c), \qquad t \to \infty,$$
-which is the bifurcation conjectured by Kuramoto.
+
+    $$r(t) = |\eta(t)| \to \sqrt{\frac{-16}{\pi K_c^4\, g''(0)}}\, \sqrt{K - K_c} + O(K - K_c), \qquad t \to \infty,$$
+
+    which is the bifurcation conjectured by Kuramoto.
 
 ## Expansion
 

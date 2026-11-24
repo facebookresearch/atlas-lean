@@ -1,9 +1,13 @@
 # Fisher's reproductive value grows exactly exponentially
 
 Let $l : [0, \infty) \to (0, 1]$ be a differentiable survivorship with $l(0) = 1$ and mortality $\mu = -l'/l$, let $m \ge 0$ be the age-specific fertility, and let $r$ be the root of the Euler–Lotka equation $\int_0^\infty e^{-ra} l(a) m(a)\, da = 1$. Fisher's reproductive value is
+
 $$v(x) = \frac{e^{rx}}{l(x)} \int_x^\infty e^{-ry} l(y) m(y)\, dy$$
+
 (the continuous-age definition in the reproductive value article; Caswell 2019, eq. (3.4)). Differentiating gives $v(0) = 1$ and $v'(x) = (\mu(x) + r)\, v(x) - m(x)$. If the age density $n(x, t)$ solves the McKendrick–von Foerster equation $\partial_t n + \partial_x n = -\mu n$ with births $n(0, t) = \int_0^\infty m(x) n(x, t)\, dx$, and $n(x, t) v(x) \to 0$ as $x \to \infty$ with enough integrability to differentiate under the integral, then the total reproductive value $V(t) = \int_0^\infty n(x, t) v(x)\, dx$ satisfies
+
 $$V'(t) = \int_0^\infty (-\partial_x n - \mu n) v\, dx = n(0, t) v(0) + \int_0^\infty n\,(v' - \mu v)\, dx = n(0, t) + \int_0^\infty n\,(r v - m)\, dx = r V(t),$$
+
 by integration by parts and the birth condition, so $V(t) = V(0) e^{rt}$ exactly, for every initial age distribution.
 
 ## Expansion
