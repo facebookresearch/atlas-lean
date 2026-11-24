@@ -36,7 +36,7 @@ module
 public import MathlibExt.AlgebraicGeometry.FormalOmega.DrinfeldDatum
 public import MathlibExt.AlgebraicGeometry.FormalOmega.LatticeStd
 import Mathlib.RingTheory.DedekindDomain.Basic
-import Mathlib.Algebra.Module.Lattice
+import Mathlib.Algebra.Module.Lattice.Full
 import Mathlib.RingTheory.IntegralClosure.IntegrallyClosed
 
 @[expose] public section
@@ -765,9 +765,12 @@ theorem LT.LatticeTree.FullLattice.eq_of_forall_smul_mem_of_le_of_le
     (hne₁ : ∃ v ∈ R₁, ∀ w ∈ M.1, v ≠ (algebraMap 𝒪 K π) • w) (hne₂ : R₂ ≠ M.1) :
     R₁ = R₂ := by
   classical
-  have hLat : Submodule.IsLattice K M.1 := ⟨M.2.1, M.2.2⟩
+  have hLat : Submodule.IsFullLattice K M.1 :=
+    { toIsLattice := Submodule.IsLattice.of_fg K M.2.1, span_eq_top := M.2.2 }
+  have := Submodule.IsLattice.free K M.1
+  have := Submodule.IsLattice.finite K M.1
   have hrank : Module.finrank 𝒪 ↥M.1 = 2 :=
-    (Submodule.IsLattice.finrank_of_pi K M.1).trans (Fintype.card_fin 2)
+    (Submodule.IsFullLattice.finrank_eq K M.1).trans (Module.finrank_fin_fun K)
   let b : Module.Basis (Fin 2) 𝒪 ↥M.1 := Module.finBasisOfFinrankEq 𝒪 ↥M.1 hrank
   have hπdvd : ∀ x : 𝒪, ¬ IsUnit x → π ∣ x := fun x hx => by
     have hmem : x ∈ IsLocalRing.maximalIdeal 𝒪 := (IsLocalRing.mem_maximalIdeal x).mpr hx
