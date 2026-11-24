@@ -14,7 +14,8 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The `s`-Cullen value `C_{n,s} = n * s ^ n + 1`.
+/-- **The $s$-Cullen value.** For natural numbers $s$ and $n$, the $s$-Cullen value is
+$C_{n,s} = n s^n + 1$.
 
 Source: Jon Grantham and Hester Graves, *The abc Conjecture Implies That Only Finitely Many
 s-Cullen Numbers Are Repunits*, Journal of Integer Sequences 24 (2021),
@@ -25,8 +26,9 @@ JIS concept: `jis_sem_281a433c6542caee86b48369`; defining statement:
 -/
 def sCullenNumber (s n : ℕ) : ℕ := n * s ^ n + 1
 
-/-- A number `m` is an `s`-Cullen number for base `s` when `2 ≤ s` and
-`m = C_{n,s}` for some positive `n`.
+/-- **$s$-Cullen numbers.** For natural numbers $s$ and $n$, write $C_{n,s} = n s^n + 1$ for the
+$s$-Cullen value. A natural number $m$ is an $s$-Cullen number when $s \ge 2$ and $m = C_{n,s}$
+for some natural number $n \ge 1$.
 
 Source: <https://cs.uwaterloo.ca/journals/JIS/VOL24/Grantham/gran4.tex>.
 -/

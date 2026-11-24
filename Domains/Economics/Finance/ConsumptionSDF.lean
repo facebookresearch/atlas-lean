@@ -60,7 +60,9 @@ def expectedUtility {Ω : Type*} [Fintype Ω] (u : ℝ → ℝ) (β : ℝ) (π :
   u (e0 - ξ * p) + β * ∑ ω, π ω * u (e1 ω + ξ * X ω)
 
 /-- The marginal-utility stochastic discount factor `m ω = β u'(c1 ω) / u'(c0)` for date-0
-consumption `c0` and date-1 consumption `c1`. -/
+consumption `c0` and date-1 consumption `c1`. Here `u'` is the derivative of `u`, taken to be `0` at
+a point where `u` is not differentiable, and `m = 0` when `u'(c0) = 0`, by the convention
+`x / 0 = 0`. -/
 noncomputable def marginalUtilitySDF {Ω : Type*} (u : ℝ → ℝ) (β c0 : ℝ) (c1 : Ω → ℝ)
     (ω : Ω) : ℝ :=
   β * deriv u (c1 ω) / deriv u c0

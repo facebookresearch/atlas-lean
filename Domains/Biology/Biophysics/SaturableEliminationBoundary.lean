@@ -23,14 +23,14 @@ One-compartment saturable (Michaelis–Menten) elimination under constant infusi
 with `Vmax, Km > 0`, is restated here minimally as the hypothesis
 `hC : ∀ t, 0 ≤ t → HasDerivAt C (R - mmRate Vmax Km (C t)) t`, using the canonical rate law
 `MathlibExt.Biology.Dynamics.MichaelisMenten.mmRate`. This hypothesis is definitionally the
-predicate `SaturableElimination.IsSolution Vmax Km R C` of the sibling file (open as #1577),
+predicate `SaturableElimination.IsSolution Vmax Km R C` of the sibling file,
 which proves existence, uniqueness, nonnegativity, and exponential convergence to the steady
 state. Equilibria are taken as an explicit `c ≥ 0` with `mmRate Vmax Km c = R`; for
 `0 ≤ R < Vmax` this is `c = R Km / (Vmax - R)` (the sibling's `steadyConc`).
 
 Convergence `C → c` is **not** proved in this file. It is the sibling's
 `IsSolution.tendsto_steadyConc` (with the exponential upper bound
-`IsSolution.abs_sub_steadyConc_le`), open as #1577. This file proves the shape of the approach:
+`IsSolution.abs_sub_steadyConc_le`). This file proves the shape of the approach:
 monotone, never crossing or reaching `c`, and no faster than an explicit exponential.
 
 ## Main results
@@ -59,8 +59,8 @@ The critical rate `R = Vmax`, where `(Km + C) C' = Vmax Km`:
   `√(2 Vmax Km t) - Km ≤ C(t) ≤ C(0) + √(2 Vmax Km t)`.
 * `tendsto_div_sqrt_critical`, `tendsto_div_critical`: `C(t)/√t → √(2 Vmax Km)` and
   `C(t)/t → 0`. Accumulation at the critical rate is square-root, slower than the linear growth
-  `C(t) ≥ C(0) + (R - Vmax) t` for `R > Vmax` (the sibling's `IsSolution.add_mul_le`, #1577; not
-  proved here).
+  `C(t) ≥ C(0) + (R - Vmax) t` for `R > Vmax`, `C(0) ≥ 0` and `t ≥ 0`
+  (`SaturableElimination.IsSolution.add_mul_le`).
 
 ## Source receipt
 
@@ -158,7 +158,7 @@ section Equilibrium
 
 variable {C : ℝ → ℝ} {t : ℝ}
 
-/-- An equilibrium forces `R < Vmax` (elimination never reaches its capacity). -/
+/-- A nonnegative equilibrium `c ≥ 0` forces `R < Vmax` (elimination never reaches its capacity). -/
 theorem lt_of_mmRate_eq (hV : 0 < Vmax) (hK : 0 < Km) (hc0 : 0 ≤ c)
     (hc : mmRate Vmax Km c = R) : R < Vmax :=
   hc ▸ mmRate_lt hV hK hc0
@@ -179,7 +179,8 @@ private lemma field_pos (hV : 0 < Vmax) (hK : 0 < Km) (hc0 : 0 ≤ c)
   exact div_pos (mul_pos (sub_pos.2 (lt_of_mmRate_eq hV hK hc0 hc)) (by linarith)) hKy
 
 /-- **The region below the equilibrium is invariant.** If `C(0) ≤ c` then `C(t) ≤ c` for all
-`t ≥ 0`. -/
+`t ≥ 0`. No sign of `C(0)` is assumed; where `C t = -Km` the rate `mmRate Vmax Km (C t)` is `0` by
+the convention `x / 0 = 0`. -/
 theorem le_of_initial_le (hC : ∀ t, 0 ≤ t → HasDerivAt C (R - mmRate Vmax Km (C t)) t)
     (hV : 0 < Vmax) (hK : 0 < Km) (hc0 : 0 ≤ c) (hc : mmRate Vmax Km c = R) (h0 : C 0 ≤ c)
     (ht : 0 ≤ t) : C t ≤ c :=
@@ -201,7 +202,8 @@ theorem eq_of_initial_eq (hC : ∀ t, 0 ≤ t → HasDerivAt C (R - mmRate Vmax 
   le_antisymm (le_of_initial_le hC hV hK hc0 hc h0.le ht)
     (le_of_le_initial hC hV hK hc0 hc h0.ge ht)
 
-/-- Starting below the equilibrium, the solution never drops below its initial value. -/
+/-- Starting at `0 ≤ C(0) ≤ c`, below the equilibrium, the solution never drops below its initial
+value. -/
 theorem initial_le_of_initial_le (hC : ∀ t, 0 ≤ t → HasDerivAt C (R - mmRate Vmax Km (C t)) t)
     (hV : 0 < Vmax) (hK : 0 < Km) (hc0 : 0 ≤ c) (hc : mmRate Vmax Km c = R) (h00 : 0 ≤ C 0)
     (h0 : C 0 ≤ c) (ht : 0 ≤ t) : C 0 ≤ C t :=
@@ -303,7 +305,8 @@ theorem mul_exp_le_sub_of_le_initial (hC : ∀ t, 0 ≤ t → HasDerivAt C (R - 
         mul_le_mul_of_nonneg_right hg (exp_pos _).le
     _ = C t - c := by rw [mul_assoc, ← exp_add]; simp
 
-/-- Starting strictly below the equilibrium, the solution stays strictly below it. -/
+/-- Starting at `0 ≤ C(0) < c`, strictly below the equilibrium, the solution stays strictly below
+it. -/
 theorem lt_of_initial_lt (hC : ∀ t, 0 ≤ t → HasDerivAt C (R - mmRate Vmax Km (C t)) t)
     (hV : 0 < Vmax) (hK : 0 < Km) (hc0 : 0 ≤ c) (hc : mmRate Vmax Km c = R) (h00 : 0 ≤ C 0)
     (h0 : C 0 < c) (ht : 0 ≤ t) : C t < c := by
@@ -367,19 +370,20 @@ private lemma field_critical_pos (hV : 0 < Vmax) (hK : 0 < Km) {y : ℝ} (hKy : 
   rw [sub_mmRate_critical hKy.ne']
   exact div_pos (mul_pos hV hK) hKy
 
-/-- At the critical rate the solution never drops below its initial value. -/
+/-- At the critical rate, for `C(0) ≥ 0`, the solution never drops below its initial value. -/
 theorem initial_le_critical (hC : ∀ t, 0 ≤ t → HasDerivAt C (Vmax - mmRate Vmax Km (C t)) t)
     (hV : 0 < Vmax) (hK : 0 < Km) (h00 : 0 ≤ C 0) (ht : 0 ≤ t) : C 0 ≤ C t :=
   ge_of_barrier (F := fun y ↦ Vmax - mmRate Vmax Km y) hC hK
     (fun _ h1 _ ↦ field_critical_pos hV hK (by linarith)) le_rfl ht
 
-/-- At the critical rate the solution is strictly increasing on `[0, ∞)`. -/
+/-- At the critical rate, for `C(0) ≥ 0`, the solution is strictly increasing on `[0, ∞)`. -/
 theorem strictMonoOn_critical (hC : ∀ t, 0 ≤ t → HasDerivAt C (Vmax - mmRate Vmax Km (C t)) t)
     (hV : 0 < Vmax) (hK : 0 < Km) (h00 : 0 ≤ C 0) : StrictMonoOn C (Ici 0) :=
   strictMonoOn_Ici_of_pos hC fun s hs ↦
     field_critical_pos hV hK (by linarith [initial_le_critical hC hV hK h00 hs])
 
-/-- **Exact integral at the critical rate.** `(Km + C(t))² = (Km + C(0))² + 2 Vmax Km t`. -/
+/-- **Exact integral at the critical rate.** For `C(0) ≥ 0` and `t ≥ 0`,
+`(Km + C(t))² = (Km + C(0))² + 2 Vmax Km t`. -/
 theorem sq_add_critical (hC : ∀ t, 0 ≤ t → HasDerivAt C (Vmax - mmRate Vmax Km (C t)) t)
     (hV : 0 < Vmax) (hK : 0 < Km) (h00 : 0 ≤ C 0) (ht : 0 ≤ t) :
     (Km + C t) ^ 2 = (Km + C 0) ^ 2 + 2 * Vmax * Km * t := by
@@ -398,7 +402,8 @@ theorem sq_add_critical (hC : ∀ t, 0 ≤ t → HasDerivAt C (Vmax - mmRate Vma
   simp only [mul_zero, sub_zero, neg_le_neg_iff] at h1 h2
   linarith
 
-/-- **Closed form at the critical rate.** `C(t) = √((Km + C(0))² + 2 Vmax Km t) - Km`. -/
+/-- **Closed form at the critical rate.** For `C(0) ≥ 0` and `t ≥ 0`,
+`C(t) = √((Km + C(0))² + 2 Vmax Km t) - Km`. -/
 theorem eq_sqrt_critical (hC : ∀ t, 0 ≤ t → HasDerivAt C (Vmax - mmRate Vmax Km (C t)) t)
     (hV : 0 < Vmax) (hK : 0 < Km) (h00 : 0 ≤ C 0) (ht : 0 ≤ t) :
     C t = √((Km + C 0) ^ 2 + 2 * Vmax * Km * t) - Km := by
@@ -406,7 +411,8 @@ theorem eq_sqrt_critical (hC : ∀ t, 0 ≤ t → HasDerivAt C (Vmax - mmRate Vm
     Real.sqrt_sq (by linarith [initial_le_critical hC hV hK h00 ht])]
   ring
 
-/-- Lower square-root bound at the critical rate: `√(2 Vmax Km t) - Km ≤ C(t)`. -/
+/-- Lower square-root bound at the critical rate, for `C(0) ≥ 0` and `t ≥ 0`:
+`√(2 Vmax Km t) - Km ≤ C(t)`. -/
 theorem sqrt_sub_le_critical (hC : ∀ t, 0 ≤ t → HasDerivAt C (Vmax - mmRate Vmax Km (C t)) t)
     (hV : 0 < Vmax) (hK : 0 < Km) (h00 : 0 ≤ C 0) (ht : 0 ≤ t) :
     √(2 * Vmax * Km * t) - Km ≤ C t := by
@@ -415,7 +421,8 @@ theorem sqrt_sub_le_critical (hC : ∀ t, 0 ≤ t → HasDerivAt C (Vmax - mmRat
     2 * Vmax * Km * t ≤ (Km + C 0) ^ 2 + 2 * Vmax * Km * t)
   linarith
 
-/-- Upper square-root bound at the critical rate: `C(t) ≤ C(0) + √(2 Vmax Km t)`. -/
+/-- Upper square-root bound at the critical rate, for `C(0) ≥ 0` and `t ≥ 0`:
+`C(t) ≤ C(0) + √(2 Vmax Km t)`. -/
 theorem le_add_sqrt_critical (hC : ∀ t, 0 ≤ t → HasDerivAt C (Vmax - mmRate Vmax Km (C t)) t)
     (hV : 0 < Vmax) (hK : 0 < Km) (h00 : 0 ≤ C 0) (ht : 0 ≤ t) :
     C t ≤ C 0 + √(2 * Vmax * Km * t) := by
@@ -441,7 +448,7 @@ theorem tendsto_atTop_critical (hC : ∀ t, 0 ≤ t → HasDerivAt C (Vmax - mmR
   rw [← sub_eq_add_neg]
   exact sqrt_sub_le_critical hC hV hK h00 ht
 
-/-- **Square-root growth at the critical rate.** `C(t) / √t → √(2 Vmax Km)`. -/
+/-- **Square-root growth at the critical rate.** For `C(0) ≥ 0`, `C(t) / √t → √(2 Vmax Km)`. -/
 theorem tendsto_div_sqrt_critical
     (hC : ∀ t, 0 ≤ t → HasDerivAt C (Vmax - mmRate Vmax Km (C t)) t)
     (hV : 0 < Vmax) (hK : 0 < Km) (h00 : 0 ≤ C 0) :
@@ -471,10 +478,9 @@ theorem tendsto_div_sqrt_critical
     have he : (a + C 0 * (√t)⁻¹) * √t = a * √t + C 0 := by field_simp
     linarith
 
-/-- **Sublinear growth at the critical rate.** `C(t) / t → 0`: the critical accumulation is
-slower than every linear rate. (For `R > Vmax` growth is at least linear,
-`C(t) ≥ C(0) + (R - Vmax) t`; that is the sibling's `IsSolution.add_mul_le`, #1577, not proved
-here.) -/
+/-- **Sublinear growth at the critical rate.** For `C(0) ≥ 0`, `C(t) / t → 0`: the critical
+accumulation is slower than every linear rate. (For `R > Vmax` growth is at least linear,
+`C(t) ≥ C(0) + (R - Vmax) t` for `t ≥ 0`, by `SaturableElimination.IsSolution.add_mul_le`.) -/
 theorem tendsto_div_critical (hC : ∀ t, 0 ≤ t → HasDerivAt C (Vmax - mmRate Vmax Km (C t)) t)
     (hV : 0 < Vmax) (hK : 0 < Km) (h00 : 0 ≤ C 0) :
     Tendsto (fun t ↦ C t / t) atTop (𝓝 0) := by

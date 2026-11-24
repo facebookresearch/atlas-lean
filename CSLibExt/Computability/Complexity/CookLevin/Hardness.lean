@@ -102,7 +102,10 @@ section Classical
 
 open Classical
 
-/-- `symSet` plus one extra symbol `acc` on the output stack. -/
+/-- **Effective alphabets with an adjoined accept symbol.** For a finite multi-stack Turing
+machine $M$, a symbol $a$ of its output-stack alphabet and a stack $k$, this is the finite set of
+symbols that some statement of $M$ can push on stack $k$ (together with the whole input alphabet
+when $k$ is the input stack), with $a$ added when $k$ is the output stack. -/
 noncomputable def symSetX (M : FinTM2) (acc : M.Γ M.k₁) (k : M.K) : Finset (M.Γ k) :=
   symSet M k ∪ (if h : M.k₁ = k then {cast (congrArg M.Γ h) acc} else ∅)
 
@@ -110,7 +113,13 @@ theorem acc_mem_symSetX (M : FinTM2) (acc : M.Γ M.k₁) : acc ∈ symSetX M acc
   unfold symSetX
   exact Finset.mem_union_right _ (by rw [dite_eq_left rfl]; exact Finset.mem_singleton_self _)
 
-/-- `Enc.ofFinTM2` with `acc` added to the effective output alphabet. -/
+/-- **Tableau encoding with a chosen accept symbol.** Given a finite multi-stack Turing machine
+$M$ and a symbol $a$ of its output-stack alphabet, this is the encoding of $M$ that numbers the
+stacks and the pairs (optional label, state) through their finite enumerations, and whose
+effective alphabet on each stack $k$ is the set of symbols some statement of $M$ can push on $k$
+(plus the whole input alphabet if $k$ is the input stack), with $a$ added if $k$ is the output
+stack. A symbol in that set has code one more than its position in it; any other symbol has
+code $0$. -/
 noncomputable def encX (M : FinTM2) (acc : M.Γ M.k₁) : Enc M :=
   letI := M.kFin; letI := M.ΛFin; letI := M.σFin
   { KK := Fintype.card M.K
@@ -135,7 +144,12 @@ noncomputable def encX (M : FinTM2) (acc : M.Γ M.k₁) : Enc M :=
     input_mem := fun x => ⟨(symSetX M acc M.k₀).equivFin
       ⟨x, Finset.mem_union_left _ (input_mem_symSet M x)⟩, by simp⟩ }
 
-/-- The accept symbol is encodable: `phi_iff`'s `hacc`, unconditionally. -/
+/-- **The chosen accept symbol is encodable.** Let $M$ be a finite multi-stack Turing machine and
+let $a$ be a symbol of its output-stack alphabet. In the tableau encoding of $M$ with $a$ adjoined
+to the output alphabet, some index of the effective output-stack alphabet decodes to $a$.
+
+This discharges, for every machine, the accept-symbol hypothesis of the correctness theorem for
+the assembled formula. -/
 theorem encX_acc (M : FinTM2) (acc : M.Γ M.k₁) : ∃ i, (encX M acc).dec M.k₁ i = acc :=
   ⟨(symSetX M acc M.k₁).equivFin ⟨acc, acc_mem_symSetX M acc⟩, by simp [encX]⟩
 
@@ -148,38 +162,73 @@ section Ver
 variable {fv : List Bool × List Bool → Bool}
   (V : TM2ComputableInPolyTime Verifier.pairEncode (fun b : Bool => [b]) fv)
 
-/-- Accept symbol: the verifier's output symbol for `true`. -/
+/-- **Accept symbol of the verifier.** Let $V$ be a polynomial-time machine computing a function
+of pairs of bit lists from their pair encoding, whose output alphabet is identified with the
+Booleans. The accept symbol is the output symbol of $V$ that corresponds to $\mathrm{true}$. -/
 def vacc : V.tm.Γ V.tm.k₁ := V.outputAlphabet.symm true
 
-/-- The tableau encoding of the verifier, with the accept symbol in its output alphabet. -/
+/-- **Tableau encoding of the verifier.** For a polynomial-time Turing machine $V$ that computes a
+Boolean function on pairs of bit strings, reading a pair $(a, y)$ as the bits of $a$, a separator,
+then the bits of $y$, and writing its answer as one bit, this is the tableau encoding of $V$ whose
+effective output alphabet is enlarged by the accept symbol: the output symbol of $V$ for true. -/
 noncomputable def vE : Enc V.tm := encX V.tm (vacc V)
 
-/-- Raw input bits as symbols `Fin 2`. -/
+/-- **Bits as indices.** The bijection from $\{0, 1\}$, the indices below the number $2$ of
+Booleans, onto the Booleans that is inverse to the fixed enumeration of the Booleans. -/
 noncomputable def veqv : Fin (Fintype.card Bool) ≃ Bool := (Fintype.equivFin Bool).symm
 
-/-- Input bit `i` of `x`, as the verifier sees it (left-tagged). -/
+/-- **Input-bit symbol of the verifier.** Let $V$ be a polynomial-time machine computing a
+function of pairs of bit lists from their pair encoding, whose input alphabet is identified with
+the pair alphabet $\mathrm{Bool} \oplus \mathrm{Option}\ \mathrm{Bool}$, and let $\beta$ be the
+fixed bijection from $\{0, 1\}$ onto the Booleans. For an index $i \in \{0, 1\}$, this is the
+symbol of $V$'s input alphabet that corresponds to the left-tagged bit $\mathrm{inl}(\beta(i))$. -/
 noncomputable def vι (i : Fin (Fintype.card Bool)) : V.tm.Γ V.tm.k₀ :=
   V.inputAlphabet.symm (Sum.inl (veqv i))
 
-/-- The separator `#`. -/
+/-- **Separator symbol of the verifier.** Let $V$ be a polynomial-time machine computing a
+function of pairs of bit lists from their pair encoding, whose input alphabet is identified with
+the pair alphabet $\mathrm{Bool} \oplus \mathrm{Option}\ \mathrm{Bool}$. This is the symbol of
+$V$'s input alphabet that corresponds to the separator $\#$, the element
+$\mathrm{inr}(\mathrm{none})$. -/
 def vsep : V.tm.Γ V.tm.k₀ := V.inputAlphabet.symm (Sum.inr none)
 
-/-- Certificate bit `g`, right-tagged. -/
+/-- **Certificate symbol of the verifier.** Let $V$ be a polynomial-time machine computing a
+function of pairs of bit lists from their pair encoding, whose input alphabet is identified with
+the pair alphabet $\mathrm{Bool} \oplus \mathrm{Option}\ \mathrm{Bool}$. For a bit $g$, this is the
+symbol of $V$'s input alphabet that corresponds to the right-tagged bit
+$\mathrm{inr}(\mathrm{some}\ g)$. -/
 def vY (g : Bool) : V.tm.Γ V.tm.k₀ := V.inputAlphabet.symm (Sum.inr (some g))
 
-/-- All certificate symbols. -/
+/-- **Certificate symbols of the verifier.** Let $V$ be a polynomial-time machine computing a
+function of pairs of bit lists from their pair encoding, whose input alphabet is identified with
+the pair alphabet $\mathrm{Bool} \oplus \mathrm{Option}\ \mathrm{Bool}$. This is the list of the
+symbols of $V$'s input alphabet corresponding to the right-tagged bits
+$\mathrm{inr}(\mathrm{some}\ g)$ for $g = \mathrm{true}$ and $g = \mathrm{false}$, each once, in
+the order of a fixed enumeration of the Booleans. -/
 noncomputable def vYs : List (V.tm.Γ V.tm.k₀) := (Finset.univ : Finset Bool).toList.map (vY V)
 
-/-- `T = (m + c)^e` dominates the verifier's time polynomial. -/
+/-- **Offset of the verifier's time bound.** Let $V$ be a polynomial-time machine computing a
+function of pairs of bit lists from their pair encoding, with time polynomial $t_V$. This is a
+natural number $c \ge 1$, fixed by choice, such that for some exponent $e$ we have
+$t_V(j) \le (j + c)^e$ for every natural number $j$. -/
 noncomputable def vc : ℕ := Classical.choose (eval_le_pow V.time)
 
-/-- Exponent with `V.time.eval j ≤ (j + vc V) ^ ve V`. -/
+/-- **Exponent of the verifier's time bound.** Let $V$ be a polynomial-time machine computing a
+function of pairs of bit lists from their pair encoding, with time polynomial $t_V$, and let
+$c \ge 1$ be the offset of its time bound, fixed by choice so that some exponent works. This is
+an exponent $e$, fixed by choice, with $t_V(j) \le (j + c)^e$ for every natural number $j$. -/
 noncomputable def ve : ℕ := Classical.choose (Classical.choose_spec (eval_le_pow V.time))
 
 theorem v_time (j : ℕ) : V.time.eval j ≤ (j + vc V) ^ ve V :=
   (Classical.choose_spec (Classical.choose_spec (eval_le_pow V.time))).2 j
 
-/-- The verifier's input on `(a, y)` is `x ++ (y mapped)`, `x` = tagged `a` then `#`. -/
+/-- **Input of the verifier on a pair.** Let $V$ be a polynomial-time machine computing a function
+of pairs of bit lists from their pair encoding, whose input alphabet is identified with the pair
+alphabet $\mathrm{Bool} \oplus \mathrm{Option}\ \mathrm{Bool}$, and let $\beta$ be the fixed
+bijection from $\{0, 1\}$ onto the Booleans. For bit lists $a$ and $y$, translating the pair
+encoding $a \# y$ symbol by symbol into $V$'s input alphabet gives the input-bit symbols of the
+indices $\beta^{-1}(b)$ for the bits $b$ of $a$ in order, then the separator symbol, then the
+certificate symbols of the bits of $y$ in order. -/
 theorem v_input (a y : List Bool) :
     List.map V.inputAlphabet.invFun (Verifier.pairEncode (a, y)) =
       (a.map veqv.invFun).map (vι V) ++ [vsep V] ++ y.map (vY V) := by
@@ -187,7 +236,17 @@ theorem v_input (a y : List Bool) :
   simp [Verifier.pairEncode, Function.comp_def]
   exact ⟨fun _ => veqv.apply_symm_apply _, fun _ => veqv.apply_symm_apply _⟩
 
-/-- Determinism link: from row `T` on, the verifier's run on `(a, y)` is its output. -/
+/-- **The verifier's run settles on its output.** Let $V$ be a machine that computes a function
+$f_v$ of pairs of bit lists from their pair encoding, within $t_V(n)$ steps on an encoding of
+length $n$ for a polynomial $t_V$ with natural-number coefficients, with input alphabet
+identified with the pair alphabet $\mathrm{Bool} \oplus \mathrm{Option}\ \mathrm{Bool}$ and output
+alphabet identified with the Booleans. Let $a$, $y$ be bit lists of lengths $|a|$, $|y|$, and $T$ a
+natural number with $t_V(|a| + 1 + |y|) \le T$. Start $V$ in its initial configuration with its
+input stack holding the symbols for the left-tagged bits $\mathrm{inl}(b)$ of $a$, then the
+separator $\mathrm{inr}(\mathrm{none})$, then the symbols for the right-tagged bits
+$\mathrm{inr}(\mathrm{some}\ b)$ of $y$, and run it for $T$ steps, a halted configuration staying
+unchanged. The result is the halted configuration, in the initial internal state, whose output
+stack holds exactly the one output symbol for $f_v(a, y)$ and whose other stacks are empty. -/
 theorem v_run (a y : List Bool) {T : ℕ} (hT : V.time.eval (a.length + 1 + y.length) ≤ T) :
     runI V.tm (initList V.tm ((a.map veqv.invFun).map (vι V) ++ [vsep V] ++ y.map (vY V))) T =
       haltList V.tm [V.outputAlphabet.symm (fv (a, y))] := by
@@ -199,12 +258,26 @@ theorem v_run (a y : List Bool) {T : ℕ} (hT : V.time.eval (a.length + 1 + y.le
   rw [hl] at h
   exact runI_haltList V.tm _ _ h hT
 
-/-- The reduction function on raw input bits. -/
+/-- **The Cook–Levin reduction.** Let $V$ be a polynomial-time Turing machine that computes a
+Boolean function on pairs of bit strings, reading a pair $(a, y)$ as the bits of $a$, a separator,
+then the bits of $y$, and writing its answer as one bit; let $t$ be its time bound and fix
+constants $c \ge 1$ and $e$ with $t(j) \le (j + c)^e$ for all $j$. For a polynomial $p$ with
+natural-number coefficients, the reduction sends a bit string $a$ of length $n$ to the dense bit
+encoding of the tableau formula $\Phi$ of $V$, built with the encoding of $V$ whose output
+alphabet contains the output symbol $\mathrm{acc}$ for true, for the input prefix $x$ made of the
+bits of $a$ followed by the separator, the certificate symbols of $V$ (one per bit) as the
+allowed symbols after $x$, the accept symbol $\mathrm{acc}$, width $m = n + 1 + p(n)$ and
+$T = (m + c)^e$ steps. -/
 noncomputable def red (p : Polynomial ℕ) : List Bool → List Bool :=
   fR (vE V) (fun l : List Bool => l) veqv (vYs V) (vacc V) (vι V) (vsep V) p (vc V) (ve V)
 
-/-- **Correctness of the reduction**: `L' a ↔ SAT (red a)`, for a language `L'` whose
-certificates of length at most `p(|a|)` are checked by `fv`. -/
+/-- **Correctness of the reduction.** Let $V$ be a polynomial-time Turing machine that computes a
+Boolean function $f$ on pairs of bit strings, reading a pair $(a, y)$ as the bits of $a$, a
+separator, then the bits of $y$, and writing its answer as one bit. Let $p$ be a polynomial with
+natural-number coefficients, $R$ a relation on bit strings with $R(a, y)$ iff $f(a, y)$ is true,
+and $L'$ a predicate on bit strings such that $L'(a)$ holds iff some bit string $y$ of length at
+most $p(|a|)$ satisfies $R(a, y)$. Then for every bit string $a$, $L'(a)$ holds iff the image of
+$a$ under the reduction built from $V$ and $p$ is in CNF-SAT. -/
 theorem v_correct {R : List Bool → List Bool → Prop} {p : Polynomial ℕ} {L' : List Bool → Prop}
     (hfv : ∀ q : List Bool × List Bool, R q.1 q.2 ↔ fv q = true)
     (hL : ∀ a, L' a ↔ ∃ y : List Bool, y.length ≤ p.eval a.length ∧ R a y) (a : List Bool) :
@@ -242,7 +315,11 @@ theorem v_correct {R : List Bool → List Bool → Prop} {p : Polynomial ℕ} {L
     refine ⟨y, by rw [← hn]; unfold mOf at hyl; omega, (hfv (a, y)).2 ((hacc y hyl).1 ?_)⟩
     exact hA
 
-/-- The reduction is polynomial-time computable in formal-math's sense. -/
+/-- **The Cook–Levin reduction is polynomial-time.** Let $V$ be a polynomial-time Turing machine
+that computes a Boolean function on pairs of bit strings, reading a pair $(a, y)$ as the bits of
+$a$, a separator, then the bits of $y$, and writing its answer as one bit. For every polynomial
+$p$ with natural-number coefficients, the reduction built from $V$ and $p$ is polynomial-time
+computable with respect to the canonical bit-string encodings. -/
 theorem isPolyTime_red (p : Polynomial ℕ) : IsPolyTime (red V p) := by
   obtain ⟨h⟩ := tm2ComputableInPolyTime_comp DecodeBits.computable
     (gComp (vE V) (fun l : List Bool => l) veqv (vYs V) (vacc V) (vι V) (vsep V) p (vc V) (ve V))
@@ -253,7 +330,10 @@ end Ver
 
 /-! ## Hardness and completeness -/
 
-/-- **Every NP problem reduces to dense CNF-SAT.** -/
+/-- **Every NP problem reduces to dense CNF-SAT.** Every decision problem $L$ in NP has a
+polynomial-time many-one reduction to dense CNF-SAT: a polynomial-time computable map $f$ on bit
+strings such that, for every bit string $x$, $L$ accepts $x$ exactly when dense CNF-SAT accepts
+$f(x)$. -/
 theorem denseSatDec_npHard (L : DecisionProblem) (hL : L ∈ NP) :
     Cslib.CookLevin.PolyManyOneRed L denseSatDec := by
   obtain ⟨p, R, ⟨V₀⟩, hLR⟩ := hL
@@ -266,8 +346,8 @@ theorem denseSatDec_npHard (L : DecisionProblem) (hL : L ∈ NP) :
   rw [Bool.eq_iff_iff, denseSatDec, decide_eq_true_iff]
   exact h
 
-/-- **Cook-Levin for dense CNF-SAT**: `denseSatDec` is NP-complete for the canonical classes,
-with polynomial-time many-one reductions. -/
+/-- **Cook-Levin for dense CNF-SAT.** Dense CNF-SAT is NP-complete: it lies in NP, and every
+decision problem in NP has a polynomial-time many-one reduction to dense CNF-SAT. -/
 theorem denseSatDec_npComplete :
     denseSatDec ∈ NP ∧
       ∀ L : DecisionProblem, L ∈ NP → Cslib.CookLevin.PolyManyOneRed L denseSatDec :=

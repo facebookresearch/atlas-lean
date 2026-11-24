@@ -11,16 +11,20 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Order.Floor.Div
 public import Mathlib.Order.Lattice.Nat
-public import MathlibExt.Combinatorics.Additive.WeightedDavenport
+public import MathlibExt.Combinatorics.Additive.WeightedDavenportInterval
+public import MathlibExt.Combinatorics.Additive.WeightedDavenportPrimePow
+public import MathlibExt.Combinatorics.Additive.WeightedDavenportZModProdSelf
 public import Mathlib.NumberTheory.Padics.PadicVal.Defs
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Xia's theorem: if `A ⊆ Z_n \ {0}` is an arithmetic progression of length `⌈n/2⌉` with
-common difference `1`, then `D_A(Z_n) = 2`. The progression is the image of
-`i ↦ (a + i) % n` for `i < ⌈n/2⌉`, and `0` is assumed not to be among its terms.
+/-- **Xia's theorem on arithmetic progressions of weights.** Let $n \ge 2$ and $a$ be natural
+numbers, and let $A = \{(a + i) \bmod n : 0 \le i < \lceil n/2 \rceil\}$ be the set of remainders
+modulo $n$ of the $\lceil n/2 \rceil$ consecutive integers
+$a, a + 1, \dots, a + \lceil n/2 \rceil - 1$. If $0 \notin A$, then the $A$-weighted Davenport
+constant of $\mathbb{Z}/n\mathbb{Z}$ is $D_A(\mathbb{Z}/n\mathbb{Z}) = 2$.
 
 Source: Md Ibrahim Molla, *New Families of Weight Sets Yielding Prescribed Weighted Zero-Sum
 Constants*, INTEGERS 26 (2026), Article A89, Theorem 1 (`integers-2026-A89-thm-1`). -/
@@ -29,10 +33,13 @@ public theorem_wanted weightedDavenport_zmod_arithmeticProgression (n a : ℕ) (
     weightedDavenport ((Finset.range (n ⌈/⌉ 2)).image (fun i => (a + i) % n)) (ZMod n) =
       ((2 : ℕ) : ℕ∞)
 
-/-- Xia's theorem: for a prime `p` and `k = v_p(n)`, the weight set
-`A = {a ∈ [1, n-1] : a ≢ 0 (mod p)}` has `D_A(Z_n) = k + 1`. The hypothesis `p ∣ n` is
-added: the residue condition is a condition on `Z_n` only when `p ∣ n`, and without it
-the claim fails (`n = 10`, `p = 3`: `k = 0` but `D_A(Z_10) = 2`).
+/-- **Weighted Davenport constant of $\mathbb{Z}/n\mathbb{Z}$ for the weights prime to $p$.** Let
+$n$ be a positive integer, $p$ a prime dividing $n$ and $k = v_p(n)$ the exponent of $p$ in $n$.
+For the weight set $A = \{a \in \{1, \dots, n - 1\} : p \nmid a\}$, the $A$-weighted Davenport
+constant of $\mathbb{Z}/n\mathbb{Z}$ is $D_A(\mathbb{Z}/n\mathbb{Z}) = k + 1$.
+
+This is Xia's theorem. Without the hypothesis $p \mid n$ the formula fails: for $n = 10$ and
+$p = 3$ one has $v_3(10) = 0$ but $D_A(\mathbb{Z}/10\mathbb{Z}) = 2$.
 
 Source: Md Ibrahim Molla, *New Families of Weight Sets Yielding Prescribed Weighted Zero-Sum
 Constants*, INTEGERS 26 (2026), Article A89, Theorem 2 (`integers-2026-A89-thm-2`). -/
@@ -41,7 +48,9 @@ public theorem_wanted weightedDavenport_zmod_not_dvd_prime (n p : ℕ) (hp : p.P
     weightedDavenport ((Finset.Icc 1 (n - 1)).filter (fun a => ¬ p ∣ a)) (ZMod n) =
       ((padicValNat p n + 1 : ℕ) : ℕ∞)
 
-/-- Olson's theorem: for `h ∣ k`, `D(Z_h ⊕ Z_k) = h + k - 1`.
+/-- **Olson's theorem for groups of rank at most two.** For positive integers $h$ and $k$ with
+$h \mid k$, the Davenport constant $D(G) = D_{\{1\}}(G)$ of
+$G = \mathbb{Z}/h\mathbb{Z} \oplus \mathbb{Z}/k\mathbb{Z}$ is $D(G) = h + k - 1$.
 
 Source: Md Ibrahim Molla, *New Families of Weight Sets Yielding Prescribed Weighted Zero-Sum
 Constants*, INTEGERS 26 (2026), Article A89, Theorem 3 (`integers-2026-A89-thm-3`). -/
@@ -49,9 +58,11 @@ public theorem_wanted weightedDavenport_one_zmod_prod_of_dvd (h k : ℕ) (hh : 1
     (hdvd : h ∣ k) (hk : 1 ≤ k) :
     weightedDavenport {1} (ZMod h × ZMod k) = ((h + k - 1 : ℕ) : ℕ∞)
 
-/-- Olson's theorem: for a prime `p` and exponents `e_i ≥ 1`,
-`D(Z_{p^{e_1}} ⊕ ⋯ ⊕ Z_{p^{e_r}}) = 1 + ∑ (p^{e_i} - 1)` (the rank `r = 0` case is the
-trivial group and is included).
+/-- **Olson's theorem for abelian $p$-groups.** Let $p$ be a prime, $r \ge 0$ and let
+$e_1, \dots, e_r \ge 1$ be natural numbers. The Davenport constant $D(G) = D_{\{1\}}(G)$ of
+$G = \mathbb{Z}/p^{e_1}\mathbb{Z} \oplus \dots \oplus \mathbb{Z}/p^{e_r}\mathbb{Z}$ is
+$D(G) = 1 + \sum_{i=1}^{r} (p^{e_i} - 1)$. For $r = 0$ the group $G$ is trivial and this reads
+$D(G) = 1$.
 
 Source: Md Ibrahim Molla, *New Families of Weight Sets Yielding Prescribed Weighted Zero-Sum
 Constants*, INTEGERS 26 (2026), Article A89, Theorem 4 (`integers-2026-A89-thm-4`). -/
@@ -60,17 +71,10 @@ public theorem_wanted weightedDavenport_one_pi_zmod_prime_pow (p r : ℕ) (hp : 
     weightedDavenport {1} ((i : Fin r) → ZMod (p ^ e i)) =
       ((1 + ∑ i, (p ^ e i - 1) : ℕ) : ℕ∞)
 
-/-- For `m, n ≥ 2` with `m ∣ n`: `⌈n / (⌈n/(m-1)⌉ - 1)⌉ = m`.
-
-Source: Md Ibrahim Molla, *New Families of Weight Sets Yielding Prescribed Weighted Zero-Sum
-Constants*, INTEGERS 26 (2026), Article A89, Lemma 1 (`integers-2026-A89-lem-1`). -/
-public theorem_wanted ceilDiv_ceilDiv_sub_one_sub_one_of_dvd (m n : ℕ) (hm : 2 ≤ m)
-    (hn : 2 ≤ n) (hdvd : m ∣ n) :
-    n ⌈/⌉ (n ⌈/⌉ (m - 1) - 1) = m
-
-/-- Main theorem: for `n ≥ 2` and a divisor `m ≥ 2` of `n`, every weight set `A` with
-`n/m ∈ A ⊆ {1, …, ⌈n/(m-1)⌉ - 1}` has `D_A(Z_n) = m`. The extracted statement is garbled;
-this is the reading Corollaries 1 and 2 restate.
+/-- **Weight sets with weighted Davenport constant $m$ on $\mathbb{Z}/n\mathbb{Z}$.** Let
+$n \ge 2$ be a natural number and $m \ge 2$ a divisor of $n$. Every finite set $A$ of natural
+numbers with $n/m \in A \subseteq \{1, \dots, \lceil n/(m-1) \rceil - 1\}$ has $A$-weighted
+Davenport constant $D_A(\mathbb{Z}/n\mathbb{Z}) = m$.
 
 Source: Md Ibrahim Molla, *New Families of Weight Sets Yielding Prescribed Weighted Zero-Sum
 Constants*, INTEGERS 26 (2026), Article A89, Theorem 5 (`integers-2026-A89-thm-5`). -/
@@ -79,39 +83,23 @@ public theorem_wanted weightedDavenport_zmod_of_dvd (m n : ℕ) (hm : 2 ≤ m) (
     (hsub : A ⊆ Finset.Icc 1 (n ⌈/⌉ (m - 1) - 1)) :
     weightedDavenport A (ZMod n) = ((m : ℕ) : ℕ∞)
 
-/-- Adhikari, David, Urroz and Xia, Li: for `1 < r < n` and `A = {1, …, r}`,
-`D_A(Z_n) = ⌈n/r⌉`.
+/-- **Weighted Davenport constant of $\mathbb{Z}/n\mathbb{Z}$ for the weights $\{1, \dots, r\}$.**
+Let $n$ and $r$ be natural numbers with $1 < r < n$ and let $A = \{1, \dots, r\}$. Then the
+$A$-weighted Davenport constant of $\mathbb{Z}/n\mathbb{Z}$ is
+$D_A(\mathbb{Z}/n\mathbb{Z}) = \lceil n/r \rceil$.
 
 Source: Md Ibrahim Molla, *New Families of Weight Sets Yielding Prescribed Weighted Zero-Sum
 Constants*, INTEGERS 26 (2026), Article A89, Corollary 1, first part (`integers-2026-A89-cor-1`). -/
 public theorem_wanted weightedDavenport_zmod_Icc (n r : ℕ) (hr : 1 < r) (hrn : r < n) :
     weightedDavenport (Finset.Icc 1 r) (ZMod n) = ((n ⌈/⌉ r : ℕ) : ℕ∞)
 
-/-- For `m, n ≥ 2` with `m ∣ n` and `r = ⌈n/(m-1)⌉ - 1`, the weight set `{1, …, r}` has
-`D_A(Z_n) = m`.
-
-Source: Md Ibrahim Molla, *New Families of Weight Sets Yielding Prescribed Weighted Zero-Sum
-Constants*, INTEGERS 26 (2026), Article A89, Corollary 1, second part (`integers-2026-A89-cor-1`).
--/
-public theorem_wanted weightedDavenport_zmod_Icc_of_dvd (m n : ℕ) (hm : 2 ≤ m) (hn : 2 ≤ n)
-    (hdvd : m ∣ n) :
-    weightedDavenport (Finset.Icc 1 (n ⌈/⌉ (m - 1) - 1)) (ZMod n) = ((m : ℕ) : ℕ∞)
-
-/-- For `m, n ≥ 2` with `m ∣ n`, `k ≥ 1` and `α = ⌈n/(m-1)⌉ - 1`, there is a sequence over
-`Z_n ⊕ Z_{kn}` of length `m + ⌈kn/α⌉ - 2` with no non-empty `{1, …, α}`-weighted zero-sum
-subsequence (the existence form; it gives `D_{1..α}(Z_n ⊕ Z_{kn}) ≥ m + ⌈kn/α⌉ - 1`).
-
-Source: Md Ibrahim Molla, *New Families of Weight Sets Yielding Prescribed Weighted Zero-Sum
-Constants*, INTEGERS 26 (2026), Article A89, Lemma 2 (`integers-2026-A89-lem-2`). -/
-public theorem_wanted exists_weightedZeroSumFree_zmod_prod (m n k : ℕ) (hm : 2 ≤ m)
-    (hn : 2 ≤ n) (hdvd : m ∣ n) (hk : 1 ≤ k) :
-    ∃ s : List (ZMod n × ZMod (k * n)),
-      s.length = m + (k * n) ⌈/⌉ (n ⌈/⌉ (m - 1) - 1) - 2 ∧
-        IsWeightedZeroSumFree (Finset.Icc 1 (n ⌈/⌉ (m - 1) - 1)) s
-
-/-- For `m, n ≥ 2` with `m ∣ n`, `α = ⌈n/(m-1)⌉ - 1` and `A ⊆ {1, …, α}` with `n/m ∈ A`:
-if `α ∣ n`, then `D_A(Z_n ⊕ Z_{kn}) = m + ⌈kn/α⌉ - 1` for every `k ≥ 1`. The paper's
-"non-empty" is implied by `n/m ∈ A` and is not repeated.
+/-- **Weight sets with prescribed weighted Davenport constant on
+$\mathbb{Z}/n\mathbb{Z} \times \mathbb{Z}/kn\mathbb{Z}$, divisible case.** Let $n \ge 2$ and
+$k \ge 1$ be natural numbers, let $m \ge 2$ be a divisor of $n$, let
+$\alpha = \lceil n/(m-1) \rceil - 1$, and suppose that $\alpha$ divides $n$. Then for every finite
+set $A$ of natural numbers with $n/m \in A \subseteq \{1, \dots, \alpha\}$, the $A$-weighted
+Davenport constant of $\mathbb{Z}/n\mathbb{Z} \times \mathbb{Z}/kn\mathbb{Z}$ is
+$D_A(\mathbb{Z}/n\mathbb{Z} \times \mathbb{Z}/kn\mathbb{Z}) = m + \lceil kn/\alpha \rceil - 1$.
 
 Source: Md Ibrahim Molla, *New Families of Weight Sets Yielding Prescribed Weighted Zero-Sum
 Constants*, INTEGERS 26 (2026), Article A89, Theorem 6(i) (`integers-2026-A89-thm-6`). -/
@@ -122,9 +110,15 @@ public theorem_wanted weightedDavenport_zmod_prod_of_dvd (m n k : ℕ) (hm : 2 �
     weightedDavenport A (ZMod n × ZMod (k * n)) =
       ((m + (k * n) ⌈/⌉ (n ⌈/⌉ (m - 1) - 1) - 1 : ℕ) : ℕ∞)
 
-/-- Same setting with `α ∤ n`: writing `r = n mod α` (so `1 ≤ r < α`), for every `k ≥ 1`
-with `(k - 1)α < kr`, `D_A(Z_n ⊕ Z_{kn}) = m + ⌈kn/α⌉ - 1`. The paper's `α ∤ n`,
-`n ≡ r (mod α)` and `1 ≤ r < α` are encoded as `0 < n % α` with `r = n % α`.
+/-- **Weight sets with prescribed weighted Davenport constant on
+$\mathbb{Z}/n\mathbb{Z} \times \mathbb{Z}/kn\mathbb{Z}$, non-divisible case.** Let $n \ge 2$ and
+$k \ge 1$ be natural numbers, let $m \ge 2$ be a divisor of $n$, let
+$\alpha = \lceil n/(m-1) \rceil - 1$, and suppose that $\alpha$ does not divide $n$. Let $r$ be
+the remainder of $n$ modulo $\alpha$, so that $1 \le r < \alpha$, and suppose that
+$(k - 1)\alpha < kr$. Then for every finite set $A$ of natural numbers with
+$n/m \in A \subseteq \{1, \dots, \alpha\}$, the $A$-weighted Davenport constant of
+$\mathbb{Z}/n\mathbb{Z} \times \mathbb{Z}/kn\mathbb{Z}$ is
+$D_A(\mathbb{Z}/n\mathbb{Z} \times \mathbb{Z}/kn\mathbb{Z}) = m + \lceil kn/\alpha \rceil - 1$.
 
 Source: Md Ibrahim Molla, *New Families of Weight Sets Yielding Prescribed Weighted Zero-Sum
 Constants*, INTEGERS 26 (2026), Article A89, Theorem 6(ii) (`integers-2026-A89-thm-6`). -/
@@ -136,65 +130,11 @@ public theorem_wanted weightedDavenport_zmod_prod_of_not_dvd (m n k : ℕ) (hm :
     weightedDavenport A (ZMod n × ZMod (k * n)) =
       ((m + (k * n) ⌈/⌉ (n ⌈/⌉ (m - 1) - 1) - 1 : ℕ) : ℕ∞)
 
-/-- For `n ≥ 2` and a divisor `m ≥ 2` of `n`, every `A ⊆ {1, …, ⌈n/(m-1)⌉ - 1}` with
-`n/m ∈ A` has `D_A(Z_n ⊕ Z_n) = 2m - 1`.
-
-Source: Md Ibrahim Molla, *New Families of Weight Sets Yielding Prescribed Weighted Zero-Sum
-Constants*, INTEGERS 26 (2026), Article A89, Corollary 2 (`integers-2026-A89-cor-2`). -/
-public theorem_wanted weightedDavenport_zmod_prod_self_of_dvd (m n : ℕ) (hm : 2 ≤ m)
-    (hn : 2 ≤ n) (hdvd : m ∣ n) (A : Finset ℕ) (hmem : n / m ∈ A)
-    (hsub : A ⊆ Finset.Icc 1 (n ⌈/⌉ (m - 1) - 1)) :
-    weightedDavenport A (ZMod n × ZMod n) = ((2 * m - 1 : ℕ) : ℕ∞)
-
-/-- Let `G = Z_{p^{e_1}} ⊕ ⋯ ⊕ Z_{p^{e_r}}` with `p` prime and `e_1 ≤ ⋯ ≤ e_r` (`e`
-monotone, `r ≥ 1`, `e_1 = e 0`), and `1 ≤ c ≤ e_1`, `β = ⌈p^{e_1}/(p^c - 1)⌉ - 1`. There is a
-sequence over `G` of length `∑ (⌈p^{e_i}/β⌉ - 1)` with no non-empty `{1, …, β}`-weighted
-zero-sum subsequence (existence form of `D_B(G) ≥ 1 + ∑ (⌈p^{e_i}/β⌉ - 1)`). The paper's
-exponent `e` is named `c`; `e_i ≥ 1` follows from `1 ≤ c ≤ e_1` and monotonicity.
-
-Source: Md Ibrahim Molla, *New Families of Weight Sets Yielding Prescribed Weighted Zero-Sum
-Constants*, INTEGERS 26 (2026), Article A89, Lemma 3 (`integers-2026-A89-lem-3`). -/
-public theorem_wanted exists_weightedZeroSumFree_pi_zmod_prime_pow (p r c : ℕ)
-    (hp : p.Prime) (hr : 0 < r) (e : Fin r → ℕ) (hmono : Monotone e) (hc : 1 ≤ c)
-    (hce : c ≤ e ⟨0, hr⟩) :
-    ∃ s : List ((i : Fin r) → ZMod (p ^ e i)),
-      s.length = ∑ i, (p ^ e i ⌈/⌉ (p ^ e ⟨0, hr⟩ ⌈/⌉ (p ^ c - 1) - 1) - 1) ∧
-        IsWeightedZeroSumFree (Finset.Icc 1 (p ^ e ⟨0, hr⟩ ⌈/⌉ (p ^ c - 1) - 1)) s
-
-/-- Same `G`, `c`, `β`; `A ⊆ {1, …, β}` with `p^{e_1 - c} ∈ A`. If `β ∣ p^{e_1}`, then
-`D_A(G) = 1 + ∑ (⌈p^{e_i}/β⌉ - 1)`.
-
-Source: Md Ibrahim Molla, *New Families of Weight Sets Yielding Prescribed Weighted Zero-Sum
-Constants*, INTEGERS 26 (2026), Article A89, Theorem 7(i) (`integers-2026-A89-thm-7`). -/
-public theorem_wanted weightedDavenport_pi_zmod_prime_pow_of_dvd (p r c : ℕ) (hp : p.Prime)
-    (hr : 0 < r) (e : Fin r → ℕ) (hmono : Monotone e) (hc : 1 ≤ c) (hce : c ≤ e ⟨0, hr⟩)
-    (A : Finset ℕ) (hmem : p ^ (e ⟨0, hr⟩ - c) ∈ A)
-    (hsub : A ⊆ Finset.Icc 1 (p ^ e ⟨0, hr⟩ ⌈/⌉ (p ^ c - 1) - 1))
-    (hβ : p ^ e ⟨0, hr⟩ ⌈/⌉ (p ^ c - 1) - 1 ∣ p ^ e ⟨0, hr⟩) :
-    weightedDavenport A ((i : Fin r) → ZMod (p ^ e i)) =
-      ((1 + ∑ i, (p ^ e i ⌈/⌉ (p ^ e ⟨0, hr⟩ ⌈/⌉ (p ^ c - 1) - 1) - 1) : ℕ) : ℕ∞)
-
-/-- Same setting with `β ∤ p^{e_1}`: writing `s = p^{e_1} mod β` (so `1 ≤ s < β`), if
-`(p^{e_j - e_1} - 1)β < s p^{e_j - e_1}` for every `j ≥ 2`, then
-`D_A(G) = 1 + ∑ (⌈p^{e_i}/β⌉ - 1)`. The paper's `β ∤ p^{e_1}`, `p^{e_1} ≡ s (mod β)` and
-`1 ≤ s < β` are encoded as `0 < p^{e_1} % β` with `s = p^{e_1} % β`; `j ∈ {2, …, r}` is
-`0 < j` in `Fin r`.
-
-Source: Md Ibrahim Molla, *New Families of Weight Sets Yielding Prescribed Weighted Zero-Sum
-Constants*, INTEGERS 26 (2026), Article A89, Theorem 7(ii) (`integers-2026-A89-thm-7`). -/
-public theorem_wanted weightedDavenport_pi_zmod_prime_pow_of_not_dvd (p r c : ℕ)
-    (hp : p.Prime) (hr : 0 < r) (e : Fin r → ℕ) (hmono : Monotone e) (hc : 1 ≤ c)
-    (hce : c ≤ e ⟨0, hr⟩) (A : Finset ℕ) (hmem : p ^ (e ⟨0, hr⟩ - c) ∈ A)
-    (hsub : A ⊆ Finset.Icc 1 (p ^ e ⟨0, hr⟩ ⌈/⌉ (p ^ c - 1) - 1))
-    (hs : 0 < p ^ e ⟨0, hr⟩ % (p ^ e ⟨0, hr⟩ ⌈/⌉ (p ^ c - 1) - 1))
-    (hineq : ∀ j : Fin r, 0 < j.val →
-      (p ^ (e j - e ⟨0, hr⟩) - 1) * (p ^ e ⟨0, hr⟩ ⌈/⌉ (p ^ c - 1) - 1) <
-        p ^ e ⟨0, hr⟩ % (p ^ e ⟨0, hr⟩ ⌈/⌉ (p ^ c - 1) - 1) * p ^ (e j - e ⟨0, hr⟩)) :
-    weightedDavenport A ((i : Fin r) → ZMod (p ^ e i)) =
-      ((1 + ∑ i, (p ^ e i ⌈/⌉ (p ^ e ⟨0, hr⟩ ⌈/⌉ (p ^ c - 1) - 1) - 1) : ℕ) : ℕ∞)
-
-/-- For a prime `p`, `1 ≤ a ≤ e` and `r ≥ 1`, every `A ⊆ {1, …, ⌈p^e/(p^a - 1)⌉ - 1}` with
-`p^{e-a} ∈ A` has `D_A((Z_{p^e})^r) = 1 + r(p^a - 1)`.
+/-- **Weighted Davenport constant of $(\mathbb{Z}/p^e\mathbb{Z})^r$.** Let $p$ be a prime and let
+$a, e, r$ be natural numbers with $1 \le a \le e$ and $r \ge 1$. Let $A$ be a finite set of
+natural numbers with $p^{e-a} \in A \subseteq \{1, \dots, \lceil p^e/(p^a - 1) \rceil - 1\}$.
+Then the $A$-weighted Davenport constant of $(\mathbb{Z}/p^e\mathbb{Z})^r$ is
+$D_A((\mathbb{Z}/p^e\mathbb{Z})^r) = 1 + r(p^a - 1)$.
 
 Source: Md Ibrahim Molla, *New Families of Weight Sets Yielding Prescribed Weighted Zero-Sum
 Constants*, INTEGERS 26 (2026), Article A89, Corollary 3 (`integers-2026-A89-cor-3`). -/

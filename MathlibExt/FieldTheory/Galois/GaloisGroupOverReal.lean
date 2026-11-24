@@ -32,8 +32,11 @@ isomorphic to `ℝ` or to `ℂ`) with the Galois degree formula
 
 namespace RealGalois
 
-/-- A finite-dimensional extension of `ℝ` has degree `1` or `2`: it is
-`ℝ`-algebra isomorphic to `ℝ` or to `ℂ` by `Real.nonempty_algEquiv_or`. -/
+/-- **Degree of a finite extension of the reals.** If $E$ is a field that is a finite-dimensional
+algebra over $\mathbb{R}$, then the dimension of $E$ as a real vector space is $1$ or $2$.
+
+This follows because such a field $E$ is isomorphic as an $\mathbb{R}$-algebra to $\mathbb{R}$ or
+to $\mathbb{C}$. -/
 theorem finrank_eq_one_or_two {E : Type*} [Field E] [Algebra ℝ E]
     [FiniteDimensional ℝ E] :
     Module.finrank ℝ E = 1 ∨ Module.finrank ℝ E = 2 := by
@@ -45,17 +48,21 @@ theorem finrank_eq_one_or_two {E : Type*} [Field E] [Algebra ℝ E]
     rw [e.toLinearEquiv.finrank_eq]
     exact Complex.finrank_real_complex
 
-/-- The Galois group of a finite Galois extension of `ℝ` has order `1`
-or `2`. -/
+/-- **Galois groups over the reals have order 1 or 2.** If $E$ is a finite Galois extension of
+$\mathbb{R}$, then the Galois group $\mathrm{Gal}(E/\mathbb{R})$ has order $1$ or $2$. -/
 theorem gal_card_eq_one_or_two {E : Type*} [Field E] [Algebra ℝ E]
     [FiniteDimensional ℝ E] [IsGalois ℝ E] :
     Nat.card Gal(E/ℝ) = 1 ∨ Nat.card Gal(E/ℝ) = 2 := by
   rw [IsGalois.card_aut_eq_finrank]
   exact finrank_eq_one_or_two
 
-/-- The Galois group of a finite Galois extension of `ℝ` has order a
-power of `2` (the book's lemma, with the sharp form in
-`gal_card_eq_one_or_two`). -/
+/-- **Galois groups over the reals have order a power of 2.** If $E$ is a finite Galois extension
+of $\mathbb{R}$, then the Galois group $\mathrm{Gal}(E/\mathbb{R})$ has order $2^n$ for some natural
+number $n$.
+
+In fact the order is $1$ or $2$.
+
+Source: the book's lemma in Lecture 34 (Main Theorem of Algebra). -/
 theorem gal_card_pow_two {E : Type*} [Field E] [Algebra ℝ E]
     [FiniteDimensional ℝ E] [IsGalois ℝ E] :
     ∃ n : ℕ, Nat.card Gal(E/ℝ) = 2 ^ n := by

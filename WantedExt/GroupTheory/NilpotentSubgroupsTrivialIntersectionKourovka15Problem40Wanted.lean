@@ -34,24 +34,31 @@ the image of `B` under conjugation by `x`; the existential quantifier makes the 
 irrelevant.
 -/
 
-/-- Kourovka 15.40 (E. P. Vdovin), in the two-subgroup form of its resolution: for any nilpotent
-subgroups `A` and `B` of a finite non-abelian simple group `G` there is `x ∈ G` with
-`A ∩ x B x⁻¹ = 1`; `A = B = N` is the problem as posed. -/
+/-- **Kourovka Problem 15.40.** The assertion, in the two-subgroup form of its resolution, that for
+every finite non-abelian simple group $G$ and all nilpotent subgroups $A$ and $B$ of $G$ there is
+$x \in G$ with $A \cap x B x^{-1} = 1$.
+
+The case $A = B$ is the problem as posed. -/
 def nilpotentSubgroupsTrivialConjugateIntersection : Prop :=
   ∀ (G : Type) [Group G] [Finite G], IsSimpleGroup G → (∃ a b : G, a * b ≠ b * a) →
     ∀ A B : Subgroup G, Group.IsNilpotent A → Group.IsNilpotent B →
       ∃ x : G, A ⊓ B.map (MulAut.conj x).toMonoidHom = ⊥
 
 /--
-Resolved true: Burness and Huang prove that if `G` is a finite (non-abelian) simple group and `A`,
-`B` are nilpotent subgroups, then `A ∩ B^x = 1` for some `x ∈ G` (for alternating groups via work of
-Zenkov); the Kourovka Notebook (21st issue) marks 15.40 solved, "Yes it is true". Source: E. I.
-Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st
-issue, arXiv:1401.0300v49 (2026), Problem 15.40 (E. P. Vdovin); resolution: T. C. Burness and H. Y.
-Huang, On the intersections of nilpotent subgroups in simple groups, arXiv:2508.03479 (2025),
-abstract (Vdovin's conjecture and its stronger form: A ∩ B^x = 1 for nilpotent subgroups A, B of a
-simple group, combined with work of Kurmazov and Zenkov on alternating groups); the Kourovka
-Notebook (21st issue) marks 15.40 solved, https://arxiv.org/abs/2508.03479.
+**Nilpotent subgroups of a finite simple group have conjugates meeting trivially.** Let $G$ be a
+finite non-abelian simple group and let $A$ and $B$ be nilpotent subgroups of $G$. Then there is
+$x \in G$ with $A \cap x B x^{-1} = 1$.
+
+Burness and Huang proved this (for alternating groups using work of Kurmazov and Zenkov); the case
+$A = B$ answers Kourovka Problem 15.40 positively.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
+Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 15.40 (E. P. Vdovin); resolution: T. C.
+Burness and H. Y. Huang, On the intersections of nilpotent subgroups in simple groups,
+arXiv:2508.03479 (2025), abstract (Vdovin's conjecture and its stronger form: A ∩ B^x = 1 for
+nilpotent subgroups A, B of a simple group, combined with work of Kurmazov and Zenkov on
+alternating groups); the Kourovka Notebook (21st issue) marks 15.40 solved,
+https://arxiv.org/abs/2508.03479.
 -/
 public theorem_wanted nilpotentSubgroupsTrivialConjugateIntersection_holds :
     nilpotentSubgroupsTrivialConjugateIntersection

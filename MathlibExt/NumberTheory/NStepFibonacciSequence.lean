@@ -22,9 +22,10 @@ The `N`-step Fibonacci numbers `F^{(N)}_n` in the Noe and Post convention, used 
 
 namespace MetaMathlibExt
 
-/-- The `N`-step Fibonacci numbers `F^{(N)}_n` (Noe and Post convention): `F^{(N)}_0 = 0`,
-`F^{(N)}_1 = 1`, and `F^{(N)}_n = F^{(N)}_{n-1} + ⋯ + F^{(N)}_{n-N}` for `n ≥ 2`, terms with
-nonpositive index being `0` (here an index that truncates to `0` contributes `F^{(N)}_0 = 0`).
+/-- **N-step Fibonacci numbers.** For a natural number $N$, the $N$-step Fibonacci numbers
+$F^{(N)}_n$ ($n \ge 0$), in the convention of Noe and Post, are defined by $F^{(N)}_0 = 0$,
+$F^{(N)}_1 = 1$ and, for $n \ge 2$, $F^{(N)}_n = \sum_{i=1}^{N} F^{(N)}_{n-i}$, where a term
+whose index $n - i$ is negative counts as $0$. In particular $F^{(0)}_n = 0$ for $n \ge 2$.
 
 Source: Bowman, *Compositions with an Odd Number of Parts, and Other
 Congruences*, Journal of Integer Sequences 27 (2024), Article 24.3.6, Section 4.4. -/
@@ -34,7 +35,9 @@ def nStepFibonacci (N : ℕ) : ℕ → ℕ
   | n + 2 => ∑ i : Fin N, nStepFibonacci N (n + 1 - i)
 decreasing_by omega
 
-/-- Recurrence of `F^{(N)}`.
+/-- **Recurrence for the N-step Fibonacci numbers.** For all natural numbers $N$ and $n$, the
+$N$-step Fibonacci numbers $F^{(N)}$ satisfy
+$F^{(N)}_{n+2} = \sum_{i=0}^{N-1} F^{(N)}_{\max(n+1-i,\,0)}$.
 
 Source: Bowman, *Compositions with an Odd Number of Parts, and Other
 Congruences*, Journal of Integer Sequences 27 (2024), Article 24.3.6, Section 4.4. -/
@@ -42,21 +45,25 @@ theorem nStepFibonacci_add_two (N n : ℕ) :
     nStepFibonacci N (n + 2) = ∑ i : Fin N, nStepFibonacci N (n + 1 - i) := by
   rw [nStepFibonacci]
 
-/-- `F^{(N)}_0 = 0`.
+/-- **Zeroth N-step Fibonacci number.** For every natural number $N$, the $N$-step Fibonacci
+number $F^{(N)}_0$ equals $0$.
 
 Source: Bowman, *Compositions with an Odd Number of Parts, and Other
 Congruences*, Journal of Integer Sequences 27 (2024), Article 24.3.6, Section 4.4. -/
 @[simp] theorem nStepFibonacci_zero (N : ℕ) : nStepFibonacci N 0 = 0 := by
   rw [nStepFibonacci]
 
-/-- `F^{(N)}_1 = 1`.
+/-- **First N-step Fibonacci number.** For every natural number $N$, the $N$-step Fibonacci
+number $F^{(N)}_1$ equals $1$.
 
 Source: Bowman, *Compositions with an Odd Number of Parts, and Other
 Congruences*, Journal of Integer Sequences 27 (2024), Article 24.3.6, Section 4.4. -/
 @[simp] theorem nStepFibonacci_one (N : ℕ) : nStepFibonacci N 1 = 1 := by
   rw [nStepFibonacci]
 
-/-- `F^{(3)}_5 = 7` (tribonacci numbers `0, 1, 1, 2, 4, 7`).
+/-- **The tribonacci number with index 5.** The $3$-step Fibonacci number $F^{(3)}_5$ equals $7$.
+
+The tribonacci numbers $F^{(3)}_0, \dots, F^{(3)}_5$ are $0, 1, 1, 2, 4, 7$.
 
 Source: Bowman, *Compositions with an Odd Number of Parts, and Other
 Congruences*, Journal of Integer Sequences 27 (2024), Article 24.3.6, Section 4.4. -/
