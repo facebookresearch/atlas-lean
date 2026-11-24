@@ -1,9 +1,7 @@
-# Skorokhod Space
+# Skorokhod space
 
-The **Skorokhod space** `D([0, T], ℝ)`: real càdlàg paths on `[0, T]` (right-continuous
-with left limits, Mathlib's `IsCadlag`). It carries the J1 extended pseudo-metric
-`skorokhodEDist` and its Borel σ-algebra.
+The Skorokhod space $D([0, T], \mathbb{R})$ is the set of real càdlàg paths on $[0, T]$: paths that are right-continuous with left limits.
 
 ## Sources
 
-- Billingsley (1999), §12 (space `D` with the Skorokhod J1 topology). Only the extended pseudo-metric axioms are proved here; separability, completeness of the Billingsley metric `d°`, and the identification of the Borel σ-algebra with the projection σ-algebra are not.
+- P. Billingsley, *Convergence of Probability Measures*, 2nd edition, Wiley, 1999, §12 (the space $D$).

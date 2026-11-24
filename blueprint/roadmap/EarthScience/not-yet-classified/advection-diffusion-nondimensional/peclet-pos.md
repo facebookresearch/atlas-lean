@@ -1,3 +1,3 @@
-# Peclet pos
+# The Péclet number is positive
 
-The Péclet number is positive and its reciprocal is `D / (U * L)`.
+For length $L > 0$, velocity $U > 0$ and diffusivity $D > 0$, the Péclet number $UL/D$ is positive and its reciprocal is $D/(UL)$.

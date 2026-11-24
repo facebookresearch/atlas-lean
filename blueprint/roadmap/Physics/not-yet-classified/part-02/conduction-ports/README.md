@@ -24,10 +24,10 @@
 - [Is Fin Steady State iff](is-fin-steady-state-iff.md)
 - [Length Constant fin](length-constant-fin.md)
 - [Char Resistance fin](char-resistance-fin.md)
-- [Temperature adiabatic](temperature-adiabatic.md)
-- [Heat Rate adiabatic](heat-rate-adiabatic.md)
+- [Temperature profile of a fin with an adiabatic tip](temperature-adiabatic.md)
+- [Heat rate of a fin with an adiabatic tip](heat-rate-adiabatic.md)
 - [Efficiency adiabatic](efficiency-adiabatic.md)
-- [Heat Rate convective Tip](heat-rate-convective-tip.md)
+- [Heat rate of a fin with a convective tip](heat-rate-convective-tip.md)
 - [Heat Rate pos of base pos](heat-rate-pos-of-base-pos.md)
 
 ## E. Thermal networks: storage and quadratic decay

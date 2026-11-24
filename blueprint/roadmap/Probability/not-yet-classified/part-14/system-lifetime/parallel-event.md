@@ -1,3 +1,3 @@
 # Parallel Event
 
-Source C4: some-component-up (parallel) event.
+Some-component-up (parallel) event.

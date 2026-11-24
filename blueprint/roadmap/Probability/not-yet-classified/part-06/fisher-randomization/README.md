@@ -1,3 +1,3 @@
 # Fisher Randomization
 
-- [Is Valid PValue fisher Randomization](is-valid-pvalue-fisher-randomization.md)
+- [Validity of the Fisher randomization test](is-valid-pvalue-fisher-randomization.md)

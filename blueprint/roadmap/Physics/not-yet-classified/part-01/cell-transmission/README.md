@@ -9,4 +9,4 @@
 - [Face Flux le supply](face-flux-le-supply.md)
 - [Demand nonneg le](demand-nonneg-le.md)
 - [Supply nonneg le](supply-nonneg-le.md)
-- [Capacity attained](capacity-attained.md)
+- [Capacity is attained at the critical density](capacity-attained.md)

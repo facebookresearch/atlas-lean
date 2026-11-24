@@ -4,7 +4,7 @@
 
 ## B. Péclet number
 
-- [Peclet pos](peclet-pos.md)
+- [The Péclet number is positive](peclet-pos.md)
 
 ## C. Concrete witness
 

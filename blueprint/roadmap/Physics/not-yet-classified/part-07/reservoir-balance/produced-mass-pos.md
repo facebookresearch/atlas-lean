@@ -1,3 +1,3 @@
-# Produced mass pos
+# Depletion gives positive produced mass
 
-Depletion produces positive mass.
+For pore volume $V_p > 0$, reference density $\rho_0 > 0$, fluid compressibility $c_{fl} > 0$ and a pressure drop $p < p_0$, the produced mass $V_p(\rho(p_0) - \rho(p))$ is positive.
