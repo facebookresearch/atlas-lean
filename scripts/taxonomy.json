@@ -10693,6 +10693,7 @@
   "MathlibExt/Combinatorics/Enumerative/Partition/ExtremalDiagonalSequences": {"to": "Combinatorics/integer-partitions/young-diagrams-statistics", "title": "Diagonal sequences of integer partitions"},
   "MathlibExt/Combinatorics/Enumerative/Partition/FixedPerimeterAlder": {"to": "Combinatorics/integer-partitions/partition-identities", "title": "Alder-type inequalities for fixed perimeter partitions"},
   "MathlibExt/Combinatorics/Enumerative/Partition/FixedPerimeterDistinctArmLeg": {"to": "Combinatorics/integer-partitions/partition-identities", "title": "Alder-type inequalities for fixed perimeter partitions"},
+  "MathlibExt/Combinatorics/Enumerative/Partition/FixedPerimeterDistinctMonotone": {"to": "Combinatorics/integer-partitions/partition-identities", "title": "Alder-type inequalities for fixed perimeter partitions"},
   "MathlibExt/Combinatorics/Enumerative/Partition/FixedPerimeterPMResidueArmLeg": {"to": "Combinatorics/integer-partitions/partition-identities", "title": "Alder-type inequalities for fixed perimeter partitions"},
   "MathlibExt/Combinatorics/Enumerative/Partition/Landau": {"to": "Combinatorics/integer-partitions/counting-partitions", "title": "Landau's function"},
   "MathlibExt/Combinatorics/Enumerative/Partition/LinearLowerBound": {"to": "Combinatorics/integer-partitions/counting-partitions", "title": "Bounds on the partition function"},
