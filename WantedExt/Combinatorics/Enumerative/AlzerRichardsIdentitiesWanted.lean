@@ -17,6 +17,7 @@ public import Mathlib.RingTheory.Polynomial.Pochhammer
 public import MathlibExt.Analysis.Ramanujan.Part1Ch5Entry10bEuleriansymmetry
 public import MathlibExt.Combinatorics.Enumerative.AlzerRichardsBernoulliSum
 public import MathlibExt.Combinatorics.Enumerative.AlzerRichardsEvenBinomialSum
+public import MathlibExt.Combinatorics.Enumerative.AlzerRichardsFubiniIdentity
 public import MathlibExt.Combinatorics.Enumerative.AlzerRichardsHypergeometricSum
 public import MathlibExt.Combinatorics.Enumerative.AlzerRichardsIdentities
 public import MathlibExt.Combinatorics.Enumerative.AlzerRichardsReciprocalSum
@@ -107,26 +108,6 @@ theorem_wanted sum_eulerNumber_mul_sum_centralPowerSum {n : ℕ} (hn : 1 ≤ n)
         ∑ ν ∈ range (n + 2), ((n + 1).choose ν : ℚ) * T ν (n - k) +
       (2 ^ (n + 1) - 1) * ((if n % 2 = 1 then 0 else chapter5EulerEven (n / 2) : ℤ) : ℚ) =
     ∑ k ∈ range (n + 1), ((n + 1).choose (k + 1) : ℚ) * T k n
-
-/-- **Alzer–Richards identity for Fubini numbers.** Let $n \ge 1$ be an integer, let $a(k)$ be
-the $k$-th Fubini (ordered Bell) number and $S(r, j)$ the Stirling numbers of the second kind,
-and for integers $r, k \ge 0$ let
-$A(r, k) = \sum_{j=0}^{k} (-1)^j \binom{k}{j} j! \, S(r, j)$. Then
-$$
-\sum_{k=0}^{n-1} \binom{n}{k} a(k) \sum_{\nu=0}^{n+1} \binom{n+1}{\nu} A(n-k, \nu) +
-(2^{n+1} - 1) a(n) = \sum_{k=0}^{n} \binom{n+1}{k+1} A(n, k).
-$$
-
-Source: Horst Alzer and Kendall C. Richards, *Extensions of Some Combinatorial Identities and
-Various Related Results*, INTEGERS 25 (2025), Article A61, Theorem 7, Equation (8). -/
-theorem_wanted sum_fubiniNumber_mul_sum_alternatingStirling {n : ℕ} (hn : 1 ≤ n)
-    (A : ℕ → ℕ → ℤ)
-    (hA : ∀ r k, A r k = ∑ j ∈ range (k + 1),
-      (-1 : ℤ) ^ j * (k.choose j : ℤ) * (j.factorial : ℤ) * (Nat.stirlingSecond r j : ℤ)) :
-    ∑ k ∈ range n, (n.choose k : ℤ) * fubiniNumber k *
-        ∑ ν ∈ range (n + 2), ((n + 1).choose ν : ℤ) * A (n - k) ν +
-      (2 ^ (n + 1) - 1) * fubiniNumber n =
-    ∑ k ∈ range (n + 1), ((n + 1).choose (k + 1) : ℤ) * A n k
 
 /-- **A binomial sum as a terminating ${}_2F_1$ series.** Write
 $x^{\overline{n}} = x(x+1)\cdots(x+n-1)$ for the rising factorial of a complex number $x$, and
