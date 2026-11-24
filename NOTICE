@@ -15,3 +15,13 @@ Files:
   MathlibExtTest/KTheory/Waldhausen/K0/WaldhausenExactFunctorTests.lean
 
 Author: @toskua, Avocado
+
+Additional source notices
+-------------------------
+
+- `MathlibExt/Algebra/Category/Grp/RepresentedFiveLemma.lean`: copyright (c)
+  2026 Tsutomu Okano. Author: Tsutomu Okano.
+- `MathlibExt/CategoryTheory/TrivialBundleWithFiberTerminal.lean`: adapts
+  Mathlib's `Mathlib/CategoryTheory/MorphismProperty/TrivialBundles.lean`,
+  copyright (c) 2026 Joël Riou, released under Apache 2.0. Author: Joël Riou.
+  See `BACKPORTS.md` for the immutable source and removal condition.

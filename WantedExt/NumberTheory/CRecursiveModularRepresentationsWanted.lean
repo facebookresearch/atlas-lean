@@ -13,6 +13,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Topology.Algebra.InfiniteSum.Real
 public import Mathlib.Algebra.Polynomial.Reverse
 public import Mathlib.RingTheory.PowerSeries.Basic
+public import MathlibExt.NumberTheory.Recurrences.CRecursiveIteratedRemainders
 public import MathlibExt.NumberTheory.Recurrences.CRecursiveModModRepresentation
 public import MathlibExt.NumberTheory.Recurrences.CRecursiveModularRepresentations
 
@@ -115,25 +116,6 @@ public theorem_wanted emod_emod_eq_abs_mul_ediv_emod_of_neg
     (hcongr : B % C = a % C) (ha : a < 0)
     (hbound : |a| * ((A / B) % C) < C) :
     (A % B) % C = |a| * ((A / B) % C)
-
-/--
-**Remainder of a remainder, positive residue case.** Let $a$, $A$, $B$ and $C$ be integers with
-$A > 0$, $B > 0$ and $C \ge 2$ such that $C$ divides $A$, $B$ does not divide $A$, $a > 0$ and
-$B \equiv a \pmod C$. Write $\lfloor A/B \rfloor$ for the floor of $A/B$ and $X \bmod M$ for the
-remainder of $X$ modulo $M$ in $\{0, 1, \dots, M - 1\}$. If
-$a + a \cdot (\lfloor A/B \rfloor \bmod C) < C$, then
-$((-A) \bmod B) \bmod C = a \cdot \bigl(1 + (\lfloor A/B \rfloor \bmod C)\bigr)$.
-
-Source: M. Prunescu and J. M. Shunia, *On Modular Representations of C-Recursive Integer Sequences*,
-Journal of Integer Sequences 28 (2025), Article 25.5.3, Lemma 7(ii).
--/
-public theorem_wanted neg_emod_emod_eq_mul_one_add_ediv_emod_of_pos
-    (a A B C : ℤ)
-    (hA : 0 < A) (hB : 0 < B) (hC : 2 ≤ C)
-    (hCA : C ∣ A) (hBA : ¬ B ∣ A)
-    (hcongr : B % C = a % C) (ha : 0 < a)
-    (hbound : a + a * ((A / B) % C) < C) :
-    ((-A) % B) % C = a * (1 + (A / B) % C)
 
 /--
 **Mod-mod representation of C-recursive sequences, negative free term.** Let

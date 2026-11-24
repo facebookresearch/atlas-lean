@@ -39,26 +39,13 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Nat.Prime.Basic
 public import Mathlib.NumberTheory.Divisors
+public import MathlibExt.NumberTheory.OddPrimeDeficientPerfect
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.FkPerfectWanted
-
-/-- **$[k,\ell]$-deficient-perfect with a given divisor.** For natural numbers $k$, $\ell$, $n$
-and $d$, the number $n$ is $[k,\ell]$-deficient-perfect with divisor $d$ when $d$ is a proper
-divisor of $n$ ($d \mid n$ and $d < n$) and $\sigma_k(n) + d^k = n^k + \ell n$, where
-$\sigma_k(n) = \sum_{e \mid n} e^k$ is the sum of the $k$-th powers of the divisors of $n$. -/
-def KLDeficientPerfectWith (k l n d : ℕ) : Prop :=
-  d ∣ n ∧ d < n ∧
-    (∑ e ∈ n.divisors, e ^ k) + d ^ k = n ^ k + l * n
-
-/-- **$[k,\ell]$-deficient-perfect numbers.** For natural numbers $k$, $\ell$ and $n$, write
-$\sigma_k(n) = \sum_{e \mid n} e^k$. The number $n$ is $[k,\ell]$-deficient-perfect when there is a
-divisor $d$ of $n$ with $d < n$ such that $\sigma_k(n) + d^k = n^k + \ell n$. -/
-def IsKLDeficientPerfect (k l n : ℕ) : Prop :=
-  ∃ d, KLDeficientPerfectWith k l n d
 
 /-- **$[k,\ell]$-near-perfect with a given divisor.** For natural numbers $k$, $\ell$, $n$ and
 $d$, the number $n$ is $[k,\ell]$-near-perfect with divisor $d$ when $d$ is a proper divisor of
@@ -103,16 +90,6 @@ satisfies $\sigma_2(n) = n^2 + d^2 + 3n$, where $\sigma_2(n) = \sum_{e \mid n} e
 of the squares of the divisors of $n$. -/
 def IsNearFPerfect (n : ℕ) : Prop :=
   IsKLNearPerfect 2 3 n
-
-/-- **Odd primes are not $[k,\ell]$-deficient-perfect.** Let $p$ be an odd prime. Then for all
-natural numbers $k$ and $\ell$, $p$ is not $[k,\ell]$-deficient-perfect.
-
-Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
-and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
-`F_k`-Perfect Numbers", Proposition 1. -/
-theorem_wanted not_isKLDeficientPerfect_of_prime_odd
-    (k l p : ℕ) (hp : p.Prime) (hpo : Odd p) :
-    ¬ IsKLDeficientPerfect k l p
 
 /-- **$2$ is $[k,1]$-deficient-perfect.** For every natural number $k$, the number $2$ is
 $[k,1]$-deficient-perfect.

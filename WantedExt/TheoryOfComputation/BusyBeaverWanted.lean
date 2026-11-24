@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.BusyBeaverOnesThree
+public import CSLibExt.Computability.BusyBeaverStepsThree
 
 @[expose] public section
 
@@ -57,14 +57,6 @@ treated differently:
   theory does not prove, blocks decidability at its size, for any
   consistent theory sound for that machine's halting sentence.
 -/
-
-/-- **Three-state Busy Beaver shift value.** Rado's shift function $S$ satisfies $S(3) = 21$:
-among the two-symbol Busy Beaver machines with $3$ working states that halt when started on the
-blank tape, the largest halting time is $21$.
-
-Source: Lin--Radó (1965), determination of `S(3) = 21`. -/
-theorem_wanted busyBeaverSteps_three_wanted :
-    busyBeaverSteps 3 = 21
 
 /-- **Four-state Busy Beaver shift value.** Rado's shift function $S$ satisfies $S(4) = 107$:
 among the two-symbol Busy Beaver machines with $4$ working states that halt when started on the

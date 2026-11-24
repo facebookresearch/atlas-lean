@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.PellNumberSequence
+public import MathlibExt.NumberTheory.Recurrences.FibonacciBrousseauSums
 public import MathlibExt.NumberTheory.Recurrences.KFibonacciBrousseauSums
 
 /-!
@@ -67,22 +68,6 @@ public theorem_wanted kFibonacci_brousseau_sum (k : ℤ) (hk : k ≠ 0) (n p : �
     (k : ℚ) * ∑ i ∈ Finset.range (n + 1), (i : ℚ) ^ p * lucasU ⟨k, -1, by decide⟩ i =
       brousseauCoeff k p n * lucasU ⟨k, -1, by decide⟩ (n + 1) +
         brousseauCoeff k p (n + 1) * lucasU ⟨k, -1, by decide⟩ n - brousseauCoeff k p 0
-
-/-- **Brousseau sums of Fibonacci numbers along an odd step.** Let $F_n$ be the Fibonacci
-numbers, $L_n$ the Lucas numbers and $C_k^{(p)}$ the coefficient polynomials. For every odd
-natural number $m$ and all $n, p \ge 0$,
-$$
-L_m \sum_{i=1}^{n} i^p F_{mi} = C_{L_m}^{(p)}(n) F_{m(n+1)} + C_{L_m}^{(p)}(n+1) F_{mn} -
-C_{L_m}^{(p)}(0) F_m.
-$$
-
-Source: Prabha Sivaraman Nair and Rejikumar Karunakaran, *On k-Fibonacci Brousseau Sums*,
-Journal of Integer Sequences 27 (2024), Article 24.6.4, Corollary 9 (`jis-2024-24.6.4-cor-9`). -/
-public theorem_wanted fibonacci_brousseau_sum_mul_odd (m : ℕ) (hm : Odd m) (n p : ℕ) :
-    (lucasNumber m : ℚ) * ∑ i ∈ Finset.Icc 1 n, (i : ℚ) ^ p * Nat.fib (m * i) =
-      brousseauCoeff (lucasNumber m) p n * Nat.fib (m * (n + 1)) +
-        brousseauCoeff (lucasNumber m) p (n + 1) * Nat.fib (m * n) -
-        brousseauCoeff (lucasNumber m) p 0 * Nat.fib m
 
 /-- **Power-weighted Pell sums along odd multiples.** Let $P_n$ be the Pell numbers and $Q_n$ the
 Pell–Lucas numbers, the Lucas sequence $V(2, -1)$: $Q_0 = Q_1 = 2$ and

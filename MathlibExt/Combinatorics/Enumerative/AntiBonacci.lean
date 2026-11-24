@@ -11,6 +11,7 @@ module
 public import Mathlib.Algebra.Group.Nat.Even
 public import Mathlib.Data.Nat.ModEq
 public import Mathlib.Order.Interval.Finset.Nat
+import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Algebra.BigOperators.Intervals
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Positivity
@@ -139,6 +140,82 @@ Source: Robbert Fokkink and Gandhar Joshi, *Anti-Recurrence Sequences*, INTEGERS
 Article A24, Section 2 (definition of anti-recurrence sequences). -/
 def antiRecurrence (a : List ℕ) (n : ℕ) : ℕ :=
   (List.zipWith (· * ·) a (antiRecurrenceState a n).1).sum
+
+-- Once 1 through m have been used, the next block is consecutive from m + 1.
+private theorem antiRecurrenceBlock_Icc (l m : ℕ) :
+    antiRecurrenceBlock l (Finset.Icc 1 m) = List.range' (m + 1) l := by
+  induction l generalizing m with
+  | zero => rfl
+  | succ l ih =>
+    have hmex := antiTribonacciMex_spec (Finset.Icc 1 m)
+    have hnot : m + 1 ∉ Finset.Icc 1 m := by simp
+    have hle := hmex.2.2 (m + 1) (by omega) hnot
+    have hn := hmex.2.1
+    rw [Finset.mem_Icc] at hn
+    have he : antiTribonacciMex (Finset.Icc 1 m) = m + 1 := by omega
+    have hi : insert (m + 1) (Finset.Icc 1 m) = Finset.Icc 1 (m + 1) := by
+      ext x
+      simp only [Finset.mem_insert, Finset.mem_Icc]
+      omega
+    rw [antiRecurrenceBlock, he, hi, ih, List.range'_succ]
+
+private theorem antiRecurrence_one_eq_sum (a : List ℕ) :
+    antiRecurrence a 1 = a.sum + ∑ j : Fin a.length, (j : ℕ) * a[j] := by
+  have hb : (antiRecurrenceState a 1).1 = List.range' 1 a.length := by
+    change antiRecurrenceBlock a.length ∅ = _
+    have hempty : Finset.Icc 1 (0 : ℕ) = ∅ := by simp
+    simpa only [hempty, Nat.zero_add] using antiRecurrenceBlock_Icc a.length 0
+  have hz : List.zipWith (· * ·) a (List.range' 1 a.length) =
+      List.ofFn (fun j : Fin a.length => a[j] * (1 + (j : ℕ))) := by
+    apply List.ext_getElem
+    · simp
+    · intro i hi hj
+      simp [List.getElem_zipWith, List.getElem_range']
+  have hs : a.sum = ∑ j : Fin a.length, a[j] := by
+    rw [← List.sum_ofFn]
+    change a.sum = (List.ofFn a.get).sum
+    rw [List.ofFn_get]
+  rw [antiRecurrence, hb, hz, List.sum_ofFn, hs]
+  simp only [Nat.mul_add, Nat.mul_one, Finset.sum_add_distrib]
+  congr 1
+  exact Finset.sum_congr rfl fun j _ => Nat.mul_comm _ _
+
+/-- **Lower bound for the first anti-recurrence number.** Let $a = (a_1, \dots, a_k)$ be a linear
+form with positive integer coefficients, of trace $\tau = a_1 + \dots + a_k$, and let $A_1$ be its
+first anti-recurrence number. Then $\tau + (k - 1)k/2 \le A_1$, and the inequality is strict if
+and only if $a_j > 1$ for some $j$ with $2 \le j \le k$.
+
+This corrects the printed strictness condition ("$k > 2$ and not anti-bonacci"), which fails for
+$a = (2, 1, 1)$: there $A_1 = 2 + 2 + 3 = 7 = \tau + 3$. The correction follows the paper's
+proof, $A_1 = \tau + \sum_j (j - 1) a_j$. The paper's hypothesis $k > 1$ is not needed.
+
+Source: Robbert Fokkink and Gandhar Joshi, *Anti-Recurrence Sequences*, INTEGERS 26 (2026),
+Article A24, Lemma 4 (`integers-2026-A24-lem-4`). -/
+public theorem antiRecurrence_one_ge (a : List ℕ) (ha : ∀ x ∈ a, 0 < x) :
+    a.sum + (a.length - 1) * a.length / 2 ≤ antiRecurrence a 1 ∧
+      (a.sum + (a.length - 1) * a.length / 2 < antiRecurrence a 1 ↔
+        ∃ j : Fin a.length, 1 ≤ (j : ℕ) ∧ 1 < a[j]) := by
+  have htriangle : (a.length - 1) * a.length / 2 = ∑ j : Fin a.length, (j : ℕ) := by
+    rw [Fin.sum_univ_eq_sum_range (fun j => j), Finset.sum_range_id, Nat.mul_comm]
+  rw [antiRecurrence_one_eq_sum, htriangle, Nat.add_le_add_iff_left, Nat.add_lt_add_iff_left]
+  have hpos (j : Fin a.length) : 0 < a[j] := ha _ (List.getElem_mem j.isLt)
+  have hle (j : Fin a.length) : (j : ℕ) ≤ (j : ℕ) * a[j] := by
+    simpa using Nat.mul_le_mul_left (j : ℕ) (hpos j)
+  refine ⟨Finset.sum_le_sum fun j _ => hle j, ?_⟩
+  constructor
+  · intro h
+    by_contra! hnone
+    have he (j : Fin a.length) : (j : ℕ) = (j : ℕ) * a[j] := by
+      by_cases hj : 1 ≤ (j : ℕ)
+      · have hj' := hnone j hj
+        have ha' : a[j] = 1 := by have := hpos j; omega
+        simp [ha']
+      · have hj' : (j : ℕ) = 0 := by omega
+        simp [hj']
+    exact (ne_of_lt h) (Finset.sum_congr rfl fun j _ => he j)
+  · rintro ⟨j, hj, haj⟩
+    refine Finset.sum_lt_sum (fun i _ => hle i) ⟨j, Finset.mem_univ _, ?_⟩
+    simpa using mul_lt_mul_of_pos_left haj (show 0 < (j : ℕ) from hj)
 
 namespace antiBonacci_mem_Icc_and_modEq
 
