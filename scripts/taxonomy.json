@@ -9802,6 +9802,7 @@
   "MathlibExt/Analysis/SpecialFunctions/ExponentialIntegral/E1/Basic": {"to": "Analysis/special-functions/elementary-transcendental-functions", "title": "Exponential integral"},
   "MathlibExt/Analysis/SpecialFunctions/ExponentialIntegral/E1/DLMF": {"to": "Analysis/special-functions/elementary-transcendental-functions", "title": "Exponential integral"},
   "MathlibExt/Analysis/SpecialFunctions/Gamma/Digamma": {"to": "Analysis/special-functions/gamma-function", "title": "Digamma and trigamma functions"},
+  "MathlibExt/Analysis/SpecialFunctions/Gamma/HalfIntegerShifts": {"to": "Analysis/sequences-and-series/trigonometric-and-harmonic-series", "title": "Series from Nörlund's digamma identity"},
   "MathlibExt/Analysis/SpecialFunctions/Gamma/MulLogUpperBound": {"to": "Analysis/special-functions/gamma-function", "title": "Iterated factorials and power towers"},
   "MathlibExt/Analysis/SpecialFunctions/Gamma/RpowLowerBound": {"to": "Analysis/special-functions/gamma-function", "title": "Iterated factorials and power towers"},
   "MathlibExt/Analysis/SpecialFunctions/GaussHypergeometricSummationFrisch": {"to": "Analysis/special-functions/hypergeometric-functions", "title": "Frisch and Klamkin binomial identities"},
