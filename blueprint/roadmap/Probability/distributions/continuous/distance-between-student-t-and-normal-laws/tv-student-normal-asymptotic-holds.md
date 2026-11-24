@@ -1,6 +1,6 @@
 # Pinelis's asymptotic for the distance between Student t and normal laws
 
-Let $d_{TV}(t_r, Z) = \frac12\int|f_r - \varphi|$ be the total variation distance between Student's $t$ law with $r$ degrees of freedom (density $f_r$) and the standard normal law (density $\varphi$), and $\kappa = \frac12\sqrt{(7 + 5\sqrt2)/(\pi e^{1+\sqrt2})} \approx 0.3164$. Then $r\,d_{TV}(t_r, Z) \to \kappa$ as $r \to \infty$, so $\kappa$ is the best constant in the bound $d_{TV}(t_r, Z) < \kappa/r$ (Pinelis, 2015).
+Let $d_{TV}(t_r, Z) = \frac12\int|f_r - \varphi|$ be the total variation distance between Student's $t$ law with $r$ degrees of freedom (density $f_r$) and the standard normal law (density $\varphi$), and $\kappa = \frac12\sqrt{(7 + 5\sqrt2)/(\pi e^{1+\sqrt2})} \approx 0.3164$. Then $r\,d_{TV}(t_r, Z) \to \kappa$ as $r \to \infty$ (Pinelis, 2015).
 
 ## Sources
 
