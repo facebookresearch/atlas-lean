@@ -1775,9 +1775,15 @@ private theorem shifted_theta (r : ℕ) : X ^ (r ^ 2) * shifted r = rrEps 5 1 r 
   simp only [pow_add, pow_mul]
   ring
 
+end MetaMathlibExt.initialRepetitionsC8Prime_prime_mul_add_even
+
+namespace MathlibExt.Combinatorics.Enumerative.Partition.RogersRamanujanWanted
+
+open MetaMathlibExt.initialRepetitionsC8Prime_prime_mul_add_even in
+open Finset PowerSeries in
 /-- The second Rogers–Ramanujan series, multiplied by the finite Euler product,
 agrees through degree `n` with the theta series of exponents `(5r² ± 3r)/2`. -/
-public theorem second_trunc (n : ℕ) :
+public theorem rrTrunc_RR_second (n : ℕ) :
     (X : PowerSeries ℚ) ^ (n + 1) ∣
       qPochFin X n * (∑ j ∈ range (n + 1), X ^ (j ^ 2 + j) * (qPochFin X j)⁻¹) -
       ∑ r ∈ range (n + 1), if r = 0 then 1 else
@@ -1798,9 +1804,9 @@ public theorem second_trunc (n : ℕ) :
       rw [pow_add]
       ring)
 
-end MetaMathlibExt.initialRepetitionsC8Prime_prime_mul_add_even
-
-namespace MathlibExt.Combinatorics.Enumerative.Partition.RogersRamanujanWanted
+@[deprecated (since := "2026-11-23")]
+alias _root_.MetaMathlibExt.initialRepetitionsC8Prime_prime_mul_add_even.second_trunc :=
+  rrTrunc_RR_second
 
 /-- Truncation of the `q^5` Jacobi triple product. -/
 private theorem rrTrunc_JTP (n : ℕ) :

@@ -224,6 +224,19 @@ private theorem coeff_formula (N : ℕ) : (initialRepetitionsC8Prime N : ZMod 2)
 end initialRepetitionsC8Prime_prime_mul_add_even
 
 open initialRepetitionsC8Prime_prime_mul_add_even in
+/-- **$c_8'(N)$ is even when $15N + 4$ is not a square.** Let $c_8'$ be the partition function
+that counts partitions with a possibly distinguished part. For every integer $N \ge 0$ such that
+$15N + 4$ is not a perfect square, $c_8'(N)$ is even.
+
+Source: John Greene and James A. Sellers, *Extending Recent Parity Results of Nyirenda and
+Mugwangwavari for Partitions with Initial Repetitions*, INTEGERS 25 (2025), Article A32,
+Theorem 13 (`integers-2025-A32-thm-13`). -/
+public theorem initialRepetitionsC8Prime_even_of_not_isSquare (N : ℕ)
+    (hN : ¬ IsSquare (15 * N + 4)) :
+    Even (initialRepetitionsC8Prime N) := by
+  apply ZMod.natCast_eq_zero_iff_even.mp
+  exact (coeff_formula N).trans (coeff_staircase_eq_zero N hN)
+
 -- The modular reduction holds for any modulus and residue satisfying the nonsquare condition.
 set_option linter.unusedVariables false in
 /-- **Parity of $c_8'$ on residue classes modulo a prime.** Let $c_8'$ be the partition function
@@ -241,11 +254,9 @@ public theorem initialRepetitionsC8Prime_prime_mul_add_even (p r n : ℕ) (hp : 
     (hp7 : 7 ≤ p) (hr : r ∈ Finset.Icc 1 (p - 1))
     (h15 : ¬ IsSquare ((15 * r + 4 : ℕ) : ZMod p)) :
     Even (initialRepetitionsC8Prime (p * n + r)) := by
-  have hN : ¬ IsSquare (15 * (p * n + r) + 4) := by
-    rintro ⟨x, hx⟩
-    apply h15
-    exact ⟨(x : ZMod p), by simpa using congrArg (fun a : ℕ => (a : ZMod p)) hx⟩
-  apply ZMod.natCast_eq_zero_iff_even.mp
-  exact (coeff_formula _).trans (coeff_staircase_eq_zero _ hN)
+  apply initialRepetitionsC8Prime_even_of_not_isSquare
+  rintro ⟨x, hx⟩
+  apply h15
+  exact ⟨(x : ZMod p), by simpa using congrArg (fun a : ℕ => (a : ZMod p)) hx⟩
 
 end MetaMathlibExt

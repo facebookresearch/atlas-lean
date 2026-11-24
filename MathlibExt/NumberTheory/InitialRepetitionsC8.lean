@@ -380,7 +380,7 @@ private theorem rogersRamanujan_trunc
         thetaSum primed X n := by
     cases primed
     · exact rrTrunc_RR n
-    · simpa [weight, thetaSum, leftSlope, rightSlope] using second_trunc n
+    · simpa [weight, thetaSum, leftSlope, rightSlope] using rrTrunc_RR_second n
   convert h using 2
   unfold tailSum
   rw [mul_sum]

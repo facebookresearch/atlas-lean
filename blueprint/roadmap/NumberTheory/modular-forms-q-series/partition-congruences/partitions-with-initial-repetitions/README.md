@@ -9,6 +9,7 @@
 - [The partition function $c_2$ of Nyirenda and Mugwangwavari](initial-repetitions-c2.md)
 - [The initial-repetitions partition function $c_3$](initial-repetitions-c3.md)
 - [The partition function $c_8$](initial-repetitions-c8.md)
+- [Coeff staircase eq zero](coeff-staircase-eq-zero.md)
 - [The initial-repetitions partition function $c_8'$](initial-repetitions-c8-prime.md)
 - [Small values of the partition functions $c_2$, $c_3$, $c_8$ and $c_8'$](initial-repetitions-values-zero-one.md)
 - [Parity of $c_2(5n + 2)$](initial-repetitions-c2-five-mul-add-two.md)

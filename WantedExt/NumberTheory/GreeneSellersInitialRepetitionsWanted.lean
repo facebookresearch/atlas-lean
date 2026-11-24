@@ -272,17 +272,6 @@ public theorem_wanted andrews_rogersRamanujan_second_dissection (q : ℂ) (hq : 
     ∑' l : ℤ, (q ^ (60 * l ^ 2 + 8 * l) - q ^ (60 * l ^ 2 + 32 * l + 4) +
       q ^ (60 * l ^ 2 + 28 * l + 3) - q ^ (60 * l ^ 2 + 52 * l + 11))
 
-/-- **$c_8'(N)$ is even when $15N + 4$ is not a square.** Let $c_8'$ be the partition function
-that counts partitions with a possibly distinguished part. For every integer $N \ge 0$ such that
-$15N + 4$ is not a perfect square, $c_8'(N)$ is even.
-
-Source: John Greene and James A. Sellers, *Extending Recent Parity Results of Nyirenda and
-Mugwangwavari for Partitions with Initial Repetitions*, INTEGERS 25 (2025), Article A32,
-Theorem 13 (`integers-2025-A32-thm-13`). -/
-public theorem_wanted initialRepetitionsC8Prime_even_of_not_isSquare (N : ℕ)
-    (hN : ¬ IsSquare (15 * N + 4)) :
-    Even (initialRepetitionsC8Prime N)
-
 /-- **Parity of $c_8$ on residue classes modulo powers of $2$.** Let $c_8$ be the
 initial-repetitions partition function of Nyirenda and Mugwangwavari, and let $k \ge 1$,
 $n \ge 0$ and $r \ge 0$ be integers. If $r < 2^{2k}$ and $15r \equiv 2^{2k-1} - 1 \pmod{2^{2k}}$,
