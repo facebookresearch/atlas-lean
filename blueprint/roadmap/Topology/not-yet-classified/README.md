@@ -213,5 +213,7 @@ Topics added since this subject's fields were last revised.
 - [Small Chains](small-chains/README.md)
 - [Std Simplex](std-simplex/README.md)
 - [Strict Loop Map](strict-loop-map/README.md)
+- [To Augmented](to-augmented/README.md)
+- [To Simplicial](to-simplicial/README.md)
 - [Triple](triple/README.md)
 - [Zeroth Homotopy](zeroth-homotopy/README.md)

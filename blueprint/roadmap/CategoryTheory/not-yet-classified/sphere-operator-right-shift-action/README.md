@@ -1,0 +1,15 @@
+# Sphere Operator Right Shift Action
+
+- [Shift](shift.md)
+- [Action](action.md)
+- [Action eq braid](action-eq-braid.md)
+- [Coefficient Hom shift](coefficient-hom-shift.md)
+- [Shift action](shift-action.md)
+- [Action postcompose](action-postcompose.md)
+- [Block Swap](block-swap.md)
+- [Block Swap inv](block-swap-inv.md)
+- [Block Swap label](block-swap-label.md)
+- [Adjoint](adjoint.md)
+- [Adjoint postcompose](adjoint-postcompose.md)
+- [Shift adjoint](shift-adjoint.md)
+- [Cotensor action](cotensor-action.md)

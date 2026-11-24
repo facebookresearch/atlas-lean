@@ -1,0 +1,16 @@
+# Weighted End Variance
+
+- [Object](object.md)
+- [Projection](projection.md)
+- [Pre](pre.md)
+- [Post](post.md)
+- [Pre projection](pre-projection.md)
+- [Post projection](post-projection.md)
+- [Pre id](pre-id.md)
+- [Post id](post-id.md)
+- [Pre comp](pre-comp.md)
+- [Post comp](post-comp.md)
+- [Pre post](pre-post.md)
+- [Right Functor](right-functor.md)
+- [Bifunctor](bifunctor.md)
+- [Source Transpose](source-transpose.md)

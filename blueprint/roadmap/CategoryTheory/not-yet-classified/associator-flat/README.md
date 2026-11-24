@@ -1,0 +1,17 @@
+# Associator Flat
+
+- [Left Objects](left-objects.md)
+- [Left Relations](left-relations.md)
+- [Right Objects](right-objects.md)
+- [Right Relations](right-relations.md)
+- [Left Map0](left-map0.md)
+- [Left Map1](left-map1.md)
+- [Right Map0](right-map0.md)
+- [Right Map1](right-map1.md)
+- [Left Point](left-point.md)
+- [Right Point](right-point.md)
+- [Left Generator](left-generator.md)
+- [Right Generator](right-generator.md)
+- [Iso](iso.md)
+- [Left Generator iso hom](left-generator-iso-hom.md)
+- [Right Generator iso inv](right-generator-iso-inv.md)
