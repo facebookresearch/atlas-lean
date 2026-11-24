@@ -9707,6 +9707,8 @@
   "MathlibExt/Analysis/ODE/OneParameterGroup": {"to": "Analysis/ordinary-differential-equations", "title": "One-parameter groups of matrices"},
   "MathlibExt/Analysis/ODE/PicardIteration": {"to": "Analysis/ordinary-differential-equations", "title": "Picard iteration"},
   "MathlibExt/Analysis/ODE/PlanarShooting/LogisticProfile": {"to": "Analysis/ordinary-differential-equations", "title": "Logistic traveling-wave profiles"},
+  "MathlibExt/Analysis/ODE/PolynomialInvariant": {"to": "Analysis/ordinary-differential-equations", "title": "Polynomial regular-sublevel invariance"},
+  "MathlibExt/Analysis/ODE/RegularSublevel": {"to": "Analysis/ordinary-differential-equations", "title": "Regular sublevel invariance"},
   "MathlibExt/Analysis/ODE/RungeKutta": {"to": "Analysis/numerical-analysis", "title": "Runge–Kutta methods"},
   "MathlibExt/Analysis/ODE/ScalarRelaxation": {"to": "Analysis/ordinary-differential-equations", "title": "Linear systems and fundamental matrices"},
   "MathlibExt/Analysis/ODE/SteadyCableTransfer": {"to": "Analysis/ordinary-differential-equations", "title": "Linear systems and fundamental matrices"},
