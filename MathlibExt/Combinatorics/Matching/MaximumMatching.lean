@@ -17,16 +17,6 @@ Source: formal-math commit `e369bf2e` (PR #5951).
 module
 
 public import Mathlib.Combinatorics.SimpleGraph.Matching
-public import Mathlib.Combinatorics.SimpleGraph.Tutte
-import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
-import Mathlib.Combinatorics.SimpleGraph.Finite
-import Mathlib.Combinatorics.SimpleGraph.Operations
-import Mathlib.Combinatorics.SimpleGraph.Subgraph
-import Mathlib.Data.Finset.Max
-import Mathlib.Data.Fintype.Card
-import Mathlib.Data.Set.Card
-import Mathlib.SetTheory.Cardinal.Finite
-import Mathlib.Data.Sym.Sym2
 
 @[expose] public section
 
