@@ -9,11 +9,13 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Algebra.Polynomial.RealRooted
+public import MathlibExt.Combinatorics.Enumerative.PermutationStatistics
 
 import Mathlib.Algebra.Polynomial.CoeffList
 import Mathlib.Data.List.NodupEquivFin
 import Mathlib.Data.List.OfFn
 import Mathlib.Data.Fintype.Fin
+import Mathlib.Util.TermReduce
 
 /-!
 # A counterexample to Neggers' conjecture
@@ -46,8 +48,9 @@ namespace MathlibExt.Combinatorics.NeggersStanleyPosetConjectureAMR156Problem002
 /-- **Number of descents of a permutation of $\{0, \dots, n-1\}$.** For a permutation $w$ of
 $\{0, 1, \dots, n-1\}$, read as the word $w(0)\,w(1) \cdots w(n-1)$, the number of descents
 $d(w)$ is the number of indices $i$ with $i + 1 < n$ and $w(i) > w(i+1)$. -/
-def descentCount {n : ℕ} (w : Equiv.Perm (Fin n)) : ℕ :=
-  (Finset.univ.filter fun i : Fin n => ∃ h : i.val + 1 < n, w ⟨i.val + 1, h⟩ < w i).card
+abbrev descentCount {n : ℕ} (w : Equiv.Perm (Fin n)) : ℕ :=
+  -- Unfold the shared count once to preserve the body of the original declaration.
+  delta% MetaMathlibExt.permDescents w
 
 open Classical in
 /-- **The $W$-polynomial of a labeled poset.** Let $R$ be a relation on the labels

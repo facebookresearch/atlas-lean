@@ -14,6 +14,11 @@ import Mathlib.GroupTheory.Perm.Fin
 open MathlibExt.Combinatorics.NeggersStanleyPosetConjectureAMR156Problem0020Wanted
 open Polynomial
 
+-- A fact about the shared statistic simplifies a polynomial exponent using the legacy name.
+example {n : ℕ} (w : Equiv.Perm (Fin n)) (h : MetaMathlibExt.permDescents w = 0) :
+    (X : ℤ[X]) ^ descentCount w = 1 := by
+  simp [h]
+
 -- The last position cannot be a descent, even in a completely decreasing word.
 example : descentCount (Fin.revPerm : Equiv.Perm (Fin 4)) = 3 := by decide
 
