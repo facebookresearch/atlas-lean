@@ -1,0 +1,3 @@
+# Self-dual monotone functions on n + 2 variables as concatenations
+
+Order $\{0,1\}$ by $0 < 1$, inputs coordinatewise and Boolean functions pointwise, with $\lor$ the pointwise disjunction; let $f^*(x) = \lnot f(\bar x)$ be the dual of $f$, where $\bar x$ is the coordinatewise complement of $x$, and call a Boolean function self-dual monotone when it is monotone and equals its dual. Let $F$ be a self-dual monotone Boolean function on $\{0,1\}^{n+2}$, and for $x \in \{0,1\}^n$ let $b(x) = F(x, 1, 0)$ and $z(x) = F(x, 1, 1)$. Then $b$ and $z$ are monotone, $b \lor b^* \le z$, and $F$ is the concatenation $z^* \cdot b \cdot b^* \cdot z$: $F(x, y_0, y_1) = W_{y_0 + 2y_1}(x)$ for all $x, y_0, y_1$, where $(W_0, W_1, W_2, W_3) = (z^*, b, b^*, z)$.

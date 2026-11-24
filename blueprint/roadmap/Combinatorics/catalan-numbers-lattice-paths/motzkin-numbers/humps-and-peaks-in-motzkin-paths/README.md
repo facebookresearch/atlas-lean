@@ -1,6 +1,8 @@
 # Humps and peaks in Motzkin paths
 
 - [Humps and peaks at a given height in Motzkin paths](motzkin-hump-peak-height-distribution.md)
+- [Number of Motzkin walks between two heights](walk-count.md)
+- [Recurrence for hump counts in the path length](hump-count-succ.md)
 - [Height change of a Motzkin step](motzkin-step.md)
 - [Motzkin prefix](is-motzkin-prefix.md)
 - [Motzkin hump](is-motzkin-hump.md)

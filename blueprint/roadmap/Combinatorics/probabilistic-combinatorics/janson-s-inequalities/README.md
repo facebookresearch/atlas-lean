@@ -17,3 +17,5 @@ A random subset $R$ of a finite ground set contains each element independently; 
 - [First and second moment methods](../first-and-second-moment-methods/README.md): the polynomial counterpart of Janson's bound.
 - [Harris inequality](../../../Probability/correlation-inequalities/harris-fkg-bk/harris-inequality/README.md): the lower bound $\Pr[\text{no } A_i] \ge \prod_i (1 - \Pr[A_i])$ and the key step of the proof of the first Janson inequality.
 - [Symmetric Lovász Local Lemma](../lovasz-local-lemma-symmetric-finite.md): another bound on the probability that none of a family of mostly independent bad events occurs, positive rather than small.
+
+- [Probability that a random subset equals a given subset](random-subset-law-real-singleton.md)
