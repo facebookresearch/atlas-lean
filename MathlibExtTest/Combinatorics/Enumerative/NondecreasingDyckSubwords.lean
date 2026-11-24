@@ -13,7 +13,7 @@ import MathlibExt.Combinatorics.Enumerative.NondecreasingDyckSubwords
 /-!
 # Tests for subwords in non-decreasing Dyck paths
 
-The tests cover overlapping triples, valley-free paths, and valley totals by semilength.
+The tests cover overlapping triples, valley-free paths, and peak and valley totals by semilength.
 -/
 
 open MetaMathlibExt DyckStep
@@ -35,3 +35,15 @@ example : ((nondecreasingDyckWords 3).filter fun p =>
 
 -- Semilength four is the first at which the non-decreasing restriction removes a path.
 example : nondecreasingDyckSubwordTotal [D, U] 4 = 19 := by decide +kernel
+
+example : PowerSeries.coeff 0 (nondecreasingDyckSubwordBivariateGF [U, D]) = 0 := by
+  simp [nondecreasingDyckSubwordBivariateGF]
+
+example : nondecreasingDyckSubwordTotal [U, D] 0 = 0 := by decide +kernel
+
+example : nondecreasingDyckSubwordTotal [U, D] 1 = 1 := by decide +kernel
+
+-- Check the last initial value and the first value governed by the homogeneous recurrence.
+example : nondecreasingDyckSubwordTotal [U, D] 4 = 32 := by decide +kernel
+
+example : nondecreasingDyckSubwordTotal [U, D] 5 = 99 := by decide +kernel

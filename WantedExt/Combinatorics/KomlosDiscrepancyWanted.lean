@@ -28,15 +28,6 @@ open MatrixDiscrepancy
 
 namespace KomlosDiscrepancyWanted
 
-/-- **Equivalence of the square and rectangular Komlós formulations (statement).** The statement
-that the uniform discrepancy bound for vectors in the unit ball holds if and only if the Komlós
-constant is finite.
-
-Source: optimization catalogue C24a, line 26, and AIM Problem 1.05. The padding
-bridge is requested, not assumed or claimed definitional. -/
-def constantFormulationEquivalence : Prop :=
-  UniformRectangularBound ↔ komlosConstant < ⊤
-
 /-- **Beck–Spencer–Gluskin logarithmic upper bound (statement).** The statement that there are a
 real number $c > 0$ and a natural number $N \ge 3$ such that for every natural number $n \ge N$,
 the Komlós constant in dimension $n$ is at most $c \log n$, where $\log$ is the natural logarithm.
@@ -153,18 +144,6 @@ and optimization catalogue C24a, line 55. -/
 def nikolov2013VectorDiscrepancyUpperBound : Prop :=
   ∀ (m n : ℕ), 1 ≤ n → ∀ A : Matrix (Fin m) (Fin n) ℝ, ColumnAdmissible A →
     vectorDiscrepancy A ≤ 1
-
-/-- **The square and rectangular Komlós formulations are equivalent.** The following two
-conditions are equivalent. (a) There is a real constant $C > 0$ such that for all natural numbers
-$n$ and $d$ and all vectors $v_1, \dots, v_n \in \mathbb{R}^d$ of Euclidean norm at most $1$,
-writing $v_{ij}$ for the $j$-th coordinate of $v_i$, there are signs
-$\varepsilon_1, \dots, \varepsilon_n \in \{-1, 1\}$ with
-$\left|\sum_{i=1}^{n} \varepsilon_i v_{ij}\right| \le C$ for every coordinate index $j$. (b) The
-Komlós constant, the supremum over all $n \ge 1$ of the discrepancy of real $n \times n$ matrices
-whose columns all have Euclidean norm at most $1$, is finite.
-
-Source: optimization catalogue C24a, line 26, and AIM Problem 1.05. -/
-theorem_wanted constantFormulationEquivalence_holds : constantFormulationEquivalence
 
 /-- **Beck–Spencer–Gluskin logarithmic upper bound for the Komlós constant.** There are a real
 number $c > 0$ and a natural number $N \ge 3$ such that for every natural number $n \ge N$, the
