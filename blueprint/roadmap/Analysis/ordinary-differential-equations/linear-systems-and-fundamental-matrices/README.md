@@ -12,6 +12,17 @@
 
 ## Steady transfer along a uniform passive cable
 
+- [Eq of has Deriv Within At zero](eq-of-has-deriv-within-at-zero.md)
+- [Length Constant](length-constant.md)
+- [Char Resistance](char-resistance.md)
+- [Is Steady State](is-steady-state.md)
+- [Cable Voltage](cable-voltage.md)
+- [Cable Current](cable-current.md)
+- [Length Constant pos](length-constant-pos.md)
+- [Char Resistance pos](char-resistance-pos.md)
+- [Length Constant sq](length-constant-sq.md)
+- [Mul length Constant sq](mul-length-constant-sq.md)
+- [Char Resistance eq](char-resistance-eq.md)
 - [Transfer solution for a uniform cable](is-steady-state-cable.md)
 - [Inlet data determine voltage and current on a finite cable](eq-cable-icc.md)
 - [Voltage profile and inlet relation for a cable with a sealed end](sealed-end.md)
