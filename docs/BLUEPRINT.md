@@ -163,6 +163,25 @@ and by its reviewers ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
   topic is not a taxonomy change; it is recorded in `scripts/card-moves.jsonl`
   ([Cards](#cards)).
 
+### Library navigation
+
+The roadmap root also has `Domains`, `CSLibExt`, and `PhyslibExt` entry points.
+They link to the authored `## Library navigation` section at the end of
+`blueprint/coverage/README.md`, whose links lead to canonical roadmap articles.
+These are code-library navigation, not mathematical regions, extra result nodes,
+or library-filtered progress totals. Mathematical subjects can contain results
+from several code libraries; classify an implemented entry by its actual source
+module, not its declaration namespace or subject. Label planned destinations
+and related prerequisites separately from implemented entries.
+
+The coverage table remains generated. `generate_wiki.generate()` preserves only
+the authored library-navigation section when it generates coverage, including
+when `sync_wiki.refresh_catalog()` refreshes the catalog. Keep the section's
+three library headings at level three and any grouping below them. Use the exact
+`## Library navigation` heading. Regeneration rejects additional level-two
+sections and unparsed library-navigation headings before writing the catalog.
+Do not edit generated counts or add another `Library navigation` section.
+
 ### Cards
 
 - **A card is a folder whose folder page's annotation carries a card record**
