@@ -10537,6 +10537,7 @@
   "MathlibExt/Combinatorics/Enumerative/FibternarySums": {"to": "Combinatorics/combinatorics-on-words/automatic-sequences", "title": "Tribonacci representations and the Trithoff array"},
   "MathlibExt/Combinatorics/Enumerative/FilipponiBinomialSum": {"to": "Combinatorics/binomial-coefficients/binomial-sums", "title": "Filipponi's binomial sum"},
   "MathlibExt/Combinatorics/Enumerative/FixedColumnHooks": {"to": "Combinatorics/integer-partitions/young-diagrams-statistics", "title": "Fixed hooks in a column of a partition"},
+  "MathlibExt/Combinatorics/Enumerative/FixedPointsKPermutations": {"to": "Combinatorics/permutations/permutation-statistics", "title": "Fixed points of permutations with k cycles"},
   "MathlibExt/Combinatorics/Enumerative/FlattenedStirlingPermutations": {"to": "Combinatorics/permutations/permutation-statistics", "title": "Flattened Stirling permutations"},
   "MathlibExt/Combinatorics/Enumerative/FloorNonMultiples": {"to": "Combinatorics/elementary-enumeration", "title": "Schreier sets"},
   "MathlibExt/Combinatorics/Enumerative/FlattenedStirlingTwoRuns": {"to": "Combinatorics/permutations/permutation-statistics", "title": "Flattened Stirling permutations"},
