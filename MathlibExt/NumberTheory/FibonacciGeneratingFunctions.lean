@@ -12,6 +12,7 @@ public import Mathlib.Algebra.Field.Rat
 public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.Logic.Function.Iterate
 import Mathlib.Data.Int.Fib.Lemmas
+import Mathlib.RingTheory.Coprime.Lemmas
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.NormNum
@@ -97,6 +98,68 @@ Sequences 27 (2024), Article 24.3.1, Lemma 5
 (`jis-2024-24.3.1-lem-5`). -/
 public theorem isGibonacciGood_one (a b : ℤ) : IsGibonacciGood a b 1 :=
   ⟨by norm_num, -b, by rw [gibonacciGeneratingValue_one]; simp⟩
+
+-- Multiplying numerator and denominator by q² gives a quotient of integers.
+private theorem isGibonacciGood_div_iff_dvd (a b p q : ℤ) (hq : q ≠ 0) :
+    IsGibonacciGood a b ((p : ℚ) / q) ↔
+      q ^ 2 - p * q - p ^ 2 ≠ 0 ∧ q ^ 2 - p * q - p ^ 2 ∣ q * ((b - a) * p + a * q) := by
+  have hq' : (q : ℚ) ≠ 0 := by exact_mod_cast hq
+  let d := q ^ 2 - p * q - p ^ 2
+  have hden : 1 - (p : ℚ) / q - ((p : ℚ) / q) ^ 2 = (d : ℚ) / (q : ℚ) ^ 2 := by
+    dsimp [d]
+    push_cast
+    field_simp
+  have hval : gibonacciGeneratingValue a b ((p : ℚ) / q) =
+      ((q * ((b - a) * p + a * q) : ℤ) : ℚ) / (d : ℚ) := by
+    rw [gibonacciGeneratingValue, hden, div_div_eq_mul_div]
+    congr 1
+    push_cast
+    field_simp
+  rw [IsGibonacciGood, hden, div_ne_zero_iff, and_iff_left (pow_ne_zero 2 hq'),
+    Int.cast_ne_zero, hval]
+  refine and_congr_right fun hd => exists_congr fun z => ?_
+  have hd' : (d : ℚ) ≠ 0 := by exact_mod_cast hd
+  rw [div_eq_iff hd', mul_comm (z : ℚ), ← Int.cast_mul, Int.cast_inj]
+
+/-- **Goodness passes to two transformed fractions.** Let $a$, $b$, $p$, $q$ be integers with
+$q \ne 0$ and $\gcd(p, q) = 1$, and suppose that $p/q$ is good for $(a, b)$. If $p + q \ne 0$,
+then $q/(p + q)$ is good for $(a, b)$; and if $p \ne 0$, then $(q - p)/p$ is good for $(a, b)$.
+
+Source: Knapp, *Fibonacci Generating Functions*, Journal of Integer
+Sequences 27 (2024), Article 24.3.1, Theorem 1
+(`jis-2024-24.3.1-thm-1`). -/
+public theorem isGibonacciGood_transform (a b p q : ℤ)
+    (hcop : Int.gcd p q = 1) (hq : q ≠ 0)
+    (h : IsGibonacciGood a b ((p : ℚ) / (q : ℚ))) :
+    (p + q ≠ 0 → IsGibonacciGood a b ((q : ℚ) / ((p : ℚ) + (q : ℚ)))) ∧
+    (p ≠ 0 → IsGibonacciGood a b (((q : ℚ) - (p : ℚ)) / (p : ℚ))) := by
+  let d := q ^ 2 - p * q - p ^ 2
+  let u := (b - a) * p + a * q
+  obtain ⟨hd, hqu⟩ := (isGibonacciGood_div_iff_dvd a b p q hq).mp h
+  have hcop' : IsCoprime d q := by
+    rw [show d = (q - p) * q - p ^ 2 by dsimp [d]; ring, IsCoprime.mul_sub_right_left_iff]
+    exact (Int.isCoprime_iff_gcd_eq_one.mpr hcop).pow_left
+  have hu : d ∣ u := hcop'.dvd_of_dvd_mul_left hqu
+  -- Modulo d, multiplying the forward linear numerator by q gives (p + q) * u.
+  have hv : d ∣ a * p + b * q := by
+    apply hcop'.dvd_of_dvd_mul_left
+    rw [show q * (a * p + b * q) = (p + q) * u + (b - a) * d by dsimp [u, d]; ring]
+    exact dvd_add (dvd_mul_of_dvd_right hu _) (dvd_mul_left ..)
+  have step (r s : ℤ) (hs : s ≠ 0) (hform : s ^ 2 - r * s - r ^ 2 = -d)
+      (hnum : d ∣ (b - a) * r + a * s) : IsGibonacciGood a b ((r : ℚ) / s) := by
+    apply (isGibonacciGood_div_iff_dvd a b r s hs).mpr
+    rw [hform]
+    exact ⟨neg_ne_zero.mpr hd, neg_dvd.mpr (dvd_mul_of_dvd_right hnum _)⟩
+  constructor
+  · intro hs
+    rw [← Int.cast_add]
+    apply step q (p + q) hs (by dsimp [d]; ring)
+    rwa [show (b - a) * q + a * (p + q) = a * p + b * q by ring]
+  · intro hp
+    rw [← Int.cast_sub]
+    apply step (q - p) p hp (by dsimp [d]; ring)
+    rw [show (b - a) * (q - p) + a * p = (a * p + b * q) - u by dsimp [u]; ring]
+    exact dvd_sub hv hu
 
 /-- **Consecutive Fibonacci ratios are good.** For all integers $a$ and $b$ and every natural
 number $n$, the ratio $F_n / F_{n+1}$ of consecutive Fibonacci numbers is good for $(a, b)$.

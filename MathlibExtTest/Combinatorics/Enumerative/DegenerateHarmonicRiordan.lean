@@ -28,3 +28,11 @@ example :
 
 example (α : ℝ) (n : ℕ) : generalizedDegenerateHarmonic 0 α n = 0 := by
   simp [generalizedDegenerateHarmonic]
+
+-- At rank zero and index two, only the middle term of the convolution contributes.
+example {lam α : ℝ} (hlam : 0 < lam) (hα : 0 < α) :
+    ∑ k ∈ Finset.range 3, degenerateHarmonicRank lam α k 1 = (1 / α) ^ 2 := by
+  rw [degenerateHarmonicRank_succ_partial_sum hlam hα 2 0]
+  simp [Finset.sum_range_succ, degenerateHarmonicRank_zero_right, generalizedDegenerateHarmonic,
+    pow_two]
+  field_simp

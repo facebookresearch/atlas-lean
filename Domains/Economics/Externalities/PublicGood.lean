@@ -38,8 +38,9 @@ namespace MathlibExt.Economics.PublicGood
 def surplus {ι : Type*} [Fintype ι] (v : ι → ℝ → ℝ) (cost : ℝ → ℝ) (G : ℝ) : ℝ :=
   ∑ i, v i G - cost G
 
-/-- **Samuelson condition.** At an interior optimum `G` of total surplus, the sum
-of marginal benefits `∑ i, v i'(G)` equals the marginal cost `cost'(G)`. -/
+/-- **Samuelson condition.** At an interior optimum `G` of total surplus where each `v i` and
+`cost` are differentiable, the sum of marginal benefits `∑ i, v i'(G)` equals the marginal cost
+`cost'(G)`. -/
 theorem sum_marginalBenefit_eq_marginalCost {ι : Type*} [Fintype ι]
     {v : ι → ℝ → ℝ} {cost : ℝ → ℝ} {G : ℝ} {mb : ι → ℝ} {mc : ℝ}
     (hopt : IsLocalMax (surplus v cost) G)
@@ -52,8 +53,8 @@ theorem sum_marginalBenefit_eq_marginalCost {ι : Type*} [Fintype ι]
   exact sub_eq_zero.mp hzero
 
 /-- **Samuelson condition on the feasible domain.** If `G > 0` locally maximizes
-total surplus among feasible levels `G' ≥ 0`, the sum of marginal benefits equals
-the marginal cost. -/
+total surplus among feasible levels `G' ≥ 0` and each `v i` and `cost` are differentiable at `G`,
+the sum of marginal benefits equals the marginal cost. -/
 theorem sum_marginalBenefit_eq_marginalCost_of_isLocalMaxOn {ι : Type*} [Fintype ι]
     {v : ι → ℝ → ℝ} {cost : ℝ → ℝ} {G : ℝ} {mb : ι → ℝ} {mc : ℝ} (hG : 0 < G)
     (hopt : IsLocalMaxOn (surplus v cost) (Set.Ici 0) G)

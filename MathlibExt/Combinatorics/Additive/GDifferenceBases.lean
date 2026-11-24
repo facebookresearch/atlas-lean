@@ -175,6 +175,75 @@ public theorem diffBasisNumber_le_succ_mul.exists_min_basis (g n : ℕ) :
       · intro a _ b _ hab
         exact congrArg Prod.snd hab
 
+/-- Repeat a finite set in disjoint translates, preserving each difference in every copy. -/
+private theorem exists_disjoint_translates {A : Finset ℤ} (hA : A.Nonempty) (g : ℕ) :
+    ∃ B : Finset ℤ, B.card = g * A.card ∧
+      ∀ x : ℤ, 1 ≤ subRepCount A x → g ≤ subRepCount B x := by
+  let lo := A.min' hA
+  let hi := A.max' hA
+  let d := hi - lo + 1
+  have hwidth : hi < lo + d := by dsimp [d]; omega
+  have hd : 0 ≤ d := by
+    have h : lo ≤ hi := A.min'_le_max' hA
+    omega
+  let shift (p : ℕ × ℤ) := p.2 + (p.1 : ℤ) * d
+  let S := Finset.range g ×ˢ A
+  -- The step exceeds the diameter, so each copy lies strictly before the next.
+  have hlt {i j : ℕ} {a b : ℤ} (hij : i < j) (ha : a ∈ A) (hb : b ∈ A) :
+      shift (i, a) < shift (j, b) := by
+    have ha' : a ≤ hi := A.le_max' a ha
+    have hb' : lo ≤ b := A.min'_le b hb
+    have hstep := mul_le_mul_of_nonneg_right
+      (show (i : ℤ) + 1 ≤ (j : ℤ) by omega) hd
+    rw [add_mul, one_mul] at hstep
+    change a + (i : ℤ) * d < b + (j : ℤ) * d
+    omega
+  have hinj : Set.InjOn shift S := by
+    rintro ⟨i, a⟩ hp ⟨j, b⟩ hq he
+    have ha := (Finset.mem_product.mp (show (i, a) ∈ S from hp)).2
+    have hb := (Finset.mem_product.mp (show (j, b) ∈ S from hq)).2
+    have hij : i = j := le_antisymm
+      (le_of_not_gt fun h => (hlt h hb ha).ne he.symm)
+      (le_of_not_gt fun h => (hlt h ha hb).ne he)
+    subst j
+    exact congrArg (Prod.mk i) (add_right_cancel he)
+  refine ⟨S.image shift, ?_, fun x hx => ?_⟩
+  · rw [Finset.card_image_of_injOn hinj, Finset.card_product, Finset.card_range]
+  · obtain ⟨⟨a, b⟩, hp⟩ := Finset.card_pos.mp hx
+    simp only [Finset.mem_filter, Finset.mem_product] at hp
+    obtain ⟨⟨ha, hb⟩, hab⟩ := hp
+    rw [← Finset.card_range g]
+    apply Finset.card_le_card_of_injOn (fun i => (shift (i, a), shift (i, b)))
+    · intro i hi
+      refine Finset.mem_filter.mpr ⟨Finset.mk_mem_product ?_ ?_, ?_⟩
+      · exact Finset.mem_image_of_mem shift (Finset.mk_mem_product hi ha)
+      · exact Finset.mem_image_of_mem shift (Finset.mk_mem_product hi hb)
+      · simpa [shift] using hab
+    · intro i hi j hj he
+      exact congrArg Prod.fst <|
+        hinj (Finset.mk_mem_product hi ha) (Finset.mk_mem_product hj ha) (congrArg Prod.fst he)
+
+/-- **Comparing $g$-difference bases with difference bases.** For natural numbers $g$ and $n$,
+let $\eta_g(n)$ be the least size of a finite set $A \subseteq \mathbb{Z}$ such that every
+$x \in \{1, \dots, n\}$ is the difference $a - a'$ of at least $g$ ordered pairs
+$(a, a') \in A \times A$. If $n > 1$ and $g \ge 1$, then
+$\eta_1(n) \le \eta_g(n) \le g\,\eta_1(n)$.
+
+Source: Eric Schmutz and Michael Tait, *Cardinalities of g-Difference Sets*, INTEGERS 25
+(2025), Article A77, Corollary 2 (`integers-2025-A77-cor-2`). -/
+public theorem diffBasisNumber_one_le_and_le_mul (g n : ℕ) (hn : 1 < n) (hg : 1 ≤ g) :
+    diffBasisNumber 1 n ≤ diffBasisNumber g n ∧ diffBasisNumber g n ≤ g * diffBasisNumber 1 n := by
+  constructor
+  · obtain ⟨A, hcard, hA⟩ := diffBasisNumber_le_succ_mul.exists_min_basis g n
+    exact Nat.sInf_le ⟨A, hcard, fun x hx => hg.trans (hA x hx)⟩
+  · obtain ⟨A, hcard, hA⟩ := diffBasisNumber_le_succ_mul.exists_min_basis 1 n
+    have h1 : (1 : ℤ) ∈ Finset.Icc 1 (n : ℤ) :=
+      Finset.mem_Icc.mpr ⟨le_rfl, by exact_mod_cast hn.le⟩
+    have htwo := two_le_card_of_subRepCount one_ne_zero (hA 1 h1)
+    have hne : A.Nonempty := Finset.card_pos.mp (by omega)
+    obtain ⟨B, hBcard, hB⟩ := exists_disjoint_translates hne g
+    exact Nat.sInf_le ⟨B, hBcard.trans (congrArg (g * ·) hcard), fun x hx => hB x (hA x hx)⟩
+
 namespace sqrt_two_mul_le_diffBasisNumber_div_sqrt
 
 private theorem mul_le_card_choose_two {g n : ℕ} (A : Finset ℤ)

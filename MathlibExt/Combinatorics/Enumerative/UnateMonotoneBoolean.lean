@@ -92,6 +92,19 @@ public theorem isUnateBoolFun_of_monotone {n : ℕ} {f : (Fin n → Bool) → Bo
   · simp
   · simp [Function.update_of_ne h]
 
+/-- **The negation of a unate function is unate.** If an $n$-variable Boolean function $f$ is
+unate, then so is its negation $x \mapsto \lnot f(x)$.
+
+Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
+under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
+Sequences 28 (2025), Article 25.3.4, Proposition 7 (`jis-2025-25.3.4-prop-7`). -/
+public theorem isUnateBoolFun_not {n : ℕ} {f : (Fin n → Bool) → Bool}
+    (hf : IsUnateBoolFun f) : IsUnateBoolFun fun x => !f x := by
+  intro i
+  rcases hf i with hinc | hdec
+  · exact Or.inr fun x hx => compl_le_compl (hinc x hx)
+  · exact Or.inl fun x hx => compl_le_compl (hdec x hx)
+
 /-- **Non-degeneracy in a variable.** An $n$-variable Boolean function $f$ is non-degenerate
 on the variable $x_i$ when flipping $x_i$ changes the value of $f$ at some input: there is
 $x \in \{0,1\}^n$ with $f(x) \ne f(x')$, where $x'$ is $x$ with its $i$-th coordinate negated.
