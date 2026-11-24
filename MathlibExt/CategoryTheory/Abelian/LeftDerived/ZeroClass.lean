@@ -29,7 +29,6 @@ open CategoryTheory
 
 namespace CategoryTheory.ProjectiveResolution
 
-attribute [local implicit_reducible] HomologicalComplex.homologyFunctor
 
 variable {C : Type u} [Category.{v} C] [Abelian C] [HasProjectiveResolutions C]
   {D : Type a} [Category.{b} D] [Abelian D] {X : C}
@@ -47,7 +46,8 @@ theorem zeroClass_fromLeftDerivedZero :
     Iso.inv_hom_id, Category.id_comp]
   rw [← Category.assoc
     (ChainComplex.isoHomologyι₀ ((F.mapHomologicalComplex (ComplexShape.down ℕ)).obj P.complex)).inv
-    (ChainComplex.isoHomologyι₀ ((F.mapHomologicalComplex (ComplexShape.down ℕ)).obj P.complex)).hom,
+    (ChainComplex.isoHomologyι₀
+      ((F.mapHomologicalComplex (ComplexShape.down ℕ)).obj P.complex)).hom,
     Iso.inv_hom_id, Category.id_comp]
   exact ProjectiveResolution.pOpcycles_comp_fromLeftDerivedZero' P F
 
