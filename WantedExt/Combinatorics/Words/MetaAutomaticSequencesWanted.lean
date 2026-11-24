@@ -140,19 +140,6 @@ public theorem_wanted metaAutomaticOne_morphism_coding :
         ([[0, 1, 1, 2], [1, 2, 3, 0], [2, 3, 0, 1], [3, 0, 2, 3]].getD (w n) []).getD r 0) ∧
       ∀ n, metaAutomaticOne n = decide (w n % 2 = 1)
 
-/-- **Recovering the even and odd terms of $\mathcal{M}_2$.** For every natural number $n$, let
-$x = \mathcal{M}_2(n)$ and $y = \mathcal{M}_2(2n + \mathcal{M}_2(n))$, where $\mathcal{M}_2$ is the
-meta-automatic sequence with values in $\{0, 1\}$. Then $\mathcal{M}_2(2n) = x \oplus y$ and
-$\mathcal{M}_2(2n+1) = x \oplus y \oplus 1$, where $\oplus$ is addition modulo $2$.
-
-Source: John M. Campbell and Benoît Cloitre, *Meta-Automatic Sequences*, Journal of
-Integer Sequences 29 (2026), Article 26.4.1, Lemma 19 (`jis-2026-26.4.1-lem-19`). -/
-public theorem_wanted metaAutomaticTwo_recover (n : ℕ) :
-    metaAutomaticTwo (2 * n) = xor (metaAutomaticTwo n)
-        (metaAutomaticTwo (2 * n + (metaAutomaticTwo n).toNat)) ∧
-      metaAutomaticTwo (2 * n + 1) = !xor (metaAutomaticTwo n)
-        (metaAutomaticTwo (2 * n + (metaAutomaticTwo n).toNat))
-
 /-- **Pair recurrence and $4$-automaticity of $\mathcal{M}_2$.** Read the meta-automatic
 sequence $\mathcal{M}_2$ as taking values in $\{0, 1\}$, write $\oplus$ for addition modulo $2$,
 and let $s(n) = (\mathcal{M}_2(n), \mathcal{M}_2(2n + \mathcal{M}_2(n)))$. For every $n \ge 0$,

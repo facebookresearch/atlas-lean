@@ -37,7 +37,7 @@ or bound becomes a Batteries `theorem_wanted` about the repository's canonical
 module
 
 public import Batteries.Util.ProofWanted
-public import MathlibExt.Combinatorics.SimpleGraph.Ramsey
+public import MathlibExt.Combinatorics.SimpleGraph.RamseyFiveFiveLowerBound
 
 @[expose] public section
 
@@ -54,7 +54,9 @@ is containment of `K_s` in `G` or of `K_t` in `Gᶜ`.
 
 `R(3,3) = 6` is `SimpleGraph.graphRamsey_three_three` and `R(3,4) = 9` is
 `SimpleGraph.graphRamsey_three_four` in `MathlibExt`. The open conjecture
-`R(5,5) ≤ 43` is `OpenConjectures.Combinatorics.RamseyFiveFiveExactValue`.
+`R(5,5) ≤ 43` is `OpenConjectures.Combinatorics.RamseyFiveFiveExactValue`. Exoo's lower bound
+`R(5,5) ≥ 43` is proved in `MathlibExt.Combinatorics.SimpleGraph.RamseyFiveFiveLowerBound`,
+which this module imports.
 -/
 
 /-- **The value of $R(4, 4)$.** The classical Ramsey number $R(4, 4)$ equals $18$.
@@ -64,16 +66,6 @@ chromatic graphs*, Canad. J. Math. 7 (1955), 1–7; S. P. Radziszowski, *Small
 Ramsey Numbers*, Electron. J. Combin. Dynamic Survey DS1;
 listed in leansolving/SqueezeBench `SqueezeBench/Problems/Ramsey/README.md`. -/
 public theorem_wanted graphRamsey_four_four : graphRamsey 4 4 = 18
-
-/-- **Exoo's lower bound for $R(5, 5)$.** The classical Ramsey number $R(5, 5)$ is at
-least $43$.
-
-Thus some simple graph on $42$ vertices contains no $K_5$ and no independent set of size $5$.
-
-Source: G. Exoo, *A lower bound for R(5,5)*, J. Graph Theory 13 (1989),
-97–98; Radziszowski, DS1; listed in SqueezeBench
-`SqueezeBench/Problems/Ramsey/README.md`. -/
-public theorem_wanted forty_three_le_graphRamsey_five_five : 43 ≤ graphRamsey 5 5
 
 /-- **The Angeltveit–McKay upper bound for $R(5, 5)$.** The classical Ramsey number
 $R(5, 5)$ is at most $46$.
