@@ -326,6 +326,48 @@ $A \subset \mathbb{R}$ with $|A| = n$, is at least $1$. -/
 def trivialLowerBound : Prop :=
   (1 : ℝ) ≤ sumProductExponent
 
+/--
+**Trivial lower bound for the real sum-product exponent.** The real sum-product exponent is at
+least $1$. Here the exponent is $\liminf_{n \to \infty} m(n)$, where $m(n)$ is the infimum of
+$\log \max(|A+A|, |AA|) / \log |A|$ over all sets $A$ of $n$ real numbers, and $A+A$ and $AA$ are
+the sumset and the product set of $A$.
+
+Optimization Problems 84b lists this bound as trivial, since $|A+A| \ge 2|A| - 1$.
+
+Source: Paul Erdős and Endre Szemerédi, On sums and products of
+integers, Studies in Pure Mathematics (1983), 213-218,
+https://doi.org/10.1007/978-3-0348-5438-2_19; György Elekes, On the number of sums and products,
+Acta Arithmetica 81 (1997), no. 4, 365-367, https://doi.org/10.4064/aa-81-4-365-367; József
+Solymosi, On the number of sums and products, Bulletin of the London Mathematical Society 37
+(2005), no. 4, 491-494, https://doi.org/10.1112/S0024609305004261; József Solymosi, Bounding
+multiplicative energy by the sumset, Advances in Mathematics 222 (2009), no. 2, 402-408,
+https://doi.org/10.1016/j.aim.2009.04.006; Misha Rudnev and Sophie Stevens, An update on the
+sum-product problem, Mathematical Proceedings of the Cambridge Philosophical Society 173 (2022),
+no. 2, 411-430, https://arxiv.org/abs/2005.11145; Thomas F. Bloom, A history of the sum-product
+problem, https://thomasbloom.org/notes/sumproduct.html; Adam Cushman, A note on the sum-product
+problem and the convex sumset problem, arXiv:2512.13849 (2025),
+https://arxiv.org/abs/2512.13849; Thomas F. Bloom, Will Sawin, Carl Schildkraut, and Dmitrii
+Zhelezov, The sum-product conjecture is false for real numbers, arXiv:2605.28781 (2026),
+https://arxiv.org/abs/2605.28781; Optimization Problems, record 84b, Sum-product exponent for
+the reals, tables of known upper and lower bounds (source commit
+2c1968cd520b60f1cf3cf50749f7285e800e4e15),
+https://github.com/teorth/optimizationproblems/blob/2c1968cd520b60f1cf3cf50749f7285e800e4e15/constants/84b.md.
+Moved from `OpenConjectures/Combinatorics/RealSumProductExponent`.
+-/
+public theorem trivialLowerBound_holds : trivialLowerBound := by
+  change (1 : ℝ) ≤ Filter.liminf sumProductLevelMinimum Filter.atTop
+  apply Filter.le_liminf_of_le sumProductLevelMinimum_isBoundedUnder_le.isCoboundedUnder_ge
+  filter_upwards [Filter.eventually_ge_atTop 2] with n hn
+  obtain ⟨A, hcard, hvalue⟩ := (sumProductLevelMinimum_isLeast n).1
+  have hA : 2 ≤ A.card := hcard.symm ▸ hn
+  have hAone : (1 : ℝ) < A.card := by exact_mod_cast hA
+  have hAnonempty : A.Nonempty := Finset.card_pos.mp (Nat.zero_lt_two.trans_le hA)
+  -- Translating A by any one of its elements already gives |A| distinct sums.
+  have hsum : A.card ≤ (A + A).card := Finset.card_le_card_add_left hAnonempty
+  have hmax : A.card ≤ sumProductMaxCard A := hsum.trans (Nat.le_max_left _ _)
+  rw [hvalue, sumProductRatio, le_div_iff₀ (Real.log_pos hAone), one_mul]
+  exact Real.log_le_log (zero_lt_one.trans hAone) (by exact_mod_cast hmax)
+
 /-- **Statement of Elekes's lower bound.** For a finite set $A \subset \mathbb{R}$ write $A + A$
 and $AA$ for the sets of all sums $a + b$ and all products $ab$ with $a, b \in A$, and let the real
 sum-product exponent $C_{84b}$ be the limit inferior, as $n \to \infty$, of the least value of
