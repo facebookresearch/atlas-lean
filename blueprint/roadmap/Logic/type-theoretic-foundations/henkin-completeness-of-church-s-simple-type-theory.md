@@ -14,8 +14,7 @@ respects typing, application and $\beta$-conversion, and the domains are closed 
 $\lambda$-term denotes. Extensionality is part of the selected model class. A standard model is a
 general model in which every function-type domain contains all functions. Henkin's theorem: the
 calculus is sound and complete for general models, under the hypothesis conditions recorded in the
-expansion. For standard models no consistent recursively
-axiomatized extension of the axioms derives every formula valid in all standard models.
+expansion.
 
 ## Expansion
 
@@ -28,8 +27,9 @@ development proves it at every infinite value carrier for signatures with infini
 parameters, needing nothing beyond well-formedness for a finite context, and, for derivability from
 some finite part of an arbitrary context of open formulas, over any infinite signature once the
 carrier is at least as large as the signature. These conditions are kept, not
-replaced by an unconditional statement. The limits of standard semantics, including the failure of
-compactness, are a separate page. Church's simple type theory is distinct from rank-one polymorphic
+replaced by an unconditional statement. The limits of standard semantics are a separate page: for
+standard models no consistent recursively axiomatized extension of the axioms derives every formula
+valid in all standard models, and compactness fails. Church's simple type theory is distinct from rank-one polymorphic
 higher-order logic and from System F.
 
 ## Sources

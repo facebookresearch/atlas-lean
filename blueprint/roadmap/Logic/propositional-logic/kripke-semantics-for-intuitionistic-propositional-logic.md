@@ -12,8 +12,7 @@ formulas: no node forces $\bot$; $k$ forces $\varphi \wedge \psi$ when it forces
 $\varphi \vee \psi$ when it forces at least one of them; and $k$ forces $\varphi \to \psi$ when
 every $k' \ge k$ that forces $\varphi$ forces $\psi$. The main result: for a finite set $\Gamma$ of
 formulas and a formula $\varphi$, $\varphi$ is derivable from $\Gamma$ in IPC exactly when, in
-every Kripke model, every node that forces all members of $\Gamma$ forces $\varphi$. For
-$\Gamma$ empty the models may be restricted to finite trees with a root.
+every Kripke model, every node that forces all members of $\Gamma$ forces $\varphi$.
 
 ## Expansion
 
@@ -31,7 +30,8 @@ A sound expansion has separate pages for:
    is not Kripke completeness);
 5. the equivalence of the preorder presentation with the partial-order presentation (by passing to
    the quotient by mutual accessibility), stated separately rather than assumed;
-6. the finite-tree refinement, stated separately.
+6. the finite-tree refinement, stated separately: for $\Gamma$ empty, the models may be restricted to
+   finite trees with a root.
 
 Minimal logic, without ex falso, is a different system with its own semantics. Completeness for
 truth tables of the classical system does not cover this node.
