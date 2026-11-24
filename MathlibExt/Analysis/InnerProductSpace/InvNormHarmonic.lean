@@ -6,8 +6,48 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+# |x|^(2-m) is harmonic away from the origin in R^m
+
+The following OpenBMB notice applies to the adapted Newtonian-kernel statement and its
+documentation.
+
+Copyright (c) 2026 OpenBMB
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+Attribution and modification notice: the Newtonian-kernel statement is adapted from
+openbmb/ma-proofbench at
+commit 31bab4c78fd1b0c464e767d62e9202163d1e9029, `benchmark/level1/ma_proofbench_l1_81.lean`
+(MA-ProofBench, L. Pu et al., *MA-ProofBench: A Two-Tiered Evaluation of LLMs for Theorem
+Proving in Mathematical Analysis*, arXiv:2606.13782), distributed under the MIT License above.
+See also the Hugging Face dataset openbmb/MA-ProofBench. Changes made: converted
+`theorem ma_proofbench_l1_81 … := by sorry` into the Batteries `theorem_wanted`
+`harmonicOnNhd_one_div_norm_pow_sub_two`; moved the informal problem statement docstring onto it
+and placed the declarations in namespace
+`MathlibExt.Analysis.Calculus.NormPowTwoSubDimHarmonicWanted`; replaced `import Mathlib` by
+`public import Mathlib` under the module system.
+This change supplies a proof using the generalized three-dimensional calculation.
+-/
 module
 
+public import Mathlib.Analysis.InnerProductSpace.Harmonic.Basic
 public import Mathlib.Analysis.InnerProductSpace.Laplacian
 import Mathlib.Analysis.InnerProductSpace.Calculus
 import Mathlib.Analysis.InnerProductSpace.PiL2
@@ -37,6 +77,9 @@ computing each second directional derivative by Faà di Bruno along the line
 the basis with `∑ v, ⟪x, v⟫ ^ 2 = ‖x‖ ^ 2` leaves
 `(4 * r * (r - 1) + 6 * r) * (h x) ^ (r - 1) = 0`.
 
+The same radial computation in arbitrary dimension also gives harmonicity of the
+Newtonian power away from the origin.
+
 ## ii. Key results
 
 - `MathlibExt.Analysis.laplacian_inv_norm_eq_zero`: `1 / r` is harmonic in
@@ -51,21 +94,19 @@ the basis with `∑ v, ⟪x, v⟫ ^ 2 = ‖x‖ ^ 2` leaves
 @[expose] public section
 
 open Laplacian
-open scoped RealInnerProductSpace
+open scoped RealInnerProductSpace Topology
 
 namespace MathlibExt.Analysis
 
-/-- The function `1 / r` is harmonic in three dimensions away from `r = 0`:
-its (flat) Laplacian vanishes at every nonzero point of
-`EuclideanSpace ℝ (Fin 3)`. -/
-theorem laplacian_inv_norm_eq_zero {x : EuclideanSpace ℝ (Fin 3)} (hx : x ≠ 0) :
-    Δ (fun y : EuclideanSpace ℝ (Fin 3) => ‖y‖⁻¹) x = 0 := by
-  set r : ℝ := -1 / 2 with hr
-  set h : EuclideanSpace ℝ (Fin 3) → ℝ := fun y => ‖y‖ ^ 2 with hh_def
+-- Compute the Laplacian once for both radial kernels.
+private theorem laplacian_rpow_norm_sq {m : ℕ} (r : ℝ)
+    {x : EuclideanSpace ℝ (Fin m)} (hx : x ≠ 0) :
+    Δ (fun y : EuclideanSpace ℝ (Fin m) => (‖y‖ ^ (2 : ℕ)) ^ r) x =
+      (4 * r * (r - 1) + (m : ℝ) * (2 * r)) * (‖x‖ ^ (2 : ℕ)) ^ (r - 1) := by
+  set h : EuclideanSpace ℝ (Fin m) → ℝ := fun y => ‖y‖ ^ 2 with hh_def
   set g : ℝ → ℝ := fun s => s ^ r with hg_def
-  set F : EuclideanSpace ℝ (Fin 3) → ℝ := g ∘ h
-  set e := stdOrthonormalBasis ℝ (EuclideanSpace ℝ (Fin 3))
-  have hr0 : r ≠ 0 := by rw [hr]; norm_num
+  set F : EuclideanSpace ℝ (Fin m) → ℝ := g ∘ h
+  set e := stdOrthonormalBasis ℝ (EuclideanSpace ℝ (Fin m))
   have hxpos : 0 < ‖x‖ := norm_pos_iff.mpr hx
   have hx2 : h x ≠ 0 := by
     have h1 : (‖x‖ : ℝ) ^ 2 ≠ 0 := pow_ne_zero 2 (ne_of_gt hxpos)
@@ -73,28 +114,12 @@ theorem laplacian_inv_norm_eq_zero {x : EuclideanSpace ℝ (Fin 3)} (hx : x ≠ 
   have hx2pos : 0 < h x := by
     have h1 : (0 : ℝ) < (‖x‖ : ℝ) ^ 2 := by positivity
     simpa [hh_def] using h1
-  have hfg : (fun y : EuclideanSpace ℝ (Fin 3) => ‖y‖⁻¹) = F := by
-    funext y
-    by_cases hy : y = 0
-    · subst hy
-      change (‖(0 : EuclideanSpace ℝ (Fin 3))‖ : ℝ)⁻¹ = g (h 0)
-      rw [norm_zero]
-      have e2 : h (0 : EuclideanSpace ℝ (Fin 3)) = 0 := by simp [hh_def]
-      rw [e2]
-      have e3 : g (0 : ℝ) = 0 := by
-        simp only [hg_def]
-        exact Real.zero_rpow hr0
-      rw [e3, inv_zero]
-    · have hpos : 0 < ‖y‖ := norm_pos_iff.mpr hy
-      have h2 : ((2 : ℕ) : ℝ) * r = -1 := by rw [hr]; norm_num
-      change (‖y‖ : ℝ)⁻¹ = ((‖y‖ ^ 2 : ℝ)) ^ r
-      rw [← Real.rpow_natCast ‖y‖ 2, ← Real.rpow_mul (le_of_lt hpos), h2,
-        Real.rpow_neg_one]
   have hΔ := InnerProductSpace.laplacian_eq_iteratedFDeriv_orthonormalBasis
-    (E := EuclideanSpace ℝ (Fin 3)) (F := ℝ) F e
+    (E := EuclideanSpace ℝ (Fin m)) (F := ℝ) F e
   have hΔx : Δ F x = ∑ i, iteratedFDeriv ℝ 2 F x ![e i, e i] := congrFun hΔ x
-  rw [hfg, hΔx]
-  have hterm : ∀ v : EuclideanSpace ℝ (Fin 3),
+  change Δ F x = _
+  rw [hΔx]
+  have hterm : ∀ v : EuclideanSpace ℝ (Fin m),
       iteratedFDeriv ℝ 2 F x (fun _ : Fin 2 => v) =
         (r * (r - 1) * (h x) ^ (r - 2)) * (2 * ⟪x, v⟫) ^ 2 +
         (r * (h x) ^ (r - 1)) * (2 * ⟪v, v⟫) := by
@@ -102,7 +127,7 @@ theorem laplacian_inv_norm_eq_zero {x : EuclideanSpace ℝ (Fin 3)} (hx : x ≠ 
     have hγ : ∀ t : ℝ, HasDerivAt (fun s : ℝ => x + s • v) v t := fun t => by
       have h0 := HasDerivAt.add (hasDerivAt_const t x)
         (HasDerivAt.smul_const (hasDerivAt_id t) v)
-      have hval : (0 : EuclideanSpace ℝ (Fin 3)) + (1 : ℝ) • v = v := by simp
+      have hval : (0 : EuclideanSpace ℝ (Fin m)) + (1 : ℝ) • v = v := by simp
       rw [hval] at h0
       exact HasDerivAt.congr_of_eventuallyEq h0
         (Filter.Eventually.of_forall fun s => rfl)
@@ -194,7 +219,7 @@ theorem laplacian_inv_norm_eq_zero {x : EuclideanSpace ℝ (Fin 3)} (hx : x ≠ 
       hiter2hi] at hvcomp
     simp only [map_zero, add_zero] at hvcomp
     exact hvcomp.symm
-  have hcons : ∀ v : EuclideanSpace ℝ (Fin 3), ![v, v] = (fun _ : Fin 2 => v) := by
+  have hcons : ∀ v : EuclideanSpace ℝ (Fin m), ![v, v] = (fun _ : Fin 2 => v) := by
     intro v
     funext j
     fin_cases j <;> simp
@@ -213,10 +238,63 @@ theorem laplacian_inv_norm_eq_zero {x : EuclideanSpace ℝ (Fin 3)} (hx : x ≠ 
       congr 1
       ring
     simpa [Real.rpow_one] using h1
-  have hcoeff : (4 : ℝ) * r * (r - 1) + 3 * (2 * r) = 0 := by rw [hr]; norm_num
   have hhx : (‖x‖ : ℝ) ^ 2 = h x := rfl
-  rw [hhx]
-  linear_combination (4 * r * (r - 1)) * hpow + hcoeff * ((h x) ^ (r - 1))
+  rw [hhx, nsmul_eq_mul]
+  linear_combination (4 * r * (r - 1)) * hpow
 
+private theorem one_div_norm_pow_eq_radial {m : ℕ} :
+    (fun x : EuclideanSpace ℝ (Fin m) => 1 / ‖x‖ ^ (m - 2)) =
+      fun x => (‖x‖ ^ (2 : ℕ)) ^ (-((m - 2 : ℕ) : ℝ) / 2) := by
+  funext x
+  rw [one_div, ← Real.rpow_natCast ‖x‖ (m - 2), ← Real.rpow_neg (norm_nonneg x),
+    ← Real.rpow_natCast_mul (norm_nonneg x) 2]
+  congr 1
+  ring
+
+/-- The function `1 / r` is harmonic in three dimensions away from `r = 0`:
+its (flat) Laplacian vanishes at every nonzero point of
+`EuclideanSpace ℝ (Fin 3)`. -/
+theorem laplacian_inv_norm_eq_zero {x : EuclideanSpace ℝ (Fin 3)} (hx : x ≠ 0) :
+    Δ (fun y : EuclideanSpace ℝ (Fin 3) => ‖y‖⁻¹) x = 0 := by
+  have heq : (fun y : EuclideanSpace ℝ (Fin 3) => ‖y‖⁻¹) =
+      fun y => (‖y‖ ^ (2 : ℕ)) ^ (-1 / 2 : ℝ) := by
+    simpa only [Nat.reduceSub, pow_one, Nat.cast_one, one_div] using
+      (one_div_norm_pow_eq_radial (m := 3))
+  rw [heq, laplacian_rpow_norm_sq _ hx]
+  norm_num
+
+namespace Calculus.NormPowTwoSubDimHarmonicWanted
+
+/-- **The Newtonian kernel is harmonic away from the origin.** Let $m > 2$ be a natural number.
+The function $x \mapsto 1/|x|^{m-2}$ on the Euclidean space $\mathbb{R}^m$, where $|x|$ is the
+Euclidean norm, is harmonic on $\mathbb{R}^m \setminus \{0\}$.
+
+Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level I (Real functions; Functions of
+several variables), `benchmark/level1/ma_proofbench_l1_81.lean` at
+openbmb/ma-proofbench@31bab4c.
+-/
+theorem harmonicOnNhd_one_div_norm_pow_sub_two
+    {m : ℕ} (hm : 2 < m) : InnerProductSpace.HarmonicOnNhd
+  (fun x : EuclideanSpace ℝ (Fin m) => 1 / ‖x‖ ^ (m - 2)) ({0}ᶜ) := by
+  rw [one_div_norm_pow_eq_radial]
+  intro x hx
+  have hne : x ≠ 0 := by simpa using hx
+  let r : ℝ := -((m - 2 : ℕ) : ℝ) / 2
+  have hcoeff : (4 : ℝ) * r * (r - 1) + (m : ℝ) * (2 * r) = 0 := by
+    have hcast : ((m - 2 : ℕ) : ℝ) = (m : ℝ) - 2 := by
+      rw [Nat.cast_sub hm.le, Nat.cast_ofNat]
+    dsimp only [r]
+    rw [hcast]
+    ring
+  change InnerProductSpace.HarmonicAt (fun y : EuclideanSpace ℝ (Fin m) =>
+    (‖y‖ ^ (2 : ℕ)) ^ r) x
+  refine ⟨?_, ?_⟩
+  · have hx2 : ‖x‖ ^ (2 : ℕ) ≠ 0 := pow_ne_zero 2 (norm_ne_zero_iff.mpr hne)
+    exact (Real.contDiffAt_rpow_const_of_ne hx2).comp x (contDiff_norm_sq ℝ).contDiffAt
+  · have hv : ∀ᶠ y in 𝓝 x, y ≠ 0 := isOpen_ne.mem_nhds hne
+    filter_upwards [hv] with y hy
+    rw [Pi.zero_apply, laplacian_rpow_norm_sq r hy, hcoeff, zero_mul]
+
+end Calculus.NormPowTwoSubDimHarmonicWanted
 
 end MathlibExt.Analysis
