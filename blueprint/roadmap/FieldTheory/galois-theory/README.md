@@ -13,3 +13,4 @@ Galois theory relates a field extension to its group of automorphisms, covering 
 - [Kummer theory for abelian extensions of exponent dividing n](kummer-theory.md)
 - [Norm in a tensor product with a Galois extension](algebra-map-norm-eq-prod-map-alg-equiv.md)
 - [The closure of a Galois subgroup is the fixing group of its fixed field](topological-closure-eq-fixing-subgroup-f.md)
+- [Four equivalent characterizations of finite Galois extensions](galois-extension-characterization.md)
