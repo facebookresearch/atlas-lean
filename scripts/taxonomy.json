@@ -9766,6 +9766,7 @@
   "MathlibExt/Analysis/Optimization/LineSearch": {"to": "Analysis/numerical-analysis", "title": "Line search methods"},
   "MathlibExt/Analysis/Optimization/QuasiNewton": {"to": "Analysis/numerical-analysis", "title": "Quasi-Newton methods"},
   "MathlibExt/Analysis/Optimization/TrustRegion": {"to": "Analysis/numerical-analysis", "title": "Trust-region methods"},
+  "MathlibExt/Analysis/PDE/ForcedBurgersSinePotential": {"to": "Analysis/partial-differential-equations", "title": "An explicit spatially forced Burgers initial-value solution"},
   "MathlibExt/Analysis/PDE/ForcedBurgersUniqueness": {"to": "Analysis/partial-differential-equations", "title": "Bounded classical uniqueness for forced Burgers"},
   "MathlibExt/Analysis/PDE/InitialForcedInverseColeHopf": {"to": "Analysis/partial-differential-equations", "title": "Initial-time forced inverse Cole–Hopf normalization"},
   "MathlibExt/Analysis/PDE/ForcedBurgersBounds": {"to": "Analysis/partial-differential-equations", "title": "Uniform bounds for forced Burgers"},
