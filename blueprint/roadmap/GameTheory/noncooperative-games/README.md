@@ -23,6 +23,7 @@ Every finite game has a mixed equilibrium ([Nash's theorem](nash-s-theorem/READM
 - [Equilibrium search is total and polynomially verifiable](equilibrium-search-is-total-and-polynomially-verifiable.md)
 - [Polynomial-time verification of (approximate) equilibria](polynomial-time-verification-of-equilibria.md)
 - [Optimal mixed strategy to commit to (two-player normal form)](optimal-mixed-strategy-to-commit-to.md)
+- [Commitment is worth at least any Nash equilibrium](commitment-is-worth-at-least-any-nash-equilibrium.md)
 
 ## Related topics
 

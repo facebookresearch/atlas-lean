@@ -8,6 +8,7 @@ When a linear model has more parameters than data points and the equations $\lan
 - [The interpolant in the span of the data is unique](eq-of-mem-span-of-interpolates.md)
 - [A limit of SGD from zero that interpolates is the minimum-norm interpolant](norm-le-of-tendsto-sgd-iterate.md)
 - [Implicit bias of GD on separable logistic regression](implicit-bias-of-gd-on-separable-logistic-regression.md)
+- [Logistic loss has no minimizer on separable data](logistic-loss-has-no-minimizer-on-separable-data.md)
 
 ## Related topics
 

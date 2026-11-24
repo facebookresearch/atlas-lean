@@ -19,6 +19,8 @@ Algorithms for quantum computers and their analysis: Fourier sampling with the D
 - [Shor per-outcome probability bound (asymptotic source form)](shor-per-outcome-probability-bound.md)
 - [Shor period finding: outcome distribution and order recovery](shor-period-finding-outcome-distribution-and-order-recovery.md)
 - [Shor success budget after approximation and repetition](shor-success-budget-after-approximation-and-repetition.md)
+- [Counting good outcomes of Shor period finding](counting-good-outcomes-of-shor-period-finding.md)
+- [Outcome distribution of Shor period finding when the order divides q](outcome-distribution-of-shor-period-finding-when-the-order-divides-q.md)
 
 ## Related topics
 

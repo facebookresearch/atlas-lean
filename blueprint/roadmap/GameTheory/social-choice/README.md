@@ -11,6 +11,8 @@ Social choice theory studies rules that aggregate individual preferences into a 
 - [Cut-and-choose and Dubins-Spanier](cut-and-choose-and-dubins-spanier.md)
 - [Even-Paz proportional protocol](even-paz-proportional-protocol.md)
 - [May's theorem](may-s-theorem.md)
+- [Proportionality and envy-freeness coincide for two agents](proportionality-and-envy-freeness-coincide-for-two-agents.md)
+- [Query count of the Dubins-Spanier protocol](query-count-of-the-dubins-spanier-protocol.md)
 
 ## Related topics
 

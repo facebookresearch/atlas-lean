@@ -29,8 +29,8 @@ A good expansion adds a page for each pending prerequisite below and links it un
 
 ## Depends on
 
-- [Wait-for relation](../concurrent-systems-and-protocols/deadlock-and-circular-wait/waits-for.md)
-- [Circular wait](../concurrent-systems-and-protocols/deadlock-and-circular-wait/circular-wait.md)
+- [Wait-for relation](../../concurrent-systems-and-protocols/deadlock-and-circular-wait/waits-for.md)
+- [Circular wait](../../concurrent-systems-and-protocols/deadlock-and-circular-wait/circular-wait.md)
 
 ## Sources
 

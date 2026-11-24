@@ -20,7 +20,7 @@ A sound expansion has separate pages for:
 
 ## Depends on
 
-- [Operation of a schedule](conflict-serializability/op.md)
+- [Operation of a schedule](../conflict-serializability/op.md)
 - [Multiversion histories and one-copy serializability](remaining-clauses-of-multiversion-histories-and-one-copy-ser.md)
 
 ## Sources

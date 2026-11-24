@@ -6,3 +6,4 @@
 - [Condorcet voting under candidate control](remaining-clauses-of-condorcet-voting-under-candidate-contro.md)
 - [Election control problems](election-control-problems.md)
 - [Justified representation for AV, SAV and MAV](remaining-clauses-of-justified-representation.md)
+- [Checking justified representation](checking-justified-representation.md)

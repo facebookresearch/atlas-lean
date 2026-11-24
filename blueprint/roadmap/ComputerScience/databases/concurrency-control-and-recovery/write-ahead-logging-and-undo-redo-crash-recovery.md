@@ -23,7 +23,7 @@ A sound expansion has separate pages for:
 
 ## Depends on
 
-- [Operation of a schedule](conflict-serializability/op.md)
+- [Operation of a schedule](../conflict-serializability/op.md)
 
 ## Sources
 

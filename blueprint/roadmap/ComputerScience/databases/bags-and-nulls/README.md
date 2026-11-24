@@ -8,3 +8,6 @@
 - [Grouping and aggregation semantics](grouping-and-aggregation-semantics.md)
 - [Naive evaluation computes certain answers for UCQs](naive-evaluation-computes-certain-answers-for-ucqs.md)
 - [SQL nulls and three-valued logic](sql-nulls-and-three-valued-logic.md)
+- [Duplicate elimination commutes with positive relational algebra](duplicate-elimination-commutes-with-positive-relational-algebra.md)
+- [Repairs are block selections](repairs-are-block-selections.md)
+- [Consistent answers to single-atom queries](consistent-answers-to-single-atom-queries.md)

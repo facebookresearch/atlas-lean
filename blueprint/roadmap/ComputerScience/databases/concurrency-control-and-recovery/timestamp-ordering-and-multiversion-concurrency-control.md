@@ -21,13 +21,13 @@ A sound expansion has separate pages for:
 
 ## Depends on
 
-- [Conflict equivalence](conflict-serializability/conflict-equiv.md)
-- [Serial schedule](conflict-serializability/is-serial.md)
+- [Conflict equivalence](../conflict-serializability/conflict-equiv.md)
+- [Serial schedule](../conflict-serializability/is-serial.md)
 - [Multiversion histories and one-copy serializability](remaining-clauses-of-multiversion-histories-and-one-copy-ser.md)
 
 ## Proof depends on
 
-- [The serializability theorem](conflict-serializability/conflict-serializable-iff-is-acyclic.md)
+- [The serializability theorem](../conflict-serializability/conflict-serializable-iff-is-acyclic.md)
 
 ## Sources
 

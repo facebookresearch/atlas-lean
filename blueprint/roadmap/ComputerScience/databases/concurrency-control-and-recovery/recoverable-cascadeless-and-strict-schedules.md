@@ -24,12 +24,12 @@ A sound expansion has separate pages for:
 
 ## Depends on
 
-- [Operation of a schedule](conflict-serializability/op.md)
-- [Strict two-phase schedules](two-phase-locking/strict-two-phase.md)
+- [Operation of a schedule](../conflict-serializability/op.md)
+- [Strict two-phase schedules](../two-phase-locking/strict-two-phase.md)
 
 ## Proof depends on
 
-- [Strict two-phase locking theorem](two-phase-locking/conflict-serializable-2.md)
+- [Strict two-phase locking theorem](../two-phase-locking/conflict-serializable-2.md)
 
 ## Sources
 
