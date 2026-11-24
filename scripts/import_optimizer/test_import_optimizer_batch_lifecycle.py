@@ -773,5 +773,217 @@ class LakePreparationCustodyTests(unittest.TestCase):
         self.assertEqual(optimizer.local_dependency_closure(inventory, {"A"}), {"A", "B", "C"})
 
 
+class SearchedProviderTests(unittest.TestCase):
+    """Providers in searched roots no inventory has cached: dependencies, the compiler, aliases."""
+
+    def setup_tree(self, root: Path, lean_path: list[str]) -> tuple[optimizer.Tools, Path, Path]:
+        build = root / ".lake/build/lib/lean"
+        (build / "Lib").mkdir(parents=True)
+        (build / "Lib/Base.olean").write_bytes(b"root artifact\n")
+        dependency = root / "dep/lib"
+        (dependency / "Lib/Sub").mkdir(parents=True)
+        (dependency / "Foo.olean").write_bytes(b"dependency provider of Foo\n")
+        (dependency / "Lib/Sub/Dep.olean").write_bytes(b"dependency provider of Lib.Sub.Dep\n")
+        (dependency / "Other.olean").write_bytes(b"unrelated dependency module\n")
+        (dependency / "Part.olean.server").write_bytes(b"only one part of a dependency module\n")
+        (root / "deplink").symlink_to(root / "dep", target_is_directory=True)
+        library = root / "sysroot/lib/lean/Init"
+        library.mkdir(parents=True)
+        (library / "Prelude.olean").write_bytes(b"compiler provider\n")
+        tools = optimizer.Tools(root, root / "output", root / "bin/lake", root / "bin/lean", root,
+                                {"LEAN_SYSROOT": str(root / "sysroot"), "LEAN_PATH": os.pathsep.join(lean_path)},
+                                5, time_binary=root / "bin/time")
+        return tools, build, dependency
+
+    def prepare(self, tools: optimizer.Tools, change: Callable[[], None], modules: set[str]) -> None:
+        def run(argv: list[str], label: Path, environment: dict[str, str] | None = None) -> dict[str, object]:
+            change()
+            return {"exit_code": 0}
+
+        with patch.object(optimizer.Tools, "run", side_effect=run):
+            optimizer.run_lake_preparation(tools, ["lake", "build"], tools.output / "prepare", frozenset(modules))
+
+    def test_cold_providers_in_every_searched_root_are_rejected(self) -> None:
+        cases = {
+            "dependency, absolute entry": (["{root}/.lake/build/lib/lean", "{root}/dep/lib"], "Foo.olean",
+                                           "{root}/dep/lib/Foo.olean"),
+            "dependency, relative entry": ([".lake/build/lib/lean", "dep/lib"], "Foo.olean",
+                                           "{root}/dep/lib/Foo.olean"),
+            "dependency, symlinked entry": (["{root}/.lake/build/lib/lean", "{root}/deplink/lib"], "Foo.olean",
+                                            "{root}/deplink/lib/Foo.olean"),
+            "dependency, nested module": (["{root}/.lake/build/lib/lean", "{root}/dep/lib"], "Lib/Sub/Dep.olean",
+                                          "{root}/dep/lib/Lib/Sub/Dep.olean"),
+            "dependency, other part": (["{root}/dep/lib"], "Foo.ir", "{root}/dep/lib/Foo.olean"),
+            "dependency, non-olean provider": (["{root}/dep/lib"], "Part.olean", "{root}/dep/lib/Part.olean.server"),
+            "compiler library": ([], "Init/Prelude.olean", "{root}/sysroot/lib/lean/Init/Prelude.olean"),
+        }
+        for name, (lean_path, addition, provider) in cases.items():
+            with self.subTest(case=name), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory).resolve()
+                tools, build, _ = self.setup_tree(root, [entry.format(root=root) for entry in lean_path])
+                self.assertEqual(tools.library_inventories, {})
+                module = addition.rsplit(".", 1)[0].replace("/", ".")
+                with self.assertRaises(ValueError) as raised:
+                    self.prepare(tools, lambda: fresh(build / addition), {module})
+                self.assertEqual(str(raised.exception), f"Lake preparation added a shadowing artifact: "
+                                 f"{build / addition} (module {module} was already provided by "
+                                 f"{provider.format(root=root)})")
+                self.assertEqual(optimizer.read_lake_growth(tools.output), {})
+
+    def test_warm_providers_keep_their_existing_rejection(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            tools, build, dependency = self.setup_tree(root, [str(root / ".lake/build/lib/lean"),
+                                                              str(root / "dep/lib")])
+            optimizer.standard_library_paths(dependency, tools)
+            with self.assertRaisesRegex(ValueError, "added an artifact for an existing module: "
+                                        + str(build / "Foo.olean")):
+                self.prepare(tools, lambda: fresh(build / "Foo.olean"), {"Foo"})
+
+    def test_additions_visible_under_another_searched_root_are_rejected(self) -> None:
+        cases = {
+            "root nested in the build root": ("{root}/.lake/build/lib/lean/Lib", "Lib/New.olean", "Lib.New",
+                                              "New", "{root}/.lake/build/lib/lean/Lib"),
+            "root containing the build root": ("{root}/.lake/build/lib", "New.olean", "New", "lean.New",
+                                               "{root}/.lake/build/lib"),
+        }
+        for name, (extra, addition, module, alias, alias_root) in cases.items():
+            with self.subTest(case=name), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory).resolve()
+                tools, build, _ = self.setup_tree(root, [str(root / ".lake/build/lib/lean"), extra.format(root=root)])
+                with self.assertRaises(ValueError) as raised:
+                    self.prepare(tools, lambda: fresh(build / addition), {module, alias})
+                self.assertEqual(str(raised.exception), f"Lake preparation added a shadowing artifact: "
+                                 f"{build / addition} (visible as module {alias} under searched root "
+                                 f"{alias_root.format(root=root)})")
+
+    def test_searched_provider_changes_during_the_build_are_rejected(self) -> None:
+        def missing_root_created(root: Path, dependency: Path) -> None:
+            fresh(root / "ghost/lib/New.olean")
+
+        def provider_created(root: Path, dependency: Path) -> None:
+            fresh(dependency / "New.olean")
+
+        def provider_replaced_same_bytes(root: Path, dependency: Path) -> None:
+            replace_same_bytes(dependency / "Foo.olean")
+
+        def provider_removed(root: Path, dependency: Path) -> None:
+            (dependency / "Foo.olean").unlink()
+
+        def provider_chmod_restored(root: Path, dependency: Path) -> None:
+            chmod_and_restore(dependency / "Foo.olean")
+
+        cases = ((missing_root_created, "{root}/ghost/lib/New.olean"),
+                 (provider_created, "{root}/dep/lib/New.olean"),
+                 (provider_replaced_same_bytes, "{root}/dep/lib/Foo.olean"),
+                 (provider_removed, "{root}/dep/lib/Foo.olean"),
+                 (provider_chmod_restored, "{root}/dep/lib/Foo.olean"))
+        for change, changed in cases:
+            with self.subTest(change=change.__name__), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory).resolve()
+                tools, build, dependency = self.setup_tree(
+                    root, [str(root / ".lake/build/lib/lean"), str(root / "dep/lib"), str(root / "ghost/lib")])
+
+                def lake() -> None:
+                    change(root, dependency)
+                    fresh(build / "New.olean")
+
+                with patch.object(optimizer.sys, "platform", "darwin"), self.assertRaises(ValueError) as raised:
+                    self.prepare(tools, lake, {"Foo", "New"})
+                self.assertEqual(str(raised.exception), "Lake preparation changed a module artifact outside the "
+                                 f"root package: {changed.format(root=root)}")
+
+    @unittest.skipUnless(sys.platform == "linux", "inotify watches the Lake window")
+    def test_transient_searched_providers_during_the_build_are_rejected(self) -> None:
+        def file_created_and_removed(dependency: Path) -> None:
+            fresh(dependency / "New.olean")
+            (dependency / "New.olean").unlink()
+
+        def namespace_created_and_removed(dependency: Path) -> None:
+            fresh(dependency / "Fresh/New.olean")
+            shutil.rmtree(dependency / "Fresh")
+
+        def provider_replaced_and_restored(dependency: Path) -> None:
+            original = dependency / "Foo.olean"
+            os.rename(original, dependency / "Foo.saved")
+            fresh(original)
+            os.replace(dependency / "Foo.saved", original)
+
+        for change, modules in ((file_created_and_removed, {"New"}), (namespace_created_and_removed, {"Fresh.New"}),
+                                (provider_replaced_and_restored, {"Foo", "New"})):
+            with self.subTest(change=change.__name__), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory).resolve()
+                tools, build, dependency = self.setup_tree(root, [str(root / ".lake/build/lib/lean"),
+                                                                  str(root / "dep/lib")])
+                before = {path: optimizer.path_state(path) for path in (dependency / "Foo.olean",
+                                                                        dependency / "New.olean")}
+                addition = build / (sorted(module for module in modules if module != "Foo")[0].replace(".", "/")
+                                    + ".olean")
+
+                def lake() -> None:
+                    change(dependency)
+                    fresh(addition)
+
+                with self.assertRaisesRegex(ValueError, "Compilation input path identity changed: "
+                                            + str(dependency)):
+                    self.prepare(tools, lake, modules)
+                if change is not provider_replaced_and_restored:
+                    # The endpoint states alone would not show it.
+                    self.assertEqual({path: optimizer.path_state(path) for path in before}, before)
+
+    def test_unrelated_activity_in_searched_roots_is_accepted(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            tools, build, dependency = self.setup_tree(root, [str(root / ".lake/build/lib/lean"),
+                                                              str(root / "dep/lib")])
+
+            def lake() -> None:
+                (dependency / "Other.trace").write_text("unrelated sidecar\n")
+                fresh(dependency / "Unrelated/Module.olean")
+                fresh(build / "Lib/New.olean")
+
+            self.prepare(tools, lake, {"Lib.New"})
+            self.assertEqual(list(optimizer.read_lake_growth(tools.output)), [str(build / "Lib/New.olean")])
+
+    def test_resume_rejects_recorded_growth_another_searched_root_provides(self) -> None:
+        for provider in ("dep/lib/Lib/Sub/New.olean", "sysroot/lib/lean/Lib/Sub/New.olean"):
+            with self.subTest(provider=provider), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory).resolve()
+                tools, build, _ = self.setup_tree(root, [str(root / ".lake/build/lib/lean"), str(root / "dep/lib")])
+                saved_paths = (str(build / "Lib/Base.olean"),)
+                saved = optimizer.pin_input_paths(tools, saved_paths)
+                addition = build / "Lib/Sub/New.olean"
+                fresh(addition)
+                fresh(root / provider)
+                grown = tuple(sorted((*saved_paths, str(addition))))
+                token = optimizer._recorded_lake_growth.set({str(addition): optimizer.file_pin(addition)})
+                try:
+                    with self.assertRaises(ValueError) as raised:
+                        optimizer.verify_input_manifest(saved, grown, tools.output, tools)
+                finally:
+                    optimizer._recorded_lake_growth.reset(token)
+                self.assertEqual(str(raised.exception), f"Saved compilation inputs gained a shadowing artifact: "
+                                 f"{addition} (module Lib.Sub.New is provided by {root / provider})")
+
+    def test_first_preparation_through_main_sees_a_cold_compiler_provider(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            arguments = lifecycle_inputs(root)
+            # The mocked environment names the project as the compiler's sysroot.
+            provider = root / "lib/lean/Lib/Sub/A.olean"
+            fresh(provider)
+            with mocked_lake(root) as builds, patch.object(sys, "argv", arguments):
+                self.assertEqual(optimizer.main(), 1)
+            self.assertEqual(builds, [["A"]])
+            rows = journal(root)
+            self.assertEqual([row["status"] for row in rows], ["blocked", "blocked", "blocked"])
+            addition = root / ".lake/build/lib/lean/Lib/Sub/A.olean"
+            message = (f"Lake preparation added a shadowing artifact: {addition} "
+                       f"(module Lib.Sub.A was already provided by {provider})")
+            self.assertEqual(rows[0]["error"], message)
+            for row in rows[1:]:
+                self.assertEqual(row["error"], "An earlier Lake preparation was rejected: " + message)
+
+
 if __name__ == "__main__":
     unittest.main()

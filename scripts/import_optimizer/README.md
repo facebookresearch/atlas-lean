@@ -76,14 +76,22 @@ an earlier batch pinned. Around each preparation (batched or per row):
   mtime, size, mode and bytes it had when first pinned; and the root artifact
   root's top-level namespaces and module files must be those the last accepted
   preparation left.
+- Also before it, whatever is cached, every artifact path of each module the
+  build may add is probed under every searched root: each captured `LEAN_PATH`
+  entry as written and resolved (missing entries included), the root artifact
+  root and the compiler library.
 - During it, on Linux, the root namespaces and the artifact root's ancestors
-  are watched for moves and attribute changes.
+  are watched for moves and attribute changes, and the nearest existing
+  directory of each probed path outside the root artifact root is watched for
+  that name.
 - After it, each root namespace keeps its directory node and resolved path,
   pinned artifacts are checked again, compiler and dependency inventories must
-  be unchanged, and Lake may remove nothing. It may only add artifacts of new
-  modules among the requested targets and their frozen local dependencies, in
-  existing or new namespaces or at the top level, and none for a module another
-  searched root already provides.
+  be unchanged, probed paths outside the root artifact root keep their state,
+  and Lake may remove nothing. It may only add artifacts of new modules among
+  the requested targets and their frozen local dependencies, in existing or new
+  namespaces or at the top level. An addition's module must have had no
+  artifact under any searched root, and the addition may not be visible as
+  another module under a nested or enclosing searched root.
 
 The first rejection blocks that batch, and every later preparation is refused,
 in this invocation and in later `--resume` invocations of the same output
@@ -92,16 +100,20 @@ and the top-level listing after the last accepted preparation are recorded
 under `lake-custody/`, and accepted additions under `lake-growth/`, in the
 output directory. A resumed invocation starts from that listing. On resume, a
 saved row's inputs may differ from the current tree only by recorded additions
-with their recorded bytes, for modules none of its inputs provided. Custody and
+with their recorded bytes, for modules none of its inputs provided and no searched root
+outside the root artifact root provides now. Custody and
 growth records are trusted run state: removing or changing them invalidates
 these record-based checks. Recover from a rejection with a new output directory.
 
 These checks compare identities and listings at the boundaries of each Lake
 window, plus the Linux watch during it. They do not see a new file name created
-and removed inside one window, unpinned sidecars such as `.hash` and `.trace`,
-changes by a privileged clock or on filesystems without stable inode or ctime,
-a namespace moved and restored inside a window on platforms without inotify,
-or identity changes between processes (a resume compares bytes). A preparation
+and removed inside one window under the root artifact root, or for a probed
+module on platforms without inotify; unpinned sidecars such as `.hash` and
+`.trace`; changes by a privileged clock or on filesystems without stable inode
+or ctime; a namespace, or a symlinked searched root, moved and restored inside
+a window where only endpoints are compared; module search paths other than the
+captured `LEAN_PATH` and the compiler library; or identity changes between
+processes (a resume compares bytes). A preparation
 interrupted before its growth is recorded can cause resume to fail closed, as
 can another output directory's run on the same worktree. Use a new output
 directory after such a rejection.

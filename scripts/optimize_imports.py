@@ -1092,6 +1092,121 @@ def shadowed_provider(tools: Tools, added: Iterable[str], existing: Iterable[str
     return None
 
 
+def searched_roots(tools: Tools) -> list[Path]:
+    """Every root Lean searches for modules, under each spelling.
+
+    The captured `LEAN_PATH` entries (absolute, as written and resolved,
+    including entries that do not exist yet), the root package's artifact
+    root and the compiler's standard library.
+    """
+    candidates = [tools.root / ".lake/build/lib/lean"]
+    for entry in tools.environment.get("LEAN_PATH", "").split(os.pathsep):
+        if entry.strip():
+            path = Path(entry.strip())
+            candidates.append(path if path.is_absolute() else tools.root / path)
+    library = standard_library_root(tools)
+    if library is not None:
+        candidates.append(library)
+    roots: list[Path] = []
+    for path in candidates:
+        for spelling in (path, resolve_inventory_path(path)):
+            if spelling not in roots:
+                roots.append(spelling)
+    return roots
+
+
+def module_artifact_paths(root: Path, module: str) -> list[Path]:
+    relative = Path(*module.split("."))
+    return [root / (str(relative) + suffix) for suffix in INVENTORY_SUFFIXES]
+
+
+def path_state(path: Path) -> SourceIdentity | None:
+    """The `lstat` identity of a path, or None when it does not exist."""
+    try:
+        return path_component_identity(path, strict=True)
+    except (FileNotFoundError, NotADirectoryError):
+        return None
+
+
+def provider_probes(tools: Tools, modules: Iterable[str], roots: list[Path]
+                    ) -> dict[Path, SourceIdentity | None]:
+    """The state of each artifact path under every searched root for each of `modules`.
+
+    The lookup is targeted: only names a preparation may add are probed,
+    so no dependency or compiler inventory is enumerated.
+    """
+    probes: dict[Path, SourceIdentity | None] = {}
+    for module in sorted(modules):
+        for root in roots:
+            for path in module_artifact_paths(root, module):
+                if path not in probes:
+                    probes[path] = path_state(path)
+    return probes
+
+
+def nearest_existing(path: Path) -> tuple[Path, Path]:
+    """The resolved nearest existing ancestor of a path and the rest of the path below it."""
+    parent = path.parent
+    while not os.path.lexists(parent) and parent != parent.parent:
+        parent = parent.parent
+    return resolve_inventory_path(parent), path.relative_to(parent)
+
+
+def outside_build_root(path: Path, build_root: Path) -> bool:
+    """Whether a path, resolved through its existing parents, lies outside the root artifact root."""
+    parent, rest = nearest_existing(path)
+    return not (parent / rest).is_relative_to(build_root)
+
+
+def artifact_module_names(path: str, roots: list[Path]) -> dict[str, Path]:
+    """Every module name an artifact provides, with a searched root that gives it."""
+    names: dict[str, Path] = {}
+    candidate = Path(path)
+    spellings = [candidate]
+    try:
+        spellings.append(resolve_inventory_path(candidate))
+    except (OSError, RuntimeError):
+        pass
+    for spelling in spellings:
+        stem = Path(artifact_stem(str(spelling)))
+        if str(stem) == str(spelling):
+            continue
+        for root in roots:
+            if stem.is_relative_to(root) and stem != root:
+                names.setdefault(".".join(stem.relative_to(root).parts), root)
+    return names
+
+
+def addition_conflict(tools: Tools, path: str, build_root: Path, roots: list[Path],
+                      probes: dict[Path, SourceIdentity | None] | None = None) -> str | None:
+    """Why an added root artifact shadows or aliases another provider, or None.
+
+    It must provide exactly one module name across every searched root (no
+    nested or aliased root may give it another), and no searched root may
+    provide that module elsewhere. With `probes` (a preparation), every
+    artifact path of the module under every root, the root artifact root
+    included, must have been absent before the build. Without (a resume),
+    no artifact path of the module outside the root artifact root may exist
+    now; saved inputs decide inside it.
+    """
+    own = build_artifact_module(tools, path)
+    names = artifact_module_names(path, roots)
+    aliases = sorted(set(names) - {own})
+    if own is None or aliases:
+        alias = aliases[0] if aliases else str(path)
+        return f"visible as module {alias} under searched root {names.get(alias, build_root)}"
+    for root in roots:
+        for candidate in module_artifact_paths(root, own):
+            if probes is not None:
+                if candidate not in probes:
+                    return f"module {own} was not probed under {root}"
+                if probes[candidate] is not None:
+                    return f"module {own} was already provided by {candidate}"
+            elif outside_build_root(candidate, build_root) and path_state(candidate) is not None:
+                return f"module {own} is provided by {candidate}"
+    return None
+
+
 IDENTITY_FIELDS = ("dev", "ino", "ctime", "mtime", "size", "mode")
 
 
@@ -1177,8 +1292,14 @@ def run_lake_preparation(tools: Tools, argv: list[str], label: Path,
     local dependencies) may be added. Root inventories are then taken again
     with new directory custody, and the additions are recorded under the
     output directory for resume. Compiler and dependency inventories stay
-    cached. The first rejection is kept on `tools`, and every later
-    preparation is refused.
+    cached. Independently of any cache, every artifact path of each module
+    in `modules` under every searched root (`LEAN_PATH` entries under both
+    spellings, the root artifact root and the compiler library) is probed
+    before the build: those outside the root artifact root must keep their
+    state through it (watched on Linux), and an addition must have been
+    absent everywhere and may not be visible as another module under a
+    nested or enclosing root. The first rejection is kept on `tools`, and
+    every later preparation is refused.
     """
     custody_directory = tools.output / LAKE_CUSTODY_DIRECTORY
     if not tools.lake_custody_failure and (custody_directory / "rejected.json").exists():
@@ -1222,8 +1343,34 @@ def run_lake_preparation(tools: Tools, argv: list[str], label: Path,
                    if path.exists() or path.is_symlink()}
         topology = namespace_topology(watched)
         identities = path_component_identities(set(watched))
-        with guard_path_component_moves(identities, mutable_roots=(*watched, build_root, tools.output)):
+        # Every searched root's artifact paths for the modules this build may
+        # add, taken now whatever is cached. Those outside the root artifact
+        # root belong to other writers: they must keep their state through the
+        # build, and on Linux their nearest existing directory is watched for
+        # those names.
+        roots = searched_roots(tools)
+        probes = provider_probes(tools, modules, roots)
+        external: dict[Path, SourceIdentity | None] = {}
+        absent_names: dict[Path, set[str]] = {}
+        located: dict[Path, tuple[Path, Path]] = {}
+        for path, state in probes.items():
+            if path.parent not in located:
+                ancestor, rest = nearest_existing(path.parent / path.name)
+                located[path.parent] = (ancestor, rest.parent)
+            ancestor, rest = located[path.parent]
+            if (ancestor / rest / path.name).is_relative_to(build_root):
+                continue
+            external[path] = state
+            if ancestor.is_dir():
+                absent_names.setdefault(ancestor, set()).add((rest / path.name).parts[0])
+        for parent in absent_names:
+            identities.setdefault(parent, path_component_identity(parent))
+        with guard_path_component_moves(identities, mutable_roots=(*watched, build_root, tools.output),
+                                        child_names=absent_names):
             result = tools.run(argv, label)
+        for path, before in external.items():
+            if path_state(path) != before:
+                raise ValueError(f"Lake preparation changed a module artifact outside the root package: {path}")
         for path, before in topology.items():
             after = namespace_topology([path])[path]
             if after != before:
@@ -1256,6 +1403,10 @@ def run_lake_preparation(tools: Tools, argv: list[str], label: Path,
         shadow = shadowed_provider(tools, added, existing)
         if shadow is not None:
             raise ValueError(f"Lake preparation added an artifact for an existing module: {shadow}")
+        for path in sorted(added):
+            conflict = addition_conflict(tools, path, build_root, roots, probes)
+            if conflict is not None:
+                raise ValueError(f"Lake preparation added a shadowing artifact: {path} ({conflict})")
     except (OSError, ValueError) as error:
         # Nothing taken during a rejected attempt becomes trusted, and every
         # later preparation is refused.
@@ -1327,6 +1478,12 @@ def verify_recorded_growth(tools: Tools | None, saved: tuple[str, ...], current:
     shadow = shadowed_provider(tools, added, saved)
     if shadow is not None:
         raise ValueError(f"Saved compilation inputs gained a provider for a consumed module: {shadow}")
+    build_root = resolve_inventory_path(tools.root / ".lake/build/lib/lean")
+    roots = searched_roots(tools)
+    for path in sorted(added):
+        conflict = addition_conflict(tools, path, build_root, roots)
+        if conflict is not None:
+            raise ValueError(f"Saved compilation inputs gained a shadowing artifact: {path} ({conflict})")
 
 
 def full_import_artifacts(metadata: dict[str, object], root: Path) -> dict[str, list[list[str]]]:
@@ -3082,7 +3239,8 @@ def path_component_identities(paths: set[Path],
 @contextmanager
 def guard_path_component_moves(identities: dict[Path, SourceIdentity],
                                mutable_roots: Iterable[Path] = (),
-                               inventory_roots: Iterable[Path] = ()) -> Iterator[None]:
+                               inventory_roots: Iterable[Path] = (),
+                               child_names: dict[Path, set[str]] | None = None) -> Iterator[None]:
     """Reject transient directory changes, using strict stamps for unreadable directories.
 
     Child create/delete/move events are monitored only for immutable
@@ -3095,8 +3253,10 @@ def guard_path_component_moves(identities: dict[Path, SourceIdentity],
     `inventory_roots` -- directories whose complete contents
     constitute a pinned inventory and where every child event
     rejects -- a child event rejects only when its name is the next
-    component of a guarded path, so unrelated sibling activity beside
-    the project or input tree does not abort compilation/snapshots.
+    component of a guarded path, or one `child_names` lists for that
+    directory (a path that must stay absent), so unrelated sibling
+    activity beside the project or input tree does not abort
+    compilation/snapshots.
     """
     if sys.platform != "linux":
         yield
@@ -3134,6 +3294,8 @@ def guard_path_component_moves(identities: dict[Path, SourceIdentity],
             if parent in identities:
                 relevant_children.setdefault(parent, set()).add(child.name)
             child = parent
+    for directory, names in (child_names or {}).items():
+        relevant_children.setdefault(directory, set()).update(names)
     libc = ctypes.CDLL(None, use_errno=True)
     try:
         initialize, add_watch = libc.inotify_init1, libc.inotify_add_watch
