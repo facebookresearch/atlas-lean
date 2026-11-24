@@ -101,6 +101,123 @@ public theorem chuFamilyKLT_one_one_one :
     chuFamilyKLT 1 1 1 = {0, 1, 2, 4, 5, 9, 12, 13, 14, 16, 17} := by
   decide
 
+private theorem setOfConsecutiveDifferences_append (a : ℤ) (p q : List ℕ) :
+    setOfConsecutiveDifferences a (p ++ q) =
+      setOfConsecutiveDifferences a p ∪ setOfConsecutiveDifferences (a + (p.sum : ℤ)) q := by
+  induction p generalizing a with
+  | nil =>
+      have ha : a ∈ setOfConsecutiveDifferences a q := by
+        cases q <;> simp [setOfConsecutiveDifferences]
+      simp [setOfConsecutiveDifferences, ha]
+  | cons g p ih =>
+      simp [setOfConsecutiveDifferences_cons, ih, Finset.insert_union, Int.natCast_add, add_assoc]
+
+-- A repeated block covers consecutive intervals of grid indices, with no gap at a join.
+private theorem mem_repeated_grid {b : List ℕ} {m : ℕ} (hs : b.sum = 4 * m)
+    (hb : ∀ (a : ℤ) (i : ℕ), i < m →
+      a + 4 * (i : ℤ) + 1 ∈ setOfConsecutiveDifferences a b)
+    (n : ℕ) (a : ℤ) (i : ℕ) (hi : i < n * m) :
+    a + 4 * (i : ℤ) + 1 ∈ setOfConsecutiveDifferences a (List.replicate n b).flatten := by
+  induction n generalizing a i with
+  | zero => simp at hi
+  | succ n ih =>
+      rw [List.replicate_succ, List.flatten_cons, setOfConsecutiveDifferences_append,
+        Finset.mem_union]
+      by_cases h : i < m
+      · exact Or.inl (hb a i h)
+      · have hsub : i - m < n * m := by rw [Nat.succ_mul] at hi; omega
+        have ha : a + 4 * (i : ℤ) + 1 = a + (b.sum : ℤ) + 4 * ((i - m : ℕ) : ℤ) + 1 := by
+          simp only [hs, Int.natCast_mul]
+          omega
+        rw [ha]
+        exact Or.inr (ih (a + (b.sum : ℤ)) (i - m) hsub)
+
+private theorem chuBlock_sum (k : ℕ) : (chuBlock k).sum = 4 * (k + 1) := by
+  simp [chuBlock, List.sum_append]
+  omega
+
+private theorem mem_chuBlock_grid (k : ℕ) (a : ℤ) (i : ℕ) (hi : i < k + 1) :
+    a + 4 * (i : ℤ) + 1 ∈ setOfConsecutiveDifferences a (chuBlock k) := by
+  have hsplit : List.replicate k 4 = List.replicate i 4 ++ List.replicate (k - i) 4 := by
+    rw [← List.replicate_add, Nat.add_sub_of_le (by omega)]
+  change a + 4 * (i : ℤ) + 1 ∈
+    setOfConsecutiveDifferences a (1 :: (List.replicate k 4 ++ [3]))
+  rw [setOfConsecutiveDifferences_cons, Finset.mem_insert, hsplit, List.append_assoc,
+    setOfConsecutiveDifferences_append, Finset.mem_union]
+  refine Or.inr (Or.inr ?_)
+  have ha : a + 4 * (i : ℤ) + 1 = a + 1 + ((List.replicate i 4).sum : ℤ) := by
+    rw [List.sum_replicate]
+    change a + 4 * (i : ℤ) + 1 = a + 1 + ((i * 4 : ℕ) : ℤ)
+    omega
+  rw [ha]
+  cases k - i <;> simp [List.replicate_succ, setOfConsecutiveDifferences]
+
+-- Keep the original named hypotheses even though the block argument also covers zero parameters.
+set_option linter.unusedVariables false in
+/-- **Elements of the Kumar–Mohan–Pandey sets (Lemma 4).** Let $k$, $l$, $t$ be positive
+integers, let $A = A_{k,l,t}$ be the Kumar–Mohan–Pandey set, and put $T = t(kl + l + 1)$. Then
+$1 + 4i \in A$ for every integer $i$ with $0 \le i \le 1 + T$, and $2 + 4T \in A$ and
+$4 + 4T \in A$.
+
+Source: Manish Kumar, Mohan and Ram Krishna Pandey, *A Conjecture of Chu et al. and a New
+Family of MSTD Sets*, INTEGERS 24 (2024), Article A32, Lemma 4 (`integers-2024-A32-lem-4`). -/
+public theorem chuFamilyKLT_mem {k l t : ℕ} (hk : 0 < k) (hl : 0 < l) (ht : 0 < t) :
+    (∀ i : ℕ, i ≤ 1 + t * (k * l + l + 1) → 1 + 4 * (i : ℤ) ∈ chuFamilyKLT k l t) ∧
+      2 + 4 * ((t * (k * l + l + 1) : ℕ) : ℤ) ∈ chuFamilyKLT k l t ∧
+      4 + 4 * ((t * (k * l + l + 1) : ℕ) : ℤ) ∈ chuFamilyKLT k l t := by
+  let b := [1, 1, 2] ++ (List.replicate l (chuBlock k)).flatten
+  let m := k * l + l + 1
+  let T := t * m
+  have hm : m = l * (k + 1) + 1 := by simp [m, Nat.mul_add, Nat.mul_comm]
+  have hs : b.sum = 4 * m := by
+    rw [hm, Nat.mul_add, Nat.mul_one]
+    simp [b, List.sum_flatten, chuBlock_sum, Nat.mul_left_comm, Nat.add_comm]
+    omega
+  -- The header supplies index 0, and the Chu blocks supply the remaining indices.
+  have hb (a : ℤ) (i : ℕ) (hi : i < m) :
+      a + 4 * (i : ℤ) + 1 ∈ setOfConsecutiveDifferences a b := by
+    cases i with
+    | zero => simp [b, setOfConsecutiveDifferences]
+    | succ i =>
+        rw [hm] at hi
+        change _ ∈ setOfConsecutiveDifferences a ([1, 1, 2] ++
+          (List.replicate l (chuBlock k)).flatten)
+        rw [setOfConsecutiveDifferences_append, Finset.mem_union]
+        right
+        have ha : a + 4 * ((i + 1 : ℕ) : ℤ) + 1 = a + 4 + 4 * (i : ℤ) + 1 := by
+          simp only [Int.natCast_add]
+          omega
+        rw [ha]
+        exact mem_repeated_grid (chuBlock_sum k) (mem_chuBlock_grid k) l
+          (a + 4) i (by omega)
+  have hsum : (List.replicate t b).flatten.sum = 4 * T := by
+    simp [List.sum_flatten, hs, T, Nat.mul_left_comm]
+  -- The fixed tail starts at 4T, after the t repeated blocks.
+  have hfamily : chuFamilyKLT k l t =
+      setOfConsecutiveDifferences 0 (List.replicate t b).flatten ∪
+        setOfConsecutiveDifferences (4 * (T : ℤ)) [1, 1, 2, 1] := by
+    change setOfConsecutiveDifferences 0
+      ((List.replicate t b).flatten ++ [1, 1, 2, 1]) = _
+    rw [setOfConsecutiveDifferences_append]
+    simp [hsum]
+  change (∀ i : ℕ, i ≤ 1 + T → 1 + 4 * (i : ℤ) ∈ chuFamilyKLT k l t) ∧
+    2 + 4 * (T : ℤ) ∈ chuFamilyKLT k l t ∧ 4 + 4 * (T : ℤ) ∈ chuFamilyKLT k l t
+  simp only [hfamily, Finset.mem_union]
+  refine ⟨?_, Or.inr ?_, Or.inr ?_⟩
+  · intro i hi
+    by_cases hit : i < T
+    · left
+      simpa only [zero_add, add_comm] using mem_repeated_grid hs hb t 0 i hit
+    · right
+      have h : i = T ∨ i = T + 1 := by omega
+      rcases h with rfl | rfl <;>
+        simp only [setOfConsecutiveDifferences, Finset.mem_insert,
+          Finset.mem_singleton, Int.natCast_add] <;> omega
+  · simp only [setOfConsecutiveDifferences, Finset.mem_insert, Finset.mem_singleton]
+    omega
+  · simp only [setOfConsecutiveDifferences, Finset.mem_insert, Finset.mem_singleton]
+    omega
+
 /-- **Two families of runs with the same sums (Proposition 1).** Let $k$, $l$, $t$ be natural
 numbers, let $M^k$ be the block $1, 4, \dots, 4, 3$ with $k$ fours, and let $B$ be the
 concatenation of $l$ copies of $M^k$. For $j \ge 1$ let $R_1(j)$ be the sequence $1, 1$ followed

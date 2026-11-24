@@ -29,6 +29,7 @@ public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Data.Nat.Factorial.Basic
 public import Mathlib.Order.Interval.Finset.Nat
 public import MathlibExt.Combinatorics.Enumerative.StirlingFirstHigherColumns
+public import MathlibExt.Combinatorics.Enumerative.StirlingFirstShiftedExpansion
 public import MathlibExt.Combinatorics.Enumerative.StirlingSecondAlternatingRowSum
 
 set_option autoImplicit false
@@ -38,19 +39,6 @@ set_option autoImplicit false
 open scoped BigOperators
 
 namespace MathlibExt.Combinatorics.Enumerative.StirlingIdentitiesWanted
-
-/-- **Lee's expansion of shifted Stirling numbers of the first kind.** Write $c(n, k)$ for the
-unsigned Stirling number of the first kind, the number of permutations of $n$ elements with
-exactly $k$ cycles. For natural numbers $m \le n$, the following identity of integers holds:
-$$c(n + 1, m + 1) = \sum_{k=m}^{n} (-1)^{n-k} \binom{k}{m}\, n^{k-m}\, c(n, k).$$
-
-Source: Kwankyu Lee, "Some New Identities for Stirling Numbers", Theorem 1
-(TeX label `thm:cksdd`). -/
-theorem_wanted stirlingFirst_succ_eq_sum_choose_pow {m n : ℕ} (hmn : m ≤ n) :
-    (Nat.stirlingFirst (n + 1) (m + 1) : ℤ) =
-      ∑ k ∈ Finset.Icc m n,
-        (Nat.stirlingFirst n k : ℤ) * (Nat.choose k m : ℤ) *
-          (-1 : ℤ) ^ (n - k) * (n : ℤ) ^ (k - m)
 
 /-- **Lee's alternating expansion of Stirling numbers of the second kind.** Write $S(n, k)$ for
 the Stirling number of the second kind, the number of partitions of an $n$-element set into $k$
