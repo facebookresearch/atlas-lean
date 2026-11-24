@@ -12,6 +12,12 @@ import MathlibExt.Combinatorics.Enumerative.UnateMonotoneBoolean
 
 open MetaMathlibExt
 
+-- Before negation, `x 0 && !x 1` is increasing in coordinate 0 and decreasing in coordinate 1.
+example : IsUnateBoolFun (fun x : Fin 2 → Bool => !(x 0 && !x 1)) := by
+  apply isUnateBoolFun_not
+  unfold IsUnateBoolFun IsBoolFunIncreasingIn IsBoolFunDecreasingIn
+  decide
+
 -- With no variables the unique input gives one function of each weight, zero and one.
 example : Nat.card {f : (Fin 0 → Bool) → Bool // Monotone f ∧ boolFunWeight f = 0} = 1 := by
   rw [card_monotone_boolFun_weight_symm 0 0 (by decide), Nat.card_eq_fintype_card]
