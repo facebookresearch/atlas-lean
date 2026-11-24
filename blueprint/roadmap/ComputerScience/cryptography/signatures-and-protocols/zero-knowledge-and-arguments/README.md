@@ -3,3 +3,5 @@
 - [Interactive arguments](interactive-arguments.md)
 - [Knowledge soundness](knowledge-soundness.md)
 - [Succinct arguments and SNARKs](succinct-arguments-and-snarks.md)
+- [AND and OR composition of Sigma protocols](and-and-or-composition-of-sigma-protocols.md)
+- [Security of the Fiat–Shamir transform](security-of-the-fiatshamir-transform.md)
