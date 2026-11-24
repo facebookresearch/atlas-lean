@@ -11,6 +11,7 @@ Continuous-time processes with continuous paths or independent increments: the c
 - [Quadratic variation of Brownian motion](quadratic-variation-of-brownian-motion/README.md)
 - [Itô integral](it-integral/README.md)
 - [Adapted continuous versions of the Itô integral](adapted-continuous-versions-of-the-it-integral/README.md)
+- [Integrated energy of Itô versions](integrated-energy-of-it-versions/README.md)
 - [Itô's formula](it-s-formula/README.md)
 - [Girsanov's theorem for a constant drift](has-law-sub-drift-with-density.md)
 - [Strong solutions of SDEs with Lipschitz coefficients](sde-lipschitz-exists-unique.md)
