@@ -333,7 +333,7 @@ private theorem tensorAbutmentSourceInclusion_f_comp_sourceDesc
       exact h⟩ : tensorAbutmentFiber q))
     i j (tensorAbutmentFiber_property ⟨⟨i, j⟩, hij⟩)
   convert hdesc using 1
-  all_goals rfl
+  rfl
 
 private theorem tensorAbutmentSourceDesc_unique
     (K : ChainComplex (ModuleCat.{u} R) ℕ)
@@ -365,7 +365,7 @@ private theorem tensorAbutmentSourceDesc_unique
           change i + j = q
           exact h⟩ : tensorAbutmentFiber q) := by
     convert hm' using 1
-    all_goals rfl
+    rfl
   exact hmcanon.trans hdesc.symm
 
 private noncomputable def tensorAbutmentSourceCoconeIsColimit
