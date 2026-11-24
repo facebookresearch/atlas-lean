@@ -25,16 +25,28 @@ mirabolic subgroup $P_n$ of matrices with last row $(0, \dots, 0, 1)$, which the
   and the description of contragredients by $g \mapsto {}^t g^{-1}$, and Bernstein's
   $P$-invariant distributions.
 
+## Expansion
+
 A good expansion has definition pages for the functors and for derivatives, and statement pages
 for the exactness and adjunctions, the Gelfand–Kazhdan theorem on derivatives, the Leibniz rule,
 the derivatives of $\langle \Delta \rangle$, the irreducibility of highest derivatives and the
 Gelfand–Kazhdan theorem on invariant distributions, each citing the sources below with locators.
+
+A good expansion also writes out these steps of its own proof:
+
+- the application of Bernstein and Zelevinsky's Theorem 5.2 in the mirabolic situations of their Proposition 4.13 (proved in their §7), which gives the filtration of the derivatives of a product by products of derivatives (their Lemma 4.5, proved in 4.14 (c)), and Corollary 4.6 in the Grothendieck group, for the Leibniz rule.
+- Bernstein's $P$-invariant distributions, by the method of invariant distributions.
 
 ## Depends on
 
 - [Smooth and admissible representations of p-adic groups](../representations-of-p-adic-reductive-groups/smooth-representations-of-p-adic-groups.md)
 - [Parabolic induction and Jacquet functors](../representations-of-p-adic-reductive-groups/parabolic-induction-and-jacquet-functors.md)
 - [Cuspidal representations and Jacquet's embedding theorem](../representations-of-p-adic-reductive-groups/cuspidal-representations-and-jacquet-embedding.md), for quasicuspidal representations
+
+## Proof depends on
+
+- [The Bernstein–Zelevinsky filtration of a restriction of an induced representation](../representations-of-p-adic-reductive-groups/bernstein-zelevinsky-filtration-theorem.md), for Bernstein and Zelevinsky's Theorem 5.2 (1977), the filtration of a composition of an induction functor and a restriction functor with characters, of which the parabolic geometric lemma is the case of trivial characters (their §6.4), for the Leibniz rule
+- [ℓ-spaces, distributions and smooth representations of ℓ-groups](../representations-of-p-adic-reductive-groups/l-spaces-distributions-and-smooth-representations-of-l-groups.md), for distributions on $\ell$-spaces and $\ell$-sheaves (Bernstein–Zelevinsky 1976, Chapter I, §1) and the theorems on invariant distributions (ibid., Chapter III, §6), for the Gelfand–Kazhdan method
 
 ## Sources
 

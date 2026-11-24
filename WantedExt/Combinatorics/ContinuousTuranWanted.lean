@@ -631,15 +631,6 @@ public theorem patternExD_singleton (d n : ℕ) (p : Fin d → ℝ) : patternExD
   · simp
   · exact absurd ⟨fun i _ => a i, fun i => by simp, by simpa using ha⟩ hA
 
-/-- **Higher-dimensional continuous Turán numbers are monotone under containment.** Let
-$P, Q \subseteq \mathbb{R}^d$. If $Q$ contains $P$, then
-$\mathrm{opx}(n, P, d) \le \mathrm{opx}(n, Q, d)$ for every real number $n$.
-
-Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Lemma 5.1
-(`integers-2024-A1-lem-5-1`). -/
-public theorem_wanted opxD_mono_of_containsPatternD {d : ℕ} (n : ℝ) {P Q : Set (Fin d → ℝ)}
-    (h : ContainsPatternD Q P) : opxD d n P ≤ opxD d n Q
-
 /-- **Higher-dimensional continuous Turán numbers are monotone in the side length.** For every
 set $P \subseteq \mathbb{R}^d$ and all real numbers $m \le n$,
 $\mathrm{opx}(m, P, d) \le \mathrm{opx}(n, P, d)$.
