@@ -21,8 +21,8 @@ For `u' = -a u`, `u(0) = I`, with a constant time step `Δt > 0` and `t_n = n Δ
 `θ = 1` the Backward Euler scheme and `θ = 1 / 2` the Crank–Nicolson scheme. When
 `1 + θ a Δt ≠ 0`, each step multiplies the numerical solution by the amplification factor
 `A = (1 - (1 - θ) a Δt) / (1 + θ a Δt)`, so `u^n = I A^n`, while the exact solution is
-`I e^{-a t_n} = I (e^{-a Δt})^n`. Apart from the algebraic solution formula, the results below
-assume `θ ≥ 0` and `a ≥ 0` (strictly positive `a` for the decay criterion).
+`I e^{-a t_n} = I (e^{-a Δt})^n`. The other results assume `θ ≥ 0` and `a ≥ 0`, and `a > 0` for
+the decay criterion.
 
 ## Main results
 
@@ -46,7 +46,7 @@ assume `θ ≥ 0` and `a ≥ 0` (strictly positive `a` for the decay criterion).
   Crank–Nicolson, so the numerical solution at a fixed time `t > 0` tends to `I e^{-a t}` as the
   number of steps tends to infinity, using step `t / n` and initial value `I` for every `n ≥ 1`.
 
-The error bounds give upper rates, not signed asymptotics or leading coefficients.
+The error bounds are upper bounds, not the signed leading terms of the source.
 
 ## References
 
@@ -62,18 +62,17 @@ open Filter Topology
 
 namespace ThetaRule
 
-/-- **Amplification factor of the θ-rule.** For real $\theta, a, \Delta t$, set
-$A = \frac{1 - (1 - \theta) a \Delta t}{1 + \theta a \Delta t}$, with division by zero defined to
-be zero. If $\Delta t \ne 0$ and $1 + \theta a \Delta t \ne 0$, one step of the θ-rule for
-$u' = -a u$ multiplies the numerical solution by $A$. -/
+/-- **Amplification factor of the θ-rule.** The number
+$A = \frac{1 - (1 - \theta) a \Delta t}{1 + \theta a \Delta t}$, read as $0$ when
+$1 + \theta a \Delta t = 0$. When $\Delta t \ne 0$ and $1 + \theta a \Delta t \ne 0$, one step
+of the θ-rule for $u' = -a u$ multiplies the numerical solution by $A$. -/
 noncomputable def amplificationFactor (θ a Δt : ℝ) : ℝ :=
   (1 - (1 - θ) * a * Δt) / (1 + θ * a * Δt)
 
-/-- **Solution of the θ-rule.** For real $\theta, a, \Delta t$, a sequence $u$ indexed by the
-natural numbers solves the θ-rule if and only if
-$\frac{u^{n+1} - u^n}{\Delta t} = -a (\theta u^{n+1} + (1 - \theta) u^n)$ for every $n \ge 0$.
-The step is constant, and the quotient is zero if $\Delta t = 0$. The predicate does not impose an
-initial value. -/
+/-- **Solution of the θ-rule.** A sequence $(u^n)_{n \ge 0}$ solves the θ-rule for $u' = -a u$ with
+constant time step $\Delta t$ if
+$\frac{u^{n+1} - u^n}{\Delta t} = -a (\theta u^{n+1} + (1 - \theta) u^n)$ for every $n \ge 0$,
+the quotient being read as $0$ when $\Delta t = 0$. No initial value is imposed. -/
 def IsSolution (θ a Δt : ℝ) (u : ℕ → ℝ) : Prop :=
   ∀ n, (u (n + 1) - u n) / Δt = -a * (θ * u (n + 1) + (1 - θ) * u n)
 
@@ -332,7 +331,7 @@ theorem IsSolution.abs_sub_exp_le_of_half {a Δt : ℝ} {u : ℕ → ℝ} (hu : 
 
 /-- **Convergence of the θ-rule.** Let $\theta, a \ge 0$ and $t > 0$. If, for every $n \ge 1$, $u_n$
 solves the θ-rule with time step $t / n$ and $u_n^0 = I$, then $u_n^n \to I e^{-a t}$ as
-$n \to \infty$. No condition is imposed on $u_0$. -/
+$n \to \infty$. -/
 theorem tendsto_of_isSolution {θ a t I : ℝ} {u : ℕ → ℕ → ℝ} (hθ : 0 ≤ θ) (ha : 0 ≤ a)
     (ht : 0 < t) (hu : ∀ n : ℕ, 0 < n → IsSolution θ a (t / n) (u n))
     (hI : ∀ n : ℕ, 0 < n → u n 0 = I) :
