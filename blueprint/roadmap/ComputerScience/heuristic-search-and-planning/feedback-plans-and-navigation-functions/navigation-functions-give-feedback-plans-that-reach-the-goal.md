@@ -1,6 +1,6 @@
 # Navigation functions give feedback plans that reach the goal
 
-Let $X$ be a finite state set, $U(x)$ a finite set of actions at $x$, $f(x, u)$ the next state, and $X_G \subseteq X$ the goal set. A function $\varphi : X \to [0, \infty]$ is a **navigation function** if
+Let $X$ be a finite state set, $U(x)$ a finite nonempty set of actions at $x$, $f(x, u)$ the next state, and $X_G \subseteq X$ the goal set. A function $\varphi : X \to [0, \infty]$ is a **navigation function** if
 
 - $\varphi(x) = 0$ for $x \in X_G$;
 - $\varphi(x) = \infty$ exactly when no state of $X_G$ is reachable from $x$;
