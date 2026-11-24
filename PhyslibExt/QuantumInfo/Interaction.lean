@@ -22,13 +22,19 @@ import Mathlib.Algebra.Order.IsBotOne
 
 A verifier-first quantum interaction with an even number `2k` of
 exchanged messages between a verifier (private register `V`, message
-register `M`) and a prover (private register `P`): the verifier's
-initial state on `V × M` already holds the first message; then each of
-the `k` rounds is one prover message (a prover channel on `M × P`)
-followed by one verifier message (a verifier channel on `V × M`); at
-the end the verifier measures a two-outcome POVM on `V × M`.
-Odd-message schedules in which the prover moves first are not
-represented by this API. The value at a fixed finite prover workspace
+register `M`) and a prover (private register `P`). The verifier's
+initial state on `V × M` holds the first message. Each of the `k` rounds
+is a prover channel on `M × P` (the prover's message) followed by a
+verifier channel on `V × M`; in rounds `1` through `k - 1` that verifier
+channel produces the next outgoing message, while in the last round it
+feeds directly into the final two-outcome POVM on `V × M` and is an
+action, not an exchanged message. Counted this way the exchanged
+messages are the initial one, `k` prover messages, and `k - 1` further
+verifier messages: `2k` in total (for `k = 0` there are none and the
+initial state is measured directly). Odd-message schedules in which the
+prover moves first are not represented by this API.
+
+The value at a fixed finite prover workspace
 `dP` is the supremum of the acceptance probability over all prover
 strategies, an element of `Prob` (the unit interval with its complete
 linear order), so the supremum is always well-defined; attainment is a
