@@ -18,8 +18,8 @@ A good expansion has pages for:
    (Proposition 1.64, (1.34));
 3. the consequences, which use that the residue characteristic $p$ is positive: $G_0/G_1$ is cyclic of order prime
    to $p$ and embeds in $\mu(k_L)$ through $\theta_0$, the quotients $G_i/G_{i+1}$ for $i \ge 1$ are elementary
-   abelian $p$-groups, $G_1$ is a $p$-group and $G_0$ is a semidirect product of a cyclic group of order prime to $p$
-   by $G_1$ (Proposition 1.64 (1)–(3), Remark 1.65); with the description of $\theta_0$ through Kummer theory and its
+   abelian $p$-groups, $G_1$ is a normal $p$-subgroup and $G_0 \cong G_1 \rtimes C$ for a cyclic subgroup $C$ of order
+   prime to $p$ (Proposition 1.64 (1)–(3), Remark 1.65); with the description of $\theta_0$ through Kummer theory and its
    compatibility (1.35) in towers of Galois extensions;
 4. the behaviour of the lower numbering under passage to subgroups, $H_i = G_i \cap H$ (Remark 1.61,
    Proposition 1.67).

@@ -1,11 +1,11 @@
 # Galois cohomology of Tate twists over a p-adic field
 
-Let $k$ be a finite extension of $\mathbb{Q}_p$ of degree $d$, let $\ell$ be a prime and, for an integer
-$i \ne 0$, let
+Let $k$ be a finite extension of $\mathbb{Q}_p$ of degree $d$, let $\ell$ be a prime and, for a nonzero integer
+$r$, let
 
-$$w_\ell^i = \max\{\ell^n : \text{the exponent of } \operatorname{Gal}(k(\mu_{\ell^n})/k) \text{ divides } i\},$$
+$$w_\ell^r = \max\{\ell^n : \text{the exponent of } \operatorname{Gal}(k(\mu_{\ell^n})/k) \text{ divides } r\},$$
 
-so that $w_\ell^1 = \# \mu_{\ell^\infty}(k)$ and $w_\ell^i = w_\ell^{-i}$. Then, for the discrete Tate twists
+so that $w_\ell^1 = \# \mu_{\ell^\infty}(k)$ and $w_\ell^r = w_\ell^{-r}$. Then, for every $i \in \mathbb{Z}$ and the discrete Tate twists
 $\mathbb{Q}_\ell/\mathbb{Z}_\ell(i)$:
 
 1. $H^0(k, \mathbb{Q}_\ell/\mathbb{Z}_\ell(i)) \cong \mathbb{Q}_\ell/\mathbb{Z}_\ell$ for $i = 0$ and
