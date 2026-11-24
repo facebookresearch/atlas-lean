@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.AlgebraicGeometry.LineBundleTaskContracts
+public import MathlibExt.AlgebraicGeometry.NativeTensorComparisons
 public import MathlibExt.AlgebraicGeometry.LogStructures
 public import Mathlib.GroupTheory.MonoidLocalization.GrothendieckGroup
 
@@ -102,52 +103,10 @@ def unitObject (X : Scheme.{u}) : DivisorObject X :=
 
 end DivisorObject
 
-/-- The fixed module-sheafification adjunction. -/
-abbrev moduleAdjunction (X : Scheme.{u}) : sheafifyModules X ⊣ forgetModules X :=
-  PresheafOfModules.sheafificationAdjunction (𝟙 X.ringCatSheaf.obj)
-
-/-- The actual left unit of the sheaf tensor. -/
-def tensorLeftUnit (X : Scheme.{u}) (L : X.Modules) :
-    moduleTensor X (structureModule X) L ≅ L :=
-  let adj := PresheafOfModules.sheafificationAdjunction (𝟙 X.ringCatSheaf.obj)
-  letI : IsIso adj.counit := by dsimp [adj]; infer_instance
-  (sheafifyModules X).mapIso (λ_ ((forgetModules X).obj L)) ≪≫
-    asIso (adj.counit.app L)
-
-/-- The actual right unit of the sheaf tensor. -/
-def tensorRightUnit (X : Scheme.{u}) (L : X.Modules) :
-    moduleTensor X L (structureModule X) ≅ L :=
-  let adj := PresheafOfModules.sheafificationAdjunction (𝟙 X.ringCatSheaf.obj)
-  letI : IsIso adj.counit := by dsimp [adj]; infer_instance
-  (sheafifyModules X).mapIso (ρ_ ((forgetModules X).obj L)) ≪≫
-    asIso (adj.counit.app L)
-
-/-- The actual symmetry is sheafification of presheaf symmetry. -/
-def tensorSwap (X : Scheme.{u}) (L M : X.Modules) :
-    moduleTensor X L M ≅ moduleTensor X M L :=
-  (sheafifyModules X).mapIso (β_ ((forgetModules X).obj L) ((forgetModules X).obj M))
-
-/-- The actual sheafification of the presheaf triple tensor. -/
-abbrev tripleTensor (X : Scheme.{u}) (L M N : X.Modules) : X.Modules :=
-  (sheafifyModules X).obj
-    ((((forgetModules X).obj L) ⊗ ((forgetModules X).obj M)) ⊗ ((forgetModules X).obj N))
-
-/-- The left comparison is the sheafification-unit map on the first pair. -/
-def tripleLeft (X : Scheme.{u}) (L M N : X.Modules) :
-    tripleTensor X L M N ⟶ moduleTensor X (moduleTensor X L M) N :=
-  (sheafifyModules X).map
-    (((moduleAdjunction X).unit.app
-      (((forgetModules X).obj L) ⊗ ((forgetModules X).obj M))) ▷
-      ((forgetModules X).obj N))
-
-/-- The right comparison uses the actual presheaf associator and unit. -/
-def tripleRight (X : Scheme.{u}) (L M N : X.Modules) :
-    tripleTensor X L M N ⟶ moduleTensor X L (moduleTensor X M N) :=
-  (sheafifyModules X).map
-    ((α_ ((forgetModules X).obj L) ((forgetModules X).obj M)
-      ((forgetModules X).obj N)).hom ≫
-      (((forgetModules X).obj L) ◁ (moduleAdjunction X).unit.app
-        (((forgetModules X).obj M) ⊗ ((forgetModules X).obj N))))
+/-! The sheaf tensor's adjunction, unit, symmetry and triple-tensor comparisons live in
+`NativeTensorComparisons`; their names stay available here. -/
+export NativeTensorComparisons (moduleAdjunction tensorLeftUnit tensorRightUnit tensorSwap
+  tripleTensor tripleLeft tripleRight)
 
 /-- A symmetric-monoidal line/section chart, with fixed native coherence maps. -/
 structure DeligneFaltingsChart (X : Scheme.{u}) (P : CommMonCat.{u}) where

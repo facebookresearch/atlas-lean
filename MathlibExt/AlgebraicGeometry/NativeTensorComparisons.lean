@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Algebra.Category.ModuleCat.PresheafTensorLocality
-public import MathlibExt.AlgebraicGeometry.DeligneFaltingsCategories
+public import MathlibExt.AlgebraicGeometry.LineBundleTaskContracts
 
 /-!
 # Canonical sheafified tensor comparisons
@@ -28,8 +28,55 @@ open _root_.CategoryTheory _root_.CategoryTheory.MonoidalCategory
 open _root_.AlgebraicGeometry
 open MathlibExt.AlgebraicGeometry.LineBundleTaskContracts
 open MathlibExt.AlgebraicGeometry.AlgebraicLineBundleFamilies
-open MathlibExt.AlgebraicGeometry.DeligneFaltingsCategories
+open MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
 universe u
+
+/-- The fixed module-sheafification adjunction. -/
+abbrev moduleAdjunction (X : Scheme.{u}) : sheafifyModules X ⊣ forgetModules X :=
+  PresheafOfModules.sheafificationAdjunction (𝟙 X.ringCatSheaf.obj)
+
+/-- The actual left unit of the sheaf tensor. -/
+def tensorLeftUnit (X : Scheme.{u}) (L : X.Modules) :
+    moduleTensor X (structureModule X) L ≅ L :=
+  let adj := PresheafOfModules.sheafificationAdjunction (𝟙 X.ringCatSheaf.obj)
+  letI : IsIso adj.counit := by dsimp [adj]; infer_instance
+  (sheafifyModules X).mapIso (λ_ ((forgetModules X).obj L)) ≪≫
+    asIso (adj.counit.app L)
+
+/-- The actual right unit of the sheaf tensor. -/
+def tensorRightUnit (X : Scheme.{u}) (L : X.Modules) :
+    moduleTensor X L (structureModule X) ≅ L :=
+  let adj := PresheafOfModules.sheafificationAdjunction (𝟙 X.ringCatSheaf.obj)
+  letI : IsIso adj.counit := by dsimp [adj]; infer_instance
+  (sheafifyModules X).mapIso (ρ_ ((forgetModules X).obj L)) ≪≫
+    asIso (adj.counit.app L)
+
+/-- The actual symmetry is sheafification of presheaf symmetry. -/
+def tensorSwap (X : Scheme.{u}) (L M : X.Modules) :
+    moduleTensor X L M ≅ moduleTensor X M L :=
+  (sheafifyModules X).mapIso (β_ ((forgetModules X).obj L) ((forgetModules X).obj M))
+
+/-- The actual sheafification of the presheaf triple tensor. -/
+abbrev tripleTensor (X : Scheme.{u}) (L M N : X.Modules) : X.Modules :=
+  (sheafifyModules X).obj
+    ((((forgetModules X).obj L) ⊗ ((forgetModules X).obj M)) ⊗ ((forgetModules X).obj N))
+
+/-- The left comparison is the sheafification-unit map on the first pair. -/
+def tripleLeft (X : Scheme.{u}) (L M N : X.Modules) :
+    tripleTensor X L M N ⟶ moduleTensor X (moduleTensor X L M) N :=
+  (sheafifyModules X).map
+    (((moduleAdjunction X).unit.app
+      (((forgetModules X).obj L) ⊗ ((forgetModules X).obj M))) ▷
+      ((forgetModules X).obj N))
+
+/-- The right comparison uses the actual presheaf associator and unit. -/
+def tripleRight (X : Scheme.{u}) (L M N : X.Modules) :
+    tripleTensor X L M N ⟶ moduleTensor X L (moduleTensor X M N) :=
+  (sheafifyModules X).map
+    ((α_ ((forgetModules X).obj L) ((forgetModules X).obj M)
+      ((forgetModules X).obj N)).hom ≫
+      (((forgetModules X).obj L) ◁ (moduleAdjunction X).unit.app
+        (((forgetModules X).obj M) ⊗ ((forgetModules X).obj N))))
 
 abbrev localIso (X : Scheme.{u}) : MorphismProperty (ModulePresheaves X) :=
   (Opens.grothendieckTopology X).W.inverseImage
@@ -82,6 +129,14 @@ instance tripleRight_isIso (X : Scheme.{u}) (L M N : X.Modules) :
     (localIso_iff X _).1 (MorphismProperty.IsMonoidal.whiskerLeft
       ((forgetModules X).obj L) _ (unit_localIso X _))
   infer_instance
+
+/-- Tensoring actual module isomorphisms, on the fixed sheaf tensor. -/
+def tensorIso {X : Scheme.{u}} {E E' F F' : X.Modules}
+    (a : E ≅ E') (b : F ≅ F') : moduleTensor X E F ≅ moduleTensor X E' F' where
+  hom := tensorMap a.hom b.hom
+  inv := tensorMap a.inv b.inv
+  hom_inv_id := by rw [← tensorMap_comp]; simp
+  inv_hom_id := by rw [← tensorMap_comp]; simp
 
 /-- The actual associator on the fixed module-sheaf tensor. -/
 def tensorAssociator (X : Scheme.{u}) (L M N : X.Modules) :
