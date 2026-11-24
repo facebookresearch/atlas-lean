@@ -8,6 +8,7 @@ Two-, three- and four-square theorems, Jacobi-type counts, Gaussian and Hurwitz 
 - [Representations by squares and triangular numbers](representations-by-squares-and-triangular-number/README.md)
 - [Representations by x² + 2y²](representations-by-x-2y/README.md)
 - [Sums of four squares via Hurwitz continued fractions](sums-of-four-squares-via-hurwitz-continued-fract/README.md)
+- [Lagrange's four-square theorem](lagrange-four-square-theorem.md)
 - [Sums of three squares](sums-of-three-squares/README.md)
 - [Sums of two squares via the Stern–Brocot tree](sums-of-two-squares-via-the-stern-brocot-tree/README.md)
 - [Landau–Ramanujan theorem](landau-ramanujan-asymptotic.md)
