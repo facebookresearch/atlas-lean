@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.Combinatorics.Additive.LinearCongruenceSolutions
 public import MathlibExt.Combinatorics.Additive.ModularSchurNumbers
 public import MathlibExt.Combinatorics.Additive.SingletonSumFreeMod
 
@@ -107,24 +108,6 @@ public theorem_wanted modularSchurNumber_three (k l : ℕ) (hk : 0 < k) (hl : 0 
     (l ≡ 1 [MOD 3] → modularSchurNumber 3 k l = 0) ∧
       (¬ l ≡ 1 [MOD 3] →
         (k = 1 → modularSchurNumber 3 k l = 1) ∧ (2 ≤ k → modularSchurNumber 3 k l = 2))
-
-/-- **Solutions of a linear congruence.** Let $a$ and $b$ be integers, let $m$ be a positive
-integer, and let $d = \gcd(a, m)$. The congruence $a x \equiv b \pmod{m}$ has an integer
-solution if and only if $d \mid b$. If $d \mid b$, then exactly $d$ of the numbers
-$x \in \{0, 1, \dots, m - 1\}$ are solutions. Moreover, if $x_0$ is a solution, then an integer
-$x$ is a solution if and only if $x \equiv x_0 + u \cdot (m / d) \pmod{m}$ for some integer $u$
-with $0 \le u \le d - 1$.
-
-Source: Jourdan D'orville, Kai An Sim, Kok Bin Wong, and Chee Kit Ho, *Modular
-Generalizations of Schur Numbers*, INTEGERS 25 (2025), Article A62, Theorem 3, quoting a
-textbook result ([3]) (`integers-2025-A62-thm-3`). -/
-public theorem_wanted linear_congruence_solutions (a b : ℤ) (m : ℕ) (hm : 0 < m) :
-    ((∃ x : ℤ, a * x ≡ b [ZMOD m]) ↔ (Int.gcd a m : ℤ) ∣ b) ∧
-      ((Int.gcd a m : ℤ) ∣ b →
-        ((Finset.range m).filter fun x : ℕ => a * x ≡ b [ZMOD m]).card = Int.gcd a m) ∧
-      ∀ x₀ : ℤ, a * x₀ ≡ b [ZMOD m] → ∀ x : ℤ,
-        (a * x ≡ b [ZMOD m] ↔
-          ∃ u : ℕ, u < Int.gcd a m ∧ x ≡ x₀ + u * ((m : ℤ) / Int.gcd a m) [ZMOD m])
 
 /-- **When the one-class modular Schur number equals one.** Let $l$ and $m$ be natural numbers with
 $l \ge 2$, $m \ge 2$ and $l \not\equiv 1 \pmod m$. Then the generalized Schur number $S_m(1, l)$

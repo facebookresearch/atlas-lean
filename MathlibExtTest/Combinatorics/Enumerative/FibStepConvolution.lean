@@ -15,6 +15,16 @@ namespace MathlibExt.Combinatorics.Enumerative.FibStepConvolutionWanted
 -- The fourth-order window initially extends past index zero.
 example : fibStepSeq 4 5 = [0, 1, 1, 2, 4, 8] := by decide
 
+-- At index zero both sequences contribute their initial zero.
+example : ∑ j ∈ Finset.range 1, fibStep 2 j * fibStep 3 (0 - j) = 0 := by
+  rw [sum_fib_mul_trib 0]
+  decide
+
+-- At index five the shifted difference is 24 - 13.
+example : ∑ j ∈ Finset.range 6, fibStep 2 j * fibStep 3 (5 - j) = 11 := by
+  rw [sum_fib_mul_trib 5]
+  decide
+
 -- At the lower endpoint the shifted convolution has just one summand.
 example : ∑ j ∈ Finset.range 2, fibStep 2 j * (fibStep 3 (1 - j) - fibStep 4 (1 - j)) = 0 := by
   rw [sum_fib_mul_sub_eq 1 (by decide)]
