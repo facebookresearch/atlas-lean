@@ -1263,7 +1263,8 @@ theorem abs_greenCoeff_le (L x₀ : ℝ) (n : ℕ) : |greenCoeff L x₀ n| ≤ 2
 
 /-- **Green's function of the sealed cable.** The cosine series
 `G(t, x; x₀) = e^{-t/τ} / L + (2 / L) ∑_{n ≥ 1} e^{-k_n t} cos (n π x₀ / L) cos (n π x / L)`,
-taken with the convention that a non-summable series has sum `0`. With `u / 0 = 0` every
+the whole series over `n ≥ 0` (whose `n = 0` term is `e^{-t/τ} / L`) being taken with the
+convention that a non-summable series has sum `0`, not the `n ≥ 1` sum alone. With `u / 0 = 0` every
 coefficient is `0` when `L = 0`, so `G ≡ 0` there. For `τ > 0` and `ℓ, L ≠ 0` the series
 converges absolutely at every `t > 0`. The solution, sealed-end, continuity, coefficient,
 total-charge, superposition, semigroup and decay theorems assume these three conditions and

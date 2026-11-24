@@ -1,4 +1,4 @@
-# For b, ε > 0, periodic solutions with nonpositive factor are at rest
+# For b, ε > 0, periodic orbits with post-pulse factor ≤ 0 are at rest
 
 Let `a`, `I` be real, `b > 0`, `ε > 0`, `(vr, wr)` an [equilibrium](is-equilibrium.md), `T > 0`, and
 `(v, w)` a [solution](is-solution.md) with `v(t + T) = v(t)` and `w(t + T) = w(t)` for every

@@ -51,11 +51,9 @@
 - [Linearization type of a FitzHugh–Nagumo equilibrium](equilibrium-type.md)
 - [For ε > 0, the type is a saddle iff b − b v² > 1](equilibrium-type-eq-saddle-iff.md)
 - [For 0 < b < 1 and ε > 0, the Jacobian determinant is positive](jac-det-pos.md)
-- [For 0 < b < 1, ε > 0, linear stability iff v² > 1 − ε b](is-linearly-stable-iff-of-lt-one.md)
 - [For 0 < b < 1, ε > 0, linear instability iff v² < 1 − ε b](is-linearly-unstable-iff-of-lt-one.md)
 - [The Jacobian is Hurwitz iff z² − τ z + Δ has only stable roots](is-hurwitz-jacobian-iff-is-linearly-stab.md)
-- [For 0 < b < 1, ε > 0, the Jacobian is Hurwitz iff v² > 1 − ε b](is-hurwitz-jacobian-iff-of-lt-one.md)
-- [For 0 < b < 1, ε > 0, some eigenvalue has Re > 0 iff v² < 1 − ε b](exists-spectrum-jacobian-re-pos-iff-of-l.md)
+- [For 0 < b < 1, ε > 0, linear stability iff v² > 1 − ε b](is-hurwitz-jacobian-iff-of-lt-one.md)
 - [For 0 < b < 1, ε > 0, the type is a linear center iff v² = 1 − ε b](equilibrium-type-eq-center-iff-of-lt-one.md)
 - [For 0 < b < 1, ε > 0, v² = 1 − ε b gives purely imaginary eigenvalues](re-eq-zero-and-im-ne-zero-of-mem-spectru.md)
 
@@ -73,10 +71,8 @@
 - [For v ≤ −1, the lower pulse root is nonnegative](pulse-root-low-nonneg.md)
 - [For v > −1, the lower pulse root is negative](pulse-root-low-neg.md)
 - [Small pulses from the left nullcline branch make the voltage fall](is-falling-after-pulse-of-lt-pulse-root.md)
-- [Hurwitz rest states with −2 ≤ v < −1 and their post-pulse drift](stable-rest-pulse-drift.md)
-- [Linearly stable rest states with −2 ≤ v < −1 and post-pulse drift](stable-rest-pulse-drift-is-linearly-stab.md)
-- [Hurwitz rest states with −2 < v < −1 have a rising pulse window](stable-rest-rising-pulse-window.md)
-- [Linearly stable rest states with −2 < v < −1 have a rising window](stable-rest-rising-pulse-window-is-linea.md)
+- [Linearly stable rest states with −2 ≤ v < −1 and post-pulse drift](stable-rest-pulse-drift.md)
+- [Linearly stable rest states with −2 < v < −1 have a rising window](stable-rest-rising-pulse-window.md)
 
 ## Single-pulse response of the full system
 
@@ -110,6 +106,6 @@
 
 ## Periodic orbits
 
-- [For b, ε > 0, periodic solutions with nonpositive factor are at rest](eq-rest-of-periodic.md)
+- [For b, ε > 0, periodic orbits with post-pulse factor ≤ 0 are at rest](eq-rest-of-periodic.md)
 - [For b, ε > 0 and vr² ≥ 4, periodic solutions are at rest](eq-rest-of-periodic-of-four-le-sq.md)
 - [For b, ε > 0 and vr² ≤ 4, nonconstant periodic orbits enter the window](exists-mem-pulse-window-of-periodic.md)

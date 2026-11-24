@@ -38,8 +38,8 @@ formula. Its explicit form is
   `A(0) = A₀`; `IsSolution.eq_amount`: it is the only solution on `[0, ∞)`.
 * `amount_nonneg`: nonnegative parameters and inputs give a nonnegative amount for `t ≥ 0`.
 * `IsSolution.add_integral_eq`, `amount_add_eliminated`: mass balance
-  `A(t) + ∫₀ᵗ k A = A₀ + R t` (for `k, R ≥ 0`, amount present plus amount eliminated equals
-  amount supplied).
+  `A(t) + ∫₀ᵗ k A = A₀ + R t` (for `k, R ≥ 0` and `A₀ ≥ 0`, amount present plus amount
+  eliminated equals amount supplied).
 * `integral_concentration_bolus`, `integral_Ici_concentration_bolus`: the bolus area under the
   concentration curve is `(D / CL)(1 - e^{-k T})` on `[0, T]` and `D / CL` on `[0, ∞)`.
 * `tendsto_amount`, `tendsto_concentration`: under constant infusion `A → R / k` and
