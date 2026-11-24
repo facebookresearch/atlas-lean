@@ -24,3 +24,8 @@
 ## The Price equation
 
 - [Price equation](price.md)
+
+## The multilevel Price equation
+
+- [Law of total covariance for a nested finite population](cov-eq-between-add-within.md)
+- [Multilevel Price equation](multilevel-price.md)
