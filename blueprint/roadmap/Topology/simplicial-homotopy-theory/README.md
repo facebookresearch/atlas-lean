@@ -7,7 +7,6 @@ The simplex category, simplicial and cosimplicial objects, simplicial sets with 
 - [Nerve of a category](nerve-of-category.md)
 - [Augmented data reversal](augmented-data-reversal/README.md)
 - [Augmented data to augmented simplicial objects](augmented-data-to-augmented-simplicial-objects/README.md)
-- [Augmented Whiskering](augmented-whiskering/README.md)
 - [Data Augmented](data-augmented/README.md)
 - [Data Extra To Simplicial](data-extra-to-simplicial/README.md)
 - [Data Iso](data-iso/README.md)

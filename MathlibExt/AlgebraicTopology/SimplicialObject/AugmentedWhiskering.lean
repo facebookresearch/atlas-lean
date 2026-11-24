@@ -6,7 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
 module
 
 public import Mathlib.AlgebraicTopology.SimplicialObject.Basic
@@ -136,14 +135,12 @@ theorem whiskeringObj_map_left_app_mk (F : C ⥤ D) {X Y : Augmented C}
       F.map (f.left.app (op (SimplexCategory.mk n))) :=
   rfl
 
-/--
-Object-level unit comparison for augmented whiskering.
+/-- Object-level unit comparison for augmented whiskering.
 
 Orientation `(whiskeringObj C C (𝟭 C)).obj X ≅ X`. Left component is the
 canonical functor right unitor `Functor.rightUnitor X.left`; the
 augmentation-point component is the identity iso. Isomorphism, not strict
-equality; no pseudofunctor coherence is claimed here.
--/
+equality; no pseudofunctor coherence is claimed here. -/
 noncomputable def whiskeringObjIdIsoApp (X : Augmented C) :
     (whiskeringObj C C (𝟭 C)).obj X ≅ X :=
   Comma.isoMk
@@ -156,14 +153,12 @@ noncomputable def whiskeringObjIdIsoApp (X : Augmented C) :
       rw [whiskeringObj_obj_hom_app]
       exact (Category.id_comp _).trans (Category.comp_id _).symm)
 
-/--
-Functor-level unit comparison for augmented whiskering.
+/-- Functor-level unit comparison for augmented whiskering.
 
 Orientation `whiskeringObj C C (𝟭 C) ≅ 𝟭 (Augmented C)`. Left component is
 the canonical `Functor.rightUnitor`; augmentation-point component is identity.
 This is the unit comparison needed for later pseudofunctorial packaging;
-isomorphism only, no coherence is claimed in this packet.
--/
+isomorphism only, no coherence is claimed in this packet. -/
 noncomputable def whiskeringObjIdIso :
     whiskeringObj C C (𝟭 C) ≅ 𝟭 (Augmented C) :=
   NatIso.ofComponents
@@ -240,15 +235,13 @@ theorem whiskeringObjIdIso_inv_app_inv_left_app (X : Augmented C) (Δ : SimplexC
     (whiskeringObjIdIso (C := C).inv.app X).left.app Δ = 𝟙 (X.left.obj Δ) :=
   rfl
 
-/--
-Object-level compositor comparison for augmented whiskering.
+/-- Object-level compositor comparison for augmented whiskering.
 
 Orientation `(whiskeringObj C E (F ⋙ G)).obj X ≅
 (whiskeringObj C D F ⋙ whiskeringObj D E G).obj X`. Left component is the
 canonical `Functor.associator X.left F G` (symmetrized); the
 augmentation-point component is the identity iso. Isomorphism, not strict
-equality; no pseudofunctor coherence is claimed here.
--/
+equality; no pseudofunctor coherence is claimed here. -/
 noncomputable def whiskeringObjCompIsoApp (F : C ⥤ D) (G : D ⥤ E) (X : Augmented C) :
     (whiskeringObj C E (F ⋙ G)).obj X ≅
       (whiskeringObj C D F ⋙ whiskeringObj D E G).obj X :=
@@ -284,15 +277,13 @@ noncomputable def whiskeringObjCompIsoApp (F : C ⥤ D) (G : D ⥤ E) (X : Augme
         (Category.comp_id _).symm
       exact h1.trans (h2.trans (h3.trans (h4.trans (h5.trans h6)))) )
 
-/--
-Functor-level compositor comparison for augmented whiskering.
+/-- Functor-level compositor comparison for augmented whiskering.
 
 Orientation `whiskeringObj C E (F ⋙ G) ≅ whiskeringObj C D F ⋙
 whiskeringObj D E G`. Left component is the canonical `Functor.associator`;
 augmentation-point component is identity. This is the compositor comparison
 needed for later pseudofunctorial packaging; isomorphism only, no coherence
-is claimed in this packet.
--/
+is claimed in this packet. -/
 noncomputable def whiskeringObjCompIso (F : C ⥤ D) (G : D ⥤ E) :
     whiskeringObj C E (F ⋙ G) ≅
       whiskeringObj C D F ⋙ whiskeringObj D E G :=

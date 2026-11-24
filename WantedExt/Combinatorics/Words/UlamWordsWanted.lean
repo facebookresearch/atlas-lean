@@ -98,17 +98,6 @@ public theorem_wanted isUlamWord_zeros_one_zero_one_zeros_iff (a b : ℕ) (hab :
     IsUlamWord (List.replicate a false ++ [true, false, true] ++ List.replicate b false) ↔
       (a + b) % 2 = 1
 
-/-- **Parity criterion for Ulam words with a single one.** For natural numbers $a$ and $b$, the
-binary word $0^a 1 0^b$ ($a$ zeros, then a one, then $b$ zeros) is an Ulam word if and only if
-the binomial coefficient $\binom{a + b}{a}$ is odd.
-
-Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
-*Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Theorem 8
-(Theorem 3.4 of Bade, Cui, Labelle, and Li). -/
-public theorem_wanted isUlamWord_zeros_one_zeros_iff (a b : ℕ) :
-    IsUlamWord (List.replicate a false ++ [true] ++ List.replicate b false) ↔
-      Odd ((a + b).choose a)
-
 /-- **Ulam words made of ones followed by zeros.** For natural numbers $x$ and $y$ with
 $1 \le y \le x$, the word $1^y 0^{x-y}$ ($y$ ones followed by $x - y$ zeros) is an Ulam word if
 and only if $(x, y) = (1, 1)$ or $(x, y)$ belongs to the discrete Sierpiński triangle

@@ -52,17 +52,6 @@ public theorem_wanted hasNSProperty_extend_const (z : ℕ) (h : ℕ → ℕ)
       h a / 2 ^ (i - 1) = h b / 2 ^ (i - 1)) :
     HasNSProperty fun x ↦ if x ≤ z then h x else h z
 
-/-- **Taking a minimum preserves quotients by powers of two.** Let $a, b, c, k \in \mathbb{N}$. If
-$\lfloor a / 2^k \rfloor = \lfloor b / 2^k \rfloor$, then
-$\lfloor \min(a, c) / 2^k \rfloor = \lfloor \min(b, c) / 2^k \rfloor$.
-
-Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
-Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
-Article G3, Lemma 2 (i) (`integers-2025-G3-lem-2`). -/
-public theorem_wanted min_div_two_pow_eq_of_div_two_pow_eq {a b k : ℕ}
-    (hab : a / 2 ^ k = b / 2 ^ k) (c : ℕ) :
-    min a c / 2 ^ k = min b c / 2 ^ k
-
 /-- **Quotients of a truncated NS function by powers of two.** Let $h : \mathbb{N} \to \mathbb{N}$
 have the NS property and let $z, z', k \in \mathbb{N}$ with $k \ge 1$ and
 $\lfloor z' / 2^k \rfloor = \lfloor z / 2^k \rfloor$. Then for every $y \in \mathbb{N}$,
