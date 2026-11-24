@@ -1,5 +1,14 @@
 /-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+/-
 # ∫||f|^p − |g|^p| ≤ ∫|f − g|^p for 0 < p < 1
+
+The following OpenBMB notice applies to the adapted statement and its documentation.
 
 Copyright (c) 2026 OpenBMB
 
