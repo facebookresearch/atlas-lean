@@ -17,15 +17,18 @@ $\mathrm{U}(U)(\mathbb{A})$, realized on a space of
 
 1. **Theta lifts.** For every Schwartz function $\varphi \in \mathcal{S}(X_r)(\mathbb{A})$ and every $f \in \pi$ the
    integral
-   $$\theta_{n,r}(\varphi, f)(h) = \int_{\mathrm{U}(U)(F) \backslash \mathrm{U}(U)(\mathbb{A})} \theta(\varphi)(g, h)\, \overline{f(g)}\, dg,$$
-   for the Tamagawa measure $dg$, converges absolutely and defines a smooth function of moderate growth on
-   $\mathrm{U}(V_r)(F) \backslash \mathrm{U}(V_r)(\mathbb{A})$ (for $V_r = 0$, the number $\varphi \int \chi_V(\iota^{-1}(\det g))\, \overline{f(g)}\, dg$). If
-   $\varphi$ is finite under the maximal compact subgroup $K_\infty$ of $\mathrm{U}(V_r)(F_\infty)$ used to define automorphic
-   forms, then $\theta_{n,r}(\varphi, f)$ is $K_\infty$-finite and, by the correspondence of infinitesimal characters,
-   finite under the centre of the enveloping algebra, hence an automorphic form. The global theta lift $\Theta_{n,r}(\pi)$ is the space spanned
-   by the $\theta_{n,r}(\varphi, f)$, a representation of $\mathrm{U}(V_r)(\mathbb{A})$ in the space of smooth automorphic
-   functions of Gan–Qiu–Takeda (without the condition of finiteness under a maximal compact subgroup); it may
-   be zero, and no irreducibility is asserted.
+
+    $$\theta_{n,r}(\varphi, f)(h) = \int_{\mathrm{U}(U)(F) \backslash \mathrm{U}(U)(\mathbb{A})} \theta(\varphi)(g, h)\, \overline{f(g)}\, dg,$$
+
+    for the Tamagawa measure $dg$, converges absolutely and defines a smooth function of moderate growth on
+    $\mathrm{U}(V_r)(F) \backslash \mathrm{U}(V_r)(\mathbb{A})$ (for $V_r = 0$, the number $\varphi \int \chi_V(\iota^{-1}(\det g))\, \overline{f(g)}\, dg$). If
+    $\varphi$ is finite under the maximal compact subgroup $K_\infty$ of $\mathrm{U}(V_r)(F_\infty)$ used to define automorphic
+    forms, then $\theta_{n,r}(\varphi, f)$ is $K_\infty$-finite and, by the correspondence of infinitesimal characters,
+    finite under the centre of the enveloping algebra, hence an automorphic form. The global theta lift $\Theta_{n,r}(\pi)$ is the space spanned
+    by the $\theta_{n,r}(\varphi, f)$, a representation of $\mathrm{U}(V_r)(\mathbb{A})$ in the space of smooth automorphic
+    functions of Gan–Qiu–Takeda (without the condition of finiteness under a maximal compact subgroup); it may
+    be zero, and no irreducibility is asserted.
+
 2. **Tower property** (Rallis). If $\Theta_{n,j}(\pi) = 0$ for every $j < r$, then every function in
    $\Theta_{n,r}(\pi)$ is cuspidal: its constant terms along all proper parabolic subgroups of $\mathrm{U}(V_r)$ vanish.
    For $r = 0$ there is nothing to prove, since $\mathrm{U}(V_0)$ has no proper parabolic subgroup over $F$.

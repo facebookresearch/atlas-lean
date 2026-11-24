@@ -881,24 +881,6 @@ public theorem_wanted opxD_graph_stack_isTheta {a b c : ℝ} (ha : 0 < a) (hc : 
       (fun n : ℝ => opxD 3 n {v | (∃ t ∈ Set.Icc 0 a, v 0 = t ∧ v 1 = f t) ∧
         ∃ i : ℕ, 1 ≤ i ∧ i ≤ 3 ∧ v 2 = i * c}) =Θ[Filter.atTop] (fun n : ℝ => n ^ (8 / 3 : ℝ))
 
-/-- **Stacked plus signs in three dimensions.** Let $r > 0$ and $c > 0$, let
-$P = \{(x, y) \in \mathbb{R}^2 : |x| \le r,\ |y| \le r,\ x = 0 \text{ or } y = 0\}$ be the plus
-sign of size $r$, and for $t \in \{2, 3\}$ let
-$Q_{P,t,c} = \{(x, y, ic) : (x, y) \in P,\ i \in \{1, \dots, t\}\} \subseteq \mathbb{R}^3$. Then,
-as the real number $n$ tends to infinity, $\mathrm{opx}(n, Q_{P,2,c}, 3) = \Theta(n^{5/2})$ and
-$\mathrm{opx}(n, Q_{P,3,c}, 3) = \Theta(n^{8/3})$.
-
-The paper's size parameter $d$ is renamed $r$, and $r > 0$ is added: for $r = 0$, $Q_{P,2,c}$ is
-two points on a vertical line and $\mathrm{opx}(n, Q_{P,2,c}, 3) \le c n^2$.
-
-Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Corollary 5.19
-(`integers-2024-A1-cor-5-19`). -/
-public theorem_wanted opxD_plus_stack_isTheta {r c : ℝ} (hr : 0 < r) (hc : 0 < c) :
-    (fun n : ℝ => opxD 3 n {v | |v 0| ≤ r ∧ |v 1| ≤ r ∧ (v 0 = 0 ∨ v 1 = 0) ∧
-        ∃ i : ℕ, 1 ≤ i ∧ i ≤ 2 ∧ v 2 = i * c}) =Θ[Filter.atTop] (fun n : ℝ => n ^ (5 / 2 : ℝ)) ∧
-      (fun n : ℝ => opxD 3 n {v | |v 0| ≤ r ∧ |v 1| ≤ r ∧ (v 0 = 0 ∨ v 1 = 0) ∧
-        ∃ i : ℕ, 1 ≤ i ∧ i ≤ 3 ∧ v 2 = i * c}) =Θ[Filter.atTop] (fun n : ℝ => n ^ (8 / 3 : ℝ))
-
 end
 
 end MetaMathlibExt
