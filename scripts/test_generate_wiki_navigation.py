@@ -3,12 +3,15 @@
 from __future__ import annotations
 
 import contextlib
+import json
 import tempfile
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import patch
 
 from scripts import generate_wiki as wiki
+from scripts import sync_wiki
 
 
 def _target(index: int, sections: tuple[str, str, str] = ("", "", ""), module: str = "MathlibExt/Geometry/Falconer") -> wiki.Target:
@@ -62,7 +65,13 @@ class NavigationTests(unittest.TestCase):
             rendered,
             "---\narticle_id: af_000000000000000000000001\n---\n\n"
             "# ATLAS roadmap\n\n## Geometry & Topology\n\n- [Geometry](Geometry/README.md)\n\n"
-            "## Algebra & Number Theory\n\n- [Algebra](Algebra/README.md)\n",
+            "## Algebra & Number Theory\n\n- [Algebra](Algebra/README.md)\n\n"
+            "## Domains\n\nApplication-specific models and their roadmaps.\n\n"
+            "- [Browse Domains](../coverage/README.md#domains)\n\n"
+            "## CSLibExt\n\nComputer-science developments and their roadmaps.\n\n"
+            "- [Browse CSLibExt](../coverage/README.md#cslibext)\n\n"
+            "## PhyslibExt\n\nPhysics developments and their roadmaps.\n\n"
+            "- [Browse PhyslibExt](../coverage/README.md#physlibext)\n",
         )
 
     def test_a_subject_without_a_region_still_appears(self):
@@ -387,6 +396,138 @@ This section studies the distances determined by finite point configurations.
                 pages = {target.path: wiki.render_target(target, None) for target in (named, unnamed, twin)}
             with _committed(folder, pages, {target.path: wiki.page_key(target) for target in (unnamed, twin)}):
                 self.assertEqual(wiki.pages_by_lean(), {wiki.page_key(target): target.path for target in (named, unnamed, twin)})
+
+LIBRARY_NAVIGATION = """## Library navigation
+
+These are entry points, not separate graph regions.
+
+### Domains
+
+- [Domain model](../roadmap/Geometry/convex/shared/result-0.md)
+
+### CSLibExt
+
+- [Algorithm](../roadmap/Geometry/convex/shared/result-1.md)
+
+### PhyslibExt
+
+- [Physical model](../roadmap/Geometry/convex/shared/result-2.md)
+"""
+
+
+class LibraryNavigationTests(unittest.TestCase):
+    def test_root_keeps_mathematical_regions_and_adds_library_entry_points(self):
+        rendered = wiki.render_roadmap_root(TAXONOMY, ["Geometry", "Algebra"], None)
+        for library in ("Domains", "CSLibExt", "PhyslibExt"):
+            self.assertEqual(rendered.count(f"## {library}\n"), 1)
+            self.assertIn(f"(../coverage/README.md#{library.lower()})", rendered)
+        self.assertIn("[Geometry](Geometry/README.md)", rendered)
+        self.assertIn("[Algebra](Algebra/README.md)", rendered)
+        self.assertEqual(wiki.regions(TAXONOMY, ["Geometry", "Algebra"]), {
+            "Geometry & Topology": ["Geometry"], "Algebra & Number Theory": ["Algebra"],
+        })
+
+    def test_the_authored_section_is_preserved_and_fenced_examples_are_ignored(self):
+        source = "# Coverage\n\n| A | OUT | Old counts. |\n\n" + LIBRARY_NAVIGATION
+        self.assertEqual(wiki.library_navigation_section(source), LIBRARY_NAVIGATION)
+        self.assertEqual(wiki.library_navigation_section("# Coverage\n"), "")
+        self.assertEqual(wiki.library_navigation_section("```markdown\n" + LIBRARY_NAVIGATION + "```\n"), "")
+        fenced = LIBRARY_NAVIGATION + "\n```markdown\n## Example, not a section\n```\n"
+        self.assertEqual(wiki.library_navigation_section(fenced), fenced)
+
+    def test_duplicate_authored_sections_are_not_silently_discarded(self):
+        with self.assertRaisesRegex(ValueError, "Library navigation"):
+            wiki.library_navigation_section(LIBRARY_NAVIGATION + "\n" + LIBRARY_NAVIGATION)
+
+    def test_an_extra_group_cannot_be_silently_discarded(self):
+        with self.assertRaisesRegex(ValueError, "Library navigation"):
+            wiki.library_navigation_section(LIBRARY_NAVIGATION + "\n## Planned destinations\n\nA planned result.\n")
+
+    def test_a_library_heading_at_level_two_cannot_be_silently_discarded(self):
+        with self.assertRaisesRegex(ValueError, "Library navigation"):
+            wiki.library_navigation_section(LIBRARY_NAVIGATION.replace("### CSLibExt", "## CSLibExt"))
+
+    def test_a_case_variant_heading_cannot_be_silently_discarded(self):
+        with self.assertRaisesRegex(ValueError, "Library navigation"):
+            wiki.library_navigation_section(LIBRARY_NAVIGATION.replace("## Library navigation", "## Library Navigation"))
+
+    def test_a_setext_heading_cannot_be_silently_discarded(self):
+        with self.assertRaisesRegex(ValueError, "Library navigation"):
+            wiki.library_navigation_section(LIBRARY_NAVIGATION.replace("## Library navigation", "Library navigation\n------------------"))
+
+    def test_a_heading_hidden_by_an_unclosed_comment_cannot_be_silently_discarded(self):
+        with self.assertRaisesRegex(ValueError, "Library navigation"):
+            wiki.library_navigation_section("# Coverage\n\n<!--\n" + LIBRARY_NAVIGATION)
+
+    def test_committed_coverage_contains_each_root_link_target(self):
+        coverage = (wiki.VAULT / "coverage/README.md").read_text()
+        for library in ("Domains", "CSLibExt", "PhyslibExt"):
+            self.assertEqual(coverage.count(f"### {library}\n"), 1)
+
+    def test_coverage_table_is_generated_and_navigation_is_not_counted(self):
+        rendered = wiki.render_coverage([("A", "OUT", "New evidence.")], LIBRARY_NAVIGATION)
+        self.assertIn("| A | OUT | New evidence. |", rendered)
+        self.assertTrue(rendered.endswith(LIBRARY_NAVIGATION))
+        self.assertEqual(rendered.count("## Library navigation"), 1)
+        self.assertEqual(wiki.render_coverage([]).count("Library navigation"), 0)
+
+    def test_generate_and_catalog_refresh_keep_navigation_without_changing_nodes(self):
+        libraries = ("Domains", "CSLibExt", "PhyslibExt")
+        targets = {library: [_target(number, module=f"{library}/Geometry/Shared")]
+                   for number, library in enumerate(libraries)}
+        taxonomy = {**TAXONOMY, "placements": {
+            f"{library}/Geometry/Shared": {"to": "Geometry/convex", "title": "Shared"}
+            for library in libraries
+        }}
+
+        def load(library, *_args):
+            selected = targets.get(library, [])
+            return selected, {"documented": len(selected), "public": len(selected), "instances": 0,
+                              "subjects": ["Geometry"] if selected else [],
+                              "unsubjected": [], "unindexed": []}
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            vault = root / "blueprint"
+            coverage = vault / "coverage" / "README.md"
+            coverage.parent.mkdir(parents=True)
+            with patch.object(wiki, "ROOT", root), patch.object(wiki, "VAULT", vault), \
+                    patch.object(wiki, "ROADMAP", vault / "roadmap"), \
+                    patch.object(wiki, "PAGE_MAP", vault / "pages.json"), \
+                    patch.object(wiki, "SOURCES", vault / "sources"), \
+                    patch.object(wiki, "load_taxonomy", return_value=taxonomy), \
+                    patch.object(wiki, "load_library", side_effect=load):
+                index = SimpleNamespace(declarations={})
+                before = wiki.generate(index=index)
+                coverage.write_text("# Old coverage\n\n| Old | OUT | Old. |\n\n" + LIBRARY_NAVIGATION)
+                after = wiki.generate(index=index)
+                self.assertEqual({p: text for p, text in before.items() if p != coverage},
+                                 {p: text for p, text in after.items() if p != coverage})
+                self.assertNotIn("| Old |", after[coverage])
+                self.assertEqual(wiki.library_navigation_section(after[coverage]), LIBRARY_NAVIGATION)
+                self.assertEqual(json.loads(after[vault / "atlas.json"])["areas"],
+                                 {"Geometry & Topology": ["Geometry"]})
+                sync_wiki.refresh_catalog(after)
+                self.assertEqual(coverage.read_text(), after[coverage])
+                again = wiki.generate(index=index)
+                sync_wiki.refresh_catalog(again)
+                self.assertEqual(coverage.read_text(), after[coverage])
+                self.assertEqual(coverage.read_text().count("## Library navigation"), 1)
+                malformed = (
+                    LIBRARY_NAVIGATION + "\n## Planned destinations\n\nA planned result.\n",
+                    LIBRARY_NAVIGATION.replace("### CSLibExt", "## CSLibExt"),
+                    LIBRARY_NAVIGATION.replace("## Library navigation", "## Library Navigation"),
+                    LIBRARY_NAVIGATION.replace("## Library navigation", "Library navigation\n------------------"),
+                    "<!--\n" + LIBRARY_NAVIGATION,
+                )
+                for text in malformed:
+                    with self.subTest(text=text):
+                        original = "# Coverage\n\n" + text
+                        coverage.write_text(original)
+                        with self.assertRaisesRegex(ValueError, "Library navigation"):
+                            sync_wiki.refresh_catalog(wiki.generate(index=index))
+                        self.assertEqual(coverage.read_text(), original)
+
 
 if __name__ == "__main__":
     unittest.main()
