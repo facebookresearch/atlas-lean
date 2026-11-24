@@ -1,5 +1,3 @@
-# Full-conditional formula
+# Full conditional of a Bayesian-network posterior
 
-The Atlas Gibbs conditional of the posterior at a
-non-evidence variable is the normalized product of the variable's own table entry and the
-table entries of its children.
+For a Bayesian network over a finite alphabet whose conditional probability tables are strictly positive, and evidence of nonzero probability, the Gibbs full conditional of the posterior at a non-evidence variable is the normalized product of that variable's own table entry and the table entries of its children.

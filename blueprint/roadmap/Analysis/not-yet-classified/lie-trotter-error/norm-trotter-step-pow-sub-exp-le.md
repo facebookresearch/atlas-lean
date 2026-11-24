@@ -1,4 +1,3 @@
-# Norm trotter Step pow sub exp le
+# Error bound for the r-step Lie–Trotter product
 
-The `r`-step Lie–Trotter error bound: splitting the evolution into
-`r` steps of length `t / r` gives error at most `(t²/(2r)) ‖[B, A]‖`.
+Let $A$ and $B$ be Hermitian $n \times n$ complex matrices, $t \ge 0$ and $r \ge 1$. Splitting the evolution $e^{-it(A+B)}$ into $r$ Lie–Trotter steps of length $t/r$ gives an error, in operator norm, of at most $\frac{t^2}{2r}\,\lVert BA - AB \rVert$.

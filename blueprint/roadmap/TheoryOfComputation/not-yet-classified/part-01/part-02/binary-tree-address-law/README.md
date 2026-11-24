@@ -6,4 +6,4 @@
 
 ## finite-address cylinders and their masses
 
-- [Law cylinder](law-cylinder.md)
+- [Probability of a cylinder under the binary-tree address law](law-cylinder.md)

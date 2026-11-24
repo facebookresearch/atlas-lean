@@ -1,3 +1,3 @@
-# Boolean Degree parity Function
+# Boolean degree of the parity function
 
-matching upper bound: the exact multilinear representation has degree N, so deg~_{1/3}(PARITY_N) = N
+For every $n$, the Boolean degree of the parity function on $\{0,1\}^n$, the total degree of its exact multilinear extension, equals $n$.
