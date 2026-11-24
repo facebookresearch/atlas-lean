@@ -37,30 +37,39 @@ variable {n : ℕ}
 
 /-! ### Left-to-right and right-to-left extrema -/
 
-/-- The number of left-to-right maxima `lmax(σ)`: entries larger than every entry to their left.
+/-- **Number of left-to-right maxima.** For a permutation $\sigma$ of $\{0, 1, \dots, n-1\}$,
+$\mathrm{lmax}(\sigma)$ is the number of positions $i$ such that $\sigma(j) < \sigma(i)$ for
+every position $j < i$, that is, the number of entries larger than every entry to their left.
 
 Source: Dan Li and Sergey Kitaev, *King Permutations and Partially Ordered Patterns*,
 INTEGERS 26 (2026), Article A59, Section 1 (statistics). -/
 def permLeftToRightMaxCount (σ : Equiv.Perm (Fin n)) : ℕ :=
   (Finset.univ.filter fun i : Fin n => ∀ j : Fin n, j < i → σ j < σ i).card
 
-/-- The number of right-to-left maxima `rmax(σ)`: entries larger than every entry to their right.
+/-- **Number of right-to-left maxima.** For a permutation $\sigma$ of $\{0, 1, \dots, n - 1\}$
+written in one-line notation, $\operatorname{rmax}(\sigma)$ is the number of positions $i$ such
+that $\sigma(j) < \sigma(i)$ for every position $j > i$, that is, the number of entries larger
+than every entry to their right.
 
 Source: Dan Li and Sergey Kitaev, *King Permutations and Partially Ordered Patterns*,
 INTEGERS 26 (2026), Article A59, Section 1 (statistics). -/
 def permRightToLeftMaxCount (σ : Equiv.Perm (Fin n)) : ℕ :=
   (Finset.univ.filter fun i : Fin n => ∀ j : Fin n, i < j → σ j < σ i).card
 
-/-- The number of left-to-right minima `lmin(σ)`: entries smaller than every entry to their
-left.
+/-- **Number of left-to-right minima.** For a permutation $\sigma$ of $\{0, 1, \dots, n - 1\}$
+written in one-line notation, $\operatorname{lmin}(\sigma)$ is the number of positions $i$ such
+that $\sigma(i) < \sigma(j)$ for every position $j < i$, that is, the number of entries smaller
+than every entry to their left.
 
 Source: Dan Li and Sergey Kitaev, *King Permutations and Partially Ordered Patterns*,
 INTEGERS 26 (2026), Article A59, Section 1 (statistics). -/
 def permLeftToRightMinCount (σ : Equiv.Perm (Fin n)) : ℕ :=
   (Finset.univ.filter fun i : Fin n => ∀ j : Fin n, j < i → σ i < σ j).card
 
-/-- The number of right-to-left minima `rmin(σ)`: entries smaller than every entry to their
-right.
+/-- **Number of right-to-left minima.** For a permutation $\sigma$ of $\{0, 1, \dots, n - 1\}$
+written in one-line notation, $\operatorname{rmin}(\sigma)$ is the number of positions $i$ such
+that $\sigma(i) < \sigma(j)$ for every position $j > i$, that is, the number of entries smaller
+than every entry to their right.
 
 Source: Dan Li and Sergey Kitaev, *King Permutations and Partially Ordered Patterns*,
 INTEGERS 26 (2026), Article A59, Section 1 (statistics). -/
@@ -69,28 +78,38 @@ def permRightToLeftMinCount (σ : Equiv.Perm (Fin n)) : ℕ :=
 
 /-! ### Double ascents, double descents, peaks and valleys -/
 
-/-- Position `i` is a double ascent of `σ`: `i + 2 < n` and `σ i < σ (i + 1) < σ (i + 2)`.
+/-- **Double ascent of a permutation.** Let $\sigma$ be a permutation of $\{0, 1, \dots, n-1\}$.
+A position $i$ is a double ascent of $\sigma$ if $i + 2 < n$ and
+$\sigma(i) < \sigma(i+1) < \sigma(i+2)$.
 
 Source: Han, *Joint Distributions of 10 Classical Statistics over Permutations
 Avoiding Two Patterns of Length 3*, INTEGERS 26 (2026), Article A18, Section 1 (`dasc`). -/
 def IsDoubleAscentAt (σ : Equiv.Perm (Fin n)) (i : Fin n) : Prop :=
   ∃ h : i.val + 2 < n, σ i < σ ⟨i.val + 1, by omega⟩ ∧ σ ⟨i.val + 1, by omega⟩ < σ ⟨i.val + 2, h⟩
 
-/-- Position `i` is a double descent of `σ`: `i + 2 < n` and `σ i > σ (i + 1) > σ (i + 2)`.
+/-- **Double descent of a permutation.** Let $\sigma$ be a permutation of $\{0, 1, \dots, n-1\}$.
+A position $i$ is a double descent of $\sigma$ if $i + 2 < n$ and
+$\sigma(i) > \sigma(i+1) > \sigma(i+2)$.
 
 Source: Han, *Joint Distributions of 10 Classical Statistics over Permutations
 Avoiding Two Patterns of Length 3*, INTEGERS 26 (2026), Article A18, Section 1 (`ddes`). -/
 def IsDoubleDescentAt (σ : Equiv.Perm (Fin n)) (i : Fin n) : Prop :=
   ∃ h : i.val + 2 < n, σ ⟨i.val + 1, by omega⟩ < σ i ∧ σ ⟨i.val + 2, h⟩ < σ ⟨i.val + 1, by omega⟩
 
-/-- Position `i` is a peak of `σ`: `i + 2 < n` and `σ i < σ (i + 1) > σ (i + 2)`.
+/-- **Peak of a permutation.** Let $\sigma$ be a permutation of $\{0, 1, \dots, n-1\}$.
+A position $i$ is a peak of $\sigma$ if $i + 2 < n$ and $\sigma(i) < \sigma(i+1) > \sigma(i+2)$.
+Thus the peak entry is $\sigma(i+1)$, and the position recorded is $i$, that of the first of
+the three entries.
 
 Source: Han, *Joint Distributions of 10 Classical Statistics over Permutations
 Avoiding Two Patterns of Length 3*, INTEGERS 26 (2026), Article A18, Section 1 (`pk`). -/
 def IsPeakAt (σ : Equiv.Perm (Fin n)) (i : Fin n) : Prop :=
   ∃ h : i.val + 2 < n, σ i < σ ⟨i.val + 1, by omega⟩ ∧ σ ⟨i.val + 2, h⟩ < σ ⟨i.val + 1, by omega⟩
 
-/-- Position `i` is a valley of `σ`: `i + 2 < n` and `σ i > σ (i + 1) < σ (i + 2)`.
+/-- **Valley of a permutation.** Let $\sigma$ be a permutation of $\{0, 1, \dots, n-1\}$.
+A position $i$ is a valley of $\sigma$ if $i + 2 < n$ and
+$\sigma(i) > \sigma(i+1) < \sigma(i+2)$. Thus the valley entry is $\sigma(i+1)$, and the
+position recorded is $i$, that of the first of the three entries.
 
 Source: Han, *Joint Distributions of 10 Classical Statistics over Permutations
 Avoiding Two Patterns of Length 3*, INTEGERS 26 (2026), Article A18, Section 1 (`vl`). -/
@@ -109,36 +128,48 @@ instance (σ : Equiv.Perm (Fin n)) : DecidablePred (IsPeakAt σ) := fun _ => by
 instance (σ : Equiv.Perm (Fin n)) : DecidablePred (IsValleyAt σ) := fun _ => by
   unfold IsValleyAt; infer_instance
 
-/-- `dasc σ`: the number of double ascents of `σ`.
+/-- **Number of double ascents.** For a permutation $\sigma$ of $\{0, 1, \dots, n-1\}$,
+$\mathrm{dasc}(\sigma)$ is the number of positions $i$ that are double ascents of $\sigma$.
 
 Source: Han, *Joint Distributions of 10 Classical Statistics over Permutations
 Avoiding Two Patterns of Length 3*, INTEGERS 26 (2026), Article A18, Section 1 (`dasc`). -/
 def permDoubleAscents (σ : Equiv.Perm (Fin n)) : ℕ :=
   (Finset.univ.filter (IsDoubleAscentAt σ)).card
 
-/-- `ddes σ`: the number of double descents of `σ`.
+/-- **Number of double descents.** For a permutation $\sigma$ of $\{0, 1, \dots, n-1\}$,
+$\mathrm{ddes}(\sigma)$ is the number of positions $i$ that are double descents of $\sigma$.
 
 Source: Han, *Joint Distributions of 10 Classical Statistics over Permutations
 Avoiding Two Patterns of Length 3*, INTEGERS 26 (2026), Article A18, Section 1 (`ddes`). -/
 def permDoubleDescents (σ : Equiv.Perm (Fin n)) : ℕ :=
   (Finset.univ.filter (IsDoubleDescentAt σ)).card
 
-/-- `pk σ`: the number of peaks of `σ`.
+/-- **Number of peaks of a permutation.** For a permutation $\sigma$ of $\{0, 1, \dots, n - 1\}$
+written in one-line notation, $\operatorname{pk}(\sigma)$ is the number of positions $i$ with
+$i + 2 < n$ and $\sigma(i) < \sigma(i + 1) > \sigma(i + 2)$, that is, the number of peaks of
+$\sigma$.
 
 Source: Han, *Joint Distributions of 10 Classical Statistics over Permutations
 Avoiding Two Patterns of Length 3*, INTEGERS 26 (2026), Article A18, Section 1 (`pk`). -/
 def permPeaks (σ : Equiv.Perm (Fin n)) : ℕ :=
   (Finset.univ.filter (IsPeakAt σ)).card
 
-/-- `vl σ`: the number of valleys of `σ`.
+/-- **Number of valleys of a permutation.** For a permutation $\sigma$ of
+$\{0, 1, \dots, n - 1\}$ written in one-line notation, $\operatorname{vl}(\sigma)$ is the number
+of positions $i$ with $i + 2 < n$ and $\sigma(i) > \sigma(i + 1) < \sigma(i + 2)$, that is, the
+number of valleys of $\sigma$.
 
 Source: Han, *Joint Distributions of 10 Classical Statistics over Permutations
 Avoiding Two Patterns of Length 3*, INTEGERS 26 (2026), Article A18, Section 1 (`vl`). -/
 def permValleys (σ : Equiv.Perm (Fin n)) : ℕ :=
   (Finset.univ.filter (IsValleyAt σ)).card
 
-/-- The positions `i` with `i + 2 < n`, the possible positions of the four local statistics, number
-`n - 2`.
+/-- **Number of positions with two successors.** For every natural number $n$, exactly $n - 2$ of
+the positions $i \in \{0, 1, \dots, n-1\}$ satisfy $i + 2 < n$, where $n - 2$ is truncated
+subtraction (it is $0$ when $n < 2$).
+
+These are the positions at which a permutation of $\{0, 1, \dots, n-1\}$ can have a double
+ascent, a double descent, a peak or a valley.
 
 Source: Han, *Joint Distributions of 10 Classical Statistics over Permutations
 Avoiding Two Patterns of Length 3*, INTEGERS 26 (2026), Article A18, Section 1. -/
@@ -152,8 +183,11 @@ theorem card_filter_add_two_lt (n : ℕ) :
     omega
   rw [this, Finset.card_range]
 
-/-- Every position `i` with `i + 2 < n` is exactly one of a double ascent, a double descent, a peak
-or a valley, and no other position is any of them.
+/-- **Local shape of a position in a permutation.** Let $\sigma$ be a permutation of
+$\{0, 1, \dots, n-1\}$ and let $i$ be a position. If $i + 2 < n$, then $i$ is exactly one of a
+double ascent, a double descent, a peak or a valley of $\sigma$; otherwise $i$ is none of them.
+That is, the number of these four properties that $i$ has is $1$ when $i + 2 < n$ and $0$
+otherwise.
 
 Source: Han, *Joint Distributions of 10 Classical Statistics over Permutations
 Avoiding Two Patterns of Length 3*, INTEGERS 26 (2026), Article A18, Section 1. -/
@@ -172,8 +206,12 @@ theorem ite_isDoubleAscentAt_add_ite_isDoubleDescentAt_add_ite_isPeakAt_add_ite_
       simp [hab, hbc, hab.asymm, hbc.asymm]
   · simp [IsDoubleAscentAt, IsDoubleDescentAt, IsPeakAt, IsValleyAt, h]
 
-/-- The four local statistics partition the positions `i` with `i + 2 < n`:
-`dasc σ + ddes σ + pk σ + vl σ = n - 2`.
+/-- **Sum of the four local statistics of a permutation.** Let $\sigma$ be a permutation of
+$\{0, 1, \dots, n-1\}$, and write $\mathrm{dasc}(\sigma)$, $\mathrm{ddes}(\sigma)$,
+$\mathrm{pk}(\sigma)$ and $\mathrm{vl}(\sigma)$ for its numbers of double ascents, double
+descents, peaks and valleys. Then
+$\mathrm{dasc}(\sigma) + \mathrm{ddes}(\sigma) + \mathrm{pk}(\sigma) + \mathrm{vl}(\sigma) = n - 2$,
+where $n - 2$ is truncated subtraction (it is $0$ when $n < 2$).
 
 Source: Han, *Joint Distributions of 10 Classical Statistics over Permutations
 Avoiding Two Patterns of Length 3*, INTEGERS 26 (2026), Article A18, Section 1. -/

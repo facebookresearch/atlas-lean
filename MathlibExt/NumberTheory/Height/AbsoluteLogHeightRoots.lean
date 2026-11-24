@@ -710,7 +710,14 @@ private theorem alh_mulHeight₁_gen_eq_mahlerMeasure
     alh_finprod_max_gen_eq_abs_leadingCoeff hx]
   exact mul_comm _ _
 
-/-- Element-level version assuming `x` is integral over `ℚ`. -/
+/-- **Logarithmic height from the roots of the minimal polynomial, for an integral element.** Let
+$K$ be a field of characteristic zero and let $x \in K$ be integral over $\mathbb{Q}$. Let $d$ be
+the degree of the minimal polynomial of $x$ over $\mathbb{Q}$, and let $P_x \in \mathbb{Z}[X]$ be
+the primitive integral minimal polynomial of $x$, with leading coefficient $a$. Then the absolute
+logarithmic height of $x$ is
+$$h(x) = \frac{1}{d}\Big(\log |a| + \sum_{z} \log^+ |z|\Big),$$
+where the sum runs over the complex roots $z$ of $P_x$, counted with multiplicity, and
+$\log^+ t = \max(0, \log t)$. -/
 public theorem absLogHeight₁_eq_log_leadingCoeff_add_sum_log_roots_of_isIntegral
     {K : Type*} [Field K] [CharZero K] [Algebra ℚ K] (x : K) (hx : IsIntegral ℚ x) :
     NumberField.absLogHeight₁ x =
@@ -733,7 +740,14 @@ public theorem absLogHeight₁_eq_log_leadingCoeff_add_sum_log_roots_of_isIntegr
     Polynomial.logMahlerMeasure_eq_log_leadingCoeff_add_sum_log_roots,
     div_eq_inv_mul]
 
-/-- Element-level version assuming `x` is algebraic over `ℚ`. -/
+/-- **Logarithmic height from the roots of the minimal polynomial, for an algebraic element.** Let
+$K$ be a field of characteristic zero and let $x \in K$ be algebraic over $\mathbb{Q}$. Let $d$ be
+the degree of the minimal polynomial of $x$ over $\mathbb{Q}$, and let $P_x \in \mathbb{Z}[X]$ be
+the primitive integral minimal polynomial of $x$, with leading coefficient $a$. Then the absolute
+logarithmic height of $x$ is
+$$h(x) = \frac{1}{d}\Big(\log |a| + \sum_{z} \log^+ |z|\Big),$$
+where the sum runs over the complex roots $z$ of $P_x$, counted with multiplicity, and
+$\log^+ t = \max(0, \log t)$. -/
 public theorem absLogHeight₁_eq_log_leadingCoeff_add_sum_log_roots_of_isAlgebraic
     {K : Type*} [Field K] [CharZero K] [Algebra ℚ K] (x : K) (hx : IsAlgebraic ℚ x) :
     NumberField.absLogHeight₁ x =
@@ -745,13 +759,19 @@ public theorem absLogHeight₁_eq_log_leadingCoeff_add_sum_log_roots_of_isAlgebr
   absLogHeight₁_eq_log_leadingCoeff_add_sum_log_roots_of_isIntegral x
     (IsAlgebraic.isIntegral hx)
 
-/--
-The absolute logarithmic height is the algebraic-degree-normalized sum of the logarithm of the
-leading coefficient and the positive logarithms of the complex roots of a primitive integral
-minimal polynomial, counted with multiplicity. Source: arXiv:2608.15903; equivalent formulas occur
-in arXiv:2304.11607, 2309.11173, 2311.13047, 2311.14001, 2607.25168, 2608.04445, and 2608.20995.
+/-- **Logarithmic height from the roots of the minimal polynomial.** Let $K$ be a field of
+characteristic zero that is algebraic over $\mathbb{Q}$, and let $x \in K$. Let $d$ be the degree
+of the minimal polynomial of $x$ over $\mathbb{Q}$, and let $P_x \in \mathbb{Z}[X]$ be the
+primitive integral minimal polynomial of $x$, with leading coefficient $a$. Then the absolute
+logarithmic height of $x$ is
+$$h(x) = \frac{1}{d}\Big(\log |a| + \sum_{z} \log^+ |z|\Big),$$
+where the sum runs over the complex roots $z$ of $P_x$, counted with multiplicity, and
+$\log^+ t = \max(0, \log t)$.
 
 Proves `Wanted` entry `absLogHeight₁_eq_log_leadingCoeff_add_sum_log_roots`.
+
+Source: arXiv:2608.15903; equivalent formulas occur
+in arXiv:2304.11607, 2309.11173, 2311.13047, 2311.14001, 2607.25168, 2608.04445, and 2608.20995.
 -/
 public theorem absLogHeight₁_eq_log_leadingCoeff_add_sum_log_roots
     {K : Type*} [Field K] [CharZero K] [Algebra ℚ K] [Algebra.IsAlgebraic ℚ K] (x : K) :
@@ -764,7 +784,12 @@ public theorem absLogHeight₁_eq_log_leadingCoeff_add_sum_log_roots
   absLogHeight₁_eq_log_leadingCoeff_add_sum_log_roots_of_isIntegral x
     (IsAlgebraic.isIntegral (Algebra.IsAlgebraic.isAlgebraic x))
 
-/-- Element-level multiplicative version assuming `x` is integral over `ℚ`. -/
+/-- **Multiplicative height as a Mahler measure, for an integral element.** Let $K$ be a field of
+characteristic zero and let $x \in K$ be integral over $\mathbb{Q}$. Let $d$ be the degree of the
+minimal polynomial of $x$ over $\mathbb{Q}$, and let $P_x \in \mathbb{Z}[X]$ be the primitive
+integral minimal polynomial of $x$. Then the absolute multiplicative height of $x$ is
+$H(x) = M(P_x)^{1/d}$, where $M(P_x)$ is the Mahler measure of $P_x$ regarded as a polynomial
+with complex coefficients. -/
 public theorem absMulHeight₁_eq_mapMahlerMeasure_of_isIntegral
     {K : Type*} [Field K] [CharZero K] [Algebra ℚ K] (x : K) (hx : IsIntegral ℚ x) :
     NumberField.absMulHeight₁ x =
@@ -782,12 +807,17 @@ public theorem absMulHeight₁_eq_mapMahlerMeasure_of_isIntegral
     Polynomial.mapMahlerMeasure_eq]
 
 /--
-The absolute multiplicative height of an algebraic number is the reciprocal-degree power of the
-Mahler measure of a primitive integral minimal polynomial. Source: arXiv:2608.15891, lines
-205–217; equivalent formulations also occur in arXiv:2306.11331, 2307.11849, 2307.14915,
-2312.04354, 2607.28857, 2607.29208, and 2608.11904.
+**Absolute multiplicative height as a Mahler measure.** Let $K$ be a field of characteristic
+zero that is algebraic over $\mathbb{Q}$, and let $x \in K$. Let $d$ be the degree of the minimal
+polynomial of $x$ over $\mathbb{Q}$, and let $P_x \in \mathbb{Z}[X]$ be the primitive integral
+minimal polynomial of $x$. Then the absolute multiplicative height of $x$ is $H(x) = M(P_x)^{1/d}$,
+where $M(P_x)$ is the Mahler measure of $P_x$ regarded as a polynomial with complex coefficients.
 
 Proves `Wanted` entry `absMulHeight₁_eq_mapMahlerMeasure`.
+
+Source: arXiv:2608.15891, lines
+205–217; equivalent formulations also occur in arXiv:2306.11331, 2307.11849, 2307.14915,
+2312.04354, 2607.28857, 2607.29208, and 2608.11904.
 -/
 public theorem absMulHeight₁_eq_mapMahlerMeasure {K : Type*} [Field K] [CharZero K]
     [Algebra ℚ K] [Algebra.IsAlgebraic ℚ K] (x : K) :

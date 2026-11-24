@@ -28,14 +28,18 @@ Status: resolved true for `C₅` (Grzesik;
 Hatami–Hladký–Králʼ–Norine–Razborov). The broader fixed odd-cycle family
 asked for in the source is not formalized here. -/
 
-/-- Triangle-free graphs on `5n` vertices have at most `n^5` copies of `C₅`. -/
+/-- **Pentagons in triangle-free graphs (Erdős Problem 24).** For every natural number $n$, every
+graph on $5n$ vertices with no three pairwise adjacent vertices has at most $n^5$ subgraphs
+isomorphic to the $5$-cycle $C_5$. -/
 def conjecture : Prop :=
   ∀ (n : ℕ) (G : SimpleGraph (Fin (5 * n))), G.CliqueFree 3 →
     G.copyCount (SimpleGraph.cycleGraph 5) ≤ n ^ 5
 
-/--
-Resolved true: Resolved true (Grzesik; Hatami-Hladky-Kral-Norine-Razborov): at most n^5 copies
-of C5. Source: Erdős Problems, Problem 24 (records the Grzesik and
+/-- **Pentagon bound for triangle-free graphs (five-cycle case of Erdős Problem 24).** For every
+natural number $n$, every graph on $5n$ vertices with no three pairwise adjacent vertices has at
+most $n^5$ subgraphs isomorphic to the $5$-cycle $C_5$.
+
+Source: Erdős Problems, Problem 24 (records the Grzesik and
 Hatami–Hladký–Králʼ–Norine–Razborov resolution), https://www.erdosproblems.com/24; Andrzej
 Grzesik, On the maximum number of five-cycles in a triangle-free graph, arXiv:1102.0962v3,
 https://arxiv.org/abs/1102.0962v3; Hamed Hatami, Jan Hladky, Daniel Kral, Serguei Norine, and

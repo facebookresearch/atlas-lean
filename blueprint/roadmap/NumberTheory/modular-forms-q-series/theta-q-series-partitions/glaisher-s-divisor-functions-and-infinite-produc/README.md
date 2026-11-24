@@ -1,0 +1,18 @@
+# Glaisher's divisor functions and infinite products
+
+- [Series-divisors add under multiplication](series-divisor-add-of-mul.md)
+- [Calculus of series-divisors](series-divisor-calculus.md)
+- [Coefficient recursion for powers of a power series](series-divisor-pow-recursion.md)
+- [Glaisher's divisor functions as series-divisors](glaisher-divisors-series-divisor-recurre.md)
+- [Recurrences for partitions into even or distinct parts and for overpartitions](glaisher-partition-recurrences.md)
+- [Recurrences for sums of squares and sums of triangular numbers](sum-squares-triangular-power-recurrences.md)
+- [Six recursions for Glaisher's divisor functions from the theta functions](glaisher-theta-divisor-recursions.md)
+- [Power recursion lemma for nonzero integer exponents](power-coeff-convolution-zpow.md)
+- [Power recursion lemma for positive exponents](power-coeff-convolution-pow.md)
+- [Six divisor-function identities from the power recursion lemma](glaisher-power-recursion-divisor-identit.md)
+- [Glaisher's congruences for divisor sums over squares and triangular numbers](glaisher-divisor-sum-congruences.md)
+- [A congruence modulo 5 for divisor sums over triangular shifts](sigma-triangular-shift-sum-mod-five.md)
+- [Convolution identities for the series-divisor of an invertible series](series-divisor-inverse-convolution.md)
+- [Overpartition formulas for a divisor sum with odd cofactors](overpartition-glaisher-d-d-formulas.md)
+- [Ramanujan's congruence modulo $5$ and a convolution of divisor sums](partition-mod-five-iff-sigma-convolution.md)
+- [Overpartitions modulo $8$ and a convolution of divisor sums](overpartition-mod-eight-iff-d-d-convolut.md)

@@ -1,0 +1,3 @@
+# Continuity of the Douglas factor via the closed graph theorem
+
+Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$, let $E$ and $F$ be Hilbert spaces over $\mathbb{K}$ and let $A, B : E \to F$ be bounded operators with $\operatorname{ran} A \subseteq \operatorname{ran} B$. The [Douglas factor](douglas-factor-lin.md) $C$, which sends $x$ to the unique $z \in (\ker B)^\perp$ with $B z = A x$, is continuous. This follows from the sequential closed graph theorem: if $u_n \to x$ and $C u_n \to y$, then $y \in (\ker B)^\perp$ because the orthogonal complement is closed, and $B y = A x$ by continuity of $A$ and $B$, so $y = C x$ by uniqueness of the preimage in $(\ker B)^\perp$.

@@ -1,0 +1,18 @@
+# Farey staircase
+
+- [Farey staircase](farey-staircase.md)
+- [The Farey staircase of order zero vanishes](farey-staircase-zero.md)
+- [The Farey staircase of order one is the floor function](farey-staircase-one.md)
+- [Zoomed Farey staircase](farey-zoom.md)
+- [The zoomed Farey staircase as a sum](farey-zoom-eq-sum.md)
+- [The zoomed Farey staircase of order one is the floor function](farey-zoom-one.md)
+- [Limit of the Farey staircase zoomed at the origin](tendsto-farey-zoom.md)
+- [Limit of the Farey staircase zoomed at a rational point](tendsto-farey-zoom-sub-at-rational.md)
+- [Limit of the rescaled Farey staircase increment](tendsto-sq-mul-farey-staircase-sub.md)
+- [Floor gaps of Farey staircases are dense above $1 - \log 2$](ici-one-sub-log-two-subset-closure-floor.md)
+- [Finiteness of small floor gaps of the Farey staircase](floor-gaps-inter-iic-finite.md)
+- [Recursion between consecutive Farey staircases](farey-staircase-sub-eq.md)
+- [Bounds comparing the Farey staircase with $\lfloor nx \rfloor / n$](farey-staircase-le-floor-div.md)
+- [Bounds on the increment of the Farey staircase](farey-staircase-sub-mem-icc.md)
+- [Harmonic blocks versus the logarithmic integral](tendsto-harmonic-block-sub-integral.md)
+- [Dilation derivative of a differentiable function](tendsto-dilation-quotient.md)

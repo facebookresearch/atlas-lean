@@ -830,47 +830,6 @@ private lemma ch6Entry14_abs_bernoulliFun_odd_le (n : ℕ) (hn : 1 ≤ n) (y : �
       0 ≤ 2 * ((2 * n + 1).factorial : ℝ) / (2 * Real.pi) ^ (2 * n + 1))]
   exact mul_le_mul_of_nonneg_left hsum (by positivity)
 
-private lemma ch6Entry14_bernoulli_coeff (j : ℕ) :
-    ((bernoulli j : ℚ) : ℝ) =
-      if j = 1 then (-1 / 2 : ℝ) else (bernoulli j : ℝ) := by
-  by_cases hj : j = 1
-  · subst j
-    simp [bernoulli_one]
-  · simp [hj]
-
-private lemma ch6Entry14_bernoulliFun_eq_sum (p : ℕ) (x : ℝ) :
-    bernoulliFun p x =
-      ∑ j ∈ Finset.range (p + 1), (Nat.choose p j : ℝ) *
-        (if j = 1 then (-1 / 2 : ℝ) else (bernoulli j : ℝ)) * x ^ (p - j) := by
-  rw [show bernoulliFun p x =
-    Polynomial.eval x (Polynomial.map (algebraMap ℚ ℝ) (Polynomial.bernoulli p)) by rfl]
-  rw [Polynomial.bernoulli_def, Polynomial.map_sum, Polynomial.eval_finsetSum]
-  have hterm : ∀ i ∈ Finset.range (p + 1),
-      Polynomial.eval x (Polynomial.map (algebraMap ℚ ℝ)
-        (Polynomial.monomial i (bernoulli (p - i) * ↑(p.choose i)))) =
-        ((bernoulli (p - i) : ℚ) : ℝ) * (Nat.choose p i : ℝ) * x ^ i := by
-    intro i _
-    rw [Polynomial.map_monomial, Polynomial.eval_monomial]
-    simp only [map_mul, map_natCast, eq_ratCast]
-  rw [Finset.sum_congr rfl hterm]
-  have hrefl : (∑ i ∈ Finset.range (p + 1),
-      ((bernoulli (p - i) : ℚ) : ℝ) * (Nat.choose p i : ℝ) * x ^ i) =
-      ∑ j ∈ Finset.range (p + 1),
-        ((bernoulli j : ℚ) : ℝ) * (Nat.choose p (p - j) : ℝ) * x ^ (p - j) := by
-    rw [← Finset.sum_range_reflect (fun j ↦ ((bernoulli j : ℚ) : ℝ) *
-      (Nat.choose p (p - j) : ℝ) * x ^ (p - j)) (p + 1)]
-    apply Finset.sum_congr rfl
-    intro i hi
-    simp only [Finset.mem_range] at hi
-    have e1 : p + 1 - 1 - i = p - i := by omega
-    have e2 : p - (p - i) = i := by omega
-    rw [e1, e2]
-  rw [hrefl]
-  apply Finset.sum_congr rfl
-  intro j hj
-  simp only [Finset.mem_range] at hj
-  rw [← ch6Entry14_bernoulli_coeff j, Nat.choose_symm (by omega : j ≤ p)]
-  ring
 
 private lemma ch6Entry14_periodicKernel_eq_of_spec
     (P : ℕ → ℝ → ℝ) (p : ℕ)
@@ -884,7 +843,7 @@ private lemma ch6Entry14_periodicKernel_eq_of_spec
     rw [Int.fract]
     simpa only [mul_one] using hp.sub_int_mul_eq (Int.floor x)
   rw [← hfract, hunit (Int.fract x) ⟨Int.fract_nonneg x, Int.fract_lt_one x⟩]
-  exact (ch6Entry14_bernoulliFun_eq_sum p (Int.fract x)).symm
+  exact (MetaMathlibExt.bernoulliFun_eq_sum p (Int.fract x)).symm
 
 private lemma ch6Entry14_abs_periodicKernel_odd_le (n : ℕ) (hn : 1 ≤ n) (x : ℝ) :
     |bernoulliKernel (2 * n + 1) x| ≤
@@ -1646,13 +1605,19 @@ private lemma ch6Entry14_minus_asymptotic_bound (x : ℝ) (n : ℕ)
       exact mul_le_mul_of_nonneg_left
         (le_add_of_nonneg_left (by positivity)) (by positivity)
 
-/-- The summands in `chapter6Entry14MinusSum` are summable for positive arguments. -/
+/-- **Summability of the Lambert series $\sum_k 1/(e^{kx}-1)$.** For every real $x > 0$, the
+series $\sum_{k=1}^{\infty} \frac{1}{e^{kx} - 1}$ is summable. -/
 theorem summable_chapter6Entry14MinusTerm (x : ℝ) (hx : 0 < x) :
     Summable (chapter6Entry14MinusTerm x) :=
   ch6Entry14_minusTerm_summable x hx
 
-/-- The Euler–Maclaurin expansion of `chapter6Entry14MinusSum`, with an explicit
-remainder bound. -/
+/-- **Remainder bound for the Lambert series $\sum_k 1/(e^{kx}-1)$.** Let $x > 0$ be real and
+let $n \ge 1$ be an integer. Let $S(x) = \sum_{k=1}^{\infty} \frac{1}{e^{kx} - 1}$, let $B_m$ be
+the $m$-th Bernoulli number, let $\gamma$ be the Euler–Mascheroni constant, and let
+$C_n(x) = \sum_{k=1}^{n} \frac{B_{2k}^2 \, x^{2k-1}}{2k \, (2k)!}$. Then
+$\left| S(x) - \left( \frac{\gamma}{x} - \frac{\log x}{x} + \frac14 - C_n(x) \right) \right|
+\le \frac{|B_{2n} B_{2n+2}| \, x^{2n}}{(2n)!}
+\left( \frac{x^2}{4\pi^2} + \frac{\pi^2}{6} \right)$. -/
 theorem chapter6Entry14MinusSum_error_le (x : ℝ) (n : ℕ)
     (hx : 0 < x) (hn : 1 ≤ n) :
     |chapter6Entry14MinusSum x -
@@ -1666,12 +1631,20 @@ theorem chapter6Entry14MinusSum_error_le (x : ℝ) (n : ℕ)
       (summable_chapter6Entry14MinusTerm x hx)
 
 
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 6.
+/-- **Asymptotic expansion of the Lambert series $\sum_k 1/(e^{kx}-1)$.** Let $x > 0$ be real
+and let $n \ge 1$ be an integer. Let $B_m$ be the $m$-th Bernoulli number, let $\gamma$ be the
+Euler–Mascheroni constant, and let
+$C_n(x) = \sum_{k=1}^{n} \frac{B_{2k}^2 \, x^{2k-1}}{2k \, (2k)!}$. Then the series
+$\sum_{k=1}^{\infty} \frac{1}{e^{kx} - 1}$ is summable, and its sum $S(x)$ satisfies
+$\left| S(x) - \left( \frac{\gamma}{x} - \frac{\log x}{x} + \frac14 - C_n(x) \right) \right|
+\le \frac{|B_{2n} B_{2n+2}| \, x^{2n}}{(2n)!} \left( \frac{x^2}{4\pi^2} + \frac{\pi^2}{6} \right)$.
+
+The proof applies the Euler–Maclaurin formula to the smooth Mittag-Leffler kernel and bounds
+the periodic Bernoulli remainder by its Fourier series.
 
 Proves `Wanted` entry `ramanujan_part1_ch6_entry10_centralbinomialfull`.
 
-Proof: Apply `MetaMathlibExt.eulerMaclaurinFormula` to the smooth Mittag-Leffler
-kernel, then bound its periodic Bernoulli remainder by its Fourier series.
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 6.
 -/
 theorem ramanujan_part1_ch6_entry10_centralbinomialfull (x : ℝ) (n : ℕ)
     (hx : 0 < x) (hn : 1 ≤ n) :
@@ -1754,7 +1727,8 @@ private lemma ch6Entry14_plusSummable_and_sum_eq (x : ℝ) (hx : 0 < x)
   rw [tsum_congr (ch6Entry14_plusTerm_eq_minusTerm_sub x hx),
     hs₁.tsum_sub (hs₂.mul_left 2), tsum_mul_left]
 
-/-- The summands in `chapter6Entry14PlusSum` are summable for positive arguments. -/
+/-- **Summability of the Lambert series $\sum_k 1/(e^{kx}+1)$.** For every real $x > 0$, the
+series $\sum_{k=1}^{\infty} \frac{1}{e^{kx} + 1}$ is summable. -/
 theorem summable_chapter6Entry14PlusTerm (x : ℝ) (hx : 0 < x) :
     Summable (chapter6Entry14PlusTerm x) := by
   exact (ch6Entry14_plusSummable_and_sum_eq x hx
@@ -1813,12 +1787,20 @@ private lemma ch6Entry14_plus_asymptotic_bound (x : ℝ) (n : ℕ)
       norm_num [pow_two]
       ring
 
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 6.
+/-- **Asymptotic expansion of the Lambert series $\sum_k 1/(e^{kx}+1)$.** Let $x > 0$ be real
+and let $n \ge 1$ be an integer. Let $B_m$ be the $m$-th Bernoulli number and let
+$D_n(x) = \sum_{k=1}^{n} \frac{(2^{2k} - 1) \, B_{2k}^2 \, x^{2k-1}}{2k \, (2k)!}$. Then the
+series $\sum_{k=1}^{\infty} \frac{1}{e^{kx} + 1}$ is summable, and its sum $T(x)$ satisfies
+$\left| T(x) - \left( \frac{\log 2}{x} - \frac14 + D_n(x) \right) \right|
+\le \frac{|B_{2n} B_{2n+2}| \, x^{2n}}{(2n)!} \left( \frac{x^2}{4\pi^2} + \frac{\pi^2}{6} +
+2^{2n+1} \left( \frac{x^2}{\pi^2} + \frac{\pi^2}{6} \right) \right)$.
+
+The proof writes this series as the series $\sum_k 1/(e^{kx}-1)$ minus twice the same series
+at $2x$, and applies the remainder bound for $\sum_k 1/(e^{kx}-1)$.
 
 Proves `Wanted` entry `ramanujan_part1_ch6_entry10_centralbinomialexpansion`.
 
-Proof: Rewrite the plus series as the minus series at `x` minus twice the minus
-series at `2 * x`, then apply the preceding Euler–Maclaurin remainder bound.
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 6.
 -/
 theorem ramanujan_part1_ch6_entry10_centralbinomialexpansion (x : ℝ) (n : ℕ)
     (hx : 0 < x) (hn : 1 ≤ n) :

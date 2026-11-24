@@ -91,21 +91,28 @@ where
     else lo
 
 /--
-Property stating that the array can be decomposed into a strictly increasing and a strictly
-decreasing part.
+**Unimodal arrays.** An array $a$ of natural numbers is unimodal if it is the concatenation of a
+strictly increasing array $b$ followed by a strictly decreasing array $b'$, where either part may
+be empty.
 -/
 def Unimodal (arr : Array Nat) : Prop :=
   ∃ b b', arr = b ++ b' ∧ b.toList.Pairwise (· < ·) ∧ b'.toList.Pairwise (· > ·)
 
 /--
-The number of indices at which the two given vectors differ
+**Number of differing positions.** For two vectors $a, b \in \mathbb{N}^n$, this is the number of
+indices $i < n$ with $a_i \neq b_i$, that is, the Hamming distance between $a$ and $b$.
 -/
 def differences {n : Nat} (a b : Vector Nat n) : Nat :=
   (List.finRange n).filter (fun i => a[i] ≠ b[i]) |>.length
 
 /--
-`minRearrange` correctly computes the smallest number of indices that need to be permuted in order to
-turn `arr` into a unimodal permutation.
+**Correctness of the unimodal rearrangement algorithm.** Let $a$ be an array of length $n$ that
+is a permutation of $1, \dots, n$, and let $m(a)$ be the value that the program
+$\mathrm{minRearrange}$ computes on $a$. Then some unimodal permutation $x$ of
+$1, \dots, n$ differs from $a$ in exactly $m(a)$ positions, and every unimodal permutation of
+$1, \dots, n$ differs from $a$ in at least $m(a)$ positions. So $m(a)$ is the minimum number of
+positions in which $a$ differs from a unimodal permutation of $1, \dots, n$.
+
 Source: NWERC 2025 Problem G, see https://2025.nwerc.eu/problem-set.pdf Via leanprover/lean-eval@38361be, problem `permute_to_unimodal`.
 -/
 public theorem_wanted minRearrange_correct {arr : Array Nat} :

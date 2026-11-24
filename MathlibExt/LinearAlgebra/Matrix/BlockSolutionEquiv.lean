@@ -27,9 +27,6 @@ once, as `elim_iff` with its two directions; no positivity, symmetry or
 graph assumption is used. A nonzero interior right-hand side survives
 reconstruction; singular `D` is excluded by the `Invertible D`
 hypothesis.
-
-Discharges ECE roadmap leaf `ECE.NET.REDUCTION.ELIM` (Kron reduction
-and one-port equivalents).
 -/
 
 @[expose] public section

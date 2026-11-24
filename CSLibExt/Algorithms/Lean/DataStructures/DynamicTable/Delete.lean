@@ -43,17 +43,24 @@ private lemma wellFormed_apply {α : Type u} {T : Table α} (hT : WellFormed T)
     (i : Nat) (h : i < T.slots.size) : (T.slots[i]'h).isSome ↔ i < T.num :=
   (wellFormed_iff T).mp hT i h
 
-/-- Lookup by logical position; positions at or beyond `num` return `none`. -/
+/-- **Lookup in a dynamic table.** Let $T$ be a dynamic table with slots $s_0, \dots, s_{m-1}$,
+each empty or holding an item, and item count $n \le m$. The lookup at logical position $i$
+returns the item held by $s_i$ when $i < n$ and $s_i$ is occupied; it returns no value when
+$i < n$ and $s_i$ is empty, and when $i \ge n$. -/
 public def get? {α : Type u} (T : Table α) (i : Nat) : Option α :=
   if i < T.num then (T.slots[i]?).bind id else none
 
-/-- Lookup outside the logical range always returns `none`. -/
+/-- **Lookup beyond the item count returns nothing.** Let $T$ be a dynamic table with item count
+$n$. For every natural number $i \ge n$, the lookup at logical position $i$ in $T$ returns no
+value. -/
 public theorem get?_eq_none_of_le {α : Type u} (T : Table α) {i : Nat}
     (h : T.num ≤ i) : get? T i = none := by
   have hnot : ¬i < T.num := by omega
   simp [get?, hnot]
 
-/-- In a well-formed table, lookup returns a value exactly on the logical range. -/
+/-- **Lookup succeeds exactly below the item count.** Let $T$ be a well-formed dynamic table
+holding $n$ items. For every natural number $i$, the lookup at logical position $i$ in $T$
+returns a value if and only if $i < n$. -/
 public theorem get?_isSome_iff {α : Type u} (T : Table α) (hT : WellFormed T)
     (i : Nat) : (get? T i).isSome ↔ i < T.num := by
   constructor
@@ -67,9 +74,13 @@ public theorem get?_isSome_iff {α : Type u} (T : Table α) (hT : WellFormed T)
     simp [get?, hi, Array.getElem?_eq_getElem hlt, hsome]
 
 /--
-TABLE-DELETE for the last item. After decrementing `num`, contract to half
-capacity when `4 * num < size`, that is, when the new load factor is
-strictly below `1/4`; otherwise clear the vacated slot in place.
+**Deletion from a dynamic table.** Let $T$ be a dynamic table with slots $s_0, \dots, s_{m-1}$,
+each empty or holding an item, and item count $n \le m$. Deleting the last item of $T$ gives the
+following table. If $n = 0$, the result is $T$ itself. Otherwise, if $4(n-1) < m$, that is, the
+load factor after deletion is strictly below $1/4$, the table contracts: the result has slots
+$s_0, \dots, s_{n-2}$ followed by $\lfloor m/2 \rfloor - (n-1)$ empty slots, so capacity
+$\lfloor m/2 \rfloor$, and item count $n-1$. Otherwise the result has the slots of $T$ with
+$s_{n-1}$ made empty, and item count $n-1$.
 -/
 public def tableDelete {α : Type u} (T : Table α) : Table α :=
   if hnum : T.num = 0 then T
@@ -87,7 +98,8 @@ public def tableDelete {α : Type u} (T : Table α) : Table α :=
       have h := T.num_le
       omega⟩
 
-/-- Deletion decrements the item count, with an empty table left at zero. -/
+/-- **Item count after deletion.** Applying deletion to a dynamic table with item count $n$ gives
+a table with item count $n - 1$ when $n \ge 1$, and item count $0$ when $n = 0$. -/
 public theorem tableDelete_num {α : Type u} (T : Table α) :
     (tableDelete T).num = T.num - 1 := by
   by_cases h0 : T.num = 0
@@ -96,7 +108,9 @@ public theorem tableDelete_num {α : Type u} (T : Table α) :
     · simp [tableDelete, h0, hcon]
     · simp [tableDelete, h0, hcon]
 
-/-- Deletion leaves capacity unchanged except for halving on contraction. -/
+/-- **Capacity after deletion.** Let $T$ be a dynamic table with capacity $m$ and item count $n$,
+and apply deletion to $T$. If $n = 0$, the capacity stays $m$. If $n \ge 1$ and $4(n-1) < m$, the
+new capacity is $\lfloor m/2 \rfloor$. Otherwise the capacity stays $m$. -/
 public theorem tableDelete_size {α : Type u} (T : Table α) :
     (tableDelete T).slots.size =
       if T.num = 0 then T.slots.size
@@ -177,8 +191,10 @@ private lemma wellFormed_of_slots {α : Type u} (T out : Table α) (k n : Nat)
   · rw [Array.getElem_append_right (by omega), Array.getElem_replicate]
     exact ⟨fun h => Bool.noConfusion h, fun h => (hn h).elim⟩
 
-/-- After deleting from a nonempty well-formed table, the slots are the
-retained occupied prefix followed by empty slots. -/
+/-- **Slots after deletion.** Let $T$ be a well-formed dynamic table with slots
+$s_0, \dots, s_{m-1}$ holding $n \ge 1$ items, and let $m'$ be the capacity of the table obtained
+by applying deletion to $T$. The slots of that table are the first $n - 1$ slots
+$s_0, \dots, s_{n-2}$ of $T$ followed by $m' - (n - 1)$ empty slots. -/
 public theorem tableDelete_slots {α : Type u} (T : Table α) (hT : WellFormed T)
     (hnum : T.num ≠ 0) :
     (tableDelete T).slots =
@@ -249,7 +265,9 @@ public theorem tableDelete_slots {α : Type u} (T : Table α) (hT : WellFormed T
           rw [hleft, hnone, Array.getElem_append_right hpre,
             Array.getElem_replicate]
 
-/-- Deletion preserves exact compact-prefix occupancy. -/
+/-- **Deletion preserves well-formedness.** Let $T$ be a well-formed dynamic table, that is, its
+occupied slots are exactly its first $n$ slots, where $n$ is its item count. Then the table
+obtained by applying deletion to $T$ is again well-formed. -/
 public theorem tableDelete_wellFormed {α : Type u} (T : Table α)
     (hT : WellFormed T) : WellFormed (tableDelete T) := by
   by_cases h0 : T.num = 0
@@ -258,7 +276,9 @@ public theorem tableDelete_wellFormed {α : Type u} (T : Table α)
   · exact wellFormed_of_slots T _ _ _ hT (tableDelete_num T) (by omega)
       (tableDelete_slots T hT h0)
 
-/-- Deletion removes exactly the last logical item from the contents. -/
+/-- **Deletion removes the last item from the contents.** Let $T$ be a well-formed dynamic table.
+The contents of the table obtained by applying deletion to $T$ is the contents of $T$ with its
+last entry removed; when the contents of $T$ is empty, it stays empty. -/
 public theorem tableDelete_contents {α : Type u} (T : Table α) (hT : WellFormed T) :
     (contents (tableDelete T)).toList = (contents T).toList.dropLast := by
   by_cases h0 : T.num = 0
@@ -286,7 +306,10 @@ public theorem tableDelete_contents {α : Type u} (T : Table α) (hT : WellForme
     rw [hdel_contents, hcontents, Array.toList_push]
     simp
 
-/-- Lookup below the deleted position is unchanged by deletion. -/
+/-- **Deletion preserves lookups below the last position.** Let $T$ be a well-formed dynamic
+table holding $n$ items, and let $i$ be a natural number with $i < n - 1$. After applying
+deletion to $T$, the lookup at logical position $i$ returns the same result as the lookup at
+position $i$ in $T$. -/
 public theorem get?_delete_of_lt {α : Type u} (T : Table α) (hT : WellFormed T)
     {i : Nat} (hi : i < T.num - 1) : get? (tableDelete T) i = get? T i := by
   have hnum : T.num ≠ 0 := by omega
@@ -304,7 +327,9 @@ public theorem get?_delete_of_lt {α : Type u} (T : Table α) (hT : WellFormed T
   simp only [Array.getElem?_append, Array.getElem?_extract, Nat.min_eq_left hkle,
     Nat.sub_zero, Nat.zero_add, hpre, hi, ↓reduceIte]
 
-/-- Lookup at the deleted position finds nothing after deletion. -/
+/-- **Lookup at the vacated position after deletion.** Let $T$ be a dynamic table with item count
+$n$, where $n - 1$ is read as $0$ when $n = 0$. After applying deletion to $T$, the lookup at
+logical position $n - 1$ returns no value. -/
 public theorem get?_delete_last {α : Type u} (T : Table α) :
     get? (tableDelete T) (T.num - 1) = none := by
   have h := tableDelete_num T

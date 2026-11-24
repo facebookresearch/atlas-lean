@@ -16,10 +16,10 @@ Research Letters 40 (2012), 31-35, doi:10.1016/j.orl.2011.10.003 (arXiv:1104.108
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import MathlibExt.Biology.Phylogenetics.BalancedMinimumEvolution
+public import MathlibExt.Combinatorics.Tree.WeightedLeafDistance
 
 @[expose] public section
 
@@ -43,7 +43,7 @@ Their Theorem 3.1 shows that the problem has no `cⁿ`-approximation unless P = 
 reduction from 3-COLORABILITY whose instances have all `δᵢⱼ ∈ {0, 1}`; in particular the
 decision problem is NP-hard.
 
-Trees reuse `MathlibExt.Biology.Phylogenetics.BalancedMinimumEvolution`: a `UTree` is a cubic
+Trees reuse `MathlibExt.Combinatorics.Tree.WeightedLeafDistance`: a `UTree` is a cubic
 tree rooted at an edge (two rooted binary trees joined by an edge); every cubic tree with at
 least two leaves arises this way, and its `bmeLength` for a symmetric dissimilarity is
 `∑_{i<j} 2^{1-τᵢⱼ} δᵢⱼ`, which depends only on the topology (the edge lengths of the `UTree` are

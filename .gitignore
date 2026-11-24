@@ -4,5 +4,13 @@ build/
 *.ilean
 *.trace
 .DS_Store
+
+# Local blueprint rendering and dependency extraction outputs.
+site-src/
+site/
+v2-dependencies.jsonl
+v2-dependencies.jsonl.gz
+v2-modules.txt
+.venv/
 __pycache__/
 *.pyc

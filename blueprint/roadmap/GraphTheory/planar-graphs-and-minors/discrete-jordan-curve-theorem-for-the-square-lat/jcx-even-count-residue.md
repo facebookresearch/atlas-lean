@@ -1,0 +1,3 @@
+# Even-degree subgraphs have as many regions as their face count
+
+Let $P$ be a finite graph $G = (V, E)$ with an injective map $\iota : V \to \mathbb{Z}^2$ sending edges to edges of the square lattice. $P$ has this property when, for every subgraph $K \le G$ (on the same vertex set $V$) whose image $\iota(K)$ has even degree at every site of $\mathbb{Z}^2$, the number of connected components of the face-region graph of $\iota(K)$ (unit faces, two adjacent faces joined unless the primal edge separating them is an edge of $\iota(K)$) equals the face count $\beta(K) + 1$, where $\beta(K) = |E(K)| + c(K) - |V|$ is the cycle rank of $K$ and $c(K)$ its number of connected components.

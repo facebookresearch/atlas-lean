@@ -49,9 +49,6 @@ some violate it (`Delta = 1`, singleton code range, `x = 10` has error
 `10`), while others still meet it (`x = 1 / 2` in the same range is
 clipped and has error exactly `Delta / 2`). No probabilistic model of
 the quantization error is asserted.
-
-This module formalizes a saturating ADC with an explicit
-quantization contract.
 -/
 
 @[expose] public section

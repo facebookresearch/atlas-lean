@@ -1,0 +1,3 @@
+# Marginal law of the targets in Gaussian-process regression
+
+Let $k$ be a kernel and $x = (x_j)_{j \in \nu}$ a finite family of training inputs whose kernel matrix $K = K(x, x)$ is positive semidefinite, and let $\sigma^2 \ge 0$. Let the latent function values $f \sim N(0, K)$ and the noise $\varepsilon \sim N(0, \sigma^2 I)$ be independent measurable random vectors in $\mathbb{R}^\nu$ on a probability space. Then the targets $y = f + \varepsilon$ satisfy $y \sim N(0, K + \sigma^2 I)$. This is the marginalization over $f$ in Rasmussen and Williams (2006), Equation 2.28, and the direct argument they give after Equation 2.30.

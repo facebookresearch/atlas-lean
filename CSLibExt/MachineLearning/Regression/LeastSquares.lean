@@ -13,6 +13,7 @@ public import Mathlib.Algebra.Order.Star.Real
 public import Mathlib.LinearAlgebra.Matrix.PosDef
 public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 public import Mathlib.LinearAlgebra.Matrix.Rank
+import MathlibExt.LinearAlgebra.Matrix.DeterminantLemma
 
 /-!
 # Least squares, ridge and lasso regression as maximum likelihood and MAP estimation
@@ -34,6 +35,12 @@ norms.)
   invertible the solution is
   `(Xᵀ X)⁻¹ Xᵀ y`, the least-squares matrix of MathlibExt's Gauss–Markov theorem
   (`MathlibExt.Probability.Statistics.GaussMarkov.gaussMarkov_covariance_minimality`).
+* `leaveOneOut_leverage_residual`: **leave-one-out least squares**. When `Xᵀ X` is invertible and
+  row `i` has leverage `h = xᵢᵀ (Xᵀ X)⁻¹ xᵢ ≠ 1`, the Gram matrix without row `i` is invertible (by
+  the matrix determinant lemma `Matrix.det_add_vecMulVec_of_isUnit_det`), its estimate minimizes
+  the residual sum of squares of the data without row `i`, `q = xᵢᵀ G₋ᵢ⁻¹ xᵢ` satisfies
+  `q = h / (1 - h)` and `h = q / (1 + q)`, and the residuals at row `i` satisfy
+  `eᵢ = (1 - h) e₋ᵢ`.
 * `gaussLikelihood_eq`, `gaussLikelihood_le_iff`: with independent Gaussian noise of variance
   `σ²`, the likelihood is a decreasing function of the residual sum of squares, so **least
   squares is maximum likelihood** (`isMaxOn_gaussLikelihood_iff`, and
@@ -50,7 +57,8 @@ norms.)
   objective (`softThreshold_le` in one dimension).
 
 The Gaussian MLE of linear regression is the Gaussian case of a canonical generalized linear
-model; see `glmLoss_sq` in `CSLibExt/MachineLearning/Discriminative/ExponentialFamily.lean`.
+model; the Bernoulli case, logistic regression, is in
+`CSLibExt/MachineLearning/Classification/LogisticSVM.lean`.
 -/
 
 @[expose] public section
@@ -64,7 +72,10 @@ variable {ι : Type*} [Fintype ι] {m : ℕ}
 private theorem dot_self_nonneg {n : Type*} [Fintype n] (w : n → ℝ) : 0 ≤ w ⬝ᵥ w := by
   simpa using dotProduct_star_self_nonneg w
 
-/-- The residual sum of squares `∑ k, (y k - (X θ) k)²`. -/
+/-- **Residual sum of squares.** For a real design matrix $X$ with $m$ rows and columns indexed
+by a finite type $\iota$, responses $y \in \mathbb{R}^m$ and $\theta \in \mathbb{R}^\iota$, the
+residual sum of squares is
+$S(\theta) = (y - X\theta) \cdot (y - X\theta) = \sum_{k=1}^{m} (y_k - (X\theta)_k)^2$. -/
 noncomputable def rss (X : Matrix (Fin m) ι ℝ) (y : Fin m → ℝ) (θ : ι → ℝ) : ℝ :=
   (y - X *ᵥ θ) ⬝ᵥ (y - X *ᵥ θ)
 
@@ -76,7 +87,12 @@ theorem mulVec_dotProduct_eq (X : Matrix (Fin m) ι ℝ) (v : ι → ℝ) (r : F
     (X *ᵥ v) ⬝ᵥ r = v ⬝ᵥ (Xᵀ *ᵥ r) := by
   rw [dotProduct_comm, dotProduct_mulVec, mulVec_transpose, dotProduct_comm]
 
-/-- Expansion of the residual sum of squares around `θ`. -/
+/-- **Expansion of the residual sum of squares.** Let $X$ be a real design matrix with $m$ rows
+and columns indexed by a finite type $\iota$, let $y \in \mathbb{R}^m$, and write
+$S(\theta) = (y - X\theta) \cdot (y - X\theta)$ for the residual sum of squares. Then for all
+$\theta, v \in \mathbb{R}^\iota$,
+$$S(\theta + v) = S(\theta) - 2\, v \cdot \bigl(X^\top (y - X\theta)\bigr) + (Xv) \cdot (Xv).$$
+-/
 theorem rss_add (X : Matrix (Fin m) ι ℝ) (y : Fin m → ℝ) (θ v : ι → ℝ) :
     rss X y (θ + v) =
       rss X y θ - 2 * (v ⬝ᵥ (Xᵀ *ᵥ (y - X *ᵥ θ))) + (X *ᵥ v) ⬝ᵥ (X *ᵥ v) := by
@@ -92,8 +108,12 @@ theorem normal_iff (X : Matrix (Fin m) ι ℝ) (y : Fin m → ℝ) (θ : ι → 
     Xᵀ *ᵥ (X *ᵥ θ) = Xᵀ *ᵥ y ↔ Xᵀ *ᵥ (y - X *ᵥ θ) = 0 := by
   rw [mulVec_sub, sub_eq_zero, eq_comm]
 
-/-- **Pythagoras for least squares**: at a solution `θ₀` of the normal equations,
-`rss θ = rss θ₀ + (X (θ - θ₀)) ⬝ᵥ (X (θ - θ₀))`. -/
+/-- **Pythagoras for least squares.** Let $X$ be a real design matrix with $m$ rows and columns
+indexed by a finite type $\iota$, let $y \in \mathbb{R}^m$, write $S$ for the residual sum of
+squares, and let $\theta_0 \in \mathbb{R}^\iota$ solve the normal equations
+$X^\top X \theta_0 = X^\top y$. Then for every $\theta \in \mathbb{R}^\iota$,
+$$S(\theta) = S(\theta_0) + (X(\theta - \theta_0)) \cdot (X(\theta - \theta_0)).$$
+-/
 theorem rss_eq_of_normal {X : Matrix (Fin m) ι ℝ} {y : Fin m → ℝ} {θ₀ : ι → ℝ}
     (h : Xᵀ *ᵥ (X *ᵥ θ₀) = Xᵀ *ᵥ y) (θ : ι → ℝ) :
     rss X y θ = rss X y θ₀ + (X *ᵥ (θ - θ₀)) ⬝ᵥ (X *ᵥ (θ - θ₀)) := by
@@ -116,8 +136,10 @@ theorem eq_zero_of_forall_quadratic {b q : ℝ} (hq : 0 ≤ q)
   have hpos : 0 < b ^ 2 * (q + 2) / (q + 1) ^ 2 := by positivity
   linarith [h (b / (q + 1))]
 
-/-- **Least squares and the normal equations**: `θ₀` minimizes the residual sum of squares if
-and only if `Xᵀ X θ₀ = Xᵀ y`. -/
+/-- **Least squares and the normal equations.** Let $X$ be a real design matrix with $m$ rows and
+columns indexed by a finite type $\iota$, let $y \in \mathbb{R}^m$, and write $S$ for the residual
+sum of squares. A vector $\theta_0 \in \mathbb{R}^\iota$ satisfies $S(\theta_0) \le S(\theta)$ for
+every $\theta \in \mathbb{R}^\iota$ if and only if $X^\top X \theta_0 = X^\top y$. -/
 theorem rss_le_iff_normal (X : Matrix (Fin m) ι ℝ) (y : Fin m → ℝ) (θ₀ : ι → ℝ) :
     (∀ θ, rss X y θ₀ ≤ rss X y θ) ↔ Xᵀ *ᵥ (X *ᵥ θ₀) = Xᵀ *ᵥ y := by
   refine ⟨fun hmin => ?_, rss_le_of_normal⟩
@@ -131,8 +153,13 @@ theorem rss_le_iff_normal (X : Matrix (Fin m) ι ℝ) (y : Fin m → ℝ) (θ₀
     nlinarith
   exact dotProduct_self_eq_zero.1 hg
 
-/-- **Least-squares estimates exist**: the normal equations `Xᵀ X θ = Xᵀ y` always have a
-solution, because `Xᵀ X` and `Xᵀ` have the same range (`Matrix.rank_transpose_mul_self`). -/
+/-- **Least-squares estimates exist.** Let $X$ be a real matrix with $m$ rows and columns indexed
+by a finite set $\iota$, and let $y \in \mathbb{R}^m$. Then there is $\theta \in \mathbb{R}^\iota$
+with $X^\top X \theta = X^\top y$: the normal equations always have a solution, whatever the rank
+of $X$.
+
+The reason is that the range of $X^\top X$ is contained in that of $X^\top$ and the two matrices
+have the same rank, so their ranges coincide. -/
 theorem exists_normal (X : Matrix (Fin m) ι ℝ) (y : Fin m → ℝ) :
     ∃ θ, Xᵀ *ᵥ (X *ᵥ θ) = Xᵀ *ᵥ y := by
   classical
@@ -152,13 +179,19 @@ theorem exists_rss_le (X : Matrix (Fin m) ι ℝ) (y : Fin m → ℝ) :
 
 variable [DecidableEq ι]
 
-/-- When `Xᵀ X` is invertible, `(Xᵀ X)⁻¹ Xᵀ y` solves the normal equations. -/
+/-- **Closed-form solution of the normal equations.** Let $X$ be a real matrix with $m$ rows and
+columns indexed by a finite set $\iota$ such that $X^\top X$ is invertible, and let
+$y \in \mathbb{R}^m$. Then $\hat\theta = (X^\top X)^{-1} X^\top y$ solves the normal equations
+$X^\top X \hat\theta = X^\top y$. -/
 theorem normal_inv {X : Matrix (Fin m) ι ℝ} (hX : IsUnit (Xᵀ * X).det) (y : Fin m → ℝ) :
     Xᵀ *ᵥ (X *ᵥ (((Xᵀ * X)⁻¹ * Xᵀ) *ᵥ y)) = Xᵀ *ᵥ y := by
   rw [mulVec_mulVec, mulVec_mulVec, ← Matrix.mul_assoc, mul_nonsing_inv _ hX, Matrix.one_mul]
 
 omit [DecidableEq ι] in
-/-- The residual sum of squares is convex. -/
+/-- **Convexity of the residual sum of squares.** Let $X$ be a real matrix with $m$ rows and
+columns indexed by a finite set $\iota$, and let $y \in \mathbb{R}^m$. Then the residual sum of
+squares $\theta \mapsto \sum_k (y_k - (X\theta)_k)^2$ is a convex function on all of
+$\mathbb{R}^\iota$. -/
 theorem convexOn_rss (X : Matrix (Fin m) ι ℝ) (y : Fin m → ℝ) :
     ConvexOn ℝ Set.univ (rss X y) := by
   refine ⟨convex_univ, fun θ _ θ' _ a b ha hb hab => ?_⟩
@@ -178,9 +211,18 @@ section Gaussian
 open NNReal ProbabilityTheory
 
 omit [DecidableEq ι] in
-/-- The likelihood of the responses under independent Gaussian noise with variance `v`. Following
-Mathlib's `gaussianPDFReal`, the variance is in `ℝ≥0` and `v = 0` gives the zero function, not a
-Dirac kernel; the probabilistic statements below assume `v ≠ 0`. -/
+/-- **Gaussian likelihood of linear regression.** Let $X$ be a real matrix with $m$ rows and
+columns indexed by a finite set $\iota$, let $y \in \mathbb{R}^m$ and let $v \ge 0$. The Gaussian
+likelihood with noise variance $v$ is the function of $\theta \in \mathbb{R}^\iota$ given by
+$$
+L(\theta) = \prod_{k=1}^{m} \frac{1}{\sqrt{2 \pi v}}
+\exp\left(-\frac{(y_k - (X\theta)_k)^2}{2 v}\right).
+$$
+This is the likelihood of $y$ when $y_k = (X\theta)_k + \varepsilon_k$ with independent
+$\varepsilon_k \sim N(0, v)$.
+
+For $v = 0$ each factor is the zero function (with the convention $1/0 = 0$), not a Dirac kernel;
+the results about this likelihood assume $v \neq 0$. -/
 noncomputable def gaussLikelihood (X : Matrix (Fin m) ι ℝ) (y : Fin m → ℝ) (v : ℝ≥0)
     (θ : ι → ℝ) : ℝ :=
   ∏ k, gaussianPDFReal ((X *ᵥ θ) k) v (y k)
@@ -198,8 +240,12 @@ theorem normConst_pos {v : ℝ≥0} (hv : v ≠ 0) (n : ℕ) : 0 < (√(2 * π *
   positivity
 
 omit [DecidableEq ι] in
-/-- With Gaussian noise the likelihood is a decreasing function of the residual sum of
-squares. -/
+/-- **The Gaussian likelihood decreases with the residual sum of squares.** Let $X$ be a real
+matrix with $m$ rows and columns indexed by a finite set $\iota$, let $y \in \mathbb{R}^m$ and
+$v > 0$, let $L$ be the Gaussian likelihood of linear regression with noise variance $v$, and let
+$\mathrm{RSS}(\theta) = \sum_k (y_k - (X\theta)_k)^2$ be the residual sum of squares. Then for all
+$\theta, \theta' \in \mathbb{R}^\iota$, $L(\theta) \le L(\theta')$ if and only if
+$\mathrm{RSS}(\theta') \le \mathrm{RSS}(\theta)$. -/
 theorem gaussLikelihood_le_iff {X : Matrix (Fin m) ι ℝ} {y : Fin m → ℝ} {v : ℝ≥0} (hv : v ≠ 0)
     (θ θ' : ι → ℝ) :
     gaussLikelihood X y v θ ≤ gaussLikelihood X y v θ' ↔ rss X y θ' ≤ rss X y θ := by
@@ -210,8 +256,11 @@ theorem gaussLikelihood_le_iff {X : Matrix (Fin m) ι ℝ} {y : Fin m → ℝ} {
     exp_le_exp, div_le_div_iff_of_pos_right hv', neg_le_neg_iff]
 
 omit [DecidableEq ι] in
-/-- **Least squares is maximum likelihood**: with Gaussian noise, `θ₀` maximizes the likelihood
-if and only if it solves the normal equations. -/
+/-- **Least squares is maximum likelihood.** Let $X$ be a real matrix with $m$ rows and columns
+indexed by a finite set $\iota$, let $y \in \mathbb{R}^m$ and $v > 0$, and let $L$ be the Gaussian
+likelihood of linear regression with noise variance $v$. Then $\theta_0 \in \mathbb{R}^\iota$
+maximizes $L$ over $\mathbb{R}^\iota$ if and only if it solves the normal equations
+$X^\top X \theta_0 = X^\top y$. -/
 theorem isMaxOn_gaussLikelihood_iff {X : Matrix (Fin m) ι ℝ} {y : Fin m → ℝ} {v : ℝ≥0}
     (hv : v ≠ 0) (θ₀ : ι → ℝ) :
     IsMaxOn (gaussLikelihood X y v) Set.univ θ₀ ↔ Xᵀ *ᵥ (X *ᵥ θ₀) = Xᵀ *ᵥ y := by
@@ -220,7 +269,11 @@ theorem isMaxOn_gaussLikelihood_iff {X : Matrix (Fin m) ι ℝ} {y : Fin m → �
     fun h θ _ => (gaussLikelihood_le_iff hv θ θ₀).2 (h θ)⟩
 
 omit [DecidableEq ι] in
-/-- A maximum likelihood estimate exists for every design. -/
+/-- **Existence of the Gaussian maximum likelihood estimate.** Let $X$ be a real matrix with $m$
+rows and columns indexed by a finite set $\iota$, let $y \in \mathbb{R}^m$ and $v > 0$, and let $L$
+be the Gaussian likelihood of linear regression with noise variance $v$. Then $L$ attains its
+maximum on $\mathbb{R}^\iota$: there is $\theta_0 \in \mathbb{R}^\iota$ with
+$L(\theta) \le L(\theta_0)$ for every $\theta \in \mathbb{R}^\iota$. -/
 theorem exists_isMaxOn_gaussLikelihood (X : Matrix (Fin m) ι ℝ) (y : Fin m → ℝ) {v : ℝ≥0}
     (hv : v ≠ 0) : ∃ θ₀, IsMaxOn (gaussLikelihood X y v) Set.univ θ₀ :=
   (exists_normal X y).imp fun θ₀ h => (isMaxOn_gaussLikelihood_iff hv θ₀).2 h
@@ -234,12 +287,20 @@ section Ridge
 open NNReal ProbabilityTheory
 
 omit [DecidableEq ι] in
-/-- The ridge objective `rss X y θ + λ θ ⬝ᵥ θ`. -/
+/-- **Ridge objective.** For a real design matrix $X$ with $m$ rows and columns indexed by a
+finite type $\iota$, responses $y \in \mathbb{R}^m$, a real number $\lambda$ and
+$\theta \in \mathbb{R}^\iota$, let $S(\theta) = \sum_{k=1}^{m} (y_k - (X\theta)_k)^2$ be the
+residual sum of squares. The ridge objective is $S(\theta) + \lambda \sum_{i} \theta_i^2$. -/
 noncomputable def ridge (X : Matrix (Fin m) ι ℝ) (y : Fin m → ℝ) (lam : ℝ) (θ : ι → ℝ) : ℝ :=
   rss X y θ + lam * (θ ⬝ᵥ θ)
 
-/-- At a solution of the ridge normal equations `(Xᵀ X + λ I) θ₀ = Xᵀ y`,
-`ridge θ = ridge θ₀ + (X (θ - θ₀)) ⬝ᵥ (X (θ - θ₀)) + λ (θ - θ₀) ⬝ᵥ (θ - θ₀)`. -/
+/-- **Expansion of the ridge objective around a solution of its normal equations.** Let $X$ be a
+real matrix with $m$ rows and columns indexed by a finite set $\iota$, let $y \in \mathbb{R}^m$
+and $\lambda \in \mathbb{R}$, and write $\|\cdot\|$ for the Euclidean norm and
+$R(\theta) = \|y - X\theta\|^2 + \lambda \|\theta\|^2$ for the ridge objective. If
+$\theta_0 \in \mathbb{R}^\iota$ satisfies $(X^\top X + \lambda I)\theta_0 = X^\top y$, then for
+every $\theta \in \mathbb{R}^\iota$,
+$R(\theta) = R(\theta_0) + \|X(\theta - \theta_0)\|^2 + \lambda \|\theta - \theta_0\|^2$. -/
 theorem ridge_eq_of_normal {X : Matrix (Fin m) ι ℝ} {y : Fin m → ℝ} {lam : ℝ} {θ₀ : ι → ℝ}
     (h : (Xᵀ * X + lam • 1) *ᵥ θ₀ = Xᵀ *ᵥ y) (θ : ι → ℝ) :
     ridge X y lam θ = ridge X y lam θ₀ + (X *ᵥ (θ - θ₀)) ⬝ᵥ (X *ᵥ (θ - θ₀)) +
@@ -257,7 +318,11 @@ theorem ridge_eq_of_normal {X : Matrix (Fin m) ι ℝ} {y : Fin m → ℝ} {lam 
   simp only [add_dotProduct, dotProduct_add, dotProduct_comm d θ₀]
   ring
 
-/-- Solutions of the ridge normal equations minimize the ridge objective (for `λ ≥ 0`). -/
+/-- **Solutions of the ridge normal equations minimize the ridge objective.** Let $X$ be a real
+matrix with $m$ rows and columns indexed by a finite set $\iota$, let $y \in \mathbb{R}^m$ and
+$\lambda \ge 0$, and write $\|\cdot\|$ for the Euclidean norm. If $\theta_0 \in \mathbb{R}^\iota$
+satisfies $(X^\top X + \lambda I)\theta_0 = X^\top y$, then for every $\theta \in \mathbb{R}^\iota$,
+$\|y - X\theta_0\|^2 + \lambda \|\theta_0\|^2 \le \|y - X\theta\|^2 + \lambda \|\theta\|^2$. -/
 theorem ridge_le_of_normal {X : Matrix (Fin m) ι ℝ} {y : Fin m → ℝ} {lam : ℝ} (hlam : 0 ≤ lam)
     {θ₀ : ι → ℝ} (h : (Xᵀ * X + lam • 1) *ᵥ θ₀ = Xᵀ *ᵥ y) (θ : ι → ℝ) :
     ridge X y lam θ₀ ≤ ridge X y lam θ := by
@@ -266,7 +331,9 @@ theorem ridge_le_of_normal {X : Matrix (Fin m) ι ℝ} {y : Fin m → ℝ} {lam 
     (mul_nonneg hlam (dot_self_nonneg _)))
 
 omit [Fintype ι] in
-/-- For `λ > 0` the ridge matrix `Xᵀ X + λ I` is positive definite. -/
+/-- **The ridge matrix is positive definite.** For every real matrix $X$ with $m$ rows and columns
+indexed by a finite set $\iota$ and every real $\lambda > 0$, the matrix $X^\top X + \lambda I$ is
+positive definite. -/
 theorem posDef_ridge [Finite ι] (X : Matrix (Fin m) ι ℝ) {lam : ℝ} (hlam : 0 < lam) :
     (Xᵀ * X + lam • (1 : Matrix ι ι ℝ)).PosDef := by
   have := Fintype.ofFinite ι
@@ -275,7 +342,12 @@ theorem posDef_ridge [Finite ι] (X : Matrix (Fin m) ι ℝ) {lam : ℝ} (hlam :
     rwa [conjTranspose_eq_transpose_of_trivial] at this
   simpa [add_comm] using (PosDef.one.smul hlam).add_posSemidef h1
 
-/-- The ridge estimate `(Xᵀ X + λ I)⁻¹ Xᵀ y`. -/
+/-- **Ridge estimate.** For a real matrix $X$ with $m$ rows and columns indexed by a finite set
+$\iota$, responses $y \in \mathbb{R}^m$ and a real number $\lambda$, the ridge estimate is
+$(X^\top X + \lambda I)^{-1} X^\top y \in \mathbb{R}^\iota$.
+
+The inverse of a singular matrix is taken to be $0$; for $\lambda > 0$ the matrix
+$X^\top X + \lambda I$ is always invertible. -/
 noncomputable def ridgeEstimate (X : Matrix (Fin m) ι ℝ) (y : Fin m → ℝ) (lam : ℝ) : ι → ℝ :=
   (Xᵀ * X + lam • 1)⁻¹ *ᵥ (Xᵀ *ᵥ y)
 
@@ -284,8 +356,11 @@ theorem ridgeEstimate_normal (X : Matrix (Fin m) ι ℝ) (y : Fin m → ℝ) {la
   rw [ridgeEstimate, mulVec_mulVec, mul_nonsing_inv _ ((posDef_ridge X hlam).det_pos.ne').isUnit,
     one_mulVec]
 
-/-- **Closed form of ridge regression**: for `λ > 0`, `(Xᵀ X + λ I)⁻¹ Xᵀ y` is the unique
-minimizer of the ridge objective. -/
+/-- **Closed form of ridge regression.** Let $X$ be a real matrix with $m$ rows and columns indexed
+by a finite set $\iota$, let $y \in \mathbb{R}^m$ and $\lambda > 0$, and write $\|\cdot\|$ for the
+Euclidean norm. The ridge estimate $\hat\theta = (X^\top X + \lambda I)^{-1} X^\top y$ minimizes
+the ridge objective: for every $\theta \in \mathbb{R}^\iota$,
+$\|y - X\hat\theta\|^2 + \lambda \|\hat\theta\|^2 \le \|y - X\theta\|^2 + \lambda \|\theta\|^2$. -/
 theorem ridge_le_ridgeEstimate (X : Matrix (Fin m) ι ℝ) (y : Fin m → ℝ) {lam : ℝ}
     (hlam : 0 < lam) (θ : ι → ℝ) : ridge X y lam (ridgeEstimate X y lam) ≤ ridge X y lam θ :=
   ridge_le_of_normal hlam.le (ridgeEstimate_normal X y hlam) θ
@@ -301,8 +376,14 @@ theorem eq_ridgeEstimate_of_ridge_le (X : Matrix (Fin m) ι ℝ) (y : Fin m → 
   exact sub_eq_zero.1 (dotProduct_self_eq_zero.1 h2)
 
 omit [DecidableEq ι] in
-/-- The density of independent `N(0, τ)` coordinates (for `τ ≠ 0`; at `τ = 0` Mathlib's
-`gaussianPDFReal` is the zero function). -/
+/-- **Density of independent centred Gaussian coordinates.** For a finite set $\iota$, a variance
+$\tau \ge 0$ and $\theta \in \mathbb{R}^\iota$, the product over $i \in \iota$ of the densities of
+the normal distribution $N(0, \tau)$ at $\theta_i$ equals
+$\left(\frac{1}{\sqrt{2\pi\tau}}\right)^{|\iota|} \exp\left(-\frac{1}{2\tau}
+\sum_{i \in \iota} \theta_i^2\right)$.
+
+This also holds at $\tau = 0$, where the normal density is the zero function, with the
+convention $1/0 = 0$. -/
 theorem prod_gaussianPDFReal_zero (τ : ℝ≥0) (θ : ι → ℝ) :
     ∏ i, gaussianPDFReal 0 τ (θ i) =
       (√(2 * π * τ))⁻¹ ^ Fintype.card ι * exp (-(θ ⬝ᵥ θ) / (2 * τ)) := by
@@ -313,9 +394,16 @@ theorem prod_gaussianPDFReal_zero (τ : ℝ≥0) (θ : ι → ℝ) :
   simp [dotProduct, sq]
 
 omit [DecidableEq ι] in
-/-- The posterior kernel of linear regression with Gaussian noise of variance `v` and the
-Gaussian prior `θ i ~ N(0, τ)`, a meaningful kernel for `v ≠ 0` and `τ ≠ 0` (as for
-`gaussLikelihood`, zero variances give the zero function). -/
+/-- **Posterior kernel of ridge regression.** For $s \ge 0$ let $\varphi_s$ be the density of
+$N(0, s)$, $\varphi_s(x) = (2 \pi s)^{-1/2} e^{-x^2 / (2 s)}$, with $\varphi_0$ the zero function.
+For a real design matrix $X$ with $m$ rows and columns indexed by a finite type $\iota$, responses
+$y \in \mathbb{R}^m$, variances $v, \tau \ge 0$ and $\theta \in \mathbb{R}^\iota$, the posterior
+kernel is the Gaussian likelihood of $y$ times the prior density of $\theta$:
+$$p(\theta) = \prod_{k=1}^{m} \varphi_v(y_k - (X\theta)_k) \prod_{i} \varphi_\tau(\theta_i).$$
+
+This is the posterior kernel of linear regression with Gaussian noise of variance $v$ and
+independent $N(0, \tau)$ priors on the coordinates of $\theta$; it is meaningful for
+$v, \tau > 0$. -/
 noncomputable def ridgePosterior (X : Matrix (Fin m) ι ℝ) (y : Fin m → ℝ) (v τ : ℝ≥0)
     (θ : ι → ℝ) : ℝ :=
   gaussLikelihood X y v θ * ∏ i, gaussianPDFReal 0 τ (θ i)
@@ -335,9 +423,15 @@ theorem ridgePosterior_eq (X : Matrix (Fin m) ι ℝ) (y : Fin m → ℝ) {v : �
     ring
 
 omit [DecidableEq ι] in
-/-- **Ridge regression is MAP estimation**: under Gaussian noise of variance `v` and the
-Gaussian prior `θ i ~ N(0, τ)`, the posterior kernel is a decreasing function of the ridge
-objective with `λ = v / τ`. -/
+/-- **Ridge regression is MAP estimation.** Let $X$ be a real design matrix with $m$ rows and
+columns indexed by a finite type $\iota$, let $y \in \mathbb{R}^m$, and let $v$ and $\tau$ be
+positive reals. Let $p$ be the posterior kernel of linear regression with Gaussian noise of
+variance $v$ and independent $N(0, \tau)$ priors on the coordinates of the parameter, and let $R$
+be the ridge objective with $\lambda = v / \tau$. Then for all
+$\theta, \theta' \in \mathbb{R}^\iota$ we have $p(\theta) \le p(\theta')$ if and only if
+$R(\theta') \le R(\theta)$.
+
+So the posterior kernel is a decreasing function of the ridge objective. -/
 theorem ridgePosterior_le_iff {X : Matrix (Fin m) ι ℝ} {y : Fin m → ℝ} {v τ : ℝ≥0} (hv : v ≠ 0)
     (hτ : τ ≠ 0) (θ θ' : ι → ℝ) :
     ridgePosterior X y v τ θ ≤ ridgePosterior X y v τ θ' ↔
@@ -349,7 +443,13 @@ theorem ridgePosterior_le_iff {X : Matrix (Fin m) ι ℝ} {y : Fin m → ℝ} {v
     mul_le_mul_iff_right₀ (mul_pos (normConst_pos hv m) (normConst_pos hτ _)), exp_le_exp,
     div_le_div_iff_of_pos_right hv', neg_le_neg_iff]
 
-/-- The ridge estimate with `λ = v / τ` maximizes the posterior kernel. -/
+/-- **The ridge estimate maximizes the ridge posterior.** Let $X$ be a real design matrix with $m$
+rows and columns indexed by a finite type $\iota$, let $y \in \mathbb{R}^m$, and let $v$ and $\tau$
+be positive reals. Let $p$ be the posterior kernel of linear regression with Gaussian noise of
+variance $v$ and independent $N(0, \tau)$ priors on the coordinates of the parameter, and let
+$\hat\theta = (X^\top X + \lambda I)^{-1} X^\top y$ be the ridge estimate with $\lambda = v / \tau$.
+Then $\hat\theta$ maximizes $p$: for every $\theta \in \mathbb{R}^\iota$ we have
+$p(\theta) \le p(\hat\theta)$. -/
 theorem isMaxOn_ridgePosterior (X : Matrix (Fin m) ι ℝ) (y : Fin m → ℝ) {v τ : ℝ≥0}
     (hv : v ≠ 0) (hτ : τ ≠ 0) :
     IsMaxOn (ridgePosterior X y v τ) Set.univ (ridgeEstimate X y (v / τ)) := by
@@ -366,13 +466,22 @@ end Ridge
 section Lasso
 
 omit [DecidableEq ι] in
-/-- The lasso objective `rss X y θ + λ ∑ i, |θ i|`. -/
+/-- **Lasso objective.** For a real matrix $X$ with $m$ rows and columns indexed by a finite set
+$\iota$, responses $y \in \mathbb{R}^m$ and a real number $\lambda$, the lasso objective at
+$\theta \in \mathbb{R}^\iota$ is
+$\sum_{k=1}^m (y_k - (X\theta)_k)^2 + \lambda \sum_{i \in \iota} |\theta_i|$, the residual sum of
+squares plus $\lambda$ times the $\ell^1$ norm of $\theta$. -/
 noncomputable def lasso (X : Matrix (Fin m) ι ℝ) (y : Fin m → ℝ) (lam : ℝ) (θ : ι → ℝ) : ℝ :=
   rss X y θ + lam * ∑ i, |θ i|
 
-/-- The density of the Laplace distribution with location `0` and scale `b`. As for Mathlib's
-`gaussianPDFReal`, the scale is in `ℝ≥0`; `b = 0` gives the zero function, and the probabilistic
-statements assume `b ≠ 0`. -/
+/-- **Laplace density.** For a scale $b \ge 0$, the density of the Laplace distribution with
+location $0$ and scale $b$ is the function on $\mathbb{R}$
+$$
+f_b(x) = \frac{1}{2b} \exp\left(-\frac{|x|}{b}\right).
+$$
+
+For $b = 0$ this is read with the convention $1/0 = 0$ and gives the zero function; the results
+about this density assume $b \neq 0$. -/
 noncomputable def laplacePDF (b : NNReal) (x : ℝ) : ℝ :=
   exp (-|x| / b) / (2 * b)
 
@@ -390,8 +499,17 @@ theorem prod_laplacePDF (b : NNReal) (θ : ι → ℝ) :
   rw [← sum_div, sum_neg_distrib]
 
 omit [DecidableEq ι] in
-/-- The posterior kernel of linear regression with Gaussian noise of variance `v` and the
-Laplace prior with scale `b` on each coordinate, a meaningful kernel for `v ≠ 0` and `b ≠ 0`. -/
+/-- **Lasso posterior kernel.** Let $X$ be a real matrix with $m$ rows and columns indexed by a
+finite set $\iota$, let $y \in \mathbb{R}^m$, and let $v \ge 0$ and $b \ge 0$. The lasso posterior
+kernel at $\theta \in \mathbb{R}^\iota$ is
+$$\prod_{k=1}^{m} \varphi_v\bigl(y_k - (X\theta)_k\bigr) \cdot \prod_{i \in \iota} p_b(\theta_i),$$
+where $\varphi_v(x) = e^{-x^2/(2v)} / \sqrt{2\pi v}$ is the density of the normal distribution with
+mean $0$ and variance $v$ and $p_b(x) = e^{-|x|/b} / (2b)$ is the density of the Laplace
+distribution with location $0$ and scale $b$: the Gaussian likelihood of $y$ with noise variance
+$v$ times the Laplace prior density of $\theta$.
+
+It is a meaningful kernel for $v \ne 0$ and $b \ne 0$; for $v = 0$ (respectively $b = 0$) the
+normal (respectively Laplace) density is the zero function. -/
 noncomputable def lassoPosterior (X : Matrix (Fin m) ι ℝ) (y : Fin m → ℝ) (v b : NNReal)
     (θ : ι → ℝ) : ℝ :=
   gaussLikelihood X y v θ * ∏ i, laplacePDF b (θ i)
@@ -409,9 +527,13 @@ theorem lassoPosterior_eq (X : Matrix (Fin m) ι ℝ) (y : Fin m → ℝ) {v : N
   ring
 
 omit [DecidableEq ι] in
-/-- **Lasso is MAP estimation**: under Gaussian noise of variance `v` and the Laplace prior with
-scale `b`, the posterior kernel is a decreasing function of the lasso objective with
-`λ = 2 v / b`. -/
+/-- **Lasso is MAP estimation.** Let $X$ be a real matrix with $m$ rows and columns indexed by a
+finite set $\iota$, let $y \in \mathbb{R}^m$, and let $v > 0$ and $b > 0$. Let $P$ be the
+posterior kernel of linear regression with Gaussian noise of variance $v$ and the Laplace prior
+with scale $b$ on each coordinate, and let $\ell$ be the lasso objective with $\lambda = 2v/b$,
+$\ell(\theta) = \sum_k (y_k - (X\theta)_k)^2 + \lambda \sum_{i \in \iota} |\theta_i|$. Then for all
+$\theta, \theta' \in \mathbb{R}^\iota$, $P(\theta) \le P(\theta')$ if and only if
+$\ell(\theta') \le \ell(\theta)$. -/
 theorem lassoPosterior_le_iff {X : Matrix (Fin m) ι ℝ} {y : Fin m → ℝ} {v : NNReal} (hv : v ≠ 0)
     {b : NNReal} (hb : b ≠ 0) (θ θ' : ι → ℝ) :
     lassoPosterior X y v b θ ≤ lassoPosterior X y v b θ' ↔
@@ -425,7 +547,10 @@ theorem lassoPosterior_le_iff {X : Matrix (Fin m) ι ℝ} {y : Fin m → ℝ} {v
     div_le_div_iff_of_pos_right hv', neg_le_neg_iff]
 
 omit [DecidableEq ι] in
-/-- The lasso objective is convex for `λ ≥ 0`. -/
+/-- **Convexity of the lasso objective.** Let $X$ be a real matrix with $m$ rows and columns
+indexed by a finite set $\iota$, let $y \in \mathbb{R}^m$ and let $\lambda \ge 0$. Then the lasso
+objective $\theta \mapsto \sum_k (y_k - (X\theta)_k)^2 + \lambda \sum_{i \in \iota} |\theta_i|$
+is a convex function on all of $\mathbb{R}^\iota$. -/
 theorem convexOn_lasso (X : Matrix (Fin m) ι ℝ) (y : Fin m → ℝ) {lam : ℝ} (hlam : 0 ≤ lam) :
     ConvexOn ℝ Set.univ (lasso X y lam) := by
   refine (convexOn_rss X y).add ⟨convex_univ, fun θ _ θ' _ a b ha hb hab => ?_⟩
@@ -437,13 +562,18 @@ theorem convexOn_lasso (X : Matrix (Fin m) ι ℝ) (y : Fin m → ℝ) {lam : �
   calc |a * θ i + b * θ' i| ≤ |a * θ i| + |b * θ' i| := abs_add_le _ _
     _ = a * |θ i| + b * |θ' i| := by rw [abs_mul, abs_mul, abs_of_nonneg ha, abs_of_nonneg hb]
 
-/-- Soft thresholding at `t`: for `t ≥ 0`, shrink `z` towards `0` by `t`, and set it to `0` when
-`|z| ≤ t`. -/
+/-- **Soft thresholding.** For real numbers $t$ and $z$, the soft thresholding of $z$ at $t$ is
+$S_t(z) = z - t$ if $z > t$; otherwise $S_t(z) = z + t$ if $z < -t$; and $S_t(z) = 0$ in the
+remaining case.
+
+For $t \ge 0$ this shrinks $z$ towards $0$ by $t$ and sets it to $0$ when $|z| \le t$. -/
 noncomputable def softThreshold (t z : ℝ) : ℝ :=
   if t < z then z - t else if z < -t then z + t else 0
 
-/-- **Soft thresholding solves the one-dimensional lasso**: for `t ≥ 0` it minimizes
-`(z - s)² + 2 t |s|`. -/
+/-- **Soft thresholding solves the one-dimensional lasso.** Let $t \ge 0$ and $z \in \mathbb{R}$,
+and let $S_t(z)$ be the soft thresholding of $z$ at $t$. Then for every $s \in \mathbb{R}$,
+$$(z - S_t(z))^2 + 2t\,|S_t(z)| \le (z - s)^2 + 2t\,|s|,$$
+so $S_t(z)$ minimizes $(z - s)^2 + 2t\,|s|$ over $s \in \mathbb{R}$. -/
 theorem softThreshold_le {t : ℝ} (ht : 0 ≤ t) (z s : ℝ) :
     (z - softThreshold t z) ^ 2 + 2 * t * |softThreshold t z| ≤ (z - s) ^ 2 + 2 * t * |s| := by
   unfold softThreshold
@@ -461,8 +591,13 @@ theorem softThreshold_le {t : ℝ} (ht : 0 ≤ t) (z s : ℝ) :
     · nlinarith [mul_nonneg hs0 (show 0 ≤ t - z by linarith)]
     · nlinarith [mul_nonneg (neg_nonneg.2 hs0.le) (show 0 ≤ t + z by linarith)]
 
-/-- **Lasso with an orthonormal design**: when `Xᵀ X = 1`, soft thresholding of `Xᵀ y` at `λ / 2`
-coordinatewise minimizes the lasso objective. -/
+/-- **Lasso with an orthonormal design.** Let $X$ be a real matrix with $m$ rows and columns indexed
+by a finite set $\iota$ such that $X^\top X = I$, let $y \in \mathbb{R}^m$ and let $\lambda \ge 0$.
+Let $\hat\theta \in \mathbb{R}^\iota$ be given by $\hat\theta_i = S_{\lambda/2}((X^\top y)_i)$,
+where $S_t$ is soft thresholding at $t$. Then $\hat\theta$ minimizes the lasso objective: for every
+$\theta \in \mathbb{R}^\iota$,
+$\sum_{k=1}^m (y_k - (X\hat\theta)_k)^2 + \lambda \sum_{i \in \iota} |\hat\theta_i| \le
+\sum_{k=1}^m (y_k - (X\theta)_k)^2 + \lambda \sum_{i \in \iota} |\theta_i|$. -/
 theorem lasso_softThreshold_le {X : Matrix (Fin m) ι ℝ} (hX : Xᵀ * X = 1) (y : Fin m → ℝ)
     {lam : ℝ} (hlam : 0 ≤ lam) (θ : ι → ℝ) :
     lasso X y lam (fun i => softThreshold (lam / 2) ((Xᵀ *ᵥ y) i)) ≤ lasso X y lam θ := by
@@ -486,5 +621,119 @@ theorem lasso_softThreshold_le {X : Matrix (Fin m) ι ℝ} (hX : Xᵀ * X = 1) (
     _ = (θ i - (Xᵀ *ᵥ y) i) ^ 2 + lam * |θ i| := by ring
 
 end Lasso
+
+/-! ## Leave-one-out least squares -/
+
+section LeaveOneOut
+
+omit [Fintype ι] [DecidableEq ι] in
+private theorem sum_eq_add_sum_erase (f : Fin m → ℝ) (i : Fin m) :
+    ∑ k, f k = f i + ∑ k ∈ Finset.univ.erase i, f k :=
+  (Finset.add_sum_erase _ _ (Finset.mem_univ i)).symm
+
+omit [Fintype ι] [DecidableEq ι] in
+private theorem gram_updateRow_zero (X : Matrix (Fin m) ι ℝ) (i : Fin m) :
+    (X.updateRow i 0)ᵀ * X.updateRow i 0 = Xᵀ * X - vecMulVec (X i) (X i) := by
+  ext a b
+  rw [Matrix.sub_apply, Matrix.mul_apply, Matrix.mul_apply, vecMulVec_apply,
+    sum_eq_add_sum_erase (fun k => (X.updateRow i 0)ᵀ a k * X.updateRow i 0 k b) i,
+    sum_eq_add_sum_erase (fun k => Xᵀ a k * X k b) i]
+  simp only [transpose_apply, updateRow_self, Pi.zero_apply, zero_mul, zero_add,
+    add_sub_cancel_left]
+  exact Finset.sum_congr rfl fun k hk => by
+    rw [updateRow_ne (Finset.ne_of_mem_erase hk)]
+
+omit [Fintype ι] [DecidableEq ι] in
+private theorem cross_updateRow_zero (X : Matrix (Fin m) ι ℝ) (y : Fin m → ℝ) (i : Fin m) :
+    (X.updateRow i 0)ᵀ *ᵥ Function.update y i 0 = Xᵀ *ᵥ y - y i • X i := by
+  ext a
+  rw [Pi.sub_apply, Pi.smul_apply, smul_eq_mul, mulVec, mulVec, dotProduct, dotProduct,
+    sum_eq_add_sum_erase (fun k => (X.updateRow i 0)ᵀ a k * Function.update y i 0 k) i,
+    sum_eq_add_sum_erase (fun k => Xᵀ a k * y k) i]
+  simp only [transpose_apply, updateRow_self, Pi.zero_apply, zero_mul, zero_add]
+  rw [mul_comm (y i), add_sub_cancel_left]
+  exact Finset.sum_congr rfl fun k hk => by
+    rw [updateRow_ne (Finset.ne_of_mem_erase hk),
+      Function.update_of_ne (Finset.ne_of_mem_erase hk)]
+
+private theorem inv_mulVec_eq_of_mulVec_eq {A : Matrix ι ι ℝ} (hA : IsUnit A.det) {w r : ι → ℝ}
+    (h : A *ᵥ w = r) : A⁻¹ *ᵥ r = w := by
+  rw [← h, mulVec_mulVec, nonsing_inv_mul _ hA, one_mulVec]
+
+/-- **Leave-one-out least squares: leverage and deleted residual.** Let `X` be a real design
+with rows `x k = X k`, responses `y`, Gram matrix `G = Xᵀ X` invertible, and fix a row `i` with
+leverage `h = xᵢᵀ G⁻¹ xᵢ ≠ 1`. Let `G₋ᵢ = G - xᵢ xᵢᵀ` be the Gram matrix without row `i`,
+`β = G⁻¹ Xᵀ y` the least-squares estimate, and `β₋ᵢ = G₋ᵢ⁻¹ (Xᵀ y - yᵢ xᵢ)` the estimate
+without row `i`. Then:
+
+* `G₋ᵢ` is invertible;
+* `β₋ᵢ` is a least-squares estimate of the data with row `i` deleted: it minimizes the residual
+  sum of squares of the design and responses with row `i` set to zero, which is
+  `∑ k ≠ i, (y k - xₖᵀ θ)²`;
+* `q = xᵢᵀ G₋ᵢ⁻¹ xᵢ` satisfies `q = h / (1 - h)` and `h = q / (1 + q)`;
+* the residuals `eᵢ = yᵢ - xᵢᵀ β` and `e₋ᵢ = yᵢ - xᵢᵀ β₋ᵢ`, both at the original row `i`,
+  satisfy `eᵢ = (1 - h) e₋ᵢ`. -/
+theorem leaveOneOut_leverage_residual {X : Matrix (Fin m) ι ℝ} (y : Fin m → ℝ) (i : Fin m)
+    (hG : IsUnit (Xᵀ * X).det) (hh : X i ⬝ᵥ ((Xᵀ * X)⁻¹ *ᵥ X i) ≠ 1) :
+    IsUnit (Xᵀ * X - vecMulVec (X i) (X i)).det ∧
+      (∀ θ, rss (X.updateRow i 0) (Function.update y i 0)
+          ((Xᵀ * X - vecMulVec (X i) (X i))⁻¹ *ᵥ (Xᵀ *ᵥ y - y i • X i)) ≤
+        rss (X.updateRow i 0) (Function.update y i 0) θ) ∧
+      X i ⬝ᵥ ((Xᵀ * X - vecMulVec (X i) (X i))⁻¹ *ᵥ X i) =
+        X i ⬝ᵥ ((Xᵀ * X)⁻¹ *ᵥ X i) / (1 - X i ⬝ᵥ ((Xᵀ * X)⁻¹ *ᵥ X i)) ∧
+      X i ⬝ᵥ ((Xᵀ * X)⁻¹ *ᵥ X i) =
+        X i ⬝ᵥ ((Xᵀ * X - vecMulVec (X i) (X i))⁻¹ *ᵥ X i) /
+          (1 + X i ⬝ᵥ ((Xᵀ * X - vecMulVec (X i) (X i))⁻¹ *ᵥ X i)) ∧
+      y i - X i ⬝ᵥ ((Xᵀ * X)⁻¹ *ᵥ (Xᵀ *ᵥ y)) =
+        (1 - X i ⬝ᵥ ((Xᵀ * X)⁻¹ *ᵥ X i)) *
+          (y i - X i ⬝ᵥ ((Xᵀ * X - vecMulVec (X i) (X i))⁻¹ *ᵥ (Xᵀ *ᵥ y - y i • X i))) := by
+  set G := Xᵀ * X with hGdef
+  set x := X i
+  set u := G⁻¹ *ᵥ x with hu
+  set h := x ⬝ᵥ u with hhdef
+  set Gd := G - vecMulVec x x with hGd
+  set b := Xᵀ *ᵥ y
+  have h1 : 1 - h ≠ 0 := sub_ne_zero.mpr (Ne.symm hh)
+  -- the deleted Gram matrix is invertible (matrix determinant lemma)
+  have hdet : Gd.det = G.det * (1 - h) := by
+    have := Matrix.det_add_vecMulVec_of_isUnit_det G (-x) x hG
+    rw [show G + vecMulVec (-x) x = Gd by
+      rw [hGd, sub_eq_add_neg, ← neg_vecMulVec]] at this
+    rw [this, mulVec_neg, dotProduct_neg, ← sub_eq_add_neg]
+  have hGdU : IsUnit Gd.det := by
+    rw [hdet, isUnit_iff_ne_zero]
+    exact mul_ne_zero (isUnit_iff_ne_zero.mp hG) h1
+  -- `Gd v = G v - (x ⬝ v) x` and `G u = x`
+  have hGdmul : ∀ v, Gd *ᵥ v = G *ᵥ v - (x ⬝ᵥ v) • x := fun v => by
+    rw [hGd, sub_mulVec, vecMulVec_mulVec, op_smul_eq_smul]
+  have hGinv : ∀ v, G *ᵥ (G⁻¹ *ᵥ v) = v := fun v => by
+    rw [mulVec_mulVec, mul_nonsing_inv _ hG, one_mulVec]
+  have hGu : G *ᵥ u = x := hGinv x
+  -- Sherman–Morrison applied to `x` and to `b`, by direct normal-equation algebra
+  have hGdx : Gd⁻¹ *ᵥ x = (1 - h)⁻¹ • u := by
+    apply inv_mulVec_eq_of_mulVec_eq hGdU
+    rw [hGdmul, mulVec_smul, hGu, dotProduct_smul, ← hhdef, smul_eq_mul, ← sub_smul,
+      show (1 - h)⁻¹ - (1 - h)⁻¹ * h = 1 by field_simp, one_smul]
+  set s := x ⬝ᵥ (G⁻¹ *ᵥ b) with hs
+  have hGdb : Gd⁻¹ *ᵥ b = G⁻¹ *ᵥ b + (s / (1 - h)) • u := by
+    apply inv_mulVec_eq_of_mulVec_eq hGdU
+    rw [hGdmul, mulVec_add, mulVec_smul, hGinv, hGu, dotProduct_add, dotProduct_smul, ← hs,
+      ← hhdef, smul_eq_mul, add_sub_assoc, ← sub_smul,
+      show s / (1 - h) - (s + s / (1 - h) * h) = 0 by field_simp; ring, zero_smul, add_zero]
+  have hq : x ⬝ᵥ (Gd⁻¹ *ᵥ x) = h / (1 - h) := by
+    rw [hGdx, dotProduct_smul, smul_eq_mul, ← hhdef, inv_mul_eq_div]
+  refine ⟨hGdU, fun θ => ?_, hq, ?_, ?_⟩
+  · -- the deleted estimate solves the normal equations of the row-zeroed data
+    refine (rss_le_iff_normal _ _ _).mpr ?_ θ
+    rw [mulVec_mulVec, gram_updateRow_zero, cross_updateRow_zero, ← hGdef, mulVec_mulVec,
+      mul_nonsing_inv _ hGdU, one_mulVec]
+  · rw [hq, show 1 + h / (1 - h) = (1 - h)⁻¹ by field_simp; ring, div_inv_eq_mul,
+      div_mul_cancel₀ _ h1]
+  · rw [mulVec_sub, mulVec_smul, dotProduct_sub, dotProduct_smul, hGdb, hGdx, dotProduct_add,
+      dotProduct_smul, dotProduct_smul, ← hs, ← hhdef, smul_eq_mul, smul_eq_mul, smul_eq_mul]
+    field_simp
+    ring
+
+end LeaveOneOut
 
 end Cslib.MachineLearning.LeastSquares

@@ -1,0 +1,3 @@
+# Chordal Schramm–Loewner evolution
+
+Let $\kappa \in \mathbb{R}$, let $(B_t)$ be a real process on a measure space $(\Omega, P)$, and for each $\omega \in \Omega$ let $(D_t(\omega))_t$ be sets and $(g_t(\omega))_t$ maps $\mathbb{C} \to \mathbb{C}$. Then $(D, g)$ is chordal SLE$_\kappa$ in $\mathbb{H}$ from $0$ to $\infty$ if $\kappa \ge 0$, $B$ is a [standard Brownian motion](is-standard-brownian-motion.md), and for $P$-almost every $\omega$, $(D(\omega), g(\omega))$ is a [maximal chordal Loewner evolution](satisfies-maximal-loewner-equation.md) driven by $t \mapsto \sqrt{\kappa}\, B_t(\omega)$.

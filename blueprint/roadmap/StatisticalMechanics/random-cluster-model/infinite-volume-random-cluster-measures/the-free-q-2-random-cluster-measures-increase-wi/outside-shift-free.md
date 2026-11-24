@@ -1,0 +1,3 @@
+# Number of outer open clusters avoiding the inner box
+
+Let $d, n \in \mathbb{N}$, $\Lambda_m = \{-m, \dots, m\}^d$ (so $\Lambda_n \subseteq \Lambda_{n+1}$), and let $\psi$ be a configuration of $\Lambda_{n+1}$ (an assignment of open/closed states to the unordered pairs of vertices of $\Lambda_{n+1}$). The free outer count $N^0_{\mathrm{out}}(\psi)$ is the number of [avoiding outer components](outside-only-comp-free.md) (connected components of $O^0_\psi$ containing no vertex of $\Lambda_n$), where $O^0_\psi$ is the [outer open graph](../boundary-conditions-induced-on-a-box-by-the-oute/outside-open-graph.md) on $\Lambda_{n+1}$ (the edges of $\Lambda_{n+1}$ open in $\psi$ that do not have both endpoints in $\Lambda_n$).

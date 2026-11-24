@@ -1,0 +1,3 @@
+# Fourier transform of a reversed convolution power
+
+Let $G$ be a finite group, $\rho$ a representation of $G$ on a complex vector space, and $Q : G \to \mathbb{C}$. Write $\check P(s) = P(s^{-1})$ and $\hat P(\rho) = \sum_s P(s)\, \rho(s)$ for the [Fourier transform](fourier.md). Then for every $k \in \mathbb{N}$, the transform at $\rho$ of the reversed [convolution power](conv-pow.md) $(Q^{*k})\check{}$ is $\bigl(\hat{\check Q}(\rho)\bigr)^k$. For a unitary $\rho$ and real-valued $Q$, the left side is the adjoint of $\widehat{Q^{*k}}(\rho)$. It follows from [reversal of convolutions](conv-comp-inv.md) and from [the transform of a convolution](fourier-conv.md).

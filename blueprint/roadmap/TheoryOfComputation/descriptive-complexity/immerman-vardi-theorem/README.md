@@ -1,0 +1,15 @@
+# Immerman–Vardi theorem
+
+- [Finite ordered graphs](ordered-graph.md)
+- [Edge relation of an ordered graph](og-edge.md)
+- [Formulas of first-order logic with least fixed points](ogfo.md)
+- [Positive occurrence of a relation symbol](positive-in.md)
+- [Negative occurrence of a relation symbol](negative-in.md)
+- [Formulas whose fixed points are all positive](all-lfppositive.md)
+- [Interpretation of relation symbols in an ordered graph](og-base.md)
+- [Well-formed FO + LFP formulas](ogwell-formed.md)
+- [Evaluation of FO + LFP formulas in an ordered graph](og-eval.md)
+- [Satisfaction of an FO + LFP formula by an ordered graph](og-lfpsat.md)
+- [Encodings of a class of ordered graphs](og-encodings.md)
+- [Definability in FO + LFP](og-lfpdefinable.md)
+- [Immerman-Vardi: FO + least fixed point is P on ordered structures](immerman-vardi.md)

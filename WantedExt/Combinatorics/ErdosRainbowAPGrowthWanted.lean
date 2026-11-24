@@ -32,9 +32,13 @@ namespace MathlibExt.Combinatorics.ErdosRainbowAPGrowthWanted
 /-! Source record `EP-190`. -/
 open Filter
 
-/-- A colouring `f` of `[0, N)` has a good `k`-term arithmetic progression:
-there are `a`, `d` with `0 < d` and every term `a + d * i` (for `i < k`)
-in `[0, N)`, such that the progression is monochromatic or rainbow. -/
+/-- **Good arithmetic progressions.** Let $f : \mathbb{N} \to \mathbb{N}$ be a colouring and let
+$N$ and $k$ be natural numbers. The colouring $f$ has a good $k$-term arithmetic progression below
+$N$ if there are natural numbers $a$ and $d > 0$ with $a + d(k - 1) < N$, where $k - 1$ is
+natural-number subtraction (so it is $0$ when $k = 0$), such that the colours $f(a + di)$ for
+$i < k$ are either all equal (the progression is monochromatic) or pairwise distinct (it is
+rainbow). For $k \ge 1$ the condition $a + d(k - 1) < N$ says that every term $a + di$ with
+$i < k$ lies in $\{0, \dots, N - 1\}$. -/
 def HasGoodAP (f : ℕ → ℕ) (N k : ℕ) : Prop :=
   ∃ a d : ℕ,
     0 < d ∧
@@ -42,8 +46,11 @@ def HasGoodAP (f : ℕ → ℕ) (N k : ℕ) : Prop :=
         ((∀ i j : Fin k, f (a + d * (i : ℕ)) = f (a + d * (j : ℕ))) ∨
           ∀ i j : Fin k, i ≠ j → f (a + d * (i : ℕ)) ≠ f (a + d * (j : ℕ)))
 
-/-- `H k` is the least `N` such that every colouring of `[0, N)` has a good
-`k`-term arithmetic progression, or `0` if no such `N` exists. -/
+/-- **Monochromatic-or-rainbow progression number.** For a natural number $k$, $H(k)$ is the least
+natural number $N$ such that every colouring $f : \mathbb{N} \to \mathbb{N}$ has a good $k$-term
+arithmetic progression below $N$, that is, there are natural numbers $a$ and $d > 0$ with
+$a + d(k - 1) < N$, where $k - 1$ is natural-number subtraction, such that the colours $f(a + di)$
+for $i < k$ are all equal or pairwise distinct. If no such $N$ exists, then $H(k) = 0$. -/
 noncomputable def H (k : ℕ) : ℕ :=
   haveI := Classical.propDecidable (∃ N, ∀ f : ℕ → ℕ, HasGoodAP f N k)
   if h : ∃ N, ∀ f : ℕ → ℕ, HasGoodAP f N k then
@@ -51,14 +58,27 @@ noncomputable def H (k : ℕ) : ℕ :=
   else
     0
 
-/-- [EP-190] `H(k)^(1/k) / k` tends to infinity as `k` tends to infinity. -/
+/-- **Erdős Problem 190 on monochromatic or rainbow progressions.** For a natural number $k$, let
+$H(k)$ be the least natural number $N$ such that every colouring $f : \mathbb{N} \to \mathbb{N}$
+has a good $k$-term arithmetic progression below $N$, that is, there are natural numbers $a$ and
+$d > 0$ with $a + d(k - 1) < N$, where $k - 1$ is natural-number subtraction, such that the colours
+$f(a + di)$ for $i < k$ are all equal or pairwise distinct; let $H(k) = 0$ if no such $N$ exists.
+The proposition asserts that $H(k)^{1/k}/k \to \infty$ as $k \to \infty$. -/
 def conjecture : Prop :=
   Tendsto (fun k : ℕ => ((H k : ℝ) ^ ((k : ℝ)⁻¹)) / (k : ℝ)) atTop atTop
 
 /--
-Resolved true: Resolved true: Bae (arXiv:2604.20588) proves H(k)^{1/k}/k >= (1/e - o(1)) k/log
-k, and Fox and Hunter (arXiv:2606.02541) independently prove H(k) >= k^{(1-o(1)) k log k};
-erdosproblems.com/190 records the problem as solved. Source: T. F. Bloom, Erdős Problem #190,
+**Solution of Erdős Problem 190 on monochromatic or rainbow progressions.** For a natural number
+$k$, let $H(k)$ be the least natural number $N$ such that every colouring
+$f : \mathbb{N} \to \mathbb{N}$ has a good $k$-term arithmetic progression below $N$, that is,
+there are natural numbers $a$ and $d > 0$ with $a + d(k - 1) < N$, where $k - 1$ is natural-number
+subtraction, such that the colours $f(a + di)$ for $i < k$ are all equal or pairwise distinct;
+let $H(k) = 0$ if no such $N$ exists. Then $H(k)^{1/k}/k \to \infty$ as $k \to \infty$.
+
+This answers Erdős Problem 190 affirmatively; it was proved by Bae and, independently, by Fox and
+Hunter.
+
+Source: T. F. Bloom, Erdős Problem #190,
 erdosproblems.com (live page, LaTeX source and forum threads read 2026-10-22),
 https://www.erdosproblems.com/190; J. H. Bae, A resolution of Erdős Problem #190 via
 Erdős-Lovász, BCT, and Baker-Harman-Pintz, arXiv:2604.20588 (2026),

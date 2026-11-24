@@ -1,0 +1,15 @@
+# Pole sets and elliptic order of meromorphic elliptic functions
+
+- [Pole multiplicity](pole-multiplicity.md)
+- [Pole multiplicity vanishes where the function is not meromorphic](pole-multiplicity-eq-zero-of-not-meromor.md)
+- [Pole multiplicity vanishes at points of nonnegative order](pole-multiplicity-eq-zero-of-nonneg.md)
+- [Pole multiplicity is nonzero exactly at negative order](pole-multiplicity-ne-zero-iff.md)
+- [Pole multiplicity via the divisor](pole-multiplicity-eq-neg-divisor.md)
+- [Poles in a fundamental parallelogram](pole-set-in-fundamental-parallelogram.md)
+- [Membership in the pole set of a fundamental parallelogram](mem-pole-set-in-fundamental-parallelogra.md)
+- [Fundamental parallelograms are bounded](is-bounded-fundamental-parallelogram.md)
+- [Finitely many poles in a fundamental parallelogram](pole-set-in-fundamental-parallelogram-fi.md)
+- [Elliptic order in a fundamental parallelogram](elliptic-order-in-fundamental-parallelog.md)
+- [Elliptic order](elliptic-order.md)
+- [The elliptic order is the parallelogram order at vertex zero](elliptic-order-eq-order-in-fundamental-p.md)
+- [Pole multiplicity of a constant function](pole-multiplicity-const.md)

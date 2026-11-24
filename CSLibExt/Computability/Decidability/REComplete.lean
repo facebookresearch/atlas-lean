@@ -47,25 +47,43 @@ namespace Cslib.Decidability
 open Nat.Partrec (Code)
 open Encodable Denumerable
 
-/-- The code `comp c (const n)` ignores its input and runs `c` on `n`. -/
+/-- **Composing a code with a constant code ignores the input.** Let $c$ be a code of a partial
+recursive function and let $n, m \in \mathbb{N}$. The code that first computes the constant
+function with value $n$ and then applies $c$, evaluated at $m$, gives the same partial value as
+$c$ evaluated at $n$: one is defined exactly when the other is, and then they are equal. -/
 theorem eval_comp_const (c : Code) (n m : ℕ) : (Code.comp c (Code.const n)).eval m = c.eval n := by
   simp only [Code.eval, Code.eval_const]
   exact Part.bind_some n c.eval
 
-/-- **Recognizability transfers down many-one reductions.** -/
+/-- **Recognizability transfers down many-one reductions.** Let $\alpha$ and $\beta$ be types
+with primitive recursive encodings into $\mathbb{N}$, and let $p$ and $q$ be predicates on
+$\alpha$ and on $\beta$. Suppose that $p$ many-one reduces to $q$, that is, there is a computable
+function $f : \alpha \to \beta$ such that for every $a \in \alpha$, $p(a)$ holds if and only if
+$q(f(a))$ holds. If $q$ is recognizable (recursively enumerable: the domain of a partial
+computable function on $\beta$), then $p$ is recognizable. -/
 theorem REPred.of_manyOneReducible {α β : Type*} [Primcodable α] [Primcodable β] {p : α → Prop}
     {q : β → Prop} (h : ManyOneReducible p q) (hq : REPred q) : REPred p := by
   obtain ⟨f, hf, hpq⟩ := h
   exact REPred.of_eq (p := fun a ↦ q (f a)) (Partrec.comp (g := fun a ↦ f a) hq hf)
     fun a ↦ (hpq a).symm
 
-/-- **The halting set is recognizable.** -/
+/-- **The halting set is recognizable.** The halting set, the set of numbers $n$ such that the
+code with number $n$ halts on input $0$, is recursively enumerable: it is the domain of a partial
+computable function on $\mathbb{N}$. -/
 theorem rePred_haltingSet : REPred haltingSet :=
   Partrec.comp (g := fun n ↦ ofNat Code n) (ComputablePred.halting_problem_re 0)
     (Computable.ofNat Code)
 
-/-- **Every recognizable predicate one-one reduces to the halting set**: the reduction
-`a ↦ comp c (const (encode a))` is injective. -/
+/-- **Every recognizable predicate one-one reduces to the halting set.** Let $\alpha$ be a type
+with a primitive recursive encoding into $\mathbb{N}$, and let $p$ be a recognizable (recursively
+enumerable) predicate on $\alpha$, that is, the domain of a partial computable function on
+$\alpha$. Here the halting set is the set of $n \in \mathbb{N}$ such that the partial recursive
+function with code number $n$ halts on input $0$. Then there is an injective computable function
+$f : \alpha \to \mathbb{N}$ such that for every $a \in \alpha$, $p(a)$ holds if and only if $f(a)$
+lies in the halting set.
+
+The proof takes for $f(a)$ the number of the code that ignores its input and runs a code for $p$
+on the number encoding $a$; distinct $a$ give distinct codes. -/
 theorem oneOneReducible_haltingSet {α : Type*} [Primcodable α] {p : α → Prop} (hp : REPred p) :
     OneOneReducible p haltingSet := by
   -- a code whose domain is `p`, read through `decode`
@@ -83,17 +101,35 @@ theorem oneOneReducible_haltingSet {α : Type*} [Primcodable α] {p : α → Pro
   simp only [haltingSet, ofNat_encode, eval_comp_const, hc, encodek]
   simp [Part.assert]
 
-/-- **Every recognizable predicate many-one reduces to the halting set.** -/
+/-- **Every recognizable predicate many-one reduces to the halting set.** Let $\alpha$ be a type
+with a primitive recursive encoding into $\mathbb{N}$, and let $p$ be a recognizable (recursively
+enumerable) predicate on $\alpha$, that is, the domain of a partial computable function on
+$\alpha$. Here the halting set is the set of $n \in \mathbb{N}$ such that the partial recursive
+function with code number $n$ halts on input $0$. Then there is a computable function
+$f : \alpha \to \mathbb{N}$ such that for every $a \in \alpha$, $p(a)$ holds if and only if $f(a)$
+lies in the halting set. -/
 theorem manyOneReducible_haltingSet {α : Type*} [Primcodable α] {p : α → Prop} (hp : REPred p) :
     ManyOneReducible p haltingSet :=
   (oneOneReducible_haltingSet hp).to_many_one
 
-/-- **A predicate is recognizable iff it many-one reduces to the halting set.** -/
+/-- **A predicate is recognizable iff it many-one reduces to the halting set.** Let $\alpha$ be a
+type with a primitive recursive encoding into $\mathbb{N}$ and let $p$ be a predicate on $\alpha$.
+Here the halting set is the set of $n \in \mathbb{N}$ such that the partial recursive function
+with code number $n$ halts on input $0$. Then $p$ is recognizable (recursively enumerable: the
+domain of a partial computable function on $\alpha$) if and only if there is a computable function
+$f : \alpha \to \mathbb{N}$ such that for every $a \in \alpha$, $p(a)$ holds if and only if $f(a)$
+lies in the halting set. -/
 theorem rePred_iff_manyOneReducible_haltingSet {α : Type*} [Primcodable α] {p : α → Prop} :
     REPred p ↔ ManyOneReducible p haltingSet :=
   ⟨manyOneReducible_haltingSet, fun h ↦ REPred.of_manyOneReducible h rePred_haltingSet⟩
 
-/-- **A predicate is recognizable iff it one-one reduces to the halting set.** -/
+/-- **A predicate is recognizable iff it one-one reduces to the halting set.** Let $\alpha$ be a
+type with a primitive recursive encoding into $\mathbb{N}$ and let $p$ be a predicate on $\alpha$.
+Here the halting set is the set of $n \in \mathbb{N}$ such that the partial recursive function
+with code number $n$ halts on input $0$. Then $p$ is recognizable (recursively enumerable: the
+domain of a partial computable function on $\alpha$) if and only if there is an injective
+computable function $f : \alpha \to \mathbb{N}$ such that for every $a \in \alpha$, $p(a)$ holds
+if and only if $f(a)$ lies in the halting set. -/
 theorem rePred_iff_oneOneReducible_haltingSet {α : Type*} [Primcodable α] {p : α → Prop} :
     REPred p ↔ OneOneReducible p haltingSet :=
   ⟨oneOneReducible_haltingSet, fun h ↦ REPred.of_manyOneReducible h.to_many_one rePred_haltingSet⟩

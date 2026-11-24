@@ -15,7 +15,7 @@ import PhyslibExt.EarthScience.NutrientBiomass
 Concrete consumers of `PhyslibExt.EarthScience.NutrientBiomass`:
 the public shapes of the conservation theorem and of the zero-nutrient
 boundary lemma. The Michaelis-Menten uptake bounds are tested with
-`MathlibExt.Biology.Dynamics.MichaelisMenten` in `MathlibExtTest`.
+`Domains.Biology.Dynamics.MichaelisMenten` in `MathlibExtTest`.
 
 ## i. Overview
 

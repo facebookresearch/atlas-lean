@@ -1,0 +1,16 @@
+# Highly homogeneous permutation groups
+
+- [Strict betweenness](is-between.md)
+- [The betweenness automorphism group of a linear order](betweenness-aut-subgroup.md)
+- [The automorphism group of a circular order](circular-order-aut-subgroup.md)
+- [Highly homogeneous permutation groups](is-highly-homogeneous.md)
+- [The full symmetric group is highly homogeneous](is-highly-homogeneous-top.md)
+- [Order automorphism group](order-aut-subgroup.md)
+- [Pointwise convergence topology on permutations](pointwise-topology.md)
+- [The betweenness group of the rationals is closed and highly homogeneous](betweenness-aut-subgroup-is-closed-and-h.md)
+- [The automorphism group of a countably infinite dense circular order is closed and highly homogeneous](circular-order-aut-subgroup-is-closed-an.md)
+- [The order-automorphism group of the rationals is closed and highly homogeneous](order-aut-subgroup-is-closed-and-highly.md)
+- [The symmetric group of the rationals is closed and highly homogeneous](cameron-symmetric-group-closed-highly-ho.md)
+- [Separation of pairs in a circular order](circular-separates.md)
+- [Separation-preserving permutation group](separation-aut-subgroup.md)
+- [The separation group of a countably infinite dense circular order is closed and highly homogeneous](separation-aut-subgroup-is-closed-and-hi.md)

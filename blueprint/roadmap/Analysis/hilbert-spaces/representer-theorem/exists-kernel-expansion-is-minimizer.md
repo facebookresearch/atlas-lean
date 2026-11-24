@@ -1,0 +1,3 @@
+# Existence of a minimizer
+
+Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$, let $V$ be a finite-dimensional Hilbert space over $\mathbb{K}$ and let $H$ be a reproducing kernel Hilbert space of functions $X \to V$. Let $x_1, \dots, x_n \in X$, let $L : V^n \to \mathbb{R}$ be continuous and bounded below, and let $\Omega : \mathbb{R} \to \mathbb{R}$ be continuous, monotone on $[0, \infty)$ and tending to $\infty$ at $\infty$. Then the [regularized risk](regularized-risk.md) $f \mapsto L(f(x_1), \dots, f(x_n)) + \Omega(\|f\|)$ has a global minimizer on $H$ that is a [kernel expansion](kernel-expansion.md) $\sum_i k_{x_i} c_i$.

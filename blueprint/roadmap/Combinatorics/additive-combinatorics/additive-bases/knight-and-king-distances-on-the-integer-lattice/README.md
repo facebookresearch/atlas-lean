@@ -1,0 +1,16 @@
+# Knight and king distances on the integer lattice
+
+- [Knight moves](knight-moves.md)
+- [King moves](king-moves.md)
+- [Piece distance on the integer lattice](piece-distance.md)
+- [Max-norm ball](max-norm-ball.md)
+- [Piece distance from a minimal fold](piece-distance-eq-of-mem-of-forall.md)
+- [King distance is the max norm](piece-distance-king-moves.md)
+- [The knight reaches $(1,2)$ in one move](piece-distance-knight-moves-one-two.md)
+- [The knight needs three moves to reach $(1,0)$](piece-distance-knight-moves-one-zero.md)
+- [The usual knight reaches (1, 1) in two moves](piece-distance-knight-moves-one-one.md)
+- [The knight's distance to the origin is zero](piece-distance-knight-moves-zero-zero.md)
+- [Number of points in the max-norm ball](card-max-norm-ball.md)
+- [Uniform bound for knight distance on a box](knight-distance-uniform-on-box.md)
+- [Knight distance asymptotics](knight-distance-asymptotics.md)
+- [Velocity formula for the (a, b)-knight](knight-velocity-formula.md)

@@ -118,7 +118,7 @@ example : ConcaveOn ℝ Set.univ (nbLogLik 1 X₀ 0 y₀) :=
 /-- The Gram matrix `X₀ᵀ X₀ = (2)` is invertible. -/
 theorem isUnit_gram_X₀ : IsUnit (X₀ᵀ * X₀) := by
   rw [Matrix.isUnit_iff_isUnit_det, Matrix.det_unique, isUnit_iff_ne_zero]
-  norm_num [X₀, mul_apply, Fin.sum_univ_two]
+  norm_num [X₀, Matrix.mul_apply, Fin.sum_univ_two]
 
 example {β₁ β₂ : Fin 1 → ℝ} (h₁ : IsMaxOn (nbLogLik 1 X₀ 0 y₀) Set.univ β₁)
     (h₂ : IsMaxOn (nbLogLik 1 X₀ 0 y₀) Set.univ β₂) : β₁ = β₂ :=

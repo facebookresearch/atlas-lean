@@ -1,0 +1,7 @@
+# Corner weights at the turns of a walk without right turns
+
+Let $n \ge 1$ and let $d = (d_0, \dots, d_{n-1})$ be a cyclic sequence of directions $d_i \in \mathbb{Z}/4\mathbb{Z}$, indices taken modulo $n$. Direction $k$ is the unit step $s(k)$, with $s(0) = (1, 0)$ (east), $s(1) = (0, 1)$ (north), $s(2) = (-1, 0)$ (west), $s(3) = (0, -1)$ (south), and the walk with step directions $d$ has vertices $p_k = \sum_{0 \le i < k} s(d_i)$ for $k = 0, \dots, n-1$ (so $p_0 = 0$; vertex indices are also taken modulo $n$). For integers $a, b$, the upward ray parity $\pi(a, b) \in \mathbb{Z}/2\mathbb{Z}$ of the cell $[a, a+1] \times [b, b+1]$ is the number, modulo $2$, of indices $k$ with $d_k$ horizontal (east or west), $\min(x(p_k), x(p_{k+1})) = a$ and $y(p_k) > b$. Suppose the walk is closed, $\sum_{i} s(d_i) = 0$, and let $I$ be the finite set of cells $(a, b)$ (unit squares labelled by lower left corners) with $\pi(a, b) = 1$, the interior of the walk. Suppose moreover that $n \ge 3$, the vertices are pairwise distinct, and every turn $d_{i+1} - d_i$ is $0$ or $1$. Let $\varepsilon = 1$ if the cell to the left of step $0$ has upward ray parity $1$, and $\varepsilon = -1$ otherwise. Then for every index $i$,
+
+$$w\big(n_I(p_{i+1})\big) = \varepsilon \cdot \mathbf{1}[d_{i+1} - d_i = 1],$$
+
+where $n_I(v)$ is the number of cells of $I$ with corner $v$ and $w(j) = \mathbf{1}[j = 1] - \mathbf{1}[j = 3]$.

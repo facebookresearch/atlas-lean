@@ -298,18 +298,21 @@ private theorem lu_exists_aux (n : ℕ) (A : Matrix (Fin n) (Fin n) K)
         (fun M ↦ Matrix.reindex finSumFinEquiv finSumFinEquiv M) hfac').trans hmul)
 
 /--
-LU decomposition without pivoting: a square matrix whose leading principal minors are all
-nonzero factors as a unit-diagonal lower-triangular matrix times an upper-triangular matrix.
-
-Sources: Mathlib `docs/undergrad.yaml`, Numerical Analysis / Solving systems of linear
-inequalities / LU decomposition; L. N. Trefethen and D. Bau, Numerical Linear Algebra, SIAM
-(1997), Lecture 20.
-
-Proves `Wanted` entry `exists_lu_decomposition_of_minors_ne_zero`.
+**LU decomposition without pivoting.** Let $K$ be a field and $A$ an $n \times n$ matrix over
+$K$ whose leading principal minors are all nonzero: for every $k \le n$, the determinant of the
+upper-left $k \times k$ block of $A$ is nonzero. Then $A = LU$ for some $n \times n$ matrices
+$L$ and $U$ over $K$ such that $L$ is lower triangular with every diagonal entry equal to $1$ and
+$U$ is upper triangular.
 
 Proof: Induct on the dimension and extend the factorization of the leading principal block by a
 bordered (Schur-complement) step. The statement is the existence half of Wikipedia, "LU
 decomposition", section "Existence and uniqueness".
+
+Proves `Wanted` entry `exists_lu_decomposition_of_minors_ne_zero`.
+
+Sources: Mathlib `docs/undergrad.yaml`, Numerical Analysis / Solving systems of linear
+inequalities / LU decomposition; L. N. Trefethen and D. Bau, Numerical Linear Algebra, SIAM
+(1997), Lecture 20.
 -/
 theorem exists_lu_decomposition_of_minors_ne_zero (n : ℕ)
     (A : Matrix (Fin n) (Fin n) K)
@@ -320,17 +323,20 @@ theorem exists_lu_decomposition_of_minors_ne_zero (n : ℕ)
   exact lu_exists_aux n A h
 
 /--
-Uniqueness of the LU decomposition with unit diagonal for an invertible matrix.
-
-Sources: Mathlib `docs/undergrad.yaml`, Numerical Analysis / Solving systems of linear
-inequalities / LU decomposition; L. N. Trefethen and D. Bau, Numerical Linear Algebra, SIAM
-(1997), Lecture 20.
-
-Proves `Wanted` entry `lu_decomposition_unique`.
+**Uniqueness of the LU decomposition.** Let $K$ be a field and $A$ an invertible $n \times n$
+matrix over $K$. Suppose $A = L_1 U_1 = L_2 U_2$, where $L_1$ and $L_2$ are lower triangular
+$n \times n$ matrices over $K$ with every diagonal entry equal to $1$, and $U_1$ and $U_2$ are
+upper triangular $n \times n$ matrices over $K$. Then $L_1 = L_2$ and $U_1 = U_2$.
 
 Proof: Move the invertible triangular factors across the equality, then use the triangular inverse
 and diagonal formulas to show the resulting matrix is the identity. The statement is the
 uniqueness half of Wikipedia, "LU decomposition", section "Existence and uniqueness".
+
+Proves `Wanted` entry `lu_decomposition_unique`.
+
+Sources: Mathlib `docs/undergrad.yaml`, Numerical Analysis / Solving systems of linear
+inequalities / LU decomposition; L. N. Trefethen and D. Bau, Numerical Linear Algebra, SIAM
+(1997), Lecture 20.
 -/
 theorem lu_decomposition_unique (n : ℕ)
     (A L₁ L₂ U₁ U₂ : Matrix (Fin n) (Fin n) K)

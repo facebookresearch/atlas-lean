@@ -1,0 +1,3 @@
+# Wired translation invariance from wired placements of every shift
+
+Let $d \in \mathbb{N}$ and $0 < p < 1$. If the [wired placement condition](med-wired-placement.md) holds for every translation $g \in \mathbb{Z}^d$, then the wired infinite-volume measure $\phi^1_{p,2}$ is translation invariant: every shift of configurations by an element of $\mathbb{Z}^d$ preserves it. Here $\phi^1_{p,2}$ is the [wired infinite-volume random-cluster measure](../finite-and-infinite-volume-fk-measures-on-d/wired-infinite-volume.md) on $\mathbb{Z}^d$ (a chosen subsequential weak limit of the wired box measures).

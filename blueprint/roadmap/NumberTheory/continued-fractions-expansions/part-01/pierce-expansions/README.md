@@ -1,0 +1,17 @@
+# Pierce expansions
+
+- [Pierce remainder trajectory](traj.md)
+- [Initial term of the Pierce trajectory](traj-zero.md)
+- [Step of the Pierce trajectory at a zero term](traj-succ-of-eq-zero.md)
+- [Step of the Pierce trajectory at a nonzero term](traj-succ-of-ne-zero.md)
+- [First step of the Pierce trajectory](traj-one.md)
+- [A bound on when a Pierce trajectory vanishes](exists-traj-eq-zero.md)
+- [Pierce trajectories vanish at a positive step](exists-traj-eq-zero-pos.md)
+- [Pierce length](length.md)
+- [The Pierce length is positive](length-pos.md)
+- [The Pierce trajectory vanishes at the Pierce length](traj-length-eq-zero.md)
+- [The Pierce length is at most any positive vanishing step](length-le-of-traj-eq-zero.md)
+- [The Pierce trajectory is nonzero before the Pierce length](traj-ne-zero-of-lt-length.md)
+- [Maximal Pierce length](max-length.md)
+- [Each Pierce length is at most the maximal Pierce length](length-le-max-length.md)
+- [A uniform bound on Pierce lengths bounds the maximal Pierce length](max-length-le-of-forall.md)

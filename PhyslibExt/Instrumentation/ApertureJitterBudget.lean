@@ -284,7 +284,7 @@ lemma abs_quantize_div_calibration_sub_le {s w : ℝ → ℝ} {Ls : ℝ≥0} {c 
       (Ls : ℝ) * (J + A / 2) + Δ / (2 * |c|) := by
   have hcpos : 0 < |c| := abs_pos.mpr hc
   have hKc : ((‖c‖₊ * Ls : ℝ≥0) : ℝ) = |c| * Ls := by
-    rw [NNReal.coe_mul, coe_nnnorm, Real.norm_eq_abs]
+    rw [NNReal.coe_mul, coe_nnNorm, Real.norm_eq_abs]
   have hcs : LipschitzOnWith (‖c‖₊ * Ls) (fun t => c * s t)
       (Icc (t₀ - (J + A / 2)) (t₀ + (J + A / 2))) := by
     refine LipschitzOnWith.of_dist_le_mul fun a ha b hb => ?_
@@ -464,7 +464,7 @@ lemma clipped_const_violates_budget {A : ℝ} (hA : 0 < A) (J : ℝ) :
   · unfold IsClipped
     rw [hr]
     decide
-  · unfold quantize code
+  · unfold quantize MathlibExt.Analysis.Numerical.SaturatingRoundHalfUp.code
     rw [hr]
     norm_num
 

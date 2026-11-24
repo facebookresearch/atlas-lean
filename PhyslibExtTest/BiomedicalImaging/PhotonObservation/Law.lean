@@ -37,4 +37,18 @@ example {x x' : Fin 3 → ℝ} :
     ![![1, 0, 0], ![0, 1, 0]] *ᵥ x = ![![1, 0, 0], ![0, 1, 0]] *ᵥ x' :=
   photon_law_agree_iff (fun _ => one_pos)
 
+/-- Identification on the whole space for the injective one-ray design. -/
+example :
+    Set.InjOn (fun x : Fin 1 → ℝ => photonLaw (fun _ => (1 : ℝ≥0)) ![![2]] x) Set.univ ↔
+      Set.InjOn (fun x : Fin 1 → ℝ => ![![2]] *ᵥ x) Set.univ :=
+  photon_identify_iff (fun _ => one_pos) ![![2]] Set.univ
+
+/-- Kernel vector `(0, 1)` for `![![1, 0]]` defeats identification on the whole space. -/
+example :
+    ¬ Set.InjOn (fun x : Fin 2 → ℝ =>
+      photonLaw (fun _ => (1 : ℝ≥0)) ![![1, 0]] x) Set.univ :=
+  photon_not_identify_of_kernel ![![1, 0]] Set.univ
+    (by intro h; have hh := congrFun h 1; simp at hh) (by ext j; fin_cases j <;> simp [Matrix.mulVec, dotProduct]) (Set.mem_univ 0)
+    (Set.mem_univ (0 + ![0, 1]))
+
 end PhyslibExtTest.BiomedicalImaging.PhotonObservation.Law

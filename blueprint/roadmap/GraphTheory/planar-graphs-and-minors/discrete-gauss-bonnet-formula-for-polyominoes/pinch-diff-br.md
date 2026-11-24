@@ -1,0 +1,5 @@
+# Change of the pinch indicator at the bottom-right corner of a new cell
+
+Let $S \subseteq \mathbb{Z}^2$ be a finite set of unit cells and $(x, y) \notin S$ a cell, and let $\pi_T(v) \in \{0, 1\}$ indicate that $v$ is a pinch point of $T$. Then
+
+$$\pi_{S \cup \{(x, y)\}}(x+1, y) - \pi_S(x+1, y) = \mathbf{1}\big[(x+1, y-1) \in S,\ (x+1, y) \notin S,\ (x, y-1) \notin S\big] - \mathbf{1}\big[(x+1, y) \in S,\ (x, y-1) \in S,\ (x+1, y-1) \notin S\big].$$

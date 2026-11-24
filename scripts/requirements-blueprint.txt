@@ -1,0 +1,7 @@
+# Keep local rendering aligned with the SHA-pinned Pages workflow.
+mkdocs==1.6.1
+mkdocs-material==9.8.0
+mkdocs-literate-nav==0.6.2
+markdown==3.10.3
+pymdown-extensions==11.0.1
+PyYAML==6.0.3

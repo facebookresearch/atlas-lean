@@ -88,8 +88,11 @@ private theorem scan_perm {α : Type u} {n : Nat}
 termination_by n - i
 decreasing_by omega
 
-/-- Every occurrence is preserved by the saved Fisher–Yates swaps, even when
-input values repeat. -/
+/-- **Fisher–Yates output is a rearrangement of its input.** For every vector $x$ of length $n$
+and every draw history $d$, which assigns to each position $i < n$ a number $d_i$ with
+$0 \le d_i < n - i$, the list of entries of the vector returned by the Fisher–Yates computation on
+$x$ and $d$ is a permutation of the list of entries of $x$. In particular every value occurs
+equally often in both, even when values of $x$ repeat. -/
 public theorem randomlyPermute_perm {α : Type u} {n : Nat} (xs : Vector α n)
     (draws : (i : Fin n) → Fin (n - i.val)) :
     (randomlyPermute xs draws).ret.toList.Perm xs.toList :=
@@ -209,15 +212,18 @@ private theorem positionPerm_injective (n : Nat) :
 
 end
 
-/-- Empty Fisher–Yates execution retrieves no choices and performs no swaps. -/
+/-- **Fisher–Yates on the empty vector.** For the empty vector $x$ (of length $0$) and its empty
+draw history, the Fisher–Yates computation returns $x$ with cost pair $(0, 0)$: it retrieves no
+draws and performs no swaps. -/
 public theorem randomlyPermute_empty {α : Type u} (xs : Vector α 0)
     (draws : (i : Fin 0) → Fin (0 - i.val)) :
     randomlyPermute xs draws = ⟨xs, (0, 0)⟩ := by
   rw [randomlyPermute, scan]
   rfl
 
-/-- Singleton execution retains its element but still retrieves the final
-unique draw and executes its self-swap. -/
+/-- **Fisher–Yates on a one-element vector.** For every vector $x$ of length $1$ and every draw
+history $d$, the Fisher–Yates computation returns $x$ unchanged with cost pair $(1, 1)$: it still
+retrieves the single draw $d_0 = 0$ and performs the self-swap at position $0$. -/
 public theorem randomlyPermute_singleton {α : Type u} (xs : Vector α 1)
     (draws : (i : Fin 1) → Fin (1 - i.val)) :
     randomlyPermute xs draws = ⟨xs, (1, 1)⟩ := by

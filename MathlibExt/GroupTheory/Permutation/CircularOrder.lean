@@ -8,14 +8,20 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Algebra.Group.Subgroup.Basic
+public import Mathlib.Algebra.Group.Subgroup.Defs
+public import Mathlib.Algebra.Group.End
+public import Mathlib.Tactic.TypeStar
 public import Mathlib.Order.Circular
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The subgroup of permutations of a circular order preserving `btw` in both directions. -/
+/-- **The automorphism group of a circular order.** Let $\alpha$ be a circularly ordered set with
+non-strict circular betweenness relation $\operatorname{btw}$. The automorphism group of $\alpha$
+is the subgroup of the group of permutations of $\alpha$ consisting of the permutations $\sigma$
+such that, for all $a, b, c \in \alpha$, $\operatorname{btw}(a, b, c)$ holds if and only if
+$\operatorname{btw}(\sigma(a), \sigma(b), \sigma(c))$ holds. -/
 def circularOrderAutSubgroup (α : Type*) [CircularOrder α] : Subgroup (Equiv.Perm α) where
   carrier := {σ | ∀ a b c, btw a b c ↔ btw (σ a) (σ b) (σ c)}
   one_mem' a b c := by simp

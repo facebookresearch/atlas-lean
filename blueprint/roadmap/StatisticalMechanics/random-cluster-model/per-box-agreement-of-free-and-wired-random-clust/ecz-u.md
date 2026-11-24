@@ -1,0 +1,3 @@
+# Negative log edge partition function of a box
+
+For $d, n \in \mathbb{N}$ and $t \in \mathbb{R}$, the value is $u(n) = -\log Z^{e}_{\Lambda_n}(\sigma(t), 2)$, where $Z^{e}_G(p, q)$ is the [edge partition function](ecz-fk-zedge.md) (the sum of the random-cluster weights over the configurations closed on every pair that is not an edge of $G$), $\Lambda_n = \{-n, \dots, n\}^d$ carries its nearest-neighbour graph, $\log$ is the real logarithm ($\log x = \log|x|$, $\log 0 = 0$), and $\sigma(t) = e^t/(1 + e^t)$ is the [logistic function](../convexity-of-the-free-energy-and-edge-densities/fsc-logistic.md).
