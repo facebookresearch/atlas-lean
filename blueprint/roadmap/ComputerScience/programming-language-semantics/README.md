@@ -14,3 +14,4 @@ Operational and denotational semantics of programming languages and correctness 
 - [Models of the untyped lambda calculus](models-of-the-untyped-lambda-calculus/README.md)
 
 - [Lexing and parsing](lexing-and-parsing/README.md)
+- [Static analysis](static-analysis/README.md)
