@@ -641,7 +641,7 @@ private theorem evaluateNode_linearCombination_aux {F : Type u} {A : Type v}
           exact Equiv.symm_apply_apply _ _
         have hpar1 : (finProdFinEquiv.symm g1).2.val % 2 = 0 := by
           rw [h1sym]
-          show ((finProdFinEquiv.symm i).2.val - 1) % 2 = 0
+          change ((finProdFinEquiv.symm i).2.val - 1) % 2 = 0
           omega
         have hIH1 := (ih g1 h1lt).1 hpar1
         simp only [h1sym] at hIH1
@@ -695,7 +695,7 @@ private theorem evaluateNode_linearCombination_aux {F : Type u} {A : Type v}
             exact Equiv.symm_apply_apply _ _
           have hpar2 : (finProdFinEquiv.symm g2).2.val % 2 = 1 := by
             rw [h2sym]
-            show ((finProdFinEquiv.symm i).2.val - 2) % 2 = 1
+            change ((finProdFinEquiv.symm i).2.val - 2) % 2 = 1
             omega
           have hIH2 := (ih g2 h2lt).2 hpar2
           simp only [h2sym] at hIH2
@@ -753,7 +753,7 @@ theorem evaluate_linearCombination {F : Type u} {A : Type v} {B : Type w}
       exact Equiv.symm_apply_apply _ _
     have hpar1 : (finProdFinEquiv.symm gL).2.val % 2 = 1 := by
       rw [hsym]
-      show (2 * Fintype.card S - 1) % 2 = 1
+      change (2 * Fintype.card S - 1) % 2 = 1
       omega
     have hall := evaluateNode_linearCombination_aux coeff src x
       ((linearCombination coeff src).size + 1)
