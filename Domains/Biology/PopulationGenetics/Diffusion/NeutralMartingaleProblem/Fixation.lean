@@ -97,7 +97,8 @@ private lemma integrable_apply' [IsFiniteMeasure μ] {σ : ℝ}
       constructor <;> linarith [h.1, h.2])
 
 /-- **The neutral allele frequency is a martingale.** For a solution of the neutral
-Wright–Fisher martingale problem, `X` itself is an `ℱ`-martingale: apply the martingale
+Wright–Fisher martingale problem under a finite measure `μ`, `X` itself is an `ℱ`-martingale:
+apply the martingale
 property to `f = id`, for which `L_0 f = 0`.
 
 Source: Ewens (2004), ch. 4; Ethier & Kurtz (1986), ch. 10. -/
@@ -125,7 +126,8 @@ theorem isWrightFisherSolution_one_sub (hX : IsWrightFisherSolution 0 ℱ μ X) 
   · have hg : ContDiff ℝ 2 (fun z => f (1 - z)) := hf.comp (contDiff_const.sub contDiff_id)
     simpa only [generator_zero_comp_one_sub] using hX.2.2.2 _ hg
 
-/-- In the neutral case the mean allele frequency is constant: `E[X t] = x`. -/
+/-- In the neutral case, under a probability measure and with the deterministic initial value
+`X 0 = x` almost surely, the mean allele frequency is constant: `E[X t] = x` for every `t`. -/
 theorem integral_apply_eq [IsProbabilityMeasure μ] (hX : IsWrightFisherSolution 0 ℱ μ X)
     (hX0 : ∀ᵐ ω ∂μ, X 0 ω = x) (t : ℝ≥0) : ∫ ω, X t ω ∂μ = x := by
   have h := (martingale_of_neutral hX).setIntegral_eq (zero_le (a := t)) MeasurableSet.univ
@@ -146,15 +148,15 @@ private lemma ae_forall_eq_zero_of_integral {Y : ℝ≥0 → Ω → ℝ}
   have := Continuous.ext_on hu (hc ω) continuous_const (by rintro _ ⟨n, rfl⟩; exact hω n)
   exact congrFun this t
 
-/-- **Boundary `x = 0`.** A neutral solution started at `0` stays at `0` for all time,
-almost surely: the nonnegative martingale `X` has mean `0` at every time. -/
+/-- **Boundary `x = 0`.** Under a probability measure, a neutral solution started at `0` stays
+at `0` for all time, almost surely: the nonnegative martingale `X` has mean `0` at every time. -/
 theorem ae_forall_eq_zero [IsProbabilityMeasure μ] (hX : IsWrightFisherSolution 0 ℱ μ X)
     (hX0 : ∀ᵐ ω ∂μ, X 0 ω = 0) : ∀ᵐ ω ∂μ, ∀ t, X t ω = 0 :=
   ae_forall_eq_zero_of_integral hX.2.1 (fun t ω => (hX.1 t ω).1) (integrable_apply' hX)
     (integral_apply_eq hX hX0)
 
-/-- **Boundary `x = 1`.** A neutral solution started at `1` stays at `1` for all time,
-almost surely (apply `ae_forall_eq_zero` to `1 - X`). -/
+/-- **Boundary `x = 1`.** Under a probability measure, a neutral solution started at `1` stays
+at `1` for all time, almost surely (apply `ae_forall_eq_zero` to `1 - X`). -/
 theorem ae_forall_eq_one [IsProbabilityMeasure μ] (hX : IsWrightFisherSolution 0 ℱ μ X)
     (hX0 : ∀ᵐ ω ∂μ, X 0 ω = 1) : ∀ᵐ ω ∂μ, ∀ t, X t ω = 1 := by
   have h := ae_forall_eq_zero (isWrightFisherSolution_one_sub hX)
@@ -162,8 +164,8 @@ theorem ae_forall_eq_one [IsProbabilityMeasure μ] (hX : IsWrightFisherSolution 
   filter_upwards [h] with ω hω t
   linarith [hω t]
 
-/-- **Neutral fixation probability.** A neutral allele at initial frequency `x` is eventually
-fixed with probability `x`.
+/-- **Neutral fixation probability.** Under a probability measure, a neutral allele at initial
+frequency `x` is eventually fixed with probability `x`.
 
 Source: Kimura (1962) with `s = 0`; Ewens (2004), ch. 4. -/
 theorem measureReal_fixation_eq [IsProbabilityMeasure μ] (hX : IsWrightFisherSolution 0 ℱ μ X)
@@ -171,8 +173,9 @@ theorem measureReal_fixation_eq [IsProbabilityMeasure μ] (hX : IsWrightFisherSo
     μ.real {ω | ∃ t₀ : ℝ≥0, ∀ t ≥ t₀, X t ω = 1} = x :=
   (KimuraFixationProcess.measureReal_fixation hX hX0).trans (Diffusion.kimuraFixation_neutral x)
 
-/-- **Neutral loss probability.** A neutral allele at initial frequency `x` is eventually lost
-with probability `1 - x` (fixation of the other allele, via `isWrightFisherSolution_one_sub`). -/
+/-- **Neutral loss probability.** Under a probability measure, a neutral allele at initial
+frequency `x` is eventually lost with probability `1 - x` (fixation of the other allele, via
+`isWrightFisherSolution_one_sub`). -/
 theorem measureReal_loss_eq [IsProbabilityMeasure μ] (hX : IsWrightFisherSolution 0 ℱ μ X)
     (hX0 : ∀ᵐ ω ∂μ, X 0 ω = x) :
     μ.real {ω | ∃ t₀ : ℝ≥0, ∀ t ≥ t₀, X t ω = 0} = 1 - x := by
@@ -181,11 +184,11 @@ theorem measureReal_loss_eq [IsProbabilityMeasure μ] (hX : IsWrightFisherSoluti
   simpa only [sub_eq_self, show ∀ a : ℝ, 1 - a = 1 ↔ a = 0 from fun a => by
     constructor <;> intro h <;> linarith] using h
 
-/-- **Neutral mean absorption time (Kimura–Ohta).** For a neutral solution started at `x`, the
-absorption time is integrable and its mean, in units of `2N` generations, is
-`-2 (x log x + (1 - x) log (1 - x))`. This is the unfolded form of
-`KimuraFixationProcess.integral_absorptionTime`, with `meanAbsorptionTime` expanded; it adds no
-new content.
+/-- **Neutral mean absorption time (Kimura–Ohta).** For a neutral solution started at `x` under a
+probability measure, the absorption time is integrable and its mean, in units of `2N` generations,
+is `-2 (x log x + (1 - x) log (1 - x))`. This is the unfolded form of
+`KimuraFixationProcess.integral_absorptionTime`, with `meanAbsorptionTime` expanded; it adds no new
+content.
 
 Source: Kimura & Ohta (1969); Ewens (2004), ch. 4. -/
 theorem integral_absorptionTime_eq [IsProbabilityMeasure μ]
@@ -195,8 +198,8 @@ theorem integral_absorptionTime_eq [IsProbabilityMeasure μ]
         -2 * (x * Real.log x + (1 - x) * Real.log (1 - x)) :=
   KimuraFixationProcess.integral_absorptionTime hX hX0
 
-/-- From an interior initial frequency `x ∈ (0, 1)` the mean absorption time is strictly
-positive. -/
+/-- Under a probability measure, from an interior initial frequency `x ∈ (0, 1)` the mean
+absorption time of a neutral solution is strictly positive. -/
 theorem integral_absorptionTime_pos [IsProbabilityMeasure μ]
     (hX : IsWrightFisherSolution 0 ℱ μ X) (hX0 : ∀ᵐ ω ∂μ, X 0 ω = x) (hx : x ∈ Ioo (0 : ℝ) 1) :
     0 < ∫ ω, (absorptionTime X ω : ℝ) ∂μ := by
@@ -207,9 +210,9 @@ theorem integral_absorptionTime_pos [IsProbabilityMeasure μ]
       (by linarith [hx.1]))
   linarith
 
-/-- From an interior initial frequency `x ∈ (0, 1)` the absorption time is almost surely
-positive: the path is absorbed (`ae_exists_absorbed`), the set of absorbed times is closed by
-continuity, and it does not contain `0`. -/
+/-- Under a probability measure, from an interior initial frequency `x ∈ (0, 1)` the absorption time
+of a neutral solution is almost surely positive: the path is absorbed (`ae_exists_absorbed`), the
+set of absorbed times is closed by continuity, and it does not contain `0`. -/
 theorem ae_absorptionTime_pos [IsProbabilityMeasure μ] (hX : IsWrightFisherSolution 0 ℱ μ X)
     (hX0 : ∀ᵐ ω ∂μ, X 0 ω = x) (hx : x ∈ Ioo (0 : ℝ) 1) :
     ∀ᵐ ω ∂μ, 0 < absorptionTime X ω := by

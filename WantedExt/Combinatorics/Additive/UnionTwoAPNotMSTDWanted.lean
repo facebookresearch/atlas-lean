@@ -13,6 +13,7 @@ public import Mathlib.Algebra.Group.Pointwise.Finset.Basic
 public import Mathlib.NumberTheory.Real.Irrational
 public import MathlibExt.Combinatorics.Additive.CoprimeDenominatorProgressions
 public import MathlibExt.Combinatorics.Additive.HalfIntegerProgressions
+public import MathlibExt.Combinatorics.Additive.IrrationalStartProgressions
 public import MathlibExt.Combinatorics.Additive.IrrationalStepProgressions
 
 /-!
@@ -467,20 +468,6 @@ public theorem_wanted not_isMSTDSet_union_two_ap_overlap (x₁ x₂ d₁ d₂ : 
     (hexc₁ : ¬ (1 < Nat.gcd q₁ q₂ ∧ 0 < d₂ ∧ d₂ < ((m₁ : ℝ) - 1) * d₁))
     (hexc₂ : ¬ (q₁ = 2 ∧ Nat.Coprime 2 q₂ ∧ 0 < d₂ ∧ d₂ < ((m₁ : ℝ) - 1) * d₁)) :
     ¬ IsMSTDSet (realAPSet x₁ m₁ d₁ ∪ realAPSet x₂ m₂ d₂)
-
-/-- **No nonnegative integer points for an irrational start and a rational difference.** Let
-$x$ be an irrational real number and $d$ a rational number. Then for all natural numbers $i$ and
-$j$, neither $x + id$ nor $2x + jd$ is a nonnegative integer.
-
-The paper assumes $d \in \mathbb{Q} \setminus \mathbb{N}$; the claim holds for every rational $d$,
-so that restriction is not stated.
-
-Source: Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions
-with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58, Lemma 18
-(`integers-2026-A58-lem-18`). -/
-public theorem_wanted add_mul_not_mem_nat_of_irrational_of_rat (x d : ℝ) (hx : Irrational x)
-    (hd : d ∈ Set.range ((↑) : ℚ → ℝ)) (i j : ℕ) :
-    x + i * d ∉ Set.range ((↑) : ℕ → ℝ) ∧ 2 * x + j * d ∉ Set.range ((↑) : ℕ → ℝ)
 
 end
 

@@ -140,7 +140,8 @@ private theorem transpose_inv_of_posDef [DecidableEq ι] {Q : Matrix ι ι ℝ} 
   rwa [IsHermitian, conjTranspose_eq_transpose_of_trivial] at h
 
 /-- The Pythagorean decomposition behind GLS: for symmetric `W = Q⁻¹` and a solution `ℓ̂` of
-the normal equations, `S1(B ℓ) = S1(B ℓ̂) - ½ (B (ℓ - ℓ̂))ᵀ Q⁻¹ (B (ℓ - ℓ̂))`. -/
+the normal equations, `S1(B ℓ) = S1(B ℓ̂) - ½ (B (ℓ - ℓ̂))ᵀ Q⁻¹ (B (ℓ - ℓ̂))`. For singular `Q`,
+the convention `Q⁻¹ = 0` makes the hypotheses hold and both sides `0`. -/
 theorem scoreS1_eq_sub [DecidableEq ι] [Fintype E] {Q : Matrix ι ι ℝ}
     (hW : (Q⁻¹)ᵀ = Q⁻¹) (B : Matrix ι E ℝ) (f : ι → ℝ) {lhat : E → ℝ}
     (hnorm : (Bᵀ * Q⁻¹ * B) *ᵥ lhat = (Bᵀ * Q⁻¹) *ᵥ f) (l : E → ℝ) :

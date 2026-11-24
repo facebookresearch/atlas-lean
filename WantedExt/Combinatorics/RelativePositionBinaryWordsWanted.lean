@@ -23,6 +23,7 @@ public import MathlibExt.Combinatorics.Words.EquilibriousWord
 public import MathlibExt.Combinatorics.Words.FibonacciIccanobiF
 public import MathlibExt.Combinatorics.Words.PisaEigenvector
 public import MathlibExt.Combinatorics.Words.RelativePositionBinaryWords
+public import MathlibExt.Combinatorics.Words.RelativePositionFrequency
 
 /-!
 # Relative position in binary words (Coons–Ramsey–Strungaru)
@@ -439,25 +440,6 @@ public theorem_wanted letter_frequency_tfae {w : ℕ → Bool} (hw : BothLetters
       Tendsto (fun m : ℕ => (letterCount w true m : ℝ) / m) atTop (𝓝 (1 - d)),
       Tendsto (fun n : ℕ => (letterPosition w false n : ℝ) / n) atTop (𝓝 (1 / d)),
       Tendsto (fun n : ℕ => (letterPosition w true n : ℝ) / n) atTop (𝓝 (1 / (1 - d)))].TFAE
-
-open Filter Topology in
-/-- **Relative position of a word with given letter frequency.** Let
-$w = \ell_0 \ell_1 \ell_2 \cdots$ be an infinite word over the letters $a$ and $b$. Let $\#_b(m)$
-be the number of letters $b$ among $\ell_0, \ldots, \ell_{m-1}$, and for $n \ge 1$ let
-$r(n) = p_b(n) - p_a(n)$, where $p_\alpha(n)$ is the position of the $n$-th occurrence of the
-letter $\alpha$ in $w$, counting positions from $0$. If $0 < d < 1$ and $\#_b(m)/m \to d$ as
-$m \to \infty$, then $r(n)/n \to 1/d - 1/(1-d)$ as $n \to \infty$.
-
-Such a word contains both letters infinitely often, so no separate hypothesis that both letters
-occur infinitely often is needed.
-
-Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
-Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Corollary 31
-(`jis-2025-25.1.5-cor-31`). -/
-public theorem_wanted tendsto_relativePosition_div_of_frequency {w : ℕ → Bool} {d : ℝ}
-    (hd₀ : 0 < d) (hd₁ : d < 1)
-    (hfreq : Tendsto (fun m : ℕ => (letterCount w false m : ℝ) / m) atTop (𝓝 d)) :
-    Tendsto (fun n : ℕ => (relativePosition w n : ℝ) / n) atTop (𝓝 (1 / d - 1 / (1 - d)))
 
 open Filter Topology in
 /-- **The frequency of $b$ from the growth of the relative position.** Let $w$ be an infinite

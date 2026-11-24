@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 public import Mathlib.Topology.MetricSpace.HausdorffDimension
+public import MathlibExt.NumberTheory.LurothConvergent
 public import WantedExt.NumberTheory.LurothConsecutiveDigitsWanted
 
 namespace MetaMathlibExt
@@ -151,31 +152,9 @@ public theorem_wanted dimH_wellApproximableSet_dodson (ψ : ℕ → ℝ)
 
 /-! The Lüroth map `T(x) = ⌊1/x⌋ ((⌊1/x⌋ + 1) x - 1)` and the digits
 `d_{n+1}(x) = ⌊1/T^n(x)⌋ + 1` of the paper are the existing `lurothMap` and `lurothDigitSeq`
-of `WantedExt/NumberTheory/LurothConsecutiveDigitsWanted.lean` (digits indexed from `0`):
+of `MathlibExt/NumberTheory/LurothConvergent.lean` (digits indexed from `0`):
 there `lurothMap x = d₁(x) (d₁(x) - 1) x - (d₁(x) - 1)` with `d₁(x) = ⌊1/x⌋ + 1`, which is the
 same map on `(0, 1]`. -/
-
-/-- **Lüroth denominators.** For a sequence of natural numbers $d_0, d_1, d_2, \dots$ (numbered from
-$0$), the $n$-th Lüroth denominator is
-$$Q_n = d_n \prod_{j=0}^{n-1} d_j (d_j - 1), \qquad n \ge 0.$$
-With digits numbered from $1$, as in the paper, this is the paper's $Q_{n+1}$.
-
-Source: Ying Wai Lee, *Lüroth Expansions in Diophantine Approximation: Metric
-Properties and Conjectures*, INTEGERS 26 (2026), Article A45, equation (8). -/
-public def lurothDenominator (d : ℕ → ℕ) (n : ℕ) : ℕ :=
-  d n * ∏ j ∈ Finset.range n, d j * (d j - 1)
-
-/-- **Lüroth convergents.** For a sequence of natural numbers $d_0, d_1, d_2, \dots$ (numbered from
-$0$) with Lüroth denominators $Q_0, Q_1, Q_2, \dots$, the $n$-th Lüroth convergent is the rational
-number
-$$x_n = \sum_{k=0}^{n} \frac{1}{Q_k}, \qquad n \ge 0,$$
-where a term with $Q_k = 0$ is read as $0$. With digits numbered from $1$, as in the paper, this is
-the paper's $x_{n+1} = P_{n+1}/Q_{n+1}$.
-
-Source: Ying Wai Lee, *Lüroth Expansions in Diophantine Approximation: Metric
-Properties and Conjectures*, INTEGERS 26 (2026), Article A45, Section 2. -/
-public def lurothConvergent (d : ℕ → ℕ) (n : ℕ) : ℚ :=
-  ∑ k ∈ Finset.range (n + 1), 1 / (lurothDenominator d k : ℚ)
 
 /-- **The Lüroth digits of 1.** Every Lüroth digit of $1$ equals $2$, that is,
 $1 = [2, 2, 2, \dots]$ in Lüroth notation.
@@ -285,19 +264,6 @@ Properties and Conjectures*, INTEGERS 26 (2026), Article A45, equation (16). -/
 public theorem half_two_two_mem_lurothTripleSet : ((1 / 2 : ℚ), 2, 2) ∈ lurothTripleSet := by
   refine ⟨1, ⟨one_pos, le_rfl⟩, 0, ?_⟩
   simp [lurothConvergent, lurothDenominator, lurothDigitSeq_one]
-
-/-- **Lüroth convergents approximate from below.** Let $x \in (0, 1]$ have Lüroth digits
-$d_0, d_1, d_2, \dots$ (numbered from $0$), Lüroth denominators $Q_0, Q_1, Q_2, \dots$ and Lüroth
-convergents $x_0, x_1, x_2, \dots$. Then for every $n \ge 0$,
-$$0 < x - x_n \le \frac{1}{(d_n - 1) Q_n}.$$
-In the paper's numbering from $1$ these are $d_{n+1}$, $Q_{n+1}$ and $x_{n+1} = P_{n+1}/Q_{n+1}$.
-
-Source: Ying Wai Lee, *Lüroth Expansions in Diophantine Approximation: Metric
-Properties and Conjectures*, INTEGERS 26 (2026), Article A45, Proposition 1. -/
-public theorem_wanted lurothConvergent_lt_le (x : ℝ) (hx : x ∈ Set.Ioc 0 1) (n : ℕ) :
-    0 < x - lurothConvergent (lurothDigitSeq x) n ∧
-      x - lurothConvergent (lurothDigitSeq x) n ≤
-        1 / (((lurothDigitSeq x n : ℝ) - 1) * lurothDenominator (lurothDigitSeq x) n)
 
 /-- **Mass transference principle for intervals.** Let $(c_n)$ and $(r_n)$ be real sequences with
 $r_n \ge 0$ for every $n$ and $r_n \to 0$, and let $I_n = [c_n - r_n, c_n + r_n]$. Assume that
