@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.Combinatorics.Additive.CoprimeDenominatorProgressions
+import Mathlib.Tactic.NormNum
 
 open MetaMathlibExt
 
@@ -33,3 +34,14 @@ example (x : ℝ) (h₁ : x + ((1 : ℕ) : ℝ) * (2 + 1 / 3 : ℝ) ∈ Set.rang
     (by decide) (by decide) (by decide) (by simp) 2 1
     (by decide) (by decide) (by decide) (by decide) h₂ h₁
   exact (by decide : (2 : ℕ) ≠ 1) h
+
+-- The argument works with a numerator larger than its denominator.
+example (i j : ℕ) (hi : 1 ≤ i) (hi' : i ≤ 3) (hj : 1 ≤ j) (hj' : j ≤ 3)
+    (h₁ : (1 / 4 : ℝ) + i * (5 / 4 : ℝ) ∈ Set.range ((↑) : ℕ → ℝ))
+    (h₂ : 2 * (1 / 4 : ℝ) + j * (5 / 4 : ℝ) ∈ Set.range ((↑) : ℕ → ℝ)) :
+    i = 3 ∧ j = 2 ∧ i ≠ j := by
+  have h := add_mul_mem_nat_unique_of_one_lt_gcd (1 / 4) (5 / 4) 0 0 1 5 4 4
+    (by decide) (by decide) (by decide) (by decide) (by decide) (by simp) (by simp)
+  exact ⟨h.1 i 3 hi hi' (by decide) (by decide) h₁ ⟨4, by norm_num⟩,
+    h.2.1 j 2 hj hj' (by decide) (by decide) h₂ ⟨3, by norm_num⟩,
+    h.2.2 i j hi hi' hj hj' h₁ h₂⟩
