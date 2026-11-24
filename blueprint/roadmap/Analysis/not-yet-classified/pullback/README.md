@@ -37,3 +37,5 @@
 - [Pullback Middle Map](pullback-middle-map.md)
 - [Pullback Middle Map coe](pullback-middle-map-coe.md)
 - [Pullback Hom](pullback-hom.md)
+- [Comp](comp.md)
+- [Comp apply](comp-apply.md)

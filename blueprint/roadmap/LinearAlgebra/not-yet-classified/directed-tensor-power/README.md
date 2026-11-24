@@ -1,0 +1,17 @@
+# Directed Tensor Power
+
+- [Positive Tensor Power Module Obj](positive-tensor-power-module-obj.md)
+- [Positive Tensor Power](positive-tensor-power.md)
+- [Positive Tensor Power Zero Equiv](positive-tensor-power-zero-equiv.md)
+- [Positive Tensor Power Succ Equiv](positive-tensor-power-succ-equiv.md)
+- [Positive Tensor Power Map](positive-tensor-power-map.md)
+- [Positive Tensor Power Map id](positive-tensor-power-map-id.md)
+- [Positive Tensor Power Map comp](positive-tensor-power-map-comp.md)
+- [Positive Tensor Power Congr](positive-tensor-power-congr.md)
+- [Positive Tensor Power Zero Equiv naturality](positive-tensor-power-zero-equiv-natural.md)
+- [Positive Tensor Power Succ Equiv naturality](positive-tensor-power-succ-equiv-natural.md)
+- [Positive Tensor Power Transition](positive-tensor-power-transition.md)
+- [Positive Tensor Power Succ Equiv transition naturality](positive-tensor-power-succ-equiv-transit.md)
+- [Positive Tensor Power Direct Limit Equiv](positive-tensor-power-direct-limit-equiv.md)
+- [Positive Tensor Power Direct Limit Equiv apply of](positive-tensor-power-direct-limit-equiv-2.md)
+- [Exists eq zero of positive Tensor Power Map to direct Limit eq zero](exists-eq-zero-of-positive-tensor-power.md)

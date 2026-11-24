@@ -65,3 +65,22 @@
 - [Map sub sub add eq](map-sub-sub-add-eq.md)
 - [Tensor Tensor Tensor Comm comm tmul comm](tensor-tensor-tensor-comm-comm-tmul-comm.md)
 - [Nontrivial right](nontrivial-right.md)
+
+## Partial semilinear maps over genuine semirings and additive monoids
+
+- [Semilinear PMap](semilinear-pmap.md)
+- [To Fun'](to-fun.md)
+- [Apply to Fun](apply-to-fun.md)
+- [Ext](ext-2.md)
+- [Ext iff](ext-iff.md)
+- [Dom Restrict](dom-restrict.md)
+- [Dom Restrict domain](dom-restrict-domain.md)
+- [Dom Restrict apply](dom-restrict-apply.md)
+- [Of Linear PMap](of-linear-pmap.md)
+- [To Linear PMap](to-linear-pmap.md)
+- [To Linear PMap of Linear PMap](to-linear-pmap-of-linear-pmap.md)
+- [Of Linear PMap to Linear PMap](of-linear-pmap-to-linear-pmap.md)
+- [Domain of Linear PMap](domain-of-linear-pmap.md)
+- [Domain to Linear PMap](domain-to-linear-pmap.md)
+- [Of Linear PMap apply](of-linear-pmap-apply.md)
+- [To Linear PMap apply](to-linear-pmap-apply.md)

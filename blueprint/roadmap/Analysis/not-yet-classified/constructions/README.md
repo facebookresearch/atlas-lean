@@ -37,3 +37,16 @@
 - [Standard Even Index Sign](standard-even-index-sign.md)
 - [Standard Even Matrix Generator](standard-even-matrix-generator.md)
 - [Standard Even Matrix](standard-even-matrix.md)
+
+## Constructions of projection-valued measures
+
+- [Unitary Transport](unitary-transport.md)
+- [Range unitary Transport](range-unitary-transport.md)
+- [Unitary Transport trans](unitary-transport-trans.md)
+- [Direct Sum Value](direct-sum-value.md)
+- [Direct Sum](direct-sum.md)
+- [Inflate](inflate.md)
+- [Atomic Diagonal](atomic-diagonal.md)
+- [Atomic Of Hilbert Basis](atomic-of-hilbert-basis.md)
+- [Atomic Of Hilbert Basis repr apply](atomic-of-hilbert-basis-repr-apply.md)
+- [Range atomic Of Hilbert Basis](range-atomic-of-hilbert-basis.md)

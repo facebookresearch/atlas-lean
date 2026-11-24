@@ -27,3 +27,7 @@
 - [Zero Weight is Tracial](zero-weight-is-tracial.md)
 - [Zero Weight is Norm Lower Semicontinuous](zero-weight-is-norm-lower-semicontinuous.md)
 - [Zero Weight is Norm Densely Defined](zero-weight-is-norm-densely-defined.md)
+- [Is Faithful Weight](is-faithful-weight.md)
+- [Is Normal Weight](is-normal-weight.md)
+- [Is Semifinite Weight](is-semifinite-weight.md)
+- [Normal Semifinite Faithful Weight](normal-semifinite-faithful-weight.md)

@@ -1,0 +1,15 @@
+# Tensor Product
+
+- [Completion Tensor To Lp](completion-tensor-to-lp.md)
+- [Completion Tensor To Lp tmul ae](completion-tensor-to-lp-tmul-ae.md)
+- [Spatial Tensor Product](spatial-tensor-product.md)
+- [Tensor Operator mem spatial Tensor Product](tensor-operator-mem-spatial-tensor-produ.md)
+- [Spatial Tensor](spatial-tensor.md)
+- [Spatial Tensor coe](spatial-tensor-coe.md)
+- [Spatial Tensor apply tmul](spatial-tensor-apply-tmul.md)
+- [Norm spatial Tensor le](norm-spatial-tensor-le.md)
+- [Star spatial Tensor](star-spatial-tensor.md)
+- [Spatial Tensor mul](spatial-tensor-mul.md)
+- [Spatial Tensor one one](spatial-tensor-one-one.md)
+- [Spatial Tensor Product le iff](spatial-tensor-product-le-iff.md)
+- [Spatial Tensor Product is Closed WOT](spatial-tensor-product-is-closed-wot.md)

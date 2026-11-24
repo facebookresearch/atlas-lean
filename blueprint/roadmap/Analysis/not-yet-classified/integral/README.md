@@ -1,0 +1,16 @@
+# Integral
+
+- [Spectral Integral Form](spectral-integral-form.md)
+- [Spectral Integral](spectral-integral.md)
+- [Inner spectral Integral apply](inner-spectral-integral-apply.md)
+- [Norm spectral Integral le](norm-spectral-integral-le.md)
+- [Spectral Integral CLM](spectral-integral-clm.md)
+- [Norm spectral Integral sub le](norm-spectral-integral-sub-le.md)
+- [Dist spectral Integral le](dist-spectral-integral-le.md)
+- [Simple Spectral Integral](simple-spectral-integral.md)
+- [Spectral Integral of Simple Func](spectral-integral-of-simple-func.md)
+- [Spectral Integral indicator Const](spectral-integral-indicator-const.md)
+- [Spectral Integral indicator](spectral-integral-indicator.md)
+- [Norm spectral Integral sub simple Spectral Integral lt](norm-spectral-integral-sub-simple-spectr.md)
+- [Exists simple Spectral Integral norm sub lt](exists-simple-spectral-integral-norm-sub.md)
+- [Spectral Integral CLM unique](spectral-integral-clm-unique.md)

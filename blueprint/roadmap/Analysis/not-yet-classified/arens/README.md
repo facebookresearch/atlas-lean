@@ -1,0 +1,18 @@
+# Arens
+
+- [Dual Bilinear](dual-bilinear.md)
+- [Dual Bilinear apply](dual-bilinear-apply.md)
+- [Norm dual Bilinear le](norm-dual-bilinear-le.md)
+- [Norm dual Bilinear apply le](norm-dual-bilinear-apply-le.md)
+- [Arens First](arens-first.md)
+- [Arens Second](arens-second.md)
+- [Arens First apply](arens-first-apply.md)
+- [Arens Second apply](arens-second-apply.md)
+- [Norm arens First le](norm-arens-first-le.md)
+- [Norm arens Second le](norm-arens-second-le.md)
+- [Norm arens First apply le](norm-arens-first-apply-le.md)
+- [Norm arens Second apply le](norm-arens-second-apply-le.md)
+- [Arens First inclusion](arens-first-inclusion.md)
+- [Arens Second inclusion](arens-second-inclusion.md)
+- [Continuous arens First weak Dual left](continuous-arens-first-weak-dual-left.md)
+- [Continuous arens Second weak Dual right](continuous-arens-second-weak-dual-right.md)

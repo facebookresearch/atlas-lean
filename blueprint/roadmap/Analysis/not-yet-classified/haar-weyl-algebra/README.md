@@ -1,0 +1,17 @@
+# Haar Weyl Algebra
+
+- [Haar Weyl Generators](haar-weyl-generators.md)
+- [Haar Weyl Algebra](haar-weyl-algebra.md)
+- [Coe haar Weyl Algebra](coe-haar-weyl-algebra.md)
+- [Haar Left Regular mem haar Weyl Algebra](haar-left-regular-mem-haar-weyl-algebra.md)
+- [Character Multiplier mem haar Weyl Algebra](character-multiplier-mem-haar-weyl-algeb.md)
+- [Inverse Character Multiplier mem haar Weyl Algebra](inverse-character-multiplier-mem-haar-we.md)
+- [Haar Weyl Translation Unitary](haar-weyl-translation-unitary.md)
+- [Haar Weyl Translation Unitary coe](haar-weyl-translation-unitary-coe.md)
+- [Haar Weyl Translation Unitary ae eq](haar-weyl-translation-unitary-ae-eq.md)
+- [Haar Weyl Character Unitary](haar-weyl-character-unitary.md)
+- [Haar Weyl Character Unitary coe](haar-weyl-character-unitary-coe.md)
+- [Haar Weyl Character Unitary ae eq](haar-weyl-character-unitary-ae-eq.md)
+- [Haar Weyl Inverse Character Unitary ae eq](haar-weyl-inverse-character-unitary-ae-e.md)
+- [Haar Weyl Algebra le iff](haar-weyl-algebra-le-iff.md)
+- [Haar Weyl Algebra is Closed WOT](haar-weyl-algebra-is-closed-wot.md)
