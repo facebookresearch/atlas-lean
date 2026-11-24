@@ -40,9 +40,9 @@ rescaled by `β`, the protein concentrations `xᵢ = pᵢ` satisfy, with indices
 
   `ẋᵢ = α / (1 + xᵢ₋₁ⁿ) - xᵢ`,   `i = 0, 1, 2`,   `α > 0`, `n ∈ ℕ`.        (R)
 
-**This ODE form (R) is frozen**: `vectorField n α` is exactly its right-hand side, the state
-space is `Fin 3 → ℝ`, `α` is the maximal (dimensionless) transcription rate and `n` the Hill
-coefficient. The full six-dimensional mRNA–protein model is not treated.
+`vectorField n α` is exactly the right-hand side of (R), the state space is `Fin 3 → ℝ`, `α` is
+the maximal (dimensionless) transcription rate and `n` the Hill coefficient. The full
+six-dimensional mRNA–protein model is not treated in this file.
 
 **The reduction (R) does not cover Elowitz–Leibler's standard regime.** For the six-variable
 model (with `α₀ = 0`) and loop gain `a < 2`, Elowitz and Leibler's instability boundary is
@@ -50,8 +50,8 @@ model (with `α₀ = 0`) and loop gain `a < 2`, Elowitz and Leibler's instabilit
 boundary tends to `a = 2`, the threshold of (R). At their standard parameters `n = 2`,
 `α = 216`, `β = 5` the six-variable model is unstable (`a ≈ 1.94 < 2`, and
 `3 a² / (4 - 2 a) ≈ 103 > 36 / 5`), while (R) with `n = 2` is linearly stable for every `α`
-(`re_neg_of_le_two`). In (R) a Hopf point needs `n > 2`. These six-variable facts are quoted, not
-proved here.
+(`re_neg_of_le_two`). In (R) a Hopf point needs `n > 2`. These six-variable facts are not proved
+in this file.
 
 **Symmetric equilibrium.** For `α > 0` there is a unique `p > 0` with `p (1 + pⁿ) = α`, and the
 constant state `(p, p, p)` is an equilibrium; for `n ≥ 1` it is the only equilibrium in the
@@ -72,9 +72,9 @@ for `n > 2`, at `pⁿ = 2 / (n - 2)`; for `n ≤ 2` the symmetric equilibrium is
 for every `α > 0`. Along the curve `μ ↦ -1 + a(μ) / 2 + i (√3 / 2) a(μ)` of eigenvalues
 (`μ` the equilibrium level) the real part crosses zero with speed `a'(μ) / 2 > 0`.
 
-**Periodic orbits.** Mathlib has no Hopf bifurcation theorem (and Poincaré–Bendixson, which is
-planar, does not apply to the three-dimensional system (R)). We state the classical local Hopf
-theorem for `C^∞` families on `ℝᴺ` as an explicit hypothesis, `HopfBifurcationTheorem N`: a
+**Periodic orbits.** Poincaré–Bendixson, which is planar, does not apply to the
+three-dimensional system (R). The classical local Hopf theorem for `C^∞` families on `ℝᴺ` is
+stated as an explicit hypothesis, `HopfBifurcationTheorem N`: a
 smooth family with an equilibrium branch whose linearization has a simple pair of eigenvalues
 `±iω₀`, no other eigenvalue on the imaginary axis, and an eigenvalue curve crossing the
 imaginary axis with nonzero speed, has nonconstant periodic orbits, with periods near
@@ -87,7 +87,7 @@ for transcription rates `α` arbitrarily close to the critical rate.
 
 Linear stability means every eigenvalue of the linearization has negative real part; the
 nonlinear (Lyapunov) stability that it implies is not proved. The periodic orbit is obtained
-from `HopfBifurcationTheorem 3`, which is a hypothesis, not a theorem proved here. The
+from `HopfBifurcationTheorem 3`, which is taken as a hypothesis. The
 direction of the bifurcation (first Lyapunov coefficient), the stability of the orbits and the
 global bifurcation diagram are out of scope. The results are about the protein-only reduction
 (R) only: they do not cover Elowitz–Leibler's standard regime (`n = 2`, `α = 216`, `β = 5`),
@@ -128,8 +128,10 @@ namespace MathlibExt.Biology.Dynamics.Repressilator
 
 /-! ### The model -/
 
-/-- The right-hand side of the repressilator (R): `ẋᵢ = α / (1 + xᵢ₋₁ⁿ) - xᵢ`, indices in
-`Fin 3` with wrap-around subtraction (gene `i - 1` represses gene `i`). -/
+/-- The right-hand side of the repressilator (R): `ẋᵢ = α / (1 + xᵢ₋₁ⁿ) - xᵢ`, indices in `Fin 3`
+with wrap-around subtraction (gene `i - 1` represses gene `i`). With the convention `x / 0 = 0` the
+repression term is `0` when `xᵢ₋₁ⁿ = -1` (`n` odd, `xᵢ₋₁ = -1`); in the model the concentrations are
+nonnegative and `α > 0`. -/
 noncomputable def vectorField (n : ℕ) (α : ℝ) (x : Fin 3 → ℝ) : Fin 3 → ℝ :=
   fun i => α / (1 + x (i - 1) ^ n) - x i
 
@@ -137,8 +139,9 @@ noncomputable def vectorField (n : ℕ) (α : ℝ) (x : Fin 3 → ℝ) : Fin 3 �
 `eqRate n p = p (1 + pⁿ)`. -/
 def eqRate (n : ℕ) (p : ℝ) : ℝ := p * (1 + p ^ n)
 
-/-- The loop gain at the symmetric equilibrium of level `p`: `gain n p = n pⁿ / (1 + pⁿ)`, minus
-the slope of the repression function `y ↦ eqRate n p / (1 + yⁿ)` at `y = p`. -/
+/-- The loop gain at the symmetric equilibrium of level `p`: `gain n p = n pⁿ / (1 + pⁿ)`, for
+`p ≥ 0` minus the slope of the repression function `y ↦ eqRate n p / (1 + yⁿ)` at `y = p`. With the
+convention `x / 0 = 0` it is `0` when `pⁿ = -1`. -/
 noncomputable def gain (n : ℕ) (p : ℝ) : ℝ := n * p ^ n / (1 + p ^ n)
 
 /-- The Jacobian `-I - a P` of (R) at a symmetric equilibrium with loop gain `a` (`P` the cyclic
@@ -146,8 +149,9 @@ shift `eᵢ₋₁ ↦ eᵢ`): `-1` on the diagonal, `-a` at the entries `(i, i -
 def jacobian (a : ℝ) : Matrix (Fin 3) (Fin 3) ℝ :=
   Matrix.of fun i j => if j = i then -1 else if j = i - 1 then -a else 0
 
-/-- The characteristic polynomial, over `ℂ`, of the linearization of a vector field `F` on `ℝᴺ`
-at `x`. -/
+/-- The characteristic polynomial, over `ℂ`, of the linearization of a vector field `F` on `ℝᴺ` at
+`x`. When `F` is not differentiable at `x` its derivative is taken to be `0` and the polynomial is
+`Xᴺ`. -/
 noncomputable def linCharpoly {N : ℕ} (F : (Fin N → ℝ) → Fin N → ℝ) (x : Fin N → ℝ) : ℂ[X] :=
   (LinearMap.toMatrix' (fderiv ℝ F x : (Fin N → ℝ) →ₗ[ℝ] Fin N → ℝ)).charpoly.map
     Complex.ofRealHom
@@ -404,8 +408,8 @@ theorem eq_of_isRoot_of_re_eq_zero {z : ℂ}
   · exact Or.inl h
   · exact Or.inr h
 
-/-- The eigenvalue curve through `i√3`: `μ ↦ -1 + a(μ) / 2 + i (√3 / 2) a(μ)`, `a = gain n`,
-parametrized by the equilibrium level `μ`. -/
+/-- The eigenvalue curve `μ ↦ -1 + a(μ) / 2 + i (√3 / 2) a(μ)`, `a = gain n`, parametrized by
+the equilibrium level `μ`; it passes through `i√3` where `a(μ) = 2`. -/
 noncomputable def hopfEigenvalue (n : ℕ) (μ : ℝ) : ℂ := rootPlus (gain n μ)
 
 lemma hopfEigenvalue_eq (n : ℕ) (μ : ℝ) :
@@ -413,7 +417,8 @@ lemma hopfEigenvalue_eq (n : ℕ) (μ : ℝ) :
       ((-1 + gain n μ / 2 : ℝ) : ℂ) + ((√3 / 2 * gain n μ : ℝ) : ℂ) * Complex.I := by
   apply Complex.ext <;> simp [hopfEigenvalue, rootPlus]
 
-/-- The derivative of the loop gain: `a'(μ) = n² μⁿ⁻¹ / (1 + μⁿ)²`. -/
+/-- The derivative of the loop gain at `μ ≥ 0`: `a'(μ) = n² μⁿ⁻¹ / (1 + μⁿ)²`, with the natural
+subtraction `n - 1 = 0` for `n = 0` (the expression is then `0`). -/
 lemma hasDerivAt_gain (n : ℕ) {μ : ℝ} (hμ : 0 ≤ μ) :
     HasDerivAt (gain n) (n ^ 2 * μ ^ (n - 1) / (1 + μ ^ n) ^ 2) μ := by
   have hd : HasDerivAt (fun y : ℝ => y ^ n) (n * μ ^ (n - 1)) μ := hasDerivAt_pow n μ
@@ -425,8 +430,8 @@ lemma hasDerivAt_gain (n : ℕ) {μ : ℝ} (hμ : 0 ≤ μ) :
     field_simp
     ring
 
-/-- **Transversality.** The eigenvalue curve `hopfEigenvalue n` has derivative
-`(1/2 + i √3/2) a'(μ)`. -/
+/-- **Transversality.** For `μ ≥ 0` the eigenvalue curve `hopfEigenvalue n` has derivative
+`(1/2 + i √3/2) a'(μ)` at `μ`. -/
 theorem hasDerivAt_hopfEigenvalue (n : ℕ) {μ : ℝ} (hμ : 0 ≤ μ) :
     HasDerivAt (hopfEigenvalue n)
       (((n ^ 2 * μ ^ (n - 1) / (1 + μ ^ n) ^ 2 / 2 : ℝ) : ℂ) +
@@ -460,7 +465,7 @@ theorem gain_lt {n : ℕ} (hn : 0 < n) {p : ℝ} (hp : 0 ≤ p) : gain n p < n :
 lemma gain_nonneg (n : ℕ) {p : ℝ} (hp : 0 ≤ p) : 0 ≤ gain n p := by
   unfold gain; have := one_add_pow_pos hp n; positivity
 
-/-- **No Hopf point for `n ≤ 2`.** The loop gain stays below `2`. -/
+/-- **No Hopf point for `n ≤ 2`.** For `p ≥ 0` the loop gain stays below `2`. -/
 theorem gain_lt_two_of_le_two {n : ℕ} (hn : n ≤ 2) {p : ℝ} (hp : 0 ≤ p) : gain n p < 2 := by
   rcases Nat.eq_zero_or_pos n with rfl | hn0
   · simp [gain]
@@ -482,8 +487,8 @@ lemma linCharpoly_vectorField (n : ℕ) {p : ℝ} (hp : 0 ≤ p) :
       (jacobian (gain n p)).charpoly.map Complex.ofRealHom := by
   rw [linCharpoly, toMatrix'_fderiv_vectorField n hp]
 
-/-- **Linear stability.** If `gain n p < 2`, every eigenvalue of the linearization of (R) at its
-symmetric equilibrium `(p, p, p)` (with `α = p (1 + pⁿ)`) has negative real part. -/
+/-- **Linear stability.** For `p ≥ 0` with `gain n p < 2`, every eigenvalue of the linearization
+of (R) at its symmetric equilibrium `(p, p, p)` (with `α = p (1 + pⁿ)`) has negative real part. -/
 theorem re_neg_of_isRoot_linCharpoly {n : ℕ} {p : ℝ} (hp : 0 ≤ p) (hg : gain n p < 2) {z : ℂ}
     (hz : (linCharpoly (vectorField n (eqRate n p)) (fun _ => p)).IsRoot z) : z.re < 0 := by
   rw [linCharpoly_vectorField n hp] at hz
@@ -496,9 +501,11 @@ theorem exists_re_pos_of_isRoot_linCharpoly {n : ℕ} {p : ℝ} (hp : 0 ≤ p) (
   rw [linCharpoly_vectorField n hp]
   exact exists_re_pos_of_isRoot hg
 
-/-- **No Hopf bifurcation for `n ≤ 2`.** For every equilibrium level `p ≥ 0` (equivalently every
-`α ≥ 0`), every eigenvalue of the linearization at the symmetric equilibrium has negative real
-part; in particular none lies on the imaginary axis. -/
+/-- **No Hopf bifurcation for `n ≤ 2` at nonnegative levels.** For every equilibrium level `p ≥ 0`
+(equivalently every `α ≥ 0`), every eigenvalue of the linearization at the symmetric equilibrium
+`(p, p, p)` has negative real part; in particular none lies on the imaginary axis. Symmetric
+equilibria at negative levels are not covered and can be unstable: for `n = 1`, `p = -3/2` and
+`α = 3/4` the eigenvalues are `-4` and `1/2 ± i 3√3/2`. -/
 theorem re_neg_of_le_two {n : ℕ} (hn : n ≤ 2) {p : ℝ} (hp : 0 ≤ p) {z : ℂ}
     (hz : (linCharpoly (vectorField n (eqRate n p)) (fun _ => p)).IsRoot z) : z.re < 0 :=
   re_neg_of_isRoot_linCharpoly hp (gain_lt_two_of_le_two hn hp) hz
@@ -527,7 +534,8 @@ def HopfBifurcationTheorem (N : ℕ) : Prop :=
       IsIntegralCurve γ (fun _ x => F μ x) ∧ (∀ t, γ (t + T) = γ t) ∧ (∃ t, γ t ≠ γ 0) ∧
       ∀ t, dist (γ t) (xe μ₀) < ε
 
-/-- The open positive orthant in `(μ, x)`-space, where (R) is smooth. -/
+/-- The set of `(μ, x)` with every `x j > 0` (the parameter `μ` is arbitrary), on which the proof of
+the periodic-orbit theorem applies the Hopf theorem to (R). -/
 def posOrthant : Set (ℝ × (Fin 3 → ℝ)) := {q | ∀ j, 0 < q.2 j}
 
 lemma isOpen_posOrthant : IsOpen posOrthant := by

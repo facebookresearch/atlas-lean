@@ -20,6 +20,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.Recurrences.LucasBinomialSum
+public import MathlibExt.NumberTheory.Recurrences.LucasRatioLowerBound
 public import MathlibExt.NumberTheory.Recurrences.LucasRootPower
 public import Mathlib.Analysis.SpecialFunctions.Log.Base
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
@@ -82,22 +83,6 @@ public theorem_wanted lucasU_lucasV_alpha_bounds (P : LucasSequenceParams) (hx :
       (P.q ≤ 0 → (P.p : ℝ) * α ^ (n - 1) ≤ lucasV P n ∧ (lucasV P n : ℝ) ≤ α ^ (n + 1) / P.p) ∧
       (0 ≤ P.q → α ^ n ≤ (lucasV P n : ℝ) ∧
         (lucasV P n : ℝ) ≤ α ^ (n + 1) / Real.sqrt (P.p ^ 2 - 4 * P.q))
-
-/-- **Lower bounds for ratios of consecutive Lucas terms.** Let $x$ and $y \neq 0$ be integers
-with $x \geq 1$ and $|y + 1| \leq x$, and let $(U_n)$ be the Lucas sequence with parameters
-$(x, y)$, given by $U_0 = 0$, $U_1 = 1$ and $U_{n+2} = x U_{n+1} - y U_n$. If $y < 0$, then
-$U_n / U_{n-1} \geq x - xy/(x^2 - y)$ for every $n > 2$. If $y > 0$, then
-$U_n / U_{n-1} \geq (x + \sqrt{x^2 - 4y})/2$ for every $n \geq 2$.
-
-Source: Benjamin Earp-Lynch, Simon Earp-Lynch, Omar Kihel and Puntani Pongsumpun, *Extension of the
-Equation ∑ j F_j^p = F_n^q to a Family of Lucas Sequences*, The Fibonacci Quarterly 62 (2024),
-no. 3, Lemma 2.3 (`fq-2024-earplynch07182024-lem-2.3`). -/
-public theorem_wanted lucasU_ratio_lower_bound (P : LucasSequenceParams) (hx : 1 ≤ P.p)
-    (hy : |P.q + 1| ≤ P.p) :
-    (P.q < 0 → ∀ n : ℕ, 2 < n →
-      (P.p : ℝ) - P.p * P.q / (P.p ^ 2 - P.q) ≤ (lucasU P n : ℝ) / lucasU P (n - 1)) ∧
-    (0 < P.q → ∀ n : ℕ, 2 ≤ n →
-      (P.p + Real.sqrt (P.p ^ 2 - 4 * P.q)) / 2 ≤ (lucasU P n : ℝ) / lucasU P (n - 1))
 
 /-- **Logarithmic bounds for weighted Lucas power sums when $y < 0$.** Let $x \ge 1$ and $y < 0$
 be integers with $|y + 1| \le x$, let $(U_m)$ be the Lucas sequence with parameters $(x, y)$,
