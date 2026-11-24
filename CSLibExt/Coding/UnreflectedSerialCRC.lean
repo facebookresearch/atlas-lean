@@ -135,40 +135,8 @@ private theorem toPolynomial_shiftLeft (r : ℕ) (w : BitVec r) :
     (w.shiftLeft 1).toPolynomial =
       w.toPolynomial * Polynomial.X +
         (if w.getMsbD 0 then Polynomial.X ^ r else 0) := by
-  ext i
-  simp only [BitVec.coeff_toPolynomial, Polynomial.coeff_add, BitVec.shiftLeft_eq,
-    BitVec.getLsbD_shiftLeft]
-  rw [BitVec.getMsbD_eq_getLsbD]
-  cases i with
-  | zero =>
-    rw [Polynomial.coeff_mul_X_zero]
-    by_cases h0r : 0 = r <;> by_cases hr0 : 0 < r
-      <;> cases hg2 : w.getLsbD (r - 1 - 0)
-      <;> (first | (exfalso; omega) | skip)
-      <;> simp_all [Polynomial.coeff_X_pow, Polynomial.coeff_zero]
-      <;> decide
-  | succ i =>
-    rw [Polynomial.coeff_mul_X, BitVec.coeff_toPolynomial, Nat.add_sub_cancel]
-    have hnot : ¬ (i + 1 < 1) := by omega
-    by_cases hge : r ≤ i
-    · rw [BitVec.getLsbD_of_ge w i hge]
-      by_cases hlt : i + 1 < r <;> by_cases heq : i + 1 = r <;> by_cases hr0 : 0 < r
-        <;> cases hg2 : w.getLsbD (r - 1 - 0)
-        <;> (first | (exfalso; omega) | skip)
-        <;> simp_all [Polynomial.coeff_X_pow, Polynomial.coeff_zero]
-        <;> decide
-    · by_cases heq2 : i = r - 1 - 0
-      · subst heq2
-        by_cases hlt : r - 1 - 0 + 1 < r <;> by_cases heq : r - 1 - 0 + 1 = r
-          <;> by_cases hr0 : 0 < r <;> cases hg : w.getLsbD (r - 1 - 0)
-          <;> (first | (exfalso; omega) | skip)
-          <;> simp_all [Polynomial.coeff_X_pow, Polynomial.coeff_zero]
-          <;> decide
-      · by_cases hlt : i + 1 < r <;> by_cases heq : i + 1 = r <;> by_cases hr0 : 0 < r
-          <;> cases hg1 : w.getLsbD i <;> cases hg2 : w.getLsbD (r - 1 - 0)
-          <;> (first | (exfalso; omega) | skip)
-          <;> simp_all [Polynomial.coeff_X_pow, Polynomial.coeff_zero]
-          <;> decide
+  rw [mul_comm, ← BitVec.toPolynomial_shiftLeft_add_high, add_assoc,
+    CharTwo.add_self_eq_zero, add_zero]
 
 private theorem toPolynomial_mulXMod (r : ℕ) (taps w : BitVec r) :
     (taps.mulXMod w).toPolynomial =
