@@ -10,7 +10,6 @@ import builtins
 import concurrent.futures
 import contextlib
 import io
-import json
 import os
 from pathlib import Path
 import subprocess
@@ -30,11 +29,34 @@ FAKE_LEAN = '/fake/toolchain/bin/lean'
 PLENTY = 64 * audit.BATCH_MEMORY
 
 
+def listing(environment):
+    """What `env -0` prints for this environment."""
+    return b''.join(f'{name}={value}'.encode() + b'\0' for name, value in environment.items())
+
+
+class FakeProcess:
+    """A batch's Lean process: runs the fake batch when its output is read; `kill` ends it."""
+
+    def __init__(self, fake, command):
+        self.fake, self.command = fake, command
+        self.killed = threading.Event()
+        self.returncode = None
+        self.output = ''
+
+    def communicate(self, timeout=None):
+        if self.returncode is None:
+            self.returncode, self.output = self.fake.run_batch(self.command, self.killed)
+        return self.output, None
+
+    def kill(self):
+        self.killed.set()
+
+
 class FakeLean:
     """Collides when a batch holds both modules of a pair; fails on any module named Bad*.
 
     `hold` maps a module to an event its batch waits for; `order` records each
-    batch's first module, in launch order.
+    batch's first module, in launch order; `processes` the launched processes.
     """
 
     def __init__(self, pairs=(), delay=0.0, hold=None, interrupt=False, launched=None):
@@ -49,39 +71,53 @@ class FakeLean:
         self.calls = 0
         self.probes = 0
         self.order = []
+        self.processes = {}
 
     def __call__(self, command, **kwargs):
-        if command[:3] == ['lake', 'env', sys.executable]:
-            with self.lock:
-                self.probes += 1
-            return subprocess.CompletedProcess(command, 0, json.dumps({'LEAN': FAKE_LEAN, 'PATH': ''}), '')
-        assert command[0] == FAKE_LEAN and kwargs['env']['LEAN'] == FAKE_LEAN, command
-        driver = command[-1]
-        batch = [line.split()[1] for line in Path(driver).read_text().splitlines()
+        """subprocess.run: only Lake's environment listing."""
+        assert command == ['lake', 'env', 'env', '-0'], command
+        with self.lock:
+            self.probes += 1
+        kwargs['stdout'].write(listing({'LEAN': FAKE_LEAN, 'PATH': '', 'SECRET': 'hunter2'}))
+        return subprocess.CompletedProcess(command, 0, None, b'')
+
+    def launch(self, command, root, environment):
+        assert command[0] == FAKE_LEAN and environment['LEAN'] == FAKE_LEAN, command
+        batch = [line.split()[1] for line in Path(command[-1]).read_text().splitlines()
                  if line.startswith('import ')]
+        process = FakeProcess(self, command)
         with self.lock:
             self.running += 1
             self.calls += 1
             self.peak = max(self.peak, self.running)
             self.order.append(batch[0])
+            self.processes[batch[0]] = process
             calls = self.calls
         if self.launched:
             self.launched(calls)
+        return process
+
+    def run_batch(self, command, killed):
+        driver = command[-1]
+        batch = [line.split()[1] for line in Path(driver).read_text().splitlines()
+                 if line.startswith('import ')]
         try:
             if self.interrupt:
                 raise KeyboardInterrupt
             for module in batch:
                 if module in self.hold:
-                    self.hold[module].wait(10)
-            time.sleep(self.delay)
+                    while not self.hold[module].wait(0.01):
+                        if killed.is_set():
+                            return -9, ''
+            if killed.wait(self.delay):
+                return -9, ''
             for first, second in self.pairs:
                 if first in batch and second in batch:
-                    return subprocess.CompletedProcess(
-                        command, 1, COLLISION.format(driver=driver, module=second, other=first), None)
+                    return 1, COLLISION.format(driver=driver, module=second, other=first)
             bad = [module for module in batch if module.split('.')[-1].startswith('Bad')]
             if bad:
-                return subprocess.CompletedProcess(command, 1, f'{driver}:3:0: error: policy {bad[0]}', None)
-            return subprocess.CompletedProcess(command, 0, '', None)
+                return 1, f'{driver}:3:0: error: policy {bad[0]}'
+            return 0, ''
         finally:
             with self.lock:
                 self.running -= 1
@@ -90,6 +126,7 @@ class FakeLean:
 def run_audit(modules, fake, **kwargs):
     out = io.StringIO()
     with mock.patch.object(audit.subprocess, 'run', fake), \
+            mock.patch.object(audit, 'launch_lean', fake.launch), \
             mock.patch.object(audit, 'available_memory', return_value=PLENTY), \
             contextlib.redirect_stdout(out):
         result = audit.audit(Path('.'), modules, '-- checker\n', **kwargs)
@@ -127,26 +164,26 @@ class ParallelAuditTests(unittest.TestCase):
         # Lake is asked for its environment once; every batch runs Lean itself.
         self.assertEqual((sequential_fake.probes, fake.probes), (1, 1))
 
-    def test_a_later_group_is_not_admitted_before_an_earlier_one(self):
+    def test_a_later_group_does_not_start_before_an_earlier_one(self):
         release = threading.Event()
-        real_admit = audit.Admission.admit
+        real_launch = audit.Admission.launch
 
-        def admit(self, index, first, real_admit=real_admit):
+        def launch(self, index, first, start, real_launch=real_launch):
             if index == 0 and first:
                 release.wait(10)  # group 0's worker is slow to reach admission
-            return real_admit(self, index, first)
+            return real_launch(self, index, first, start)
 
         fake = FakeLean()
         result = {}
 
         def run():
-            with mock.patch.object(audit.Admission, 'admit', admit):
+            with mock.patch.object(audit.Admission, 'launch', launch):
                 result['audit'], _ = run_audit(names(16, 2), fake, batch_size=8, workers=2)
 
         worker = threading.Thread(target=run)
         worker.start()
         time.sleep(0.3)
-        self.assertEqual(fake.calls, 0, 'group 1 was admitted before group 0')
+        self.assertEqual(fake.calls, 0, 'group 1 started before group 0')
         release.set()
         worker.join(10)
         self.assertEqual(sorted(fake.order), ['L.M00', 'L.M08'])
@@ -201,15 +238,16 @@ class ParallelAuditTests(unittest.TestCase):
             run_audit(MODULES, fake, batch_size=8, workers=1)
         self.assertEqual(fake.calls, 1)
 
-    def test_cancellation_admits_nothing_more(self):
+    def test_cancellation_starts_nothing_more_and_stops_what_runs(self):
         admission = audit.Admission()
-        admission.admit(0, True)
+        first = FakeProcess(None, [])
+        self.assertIs(admission.launch(0, True, lambda: first), first)
         waiting = {}
 
         def wait_for_group_2():
             try:
-                admission.admit(2, True)  # waits: group 1 has not been admitted
-                waiting['result'] = 'admitted'
+                admission.launch(2, True, lambda: FakeProcess(None, []))  # waits: group 1 has not started
+                waiting['result'] = 'started'
             except audit.SkippedGroup:
                 waiting['result'] = 'skipped'
 
@@ -220,18 +258,29 @@ class ParallelAuditTests(unittest.TestCase):
         admission.cancel()
         thread.join(10)
         self.assertEqual(waiting['result'], 'skipped')
-        with self.assertRaises(audit.SkippedGroup):
-            admission.admit(1, True)
-        with self.assertRaises(audit.SkippedGroup):
-            admission.admit(0, False)
+        self.assertTrue(first.killed.is_set())
+        for index, first_batch in ((1, True), (0, False)):
+            with self.assertRaises(audit.SkippedGroup):
+                admission.launch(index, first_batch, lambda: FakeProcess(None, []))
+
+    def test_a_failure_stops_the_later_groups_running_batches(self):
+        # Group 1 runs (and would run for ever) when group 0 fails; group 2 runs to its end.
+        modules = names(24, 2, bad=[(8, 'L.Bad')])
+        never, started = threading.Event(), threading.Event()
+        fake = FakeLean(hold={'L.Bad': started, 'L.M16': never}, launched=lambda calls: calls == 3 and started.set())
+        began = time.monotonic()
+        with self.assertRaisesRegex(audit.AuditFailure, 'L.Bad'):
+            run_audit(modules, fake, batch_size=8, workers=3)
+        self.assertLess(time.monotonic() - began, 5)
+        self.assertTrue(fake.processes['L.M16'].killed.is_set())
+        self.assertFalse(fake.processes['L.M00'].killed.is_set())
 
     def test_an_interrupt_while_submitting_cancels_the_queued_groups(self):
         # Groups 0 and 1 run and groups 2-3 wait in the queue when submitting group 4 is interrupted.
-        running, release = threading.Event(), threading.Event()
-        fake = FakeLean(hold={'L.M000': release, 'L.M008': release},
+        running, never = threading.Event(), threading.Event()
+        fake = FakeLean(hold={'L.M000': never, 'L.M008': never},
                         launched=lambda calls: calls == 2 and running.set())
         real_submit = concurrent.futures.ThreadPoolExecutor.submit
-        real_cancel = audit.Admission.cancel
         submitted = []
 
         def submit(pool, *args, **kwargs):
@@ -241,16 +290,11 @@ class ParallelAuditTests(unittest.TestCase):
             submitted.append(args[1])
             return real_submit(pool, *args, **kwargs)
 
-        def cancel(self, real_cancel=real_cancel):
-            real_cancel(self)
-            release.set()  # the running batches end only once the audit is cancelled
-
-        with mock.patch.object(concurrent.futures.ThreadPoolExecutor, 'submit', submit), \
-                mock.patch.object(audit.Admission, 'cancel', cancel):
+        with mock.patch.object(concurrent.futures.ThreadPoolExecutor, 'submit', submit):
             with self.assertRaises(KeyboardInterrupt):
                 run_audit(MODULES, fake, batch_size=8, workers=2)
-        self.assertTrue(release.is_set())
         self.assertEqual(sorted(fake.order), ['L.M000', 'L.M008'])
+        self.assertTrue(all(process.killed.is_set() for process in fake.processes.values()))
 
     def test_a_timeout_stops_lean_itself(self):
         # Each batch's process is Lean, not a Lake wrapper, so the timeout ends it.
@@ -262,8 +306,9 @@ class ParallelAuditTests(unittest.TestCase):
             real_run = subprocess.run
 
             def run(command, **kwargs):
-                if command[:3] == ['lake', 'env', sys.executable]:
-                    return subprocess.CompletedProcess(command, 0, json.dumps({'LEAN': str(lean)}), '')
+                if command == ['lake', 'env', 'env', '-0']:
+                    kwargs['stdout'].write(listing({'LEAN': str(lean)}))
+                    return subprocess.CompletedProcess(command, 0, None, b'')
                 return real_run(command, **kwargs)
 
             with mock.patch.object(audit.subprocess, 'run', run), \
@@ -282,13 +327,38 @@ class ParallelAuditTests(unittest.TestCase):
         self.assertEqual(result['checkedModules'], MODULES)
 
     def test_lake_environment_failures_are_audit_failures(self):
-        for answer in (subprocess.CompletedProcess([], 1, '', 'error: no workspace'),
-                       subprocess.CompletedProcess([], 0, 'not json', ''),
-                       subprocess.CompletedProcess([], 0, json.dumps({'PATH': ''}), '')):
-            with mock.patch.object(audit.subprocess, 'run', return_value=answer), \
+        def probe(status, content=b'', errors=b''):
+            def run(command, **kwargs):
+                kwargs['stdout'].write(content)
+                return subprocess.CompletedProcess(command, status, None, errors)
+            return run
+
+        secret = listing({'LEAN': FAKE_LEAN, 'SECRET': 'hunter2'})
+        for run in (probe(1, secret, b'error: no workspace'), probe(0), probe(0, b'hunter2\0' + secret),
+                    probe(0, listing({'PATH': '', 'SECRET': 'hunter2'})),
+                    probe(0, listing({'PATH': '/nowhere', 'SECRET': 'hunter2'}))):
+            with mock.patch.object(audit.subprocess, 'run', run), \
                     mock.patch.object(audit, 'available_memory', return_value=PLENTY):
-                with self.assertRaises(audit.AuditFailure):
+                with self.assertRaises(audit.AuditFailure) as caught:
                     audit.audit(Path('.'), ['L.A'], '', workers=1)
+            self.assertNotIn('hunter2', str(caught.exception))
+
+    def test_the_environment_round_trips_undecodable_bytes(self):
+        content = b'LEAN=/fake/lean\0ODD=caf\xe9\0MULTI=a\nb=c\0'
+        with mock.patch.object(audit.subprocess, 'run',
+                               lambda command, **kwargs: kwargs['stdout'].write(content)
+                               and subprocess.CompletedProcess(command, 0, None, b'')):
+            lean, environment = audit.lean_environment(Path('.'))
+        self.assertEqual(lean, '/fake/lean')
+        self.assertEqual(os.fsencode(environment['ODD']), b'caf\xe9')
+        self.assertEqual(environment['MULTI'], 'a\nb=c')
+
+    def test_the_environment_never_reaches_the_output(self):
+        fake = FakeLean(pairs=[('L.M000', 'L.M001')])
+        out = io.StringIO()
+        with contextlib.redirect_stderr(out):
+            _, lines = run_audit(names(16), fake, batch_size=8, workers=2)
+        self.assertNotIn('hunter2', '\n'.join(lines) + out.getvalue())
 
     def test_worker_count_follows_memory_and_the_override(self):
         with mock.patch.dict(os.environ, {audit.WORKERS_VARIABLE: ''}), \
@@ -343,6 +413,7 @@ class CgroupTests(unittest.TestCase):
             group = Path(folder, relative)
             group.mkdir(parents=True, exist_ok=True)
             (group / 'memory.max').write_text('max\n' if limit is None else f'{limit * self.gib}\n')
+            (group / 'memory.high').write_text('max\n')
             (group / 'memory.current').write_text(f'{used * self.gib}\n')
             (group / 'memory.stat').write_text(f'anon 1\ninactive_file {inactive * self.gib}\n')
 
@@ -360,6 +431,17 @@ class CgroupTests(unittest.TestCase):
             with self.proc(files):
                 # user.slice: 16 GiB allowed, 10 used of which 4 inactive file pages, so 10 left.
                 self.assertEqual(audit.cgroup_headroom(), 10 * self.gib)
+
+    def test_memory_high_counts_when_tighter(self):
+        with tempfile.TemporaryDirectory() as folder:
+            self.tree(folder, {'': (None, 1, 0), 'job': (16, 2, 0)})
+            Path(folder, 'job', 'memory.high').write_text(f'{8 * self.gib}\n')
+            files = {'/proc/self/cgroup': '0::/job\n', '/proc/self/mountinfo': self.mountinfo('/', folder)}
+            with self.proc(files):
+                self.assertEqual(audit.cgroup_headroom(), 6 * self.gib)
+            Path(folder, 'job', 'memory.high').write_text(f'{32 * self.gib}\n')
+            with self.proc(files):
+                self.assertEqual(audit.cgroup_headroom(), 14 * self.gib)
 
     def test_resolves_the_membership_against_the_mount_root(self):
         with tempfile.TemporaryDirectory() as folder:
@@ -449,7 +531,7 @@ class CgroupTests(unittest.TestCase):
     def test_a_level_without_memory_files_sets_no_limit(self):
         with tempfile.TemporaryDirectory() as folder:
             self.tree(folder, {'job': (8, 2, 0)})
-            for name in ('memory.max', 'memory.current', 'memory.stat'):
+            for name in ('memory.max', 'memory.high', 'memory.current', 'memory.stat'):
                 Path(folder, name).unlink(missing_ok=True)
             files = {'/proc/self/cgroup': '0::/job\n', '/proc/self/mountinfo': self.mountinfo('/', folder)}
             with self.proc(files):
