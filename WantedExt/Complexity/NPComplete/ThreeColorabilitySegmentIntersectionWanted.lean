@@ -25,7 +25,7 @@ Mendez and P. Rosenstiehl, "On triangle contact graphs", Combinatorics, Probabil
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Combinatorics.SimpleGraph.Coloring.Vertex
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
