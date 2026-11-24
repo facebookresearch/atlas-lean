@@ -12,8 +12,8 @@ Portions of this file are adapted from:
 `SqueezeBench/Problems/Schur/Def.lean` and `SqueezeBench/Problems/Schur/README.md`
 (leansolving/SqueezeBench), at commit e2e19eef093a77882da57f348def029533ec2d5e: the definitions
 `schurForces` and `schurNumber` (SqueezeBench's `Forces` and `f`) and the statements of
-`schurNumber_two` and `le_schurNumber_six` (from the README's "Known values" table), with the
-docstrings they had in the wanted module `WantedExt/Combinatorics/SchurNumbersWanted.lean`.
+`schurNumber_two`, `schurNumber_three` and `le_schurNumber_six` (from the README's "Known values"
+table), with their docstrings from `WantedExt/Combinatorics/SchurNumbersWanted.lean`.
 Copyright the SqueezeBench contributors.
 Authors: P. Manrique, H. Xia, S. Szeider.
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use these portions
@@ -49,8 +49,10 @@ import MathlibExt.Combinatorics.SchurRamsey
 For natural numbers `k` and `N`, `schurForces k N` says that every colouring of the natural
 numbers with `k` colours has a monochromatic solution of `x + y = z` with `x, y, z ∈ [1, N]`, and
 `schurNumber k` is the Schur number `S(k)`, one less than the least such `N` (and `0` for
-`k = 0`). This file proves `S(2) = 4` by a finite check. It also proves the lower bound
-`536 ≤ S(6)` due to Fredricksen and Sweet (see the docstring of `le_schurNumber_six`).
+`k = 0`). This file proves `S(2) = 4` and `S(3) = 13` by finite checks. For three colours, it
+exhibits a sum-free partition of `[1, 13]` and checks that no sum-free prefix extends to length 14.
+It also proves the lower bound `536 ≤ S(6)` due to Fredricksen and Sweet (see
+`le_schurNumber_six`).
 
 ## Proof of the lower bound for six colours
 
@@ -136,6 +138,59 @@ theorem schurNumber_two : schurNumber 2 = 4 := by
   have hinf : sInf {N | schurForces 2 N} = 4 + 1 :=
     (Nat.sInf_upward_closed_eq_succ_iff (fun _ _ hNM h => schurForces_mono h hNM) 4).2
       ⟨schurForces_two_five, not_schurForces_two_four⟩
+  simp [schurNumber, hinf]
+
+/-- A partition of `[1, 13]` into three sum-free classes. -/
+private theorem not_schurForces_three_thirteen : ¬ schurForces 3 13 := by
+  let c (n : ℕ) : Fin 3 :=
+    if n ∈ ({1, 4, 10, 13} : Finset ℕ) then 0
+    else if n ∈ ({2, 3, 11, 12} : Finset ℕ) then 1 else 2
+  have h : ∀ x ∈ Icc 1 13, ∀ y ∈ Icc 1 13, x + y ≤ 13 → c x = c y → c y ≠ c (x + y) := by
+    decide +kernel
+  intro hf
+  obtain ⟨x, hx, y, hy, _, hz, rfl, hxy, hyz⟩ := hf c
+  exact h x hx y hy (mem_Icc.mp hz).2 hxy hyz
+
+/-- All three-colourings of `[1, n]` that avoid a monochromatic Schur triple, in interval order.
+To append colour `a` at `n + 1`, check the summands `i + 1` and `n - i` for each `i < n`.
+Their colours are entries `i` and `n - 1 - i` of the prefix. -/
+private def sumFreePrefixes : ℕ → List (List (Fin 3))
+  | 0 => [[]]
+  | n + 1 => (sumFreePrefixes n).flatMap fun p =>
+      ((List.finRange 3).filter fun a => (List.range n).all fun i =>
+        decide (p[i]? = some a → p[n - 1 - i]? ≠ some a)).map fun a => p ++ [a]
+
+/-- Every three-colouring of `[1, 14]` contains a monochromatic Schur triple. -/
+private theorem schurForces_three_fourteen : schurForces 3 14 := by
+  intro c
+  by_contra h
+  have mem (n : ℕ) (hn : n ≤ 14) :
+      ((List.range n).map fun i => c (i + 1)) ∈ sumFreePrefixes n := by
+    induction n with
+    | zero => simp [sumFreePrefixes]
+    | succ n ih =>
+      simp only [sumFreePrefixes, List.mem_flatMap, List.mem_map, List.mem_filter]
+      refine ⟨_, ih (by omega), c (n + 1), ⟨by simp, ?_⟩, ?_⟩
+      · simp only [List.all_eq_true, List.mem_range, decide_eq_true_eq]
+        intro i hi
+        have hj : n - 1 - i < n := by omega
+        simp only [List.getElem?_map, List.getElem?_range hi, List.getElem?_range hj,
+          Option.map_some, ne_eq, Option.some.injEq]
+        intro h₁ h₂
+        refine h ⟨i + 1, ?_, n - 1 - i + 1, ?_, n + 1, ?_, by omega, h₁.trans h₂.symm, h₂⟩ <;>
+          rw [mem_Icc] <;> omega
+      · simp [List.range_succ]
+  have empty : sumFreePrefixes 14 = [] := by decide +kernel
+  simpa [empty] using mem 14 le_rfl
+
+/-- **The third Schur number.** The Schur number $S(3)$ equals $13$.
+
+Source: exhaustive check; OEIS A045652; listed in SqueezeBench
+`SqueezeBench/Problems/Schur/README.md`. -/
+theorem schurNumber_three : schurNumber 3 = 13 := by
+  have hinf : sInf {N | schurForces 3 N} = 13 + 1 :=
+    (Nat.sInf_upward_closed_eq_succ_iff (fun _ _ hNM h => schurForces_mono h hNM) 13).2
+      ⟨schurForces_three_fourteen, not_schurForces_three_thirteen⟩
   simp [schurNumber, hinf]
 
 /-- The six classes of the partition of `{1, …, 537}` into sum-free sets listed in the proof of
