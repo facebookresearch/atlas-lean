@@ -17,7 +17,7 @@ When $u$ is empty, this is a [maximal-munch tokenization](maximal-munch-lexing-w
 2. **Uniqueness.** For each $z$ there is at most one pair $(t, u)$ with $\mathrm{Tokens}_R(t, u)\, z$.
 3. **Completeness.** If $\mathrm{Tokens}_R(t, u)\, z$, then $\mathrm{lex}\ R\ z = (t, u)$.
 
-Soundness is proved by strong induction on the length of $z$. Its main step shows that the label chosen by $\mathrm{max\_pref}$ is that of the earliest matching rule. Completeness follows from soundness and uniqueness, since $\mathrm{lex}$ is total. Totality is shown by well-founded recursion on the length of the remaining input. The hypothesis on labels excludes rule lists such as $[(\ell_1, a^*), (\ell_2, b^*), (\ell_1, b)]$, in which a later rule reuses the label of an earlier one. It does not reduce expressiveness, because rules with the same label can be merged into one by union.
+Soundness is proved by strong induction on the length of $z$. Its main step shows that the label chosen by $\mathrm{max\_pref}$ is that of the earliest matching rule. Completeness follows from soundness and uniqueness, since $\mathrm{lex}$ is total. Totality is shown by well-founded recursion on the length of the remaining input. The hypothesis on labels excludes rule lists such as $[(\ell_1, a^*), (\ell_2, b^*), (\ell_1, b)]$, in which a later rule reuses the label of an earlier one.
 
 All three properties are verified in Coq.
 

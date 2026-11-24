@@ -22,6 +22,7 @@ which first evaluates the argument.
 This page becomes ready once:
 
 - The Church–Rosser property of $\beta$-reduction for simply typed terms (statement prerequisite; not yet stated)
+- Strong normalization of full $\beta$-reduction for simply typed terms (statement prerequisite; formal statement exists, page pending)
 
 ## Sources
 
