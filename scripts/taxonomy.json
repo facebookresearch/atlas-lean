@@ -11850,6 +11850,7 @@
   "MathlibExt/NumberTheory/DeBruijnNewman": {"to": "NumberTheory/zeta-l-functions/riemann-zeta", "title": "De Bruijn–Newman constant"},
   "MathlibExt/NumberTheory/DelannoyBinomialSum": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Congruences for Delannoy numbers"},
   "MathlibExt/NumberTheory/Digits/BinaryDigitSum": {"to": "Analysis/real-functions/continuity-and-functional-equations", "title": "Takagi function"},
+  "MathlibExt/NumberTheory/Digits/BinomialDigits": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Palindromic representations of powers of two"},
   "MathlibExt/NumberTheory/Digits/BinomialFormTwoPowBase": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Palindromic representations of powers of two"},
   "MathlibExt/NumberTheory/Digits/Cohn": {"to": "Algebra/polynomials", "title": "Irreducibility criteria for integer polynomials"},
   "MathlibExt/NumberTheory/Digits/CommaParent": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Comma sequences"},
