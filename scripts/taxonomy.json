@@ -10562,6 +10562,7 @@
   "MathlibExt/Combinatorics/Enumerative/DoubleAscentDescent": {"to": "Combinatorics/permutations/permutation-patterns", "title": "Permutations avoiding two patterns of length three"},
   "MathlibExt/Combinatorics/Enumerative/DoubleBinomialSumReduction": {"to": "Combinatorics/binomial-coefficients/binomial-sums", "title": "Binomial sums involving absolute values"},
   "MathlibExt/Combinatorics/Enumerative/DoublePerfectPartitions": {"to": "Combinatorics/integer-partitions/young-diagrams-statistics", "title": "Perfect and double-perfect partitions"},
+  "MathlibExt/Combinatorics/Enumerative/DowlingExponentialGeneratingFunction": {"to": "Combinatorics/permutations/permutation-statistics", "title": "Flattened Stirling permutations"},
   "MathlibExt/Combinatorics/Enumerative/DyckPeakDescents": {"to": "Combinatorics/catalan-numbers-lattice-paths/dyck-paths-lattice-walks", "title": "Peak descents of Dyck paths"},
   "MathlibExt/Combinatorics/Enumerative/EngelBellLogConvexity": {"to": "Combinatorics/stirling-bell-eulerian/bell-fubini-numbers", "title": "Log-convexity of Bell numbers"},
   "MathlibExt/Combinatorics/Enumerative/EulerSeidelMatrix": {"to": "Combinatorics/stirling-bell-eulerian/bernoulli-euler-genocchi", "title": "Euler–Seidel matrices"},
