@@ -12,14 +12,16 @@ import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Tactic.LinearCombination
 
 /-!
-# A partial-sum identity for the Hopkins–Wang tribonacci numbers
+# Partial-sum identities for the Hopkins–Wang tribonacci numbers
 
 Let `t(0) = 1`, `t(1) = 0`, `t(2) = 1` and `t(n) = t(n-1) + t(n-2) + t(n-3)` for `n ≥ 3`, and
-set `t(n) = 0` for `n < 0`; on the naturals this is `tribNat`, on the integers `trib`. This file
-proves that for every natural number `k ≥ 1`, with `n = 3k + 2`,
-`t(n) + t(n-2) = 2 + 2 ∑_{i=0}^{k-1} t(n-3i-1)` (`trib_add_two_sub_three_mul_add_two`).
+set `t(n) = 0` for `n < 0`; on the naturals this is `tribNat`, on the integers `trib`.
+The theorem `trib_three_mul` expresses `t(3k)` as one plus the sum of the two
+preceding terms at each multiple of three from `0` through `3k`. The theorem
+`trib_add_two_sub_three_mul_add_two` proves that for every natural number
+`k ≥ 1`, with `n = 3k + 2`, `t(n) + t(n-2) = 2 + 2 ∑_{i=0}^{k-1} t(n-3i-1)`.
 
-## Proof outline
+## Proof outline for `trib_add_two_sub_three_mul_add_two`
 
 All indices are nonnegative, so the identity is one about `tribNat`, where the sum reads
 `s(k) = t(3k+1) + t(3k-2) + ⋯ + t(4)`. Induct on `k`. For `k = 1` both sides equal
@@ -107,5 +109,41 @@ theorem trib_add_two_sub_three_mul_add_two (k : ℕ)
       trib_eq_tribNat (by have := Finset.mem_range.mp hi; omega)
   rw [trib_eq_tribNat (m := 3 * k + 2) (by omega), trib_eq_tribNat (m := 3 * k) (by omega), hsum]
   exact tribNat_add_two_sub_three_mul_add_two k hk
+
+/-- **Tribonacci partial-sum identity for $t(3k)$.** Let $t$ be the tribonacci numbers with
+$t(0) = 1$, $t(1) = 0$, $t(2) = 1$ and $t(n) = t(n-1) + t(n-2) + t(n-3)$ for $n \ge 3$,
+extended by $t(n) = 0$ for $n < 0$. For every natural number $k$,
+$$t(3k) = 1 + \sum_{i=0}^{k} \bigl(t(3k-3i-1) + t(3k-3i-2)\bigr).$$
+
+Source: Brian Hopkins and Hua Wang, "Allowing or Prohibiting
+Two Consecutive Colors in `n`-Color Compositions",
+Theorem 8. -/
+theorem trib_three_mul (k : ℕ) :
+    trib (3 * (k : ℤ)) = 1 +
+      ∑ i ∈ Finset.range (k + 1),
+        (trib (3 * (k : ℤ) - 3 * (i : ℤ) - 1) +
+          trib (3 * (k : ℤ) - 3 * (i : ℤ) - 2)) := by
+  induction k with
+  | zero =>
+    -- The only summand is `t(-1) + t(-2) = 0`.
+    decide
+  | succ k ih =>
+    -- Removing the first summand leaves the indices for `k`.
+    have hshift (i : ℕ) :
+        3 * ((k + 1 : ℕ) : ℤ) - 3 * ((i + 1 : ℕ) : ℤ) =
+          3 * (k : ℤ) - 3 * (i : ℤ) := by
+      omega
+    have hrec : trib (3 * ((k + 1 : ℕ) : ℤ)) =
+        trib (3 * ((k + 1 : ℕ) : ℤ) - 1) +
+          trib (3 * ((k + 1 : ℕ) : ℤ) - 2) + trib (3 * (k : ℤ)) := by
+      rw [trib_eq_tribNat (m := 3 * k + 3) (by omega),
+        trib_eq_tribNat (m := 3 * k + 2) (by omega),
+        trib_eq_tribNat (m := 3 * k + 1) (by omega),
+        trib_eq_tribNat (m := 3 * k) (by omega)]
+      exact tribNat_add_three _
+    rw [Finset.sum_range_succ']
+    simp only [hshift, Nat.cast_zero, mul_zero, sub_zero]
+    rw [hrec, ih]
+    ac_rfl
 
 end MathlibExt.Combinatorics.Enumerative.NColorCompositionsWanted

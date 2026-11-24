@@ -34,3 +34,13 @@ example : weightedSchreierCount 4 4 = 6 := by decide
 -- A second iteration uses both seed entries. The zero seed gives ordinary iterated sums.
 example : seededPartialSums (fun j => j + 3) (fun _ => 2) 2 3 = 19 := by decide
 example : iteratedPartialSum 2 (fun _ => (2 : ℕ)) 3 = 6 := by decide
+
+-- At depth two, the first nonzero shifted sum occurs at index two.
+example : iteratedPartialSum 2 (fun n => Nat.fib (n + 2)) 2 = 1 := by
+  rw [iteratedPartialSum_fib_add_two]
+  decide
+
+-- At index four both unshifted terms contribute.
+example : iteratedPartialSum 2 (fun n => Nat.fib (n + 2)) 4 = 10 := by
+  rw [iteratedPartialSum_fib_add_two]
+  decide
