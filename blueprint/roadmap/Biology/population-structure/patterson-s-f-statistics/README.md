@@ -40,6 +40,8 @@
 - [f4 of an admixed population scales with the mixture proportion](f4-admixture-right.md)
 - [f4-ratio estimation of the admixture proportion](f4-ratio.md)
 - [Root-relative second moment in the drift model](root-second-moment.md)
+- [f-statistics of a sample taken on an ancestral lineage](ancient-samples-as-internal-nodes-ancestor-desce.md)
+- [f-statistics carry no sampling times](f-statistics-carry-no-time-labels-ancient-sample.md)
 
 ## The Wahlund effect
 
