@@ -18,7 +18,8 @@ The wedge, resolution square, global-section products and both Milnor-fiber
 coordinates are fixed independently of the geometric prismatic comparison.
 Compatible multiplicative hypermodels and their comparison are constructed
 jointly. The map uses the actual phi_A quotient scalar map, preserves all
-prescribed cups/units and is normalized by the native completion unit.
+prescribed cups/units and is normalized by the native completion unit. The comparison is
+requested for quasi-compact and quasi-separated formal schemes.
 
 References: Bhatt–Scholze, arXiv:1905.08229v4, Theorem 1.8(3) and
 Corollary 15.4; Stacks Project, Tags 070A and 091Z.
@@ -51,13 +52,19 @@ public theorem_wanted formalDeRhamIsPComplete
     (p : ℕ) [Fact p.Prime] (P : Prism.{0} p) (X : FormalScheme p P.ring P.ideal)
     (S : System p P X) : IsComplete P.Residue (Ideal.span {(p : P.Residue)}) S.derived
 
+/-- The algebra comparison of completed prismatic and formal de Rham cohomology for a smooth,
+quasi-compact and quasi-separated formal scheme (Bhatt–Scholze, Thm. 1.8(3) and Cor. 15.4); as
+for `deRhamModuleComparison`, scalar extension through global sections needs the qcqs
+hypothesis. -/
 public def_wanted prismaticDeRhamAlgebraComparison
     (p : ℕ) [Fact p.Prime] (P : Prism.{0} p) (X : FormalScheme p P.ring P.ideal)
     [RelativePrismaticCohomology.HasDerivedSections p P X]
     [HasExtension (deRhamScalars p P)]
     (O : StructuralAlgebra p P X)
     (C : Completion P.Residue (Ideal.span {(p : P.Residue)}))
-    (hSmooth : ∀ n : ℕ, Smooth (X.structureMap.app n)) :
+    (hSmooth : ∀ n : ℕ, Smooth (X.structureMap.app n))
+    (hQcqs : ∀ n : ℕ, QuasiCompact (X.structureMap.app n) ∧
+      QuasiSeparated (X.structureMap.app n)) :
     Σ H : Hypermodel p P X O,
       Σ M : AlgebraAssembly H.globalDiagram,
         Σ S : System p P X,

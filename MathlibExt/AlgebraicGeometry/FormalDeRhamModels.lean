@@ -32,8 +32,8 @@ hypermodel is bounded below and quasi-isomorphic to that complex, and its
 global sections compute derived global sections: it maps quasi-isomorphically
 to a termwise injective resolution, by a map that stays a quasi-isomorphism on
 global sections. The hypermodel itself is not required to be injective, since it
-carries the strict products of `FormalDeRhamCupModels`, which no injective
-resolution admits (see below). Adjacent restriction maps are fixed on every
+carries the strict products of `FormalDeRhamCupModels`, which injective
+resolutions need not admit (see below). Adjacent restriction maps are fixed on every
 local exact wedge generator; the resolution maps lift them up to an actual
 homotopy.
 
@@ -80,10 +80,11 @@ instance pushforward_additive (n : ℕ) : (pushforward p P X n).Additive where
 maps pinned independently of any prismatic comparison.
 
 The hypermodel `resolution n` is acyclic for global sections, as witnessed by `toInjective n`,
-but is not itself required to be termwise injective: an injective module over `ℤ_p` is
-`p`-divisible, so it has no bilinear product with a unit killed by `p`, as the product of a
-level killed by `p` must be (for the Breuil–Kisin prism and `X = Spf ℤ_p`, level zero is
-`Spec 𝔽_p`, and such a product would force the injective degree-zero term to vanish). -/
+but is not itself required to be termwise injective, because injective resolutions need not
+admit strict unital products: an injective module over `ℤ_p` is `p`-divisible, so it has no
+bilinear product with a unit killed by `p`, as the product of a level killed by `p` must be (for
+the Breuil–Kisin prism and `X = Spf ℤ_p`, level zero is `Spec 𝔽_p`, and such a product would
+force the injective degree-zero term to vanish). -/
 structure System where
   differential : ∀ n, Differential P.Residue (level p P X n)
   resolution : ∀ n, CochainComplex

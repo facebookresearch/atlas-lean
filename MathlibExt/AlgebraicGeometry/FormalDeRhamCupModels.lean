@@ -24,8 +24,8 @@ sign; finite projections alone do not discard a possible lim1 component.
 
 Compatible multiplicative resolutions are construction output, chosen
 jointly with the original formal system; they are the section-acyclic
-hypermodels of `FormalDeRhamModels.System`, which are not injective (an
-injective resolution admits no such strict unital product). No claim is made
+hypermodels of `FormalDeRhamModels.System`, which need not be injective
+(injective resolutions need not admit such strict unital products). No claim is made
 for independently chosen arbitrary resolutions.
 
 References: Bhatt–Scholze, arXiv:1905.08229v4, Theorem 1.8(3) and
