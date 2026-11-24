@@ -22,7 +22,10 @@ which the two implications are proved; derivability and consistency are the firs
 linked above. It then has separate pages for: CH holds in $L$ and the
 relative consistency of ZFC + CH; forcing over a countable transitive model or by Boolean-valued
 models, and the relative consistency of ZFC + ¬CH; and the corresponding statements for the
-generalized continuum hypothesis. The truth of CH inside one model of set theory is a different, semantic
+generalized continuum hypothesis. The existence of a countable transitive model of ZFC is a stronger
+hypothesis than the consistency of ZFC, so a forcing argument that starts from such a model does not
+by itself give the implication from the consistency of ZFC; each page states which hypothesis it
+uses. The truth of CH inside one model of set theory is a different, semantic
 statement and does not express independence.
 
 ## Sources
@@ -30,3 +33,7 @@ statement and does not express independence.
 - P. Koellner, *The continuum hypothesis*, Stanford Encyclopedia of Philosophy, first published
   22 May 2013, §1, Theorems 1.1 (Gödel 1938) and 1.2 (Cohen 1963).
   <https://plato.stanford.edu/entries/continuum-hypothesis/>
+- T. Y. Chow, "A beginner's guide to forcing", preprint, version 2 (2008), Section 3.3 and its
+  footnote 3 (standard and transitive models; the existence of a standard model of ZFC is a stronger
+  assumption than the consistency of ZFC) and Section 7 (forcing over a countable standard transitive
+  model). <https://arxiv.org/abs/0712.1320>
