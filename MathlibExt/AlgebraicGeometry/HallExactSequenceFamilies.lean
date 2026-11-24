@@ -178,7 +178,7 @@ abbrev CoherentObject := {F : X.left.Modules //
 def sheafEuler (_HX : Threefold X) (F : CoherentObject X) : ℤ :=
   cohomologyDifference X F.val
 
-/-- Integral curve degree profile of an actual proper smooth curve map. -/
+/-- Degree profile of a map from a proper integral curve (possibly singular). -/
 def integralCurveDegrees (C : NumericalCurveCones.Curve X) : LineBundle X.left → ℤ :=
   fun L => degree C.source.hom ((Scheme.Modules.pullback C.map.left).obj L.val)
     (L.2.pullback C.map.left)
