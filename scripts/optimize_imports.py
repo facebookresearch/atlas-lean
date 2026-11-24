@@ -1018,6 +1018,17 @@ LAKE_GROWTH_DIRECTORY = "lake-growth"
 # Lake custody that must outlive one invocation of a run: the first rejected
 # preparation and the root artifact root's listing after the last accepted one.
 LAKE_CUSTODY_DIRECTORY = "lake-custody"
+# Written before each Lake preparation starts its child and removed only after every custody
+# record of that preparation is saved. Its presence means a preparation's effects were never
+# checked or recorded, so the output directory may not run another one.
+PENDING_PREPARATION = "pending.json"
+
+
+def refuse_interrupted_preparation(output: Path) -> None:
+    pending = output / LAKE_CUSTODY_DIRECTORY / PENDING_PREPARATION
+    if os.path.lexists(pending):
+        raise ValueError(f"A Lake preparation was interrupted before its custody records were saved ({pending}); "
+                         "start a new output directory")
 
 # Root-package artifacts this run's own Lake preparations added (path to file
 # pin), consulted only while saved rows are validated on resume.
@@ -1359,6 +1370,7 @@ def run_lake_preparation(tools: Tools, argv: list[str], label: Path,
     every later preparation is refused.
     """
     custody_directory = tools.output / LAKE_CUSTODY_DIRECTORY
+    refuse_interrupted_preparation(tools.output)
     if not tools.lake_custody_failure and (custody_directory / "rejected.json").exists():
         recorded = read_json(custody_directory / "rejected.json").get("error")
         tools.lake_custody_failure.append(recorded if isinstance(recorded, str) else "unreadable rejection record")
@@ -1422,6 +1434,8 @@ def run_lake_preparation(tools: Tools, argv: list[str], label: Path,
                 absent_names.setdefault(ancestor, set()).add((rest / path.name).parts[0])
         for parent in absent_names:
             identities.setdefault(parent, path_component_identity(parent))
+        # From here until every record below is saved, an interruption leaves this marker.
+        write_json(custody_directory / PENDING_PREPARATION, {"preparation": str(label), "modules": sorted(modules)})
         with guard_path_component_moves(identities, mutable_roots=(*watched, build_root, tools.output),
                                         child_names=absent_names):
             result = tools.run(argv, label)
@@ -1472,6 +1486,8 @@ def run_lake_preparation(tools: Tools, argv: list[str], label: Path,
         tools.lake_custody_failure.append(str(error))
         if not (custody_directory / "rejected.json").exists():
             write_json(custody_directory / "rejected.json", {"preparation": str(label), "error": str(error)})
+        # The rejection record now keeps the output directory closed.
+        (custody_directory / PENDING_PREPARATION).unlink(missing_ok=True)
         raise
     tools.root_listing["after"] = (frozenset(namespaces_after), frozenset(files_after))
     write_json(custody_directory / "listing.json",
@@ -1482,6 +1498,7 @@ def run_lake_preparation(tools: Tools, argv: list[str], label: Path,
         record_root_custody(tools, added.values())
         write_json(tools.output / LAKE_GROWTH_DIRECTORY / f"{time.time_ns()}.json",
                    {"preparation": str(label), "added": [added[path] for path in sorted(added)]})
+    (custody_directory / PENDING_PREPARATION).unlink()
     return result
 
 
@@ -5295,6 +5312,8 @@ def main() -> int:
         recover_source_edit(root, output / "transaction.json")
         if (output / "results.jsonl").exists() and not (output / "run.json").exists():
             raise ValueError("Refusing a result journal without its original run identity")
+        # Before any child process: an interrupted preparation's effects were never checked.
+        refuse_interrupted_preparation(output)
         source_cache: SourceCache = {}
         inventory = load_inventory(root, options.manifest, [], source_cache)
         rows = select_inventory(inventory, options.files)

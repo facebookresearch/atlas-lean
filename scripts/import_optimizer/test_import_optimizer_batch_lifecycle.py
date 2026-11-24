@@ -990,8 +990,8 @@ class SearchedProviderTests(unittest.TestCase):
                 self.assertEqual(row["error"], "An earlier Lake preparation was rejected: " + message)
 
 
-class SavedReceiptResumeTests(unittest.TestCase):
-    """Every saved root-package receipt holds on resume, whatever the journal says."""
+class ResumeHarness(unittest.TestCase):
+    """Three one-module batches through main() with a mocked Lake that leaves up-to-date targets alone."""
 
     def setUp(self) -> None:
         directory = tempfile.TemporaryDirectory()
@@ -1049,6 +1049,10 @@ class SavedReceiptResumeTests(unittest.TestCase):
             path.write_bytes(path.read_bytes() + b"changed\n")
         else:
             path.unlink()
+
+
+class SavedReceiptResumeTests(ResumeHarness):
+    """Every saved root-package receipt holds on resume, whatever the journal says."""
 
     def test_interrupted_preparation_growth_is_verified_with_empty_or_missing_journal(self) -> None:
         for journal_state in ("empty", "missing"):
@@ -1203,6 +1207,211 @@ class SavedReceiptResumeTests(unittest.TestCase):
                         contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit) as raised:
                     optimizer.main()
                 self.assertEqual(raised.exception.code, 2)
+
+
+class Abrupt(BaseException):
+    """An abrupt stop that no optimizer handler catches, standing in for a killed process."""
+
+
+class InterruptedPreparationTests(ResumeHarness):
+    """A Lake preparation stopped after its child may have written artifacts keeps the output closed."""
+
+    def pending(self) -> Path:
+        return self.root / "output" / optimizer.LAKE_CUSTODY_DIRECTORY / optimizer.PENDING_PREPARATION
+
+    def interrupted_after_lake_writes(self, target: str):
+        def during_build(built: str) -> None:
+            if built == target:
+                raise KeyboardInterrupt("Received signal 15")
+        return during_build
+
+    def test_marker_is_saved_before_lake_runs(self) -> None:
+        seen: list[dict[str, object]] = []
+
+        def during_build(target: str) -> None:
+            seen.append(optimizer.read_json(self.pending()))
+
+        self.assertEqual(self.invoke("--max-batches", "1", during_build=during_build), (0, [["A"]]))
+        self.assertEqual(seen[0]["modules"], ["A", "Lib.Base", "Lib.Sub.A"])
+        self.assertTrue(str(seen[0]["preparation"]).endswith("/prepare"))
+        self.assertFalse(os.path.lexists(self.pending()))
+
+    def test_interruption_after_lake_writes_closes_the_output(self) -> None:
+        for later in (False, True):
+            with self.subTest(later=later):
+                self.setUp()
+                target = "A"
+                if later:
+                    self.assertEqual(self.invoke("--max-batches", "1"), (0, [["A"]]))
+                    target = "B"
+                with self.assertRaises(KeyboardInterrupt):
+                    self.invoke(*(["--resume"] if later else []),
+                                during_build=self.interrupted_after_lake_writes(target))
+                self.assertTrue((self.sub / f"{target}.olean").exists())
+                self.assertEqual(optimizer.read_json(self.pending())["modules"][-1], f"Lib.Sub.{target}")
+                growth = optimizer.read_lake_growth(self.root / "output")
+                self.assertNotIn(str(self.sub / f"{target}.olean"), growth)
+                self.assertFalse((self.pending().parent / "rejected.json").exists())
+                for extra in ((), ("--retry-blocked",)):
+                    self.refused("A Lake preparation was interrupted before its custody records were saved", *extra)
+                self.assertTrue(os.path.lexists(self.pending()))
+
+    def test_a_later_preparation_in_the_same_process_is_refused(self) -> None:
+        tools = optimizer.Tools(self.root, self.root / "output", self.root / "bin/lake", self.root / "bin/lean",
+                                self.root, {"LEAN_SYSROOT": str(self.root)}, 5, time_binary=self.root / "bin/time")
+
+        def interrupted(argv, label, environment=None):
+            fresh(self.sub / "A.olean")
+            raise KeyboardInterrupt("Received signal 15")
+
+        with patch.object(optimizer.Tools, "run", side_effect=interrupted), self.assertRaises(KeyboardInterrupt):
+            optimizer.run_lake_preparation(tools, ["lake", "build"], tools.output / "prepare",
+                                           frozenset({"Lib.Sub.A"}))
+        with patch.object(optimizer.Tools, "run", side_effect=AssertionError("Lake ran")), \
+                self.assertRaisesRegex(ValueError, "interrupted before its custody records were saved"):
+            optimizer.run_lake_preparation(tools, ["lake", "build"], tools.output / "prepare",
+                                           frozenset({"Lib.Sub.B"}))
+
+    def stop_at(self, point: str, before: bool = False):
+        """Stop abruptly right after (or before) one record write of the preparation."""
+        actual = optimizer.write_json
+        unlink = Path.unlink
+        state = {"stopped": False}
+
+        def matches(path: Path) -> bool:
+            return {"pending": path.name == optimizer.PENDING_PREPARATION, "listing": path.name == "listing.json",
+                    "growth": path.parent.name == optimizer.LAKE_GROWTH_DIRECTORY,
+                    "rejected": path.name == "rejected.json"}.get(point, False)
+
+        def write_json(path, value):
+            hit = not state["stopped"] and matches(Path(path))
+            if hit and before:
+                state["stopped"] = True
+                raise Abrupt(point)
+            actual(path, value)
+            if hit:
+                state["stopped"] = True
+                raise Abrupt(point)
+
+        def unlink_marker(path, *args, **kwargs):
+            removal = point == "marker-removal" or (
+                point == "marker-removal-after-rejection" and (path.parent / "rejected.json").exists())
+            if removal and not state["stopped"] and path.name == optimizer.PENDING_PREPARATION:
+                state["stopped"] = True
+                raise Abrupt(point)
+            return unlink(path, *args, **kwargs)
+
+        return contextlib.ExitStack(), write_json, unlink_marker, state
+
+    def run_stopped(self, point: str, before: bool = False, **lake: object) -> None:
+        _, write_json, unlink_marker, state = self.stop_at(point, before)
+        with patch.object(optimizer, "write_json", side_effect=write_json), \
+                patch.object(Path, "unlink", autospec=True, side_effect=unlink_marker), \
+                self.assertRaises(Abrupt):
+            self.invoke(**lake)
+        self.assertTrue(state["stopped"])
+
+    def test_every_commit_boundary_before_marker_removal_stays_closed(self) -> None:
+        for point in ("pending", "listing", "growth", "marker-removal"):
+            with self.subTest(stopped_after=point):
+                self.setUp()
+                self.run_stopped(point)
+                self.assertTrue(os.path.lexists(self.pending()))
+                self.refused("interrupted before its custody records were saved")
+
+    def test_stop_before_the_marker_exists_leaves_a_resumable_run(self) -> None:
+        builds: list[list[str]] = []
+        with self.lake() as observed:
+            _, write_json, unlink_marker, state = self.stop_at("pending", before=True)
+            with patch.object(optimizer, "write_json", side_effect=write_json), \
+                    patch.object(sys, "argv", self.arguments), self.assertRaises(Abrupt):
+                optimizer.main()
+            builds = list(observed)
+        self.assertEqual(builds, [])
+        self.assertFalse(os.path.lexists(self.pending()))
+        self.assertEqual(self.invoke("--resume"), (0, [["A"], ["B"], ["C"]]))
+        self.assertFalse(os.path.lexists(self.pending()))
+
+    def test_a_rejection_replaces_the_marker_and_stays_closed(self) -> None:
+        def unrequested(target: str) -> None:
+            if target == "B":
+                fresh(self.root / ".lake/build/lib/lean/Fresh/Unrequested.olean")
+
+        self.assertEqual(self.invoke(during_build=unrequested), (1, [["A"], ["B"]]))
+        self.assertFalse(os.path.lexists(self.pending()))
+        self.assertTrue((self.pending().parent / "rejected.json").exists())
+        # The rejected growth in A's namespace already stops the resume at A's saved row.
+        with self.lake() as builds, patch.object(sys, "argv", [*self.arguments, "--resume"]), \
+                self.assertRaisesRegex(ValueError, "gained an unrecorded artifact: " + str(self.sub / "B.olean")):
+            optimizer.main()
+        self.assertEqual(builds, [])
+        # Stopped between the rejection record and the marker's removal: both keep it closed.
+        self.setUp()
+        self.run_stopped("marker-removal-after-rejection", during_build=unrequested)
+        self.assertTrue((self.pending().parent / "rejected.json").exists())
+        self.assertTrue(os.path.lexists(self.pending()))
+        self.refused("interrupted before its custody records were saved")
+
+    def test_the_marker_survives_until_the_rejection_record_is_saved(self) -> None:
+        def unrequested(target: str) -> None:
+            if target == "B":
+                fresh(self.root / ".lake/build/lib/lean/Fresh/Unrequested.olean")
+
+        # Stopped before the rejection record is written.
+        self.run_stopped("rejected", before=True, during_build=unrequested)
+        self.assertFalse((self.pending().parent / "rejected.json").exists())
+        self.assertTrue(os.path.lexists(self.pending()))
+        self.refused("interrupted before its custody records were saved")
+        # The rejection record cannot be written.
+        self.setUp()
+        actual = optimizer.write_json
+
+        def failing(path, value):
+            if Path(path).name == "rejected.json":
+                raise OSError(28, "No space left on device")
+            actual(path, value)
+
+        with patch.object(optimizer, "write_json", side_effect=failing), self.assertRaises(OSError):
+            self.invoke(during_build=unrequested)
+        self.assertFalse((self.pending().parent / "rejected.json").exists())
+        self.assertTrue(os.path.lexists(self.pending()))
+        self.refused("interrupted before its custody records were saved")
+
+    def test_a_failed_success_record_write_keeps_the_marker(self) -> None:
+        for record in ("listing.json", optimizer.LAKE_GROWTH_DIRECTORY):
+            with self.subTest(record=record):
+                self.setUp()
+                actual = optimizer.write_json
+
+                def failing(path, value):
+                    if record in (Path(path).name, Path(path).parent.name):
+                        raise OSError(28, "No space left on device")
+                    actual(path, value)
+
+                with patch.object(optimizer, "write_json", side_effect=failing), self.assertRaises(OSError):
+                    self.invoke()
+                self.assertTrue(os.path.lexists(self.pending()))
+                self.refused("interrupted before its custody records were saved")
+
+    def test_any_marker_entry_is_refused(self) -> None:
+        for form in ("malformed", "directory", "dangling-symlink"):
+            with self.subTest(form=form):
+                self.setUp()
+                self.assertEqual(self.invoke("--max-batches", "1"), (0, [["A"]]))
+                marker = self.pending()
+                if form == "malformed":
+                    marker.write_text("{not json")
+                elif form == "directory":
+                    marker.mkdir()
+                else:
+                    marker.symlink_to(self.root / "missing-target")
+                self.refused("interrupted before its custody records were saved")
+
+    def test_completed_and_bounded_runs_leave_no_marker(self) -> None:
+        for step, expected in ((("--max-batches", "1"), [["A"]]), (("--max-batches", "1", "--resume"), [["B"]]),
+                               (("--resume",), [["C"]]), (("--resume",), [])):
+            self.assertEqual(self.invoke(*step), (0, expected))
+            self.assertFalse(os.path.lexists(self.pending()))
 
 
 if __name__ == "__main__":
