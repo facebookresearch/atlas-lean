@@ -11,7 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
 public import MathlibExt.Analysis.Ramanujan.Part1Ch5Entry10bEuleriansymmetry
-public import WantedExt.Combinatorics.ReducedComplexitiesWanted
+public import MathlibExt.Combinatorics.ReducedComplexities
 
 namespace MetaMathlibExt
 
