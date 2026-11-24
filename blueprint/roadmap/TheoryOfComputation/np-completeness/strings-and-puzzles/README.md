@@ -9,6 +9,7 @@ String problems (closest string, longest common subsequence, shortest common sup
 - [Lambek calculus derivability](lambek-calculus-derivability/README.md)
 - [Latin square completion](latin-square-completion/README.md)
 - [Longest common subsequence of many strings](longest-common-subsequence-of-many-strings/README.md)
+- [Macro data compression](macro-data-compression/README.md)
 - [Minesweeper consistency](minesweeper-consistency/README.md)
 - [Nonogram](nonogram/README.md)
 - [Shortest common supersequence](shortest-common-supersequence/README.md)
