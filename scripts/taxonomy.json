@@ -1607,6 +1607,7 @@
   "CSLibExt/Languages/IMP/HoareTotal": {"to": "ComputerScience/program-logics-and-verification", "title": "Hoare logic"},
   "CSLibExt/Languages/IMP/SeparationAPI": {"to": "ComputerScience/program-logics-and-verification", "title": "Separation logic"},
   "CSLibExt/Languages/IMP/SeparationLogic": {"to": "ComputerScience/program-logics-and-verification", "title": "Separation logic"},
+  "CSLibExt/Languages/IMP/SeparationRules": {"to": "ComputerScience/program-logics-and-verification", "title": "Safe backward rules for heap IMP"},
   "CSLibExt/Languages/IMP/SmallStep": {"to": "ComputerScience/programming-language-semantics", "title": "Operational semantics of IMP"},
   "CSLibExt/Languages/IMP/StackMachine": {"to": "ComputerScience/programming-language-semantics", "title": "Compiling IMP to a stack machine"},
   "CSLibExt/Languages/IMP/Syntax": {"to": "ComputerScience/programming-language-semantics", "title": "Operational semantics of IMP"},
