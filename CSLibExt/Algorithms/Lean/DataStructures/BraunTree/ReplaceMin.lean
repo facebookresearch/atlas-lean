@@ -513,7 +513,8 @@ theorem mset_delMin2 {l : BraunTree α} {a : α} {r : BraunTree α}
   rw [add_tsub_cancel_left]
 
 /-- The second priority-queue interpretation (AFP `interpretation braun`
-    in `Braun2`), with `delMin` replaced by `delMin2`. -/
+    in `Braun2`), with `delMin` replaced by `delMin2`; includes the
+    `isEmpty` emptiness test. -/
 theorem pq_spec2 :
     msetTree (BraunTree.Leaf : BraunTree α) = 0 ∧
     (Braun (BraunTree.Leaf : BraunTree α) ∧ Heap (BraunTree.Leaf : BraunTree α)) ∧
@@ -527,8 +528,9 @@ theorem pq_spec2 :
     (∀ (t : BraunTree α), Braun t ∧ Heap t → msetTree t ≠ 0 →
       getMin t = Min_mset (msetTree t)) ∧
     (∀ (l : BraunTree α) (a : α) (r : BraunTree α), Heap (BraunTree.Node l a r) →
-      ∀ y ∈ msetTree (BraunTree.Node l a r), a ≤ y) := by
-  refine ⟨rfl, ⟨trivial, trivial⟩, ?_, ?_, ?_, ?_⟩
+      ∀ y ∈ msetTree (BraunTree.Node l a r), a ≤ y) ∧
+    (∀ (t : BraunTree α), isEmpty t = true ↔ msetTree t = 0) := by
+  refine ⟨rfl, ⟨trivial, trivial⟩, ?_, ?_, ?_, ?_, ?_⟩
   · intro a t h
     exact ⟨mset_insert a t, braun_insert a h.1, heap_insert a h.2⟩
   · intro l a r h
@@ -538,5 +540,7 @@ theorem pq_spec2 :
       intro hleaf; subst hleaf; simp [msetTree] at hm)
   · intro l a r h y hy
     exact heap_root_le h y hy
+  · intro t
+    exact isEmpty_iff_mset_eq_zero t
 
 end Cslib.Algorithms.Lean.BraunTree.ReplaceMin

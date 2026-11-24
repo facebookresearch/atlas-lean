@@ -69,4 +69,9 @@ example : 1 ∈ msetTree (BraunTree.Node BraunTree.Leaf 1
       (BraunTree.Node BraunTree.Leaf 2 BraunTree.Leaf)) - {1} :=
   delLeft_mset_sub (by decide)
 
+/-- `isEmpty` is the emptiness test: `pq_spec`'s emptiness field. -/
+example : ∀ (t : BraunTree ℕ), isEmpty t = true ↔ msetTree t = 0 := by
+  obtain ⟨_, _, _, _, _, _, hEmpty⟩ := pq_spec (α := ℕ)
+  exact hEmpty
+
 end Cslib.Algorithms.Lean.BraunTreeAPITests

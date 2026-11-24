@@ -199,6 +199,16 @@ omit [LinearOrder α] [DecidableLT α] [DecidableLE α] [DecidableEq α] in
 theorem isEmpty_node (l r : BraunTree α) (a : α) :
     isEmpty (BraunTree.Node l a r) = false := rfl
 
+omit [LinearOrder α] [DecidableLT α] [DecidableLE α] [DecidableEq α] in
+/-- `isEmpty` is the emptiness test: it holds exactly when the tree's
+    multiset is empty. This is the AFP locale's `is_empty` field
+    (`is_empty = λh. h = Leaf`) expressed via `msetTree`. -/
+theorem isEmpty_iff_mset_eq_zero (t : BraunTree α) :
+    isEmpty t = true ↔ msetTree t = 0 := by
+  cases t with
+  | Leaf => simp [isEmpty, msetTree]
+  | Node l a r => simp [isEmpty, msetTree]
+
 /-- Insertion (§16.1). Inserts into the right (possibly smaller)
     child and swaps children to re-establish the Braun invariant. -/
 def insert (a : α) : BraunTree α → BraunTree α
@@ -1219,9 +1229,9 @@ theorem braun_height_size {t : BraunTree α} (ht : Braun t) :
 /-! ### The ADT discharge: Braun trees *are* priority queues -/
 
 /-- The book's ADT `Priority_Queue` (Chapter 14, Fig. 14.1), discharged
-    for Braun trees: empty tree, Braun + heap invariant, insertion,
-    deletion, and the root-is-minimum property. In the AFP this is
-    `interpretation braun: Priority_Queue`. -/
+    for Braun trees: empty tree, emptiness test, Braun + heap invariant,
+    insertion, deletion, and the root-is-minimum property. In the AFP
+    this is `interpretation braun: Priority_Queue`. -/
 theorem pq_spec :
     msetTree (BraunTree.Leaf : BraunTree α) = 0 ∧
     (Braun (BraunTree.Leaf : BraunTree α) ∧ Heap (BraunTree.Leaf : BraunTree α)) ∧
@@ -1235,8 +1245,9 @@ theorem pq_spec :
     (∀ (t : BraunTree α), Braun t ∧ Heap t → msetTree t ≠ 0 →
       getMin t = Min_mset (msetTree t)) ∧
     (∀ (l : BraunTree α) (a : α) (r : BraunTree α), Heap (BraunTree.Node l a r) →
-      ∀ y ∈ msetTree (BraunTree.Node l a r), a ≤ y) := by
-  refine ⟨rfl, ⟨trivial, trivial⟩, ?_, ?_, ?_, ?_⟩
+      ∀ y ∈ msetTree (BraunTree.Node l a r), a ≤ y) ∧
+    (∀ (t : BraunTree α), isEmpty t = true ↔ msetTree t = 0) := by
+  refine ⟨rfl, ⟨trivial, trivial⟩, ?_, ?_, ?_, ?_, ?_⟩
   · intro a t h
     exact ⟨mset_insert a t, braun_insert a h.1, heap_insert a h.2⟩
   · intro l a r h
@@ -1247,6 +1258,8 @@ theorem pq_spec :
       intro hleaf; subst hleaf; simp [msetTree] at hm)
   · intro l a r h y hy
     exact heap_root_le h y hy
+  · intro t
+    exact isEmpty_iff_mset_eq_zero t
 
 end BraunTree
 

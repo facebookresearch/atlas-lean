@@ -92,4 +92,9 @@ example : Braun (BraunTree.Node BraunTree.Leaf 1 BraunTree.Leaf) ∧
       some (2, BraunTree.Node BraunTree.Leaf 1 BraunTree.Leaf))
     (by simp [Braun, size])
 
+/-- `isEmpty` is the emptiness test: `pq_spec2`'s emptiness field. -/
+example : ∀ (t : BraunTree ℕ), isEmpty t = true ↔ msetTree t = 0 := by
+  obtain ⟨_, _, _, _, _, _, hEmpty⟩ := pq_spec2 (α := ℕ)
+  exact hEmpty
+
 end Cslib.Algorithms.Lean.BraunTree.ReplaceMinTests
