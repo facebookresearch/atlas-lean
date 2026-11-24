@@ -110,4 +110,48 @@ public theorem boundedSubsequenceSums_eq_generalizedHFoldSumset_of_zero_mem
       omega
     · simp [Fin.sum_univ_succ, Fin.tail]
 
+open boundedSubsequenceSums_eq_generalizedHFoldSumset_of_zero_mem in
+set_option linter.unusedVariables false in
+/-- **Bounded subsequence sums as a generalized h-fold sumset when zero is not a term.** Let $G$
+be an abelian group and let $a_1, \dots, a_k$ be distinct nonzero elements of $G$. Let
+$t_1, \dots, t_k$ be positive integers, let $\mathcal{A}$ be the sequence in which each $a_i$
+occurs $t_i$ times, and let $h = t_1 + \dots + t_k$ be its length. If $\alpha, \beta$ are natural
+numbers with $\alpha \ge 1$ and $\alpha + \beta \le h - 1$, then $\Sigma^\beta_\alpha(\mathcal{A})$,
+the set of sums of subsequences of $\mathcal{A}$ with at least $\alpha$ and at most $h - \beta$
+terms, equals the generalized $(h - \beta)$-fold sumset $(h - \beta)^{(\bar r)} A_0$ of
+$A_0 = (a_0, a_1, \dots, a_k)$, where $a_0 = 0$, with
+$\bar r = (h - \alpha - \beta, t_1, \dots, t_k)$, that is, the set of sums
+$\sum_{j=0}^{k} s_j a_j$ with $0 \le s_j \le r_j$ for all $j$ and $\sum_j s_j = h - \beta$.
+
+Source: Raj Kumar Mistri, *Subset and Subsequence Sums with Bounded Numbers of Terms*, INTEGERS 24
+(2024), Article A116, Lemma 4 (`integers-2024-A116-lem-4`). -/
+public theorem boundedSubsequenceSums_eq_generalizedHFoldSumset_of_zero_not_mem
+    {G : Type*} [AddCommGroup G] [DecidableEq G] {k : ℕ} (b : Fin k → G)
+    (hb : Function.Injective b) (hb0 : ∀ i, b i ≠ 0) (t : Fin k → ℕ) (ht : ∀ i, 0 < t i)
+    (h : ℕ) (hh : h = ∑ i, t i) (α β : ℕ) (hα : 1 ≤ α) (hαβ : α + β + 1 ≤ h) :
+    boundedSubsequenceSums α β (repetitionSequence b t) =
+      generalizedHFoldSumset (Fin.cons 0 b : Fin (k + 1) → G)
+        (Fin.cons (h - α - β) t : Fin (k + 1) → ℕ) (h - β) := by
+  ext x
+  rw [mem_boundedSubsequenceSums_iff b hb, ← hh]
+  simp only [generalizedHFoldSumset, Finset.mem_image, Finset.mem_filter, Fintype.mem_piFinset,
+    Finset.mem_range, Nat.lt_succ_iff]
+  constructor
+  · rintro ⟨s, hs, hlo, hhi, rfl⟩
+    -- Pad the selected terms with just enough zeros to reach length h - β.
+    have hpad : h - β - ∑ i, s i ≤ h - α - β := by omega
+    refine ⟨Fin.cons (h - β - ∑ i, s i) s, ⟨fun i => Fin.cases hpad hs i, ?_⟩, ?_⟩
+    · simp only [Fin.sum_univ_succ, Fin.cons_zero, Fin.cons_succ]
+      omega
+    · simp [Fin.sum_univ_succ]
+  · rintro ⟨s, ⟨hs, hlen⟩, rfl⟩
+    rw [Fin.sum_univ_succ s] at hlen
+    have hcap : s 0 ≤ h - α - β := hs 0
+    refine ⟨fun i => s i.succ, fun i => hs i.succ, ?_, ?_, ?_⟩
+    · change α ≤ ∑ i : Fin k, s i.succ
+      omega
+    · change (∑ i : Fin k, s i.succ) + β ≤ h
+      omega
+    · simp [Fin.sum_univ_succ]
+
 end MetaMathlibExt
