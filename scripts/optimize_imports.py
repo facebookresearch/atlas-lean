@@ -42,6 +42,25 @@ from generate_import_inventory import (
 
 ARTIFACT_SUFFIXES = (".olean", ".olean.private", ".olean.server", ".ir", ".ir.sig", ".ilean", ".c")
 LEGACY_ARTIFACT_SUFFIXES = (".olean", ".ilean", ".c")
+DEFAULT_LEAN_THREADS = 2
+DEFAULT_LAKE_JOBS = 1
+MAX_THREAD_COUNT = 1024
+
+
+def validate_thread_count(name: str, value: object) -> int:
+    """Accept only a plain integer in 1..MAX_THREAD_COUNT; bool is not a count."""
+    if type(value) is not int or not 1 <= value <= MAX_THREAD_COUNT:
+        raise ValueError(f"{name} must be an integer from 1 to {MAX_THREAD_COUNT}")
+    return value
+
+
+def thread_count_argument(text: str) -> int:
+    if re.fullmatch(r"[1-9][0-9]{0,3}", text) is None:
+        raise argparse.ArgumentTypeError(f"expected an integer from 1 to {MAX_THREAD_COUNT}")
+    try:
+        return validate_thread_count("thread count", int(text))
+    except ValueError as error:
+        raise argparse.ArgumentTypeError(str(error)) from None
 
 
 @dataclass(frozen=True)
@@ -529,6 +548,11 @@ class Tools:
     timeout: int
     time_binary: Path = Path("/usr/bin/time")
     lake_config: Path | None = None
+    # Threads per Lean compiler or helper process (`lean -jN`).
+    lean_threads: int = DEFAULT_LEAN_THREADS
+    # Lake's build scheduler threads, passed to every child as
+    # LEAN_NUM_THREADS. The Lean frontend does not read that variable.
+    lake_jobs: int = DEFAULT_LAKE_JOBS
     file_cache: SourceCache = field(default_factory=dict, compare=False, repr=False)
     input_manifests: dict[tuple[str, ...], tuple[dict[str, object], list[dict[str, object]]]] = field(
         default_factory=dict, compare=False, repr=False)
@@ -549,6 +573,8 @@ class Tools:
         default_factory=dict, compare=False, repr=False)
 
     def __post_init__(self) -> None:
+        validate_thread_count("lean_threads", self.lean_threads)
+        validate_thread_count("lake_jobs", self.lake_jobs)
         object.__setattr__(self, "root", self.root.resolve())
         roots = canonical_artifact_roots(self)
         library = standard_library_root(self)
@@ -562,6 +588,10 @@ class Tools:
         # discovery trust call sites.
         reject_output_nested_in_roots(self, roots, _during_post_init=True)
 
+    @property
+    def lean_thread_argument(self) -> str:
+        return f"-j{self.lean_threads}"
+
     def lake_command(self, *arguments: str) -> list[str]:
         config = ["-f", str(self.lake_config)] if self.lake_config is not None else []
         return [str(self.lake), "--no-cache", *config, *arguments]
@@ -569,10 +599,10 @@ class Tools:
     def run(self, argv: list[str], label: Path,
             environment: dict[str, str] | None = None) -> dict[str, object]:
         revalidate_analysis_inputs(self)
+        child_environment = {**(self.environment if environment is None else environment),
+                             "LEAN_NUM_THREADS": str(self.lake_jobs)}
         try:
-            return run_command(argv, self.root, label,
-                               self.environment if environment is None else environment,
-                               self.timeout)
+            return run_command(argv, self.root, label, child_environment, self.timeout)
         finally:
             cached = self.validated_analysis_inputs.get("phase")
             if cached is not None:
@@ -582,15 +612,18 @@ class Tools:
                 groups.clear()
 
 
-def bounded_lake_config(root: Path) -> Path:
+def bounded_lake_config(root: Path, lean_threads: int = DEFAULT_LEAN_THREADS) -> Path:
+    validate_thread_count("lean_threads", lean_threads)
     original = (root / "lakefile.toml").read_bytes()
     if re.search(rb"(?m)^\s*moreLeanArgs\s*=", original):
         raise ValueError("Existing moreLeanArgs require an explicit bounded configuration")
     first, separator, rest = original.partition(b"\n")
     if not separator or first.lstrip().startswith(b"["):
         raise ValueError("Lake configuration needs a root section before compiler arguments")
-    content = first + separator + b'moreLeanArgs = ["-j2"]\n' + rest
-    path = root / ".lake/lakefile-lean-j2.toml"
+    content = first + separator + f'moreLeanArgs = ["-j{lean_threads}"]\n'.encode() + rest
+    # One file per thread count, so a run never rewrites the configuration
+    # another thread setting's saved Lake commands name.
+    path = root / f".lake/lakefile-lean-j{lean_threads}.toml"
     if not path.exists() or path.read_bytes() != content:
         path.write_bytes(content)
     return path
@@ -970,6 +1003,7 @@ def computation_paths_without_output(tools: Tools) -> Tools:
     return Tools(
         tools.root, placeholder, tools.lake, tools.lean, tools.helpers,
         tools.environment, tools.timeout, tools.time_binary, tools.lake_config,
+        lean_threads=tools.lean_threads, lake_jobs=tools.lake_jobs,
         file_cache=tools.file_cache, input_manifests=tools.input_manifests,
         library_inventories=tools.library_inventories,
         validated_analysis_inputs=tools.validated_analysis_inputs,
@@ -1949,7 +1983,7 @@ def verify_private_snapshot_dependencies(tools: Tools, value: dict[str, object],
         require_success(command)
         if (not isinstance(evidence, dict) or evidence.get("kind") != "private_imports" or
                 evidence.get("inputs") != inputs or
-                command.get("argv") != [str(tools.lean), "-j2", "--run", str(helper),
+                command.get("argv") != [str(tools.lean), tools.lean_thread_argument, "--run", str(helper),
                                         str(original), str(roots_path), *modules]):
             raise ValueError("Snapshot private closure command identity changed")
         output = json.loads(verify_file_pin(evidence["stdout"], tools.output, tools.file_cache).read_text())
@@ -2018,7 +2052,7 @@ def verify_private_snapshot_dependencies(tools: Tools, value: dict[str, object],
             request.get("inputs") != {"compiler": inputs["compiler"],
                                       "helper": file_pin(snapshot_helper, tools.file_cache),
                                       "setup": record["original_setup"]} or
-            command.get("argv") != [str(tools.lean), "-j2", "--run", str(snapshot_helper),
+            command.get("argv") != [str(tools.lean), tools.lean_thread_argument, "--run", str(snapshot_helper),
                                     str(original), *modules] or not missing_private_import(command, value)):
         raise ValueError("Snapshot private import request identity changed")
     return arts
@@ -2078,7 +2112,7 @@ def complete_private_snapshot_setup(tools: Tools, artifact_root: Path,
         singleton_value = cast(dict[str, object], closure["value"])
         singleton_roots = cast(dict[str, list[str]], closure["roots"])
         context = cast(dict[str, object], closure["context"])
-        context_argv = [str(tools.lean), "-j2", "--run", str(helper),
+        context_argv = [str(tools.lean), tools.lean_thread_argument, "--run", str(helper),
                         str(closure["setup"]), str(closure["roots_path"]), str(context["module"])]
         with guard_path_component_moves(identities, mutable_roots={tools.output, directory},
                                         inventory_roots=snapshot_private_inventory_roots(
@@ -2096,7 +2130,7 @@ def complete_private_snapshot_setup(tools: Tools, artifact_root: Path,
                     if context_pins.get(path) != file_pin(Path(path), tools.file_cache):
                         raise ValueError("Snapshot private artifact was not pinned before compilation")
         context_maps.append(context_arts)
-    argv = [str(tools.lean), "-j2", "--run", str(helper), str(setup), str(roots_path), *modules]
+    argv = [str(tools.lean), tools.lean_thread_argument, "--run", str(helper), str(setup), str(roots_path), *modules]
     with guard_path_component_moves(identities, mutable_roots={tools.output, directory},
                                     inventory_roots=snapshot_private_inventory_roots(tools, value)):
         discovery = tools.run(argv, directory / "discovery", {**tools.environment, "LEAN_PATH": ""})
@@ -2378,7 +2412,7 @@ def check_saved_snapshot_group(tools: Tools, evidence: dict[str, object]) -> Val
         require_success(command)
         scratch = directory / f"resolve-{index}.lean"
         if (dependency.get("kind") != "deps" or
-                command.get("argv") != [str(tools.lean), "-j2", "--deps", str(scratch)] or
+                command.get("argv") != [str(tools.lean), tools.lean_thread_argument, "--deps", str(scratch)] or
                 scratch.read_text() != f"import all {member['module']}\n" or
                 str(Path(member["compilation"]["artifact_root"]) / Path(member["path"]).with_suffix(".olean"))
                 not in Path(command["stdout"]).read_text().splitlines()):
@@ -2387,7 +2421,7 @@ def check_saved_snapshot_group(tools: Tools, evidence: dict[str, object]) -> Val
     command, _ = read_analysis(tools, snapshot_evidence)
     require_success(command)
     if (not isinstance(snapshot_evidence, dict) or snapshot_evidence.get("kind") != "snapshot" or
-            command.get("argv") != [str(tools.lean), "-j2", "--run",
+            command.get("argv") != [str(tools.lean), tools.lean_thread_argument, "--run",
                                     str(tools.helpers / "declarations_batch.lean"), str(setup), *modules]):
         raise ValueError("Saved shared snapshot command identity changed")
     records = [json.loads(line) for line in Path(command["stdout"]).read_text().splitlines() if line]
@@ -2910,7 +2944,7 @@ def compilation_argv(tools: Tools, relative: Path, directory: Path,
     source_root = directory / "source"
     return [str(tools.time_binary), "-f",
             '{"wall_seconds":%e,"user_seconds":%U,"system_seconds":%S,"max_rss_kib":%M}',
-            "-o", str(directory / "time.json"), str(tools.lean), "-j2", "-R", str(source_root),
+            "-o", str(directory / "time.json"), str(tools.lean), tools.lean_thread_argument, "-R", str(source_root),
             str(source_root / relative), "--setup", str(directory / "setup.json"),
             "-o", str(prefix) + ".olean", "-i", str(prefix) + ".ilean", "-c", str(prefix) + ".c"]
 
@@ -3072,7 +3106,7 @@ def snapshot_arm(tools: Tools, module: str, relative: Path,
     with guard_path_component_moves(dependency_identities,
                                     mutable_roots={tools.output, evidence},
                                     inventory_roots=inventory_roots):
-        dependencies = tools.run([str(tools.lean), "-j2", "--deps", str(scratch)],
+        dependencies = tools.run([str(tools.lean), tools.lean_thread_argument, "--deps", str(scratch)],
                                  evidence / "deps", environment)
     require_success(dependencies)
     verify_snapshot_inputs(snapshot_inputs, artifacts, tools.output, tools, input_identities)
@@ -3086,7 +3120,7 @@ def snapshot_arm(tools: Tools, module: str, relative: Path,
                                     mutable_roots={tools.output, evidence},
                                     inventory_roots=inventory_roots):
         command = tools.run(
-            [str(tools.lean), "-j2", "--run", str(tools.helpers / "declarations.lean"), str(setup), module],
+            [str(tools.lean), tools.lean_thread_argument, "--run", str(tools.helpers / "declarations.lean"), str(setup), module],
             snapshot_label, environment,
         )
     if missing_private_import(command, read_json(verify_file_pin(
@@ -3103,7 +3137,7 @@ def snapshot_arm(tools: Tools, module: str, relative: Path,
         with guard_path_component_moves(dependency_identities,
                                         mutable_roots={tools.output, evidence},
                                         inventory_roots=inventory_roots):
-            command = tools.run([str(tools.lean), "-j2", "--run", str(tools.helpers / "declarations.lean"),
+            command = tools.run([str(tools.lean), tools.lean_thread_argument, "--run", str(tools.helpers / "declarations.lean"),
                                  str(setup), module], snapshot_label, environment)
     require_success(command)
     verify_snapshot_inputs(snapshot_inputs, artifacts, tools.output, tools, input_identities)
@@ -3201,7 +3235,7 @@ def snapshot_batch(tools: Tools, rows: list[dict[str, object]], artifact_root: P
         with guard_path_component_moves(dependency_identities,
                                         mutable_roots={tools.output, evidence},
                                         inventory_roots=inventory_roots):
-            dependencies = tools.run([str(tools.lean), "-j2", "--deps", str(scratch)], label, environment)
+            dependencies = tools.run([str(tools.lean), tools.lean_thread_argument, "--deps", str(scratch)], label, environment)
         require_success(dependencies)
         verify_inputs()
         resolved = Path(str(label) + ".stdout").read_text().splitlines()
@@ -3213,7 +3247,7 @@ def snapshot_batch(tools: Tools, rows: list[dict[str, object]], artifact_root: P
     with guard_path_component_moves(dependency_identities,
                                     mutable_roots={tools.output, evidence},
                                     inventory_roots=inventory_roots):
-        command = tools.run([str(tools.lean), "-j2", "--run",
+        command = tools.run([str(tools.lean), tools.lean_thread_argument, "--run",
                              str(tools.helpers / "declarations_batch.lean"), str(setup), *modules],
                             snapshot_label, {**tools.environment, "LEAN_PATH": ""})
     if missing_private_import(command, read_json(verify_file_pin(
@@ -3229,7 +3263,7 @@ def snapshot_batch(tools: Tools, rows: list[dict[str, object]], artifact_root: P
         with guard_path_component_moves(dependency_identities,
                                         mutable_roots={tools.output, evidence},
                                         inventory_roots=inventory_roots):
-            command = tools.run([str(tools.lean), "-j2", "--run",
+            command = tools.run([str(tools.lean), tools.lean_thread_argument, "--run",
                                  str(tools.helpers / "declarations_batch.lean"), str(setup), *modules],
                                 snapshot_label, {**tools.environment, "LEAN_PATH": ""})
     require_success(command)
@@ -3415,7 +3449,7 @@ def verify_saved_candidate(result: dict[str, object], output: Path,
             helper = tools.helpers / ("declarations_batch.lean" if value["snapshot_kind"] == "batch"
                                       else "declarations.lean")
             if (not isinstance(evidence, dict) or evidence.get("kind") != "snapshot" or
-                    command.get("argv") != [str(tools.lean), "-j2", "--run", str(helper), str(setup), *modules] or
+                    command.get("argv") != [str(tools.lean), tools.lean_thread_argument, "--run", str(helper), str(setup), *modules] or
                     read_json(verify_file_pin(evidence["stdout"], output, cache)) != snapshot):
                 raise ValueError("Saved private snapshot output differs from its command")
         if value["snapshot_kind"] == "batch":
@@ -3451,6 +3485,7 @@ def analysis_inputs(tools: Tools, rows: list[dict[str, object]]) -> dict[str, ob
             "compiled_inputs": compiled_inputs,
             "manifest_sha256": read_json(run)["manifest_sha256"] if run.exists() else None,
             "compiler_sha256": sha256(tools.lean),
+            "lean_threads": tools.lean_threads, "lake_jobs": tools.lake_jobs,
             "effective_config_sha256": sha256(tools.lake_config) if tools.lake_config else None}
 
 
@@ -3822,7 +3857,7 @@ def verify_saved_proposal(result: dict[str, object], tools: Tools
             proposal = parse_shake_output(output, cast(int, command["exit_code"]), source, tools.root)
         elif kind == "legacy":
             require_success(command)
-            if header.is_module or argv != [str(tools.lean), "-j2", "--run", str(tools.helpers / "legacy.lean"), module]:
+            if header.is_module or argv != [str(tools.lean), tools.lean_thread_argument, "--run", str(tools.helpers / "legacy.lean"), module]:
                 raise ValueError("Saved legacy proposal command changed")
             backend = read_json(Path(str(cast(dict[str, object], evidence["stdout"])["path"])))
             modules = backend.get("required_modules")
@@ -3854,7 +3889,7 @@ def legacy_proposal(tools: Tools, module: str, header: Header,
     helper = tools.helpers / "legacy.lean"
     if not helper.is_file():
         raise ValueError("Legacy ImportGraph backend is unavailable")
-    command = tools.run([str(tools.lean), "-j2", "--run", str(helper), module],
+    command = tools.run([str(tools.lean), tools.lean_thread_argument, "--run", str(helper), module],
                         directory / "legacy")
     require_success(command)
     result = read_json(Path(str(directory / "legacy") + ".stdout"))
@@ -4173,7 +4208,7 @@ def native_headers(tools: Tools, rows: list[dict[str, object]]) -> dict[str, dic
                           for row in batch}
             label = tools.output / "headers" / str(offset)
             command = tools.run(
-                [str(tools.lean), "-j2", "--run", str(tools.helpers / "header.lean"),
+                [str(tools.lean), tools.lean_thread_argument, "--run", str(tools.helpers / "header.lean"),
                  *(str(source_path(tools.root, str(row["path"]))) for row in batch)], label,
             )
             require_completion(command)
@@ -4248,6 +4283,20 @@ def verify_resume_executables(run: Path, lake: Path, lean: Path, time_binary: Pa
                 raise ValueError(message)
     except (OSError, RuntimeError) as error:
         raise ValueError(message) from error
+
+
+def verify_resume_thread_settings(run: Path, lean_threads: int, lake_jobs: int) -> None:
+    """Reject changed concurrency before any child runs or Lake config is written."""
+    if not run.exists():
+        return
+    saved = read_json(run)
+    requested = {"lean_threads": lean_threads, "lake_scheduler_threads": lake_jobs}
+    if any(type(saved.get(key)) is not int or saved.get(key) != value
+           for key, value in requested.items()):
+        raise ValueError(
+            "Resume thread settings differ from the saved run: saved --lean-threads "
+            f"{saved.get('lean_threads')!r} and --lake-jobs {saved.get('lake_scheduler_threads')!r}, "
+            f"requested {lean_threads} and {lake_jobs}")
 
 
 def run_headers(tools: Tools, rows: list[dict[str, object]], supplied: Path | None,
@@ -4369,6 +4418,12 @@ def main() -> int:
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--retry-blocked", action="store_true",
                         help="Retry failed files when resuming the same frozen inputs")
+    parser.add_argument("--lean-threads", type=thread_count_argument, default=DEFAULT_LEAN_THREADS,
+                        help="Threads for each Lean compiler or helper process, including "
+                             "root-package modules Lake builds (default: %(default)s)")
+    parser.add_argument("--lake-jobs", type=thread_count_argument, default=DEFAULT_LAKE_JOBS,
+                        help="Concurrent Lake build jobs, set through LEAN_NUM_THREADS "
+                             "(default: %(default)s)")
     options = parser.parse_args()
     root, output = options.root.resolve(), options.output.resolve()
     if (options.lake is None or options.timeout <= 0 or options.batch_size <= 0 or
@@ -4394,6 +4449,7 @@ def main() -> int:
         lean = lake.with_name("lean")
         time_binary = options.time.absolute()
         verify_resume_executables(output / "run.json", lake, lean, time_binary)
+        verify_resume_thread_settings(output / "run.json", options.lean_threads, options.lake_jobs)
         try:
             version = subprocess.check_output([str(time_binary), "--version"], stderr=subprocess.STDOUT)
         except (OSError, subprocess.CalledProcessError) as error:
@@ -4401,10 +4457,10 @@ def main() -> int:
         if b"GNU" not in version:
             raise ValueError("The measurement executable is not GNU time")
         helpers = Path(__file__).resolve().parent / "import_optimizer"
-        lake_config = bounded_lake_config(root)
+        lake_config = bounded_lake_config(root, options.lean_threads)
         environment = dict(os.environ)
         environment["PATH"] = str(lake.parent) + os.pathsep + environment.get("PATH", "")
-        environment["LEAN_NUM_THREADS"] = "1"
+        environment["LEAN_NUM_THREADS"] = str(options.lake_jobs)
         # Pin the Lake manifest before `lake env` runs: the captured
         # LEAN_PATH is derived from the manifest Lake reads, so the
         # bytes authorizing package roots must be the pre-capture
@@ -4426,7 +4482,8 @@ def main() -> int:
         environment.update(cast(dict[str, str], augmented))
         verify_lake_manifest_bytes(root, lake_manifest_pinned)
         tools = Tools(root, output, lake, lean, helpers, environment, options.timeout,
-                      time_binary, lake_config, file_cache=source_cache,
+                      time_binary, lake_config, lean_threads=options.lean_threads,
+                      lake_jobs=options.lake_jobs, file_cache=source_cache,
                       lake_manifest_bytes={
                           root / "lake-manifest.json": lake_manifest_pinned})
         # Independently bind the captured environment to the pinned
@@ -4448,12 +4505,12 @@ def main() -> int:
             "project_pins": {name: sha256(root / name) for name in
                              ("lean-toolchain", "lakefile.toml", "lake-manifest.json", "atlas.lock.json")
                              if name != "atlas.lock.json" or (root / name).is_file()},
-            "compiler": str(lean), "compiler_sha256": sha256(lean), "lean_threads": 2,
+            "compiler": str(lean), "compiler_sha256": sha256(lean), "lean_threads": tools.lean_threads,
             "compiler_launcher": str(lean.resolve()),
             "compiler_binary": str(compiler_binary), "compiler_binary_sha256": sha256(compiler_binary),
             "lake_launcher": str(lake_launcher), "lake_launcher_sha256": sha256(lake_launcher),
             "lake_binary": str(lake_binary), "lake_binary_sha256": sha256(lake_binary),
-            "lake_scheduler_threads": 1, "effective_lake_config_sha256": sha256(lake_config),
+            "lake_scheduler_threads": tools.lake_jobs, "effective_lake_config_sha256": sha256(lake_config),
             "time_binary": str(time_binary), "time_binary_sha256": sha256(time_binary),
             "time_binary_resolved": str(time_binary.resolve()),
             "headers_input_sha256": sha256(options.headers) if options.headers else None,

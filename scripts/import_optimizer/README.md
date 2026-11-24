@@ -68,6 +68,23 @@ worktree for optimization runs if preserving a developer's warm cache matters.
 Compatible modules share snapshot
 processes; failed groups fall back to singleton verification.
 
+Two options set the concurrency of one invocation:
+
+| Option | Default | Effect |
+| --- | --- | --- |
+| `--lean-threads N` | 2 | `lean -jN` for every compiler and helper process, and for root-package modules that Lake builds (`.lake/lakefile-lean-jN.toml`) |
+| `--lake-jobs N` | 1 | Lake runs up to `N` build jobs at once (`LEAN_NUM_THREADS=N` for every child) |
+
+Each accepts an integer from 1 to 1024. A Lake build of root-package modules can
+run up to `N * --lean-threads` compiler threads at once. Lean writes the same artifacts at
+any thread count, but Lake's build trace includes the compiler arguments, so a
+new `--lean-threads` value rebuilds the root-package modules in `.lake/build`.
+`run.json` records both values (`lean_threads`, `lake_scheduler_threads`), and the
+saved compiler, helper, and Shake receipts carry them. A resume must repeat the
+original values; changed values stop before any child process runs. Start a new
+output directory to use other settings. The run lock still allows one optimizer
+per worktree.
+
 Legacy files retain all imports because their imports also re-export transitive
 dependencies. Their ImportGraph analysis is recorded as `no_change`, not as a
 verified import reduction.
@@ -136,7 +153,9 @@ python3 scripts/import_optimizer/smoke_test.py --lake "$(elan which lake)"
 It creates a temporary Git/Lake project using only Lean's bundled `Std` library,
 runs inventory generation and optimization, requires a populated verified result
 and a patch removing unused imports, checks that the source stays unchanged, and
-resumes the saved run. It performs real compilation and declaration comparison;
+resumes the saved run. It then checks that a resume with other thread settings
+is refused, and repeats the optimization and resume with `--lean-threads 3
+--lake-jobs 2`. It performs real compilation and declaration comparison;
 it does not download packages or rewrite any ATLAS library.
 
 To also exercise the legacy ImportGraph API, first build the pinned dependency
