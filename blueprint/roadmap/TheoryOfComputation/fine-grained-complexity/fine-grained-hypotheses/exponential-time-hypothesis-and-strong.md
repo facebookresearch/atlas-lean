@@ -5,7 +5,7 @@ For $k \ge 3$, the $k$-SAT problem asks whether a CNF formula whose clauses have
 - *Exponential Time Hypothesis* (ETH; Impagliazzo and Paturi): let $s_k$ be the infimum of the $\delta$ for which there is an $O(2^{\delta n})$-time algorithm for $k$-SAT. Then $s_k > 0$ for every $k \ge 3$; that is, $k$-SAT has no subexponential-time algorithm.
 - *Strong Exponential Time Hypothesis* (SETH; Impagliazzo, Paturi and Zane): for every $\varepsilon > 0$ there is an integer $k \ge 3$ such that $k$-SAT on $n$ variables cannot be solved in time $O(2^{(1 - \varepsilon) n})$, even by a randomized algorithm.
 
-Both hypotheses are stated for the word-RAM with $O(\log n)$-bit words.
+In fine-grained complexity both hypotheses are taken on the word-RAM with $O(\log n)$-bit words.
 
 ## Depends on
 
