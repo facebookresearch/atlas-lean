@@ -14214,7 +14214,6 @@
   "WantedExt/Analysis/RadonTransformWanted": {"to": "Analysis/harmonic-analysis/integral-transforms", "title": "Radon transform"},
   "WantedExt/Analysis/Ramanujan/Part1Ch9Wanted": {"to": "Analysis/asymptotic-analysis", "title": "Asymptotic expansions of power sums"},
   "WantedExt/Analysis/RieszBrothersWanted": {"to": "Analysis/complex-analysis/analytic-function-spaces", "title": "F. and M. Riesz theorem"},
-  "WantedExt/Analysis/RoucheWanted": {"to": "Analysis/complex-analysis/cauchy-theory", "title": "Rouché's theorem"},
   "WantedExt/Analysis/RubelHInfinityCoherenceWanted": {"to": "Analysis/complex-analysis/analytic-function-spaces", "title": "Finitely generated ideals of H^∞"},
   "WantedExt/Analysis/RungeWanted": {"to": "Analysis/approximation-theory", "title": "Runge's theorem"},
   "WantedExt/Analysis/ScottishBook124Wanted": {"to": "Analysis/operator-theory/integral-and-multiplication", "title": "Titchmarsh convolution theorem"},
