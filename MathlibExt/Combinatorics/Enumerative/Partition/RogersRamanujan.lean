@@ -1498,49 +1498,32 @@ private theorem rrTheta_of_unit (r : ℕ) :
                 ^ (5 * (r.choose 2) + (5 - 2) * r)) := by
           rw [hX1, hX2]
 
+end MathlibExt.Combinatorics.Enumerative.Partition.RogersRamanujanWanted
+
+namespace MetaMathlibExt.initialRepetitionsC8Prime_prime_mul_add_even
+
+open MathlibExt.Combinatorics.Enumerative.Partition.RogersRamanujanWanted MathlibExt
+
+private theorem rrFirst_pair (m : ℕ) : rrIp m
+    = ∑ r ∈ Finset.range (m + 1),
+      ((PowerSeries.X : PowerSeries ℚ) ^ (r ^ 2) * rrU r) * rrIp (m - r) * rrIp (m + r) := by
+  have h := rrBailey_step rrU (fun k => if k = 0 then 1 else 0)
+    (fun n => (rrUnit_bailey_pair n).symm) m
+  simpa [mul_ite, ite_mul] using h
+
+end MetaMathlibExt.initialRepetitionsC8Prime_prime_mul_add_even
+
+namespace MathlibExt.Combinatorics.Enumerative.Partition.RogersRamanujanWanted
+
+open MetaMathlibExt.initialRepetitionsC8Prime_prime_mul_add_even in
 /-- Finite Rogers–Ramanujan polynomial identity. -/
 private theorem rrFinite_identity (n : ℕ) :
     ∑ j ∈ Finset.range (n + 1),
         (PowerSeries.X : PowerSeries ℚ) ^ (j ^ 2) * rrIp (n - j) * rrIp j
       = ∑ r ∈ Finset.range (n + 1),
         rrTheta r * rrIp (n - r) * rrIp (n + r) := by
-  have hU : ∀ m, (if m = 0 then (1 : PowerSeries ℚ) else 0)
-      = ∑ r ∈ Finset.range (m + 1), rrU r * rrIp (m - r) * rrIp (m + r) :=
-    fun m => (rrUnit_bailey_pair m).symm
-  have hcollapse : ∀ m, (∑ j ∈ Finset.range (m + 1),
-        (PowerSeries.X : PowerSeries ℚ) ^ (j ^ 2)
-          * (if j = 0 then (1 : PowerSeries ℚ) else 0) * rrIp (m - j))
-      = rrIp m := by
-    intro m
-    have hterm : ∀ j ∈ Finset.range (m + 1),
-        (PowerSeries.X : PowerSeries ℚ) ^ (j ^ 2)
-          * (if j = 0 then (1 : PowerSeries ℚ) else 0) * rrIp (m - j)
-          = (if j = 0 then rrIp m else 0) := by
-      intro j _
-      by_cases hj : j = 0
-      · subst hj
-        simp
-      · simp [hj]
-    rw [Finset.sum_congr rfl hterm]
-    simp
-  have hIp : ∀ m, rrIp m
-      = ∑ r ∈ Finset.range (m + 1),
-        ((PowerSeries.X : PowerSeries ℚ) ^ (r ^ 2) * rrU r)
-          * rrIp (m - r) * rrIp (m + r) := by
-    intro m
-    have hstep := rrBailey_step rrU (fun k => if k = 0 then 1 else 0) hU m
-    rw [hcollapse m] at hstep
-    have hterm : ∀ r ∈ Finset.range (m + 1),
-        (PowerSeries.X : PowerSeries ℚ) ^ (r ^ 2) * rrU r * rrIp (m - r)
-          * rrIp (m + r)
-        = ((PowerSeries.X : PowerSeries ℚ) ^ (r ^ 2) * rrU r)
-          * rrIp (m - r) * rrIp (m + r) := by
-      intro r _
-      ring
-    rw [Finset.sum_congr rfl hterm] at hstep
-    exact hstep
   have hstep2 := rrBailey_step
-    (fun r => (PowerSeries.X : PowerSeries ℚ) ^ (r ^ 2) * rrU r) rrIp hIp n
+    (fun r => (PowerSeries.X : PowerSeries ℚ) ^ (r ^ 2) * rrU r) rrIp rrFirst_pair n
   have hLHScomm : (∑ j ∈ Finset.range (n + 1),
         (PowerSeries.X : PowerSeries ℚ) ^ (j ^ 2) * rrIp j * rrIp (n - j))
       = ∑ j ∈ Finset.range (n + 1),
@@ -1619,29 +1602,84 @@ private theorem rrXpow_dvd_theta (r : ℕ) :
     exact dvd_mul_of_dvd_right dsum _
 
 /-- A `θ`-multiple of two near-one brackets is `θ` mod `X^(n+1)`. -/
-private theorem rrDvd_theta_mul_sub (r n : ℕ) (hr : r ≤ n) (U V : PowerSeries ℚ)
+private theorem rrDvd_theta_mul_sub (r n : ℕ) (hr : r ≤ n) (t : PowerSeries ℚ)
+    (hθ : PowerSeries.X ^ r ∣ t) (U V : PowerSeries ℚ)
     (hU : (PowerSeries.X : PowerSeries ℚ) ^ (n - r + 1) ∣ U - 1)
     (hV : (PowerSeries.X : PowerSeries ℚ) ^ (n + 1) ∣ V - 1) :
     (PowerSeries.X : PowerSeries ℚ) ^ (n + 1)
-      ∣ rrTheta r * U * V - rrTheta r := by
-  have hθ := rrXpow_dvd_theta r
+      ∣ t * U * V - t := by
   have hexp : r + (n - r + 1) = n + 1 := by omega
   have hUV : (PowerSeries.X : PowerSeries ℚ) ^ (n + 1)
-      ∣ rrTheta r * (U - 1) := by
+      ∣ t * (U - 1) := by
     have hmul := mul_dvd_mul hθ hU
     rw [← pow_add, hexp] at hmul
     exact hmul
   have t1 : (PowerSeries.X : PowerSeries ℚ) ^ (n + 1)
-      ∣ rrTheta r * (U - 1) * V :=
+      ∣ t * (U - 1) * V :=
     dvd_mul_of_dvd_left hUV V
   have t2 : (PowerSeries.X : PowerSeries ℚ) ^ (n + 1)
-      ∣ rrTheta r * (V - 1) :=
+      ∣ t * (V - 1) :=
     dvd_mul_of_dvd_right hV _
-  have hdecomp : rrTheta r * U * V - rrTheta r
-      = rrTheta r * (U - 1) * V + rrTheta r * (V - 1) := by ring
+  have hdecomp : t * U * V - t
+      = t * (U - 1) * V + t * (V - 1) := by ring
   rw [hdecomp]
   exact dvd_add t1 t2
 
+end MathlibExt.Combinatorics.Enumerative.Partition.RogersRamanujanWanted
+
+namespace MetaMathlibExt.initialRepetitionsC8Prime_prime_mul_add_even
+
+open MathlibExt.Combinatorics.Enumerative.Partition.RogersRamanujanWanted MathlibExt
+
+open Finset PowerSeries in
+private theorem rrTrunc_of_finite (n : ℕ) (w : ℕ → ℕ) (t : ℕ → PowerSeries ℚ)
+    (hw : ∀ j, j ≤ w j) (ht : ∀ r, X ^ r ∣ t r)
+    (hFin : ∑ j ∈ range (n + 1), X ^ w j * rrIp (n - j) * rrIp j =
+      ∑ r ∈ range (n + 1), t r * rrIp (n - r) * rrIp (n + r)) :
+    X ^ (n + 1) ∣ rrP n * (∑ j ∈ range (n + 1), X ^ w j * rrIp j) -
+      ∑ r ∈ range (n + 1), t r := by
+  let L j := rrP n * (X ^ w j * rrIp j)
+  let U r := rrP n * rrIp (n - r)
+  let V r := rrP n * rrIp (n + r)
+  have hUV (a b : ℕ) : X ^ (min a b + 1) ∣ rrP a * rrIp b - 1 := by
+    simpa only [one_mul, pow_one, rrP, rrIp] using
+      rrXpow_dvd_qPoch_mul_inv_sub_one 1 a b (by decide)
+  have hU (r : ℕ) : X ^ (n - r + 1) ∣ U r - 1 := by
+    simpa only [Nat.min_eq_right (Nat.sub_le n r), U] using hUV n (n - r)
+  have hV (r : ℕ) : X ^ (n + 1) ∣ V r - 1 := by
+    simpa only [Nat.min_eq_left (Nat.le_add_right n r), V] using hUV n (n + r)
+  have hsum : ∑ j ∈ range (n + 1), L j * U j =
+      ∑ r ∈ range (n + 1), t r * U r * V r := by
+    calc
+      _ = rrP n ^ 2 * ∑ j ∈ range (n + 1), X ^ w j * rrIp (n - j) * rrIp j := by
+        rw [mul_sum]
+        exact sum_congr rfl (fun j _ => by dsimp [L, U]; ring)
+      _ = _ := by
+        rw [hFin, mul_sum]
+        exact sum_congr rfl (fun r _ => by dsimp [U, V]; ring)
+  have hleft (j : ℕ) (hj : j ∈ range (n + 1)) : X ^ (n + 1) ∣ L j * U j - L j := by
+    have hjn := mem_range.mp hj
+    have hd : X ^ j ∣ L j := by
+      dsimp [L]
+      exact dvd_mul_of_dvd_right (dvd_mul_of_dvd_left (pow_dvd_pow X (hw j)) _) _
+    simpa only [show j + (n - j + 1) = n + 1 by omega] using
+      rrDvd_mul_sub j (n - j + 1) (L j) (U j) hd (hU j)
+  have hright (r : ℕ) (hr : r ∈ range (n + 1)) :
+      X ^ (n + 1) ∣ t r * U r * V r - t r :=
+    rrDvd_theta_mul_sub r n (Nat.le_of_lt_succ (mem_range.mp hr)) (t r) (ht r) _ _ (hU r) (hV r)
+  rw [mul_sum]
+  change _ ∣ ∑ j ∈ range (n + 1), L j - ∑ r ∈ range (n + 1), t r
+  have hl := dvd_sum hleft
+  have hr := dvd_sum hright
+  rw [sum_sub_distrib, hsum] at hl
+  rw [sum_sub_distrib] at hr
+  simpa only [sub_sub_sub_cancel_left] using dvd_sub hr hl
+
+end MetaMathlibExt.initialRepetitionsC8Prime_prime_mul_add_even
+
+namespace MathlibExt.Combinatorics.Enumerative.Partition.RogersRamanujanWanted
+
+open MetaMathlibExt.initialRepetitionsC8Prime_prime_mul_add_even in
 open Finset PowerSeries in
 /-- The first Rogers–Ramanujan series, truncated at index `n` and multiplied by the finite
 q-Pochhammer symbol, agrees with the partial theta sum through degree `n`. -/
@@ -1650,147 +1688,119 @@ public theorem rrTrunc_RR (n : ℕ) :
       qPochFin X n * (∑ j ∈ range (n + 1), X ^ (j ^ 2) * (qPochFin X j)⁻¹) -
       ∑ r ∈ range (n + 1), if r = 0 then 1 else
         (-1) ^ r * (X ^ (5 * r.choose 2 + 2 * r) + X ^ (5 * r.choose 2 + 3 * r)) := by
-  change _ ∣ rrP n * (∑ j ∈ range (n + 1), X ^ (j ^ 2) * rrIp j) - rrT n
-  have hFin := rrFinite_identity n
-  simp only [rrT]
-  have hPS : rrP n * (∑ k ∈ Finset.range (n + 1),
-        (PowerSeries.X : PowerSeries ℚ) ^ (k ^ 2) * rrIp k)
-      = ∑ j ∈ Finset.range (n + 1),
-        rrP n * ((PowerSeries.X : PowerSeries ℚ) ^ (j ^ 2) * rrIp j) := by
-    rw [Finset.mul_sum]
-  have hP2L : (rrP n * rrP n) * (∑ j ∈ Finset.range (n + 1),
-        (PowerSeries.X : PowerSeries ℚ) ^ (j ^ 2) * rrIp (n - j) * rrIp j)
-      = ∑ j ∈ Finset.range (n + 1),
-        (rrP n * ((PowerSeries.X : PowerSeries ℚ) ^ (j ^ 2) * rrIp j))
-          * (rrP n * rrIp (n - j)) := by
-    rw [Finset.mul_sum]
-    apply Finset.sum_congr rfl
-    intro j _
+  exact rrTrunc_of_finite n (fun j => j ^ 2) rrTheta
+    (fun j => by simpa [sq] using Nat.le_mul_self j) rrXpow_dvd_theta (rrFinite_identity n)
+
+end MathlibExt.Combinatorics.Enumerative.Partition.RogersRamanujanWanted
+
+namespace MetaMathlibExt.initialRepetitionsC8Prime_prime_mul_add_even
+
+open MathlibExt MathlibExt.Combinatorics.Enumerative.Partition.RogersRamanujanWanted
+open Finset PowerSeries
+
+/-- Factor out the power of `X` needed to shift the first Bailey pair by one. -/
+private noncomputable def base (r : ℕ) : PowerSeries ℚ := X ^ (r ^ 2 - r) * rrU r
+
+private theorem base_mul (r : ℕ) : X ^ r * base r = X ^ (r ^ 2) * rrU r := by
+  have hr : r ≤ r ^ 2 := by simpa [sq] using Nat.le_mul_self r
+  rw [base, ← mul_assoc, ← pow_add, Nat.add_sub_of_le hr]
+
+private noncomputable def shifted (r : ℕ) : PowerSeries ℚ :=
+  (X ^ (r + r) + 1 - X ^ r) * base r
+
+private theorem ip_pred (k : ℕ) : (1 - X ^ (k + 1)) * rrIp (k + 1) = rrIp k := by
+  apply mul_left_cancel₀ (rrQPoch_ne_zero _ constantCoeff_X k : rrP k ≠ 0)
+  change rrP k * _ = rrP k * _
+  rw [← mul_assoc, show rrP k * (1 - X ^ (k + 1)) = rrP (k + 1) by
+    simp [rrP, qPochFin, prod_range_succ], rrP_mul_ip, rrP_mul_ip]
+
+/-- Shifting the first Bailey pair changes its beta sequence from `1/P(n)` to `X^n/P(n)`.
+After multiplication by `X^n`, the correction factors cancel the final terms of both
+q-Pochhammer symbols in the Bailey kernel. -/
+private theorem shifted_pair (n : ℕ) : X ^ n * rrIp n =
+    ∑ r ∈ range (n + 1), shifted r * rrIp (n - r) * rrIp (n + r) := by
+  let a (r : ℕ) := X ^ (r ^ 2) * rrU r
+  have hterm (r : ℕ) (hr : r ≤ n) :
+      X ^ n * shifted r =
+        (1 - X ^ n + X ^ n * X ^ n) * a r -
+        (1 - X ^ (n - r)) * (1 - X ^ (n + r)) * a r := by
+    change _ = _ * (X ^ (r ^ 2) * rrU r) - _ * (X ^ (r ^ 2) * rrU r)
+    rw [← base_mul, shifted, pow_add, pow_add,
+      show (X : PowerSeries ℚ) ^ n = X ^ (n - r) * X ^ r by
+        rw [← pow_add, Nat.sub_add_cancel hr]]
     ring
-  have hP2R : (rrP n * rrP n) * (∑ r ∈ Finset.range (n + 1),
-        rrTheta r * rrIp (n - r) * rrIp (n + r))
-      = ∑ r ∈ Finset.range (n + 1),
-        rrTheta r * ((rrP n * rrIp (n - r)) * (rrP n * rrIp (n + r))) := by
-    rw [Finset.mul_sum]
-    apply Finset.sum_congr rfl
-    intro r _
-    ring
-  have hP2eq : (∑ j ∈ Finset.range (n + 1),
-        (rrP n * ((PowerSeries.X : PowerSeries ℚ) ^ (j ^ 2) * rrIp j))
-          * (rrP n * rrIp (n - j)))
-      = ∑ r ∈ Finset.range (n + 1),
-        rrTheta r * ((rrP n * rrIp (n - r)) * (rrP n * rrIp (n + r))) := by
-    have hMul : (rrP n * rrP n) * (∑ j ∈ Finset.range (n + 1),
-          (PowerSeries.X : PowerSeries ℚ) ^ (j ^ 2) * rrIp (n - j) * rrIp j)
-        = (rrP n * rrP n) * (∑ r ∈ Finset.range (n + 1),
-          rrTheta r * rrIp (n - r) * rrIp (n + r)) := by
-      rw [hFin]
-    rw [hP2L, hP2R] at hMul
-    exact hMul
-  have hleft : ∀ j ∈ Finset.range (n + 1),
-      (PowerSeries.X : PowerSeries ℚ) ^ (n + 1)
-        ∣ (rrP n * ((PowerSeries.X : PowerSeries ℚ) ^ (j ^ 2) * rrIp j))
-          - (rrP n * ((PowerSeries.X : PowerSeries ℚ) ^ (j ^ 2) * rrIp j))
-            * (rrP n * rrIp (n - j)) := by
-    intro j hj
-    have hjle : j ≤ n := by
-      have hlt : j < n + 1 := Finset.mem_range.mp hj
-      omega
-    have hmin : min n (n - j) = n - j := Nat.min_eq_right (Nat.sub_le n j)
-    have hg : (PowerSeries.X : PowerSeries ℚ) ^ (n - j + 1)
-        ∣ rrP n * rrIp (n - j) - 1 := by
-      have h0 := rrXpow_dvd_qPoch_mul_inv_sub_one 1 n (n - j) (by omega)
-      have hQ1 : (PowerSeries.X ^ 1 : PowerSeries ℚ) = PowerSeries.X :=
-        pow_one _
-      have hmin1 : 1 * (min n (n - j) + 1) = n - j + 1 := by
-        rw [hmin, one_mul]
-      rw [hmin1, hQ1] at h0
-      simpa only [rrP, rrIp] using h0
-    have hf : (PowerSeries.X : PowerSeries ℚ) ^ (j ^ 2)
-        ∣ rrP n * ((PowerSeries.X : PowerSeries ℚ) ^ (j ^ 2) * rrIp j) := by
-      have hfac : rrP n * ((PowerSeries.X : PowerSeries ℚ) ^ (j ^ 2) * rrIp j)
-          = (PowerSeries.X : PowerSeries ℚ) ^ (j ^ 2) * (rrP n * rrIp j) := by
+  cases n with
+  | zero => simpa [shifted, base] using rrFirst_pair 0
+  | succ m =>
+    let n := m + 1
+    change X ^ n * rrIp n = ∑ r ∈ range (n + 1), shifted r * rrIp (n - r) * rrIp (n + r)
+    have hprev : ∑ r ∈ range (n + 1),
+        ((1 - X ^ (n - r)) * (1 - X ^ (n + r)) * a r * rrIp (n - r) * rrIp (n + r)) =
+        rrIp m := by
+      rw [sum_range_succ]
+      simp only [Nat.sub_self, pow_zero, sub_self, zero_mul, add_zero]
+      rw [rrFirst_pair m]
+      apply sum_congr rfl
+      intro r hr
+      have hr' := mem_range.mp hr
+      have hk : n - r = m - r + 1 := by dsimp [n] at *; omega
+      have hl : n + r = m + r + 1 := by dsimp [n]; omega
+      rw [hk, hl]
+      calc
+        _ = a r * ((1 - X ^ (m - r + 1)) * rrIp (m - r + 1)) *
+            ((1 - X ^ (m + r + 1)) * rrIp (m + r + 1)) := by ring
+        _ = _ := by rw [ip_pred, ip_pred]
+    apply mul_left_cancel₀ (pow_ne_zero n (X_ne_zero (R := ℚ)))
+    calc
+      X ^ n * (X ^ n * rrIp n) = (1 - X ^ n + X ^ n * X ^ n) * rrIp n - rrIp m := by
+        rw [← ip_pred m]
+        dsimp [n]
         ring
-      rw [hfac]
-      exact dvd_mul_right _ _
-    have hj2 : j ≤ j ^ 2 := by
-      rcases Nat.eq_zero_or_pos j with rfl | hjpos
-      · simp
-      · calc j = j * 1 := (mul_one _).symm
-          _ ≤ j * j := Nat.mul_le_mul (le_refl _) (by omega)
-          _ = j ^ 2 := (pow_two _).symm
-    have hle : n + 1 ≤ j ^ 2 + (n - j + 1) := by omega
-    have hmain := rrDvd_mul_sub (j ^ 2) (n - j + 1)
-      (rrP n * ((PowerSeries.X : PowerSeries ℚ) ^ (j ^ 2) * rrIp j))
-      (rrP n * rrIp (n - j)) hf hg
-    have hpow : (PowerSeries.X : PowerSeries ℚ) ^ (n + 1)
-        ∣ (PowerSeries.X : PowerSeries ℚ) ^ (j ^ 2 + (n - j + 1)) :=
-      pow_dvd_pow _ hle
-    have hneg : (rrP n * ((PowerSeries.X : PowerSeries ℚ) ^ (j ^ 2) * rrIp j))
-          - (rrP n * ((PowerSeries.X : PowerSeries ℚ) ^ (j ^ 2) * rrIp j))
-            * (rrP n * rrIp (n - j))
-        = -((rrP n * ((PowerSeries.X : PowerSeries ℚ) ^ (j ^ 2) * rrIp j))
-            * (rrP n * rrIp (n - j))
-          - (rrP n * ((PowerSeries.X : PowerSeries ℚ) ^ (j ^ 2) * rrIp j))) := by
-      ring
-    rw [hneg]
-    exact dvd_neg.mpr (dvd_trans hpow hmain)
-  have hright : ∀ r ∈ Finset.range (n + 1),
-      (PowerSeries.X : PowerSeries ℚ) ^ (n + 1)
-        ∣ rrTheta r * ((rrP n * rrIp (n - r)) * (rrP n * rrIp (n + r)))
-          - rrTheta r := by
-    intro r hr
-    have hrle : r ≤ n := by
-      have hlt : r < n + 1 := Finset.mem_range.mp hr
-      omega
-    have hminC : min n (n - r) = n - r := Nat.min_eq_right (Nat.sub_le n r)
-    have hC : (PowerSeries.X : PowerSeries ℚ) ^ (n - r + 1)
-        ∣ rrP n * rrIp (n - r) - 1 := by
-      have h0 := rrXpow_dvd_qPoch_mul_inv_sub_one 1 n (n - r) (by omega)
-      have hQ1 : (PowerSeries.X ^ 1 : PowerSeries ℚ) = PowerSeries.X :=
-        pow_one _
-      have hmin1 : 1 * (min n (n - r) + 1) = n - r + 1 := by
-        rw [hminC, one_mul]
-      rw [hmin1, hQ1] at h0
-      simpa only [rrP, rrIp] using h0
-    have hminD : min n (n + r) = n := Nat.min_eq_left (Nat.le_add_right n r)
-    have hD : (PowerSeries.X : PowerSeries ℚ) ^ (n + 1)
-        ∣ rrP n * rrIp (n + r) - 1 := by
-      have h0 := rrXpow_dvd_qPoch_mul_inv_sub_one 1 n (n + r) (by omega)
-      have hQ1 : (PowerSeries.X ^ 1 : PowerSeries ℚ) = PowerSeries.X :=
-        pow_one _
-      have hmin1 : 1 * (min n (n + r) + 1) = n + 1 := by
-        rw [hminD, one_mul]
-      rw [hmin1, hQ1] at h0
-      simpa only [rrP, rrIp] using h0
-    have hmain := rrDvd_theta_mul_sub r n hrle
-      (rrP n * rrIp (n - r)) (rrP n * rrIp (n + r)) hC hD
-    have hgoal : rrTheta r * ((rrP n * rrIp (n - r)) * (rrP n * rrIp (n + r)))
-          - rrTheta r
-        = rrTheta r * (rrP n * rrIp (n - r)) * (rrP n * rrIp (n + r))
-          - rrTheta r := by ring
-    rw [hgoal]
-    exact hmain
-  have hsum : (∑ j ∈ Finset.range (n + 1),
-        rrP n * ((PowerSeries.X : PowerSeries ℚ) ^ (j ^ 2) * rrIp j))
-      - ∑ r ∈ Finset.range (n + 1), rrTheta r
-      = (∑ j ∈ Finset.range (n + 1),
-          ((rrP n * ((PowerSeries.X : PowerSeries ℚ) ^ (j ^ 2) * rrIp j))
-            - (rrP n * ((PowerSeries.X : PowerSeries ℚ) ^ (j ^ 2) * rrIp j))
-              * (rrP n * rrIp (n - j))))
-        + (∑ r ∈ Finset.range (n + 1),
-          (rrTheta r * ((rrP n * rrIp (n - r)) * (rrP n * rrIp (n + r)))
-            - rrTheta r)) := by
-    rw [Finset.sum_sub_distrib, Finset.sum_sub_distrib]
-    linear_combination hP2eq
-  rw [hPS, hsum]
-  apply dvd_add
-  · apply Finset.dvd_sum
-    intro j hj
-    exact hleft j hj
-  · apply Finset.dvd_sum
-    intro r hr
-    exact hright r hr
+      _ = _ := by
+        conv_lhs => enter [1, 2]; rw [rrFirst_pair n]
+        rw [← hprev, mul_sum, mul_sum, ← sum_sub_distrib]
+        apply sum_congr rfl
+        intro r hr
+        have h := hterm r (by simpa using mem_range.mp hr)
+        change _ * (a r * _ * _) - _ = _
+        linear_combination -(rrIp (n - r) * rrIp (n + r)) * h
+
+private theorem shifted_theta (r : ℕ) : X ^ (r ^ 2) * shifted r = rrEps 5 1 r := by
+  by_cases h : r = 0
+  · subst r
+    simp [shifted, base, rrU, rrEps]
+  have hs : r ^ 2 = 2 * r.choose 2 + r := by rw [rrTwo_choose_add_self, sq]
+  simp only [shifted, base, rrU, rrEps, h, ↓reduceIte, hs, Nat.add_sub_cancel,
+    one_mul, zero_mul, Nat.add_zero, Nat.reduceSub]
+  simp only [pow_add, pow_mul]
+  ring
+
+/-- The second Rogers–Ramanujan series, multiplied by the finite Euler product,
+agrees through degree `n` with the theta series of exponents `(5r² ± 3r)/2`. -/
+public theorem second_trunc (n : ℕ) :
+    (X : PowerSeries ℚ) ^ (n + 1) ∣
+      qPochFin X n * (∑ j ∈ range (n + 1), X ^ (j ^ 2 + j) * (qPochFin X j)⁻¹) -
+      ∑ r ∈ range (n + 1), if r = 0 then 1 else
+        (-1) ^ r * (X ^ (5 * r.choose 2 + r) + X ^ (5 * r.choose 2 + 4 * r)) := by
+  have h := rrBailey_step shifted (fun j => X ^ j * rrIp j) shifted_pair n
+  have hd (r : ℕ) : X ^ r ∣ rrEps 5 1 r := by
+    by_cases hr : r = 0
+    · simp [hr]
+    simp only [rrEps, hr, ↓reduceIte, one_mul, Nat.reduceSub]
+    apply dvd_mul_of_dvd_right
+    exact dvd_add (pow_dvd_pow _ (by omega)) (pow_dvd_pow _ (by omega))
+  simpa only [rrEps, one_mul, Nat.reduceSub, rrP, rrIp] using
+    rrTrunc_of_finite n (fun j => j ^ 2 + j) (rrEps 5 1) (fun _ => by omega) hd (by
+      simp only [shifted_theta] at h
+      rw [← h]
+      apply sum_congr rfl
+      intro j _
+      rw [pow_add]
+      ring)
+
+end MetaMathlibExt.initialRepetitionsC8Prime_prime_mul_add_even
+
+namespace MathlibExt.Combinatorics.Enumerative.Partition.RogersRamanujanWanted
 
 /-- Truncation of the `q^5` Jacobi triple product. -/
 private theorem rrTrunc_JTP (n : ℕ) :
@@ -1879,7 +1889,7 @@ private theorem rrTrunc_JTP (n : ℕ) :
           ∣ rrP5 (2 * n) * rrIp5 (n + r) - 1 := by
         simpa only [rrP5, rrIp5] using hV0
       exact dvd_trans hpow hV0'
-    have hmain := rrDvd_theta_mul_sub r n hrle
+    have hmain := rrDvd_theta_mul_sub r n hrle (rrTheta r) (rrXpow_dvd_theta r)
       (rrP5 n * rrIp5 (n - r)) (rrP5 (2 * n) * rrIp5 (n + r)) hU hV
     have hgoal : rrTheta r
           * ((rrP5 (2 * n) * rrIp5 (n + r)) * (rrP5 n * rrIp5 (n - r)))

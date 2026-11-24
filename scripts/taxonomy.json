@@ -11556,6 +11556,7 @@
   "MathlibExt/NumberTheory/IncompleteExponentialSum": {"to": "NumberTheory/exponential-sums", "title": "Incomplete exponential sums"},
   "MathlibExt/NumberTheory/IncompleteLeonardoP": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Leonardo p-numbers"},
   "MathlibExt/NumberTheory/InitialRepetitionsC8": {"to": "NumberTheory/modular-forms-q-series/partition-congruences", "title": "Partitions with initial repetitions"},
+  "MathlibExt/NumberTheory/InitialRepetitionsC8Prime": {"to": "NumberTheory/modular-forms-q-series/partition-congruences", "title": "Partitions with initial repetitions"},
   "MathlibExt/NumberTheory/IncompleteLeonardoPBinomialSum": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Leonardo p-numbers"},
   "MathlibExt/NumberTheory/IncompleteLeonardoPPartialSum": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Leonardo p-numbers"},
   "MathlibExt/NumberTheory/IntegerComplexity": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Integer complexity"},

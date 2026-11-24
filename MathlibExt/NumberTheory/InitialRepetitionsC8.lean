@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Combinatorics.Enumerative.Partition.Basic
 public import Mathlib.Data.ZMod.Basic
+public import Mathlib.RingTheory.PowerSeries.Basic
 import Mathlib.Algebra.CharP.Algebra
 import Mathlib.Combinatorics.Enumerative.Pentagonal.PowerSeries
 import Mathlib.Data.Int.Interval
@@ -30,6 +31,9 @@ Rogers–Ramanujan identity expands the remaining product. Completing the square
 exponents identifies the coefficient at `N` modulo two with the number of representations
 `5x² + 3y² = 8(15N + 1)` with `x ≡ 1 mod 6` and `y ≡ 1 mod 10`. Two involutions give the
 parity of this count when `15N + 1` is nonsquare.
+
+The same coefficient argument for the second Rogers–Ramanujan series uses staircase weight
+`j² + j`, the residue `y ≡ 3 mod 10`, and the discriminant `15N + 4`.
 
 The generating function follows D. Nyirenda and B. Mugwangwavari, *Modulo 2 congruences for
 partitions with initial repetitions*, proof of Theorem 2.9, <https://arxiv.org/abs/2212.12705>.
@@ -306,12 +310,19 @@ private theorem c8_coeff (N : ℕ) : (initialRepetitionsC8 N : ZMod 2) =
   rw [prod_pow_eq_pow_sum, ← pow_add, coeff_X_pow, Finset.sum_val]
   simp [eq_comm]
 
+end initialRepetitionsC8_prime_mul_add_even
+
+namespace initialRepetitionsC8Prime_prime_mul_add_even
+
+open Finset PowerSeries initialRepetitionsC8_prime_mul_add_even
+
 /-- Over the two-element field, a tail factor `1 + X^(2a)` is the square of `1 - X^a`. -/
-private theorem c8_factored (N : ℕ) : (initialRepetitionsC8 N : ZMod 2) =
-    coeff N ((∏ i ∈ range N, (1 - X ^ (i + 1))) *
-      ∑ j ∈ range (N + 1), X ^ (j ^ 2) * ∏ i ∈ range (N - j), (1 - X ^ (j + i + 1))) := by
-  rw [c8_coeff, mul_sum]
-  congr 1
+private theorem factor_optional (N : ℕ) (w : ℕ → ℕ) :
+    (∑ j ∈ range (N + 1), (X : PowerSeries (ZMod 2)) ^ w j *
+      ∏ a ∈ optionalParts N j, (1 + X ^ a)) =
+    (∏ i ∈ range N, (1 - X ^ (i + 1))) *
+      ∑ j ∈ range (N + 1), X ^ (w j) * ∏ i ∈ range (N - j), (1 - X ^ (j + i + 1)) := by
+  rw [mul_sum]
   apply sum_congr rfl
   intro j hj
   have hjn := Nat.le_of_lt_succ (mem_range.mp hj)
@@ -345,15 +356,33 @@ private theorem c8_factored (N : ℕ) : (initialRepetitionsC8 N : ZMod 2) =
 
 /-! ## Euler and Rogers–Ramanujan coefficients -/
 
+private abbrev weight (primed : Bool) (j : ℕ) := if primed then j ^ 2 + j else j ^ 2
+private abbrev leftSlope (primed : Bool) : ℕ := if primed then 1 else 2
+private abbrev rightSlope (primed : Bool) : ℕ := if primed then 4 else 3
+private abbrev residue (primed : Bool) : ℤ := if primed then 3 else 1
+private abbrev shift (primed : Bool) : ℕ := if primed then 4 else 1
+
+private def tailSum (primed : Bool) {R : Type*} [CommRing R] (q : R) (n : ℕ) :=
+  ∑ j ∈ range (n + 1), q ^ (weight primed j) * ∏ i ∈ range (n - j), (1 - q ^ (j + i + 1))
+
+private def thetaSum (primed : Bool) {R : Type*} [CommRing R] (q : R) (n : ℕ) :=
+  ∑ r ∈ range (n + 1), if r = 0 then 1 else
+    (-1) ^ r * (q ^ (5 * r.choose 2 + leftSlope primed * r) +
+      q ^ (5 * r.choose 2 + rightSlope primed * r))
+
 open MathlibExt MathlibExt.Combinatorics.Enumerative.Partition.RogersRamanujanWanted in
-/-- Clear the finite denominators in the truncated first Rogers–Ramanujan identity. -/
+/-- Clear the finite denominators in the truncated Rogers–Ramanujan identities. -/
 private theorem rogersRamanujan_trunc
-    (n : ℕ) :
-    (X : PowerSeries ℚ) ^ (n + 1) ∣
-      (∑ j ∈ range (n + 1), X ^ (j ^ 2) * ∏ i ∈ range (n - j), (1 - X ^ ((j + i) + 1))) -
-      ∑ r ∈ range (n + 1), if r = 0 then 1 else
-        (-1) ^ r * (X ^ (5 * r.choose 2 + 2 * r) + X ^ (5 * r.choose 2 + 3 * r)) := by
-  convert rrTrunc_RR n using 2
+    (primed : Bool) (n : ℕ) :
+    (X : PowerSeries ℚ) ^ (n + 1) ∣ tailSum primed X n - thetaSum primed X n := by
+  have h : (X : PowerSeries ℚ) ^ (n + 1) ∣
+      qPochFin X n * (∑ j ∈ range (n + 1), X ^ (weight primed j) * (qPochFin X j)⁻¹) -
+        thetaSum primed X n := by
+    cases primed
+    · exact rrTrunc_RR n
+    · simpa [weight, thetaSum, leftSlope, rightSlope] using second_trunc n
+  convert h using 2
+  unfold tailSum
   rw [mul_sum]
   apply sum_congr rfl
   intro j hj
@@ -364,37 +393,30 @@ private theorem rogersRamanujan_trunc
   have hunit : qPochFin (X : PowerSeries ℚ) j * (qPochFin X j)⁻¹ = 1 :=
     PowerSeries.mul_inv_cancel _ (by simp [qPochFin, map_prod])
   rw [hsplit]
-  linear_combination -(X ^ (j ^ 2) * ∏ i ∈ range (n - j), (1 - X ^ (j + i + 1))) * hunit
+  linear_combination -(X ^ (weight primed j) * ∏ i ∈ range (n - j), (1 - X ^ (j + i + 1))) * hunit
 
-private def tailSum {R : Type*} [CommRing R] (q : R) (n : ℕ) :=
-  ∑ j ∈ range (n + 1), q ^ (j ^ 2) * ∏ i ∈ range (n - j), (1 - q ^ (j + i + 1))
+private theorem map_tail (primed : Bool) {R S : Type*} [CommRing R] [CommRing S]
+    (f : R →+* S) (q : R) (n : ℕ) : f (tailSum primed q n) = tailSum primed (f q) n := by
+  simp [tailSum, apply_ite f]
 
-private def thetaSum {R : Type*} [CommRing R] (q : R) (n : ℕ) :=
-  ∑ r ∈ range (n + 1), if r = 0 then 1 else
-    (-1) ^ r * (q ^ (5 * r.choose 2 + 2 * r) + q ^ (5 * r.choose 2 + 3 * r))
-
-private theorem map_tail {R S : Type*} [CommRing R] [CommRing S]
-    (f : R →+* S) (q : R) (n : ℕ) : f (tailSum q n) = tailSum (f q) n := by
-  simp [tailSum]
-
-private theorem map_theta {R S : Type*} [CommRing R] [CommRing S]
-    (f : R →+* S) (q : R) (n : ℕ) : f (thetaSum q n) = thetaSum (f q) n := by
+private theorem map_theta (primed : Bool) {R S : Type*} [CommRing R] [CommRing S]
+    (f : R →+* S) (q : R) (n : ℕ) : f (thetaSum primed q n) = thetaSum primed (f q) n := by
   simp [thetaSum, apply_ite f]
 
 /-- Compare integral coefficients over the rationals, then reduce them modulo two. -/
-private theorem coeff_tail_eq_theta {n k : ℕ} (hk : k ≤ n) :
-    coeff k (tailSum (X : PowerSeries (ZMod 2)) n) = coeff k (thetaSum X n) := by
-  have h := (X_pow_dvd_iff.mp (rogersRamanujan_trunc n)) k (by omega)
+private theorem coeff_tail_eq_theta (primed : Bool) {n k : ℕ} (hk : k ≤ n) :
+    coeff k (tailSum primed (X : PowerSeries (ZMod 2)) n) = coeff k (thetaSum primed X n) := by
+  have h := (X_pow_dvd_iff.mp (rogersRamanujan_trunc primed n)) k (by omega)
   rw [map_sub, sub_eq_zero] at h
-  change coeff k (tailSum X n) = coeff k (thetaSum X n) at h
-  have hi : coeff k (tailSum (X : PowerSeries ℤ) n) = coeff k (thetaSum X n) := by
+  change coeff k (tailSum primed X n) = coeff k (thetaSum primed X n) at h
+  have hi : coeff k (tailSum primed (X : PowerSeries ℤ) n) = coeff k (thetaSum primed X n) := by
     apply Int.cast_injective (α := ℚ)
-    change coeff k (map (Int.castRingHom ℚ) (tailSum X n)) =
-      coeff k (map (Int.castRingHom ℚ) (thetaSum X n))
+    change coeff k (map (Int.castRingHom ℚ) (tailSum primed X n)) =
+      coeff k (map (Int.castRingHom ℚ) (thetaSum primed X n))
     simpa only [map_tail, map_theta, map_X] using! h
   have hz := congrArg (Int.castRingHom (ZMod 2)) hi
-  change coeff k (map (Int.castRingHom (ZMod 2)) (tailSum X n)) =
-    coeff k (map (Int.castRingHom (ZMod 2)) (thetaSum X n)) at hz
+  change coeff k (map (Int.castRingHom (ZMod 2)) (tailSum primed X n)) =
+    coeff k (map (Int.castRingHom (ZMod 2)) (thetaSum primed X n)) at hz
   simpa only [map_tail, map_theta, map_X] using hz
 
 private theorem finite_euler_coeff {n k : ℕ} (hk : k ≤ n) :
@@ -412,36 +434,40 @@ private theorem finite_euler_coeff {n k : ℕ} (hk : k ≤ n) :
     rw [order_X_pow, Nat.cast_lt]
     omega
 
-/-- The exponent `k(5k - 1)/2`, split by sign as in the finite Rogers–Ramanujan sum. -/
-private def thetaExponent : ℤ → ℕ
-  | .ofNat r => 5 * r.choose 2 + 2 * r
-  | .negSucc r => 5 * (r + 1).choose 2 + 3 * (r + 1)
+/-- The exponent `k(5k - s)/2`, split by sign, with `s = 1` for the first series and
+`s = 3` for the second. -/
+private def thetaExponent (primed : Bool) : ℤ → ℕ
+  | .ofNat r => 5 * r.choose 2 + leftSlope primed * r
+  | .negSucc r => 5 * (r + 1).choose 2 + rightSlope primed * (r + 1)
 
 private def indices (N : ℕ) :=
   (range (N + 1)).image Int.ofNat ∪ (range N).image Int.negSucc
 
-private theorem mem_indices {N : ℕ} {k : ℤ} (h : thetaExponent k ≤ N) : k ∈ indices N := by
+private theorem mem_indices {primed : Bool} {N : ℕ} {k : ℤ}
+    (h : thetaExponent primed k ≤ N) : k ∈ indices N := by
   cases k with
   | ofNat r =>
-    simp only [thetaExponent] at h
-    exact mem_union_left _ (mem_image.mpr ⟨r, mem_range.mpr (by omega), rfl⟩)
+    cases primed <;> simp [thetaExponent, leftSlope] at h <;>
+      exact mem_union_left _ (mem_image.mpr ⟨r, mem_range.mpr (by omega), rfl⟩)
   | negSucc r =>
-    simp only [thetaExponent] at h
-    exact mem_union_right _ (mem_image.mpr ⟨r, mem_range.mpr (by omega), rfl⟩)
+    cases primed <;> simp [thetaExponent, rightSlope] at h <;>
+      exact mem_union_right _ (mem_image.mpr ⟨r, mem_range.mpr (by omega), rfl⟩)
 
-private theorem thetaSum_eq (N : ℕ) : thetaSum (X : PowerSeries (ZMod 2)) N =
-    ∑ k ∈ indices N, X ^ thetaExponent k := by
+private theorem thetaSum_eq (primed : Bool) (N : ℕ) : thetaSum primed (X : PowerSeries (ZMod 2)) N =
+    ∑ k ∈ indices N, X ^ thetaExponent primed k := by
   let : CharP (PowerSeries (ZMod 2)) 2 := charP_of_injective_ringHom C_injective 2
   have hd : Disjoint ((range (N + 1)).image Int.ofNat) ((range N).image Int.negSucc) := by
     simp [disjoint_left]
   rw [indices, sum_union hd, sum_image Int.ofNat_injective.injOn,
     sum_image (fun _ _ _ _ h => Int.negSucc.inj h)]
   unfold thetaSum
-  rw [sum_range_succ', sum_range_succ' (fun r => X ^ thetaExponent (.ofNat r))]
-  simp [thetaExponent, CharTwo.neg_eq, sum_add_distrib, add_assoc, add_comm]
+  rw [sum_range_succ', sum_range_succ' (fun r => X ^ thetaExponent primed (.ofNat r))]
+  cases primed <;>
+    simp [thetaExponent, leftSlope, rightSlope, CharTwo.neg_eq, sum_add_distrib,
+      add_assoc, add_comm]
 
-private theorem thetaExponent_sq (k : ℤ) :
-    40 * (thetaExponent k : ℤ) + 1 = (1 - 10 * k) ^ 2 := by
+private theorem thetaExponent_sq (primed : Bool) (k : ℤ) :
+    40 * (thetaExponent primed k : ℤ) + residue primed ^ 2 = (residue primed - 10 * k) ^ 2 := by
   have hc (r : ℕ) : 2 * (r.choose 2 : ℤ) = (r : ℤ) * (r - 1) := by
     induction r with
     | zero => simp
@@ -452,57 +478,63 @@ private theorem thetaExponent_sq (k : ℤ) :
   cases k with
   | ofNat r =>
     simp only [thetaExponent, Nat.cast_add, Nat.cast_mul, Nat.cast_ofNat, Int.ofNat_eq_natCast]
-    linarith [hc r]
+    cases primed <;> norm_num [leftSlope, residue] <;> linarith [hc r]
   | negSucc r =>
     simp only [thetaExponent, Nat.cast_add, Nat.cast_mul, Nat.cast_ofNat, Nat.cast_one,
       Int.negSucc_eq]
     have := hc (r + 1)
     push_cast at *
-    linarith
+    cases primed <;> norm_num [rightSlope, residue] <;> linarith
 
-private theorem thetaExponent_injective : Function.Injective thetaExponent := by
+private theorem thetaExponent_injective (primed : Bool) :
+    Function.Injective (thetaExponent primed) := by
   intro a b hab
-  have H := thetaExponent_sq a
-  rw [hab, thetaExponent_sq b] at H
-  rcases sq_eq_sq_iff_eq_or_eq_neg.mp H with h | h <;> omega
+  have H := thetaExponent_sq primed a
+  rw [hab, thetaExponent_sq primed b] at H
+  rcases sq_eq_sq_iff_eq_or_eq_neg.mp H with h | h <;>
+    cases primed <;> simp [residue] at h <;> omega
 
-private def hasRoot (m c d : ℕ) := ∃ x : ℤ, x % m = 1 ∧ x ^ 2 = c * (d:ℤ) + 1
+private def hasRoot (m c d : ℕ) (r : ℤ) := ∃ x : ℤ, x % m = r ∧ x ^ 2 = c * (d : ℤ) + r ^ 2
 
-private theorem theta_root (d : ℕ) : hasRoot 10 40 d ↔ ∃ k, thetaExponent k = d := by
+private theorem theta_root (primed : Bool) (d : ℕ) :
+    hasRoot 10 40 d (residue primed) ↔ ∃ k, thetaExponent primed k = d := by
   constructor
   · rintro ⟨x, hx, hs⟩
-    let k := (1 - x) / 10
-    have hk : 1 - 10 * k = x := by dsimp [k]; norm_num at hx; omega
-    have H := thetaExponent_sq k
+    let k := (residue primed - x) / 10
+    have hk : residue primed - 10 * k = x := by dsimp [k]; norm_num at hx; omega
+    have H := thetaExponent_sq primed k
     rw [hk, hs] at H
     exact ⟨k, by omega⟩
   · rintro ⟨k, rfl⟩
-    exact ⟨1 - 10 * k, by norm_num, (thetaExponent_sq k).symm⟩
+    exact ⟨residue primed - 10 * k, by cases primed <;> norm_num [residue],
+      (thetaExponent_sq primed k).symm⟩
 
-private theorem coeff_theta {n d : ℕ} (hd : d ≤ n) :
+private theorem coeff_theta (primed : Bool) {n d : ℕ} (hd : d ≤ n) :
     letI := Classical.propDecidable
-    coeff d (thetaSum (X : PowerSeries (ZMod 2)) n) = if hasRoot 10 40 d then 1 else 0 := by
+    coeff d (thetaSum primed (X : PowerSeries (ZMod 2)) n) =
+      if hasRoot 10 40 d (residue primed) then 1 else 0 := by
   classical
   rw [thetaSum_eq, map_sum]
   simp only [coeff_X_pow]
   split
   · rename_i h
-    obtain ⟨k, hk⟩ := (theta_root _).mp h
+    obtain ⟨k, hk⟩ := (theta_root primed _).mp h
     rw [sum_eq_single k]
     · simp [hk]
     · intro b _ hb
-      exact ite_eq_right (fun H => hb (thetaExponent_injective (H.symm.trans hk.symm)))
+      exact ite_eq_right (fun H => hb (thetaExponent_injective primed (H.symm.trans hk.symm)))
     · exact fun hmem => (hmem (mem_indices (hk ▸ hd))).elim
   · rename_i h
-    exact sum_eq_zero (fun k _ => ite_eq_right (fun he => h ((theta_root _).mpr ⟨k, he.symm⟩)))
+    apply sum_eq_zero
+    exact fun k _ => ite_eq_right (fun he => h ((theta_root primed _).mpr ⟨k, he.symm⟩))
 
 private theorem coeff_pentagonal_root (d : ℕ) :
     letI := Classical.propDecidable
-    coeff d (pentagonalSeries (ZMod 2)) = if hasRoot 6 24 d then 1 else 0 := by
+    coeff d (pentagonalSeries (ZMod 2)) = if hasRoot 6 24 d 1 then 1 else 0 := by
   classical
   have hs (k : ℤ) : 24 * (pentagonal k : ℤ) + 1 = (1 - 6 * k) ^ 2 := by
     linarith [two_mul_natCast_pentagonal k]
-  have equiv : hasRoot 6 24 d ↔ d ∈ Set.range pentagonal := by
+  have equiv : hasRoot 6 24 d 1 ↔ d ∈ Set.range pentagonal := by
     constructor
     · rintro ⟨x, hx, he⟩
       let k := (1 - x) / 6
@@ -519,18 +551,19 @@ private theorem coeff_pentagonal_root (d : ℕ) :
     rcases Int.even_or_odd k with he | ho
     · simp [Int.negOnePow_even k he]
     · simp [Int.negOnePow_odd k ho, CharTwo.neg_eq]
-  · exact coeff_pentagonalSeries_eq_zero _ (fun h => ‹¬ hasRoot 6 24 d› (equiv.mpr h))
+  · exact coeff_pentagonalSeries_eq_zero _ (fun h => ‹¬ hasRoot 6 24 d 1› (equiv.mpr h))
 
 /-! ## Parity of the representation count -/
 
-private def box (N : ℕ) : Finset ℤ :=
-  Icc (-(8 * (15 * (N : ℤ) + 1))) (8 * (15 * (N : ℤ) + 1))
+private def box (primed : Bool) (N : ℕ) : Finset ℤ :=
+  Icc (-(8 * (15 * (N : ℤ) + shift primed))) (8 * (15 * (N : ℤ) + shift primed))
 
-private def shell (N : ℕ) : Finset (ℤ × ℤ) :=
-  ((box N) ×ˢ (box N)).filter fun (x, y) => 5 * x ^ 2 + 3 * y ^ 2 = 8 * (15 * (N : ℤ) + 1)
+private def shell (primed : Bool) (N : ℕ) : Finset (ℤ × ℤ) :=
+  ((box primed N) ×ˢ (box primed N)).filter fun (x, y) =>
+    5 * x ^ 2 + 3 * y ^ 2 = 8 * (15 * (N : ℤ) + shift primed)
 
-private theorem mem_shell (N : ℕ) (x y : ℤ) :
-    (x, y) ∈ shell N ↔ 5 * x ^ 2 + 3 * y ^ 2 = 8 * (15 * (N : ℤ) + 1) := by
+private theorem mem_shell (primed : Bool) (N : ℕ) (x y : ℤ) :
+    (x, y) ∈ shell primed N ↔ 5 * x ^ 2 + 3 * y ^ 2 = 8 * (15 * (N : ℤ) + shift primed) := by
   simp only [shell, mem_filter, mem_product, box, mem_Icc, and_iff_right_iff_imp]
   intro h
   constructor <;> constructor <;>
@@ -538,48 +571,49 @@ private theorem mem_shell (N : ℕ) (x y : ℤ) :
       sq_nonneg x, sq_nonneg y]
 
 /-- Choose the sign of the second coordinate by the congruence modulo four. -/
-private def lattice (N : ℕ) :=
-  (shell N).filter fun (x, y) => x % 3 = 1 ∧ x % 4 = y % 4
+private def lattice (primed : Bool) (N : ℕ) :=
+  (shell primed N).filter fun (x, y) => x % 3 = 1 ∧ x % 4 = y % 4
 
-private theorem mem_lattice (N : ℕ) (x y : ℤ) :
-    (x, y) ∈ lattice N ↔
-      5 * x ^ 2 + 3 * y ^ 2 = 8 * (15 * (N : ℤ) + 1) ∧ x % 3 = 1 ∧ x % 4 = y % 4 := by
+private theorem mem_lattice (primed : Bool) (N : ℕ) (x y : ℤ) :
+    (x, y) ∈ lattice primed N ↔
+      5 * x ^ 2 + 3 * y ^ 2 = 8 * (15 * (N : ℤ) + shift primed) ∧ x % 3 = 1 ∧ x % 4 = y % 4 := by
   simp [lattice, mem_shell]
 
 /-- Put `d = (x - y)/4`. The reflection `(x, y) ↦ (x - 3d, x + d)` negates `d`.
-Its fixed points have `x = y` and hence `15N + 1 = x²`. -/
-private theorem even_lattice {N : ℕ} (hn : ¬ IsSquare (15 * N + 1)) : Even (lattice N).card := by
+Its fixed points have `x = y`, so the discriminant equals `x²`. -/
+private theorem even_lattice {primed : Bool} {N : ℕ} (hn : ¬ IsSquare (15 * N + shift primed)) :
+    Even (lattice primed N).card := by
   let f : ℤ × ℤ → ℤ × ℤ := fun (x, y) =>
     let d := (x - y) / 4
     (x - 3 * d, x + d)
   have eqn {x y : ℤ} (h : x % 4 = y % 4) : 4 * ((x - y) / 4) = x - y := by omega
   apply Finset.even_card_of_involution (f := f)
   · rintro ⟨x, y⟩ h
-    rcases (mem_lattice N x y).mp h with ⟨hQ, hx, hm⟩
-    apply (mem_lattice _ _ _).mpr
+    rcases (mem_lattice primed N x y).mp h with ⟨hQ, hx, hm⟩
+    apply (mem_lattice _ _ _ _).mpr
     refine ⟨?_, by omega, by omega⟩
     have hd := eqn hm
     linear_combination hQ - (3 * y + 3 * x - 12 * ((x - y) / 4)) * hd
   · rintro ⟨x, y⟩ h
-    have hm := ((mem_lattice N x y).mp h).2.2
+    have hm := ((mem_lattice primed N x y).mp h).2.2
     dsimp [f]
     congr 1 <;> omega
   · rintro ⟨x, y⟩ h he
-    rcases (mem_lattice N x y).mp h with ⟨hQ, hx, hm⟩
+    rcases (mem_lattice primed N x y).mp h with ⟨hQ, hx, hm⟩
     have he' := congrArg Prod.snd he
     dsimp [f] at he'
     have hxy : x = y := by omega
     subst y
-    have H : (15 * N + 1 : ℕ) = x.natAbs * x.natAbs := by
-      have hs : (15 * (N : ℤ) + 1) = x * x := by linarith
-      exact_mod_cast (show 15 * (N : ℤ) + 1 = (x.natAbs : ℤ) * x.natAbs by
+    have H : (15 * N + shift primed : ℕ) = x.natAbs * x.natAbs := by
+      have hs : (15 * (N : ℤ) + shift primed) = x * x := by linarith
+      exact_mod_cast (show 15 * (N : ℤ) + shift primed = (x.natAbs : ℤ) * x.natAbs by
         simpa [Int.natCast_natAbs, ← abs_mul, abs_of_nonneg (mul_self_nonneg x)] using hs)
     exact hn ⟨_, H⟩
 
 /-- When the coordinates are even, both signs of `y` satisfy the congruence modulo four.
 The equation modulo five rules out the fixed points with `y = 0`. -/
-private theorem even_even_lattice (N : ℕ) :
-    Even ((lattice N).filter fun z => z.1 % 2 = 0).card := by
+private theorem even_even_lattice (primed : Bool) (N : ℕ) :
+    Even ((lattice primed N).filter fun z => z.1 % 2 = 0).card := by
   apply Finset.even_card_of_involution (f := fun z => (z.1, -z.2))
   · rintro ⟨x, y⟩ h
     simp only [mem_filter, mem_lattice] at h ⊢
@@ -588,71 +622,81 @@ private theorem even_even_lattice (N : ℕ) :
   · rintro ⟨x, y⟩ _
     simp
   · rintro ⟨x, y⟩ h he
-    have hQ := ((mem_lattice _ _ _).mp (mem_filter.mp h).1).1
+    have hQ := ((mem_lattice _ _ _ _).mp (mem_filter.mp h).1).1
     have he' := congrArg Prod.snd he
     change - y = y at he'
     have : y = 0 := by omega
     subst y
     ring_nf at hQ
-    omega
+    cases primed <;> norm_num [shift] at hQ <;> omega
 
-private theorem even_odd_lattice {N : ℕ} (hn : ¬ IsSquare (15 * N + 1)) :
-    Even ((lattice N).filter fun z => z.1 % 2 ≠ 0).card := by
-  have h := Finset.card_filter_add_card_filter_not (s := lattice N) (p := fun z => z.1 % 2 = 0)
-  have he := even_even_lattice N
+private theorem even_odd_lattice {primed : Bool} {N : ℕ} (hn : ¬ IsSquare (15 * N + shift primed)) :
+    Even ((lattice primed N).filter fun z => z.1 % 2 ≠ 0).card := by
+  have h := Finset.card_filter_add_card_filter_not (s := lattice primed N)
+    (p := fun z => z.1 % 2 = 0)
+  have he := even_even_lattice primed N
   have hall := even_lattice hn
   rw [← h, Nat.even_add] at hall
   exact hall.mp he
 
-private def thetaPairs (N : ℕ) :=
-  (shell N).filter fun (x, y) => x % 6 = 1 ∧ y % 10 = 1
+private def thetaPairs (primed : Bool) (N : ℕ) :=
+  (shell primed N).filter fun (x, y) => x % 6 = 1 ∧ y % 10 = residue primed
 
-private theorem mem_thetaPairs (N : ℕ) (x y : ℤ) :
-    (x, y) ∈ thetaPairs N ↔
-      5 * x ^ 2 + 3 * y ^ 2 = 8 * (15 * (N : ℤ) + 1) ∧ x % 6 = 1 ∧ y % 10 = 1 := by
+private theorem mem_thetaPairs (primed : Bool) (N : ℕ) (x y : ℤ) :
+    (x, y) ∈ thetaPairs primed N ↔
+      5 * x ^ 2 + 3 * y ^ 2 = 8 * (15 * (N : ℤ) + shift primed) ∧
+        x % 6 = 1 ∧ y % 10 = residue primed := by
   simp [thetaPairs, mem_shell]
 
-private theorem y_mod_five {N : ℕ} {x y : ℤ}
-    (h : 5 * x ^ 2 + 3 * y ^ 2 = 8 * (15 * (N : ℤ) + 1)) : y % 5 = 1 ∨ y % 5 = 4 := by
+private theorem y_mod_five {primed : Bool} {N : ℕ} {x y : ℤ}
+    (h : 5 * x ^ 2 + 3 * y ^ 2 = 8 * (15 * (N : ℤ) + shift primed)) :
+    y % 5 = residue primed ∨ y % 5 = 5 - residue primed := by
   have he := congrArg (fun t : ℤ => (t : ZMod 5)) h
   push_cast at he
-  have test : ∀ a b c : ZMod 5,
-      5 * a ^ 2 + 3 * b ^ 2 = 8 * (15 * c + 1) → b = 1 ∨ b = 4 := by decide
-  rcases test _ _ _ he with hy | hy
-  · exact Or.inl ((ZMod.intCast_eq_intCast_iff y 1 5).mp (by simpa using hy))
-  · exact Or.inr ((ZMod.intCast_eq_intCast_iff y 4 5).mp (by simpa using hy))
+  have test (s : ZMod 5) (u : ZMod 5) (hs : (s = 1 ∧ u = 1) ∨ (s = 4 ∧ u = 3)) :
+      ∀ a b c : ZMod 5, 5 * a ^ 2 + 3 * b ^ 2 = 8 * (15 * c + s) →
+        b = u ∨ b = 5 - u := by
+    rcases hs with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;> decide
+  have hs := test (shift primed) (residue primed) (by cases primed <;> decide) x y N
+    (by cases primed <;> simpa [shift] using he)
+  rcases hs with hy | hy
+  · have hmod := (ZMod.intCast_eq_intCast_iff y (residue primed) 5).mp hy
+    cases primed <;> exact Or.inl hmod
+  · have hmod := (ZMod.intCast_eq_intCast_iff y (5 - residue primed) 5).mp (by simpa using hy)
+    cases primed <;> exact Or.inr hmod
 
 private theorem odd_mod_four {x : ℤ} (h : x % 2 = 1) : x % 4 = 1 ∨ x % 4 = 3 := by
   have he := Int.emod_emod_of_dvd x (by decide : (2 : ℤ) ∣ 4)
   omega
 
 /-- For odd coordinates, precisely one sign of `y` gives the required residue modulo four. -/
-private theorem even_thetaPairs {N : ℕ} (hn : ¬ IsSquare (15 * N + 1)) :
-    Even (thetaPairs N).card := by
-  rw [show (thetaPairs N).card =
-      ((lattice N).filter fun z => z.1 % 2 ≠ 0).card from ?_]
+private theorem even_thetaPairs {primed : Bool} {N : ℕ} (hn : ¬ IsSquare (15 * N + shift primed)) :
+    Even (thetaPairs primed N).card := by
+  rw [show (thetaPairs primed N).card =
+      ((lattice primed N).filter fun z => z.1 % 2 ≠ 0).card from ?_]
   · exact even_odd_lattice hn
   apply Finset.card_nbij'
     (fun (x, y) => (x, if x % 4 = y % 4 then y else -y))
-    (fun (x, y) => (x, if y % 10 = 1 then y else -y))
+    (fun (x, y) => (x, if y % 10 = residue primed then y else -y))
   · rintro ⟨x, y⟩ h
-    obtain ⟨hQ, hx, hy⟩ := (mem_thetaPairs N x y).mp h
+    obtain ⟨hQ, hx, hy⟩ := (mem_thetaPairs primed N x y).mp h
     change _ ∈ Finset.filter _ _
     simp only [mem_filter, mem_lattice]
+    have hr : residue primed = 1 ∨ residue primed = 3 := by cases primed <;> decide
     rcases odd_mod_four (x := x) (by omega) with h1 | h1 <;>
       rcases odd_mod_four (x := y) (by omega) with h2 | h2 <;> split <;> simp_all <;> omega
   · rintro ⟨x, y⟩ h
     change _ ∈ Finset.filter _ _ at h
     obtain ⟨⟨hQ, hx, hm⟩, ho⟩ := (show (_ ∧ _ ∧ _) ∧ x % 2 ≠ 0 by
       simpa only [mem_filter, mem_lattice] using h)
-    apply (mem_thetaPairs N _ _).mpr
+    apply (mem_thetaPairs primed N _ _).mpr
     have hy := y_mod_five hQ
-    split <;> simp_all <;> omega
+    cases primed <;> split <;> simp_all [residue] <;> omega
   · rintro ⟨x, y⟩ h
-    obtain ⟨hQ, hx, hy⟩ := (mem_thetaPairs N x y).mp h
+    obtain ⟨hQ, hx, hy⟩ := (mem_thetaPairs primed N x y).mp h
     dsimp only
     split <;> (try split) <;> simp_all
-    omega
+    cases primed <;> simp [residue] at * <;> omega
   · rintro ⟨x, y⟩ h
     change _ ∈ Finset.filter _ _ at h
     obtain ⟨⟨hQ, hx, hm⟩, ho⟩ := (show (_ ∧ _ ∧ _) ∧ x % 2 ≠ 0 by
@@ -663,34 +707,38 @@ private theorem even_thetaPairs {N : ℕ} (hn : ¬ IsSquare (15 * N + 1)) :
 
 /-! ## Matching lattice points with the coefficient of the product -/
 
-private noncomputable def degreePairs (N : ℕ) : Finset (ℕ × ℕ) := by
+private noncomputable def degreePairs (primed : Bool) (N : ℕ) : Finset (ℕ × ℕ) := by
   classical
-  exact (antidiagonal N).filter fun (a, b) => hasRoot 6 24 a ∧ hasRoot 10 40 b
+  exact (antidiagonal N).filter fun (a, b) => hasRoot 6 24 a 1 ∧ hasRoot 10 40 b (residue primed)
 
-private theorem mem_degreePairs {N a b : ℕ} :
-    (a, b) ∈ degreePairs N ↔ a + b = N ∧ hasRoot 6 24 a ∧ hasRoot 10 40 b := by
+private theorem mem_degreePairs {primed : Bool} {N a b : ℕ} :
+    (a, b) ∈ degreePairs primed N ↔
+      a + b = N ∧ hasRoot 6 24 a 1 ∧ hasRoot 10 40 b (residue primed) := by
   classical
   simp [degreePairs]
 
-private theorem c8_degreePairs (N : ℕ) : (initialRepetitionsC8 N : ZMod 2) =
-    ((degreePairs N).card : ZMod 2) := by
+private theorem coeff_degreePairs (primed : Bool) (N : ℕ) :
+    coeff N (∑ j ∈ range (N + 1), (X : PowerSeries (ZMod 2)) ^ weight primed j *
+      ∏ a ∈ optionalParts N j, (1 + X ^ a)) =
+    ((degreePairs primed N).card : ZMod 2) := by
   classical
-  rw [c8_factored, coeff_mul]
+  rw [factor_optional, coeff_mul]
   change _ = ((Finset.filter _ (antidiagonal N)).card : ZMod 2)
   rw [natCast_card_filter]
   apply sum_congr rfl
   rintro ⟨a, b⟩ hab
   have he := mem_antidiagonal.mp hab
-  change _ * coeff b (tailSum X N) = _
-  rw [finite_euler_coeff (by omega : a ≤ N), coeff_tail_eq_theta (by omega : b ≤ N),
-    coeff_pentagonal_root, coeff_theta (by omega : b ≤ N)]
+  change _ * coeff b (tailSum primed X N) = _
+  rw [finite_euler_coeff (by omega : a ≤ N), coeff_tail_eq_theta primed (by omega : b ≤ N),
+    coeff_pentagonal_root, coeff_theta primed (by omega : b ≤ N)]
   split_ifs <;> simp_all
 
 /-- Complete the two squares to identify pairs of series exponents with lattice points. -/
-private theorem thetaPairs_card (N : ℕ) : (thetaPairs N).card = (degreePairs N).card := by
+private theorem thetaPairs_card (primed : Bool) (N : ℕ) :
+    (thetaPairs primed N).card = (degreePairs primed N).card := by
   classical
   let u (x : ℤ) := pentagonal ((1 - x) / 6)
-  let v (y : ℤ) := thetaExponent ((1 - y) / 10)
+  let v (y : ℤ) := thetaExponent primed ((residue primed - y) / 10)
   have hu (x : ℤ) (hx : x % 6 = 1) : x ^ 2 = 24 * (u x : ℤ) + 1 := by
     have h := two_mul_natCast_pentagonal ((1 - x) / 6)
     have he : x = 1 - 6 * ((1 - x) / 6) := by omega
@@ -698,40 +746,53 @@ private theorem thetaPairs_card (N : ℕ) : (thetaPairs N).card = (degreePairs N
     calc
       x ^ 2 = (1 - 6 * ((1 - x) / 6)) ^ 2 := congrArg (·^2) he
       _ = _ := by linarith
-  have hv (y : ℤ) (hy : y % 10 = 1) : y ^ 2 = 40 * (v y : ℤ) + 1 := by
-    have he : 1 - 10 * ((1 - y) / 10) = y := by omega
-    simpa only [v, he] using (thetaExponent_sq ((1 - y) / 10)).symm
+  have hv (y : ℤ) (hy : y % 10 = residue primed) : y ^ 2 = 40 * (v y : ℤ) + residue primed ^ 2 := by
+    have he : residue primed - 10 * ((residue primed - y) / 10) = y := by omega
+    simpa only [v, he] using (thetaExponent_sq primed ((residue primed - y) / 10)).symm
   apply card_nbij (fun (x, y) => (u x, v y))
   · rintro ⟨x, y⟩ h
-    obtain ⟨hQ, hx, hy⟩ := (mem_thetaPairs N x y).mp h
+    obtain ⟨hQ, hx, hy⟩ := (mem_thetaPairs primed N x y).mp h
     apply mem_degreePairs.mpr
     refine ⟨?_, ⟨x, hx, hu x hx⟩, ⟨y, hy, hv y hy⟩⟩
-    exact_mod_cast (show (u x : ℤ) + (v y : ℤ) = N by linarith [hu x hx, hv y hy])
+    have h := hu x hx
+    have h' := hv y hy
+    exact_mod_cast (show (u x : ℤ) + (v y : ℤ) = N by
+      cases primed <;> norm_num [shift, residue] at * <;> linarith)
   · rintro ⟨x, y⟩ h ⟨x', y'⟩ h' he
-    obtain ⟨_, hx, hy⟩ := (mem_thetaPairs N x y).mp h
-    obtain ⟨_, hx', hy'⟩ := (mem_thetaPairs N x' y').mp h'
+    obtain ⟨_, hx, hy⟩ := (mem_thetaPairs primed N x y).mp h
+    obtain ⟨_, hx', hy'⟩ := (mem_thetaPairs primed N x' y').mp h'
     obtain ⟨ha, hb⟩ := Prod.mk.inj he
     have ex : x ^ 2 = x'^2 := by rw [hu x hx, ha, ← hu x' hx']
     have ey : y ^ 2 = y'^2 := by rw [hv y hy, hb, ← hv y' hy']
     apply Prod.ext
     · rcases sq_eq_sq_iff_eq_or_eq_neg.mp ex with h | h <;> dsimp <;> omega
-    · rcases sq_eq_sq_iff_eq_or_eq_neg.mp ey with h | h <;> dsimp <;> omega
+    · rcases sq_eq_sq_iff_eq_or_eq_neg.mp ey with h | h <;> dsimp <;>
+        cases primed <;> simp [residue] at hy hy' <;> omega
   · rintro ⟨a, b⟩ h
     obtain ⟨hab, ⟨x, hx, ex⟩, ⟨y, hy, ey⟩⟩ := mem_degreePairs.mp h
     norm_num at hx hy ex ey
-    have hQ : 5 * x ^ 2 + 3 * y ^ 2 = 8 * (15 * (N : ℤ) + 1) := by
+    have hQ : 5 * x ^ 2 + 3 * y ^ 2 = 8 * (15 * (N : ℤ) + shift primed) := by
       rw [ex, ey, ← hab]
       push_cast
-      ring
-    refine ⟨⟨x, y⟩, (mem_thetaPairs N x y).mpr ⟨hQ, hx, hy⟩, ?_⟩
+      cases primed <;> norm_num [shift, residue] <;> ring
+    refine ⟨⟨x, y⟩, (mem_thetaPairs primed N x y).mpr ⟨hQ, hx, hy⟩, ?_⟩
     have ha := hu x hx
     have hb := hv y hy
     change (u x, v y) = (a, b)
-    congr 1 <;> omega
+    congr 1 <;> cases primed <;> norm_num [residue] at * <;> omega
 
-end initialRepetitionsC8_prime_mul_add_even
+/-- The coefficient counting an even staircase and a subset of its optional parts vanishes
+when the discriminant is nonsquare. -/
+public theorem coeff_staircase_eq_zero (N : ℕ) (hN : ¬ IsSquare (15 * N + 4)) :
+    coeff N (∑ j ∈ range (N + 1), (X : PowerSeries (ZMod 2)) ^ (j ^ 2 + j) *
+      ∏ a ∈ Icc 1 j ∪ (Ioc j N).image (fun i => 2 * i), (1 + X ^ a)) = 0 := by
+  obtain ⟨k, hk⟩ := even_thetaPairs (primed := true) hN
+  have h := coeff_degreePairs true N
+  rwa [← thetaPairs_card, hk, Nat.cast_add, CharTwo.add_self_eq_zero] at h
 
-open initialRepetitionsC8_prime_mul_add_even in
+end initialRepetitionsC8Prime_prime_mul_add_even
+
+open initialRepetitionsC8_prime_mul_add_even initialRepetitionsC8Prime_prime_mul_add_even in
 /-- **$c_8(N)$ is even when $15N + 1$ is not a square.** Let $c_8$ be the initial-repetitions
 partition function of Nyirenda and Mugwangwavari. For every integer $N \ge 0$ such that $15N + 1$
 is not a perfect square, $c_8(N)$ is even.
@@ -742,8 +803,8 @@ Theorem 11 (`integers-2025-A32-thm-11`). -/
 public theorem initialRepetitionsC8_even_of_not_isSquare (N : ℕ)
     (hN : ¬ IsSquare (15 * N + 1)) :
     Even (initialRepetitionsC8 N) := by
-  obtain ⟨k, hk⟩ := even_thetaPairs hN
-  have h := c8_degreePairs N
+  obtain ⟨k, hk⟩ := even_thetaPairs (primed := false) hN
+  have h := (c8_coeff N).trans (coeff_degreePairs false N)
   rw [← thetaPairs_card, hk, Nat.cast_add, CharTwo.add_self_eq_zero] at h
   exact ZMod.natCast_eq_zero_iff_even.mp h
 
