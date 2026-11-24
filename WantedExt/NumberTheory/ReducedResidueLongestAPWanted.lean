@@ -22,8 +22,9 @@ with common difference `d`, and `g(n) = f_{-⌈n/2⌉}(n)` for the system of abs
 reduced residues. Throughout, `gpf(n)` is written `n.primeFactors.sup id` (the largest prime
 factor of `n` for `n > 1`) and `rad(n)` is `UniqueFactorizationMonoid.radical n`.
 
-The definitions, the squarefree fixed-difference bound and the formula for twice an odd prime
-are in `MathlibExt.NumberTheory.ReducedResidueLongestAP`.
+The definitions, the squarefree fixed-difference bound, the formula for twice an odd prime and
+the minimum for primes congruent to three modulo four are in
+`MathlibExt.NumberTheory.ReducedResidueLongestAP`.
 
 Source: Chaninat Phothila, Natthakan Thoket and Narakorn Rompurk Kanasri, *Length of the Longest
 Arithmetic Progressions in a Certain Reduced Residue System*, INTEGERS 26 (2026), Article A6.
@@ -150,19 +151,6 @@ Theorem 3 (`integers-2026-A6-thm-3`). -/
 public theorem_wanted isLeast_longestAPLength_prime_of_mod_four_eq_one {p : ℕ} (hp : p.Prime)
     (h4 : p % 4 = 1) :
     IsLeast (Set.range fun m : ℤ => longestAPLength m p) ((p - 1) / 2)
-
-/-- **Minimum longest progression length modulo a prime $p \equiv 3 \pmod 4$.** Let $p$ be a prime
-with $p \equiv 3 \pmod 4$. For an integer $m$ let $f_m(p)$ be the length of the longest arithmetic
-progression with positive common difference contained in the set $R_m(p)$ of integers $a$ with
-$m + 1 \le a \le m + p$ and $\gcd(a, p) = 1$. Then the least value of $f_m(p)$ over all integers
-$m$ is $(p + 1) / 2$.
-
-Source: Chaninat Phothila, Natthakan Thoket and Narakorn Rompurk Kanasri, *Length of the Longest
-Arithmetic Progressions in a Certain Reduced Residue System*, INTEGERS 26 (2026), Article A6,
-Theorem 3 (`integers-2026-A6-thm-3`). -/
-public theorem_wanted isLeast_longestAPLength_prime_of_mod_four_eq_three {p : ℕ} (hp : p.Prime)
-    (h4 : p % 4 = 3) :
-    IsLeast (Set.range fun m : ℤ => longestAPLength m p) ((p + 1) / 2)
 
 /-- **Minimum longest progression length modulo a prime power.** Let $p$ be a prime and $r > 1$ a
 natural number. For an integer $m$ let $f_m(p^r)$ be the length of the longest arithmetic

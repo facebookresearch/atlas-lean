@@ -34,27 +34,15 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.NumberTheory.ArithmeticFunction.Carmichael
-public import Mathlib.RingTheory.Polynomial.Pochhammer
 public import Mathlib.SetTheory.Cardinal.Finite
 public import MathlibExt.Combinatorics.Enumerative.FubiniNumber
-public import MathlibExt.Combinatorics.Enumerative.SignedStirlingFirst
+public import MathlibExt.Combinatorics.Enumerative.StirlingDescPochhammer
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
-open Polynomial ArithmeticFunction
-
-/-- **Falling factorial in terms of signed Stirling numbers.** For every natural number $n$, the
-identity of polynomials with integer coefficients
-$$x (x - 1) \cdots (x - n + 1) = \sum_{k=0}^{n} s(n, k)\, x^k$$
-holds, where $s(n, k)$ is the signed Stirling number of the first kind.
-
-Source: Benjamin Schreyer, *Rigged Horse Numbers and their Modular Periodicity*, Journal of
-Integer Sequences 28 (2025), Article 25.4.1, Proposition 2 (`jis-2025-25.4.1-prop-2`). -/
-public theorem_wanted descPochhammer_eq_sum_signedStirlingFirst (n : ℕ) :
-    descPochhammer ℤ n =
-      ∑ k ∈ Finset.range (n + 1), C (signedStirlingFirst n k) * X ^ k
+open ArithmeticFunction
 
 /-- **A Carmichael congruence for all residues modulo $K$.** Let $K$ be a natural number, let
 $\lambda(K)$ be the value of the Carmichael function at $K$, and let $R$ be the largest exponent
