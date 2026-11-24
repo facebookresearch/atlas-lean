@@ -386,4 +386,20 @@ public theorem strassen1969Upper :
   change (c.size : ℝ) ≤ 49 * (n : ℝ) ^ (w + ε)
   linarith [hseven.trans hε']
 
+-- The docstring is carried over from the original request. The proof uses
+-- Strassen's stronger circuit bound, not a construction of the naive circuit.
+/-- **Naive bound for square matrix multiplication.** For every field $F$, the square matrix
+multiplication exponent $\omega(F)$ of the arithmetic-circuit model satisfies $\omega(F) \le 3$.
+
+Source: C15a, trivial upper bound. The general finite naive circuit
+construction is not supplied upstream, so this remains a proof request. -/
+public theorem naiveUpperThree :
+    ∀ (F : Type u) [Field F],
+      squareMatrixMultiplicationCircuitExponent F ≤ ENNReal.ofReal 3 := by
+  intro F _
+  refine (strassen1969Upper F).trans (ENNReal.ofReal_le_ofReal ?_)
+  change Real.logb 2 7 ≤ 3
+  apply (Real.logb_le_iff_le_rpow (by norm_num) (by norm_num)).mpr
+  norm_num [Real.rpow_ofNat]
+
 end Cslib.Complexity.Algebraic.SquareMatrixMultiplicationBoundsWanted
