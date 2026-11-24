@@ -52,6 +52,7 @@ conservation law, a nonzero vector `m` orthogonal to every reaction vector `prod
 the chain never leaves the level set of `x ↦ m · x` containing its initial state.
 
 For the chain built by the jump–hold construction, the same almost sure limits hold from every
-initial state under a Foster–Lyapunov drift bound and the reachability of every state from `x₀`
-along reactions of positive propensity, with no hypothesis of non-explosion, stationarity or
-regeneration ([ergodic theorem under a drift bound and reachability](../regeneration-of-stochastic-reaction-networks/ergodic-of-is-complex-balanced-of-reacha.md)).
+initial state under a Foster–Lyapunov drift bound, `L V ≤ a V + b` for the generator `L` of the
+mass-action chain, with `a, b ≥ 0` and some `V : ℕ^S → [0, ∞)` with `∑_s x_s ≤ V(x)` for every
+`x`, and the reachability of every state from `x₀` along reactions of positive propensity, with
+no hypothesis of non-explosion, stationarity or regeneration ([ergodic theorem under a drift bound and reachability](../regeneration-of-stochastic-reaction-networks/ergodic-of-is-complex-balanced-of-reacha.md)).

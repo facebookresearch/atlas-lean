@@ -548,7 +548,9 @@ theorem IsSolution.abs_substrate_sub_reduced_le (h : IsSolution k₁ kb k₂ s c
 
 /-- The constant of the substrate estimate on the slow window `[0, T]`:
 `(k₁ s₀ + kb) (1 / (kb + k₂) + (k₁ s₀ + kb) / K / (kb + k₂) · T)`. Quotients by zero are read as
-zero; it is affine in `T`, and increasing in `T` for `k₁, k₂ > 0`, `kb ≥ 0` and `s₀ > 0`. -/
+zero: when `K = 0` (exactly when `k₁ = 0` or `kb + k₂ = 0`) the term in `T` vanishes and the value
+is `(k₁ s₀ + kb) / (kb + k₂)`, which is `0` when `kb + k₂ = 0`. It is affine in `T`, and increasing
+in `T` for `k₁, k₂ > 0`, `kb ≥ 0` and `s₀ > 0`. -/
 noncomputable def substrateErrorConst (k₁ kb k₂ s₀ T : ℝ) : ℝ :=
   (k₁ * s₀ + kb) *
     (1 / (kb + k₂) + (k₁ * s₀ + kb) / michaelisConstant k₁ kb k₂ / (kb + k₂) * T)
@@ -684,9 +686,10 @@ theorem IsSolution.abs_rate_sub_mmRate_le (h : IsSolution k₁ kb k₂ s c e p) 
 
 /-- The explicit rate-law error bound for standard data on the slow window `[τ₀, T]`:
 `k₂ (e^{-(kb + k₂) τ₀ / ε} + ε ((k₁ s₀ + kb)/K/(kb + k₂) + substrateErrorConst/K))`. Quotients by
-zero are read as zero (at `ε = 0` the exponent is `0` and the bound is `k₂`). The first term is the
+zero are read as zero (at `ε = 0` the exponent is `0` and the bound is `k₂`; when `K = 0`, exactly
+when `k₁ = 0` or `kb + k₂ = 0`, the bound is `k₂ e^{-(kb + k₂) τ₀ / ε}`). The first term is the
 initial layer; for `kb + k₂ > 0` and `ε > 0` it is small exactly when `(kb + k₂) τ₀ / ε` is
-large. -/
+large. Meaningful for `k₁, k₂ > 0`, `kb ≥ 0`, `s₀ > 0`, `τ₀ ≥ 0` and `ε > 0`. -/
 noncomputable def rateErrorBound (k₁ kb k₂ s₀ T τ₀ ε : ℝ) : ℝ :=
   k₂ * (exp (-(kb + k₂) * τ₀ / ε) +
     ε * ((k₁ * s₀ + kb) / michaelisConstant k₁ kb k₂ / (kb + k₂) +
@@ -753,7 +756,8 @@ theorem tendsto_rateErrorBound (hkb : 0 ≤ kb) (hk₂ : 0 < k₂) {s₀ T τ₀
 
 /-- The explicit rate-law error bound for prepared data on `[0, T]`:
 `k₂ ε (k₁ (s₀ + ε) + kb)/K/(kb + k₂) · (1 + (k₁ (s₀ + ε) + kb) T / K)`, with quotients by zero read
-as zero. -/
+as zero: it is `0` when `K = 0`, exactly when `k₁ = 0` or `kb + k₂ = 0`. Meaningful for
+`k₁, k₂ > 0`, `kb ≥ 0`, `s₀ > 0` and `ε > 0`. -/
 noncomputable def preparedRateBound (k₁ kb k₂ s₀ T ε : ℝ) : ℝ :=
   k₂ * ε * ((k₁ * (s₀ + ε) + kb) / michaelisConstant k₁ kb k₂ / (kb + k₂) *
     (1 + (k₁ * (s₀ + ε) + kb) * T / michaelisConstant k₁ kb k₂))

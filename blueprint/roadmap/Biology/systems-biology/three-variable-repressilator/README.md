@@ -12,7 +12,7 @@
 
 - [For p ≥ 0, (p, p, p) is an equilibrium iff α = p (1 + pⁿ)](vector-field-const-eq-zero-iff.md)
 - [Each positive rate has exactly one positive equilibrium level](exists-unique-eq-level.md)
-- [For n ≥ 1, the only nonnegative equilibrium is symmetric](eq-const-of-vector-field-eq-zero.md)
+- [For n ≥ 1 and α > 0, the only nonnegative equilibrium is symmetric](eq-const-of-vector-field-eq-zero.md)
 
 ## The linearization
 
@@ -52,7 +52,7 @@
 
 - [Linear stability when the loop gain is below 2](re-neg-of-is-root-lin-charpoly.md)
 - [Linear instability when the loop gain exceeds 2](exists-re-pos-of-is-root-lin-charpoly.md)
-- [For n ≤ 2, the symmetric equilibrium is linearly stable](re-neg-of-le-two.md)
+- [For n ≤ 2, the nonnegative symmetric equilibrium is linearly stable](re-neg-of-le-two.md)
 
 ## Periodic orbits from the Hopf theorem
 

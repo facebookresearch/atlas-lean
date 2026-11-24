@@ -5,7 +5,7 @@
 - [Derivative of the characteristic function in z](char-fun-deriv.md)
 - [At the critical delay the z-derivative at i r is 1 + (π / 2) i](char-fun-deriv-critical-delay.md)
 - [At the critical delay, i r is a simple characteristic root](char-fun-deriv-critical-delay-ne-zero.md)
-- [At the critical delay the only imaginary roots are ± i r](eq-i-mul-or-eq-neg-i-mul-of-re-eq-zero.md)
+- [At the critical delay every root with zero real part is ± i r](eq-i-mul-or-eq-neg-i-mul-of-re-eq-zero.md)
 - [At the critical delay all other roots have negative real part](re-neg-of-char-fun-critical-delay.md)
 
 ## The root branch through i r and transversality

@@ -41,7 +41,7 @@
 - [Horn–Jackson inequality for the reversible Michaelis–Menten mechanism](helmholtz-rate-mm-network-nonpos.md)
 - [The pseudo-Helmholtz function is continuous](continuous-pseudo-helmholtz.md)
 - [Positive rates and totals: pseudo-Helmholtz function never increases](antitone-on-pseudo-helmholtz.md)
-- [For positive rates and totals every solution tends to an equilibrium](tendsto-equilibrium.md)
+- [Positive rates and totals: nonnegative solutions tend to equilibrium](tendsto-equilibrium.md)
 
 ## Quasi-steady-state approximation
 

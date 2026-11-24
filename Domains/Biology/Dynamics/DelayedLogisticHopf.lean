@@ -135,8 +135,8 @@ theorem charFunDeriv_criticalDelay_ne_zero {r : ℝ} (hr : 0 < r) :
   have := congrArg Complex.re h
   simp at this
 
-/-- **No other imaginary roots**: at `τ = τ_c` the only characteristic roots with `Re z = 0`
-are `± i r`. -/
+/-- **No other imaginary roots**: for `r > 0`, at `τ = τ_c` every characteristic root with
+`Re z = 0` is `i r` or `-i r`. -/
 theorem eq_I_mul_or_eq_neg_I_mul_of_re_eq_zero {r : ℝ} (hr : 0 < r) {z : ℂ}
     (hz : charFun r (criticalDelay r) z = 0) (hre : z.re = 0) :
     z = Complex.I * r ∨ z = -(Complex.I * r) := by
@@ -311,7 +311,7 @@ noncomputable def hopfAlpha2 : ℝ := (3 * π - 2) / 40
 noncomputable def hopfOmega2 : ℝ := -1 / 20
 
 /-- The bifurcation parameter `α(ε) = π / 2 + α₂ ε²` of the scaled equation, equal to `r τ(ε)`
-for `r ≠ 0`. -/
+for `r ≠ 0` (at `r = 0` the convention `a / 0 = 0` gives `τ(ε) = 0`). -/
 noncomputable def hopfParam (ε : ℝ) : ℝ := π / 2 + hopfAlpha2 * ε ^ 2
 
 /-- The angular frequency `ω(ε)` of the approximate orbit in scaled time. -/

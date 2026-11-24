@@ -1,4 +1,4 @@
-# For n ≥ 1 and β ≠ 0, the only nonnegative equilibrium is symmetric
+# For n ≥ 1, α > 0, β ≠ 0, the only nonnegative equilibrium is symmetric
 
 Let `n ≥ 1`, `α > 0`, `β ≠ 0` and `p ≥ 0` with `p (1 + pⁿ) = α`. If `x ∈ ℝ⁶` has nonnegative entries
 and is an equilibrium of the [six-variable field](vector-field.md) with Hill coefficient `n`, rate

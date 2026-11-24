@@ -501,9 +501,11 @@ theorem exists_re_pos_of_isRoot_linCharpoly {n : ℕ} {p : ℝ} (hp : 0 ≤ p) (
   rw [linCharpoly_vectorField n hp]
   exact exists_re_pos_of_isRoot hg
 
-/-- **No Hopf bifurcation for `n ≤ 2`.** For every equilibrium level `p ≥ 0` (equivalently every
-`α ≥ 0`), every eigenvalue of the linearization at the symmetric equilibrium has negative real
-part; in particular none lies on the imaginary axis. -/
+/-- **No Hopf bifurcation for `n ≤ 2` at nonnegative levels.** For every equilibrium level `p ≥ 0`
+(equivalently every `α ≥ 0`), every eigenvalue of the linearization at the symmetric equilibrium
+`(p, p, p)` has negative real part; in particular none lies on the imaginary axis. Symmetric
+equilibria at negative levels are not covered and can be unstable: for `n = 1`, `p = -3/2` and
+`α = 3/4` the eigenvalues are `-4` and `1/2 ± i 3√3/2`. -/
 theorem re_neg_of_le_two {n : ℕ} (hn : n ≤ 2) {p : ℝ} (hp : 0 ≤ p) {z : ℂ}
     (hz : (linCharpoly (vectorField n (eqRate n p)) (fun _ => p)).IsRoot z) : z.re < 0 :=
   re_neg_of_isRoot_linCharpoly hp (gain_lt_two_of_le_two hn hp) hz

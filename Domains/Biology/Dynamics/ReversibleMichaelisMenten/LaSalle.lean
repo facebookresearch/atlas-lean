@@ -325,7 +325,7 @@ theorem IsSolution.antitoneOn_pseudoHelmholtz (h : IsSolution k₁ kb k₂ kb₂
 
 /-- **Global convergence for reversible Michaelis–Menten kinetics, via LaSalle.** For positive
 rate constants, every solution with nonnegative initial data and positive totals
-`E_T = e₀ + c₀`, `S_T = s₀ + c₀ + p₀` converges to the unique equilibrium `x*` of its
+`E_T = e₀ + c₀`, `S_T = s₀ + c₀ + p₀` converges to the unique nonnegative equilibrium `x*` of its
 compatibility class (`existsUnique_equilibrium`), which is positive.
 
 Proof: `lasalle_of_antitoneOn` on the compact, convex, forward-invariant class

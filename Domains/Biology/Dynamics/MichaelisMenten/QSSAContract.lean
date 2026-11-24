@@ -134,7 +134,8 @@ noncomputable def fastTimeScale (k₁ kb k₂ s₀ : ℝ) : ℝ :=
 noncomputable def reducedField (k₁ kb k₂ s₀ u : ℝ) : ℝ :=
   -mmRate (1 + qssaKappa k₁ kb k₂ s₀) (qssaKappa k₁ kb k₂ s₀) u
 
-/-- The slow manifold for `v = c / e₀`: `v = u / (κ + u)`, read as `0` when `κ + u = 0`. -/
+/-- The slow manifold for `v = c / e₀`: `v = u / (κ + u)`, read as `0` when `κ + u = 0`;
+meaningful for `κ > 0` and `u ≥ 0`, where `κ + u > 0`. -/
 noncomputable def slowManifold (k₁ kb k₂ s₀ u : ℝ) : ℝ :=
   u / (qssaKappa k₁ kb k₂ s₀ + u)
 

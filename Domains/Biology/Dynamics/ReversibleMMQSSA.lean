@@ -72,11 +72,9 @@ hence nondecreasing on `[0, M]`, so the difference `d = s - S̄(e_T ·)` satisfi
 `d' ≤ (k₁ M + kb) |w| + e_T² kb₂ (k₁ M + kb) / D` wherever `d ≥ 0` (and symmetrically); `|d|`
 grows at most by the integral of that bound, with no Gronwall factor.
 
-## Source receipt (API-00)
+## Reused results
 
-Reuse search (2026-11-15, base `origin/main` ca1b9e8001): `grep` for `QSSA`, `qss`,
-`quasi-steady`, `reducedRate`, `revMMRate` over `MathlibExt`, `WantedExt`, `MathlibExtTest`.
-Reused: `ReversibleMichaelisMenten.IsSolution`, `IsSolution.enzyme_conservation`,
+From other files: `ReversibleMichaelisMenten.IsSolution`, `IsSolution.enzyme_conservation`,
 `IsSolution.substrate_conservation`, `IsSolution.nonneg`, `revComplexRate`, `revProductRate`
 (`Domains.Biology.Dynamics.ReversibleMichaelisMenten`); `substrateRate`, `qssComplex`,
 `mmRate`, `michaelisConstant` (`Domains.Biology.Dynamics.MichaelisMenten`); Mathlib
@@ -117,13 +115,15 @@ open MathlibExt.Analysis.ODE.ComparisonBounds
 
 /-- The quasi-steady-state complex of the reversible mechanism with total enzyme `eT`,
 `q(s, p) = eT (k₁ s + kb₂ p) / (k₁ s + kb₂ p + kb + k₂)`, read as `0` when the denominator
-vanishes. -/
+vanishes. For `k₁, k₂ > 0`, `kb, kb₂ ≥ 0` and `s, p ≥ 0` the denominator is at least
+`kb + k₂ > 0`. -/
 noncomputable def revQSSComplex (k₁ kb k₂ kb₂ eT s p : ℝ) : ℝ :=
   eT * (k₁ * s + kb₂ * p) / (k₁ * s + kb₂ * p + (kb + k₂))
 
 /-- The reversible Michaelis–Menten rate law (per unit total enzyme),
 `v(s, p) = (k₁ k₂ s - kb kb₂ p) / (k₁ s + kb₂ p + kb + k₂)`, read as `0` when the denominator
-vanishes. -/
+vanishes. For `k₁, k₂ > 0`, `kb, kb₂ ≥ 0` and `s, p ≥ 0` the denominator is at least
+`kb + k₂ > 0`. -/
 noncomputable def revMMRate (k₁ kb k₂ kb₂ s p : ℝ) : ℝ :=
   (k₁ * k₂ * s - kb * kb₂ * p) / (k₁ * s + kb₂ * p + (kb + k₂))
 
@@ -137,7 +137,7 @@ def complexForcingConst (k₁ kb k₂ kb₂ M : ℝ) : ℝ :=
 
 /-- The constant of the substrate estimate on the slow window `[0, T]`:
 `(k₁ M + kb) (1 / (kb + k₂) + (F / (kb + k₂)² + kb₂ / (kb + k₂)) T)`, with quotients by zero read as
-zero. -/
+zero: it is `0` for every `T` when `kb + k₂ = 0`. -/
 noncomputable def revSubstrateErrorConst (k₁ kb k₂ kb₂ M T : ℝ) : ℝ :=
   (k₁ * M + kb) * (1 / (kb + k₂) +
     (complexForcingConst k₁ kb k₂ kb₂ M / (kb + k₂) ^ 2 + kb₂ / (kb + k₂)) * T)

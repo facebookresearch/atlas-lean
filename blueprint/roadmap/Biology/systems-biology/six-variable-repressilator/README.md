@@ -15,7 +15,7 @@
 ## The symmetric equilibrium
 
 - [For p ≥ 0, (p, …, p) is an equilibrium iff α = p (1 + pⁿ)](vector-field-const-eq-zero-iff.md)
-- [For n ≥ 1 and β ≠ 0, the only nonnegative equilibrium is symmetric](eq-const-of-vector-field-eq-zero.md)
+- [For n ≥ 1, α > 0, β ≠ 0, the only nonnegative equilibrium is symmetric](eq-const-of-vector-field-eq-zero.md)
 
 ## The linearization
 
