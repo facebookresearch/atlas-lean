@@ -14,6 +14,8 @@ public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.Analysis.Normed.Module.Connected
 public import Mathlib.Data.Set.Card
 public import Mathlib.Topology.Connected.Basic
+public import MathlibExt.Combinatorics.ConstrainedTIntersections
+public import MathlibExt.Combinatorics.ExoticKnifePancake
 
 /-!
 # Cutting a pancake with an exotic knife
@@ -98,46 +100,6 @@ public theorem_wanted isGreatest_planeRegionCount_longLeggedA (n : ℕ) :
           (fun s : ℝ => c i + s • u₂ i) '' Set.Ici 0 ∪
           segment ℝ (c i + a i • u₁ i) (c i + b i • u₂ i)))}
       ((9 * n ^ 2 - 5 * n + 2) / 2)
-
-/-- **Four-point intersections of constrained T's.** For a point $c \in \mathbb{R}^2$ and an angle
-$\theta \in \mathbb{R}$, the constrained long-legged T $\bar T(c, \theta)$ is the union of the
-crossbar, the line $\{c + s(-\sin\theta, \cos\theta) : s \in \mathbb{R}\}$, and the stem, the ray
-$\{c + s(\cos\theta, \sin\theta) : s \ge 0\}$. For all $c_1, c_2 \in \mathbb{R}^2$ and
-$\theta_1, \theta_2 \in \mathbb{R}$, if $\bar T(c_1, \theta_1) \cap \bar T(c_2, \theta_2)$ has
-exactly four points, then $\cos(\theta_1 - \theta_2) < 0$, that is, the two stem directions make
-an angle greater than $\pi/2$.
-
-Source: David O. H. Cutler, Jonas Karlsson and Neil J. A. Sloane, *Cutting a Pancake with an
-Exotic Knife*, Journal of Integer Sequences 29 (2026), Article 26.4.5, Lemma 2
-(`jis-2026-26.4.5-lem-2`), with the definition in the subsection *The constrained long-legged T̄*. -/
-public theorem_wanted cos_sub_neg_of_tbar_inter_ncard_four (c₁ c₂ : ℝ × ℝ) (θ₁ θ₂ : ℝ) :
-    let T : ℝ × ℝ → ℝ → Set (ℝ × ℝ) := fun c θ =>
-      Set.range (fun s : ℝ => c + s • (-Real.sin θ, Real.cos θ)) ∪
-        (fun s : ℝ => c + s • (Real.cos θ, Real.sin θ)) '' Set.Ici 0
-    (T c₁ θ₁ ∩ T c₂ θ₂).ncard = 4 → Real.cos (θ₁ - θ₂) < 0
-
-/-- **Stem–circle intersections of two lollipops.** For a point $c = (a, b) \in \mathbb{R}^2$, a
-radius $r > 0$ and an angle $\theta \in \mathbb{R}$, the lollipop with center $c$, radius $r$ and
-stem direction $(\cos\theta, \sin\theta)$ consists of the circle
-$\{(x, y) \in \mathbb{R}^2 : (x - a)^2 + (y - b)^2 = r^2\}$ and the stem
-$\{c + s(\cos\theta, \sin\theta) : s \ge r\}$, the part of the ray from $c$ in that direction
-outside the open disc. For all $c_1, c_2 \in \mathbb{R}^2$, $r_1, r_2 > 0$ and
-$\theta_1, \theta_2 \in \mathbb{R}$, consider the lollipops with centers $c_i$, radii $r_i$ and
-stem directions $(\cos\theta_i, \sin\theta_i)$. If the number of points where the stem of the
-first meets the circle of the second plus the number of points where the stem of the second meets
-the circle of the first is $3$ or $4$, then $\cos(\theta_1 - \theta_2) < 0$.
-
-Source: David O. H. Cutler, Jonas Karlsson and Neil J. A. Sloane, *Cutting a Pancake with an
-Exotic Knife*, Journal of Integer Sequences 29 (2026), Article 26.4.5, Lemma 3
-(`jis-2026-26.4.5-lem-3`), with the definition in the subsection *The lollipop or qoppa*. -/
-public theorem_wanted cos_sub_neg_of_lollipop_good_pair (c₁ c₂ : ℝ × ℝ) {r₁ r₂ : ℝ}
-    (hr₁ : 0 < r₁) (hr₂ : 0 < r₂) (θ₁ θ₂ : ℝ) :
-    let circ : ℝ × ℝ → ℝ → Set (ℝ × ℝ) := fun c r =>
-      {x | (x.1 - c.1) ^ 2 + (x.2 - c.2) ^ 2 = r ^ 2}
-    let stem : ℝ × ℝ → ℝ → ℝ → Set (ℝ × ℝ) := fun c r θ =>
-      (fun s : ℝ => c + s • (Real.cos θ, Real.sin θ)) '' Set.Ici r
-    (stem c₁ r₁ θ₁ ∩ circ c₂ r₂).ncard + (stem c₂ r₂ θ₂ ∩ circ c₁ r₁).ncard ∈
-        ({3, 4} : Set ℕ) → Real.cos (θ₁ - θ₂) < 0
 
 end
 

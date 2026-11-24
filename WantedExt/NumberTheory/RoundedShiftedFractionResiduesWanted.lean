@@ -15,6 +15,8 @@ public import MathlibExt.NumberTheory.AlternatingReciprocalIntegral
 public import MathlibExt.NumberTheory.AlternatingSumFloorDiv
 public import MathlibExt.NumberTheory.CeilQuotientOddCount
 public import MathlibExt.NumberTheory.DivisorCountBound
+public import MathlibExt.NumberTheory.FloorDivisionCounts
+public import MathlibExt.NumberTheory.FloorQuotientOddCount
 public import MathlibExt.NumberTheory.RoundQuotientOddCount
 
 namespace MetaMathlibExt
@@ -55,28 +57,6 @@ public theorem shiftedFloorResidueCount_modulus_one (n : ℕ) (α ν : ℝ)
   unfold shiftedFloorResidueCount
   rw [Finset.filter_true_of_mem (fun k _ => by simp [Int.ModEq])]
   simp
-
-/-- **Counting large terms of the floor sequence.** For every natural number $n$ and every
-integer $k \ge 1$, exactly $\lfloor n/k \rfloor$ of the integers $d$ with $1 \le d \le n$
-satisfy $\lfloor n/d \rfloor \ge k$; that is, exactly $\lfloor n/k \rfloor$ terms of the floor
-sequence $\lfloor n/1 \rfloor, \dots, \lfloor n/n \rfloor$ are at least $k$.
-
-Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
-Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
-Article 24.2.5, Lemma 1 (`jis-2024-24.2.5-lem-1`). -/
-public theorem_wanted floor_div_sequence_card_ge (n k : ℕ) (hk : 1 ≤ k) :
-    ((Finset.Icc 1 n).filter (fun d : ℕ => k ≤ n / d)).card = n / k
-
-/-- **The floor parity count as an alternating sum.** Let $\mathcal{F}_n$ be the number of
-integers $k$ with $1 \le k \le n$ for which $\lfloor n/k \rfloor$ is odd. For every natural
-number $n$, $\mathcal{F}_n = \sum_{d=1}^{n} \lfloor n/d \rfloor (-1)^{d+1}$.
-
-Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
-Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
-Article 24.2.5, Proposition 2 (`jis-2024-24.2.5-prop-2`). -/
-public theorem_wanted floorQuotientOddCount_eq_alternating_sum (n : ℕ) :
-    (floorQuotientOddCount n : ℤ) =
-      ∑ d ∈ Finset.Icc 1 n, ((n / d : ℕ) : ℤ) * (-1) ^ (d + 1)
 
 /-- **The floor parity count through the divisor summatory function.** Let $\tau(m)$ be the
 number of positive divisors of $m$, let $D(x) = \sum_{1 \le m \le x} \tau(m)$, and let

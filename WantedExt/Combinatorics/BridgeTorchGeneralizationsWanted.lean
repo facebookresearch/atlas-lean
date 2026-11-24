@@ -30,6 +30,9 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+public import MathlibExt.Combinatorics.BridgeTorchParityInterpolation
+public import MathlibExt.Combinatorics.BridgeTorchReturnInequality
+public import MathlibExt.Combinatorics.BridgeTorchThreeUpperBound
 public import MathlibExt.Combinatorics.BridgeTorchTwo
 public import MathlibExt.Combinatorics.BridgeTorchWeights
 
@@ -120,48 +123,6 @@ theorem forwardCrossings_returnCrossings_rightBank_example :
       rightBank 4 [{1, 2}, {1}] = {2} := by
   decide
 
-/-- **Parity interpolation.** Let $f, g, a : \mathbb{N} \to \mathbb{R}$ be sequences with
-$a_{2m} = f(m)$ and $a_{2m+1} = g(m)$ for every $m \in \mathbb{N}$. Then for every
-$n \in \mathbb{N}$,
-
-$$a_n = \frac{1 + (-1)^n}{2} f(\lfloor n/2 \rfloor) + \frac{1 - (-1)^n}{2} g(\lfloor n/2 \rfloor).$$
-
-Source: Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge
-and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
-Lemma 2 (`jis-2026-26.5.6-lem-2`). -/
-public theorem_wanted parity_interpolation (f g a : ℕ → ℝ)
-    (heven : ∀ m, a (2 * m) = f m) (hodd : ∀ m, a (2 * m + 1) = g m) (n : ℕ) :
-    a n = (1 + (-1 : ℝ) ^ n) / 2 * f (n / 2) + (1 - (-1 : ℝ) ^ n) / 2 * g (n / 2)
-
-/-- **Return inequality for the capacity-3 weights.** Let $y_i$ be the weights of the capacity-3
-lower bound. For every nonempty set $R$ of positive integers with $|R| \le 3$,
-$$\frac{9}{2}(|R| - 1) + \max R + \sum_{i \in R} (y_i - i) \ge 0.$$
-
-Source: Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge
-and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
-Lemma 16 (`jis-2026-26.5.6-lem-16`). -/
-public theorem_wanted bridgeWeight_return_inequality (R : Finset ℕ) (hR : R.Nonempty)
-    (hR3 : R.card ≤ 3) (hpos : 0 ∉ R) :
-    0 ≤ 9 / 2 * ((R.card : ℚ) - 1) + ((R.max' hR : ℕ) : ℚ) +
-      ∑ i ∈ R, (bridgeWeight i - (i : ℚ))
-
-/-- **The capacity-3 closed form is an integer close to the lower bound.** For every integer
-$n \ge 7$, let $U(n) = n^2/6 + 2n - 181/36 + (-1)^n/4 - (2/9)\cos(2n\pi/3)$ and
-$V(n) = n^2/6 + 2n - 11/2$. Then $U(n)$ is an integer and $0 \le U(n) - V(n) < 1$.
-
-Source: Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge
-and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
-Lemma 19 (`jis-2026-26.5.6-lem-19`), with `U` from Theorem 12 and `V` from
-Proposition 17. -/
-public theorem_wanted closedForm_U_integral_and_near_V (n : ℕ) (hn : 7 ≤ n) :
-    (∃ z : ℤ, (n : ℝ) ^ 2 / 6 + 2 * n - 181 / 36 + (-1 : ℝ) ^ n / 4 -
-        2 / 9 * Real.cos (2 * n * Real.pi / 3) = z) ∧
-      0 ≤ ((n : ℝ) ^ 2 / 6 + 2 * n - 181 / 36 + (-1 : ℝ) ^ n / 4 -
-          2 / 9 * Real.cos (2 * n * Real.pi / 3)) - ((n : ℝ) ^ 2 / 6 + 2 * n - 11 / 2) ∧
-      ((n : ℝ) ^ 2 / 6 + 2 * n - 181 / 36 + (-1 : ℝ) ^ n / 4 -
-          2 / 9 * Real.cos (2 * n * Real.pi / 3)) - ((n : ℝ) ^ 2 / 6 + 2 * n - 11 / 2) < 1
-
-
 /-- **Fewest crossings of the fastest person in an optimal schedule.** For bridge capacity $2$
 and $n \ge 1$ people $1, \dots, n$ (person $i$ has crossing time $i$), the least number $a(n)$
 of crossings that include person $1$, taken over all optimal schedules (complete schedules
@@ -220,28 +181,6 @@ public theorem_wanted exists_optimal_schedule_three_fastest_returns (n : ℕ) (h
     ∃ σ, IsBridgeSchedule 3 n σ ∧ scheduleCost σ = bridgeTime 3 n ∧
       ∀ (i : ℕ) (hi : i < σ.length), Odd i →
         ∃ p, σ[i] = {p} ∧ ∀ q ∈ rightBank n (σ.take i), p ≤ q
-
-/-- **Six-step upper bound for capacity three.** Let $T_3(n)$ be the optimal crossing time of
-$n$ people with crossing times $1, \dots, n$ on a bridge of capacity $3$ with one torch. For
-every $k \ge 9$, $T_3(k) \le T_3(k - 6) + 2k + 6$.
-
-Source: Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge
-and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
-Proposition 11 (`jis-2026-26.5.6-prop-11`). -/
-public theorem_wanted bridgeTime_three_le_sub_six (k : ℕ) (hk : 9 ≤ k) :
-    bridgeTime 3 k ≤ bridgeTime 3 (k - 6) + 2 * k + 6
-
-/-- **Upper bound for capacity three.** Let $T_3(n)$ be the optimal crossing time of $n$ people
-with crossing times $1, \dots, n$ on a bridge of capacity $3$ with one torch. For every
-$n \ge 7$,
-$$T_3(n) \le \frac{n^2}{6} + 2n - \frac{181}{36} + \frac{(-1)^n}{4} - \frac{2}{9}\cos(2n\pi/3).$$
-
-Source: Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge
-and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
-Theorem 12 (`jis-2026-26.5.6-thm-12`). -/
-public theorem_wanted bridgeTime_three_le_closed_form (n : ℕ) (hn : 7 ≤ n) :
-    (bridgeTime 3 n : ℝ) ≤ (n : ℝ) ^ 2 / 6 + 2 * n - 181 / 36 + (-1 : ℝ) ^ n / 4 -
-      2 / 9 * Real.cos (2 * n * Real.pi / 3)
 
 /-- **Lower bound for capacity-three schedules.** Let $n \ge 7$. Every bridge schedule of
 capacity $3$ for the $n$ people $1, \dots, n$ (person $i$ crossing in time $i$) has total cost at
