@@ -10516,6 +10516,7 @@
   "MathlibExt/Combinatorics/Enumerative/AignerMotzkinInequality": {"to": "Combinatorics/catalan-numbers-lattice-paths/motzkin-numbers", "title": "Aigner's ratio inequality for Motzkin numbers"},
   "MathlibExt/Combinatorics/Enumerative/AlphaUpperMatrix": {"to": "Combinatorics/stirling-bell-eulerian/generalized-stirling-numbers", "title": "α-Stirling matrices"},
   "MathlibExt/Combinatorics/Enumerative/AlternatingBinomialPolynomial": {"to": "Combinatorics/binomial-coefficients/binomial-sums", "title": "Knuth's old sum"},
+  "MathlibExt/Combinatorics/Enumerative/AlternatingBinomialPowerSmallCases": {"to": "Combinatorics/riordan-arrays-transforms/sequence-transforms", "title": "Hypersequences"},
   "MathlibExt/Combinatorics/Enumerative/AlternatingBinomialPowerSumRecurrences": {"to": "Combinatorics/riordan-arrays-transforms/sequence-transforms", "title": "Hypersequences"},
   "MathlibExt/Combinatorics/Enumerative/AlternatingBinomialPowerSumStirling": {"to": "Combinatorics/riordan-arrays-transforms/sequence-transforms", "title": "Hypersequences"},
   "MathlibExt/Combinatorics/Enumerative/AlternatingCentralBinomialSum": {"to": "Combinatorics/binomial-coefficients/binomial-sums", "title": "Knuth's old sum"},
