@@ -32,27 +32,19 @@ Bellman residual of $W$ and does not require knowing $V^*$ to compute it.
 
 - [Componentwise Bellman residual bound for a greedy policy](componentwise-bellman-residual-bound.md)
 - [A greedy policy for the optimal value is optimal](../../../heuristic-search-and-planning/value-iteration/policy-value-greedy.md)
-- [Value of a Markov reward process](../stochastic-policies-and-discounted-occupancy/mrp-value.md)
-- [The value of a Markov reward process solves its Bellman equation](../stochastic-policies-and-discounted-occupancy/mrp-value-eq.md)
-- [A constant reward has constant value](../stochastic-policies-and-discounted-occupancy/mrp-value-const.md)
-- [A nonnegative reward has a nonnegative value](../stochastic-policies-and-discounted-occupancy/mrp-value-nonneg.md)
+- [Absolute value bound for a Markov reward process](../stochastic-policies-and-discounted-occupancy/abs-mrp-value-le.md)
 
 ## Proof
 
-For any row-stochastic policy matrix $P_\sigma$ and real reward vector $c$,
-its Markov reward process value $V_c$ satisfies
-$(I-\gamma P_\sigma)V_c=c$. The square matrix $I-\gamma P_\sigma$ is thus
-surjective and invertible, so $R_\sigma c=V_c$ for
-$R_\sigma=(I-\gamma P_\sigma)^{-1}$. It is entrywise nonnegative by
-applying it to indicator rewards, and it sends the all-ones vector
-$\mathbf 1$ to $(1-\gamma)^{-1}\mathbf 1$. Thus its row sums and its induced
-sup operator norm are exactly $1/(1-\gamma)$: the row sums bound its action
-on any vector in the unit ball, and $\mathbf 1$ attains the bound. Choose a
-policy $\pi^*$ greedy for $V^*$, which exists since the action set is finite
-and nonempty. It is optimal, so the componentwise bound applies. Each resolvent
-term acting on $|TW-W|$ is at most
-$\|TW-W\|_\infty\mathbf 1/(1-\gamma)$, and the loss is nonnegative in each
-state. Taking the maximum gives (4.5).
+Choose a policy $\pi^*$ greedy for $V^*$, which exists because the action
+set is finite and nonempty. It is optimal. Put $e=TW-W$ and let
+$R_\sigma(c)$ be the value of the Markov reward process with the transition
+matrix of $\sigma$ and reward $c$, at discount $\gamma$. The componentwise
+bound puts $V^*-V^\pi$ between zero and
+$R_{\pi^*}(|e|)+R_\pi(|e|)$.
+For each of the two terms, the absolute value bound for a Markov reward
+process with reward $|e|$ gives a bound of $\|e\|_\infty/(1-\gamma)$ at
+every state. Taking the maximum gives (4.5).
 
 The coefficient $2/(1-\gamma)$ is the one in (4.5); no sharpness claim
 is made here. For $\gamma=0$, greediness maximizes the immediate expected

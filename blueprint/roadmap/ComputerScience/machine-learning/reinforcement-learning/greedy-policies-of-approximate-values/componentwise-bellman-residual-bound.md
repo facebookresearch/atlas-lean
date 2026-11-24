@@ -7,15 +7,18 @@ $\sum_{s'\in S}P(s,a,s')=1$ for every $(s,a)$. Fix $0\le\gamma<1$. Write
 $T$ for the Bellman optimality operator, $T_\sigma$ for the Bellman operator
 of a deterministic stationary policy $\sigma:S\to A$, $V^\sigma$ for its
 value, and $V^*$ for the optimal value. For each $\sigma$ write
-$P_\sigma(s,s')=P(s,\sigma(s),s')$ and $R_\sigma=(I-\gamma P_\sigma)^{-1}$,
-acting on column vectors indexed by $S$.
+$P_\sigma(s,s')=P(s,\sigma(s),s')$. For a reward vector $c:S\to\mathbb R$,
+let $R_\sigma(c)$ be the value of the Markov reward process with transition
+matrix $P_\sigma$, discount $\gamma$ and reward $c$. Munos writes this value
+as $(I-\gamma P_\sigma)^{-1}c$; the Bellman equation for the process is
+$(I-\gamma P_\sigma)R_\sigma(c)=c$.
 
 For any $W:S\to\mathbb R$, any deterministic stationary policy $\pi$ greedy
 with respect to $W$ (so $T_\pi W=TW$), and any deterministic stationary
 optimal policy $\pi^*$ (so $V^{\pi^*}=V^*$), the loss is bounded by
 
 $$
-0 \le V^*-V^\pi \le (R_{\pi^*}+R_\pi)\,|TW-W|.
+0 \le V^*-V^\pi \le R_{\pi^*}(|TW-W|)+R_\pi(|TW-W|).
 $$
 
 Both inequalities and the absolute value are componentwise. The statement
@@ -30,6 +33,7 @@ exists: one can take a policy greedy with respect to $V^*$.
 - [Bellman operator of a policy](../../../heuristic-search-and-planning/value-iteration/policy-bellman.md)
 - [Optimal value of a discounted Markov decision process](../../../heuristic-search-and-planning/value-iteration/optimal-value.md)
 - [Value of a policy](../../../heuristic-search-and-planning/value-iteration/policy-value.md)
+- [Value of a Markov reward process](../stochastic-policies-and-discounted-occupancy/mrp-value.md)
 
 ## Proof depends on
 
@@ -37,40 +41,40 @@ exists: one can take a policy greedy with respect to $V^*$.
 - [A policy's value satisfies its Bellman equation](../../../heuristic-search-and-planning/value-iteration/policy-bellman-policy-value.md)
 - [A greedy policy for the optimal value is optimal](../../../heuristic-search-and-planning/value-iteration/policy-value-greedy.md)
 - [No deterministic policy beats the optimal value](../../../heuristic-search-and-planning/value-iteration/policy-value-le-optimal-value.md)
-- [Value of a Markov reward process](../stochastic-policies-and-discounted-occupancy/mrp-value.md)
 - [The value of a Markov reward process solves its Bellman equation](../stochastic-policies-and-discounted-occupancy/mrp-value-eq.md)
-- [A nonnegative reward has a nonnegative value](../stochastic-policies-and-discounted-occupancy/mrp-value-nonneg.md)
+- [The Markov reward process Bellman equation determines its value](../stochastic-policies-and-discounted-occupancy/eq-mrp-value.md)
+- [Monotonicity of Markov reward process value in the reward](../stochastic-policies-and-discounted-occupancy/mrp-value-mono.md)
+- [Negating the reward negates the Markov reward process value](../stochastic-policies-and-discounted-occupancy/mrp-value-neg.md)
 
 ## Proof
 
-For each $\sigma$, the matrix $P_\sigma$ is row-stochastic. For every reward
-vector $c$, the corresponding Markov reward process value $V_c$ satisfies
-$(I-\gamma P_\sigma)V_c=c$. Thus $I-\gamma P_\sigma$ is surjective on
-$\mathbb R^S$ and, being square, invertible, with $R_\sigma c=V_c$. For
-an indicator reward $c=\mathbf 1_{\{s'\}}\ge 0$, the value is nonnegative.
-These values are the columns of $R_\sigma$, so its entries are nonnegative
-(not necessarily strictly positive). In particular it preserves
-componentwise inequalities.
+For each $\sigma$, $P_\sigma$ is row-stochastic because the MDP is
+stochastic. The Bellman equation of the Markov reward process gives a
+solution to $(I-\gamma P_\sigma)u=c$ for every $c$. The square matrix is
+therefore invertible, so this interpretation of $R_\sigma$ agrees with
+the inverse in (4.6).
 
 Put $e=TW-W$, the signed Bellman residual. By the policy Bellman equation
 and the affine form of $T_\sigma$,
 
 $$
-(I-\gamma P_\sigma)(V^\sigma-W)=T_\sigma W-W.
+V^\sigma-W=(T_\sigma W-W)+\gamma P_\sigma(V^\sigma-W).
 $$
 
-For $\pi$ the right-hand side equals $e$, giving $V^\pi-W=R_\pi e$.
-For $\pi^*$ it is at most $e$, giving $V^*-W\le R_{\pi^*}e$ by order
-preservation. Subtracting gives the signed comparison and then the bound:
+This is the Markov reward process Bellman equation with reward
+$T_\sigma W-W$, so uniqueness gives
+$V^\sigma-W=R_\sigma(T_\sigma W-W)$. For $\pi$ the reward is $e$; for
+$\pi^*$ it is at most $e$, so monotonicity gives $V^*-W\le R_{\pi^*}(e)$.
+Subtracting gives the signed comparison. Since $e\le |e|$ and
+$-e\le |e|$, monotonicity and $R_\pi(-e)=-R_\pi(e)$ give
 
 $$
-0\le V^*-V^\pi\le (R_{\pi^*}-R_\pi)e
-    \le (R_{\pi^*}+R_\pi)|e|.
+0\le V^*-V^\pi\le R_{\pi^*}(e)-R_\pi(e)
+    \le R_{\pi^*}(|e|)+R_\pi(|e|).
 $$
 
-The first inequality is optimality; the last uses $e\le |e|$ and
-$-e\le |e|$ separately. At $\gamma=0$ both resolvents are $I$, so the
-signed comparison already gives zero loss, even if $e\ne 0$.
+The first inequality is optimality. At $\gamma=0$, $R_\sigma(c)=c$ for
+every policy, so the signed comparison gives zero loss even if $e\ne 0$.
 
 ## Sources
 
