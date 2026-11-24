@@ -449,7 +449,7 @@ theorem lvTrajectory_timeChange (hx : IsSolution f x) (hf : Continuous f) (h0 : 
     (t : ℝ) : lvTrajectory x (timeChange x t) = toLV (x t) := by
   rw [lvTrajectory, leftInverse_invFun (strictMono_timeChange hx hf h0).injective t]
 
-/-- **The Lotka–Volterra trajectory solves the Lotka–Volterra equation**: for a replicator
+/-- **The Lotka–Volterra trajectory solves the Lotka–Volterra equation of `A`**: for a replicator
 solution `x` of the game `A` with `x_none(0) > 0`, at every time `τ(t)`, `t ≥ 0`, in the image
 of `[0, ∞)` under the time change. -/
 theorem hasDerivAt_lvTrajectory {A : Matrix (Option ι) (Option ι) ℝ}
@@ -615,7 +615,8 @@ theorem exists_repTimeChange_eq
   exact intermediate_value_Icc ht hcont.continuousOn hmem
 
 /-- **The replicator trajectory solves the replicator equation** of the game `A` for all
-times `t ≥ 0`, when `y` is a positive solution of the Lotka–Volterra equation on `[0, ∞)`. -/
+times `t ≥ 0`, when `y` is a positive solution of the Lotka–Volterra equation of `A` on `[0, ∞)`.
+-/
 theorem isSolution_repTrajectory
     (hy : ∀ i τ, 0 ≤ τ → HasDerivAt (fun σ => y σ i)
       (lvField (lvGrowth A) (lvInteraction A) (y τ) i) τ)

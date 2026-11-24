@@ -10,3 +10,5 @@ $$
 |c(t) - q(s(t), p(t))| \le |c(0) - q(s(0), p(0))|\, e^{-(k_{-1} + k_2) t} +
 \frac{e_T^2 F}{(k_{-1} + k_2)^2}.
 $$
+
+The first term is an initial layer, decaying at the rate $k_{-1} + k_2$; the second is of order $e_T^2$.

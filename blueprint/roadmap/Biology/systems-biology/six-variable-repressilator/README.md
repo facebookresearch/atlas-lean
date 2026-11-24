@@ -60,7 +60,7 @@
 
 ## Stability at the symmetric equilibrium
 
-- [Linear stability at a nonnegative symmetric state inside the boundary](re-neg-of-is-root-lin-charpoly.md)
+- [Symmetric equilibrium with p ≥ 0 inside the boundary: linear stability](re-neg-of-is-root-lin-charpoly.md)
 - [Linear instability at the symmetric equilibrium outside the boundary](exists-re-pos-of-is-root-lin-charpoly.md)
 - [The standard regime n = 2, α = 216, β = 5 is linearly unstable](exists-re-pos-standard-regime.md)
 

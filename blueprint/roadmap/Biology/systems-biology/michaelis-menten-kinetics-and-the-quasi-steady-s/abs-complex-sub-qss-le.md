@@ -1,4 +1,4 @@
-# With s₀ > 0, past an initial layer the complex nears the QSS manifold
+# For s₀ > 0, c₀, e₀ ≥ 0, c nears the QSS manifold past an initial layer
 
 Let $k_1 > 0$, $k_b \ge 0$ and $k_2 > 0$, so that the [Michaelis constant](michaelis-constant.md)
 $K_M = (k_b + k_2)/k_1$ is positive, and let $(s, c, e, p)$ be a [solution](is-solution.md) of the

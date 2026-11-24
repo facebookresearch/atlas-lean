@@ -1,4 +1,4 @@
-# Routh–Hurwitz criterion for $2 \times 2$ matrices
+# Real 2 × 2 matrices: an eigenvalue with Re > 0 iff tr > 0 or det < 0
 
 A real $2 \times 2$ matrix $M$ has a complex eigenvalue with positive real part (some $\mu \in \mathbb{C}$
 with $\operatorname{Re} \mu > 0$ and a nonzero $v \in \mathbb{C}^2$ with $M v = \mu v$) if and only if

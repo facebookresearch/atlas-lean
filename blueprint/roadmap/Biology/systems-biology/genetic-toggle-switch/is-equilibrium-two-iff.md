@@ -1,4 +1,4 @@
-# For β = γ = 2, equilibria correspond to roots of the quintic
+# For a, b > 0 and β = γ = 2, equilibria correspond to quintic roots
 
 For `a > 0` and `b > 0`, a pair `(u, v)` is an [equilibrium](is-equilibrium.md) of the toggle switch
 with Hill exponents `β = γ = 2` and rates `a = α₁`, `b = α₂` if and only if `u` is a root of the

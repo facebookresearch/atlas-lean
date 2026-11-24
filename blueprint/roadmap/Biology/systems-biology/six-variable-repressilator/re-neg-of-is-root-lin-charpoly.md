@@ -1,4 +1,4 @@
-# Linear stability at a nonnegative symmetric state inside the boundary
+# Symmetric equilibrium with p ≥ 0 inside the boundary: linear stability
 
 For `n ∈ ℕ`, `β > 0` and `p ≥ 0` with `3 a² β < (4 − 2 a) (1 + β)²`, where `a = a(p)` is the
 [loop gain](../three-variable-repressilator/gain.md) `a(p) = n pⁿ / (1 + pⁿ)`, every complex root

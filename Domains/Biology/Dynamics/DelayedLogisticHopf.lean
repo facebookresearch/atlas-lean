@@ -48,8 +48,9 @@ Transversal crossing.
 
 Normal form of the approximate orbit (time scaled by `τ`: `v(s) = x(τ s) / K - 1`, so
 `v'(s) = -α v(s - 1) (1 + v(s))` with `α = r τ`, `α_c = π / 2`).
-* `hopfProfile`, `hopfApprox`: `W_ε(θ) = ε cos θ + ε² (cos 2θ / 5 + sin 2θ / 10)
-  + ε³ (cos 3θ / 80 + 3 sin 3θ / 80)` and `v_ε(s) = W_ε(ω(ε) s)`, with frequency
+* `hopfProfile`, `hopfApprox`:
+  `W_ε(θ) = ε cos θ + ε² (cos 2θ / 5 + sin 2θ / 10) + ε³ (cos 3θ / 80 + 3 sin 3θ / 80)`
+  and `v_ε(s) = W_ε(ω(ε) s)`, with frequency
   `ω(ε) = π / 2 - ε² / 20` (`hopfFreq`) and parameter `α(ε) = π / 2 + (3π - 2) / 40 · ε²`
   (`hopfParam`).
 * `exists_hopfApprox_residual_le`: `v_ε` solves the scaled equation up to a residual

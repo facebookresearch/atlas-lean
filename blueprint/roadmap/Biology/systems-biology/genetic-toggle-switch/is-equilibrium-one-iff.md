@@ -1,4 +1,4 @@
-# For β = 1, equilibria correspond to positive polynomial roots
+# For a, b > 0 and β = 1, equilibria match positive polynomial roots
 
 For `a > 0` and `b > 0`, a pair `(u, v)` is an [equilibrium](is-equilibrium.md) of the toggle switch
 with Hill exponent `β = 1`, any `γ ∈ ℕ`, and rates `a = α₁`, `b = α₂` if and only if `u > 0`, `u` is

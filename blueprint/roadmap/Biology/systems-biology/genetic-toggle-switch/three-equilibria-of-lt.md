@@ -1,4 +1,4 @@
-# Three cubic roots give two linearly stable equilibria and a saddle
+# For a, b > 0, three roots: two linearly stable equilibria and a saddle
 
 For `a > 0` and `b > 0` and real roots `r < s < t` of the [equilibrium cubic](cubic.md)
 `c(u) = u³ − a u² + (1 + b) u − a`, the [set of equilibria](equilibria.md) of the toggle switch with

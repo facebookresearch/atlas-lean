@@ -16,10 +16,10 @@ import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 /-!
 # Convergence of reversible Michaelis–Menten kinetics
 
-Every solution of the reversible Michaelis–Menten system `E + S ⇌ C ⇌ E + P`
-(`Domains.Biology.Dynamics.ReversibleMichaelisMenten`) with nonnegative data and positive
-totals converges to the unique nonnegative equilibrium of its compatibility class, which is
-positive. The proof
+For positive rate constants, every solution of the reversible Michaelis–Menten system
+`E + S ⇌ C ⇌ E + P` (`Domains.Biology.Dynamics.ReversibleMichaelisMenten`) with nonnegative data
+and positive totals converges to the unique nonnegative equilibrium of its compatibility class,
+which is positive. The proof
 applies LaSalle's invariance principle for ODEs (`MathlibExt.Analysis.ODE.LaSalle`) with the
 pseudo-Helmholtz function of `Domains.Biology.Dynamics.ComplexBalanced` as the Lyapunov
 function.
@@ -34,9 +34,9 @@ function.
   `IsSolution.antitoneOn_pseudoHelmholtz` is monotonicity along solutions;
 * `IsSolution.pos`: solutions with nonnegative data and positive totals are strictly positive
   for `t > 0`;
-* `IsSolution.tendsto_equilibrium`: **every solution with nonnegative data and positive totals
-  converges to the unique nonnegative equilibrium of its compatibility class**, which is
-  positive.
+* `IsSolution.tendsto_equilibrium`: **for positive rate constants, every solution with
+  nonnegative data and positive totals converges to the unique nonnegative equilibrium of its
+  compatibility class**, which is positive.
 
 ## Scope
 

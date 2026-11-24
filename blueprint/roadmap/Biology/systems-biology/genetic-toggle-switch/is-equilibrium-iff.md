@@ -1,4 +1,4 @@
-# Equilibria for exponents 1 and 2 correspond to roots of the cubic
+# For a, b > 0 and exponents 1, 2, equilibria match roots of the cubic
 
 For `a > 0` and `b > 0`, a pair `(u, v)` is an [equilibrium](is-equilibrium.md) of the toggle switch
 with Hill exponents `β = 1`, `γ = 2` and rates `a = α₁`, `b = α₂` if and only if `c(u) = 0` and

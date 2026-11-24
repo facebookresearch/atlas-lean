@@ -1,4 +1,4 @@
-# For β = γ = 2, equilibria are counted by positive roots of the quintic
+# For a, b > 0 and β = γ = 2, positive quintic roots count equilibria
 
 For `a > 0` and `b > 0`, the number of [equilibria](is-equilibrium.md) of the toggle switch with
 Hill exponents `β = γ = 2` and rates `a = α₁`, `b = α₂` equals the number of positive real roots of
