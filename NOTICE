@@ -25,3 +25,232 @@ Additional source notices
   Mathlib's `Mathlib/CategoryTheory/MorphismProperty/TrivialBundles.lean`,
   copyright (c) 2026 Joël Riou, released under Apache 2.0. Author: Joël Riou.
   See `BACKPORTS.md` for the immutable source and removal condition.
+
+A02: enriched categories, functors, and Reedy structures
+
+Files:
+  MathlibExt/CategoryTheory/Enriched/CotensorCoefficientAction.lean
+  MathlibExt/CategoryTheory/Enriched/CotensorOrdinaryComparison.lean
+  MathlibExt/CategoryTheory/Enriched/CotensorPointMap.lean
+  MathlibExt/CategoryTheory/Enriched/FreeHomTransport.lean
+  MathlibExt/CategoryTheory/Enriched/FunctorCategory.lean
+  MathlibExt/CategoryTheory/Enriched/FunctorCategoryIso.lean
+  MathlibExt/CategoryTheory/Enriched/FunctorCompositionLaws.lean
+  MathlibExt/CategoryTheory/Enriched/HomEndpointEquality.lean
+  MathlibExt/CategoryTheory/Enriched/HomEndpointMaps.lean
+  MathlibExt/CategoryTheory/Enriched/HomEqualityTransport.lean
+  MathlibExt/CategoryTheory/Enriched/Ordinary/FunctorCategory.lean
+  MathlibExt/CategoryTheory/Enriched/Ordinary/MapHomWhisker.lean
+  MathlibExt/CategoryTheory/Enriched/ScalarCotensorUnit.lean
+  MathlibExt/CategoryTheory/Enriched/ScalarFreeEvaluation.lean
+  MathlibExt/CategoryTheory/Enriched/StrictComposition.lean
+  MathlibExt/CategoryTheory/Enriched/TransportFunctor.lean
+  MathlibExt/CategoryTheory/Functor/CoaugmentationHomEquivalence.lean
+  MathlibExt/CategoryTheory/Functor/CoaugmentedTestRetract.lean
+  MathlibExt/CategoryTheory/Functor/EquivalenceTransport.lean
+  MathlibExt/CategoryTheory/Functor/IsofibrationEssentialSurjectivity.lean
+  MathlibExt/CategoryTheory/Functor/KanExtension/CompositeUnit.lean
+  MathlibExt/CategoryTheory/Functor/SequenceMapProperty.lean
+  MathlibExt/CategoryTheory/Functor/WholeArrowRetyping.lean
+  MathlibExt/CategoryTheory/Monoidal/Closed/CoefficientShuffle.lean
+  MathlibExt/CategoryTheory/Monoidal/Closed/UnitEvaluation.lean
+  MathlibExt/CategoryTheory/Monoidal/DayConvolution/FreeFunction/ActionIndexComparison.lean
+
+Authors: Tsutomu Okano
+
+Files:
+  MathlibExt/AlgebraicTopology/ModelCategory/CofibrantlyGenerated.lean
+  MathlibExt/AlgebraicTopology/ModelCategory/CofibrantlyGeneratedFactorization.lean
+  MathlibExt/CategoryTheory/Enriched/AdjunctionComparisonHEq.lean
+  MathlibExt/CategoryTheory/Enriched/CentralGradedInputActions.lean
+  MathlibExt/CategoryTheory/Enriched/CentralGradedYoneda.lean
+  MathlibExt/CategoryTheory/Enriched/CoendCharacteristicEquationTransport.lean
+  MathlibExt/CategoryTheory/Enriched/CoendGeneratorEquationTransport.lean
+  MathlibExt/CategoryTheory/Enriched/EnrichedAdjunctionFull.lean
+  MathlibExt/CategoryTheory/Enriched/EnrichedAdjunctionHom.lean
+  MathlibExt/CategoryTheory/Enriched/EnrichedAdjunctionValue.lean
+  MathlibExt/CategoryTheory/Enriched/EnrichedHomTransport.lean
+  MathlibExt/CategoryTheory/Enriched/Evaluation.lean
+  MathlibExt/CategoryTheory/Enriched/FreeAdjunctionSource.lean
+  MathlibExt/CategoryTheory/Enriched/FreeEvaluation.lean
+  MathlibExt/CategoryTheory/Enriched/FreeLifting.lean
+  MathlibExt/CategoryTheory/Enriched/FreeMappingSource.lean
+  MathlibExt/CategoryTheory/Enriched/FreeUnitComparison.lean
+  MathlibExt/CategoryTheory/Enriched/FreeYoneda.lean
+  MathlibExt/CategoryTheory/Enriched/FunctorCompositionFieldTransport.lean
+  MathlibExt/CategoryTheory/Enriched/FunctorFullLawTransport.lean
+  MathlibExt/CategoryTheory/Enriched/FunctorMapCongruence.lean
+  MathlibExt/CategoryTheory/Enriched/FunctorOpposite.lean
+  MathlibExt/CategoryTheory/Enriched/GradeNaturality.lean
+  MathlibExt/CategoryTheory/Enriched/GradedComponentActions.lean
+  MathlibExt/CategoryTheory/Enriched/GradedComposition.lean
+  MathlibExt/CategoryTheory/Enriched/GradedCompositionActions.lean
+  MathlibExt/CategoryTheory/Enriched/GradedInputComposition.lean
+  MathlibExt/CategoryTheory/Enriched/GradedRestriction.lean
+  MathlibExt/CategoryTheory/Enriched/GradedTensor.lean
+  MathlibExt/CategoryTheory/Enriched/GradedYoneda.lean
+  MathlibExt/CategoryTheory/Enriched/HomIsoEquivalence.lean
+  MathlibExt/CategoryTheory/Enriched/IndexedPointHomMap.lean
+  MathlibExt/CategoryTheory/Enriched/InducedOrdinary.lean
+  MathlibExt/CategoryTheory/Enriched/InducedPointTransport.lean
+  MathlibExt/CategoryTheory/Enriched/LocallySmall.lean
+  MathlibExt/CategoryTheory/Enriched/MappingEndOrientation.lean
+  MathlibExt/CategoryTheory/Enriched/NaturalTransformation.lean
+  MathlibExt/CategoryTheory/Enriched/OfObjectFunction.lean
+  MathlibExt/CategoryTheory/Enriched/Ordinary/Basic.lean
+  MathlibExt/CategoryTheory/Enriched/PointFunctionTransport.lean
+  MathlibExt/CategoryTheory/Enriched/PointwiseColimit.lean
+  MathlibExt/CategoryTheory/Enriched/PointwiseColimitAction.lean
+  MathlibExt/CategoryTheory/Enriched/PointwiseColimitReflection.lean
+  MathlibExt/CategoryTheory/Enriched/PointwiseFiniteInstances.lean
+  MathlibExt/CategoryTheory/Enriched/PointwiseLimit.lean
+  MathlibExt/CategoryTheory/Enriched/PointwiseLimitAction.lean
+  MathlibExt/CategoryTheory/Enriched/PointwiseShapeInstances.lean
+  MathlibExt/CategoryTheory/Enriched/PointwiseSizeInstances.lean
+  MathlibExt/CategoryTheory/Enriched/ProductRelationMapping.lean
+  MathlibExt/CategoryTheory/Enriched/Representable.lean
+  MathlibExt/CategoryTheory/Enriched/Restriction.lean
+  MathlibExt/CategoryTheory/Enriched/RestrictionInversePair.lean
+  MathlibExt/CategoryTheory/Enriched/ScalarCoherence.lean
+  MathlibExt/CategoryTheory/Enriched/ScalarCotensor.lean
+  MathlibExt/CategoryTheory/Enriched/ScalarTensor.lean
+  MathlibExt/CategoryTheory/Enriched/ScalarTensorBifunctor.lean
+  MathlibExt/CategoryTheory/Enriched/SphereOperatorTripleTensor.lean
+  MathlibExt/CategoryTheory/Enriched/WholePointHomMap.lean
+  MathlibExt/CategoryTheory/Functor/CoaugmentedLocalization.lean
+  MathlibExt/CategoryTheory/Functor/CoaugmentedReflection.lean
+  MathlibExt/CategoryTheory/Functor/ColimitGeneratorSourceTransport.lean
+  MathlibExt/CategoryTheory/Functor/ColimitHomFamilyFunctions.lean
+  MathlibExt/CategoryTheory/Functor/FullyFaithfulLifting.lean
+  MathlibExt/CategoryTheory/Functor/Isofibration.lean
+  MathlibExt/CategoryTheory/Functor/KanExtension/IndexAdjunctionProperties.lean
+  MathlibExt/CategoryTheory/Functor/KanExtension/RightIndexAdjunctionProperties.lean
+  MathlibExt/CategoryTheory/Functor/OriginalArrowBounds.lean
+  MathlibExt/CategoryTheory/Functor/PullbackObjObj/FactorComparison.lean
+  MathlibExt/CategoryTheory/Functor/PullbackObjObj/SourceArrowIso.lean
+  MathlibExt/CategoryTheory/Functor/PushoutObjObj/Transport.lean
+  MathlibExt/CategoryTheory/MorphismProperty/FunctorCategory.lean
+  MathlibExt/CategoryTheory/MorphismProperty/IndexEquivalence.lean
+  MathlibExt/CategoryTheory/MorphismProperty/PushoutProduct.lean
+  MathlibExtTest/CategoryTheory/Functor/FullyFaithfulLiftingTests.lean
+  MathlibExtTest/CategoryTheory/Functor/OriginalArrowBounds.lean
+  MathlibExtTest/CategoryTheory/Functor/SmallIndex.lean
+
+Authors: Tsutomu Okano, Avocado
+
+Files:
+  MathlibExt/CategoryTheory/Enriched/ScalarCorners.lean
+  MathlibExt/CategoryTheory/Enriched/ScalarFreeTensor.lean
+  MathlibExt/CategoryTheory/Enriched/ScalarLeibniz.lean
+
+Authors: Tsutomu Okano, Avocado, Tsutomu Okano
+
+Files:
+  MathlibExt/AlgebraicTopology/ModelCategory/FramingCoefficientFactory.lean
+  MathlibExt/CategoryTheory/Enriched/HomTransport.lean
+  MathlibExt/CategoryTheory/Enriched/PointwiseLimitReflection.lean
+  MathlibExt/CategoryTheory/Enriched/WholeRepresentationCurry.lean
+  MathlibExt/CategoryTheory/Enriched/WholeRepresentationData.lean
+  MathlibExt/CategoryTheory/Enriched/WholeRepresentationEquivalence.lean
+  MathlibExt/CategoryTheory/Enriched/WholeRepresentationFreeComparison.lean
+  MathlibExt/CategoryTheory/Enriched/WholeRepresentationFreeEvaluation.lean
+  MathlibExt/CategoryTheory/Enriched/WholeRepresentationFreeObject.lean
+  MathlibExt/CategoryTheory/Enriched/WholeRepresentationFunctor.lean
+  MathlibExt/CategoryTheory/Enriched/WholeRepresentationGenuine.lean
+  MathlibExt/CategoryTheory/Reedy/Basic.lean
+  MathlibExt/CategoryTheory/Reedy/Boundary.lean
+  MathlibExt/CategoryTheory/Reedy/BoundaryLifting.lean
+  MathlibExt/CategoryTheory/Reedy/Corner.lean
+  MathlibExt/CategoryTheory/Reedy/DegreeZero.lean
+  MathlibExt/CategoryTheory/Reedy/Extension.lean
+  MathlibExt/CategoryTheory/Reedy/Factorization.lean
+  MathlibExt/CategoryTheory/Reedy/FactorizationCorners.lean
+  MathlibExt/CategoryTheory/Reedy/FiniteBoundaries.lean
+  MathlibExt/CategoryTheory/Reedy/FunctorialFactorization.lean
+  MathlibExt/CategoryTheory/Reedy/Lifting.lean
+  MathlibExt/CategoryTheory/Reedy/Prefix.lean
+
+Authors: Tsutomu Okano, Codex
+
+A02 source tests
+
+Files:
+  MathlibExtTest/CategoryTheory/Enriched/FreeHomTransportClients.lean
+  MathlibExtTest/CategoryTheory/Enriched/FunctorCategoryTests.lean
+  MathlibExtTest/CategoryTheory/Enriched/Ordinary/MapHomWhiskerTests.lean
+  MathlibExtTest/CategoryTheory/Functor/CoaugmentationHomTests.lean
+  MathlibExtTest/CategoryTheory/Functor/CoaugmentedTestRetract.lean
+  MathlibExtTest/CategoryTheory/Functor/KanExtension/CompositeUnitPublicApi.lean
+
+Authors: Tsutomu Okano
+
+Files:
+  MathlibExtTest/AlgebraicTopology/ModelCategory/CofibrantlyGeneratedTests.lean
+  MathlibExtTest/CategoryTheory/Enriched/CentralGradedInputActionsTests.lean
+  MathlibExtTest/CategoryTheory/Enriched/CentralGradedYonedaTests.lean
+  MathlibExtTest/CategoryTheory/Enriched/EvaluationTests.lean
+  MathlibExtTest/CategoryTheory/Enriched/FreeAdjunctionSourceTests.lean
+  MathlibExtTest/CategoryTheory/Enriched/FreeEvaluationSimpTests.lean
+  MathlibExtTest/CategoryTheory/Enriched/FreeEvaluationTests.lean
+  MathlibExtTest/CategoryTheory/Enriched/FreeLiftingOwner.lean
+  MathlibExtTest/CategoryTheory/Enriched/FreeMappingSourcePointFunctionTests.lean
+  MathlibExtTest/CategoryTheory/Enriched/FunctorMapCongruenceTests.lean
+  MathlibExtTest/CategoryTheory/Enriched/FunctorOppositeTests.lean
+  MathlibExtTest/CategoryTheory/Enriched/GradeNaturalityTests.lean
+  MathlibExtTest/CategoryTheory/Enriched/GradedCompositionActionsTests.lean
+  MathlibExtTest/CategoryTheory/Enriched/GradedCompositionTests.lean
+  MathlibExtTest/CategoryTheory/Enriched/GradedInputCompositionTests.lean
+  MathlibExtTest/CategoryTheory/Enriched/GradedRestrictionTests.lean
+  MathlibExtTest/CategoryTheory/Enriched/GradedTensorTests.lean
+  MathlibExtTest/CategoryTheory/Enriched/GradedYonedaTests.lean
+  MathlibExtTest/CategoryTheory/Enriched/HomIsoEquivalenceTests.lean
+  MathlibExtTest/CategoryTheory/Enriched/IndexedPointHomMapTests.lean
+  MathlibExtTest/CategoryTheory/Enriched/InducedPointTransportTests.lean
+  MathlibExtTest/CategoryTheory/Enriched/LocallySmallTests.lean
+  MathlibExtTest/CategoryTheory/Enriched/NaturalTransformationTests.lean
+  MathlibExtTest/CategoryTheory/Enriched/PointwiseColimitActionTests.lean
+  MathlibExtTest/CategoryTheory/Enriched/PointwiseColimitReflectionTests.lean
+  MathlibExtTest/CategoryTheory/Enriched/PointwiseColimitTests.lean
+  MathlibExtTest/CategoryTheory/Enriched/PointwiseFiniteInstancesTests.lean
+  MathlibExtTest/CategoryTheory/Enriched/PointwiseLimitActionTests.lean
+  MathlibExtTest/CategoryTheory/Enriched/PointwiseLimitTests.lean
+  MathlibExtTest/CategoryTheory/Enriched/PointwiseShapeInstancesTests.lean
+  MathlibExtTest/CategoryTheory/Enriched/PointwiseSizeInstancesTests.lean
+  MathlibExtTest/CategoryTheory/Enriched/RepresentableTests.lean
+  MathlibExtTest/CategoryTheory/Enriched/RestrictionInversePairTests.lean
+  MathlibExtTest/CategoryTheory/Enriched/RestrictionTests.lean
+  MathlibExtTest/CategoryTheory/Enriched/ScalarCoherenceTests.lean
+  MathlibExtTest/CategoryTheory/Enriched/ScalarCornersTests.lean
+  MathlibExtTest/CategoryTheory/Enriched/ScalarCotensorTests.lean
+  MathlibExtTest/CategoryTheory/Enriched/ScalarFreeTensorFullOwner.lean
+  MathlibExtTest/CategoryTheory/Enriched/ScalarTensorTests.lean
+  MathlibExtTest/CategoryTheory/Enriched/SphereOperatorTripleTensorTests.lean
+  MathlibExtTest/CategoryTheory/Enriched/WholeInducedPointFunctionTests.lean
+  MathlibExtTest/CategoryTheory/Functor/CoaugmentedLocalization.lean
+  MathlibExtTest/CategoryTheory/Functor/CoaugmentedReflection.lean
+  MathlibExtTest/CategoryTheory/Functor/IsofibrationTest.lean
+  MathlibExtTest/CategoryTheory/Functor/KanExtension/IndexAdjunctionPropertiesTests.lean
+  MathlibExtTest/CategoryTheory/Functor/KanExtension/RightIndexAdjunctionPropertiesTests.lean
+  MathlibExtTest/CategoryTheory/MorphismProperty/PushoutProductTests.lean
+
+Authors: Tsutomu Okano, Avocado
+
+Files:
+  MathlibExtTest/CategoryTheory/Enriched/PointwiseLimitReflection.lean
+  MathlibExtTest/CategoryTheory/Enriched/WholeRepresentationClient.lean
+  MathlibExtTest/CategoryTheory/Enriched/WholeRepresentationFullClient.lean
+
+Authors: Tsutomu Okano, Codex
+
+Files:
+  MathlibExt/AlgebraicTopology/SimplicialObject/AlexanderWhitney/Differential.lean
+  MathlibExt/AlgebraicTopology/SimplicialObject/AugmentedWhiskering.lean
+  MathlibExt/AlgebraicTopology/SimplicialObject/EilenbergZilber/ChainMap.lean
+
+Author: @toskua, Avocado
+
+Files:
+  MathlibExt/AlgebraicTopology/SimplicialObject/EilenbergZilber/ShuffleAlternating.lean
+  MathlibExt/AlgebraicTopology/SimplicialObject/EilenbergZilber/ShuffleUnit.lean
+
+Authors: Avocado

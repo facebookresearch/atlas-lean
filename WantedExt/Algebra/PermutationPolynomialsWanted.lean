@@ -29,6 +29,7 @@ public import Mathlib.Data.Fintype.Card
 public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.Order.Interval.Finset.Nat
+public import MathlibExt.Algebra.ZModPermutationPolynomial
 
 set_option autoImplicit false
 
@@ -45,24 +46,6 @@ Polynomials of the Form `∑_{n=1}^k h(n) X^n`", Lemma 1. -/
 theorem_wanted sum_zmod_pow_eq_ite
     (p t : ℕ) [NeZero p] (hp : p.Prime) (ht : 0 < t) :
     (∑ a : ZMod p, a ^ t) = if (p - 1) ∣ t then -1 else 0
-
-/-- **Permutation polynomials $\sum_{n=1}^k n^t X^n$ over $\mathbb{F}_p$.** Let $p$ be an
-odd prime and let $k$ and $t$ be positive integers with $k \equiv 1 \pmod{p(p-1)}$.
-Suppose that $k \equiv 1 \pmod{p^2}$ or that $p - 1$ does not divide $t$. Then the map
-$c \mapsto \sum_{n=1}^{k} n^t c^n$ is a bijection from $\mathbb{Z}/p\mathbb{Z}$ to itself.
-
-Ding and Zieve quote this result from an earlier paper.
-
-Source: Zhiguo Ding and Michael E. Zieve, "Permutation
-Polynomials of the Form `∑_{n=1}^k h(n) X^n`", Theorem 1. -/
-theorem_wanted bijective_sum_pow_mul_pow_zmod
-    (p k t : ℕ) (hp : p.Prime) (hpodd : p % 2 = 1)
-    (hk : 0 < k) (ht : 0 < t)
-    (hkcong : k % (p * (p - 1)) = 1)
-    (hcases : k % (p ^ 2) = 1 ∨ ¬(p - 1) ∣ t) :
-    Function.Bijective
-      (fun c : ZMod p =>
-        ∑ n ∈ Finset.Icc 1 k, (n : ZMod p) ^ t * c ^ n)
 
 /-- **When $\sum_{n=1}^k h(n) X^n$ induces the identity on $\mathbb{F}_q$.** Let $p$ be a
 prime, $\ell \ge 1$ and $q = p^\ell > 2$, and let $K$ be a finite field of characteristic
