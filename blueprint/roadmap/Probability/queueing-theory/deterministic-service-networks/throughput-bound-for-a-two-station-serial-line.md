@@ -26,9 +26,10 @@ arbitrarily short with positive probability. Stationary stochastic models of lin
 
 ## Expansion
 
-Check the correspondence with the cited deterministic serial-line source and formalize the finite-history model with the
-initial-service and event conventions stated above. No source-backed stationary or stochastic throughput claim is made.
+Formalize the finite-history model with the initial-service and event conventions stated above and prove the displayed
+bound. The bound and its argument are derived on this page from the stated per-job service assumption; they are not taken
+from a source. No stationary or stochastic throughput claim is made.
 
 ## Sources
 
-- W. J. Hopp and M. L. Spearman, *Factory Physics*, 3rd edition, Waveland Press, 2011, Chapter 7 (bottleneck rate).
+- W. J. Hopp and M. L. Spearman, *Factory Physics*, 3rd edition, Waveland Press, 2011, Chapter 7: the bottleneck-rate concept that motivates this bound. The finite-history bound and its proof are derived on this page.
