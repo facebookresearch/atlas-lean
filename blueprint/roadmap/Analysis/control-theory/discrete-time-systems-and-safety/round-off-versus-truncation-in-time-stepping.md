@@ -6,15 +6,24 @@ $\delta$, and that the exact and computed trajectories stay in $K$ up to time $T
 
 $$\lVert \tilde x_n - x(T) \rVert \le e^{LT} \bigl( \lVert \tilde x_0 - x(0) \rVert + T (C h^{p} + \delta / h) \bigr).$$
 
-With $\delta = c\,u$ for the unit roundoff $u$, the bound $C h^p + c u/h$ is minimized at $h_\ast = (c u/(pC))^{1/(p+1)}$, so the certified error is of order
-$u^{p/(p+1)}$; reducing $h$ below $h_\ast$ increases the bound, because the rounding term grows like $u/h$ while the truncation term shrinks like $h^p$.
+Suppose further that $C > 0$ and $\delta = c\,u$ with $c > 0$ for the unit roundoff $u$. The function $\varphi(h) = C h^p + c u/h$ is strictly decreasing on
+$(0, h_\ast]$ and strictly increasing on $[h_\ast, \infty)$, where $h_\ast = (c u/(pC))^{1/(p+1)}$, and $\varphi(h_\ast) = (p+1)\,C^{1/(p+1)}(c u/p)^{p/(p+1)}$. Hence, if
+$h_\ast \le h_0$, $T/h_\ast$ is an integer and the initial data are exact, $\tilde x_0 = x(0)$, the step $h = h_\ast$ gives
+
+$$\lVert \tilde x_n - x(T) \rVert \le e^{LT}\,T\,(p+1)\,C^{1/(p+1)}\Bigl(\frac{c u}{p}\Bigr)^{p/(p+1)},$$
+
+a certified error proportional to $u^{p/(p+1)}$; the same order holds when $\lVert \tilde x_0 - x(0) \rVert$ is at most a constant times $u^{p/(p+1)}$. Over the
+admissible steps $h = T/n \le h_0$, the bound $\varphi$ is smallest at one of the two admissible steps nearest to $h_\ast$ on either side, or at the largest
+admissible step when $h_\ast$ exceeds every admissible step. Reducing $h$ below $h_\ast$ increases the bound, because the rounding term grows like $u/h$
+while the truncation term shrinks like $h^p$.
 
 ## Proof
 
 Write $x_k = x(kh)$, so that $x_{k+1} = \Psi_h(x_k) + d_k$ with $\lVert d_k \rVert \le C h^{p+1}$, and $\tilde x_{k+1} = \Psi_h(\tilde x_k) + e_k$ with $\lVert e_k \rVert \le \delta$. Since both
 points lie in $K$, $\varepsilon_k = \tilde x_k - x_k$ satisfies $\lVert \varepsilon_{k+1} \rVert \le (1 + Lh) \lVert \varepsilon_k \rVert + C h^{p+1} + \delta$, and the induction of the discrete
-Gronwall bound with $1 + Lh \le e^{Lh}$ gives $\lVert \varepsilon_n \rVert \le e^{Lnh}(\lVert \varepsilon_0 \rVert + n(C h^{p+1} + \delta))$, where $nh = T$. Minimizing $C h^p + c u h^{-1}$ over
-$h > 0$ gives $p C h^{p-1} = c u h^{-2}$.
+Gronwall bound with $1 + Lh \le e^{Lh}$ gives $\lVert \varepsilon_n \rVert \le e^{Lnh}(\lVert \varepsilon_0 \rVert + n(C h^{p+1} + \delta))$, where $nh = T$. The derivative of $\varphi(h) = C h^p + c u h^{-1}$ is
+$p C h^{p-1} - c u h^{-2} = h^{-2}(p C h^{p+1} - c u)$, which is negative for $0 < h < h_\ast$ and positive for $h > h_\ast$; at $h_\ast$, $c u/h_\ast = p C h_\ast^p$, so
+$\varphi(h_\ast) = (p+1) C h_\ast^p$.
 
 ## Depends on
 
