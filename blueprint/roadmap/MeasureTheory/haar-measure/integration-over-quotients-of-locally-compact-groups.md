@@ -2,8 +2,10 @@
 
 This node is still to be broken down. It covers the invariant measures on quotients of locally compact
 groups and the integration formula relating them to Haar measures, which the pages on discrete series
-and on automorphic forms use. Let $G$ be a locally compact group with a left Haar measure $dg$ and $H$
-a closed subgroup with a left Haar measure $dh$.
+and on automorphic forms use. Let $G$ be a locally compact Hausdorff group with a countable basis of open
+sets, as are the Lie groups and the groups of adelic points that use this node, with a left Haar measure
+$dg$, and $H$ a closed subgroup with a left Haar measure $dh$. The theorems below hold without the countable
+basis, but the source below assumes it; the general case needs a source of its own.
 
 - **Weil's formula.** There is a nonzero $G$-invariant Radon measure $d\dot g$ on $G/H$ if and only if the
   modular functions of $G$ and $H$ agree on $H$ (for instance if both are unimodular); it is then unique up to a
@@ -37,7 +39,8 @@ locators.
   <https://www-users.cse.umn.edu/~garrett/m/repns/notes_2014-15/06a_unitary_of_top.pdf>: §4, Lemma [4.0.5],
   p. 7 (the averaging maps are onto) and Theorem [4.0.6], p. 8 ($H \backslash G$ has a right $G$-invariant measure if
   and only if $\Delta_G|_H = \Delta_H$, unique up to scalars, with the integration formula), for locally compact
-  Hausdorff countably based groups, with right Haar measures and right cosets ($G/H$ by inversion).
+  Hausdorff countably based groups, with right Haar measures and right cosets ($G/H$ by inversion); this is
+  the generality stated above.
 - J. Arthur, "An introduction to the trace formula", in *Harmonic Analysis, the Trace Formula, and
   Shimura Varieties*, Clay Math. Proc. 4, American Mathematical Society, 2005, 1–263,
   <https://www.claymath.org/library/proceedings/cmip04c.pdf>: §1, p. 9 ("for any sequence

@@ -17,7 +17,8 @@ series converges only when its terms are eventually $0$, and the statements belo
   with $b_m x^m \to 0$ and $\lvert a_n \rvert \rho^n \to 0$ for $\rho = \sup_m \lvert b_m x^m \rvert$. Then
   $f \circ g$ converges at $x$ and $(f \circ g)(x) = f(g(x))$. Proof by regrouping: the terms
   $c_{n,k} = a_n [X^k](g^n) x^k$ tend to $0$, since $\lvert c_{n,k} \rvert \le \lvert a_n \rvert \rho^n$ controls large $n$ and,
-  for each $n$, $\lvert c_{n,k} \rvert \le \lvert a_n \rvert \rho^{n-1} \sup_{m \ge k/n} \lvert b_m x^m \rvert$; so the double series
+  for each $n \ge 1$, $\lvert c_{n,k} \rvert \le \lvert a_n \rvert \rho^{n-1} \sup_{m \ge k/n} \lvert b_m x^m \rvert$, while the row $n = 0$ has
+  the single term $c_{0,0} = a_0$; so the double series
   can be summed in either order, over $n$ for each $k$ (a finite sum, giving the coefficients of $f \circ g$) or over
   $k$ for each $n$ (giving $a_n g(x)^n$).
 - **Formal identities.** In $\mathbb{Q}[[X]]$, with $\exp(X) = \sum_{k \ge 0} X^k/k!$ and
@@ -28,8 +29,9 @@ series converges only when its terms are eventually $0$, and the statements belo
 
 The domains matter: convergence of the two series is not enough for a composition identity. In
 $\mathbb{Q}_2$, $\log(-1)$ converges and equals $0$, while $\exp(0) = 1$; the identities hold on balls on
-which the substitution conditions above are met, such as $\lvert x \rvert < p^{-1/(p-1)}$ (Conrad, Theorem 8.13 and
-Example 8.14).
+which the substitution conditions above are met, such as $\lvert x \rvert < p^{-1/(p-1)}$ for $\exp$ and
+$\lvert x - 1 \rvert < p^{-1/(p-1)}$ for $\log$, for the absolute value extending the normalized one of $\mathbb{Q}_p$ (Conrad,
+Theorem 8.13 and Example 8.14).
 
 A good expansion has pages for the convergence criterion and rearrangements, for Cauchy products and the
 evaluation of products of power series, for substitution, and for the two formal identities, each citing a

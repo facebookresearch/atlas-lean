@@ -29,12 +29,15 @@ of holomorphic sections over $G/K \subseteq G^{\mathbb{C}}/K^{\mathbb{C}} P_+$.
 - **Square-integrability** (Harish-Chandra). Fix a $G$-invariant measure on $G/K$ and a $K$-invariant
   Hermitian inner product on $V_\mu$, which give the Hilbert space of square-integrable sections of the
   bundle. If $(\lambda, \alpha) > 0$ for every $\alpha \in \Psi$, the square-integrable holomorphic sections form a
-  nonzero $G$-invariant subspace of this Hilbert space, closed in it (point evaluations are continuous on
-  holomorphic sections for the $L^2$ norm), on which $G$ acts by a discrete series representation
-  infinitesimally equivalent to $\mathbf{F}_\lambda$ (Schmid, (3.12)). This subspace is not closed in
+  nonzero $G$-invariant subspace of this Hilbert space, closed in it (on each compact set holomorphic sections
+  are bounded uniformly by a multiple of their $L^2$ norm, by the mean value property, so $L^2$ limits of
+  holomorphic sections are holomorphic), on which $G$ acts by a discrete series representation
+  infinitesimally equivalent to $\mathbf{F}_\lambda$ (Schmid, (3.12)). This subspace need not be closed in
   $\mathbf{F}_\lambda$ for the topology of uniform convergence on compact sets: for $\mathrm{SU}(1, 1)$ in the scalar
   case of weight $2$ it is the Bergman space of the disk, which contains the partial sums of
-  $\sum_j z^j$, and these converge uniformly on compact sets to $1/(1 - z)$, which is not square-integrable.
+  $\sum_j z^j$, and these converge uniformly on compact sets to $1/(1 - z)$, which is not square-integrable; for a
+  compact group $G = K$, such as $\mathrm{SU}(2)$, $G/K$ is a point and the finite-dimensional space of sections is closed
+  in both topologies.
 
 A good expansion has pages for the decomposition $P_- K^{\mathbb{C}} P_+$ and the bounded realization,
 for the polynomial model with the duality of $\mathfrak{p}_\pm$, for the Fréchet topology of spaces of

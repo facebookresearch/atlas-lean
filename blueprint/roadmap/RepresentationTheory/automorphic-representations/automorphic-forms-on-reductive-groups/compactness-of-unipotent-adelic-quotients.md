@@ -10,9 +10,10 @@ $P = MN$ a parabolic $k$-subgroup with unipotent radical $N$.
   measure. More generally this holds for every $k$-split unipotent $k$-group.
 - **Route.** $N$ has a filtration by normal $k$-subgroups with successive quotients isomorphic to vector
   groups $\mathbb{G}_a^{r}$; for a vector group the statement is the compactness of $k \backslash \mathbb{A}$,
-  and the general case follows by induction along $1 \to N' \to N \to N'' \to 1$: a $k$-rational section
-  $N'' \to N$ of varieties lifts the rational and the adelic points of $N''$ and carries compact sets to compact
-  sets, so that compact fundamental sets assemble. $N(k) \backslash N(\mathbb{A})$ is then a tower of fibrations with
+  and the general case follows by induction along $1 \to N' \to N \to N'' \to 1$: a section $N'' \to N$ that is a
+  morphism of varieties over $k$ defined on all of $N''$ (for instance in exponential coordinates) lifts the rational
+  and the adelic points of $N''$ and carries compact sets to compact sets, so that compact fundamental sets
+  assemble. $N(k) \backslash N(\mathbb{A})$ is then a tower of fibrations with
   compact fibres; it is a homogeneous space, not a group, as $N(k)$ need not be normal in $N(\mathbb{A})$: in the
   $3 \times 3$ upper unitriangular group, conjugating $1 + e_{23}$ by $1 + t e_{12}$, $t \in \mathbb{A} \setminus k$, gives
   $1 + e_{23} + t e_{13} \notin N(k)$.
@@ -33,7 +34,7 @@ source with locators besides the one below.
 ## Proof depends on
 
 - [Additive duality of adeles and the volume of A/K](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/additive-duality-of-adeles.md), for the compactness of $k \backslash \mathbb{A}$, the case of a vector group
-- Not yet a page: the filtration of a $k$-split unipotent group by normal $k$-subgroups with vector-group quotients, and for each step a $k$-rational section $N'' \to N$ of varieties, which gives the surjectivity of $N(k) \to N''(k)$ and of $N(\mathbb{A}) \to N''(\mathbb{A})$ and compact lifts of compact sets, for the induction
+- Not yet a page: the filtration of a $k$-split unipotent group by normal $k$-subgroups with vector-group quotients, and for each step a section $N'' \to N$ that is a morphism of $k$-varieties defined everywhere, which gives the surjectivity of $N(k) \to N''(k)$ and of $N(\mathbb{A}) \to N''(\mathbb{A})$ and compact lifts of compact sets, for the induction
 
 ## Sources
 
