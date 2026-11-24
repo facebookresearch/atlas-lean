@@ -31,52 +31,13 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Data.Rat.Defs
-public import Mathlib.SetTheory.Cardinal.Finite
+public import MathlibExt.Combinatorics.KnuthOldSumBinomialQuotients
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.Combinatorics.KnuthOldSumWanted
-
-/-- **Weight in Knuth's old sum.** For a natural number $m$, the weight $w(m)$ is the rational
-number $(4^m + 2^m)/2$, which equals $(2^m + 1) 2^{m-1}$.
-
-It is the number of words of length $m$ over a four-letter alphabet in which a fixed letter
-occurs an even number of times. -/
-def knuthOldSumWeight (m : ℕ) : ℚ := ((4 : ℚ) ^ m + (2 : ℚ) ^ m) / 2
-
-/-- **Counting words with an even number of $a$'s.** For every natural number $n$, the number of
-words of length $n$ over the four-letter alphabet $\{a, b, c, d\}$ in which the letter $a$ occurs
-an even number of times is $(4^n + 2^n)/2$.
-
-Source: Akalu Tefera and Aklilu Zeleke, "Combinatorial Identities
-Inspired by Knuth's Old Sum", Lemma 1. -/
-theorem_wanted card_evenACount_words (n : ℕ) :
-    Nat.card {w : Fin n → Fin 4 //
-      Even (Finset.univ.filter (fun i => w i = 0)).card} =
-        (4 ^ n + 2 ^ n) / 2
-
-/-- **Tefera–Zeleke identity with binomial quotients.** Let $n$ and $j$ be natural numbers, let
-$N = n + 2j + 1$, and let $w(m) = (4^m + 2^m)/2$ be the weight in Knuth's old sum. Then, in the
-rational numbers,
-$$\sum_{k=0}^{n} \binom{N}{n-k} w(n-k) (-1)^k
-= \binom{N}{n} \sum_{k=0}^{n} \frac{\binom{n}{k}}{\binom{2j+1+k}{2j+1}} w(n-k) (-1)^k.$$
-
-This is Equation (1) of the paper, whose weight $(2^m + 1) 2^{m-1}$ is written here as
-$(4^m + 2^m)/2$.
-
-Source: Akalu Tefera and Aklilu Zeleke, "Combinatorial Identities
-Inspired by Knuth's Old Sum", Theorem 1. -/
-theorem_wanted knuthOldSum_eq_mul_sum_div (n j : ℕ) :
-    (∑ k ∈ Finset.range (n + 1),
-      (Nat.choose (n + 2 * j + 1) (n - k) : ℚ) *
-        knuthOldSumWeight (n - k) * (-1 : ℚ) ^ k) =
-      (Nat.choose (n + 2 * j + 1) n : ℚ) *
-        ∑ k ∈ Finset.range (n + 1),
-          ((Nat.choose n k : ℚ) /
-            (Nat.choose (2 * j + 1 + k) (2 * j + 1) : ℚ)) *
-            knuthOldSumWeight (n - k) * (-1 : ℚ) ^ k
 
 /-- **Tefera–Zeleke identity with powers of $2$, $3$ and $4$.** Let $n$ and $j$ be natural numbers,
 let $N = n + 2j + 1$, and let $w(m) = (4^m + 2^m)/2$ be the weight in Knuth's old sum. Then, in the

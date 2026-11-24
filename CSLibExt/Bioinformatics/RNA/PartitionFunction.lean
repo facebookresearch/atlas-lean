@@ -616,7 +616,7 @@ theorem inside_eq_sum [DecidableRel pair] {R : Type*} [CommSemiring R] (w : ℕ 
     inside pair m s w i len = ∑ P ∈ structuresIn pair m s i len, weight w P := by
   classical
   induction len using Nat.strong_induction_on generalizing i with
-  | h len ih =>
+  | ind len ih =>
     cases len with
     | zero => simp [inside, structures_zero, weight]
     | succ n =>
@@ -1419,7 +1419,7 @@ private theorem outside_eq_exteriors {B R : Type*} [CommSemiring R]
   classical
   generalize hmeasure : s.length - (j - i) = d
   induction d using Nat.strong_induction_on generalizing i j with
-  | h d ih =>
+  | ind d ih =>
     have hjn := (pair_bounds hc).2
     rw [outside, exterior_partition, ground_sum w (by omega) hjn]
     congr 1
@@ -1518,7 +1518,7 @@ theorem card_structures_eq_watermanNumber (m n : ℕ) :
         watermanNumber m len := by
     intro len
     induction len using Nat.strong_induction_on with
-    | h len ih =>
+    | ind len ih =>
       intro i hi
       cases len with
       | zero => simp [inside, watermanNumber]
@@ -1542,7 +1542,7 @@ theorem card_structures_eq_watermanNumber (m n : ℕ) :
 theorem watermanNumber_zero_eq_motzkinNumber (n : ℕ) :
     watermanNumber 0 n = MetaMathlibExt.motzkinNumber n := by
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     cases n with
     | zero => simp [watermanNumber, MetaMathlibExt.motzkinNumber]
     | succ n =>

@@ -23,68 +23,25 @@ sequence `(aₙ)` lists the positive integers `n` with `D(C(n)) = C(D(n))`; stat
 *compatible* (`IsCompatibleSemiprimePair p q r s`) when `p, q, r, s` are primes and `r, s` are
 the roots of `2x² - (p + q)x + 3pq + 1 = 0`, that is, `2(r + s) = p + q` and
 `2rs = 3pq + 1`.
+
+The statements already proved, such as the oddness of every positive `n` with
+`D(C(n)) = C(D(n))`, live in `MathlibExt/NumberTheory/CollatzArithmeticDerivative.lean`, which
+this module imports publicly.
 -/
 module
 
 import Batteries.Util.ProofWanted
-import Mathlib.Tactic.NormNum.Prime
 public import Mathlib.Algebra.IsPrimePow
 public import Mathlib.Analysis.SpecialFunctions.Log.Base
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.Topology.Algebra.InfiniteSum.Defs
 public import MathlibExt.NumberTheory.ArithmeticDerivative
-public import MathlibExt.NumberTheory.Collatz
+public import MathlibExt.NumberTheory.CollatzArithmeticDerivative
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **The accelerated Collatz map.** The accelerated Collatz map $C : \mathbb{N} \to \mathbb{N}$
-sends a natural number $n$ to $n/2$ if $n$ is even and to $(3n + 1)/2$ if $n$ is odd.
-
-Source: Zachary P. Bradshaw, *On a Family of Solutions to Arithmetic Differential Equations
-Involving the Collatz Map*, Journal of Integer Sequences 28 (2025), Article 25.1.8, Section 2. -/
-def collatzAccelerated (n : ℕ) : ℕ :=
-  if n % 2 = 0 then n / 2 else (3 * n + 1) / 2
-
-/-- **The accelerated Collatz map on odd numbers.** Let $C$ be the accelerated Collatz map and
-$T$ the Collatz map. For every odd natural number $n$, $C(n) = T(T(n))$.
-
-Source: Zachary P. Bradshaw, *On a Family of Solutions to Arithmetic Differential Equations
-Involving the Collatz Map*, Journal of Integer Sequences 28 (2025), Article 25.1.8, Section 2. -/
-theorem collatzAccelerated_of_odd {n : ℕ} (hn : n % 2 = 1) :
-    collatzAccelerated n = Nat.collatzStep (Nat.collatzStep n) := by
-  have h : (3 * n + 1) % 2 = 0 := by omega
-  simp [collatzAccelerated, Nat.collatzStep, hn, h]
-
-/-- **The accelerated Collatz map on even numbers.** Let $C$ be the accelerated Collatz map and
-$T$ the Collatz map. For every even natural number $n$, $C(n) = T(n)$.
-
-Source: Zachary P. Bradshaw, *On a Family of Solutions to Arithmetic Differential Equations
-Involving the Collatz Map*, Journal of Integer Sequences 28 (2025), Article 25.1.8, Section 2. -/
-theorem collatzAccelerated_of_even {n : ℕ} (hn : n % 2 = 0) :
-    collatzAccelerated n = Nat.collatzStep n := by
-  simp [collatzAccelerated, Nat.collatzStep, hn]
-
-/-- **Compatible semiprimes.** Natural numbers $p, q, r, s$ form a compatible semiprime pair,
-and the semiprimes $pq$ and $rs$ are called compatible, when $p, q, r, s$ are primes with
-$2(r + s) = p + q$ and $2rs = 3pq + 1$; equivalently, $r$ and $s$ are the roots of
-$2x^2 - (p + q)x + 3pq + 1 = 0$.
-
-Source: Zachary P. Bradshaw, *On a Family of Solutions to Arithmetic Differential Equations
-Involving the Collatz Map*, Journal of Integer Sequences 28 (2025), Article 25.1.8, Section 3,
-definition after Proposition 7. -/
-def IsCompatibleSemiprimePair (p q r s : ℕ) : Prop :=
-  p.Prime ∧ q.Prime ∧ r.Prime ∧ s.Prime ∧ 2 * (r + s) = p + q ∧ 2 * (r * s) = 3 * (p * q) + 1
-
-/-- **An example of compatible semiprimes.** The semiprimes $71 \cdot 1609 = 114239$ and
-$349 \cdot 491$ are compatible.
-
-Source: Zachary P. Bradshaw, *On a Family of Solutions to Arithmetic Differential Equations
-Involving the Collatz Map*, Journal of Integer Sequences 28 (2025), Article 25.1.8, Table 1. -/
-theorem isCompatibleSemiprimePair_71_1609 : IsCompatibleSemiprimePair 71 1609 349 491 := by
-  refine ⟨by norm_num, by norm_num, by norm_num, by norm_num, by norm_num, by norm_num⟩
 
 /-- **Bounds for the arithmetic derivative.** Let $n \ge 2$ be a natural number, let $p$ be the
 least prime factor of $n$, and let $\Omega(n)$ be the number of prime factors of $n$ counted with
@@ -103,18 +60,6 @@ public theorem_wanted arithmeticDerivative_bounds (n : ℕ) (hn : 2 ≤ n) :
     lower ≤ arithmeticDerivative n ∧ (arithmeticDerivative n : ℝ) ≤ upper ∧
       (lower = arithmeticDerivative n ↔ IsPrimePow n) ∧
       ((arithmeticDerivative n : ℝ) = upper ↔ IsPrimePow n)
-
-/-- **Positive solutions of the Collatz arithmetic differential equation are odd.** Let $D$ be
-the arithmetic derivative and $C$ the accelerated Collatz map. Every positive integer $n$ with
-$D(C(n)) = C(D(n))$ is odd.
-
-Source: Zachary P. Bradshaw, *On a Family of Solutions to Arithmetic Differential Equations
-Involving the Collatz Map*, Journal of Integer Sequences 28 (2025), Article 25.1.8,
-Proposition 2 (`jis-2025-25.1.8-prop-2`). -/
-public theorem_wanted odd_of_arithmeticDerivative_collatz_comm (n : ℕ) (hn : 0 < n)
-    (h : arithmeticDerivative (collatzAccelerated n) =
-      collatzAccelerated (arithmeticDerivative n)) :
-    Odd n
 
 /-- **Positive solutions of the Collatz arithmetic differential equation are composite.** Let
 $D$ be the arithmetic derivative and $C$ the accelerated Collatz map. Every positive integer $n$
@@ -193,20 +138,6 @@ public theorem_wanted collatzAccelerated_mul_eq_and_comm_of_roots_prime (p q r s
       arithmeticDerivative (collatzAccelerated (p * q)) =
         collatzAccelerated (arithmeticDerivative (p * q))
 
-/-- **Compatible semiprimes modulo 3.** Let $p, q, r, s$ be primes with $2(r + s) = p + q$ and
-$2rs = 3pq + 1$, so that the semiprimes $pq$ and $rs$ are compatible. Then
-$pq \equiv rs \equiv 2 \pmod 3$; moreover one of $p, q$ is congruent to $1$ and the other to $2$
-modulo $3$, and likewise one of $r, s$ is congruent to $1$ and the other to $2$ modulo $3$.
-
-Source: Zachary P. Bradshaw, *On a Family of Solutions to Arithmetic Differential Equations
-Involving the Collatz Map*, Journal of Integer Sequences 28 (2025), Article 25.1.8,
-Proposition 8 (`jis-2025-25.1.8-prop-8`). -/
-public theorem_wanted IsCompatibleSemiprimePair.mod_three {p q r s : ℕ}
-    (h : IsCompatibleSemiprimePair p q r s) :
-    p * q % 3 = 2 ∧ r * s % 3 = 2 ∧
-      ((p % 3 = 1 ∧ q % 3 = 2) ∨ (p % 3 = 2 ∧ q % 3 = 1)) ∧
-      ((r % 3 = 1 ∧ s % 3 = 2) ∨ (r % 3 = 2 ∧ s % 3 = 1))
-
 /-- **Compatible semiprimes have odd prime factors.** Let $p, q, r, s$ be primes with
 $2(r + s) = p + q$ and $2rs = 3pq + 1$, so that the semiprimes $pq$ and $rs$ are compatible.
 Then $p$, $q$, $r$ and $s$ are all odd.
@@ -217,17 +148,6 @@ Involving the Collatz Map*, Journal of Integer Sequences 28 (2025), Article 25.1
 public theorem_wanted IsCompatibleSemiprimePair.odd {p q r s : ℕ}
     (h : IsCompatibleSemiprimePair p q r s) :
     Odd p ∧ Odd q ∧ Odd r ∧ Odd s
-
-/-- **Compatible semiprimes modulo 4.** Let $p, q, r, s$ be primes with $2(r + s) = p + q$ and
-$2rs = 3pq + 1$, so that the semiprime $pq$ is compatible with the semiprime $rs$. Then
-$pq \equiv 3 \pmod 4$, and one of $p, q$ is congruent to $1$ and the other to $3$ modulo $4$.
-
-Source: Zachary P. Bradshaw, *On a Family of Solutions to Arithmetic Differential Equations
-Involving the Collatz Map*, Journal of Integer Sequences 28 (2025), Article 25.1.8,
-Proposition 10 (`jis-2025-25.1.8-prop-10`). -/
-public theorem_wanted IsCompatibleSemiprimePair.mod_four {p q r s : ℕ}
-    (h : IsCompatibleSemiprimePair p q r s) :
-    p * q % 4 = 3 ∧ ((p % 4 = 1 ∧ q % 4 = 3) ∨ (p % 4 = 3 ∧ q % 4 = 1))
 
 /-- **Bounds on the factors of compatible semiprimes.** Suppose the semiprimes $pq$ and $rs$ are
 compatible, where $q < p$. Then $r \ge 241$, $s \ge 241$, $3q < r < 3p$ and $3q < s < 3p$.

@@ -8,7 +8,7 @@ articles to the Mathlib nodes they use, and each node's topic in
 compiled constants and `scripts/extract_mathlib_graph.py` builds the files
 below. The workflow's `build the Mathlib layer` job uploads them as the
 `mathlib-graph` artifact, with this page as `SCHEMA.md`, except the two dumps:
-the v2 one is the wiki job's `v2-mathlib-dump` artifact and the Mathlib one
+the v2 one is that job's `v2-mathlib-dump` artifact and the Mathlib one
 depends only on the pinned Mathlib. Like the v2 dependency dump, they are build outputs and are
 never committed. `docs/BLUEPRINT.md` gives the commands, and
 `docs/mathlib-pages.md` describes the pages built from the layer.
@@ -65,6 +65,14 @@ those libraries cannot reach Mathlib.
 Bridge edges apply the same rules to ATLAS's articles (the Lean names that
 `blueprint/links` annotations link, as Autoform reads them) over the v2 and
 Mathlib constants together, and keep the edges whose target is a Mathlib node.
+A declaration a row lists as a duplicate of its page's counts as that page's
+article, as in the v2 extraction: another article's use of it is a direct use
+of the article, and to the article itself it is part of the article, whose
+edges reach what the duplicate uses: as directly as the duplicate does where
+the article names it, and otherwise as through a hidden constant.
+The bridge refuses a duplicate, or warns about one, as the extraction does;
+with `--articles`, which comes with no Lean sources to tell a deleted
+declaration from an incomplete dump, it refuses a duplicate its dump lacks.
 Uses of CSLib, Physlib and other libraries are not followed. With `--check-v2`,
 as the workflow runs it, the same computation must give exactly the articles
 and ATLAS-to-ATLAS edges of `build/lean-dependencies.json`: an article only one

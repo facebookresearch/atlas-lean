@@ -21,6 +21,7 @@ ROOT = Path(__file__).resolve().parent.parent
 # The card files: their tests run in the card job (scripts/test_cards.py), not in the wiki job.
 CARD_INPUTS = ("scripts/cards.py", "scripts/card-moves.jsonl", "scripts/test_cards.py", "docs/cards.md")
 WORKFLOW = ROOT / ".github" / "workflows" / "blueprint-pages.yml"
+GRAPH_SYNC = ROOT / ".github" / "workflows" / "graph-sync.yml"
 
 
 class BlueprintWorkflowTests(unittest.TestCase):
@@ -306,8 +307,8 @@ class BlueprintWorkflowTests(unittest.TestCase):
                                     "GITHUB_OUTPUT": str(output)})
                 self.assertEqual(output.read_text(), f"sha={expected}\n", event)
         # The Mathlib dump and the graph built from it depend only on the pins and the scripts that make them. Runs
-        # other than pull requests save them once per key; a restored graph skips the Lean setup, the dump and the
-        # graph. No other cache is saved here.
+        # other than pull requests save them once per key; a restored graph skips the dump and the graph. No other
+        # cache is saved here.
         mathlib = {step.get("name"): step for step in self.workflow["jobs"]["mathlib"]["steps"]}
         cached = mathlib["Restore the Mathlib graph"]
         self.assertIn("actions/cache/restore@", cached["uses"])
@@ -320,8 +321,9 @@ class BlueprintWorkflowTests(unittest.TestCase):
                                                  "edges.jsonl.gz", "graph-meta.json")])
         order = list(mathlib)
         miss = "steps.mathlib-graph.outputs.cache-hit != 'true'"
-        for name in ("Free disk space for Lean caches", "Add swap for the Mathlib dump", "Install elan v4.2.4",
-                     "Fetch Mathlib cache", "Dump the Mathlib declarations", "Build the Mathlib graph"):
+        self.assertEqual([name for name, step in mathlib.items() if "if" in step and "cache-hit" in step["if"]],
+                         ["Dump the Mathlib declarations", "Build the Mathlib graph", "Save the Mathlib graph"])
+        for name in ("Dump the Mathlib declarations", "Build the Mathlib graph"):
             self.assertEqual(mathlib[name]["if"], miss, name)
             self.assertLess(order.index("Restore the Mathlib graph"), order.index(name), name)
         self.assertIn("extract_mathlib_graph.py graph", mathlib["Build the Mathlib graph"]["run"])
@@ -447,10 +449,11 @@ elif "/compare/" in path:
         self.assertEqual(len(receipts.splitlines()), 2)
 
     def test_the_mathlib_layer_cannot_hold_back_the_site(self):
-        # The layer has its own job and check after the wiki job, and deployment waits for the wiki job alone.
+        # The layer has its own job and check beside the wiki job, and deployment waits for the wiki job alone.
         jobs = self.workflow["jobs"]
         mathlib = jobs["mathlib"]
-        self.assertEqual(mathlib["needs"], "wiki")
+        self.assertNotIn("needs", mathlib)
+        self.assertEqual(mathlib["timeout-minutes"], self.job["timeout-minutes"])
         self.assertDeploysWhateverTheMathlibJobsDo()
         self.assertNotIn("permissions", mathlib)
         self.assertNotIn("continue-on-error", mathlib)
@@ -458,28 +461,31 @@ elif "/compare/" in path:
         self.assertEqual(checkout["with"]["persist-credentials"], "false")
         self.assertIn("!/v1/", checkout["with"]["sparse-checkout"])
         self.assertIn("!/Atlas/", checkout["with"]["sparse-checkout"])
-        # In the wiki job only the dump of the v2 declarations, which needs the ATLAS build. It comes after every
-        # step the site needs, cannot fail the job, and has a timeout, so a hang cannot hold the job until its own
-        # timeout either; its upload cannot fail the job. A missing dump fails the layer's job instead.
-        dump = "Dump the v2 declarations with their Mathlib uses"
-        wiki_steps = [step["name"] for step in self.steps if "extract_mathlib_graph.py" in step.get("run", "")]
-        self.assertEqual(wiki_steps, [dump])
-        self.assertEqual(self.step(dump)["continue-on-error"], "true")
-        self.assertLessEqual(int(self.step(dump)["timeout-minutes"]), 30)
-        self.assertIn("--jobs 1 --shards 1", self.step(dump)["run"])
-        names = [step.get("name") for step in self.steps]
-        upload = "Keep the v2 declarations with their Mathlib uses"
-        self.assertEqual(names[-2:], [dump, upload])
-        for site_step in ("Check routes, anchors, and article cards", "Keep dependency diagnostics",
-                          "Keep the built site", "Upload Pages artifact"):
-            self.assertLess(names.index(site_step), names.index(dump), site_step)
-        self.assertEqual(self.step(upload)["continue-on-error"], "true")
-        self.assertEqual(self.step(upload)["with"]["name"], "v2-mathlib-dump")
-        self.assertNotIn("mathlib-graph", self.step("Keep dependency diagnostics")["with"]["path"])
+        # The layer's job sets up Lean, restores CI's builds, builds what they lack and makes the v2 extraction with
+        # the wiki job's own steps, so that `bridge` checks the layer against the extraction the site uses. It
+        # downloads nothing from the wiki job, which no longer runs the layer's dump.
         steps = {step.get("name"): step for step in mathlib["steps"]}
-        self.assertEqual(steps["Fetch the v2 extraction"]["with"]["name"], "blueprint-dependencies")
-        fetch = steps["Fetch the v2 declarations with their Mathlib uses"]["with"]
-        self.assertEqual((fetch["name"], fetch["path"]), ("v2-mathlib-dump", "mathlib-graph"))
+        order = list(steps)
+        names = [step.get("name") for step in self.steps]
+        shared = names[names.index("Free disk space for Lean caches"):names.index("Add the Lean-owned facts to the articles")]
+        self.assertEqual(shared[-1], "Collapse dependencies onto the wiki articles")
+        self.assertEqual(order[order.index(shared[0]):order.index(shared[0]) + len(shared)], shared)
+        for name in shared:
+            self.assertEqual(steps[name], self.step(name), name)
+        self.assertFalse([step for step in mathlib["steps"] if "download-artifact" in step.get("uses", "")])
+        self.assertFalse([step["name"] for step in self.steps if "extract_mathlib_graph.py" in step.get("run", "")])
+        # Its dump of the v2 declarations with their Mathlib uses follows the extraction, runs one Lean process and
+        # has a timeout, so a hang cannot hold the job until its own; a failure fails the layer's check. The upload
+        # keeps it as before and cannot fail the job.
+        dump, upload = "Dump the v2 declarations with their Mathlib uses", "Keep the v2 declarations with their Mathlib uses"
+        self.assertEqual(order.index(dump), order.index(shared[-1]) + 1)
+        self.assertEqual(order.index(upload), order.index(dump) + 1)
+        self.assertLessEqual(int(steps[dump]["timeout-minutes"]), 30)
+        self.assertIn("--jobs 1 --shards 1", steps[dump]["run"])
+        self.assertIn("--modules v2-modules.txt", steps[dump]["run"])
+        self.assertEqual(steps[upload]["continue-on-error"], "true")
+        self.assertEqual(steps[upload]["with"]["name"], "v2-mathlib-dump")
+        self.assertNotIn("mathlib-graph", self.step("Keep dependency diagnostics")["with"]["path"])
         extract = steps["Extract the Mathlib layer"]["run"]
         self.assertIn("set -euo pipefail", extract)
         self.assertIn("test -s mathlib-graph/v2-mathlib-dump.jsonl.gz", extract)
@@ -488,9 +494,9 @@ elif "/compare/" in path:
         for command in ("dump", "graph", "bridge", "stats"):
             self.assertTrue(any(f"extract_mathlib_graph.py {command}" in step.get("run", "")
                                 for step in mathlib["steps"]), command)
-        # Only the upload may fail without failing the layer's check.
+        # Only the uploads may fail without failing the layer's check.
         self.assertEqual([name for name, step in steps.items() if "continue-on-error" in step],
-                         ["Keep the Mathlib layer"])
+                         [upload, "Keep the Mathlib layer"])
         self.assertEqual(steps["Keep the Mathlib layer"]["with"]["name"], "mathlib-graph")
         self.assertEqual(steps["Keep the Mathlib layer"]["if"], "always()")
 
@@ -611,16 +617,23 @@ elif "/compare/" in path:
         self.assertEqual(jobs["deploy"]["needs"], "wiki")
         self.assertNotIn("permissions", cards)
         self.assertNotIn("continue-on-error", cards)
-        # The card tests do not run in the wiki job. It derives the card data its site shows in one step, after
-        # lean-facts and before render, which can neither fail the job nor hold it past its timeout.
+        # The card tests do not run in the wiki job. It checks the move ledger the site serves and derives the card
+        # data its site shows in two steps, after lean-facts and before render, each of which can neither fail the
+        # job nor hold it past its timeout.
         self.assertFalse(any("test_cards" in step.get("run", "") for step in self.steps))
-        derive = "Derive the card data the site shows"
-        self.assertEqual([step["name"] for step in self.steps if "cards.py" in step.get("run", "")], [derive])
-        self.assertEqual(self.step(derive)["continue-on-error"], "true")
-        self.assertLessEqual(int(self.step(derive)["timeout-minutes"]), 15)
+        moves, derive = "Check the move ledger the site serves", "Derive the card data the site shows"
+        self.assertEqual([step["name"] for step in self.steps if "cards.py" in step.get("run", "")], [moves, derive])
         wiki_names = [step.get("name") for step in self.steps]
-        self.assertLess(wiki_names.index("Add the Lean-owned facts to the articles"), wiki_names.index(derive))
-        self.assertLess(wiki_names.index(derive), wiki_names.index("Render the blueprint"))
+        for name in (moves, derive):
+            self.assertEqual(self.step(name)["continue-on-error"], "true")
+            self.assertLessEqual(int(self.step(name)["timeout-minutes"]), 15)
+            self.assertLess(wiki_names.index("Add the Lean-owned facts to the articles"), wiki_names.index(name))
+            self.assertLess(wiki_names.index(name), wiki_names.index("Render the blueprint"))
+        # The ledger check, independent of the strict card check, removes any earlier receipt before it runs.
+        check_moves = self.step(moves)["run"]
+        self.assertLess(check_moves.index("rm -f build/card-moves.json"),
+                        check_moves.index("python scripts/cards.py moves build/card-moves.json"))
+        self.assertIn('uv run --no-project --with "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}"', check_moves)
         checkout = next(step for step in cards["steps"] if step.get("name") == "Check out project")
         self.assertEqual(checkout["with"]["persist-credentials"], "false")
         self.assertIn("!/v1/", checkout["with"]["sparse-checkout"])
@@ -778,94 +791,184 @@ elif "/compare/" in path:
         self.assertNotIn("cancel-in-progress", str(self.workflow["concurrency"]["group"]))
         self.assertEqual(self.workflow["concurrency"]["cancel-in-progress"], "${{ github.ref != 'refs/heads/main' }}")
 
-    def run_size_step(self, deploying, stubs):
-        """Run the size step on an empty `site` with the commands in `stubs` (name -> script) ahead
-        of the system's; return its result and summary."""
-        step = self.step("Check the site against GitHub Pages' size limit")
-        with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
-            (root / "bin").mkdir()
-            (root / "site").mkdir()
-            for name, script in stubs.items():
-                command = root / "bin" / name
-                command.write_text(script)
-                command.chmod(0o755)
-            summary = root / "summary.md"
-            env = {"PATH": f"{root / 'bin'}:/usr/bin:/bin", "GITHUB_STEP_SUMMARY": str(summary),
-                   "DEPLOYING": "true" if deploying else "false"}
-            result = subprocess.run(["bash", "-e", "-c", step["run"]], cwd=root, env=env,
-                                    text=True, capture_output=True, check=False)
-            return result, summary.read_text() if summary.exists() else ""
 
-    def run_size_check(self, size, deploying):
-        # `wc` reads the archive and reports `size` bytes.
-        result, summary = self.run_size_step(
-            deploying, {"wc": f"#!/bin/sh\ncat >/dev/null\nprintf '%s\\n' {size}\n"})
-        self.assertIn(f"The built site's Pages archive is {size} bytes ({size // 1000000} MB)", summary)
-        return result
+class GraphSyncWorkflowTests(unittest.TestCase):
+    """The scoped declarations check (docs/BLUEPRINT.md, Maintaining articles) runs on every pull request and merge
+    group, reads the Lean sources only, and reports without failing its job."""
 
-    def test_site_size_warns_from_900_mb_and_fails_only_a_publishing_build_over_1_gb(self):
-        for size, deploying, code, annotation in (
-            (899_999_999, True, 0, None),
-            (900_000_000, True, 0, "::warning title=Site near the Pages limit::"),
-            (1_000_000_000, True, 0, "::warning title=Site near the Pages limit::"),
-            (1_000_000_001, False, 0, "::warning title=Site over the Pages limit::"),
-            (1_000_000_001, True, 1, "::error title=Site over the Pages limit::"),
-        ):
-            with self.subTest(size=size, deploying=deploying):
-                result = self.run_size_check(size, deploying)
-                self.assertEqual(result.returncode, code, result.stderr)
-                if annotation is None:
-                    self.assertNotIn("::", result.stdout)
-                else:
-                    self.assertIn(annotation, result.stdout)
-                    self.assertIn(f"archive is {size} bytes", result.stdout)
+    @classmethod
+    def setUpClass(cls):
+        cls.text = GRAPH_SYNC.read_text()
+        cls.workflow = yaml.load(cls.text, Loader=yaml.BaseLoader)
+        cls.job = cls.workflow["jobs"]["check"]
+        cls.steps = {step.get("name"): step for step in cls.job["steps"]}
 
-    def test_site_size_check_fails_when_the_size_cannot_be_measured(self):
-        # A failing archive, or a count that is not a number of bytes, fails the step on every
-        # build with its own annotation, instead of reporting 0 MB and passing.
-        for stubs in ({"tar": "#!/bin/sh\necho 'tar: site: Cannot open' >&2\nexit 2\n"},
-                      {"wc": "#!/bin/sh\ncat >/dev/null\necho unknown\n"},
-                      {"wc": "#!/bin/sh\ncat >/dev/null\n"}):
-            for deploying in (False, True):
-                with self.subTest(stubs=stubs, deploying=deploying):
-                    result, summary = self.run_size_step(deploying, stubs)
-                    self.assertNotEqual(result.returncode, 0, result.stdout)
-                    self.assertIn("::error title=Site size unknown::", result.stdout)
-                    self.assertNotIn("Pages archive is", summary)
+    def test_every_pull_request_and_merge_group_runs_it(self):
+        # No filter skips a pull request, Lean-only ones included, and nothing skips the job: the merge queue could
+        # require it one day (scripts/test_merge_queue_checks.py holds required checks to this).
+        events = self.workflow["on"]
+        self.assertEqual(set(events), {"pull_request", "merge_group", "workflow_dispatch"})
+        self.assertEqual(events["pull_request"], "")
+        self.assertEqual(events["merge_group"], {"types": ["checks_requested"]})
+        for key in ("if", "needs", "strategy", "continue-on-error"):
+            self.assertNotIn(key, self.job)
+        self.assertIn("github.ref", self.workflow["concurrency"]["group"])
+        # Its check's name is its own: another job of that name could stand in for it.
+        names = [job.get("name", key) for path in sorted(GRAPH_SYNC.parent.glob("*.y*ml"))
+                 for key, job in yaml.load(path.read_text(), Loader=yaml.BaseLoader)["jobs"].items()]
+        self.assertEqual(names.count("graph sync"), 1)
+        self.assertEqual(self.job["name"], "graph sync")
 
-    def test_site_size_check_measures_the_archive_the_pages_upload_builds(self):
-        step = self.step("Check the site against GitHub Pages' size limit")
-        with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
-            site = root / "site"
-            (site / "assets").mkdir(parents=True)
-            (site / "index.html").write_text("hello")
-            (site / "assets" / "page.html").write_text("x" * 3000)
-            (root / "outside.txt").write_text("content behind a link")
-            (site / "linked.txt").symlink_to(root / "outside.txt")
-            (site / ".git").mkdir()
-            (site / ".git" / "objects").write_bytes(b"\0" * 4096)
-            # A hidden sparse file larger than the limit: the upload leaves it out.
-            with open(site / ".hidden", "wb") as hidden:
-                hidden.truncate(2_000_000_000)
-            # The archive of actions/upload-pages-artifact's Linux "Archive artifact" step.
-            archive = subprocess.run(
-                ["tar", "--dereference", "--hard-dereference", "--directory", str(site), "-cf", "-",
-                 "--exclude=.git", "--exclude=.github", "--exclude=.[^/]*", "."],
-                capture_output=True, check=True).stdout
-            summary = root / "summary.md"
-            env = {"PATH": "/usr/bin:/bin", "GITHUB_STEP_SUMMARY": str(summary), "DEPLOYING": "true"}
-            result = subprocess.run(["bash", "-e", "-c", step["run"]], cwd=root, env=env,
-                                    text=True, capture_output=True, check=False)
-            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-            self.assertNotIn("::", result.stdout)
-            self.assertIn(f"The built site's Pages archive is {len(archive)} bytes", summary.read_text())
+    def test_the_check_only_reports_and_keeps_its_report(self):
+        step = self.steps["Check that the graph is in step with the Lean"]
+        self.assertEqual(step["continue-on-error"], "true")
+        self.assertIn('python scripts/sync_wiki.py declarations --base "$BASE" --check', step["run"])
+        self.assertIn("--report build/graph-sync.json", step["run"])
+        self.assertIn('exit "$status"', step["run"])
+        keep = self.steps["Keep the report"]
+        self.assertEqual((keep["if"], keep["continue-on-error"], keep["with"]["name"]), ("always()", "true", "graph-sync"))
+        # No Lean is built or fetched: the check reads the sources as the declarations sync does.
+        self.assertNotIn("lake", self.text)
+        self.assertNotIn("elan", self.text)
 
-    def test_site_size_check_deploys_exactly_when_the_upload_does(self):
-        step = self.step("Check the site against GitHub Pages' size limit")
-        upload = self.step("Upload Pages artifact")["if"]
-        self.assertEqual(step["env"]["DEPLOYING"], "${{ " + upload + " }}")
+    def test_it_reads_autoform_and_the_markdown_as_the_wiki_build_does(self):
+        wiki = yaml.load(WORKFLOW.read_text(), Loader=yaml.BaseLoader)
+        pins = {step["name"]: step for step in wiki["jobs"]["wiki"]["steps"]}
+        self.assertEqual(self.steps["Read the reviewed Autoform pin"]["run"], pins["Read the reviewed Autoform pin"]["run"])
+        self.assertEqual(self.steps["Install uv"]["with"], pins["Install uv"]["with"])
+        self.assertEqual(self.workflow["env"]["AUTOFORM_SOURCE"], wiki["env"]["AUTOFORM_SOURCE"])
+        check = self.steps["Check that the graph is in step with the Lean"]["run"]
+        self.assertIn('--with "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}"', check)
+        for pin in re.findall(r"--with ([\w.-]+==[^\s]+)", pins["Build the Markdown site"]["run"]):
+            self.assertIn(f"--with {pin}", check)
+
+    def test_it_holds_no_write_token_or_credentials(self):
+        self.assertEqual(self.workflow["permissions"], {"contents": "read"})
+        self.assertNotIn("permissions", self.job)
+        self.assertEqual(self.steps["Check out project"]["with"]["persist-credentials"], "false")
+        self.assertNotIn("secrets.", self.text)
+        for step in self.job["steps"]:
+            if "uses" in step:
+                self.assertRegex(step["uses"], r"@[0-9a-f]{40}\Z")
+
+    def run_check(self, status: int, report: str | None = None, extra: str = "", fix_fetch: str = "refs/heads/main"):
+        """Run the check's step with a uv that prints a verdict, writes *report* as the check's JSON report, if any,
+        and exits with *status*; returns the result, the job summary and the arguments uv got."""
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        root = Path(directory.name)
+        (root / "bin").mkdir()
+        if report is not None:
+            (root / "report.json").write_text(report)
+        (root / "bin" / "uv").write_text(f'#!/bin/sh\necho "$@" > uv-arguments\necho "In step: no"\necho "error: a link" >&2\n'
+                                        'printf "%s" "${UV_EXTRA:-}"\n'
+                                        f'[ -f report.json ] && cp report.json build/graph-sync.json\nexit {status}\n')
+        (root / "bin" / "uv").chmod(0o755)
+        summary = root / "summary.md"
+        result = subprocess.run(
+            ["bash", "-c", self.steps["Check that the graph is in step with the Lean"]["run"]], cwd=root, text=True,
+            capture_output=True, env={**os.environ, "PATH": f"{root / 'bin'}:{os.environ['PATH']}", "BASE": "b" * 40,
+                                      "AUTOFORM_SOURCE": "https://example.invalid/autoform.git", "AUTOFORM_REF": "a" * 40,
+                                      "GITHUB_STEP_SUMMARY": str(summary), "UV_EXTRA": extra, "FIX_FETCH": fix_fetch})
+        return result, summary.read_text(), (root / "uv-arguments").read_text().split()
+
+    def test_the_check_output_can_neither_issue_a_command_nor_end_the_summary_block(self):
+        # A file name holding a workflow command or a code fence, as the check prints it.
+        result, summary, _ = self.run_check(0, extra="::error::forged\n```\n# Heading")
+        lines = result.stdout.splitlines()
+        start = next(number for number, line in enumerate(lines) if line.startswith("::stop-commands::"))
+        token = lines[start].removeprefix("::stop-commands::")
+        self.assertTrue(token.startswith("graph-sync-") and len(token) > len("graph-sync-") + 16, token)
+        end = lines.index(f"::{token}::")
+        self.assertTrue(start < lines.index("::error::forged") < end)
+        self.assertTrue(all(line.startswith("    ") or not line.strip() or line.startswith(("###", "The check"))
+                            for line in summary.splitlines()), summary)
+        self.assertIn("    ```\n    # Heading", summary)
+        # Lines a carriage return ends, and output with no last line end: every line of the summary stays indented,
+        # and the log's resume marker stands on a line of its own.
+        result, summary, _ = self.run_check(0, extra="one\r# two\r\n```three")
+        self.assertTrue(summary.endswith("    one\n    # two\n    ```three\n"), summary)
+        self.assertNotIn("\r", summary)
+        self.assertTrue(any(line.startswith("::graph-sync-") for line in result.stdout.split("\n")), result.stdout)
+
+    def test_the_verdict_goes_to_the_log_and_the_summary_with_the_branchs_command(self):
+        if shutil.which("jq") is None:
+            self.skipTest("jq is not installed")
+        result, summary, arguments = self.run_check(1, '{"in_step": false}')
+        self.assertEqual(result.returncode, 1)
+        self.assertEqual(arguments[arguments.index("python"):], ["python", "scripts/sync_wiki.py", "declarations", "--base",
+                                                                "b" * 40, "--check", "--report", "build/graph-sync.json"])
+        self.assertIn("In step: no\nerror: a link\n", result.stdout)
+        self.assertIn("::warning title=Graph sync::", result.stdout)
+        self.assertIn("    In step: no\n    error: a link\n", summary)
+        self.assertIn('git fetch https://github.com/facebookresearch/atlas-lean.git refs/heads/main\n'
+                      'python3 scripts/sync_wiki.py declarations --base "$(git merge-base FETCH_HEAD HEAD)"\n', summary)
+        # A run dispatched with a base names it.
+        result, summary, _ = self.run_check(1, '{"in_step": false}', fix_fetch="")
+        self.assertIn(f"git fetch https://github.com/facebookresearch/atlas-lean.git {'b' * 40}\n"
+                      f"python3 scripts/sync_wiki.py declarations --base {'b' * 40}\n", summary)
+        result, summary, _ = self.run_check(0)
+        self.assertEqual(result.returncode, 0)
+        self.assertNotIn("::warning", result.stdout)
+        self.assertNotIn("merge-base", summary)
+        # A check that could not run, by its exit code or with no report that says the pull request is not in step,
+        # as when Python fails, says so rather than that the pull request is not in step.
+        for status, report in ((2, None), (1, None), (1, '{"in_step": true}'), (1, "not json")):
+            result, summary, _ = self.run_check(status, report)
+            self.assertEqual(result.returncode, status)
+            self.assertIn("::warning title=Graph sync::The check could not run", result.stdout)
+            self.assertIn(f"The check could not run (exit {status})", summary)
+            self.assertNotIn("merge-base", summary)
+
+    def find_base(self, event: str, env=lambda main, merge: {}):
+        """Run the step that finds the base in a repository whose HEAD merges a branch into main, as a pull request's
+        merge commit does, with the environment *env* gives for the main and merge commits; returns the result, what
+        the step wrote to GITHUB_ENV, and those commits."""
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        root = Path(directory.name)
+        git = lambda *args: subprocess.run(["git", "-C", str(root), "-c", "user.name=t", "-c", "user.email=t@t", *args],
+                                           check=True, capture_output=True, text=True).stdout.strip()
+        git("init", "-q", "-b", "main")
+        git("commit", "-q", "--allow-empty", "-m", "first")
+        git("switch", "-q", "-c", "topic")
+        git("commit", "-q", "--allow-empty", "-m", "topic")
+        git("switch", "-q", "main")
+        git("commit", "-q", "--allow-empty", "-m", "second")
+        main = git("rev-parse", "HEAD")
+        git("merge", "-q", "--no-ff", "-m", "merge", "topic")
+        merge = git("rev-parse", "HEAD")
+        output = root / "env"
+        result = subprocess.run(["bash", "-c", self.steps["Find the base commit"]["run"]], cwd=root, text=True,
+                                capture_output=True,
+                                env={**os.environ, "EVENT": event, "GITHUB_ENV": str(output), **env(main, merge)})
+        return result, output.read_text() if output.exists() else "", main, merge
+
+    def test_a_pull_request_compares_with_its_base_and_a_merge_group_with_the_queues(self):
+        env = self.steps["Find the base commit"]["env"]
+        self.assertEqual(env["MERGE_GROUP_BASE"], "${{ github.event.merge_group.base_sha }}")
+        self.assertEqual(env["DISPATCH_BASE"], "${{ inputs.base }}")
+        self.assertEqual(env["PR_BASE_REF"], "${{ github.event.pull_request.base.ref }}")
+        self.assertEqual(env["MERGE_GROUP_REF"], "${{ github.event.merge_group.base_ref }}")
+        self.assertEqual(self.steps["Check out project"]["with"]["fetch-depth"], "2")
+        result, written, main, merge = self.find_base("pull_request", lambda main, merge: {"PR_BASE_REF": "release/1.x"})
+        self.assertEqual((result.returncode, written), (0, f"BASE={main}\nFIX_FETCH=refs/heads/release/1.x\n"),
+                         result.stderr)
+        # A branch name the fix command could not give plainly: it fetches the base commit instead.
+        result, written, main, merge = self.find_base("pull_request", lambda main, merge: {"PR_BASE_REF": "a b;c"})
+        self.assertEqual((result.returncode, written), (0, f"BASE={main}\nFIX_FETCH={main}\n"), result.stderr)
+        # The queue's base, here the merge commit itself, which the checkout already has.
+        result, written, main, merge = self.find_base("merge_group", lambda main, merge: {
+            "MERGE_GROUP_BASE": merge, "MERGE_GROUP_REF": "refs/heads/main"})
+        self.assertEqual((result.returncode, written), (0, f"BASE={merge}\nFIX_FETCH=refs/heads/main\n"),
+                         result.stderr)
+        # A run dispatched with a base fetches nothing to find one: the command names it.
+        result, written, main, merge = self.find_base("workflow_dispatch", lambda main, merge: {"DISPATCH_BASE": main})
+        self.assertEqual((result.returncode, written), (0, f"BASE={main}\nFIX_FETCH=\n"), result.stderr)
+        # A run with no commit to compare with fails rather than checking against nothing.
+        result, written, _, _ = self.find_base("workflow_dispatch", lambda main, merge: {"DISPATCH_BASE": "main"})
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(written, "")
 
 
 if __name__ == "__main__":

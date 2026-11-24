@@ -13,6 +13,18 @@ import Mathlib.Tactic.NormNum
 
 open MathlibExt.Combinatorics.Enumerative.IncompleteBinomialHarmonicSumsWanted
 
+-- At the upper boundary m = N = 2, the trailing coefficient `(N - 1).choose m` vanishes.
+example (a : ℕ → ℝ) : a 0 + 2 * a 1 + a 2 = (a 0 + a 1) + (a 1 + a 2) := by
+  have h := sum_range_choose_mul_eq_sum_range_choose_add a 2 2 (by decide) (by decide) le_rfl
+  norm_num [Finset.sum_range_succ, Nat.choose] at h
+  exact h
+
+-- Below the boundary, at m = 2 and N = 3, the trailing term survives.
+example (a : ℕ → ℝ) : a 0 + 3 * a 1 + 3 * a 2 = (a 0 + a 1) + 2 * (a 1 + a 2) + a 2 := by
+  have h := sum_range_choose_mul_eq_sum_range_choose_add a 2 3 (by decide) (by decide) (by decide)
+  norm_num [Finset.sum_range_succ, Nat.choose] at h
+  exact h
+
 -- At the zero cutoff, the extra sequence value cancels.
 example (a : ℕ → ℝ) (n : ℕ) (hn : 0 < n) : a 0 = (a 0 + a 1) - a 1 := by
   simpa only [Nat.zero_add, Finset.sum_range_one, Nat.choose_zero_right, Nat.cast_one, one_mul]
@@ -22,6 +34,13 @@ example (a : ℕ → ℝ) (n : ℕ) (hn : 0 < n) : a 0 = (a 0 + a 1) - a 1 := by
 example (a : ℕ → ℝ) : a 0 + 3 * a 1 + 3 * a 2 =
     (a 0 + a 1) + 2 * (a 1 + a 2) + (a 2 + a 3) - a 3 := by
   have h := sum_range_choose_two_mul_sub_one_mul_eq a 2 2 (by decide) le_rfl
+  norm_num [Finset.sum_range_succ, Nat.choose] at h
+  exact h
+
+-- At the half-row cutoff m = n = 2, the endpoint contributes 3 * a 2.
+example (a : ℕ → ℝ) : a 0 + 4 * a 1 + 6 * a 2 =
+    (a 0 + a 1) + 3 * (a 1 + a 2) + 3 * a 2 := by
+  have h := sum_range_choose_two_mul_mul_eq a 2 2 (by decide) (by decide) le_rfl
   norm_num [Finset.sum_range_succ, Nat.choose] at h
   exact h
 

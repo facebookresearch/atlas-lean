@@ -1802,8 +1802,8 @@ private theorem pick_polygon_doubled (vertices : Finset (Fin 2 → ℤ))
     · have hlarge : 3 ≤ E.card := by
         by_contra h
         have hcard : E.card ≤ 2 := by omega
-        have hnotop := affineSpan_image_ne_top_of_encard_le_finrank ℝ E.finite_toSet
-          (p := pickCast) (by
+        have hnotop := affineSpan_image_ne_top_of_encard_le_finrank ℝ
+          (s := (E : Set (Fin 2 → ℤ))) (p := pickCast) (by
             rw [Set.encard_coe_eq_coe_finsetCard, Module.finrank_fin_fun]
             exact_mod_cast hcard)
         exact hnotop hspan

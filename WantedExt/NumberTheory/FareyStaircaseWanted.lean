@@ -18,7 +18,6 @@ The Farey staircase `A_n(x) = (1/n) Σ_{k=1}^n ⌊kx⌋/k` averages the lower ra
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import MathlibExt.NumberTheory.FareyStaircase
 
@@ -86,20 +85,6 @@ public theorem_wanted floor_gaps_inter_Iic_finite {ε : ℝ} (hε : 0 < ε) :
     ({y : ℝ | ∃ n : ℕ, 1 ≤ n ∧ ∃ x : ℝ, y = ⌊(n : ℝ) * x⌋ - n * fareyStaircase n x} ∩
       Set.Iic (1 - Real.log 2 - ε)).Finite
 
-/-- **Recursion between consecutive Farey staircases.** Let $n \ge 2$ be a natural number and $x$
-a real number, write $A_m$ for the Farey staircase of order $m$, and let
-$D_n(x) = A_n(x) - A_{n-1}(x)$. Then
-$D_n(x) = \frac{1}{n} \left( \lfloor nx \rfloor / n - A_{n-1}(x) \right)$ and
-$D_n(x) = \frac{1}{n-1} \left( \lfloor nx \rfloor / n - A_n(x) \right)$.
-
-Source: David Harry Richman, *Lower Rational Approximations and Farey Staircases*, INTEGERS 24
-(2024), Article A37, Proposition 7 (`integers-2024-A37-prop-7`). -/
-public theorem_wanted fareyStaircase_sub_eq {n : ℕ} (hn : 2 ≤ n) (x : ℝ) :
-    fareyStaircase n x - fareyStaircase (n - 1) x =
-        (n : ℝ)⁻¹ * (⌊(n : ℝ) * x⌋ / n - fareyStaircase (n - 1) x) ∧
-      fareyStaircase n x - fareyStaircase (n - 1) x =
-        ((n : ℝ) - 1)⁻¹ * (⌊(n : ℝ) * x⌋ / n - fareyStaircase n x)
-
 /-- **Bounds comparing the Farey staircase with $\lfloor nx \rfloor / n$.** For every natural
 number $n \ge 1$ and every real number $x$, the Farey staircase $A_n$ of order $n$ satisfies
 $A_n(x) \le \lfloor nx \rfloor / n \le A_n(x) + (\log n)/n$, where $\log$ is the natural
@@ -120,18 +105,6 @@ Source: David Harry Richman, *Lower Rational Approximations and Farey Staircases
 public theorem_wanted fareyStaircase_sub_mem_Icc {n : ℕ} (hn : 2 ≤ n) (x : ℝ) :
     0 ≤ fareyStaircase n x - fareyStaircase (n - 1) x ∧
       fareyStaircase n x - fareyStaircase (n - 1) x ≤ Real.log n / (n * (n - 1))
-
-/-- **Dilation derivative of a differentiable function.** Let $f : \mathbb{R} \to \mathbb{R}$ have
-derivative $f'$ at the point $x \in \mathbb{R}$. Then the quotient
-$(\lambda^{-1} f(\lambda x) - f(x))/(\lambda - 1)$ tends to $x f' - f(x)$ as $\lambda \to 1$ with
-$\lambda \ne 1$; that is, the dilation derivative of $f$ at $x$ exists and equals $x f' - f(x)$.
-
-Source: David Harry Richman, *Lower Rational Approximations and Farey Staircases*, INTEGERS 24
-(2024), Article A37, Proposition 12 (`integers-2024-A37-prop-12`); dilation derivative as defined
-before it. -/
-public theorem_wanted tendsto_dilation_quotient {f : ℝ → ℝ} {f' x : ℝ} (hf : HasDerivAt f f' x) :
-    Filter.Tendsto (fun l : ℝ => (l⁻¹ * f (l * x) - f x) / (l - 1)) (nhdsWithin 1 {1}ᶜ)
-      (nhds (x * f' - f x))
 
 end
 

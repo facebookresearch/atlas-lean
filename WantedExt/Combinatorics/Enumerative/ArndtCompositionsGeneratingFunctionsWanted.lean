@@ -25,6 +25,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Asymptotics.AsymptoticEquivalent
 public import Mathlib.NumberTheory.Real.GoldenRatio
 public import Mathlib.RingTheory.Binomial
+public import MathlibExt.Combinatorics.Enumerative.ArndtLastPartBounds
 public import WantedExt.Combinatorics.Enumerative.ArndtCompositionsWanted
 
 namespace MetaMathlibExt
@@ -125,33 +126,6 @@ Approach*, INTEGERS 24 (2024), Article A35, Section 2.1 (each class has `2^{⌊�
 theorem antiPalindromicCompositionCount_six_four :
     antiPalindromicCompositionCount 6 4 = 4 ∧ reducedAntiPalindromicCompositionCount 6 4 = 1 := by
   decide
-
-/-- **Arndt compositions by last part.** An Arndt composition of $n$ is a composition
-$(\sigma_1, \ldots, \sigma_\ell)$ of $n$ into positive parts such that $\sigma_{2i-1} > \sigma_{2i}$
-for every $i$ with $2i \le \ell$. For natural numbers $n$ and $j$, $b(n, j)$ is the number of
-Arndt compositions of $n$, with any number of parts, whose last part is $j$. The empty
-composition of $0$ counts as having last part $0$, so $b(0, 0) = 1$ and $b(0, j) = 0$ for
-$j \ge 1$.
-
-Source: Daniel F. Checa and José L. Ramírez, *Arndt Compositions: A Generating Functions
-Approach*, INTEGERS 24 (2024), Article A35, Section 3 (definition of `b(n, m)` and Table 2). -/
-def arndtLastPartCount (n j : ℕ) : ℕ :=
-  if n = 0 then (if j = 0 then 1 else 0) else
-    ∑ m ∈ Finset.range n,
-      ((Finset.Nat.antidiagonalTuple (m + 1) n).filter fun c =>
-        (∀ i, 0 < c i) ∧
-          (∀ i i' : Fin (m + 1), (i : ℕ) % 2 = 0 → (i' : ℕ) = i + 1 → c i' < c i) ∧
-            c (Fin.last m) = j).card
-
-/-- **Arndt compositions of 6 by last part.** Let $b(n, j)$ be the number of Arndt compositions
-of $n$ with last part $j$. Then $b(6, 1) = 4$, $b(6, 2) = 2$, $b(6, 3) = 1$ and $b(6, 6) = 1$.
-
-Source: Daniel F. Checa and José L. Ramírez, *Arndt Compositions: A Generating Functions
-Approach*, INTEGERS 24 (2024), Article A35, Section 3, Table 2. -/
-theorem arndtLastPartCount_six :
-    arndtLastPartCount 6 1 = 4 ∧ arndtLastPartCount 6 2 = 2 ∧ arndtLastPartCount 6 3 = 1 ∧
-      arndtLastPartCount 6 6 = 1 := by
-  decide +kernel
 
 /-- **Number of $k$-Arndt compositions.** For an integer $k$ and $n, m \ge 0$, $a_k(n, m)$ is the
 number of $k$-Arndt compositions of $n$ with $m$ parts: sequences $(c_0, \ldots, c_{m-1})$ of
@@ -388,39 +362,6 @@ public theorem_wanted arndtLastPartCount_eq (n m : ℕ) (hn : 1 ≤ n) (hm : 1 �
     let t₂ : ℕ → ℕ := fun r => if r = 0 then 0 else if r = 1 then 1 else Nat.fib (r - 1)
     arndtLastPartCount n m =
       if n < m then 0 else if n < 2 * m then t₁ (n - m) else t₁ (n - m) + t₂ (n - 2 * m)
-
-/-- **Asymptotics of Arndt compositions with a fixed last part.** Let $b(n, m)$ be the number of
-Arndt compositions of $n$ with last part $m$, and let $\varphi$ be the golden ratio. For every
-fixed integer $m \ge 1$,
-$b(n, m) \sim \frac{\varphi^{n-m-2}}{\sqrt{5}} \left(1 + \frac{1}{\varphi^{m-1}}\right)$ as
-$n \to \infty$.
-
-Source: Daniel F. Checa and José L. Ramírez, *Arndt Compositions: A Generating Functions
-Approach*, INTEGERS 24 (2024), Article A35, Theorem 10 (`integers-2024-A35-thm-10`). -/
-public theorem_wanted arndtLastPartCount_isEquivalent (m : ℕ) (hm : 0 < m) :
-    Asymptotics.IsEquivalent Filter.atTop (fun n : ℕ => (arndtLastPartCount n m : ℝ))
-      (fun n : ℕ => Real.goldenRatio ^ ((n : ℤ) - m - 2) / Real.sqrt 5 *
-        (1 + 1 / Real.goldenRatio ^ ((m : ℤ) - 1)))
-
-/-- **Arndt compositions with last part at most or at least $k$.** Let $F_n$ be the $n$-th
-Fibonacci number ($F_0 = 0$, $F_1 = 1$) and $b(n, j)$ the number of Arndt compositions of $n$
-with last part $j$. For all integers $k \ge 1$ and $n \ge 2k + 2$, the number of Arndt
-compositions of $n$ with last part at most $k$ is
-$\sum_{j=1}^{k} b(n, j) = F_n - F_{n-k-1} - F_{n-2k-2}$, and the number with last part at least
-$k$ is $\sum_{j=k}^{n} b(n, j) = F_{n-k} + F_{n-2k}$.
-
-The paper prints the second count as $F_{n-k} - F_{n-2k}$, which is false: for $k = 1$ and
-$n = 4$ all $F_4 = 3$ Arndt compositions of $4$ have last part at least $1$, while
-$F_3 - F_2 = 1$. The sign $+$ is the one the paper's own consequence uses ($F_{n-2} + F_{n-4}$
-compositions with last part greater than $1$), and it is what subtracting the number with last
-part at most $k - 1$ from $F_n$ gives.
-
-Source: Daniel F. Checa and José L. Ramírez, *Arndt Compositions: A Generating Functions
-Approach*, INTEGERS 24 (2024), Article A35, Corollary 4 (`integers-2024-A35-cor-4`). -/
-public theorem_wanted arndtLastPart_atMost_atLeast (k n : ℕ) (hk : 1 ≤ k) (hn : 2 * k + 2 ≤ n) :
-    ((∑ j ∈ Finset.Icc 1 k, arndtLastPartCount n j : ℕ) : ℤ) =
-        Nat.fib n - Nat.fib (n - k - 1) - Nat.fib (n - 2 * k - 2) ∧
-      ∑ j ∈ Finset.Icc k n, arndtLastPartCount n j = Nat.fib (n - k) + Nat.fib (n - 2 * k)
 
 /-- **Generating function of $k$-Arndt compositions for $k \ge 0$.** Let $k \ge 0$ be an
 integer, let $a_k(n, m)$ be the number of $k$-Arndt compositions of $n$ with $m$ parts, and let

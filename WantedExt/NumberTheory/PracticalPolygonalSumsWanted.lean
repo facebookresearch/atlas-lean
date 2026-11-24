@@ -76,18 +76,6 @@ Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1, Lemma 5
 public theorem_wanted sq_sub_one_div_eight_eq_triangular (x : ℕ) (hx : Odd x) :
     ∃ k : ℕ, (x ^ 2 - 1) / 8 = Nat.polygonalNumber 3 k
 
-/-- **Sums of two polygonal numbers modulo an odd prime.** For a natural number $s > 3$ and a
-natural number $x$, let $P_s(x) = (s-2)\binom{x}{2} + x$ be the $x$-th $s$-gonal number. For
-every odd prime $p$ and every natural number $n > 0$ there are natural numbers $x, y > 0$ with
-$P_s(x) + P_s(y) \equiv n \pmod{p}$.
-
-Source: Sai Teja Somu and Duc Van Khanh Tran, *On Sums of Practical Numbers and Polygonal
-Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1, Lemma 6
-(arXiv Lemma 4.1; `jis-2024-24.5.1-lem-6`). -/
-public theorem_wanted exists_polygonal_add_polygonal_modEq_prime (p n s : ℕ) (hp : p.Prime)
-    (hp2 : p ≠ 2) (hn : 0 < n) (hs : 3 < s) :
-    ∃ x y : ℕ, 0 < x ∧ 0 < y ∧ Nat.polygonalNumber s x + Nat.polygonalNumber s y ≡ n [MOD p]
-
 /-- **Parity of sums of two polygonal numbers.** For a natural number $s > 3$ and a natural
 number $x$, let $P_s(x) = (s-2)\binom{x}{2} + x$ be the $x$-th $s$-gonal number. For every
 natural number $n > 0$ there are natural numbers $x, y > 0$ such that
@@ -129,30 +117,6 @@ public theorem_wanted exists_prime_polygonal_add_polygonal_modEq_prime_pow (s : 
     (hs : 3 < s) :
     ∃ p : ℕ, p.Prime ∧ p % 4 = 1 ∧ ¬ p ∣ s - 2 ∧ ∀ k n : ℕ, 0 < k → 0 < n →
       ∃ x y : ℕ, 0 < x ∧ 0 < y ∧ Nat.polygonalNumber s x + Nat.polygonalNumber s y ≡ n [MOD p ^ k]
-
-/-- **Quadratic upper bound for polygonal numbers.** For a natural number $s > 3$ and a natural
-number $x$, let $P_s(x) = (s-2)\binom{x}{2} + x$ be the $x$-th $s$-gonal number. For every natural
-number $c$ there is a natural number $A$ such that $2 P_s(2cx) \le A x^2$ for every natural
-number $x \ge 1$.
-
-The paper states this only for one specific prime $c$, the prime chosen in Lemma 9 (arXiv
-Lemma 4.4), and for real $x$; here $c$ is an arbitrary natural number and $x$ is a natural number.
-
-Source: Sai Teja Somu and Duc Van Khanh Tran, *On Sums of Practical Numbers and Polygonal
-Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1, Lemma 10
-(arXiv Lemma 4.5; `jis-2024-24.5.1-lem-10`). -/
-public theorem_wanted exists_two_polygonal_two_mul_le_mul_sq (s c : ℕ) (hs : 3 < s) :
-    ∃ A : ℕ, ∀ x : ℕ, 1 ≤ x → 2 * Nat.polygonalNumber s (2 * c * x) ≤ A * x ^ 2
-
-/-- **Practical numbers divisible by neither 3 nor 4.** If $q$ is a practical number that is
-divisible by neither $3$ nor $4$, then $q = 1$ or $q = 2$.
-
-Source: Sai Teja Somu and Duc Van Khanh Tran, *On Sums of Practical Numbers and Polygonal
-Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1, Lemma 11
-(arXiv Lemma 4.6; `jis-2024-24.5.1-lem-11`). -/
-public theorem_wanted isPracticalNumber_eq_one_or_two (q : ℕ) (hq : IsPracticalNumber q)
-    (h3 : ¬ 3 ∣ q) (h4 : ¬ 4 ∣ q) :
-    q = 1 ∨ q = 2
 
 /-- **Exceptions to sums of a practical number and polygonal numbers.** (a) Let $s \ge 3$ with
 $s \equiv 0$ or $s \equiv 4 \pmod{12}$. Then there are infinitely many positive integers $n$ that

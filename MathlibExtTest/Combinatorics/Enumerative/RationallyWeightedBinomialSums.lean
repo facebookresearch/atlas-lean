@@ -49,4 +49,35 @@ example (n : ℕ) :
   push_cast at h
   exact_mod_cast h
 
+-- The inverse-square sum is empty at zero.
+example : ∑ k ∈ Finset.Icc 1 0, (-1 : ℚ) ^ (k - 1) * (0 : ℕ).choose k / (k : ℚ) ^ 2 = 0 := by
+  rw [sum_neg_one_pow_choose_div_sq_eq_sum_harmonic]
+  simp
+
+-- At two the first negative term contributes, giving 2 - 1/4 = 7/4.
+example : ∑ k ∈ Finset.Icc 1 2, (-1 : ℚ) ^ (k - 1) * (2 : ℕ).choose k / (k : ℚ) ^ 2 = 7 / 4 := by
+  rw [sum_neg_one_pow_choose_div_sq_eq_sum_harmonic]
+  rw [show Finset.Icc 1 2 = {1, 2} from by decide]
+  norm_num [harmonic, Finset.sum_range_succ]
+
+-- Exponent zero recovers the unweighted sum, including the zero-index term.
+example (N : ℕ) : ∑ k ∈ Finset.range (N + 1), N.choose k * Nat.fib k = Nat.fib (2 * N) := by
+  simpa using sum_pow_mul_choose_mul_fib N 0
+
+-- At exponent five in row two, the falling factorials above order two vanish.
+example : ∑ k ∈ Finset.range (2 + 1), k ^ 5 * (2 : ℕ).choose k * Nat.fib k = 34 :=
+  (sum_pow_mul_choose_mul_fib 2 5).trans (by decide)
+
+-- The first-power sum is empty in row zero.
+example : ∑ k ∈ Finset.Icc 1 0, k * (0 : ℕ).choose k * Nat.fib k = 0 :=
+  (sum_pow_mul_choose_mul_fib_small 0).1.trans (by decide)
+
+-- In row one the higher falling factorials vanish, including those with truncated indices.
+example : ∑ k ∈ Finset.Icc 1 1, k ^ 4 * (1 : ℕ).choose k * Nat.fib k = 1 :=
+  (sum_pow_mul_choose_mul_fib_small 1).2.2.2.trans (by decide)
+
+-- Row four is the first where all four terms of the fourth-power formula contribute.
+example : ∑ k ∈ Finset.Icc 1 4, k ^ 4 * (4 : ℕ).choose k * Nat.fib k = 1516 :=
+  (sum_pow_mul_choose_mul_fib_small 4).2.2.2.trans (by decide)
+
 end MathlibExtTest.RationallyWeightedBinomialSums

@@ -30,6 +30,8 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+public import MathlibExt.Combinatorics.BridgeTorchTwo
+public import MathlibExt.Combinatorics.BridgeTorchWeights
 
 set_option autoImplicit false
 
@@ -40,104 +42,6 @@ namespace BridgeTorchGeneralizations
 @[expose] public section
 
 open Finset
-
-/-- **Weights of the capacity-3 lower bound.** The rational weights $y_i$ are
-$y_1 = y_2 = y_3 = 0$, $y_4 = 2$, $y_5 = 4$, $y_6 = 5$, and $y_i = (4i - 8)/3$ for $i \ge 7$.
-The value $y_0$ is unused and set to $0$.
-
-Source: Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge
-and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
-Lemma 15. -/
-def bridgeWeight : ℕ → ℚ
-  | 0 | 1 | 2 | 3 => 0
-  | 4 => 2
-  | 5 => 4
-  | 6 => 5
-  | i + 7 => (4 * ((i + 7 : ℕ) : ℚ) - 8) / 3
-
-/-- **First seven weights of the capacity-3 lower bound.** The weights $y_1, \dots, y_7$ of the
-capacity-3 lower bound are $0, 0, 0, 2, 4, 5, 20/3$.
-
-Source: Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge
-and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
-Lemma 15. -/
-theorem bridgeWeight_small :
-    bridgeWeight 1 = 0 ∧ bridgeWeight 2 = 0 ∧ bridgeWeight 3 = 0 ∧ bridgeWeight 4 = 2 ∧
-      bridgeWeight 5 = 4 ∧ bridgeWeight 6 = 5 ∧ bridgeWeight 7 = 20 / 3 := by
-  refine ⟨rfl, rfl, rfl, rfl, rfl, rfl, ?_⟩
-  simp only [bridgeWeight]
-  norm_num
-
-/-- **Weights of the capacity-3 lower bound from $7$ on.** For every natural number $i \ge 7$,
-the weight $y_i$ of the capacity-3 lower bound equals $(4i - 8)/3$.
-
-Source: Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge
-and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
-Lemma 15. -/
-theorem bridgeWeight_of_seven_le (i : ℕ) (hi : 7 ≤ i) :
-    bridgeWeight i = (4 * (i : ℚ) - 8) / 3 := by
-  obtain ⟨j, rfl⟩ := Nat.exists_eq_add_of_le' hi
-  rfl
-
-/-- **Valid crossing sequences from a state of the bridge and torch problem.** Let $c$ be a
-natural number and let $P$ and $L$ be finite sets of natural numbers, the people and the left
-bank. Whether a finite sequence $A_1, \dots, A_k$ of finite sets of natural numbers (the
-crossings) is valid from the left bank $L$ with the torch on a given side is defined by recursion
-on $k$. The empty sequence is valid exactly when $L = \emptyset$ and the torch is on the right.
-With the torch on the left, the sequence is valid when $A_1$ is a nonempty subset of $L$ with at
-most $c$ elements and $A_2, \dots, A_k$ is valid from the left bank $L \setminus A_1$ with the
-torch on the right. With the torch on the right, it is valid when $A_1$ is a nonempty subset of
-$P \setminus L$ with at most $c$ elements and $A_2, \dots, A_k$ is valid from the left bank
-$L \cup A_1$ with the torch on the left.
-
-Source: Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge
-and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
-proof of Theorem 1 (states and moves) and Section 3 (capacity `c`). -/
-def bridgeScheduleFrom (c : ℕ) (P : Finset ℕ) : Finset ℕ → Bool → List (Finset ℕ) → Bool
-  | L, torchLeft, [] => decide (L = ∅) && !torchLeft
-  | L, true, A :: σ =>
-      decide (A.Nonempty ∧ A.card ≤ c ∧ A ⊆ L) && bridgeScheduleFrom c P (L \ A) false σ
-  | L, false, A :: σ =>
-      decide (A.Nonempty ∧ A.card ≤ c ∧ A ⊆ P \ L) && bridgeScheduleFrom c P (L ∪ A) true σ
-
-/-- **Bridge schedules.** Let $c$ and $n$ be natural numbers. A finite sequence $\sigma$ of finite
-sets of natural numbers (the crossings) is a schedule for the people $1, \dots, n$ on a bridge of
-capacity $c$ with one torch when the following holds. Start with all of $1, \dots, n$ and the
-torch on the left bank. The crossings at even positions (counting from $0$) are forward moves:
-each is a nonempty set of at most $c$ people then on the left bank, who cross with the torch to
-the right bank. The crossings at odd positions are returns: each is a nonempty set of at most $c$
-people then on the right bank, who cross with the torch back to the left bank. After the last
-crossing the left bank is empty and the torch is on the right bank.
-
-Source: Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge
-and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
-proof of Theorem 1 and Section 3. -/
-def IsBridgeSchedule (c n : ℕ) (σ : List (Finset ℕ)) : Prop :=
-  bridgeScheduleFrom c (Finset.Icc 1 n) (Finset.Icc 1 n) true σ = true
-
-/-- **Total time of a schedule.** For a finite sequence $\sigma = (A_1, \dots, A_k)$ of finite sets
-of natural numbers (the crossings), the total time of $\sigma$ is $\sum_{i=1}^{k} \max A_i$, where
-$\max \emptyset = 0$. Since person $p$ has crossing time $p$, each crossing costs the largest
-crossing time among the people in it.
-
-Source: Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge
-and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
-proof of Theorem 1. -/
-def scheduleCost (σ : List (Finset ℕ)) : ℕ :=
-  (σ.map fun A => A.sup id).sum
-
-/-- **Optimal crossing time of the bridge and torch problem.** For a bridge of capacity $c$ and
-$n$ people $1, \dots, n$, where person $i$ has crossing time $i$, the optimal crossing time is
-the least total time of a complete schedule with one torch; the total time of a schedule is the
-sum, over its crossings, of the largest crossing time among the people in that crossing. It is
-written $T(n)$ for $c = 2$ and $T_3(n)$ for $c = 3$. If no complete schedule exists (for
-example when $n = 0$), the value is $0$.
-
-Source: Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge
-and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
-Theorem 1 and Theorem 12. -/
-noncomputable def bridgeTime (c n : ℕ) : ℕ :=
-  sInf {t | ∃ σ, IsBridgeSchedule c n σ ∧ scheduleCost σ = t}
 
 /-- **Forward crossings.** The forward crossings of a list of crossings are its entries at the
 even positions $0, 2, 4, \dots$ (counting from $0$), in their original order. For a schedule
@@ -175,18 +79,6 @@ and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
 Lemma 9. -/
 def rightBank (n : ℕ) (τ : List (Finset ℕ)) : Finset ℕ :=
   (Finset.Icc 1 n).filter fun p => Odd (τ.countP fun A => decide (p ∈ A))
-
-/-- **Every schedule bounds the optimal time.** For all natural numbers $c$ and $n$ and every
-complete schedule $\sigma$ for the people $1, \dots, n$ on a bridge of capacity $c$ with one
-torch, the optimal crossing time of these $n$ people on this bridge is at most the total time
-of $\sigma$.
-
-Source: Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge
-and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
-Theorem 1 (definition of `T(n)`). -/
-theorem bridgeTime_le_scheduleCost {c n : ℕ} {σ : List (Finset ℕ)}
-    (hσ : IsBridgeSchedule c n σ) : bridgeTime c n ≤ scheduleCost σ :=
-  Nat.sInf_le ⟨σ, hσ, rfl⟩
 
 /-- **A four-person schedule of total time 11.** For the people $1, 2, 3, 4$ on a bridge of
 capacity $2$, the crossings $\{1,2\}$ forward, $\{1\}$ back, $\{1,3\}$ forward, $\{1\}$ back,
@@ -241,18 +133,6 @@ public theorem_wanted parity_interpolation (f g a : ℕ → ℝ)
     (heven : ∀ m, a (2 * m) = f m) (hodd : ∀ m, a (2 * m + 1) = g m) (n : ℕ) :
     a n = (1 + (-1 : ℝ) ^ n) / 2 * f (n / 2) + (1 - (-1 : ℝ) ^ n) / 2 * g (n / 2)
 
-/-- **Local inequality for the capacity-3 weights.** Let $y_i$ be the weights of the capacity-3
-lower bound. For every nonempty set $T$ of positive integers with $|T| \le 3$,
-$$\sum_{i \in T} y_i + \frac{9}{2}(|T| - 1) \le \max T + \sum_{i \in T} i.$$
-
-Source: Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge
-and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
-Lemma 15 (`jis-2026-26.5.6-lem-15`). -/
-public theorem_wanted bridgeWeight_local_inequality (T : Finset ℕ) (hT : T.Nonempty)
-    (hT3 : T.card ≤ 3) (hpos : 0 ∉ T) :
-    (∑ i ∈ T, bridgeWeight i) + 9 / 2 * ((T.card : ℚ) - 1) ≤
-      ((T.max' hT : ℕ) : ℚ) + ∑ i ∈ T, (i : ℚ)
-
 /-- **Return inequality for the capacity-3 weights.** Let $y_i$ be the weights of the capacity-3
 lower bound. For every nonempty set $R$ of positive integers with $|R| \le 3$,
 $$\frac{9}{2}(|R| - 1) + \max R + \sum_{i \in R} (y_i - i) \ge 0.$$
@@ -281,16 +161,6 @@ public theorem_wanted closedForm_U_integral_and_near_V (n : ℕ) (hn : 7 ≤ n) 
       ((n : ℝ) ^ 2 / 6 + 2 * n - 181 / 36 + (-1 : ℝ) ^ n / 4 -
           2 / 9 * Real.cos (2 * n * Real.pi / 3)) - ((n : ℝ) ^ 2 / 6 + 2 * n - 11 / 2) < 1
 
-
-/-- **Closed form for capacity two.** Let $T(n)$ be the optimal crossing time of $n$ people with
-crossing times $1, \dots, n$ on a bridge of capacity $2$ with one torch. For every $n \ge 2$,
-$$T(n) = \frac{n^2}{4} + 3n - 5 + \frac{(-1)^n - 1}{8}.$$
-
-Source: Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge
-and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
-Theorem 1 (`jis-2026-26.5.6-thm-1`). -/
-public theorem_wanted bridgeTime_two_closed_form (n : ℕ) (hn : 2 ≤ n) :
-    (bridgeTime 2 n : ℝ) = (n : ℝ) ^ 2 / 4 + 3 * n - 5 + ((-1 : ℝ) ^ n - 1) / 8
 
 /-- **Fewest crossings of the fastest person in an optimal schedule.** For bridge capacity $2$
 and $n \ge 1$ people $1, \dots, n$ (person $i$ has crossing time $i$), the least number $a(n)$
@@ -603,7 +473,8 @@ def starRunFrom {n k : ℕ} :
     (Fin n → Option (Fin k)) → (Option (Fin k) → ℕ) → List (List (StarMove n k)) → Bool
   | pos, _, [] => decide (∀ p, (pos p).isSome)
   | pos, tor, step :: σ =>
-      decide (IsStarStep pos tor step) && starRunFrom (starStepPos pos step) (starStepTorch tor step) σ
+      decide (IsStarStep pos tor step) &&
+        starRunFrom (starStepPos pos step) (starStepTorch tor step) σ
 
 /-- **Star schedules.** Consider the star model on the star graph $\mathcal{S}(k)$, which has a
 center and $k$ leaves, with $n$ persons and $t$ torches. A finite list $\sigma$ of parallel steps

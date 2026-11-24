@@ -15,6 +15,7 @@ public import Mathlib.Analysis.Asymptotics.Defs
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Data.Nat.Factorization.Basic
 public import Mathlib.Topology.Algebra.InfiniteSum.Defs
+public import MathlibExt.NumberTheory.ArithmeticFunction.HyperbolicFloorSum
 
 /-! # Hyperbolic sums of arithmetic functions at the integer part
 
