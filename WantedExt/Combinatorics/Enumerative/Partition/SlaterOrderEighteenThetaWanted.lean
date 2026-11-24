@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.Analysis.SpecialFunctions.QPochhammer
+public import MathlibExt.NumberTheory.ModularForms.JacobiTheta.NonicProduct
 public import MathlibExt.NumberTheory.ModularForms.JacobiTheta.RamanujanProductDifference
 
 /-!
@@ -64,20 +65,6 @@ INTEGERS 24 (2024), Article A103, Lemma 3, Equation (9) (`integers-2024-A103-lem
 public theorem_wanted ramanujanTheta_one_five {q : ℂ} (hq : ‖q‖ < 1) :
     ramanujanThetaRaw q (q ^ 5) =
       qPochhammerInfRaw (-q) (q ^ 2) * ramanujanThetaRaw (-q ^ 3) ((-q ^ 3) ^ 3)
-
-/-- **Product of the nonic theta functions.** Let
-$f(a,b) = \sum_{n \in \mathbb{Z}} a^{n(n+1)/2} b^{n(n-1)/2}$ be Ramanujan's theta function and
-write $f(-x) = f(-x,-x^2)$. For every complex number $q$ with $|q| < 1$,
-$f(-q,-q^8) f(-q^2,-q^7) f(-q^4,-q^5) f(-q^3) = f(-q) f(-q^9)^3$, that is,
-$f(-q,-q^8) f(-q^2,-q^7) f(-q^4,-q^5) = f(-q) f^3(-q^9)/f(-q^3)$ with the denominator cleared.
-
-Source: A. Vanitha, M. P. Chaudhary, and Madiha Khanum, *Modular Relations for the
-Rogers-Ramanujan-Slater Type Functions of Order Eighteen with Applications to Partitions*,
-INTEGERS 24 (2024), Article A103, Lemma 4, Equation (10) (`integers-2024-A103-lem-4`). -/
-public theorem_wanted ramanujanTheta_order_nine_product {q : ℂ} (hq : ‖q‖ < 1) :
-    ramanujanThetaRaw (-q) (-q ^ 8) * ramanujanThetaRaw (-q ^ 2) (-q ^ 7) *
-        ramanujanThetaRaw (-q ^ 4) (-q ^ 5) * ramanujanThetaRaw (-q ^ 3) (-(q ^ 3) ^ 2) =
-      ramanujanThetaRaw (-q) (-q ^ 2) * ramanujanThetaRaw (-q ^ 9) (-(q ^ 9) ^ 2) ^ 3
 
 /-- **Ramanujan's theta function at $(q, q^2)$.** Let
 $f(a,b) = \sum_{n \in \mathbb{Z}} a^{n(n+1)/2} b^{n(n-1)/2}$ be Ramanujan's theta function and
