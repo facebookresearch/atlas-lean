@@ -68,6 +68,15 @@ worktree for optimization runs if preserving a developer's warm cache matters.
 Compatible modules share snapshot
 processes; failed groups fall back to singleton verification.
 
+During validation, a phase retains compilation-input derivations and the
+filesystem facts used to derive them. The facts are reread at native-command
+boundaries and phase close; shared dependencies are checked once per window.
+The retained data grows with both batch size and dependency-closure size.
+For broad Mathlib imports, start with `--batch-size 4` and measure memory before
+increasing it. More compiler threads and concurrent Lake jobs add to that memory
+budget. Independent optimizer workers need separate writable worktrees, package
+caches and output directories; do not modify their pinned inputs during a run.
+
 Two options set the concurrency of one invocation:
 
 | Option | Default | Effect |

@@ -13,6 +13,7 @@ arguments and environment it received.
 
 from __future__ import annotations
 
+import ast
 import contextlib
 import io
 import json
@@ -43,6 +44,17 @@ def saved_commands(output: Path) -> list[list[str]]:
     return commands
 
 
+def lean_thread_arguments(source: str) -> list[str]:
+    arguments = []
+    for node in ast.walk(ast.parse(source)):
+        if isinstance(node, ast.List):
+            for index, element in enumerate(node.elts):
+                if ast.unparse(element) == "str(tools.lean)":
+                    arguments.append(ast.unparse(node.elts[index + 1])
+                                     if index + 1 < len(node.elts) else "<missing>")
+    return arguments
+
+
 class ThreadArgumentTests(unittest.TestCase):
     def test_cli_rejects_invalid_counts_before_any_output_or_child(self) -> None:
         invalid = ("0", "-1", "01", "+2", " 2", "1.5", "abc", "", "\u0663", "1025", "99999999999")
@@ -67,11 +79,21 @@ class ThreadArgumentTests(unittest.TestCase):
         # Covers command sites the mocked runs below do not reach (private
         # imports, legacy and header helpers): no hardcoded thread count.
         source = Path(optimizer.__file__).read_text()
-        arguments = re.findall(r"str\(tools\.lean\),\s*([^,\]]+)", source)
+        arguments = lean_thread_arguments(source)
         self.assertGreaterEqual(len(arguments), 17)
         self.assertEqual(set(arguments), {"tools.lean_thread_argument"})
         self.assertIsNone(re.search(r"[\"']-j[0-9]", source))
         self.assertNotIn('LEAN_NUM_THREADS"] = "', source)
+
+    def test_command_scan_ignores_cache_keys_but_keeps_bad_or_missing_flags(self) -> None:
+        source = '''
+key = (str(tools.lean), tuple(sorted(tools.environment.items())))
+good = [str(tools.lean), tools.lean_thread_argument]
+bad = [str(tools.lean), "-j2"]
+missing = [str(tools.lean)]
+'''
+        self.assertEqual(lean_thread_arguments(source),
+                         ["tools.lean_thread_argument", repr("-j2"), "<missing>"])
 
     def test_cli_accepts_the_bounds(self) -> None:
         self.assertEqual(optimizer.thread_count_argument("1"), 1)

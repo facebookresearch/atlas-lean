@@ -27,7 +27,7 @@ import subprocess
 import sys
 import time
 from collections import Counter
-from collections.abc import Iterable, Iterator
+from collections.abc import Callable, Iterable, Iterator
 from contextlib import contextmanager
 from contextvars import ContextVar
 from copy import deepcopy
@@ -529,11 +529,69 @@ _guarded_inventory_canonical_paths: ContextVar[frozenset[Path]] = ContextVar(
     "guarded_inventory_canonical_paths", default=frozenset())
 
 
+# Filesystem facts read by a recorded whole-batch input derivation (see
+# `PreparedInputs`); `None` while nothing is being recorded.
+_recorded_input_facts: ContextVar[dict[tuple[str, str], object] | None] = ContextVar(
+    "recorded_input_facts", default=None)
+
+
+def read_input_fact(kind: str, path: Path) -> object:
+    if kind == "exists":
+        return path.exists()
+    if kind == "is_file":
+        return path.is_file()
+    if kind == "is_dir":
+        return path.is_dir()
+    if kind in ("resolve", "inventory_resolve"):
+        try:
+            return str(path.resolve() if kind == "resolve" else resolve_inventory_path(path))
+        except OSError as error:
+            return ("OSError", error.errno)
+    raise ValueError(f"Unknown compilation input fact: {kind}")
+
+
+def input_fact(kind: str, path: Path) -> object:
+    value = read_input_fact(kind, path)
+    facts = _recorded_input_facts.get()
+    if facts is not None and facts.setdefault((kind, str(path)), value) != value:
+        raise ValueError(f"Compilation input changed while its inputs were derived: {path}")
+    return value
+
+
+def fact_exists(path: Path) -> bool:
+    return cast(bool, input_fact("exists", path))
+
+
+def fact_is_file(path: Path) -> bool:
+    return cast(bool, input_fact("is_file", path))
+
+
+def fact_is_dir(path: Path) -> bool:
+    return cast(bool, input_fact("is_dir", path))
+
+
+def _resolved_fact(path: Path, value: object) -> Path:
+    if isinstance(value, tuple):
+        raise OSError(value[1], "Could not resolve compilation input path", str(path))
+    return Path(cast(str, value))
+
+
+def fact_resolve(path: Path) -> Path:
+    return _resolved_fact(path, input_fact("resolve", path))
+
+
+def fact_inventory_resolve(path: Path) -> Path:
+    return _resolved_fact(path, input_fact("inventory_resolve", path))
+
+
 def inventory_path_outside_output(path: Path, output_parts: tuple[str, ...]) -> bool:
-    if sys.platform == "linux" and path in _guarded_inventory_canonical_paths.get():
+    # A recorded derivation may be reused outside the guard that made a
+    # path canonical, so it records the real resolution instead.
+    if (sys.platform == "linux" and path in _guarded_inventory_canonical_paths.get() and
+            _recorded_input_facts.get() is None):
         resolved = path
     else:
-        resolved = resolve_inventory_path(path)
+        resolved = fact_inventory_resolve(path)
     return resolved.parts[:len(output_parts)] != output_parts
 
 
@@ -562,6 +620,7 @@ class Tools:
         default_factory=dict, compare=False, repr=False)
     validated_snapshot_groups: dict[str, dict[str, list[ValidatedSnapshotGroup]]] = field(
         default_factory=dict, compare=False, repr=False)
+    prepared_inputs: dict[str, PreparedInputs] = field(default_factory=dict, compare=False, repr=False)
     # Lake-manifest bytes pinned before Lake's environment is
     # captured (production `main` passes them in explicitly; other
     # callers pin at first derivation in `__post_init__`).
@@ -575,7 +634,7 @@ class Tools:
     def __post_init__(self) -> None:
         validate_thread_count("lean_threads", self.lean_threads)
         validate_thread_count("lake_jobs", self.lake_jobs)
-        object.__setattr__(self, "root", self.root.resolve())
+        object.__setattr__(self, "root", fact_resolve(self.root))
         roots = canonical_artifact_roots(self)
         library = standard_library_root(self)
         if library is not None:
@@ -598,6 +657,9 @@ class Tools:
 
     def run(self, argv: list[str], label: Path,
             environment: dict[str, str] | None = None) -> dict[str, object]:
+        prepared = self.prepared_inputs.get("phase")
+        if prepared is not None:
+            prepared.new_window()
         revalidate_analysis_inputs(self)
         child_environment = {**(self.environment if environment is None else environment),
                              "LEAN_NUM_THREADS": str(self.lake_jobs)}
@@ -610,6 +672,114 @@ class Tools:
             groups = self.validated_snapshot_groups.get("phase")
             if groups is not None:
                 groups.clear()
+            if prepared is not None:
+                prepared.new_window()
+
+
+class PreparedInputs:
+    """Phase-scoped reuse of whole-batch compilation input derivations.
+
+    Rechecking a shared Shake bundle rebuilds every member's compilation
+    input paths: optional-artifact probes, strict root selection, canonical
+    path resolution and namespace inventories over each dependency closure.
+    That cost scales with the whole batch and was paid before every native
+    command.
+
+    A derivation is stored with every filesystem fact it read
+    (`input_fact`, plus each namespace or library inventory as one fact
+    checked through its directory identities). It is reused only when each
+    of those facts, read again, still has its recorded value: the
+    derivation is deterministic in its key (setup metadata and the `Tools`
+    configuration) and those facts, so it would follow the same path and
+    return the same paths. Anything else derives again from scratch.
+
+    A fact read is shared only within one window. A window ends at every
+    native boundary, before the boundary's revalidation and after its
+    child, and before a phase's closing revalidation: the same points that
+    already drop the phase's validated bundles. File pins and inventory
+    directory identities from input manifests are deduplicated the same
+    way. Only saved-evidence validation in an open phase uses this object:
+    Shake bundle checks, boundary revalidation and saved candidates.
+    """
+
+    def __init__(self, tools: Tools) -> None:
+        self.tools = tools
+        self.derivations: dict[tuple[object, ...],
+                               tuple[tuple[str, ...], dict[tuple[str, str], object]]] = {}
+        self.window: dict[tuple[str, str], object] = {}
+
+    def new_window(self) -> None:
+        self.window.clear()
+
+    def fact(self, kind: str, path: str) -> object:
+        key = (kind, path)
+        if key not in self.window:
+            self.window[key] = self.read(kind, Path(path))
+        return self.window[key]
+
+    def read(self, kind: str, path: Path) -> object:
+        unreadable = object()
+        try:
+            if kind == "inventory":
+                cached = self.tools.library_inventories.get(path)
+                if cached is None:
+                    return unreadable
+                self.verify_directories(cached[1])
+                return cached[0]
+            if kind == "volatile":
+                return unreadable
+            return read_input_fact(kind, path)
+        except (OSError, RuntimeError, ValueError):
+            return unreadable
+
+    def derive(self, key: tuple[object, ...],
+               derivation: Callable[[], tuple[str, ...]]) -> tuple[str, ...]:
+        stored = self.derivations.pop(key, None)
+        if stored is not None and all(self.fact(kind, path) == value
+                                      for (kind, path), value in stored[1].items()):
+            self.derivations[key] = stored
+            return stored[0]
+        facts: dict[tuple[str, str], object] = {}
+        token = _recorded_input_facts.set(facts)
+        try:
+            result = derivation()
+        finally:
+            _recorded_input_facts.reset(token)
+        self.derivations[key] = (result, facts)
+        return result
+
+    def verify_pin(self, receipt: object) -> None:
+        key = ("pin", str(receipt.get("path"))) if isinstance(receipt, dict) else None
+        if key is not None and self.window.get(key) == receipt:
+            return
+        verify_file_pin(receipt, cache=self.tools.file_cache)
+        self.window[cast(tuple[str, str], key)] = dict(cast(dict[str, object], receipt))
+
+    def verify_directories(self, directories: dict[Path, SourceIdentity]) -> None:
+        for path, identity in directories.items():
+            key = ("identity", str(path))
+            if self.window.get(key) != identity:
+                if source_identity(path) != identity:
+                    raise ValueError(f"Compiler standard-library inventory changed: {path}")
+                self.window[key] = identity
+
+
+_active_prepared_inputs: ContextVar[PreparedInputs | None] = ContextVar(
+    "active_prepared_inputs", default=None)
+
+
+@contextmanager
+def using_prepared_inputs(tools: Tools) -> Iterator[None]:
+    token = _active_prepared_inputs.set(tools.prepared_inputs.get("phase"))
+    try:
+        yield
+    finally:
+        _active_prepared_inputs.reset(token)
+
+
+def active_prepared_inputs(tools: Tools | None) -> PreparedInputs | None:
+    prepared = _active_prepared_inputs.get()
+    return prepared if prepared is not None and tools is prepared.tools else None
 
 
 def bounded_lake_config(root: Path, lean_threads: int = DEFAULT_LEAN_THREADS) -> Path:
@@ -721,11 +891,11 @@ def setup_input_paths(metadata: dict[str, object], root: Path) -> tuple[str, ...
 
 
 def standard_library_root(tools: Tools) -> Path | None:
-    sysroot = Path(tools.environment.get("LEAN_SYSROOT", str(tools.lean.resolve().parent.parent)))
+    sysroot = Path(tools.environment.get("LEAN_SYSROOT", str(fact_resolve(tools.lean).parent.parent)))
     library = sysroot / "lib/lean"
-    if library in tools.library_inventories and not library.is_dir():
+    if library in tools.library_inventories and not fact_is_dir(library):
         raise ValueError("Compiler standard-library inventory changed")
-    return library if library.is_dir() else None
+    return library if fact_is_dir(library) else None
 
 
 def verify_library_directories(directories: dict[Path, SourceIdentity],
@@ -740,6 +910,27 @@ def verify_library_directories(directories: dict[Path, SourceIdentity],
 
 
 def standard_library_paths(library: Path, tools: Tools | None = None) -> tuple[str, ...]:
+    facts = _recorded_input_facts.get()
+    if facts is None:
+        return _standard_library_paths(library, tools)
+    # A recorded derivation keeps a whole inventory as one fact. Reading it
+    # again verifies its cached directory identities, exactly as this
+    # function does for a cached inventory; an uncached result is volatile.
+    token = _recorded_input_facts.set(None)
+    try:
+        result = _standard_library_paths(library, tools)
+    finally:
+        _recorded_input_facts.reset(token)
+    cached = tools.library_inventories.get(library) if tools is not None else None
+    if cached is not None and cached[0] == result:
+        if facts.setdefault(("inventory", str(library)), result) != result:
+            raise ValueError(f"Compilation input changed while its inputs were derived: {library}")
+    else:
+        facts[("volatile", str(library))] = object()
+    return result
+
+
+def _standard_library_paths(library: Path, tools: Tools | None = None) -> tuple[str, ...]:
     if not library.is_absolute() or not library.is_dir():
         raise ValueError("Saved compiler standard library is missing")
     cached = tools.library_inventories.get(library) if tools is not None else None
@@ -803,10 +994,10 @@ def full_import_artifacts(metadata: dict[str, object], root: Path) -> dict[str, 
                                           (".ir.sig", ".ir"))):
             prefix = (prefixes[index] or prefixes[1 - index]) if not groups[index] or prefixes[index] else None
             if prefix is not None:
-                if not groups[index] and not Path(prefix + suffixes[0]).exists():
+                if not groups[index] and not fact_exists(Path(prefix + suffixes[0])):
                     continue
                 groups[index] = list(dict.fromkeys([*groups[index],
-                    *(prefix + suffix for suffix in suffixes if Path(prefix + suffix).exists())]))
+                    *(prefix + suffix for suffix in suffixes if fact_exists(Path(prefix + suffix)))]))
                 if index == 0 and prefix + ".olean.private" in groups[index] and prefix + ".olean.server" not in groups[index]:
                     raise ValueError("Snapshot private input has no server artifact")
                 if index == 0 and prefix + ".olean.server" in groups[index] and prefix + ".olean.private" not in groups[index]:
@@ -824,7 +1015,7 @@ def selected_namespace_artifact_paths(metadata: dict[str, object], root: Path,
     # explicitly captured search root does not make its containing
     # directory a trusted namespace inventory.
     strict_roots = {
-        str(Path(candidate).resolve())
+        str(fact_resolve(Path(candidate)))
         for candidate in selected_artifact_roots(
             metadata, root, strict=True,
             search_roots=private_search_roots(tools) if tools is not None else ())
@@ -834,13 +1025,13 @@ def selected_namespace_artifact_paths(metadata: dict[str, object], root: Path,
         if not groups[0]:
             continue
         relative = private_module_olean_path(module)
-        path = resolve_inventory_path(Path(groups[0][0]))
+        path = fact_inventory_resolve(Path(groups[0][0]))
         if path.parts[-len(relative.parts):] != relative.parts:
             continue
         selected = path.parents[len(relative.parts) - 1]
         if str(selected) not in strict_roots:
             continue
-        if library is None or selected != resolve_inventory_path(library):
+        if library is None or selected != fact_inventory_resolve(library):
             namespaces.add(selected / private_module_components(module)[0])
     paths: set[str] = set()
     for namespace in namespaces:
@@ -850,14 +1041,14 @@ def selected_namespace_artifact_paths(metadata: dict[str, object], root: Path,
 
 def namespace_artifact_paths(namespace: Path, tools: Tools | None = None) -> set[str]:
     paths: set[str] = set()
-    if namespace.is_dir():
+    if fact_is_dir(namespace):
         paths.update(standard_library_paths(namespace, tools))
     for suffix in (".olean", ".olean.private", ".olean.server", ".ir", ".ir.sig", ".so", ".dylib"):
         path = Path(str(namespace) + suffix)
-        if path.is_file():
+        if fact_is_file(path):
             paths.add(str(path))
     if tools is not None:
-        output_parts = resolve_inventory_path(tools.output).parts
+        output_parts = fact_inventory_resolve(tools.output).parts
         paths = {path for path in paths
                  if inventory_path_outside_output(Path(path), output_parts)}
     return paths
@@ -997,9 +1188,9 @@ def computation_paths_without_output(tools: Tools) -> Tools:
     compilation/fallback/discovery surfaces keep using the original
     `tools` and reject trusted roots beneath real output.
     """
-    if tools.output.resolve() != tools.root.resolve():
+    if fact_resolve(tools.output) != fact_resolve(tools.root):
         return tools
-    placeholder = tools.root.resolve().parent / (tools.root.resolve().name + ".saved-fixture-no-output")
+    placeholder = fact_resolve(tools.root).parent / (fact_resolve(tools.root).name + ".saved-fixture-no-output")
     return Tools(
         tools.root, placeholder, tools.lake, tools.lean, tools.helpers,
         tools.environment, tools.timeout, tools.time_binary, tools.lake_config,
@@ -1008,11 +1199,30 @@ def computation_paths_without_output(tools: Tools) -> Tools:
         library_inventories=tools.library_inventories,
         validated_analysis_inputs=tools.validated_analysis_inputs,
         validated_snapshot_groups=tools.validated_snapshot_groups,
-        lake_manifest_bytes=tools.lake_manifest_bytes)
+        prepared_inputs=tools.prepared_inputs, lake_manifest_bytes=tools.lake_manifest_bytes)
 
 
 def compilation_input_paths(metadata: dict[str, object], root: Path,
                              library: Path | None, tools: Tools | None = None) -> tuple[str, ...]:
+    prepared = active_prepared_inputs(tools)
+    if prepared is None or tools is None:
+        return derive_compilation_input_paths(metadata, root, library, tools)
+    # The key holds every in-memory input of the derivation (capture the
+    # pinned manifest bytes first); everything else it reads is a recorded
+    # filesystem fact.
+    pinned_lake_manifest_bytes(tools)
+    try:
+        key = (json.dumps(metadata, sort_keys=True, ensure_ascii=False), str(root),
+               None if library is None else str(library), str(tools.root), str(tools.output),
+               str(tools.lean), tuple(sorted(tools.environment.items())),
+               tuple(sorted((str(path), raw) for path, raw in tools.lake_manifest_bytes.items())))
+    except (TypeError, ValueError):
+        return derive_compilation_input_paths(metadata, root, library, tools)
+    return prepared.derive(key, lambda: derive_compilation_input_paths(metadata, root, library, tools))
+
+
+def derive_compilation_input_paths(metadata: dict[str, object], root: Path,
+                                   library: Path | None, tools: Tools | None = None) -> tuple[str, ...]:
     path_tools = tools
     if tools is not None:
         path_tools = computation_paths_without_output(tools)
@@ -1058,11 +1268,18 @@ def verify_input_manifest(record: object, paths: tuple[str, ...], output: Path,
                 any(not isinstance(row, dict) or not isinstance(row.get("path"), str) for row in files) or
                 tuple(row["path"] for row in files) != paths):
             raise ValueError("Saved compilation input manifest has a different setup path set")
+    prepared = active_prepared_inputs(tools)
     for receipt in files:
-        verify_file_pin(receipt, cache=cache)
+        if prepared is None:
+            verify_file_pin(receipt, cache=cache)
+        else:
+            prepared.verify_pin(receipt)
     if tools is not None:
         for inventory_paths, directories in tools.library_inventories.values():
-            verify_library_directories(directories, inventory_paths)
+            if prepared is None:
+                verify_library_directories(directories, inventory_paths)
+            else:
+                prepared.verify_directories(directories)
         tools.input_manifests[paths] = (cast(dict[str, object], record), files)
     return files
 
@@ -1421,7 +1638,7 @@ def lake_package_artifact_roots(tools: Tools) -> set[Path]:
         if package_dir is None:
             continue
         try:
-            roots.add((package_dir / ".lake/build/lib/lean").resolve())
+            roots.add(fact_resolve(package_dir / ".lake/build/lib/lean"))
         except OSError:
             continue
     return roots
@@ -1451,15 +1668,15 @@ def canonical_artifact_roots(tools: Tools) -> list[Path]:
 
     def add(path: Path) -> None:
         try:
-            resolved = path.resolve()
+            resolved = fact_resolve(path)
         except OSError:
             return
-        if resolved.is_dir() and resolved not in result:
+        if fact_is_dir(resolved) and resolved not in result:
             result.append(resolved)
 
     def is_canonical(path: Path) -> bool:
         try:
-            resolved = path.resolve()
+            resolved = fact_resolve(path)
         except OSError:
             return False
         if resolved in manifest_roots:
@@ -1537,7 +1754,7 @@ def private_search_roots(tools: Tools) -> list[Path]:
         if not path.is_absolute():
             path = tools.root / path
         try:
-            resolved = path.resolve()
+            resolved = fact_resolve(path)
         except OSError:
             continue
         if resolved not in result:
@@ -1559,7 +1776,7 @@ def selected_artifact_roots(metadata: dict[str, object], root: Path,
     to a wholesale namespace inventory. The tolerant mode retains
     flat-artifact containment only for legacy discovery callers.
     """
-    explicit_search_roots = {str(Path(candidate).resolve()) for candidate in search_roots}
+    explicit_search_roots = {str(fact_resolve(Path(candidate))) for candidate in search_roots}
     roots: list[str] = []
     for module, groups in cast(dict[str, list[list[str]]], metadata.get("importArts", {})).items():
         if targets is not None and module in targets:
@@ -1570,7 +1787,7 @@ def selected_artifact_roots(metadata: dict[str, object], root: Path,
         path = Path(groups[0][0])
         if not path.is_absolute():
             path = root / path
-        path = path.resolve()
+        path = fact_resolve(path)
         if (strict and len(relative.parts) <= 1 and
                 str(path.parent) not in explicit_search_roots):
             continue
@@ -1609,23 +1826,23 @@ def ordered_trusted_roots(tools: Tools, selected_roots: list[str]) -> list[str]:
     order differs from its discovery order.
     """
     search = [str(path) for path in private_search_roots(tools)]
-    rank = {str(Path(root).resolve()) for root in search}
+    rank = {str(fact_resolve(Path(root))) for root in search}
     canonical = canonical_artifact_roots(tools)
     library = standard_library_root(tools)
-    trusted: set[str] = {str(Path(root).resolve()) for root in selected_roots}
+    trusted: set[str] = {str(fact_resolve(Path(root))) for root in selected_roots}
     for path in canonical:
-        trusted.add(str(path.resolve()))
+        trusted.add(str(fact_resolve(path)))
     if library is not None:
-        trusted.add(str(library.resolve()))
+        trusted.add(str(fact_resolve(library)))
     ordered: list[str] = []
     for root in search:
-        if str(Path(root).resolve()) in trusted and root not in ordered:
+        if str(fact_resolve(Path(root))) in trusted and root not in ordered:
             ordered.append(root)
-    extra = [root for root in selected_roots if str(Path(root).resolve()) not in rank]
+    extra = [root for root in selected_roots if str(fact_resolve(Path(root))) not in rank]
     extra += [str(path) for path in canonical
-              if str(path.resolve()) not in rank and str(path) not in extra]
-    if library is not None and str(library.resolve()) not in rank:
-        extra.append(str(library.resolve()))
+              if str(fact_resolve(path)) not in rank and str(path) not in extra]
+    if library is not None and str(fact_resolve(library)) not in rank:
+        extra.append(str(fact_resolve(library)))
     for root in extra:
         if root not in ordered:
             ordered.append(root)
@@ -1645,10 +1862,10 @@ def reject_output_nested_in_roots(tools: Tools, roots: Iterable[Path | str],
     consumed artifacts could never have been pinned. Reject both
     directions before compilation, fallback pinning, or discovery.
     """
-    output = tools.output.resolve()
+    output = fact_resolve(tools.output)
     for root in roots:
         try:
-            resolved = Path(root).resolve()
+            resolved = fact_resolve(Path(root))
         except OSError:
             continue
         if output == resolved or output.is_relative_to(resolved):
@@ -3316,6 +3533,17 @@ def snapshot_batch(tools: Tools, rows: list[dict[str, object]], artifact_root: P
 
 def verify_saved_candidate(result: dict[str, object], output: Path,
                            tools: Tools | None = None) -> None:
+    # Both arms and the snapshot evidence re-derive the inputs of the
+    # bundle's own setup; inside a phase they share its derivations.
+    if tools is None:
+        _verify_saved_candidate(result, output, tools)
+        return
+    with using_prepared_inputs(tools):
+        _verify_saved_candidate(result, output, tools)
+
+
+def _verify_saved_candidate(result: dict[str, object], output: Path,
+                            tools: Tools | None = None) -> None:
     if tools is None or tools.output != output:
         raise ValueError("Saved candidates require their complete validation tools")
     directory = Path(str(result["attempt_directory"])).resolve()
@@ -3533,7 +3761,9 @@ def check_shake_inputs(tools: Tools, inputs: object) -> list[dict[str, object]]:
     if len({row["module"] for row in rows}) != len(rows):
         raise ValueError("Saved Shake inputs contain duplicate module identities")
     validate_inventory_sources(tools.root, rows, tools.file_cache)
-    if analysis_inputs(tools, rows) != inputs:
+    with using_prepared_inputs(tools):
+        current = analysis_inputs(tools, rows)
+    if current != inputs:
         raise ValueError("Saved Shake proposal inputs changed")
     return rows
 
@@ -3551,6 +3781,11 @@ def verify_shake_inputs(tools: Tools, inputs: object) -> list[dict[str, object]]
 
 
 def revalidate_analysis_inputs(tools: Tools) -> None:
+    with using_prepared_inputs(tools):
+        _revalidate_analysis_inputs(tools)
+
+
+def _revalidate_analysis_inputs(tools: Tools) -> None:
     cached = tools.validated_analysis_inputs.get("phase")
     if cached is not None:
         tools.validated_analysis_inputs["phase"] = []
@@ -3570,14 +3805,17 @@ def analysis_validation_phase(tools: Tools) -> Iterator[None]:
         raise ValueError("Analysis validation phases may not nest")
     tools.validated_analysis_inputs["phase"] = []
     tools.validated_snapshot_groups["phase"] = {}
+    tools.prepared_inputs["phase"] = PreparedInputs(tools)
     try:
         yield
     finally:
         try:
+            tools.prepared_inputs["phase"].new_window()
             revalidate_analysis_inputs(tools)
         finally:
             tools.validated_analysis_inputs.pop("phase", None)
             tools.validated_snapshot_groups.pop("phase", None)
+            tools.prepared_inputs.pop("phase", None)
 
 
 def derive_snapshot_failure_error(tools: Tools, arms: dict[str, object]) -> str | None:
