@@ -26,6 +26,8 @@ and every real `x` (`MetaMathlibExt.IsCarlitzTypeWith`). Carlitz's `q`-polynomia
   Carlitz-type sequences is closed under four operations: `n q^x T_{n-1}(x)`,
   `q^{-x} T_{n+1}(x)/(n + 1)` (when `a_0 = 0`), `q^{-x} (T_n(x) + (q - 1) T_{n+1}(x))` and
   `n (T_{n-1}(x) + (q - 1) T_n(x))` are Carlitz-type, with explicit associated sequences.
+* `MetaMathlibExt.sum_qpow_mul_qBracket_pow` expresses the sum of `q^(rk) [k]^n` as a weighted
+  difference of values of a Carlitz-type sequence.
 * `MetaMathlibExt.sum_qpow_mul_qBracket_pow_eq_carlitzEta` evaluates the finite sum of
   `q^k [k]^{n-1}` as the difference of two values of the Carlitz polynomial divided by `n`.
 
@@ -287,6 +289,44 @@ public theorem qBracket.isCarlitzTypeWith_pow {q : ℝ} (hq0 : 0 < q) :
   refine sum_congr rfl fun k _ => ?_
   rw [mul_comm (k : ℝ) x, Real.rpow_mul_natCast hq0.le]
   ring
+
+/-- **Sums of $q^{rk} [k]^n$ via Carlitz-type sequences.** Let $q > 0$ with $q \ne 1$, let
+$[x] = (q^x - 1)/(q - 1)$, and let $r \ge 1$ be a natural number. Let $S_m(x)$
+($m \in \mathbb{N}$, $x \in \mathbb{R}$) be the Carlitz-type sequence with associated sequence
+$a_k = 1/((q - 1)[k + r])$, that is,
+$$S_m(x) = (q - 1)^{-m} \sum_{k=0}^{m} (-1)^{m-k} \binom{m}{k} a_k q^{kx}$$
+for all $m$ and all real $x$. Then for all natural numbers $n$ and $N$,
+$$\sum_{k=0}^{N-1} q^{rk} [k]^n = q^{rN} S_n(N) - S_n(0),$$
+where $0^0 = 1$.
+
+Source: Bakir Farhi, *q-Analogues of Sums of Consecutive Powers of Natural Numbers and Extended
+Carlitz q-Bernoulli Numbers and Polynomials*, INTEGERS 26 (2026), Article A85, Theorem 2.3
+(`integers-2026-A85-thm-2-3`). -/
+public theorem sum_qpow_mul_qBracket_pow (q : ℝ) (hq0 : 0 < q) (hq1 : q ≠ 1)
+    (r n N : ℕ) (hr : 0 < r) (S : ℕ → ℝ → ℝ)
+    (hS : IsCarlitzTypeWith q S fun k => 1 / ((q - 1) * qBracket q ((k + r : ℕ) : ℝ))) :
+    ∑ k ∈ range N, q ^ (r * k) * qBracket q k ^ n = q ^ (r * N) * S n N - S n 0 := by
+  have hcoeff (j : ℕ) :
+      1 / ((q - 1) * qBracket q ((j + r : ℕ) : ℝ)) * (q ^ j * q ^ r - 1) = 1 := by
+    have hpow : q ^ (j + r) ≠ 1 :=
+      fun h => hq1 ((pow_eq_one_iff_of_nonneg hq0.le (by omega)).mp h)
+    rw [qBracket, Real.rpow_natCast, ← pow_add]
+    field_simp [sub_ne_zero.mpr hq1, sub_ne_zero.mpr hpow]
+  -- The weighted forward difference cancels the denominator of each Carlitz coefficient.
+  have hdiff (x : ℝ) : q ^ r * S n (x + 1) - S n x = qBracket q x ^ n := by
+    refine Eq.trans ?_ (qBracket.isCarlitzTypeWith_pow hq0 n x).symm
+    rw [hS n (x + 1), hS n x, mul_left_comm (q ^ r), ← mul_sub, mul_sum,
+      ← sum_sub_distrib]
+    congr 1
+    refine sum_congr rfl fun j _ => ?_
+    simp only [mul_add, mul_one, Real.rpow_add hq0, Real.rpow_natCast]
+    linear_combination ((-1 : ℝ) ^ (n - j) * (n.choose j : ℝ) * q ^ ((j : ℝ) * x)) * hcoeff j
+  calc
+    _ = ∑ k ∈ range N, (q ^ (r * (k + 1)) * S n (k + 1 : ℕ) - q ^ (r * k) * S n k) := by
+      refine sum_congr rfl fun k _ => ?_
+      rw [Nat.cast_succ, ← hdiff, Nat.mul_succ, pow_add]
+      ring
+    _ = _ := by simpa using sum_range_sub (fun k : ℕ => q ^ (r * k) * S n k) N
 
 /-- **Carlitz $q$-polynomials $\eta_n$.** For real $q$, write $[y] = (q^y - 1)/(q - 1)$ and let
 $a_0 = 1$ and $a_k = k/[k]$ for $k \ge 1$. For natural $n$ and real $x$, Carlitz's $q$-polynomial

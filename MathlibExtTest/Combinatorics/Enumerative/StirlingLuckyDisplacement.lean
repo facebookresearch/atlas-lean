@@ -31,3 +31,10 @@ example : Odd 1 :=
 example : Odd 5 :=
   stirling_odd_of_lt_all_before 3 ![2, 3, 3, 2, 1, 1] (by unfold IsStirlingPermutation; decide)
     4 (by decide)
+
+-- The formula includes the empty parking lot.
+example : stirlingTotalDisplacement (n := 0) Fin.elim0 = 0 :=
+  stirlingTotalDisplacement_eq 0 Fin.elim0 (by simp [IsStirlingPermutation])
+
+-- In 332211 the first car takes spot 3 and the last car travels from spot 1 to spot 6.
+example : stirlingTotalDisplacement (n := 3) ![3, 3, 2, 2, 1, 1] = 9 := by decide
