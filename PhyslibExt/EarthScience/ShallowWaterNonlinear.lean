@@ -240,9 +240,9 @@ lemma shallow_water_conservative_rarefaction
     exact div_ne_zero (mul_ne_zero (mul_ne_zero two_ne_zero hB) hA) h9g'
 
 /-- Dry state rejected: at zero depth the equivalence fails, for every
-`g`. There are smooth fields with `h t x = 0` whose slice partials
-exist, which satisfy both conservative equations at `(t, x)`, but whose
-primitive momentum equation fails there. So the positive-depth
+`g`. There are fields with `h t x = 0` whose slice partials
+exist, which satisfy both conservative equations at `(t, x)`, but for which the
+two primitive equations do not both hold there. So the positive-depth
 admission of `shallow_water_conservative_iff_primitive` cannot be
 dropped. -/
 lemma exists_dry_conservative_not_primitive (g t x : ℝ) :
