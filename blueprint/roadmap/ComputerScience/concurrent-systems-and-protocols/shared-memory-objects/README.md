@@ -13,3 +13,4 @@
 - [Consensus number](consensus-number.md)
 - [Nontrivial read-modify-write registers solve two-process consensus](nontrivial-read-modify-write-registers-solve.md)
 - [The double-collect lemma](the-double-collect-lemma.md)
+- [Valency arguments for consensus](valency-arguments-for-consensus.md)
