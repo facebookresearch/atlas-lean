@@ -17,6 +17,7 @@ Approximation and interpolation of functions: Chebyshev equioscillation, best ap
 - [Lagrange interpolation](lagrange-interpolation/README.md)
 - [Low-rank matrix recovery](low-rank-matrix-recovery/README.md)
 - [Matching pursuit](matching-pursuit/README.md)
+- [Matrix Bernstein refinement](matrix-bernstein-refinement/README.md)
 - [Multivariate Bernstein conversion](multivariate-bernstein-conversion/README.md)
 - [Polynomial approximation with derivatives in several variables](polynomial-approximation-with-derivatives-in-sev/README.md)
 - [Sparse recovery by orthogonal matching pursuit](sparse-recovery-by-orthogonal-matching-pursuit/README.md)

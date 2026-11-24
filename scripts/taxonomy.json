@@ -11576,6 +11576,7 @@
   "MathlibExt/LinearAlgebra/LeftExact": {"to": "LinearAlgebra/linear-maps-and-duality", "title": "Exactness and the Hom functor"},
   "MathlibExt/LinearAlgebra/LinearMapInvariants": {"to": "LinearAlgebra/linear-maps-and-duality", "title": "Similarity invariants of linear maps"},
   "MathlibExt/LinearAlgebra/Matrix/Bernstein": {"to": "Analysis/approximation-theory", "title": "Bernstein bounds for polynomial matrices"},
+  "MathlibExt/LinearAlgebra/Matrix/BernsteinRefinement": {"to": "Analysis/approximation-theory", "title": "Matrix Bernstein refinement"},
   "MathlibExt/LinearAlgebra/Matrix/AdjMatrixPowWalk": {"to": "GraphTheory/algebraic-graph-theory", "title": "Walks and powers of the adjacency matrix"},
   "MathlibExt/LinearAlgebra/Matrix/BitSwap": {"to": "LinearAlgebra/determinants-and-matrix-identities", "title": "Decomposition of the bit-swap permutation matrix"},
   "MathlibExt/LinearAlgebra/Matrix/CarrollIdentity": {"to": "LinearAlgebra/determinants-and-matrix-identities", "title": "Desnanot–Jacobi identity"},
