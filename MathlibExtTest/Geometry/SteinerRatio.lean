@@ -33,4 +33,8 @@ example {V : Finset Plane} (hV : V.Nonempty) :
 example {V : Finset Plane} (hV : V.Nonempty) : 0 ≤ steinerLength V :=
   steinerLength_nonneg hV
 
+-- The proved upper bound remains available under its original qualified name.
+example : steinerRatioConstant ≤ Real.sqrt 3 / 2 :=
+  MathlibExt.Geometry.SteinerRatioWanted.gilbertPollakUpperBound_wanted
+
 end MathlibExtTest.SteinerRatio
