@@ -9,12 +9,12 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Analysis.Calculus.IteratedDeriv.Defs
 public import Mathlib.Analysis.SpecialFunctions.Gamma.Digamma
 public import Mathlib.Combinatorics.Enumerative.Stirling
 public import Mathlib.RingTheory.Binomial
 public import MathlibExt.Combinatorics.Enumerative.CentralBinomHarmonicSums
 public import MathlibExt.Combinatorics.Enumerative.RStirlingSecond
+public import MathlibExt.Combinatorics.Enumerative.StirlingSecondExpDeriv
 public import MathlibExt.NumberTheory.Harmonic.OddHarmonic
 
 /-!
@@ -125,30 +125,6 @@ public theorem_wanted centralBinomPowSum_harmonic_two_mul_recursion (n : ℕ) :
       centralBinomPowSum (fun k => harmonic (2 * k)) 1 n =
         1 / 9 * ((n.centralBinom : ℚ) / 4 ^ n) *
             (3 * n * (2 * n + 1) * harmonic (2 * n) - 4 * n ^ 2 + 7 * n + 3) - 1 / 3
-
-/-- **Stirling numbers from derivatives of powers of one minus the exponential.** For all natural
-numbers $k$, $r$ and $v$, write ${a \brace b}$ for the Stirling numbers of the second kind and
-${a \brace b}_v$ for the r-Stirling numbers of the second kind with parameter $v$, and use the
-convention $0^0 = 1$. Then the real functions $x \mapsto (1 - e^x)^k$ and
-$x \mapsto (1 - e^x)^k e^{vx}$ satisfy
-$$\frac{d^r}{dx^r} (1 - e^x)^k \Big|_{x=0} = \sum_{p=0}^{k} (-1)^p \binom{k}{p} p^r =
-(-1)^k k! {r \brace k}$$
-and
-$$\frac{d^r}{dx^r} (1 - e^x)^k e^{vx} \Big|_{x=0} = \sum_{p=0}^{k} (-1)^p \binom{k}{p} (v+p)^r =
-(-1)^k k! {r+v \brace k+v}_v.$$
-
-Source: Kunle Adegoke and Robert Frontczak, *Three Classes of Combinatorial Sums Involving
-Central Binomial Coefficients and Harmonic Numbers*, INTEGERS 26 (2026), Article A109,
-Lemma 1 (`integers-2026-A109-lem-1`). -/
-public theorem_wanted iteratedDeriv_one_sub_exp_pow (k r v : ℕ) :
-    (iteratedDeriv r (fun x : ℝ => (1 - Real.exp x) ^ k) 0 =
-        ∑ p ∈ range (k + 1), (-1 : ℝ) ^ p * (k.choose p : ℝ) * (p : ℝ) ^ r ∧
-      ∑ p ∈ range (k + 1), (-1 : ℝ) ^ p * (k.choose p : ℝ) * (p : ℝ) ^ r =
-        (-1) ^ k * k.factorial * (Nat.stirlingSecond r k : ℝ)) ∧
-    (iteratedDeriv r (fun x : ℝ => (1 - Real.exp x) ^ k * Real.exp (v * x)) 0 =
-        ∑ p ∈ range (k + 1), (-1 : ℝ) ^ p * (k.choose p : ℝ) * ((v + p : ℕ) : ℝ) ^ r ∧
-      ∑ p ∈ range (k + 1), (-1 : ℝ) ^ p * (k.choose p : ℝ) * ((v + p : ℕ) : ℝ) ^ r =
-        (-1) ^ k * k.factorial * (rStirlingSecond (r + v) (k + v) v : ℝ))
 
 /-- **Power sums of $\binom{t}{k}(H_t - H_{t-k})$ in r-Stirling form.** Let $t$ be a complex
 number that is not an integer. For complex $x$ write $\binom{x}{k} = x(x-1)\cdots(x-k+1)/k!$,
