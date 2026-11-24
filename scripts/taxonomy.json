@@ -11258,6 +11258,7 @@
   "MathlibExt/Combinatorics/SimpleGraph/Ramsey": {"to": "GraphTheory/graph-ramsey-theory", "title": "Graph Ramsey numbers"},
   "MathlibExt/Combinatorics/SimpleGraph/RamseyErdosLowerBound": {"to": "GraphTheory/graph-ramsey-theory", "title": "Graph Ramsey numbers"},
   "MathlibExt/Combinatorics/SimpleGraph/RamseyFiveFiveLowerBound": {"to": "GraphTheory/graph-ramsey-theory", "title": "Small Ramsey numbers"},
+  "MathlibExt/Combinatorics/SimpleGraph/RamseyThreeUpper": {"to": "GraphTheory/graph-ramsey-theory", "title": "Graph Ramsey numbers"},
   "MathlibExt/Combinatorics/SimpleGraph/RandomGraphIsolatedVertices": {"to": "GraphTheory/random-graphs", "title": "Connectivity threshold of random graphs"},
   "MathlibExt/Combinatorics/SimpleGraph/RandomGraphTriangleThreshold": {"to": "GraphTheory/random-graphs", "title": "Threshold for triangles"},
   "MathlibExt/Combinatorics/SimpleGraph/RankWidth": {"to": "GraphTheory/planar-graphs-and-minors", "title": "Rank-width and vertex-minors"},
