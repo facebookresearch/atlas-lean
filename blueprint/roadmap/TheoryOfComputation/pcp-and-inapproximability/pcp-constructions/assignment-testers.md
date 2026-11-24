@@ -3,7 +3,7 @@
 A *constraint graph* $G = \langle (V, E), \Sigma, \mathcal{C} \rangle$ has an undirected graph $(V, E)$ whose vertices are variables over the finite alphabet $\Sigma$, and a constraint
 $c(e) \subseteq \Sigma \times \Sigma$ on each edge. For an assignment $\sigma : V \to \Sigma$, $\mathrm{UNSAT}_\sigma(G)$ is the fraction of edges $(u, v)$ with $(\sigma(u), \sigma(v)) \notin c(e)$. For an
 assignment $a$ to Boolean variables $X$ and a set $S$ of such assignments, $\mathrm{rdist}(a, S)$ is the least fraction of variables on which $a$ differs from a member
-of $S$.
+of $S$, with the convention $\mathrm{rdist}(a, \emptyset) = 1$.
 
 An *assignment tester* with alphabet $\Sigma_0$ and rejection probability $\varepsilon > 0$ is an algorithm $P$ that maps each Boolean circuit $\Phi$ over variables $X$ to a
 constraint graph $G = \langle (V, E), \Sigma_0, \mathcal{C} \rangle$ with $V \supseteq X$, such that, writing $V' = V \setminus X$ and $\mathrm{SAT}(\Phi)$ for the satisfying assignments, for every

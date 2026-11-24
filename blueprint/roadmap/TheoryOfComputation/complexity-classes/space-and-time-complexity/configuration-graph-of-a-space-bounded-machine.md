@@ -9,7 +9,7 @@ deterministic and at most two if $M$ is nondeterministic.
 - After modifying $M$ to erase its work tapes before accepting, there is a single accepting configuration $C_{\mathrm{accept}}$, and $M$ accepts $x$ if and only if
   $G_{M,x}$ has a directed path from $C^x_{\mathrm{start}}$ to $C_{\mathrm{accept}}$.
 - If $M$ uses space $S(n)$, every vertex of $G_{M,x}$ is described by $c\,S(n)$ bits for a constant $c$ depending on $M$, so $G_{M,x}$ has at most $2^{c S(n)}$
-  vertices, and there is a CNF formula $\varphi_{M,x}$ of size $O(S(n))$ such that $\varphi_{M,x}(C, C') = 1$ exactly when $C$ and $C'$ encode neighboring configurations.
+  vertices, and given $x$, whether two strings of $c\,S(n)$ bits encode configurations $C$ and $C'$ with an edge from $C$ to $C'$ can be decided in space $O(S(n))$, by reading the input symbol under the input head of $C$ and checking one application of the transition function.
 
 ## Depends on
 

@@ -9,7 +9,7 @@ with $p(0) = v$, of which party $P_i$ holds $p(i)$. In the BGW protocol:
 - for a multiplication gate each party multiplies its shares locally, giving a point $q(i)$ on a polynomial $q = p_\alpha p_\beta$ of degree at most $2t$; each party
   shares $q(i)$ with threshold $t$, and the parties compute a threshold-$t$ sharing of $q(0)$ as the fixed linear (Lagrange) combination of these sharings,
   which requires $2t + 1 \le n$;
-- for an output wire every party broadcasts its share.
+- for an output wire every party sends its share to the party that receives that output, which reconstructs the value.
 
 Each wire then carries a threshold-$t$ sharing of its value, any $t$ shares reveal nothing about the shared value, and the protocol securely computes $f$
 against up to $t$ semi-honest corrupted parties whenever $2t < n$.

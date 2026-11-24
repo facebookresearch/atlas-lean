@@ -6,9 +6,7 @@ replaced by a call to $\pi$; for an ideal functionality $\mathcal{F}$, $\rho^{\m
 **Theorem (universal composition).** Let $\rho$, $\phi$ and $\pi$ be protocols such that $\phi$ is a sub-protocol of $\rho$ and $\pi$ UC-emulates $\phi$. Then $\rho^{\phi \to \pi}$ UC-emulates $\rho$.
 In particular, if $\pi$ UC-realizes $\mathcal{F}$ then $\rho^{\mathcal{F} \to \pi}$ UC-emulates $\rho$, and if $\rho$ UC-realizes $\mathcal{G}$ then so does $\rho^{\mathcal{F} \to \pi}$.
 
-Quantitatively, if $\pi$ UC-emulates $\phi$ with simulation overhead $\delta$ and emulation slack $\varepsilon$, then $\rho^{\phi \to \pi}$ UC-emulates $\rho$ with the same overhead and
-slack, so the theorem can be applied any number of times with linear growth of these parameters. This is the statement in Canetti's simplified
-presentation; in the general framework the theorem carries further conditions on how the protocols use their subroutines.
+This is the qualitative statement in Canetti's simplified presentation; in the general framework the theorem carries further conditions on how the protocols use their subroutines.
 
 ## Depends on
 
