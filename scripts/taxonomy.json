@@ -9752,6 +9752,7 @@
   "MathlibExt/Analysis/PDE/HeatKernelGradient": {"to": "Analysis/partial-differential-equations", "title": "Weighted heat gradient estimates"},
   "MathlibExt/Analysis/PDE/HeatDuhamelSeries": {"to": "Analysis/partial-differential-equations", "title": "Summation under heat integrals"},
   "MathlibExt/Analysis/PDE/PotentialHeatRegularity": {"to": "Analysis/partial-differential-equations", "title": "Potential-heat restart and spatial regularity"},
+  "MathlibExt/Analysis/PDE/PotentialHeatSpatial": {"to": "Analysis/partial-differential-equations", "title": "Potential-heat spatial bootstrap"},
   "MathlibExt/Analysis/PDE/PotentialHeatSeries": {"to": "Analysis/partial-differential-equations", "title": "Potential-heat Volterra construction"},
   "MathlibExt/Analysis/PDE/HeatDuhamelSmoothing": {"to": "Analysis/partial-differential-equations", "title": "Duhamel spatial smoothing"},
   "MathlibExt/Analysis/PDE/HeatSemigroup": {"to": "Analysis/partial-differential-equations", "title": "Heat semigroup and restart"},
