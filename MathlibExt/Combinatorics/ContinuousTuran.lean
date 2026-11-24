@@ -200,6 +200,26 @@ private theorem opxD_add_lt.volume_le_opxD {d : ℕ} {n : ℝ} {S P : Set (Fin d
   rintro _ ⟨T, ⟨_, hT, _⟩, rfl⟩
   exact measureReal_mono hT isCompact_Icc.measure_ne_top
 
+/-- **Higher-dimensional continuous Turán numbers are monotone under containment.** Let
+$P, Q \subseteq \mathbb{R}^d$. If $Q$ contains $P$, then
+$\mathrm{opx}(n, P, d) \le \mathrm{opx}(n, Q, d)$ for every real number $n$.
+
+Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Lemma 5.1
+(`integers-2024-A1-lem-5-1`). -/
+public theorem opxD_mono_of_containsPatternD {d : ℕ} (n : ℝ) {P Q : Set (Fin d → ℝ)}
+    (h : ContainsPatternD Q P) : opxD d n P ≤ opxD d n Q := by
+  apply Real.sSup_le _ (opxD_nonneg ..)
+  rintro _ ⟨S, ⟨hS, hSn, hfree⟩, rfl⟩
+  apply opxD_add_lt.volume_le_opxD hS hSn
+  rintro ⟨g, hg, hgS⟩
+  obtain ⟨f, hf, hfQ⟩ := h
+  apply hfree
+  refine ⟨fun i => g i ∘ f i, ?_, fun p hp => hgS _ (hfQ p hp)⟩
+  intro i p hp q hq hlt
+  have hgap := hf i p hp q hq hlt
+  have hlt' := sub_pos.mp ((sub_pos.mpr hlt).trans_le hgap)
+  exact hgap.trans (hg i _ (hfQ p hp) _ (hfQ q hq) hlt')
+
 /-- **Increment bound for the d-dimensional continuous Turán number.** Let $d \ge 2$ be a
 natural number, let $P \subseteq \mathbb{R}^d$, and let $n, \varepsilon$ be real numbers with
 $n > 0$ and $0 < \varepsilon < n$. Then the $d$-dimensional continuous Turán number
