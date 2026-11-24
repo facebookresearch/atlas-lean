@@ -19,8 +19,9 @@ import Mathlib.Order.Fin.Basic
 # Sumsets of sets of size `k`
 
 We describe the trivial elements of an iterated sumset, show that adjoining a new maximum
-preserves nontrivial sums, and compute the size of the sumset of an arithmetic progression
-with its penultimate term removed.
+preserves nontrivial sums, and bound their number when the final gap is a proper multiple of
+the preceding one. We also compute the size of the sumset of an arithmetic progression with its
+penultimate term removed.
 -/
 
 open scoped Pointwise
@@ -165,6 +166,102 @@ public theorem nsmul_sumset_erase_max_nontrivial
   cases j with
   | zero => exact Or.inl ⟨by omega, heq⟩
   | succ j => exact Or.inr ⟨j, h, by omega, le_rfl, by simpa using heq⟩
+
+namespace nontrivial_sumset_card_of_last_gap_eq_nsmul
+
+-- Replace one copy of the penultimate element by its predecessor in a last-pair sum.
+private theorem sub_gap_mem {G : Type*} [AddCommGroup G] [DecidableEq G] {A : Finset G}
+    {y b c : G} (hx : y - b ∈ A) (hy : y ∈ A) (hz : y + c ∈ A) (m e : ℕ) :
+    (m + e + 1) • y + e • c - b ∈ (m + e + 1) • A := by
+  have hsum : (m + e + 1) • y + e • c - b = m • y + e • (y + c) + (y - b) := by
+    rw [succ_nsmul, add_nsmul, nsmul_add]
+    simp [sub_eq_add_neg, add_assoc, add_left_comm, add_comm]
+  rw [hsum, succ_nsmul A, add_nsmul A]
+  exact Finset.add_mem_add
+    (Finset.add_mem_add (Finset.nsmul_mem_nsmul hy) (Finset.nsmul_mem_nsmul hz)) hx
+
+end nontrivial_sumset_card_of_last_gap_eq_nsmul
+
+/-- **Many nontrivial sums when the last gap is a proper multiple of the previous one.** Let $G$
+be a linearly ordered additive commutative group, let $h$ and $k \ge 4$ be natural numbers, and
+let $a_0, a_1, \ldots$ be a sequence in $G$ with $0 = a_0 < a_1 < \cdots < a_{k-3}$. Suppose
+that $a_{k-2} = a_{k-3} + b$ and $a_{k-1} = a_{k-3} + b + db$, where $b \in G$ satisfies
+$b > 0$ and $d > 1$ is an integer. Then at least $h - 1$ elements of the $h$-fold sumset
+$h\{a_0, \ldots, a_{k-1}\}$ (the set of sums of $h$ elements of $\{a_0, \ldots, a_{k-1}\}$)
+are not trivial elements of the $h$-fold sumset of $a_0, \ldots, a_{k-1}$.
+
+The paper's last gap $c$ is written as $db$ (its positivity follows). The paper takes $h > 1$;
+the bound is vacuous for $h \le 1$.
+
+Source: Vincent Schinina, *On the Sumset of Sets of Size k*, INTEGERS 26 (2026),
+Article A31, Theorem 2 (`integers-2026-A31-thm-2`; arXiv:2505.07679v2,
+Theorem 3.4). -/
+public theorem nontrivial_sumset_card_of_last_gap_eq_nsmul
+    {G : Type*} [AddCommGroup G] [LinearOrder G] [IsOrderedAddMonoid G]
+    (h k : ℕ) (hk : 4 ≤ k) (a : ℕ → G) (ha0 : a 0 = 0)
+    (ha : ∀ i, i + 1 ≤ k - 3 → a i < a (i + 1)) (b : G) (hb : 0 < b) (d : ℕ) (hd : 1 < d)
+    (hb' : a (k - 2) = a (k - 3) + b) (hc' : a (k - 1) = a (k - 3) + b + d • b) :
+    h - 1 ≤ (h • (Finset.range k).image a \ sumsetTrivialElements h k a).card := by
+  let y := a (k - 2)
+  let c := d • b
+  have hlast : a (k - 1) = y + c := by simpa only [y, hb'] using hc'
+  have hbc : b < c := by
+    calc b = (1 : ℕ) • b := (one_nsmul b).symm
+         _ < c := nsmul_left_strictMono hb hd
+  -- All elements before the last pair are bounded by its lower endpoint.
+  have hbound (j : ℕ) (hj : j ≤ k - 2) : a j ≤ y := by
+    induction hj using Nat.decreasingInduction with
+    | self => exact le_rfl
+    | of_succ j hj ih =>
+      by_cases h : j + 1 ≤ k - 3
+      · exact (ha j h).le.trans ih
+      · rw [show j = k - 3 by omega]
+        change a (k - 3) ≤ a (k - 2)
+        rw [hb']
+        exact le_add_of_nonneg_right hb.le
+  let lastSum (i : ℕ) := h • y + i • c
+  have hmono : StrictMono lastSum := (nsmul_left_strictMono (hb.trans hbc)).const_add _
+  have hstep (i : ℕ) : lastSum (i + 1) = lastSum i + c := by
+    simp [lastSum, succ_nsmul, add_assoc]
+  -- Each witness lies strictly inside its own interval between consecutive last-pair sums.
+  refine Finset.le_card_of_inj_on_range (fun i => lastSum (i + 1) - b) ?_ ?_
+  · intro i hi
+    refine Finset.mem_sdiff.mpr ⟨?_, ?_⟩
+    · have hmem (j : ℕ) (hj : j < k) : a j ∈ (Finset.range k).image a :=
+        Finset.mem_image_of_mem a (Finset.mem_range.mpr hj)
+      have hx : y - b = a (k - 3) := by simp [y, hb']
+      have hcount : h - (i + 2) + (i + 1) + 1 = h := by omega
+      simpa only [hcount, lastSum] using
+        nontrivial_sumset_card_of_last_gap_eq_nsmul.sub_gap_mem
+          (hx ▸ hmem (k - 3) (by omega)) (hmem (k - 2) (by omega))
+          (hlast ▸ hmem (k - 1) (by omega)) (h - (i + 2)) (i + 1)
+    · have hlo : lastSum i < lastSum (i + 1) - b := by
+        rw [lt_sub_iff_add_lt, hstep]
+        exact add_lt_add_right hbc _
+      have habove : h • y < lastSum (i + 1) - b := by
+        simpa [lastSum] using (hmono.monotone (Nat.zero_le i)).trans_lt hlo
+      intro htriv
+      rcases (mem_sumsetTrivialElements_iff _ _).mp htriv with ⟨_, heq⟩ | ⟨j, r, hj, hr, heq⟩
+      · apply habove.not_ge
+        rw [heq, ha0, nsmul_zero]
+        exact nsmul_nonneg (ha0 ▸ hbound 0 (by omega)) _
+      by_cases hprev : j + 1 ≤ k - 2
+      · apply habove.not_ge
+        calc
+          _ = _ := heq
+          _ ≤ (h - r) • y + r • y := add_le_add
+            (nsmul_le_nsmul_right (hbound j (by omega)) _)
+            (nsmul_le_nsmul_right (hbound _ hprev) _)
+          _ = _ := by rw [← add_nsmul, Nat.sub_add_cancel hr]
+      have hpair : lastSum (i + 1) - b = lastSum r := by
+        rw [heq, show j + 1 = k - 1 by omega, show j = k - 2 by omega, hlast]
+        change (h - r) • y + r • (y + c) = _
+        rw [nsmul_add, ← add_assoc, ← add_nsmul, Nat.sub_add_cancel hr]
+      rcases le_or_gt r i with hri | hri
+      · exact hlo.not_ge (hpair.trans_le (hmono.monotone hri))
+      · exact (sub_lt_self _ hb).not_ge (hpair ▸ hmono.monotone hri)
+  · intro i _ j _ heq
+    exact Nat.succ.inj (hmono.injective (sub_left_inj.mp heq))
 
 namespace card_nsmul_arithProg_skip_penultimate
 

@@ -121,26 +121,6 @@ public theorem_wanted accelZeck_conjecture17_le_five (n : ℕ)
     (hkn : 3 * k ≤ n) :
     AccelZeckLosing (Finsupp.single 3 k + Finsupp.single 1 (n - 3 * k))
 
-/-- **Unique losing move from $k$ copies of $F_2$ for odd $k$.** Let $k$ be odd and $n \ge 2k$,
-and suppose that for every $i < k$ with $3i \le n$ the state with $i$ copies of $F_3$,
-$n - 3i$ copies of $F_1$ and nothing else is losing. Then $n \ge 3k$; the state $T$ with $k$
-copies of $F_3$, $n - 3k$ copies of $F_1$ and nothing else is losing and is reached in one
-move from the state $S$ with $k$ copies of $F_2$, $n - 2k$ copies of $F_1$ and nothing else;
-and every losing state reached in one move from $S$ equals $T$.
-
-Source: Diego Garcia-Fernandezsesma, Steven J. Miller, Thomas Rascon, Risa Vandegrift, and
-Ajmain Yamin, *The Accelerated Zeckendorf Game*, The Fibonacci Quarterly 62 (2024), no. 1,
-Article milleretal04072023, Lemma 2.4. -/
-public theorem_wanted accelZeck_odd_unique_losing_move (k n : ℕ) (hk : Odd k) (hn : 2 * k ≤ n)
-    (hlose : ∀ i < k, 3 * i ≤ n →
-      AccelZeckLosing (Finsupp.single 3 i + Finsupp.single 1 (n - 3 * i))) :
-    3 * k ≤ n ∧
-      AccelZeckMove (Finsupp.single 2 k + Finsupp.single 1 (n - 2 * k))
-        (Finsupp.single 3 k + Finsupp.single 1 (n - 3 * k)) ∧
-      AccelZeckLosing (Finsupp.single 3 k + Finsupp.single 1 (n - 3 * k)) ∧
-      ∀ t, AccelZeckMove (Finsupp.single 2 k + Finsupp.single 1 (n - 2 * k)) t →
-        AccelZeckLosing t → t = Finsupp.single 3 k + Finsupp.single 1 (n - 3 * k)
-
 end
 
 end MetaMathlibExt

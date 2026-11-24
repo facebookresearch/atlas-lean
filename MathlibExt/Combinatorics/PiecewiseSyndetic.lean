@@ -18,7 +18,9 @@ public import Mathlib.Order.Lattice.Nat
 /-!
 # Piecewise syndetic sets in `ℕ^t`
 
-This module proves Brown’s dense color class lemma for lattice cubes. The definitions follow
+This module proves Brown’s dense color class lemma for lattice cubes, and its consequence that
+some color class is `d`-dense in a subcube of side `m > f(d)` inside a cube `[1, A]^t` whose
+size `A` depends only on `r`, `t` and `f` (Lemmas 1 and 2). The definitions follow
 Tom C. Brown, *Piecewise Syndetic Sets in `N^t` and `N^X`*,
 INTEGERS 24 (2024), Article A2.
 
@@ -164,6 +166,40 @@ theorem exists_subcube_isDenseInCubes_colorClass (t : ℕ) (m : ℕ → ℕ)
         exact ⟨hlo, Nat.le_of_lt_succ (lt_of_le_of_ne hhi hne)⟩
       obtain ⟨i, hi, a', hsub, hdense⟩ := ih b hc'
       exact ⟨i, ⟨hi.1, Nat.le_succ_of_le hi.2⟩, a', hsub.trans hb, hdense⟩
+
+/-- **A color class is dense in a large subcube (Brown, Lemma 2).** Let $r, t \in \mathbb{N}$ and
+let $f : \mathbb{N} \to \mathbb{N}$. There is $A \in \mathbb{N}$ such that for every coloring of
+$\mathbb{N}^t$ with $r$ colors there are natural numbers $d \ge 1$ and $m > f(d)$, a color $j$, and
+a subcube $M$ of side $m$ with $M \subseteq [1, A]^t$ in which the class of color $j$ is
+$d$-dense. Here $[1, A]^t$ is the set of points $x$ with $1 \le x_i \le A$ for every coordinate $i$.
+
+The paper's "(a smallest)" is omitted: it follows from existence. Only the restriction of the
+coloring to $[1, A]^t$ matters.
+
+Source: Tom C. Brown, *Piecewise Syndetic Sets in `N^t` and `N^X`*, INTEGERS 24
+(2024), Article A2, Lemma 2 (`integers-2024-A2-lem-2`). -/
+theorem exists_cube_bound_isDenseInCubes (r t : ℕ) (f : ℕ → ℕ) :
+    ∃ A : ℕ, ∀ c : (Fin t → ℕ) → Fin r, ∃ d m : ℕ, 1 ≤ d ∧ f d < m ∧ ∃ j : Fin r,
+      ∃ a : Fin t → ℕ, latticeCube a m ⊆ latticeCube (fun _ => 1) A ∧
+        IsDenseInCubes d {x | c x = j} (latticeCube a m) := by
+  -- The sides `1 = s 0 < s 1 < ⋯` for Lemma 1, chosen with `f (s i) < s (i + 1)`.
+  obtain ⟨s, hs0, hs⟩ : ∃ s : ℕ → ℕ, s 0 = 1 ∧ ∀ i, max (s i) (f (s i)) < s (i + 1) :=
+    ⟨fun i => Nat.rec 1 (fun _ k => max k (f k) + 1) i, rfl, fun _ => Nat.lt_succ_self _⟩
+  have hmono : StrictMono s :=
+    strictMono_nat_of_lt_succ fun i => (le_max_left _ _).trans_lt (hs i)
+  refine ⟨s r, fun c => ?_⟩
+  -- Recolor with the colors `1, …, r` of Lemma 1 and apply it to the cube `[1, s r]^t`.
+  obtain ⟨i, ⟨hi1, hir⟩, a, hsub, hdense⟩ :=
+    exists_subcube_isDenseInCubes_colorClass t s hs0 hmono r (fun _ => 1)
+      (fun x => (c x).val + 1) fun x _ => ⟨Nat.succ_pos _, (c x).isLt⟩
+  obtain ⟨k, rfl⟩ : ∃ k, i = k + 1 := ⟨i - 1, by omega⟩
+  refine ⟨s k, s (k + 1), hs0 ▸ hmono.monotone (Nat.zero_le k),
+    (le_max_right _ _).trans_lt (hs k), ⟨k, by omega⟩, a, hsub, ?_⟩
+  have hclass : {x | c x = (⟨k, by omega⟩ : Fin r)} = {x | (c x).val + 1 = k + 1} := by
+    ext x
+    simp [Fin.ext_iff]
+  rw [hclass]
+  simpa using hdense
 
 /-- **Gap size.** For a set $S \subseteq \mathbb{N}^t$, the gap size $\operatorname{gs}(S)$ is the
 least $d \ge 1$ such that $S$ is $d$-dense in some subcube of $\mathbb{N}^t$ that contains $S$. If

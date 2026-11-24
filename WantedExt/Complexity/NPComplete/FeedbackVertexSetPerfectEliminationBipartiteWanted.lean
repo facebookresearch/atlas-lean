@@ -23,7 +23,7 @@ bipartite (gc_122), problem Feedback vertex set: NP-complete [Liu 2014].
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Combinatorics.SimpleGraph.Acyclic
 public import Mathlib.Combinatorics.SimpleGraph.Bipartite
 public import MathlibExt.Computability.BinaryNatEncoding
