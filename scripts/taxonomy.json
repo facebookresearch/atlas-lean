@@ -12592,6 +12592,7 @@
   "MathlibExt/NumberTheory/QuadraticForms/ThreeSquares": {"to": "NumberTheory/quadratic-forms-sums-of-squares/sums-of-squares", "title": "Sums of three squares"},
   "MathlibExt/NumberTheory/QuadraticForms/ThreeSquaresLegendreRecursion": {"to": "NumberTheory/quadratic-forms-sums-of-squares/sums-of-squares", "title": "Sums of three squares"},
   "MathlibExt/NumberTheory/QuadraticGaussSumFive": {"to": "NumberTheory/exponential-sums", "title": "Quadratic Gauss sums"},
+  "MathlibExt/NumberTheory/QuadraticIrrationalCFClassification": {"to": "NumberTheory/continued-fractions-expansions", "title": "Continued fractions of quadratic irrationals"},
   "MathlibExt/NumberTheory/QuadraticIrrationalCFNonexistence": {"to": "NumberTheory/continued-fractions-expansions", "title": "Continued fractions of quadratic irrationals"},
   "MathlibExt/NumberTheory/QuadraticPackingPolynomials": {"to": "NumberTheory/quadratic-forms-sums-of-squares", "title": "Quadratic packing polynomials"},
   "MathlibExt/NumberTheory/RFibonacciPolynomial": {"to": "NumberTheory/linear-recurrences/fibonacci-polynomials", "title": "r-Fibonacci and r-Lucas polynomials"},
