@@ -23,3 +23,5 @@ The Weil representation and the theta correspondence for unitary dual pairs, loc
 - [Siegel–Weil formula for unitary groups in Weil's convergent range](siegel-weil-formula-convergent-range.md)
 - [Rallis inner product formula in Weil's convergent range](rallis-inner-product-formula.md)
 - [Doubling method and standard L-functions of unitary groups](doubling-method.md)
+- [Conservation relations for the local theta correspondence](conservation-relations-for-local-theta-correspondence.md)
+- [Poles of L-functions and nonvanishing of global theta lifts](poles-of-doubling-l-functions-and-nonvanishing-of-theta-lifts.md)

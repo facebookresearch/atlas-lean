@@ -55,8 +55,8 @@ namespace EarthScience
 
 
 set_option linter.unusedVariables false in
-/-- Planetary energy balance: an equilibrium `T >= 0` with
-`sigma * T^4 = (1 - alpha) * S / 4` exists. -/
+/-- Planetary energy balance: for `sigma > 0`, `S >= 0` and `alpha ∈ [0,1]`, an
+equilibrium `T >= 0` with `sigma * T^4 = (1 - alpha) * S / 4` exists. -/
 theorem planetaryEnergyBalance_equilibrium_exists {σ S α : ℝ} (hσ : 0 < σ) (hS : 0 ≤ S)
     (hα0 : 0 ≤ α) (hα1 : α ≤ 1) :
     ∃ T : ℝ, 0 ≤ T ∧ σ * T ^ 4 = (1 - α) * S / 4 := by
@@ -79,7 +79,8 @@ theorem planetaryEnergyBalance_equilibrium_exists {σ S α : ℝ} (hσ : 0 < σ)
   rw [hT4]
   field_simp
 
-/-- Planetary energy balance: the nonnegative equilibrium is unique. -/
+/-- Planetary energy balance: for `sigma > 0`, the nonnegative equilibrium is
+unique. -/
 theorem planetaryEnergyBalance_equilibrium_unique {σ S α T₁ T₂ : ℝ} (hσ : 0 < σ)
     (hT₁ : 0 ≤ T₁) (hT₂ : 0 ≤ T₂)
     (h₁ : σ * T₁ ^ 4 = (1 - α) * S / 4) (h₂ : σ * T₂ ^ 4 = (1 - α) * S / 4) :
@@ -104,7 +105,8 @@ theorem planetaryEnergyBalance_equilibrium_unique {σ S α T₁ T₂ : ℝ} (hσ
   exact habs
 
 set_option linter.unusedVariables false in
-/-- Boundary case `alpha = 1` (zero absorption): the equilibrium is `T = 0`. -/
+/-- Boundary case `alpha = 1` (zero absorption): for `sigma > 0` and `S >= 0`,
+the nonnegative equilibrium is `T = 0`. -/
 theorem planetaryEnergyBalance_full_albedo {σ S : ℝ} (hσ : 0 < σ) (hS : 0 ≤ S) {T : ℝ} (hT : 0 ≤ T)
     (h : σ * T ^ 4 = (1 - (1 : ℝ)) * S / 4) :
     T = 0 := by
