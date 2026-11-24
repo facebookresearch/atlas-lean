@@ -59,18 +59,22 @@ $q^{-\dim \overline{H}} \, \# \overline{H}(\mathbb{F}_q)$ of their formula (2.11
 the reference group at $\mathfrak{p}$, by the [order of $\mathrm{GL}_m(\mathbb{F}_q)$](../../GroupTheory/linear-groups/card-general-linear-group-finite-field.md) if
 $\mathfrak{p}$ splits ($\overline{H} = \mathrm{GL}_m$), the [order of the finite unitary group](finite-unitary-group-order.md) if
 $\mathfrak{p}$ is inert ($\overline{H} = \mathrm{U}_m$), and the orders of $\mathrm{SO}_m(\mathbb{F}_q)$ for odd $m$ and of
-$\mathrm{Sp}_m(\mathbb{F}_q)$ for even $m$, still to be supplied, if $\mathfrak{p}$ ramifies. A good expansion also extends the
-formula to every lattice $L$, through a rescaling $L^c$ of the form, the module $L$ in $(V, c \Phi)$, by a positive rational
-integer $c$ that makes it integral: the local factors of $L$ are defined as those of $L^c$, which do not depend on $c$
-(Kirschmer, Proposition 4.2.10(3), for $\lambda$: for $c$ of $\mathfrak{p}$-adic valuation $k$, $t_{\mathfrak{p}}$ grows by $2mk$ and
-$\beta(L_{\mathfrak{p}})$ by the factor $q^{k m^2}$, which cancel in $\lambda(L_{\mathfrak{p}})$), while $L^c$ has the same isometry
-classes in its genus and the same automorphism groups as $L$, hence the same mass. The quotient $L^\# / L$ is formed only
-for integral lattices.
+$\mathrm{Sp}_m(\mathbb{F}_q)$ for even $m$, still to be supplied, if $\mathfrak{p}$ ramifies.
 Writing each $\beta(L_{\mathfrak{p}})^{-1}$ through $\lambda(L_{\mathfrak{p}})$, the powers $q^{-t_{\mathfrak{p}} m/2}$ cancel
 $[L^\# : L]_{\mathbb{Z}}^{m/2}$; at a prime $\mathfrak{p}$ unramified in $E$ the factor $c_{\mathfrak{p}}^{-1}$ is the Euler factor of
 $\prod_{i=1}^m L_K(\chi^i, i)$ at $\mathfrak{p}$; and at the ramified primes the factors
 $c_{\mathfrak{p}}^{-1} = \prod_{j=1}^{\lfloor m/2 \rfloor} (1 - q^{-2j})^{-1}$ give the Euler factors there, while the powers
 $q^{-a_{\mathfrak{p}}}$ change the exponent of $N_{K/\mathbb{Q}}(\mathfrak{d}_{E/K})$ from $m(m+1)/4$ to $m(m - (-1)^m)/4$.
+
+A good expansion also extends the displayed formula to every lattice $L$ in $V$. For a positive integer $A$ such that
+the rescaled lattice $L^A$, the module $L$ in the definite Hermitian space $(V, A \Phi)$, is integral, the local factors of
+$L$ are defined as those of $L^A$. They do not depend on $A$. If an already integral model is rescaled further by a
+positive integer $b$, with $k = \operatorname{ord}_{\mathfrak{p}}(b)$, then $t_{\mathfrak{p}}$ grows by $2mk$ and $\beta$ at $\mathfrak{p}$ is
+multiplied by $q^{k m^2}$, so that $\lambda$ at $\mathfrak{p}$ is unchanged (Kirschmer, Proposition 4.2.10(3)); and two clearing
+integers $A$ and $B$ give the same local factors, as $L^A$ and $L^B$ both compare in this way with the common integral
+model $L^{AB}$. Rescaling the form does not change the isometries, so it changes neither the genus, nor its isometry
+classes, nor their automorphism groups, hence not the mass. The quotient $L^\# / L$ and the local density
+$\beta(L_{\mathfrak{p}})$ are formed only for integral lattices.
 
 ## Depends on
 

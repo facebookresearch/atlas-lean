@@ -53,7 +53,7 @@ $(\det T)^2 D = -d^4 N(\mathfrak{b})^2 |D|$; dividing by $-d^4$ gives $4 (\opera
 
 ## Depends on
 
-- [Absolute norm of an ideal](../../../RingTheory/dedekind-domains/ideal-absolute-norm.md), for $N$ (its multiplicativity is a proof input)
+- [Absolute norm of an ideal](../../../RingTheory/dedekind-domains/ideal-absolute-norm.md), for $N$
 - [The class group of a number field is finite](../../algebraic-number-theory/number-fields-embeddings/class-group-finite.md), for the $h$ ideal classes
 
 ## Proof depends on
@@ -61,6 +61,7 @@ $(\det T)^2 D = -d^4 N(\mathfrak{b})^2 |D|$; dividing by $-d^4$ gives $4 (\opera
 - [A finitely generated torsion-free module over a principal ideal domain is free](../../../LinearAlgebra/eigenvalues-and-canonical-forms/finite-torsion-free-module-pid-free.md), for the $\mathbb{Z}$-bases of the fractional ideals
 - [Dedekind domains via principal products](../../../RingTheory/dedekind-domains/characterizations-of-dedekind-domains/is-dedekind-domain-iff-principal-product.md), for the inverse $\mathfrak{b}^{-1}$
 - [The absolute norm of a principal ideal](../../../RingTheory/dedekind-domains/ideal-absolute-norm-principal.md), for $N((d \gamma)) = d^2 |\gamma|^2$
+- [Absolute norm of an ideal](../../../RingTheory/dedekind-domains/ideal-absolute-norm.md), for $N(IJ) = N(I) N(J)$, in $N(\mathfrak{a}) N(d \mathfrak{b}) = N((d \gamma))$
 - [An algebraic integer of a number field is a unit if and only if its norm is ±1](../../algebraic-number-theory/discriminants-ramification/unit-iff-norm-plus-minus-one.md), for the units of $\mathcal{O}_K$
 - [The absolute norm of an ideal as a determinant](../../../RingTheory/dedekind-domains/ideal-absolute-norm-det-basis-change.md), for $|\det T| = N(d \mathfrak{b})$
 - [Discriminants under a change of basis](../../../RingTheory/algebras-and-differentials/discriminant-change-of-basis.md), for the discriminant of $(d, d z)$

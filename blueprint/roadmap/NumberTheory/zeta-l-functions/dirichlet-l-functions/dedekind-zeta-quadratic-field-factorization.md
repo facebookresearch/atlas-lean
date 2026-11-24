@@ -26,13 +26,14 @@ $(1 - p^{-s})^{-1} (1 - \chi_D(p) p^{-s})^{-1}$ in each case.
 ## Depends on
 
 - [Quadratic Dirichlet character of a fundamental discriminant](../../congruences/power-residues-reciprocity/kronecker-symbol-and-quadratic-characters/quadratic-dirichlet-character.md)
-- [Absolute norm of an ideal](../../../RingTheory/dedekind-domains/ideal-absolute-norm.md), for $N$ (its multiplicativity is a proof input)
+- [Absolute norm of an ideal](../../../RingTheory/dedekind-domains/ideal-absolute-norm.md), for $N$
 
 ## Proof depends on
 
 - [Decomposition of rational primes in a quadratic field](../../algebraic-number-theory/quadratic-fields/quadratic-field-prime-decomposition.md)
 - [Summability of Dedekind zeta terms for σ > 1](dedekind-zeta-function-and-polar-density/summable-height-one-spectrum-abs-norm-rp.md), for the absolute convergence of the Euler product of $\zeta_K$
 - [Unique factorisation of ideals in a Dedekind domain](../../../RingTheory/dedekind-domains/ideal-unique-factorization.md), for the Euler products of $\zeta_K(s)$ and $L(s, \chi_D)$
+- [Absolute norm of an ideal](../../../RingTheory/dedekind-domains/ideal-absolute-norm.md), for $N(IJ) = N(I) N(J)$, in the Euler product of $\zeta_K(s)$
 - [Dedekind domains as the Noetherian domains where to contain is to divide](../../../RingTheory/dedekind-domains/characterizations-of-dedekind-domains/is-dedekind-domain-iff-contain-is-divide.md), for the irreducible ideals being the nonzero prime ideals
 
 ## Sources

@@ -47,7 +47,7 @@ Kronecker symbol at two, which is $0$ for even $D$, $1$ for $D \equiv \pm 1 \pmo
 ## Depends on
 
 - [Kronecker symbol](../../congruences/power-residues-reciprocity/kronecker-symbol-and-quadratic-characters/kronecker-sym.md)
-- [Absolute norm of an ideal](../../../RingTheory/dedekind-domains/ideal-absolute-norm.md), for the norms of the prime ideals (its multiplicativity is a proof input)
+- [Absolute norm of an ideal](../../../RingTheory/dedekind-domains/ideal-absolute-norm.md), for the norms of the prime ideals
 
 ## Proof depends on
 
@@ -55,6 +55,7 @@ Kronecker symbol at two, which is $0$ for even $D$, $1$ for $D \equiv \pm 1 \pmo
 - [Conductor ideal of the whole algebra](../../../RingTheory/dedekind-domains/conductor-ideal/conductor-ideal-top.md), for the conductor of $\mathbb{Z}[\omega] = \mathcal{O}_K$, which makes the Kummer–Dedekind theorem apply to every $p$
 - [Kummer–Dedekind theorem](../discriminants-ramification/kummer-dedekind-theorem.md), for the factorisation of $p\mathcal{O}_K$ from that of $f \bmod p$
 - [The absolute norm of a principal ideal](../../../RingTheory/dedekind-domains/ideal-absolute-norm-principal.md), for $N(p\mathcal{O}_K) = p^2$
+- [Absolute norm of an ideal](../../../RingTheory/dedekind-domains/ideal-absolute-norm.md), for $N(IJ) = N(I) N(J)$, which gives the norms of the prime factors of $p\mathcal{O}_K$
 - [Unique factorisation of ideals in a Dedekind domain](../../../RingTheory/dedekind-domains/ideal-unique-factorization.md), for conjugation permuting the prime factors of $p\mathcal{O}_K$
 - [Kronecker symbol with a prime denominator](../../congruences/power-residues-reciprocity/kronecker-symbol-and-quadratic-characters/kronecker-sym-prime.md)
 - [Kronecker symbol at a prime](../../congruences/power-residues-reciprocity/kronecker-symbol-and-quadratic-characters/kronecker-at-prime.md)

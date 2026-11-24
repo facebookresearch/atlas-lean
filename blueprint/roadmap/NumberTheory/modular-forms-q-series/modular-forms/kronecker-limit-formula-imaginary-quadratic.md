@@ -51,8 +51,8 @@ classes, where $Z(\tau, s) = \sum_{(m, n) \neq (0, 0)} (\operatorname{Im} \tau)^
 $\mathbb{C}$, regular at $s = 0$, with $Z(\tau, 0) = -1$, and
 $\Lambda(\tau, s) = \pi^{-s} \Gamma(s) Z(\tau, s)$ satisfies $\Lambda(\tau, s) = \Lambda(\tau, 1 - s)$. Near
 $s = 1$, [Kronecker's first limit formula](kronecker-first-limit-formula.md) and
-$\pi^{-s}\Gamma(s) = \pi^{-1}(1 - (\gamma + \log \pi)(s - 1) + O((s - 1)^2))$, the Taylor expansion of the function $\Gamma$,
-[analytic](../../../Analysis/special-functions/gamma-function/digamma-and-trigamma-functions/analytic-at-gamma.md) at $1$, with $\Gamma(1) = \int_0^\infty e^{-t} \, dt = 1$ and
+$\pi^{-s}\Gamma(s) = \pi^{-1}(1 - (\gamma + \log \pi)(s - 1) + O((s - 1)^2))$, obtained from the Taylor expansion of the function
+$\Gamma$, [analytic](../../../Analysis/special-functions/gamma-function/digamma-and-trigamma-functions/analytic-at-gamma.md) at $1$, with $\Gamma(1) = \int_0^\infty e^{-t} \, dt = 1$ and
 [$\Gamma'(1) = -\gamma$](../../special-numbers/harmonic-numbers/gamma-derivative-at-one.md), give
 $\Lambda(\tau, s) = \frac{1}{s - 1} + 2(\gamma - \log 2 - \log(\sqrt{y} |\eta(\tau)|^2)) - \gamma - \log \pi + O(s - 1)$
 with $y = \operatorname{Im} \tau$; the functional equation turns this into the expansion of $\Lambda(\tau, s)$ at
