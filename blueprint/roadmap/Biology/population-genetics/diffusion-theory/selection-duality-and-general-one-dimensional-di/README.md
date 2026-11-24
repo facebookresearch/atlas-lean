@@ -67,3 +67,5 @@
 - [Backward equation for the neutral conditional fixation time](generator-mul-neutral-fixation-time.md)
 - [Neutral conditional fixation time of a new mutation](tendsto-neutral-fixation-time-zero.md)
 - [Neutral mean absorption time from the conditional times](mul-neutral-fixation-time-add-mul-neutra.md)
+
+- [Type of the common ancestor under selection and mutation](common-ancestor-type-distribution.md)

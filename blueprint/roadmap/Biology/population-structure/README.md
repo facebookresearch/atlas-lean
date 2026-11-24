@@ -14,3 +14,5 @@ f-statistics, admixture graphs, ancestry models and linkage-disequilibrium metho
 - [Centred population covariance and f-statistics](centred-population-covariance-and-f-statistics/README.md)
 - [Fitting admixture graphs by least squares](fitting-admixture-graphs-by-least-squares/README.md)
 - [Outgroup f3 and admixed branches](outgroup-f3-and-admixed-branches/README.md)
+
+- [Wright's F-statistics](wright-s-f-statistics/README.md)

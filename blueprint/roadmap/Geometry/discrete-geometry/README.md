@@ -29,3 +29,8 @@ Finite point configurations and their distances, polytopes and polyhedra, dissec
 
 - [Squaring the square with distinct squares](part-02/squaring-the-square-distinct-squares.md)
 - [Sylvester–Gallai theorem](part-02/sylvester-gallai.md)
+
+## Research directions
+
+- [Crystallization for the Lennard-Jones potential in the plane](crystallization-for-the-lennard-jones-potential-in-the-plane.md)
+- [Optimality of the body-centered cubic Wigner crystal](optimality-of-the-body-centered-cubic-wigner-crystal.md)

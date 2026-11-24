@@ -32,3 +32,5 @@
 - [The inverse exponent inverts RSA encryption](pow-inv-val-pow.md)
 - [Correctness of the reduction from RSA to factoring](rsa-of-factor-pow-e.md)
 - [RSA hardness implies factoring hardness](factor-advantage-le-rsa-advantage.md)
+
+- [RSA inversion versus factoring](rsa-inversion-versus-factoring.md)

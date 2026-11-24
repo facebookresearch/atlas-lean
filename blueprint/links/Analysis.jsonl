@@ -4216,3 +4216,6 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/Analysis/control-theory/observability-of-linear-systems/observability-rank-condition-discrete-time.md"}], "id": "af_ad5629e8e24212302a32968c", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Analysis/control-theory/sampled-data-systems/zero-order-hold-sampled-system.md"}], "id": "af_936c844f23d820f1f90d372c", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Analysis/control-theory/sampled-data-systems/README.md"}], "id": "af_d1eb272b4831bdddfcdbceee"}
+{"subject": [{"type": "generic", "uri": "../roadmap/Analysis/function-spaces/sharp-lieb-thirring-constant-in-three-dimensions.md"}], "id": "af_85b12e9f75126ccc7ea72d20", "extensions": {"org.autoform": {"not_ready": true}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Analysis/convex-analysis-and-variations/existence-of-minimizers-for-quasiconvex-elastic-energies.md"}], "id": "af_0edc7d52a7716ced90acc29b", "extensions": {"org.autoform": {"not_ready": true}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Analysis/partial-differential-equations/global-regularity-of-the-navier-stokes-equations.md"}], "id": "af_5fff502b9aa4df4ebda4c265", "extensions": {"org.autoform": {"not_ready": true}}}

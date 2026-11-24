@@ -9,3 +9,6 @@ Mathematical models for tumour sequencing data: purity and copy number, cancer c
 - [Detection power for somatic mutations](detection-power-for-somatic-mutations/README.md)
 - [Cancer cell fraction estimation](cancer-cell-fraction-estimation/README.md)
 - [Saturation power for cancer gene discovery](saturation-power-for-cancer-gene-discovery/README.md)
+
+- [Forbidden structures for persistent perfect phylogenies](forbidden-structures-for-persistent-perfect-phylogenies.md)
+- [Complexity of the copy-number triplet problem](complexity-of-the-copy-number-triplet-problem.md)

@@ -17,3 +17,5 @@ L^p and Sobolev spaces of functions: embeddings (Morrey, Rellich, radial, trace)
 - [The constant in Young's $L^1$–$L^p$ convolution inequality cannot be lowered](exists-e-lp-norm-convolution-gt-one-sub.md)
 - [Weighted Ladyzhenskaya inequality in the plane](exists-const-integral-pow-four-mul-weigh.md)
 - [Lieb–Thirring kinetic energy inequality](lieb-thirring-kinetic.md)
+
+- [Sharp Lieb–Thirring kinetic constant in three dimensions](sharp-lieb-thirring-constant-in-three-dimensions.md)

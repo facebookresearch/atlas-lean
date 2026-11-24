@@ -8,3 +8,6 @@ Valiant's model of learning from random examples (error, learners, version space
 - [The fundamental theorem of PAC learning](is-paclearnable-realizable-family-iff-ha.md)
 - [Risk of the 0-1 loss](risk-of-the-0-1-loss/README.md)
 - [Weak learnability](weak-learnability/README.md)
+
+- [Sample compression conjecture](sample-compression-conjecture.md)
+- [Distribution-free PAC learning of DNF formulas](distribution-free-learning-of-dnf-formulas.md)

@@ -24,3 +24,7 @@
 ## The Price equation
 
 - [Price equation](price.md)
+
+## Mean-fitness counterexample
+
+- [An example where the change in mean fitness differs from the additive variance](change-in-mean-fitness-differs-from-additive-variance.md)

@@ -9,3 +9,8 @@ Dynamics of biochemical reaction networks and gene regulatory circuits: mass-act
 - [Intrinsic and extrinsic gene expression noise](intrinsic-and-extrinsic-gene-expression-noise/README.md)
 - [Michaelis–Menten kinetics and the quasi-steady state](michaelis-menten-kinetics-and-the-quasi-steady-s/README.md)
 - [Stochastic mass action, metabolic control and flux balance](stochastic-mass-action-metabolic-control-and-flu/README.md)
+
+- [Extended Permanence Conjecture](extended-permanence-conjecture.md)
+- [Nondegeneracy Conjecture for reaction networks](nondegeneracy-conjecture-for-reaction-networks.md)
+- [Maximal multistationarity of multisite phosphorylation](maximal-multistationarity-of-multisite-phosphorylation.md)
+- [Leak removal in linear compartmental models](leak-removal-in-linear-compartmental-models.md)

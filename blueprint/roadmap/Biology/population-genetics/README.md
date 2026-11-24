@@ -15,3 +15,10 @@ Mathematical models of allele frequencies in populations under random mating, se
 - [Baum–Eagon inequality for diploid selection](baum-eagon-inequality-for-diploid-selection/README.md)
 - [Wright's island model](wright-s-island-model/README.md)
 - [Wright–Fisher Markov chain](wright-fisher-markov-chain/README.md)
+
+- [Inbreeding and regular systems of mating](inbreeding-and-regular-systems-of-mating/README.md)
+- [One-locus selection dynamics](one-locus-selection-dynamics/README.md)
+- [Migration and selection](migration-and-selection/README.md)
+- [Effective population size](effective-population-size/README.md)
+- [Interference between linked selected loci](interference-between-linked-selected-loci/README.md)
+- [Modifier theory and the evolution of recombination](modifier-theory-and-the-evolution-of-recombination/README.md)

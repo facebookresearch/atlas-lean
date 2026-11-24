@@ -13,3 +13,7 @@ Quantum operations and channels covers the physically allowed transformations of
 ## Sources
 
 - J. Preskill, *Lecture Notes for Physics 229: Quantum Information and Computation*, Chapter 7 "Quantum Error Correction" (Caltech, 1998; https://www.preskill.caltech.edu/ph229/notes/chap7.pdf), Section 7.8.2.
+
+## Research directions
+
+- [Quantum capacity of the depolarizing channel](quantum-capacity-of-the-depolarizing-channel.md)

@@ -20,3 +20,6 @@
 - [Loss probability of the chain](tendsto-mat-pow-moran-matrix-zero.md)
 - [Closed form of Kimura's fixation probability](kimura-fixation-half.md)
 - [Diffusion limit of the Moran fixation probability](tendsto-moran-fixation-diffusion.md)
+
+- [Minimum fixation probability of the Moran process on graphs](minimum-fixation-probability-on-graphs.md)
+- [Worst-case absorption time of the Moran process on graphs](worst-case-absorption-time-on-graphs.md)

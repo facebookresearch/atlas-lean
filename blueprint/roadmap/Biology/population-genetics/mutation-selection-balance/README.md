@@ -34,3 +34,8 @@
 - [Haldane–Muller load](load-mult-at-equilibrium.md)
 - [Positivity of mean fitness for allele frequencies below one](mean-fitness-pos.md)
 - [Equilibria lie at or below $U/s$](le-div-of-diploid-step-eq.md)
+
+## Further mutation–selection models
+
+- [Mutation–selection balance in a haploid population](haploid-mutation-selection-balance.md)
+- [Mutation–selection balance for a recessive allele](recessive-mutation-selection-balance.md)

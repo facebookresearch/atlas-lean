@@ -9,3 +9,10 @@ Social choice theory studies rules that aggregate individual preferences into a 
 ## Related topics
 
 - [Mechanism design](../mechanism-design/README.md): with money and quasi-linear utilities, Vickrey–Clarke–Groves mechanisms make truthful reporting a dominant strategy, which the Gibbard–Satterthwaite theorem rules out without money.
+
+## Research directions
+
+- [Optimal maximin-share approximation](optimal-maximin-share-approximation.md)
+- [Optimal metric distortion of randomized voting](optimal-metric-distortion-of-randomized-voting.md)
+- [Condorcet dimension](condorcet-dimension.md)
+- [Maximum size of Condorcet domains](maximum-size-of-condorcet-domains.md)

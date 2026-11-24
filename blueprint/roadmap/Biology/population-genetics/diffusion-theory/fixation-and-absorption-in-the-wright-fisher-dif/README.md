@@ -14,3 +14,7 @@
 - [Absorption in finite time](ae-exists-absorbed.md)
 - [Kimura's fixation probability, process form](measure-real-fixation.md)
 - [Kimura–Ohta mean absorption time, process form](integral-absorption-time.md)
+
+## Research directions
+
+- [Fixation probability in a population of changing size](fixation-probability-in-a-population-of-changing-size.md)

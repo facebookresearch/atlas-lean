@@ -18,3 +18,8 @@ Reconstruction of evolutionary trees from sequence data: substitution models, li
 - [Tree metrics and the four-point condition](../../GraphTheory/graph-families-and-operations/tree-metrics-and-the-four-point-condition/README.md)
 - [Splits, compatibility, ultrametrics and UPGMA](splits-compatibility-ultrametrics-and-upgma/README.md)
 - [Evolutionary conservation scores](evolutionary-conservation-scores/README.md)
+
+- [Maximum agreement subtree of two random binary trees](maximum-agreement-subtree-of-random-trees.md)
+- [Sample complexity of maximum parsimony](sample-complexity-of-maximum-parsimony.md)
+- [Admissibility of maximum-likelihood tree estimation](admissibility-of-maximum-likelihood-tree-estimation.md)
+- [Phylogenetic complexity of group-based models](phylogenetic-complexity-of-group-based-models.md)
