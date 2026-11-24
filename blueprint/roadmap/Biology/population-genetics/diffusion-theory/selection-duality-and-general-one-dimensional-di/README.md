@@ -77,3 +77,7 @@
 - [Neutral mean absorption time from the conditional times](mul-neutral-fixation-time-add-mul-neutra.md)
 
 - [Type of the common ancestor under selection and mutation](common-ancestor-type-distribution.md)
+- [The ancestral selection graph line count as a non-explosive chain](realized-asg-line-counting-process-countable-ctm.md)
+- [Selection duality for every solution of the Wright–Fisher martingale problem](process-level-selection-duality-with-the-asg-lin.md)
+- [Positive recurrence and convergence of the ancestral selection graph line count](asg-line-count-positive-recurrence-and-convergen.md)
+- [Fixation probability via the ancestral selection graph line count](fixation-probability-from-the-asg.md)

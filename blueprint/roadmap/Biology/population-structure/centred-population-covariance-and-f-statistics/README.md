@@ -27,3 +27,4 @@
 ## f2 and other network distances
 
 - [f2, independent-lineage distance and average network distance differ on admixture graphs](f2-drift-metric-versus-network-average-distance.md)
+- [Which drift models have the f-statistics of a star tree](f-equivalence-classes-of-drift-models.md)

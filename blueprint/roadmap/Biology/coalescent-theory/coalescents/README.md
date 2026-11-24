@@ -26,3 +26,4 @@
 
 - [Merger rates of a coalescent with simultaneous multiple collisions](xi-coalescents-simultaneous-multiple-collisions.md)
 - [The Ξ-coalescent rate matrix on partitions of a finite sample](xi-coalescent-partition-valued-ctmc-and-restrict.md)
+- [The first n lookdown levels have Kingman's coalescent as genealogy](finite-level-lookdown-chain-and-its-embedded-lam.md)
