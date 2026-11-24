@@ -1,6 +1,6 @@
 # Wright–Fisher diffusion with a strong seed bank
 
-Fix a positive integer $c$ and $K \in (0, \infty)$. For each $N$ consider the Wright–Fisher model with a geometric seed bank of Blath, González Casanova, Kurt and Wilke-Berenguer (2016, Definition 2.1): $N$ active individuals and $M = N/K$ dormant ones, with $\varepsilon = c/N$ and $\delta = cK/N$, so that $c$ individuals enter and $c$ leave the seed bank each generation. In each generation the active individuals produce $N - c$ active offspring by multinomial sampling, $c$ uniformly chosen dormant individuals become active and leave the seed bank, and the active individuals produce $c$ new dormant individuals by multinomial sampling; the other dormant individuals stay, and types are inherited. Let $X^N_k$ and $Y^N_k$ be the frequencies of one of two types among the active and the dormant individuals in generation $k$. Then:
+Fix a positive integer $c$ and $K \in (0, \infty)$, and let $(M_N)$ be positive integers with $N/M_N \to K$ as $N \to \infty$ (for example $M_N = \lceil N/K\rceil$). For each $N$ with $c \le \min(N, M_N)$ consider the Wright–Fisher model with a geometric seed bank of Blath, González Casanova, Kurt and Wilke-Berenguer (2016, Definition 2.1): $N$ active individuals and $M_N$ dormant ones, with $\varepsilon = c/N$ and $\delta_N = c/M_N$, so that $c$ individuals enter and $c$ leave the seed bank each generation. In each generation the active individuals produce $N - c$ active offspring by multinomial sampling, $c$ uniformly chosen dormant individuals become active and leave the seed bank, and the active individuals produce $c$ new dormant individuals by multinomial sampling; the other dormant individuals stay, and types are inherited. Let $X^N_k$ and $Y^N_k$ be the frequencies of one of two types among the active and the dormant individuals in generation $k$. Then:
 
 1. For $f \in C^3([0, 1]^2)$ the rescaled one-step generators $A^Nf(x, y) = N\,\mathbb E_{x,y}[f(X^N_1, Y^N_1) - f(x, y)]$ converge pointwise on $[0, 1]^2$ to
 
@@ -23,7 +23,7 @@ The seed bank only exchanges genes with the active population, so genetic drift 
 ## Expansion
 
 1. The one-step transition law as a sum over the hypergeometric number of germinating seeds of the type and two independent binomials (Proposition 2.2 of the source).
-2. Moments of the one-step increments under the scaling $\varepsilon = c/N$, $M = N/K$, and the Taylor expansion giving the generator limit.
+2. Moments of the one-step increments under the scaling $\varepsilon = c/N$, $\delta_N = c/M_N$ with $N\delta_N \to cK$, and the Taylor expansion giving the generator limit.
 3. Tightness on the compact square and identification of the limit through the martingale problem for $A$, which is the generator of a Markov process.
 4. The duality, from $Ax^ny^m$ being the dual generator applied to $(n, m) \mapsto x^ny^m$.
 
