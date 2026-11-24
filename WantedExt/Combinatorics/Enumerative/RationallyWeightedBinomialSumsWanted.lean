@@ -33,8 +33,9 @@ rising factorial `(k + 1)^{(s)} = (k + 1)(k + 2) ⋯ (k + s)` is `(k + 1).ascFac
 polynomial `f(x) = ∑_{k=0}^N a_k x^k` is written `∑ k ∈ range (N + 1), C (a k) * X ^ k`, and its
 `i`-th derivative is `derivative^[i]`. `F_n` and `L_n` are `Nat.fib n` and `lucasNumber n`.
 
-Epsteen's identity (`sum_choose_div_succ`) and Finkel's identity
-(`sum_neg_one_pow_choose_div_eq_harmonic`) are proved in
+Epsteen's identity (`sum_choose_div_succ`), Finkel's identity
+(`sum_neg_one_pow_choose_div_eq_harmonic`), and the inverse-square identity
+(`sum_choose_mul_pow_div_sq`) are proved in
 `MathlibExt.Combinatorics.Enumerative.RationallyWeightedBinomialSums`.
 -/
 
@@ -198,21 +199,6 @@ public theorem_wanted sum_choose_mul_pow_div_ascFactorial (N s : ℕ) (hs : 0 < 
     ∑ k ∈ Finset.range (N + 1), (N.choose k : ℝ) * x ^ (k + s) / (k + 1).ascFactorial s =
       ((1 + x) ^ (N + s) - 1) / (N + 1).ascFactorial s -
         ∑ j ∈ Finset.Icc 1 (s - 1), x ^ j / (j.factorial * (N + 1).ascFactorial (s - j))
-
-/-- **Binomial sums weighted by $x^k/k^2$.** For every natural number $n$ and every real number
-$x$,
-
-$$\sum_{k=1}^{n} \binom{n}{k} \frac{x^k}{k^2} =
-\sum_{k=1}^{n} \frac{1}{k} \sum_{j=1}^{k} \frac{(1+x)^j}{j} -
-\sum_{k=1}^{n} \frac{1}{k} \sum_{j=1}^{k} \frac{1}{j}.$$
-
-Source: Andreea M. Stănică, Gabriela N. Stănică, and Pantelimon Stănică, *An Evaluation of
-Rationally Weighted Binomial Sums Via Some Differential and Integral Operators*, The Fibonacci
-Quarterly 62 (2024), Article 62-1/stanica09202023, Corollary 3.2. -/
-public theorem_wanted sum_choose_mul_pow_div_sq (n : ℕ) (x : ℝ) :
-    ∑ k ∈ Finset.Icc 1 n, (n.choose k : ℝ) * x ^ k / (k : ℝ) ^ 2 =
-      ∑ k ∈ Finset.Icc 1 n, 1 / (k : ℝ) * ∑ j ∈ Finset.Icc 1 k, (1 + x) ^ j / j -
-        ∑ k ∈ Finset.Icc 1 n, 1 / (k : ℝ) * ∑ j ∈ Finset.Icc 1 k, 1 / (j : ℝ)
 
 end
 

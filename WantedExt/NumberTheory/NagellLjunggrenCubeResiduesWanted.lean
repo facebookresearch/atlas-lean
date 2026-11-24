@@ -9,32 +9,21 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Algebra.Ring.Int.Defs
+public import MathlibExt.NumberTheory.NagellLjunggrenCubeResidues
 
 /-!
 # The Nagell–Ljunggren equation `(xⁿ - 1)/(x - 1) = y^q` (statements)
 
 Statement-only targets from Tran Duc Son, *A Note on the Nagell–Ljunggren Equation
-`(xⁿ - 1)/(x - 1) = y³`*. Theorem 2 and Corollary 1 concern `q = 3` with `x ≡ 2, 3, 5, 6 (mod 9)`;
+`(xⁿ - 1)/(x - 1) = y³`*. Corollary 1 concerns `q = 3` with `x ≡ 2, 3, 5, 6 (mod 9)`.
 Theorem 1, quoted from Ljunggren, concerns the general exponent `q ≥ 2`. The equation is written
-without division as `xⁿ - 1 = (x - 1) y^q`, which is equivalent because `x ≠ 1`: in Theorem 2 and
-Corollary 1 since `x ≢ 1 (mod 9)`, in Theorem 1 since `1 < x.natAbs`.
+without division as `xⁿ - 1 = (x - 1) y^q`, which is equivalent because `x ≠ 1`: in Corollary 1
+since `x ≢ 1 (mod 9)`, in Theorem 1 since `1 < x.natAbs`.
 -/
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **The Nagell–Ljunggren cube equation for $n \equiv 5 \pmod 6$.** Let $n$ be a natural
-number with $n \equiv 5 \pmod 6$. Then there are no integers $x$ and $y$ with
-$x \equiv 2, 3, 5$ or $6 \pmod 9$ such that $x^n - 1 = (x - 1) y^3$. Since such an $x$ is not
-$1$, this says that $(x^n - 1)/(x - 1) = y^3$ has no such integer solution.
-
-Source: Tran Duc Son, *A Note on the Nagell–Ljunggren Equation (xⁿ - 1)/(x - 1) = y³*,
-INTEGERS 26 (2026), Article A104, Theorem 2 (`integers-2026-A104-thm-2`). -/
-public theorem_wanted nagell_ljunggren_cube_no_solution_of_mod_six_eq_five (n : ℕ)
-    (hn : n % 6 = 5) (x y : ℤ) (hx : x % 9 = 2 ∨ x % 9 = 3 ∨ x % 9 = 5 ∨ x % 9 = 6) :
-    x ^ n - 1 ≠ (x - 1) * y ^ 3
 
 /-- **The Nagell–Ljunggren cube equation for $x \equiv 2, 3, 5, 6 \pmod 9$.** Let $n \ge 3$ be a
 natural number. Then there are no integers $x$ and $y$ with $x \equiv 2, 3, 5$ or $6 \pmod 9$
