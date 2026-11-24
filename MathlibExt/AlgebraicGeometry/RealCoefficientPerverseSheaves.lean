@@ -56,8 +56,13 @@ costalk support conditions with coefficients in `A`. -/
 abbrev PerverseTheory (X : ComplexScheme) [IsComplexVariety X] :=
   CoefficientPerverseModels.CoefficientPerverseTheory A X
 
-/-- The characterized middle perverse t-structure with coefficients in `A`. -/
-def perverseTStructure (X : ComplexScheme) [IsComplexVariety X] [PerverseTheory A X] :=
+/-- For a subfield `A` of `ℝ` and a complex variety `X` equipped with a middle perverse theory with
+coefficients in `A` (an instance of `PerverseTheory A X`), the characterized middle perverse
+t-structure on the bounded algebraically constructible complexes of sheaves of `A`-vector spaces on
+`X(ℂ)`. -/
+def perverseTStructure (X : ComplexScheme) [IsComplexVariety X] [PerverseTheory A X] :
+    _root_.CategoryTheory.Triangulated.TStructure
+      (ConstructibleComplexes.boundedConstructible A X).FullSubcategory :=
   CoefficientPerverseModels.CoefficientPerverseTheory.t (k := A) (X := X)
 
 abbrev Perverse (X : ComplexScheme) [IsComplexVariety X] [PerverseTheory A X] :=
