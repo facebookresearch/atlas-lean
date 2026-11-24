@@ -22,21 +22,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Residues that are squares modulo $2^{2k-1}$ but not modulo $2^{2k}$.** Let $k \ge 0$ and let
-$x$ be an integer with $0 \le x < 2^{2k}$, where the exponents $2k - 1$ and $2k - 2$ are truncated
-at $0$. Then $x$ is a square modulo $2^{2k-1}$ but not a square modulo $2^{2k}$ if and only if
-$x = 2^{2k-1}$ or $x = 2^{2k-1} + 2^{2k-2}$.
-
-For $k \ge 1$ these are exactly two residues; for $k = 0$ both sides of the equivalence are false.
-
-Source: John Greene and James A. Sellers, *Extending Recent Parity Results of Nyirenda and
-Mugwangwavari for Partitions with Initial Repetitions*, INTEGERS 25 (2025), Article A32, Lemma 2
-(`integers-2025-A32-lem-2`). -/
-public theorem_wanted isSquare_mod_two_pow_odd_not_even_iff (k : ℕ) (x : ℕ)
-    (hx : x < 2 ^ (2 * k)) :
-    (IsSquare (x : ZMod (2 ^ (2 * k - 1))) ∧ ¬IsSquare (x : ZMod (2 ^ (2 * k)))) ↔
-      x = 2 ^ (2 * k - 1) ∨ x = 2 ^ (2 * k - 1) + 2 ^ (2 * k - 2)
-
 open scoped Classical in
 /-- **Residues $r$ with $16r + 1$ and $8r + 1$ both non-squares modulo $p$.** For every prime $p$,
 the number of integers $r$ with $1 \le r \le p - 1$ such that neither $16r + 1$ nor $8r + 1$ is a
