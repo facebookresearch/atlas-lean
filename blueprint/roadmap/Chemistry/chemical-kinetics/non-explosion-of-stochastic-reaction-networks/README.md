@@ -45,7 +45,7 @@
 - [Total propensity of a stochastic reaction network](total-rate.md)
 - [Holding rate, with a fictitious rate one at absorbing states](hold-rate.md)
 - [Generator of a stochastic reaction network](generator.md)
-- [Law of the next reaction at a state with positive total propensity](reaction-pmf.md)
+- [Law of the next reaction at a state with nonzero total propensity](reaction-pmf.md)
 - [Jump kernel of a stochastic reaction network](jump-pmf.md)
 - [Law of the steps driving a stochastic reaction network](input-measure-2.md)
 - [Jump times of a stochastic reaction network](jump-time-2.md)

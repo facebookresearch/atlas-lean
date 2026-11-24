@@ -2,7 +2,7 @@
 
 Let $N$ be a [stochastic chemical reaction network](stochastic-crn.md) on a set $S$ of species with
 a finite set of reactions and [holding rate](hold-rate.md) $q$ (the total propensity, or $1$ at
-absorbing states, so $q > 0$). For a starting state $x_0 \in \mathbb{N}^S$ and a step sequence
+absorbing states). For a starting state $x_0 \in \mathbb{N}^S$ and a step sequence
 $\omega = ((\xi_n, E_n))_{n \in \mathbb{N}}$, with maps $\xi_n : \mathbb{N}^S \to \mathbb{N}^S$ and
 clocks $E_n \in \mathbb{R}$, let $Y_0 = x_0$, $Y_{n+1} = \xi_n(Y_n)$ be the
 [jump chain](../../../Probability/markov-chains/finite-continuous-time-markov-chains/finite-continuous-time-markov-chains-as-path-pro/ctmc-jump-chain.md).

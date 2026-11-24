@@ -13,5 +13,4 @@ $$h(x) = \mathbb{P}\bigl(\exists n \ge 0,\ Y_n = x_0\bigr) \in [0, 1],$$
 where $Y_0 = x$, $Y_{n+1} = \xi_n(Y_n)$ is the
 [jump chain](../../../Probability/markov-chains/finite-continuous-time-markov-chains/finite-continuous-time-markov-chains-as-path-pro/ctmc-jump-chain.md)
 started at $x$: the probability that the chain ever visits $x_0$. Step $n = 0$ counts, so
-$h(x_0) = 1$. When $\sigma$ is countable and its σ-algebra contains the singletons, the event is
-measurable; in general, if the event is not measurable, $h(x)$ is its outer measure.
+$h(x_0) = 1$. If the event is not measurable, $h(x)$ is its outer measure.
