@@ -1,0 +1,15 @@
+# Pointwise Tensor
+
+- [Left Tensor](left-tensor.md)
+- [Left Tensor obj](left-tensor-obj.md)
+- [Left Tensor full Hom](left-tensor-full-hom.md)
+- [Left Tensor map component](left-tensor-map-component.md)
+- [Right Tensor](right-tensor.md)
+- [Right Tensor obj](right-tensor-obj.md)
+- [Adjunction](adjunction.md)
+- [Adjunction hom Equiv](adjunction-hom-equiv.md)
+- [Cartesian Diagonal](cartesian-diagonal.md)
+- [Cartesian Diagonal obj](cartesian-diagonal-obj.md)
+- [Cartesian Diagonal map](cartesian-diagonal-map.md)
+- [Cartesian Diagonal fst](cartesian-diagonal-fst.md)
+- [Cartesian Diagonal snd](cartesian-diagonal-snd.md)

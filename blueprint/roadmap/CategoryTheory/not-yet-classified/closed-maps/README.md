@@ -1,0 +1,17 @@
+# Closed Maps
+
+- [Adjunction hom Equiv](adjunction-hom-equiv.md)
+- [Untranspose transpose](untranspose-transpose.md)
+- [Adjunction hom Equiv symm](adjunction-hom-equiv-symm.md)
+- [Transpose untranspose](transpose-untranspose.md)
+- [Hom Equiv](hom-equiv.md)
+- [Adjunction unit app](adjunction-unit-app.md)
+- [Adjunction unit π](adjunction-unit.md)
+- [Adjunction counit app](adjunction-counit-app.md)
+- [Adjunction counit gen](adjunction-counit-gen.md)
+- [Adjunction left triangle](adjunction-left-triangle.md)
+- [Adjunction right triangle](adjunction-right-triangle.md)
+- [Evaluation point](evaluation-point.md)
+- [Closed Curry π](closed-curry.md)
+- [Closed Pre π](closed-pre.md)
+- [Closed Pre eq](closed-pre-eq.md)

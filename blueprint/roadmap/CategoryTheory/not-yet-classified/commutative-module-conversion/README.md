@@ -1,0 +1,41 @@
+# Commutative Module Conversion
+
+## Braided
+
+- [Right Module](right-module.md)
+- [Right Action](right-action.md)
+- [Right Mod Obj](right-mod-obj.md)
+- [Right Mod Obj smul](right-mod-obj-smul.md)
+- [To Right](to-right.md)
+- [To Right obj](to-right-obj.md)
+- [To Right smul](to-right-smul.md)
+- [Left Action](left-action.md)
+- [Left Mod Obj](left-mod-obj.md)
+- [Left Mod Obj smul](left-mod-obj-smul.md)
+- [To Left](to-left.md)
+- [To Left obj](to-left-obj.md)
+- [To Left smul](to-left-smul.md)
+- [To Right Map](to-right-map.md)
+- [To Right Map hom](to-right-map-hom.md)
+- [To Left Map](to-left-map.md)
+- [To Left Map hom](to-left-map-hom.md)
+- [Left To Right](left-to-right.md)
+- [Right To Left](right-to-left.md)
+
+## Symmetric
+
+- [Left recovery smul](left-recovery-smul.md)
+- [Right recovery smul](right-recovery-smul.md)
+- [Left Recovery Iso](left-recovery-iso.md)
+- [Left Recovery Iso hom](left-recovery-iso-hom.md)
+- [Left Recovery Iso inv](left-recovery-iso-inv.md)
+- [Right Recovery Iso](right-recovery-iso.md)
+- [Right Recovery Iso hom](right-recovery-iso-hom.md)
+- [Right Recovery Iso inv](right-recovery-iso-inv.md)
+- [Left Recovery Nat Iso](left-recovery-nat-iso.md)
+- [Right Recovery Nat Iso](right-recovery-nat-iso.md)
+- [Module Equivalence](module-equivalence.md)
+- [Module Equivalence right map inverse](module-equivalence-right-map-inverse.md)
+- [Module Equivalence left map inverse](module-equivalence-left-map-inverse.md)
+- [Module Equivalence right triangle](module-equivalence-right-triangle.md)
+- [Module Equivalence left triangle](module-equivalence-left-triangle.md)

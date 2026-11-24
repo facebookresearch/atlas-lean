@@ -10,11 +10,31 @@ Files:
   MathlibExt/AlgebraicTopology/SimplicialObject/ToSimplicial.lean
   MathlibExt/CategoryTheory/Enriched/Limits/Products.lean
   MathlibExt/CategoryTheory/Enriched/Ordinary/HomCongr.lean
+  MathlibExt/CategoryTheory/Enriched/WeightedBar.lean
+  MathlibExt/CategoryTheory/Enriched/WeightedBarData.lean
+  MathlibExt/CategoryTheory/Enriched/WeightedBarInner.lean
+  MathlibExt/CategoryTheory/Enriched/WeightedBarMapF.lean
+  MathlibExt/CategoryTheory/Enriched/WeightedBarMapPostcomp.lean
+  MathlibExt/CategoryTheory/Enriched/WeightedBarOuter.lean
+  MathlibExt/CategoryTheory/Enriched/WeightedBarSimplicial.lean
+  MathlibExt/CategoryTheory/Monad/BalancedTensor.lean
+  MathlibExt/CategoryTheory/Monad/BarAugmentation.lean
+  MathlibExt/CategoryTheory/Monad/BarFunctorial.lean
+  MathlibExt/CategoryTheory/Monad/BarSimplicial.lean
+  MathlibExt/CategoryTheory/Monad/MonoidalBar.lean
+  MathlibExt/CategoryTheory/Monad/SimplicialReplacementBridge.lean
+  MathlibExt/CategoryTheory/Monoidal/TensorPowers.lean
+  MathlibExt/CategoryTheory/NerveHomotopy.lean
   MathlibExt/CategoryTheory/Waldhausen/Basic.lean
   MathlibExt/CategoryTheory/Waldhausen/ExactFunctor.lean
   MathlibExt/CategoryTheory/Waldhausen/SConstruction/FiniteStage.lean
   MathlibExt/KTheory/Waldhausen/K0/Basic.lean
   MathlibExt/KTheory/Waldhausen/K0/WaldhausenExactFunctor.lean
+  MathlibExtTest/CategoryTheory/Enriched/WeightedBarDataTests.lean
+  MathlibExtTest/CategoryTheory/Monad/BarFunctorialTests.lean
+  MathlibExtTest/CategoryTheory/Monoidal/TensorPowersTests.lean
+  MathlibExtTest/CategoryTheory/Operad/FinBijSmallCoreMonoidalPublicApi.lean
+  MathlibExtTest/CategoryTheory/Operad/FinBijTensorPowerPublicApi.lean
   MathlibExtTest/CategoryTheory/Waldhausen/SConstruction/FiniteStageTests.lean
   MathlibExtTest/KTheory/Waldhausen/K0/WaldhausenExactFunctorTests.lean
 
