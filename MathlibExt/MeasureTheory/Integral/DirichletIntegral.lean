@@ -35,9 +35,9 @@ converge as `b → ∞`, but `f` is not Lebesgue integrable on `(a, ∞)`.
 Sources:
 - Mathlib `docs/undergrad.yaml`, section "Single Variable Real Analysis / Integration",
   entry "absolute vs conditional convergence of improper integrals"
-  (currently missing: external URL, no Mathlib declaration).
-- T. Apostol, *Mathematical Analysis*, 2nd ed., §10.23 (absolute and conditional
-  convergence of improper integrals).
+  (linked there to the Wikipedia article below).
+- T. Apostol, *Mathematical Analysis*, 2nd ed., Exercise 10.9(b) with $p=1$
+  (improper convergence without Lebesgue integrability).
 - https://en.wikipedia.org/wiki/Conditional_convergence
 -/
 
@@ -97,9 +97,11 @@ not Lebesgue integrable on $(1, \infty)$.
 Sources:
 - Mathlib `docs/undergrad.yaml`, section "Single Variable Real Analysis / Integration",
   entry "absolute vs conditional convergence of improper integrals"
-  (currently missing).
-- W. Rudin, *Principles of Mathematical Analysis*, 3rd ed., Ch. 11, Exercise 15
-  (conditional convergence of the sine integral).
+  (linked there to an exposition).
+- W. Rudin, *Principles of Mathematical Analysis*, 3rd ed., Ch. 6, Exercise 9
+  (integration by parts and conditional convergence).
+- T. Apostol, *Mathematical Analysis*, 2nd ed., Exercise 10.9(b) with $p=1$
+  (improper convergence without Lebesgue integrability).
 -/
 theorem dirichlet_integral_conditionally_convergent :
     (∀ b : ℝ, 1 ≤ b → IntervalIntegrable (fun x ↦ Real.sin x / x) volume 1 b) ∧
