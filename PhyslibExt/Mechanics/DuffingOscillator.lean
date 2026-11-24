@@ -90,7 +90,8 @@ open MathlibExt.Analysis.ODE (IsForwardInvariant largestForwardInvariantSubset)
 
 /-! ## A. Model -/
 
-/-- The hardening Duffing field on the phase plane: `(x, v) ↦ (v, -(c v + k x + β x ^ 3) / m)`. -/
+/-- The hardening Duffing field on the phase plane: `(x, v) ↦ (v, -(c v + k x + β x ^ 3) / m)`.
+With `u / 0 = 0` the second component is `0` at `m = 0`. -/
 noncomputable def duffingField (m c k β : ℝ) (p : ℝ × ℝ) : ℝ × ℝ :=
   (p.2, -(c * p.2 + k * p.1 + β * p.1 ^ 3) / m)
 
@@ -105,14 +106,15 @@ noncomputable def duffingEnergyDeriv (m k β : ℝ) (p : ℝ × ℝ) : ℝ × �
 
 /-! ## B. Coercive energy and compact sublevels -/
 
-/-- The hardening quartic only adds energy: the energy dominates `m v ^ 2 / 2 + k x ^ 2 / 2`. -/
+/-- The hardening quartic only adds energy: for `β > 0` the energy dominates
+`m v ^ 2 / 2 + k x ^ 2 / 2`. -/
 lemma quadratic_le_duffingEnergy {m k β : ℝ} (hβ : 0 < β) (p : ℝ × ℝ) :
     m * p.2 ^ 2 / 2 + k * p.1 ^ 2 / 2 ≤ duffingEnergy m k β p := by
   unfold duffingEnergy
   have : 0 ≤ β * p.1 ^ 4 / 4 := by positivity
   linarith
 
-/-- The energy vanishes only at the origin. -/
+/-- For `m, k, β > 0` the energy vanishes only at the origin. -/
 lemma duffingEnergy_eq_zero_iff {m k β : ℝ} (hm : 0 < m) (hk : 0 < k) (hβ : 0 < β)
     (p : ℝ × ℝ) : duffingEnergy m k β p = 0 ↔ p = 0 := by
   constructor
@@ -133,7 +135,7 @@ lemma duffingEnergy_eq_zero_iff {m k β : ℝ} (hm : 0 < m) (hk : 0 < k) (hβ : 
   · rintro rfl
     simp [duffingEnergy]
 
-/-- Every energy sublevel set is compact. -/
+/-- For `m, k, β > 0` every energy sublevel set is compact. -/
 lemma isCompact_duffingSublevel {m k β : ℝ} (hm : 0 < m) (hk : 0 < k) (hβ : 0 < β) (r : ℝ) :
     IsCompact {p : ℝ × ℝ | duffingEnergy m k β p ≤ r} := by
   apply Metric.isCompact_of_isClosed_isBounded
@@ -190,14 +192,14 @@ lemma hasFDerivAt_duffingEnergy (m k β : ℝ) (p : ℝ × ℝ) :
   simp [duffingEnergyDeriv]
   ring
 
-/-- Along the field the energy changes at the rate `V' = -c v ^ 2`. -/
+/-- For `m > 0`, along the field the energy changes at the rate `V' = -c v ^ 2`. -/
 lemma duffingEnergy_orbital {m : ℝ} (hm : 0 < m) (c k β : ℝ) (p : ℝ × ℝ) :
     duffingEnergyDeriv m k β p (duffingField m c k β p) = -c * p.2 ^ 2 := by
   simp [duffingEnergyDeriv, duffingField]
   field_simp
   ring
 
-/-- For `c ≥ 0` the energy is nonincreasing along every forward solution. -/
+/-- For `m > 0` and `c ≥ 0` the energy is nonincreasing along every forward solution. -/
 lemma duffingEnergy_antitoneOn {m c k β : ℝ} (hm : 0 < m) (hc : 0 ≤ c) {γ : ℝ → ℝ × ℝ}
     (hγ : IsIntegralCurveOn γ (fun _ => duffingField m c k β) (Ici 0)) :
     AntitoneOn (fun t => duffingEnergy m k β (γ t)) (Ici 0) := by
@@ -211,7 +213,7 @@ lemma duffingEnergy_antitoneOn {m c k β : ℝ} (hm : 0 < m) (hc : 0 ≤ c) {γ 
   · rw [duffingEnergy_orbital hm]
     nlinarith [sq_nonneg (γ t).2]
 
-/-- The energy derivative gives no exponential decay rate: no `α > 0` has
+/-- The energy derivative gives no exponential decay rate: for `m, k, β > 0`, no `α > 0` has
 `V' ≤ -α V` everywhere (at `v = 0`, `x ≠ 0` the left side is `0` and the right side negative). -/
 lemma not_exponential_energy_decay {m k β : ℝ} (hm : 0 < m) (hk : 0 < k) (hβ : 0 < β) (c : ℝ) :
     ¬ ∃ α > 0, ∀ p : ℝ × ℝ,
@@ -224,8 +226,8 @@ lemma not_exponential_energy_decay {m k β : ℝ} (hm : 0 < m) (hk : 0 < k) (hβ
 
 /-! ## D. Global continuation in a sublevel -/
 
-/-- For `c ≥ 0` every energy sublevel set is forward invariant: through each of its points there
-is a forward solution on `[0, ∞)` that stays in it. -/
+/-- For `m, k, β > 0` and `c ≥ 0` every energy sublevel set is forward invariant: through each of
+its points there is a forward solution on `[0, ∞)` that stays in it. -/
 lemma isForwardInvariant_duffingSublevel {m c k β : ℝ} (hm : 0 < m) (hk : 0 < k) (hβ : 0 < β)
     (hc : 0 ≤ c) (r : ℝ) :
     IsForwardInvariant (duffingField m c k β) {p : ℝ × ℝ | duffingEnergy m k β p ≤ r} := by
@@ -287,8 +289,8 @@ lemma isForwardInvariant_duffingSublevel {m c k β : ℝ} (hm : 0 < m) (hk : 0 <
 
 /-! ## E. LaSalle convergence and asymptotic stability -/
 
-/-- On `{V' = 0}` (that is `v = 0` when `c > 0`) the largest forward-invariant subset is at most
-the origin, inside any set `K`. -/
+/-- For `m, k, β, c > 0`, on `{V' = 0}` (that is `v = 0`) the largest forward-invariant subset is
+at most the origin, inside any set `K`. -/
 lemma largestForwardInvariantSubset_subset_zero {m c k β : ℝ} (hm : 0 < m) (hk : 0 < k)
     (hβ : 0 < β) (hc : 0 < c) (K : Set (ℝ × ℝ)) :
     largestForwardInvariantSubset (duffingField m c k β)
@@ -325,7 +327,7 @@ lemma largestForwardInvariantSubset_subset_zero {m c k β : ℝ} (hm : 0 < m) (h
     · nlinarith [sq_nonneg y.1, mul_nonneg hβ.le (sq_nonneg y.1)]
   exact Prod.ext hx hy2
 
-/-- LaSalle convergence: every forward solution tends to the origin. -/
+/-- LaSalle convergence: for `m, k, β, c > 0`, every forward solution tends to the origin. -/
 lemma tendsto_zero_of_isIntegralCurveOn {m c k β : ℝ} (hm : 0 < m) (hk : 0 < k) (hβ : 0 < β)
     (hc : 0 < c) {γ : ℝ → ℝ × ℝ}
     (hγ : IsIntegralCurveOn γ (fun _ => duffingField m c k β) (Ici 0)) :
@@ -345,8 +347,8 @@ lemma tendsto_zero_of_isIntegralCurveOn {m c k β : ℝ} (hm : 0 < m) (hk : 0 < 
     (fun q _ => by rw [duffingEnergy_orbital hm]; nlinarith [sq_nonneg q.2])
     (largestForwardInvariantSubset_subset_zero hm hk hβ hc K)
 
-/-- Lyapunov stability of the origin: forward solutions starting close to the origin stay close
-to it. -/
+/-- Lyapunov stability of the origin: for `m, k, β > 0` and `c ≥ 0`, forward solutions starting
+close to the origin stay close to it (in the max norm of `ℝ × ℝ`). -/
 lemma stable_zero {m c k β : ℝ} (hm : 0 < m) (hk : 0 < k) (hβ : 0 < β) (hc : 0 ≤ c) {ε : ℝ}
     (hε : 0 < ε) :
     ∃ δ > 0, ∀ γ : ℝ → ℝ × ℝ, IsIntegralCurveOn γ (fun _ => duffingField m c k β) (Ici 0) →
