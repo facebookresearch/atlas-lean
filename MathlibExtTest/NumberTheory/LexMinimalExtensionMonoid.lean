@@ -33,6 +33,20 @@ example {η : ℕ → ℕ} (hη : IsBinomidIndex η) :
 example (η : ℕ → ℕ) : maxAverageIndices η 0 = ∅ := by
   simp [maxAverageIndices]
 
+/-- For the prefix `0, 2`, an odd length cannot attain its maximal average of one. -/
+example {η : ℕ → ℕ} (hη : IsLexMinimalExtensionOf η 2) (h₀ : η 0 = 0) (h₁ : η 1 = 2)
+    (k : ℕ) : binomidAverage η (2 * k + 1) ≠ 1 := by
+  have h₂ : binomidAverage η 2 = 1 := by
+    norm_num [binomidAverage, Finset.sum_range_succ, h₀, h₁]
+  have hJ : maxAverageIndices η 2 = {2} := by
+    have hI : Finset.Icc 1 2 = ({1, 2} : Finset ℕ) := by decide
+    norm_num [maxAverageIndices, hI, Finset.filter_insert, Finset.filter_singleton,
+      binomidAverage_one, h₀, h₂]
+  intro heq
+  have hd := hη.gcd_maxAverageIndices_dvd (i := 2 * k + 1) (by omega)
+    ⟨2, by simp [hJ], heq.trans h₂.symm⟩
+  simp [hJ] at hd
+
 /-- The singleton containing zero generates the zero submonoid but fails independence. -/
 example : ¬ IsAddMonoidBasis ({0} : Set ℕ) {0} :=
   fun h => h.zero_notMem rfl

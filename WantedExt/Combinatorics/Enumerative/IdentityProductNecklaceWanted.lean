@@ -17,6 +17,7 @@ public import Mathlib.NumberTheory.ArithmeticFunction.Moebius
 public import Mathlib.RingTheory.Trace.Basic
 public import MathlibExt.Combinatorics.Enumerative.IdentityProductNecklace
 public import MathlibExt.Combinatorics.Enumerative.IdentityProductNecklacePiCyclic
+public import MathlibExt.Combinatorics.Enumerative.PeriodicTupleProductCount
 public import MathlibExt.Combinatorics.Enumerative.TotientWeightedDivisorSum
 public import MathlibExt.Data.Int.GCD
 
@@ -33,7 +34,9 @@ paper's `[G ÷ m]` is the number `#{a ∈ G | a^m = 1}`, and `[G ÷ K ÷ m] = #{
 `MetaMathlibExt.identity_product_necklace_count`. The rotation orbits `tupleRotationOrbit` are
 defined in `MathlibExt.Combinatorics.Enumerative.TupleRotationOrbit`, and the count over a product
 of cyclic groups (Corollary 6) is proved in
-`MathlibExt.Combinatorics.Enumerative.IdentityProductNecklacePiCyclic`.
+`MathlibExt.Combinatorics.Enumerative.IdentityProductNecklacePiCyclic`. The count of periodic
+tuples with product in a conjugation-closed set, `MetaMathlibExt.card_productIn_period`, is proved
+in `MathlibExt.Combinatorics.Enumerative.PeriodicTupleProductCount`.
 -/
 
 namespace MetaMathlibExt
@@ -145,20 +148,6 @@ public theorem_wanted productInNecklace_count (G : Type*) [Group G] [Fintype G] 
         O = tupleRotationOrbit x} : ℚ) =
       (1 / n : ℚ) * ∑ d ∈ n.divisors, (Nat.totient (n / d) : ℚ) *
         (Set.ncard {a : G | a ^ (n / d) ∈ K} : ℚ) * (Fintype.card G : ℚ) ^ (d - 1)
-
-/-- **Counting periodic tuples with product in a conjugation-closed set.** Let $G$ be a finite
-group, let $K \subseteq G$ satisfy $g c g^{-1} \in K$ for all $g \in G$ and $c \in K$, let
-$n \ge 1$ and let $k$ be a divisor of $n$. The number of tuples
-$x = (x_0, \dots, x_{n-1}) \in G^n$ with $x_0 x_1 \cdots x_{n-1} \in K$ and $x_{i+k} = x_i$ for
-all $i$ (indices taken mod $n$) is $\#\{a \in G : a^{n/k} \in K\} \cdot |G|^{k-1}$.
-
-Source: Darij Grinberg and Peter Mao, *Necklaces over a Group with Identity Product*,
-Journal of Integer Sequences 29 (2026), Article 26.4.6, Lemma 23
-(`jis-2026-26.4.6-lem-23`). -/
-public theorem_wanted card_productIn_period (G : Type*) [Group G] [Fintype G] (K : Set G)
-    (hK : ∀ g k, k ∈ K → g * k * g⁻¹ ∈ K) (n k : ℕ) (hn : 0 < n) (hk : k ∣ n) :
-    Set.ncard {x : Fin n → G | (List.ofFn x).prod ∈ K ∧ x ∘ ⇑((finRotate n) ^ k) = x} =
-      Set.ncard {a : G | a ^ (n / k) ∈ K} * Fintype.card G ^ (k - 1)
 
 /-- **Counting aperiodic necklaces with product in a conjugation-closed set.** Let $G$ be a
 finite group, let $K \subseteq G$ satisfy $g c g^{-1} \in K$ for all $g \in G$ and $c \in K$, and
