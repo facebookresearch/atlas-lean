@@ -109,6 +109,7 @@ theorem isSumFreeMod_three_two_singleton_one : IsSumFreeMod 3 2 {1} := by
   rw [Fin.sum_univ_two, hx 0, hx 1]
   decide
 
+set_option linter.unusedVariables false in
 /-- **When a singleton set is sum-free.** Let $a$, $l$ and $m$ be natural numbers with
 $l \ge 1$, $m \ge 1$ and $m \nmid a$, and let $d = \gcd(a, m)$. If $d = 1$, then $\{a\}$ is not
 $l$-sum-free modulo $m$ if and only if $l \equiv 1 \pmod{m}$. If $d > 1$, then $\{a\}$ is not
@@ -118,7 +119,7 @@ Source: Jourdan D'orville, Kai An Sim, Kok Bin Wong, and Chee Kit Ho, *Modular
 Generalizations of Schur Numbers*, INTEGERS 25 (2025), Article A62, Theorem 4
 (`integers-2025-A62-thm-4`). -/
 theorem not_isSumFreeMod_singleton_iff (a l m : ℕ) (hl : 0 < l) (hm : 0 < m)
-    (_ha : ¬ m ∣ a) :
+    (ha : ¬ m ∣ a) :
     (Nat.gcd a m = 1 → (¬ IsSumFreeMod m l {(a : ℤ)} ↔ l ≡ 1 [MOD m])) ∧
       (1 < Nat.gcd a m → (¬ IsSumFreeMod m l {(a : ℤ)} ↔ l ≡ 1 [MOD m / Nat.gcd a m])) := by
   have hle : a ≤ l * a := by simpa using Nat.mul_le_mul_right a hl
