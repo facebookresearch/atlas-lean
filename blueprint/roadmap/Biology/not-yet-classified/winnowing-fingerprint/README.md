@@ -1,0 +1,15 @@
+# Winnowing Fingerprint
+
+- [Window](window.md)
+- [Rightmost Argmin](rightmost-argmin.md)
+- [Local Sel](local-sel.md)
+- [Winnow](winnow.md)
+- [Charged](charged.md)
+- [Is Local](is-local.md)
+- [Kgram Hashes](kgram-hashes.md)
+- [Local algorithms find every long match](exists-selected-of-shared-substring.md)
+- [Charging probability under uniform permutations](card-charged-perm.md)
+- [Expected number of winnowing fingerprints, uniform permutations](sum-card-winnow-perm.md)
+- [Expected number of winnowing fingerprints, i.i.d. uniform hashes without ties](sum-card-winnow-injective.md)
+- [Winnowing density `2 / (w + 1)`](tendsto-density-winnow-perm.md)
+- [Lower bound for local algorithms](density-local-ge.md)

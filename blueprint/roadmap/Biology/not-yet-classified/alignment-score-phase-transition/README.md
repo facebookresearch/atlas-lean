@@ -1,0 +1,17 @@
+# Alignment Score Phase Transition
+
+- [Is Alignment](is-alignment.md)
+- [Align Score](align-score.md)
+- [Opt Score](opt-score.md)
+- [Window](window.md)
+- [Local Score](local-score.md)
+- [IIDLetters](iidletters.md)
+- [Global Score](global-score.md)
+- [M](m.md)
+- [Growth Const](growth-const.md)
+- [Rate](rate.md)
+- [Log Coeff](log-coeff.md)
+- [The growth constant exists](tendsto-global-score-div.md)
+- [Linear regime](tendsto-in-measure-local-score-div.md)
+- [Logarithmic regime](tendsto-prob-local-score-log-window.md)
+- [Large-deviation rate](rate-pos.md)
