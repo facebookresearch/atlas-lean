@@ -12180,6 +12180,7 @@
   "MathlibExt/NumberTheory/FloorCeilingSums": {"to": "NumberTheory/diophantine-approximation/uniform-distribution-metric", "title": "Floor and ceiling function sums"},
   "MathlibExt/NumberTheory/FloorDivisionCounts": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Residues of rounded quotients n/k"},
   "MathlibExt/NumberTheory/FloorIdentities": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Palindromes in arithmetic progressions"},
+  "MathlibExt/NumberTheory/FloorQuotientOddCount": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Residues of rounded quotients n/k"},
   "MathlibExt/NumberTheory/FloorSumCubeRoots": {"to": "NumberTheory/special-numbers", "title": "Floor of a sum of cube roots"},
   "MathlibExt/NumberTheory/FormalSequence": {"to": "NumberTheory/linear-recurrences/recurrence-theory", "title": "Second-order recurrences from seed triples"},
   "MathlibExt/NumberTheory/ForwardDiffPow": {"to": "NumberTheory/linear-recurrences/fibonacci-lucas-numbers", "title": "Bernoulli–Fibonacci and Euler–Lucas double sums"},
