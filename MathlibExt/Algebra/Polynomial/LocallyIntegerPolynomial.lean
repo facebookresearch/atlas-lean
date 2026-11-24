@@ -154,6 +154,24 @@ public theorem lip_eq_zero_of_infinite_zeros {U : Set ℤ} {f : U → ℤ}
   rw [lt_abs]
   omega
 
+/-- **Locally integer polynomial functions on an infinite set form a domain.** For every infinite
+$U \subseteq \mathbb{Z}$, the ring $\mathrm{LIP}(U)$ of locally integer polynomial functions
+$U \to \mathbb{Z}$ is an integral domain.
+
+Source: Alexander Borisov, *Locally Integer Polynomial Functions*, INTEGERS 25 (2025),
+Article A41, Lemma 4 (`integers-2025-A41-lem-4`). -/
+public theorem lipSubring_isDomain {U : Set ℤ} (hU : U.Infinite) :
+    IsDomain (lipSubring U) := by
+  have := hU.to_subtype
+  refine (isDomain_iff_noZeroDivisors_and_nontrivial _).mpr ⟨⟨?_⟩, inferInstance⟩
+  intro f g hfg
+  have hcover : (Set.univ : Set U) ⊆ {x | f.val x = 0} ∪ {x | g.val x = 0} := by
+    intro x _
+    exact mul_eq_zero.mp (congrArg (fun h : lipSubring U => h.val x) hfg)
+  obtain hf | hg := Set.infinite_union.mp (Set.infinite_univ.mono hcover)
+  · exact Or.inl (Subtype.ext (lip_eq_zero_of_infinite_zeros f.property hf))
+  · exact Or.inr (Subtype.ext (lip_eq_zero_of_infinite_zeros g.property hg))
+
 end
 
 end MetaMathlibExt

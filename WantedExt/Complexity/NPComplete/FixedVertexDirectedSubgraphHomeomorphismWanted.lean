@@ -19,7 +19,7 @@ doi:10.1016/0196-6774(81)90037-7, entry [2] SUBGRAPH HOMEOMORPHISM (FOR A FIXED 
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.DirectedTwoDisjointConnectingPathsWanted

@@ -16,6 +16,7 @@ public import Mathlib.Data.Set.Card
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.NumberTheory.Real.GoldenRatio
 public import MathlibExt.Analysis.SpecialFunctions.LambertWFunction
+public import MathlibExt.NumberTheory.GoldenRatioLambertSequence
 
 /-!
 # The golden ratio, factorials, and the Lambert `W` function
@@ -81,7 +82,7 @@ Article 24.5.7, Section 2.2, definition (4). -/
 public theorem goldenFactorialExponent_mem (n : ℕ) :
     1 ≤ goldenFactorialExponent n ∧
       (n.factorial : ℝ) ≤ goldenRatio ^ goldenFactorialExponent n :=
-  Nat.sInf_mem (exists_goldenRatio_pow_ge_factorial n)
+  Nat.sInf_mem (s := .ofPred _) (exists_goldenRatio_pow_ge_factorial n)
 
 /-- **Minimality of the golden factorial exponent.** Let $\varphi$ be the golden ratio and,
 for a natural number $n$, let $\alpha(n)$ be the least positive integer $m$ with
@@ -267,26 +268,6 @@ public theorem_wanted lambertSequence_lt_goldenFactorialExponent (n : ℕ) (hn :
     (hW : lambertMap (-a / ((n : ℝ) - 1)) =
       -(1 / ((n : ℝ) - 1)) * (4 / 7 : ℝ) ^ (1 / ((n : ℝ) - 1))) :
     a < goldenFactorialExponent n
-
-/-- **A linear lower bound for the Lambert sequence.** Let $n \ge 4$ be a natural number, write
-$h(y) = y e^y$ for the Lambert map, and let $a$ be a real number with $a \ge n - 1$ such that
-
-$$h\left(-\frac{a}{n - 1}\right) = -\frac{1}{n - 1} \left(\frac{4}{7}\right)^{1/(n - 1)}.$$
-
-Then $2n - 4 < \frac{3}{4} a$.
-
-These conditions determine $a$ uniquely: it is the paper's
-$a_n = -(n - 1) W_{-1}\bigl(-\frac{1}{n - 1} (4/7)^{1/(n - 1)}\bigr)$, where $W_{-1}$ is the lower
-real branch of the Lambert W function.
-
-Source: Petojević, Gorjanac Ranitović, Rastovac and Mandić, *The Golden Ratio,
-Factorials, and the Lambert W Function*, Journal of Integer Sequences 27 (2024),
-Article 24.5.7, Lemma 8 (`jis-2024-24.5.7-lem-8`). -/
-public theorem_wanted two_mul_sub_four_lt_lambertSequence (n : ℕ) (hn : 4 ≤ n)
-    (a : ℝ) (ha : (n : ℝ) - 1 ≤ a)
-    (hW : lambertMap (-a / ((n : ℝ) - 1)) =
-      -(1 / ((n : ℝ) - 1)) * (4 / 7 : ℝ) ^ (1 / ((n : ℝ) - 1))) :
-    2 * (n : ℝ) - 4 < 3 / 4 * a
 
 /-- **Partial exponential sums at the Lambert sequence.** Let $n \ge 5$ and $k$ be natural numbers
 with $k < n - 2$, let $h(y) = y e^y$ be the Lambert map, and let $a$ be a real number with

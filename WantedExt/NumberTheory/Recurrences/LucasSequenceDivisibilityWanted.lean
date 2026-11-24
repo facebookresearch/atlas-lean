@@ -343,7 +343,7 @@ INTEGERS 25 (2025), Article A107, Section 2 (definition of `ρ` as a least index
 public theorem lucasRankOfAppearance_spec (L : LucasSequenceParams) {m : ℕ}
     (h : ∃ r, 0 < r ∧ (m : ℤ) ∣ lucasU L r) :
     0 < lucasRankOfAppearance L m ∧ (m : ℤ) ∣ lucasU L (lucasRankOfAppearance L m) :=
-  Nat.sInf_mem h
+  Nat.sInf_mem (s := .ofPred _) h
 
 /-- **Rank of appearance of $1$.** For all integers $P, Q$ with $Q \neq 0$, the rank of
 appearance of $1$ in the Lucas sequence $U(P, Q)$ is $1$.

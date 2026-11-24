@@ -41,27 +41,6 @@ set_option autoImplicit false
 
 namespace MathlibExt.NumberTheory.TwoSetsSumsetSquaresWanted
 
-/-- **Scaling rational families with square pairwise sums to integers.** Let $a_1, \dots, a_m$
-and $b_1, \dots, b_n$ be rational numbers such that every sum $a_i + b_j$ is the square of a
-rational number, and let $t$ be an integer and $k$ a rational number such that $k^2 a_i - t$ is an
-integer for every $i$ and $k^2 b_j + t$ is an integer for every $j$. Then the integers
-$a_i' = k^2 a_i - t$ and $b_j' = k^2 b_j + t$ are such that every sum $a_i' + b_j'$ is the square
-of an integer.
-
-Source: Ajai Choudhry, "Two Sets of Integers Such That All
-Elements of the Sumset of the Two Sets Are Perfect Squares",
-Lemma 1. -/
-theorem_wanted exists_int_pairwiseSumsSquares_scale_translate
-    (m n : ℕ) (a : Fin m → ℚ) (b : Fin n → ℚ)
-    (hab : PairwiseSumsSquares a b)
-    (t : ℤ) (k : ℚ)
-    (ha : ∀ i, ∃ z : ℤ, (z : ℚ) = k ^ 2 * a i - (t : ℚ))
-    (hb : ∀ j, ∃ z : ℤ, (z : ℚ) = k ^ 2 * b j + (t : ℚ)) :
-    ∃ a' : Fin m → ℤ, ∃ b' : Fin n → ℤ,
-      (∀ i, (a' i : ℚ) = k ^ 2 * a i - (t : ℚ)) ∧
-        (∀ j, (b' j : ℚ) = k ^ 2 * b j + (t : ℚ)) ∧
-        PairwiseSumsSquares a' b'
-
 /-- **Triples with square pairwise sums from a semi-magic square of squares.** Let $e_{ij}$,
 $1 \le i, j \le 3$, be integers such that the matrix of squares $(e_{ij}^2)$ is semi-magic, that
 is, all its row sums and all its column sums are equal. Put $a_1 = e_{13}^2$, $a_2 = e_{31}^2$,
