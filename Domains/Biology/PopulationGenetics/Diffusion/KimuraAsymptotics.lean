@@ -180,7 +180,8 @@ private theorem kimura_ratio_eq (u : ℝ → ℝ → ℝ)
 `u σ x = (1 - e^{-2σx}) / (1 - e^{-2σ})` for `σ ≠ 0` and `u 0 x = x`, and let `K` be its slope
 constant `K σ = 2σ / (1 - e^{-2σ})` for `σ ≠ 0` and `K 0 = 1`. For every fixed `α`, the scaled
 fixation probability of a single new copy among `M` gene copies converges:
-`M * u α (1 / M) → K α` as `M → ∞`. -/
+`M * u α (1 / M) → K α` as `M → ∞`. The hypotheses force `u = kimuraFixation` and
+`K = kimuraSlope`, so this is `M * kimuraFixation α (1 / M) → kimuraSlope α`. -/
 theorem tendsto_natCast_mul_one_div_of_kimuraForm (u : ℝ → ℝ → ℝ) (K : ℝ → ℝ)
     (hu : ∀ σ x, σ ≠ 0 → u σ x = (1 - Real.exp (-2 * σ * x)) / (1 - Real.exp (-2 * σ)))
     (hu0 : ∀ x, u 0 x = x)
@@ -309,8 +310,8 @@ theorem tendsto_div_two_mul_of_kimuraForm (u : ℝ → ℝ → ℝ)
   exact (tendsto_congr' heq).mpr hmul
 
 /-- **Haldane's `2s` holds only in the joint regime.** Let `u σ x = (1 - e^{-2σx}) / (1 - e^{-2σ})`
-for `σ ≠ 0`. If `u (M * s M) (1 / M) / (2 * s M) → 1` as `M → ∞`, then `s M → 0` and
-`M * s M → ∞`. -/
+for `σ ≠ 0`. If `u (M * s M) (1 / M) / (2 * s M) → 1` as `M → ∞` (a quotient by `0` being `0`),
+then `s M → 0` and `M * s M → ∞`. -/
 theorem tendsto_zero_and_tendsto_atTop_of_kimuraForm (u : ℝ → ℝ → ℝ)
     (hu : ∀ σ x, σ ≠ 0 → u σ x = (1 - Real.exp (-2 * σ * x)) / (1 - Real.exp (-2 * σ)))
     (s : ℕ → ℝ)
@@ -509,12 +510,15 @@ theorem tendsto_one_sub_exp_of_kimuraForm (u : ℝ → ℝ → ℝ)
 
 /-! ### Atlas's Kimura formula -/
 
-/-- Atlas's `kimuraFixation` has the closed form the core lemmas assume (definition unfolding). -/
+/-- For `σ ≠ 0` and every real `x`, `kimuraFixation σ x = (1 - e^{-2σx}) / (1 - e^{-2σ})`: Atlas's
+`kimuraFixation` has the closed form the core lemmas assume (definition unfolding). It is a fixation
+probability only for `x ∈ [0, 1]`. -/
 theorem kimuraFixation_eq_of_ne_zero (σ x : ℝ) (hσ : σ ≠ 0) :
     kimuraFixation σ x = (1 - Real.exp (-2 * σ * x)) / (1 - Real.exp (-2 * σ)) := by
   simp [kimuraFixation, hσ]
 
-/-- Atlas's `kimuraSlope` has the closed form the core lemmas assume (definition unfolding). -/
+/-- For `σ ≠ 0`, `kimuraSlope σ = 2σ / (1 - e^{-2σ})`: Atlas's `kimuraSlope` has the closed
+form the core lemmas assume (definition unfolding). -/
 theorem kimuraSlope_eq_of_ne_zero (σ : ℝ) (hσ : σ ≠ 0) :
     kimuraSlope σ = 2 * σ / (1 - Real.exp (-2 * σ)) := by
   simp [kimuraSlope, hσ]
@@ -538,7 +542,8 @@ theorem tendsto_kimuraFixation_div_two_mul {s : ℕ → ℝ} (hs : Tendsto s atT
       (𝓝 1) :=
   tendsto_div_two_mul_of_kimuraForm kimuraFixation kimuraFixation_eq_of_ne_zero s hs hMs
 
-/-- (ii) "only when": Haldane's `2s` forces `s_M → 0` and `M s_M → ∞`. -/
+/-- (ii) "only when": Haldane's `2s` forces `s_M → 0` and `M s_M → ∞` (in the hypothesis a
+quotient by `0` is `0`). -/
 theorem tendsto_zero_and_tendsto_atTop_of_tendsto_kimuraFixation_div {s : ℕ → ℝ}
     (h : Tendsto (fun M : ℕ => kimuraFixation ((M : ℝ) * s M) (1 / (M : ℝ)) / (2 * s M))
       atTop (𝓝 1)) :

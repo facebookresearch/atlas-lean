@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
+# Copyright (c) Meta Platforms, Inc. and affiliates.
+# All rights reserved.
+#
+# This source code is licensed under the license found in the
+# LICENSE file in the root directory of this source tree.
+
 # Regression tests for repository-maintenance scripts. These tests need only
 # Bash, Python 3.11, and standard Unix tools; they intentionally do not invoke
 # Lean.
@@ -610,6 +616,9 @@ check_copyright --all || { cat "$TMP_ROOT/output.log" >&2; fail "--all rejected 
 grep -q 'check_copyright.py --all' "$REPO_ROOT/scripts/check.sh" ||
   fail "preflight does not check every file's copyright header"
 
+PYTHONPATH="$REPO_ROOT/scripts${PYTHONPATH:+:$PYTHONPATH}" \
+  python3 -m unittest discover \
+    -s "$REPO_ROOT/scripts/import_optimizer" -p 'test_*.py' -v
 python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_quality_eval.py -v
 python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_formal_math_sync.py -v
 python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_public_references.py -v

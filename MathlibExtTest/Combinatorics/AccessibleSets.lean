@@ -14,6 +14,22 @@ import MathlibExt.Combinatorics.AccessibleSets
 
 /-! # Tests for accessible sets and diffsequences -/
 
+namespace MetaMathlibExt.two_accessible_of_internal_diffsequences
+
+-- Consecutive powers of two have gaps that are themselves powers of two.
+example : IsRAccessible 2 (Set.range fun n : ℕ => 2 ^ n) := by
+  apply two_accessible_of_internal_diffsequences
+  · rintro _ ⟨n, rfl⟩
+    exact pow_pos (by decide : 0 < (2 : ℕ)) n
+  · intro k _
+    refine ⟨fun i => ⟨2 ^ (i : ℕ), pow_pos (by decide) _⟩, fun i => ⟨i, rfl⟩, ?_⟩
+    intro i hi
+    refine ⟨2 ^ i, ⟨i, rfl⟩, ?_⟩
+    change ((2 ^ (i + 1) : ℕ) : ℤ) - (2 ^ i : ℕ) = (2 ^ i : ℕ)
+    simp [pow_succ, mul_two]
+
+end MetaMathlibExt.two_accessible_of_internal_diffsequences
+
 namespace MetaMathlibExt.accessible_divisible_subset
 
 -- Enumerating an infinite color class in order witnesses accessibility of all positive gaps.
@@ -56,3 +72,18 @@ example {D : Set ℕ} (hD : IsAccessible D) : IsAccessible {d ∈ D | d % 2 = 0}
   omega
 
 end MetaMathlibExt.accessible_union_partition
+
+namespace MetaMathlibExt.large_union_partition
+
+-- Adjoining every odd gap cannot make a set large, even if it already contains some odd gaps.
+example {D : Set ℕ} (h : IsLarge (D ∪ {d : ℕ | d % 2 = 1})) : IsLarge D := by
+  apply (large_union_partition _ _ _ rfl h).resolve_right
+  intro hodd
+  let parity (n : ℕ+) : Fin 2 := ⟨(n : ℕ) % 2, Nat.mod_lt _ (by decide)⟩
+  obtain ⟨x, hx, a, d, hd, hgap⟩ := (hodd 2 (by decide)).2.2 parity 2 (by decide)
+  have heq : (x 0 : ℕ) % 2 = (x 1 : ℕ) % 2 := congrArg Fin.val (hx 0 1)
+  change d % 2 = 1 at hd
+  simp [hgap] at heq
+  omega
+
+end MetaMathlibExt.large_union_partition
