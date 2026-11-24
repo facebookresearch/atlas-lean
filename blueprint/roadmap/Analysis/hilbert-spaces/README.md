@@ -21,4 +21,4 @@ Geometry of inner product spaces: nearest-point projections, orthonormal and Hil
 - [Every finite-dimensional real or complex inner product space has an orthonormal basis](orthonormal-basis-existence-finite-dimensional.md)
 - [Inner product on a finite ℓ² product of inner product spaces](hilbert-direct-sum-finite.md)
 - [Riesz representation theorem for Hilbert spaces](riesz-representation-hilbert.md)
-- [Kernel ridge regression closed form](kernel-ridge-regression-closed-form.md)
+- [Gaussian-process posterior mean is the kernel ridge fit](gaussian-process-posterior-mean-is-the-kernel-ridge-fit.md)

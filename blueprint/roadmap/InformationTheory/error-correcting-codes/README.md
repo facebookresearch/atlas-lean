@@ -14,4 +14,5 @@ Codes that detect or correct transmission errors, including linear codes, Hammin
 - [Expander code distance](expander-code-distance.md)
 - [Sipser-Spielman expander codes](sipser-spielman-expander-codes.md)
 - [MacWilliams identity](macwilliams-identity.md)
-- [Reed-Muller codes and Hadamard local decoding](reed-muller-codes-and-hadamard-local-decoding.md)
+- [Dimension and distance of binary Reed–Muller codes](reed-muller-codes-dimension-and-distance.md)
+- [Local decoding of the Hadamard code](hadamard-code-local-decoding.md)
