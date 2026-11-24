@@ -87,3 +87,24 @@ example {D : Set ℕ} (h : IsLarge (D ∪ {d : ℕ | d % 2 = 1})) : IsLarge D :=
   omega
 
 end MetaMathlibExt.large_union_partition
+
+namespace MetaMathlibExt.coloring_avoids_diffsequence_of_fractional_bounds
+
+-- Odd gaps attain both fractional-part bounds and the forbidden length is exactly two.
+example : ∃ c : ℕ+ → Fin 2, ¬ ∃ x : Fin 2 → ℕ+,
+    IsMonochromatic c x ∧
+      IsDDiffSequence (Set.range fun n : ℕ => 2 * n + 1) (fun i => ((x i : ℕ) : ℤ)) := by
+  let d (n : ℕ) := 2 * n + 1
+  have hfrac (n : ℕ) : Int.fract ((1 / 2 : ℝ) * (d n : ℝ)) = 1 / 2 := by
+    have heq : (1 / 2 : ℝ) * (d n : ℝ) = 1 / 2 + n := by
+      simp only [d, Nat.cast_add, Nat.cast_mul, Nat.cast_ofNat, Nat.cast_one]
+      ring
+    rw [heq, Int.fract_add_natCast, Int.fract_eq_self.mpr ⟨by norm_num, by norm_num⟩]
+  have h := coloring_avoids_diffsequence_of_fractional_bounds 2 (by decide) _ d
+    (fun i j hij => by dsimp [d]; omega) rfl (by decide) (1 / 2) (1 / 2) (by norm_num)
+    (fun n => by rw [hfrac]; norm_num)
+  have hlen : Nat.ceil ((((2 : ℕ) : ℝ) * (1 / 2 : ℝ))⁻¹) = 1 := by norm_num
+  rw [hlen] at h
+  exact h
+
+end MetaMathlibExt.coloring_avoids_diffsequence_of_fractional_bounds
