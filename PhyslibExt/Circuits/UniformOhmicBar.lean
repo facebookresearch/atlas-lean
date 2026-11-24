@@ -55,7 +55,8 @@ namespace PhyslibExt.Circuits.UniformOhmicBar
 
 open MeasureTheory Set
 
-/-- The explicit uniform axial field of a bar of length `ℓ` with terminal voltage drop `V`. -/
+/-- The explicit uniform axial field `V / ℓ` of a bar of length `ℓ` with terminal voltage drop `V`
+(`0` when `ℓ = 0`, by the convention `x / 0 = 0`). -/
 noncomputable def uniformAxialField (V ℓ : ℝ) : ℝ :=
   V / ℓ
 
@@ -64,18 +65,20 @@ def ohmCurrentDensity (σ E : ℝ) : ℝ :=
   σ * E
 
 /-- Terminal current: the `+x` flux `∫_S J dA` of the axial current density `J` through the
-cross-section `S` (current entering at terminal `0`, leaving at terminal `1`). -/
+cross-section `S` (current entering at terminal `0`, leaving at terminal `1`); it is `0` when `J` is
+not integrable on `S`. -/
 noncomputable def terminalCurrent (S : Set (ℝ × ℝ)) (J : ℝ × ℝ → ℝ) : ℝ :=
   ∫ p in S, J p
 
-/-- Conductance `σ A / ℓ` of the bar; defined for every `σ`, and `0` when `σ = 0`. -/
+/-- Conductance `σ A / ℓ` of the bar; defined for every `σ`, and `0` when `σ = 0` (and, by the
+convention `x / 0 = 0`, when `ℓ = 0`). -/
 noncomputable def conductance (σ A ℓ : ℝ) : ℝ :=
   σ * A / ℓ
 
-/-- Resistance `ℓ / (σ A)`, available only for `σ > 0`. This is a raw
-totalized expression: it is a physical resistance (positive, and the
-reciprocal of `conductance`) only on the physical domain `σ > 0`, `A > 0`,
-`ℓ > 0`, as used by `conductance_mul_resistance` and `resistance_pos`. -/
+/-- Resistance `ℓ / (σ A)`, available only for `σ > 0` (and `0` when `A = 0`, by the convention
+`x / 0 = 0`). The formula is defined for all such inputs: it is a physical resistance (positive, and
+the reciprocal of `conductance`) only on the physical domain `σ > 0`, `A > 0`, `ℓ > 0`, as used by
+`conductance_mul_resistance` and `resistance_pos`. -/
 noncomputable def resistance (σ A ℓ : ℝ) (_hσ : 0 < σ) : ℝ :=
   ℓ / (σ * A)
 
@@ -106,7 +109,8 @@ lemma terminalCurrent_eq_conductance_mul (σ A ℓ V : ℝ) (S : Set (ℝ × ℝ
 
 /-! ### Resistance, only for `σ > 0` -/
 
-/-- For `σ > 0`, `V = R I` with `R = ℓ / (σ A)`. -/
+/-- For a bar with measurable cross-section `S` of area `A > 0`, length `ℓ > 0`, uniform axial field
+`E = V / ℓ` and local Ohm law `J = σ E` on `S` with `σ > 0`, `V = R I` with `R = ℓ / (σ A)`. -/
 lemma voltage_eq_resistance_mul_terminalCurrent (σ A ℓ V : ℝ) (S : Set (ℝ × ℝ))
     (E J : ℝ × ℝ → ℝ) (hS : MeasurableSet S) (hSA : volume S = ENNReal.ofReal A) (hA : 0 < A)
     (hℓ : 0 < ℓ) (hσ : 0 < σ) (hE : ∀ p ∈ S, E p = uniformAxialField V ℓ)
@@ -122,7 +126,7 @@ lemma voltage_eq_resistance_mul_terminalCurrent (σ A ℓ V : ℝ) (S : Set (ℝ
   have hσA : σ * A ≠ 0 := mul_ne_zero hσ' hA'
   field_simp
 
-/-- For `σ > 0`, conductance and resistance are reciprocal. -/
+/-- For `σ > 0`, `A > 0` and `ℓ > 0`, conductance and resistance are reciprocal. -/
 lemma conductance_mul_resistance (σ A ℓ : ℝ) (hσ : 0 < σ) (hA : 0 < A) (hℓ : 0 < ℓ) :
     conductance σ A ℓ * resistance σ A ℓ hσ = 1 := by
   unfold conductance resistance
@@ -138,7 +142,9 @@ lemma conductance_mul_resistance (σ A ℓ : ℝ) (hσ : 0 < σ) (hA : 0 < A) (h
 lemma conductance_zero_left (A ℓ : ℝ) : conductance 0 A ℓ = 0 := by
   simp [conductance]
 
-/-- An insulating bar (`σ = 0`) carries no terminal current. -/
+/-- An insulating bar (`σ = 0`) carries no terminal current: for a bar with measurable cross-section
+`S` of area `A > 0`, length `ℓ > 0`, uniform axial field `E = V / ℓ` and local Ohm law `J = σ E` on
+`S`. -/
 lemma terminalCurrent_eq_zero_of_conductivity_eq_zero (A ℓ V : ℝ) (S : Set (ℝ × ℝ))
     (E J : ℝ × ℝ → ℝ) (hS : MeasurableSet S) (hSA : volume S = ENNReal.ofReal A) (hA : 0 < A)
     (hℓ : 0 < ℓ) (hE : ∀ p ∈ S, E p = uniformAxialField V ℓ)
@@ -149,9 +155,10 @@ lemma terminalCurrent_eq_zero_of_conductivity_eq_zero (A ℓ V : ℝ) (S : Set (
   rw [conductance_zero_left] at h
   simpa using h
 
-/-- Terminal orientation: with the terminals swapped the voltage drop is `-V` and the axial
-current density is `-J`; the terminal current is then `-I`, and the law still reads
-`(σ A / ℓ) (-V)`. -/
+/-- Terminal orientation: for a bar with measurable cross-section `S` of area `A > 0`, length
+`ℓ > 0`, uniform axial field `E = V / ℓ` and local Ohm law `J = σ E` on `S` with `σ ≥ 0`, if the
+terminals are swapped the voltage drop is `-V` and the axial current density is `-J`; the terminal
+current is then `-I`, and the law still reads `(σ A / ℓ) (-V)`. -/
 lemma terminalCurrent_reversed (σ A ℓ V : ℝ) (S : Set (ℝ × ℝ)) (E J : ℝ × ℝ → ℝ)
     (hS : MeasurableSet S) (hSA : volume S = ENNReal.ofReal A) (hA : 0 < A) (hℓ : 0 < ℓ)
     (hσ : 0 ≤ σ) (hE : ∀ p ∈ S, E p = uniformAxialField V ℓ)
@@ -167,7 +174,9 @@ lemma terminalCurrent_reversed (σ A ℓ V : ℝ) (S : Set (ℝ × ℝ)) (E J : 
   rw [hNeg, hI]
   ring
 
-/-- Passive sign convention: the absorbed power `V I` is nonnegative. -/
+/-- Passive sign convention: for a bar with measurable cross-section `S` of area `A > 0`, length
+`ℓ > 0`, uniform axial field `E = V / ℓ` and local Ohm law `J = σ E` on `S` with `σ ≥ 0`, the
+absorbed power `V I` is nonnegative. -/
 lemma voltage_mul_terminalCurrent_nonneg (σ A ℓ V : ℝ) (S : Set (ℝ × ℝ))
     (E J : ℝ × ℝ → ℝ) (hS : MeasurableSet S) (hSA : volume S = ENNReal.ofReal A) (hA : 0 < A)
     (hℓ : 0 < ℓ) (hσ : 0 ≤ σ) (hE : ∀ p ∈ S, E p = uniformAxialField V ℓ)
@@ -183,9 +192,9 @@ lemma voltage_mul_terminalCurrent_nonneg (σ A ℓ V : ℝ) (S : Set (ℝ × ℝ
   rw [hEq]
   exact mul_nonneg hG (mul_self_nonneg V)
 
-/-- A nonuniform field needs an integral: on a unit-length bar the axial field `E x = 2 x`
-has terminal voltage `∫₀¹ E = 1`, yet the flux through the cross-section at `x = 0` is `0`,
-not the constant-field value `(σ A / 1) · 1`. -/
+/-- A nonuniform field needs an integral: for a measurable cross-section `S` of area `A > 0` and
+`σ > 0`, on a unit-length bar the axial field `E x = 2 x` has terminal voltage `∫₀¹ E = 1`, yet the
+flux through the cross-section at `x = 0` is `0`, not the constant-field value `(σ A / 1) · 1`. -/
 lemma nonuniformField_constantShortcut_fails (σ A : ℝ) (S : Set (ℝ × ℝ))
     (hS : MeasurableSet S) (hSA : volume S = ENNReal.ofReal A) (hA : 0 < A) (hσ : 0 < σ) :
     (∫ x in (0 : ℝ)..1, 2 * x) = 1 ∧
@@ -213,7 +222,7 @@ lemma nonuniformField_constantShortcut_fails (σ A : ℝ) (S : Set (ℝ × ℝ))
   rw [div_one, hLHS]
   exact Ne.symm (mul_ne_zero (ne_of_gt hσ) (ne_of_gt hA))
 
-/-- On the physical domain the resistance is positive. -/
+/-- On the physical domain `σ > 0`, `A > 0`, `ℓ > 0` the resistance is positive. -/
 lemma resistance_pos (σ A ℓ : ℝ) (hσ : 0 < σ) (hA : 0 < A) (hℓ : 0 < ℓ) :
     0 < resistance σ A ℓ hσ := by
   unfold resistance

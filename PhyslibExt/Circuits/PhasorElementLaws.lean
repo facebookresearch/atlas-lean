@@ -158,8 +158,8 @@ lemma rmsWaveform_eq_iff {ω : ℝ} (hω : ω ≠ 0) (V W : ℂ) :
 
 /-! ### Element laws as phasor equations -/
 
-/-- **Resistor.** For sinusoidal `v`, `i` with RMS phasors `V`, `I` at `ω > 0`, Ohm's law
-`v = R i` at every time is equivalent to the phasor equation `V = R I`. -/
+/-- **Resistor.** For `R ≥ 0` and sinusoidal `v`, `i` with RMS phasors `V`, `I` at `ω > 0`,
+Ohm's law `v = R i` at every time is equivalent to the phasor equation `V = R I`. -/
 lemma resistor_law_iff_phasor (R : ℝ) (hR : 0 ≤ R) {ω : ℝ} (hω : 0 < ω) (V I : ℂ)
     (v i : ℝ → ℝ) (hv : ∀ t, v t = rmsWaveform V ω t) (hi : ∀ t, i t = rmsWaveform I ω t) :
     (∀ t, v t = R * i t) ↔ V = (R : ℂ) * I := by
@@ -177,7 +177,7 @@ lemma resistor_law_iff_phasor (R : ℝ) (hR : 0 ≤ R) {ω : ℝ} (hω : 0 < ω)
     rw [hv t, hi t, h]
     exact rmsWaveform_real_scale R I ω t
 
-/-- **Inductor.** For sinusoidal `v`, `i` with RMS phasors `V`, `I` at `ω > 0`, the law
+/-- **Inductor.** For `L > 0` and sinusoidal `v`, `i` with RMS phasors `V`, `I` at `ω > 0`, the law
 `v = L di/dt` at every time is equivalent to the phasor equation `V = i ω L I`. -/
 lemma inductor_law_iff_phasor (L : ℝ) (hL : 0 < L) {ω : ℝ} (hω : 0 < ω) (V I : ℂ)
     (v i : ℝ → ℝ) (hv : ∀ t, v t = rmsWaveform V ω t) (hi : ∀ t, i t = rmsWaveform I ω t) :
@@ -207,8 +207,8 @@ lemma inductor_law_iff_phasor (L : ℝ) (hL : 0 < L) {ω : ℝ} (hω : 0 < ω) (
   · intro h t
     rw [hv t, hder t, hscale t, h]
 
-/-- **Capacitor.** For sinusoidal `v`, `i` with RMS phasors `V`, `I` at `ω > 0`, the law
-`i = C dv/dt` at every time is equivalent to the phasor equation `I = i ω C V`. -/
+/-- **Capacitor.** For `C > 0` and sinusoidal `v`, `i` with RMS phasors `V`, `I` at `ω > 0`, the
+law `i = C dv/dt` at every time is equivalent to the phasor equation `I = i ω C V`. -/
 lemma capacitor_law_iff_phasor (C : ℝ) (hC : 0 < C) {ω : ℝ} (hω : 0 < ω) (V I : ℂ)
     (v i : ℝ → ℝ) (hv : ∀ t, v t = rmsWaveform V ω t) (hi : ∀ t, i t = rmsWaveform I ω t) :
     (∀ t, i t = C * deriv v t) ↔ I = Complex.I * (ω : ℂ) * (C : ℂ) * V := by

@@ -96,11 +96,13 @@ open MathlibExt.Analysis.ODE.PWMPrimitiveBound
 /-! ## A. Physical and scaled model data -/
 
 /-- State matrix of the ideal buck in the state `(i, v)`:
-`A = [[0, -1/L], [1/C, -1/(R C)]]`. -/
+`A = [[0, -1/L], [1/C, -1/(R C)]]`. With `a / 0 = 0` an entry with a vanishing
+denominator is `0`; the intended domain is `L, C, R > 0`. -/
 noncomputable def buckMatrix (L C R : ℝ) : Matrix (Fin 2) (Fin 2) ℝ :=
   !![0, -1 / L; 1 / C, -1 / (R * C)]
 
-/-- Input direction of the ideal buck: `b = (Vin / L, 0)`. -/
+/-- Input direction of the ideal buck: `b = (Vin / L, 0)`. With `a / 0 = 0` it is `0`
+when `L = 0`; the intended domain is `L > 0`. -/
 noncomputable def buckInput (L Vin : ℝ) : Fin 2 → ℝ :=
   ![Vin / L, 0]
 
@@ -108,11 +110,11 @@ noncomputable def buckInput (L Vin : ℝ) : Fin 2 → ℝ :=
 def stateScaling (Iref Vref : ℝ) : Matrix (Fin 2) (Fin 2) ℝ :=
   Matrix.diagonal ![Iref, Vref]
 
-/-- Scaled state matrix `Ã = S⁻¹ A S`, written out entrywise. -/
+/-- Scaled state matrix `Ã = S⁻¹ A S`, written out entrywise (with `a / 0 = 0`). -/
 noncomputable def scaledBuckMatrix (L C R Iref Vref : ℝ) : Matrix (Fin 2) (Fin 2) ℝ :=
   !![0, -Vref / (L * Iref); Iref / (C * Vref), -1 / (R * C)]
 
-/-- Scaled input direction `b̃ = S⁻¹ b = (Vin / (L Iref), 0)`. -/
+/-- Scaled input direction `b̃ = S⁻¹ b = (Vin / (L Iref), 0)` (with `a / 0 = 0`). -/
 noncomputable def scaledBuckInput (L Vin Iref : ℝ) : Fin 2 → ℝ :=
   ![Vin / (L * Iref), 0]
 
@@ -122,17 +124,19 @@ noncomputable def scaledBuckOperator (L C R Iref Vref : ℝ) :
     (Fin 2 → ℝ) →L[ℝ] (Fin 2 → ℝ) :=
   LinearMap.toContinuousLinearMap (Matrix.toLin' (scaledBuckMatrix L C R Iref Vref))
 
-/-- Dimensionless state `(i / Iref, v / Vref)`. -/
+/-- Dimensionless state `(i / Iref, v / Vref)`. With `a / 0 = 0` a coordinate with a
+vanishing scale is `0`; the intended domain is `Iref, Vref > 0`. -/
 noncomputable def scaledState (Iref Vref i v : ℝ) : Fin 2 → ℝ :=
   ![i / Iref, v / Vref]
 
 /-- Explicit growth rate `κ = max(Vref/(L Iref), Iref/(C Vref) + 1/(R C))`,
-the largest absolute row sum of `Ã`. -/
+the largest absolute row sum of `Ã` for positive parameters (with `a / 0 = 0`). -/
 noncomputable def scaledBuckGrowthRate (L C R Iref Vref : ℝ) : ℝ :=
   max (Vref / (L * Iref)) (Iref / (C * Vref) + 1 / (R * C))
 
 /-- Dimensionless error bound
-`B = exp(κ T) * (max(|Δi₀| / Iref, |Δv₀| / Vref) + |Vin| / (L Iref) * ε * (1 + Ld T / 2))`. -/
+`B = exp(κ T) * (max(|Δi₀| / Iref, |Δv₀| / Vref) + |Vin| / (L Iref) * ε * (1 + Ld T / 2))`,
+with `a / 0 = 0`. -/
 noncomputable def scaledBuckErrorBound (L C R Vin Iref Vref T ε Ld Δi₀ Δv₀ : ℝ) : ℝ :=
   Real.exp (scaledBuckGrowthRate L C R Iref Vref * T) *
     (max (|Δi₀| / Iref) (|Δv₀| / Vref) + |Vin| / (L * Iref) * ε * (1 + Ld * T / 2))

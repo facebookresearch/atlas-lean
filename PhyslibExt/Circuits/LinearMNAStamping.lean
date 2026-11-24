@@ -156,7 +156,8 @@ def nodalCapacitance {nN nB : ℕ} (B : Matrix (Fin nN) (Fin nB) ℝ)
     Matrix.diagonal (fun e : ↥Cset => Cval (e : Fin nB)) *
     (capacitorIncidence B Cset)ᵀ
 
-/-- The nodal conductance matrix `Br * diagonal (1 / R) * Brᵀ`. -/
+/-- The nodal conductance matrix `Br * diagonal (1 / R) * Brᵀ`. With `0⁻¹ = 0` a branch with
+zero resistance contributes conductance `0`; the intended domain is positive resistances. -/
 noncomputable def nodalConductance {nN nB : ℕ} (B : Matrix (Fin nN) (Fin nB) ℝ)
     (Rset : Finset (Fin nB)) (Rval : Fin nB → ℝ) : Matrix (Fin nN) (Fin nN) ℝ :=
   resistorIncidence B Rset *
@@ -185,7 +186,8 @@ def satisfiesStampingHypotheses {nB : ℕ} (Rset Lset Cset Sset : Finset (Fin nB
 /-- The carrier branch equations: zero potential at the ground
 node, branch voltages from node potentials, nodal current balance
 against the supplied injection, and the resistor, capacitor,
-inductor and independent voltage-source element laws. -/
+inductor and independent voltage-source element laws (`deriv` is `0`
+where the function is not differentiable). -/
 def satisfiesBranchEquations {nN nB : ℕ} (B : Matrix (Fin nN) (Fin nB) ℝ)
     (Rset Lset Cset Sset : Finset (Fin nB)) (Rval Lval Cval sourceVal : Fin nB → ℝ)
     (ground : Fin nN) (j : ℝ → Fin nN → ℝ)
@@ -203,7 +205,8 @@ def satisfiesBranchEquations {nN nB : ℕ} (B : Matrix (Fin nN) (Fin nB) ℝ)
 /-- The stamped equations: zero potential at the ground node, the
 assembled nodal equation with capacitor, resistor, inductor and
 voltage-source blocks, the inductor voltage equation, and the
-voltage-source constraint on node potentials. -/
+voltage-source constraint on node potentials (`deriv` is `0` where the
+function is not differentiable). -/
 def satisfiesStampedEquations {nN nB : ℕ} (B : Matrix (Fin nN) (Fin nB) ℝ)
     (Rset Lset Cset Sset : Finset (Fin nB)) (Rval Lval Cval sourceVal : Fin nB → ℝ)
     (ground : Fin nN) (j : ℝ → Fin nN → ℝ)

@@ -56,14 +56,14 @@ the exact gain deficit below the ideal gain `1 / beta` is
 
 namespace PhyslibExt.Electronics.FiniteGainFeedback
 
-/-- The loop denominator `1 + A * beta` is strictly positive. -/
+/-- The loop denominator `1 + A * beta` is strictly positive for `A > 0` and `beta > 0`. -/
 lemma one_add_mul_pos {A beta : ℝ} (hA : 0 < A) (hbeta : 0 < beta) :
     0 < 1 + A * beta := by
   have h : 0 < A * beta := mul_pos hA hbeta
   linarith
 
-/-- Any output satisfying the amplifier equation has the closed form
-`A * vi / (1 + A * beta)`. -/
+/-- For `A > 0` and `beta > 0`, any output satisfying the amplifier equation
+`vo = A * (vi - beta * vo)` has the closed form `A * vi / (1 + A * beta)`. -/
 lemma eq_closedForm_of_eq {A beta vi vo : ℝ} (hA : 0 < A) (hbeta : 0 < beta)
     (h : vo = A * (vi - beta * vo)) :
     vo = A * vi / (1 + A * beta) := by
@@ -72,8 +72,8 @@ lemma eq_closedForm_of_eq {A beta vi vo : ℝ} (hA : 0 < A) (hbeta : 0 < beta)
   rw [eq_div_iff hne]
   linarith
 
-/-- The closed-form value indeed satisfies the amplifier equation, so
-the equation has a solution for every input. -/
+/-- For `A > 0` and `beta > 0`, the closed-form value indeed satisfies the amplifier equation,
+so the equation has a solution for every input. -/
 lemma closedForm_satisfies {A beta vi : ℝ} (hA : 0 < A) (hbeta : 0 < beta) :
     A * vi / (1 + A * beta)
       = A * (vi - beta * (A * vi / (1 + A * beta))) := by
@@ -82,15 +82,14 @@ lemma closedForm_satisfies {A beta vi : ℝ} (hA : 0 < A) (hbeta : 0 < beta) :
   field_simp
   ring
 
-/-- The closed-loop gain of the amplifier: the factor multiplying the
-input in the closed-form output. -/
+/-- The closed-loop gain `A / (1 + A * beta)` of the amplifier: for `A > 0` and `beta > 0`, the
+factor multiplying the input in the closed-form output. With `x / 0 = 0` it is `0` when
+`A * beta = -1`. -/
 noncomputable def closedLoopGain (A beta : ℝ) : ℝ :=
   A / (1 + A * beta)
 
-/-- Any output satisfying the amplifier equation is the closed-loop
-gain times the input. This is the amplifier contract for
-`closedLoopGain`; it consumes the equation rather than restating
-arithmetic. -/
+/-- For `A > 0` and `beta > 0`, any output satisfying the amplifier equation is the closed-loop
+gain times the input. -/
 lemma output_eq_closedLoopGain_mul {A beta vi vo : ℝ} (hA : 0 < A)
     (hbeta : 0 < beta) (h : vo = A * (vi - beta * vo)) :
     vo = closedLoopGain A beta * vi := by
@@ -99,7 +98,7 @@ lemma output_eq_closedLoopGain_mul {A beta vi vo : ℝ} (hA : 0 < A)
   rw [hcf]
   ring
 
-/-- The exact gain deficit identity:
+/-- The exact gain deficit identity, for `A > 0` and `beta > 0`:
 `1 / beta - closedLoopGain A beta = 1 / (beta * (1 + A * beta))`. -/
 lemma gain_deficit {A beta : ℝ} (hA : 0 < A) (hbeta : 0 < beta) :
     1 / beta - closedLoopGain A beta = 1 / (beta * (1 + A * beta)) := by
@@ -110,7 +109,7 @@ lemma gain_deficit {A beta : ℝ} (hA : 0 < A) (hbeta : 0 < beta) :
   field_simp
   ring
 
-/-- The closed-loop gain is positive and below the ideal gain
+/-- For `A > 0` and `beta > 0`, the closed-loop gain is positive and below the ideal gain
 `1 / beta`; equivalently the deficit is positive. -/
 lemma closedLoopGain_pos_and_lt {A beta : ℝ} (hA : 0 < A)
     (hbeta : 0 < beta) :

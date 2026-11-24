@@ -97,9 +97,9 @@ open PhyslibExt.Electronics.LogicObservationBands
 
 /-! ## A. Observation events and the settling guarantee -/
 
-/-- An observation is invalid when its voltage falls in the invalid
-band between the thresholds, so the three-valued observation is
-`none`. -/
+/-- An observation is invalid when its three-valued observation is `none`: for `Vil < Vih`,
+when its voltage falls in the invalid band strictly between the thresholds; for `Vih ≤ Vil`, no
+voltage is invalid. -/
 def invalidObservation (Vil Vih v : ℝ) : Prop :=
   observe Vil Vih v = none
 
@@ -108,7 +108,8 @@ ideal voltage plus additive noise. Whenever the resolution time is
 within the budget, the ideal voltage encodes the expected bit in its
 output band (`Vol` on the low side, `Voh` on the high side) and the
 noise is below both noise margins formed from `Vol < Vil` and
-`Vih < Voh`. No claim is made outside the stated budget. -/
+`Vih < Voh`. No claim is made outside the stated budget. The levels are not assumed ordered: if
+a margin is not positive, the guarantee forces every resolution time to exceed its budget. -/
 def settlingGuarantee {Ω : Type*} [MeasurableSpace Ω] {ι : Type*}
     (Vil Vih Vol Voh : ℝ) (resolutionTime : ι → Ω → ℝ) (budget : ι → ℝ)
     (idealVoltage : ι → Ω → ℝ) (noise : ι → Ω → ℝ)
@@ -133,8 +134,8 @@ def resolutionExceedsEvent {Ω : Type*} {ι : Type*}
 
 /-! ## B. Within-budget observation -/
 
-/-- Within budget, under the settling model, the observed voltage is
-observed as the expected bit. -/
+/-- Within budget, under the settling model with `Vol < Vil < Vih < Voh`, the observed voltage
+is observed as the expected bit. -/
 lemma observe_observedVoltage_eq_some_of_le {Ω : Type*} [MeasurableSpace Ω]
     {ι : Type*} (Vil Vih Vol Voh : ℝ) (hVol : Vol < Vil) (hVilVih : Vil < Vih)
     (hVoh : Vih < Voh) (resolutionTime : ι → Ω → ℝ) (budget : ι → ℝ)
@@ -150,7 +151,7 @@ lemma observe_observedVoltage_eq_some_of_le {Ω : Type*} [MeasurableSpace Ω]
   rw [hobs i ω]
   exact h
 
-/-- Within budget, under the settling model, the observation is not
+/-- Within budget, under the settling model with `Vol < Vil < Vih < Voh`, the observation is not
 invalid. -/
 lemma not_invalidObservation_of_le {Ω : Type*} [MeasurableSpace Ω]
     {ι : Type*} (Vil Vih Vol Voh : ℝ) (hVol : Vol < Vil) (hVilVih : Vil < Vih)
@@ -170,7 +171,7 @@ lemma not_invalidObservation_of_le {Ω : Type*} [MeasurableSpace Ω]
 
 /-! ## C. Invalid observations and budget expiry -/
 
-/-- **Invalid implies unresolved.** Under the settling model, an
+/-- **Invalid implies unresolved.** Under the settling model with `Vol < Vil < Vih < Voh`, an
 invalid observation can occur only after its settling budget has
 expired: its resolution time strictly exceeds its budget. -/
 lemma resolutionExceeds_of_invalidObservation {Ω : Type*} [MeasurableSpace Ω]
@@ -188,8 +189,8 @@ lemma resolutionExceeds_of_invalidObservation {Ω : Type*} [MeasurableSpace Ω]
     resolutionTime budget idealVoltage noise observedVoltage expectedBit hmodel i ω hle)
     hinvalid
 
-/-- The invalid-observation event of each index is contained in its
-budget-expiry event. -/
+/-- Under the settling model with `Vol < Vil < Vih < Voh`, the invalid-observation event of
+each index is contained in its budget-expiry event. -/
 lemma invalidEvent_subset_resolutionExceedsEvent {Ω : Type*} [MeasurableSpace Ω]
     {ι : Type*} (Vil Vih Vol Voh : ℝ) (hVol : Vol < Vil) (hVilVih : Vil < Vih)
     (hVoh : Vih < Voh) (resolutionTime : ι → Ω → ℝ) (budget : ι → ℝ)
@@ -204,7 +205,10 @@ lemma invalidEvent_subset_resolutionExceedsEvent {Ω : Type*} [MeasurableSpace �
     resolutionTime budget idealVoltage noise observedVoltage expectedBit hmodel i ω hmem
 
 /-- Per-index tail bound for an invalid observation, from its
-budget-expiry tail bound. -/
+budget-expiry tail bound, under the settling model with `Vol < Vil < Vih < Voh` and a
+probability measure `μ`, for any reals `c` and `tau`. `ENNReal.ofReal` sends a negative value
+to `0`, and `tau = 0` gives `exp 0 = 1` (with `x / 0 = 0`); the invalid event need not be
+measurable (`μ` is then its outer measure). -/
 lemma measure_invalidEvent_le_of_tail {Ω : Type*} [MeasurableSpace Ω]
     {ι : Type*} (μ : Measure Ω) [IsProbabilityMeasure μ] (Vil Vih Vol Voh : ℝ)
     (hVol : Vol < Vil) (hVilVih : Vil < Vih) (hVoh : Vih < Voh)
@@ -227,8 +231,10 @@ lemma measure_invalidEvent_le_of_tail {Ω : Type*} [MeasurableSpace Ω]
 
 /-! ## D. Tail bounds and the finite union bound -/
 
-/-- **Finite union bound, unequal budgets.** With measurable invalid
-events and a per-index exponential tail bound, the probability of any
+/-- **Finite union bound, unequal budgets.** For finitely many observations under the settling
+model with `Vol < Vil < Vih < Voh`, with measurable invalid
+events and a per-index exponential tail bound with `0 ≤ c`, `0 < tau` and nonnegative
+budgets, the probability of any
 invalid observation is at most the sum of the tail bounds. No
 independence is assumed. -/
 lemma measure_biUnion_invalidEvent_le_sum {Ω : Type*} [MeasurableSpace Ω]
@@ -257,8 +263,9 @@ lemma measure_biUnion_invalidEvent_le_sum {Ω : Type*} [MeasurableSpace Ω]
           i (htail i)
 
 /-- **Synchronizer observation budget.** The capped finite union bound
-for any invalid observation, under the settling model and the
-exponential resolution tail: the union bound capped at one, the total
+for any invalid observation, under the settling model with `Vol < Vil < Vih < Voh`, measurable
+invalid events and the exponential resolution tail with `0 ≤ c`, `0 < tau` and nonnegative
+budgets: the union bound capped at one, the total
 probability of the space. This carries the pointwise
 invalid-implies-unresolved inclusion and needs no independence. -/
 lemma anyInvalid_measure_le_min_one_sum {Ω : Type*} [MeasurableSpace Ω]
@@ -283,10 +290,11 @@ lemma anyInvalid_measure_le_min_one_sum {Ω : Type*} [MeasurableSpace Ω]
       resolutionTime budget idealVoltage noise observedVoltage expectedBit hmodel hmeas c tau
       hc htau hb htail
 
-/-- **Equal budgets.** When every budget equals one nonnegative budget
-`b`, the capped union bound is `min (1, N * c * exp (-b / tau))`, with
-`N` the number of observations and the product taken in the extended
-nonnegative reals. -/
+/-- **Equal budgets.** For finitely many observations, `N` of them, whose budgets all equal one
+`b ≥ 0`, under the settling model with `Vol < Vil < Vih < Voh`, a probability measure `μ`,
+measurable invalid events and the exponential tail bound with `0 ≤ c` and `0 < tau`, the
+probability of any invalid observation is at most `min (1, N * c * exp (-b / tau))`, the
+product taken in the extended nonnegative reals. -/
 lemma measure_biUnion_invalidEvent_le_min_one_card_mul {Ω : Type*}
     [MeasurableSpace Ω] {ι : Type*} [Fintype ι] (μ : Measure Ω)
     [IsProbabilityMeasure μ]

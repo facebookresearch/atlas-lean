@@ -35,7 +35,9 @@ is the arc-network weighted Laplacian of
 identity, its kernel for nonnegative susceptances, and the positive
 definiteness of its grounded block are restated here for `L_b`. The
 injections sum to zero, and a uniform angle shift changes no flow, for
-susceptances of any sign.
+susceptances of any sign. Physical susceptances are positive; each
+statement holds for all real susceptances unless it states a sign
+condition.
 
 The nonlinear comparison is the lossless unit-magnitude AC model built
 on the network of `PhyslibExt.Circuits.ACInjectionLossBalance`: node
@@ -104,19 +106,23 @@ open PhyslibExt.Circuits.ArcPortSigns
 open MathlibExt.Combinatorics.Graph.ArcNetworkLaplacian (positiveArcGraph)
 
 /-- DC branch flow `f = diag(b) * Bᵀ * θ` for branch susceptances `b` and
-node phase angles `θ`. -/
+node phase angles `θ`. With the tail-positive electrical incidence `B`,
+`f e = b e * (θ tail - θ head)`, read as the flow from tail to head. The
+physical susceptances are positive; the definition allows any real `b`. -/
 noncomputable def dcBranchFlow (nN nE : ℕ) (tail head : Fin nE → Fin nN)
     (b : Fin nE → ℝ) (θ : Fin nN → ℝ) : Fin nE → ℝ :=
   Matrix.mulVec
     (Matrix.diagonal b * Matrix.transpose (electricalIncidence tail head)) θ
 
-/-- DC nodal injection `p = B * f`. -/
+/-- DC nodal injection `p = B * f`: at `v`, the flow leaving `v` on the branches with tail `v`
+minus the flow arriving on the branches with head `v`, read as the net power injected at `v`. -/
 noncomputable def dcInjection (nN nE : ℕ) (tail head : Fin nE → Fin nN)
     (b : Fin nE → ℝ) (θ : Fin nN → ℝ) : Fin nN → ℝ :=
   Matrix.mulVec (electricalIncidence tail head) (dcBranchFlow nN nE tail head b θ)
 
 /-- Full susceptance-weighted Laplacian `L_b = B * diag(b) * Bᵀ`, with no
-reference row or column deleted. -/
+reference row or column deleted. The physical susceptances are positive;
+the definition allows any real `b`. -/
 noncomputable def weightedLaplacian (nN nE : ℕ) (tail head : Fin nE → Fin nN)
     (b : Fin nE → ℝ) : Matrix (Fin nN) (Fin nN) ℝ :=
   electricalIncidence tail head * Matrix.diagonal b *
@@ -129,7 +135,9 @@ noncomputable def unitVoltage (nN : ℕ) (θ : Fin nN → ℝ) (v : Fin nN) : �
   Complex.exp ((θ v : ℂ) * Complex.I)
 
 /-- Lossless branch admittance `y e = -i * b e`: a pure series susceptance
-with no conductance. -/
+with no conductance and imaginary part `-b e`. A line of series reactance
+`x > 0` has admittance `1 / (i * x)`, so `b e = 1 / x > 0`; the definition
+allows any real `b`. -/
 def losslessAdmittance (nE : ℕ) (b : Fin nE → ℝ) (e : Fin nE) : ℂ :=
   -Complex.I * (b e : ℂ)
 
@@ -251,8 +259,9 @@ theorem grounded_weightedLaplacian_posDef (nN nE : ℕ) (tail head : Fin nE → 
   exact MathlibExt.Combinatorics.Graph.ArcNetworkLaplacian.grounded_weightedLaplacian_posDef
     tail head b hb r hconn
 
-/-- The grounded block of `L_b` is invertible under the hypotheses of
-`grounded_weightedLaplacian_posDef`. -/
+/-- Grounded block: with nonnegative susceptances and every node reachable
+from the reference `r` through positive-susceptance branches, `L_b` with
+the row and column of `r` deleted is invertible (it has a two-sided inverse). -/
 theorem grounded_weightedLaplacian_isUnit (nN nE : ℕ) (tail head : Fin nE → Fin nN)
     (b : Fin nE → ℝ) (hb : ∀ e, 0 ≤ b e) (r : Fin nN)
     (hconn : ∀ v, (positiveArcGraph tail head b).Reachable r v) :
@@ -260,8 +269,9 @@ theorem grounded_weightedLaplacian_isUnit (nN nE : ℕ) (tail head : Fin nE → 
       (Subtype.val : {v // v ≠ r} → Fin nN) (Subtype.val : {v // v ≠ r} → Fin nN)) :=
   (grounded_weightedLaplacian_posDef nN nE tail head b hb r hconn).isUnit
 
-/-- DC injections are balanced: they sum to zero over all nodes, which is
-the full reference equation a grounded solve must respect. -/
+/-- DC injections are balanced, for susceptances and angles of any sign:
+they sum to zero over all nodes, so the injection at any node, the
+reference node included, is minus the sum of the others. -/
 lemma sum_dcInjection_eq_zero (nN nE : ℕ) (tail head : Fin nE → Fin nN)
     (b : Fin nE → ℝ) (θ : Fin nN → ℝ) :
     ∑ v : Fin nN, dcInjection nN nE tail head b θ v = 0 := by
@@ -269,9 +279,10 @@ lemma sum_dcInjection_eq_zero (nN nE : ℕ) (tail head : Fin nE → Fin nN)
   simp only [Pi.neg_apply, Finset.sum_neg_distrib,
     MathlibExt.Combinatorics.Graph.ArcNetwork.sum_incidenceMatrix_mulVec_eq_zero, neg_zero]
 
-/-- A uniform angle shift changes no DC flow: the full weighted Laplacian
-kills constant angle vectors. Unlike `weightedLaplacian_mulVec_eq_zero_iff`,
-this holds for susceptances of any sign. -/
+/-- The full weighted Laplacian kills constant angle vectors, so a uniform
+angle shift changes no DC injection `L_b * θ` (nor any DC flow). Unlike
+`weightedLaplacian_mulVec_eq_zero_iff`, this holds for susceptances of any
+sign. -/
 lemma weightedLaplacian_mulVec_const (nN nE : ℕ) (tail head : Fin nE → Fin nN)
     (b : Fin nE → ℝ) (c : ℝ) :
     Matrix.mulVec (weightedLaplacian nN nE tail head b) (fun _ => c) = 0 := by
@@ -371,7 +382,8 @@ lemma nodeRealPower_eq_sum_mul_sin (nN nE : ℕ) (tail head : Fin nE → Fin nN)
   rw [mul_left_comm, ofReal_mul_re]
   exact hbranch e
 
-/-- Total AC real power of the lossless network is zero. -/
+/-- Total AC real power of the lossless network, with unit-magnitude
+voltages and no shunts, is zero. -/
 lemma sum_nodeRealPower_eq_zero (nN nE : ℕ) (tail head : Fin nE → Fin nN)
     (b : Fin nE → ℝ) (θ : Fin nN → ℝ) :
     ∑ v : Fin nN, (nodeComplexPower nN nE (electricalIncidence tail head)
@@ -379,7 +391,8 @@ lemma sum_nodeRealPower_eq_zero (nN nE : ℕ) (tail head : Fin nE → Fin nN)
   total_realPower_eq_zero_of_purely_reactive nN nE _ _ _ _
     (fun _ => by simp [losslessAdmittance]) (fun _ => Complex.zero_re)
 
-/-- Per-line angle error: the sending-end AC real power and the DC flow
+/-- Per-line angle error: for positive susceptances (`0 < b e` on every
+branch) and all real angles, the sending-end AC real power and the DC flow
 differ by at most `b e * |θ tail - θ head| ^ 3 / 6`. -/
 theorem abs_acBranchRealPower_sub_dcBranchFlow_le (nN nE : ℕ)
     (tail head : Fin nE → Fin nN) (b : Fin nE → ℝ) (hb : ∀ e, 0 < b e)
@@ -402,8 +415,9 @@ theorem abs_acBranchRealPower_sub_dcBranchFlow_le (nN nE : ℕ)
         mul_le_mul_of_nonneg_left hsin (le_of_lt hbe)
     _ = b e * |θ (tail e) - θ (head e)| ^ 3 / 6 := by ring
 
-/-- Nodal angle error: AC nodal real power and DC injection differ by at
-most the incidence-weighted sum of per-line bounds. -/
+/-- Nodal angle error: for positive susceptances (`0 < b e` on every
+branch), AC nodal real power and DC injection differ by at most the
+incidence-weighted sum of per-line bounds. -/
 theorem abs_nodeRealPower_sub_dcInjection_le (nN nE : ℕ)
     (tail head : Fin nE → Fin nN) (b : Fin nE → ℝ) (hb : ∀ e, 0 < b e)
     (θ : Fin nN → ℝ) (v : Fin nN) :
@@ -452,9 +466,9 @@ lemma acBranchRealPower_reverse (nN nE : ℕ) (tail head : Fin nE → Fin nN)
   rw [h, Real.sin_neg]
   ring
 
-/-- Out of model, nonunit magnitudes: for `V v = m v * exp(i * θ v)` and a
-lossless branch, the sending-end real power carries the factor
-`m tail * m head`, so the cubic bound does not transfer. -/
+/-- Out of model, nonunit magnitudes: for real `m`, `V v = m v * exp(i * θ v)`
+and a lossless branch, the sending-end real power carries the factor
+`m tail * m head`, so the cubic bound need not hold when that factor is not `1`. -/
 lemma realPower_scaledVoltage (nN nE : ℕ) (tail head : Fin nE → Fin nN)
     (b : Fin nE → ℝ) (m θ : Fin nN → ℝ) (e : Fin nE) :
     (complexPower ((m (tail e) : ℂ) * unitVoltage nN θ (tail e))
@@ -489,8 +503,9 @@ lemma realPower_conductance (nN nE : ℕ) (tail head : Fin nE → Fin nN)
 
 /-! ## F. Headline -/
 
-/-- Lossless DC load-flow model and its per-line angle error. The DC flow
-is `f e = b e * (θ tail - θ head)`, the DC injection is `L_b * θ` for the
+/-- Lossless DC load-flow model and its per-line angle error, for positive
+susceptances (`0 < b e` on every branch). The DC flow is
+`f e = b e * (θ tail - θ head)`, the DC injection is `L_b * θ` for the
 full weighted Laplacian, the lossless unit-magnitude AC sending-end real
 power is `b e * sin(θ tail - θ head)`, and the two differ by at most
 `b e * |θ tail - θ head| ^ 3 / 6` on every branch. -/

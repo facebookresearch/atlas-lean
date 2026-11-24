@@ -95,20 +95,24 @@ private theorem zmod3_cases (p : ZMod 3) : p = 0 ∨ p = 1 ∨ p = 2 := by
   exact hall p
 
 /-- The supplied Thevenin source law `V = E - Zth * I` and the balanced
-fault law `V = Zf * I`, for one positive-sequence phase. -/
+fault law `V = Zf * I`, for one positive-sequence phase. In a power system the
+impedances have nonnegative real parts; the definition allows all complex values. -/
 def IsTheveninFault (E Zth Zf V I : ℂ) : Prop :=
   V = E - Zth * I ∧ V = Zf * I
 
-/-- Fault current `E / (Zth + Zf)`. -/
+/-- Fault current `E / (Zth + Zf)`. With the convention `x / 0 = 0`, it is `0` when
+`Zth + Zf = 0`. -/
 noncomputable def faultCurrent (E Zth Zf : ℂ) : ℂ :=
   E / (Zth + Zf)
 
-/-- Fault voltage `Zf * E / (Zth + Zf)` at the faulted terminals. -/
+/-- Fault voltage `Zf * E / (Zth + Zf)` at the faulted terminals. With the convention
+`x / 0 = 0`, it is `0` when `Zth + Zf = 0`. -/
 noncomputable def faultVoltage (E Zth Zf : ℂ) : ℂ :=
   Zf * faultCurrent E Zth Zf
 
 /-- Balanced phase currents of the fault, the canonical positive-sequence
-set built from the fault current. -/
+set `(I, α² I, α I)` built from the fault current `I`. All three are `0` when
+`Zth + Zf = 0` (convention `x / 0 = 0`). -/
 noncomputable def faultPhaseCurrents (E Zth Zf : ℂ) : ZMod 3 → ℂ :=
   balancedPhases (faultCurrent E Zth Zf)
 
@@ -131,12 +135,13 @@ theorem isTheveninFault_iff (E Zth Zf V I : ℂ) (h : Zth + Zf ≠ 0) :
     field_simp
     ring
 
-/-- The fault current and voltage satisfy both laws. -/
+/-- With nonzero total impedance, the fault current and voltage satisfy both laws. -/
 lemma isTheveninFault_faultCurrent (E Zth Zf : ℂ) (h : Zth + Zf ≠ 0) :
     IsTheveninFault E Zth Zf (faultVoltage E Zth Zf) (faultCurrent E Zth Zf) :=
   (isTheveninFault_iff E Zth Zf _ _ h).mpr ⟨rfl, rfl⟩
 
-/-- The fault voltage is also the source voltage minus the Thevenin drop. -/
+/-- With nonzero total impedance, the fault voltage is also the source voltage minus the
+Thevenin drop. -/
 lemma faultVoltage_eq_sub (E Zth Zf : ℂ) (h : Zth + Zf ≠ 0) :
     faultVoltage E Zth Zf = E - Zth * faultCurrent E Zth Zf :=
   (isTheveninFault_faultCurrent E Zth Zf h).1
@@ -158,8 +163,8 @@ lemma isTheveninFault_balancedPhases (E Zth Zf V I : ℂ)
   · change alpha * V = alpha * E - Zth * (alpha * I) ∧ alpha * V = Zf * (alpha * I)
     exact ⟨by linear_combination alpha * h1, by linear_combination alpha * h2⟩
 
-/-- The balanced fault phase currents solve the per-phase laws with the
-balanced source and the balanced fault voltages. -/
+/-- With nonzero total impedance, the balanced fault phase currents solve the per-phase
+laws with the balanced source and the balanced fault voltages. -/
 lemma isTheveninFault_faultPhaseCurrents (E Zth Zf : ℂ) (h : Zth + Zf ≠ 0) (p : ZMod 3) :
     IsTheveninFault (balancedPhases E p) Zth Zf
       (balancedPhases (faultVoltage E Zth Zf) p) (faultPhaseCurrents E Zth Zf p) :=
@@ -167,7 +172,8 @@ lemma isTheveninFault_faultPhaseCurrents (E Zth Zf : ℂ) (h : Zth + Zf ≠ 0) (
     (faultCurrent E Zth Zf) (isTheveninFault_faultCurrent E Zth Zf h) p
 
 /-- The fault phase currents have zero zero-sequence and negative-sequence
-components, and positive-sequence component equal to the fault current. -/
+components, and positive-sequence component equal to the fault current. No condition on
+`Zth + Zf` is needed: when it is `0`, all three components are `0` (convention `x / 0 = 0`). -/
 theorem sequence_faultPhaseCurrents (E Zth Zf : ℂ) :
     zeroSequence (faultPhaseCurrents E Zth Zf 0) (faultPhaseCurrents E Zth Zf 1)
         (faultPhaseCurrents E Zth Zf 2) = 0 ∧
@@ -179,8 +185,9 @@ theorem sequence_faultPhaseCurrents (E Zth Zf : ℂ) :
 
 /-! ## D. Physical and per-unit values -/
 
-/-- The fault current in per-unit is the per-unit source voltage over the
-per-unit total impedance. -/
+/-- For positive bases `Vb` and `Ib`, the fault current in per-unit is the per-unit source
+voltage over the per-unit total impedance; both sides are `0` when `Zth + Zf = 0`
+(convention `x / 0 = 0`). -/
 theorem faultCurrent_perUnit (E Zth Zf : ℂ) (Vb Ib : ℝ) (hVb : 0 < Vb) (hIb : 0 < Ib) :
     currentPerUnit Ib (faultCurrent E Zth Zf) =
       faultCurrent (voltagePerUnit Vb E) (impedancePerUnit Vb Ib Zth)
@@ -192,7 +199,8 @@ theorem faultCurrent_perUnit (E Zth Zf : ℂ) (Vb Ib : ℝ) (hVb : 0 < Vb) (hIb 
   rw [← add_div, ← hrel, div_div_div_eq, div_div, mul_assoc, mul_comm E,
     mul_div_mul_left _ _ hZc, mul_comm (Zth + Zf)]
 
-/-- The fault voltage in per-unit is the per-unit fault voltage formula. -/
+/-- For positive bases `Vb` and `Ib`, the fault voltage in per-unit is the per-unit fault
+voltage formula; both sides are `0` when `Zth + Zf = 0`. -/
 lemma faultVoltage_perUnit (E Zth Zf : ℂ) (Vb Ib : ℝ) (hVb : 0 < Vb) (hIb : 0 < Ib) :
     voltagePerUnit Vb (faultVoltage E Zth Zf) =
       faultVoltage (voltagePerUnit Vb E) (impedancePerUnit Vb Ib Zth)
@@ -204,8 +212,8 @@ lemma faultVoltage_perUnit (E Zth Zf : ℂ) (Vb Ib : ℝ) (hVb : 0 < Vb) (hIb : 
   unfold voltagePerUnit currentPerUnit impedancePerUnit
   rw [div_mul_div_comm, hrel]
 
-/-- The Thevenin and fault laws hold physically if and only if they hold
-in per-unit coordinates. -/
+/-- For positive bases `Vb` and `Ib`, the Thevenin and fault laws hold physically if and only
+if they hold in per-unit coordinates. -/
 lemma isTheveninFault_perUnit_iff (E Zth Zf V I : ℂ) (Vb Ib : ℝ) (hVb : 0 < Vb)
     (hIb : 0 < Ib) :
     IsTheveninFault E Zth Zf V I ↔
@@ -222,8 +230,8 @@ lemma isTheveninFault_perUnit_iff (E Zth Zf V I : ℂ) (Vb Ib : ℝ) (hVb : 0 < 
   unfold voltagePerUnit
   rw [← sub_div, div_left_inj' hVc]
 
-/-- Recovery of the physical fault current: the current base times the
-per-unit fault current. -/
+/-- Recovery of the physical fault current, for positive bases `Vb` and `Ib`: the current base
+times the per-unit fault current (both sides are `0` when `Zth + Zf = 0`). -/
 lemma faultCurrent_eq_base_mul_perUnit (E Zth Zf : ℂ) (Vb Ib : ℝ) (hVb : 0 < Vb)
     (hIb : 0 < Ib) :
     faultCurrent E Zth Zf =
@@ -233,8 +241,8 @@ lemma faultCurrent_eq_base_mul_perUnit (E Zth Zf : ℂ) (Vb Ib : ℝ) (hVb : 0 <
   rw [← faultCurrent_perUnit E Zth Zf Vb Ib hVb hIb, currentPerUnit,
     mul_div_cancel₀ _ hIc]
 
-/-- Per-unit phase currents of the fault are the balanced set of the
-per-unit fault current. -/
+/-- For positive bases `Vb` and `Ib`, the per-unit phase currents of the fault are the balanced
+set of the per-unit fault current (both sides are `0` when `Zth + Zf = 0`). -/
 lemma faultPhaseCurrents_perUnit (E Zth Zf : ℂ) (Vb Ib : ℝ) (hVb : 0 < Vb) (hIb : 0 < Ib)
     (p : ZMod 3) :
     currentPerUnit Ib (faultPhaseCurrents E Zth Zf p) =
@@ -251,13 +259,15 @@ lemma faultPhaseCurrents_perUnit (E Zth Zf : ℂ) (Vb Ib : ℝ) (hVb : 0 < Vb) (
 
 /-! ## E. Validation cases -/
 
-/-- Bolted fault: with `Zf = 0` the fault voltage is zero. -/
+/-- Bolted fault: with `Zf = 0` the fault voltage is zero, for every `E` and `Zth` (also for
+`Zth = 0`, where the fault current is `0` by the convention `x / 0 = 0`). -/
 lemma faultVoltage_bolted (E Zth : ℂ) : faultVoltage E Zth 0 = 0 :=
   zero_mul _
 
 /-- Bolted fault behind a purely reactive Thevenin impedance `X * i` with
 `X ≠ 0`: the fault current is `-i * E / X`, lagging the source by a
-quarter period for `X > 0`. -/
+quarter period for `X > 0` and leading it for `X < 0` (multiplying a phasor by `exp (-i θ)`
+delays it by `θ`, as for the balanced phases). -/
 lemma faultCurrent_bolted_reactive (E : ℂ) (X : ℝ) (hX : X ≠ 0) :
     faultCurrent E ((X : ℂ) * Complex.I) 0 = -Complex.I * E / (X : ℂ) := by
   have hXc : (X : ℂ) ≠ 0 := by exact_mod_cast hX
@@ -273,8 +283,8 @@ lemma not_isTheveninFault_of_total_eq_zero (E Zth Zf V I : ℂ) (h : Zth + Zf = 
   rintro ⟨h1, h2⟩
   exact hE (by linear_combination h2 - h1 + I * h)
 
-/-- Zero total impedance is excluded: with a zero source every current
-satisfies both laws, so the fault current is not determined. -/
+/-- Zero total impedance is excluded: with a zero source every current `I`, with voltage
+`Zf * I`, satisfies both laws, so the fault current is not determined. -/
 lemma isTheveninFault_of_total_eq_zero (Zth Zf I : ℂ) (h : Zth + Zf = 0) :
     IsTheveninFault 0 Zth Zf (Zf * I) I :=
   ⟨by linear_combination I * h, rfl⟩
@@ -286,7 +296,7 @@ lemma sequence_singlePhase (I : ℂ) :
       negativeSequence I 0 0 = I / 3 := by
   simp [zeroSequence, positiveSequence, negativeSequence]
 
-/-- A nonzero one-phase current set is not balanced. -/
+/-- A nonzero one-phase current set is not a balanced positive-sequence set. -/
 lemma singlePhase_ne_balancedPhases (I : ℂ) (hI : I ≠ 0) (X : ℂ) :
     (![I, 0, 0] : ZMod 3 → ℂ) ≠ balancedPhases X := by
   intro hcon

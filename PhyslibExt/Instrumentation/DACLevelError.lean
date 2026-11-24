@@ -47,9 +47,9 @@ not an adjacent step.
   unclipped saturating round-half-up code with this DAC gives an
   output within `Δ / 2 + η` of the input.
 - `dacLevel_correct`: the three clauses together.
-- `exists_not_strictMonoOn_of_le_two_mul`: the monotonicity
+- `exists_not_strictMonoOn_of_le_two_mul`: the strict-monotonicity
   threshold is sharp; once `Δ ≤ 2 * η`, some admissible level error
-  makes the levels nonmonotone.
+  makes the levels not strictly increasing.
 
 ## iii. Table of contents
 
@@ -186,8 +186,8 @@ theorem abs_dacLevel_code_sub_le_of_not_isClipped {Δ η : ℝ} (hΔ : 0 < Δ) {
   rw [hdecomp, abs_le]
   constructor <;> linarith
 
-/-- **Full-scale form.** For inputs in the full-scale interval
-`[Δ * kmin, Δ * kmax]` the composed error is at most `Δ / 2 + η`. -/
+/-- **Full-scale form.** For `Δ > 0`, `|e k| ≤ η` on the code range and inputs in the
+full-scale interval `[Δ * kmin, Δ * kmax]`, the composed error is at most `Δ / 2 + η`. -/
 lemma abs_dacLevel_code_sub_le_of_mem_Icc {Δ η : ℝ} (hΔ : 0 < Δ) {kmin kmax : ℤ}
     {e : ℤ → ℝ} (he : ∀ k ∈ Icc kmin kmax, |e k| ≤ η) {x : ℝ}
     (hx : x ∈ Icc (Δ * (kmin : ℝ)) (Δ * (kmax : ℝ))) :
@@ -259,9 +259,10 @@ lemma dacLevel_toInt_intMax_add_one_lt {Δ η : ℝ} {w : ℕ} (hw : 1 ≤ w) {e
     linarith
   · exact hmono hmem1 hmem2 hlt
 
-/-- **`η ≥ Δ / 2` can permit a nonmonotone DAC.** For every `Δ > 0`
-and `η` with `Δ ≤ 2 * η`, some level error bounded by `η` on the
-codes `{0, 1}` makes the DAC levels not strictly increasing. -/
+/-- **`η ≥ Δ / 2` can break strict monotonicity of a DAC.** For every
+`Δ > 0` and `η` with `Δ ≤ 2 * η`, some level error bounded by `η` on the
+codes `{0, 1}` makes the DAC levels not strictly increasing (in the
+witness two levels are equal). -/
 theorem exists_not_strictMonoOn_of_le_two_mul {Δ η : ℝ} (hΔ : 0 < Δ) (hη : Δ ≤ 2 * η) :
     ∃ e : ℤ → ℝ, (∀ k ∈ Icc (0 : ℤ) 1, |e k| ≤ η) ∧
       ¬ StrictMonoOn (dacLevel Δ e) (Icc (0 : ℤ) 1) := by

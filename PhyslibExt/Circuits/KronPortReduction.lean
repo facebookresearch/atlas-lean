@@ -160,7 +160,8 @@ lemma dissipation_reindex_invariant {m p α : Type*} [Fintype m] [Fintype p]
 
 /-- Relabeling the interior nodes by `e : q ≃ p`, which reindexes the
 columns of `B` and both indices of `D`, leaves the Schur complement
-unchanged. -/
+unchanged. The matrix inverse is `0` for a singular matrix, and the
+identity holds for every `D`. -/
 theorem schurComplement_reindex_interior {m p q : Type*} [Fintype m]
     [Fintype p] [Fintype q] [DecidableEq p] [DecidableEq q] (e : q ≃ p)
     (A : Matrix m m ℝ) (B : Matrix m p ℝ) (D : Matrix p p ℝ) :
@@ -175,7 +176,8 @@ nodes. Relabeling by `e : q ≃ p` reindexes `B`, `D` and the interior
 injection `jI`; the relabeled network has the same Schur complement,
 the same reduced port equation right-hand side, the relabeled
 reconstruction of the interior potentials, and the same retained
-interior source term. -/
+interior source term. The matrix inverse is `0` for a singular matrix,
+and the identities hold for every `D`. -/
 theorem kron_reduction_reindex_interior {m p q : Type*} [Fintype m]
     [Fintype p] [Fintype q] [DecidableEq p] [DecidableEq q] (e : q ≃ p)
     (A : Matrix m m ℝ) (B : Matrix m p ℝ) (D : Matrix p p ℝ)

@@ -69,14 +69,14 @@ segment in question.
 
 namespace PhyslibExt.Electronics.OperatingPointLinearization
 
-/-- The one-dimensional segment pullback of the device law along the
-perturbation: `g t = i (v0 + t • dv)`, the leaf's `t -> i(v0+t*dv)`. -/
+/-- The one-dimensional segment pullback of the device law along the perturbation:
+`g t = i (v0 + t • dv)`. -/
 def segmentPullback {n : ℕ} (i : (Fin n → ℝ) → ℝ) (v0 dv : Fin n → ℝ) (t : ℝ) : ℝ :=
   i (v0 + t • dv)
 
-/-- Small-signal remainder of the device law at the operating point `v0`
-for perturbation `dv`: `r = i (v0 + dv) - i v0 - Di(v0)[dv]`, where
-`Di(v0)[dv]` is `fderiv ℝ i v0 dv`. -/
+/-- Small-signal remainder of the device law at the operating point `v0` for perturbation `dv`:
+`r = i (v0 + dv) - i v0 - Di(v0)[dv]`, where `Di(v0)[dv]` is `fderiv ℝ i v0 dv` (`0` when `i` is not
+differentiable at `v0`). -/
 noncomputable def smallSignalRemainder {n : ℕ} (i : (Fin n → ℝ) → ℝ) (v0 dv : Fin n → ℝ) : ℝ :=
   i (v0 + dv) - i v0 - fderiv ℝ i v0 dv
 

@@ -65,7 +65,8 @@ namespace PhyslibExt.Circuits.DistributedLineEnergy
 open Set
 
 /-- Telegrapher equations on `U`: `v_x = -R i - L i_t` and `i_x = -G v - C v_t` at every
-`(x, t) ∈ U`, with per-length constants `R L G C`. -/
+`(x, t) ∈ U`, with per-length constants `R L G C`. The partial derivatives are `deriv` of the
+slices, `0` where a slice is not differentiable; the results below assume `C¹` fields. -/
 def IsTelegrapherSolution (R L G C : ℝ) (U : Set (ℝ × ℝ)) (v i : ℝ → ℝ → ℝ) : Prop :=
   ∀ x t : ℝ, (x, t) ∈ U →
     deriv (fun y => v y t) x = -R * i x t - L * deriv (fun s => i x s) t ∧
@@ -83,7 +84,9 @@ noncomputable def powerFlux (v i : ℝ → ℝ → ℝ) (x t : ℝ) : ℝ :=
 noncomputable def dissipationDensity (R G : ℝ) (v i : ℝ → ℝ → ℝ) (x t : ℝ) : ℝ :=
   R * i x t ^ 2 + G * v x t ^ 2
 
-/-- Energy stored on the line `[0, ℓ]` at time `t`. -/
+/-- Energy stored on the line `[0, ℓ]` at time `t`. The integral is oriented (it changes sign for
+`ℓ < 0`) and is `0` for a non-integrable density; the intended domain is `ℓ > 0` with continuous
+fields. -/
 noncomputable def lineEnergy (L C ℓ : ℝ) (v i : ℝ → ℝ → ℝ) (t : ℝ) : ℝ :=
   ∫ x in (0 : ℝ)..ℓ, energyDensity L C v i x t
 
@@ -441,7 +444,8 @@ private theorem continuousOn_dissIntegral (R G ℓ t₀ t₁ : ℝ) (U : Set (�
       hs_mem hF_meas hF_int hF' hle hbound hdiff).2
   exact hpar.continuousAt
 
-/-- **Local energy identity**: `∂ₜ(C v²/2 + L i²/2) + ∂ₓ(v i) = -(R i² + G v²)`. -/
+/-- **Local energy identity**: for `C¹` fields solving the telegrapher equations on an open set
+`U`, at every point of `U`, `∂ₜ(C v²/2 + L i²/2) + ∂ₓ(v i) = -(R i² + G v²)`. -/
 lemma energyDensity_timeDeriv_add_powerFlux_spaceDeriv (R L G C : ℝ) (U : Set (ℝ × ℝ))
     (v i : ℝ → ℝ → ℝ) (hU : IsOpen U) (hv : ContDiffOn ℝ 1 (Function.uncurry v) U)
     (hi : ContDiffOn ℝ 1 (Function.uncurry i) U) (htel : IsTelegrapherSolution R L G C U v i)
@@ -530,7 +534,8 @@ private theorem hasDerivAt_energySlice (R L G C : ℝ) (U : Set (ℝ × ℝ)) (v
   exact hEchain
 
 /-- Rate form of the finite-line balance: `dE/dt = S(0,t) - S(ℓ,t) - ∫₀^ℓ (R i² + G v²)`,
-given C1 fields on an open set containing the segment `[0, ℓ] × {t}`. -/
+given C1 fields solving the telegrapher equations on an open set containing the segment
+`[0, ℓ] × {t}`, with `ℓ > 0`. -/
 lemma hasDerivAt_lineEnergy (R L G C ℓ t : ℝ) (U : Set (ℝ × ℝ)) (v i : ℝ → ℝ → ℝ)
     (hU : IsOpen U) (hv : ContDiffOn ℝ 1 (Function.uncurry v) U)
     (hi : ContDiffOn ℝ 1 (Function.uncurry i) U) (htel : IsTelegrapherSolution R L G C U v i)
@@ -722,7 +727,9 @@ lemma hasDerivAt_lineEnergy (R L G C ℓ t : ℝ) (U : Set (ℝ × ℝ)) (v i : 
   exact hpar
 
 /-- **Finite-line integrated energy balance** over the space-time rectangle
-`[0, ℓ] × [t₀, t₁]`, with the inflow at `x = 0` and the outflow at `x = ℓ`. -/
+`[0, ℓ] × [t₀, t₁]`, with the inflow at `x = 0` and the outflow at `x = ℓ`: for `C¹` fields
+solving the telegrapher equations on an open set containing the rectangle, `ℓ > 0` and
+`t₀ ≤ t₁`, `E(t₁) - E(t₀) = ∫ (S(0, s) - S(ℓ, s)) ds - ∫∫ (R i² + G v²)`. -/
 lemma lineEnergy_sub_eq_integral_endpointFlux_sub_dissipation (R L G C ℓ t₀ t₁ : ℝ)
     (U : Set (ℝ × ℝ)) (v i : ℝ → ℝ → ℝ) (hU : IsOpen U)
     (hv : ContDiffOn ℝ 1 (Function.uncurry v) U) (hi : ContDiffOn ℝ 1 (Function.uncurry i) U)
@@ -791,7 +798,8 @@ lemma dissipationDensity_nonneg (R G : ℝ) (v i : ℝ → ℝ → ℝ) (x t : �
   exact add_nonneg (mul_nonneg hR (sq_nonneg _)) (mul_nonneg hG (sq_nonneg _))
 
 /-- For a passive line (`R, G ≥ 0`) the stored energy grows by at most the net endpoint
-inflow. -/
+inflow, for `C¹` fields solving the telegrapher equations on an open set containing
+`[0, ℓ] × [t₀, t₁]`, `ℓ > 0` and `t₀ ≤ t₁`. -/
 lemma lineEnergy_sub_le_integral_endpointFlux (R L G C ℓ t₀ t₁ : ℝ) (U : Set (ℝ × ℝ))
     (v i : ℝ → ℝ → ℝ) (hU : IsOpen U) (hv : ContDiffOn ℝ 1 (Function.uncurry v) U)
     (hi : ContDiffOn ℝ 1 (Function.uncurry i) U) (htel : IsTelegrapherSolution R L G C U v i)
@@ -884,11 +892,13 @@ lemma shuntDischarge_lineEnergy_strictAnti (L G C ℓ V : ℝ) (hC : 0 < C) (hG 
 
 /-! ### Lossless traveling wave -/
 
-/-- Forward wave voltage `f (x - t / √(L C))`. -/
+/-- Forward wave voltage `f (x - t / √(L C))`. The intended domain is `L, C > 0`; with `√y = 0`
+for `y < 0` and `t / 0 = 0` it is `f x` when `L * C ≤ 0`. -/
 noncomputable def travelingWaveVoltage (L C : ℝ) (f : ℝ → ℝ) (x t : ℝ) : ℝ :=
   f (x - t / Real.sqrt (L * C))
 
-/-- Forward wave current `f (x - t / √(L C)) / √(L / C)`. -/
+/-- Forward wave current `f (x - t / √(L C)) / √(L / C)`. The intended domain is `L, C > 0`;
+with `√y = 0` for `y < 0` and `y / 0 = 0` it is `0` when `L / C ≤ 0`. -/
 noncomputable def travelingWaveCurrent (L C : ℝ) (f : ℝ → ℝ) (x t : ℝ) : ℝ :=
   f (x - t / Real.sqrt (L * C)) / Real.sqrt (L / C)
 

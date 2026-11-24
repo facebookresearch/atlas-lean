@@ -25,8 +25,9 @@ neutral current vanishes, the total complex power is
 `3 V conj(I)` in the RMS passive-sign convention, and line
 voltages are `sqrt 3` times phase voltages with a +30 degree
 shift; the reversed (acb) sequence flips the shift sign
-(its neutral current also vanishes). Delta line currents satisfy the same
-relations. The rotation constant comes from
+(its neutral current also vanishes). Delta line currents are `sqrt 3`
+times balanced branch currents with a -30 degree shift. The rotation
+constant comes from
 `PhyslibExt.Circuits.SymmetricalComponentCoordinates`
 (imported, not copied).
 
@@ -61,21 +62,25 @@ open ComplexConjugate
 open PhyslibExt.Circuits.SymmetricalComponentCoordinates
 
 /-- Balanced positive-sequence (abc) phase set `(X, α² X, α X)`, indices `0, 1, 2` for phases
-`a, b, c`: phase `b` lags `a` by `2π/3`. -/
+`a, b, c`, for any complex `X`: with phasors rotating as `e^{iωt}`, phase `b` lags `a` by `2π/3`
+and phase `c` lags `b` by `2π/3`. -/
 noncomputable def balancedPhases (X : ℂ) : ZMod 3 → ℂ :=
   ![X, alpha ^ 2 * X, alpha * X]
 
-/-- Balanced negative-sequence (acb) phase set `(X, α X, α² X)`. -/
+/-- Balanced negative-sequence (acb) phase set `(X, α X, α² X)`: with phasors rotating as
+`e^{iωt}`, phase `c` lags `a` by `2π/3` and phase `b` lags `c` by `2π/3`. -/
 noncomputable def reversedPhases (X : ℂ) : ZMod 3 → ℂ :=
   ![X, alpha * X, alpha ^ 2 * X]
 
 /-- Complex power `V * conj I` absorbed by one phase, for RMS phasors under the passive sign
-convention (no `1/2` factor). -/
+convention (no `1/2` factor; for peak-amplitude phasors the absorbed power is `V * conj I / 2`).
+Its real part is the real power and its imaginary part the reactive power absorbed. -/
 def complexPower (V I : ℂ) : ℂ :=
   V * conj I
 
 /-- Star connection with a neutral wire: the neutral current is the sum of the three line
-(= phase) currents at the star point. -/
+(= phase) currents at the star point; with the line currents directed into the star point, it is
+the current leaving it through the neutral wire. -/
 def neutralCurrent (I : ZMod 3 → ℂ) : ℂ :=
   ∑ p, I p
 
@@ -84,11 +89,14 @@ def lineVoltage (V : ZMod 3 → ℂ) : ZMod 3 → ℂ :=
   fun p => V p - V (p + 1)
 
 /-- Delta connection: from branch currents `J = (I_ab, I_bc, I_ca)`, the line currents
-`(I_a, I_b, I_c) = (I_ab - I_ca, I_bc - I_ab, I_ca - I_bc)`, i.e. `J p - J (p - 1)`. -/
+`(I_a, I_b, I_c) = (I_ab - I_ca, I_bc - I_ab, I_ca - I_bc)`, i.e. `J p - J (p - 1)`. With `I_ab`
+directed from `a` to `b` (cyclically for the other branches) and the line currents directed into
+the terminals, this is Kirchhoff's current law at the terminals. -/
 def deltaLineCurrent (J : ZMod 3 → ℂ) : ZMod 3 → ℂ :=
   fun p => J p - J (p - 1)
 
-/-- Validation fixture: the balanced set `(I, α² I, α I)` with phase `c` perturbed by `δ`. -/
+/-- The balanced positive-sequence set `(I, α² I, α I)` with phase `c` perturbed by `δ`:
+`(I, α² I, α I + δ)`. -/
 noncomputable def alteredPhases (I δ : ℂ) : ZMod 3 → ℂ :=
   ![I, alpha ^ 2 * I, alpha * I + δ]
 
@@ -317,7 +325,8 @@ private lemma polar_mul_conj (Vm Im θ φ : ℝ) :
   push_cast
   ring
 
-/-- The balanced set in the leaf's literal form `(V, V e^{-2πi/3}, V e^{2πi/3})`. -/
+/-- The balanced positive-sequence set in exponential form `(V, V e^{-2πi/3}, V e^{2πi/3})`,
+for every complex `V`. -/
 lemma balancedPhases_eq_exp (V : ℂ) :
     balancedPhases V 0 = V ∧
       balancedPhases V 1 = V * Complex.exp (-(2 * Real.pi * Complex.I / 3)) ∧
@@ -354,7 +363,9 @@ lemma sum_complexPower_balancedPhases (V I : ℂ) :
 
 /-! ### Line-to-line voltages: the `√3` factor and the phase-sequence sign -/
 
-/-- Positive sequence: the line-to-line set is again balanced, `V_ab = √3 e^{iπ/6} V_a`. -/
+/-- Positive sequence: the line-to-line set is again balanced, `V_ab = √3 e^{iπ/6} V_a`; with
+phasors rotating as `e^{iωt}`, each line voltage leads the phase voltage of its first index by
+`π/6`. -/
 lemma lineVoltage_balancedPhases (V : ℂ) :
     lineVoltage (balancedPhases V) =
       balancedPhases ((Real.sqrt 3 : ℂ) *
@@ -367,8 +378,9 @@ lemma norm_lineVoltage_balancedPhases (V : ℂ) (p : ZMod 3) :
   rw [lineVoltage_balancedPhases, norm_balancedPhases, norm_mul, norm_mul,
     norm_sqrt3, norm_exp_pi_div_six, mul_one]
 
-/-- **Balanced star, three clauses.** Zero neutral current, total complex power `3 V conj I`,
-and line-to-line magnitudes `√3 ‖V‖`. -/
+/-- **Balanced star connection.** For positive-sequence voltages `(V, α² V, α V)` and currents
+`(I, α² I, α I)`: zero neutral current, total complex power `3 V conj I`, and line-to-line
+magnitudes `√3 ‖V‖`. -/
 lemma balancedPhases_neutral_power_lineVoltage (V I : ℂ) :
     neutralCurrent (balancedPhases I) = 0 ∧
       ∑ p, complexPower (balancedPhases V p) (balancedPhases I p) = 3 * (V * conj I) ∧
@@ -376,7 +388,8 @@ lemma balancedPhases_neutral_power_lineVoltage (V I : ℂ) :
   exact ⟨neutralCurrent_balancedPhases I, sum_complexPower_balancedPhases V I,
     norm_lineVoltage_balancedPhases V⟩
 
-/-- Negative sequence: `V_ab = √3 e^{-iπ/6} V_a`, the opposite rotation. -/
+/-- Negative sequence: `V_ab = √3 e^{-iπ/6} V_a`, the opposite rotation: with phasors rotating
+as `e^{iωt}`, each line voltage lags the phase voltage of its first index by `π/6`. -/
 lemma lineVoltage_reversedPhases (V : ℂ) :
     lineVoltage (reversedPhases V) =
       reversedPhases ((Real.sqrt 3 : ℂ) *
@@ -384,7 +397,7 @@ lemma lineVoltage_reversedPhases (V : ℂ) :
   exact funext (lineVoltage_reversedPhases_apply V)
 
 /-- The phase-sequence sign is visible: for `V ≠ 0` the two sequences give different
-`V_ab`. -/
+`V_ab` (for `V = 0` both vanish). -/
 lemma lineVoltage_balancedPhases_ne_reversed (V : ℂ) (hV : V ≠ 0) :
     lineVoltage (balancedPhases V) 0 ≠ lineVoltage (reversedPhases V) 0 := by
   have e1 : lineVoltage (balancedPhases V) 0
@@ -433,7 +446,8 @@ lemma sum_deltaLineCurrent (J : ZMod 3 → ℂ) : ∑ p, deltaLineCurrent J p = 
   simp only [deltaLineCurrent, zmod3_sub1_0, zmod3_sub1_1, zmod3_sub1_2]
   ring
 
-/-- Balanced delta: line currents are balanced, `I_a = √3 e^{-iπ/6} I_ab`. -/
+/-- Balanced delta: line currents are balanced, `I_a = √3 e^{-iπ/6} I_ab`; with phasors rotating
+as `e^{iωt}`, each line current lags the branch current of its index by `π/6`. -/
 lemma deltaLineCurrent_balancedPhases (J : ℂ) :
     deltaLineCurrent (balancedPhases J) =
       balancedPhases ((Real.sqrt 3 : ℂ) *
@@ -468,7 +482,10 @@ lemma norm_sum_complexPower_delta (V J : ℂ) :
 /-! ### Power factor -/
 
 /-- With `V = Vm e^{iθ}`, `I = Im e^{i(θ - φ)}`, `Vm, Im ≥ 0`: real power `3 Vm Im cos φ`,
-reactive power `3 Vm Im sin φ`, and in line quantities `P = √3 V_L I_L cos φ`. -/
+reactive power `3 Vm Im sin φ`, and in line quantities `P = √3 V_L I_L cos φ`. The current lags
+the voltage by `φ`, and `cos φ` is the power factor. The conditions `Vm, Im ≥ 0` make `Vm = ‖V‖`
+and `Im = ‖I‖`; the first two identities hold without them. For `Vm = 0` or `Im = 0` all three
+quantities are `0` for every `φ`. -/
 lemma sum_complexPower_polar (Vm Im θ φ : ℝ) (hVm : 0 ≤ Vm) (hIm : 0 ≤ Im) :
     (∑ p, complexPower (balancedPhases ((Vm : ℂ) * Complex.exp ((θ : ℂ) * Complex.I)) p)
         (balancedPhases ((Im : ℂ) * Complex.exp (((θ - φ : ℝ) : ℂ) * Complex.I)) p)).re =
@@ -505,7 +522,8 @@ lemma sum_complexPower_polar (Vm Im θ φ : ℝ) (hVm : 0 ≤ Vm) (hIm : 0 ≤ I
 
 /-! ### Validation: balanced loads, an altered phase -/
 
-/-- Balanced load `I_p = V_p / Z`, `Z ≠ 0`: total complex power `3 ‖V‖² / conj Z`. -/
+/-- Balanced load `I_p = V_p / Z`, `Z ≠ 0`: total complex power `3 ‖V‖² / conj Z`. A passive
+load has `Re Z ≥ 0`; the identity holds for every nonzero complex `Z`. -/
 lemma sum_complexPower_impedance (V Z : ℂ) (hZ : Z ≠ 0) :
     ∑ p, complexPower (balancedPhases V p) (balancedPhases V p / Z) =
       3 * ((‖V‖ ^ 2 : ℝ) : ℂ) / conj Z := by
@@ -526,7 +544,8 @@ lemma sum_complexPower_resistive (V : ℂ) (R : ℝ) (hR : 0 < R) :
   rw [h, Complex.conj_ofReal, h3, ← Complex.ofReal_mul, ← Complex.ofReal_div]
 
 /-- Reactive balanced load `Z = i X`, `X ≠ 0`: the total power is purely reactive,
-`(3 ‖V‖² / X) i` (absorbed reactive power for an inductive `X > 0`). -/
+`(3 ‖V‖² / X) i` (absorbed reactive power for an inductive `X > 0`, supplied reactive power for a
+capacitive `X < 0`). -/
 lemma sum_complexPower_reactive (V : ℂ) (X : ℝ) (hX : X ≠ 0) :
     ∑ p, complexPower (balancedPhases V p) (balancedPhases V p / ((X : ℂ) * Complex.I)) =
       ((3 * ‖V‖ ^ 2 / X : ℝ) : ℂ) * Complex.I := by

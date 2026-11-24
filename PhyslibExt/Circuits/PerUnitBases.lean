@@ -80,7 +80,8 @@ namespace PhyslibExt.Circuits.PerUnitBases
 def threePhasePowerBase (Vb Ib : ℝ) : ℝ :=
   3 * Vb * Ib
 
-/-- Impedance base for phase voltage and current bases. -/
+/-- Impedance base `Vb / Ib` for phase voltage and current bases; with `x / 0 = 0` it is `0` at
+`Ib = 0`. -/
 noncomputable def impedanceBase (Vb Ib : ℝ) : ℝ :=
   Vb / Ib
 
@@ -90,22 +91,23 @@ noncomputable def lineVoltageBase (Vb : ℝ) : ℝ :=
   Real.sqrt 3 * Vb
 
 /-- Voltage in per-unit coordinates: physical voltage divided by
-the phase-voltage base, read as a complex scalar. -/
+the phase-voltage base, read as a complex scalar (`0` at `Vb = 0`, by `x / 0 = 0`). -/
 noncomputable def voltagePerUnit (Vb : ℝ) (V : ℂ) : ℂ :=
   V / (Vb : ℂ)
 
 /-- Current in per-unit coordinates: physical current divided by
-the phase-current base, read as a complex scalar. -/
+the phase-current base, read as a complex scalar (`0` at `Ib = 0`, by `x / 0 = 0`). -/
 noncomputable def currentPerUnit (Ib : ℝ) (I : ℂ) : ℂ :=
   I / (Ib : ℂ)
 
 /-- Impedance in per-unit coordinates: physical impedance divided
-by the impedance base, read as a complex scalar. -/
+by the impedance base, read as a complex scalar (`0` when `Vb = 0` or `Ib = 0`, by `x / 0 = 0`). -/
 noncomputable def impedancePerUnit (Vb Ib : ℝ) (Z : ℂ) : ℂ :=
   Z / (impedanceBase Vb Ib : ℂ)
 
 /-- Complex power in per-unit coordinates: physical power divided
-by the three-phase power base, read as a complex scalar. -/
+by the three-phase power base, read as a complex scalar (`0` when `Vb = 0` or `Ib = 0`, by
+`x / 0 = 0`). -/
 noncomputable def powerPerUnit (Vb Ib : ℝ) (S : ℂ) : ℂ :=
   S / (threePhasePowerBase Vb Ib : ℂ)
 

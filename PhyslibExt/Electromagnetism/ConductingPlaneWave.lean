@@ -108,12 +108,16 @@ namespace PhyslibExt.Electromagnetism.ConductingPlaneWave
 
 /-! ## A. Declared propagation model -/
 
-/-- Attenuation constant `alpha` for positive medium parameters. -/
+/-- Attenuation constant `alpha` for positive medium parameters. Defined for all real inputs (with
+`x / 0 = 0` and `√x = 0` for `x < 0`), it is `0` when `omega * epsilon = 0` or
+`mu * epsilon < 0`. -/
 noncomputable def attenuationConstant (epsilon mu omega sigma : ℝ) : ℝ :=
   omega * Real.sqrt (mu * epsilon / 2) *
     Real.sqrt (Real.sqrt (1 + (sigma / (omega * epsilon)) ^ 2) - 1)
 
-/-- Phase constant `beta` for positive medium parameters. -/
+/-- Phase constant `beta` for positive medium parameters. Defined for all real inputs (with
+`x / 0 = 0` and `√x = 0` for `x < 0`), it is `0` when `omega * epsilon = 0` or
+`mu * epsilon < 0`. -/
 noncomputable def phaseConstant (epsilon mu omega sigma : ℝ) : ℝ :=
   omega * Real.sqrt (mu * epsilon / 2) *
     Real.sqrt (Real.sqrt (1 + (sigma / (omega * epsilon)) ^ 2) + 1)
@@ -123,7 +127,8 @@ noncomputable def propagationConstant (epsilon mu omega sigma : ℝ) : ℂ :=
   (attenuationConstant epsilon mu omega sigma : ℂ) +
     Complex.I * (phaseConstant epsilon mu omega sigma : ℂ)
 
-/-- Skin depth `1 / alpha`, meaningful when attenuation is positive. -/
+/-- Skin depth `1 / alpha`, meaningful when attenuation is positive; with `1 / 0 = 0` it is `0` when
+`alpha = 0`, for instance at `sigma = 0`. -/
 noncomputable def skinDepth (epsilon mu omega sigma : ℝ) : ℝ :=
   1 / attenuationConstant epsilon mu omega sigma
 
@@ -134,7 +139,7 @@ def satisfiesDispersionEquation (epsilon mu omega sigma : ℝ) (gamma : ℂ) : P
 
 /-! ## B. Root choice and dispersion verification -/
 
-/-- Attenuation is nonnegative. -/
+/-- For `epsilon, mu, omega > 0` and `sigma ≥ 0`, attenuation is nonnegative. -/
 lemma attenuationConstant_nonneg (epsilon mu omega sigma : ℝ)
     (hepsilon : 0 < epsilon) (hmu : 0 < mu) (homega : 0 < omega)
     (hsigma : 0 ≤ sigma) :
@@ -145,7 +150,7 @@ lemma attenuationConstant_nonneg (epsilon mu omega sigma : ℝ)
     positivity
   · exact Real.sqrt_nonneg _
 
-/-- The phase constant is strictly positive. -/
+/-- For `epsilon, mu, omega > 0` and `sigma ≥ 0`, the phase constant is strictly positive. -/
 lemma phaseConstant_pos (epsilon mu omega sigma : ℝ)
     (hepsilon : 0 < epsilon) (hmu : 0 < mu) (homega : 0 < omega)
     (hsigma : 0 ≤ sigma) :
@@ -157,7 +162,7 @@ lemma phaseConstant_pos (epsilon mu omega sigma : ℝ)
     have h := Real.sqrt_nonneg (1 + (sigma / (omega * epsilon)) ^ 2)
     linarith
 
-/-- Positive conductivity gives strictly positive attenuation. -/
+/-- For `epsilon, mu, omega > 0`, positive conductivity gives strictly positive attenuation. -/
 lemma attenuationConstant_pos_of_sigma_pos (epsilon mu omega sigma : ℝ)
     (hepsilon : 0 < epsilon) (hmu : 0 < mu) (homega : 0 < omega)
     (hsigma : 0 < sigma) :
@@ -179,8 +184,8 @@ lemma propagationConstant_eq (epsilon mu omega sigma : ℝ) :
         Complex.I * (phaseConstant epsilon mu omega sigma : ℂ) := by
   rfl
 
-/-- Headline verification: the forward root satisfies the squared
-propagation equation for the stated sign convention. -/
+/-- Headline verification: for `epsilon, mu, omega > 0` and `sigma ≥ 0`, the forward root satisfies
+the squared propagation equation for the stated sign convention. -/
 theorem propagationConstant_sq (epsilon mu omega sigma : ℝ)
     (hepsilon : 0 < epsilon) (hmu : 0 < mu) (homega : 0 < omega)
     (hsigma : 0 ≤ sigma) :
@@ -314,7 +319,8 @@ theorem propagationConstant_sq (epsilon mu omega sigma : ℝ)
     simp
     linear_combination h_prod
 
-/-- The same verification, with the squared equation written out. -/
+/-- The same verification (for `epsilon, mu, omega > 0` and `sigma ≥ 0`), with the squared equation
+written out. -/
 theorem propagationConstant_sq_eq (epsilon mu omega sigma : ℝ)
     (hepsilon : 0 < epsilon) (hmu : 0 < mu) (homega : 0 < omega)
     (hsigma : 0 ≤ sigma) :
@@ -325,8 +331,8 @@ theorem propagationConstant_sq_eq (epsilon mu omega sigma : ℝ)
   unfold satisfiesDispersionEquation at h
   exact h
 
-/-- Headline bundle: the squared equation holds and the chosen root
-is the forward attenuating one. -/
+/-- Headline bundle: for `epsilon, mu, omega > 0` and `sigma ≥ 0`, the squared equation holds and
+the chosen root is the forward attenuating one. -/
 theorem dispersion_verification (epsilon mu omega sigma : ℝ)
     (hepsilon : 0 < epsilon) (hmu : 0 < mu) (homega : 0 < omega)
     (hsigma : 0 ≤ sigma) :
@@ -340,15 +346,16 @@ theorem dispersion_verification (epsilon mu omega sigma : ℝ)
 
 /-! ## C. Lossless and skin-depth reductions -/
 
-/-- Lossless reduction: at zero conductivity there is no attenuation. -/
+/-- Lossless reduction: for `epsilon, mu, omega > 0`, at zero conductivity there is no
+attenuation. -/
 lemma attenuationConstant_zero_sigma (epsilon mu omega : ℝ)
     (hepsilon : 0 < epsilon) (hmu : 0 < mu) (homega : 0 < omega) :
     attenuationConstant epsilon mu omega 0 = 0 := by
   unfold attenuationConstant
   simp
 
-/-- Lossless reduction: at zero conductivity the phase constant is
-the lossless wavenumber. -/
+/-- Lossless reduction: for `epsilon, mu, omega > 0`, at zero conductivity the phase constant is the
+lossless wavenumber. -/
 lemma phaseConstant_zero_sigma (epsilon mu omega : ℝ)
     (hepsilon : 0 < epsilon) (hmu : 0 < mu) (homega : 0 < omega) :
     phaseConstant epsilon mu omega 0 = omega * Real.sqrt (mu * epsilon) := by
@@ -366,7 +373,7 @@ lemma phaseConstant_zero_sigma (epsilon mu omega : ℝ)
       = omega * (Real.sqrt (mu * epsilon / 2) * Real.sqrt 2) := by ring
     _ = omega * Real.sqrt (mu * epsilon) := by rw [h_eq]
 
-/-- Lossless reduction: at zero conductivity the propagation constant
+/-- Lossless reduction: for `epsilon, mu, omega > 0`, at zero conductivity the propagation constant
 is purely imaginary with the lossless wavenumber. -/
 lemma propagationConstant_zero_sigma (epsilon mu omega : ℝ)
     (hepsilon : 0 < epsilon) (hmu : 0 < mu) (homega : 0 < omega) :
@@ -377,7 +384,7 @@ lemma propagationConstant_zero_sigma (epsilon mu omega : ℝ)
     phaseConstant_zero_sigma epsilon mu omega hepsilon hmu homega]
   simp
 
-/-- With positive conductivity the skin depth is positive and
+/-- For `epsilon, mu, omega > 0`, with positive conductivity the skin depth is positive and
 reciprocal to the attenuation. -/
 lemma skinDepth_pos_and_mul_eq_one (epsilon mu omega sigma : ℝ)
     (hepsilon : 0 < epsilon) (hmu : 0 < mu) (homega : 0 < omega)
@@ -394,9 +401,8 @@ lemma skinDepth_pos_and_mul_eq_one (epsilon mu omega sigma : ℝ)
 
 /-! ## D. Root exclusion and sign convention -/
 
-/-- The opposite root has the same square but is not the forward
-attenuating root: its real part is nonpositive and its imaginary
-part is negative under the headline hypotheses. -/
+/-- The opposite root has the same square but is not the forward attenuating root: its real part is
+nonpositive and its imaginary part is negative for `epsilon, mu, omega > 0` and `sigma ≥ 0`. -/
 lemma neg_propagationConstant_not_forward (epsilon mu omega sigma : ℝ)
     (hepsilon : 0 < epsilon) (hmu : 0 < mu) (homega : 0 < omega)
     (hsigma : 0 ≤ sigma) :
@@ -443,15 +449,12 @@ lemma abs_exp_neg_propagationConstant_mul (epsilon mu omega sigma : ℝ)
     Complex.mul_re, Complex.mul_im, Complex.ofReal_re, Complex.ofReal_im,
     Complex.I_re, Complex.I_im]
 
-/-- At zero conductivity, the real cosine plane wave with wavenumber
-the phase constant `beta` is the real part of
-`exp (i * (beta * x - omega * t)) * E0`. This is the complex conjugate
-of the forward phasor `exp (i * (omega * t - beta * x)) * E0` of the
-declared convention, that is the phasor of the opposite time
-convention; the two have the same real part because cosine is even,
-so this identity does not check the sign convention. The phasor of
-the declared convention is
-`planeWave_eq_re_forward_phasor_at_zero_sigma`. -/
+/-- For `epsilon, mu, omega > 0` and zero conductivity, the real cosine plane wave with wavenumber
+the phase constant `beta` is the real part of `exp (i * (beta * x - omega * t)) * E0`. This is the
+complex conjugate of the forward phasor `exp (i * (omega * t - beta * x)) * E0` of the declared
+convention, that is the phasor of the opposite time convention; the two have the same real part
+because cosine is even, so this identity does not check the sign convention. The phasor of the
+declared convention is `planeWave_eq_re_forward_phasor_at_zero_sigma`. -/
 lemma planeWave_eq_re_phasor_at_zero_sigma (E0 epsilon mu omega : ℝ)
     (hepsilon : 0 < epsilon) (hmu : 0 < mu) (homega : 0 < omega) (x t : ℝ) :
     PhyslibExt.Electromagnetism.ElectrostaticsAndLinearWaves.planeWave
@@ -467,10 +470,9 @@ lemma planeWave_eq_re_phasor_at_zero_sigma (E0 epsilon mu omega : ℝ)
   rw [Complex.exp_ofReal_mul_I_re]
   ring
 
-/-- At zero conductivity, the real cosine plane wave with wavenumber
-the phase constant is the real part of the forward phasor of the
-declared convention, `exp (+i * omega * t) * exp (-gamma * x) * E0`
-with `gamma` the propagation constant. -/
+/-- For `epsilon, mu, omega > 0` and zero conductivity, the real cosine plane wave with wavenumber
+the phase constant is the real part of the forward phasor of the declared convention,
+`exp (+i * omega * t) * exp (-gamma * x) * E0` with `gamma` the propagation constant. -/
 lemma planeWave_eq_re_forward_phasor_at_zero_sigma (E0 epsilon mu omega : ℝ)
     (hepsilon : 0 < epsilon) (hmu : 0 < mu) (homega : 0 < omega) (x t : ℝ) :
     PhyslibExt.Electromagnetism.ElectrostaticsAndLinearWaves.planeWave

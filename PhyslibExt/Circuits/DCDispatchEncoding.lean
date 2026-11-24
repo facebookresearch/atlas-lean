@@ -606,8 +606,9 @@ theorem dispatch_nonempty_iff_lp_nonempty (nN nE nG : ℕ) (tail head : Fin nE �
 
 /-! ## F. Optimality transfer -/
 
-/-- An optimal point of the canonical LP decodes to a minimum-cost
-feasible dispatch. -/
+/-- An optimal point of the canonical LP decodes to a generation whose cost
+is at most that of every feasible dispatch; the decoded dispatch is feasible
+by `decode_feasible`, so it is a minimum-cost feasible dispatch. -/
 theorem decode_optimal (nN nE nG : ℕ) (tail head : Fin nE → Fin nN) (b : Fin nE → ℝ)
     (gbus : Fin nG → Fin nN) (d : Fin nN → ℝ) (ref : Fin nN)
     (pmin pmax : Fin nG → ℝ) (fmin fmax : Fin nE → ℝ) (cost : Fin nG → ℝ)

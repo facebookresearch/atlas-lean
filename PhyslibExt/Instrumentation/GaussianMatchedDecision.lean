@@ -91,13 +91,16 @@ namespace PhyslibExt.Instrumentation.GaussianMatchedDecision
 open MathlibExt.Probability.Decision.BinaryCostAdapter
 open MathlibExt.LinearAlgebra.Matrix.MatchedSNRQuotient
 
-/-- The matched-filter statistic `(s1 - s0)ᵀ R⁻¹ y`. -/
+/-- The matched-filter statistic `(s1 - s0)ᵀ R⁻¹ y`. The inverse is `0` for a singular `R`; the
+intended domain is a positive definite `R`. -/
 noncomputable def matchedStatistic {ι : Type} [Fintype ι] [DecidableEq ι]
     (s1 s0 : EuclideanSpace ℝ ι) (R : Matrix ι ι ℝ) (y : EuclideanSpace ℝ ι) : ℝ :=
   ofLp (s1 - s0) ⬝ᵥ R⁻¹ *ᵥ ofLp y
 
 /-- The finite-cost matched-filter threshold
-`log (pi0 (C10 - C00) / (pi1 (C01 - C11))) + (s1ᵀ R⁻¹ s1 - s0ᵀ R⁻¹ s0) / 2`. -/
+`log (pi0 (C10 - C00) / (pi1 (C01 - C11))) + (s1ᵀ R⁻¹ s1 - s0ᵀ R⁻¹ s0) / 2`. With `a / 0 = 0`,
+`log 0 = 0`, `log a = log |a|` and `R⁻¹ = 0` for singular `R` it is defined for all inputs; the
+intended domain is `0 < pi0`, `0 < pi1`, `C00 < C10`, `C11 < C01` and `R` positive definite. -/
 noncomputable def matchedThreshold {ι : Type} [Fintype ι] [DecidableEq ι]
     (s1 s0 : EuclideanSpace ℝ ι) (R : Matrix ι ι ℝ) (pi0 pi1 C00 C01 C10 C11 : ℝ) : ℝ :=
   Real.log (pi0 * (C10 - C00) / (pi1 * (C01 - C11))) +

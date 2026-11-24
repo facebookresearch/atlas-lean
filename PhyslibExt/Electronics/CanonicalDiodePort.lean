@@ -86,8 +86,9 @@ open Matrix
 /-! ## A. Thermal voltage -/
 
 /-- Thermal voltage `VT = kB * T / |q|`. The denominator is the carrier-charge
-magnitude `|q|`, never the signed carrier charge `q`. Here `kB` is the coordinate
-of the positive Boltzmann constant in the chosen coherent unit system. -/
+magnitude `|q|`, never the signed carrier charge `q`; with `x / 0 = 0`, `VT = 0` when `q = 0`.
+Here `kB` is the coordinate of the positive Boltzmann constant in the chosen coherent unit
+system; the definition takes any real inputs. -/
 noncomputable def thermalVoltage (kB T q : ℝ) : ℝ := kB * T / |q|
 
 /-- The thermal voltage is positive for positive `kB`, `T` and nonzero carrier
@@ -102,8 +103,8 @@ lemma thermalVoltage_neg_charge (kB T q : ℝ) :
     thermalVoltage kB T (-q) = thermalVoltage kB T q := by
   simp [thermalVoltage]
 
-/-- The thermal voltage is the canonical Einstein ratio `D / mu` of the
-dilute-carrier transport model; it is a consumer of that model, not a second one. -/
+/-- For a mobility `mu ≠ 0` and a carrier charge `q ≠ 0`, the thermal voltage is the Einstein
+ratio `D / mu` of the diffusion coefficient `D = mu * kB * T / |q|`. -/
 theorem einstein_ratio_eq_thermalVoltage {mu kB T q : ℝ} (hmu : mu ≠ 0) (hq : q ≠ 0) :
     PhyslibExt.Electromagnetism.ElectrostaticsAndLinearWaves.diffusionCoeff mu kB T q / mu =
       thermalVoltage kB T q :=
@@ -113,9 +114,10 @@ theorem einstein_ratio_eq_thermalVoltage {mu kB T q : ℝ} (hmu : mu ≠ 0) (hq 
 
 /-- Ideal Shockley diode current from anode to cathode at anode-to-cathode
 voltage `V`, with saturation current `Is` and emission coefficient `n`:
-`Is * (exp (V / (n * VT)) - 1)`. This reuses the exponential junction law
-`EbersMollTerminalBalance.forwardBranchCurrent` with the scale `n * VT`; no second
-exponential law or transport model is declared. -/
+`Is * (exp (V / (n * VT)) - 1)`, the exponential junction branch law
+`EbersMollTerminalBalance.forwardBranchCurrent` at the scale `n * VT`. With `x / 0 = 0` the
+scale is `0` when `n`, `kB`, `T` or `q` is zero, and the current is then `0` for every `V`;
+physically `Is`, `n`, `kB`, `T` are positive and `q ≠ 0`. -/
 noncomputable def diodeCurrent (Is n kB T q V : ℝ) : ℝ :=
   PhyslibExt.Electronics.EbersMollTerminalBalance.forwardBranchCurrent Is
     (n * thermalVoltage kB T q) V
@@ -126,7 +128,8 @@ lemma diodeCurrent_zero (Is n kB T q : ℝ) : diodeCurrent Is n kB T q 0 = 0 := 
     PhyslibExt.Electronics.EbersMollTerminalBalance.forwardBranchCurrent]
 
 /-- Derivative of the diode current in the anode-to-cathode voltage (small-signal
-conductance). -/
+conductance), for all real parameters. When the scale `n * VT` is `0`, the current is
+identically `0` and, with `x / 0 = 0`, so is the stated derivative. -/
 theorem hasDerivAt_diodeCurrent (Is n kB T q V : ℝ) :
     HasDerivAt (diodeCurrent Is n kB T q)
       (Is / (n * thermalVoltage kB T q) * Real.exp (V / (n * thermalVoltage kB T q))) V := by
@@ -154,7 +157,8 @@ lemma strictMono_diodeCurrent {Is n kB T q : ℝ} (hIs : 0 < Is) (hn : 0 < n) (h
   rw [sub_lt_sub_iff_right, Real.exp_lt_exp, div_eq_mul_inv, div_eq_mul_inv]
   exact mul_lt_mul_of_pos_right hab (inv_pos.mpr hc)
 
-/-- Forward bias conducts anode to cathode; reverse bias gives negative current. -/
+/-- For `Is`, `n`, `kB`, `T` positive and `q ≠ 0`, the current is positive (from anode to
+cathode) exactly in forward bias `V > 0`; hence it is `≤ 0` for `V ≤ 0`. -/
 lemma diodeCurrent_pos_iff {Is n kB T q V : ℝ} (hIs : 0 < Is) (hn : 0 < n) (hkB : 0 < kB)
     (hT : 0 < T) (hq : q ≠ 0) : 0 < diodeCurrent Is n kB T q V ↔ 0 < V := by
   have hc : 0 < n * thermalVoltage kB T q := mul_pos hn (thermalVoltage_pos hkB hT hq)
@@ -172,8 +176,8 @@ lemma neg_saturation_lt_diodeCurrent {Is n kB T q : ℝ} (V : ℝ) (hIs : 0 < Is
   have hpos : 0 < Is * Real.exp (V / (n * thermalVoltage kB T q)) := mul_pos hIs hexp
   linarith [mul_sub_one Is (Real.exp (V / (n * thermalVoltage kB T q)))]
 
-/-- Reverse saturation limit: as the voltage tends to minus infinity the current
-tends to `-Is`. -/
+/-- Reverse saturation limit: for `n`, `kB`, `T` positive and `q ≠ 0` (any real `Is`), as the
+voltage tends to minus infinity the current tends to `-Is`. -/
 theorem tendsto_diodeCurrent_atBot {Is n kB T q : ℝ} (hn : 0 < n) (hkB : 0 < kB) (hT : 0 < T)
     (hq : q ≠ 0) :
     Filter.Tendsto (diodeCurrent Is n kB T q) Filter.atBot (nhds (-Is)) := by
@@ -186,8 +190,8 @@ theorem tendsto_diodeCurrent_atBot {Is n kB T q : ℝ} (hn : 0 < n) (hkB : 0 < k
   rwa [zero_sub, mul_neg_one] at h4
 
 /-- Invalid division cases: with `n = 0`, `T = 0` or `q = 0` the scale
-`n * VT` vanishes and the formula collapses to the zero current, so the positivity
-premises above cannot be dropped. -/
+`n * VT` vanishes (`x / 0 = 0` when `q = 0`) and the formula collapses to the zero current, which
+is neither strictly increasing nor positive in forward bias. -/
 lemma diodeCurrent_eq_zero_of_invalid {Is n kB T q : ℝ} (h : n = 0 ∨ T = 0 ∨ q = 0) :
     diodeCurrent Is n kB T q = fun _ => 0 := by
   funext V
@@ -205,8 +209,9 @@ lemma diodeCurrent_eq_zero_of_invalid {Is n kB T q : ℝ} (h : n = 0 ∨ T = 0 �
 /-- A diode with anode at node `a` and cathode at node `c` occupies network
 branch `e` (in either orientation), and the passive branch current `i e`
 (tail to head) is `s * diodeCurrent (s * v e)`, where
-`s = ArcPortSigns.electricalIncidence tail head a e` is `+1` when the anode is the
-branch tail and `-1` when the anode is the branch head. -/
+`s = ArcPortSigns.electricalIncidence tail head a e`. For `a ≠ c`, `s` is `+1` when the anode is
+the branch tail and `-1` when the anode is the branch head; for `a = c` (a loop branch) `s = 0`
+and the condition forces `i e = 0`. -/
 def DiodeBranch {V : Type*} [Fintype V] [DecidableEq V] {E : Type*} [Fintype E]
     [DecidableEq E] (Is n kB T q : ℝ) (tail head : E → V) (a c : V) (e : E)
     (v i : E → ℝ) : Prop :=
@@ -215,7 +220,7 @@ def DiodeBranch {V : Type*} [Fintype V] [DecidableEq V] {E : Type*} [Fintype E]
       diodeCurrent Is n kB T q
         (PhyslibExt.Circuits.ArcPortSigns.electricalIncidence tail head a e * v e)
 
-/-- Terminal direction: with branch voltages defined from node potentials, the
+/-- Terminal direction: for `a ≠ c` and branch voltages defined from node potentials, the
 physical anode-to-cathode current `s * i e` of a diode branch is the diode current
 at `phi a - phi c`, whichever way the branch is oriented. -/
 lemma anodeCurrent_of_diodeBranch {V : Type*} [Fintype V] [DecidableEq V] {E : Type*}
@@ -268,11 +273,12 @@ lemma diodeBranch_reverse {V : Type*} [Fintype V] [DecidableEq V] {E : Type*} [F
 
 /-! ## D. Headline statement -/
 
-/-- Headline: the Shockley law, adapted to thermal voltage `kB * T / |q|` and to
-network terminal directions, is positive-scaled, vanishes at zero bias, has the
-stated derivative, is strictly increasing, is bounded below by `-Is` with that
-reverse limit, and gives an orientation-independent anode-to-cathode current that
-survives branch reversal. -/
+/-- Headline: for `Is`, `n`, `kB`, `T` positive, `q ≠ 0`, branch voltages defined from node
+potentials and a diode on branch `e` with anode `a ≠ c`, the Shockley law with thermal voltage
+`kB * T / |q|` is positive-scaled (and the thermal voltage does not depend on the sign of `q`),
+vanishes at zero bias, has the stated derivative, is strictly increasing, is positive exactly in
+forward bias, is bounded below by `-Is` with that reverse limit, and gives an
+orientation-independent anode-to-cathode current that survives branch reversal. -/
 theorem canonicalDiodePort_correct {V : Type*} [Fintype V] [DecidableEq V] {E : Type*}
     [Fintype E] [DecidableEq E] {Is n kB T q : ℝ} (hIs : 0 < Is) (hn : 0 < n) (hkB : 0 < kB)
     (hT : 0 < T) (hq : q ≠ 0) {tail head : E → V} {a c : V} {e : E} {phi : V → ℝ}

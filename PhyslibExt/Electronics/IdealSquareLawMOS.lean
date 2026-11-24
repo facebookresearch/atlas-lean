@@ -80,7 +80,10 @@ noncomputable def saturationCurrent (beta u : ℝ) : ℝ :=
   beta * u ^ 2 / 2
 
 /-- Prioritized ideal forward nMOS drain current:
-cutoff 0 if u <= 0; else triode if Vds <= u; else saturation. -/
+cutoff 0 if u <= 0; else triode if Vds <= u; else saturation.
+Defined for all real inputs: for u > 0 the triode branch also covers
+Vds < 0, where the current is negative when beta > 0. The forward
+domain is beta > 0, Vds >= 0. -/
 noncomputable def current (beta u Vds : ℝ) : ℝ :=
   if u ≤ 0 then 0
   else if Vds ≤ u then triodeCurrent beta u Vds
@@ -168,8 +171,8 @@ lemma triode_eq_saturation_at_boundary (beta u : ℝ) :
   unfold triodeCurrent saturationCurrent
   ring
 
-/-- At the active boundary the device current is the common value
-of the two active formulas. -/
+/-- For u > 0, at the active boundary Vds = u the device current is
+the common value of the two active formulas. -/
 lemma current_at_boundary (beta u : ℝ) (hu : 0 < u) :
     current beta u u = triodeCurrent beta u u
       ∧ current beta u u = saturationCurrent beta u := by
@@ -177,8 +180,9 @@ lemma current_at_boundary (beta u : ℝ) (hu : 0 < u) :
   · exact current_of_triode beta u u hu hu.le le_rfl
   · exact current_of_saturation beta u u hu le_rfl
 
-/-- Continuity in u at cutoff onset u = 0, for fixed Vds >= 0:
-both sides approach the cutoff value 0. -/
+/-- Continuity in u at cutoff onset u = 0, for beta > 0 and fixed
+Vds >= 0: both sides approach the cutoff value 0. For Vds < 0 the
+triode branch tends to -beta*Vds^2/2 instead. -/
 lemma continuousAt_u_zero (beta Vds : ℝ) (hbeta : 0 < beta)
     (hV : 0 ≤ Vds) :
     ContinuousAt (fun u : ℝ => current beta u Vds) 0 := by
@@ -207,7 +211,8 @@ lemma continuousAt_u_zero (beta Vds : ℝ) (hbeta : 0 < beta)
   rw [hval]
   exact hsqueeze
 
-/-- Continuity in Vds across the active boundary Vds = u, u fixed. -/
+/-- Continuity in Vds across the active boundary Vds = u, for
+beta > 0 and u > 0 fixed. -/
 lemma continuousAt_vds_boundary (beta u : ℝ) (hbeta : 0 < beta)
     (hu : 0 < u) :
     ContinuousAt (fun Vds : ℝ => current beta u Vds) u := by
@@ -228,7 +233,8 @@ lemma continuousAt_vds_boundary (beta u : ℝ) (hbeta : 0 < beta)
   rw [heq]
   exact continuousAt_ite_of_agree _ _ (fun V => V ≤ u) _ htri hsat hagree
 
-/-- Continuity in u across the active boundary u = Vds, Vds > 0 fixed. -/
+/-- Continuity in u across the active boundary u = Vds, for beta > 0
+and Vds > 0 fixed. -/
 lemma continuousAt_u_boundary (beta Vds : ℝ) (hbeta : 0 < beta)
     (hV : 0 < Vds) :
     ContinuousAt (fun u : ℝ => current beta u Vds) Vds := by
@@ -253,7 +259,8 @@ lemma continuousAt_u_boundary (beta Vds : ℝ) (hbeta : 0 < beta)
     simp [h1]
   exact hgcont.congr_of_eventuallyEq heq
 
-/-- Joint continuity in (u, Vds) across the active boundary at (u, u). -/
+/-- Joint continuity in (u, Vds) across the active boundary at (u, u),
+for beta > 0 and u > 0. -/
 lemma continuousAt_joint_boundary (beta u : ℝ) (hbeta : 0 < beta)
     (hu : 0 < u) :
     ContinuousAt (fun p : ℝ × ℝ => current beta p.1 p.2) (u, u) := by
@@ -397,17 +404,18 @@ lemma triode_gds_nonneg (beta u Vds : ℝ) (hbeta : 0 < beta)
     0 ≤ beta * (u - Vds) := by
   exact mul_nonneg hbeta.le (sub_nonneg.mpr hVu)
 
-/-- Drain current is nonnegative on the forward domain Vds >= 0. -/
+/-- For beta > 0, the drain current is nonnegative on the forward
+domain Vds >= 0 (for every u). -/
 lemma current_nonneg (beta u Vds : ℝ) (hbeta : 0 < beta)
     (hV : 0 ≤ Vds) :
     0 ≤ current beta u Vds := by
   exact current_nonneg_aux beta u Vds hbeta hV
 
-/-- Ideal long-channel square-law nMOS, bundled: prioritized piecewise
-current, boundary agreement, continuity at u = 0 and across Vds = u,
-regional gm/gds on open regions, nonnegative triode gds, and
-nonnegative current on Vds >= 0. No derivative at any boundary and
-no global smoothness is asserted. -/
+/-- Ideal long-channel square-law nMOS, bundled for beta > 0:
+prioritized piecewise current, boundary agreement, continuity at
+u = 0 and across Vds = u, regional gm/gds on open regions,
+nonnegative triode gds, and nonnegative current on Vds >= 0. No
+derivative at any boundary and no global smoothness is asserted. -/
 lemma idealSquareLawMOS_spec (beta : ℝ) (hbeta : 0 < beta) :
     (∀ u Vds : ℝ, 0 ≤ Vds → u ≤ 0 → current beta u Vds = 0)
     ∧ (∀ u Vds : ℝ, 0 ≤ Vds → 0 < u → Vds ≤ u →

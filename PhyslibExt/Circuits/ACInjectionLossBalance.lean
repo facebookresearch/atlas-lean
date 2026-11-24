@@ -148,7 +148,7 @@ existing `powerPerUnit` with phase voltage base `1` and phase current base
 quantity as `S`: a per-phase base for per-phase power such as
 `nodeComplexPower`, a three-phase base for three-phase power. Dividing by
 a positive real base scales the real and reactive parts by the same
-positive factor and does not rotate them. -/
+positive factor and does not rotate them. With `x / 0 = 0` it is `0` at `Sbase = 0`. -/
 noncomputable def perUnitComplexPower (S : ℂ) (Sbase : ℝ) : ℂ :=
   powerPerUnit 1 (Sbase / 3) S
 

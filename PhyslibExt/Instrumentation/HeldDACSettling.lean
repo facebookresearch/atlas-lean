@@ -105,7 +105,8 @@ open PhyslibExt.Instrumentation.DACLevelError
 namespace PhyslibExt.Instrumentation.HeldDACSettling
 
 /-- The explicit settling output on one holding interval: held
-level plus initial mismatch decayed by the exponential factor. -/
+level plus initial mismatch decayed by the exponential factor. It is meant for `tau > 0` and
+`t ≥ tk`; with `x / 0 = 0`, `tau = 0` gives `yStart` for every `t`. -/
 noncomputable def settlingOutput (u yStart tk tau t : ℝ) : ℝ :=
   u + (yStart - u) * Real.exp (-(t - tk) / tau)
 

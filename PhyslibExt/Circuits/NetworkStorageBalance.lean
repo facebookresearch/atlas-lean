@@ -86,7 +86,8 @@ noncomputable def storedEnergy (nB : ℕ) (Cset Lset : Finset (Fin nB))
   (∑ e ∈ Cset, Cval e * (v e) ^ 2 / 2) +
     ∑ e ∈ Lset, Lval e * (iB e) ^ 2 / 2
 
-/-- Resistive absorbed power (loss): `sum_R R_e * (i_e)^2`. -/
+/-- Resistive absorbed power: `sum_R R_e * (i_e)^2`, a loss (nonnegative) for nonnegative
+resistances. -/
 def resistiveLoss (nB : ℕ) (Rset : Finset (Fin nB))
     (Rval : Fin nB → ℝ) (iB : Fin nB → ℝ) : ℝ :=
   ∑ e ∈ Rset, Rval e * (iB e) ^ 2
@@ -207,10 +208,10 @@ lemma hasDerivAt_storedEnergy (nB : ℕ)
   have hadd := hC_sum.fun_add hL_sum
   simpa only [storedEnergy] using hadd
 
-/-- **Network storage balance.** Under KVL, KCL, the branch
-partition and the R/C/L branch laws, the derivative of stored energy
-equals supplied node power minus source absorbed power minus
-resistive loss:
+/-- **Network storage balance.** At a time `t`, under KVL, KCL, the branch partition, the R/C/L
+branch laws, nonnegative resistances, positive inductances and capacitances, and
+differentiability of the capacitor voltages and inductor currents at `t`, the derivative of stored
+energy equals supplied node power minus source absorbed power minus resistive loss:
 `dE/dt = phi ⬝ᵥ j - sum_source (v_e * i_e) - sum_R R_e * (i_e)^2`. -/
 lemma network_storage_deriv_eq_supplied_minus_losses (nN nB : ℕ)
     (B : Matrix (Fin nN) (Fin nB) ℝ)
@@ -264,7 +265,10 @@ lemma network_storage_deriv_eq_supplied_minus_losses (nN nB : ℕ)
 If the circuit laws (KVL, KCL, and the resistor, capacitor and
 inductor branch laws) hold at every `s ∈ [a, b]`, so that the
 storage-balance identity is derived from the network model there
-rather than assumed, with integrable supplied power, then
+rather than assumed, with nonnegative resistances, positive inductances and capacitances, the
+capacitor voltages and inductor currents differentiable on `[a, b]`, the supplied power
+`phi ⬝ᵥ j - sum_source v_e * i_e` continuous on `[a, b]` and the supplied power minus the
+resistive loss interval integrable, then
 `E(b) - E(a) <= ∫ s in a..b, (phi ⬝ᵥ j - sum_source v_e * i_e)`. -/
 lemma network_energy_sub_le_integral_supplied (nN nB : ℕ)
     (B : Matrix (Fin nN) (Fin nB) ℝ)
