@@ -12,8 +12,9 @@ $$\lVert p_n \rVert \le \Bigl(\frac{1}{2\pi} \int_0^{2\pi} \lVert f(c + R e^{i\t
 
 No hypothesis on $f$ or completeness of $E$ is needed, with the conventions that an $E$-valued integral
 is $0$ when the integrand is not integrable or when $E$ is not complete, and that $|R|^{-1} = 0$ when
-$R = 0$. The real-valued integral on the right is $0$ only when $\theta \mapsto \lVert f(c + R e^{i\theta}) \rVert$
-is not integrable; the completeness of $E$ does not affect it. In particular, if
+$R = 0$. If $\theta \mapsto \lVert f(c + R e^{i\theta}) \rVert$ is not integrable, Mathlib assigns the
+real-valued integral on the right the value $0$; completeness of $E$ does not affect that integral. In
+particular, if
 $\lVert f(w) \rVert \le M$ on the circle $|w - c| = R$ with $R > 0$, then $\lVert p_n \rVert \le M R^{-n}$.
 
 ## Sources
