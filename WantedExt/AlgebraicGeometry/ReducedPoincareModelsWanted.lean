@@ -53,7 +53,7 @@ def_wanted generalizedJacobianTensorAction
     (k : Type) [Field k] [IsAlgClosed k]
     (C : Over (Spec (.of k))) [TorsionFreeRestrictions C.left]
     [IsProperCurve C.hom] [IsReduced C.left] [ConnectedSpace C.left]
-    (projective : ProjectiveLineSystems.IsProjectiveVariety C)
+    (projective : ProjectiveSpace.IsProjective C)
     (q : Polarization C.left) (general : IsNondegenerate C q) (s : SmoothMarking C)
     (M : FineCompactifiedJacobian C q s) (J : PicardZeroModel C s.p) : PicardTensorAction C q s M J
 
@@ -63,7 +63,7 @@ def_wanted reducedPoincareCohomology
     (k : Type) [Field k] [IsAlgClosed k]
     (C : Over (Spec (.of k))) [TorsionFreeRestrictions C.left]
     [IsProperCurve C.hom] [IsReduced C.left] [ConnectedSpace C.left]
-    (projective : ProjectiveLineSystems.IsProjectiveVariety C)
+    (projective : ProjectiveSpace.IsProjective C)
     (q : Polarization C.left) (general : IsNondegenerate C q) (s : SmoothMarking C)
     (M : FineCompactifiedJacobian C q s) (J : PicardZeroModel C s.p) :
     PoincareCohomologyData C q s M J
@@ -74,7 +74,7 @@ def_wanted reducedPoincareFamily
     (k : Type) [Field k] [IsAlgClosed k]
     (C : Over (Spec (.of k))) [TorsionFreeRestrictions C.left]
     [IsProperCurve C.hom] [IsReduced C.left] [ConnectedSpace C.left]
-    (projective : ProjectiveLineSystems.IsProjectiveVariety C)
+    (projective : ProjectiveSpace.IsProjective C)
     (q : Polarization C.left) (general : IsNondegenerate C q) (s : SmoothMarking C)
     (M : FineCompactifiedJacobian C q s) (J : PicardZeroModel C s.p)
     (S : AffineSources) (A : DeterminantSystem S) (D : PoincareCohomologyData C q s M J)
@@ -87,7 +87,7 @@ theorem_wanted reducedBetaGroupCompatibility
     (k : Type) [Field k] [IsAlgClosed k]
     (C : Over (Spec (.of k))) [TorsionFreeRestrictions C.left]
     [IsProperCurve C.hom] [IsReduced C.left] [ConnectedSpace C.left]
-    (projective : ProjectiveLineSystems.IsProjectiveVariety C)
+    (projective : ProjectiveSpace.IsProjective C)
     (q : Polarization C.left) (general : IsNondegenerate C q) (s : SmoothMarking C)
     (M : FineCompactifiedJacobian C q s) (J : PicardZeroModel C s.p)
     (S : AffineSources) (A : DeterminantSystem S) (D : PoincareCohomologyData C q s M J)
@@ -101,7 +101,7 @@ theorem_wanted reducedCurveAutoduality
     (k : Type) [Field k] [IsAlgClosed k]
     (C : Over (Spec (.of k))) [TorsionFreeRestrictions C.left]
     [IsProperCurve C.hom] [IsReduced C.left] [ConnectedSpace C.left]
-    (projective : ProjectiveLineSystems.IsProjectiveVariety C)
+    (projective : ProjectiveSpace.IsProjective C)
     (q : Polarization C.left) (general : IsNondegenerate C q) (s : SmoothMarking C)
     (M : FineCompactifiedJacobian C q s) (J : PicardZeroModel C s.p)
     (S : AffineSources) (A : DeterminantSystem S) (D : PoincareCohomologyData C q s M J)
@@ -113,7 +113,7 @@ def_wanted compactifiedLineLocus
     (k : Type) [Field k] [IsAlgClosed k]
     (C : Over (Spec (.of k))) [TorsionFreeRestrictions C.left]
     [IsProperCurve C.hom] [IsReduced C.left] [ConnectedSpace C.left]
-    (projective : ProjectiveLineSystems.IsProjectiveVariety C)
+    (projective : ProjectiveSpace.IsProjective C)
     (q : Polarization C.left) (general : IsNondegenerate C q) (s : SmoothMarking C)
     (M : FineCompactifiedJacobian C q s) : LineLocus C q s M
 
@@ -123,7 +123,7 @@ def_wanted mixedOpenPoincareCohomology
     (k : Type) [Field k] [IsAlgClosed k]
     (C : Over (Spec (.of k))) [TorsionFreeRestrictions C.left]
     [IsProperCurve C.hom] [IsReduced C.left] [ConnectedSpace C.left]
-    (projective : ProjectiveLineSystems.IsProjectiveVariety C)
+    (projective : ProjectiveSpace.IsProjective C)
     (q q' : Polarization C.left) (general : IsNondegenerate C q)
     (general' : IsNondegenerate C q') (s : SmoothMarking C)
     (M : FineCompactifiedJacobian C q s) (N : FineCompactifiedJacobian C q' s)
@@ -136,7 +136,7 @@ def_wanted mixedProductCoordinates
     (k : Type) [Field k] [IsAlgClosed k]
     (C : Over (Spec (.of k))) [TorsionFreeRestrictions C.left]
     [IsProperCurve C.hom] [IsReduced C.left] [ConnectedSpace C.left]
-    (projective : ProjectiveLineSystems.IsProjectiveVariety C)
+    (projective : ProjectiveSpace.IsProjective C)
     (q q' : Polarization C.left) (general : IsNondegenerate C q)
     (general' : IsNondegenerate C q') (s : SmoothMarking C)
     (M : FineCompactifiedJacobian C q s) (N : FineCompactifiedJacobian C q' s) :
@@ -148,7 +148,7 @@ theorem_wanted mixedPoincareCohenMacaulay
     (k : Type) [Field k] [IsAlgClosed k]
     (C : Over (Spec (.of k))) [TorsionFreeRestrictions C.left]
     [IsProperCurve C.hom] [IsReduced C.left] [ConnectedSpace C.left]
-    (projective : ProjectiveLineSystems.IsProjectiveVariety C)
+    (projective : ProjectiveSpace.IsProjective C)
     (q q' : Polarization C.left) (general : IsNondegenerate C q)
     (general' : IsNondegenerate C q') (s : SmoothMarking C)
     (M : FineCompactifiedJacobian C q s) (N : FineCompactifiedJacobian C q' s)
@@ -171,7 +171,7 @@ def_wanted chosenMixedPoincareEquivalence
     (k : Type) [Field k] [IsAlgClosed k]
     (C : Over (Spec (.of k))) [TorsionFreeRestrictions C.left]
     [IsProperCurve C.hom] [IsReduced C.left] [ConnectedSpace C.left]
-    (projective : ProjectiveLineSystems.IsProjectiveVariety C)
+    (projective : ProjectiveSpace.IsProjective C)
     (q q' : Polarization C.left) (general : IsNondegenerate C q)
     (general' : IsNondegenerate C q') (s : SmoothMarking C)
     (M : FineCompactifiedJacobian C q s) (N : FineCompactifiedJacobian C q' s)

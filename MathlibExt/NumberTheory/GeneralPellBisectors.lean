@@ -28,6 +28,7 @@ Equations and Angle Bisectors between Planar Lines with Rational
 Slopes*, INTEGERS 24 (2024), Article A111.
 
 Squaring the equality of distances to two lines gives an equation for their bisector slope.
+For slopes on the same negative Pell conic, rational solutions admit a quotient formula.
 
 Squares are `0` or `1` modulo `4`, so for `d ≡ 1 (mod 4)` the value
 `x² - d y²` is `0`, `1`, or `3` modulo `4`, and so is its negation.
@@ -68,6 +69,53 @@ theorem bisector_slope_equation (a b c : ℝ) (hab : |a| ≠ |b|) (hc : c ≠ 0)
   have h := (div_eq_div_iff (by positivity) (by positivity)).mp hbis
   apply_fun (fun x : ℝ ↦ x ^ 2) at h
   simpa (disch := positivity) only [mul_pow, sq_abs, Real.sq_sqrt] using h
+
+-- Squarefreeness is part of the source statement. The sign choice uses only the Pell equations.
+set_option linter.unusedVariables false in
+/-- **Rational solutions of the bisector equation for square-free $d > 1$.** Let $d > 1$ be a
+square-free integer and let $a, b, c$ be rational numbers with $|a| \ne |b|$ and
+$$(a - c)^2 (b^2 + 1) = (b - c)^2 (a^2 + 1).$$
+Suppose there are rational numbers $u, v$ with $a^2 - d u^2 = -1$ and $b^2 - d v^2 = -1$. Then
+there are rational numbers $a_2, b_2$ with $a^2 - d a_2^2 = -1$ and $b^2 - d b_2^2 = -1$ such
+that either $a_2 + b_2 \ne 0$ and $c = (a b_2 + a_2 b) / (a_2 + b_2)$, or $a b_2 + a_2 b \ne 0$
+and $c = -(a_2 + b_2) / (a b_2 + a_2 b)$.
+
+In terms of $\alpha = a + a_2 \sqrt{d}$ and $\beta = b + b_2 \sqrt{d}$, which have norm $-1$, and
+the conjugation $'$ of $\mathbb{Q}(\sqrt{d})$, the first quotient is
+$(\alpha\beta - (\alpha\beta)') / (\alpha + \beta - (\alpha + \beta)')$.
+
+Source: the theorem's second part (the factorization of $\alpha, \beta$ through $\eta$, $\xi_p$
+and $S(d)$) is not formalized.
+
+Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
+Rational Slopes*, INTEGERS 24 (2024), Article A111, Theorem 1(ii), first
+sentence (`integers-2024-A111-thm-1`). -/
+theorem bisector_equation_rat_solution_negPell (d : ℤ) (hd : 1 < d)
+    (hsq : Squarefree d) (a b c : ℚ) (hab : |a| ≠ |b|)
+    (h : (a - c) ^ 2 * (b ^ 2 + 1) = (b - c) ^ 2 * (a ^ 2 + 1))
+    (ha : ∃ a₂ : ℚ, a ^ 2 - d * a₂ ^ 2 = -1) (hb : ∃ b₂ : ℚ, b ^ 2 - d * b₂ ^ 2 = -1) :
+    ∃ a₂ b₂ : ℚ, a ^ 2 - d * a₂ ^ 2 = -1 ∧ b ^ 2 - d * b₂ ^ 2 = -1 ∧
+      ((a₂ + b₂ ≠ 0 ∧ c = (a * b₂ + a₂ * b) / (a₂ + b₂)) ∨
+        (a * b₂ + a₂ * b ≠ 0 ∧ c = -(a₂ + b₂) / (a * b₂ + a₂ * b))) := by
+  obtain ⟨u, hu⟩ := ha
+  obtain ⟨v, hv⟩ := hb
+  have hd₀ : (d : ℚ) ≠ 0 := by exact_mod_cast (by omega : d ≠ 0)
+  have hs : ((a - c) * v) ^ 2 = ((b - c) * u) ^ 2 := by
+    apply mul_left_cancel₀ hd₀
+    linear_combination h - (a - c) ^ 2 * hv + (b - c) ^ 2 * hu
+  -- Choose the sign of the second coordinate paired with `a` so the two products cancel.
+  obtain ⟨u', hu', hsign⟩ : ∃ u' : ℚ, a ^ 2 - d * u' ^ 2 = -1 ∧
+      (a - c) * v = -((b - c) * u') := by
+    rcases sq_eq_sq_iff_eq_or_eq_neg.mp hs with heq | heq
+    · exact ⟨-u, by simpa using hu, by simpa using heq⟩
+    · exact ⟨u, hu, heq⟩
+  have hden : u' + v ≠ 0 := by
+    intro hz
+    apply hab
+    apply (sq_eq_sq_iff_abs_eq_abs a b).mp
+    linear_combination hu' - hv + (d : ℚ) * (u' - v) * hz
+  refine ⟨u', v, hu', hv, Or.inl ⟨hden, (eq_div_iff hden).2 ?_⟩⟩
+  linear_combination -hsign
 
 /-- **Bisector-equation solutions from two solutions of $x^2 - d y^2 = -1$.** Let $d$ be an integer
 and let $a, a_2, b, b_2$ be rational numbers with $a^2 - d a_2^2 = -1$ and $b^2 - d b_2^2 = -1$.
