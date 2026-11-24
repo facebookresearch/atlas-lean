@@ -1,6 +1,7 @@
 # Schmidt decomposition
 
-Every unit vector $u \in \mathcal{X} \otimes \mathcal{Y}$ can be written as
+Let $\mathcal{X}$ and $\mathcal{Y}$ be finite-dimensional complex Hilbert spaces. Every unit vector
+$u \in \mathcal{X} \otimes \mathcal{Y}$ can be written as
 
 $$u = \sum_{i=1}^r \sqrt{p_i}\, x_i \otimes y_i$$
 
@@ -18,7 +19,9 @@ prerequisites and links it under the dependency sections below:
 ## Depends on
 
 - [Left partial trace of a rank-one matrix](../../LinearAlgebra/linear-maps-and-duality/partial-trace/partial-trace-left-vec-mul-vec-star.md)
+- [Right partial trace of a rank-one matrix](../../LinearAlgebra/linear-maps-and-duality/partial-trace/partial-trace-right-vec-mul-vec-star.md)
 
 ## Sources
 
-- M. M. Wilde, *From Classical to Quantum Shannon Theory*, arXiv:1106.1445v8, Theorem 3.8.1. <https://arxiv.org/pdf/1106.1445v8>
+- M. M. Wilde, *From Classical to Quantum Shannon Theory*, arXiv:1106.1445v8, Theorem 3.8.1 (the decomposition, for
+  finite-dimensional Hilbert spaces) and (11.26) in the proof of Theorem 11.2.1 (the reduced states). <https://arxiv.org/pdf/1106.1445v8>
