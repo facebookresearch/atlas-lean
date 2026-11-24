@@ -37,6 +37,7 @@ public import Mathlib.Algebra.Group.Nat.Even
 public import Mathlib.Data.Finset.Powerset
 public import Mathlib.Data.Nat.Fib.Basic
 public import MathlibExt.Combinatorics.Enumerative.FibonacciSquaredAddition
+public import MathlibExt.Combinatorics.Enumerative.FibonacciSquaredBinomialSum
 public import MathlibExt.Combinatorics.Enumerative.FibonacciSquaredWeightedSum
 
 namespace MetaMathlibExt
@@ -306,20 +307,6 @@ Theorem 2.2 (`fq-2024-belaggoun01132024-thm-2.2`). -/
 public theorem_wanted fenceTilingSum_eq_biPeriodicFibonacciSq {K : Type*} [Field K] {a b : K}
     (ha : a ≠ 0) (hb : b ≠ 0) (n : ℕ) :
     fenceTilingSum a b n = biPeriodicFibonacciSq a b (n + 1)
-
-/-- **Squared Fibonacci numbers as a double binomial sum.** Let $F_k$ denote the Fibonacci
-numbers ($F_0 = 0$, $F_1 = 1$). For every natural number $n$,
-$$
-F_{n+1}^2 = \sum_{i=0}^{\lfloor 2n/3 \rfloor} \sum_{j=0}^{i} \binom{i}{j} \binom{2n-3i}{j} 2^j.
-$$
-
-Source: Nassima Belaggoun and Hacène Belbachir, *Combinatorial Identities for the Bi-Periodic
-Fibonacci Numbers Squared*, The Fibonacci Quarterly 62 (2024), Article belaggoun01132024,
-Corollary 3.3 (`fq-2024-belaggoun01132024-cor-3.3`). -/
-public theorem_wanted fib_succ_sq_eq_sum_choose_mul_choose (n : ℕ) :
-    Nat.fib (n + 1) ^ 2 =
-      ∑ i ∈ range (2 * n / 3 + 1), ∑ j ∈ range (i + 1),
-        i.choose j * (2 * n - 3 * i).choose j * 2 ^ j
 
 /-- **Recurrence for weighted tilings with no free bifence.** Let $a$ and $b$ be nonzero elements
 of a field, and let $R_n$ be the weighted number of tilings of an $n$-board by half-squares and

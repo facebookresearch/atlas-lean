@@ -1,4 +1,4 @@
-# Boundary representation of an operator system S ⊆ C*(S): an irreducible representation of C*(S) whose restriction to S has a unique completely positive extension
+# Boundary representation of an operator system S ⊆ C\*(S): an irreducible representation of C\*(S) whose restriction to S has a unique completely positive extension
 
 Let $S \subseteq B(H)$ be a concrete operator system, and let $C^*(S)$ be the C*-algebra it generates in $B(H)$. An irreducible representation $\pi\colon C^*(S) \to B(H_\pi)$ is a *boundary representation* of $S$ if $\pi$ is the only unital completely positive map $C^*(S) \to B(H_\pi)$ whose restriction to $S$ equals $\pi|_S$.
 
