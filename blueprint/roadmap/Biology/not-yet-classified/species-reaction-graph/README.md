@@ -9,8 +9,9 @@
 - [Cfstr Field](cfstr-field.md)
 - [Has Capacity For Multiple Equilibria](has-capacity-for-multiple-equilibria.md)
 - [Complex On](complex-on.md)
-- [Edge](edge.md)
+- [Edge Descriptor](edge-descriptor.md)
 - [Coeff](coeff.md)
+- [Is Edge](is-edge.md)
 - [Cycle](cycle.md)
 
 ## Cycle

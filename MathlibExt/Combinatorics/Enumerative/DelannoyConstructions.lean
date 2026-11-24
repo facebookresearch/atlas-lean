@@ -105,6 +105,29 @@ public theorem genDelannoyUpper_add_succ_right (k m n : ℕ) :
   congr 2
   omega
 
+/-- **Vertical sum identity for the upper generalized Delannoy numbers.**
+For natural numbers $k$, $m$ and $n$, write
+$D^k(m, n) = \sum_{j=0}^{n} \binom{m + n + k - j}{n + k} \binom{n}{j}$ for the upper
+generalized Delannoy numbers. For all natural numbers $k$, $m$ and $n$ with $k \ge 1$,
+$D^k(m, n) + D^k(m + 1, n) = D^{k-1}(m + 1, n + 1)$.
+
+Source: Steven Edwards and William Griffiths, *Delannoy Constructions*, Journal
+of Integer Sequences 27 (2024), Article 24.1.8, Theorem 4
+(`jis-2024-24.1.8-thm-4`). -/
+public theorem genDelannoyUpper_add_succ_left (k m n : ℕ) (hk : 1 ≤ k) :
+    genDelannoyUpper k m n + genDelannoyUpper k (m + 1) n =
+      genDelannoyUpper (k - 1) (m + 1) (n + 1) := by
+  obtain ⟨s, rfl⟩ := Nat.exists_eq_add_of_le' hk
+  rw [add_comm (genDelannoyUpper (s + 1) m n)]
+  simp only [Nat.add_sub_cancel]
+  have hsplit := sum_choose_succ_mul
+    (fun j _ ↦ (m + n + (s + 1) + 1 - j).choose (n + (s + 1))) n
+  have htop : m + 1 + n + (s + 1) = m + n + (s + 1) + 1 := by omega
+  have htop' : m + 1 + (n + 1) + s = m + n + (s + 1) + 1 := by omega
+  have hbot : n + 1 + s = n + (s + 1) := by omega
+  simpa only [genDelannoyUpper, htop, htop', hbot, Nat.add_sub_add_right, Nat.cast_id,
+    Nat.mul_comm] using hsplit.symm
+
 /-- **Horizontal difference identity for the upper generalized Delannoy numbers.**
 For natural numbers $k$, $m$ and $n$, write
 $D^k(m, n) = \sum_{j=0}^{n} \binom{m + n + k - j}{n + k} \binom{n}{j}$ for the upper

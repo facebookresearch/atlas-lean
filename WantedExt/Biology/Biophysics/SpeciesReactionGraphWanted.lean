@@ -32,12 +32,14 @@ positive equilibria.
 
 Representation. Each reaction node `r` carries two distinct complexes `lhs r` and `rhs r` with
 natural-number coefficients, a forward reaction `lhs r → rhs r`, and the reverse reaction when
-`r` is a reversible pair. An edge is a triple (species, reaction node, side), so a species that
-occurs in both complexes of a reaction node gives two parallel edges. A cycle of length `2k`
-visits distinct species nodes `s_0, …, s_{k-1}` and distinct reaction nodes `r_0, …, r_{k-1}`,
-entering `r_i` from `s_i` and leaving it to `s_{i+1}` (indices mod `k`) along two different
-edges. Its common edges with another cycle are a union of maximal runs of consecutive edges, and
-a run joins a species node to a reaction node exactly when it has an odd number of edges.
+`r` is a reversible pair. An edge descriptor is a triple (species, reaction node, side); it is an
+edge of the SR graph exactly when the species occurs in the complex on that side (positive
+coefficient), so a species that occurs in both complexes of a reaction node gives two parallel
+edges. A cycle of length `2 (k + 1)` visits distinct species nodes `s_0, …, s_k` and distinct
+reaction nodes `r_0, …, r_k`, entering `r_i` from `s_i` and leaving it to `s_{i+1}` (indices mod
+`k + 1`) along two different edges. Its common edges with another cycle are a union of maximal
+runs of consecutive edges, and a run joins a species node to a reaction node exactly when it has
+an odd number of edges.
 
 Sources: G. Craciun, M. Feinberg, "Multiple equilibria in complex chemical reaction networks:
 II. The species-reaction graph", SIAM J. Appl. Math. 66 (2006) 1321–1338, Section 1,
@@ -95,9 +97,10 @@ def HasCapacityForMultipleEquilibria [Fintype S] [Fintype ρ] : Prop :=
 def complexOn (r : ρ) (side : Bool) : S → ℕ :=
   if side then N.rhs r else N.lhs r
 
-/-- An edge of the SR graph: species `s`, reaction node `r`, and the side whose complex labels
-the edge; it is present when `s` occurs in that complex. -/
-structure Edge (S ρ : Type*) where
+/-- An edge descriptor of the SR graph: species `s`, reaction node `r`, and the side whose
+complex would label the edge. Every triple is a descriptor; it describes an actual edge of the SR
+graph of a network only when `s` occurs in that complex (`SRNetwork.IsEdge`). -/
+structure EdgeDescriptor (S ρ : Type*) where
   /-- The species node. -/
   species : S
   /-- The reaction node. -/
@@ -105,13 +108,20 @@ structure Edge (S ρ : Type*) where
   /-- The side of the reaction node whose complex labels the edge. -/
   side : Bool
 
-/-- The stoichiometric coefficient of an edge: the coefficient of its species in its label. -/
-def coeff (e : Edge S ρ) : ℕ :=
+/-- The stoichiometric coefficient of an edge descriptor: the coefficient of its species in the
+complex on its side. -/
+def coeff (e : EdgeDescriptor S ρ) : ℕ :=
   N.complexOn e.rxn e.side e.species
 
-/-- A cycle of the SR graph of length `2k`: distinct species `sp i` and distinct reaction nodes
-`rx i`; the cycle enters `rx i` from `sp i` along the edge labeled by side `inSide i` and leaves it
-to `sp (i + 1)` along the edge labeled by side `outSide i`, these two edges being different. -/
+/-- The edge descriptor `e` is an actual edge of the SR graph of `N`: its species occurs in the
+complex on its side (positive stoichiometric coefficient). -/
+def IsEdge (e : EdgeDescriptor S ρ) : Prop :=
+  0 < N.coeff e
+
+/-- A cycle of the SR graph of length `2 (k + 1)`: distinct species `sp i` and distinct reaction
+nodes `rx i` for `i = 0, …, k`; the cycle enters `rx i` from `sp i` along the edge labeled by side
+`inSide i` and leaves it to `sp (i + 1)` (indices mod `k + 1`) along the edge labeled by side
+`outSide i`. Both are actual edges (positive coefficients), and they are different edges. -/
 structure Cycle (k : ℕ) where
   /-- The species nodes, in order. -/
   sp : Fin (k + 1) → S
@@ -134,20 +144,20 @@ namespace Cycle
 variable {k : ℕ} (C : N.Cycle k)
 
 /-- The edge entering reaction node `rx i`. -/
-def inEdge (i : Fin (k + 1)) : Edge S ρ :=
+def inEdge (i : Fin (k + 1)) : EdgeDescriptor S ρ :=
   ⟨C.sp i, C.rx i, C.inSide i⟩
 
 /-- The edge leaving reaction node `rx i`. -/
-def outEdge (i : Fin (k + 1)) : Edge S ρ :=
+def outEdge (i : Fin (k + 1)) : EdgeDescriptor S ρ :=
   ⟨C.sp (i + 1), C.rx i, C.outSide i⟩
 
 /-- The `j`-th edge of the cycle in cyclic order (period `2 (k + 1)`). -/
-def edgeAt (j : ℕ) : Edge S ρ :=
+def edgeAt (j : ℕ) : EdgeDescriptor S ρ :=
   if j % 2 = 0 then C.inEdge ⟨j / 2 % (k + 1), Nat.mod_lt _ k.succ_pos⟩
   else C.outEdge ⟨j / 2 % (k + 1), Nat.mod_lt _ k.succ_pos⟩
 
-/-- The set of edges of the cycle. -/
-def edges : Set (Edge S ρ) :=
+/-- The set of edges of the cycle (all actual edges of the SR graph). -/
+def edges : Set (EdgeDescriptor S ρ) :=
   Set.range C.inEdge ∪ Set.range C.outEdge
 
 open scoped Classical in
