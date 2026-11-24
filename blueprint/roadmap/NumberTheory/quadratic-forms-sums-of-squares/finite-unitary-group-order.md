@@ -8,7 +8,8 @@ unitary group of $(W, h)$, the group of $\mathbb{F}_{q^2}$-linear automorphisms 
 $$\# \mathrm{U}(W, h) = q^{m(m-1)/2} \prod_{j=1}^{m} \bigl(q^j - (-1)^j\bigr), \qquad \text{so} \qquad q^{-m^2} \, \# \mathrm{U}(W, h) = \prod_{j=1}^{m} \bigl(1 - (-q)^{-j}\bigr).$$
 
 The norm $N(x) = x \bar{x} = x^{q+1}$ maps $\mathbb{F}_{q^2}^\times$ to $\mathbb{F}_q^\times$, as $N(x)^q = x^{q^2 + q} = x \cdot x^q = N(x)$;
-its kernel, the set of roots of $X^{q+1} - 1$, has at most $q + 1$ elements, so its image has at least
+its kernel, the set of roots of $X^{q+1} - 1$, has at most $q + 1$ elements by the
+[bound on the number of roots](../../Algebra/zeros-of-polynomials/card-roots-le-degree.md), so its image has at least
 $(q^2 - 1)/(q + 1) = q - 1$ elements: the norm maps $\mathbb{F}_{q^2}^\times$ onto $\mathbb{F}_q^\times$, each value being taken
 exactly $q + 1$ times.
 Some $x \in W$ has $h(x, x) \neq 0$: otherwise $h(x + y, x + y) = 0$ gives $h(x, y) + \overline{h(x, y)} = 0$ for all
@@ -31,6 +32,7 @@ This node has no prerequisites.
 ## Proof depends on
 
 - [Trace form criterion for étale algebras](../../RingTheory/algebras-and-differentials/tale-algebras-and-the-trace-form/trace-form-nondegenerate-iff-etale.md), for the nondegeneracy of the trace form of the finite separable, hence étale, extension $\mathbb{F}_{q^2}/\mathbb{F}_q$
+- [A polynomial over an integral domain has at most as many roots as its degree](../../Algebra/zeros-of-polynomials/card-roots-le-degree.md), for the kernel of the norm
 
 ## Sources
 

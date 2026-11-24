@@ -28,7 +28,9 @@ Summing over the classes gives the expansion of $\zeta_K(s)$ at $s = 1$, and
 for $\operatorname{Re} s > 1$, with $\zeta(s) = \frac{1}{s - 1} + \gamma + O(s - 1)$ (the
 [Laurent expansion of $\zeta$ at $1$](../../zeta-l-functions/riemann-zeta/stieltjes-constants/ramanujan-part1-ch7-entry13-bernoullirec.md), whose constant term is
 [Euler's constant](../../zeta-l-functions/riemann-zeta/stieltjes-constants/ramanujan-part1-ch7-entry13-bernoullipol.md)), shows that
-$L(s, \chi) = \zeta_K(s) / \zeta(s)$ is holomorphic at $s = 1$, as a quotient of two functions with simple poles there,
+$L(s, \chi) = \zeta_K(s) / \zeta(s)$ is holomorphic at $s = 1$, as a quotient of two functions with simple poles there
+(the identity holds as one of meromorphic functions on $\mathbb{C}$, by the
+[identity theorem](../../../Geometry/complex-and-symplectic-geometry/identity-and-open-mapping-theorems-for-holomorph/holomorphic-identity-on-connected-comple.md) on the complement of their poles, a connected open set),
 and gives $\zeta_K(s) = \frac{L(1, \chi)}{s - 1} + \gamma L(1, \chi) + L'(1, \chi) + O(s - 1)$. Comparing the residues gives
 Dirichlet's class number formula $L(1, \chi) = 2\pi h / (w \sqrt{|D|})$, and comparing the constant terms gives
 
@@ -39,6 +41,8 @@ which is the identity above, rewritten with $N(\mathfrak{b}_c) = 2 \operatorname
 ## Depends on
 
 - [Quadratic Dirichlet character of a fundamental discriminant](../../congruences/power-residues-reciprocity/kronecker-symbol-and-quadratic-characters/quadratic-dirichlet-character.md)
+- [The class group of a number field is finite](../../algebraic-number-theory/number-fields-embeddings/class-group-finite.md), for the $h$ ideal classes
+- [A finitely generated torsion-free module over a principal ideal domain is free](../../../LinearAlgebra/eigenvalues-and-canonical-forms/finite-torsion-free-module-pid-free.md), for the $\mathbb{Z}$-bases $(\omega_1, \omega_2)$ of the fractional ideals $\mathfrak{a}_c$
 
 ## Proof depends on
 
@@ -47,6 +51,7 @@ which is the identity above, rewritten with $N(\mathfrak{b}_c) = 2 \operatorname
 - [Dedekind zeta function of a quadratic field as $\zeta(s) L(s, \chi_D)$](../../zeta-l-functions/dirichlet-l-functions/dedekind-zeta-quadratic-field-factorization.md)
 - [Laurent expansion of $\zeta$ at $s = 1$](../../zeta-l-functions/riemann-zeta/stieltjes-constants/ramanujan-part1-ch7-entry13-bernoullirec.md), for its constant term $c_0$
 - [Stieltjes constants exist, and the zeroth is Euler's constant](../../zeta-l-functions/riemann-zeta/stieltjes-constants/ramanujan-part1-ch7-entry13-bernoullipol.md), for $c_0 = \gamma$
+- [Identity theorem for holomorphic maps](../../../Geometry/complex-and-symplectic-geometry/identity-and-open-mapping-theorems-for-holomorph/holomorphic-identity-on-connected-comple.md), for extending $\zeta_K(s) = \zeta(s) L(s, \chi)$ from $\operatorname{Re} s > 1$
 
 ## Sources
 

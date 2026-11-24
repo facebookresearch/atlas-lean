@@ -23,11 +23,38 @@ $y^{1/4} |\eta(z)|$, and hence $\operatorname{Im}(z) |\eta(z)|^4$, is invariant 
 
 Siegel proves the formula by separating the terms with $n = 0$, which give $2 y^s \zeta(2s)$, equal to $\pi^2 y / 3$
 at $s = 1$ by the [even zeta value](../../zeta-l-functions/riemann-zeta/zeta-even-integers-bernoulli.md) $\zeta(2) = \pi^2/6$, and
-applying the Poisson summation formula in $m$ to the others. The term of frequency $0$ produces the
-pole, through $\zeta(2s - 1)$, and the constant term $c_0$ of the
-[Laurent expansion of $\zeta$ at $1$](../../zeta-l-functions/riemann-zeta/stieltjes-constants/ramanujan-part1-ch7-entry13-bernoullirec.md), which is
-[Euler's constant](../../zeta-l-functions/riemann-zeta/stieltjes-constants/ramanujan-part1-ch7-entry13-bernoullipol.md), brings in $\gamma$; the terms of nonzero frequency, computed at $s = 1$ by residues, add up to the
-logarithm of the product defining $\eta$ (Siegel, pp. 11–13).
+applying the [Poisson summation formula](../../../Analysis/harmonic-analysis/fourier-series/poisson-summation-formula.md) in $m$
+to the others. The terms with $n$ and $-n$ are equal, and for $n \ge 1$ the function $\xi \mapsto |\xi + i n y|^{-2s}$ is
+continuous and $O(|\xi|^{-2 \operatorname{Re} s})$, while its Fourier transform decays exponentially (Siegel's estimates (11)
+and (12) below), so
+
+$$\sum_{m \in \mathbb{Z}} |m + n z|^{-2s} = (n y)^{1 - 2s} \sum_{k \in \mathbb{Z}} e^{-2\pi i k n x} \int_{\mathbb{R}} (1 + \xi^2)^{-s} e^{2\pi i k n y \xi} \, d\xi.$$
+
+The term of frequency $k = 0$ is $(n y)^{1 - 2s} \, \mathrm{B}(\tfrac{1}{2}, s - \tfrac{1}{2}) = (n y)^{1 - 2s} \sqrt{\pi} \, \Gamma(s - \tfrac{1}{2}) / \Gamma(s)$,
+by the substitutions $\xi^2 = \lambda$ and $\lambda = \mu / (1 - \mu)$, the
+[beta integral](../../../Analysis/special-functions/gamma-function/gamma-beta-relation.md) and
+[$\Gamma(\tfrac{1}{2}) = \sqrt{\pi}$](../../../Analysis/sequences-and-series/trigonometric-and-harmonic-series/series-from-n-rlund-s-digamma-identity/gamma-add-half-and-gamma-half-sub-nat.md);
+summed over $n \ge 1$ with the factor $2 y^s$, these terms give $2 y^{1 - s} \sqrt{\pi} \, \Gamma(s - \tfrac{1}{2}) \Gamma(s)^{-1} \zeta(2s - 1)$. For $k \neq 0$,
+moving the path of integration, along a rectilinear contour, to the two banks of the cut from $i$ to $i\infty$ (from $-i$
+to $-i\infty$ when $k < 0$) by the [Cauchy–Goursat theorem](../../../Analysis/complex-analysis/cauchy-theory/contour-integrals-over-rectangles/integral-eq-zero-of-filling-supported-in.md),
+Siegel bounds the integral by $c \, e^{-\pi |k| n y}$ uniformly for $s$ in a compact set (his (11) and (12)); so the terms of
+nonzero frequency form a double series of entire functions of $s$, dominated by a convergent series, and their sum is
+[entire](../../../Analysis/complex-analysis/cauchy-theory/holomorphic-sum-of-dominated-series.md). Hence $Z(z, s)$ continues to the
+half-plane $\operatorname{Re} s > 1/2$, where $\zeta(2s)$ is holomorphic and so is $\Gamma(s - \tfrac{1}{2}) / \Gamma(s)$, as
+$\Gamma$ is [analytic away from the nonpositive integers](../../../Analysis/special-functions/gamma-function/digamma-and-trigamma-functions/analytic-at-gamma.md)
+and [has no zeros](../../../Analysis/special-functions/gamma-function/gamma-function-no-zeros.md); its value at $s = 1$ is $\sqrt{\pi}$, as
+$\Gamma(1) = \int_0^\infty e^{-t} \, dt = 1$. The only pole is that of $\zeta(2s - 1)$ at $s = 1$, whose residue is $\frac{1}{2}$ by the
+[Laurent expansion of $\zeta$ at $1$](../../zeta-l-functions/riemann-zeta/stieltjes-constants/ramanujan-part1-ch7-entry13-bernoullirec.md),
+so $Z(z, s)$ has residue $2 \sqrt{\pi} \cdot \sqrt{\pi} \cdot \frac{1}{2} = \pi$ there.
+
+For the constant term, the [duplication formula](../../../Analysis/sequences-and-series/trigonometric-and-harmonic-series/series-from-n-rlund-s-digamma-identity/gamma-add-half-and-gamma-half-sub-nat.md)
+at $r = s - 1$ gives $\Gamma(s - \tfrac{1}{2}) / \Gamma(s) = \sqrt{\pi} \, 2^{2 - 2s} \, \Gamma(2s - 1) / \Gamma(s)^2$, and
+$\Gamma(2s - 1) / \Gamma(s)^2 = 1 + O((s - 1)^2)$ by the analyticity of $\Gamma$ at $1$. With the constant term $c_0$ of the
+Laurent expansion, which is [Euler's constant](../../zeta-l-functions/riemann-zeta/stieltjes-constants/ramanujan-part1-ch7-entry13-bernoullipol.md),
+the term of frequency $0$ is $\pi / (s - 1) + 2\pi(\gamma - \log(2\sqrt{y})) + O(s - 1)$. The terms of nonzero frequency at
+$s = 1$ follow from the residues at $\pm i$, $\int_{\mathbb{R}} (1 + \xi^2)^{-1} e^{2\pi i a \xi} \, d\xi = \pi e^{-2\pi |a|}$
+for real $a$, and summing them with $\sum_{n \ge 1} q^n / n = -\log(1 - q)$ gives the logarithm of the product defining
+$\eta$ (Siegel, pp. 6–13).
 
 ## Depends on
 
@@ -35,10 +62,17 @@ This node has no prerequisites.
 
 ## Proof depends on
 
-- [Laurent expansion of $\zeta$ at $s = 1$](../../zeta-l-functions/riemann-zeta/stieltjes-constants/ramanujan-part1-ch7-entry13-bernoullirec.md), for its constant term $c_0$
+- [Poisson summation formula for functions with power decay](../../../Analysis/harmonic-analysis/fourier-series/poisson-summation-formula.md), in $m$, for the terms with $n \neq 0$
+- [The beta integral in terms of the gamma function](../../../Analysis/special-functions/gamma-function/gamma-beta-relation.md), for the term of frequency $0$
+- [The Gamma function at $r + \tfrac12$ and at $\tfrac12 - r$](../../../Analysis/sequences-and-series/trigonometric-and-harmonic-series/series-from-n-rlund-s-digamma-identity/gamma-add-half-and-gamma-half-sub-nat.md), for $\Gamma(\tfrac{1}{2}) = \sqrt{\pi}$ and, at $r = s - 1$, for the duplication formula
+- [Cauchy–Goursat theorem for rectilinear cycles](../../../Analysis/complex-analysis/cauchy-theory/contour-integrals-over-rectangles/integral-eq-zero-of-filling-supported-in.md), for moving the path of integration to the banks of the cuts
+- [A dominated series of holomorphic functions is holomorphic](../../../Analysis/complex-analysis/cauchy-theory/holomorphic-sum-of-dominated-series.md), for the terms of nonzero frequency
+- [Analyticity of the Gamma function](../../../Analysis/special-functions/gamma-function/digamma-and-trigamma-functions/analytic-at-gamma.md), for the regularity of $\Gamma(s - \tfrac{1}{2})$ and the expansion of $\Gamma$ at $1$
+- [The complex gamma function has no zeros away from its poles](../../../Analysis/special-functions/gamma-function/gamma-function-no-zeros.md), for the regularity of $1 / \Gamma(s)$
+- [Laurent expansion of $\zeta$ at $s = 1$](../../zeta-l-functions/riemann-zeta/stieltjes-constants/ramanujan-part1-ch7-entry13-bernoullirec.md), for the pole of $\zeta(2s - 1)$ and its constant term $c_0$
 - [Stieltjes constants exist, and the zeroth is Euler's constant](../../zeta-l-functions/riemann-zeta/stieltjes-constants/ramanujan-part1-ch7-entry13-bernoullipol.md), for $c_0 = \gamma$
 - [Even zeta values and Bernoulli numbers](../../zeta-l-functions/riemann-zeta/zeta-even-integers-bernoulli.md), for $\zeta(2) = \pi^2/6$
-- [Residue theorem on a disc](../../../Analysis/complex-analysis/cauchy-theory/residue-theorem-closed-ball.md), for the integrals $\int_{\mathbb{R}} (1 + \xi^2)^{-1} e^{2\pi i k y \xi} \, d\xi$ at $s = 1$, computed from the residues at $\pm i$
+- [Residue theorem on a disc](../../../Analysis/complex-analysis/cauchy-theory/residue-theorem-closed-ball.md), for the integrals $\int_{\mathbb{R}} (1 + \xi^2)^{-1} e^{2\pi i a \xi} \, d\xi$, computed from the residues at $\pm i$
 
 ## Sources
 
@@ -47,4 +81,6 @@ This node has no prerequisites.
   <https://www.math.tifr.res.in/~publ/ln/tifr23.pdf> (copy:
   <https://www-users.cse.umn.edu/~garrett/m/mfms/notes_2013-14/Siegel_AdvAnNoTh.pdf>), Chapter 1, §1:
   Theorem 1 (p. 13) and its proof, which uses Proposition 1 (the constant term of $\zeta$ at $s = 1$),
-  formula (6) and Proposition 2 (Poisson summation); §2, formula (17) (p. 15).
+  formula (6), Proposition 2 (Poisson summation), formulas (8)–(13) (Cauchy's theorem for the contours $\Gamma_\pm$, the
+  estimates (11) and (12), the beta integral and the theorem of Weierstrass, pp. 6–10) and the duplication formula
+  (p. 11); §2, formula (17) (p. 15).

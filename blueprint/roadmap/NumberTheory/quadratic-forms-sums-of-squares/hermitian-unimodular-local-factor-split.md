@@ -7,20 +7,22 @@ $L_{\mathfrak{p}}$ unimodular. Then the local density and the local factor of $L
 
 $$\beta(L_{\mathfrak{p}}) = q^{-m^2} \, \# \mathrm{GL}_m(\mathbb{F}_q) = \prod_{j=1}^{m} (1 - q^{-j}), \qquad \lambda(L_{\mathfrak{p}}) = 1.$$
 
-Indeed $\mathcal{O}$ is a finitely generated $\mathfrak{o}$-module, so $\mathcal{O}_{\mathfrak{p}} = \mathcal{O} \otimes_{\mathfrak{o}} \mathfrak{o}_{\mathfrak{p}}$ is
-the $\mathfrak{p}$-adic completion $\varprojlim_N \mathcal{O}/\mathfrak{p}^N \mathcal{O}$, which by the factorization of $\mathfrak{p}\mathcal{O}$ and
-the Chinese remainder theorem is the product of the completions $\widehat{\mathcal{O}}_{\mathfrak{P}}$ over the prime ideals
-$\mathfrak{P}$ of $\mathcal{O}$ above $\mathfrak{p}$. Here there are two of them, each with ramification index and residue degree $1$, so
+Indeed $\mathcal{O}_{\mathfrak{p}} = \mathcal{O} \otimes_{\mathfrak{o}} \mathfrak{o}_{\mathfrak{p}}$ is the
+[product of the valuation rings](../algebraic-number-theory/discriminants-ramification/completions-of-number-fields-at-finite-places/the-finite-place-completion-tensor-product/ring-of-integers-completion-tensor-product.md) $\widehat{\mathcal{O}}_{\mathfrak{P}}$
+of the completions $E_{\mathfrak{P}}$ at the prime ideals $\mathfrak{P}$ of $\mathcal{O}$ above $\mathfrak{p}$, and $\mathfrak{o}_{\mathfrak{p}}$
+and these rings are discrete valuation rings. Here there are two of them, each with ramification index and residue degree $1$, so
 each completion $E_{\mathfrak{P}}$ has [degree $e f = 1$](../algebraic-number-theory/discriminants-ramification/completions-of-number-fields-at-finite-places/finrank-adic-completion-eq-ramification.md) over $K_{\mathfrak{p}}$ and
 $\widehat{\mathcal{O}}_{\mathfrak{P}} = \mathfrak{o}_{\mathfrak{p}}$; thus $\mathcal{O}_{\mathfrak{p}} = \mathfrak{o}_{\mathfrak{p}} \times \mathfrak{o}_{\mathfrak{p}}$, with the
-involution exchanging the factors. So $L_{\mathfrak{p}} = A \oplus A'$ for free $\mathfrak{o}_{\mathfrak{p}}$-modules $A$, $A'$ of rank $m$,
+involution exchanging the factors. So $L_{\mathfrak{p}} = A \oplus A'$ for finitely generated torsion-free
+$\mathfrak{o}_{\mathfrak{p}}$-modules $A$ and $A'$, which are [free](../../LinearAlgebra/eigenvalues-and-canonical-forms/finite-torsion-free-module-pid-free.md), of rank $m$,
 and $\Phi$ is given by a pairing of $A$ with $A'$, perfect because $L_{\mathfrak{p}}$ is unimodular. An isometry of
 $L_{\mathfrak{p}} \otimes R$ is determined by its restriction to $A \otimes R$, which can be any automorphism, so the set
 $H(R)$ of the definition of $\beta(L_{\mathfrak{p}})$ is $\mathrm{GL}_m(R)$. The reduction map
 $\mathrm{GL}_m(\mathfrak{o}/\mathfrak{p}^N) \to \mathrm{GL}_m(\mathbb{F}_q)$ is onto, with kernel $1 + \mathfrak{p} M_m(\mathfrak{o}/\mathfrak{p}^N)$
 of order $q^{(N - 1) m^2}$, so $\# H(\mathfrak{o}/\mathfrak{p}^N) = q^{(N-1) m^2} \# \mathrm{GL}_m(\mathbb{F}_q)$ and
-$\beta(L_{\mathfrak{p}}) = q^{-m^2} \# \mathrm{GL}_m(\mathbb{F}_q)$, where
-$\# \mathrm{GL}_m(\mathbb{F}_q) = q^{m(m-1)/2} \prod_{j=1}^{m} (q^j - 1)$. In the definition of $\lambda(L_{\mathfrak{p}})$,
+$\beta(L_{\mathfrak{p}}) = q^{-m^2} \# \mathrm{GL}_m(\mathbb{F}_q)$, where, by the
+[order of the general linear group](../../GroupTheory/linear-groups/card-general-linear-group-finite-field.md),
+$\# \mathrm{GL}_m(\mathbb{F}_q) = \prod_{i=0}^{m-1} (q^m - q^i) = q^{m(m-1)/2} \prod_{j=1}^{m} (q^j - 1)$. In the definition of $\lambda(L_{\mathfrak{p}})$,
 $t_{\mathfrak{p}} = 0$, $a_{\mathfrak{p}} = 0$ and $c_{\mathfrak{p}} = \prod_{j=1}^{m} (1 - q^{-j}) = \beta(L_{\mathfrak{p}})$, so
 $\lambda(L_{\mathfrak{p}}) = 1$.
 
@@ -34,7 +36,10 @@ Lemma 4.2.9 with $m_0 = m$, where $\lambda(L_{\mathfrak{p}}) = \binom{m}{m}_q = 
 
 ## Proof depends on
 
+- [Base change of the ring of integers to a finite completion](../algebraic-number-theory/discriminants-ramification/completions-of-number-fields-at-finite-places/the-finite-place-completion-tensor-product/ring-of-integers-completion-tensor-product.md), for $\mathcal{O}_{\mathfrak{p}} = \prod_{\mathfrak{P} \mid \mathfrak{p}} \widehat{\mathcal{O}}_{\mathfrak{P}}$
 - [The local degree is the product of ramification index and inertia degree](../algebraic-number-theory/discriminants-ramification/completions-of-number-fields-at-finite-places/finrank-adic-completion-eq-ramification.md), for $\widehat{\mathcal{O}}_{\mathfrak{P}} = \mathfrak{o}_{\mathfrak{p}}$
+- [A finitely generated torsion-free module over a principal ideal domain is free](../../LinearAlgebra/eigenvalues-and-canonical-forms/finite-torsion-free-module-pid-free.md), for the freeness of $A$ and $A'$
+- [Order of the general linear group over a finite field](../../GroupTheory/linear-groups/card-general-linear-group-finite-field.md), for $\# \mathrm{GL}_m(\mathbb{F}_q)$
 
 ## Sources
 

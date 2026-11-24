@@ -12,7 +12,10 @@ $s \in \mathbb{C}$ whose only pole is a simple pole at $s = 1$, with residue $\p
 $$\Lambda(z, s) = \Lambda(z, 1 - s).$$
 
 In particular $\Lambda(z, s)$ has simple poles at $s = 1$ and $s = 0$, with residues $1$ and $-1$, and
-$Z(z, 0) = -1$, since $\Gamma(s) = \Gamma(s + 1)/s$ and $\Gamma(1) = 1$ give $\Gamma$ the residue $1$ at $s = 0$.
+$Z(z, 0) = -1$, since the [recurrence](../../../Analysis/special-functions/gamma-function/gamma-function-recurrence.md)
+$\Gamma(s) = \Gamma(s + 1)/s$, with $\Gamma(1) = \int_0^\infty e^{-t} \, dt = 1$ and $\Gamma$
+[analytic](../../../Analysis/special-functions/gamma-function/digamma-and-trigamma-functions/analytic-at-gamma.md) at $1$, gives $\Gamma$ the
+residue $1$ at $s = 0$.
 
 This is Siegel's Theorem 3 for the form $Q = Q_z$ in $n = 2$ variables, with $|Q| = 1$, the spherical
 function $P = 1$ of order $g = 0$ and $u = v = 0$: then $\zeta(s, 0, 0, Q, 1) = Z(z, s)$, and the dual
@@ -41,6 +44,8 @@ This node has no prerequisites.
 
 - [Theta transformation of a Gaussian sum with a linear term](../../../Analysis/harmonic-analysis/fourier-series/gaussian-sum-with-linear-term-transformation.md), for the one-variable steps of Proposition 7, with the shift $m_2 \operatorname{Re} z$
 - [The complex gamma function has no zeros away from its poles](../../../Analysis/special-functions/gamma-function/gamma-function-no-zeros.md), for passing from $\Lambda(z, s)$ to $Z(z, s)$ without further poles
+- [Recurrence of the gamma function](../../../Analysis/special-functions/gamma-function/gamma-function-recurrence.md), for $\Gamma(s) = \Gamma(s + 1)/s$ and the residue of $\Gamma$ at $0$
+- [Analyticity of the Gamma function](../../../Analysis/special-functions/gamma-function/digamma-and-trigamma-functions/analytic-at-gamma.md), for the continuity of $\Gamma$ at $1$
 
 ## Sources
 

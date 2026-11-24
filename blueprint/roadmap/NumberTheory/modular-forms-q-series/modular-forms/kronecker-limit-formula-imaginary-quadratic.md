@@ -27,11 +27,19 @@ $$F(\mathfrak{a}_c)^{1/12} = \frac{2\pi}{\sqrt{|D|}} \cdot 4\pi \operatorname{Im
 
 which follows from [Jacobi's formula](lattice-discriminant-eta-product.md)
 $\Delta(\mathbb{Z}\tau + \mathbb{Z}) = (2\pi)^{12} \eta(\tau)^{24}$, the homogeneity of $\Delta$, $\Delta(\overline{L}) = \overline{\Delta(L)}$,
-$\mathfrak{a}^{-1} = N(\mathfrak{a})^{-1} \overline{\mathfrak{a}}$ (that is, $\mathfrak{a}\overline{\mathfrak{a}} = N(\mathfrak{a}) \mathcal{O}_K$, which
-holds for prime ideals by the [decomposition of rational primes](../../algebraic-number-theory/quadratic-fields/quadratic-field-prime-decomposition.md)
-and so for all fractional ideals) and
-$|\omega_2|^2 \operatorname{Im}(\tau_c) = N(\mathfrak{a}_c) \sqrt{|D|} / 2$,
-the last being the relation $2 \operatorname{Im} z = N(\mathfrak{b}) \sqrt{|D|}$ for
+$\mathfrak{a}^{-1} = N(\mathfrak{a})^{-1} \overline{\mathfrak{a}}$, that is, $\mathfrak{a}\overline{\mathfrak{a}} = N(\mathfrak{a}) \mathcal{O}_K$, and
+$|\omega_2|^2 \operatorname{Im}(\tau_c) = N(\mathfrak{a}_c) \sqrt{|D|} / 2$. The identity
+$\mathfrak{a}\overline{\mathfrak{a}} = N(\mathfrak{a}) \mathcal{O}_K$ holds for the nonzero prime ideals by the
+[decomposition of rational primes](../../algebraic-number-theory/quadratic-fields/quadratic-field-prime-decomposition.md) (in the
+ramified case $\overline{\mathfrak{p}}^2 = \mathfrak{p}^2$ forces $\overline{\mathfrak{p}} = \mathfrak{p}$). By
+[unique factorisation](../../../RingTheory/dedekind-domains/ideal-unique-factorization.md), every nonzero ideal is a product of
+irreducible ideals, and these are the nonzero prime ideals, because an ideal of a Dedekind domain
+[divides exactly the ideals it contains](../../../RingTheory/dedekind-domains/characterizations-of-dedekind-domains/is-dedekind-domain-iff-contain-is-divide.md);
+so the identity holds for every nonzero ideal, by the
+[multiplicativity of $N$](../../../RingTheory/dedekind-domains/ideal-absolute-norm.md), and for a fractional ideal $\mathfrak{a}$ by
+applying it to $d \mathfrak{a} \subseteq \mathcal{O}_K$, with $N(\mathfrak{a}) = N(d \mathfrak{a})/d^2$ as for the
+[partial zeta functions](imaginary-quadratic-partial-zeta-epstein.md). The last relation is
+$2 \operatorname{Im} z = N(\mathfrak{b}) \sqrt{|D|}$ for
 $\mathfrak{b} = \omega_2^{-1} \mathfrak{a}_c = \mathbb{Z} + \mathbb{Z} \tau_c$.
 
 Proof. The fractional ideal $\omega_2^{-1} \mathfrak{a}_c = \mathbb{Z} + \mathbb{Z}\tau_c$ lies in $c$, so the
@@ -42,11 +50,13 @@ classes, where $Z(\tau, s) = \sum_{(m, n) \neq (0, 0)} (\operatorname{Im} \tau)^
 $\mathbb{C}$, regular at $s = 0$, with $Z(\tau, 0) = -1$, and
 $\Lambda(\tau, s) = \pi^{-s} \Gamma(s) Z(\tau, s)$ satisfies $\Lambda(\tau, s) = \Lambda(\tau, 1 - s)$. Near
 $s = 1$, [Kronecker's first limit formula](kronecker-first-limit-formula.md) and
-$\pi^{-s}\Gamma(s) = \pi^{-1}(1 - (\gamma + \log \pi)(s - 1) + \cdots)$, which uses $\Gamma(1) = 1$ and $\Gamma'(1) = -\gamma$, give
+$\pi^{-s}\Gamma(s) = \pi^{-1}(1 - (\gamma + \log \pi)(s - 1) + \cdots)$, which uses $\Gamma(1) = \int_0^\infty e^{-t} \, dt = 1$ and
+[$\Gamma'(1) = -\gamma$](../../special-numbers/harmonic-numbers/gamma-derivative-at-one.md), give
 $\Lambda(\tau, s) = \frac{1}{s - 1} + 2(\gamma - \log 2 - \log(\sqrt{y} |\eta(\tau)|^2)) - \gamma - \log \pi + O(s - 1)$
 with $y = \operatorname{Im} \tau$; the functional equation turns this into the expansion of $\Lambda(\tau, s)$ at
 $s = 0$, and comparing it with $\pi^{-s} \Gamma(s) = \frac{1}{s} - \gamma - \log \pi + O(s)$, which follows from
-$\Gamma(s) = \Gamma(s + 1)/s$ with $\Gamma(1) = 1$ and $\Gamma'(1) = -\gamma$, gives
+the [recurrence](../../../Analysis/special-functions/gamma-function/gamma-function-recurrence.md) $\Gamma(s) = \Gamma(s + 1)/s$
+with $\Gamma(1) = 1$ and $\Gamma'(1) = -\gamma$, gives
 
 $$\frac{\partial Z}{\partial s}(\tau, 0) = -\log\bigl(4\pi^2 \operatorname{Im}(\tau)\, |\eta(\tau)|^4\bigr).$$
 
@@ -56,7 +66,8 @@ written out here.)
 
 ## Depends on
 
-This node has no prerequisites.
+- [The class group of a number field is finite](../../algebraic-number-theory/number-fields-embeddings/class-group-finite.md), for the $h$ ideal classes
+- [A finitely generated torsion-free module over a principal ideal domain is free](../../../LinearAlgebra/eigenvalues-and-canonical-forms/finite-torsion-free-module-pid-free.md), for the $\mathbb{Z}$-bases $(\omega_1, \omega_2)$ of the fractional ideals $\mathfrak{a}_c$
 
 ## Proof depends on
 
@@ -65,6 +76,11 @@ This node has no prerequisites.
 - [Kronecker's first limit formula](kronecker-first-limit-formula.md), for the expansion of $Z(\tau, s)$ at $s = 1$ and for the invariance of $\operatorname{Im}(\tau) |\eta(\tau)|^4$ under $\mathrm{SL}_2(\mathbb{Z})$, which makes each term independent of the choice of $\mathfrak{a}_c$ and of its basis
 - [Jacobi's product formula for the discriminant of a lattice](lattice-discriminant-eta-product.md), for Kaneko's form
 - [Decomposition of rational primes in a quadratic field](../../algebraic-number-theory/quadratic-fields/quadratic-field-prime-decomposition.md), for $\mathfrak{p}\overline{\mathfrak{p}} = N(\mathfrak{p}) \mathcal{O}_K$, in Kaneko's form
+- [Unique factorisation of ideals in a Dedekind domain](../../../RingTheory/dedekind-domains/ideal-unique-factorization.md), for passing from prime ideals to all ideals, in Kaneko's form
+- [Dedekind domains as the Noetherian domains where to contain is to divide](../../../RingTheory/dedekind-domains/characterizations-of-dedekind-domains/is-dedekind-domain-iff-contain-is-divide.md), for the irreducible ideals being the nonzero prime ideals
+- [Absolute norm of an ideal](../../../RingTheory/dedekind-domains/ideal-absolute-norm.md), for the multiplicativity of $N$, in Kaneko's form
+- [Recurrence of the gamma function](../../../Analysis/special-functions/gamma-function/gamma-function-recurrence.md), for $\Gamma(s) = \Gamma(s + 1)/s$
+- [The derivative of the gamma function at 1 is minus Euler's constant](../../special-numbers/harmonic-numbers/gamma-derivative-at-one.md), for $\Gamma'(1) = -\gamma$
 
 ## Sources
 
