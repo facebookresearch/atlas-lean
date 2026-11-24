@@ -17,6 +17,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Data.Int.GCD
 public import Mathlib.Data.Nat.Prime.Defs
+public import MathlibExt.NumberTheory.CoprimePrimeSquareCubeSplit
 public import MathlibExt.NumberTheory.CubeFactorGCD
 public import MathlibExt.NumberTheory.CubeSubCube
 public import MathlibExt.NumberTheory.PrimeGCDCubeSplit
@@ -24,19 +25,6 @@ public import MathlibExt.NumberTheory.PrimeGCDCubeSplit
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Splitting $RS = p^2 C^3$ when $R$ and $S$ are coprime.** Let $p$ be a prime and let $R$,
-$S$, $C$ be integers with $RS = p^2 C^3$ and $\gcd(R, S) = 1$. Then there are integers $C_1$,
-$C_2$ such that either $R = C_1^3$ and $S = p^2 C_2^3$, or $R = p^2 C_1^3$ and $S = C_2^3$.
-
-Source: Jialai She, *Nonexistence of Consecutive Powerful Triplets Around Cubes
-with Prime-Square Factors*, INTEGERS 25 (2025), Article A103, Lemma 1
-(`integers-2025-A103-lem-1`). -/
-public theorem_wanted cube_split_of_mul_eq_prime_sq_mul_cube_of_gcd_eq_one
-    {p : ℕ} (hp : p.Prime) {R S C : ℤ} (h : R * S = (p : ℤ) ^ 2 * C ^ 3)
-    (hg : Int.gcd R S = 1) :
-    ∃ C₁ C₂ : ℤ, (R = C₁ ^ 3 ∧ S = (p : ℤ) ^ 2 * C₂ ^ 3) ∨
-      (R = (p : ℤ) ^ 2 * C₁ ^ 3 ∧ S = C₂ ^ 3)
 
 /-- **Integer solutions of $u^2 \pm u + 1 = 3v^3$.** For all integers $u$ and $v$,
 $u^2 + u + 1 = 3v^3$ if and only if $(u, v) = (-2, 1)$ or $(u, v) = (1, 1)$, and
