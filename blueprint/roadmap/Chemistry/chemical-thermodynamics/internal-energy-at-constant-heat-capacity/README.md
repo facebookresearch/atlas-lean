@@ -8,5 +8,4 @@
 
 ## Internal energy as a function of temperature
 
-- [The constant-capacity internal energy has temperature derivative C](internal-energy-has-deriv-at.md)
 - [For C > 0 the constant-capacity internal energy is strictly increasing](internal-energy-strict-mono.md)

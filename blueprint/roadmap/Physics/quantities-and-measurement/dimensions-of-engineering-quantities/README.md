@@ -21,21 +21,19 @@
 
 ## Dimension identities and invalid identifications
 
-- [Force times length is energy](force-dim-mul-length.md)
-- [Stress times area is force](stress-dim-mul-area.md)
+- [Force times length and torsional stiffness have the energy dimension](force-dim-mul-length.md)
+- [Stress is force per area](stress-dim-mul-area.md)
 - [Power times time is energy](power-dim-mul-time.md)
 - [Molar mass times molar flow rate is a mass flow rate](molar-mass-dim-mul-molar-flow-dim.md)
 - [The Faraday constant times an amount is an electric charge](faraday-dim-mul-amount-dim.md)
-- [Torsional stiffness per radian has the energy dimension](torsional-stiffness-dim-eq-energy-dim.md)
 - [A newton metre is not a newton per metre](force-dim-mul-length-ne-div-length.md)
 - [A mass flow rate is not a molar flow rate](mass-flow-dim-ne-molar-flow-dim.md)
 - [A molar flow rate is not a particle rate](molar-flow-dim-ne-inv-time.md)
 
 ## Conversion factors of force, stress, power and flows
 
-- [Converting a force value to other units and back returns it](force-dim-dim-scale-round-trip.md)
+- [Converting a force to other units and back returns it](force-dim-dim-scale-round-trip.md)
 - [Converting a stress value to other units and back returns it](stress-dim-dim-scale-round-trip.md)
-- [Converting a force quantity to other units and back returns it](force-with-dim-round-trip.md)
 - [Stress times area converts with the force factor](stress-mul-area-with-dim-dim-scale.md)
 - [Stress factor times area factor is the force factor](dim-scale-stress-mul-area.md)
 - [Power factor times time factor is the energy factor](dim-scale-power-mul-time.md)
@@ -53,7 +51,6 @@
 
 ## Dimensions of the stress, shaft-power and mass-flow formulas
 
-- [Force over area is a stress](force-dim-mul-inv-area.md)
 - [Torque times angular velocity is power](torque-mul-angular-velocity.md)
 - [Density times velocity times area is a mass flow rate](density-mul-velocity-mul-area.md)
 
@@ -77,9 +74,6 @@
 - [The typed normal stress has value F / A](normal-stress-val.md)
 - [The typed shaft power has value τ ω](shaft-power-val.md)
 - [The typed mass flow rate has value ρ v A](mass-flow-rate-val.md)
-- [The typed normal stress commutes with every change of units](normal-stress-dim-scale.md)
-- [The typed shaft power commutes with every change of units](shaft-power-dim-scale.md)
-- [The typed mass flow rate commutes with every change of units](mass-flow-rate-dim-scale.md)
 - [Stress computed in new units and converted back is unchanged](normal-stress-coord-round-trip.md)
 - [Shaft power computed in new units and converted back is unchanged](shaft-power-coord-round-trip.md)
 - [Mass flow rate computed in new units and converted back is unchanged](mass-flow-rate-coord-round-trip.md)

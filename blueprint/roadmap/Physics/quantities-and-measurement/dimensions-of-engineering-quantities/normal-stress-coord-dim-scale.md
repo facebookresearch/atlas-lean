@@ -6,4 +6,9 @@ the seven ISQ base quantities), let `k(d)` be the
 dimension `d` from `u₁` to `u₂`. For every real normal force `F` and area `A > 0`, dividing the
 converted force by the converted area gives the converted stress:
 `k(M L T⁻²) F / (k(L²) A) = k(M L⁻¹ T⁻²) (F / A)`, where `M L T⁻²` and `M L⁻¹ T⁻²` are the
-[force](force-dim.md) and [stress](../dimensions-of-physical-quantities/stress-dim.md) dimensions.
+[force](force-dim.md) and [stress](../quantity-calculus-and-dimensionless-groups/pressure.md)
+dimensions.
+
+In typed form, for a normal force `F` and an area `A > 0`: the [normal stress](normal-stress.md) of
+the converted force `k(M L T⁻²) F` and the converted area `k(L²) A` is the stress `F / A` converted
+by `k(M L⁻¹ T⁻²)`.

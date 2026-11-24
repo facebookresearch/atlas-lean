@@ -10,11 +10,6 @@
 - [With Tb = Ts and k ≠ 0 the midplane temperature is Ts + HL²/8k](slab-temperature-midplane.md)
 - [With Tb = Ts, k > 0, H ≥ 0 the slab never exceeds its midplane value](slab-temperature-le-midplane.md)
 
-## Derivatives of the slab profile
-
-- [The slab gradient is the derivative of the slab temperature](slab-temperature-has-deriv-at.md)
-- [For k > 0 the slab gradient has derivative −H/k, so k T″ + H = 0](slab-gradient-has-deriv-at.md)
-
 ## Solid cylinder with a uniform heat source
 
 - [Temperature of a solid cylinder with a uniform heat source](cylinder-temperature.md)

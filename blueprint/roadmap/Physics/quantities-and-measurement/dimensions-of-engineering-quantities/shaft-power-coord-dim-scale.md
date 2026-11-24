@@ -7,3 +7,7 @@ dimension `d` from `u₁` to `u₂`. For every real torque `τ` and angular velo
 the converted torque times the converted angular velocity is the converted power:
 `(k(M L² T⁻²) τ) (k(T⁻¹) ω) = k(M L² T⁻³) (τ ω)`, where `M L² T⁻²` is the dimension of a torque (a
 [force](force-dim.md) times a length) and `M L² T⁻³` the [power](power-dim.md) dimension.
+
+In typed form, for a torque `τ` and an angular velocity `ω`: the [shaft power](shaft-power.md) of
+the converted torque `k(M L² T⁻²) τ` and the converted angular velocity `k(T⁻¹) ω` is the power
+`τ ω` converted by `k(M L² T⁻³)`.
