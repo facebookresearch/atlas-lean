@@ -10661,6 +10661,7 @@
   "MathlibExt/Combinatorics/Enumerative/Partition/RogersRamanujan": {"to": "Combinatorics/integer-partitions/partition-identities", "title": "Rogers–Ramanujan identities"},
   "MathlibExt/Combinatorics/Enumerative/Partition/StanleyElderParts": {"to": "Combinatorics/integer-partitions/partition-identities", "title": "Stanley's and Elder's theorems on parts of partitions"},
   "MathlibExt/Combinatorics/Enumerative/Partition/RookDecomposition": {"to": "Combinatorics/integer-partitions/young-diagrams-statistics", "title": "Max-rook numbers of partitions"},
+  "MathlibExt/Combinatorics/Enumerative/Partition/TriangularQBinomial": {"to": "Combinatorics/integer-partitions/young-diagrams-statistics", "title": "Lit cells in integer partitions"},
   "MathlibExt/Combinatorics/Enumerative/Partition/TwoDistantPolarized": {"to": "Combinatorics/integer-partitions/partition-identities", "title": "Polarized partitions and 2-distant parts"},
   "MathlibExt/Combinatorics/Enumerative/PartitionDiamondsEulerMahonian": {"to": "Combinatorics/integer-partitions/counting-partitions", "title": "Multifold partition diamonds"},
   "MathlibExt/Combinatorics/Enumerative/PartitionNumberArray": {"to": "Combinatorics/set-partitions", "title": "Partition number arrays"},
