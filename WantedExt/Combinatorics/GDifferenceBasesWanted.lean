@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.FieldTheory.Finite.GaloisField
 public import MathlibExt.Combinatorics.Additive.BoseChowlaSubgroup
+public import MathlibExt.Combinatorics.Additive.FiniteFieldDifferenceBases
 public import MathlibExt.Combinatorics.Additive.GDifferenceBasisScaling
 public import MathlibExt.Combinatorics.Additive.ZModDifferenceBasis
 
@@ -69,18 +70,6 @@ public theorem_wanted singer_product_diffBasis (g q v : ℕ) (a : Fin (q + 1) �
     ∀ s ∈ Finset.Icc (1 : ℤ) ((q ^ 2 + q + 1) * v),
       g ≤ subRepCount
         ((Finset.univ ×ˢ B).image fun ib : Fin (q + 1) × ℤ => a ib.1 + (q ^ 2 + q + 1) * ib.2) s
-
-/-- **Difference bases of the square of a finite field.** For an abelian group $G$ let
-$\eta_1(G)$ be the least size of a set $A \subseteq G$ such that every element of $G$ is a
-difference $a - a'$ of two elements of $A$. If $K$ is a finite field with $q$ elements whose
-characteristic is not $2$, then $\eta_1(K \times K) \le q + \eta_1(K)$, where $K$ and
-$K \times K$ are taken as additive groups.
-
-Source: Eric Schmutz and Michael Tait, *Cardinalities of g-Difference Sets*, INTEGERS 25
-(2025), Article A77, Lemma 6 (`integers-2025-A77-lem-6`). -/
-public theorem_wanted groupDiffBasisNumber_prod_self_le {K : Type*} [Field K] [Finite K]
-    [DecidableEq K] (hK : ringChar K ≠ 2) :
-    groupDiffBasisNumber 1 (K × K) ≤ Nat.card K + groupDiffBasisNumber 1 K
 
 /-- **Square-root bound for difference bases of finite fields.** For every finite field $K$ with
 $q$ elements, the least size $\eta_1(K)$ of a set $A \subseteq K$ such that every element of $K$
