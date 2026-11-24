@@ -1,3 +1,5 @@
 # Feasible instances of VERTEX K-CUT
 
-An instance $(n, E, P, w, K)$ is feasible for VERTEX K-CUT when some set $C$ of vertices, containing no vertex of any listed pair and of total weight at most $K$ (the sum of the listed weights $w_v$ over $v \in C$), disconnects every pair: in the subgraph of the graph on the vertices $0, \dots, n-1$ in which $u$ and $v$ are adjacent when $u \ne v$ and $(u, v)$ or $(v, u)$ is in $E$ induced on the vertices outside $C$, $t_i$ is not reachable from $s_i$ for every pair $(s_i, t_i)$ in $P$. A pair with $s_i = t_i$ can never be separated.
+For $(n,E,P,w,K)$ let $V=\{0,\ldots,n-1\}$. The instance is feasible if some $C\subseteq V$ contains no endpoint of any listed pair in $P$, has total weight at most $K$, and separates the pairs. A vertex in $C$ contributes zero if its weight is missing from $w$.
+
+For a pair $(s,t)$ with both endpoints in $V$, separation means that $t$ is not reachable from $s$ in the graph induced on $V\setminus C$. Distinct vertices $u,v$ are adjacent before deletion when $(u,v)$ or $(v,u)$ is in $E$. Hence a pair $(s,s)$ with $s\in V$ cannot be separated. A pair with an endpoint outside $V$ imposes no reachability test, but its in-range endpoint, if any, is still excluded from $C$.

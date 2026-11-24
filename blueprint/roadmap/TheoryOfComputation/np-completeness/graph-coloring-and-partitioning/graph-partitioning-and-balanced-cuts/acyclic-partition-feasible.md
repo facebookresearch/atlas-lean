@@ -1,3 +1,5 @@
 # Feasible instances of ACYCLIC PARTITION
 
-An instance $(n, w, A, B, K)$ of ACYCLIC PARTITION is feasible when there is a block labelling $p$ such that the quotient digraph of $p$ has no directed cycle (no label reaches itself by a nonempty sequence of quotient arcs); for every label $b$, the weights $w(v)$ of the vertices $v < n$ with $p(v) = b$ sum to at most $B$; and the costs $c$ of the entries $(u, v, c)$ of $A$ with $p(u) \ne p(v)$ sum to at most $K$. The blocks are the nonempty sets of vertices sharing a label.
+Let $(n,w,A,B,K)$ consist of a vertex count, a list of vertex weights, an arc list with costs, and two bounds. It is feasible if there is a block labelling $p:\mathbb N\to\mathbb N$ satisfying three conditions. The quotient digraph has no directed cycle: no block label reaches itself by a nonempty sequence of quotient arcs. For each label $b$, the weights of vertices $v<n$ with $p(v)=b$ sum to at most $B$. Finally, the costs of the listed arcs $(u,v,c)$ with $p(u)\ne p(v)$ sum to at most $K$.
+
+A missing vertex weight contributes zero to its block; weights at indices $v\ge n$ do not enter any block sum.

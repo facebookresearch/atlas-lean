@@ -1,3 +1,3 @@
 # Feasible instances of BALANCED CONNECTED PARTITION
 
-An instance $(n, E, w, K)$ is feasible for BALANCED CONNECTED PARTITION when the vertex set $V = \{0, \dots, n-1\}$ splits into nonempty sets $S$ and $V \setminus S$ that both induce connected subgraphs of the graph on $V$ in which $u$ and $v$ are adjacent when $u \ne v$ and $(u, v)$ or $(v, u)$ is in $E$, and $\min(w(S), w(V \setminus S)) \ge K$, where $w(X)$ is the sum of the listed weights $w_v$ over $v \in X$.
+An instance $(n,E,w,K)$ is feasible if $V=\{0,\ldots,n-1\}$ splits into two nonempty sets $S$ and $V\setminus S$ that both induce connected subgraphs and both have weight at least $K$. Distinct vertices $u,v\in V$ are adjacent when $(u,v)$ or $(v,u)$ occurs in $E$. The weight of either set is the sum of its vertex weights; a vertex omitted from the weight list contributes zero.
