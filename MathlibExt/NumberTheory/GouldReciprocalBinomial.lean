@@ -17,9 +17,10 @@ import Mathlib.Tactic.Ring
 /-!
 # Gould's reciprocal binomial identity
 
-This is Lemma 7, equation (2.4), in the published version of Horst Alzer and Man Kam Kwong,
-*Ramanujan and a Combinatorial Identity Involving Harmonic Numbers*,
-*Journal of Integer Sequences* 29 (2026), Article 26.4.8.
+H. W. Gould gives the identity in *Combinatorial Identities: A Standardized Set of Tables
+Listing 500 Binomial Coefficient Summations* (1972), p. 6, as cited by Horst Alzer and Man Kam
+Kwong in *Ramanujan and a Combinatorial Identity Involving Harmonic Numbers*,
+*Journal of Integer Sequences* 29 (2026), Article 26.4.8, Lemma 7, equation (2.4).
 
 Pascal's identity gives a difference of two sums with one fewer term, at `x` and `x - 1`.
 Their falling product denominators differ by the first and last factors of the next product.
@@ -112,9 +113,9 @@ $$
 $$
 where $\binom{x}{N} = x(x-1)\cdots(x-N+1)/N!$ is the generalized binomial coefficient.
 
-Source: Horst Alzer and Man Kam Kwong, "Ramanujan and a
-Combinatorial Identity Involving Harmonic Numbers",
-Lemma 7, equation (2.4). -/
+Source: H. W. Gould, *Combinatorial Identities: A Standardized Set of Tables Listing 500 Binomial
+Coefficient Summations* (1972), p. 6, as cited by Horst Alzer and Man Kam Kwong, *Ramanujan and a
+Combinatorial Identity Involving Harmonic Numbers*, Lemma 7, equation (2.4). -/
 public theorem sum_neg_one_pow_div_mul_choose_eq
     (N : ℕ) (x : ℝ)
     (hx : ∀ ν ∈ Finset.Icc 0 N, x ≠ (ν : ℝ)) :
