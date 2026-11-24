@@ -15,6 +15,7 @@ public import Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
 public import MathlibExt.Algebra.Polynomial.PrimeValueConditions
 public import MathlibExt.NumberTheory.AbsoluteLucasPseudoprimes
 public import MathlibExt.NumberTheory.LucasSequence
+public import MathlibExt.NumberTheory.TwoPrimeDCarmichael
 import Mathlib.Tactic.NormNum.LegendreSymbol
 
 namespace MetaMathlibExt
@@ -59,23 +60,6 @@ public theorem_wanted mul_dvd_prod_sub_sign_iff {ε₁ ε₂ ε₃ c₁ c₂ c�
         ε₁ * ε₂ * ε₃ * (ε₁ * c₁ + ε₂ * c₂ + ε₃ * c₃)
 
 /-! ## Absolute Lucas pseudoprimes -/
-
-/-- **$D$-Carmichael number.** Let $D$ be an integer. A natural number $n$ is a $D$-Carmichael
-number when $D \equiv 0$ or $1 \pmod 4$, $n > 1$ is odd and composite, $D$ and $n$ are coprime,
-and for all integers $P$ and $Q \ne 0$ with $P$ and $Q$ coprime, $P^2 - 4Q = D$ and $Q$ coprime
-to $n$, the number $n$ divides the term $U_{n - \varepsilon_n}(P, Q)$ of the Lucas sequence
-$U(P, Q)$, where $\varepsilon_n = \left(\frac{D}{n}\right)$ is the Jacobi symbol.
-
-These are Williams' absolute Lucas $D$-pseudoprimes. The condition on $D$ is the paper's standing
-assumption; for other $D$ no Lucas sequence has discriminant $D$, so the last clause would be
-vacuous.
-
-Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
-Section 1 (definition of absolute Lucas `D`-pseudoprimes, after [17]). -/
-def IsDCarmichael (D : ℤ) (n : ℕ) : Prop :=
-  (D % 4 = 0 ∨ D % 4 = 1) ∧ Odd n ∧ 1 < n ∧ ¬ n.Prime ∧ IsCoprime D n ∧
-    ∀ params : LucasSequenceParams, params.IsCoprime → params.p ^ 2 - 4 * params.q = D →
-      IsCoprime params.q n → (n : ℤ) ∣ lucasU params (n - jacobiSym D n).toNat
 
 /-- **$D$-Carmichael numbers are not prime.** For every integer $D$ and every natural number $n$,
 if $n$ is a $D$-Carmichael number, then $n$ is not prime.
@@ -538,17 +522,6 @@ public theorem_wanted threeQR_isDCarmichael_divisibility {D : ℤ} {q r : ℕ} (
     ((r : ℤ) - jacobiSym D r) ∣ (3 * q - jacobiSym D 3 * jacobiSym D q) ∧
     (jacobiSym D r = -(jacobiSym D 3 * jacobiSym D q) → (r : ℤ) = 3 * q + 2 * jacobiSym D r) ∧
     (jacobiSym D r = jacobiSym D 3 * jacobiSym D q → 2 * (r : ℤ) = 3 * q + jacobiSym D r)
-
-/-- **Williams' characterization of two-prime $D$-Carmichael numbers.** Let $D$ be an integer
-with $D \equiv 0$ or $1 \pmod 4$ and let $p_1 < p_2$ be primes. Then $p_1 p_2$ is a
-$D$-Carmichael number if and only if $p_2 = p_1 + 2$, $\left(\frac{D}{p_1}\right) = -1$ and
-$\left(\frac{D}{p_2}\right) = 1$, where $\left(\frac{D}{p}\right)$ is the Jacobi symbol.
-
-Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
-Proposition 1 (`integers-2026-A102-prop-1`). -/
-public theorem_wanted isDCarmichael_mul_iff {D : ℤ} (hD : D % 4 = 0 ∨ D % 4 = 1) {p₁ p₂ : ℕ}
-    (h₁ : p₁.Prime) (h₂ : p₂.Prime) (h12 : p₁ < p₂) :
-    IsDCarmichael D (p₁ * p₂) ↔ p₂ = p₁ + 2 ∧ jacobiSym D p₁ = -1 ∧ jacobiSym D p₂ = 1
 
 end
 
