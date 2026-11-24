@@ -59,7 +59,7 @@ $q^{-\dim \overline{H}} \, \# \overline{H}(\mathbb{F}_q)$ of their formula (2.11
 the reference group at $\mathfrak{p}$, by the [order of $\mathrm{GL}_m(\mathbb{F}_q)$](../../GroupTheory/linear-groups/card-general-linear-group-finite-field.md) if
 $\mathfrak{p}$ splits ($\overline{H} = \mathrm{GL}_m$), the [order of the finite unitary group](finite-unitary-group-order.md) if
 $\mathfrak{p}$ is inert ($\overline{H} = \mathrm{U}_m$), and the orders of $\mathrm{SO}_m(\mathbb{F}_q)$ for odd $m$ and of
-$\mathrm{Sp}_m(\mathbb{F}_q)$ for even $m$, still to be supplied, if $\mathfrak{p}$ ramifies.
+$\mathrm{Sp}_m(\mathbb{F}_q)$ for even $m$, for which the expansion adds a page, if $\mathfrak{p}$ ramifies.
 Writing each $\beta(L_{\mathfrak{p}})^{-1}$ through $\lambda(L_{\mathfrak{p}})$, the powers $q^{-t_{\mathfrak{p}} m/2}$ cancel
 $[L^\# : L]_{\mathbb{Z}}^{m/2}$; at a prime $\mathfrak{p}$ unramified in $E$ the factor $c_{\mathfrak{p}}^{-1}$ is the Euler factor of
 $\prod_{i=1}^m L_K(\chi^i, i)$ at $\mathfrak{p}$; and at the ramified primes the factors
