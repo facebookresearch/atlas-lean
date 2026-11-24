@@ -13,6 +13,7 @@ PDE existence, regularity and qualitative results: Cauchy–Kovalevskaya, heat a
 - [Iterated heat and Duhamel derivatives](iterated-heat-and-duhamel-derivatives/README.md)
 - [Potential-heat restart and spatial regularity](potential-heat-restart-and-spatial-regularity/README.md)
 - [Potential-heat spatial bootstrap](potential-heat-spatial-bootstrap/README.md)
+- [Potential-heat time evolution and smoothness](potential-heat-time-evolution-and-smoothness/README.md)
 - [Potential-heat Volterra construction](potential-heat-volterra-construction/README.md)
 - [Pólya's conjecture on Laplacian eigenvalues](p-lya-s-conjecture-on-laplacian-eigenvalues/README.md)
 - [Radial symmetry of semilinear elliptic equations](radial-symmetry-of-semilinear-elliptic-equations/README.md)
