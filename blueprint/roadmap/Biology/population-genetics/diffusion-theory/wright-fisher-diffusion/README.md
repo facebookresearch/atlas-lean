@@ -45,3 +45,5 @@
 - [Spatial and time integrals of the neutral spectral series](distribution-of-absorption-time-from-the-spectra.md)
 
 - [Robertson's limit of artificial selection](robertson-s-limit-of-artificial-selection.md)
+
+- [The neutral Gegenbauer series identifies the Wright–Fisher kernel](identification-of-the-kimura-series-with-the-neu.md)
