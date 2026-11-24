@@ -28,7 +28,8 @@ log-convex (log-concave) if `z n ^ 2 ≤ z (n - 1) z (n + 1)` (`≥`) for every 
 log-balanced (Došlić) if it is log-convex and `(z n / n!)_{n ≥ m}` is log-concave.
 
 Proved in `MathlibExt.Combinatorics.Enumerative.LinearRecurrenceLogBehavior`: Lemma 1
-(`MetaMathlibExt.a005773Recurrence_ratio_bounds`).
+(`MetaMathlibExt.a005773Recurrence_ratio_bounds`) and Theorem 4
+(`MetaMathlibExt.a005773Recurrence_pow_logConvex`).
 -/
 
 namespace MetaMathlibExt
@@ -103,22 +104,6 @@ public theorem_wanted a005773Recurrence_weighted_logConcave (A : ℕ → ℝ) (h
     let T : ℕ → ℝ := fun m => m * (A (m + 2) - 2 * A (m + 1) + A m)
     W (n - 1) * W (n + 1) ≤ W n ^ 2 ∧ V (n - 1) * V (n + 1) ≤ V n ^ 2 ∧
       U (n - 1) * U (n + 1) ≤ U n ^ 2 ∧ T (n - 1) * T (n + 1) ≤ T n ^ 2
-
-/-- **Log-convexity of $(n A_n)^n$ for A005773.**
-Let $(A_n)_{n \ge 0}$ be a sequence of real numbers with $A_0 = A_1 = 1$ and
-$(n+1) A_{n+1} = 2(n+1) A_n + 3(n-1) A_{n-1}$ for every $n \ge 1$, and let
-$z_m = (m A_m)^m$. Then $z_n^2 \le z_{n-1} z_{n+1}$ for every $n \ge 2$; that is, the sequence
-$(n^n A_n^n)_{n \ge 1}$ is log-convex.
-
-Source: Feng-Zhen Zhao, *The Log-Behavior of Some Sequences Related to a Linear Recurrence
-Sequence*, INTEGERS 25 (2025), Article A100, Theorem 4. -/
-public theorem_wanted a005773Recurrence_pow_logConvex (A : ℕ → ℝ) (h0 : A 0 = 1)
-    (h1 : A 1 = 1)
-    (hrec : ∀ n : ℕ, 1 ≤ n →
-      ((n : ℝ) + 1) * A (n + 1) = 2 * ((n : ℝ) + 1) * A n + 3 * ((n : ℝ) - 1) * A (n - 1))
-    (n : ℕ) (hn : 2 ≤ n) :
-    let z : ℕ → ℝ := fun m => ((m : ℝ) * A m) ^ m
-    z n ^ 2 ≤ z (n - 1) * z (n + 1)
 
 end
 
