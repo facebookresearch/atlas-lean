@@ -27,6 +27,13 @@ Type `B` set partitions of `[-n, n]` are Mathlib `Finpartition`s of
 (Whitney numbers of the second kind of the Dowling lattice over a group of
 order `2`: `W(n+1, k+1) = W(n, k) + (2(k+1) + 1) W(n, k+1)`).
 -/
+
+/-
+Proved in `MathlibExt.Combinatorics.Enumerative.FlattenedStirlingTypeBRuns`, which this module
+imports: the number of runs of the word of a type `B` set partition
+(`MetaMathlibExt.wordRunCount_typeBFlattenedWord`).
+-/
+
 module
 
 import Batteries.Util.ProofWanted
@@ -34,6 +41,7 @@ public import Mathlib.Algebra.Order.Floor.Semiring
 public import Mathlib.Analysis.SpecialFunctions.Exponential
 public import Mathlib.Combinatorics.Enumerative.Stirling
 public import MathlibExt.Combinatorics.Enumerative.FlattenedStirlingTwoRuns
+public import MathlibExt.Combinatorics.Enumerative.FlattenedStirlingTypeBRuns
 public import MathlibExt.Combinatorics.Enumerative.QRWhitneyNumbers
 public import MathlibExt.NumberTheory.QRDowlingPolynomial
 
@@ -178,30 +186,6 @@ public theorem_wanted bijOn_typeBFlattenedWord (n : ℕ) :
     Set.BijOn (typeBFlattenedWord (n := n))
       {P : Finpartition (Finset.Icc (-(n : ℤ)) n) | IsTypeBSetPartition P}
       {w : Fin (2 * (n + 1)) → ℕ | IsStirlingPermutation (n + 1) w ∧ IsFlattenedWord w}
-
-/-- **Number of runs of the word of a type $B$ set partition.** Let $\pi$ be a type $B$ set
-partition of $[-n, n]$ and let $\varphi(\pi)$ be the word of length $2(n + 1)$ that the map
-$\varphi$ of Proposition 1 assigns to it. Write $P_0$ for the set of nonnegative elements of the
-block of $\pi$ containing $0$. Let $\beta_1, \dots, \beta_m$ be the blocks kept by Adler's
-labelling, exactly one from each pair $\{\beta, -\beta\}$ of distinct blocks, namely the block
-containing the smallest magnitude of the pair as a positive element; write $N_i$ and $P_i$ for
-the sets of negative and positive elements of $\beta_i$. Then the number of runs of
-$\varphi(\pi)$ is
-$$1 + |\{i \ge 1 : |N_i| \ge 1\}| + |\{i \ge 0 : |P_i| \ge 2\}|.$$
-
-The paper states this for a flattened Stirling permutation $w$ of order $n + 1$ and the
-partition $\varphi^{-1}(w)$; since $\varphi$ is a bijection from the type $B$ set partitions of
-$[-n, n]$ onto these permutations (Theorem 3), this is the same as the statement for
-$w = \varphi(\pi)$ over all $\pi$.
-
-Source: Buck, Elder, Figueroa, Harris, Harry, Simpson, *Flattened Stirling
-Permutations*, INTEGERS 24 (2024), Article A104, Lemma 4. -/
-public theorem_wanted wordRunCount_typeBFlattenedWord {n : ℕ}
-    (P : Finpartition (Finset.Icc (-(n : ℤ)) n)) (hP : IsTypeBSetPartition P) :
-    wordRunCount (typeBFlattenedWord P) =
-      1 + ((adlerBlockLabels P).filter fun p => ((P.part p).filter (· < 0)).Nonempty).card +
-        ((insert 0 (adlerBlockLabels P)).filter fun p =>
-          2 ≤ ((P.part p).filter (0 ≤ ·)).card).card
 
 end
 

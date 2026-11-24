@@ -158,4 +158,20 @@ example (p : ℕ) [Fact p.Prime] (hp : p ≠ 2) (a : ZMod p) (ha : a ≠ 0)
     (isCycleVertex_powMap_iff_orderOf_dvd p 0 hp 1 (one_dvd _) (Nat.coprime_one_left _)
       (fun s _ hs => ((Nat.coprime_zero_right s).1 hs).le) a ha).1 h
 
+-- For coprime generators, the divisibility condition is automatic.
+example : ∃ n₀ : ℕ, ∀ m : ℕ, n₀ < m → ∃ u v : ℕ, m = u * 4 + v * 7 := by
+  have hg : Nat.gcd 4 7 = 1 := by decide
+  simpa only [hg, one_dvd, true_implies] using
+    exists_forall_gcd_dvd_eq_add_mul 4 7 (by decide) (by decide)
+
+-- With gcd 2, the conclusion covers all sufficiently large even numbers.
+example : ∃ n₀ : ℕ, ∀ m : ℕ, n₀ < m → 2 ∣ m → ∃ u v : ℕ, m = u * 6 + v * 10 := by
+  have hg : Nat.gcd 6 10 = 2 := by decide
+  simpa only [hg] using exists_forall_gcd_dvd_eq_add_mul 6 10 (by decide) (by decide)
+
+-- A generator equal to 1 is allowed.
+example : ∃ n₀ : ℕ, ∀ m : ℕ, n₀ < m → ∃ u v : ℕ, m = u * 9 + v := by
+  simpa only [Nat.gcd_one_right, one_dvd, true_implies, mul_one] using
+    exists_forall_gcd_dvd_eq_add_mul 9 1 (by decide) (by decide)
+
 end MathlibExtTest.RainbowPowerDifference

@@ -80,8 +80,10 @@ fi
 if [[ "$scope" == all || "$scope" == build ]]; then
   run_check "compiler diagnostics" scripts/check_diagnostics.sh
   run_check "compiled environment policy" scripts/check_axioms.sh
-  # The compiled-policy audit imports modules in groups and splits a group on a name
-  # collision; this check imports every v2 module at once, as the wiki does.
+  # The compiled-policy audit imports modules in groups, where a name that two modules
+  # declare can make it split a group, which only slows it down. This check loads every
+  # module it audits into one environment, so that modules which do not load together
+  # fail the build.
   run_check "declaration collisions" scripts/check_declaration_collisions.sh
 fi
 
