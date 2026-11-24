@@ -23,8 +23,9 @@ public import Mathlib.Algebra.Category.Grp.EquivalenceGroupAddGroup
 The rings are literal PD thickening rings; the group values are the
 original scheme-valued points on their actual closed reductions. Covers
 preserve those reductions as cartesian open restrictions. This site is
-separate from the nilpotent crystalline basis (nilpotent divided-power structures). Restriction and
-extension comparisons are separate source requests.
+separate from the nilpotent crystalline basis (nilpotent divided-power
+structures); the restriction comparison with that basis is not constructed
+here.
 
 Source: Berthelot--Breen--Messing, Theorie de Dieudonne cristalline II;
 Scholze--Weinstein1211.6357v2, Sections3.2 and4.1.
