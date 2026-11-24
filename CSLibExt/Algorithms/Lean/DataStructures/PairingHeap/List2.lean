@@ -738,6 +738,16 @@ theorem getMin_isLeast [LinearOrder α] (ho : Heap α) (x : α)
   intro y hy
   exact getMin_le ho x y hx hinv hy
 
+/-- `getMin` is defined on every nonempty heap: the definedness clause
+of the `Priority_Queue_Merge` specifications. -/
+theorem getMin_defined (ho : Heap α) (hne : msetHeap ho ≠ 0) :
+    ∃ x, getMin ho = some x := by
+  cases ho with
+  | none => simp [msetHeap] at hne
+  | some h =>
+    obtain ⟨x, hs⟩ := h
+    exact ⟨x, rfl⟩
+
 theorem msetHeap_eq_zero_iff (ho : Heap α) : msetHeap ho = 0 ↔ ho = none := by
   cases ho with
   | none => simp [msetHeap_none]
@@ -758,7 +768,7 @@ theorem msetHeap_eq_zero_iff (ho : Heap α) : msetHeap ho = 0 ↔ ho = none := b
 heaps, as one conjunction. In the AFP this is the `interpretation pairing:
 Priority_Queue_Merge` (10 cases) at the end of `Pairing_Heap_List2.thy`,
 against the locale in `HOL-Data_Structures.Priority_Queue_Specs`.
-Two deliberate form changes, both strengthenings or exact equivalents,
+Three deliberate form changes, all strengthenings or exact equivalents,
 not weakenings:
 * The locale's `mset_get_min` (`get_min q = Min_mset (mset q)`) appears
   here in the decomposed form `getMin_mem` + `getMin_le` — the two lemmas
@@ -769,7 +779,11 @@ not weakenings:
   with `q ≠ empty` and the partial `get_min`. Here they are stated
   *without* the `invar` hypotheses and with `getMin ho = some x`, because
   Lean proves each of them unconditionally — a stronger statement, which
-  implies the locale's version. -/
+  implies the locale's version.
+* The definedness clause `msetHeap ho ≠ 0 → ∃ x, getMin ho = some x`
+  is added (see the module doc of `PairingHeap.PriorityQueue`): without
+  it, the `getMin` clauses would be vacuous for an implementation whose
+  `getMin` always returns `none`. -/
 theorem priority_queue_merge [LinearOrder α] :
     (msetHeap (empty : Heap α) = 0) ∧
     (∀ ho : Heap α, msetHeap ho = 0 ↔ ho = none) ∧
@@ -780,13 +794,14 @@ theorem priority_queue_merge [LinearOrder α] :
     (∀ (ho : Heap α) (x : α), getMin ho = some x → x ∈ msetHeap ho) ∧
     (∀ (ho : Heap α) (x y : α), getMin ho = some x → invar ho →
       y ∈ msetHeap ho → x ≤ y) ∧
+    (∀ (ho : Heap α), msetHeap ho ≠ 0 → ∃ x, getMin ho = some x) ∧
     invar (empty : Heap α) ∧
     (∀ (x : α) (ho : Heap α), invar ho → invar (insert x ho)) ∧
     (∀ ho : Heap α, invar ho → invar (delMin ho)) ∧
     (∀ (ho1 ho2 : Heap α),
       msetHeap (merge ho1 ho2) = msetHeap ho1 + msetHeap ho2) ∧
     (∀ (ho1 ho2 : Heap α), invar ho1 → invar ho2 → invar (merge ho1 ho2)) := by
-  refine ⟨rfl, ?_, mset_insert, mset_delMin, getMin_mem, getMin_le, trivial,
+  refine ⟨rfl, ?_, mset_insert, mset_delMin, getMin_mem, getMin_le, ?_, trivial,
     fun _ _ h => invar_insert h, fun ho h => invar_delMin h, mset_merge, fun ho1 ho2 h1 h2 => invar_merge h1 h2⟩
   intro ho
   cases ho with
@@ -797,17 +812,20 @@ theorem priority_queue_merge [LinearOrder α] :
       exact absurd hcontra (msetHp_ne_zero h)
     · intro hcontra
       exact absurd hcontra (by simp)
+  · intro ho hne
+    exact getMin_defined ho hne
 
-/-- The `Priority_Queue_Merge` specification in exactly the locale's form:
-the `invar` hypotheses are kept, `isEmpty` is used, `mset_insert` is
-stated as `mset + {x}`, and `mset_get_min` is the `IsLeast` form. This is
-the counterpart of `priority_queue_merge`, which states the same content
-in strengthened (unconditional) form. -/
+/-- The `Priority_Queue_Merge` specification in the locale's form: the
+locale's assumptions (the `invar` hypotheses are kept, `isEmpty` is used,
+`mset_insert` is stated as `mset + {x}`, and `mset_get_min` is the
+`IsLeast` form), plus the definedness clause. This is the counterpart
+of `priority_queue_merge`, which states the same content in
+strengthened (unconditional) form. -/
 theorem priority_queue_merge_locale [LinearOrder α] :
     PriorityQueueMergeSpec (empty : Heap α) isEmpty merge insert delMin getMin
       invar msetHeap := by
   unfold PriorityQueueMergeSpec
-  refine ⟨rfl, ?_, ?_, ?_, ?_, trivial, ?_, ?_, ?_, ?_⟩
+  refine ⟨rfl, ?_, ?_, ?_, ?_, ?_, trivial, ?_, ?_, ?_, ?_⟩
   · intro ho _
     exact (msetHeap_eq_zero_iff ho).symm
   · intro x ho _
@@ -817,6 +835,8 @@ theorem priority_queue_merge_locale [LinearOrder α] :
     exact mset_delMin ho x hx
   · intro ho x hinv _ hx
     exact getMin_isLeast ho x hx hinv
+  · intro ho hne
+    exact getMin_defined ho hne
   · intro x ho h
     exact invar_insert h
   · intro ho h _
@@ -827,13 +847,13 @@ theorem priority_queue_merge_locale [LinearOrder α] :
     exact invar_merge h1 h2
 
 /-- The `Priority_Queue_Merge` specification in the book's form: Chapter 14,
-Figures 14.1–14.2. Exactly 9 properties, in the book's order and with the
-book's `invar` hypotheses. -/
+Figures 14.1–14.2. The book's 9 properties, in the book's order and with
+the book's `invar` hypotheses, plus the definedness clause. -/
 theorem priority_queue_merge_book [LinearOrder α] :
     PriorityQueueSpec (empty : Heap α) merge insert delMin getMin invar
       msetHeap := by
   unfold PriorityQueueSpec
-  refine ⟨rfl, trivial, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  refine ⟨rfl, trivial, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · intro x ho _
     rw [mset_insert]
     exact add_comm _ _
@@ -845,6 +865,8 @@ theorem priority_queue_merge_book [LinearOrder α] :
     exact invar_delMin h
   · intro ho x hinv _ hx
     exact getMin_isLeast ho x hx hinv
+  · intro ho hne
+    exact getMin_defined ho hne
   · intro ho1 ho2 h1 h2
     exact mset_merge ho1 ho2
   · intro ho1 ho2 h1 h2
@@ -884,4 +906,3 @@ end List2
 end PairingHeap
 
 end Cslib.Algorithms.Lean
-

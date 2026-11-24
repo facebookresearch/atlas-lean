@@ -521,6 +521,14 @@ theorem getMin_isLeast [LinearOrder α] (t : BTree α) (x : α)
   intro y hy
   exact getMin_le t x y hx hr hp (msetTree_mem.mp hy)
 
+/-- `getMin` is defined on every nonempty tree: the definedness clause
+of the `Priority_Queue_Merge` specifications. -/
+theorem getMin_defined (t : BTree α) (hne : msetTree t ≠ 0) :
+    ∃ x, getMin t = some x := by
+  cases t with
+  | leaf => simp [msetTree] at hne
+  | node l x r => exact ⟨x, rfl⟩
+
 /-! ### Correctness: multiset lemmas -/
 
 /-- AFP `mset_link`. -/
@@ -609,12 +617,12 @@ theorem mset_delMin [LinearOrder α] {h : BTree α} (x : α) (hr : isRoot h)
 /-- The `Priority_Queue_Merge` specification for the Tree variant, in the
 Isabelle locale's form (`pairing: Priority_Queue_Merge` in
 `Pairing_Heap_Tree.thy`), with `invar = λh. is_root h ∧ pheap h` and
-`mset = mset_tree`. -/
+`mset = mset_tree`, plus the definedness clause. -/
 theorem priority_queue_merge_locale [LinearOrder α] :
     PriorityQueueMergeSpec (BTree.leaf : BTree α) isEmpty merge insert delMin getMin
       (fun t => isRoot t ∧ pheap t) msetTree := by
   unfold PriorityQueueMergeSpec
-  refine ⟨rfl, ?_, ?_, ?_, ?_, ⟨trivial, trivial⟩, ?_, ?_, ?_, ?_⟩
+  refine ⟨rfl, ?_, ?_, ?_, ?_, ?_, ⟨trivial, trivial⟩, ?_, ?_, ?_, ?_⟩
   · intro t _
     exact (msetTree_eq_zero_iff t).symm
   · intro x t hinv
@@ -630,6 +638,8 @@ theorem priority_queue_merge_locale [LinearOrder α] :
   · intro t x hinv _ hx
     obtain ⟨hr, hp⟩ := hinv
     exact getMin_isLeast t x hx hr hp
+  · intro t hne
+    exact getMin_defined t hne
   · intro x t hinv
     obtain ⟨hr, hp⟩ := hinv
     exact ⟨isRoot_insert hr, pheap_insert hr hp⟩
@@ -646,12 +656,13 @@ theorem priority_queue_merge_locale [LinearOrder α] :
     exact ⟨isRoot_merge hr1 hr2, pheap_merge hr1 hr2 hp1 hp2⟩
 
 /-- The `Priority_Queue_Merge` specification for the Tree variant in the
-book's form (Chapter 14, Figures 14.1–14.2): 9 properties, no `is_empty`. -/
+book's form (Chapter 14, Figures 14.1–14.2): the book's 9 properties,
+no `is_empty`, plus the definedness clause. -/
 theorem priority_queue_merge_book [LinearOrder α] :
     PriorityQueueSpec (BTree.leaf : BTree α) merge insert delMin getMin
       (fun t => isRoot t ∧ pheap t) msetTree := by
   unfold PriorityQueueSpec
-  refine ⟨rfl, ⟨trivial, trivial⟩, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  refine ⟨rfl, ⟨trivial, trivial⟩, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · intro x t hinv
     obtain ⟨hr, hp⟩ := hinv
     have hroot : isRoot (BTree.node BTree.leaf x BTree.leaf) := by simp [isRoot]
@@ -670,6 +681,8 @@ theorem priority_queue_merge_book [LinearOrder α] :
   · intro t x hinv _ hx
     obtain ⟨hr, hp⟩ := hinv
     exact getMin_isLeast t x hx hr hp
+  · intro t hne
+    exact getMin_defined t hne
   · intro t1 t2 hinv1 hinv2
     obtain ⟨hr1, -⟩ := hinv1
     obtain ⟨hr2, -⟩ := hinv2
@@ -684,4 +697,3 @@ end Tree
 end PairingHeap
 
 end Cslib.Algorithms.Lean
-

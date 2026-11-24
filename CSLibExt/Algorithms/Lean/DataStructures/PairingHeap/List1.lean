@@ -25,9 +25,10 @@ operations themselves (`pheap` plays the role of `invar`).
 
 Includes the functional-correctness proof and the
 `Priority_Queue_Merge` specification in the locale's and the book's
-forms. The amortized analyses (the direct `sum_ub` route, the
-tree-potential route, and the transfer from the Tree analysis) live in
-`PairingHeap.Amortized`.
+forms. The List1 amortized analyses (the direct `sum_ub` route, the
+tree-potential route, and the transfer from the Tree analysis) are
+not ported; `PairingHeap.Amortized` contains only the `List2` and
+`Tree` analyses.
 
 `getMin` is `Option`-valued: the book's `get_min` is partial on the
 empty heap.
@@ -414,6 +415,14 @@ theorem getMin_isLeast [LinearOrder α] (h : Heap α) (x : α)
   intro y hy
   exact getMin_le h x y hx hp hy
 
+/-- `getMin` is defined on every nonempty heap: the definedness clause
+of the `Priority_Queue_Merge` specifications. -/
+theorem getMin_defined (h : Heap α) (hne : msetHeap h ≠ 0) :
+    ∃ x, getMin h = some x := by
+  cases h with
+  | empty => simp [msetHeap] at hne
+  | hp x hs => exact ⟨x, rfl⟩
+
 /-- AFP `mset_del_min`. -/
 theorem mset_delMin [LinearOrder α] {h : Heap α} {x : α}
     (hx : getMin h = some x) :
@@ -432,12 +441,13 @@ def isEmpty : Heap α → Prop := fun h => h = .empty
 
 /-- The `Priority_Queue_Merge` specification for the List1 variant, in the
 Isabelle locale's form (`pairing: Priority_Queue_Merge` in
-`Pairing_Heap_List1.thy`), with `invar = pheap` and `mset = mset_heap`. -/
+`Pairing_Heap_List1.thy`), with `invar = pheap` and `mset = mset_heap`,
+plus the definedness clause. -/
 theorem priority_queue_merge_locale [LinearOrder α] :
     PriorityQueueMergeSpec (Heap.empty : Heap α) isEmpty merge insert delMin getMin
       pheap msetHeap := by
   unfold PriorityQueueMergeSpec
-  refine ⟨msetHeap_empty, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  refine ⟨msetHeap_empty, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · intro h _
     exact (msetHeap_empty_iff h).symm
   · intro x h hp
@@ -447,6 +457,8 @@ theorem priority_queue_merge_locale [LinearOrder α] :
     exact mset_delMin hx
   · intro h x hp _ hx
     exact getMin_isLeast h x hx hp
+  · intro h hne
+    exact getMin_defined h hne
   · simp [pheap]
   · intro x h hp
     exact pheap_insert hp
@@ -458,12 +470,13 @@ theorem priority_queue_merge_locale [LinearOrder α] :
     exact pheap_merge hp1 hp2
 
 /-- The `Priority_Queue_Merge` specification for the List1 variant in the
-book's form (Chapter 14, Figures 14.1–14.2): 9 properties, no `is_empty`. -/
+book's form (Chapter 14, Figures 14.1–14.2): the book's 9 properties,
+no `is_empty`, plus the definedness clause. -/
 theorem priority_queue_merge_book [LinearOrder α] :
     PriorityQueueSpec (Heap.empty : Heap α) merge insert delMin getMin pheap
       msetHeap := by
   unfold PriorityQueueSpec
-  refine ⟨msetHeap_empty, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  refine ⟨msetHeap_empty, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · simp [pheap]
   · intro x h hp
     rw [mset_insert x h]
@@ -476,6 +489,8 @@ theorem priority_queue_merge_book [LinearOrder α] :
     exact pheap_delMin hp
   · intro h x hp _ hx
     exact getMin_isLeast h x hx hp
+  · intro h hne
+    exact getMin_defined h hne
   · intro h1 h2 hp1 hp2
     exact mset_merge h1 h2
   · intro h1 h2 hp1 hp2

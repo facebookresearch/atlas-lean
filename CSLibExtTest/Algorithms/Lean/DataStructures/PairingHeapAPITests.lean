@@ -69,6 +69,8 @@ example :
       x ∈ List2.msetHeap ho) ∧
     (∀ (ho : List2.Heap α) (x y : α), List2.getMin ho = some x →
       List2.invar ho → y ∈ List2.msetHeap ho → x ≤ y) ∧
+    (∀ (ho : List2.Heap α), List2.msetHeap ho ≠ 0 →
+      ∃ x, List2.getMin ho = some x) ∧
     List2.invar (List2.empty : List2.Heap α) ∧
     (∀ (x : α) (ho : List2.Heap α), List2.invar ho →
       List2.invar (List2.insert x ho)) ∧
@@ -119,6 +121,19 @@ example {t : Tree.BTree α} {x : α} (hr : Tree.isRoot t)
     (hx : Tree.getMin t = some x) :
     Tree.msetTree (Tree.delMin t) = Tree.msetTree t - {x} :=
   Tree.mset_delMin x hr hx
+
+-- Check the `getMin` definedness clause for each variant.
+example {ho : List2.Heap α} (hne : List2.msetHeap ho ≠ 0) :
+    ∃ x, List2.getMin ho = some x :=
+  List2.getMin_defined ho hne
+
+example {t : Tree.BTree α} (hne : Tree.msetTree t ≠ 0) :
+    ∃ x, Tree.getMin t = some x :=
+  Tree.getMin_defined t hne
+
+example {h : List1.Heap α} (hne : List1.msetHeap h ≠ 0) :
+    ∃ x, List1.getMin h = some x :=
+  List1.getMin_defined h hne
 
 -- Check the `Tree` specification in the locale's form.
 example :

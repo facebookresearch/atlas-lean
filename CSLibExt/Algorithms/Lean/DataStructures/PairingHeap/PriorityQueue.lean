@@ -26,6 +26,12 @@ Two renderings of Isabelle/HOL in the book are made explicit here:
   here it is `Option`-valued, and the `del_min` / `get_min` clauses are
   stated for `mset q ≠ 0`, exactly as in the book, with the minimum
   produced as `some x`.
+* The `del_min` / `get_min` clauses are vacuous when `getMin q = none`,
+  so an implementation whose `getMin` always returns `none` would
+  otherwise satisfy them. Both specs therefore add a definedness
+  clause, `mset q ≠ 0 → ∃ x, getMin q = some x`, which is not in the
+  Isabelle locale or the book: it is the totalized form of the fact
+  that the book's partial `get_min` is defined on nonempty queues.
 * The book writes the `del_min` clause as
   `mset (del_min q) = mset q - {#get_min q#}` (remove one occurrence
   of the minimum). It is stated here in that subtractive form, which is
@@ -57,10 +63,12 @@ namespace PairingHeap
 
 variable {α : Type u}
 
-/-- The `Priority_Queue_Merge` specification in exactly the Isabelle
-locale's form: the `invar` hypotheses are kept, `isEmpty` is used,
-`mset_insert` is stated as `mset + {x}`, and `mset_get_min` is the
-`IsLeast` form. The `del_min` clause is the book's subtractive form. -/
+/-- The `Priority_Queue_Merge` specification in the Isabelle locale's
+form: the locale's 10 assumptions (the `invar` hypotheses are kept,
+`isEmpty` is used, `mset_insert` is stated as `mset + {x}`, and
+`mset_get_min` is the `IsLeast` form), plus the definedness clause
+`mset q ≠ 0 → ∃ x, getMin q = some x` described in the module doc.
+The `del_min` clause is the book's subtractive form. -/
 def PriorityQueueMergeSpec {S : Type u} [LinearOrder α]
     (empty : S) (isEmpty : S → Prop) (merge : S → S → S)
     (insert : α → S → S) (delMin : S → S) (getMin : S → Option α)
@@ -72,6 +80,7 @@ def PriorityQueueMergeSpec {S : Type u} [LinearOrder α]
     mset (delMin q) = mset q - {x}) ∧
   (∀ (q : S) (x : α), invar q → mset q ≠ 0 → getMin q = some x →
     IsLeast {y | y ∈ mset q} x) ∧
+  (∀ q : S, mset q ≠ 0 → ∃ x, getMin q = some x) ∧
   invar empty ∧
   (∀ (x : α) (q : S), invar q → invar (insert x q)) ∧
   (∀ q : S, invar q → mset q ≠ 0 → invar (delMin q)) ∧
@@ -80,9 +89,11 @@ def PriorityQueueMergeSpec {S : Type u} [LinearOrder α]
   (∀ (q1 q2 : S), invar q1 → invar q2 → invar (merge q1 q2))
 
 /-- The `Priority_Queue_Merge` specification in the book's form: Chapter 14,
-Figures 14.1–14.2. Exactly 9 properties, in the book's order and with the
-book's `invar` hypotheses: (empty), (empty-inv), (insert), (insert-inv),
-(del_min), (del_min-inv), (get_min), and the two `Merge` properties.
+Figures 14.1–14.2. The book's 9 properties, in the book's order and with
+the book's `invar` hypotheses: (empty), (empty-inv), (insert),
+(insert-inv), (del_min), (del_min-inv), (get_min), and the two `Merge`
+properties, plus the definedness clause
+`mset q ≠ 0 → ∃ x, getMin q = some x` described in the module doc.
 The book has **no** `is_empty` property — the Isabelle locale added one —
 so there is no `isEmpty` conjunct here. -/
 def PriorityQueueSpec {S : Type u} [LinearOrder α]
@@ -98,6 +109,7 @@ def PriorityQueueSpec {S : Type u} [LinearOrder α]
   (∀ q : S, invar q → mset q ≠ 0 → invar (delMin q)) ∧
   (∀ (q : S) (x : α), invar q → mset q ≠ 0 → getMin q = some x →
     IsLeast {y | y ∈ mset q} x) ∧
+  (∀ q : S, mset q ≠ 0 → ∃ x, getMin q = some x) ∧
   (∀ (q1 q2 : S), invar q1 → invar q2 →
     mset (merge q1 q2) = mset q1 + mset q2) ∧
   (∀ (q1 q2 : S), invar q1 → invar q2 → invar (merge q1 q2))
