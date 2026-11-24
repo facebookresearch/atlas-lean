@@ -644,19 +644,6 @@ public theorem_wanted strictlyPrimitive_pow (d : ℤ) (hd : 1 < d) (hsq : Square
     (ha : IsCoprime a.re (d * a.im)) (hN : |a.norm| = (p : ℤ) ^ m) :
     IsCoprime (a ^ n).re (d * (a ^ n).im) ∧ |(a ^ n).norm| = (p : ℤ) ^ (m * n)
 
-/-- **Negating the value of a strictly primitive solution.** Let $d > 1$ be a square-free integer
-such that $x^2 - d y^2 = -1$ has an integral solution, and let $z \ne 0$ be an integer. If
-$x^2 - d y^2 = z$ has an integral solution with $x$ and $d y$ coprime, then so does
-$x^2 - d y^2 = -z$.
-
-Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
-Rational Slopes*, INTEGERS 24 (2024), Article A111, Proposition 4
-(`integers-2024-A111-prop-4`). -/
-public theorem_wanted strictlyPrimitive_neg (d : ℤ) (hd : 1 < d) (hsq : Squarefree d) (z : ℤ)
-    (hz : z ≠ 0) (hneg : ∃ x y : ℤ, x ^ 2 - d * y ^ 2 = -1)
-    (h : ∃ x y : ℤ, IsCoprime x (d * y) ∧ x ^ 2 - d * y ^ 2 = z) :
-    ∃ x y : ℤ, IsCoprime x (d * y) ∧ x ^ 2 - d * y ^ 2 = -z
-
 /-- **Strictly primitive solutions modulo p and splitting of p.** Let $d > 1$ be a square-free
 integer, let $K$ be a number field of degree $2$ over $\mathbb{Q}$ containing an element $s$ with
 $s^2 = d$ (so $K = \mathbb{Q}(\sqrt d)$), and let $p$ be a prime such that $p \ne 2$, or

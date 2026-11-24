@@ -69,15 +69,6 @@ public theorem_wanted weightedDavenport_one_pi_zmod_prime_pow (p r : ℕ) (hp : 
     weightedDavenport {1} ((i : Fin r) → ZMod (p ^ e i)) =
       ((1 + ∑ i, (p ^ e i - 1) : ℕ) : ℕ∞)
 
-/-- **A nested ceiling identity for divisors.** For all natural numbers $m, n \ge 2$ with
-$m \mid n$, we have $\lceil n / (\lceil n/(m-1) \rceil - 1) \rceil = m$.
-
-Source: Md Ibrahim Molla, *New Families of Weight Sets Yielding Prescribed Weighted Zero-Sum
-Constants*, INTEGERS 26 (2026), Article A89, Lemma 1 (`integers-2026-A89-lem-1`). -/
-public theorem_wanted ceilDiv_ceilDiv_sub_one_sub_one_of_dvd (m n : ℕ) (hm : 2 ≤ m)
-    (hn : 2 ≤ n) (hdvd : m ∣ n) :
-    n ⌈/⌉ (n ⌈/⌉ (m - 1) - 1) = m
-
 /-- **Weight sets with weighted Davenport constant $m$ on $\mathbb{Z}/n\mathbb{Z}$.** Let
 $n \ge 2$ be a natural number and $m \ge 2$ a divisor of $n$. Every finite set $A$ of natural
 numbers with $n/m \in A \subseteq \{1, \dots, \lceil n/(m-1) \rceil - 1\}$ has $A$-weighted

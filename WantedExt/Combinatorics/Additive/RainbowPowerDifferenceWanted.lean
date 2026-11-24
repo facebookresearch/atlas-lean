@@ -264,21 +264,6 @@ public theorem_wanted monochromatic_shift_of_rainbowFree_powDiff (k : ℕ) (c : 
     (∃ e : Fin 3, (e = B ∨ e = G) ∧ ∀ t < ℓ, c (i + j ^ k + t) = e) ∧
       (j ^ k < i → ∃ e : Fin 3, (e = B ∨ e = G) ∧ ∀ t < ℓ, c (i - j ^ k + t) = e)
 
-/-- **Zhan's small-gap lemma.** Let $S$ be a set of natural numbers, let $n_0 \ge 2$ be an
-integer, and write $S(n)$ for the number of elements of $S \cap \{1, \dots, n\}$. If
-$\limsup_{n \to \infty} (S(n) - n / n_0) = \infty$, that is, for every real $M$ there are
-arbitrarily large $n$ with $S(n) - n / n_0 > M$, then there is an integer $d$ with
-$1 \le d \le n_0 - 1$ such that $j$ and $j + d$ both lie in $S$ for arbitrarily large $j$.
-
-Source: Katie Ansaldi, Gabriel Cowley, Eric Green, Kihyun Kim and JT Rapp, *Rainbow-Free
-Colorings and Rainbow Numbers for x-y=z^k*, INTEGERS 24 (2024), Article A105, Lemma 3
-(`integers-2024-A105-lem-3`). -/
-public theorem_wanted exists_small_gap_of_limsup_count (S : Set ℕ) [DecidablePred (· ∈ S)]
-    (n₀ : ℕ) (hn₀ : 2 ≤ n₀)
-    (hS : ∀ M : ℝ, ∀ N₀ : ℕ, ∃ n : ℕ, N₀ ≤ n ∧
-      M < (((Finset.Icc 1 n).filter (· ∈ S)).card : ℝ) - n / n₀) :
-    ∃ d : ℕ, 1 ≤ d ∧ d ≤ n₀ - 1 ∧ ∀ i : ℕ, ∃ j : ℕ, i < j ∧ j ∈ S ∧ j + d ∈ S
-
 /-- **Non-dominant monochromatic strings have bounded length.** Let $k$ be a natural number, let
 $n_0 \ge 2$ be an integer, and let $c$ be a coloring of the positive integers by three colors
 with no rainbow solution of $x - y = z^k$: there are no positive integers $x, y, z$ with

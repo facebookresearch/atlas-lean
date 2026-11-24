@@ -9,6 +9,7 @@ module
 
 public import Mathlib.RingTheory.IntegralClosure.IntegrallyClosed
 public import Mathlib.RingTheory.Depth.Basic
+public import Mathlib.AlgebraicGeometry.Noetherian
 public import MathlibExt.AlgebraicGeometry.BirationalResolution
 public import MathlibExt.AlgebraicGeometry.CurveCohomologyCalculus
 
@@ -50,8 +51,9 @@ abbrev higherDirectImage {Y X : Scheme.{u}} (f : Y ⟶ X)
 def IsNormalIntegral (X : Scheme.{u}) [IsIntegral X] : Prop :=
   ∀ x : X, IsIntegrallyClosed (X.presheaf.stalk x)
 
-/-- Stalkwise Cohen–Macaulayness via actual local Ext-depth. -/
-def IsCohenMacaulayStalkwise (X : Scheme.{u}) : Prop :=
+/-- Stalkwise Cohen–Macaulayness of a locally Noetherian scheme via actual local
+Ext-depth: every stalk, a Noetherian local ring, has depth equal to its dimension. -/
+def IsCohenMacaulayStalkwise (X : Scheme.{u}) [IsLocallyNoetherian X] : Prop :=
   ∀ x : X,
     (IsLocalRing.depth
       (ModuleCat.of (X.presheaf.stalk x) (X.presheaf.stalk x)) : WithBot ℕ∞) =

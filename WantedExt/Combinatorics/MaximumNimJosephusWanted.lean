@@ -20,151 +20,11 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Minimum excludant of a finite set.** For a finite set $s$ of natural numbers,
-$\operatorname{mex}(s)$ is the least natural number that does not belong to $s$.
-
-Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
-        INTEGERS 24 (2024), Article G5, Section 2. -/
-public def maximumNimMex (s : Finset ℕ) : ℕ :=
-  Nat.find (show ∃ m, m ∉ s by
-    let M := (insert 0 s).max' (by simp)
-    refine ⟨M + 1, ?_⟩
-    intro h
-    have hle : M + 1 ≤ M := Finset.le_max' (insert 0 s) (M + 1) (by simp [h])
-    omega)
-
-/-- **Characterization of the minimum excludant.** Let $s$ be a finite set of natural numbers and
-$m$ a natural number. Then $\operatorname{mex}(s)$, the least natural number not in $s$, equals $m$
-if and only if $m \notin s$ and every natural number $n < m$ lies in $s$.
-
-Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
-        INTEGERS 24 (2024), Article G5, Section 2. -/
-public theorem maximumNimMex_eq_iff (s : Finset ℕ) (m : ℕ) :
-    maximumNimMex s = m ↔ m ∉ s ∧ ∀ n < m, n ∈ s := by
-  unfold maximumNimMex
-  rw [Nat.find_eq_iff]
-  simp
-
-/-- **Grundy numbers of Maximum Nim.** For a rule function $f : \mathbb{N} \to \mathbb{N}$, the
-Grundy number $G_f(x)$ of a pile of $x$ stones in Maximum Nim is defined by recursion on $x$ as the
-mex (least natural number not in the set) of $\{G_f(x - u) : 1 \le u \le \min(f(x), x)\}$, the
-Grundy numbers of the positions reachable from $x$ by removing $u$ stones.
-
-Taking $\min(f(x), x)$ makes the definition total; under the source's hypotheses on $f$, which
-include $f(0) = 0$, it does not change the legal moves.
-
-Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
-        INTEGERS 24 (2024), Article G5, Section 2. -/
-public def maximumNimGrundy (f : ℕ → ℕ) (x : ℕ) : ℕ :=
-  maximumNimMex <|
-    (Finset.Icc 1 (min (f x) x)).attach.image fun u =>
-      maximumNimGrundy f (x - u.1)
-termination_by x
-decreasing_by
-  have hu := u.property
-  simp only [Finset.mem_Icc] at hu
-  omega
-
-/-- **Recursive formula for Maximum Nim Grundy numbers.** For every rule function
-$f : \mathbb{N} \to \mathbb{N}$ and every pile size $x \in \mathbb{N}$, the Grundy number $G_f(x)$
-of a pile of $x$ stones in Maximum Nim with rule function $f$ equals the mex (least natural number
-not in the set) of $\{G_f(x - u) : 1 \le u \le \min(f(x), x)\}$.
-
-Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
-        INTEGERS 24 (2024), Article G5, Section 2. -/
-public theorem maximumNimGrundy_eq (f : ℕ → ℕ) (x : ℕ) :
-    maximumNimGrundy f x =
-      maximumNimMex ((Finset.Icc 1 (min (f x) x)).attach.image fun u =>
-        maximumNimGrundy f (x - u.1)) := by
-  rw [maximumNimGrundy]
-
-/-- The `k=2` Grundy calculation starts with `G(0)=0`; this private computation
-supports the requested examples and introduces no deviation.
-Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
-        INTEGERS 24 (2024), Article G5, Section 3 (characteristic values). -/
-private theorem maximumNimGrundy_div_two_zero : maximumNimGrundy (· / 2) 0 = 0 := by
-  rw [maximumNimGrundy, maximumNimMex_eq_iff]
-  norm_num
-
-/-- For the `k=2` rule, `G(1)=0`; this private computation supports the requested
-examples and introduces no deviation.
-Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
-        INTEGERS 24 (2024), Article G5, Section 3 (characteristic values). -/
-private theorem maximumNimGrundy_div_two_one : maximumNimGrundy (· / 2) 1 = 0 := by
-  rw [maximumNimGrundy, maximumNimMex_eq_iff]
-  norm_num
-
-/-- For the `k=2` rule, `G(2)=1`; this private computation supports the requested
-examples and introduces no deviation.
-Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
-        INTEGERS 24 (2024), Article G5, Section 3 (characteristic values). -/
-private theorem maximumNimGrundy_div_two_two : maximumNimGrundy (· / 2) 2 = 1 := by
-  rw [maximumNimGrundy, maximumNimMex_eq_iff]
-  norm_num [maximumNimGrundy_div_two_one]
-
-/-- For the `k=2` rule, `G(3)=0`; this private computation supports the requested
-examples and introduces no deviation.
-Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
-        INTEGERS 24 (2024), Article G5, Section 3 (characteristic values). -/
-private theorem maximumNimGrundy_div_two_three_aux :
-    maximumNimGrundy (· / 2) 3 = 0 := by
-  rw [maximumNimGrundy, maximumNimMex_eq_iff]
-  norm_num [maximumNimGrundy_div_two_two]
-
-/-- For the `k=2` rule, `G(4)=2`; this private computation supports the requested
-examples and introduces no deviation.
-Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
-        INTEGERS 24 (2024), Article G5, Section 3 (characteristic values). -/
-private theorem maximumNimGrundy_div_two_four_aux :
-    maximumNimGrundy (· / 2) 4 = 2 := by
-  rw [maximumNimGrundy, maximumNimMex_eq_iff]
-  norm_num
-  constructor
-  · intro x hx₁ hx₂
-    interval_cases x <;>
-      norm_num [maximumNimGrundy_div_two_three_aux, maximumNimGrundy_div_two_two]
-  · intro n hn
-    interval_cases n
-    · exact ⟨1, by norm_num, maximumNimGrundy_div_two_three_aux⟩
-    · exact ⟨2, by norm_num, maximumNimGrundy_div_two_two⟩
-
-/-- For the `k=2` rule, `G(5)=1`; this private computation supports the requested
-examples and introduces no deviation.
-Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
-        INTEGERS 24 (2024), Article G5, Section 3 (characteristic values). -/
-private theorem maximumNimGrundy_div_two_five_aux :
-    maximumNimGrundy (· / 2) 5 = 1 := by
-  rw [maximumNimGrundy, maximumNimMex_eq_iff]
-  norm_num
-  constructor
-  · intro x hx₁ hx₂
-    interval_cases x <;>
-      norm_num [maximumNimGrundy_div_two_four_aux, maximumNimGrundy_div_two_three_aux]
-  · exact ⟨2, by norm_num, maximumNimGrundy_div_two_three_aux⟩
-
-/-- **Grundy number of a pile of five in halving Maximum Nim.** In Maximum Nim with rule
-function $f(x) = \lfloor x/2 \rfloor$, a pile of $5$ stones has Grundy number $1$.
-
-Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
-        INTEGERS 24 (2024), Article G5, Section 3 (characteristic values). -/
-public theorem maximumNimGrundy_div_two_five : maximumNimGrundy (· / 2) 5 = 1 := by
-  exact maximumNimGrundy_div_two_five_aux
-
-/-- **Grundy number of a pile of four in halving Maximum Nim.** In Maximum Nim with rule
-function $f(x) = \lfloor x/2 \rfloor$, a pile of $4$ stones has Grundy number $2$.
-
-Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
-        INTEGERS 24 (2024), Article G5, Section 3 (characteristic values). -/
-public theorem maximumNimGrundy_div_two_four : maximumNimGrundy (· / 2) 4 = 2 := by
-  exact maximumNimGrundy_div_two_four_aux
-
-/-- **Grundy number of a pile of three in halving Maximum Nim.** In Maximum Nim with rule
-function $f(x) = \lfloor x/2 \rfloor$, a pile of $3$ stones has Grundy number $0$.
-
-Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
-        INTEGERS 24 (2024), Article G5, Section 3 (characteristic values). -/
-public theorem maximumNimGrundy_div_two_three : maximumNimGrundy (· / 2) 3 = 0 := by
-  exact maximumNimGrundy_div_two_three_aux
+-- The minimum excludant `maximumNimMex`, the Maximum Nim Grundy numbers `maximumNimGrundy`, their
+-- characterization and recursive formula `maximumNimMex_eq_iff` and `maximumNimGrundy_eq`, and the
+-- values `maximumNimGrundy_div_two_five`, `maximumNimGrundy_div_two_four` and
+-- `maximumNimGrundy_div_two_three` for the halving rule are in
+-- `MathlibExt.Combinatorics.MaximumNimJosephus`, which this module imports.
 
 /-- **The Maximum Nim game.** For a rule function $f : \mathbb{N} \to \mathbb{N}$, the Maximum Nim
 game with rule $f$ is the impartial game whose positions are the pile sizes $x \in \mathbb{N}$, in
@@ -473,15 +333,9 @@ public theorem_wanted maximumNimGrundy_eq_sub_rule_succ (f : ℕ → ℕ) (hf0 :
 -- `maximumNim_sub_div_sub_one_eq` in `MathlibExt.Combinatorics.MaximumNimJosephus`, which this
 -- module imports.
 
-/-- **Maximum Nim Grundy numbers at multiples of the divisor.** Let $k \ge 2$ and let $G$ be
-the Grundy number of Maximum Nim with rule function $f(y) = \lfloor y/k \rfloor$. Every positive
-multiple $x$ of $k$ satisfies $G(x) = x/k$.
-
-Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
-        INTEGERS 24 (2024), Article G5, Lemma 3(i) (`integers-2024-G5-lem-3`). -/
-public theorem_wanted maximumNimGrundy_div_eq_of_dvd (k x : ℕ) (hk : 2 ≤ k)
-    (hx : 1 ≤ x) (hkx : k ∣ x) :
-    maximumNimGrundy (· / k) x = x / k
+-- The Grundy number at positive multiples of `k`, `G(x) = x / k`, is proved as
+-- `maximumNimGrundy_div_eq_of_dvd` in `MathlibExt.Combinatorics.MaximumNimJosephus`, which this
+-- module imports.
 
 /-- **Maximum Nim Grundy numbers at non-multiples of the divisor.** Let $k \ge 2$ and let $G$
 be the Grundy number of Maximum Nim with rule function $f(y) = \lfloor y/k \rfloor$. If $x$ is a

@@ -22,7 +22,7 @@ public import Mathlib.CategoryTheory.Triangulated.Pretriangulated
 
 Let `C` be a differential graded category and let `H⁰` be the homotopy category of the twisted
 objects of the additive closure of the shift closure of `C`, with the shift of
-`TauCeti/CategoryTheory/DG/Twisted/HomotopyShift.lean`.  This file equips `H⁰` with the cone
+`MathlibExt/CategoryTheory/DGSourceMore/DGTwistedHomotopyShift.lean`.  This file equips `H⁰` with the cone
 triangles of Bondal and Kapranov as distinguished triangles, and proves the axioms of a
 pretriangulated category for them, except for the converse half of the rotation axiom.  The
 twisting matrices of the objects of `H⁰` are not required to be one-sided, so `H⁰` contains, and is
@@ -55,7 +55,7 @@ of `H⁰` is **distinguished** when it is isomorphic to a cone triangle
   by the projections onto `Q`, the comparison morphism `Q ⟶ Q⟦1⟧` and the inclusion of `Q⟦1⟧`.
 
 The converse half of the rotation axiom, that a triangle whose rotation is distinguished is
-distinguished, is proved in `TauCeti/CategoryTheory/DG/Twisted/Pretriangulated.lean`, which
+distinguished, is proved in `MathlibExt/CategoryTheory/DGSourceMore/DGTwistedPretriangulated.lean`, which
 assembles the pretriangulated structure.
 
 ## Main definitions

@@ -9,6 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.AlgebraicGeometry.ValuativeFanoGeometry
+public import MathlibExt.AlgebraicGeometry.LineBundleTaskContracts
+public import MathlibExt.AlgebraicGeometry.GenericSectionMaps
 public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 public import Mathlib.Algebra.Order.Floor.Ring
 
@@ -45,17 +47,11 @@ open MathlibExt.AlgebraicGeometry.FiniteCoverLocalComparison
 open MathlibExt.AlgebraicGeometry.ValuativeFanoGeometry
 open scoped ENNReal
 
-/-- An actual global section as the canonical homomorphism from the structure module. -/
-def sectionHom (X : ComplexVariety) (M : X.left.Modules) (s : SectionSpace X M) :
-    structureModule X.left ⟶ M := by
-  let t : M.val.obj (op (⊤ : X.left.Opens)) := s
-  refine (SheafOfModules.unitHomEquiv M).symm ?_
-  refine PresheafOfModules.sectionsMk (M := M.val)
-    (fun U ↦ M.val.map (homOfLE (le_top : U.unop ≤ ⊤)).op t) ?_
-  intro U V f
-  have h : (homOfLE (le_top : U.unop ≤ ⊤)).op ≫ f =
-      (homOfLE (le_top : V.unop ≤ ⊤)).op := Subsingleton.elim _ _
-  rw [← PresheafOfModules.map_comp_apply, h]
+/-- The actual module morphism represented by a global section: the shared
+`GenericSectionMaps.topSectionHom`. -/
+abbrev sectionHom (X : ComplexVariety) (M : X.left.Modules) (s : SectionSpace X M) :
+    structureModule X.left ⟶ M :=
+  GenericSectionMaps.topSectionHom X.left M s
 
 /-- On every actual open, the normalized section homomorphism multiplies
 the restricted section by the regular function. -/
@@ -65,11 +61,6 @@ theorem sectionHom_app (X : ComplexVariety) (M : X.left.Modules) (s : SectionSpa
       a • (show M.val.obj (op U) from
         (M.val.map (homOfLE (le_top : U ≤ ⊤)).op) s) := by
   rfl
-
-/-- Actual pullback of a section through the normalized coefficient unit. -/
-def pullSection {X Y : Scheme.{0}} (f : Y ⟶ X) {M : X.Modules}
-    (s : structureModule X ⟶ M) : structureModule Y ⟶ (Scheme.Modules.pullback f).obj M :=
-  (pullbackStructureIso f).inv ≫ (Scheme.Modules.pullback f).map s
 
 /-- A genuine local trivialization of the pulled line at the divisor point. -/
 structure SectionFrame {X Y : ComplexVariety} (f : Y ⟶ X) (y : Y.left)
@@ -82,8 +73,8 @@ structure SectionFrame {X Y : ComplexVariety} (f : Y ⟶ X) (y : Y.left)
 /-- The actual regular-function value of a pulled section in the displayed local frame. -/
 def localSectionValue {X Y : ComplexVariety} {f : Y ⟶ X} {y : Y.left}
     {M : X.left.Modules} (e : SectionFrame f y M) (s : SectionSpace X M) : LocalRing Y y :=
-  let hY := pullSection f.left (sectionHom X M s)
-  let hU := pullSection e.openSet.ι hY ≫ e.trivialization.hom
+  let hY := LineBundleTaskContracts.pullbackSection f.left (sectionHom X M s)
+  let hU := LineBundleTaskContracts.pullbackSection e.openSet.ι hY ≫ e.trivialization.hom
   let value : Γ(e.openSet.toScheme, ⊤) :=
     (hU.val.app (op ⊤)).hom (1 : Γ(e.openSet.toScheme, ⊤))
   (Y.left.presheaf.germ e.openSet y e.contains).hom (e.openSet.topIso.hom value)

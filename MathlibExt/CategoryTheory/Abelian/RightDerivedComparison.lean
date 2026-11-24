@@ -7,13 +7,15 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-Ported from AxiomMath/Stacks, revision
-c496df0d9beea9deaeabcea8492605f9a0a2313b,
-StacksFrontier/CategoryTheory/Abelian/RightDerivedPostcompose.lean.
-The public source has no individual author or copyright notice.
-Licensed under Apache 2.0. Modification notice: retain the complete
-natural derived-functor comparisons as a standalone MathlibExt module;
-no Stacks package or unresolved theorem is imported.
+Portions of this file are adapted from:
+
+`StacksFrontier/CategoryTheory/Abelian/RightDerivedPostcompose.lean`
+(AxiomMath/Stacks, https://github.com/AxiomMath/Stacks, revision
+c496df0d9beea9deaeabcea8492605f9a0a2313b):
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+The source files carry no per-file copyright notice or author list.
+Modified: the natural derived-functor comparisons are kept as a standalone module;
+no Stacks package is imported.
 -/
 module
 

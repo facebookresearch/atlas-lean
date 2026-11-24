@@ -41,7 +41,7 @@ open MathlibExt.DGSource
 open MathlibExt.CategoryTheory.DGModelContracts
 open MathlibExt.CategoryTheory.DGQuasiFunctorModels
 open MathlibExt.CategoryTheory.PerfectDGModuleModels
-open MathlibExt.Algebra.Homology.DGCyclicBarModels
+open MathlibExt.Algebra.Homology
 open MathlibExt.CategoryTheory.DGAlgebraCategoryModels
 
 universe u
