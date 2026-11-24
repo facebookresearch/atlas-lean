@@ -693,7 +693,7 @@ the binomial coefficient $\binom{a + b}{a}$ is odd.
 
 Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
 *Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Theorem 8
-(Theorem 3.4 of Bade, Cui, Labelle, and Li). -/
+(Theorem 3.3 of Bade, Cui, Labelle, and Li). -/
 public theorem isUlamWord_zeros_one_zeros_iff (a b : ℕ) :
     IsUlamWord (List.replicate a false ++ [true] ++ List.replicate b false) ↔
       Odd ((a + b).choose a) := by
