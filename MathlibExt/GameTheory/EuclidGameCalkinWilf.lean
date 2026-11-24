@@ -375,6 +375,94 @@ public theorem euclidPPosition_branch_step (x y : ℕ) (hx : 0 < x) (hy : 0 < y)
   · rw [swap x (x + y), swap (x + y) (x + 2 * y)]
     simpa only [two_mul, Nat.add_comm, Nat.add_left_comm, Nat.add_assoc] using niece y x hy hx
 
+namespace euclidPPosition_self_similar
+
+open euclidPPosition_aunt_xor_cousin euclidPPosition_branch_step
+
+private def child (p : ℕ × ℕ) (b : Bool) : ℕ × ℕ :=
+  if b then (p.1 + p.2, p.2) else (p.1, p.1 + p.2)
+
+private abbrev outcome (p : ℕ × ℕ) := euclidPPosition p.1 p.2
+
+private theorem child_pos {p : ℕ × ℕ} (hp : 0 < p.1 ∧ 0 < p.2) (b : Bool) :
+    0 < (child p b).1 ∧ 0 < (child p b).2 := by
+  cases b <;> simp [child, hp.1, hp.2]
+
+private theorem row_pos {k : ℕ} {p : ℕ × ℕ} (h : p ∈ calkinWilfRow k) :
+    0 < p.1 ∧ 0 < p.2 := by
+  induction k generalizing p with
+  | zero =>
+    simp only [calkinWilfRow, List.mem_singleton] at h
+    subst p
+    decide
+  | succ k ih =>
+    obtain ⟨q, hq, h⟩ := List.mem_flatMap.mp h
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at h
+    rcases h with rfl | rfl
+    · exact child_pos (ih hq) false
+    · exact child_pos (ih hq) true
+
+-- The daughter has a forced move to its parent when a ≤ b. Otherwise it is always N.
+private theorem daughter_iff (a b : ℕ) (ha : 0 < a) (hb : 0 < b) :
+    euclidPPosition (a + b) b = true ↔ euclidPPosition a b = false ∧ a ≤ b := by
+  by_cases hab : a ≤ b
+  · have h := forced a b ha hab
+    grind
+  · simp [hab, daughter_not_p_of_le a b hb (by omega)]
+
+private theorem child_iff {p : ℕ × ℕ} (hp : 0 < p.1 ∧ 0 < p.2) (b : Bool) :
+    outcome (child p b) = true ↔ outcome p = false ∧
+      (if b then p.1 ≤ p.2 else p.2 ≤ p.1) := by
+  cases b with
+  | false =>
+    simp only [child, outcome, Bool.false_eq_true, ite_false]
+    rw [swap, Nat.add_comm, daughter_iff _ _ hp.2 hp.1, swap p.2 p.1]
+  | true => exact daughter_iff _ _ hp.1 hp.2
+
+-- Repeating a direction gives N. Changing direction flips the intermediate outcome.
+private theorem grandchild_iff {p : ℕ × ℕ} (hp : 0 < p.1 ∧ 0 < p.2) (b c : Bool) :
+    outcome (child (child p b) c) = true ↔ outcome (child p b) = false ∧ b ≠ c := by
+  rw [child_iff (child_pos hp b)]
+  cases b <;> cases c <;> simp [child, hp.1.ne', hp.2.ne']
+
+private theorem walk_congr (w : List Bool) {p q : ℕ × ℕ}
+    (hp : 0 < p.1 ∧ 0 < p.2) (hq : 0 < q.1 ∧ 0 < q.2) (h : outcome p = outcome q)
+    (hc : ∀ b, outcome (child p b) = outcome (child q b)) :
+    outcome (w.foldl child p) = outcome (w.foldl child q) := by
+  induction w generalizing p q with
+  | nil => exact h
+  | cons b w ih =>
+    apply ih (child_pos hp b) (child_pos hq b) (hc b)
+    intro c
+    apply Bool.eq_iff_iff.mpr
+    rw [grandchild_iff hp, grandchild_iff hq, hc b]
+
+end euclidPPosition_self_similar
+
+open euclidPPosition_self_similar in
+/-- **Self-similarity of the P-positions of Euclid.** Call a pair $(a, b)$ of natural numbers a
+P-position when the Euclid P-position test returns true at $(a, b)$, and read it as the vertex
+$a/b$ of the Calkin–Wilf tree, with son $a/(a+b)$ and daughter $(a+b)/b$. Let $V$ be a vertex in
+some row of the Calkin–Wilf tree that is a P-position. Then for every finite sequence $w$ of steps,
+each step going to the son or to the daughter, the vertex reached from $V$ by following $w$ is a
+P-position if and only if the vertex reached from the root $1/1$ by following $w$ is one.
+
+In other words, below every P-position the P-positions sit exactly where they sit below the root.
+
+Source: Michael A. Jones and Brittany C. Ohlinger, *Self-Similar Structure of P-Positions
+of the Game Euclid*, The Fibonacci Quarterly 62.1 (2024), Theorem 4.5. -/
+public theorem euclidPPosition_self_similar (k : ℕ) (V : ℕ × ℕ)
+    (hV : V ∈ calkinWilfRow k) (hP : euclidPPosition V.1 V.2 = true) (w : List Bool) :
+    let walk : ℕ × ℕ → ℕ × ℕ := fun p =>
+      w.foldl (fun q b => if b then (q.1 + q.2, q.2) else (q.1, q.1 + q.2)) p
+    euclidPPosition (walk V).1 (walk V).2 = euclidPPosition (walk (1, 1)).1 (walk (1, 1)).2 := by
+  have hp := row_pos hV
+  have hr : 0 < (1 : ℕ) ∧ 0 < (1 : ℕ) := by decide
+  apply walk_congr w hp hr (hP.trans euclidPPosition_small.1.symm)
+  intro b
+  apply Bool.eq_iff_iff.mpr
+  simp [child_iff hp, child_iff (p := (1, 1)) hr, outcome, hP, euclidPPosition_small.1]
+
 namespace fibonacci_arch_tops
 
 -- Each successive Fibonacci pair is the son's daughter of the preceding pair.

@@ -54,6 +54,7 @@ Topics added since this subject's fields were last revised.
 - [Coproduct Union](coproduct-union/README.md)
 - [Created Limit Functor](created-limit-functor/README.md)
 - [Descent](descent/README.md)
+- [DGQuasi Functor Models](dgquasi-functor-models/README.md)
 - [Discrete Fiber](discrete-fiber/README.md)
 - [Discrete Source Mapping](discrete-source-mapping/README.md)
 - [Elements Discrete Projection](elements-discrete-projection/README.md)
