@@ -22,3 +22,6 @@
 - [Completed Hodge Galois mul](completed-hodge-galois-mul.md)
 - [Completed Hodge Galois smul](completed-hodge-galois-smul.md)
 - [Comparison](comparison.md)
+- [Etale Galois one](etale-galois-one.md)
+- [Etale Galois mul](etale-galois-mul.md)
+- [Hodge Tate Comparison](hodge-tate-comparison.md)

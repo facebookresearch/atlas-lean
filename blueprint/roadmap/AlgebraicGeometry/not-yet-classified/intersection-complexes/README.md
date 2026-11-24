@@ -10,3 +10,7 @@
 - [Local System Perverse Realization](local-system-perverse-realization.md)
 - [Intersection Complex](intersection-complex.md)
 - [Intersection Complex restriction](intersection-complex-restriction.md)
+- [Local System Perverse Realization](local-system-perverse-realization-2.md)
+- [Intermediate Extension](intermediate-extension.md)
+- [Intermediate Extension full](intermediate-extension-full.md)
+- [Intermediate Extension unique](intermediate-extension-unique.md)

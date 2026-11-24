@@ -14,3 +14,4 @@
 - [Compact Reductions Commute](compact-reductions-commute.md)
 - [Compact Finite Limit](compact-finite-limit.md)
 - [Compact Support Limit Comparison](compact-support-limit-comparison.md)
+- [Continuous Adic Compact Supports Wanted](compact-support-limit-comparison-bijecti.md)

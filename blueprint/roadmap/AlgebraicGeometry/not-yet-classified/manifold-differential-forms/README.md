@@ -13,3 +13,4 @@
 - [D To Closed](d-to-closed.md)
 - [De Rham H2](de-rham-h2.md)
 - [Class Of Closed Two Form](class-of-closed-two-form.md)
+- [Manifold Differential Forms Wanted](integration-theory.md)

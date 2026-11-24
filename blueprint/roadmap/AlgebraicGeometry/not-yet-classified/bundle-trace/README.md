@@ -11,3 +11,4 @@
 - [Scalars On Cohomology](scalars-on-cohomology.md)
 - [Scalars On Cohomology comp trace](scalars-on-cohomology-comp-trace.md)
 - [Trace Free Cohomology](trace-free-cohomology.md)
+- [Bundle Trace Wanted](bundle-trace.md)

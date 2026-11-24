@@ -9,3 +9,4 @@
 - [Scalar Extension](scalar-extension.md)
 - [Lattice Inclusion Sheaf](lattice-inclusion-sheaf.md)
 - [Lattice Scalar Comparison](lattice-scalar-comparison.md)
+- [Continuous Adic Coefficients Wanted](lattice-scalar-comparison-is-iso.md)

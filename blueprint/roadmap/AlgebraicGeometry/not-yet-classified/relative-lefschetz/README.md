@@ -12,3 +12,5 @@
 - [Hyperplane Pullback Map](hyperplane-pullback-map.md)
 - [Hyperplane Image Map](hyperplane-image-map.md)
 - [Perverse Power Map](perverse-power-map.md)
+- [Hyperplane Comparisons](hyperplane-comparisons-2.md)
+- [Relative hard lefschetz](relative-hard-lefschetz.md)

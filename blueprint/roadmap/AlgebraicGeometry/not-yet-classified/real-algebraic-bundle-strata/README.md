@@ -9,3 +9,4 @@
 - [Bundle Iso](bundle-iso.md)
 - [Admits Stratified Algebraic Structure](admits-stratified-algebraic-structure.md)
 - [Is Algebraic Iso For](is-algebraic-iso-for.md)
+- [Real Algebraic Bundle Strata Wanted](uniform-bundle-stratification.md)

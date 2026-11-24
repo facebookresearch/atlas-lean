@@ -13,3 +13,5 @@
 - [Underlying Diagram](underlying-diagram.md)
 - [Augmented Diagram](augmented-diagram.md)
 - [Augmentation restriction](augmentation-restriction.md)
+- [Native qcqs cech](native-qcqs-cech.md)
+- [Native qcqs matching limits](native-qcqs-matching-limits.md)

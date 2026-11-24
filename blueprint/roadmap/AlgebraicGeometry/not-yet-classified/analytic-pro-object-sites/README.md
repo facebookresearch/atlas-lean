@@ -14,3 +14,5 @@
 - [Bms Topology](bms-topology.md)
 - [Represented Boundary](represented-boundary.md)
 - [Geometry Comparison](geometry-comparison.md)
+- [Represented Boundary Cover](represented-boundary-cover.md)
+- [Represented Boundary Sheaf Comparison](represented-boundary-sheaf-comparison.md)

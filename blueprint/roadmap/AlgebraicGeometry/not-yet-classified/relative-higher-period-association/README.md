@@ -6,3 +6,4 @@
 - [Higher ZRestriction](higher-zrestriction.md)
 - [Higher Nabla](higher-nabla.md)
 - [Higher Coefficient Connection Type](higher-coefficient-connection-type.md)
+- [Relative Higher Period Association Wanted](integral-restriction-exact.md)

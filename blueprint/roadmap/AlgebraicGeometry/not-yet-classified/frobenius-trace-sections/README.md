@@ -17,3 +17,4 @@
 - [Local Test Infimum is Least](local-test-infimum-is-least.md)
 - [Trace Trivializing Cover](trace-trivializing-cover.md)
 - [Test Ideal Comparison](test-ideal-comparison.md)
+- [Frobenius Trace Sections Wanted](local-test-infimum-ne-bot.md)
