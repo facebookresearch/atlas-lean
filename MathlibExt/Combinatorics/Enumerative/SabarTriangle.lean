@@ -11,10 +11,12 @@ module
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Data.Rat.Defs
+public import Mathlib.NumberTheory.Harmonic.Defs
 public import Mathlib.Order.Interval.Finset.Nat
 import MathlibExt.Combinatorics.Enumerative.FrischReciprocalBinomial
 import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Data.Nat.Choose.Cast
+import Mathlib.Data.Nat.Choose.Sum
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.LinearCombination
 
@@ -26,7 +28,8 @@ Sabar's triangle is `s(n, i) = ∑_{j=i+1}^{n} (-1)^{n-j} C(j, i)` (OEIS A341091
 INTEGERS 26 (2026), Article A27. This file defines it (`sabarNumber`), checks rows `5` and `10` of
 the source's Table 1 and a recurrence in small cases, and proves that for every `n ≥ 2`
 `(1 / (n + 1)) ∑_{i=0}^{n} C(n, i)⁻¹ = 1 + ∑_{i=0}^{n-2} (-1)^{n-i-1} s(n-1, i) / ((n-i)(n+1-i))`
-(`sum_inv_choose_succ_eq_one_add_sum_sabarNumber`).
+(`sum_inv_choose_succ_eq_one_add_sum_sabarNumber`) and the harmonic number identity
+`∑_{i=0}^{2n-2} (-1)^i s(2n-1, i) / (i+1) = H_n` (`sum_sabarNumber_div_succ_eq_harmonic`).
 
 ## Proof outline
 
@@ -39,11 +42,16 @@ of Frisch's identity `MetaMathlibExt.frisch_alternating_reciprocal_binomial`
 `1 / ((n-j)(n+1-j))` telescope to `1 - 1 / (n+1)`, and the remaining terms
 `1 / ((n+1) C(n, j+1))` for `0 ≤ j ≤ n - 1` are the left side without its term `i = 0`.
 
+For the harmonic identity, the same exchange of sums leaves an alternating binomial sum in each
+column. Binomial absorption reduces this inner sum to `(1 - (-1)^j) / (j+1)`, so the even columns
+vanish and the odd columns contribute the consecutive reciprocals of `H_n`.
+
 ## Implementation notes
 
-`sabarNumber`, `sabarNumber_rows_five_ten`, `sabarNumber_recurrence_small` and
-`sum_inv_choose_succ_eq_one_add_sum_sabarNumber` keep the full names, statements and docstrings
-they had in `WantedExt.Combinatorics.Enumerative.SabarTriangleWanted`, which imports this module.
+`sabarNumber`, `sabarNumber_rows_five_ten`, `sabarNumber_recurrence_small`,
+`sum_inv_choose_succ_eq_one_add_sum_sabarNumber` and `sum_sabarNumber_div_succ_eq_harmonic`
+keep the full names, statements and docstrings they had in
+`WantedExt.Combinatorics.Enumerative.SabarTriangleWanted`, which imports this module.
 -/
 
 namespace MetaMathlibExt
@@ -210,6 +218,84 @@ public theorem sum_inv_choose_succ_eq_one_add_sum_sabarNumber (n : ℕ) (hn : 2 
     exact Finset.sum_congr rfl fun j _ => (one_div_mul_one_div _ _).symm
   rw [Finset.sum_congr rfl hinner, Finset.sum_sub_distrib, htel, hbeta, Finset.sum_range_succ',
     Nat.choose_zero_right, Nat.cast_one, div_one]
+  ring
+
+/-- Strip the constant term from the alternating binomial sum of row `j + 1`,
+then use binomial absorption to account for the denominator `i + 1`. -/
+private theorem sum_neg_one_pow_mul_choose_div_succ (j : ℕ) :
+    ∑ i ∈ Finset.range j, (-1 : ℚ) ^ i * (j.choose i : ℚ) / ((i + 1 : ℕ) : ℚ) =
+      (1 - (-1) ^ j) / ((j + 1 : ℕ) : ℚ) := by
+  have hrow : ∑ i ∈ Finset.range (j + 1), (-1 : ℚ) ^ i * ((j + 1).choose i : ℚ) =
+      (-1 : ℚ) ^ j := by
+    exact_mod_cast (show ∑ i ∈ Finset.range (j + 1), (-1 : ℤ) ^ i * ((j + 1).choose i : ℤ) =
+      (-1 : ℤ) ^ j by simpa using Int.alternating_sum_range_choose_eq_choose (n := j) (m := j))
+  rw [Finset.sum_range_succ'] at hrow
+  simp only [pow_zero, Nat.choose_zero_right, Nat.cast_one, pow_succ, mul_neg, mul_one,
+    neg_mul, Finset.sum_neg_distrib] at hrow
+  calc
+    _ = (∑ i ∈ Finset.range j, (-1 : ℚ) ^ i * ((j + 1).choose (i + 1) : ℚ)) /
+          ((j + 1 : ℕ) : ℚ) := by
+      rw [Finset.sum_div]
+      refine Finset.sum_congr rfl fun i _ => ?_
+      simp only [mul_div_assoc]
+      congr 1
+      apply (div_eq_div_iff (by positivity) (by positivity)).2
+      exact_mod_cast (Nat.mul_comm _ _).trans (Nat.add_one_mul_choose_eq j i)
+    _ = _ := by
+      congr 1
+      linear_combination -hrow
+
+/-- **The harmonic numbers as an alternating sum of Sabar numbers.** For every natural number
+$n \ge 2$, writing $s(m, i)$ for Sabar's triangle and $H_n = \sum_{j=1}^{n} 1/j$ for the $n$-th
+harmonic number, in the rational numbers
+
+$$\sum_{i=0}^{2n-2} \frac{(-1)^i \, s(2n-1, i)}{i+1} = H_n.$$
+
+Source: Sabar Taoufik, *A New Triangle of Numbers: Properties and Observations*, INTEGERS 26
+(2026), Article A27, Theorem 3 (`integers-2026-A27-thm-3`). -/
+public theorem sum_sabarNumber_div_succ_eq_harmonic (n : ℕ) (hn : 2 ≤ n) :
+    ∑ i ∈ Finset.range (2 * n - 1), (-1 : ℚ) ^ i * sabarNumber (2 * n - 1) i / ((i + 1 : ℕ) : ℚ) =
+      harmonic n := by
+  let N := 2 * n - 1
+  change ∑ i ∈ Finset.range N, (-1 : ℚ) ^ i * sabarNumber N i / ((i + 1 : ℕ) : ℚ) = harmonic n
+  have hN : N + 1 = 2 * n := by dsimp [N]; omega
+  -- Expand Sabar's triangle and exchange the sums over `i < j ≤ N`.
+  have hexpand (i : ℕ) :
+      (-1 : ℚ) ^ i * sabarNumber N i / ((i + 1 : ℕ) : ℚ) =
+        ∑ j ∈ Finset.Ioc i N, (-1 : ℚ) ^ (N - j) *
+          ((-1 : ℚ) ^ i * (j.choose i : ℚ) / ((i + 1 : ℕ) : ℚ)) := by
+    simp only [sabarNumber]
+    push_cast
+    rw [Finset.mul_sum, Finset.sum_div]
+    refine Finset.sum_congr rfl fun j _ => ?_
+    rw [← mul_div_assoc, mul_left_comm]
+  rw [Finset.sum_congr rfl (fun i _ => hexpand i),
+    Finset.sum_comm' (t' := Finset.range (N + 1)) (s' := Finset.range) (by
+      intro i j
+      simp only [Finset.mem_range, Finset.mem_Ioc]
+      omega)]
+  simp_rw [← Finset.mul_sum, sum_neg_one_pow_mul_choose_div_succ]
+  -- Pair each even index `2*k` (zero) with the odd index `2*k+1` (the reciprocal of `k+1`).
+  have hpair (f : ℕ → ℚ) (m : ℕ) :
+      ∑ j ∈ Finset.range (2 * m), f j =
+        ∑ k ∈ Finset.range m, (f (2 * k) + f (2 * k + 1)) := by
+    induction m with
+    | zero => simp
+    | succ m ih =>
+      rw [show 2 * (m + 1) = 2 * m + 1 + 1 by omega, Finset.sum_range_succ,
+        Finset.sum_range_succ, ih, Finset.sum_range_succ, add_assoc]
+  rw [hN, hpair]
+  unfold harmonic
+  refine Finset.sum_congr rfl fun k _ => ?_
+  have heven : (-1 : ℚ) ^ (2 * k) = 1 := by rw [pow_mul]; norm_num
+  have hodd : (-1 : ℚ) ^ (2 * k + 1) = -1 := by simp [pow_succ, heven]
+  have hsign : (-1 : ℚ) ^ (N - (2 * k + 1)) = 1 := by
+    rw [show N - (2 * k + 1) = 2 * (n - (k + 1)) by omega, pow_mul]
+    norm_num
+  simp only [heven, hodd, hsign, sub_self, zero_div, mul_zero, one_mul, zero_add]
+  push_cast
+  rw [← one_div]
+  field_simp
   ring
 
 end
