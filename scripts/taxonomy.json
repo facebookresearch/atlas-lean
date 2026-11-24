@@ -12871,6 +12871,7 @@
   "MathlibExt/Probability/Diffusion/FokkerPlanckGradient": {"to": "Probability/stochastic-calculus", "title": "Fokker–Planck equation"},
   "MathlibExt/Probability/Diffusion/JKOScheme": {"to": "MeasureTheory/optimal-transport", "title": "Wasserstein gradient flows and the JKO scheme"},
   "MathlibExt/Probability/DirichletForm": {"to": "Probability/markov-chains", "title": "Dirichlet forms"},
+  "MathlibExt/Probability/DirichletForm/Brownian": {"to": "Probability/markov-chains", "title": "Dirichlet forms"},
   "MathlibExt/Probability/DirichletProcess": {"to": "Probability/bayesian-statistics", "title": "Dirichlet process"},
   "MathlibExt/Probability/Distributions/BetaBinomial": {"to": "Probability/distributions/discrete", "title": "Negative binomial and beta-binomial distributions"},
   "MathlibExt/Probability/Distributions/BetaBinomialSampleRank": {"to": "Probability/distributions/discrete", "title": "Negative binomial and beta-binomial distributions"},
