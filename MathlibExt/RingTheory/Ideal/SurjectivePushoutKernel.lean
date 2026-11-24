@@ -1,0 +1,108 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+
+-- Author: @toskua, Avocado
+module
+
+public import Mathlib.Algebra.Category.Ring.Constructions
+public import Mathlib.RingTheory.Ideal.Quotient.Operations
+public import MathlibExt.RingTheory.Localization.SurjectivePrime
+
+/-!
+# Kernels in pushouts along surjective ring homomorphisms
+
+In a pushout of commutative rings along a surjection, the kernel of the
+base-changed map is the extension of the original kernel. We also record the
+corresponding equality after localization at compatible prime ideals.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+
+open CategoryTheory CategoryTheory.Limits
+
+namespace RingHom
+
+universe u
+
+/-- In a pushout of commutative rings along a surjection, the kernel of the
+base-changed map is the extension of the original kernel. -/
+theorem ker_pushout_inl_eq_map_ker_of_surjective
+    {R A B P : Type u} [CommRing R] [CommRing A] [CommRing B] [CommRing P]
+    (f : R →+* A) (g : R →+* B) (inl : A →+* P) (inr : B →+* P)
+    (h : IsPushout (CommRingCat.ofHom f) (CommRingCat.ofHom g)
+      (CommRingCat.ofHom inl) (CommRingCat.ofHom inr))
+    (hg : Function.Surjective g) :
+    RingHom.ker inl = (RingHom.ker g).map f := by
+  apply le_antisymm
+  · let J : Ideal A := (RingHom.ker g).map f
+    let q : A →+* A ⧸ J := Ideal.Quotient.mk J
+    have hker : RingHom.ker g ≤ RingHom.ker (q.comp f) := by
+      intro r hr
+      rw [RingHom.mem_ker, RingHom.comp_apply,
+        Ideal.Quotient.eq_zero_iff_mem]
+      exact Ideal.mem_map_of_mem f hr
+    let k : B →+* A ⧸ J :=
+      (g.liftOfSurjective hg) ⟨q.comp f, hker⟩
+    have hk : k.comp g = q.comp f := by
+      exact RingHom.liftOfSurjective_comp g hg ⟨q.comp f, hker⟩
+    let c : PushoutCocone (CommRingCat.ofHom f) (CommRingCat.ofHom g) :=
+      PushoutCocone.mk (CommRingCat.ofHom q) (CommRingCat.ofHom k) (by
+        apply CommRingCat.hom_ext
+        simpa [CommRingCat.hom_comp, CommRingCat.hom_ofHom] using hk.symm)
+    let desc : CommRingCat.of P ⟶ CommRingCat.of (A ⧸ J) :=
+      h.isColimit.desc c
+    have hfac : CommRingCat.ofHom inl ≫ desc = CommRingCat.ofHom q := by
+      exact h.isColimit.fac c WalkingSpan.left
+    intro x hx
+    change x ∈ J
+    rw [← Ideal.Quotient.eq_zero_iff_mem]
+    have hfacx := ConcreteCategory.congr_hom hfac x
+    calc
+      q x = desc.hom (inl x) := hfacx.symm
+      _ = desc.hom 0 := by rw [RingHom.mem_ker.mp hx]
+      _ = 0 := map_zero desc.hom
+  · rw [Ideal.map_le_iff_le_comap]
+    intro r hr
+    rw [Ideal.mem_comap, RingHom.mem_ker]
+    have hw := ConcreteCategory.congr_hom h.w r
+    change inl (f r) = 0
+    calc
+      inl (f r) = inr (g r) := by simpa using hw
+      _ = 0 := by rw [RingHom.mem_ker.mp hr, map_zero]
+
+/-- Localizing a pushout square along compatible primes transports the
+kernel of the base-changed surjection by the induced local map. -/
+theorem ker_localRingHom_pushout_eq_map_ker_of_surjective
+    {R A B P : Type u} [CommRing R] [CommRing A] [CommRing B] [CommRing P]
+    (f : R →+* A) (g : R →+* B) (inl : A →+* P) (inr : B →+* P)
+    (h : IsPushout (CommRingCat.ofHom f) (CommRingCat.ofHom g)
+      (CommRingCat.ofHom inl) (CommRingCat.ofHom inr))
+    (hg : Function.Surjective g) (hinl : Function.Surjective inl)
+    (pB : Ideal B) [pB.IsPrime] (pP : Ideal P) [pP.IsPrime]
+    (hbase : pB.comap g = (pP.comap inl).comap f) :
+    RingHom.ker
+        (Localization.localRingHom (pP.comap inl) pP inl rfl) =
+      (RingHom.ker
+        (Localization.localRingHom (pB.comap g) pB g rfl)).map
+          (Localization.localRingHom
+            (pB.comap g) (pP.comap inl) f hbase) := by
+  rw [Localization.ker_localRingHom_eq_map_ker_of_surjective inl hinl pP]
+  rw [ker_pushout_inl_eq_map_ker_of_surjective f g inl inr h hg]
+  rw [Ideal.map_map]
+  rw [Localization.ker_localRingHom_eq_map_ker_of_surjective g hg pB]
+  rw [Ideal.map_map]
+  apply congrArg (fun psi : R →+* Localization.AtPrime (pP.comap inl) =>
+    (RingHom.ker g).map psi)
+  ext r
+  exact (Localization.localRingHom_to_map
+    (pB.comap g) (pP.comap inl) f hbase r).symm
+
+end RingHom
