@@ -39,7 +39,7 @@ with equality exactly at the equilibrium. The convergence argument is quantitati
 an appeal to LaSalle's principle:
 
 1. `V` is nonincreasing, so `V(t) ≤ V(0)`; since `V ≥ I - I* - I* log (I / I*)`, this keeps
-   `I(t) ≥ m := I* exp (-(V(0) + I*) / I*) > 0` (uniform persistence).
+   `I(t) ≥ m := I* exp (-(V(0) + I*) / I*) > 0` (persistence; `m` depends on `V(0)`).
 2. The elementary bound `x - a - a log (x / a) ≤ (x - a)² / x` gives
    `V ≤ (S - S*)² N / (S I)`, hence `V' ≤ -(β m / N) V`, and `V(t) ≤ V(0) e^{-c t}`.
 3. The bound `(x - a)² ≤ 2 M (x - a - a log (x / a))` for `0 < x, a ≤ M` gives
@@ -80,9 +80,11 @@ open scoped Topology
 
 namespace MathlibExt.Biology.Epidemiology.SIS
 
-/-- The **Goh–Volterra Lyapunov function** of the SIS endemic equilibrium
-`(S*, I*) = (N γ / β, N (1 - γ / β))`:
-`V(S, I) = (S - S* - S* log (S / S*)) + (I - I* - I* log (I / I*))`. -/
+/-- The **Goh–Volterra Lyapunov function**
+`V(S, I) = (S - S* - S* log (S / S*)) + (I - I* - I* log (I / I*))` with `S* = N γ / β` and
+`I* = N (1 - γ / β)`; for `0 < γ < β` and `N > 0`, `(S*, I*)` is the SIS endemic equilibrium.
+The intended domain is `0 < γ < β`, `N > 0`, `S, I > 0`, where `S*, I* > 0`. Other real inputs
+use `x / 0 = 0`, `log 0 = 0` and `log x = log |x|`; for example `β = 0` gives `S* = 0`, `I* = N`. -/
 noncomputable def lyapunov (β γ N S I : ℝ) : ℝ :=
   (S - N * γ / β - N * γ / β * log (S / (N * γ / β))) +
     (I - N * (1 - γ / β) - N * (1 - γ / β) * log (I / (N * (1 - γ / β))))
@@ -200,7 +202,8 @@ theorem lyapunov_nonneg (hγ : 0 < γ) (hγβ : γ < β) (hN : 0 < N) {S I : ℝ
   add_nonneg (volterra_nonneg (endemicS_pos hγ hγβ hN) hS)
     (volterra_nonneg (endemicI_pos hγ hγβ hN) hI)
 
-/-- **`V` vanishes only at the endemic equilibrium** on the positive orthant. -/
+/-- **`V` vanishes exactly at the endemic equilibrium** on the positive orthant: for
+`0 < γ < β` (`R₀ > 1`), `N > 0` and `S, I > 0`, `V(S, I) = 0` iff `(S, I) = (S*, I*)`. -/
 theorem lyapunov_eq_zero_iff (hγ : 0 < γ) (hγβ : γ < β) (hN : 0 < N) {S I : ℝ} (hS : 0 < S)
     (hI : 0 < I) : lyapunov β γ N S I = 0 ↔ S = N * γ / β ∧ I = N * (1 - γ / β) := by
   have h1 := volterra_nonneg (endemicS_pos hγ hγβ hN) hS
@@ -208,13 +211,16 @@ theorem lyapunov_eq_zero_iff (hγ : 0 < γ) (hγβ : γ < β) (hN : 0 < N) {S I 
   rw [lyapunov, add_eq_zero_iff_of_nonneg h1 h2, volterra_eq_zero_iff (endemicS_pos hγ hγβ hN) hS,
     volterra_eq_zero_iff (endemicI_pos hγ hγβ hN) hI]
 
-/-- **The Lyapunov derivative is nonpositive**: `-β (S - S*)² / S ≤ 0` for `β ≥ 0`, `S > 0`. -/
+/-- **The Lyapunov derivative is nonpositive**: `-β (S - S*)² / S ≤ 0` for `β ≥ 0`, `S > 0`,
+with `S* = N γ / β` for any real `γ`, `N`. At `β = 0` the expression is `0` (and `S* = 0` by
+`x / 0 = 0`). -/
 theorem lyapunovDeriv_nonpos (hβ : 0 ≤ β) {S : ℝ} (hS : 0 < S) :
     -(β * (S - N * γ / β) ^ 2 / S) ≤ 0 :=
   neg_nonpos.2 (div_nonneg (mul_nonneg hβ (sq_nonneg _)) hS.le)
 
-/-- **The Lyapunov derivative vanishes only at the equilibrium**: on the segment `S + I = N`
-with `S > 0` and `β > 0`, `-β (S - S*)² / S = 0` iff `(S, I) = (S*, I*)`. -/
+/-- **For `β > 0`, on the line `S + I = N` with `S > 0`, the Lyapunov derivative vanishes exactly
+at the equilibrium** (no sign condition on `I`, `γ` or `N`): `-β (S - S*)² / S = 0` iff
+`(S, I) = (S*, I*)`. -/
 theorem lyapunovDeriv_eq_zero_iff (hβ : 0 < β) {S I : ℝ} (hS : 0 < S) (hSI : S + I = N) :
     -(β * (S - N * γ / β) ^ 2 / S) = 0 ↔ S = N * γ / β ∧ I = N * (1 - γ / β) := by
   have hsum := endemic_sum (N := N) (γ := γ) hβ.ne'
@@ -289,7 +295,9 @@ variable (h : IsSolution β γ N S I) (hγ : 0 < γ) (hγβ : γ < β) (hN : 0 <
   (hS : S 0 + I 0 = N) (hS0 : 0 < S 0) (hI0 : 0 < I 0)
 include h hγ hγβ hN hS hS0 hI0
 
-/-- **`V` is nonincreasing along solutions**: `V(S(t), I(t)) ≤ V(S(0), I(0))` for `t ≥ 0`. -/
+/-- **`V` never exceeds its initial value along solutions from the open segment**: for
+`0 < γ < β`, `N > 0` and a solution with `S(0) + I(0) = N`, `S(0) > 0`, `I(0) > 0`,
+`V(S(t), I(t)) ≤ V(S(0), I(0))` for `t ≥ 0`. -/
 theorem lyapunov_le_initial {t : ℝ} (ht : 0 ≤ t) :
     lyapunov β γ N (S t) (I t) ≤ lyapunov β γ N (S 0) (I 0) :=
   le_of_hasDerivAt_nonpos (f := fun s => lyapunov β γ N (S s) (I s))
@@ -299,8 +307,9 @@ theorem lyapunov_le_initial {t : ℝ} (ht : 0 ≤ t) :
     (fun _ hs => lyapunovDeriv_nonpos (hγ.trans hγβ).le
       (h.pos_of_pos (hγ.trans hγβ).le hγ.le hN hS hS0 hI0 hs).1) ht
 
-/-- **Uniform persistence.** Along a solution in the open segment, the infectives stay above
-`m = I* exp (-(V(0) + I*) / I*) > 0` for all `t ≥ 0`. -/
+/-- **Persistence with an explicit bound.** For `0 < γ < β` (`R₀ > 1`) and `N > 0`, along a
+solution in the open segment (`S(0) + I(0) = N`, `S(0), I(0) > 0`) the infectives satisfy
+`I(t) ≥ m = I* exp (-(V(0) + I*) / I*) > 0` for all `t ≥ 0`; `m` depends on `V(0)`. -/
 theorem persistence {t : ℝ} (ht : 0 ≤ t) :
     N * (1 - γ / β) *
         exp (-(lyapunov β γ N (S 0) (I 0) + N * (1 - γ / β)) / (N * (1 - γ / β))) ≤ I t := by
@@ -317,9 +326,10 @@ theorem persistence {t : ℝ} (ht : 0 ≤ t) :
   rw [le_div_iff₀ ha] at this
   linarith
 
-/-- **Exponential decay of the Lyapunov function.** There is `c > 0` with
-`V(S(t), I(t)) ≤ V(S(0), I(0)) e^{-c t}` for all `t ≥ 0` (take `c = β m / N`, `m` the
-persistence bound). -/
+/-- **For `R₀ > 1`, exponential decay of the Lyapunov function along solutions from the open
+segment.** For `0 < γ < β`, `N > 0` and a solution with `S(0) + I(0) = N`, `S(0), I(0) > 0`, there
+is `c > 0` with `V(S(t), I(t)) ≤ V(S(0), I(0)) e^{-c t}` for all `t ≥ 0` (take `c = β m / N`, `m`
+the persistence bound). -/
 theorem exists_lyapunov_le_exp :
     ∃ c > 0, ∀ t, 0 ≤ t →
       lyapunov β γ N (S t) (I t) ≤ lyapunov β γ N (S 0) (I 0) * exp (-(c * t)) := by
@@ -378,9 +388,10 @@ private theorem sq_sub_le_lyapunov {t : ℝ} (ht : 0 ≤ t) :
   unfold lyapunov
   nlinarith
 
-/-- **Global attractivity via the Lyapunov function.** If `γ > 0` and `R₀ = β / γ > 1`, every
-solution of the SIS model starting in the open segment `{S + I = N, S > 0, I > 0}` of the
-positive orthant converges to the endemic equilibrium `(S*, I*) = (N γ / β, N (1 - γ / β))`. -/
+/-- **For `R₀ > 1`, interior solutions converge to the endemic equilibrium** (via the Lyapunov
+function). If `γ > 0` and `R₀ = β / γ > 1`, every solution of the SIS model starting in the open
+segment `{S + I = N, S > 0, I > 0}` of the positive orthant converges to the endemic equilibrium
+`(S*, I*) = (N γ / β, N (1 - γ / β))`. -/
 theorem tendsto_endemic_of_lyapunov :
     Tendsto (fun t => (S t, I t)) atTop (𝓝 (N * γ / β, N * (1 - γ / β))) := by
   obtain ⟨c, hc, hdec⟩ := h.exists_lyapunov_le_exp hγ hγβ hN hS hS0 hI0
@@ -416,8 +427,9 @@ variable {β γ N : ℝ}
 
 /-- **Lyapunov stability of the endemic equilibrium.** For `γ > 0`, `R₀ = β / γ > 1` and
 `N > 0`: for every `ε > 0` there is `δ > 0` such that every solution starting in the open
-segment `{S + I = N, S > 0, I > 0}` within distance `δ` of `(S*, I*)` (in `ℝ × ℝ`) stays within
-distance `ε` of it for all `t ≥ 0`. -/
+segment `{S + I = N, S > 0, I > 0}` within distance `δ` of `(S*, I*)` stays within distance `ε`
+of it for all `t ≥ 0`. The distance is the maximum distance of `ℝ × ℝ`,
+`max (|S - S*|, |I - I*|)`, and `δ` does not depend on the solution. -/
 theorem endemic_lyapunovStable (hγ : 0 < γ) (hR₀ : 1 < β / γ) (hN : 0 < N) :
     ∀ ε > 0, ∃ δ > 0, ∀ S I : ℝ → ℝ, IsSolution β γ N S I → S 0 + I 0 = N → 0 < S 0 →
       0 < I 0 → dist (S 0, I 0) (N * γ / β, N * (1 - γ / β)) < δ →
@@ -474,11 +486,12 @@ theorem endemic_lyapunovStable (hγ : 0 < γ) (hR₀ : 1 < β / γ) (hN : 0 < N)
   rw [Prod.dist_eq, Real.dist_eq, Real.dist_eq, max_lt_iff]
   exact ⟨hSt, hIt⟩
 
-/-- **Global asymptotic stability of the SIS endemic equilibrium.** If `γ > 0`,
-`R₀ = β / γ > 1` and `N > 0`, the endemic equilibrium `(S*, I*) = (N γ / β, N (1 - γ / β))` is
-Lyapunov stable and attracts every solution starting in the open segment
+/-- **Global asymptotic stability of the SIS endemic equilibrium on the open segment.** If
+`γ > 0`, `R₀ = β / γ > 1` and `N > 0`, the endemic equilibrium `(S*, I*) = (N γ / β, N (1 - γ / β))`
+is Lyapunov stable and attracts every solution starting in the open segment
 `{S + I = N, S > 0, I > 0}` of the positive orthant; both facts are proved from the
-Goh–Volterra function `lyapunov`. -/
+Goh–Volterra function `lyapunov`. Stability is for the maximum distance of `ℝ × ℝ` and for
+solutions starting in the open segment. -/
 theorem endemic_globallyAsymptoticallyStable (hγ : 0 < γ) (hR₀ : 1 < β / γ) (hN : 0 < N) :
     (∀ ε > 0, ∃ δ > 0, ∀ S I : ℝ → ℝ, IsSolution β γ N S I → S 0 + I 0 = N → 0 < S 0 →
       0 < I 0 → dist (S 0, I 0) (N * γ / β, N * (1 - γ / β)) < δ →

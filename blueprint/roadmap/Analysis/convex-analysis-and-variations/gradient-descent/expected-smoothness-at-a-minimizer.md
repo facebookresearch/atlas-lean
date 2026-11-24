@@ -31,6 +31,10 @@ include convexity or strong quasi-convexity as part of the condition.
 - [Weighted finite-sum objective](weighted-finite-sum-objective.md)
 - [Expected value of a random variable](../../../Probability/foundations/laws-of-random-variables-and-identical-distribut/expectation/expectation-random-variable.md)
 
+## Proof depends on
+
+None beyond the statement prerequisites; this page is a definition.
+
 ## Sources
 
 - R. M. Gower, N. Loizou, X. Qian, A. Sailanbayev, E. Shulgin, and

@@ -15,6 +15,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.NumberTheory.Padics.PadicNumbers
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 public import Mathlib.RingTheory.Binomial
+public import MathlibExt.NumberTheory.AlternatingChooseSums
 public import MathlibExt.NumberTheory.HigherOrderHarmonic
 public import MathlibExt.NumberTheory.WolstenholmeBinomialExtension
 
@@ -183,34 +184,6 @@ public theorem_wanted norm_sub_taylor_le_zpow_valuation {p : ℕ} [Fact p.Prime]
       (h = 0 → R = 0)
 
 /-! ### The general congruence for `binom(np, kp)` -/
-
-/-- **Alternating binomial sum identities.** For an integer $x$ and a natural number $r$ write
-$\binom{x}{r} = x(x-1)\cdots(x-r+1)/r!$ for the generalized binomial coefficient. Let $m$, $n$
-and $k$ be natural numbers. Then for every natural number $j \le m$,
-$$\sum_{s=j}^{m} (-1)^{s-j} \binom{n}{s} \binom{s}{j} = (-1)^{m-j} \binom{n}{j} \binom{n-j-1}{m-j}
-= \binom{n}{j} \binom{m-n}{m-j},$$
-and
-$$\sum_{j=0}^{m} (-1)^{m-j} \binom{n}{j} \binom{n-j-1}{m-j} \binom{n-j}{k} =
-\binom{n}{k} \binom{m-k}{m},$$
-$$\sum_{j=0}^{\min(m, k)} (-1)^{m-j} \binom{n}{j} \binom{n-j-1}{m-j} \binom{n-j}{k-j} =
-\binom{n}{k} \binom{k+m-n}{m}.$$
-
-Source: Walid Kehila, *An Extension of Wolstenholme's Theorem by Binomial
-Coefficients*, INTEGERS 26 (2026), Article A32, Lemma 3
-(`integers-2026-A32-lem-3`). -/
-public theorem_wanted alternating_choose_sum_identities (m n k : ℕ) :
-    let C : ℤ → ℕ → ℤ := fun x r => Ring.choose x r
-    (∀ j ≤ m, ∑ s ∈ Finset.Icc j m, (-1 : ℤ) ^ (s - j) * C n s * C s j =
-          (-1) ^ (m - j) * C n j * C ((n : ℤ) - j - 1) (m - j) ∧
-        (-1 : ℤ) ^ (m - j) * C n j * C ((n : ℤ) - j - 1) (m - j) =
-          C n j * C ((m : ℤ) - n) (m - j)) ∧
-      ∑ j ∈ Finset.range (m + 1),
-          (-1 : ℤ) ^ (m - j) * C n j * C ((n : ℤ) - j - 1) (m - j) * C ((n : ℤ) - j) k =
-        C n k * C ((m : ℤ) - k) m ∧
-      ∑ j ∈ Finset.range (m + 1),
-          (-1 : ℤ) ^ (m - j) * C n j * C ((n : ℤ) - j - 1) (m - j) *
-            (if j ≤ k then C ((n : ℤ) - j) (k - j) else 0) =
-        C n k * C ((k : ℤ) + m - n) m
 
 /-- **The general congruence for $\binom{np}{kp}$.** Let $p$ be a prime, let $m$ and $k$ be
 natural numbers with $m + 1 < p$, and let $n$ be an integer. For an integer $x$ and a natural

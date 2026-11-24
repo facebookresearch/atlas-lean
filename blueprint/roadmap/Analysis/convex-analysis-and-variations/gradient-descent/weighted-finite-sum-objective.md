@@ -9,6 +9,14 @@ f_v(x)=\frac{1}{n}\sum_{i=1}^n v_i f_i(x),
 \qquad f(x)=\frac{1}{n}\sum_{i=1}^n f_i(x).
 $$
 
+## Depends on
+
+No prerequisites beyond the finite family of real-valued functions and weights specified above.
+
+## Proof depends on
+
+None; this page is a definition.
+
 ## Sources
 
 - R. M. Gower, N. Loizou, X. Qian, A. Sailanbayev, E. Shulgin, and

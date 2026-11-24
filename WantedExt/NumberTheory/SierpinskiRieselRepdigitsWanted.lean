@@ -14,7 +14,7 @@ public import Mathlib.GroupTheory.OrderOfElement
 public import Mathlib.Algebra.GCDMonoid.Finset
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import MathlibExt.NumberTheory.PrimitiveDivisor
-public import MathlibExt.NumberTheory.SierpinskiRieselRepdigits
+public import MathlibExt.NumberTheory.RieselRepdigit101
 
 /-!
 # Further results on Sierpiński and Riesel repdigits, repintegers and repstrings
@@ -110,17 +110,6 @@ Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, Theorem 3.9
 (`integers-2026-A12-thm-3-9`). -/
 public theorem_wanted isSierpinskiNumber_repstring_41 {b t : ℕ} (hb : b ≡ 87 [MOD 11184810])
     (ht : t ≡ 59 [MOD 120]) : IsSierpinskiNumber (repstring b 41 0 t)
-
-/-- **Riesel repdigits with digit $101$ in bases $b \equiv 180 \pmod{11184810}$.** Let $b$ and $t$
-be natural numbers with $b \equiv 180 \pmod{11184810}$ and $t \equiv 171 \pmod{240}$. Then the
-$b$-repinteger $101_b^{(t)}$, which is the repdigit $101\,(b^t - 1)/(b - 1)$ because $101 < b$, is
-a Riesel number.
-
-Source: Bispels, Cohen, Harrington, Lowrance, Pontes, Schaumann and Wong, *On Sierpiński and
-Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, Theorem 3.10
-(`integers-2026-A12-thm-3-10`). -/
-public theorem_wanted isRieselNumber_repstring_101 {b t : ℕ} (hb : b ≡ 180 [MOD 11184810])
-    (ht : t ≡ 171 [MOD 240]) : IsRieselNumber (repstring b 101 0 t)
 
 /-- **Infinitely many Sierpiński repunits from primitive divisors of $2^{2^j} - 1$.** Let $\tau$
 be a natural number. For $1 \le j \le \tau$ let $p_j$ be a primitive prime divisor of

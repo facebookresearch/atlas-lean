@@ -39,7 +39,6 @@ theorem for linear systems, and records the Rashevskii–Chow theorem and Brocke
 stabilisation for nonlinear ones.
 
 - [Real functions and calculus](real-functions/README.md)
-- [Differential calculus in normed spaces](calculus-in-normed-spaces/README.md)
 - [Inequalities](inequalities/README.md)
 - [Sequences, series and summability](sequences-and-series/README.md)
 - [Asymptotic analysis](asymptotic-analysis/README.md)
@@ -61,3 +60,5 @@ stabilisation for nonlinear ones.
 - [Fixed-point theory](fixed-point-theory/README.md)
 - [Numerical analysis](numerical-analysis/README.md)
 - [Approximation theory](approximation-theory/README.md)
+- [Not yet classified](not-yet-classified/README.md)
+- [Differential calculus in normed spaces](calculus-in-normed-spaces/README.md)

@@ -77,18 +77,6 @@ public theorem_wanted oddProductBlock_congr_initial_segment
         (2 ^ (m - 1 - d))
 
 /--
-**Odd parts biject the upper dyadic half onto the odd numbers below a power of two.**
-For every natural number $e \ge 1$, the map sending each natural number to its odd part restricts
-to a bijection from $I_e = \{i \in \mathbb{N} : 2^{e-1} < i \le 2^e\}$ onto the set $S_e$ of odd
-natural numbers $i$ with $1 \le i < 2^e$.
-
-Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
-Sequences 29 (2026), Article 26.3.1, Lemma 5.
--/
-public theorem_wanted oddPart_bijOn_upperHalf_oddSet (e : ℕ) (he : 1 ≤ e) :
-    Set.BijOn oddPart (↑(dyadicUpperHalf e) : Set ℕ) (↑(oddBelowTwoPow e) : Set ℕ)
-
-/--
 **Odd parts of consecutive dyadic factorials agree modulo a power of two.** For every natural
 number $e \ge 3$, $\mathrm{od}((2^{e-1})!) \equiv \mathrm{od}((2^e)!) \pmod{2^e}$, where
 $\mathrm{od}(n)$ denotes the odd part of $n$.
