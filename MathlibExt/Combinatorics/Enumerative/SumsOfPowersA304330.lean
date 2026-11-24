@@ -12,9 +12,11 @@ public import Mathlib.Algebra.BigOperators.Intervals
 public import Mathlib.Algebra.Order.Field.Rat
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Data.Nat.Choose.Basic
+public import MathlibExt.Combinatorics.Enumerative.JacobiStirlingFirstKind
 import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Algebra.Group.ForwardDiff
 import Mathlib.Algebra.Ring.GeomSum
+import Mathlib.Data.Nat.Choose.Cast
 import Mathlib.Data.Nat.Choose.Multinomial
 import Mathlib.RingTheory.PowerSeries.Exp
 import Mathlib.Tactic.FieldSimp
@@ -33,6 +35,16 @@ Cereceda's closed form for the array in Corollary 6 comes from exponential gener
 functions: the coefficient of `X ^ (2k)` in `(exp X + exp (-X) - 2) ^ m` is
 `2 R(k, m) / (2k)!`, and the multinomial theorem expands the same power of the truncation
 `∑_{r=1}^{k} X ^ (2r) / (2r)!` of `cosh X - 1`.
+
+The recurrence for the normalized array `arrayU` and the signed Jacobi–Stirling recurrence
+give the inverse sequence transformations in Cereceda's Lemma 5.
+
+The odd power-sum formula follows by extracting coefficients from the finite geometric
+sum in `exp (2X)`, expanded in powers of `exp X + exp (-X) - 2` after factoring out
+`exp (nX)`.
+
+The even power-sum formula in Theorem 1 follows by centering the geometric sum at zero
+and taking its coefficient of degree `2k`. Opposite exponents contribute equally.
 -/
 
 public section
@@ -382,5 +394,416 @@ theorem arrayR_eq_closedForm (k m : ℕ) (hm1 : 1 ≤ m)
       Finset.prod_ne_zero_iff.mpr fun r _ ↦ by positivity
     rw [← hprod, ← hmult', (eq_div_iff two_ne_zero).mpr hpow]
     field_simp
+
+/-- **The array $U(k, m)$.** For natural numbers $k$ and $m$, $U(k, m)$ is the rational number
+$\frac{2}{(2m)!} \sum_{j=0}^{m} (-1)^j \binom{2m}{j} (m - j)^{2k}$. -/
+@[expose] def arrayU (k m : ℕ) : ℚ :=
+  (2 / (Nat.factorial (2 * m) : ℚ)) *
+    ∑ j ∈ Finset.range (m + 1),
+      (-1 : ℚ) ^ j * (Nat.choose (2 * m) j : ℚ) * ((m : ℚ) - j) ^ (2 * k)
+
+section Inversion
+
+open MetaMathlibExt
+
+private theorem arrayU_eq_scaled_arrayR (k m : ℕ) :
+    arrayU k m = (2 / ((2 * m).factorial : ℚ)) * (arrayR k m : ℚ) := by
+  simp [arrayU, arrayR]
+
+private theorem arrayU_succ (k m : ℕ) :
+    arrayU (k + 1) (m + 1) = arrayU k m + ((m : ℚ) + 1) ^ 2 * arrayU k (m + 1) := by
+  have h := congrArg (Int.cast : ℤ → ℚ) (arrayR_succ_sub k m)
+  push_cast at h
+  simp only [arrayU_eq_scaled_arrayR, show 2 * (m + 1) = 2 * m + 1 + 1 by omega,
+    Nat.factorial_succ, Nat.cast_mul, Nat.cast_add, Nat.cast_one, Nat.cast_ofNat]
+  field_simp
+  linear_combination h
+
+private noncomputable abbrev firstEntry (k m : ℕ) : ℝ := jacobiStirlingFirst k m (0 : ℤ)
+private abbrev secondEntry (k m : ℕ) : ℝ := arrayU k m
+
+private noncomputable def transform (c : ℕ → ℕ → ℝ) (b : ℕ → ℝ) (k : ℕ) : ℝ :=
+  ∑ m ∈ Finset.Icc 1 k, c k m * b m
+
+-- A two-term row recurrence shifts the argument of the sequence transform.
+private theorem transform_step (c : ℕ → ℕ → ℝ) (b w : ℕ → ℝ) (k : ℕ)
+    (hzero : c k 0 = 0) (htop : c k (k + 1) = 0)
+    (hrec : ∀ m, c (k + 1) (m + 1) = c k m + w (m + 1) * c k (m + 1)) :
+    transform c b (k + 1) = transform c (fun m ↦ b (m + 1) + w m * b m) k := by
+  simp only [transform, ← Finset.Ico_add_one_right_eq_Icc, Finset.sum_Ico_eq_sum_range,
+    Nat.add_sub_cancel, Nat.add_comm 1, hrec, add_mul, mul_add, Finset.sum_add_distrib]
+  rw [Finset.sum_range_succ' (fun m ↦ c k m * b (m + 1)),
+    Finset.sum_range_succ (fun m ↦ w (m + 1) * c k (m + 1) * b (m + 1))]
+  simp only [hzero, htop, zero_mul, mul_zero, add_zero]
+  congr 1
+  exact Finset.sum_congr rfl fun m _ ↦ by ring
+
+private theorem firstTransform_succ (b : ℕ → ℝ) (k : ℕ) (hk : 1 ≤ k) :
+    transform firstEntry b (k + 1) =
+      transform firstEntry (fun m ↦ b (m + 1)) k - (k : ℝ) ^ 2 * transform firstEntry b k := by
+  have hzero : firstEntry k 0 = 0 := by
+    obtain ⟨j, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : k ≠ 0)
+    simp [firstEntry, jacobiStirlingFirst, jacobiStirlingFirstPoly, Finset.prod_range_succ',
+      Polynomial.mul_coeff_zero]
+  rw [transform_step firstEntry b (fun _ ↦ -(k : ℝ) ^ 2) k hzero
+    (jacobiStirlingFirst_support k (k + 1) _ (Nat.lt_succ_self k)) (by
+    intro m
+    simp only [firstEntry, jacobiStirlingFirst_recurrence]
+    ring)]
+  simp only [transform, Finset.mul_sum, ← Finset.sum_sub_distrib]
+  exact Finset.sum_congr rfl fun m _ ↦ by ring
+
+private theorem secondTransform_succ (a : ℕ → ℝ) (k : ℕ) (hk : 1 ≤ k) :
+    transform secondEntry a (k + 1) =
+      transform secondEntry (fun m ↦ a (m + 1) + (m : ℝ) ^ 2 * a m) k := by
+  apply transform_step
+  · simp [secondEntry, arrayU, zero_pow (by omega : 2 * k ≠ 0)]
+  · simp [secondEntry, arrayU_eq_scaled_arrayR, arrayR_eq_zero_of_lt hk (Nat.lt_succ_self k)]
+  · intro m
+    simp [secondEntry, arrayU_succ, sq]
+
+-- Composing the transforms cancels the square weight at each step.
+private theorem first_second_cancel (a : ℕ → ℝ) (k : ℕ) (hk : 1 ≤ k) :
+    transform firstEntry (transform secondEntry a) k = a k := by
+  induction k, hk using Nat.le_induction generalizing a with
+  | base =>
+    simp [transform, firstEntry, secondEntry, jacobiStirlingFirst_diagonal,
+      show arrayU 1 1 = 1 by norm_num [arrayU, Finset.sum_range_succ, Nat.factorial]]
+  | succ k hk ih =>
+    rw [firstTransform_succ _ k hk, ih]
+    let shifted (m : ℕ) := a (m + 1) + (m : ℝ) ^ 2 * a m
+    have hshift : transform firstEntry (fun m ↦ transform secondEntry a (m + 1)) k =
+        transform firstEntry (transform secondEntry shifted) k :=
+      Finset.sum_congr rfl fun m hm ↦
+        congrArg (firstEntry k m * ·) (secondTransform_succ a m (Finset.mem_Icc.mp hm).1)
+    rw [hshift, ih]
+    dsimp only [shifted]
+    ring
+
+/-- **Inversion formula for the arrays $u(k, m)$ and $U(k, m)$ (Butzer et al.).** For natural
+numbers $k$ and $m$, let $u(k, m)$ be the first-kind Jacobi–Stirling number $J(k, m; 0)$, the
+coefficient of $x^m$ in $\prod_{i=0}^{k-1} (x - i^2)$, and let
+$U(k, m) = \frac{2}{(2m)!} \sum_{j=0}^{m} (-1)^j \binom{2m}{j} (m - j)^{2k}$. For all sequences
+$(a_k)_{k \ge 0}$ and $(b_k)_{k \ge 0}$ of real numbers, $a_k = \sum_{m=1}^{k} u(k, m)\, b_m$
+holds for every $k \ge 1$ if and only if $b_k = \sum_{m=1}^{k} U(k, m)\, a_m$ holds for every
+$k \ge 1$.
+
+Source: José L. Cereceda, "Sums of Powers of Integers and the
+Sequence A304330", Lemma 5. -/
+theorem inversion_uU (a b : ℕ → ℝ) :
+    (∀ k : ℕ, 1 ≤ k → a k =
+      ∑ m ∈ Finset.Icc 1 k, (MetaMathlibExt.jacobiStirlingFirst k m (0 : ℤ) : ℝ) * b m) ↔
+    (∀ k : ℕ, 1 ≤ k → b k =
+      ∑ m ∈ Finset.Icc 1 k, (arrayU k m : ℝ) * a m) := by
+  change (∀ k, 1 ≤ k → a k = transform firstEntry b k) ↔
+    (∀ k, 1 ≤ k → b k = transform secondEntry a k)
+  constructor
+  · intro h k hk
+    -- The unit diagonal determines each new term from the terms already recovered.
+    induction k using Nat.strong_induction_on with
+    | ind k ih =>
+      obtain ⟨r, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : k ≠ 0)
+      have eq := (h _ hk).symm.trans (first_second_cancel a _ hk).symm
+      have split (c : ℕ → ℝ) : transform firstEntry c (r + 1) =
+          (∑ m ∈ Finset.Icc 1 r, firstEntry (r + 1) m * c m) + c (r + 1) := by
+        simp [transform, Finset.sum_Icc_succ_top hk, firstEntry, jacobiStirlingFirst_diagonal]
+      have lower : (∑ m ∈ Finset.Icc 1 r, firstEntry (r + 1) m * b m) =
+          ∑ m ∈ Finset.Icc 1 r, firstEntry (r + 1) m * transform secondEntry a m :=
+        Finset.sum_congr rfl fun m hm ↦ by
+          obtain ⟨hm₁, hm₂⟩ := Finset.mem_Icc.mp hm
+          rw [ih m (by omega) hm₁]
+      rw [split, split, lower] at eq
+      exact add_left_cancel eq
+  · intro h k hk
+    rw [← first_second_cancel a k hk]
+    exact Finset.sum_congr rfl fun m hm ↦ by rw [h m (Finset.mem_Icc.mp hm).1]
+
+end Inversion
+
+/-- **Power sums.** For natural numbers $k$ and $n$, the power sum $S_k(n)$ is the rational
+number $\sum_{i=1}^{n} i^k = 1^k + 2^k + \cdots + n^k$, which is $0$ when $n = 0$. -/
+@[expose] def powerSum (k n : ℕ) : ℚ :=
+  ∑ i ∈ Finset.Icc 1 n, (i : ℚ) ^ k
+
+/-- **The polynomials $Q_{k,m}$ of Theorem 10.** For natural numbers $k$, $m$ and $n$, write
+$R(a, b) = \sum_{i=0}^{b} (-1)^i \binom{2b}{i} (b - i)^{2a}$ for the array of OEIS A304330.
+The rational number $Q_{k,m}(n)$ is $n^{2k-1}$ if $m = 1$, and otherwise
+$$Q_{k,m}(n) = 2 \sum_{j=m}^{k} \binom{2k-1}{2j-2} R(j-1, m-1) \, n^{2k-2j+1}.$$
+
+Differences of natural numbers such as $2k - 1$ and $m - 1$ are truncated at $0$. -/
+@[expose] def thmQ (k m n : ℕ) : ℚ :=
+  if m = 1 then (n : ℚ) ^ (2 * k - 1)
+  else 2 * ∑ j ∈ Finset.Icc m k,
+    (Nat.choose (2 * k - 1) (2 * j - 2) : ℚ) *
+      (arrayR (j - 1) (m - 1) : ℚ) * (n : ℚ) ^ (2 * k - 2 * j + 1)
+
+section OddPowerSums
+
+open PowerSeries Finset
+
+private def binomialSum {A : Type*} [CommRing A] (d : A) (n : ℕ) : A :=
+  ∑ m ∈ range (n + 1), ((n + m + 1).choose (2 * m + 1) : A) * d ^ m
+
+-- Two applications of Pascal's identity give the recurrence in the endpoint n.
+private theorem binomialSum_recurrence {A : Type*} [CommRing A] (d : A) (n : ℕ) :
+    binomialSum d (n + 2) + binomialSum d n = (d + 2) * binomialSum d (n + 1) := by
+  let c (i m : ℕ) : A := (i + m + 1).choose (2 * m + 1)
+  have pad (i b : ℕ) (hi : i < b) :
+      ∑ m ∈ range (b + 1), c i m * d ^ m = ∑ m ∈ range b, c i m * d ^ m := by
+    rw [sum_range_succ]
+    simp [c, Nat.choose_eq_zero_of_lt (show i + b + 1 < 2 * b + 1 by omega)]
+  have row (m : ℕ) : c (n + 2) (m + 1) + c n (m + 1) =
+      2 * c (n + 1) (m + 1) + c (n + 1) m := by
+    dsimp only [c]
+    set a := n + m + 2
+    set b := 2 * m + 1
+    have h := Nat.choose_succ_succ' (a + 1) (b + 1)
+    have h' := Nat.choose_succ_succ' a b
+    have h'' := Nat.choose_succ_succ' a (b + 1)
+    have hr : (a + 2).choose (b + 2) + a.choose (b + 2) =
+        2 * (a + 1).choose (b + 2) + a.choose b := by
+      grind only
+    have hc := congrArg (Nat.cast : ℕ → A) hr
+    push_cast at hc
+    simpa only [a, b, Nat.mul_add, Nat.mul_one, Nat.add_assoc, Nat.add_left_comm,
+      Nat.add_comm, Nat.reduceAdd] using hc
+  change (∑ m ∈ range (n + 3), c (n + 2) m * d ^ m) +
+    (∑ m ∈ range (n + 1), c n m * d ^ m) =
+    (d + 2) * ∑ m ∈ range (n + 2), c (n + 1) m * d ^ m
+  rw [add_mul, mul_sum, ← pad n (n + 1) (by omega), ← pad n (n + 2) (by omega),
+    ← pad (n + 1) (n + 2) (by omega)]
+  -- Remove the constant terms to align the columns shifted by multiplication by d.
+  rw [sum_range_succ' (fun m ↦ c (n + 2) m * d ^ m),
+    sum_range_succ' (fun m ↦ c n m * d ^ m),
+    sum_range_succ' (fun m ↦ c (n + 1) m * d ^ m), mul_add, mul_sum]
+  have hsum := sum_congr (s₁ := range (n + 2)) rfl fun m _ ↦
+    congrArg (· * d ^ (m + 1)) (row m)
+  simp only [add_mul, sum_add_distrib] at hsum
+  simp only [pow_zero, mul_one]
+  have hzero (i : ℕ) : c i 0 = (i : A) + 1 := by simp [c]
+  simp_rw [hzero]
+  push_cast
+  simp_rw [pow_succ d] at hsum ⊢
+  simp only [mul_comm, mul_left_comm, mul_assoc] at hsum ⊢
+  linear_combination hsum
+
+-- The geometric sum at z², centered by zⁿ, is a polynomial in z + z⁻¹ - 2.
+private theorem geomSum_eq_binomialSum {A : Type*} [CommRing A] (z w : A) (hw : z * w = 1)
+    (n : ℕ) : ∑ i ∈ range (n + 1), (z ^ 2) ^ i =
+      z ^ n * binomialSum (z + w - 2) n := by
+  let d := z + w - 2
+  have hd : z * (d + 2) = 1 + z ^ 2 := by dsimp [d]; linear_combination hw
+  change _ = z ^ n * binomialSum d n
+  induction n using Nat.twoStepInduction with
+  | zero => simp [binomialSum]
+  | one =>
+    simp [binomialSum, sum_range_succ, Nat.choose] at *
+    linear_combination -hd
+  | more n ih₀ ih₁ =>
+    have hg : (∑ i ∈ range (n + 3), (z ^ 2) ^ i) =
+        (1 + z ^ 2) * (∑ i ∈ range (n + 2), (z ^ 2) ^ i) -
+          z ^ 2 * ∑ i ∈ range (n + 1), (z ^ 2) ^ i := by
+      rw [sum_range_succ _ (n + 2), sum_range_succ _ (n + 1), pow_succ _ (n + 1)]
+      ring
+    rw [hg, ih₀, ih₁, ← hd]
+    simp only [pow_succ z]
+    linear_combination -(z ^ n * z ^ 2) * binomialSum_recurrence d n
+
+private noncomputable abbrev centeredExp : ℚ⟦X⟧ := exp ℚ + rescale (-1) (exp ℚ) - 2
+
+-- The nonzero coefficients of the m-th power have even degree at least 2m.
+private theorem centeredExp_support (m r : ℕ) (hm : 0 < m)
+    (hr : coeff r (centeredExp ^ m) ≠ 0) : ∃ j, r = 2 * j ∧ m ≤ j := by
+  rcases Nat.even_or_odd' r with ⟨j, rfl | rfl⟩
+  · refine ⟨j, rfl, ?_⟩
+    by_contra! hj
+    cases j with
+    | zero =>
+      have hc : constantCoeff centeredExp = 0 := by
+        rw [← coeff_zero_eq_constantCoeff_apply]
+        simp only [centeredExp, map_sub, map_add, coeff_rescale, pow_zero, one_mul, coeff_exp]
+        norm_num [map_ofNat]
+      exact hr (by simp [coeff_zero_eq_constantCoeff, hc, hm.ne'])
+    | succ j =>
+      exact hr (by rw [coeff_pow_exp_add_rescale_neg_one_sub_two (by omega) m,
+        arrayR_eq_zero_of_lt (by omega) hj]; simp)
+  · have hs : rescale (-1 : ℚ) centeredExp = centeredExp := by
+      simp [centeredExp, rescale_rescale, map_ofNat, add_comm]
+    have h := congrArg (coeff (2 * j + 1)) (congrArg (· ^ m) hs)
+    rw [← map_pow, coeff_rescale, pow_succ, pow_mul, neg_one_sq, one_pow] at h
+    exact (hr (by linarith)).elim
+
+-- Extract the odd coefficient after translating the centered exponential by n.
+private theorem factorial_mul_coeff_centeredExp (k m n : ℕ) (hk : 1 ≤ k) :
+    ((2 * k - 1).factorial : ℚ) * coeff (2 * k - 1) (centeredExp ^ m * exp ℚ ^ n) =
+      thmQ k (m + 1) n := by
+  rw [exp_pow_eq_rescale_exp]
+  rcases Nat.eq_zero_or_pos m with rfl | hm
+  · simp [thmQ, coeff_exp, Algebra.algebraMap_self]
+    field_simp
+  rw [thmQ, ite_eq_right (by omega), coeff_mul, Nat.sum_antidiagonal_eq_sum_range_succ_mk]
+  simp only [mul_sum, Nat.add_sub_cancel]
+  symm
+  apply sum_of_injOn (fun j ↦ 2 * j - 2)
+  · intro i hi j hj hij
+    simp only [SetLike.mem_coe, mem_Icc] at hi hj
+    dsimp only at hij
+    omega
+  · intro j hj
+    simp only [SetLike.mem_coe, mem_Icc, mem_range] at hj ⊢
+    omega
+  · intro r hr hmiss
+    suffices coeff r (centeredExp ^ m) = 0 by simp [this]
+    by_contra h
+    obtain ⟨j, rfl, hj⟩ := centeredExp_support m r hm h
+    apply hmiss
+    have hr' := mem_range.mp hr
+    refine ⟨j + 1, mem_Icc.mpr ⟨by omega, by omega⟩, ?_⟩
+    dsimp only
+    omega
+  · intro j hj
+    obtain ⟨h₁, h₂⟩ := mem_Icc.mp hj
+    have hdeg : 2 * j - 2 = 2 * (j - 1) := by omega
+    have hsub : 2 * k - 1 - (2 * j - 2) = 2 * k - 2 * j + 1 := by omega
+    rw [Nat.cast_choose ℚ (by omega), hsub, hdeg,
+      coeff_pow_exp_add_rescale_neg_one_sub_two (by omega) m, coeff_rescale, coeff_exp]
+    simp only [Algebra.algebraMap_self, RingHom.id_apply]
+    ring
+
+-- The binomial factor vanishes after column n, and the polynomial after column k - 1.
+private theorem sum_thmQ_change_bound (k n : ℕ) (hk : 1 ≤ k) :
+    (∑ m ∈ range (n + 1), thmQ k (m + 1) n * ((n + m + 1).choose (2 * m + 1) : ℚ)) =
+      ∑ m ∈ range k, thmQ k (m + 1) n * ((n + m + 1).choose (2 * m + 1) : ℚ) := by
+  rcases le_total (n + 1) k with h | h
+  · apply sum_subset (range_mono h)
+    intro m _ hm
+    rw [Nat.choose_eq_zero_of_lt (by simp only [mem_range] at hm; omega)]
+    simp
+  · symm
+    apply sum_subset (range_mono h)
+    intro m _ hm
+    have hmk : k < m + 1 := by simp only [mem_range] at hm; omega
+    simp [thmQ, show m ≠ 0 by omega, Icc_eq_empty_of_lt hmk]
+
+/-- **Odd power sums in terms of $\binom{n+m}{2m-1}$.** For natural numbers $k \ge 1$ and $n$,
+write $S_{2k-1}(n) = 1^{2k-1} + 2^{2k-1} + \dots + n^{2k-1}$, let
+$R(p, q) = \sum_{j=0}^{q} (-1)^j \binom{2q}{j} (q - j)^{2p}$, and let $Q_{k,1}(n) = n^{2k-1}$ and
+$Q_{k,m}(n) = 2 \sum_{j=m}^{k} \binom{2k-1}{2j-2} R(j-1, m-1)\, n^{2k-2j+1}$ for $m \ge 2$. Then
+$2^{2k-1} S_{2k-1}(n) = \sum_{m=1}^{k} Q_{k,m}(n) \binom{n+m}{2m-1}$.
+
+Source: José L. Cereceda, "Sums of Powers of Integers and the
+Sequence A304330", Theorem 10. -/
+theorem pow_mul_powerSum_odd_eq_sum (k : ℕ) (hk : 1 ≤ k)
+    (n : ℕ) :
+    (2 : ℚ) ^ (2 * k - 1) * powerSum (2 * k - 1) n =
+      ∑ m ∈ Finset.Icc 1 k,
+        thmQ k m n * (Nat.choose (n + m) (2 * m - 1) : ℚ) := by
+  let p := 2 * k - 1
+  have hp : p ≠ 0 := by dsimp [p]; omega
+  have hg := geomSum_eq_binomialSum (exp ℚ) (rescale (-1) (exp ℚ))
+    (by simpa using exp_mul_exp_eq_exp_add (1 : ℚ) (-1)) n
+  have h := congrArg (fun f ↦ (p.factorial : ℚ) * coeff p f) hg
+  have left (i : ℕ) : (p.factorial : ℚ) * coeff p ((exp ℚ ^ 2) ^ i) =
+      2 ^ p * (i : ℚ) ^ p := by
+    rw [← pow_mul, exp_pow_eq_rescale_exp, coeff_rescale, coeff_exp]
+    push_cast
+    simp [Algebra.algebraMap_self, mul_pow]
+    field_simp
+  have right (m : ℕ) : (p.factorial : ℚ) * coeff p
+      (exp ℚ ^ n * (((n + m + 1).choose (2 * m + 1) : ℚ⟦X⟧) * centeredExp ^ m)) =
+      thmQ k (m + 1) n * ((n + m + 1).choose (2 * m + 1) : ℚ) := by
+    rw [mul_left_comm, mul_comm (exp ℚ ^ n), coeff_natCast_mul,
+      ← factorial_mul_coeff_centeredExp k m n hk]
+    change _ = ((p.factorial : ℚ) * _) * _
+    ring
+  change _ = (p.factorial : ℚ) * coeff p (exp ℚ ^ n * binomialSum centeredExp n) at h
+  simp only [binomialSum, mul_sum, map_sum] at h
+  simp_rw [left, right] at h
+  rw [← mul_sum, sum_thmQ_change_bound k n hk] at h
+  rw [sum_range_succ'] at h
+  simp only [Nat.cast_zero, zero_pow hp, add_zero] at h
+  simpa only [powerSum, ← Ico_add_one_right_eq_Icc, sum_Ico_eq_sum_range, Nat.add_sub_cancel,
+    Nat.add_comm 1, show ∀ m, 2 * (m + 1) - 1 = 2 * m + 1 by omega,
+    Nat.add_assoc] using h
+
+end OddPowerSums
+
+section EvenPowerSums
+
+open PowerSeries Finset
+
+-- Shift the geometric sum by -2n so its exponents range from -2n to 2n.
+private theorem centered_geomSum (n : ℕ) :
+    (∑ i ∈ range (2 * n + 1), rescale (2 * ((i : ℚ) - n)) (exp ℚ)) =
+      binomialSum centeredExp (2 * n) := by
+  have shift (i : ℕ) : rescale (-(2 * (n : ℚ))) (exp ℚ) * (exp ℚ ^ 2) ^ i =
+      rescale (2 * ((i : ℚ) - n)) (exp ℚ) := by
+    rw [← pow_mul, exp_pow_eq_rescale_exp, exp_mul_exp_eq_exp_add]
+    push_cast
+    rw [show -(2 * (n : ℚ)) + 2 * i = 2 * (i - n) by ring]
+  have cancel : rescale (-(2 * (n : ℚ))) (exp ℚ) * exp ℚ ^ (2 * n) = 1 := by
+    rw [exp_pow_eq_rescale_exp, exp_mul_exp_eq_exp_add]
+    simp
+  simp_rw [← shift]
+  rw [← mul_sum, geomSum_eq_binomialSum (exp ℚ) (rescale (-1) (exp ℚ))
+    (by simpa using exp_mul_exp_eq_exp_add (1 : ℚ) (-1)), ← mul_assoc, cancel, one_mul]
+
+-- Each positive integer and its negative contribute the same even power.
+private theorem sum_centered_even_pow (k n : ℕ) (hk : 0 < k) :
+    (∑ i ∈ range (2 * n + 1), ((i : ℚ) - n) ^ (2 * k)) = 2 * powerSum (2 * k) n := by
+  induction n with
+  | zero => simp [powerSum, zero_pow (by omega : 2 * k ≠ 0)]
+  | succ n ih =>
+    rw [show 2 * (n + 1) + 1 = 2 * n + 1 + 1 + 1 by omega, sum_range_succ, sum_range_succ']
+    simp only [Nat.cast_succ, add_sub_add_right_eq_sub, Nat.cast_zero, zero_sub,
+      (even_two_mul k).neg_pow, ih]
+    simp only [powerSum, sum_Icc_succ_top (show 1 ≤ n + 1 by omega)]
+    push_cast
+    rw [show 2 * (n : ℚ) + 1 - n = n + 1 by ring]
+    ring
+
+/-- **Even power sums in terms of $\binom{2n+m+1}{2m+1}$.** For natural numbers $k \ge 1$ and
+$n$, write $S_{2k}(n) = 1^{2k} + 2^{2k} + \dots + n^{2k}$ and
+$R(k, m) = \sum_{j=0}^{m} (-1)^j \binom{2m}{j} (m - j)^{2k}$. Then
+$2^{2k} S_{2k}(n) = \sum_{m=1}^{k} R(k, m) \binom{2n+m+1}{2m+1}$.
+
+Source: José L. Cereceda, "Sums of Powers of Integers and the
+Sequence A304330", Theorem 1. -/
+theorem pow_mul_powerSum_even_eq_sum (k : ℕ) (hk : 1 ≤ k)
+    (n : ℕ) :
+    (2 : ℚ) ^ (2 * k) * powerSum (2 * k) n =
+      ∑ m ∈ Finset.Icc 1 k,
+        (arrayR k m : ℚ) *
+          (Nat.choose (2 * n + m + 1) (2 * m + 1) : ℚ) := by
+  have h := congrArg (fun f ↦ ((2 * k).factorial : ℚ) * coeff (2 * k) f) (centered_geomSum n)
+  have left (i : ℕ) : ((2 * k).factorial : ℚ) *
+      coeff (2 * k) (rescale (2 * ((i : ℚ) - n)) (exp ℚ)) =
+      2 ^ (2 * k) * ((i : ℚ) - n) ^ (2 * k) := by
+    rw [coeff_rescale, coeff_exp, mul_pow]
+    simp only [Algebra.algebraMap_self, RingHom.id_apply]
+    field_simp
+  have right (m : ℕ) : ((2 * k).factorial : ℚ) * coeff (2 * k)
+      (((2 * n + m + 1).choose (2 * m + 1) : ℚ⟦X⟧) * centeredExp ^ m) =
+      2 * ((arrayR k m : ℚ) * (2 * n + m + 1).choose (2 * m + 1)) := by
+    rw [coeff_natCast_mul, coeff_pow_exp_add_rescale_neg_one_sub_two hk]
+    field_simp
+  simp only [binomialSum, map_sum, mul_sum] at h
+  simp_rw [left, right] at h
+  rw [← mul_sum, ← mul_sum, sum_centered_even_pow k n hk] at h
+  calc
+    _ = ∑ m ∈ range (2 * n + 1),
+          (arrayR k m : ℚ) * (2 * n + m + 1).choose (2 * m + 1) := by linarith only [h]
+    _ = _ := by
+      apply sum_congr_of_eq_on_inter _ _ (fun _ _ _ ↦ rfl)
+      · intro m _ hm
+        rcases Nat.eq_zero_or_pos m with rfl | hpos
+        · simp [arrayR, zero_pow (by omega : 2 * k ≠ 0)]
+        · have hmk : k < m := by simp only [mem_Icc] at hm; omega
+          simp [arrayR_eq_zero_of_lt hk hmk]
+      · intro m _ hm
+        simp only [mem_range] at hm
+        simp [Nat.choose_eq_zero_of_lt (show 2 * n + m + 1 < 2 * m + 1 by omega)]
+
+end EvenPowerSums
 
 end MathlibExt.Combinatorics.Enumerative.SumsOfPowersA304330Wanted
