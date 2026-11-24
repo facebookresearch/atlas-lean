@@ -6,8 +6,9 @@ sequence $k \mapsto d(f_k)$. Write $f \oplus g$ for the pointwise maximum and $f
 max-min product of coefficient sequences $f$ and $g$. Then for all $f$ and $g$,
 $d(f) \oplus d(g) = d(f \oplus g)$ and $d(f) \otimes d(g) = d(f \otimes g)$.
 
-This is Theorem 15 (Applegate, LeBrun and Sloane, prime promotion), stated for every nondecreasing
-map on $\mathbb{N}$; a base-$b$ digit map, a nondecreasing map on the digits, extends to such a map.
+This extends Theorem 15 from zero-preserving base-$b$ digit maps on lunar numbers to arbitrary
+nondecreasing maps on $\mathbb{N}$ and all coefficient sequences. The paragraph preceding
+Theorem 15 notes that the theory extends to general nondecreasing maps.
 
 ## Sources
 
