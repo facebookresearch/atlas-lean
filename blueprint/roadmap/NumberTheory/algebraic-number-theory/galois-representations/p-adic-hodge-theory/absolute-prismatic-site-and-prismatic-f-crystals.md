@@ -18,8 +18,8 @@ A good expansion has pages for:
    uses: the Hodge–Tate comparison over a crystalline prism, deduced from the crystalline comparison and the
    Cartier isomorphism (Corollary 5.5); the Hodge–Tate and de Rham comparisons of §6 (Theorems 6.3 and 6.4); and the
    prismatic cohomology $\Delta_S$ of a quasiregular semiperfectoid
-   ring $S$ with its conjugate filtration (Theorem 1.14, Proposition 7.10, whose proof uses the Hodge–Tate
-   comparison), with the identification $\Delta_R \simeq A_{\mathrm{cris}}(R)$ for a quasiregular semiperfect
+   ring $S$ and the conjugate filtration on its Hodge–Tate specialisation $\Delta_S/I$ (Theorem 1.14 (1),
+   Construction 7.6; Proposition 7.10, whose proof uses the Hodge–Tate comparison), with the identification $\Delta_R \simeq A_{\mathrm{cris}}(R)$ for a quasiregular semiperfect
    $\mathbb{F}_p$-algebra $R$, which Bhatt–Scholze 2021 call the crystalline comparison for such $R$ (Example 4.7)
    and derive for $R = \mathcal{O}_C/p$ from Corollary 2.39 and Proposition 7.10, with
    $\Delta_{\mathcal{O}_C} = A_{\mathrm{inf}}$ (§5);
@@ -53,7 +53,7 @@ and is not part of this node.
 
 ## Proof depends on
 
-- [Crystalline comparison for prismatic cohomology](crystalline-comparison-for-prismatic-cohomology.md), for the Hodge–Tate comparison over a crystalline prism deduced from it (Bhatt–Scholze 2019, Corollary 5.5), through which pass the Hodge–Tate comparison of Theorem 6.3 and the proof of Proposition 7.10 in item 1, and for the identification $\Delta_R \simeq A_{\mathrm{cris}}(R)$ in the crystalline realization of item 2 (Bhatt–Scholze 2021, Example 4.7)
+- [Crystalline comparison for prismatic cohomology](crystalline-comparison-for-prismatic-cohomology.md), for the Hodge–Tate comparison over a crystalline prism deduced from it (Bhatt–Scholze 2019, Corollary 5.5), through which pass the Hodge–Tate comparison of Theorem 6.3 and the proof of Proposition 7.10 in item 1
 
 ## Expansion
 
