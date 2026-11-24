@@ -16,10 +16,14 @@ public import MathlibExt.CategoryTheory.NativeScalarCompositionSources
 Both the actual integral native R^i f_* coefficient and actual relative
 native R^i f_dR* coefficient map to the SAME constructed period-complex
 cohomology. The source lisse augmentation is fixed on every original
-coefficient by the given BASE association. The comparison below is the
-composition of those native maps, with the inverse of the separately
-proved coherent period comparison. Higher bundles and filtrations are
+coefficient by the given BASE association. Higher bundles and filtrations are
 OUTPUT carriers, never replacement input data.
+
+The canonical higher comparison (the composition of those native maps with the inverse of the
+coherent period comparison) and the associated filtered bundle are not constructed here: the
+period objects are the naive structural periods of `StructuralDeRhamPeriodSources` (Scholze's
+withdrawn Definition 6.8, erratum item (3)), for which the coherent comparison is not available.
+They await the corrected finite-stage construction.
 
 Source: Scholze, arXiv:1205.3463v2, Definitions 7.5 and 8.3 and Theorem 8.8.
 Native Mathlib, Apache 2.0, `56a005855ea17e0b0958f73ec801ae140b0a1679`.
@@ -184,12 +188,9 @@ variable [EnoughInjectives (Modules SY.regular)]
   [(pushforward Q.functor SY.regular (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q)
     (inverseUnit (J := proTopology p Y.left PY) (T := proTopology p X.left PX) Q.functor SY.regular)).IsRightAdjoint]
 
-
 variable (H : BaseData (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f)
   (PX := PX) (PY := PY) (SX := SX) (SY := SY)
   (FX := FX) (IX := IX) (T := T) (TQ := TQ) (L := L) (Ω := Ω) (M := M))
-
-
 
 variable [IsIso (constantInverseMap (J := proTopology p Y.left PY) (T := proTopology p X.left PX)
   Q.functor (BaseField.carrier p K))]
@@ -227,8 +228,6 @@ variable  (PC : PositiveConnectionSource p K SX.regular SX.positive SX.untilting
   [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left))
     (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q)
     (basePeriod p K B X Y f PX PY SY E Q) (baseScalar p K B X Y f PX PY SY E Q)).IsRightAdjoint]
-
-
 
 def absoluteToFullX : SX.absolutePositive ⟶ SX.naiveStructuralFull :=
   SX.scalars.absoluteToPositive ≫ SX.scalars.positiveToFull
@@ -315,7 +314,6 @@ abbrev AugmentationType := AssociatedPeriodAugmentationSources.Source
     (SX := SX) (SY := SY) (Ω := Ω) (M := M) (H := H) (CLX := CLX)) PD.full
   (PeriodCoefficientComplexSources.fullBaseMap Q.functor SY.naiveStructuralFull p K SX.regular SX.positive SX.untilting SX.scalars
     (NaturalPeriodMaps.structuralFullMap p K B X Y f PX PY SX SY E Q N hp PM)) PD.fullTerms
-
 
 variable [PullbackSourceUnit Q.functor SY.naiveStructuralFull (basePeriod p K B X Y f PX PY SY E Q) (periodUnitY p K B X Y f PX PY SY E Q)]
   [PullbackSourceUnit (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q) (basePeriod p K B X Y f PX PY SY E Q) (baseScalar p K B X Y f PX PY SY E Q)]
@@ -433,25 +431,6 @@ def higherZRestriction (i : ℤ) : (MathlibExt.AlgebraicGeometry.RelativeDeRhamH
     ((derivedPushforward Q.functor (Zhat p Y.left PY) (baseZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)) (baseZUnit (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q))).map
       (DerivedCategory.Plus.Q.map (SSZ.iso L.module).hom))
 
-/-- The actual canonical integral higher association map. The invertibility of the coherent
-comparison is an input (an `IsIso` instance argument), used here through its native inverse; it is
-not requested, since the period objects are the naive structural periods
-(see `StructuralDeRhamPeriodSources`). -/
-def higherComparison (i : ℤ)
-    [IsIso (coherentPeriodComparison (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (Ω := Ω) (M := M) (D := D) (DS := DS) (FS := FS) (hp := hp) (PM := PM) (PC := PC) (FC := FC) (PD := PD) (SO := SO) (AZO := AZO) (AZF := AZF) (ASO := ASO) i)] :
-    BaseFilteredPeriodAssociation.localSystemFull p K SY.regular SY.positive (Zhat p Y.left PY) SY.untilting SY.scalars
-      (MathlibExt.AlgebraicGeometry.RelativeIntegralPeriodComparison.scalarY (p := p) (K := K) (B := B) (Y := Y) (PY := PY) (SY := SY) (FY := FY) (IY := IY)) (MathlibExt.AlgebraicGeometry.RelativeDeRhamHigherSources.higherIntegral (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q) (N := N) (PS := PS) (T := T) (TQ := TQ) (L := L) i) ⟶
-    BaseFilteredPeriodAssociation.vectorFull p K SY.regular SY.positive SY.untilting SY.scalars (MathlibExt.AlgebraicGeometry.RelativeDeRhamHigherSources.higherDeRham (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (Ω := Ω) (M := M) (D := D) i) :=
-  CLY.iso.inv.app (MathlibExt.AlgebraicGeometry.RelativeDeRhamHigherSources.higherIntegral (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q) (N := N) (PS := PS) (T := T) (TQ := TQ) (L := L) i) ≫
-  (NativeScalarProjectionMaps.scalarY (Zhat p Y.left PY) SY.naiveStructuralFull (zFullY (p := p) (K := K) (B := B) (Y := Y) (PY := PY) (SY := SY) (FY := FY) (IY := IY))).map
-    (higherZRestriction (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY)
-      (E := E) (Q := Q) (N := N) (PS := PS) (T := T) (TQ := TQ) (L := L) (RZ := RZ) (IDZ := IDZ) (SSZ := SSZ) i) ≫
-  lissePeriodComparison (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (Ω := Ω) (M := M) (D := D) (DS := DS) (FS := FS) (hp := hp) (PM := PM) (PC := PC) (FC := FC) (PD := PD) (FX := FX) (FY := FY) (IX := IX) (IY := IY) (PS := PS)
-    (T := T) (TQ := TQ) (L := L) (H := H) (CLX := CLX) (AL := AL) (SZ := SZ) (AZZ := AZZ) (AZF := AZF) (ASZ := ASZ) i ≫
-  inv (coherentPeriodComparison (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (Ω := Ω) (M := M) (D := D) (DS := DS) (FS := FS) (hp := hp) (PM := PM) (PC := PC) (FC := FC) (PD := PD) (SO := SO) (AZO := AZO) (AZF := AZF) (ASO := ASO) i) ≫
-  CEY.iso.hom.app (MathlibExt.AlgebraicGeometry.RelativeDeRhamHigherSources.higherDeRham (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (Ω := Ω) (M := M) (D := D) i)
-
-
 variable (GM : RelativeGaussManinSources.GaussManinFactory (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (FX := FX) (IX := IX) (T := T) (TQ := TQ) (L := L) (Ω := Ω) (M := M) (D := D) (DS := DS) (FS := FS) (H := H))
 
 /-- The connection on the actual higher carrier is the computed native Gauss--Manin map. -/
@@ -464,23 +443,5 @@ normalized on every original coefficient and full local-generator fraction. -/
 abbrev HigherCoefficientConnectionType (i : ℤ) := BaseFilteredPeriodAssociation.CoefficientConnectionSource
   p K SY.regular SY.positive SY.untilting SY.scalars (MathlibExt.AlgebraicGeometry.RelativeDeRhamHigherSources.higherDeRham (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (Ω := Ω) (M := M) (D := D) i) (AnalyticAbsoluteDeRhamSources.forms p K B Y PY SY H.absoluteFormsY)
     H.formSourceY.differential (higherNabla (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (FX := FX) (IX := IX) (T := T) (TQ := TQ) (L := L) (Ω := Ω) (M := M) (D := D) (DS := DS) (FS := FS) (H := H) (GM := GM) i) H.positiveConnectionY H.fullConnectionY
-
-variable (i : ℤ) [IsIso (coherentPeriodComparison (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (Ω := Ω) (M := M) (D := D) (DS := DS) (FS := FS) (hp := hp) (PM := PM) (PC := PC) (FC := FC) (PD := PD) (SO := SO) (AZO := AZO) (AZF := AZF) (ASO := ASO) i)]
-  (HF : HigherFiltrationType (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (Ω := Ω) (M := M) (D := D) i)
-  (HC : HigherCoefficientConnectionType (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (FX := FX) (IX := IX) (T := T) (TQ := TQ) (L := L) (Ω := Ω) (M := M) (D := D) (DS := DS) (FS := FS) (H := H) (GM := GM) i)
-
-/-- Filtered/horizontal association properties of the ACTUAL constructed higher comparison. -/
-abbrev HigherAssociationPropertiesType := BaseFilteredPeriodAssociation.AssociatedMapProperties
-  p K SY.regular SY.positive (Zhat p Y.left PY) SY.untilting SY.scalars (MathlibExt.AlgebraicGeometry.RelativeIntegralPeriodComparison.scalarY (p := p) (K := K) (B := B) (Y := Y) (PY := PY) (SY := SY) (FY := FY) (IY := IY)) (MathlibExt.AlgebraicGeometry.RelativeDeRhamHigherSources.higherIntegral (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q) (N := N) (PS := PS) (T := T) (TQ := TQ) (L := L) i) (MathlibExt.AlgebraicGeometry.RelativeDeRhamHigherSources.higherDeRham (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (Ω := Ω) (M := M) (D := D) i) (AnalyticAbsoluteDeRhamSources.forms p K B Y PY SY H.absoluteFormsY) HF.filtration H.formSourceY.differential (higherNabla (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (FX := FX) (IX := IX) (T := T) (TQ := TQ) (L := L) (Ω := Ω) (M := M) (D := D) (DS := DS) (FS := FS) (H := H) (GM := GM) i) H.positiveConnectionY H.fullConnectionY HC (higherComparison (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (Ω := Ω) (M := M) (D := D) (DS := DS) (FS := FS) (hp := hp) (PM := PM) (PC := PC) (FC := FC) (PD := PD) (FX := FX) (FY := FY) (IX := IX) (IY := IY) (PS := PS) (T := T) (TQ := TQ) (L := L) (H := H) (CLX := CLX) (CLY := CLY) (CEY := CEY) (AL := AL) (SO := SO) (AZO := AZO) (AZF := AZF) (ASO := ASO) (SZ := SZ) (AZZ := AZZ) (ASZ := ASZ) (RZ := RZ) (IDZ := IDZ) (SSZ := SSZ) i)
-
-/-- The final associated filtered higher bundle is OUTPUT from the actual native map,
-actual native image filtration and actual native Gauss--Manin connection. -/
-def higherAssociated
-    [IsIso (higherComparison (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (Ω := Ω) (M := M) (D := D) (DS := DS) (FS := FS) (hp := hp) (PM := PM) (PC := PC) (FC := FC) (PD := PD) (FX := FX) (FY := FY) (IX := IX) (IY := IY) (PS := PS) (T := T) (TQ := TQ) (L := L) (H := H) (CLX := CLX) (CLY := CLY) (CEY := CEY) (AL := AL) (SO := SO) (AZO := AZO) (AZF := AZF) (ASO := ASO) (SZ := SZ) (AZZ := AZZ) (ASZ := ASZ) (RZ := RZ) (IDZ := IDZ) (SSZ := SSZ) i)]
-    (HP : HigherAssociationPropertiesType (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (Ω := Ω) (M := M) (D := D) (DS := DS) (FS := FS) (hp := hp) (PM := PM) (PC := PC) (FC := FC) (PD := PD) (FX := FX) (FY := FY) (IX := IX) (IY := IY) (PS := PS)
-      (T := T) (TQ := TQ) (L := L) (H := H) (CLX := CLX) (CLY := CLY) (CEY := CEY) (AL := AL)
-      (SO := SO) (AZO := AZO) (AZF := AZF) (ASO := ASO) (SZ := SZ) (AZZ := AZZ) (ASZ := ASZ)
-      (RZ := RZ) (IDZ := IDZ) (SSZ := SSZ) (GM := GM) (i := i) (HF := HF) (HC := HC)) :=
-  BaseFilteredPeriodAssociation.associatedOfMap p K SY.regular SY.positive (Zhat p Y.left PY) SY.untilting SY.scalars (MathlibExt.AlgebraicGeometry.RelativeIntegralPeriodComparison.scalarY (p := p) (K := K) (B := B) (Y := Y) (PY := PY) (SY := SY) (FY := FY) (IY := IY)) (MathlibExt.AlgebraicGeometry.RelativeDeRhamHigherSources.higherIntegral (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q) (N := N) (PS := PS) (T := T) (TQ := TQ) (L := L) i) (MathlibExt.AlgebraicGeometry.RelativeDeRhamHigherSources.higherDeRham (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (Ω := Ω) (M := M) (D := D) i) (AnalyticAbsoluteDeRhamSources.forms p K B Y PY SY H.absoluteFormsY) HF.filtration H.formSourceY.differential (higherNabla (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (FX := FX) (IX := IX) (T := T) (TQ := TQ) (L := L) (Ω := Ω) (M := M) (D := D) (DS := DS) (FS := FS) (H := H) (GM := GM) i) H.positiveConnectionY H.fullConnectionY HC (higherComparison (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (Ω := Ω) (M := M) (D := D) (DS := DS) (FS := FS) (hp := hp) (PM := PM) (PC := PC) (FC := FC) (PD := PD) (FX := FX) (FY := FY) (IX := IX) (IY := IY) (PS := PS) (T := T) (TQ := TQ) (L := L) (H := H) (CLX := CLX) (CLY := CLY) (CEY := CEY) (AL := AL) (SO := SO) (AZO := AZO) (AZF := AZF) (ASO := ASO) (SZ := SZ) (AZZ := AZZ) (ASZ := ASZ) (RZ := RZ) (IDZ := IDZ) (SSZ := SSZ) i) HP
 
 end MathlibExt.AlgebraicGeometry.RelativeHigherPeriodAssociation
