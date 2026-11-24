@@ -6,3 +6,5 @@ Thermodynamic states and balances of engineering systems, power and refrigeratio
 - [Mass transfer](mass-transfer/README.md)
 - [Heat integration](heat-integration/README.md)
 - [Drying and evaporation](drying-and-evaporation/README.md)
+
+- [Coupled heat and moisture transport](coupled-heat-and-moisture-transport/README.md)

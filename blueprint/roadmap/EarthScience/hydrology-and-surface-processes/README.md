@@ -9,3 +9,7 @@ Water at and below the land surface and the materials it moves through: catchmen
 - [Terzaghi consolidation](terzaghi-consolidation/README.md)
 
 - [Agricultural water and nutrient budgets](agricultural-water-and-nutrient-budgets/README.md)
+
+- [Reactive transport](reactive-transport/README.md)
+- [Unsaturated flow](unsaturated-flow/README.md)
+- [Reservoir and channel routing](reservoir-and-channel-routing/README.md)

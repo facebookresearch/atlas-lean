@@ -12,3 +12,5 @@ Rates of chemical reactions and well-mixed reactors: integrated rate laws and ha
 - [Enzyme reactor reductions](enzyme-reactor-reductions/README.md)
 - [Thermal inactivation kinetics](thermal-inactivation-kinetics/README.md)
 - [Catalyst pellet diffusion and reaction](catalyst-pellet-diffusion-and-reaction/README.md)
+
+- [Stochastic batch reactors](stochastic-batch-reactors/README.md)

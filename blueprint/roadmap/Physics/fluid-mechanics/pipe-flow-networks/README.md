@@ -10,3 +10,5 @@ flows and heads are unique once one head is fixed.
 
 - [Pump power and the Poiseuille pipe law](pump-power-and-the-poiseuille-pipe-law.md)
 - [Square law for mine ventilation networks](square-law-for-mine-ventilation-networks.md)
+
+- [Pumps, reservoirs, valves and general passive losses](pumps-reservoirs-valves-and-general-passive-losses.md)
