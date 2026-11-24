@@ -66,14 +66,8 @@ public theorem maximumNimGame_isP_iff (f : ℕ → ℕ) (x : ℕ) :
     obtain ⟨u, hu, rfl⟩ := Finset.mem_image.mp hq
     exact h u (Finset.mem_Icc.mp hu).1 (Finset.mem_Icc.mp hu).2
 
-/-- **The Maximum Nim map $h_k$.** For natural numbers $k$ and $x$, let
-$h_k(x) = x + \lfloor x/(k-1) \rfloor + 1$. The paper takes $k \ge 2$; for $k \le 1$ the definition
-gives $h_k(x) = x + 1$, because $k - 1$ is truncated to $0$ and $\lfloor x/0 \rfloor$ is taken to
-be $0$.
-
-Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
-        INTEGERS 24 (2024), Article G5, Definition 3.1. -/
-public def maximumNimH (k x : ℕ) : ℕ := x + x / (k - 1) + 1
+-- `maximumNimH` and `maximumNimH_iterate_bounds` are in
+-- `MathlibExt.Combinatorics.MaximumNimJosephus`, which this module publicly imports.
 
 /-- **The value $h_3(0) = 1$ of the Maximum Nim map.** For the map
 $h_k(x) = x + \lfloor x/(k-1) \rfloor + 1$ on the natural numbers, we have $h_3(0) = 1$.
@@ -357,21 +351,6 @@ public theorem_wanted maximumNimGrundy_sub_eq_zero (k j : ℕ) (hk : 2 ≤ k)
     (hj : 1 ≤ j) (hjk : j ≤ k) :
     maximumNimGrundy (· / k) (k - j) = 0
 
-/-- **A Maximum Nim non-divisibility lemma for $s < t$.** Let $k, n, t, h, s, i$ be natural
-numbers with $h \ge 1$, $k = nt + h$, $h \le n$ and $s < t$. If $1 \le i \le n$, then $k$ does
-not divide $n(k - s) - i$.
-
-The hypotheses force $n \ge 1$, $s < k$ and $i \le n(k - s)$, so both subtractions are ordinary
-differences of natural numbers.
-
-Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
-        INTEGERS 24 (2024), Article G5, Lemma 4(i) (`integers-2024-G5-lem-4`). -/
-public theorem_wanted maximumNim_not_dvd_mul_sub_of_lt (k n t h s i : ℕ)
-    (hh : 1 ≤ h)
-    (hdecomp : k = n * t + h) (hhn : h ≤ n) (hst : s < t)
-    (hi : 1 ≤ i) (hin : i ≤ n) :
-    ¬k ∣ n * (k - s) - i
-
 /-- **A Maximum Nim non-divisibility lemma for $i \ne h$.** Let $k, n, t, h, i$ be natural numbers
 with $t \ge 1$, $h \ge 1$, $k = nt + h$ and $h \le n$. If $1 \le i \le n$ and $i \ne h$, then $k$
 does not divide $n(k - t) - i$.
@@ -460,15 +439,6 @@ public theorem_wanted maximumNimGrundy_mul_sub_eq_succ_iterate_F (k n t h i : �
       maximumNimGrundy (· / k) (Nat.iterate F (t + 1) (n * k - i)) =
         maximumNimGrundy (· / k) ((n - 1) * k - (n - h + i))
 
-/-- **The Maximum Nim map $h_k$ is strictly increasing.** Let $k \ge 2$ be a natural number and
-let $h_k$ be the map $x \mapsto x + \lfloor x/(k-1) \rfloor + 1$ on the natural numbers. For all
-natural numbers $x$ and $x'$ with $x < x'$, we have $h_k(x) < h_k(x')$.
-
-Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
-        INTEGERS 24 (2024), Article G5, Lemma 6(i) (`integers-2024-G5-lem-6`). -/
-public theorem_wanted maximumNimH_strictMono (k x x' : ℕ) (hk : 2 ≤ k) (hxx' : x < x') :
-    maximumNimH k x < maximumNimH k x'
-
 /-- **The Maximum Nim map $h_k$ exceeds its argument.** Let $k \ge 2$ be a natural number and let
 $h_k$ be the map $x \mapsto x + \lfloor x/(k-1) \rfloor + 1$ on the natural numbers. Every natural
 number $x$ satisfies $x < x + 1 \le h_k(x)$.
@@ -487,23 +457,6 @@ Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Jo
 public theorem_wanted maximumNimH_iterate_tendsto_atTop (k x₀ : ℕ) (hk : 2 ≤ k) :
     Filter.Tendsto (fun p => Nat.iterate (maximumNimH k) p x₀)
       Filter.atTop Filter.atTop
-
-/-- **Linear bounds on h_k and their iterates.** Let $k \ge 2$ be a natural number, let
-$h_k(x) = x + \lfloor x/(k-1) \rfloor + 1$ on natural numbers, and define the real maps
-$h_k^-(x) = x + \frac{x}{k-1}$ and $h_k^+(x) = x + \frac{x}{k-1} + 1$. Writing $g^p$ for the
-$p$-fold iterate of a map $g$, for all natural numbers $p$ and $x$: (i)
-$(h_k^-)^p(x) = \left(\frac{k}{k-1}\right)^p x$, (ii)
-$(h_k^+)^p(x) = \left(\frac{k}{k-1}\right)^p (x + k - 1) - (k - 1)$, and (iii)
-$h_k^-(x) \le h_k(x) \le h_k^+(x)$.
-
-Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
-        INTEGERS 24 (2024), Article G5, Lemma 7 (`integers-2024-G5-lem-7`). -/
-public theorem_wanted maximumNimH_iterate_bounds (k : ℕ) (hk : 2 ≤ k) :
-    let hMinus : ℝ → ℝ := fun x => x + x / ((k : ℝ) - 1)
-    let hPlus : ℝ → ℝ := fun x => x + x / ((k : ℝ) - 1) + 1
-    (∀ (p x : ℕ), Nat.iterate hMinus p x = ((k : ℝ) / (k - 1)) ^ p * x) ∧
-    (∀ (p x : ℕ), Nat.iterate hPlus p x = ((k : ℝ) / (k - 1)) ^ p * (x + k - 1) - (k - 1)) ∧
-    (∀ x : ℕ, hMinus x ≤ maximumNimH k x ∧ (maximumNimH k x : ℝ) ≤ hPlus x)
 
 /-- **Josephus elimination positions as Maximum Nim Grundy numbers.** Let $k \ge 2$ and
 $1 \le m \le n$. Write $o_n(m)$ for the position, counting from $1$, at which $m$ appears in the
