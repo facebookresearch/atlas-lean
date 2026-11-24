@@ -44,6 +44,7 @@
 - [Decidability of halting passes to fewer states](decides-halting-of-succ.md)
 - [Proof-checker presentation of a ZFC-like theory](zfcpresentation.md)
 - [ZFC-like theories decide halting through five states](decides-halting-le-five.md)
+- [Machine bounds](machine-bounds.md)
 - [Three-state Busy Beaver shift value](busy-beaver-steps-three-wanted.md)
 - [Three-state Busy Beaver score value](busy-beaver-ones-three-wanted.md)
 - [Four-state Busy Beaver shift value](busy-beaver-steps-four-wanted.md)

@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import MathlibExt.Combinatorics.Enumerative.Partition.FixedPerimeterAlder
+public import MathlibExt.Combinatorics.Enumerative.Partition.FixedPerimeterDistinctArmLeg
 
 /-!
 # Alder-type inequalities for fixed perimeter partitions
@@ -59,21 +59,6 @@ public theorem_wanted perimeterDistinctArmLegCount_eq_perimeterResidueArmLegCoun
     {d a m k : ℕ} (hd : 0 < d) (ha : 1 ≤ a) (had : a ≤ d + 1) (hm : 0 < m) (hk : 0 < k) :
     perimeterDistinctArmLegCount d a m k =
       perimeterResidueArmLegCount d a (a + (d + 1) * (k - 1)) (m + 1 - a - d * (k - 1))
-
-/-- **Counting d-distinct partitions by largest part and length.** Let $d$, $a$, $m$ and $k$ be
-positive integers with $a \le d + 1$, and write $h_d^{(a)}(m, k)$ for the number of partitions into
-$d$-distinct parts, all at least $a$, with largest part $m$ and $k$ parts. Then
-$h_d^{(a)}(m, k) \ne 0$ if and only if $m \ge a + d(k - 1)$, and in that case
-$h_d^{(a)}(m, k) = \binom{m - a - (d - 1)(k - 1)}{k - 1}$.
-
-Source: Ling Chen, Isabelle Hernandez, Zain Shields, and Holly Swisher, *Analogues of Alder-Type
-Partition Inequalities for Fixed Perimeter Partitions*, INTEGERS 24 (2024), Article A102,
-Lemma 1. -/
-public theorem_wanted perimeterDistinctArmLegCount_ne_zero_iff_and_eq_choose {d a m k : ℕ}
-    (hd : 0 < d) (ha : 0 < a) (hm : 0 < m) (hk : 0 < k) (had : a ≤ d + 1) :
-    (perimeterDistinctArmLegCount d a m k ≠ 0 ↔ a + d * (k - 1) ≤ m) ∧
-      (a + d * (k - 1) ≤ m →
-        perimeterDistinctArmLegCount d a m k = (m - a - (d - 1) * (k - 1)).choose (k - 1))
 
 /-- **Nonvanishing and binomial count for parts $\equiv a \pmod{d+1}$.** Let $d$, $a$, $\alpha$
 and $\lambda$ be positive integers with $a \le d + 1$, and let $f_d^{(a)}(\alpha, \lambda)$ be the

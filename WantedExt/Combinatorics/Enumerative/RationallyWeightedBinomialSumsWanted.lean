@@ -33,7 +33,8 @@ rising factorial `(k + 1)^{(s)} = (k + 1)(k + 2) ⋯ (k + s)` is `(k + 1).ascFac
 polynomial `f(x) = ∑_{k=0}^N a_k x^k` is written `∑ k ∈ range (N + 1), C (a k) * X ^ k`, and its
 `i`-th derivative is `derivative^[i]`. `F_n` and `L_n` are `Nat.fib n` and `lucasNumber n`.
 
-Epsteen's identity (`sum_choose_div_succ`) is proved in
+Epsteen's identity (`sum_choose_div_succ`) and Finkel's identity
+(`sum_neg_one_pow_choose_div_eq_harmonic`) are proved in
 `MathlibExt.Combinatorics.Enumerative.RationallyWeightedBinomialSums`.
 -/
 
@@ -42,21 +43,6 @@ namespace MetaMathlibExt
 open Polynomial
 
 @[expose] public section
-
-/-- **Scherk's identity.** Write $S(r, i)$ for the Stirling numbers of the second kind. Let $N$ and
-$r$ be natural numbers, let $a_0, \dots, a_N$ be real numbers, and let $f$ be the polynomial
-$f(y) = \sum_{k=0}^{N} a_k y^k$, with $i$-th derivative $f^{(i)}$. Then for every real number $x$,
-with the convention $0^0 = 1$,
-$$\sum_{k=0}^{N} k^r a_k x^k = \sum_{i=0}^{r} S(r, i) \, x^i f^{(i)}(x).$$
-
-Source: Andreea M. Stănică, Gabriela N. Stănică, and Pantelimon Stănică, *An Evaluation of
-Rationally Weighted Binomial Sums Via Some Differential and Integral Operators*, The Fibonacci
-Quarterly 62 (2024), Article 62-1/stanica09202023, Theorem 2.1, equation (2.1). -/
-public theorem_wanted sum_pow_mul_coeff_eq_sum_stirlingSecond_derivative (a : ℕ → ℝ) (N r : ℕ)
-    (x : ℝ) :
-    ∑ k ∈ Finset.range (N + 1), (k : ℝ) ^ r * a k * x ^ k =
-      ∑ i ∈ Finset.range (r + 1), (Nat.stirlingSecond r i : ℝ) * x ^ i *
-        (derivative^[i] (∑ k ∈ Finset.range (N + 1), C (a k) * X ^ k)).eval x
 
 /-- **Scherk's identity with $s$-rising factorials.** Let $s$ be a real number and let $S(n, k)$
 be the generalized Stirling numbers of Hsu and Shiue with parameters $(-s, 1, 0)$: a real array
@@ -101,17 +87,6 @@ public theorem stirlingSecond_three_eq (r : ℕ) (hr : 1 ≤ r) :
     linear_combination h / 6
   rw [Nat.add_sub_cancel_left]
   exact_mod_cast hR
-
-/-- **Greenstreet's identity.** For every natural number $N$,
-
-$$\sum_{k=1}^{N} (-1)^k \binom{N}{k} 2^{N-k} k^2 = N^2 - 2N.$$
-
-Source: Andreea M. Stănică, Gabriela N. Stănică, and Pantelimon Stănică, *An Evaluation of
-Rationally Weighted Binomial Sums Via Some Differential and Integral Operators*, The Fibonacci
-Quarterly 62 (2024), Article 62-1/stanica09202023, Corollary 2.3. -/
-public theorem_wanted sum_neg_one_pow_choose_two_pow_mul_sq (N : ℕ) :
-    ∑ k ∈ Finset.Icc 1 N, (-1 : ℤ) ^ k * (N.choose k : ℤ) * 2 ^ (N - k) * (k : ℤ) ^ 2 =
-      (N : ℤ) ^ 2 - 2 * N
 
 /-- **Power-weighted binomial sums of Lucas numbers.** Let $L_n$ denote the Lucas numbers
 ($L_0 = 2$, $L_1 = 1$, $L_{n+2} = L_{n+1} + L_n$), $S(r, i)$ the Stirling numbers of the second
@@ -223,17 +198,6 @@ public theorem_wanted sum_choose_mul_pow_div_ascFactorial (N s : ℕ) (hs : 0 < 
     ∑ k ∈ Finset.range (N + 1), (N.choose k : ℝ) * x ^ (k + s) / (k + 1).ascFactorial s =
       ((1 + x) ^ (N + s) - 1) / (N + 1).ascFactorial s -
         ∑ j ∈ Finset.Icc 1 (s - 1), x ^ j / (j.factorial * (N + 1).ascFactorial (s - j))
-
-/-- **Finkel's identity.** For every natural number $n$, with $H_n = \sum_{j=1}^{n} 1/j$ the
-$n$-th harmonic number,
-
-$$\sum_{k=1}^{n} (-1)^{k-1} \frac{1}{k} \binom{n}{k} = H_n.$$
-
-Source: Andreea M. Stănică, Gabriela N. Stănică, and Pantelimon Stănică, *An Evaluation of
-Rationally Weighted Binomial Sums Via Some Differential and Integral Operators*, The Fibonacci
-Quarterly 62 (2024), Article 62-1/stanica09202023, Corollary 3.2. -/
-public theorem_wanted sum_neg_one_pow_choose_div_eq_harmonic (n : ℕ) :
-    ∑ k ∈ Finset.Icc 1 n, (-1 : ℚ) ^ (k - 1) * n.choose k / k = harmonic n
 
 /-- **Binomial sums weighted by $x^k/k^2$.** For every natural number $n$ and every real number
 $x$,

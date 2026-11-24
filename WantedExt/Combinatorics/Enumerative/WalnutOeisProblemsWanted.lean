@@ -14,7 +14,7 @@ public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.Data.Nat.Log
 import Mathlib.Data.List.Infix
 public import MathlibExt.Combinatorics.Enumerative.AntiBonacci
-public import MathlibExt.Combinatorics.Enumerative.UpperWythoffUnsumPalindrome
+public import MathlibExt.Combinatorics.Enumerative.UpperWythoffUnsumPalindromeLimit
 
 /-!
 # Problems from the OEIS settled with Walnut
@@ -274,22 +274,6 @@ public theorem_wanted upperWythoffUnsumPalindrome_succ :
         (upperWythoffUnsumPalindrome i).length + (upperWythoffUnsumPalindrome (i - 1)).length) ∧
     (upperWythoffUnsumPalindrome 1).length = 1 ∧ (upperWythoffUnsumPalindrome 2).length = 2 ∧
     ∀ i, 1 ≤ i → (upperWythoffUnsumPalindrome i).length = Nat.fib (i + 1)
-
-/-- **The words $W_i$ converge to $3$ followed by the coded Fibonacci word.** Let
-$u_0 u_1 u_2 \cdots$ be the infinite Fibonacci word over $\{0, 1\}$, indexed from $0$, and let
-$\mathbf{V}$ be the infinite word obtained from it by replacing each $0$ by $5$ and each
-$1$ by $3$. Then the words $W_i$ of the unsum gap sequence converge to the infinite word
-$3\mathbf{V}$: for every $k \ge 0$ there is $N$ such that for every $i \ge N$ the word $W_i$ has
-more than $k$ digits and its digit at position $k$ (counted from zero) is the digit of
-$3\mathbf{V}$ at position $k$, that is, $3$ if $k = 0$, and for $k \ge 1$ it is $3$ if
-$u_{k-1} = 1$ and $5$ if $u_{k-1} = 0$.
-
-Source: Bosma, Bruin, Fokkink, Grube, Reuijl, and Tromp, *Using Walnut to Solve
-Problems from the OEIS*, Journal of Integer Sequences 28 (2025), Article 25.3.8,
-Lemma 9 (`jis-2025-25.3.8-lem-9`). -/
-public theorem_wanted upperWythoffUnsumPalindrome_tendsto (k : ℕ) :
-    ∃ N, ∀ i, N ≤ i → (upperWythoffUnsumPalindrome i)[k]? =
-      some (if k = 0 then 3 else if fibInf (k - 1) = true then 3 else 5)
 
 /-- **Iterates of the period-doubling substitution.** Write the period-doubling substitution
 $a \mapsto ab$, $b \mapsto aa$ over the letters $a = 1$ and $b = 0$, so that it sends $1$ to $10$

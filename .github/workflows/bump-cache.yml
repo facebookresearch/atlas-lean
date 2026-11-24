@@ -248,9 +248,14 @@ jobs:
       - name: Free disk space for Lean caches
         run: |
           set -euo pipefail
-          df -h /
-          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
-          df -h /
+          df -h / || true
+          # Unknown free space counts as too little: the second line of the
+          # report must be one decimal number.
+          free_kib="$(df --output=avail -k / | awk 'NR == 2 && NF == 1 && $1 ~ /^[0-9]+$/ { print $1 }')" || free_kib=""
+          if [[ -z "$free_kib" ]] || (( 10#$free_kib < 60 * 1024 * 1024 )); then
+            sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
+            df -h / || true
+          fi
 
       - name: Add swap for cold Lean builds
         run: |

@@ -164,19 +164,6 @@ public theorem_wanted ncard_arithmeticalStructure_coconutTree_two {p : ℕ} (hp 
             Set.ncard {z : (Fin (i - 2) ⊕ Fin 2 → ℕ) × (Fin (i - 2) ⊕ Fin 2 → ℕ) |
               IsSmoothCoconut (i - 2) 2 z.1 z.2}
 
-/-- **Euclidean chain function under adding multiples.** For natural numbers $x \ge 1$, $y$ and
-$k$, the Euclidean chain function $F$ satisfies $F(x + k y, y) = F(x, y)$ and
-$F(x, k x + y) = F(x, y) + k$.
-
-The source quotes this result from Archer et al.
-
-Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
-Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Proposition 6
-(`integers-2025-A82-prop-6`). -/
-public theorem_wanted euclideanChainLength_add_mul {x : ℕ} (hx : 0 < x) (y k : ℕ) :
-    euclideanChainLength (x + k * y) y = euclideanChainLength x y ∧
-      euclideanChainLength x (k * x + y) = euclideanChainLength x y + k
-
 /-- **Euclidean chain function when the first argument divides the second.** For natural numbers
 $x, y \ge 1$ with $x \mid y$, the Euclidean chain function $F$ satisfies $F(x, y) = 1 + y / x$.
 
@@ -236,18 +223,6 @@ Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Proposition 8
 public theorem_wanted IsSmoothCoconut.one_lt_center_iff {p s : ℕ} (hp : 0 < p)
     {d r : Fin p ⊕ Fin s → ℕ} (h : IsSmoothCoconut p s d r) :
     1 < d (.inl ⟨p - 1, by omega⟩) ↔ r (.inl ⟨p - 1, by omega⟩) < ∑ j, r (.inr j)
-
-/-- **Smooth structures on coconut trees with two leaves.** Let $p \ge 1$ and let $(d, r)$ be a
-smooth arithmetical structure on the coconut tree $CT(p, 2)$, whose path is
-$v_1, \dots, v_p$ and whose two leaves are attached to the central vertex $v_p$. Then
-$d(v_p) \le 1$.
-
-Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
-Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Corollary 7
-(`integers-2025-A82-cor-7`). -/
-public theorem_wanted IsSmoothCoconut.center_le_one_of_two {p : ℕ} (hp : 0 < p)
-    {d r : Fin p ⊕ Fin 2 → ℕ} (h : IsSmoothCoconut p 2 d r) :
-    d (.inl ⟨p - 1, by omega⟩) ≤ 1
 
 /-- **Smoothing at a path vertex of a coconut tree.** Let the coconut tree $CT(p + 1, s)$ have
 path vertices $v_1, \dots, v_{p+1}$, central vertex $v_{p+1}$ and leaves $\ell_1, \dots, \ell_s$,
