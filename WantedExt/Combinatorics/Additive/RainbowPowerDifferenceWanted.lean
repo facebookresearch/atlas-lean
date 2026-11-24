@@ -136,16 +136,6 @@ public theorem_wanted card_powMap_components_eq_three_iff_of_odd
     Nat.card (Quot fun a b : ZMod p => ∃ m n : ℕ, a ^ k ^ m = b ^ k ^ n) = 3 ↔
       ∃ m : ℕ, p - 1 = 2 * m ∧ ∀ q : ℕ, q.Prime → q ∣ m → q ∣ k
 
-/-- **Large multiples of the gcd are nonnegative combinations.** Let $i$ and $j$ be positive
-integers. There is an $n_0$ such that every integer $m > n_0$ divisible by $\gcd(i, j)$ can be
-written as $m = ui + vj$ with nonnegative integers $u$ and $v$.
-
-Source: Katie Ansaldi, Gabriel Cowley, Eric Green, Kihyun Kim and JT Rapp, *Rainbow-Free
-Colorings and Rainbow Numbers for x-y=z^k*, INTEGERS 24 (2024), Article A105, Theorem 2
-(`integers-2024-A105-thm-2`). -/
-public theorem_wanted exists_forall_gcd_dvd_eq_add_mul (i j : ℕ) (hi : 0 < i) (hj : 0 < j) :
-    ∃ n₀ : ℕ, ∀ m : ℕ, n₀ < m → Nat.gcd i j ∣ m → ∃ u v : ℕ, m = u * i + v * j
-
 /-- **Upper density threshold for rainbow solutions of $x - y = z^k$.** Let $k \ge 2$ be an
 integer, let $s = \lfloor k / 2 \rfloor$ and $\delta = (4^s - 1) / (3 \cdot 4^s)$, and let $c$ be
 a coloring of the positive integers by three colors. Suppose that for each color $e$ there is
