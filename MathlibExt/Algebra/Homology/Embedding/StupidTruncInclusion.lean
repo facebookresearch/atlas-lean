@@ -77,7 +77,7 @@ lemma f_eq {i : ι} {i' : ι'} (hi : e.f i = i') :
 
 lemma f_eq_zero (i' : ι') (hi' : ∀ i, e.f i ≠ i') :
     f K e i' = 0 := by
-  simp only [f, ιStupidTruncf, dif_neg (not_exists.mpr hi')]
+  simp only [f, ιStupidTruncf, dite_eq_right (not_exists.mpr hi')]
 
 end stupidTruncι
 

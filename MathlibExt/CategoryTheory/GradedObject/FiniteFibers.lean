@@ -11,6 +11,7 @@ module
 
 public import Mathlib.CategoryTheory.Abelian.GrothendieckAxioms.Basic
 public import Mathlib.CategoryTheory.GradedObject
+public import Mathlib.CategoryTheory.Limits.Preserves.FunctorCategory
 public import MathlibExt.CategoryTheory.GradedObject.Preadditive
 
 /-!

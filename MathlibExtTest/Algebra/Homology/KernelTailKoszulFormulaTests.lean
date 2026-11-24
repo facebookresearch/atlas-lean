@@ -65,7 +65,9 @@ example (a : Fin 2 → R) :
     subst q
     rfl
   rw [KoszulComplex.familyDifferential_apply_basis]
-  simp [Fin.sum_univ_two, sub_eq_add_neg, hsucc, hdelete, neg_smul]
+  simp [Fin.sum_univ_two, sub_eq_add_neg, hsucc, hdelete]
+  exact neg_smul (a 1)
+    (exteriorPower.ιMulti R 1 (fun _ => (Pi.single (0 : Fin 2) 1 : Fin 2 → R)))
 
 /-- The empty family generates the zero ideal. -/
 example (a : Fin 0 → R) :
