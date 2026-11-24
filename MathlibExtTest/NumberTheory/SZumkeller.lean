@@ -14,6 +14,17 @@ import MathlibExt.NumberTheory.SZumkeller
 
 open MetaMathlibExt
 
+-- The empty product has value one when n = 1.
+example : (ArithmeticFunction.sigma 1 1 : ℚ) = 1 := by
+  have h := (sigma_one_prod_formulas 1 (by decide)).1
+  rw [Nat.primeFactors_one, Finset.prod_empty] at h
+  exact h
+
+-- For 12 = 2² · 3, the strict bound uses both prime factors.
+example : (ArithmeticFunction.sigma 1 12 : ℚ) / 12 <
+    ∏ p ∈ (12 : ℕ).primeFactors, (p : ℚ) / (p - 1) :=
+  (sigma_one_prod_formulas 12 (by decide)).2.2 (by decide)
+
 -- Reinserting 30 into this witness gives the equal-squares part {1, 2, 5, 30}.
 example : IsSZumkeller 60 := by
   apply (isSZumkeller_iff_of_even 60 (by decide) (by decide)).2

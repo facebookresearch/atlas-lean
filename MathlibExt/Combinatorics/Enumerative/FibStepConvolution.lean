@@ -115,6 +115,26 @@ private lemma fibStepGF_sub_succ (m : ℕ) :
   apply X_mul_cancel
   linear_combination fibStepGF (m + 1) * hm - fibStepGF m * hs
 
+/-- **Convolution of the Fibonacci and tribonacci numbers.** Write $F_n$ and $T_n$ for the
+Fibonacci and tribonacci numbers, that is, the Fibonacci $m$-step numbers $F^{(m)}_n$ for
+$m = 2, 3$ ($F^{(m)}_0 = 0$, $F^{(m)}_1 = 1$, and each later term is the sum of the $m$ terms
+before it, terms at negative indices being $0$). For every natural number $n$,
+$$\sum_{j=0}^{n} F_j T_{n-j} = T_{n+2} - F_{n+2}.$$
+
+Source: Robert Frontczak and Karol Gryszka, "General
+Convolution Sums Involving Fibonacci `m`-Step Numbers",
+Corollary 2. -/
+theorem sum_fib_mul_trib (n : ℕ) :
+    ∑ j ∈ Finset.range (n + 1), fibStep 2 j * fibStep 3 (n - j) =
+      fibStep 3 (n + 2) - fibStep 2 (n + 2) := by
+  have hg : X ^ 2 * (fibStepGF 2 * fibStepGF 3) = fibStepGF 3 - fibStepGF 2 := by
+    linear_combination fibStepGF_sub_succ 2
+  have hc := congrArg (coeff (n + 2) (R := ℚ)) hg
+  rw [coeff_X_pow_mul] at hc
+  simp only [coeff_mul, Finset.Nat.sum_antidiagonal_eq_sum_range_succ_mk, map_sub,
+    fibStepGF, coeff_mk] at hc
+  exact_mod_cast hc
+
 private lemma sum_consecutive_mul_sub_eq (m n : ℕ) (hn : 1 ≤ n) :
     ∑ j ∈ Finset.range (n + 1), fibStep m j *
         (fibStep (m + 1) (n - j) - fibStep (m + 2) (n - j)) =
