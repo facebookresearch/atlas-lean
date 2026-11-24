@@ -11979,6 +11979,7 @@
   "MathlibExt/NumberTheory/ClementTwinPrimes": {"to": "NumberTheory/distribution-of-primes/prime-patterns", "title": "Twin primes"},
   "MathlibExt/NumberTheory/CobhamBaseDependence": {"to": "NumberTheory/digits-numeration/numeration-automatic", "title": "Cobham's theorems on recognizable sets"},
   "MathlibExt/NumberTheory/CobhamGapTheorem": {"to": "NumberTheory/digits-numeration/numeration-automatic", "title": "Cobham's theorems on recognizable sets"},
+  "MathlibExt/NumberTheory/CohenLcmGcd": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Divisors in short intervals"},
   "MathlibExt/NumberTheory/Collatz": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Collatz problem"},
   "MathlibExt/NumberTheory/CollatzArithmeticDerivative": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Arithmetic derivative and the Collatz map"},
   "MathlibExt/NumberTheory/CommaSequence": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Comma sequences"},
