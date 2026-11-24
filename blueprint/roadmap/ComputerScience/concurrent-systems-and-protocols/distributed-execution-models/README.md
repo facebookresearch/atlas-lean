@@ -5,3 +5,4 @@
 - [Partial synchrony](partial-synchrony.md)
 - [The LOCAL model](the-local-model.md)
 - [Weak and strong fairness](weak-and-strong-fairness.md)
+- [Asynchronous message-passing systems](asynchronous-message-passing-systems.md)
