@@ -12,7 +12,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import MathlibExt.Probability.Geometry.ThinShell
+public import MathlibExt.Probability.Geometry.ThinShellCubeBound
 public import Mathlib.Probability.Distributions.Gaussian.Multivariate
 public import Mathlib.Probability.Distributions.Uniform
 
@@ -172,16 +172,6 @@ public theorem_wanted uniformCube_isotropic_variance (n : ℕ) (hn : 0 < n) :
       (volume : Measure (EuclideanSpace ℝ (Fin n)))
       {x | ∀ i : Fin n, |x i| ≤ Real.sqrt 3}
     IsIsotropicLogConcave μ ∧ normalizedRadiusVariance μ = ENNReal.ofReal (4 / 5)
-
-/-- **Cube lower bound for the thin-shell variance constant.** The thin-shell variance constant,
-an element of $[0, \infty]$, is at least $4/5$.
-
-The value $4/5$ is the exact normalized radius variance of the uniform law on a cube scaled to
-identity covariance.
-
-Source: Klartag and Lehec, arXiv:2507.15495v1, Introduction. -/
-public theorem_wanted fourFifths_le_thinShellVarianceConstant :
-    ENNReal.ofReal (4 / 5) ≤ thinShellVarianceConstant
 
 /-- **The thin-shell variance constant is at least 2.** The thin-shell variance constant, the
 supremum in $[0, \infty]$ of the normalized radius variances

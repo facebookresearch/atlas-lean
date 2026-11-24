@@ -20,7 +20,8 @@ import Mathlib.Tactic.Linarith
 The switching criterion characterizes when a Bézout coefficient for `m` modulo `n`
 is also an inverse of `t` modulo `n`. The two predicates describe least absolute inverses
 and the switching identities along a Euclidean remainder sequence. Least absolute inverses
-propagate from each remainder to the preceding one.
+propagate from each remainder to the preceding one. When the first remainder is odd and the
+second is even, both initial inverses are extremal exactly when the second remainder is two.
 -/
 
 @[expose] public section
@@ -189,5 +190,46 @@ theorem abs_lt_of_even_odd
     _ ≤ _ := add_le_add_right (mul_le_mul_of_nonneg_right hs (Int.natCast_nonneg _)) 1
   rw [hm, hn] at hle
   linarith only [ha', hle]
+
+/-- **Both first inverses extremal, odd–even case.** Let $(r_i)$, $(s_i)$ and $N$ be Euclidean
+switching data with $r_0$ odd and $r_1$ even. Then $2|s_1| = r_0 - 1$ and $2|s_2| = r_1$ hold
+simultaneously if and only if $r_1 = 2$.
+
+Source: Spiros Konstantogiannis, "The Euclidean Algorithm as a
+Sequence of Modular Inverse Switching Formulas", Lemma 7. -/
+theorem abs_eq_halves_iff_eq_two_of_odd_even
+    (r : ℕ → ℕ) (s : ℕ → ℤ) (N : ℕ) (hseq : IsEuclidSwitchSeq r s N)
+    (h0 : Odd (r 0)) (h1 : Even (r 1)) :
+    (2 * |s 1| = (r 0 : ℤ) - 1 ∧ 2 * |s 2| = (r 1 : ℤ)) ↔
+      r 1 = 2 := by
+  have ⟨hN, _, _, _, _, _, hswitch⟩ := hseq
+  have hbez : s 2 * (r 0 : ℤ) + s 1 * (r 1 : ℤ) = 1 := hswitch 1 le_rfl hN
+  constructor
+  · rintro ⟨_, hs₂⟩
+    obtain ⟨k, hk⟩ := h1
+    have hr₁ : (r 1 : ℤ) = 2 * k := by omega
+    have habs : |s 2| = (k : ℤ) := by omega
+    -- Half the second remainder divides both summands of the Bézout identity.
+    have hdvd : (k : ℤ) ∣ (1 : ℤ) := by
+      have hs : (k : ℤ) ∣ s 2 := habs ▸ abs_dvd_self (s 2)
+      rw [← hbez, hr₁]
+      exact dvd_add (hs.mul_right _) ((dvd_mul_left (k : ℤ) 2).mul_left _)
+    have hk_one : k = 1 := Nat.dvd_one.mp (by exact_mod_cast hdvd)
+    omega
+  · intro hr
+    obtain ⟨hlo, hhi⟩ : -(r 1 : ℤ) < 2 * s 2 ∧ 2 * s 2 ≤ (r 1 : ℤ) :=
+      switching_bounds hseq (i := 1) hN
+    rw [hr] at hbez hlo hhi
+    have hs₂ : s 2 = 1 := by
+      by_contra h
+      have hz : s 2 = 0 := by omega
+      rw [hz, zero_mul, zero_add] at hbez
+      omega
+    obtain ⟨k, hk⟩ := h0
+    have hr₀ : (r 0 : ℤ) = 2 * k + 1 := by omega
+    have hs₁ : s 1 = -(k : ℤ) := by
+      rw [hs₂, one_mul, hr₀] at hbez
+      omega
+    simp [hs₁, hs₂, hr₀, hr]
 
 end MathlibExt.NumberTheory.ModInverseSwitchingWanted

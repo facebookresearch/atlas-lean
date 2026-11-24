@@ -9,10 +9,13 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.Calculus.Deriv.Basic
+public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 import Mathlib.Analysis.Calculus.Deriv.Inv
 import Mathlib.Analysis.Calculus.Deriv.Mul
 import Mathlib.Analysis.Calculus.Deriv.Slope
+import Mathlib.Analysis.SpecificLimits.Basic
+import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 import Mathlib.Analysis.SumIntegralComparisons
 
 /-!
@@ -20,6 +23,7 @@ import Mathlib.Analysis.SumIntegralComparisons
 
 The Farey staircase averages the lower rational approximations of a real number.
 Harmonic blocks in its zoomed form can be compared with the integral of the reciprocal.
+This comparison gives the logarithmic limit of the rescaled staircase increment.
 The dilation derivative of a differentiable function at `x` is `x * f' - f x`.
 -/
 
@@ -145,6 +149,97 @@ public theorem tendsto_harmonic_block_sub_integral {a b : ℕ → ℕ} (hab : �
     apply add_le_add_right
     rw [← Finset.Ico_add_one_add_one_eq_Ioc, ← Finset.sum_Ico_add']
     exact hn.sum_le_integral_Ico (hab n)
+
+namespace tendsto_sq_mul_fareyStaircase_sub
+
+open Finset Filter
+
+-- Count the levels crossed by each floor, then sum first over the levels.
+private theorem zoom_eq_sum_blocks {x : ℝ} (hx : 0 ≤ x) {n : ℕ} (hn : 1 ≤ n) :
+    fareyZoom n x = ∑ j ∈ Icc 1 ⌊x⌋₊, ∑ k ∈ Icc ⌈(j : ℝ) / x * n⌉₊ n, (1 / k : ℝ) := by
+  classical
+  have hn' : (0 : ℝ) < n := by positivity
+  rw [fareyZoom_eq_sum hn]
+  calc
+    _ = ∑ k ∈ Icc 1 n, ∑ j ∈ Icc 1 ⌊x⌋₊,
+          if (j : ℝ) ≤ k / (n : ℝ) * x then 1 / (k : ℝ) else 0 := by
+      refine sum_congr rfl fun k hk => ?_
+      let y := (k : ℝ) / n * x
+      have hy : 0 ≤ y := mul_nonneg (by positivity) hx
+      have hyx : y ≤ x := mul_le_of_le_one_left hx <|
+        (div_le_one hn').mpr (by exact_mod_cast (mem_Icc.mp hk).2)
+      have levels : (Icc 1 ⌊x⌋₊).filter (fun j : ℕ => (j : ℝ) ≤ y) = Icc 1 ⌊y⌋₊ := by
+        ext j
+        simp only [mem_filter, mem_Icc, ← Nat.le_floor_iff hy]
+        exact ⟨fun h => ⟨h.1.1, h.2⟩, fun h => ⟨⟨h.1, h.2.trans (Nat.floor_mono hyx)⟩, h.2⟩⟩
+      change (⌊y⌋ : ℝ) / k = ∑ j ∈ Icc 1 ⌊x⌋₊, if (j : ℝ) ≤ y then 1 / (k : ℝ) else 0
+      rw [← sum_filter, levels]
+      simp [← natCast_floor_eq_intCast_floor hy, nsmul_eq_mul, div_eq_mul_inv]
+    _ = _ := by
+      rw [sum_comm]
+      refine sum_congr rfl fun j hj => ?_
+      have hj' : (0 : ℝ) < j := by exact_mod_cast (mem_Icc.mp hj).1
+      have hx' := hj'.trans_le ((Nat.le_floor_iff hx).mp (mem_Icc.mp hj).2)
+      have ha : 0 < ⌈(j : ℝ) / x * n⌉₊ := Nat.ceil_pos.mpr (by positivity)
+      rw [← sum_filter]
+      congr 1
+      ext k
+      simp only [mem_filter, mem_Icc, Nat.ceil_le]
+      rw [← div_le_iff₀ hx', le_div_iff₀ hn']
+      constructor
+      · exact fun h => ⟨h.2, h.1.2⟩
+      · exact fun h => ⟨⟨ha.trans_le (Nat.ceil_le.mpr h.1), h.2⟩, h.1⟩
+
+-- A block starting at a fixed positive fraction of its upper endpoint has a logarithmic limit.
+private theorem tendsto_block {r : ℝ} (hr : 0 < r) (hr₁ : r ≤ 1) :
+    Tendsto (fun n : ℕ => ∑ k ∈ Icc ⌈r * n⌉₊ n, (1 / k : ℝ)) atTop (nhds (Real.log r⁻¹)) := by
+  let a (n : ℕ) := ⌈r * n⌉₊
+  have ha : Tendsto a atTop atTop :=
+    tendsto_nat_ceil_atTop.comp (Tendsto.const_mul_atTop hr tendsto_natCast_atTop_atTop)
+  have han (n : ℕ) : a n ≤ n := Nat.ceil_le.mpr (mul_le_of_le_one_left (by positivity) hr₁)
+  have hratio : Tendsto (fun n : ℕ => (a n : ℝ) / n) atTop (nhds r) :=
+    (tendsto_nat_ceil_mul_div_atTop hr.le).comp tendsto_natCast_atTop_atTop
+  have hint : Tendsto (fun n : ℕ => ∫ t in (a n : ℝ)..(n : ℝ), t⁻¹) atTop
+      (nhds (Real.log r⁻¹)) := by
+    apply ((hratio.inv₀ hr.ne').log (inv_ne_zero hr.ne')).congr'
+    filter_upwards [eventually_gt_atTop 0, ha.eventually_gt_atTop 0] with n hn hpos
+    simp [integral_inv_of_pos (Nat.cast_pos.mpr hpos) (Nat.cast_pos.mpr hn), inv_div]
+  simpa only [id_eq, sub_add_cancel, zero_add] using
+    (tendsto_harmonic_block_sub_integral (b := id) han ha).add hint
+
+end tendsto_sq_mul_fareyStaircase_sub
+
+open Filter tendsto_sq_mul_fareyStaircase_sub in
+/-- **Limit of the rescaled Farey staircase increment.** Let $A_n$ be the Farey staircase of order
+$n$ and $D_n = A_n - A_{n-1}$. For every real $x \ge 0$,
+$n^2 D_n(x/n) \to \sum_{k=1}^{\lfloor x \rfloor} (1 - \log(x/k))$ as $n \to \infty$.
+
+Source: David Harry Richman, *Lower Rational Approximations and Farey Staircases*, INTEGERS 24
+(2024), Article A37, Theorem 4 (`integers-2024-A37-thm-4`). -/
+public theorem tendsto_sq_mul_fareyStaircase_sub {x : ℝ} (hx : 0 ≤ x) :
+    Filter.Tendsto
+      (fun n : ℕ => (n : ℝ) ^ 2 * (fareyStaircase n (x / n) - fareyStaircase (n - 1) (x / n)))
+      Filter.atTop (nhds (∑ k ∈ Finset.Icc 1 ⌊x⌋₊, (1 - Real.log (x / k)))) := by
+  have hblocks : Tendsto
+      (fun n : ℕ => ∑ j ∈ Finset.Icc 1 ⌊x⌋₊, ∑ k ∈ Finset.Icc ⌈(j : ℝ) / x * n⌉₊ n, (1 / k : ℝ))
+      atTop (nhds (∑ j ∈ Finset.Icc 1 ⌊x⌋₊, Real.log (x / j))) := by
+    apply tendsto_finsetSum
+    intro j hj
+    have hj' : (0 : ℝ) < j := by exact_mod_cast (Finset.mem_Icc.mp hj).1
+    have hjx := (Nat.le_floor_iff hx).mp (Finset.mem_Icc.mp hj).2
+    have hx' := hj'.trans_le hjx
+    simpa only [inv_div] using tendsto_block (div_pos hj' hx') ((div_le_one hx').mpr hjx)
+  have hlim := (tendsto_natCast_div_add_atTop (-1 : ℝ)).mul
+    ((tendsto_const_nhds (x := (⌊x⌋₊ : ℝ))).sub hblocks)
+  rw [Finset.sum_sub_distrib]
+  simp only [Finset.sum_const, Nat.card_Icc, Nat.add_sub_cancel, nsmul_one]
+  simp only [one_mul] at hlim
+  apply hlim.congr'
+  filter_upwards [eventually_ge_atTop 2] with n hn
+  have hn' : (n : ℝ) ≠ 0 := by positivity
+  rw [← zoom_eq_sum_blocks hx (by omega), (fareyStaircase_sub_eq hn _).2,
+    mul_div_cancel₀ x hn', ← natCast_floor_eq_intCast_floor hx, fareyZoom, ← sub_eq_add_neg]
+  field_simp [hn']
 
 /-- **Dilation derivative of a differentiable function.** Let $f : \mathbb{R} \to \mathbb{R}$ have
 derivative $f'$ at the point $x \in \mathbb{R}$. Then the quotient
