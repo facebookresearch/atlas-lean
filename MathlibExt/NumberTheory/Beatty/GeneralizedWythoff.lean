@@ -17,7 +17,8 @@ import Mathlib.Tactic.Ring
 # Generalized Beatty sequences and the Wythoff sequences
 
 A generalized Beatty sequence has terms `p * ⌊nφ⌋ + q * n + r`. To compose it with
-one of the Wythoff sequences, write `nφ = a + δ`, where `a = ⌊nφ⌋` and `0 < δ < 1`.
+one of the Wythoff sequences, take `1 ≤ n` and write `nφ = a + δ`, where `a = ⌊nφ⌋`
+and `0 < δ < 1`.
 Then `aφ` is just below `a + n`, while `(a + n)φ` lies between `2a + n` and `2a + n + 1`.
 -/
 
@@ -30,9 +31,11 @@ namespace MetaMathlibExt
 /-- **Generalized Beatty sequence.** Let $\varphi$ be the golden ratio. For integers $p, q, r$, the
 generalized Beatty sequence $V(p, q, r)$ is the integer sequence defined for every natural number
 $n$, including $n = 0$, by $V(p, q, r)(n) = p\lfloor n\varphi \rfloor + qn + r$.
+Here $V$ denotes Dekking’s $V_0$ (Section 6), the extension to index zero of
+his sequence $V$, which starts at $n = 1$ (Section 5).
 
 Source: F. Michel Dekking, *The Structure of Base Phi Expansions*, INTEGERS 24
-(2024), Article A24, Section 5. -/
+(2024), Article A24, Sections 5–6 (pp. 12–13). -/
 noncomputable def generalizedBeatty (p q r : ℤ) (n : ℕ) : ℤ :=
   p * ⌊(n : ℝ) * φ⌋ + q * n + r
 
