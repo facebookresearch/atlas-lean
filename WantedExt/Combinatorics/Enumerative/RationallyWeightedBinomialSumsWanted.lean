@@ -33,8 +33,9 @@ rising factorial `(k + 1)^{(s)} = (k + 1)(k + 2) ⋯ (k + s)` is `(k + 1).ascFac
 polynomial `f(x) = ∑_{k=0}^N a_k x^k` is written `∑ k ∈ range (N + 1), C (a k) * X ^ k`, and its
 `i`-th derivative is `derivative^[i]`. `F_n` and `L_n` are `Nat.fib n` and `lucasNumber n`.
 
-Epsteen's identity (`sum_choose_div_succ`) and Finkel's identity
-(`sum_neg_one_pow_choose_div_eq_harmonic`) are proved in
+Epsteen's identity (`sum_choose_div_succ`), Finkel's identity
+(`sum_neg_one_pow_choose_div_eq_harmonic`), and the inverse-square identity
+(`sum_choose_mul_pow_div_sq`) are proved in
 `MathlibExt.Combinatorics.Enumerative.RationallyWeightedBinomialSums`.
 -/
 
@@ -43,21 +44,6 @@ namespace MetaMathlibExt
 open Polynomial
 
 @[expose] public section
-
-/-- **Scherk's identity.** Write $S(r, i)$ for the Stirling numbers of the second kind. Let $N$ and
-$r$ be natural numbers, let $a_0, \dots, a_N$ be real numbers, and let $f$ be the polynomial
-$f(y) = \sum_{k=0}^{N} a_k y^k$, with $i$-th derivative $f^{(i)}$. Then for every real number $x$,
-with the convention $0^0 = 1$,
-$$\sum_{k=0}^{N} k^r a_k x^k = \sum_{i=0}^{r} S(r, i) \, x^i f^{(i)}(x).$$
-
-Source: Andreea M. Stănică, Gabriela N. Stănică, and Pantelimon Stănică, *An Evaluation of
-Rationally Weighted Binomial Sums Via Some Differential and Integral Operators*, The Fibonacci
-Quarterly 62 (2024), Article 62-1/stanica09202023, Theorem 2.1, equation (2.1). -/
-public theorem_wanted sum_pow_mul_coeff_eq_sum_stirlingSecond_derivative (a : ℕ → ℝ) (N r : ℕ)
-    (x : ℝ) :
-    ∑ k ∈ Finset.range (N + 1), (k : ℝ) ^ r * a k * x ^ k =
-      ∑ i ∈ Finset.range (r + 1), (Nat.stirlingSecond r i : ℝ) * x ^ i *
-        (derivative^[i] (∑ k ∈ Finset.range (N + 1), C (a k) * X ^ k)).eval x
 
 /-- **Scherk's identity with $s$-rising factorials.** Let $s$ be a real number and let $S(n, k)$
 be the generalized Stirling numbers of Hsu and Shiue with parameters $(-s, 1, 0)$: a real array
@@ -197,37 +183,6 @@ public theorem_wanted sum_poly_mul_choose_mul_secondOrder_pow (a b : ℝ) (U : �
           (r.choose l : ℂ) * ((U 1 - U 0 * β) / (α - β)) ^ l *
             (-((U 1 - U 0 * α) / (α - β))) ^ (r - l) * N.descFactorial i *
             (α ^ l * β ^ (r - l)) ^ i * (1 + α ^ l * β ^ (r - l) * x) ^ (N - i)
-
-/-- **Binomial sums with rising-factorial denominators.** Write $m^{(i)} = m(m+1)\cdots(m+i-1)$
-for the rising factorial. For all natural numbers $N$ and $s \ge 1$ and every real number $x$,
-
-$$\sum_{k=0}^{N} \binom{N}{k} \frac{x^{k+s}}{(k+1)^{(s)}} =
-\frac{(1+x)^{N+s} - 1}{(N+1)^{(s)}} - \sum_{j=1}^{s-1} \frac{x^j}{j!\,(N+1)^{(s-j)}}.$$
-
-The source writes $\binom{n}{k}$ for $\binom{N}{k}$.
-
-Source: Andreea M. Stănică, Gabriela N. Stănică, and Pantelimon Stănică, *An Evaluation of
-Rationally Weighted Binomial Sums Via Some Differential and Integral Operators*, The Fibonacci
-Quarterly 62 (2024), Article 62-1/stanica09202023, Theorem 3.1, equation (3.1). -/
-public theorem_wanted sum_choose_mul_pow_div_ascFactorial (N s : ℕ) (hs : 0 < s) (x : ℝ) :
-    ∑ k ∈ Finset.range (N + 1), (N.choose k : ℝ) * x ^ (k + s) / (k + 1).ascFactorial s =
-      ((1 + x) ^ (N + s) - 1) / (N + 1).ascFactorial s -
-        ∑ j ∈ Finset.Icc 1 (s - 1), x ^ j / (j.factorial * (N + 1).ascFactorial (s - j))
-
-/-- **Binomial sums weighted by $x^k/k^2$.** For every natural number $n$ and every real number
-$x$,
-
-$$\sum_{k=1}^{n} \binom{n}{k} \frac{x^k}{k^2} =
-\sum_{k=1}^{n} \frac{1}{k} \sum_{j=1}^{k} \frac{(1+x)^j}{j} -
-\sum_{k=1}^{n} \frac{1}{k} \sum_{j=1}^{k} \frac{1}{j}.$$
-
-Source: Andreea M. Stănică, Gabriela N. Stănică, and Pantelimon Stănică, *An Evaluation of
-Rationally Weighted Binomial Sums Via Some Differential and Integral Operators*, The Fibonacci
-Quarterly 62 (2024), Article 62-1/stanica09202023, Corollary 3.2. -/
-public theorem_wanted sum_choose_mul_pow_div_sq (n : ℕ) (x : ℝ) :
-    ∑ k ∈ Finset.Icc 1 n, (n.choose k : ℝ) * x ^ k / (k : ℝ) ^ 2 =
-      ∑ k ∈ Finset.Icc 1 n, 1 / (k : ℝ) * ∑ j ∈ Finset.Icc 1 k, (1 + x) ^ j / j -
-        ∑ k ∈ Finset.Icc 1 n, 1 / (k : ℝ) * ∑ j ∈ Finset.Icc 1 k, 1 / (j : ℝ)
 
 end
 

@@ -6,3 +6,5 @@ Automorphic forms and automorphic representations of reductive groups over numbe
 - [Automorphic representations of GLₙ](automorphic-representations-of-gl-n/README.md)
 - [Endoscopic classification and base change for unitary groups](endoscopic-classification-and-base-change-for-unitary-groups.md)
 - [Theta correspondence for unitary dual pairs](theta-correspondence/README.md)
+- [Boundedness in vertical strips of Langlands–Shahidi L-functions](gelbart-shahidi-boundedness-in-vertical-strips.md)
+- [Stabilization of the trace formulas for unitary groups and their twisted comparison group](stabilization-of-trace-formulas-for-unitary-groups.md)

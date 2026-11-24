@@ -21,7 +21,8 @@ import Mathlib.NumberTheory.Bertrand
 /-!
 # Continuous Turán numbers in finite dimensions
 
-Translating a planar pattern preserves its continuous Turán number.
+Translating a planar pattern preserves its continuous Turán number, and enlarging the square
+can only increase it.
 The volume gained by enlarging the ambient cube bounds the increase in the supremum of volumes
 of open sets avoiding a fixed pattern.
 
@@ -116,6 +117,25 @@ public theorem opx_translate (n : ℝ) (P : Set (ℝ × ℝ)) (v : ℝ × ℝ) :
       opx_translate.contains_translate ht (-v)
   simp only [opx, h]
 
+open Set MeasureTheory in
+/-- **Monotonicity of the continuous Turán number in the side length.** For every set
+$P \subseteq \mathbb{R}^2$ and all real numbers $m \le n$, the continuous Turán numbers satisfy
+$\operatorname{opx}(m, P) \le \operatorname{opx}(n, P)$.
+
+The paper assumes $0 < m$. This is not needed, since $\operatorname{opx}(m, P) = 0$ for $m \le 0$.
+
+Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Lemma 2.4
+(`integers-2024-A1-lem-2-4`). -/
+public theorem opx_mono_left (P : Set (ℝ × ℝ)) {m n : ℝ} (hmn : m ≤ n) :
+    opx m P ≤ opx n P := by
+  have hI : Icc 0 m ⊆ Icc 0 n := Icc_subset_Icc_right hmn
+  apply Real.sSup_le _ (opx_nonneg n P)
+  rintro _ ⟨S, ⟨hopen, hSm, hfree⟩, rfl⟩
+  refine le_csSup ?_ ⟨S, ⟨hopen, hSm.trans (prod_mono hI hI), hfree⟩, rfl⟩
+  refine ⟨volume.real (Icc 0 n ×ˢ Icc 0 n), ?_⟩
+  rintro _ ⟨T, ⟨_, hTn, _⟩, rfl⟩
+  exact measureReal_mono hTn (isCompact_Icc.prod isCompact_Icc).measure_ne_top
+
 /-- **Containment of point sets in $\mathbb{R}^d$.** Let $d$ be a natural number and let
 $S, P \subseteq \mathbb{R}^d$. Then $S$ contains $P$ when there are maps
 $f_1, \dots, f_d : \mathbb{R} \to \mathbb{R}$ that expand distances between coordinates of points
@@ -179,6 +199,26 @@ private theorem opxD_add_lt.volume_le_opxD {d : ℕ} {n : ℝ} {S P : Set (Fin d
   refine ⟨volume.real (Icc (0 : Fin d → ℝ) (fun _ => n)), ?_⟩
   rintro _ ⟨T, ⟨_, hT, _⟩, rfl⟩
   exact measureReal_mono hT isCompact_Icc.measure_ne_top
+
+/-- **Higher-dimensional continuous Turán numbers are monotone under containment.** Let
+$P, Q \subseteq \mathbb{R}^d$. If $Q$ contains $P$, then
+$\mathrm{opx}(n, P, d) \le \mathrm{opx}(n, Q, d)$ for every real number $n$.
+
+Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Lemma 5.1
+(`integers-2024-A1-lem-5-1`). -/
+public theorem opxD_mono_of_containsPatternD {d : ℕ} (n : ℝ) {P Q : Set (Fin d → ℝ)}
+    (h : ContainsPatternD Q P) : opxD d n P ≤ opxD d n Q := by
+  apply Real.sSup_le _ (opxD_nonneg ..)
+  rintro _ ⟨S, ⟨hS, hSn, hfree⟩, rfl⟩
+  apply opxD_add_lt.volume_le_opxD hS hSn
+  rintro ⟨g, hg, hgS⟩
+  obtain ⟨f, hf, hfQ⟩ := h
+  apply hfree
+  refine ⟨fun i => g i ∘ f i, ?_, fun p hp => hgS _ (hfQ p hp)⟩
+  intro i p hp q hq hlt
+  have hgap := hf i p hp q hq hlt
+  have hlt' := sub_pos.mp ((sub_pos.mpr hlt).trans_le hgap)
+  exact hgap.trans (hg i _ (hfQ p hp) _ (hfQ q hq) hlt')
 
 /-- **Increment bound for the d-dimensional continuous Turán number.** Let $d \ge 2$ be a
 natural number, let $P \subseteq \mathbb{R}^d$, and let $n, \varepsilon$ be real numbers with

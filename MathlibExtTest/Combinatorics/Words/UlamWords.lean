@@ -84,3 +84,22 @@ example (k : ℕ) :
   exact (isUlamWord_zeros_four_ones_zeros_iff _ _ (by omega)).2 (by omega)
 
 end MetaMathlibExt.isUlamWord_zeros_four_ones_zeros_iff
+
+namespace MetaMathlibExt.isUlamWord_zeros_two_ones_zeros_iff
+
+-- At zero padding the halves of 11 coincide. Adding one zero at either end gives a unique cut.
+example : ¬IsUlamWord [true, true] ∧ IsUlamWord [false, true, true] ∧
+    IsUlamWord [true, true, false] := by
+  decide
+
+-- With padding at both ends, 01|10 competes with endpoint cuts in 0110.
+-- In 00110 the cut 001|10 is unique.
+example : ¬IsUlamWord [false, true, true, false] ∧
+    IsUlamWord [false, false, true, true, false] := by
+  decide
+
+example (k : ℕ) :
+    IsUlamWord (List.replicate k false ++ List.replicate 2 true ++ List.replicate (k + 1) false) :=
+  (isUlamWord_zeros_two_ones_zeros_iff k (k + 1)).2 (by omega)
+
+end MetaMathlibExt.isUlamWord_zeros_two_ones_zeros_iff

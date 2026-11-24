@@ -13,6 +13,7 @@ public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.RingTheory.Ideal.Defs
 import Mathlib.Data.Nat.Choose.Sum
 import Mathlib.RingTheory.Ideal.BigOperators
+import MathlibExt.Algebra.DeepPowerSumCongruences
 
 /-!
 # Powers of congruent elements in a divided-power ideal
@@ -33,6 +34,42 @@ Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions a
 Congruences*, INTEGERS 24 (2024), Article A46, Section 2.2. -/
 @[expose] public def IsDividedPowerIdeal {A : Type*} [CommRing A] (I : Ideal A) : Prop :=
   ∀ a ∈ I, ∀ k : ℕ, 1 ≤ k → ∃ c ∈ I, a ^ k = (k.factorial : A) * c
+
+/-- **The $p$-th power criterion for divided-power ideals.** Let $p$ be a prime and let $A$ be a
+commutative ring in which every natural number not divisible by $p$ is a unit (a
+$\mathbb{Z}_{(p)}$-algebra). An ideal $\mathfrak{a}$ of $A$ is a divided-power ideal if and only if
+for every $a \in \mathfrak{a}$ there is $c \in \mathfrak{a}$ with $a^p = p\,c$, that is,
+$a^p \in p\mathfrak{a}$.
+
+The paper also assumes $A$ torsion-free; the statement does not need it.
+
+Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
+Congruences*, INTEGERS 24 (2024), Article A46, Corollary 4 (`integers-2024-A46-cor-4`). -/
+public theorem isDividedPowerIdeal_iff_pow_prime_mem {p : ℕ} [Fact p.Prime]
+    {A : Type*} [CommRing A] (hA : ∀ n : ℕ, ¬ p ∣ n → IsUnit (n : A)) (I : Ideal A) :
+    IsDividedPowerIdeal I ↔ ∀ a ∈ I, ∃ c ∈ I, a ^ p = (p : A) * c := by
+  have hp : p.Prime := Fact.out
+  -- The factor of `k!` left after removing the full power of `p` is a unit in `A`.
+  have hfactorial (k : ℕ) : ∃ u : Aˣ,
+      (k.factorial : A) = (p : A) ^ padicValNat p k.factorial * u := by
+    have hfin : FiniteMultiplicity p k.factorial :=
+      Nat.finiteMultiplicity_iff.mpr ⟨hp.ne_one, Nat.factorial_pos k⟩
+    obtain ⟨m, hm, hpm⟩ := hfin.exists_eq_pow_mul_and_not_dvd
+    obtain ⟨u, hu⟩ := hA m hpm
+    refine ⟨u, ?_⟩
+    simpa only [Nat.cast_mul, Nat.cast_pow, Nat.padicValNat_def, hu] using
+      congrArg (fun n : ℕ => (n : A)) hm
+  refine Iff.trans ?_ (pow_mem_prime_pow_padicValNat_factorial_iff I)
+  constructor
+  · intro h k hk a ha
+    obtain ⟨c, hc, heq⟩ := h a ha k hk
+    obtain ⟨u, hu⟩ := hfactorial k
+    exact ⟨(u : A) * c, I.mul_mem_left _ hc, by simpa only [hu, mul_assoc] using heq⟩
+  · intro h a ha k hk
+    obtain ⟨c, hc, heq⟩ := h k hk a ha
+    obtain ⟨u, hu⟩ := hfactorial k
+    refine ⟨↑u⁻¹ * c, I.mul_mem_left _ hc, ?_⟩
+    rw [heq, hu, mul_assoc, u.mul_inv_cancel_left]
 
 /-- If two elements agree modulo a divided-power ideal, their `n`th powers differ by
 `n` times an element of the ideal. -/
