@@ -3,7 +3,7 @@
 Let $\iota$ be a finite set of categories, and consider two populations, one with real sizes $N_i$
 and rates $T_i$, the other with real sizes $n_i$ and rates $t_i$. Write $S_i = N_i / \sum_j N_j$ and
 $s_i = n_i / \sum_j n_j$ for their [population shares](population-share.md), $c(N, T)$ and $c(n, t)$
-for their [crude rates](crude-rate.md), $\bar s_i = (s_i + S_i) / 2$ for the average shares and
+for their [crude rates](../../statistical-genetics/mendelian-randomization/weighted-mean.md), $\bar s_i = (s_i + S_i) / 2$ for the average shares and
 $\bar r_i = (t_i + T_i) / 2$ for the average rates. Then $c(n, t) - c(N, T) = R + C$, where
 $R = \sum_i \bar s_i t_i - \sum_i \bar s_i T_i$ is the rate effect, the two sets of rates compared
 at the average shares, and $C = \sum_i \bar r_i s_i - \sum_i \bar r_i S_i$ is the composition

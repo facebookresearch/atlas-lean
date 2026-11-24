@@ -28,7 +28,6 @@ rates into a rate effect and a composition effect.
 - [Population share of a category as its size over the total](population-share.md)
 - [Population shares sum to one when the total size is nonzero](sum-population-share.md)
 - [Shares of a valid population lie between 0 and 1](population-share-mem-icc.md)
-- [Crude rate as the size-weighted sum of rates over the total size](crude-rate.md)
 - [Crude rate as the centre of mass of the rates with sizes as masses](crude-rate-eq-center-mass.md)
 - [Crude rate as total events over total size](crude-rate-eq-sum-mul-div.md)
 - [Crude rate as the share-weighted sum of category rates](crude-rate-eq-sum-population-share-mul.md)
@@ -37,7 +36,6 @@ rates into a rate effect and a composition effect.
 
 ## Direct standardization and rate differences
 
-- [Directly standardized rate of the category rates under a standard](directly-standardized-rate.md)
 - [Directly standardized rate is the crude rate with the standard's sizes](directly-standardized-rate-eq-crude-rate.md)
 - [Crude-rate difference as a rate effect plus a composition effect](crude-rate-sub-crude-rate.md)
 - [With common category rates, the crude-rate gap is a composition effect](crude-rate-sub-crude-rate-of-same-rates.md)
