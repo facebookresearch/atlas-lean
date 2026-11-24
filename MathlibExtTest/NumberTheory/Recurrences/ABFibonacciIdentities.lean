@@ -39,3 +39,18 @@ example (a b c : ℂ) (hc : c ≠ 0) (h : c ^ 2 - a * c - b ≠ 0) :
 example : ∑ i ∈ Finset.Icc 1 4, (-2 : ℂ) ^ (4 - i) * fibAB 2 (-1) i = -2 := by
   rw [sum_c_pow_fibAB 2 (-1) (-2) (by norm_num) (by norm_num) 4 (by decide)]
   norm_num [fibAB]
+
+-- With b = 0 and n = 0 the sole term has weight 0^0 in both sums.
+example (a : ℂ) (ha : a ≠ 0) :
+    (lucasAB a 0 1 - a) / a ^ 2 = 0 ∧ lucasAB a 0 2 / a ^ 2 = 1 := by
+  have hΔ : a ^ 2 + 4 * 0 ≠ 0 := by simpa using pow_ne_zero 2 ha
+  obtain ⟨hEven, hOdd⟩ := sum_neg_b_pow_fibAB_disc a 0 hΔ 0
+  simpa [sub_eq_add_neg] using And.intro hEven.symm hOdd.symm
+
+-- At b = 2 the weights alternate in sign and have distinct magnitudes.
+example :
+    (∑ i ∈ Finset.range 3, (-2 : ℂ) ^ (2 - i) * fibAB 1 2 (2 * i)) = 3 ∧
+    (∑ i ∈ Finset.range 3, (-2 : ℂ) ^ (2 - i) * fibAB 1 2 (2 * i + 1)) = 9 := by
+  obtain ⟨hEven, hOdd⟩ := sum_neg_b_pow_fibAB_disc 1 2 (by norm_num) 2
+  rw [hEven, hOdd]
+  norm_num [lucasAB]

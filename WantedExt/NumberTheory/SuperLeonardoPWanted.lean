@@ -28,6 +28,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Choose.Basic
+public import MathlibExt.NumberTheory.Recurrences.SchutzKellyBinomialSum
 public import MathlibExt.NumberTheory.Recurrences.SuperLeonardoP
 
 namespace MetaMathlibExt
@@ -65,22 +66,6 @@ Theorem 5. -/
 public theorem_wanted superLeonardoP_one_succ_eq_sum_choose (p : ℕ) (hp : 1 ≤ p) (n : ℕ) :
     superLeonardoP p 1 (fun i => (i : ℝ) + 1) n =
       ∑ i ∈ Finset.range ((n + 1) / (p + 1) + 1), ((n + 1 - p * i).choose (i + 1) : ℝ)
-
-/-- **Schütz–Kelly binomial sum identity.** For all natural numbers $J$, $n$ and $p$,
-$$1 + \sum_{i=0}^{J} \binom{\max(n-pi,\,0)}{i+1} + \sum_{i=0}^{J-1} \binom{\max(n-pi-p,\,0)}{i+1} =
-\sum_{i=0}^{J} \binom{\max(n-pi,\,0)+1}{i+1}.$$
-
-Truncating the upper indices at $0$ makes a negative upper index give $\binom{0}{i+1} = 0$,
-matching the paper's binomials. The identity is stated for all natural $J$, $n$, $p$, which
-includes the value $0$ beyond the paper's positive range.
-
-Source: Clemens Schütz and Kristian Kelly, *An Explicit Formula for Supergeneralized
-Leonardo `p`-numbers*, Journal of Integer Sequences 28 (2025), Article 25.8.2,
-Lemma 6. -/
-public theorem_wanted one_add_sum_choose_add_sum_choose (J n p : ℕ) :
-    1 + (∑ i ∈ Finset.range (J + 1), (n - p * i).choose (i + 1)) +
-        ∑ i ∈ Finset.range J, (n - p * i - p).choose (i + 1) =
-      ∑ i ∈ Finset.range (J + 1), (n - p * i + 1).choose (i + 1)
 
 /-- **Supergeneralized Leonardo p-numbers via Fibonacci p-numbers.** For all natural numbers
 $p \ge 1$, $k$ and $n$ with $n > p$ and every real sequence $x$, the supergeneralized Leonardo

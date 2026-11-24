@@ -15,6 +15,7 @@ public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Complex
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Inverse
 public import Mathlib.Data.Nat.Choose.Central
+public import MathlibExt.Combinatorics.Enumerative.CentralBinomialReciprocalMultisection
 
 /-!
 # Multisections of reciprocal central binomial series
@@ -39,23 +40,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open Polynomial
-
-/-- **Multisection formula for $\sum_k x^k / \binom{2mk}{mk}$.** Let $m \ge 1$ be a natural number
-and $x$ a complex number with $|x| < 4^m$. Write $H(y) = \sum_{n \ge 0} y^n / \binom{2n}{n}$,
-$w = e^{2\pi i/m}$, and let $x^{1/m}$ be the principal $m$-th root of $x$. Then
-$$
-\sum_{k \ge 0} \frac{x^k}{\binom{2mk}{mk}} = \frac{1}{m} \sum_{j=0}^{m-1} H(w^j x^{1/m}).
-$$
-
-Source: Rimer Zurita, *Elementary Functions Associated with Series Involving Reciprocals of
-Central Binomial Coefficients*, Journal of Integer Sequences 27 (2024), Article 24.6.8,
-Theorem 7 (`jis-2024-24.6.8-thm-7`). -/
-public theorem_wanted tsum_div_centralBinom_mul_eq_multisection {m : ℕ} (hm : 1 ≤ m) {x : ℂ}
-    (hx : ‖x‖ < 4 ^ m) :
-    ∑' k : ℕ, x ^ k / (Nat.centralBinom (m * k) : ℂ) =
-      (1 / m : ℂ) * ∑ j ∈ Finset.range m,
-        ∑' n : ℕ, (Complex.exp (2 * Real.pi * Complex.I / m) ^ j * x ^ ((1 : ℂ) / m)) ^ n /
-          (Nat.centralBinom n : ℂ)
 
 /-- **Multisection formula for $\sum_k x^k / (k \binom{2mk}{mk})$.** Let $m \ge 1$ be a natural
 number and $x$ a complex number with $|x| < 4^m$. Write

@@ -34,4 +34,16 @@ example : sumProductMaxCard {0, 1} = 3 := by
   rw [hs, hp]
   norm_num [A, Finset.card_insert_of_notMem]
 
-example : sumProductExponent ≤ 2 := erdosSzemerediHistoricalUpperBound_holds
+example : sumProductExponent ∈ Set.Icc (1 : ℝ) 2 :=
+  ⟨trivialLowerBound_holds, erdosSzemerediHistoricalUpperBound_holds⟩
+
+-- The same constant works on singletons, which forces it to be at most one.
+example (ε : ℝ) (hε : 0 < ε) :
+    ∃ K ∈ Set.Ioc (0 : ℝ) 1, ∀ A : Finset ℝ, A.Nonempty →
+      K * (A.card : ℝ) ^ (sumProductExponent - ε) ≤ sumProductMaxCard A := by
+  obtain ⟨K, hK, hbound⟩ := epsilonUniformLowerGrowthCharacterization_holds.1 ε hε
+  refine ⟨K, ⟨hK, ?_⟩, hbound⟩
+  simpa [sumProductMaxCard] using hbound {0} (Finset.singleton_nonempty _)
+
+example {s : ℝ} (hs : sumProductExponent < s) : ¬ HasUniformSumProductLowerGrowth s :=
+  fun h => hs.not_ge (epsilonUniformLowerGrowthCharacterization_holds.2 h)
