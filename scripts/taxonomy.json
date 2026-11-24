@@ -12152,6 +12152,7 @@
   "MathlibExt/NumberTheory/DivisorSumDensity": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Average and divisibility of the divisor sum"},
   "MathlibExt/NumberTheory/DivisorSumReciprocalConvergence": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Pseudoperfect numbers"},
   "MathlibExt/NumberTheory/DivisorsShortInterval": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Divisors in short intervals"},
+  "MathlibExt/NumberTheory/DoldPrimePowerCongruences": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Dold and realizable sequences"},
   "MathlibExt/NumberTheory/DoldSequence": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Dold and realizable sequences"},
   "MathlibExt/NumberTheory/DoublyExponentialReciprocalSum": {"to": "NumberTheory/diophantine-approximation/transcendence-irrationality", "title": "Reciprocal sums of doubly exponential sequences"},
   "MathlibExt/NumberTheory/DowkerHalfSum": {"to": "NumberTheory/exponential-sums", "title": "Watson's cosecant and cosine sums"},
