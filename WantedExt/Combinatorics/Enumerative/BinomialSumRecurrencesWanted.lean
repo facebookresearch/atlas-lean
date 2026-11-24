@@ -46,21 +46,6 @@ public theorem_wanted rootsOfUnity_product_mul_eq_comp_pow (f : ℤ[X]) (r k : �
             (C (Complex.exp (2 * Real.pi * Complex.I / k) ^ j) * X) ∧
       T.natDegree = r ∧ f * G = T.comp (X ^ k)
 
-/-- **Step sums along a Riordan array.** Let $K$ be a field, let $g, h \in K[[x]]$ with
-$h(0) = 0$, and write $d(n, m) = [x^n]\, g(x) h(x)^m$. Then for all natural numbers $k > 1$,
-$p < k$ and $n$,
-$\sum_{j=0}^{n} d(n, kj + p) = [x^n]\, g(x) h(x)^p (1 - h(x)^k)^{-1}$.
-
-Since $h(0) = 0$, $d(n, m) = 0$ for $m > n$, so the left side is the full sum over all
-$j \ge 0$.
-
-Source: Eduardo H. M. Brietzke, *Recurrence Relations for Sums of Binomial Coefficients and
-Some Generalizations*, Journal of Integer Sequences 27 (2024), Article 24.3.4, Proposition 5. -/
-public theorem_wanted riordan_stepSum_coeff {K : Type*} [Field K] (g h : PowerSeries K)
-    (hh : PowerSeries.constantCoeff h = 0) (k p : ℕ) (hk : 1 < k) (hp : p < k) (n : ℕ) :
-    ∑ j ∈ Finset.range (n + 1), PowerSeries.coeff n (g * h ^ (k * j + p)) =
-      PowerSeries.coeff n (g * h ^ p * (1 - h ^ k)⁻¹)
-
 /-- **Window criterion for step sums of binomial coefficients.** Let $\alpha, k, \gamma, p, s$
 be natural numbers with $\alpha > 1$, $k > 1$, $\gamma \ge 1$ and $p < k$, and let
 $\delta_1, \delta_2, \ldots$ be integers. For $n \in \mathbb{N}$ let $c(n)$ be the sum of
