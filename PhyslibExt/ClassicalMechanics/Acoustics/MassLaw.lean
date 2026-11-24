@@ -87,19 +87,22 @@ theorem mass_law_comparison {x : ℝ} (hx : 0 < x) :
     linarith
   · rw [hdouble]; ring
 
-/-- The mass-law split: transmission loss equals the asymptote
-plus the positive correction term. -/
+/-- The mass-law split: for `x > 0`, the transmission loss
+`10 * log10 (1 + x ^ 2)` equals the asymptote `20 * log10 x` plus the
+positive correction term `10 * log10 (1 + x ^ (-2 : ℤ))`. -/
 lemma mass_law_split {x : ℝ} (hx : 0 < x) :
     10 * Real.logb 10 (1 + x ^ 2)
       = 20 * Real.logb 10 x + 10 * Real.logb 10 (1 + x ^ (-2 : ℤ)) :=
   (mass_law_comparison hx).1
 
-/-- The transmission loss strictly exceeds the mass-law asymptote. -/
+/-- For `x > 0`, the transmission loss `10 * log10 (1 + x ^ 2)` strictly
+exceeds the mass-law asymptote `20 * log10 x`. -/
 lemma mass_law_gt_asymptote {x : ℝ} (hx : 0 < x) :
     20 * Real.logb 10 x < 10 * Real.logb 10 (1 + x ^ 2) :=
   (mass_law_comparison hx).2.1
 
-/-- Doubling `x` adds `20 * log10 2` to the asymptote. -/
+/-- For `x > 0`, doubling `x` adds `20 * log10 2` to the asymptote
+`20 * log10 x`. -/
 lemma mass_law_asymptote_double {x : ℝ} (hx : 0 < x) :
     20 * Real.logb 10 (2 * x)
       = 20 * Real.logb 10 x + 20 * Real.logb 10 2 :=

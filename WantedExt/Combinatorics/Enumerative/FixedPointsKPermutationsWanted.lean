@@ -30,7 +30,8 @@ public import Mathlib.Combinatorics.Enumerative.Stirling
 public import Mathlib.GroupTheory.Perm.Cycle.Type
 public import Mathlib.Probability.CDF
 public import Mathlib.Probability.Distributions.Gaussian.Real
-public import MathlibExt.Combinatorics.Enumerative.FixedPointsKPermutations
+public import MathlibExt.Combinatorics.Enumerative.FixedPointsKPermutationsDistribution
+public import MathlibExt.Combinatorics.Enumerative.FixedPointsKPermutationsRecurrence
 public import MathlibExt.Combinatorics.Enumerative.Stirling
 public import MathlibExt.Combinatorics.Sequences.NewtonInequalities
 
@@ -39,45 +40,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open Filter Polynomial Topology
-
-/-- **A permutation has at most as many fixed points as cycles.** Write $a(n, k, j)$ for the number
-of permutations of an $n$-element set with exactly $k$ cycles (fixed points counted as cycles of
-length one) and exactly $j$ fixed points. If $k < j$, then $a(n, k, j) = 0$.
-
-Source: Moussa Benoumhani, *The Distribution of the Number of Fixed Points in k-Permutations*,
-INTEGERS 24 (2024), Article A54, Proposition 3 (range `0 ≤ j ≤ k` of `a(n, k, j)`). -/
-public theorem kPermFixedPointCount_eq_zero_of_lt {n k j : ℕ} (h : k < j) :
-    kPermFixedPointCount n k j = 0 := by
-  unfold kPermFixedPointCount
-  rw [Fintype.card_eq_zero_iff]
-  exact ⟨fun ⟨σ, h1, h2⟩ => by rw [cycleQuotientCount_eq] at h1; omega⟩
-
-/-- **Counting the empty permutation.** Write $a(n, k, j)$ for the number of permutations of an
-$n$-element set with exactly $k$ cycles (fixed points counted as cycles of length one) and exactly
-$j$ fixed points. Then $a(0, 0, 0) = 1$: the empty permutation is the only permutation of the
-empty set, and it has no cycles and no fixed points.
-
-Source: Moussa Benoumhani, *The Distribution of the Number of Fixed Points in k-Permutations*,
-INTEGERS 24 (2024), Article A54, Proposition 3 (definition of `a(n, k, j)`, value at
-`n = k = j = 0`). -/
-public theorem kPermFixedPointCount_zero_zero_zero : kPermFixedPointCount 0 0 0 = 1 := by
-  unfold kPermFixedPointCount
-  rw [Fintype.card_eq_one_iff]
-  refine ⟨⟨1, by rw [cycleQuotientCount_eq]; simp, by simp⟩,
-    fun x => Subtype.ext (Subsingleton.elim _ _)⟩
-
-/-- **Recurrence for permutations counted by cycles and fixed points.** Write $a(n, k, j)$ for the
-number of permutations of an $n$-element set with exactly $k$ cycles (fixed points counted as
-cycles of length one) and exactly $j$ fixed points. For all natural numbers $n$, $k$ and $j$
-with $1 \le j \le k$, $j \, a(n, k, j) = n \, a(n - 1, k - 1, j - 1)$, where $n - 1$ is read as
-$0$ when $n = 0$.
-
-The paper assumes $n \ge k \ge 1$; the identity holds for all $n$.
-
-Source: Moussa Benoumhani, *The Distribution of the Number of Fixed Points in k-Permutations*,
-INTEGERS 24 (2024), Article A54, Proposition 3 (iii) (`integers-2024-A54-prop-3`). -/
-public theorem_wanted mul_kPermFixedPointCount {n k j : ℕ} (hj : 1 ≤ j) (hjk : j ≤ k) :
-    j * kPermFixedPointCount n k j = n * kPermFixedPointCount (n - 1) (k - 1) (j - 1)
 
 /-- **Stirling numbers from fixed-point counts.** For natural numbers $n$, $k$ and $j$, let
 $a(n, k, j)$ be the number of permutations of an $n$-element set with exactly $k$ cycles (fixed
@@ -110,26 +72,6 @@ INTEGERS 24 (2024), Article A54, Proposition 4 (`integers-2024-A54-prop-4`). -/
 public theorem_wanted sum_mul_kPermFixedPointCount {n k : ℕ} (hk : 1 ≤ k) :
     ∑ j ∈ Finset.range (k + 1), j * kPermFixedPointCount n k j =
       n * Nat.stirlingFirst (n - 1) (k - 1)
-
-/-- **Variance of the number of fixed points of a permutation with a given number of cycles.**
-Write $a(n, k, j)$ for the number of permutations of an $n$-element set with exactly $k$ cycles
-(fixed points counted as cycles of length one) and exactly $j$ fixed points, $c(n, k)$ for the
-unsigned Stirling number of the first kind (the number of permutations of an $n$-element set
-with $k$ cycles), and $\mu_{n,k} = n \, c(n - 1, k - 1) / c(n, k)$. If $2 \le k \le n$, then
-$\frac{1}{c(n, k)} \sum_{j=0}^{k} j^2 \, a(n, k, j) - \mu_{n,k}^2 =
-\mu_{n,k} (1 + \mu_{n-1,k-1} - \mu_{n,k})$.
-
-Here $\mu_{n,k}$ is the mean number of fixed points of a uniformly random permutation of an
-$n$-element set with $k$ cycles, so the left side is the variance of that number.
-
-Source: Moussa Benoumhani, *The Distribution of the Number of Fixed Points in k-Permutations*,
-INTEGERS 24 (2024), Article A54, Proposition 4 (`integers-2024-A54-prop-4`). -/
-public theorem_wanted kPermFixedPoint_variance {n k : ℕ} (hk : 2 ≤ k) (hkn : k ≤ n) :
-    let μ : ℕ → ℕ → ℚ := fun n k =>
-      (n : ℚ) * Nat.stirlingFirst (n - 1) (k - 1) / Nat.stirlingFirst n k
-    (∑ j ∈ Finset.range (k + 1), (j : ℚ) ^ 2 * kPermFixedPointCount n k j) /
-        Nat.stirlingFirst n k - μ n k ^ 2 =
-      μ n k * (1 + μ (n - 1) (k - 1) - μ n k)
 
 /-- **Newton's inequalities.** Let $p(x) = \sum_{j=0}^{n} a_j x^j$ be a real polynomial of degree
 $n \ge 2$ that splits over $\mathbb{R}$, that is, all $n$ of its zeros, counted with

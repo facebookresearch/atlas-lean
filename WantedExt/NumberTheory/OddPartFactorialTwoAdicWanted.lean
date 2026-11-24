@@ -249,18 +249,6 @@ public theorem_wanted reverseESymm_two_oddSet_congr (e : ℕ) (he : 2 ≤ e) :
       reverseESymm 2 (integerMultiset (oddBelowTwoPow e)) - (2 : ℤ) ^ (e - 2)
 
 /--
-**Each residue $1 \bmod 8$ has four odd square roots modulo $2^e$.** Let $e \ge 3$ and let $S_e$
-be the set of odd natural numbers $i$ with $1 \le i < 2^e$. For every natural number $v < 2^e$
-with $v \equiv 1 \pmod 8$, exactly four elements $i \in S_e$ satisfy $i^2 \bmod 2^e = v$.
-
-Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
-Sequences 29 (2026), Article 26.3.1, Lemma 20.
--/
-public theorem_wanted square_mod_twoPower_fiber_card
-    (e : ℕ) (he : 3 ≤ e) (v : ℕ) (hv : v < 2 ^ e) (hv8 : v % 8 = 1) :
-    ({i ∈ oddBelowTwoPow e | i ^ 2 % 2 ^ e = v}).card = 4
-
-/--
 **$\hat\sigma_1$ of four copies of the numbers $1 \bmod 8$ below $2^e$.** Let $e \ge 3$ and let
 $M_e$ be the multiset of integers containing each natural number $n < 2^e$ with
 $n \equiv 1 \pmod 8$ (that is, $1, 9, \dots, 2^e - 7$) exactly four times, let $N$ be the
