@@ -16,8 +16,10 @@ kernel of $\lvert \det \rvert$.
 A good expansion has a statement page for the theorem, after a definition page for isobaric sums, citing the sources
 below with locators; Mœglin and Waldspurger prove it through the residues of the Eisenstein series induced from
 $\mu^{\otimes n}$ and the classification of the residual spectrum. The global normalizing factors of their intertwining
-operators are Rankin–Selberg $L$-functions of pairs of cuspidal representations, whose poles locate the residues, and
-they analyse the normalized local intertwining operators separately.
+operators are built from shifted ratios of Rankin–Selberg $L$-functions of pairs of cuspidal representations and from
+$\varepsilon$-factors; their poles identify the candidate residues, which survive or cancel according to the normalized local
+intertwining operators, analysed separately. Already in rank one the spherical factor is a ratio whose denominator is
+shifted by $1$, not a single $L$-function.
 
 ## Depends on
 

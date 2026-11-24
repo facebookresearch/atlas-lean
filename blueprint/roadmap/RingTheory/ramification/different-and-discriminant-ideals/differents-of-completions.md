@@ -31,6 +31,8 @@ the ideal of norms of the elements of the different, and its absolute norm $\lve
 - [The norm of the different commutes with localization](map-span-norm-different-ideal-eq-localiz.md), for the localization of the norm of the different, a step toward the local factorization of the norm
 - [The discriminant ideal is the norm of the different](discriminant-ideal-eq-span-norm.md), for the discriminant ideal as the ideal of norms of the elements of the different
 - [Absolute norm of the discriminant ideal of a number field](../../../NumberTheory/algebraic-number-theory/discriminants-ramification/discriminants-of-number-fields/abs-norm-discriminant-ideal.md), for $\lvert d_K \rvert$ as the absolute norm of the discriminant ideal
+- [Base change to a finite completion as a product of completions](../../../NumberTheory/algebraic-number-theory/discriminants-ramification/completions-of-number-fields-at-finite-places/the-finite-place-completion-tensor-product/completion-tensor-product-alg-equiv.md), for the decomposition $\mathbb{Q}_p \otimes_{\mathbb{Q}} K \cong \prod_{v \mid p} K_v$ of the field factor (its case of the extension $K/\mathbb{Q}$), on which Sutherland's trace-dual argument computes the trace pairing
+- [Base change of the ring of integers to a finite completion](../../../NumberTheory/algebraic-number-theory/discriminants-ramification/completions-of-number-fields-at-finite-places/the-finite-place-completion-tensor-product/ring-of-integers-completion-tensor-product.md), for the integral decomposition $\mathbb{Z}_p \otimes_{\mathbb{Z}} \mathcal{O}_K \cong \prod_{v \mid p} \mathcal{O}_v$ (its case of the extension $K/\mathbb{Q}$), which identifies the lattice whose trace dual is computed; the field decomposition alone does not identify it
 
 ## Sources
 
@@ -38,6 +40,10 @@ the ideal of norms of the elements of the different, and its absolute norm $\lve
   <https://math.mit.edu/~poonen/786/notes.pdf>: Proposition 4.8, p. 16 (the self-dual Haar measure gives $\mathcal{O}$ the volume $(N\mathcal{D})^{-1/2}$, $\mathcal{D}$ the different of
   $F/F_0$), and §5.3, Proposition 5.5 and its proof, p. 28 (the volume of $\mathbb{A}/K$ through the covolume of $\mathcal{O}_K$ and the norm
   of the different).
+- A. V. Sutherland, 18.785 Number theory I, Fall 2021, Lecture 11, "Dedekind extensions and completion" (title of the
+  notes), <https://math.mit.edu/classes/18.785/2021fa/LectureNotes11.pdf>: Theorem 11.23 (5), pp. 7–8
+  ($L \otimes_K K_{\mathfrak{p}} \cong \prod_{\mathfrak{q} \mid \mathfrak{p}} L_{\mathfrak{q}}$), and Corollary 11.26, p. 9 ($B \otimes_A \hat A_{\mathfrak{p}} \cong \prod_{\mathfrak{q} \mid \mathfrak{p}} \hat B_{\mathfrak{q}}$ as
+  $\hat A_{\mathfrak{p}}$-algebras).
 - A. V. Sutherland, 18.785 Number theory I, Fall 2021, Lecture 12, "The different and the discriminant",
   <https://math.mit.edu/classes/18.785/2021fa/LectureNotes12.pdf>: Proposition 12.3 (the different respects localization)
   and Proposition 12.4 with its proof, p. 2 (the different respects completion, $D_{\hat B_q / \hat A_p} = D_{B/A} \hat B_q$, through

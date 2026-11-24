@@ -15,9 +15,14 @@ norm, $\mathfrak{a}^*_{\mathbb{C}}$ the complexified dual, and $E$ a finite-dime
 ## Expansion
 
 A good expansion has a statement page for the theorem, in both directions, citing the sources below with locators. The case
-$\Lambda = 0$ of the recovery of $\psi$ is Fourier inversion, after choosing an inner product on $\mathfrak{a}$ and identifying $\xi \in \mathfrak{a}^*$
-with $w \in \mathfrak{a}$ by $\xi(H) = 2\pi \langle H, w \rangle$, so that $\Psi(i\xi)$ becomes the Fourier transform of $\psi$ at $w$; the passage to
-$\Lambda + i\mathfrak{a}^*$ is a contour shift, by Cauchy's theorem and the growth estimate.
+$\Lambda = 0$ of the recovery of $\psi$ is Fourier inversion, after choosing an inner product on $\mathfrak{a}$, with Lebesgue measure $dV$
+normalized by the unit cube on an orthonormal basis, and identifying $\xi \in \mathfrak{a}^*$ with $w \in \mathfrak{a}$ by
+$\xi(H) = 2\pi \langle H, w \rangle$. If $dH = c \, dV$, then $\Psi(i\xi) = c \, \mathcal{F}\psi(w)$, where $\mathcal{F}$ is the Fourier transform for $dV$
+with kernel $e^{-2\pi i \langle v, w \rangle}$, and the measure on $i\mathfrak{a}^*$ dual to $dH$ corresponds to $c^{-1} \, dV(w)$, so the two factors
+cancel in $\psi(H) = \int_{i\mathfrak{a}^*} \Psi(\lambda) e^{\lambda(H)} \, d\lambda$. The converse direction needs $\mathcal{F}(\mathcal{F}^{-1} g) = g$ for the
+function $g$ on $i\mathfrak{a}^*$ defined by the entire function, which follows from the same theorem by the reflection
+$\mathcal{F}^{-1} g(v) = \mathcal{F} g(-v)$. The passage to $\Lambda + i\mathfrak{a}^*$, and the support estimate in the converse direction, are contour shifts,
+one variable at a time, by Cauchy's theorem for rectangles and the growth estimate.
 
 ## Depends on
 
@@ -25,7 +30,8 @@ Its statement uses only the notions recalled above.
 
 ## Proof depends on
 
-- [Fourier inversion formula](fourier-inv-fourier-eq.md), for the recovery of $\psi$ from the values of $\Psi$ on the imaginary subspace $i\mathfrak{a}^*$, after the identification of $\mathfrak{a}$ with a Euclidean space and the rescaling by $2\pi$ described above
+- [Fourier inversion formula](fourier-inv-fourier-eq.md), for the recovery of $\psi$ from the values of $\Psi$ on the imaginary subspace $i\mathfrak{a}^*$, after the identification of $\mathfrak{a}$ with a Euclidean space and the rescaling by $2\pi$ described above, and, by reflection, for the inversion in the converse direction
+- [Cauchy–Goursat theorem for rectangles](../../complex-analysis/cauchy-theory/contour-integrals-over-rectangles/boundary-integral-eq-zero.md), for the contour shifts from $i\mathfrak{a}^*$ to $\Lambda + i\mathfrak{a}^*$, one complex variable at a time, between which the growth estimate makes the horizontal sides vanish
 
 ## Sources
 

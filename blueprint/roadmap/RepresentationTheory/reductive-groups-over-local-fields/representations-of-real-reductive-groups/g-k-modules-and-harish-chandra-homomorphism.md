@@ -29,9 +29,13 @@ $(\mathfrak{g}, K)$-modules, admissibility and Harish-Chandra modules, and state
 finitely generated $Z(\mathfrak{g})$-finite modules and for the homomorphism $\nu$ and its finiteness, each citing the sources
 below with locators. Howe states the admissibility for a quasisimple module, on which $Z(\mathfrak{g})$ acts by scalars. A
 finitely generated module $M$ annihilated by an ideal of finite codimension of $Z(\mathfrak{g})$ is the direct sum of finitely
-many generalized eigenspaces $M_\chi$, each with a finite filtration by the submodules $\mathfrak{m}_\chi^i M_\chi$, $\mathfrak{m}_\chi$ the
-kernel of the character $\chi$; the subquotients are finitely generated, since $U(\mathfrak{g})$ is Noetherian, with $Z(\mathfrak{g})$
-acting by scalars, hence admissible, and so is $M$. The finiteness of $Z(\mathfrak{l})$ over $\nu(Z(\mathfrak{g}))$ comes from the
+many generalized eigenspaces $M_\chi$ for characters $\chi$ of $Z(\mathfrak{g})$, but a disconnected $K$ need not preserve them, since
+it acts on $Z(\mathfrak{g})$: for the standard representation of $\mathrm{O}(2)$, a reflection swaps the two eigenlines of the Lie
+algebra. The identity component $K^\circ$ acts trivially on $Z(\mathfrak{g})$, so each $M_\chi$ is a $(\mathfrak{g}, K^\circ)$-module, with a finite
+filtration by the submodules $\mathfrak{m}_\chi^i M_\chi$, $\mathfrak{m}_\chi$ the kernel of $\chi$. The subquotients are finitely generated, since
+$U(\mathfrak{g})$ is Noetherian, with $Z(\mathfrak{g})$ acting by scalars, hence admissible for $K^\circ$, and so is $M$. As $K/K^\circ$ is finite,
+$\dim \mathrm{Hom}_K(\tau, M) \le \dim \mathrm{Hom}_{K^\circ}(\tau, M) < \infty$ for every irreducible representation $\tau$ of $K$, so $M$ is
+admissible for $K$. The finiteness of $Z(\mathfrak{l})$ over $\nu(Z(\mathfrak{g}))$ comes from the
 Harish-Chandra isomorphisms $Z(\mathfrak{g}) \cong S(\mathfrak{h})^W$ and $Z(\mathfrak{l}) \cong S(\mathfrak{h})^{W_L}$ for a Cartan
 subalgebra $\mathfrak{h} \subseteq \mathfrak{l}$.
 

@@ -29,9 +29,12 @@ continuous anti-automorphism of $G$, written $x \mapsto x^\sigma$.
 
 A good expansion has definition pages for Schwartz functions and densities and for tempered generalized functions, and
 statement pages for the generalized matrix coefficients and for the theorem with Sun and Zhu's hypotheses and their
-Remark 2.4, each citing the source below with locators. Sun and Zhu prove Theorem 2.1 through the Casselman–Wallach
-globalization, and Theorem 2.3 by applying the hypothesis to the generalized matrix coefficient of two nonzero
-$S_i$-equivariant functionals.
+Remark 2.4, each citing the source below with locators. Sun and Zhu prove Theorem 2.1 in their §3, pp. 7–11, from the
+Casselman–Wallach globalization, polynomially controlled integration of Schwartz functions, the completed projective
+tensor product of nuclear Fréchet spaces and its strong dual, and a lemma on transposes with closed image (Lemma 3.8,
+p. 11). They prove Theorem 2.3 in §4, pp. 11–13, by applying the hypothesis to the generalized matrix coefficient of two
+nonzero $S_i$-equivariant functionals, with Lemma 3.7, Lemma 4.1 and Schur's lemma; when either space of functionals is
+zero the bound is immediate. These are steps of the node's own proof.
 
 ## Depends on
 
@@ -40,7 +43,7 @@ $S_i$-equivariant functionals.
 
 ## Proof depends on
 
-Its proof is that of the source below, as the Expansion describes.
+- [Casselman–Wallach globalization](casselman-wallach-globalization.md), for the exact globalization functor and the closed range of the maps between globalizations that Sun and Zhu's proof of their Theorem 2.1 uses; the polynomially controlled Schwartz integration, the nuclear Fréchet tensor products with their strong duals and the transpose lemma are steps of the node's own proof, as the Expansion describes
 
 ## Sources
 

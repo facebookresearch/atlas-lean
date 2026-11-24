@@ -42,7 +42,7 @@ It also writes out these steps of its own proof:
 ## Proof depends on
 
 - [Siegel sets and reduction theory for adelic groups](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/reduction-theory-for-adelic-groups.md), for $\lVert xy \rVert \le c \lVert x \rVert \lVert y \rVert$, which makes convolution with a compactly supported function preserve moderate growth, and for the finiteness of $G(k) \backslash G(\mathbb{A}_f) / L$, $L$ open compact in $G(\mathbb{A}_f)$, by which $G(k) \backslash G(\mathbb{A}) / L$ is a finite union of arithmetic quotients $\Gamma_i \backslash G_\infty$ (not a finite set: for $\mathbb{G}_m$ over $\mathbb{Q}$ and $L = \prod_p \mathbb{Z}_p^\times$ the idele norm maps it onto $\mathbb{R}_{>0}$), in the passage to the adelic quotient
-- [Analytic elliptic regularity](../../../Analysis/partial-differential-equations/analytic-elliptic-regularity.md), for the analyticity of a $K$-finite, $\mathcal{Z}$-finite function, annihilated by a nonconstant polynomial in an elliptic invariant operator, in Harish-Chandra's proof
+- [Analytic elliptic regularity](../../../Analysis/partial-differential-equations/analytic-elliptic-regularity.md), for the analyticity, in Harish-Chandra's proof, of the auxiliary coefficient $F(x) = \beta(r(x) f)$ attached after a Hahn–Banach separation to a continuous linear form $\beta$: $F$ is killed by the finite-codimensional annihilator, which contains elliptic operators, so it is analytic, and vanishing with all its derivatives at the identity it vanishes, which proves the density of the infinitesimal cyclic space
 
 ## Sources
 

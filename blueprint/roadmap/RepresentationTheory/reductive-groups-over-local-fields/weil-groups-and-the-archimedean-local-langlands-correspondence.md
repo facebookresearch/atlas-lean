@@ -17,9 +17,10 @@ local Langlands correspondence, on base change and on archimedean $L$-factors us
   inertia; an unramified semisimple representation of dimension $n$ is determined by the conjugacy class of the image
   of a geometric Frobenius element.
 - **Unramified parameters.** Every irreducible representation $\pi$ of $\mathrm{GL}_n(F)$ with a nonzero
-  $\mathrm{GL}_n(\mathcal{O}_F)$-fixed vector is the unramified constituent of the representation normalized-induced from
-  unramified characters $\chi_1, \dots, \chi_n$ of $F^\times$ (Casselman), and is determined by the $S_n$-orbit of
-  $(\chi_1(\varpi), \dots, \chi_n(\varpi))$, its Satake parameter. Its Langlands parameter is the unramified representation
+  $\mathrm{GL}_n(\mathcal{O}_F)$-fixed vector is the unramified constituent of the representation
+  [normalized-induced](representations-of-p-adic-reductive-groups/parabolic-induction-and-jacquet-functors.md) from unramified characters $\chi_1, \dots, \chi_n$ of
+  $F^\times$ (Casselman), and is determined by the $S_n$-orbit of $(\chi_1(\varpi), \dots, \chi_n(\varpi))$, its
+  [Satake parameter](representations-of-p-adic-reductive-groups/cartan-decomposition-and-satake-isomorphism.md). Its Langlands parameter is the unramified representation
   $\bigoplus_i \chi_i \circ \mathrm{Art}_F^{-1}$ of $W_F$, on which a geometric Frobenius element acts with eigenvalues
   $\chi_1(\varpi), \dots, \chi_n(\varpi)$. This identification of the Satake parameter with the Frobenius class is a
   normalization of the correspondence; it does not follow from the determination of unramified representations by
@@ -34,21 +35,28 @@ local Langlands correspondence, on base change and on archimedean $L$-factors us
   representations $\tau_{\ell, t}$ for integers $\ell \ge 1$ and $t \in \mathbb{C}$, with a basis $u, u'$ such that
   $re^{i\theta}$ acts by $r^{2t} e^{i\ell\theta}$ on $u$ and by $r^{2t} e^{-i\ell\theta}$ on $u'$, $ju = u'$ and $ju' = (-1)^\ell u$.
 - **Archimedean local Langlands correspondence for $\mathrm{GL}_n$** (Langlands). For $k = \mathbb{R}$ or $\mathbb{C}$ there is a
-  bijection $\tau \mapsto \pi(\tau)$ from the $n$-dimensional representations of $W_k$ onto the irreducible admissible
-  smooth representations of moderate growth of $\mathrm{GL}_n(k)$ (equivalently, by Casselman and Wallach, the
-  irreducible admissible $(\mathfrak{g}, K)$-modules). Characters of $W_k^{\mathrm{ab}} = k^\times$ correspond to characters of
-  $\mathrm{GL}_1(k)$, and $\tau_{\ell, t}$ to the discrete series $D_\ell \otimes \lvert \det \rvert^t$ of $\mathrm{GL}_2(\mathbb{R})$. For
-  $\tau = \bigoplus_{i=1}^r \tau_i$ with $\tau_i$ irreducible of dimension $n_i$ and exponent $t_i$, ordered so that
-  $\operatorname{Re} t_1 / n_1 \ge \dots \ge \operatorname{Re} t_r / n_r$, the representation normalized-induced from
-  $\pi(\tau_1) \otimes \dots \otimes \pi(\tau_r)$ on the block upper triangular parabolic subgroup is a standard module, and
-  $\pi(\tau)$ is its unique irreducible quotient, the Langlands quotient.
-- **Factors.** With $\Gamma_{\mathbb{R}}(s) = \pi^{-s/2}\Gamma(s/2)$ and $\Gamma_{\mathbb{C}}(s) = 2(2\pi)^{-s}\Gamma(s)$, Weil attached
-  $L(s, \tau)$ and $\varepsilon(s, \tau, \psi)$ to representations of $W_k$, multiplicatively on direct sums:
+  bijection $\tau \mapsto \pi(\tau)$ from the isomorphism classes of $n$-dimensional representations of $W_k$ onto the
+  isomorphism classes of irreducible admissible smooth representations of moderate growth of $\mathrm{GL}_n(k)$
+  (equivalently, by Casselman and Wallach, of irreducible admissible $(\mathfrak{g}, K)$-modules). Characters of
+  $W_k^{\mathrm{ab}} = k^\times$ correspond to characters of $\mathrm{GL}_1(k)$, and $\tau_{\ell, t}$ to the essentially discrete series
+  representation $D_\ell \otimes \lvert \det \rvert^t$ of $\mathrm{GL}_2(\mathbb{R})$, where $D_\ell$ is the discrete series of weight $\ell + 1$, extended
+  by the trivial character of the positive scalar matrices. Write each irreducible $\tau_i$ of dimension $n_i$ as
+  $\tau_i^\circ \otimes \lvert \cdot \rvert^{t_i}$ with $\tau_i^\circ$ bounded, so that $\pi(\tau_i) = \pi(\tau_i^\circ) \otimes \lvert \det \rvert^{t_i}$ with determinant exponent $t_i$
+  ($t_i = t$ for $\tau_{\ell, t}$ and for $\chi \lvert \cdot \rvert^t$). For $\tau = \bigoplus_{i=1}^r \tau_i$ ordered so that
+  $\operatorname{Re} t_1 \ge \dots \ge \operatorname{Re} t_r$, the representation normalized-induced from $\pi(\tau_1) \otimes \dots \otimes \pi(\tau_r)$ on the
+  block upper triangular parabolic subgroup is a standard module, and $\pi(\tau)$ is its unique irreducible quotient, the
+  Langlands quotient. In terms of the exponent $a_i = n_i t_i$ of the central character $x \mapsto x^{a_i}$ on the positive scalar
+  matrices $x I_{n_i}$, the condition reads $\operatorname{Re}(a_1)/n_1 \ge \dots \ge \operatorname{Re}(a_r)/n_r$; dividing the determinant exponents by $n_i$
+  would give a different, wrong order when blocks of sizes $1$ and $2$ are mixed.
+- **Factors.** With $\Gamma_{\mathbb{R}}(s) = \pi^{-s/2}\Gamma(s/2)$ and $\Gamma_{\mathbb{C}}(s) = 2(2\pi)^{-s}\Gamma(s)$, there are factors
+  $L(s, \tau)$ and $\varepsilon(s, \tau, \psi)$ of representations of $W_k$ (the existence of $\varepsilon$ for all local fields is a theorem of
+  Langlands; at the archimedean places both are explicit), multiplicative on direct sums:
   $L(s, \tau \oplus \tau') = L(s, \tau) L(s, \tau')$ and likewise for $\varepsilon$. For instance
   $L(s, \lvert \cdot \rvert_k^r) = \Gamma_k(s + r)$ with the normalized absolute value, and
   $L(s, \tau_{\ell, t}) = \Gamma_{\mathbb{C}}(s + t + \ell/2)$. For representations $\pi$ of $\mathrm{GL}_n(k)$ and $\pi'$ of
-  $\mathrm{GL}_m(k)$, $L(s, \pi \times \pi') = L(s, \tau(\pi) \otimes \tau(\pi'))$ and
-  $\varepsilon(s, \pi \times \pi', \psi) = \varepsilon(s, \tau(\pi) \otimes \tau(\pi'), \psi)$, where $\tau(\pi)$ is the parameter of $\pi$.
+  $\mathrm{GL}_m(k)$ the factors of the pair are defined through the correspondence:
+  $L(s, \pi \times \pi') = L(s, \tau(\pi) \otimes \tau(\pi'))$ and $\varepsilon(s, \pi \times \pi', \psi) = \varepsilon(s, \tau(\pi) \otimes \tau(\pi'), \psi)$, where $\tau(\pi)$
+  is the parameter of $\pi$.
 
 ## Expansion
 
@@ -56,7 +64,10 @@ A good expansion has definition pages for the Weil groups of $p$-adic and archim
 parameters, and statement pages for the unramified correspondence, for the archimedean local Langlands correspondence
 for $\mathrm{GL}_n$ and for Weil's archimedean $L$- and $\varepsilon$-factors, each citing the sources below with locators.
 Langlands's classification of real groups is by $L$-packets; that the packets of $\mathrm{GL}_n(k)$ are single
-representations, so that the correspondence is a bijection, is part of Knapp's account.
+representations, so that the correspondence is a bijection, is due to Knapp and Zuckerman with Knapp and Stein for
+$\mathrm{GL}_n(\mathbb{R})$ and to Želobenko and Naimark for $\mathrm{GL}_n(\mathbb{C})$, as Knapp reports (pp. 401, 405). Knapp's printed order
+condition (2.5) divides the exponents by the block sizes while his (2.2b) and (3.4) twist by $\lvert \det \rvert^t$; it holds with $t_j$
+read as the central exponent, and the order above is the one for determinant exponents.
 
 ## Depends on
 
@@ -67,6 +78,8 @@ representations, so that the correspondence is a bijection, is part of Knapp's a
   $\mathrm{GL}_n(\mathbb{R})$ and $\mathrm{GL}_n(\mathbb{C})$
 - [Casselman–Wallach globalization theorem](representations-of-real-reductive-groups/casselman-wallach-globalization.md), for the equivalence between representations of moderate growth and $(\mathfrak{g}, K)$-modules
 - [Discrete series representations and formal degrees](representations-of-real-reductive-groups/discrete-series-and-formal-degrees.md), for the discrete series of $\mathrm{GL}_2(\mathbb{R})$ attached to the two-dimensional parameters
+- [Parabolic induction and Jacquet functors](representations-of-p-adic-reductive-groups/parabolic-induction-and-jacquet-functors.md), for normalized parabolic induction of smooth representations of $\mathrm{GL}_n(F)$, in the unramified correspondence
+- [Cartan decomposition and Satake isomorphism for special maximal compact subgroups](representations-of-p-adic-reductive-groups/cartan-decomposition-and-satake-isomorphism.md), for the Satake parameters of the unramified representations of $\mathrm{GL}_n(F)$
 
 ## Proof depends on
 
@@ -86,9 +99,11 @@ representations, so that the correspondence is a bijection, is part of Knapp's a
   classification for $\mathrm{GL}_n(k)$, with Casselman–Wallach), and §2, pp. 62–63 (Weil's $L$- and $\varepsilon$-factors,
   $\Gamma_k$, and the factors of pairs through the classification).
 - A. W. Knapp, "Local Langlands correspondence: the archimedean case", in *Motives*, Proc. Sympos. Pure Math. 55,
-  Part 2, American Mathematical Society, 1994, 393–410: Theorems 2 and 5, pp. 403 and 406 (the bijections for
-  $\mathrm{GL}_n(\mathbb{R})$ and $\mathrm{GL}_n(\mathbb{C})$, through the Langlands quotients of standard modules ordered by the
-  real parts of the normalized exponents, with the parameters $\tau_{\ell, t}$ and the discrete series $D_\ell$).
+  Part 2, American Mathematical Society, 1994, 393–410: (2.1a–b), p. 399 (the discrete series $D_\ell$), (2.2a–b) and
+  Theorem 1, p. 400, Theorems 2 and 5, pp. 403 and 406 (the bijections for $\mathrm{GL}_n(\mathbb{R})$ and $\mathrm{GL}_n(\mathbb{C})$, through the
+  Langlands quotients of standard modules, with the parameters $\tau_{\ell, t}$ of (3.3)–(3.4)), pp. 401 and 405 (the singleton
+  packets), and (3.6)–(3.8), p. 404 (the factors, Langlands's existence of $\varepsilon$, and the factors of pairs defined by the
+  correspondence).
 - R. P. Langlands, "On the classification of irreducible representations of real algebraic groups", in
   *Representation theory and harmonic analysis on semisimple Lie groups*, Math. Surveys Monogr. 31, American
   Mathematical Society, 1989, 101–170, the classification by $L$-packets of Langlands parameters, as cited by Cogdell.

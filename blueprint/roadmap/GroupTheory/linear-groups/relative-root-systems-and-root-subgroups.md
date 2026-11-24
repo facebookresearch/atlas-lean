@@ -22,7 +22,7 @@ with locators.
 A good expansion also writes out these steps of its own proof:
 
 - the structure of minimal parabolic $k$-subgroups that Borel and Tits establish before the relative root system
-  (their §4, through Theorem 4.13 and Corollaries 4.15–4.16), from which they derive the conjugacy of maximal $k$-split tori
+  (their §4, through Theorem 4.13, Theorem 4.15 and Corollary 4.16), from which they derive the conjugacy of maximal $k$-split tori
   (Theorem 4.21) and, in §5, the relative root system.
 
 ## Depends on

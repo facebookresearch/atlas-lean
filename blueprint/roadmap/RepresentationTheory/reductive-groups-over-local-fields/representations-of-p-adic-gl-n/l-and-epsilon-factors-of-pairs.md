@@ -57,7 +57,7 @@ follows there, since its printed factors do not depend on the product index.
 
 A good expansion also writes out these steps of its own proof:
 
-- the convergence and rationality of the local integrals, from the asymptotic expansion of Whittaker functions on the diagonal torus (Cogdell, Lecture 6, §1, Proposition 6.2, p. 47); Cogdell proves this for unitary generic representations with $m < n$, the case $m = n$ being analogous.
+- the convergence and rationality of the local integrals, from the asymptotic expansion of Whittaker functions on the diagonal torus (Cogdell, Lecture 6, §2, Proposition 6.2, p. 47); Cogdell proves this for unitary generic representations with $m < n$, the case $m = n$ being analogous.
 - the existence of the Langlands–Deligne local constants, multiplicative in exact sequences and inductive in degree zero, by Deligne's global argument (Deligne 1973, as cited by Wedhorn), for the Galois side.
 - the application of Brauer's theorem type by type: a virtual representation of $W_F$ is a combination of irreducible ones, on each of which a power of Frobenius acts by a scalar, its type, and each type becomes of finite image after an unramified twist chosen for it (Česnavičius, §5.5, Lemma 5.5.1, (5.5.2)–(5.5.3), and Proposition 5.6, after Deligne); one twist for the whole representation does not suffice, as $1 \oplus \lvert \cdot \rvert$ shows.
 

@@ -17,9 +17,14 @@ A good expansion has statement pages for Brauer's induction theorem and for its 
 below with locators. Subtracting $\deg \cdot [1_G]$ from a combination of induced characters does not give the degree-zero
 form: it leaves the permutation characters $\mathrm{Ind}_H^G [1_H]$. Česnavičius writes $[1_G] = \sum_i \mathrm{Ind}_{H_i}^G a_i$ with $H_i$
 elementary, by Brauer's theorem, and multiplies by a virtual representation $v$ of degree zero; the projection formula
-$v \cdot \mathrm{Ind}_H^G a = \mathrm{Ind}_H^G(\mathrm{Res}_H v \cdot a)$ reduces the claim to $G$ elementary. There
-$v = \sum_i n_i \mathrm{Ind}_{H_i}^G [\chi_i] = \sum_i n_i \mathrm{Ind}_{H_i}^G([\chi_i] - [1_{H_i}]) + \sum_i n_i \mathrm{Ind}_{H_i}^G [1_{H_i}]$, and the last sum, of
-degree zero, is inflated from $G/Z$ for the centre $Z$ of $G$, nontrivial if $G$ is, so induction on $\# G$ concludes.
+$v \cdot \mathrm{Ind}_H^G a = \mathrm{Ind}_H^G(\mathrm{Res}_H v \cdot a)$ reduces the claim to $G$ elementary. There every irreducible
+representation is induced from a one-dimensional character of a subgroup, and one writes
+$v = \sum_i n_i \mathrm{Ind}_{H_i}^G [\chi_i]$ through such monomial decompositions of the irreducible constituents of $v$. The centre $Z$ of
+$G$ acts by scalars on each irreducible $\mathrm{Ind}_{H_i}^G [\chi_i]$, so it fixes the cosets of $H_i$ that support it and lies in $H_i$.
+Then $v = \sum_i n_i \mathrm{Ind}_{H_i}^G([\chi_i] - [1_{H_i}]) + \sum_i n_i \mathrm{Ind}_{H_i}^G [1_{H_i}]$, and the last sum, of degree zero, is inflated
+from $G/Z$, nontrivial if $G$ is, so induction on $\# G$ concludes. For an arbitrary expression of $v$ by induced characters
+the inflation fails: for $G$ of order $2$ and $v = \mathrm{Ind}_1^G 1 - 2 \cdot 1_G$, the residual sum is $v$ itself, not inflated from the
+trivial quotient.
 
 ## Depends on
 

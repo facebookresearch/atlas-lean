@@ -55,7 +55,7 @@ on $G \times C$.
 ## Proof depends on
 
 - [Smoothness of compactly supported parameter integrals](../../MeasureTheory/integration/differentiation-under-the-integral-sign/smoothness-of-parameter-integrals/cont-diff-integral-smul-comp-of-cont-dif.md), for the special case of
-  Banach-valued integrals $\int w(x) \Psi(c(x), p) \, d\mu(x)$ with $w$ continuous and compactly supported and $\Psi$ jointly smooth;
+  Banach-valued integrals $\int w(x) \Psi(c(x), p) \, d\mu(x)$ with $w$ continuous and compactly supported and $\Psi$ jointly smooth and compactly supported;
   the general statement is proved as the Expansion describes
 - [Poincaré–Birkhoff–Witt theorem](../../Algebra/nonassociative-algebras/poincare-birkhoff-witt-theorem.md), for the freeness of $U(\mathfrak{g}_{\mathbb{C}})$ over $U(\mathfrak{k}_{\mathbb{C}})$, which
   identifies the normal derivatives with $U(\mathfrak{g}_{\mathbb{C}}) \otimes_{U(\mathfrak{k}_{\mathbb{C}})} \mathcal{A}(K)$

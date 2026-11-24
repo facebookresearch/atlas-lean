@@ -14,7 +14,14 @@ $G$-modules, with $G$ acting diagonally on $M \otimes N$.
   $\mathrm{Res}(x \cup y) = \mathrm{Res}(x) \cup \mathrm{Res}(y)$, $\mathrm{Cor}(x \cup \mathrm{Res}\, y) = \mathrm{Cor}(x) \cup y$ and
   $\mathrm{Inf}(x \cup y) = \mathrm{Inf}(x) \cup \mathrm{Inf}(y)$.
 - **Tate cohomology.** When $G$ is finite, the cup products extend uniquely to pairings
-  $\hat H^r(G, M) \times \hat H^s(G, N) \to \hat H^{r+s}(G, M \otimes N)$ for all $r, s \in \mathbb{Z}$ with the same properties.
+  $\hat H^r(G, M) \times \hat H^s(G, N) \to \hat H^{r+s}(G, M \otimes N)$ for all $r, s \in \mathbb{Z}$, natural, given in degree $0$ by
+  the map $\hat H^0(G, M) \otimes \hat H^0(G, N) \to \hat H^0(G, M \otimes N)$ induced by $m \otimes n \mapsto m \otimes n$, compatible with
+  the connecting homomorphisms under the same exactness conditions, associative, graded commutative and compatible
+  with restriction and corestriction. Inflation $\hat H^r(G/H, M^H) \to \hat H^r(G, M)$, for $H$ normal in $G$, is defined
+  only for $r \ge 1$, where Tate and ordinary cohomology agree, so the compatibility with inflation is that of ordinary
+  cohomology in those degrees. In degree $0$ the identity of $M^G$ does not induce a map $\hat H^0(G/H, M^H) \to \hat H^0(G, M)$:
+  for $G$ cyclic of order $4$, $H$ its subgroup of order $2$ and $M = \mathbb{Z}$ with trivial action, these groups are
+  $\mathbb{Z}/2\mathbb{Z}$ and $\mathbb{Z}/4\mathbb{Z}$, and the identity of $\mathbb{Z}$ does not map the norms $2\mathbb{Z}$ of $G/H$ into the norms $4\mathbb{Z}$ of $G$.
 
 ## Expansion
 
@@ -35,7 +42,8 @@ Its proof is that of the sources below, as the Expansion describes.
 - J. S. Milne, *Class Field Theory*, version 4.03 (2020), <https://www.jmilne.org/math/CourseNotes/CFT.pdf>: Chapter II,
   §1, "Cup-products", pp. 72–74, Proposition 1.38 (existence and uniqueness, with conditions (a)–(d), including the
   exactness of the tensored sequences and the sign $(-1)^r$, and the cochain formula) and Proposition 1.39 (associativity,
-  graded commutativity, and compatibility with restriction, corestriction and inflation), and §3, "Cup-products",
+  graded commutativity, and compatibility with restriction, corestriction and inflation), §3, p. 79, footnote 4 (Tate
+  inflation is defined only in degrees $r \ge 1$), and §3, "Cup-products",
   p. 80 ("When the group G is finite, the cup-products extend in a unique way to all the cohomology groups, and have the
   same list of properties. See Weiss 1969, Chapter IV").
 - E. Weiss, *Cohomology of groups*, Academic Press, 1969, Chapter IV, as cited by Milne.

@@ -51,6 +51,7 @@ It also writes out these steps of its own proof:
 ## Proof depends on
 
 - [Fourier transform on the Schwartz space](../../../Analysis/harmonic-analysis/fourier-transform/fourier-transform-clm.md), for the Fourier transform on the Schwartz space of $\mathbb{R}$
+- [Fourier inversion formula](../../../Analysis/harmonic-analysis/fourier-transform/fourier-inv-fourier-eq.md), for the identification of the transform of the Schwartz function $\psi$ with the continuous integrable reciprocal product $\chi$ whose inverse transform it is, the two sign conventions differing by a reflection under which these functions are even
 - [Lie groups: the exponential map, closed subgroups and maximal compact subgroups](../../lie-and-topological-representations/lie-groups-exponential-map-and-maximal-compact-subgroups.md), for product coordinates of the second kind on a Lie group, $(t_1, \dots, t_d) \mapsto e^{t_1 X_1} \cdots e^{t_d X_d}$, a diffeomorphism near $0$, for the passage to kernels on $G$ with their Jacobian
 
 ## Sources
