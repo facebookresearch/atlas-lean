@@ -29,7 +29,6 @@ that relates them.
 ## Rigidity and unique response
 
 - [Positive definiteness of the supported truss stiffness](supported-pos-def-iff.md)
-- [Positive definite supported stiffness iff the kernel of B S is zero](supported-pos-def-iff-ker-eq-bot.md)
 - [Rigidity of a supported truss with axial weights EA over L cubed](supported-pos-def-iff-of-axial.md)
 - [A positive definite supported stiffness gives a unique displacement](supported-exists-unique-of-pos-def.md)
 - [Explicit supported displacement by the inverse stiffness](supported-mul-vec-eq-iff-inv-mul-vec.md)

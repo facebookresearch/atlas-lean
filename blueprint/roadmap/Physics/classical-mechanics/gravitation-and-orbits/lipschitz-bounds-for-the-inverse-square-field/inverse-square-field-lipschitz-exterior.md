@@ -8,3 +8,6 @@ $$\|F(r) - F(s)\| \le \frac{4\mu}{r_{min}^3}\,\|r - s\|.$$
 
 The constant is not claimed to be sharp. No convexity of the set $\|r\| \ge r_{min}$ is used: the
 bound comes from the triangle and reverse triangle inequalities.
+
+Equivalently, $F$ is Lipschitz on the set $\{r \in E : \|r\| \ge r_{min}\}$ with constant
+$4\mu/r_{min}^3$.

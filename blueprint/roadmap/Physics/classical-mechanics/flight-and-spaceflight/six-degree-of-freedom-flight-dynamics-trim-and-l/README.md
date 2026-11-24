@@ -29,7 +29,7 @@
 - [Pitch-moment actuator of the longitudinal fixture](pitch-moment.md)
 - [Reduced longitudinal vector field](reduced-field.md)
 - [Admitted actuator box of the longitudinal fixture](actuator-box.md)
-- [Pitch orientation as a rotation about the third axis](pitch-orientation.md)
+- [Rotation about the third axis as a pitch or rotating-frame orientation](pitch-orientation.md)
 - [Longitudinal force and moment maps on the actuator box](longitudinal-maps.md)
 - [Planar longitudinal motion of a rigid body](planar-motion.md)
 - [Longitudinal state of a planar motion](planar-state.md)

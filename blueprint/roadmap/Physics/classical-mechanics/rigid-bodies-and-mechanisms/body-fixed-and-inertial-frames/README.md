@@ -6,7 +6,6 @@
 - [Body coordinates of a point given in inertial coordinates](inertial-to-body.md)
 - [Inertial components of a free vector given in body components](body-to-inertial-vec.md)
 - [Body components of a free vector given in inertial components](inertial-to-body-vec.md)
-- [Active rotation of a vector within one frame](rotate-active.md)
 - [The passive map to inertial components is the active rotation by R](body-to-inertial-vec-eq-rotate-active.md)
 - [The passive map to body components is the active rotation by R⁻¹](inertial-to-body-vec-eq-rotate-active-in.md)
 - [Body coordinates are recovered from inertial coordinates](inertial-to-body-body-to-inertial.md)

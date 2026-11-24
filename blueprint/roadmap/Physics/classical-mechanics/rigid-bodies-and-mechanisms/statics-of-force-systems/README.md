@@ -27,19 +27,15 @@
 - [Force, stress, moment and line load have four distinct dimensions](force-dim-stress-dim-moment-line-load-no.md)
 - [Coordinates of a resultant of dimensioned forces](sum-force-val.md)
 - [Dimensioned forces balance iff their coordinates do](sum-force-eq-zero-iff.md)
-- [The resultant of retagged force coordinates](sum-retag-force.md)
 - [Planar moment of dimensioned forces about a point](force-moment2-d.md)
 - [Value of the dimensioned planar moment](force-moment2-d-val.md)
-- [Planar moment of retagged lever arms and forces](force-moment2-d-retag.md)
 - [The dimensioned planar moment vanishes iff its value does](force-moment2-d-eq-zero-iff.md)
 - [Dimensioned planar balance iff the coordinates balance](planar-load-balance-iff.md)
 
 ## Conversion between unit systems
 
 - [Converting force components there and back returns them](force-components-dim-scale-round-trip.md)
-- [Converting a dimensioned force vector there and back returns it](force-vector-with-dim-dim-scale-round-tr.md)
 - [Converting a moment coordinate there and back returns it](moment-dim-scale-round-trip.md)
-- [Converting a dimensioned moment there and back returns it](moment-with-dim-dim-scale-round-trip.md)
 - [Unit conversion multiplies the planar moment by the moment factor](force-moment2-d-dim-scale.md)
 - [Planar balance does not depend on the choice of units](planar-load-balance-dim-scale-iff.md)
 

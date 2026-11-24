@@ -5,7 +5,6 @@
 - [Inverse-square field (μ/‖r‖³) r, outward for μ > 0](inverse-square-field.md)
 - [For μ ≥ 0 the inverse-square field has magnitude μ/‖r‖²](norm-inverse-square-field.md)
 - [For μ ≥ 0, Lipschitz bound 4μ/r_min³ outside a ball](inverse-square-field-lipschitz-exterior.md)
-- [For μ ≥ 0 the field is Lipschitz on the set ‖r‖ ≥ r_min](inverse-square-field-lipschitz-on-with.md)
 
 ## The J2 perturbing acceleration
 

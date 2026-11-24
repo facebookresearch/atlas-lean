@@ -24,7 +24,6 @@
 ## Inverse-square force
 
 - [Away from the centre, inverse-square work is the potential drop](inverse-square-work.md)
-- [Away from the centre, the inverse-square field is a gradient](has-gradient-at-inverse-square-potential.md)
 - [For μ ≠ 0, the inverse-square potential is discontinuous at the centre](inverse-square-potential-not-continuous.md)
 
 ## Planar rigid body

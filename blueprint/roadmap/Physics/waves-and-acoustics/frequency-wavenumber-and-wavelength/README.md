@@ -11,5 +11,4 @@
 
 - [Wavenumber k = 2π/λ of a wavelength λ](wavenumber.md)
 - [Wavelength λ = 2π/k of a wavenumber k](wavelength.md)
-- [For k ≠ 0, the wavenumber of the wavelength 2π/k is k](wavenumber-wavelength.md)
-- [For λ ≠ 0, the wavelength of the wavenumber 2π/λ is λ](wavelength-wavenumber.md)
+- [Wavenumber and wavelength are inverse: 2π / (2π / x) = x for x ≠ 0](wavelength-wavenumber.md)

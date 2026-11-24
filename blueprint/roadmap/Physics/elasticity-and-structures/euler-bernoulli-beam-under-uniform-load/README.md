@@ -33,4 +33,3 @@
 
 - [Quartic in coefficient form](quartic-fun.md)
 - [A quartic with the beam conditions is the uniform-load deflection](quartic-unique.md)
-- [A quartic with the beam conditions equals the deflection function](quartic-unique-uniform-load-deflection.md)

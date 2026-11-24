@@ -6,3 +6,6 @@ Let `EI ≠ 0` and `L ≠ 0`, and let the [quartic](quartic-fun.md)
 supports, `p''(0) = 2 * c = 0` and `p''(L) = 12 * a * L ^ 2 + 6 * b * L + 2 * c = 0`. Then for every
 real `x`, `p(x) = w * x * (L ^ 3 - 2 * L * x ^ 2 + x ^ 3) / (24 * EI)`, the simply supported
 uniform-load deflection.
+
+In terms of the [uniform-load deflection](uniform-load-deflection.md) `y`, this says `p(x) = y(x)`
+at every real `x`.

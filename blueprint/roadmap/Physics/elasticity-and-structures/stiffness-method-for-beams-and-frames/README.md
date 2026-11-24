@@ -24,9 +24,7 @@
 ## Uniform load and end forces
 
 - [Consistent load vector of a uniform load on a beam element](uniform-load-vector.md)
-- [The consistent load vector entries as Hermite integrals](uniform-load-vector-entries-hermite.md)
 - [Consistent loads of a uniform load from Hermite shape functions](hermite-consistent-loads.md)
-- [Consistent loads of a uniform load from the Hermite cubic](hermite-consistent-loads-hermite.md)
 - [End deflections and slopes of a beam element](beam-end-data.md)
 - [End forces of a beam deflection field](beam-end-forces.md)
 - [End forces of a uniformly loaded quartic from the stiffness matrix](quartic-end-force-identity.md)
