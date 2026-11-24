@@ -1378,4 +1378,35 @@ theorem transcript_isApproxDP_advanced_composition_pure {C Y Database : Type*}
       rw [hE, hδ] at hmain
       exact hmain
 
+/-- Domination transport: per-stage domination scales to transcript laws. -/
+theorem transcript_domination {C Y D E : Type*} [Fintype C] [Fintype Y]
+    (R : PMF C) (K : (n : ℕ) → Hist C Y n → D → PMF Y)
+    (L : (n : ℕ) → Hist C Y n → E → PMF Y) (d : D) (e : E) (k : ℕ)
+    (m : ℝ) (hm : 0 ≤ m) (hm_one : m ≤ 1)
+    (hstage : ∀ n, n < k → ∀ (h : Hist C Y n) (y : Y),
+      m * (L n h e y).toReal ≤ (K n h d y).toReal) :
+    ∀ w : Hist C Y k,
+      m ^ k * (transcript R L k e w).toReal
+        ≤ (transcript R K k d w).toReal := by
+  intro w
+  rw [transcript_toReal_factor R L k e w, transcript_toReal_factor R K k d w]
+  have hpow : (∏ _i : Fin k, m) = m ^ k := by
+    rw [Finset.prod_const, Finset.card_univ, Fintype.card_fin]
+  have hle : (∏ i : Fin k, m * (L i.val (histPrefix i w) e (histOut i w)).toReal)
+      ≤ ∏ i : Fin k, (K i.val (histPrefix i w) d (histOut i w)).toReal :=
+    Finset.prod_le_prod₀ (fun i _ => mul_nonneg hm ENNReal.toReal_nonneg)
+      (fun i _ => hstage i.val i.isLt _ _)
+  calc m ^ k * ((R w.1).toReal
+          * ∏ i : Fin k, (L i.val (histPrefix i w) e (histOut i w)).toReal)
+      = (R w.1).toReal * ((∏ _i : Fin k, m)
+          * ∏ i : Fin k, (L i.val (histPrefix i w) e (histOut i w)).toReal) := by
+        rw [hpow]
+        ring
+    _ = (R w.1).toReal
+          * ∏ i : Fin k, m * (L i.val (histPrefix i w) e (histOut i w)).toReal := by
+        rw [Finset.prod_mul_distrib]
+    _ ≤ (R w.1).toReal
+          * ∏ i : Fin k, (K i.val (histPrefix i w) d (histOut i w)).toReal :=
+        mul_le_mul_of_nonneg_left hle ENNReal.toReal_nonneg
+
 end CSLibExt.Privacy.DifferentialPrivacy

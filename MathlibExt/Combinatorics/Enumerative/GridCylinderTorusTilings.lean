@@ -25,8 +25,8 @@ tile designs, up to symmetry. A tiling is a map `F` from the cells to `T`. A sym
 cells by a map `φ` and on the designs by a permutation `σ`, and it fixes `F` when
 `F (φ c) = σ (F c)` for every cell `c`; Burnside's lemma turns the numbers of fixed tilings into
 the number of tilings up to symmetry. This file defines the number of fixed tilings and counts
-the tilings of the rectangular and square grids fixed by the identity. On the rectangular torus,
-it sums the fixed-tiling counts over all translations.
+the tilings of the rectangular and square grids fixed by the identity. On the cylinder and the
+rectangular torus, it sums the fixed-tiling counts over all translations.
 
 On the `n × m` cylinder, applying the shift `x ↦ x + a` and then the reflection
 `x ↦ n - 1 - x` sends the column `x` to `-1 - x - a` modulo `n`, so the columns this map fixes
@@ -104,6 +104,23 @@ Source: Peter Kagey, William Keehn, *Counting Tilings of the n × m Grid, Cylind
 @[expose] public def fixedTilingCount {α T : Type*} [Fintype α] [DecidableEq α]
     [Fintype T] [DecidableEq T] (φ : α → α) (σ : Equiv.Perm T) : ℕ :=
   Fintype.card {F : α → T // ∀ c, F (φ c) = σ (F c)}
+
+/-- **Cylinder shift sum.** Let $T$ be a finite set of tile designs, let $n, m \ge 1$, let $g$ be
+a map from the cells $\mathbb{Z}/n \times \mathbb{Z}/m$ to themselves, and let $\sigma$ be a
+permutation of $T$. The cylinder shift sum of $g$ and $\sigma$ is the sum, over all shifts
+$a \in \mathbb{Z}/n$, of the number of tilings $F : \mathbb{Z}/n \times \mathbb{Z}/m \to T$
+with $F(g(x + a, y)) = \sigma(F(x, y))$ for every cell $(x, y)$.
+
+The shift is applied before $g$, following the paper's right-action convention, and $\sigma$
+is the action of $g$ on tile designs.
+
+Source: Peter Kagey, William Keehn, *Counting Tilings of the n × m Grid, Cylinder, and Torus*,
+        Journal of Integer Sequences 27 (2024), Article 24.6.1, Setting. -/
+@[expose] public noncomputable def cylinderShiftSum {T : Type*} [Fintype T] [DecidableEq T]
+    (n m : ℕ) [NeZero n] [NeZero m]
+    (cellG : ZMod n × ZMod m → ZMod n × ZMod m) (σ : Equiv.Perm T) : ℕ :=
+  ∑ a : ZMod n,
+    fixedTilingCount (fun c => cellG (c.1 + a, c.2)) σ
 
 /-- **Torus shift sum.** Let $n, m \ge 1$, let $T$ be a finite set of tile designs, let $g$ be a
 map from $\mathbb{Z}/n \times \mathbb{Z}/m$ (the cells of the $n \times m$ torus) to itself and
@@ -258,6 +275,34 @@ private theorem sum_by_order (n : ℕ) [NeZero n] (f : ℕ → ℕ) :
   simpa using (Nat.mem_divisors.mp hd).1
 
 end rectangularTorus_identity
+
+/-- **Cylinder fixed-tiling count for the identity.** Let $T$ be a finite set of tile designs,
+let $n, m \ge 1$, and let $\sigma$ be a permutation of $T$ with $\sigma^1 = 1$, that is, the
+identity. Then the cylinder shift sum of the identity map of $\mathbb{Z}/n \times \mathbb{Z}/m$
+and $\sigma$ equals $\sum_{d \mid n} \varphi(d)\, |T|^{nm/d}$, where $d$ runs over the positive
+divisors of $n$ and $\varphi$ is Euler's totient function.
+
+Source: Peter Kagey, William Keehn, *Counting Tilings of the n × m Grid, Cylinder, and Torus*,
+        Journal of Integer Sequences 27 (2024), Article 24.6.1, Theorem 28. -/
+public theorem cylinder_identity {T : Type*} [Fintype T] [DecidableEq T]
+    (n m : ℕ) [NeZero n] [NeZero m] (σ : Equiv.Perm T) (hσ : σ ^ 1 = 1) :
+    cylinderShiftSum n m id σ =
+      ∑ d ∈ n.divisors, Nat.totient d * Fintype.card T ^ (n * m / d) := by
+  rw [pow_one] at hσ
+  subst σ
+  calc
+    cylinderShiftSum n m id (1 : Equiv.Perm T) =
+        ∑ a : ZMod n, Fintype.card T ^ (n * m / addOrderOf a) := by
+      rw [cylinderShiftSum]
+      refine Finset.sum_congr rfl fun a _ => ?_
+      -- The vertical coordinate is fixed, so the translation has the order of `a`.
+      have hshift : (fun c : ZMod n × ZMod m => id (c.1 + a, c.2)) = (· + (a, 0)) := by
+        funext c
+        rcases c with ⟨x, y⟩
+        simp only [id_eq, Prod.mk_add_mk, add_zero]
+      rw [hshift, rectangularTorus_identity.fixedTilingCount_add, Fintype.card_prod, ZMod.card,
+        ZMod.card, Prod.addOrderOf_mk, addOrderOf_zero, Nat.lcm_one_right]
+    _ = _ := rectangularTorus_identity.sum_by_order n (fun d => Fintype.card T ^ (n * m / d))
 
 /-- **Torus fixed-tiling sum for the identity.** Let $n$ and $m$ be positive integers, let $T$ be
 a finite set of tiles and let $\sigma$ be a permutation of $T$ with $\sigma^1 = 1$, that is, the

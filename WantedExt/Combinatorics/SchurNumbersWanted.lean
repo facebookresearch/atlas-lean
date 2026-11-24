@@ -36,23 +36,19 @@ trivial value `S(1) = 1` is omitted.
 This module imports `MathlibExt.Combinatorics.SchurNumbers`, which proves the
 second and third Schur numbers and the lower bound for the sixth Schur number.
 The definitions `schurForces` and `schurNumber` moved there with the lower
-bound, with the same names, statements and docstrings.
+bound, with the same names, statements and docstrings. It also imports
+`MathlibExt.Combinatorics.SchurNumberFour`, which proves the fourth Schur number;
+that statement moved there with the same name, statement and docstring.
 -/
 module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.SchurNumbers
+public import MathlibExt.Combinatorics.SchurNumberFour
 
 @[expose] public section
 
 namespace MathlibExt.Combinatorics.SchurNumbersWanted
-
-/-- **The fourth Schur number.** The Schur number $S(4)$ equals $44$.
-
-Source: S. W. Golomb and L. D. Baumert, *Backtrack programming*, J. ACM 12
-(1965), 516–524; OEIS A045652; listed in SqueezeBench
-`SqueezeBench/Problems/Schur/README.md`. -/
-public theorem_wanted schurNumber_four : schurNumber 4 = 44
 
 /-- **The fifth Schur number.** The Schur number $S(5)$ equals $160$.
 
