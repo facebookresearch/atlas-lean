@@ -519,7 +519,7 @@ private theorem adoExists_replicate_perm {d B : ℕ} [NeZero d] (w : List (Fin d
   obtain ⟨i, hi⟩ := Fintype.exists_le_card_fiber_of_mul_le_card
     (fun j : Fin w.length => v.get j) (by simpa using h)
   have hicount : B ≤ w.count i := by
-    rw [Fin.card_filter_univ_eq_vector_get_eq_count i v] at hi
+    rw [← List.Vector.count_toList i v] at hi
     simpa [v] using hi
   have hsub : (List.replicate B i).Sublist w :=
     List.replicate_sublist_iff.mpr hicount
@@ -582,7 +582,7 @@ private theorem adoWord_mem_bounded_modWords
       (UniversalEnvelopingAlgebra.ι K (b i)) ^ B ∈ adoModWords Q b B)
     (w : List (Fin d)) : adoWord b w ∈ adoModWords Q b (d * B) := by
   induction hlen : w.length using Nat.strong_induction_on generalizing w with
-  | h n ih =>
+  | ind n ih =>
       by_cases hw : w.length < d * B
       · apply Submodule.mem_sup_right
         exact Submodule.subset_span (adoWord_mem_wordsLt b hw)
@@ -597,7 +597,7 @@ private theorem adoWord_mem_bounded_modWords
           rintro u ⟨v, hv, rfl⟩
           exact ih v.length (by simpa [hlen] using hv) v rfl
 
-private def adoAllWords
+private noncomputable def adoAllWords
     {K L : Type*} [Field K] [LieRing L] [LieAlgebra K L]
     {d : ℕ} (b : Module.Basis (Fin d) K L) : Set (adoUEA K L) :=
   Set.range (adoWord b)
@@ -853,7 +853,7 @@ private theorem adoDerivation_pow_mul_eq_zero
     {x y : A} {a b : ℕ} (hx : (d ^ a) x = 0) (hy : (d ^ b) y = 0) :
     (d ^ (a + b)) (x * y) = 0 := by
   induction h : a + b using Nat.strong_induction_on generalizing a b x y with
-  | h n ih =>
+  | ind n ih =>
       subst n
       obtain rfl | a := a
       · have hx0 : x = 0 := by simpa using hx

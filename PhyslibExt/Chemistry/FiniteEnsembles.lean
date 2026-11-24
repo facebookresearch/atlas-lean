@@ -138,8 +138,9 @@ results stay in finite-sum form:
 - `twoLevelEnergy Δ` is the energy of `CanonicalEnsemble.twoState 0 Δ`.
 - `IsCanonical` has no Physlib counterpart; Physlib defines the canonical probabilities directly.
 
-Physlib's `kB` is the constant `Constants.kB` and its temperatures have type `Temperature`; here
-`kB` and `β` are real parameters. New relative to Physlib are the maximum-entropy theorem, the
+Physlib takes the Boltzmann constant as an argument `kB : BoltzmannConstant` (its positive value in
+a chosen system of units) and its temperatures have type `Temperature`; here `kB` and `β` are real
+parameters. New relative to Physlib are the maximum-entropy theorem, the
 finite-sum product identities and the two-level worked example; the Einstein-solid count
 transports Mathlib's `Sym.card_sym_eq_choose` along `Sym.equivNatSumOfFintype`. Besides Mathlib,
 this module imports Physlib's `CanonicalEnsemble.Finite` (for the §H bridge) and the landed

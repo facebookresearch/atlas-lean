@@ -6,3 +6,7 @@ parent writes performed by the cost-counted FIND auxiliary on $x$ (the second co
 cost) is at most $R - \operatorname{rank}(x)$.
 
 This is a per-call bound, not a logarithmic or amortized inverse-Ackermann bound.
+
+## Depends on
+
+- [Cost-counted FIND auxiliary](counted-aux.md)

@@ -913,7 +913,7 @@ theorem firstUndecidable_le_of_not_decides {T : FormalTheory} {n : ℕ}
 theorem not_decides_firstUndecidable {T : FormalTheory}
     (h : ∃ n, ¬ DecidesHalting T n) :
     ¬ DecidesHalting T (firstUndecidable T) :=
-  Nat.sInf_mem h
+  Nat.sInf_mem (s := {n | ¬ DecidesHalting T n}) h
 
 /-- **Decidability through five states and the first undecidable size.** If a formal theory
 $T$ decides halting for $n$-state machines for every $n \le 5$, and fails to decide halting for
