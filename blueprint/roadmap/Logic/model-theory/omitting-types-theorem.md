@@ -22,9 +22,16 @@ A sound expansion builds on first-order syntax and semantics, defines realizing 
 a set of formulas in one free variable and supports in a complete theory, which the statement uses,
 and proves the theorem for countable languages (for example by a Henkin construction, as in the proof
 of Gödel's completeness theorem, or a Baire-category argument). Further
-results of the same branch are separate pages, each with its own source: prime and atomic models of
-countable complete theories, and countable $\omega$-saturated elementary extensions. Versions for
-several free variables and for uncountable languages are separate statements.
+results of the same branch are separate pages, each with its own source. The first is the general
+form: let $T$ be a theory, not necessarily complete, in a countable language, such that $T$ has a
+model, and let $\Phi_0, \Phi_1, \dots$ be countably many sets of formulas, each set in finitely many
+free variables $\bar x$, none of which is principal over $T$, where $\Phi(\bar x)$ is principal over
+$T$ when some formula $\psi(\bar x)$ such that $T \cup \{\exists \bar x\, \psi\}$ has a model satisfies
+$T \models \forall \bar x\, (\psi \to \varphi)$ for every $\varphi$ in $\Phi$; then $T$ has a countable
+model in which no tuple satisfies every formula of any $\Phi_n$. The others are: every countable atomic
+model of a complete theory is prime; and every model of a countable language has an
+$\omega$-saturated elementary extension, which need not be countable. Versions for uncountable
+languages are separate statements.
 
 ## Sources
 

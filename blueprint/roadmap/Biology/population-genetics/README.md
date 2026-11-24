@@ -24,10 +24,7 @@ Mathematical models of allele frequencies in populations under random mating, se
 - [Wright–Fisher Markov chain](wright-fisher-markov-chain/README.md)
 
 - [Inbreeding and regular systems of mating](inbreeding-and-regular-systems-of-mating/README.md)
-- [One-locus selection dynamics](one-locus-selection-dynamics/README.md)
-- [Migration and selection](migration-and-selection/README.md)
+- [Selection, migration and transmission](selection-migration-and-transmission/README.md)
 - [Effective population size](effective-population-size/README.md)
-- [Interference between linked selected loci](interference-between-linked-selected-loci/README.md)
-- [Modifier theory and the evolution of recombination](modifier-theory-and-the-evolution-of-recombination/README.md)
 
 - [Bernstein's law for the ABO blood groups](bernstein-s-law-for-the-abo-blood-groups/README.md)

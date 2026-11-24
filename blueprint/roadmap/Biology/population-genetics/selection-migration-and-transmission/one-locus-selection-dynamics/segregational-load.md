@@ -8,7 +8,7 @@ $$\bar w = 1 - s p_e^2 - t (1 - p_e)^2 = 1 - \frac{st}{s + t},$$
 
 so the segregational load, the reduction relative to the fittest genotype $Aa$, is $st/(s + t)$, half
 the harmonic mean of $s$ and $t$; it is at most $1/2$. If the population at allele frequency $p_e$ has
-the [genotype frequencies of inbreeding coefficient $F$](../inbreeding-and-regular-systems-of-mating/genotype-frequencies-under-inbreeding.md),
+the [genotype frequencies of inbreeding coefficient $F$](../../inbreeding-and-regular-systems-of-mating/genotype-frequencies-under-inbreeding.md),
 its mean viability is
 
 $$\bar w(F) = 1 - (1 + F) \frac{st}{s + t},$$
@@ -18,7 +18,7 @@ so the load becomes $(1 + F)\,st/(s + t)$ and complete inbreeding doubles it.
 ## Depends on
 
 - [Directional selection, overdominance and underdominance at one locus](one-locus-viability-selection-regimes.md)
-- [Genotype frequencies of an inbred individual](../inbreeding-and-regular-systems-of-mating/genotype-frequencies-under-inbreeding.md)
+- [Genotype frequencies of an inbred individual](../../inbreeding-and-regular-systems-of-mating/genotype-frequencies-under-inbreeding.md)
 
 ## Sources
 

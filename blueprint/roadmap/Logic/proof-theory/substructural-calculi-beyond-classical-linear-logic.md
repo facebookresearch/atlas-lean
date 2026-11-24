@@ -13,10 +13,10 @@ provability for linear logic.
 
 A sound expansion fixes, for each calculus separately, its formulas, the form of its contexts (lists or
 multisets) and its rules, and has separate pages for: cut elimination for the Lambek calculus; cut
-elimination for affine linear logic; phase spaces and the soundness and completeness of linear logic
-for phase semantics, as stated in a source fixed for that page; and any decidability or complexity
-result, each with its own source. Bunched logics and other resource calculi need their own sources
-and are not part of this node until one is fixed. Results for classical linear logic do not transfer
+elimination for affine linear logic; phase spaces and the soundness and completeness for phase semantics of multiplicative-additive linear
+logic and, separately, of full linear logic with exponentials, as stated in a source fixed for that
+page; cut elimination for intuitionistic linear logic; and any decidability or complexity result, each
+with its own source. The logic of bunched implications is outside this node and needs its own sources. Results for classical linear logic do not transfer
 to these calculi without proof.
 
 ## Sources
