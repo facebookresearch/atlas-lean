@@ -22,11 +22,12 @@ The Shaw-Mohler invasion fitness of a mutant parent with son fraction `x` in a p
 son fraction `y` is, up to the positive factor `1/4`,
 `W x y = x / y + (1 - x) / (1 - y)`.
 
-At the resident ratio `1/2`, every mutant has the same fitness. The selection gradient
-`1/y - 1/(1-y)` is positive below `1/2`, negative above it, and zero only at `1/2`; `1/2` is
-the unique uninvadable resident ratio. With unequal costs of sons and daughters, equal
-investment still gives the stable investment fraction, while the resulting son fraction is
-biased toward the cheaper sex.
+At the resident ratio `1/2`, every mutant has the same fitness. For interior resident fractions
+`0 < y < 1`, the selection gradient `1/y - 1/(1-y)` is positive on `(0, 1/2)`, negative on
+`(1/2, 1)` and zero only at `1/2` (at `y = 0` and `y = 1` the convention `a / 0 = 0` gives `-1`
+and `1`); `1/2` is the unique uninvadable interior resident ratio. With unequal costs of sons
+and daughters, equal investment still gives the stable investment fraction, while the resulting
+son fraction is biased toward the cheaper sex.
 
 ## References
 
@@ -42,14 +43,16 @@ open Set
 namespace MathlibExt.Biology.PopulationGenetics.Classical.SexRatio
 
 /-- Shaw–Mohler invasion fitness (up to the factor `1/4`) of a mutant with son fraction `x` in a
-population with son fraction `y`. -/
+population with son fraction `y`. It is defined for all real `x`, `y`: by the convention
+`a / 0 = 0`, `W x 0 = 1 - x` and `W x 1 = x`; the intended domain is `0 < y < 1`. -/
 noncomputable def W (x y : ℝ) : ℝ := x / y + (1 - x) / (1 - y)
 
 /-- Neutrality at `1/2`: every mutant has the same fitness when the population ratio is `1/2`. -/
 theorem W_half_right (x : ℝ) : W x (1 / 2) = 2 := by
   unfold W; ring
 
-/-- Fitness advantage of a mutant over the resident. -/
+/-- Fitness advantage of a mutant over the resident, for `0 < y < 1`:
+`W x y - W y y = (x - y) (1 - 2 y) / (y (1 - y))`. -/
 theorem W_sub_W_self {x y : ℝ} (hy0 : 0 < y) (hy1 : y < 1) :
     W x y - W y y = (x - y) * (1 - 2 * y) / (y * (1 - y)) := by
   have h1 : (1 - y) ≠ 0 := by linarith
@@ -57,7 +60,8 @@ theorem W_sub_W_self {x y : ℝ} (hy0 : 0 < y) (hy1 : y < 1) :
   field_simp
   ring
 
-/-- Selection gradient: `∂W/∂x (x, y) = 1/y - 1/(1-y)`, independent of `x`. -/
+/-- Selection gradient: `∂W/∂x (x, y) = 1/y - 1/(1-y)`, independent of `x`, for all real `x`, `y`
+(at `y = 0` and `y = 1` by the convention `a / 0 = 0`). -/
 theorem hasDerivAt_W_left (x y : ℝ) : HasDerivAt (fun x => W x y) (1 / y - 1 / (1 - y)) x := by
   have h : HasDerivAt (fun x => x / y + (1 - x) / (1 - y)) (1 / y + (0 - 1) / (1 - y)) x :=
     ((hasDerivAt_id' x).div_const y).add
@@ -66,7 +70,8 @@ theorem hasDerivAt_W_left (x y : ℝ) : HasDerivAt (fun x => W x y) (1 / y - 1 /
   convert h using 1
   ring
 
-/-- Convergence stability: the gradient is positive below `1/2` and negative above. -/
+/-- Convergence stability: the gradient is positive for `0 < y < 1/2` (`gradient_neg` gives the
+negative sign for `1/2 < y < 1`). -/
 theorem gradient_pos {y : ℝ} (hy0 : 0 < y) (hy : y < 1 / 2) : 0 < 1 / y - 1 / (1 - y) := by
   rw [sub_pos]
   exact one_div_lt_one_div_of_lt hy0 (by linarith)
@@ -102,7 +107,8 @@ theorem W_lt_W_half {x ε : ℝ} (hx0 : 0 < x) (hx1 : x < 1) (hx : x ≠ 1 / 2) 
     positivity
   linarith
 
-/-- Uniqueness: every other resident ratio `y ∈ (0, 1)` can be invaded. -/
+/-- Uniqueness: every interior resident son fraction `y ∈ (0, 1)` other than `1/2` can be
+invaded by some mutant son fraction `x ∈ (0, 1)`, that is `W y y < W x y`. -/
 theorem exists_W_self_lt {y : ℝ} (hy0 : 0 < y) (hy1 : y < 1) (hy : y ≠ 1 / 2) :
     ∃ x ∈ Ioo (0 : ℝ) 1, W y y < W x y := by
   refine ⟨(y + 1 / 2) / 2, ⟨by linarith, by linarith⟩, ?_⟩
@@ -115,7 +121,8 @@ theorem exists_W_self_lt {y : ℝ} (hy0 : 0 < y) (hy1 : y < 1) (hy : y ≠ 1 / 2
     positivity
   linarith
 
-/-- `1/2` is the unique uninvadable resident son fraction in `(0, 1)`. -/
+/-- `1/2` is the only uninvadable interior resident son fraction: for `0 < y < 1`,
+`W x y ≤ W y y` for every `x ∈ (0, 1)` iff `y = 1/2`. -/
 theorem forall_W_le_iff {y : ℝ} (hy0 : 0 < y) (hy1 : y < 1) :
     (∀ x ∈ Ioo (0 : ℝ) 1, W x y ≤ W y y) ↔ y = 1 / 2 := by
   constructor
@@ -130,21 +137,25 @@ theorem forall_W_le_iff {y : ℝ} (hy0 : 0 < y) (hy1 : y < 1) :
 
 /-- Fitness of a parent investing a fraction `r'` of its resources in sons, sons costing `cs`
 and daughters `cd`, in a population investing `r`: sons and daughters counted relative to the
-population. -/
+population. By the convention `a / 0 = 0` the first term is `0` when `cs = 0` or `r = 0`, and the
+second when `cd = 0` or `r = 1`; the intended domain is `cs, cd > 0` and `0 < r < 1`. -/
 noncomputable def Wcost (cs cd r' r : ℝ) : ℝ :=
   (r' / cs) / (r / cs) + ((1 - r') / cd) / ((1 - r) / cd)
 
-/-- The son fraction among offspring produced by investing a fraction `r` in sons. -/
+/-- The son fraction among offspring produced by investing a fraction `r` in sons. It is defined
+for all real arguments, with the convention `a / 0 = 0`; the intended domain is `cs, cd > 0` and
+`0 ≤ r ≤ 1`, where the denominator is positive. -/
 noncomputable def sonFraction (cs cd r : ℝ) : ℝ := (r / cs) / (r / cs + (1 - r) / cd)
 
-/-- With costs, the Shaw–Mohler fitness in investment fractions is `W`, so the stable
-investment is `1/2` by `forall_W_le_iff`. -/
+/-- With nonzero costs `cs` and `cd`, the Shaw–Mohler fitness in investment fractions is `W`:
+`Wcost cs cd r' r = W r' r` for all real `r'` and `r`. So, by `forall_W_le_iff`, for a resident
+investment `0 < r < 1`, no mutant investment `r' ∈ (0, 1)` does better iff `r = 1/2`. -/
 theorem Wcost_eq (cs cd r' r : ℝ) (hcs : cs ≠ 0) (hcd : cd ≠ 0) : Wcost cs cd r' r = W r' r := by
   unfold Wcost W
   rw [div_div_div_cancel_right₀ hcs, div_div_div_cancel_right₀ hcd]
 
-/-- Equal investment `r = 1/2` gives the son fraction `cd / (cs + cd)`: the ratio is biased
-towards the cheaper sex. -/
+/-- For positive costs, equal investment `r = 1/2` gives the son fraction `cd / (cs + cd)`: the
+ratio is biased towards the cheaper sex. -/
 theorem sonFraction_half {cs cd : ℝ} (hcs : 0 < cs) (hcd : 0 < cd) :
     sonFraction cs cd (1 / 2) = cd / (cs + cd) := by
   unfold sonFraction

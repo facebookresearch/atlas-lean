@@ -10,6 +10,7 @@ module
 public import MathlibExt.CategoryTheory.DGSourceMore.DGOneSided
 public import MathlibExt.CategoryTheory.DGSourceMore.DGKaroubi
 public import MathlibExt.CategoryTheory.DGSourceMore.DGSimplicial
+public import MathlibExt.CategoryTheory.DGScalarNerveMaps
 public import MathlibExt.CategoryTheory.DGQuasiFunctorModels
 public import Mathlib.AlgebraicTopology.SimplicialNerve
 
@@ -106,9 +107,10 @@ structure SmallPerfectModel (C : DGCat k) where
 abbrev DGSimplicial (C : Type v) [DGCategory k C] :=
   ForgetEnrichment SSet.{u} (DGSimplicialCategory k C)
 
-/-- The native homotopy-coherent nerve retains every enriched simplex. -/
-def dgNerve (C : Type v) [DGCategory k C] : SSet.{max u v} :=
-  SimplicialNerve (DGSimplicial (k := k) C)
+/-- The native homotopy-coherent nerve retains every enriched simplex. It is
+`DGScalarNerveMaps.coherentNerve`, the nerve of `DGSimplicial C`. -/
+abbrev dgNerve (C : Type v) [DGCategory k C] : SSet.{max u v} :=
+  DGScalarNerveMaps.coherentNerve (R := k) C
 
 /-- The actual coherent nerve of a chosen small perfect realization. -/
 def perfectNerve {C : DGCat k} (P : SmallPerfectModel C) : SSet.{u} :=

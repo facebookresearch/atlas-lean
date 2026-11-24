@@ -40,11 +40,12 @@ open Filter Topology
 
 namespace MathlibExt.Economics.Macro.GovernmentDebtConvergence
 
-/-- Debt-to-output ratio `b[t] = B[t] / Y[t]`: nominal government debt over output. -/
+/-- Debt-to-output ratio `b[t] = B[t] / Y[t]`: nominal government debt over output. With the
+convention `x / 0 = 0`, `b(t) = 0` when `Y(t) = 0`. -/
 noncomputable def debtRatio (B Y : ℕ → ℝ) (t : ℕ) : ℝ := B t / Y t
 
-/-- Primary-deficit-to-output ratio `d[t] = D[t] / Y[t]`, against the same-period
-output denominator as `debtRatio`. -/
+/-- Primary-deficit-to-output ratio `d[t] = D[t] / Y[t]`, against the same-period output denominator
+as `debtRatio`. With the convention `x / 0 = 0`, `d(t) = 0` when `Y(t) = 0`. -/
 noncomputable def deficitRatio (D Y : ℕ → ℝ) (t : ℕ) : ℝ := D t / Y t
 
 /-- **Affine recurrence convergence.** An affine recursion `b[t+1] = a * b[t] + d`
@@ -55,9 +56,10 @@ theorem affineRecurrence_tendsto {a d : ℝ} (ha : |a| < 1) {b : ℕ → ℝ}
     Tendsto b atTop (𝓝 (d / (1 - a))) :=
   MathlibExt.AffineRecurrence.affine_tendsto_fixedPoint hb ha
 
-/-- **Constant-deficit debt-ratio convergence (MA07.T03).** If the debt ratio
-satisfies the MA07.T02 recurrence with a constant deficit ratio `d` and a stable
-coefficient `|(1+r)/(1+g)| < 1`, then the debt ratio converges to
+/-- **Constant-deficit debt-ratio convergence (MA07.T03).** If output is nonzero and grows as
+`Y[t+1] = (1+g) * Y[t]` with `1 + g ≠ 0`, debt follows `B[t+1] = (1+r) * B[t] + D[t+1]`, the
+deficit ratio `d[t+1] = d` is constant and the coefficient is stable,
+`|(1+r)/(1+g)| < 1`, then the debt ratio converges to
 `d / (1 - (1+r)/(1+g))`. -/
 theorem debtRatio_tendsto_of_stable {r g d : ℝ} {B D Y : ℕ → ℝ}
     (hg : 1 + g ≠ 0) (hY : ∀ t, Y t ≠ 0)

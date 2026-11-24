@@ -19,7 +19,7 @@ public import MathlibExt.CategoryTheory.DGSource.DGCategory
 
 Cochain complexes in an `R`-linear preadditive category are enriched in cochain complexes of
 `R`-modules through `CochainComplex.linearHomComplex`, so they form a differential graded category.
-This file evaluates the differential graded operations of `MathlibExt.DGSource/CategoryTheory/DG/Basic.lean`
+This file evaluates the differential graded operations of `MathlibExt/CategoryTheory/DGSource/DGCategory.lean`
 on that example: the degree-`n` morphisms are the degree-`n` cochains, the differential is Mathlib's
 signed `CochainComplex.HomComplex.δ`, the identity is the identity cochain, and composition is
 composition of cochains with the Koszul sign.

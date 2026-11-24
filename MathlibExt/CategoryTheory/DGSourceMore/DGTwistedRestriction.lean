@@ -34,7 +34,7 @@ morphism `g : Q ⟶ P` (`MathlibExt.DGSource.DGTwistedObject.restrictHom`).  Reg
 whose entries are identities (`MathlibExt.DGSource.DGTwistedObject.extensionRestrictIso`).  For a one-sided
 twisted complex and `p` the summands other than one of maximal level, this exhibits the twisted
 complex as an extension of a single summand by a one-sided twisted complex with fewer summands;
-see `TauCeti/CategoryTheory/DG/Twisted/OneSided.lean`.
+see `MathlibExt/CategoryTheory/DGSourceMore/DGOneSided.lean`.
 
 ## Main definitions
 
