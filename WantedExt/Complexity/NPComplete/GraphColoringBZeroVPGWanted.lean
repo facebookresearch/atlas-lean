@@ -20,7 +20,7 @@ intersection graphs of paths on a grid", Journal of Graph Algorithms and Applica
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Order.Interval.Set.Basic
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity

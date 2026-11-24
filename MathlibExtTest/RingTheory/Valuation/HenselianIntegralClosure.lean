@@ -14,7 +14,7 @@ public import MathlibExt.RingTheory.Valuation.Henselian
 @[expose] public section
 
 -- Exact-source consumer, with the original binders.
-theorem exactSource
+private theorem exactSource
     {K L : Type*} [Field K] [Field L] [Algebra K L] [Algebra.IsAlgebraic K L]
     (O : ValuationSubring K) [HenselianLocalRing O]
     (V : ValuationSubring L) (hV : ∀ x : K, algebraMap K L x ∈ V ↔ x ∈ O) :
