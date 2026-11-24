@@ -126,6 +126,7 @@ private theorem sum_rows (n i : ℕ) (hi : 2 ≤ i) (hin : i ≤ n + 1) :
 
 end sum_choose_mul_fib_odd_eq_choose_add_sum
 
+set_option linter.unusedVariables false in
 /-- **A recursion for binomial sums of odd-indexed Fibonacci numbers.** Let $F_k$ be the Fibonacci
 numbers, with the convention $F_{-1} = 1$. For all integers $n \ge 1$ and $2 \le i \le n + 1$,
 $$\sum_{m=0}^{n-i+1} \binom{n-m-1}{i-2} F_{2m-1} =
@@ -135,7 +136,7 @@ in the summation bounds are nonnegative.
 
 Source: Toufik Mansour and Mark Shattuck, *Enumeration of Catalan and Smooth Words According
 to Capacity*, INTEGERS 25 (2025), Article A5, Lemma 5 (`integers-2025-A5-lem-5`). -/
-public theorem sum_choose_mul_fib_odd_eq_choose_add_sum (n i : ℕ) (_hn : 1 ≤ n)
+public theorem sum_choose_mul_fib_odd_eq_choose_add_sum (n i : ℕ) (hn : 1 ≤ n)
     (hi : 2 ≤ i) (hin : i ≤ n + 1) :
     ∑ m ∈ Finset.range (n + 2 - i),
         (n - m - 1).choose (i - 2) * (if m = 0 then 1 else Nat.fib (2 * m - 1)) =

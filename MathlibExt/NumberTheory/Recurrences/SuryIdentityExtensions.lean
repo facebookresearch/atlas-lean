@@ -42,6 +42,7 @@ def lucasAtInt (n : ℤ) : ℚ :=
     (-1 : ℚ) ^ ((-n).toNat) *
       (MetaMathlibExt.lucasNumber (-n).toNat : ℚ)
 
+set_option linter.unusedVariables false in
 /-- **Sury's identity for a second-order recurrence starting at 1.** Let $c_1, c_2$ be rational
 numbers with $c_2 \neq 0$, and let $(A_n)_{n \ge 0}$ be a sequence of rational numbers with
 $A_0 = 1$ and $A_{n+2} = c_1 A_{n+1} + c_2 A_n$ for all $n \ge 0$. Put $t = c_1 - A_1$ and
@@ -51,9 +52,9 @@ $$A_{n+2} - A_1 A_{n+1} = (A_2 - A_1^2) \sum_{i=0}^{n} t^{n-i} A_i.$$
 Source: Gregory Dresden and Xiaoya Gao, "Further Extensions of Sury's Identity", Theorem 1. -/
 theorem second_order_recurrence_initial_one_sury_sum
     (A : ℕ → ℚ) (c₁ c₂ : ℚ)
-    (_hc₂ : c₂ ≠ 0) (hA0 : A 0 = 1)
+    (hc₂ : c₂ ≠ 0) (hA0 : A 0 = 1)
     (hrec : ∀ n : ℕ, A (n + 2) = c₁ * A (n + 1) + c₂ * A n)
-    (_ht : c₁ - A 1 ≠ 0) (n : ℕ) :
+    (ht : c₁ - A 1 ≠ 0) (n : ℕ) :
     A (n + 2) - A 1 * A (n + 1) =
       (A 2 - A 1 ^ 2) *
         ∑ i ∈ Finset.range (n + 1), (c₁ - A 1) ^ (n - i) * A i := by
