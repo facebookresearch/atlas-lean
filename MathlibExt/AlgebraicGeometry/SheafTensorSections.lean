@@ -21,13 +21,11 @@ set_option backward.isDefEq.respectTransparency false
 set_option backward.isDefEq.respectTransparency.instanceSearchTypes false
 @[expose] public noncomputable section
 
-attribute [local instance_reducible] TopCat.Sheaf _root_.CategoryTheory.sheafCompose
-  AlgebraicGeometry.SheafedSpace.sheaf
 
 namespace MathlibExt.AlgebraicGeometry.SheafTensorSections
 
 open _root_.CategoryTheory _root_.CategoryTheory.MonoidalCategory _root_.AlgebraicGeometry Opposite
-open LineBundleTaskContracts AlgebraicLineBundleFamilies DeligneFaltingsCategories
+open LineBundleTaskContracts AlgebraicLineBundleFamilies
 open NativeTensorComparisons
 
 variable (X : Scheme.{0}) (E F : X.Modules) (U : X.Opens)
@@ -111,5 +109,36 @@ theorem tensor_hom_ext {G : X.Modules} {f g : moduleTensor X E F ⟶ G}
   apply TensorProduct.ext'
   intro e s
   exact h U.unop e s
+
+section Pullback
+
+variable {Y Y' : Scheme.{0}}
+
+/-- A section of `E` over `U`, pulled back along `f` to `f ⁻¹ᵁ U` through the unit of the
+pullback/pushforward adjunction. -/
+def pullSection (f : Y' ⟶ Y) (E : Y.Modules) (U : Y.Opens)
+    (s : E.val.obj (op U)) : ((Scheme.Modules.pullback f).obj E).val.obj (op (f ⁻¹ᵁ U)) :=
+  ((((Scheme.Modules.pullbackPushforwardAdjunction f).unit.app E).val.app (op U)).hom s)
+
+@[simp] theorem pullSection_zero (f : Y' ⟶ Y) (E : Y.Modules) (U : Y.Opens) :
+    pullSection f E U 0 = 0 := map_zero _
+
+@[simp] theorem pullSection_add (f : Y' ⟶ Y) (E : Y.Modules) (U : Y.Opens)
+    (s t : E.val.obj (op U)) :
+    pullSection f E U (s + t) = pullSection f E U s + pullSection f E U t := map_add _ _ _
+
+/-- A comparison of the pullback of a tensor product with the tensor product of the pullbacks,
+normalized on pulled-back pure tensor sections. -/
+structure TensorPullbackComparison (f : Y' ⟶ Y) where
+  iso : ∀ E F : Y.Modules,
+    (Scheme.Modules.pullback f).obj (moduleTensor Y E F) ≅
+      moduleTensor Y' ((Scheme.Modules.pullback f).obj E) ((Scheme.Modules.pullback f).obj F)
+  pure : ∀ (E F : Y.Modules) (U : Y.Opens) (e : E.val.obj (op U)) (s : F.val.obj (op U)),
+    (((iso E F).hom).val.app (op (f ⁻¹ᵁ U))).hom
+      (pullSection f (moduleTensor Y E F) U (tensorSection Y E F U e s)) =
+      tensorSection Y' ((Scheme.Modules.pullback f).obj E) ((Scheme.Modules.pullback f).obj F)
+        (f ⁻¹ᵁ U) (pullSection f E U e) (pullSection f F U s)
+
+end Pullback
 
 end MathlibExt.AlgebraicGeometry.SheafTensorSections

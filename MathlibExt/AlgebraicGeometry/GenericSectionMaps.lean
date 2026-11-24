@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import MathlibExt.AlgebraicGeometry.BirationalSectionCoordinates
+public import MathlibExt.AlgebraicGeometry.LineBundleTaskContracts
 
 /-!
 # Native global-section and pullback formulas over an affine base

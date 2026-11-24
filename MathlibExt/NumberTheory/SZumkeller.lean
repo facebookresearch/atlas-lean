@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Mathlib.Algebra.Order.Field.Basic
+import Mathlib.Analysis.PSeries
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import MathlibExt.NumberTheory.UnitaryDivisor
 
@@ -134,6 +135,57 @@ theorem isSZumkeller_iff_of_even (n : ℕ) (hn : 0 < n) (he : Even n) :
     rw [← hbal, Finset.sum_insert hkS]
     have := Nat.pos_of_mem_properDivisors hk
     positivity
+
+open Finset in
+private theorem three_dvd_of_isSZumkeller.sum_inv_sq_lt (n : ℕ) (h₃ : ¬ 3 ∣ n) :
+    ∑ d ∈ n.divisors, ((d : ℚ) ^ 2)⁻¹ < 3 / 2 := by
+  -- Below 10 we can exclude 3, 6 and 9. The entire tail contributes at most 1/9.
+  let small := (Icc 1 9).filter (fun d : ℕ => ¬ 3 ∣ d)
+  let tail := Ioc 9 (max 9 n)
+  have hsub : n.divisors ⊆ small ∪ tail := by
+    intro d hd
+    simp only [small, tail, mem_union, mem_filter, mem_Icc, mem_Ioc]
+    by_cases h : d ≤ 9
+    · exact Or.inl ⟨⟨Nat.pos_of_mem_divisors hd, h⟩,
+        fun h₃d => h₃ (h₃d.trans (Nat.dvd_of_mem_divisors hd))⟩
+    · exact Or.inr ⟨Nat.lt_of_not_ge h, (Nat.divisor_le hd).trans (le_max_right _ _)⟩
+  have hdisj : Disjoint small tail := by
+    apply disjoint_left.mpr
+    intro d hd ht
+    simp only [small, tail, mem_filter, mem_Icc, mem_Ioc] at hd ht
+    exact ht.1.not_ge hd.1.2
+  have htail : ∑ d ∈ tail, ((d : ℚ) ^ 2)⁻¹ ≤ 1 / 9 := by
+    refine (sum_Ioc_inv_sq_le_sub (α := ℚ) (by decide : 9 ≠ 0) (le_max_left 9 n)).trans ?_
+    simp [one_div]
+  calc
+    _ ≤ ∑ d ∈ small ∪ tail, ((d : ℚ) ^ 2)⁻¹ :=
+      sum_le_sum_of_subset_of_nonneg hsub (by intros; positivity)
+    _ = (∑ d ∈ small, ((d : ℚ) ^ 2)⁻¹) + ∑ d ∈ tail, ((d : ℚ) ^ 2)⁻¹ := sum_union hdisj
+    _ ≤ (∑ d ∈ small, ((d : ℚ) ^ 2)⁻¹) + 1 / 9 := add_le_add_right htail _
+    _ < 3 / 2 := by decide +kernel
+
+/-- **Even s-Zumkeller numbers are divisible by 3.** If $n$ is an even s-Zumkeller number, then
+$3$ divides $n$.
+
+Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
+Numbers*, INTEGERS 24 (2024), Article A95, Proposition 4. -/
+theorem three_dvd_of_isSZumkeller (n : ℕ) (h : IsSZumkeller n) (he : Even n) :
+    3 ∣ n := by
+  by_contra h₃
+  have hn : 0 < n := Nat.pos_of_ne_zero fun h₀ => h₃ (h₀ ▸ dvd_zero 3)
+  obtain ⟨S, _, hS⟩ := (isSZumkeller_iff_of_even n hn he).mp h
+  have hnonneg : 0 ≤ ∑ d ∈ S, (d : ℤ) ^ 2 := Finset.sum_nonneg fun _ _ => sq_nonneg _
+  have hlower : 3 * (n : ℚ) ^ 2 ≤ 2 * ArithmeticFunction.sigma 2 n := by
+    exact_mod_cast (show 3 * (n : ℤ) ^ 2 ≤ 2 * ArithmeticFunction.sigma 2 n by omega)
+  -- Pair each divisor d with n / d to express the normalized sum as reciprocal squares.
+  have hupper : (ArithmeticFunction.sigma 2 n : ℚ) < (n : ℚ) ^ 2 * (3 / 2) := calc
+    _ = (n : ℚ) ^ 2 * ∑ d ∈ n.divisors, ((d : ℚ) ^ 2)⁻¹ := by
+      rw [ArithmeticFunction.sigma_eq_sum_div, Nat.cast_sum, Finset.mul_sum]
+      apply Finset.sum_congr rfl
+      intro d hd
+      rw [Nat.cast_pow, Nat.cast_div_charZero (Nat.dvd_of_mem_divisors hd), div_pow, div_eq_mul_inv]
+    _ < _ := mul_lt_mul_of_pos_left (three_dvd_of_isSZumkeller.sum_inv_sq_lt n h₃) (by positivity)
+  linarith
 
 /-- **Harmonic mean of squared divisors of s-Zumkeller numbers $2^\alpha(2^{\alpha+1}-1)$.** Let
 $\alpha \ge 1$ be an integer, let $n = 2^\alpha (2^{\alpha+1} - 1)$ and let $\tau(n)$ be the

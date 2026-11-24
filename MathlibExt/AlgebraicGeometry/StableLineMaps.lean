@@ -62,8 +62,11 @@ structure StableLineFamily (T : ComplexScheme) where
   map : curve.X ⟶ X.total.left
   over : map ≫ X.projection.left = curve.π ≫ T.hom
   degree : ∀ (Ω : Type) [Field Ω] [IsAlgClosed Ω] (p : Spec (.of Ω) ⟶ T.left),
-    CoherentCurveLinearSeries.degree (fiberCurve curve.π p).hom
-      ((Scheme.Modules.pullback (pullback.fst curve.π p ≫ map)).obj X.tautological) = 1
+    ∃ (_ : IsProperCurve (fiberCurve curve.π p).hom)
+      (hL : IsLineBundle
+        ((Scheme.Modules.pullback (pullback.fst curve.π p ≫ map)).obj X.tautological)),
+      CoherentCurveLinearSeries.degree (fiberCurve curve.π p).hom
+        ((Scheme.Modules.pullback (pullback.fst curve.π p ≫ map)).obj X.tautological) hL = 1
   stable : ∀ (Ω : Type) [Field Ω] [IsAlgClosed Ω] (p : Spec (.of Ω) ⟶ T.left),
     Finite (mapAut r X curve map p)
 

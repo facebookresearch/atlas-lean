@@ -6,20 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-The Rees/cotangent interface uses Mathlib at revision
-56a005855ea17e0b0958f73ec801ae140b0a1679:
-Mathlib/RingTheory/ReesAlgebra.lean (Copyright 2022 Andrew Yang) and
-Mathlib/RingTheory/Extension/Cotangent/Basic.lean
-(Copyright 2024 Andrew Yang), under Apache 2.0. Modification notice:
-compose the actual degree-one Rees map with scalar extension and retain
-the cotangent scalar comparison for the POT cone atlas below. Generic
-chosen-immersion virtual classes are already completed in AxiomMath/Stacks,
-revision c496df0d9beea9deaeabcea8492605f9a0a2313b,
-StacksFrontier/AlgebraicGeometry/Chow/BivariantLemmas/
-VirtualNormalBundleClassConstruction.lean; those results are not re-requested.
--/
-
 module
 public import Mathlib.RingTheory.ReesAlgebra
 public import Mathlib.RingTheory.Extension.Cotangent.Basic
@@ -40,6 +26,13 @@ Their morphisms are the actual E⁰-dual translations of the displayed matrix
 coordinates. Groupoid laws are proved. Closedness, image stability and
 intrinsic compatibility remain geometric comparison work, not assumptions
 of a freely named virtual class.
+
+The construction uses Mathlib's Rees algebra (`Mathlib.RingTheory.ReesAlgebra`) and the
+cotangent complex of an algebra extension (`Mathlib.RingTheory.Extension.Cotangent.Basic`).
+Virtual classes for a chosen immersion are constructed in AxiomMath/Stacks
+(revision c496df0d9beea9deaeabcea8492605f9a0a2313b,
+`StacksFrontier/AlgebraicGeometry/Chow/BivariantLemmas/VirtualNormalBundleClassConstruction.lean`)
+and are not requested here.
 -/
 
 set_option backward.isDefEq.respectTransparency false

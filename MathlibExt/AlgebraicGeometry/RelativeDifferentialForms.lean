@@ -35,14 +35,12 @@ set_option backward.isDefEq.respectTransparency false
 set_option backward.isDefEq.respectTransparency.instanceSearchTypes false
 @[expose] public noncomputable section
 
-attribute [local instance_reducible] TopCat.Sheaf _root_.CategoryTheory.sheafCompose
-  AlgebraicGeometry.SheafedSpace.sheaf
 
 namespace MathlibExt.AlgebraicGeometry.RelativeDifferentialForms
 
 open _root_.CategoryTheory _root_.CategoryTheory.MonoidalCategory _root_.AlgebraicGeometry Opposite
 open TopologicalSpace PresheafOfModulesOfCommRing
-open LineBundleTaskContracts AlgebraicLineBundleFamilies DeligneFaltingsCategories
+open LineBundleTaskContracts AlgebraicLineBundleFamilies
 open NativeTensorComparisons
 
 variable {Y T : Scheme.{0}} (pi : Y ⟶ T)

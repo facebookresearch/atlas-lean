@@ -17,7 +17,7 @@ public import MathlibExt.CategoryTheory.DGSource.DGCategory
 # Differential graded categories from explicit Hom-complex data
 
 A differential graded category is defined as a category enriched in cochain complexes of
-`R`-modules, and `MathlibExt.DGSource/CategoryTheory/DG/Basic.lean` unpacks that enrichment into homogeneous
+`R`-modules, and `MathlibExt/CategoryTheory/DGSource/DGCategory.lean` unpacks that enrichment into homogeneous
 morphisms, their differential, and their composition.  This file goes the other way.  Explicit
 Hom-complex data, `MathlibExt.DGSource.DGCategoryData`, consists of a Hom complex for every pair of objects,
 bilinear composition maps on homogeneous degrees, and identities, subject to the graded Leibniz
@@ -59,8 +59,8 @@ that convention.
 * B. Keller, *Deriving DG categories*, Section 1.
 * B. Keller, *Introduction to A-infinity algebras and modules*, Section 3.1, for the sign
   conventions and the comparison sign between the two factor orders.
-* `MathlibExt.DGSource/Algebra/Homology/LinearHomComplex/Composition.lean`.
-* `MathlibExt.DGSource/Algebra/Homology/LinearHomComplex/Enrichment.lean`.
+* `MathlibExt/CategoryTheory/DGSource/LinearHomComplexComposition.lean`.
+* `MathlibExt/CategoryTheory/DGSource/LinearHomComplexEnrichment.lean`.
 -/
 
 public section

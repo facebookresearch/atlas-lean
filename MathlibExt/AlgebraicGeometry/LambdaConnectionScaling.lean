@@ -25,8 +25,6 @@ set_option backward.isDefEq.respectTransparency false
 set_option backward.isDefEq.respectTransparency.instanceSearchTypes false
 @[expose] public noncomputable section
 
-attribute [local instance_reducible] TopCat.Sheaf _root_.CategoryTheory.sheafCompose
-  AlgebraicGeometry.SheafedSpace.sheaf
 
 namespace MathlibExt.AlgebraicGeometry.LambdaConnectionScaling
 

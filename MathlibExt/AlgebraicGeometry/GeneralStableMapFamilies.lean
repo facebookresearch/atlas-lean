@@ -7,21 +7,21 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-The general prestable-map/evaluation/category/base-change signatures adapt
-TauCetiProject/TauCeti at 62bbc0596dc3539d488232e4e924a338548ea0a9,
-TauCeti/AlgebraicGeometry/Curves/StableMaps/{Basic,Category,Contracted}.lean.
-Copyright (c) 2026 The Tau Ceti contributors. Apache 2.0.
-Modification notice: use the existing native MarkedFamily for arbitrary n,g,
-retain a fixed target over an arbitrary base, expose geometric map stability
-and native cycle-class constraints. Complete source base-change primitives
-are dependencies/ports, not new Wanted claims.
--/
+Portions of this file are adapted from:
 
+`TauCeti/AlgebraicGeometry/Curves/StableMaps/Basic.lean`,
+`TauCeti/AlgebraicGeometry/Curves/StableMaps/Category.lean` and
+`TauCeti/AlgebraicGeometry/Curves/StableMaps/Contracted.lean`
+(TauCetiProject/TauCeti, revision 62bbc0596dc3539d488232e4e924a338548ea0a9):
+Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: The Tau Ceti contributors
+Modifications: the prestable-map, evaluation, category and base-change signatures use the
+native `MarkedFamily` for arbitrary `n` and `g` and keep a fixed target over an arbitrary base.
+-/
 module
 
 public import MathlibExt.AlgebraicGeometry.MarkedCurveStabilization
-public import MathlibExt.AlgebraicGeometry.RelativeCurveClasses
-public import MathlibExt.AlgebraicGeometry.StableLineMaps
 
 /-!
 # General stable-map family contracts
@@ -34,9 +34,11 @@ closed field fibre and every map-and-mark-preserving automorphism.
 The native groupoid contains actual source isomorphisms with their map,
 base and marking equations. Cartesian base-change data specify actual
 pullback squares and normalized marking maps; the map part is constructed
-from that data. The general source-family construction itself is already
-covered public TauCeti mathematics. General stable-map stack/algebraicity,
-POT and gluing/invariant providers remain separate work.
+from that data. Curve-class constraints are in `GeneralStableMapCurveClasses` and the
+degree-one projective-line adapter is in `GeneralStableLineAdapters`, so that consumers of
+the core family API (for instance log stable maps) do not import Chow groups, bundle
+geometry or analytification. General stable-map stack/algebraicity, POT and
+gluing/invariant providers remain separate work.
 -/
 
 set_option backward.isDefEq.respectTransparency false
@@ -99,7 +101,6 @@ instance familyGroupoid : Groupoid (Family q n g T b) where
   assoc a c d := by apply hom_ext; ext; simp
   inv_comp a := by apply hom_ext; ext; simp
 
-
 theorem evaluation_eq_of_hom {G : Family q n g T b} (e : F ⟶ G) (i : Fin n) :
     evaluation F i = evaluation G i := by
   rw [evaluation, ← e.map, ← Category.assoc, e.markings, evaluation]
@@ -118,88 +119,5 @@ def baseChangeMap {T' : Scheme.{0}} (h : T' ⟶ T) (C : MarkedFamily T' n g)
   curve := C
   map := a ≫ F.map
   over := by rw [Category.assoc, F.over, ← Category.assoc, ha.w]; simp [Category.assoc]
-
-
-section CurveClasses
-
-variable {k : Type} [Field k]
-    (X T : MathlibExt.AlgebraicGeometry.RelativeCurveClasses.SchemeOver k)
-    {n g : ℕ} (F : Family X.hom n g T.left T.hom)
-
-/-- The actual map of a geometric source fibre into the scalar-extended target. -/
-def geometricMap (Ω : Type) [Field Ω] [Algebra k Ω]
-    (p : Spec (.of Ω) ⟶ T.left)
-    (hp : p ≫ T.hom = Spec.map (CommRingCat.ofHom (algebraMap k Ω))) :
-    (fiberCurve F.curve.π p).left ⟶
-      (MathlibExt.AlgebraicGeometry.RelativeCurveClasses.fieldBaseChange X Ω).left :=
-  pullback.lift (pullback.fst F.curve.π p ≫ F.map) (pullback.snd F.curve.π p) (by
-    rw [Category.assoc, F.over, ← Category.assoc, pullback.condition]
-    simp only [Category.assoc, hp])
-
-/-- A fixed actual Chow curve class on every geometric fibre. The right side
-is the computed native flat cycle sum, tested on every representative of β;
-no arbitrary class base-change function occurs in the contract. -/
-def HasCurveClass [LocallyOfFiniteType X.hom] [IsNoetherian X.left]
-    (β : MathlibExt.AlgebraicGeometry.RelativeCurveClasses.CurveClass X) : Prop :=
-  ∀ (Ω : Type) [Field Ω] [IsAlgClosed Ω] [Algebra k Ω]
-    (p : Spec (.of Ω) ⟶ T.left)
-    (hp : p ≫ T.hom = Spec.map (CommRingCat.ofHom (algebraMap k Ω))),
-    ∃ hC : IsNoetherian (fiberCurve F.curve.π p).left,
-    ∃ hX : IsNoetherian
-      (MathlibExt.AlgebraicGeometry.RelativeCurveClasses.fieldBaseChange X Ω).left,
-    ∃ hf : IsProper (geometricMap X T F Ω p hp),
-    letI := hC
-    letI := hX
-    letI := hf
-    ∀ c : MathlibExt.AlgebraicGeometry.GeometricChow.CycleGroup X.left 1,
-      (MathlibExt.AlgebraicGeometry.RelativeCurveClasses.relations X 1).mkQ c = β →
-      MathlibExt.AlgebraicGeometry.RelativeCurveClasses.pushedCurveClass
-        (fiberCurve F.curve.π p).left (geometricMap X T F Ω p hp) =
-      (MathlibExt.AlgebraicGeometry.RelativeCurveClasses.relations
-        (MathlibExt.AlgebraicGeometry.RelativeCurveClasses.fieldBaseChange X Ω) 1).mkQ
-        (MathlibExt.AlgebraicGeometry.GeometricChowOperators.flatCyclePullback
-          (MathlibExt.AlgebraicGeometry.RelativeCurveClasses.fieldProjection X Ω) 1 0 c)
-
-/-- General map-stable, class-controlled families. This is a public contract
-on actual objects; no moduli-stack/properness provider is assumed by its type. -/
-structure StableFamily [LocallyOfFiniteType X.hom] [IsNoetherian X.left]
-    (β : MathlibExt.AlgebraicGeometry.RelativeCurveClasses.CurveClass X) where
-  toFamily : Family X.hom n g T.left T.hom
-  stable : IsGeometricallyStable toFamily
-  curveClass : HasCurveClass X T toFamily β
-
-end CurveClasses
-
-
-section ScopedAdapter
-
-open MathlibExt.AlgebraicGeometry.AlgebraicBundleGeometry
-open MathlibExt.AlgebraicGeometry.PerverseSheaves
-
-variable {r : ℕ}
-  {X : ProjectiveBundle MathlibExt.AlgebraicGeometry.StableLineMaps.Point 0 r
-    (MathlibExt.AlgebraicGeometry.StableLineMaps.targetGenerators r)}
-  {T : ComplexScheme}
-
-/-- The previous degree-one packet embeds into the general family contract. -/
-def ofStableLine (F : MathlibExt.AlgebraicGeometry.StableLineMaps.StableLineFamily r X T) :
-    Family X.projection.left 1 0 T.left T.hom :=
-  ⟨F.curve, F.map, F.over⟩
-
-theorem ofStableLine_stable
-    (F : MathlibExt.AlgebraicGeometry.StableLineMaps.StableLineFamily r X T) :
-    IsGeometricallyStable (ofStableLine F) := by
-  intro Ω _ _ p
-  let := F.stable Ω p
-  let inclusion : geometricAutomorphisms (ofStableLine F) Ω p →
-      MathlibExt.AlgebraicGeometry.StableLineMaps.mapAut r X F.curve F.map p :=
-    fun e => ⟨e.val, e.property.1, e.property.2 0⟩
-  exact Finite.of_injective inclusion (by
-    intro a c h
-    apply Subtype.ext
-    exact congrArg
-      (fun e : MathlibExt.AlgebraicGeometry.StableLineMaps.mapAut r X F.curve F.map p => e.val) h)
-
-end ScopedAdapter
 
 end MathlibExt.AlgebraicGeometry.GeneralStableMapFamilies

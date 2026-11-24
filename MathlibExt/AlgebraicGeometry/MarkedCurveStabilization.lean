@@ -50,12 +50,14 @@ abbrev NodeRing (k : Type u) [Field k] :=
 def nodeCurve (k : Type u) [Field k] : Over (Spec (.of k)) :=
   Over.mk (Spec.map (CommRingCat.ofHom (algebraMap k (NodeRing k))))
 
-/-- A curve is nodal if closed points lift to an actual étale neighborhood
+/-- A curve is nodal if every point lifts to an actual étale neighborhood
 with an étale map to the standard node. The chart is an étale neighborhood,
 so an irreducible nodal curve may split into its two local branches there.
-Smooth points map to a smooth point of the same standard nodal curve. -/
+Smooth points map to a smooth point of the same standard nodal curve.
+Every point is tested, closed or not, so no finiteness hypothesis on `C` is
+needed; such charts force `C` to be locally of finite type of dimension at most one. -/
 def IsNodal {k : Type u} [Field k] (C : Over (Spec (.of k))) : Prop :=
-  ∀ x : C.left, IsClosed ({x} : Set C.left) →
+  ∀ x : C.left,
     ∃ (V : Scheme.{u}) (a : V ⟶ C.left) (v : V)
       (f : V ⟶ (nodeCurve k).left),
       Etale a ∧ Etale f ∧ a v = x ∧ a ≫ C.hom = f ≫ (nodeCurve k).hom
@@ -90,20 +92,16 @@ structure MarkedFamily (S : Scheme.{u}) (n g : ℕ) where
     ∃ s : S ⟶ U.toScheme, s ≫ U.ι = marking i
   fibers : ∀ (Ω : Type u) [Field Ω] [IsAlgClosed Ω] (p : Spec (.of Ω) ⟶ S),
     GeometricallyConnected (fiberCurve π p).hom ∧
-    IsNodal (fiberCurve π p) ∧ genus (fiberCurve π p).hom = g
+    IsNodal (fiberCurve π p) ∧
+    ∃ (_ : IsProperCurve (fiberCurve π p).hom)
+      (_ : HasConstantGlobalSections (fiberCurve π p).hom),
+      genus (fiberCurve π p).hom = g
 
 /-- Fiberwise finite marked automorphisms, the characteristic-zero stability test. -/
 def IsStable {S : Scheme.{u}} {n g : ℕ} (C : MarkedFamily S n g) : Prop :=
   ∀ (Ω : Type u) [Field Ω] [IsAlgClosed Ω] (p : Spec (.of Ω) ⟶ S),
     Finite (MarkedAut (fiberCurve C.π p) n
       (fun i ↦ fiberMark C.π (C.marking i) (C.section_eq i) p))
-
-/-- Module-sheaf pushforward acts additively on the actual morphisms. -/
-instance pushforward_additive {X Y : Scheme.{u}} (f : X ⟶ Y) :
-    (Scheme.Modules.pushforward f).Additive where
-  map_add := by
-    intro M N a b
-    rfl
 
 /-- The contraction's structure-sheaf images use actual derived functors. -/
 def IsGenusPreservingContraction {X Y : Scheme.{u}} (f : X ⟶ Y) : Prop :=

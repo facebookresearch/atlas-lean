@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 public import MathlibExt.AlgebraicGeometry.GeometricChow
 public import Mathlib.AlgebraicGeometry.ResidueField
+public import Mathlib.AlgebraicGeometry.Fiber
 public import Mathlib.LinearAlgebra.Finsupp.LinearCombination
 public import Mathlib.Algebra.Category.ModuleCat.Basic
 public import Mathlib.Algebra.Module.LinearMap.Rat
@@ -81,6 +82,9 @@ def basisPullback (d r : ℕ) (x : X) : CycleGroup Y (d + r) :=
     (AlgebraicCycle.map (fiberInclusion p x) Order.height Order.height
       (fundamentalCycle (pointFiber p x)))
 
+/-- The raw fibre-cycle transform: each point is sent to the dimension-`d + r` part of the
+fundamental cycle of its fibre. It is the flat pullback only for a flat map of pure relative
+dimension `r`; `FlatCycleDescent` records those hypotheses. -/
 def flatCyclePullback (d r : ℕ) : CycleGroup X d →ₗ[ℚ] CycleGroup Y (d + r) :=
   Finsupp.linearCombination ℚ (basisPullback p d r) ∘ₗ cycleFinsupp X ∘ₗ
     (cyclesOfDimension X d).subtype
@@ -88,7 +92,13 @@ def flatCyclePullback (d r : ℕ) : CycleGroup X d →ₗ[ℚ] CycleGroup Y (d +
 variable (X Y : ComplexScheme) [IsNoetherian X.left] [IsNoetherian Y.left]
   (f : Y ⟶ X) (r : ℕ)
 
+/-- Flat pullback of relative dimension `r`: `f` is flat, every irreducible component of every
+actual (scheme-theoretic) fibre `f.left.fiber x` has dimension `r`, and the fibre-cycle transform
+preserves rational equivalence. -/
 structure FlatCycleDescent : Prop where
+  flat : Flat f.left
+  pureDimension : ∀ (x : X.left) (Z : Set (f.left.fiber x)),
+    Z ∈ irreducibleComponents (f.left.fiber x) → topologicalKrullDim Z = r
   preserves : ∀ d : ℕ, rationalEquivalences X d ≤
     (rationalEquivalences Y (d + r)).comap (flatCyclePullback f.left d r)
 

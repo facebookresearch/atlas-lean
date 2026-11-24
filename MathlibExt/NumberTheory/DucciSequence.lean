@@ -13,12 +13,13 @@ public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Data.ZMod.Basic
 import Mathlib.Algebra.Polynomial.Expand
-import Mathlib.Data.Nat.Choose.Dvd
+import Mathlib.Data.Nat.Multiplicity
 
 /-!
 # Binomial congruences and Ducci sequences
 
-For prime `p` and positive `k`, substituting `X ^ (p ^ (k - 1))` for `X` in `(X + 1) ^ (p - 1)`
+For prime `p` and positive `k`, Pascal's identity gives the alternating residues of row `p ^ k - 1`
+in `choose_prime_pow_sub_one_mod`. Substituting `X ^ (p ^ (k - 1))` for `X` in `(X + 1) ^ (p - 1)`
 gives `(X + 1) ^ (p ^ k - p ^ (k - 1))` in characteristic `p`. Its coefficients give the binomial
 congruence of Lewis and Tefft for Ducci sequences.
 -/
@@ -38,16 +39,26 @@ def ducciCoeff (n r s : ℕ) : ℕ :=
   ∑ j ∈ (Finset.range (r + 1)).filter
     (fun j => j % n = (s - 1) % n), Nat.choose r j
 
-private theorem choose_pred_prime {p c : ℕ} (hp : p.Prime) (hc : c < p) :
-    ((p - 1).choose c : ZMod p) = (-1) ^ c := by
-  induction c with
+/-- **Binomial coefficients $\binom{p^k - 1}{j}$ modulo $p$.** Let $p$ be a prime, let $k \ge 1$,
+and let $j$ be an integer with $0 \le j \le p^k - 1$. Then
+$\binom{p^k - 1}{j} \equiv (-1)^j \pmod{p}$.
+
+Source: Mark L. Lewis and Shannon M. Tefft, "The Maximum
+Length for Ducci Sequences on `ℤ_m^n` when `n` is Even",
+Lemma 1. -/
+theorem choose_prime_pow_sub_one_mod (p k j : ℕ)
+    (hp : p.Prime) (hk : 1 ≤ k) (hj : j ≤ p ^ k - 1) :
+    ((Nat.choose (p ^ k - 1) j : ℤ) : ZMod p) = (-1) ^ j := by
+  rw [Int.cast_natCast]
+  have hpos : 1 ≤ p ^ k := hp.one_le.trans (Nat.le_self_pow (Nat.ne_of_gt hk) p)
+  induction j with
   | zero => simp
-  | succ c ih =>
+  | succ j ih =>
     have hzero := (ZMod.natCast_eq_zero_iff _ p).2
-      (hp.dvd_choose_self (Nat.succ_ne_zero c) hc)
-    have hpascal := Nat.choose_succ_succ (p - 1) c
-    rw [Nat.succ_eq_add_one, Nat.sub_add_cancel hp.one_le] at hpascal
-    rw [hpascal, Nat.cast_add, ih (Nat.lt_of_succ_lt hc)] at hzero
+      (hp.dvd_choose_pow j.succ_ne_zero (by omega : j.succ ≠ p ^ k))
+    have hpascal := Nat.choose_succ_succ (p ^ k - 1) j
+    rw [Nat.succ_eq_add_one, Nat.sub_add_cancel hpos] at hpascal
+    rw [hpascal, Nat.cast_add, ih (Nat.le_of_succ_le hj)] at hzero
     simpa [pow_succ] using eq_neg_of_add_eq_zero_right hzero
 
 open Polynomial in
@@ -72,17 +83,18 @@ theorem choose_prime_pow_sub_mod (p k j : ℕ)
   have htop : p ^ k - q = q * (p - 1) := by
     dsimp [q]
     rw [Nat.mul_sub, Nat.mul_one, ← pow_succ, Nat.sub_add_cancel (by omega : 1 ≤ k)]
-  have hc : j / q < p := by
-    have h := Nat.div_le_div_right (c := q) (htop ▸ hj)
-    rw [Nat.mul_div_cancel_left _ hq] at h
-    exact h.trans_lt (Nat.sub_lt hp.pos Nat.one_pos)
+  have hc : j / q ≤ p - 1 := calc
+    j / q ≤ q * (p - 1) / q := Nat.div_le_div_right (htop ▸ hj)
+    _ = p - 1 := Nat.mul_div_cancel_left _ hq
+  have hcoeff := choose_prime_pow_sub_one_mod p 1 (j / q) hp le_rfl (by simpa using hc)
+  simp only [pow_one, Int.cast_natCast] at hcoeff
   have hexpand : (X + 1 : (ZMod p)[X]) ^ (q * (p - 1)) =
       expand (ZMod p) q ((X + 1) ^ (p - 1)) := by
     simp [q, pow_mul, add_pow_char_pow]
   change ((Nat.choose (p ^ k - q) j : ℤ) : ZMod p) =
     if j % q = 0 then (-1) ^ (j / q) else 0
   rw [Int.cast_natCast, htop, ← coeff_X_add_one_pow, hexpand, coeff_expand hq,
-    coeff_X_add_one_pow, choose_pred_prime hp hc]
+    coeff_X_add_one_pow, hcoeff]
   simp only [Nat.dvd_iff_mod_eq_zero]
 
 /-- The Ducci map on `ℤ_m^n`:

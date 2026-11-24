@@ -1,20 +1,16 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
+Copyright (c) 2019 Kim Morrison. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Kim Morrison
 -/
 
 /-
-Adapted from leanprover-community/mathlib4, revision
-56a005855ea17e0b0958f73ec801ae140b0a1679,
-Mathlib/Algebra/Category/MonCat/Colimits.lean.
-Copyright (c) 2019 Kim Morrison. Released under Apache 2.0.
-Authors: Kim Morrison
-Modification notice: retain the proved free-expression colimit construction,
-add the commutativity relation and its universal-property proof, and specialize
-the result to CommMonCat. Generic MonCat colimits are already covered.
+Modifications (c) 2026 Meta Platforms, Inc. and affiliates:
+copied from `Mathlib/Algebra/Category/MonCat/Colimits.lean` in
+leanprover-community/mathlib4 at revision 56a005855ea17e0b0958f73ec801ae140b0a1679;
+the free-expression colimit construction is kept, the commutativity relation and
+its case of the universal property are added, and the result is specialized to
+`CommMonCat` (pinned Mathlib provides colimits in `MonCat` only).
 -/
 
 module

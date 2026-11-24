@@ -54,15 +54,20 @@ def reflexivePower {X : Scheme.{0}} (M : X.Modules) (m : ℕ) : X.Modules :=
 variable [HasDerivedPushforwards.{0}] {X Y : Scheme.{0}} (f : X ⟶ Y)
   [(derivedPushforward f).IsLeftAdjoint]
 
-/-- The fixed relative duality object f! O_Y. -/
+/-- The fixed relative duality object `f^× O_Y`: the right adjoint of the fixed
+ambient `Rf_*` (on the derived category of all module sheaves) applied to `O_Y`.
+Identifying it with Grothendieck's `f^! O_Y` needs `f` proper and the comparison with
+the right adjoint on quasi-coherent complexes (`QuasicoherentDualityReferences`); for a
+nonproper `f` the two differ. -/
 def relativeDuality : D X := (derivedPushforward f).rightAdjoint.obj (derivedUnit Y)
 
 /-- The actual trace/counit of the prescribed Rf_* adjunction. -/
 def trace : (derivedPushforward f).obj (relativeDuality f) ⟶ derivedUnit Y :=
   (Adjunction.ofIsLeftAdjoint (derivedPushforward f)).counit.app (derivedUnit Y)
 
-/-- H^(-n)(f!O_Y), as an actual module reference, not an assumed canonical line.
-Canonical-module interpretation requires the appropriate pure-dimensional/CM scope. -/
+/-- `H^(-n)(f^× O_Y)`, as an actual module reference, not an assumed canonical line.
+Reading it as `H^(-n)(f^! O_Y)` needs the proper quasi-coherent comparison, and the
+canonical-module interpretation the appropriate pure-dimensional/CM scope. -/
 def relativeCanonicalModule (n : ℕ) : X.Modules :=
   (DerivedCategory.homologyFunctor X.Modules (-(n : ℤ))).obj (relativeDuality f)
 

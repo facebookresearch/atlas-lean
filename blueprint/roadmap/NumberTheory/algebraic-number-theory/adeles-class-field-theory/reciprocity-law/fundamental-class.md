@@ -9,23 +9,28 @@ $C_L = \mathbb{I}_L / L^\times$ its idèle class group. The statements are:
    $\mathrm{Br}(K) = H^2(\mathrm{Gal}(\overline{K}/K), \overline{K}^\times)$, and similarly for the
    completions. If the degree $n$ of $L/K$ is the least common multiple of its local degrees, in
    particular if $L/K$ is cyclic (Milne, Lemma VIII.4.1), then the sequence
-   $$0 \to \mathrm{Br}(L/K) \to \bigoplus_v \mathrm{Br}(L_w/K_v) \xrightarrow{\ \sum_v \mathrm{inv}_v\ } \tfrac1n\mathbb{Z}/\mathbb{Z} \to 0$$
-   is exact, $w$ being any place of $L$ above $v$ (Milne, the discussion before Lemma VIII.4.1, (a)–(c)).
-   The absolute sequence
-   $$0 \to \mathrm{Br}(K) \to \bigoplus_v \mathrm{Br}(K_v) \xrightarrow{\ \sum_v \mathrm{inv}_v\ } \mathbb{Q}/\mathbb{Z} \to 0$$
-   is exact (Milne, Theorem VIII.4.2). Its first map is injective by the Hasse principle, the composite
-   is zero because the local invariants of a global class sum to zero, and the last map is onto because
-   $\mathrm{inv}_v$ is onto $\mathbb{Q}/\mathbb{Z}$ at a finite place. A family $(\beta_v)$ with
-   $\sum_v \mathrm{inv}_v(\beta_v) = 0$ has finitely many nonzero components; a totally complex cyclic
-   cyclotomic extension $L/K$ whose local degrees kill them (Milne, Lemma VII.7.3, with $L$ chosen totally
-   complex) puts every $\beta_v$ in $\mathrm{Br}(L_w/K_v)$, and the exact sequence for the cyclic
-   extension $L/K$ gives a global class with these components. Milne's own proof of Theorem VIII.4.2
-   passes to the limit over the fields $\Omega_n$ below; since $\mathbb{Q}^c$ is totally real, that limit
-   reaches only the groups $\mathrm{Br}(\Omega_v/K_v)$, which are $0$ at the real places of $K$ that stay
-   real in $\Omega$, instead of $\mathrm{Br}(K_v) = \tfrac12\mathbb{Z}/\mathbb{Z}$; the argument above
-   avoids this. For every finite Galois extension $L/K$, the snake lemma then gives the exact sequence
-   above, ending in $\tfrac{1}{n_0}\mathbb{Z}/\mathbb{Z}$, $n_0$ the least common multiple of the local
-   degrees (Milne, Corollary VIII.4.3, stated there for every finite extension).
+
+    $$0 \to \mathrm{Br}(L/K) \to \bigoplus_v \mathrm{Br}(L_w/K_v) \xrightarrow{\ \sum_v \mathrm{inv}_v\ } \tfrac1n\mathbb{Z}/\mathbb{Z} \to 0$$
+
+    is exact, $w$ being any place of $L$ above $v$ (Milne, the discussion before Lemma VIII.4.1, (a)–(c)).
+    The absolute sequence
+
+    $$0 \to \mathrm{Br}(K) \to \bigoplus_v \mathrm{Br}(K_v) \xrightarrow{\ \sum_v \mathrm{inv}_v\ } \mathbb{Q}/\mathbb{Z} \to 0$$
+
+    is exact (Milne, Theorem VIII.4.2). Its first map is injective by the Hasse principle, the composite
+    is zero because the local invariants of a global class sum to zero, and the last map is onto because
+    $\mathrm{inv}_v$ is onto $\mathbb{Q}/\mathbb{Z}$ at a finite place. A family $(\beta_v)$ with
+    $\sum_v \mathrm{inv}_v(\beta_v) = 0$ has finitely many nonzero components; a totally complex cyclic
+    cyclotomic extension $L/K$ whose local degrees kill them (Milne, Lemma VII.7.3, with $L$ chosen totally
+    complex) puts every $\beta_v$ in $\mathrm{Br}(L_w/K_v)$, and the exact sequence for the cyclic
+    extension $L/K$ gives a global class with these components. Milne's own proof of Theorem VIII.4.2
+    passes to the limit over the fields $\Omega_n$ below; since $\mathbb{Q}^c$ is totally real, that limit
+    reaches only the groups $\mathrm{Br}(\Omega_v/K_v)$, which are $0$ at the real places of $K$ that stay
+    real in $\Omega$, instead of $\mathrm{Br}(K_v) = \tfrac12\mathbb{Z}/\mathbb{Z}$; the argument above
+    avoids this. For every finite Galois extension $L/K$, the snake lemma then gives the exact sequence
+    above, ending in $\tfrac{1}{n_0}\mathbb{Z}/\mathbb{Z}$, $n_0$ the least common multiple of the local
+    degrees (Milne, Corollary VIII.4.3, stated there for every finite extension).
+
 2. **The fundamental class.** Let $\mathbb{Q}^c$ be the infinite cyclic cyclotomic extension of
    $\mathbb{Q}$, with Galois group $\hat{\mathbb{Z}}$, which is totally real (Milne, Example I.A.5(d)), let
    $\Omega = \mathbb{Q}^c K$ and let $\Omega_n \subseteq \Omega$ be the cyclic extension of $K$ of degree

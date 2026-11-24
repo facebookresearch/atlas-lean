@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.AlgebraicGeometry.GeneralStableMapFamilies
-public import MathlibExt.AlgebraicGeometry.StackChowGroups
+public import MathlibExt.AlgebraicGeometry.StackCycleRelations
 
 /-!
 # Actual stable marked-curve stack models
@@ -37,7 +37,7 @@ namespace MathlibExt.AlgebraicGeometry.StableCurveStackModels
 
 open CategoryTheory CategoryTheory.Limits Opposite TopologicalSpace
 open _root_.AlgebraicGeometry
-open StackCycleGeometry StackCycleRelations StackFibreModels
+open StackCycleGeometry StackCycleRelations
 open MarkedCurveStabilization
 
 variable {k : Type} [Field k]
@@ -58,8 +58,11 @@ structure FamilyBaseChange {T U : Over (Spec (.of k))} (f : T ⟶ U) {g n : ℕ}
   cartesian : IsPullback projection (curve F).π (curve G).π f.left
   markings : ∀ i : Fin n, (curve F).marking i ≫ projection = f.left ≫ (curve G).marking i
 
-/-- Pure stack dimension on actual atlas components with signed atlas ranks. -/
+/-- Pure stack dimension `d`: a cycle atlas exists, and on every cycle atlas each irreducible
+component of the atlas has dimension `d` plus the atlas's relative rank. Requiring an atlas
+keeps the condition from holding vacuously when no cycle atlas exists. -/
 def HasDimension (X : Stack (Spec (.of k))) (d : ℤ) : Prop :=
+  Nonempty (CycleAtlas X) ∧
   ∀ (a : CycleAtlas X) (Z : Set a.atlas.U.left),
     Z ∈ irreducibleComponents a.atlas.U.left →
       ∃ r : ℕ, (r : ℤ) = d + a.relativeRank ∧ topologicalKrullDim Z = (r : ℕ)

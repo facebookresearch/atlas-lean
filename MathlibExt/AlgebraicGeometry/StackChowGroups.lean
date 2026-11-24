@@ -79,21 +79,37 @@ structure TwoCartesianSquare {X T Y : Stack S} (f : StackHom X Y) (g : StackHom 
   commutes : StackVectorBundles.TwoIso (Pseudofunctor.StrongTrans.vcomp fst f)
     (Pseudofunctor.StrongTrans.vcomp snd g)
   cartesian : ∀ U : Over S,
-    (isoFibreLift (StackCycleGeometry.component f U) (StackCycleGeometry.component g U)
-      (StackCycleGeometry.component fst U) (StackCycleGeometry.component snd U)
-      (commutes.app U)).IsEquivalence
+    ((CategoryTheory.Limits.CategoricalPullback.CatCommSqOver.toFunctorToCategoricalPullback
+      (StackCycleGeometry.component f U) (StackCycleGeometry.component g U) _).obj
+      ⟨StackCycleGeometry.component fst U, StackCycleGeometry.component snd U,
+        commutes.app U⟩).IsEquivalence
 
-/-- The actual base change of a bundle, with its rank and total-space square. -/
+/-- The actual base change of a bundle: its sections are the pulled sections of `E`, linearly,
+and its total space maps to that of `E` by the induced map, in a 2-Cartesian square. -/
 structure BundlePullback {T X : Stack S} (p : StackHom T X) (E : VectorBundle X) where
   bundle : VectorBundle T
   rank_eq : bundle.rank = E.rank
+  /-- The sections of the pulled bundle are the pulled sections of `E`, as modules. -/
+  sections : bundle.module.val.presheaf ≅ pulledPresheaf p E.module.val.presheaf
   map : StackHom bundle.total E.total
   commutes : StackVectorBundles.TwoIso (Pseudofunctor.StrongTrans.vcomp map E.projection)
     (Pseudofunctor.StrongTrans.vcomp bundle.projection p)
   cartesian : ∀ U : Over S,
-    (isoFibreLift (StackCycleGeometry.component E.projection U)
-      (StackCycleGeometry.component p U) (StackCycleGeometry.component map U)
-      (StackCycleGeometry.component bundle.projection U) (commutes.app U)).IsEquivalence
+    ((CategoryTheory.Limits.CategoricalPullback.CatCommSqOver.toFunctorToCategoricalPullback
+      (StackCycleGeometry.component E.projection U) (StackCycleGeometry.component p U) _).obj
+      ⟨StackCycleGeometry.component map U, StackCycleGeometry.component bundle.projection U,
+        commutes.app U⟩).IsEquivalence
+  /-- The total-space map is the one induced by `sections`, so it is linear on fibres: it
+  preserves the zero section and cannot, for example, translate a trivial line. -/
+  normalized : bundle.comparison.functor ⋙ (presheafSectionMap sections.hom).mapElements.op ⋙
+      (pulledElements p E.module.val).op ≅ affineMap map ⋙ E.comparison.functor
+  /-- `normalized` lies over the base 2-cell `commutes`: projected to affine points of `X` it is the
+  composite of the bundles' `overBase` comparisons with the inverse of `commutes`. Without this an
+  arbitrary natural isomorphism could hide a nonlinear map through stabilizers of `X`. -/
+  based : ∀ b : AffinePoint bundle.total,
+    (sectionForget E.module.val).map (normalized.hom.app b) =
+      (affineMap p).map (bundle.overBase.hom.app b) ≫ commutes.pointInv b ≫
+        E.overBase.inv.app ((affineMap map).obj b)
 
 structure BundleStage (X : Stack S) where
   bundle : VectorBundle X
@@ -196,9 +212,13 @@ structure ProjectiveAtlasLift {T X : Stack S} (p : StackHom T X) (a : CycleAtlas
   map : atlas.atlas.U ⟶ a.atlas.U
   pointIso : (StackCycleGeometry.component p atlas.atlas.U).obj atlas.atlas.point ≅
     (pull X map).obj a.atlas.point
-  comparison : FibreCategory p a.atlas.U a.atlas.point ≌ Over atlas.atlas.U.left
-  overBase : comparison.functor ⋙ Over.map map.left ≅
-    fibreForget p a.atlas.U a.atlas.point ⋙ a.atlas.U.iteratedSliceForward
+  /-- The displayed square is 2-Cartesian: its own object of the fibre category (the atlas point
+  of `T` over `map`, with `pointIso`) is terminal, so the atlas of `T` represents the fibre of `p`
+  over the atlas of `X` through this square (a nontrivial étale self-cover of it does not). -/
+  universal : IsTerminal (CostructuredArrow.mk (S := totalMap p) (T := point a.atlas.U a.atlas.point)
+    (Y := point atlas.atlas.U atlas.atlas.point)
+    (⟨map, pointIso.hom⟩ : (totalMap p).obj (point atlas.atlas.U atlas.atlas.point) ⟶
+      point a.atlas.U a.atlas.point))
   rank_eq : atlas.relativeRank = a.relativeRank
 
 structure NaiveProjectivePushData (D : CycleConstructionData S scope) {T X : Stack S}
@@ -286,10 +306,26 @@ structure ComponentTransitions (D : CycleConstructionData S scope) (B : BundleTr
     (β : RestrictedBundleChowGroup D B R A.inScope A'.inScope g.map d),
     push Y A A' g d (I.iota A.source A'.source A.inScope A'.inScope g.map d β) =
       P.push A.source A'.source A.inScope A'.inScope g.map g.projective d β
+  /-- Every bundle class on `A` is restricted along the component inclusion (pad a bundle stage
+  by a trivial bundle on the other components), so `normalized` determines `push` on all classes
+  and the colimit does not depend on the provider. -/
+  restricted_surjective : ∀ (Y : Stack S) (A A' : ProjectiveStage (scope := scope) Y)
+    (g : ProjectiveArrow A A') (d : ℤ),
+    Function.Surjective (I.iota A.source A'.source A.inScope A'.inScope g.map d)
   descends : ∀ (Y : Stack S) (A A' : ProjectiveStage (scope := scope) Y)
     (g : ProjectiveArrow A A') (d : ℤ) (z : BundleChowGroup D B A.source A.inScope d),
     z ∈ projectiveRelations D B R I P A.inScope A.map d →
       push Y A A' g d z ∈ projectiveRelations D B R I P A'.inScope A'.map d
+
+/-- The component push is determined by the restricted projective pushes. -/
+theorem ComponentTransitions.push_eq_of_iota {D : CycleConstructionData S scope}
+    {B : BundleTransitions D} {R : RestrictedBundleSystem D} {I : RestrictedComparison D B R}
+    {P : RestrictedProjectiveSystem D B R} (C C' : ComponentTransitions D B R I P) (Y : Stack S)
+    (A A' : ProjectiveStage (scope := scope) Y) (g : ProjectiveArrow A A') (d : ℤ) :
+    C.push Y A A' g d = C'.push Y A A' g d := by
+  refine AddMonoidHom.ext fun z ↦ ?_
+  obtain ⟨β, rfl⟩ := C.restricted_surjective Y A A' g d z
+  rw [C.normalized, C'.normalized]
 
 structure KreschPresentation (D : CycleConstructionData S scope) where
   bundle : BundleTransitions D

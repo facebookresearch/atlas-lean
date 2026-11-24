@@ -7,13 +7,15 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-Adapted from AxiomMath/Stacks at
-c496df0d9beea9deaeabcea8492605f9a0a2313b,
-StacksFrontier/Algebra/Category/ModuleCat/Presheaf/InternalHom.lean.
-Public source: https://github.com/AxiomMath/Stacks
-Licensed under Apache License 2.0. The source has no individual author
-or copyright notice. Modification notice: remove source-only citation
-attributes and place the complete construction/proofs in this namespace.
+Portions of this file are adapted from:
+
+`StacksFrontier/Algebra/Category/ModuleCat/Presheaf/InternalHom.lean`
+(AxiomMath/Stacks, https://github.com/AxiomMath/Stacks, revision
+c496df0d9beea9deaeabcea8492605f9a0a2313b):
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+The source files carry no per-file copyright notice or author list.
+Modified: source-only citation attributes removed; the construction and its proofs
+are placed in this namespace.
 -/
 module
 

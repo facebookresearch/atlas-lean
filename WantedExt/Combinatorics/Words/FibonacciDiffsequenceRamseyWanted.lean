@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.NumberTheory.Real.GoldenRatio
+public import MathlibExt.Combinatorics.HalfEvenFibonacciSet
 public import MathlibExt.Combinatorics.InfiniteWord.FibonacciWord
 public import MathlibExt.NumberTheory.LucasSequence
 public import WantedExt.Combinatorics.AccessibleSetsWanted
@@ -37,26 +38,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open scoped Pointwise
-
-/-- **Halves of even Fibonacci numbers.** Let $F_m$ be the $m$-th Fibonacci number, with $F_0 = 0$
-and $F_1 = 1$. The set of halves of the positive even Fibonacci numbers is
-$G = \{F_{3n}/2 : n \ge 1\} = \{1, 4, 17, 72, \dots\}$; its elements are written
-$g_n = F_{3n}/2$ for $n \ge 1$.
-
-Source: William J. Wesley, *Improved Ramsey-Type Theorems for Fibonacci Numbers and Other
-Sequences*, INTEGERS 25 (2025), Article A29, Section 2 (notation `G`, `g_n`). -/
-def halfEvenFibonacciSet : Set ℕ :=
-  Set.range fun n => Nat.fib (3 * (n + 1)) / 2
-
-/-- **$4$ is half of an even Fibonacci number.** Let $F_m$ be the $m$-th Fibonacci number, with
-$F_0 = 0$ and $F_1 = 1$. The number $4$ belongs to the set
-$G = \{F_{3n}/2 : n \ge 1\} = \{1, 4, 17, 72, \dots\}$ of halves of the positive even Fibonacci
-numbers; indeed $4 = F_6/2$.
-
-Source: William J. Wesley, *Improved Ramsey-Type Theorems for Fibonacci Numbers and Other
-Sequences*, INTEGERS 25 (2025), Article A29, Section 2 (notation `G`, `g_n`). -/
-theorem four_mem_halfEvenFibonacciSet : 4 ∈ halfEvenFibonacciSet :=
-  ⟨1, by decide⟩
 
 /-- **The Thue–Morse morphism $\mu$.** The morphism $\mu$ on binary words sends the letter $0$ to
 the word $10$ and the letter $1$ to the word $01$.
@@ -213,18 +194,6 @@ public theorem_wanted fibonacciWord_beatty_properties :
         (Odd n ∧ ∀ m : ℤ, (((n + 1) / 2 : ℕ) : ℤ) ≠ ⌊m * Real.goldenRatio⌋))) ∧
     ∀ n : ℕ, 1 ≤ n → (wesleyWordT (n - 1) = true ↔
       ∃ m : ℤ, (n : ℤ) = 2 * ⌊m * Real.goldenRatio⌋ - m)
-
-/-- **Halved even Fibonacci numbers and $4$-accessibility of the Fibonacci numbers.** Write $f_n$
-for the $n$-th Fibonacci number ($f_0 = 0$, $f_1 = 1$). Let $F = \{1, 2, 3, 5, 8, \dots\}$ be the
-set of positive Fibonacci numbers and $G = \{f_{3n}/2 : n \ge 1\} = \{1, 4, 17, 72, \dots\}$ the set
-of halves of the even Fibonacci numbers. If $G$ is not $2$-accessible, then $F$ is not
-$4$-accessible.
-
-Source: William J. Wesley, *Improved Ramsey-Type Theorems for Fibonacci Numbers and Other
-Sequences*, INTEGERS 25 (2025), Article A29, Lemma 3 (`integers-2025-A29-lem-3`). -/
-public theorem_wanted not_accessible_four_of_halfEvenFibonacci
-    (h : ¬ IsRAccessible 2 halfEvenFibonacciSet) :
-    ¬ IsRAccessible 4 positiveFibonacciSet
 
 /-- **Differences of fractional parts of multiples of the golden ratio.** Let $F_m$ be the $m$-th
 Fibonacci number, with $F_0 = 0$ and $F_1 = 1$, let $\varphi = (1 + \sqrt{5})/2$ be the golden

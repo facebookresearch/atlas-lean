@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.AlgebraicGeometry.DeligneFaltingsCategories
+public import MathlibExt.AlgebraicGeometry.NativeTensorComparisons
 public import MathlibExt.AlgebraicGeometry.AlgebraicDifferentialSheaves
 public import MathlibExt.AlgebraicGeometry.CurveVectorBundles
 public import Mathlib.LinearAlgebra.Matrix.Charpoly.Basic
@@ -49,13 +50,7 @@ open scoped BigOperators
 
 universe u
 
-/-- Tensoring actual module isomorphisms, on the fixed sheaf tensor. -/
-def tensorIso {X : Scheme.{u}} {E E' F F' : X.Modules}
-    (a : E ≅ E') (b : F ≅ F') : moduleTensor X E F ≅ moduleTensor X E' F' where
-  hom := tensorMap a.hom b.hom
-  inv := tensorMap a.inv b.inv
-  hom_inv_id := by rw [← tensorMap_comp]; simp
-  inv_hom_id := by rw [← tensorMap_comp]; simp
+export NativeTensorComparisons (tensorIso)
 
 /-- A native locally free sheaf with an actual line-valued endomorphism. -/
 structure TwistedBundle (X : Scheme.{u}) (L : X.Modules) (r : ℕ) where
@@ -162,28 +157,34 @@ def FieldInvariant {X : Scheme.{u}} {L : X.Modules} {r : ℕ}
   ∃ theta : F ⟶ moduleTensor X F L,
     i ≫ E.field = theta ≫ tensorMap i (𝟙 L)
 
-/-- Curve slope stability uses the actual saturated invariant subobjects. -/
+/-- Slope stability of a twisted bundle on a smooth proper integral curve, tested on the
+actual invariant subbundles. On such a curve a saturated subsheaf of a vector bundle is a
+subbundle with locally free quotient (finitely generated torsion-free modules over a discrete
+valuation ring are free), so these are the saturated invariant subsheaves of the slope condition. -/
 def IsStableCurve {k : Type u} [Field k]
-    (C : Over (Spec (.of k))) {L : C.left.Modules} {r : ℕ}
+    (C : Over (Spec (.of k))) [IsProperCurve C.hom] [SmoothOfRelativeDimension 1 C.hom]
+    [IsIntegral C.left] {L : C.left.Modules} {r : ℕ}
     (E : TwistedBundle C.left L r) : Prop :=
   0 < r ∧ ∀ s : ℕ, 0 < s → s < r → ∀ (F : C.left.Modules) (i : F ⟶ E.module),
-    Mono i → IsVectorBundle F s → IsVectorBundle (cokernel i) (r-s) →
+    Mono i → ∀ hF : IsVectorBundle F s, IsVectorBundle (cokernel i) (r-s) →
     FieldInvariant E F i →
-      (bundleDegree C.hom F s : ℚ) / s < (bundleDegree C.hom E.module r : ℚ) / r
+      (bundleDegree C.hom F s hF : ℚ) / s < (bundleDegree C.hom E.module r E.bundle : ℚ) / r
 
-/-- Semistability tests the same actual saturated invariant subobjects. -/
+/-- Semistability tests the same invariant subbundles, on a smooth proper integral curve. -/
 def IsSemistableCurve {k : Type u} [Field k]
-    (C : Over (Spec (.of k))) {L : C.left.Modules} {r : ℕ}
+    (C : Over (Spec (.of k))) [IsProperCurve C.hom] [SmoothOfRelativeDimension 1 C.hom]
+    [IsIntegral C.left] {L : C.left.Modules} {r : ℕ}
     (E : TwistedBundle C.left L r) : Prop :=
   0 < r ∧ ∀ s : ℕ, 0 < s → s < r → ∀ (F : C.left.Modules) (i : F ⟶ E.module),
-    Mono i → IsVectorBundle F s → IsVectorBundle (cokernel i) (r-s) →
+    Mono i → ∀ hF : IsVectorBundle F s, IsVectorBundle (cokernel i) (r-s) →
     FieldInvariant E F i →
-      (bundleDegree C.hom F s : ℚ) / s ≤ (bundleDegree C.hom E.module r : ℚ) / r
+      (bundleDegree C.hom F s hF : ℚ) / s ≤ (bundleDegree C.hom E.module r E.bundle : ℚ) / r
 
 /-- Polystability is a genuine finite direct sum of stable same-slope fields;
 it does not assume existence of a harmonic metric. -/
 def IsPolystableCurve {k : Type u} [Field k]
-    (C : Over (Spec (.of k))) {L : C.left.Modules} {r : ℕ}
+    (C : Over (Spec (.of k))) [IsProperCurve C.hom] [SmoothOfRelativeDimension 1 C.hom]
+    [IsIntegral C.left] {L : C.left.Modules} {r : ℕ}
     (E : TwistedBundle C.left L r) : Prop :=
   let : HasFiniteBiproducts C.left.Modules := HasFiniteBiproducts.of_hasFiniteProducts
   ∃ (n : ℕ) (rank : Fin n → ℕ)
@@ -191,8 +192,8 @@ def IsPolystableCurve {k : Type u} [Field k]
     (∑ i, rank i) = r ∧
     ∃ b : (biproduct fun i => (F i).module) ≅ E.module,
       (∀ i, IsStableCurve C (F i)) ∧
-      (∀ i, (bundleDegree C.hom (F i).module (rank i) : ℚ) / rank i =
-        (bundleDegree C.hom E.module r : ℚ) / r) ∧
+      (∀ i, (bundleDegree C.hom (F i).module (rank i) (F i).bundle : ℚ) / rank i =
+        (bundleDegree C.hom E.module r E.bundle : ℚ) / r) ∧
       ∀ i, biproduct.ι (fun j => (F j).module) i ≫ b.hom ≫ E.field =
         (F i).field ≫ tensorMap
           (biproduct.ι (fun j => (F j).module) i ≫ b.hom) (𝟙 L)

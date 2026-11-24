@@ -32,8 +32,6 @@ set_option backward.isDefEq.respectTransparency false
 set_option backward.isDefEq.respectTransparency.instanceSearchTypes false
 @[expose] public noncomputable section
 
-attribute [local instance_reducible] TopCat.Sheaf _root_.CategoryTheory.sheafCompose
-  AlgebraicGeometry.SheafedSpace.sheaf
 
 namespace MathlibExt.AlgebraicGeometry.RelativeLambdaReindexing
 
@@ -43,26 +41,9 @@ open SheafTensorSections LineBundleTaskContracts AlgebraicLineBundleFamilies
 
 variable {Y Y' T T' : Scheme.{0}}
 
-def pullSection (f : Y' ⟶ Y) (E : Y.Modules) (U : Y.Opens)
-    (s : E.val.obj (op U)) : ((Scheme.Modules.pullback f).obj E).val.obj (op (f ⁻¹ᵁ U)) :=
-  ((((Scheme.Modules.pullbackPushforwardAdjunction f).unit.app E).val.app (op U)).hom s)
-
-@[simp] theorem pullSection_zero (f : Y' ⟶ Y) (E : Y.Modules) (U : Y.Opens) :
-    pullSection f E U 0 = 0 := map_zero _
-
-@[simp] theorem pullSection_add (f : Y' ⟶ Y) (E : Y.Modules) (U : Y.Opens)
-    (s t : E.val.obj (op U)) :
-    pullSection f E U (s + t) = pullSection f E U s + pullSection f E U t := map_add _ _ _
-
-structure TensorPullbackComparison (f : Y' ⟶ Y) where
-  iso : ∀ E F : Y.Modules,
-    (Scheme.Modules.pullback f).obj (moduleTensor Y E F) ≅
-      moduleTensor Y' ((Scheme.Modules.pullback f).obj E) ((Scheme.Modules.pullback f).obj F)
-  pure : ∀ (E F : Y.Modules) (U : Y.Opens) (e : E.val.obj (op U)) (s : F.val.obj (op U)),
-    (((iso E F).hom).val.app (op (f ⁻¹ᵁ U))).hom
-      (pullSection f (moduleTensor Y E F) U (tensorSection Y E F U e s)) =
-      tensorSection Y' ((Scheme.Modules.pullback f).obj E) ((Scheme.Modules.pullback f).obj F)
-        (f ⁻¹ᵁ U) (pullSection f E U e) (pullSection f F U s)
+/-! The section pullback and the tensor-pullback comparison now live in `SheafTensorSections`;
+their names stay available here. -/
+export SheafTensorSections (pullSection pullSection_zero pullSection_add TensorPullbackComparison)
 
 structure RelativeSquare (pi : Y ⟶ T) (pi' : Y' ⟶ T') where
   total : Y' ⟶ Y

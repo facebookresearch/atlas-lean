@@ -7,14 +7,18 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-The sectionwise realization follows AxiomMath/Stacks,
-c496df0d9beea9deaeabcea8492605f9a0a2313b,
-StacksFrontier/Topology/Sheaves/Modules/Differentials.lean and
-StacksFrontier/Algebra/Category/ModuleCat/Sheaf/SectionwiseAlgebras.lean,
-licensed under Apache 2.0 in that repository.
-Modification: fix scalar morphisms using the actual affine-base scheme
-structure map and directly sheafify the actual sectionwise Kähler and
-exterior-power presheaves. No differential-sheaf provider is assumed.
+Portions of this file are adapted from:
+
+`StacksFrontier/Topology/Sheaves/Modules/Differentials.lean`
+(AxiomMath/Stacks, https://github.com/AxiomMath/Stacks, revision
+c496df0d9beea9deaeabcea8492605f9a0a2313b):
+`StacksFrontier/Algebra/Category/ModuleCat/Sheaf/SectionwiseAlgebras.lean`
+(AxiomMath/Stacks, https://github.com/AxiomMath/Stacks, revision
+c496df0d9beea9deaeabcea8492605f9a0a2313b):
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+The source files carry no per-file copyright notice or author list.
+Modified: the scalar morphisms use the affine-base structure map, and the sectionwise
+Kähler and exterior-power presheaves are sheafified directly.
 -/
 module
 

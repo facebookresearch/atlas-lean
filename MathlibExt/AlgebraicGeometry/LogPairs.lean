@@ -12,7 +12,7 @@ MathlibExt/AlgebraicGeometry/ValuativeFanoGeometry.lean, at
 534d1fe350d3adec419480b5ab33440a8b25be7f:
 https://github.com/facebookresearch/atlas-lean/pull/2903
 The source has the same Meta license notice. Modification notice: use any
-field, actual normal codimension-one frames and real Weil-boundary data;
+perfect base field, actual normal codimension-one frames and real Weil-boundary data;
 no smooth Fano or absolute-proper specialization is required here.
 Native function-field/ord operations are Mathlib at
 56a005855ea17e0b0958f73ec801ae140b0a1679, Apache 2.0.
@@ -20,9 +20,10 @@ Native function-field/ord operations are Mathlib at
 
 module
 
-public import Mathlib.AlgebraicGeometry.OrderOfVanishing
+public import Mathlib.AlgebraicGeometry.OrderOfVanishing.DVR
 public import Mathlib.Algebra.Category.ModuleCat.Stalk
 public import Mathlib.RingTheory.Kaehler.Basic
+public import Mathlib.FieldTheory.Perfect
 public import Mathlib.Topology.KrullDimension
 public import MathlibExt.AlgebraicGeometry.RationalResolution
 public import MathlibExt.AlgebraicGeometry.BirationalResolution
@@ -35,7 +36,14 @@ public import MathlibExt.LinearAlgebra.ExteriorPowerSemilinear
 
 Boundary coefficients are finite real Weil cycles on native codimension-one
 scheme points. Canonical coefficients use a nonzero rational top differential,
-actual local/rational bases and Mathlib's order of vanishing. Cartier data
+actual local/rational bases and Mathlib's order of vanishing. The base field
+of canonical data, hence of log pairs, is perfect: then a normal variety is
+smooth at its codimension-one points (their local rings are essentially smooth
+over the field), so the top Kähler forms there are free of rank one and
+canonical frames exist at every prime point. Over an
+imperfect field the module of Kähler differentials of the function field can
+have dimension larger than `n`, and the canonical divisor would have to come
+from the dualizing module; that case is not modelled here. Cartier data
 use actual affine opens and rational functions with unit transition maps;
 their line bundles are pinned by genuine local sections and stalk generators.
 
@@ -77,6 +85,10 @@ attribute [instance] NormalVariety.integral NormalVariety.noetherian
 
 variable {k : Type u} [Field k] {n : ℕ}
 
+/-- Codimension-one points: in Mathlib's specialization order on a scheme
+(`x ≤ y` when `x` lies in the closure of `y`, so the generic point is the top),
+`Order.coheight x` is the codimension of `x`. This is the convention of
+`AlgebraicGeometry.AlgebraicCycle.IsWeilDivisor` and of `Scheme.ord`. -/
 abbrev PrimePoint (V : NormalVariety k n) := {x : V.X.left // coheight x = 1}
 abbrev IntegerWeil (V : NormalVariety k n) := PrimePoint V →₀ ℤ
 abbrev RealWeil (V : NormalVariety k n) := PrimePoint V →₀ ℝ
@@ -148,7 +160,13 @@ def canonicalCoefficient (V : NormalVariety k n) (eta : RationalTopForms V)
     (frames : ∀ p : PrimePoint V, CanonicalFrame V p) (p : PrimePoint V) : ℤ :=
   V.X.left.ord ((frames p).rationalBasis.repr eta ()) p.val
 
+/-- Canonical data of a normal variety over a perfect field (field `perfect`): a
+nonzero rational top form and frames of the top Kähler forms at every prime point.
+Over a perfect field such frames always exist; over an imperfect field top forms
+need not have rank one (see the module docstring), and this structure does not
+model that case. -/
 structure CanonicalData (V : NormalVariety k n) where
+  [perfect : PerfectField k]
   form : RationalTopForms V
   nonzero : form ≠ 0
   frames : ∀ p : PrimePoint V, CanonicalFrame V p
@@ -233,6 +251,9 @@ structure CartierCombination (V : NormalVariety k n) where
 def CartierCombination.divisor {V : NormalVariety k n} (D : CartierCombination V) : RealWeil V :=
   ∑ i, D.coefficients i • realCast (D.components i).divisor
 
+/-- A log pair over a perfect field `k` (perfectness is recorded in its canonical
+data): a normal variety, canonical data, an effective real boundary and an adjoint
+Cartier combination representing `K + Δ`. -/
 structure LogPair (k : Type u) [Field k] (n : ℕ) where
   variety : NormalVariety k n
   canonical : CanonicalData variety
@@ -321,11 +342,23 @@ adjoint order, plus one. No discrepancy values are supplied as fields. -/
 def logDiscrepancy {P : LogPair k n} (M : BirationalModel P) (p : PrimePoint M.variety) : ℝ :=
   1 + (canonicalDivisor M.data.canonical p : ℝ) - pulledCombinationCoefficient M P.adjoint p
 
+/-- Kawamata log terminal: every prime divisor on every proper birational
+normal model has positive log discrepancy. The model calculus is part of the
+definition, so every such model carries the comparison data `BirationalData`
+and none is omitted from the quantifier (if the calculus fails, the predicate is
+false rather than vacuous). The log discrepancy does not depend on the chosen
+data: frames change by local units, which have order zero. -/
 def IsKlt (P : LogPair k n) : Prop :=
-  ∀ M : BirationalModel P, ∀ p : PrimePoint M.variety, 0 < logDiscrepancy M p
+  HasModelCalculus P ∧
+    ∀ M : BirationalModel P, ∀ p : PrimePoint M.variety, 0 < logDiscrepancy M p
 
+/-- Log canonical: as `IsKlt`, with nonnegative log discrepancies. -/
 def IsLogCanonical (P : LogPair k n) : Prop :=
-  ∀ M : BirationalModel P, ∀ p : PrimePoint M.variety, 0 ≤ logDiscrepancy M p
+  HasModelCalculus P ∧
+    ∀ M : BirationalModel P, ∀ p : PrimePoint M.variety, 0 ≤ logDiscrepancy M p
+
+theorem IsKlt.isLogCanonical {P : LogPair k n} (h : IsKlt P) : IsLogCanonical P :=
+  ⟨h.1, fun M p ↦ (h.2 M p).le⟩
 
 def valuationOnBase {P : LogPair k n} (M : BirationalModel P) (p : PrimePoint M.variety)
     (a : (FunctionField P.variety)ˣ) : ℤ :=
