@@ -52,6 +52,14 @@ the degenerate principal series used, each with a precise statement and the sour
 - [Siegel Eisenstein series on unitary groups](siegel-eisenstein-series-on-unitary-groups.md), for $I_n(s, \chi_V)$, standard sections and $E(s, \Phi)$
 - [Splitting characters and the Weil representation of unitary dual pairs](weil-representation-of-unitary-dual-pairs.md), for Siegel–Weil sections
 - [Jacquet modules of the Weil representation and degenerate principal series](jacquet-modules-of-the-weil-representation.md), for the local structure of the degenerate principal series
+- [Weil's convergence criterion for theta integrals](weil-convergence-criterion.md), for the theta integral $I_V(\varphi)$ of the anisotropic space $V$ and its normalization, which the statements use
+
+## Proof depends on
+
+- [Fourier coefficients and poles of Siegel Eisenstein series](fourier-coefficients-and-poles-of-siegel-eisenstein-series.md), for the non-singular Fourier coefficients compared in the central case and, after reduction to a smaller group, in the rank-$m$ comparison (Yamana 2013, Lemmas 2.1 (2) and 3.1, Proposition 3.2; Yamana 2011, §6); the equality with the coefficients of the theta integral is a further step
+- [Eisenstein series and their meromorphic continuation](../automorphic-forms-on-reductive-groups/eisenstein-series.md), for the meromorphic global intertwining operator and the functional equation, before Yamana's normalization $M^\circ(s)$
+- [Meromorphic continuation of Hecke L-functions](../../../NumberTheory/zeta-l-functions/dirichlet-l-functions/hecke-l-function-meromorphic-continuation.md), for the completed Hecke $L$-functions in $a(s)$ and $b(s)$
+- [Weil's convergence criterion for theta integrals](weil-convergence-criterion.md), for the convergence of $I_V(\varphi)$ for anisotropic $V$
 
 ## Sources
 
