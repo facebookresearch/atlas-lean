@@ -1,0 +1,17 @@
+# Under Functor Presentability
+
+- [Relative Evaluation](relative-evaluation.md)
+- [Relative Evaluation object function](relative-evaluation-object-function.md)
+- [Relative Evaluation map right function](relative-evaluation-map-right-function.md)
+- [Structure Action](structure-action.md)
+- [Structure Action right function](structure-action-right-function.md)
+- [Equation Index](equation-index.md)
+- [Component Projection](component-projection.md)
+- [Component Cone](component-cone.md)
+- [Component Lift Morphism](component-lift-morphism.md)
+- [Component Lift Morphism right app](component-lift-morphism-right-app.md)
+- [Component Lift Morphism root](component-lift-morphism-root.md)
+- [Component Lift](component-lift.md)
+- [Component Cone Is Limit](component-cone-is-limit.md)
+- [Component Cone Is Limit lift](component-cone-is-limit-lift.md)
+- [Relative diagram presentable](relative-diagram-presentable.md)

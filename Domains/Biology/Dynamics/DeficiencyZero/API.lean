@@ -30,8 +30,8 @@ network `N : ReactionNetwork S ρ` (whose shared definitions live in
 * `deficiency`: `δ = n - ℓ - s`, also for finitely many complexes;
 * `IsWeaklyReversible`: every reaction `y → y'` can be undone by a directed path `y' ⟶* y`.
 
-`WantedExt/Biology/Dynamics/DeficiencyZeroWanted.lean` imports the shared definitions
-without depending on this domain library.
+`MathlibExt.Dynamics.PolynomialNetworks.DeficiencyZero` uses these definitions to prove
+`ReactionNetwork.not_exists_positive_equilibrium`.
 
 ## Main results
 

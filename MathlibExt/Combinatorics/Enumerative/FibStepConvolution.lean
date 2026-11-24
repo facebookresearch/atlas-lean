@@ -115,6 +115,46 @@ private lemma fibStepGF_sub_succ (m : ℕ) :
   apply X_mul_cancel
   linear_combination fibStepGF (m + 1) * hm - fibStepGF m * hs
 
+/-- **Convolution of the Fibonacci and tribonacci numbers.** Write $F_n$ and $T_n$ for the
+Fibonacci and tribonacci numbers, that is, the Fibonacci $m$-step numbers $F^{(m)}_n$ for
+$m = 2, 3$ ($F^{(m)}_0 = 0$, $F^{(m)}_1 = 1$, and each later term is the sum of the $m$ terms
+before it, terms at negative indices being $0$). For every natural number $n$,
+$$\sum_{j=0}^{n} F_j T_{n-j} = T_{n+2} - F_{n+2}.$$
+
+Source: Robert Frontczak and Karol Gryszka, "General
+Convolution Sums Involving Fibonacci `m`-Step Numbers",
+Corollary 2. -/
+theorem sum_fib_mul_trib (n : ℕ) :
+    ∑ j ∈ Finset.range (n + 1), fibStep 2 j * fibStep 3 (n - j) =
+      fibStep 3 (n + 2) - fibStep 2 (n + 2) := by
+  have hg : X ^ 2 * (fibStepGF 2 * fibStepGF 3) = fibStepGF 3 - fibStepGF 2 := by
+    linear_combination fibStepGF_sub_succ 2
+  have hc := congrArg (coeff (n + 2) (R := ℚ)) hg
+  rw [coeff_X_pow_mul] at hc
+  simp only [coeff_mul, Finset.Nat.sum_antidiagonal_eq_sum_range_succ_mk, map_sub,
+    fibStepGF, coeff_mk] at hc
+  exact_mod_cast hc
+
+/-- **Difference of the Fibonacci 3-step and 2-step numbers as a convolution.** Let $F_j$ and
+$T_j$ be the Fibonacci $2$-step and $3$-step numbers, where the Fibonacci $k$-step numbers start
+$0, 1$ and each later term is the sum of the $k$ terms before it (terms of negative index being
+$0$). For every natural number $n \ge 1$,
+
+$$T_{n+1} - F_{n+1} = \sum_{j=0}^{n-1} T_j \, F_{n-1-j}.$$
+
+Source: Robert Frontczak and Karol Gryszka, "General
+Convolution Sums Involving Fibonacci `m`-Step Numbers",
+Corollary 11. -/
+theorem trib_sub_fib_eq_sum (n : ℕ) (hn : 1 ≤ n) :
+    fibStep 3 (n + 1) - fibStep 2 (n + 1) =
+      ∑ j ∈ Finset.range n, fibStep 3 j * fibStep 2 (n - 1 - j) := by
+  obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : n ≠ 0)
+  rw [← sum_fib_mul_trib k, ← Finset.sum_flip (fun j => fibStep 2 j * fibStep 3 (k - j))]
+  apply Finset.sum_congr rfl
+  intro j hj
+  rw [Nat.sub_sub_self (Nat.le_of_lt_succ (Finset.mem_range.mp hj))]
+  exact mul_comm _ _
+
 private lemma sum_consecutive_mul_sub_eq (m n : ℕ) (hn : 1 ≤ n) :
     ∑ j ∈ Finset.range (n + 1), fibStep m j *
         (fibStep (m + 1) (n - j) - fibStep (m + 2) (n - j)) =

@@ -1,0 +1,18 @@
+# Right Module Mapping End Action
+
+- [Auxiliary Module](auxiliary-module.md)
+- [Auxiliary Right Action](auxiliary-right-action.md)
+- [Stock Right Action stockι](stock-right-action-stock.md)
+- [Module Object action ι](module-object-action.md)
+- [Auxiliary Right Action eq](auxiliary-right-action-eq.md)
+- [Map hom](map-hom.md)
+- [Stock Source Map](stock-source-map.md)
+- [Stock Source Map ι](stock-source-map-2.md)
+- [Source Map](source-map.md)
+- [Source Map ι](source-map-2.md)
+- [Source Map hom](source-map-hom.md)
+- [Source Map id](source-map-id.md)
+- [Source Map comp](source-map-comp.md)
+- [Source Map naturality](source-map-naturality.md)
+- [Source Nat Trans](source-nat-trans.md)
+- [Bifunctor](bifunctor.md)

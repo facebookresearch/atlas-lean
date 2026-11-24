@@ -1,0 +1,18 @@
+# Exact-category K₀ of a product
+
+- [Prod Fst Inclusion Functor](prod-fst-inclusion-functor.md)
+- [Prod Snd Inclusion Functor](prod-snd-inclusion-functor.md)
+- [Prod Fst Hom](prod-fst-hom.md)
+- [Prod Snd Hom](prod-snd-hom.md)
+- [Prod Fst Inclusion Hom](prod-fst-inclusion-hom.md)
+- [Prod Snd Inclusion Hom](prod-snd-inclusion-hom.md)
+- [Prod Forward Hom](prod-forward-hom.md)
+- [Prod Inverse Hom](prod-inverse-hom.md)
+- [Prod Fst Inclusion Hom mk](prod-fst-inclusion-hom-mk.md)
+- [Prod Snd Inclusion Hom mk](prod-snd-inclusion-hom-mk.md)
+- [Prod Inverse Hom comp prod Forward Hom](prod-inverse-hom-comp-prod-forward-hom.md)
+- [Prod Forward Hom comp prod Inverse Hom](prod-forward-hom-comp-prod-inverse-hom.md)
+- [Prod Equiv](prod-equiv.md)
+- [Prod Equiv mk](prod-equiv-mk.md)
+- [Prod Equiv symm apply](prod-equiv-symm-apply.md)
+- [Prod Equiv symm mk](prod-equiv-symm-mk.md)

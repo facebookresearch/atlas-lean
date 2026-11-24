@@ -1,0 +1,18 @@
+# Stage One Equivalence
+
+- [Stage One Eval](stage-one-eval.md)
+- [Stage One Eval obj](stage-one-eval-obj.md)
+- [Stage One Eval Unit](stage-one-eval-unit.md)
+- [Stage One obj eq zero of diag](stage-one-obj-eq-zero-of-diag.md)
+- [Stage One obj eq X of offdiag](stage-one-obj-eq-x-of-offdiag.md)
+- [Is Zero stage obj of diag](is-zero-stage-obj-of-diag.md)
+- [Stage obj eq eval of offdiag](stage-obj-eq-eval-of-offdiag.md)
+- [Counit App Iso](counit-app-iso.md)
+- [Counit App Iso naturality](counit-app-iso-naturality.md)
+- [Counit Underlying Iso](counit-underlying-iso.md)
+- [Counit App Stage Iso](counit-app-stage-iso.md)
+- [Counit naturality](counit-naturality.md)
+- [Stage One Eval Counit](stage-one-eval-counit.md)
+- [Stage One Equivalence](stage-one-equivalence.md)
+- [Stage One Equivalence functor](stage-one-equivalence-functor.md)
+- [Stage One Equivalence inverse](stage-one-equivalence-inverse.md)
