@@ -25,7 +25,7 @@ the terms. Arithmetic functions, digits and numeration systems, modular forms an
 the Bernoulli and Catalan numbers, and integer sequences make up much of the rest.
 
 - [Congruences and power residues](congruences/README.md)
-- [Primes and primality](primes-primality/README.md)
+- [Primes, divisibility and factorization](primes-primality/README.md)
 - [Distribution of primes](distribution-of-primes/README.md)
 - [Arithmetic functions](arithmetic-functions/README.md)
 - [Zeta and L-functions](zeta-l-functions/README.md)

@@ -34,15 +34,21 @@ Emaldi). UnsolvedMath record UM-00700820 (`KOU-11.128`), dataset ulamai/Unsolved
 `ComplementedLattice (Subgroup G)`. Groups are in `Type`.
 -/
 
-/-- Kourovka 11.128 (M. Emaldi): every normal subgroup of a `K`-group is a `K`-group, a `K`-group
-being a group whose subgroup lattice is complemented (`ComplementedLattice`). -/
+/-- **Kourovka Problem 11.128 on normal subgroups of $K$-groups.** Call a group $G$ a $K$-group
+when its subgroup lattice is complemented: every subgroup $A$ of $G$ has a subgroup $B$ with
+$A \cap B = 1$ and $\langle A, B \rangle = G$. This is the assertion (M. Emaldi) that every normal
+subgroup of a $K$-group, viewed as a group in its own right, is again a $K$-group. -/
 def normalSubgroupOfKGroupIsKGroup : Prop :=
   ∀ (G : Type) [Group G], ComplementedLattice (Subgroup G) → ∀ N : Subgroup G, N.Normal →
     ComplementedLattice (Subgroup N)
 
-/--
-Resolved false: the Kourovka Archive answers 11.128 "No, it is not" (Obraztsov): some `K`-group has
-a normal subgroup that is not a `K`-group. Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved
+/-- **Normal subgroups of $K$-groups need not be $K$-groups.** There is a group $G$ whose subgroup
+lattice is complemented (a $K$-group) with a normal subgroup $N$ whose own subgroup lattice is not
+complemented; so Kourovka Problem 11.128 has a negative answer.
+
+The Kourovka Archive answers 11.128 "No, it is not" (Obraztsov).
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved
 Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of
 Solved Problems, Problem 11.128 (M. Emaldi); resolution: V. N. Obraztsov, J. Austral. Math. Soc.
 (Ser. A) 61, no. 2 (1996), 267-288, Kourovka Archive, Problem 11.128: "No, it is not",

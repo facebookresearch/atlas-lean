@@ -44,25 +44,36 @@ truncated subtraction), and `kA` is the `k`-fold sumset `k • Set.range a` (Mat
 
 open scoped Pointwise
 
-/-- The threshold `r_k(d₁, d₂)` of Erdős Problem 1112 exists: there is `r` such that for every
-sequence of positive integers `b₀ < b₁ < ⋯` with `b_{i+1} ≥ r b_i` there is a sequence of
-positive integers `a₀ < a₁ < ⋯` with `d₁ ≤ a_{i+1} - a_i ≤ d₂` whose `k`-fold sumset
-`kA = A + ⋯ + A` contains no `b_i`. -/
+/-- **Lacunary threshold for bounded-gap sumsets.** For natural numbers $d_1$, $d_2$ and $k$,
+the threshold $r_k(d_1, d_2)$ of Erdős Problem 1112 exists when there is a natural number $r$
+such that for every strictly increasing sequence $b_0 < b_1 < \cdots$ of positive integers with
+$b_{i+1} \ge r b_i$ for all $i$, there is a sequence $a_0, a_1, \dots$ of positive integers with
+$a_i + d_1 \le a_{i+1} \le a_i + d_2$ for all $i$ such that no $b_i$ lies in the $k$-fold sumset
+of $A = \{a_0, a_1, \dots\}$, the set of all sums of $k$ elements of $A$ with repetition allowed
+(for $k = 0$ this set is $\{0\}$). -/
 def HasLacunaryThreshold (d₁ d₂ k : ℕ) : Prop :=
   ∃ r : ℕ, ∀ b : ℕ → ℕ, 0 < b 0 → StrictMono b → (∀ i, r * b i ≤ b (i + 1)) →
     ∃ a : ℕ → ℕ, 0 < a 0 ∧ (∀ i, a i + d₁ ≤ a (i + 1) ∧ a (i + 1) ≤ a i + d₂) ∧
       Disjoint (k • Set.range a) (Set.range b)
 
-/-- The case `d₁ = 2`, `d₂ = 3`, `k = 3` of Erdős Problem 1112: the threshold `r₃(2, 3)` exists,
-that is, for some `r` every lacunary `B` with ratio `r` is avoided by `A + A + A` for some `A`
-with gaps in `[2, 3]`. -/
+/-- **Statement of Erdős Problem 1112 for gaps in $[2, 3]$ and triple sums.** The threshold
+$r_3(2, 3)$ exists: there is a natural number $r$ such that for every strictly increasing
+sequence $b_0 < b_1 < \cdots$ of positive integers with $b_{i+1} \ge r b_i$ for all $i$, there is
+a sequence $a_0, a_1, \dots$ of positive integers with $a_i + 2 \le a_{i+1} \le a_i + 3$ for all
+$i$ such that no $b_i$ is a sum $x + y + z$ of three, not necessarily distinct, terms $x, y, z$
+of the sequence $a$. -/
 def lacunaryThresholdGapsTwoThreeThreeFold : Prop :=
   HasLacunaryThreshold 2 3 3
 
 /--
-Resolved false (`r₃(2, 3)` does not exist): Bollobás, Hegyvári and Jin showed that for every
-growth sequence `1 ≤ r₁ < r₂ < ⋯` some `B` with `b_{i+1} ≥ r_i b_i` meets `A + A + A` for every
-`A` with gaps in `[2, 3]`, and the page concludes that `r₃(2, 3)` does not exist. Source: T. F.
+**Bollobás–Hegyvári–Jin theorem on Erdős Problem 1112.** There is no natural number $r$ such
+that for every strictly increasing sequence $b_0 < b_1 < \cdots$ of positive integers with
+$b_{i+1} \ge r b_i$ for all $i$, there is a sequence $a_0, a_1, \dots$ of positive integers with
+$a_i + 2 \le a_{i+1} \le a_i + 3$ for all $i$ such that no $b_i$ is a sum of three, not
+necessarily distinct, terms of the sequence $a$. In other words, the threshold $r_3(2, 3)$ of
+Erdős Problem 1112 (gaps between $2$ and $3$, triple sums) does not exist.
+
+Source: T. F.
 Bloom, Erdős Problems, Problem #1112, https://www.erdosproblems.com/1112 (status OPEN (LEAN));
 resolution: B. Bollobás, N. Hegyvári and G. Jin, On a problem of Erdős and Graham, Discrete Math.
 175 (1997), 253-257, main result (Theorem 3 of the paper), as recorded on erdosproblems.com/1112:

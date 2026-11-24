@@ -28,10 +28,13 @@ namespace MathlibExt.NumberTheory.Ramanujan.Part1Ch3
 
 namespace Entry10Example2Summable
 
-/-- Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, Entry 10, Example 2, printed p.
-    65 / PDF p. 75.
+/-- **Summability of the logarithmic Poisson series.** For every real $x$, the series
+$\sum_{k=1}^{\infty} e^{-x} x^k \log(k + 1) / k!$ is summable.
 
 Proves `Wanted` entry `ramanujan_part1_ch3_entry10_example2_summable`.
+
+Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, Entry 10, Example 2, printed p.
+    65 / PDF p. 75.
 -/
 theorem ramanujan_part1_ch3_entry10_example2_summable :
     ∀ (x : ℝ),

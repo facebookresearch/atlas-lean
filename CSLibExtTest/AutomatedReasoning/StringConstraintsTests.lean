@@ -32,7 +32,7 @@ namespace StringConstraintsTests
 
 open Cslib.AutomatedReasoning.StringConstraints
 open Cslib.Decidability
-open Cslib.Logic.PL
+open Cslib.Logic.LegacyPL
 
 /-- Levi's lemma: cancellation of a common prefix. -/
 example {a b : List Bool} (h : [true] ++ a = [true] ++ b) : a = b :=

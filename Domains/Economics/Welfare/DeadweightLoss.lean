@@ -270,7 +270,7 @@ theorem exists_taxEquilibrium_path {Pd Ps : ℝ → ℝ} {qstar : ℝ}
   have hw0 : Pd qstar - Ps qstar = 0 := sub_eq_zero.mpr heq
   have hstrict0 : HasStrictDerivAt (fun x => Pd x - Ps x)
       (-(deriv Ps qstar - deriv Pd qstar)) qstar := by
-    have h := hw2.hasStrictDerivAt (by decide)
+    have h := hw2.hasStrictDerivAt_deriv (by decide)
     rw [hdw] at h
     exact h
   have hsne : -(deriv Ps qstar - deriv Pd qstar) ≠ 0 :=

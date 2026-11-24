@@ -54,19 +54,27 @@ empty structure (`n = 0`) is handled by a separate Boolean in the
 definability clause.
 -/
 
-/-- A finite ordered graph: domain size and a row-major edge table; the order is the
-numeric order on `Fin n`. -/
+/-- **Ordered graphs for first-order logic with transitive closure.** An ordered graph is
+encoded as a pair $(n, e)$ of a natural number $n$, the domain size, and a finite list $e$ of
+booleans of arbitrary length, the edge table in row-major order. It is read as the graph on
+$\{0, \dots, n - 1\}$, ordered numerically, with an edge from $a$ to $b$ when the entry of $e$ at
+position $an + b$ is true; a missing entry counts as false. -/
 abbrev TCOrderedGraph := ℕ × List Bool
 
-/-- The edge relation of an ordered graph on `Fin n`. -/
+/-- **Edge relation of an ordered graph for FO + TC.** For an ordered graph $(n, T)$ with edge
+table $T$ and elements $a, b < n$, there is an edge from $a$ to $b$ when the entry of $T$ at
+position $a n + b$ is true; positions beyond the end of $T$ count as false. -/
 def tcEdge (G : TCOrderedGraph) (a b : Fin G.1) : Prop :=
   G.2.getD (a.val * G.1 + b.val) false = true
 
-/-- First-order formulas with transitive closure over ordered graphs. `tc φ xs ys`
-is the transitive closure of the binary relation on tuples of arity
-`|xs| = |ys|` defined by `φ` (body variables `0, …, a - 1` are the source
-tuple, `a, …, 2 * a - 1` the target tuple), applied to the variable tuples
-`xs` and `ys`. -/
+/-- **Formulas of first-order logic with transitive closure.** FO + TC formulas, with variables
+and relation symbols indexed by natural numbers, are built from equations between two variables
+and relation symbols applied to lists of variables by negation, conjunction, disjunction,
+existential quantification (which binds variable $0$, de Bruijn style) and transitive closure
+$\mathrm{TC}(\varphi; \bar u, \bar v)$ of a formula $\varphi$ applied to two lists $\bar u$,
+$\bar v$ of variables. With $a = |\bar u| = |\bar v|$, the body $\varphi$ defines a step
+relation on $a$-tuples: its variables $0, \dots, a - 1$ are the source tuple, $a, \dots, 2a - 1$
+the target tuple, and each variable $j \ge 2a$ is outer variable $j - 2a$. -/
 inductive TCFO where
   | eq : ℕ → ℕ → TCFO
   | rel : ℕ → List ℕ → TCFO
@@ -76,8 +84,10 @@ inductive TCFO where
   | exists : TCFO → TCFO
   | tc : TCFO → List ℕ → List ℕ → TCFO
 
-/-- The meaning of relation symbol `i` in an ordered graph: symbol `0` is `<`, symbol
-`1` is the edge relation, other symbols are false. -/
+/-- **Order and edge relations as FO + TC relation symbols.** In an ordered graph with domain
+$\{0, \dots, n - 1\}$, relation symbol $0$ holds of a list of elements exactly when the list is
+$[a, b]$ with $a < b$, relation symbol $1$ holds exactly when the list is $[a, b]$ and there is
+an edge from $a$ to $b$, and every other relation symbol holds of no list. -/
 def tcBase (G : TCOrderedGraph) (i : ℕ) : List (Fin G.1) → Prop :=
   match i with
   | 0 => fun args => match args with
@@ -88,8 +98,20 @@ def tcBase (G : TCOrderedGraph) (i : ℕ) : List (Fin G.1) → Prop :=
     | _ => False
   | _ => fun _ => False
 
-/-- Evaluation of a first-order formula with transitive closure in an ordered graph,
-with variable assignment `ρ` and relation assignment `S`. -/
+/-- **Evaluation of FO + TC formulas.** Fix an ordered graph with domain
+$D = \{0, \dots, n - 1\}$, an assignment $\rho$ of an element of $D$ to each variable index and
+an assignment $S$ of a relation on lists of elements of $D$ to each relation symbol. The truth
+value of a formula is defined by recursion. The equation between variables $i$ and $j$ holds
+when $\rho(i) = \rho(j)$. Relation symbol $i$ applied to variables $j_1, \dots, j_k$ holds when
+$S_i$ holds of the list $[\rho(j_1), \dots, \rho(j_k)]$. Negation, conjunction and disjunction
+are interpreted as usual. An existential formula $\exists \varphi$ holds when $\varphi$ holds
+under the assignment sending $0$ to some $d \in D$ and $j + 1$ to $\rho(j)$. A transitive
+closure $\mathrm{TC}(\varphi; \bar u, \bar v)$ is false when the index lists $\bar u$ and
+$\bar v$ have different lengths. Otherwise, with $a$ their common length, it holds when the
+tuple $(\rho(v_0), \dots, \rho(v_{a-1}))$ is reachable from $(\rho(u_0), \dots, \rho(u_{a-1}))$
+in zero or more steps, where a step from $s \in D^a$ to $t \in D^a$ means that $\varphi$ holds
+under the assignment sending $j < a$ to $s_j$, $a \le j < 2a$ to $t_{j - a}$, and $j \ge 2a$ to
+$\rho(j - 2a)$. -/
 def tcEval (G : TCOrderedGraph) (ρ : ℕ → Fin G.1)
     (S : ℕ → List (Fin G.1) → Prop) : TCFO → Prop
   | .eq a b => ρ a = ρ b
@@ -109,43 +131,58 @@ def tcEval (G : TCOrderedGraph) (ρ : ℕ → Fin G.1)
           (fun i => ρ (xs.getD i.val 0)) (fun i => ρ (ys.getD i.val 0))
       else False
 
-/-- Parameterized transitive closure, as a focused example: reachability from outer
-variable `1` to outer variable `2` where each step is either a direct edge, or a
-two-step path through outer variable `0`. In the `TC` body, de Bruijn indices `0`
-and `1` are the path endpoints, index `2` is the parameter (outer variable `0`), and
-the endpoint args `[1]` and `[2]` at the `TC` node are evaluated as `ρ 1` and `ρ 2`
-(the `TC` node's endpoint args are outer variables, not shifted; only variables
-inside the body receive the two-position shift, here by `2 * 1 = 2`). -/
+/-- **Example: parameterized transitive closure in FO + TC.** The FO + TC formula
+$\mathrm{TC}(\varphi; (1), (2))$ of arity $1$ whose body $\varphi$ is
+$E(0, 1) \lor (E(0, 2) \land E(2, 1))$, where $E$ is relation symbol $1$ (the edge relation).
+In the body, variable $0$ is the source, variable $1$ the target, and variable $2$ is outer
+variable $0$, shifted by $2$; the endpoint arguments $1$ and $2$ are outer variables, not
+shifted. So the formula expresses that outer variable $2$ is reachable from outer variable $1$
+by steps that are either an edge or a path of two edges through outer variable $0$. -/
 def tcParamExample : TCFO :=
   .tc (.or (.rel 1 [0, 1])
     (.and (.rel 1 [0, 2]) (.rel 1 [2, 1]))) [1] [2]
 
-/-- Transitive closure over pairs of domain elements, as a focused example of
-tuple closure of arity `2`: a step moves both components along edges
-simultaneously (body variables `0, 1` are the source pair, `2, 3` the target
-pair), so `TC` over pairs expresses simultaneous reachability. The endpoint
-tuples are the outer variables `[0, 1]` and `[2, 3]`. -/
+/-- **Example: simultaneous reachability of pairs in FO + TC.** The FO + TC formula
+$\mathrm{TC}(\varphi; (0, 1), (2, 3))$ of arity $2$ whose body $\varphi$ states that relation
+symbol $1$ (the edge relation) holds of variables $0, 2$ and of variables $1, 3$. In the body,
+variables $0, 1$ are the source pair and $2, 3$ the target pair, so a step moves both components
+along an edge at the same time, and the formula expresses that the pair of outer variables
+$(2, 3)$ is reachable from the pair $(0, 1)$ by such steps. -/
 def tcPairExample : TCFO :=
   .tc (.and (.rel 1 [0, 2]) (.rel 1 [1, 3])) [0, 1] [2, 3]
 
-/-- An ordered graph satisfies an `FO + TC` sentence `φ`. -/
+/-- **Satisfaction of an FO + TC formula in an ordered graph.** An ordered graph with nonempty
+domain $\{0, \dots, n - 1\}$ satisfies an FO + TC formula $\varphi$ when $\varphi$ evaluates to
+true with every variable assigned the element $0$, relation symbol $0$ interpreted as the order
+$<$ and relation symbol $1$ as the edge relation (both only on two-element lists), and every
+other relation symbol interpreted as the empty relation. -/
 def tcSat (G : TCOrderedGraph) (h : 0 < G.1) (φ : TCFO) : Prop :=
   tcEval G (fun _ => ⟨0, h⟩) (tcBase G) φ
 
 open Classical in
-/-- The encodings of a class of ordered graphs, as a decision problem. -/
+/-- **Encodings of a class of ordered graphs.** For a set $K$ of ordered graphs, this is the
+decision problem that accepts a bitstring $x$ exactly when $x$ decodes, under the canonical
+bitstring encoding of pairs of a natural number and a list of booleans, to some ordered graph
+$(n, T) \in K$ whose edge table $T$ has length exactly $n^2$. -/
 noncomputable def tcEncodings (K : Set TCOrderedGraph) :
     MetaMathlibExt.ComplexityTheory.DecisionProblem :=
   fun x => decide (∃ G ∈ K,
     MetaMathlibExt.BitstringEncoding.bitDecode x = some G ∧ G.2.length = G.1 * G.1)
 
-/-- `K` is `FO + TC`-definable if some `FO + TC` sentence is true exactly on its
-canonical members, with the empty structure's membership given by a separate Boolean. -/
+/-- **Definability in FO + TC.** A set $K$ of ordered graphs is FO + TC-definable when there
+are an FO + TC formula $\varphi$ and a boolean $b$ such that for every ordered graph $(n, T)$
+whose edge table $T$ has length exactly $n^2$: if $n > 0$, then $(n, T) \in K$ exactly when
+$(n, T)$ satisfies $\varphi$, and if $n = 0$, then $(n, T) \in K$ exactly when $b$ is true. -/
 def tcDefinable (K : Set TCOrderedGraph) : Prop :=
   ∃ φ, ∃ emptyIn : Bool, ∀ G : TCOrderedGraph, G.2.length = G.1 * G.1 →
     (G ∈ K ↔ (if h : 0 < G.1 then tcSat G h φ else emptyIn = true))
 
-/-- **Immerman: FO + transitive closure is NL on ordered structures.** Source: N.
+/-- **Immerman: FO + transitive closure is NL on ordered structures.** For every set $K$ of
+finite ordered graphs, the decision problem of the encodings of $K$ (the bitstrings that decode
+to a member $(n, T)$ of $K$ whose edge table $T$ has length exactly $n^2$) belongs to
+$\mathrm{NL}$ if and only if $K$ is definable in first-order logic with transitive closure.
+
+Source: N.
 Immerman, "Languages that capture complexity classes", SIAM Journal on Computing 16
 (1987), 760-778 (STOC 1983). -/
 public theorem_wanted fo_tc_eq_nl :

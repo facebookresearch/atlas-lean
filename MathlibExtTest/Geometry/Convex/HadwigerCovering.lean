@@ -23,7 +23,7 @@ open ConvexCovering
 
 abbrev E := EuclideanSpace ℝ (Fin 1)
 noncomputable def tip : E := PiLp.single 2 0 (1 : ℝ)
-def K : Set E := Metric.closedBall 0 1
+noncomputable def K : Set E := Metric.closedBall 0 1
 
 lemma tip_norm : ‖tip‖ = 1 := by simp [tip, PiLp.norm_single]
 lemma tip_frontier : tip ∈ frontier K := by

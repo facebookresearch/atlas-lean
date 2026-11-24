@@ -16,7 +16,7 @@ assignment is a Hamiltonian path of the construction. -/
 
 namespace Cslib.Complexity.Karp.HamPathForwardTests
 
-open Cslib.CookLevin Cslib.Logic.PL
+open Cslib.CookLevin Cslib.Logic.LegacyPL
 
 /-- The least diamond whose variable, valued by `σ`, is a literal of clause `j`. -/
 private def pick (φ : CNF) (σ : ℕ → Bool) (j : ℕ) : ℕ :=
