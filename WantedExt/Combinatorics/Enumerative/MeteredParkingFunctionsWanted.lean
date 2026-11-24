@@ -10,7 +10,8 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Real.Sqrt
-public import MathlibExt.Combinatorics.Enumerative.MeteredParkingFunctions
+public import MathlibExt.Combinatorics.Enumerative.LongMeteredParkingFunctions
+public import MathlibExt.Combinatorics.Enumerative.MeteredParkingLowerBound
 public import MathlibExt.Combinatorics.Enumerative.OneMeteredParkingFunctions
 public import MathlibExt.Combinatorics.Enumerative.ParkingFunction
 
@@ -42,16 +43,6 @@ public theorem_wanted metered_window_count_ge {m n t : ℕ} {f : Fin m → Fin n
       (Finset.univ.filter fun k : Fin m =>
           j ≤ (k : ℕ) + 1 ∧ (k : ℕ) + 1 ≤ j + t ∧ (f k : ℕ) + 1 ≤ i).card + n
 
-/-- **Metered parking functions with a long meter are classical.** Let $m \le n$ and
-$t \ge m - 1$. A map $f : \{0, \dots, m-1\} \to \{0, \dots, n-1\}$ is a $t$-metered parking
-function if and only if it is a partial parking function with $m$ cars and $n$ spots.
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, Proposition 3 (`integers-2025-A73-prop-3`). -/
-public theorem_wanted isMeteredParkingFunction_iff_of_le {m n t : ℕ} (ht : m - 1 ≤ t)
-    (hmn : m ≤ n) (f : Fin m → Fin n) :
-    IsMeteredParkingFunction t f ↔ IsPartialParkingFunction m n f
-
 /-- **Classical parking functions are metered parking functions.** Let $m \le n$. Every partial
 parking function $f$ with $m$ cars and $n$ spots is a $t$-metered parking function for every
 $t \in \mathbb{N}$.
@@ -78,15 +69,6 @@ public theorem_wanted meteredOutcome_displacement_le {m n t : ℕ} (f : Fin m �
         s ≤ (f i : ℕ) + t) ∧
       ((meteredOutcome t n (List.ofFn fun i => (f i : ℕ)))[(i : ℕ)]? = some none →
         n ≤ (f i : ℕ) + t)
-
-/-- **Lower bound for the number of metered parking functions.** For all natural numbers $t$,
-$m$ and $n$, $\mathrm{mpf}_{m,n}(t) \ge (n - t)^m$, where $n - t$ is truncated subtraction
-(equal to $0$ when $t \ge n$).
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, Corollary 1 (`integers-2025-A73-cor-1`). -/
-public theorem_wanted pow_sub_le_meteredParkingCount (t m n : ℕ) :
-    (n - t) ^ m ≤ meteredParkingCount t m n
 
 /-- **Metered parking functions with two cars.** For every natural number $t \ge 1$ and every
 natural number $n$, the number of $t$-metered $(2, n)$-parking functions is
