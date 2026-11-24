@@ -30,6 +30,7 @@ public import Mathlib.Data.Nat.Factorial.Basic
 public import Mathlib.Order.Interval.Finset.Nat
 public import MathlibExt.Combinatorics.Enumerative.StirlingFirstHigherColumns
 public import MathlibExt.Combinatorics.Enumerative.StirlingFirstShiftedExpansion
+public import MathlibExt.Combinatorics.Enumerative.StirlingFirstSmallerRows
 public import MathlibExt.Combinatorics.Enumerative.StirlingSecondAlternatingRowSum
 public import MathlibExt.Combinatorics.Enumerative.StirlingSecondSmallerRows
 
@@ -72,22 +73,5 @@ theorem_wanted stirlingSecond_mul_sub_eq_sum_factorial_negChoose
         (Nat.factorial (j - 2) : ℤ) *
           ((-1 : ℤ) ^ j * (Nat.choose (k + j - 1) j : ℤ)) *
           (Nat.stirlingSecond n (k + j - 1) : ℤ)
-
-/-- **Lee's identity for Stirling numbers of the first kind from smaller rows.** Write $c(n, k)$
-for the unsigned Stirling number of the first kind, the number of permutations of $n$ elements
-with exactly $k$ cycles. For natural numbers $k$ and $n$ with $k \ge 1$ and $n \ge k + 1$, the
-following identity of integers holds:
-$$(n - k)\, c(n, k) = \sum_{j=2}^{n-k+1} \binom{n}{j}\, (j-2)!\, c(n-j+1, k).$$
-
-This is Lee's Theorem 11 with the denominator $n - k$ cleared.
-
-Source: Kwankyu Lee, "Some New Identities for Stirling Numbers", Theorem 11
-(TeX label `thm:mdkda`). -/
-theorem_wanted stirlingFirst_mul_sub_eq_sum_choose_factorial
-    {k n : ℕ} (hk : 1 ≤ k) (hkn : k + 1 ≤ n) :
-    ((n : ℤ) - k) * (Nat.stirlingFirst n k : ℤ) =
-      ∑ j ∈ Finset.Icc 2 (n - k + 1),
-        (Nat.choose n j : ℤ) * (Nat.stirlingFirst (n - j + 1) k : ℤ) *
-          (Nat.factorial (j - 2) : ℤ)
 
 end MathlibExt.Combinatorics.Enumerative.StirlingIdentitiesWanted

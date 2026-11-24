@@ -15,7 +15,7 @@ public import MathlibExt.RingTheory.LocalRing.ChevalleyCofinality
 universe u
 
 /-- Consumer with the original binders. -/
-theorem exactSource
+private theorem exactSource
     {A : Type u} [CommRing A] [IsNoetherianRing A] [IsLocalRing A]
     [IsAdicComplete (IsLocalRing.maximalIdeal A) A]
     (K : ℕ → Ideal A) (hK : Antitone K) (hinf : ⨅ w, K w = ⊥) (N : ℕ) :
@@ -23,7 +23,7 @@ theorem exactSource
   IsLocalRing.exists_le_maximalIdeal_pow_of_antitone_of_iInf_eq_bot K hK hinf N
 
 /-- Higher-universe consumer. -/
-theorem exactSourceHigherUniverse
+private theorem exactSourceHigherUniverse
     {A : Type 1} [CommRing A] [IsNoetherianRing A] [IsLocalRing A]
     [IsAdicComplete (IsLocalRing.maximalIdeal A) A]
     (K : ℕ → Ideal A) (hK : Antitone K) (hinf : ⨅ w, K w = ⊥) (N : ℕ) :
