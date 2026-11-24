@@ -39,6 +39,9 @@ Shiryaev's formulation: a geometric prior on the change point, the false-alarm p
 - [Lorden's worst-case detection delay](lorden-delay.md)
 - [Moustakides' theorem: optimality of CUSUM under Lorden's criterion](cusum-time-lorden-delay-le.md)
 
+- [Sequential test of a defect rate](sequential-test-of-a-defect-rate.md)
+- [Run length of a sequential alarm](run-length-of-a-sequential-alarm.md)
+
 ## Related topics
 
 - [Optimal stopping and the Snell envelope](../../martingales/optimal-stopping-and-the-snell-envelope/README.md): the general theory to which the Bayesian formulations of sequential testing and change detection reduce.

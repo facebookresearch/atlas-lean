@@ -12,3 +12,5 @@
 - [Positive definiteness of the phenotypic covariance](pos-def-phen-cov.md)
 - [Henderson's mixed-model equations](is-mmesolution-iff.md)
 - [The MME solution is the GLS estimate and the BLUP](is-mmesolution-iff-gls.md)
+
+- [Weighted reconciliation of two meters](weighted-reconciliation-of-two-meters.md)
