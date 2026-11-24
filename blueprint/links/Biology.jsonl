@@ -4476,3 +4476,5 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/Biology/cancer-genomics/number-of-samples-for-unique-clone-tree-reconstruction.md"}], "id": "af_e3022813fa2e50f05429cd2d", "extensions": {"org.autoform": {"not_ready": true}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Biology/systems-biology/minimal-experiments-for-identifiable-compartmental-models.md"}], "id": "af_42087188b0df222c16cd9b23", "extensions": {"org.autoform": {"not_ready": true}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Biology/pattern-formation/threshold-for-pulse-initiation-in-excitable-media.md"}], "id": "af_f8eb56f719ae645fd04a4cd3", "extensions": {"org.autoform": {"not_ready": true}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Biology/population-dynamics/life-tables/multistate-life-table-by-matrix-products.md"}], "id": "af_3c23e57c57abda2809588db7", "extensions": {"org.atlas-wiki": {"kind": "theorem"}, "org.autoform": {"not_ready": true}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Biology/population-dynamics/life-tables/README.md"}], "id": "af_084e3039f303729c101c7cff"}

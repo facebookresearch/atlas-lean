@@ -14,3 +14,4 @@ Bayesian networks and their Markov properties, structure scores and Markov equiv
 - [Additive noise models and causal identifiability](additive-noise-models-and-causal-identifiability/README.md)
 
 - [Complete efficient criteria for generic identifiability of linear structural equation models](generic-identifiability-of-linear-structural-equation-models.md)
+- [Bayesian knowledge tracing as a two-state hidden Markov model](bayesian-knowledge-tracing-as-a-hidden-markov-model.md)
