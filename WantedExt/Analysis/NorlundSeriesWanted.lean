@@ -31,6 +31,7 @@ public import Mathlib.NumberTheory.Harmonic.Defs
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
 public import MathlibExt.Analysis.CentralBinomDigammaSeries
 public import MathlibExt.Analysis.OddWeightedCatalanSeries
+public import MathlibExt.Analysis.SpecialFunctions.Gamma.HalfIntegerShifts
 
 namespace MetaMathlibExt
 
@@ -88,26 +89,6 @@ public theorem_wanted harmonic_nat_sub_half_values (k : ℕ) :
       ∑' j : ℕ, (1 / ((j : ℂ) + 1) ^ 3 - 1 / ((j : ℂ) + 1 / 2) ^ 3) = -6 * riemannZeta 3 ∧
       ∀ m : ℕ, ∑' j : ℕ, (1 / ((j : ℂ) + 1 / 2) ^ (m + 1) - 1 / ((j : ℂ) + k + 1 / 2) ^ (m + 1)) =
         2 ^ (m + 1) * ∑ j ∈ Finset.range k, 1 / (2 * (j : ℂ) + 1) ^ (m + 1)
-
-/-- **The Gamma function at $r + \tfrac12$ and at $\tfrac12 - r$.** For every complex number $r$
-that is not a negative integer,
-$$\Gamma\bigl(r + \tfrac12\bigr) =
-\frac{\sqrt{\pi}}{2^{2r}} \cdot \frac{\Gamma(2r + 1)}{\Gamma(r + 1)},$$
-where $2^{2r} = e^{2r \log 2}$; and for every natural number $r$,
-$$\Gamma\bigl(\tfrac12 - r\bigr) = \frac{(-1)^r \, 2^{2r} \sqrt{\pi}}{r! \binom{2r}{r}}.$$
-
-In the first identity $\Gamma$ is taken to be $0$ at the non-positive integers, so for
-$r = -\tfrac12, -\tfrac32, \dots$ both sides are $0$.
-
-Source: Kunle Adegoke and Robert Frontczak, *Series Associated with a Forgotten Identity of
-Nörlund*, INTEGERS 25 (2025), Article A18, Lemma 2 (`integers-2025-A18-lem-2`). -/
-public theorem_wanted Gamma_add_half_and_Gamma_half_sub_nat :
-    (∀ r : ℂ, (∀ m : ℕ, r ≠ -((m : ℂ) + 1)) →
-      Complex.Gamma (r + 1 / 2) =
-        (Real.sqrt Real.pi : ℂ) / (2 : ℂ) ^ (2 * r) *
-          (Complex.Gamma (2 * r + 1) / Complex.Gamma (r + 1))) ∧
-    ∀ r : ℕ, Complex.Gamma (1 / 2 - r) =
-      (Real.sqrt Real.pi : ℂ) * (-1) ^ r / r.factorial * 2 ^ (2 * r) / (2 * r).choose r
 
 /-- **A Catalan series in terms of the digamma function.** Let $z$ be a complex number with
 $\operatorname{Re} z > 0$, let $\binom{n+z}{n} = \prod_{j=1}^{n} \frac{z + j}{j}$, let $C_n$ be the
