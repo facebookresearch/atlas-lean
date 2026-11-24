@@ -26,6 +26,8 @@ public import Mathlib.Algebra.Order.BigOperators.Ring.Finset
 * Front-door: the network `U → X → M → Y`, `U → Y` (nodes `0, 1, 2, 3`), with the confounder
   `U` of `X` and `Y`: the set `{M}` meets the three front-door conditions.
 * The truncated factorization for an intervention on a set of nodes.
+* Overwriting an assignment on a set of nodes (`fill`): a concrete evaluation, and its values on
+  and off the set.
 -/
 
 @[expose] public section
@@ -267,5 +269,22 @@ example :
     simp only [mem_filter, mem_univ, true_and]
     refine ⟨by simp, funext fun i => ?_⟩
     simp [i.2]
+
+/-! ### Overwriting an assignment on a set of nodes -/
+
+/-- Overwriting `(5, 7, 9)` with `3` at node `0` and `4` at node `2` gives `(3, 7, 4)`. -/
+example : fill ({0, 2} : Finset (Fin 3)) ![5, 7, 9] (fun i => if (i : Fin 3) = 0 then 3 else 4) =
+    ![3, 7, 4] := by
+  decide
+
+/-- On `T`, `fill T x' t` takes the values of `t`. -/
+example {α : Type*} {n : ℕ} (T : Finset (Fin n)) (x' : Fin n → α) (t : T → α) (i : Fin n)
+    (hi : i ∈ T) : fill T x' t i = t ⟨i, hi⟩ := by
+  simp [fill, hi]
+
+/-- Off `T`, `fill T x' t` agrees with `x'`. -/
+example {α : Type*} {n : ℕ} (T : Finset (Fin n)) (x' : Fin n → α) (t : T → α) (i : Fin n)
+    (hi : i ∉ T) : fill T x' t i = x' i := by
+  simp [fill, hi]
 
 end Cslib.MachineLearning.CausalAdjustmentTests
