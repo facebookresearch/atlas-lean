@@ -4243,3 +4243,4 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/Analysis/convex-analysis-and-variations/stochastic-programming/sample-average-approximation-and-benders-cuts.md"}], "id": "af_e6d9d10e1d1aadb1d295c735", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Analysis/convex-analysis-and-variations/lagrange-duality/conic-duality.md"}], "id": "af_ba47be35a0dda14e6b81ebd9", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Analysis/convex-analysis-and-variations/stochastic-programming/README.md"}], "id": "af_0ddf8024a17748069464e241"}
+{"subject": [{"type": "generic", "uri": "../roadmap/Analysis/convex-analysis-and-variations/accelerated-gradient-methods/nesterov-accelerated-gradient-method.md"}], "id": "af_24c32fa59a69d591560728ca", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
