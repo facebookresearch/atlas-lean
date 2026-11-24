@@ -11,6 +11,7 @@ public import MathlibExt.AlgebraicGeometry.PrismaticSyntomicModels
 public import MathlibExt.AlgebraicGeometry.FormalProObjectSites
 public import MathlibExt.AlgebraicGeometry.FiniteTateCoefficientTowers
 public import Mathlib.AlgebraicGeometry.Morphisms.Smooth
+public import MathlibExt.CategoryTheory.FunctorialKInjective
 
 /-!
 # Syntomic restriction on the actual formal étale site
@@ -199,26 +200,30 @@ attribute [instance] FormalRestriction.additive
 namespace FormalRestriction
 
 variable {p C B X} (R : FormalRestriction p C B X)
-  (Q : QsynExtension p C B D Z T F)
+  (Q : QsynExtension p C B D Z T F) (RQ : FunctorialKInjective (QsynSheaves p C B))
 
-/-- The actual globally restricted syntomic cochains. -/
+/-- The derived formal restriction of the syntomic cochains: the restriction functor applied to a
+K-injective resolution of the extended complex, which computes its right derived functor
+(Bhatt–Morrow–Scholze, *Topological Hochschild homology and integral p-adic Hodge theory*,
+Thm. 10.1 and Rem. 10.4, use descent for complexes). Applying the restriction termwise to the
+short extended complex itself would lose all higher quasisyntomic cohomology. -/
 def syntomic (i : ℤ) : CochainComplex (FormalSheaves p C X) ℤ :=
-  (R.functor.mapHomologicalComplex (.up ℤ)).obj (Q.complex i)
+  (R.functor.mapHomologicalComplex (.up ℤ)).obj (RQ.functor.obj (Q.complex i))
 
 /-- Every coefficient level is a derived p-power cone on the same source. -/
 def finite (i : ℤ) (r : ℕ) : CochainComplex (FormalSheaves p C X) ℤ :=
-  CochainComplex.mappingCone ((p ^ (r + 1) : ℤ) • (𝟙 (R.syntomic Q i)))
+  CochainComplex.mappingCone ((p ^ (r + 1) : ℤ) • (𝟙 (R.syntomic Q RQ i)))
 
 /-- The actual coefficient-reduction square: p on the source, 1 on target. -/
-def reduction (i : ℤ) (r : ℕ) : R.finite Q i (r + 1) ⟶ R.finite Q i r :=
+def reduction (i : ℤ) (r : ℕ) : R.finite Q RQ i (r + 1) ⟶ R.finite Q RQ i r :=
   HomologicalComplex.homotopyCofiber.mapArrowHom
-    ((p ^ (r + 2) : ℤ) • (𝟙 (R.syntomic Q i)))
-    ((p ^ (r + 1) : ℤ) • (𝟙 (R.syntomic Q i)))
+    ((p ^ (r + 2) : ℤ) • (𝟙 (R.syntomic Q RQ i)))
+    ((p ^ (r + 1) : ℤ) • (𝟙 (R.syntomic Q RQ i)))
     (fun j : ℤ ↦ ⟨j - 1, by simp⟩)
-    (Arrow.homMk ((p : ℤ) • (𝟙 (R.syntomic Q i))) (𝟙 _) (by
-      change ((p : ℤ) • (𝟙 (R.syntomic Q i))) ≫
-        ((p ^ (r + 1) : ℤ) • (𝟙 (R.syntomic Q i))) =
-          ((p ^ (r + 2) : ℤ) • (𝟙 (R.syntomic Q i))) ≫ 𝟙 _
+    (Arrow.homMk ((p : ℤ) • (𝟙 (R.syntomic Q RQ i))) (𝟙 _) (by
+      change ((p : ℤ) • (𝟙 (R.syntomic Q RQ i))) ≫
+        ((p ^ (r + 1) : ℤ) • (𝟙 (R.syntomic Q RQ i))) =
+          ((p ^ (r + 2) : ℤ) • (𝟙 (R.syntomic Q RQ i))) ≫ 𝟙 _
       simp only [Preadditive.zsmul_comp, Preadditive.comp_zsmul, Category.id_comp,
         Category.comp_id, smul_smul]
       rw [← pow_succ]))

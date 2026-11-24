@@ -35,6 +35,7 @@ namespace WantedExt.AlgebraicGeometry.CompletedFilteredPrismaticTensors
 open _root_.CategoryTheory _root_.CategoryTheory.Limits
 open MathlibExt.AlgebraicGeometry AbsolutePrismaticBasis PrismaticFilteredTwists
 open SyntomicNearbyComparisons CompletedFilteredPrismaticTensors
+open MathlibExt (FunctorialKInjective)
 
 attribute [local instance] HasDerivedCategory.standard
 

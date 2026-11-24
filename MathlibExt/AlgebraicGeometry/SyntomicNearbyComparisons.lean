@@ -53,14 +53,6 @@ structure SiteInverse {D E : Type 1} [Category.{v₁} D] [Category.{v₂} E]
 
 attribute [instance] SiteInverse.additive SiteInverse.finiteLimits
 
-/-- Native functorial K-injective resolution, independent of a comparison
-theorem. It computes the derived products in the Milnor limit below. -/
-structure FunctorialKInjective (M : Type 2) [Category.{1} M] [Abelian M] where
-  functor : CochainComplex M ℤ ⥤ CochainComplex M ℤ
-  unit : 𝟭 _ ⟶ functor
-  quasiIso : ∀ K, QuasiIso (unit.app K)
-  kInjective : ∀ K, (functor.obj K).IsKInjective
-
 /-- Generic integration of the canonical derived truncation with native
 cochain good truncation. Naturality and the inclusion into the original
 cochain fix the comparison, including for all coefficient morphisms. -/
@@ -100,6 +92,7 @@ variable (p : ℕ) [Fact p.Prime] (C : CompletePadicField p) (B : IntegralBase p
   [E.functor.IsContinuous (formalEtaleTopology p C X) (analyticEtaleTopology p G)]
   [E.HasDerivedNearby]
   (R : FormalRestriction p C B X) (Q : QsynExtension p C B D Z T F)
+  (RQ : FunctorialKInjective (QsynSheaves p C B))
   (K : TateTower p (analyticEtaleRings p G) (analyticEtaleTopology p G))
 
 def finiteTarget (i : ℤ) (r : ℕ) : DerivedCategory (FormalSheaves p C X) :=
@@ -114,9 +107,9 @@ def targetReduction (i : ℤ) (r : ℕ) : finiteTarget p C X G A E i (r + 1) ⟶
 /-- This type is construction/theorem output. Its inputs contain no
 finite syntomic equivalence or unconstrained purported comparison map. -/
 structure FiniteEquivalences where
-  iso : ∀ (i : ℤ) (r : ℕ), DerivedCategory.Q.obj (R.finite Q i r) ≅ finiteTarget p C X G A E i r
+  iso : ∀ (i : ℤ) (r : ℕ), DerivedCategory.Q.obj (R.finite Q RQ i r) ≅ finiteTarget p C X G A E i r
   modulus : ∀ (i : ℤ) (r : ℕ),
-    DerivedCategory.Q.map (R.reduction Q i r) ≫ (iso i r).hom =
+    DerivedCategory.Q.map (R.reduction Q RQ i r) ≫ (iso i r).hom =
       (iso i (r + 1)).hom ≫ targetReduction p C X G A E K i r
 
 variable
@@ -137,19 +130,19 @@ variable
   (RG : FunctorialKInjective (FormalProObjectSites.GenericProModel.GenericSheaves S))
 
 def proFinite (i : ℤ) (r : ℕ) : CochainComplex (FormalProObjectSites.Sheaves p C X P) ℤ :=
-  (VP.inverse.mapHomologicalComplex (.up ℤ)).obj (R.finite Q i r)
+  (VP.inverse.mapHomologicalComplex (.up ℤ)).obj (R.finite Q RQ i r)
 
-def proReduction (i : ℤ) (r : ℕ) : proFinite p C B D Z T F X R Q P VP i (r + 1) ⟶
-    proFinite p C B D Z T F X R Q P VP i r :=
-  (VP.inverse.mapHomologicalComplex (.up ℤ)).map (R.reduction Q i r)
+def proReduction (i : ℤ) (r : ℕ) : proFinite p C B D Z T F X R Q RQ P VP i (r + 1) ⟶
+    proFinite p C B D Z T F X R Q RQ P VP i r :=
+  (VP.inverse.mapHomologicalComplex (.up ℤ)).map (R.reduction Q RQ i r)
 
 def proResolvedFinite (i : ℤ) (r : ℕ) : CochainComplex (FormalProObjectSites.Sheaves p C X P) ℤ :=
-  RP.functor.obj (proFinite p C B D Z T F X R Q P VP i r)
+  RP.functor.obj (proFinite p C B D Z T F X R Q RQ P VP i r)
 
 def proResolvedReduction (i : ℤ) (r : ℕ) :
-    proResolvedFinite p C B D Z T F X R Q P VP RP i (r + 1) ⟶
-      proResolvedFinite p C B D Z T F X R Q P VP RP i r :=
-  RP.functor.map (proReduction p C B D Z T F X R Q P VP i r)
+    proResolvedFinite p C B D Z T F X R Q RQ P VP RP i (r + 1) ⟶
+      proResolvedFinite p C B D Z T F X R Q RQ P VP RP i r :=
+  RP.functor.map (proReduction p C B D Z T F X R Q RQ P VP i r)
 
 instance proCountableLimits : HasLimitsOfShape (Discrete ℕ) (FormalProObjectSites.Sheaves p C X P) := by
   let : HasLimitsOfShape (Discrete ℕ) (ModuleCat.{1} ℤ) := ModuleCat.hasLimitsOfShape
@@ -158,16 +151,16 @@ instance proCountableLimits : HasLimitsOfShape (Discrete ℕ) (FormalProObjectSi
       (ModuleCat.{1} ℤ) inferInstance (Discrete ℕ) inferInstance inferInstance
 
 def proDifference (i : ℤ) :
-    ∏ᶜ (proResolvedFinite p C B D Z T F X R Q P VP RP i) ⟶
-      ∏ᶜ (proResolvedFinite p C B D Z T F X R Q P VP RP i) :=
+    ∏ᶜ (proResolvedFinite p C B D Z T F X R Q RQ P VP RP i) ⟶
+      ∏ᶜ (proResolvedFinite p C B D Z T F X R Q RQ P VP RP i) :=
   Pi.lift.{0, 1, 2} (fun r ↦
-    Pi.π.{0, 1, 2} (proResolvedFinite p C B D Z T F X R Q P VP RP i) r -
-    Pi.π.{0, 1, 2} (proResolvedFinite p C B D Z T F X R Q P VP RP i) (r + 1) ≫
-      proResolvedReduction p C B D Z T F X R Q P VP RP i r)
+    Pi.π.{0, 1, 2} (proResolvedFinite p C B D Z T F X R Q RQ P VP RP i) r -
+    Pi.π.{0, 1, 2} (proResolvedFinite p C B D Z T F X R Q RQ P VP RP i) (r + 1) ≫
+      proResolvedReduction p C B D Z T F X R Q RQ P VP RP i r)
 
 /-- Rlim is formed on the pro-étale site after finite pullback. -/
 def integralSource (i : ℤ) : DerivedCategory (FormalProObjectSites.Sheaves p C X P) :=
-  DerivedCategory.Q.obj (CochainComplex.mappingCocone (proDifference p C B D Z T F X R Q P VP RP i))
+  DerivedCategory.Q.obj (CochainComplex.mappingCocone (proDifference p C B D Z T F X R Q RQ P VP RP i))
 
 def genericProFinite (i : ℤ) (r : ℕ) :
     CochainComplex (FormalProObjectSites.GenericProModel.GenericSheaves S) ℤ :=
@@ -205,11 +198,11 @@ def integralGeneric (i : ℤ) : DerivedCategory (FormalProObjectSites.GenericPro
 def integralTarget (i : ℤ) : DerivedCategory (FormalProObjectSites.Sheaves p C X P) :=
   (H.truncatedNearby S (R := P) i).obj (integralGeneric p G K S VG RG i)
 
-def sourceProjection (i : ℤ) (r : ℕ) : integralSource p C B D Z T F X R Q P VP RP i ⟶
-    DerivedCategory.Q.obj (proResolvedFinite p C B D Z T F X R Q P VP RP i r) :=
+def sourceProjection (i : ℤ) (r : ℕ) : integralSource p C B D Z T F X R Q RQ P VP RP i ⟶
+    DerivedCategory.Q.obj (proResolvedFinite p C B D Z T F X R Q RQ P VP RP i r) :=
   DerivedCategory.Q.map (CochainComplex.mappingCocone.fst
-    (proDifference p C B D Z T F X R Q P VP RP i) ≫
-      Pi.π.{0, 1, 2} (proResolvedFinite p C B D Z T F X R Q P VP RP i) r)
+    (proDifference p C B D Z T F X R Q RQ P VP RP i) ≫
+      Pi.π.{0, 1, 2} (proResolvedFinite p C B D Z T F X R Q RQ P VP RP i) r)
 
 def genericProjection (i : ℤ) (r : ℕ) : integralGeneric p G K S VG RG i ⟶
     DerivedCategory.Q.obj (genericProResolvedFinite p G K S VG RG i r) :=
@@ -234,15 +227,15 @@ their actual coefficient maps and compatibility with every resolved
 Milnor projection. No finite or integral target equivalence is input. -/
 structure IntegralEquivalences where
   finite : ∀ (i : ℤ) (r : ℕ),
-    DerivedCategory.Q.obj (proResolvedFinite p C B D Z T F X R Q P VP RP i r) ≅
+    DerivedCategory.Q.obj (proResolvedFinite p C B D Z T F X R Q RQ P VP RP i r) ≅
       finiteProTarget p C X G A E K P S VG H RG i r
   modulus : ∀ (i : ℤ) (r : ℕ),
-    DerivedCategory.Q.map (proResolvedReduction p C B D Z T F X R Q P VP RP i r) ≫
+    DerivedCategory.Q.map (proResolvedReduction p C B D Z T F X R Q RQ P VP RP i r) ≫
       (finite i r).hom = (finite i (r + 1)).hom ≫ finiteProTargetReduction p C X G A E K P S VG H RG i r
   integral : ∀ i : ℤ,
-    integralSource p C B D Z T F X R Q P VP RP i ≅ integralTarget p C X G A E K P S VG H RG i
+    integralSource p C B D Z T F X R Q RQ P VP RP i ≅ integralTarget p C X G A E K P S VG H RG i
   projections : ∀ (i : ℤ) (r : ℕ),
-    sourceProjection p C B D Z T F X R Q P VP RP i r ≫ (finite i r).hom =
+    sourceProjection p C B D Z T F X R Q RQ P VP RP i r ≫ (finite i r).hom =
       (integral i).hom ≫ nearbyProjection p C X G A E K P S VG H RG i r
 
 end MathlibExt.AlgebraicGeometry.SyntomicNearbyComparisons

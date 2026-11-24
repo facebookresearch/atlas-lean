@@ -23,8 +23,10 @@ interval formula, including the actual tower restriction and the Koszul
 sign; finite projections alone do not discard a possible lim1 component.
 
 Compatible multiplicative resolutions are construction output, chosen
-jointly with the original formal system. No claim is made for independently
-chosen arbitrary injective resolutions.
+jointly with the original formal system; they are the section-acyclic
+hypermodels of `FormalDeRhamModels.System`, which are not injective (an
+injective resolution admits no such strict unital product). No claim is made
+for independently chosen arbitrary resolutions.
 
 References: Bhatt–Scholze, arXiv:1905.08229v4, Theorem 1.8(3) and
 Corollary 15.4; Stacks Project, Tags 070A and 091Z.

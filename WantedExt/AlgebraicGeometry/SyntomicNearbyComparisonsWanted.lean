@@ -37,6 +37,7 @@ open FormalGenericFibreModels FormalNearbyCycleModels FormalSyntomicSiteModels
 open PrismaticSyntomicModels AbsolutePrismaticBasis PrismaticFilteredTwists
 open FiniteTateCoefficientTowers AnalyticTateAdicModels AnalyticDiamondEtaleSites
 open SyntomicNearbyComparisons
+open MathlibExt (FunctorialKInjective)
 
 attribute [local instance] HasDerivedCategory.standard
 
@@ -55,6 +56,10 @@ variable (p : ℕ) [Fact p.Prime] (C : CompletePadicField p) (B : IntegralBase p
   (F : FrobeniusModel p B.ring D Z T)
 
 public def_wanted extendSyntomicFromBasis : QsynExtension p C B D Z T F
+
+/-- Functorial K-injective resolutions on the quasisyntomic sheaves, used to derive the formal
+restriction of syntomic cochains. -/
+public def_wanted qsynKInjectiveResolution : FunctorialKInjective (QsynSheaves p C B)
 
 public def_wanted restrictQsynToFormalEtale
     (X : FormalGenericFibreModels.FormalScheme p C)
@@ -121,12 +126,13 @@ variable (X : FormalGenericFibreModels.FormalScheme p C)
   [E.functor.IsContinuous (formalEtaleTopology p C X) (analyticEtaleTopology p G)]
   [E.HasDerivedNearby]
   (R : FormalRestriction p C B X) (Q : QsynExtension p C B D Z T F)
+  (RQ : FunctorialKInjective (QsynSheaves p C B))
   (K : TateTower p (analyticEtaleRings p G) (analyticEtaleTopology p G))
 
 public def_wanted finiteSyntomicNearbyEquivalences
     (smooth : ∀ n : ℕ, Smooth (X.structureMap.app n))
     (genericNoetherian : AnalyticProObjectSites.IsLocallyNoetherian p G) :
-    FiniteEquivalences p C B D Z T F X G A E R Q K
+    FiniteEquivalences p C B D Z T F X G A E R Q RQ K
 
 variable (P : FormalProObjectSites.PointRealization p C X) (S : AnalyticProObjectSites.PointRealization p G)
   [(FormalProObjectSites.etaleEmbedding p C X).IsContinuous
@@ -146,6 +152,6 @@ variable (P : FormalProObjectSites.PointRealization p C X) (S : AnalyticProObjec
 public theorem_wanted integralSyntomicNearbyEquivalence
     (smooth : ∀ n : ℕ, Smooth (X.structureMap.app n))
     (genericNoetherian : AnalyticProObjectSites.IsLocallyNoetherian p G) :
-    Nonempty (IntegralEquivalences p C B D Z T F X G A E R Q K P S VP VG H RP RG)
+    Nonempty (IntegralEquivalences p C B D Z T F X G A E R Q RQ K P S VP VG H RP RG)
 
 end WantedExt.AlgebraicGeometry.SyntomicNearbyComparisons

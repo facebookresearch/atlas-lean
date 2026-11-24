@@ -18,6 +18,7 @@ module
 
 public import MathlibExt.AlgebraicGeometry.AbsolutePrismaticBasis
 public import Mathlib.Algebra.Homology.DerivedCategory.KInjective
+public import MathlibExt.CategoryTheory.FunctorialKInjective
 public import Mathlib.Algebra.Homology.HomologicalComplexLimits
 public import Mathlib.Algebra.Homology.HomotopyCategory.MappingCocone
 
@@ -167,11 +168,7 @@ def can [HasDerivedSections p A] (n : ℕ) : nygaard p A D n ⟶ delta p A D :=
     ((DerivedCategory.singleFunctor (Sheaves p A) 0).map (canSheaf p A D n))
 
 /-- The native functorial K-injective toolbox on these actual sheaves. -/
-structure Resolution where
-  functor : CochainComplex (Sheaves p A) ℤ ⥤ CochainComplex (Sheaves p A) ℤ
-  unit : 𝟭 _ ⟶ functor
-  quasiIso : ∀ C, QuasiIso (unit.app C)
-  kInjective : ∀ C, (functor.obj C).IsKInjective
+abbrev Resolution := FunctorialKInjective (Sheaves p A)
 
 namespace Resolution
 

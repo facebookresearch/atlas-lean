@@ -28,9 +28,14 @@ public import MathlibExt.AlgebraicGeometry.RelativePrismaticCohomology
 # Normalized de Rham hypermodels of an actual p-adic formal scheme
 
 Every level complex has the actual Kahler/exterior terms. Its chosen
-hypermodel is bounded below, termwise injective and quasi-isomorphic to
-that complex. Adjacent restriction maps are fixed on every local exact
-wedge generator; the resolution maps lift them up to an actual homotopy.
+hypermodel is bounded below and quasi-isomorphic to that complex, and its
+global sections compute derived global sections: it maps quasi-isomorphically
+to a termwise injective resolution, by a map that stays a quasi-isomorphism on
+global sections. The hypermodel itself is not required to be injective, since it
+carries the strict products of `FormalDeRhamCupModels`, which no injective
+resolution admits (see below). Adjacent restriction maps are fixed on every
+local exact wedge generator; the resolution maps lift them up to an actual
+homotopy.
 
 The formal de Rham complex is the literal cochain Milnor fiber of these
 global-section complexes. There is no freely named cohomology carrier.
@@ -72,14 +77,26 @@ instance pushforward_additive (n : ℕ) : (pushforward p P X n).Additive where
   map_add := by intros; rfl
 
 /-- Formal de Rham hypermodels, with their actual terms and restriction
-maps pinned independently of any prismatic comparison. -/
+maps pinned independently of any prismatic comparison.
+
+The hypermodel `resolution n` is acyclic for global sections, as witnessed by `toInjective n`,
+but is not itself required to be termwise injective: an injective module over `ℤ_p` is
+`p`-divisible, so it has no bilinear product with a unit killed by `p`, as the product of a
+level killed by `p` must be (for the Breuil–Kisin prism and `X = Spf ℤ_p`, level zero is
+`Spec 𝔽_p`, and such a product would force the injective degree-zero term to vanish). -/
 structure System where
   differential : ∀ n, Differential P.Residue (level p P X n)
   resolution : ∀ n, CochainComplex
     (Sheaves P.Residue (level p P X n)) ℕ
   unit : ∀ n, (differential n).natComplex ⟶ resolution n
   [unit_quasiIso : ∀ n, QuasiIso (unit n)]
-  [injective : ∀ n i, Injective ((resolution n).X i)]
+  injectiveResolution : ∀ n, CochainComplex (Sheaves P.Residue (level p P X n)) ℕ
+  [injective : ∀ n i, Injective ((injectiveResolution n).X i)]
+  toInjective : ∀ n, resolution n ⟶ injectiveResolution n
+  [toInjective_quasiIso : ∀ n, QuasiIso (toInjective n)]
+  [sections_quasiIso : ∀ n, QuasiIso
+    (((sections P.Residue (level p P X n) ⋙ liftModules P.Residue).mapHomologicalComplex
+      (ComplexShape.up ℕ)).map (toInjective n))]
   inverseImage_exact : ∀ n, PreservesFiniteLimits
     (TopCat.Sheaf.pullback (ModuleCat.{0} P.Residue)
       (TopCat.ofHom (transitionScheme p P X n).base.hom :
@@ -106,13 +123,14 @@ structure System where
       ((pushforward p P X n).mapHomologicalComplex
         (ComplexShape.up ℕ)).map (unit n))
 
-attribute [instance] System.unit_quasiIso System.injective
+attribute [instance] System.unit_quasiIso System.injective System.toInjective_quasiIso
+  System.sections_quasiIso
 
 namespace System
 
 variable {p P X} (S : System p P X)
 
-/-- Actual global sections of the injective nth form hypermodel. -/
+/-- Actual global sections of the nth form hypermodel; they compute derived global sections. -/
 def globalComplex (n : ℕ) : CochainComplex (ModuleCat.{1} P.Residue) ℤ :=
   (((sections P.Residue (level p P X n) ⋙ liftModules P.Residue).mapHomologicalComplex
     (ComplexShape.up ℕ)).obj (S.resolution n)).extend

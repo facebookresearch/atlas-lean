@@ -24,7 +24,8 @@ a strict algebra map. The comparison preserves the fixed cup and unit
 because its cochain realization is an AlgebraMap, not merely a module iso.
 
 References: Bhatt--Scholze, arXiv:1905.08229v4, Theorem 1.8(5),
-Corollary 4.12; Stacks Project, Tags 015G, 01FM and 0FKM.
+Corollary 4.12; Stacks Project, Tags 015G, 01FM and 0FKM. The global base change is requested
+for quasi-compact and quasi-separated formal schemes only.
 The E-infinity enhancement and the normalized global de Rham comparison
 are distinct from this ordinary derived-algebra component.
 -/
@@ -85,7 +86,11 @@ public theorem_wanted prismaticIsComplete
     (hSmooth : ∀ n : ℕ, Smooth (X.structureMap.app n)) :
     IsComplete P.ring (completionIdeal p P.ideal) (prismatic p P X)
 
-/-- The source's base-change isomorphism on the actual normalized completed algebra map. -/
+/-- The source's base-change isomorphism on the actual normalized completed algebra map, for
+quasi-compact and quasi-separated `X`. Bhatt–Scholze, Cor. 4.12, is local, on the étale site; on
+global sections it is obtained from finite affine hypercovers, which need the qcqs hypothesis:
+for a countable disjoint union of copies of the base, the completed tensor product does not
+commute with the infinite product of global sections. -/
 public theorem_wanted cartesianBaseChange
     (p : ℕ) [Fact p.Prime] (P Q : Prism.{0} p)
     (X : FormalScheme p P.ring P.ideal) (Y : FormalScheme p Q.ring Q.ideal)
@@ -101,7 +106,9 @@ public theorem_wanted cartesianBaseChange
     (hComplete : IsComplete Q.ring (completionIdeal p Q.ideal)
       (DerivedCategory.Q.obj (complex K.globalDiagram)))
     (hCartesian : IsCartesian p P Q X Y g)
-    (hSmooth : ∀ n : ℕ, Smooth (X.structureMap.app n)) :
+    (hSmooth : ∀ n : ℕ, Smooth (X.structureMap.app n))
+    (hQcqs : ∀ n : ℕ, QuasiCompact (X.structureMap.app n) ∧
+      QuasiSeparated (X.structureMap.app n)) :
     IsIso (s.prismaticMap a C hComplete)
 
 end WantedExt.AlgebraicGeometry.PrismaticAlgebraModels
