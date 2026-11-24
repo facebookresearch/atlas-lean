@@ -12395,6 +12395,7 @@
   "MathlibExt/NumberTheory/GobelSequenceSomosBound": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Göbel sequences"},
   "MathlibExt/NumberTheory/GoldenFactorialExponent": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Factorials bounded by powers of the golden ratio"},
   "MathlibExt/NumberTheory/GoldenRatioLambertSequence": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Factorials bounded by powers of the golden ratio"},
+  "MathlibExt/NumberTheory/GouldReciprocalBinomial": {"to": "NumberTheory/special-numbers/harmonic-numbers", "title": "Ramanujan's binomial–harmonic identity"},
   "MathlibExt/NumberTheory/HankelTransform": {"to": "Combinatorics/riordan-arrays-transforms/hankel-continued-fractions", "title": "Hankel transforms and Jacobi continued fractions"},
   "MathlibExt/NumberTheory/HardyLittlewoodPrimeTuple": {"to": "NumberTheory/distribution-of-primes/prime-patterns", "title": "Hardy–Littlewood prime tuples conjecture"},
   "MathlibExt/NumberTheory/Harmonic/EulerMascheroniBounds": {"to": "NumberTheory/special-numbers/harmonic-numbers", "title": "Harmonic numbers and the Euler–Mascheroni constant"},
