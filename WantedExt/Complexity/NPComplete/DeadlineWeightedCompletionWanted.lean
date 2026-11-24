@@ -21,7 +21,7 @@ doi:10.1016/S0167-5060(08)70743-X, Theorem 4(b) (`n|1|L_max ≤ 0|Σw_jC_j`).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs

@@ -97,32 +97,6 @@ public theorem_wanted seededPartialSums_sub_zero {R : Type*} [CommRing R] (b a :
     seededPartialSums b a k n - seededPartialSums 0 a k n =
       ∑ i ∈ Finset.range k, (n.choose i : R) * b (k - 1 - i)
 
-/-- **Adding one to a sequence shifts its iterated partial sums by a binomial coefficient.**
-Let $R$ be a commutative ring, let $(a_n)_{n \ge 0}$ be a sequence in $R$, and let $k, m \ge 0$.
-Writing $P^{(k)}(x)(m)$ for the $k$-fold iterated partial sum of a sequence $x$ at $m$, we have
-$P^{(k)}((a_n + 1)_{n \ge 0})(m) - P^{(k)}((a_n)_{n \ge 0})(m) = \binom{m}{k}$, where
-$\binom{m}{k}$ is read as an element of $R$.
-
-Source: Hùng Việt Chu and Zachary Louis Vasseur, *Weighted Schreier-type Sets and the
-Fibonacci Sequence*, The Fibonacci Quarterly 62 (2024), no. 4, Lemma 3.3
-(`fq-2024-chu08302024rev-lem-3.3`). -/
-public theorem_wanted iteratedPartialSum_add_one_sub {R : Type*} [CommRing R] (a : ℕ → R)
-    (k m : ℕ) :
-    iteratedPartialSum k (fun n => a n + 1) m - iteratedPartialSum k a m = (m.choose k : R)
-
-/-- **Iterated partial sums of shifted Fibonacci numbers.** Let $F_n$ denote the Fibonacci
-numbers, with $F_0 = 0$ and $F_1 = 1$, and write $P^{(k)}(x)(m)$ for the $k$-fold iterated
-partial sum of a sequence $x$ of natural numbers at $m$. Then for all $k, \ell \ge 0$,
-$P^{(k)}((F_{n+2})_{n \ge 0})(\ell) = P^{(k)}((F_n)_{n \ge 0})(\ell) +
-P^{(k)}((F_n)_{n \ge 0})(\ell + 1)$.
-
-Source: Hùng Việt Chu and Zachary Louis Vasseur, *Weighted Schreier-type Sets and the
-Fibonacci Sequence*, The Fibonacci Quarterly 62 (2024), no. 4, Lemma 3.4
-(`fq-2024-chu08302024rev-lem-3.4`). -/
-public theorem_wanted iteratedPartialSum_fib_add_two (k l : ℕ) :
-    iteratedPartialSum k (fun n => Nat.fib (n + 2)) l =
-      iteratedPartialSum k Nat.fib l + iteratedPartialSum k Nat.fib (l + 1)
-
 end
 
 end MetaMathlibExt

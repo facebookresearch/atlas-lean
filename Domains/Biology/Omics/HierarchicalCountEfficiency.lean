@@ -131,21 +131,25 @@ local notation "E₂" => EuclideanSpace ℝ (Fin 2)
 
 /-! ### The per-count score and its derivative -/
 
-/-- The score of one count `k` at size factor `σ` in the hyperparameter `θ = (a, b)` (prior
-shape `θ 0`, prior rate `θ 1`): the gradient
+/-- The score of one count `k` at size factor `σ` in the hyperparameter `θ = (a, b)` (prior shape
+`θ 0`, prior rate `θ 1`), defined for all real arguments with the real logarithm and `x / 0 = 0`:
+for `σ > 0` and `a, b > 0` it is the gradient
 `(∑_{j<k} 1 / (a + j) + log b - log (b + σ), a / b - (a + k) / (b + σ))` of
 `log (marginalLik a b σ k)`. Summed over a sample it is `(shapeScore, rateScore)`
 (`sum_countScore`). -/
 noncomputable def countScore (σ : ℝ) (θ : E₂) (k : ℕ) : E₂ :=
   !₂[digammaIncrement (θ 0) k + log (θ 1) - log (θ 1 + σ), θ 0 / θ 1 - (θ 0 + k) / (θ 1 + σ)]
 
-/-- The trigamma increment `∑_{j<k} 1 / (a + j)²`, equal to `ψ'(a) - ψ'(a + k)` for `a > 0`; it is
-minus the derivative of `digammaIncrement a k` in `a`. -/
+/-- The trigamma increment `∑_{j<k} 1 / (a + j)²` (a term with `a + j = 0` is `0`, by the convention
+`0⁻¹ = 0`), equal to `ψ'(a) - ψ'(a + k)` for `a > 0`; it is minus the derivative of
+`digammaIncrement a k` in `a`. -/
 noncomputable def trigammaIncrement (a : ℝ) (k : ℕ) : ℝ := ∑ j ∈ range k, ((a + j) ^ 2)⁻¹
 
-/-- The derivative of `countScore σ · k` at `θ = (a, b)` (the Hessian of the log marginal
-likelihood of one count), as the operator of the symmetric matrix
-`[[-∑_{j<k} 1/(a+j)², 1/b - 1/(b+σ)], [1/b - 1/(b+σ), (a+k)/(b+σ)² - a/b²]]`. -/
+/-- The derivative of `countScore σ · k` at `θ = (a, b)` for `a, b > 0` and `σ ≥ 0` (for `σ > 0`,
+the Hessian of the log marginal likelihood of one count), as the operator of the symmetric matrix
+`[[-∑_{j<k} 1/(a+j)², 1/b - 1/(b+σ)], [1/b - 1/(b+σ), (a+k)/(b+σ)² - a/b²]]`. It is defined for all
+real `σ`, `a` and `b`, with `0⁻¹ = 0`: a term whose denominator vanishes (`a + j = 0`, `b = 0` or
+`b + σ = 0`) is `0`. -/
 noncomputable def countHessian (σ : ℝ) (θ : E₂) (k : ℕ) : E₂ →L[ℝ] E₂ :=
   Matrix.toEuclideanCLM (𝕜 := ℝ) !![-trigammaIncrement (θ 0) k, (θ 1)⁻¹ - (θ 1 + σ)⁻¹;
     (θ 1)⁻¹ - (θ 1 + σ)⁻¹, (θ 0 + k) / (θ 1 + σ) ^ 2 - θ 0 / θ 1 ^ 2]
@@ -406,7 +410,9 @@ theorem norm_countHessian_sub_le {σ : ℝ} (hσ : 0 ≤ σ) {θ₀ θ : E₂} {
 /-- The Fisher information matrix of one count at size factor `σ` and hyperparameter `(a, b)`,
 `[[τ, -σ / (b (b + σ))], [-σ / (b (b + σ)), a σ / (b² (b + σ))]]`, as an operator, with the shape
 entry `τ = E[∑_{j<K} 1 / (a + j)²]` (an expected trigamma increment, which has no closed form)
-supplied as a parameter. `integral_countHessian`: it is minus the expected score derivative. -/
+supplied as a parameter. The entries use `x / 0 = 0`. For `a, b > 0`, `σ ≥ 0` and a probability
+count law with mean `σ a / b` it is minus the expected score derivative
+(`integral_countHessian`). -/
 noncomputable def countFisherInfo (a b σ τ : ℝ) : E₂ →L[ℝ] E₂ :=
   Matrix.toEuclideanCLM (𝕜 := ℝ) !![τ, -(σ / (b * (b + σ))); -(σ / (b * (b + σ))),
     a * σ / (b ^ 2 * (b + σ))]
@@ -521,10 +527,10 @@ private lemma integral_toEuclideanCLM {μX : Measure ℕ} [IsProbabilityMeasure 
   · exact i₁.add i₂
   · exact (i₁.add i₂).add i₃
 
-/-- **Fisher information of one count.** If the count law `μX` has a finite mean equal to the
-marginal mean `σ a / b` of the hierarchy, then the expected score derivative at `θ₀ = (a, b)` is
-minus `countFisherInfo a b σ τ`, with `τ = E[∑_{j<K} 1 / (a + j)²]`:
-`I_ab = -σ / (b (b + σ))`, `I_bb = a σ / (b² (b + σ))`. -/
+/-- **Fisher information of one count.** For `a, b > 0` and `σ ≥ 0`, if the count law `μX` is a
+probability measure with a finite mean equal to the marginal mean `σ a / b` of the hierarchy, then
+the expected score derivative at `θ₀ = (a, b)` is minus `countFisherInfo a b σ τ`, with
+`τ = E[∑_{j<K} 1 / (a + j)²]`: `I_ab = -σ / (b (b + σ))`, `I_bb = a σ / (b² (b + σ))`. -/
 theorem integral_countHessian {σ : ℝ} {θ₀ : E₂} (ha : 0 < θ₀ 0) (hb : 0 < θ₀ 1) (hσ : 0 ≤ σ)
     {μX : Measure ℕ} [IsProbabilityMeasure μX] (hk : Integrable (fun k : ℕ => (k : ℝ)) μX)
     (hmean : ∫ k, (k : ℝ) ∂μX = σ * θ₀ 0 / θ₀ 1) :
@@ -617,8 +623,9 @@ private lemma integrable_norm_countScore_sq {σ : ℝ} (hσ : 0 ≤ σ) {θ₀ :
   change ‖countScore σ θ₀ k‖ ^ 2 ≤ 2 * A ^ 2 + 2 * B ^ 2 * (k : ℝ) ^ 2
   nlinarith [sq_nonneg (A - B * k)]
 
-/-- The rate component of the score equations at the truth forces the marginal mean: if
-`E[countScore σ θ₀ K] = 0` then `E K = σ a / b`, since `a/b - (a + E K)/(b + σ) = 0`. -/
+/-- The rate component of the score equations at the truth forces the marginal mean: for `σ ≥ 0`,
+`a, b > 0` and a probability count law with finite mean, if `E[countScore σ θ₀ K] = 0` then
+`E K = σ a / b`, since `a/b - (a + E K)/(b + σ) = 0`. -/
 theorem integral_natCast_of_integral_countScore {σ : ℝ} (hσ : 0 ≤ σ) {θ₀ : E₂} (ha : 0 < θ₀ 0)
     (hb : 0 < θ₀ 1) {μX : Measure ℕ} [IsProbabilityMeasure μX]
     (hk : Integrable (fun k : ℕ => (k : ℝ)) μX) (hscore : ∫ k, countScore σ θ₀ k ∂μX = 0) :
@@ -755,10 +762,10 @@ theorem tendstoInDistribution_countMLE_of_info {Ω Ω' : Type*} [MeasurableSpace
 /-! ### The method-of-moments estimator as a Z-estimator -/
 
 /-- The moment estimating function of one count `k` at `θ = (a, b)`:
-`(b k - σ a, b² k² - σ a b - σ² a - σ² a²)`, which is `(b (k - μ), b² (k² - μ - μ² / a - μ²))`
-with `μ = σ a / b`. Its sample equations `∑ᵢ momEstFun σ θ kᵢ = 0` say that the sample mean and
-second moment match the negative binomial ones, so for overdispersed samples their unique
-positive root is the moment estimate (`sum_momEstFun_mom_eq_zero`). -/
+`(b k - σ a, b² k² - σ a b - σ² a - σ² a²)`, which is `(b (k - μ), b² (k² - μ - μ² / a - μ²))` with
+`μ = σ a / b` when `b ≠ 0`. For `a, b ≠ 0` its sample equations `∑ᵢ momEstFun σ θ kᵢ = 0` say that
+the sample mean and second moment match the negative binomial ones, and the moment estimate of an
+overdispersed sample is a root (`sum_momEstFun_mom_eq_zero`). -/
 noncomputable def momEstFun (σ : ℝ) (θ : E₂) (k : ℕ) : E₂ :=
   !₂[θ 1 * k - σ * θ 0, θ 1 ^ 2 * k ^ 2 - σ * θ 0 * θ 1 - σ ^ 2 * θ 0 - σ ^ 2 * θ 0 ^ 2]
 
@@ -768,9 +775,10 @@ noncomputable def momEstDeriv (σ : ℝ) (θ : E₂) (k : ℕ) : E₂ →L[ℝ] 
   Matrix.toEuclideanCLM (𝕜 := ℝ) !![-σ, (k : ℝ); -(σ * θ 1) - σ ^ 2 - 2 * σ ^ 2 * θ 0,
     2 * θ 1 * k ^ 2 - σ * θ 0]
 
-/-- The expected derivative of the moment estimating function at `(a, b)` under the negative
-binomial mean and second moment: `[[-σ, σ a / b], [-σ b - σ² - 2 σ² a, σ a + 2 σ² a (1 + a) / b]]`
-(`integral_momEstDeriv`). Its determinant is `-σ³ a / b`. -/
+/-- The expected derivative of the moment estimating function at `(a, b)`, for `a, b > 0`, under the
+negative binomial mean and second moment:
+`[[-σ, σ a / b], [-σ b - σ² - 2 σ² a, σ a + 2 σ² a (1 + a) / b]]` (`integral_momEstDeriv`). The
+entries use `x / 0 = 0`; for `b ≠ 0` the determinant is `-σ³ a / b`. -/
 noncomputable def momJacobian (a b σ : ℝ) : E₂ →L[ℝ] E₂ :=
   Matrix.toEuclideanCLM (𝕜 := ℝ) !![-σ, σ * a / b; -(σ * b) - σ ^ 2 - 2 * σ ^ 2 * a,
     σ * a + 2 * σ ^ 2 * a * (1 + a) / b]
@@ -826,9 +834,10 @@ theorem norm_momEstDeriv_sub_le (σ : ℝ) (θ₀ θ : E₂) (k : ℕ) :
   simp only [abs_zero, zero_add]
   nlinarith
 
-/-- **The Jacobian of the moment equations.** If the count law has the negative binomial mean
-`m = σ a / b` and second moment `m + m² / a + m²`, the expected derivative of the moment
-estimating function at `(a, b)` is `momJacobian a b σ`. -/
+/-- **The Jacobian of the moment equations.** For `a, b > 0`, if the count law is a probability
+measure with finite second moment and the negative binomial mean `m = σ a / b` and second moment
+`m + m² / a + m²`, the expected derivative of the moment estimating function at `(a, b)` is
+`momJacobian a b σ`. -/
 theorem integral_momEstDeriv {σ a b : ℝ} (ha : 0 < a) (hb : 0 < b)
     {μX : Measure ℕ} [IsProbabilityMeasure μX] (hk2 : Integrable (fun k : ℕ => (k : ℝ) ^ 2) μX)
     (hmean : ∫ k, (k : ℝ) ∂μX = σ * a / b)
@@ -919,8 +928,9 @@ private lemma integral_toLp_two {μX : Measure ℕ} {f g : ℕ → ℝ} (hf : In
   simp_rw [toLp_two_eq]
   rw [integral_add (hf.smul_const _) (hg.smul_const _), integral_smul_const, integral_smul_const]
 
-/-- The moment equations hold at the truth: if the count law has the negative binomial mean and
-second moment at `(a, b)`, then `E[momEstFun σ (a, b) K] = 0`. -/
+/-- The moment equations hold at the truth: for `b > 0`, if the count law is a probability measure
+with finite second moment and the negative binomial mean and second moment at `(a, b)`, then
+`E[momEstFun σ (a, b) K] = 0`. -/
 theorem integral_momEstFun {σ a b : ℝ} (hb : 0 < b)
     {μX : Measure ℕ} [IsProbabilityMeasure μX] (hk2 : Integrable (fun k : ℕ => (k : ℝ) ^ 2) μX)
     (hmean : ∫ k, (k : ℝ) ∂μX = σ * a / b)
@@ -955,7 +965,8 @@ theorem integral_momEstFun {σ a b : ℝ} (hb : 0 < b)
 
 /-- The method-of-moments estimate `(momShape M̂ₙ V̂ₙ, momRate σ M̂ₙ V̂ₙ)` of the hyperparameter
 `(a, b)` from the first `n` counts, with the sample mean `M̂ₙ` and biased sample variance `V̂ₙ` of
-`HierarchicalCount`. -/
+`HierarchicalCount`. Both coordinates are `0` when `V̂ₙ = M̂ₙ`, in particular for `n = 0`, by the
+convention `x / 0 = 0`. -/
 noncomputable def momEstimator {Ω : Type*} (σ : ℝ) (X : ℕ → Ω → ℕ) (n : ℕ) (ω : Ω) : E₂ :=
   !₂[momShape (sampleMean (fun i ω => (X i ω : ℝ)) n ω) (sampleVar (fun i ω => (X i ω : ℝ)) n ω),
     momRate σ (sampleMean (fun i ω => (X i ω : ℝ)) n ω) (sampleVar (fun i ω => (X i ω : ℝ)) n ω)]
@@ -1212,8 +1223,9 @@ theorem inner_inverse_countFisherInfo_le {σ a b : ℝ} (hσ : 0 < σ) (ha : 0 <
   have h := inner_inverse_le_integral_inner_sq hs_meas hs_sq hg_meas hg_sq hI hinfo w
   rwa [hv, map_neg, inner_neg_neg] at h
 
-/-- **Law of the MLE limit.** If `⟪Y, t⟫ ~ N(0, ⟪I t, t⟫)` for every `t`, with `I` the
-invertible Fisher information, then `⟪I⁻¹ Y, u⟫ ~ N(0, ⟪I⁻¹ u, u⟫)`. -/
+/-- **Law of the MLE limit.** If `⟪Y, t⟫ ~ N(0, ⟪I t, t⟫)` for every `t`, with `I` the Fisher
+information at `a, b, σ > 0` and `τ > σ / (a (b + σ))`, which is invertible, then
+`⟪I⁻¹ Y, u⟫ ~ N(0, ⟪I⁻¹ u, u⟫)`. -/
 theorem hasLaw_inner_inverse_countFisherInfo {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'}
     {a b σ τ : ℝ} (ha : 0 < a) (hb : 0 < b) (hσ : 0 < σ) (hτ : σ / (a * (b + σ)) < τ)
     {Y : Ω' → E₂}
@@ -1230,8 +1242,8 @@ theorem hasLaw_inner_inverse_countFisherInfo {Ω' : Type*} [MeasurableSpace Ω']
     (inner_countFisherInfo_comm a b σ τ) hI _ _
 
 /-- **Law of the moment-estimator limit.** If `⟪Y, t⟫ ~ N(0, E ⟪g, t⟫²)` for every `t`,
-`g = momEstFun σ (a, b) K`, then `⟪-J⁻¹ Y, u⟫ ~ N(0, E ⟪g, (J⁻¹)ᵀ u⟫²)`,
-`J = momJacobian a b σ`. -/
+`g = momEstFun σ (a, b) K`, then `⟪-J⁻¹ Y, u⟫ ~ N(0, E ⟪g, (J⁻¹)ᵀ u⟫²)`, `J = momJacobian a b σ`,
+where `J⁻¹` is the inverse of `J` if `J` is invertible (as for `a, b, σ > 0`) and `0` otherwise. -/
 theorem hasLaw_inner_neg_inverse_momJacobian {Ω' : Type*} [MeasurableSpace Ω']
     {P' : Measure Ω'} {σ a b : ℝ} {μX : Measure ℕ} {Y : Ω' → E₂}
     (hY : ∀ t, HasLaw (fun ω => ⟪Y ω, t⟫)

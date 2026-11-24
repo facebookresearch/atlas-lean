@@ -52,16 +52,6 @@ public theorem_wanted opx_mono_of_containsPattern (n : ℝ) {P Q : Set (ℝ × �
     (h : PointSetContainsPattern Q P) :
     opx n P ≤ opx n Q
 
-/-- **Monotonicity of the continuous Turán number in the side length.** For every set
-$P \subseteq \mathbb{R}^2$ and all real numbers $m \le n$, the continuous Turán numbers satisfy
-$\operatorname{opx}(m, P) \le \operatorname{opx}(n, P)$.
-
-The paper assumes $0 < m$. This is not needed, since $\operatorname{opx}(m, P) = 0$ for $m \le 0$.
-
-Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Lemma 2.4
-(`integers-2024-A1-lem-2-4`). -/
-public theorem_wanted opx_mono_left (P : Set (ℝ × ℝ)) {m n : ℝ} (hmn : m ≤ n) : opx m P ≤ opx n P
-
 /-- **Superadditivity of the continuous Turán number.** For every set $P \subseteq \mathbb{R}^2$
 and all real numbers $m, n > 0$,
 $\operatorname{opx}(m, P) + \operatorname{opx}(n, P) \le \operatorname{opx}(m + n, P)$.
@@ -640,15 +630,6 @@ public theorem patternExD_singleton (d n : ℕ) (p : Fin d → ℝ) : patternExD
   rcases A.eq_empty_or_nonempty with rfl | ⟨a, ha⟩
   · simp
   · exact absurd ⟨fun i _ => a i, fun i => by simp, by simpa using ha⟩ hA
-
-/-- **Higher-dimensional continuous Turán numbers are monotone under containment.** Let
-$P, Q \subseteq \mathbb{R}^d$. If $Q$ contains $P$, then
-$\mathrm{opx}(n, P, d) \le \mathrm{opx}(n, Q, d)$ for every real number $n$.
-
-Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Lemma 5.1
-(`integers-2024-A1-lem-5-1`). -/
-public theorem_wanted opxD_mono_of_containsPatternD {d : ℕ} (n : ℝ) {P Q : Set (Fin d → ℝ)}
-    (h : ContainsPatternD Q P) : opxD d n P ≤ opxD d n Q
 
 /-- **Higher-dimensional continuous Turán numbers are monotone in the side length.** For every
 set $P \subseteq \mathbb{R}^d$ and all real numbers $m \le n$,
