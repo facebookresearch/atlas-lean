@@ -15,7 +15,7 @@
 ## Examples and sign checks
 
 - [A decaying cosine mode satisfies Robin conditions with h = kμ tan μL/2](robin-cosine-mode.md)
-- [For L > 0 a decaying cosine mode has zero flux at both ends](neumann-cosine-mode.md)
+- [For L > 0 the cosine mode cos(πx/L) has zero flux at both ends](neumann-cosine-mode.md)
 - [With the wrong sign at x = 0 the boundary work can be positive](wrong-left-sign-boundary-input.md)
 - [A negative transfer coefficient can make the boundary work positive](negative-h-boundary-input.md)
 
@@ -35,6 +35,6 @@
 ## Thermal networks: stored heat and a quadratic functional
 
 - [With symmetric conductances the stored heat changes at the input rate](has-deriv-at-thermal-storage.md)
-- [Without inputs the rate of ∑ C T²/2 is −½ ∑∑ G times squared gaps](has-deriv-at-quadratic-functional.md)
+- [Symmetric G, no inputs: ∑ C T²/2 has rate −½ ∑∑ G times squared gaps](has-deriv-at-quadratic-functional.md)
 - [For nonnegative capacities the quadratic functional is nonnegative](quadratic-functional-nonneg.md)
 - [For nonnegative conductances the quadratic rate is nonpositive](quadratic-functional-rate-nonpos.md)

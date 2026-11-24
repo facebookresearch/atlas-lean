@@ -7,5 +7,5 @@ temperature is
 
 with `D₀` the [boundary constant](counterflow-inlet-diff.md), `s` the
 [counterflow rate](counterflow-rate.md) and `I(s, x)` the
-[exponential integral](exp-decay-integral.md), so `T_c(0) = T_hi - D₀` is the cold outlet. It is
-meant for `C_h, C_c > 0`; with `u / 0 = 0`, `K / C_c = 0` when `C_c = 0`.
+[exponential integral](exp-decay-integral.md); since `I(s, 0) = 0`, `T_c(0) = T_hi - D₀` is the cold
+outlet value. It is meant for `C_h, C_c > 0`; with `u / 0 = 0`, `K / C_c = 0` when `C_c = 0`.

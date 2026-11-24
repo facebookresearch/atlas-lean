@@ -12,7 +12,6 @@ flows and heads are unique once one head is fixed.
 - [Passive pipe flow: pipe-flow equations with nonnegative resistances](is-passive-pipe-flow.md)
 - [Head drop along each arc of a passive pipe flow](passive-pipe-flow-head-drop.md)
 - [Dissipation identity for a passive pipe flow](passive-pipe-flow-dissipation.md)
-- [The dissipation pairing of a passive pipe flow is nonnegative](passive-pipe-flow-dissipation-nonneg.md)
 - [Reversing all arcs and flows preserves passivity](passive-pipe-flow-reverse.md)
 - [With positive resistances and equal inflows the arc flows are unique](pipe-flow-equations-flow-unique.md)
 - [Passive pipe flows with positive resistances have unique arc flows](passive-pipe-flow-flow-unique.md)

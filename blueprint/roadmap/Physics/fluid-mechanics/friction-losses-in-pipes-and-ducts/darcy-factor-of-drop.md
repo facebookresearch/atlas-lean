@@ -5,5 +5,4 @@ For an oriented pressure drop `Δp`, a duct length `L > 0`, a hydraulic diameter
 the drop is `f = 2 D Δp / (ρ V |V| L)`: the Darcy–Weisbach relation `Δp = f (L / D) ρ V |V| / 2`
 solved for `f`. The four conditions are part of the definition, so no factor is defined at zero
 flow, for a degenerate duct or fluid, or for a drop against the flow, which would describe energy
-generation rather than friction. Reversing both `V` and `Δp` keeps the factor, and the factor is
-[positive](darcy-factor-of-drop-pos.md).
+generation rather than friction. The factor is [positive](darcy-factor-of-drop-pos.md).

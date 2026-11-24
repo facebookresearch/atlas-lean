@@ -1,4 +1,4 @@
-# For L > 0 a decaying cosine mode has zero flux at both ends
+# For L > 0 the cosine mode cos(πx/L) has zero flux at both ends
 
 Let `L > 0`, let `D`, `k` and `Ta` be real, and let `μ = π/L` and
 `u(t, x) = Ta + e^{-Dμ²t} cos(μx)`. Then at every `(t, x)` the map `u(t, ·)` has the derivative

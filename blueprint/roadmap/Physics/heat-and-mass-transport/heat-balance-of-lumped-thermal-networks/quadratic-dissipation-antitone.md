@@ -1,4 +1,4 @@
-# Without heating and with G, g0 ≥ 0 the functional is nonincreasing
+# Symmetric G ≥ 0, g0 ≥ 0, no heating: the functional is nonincreasing
 
 Let `ι` be a finite index set of zones, with capacities `C i` of any sign, symmetric conductances
 `G i j = G j i`, boundary conductances `g0 i` and a constant outside temperature `Tout`. Let

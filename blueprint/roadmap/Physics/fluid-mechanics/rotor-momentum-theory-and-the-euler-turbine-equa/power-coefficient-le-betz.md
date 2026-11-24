@@ -9,4 +9,5 @@ area `A` are positive, then on the wind-extraction branch `0 < U_w < U∞` the
 [axial induction factor](induction-factor.md) lies in `0 < a < 1/2`, the
 [power coefficient](power-coefficient.md) is at most `16/27`, and it equals `16/27` exactly when
 `a = 1/3`. The limit is reached: for `ρ, A, U∞ > 0` the
-[state with induction factor](of-induction.md) `1/3` has `U_w = U∞ / 3` and `C_P = 16/27`.
+[state with induction factor](of-induction.md) `1/3` has `U_w = U∞ / 3` and `C_P = 16/27`
+([realization](of-induction-spec.md)).

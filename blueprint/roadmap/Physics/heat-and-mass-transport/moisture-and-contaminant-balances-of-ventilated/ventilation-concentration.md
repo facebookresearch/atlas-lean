@@ -6,6 +6,7 @@ at exchange rate `Q/V` and constant input `(Q c_out + G)/V`:
 
 `c(t) = c₀ e^{-(Q/V)t} + ∫_0^t e^{-(Q/V)(t - s)} (Q c_out + G)/V ds`,
 
-the solution of `c′ = (Q/V)(c_out - c) + G/V` with `c(0) = c₀` for a room of volume `V`, flow `Q`,
-outdoor concentration `c_out` and indoor source `G`. With `x/0 = 0`, it is the constant `c₀` when
-`V = 0`. In the physical reading `V > 0` and `Q > 0`.
+for a room of volume `V`, flow `Q`, outdoor concentration `c_out` and indoor source `G`. For `V ≠ 0`
+it [solves](ventilation-concentration-has-deriv-at.md) the balance `c′ = (Q/V)(c_out - c) + G/V`,
+and it [starts](ventilation-concentration-zero.md) at `c(0) = c₀`. With `x/0 = 0`, it is the
+constant `c₀` when `V = 0`. In the physical reading `V > 0` and `Q > 0`.

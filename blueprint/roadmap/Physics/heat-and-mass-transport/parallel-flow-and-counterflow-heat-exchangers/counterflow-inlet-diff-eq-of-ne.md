@@ -5,4 +5,5 @@ Let `C_h > 0`, `C_c > 0`, `K ≥ 0`, `L ≥ 0` and `C_h ≠ C_c`, and let `T_hi`
 
 `D₀ = (C_c - C_h)(T_hi - T_ci) / (C_c - C_h exp(-s L))`,
 
-with `s` the [counterflow rate](counterflow-rate.md); the denominator does not vanish.
+with `s` the [counterflow rate](counterflow-rate.md); the denominator has the sign of `C_c - C_h`,
+so it does not vanish.

@@ -710,8 +710,9 @@ lemma meanFlowExtraction_modeledReynoldsStress (k νt : ℝ) {S : Matrix (Fin 3)
   simp [meanFlowExtraction, modeledReynoldsStress, Fin.sum_univ_three, Matrix.one_apply]
   linear_combination (-(2 * k / 3)) * hS
 
-/-- **A nonnegative eddy viscosity extracts energy from the mean flow.** If `νt ≥ 0`, the
-closure's extraction `2 νt ‖S‖²` is nonnegative, for every trace-free `S` and every real `k`. -/
+/-- **For a trace-free strain, a nonnegative eddy viscosity gives nonnegative extraction.** If
+`νt ≥ 0`, the closure's extraction `2 νt ‖S‖²` is nonnegative, for every trace-free `S` and every
+real `k`. -/
 lemma meanFlowExtraction_modeledReynoldsStress_nonneg (k : ℝ) {νt : ℝ}
     {S : Matrix (Fin 3) (Fin 3) ℝ} (hS : S.trace = 0) (hνt : 0 ≤ νt) :
     0 ≤ meanFlowExtraction (modeledReynoldsStress k νt S) S := by

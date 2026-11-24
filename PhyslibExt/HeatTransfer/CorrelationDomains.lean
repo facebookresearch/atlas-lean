@@ -348,7 +348,8 @@ lemma nusseltNumber_heatTransferCoefficient (Nu : ℝ) (k : WithDim thermalCondu
   simp only [heatTransferCoefficient]
   field_simp
 
-/-- The convective heat rate `Q = h A ΔT` into the fluid side, the defining relation of `h` (a
+/-- The convective heat rate `Q = h A ΔT` from the surface into the fluid, for the
+surface-minus-fluid temperature difference `ΔT = T_s - T_m`: the defining relation of `h` (a
 model input), cast to the power dimension. -/
 noncomputable def convectiveHeatRate (h : WithDim heatTransferCoefficientDim ℝ)
     (A : WithDim (single ISQDimensionBase.length ^ (2 : ℕ)) ℝ)

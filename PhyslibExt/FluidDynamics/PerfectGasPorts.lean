@@ -1394,7 +1394,8 @@ lemma specificEntropyChange_perfectGas {γ R ρ1 p1 T1 ρ2 p2 T2 : ℝ} (hγ : 1
 /-- The dimensionless entropy jump `Δs / R = log P / (γ - 1) - γ log r / (γ - 1)` of the distinct
 normal-shock branch at `m = M1 ^ 2`, with its pressure ratio `P` and density ratio `r`. Domain:
 `γ > 1` and `m > (γ - 1) / (2 γ)`, where `P, r > 0`; below the threshold `P ≤ 0`, and the value
-comes from the conventions `log 0 = 0` and `log x = log |x|`. -/
+comes from the conventions `log 0 = 0` and `log x = log |x|`. With `x / 0 = 0` it is `0` at
+`γ = 1`. -/
 noncomputable def shockEntropyJump (γ m : ℝ) : ℝ :=
   Real.log (shockPressureRatio γ m) / (γ - 1) - γ * Real.log (shockDensityRatio γ m) / (γ - 1)
 

@@ -121,9 +121,9 @@ coefficient `Krad`, and constant heat input `Q`:
 noncomputable def radiatorRate (C Krad Q T : ℝ) : ℝ :=
   (Q - Krad * T ^ 4) / C
 
-/-- The clipped radiator rate: the rate of the temperature clipped
-to the invariant box `[Tmin, Tmax]`. It agrees with the physical
-rate on the box and is globally defined. -/
+/-- The clipped radiator rate: the rate of the temperature clipped to the box `[Tmin, Tmax]`, meant
+for `Tmin ≤ Tmax` (for `Tmin > Tmax` the clipped temperature is `Tmax` for every `T`). It agrees
+with the physical rate on the box and is globally defined. -/
 noncomputable def clippedRadiatorRate (C Krad Q Tmin Tmax T : ℝ) : ℝ :=
   radiatorRate C Krad Q (min (max T Tmin) Tmax)
 
@@ -164,11 +164,8 @@ lemma clippedRadiatorRate_eq_of_mem {C Krad Q Tmin Tmax T : ℝ}
   unfold clippedRadiatorRate
   rw [max_eq_left hlo, min_eq_left hhi]
 
-/-- Global Lipschitz bound for the clipped rate: for `0 ≤ Tmin`,
-`Tmin ≤ Tmax`, `Krad, C > 0`, with `M = max Tmax |Tmin|` (which is
-`Tmax` under these hypotheses),
-`|clippedRate a - clippedRate b| ≤ (Krad * (4 * Tmax^3) / C) * |a - b|`
-for all real `a, b`. -/
+/-- Global Lipschitz bound for the clipped rate: for `0 ≤ Tmin`, `Tmin ≤ Tmax` and `Krad, C > 0`,
+`|clippedRate a - clippedRate b| ≤ (Krad * (4 * Tmax^3) / C) * |a - b|` for all real `a, b`. -/
 lemma clippedRadiatorRate_lipschitz {C Krad Q Tmin Tmax : ℝ}
     (hC : 0 < C) (hK : 0 < Krad) (hmin : 0 ≤ Tmin) (hmax : Tmin ≤ Tmax)
     (a b : ℝ) :
@@ -213,9 +210,9 @@ lemma clippedRadiatorRate_lipschitz {C Krad Q Tmin Tmax : ℝ}
   rw [hLHS, hRHS]
   exact hmul
 
-/-- The clipped rate in Mathlib's bundled `LipschitzWith` form,
-with constant `Krad * (4 * Tmax^3) / C`, for direct consumption
-by ODE existence/uniqueness APIs. -/
+/-- For `C, Krad > 0` and `0 ≤ Tmin ≤ Tmax`, the clipped rate in Mathlib's bundled `LipschitzWith`
+form, with constant `Krad * (4 * Tmax^3) / C`, for direct consumption by ODE existence/uniqueness
+APIs. -/
 lemma clippedRadiatorRate_lipschitzWith {C Krad Q Tmin Tmax : ℝ}
     (hC : 0 < C) (hK : 0 < Krad) (hmin : 0 ≤ Tmin) (hmax : Tmin ≤ Tmax) :
     LipschitzWith ⟨Krad * (4 * Tmax ^ 3) / C, by
@@ -350,11 +347,10 @@ private lemma exists_last_time_ge {T : ℝ → ℝ} {B t : ℝ} (ht : 0 ≤ t)
     have h1' : -(T s0) = -B := h1
     exact neg_inj.mp h1'
 
-/-- Box trapping for an actual forward solution: if `T` has
-within-derivative `radiatorRate C Krad Q (T s)` on `Set.Ici 0` at
-every `s ≥ 0`, with `0 ≤ Tmin ≤ Tmax`, the inward signs above, and
-`T 0 ∈ [Tmin, Tmax]`, then `T t ∈ [Tmin, Tmax]` for every `t ≥ 0`:
-on the box the trajectory solves the original (unclipped) field. -/
+/-- Box trapping for an actual forward solution: for `C, Krad > 0`, if `T` has within-derivative
+`radiatorRate C Krad Q (T s)` on `Set.Ici 0` at every `s ≥ 0`, with `0 ≤ Tmin ≤ Tmax`, the inward
+signs above, and `T 0 ∈ [Tmin, Tmax]`, then `T t ∈ [Tmin, Tmax]` for every `t ≥ 0`: on the box the
+trajectory solves the original (unclipped) field. -/
 theorem radiator_solution_trapped {C Krad Q Tmin Tmax : ℝ}
     (hC : 0 < C) (hK : 0 < Krad) (hmin : 0 ≤ Tmin) (hmax : Tmin ≤ Tmax)
     (hlo : 0 ≤ Q - Krad * Tmin ^ 4) (hhi : Q - Krad * Tmax ^ 4 ≤ 0)
@@ -787,15 +783,14 @@ private lemma ode_global_exists_of_global_lipschitz
       (hlip.continuous.comp continuous_snd) (fun _ => hlip)
   exact ⟨T, hT.1, hT.2⟩
 
-/-- Existence of the trapped physical solution: for every
-`T0 ∈ [Tmin, Tmax]` there is a global trajectory `T` with
-`T 0 = T0`, solving the clipped field everywhere
-(`HasDerivAt T (clippedRadiatorRate ... (T t)) t` for all `t`),
-staying in the box for all `t ≥ 0`, and there solving the
-original field (`HasDerivAt T (radiatorRate ... (T t)) t`).
-Existence uses the global existence theorem for globally
-Lipschitz fields (`ode_global_exists_of_global_lipschitz`) with
-the Lipschitz constant from `clippedRadiatorRate_lipschitz`. -/
+/-- Existence of the trapped physical solution: for `C, Krad > 0`, `0 ≤ Tmin ≤ Tmax` and the inward
+end conditions `0 ≤ Q - Krad * Tmin ^ 4` and `Q - Krad * Tmax ^ 4 ≤ 0`, for every
+`T0 ∈ [Tmin, Tmax]` there is a global trajectory `T` with `T 0 = T0`, solving the clipped field
+everywhere (`HasDerivAt T (clippedRadiatorRate ... (T t)) t` for all `t`), staying in the box for
+all `t ≥ 0`, and there solving the original field (`HasDerivAt T (radiatorRate ... (T t)) t`).
+Existence uses the global existence theorem for globally Lipschitz fields
+(`ode_global_exists_of_global_lipschitz`) with the Lipschitz constant from
+`clippedRadiatorRate_lipschitz`. -/
 lemma radiator_solution_exists_trapped {C Krad Q Tmin Tmax T0 : ℝ}
     (hC : 0 < C) (hK : 0 < Krad) (hmin : 0 ≤ Tmin) (hmax : Tmin ≤ Tmax)
     (hlo : 0 ≤ Q - Krad * Tmin ^ 4) (hhi : Q - Krad * Tmax ^ 4 ≤ 0)
@@ -913,12 +908,11 @@ theorem glued_integral_on_piece {C Krad : ℝ} (hC : 0 < C) {m : ℕ}
   have hftc := intervalIntegral.integral_eq_sub_of_hasDerivAt_of_le hle hTsmall hderiv hint
   exact hftc.symm
 
-/-- Box trapping across the switches: if every mode satisfies
-the inward endpoint signs and the initial temperature is in the
-box, and if every single-mode piece solution starting in the box
-stays in the box on its piece (the single-mode trapping
-principle, supplied as data), then the glued solution stays in
-the box on the whole horizon. -/
+/-- Box trapping across the switches: for strictly increasing switch times and a temperature that is
+continuous on each piece and solves that piece's radiator equation inside it, if the initial
+temperature is in the box and every single-mode piece solution starting in the box stays in the box
+on its piece (the single-mode trapping principle, supplied as data), then the glued solution stays
+in the box on the whole horizon. -/
 theorem glued_trapped {C Krad Tmin Tmax : ℝ} {m : ℕ} {τ : ℕ → ℝ}
     (hτ : StrictMono τ) {Q : ℕ → ℝ} {T : ℝ → ℝ}
     (hcont : ∀ j : ℕ, j < m →

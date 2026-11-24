@@ -3,4 +3,5 @@
 For rates `λ`, `μ`, a red duration `R` and a time `s ≥ 0`, the cumulative departures are
 `D(s) = max(λ s - Q(s), 0)`, the arrivals minus the vehicles still queued, with the
 [signal queue](queue-len.md) `Q(t)` (`λ t` for `t ≤ R`, `max(0, λ R - (μ - λ)(t - R))` for `t > R`).
-For `0 < λ < μ` the maximum is not needed: `D(s) = λ s - Q(s)`.
+For `0 < λ < μ` and `R ≥ 0` the maximum is not needed, `D(s) = λ s - Q(s)`, since then the backlog
+`λ s - D(s)` is `Q(s)` ([flow pair](is-flow-pair-and-backlog-eq-queue-len.md)).

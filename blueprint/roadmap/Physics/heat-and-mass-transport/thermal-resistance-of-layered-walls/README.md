@@ -5,8 +5,7 @@
 - [Total series resistance of n layers between two surface films](thermal-series-resistance.md)
 - [Overall heat-transfer coefficient of a layered wall](thermal-overall-coefficient.md)
 - [For positive area, films, thicknesses and conductivities R > 0](thermal-series-resistance-pos.md)
-- [Film and layer drops of one heat rate Q give Q = ΔT over R](thermal-series-heat-rate-of-drops.md)
-- [Film and layer drops of one heat rate Q give Q = A U ΔT](thermal-series-heat-rate-eq-area-mul-u.md)
+- [Film and layer drops of one heat rate Q give Q = ΔT/R = A U ΔT](thermal-series-heat-rate-of-drops.md)
 
 ## Interface temperatures
 

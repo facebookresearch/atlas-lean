@@ -607,8 +607,8 @@ lemma massFlowRate_dimScale (u1 u2 : UnitScale ISQDimensionBase)
   apply WithDim.ext
   exact massFlowRate_coord_dimScale u1 u2 ρ.val v.val A.val hA
 
-/-- Computing the stress in the new units and converting it back restores the stress computed in
-the original units (`dimScale_round_trip` at `stressDim`). -/
+/-- For a positive area `A`, computing the stress in the new units and converting it back restores
+the stress computed in the original units (`dimScale_round_trip` at `stressDim`). -/
 lemma normalStress_coord_round_trip (u1 u2 : UnitScale ISQDimensionBase) (F A : ℝ)
     (hA : 0 < A) :
     (u2.dimScale u1 stressDim : ℝ) *
@@ -624,8 +624,9 @@ lemma shaftPower_coord_round_trip (u1 u2 : UnitScale ISQDimensionBase) (τ ω : 
           ((u1.dimScale u2 (single .time)⁻¹ : ℝ) * ω)) = τ * ω := by
   rw [shaftPower_coord_dimScale u1 u2 τ ω, dimScale_round_trip]
 
-/-- Computing the mass flow rate in the new units and converting it back restores the mass flow
-rate computed in the original units (`dimScale_round_trip` at `massFlowDim`). -/
+/-- For a positive area `A`, computing the mass flow rate in the new units and converting it back
+restores the mass flow rate computed in the original units (`dimScale_round_trip` at
+`massFlowDim`). -/
 lemma massFlowRate_coord_round_trip (u1 u2 : UnitScale ISQDimensionBase) (ρ v A : ℝ)
     (hA : 0 < A) :
     (u2.dimScale u1 massFlowDim : ℝ) *
@@ -699,8 +700,8 @@ lemma normalStress_coord_ne_forceDim :
   simp only [forceDim, map_div, map_mul, map_pow, dimScale_single, siScale, mmScale]
   norm_num
 
-/-- Commuting with a change of units does not certify a formula: the dimensionally consistent but
-empirically wrong stress `2 F / A` commutes as well. -/
+/-- Commuting with a change of units does not certify a formula: for a positive area `A`, the
+dimensionally consistent but empirically wrong stress `2 F / A` commutes as well. -/
 lemma two_mul_normalStress_coord_dimScale (u1 u2 : UnitScale ISQDimensionBase) (F A : ℝ)
     (hA : 0 < A) :
     2 * ((u1.dimScale u2 forceDim : ℝ) * F) /

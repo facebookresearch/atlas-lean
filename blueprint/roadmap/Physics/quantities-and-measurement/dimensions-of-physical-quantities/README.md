@@ -1,6 +1,6 @@
 # Dimensions of physical quantities
 
-## ISQ dimensions of amount-based quantities
+## ISQ dimensions, exponents and dimension identities
 
 - [The dimensionless dimension](dimensionless-dim.md)
 - [Dimension of energy](energy-dim.md)

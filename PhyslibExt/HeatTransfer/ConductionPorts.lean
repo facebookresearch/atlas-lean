@@ -433,11 +433,10 @@ theorem robin_uniqueness {D L k h0 hL Ta T : ℝ} (hD : 0 ≤ D) (hL0 : 0 < L)
 
 /-! ## C. Fixtures -/
 
-/-- Robin cosine mode (nonzero fixture), for `k > 0`.
+/-- Robin cosine mode (nonzero fixture), for `k > 0`, `0 ≤ μ`, `0 ≤ L` and `μ * L / 2 < π / 2`.
 `u t x = Ta + exp (-D * μ^2 * t) * cos (μ * (x - L / 2))` with `ux` its `x`-derivative solves
 `u_t = D * u_xx` at every point, satisfies the outward Robin conditions at both ends with
-`h = k * μ * tan (μ * L / 2)`, has `h ≥ 0` when `0 ≤ μ`, `0 ≤ L` and `μ * L / 2 < π / 2`, and has
-`θ(t, 0) ≠ 0` there. -/
+`h = k * μ * tan (μ * L / 2)`, has `h ≥ 0`, and has `θ(t, 0) ≠ 0`. -/
 lemma robinCosineMode {D k μ L Ta : ℝ} (hk : 0 < k) (hμ : 0 ≤ μ) (hL0 : 0 ≤ L)
     (hμL : μ * L / 2 < Real.pi / 2) :
     let u : ℝ → ℝ → ℝ := fun t x => Ta + Real.exp (-D * μ ^ 2 * t) * Real.cos (μ * (x - L / 2))

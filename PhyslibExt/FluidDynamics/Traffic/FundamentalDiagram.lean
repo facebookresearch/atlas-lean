@@ -60,9 +60,8 @@ for `0 < vf`, `0 < kj`, and `0 ≤ k ≤ kj`. With the convention `x / 0 = 0` it
 noncomputable def greenshieldsFlux (vf kj k : ℝ) : ℝ :=
   vf * k * (1 - k / kj)
 
-/-- **Greenshields flux range.** On the physical density range
-`0 ≤ k ≤ kj`, the Greenshields flux is nonnegative and at most the capacity
-`vf * kj / 4`. -/
+/-- **Greenshields flux range.** For `0 < vf` and `0 < kj`, on the physical density range
+`0 ≤ k ≤ kj`, the Greenshields flux is nonnegative and at most the capacity `vf * kj / 4`. -/
 theorem greenshieldsFlux_nonneg_le {vf kj k : ℝ} (hvf : 0 < vf)
     (hkj : 0 < kj) (hk0 : 0 ≤ k) (hk : k ≤ kj) :
     0 ≤ greenshieldsFlux vf kj k ∧ greenshieldsFlux vf kj k ≤ vf * kj / 4 := by

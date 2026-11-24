@@ -386,14 +386,16 @@ def boltzmannDim : Dimension ISQDimensionBase := energyDim / temperatureDim
 /-- The amount of substance `n = N / N_A` of a dimensionless particle count `N`, given the
 Avogadro constant `N_A` as an inverse-amount quantity. The quotient is a `WithDim`
 division, so its dimension `1 * (N⁻¹)⁻¹ = N` is computed by the type system. With the
-convention `x / 0 = 0`, it is `0` when `N_A = 0`. -/
+convention `x / 0 = 0`, it is `0` when `N_A = 0`. In the physical reading `N_A > 0` and
+`N ≥ 0`. -/
 noncomputable def amountOfCount (NA : WithDim avogadroDim ℝ) (N : WithDim dimensionlessDim ℝ) :
     WithDim amountDim ℝ :=
   WithDim.cast (N / NA) (by unfold dimensionlessDim avogadroDim; rw [inv_inv, one_mul])
 
 /-- The dimensionless particle count `N = n N_A` of an amount of substance `n`, given the
 Avogadro constant `N_A` as an inverse-amount quantity. The product is a `WithDim`
-multiplication, so its dimension `N * N⁻¹ = 1` is computed by the type system. -/
+multiplication, so its dimension `N * N⁻¹ = 1` is computed by the type system. In the physical
+reading `N_A > 0` and `n ≥ 0`. -/
 def countOfAmount (NA : WithDim avogadroDim ℝ) (n : WithDim amountDim ℝ) :
     WithDim dimensionlessDim ℝ :=
   WithDim.cast (n * NA) (by unfold dimensionlessDim avogadroDim; rw [mul_inv_cancel])
@@ -436,7 +438,8 @@ lemma dimOf_amountOfCount_ne_one (NA : WithDim avogadroDim ℝ) (N : WithDim dim
     dimOf (amountOfCount NA N) ≠ 1 :=
   amountDim_ne_one
 
-/-- The molar gas constant `R = N_A k_B`, as a quantity of dimension `gasConstantDim`. -/
+/-- The molar gas constant `R = N_A k_B`, as a quantity of dimension `gasConstantDim`. In the
+physical reading `N_A > 0` and `k_B > 0`. -/
 noncomputable def gasConstant (NA : WithDim avogadroDim ℝ) (kB : WithDim boltzmannDim ℝ) :
     WithDim gasConstantDim ℝ :=
   WithDim.cast (NA * kB) (by
@@ -453,7 +456,7 @@ lemma gasConstant_pos {NA : WithDim avogadroDim ℝ} {kB : WithDim boltzmannDim 
   mul_pos hNA hkB
 
 /-- The molar energy `E = N_A e` of a per-particle energy `e`, as a quantity of dimension
-`molarEnergyDim`. -/
+`molarEnergyDim`. In the physical reading `N_A > 0`. -/
 def molarEnergy (NA : WithDim avogadroDim ℝ) (e : WithDim energyDim ℝ) :
     WithDim molarEnergyDim ℝ :=
   WithDim.cast (NA * e) (by

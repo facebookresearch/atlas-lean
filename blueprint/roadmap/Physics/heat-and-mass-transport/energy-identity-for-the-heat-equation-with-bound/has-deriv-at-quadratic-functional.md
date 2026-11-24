@@ -1,4 +1,4 @@
-# Without inputs the rate of ∑ C T²/2 is −½ ∑∑ G times squared gaps
+# Symmetric G, no inputs: ∑ C T²/2 has rate −½ ∑∑ G times squared gaps
 
 Let `ι` be a finite index set of nodes, with capacities `C i`, conductances `G i j` such that
 `G i j = G j i`, temperatures `T i` differentiable at time `t` with derivatives `dT i`, such that

@@ -4,5 +4,6 @@ For an initial count `N0 ≥ 0` (the vehicles on the link at time `0`), cumulati
 departure counts `A, D : [0, ∞) → [0, ∞)` counted from time `0` and an entry time `t ≥ 0`, the exit
 time of the vehicle that enters at `t`, under first-in first-out order, is
 `τ(t) = inf {s ≥ t : D(s) ≥ N0 + A(t)}` when that set is nonempty and `τ(t) = ∞` otherwise: the
-first time at or after entry at which the departure count reaches the vehicle's number `N0 + A(t)`.
-It takes values in `[0, ∞]`. For a right-continuous `D` the infimum is attained.
+infimum of the times at or after entry at which the departure count reaches the vehicle's number
+`N0 + A(t)`. It takes values in `[0, ∞]`. For a nondecreasing right-continuous `D` the infimum is
+attained, so it is the first such time ([exit by a given time](link-exit-time-le-iff.md)).

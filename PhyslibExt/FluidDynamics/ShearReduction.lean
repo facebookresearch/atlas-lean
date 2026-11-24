@@ -433,8 +433,8 @@ lemma shearFlow_kineticEnergy_hasDerivAt {ρ L : ℝ} (hρ : 0 < ρ) (hL : 0 ≤
 `y = L` (for `L ≠ 0`, `singleModeProfile_walls`):
 `U(t, y) = A y / L - (A / π) sin(π y / L) exp(-ν (π / L)² t)`, the plane Couette profile minus one
 decaying sine mode. With the convention `x / 0 = 0` it is identically `0` when `L = 0`. It is not a
-start from rest: for `L > 0` and `A ≠ 0` the initial data `A y / L - (A / π) sin(π y / L)` is
-nonzero at every interior point `0 < y < L`, and the wall `y = L` moves at every time. -/
+start from rest: for `ρ, μ, L > 0`, `A ≠ 0` and `ν = μ / ρ` its kinetic energy at `t = 0` is
+positive (`singleModeProfile_energy_pos`), and the wall `y = L` moves at every time. -/
 noncomputable def singleModeProfile (A L ν t y : ℝ) : ℝ :=
   A * y / L - A / Real.pi * Real.sin (Real.pi * y / L) * Real.exp (-ν * (Real.pi / L) ^ 2 * t)
 

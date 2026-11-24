@@ -5,5 +5,5 @@ Let `(T_h, T_c)` be a [counterflow solution](is-counterflow-solution.md) on `[0,
 
 `C_h (T_hi - T_h(x)) = C_c (T_c(0) - T_c(x))`;
 
-at `x = L` this is the port balance `C_h (T_hi - T_h(L)) = C_c (T_c(0) - T_ci)`. No sign condition
-is needed.
+for `L ≥ 0`, at `x = L` this is the port balance `C_h (T_hi - T_h(L)) = C_c (T_c(0) - T_ci)`. No
+sign condition on `C_h`, `C_c` or `K` is needed.

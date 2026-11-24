@@ -199,8 +199,8 @@ lemma parallelHotTemp_sub_parallelColdTemp {Ch Cc : ℝ} (hCh : 0 < Ch) (hCc : 0
   field_simp
   ring
 
-/-- **Existence.** The closed form solves the parallel-flow equations on `[0, L]` with both
-inlets at `x = 0`, for every conductance per unit length `K` and length `L`. -/
+/-- **Existence.** For `Ch, Cc > 0`, the closed form solves the parallel-flow equations on
+`[0, L]` with both inlets at `x = 0`, for every conductance per unit length `K` and length `L`. -/
 lemma isParallelFlowSolution_closedForm {Ch Cc : ℝ} (hCh : 0 < Ch) (hCc : 0 < Cc)
     (K L Thi Tci : ℝ) :
     IsParallelFlowSolution Ch Cc K L Thi Tci (parallelHotTemp Ch Cc K Thi Tci)
@@ -249,8 +249,8 @@ lemma isParallelFlowSolution_closedForm {Ch Cc : ℝ} (hCh : 0 < Ch) (hCc : 0 < 
     field_simp
     ring
 
-/-- **Uniqueness.** Every solution of the parallel-flow equations on `[0, L]` with inlets
-`Thi`, `Tci` at `x = 0` is the closed form on `[0, L]`. -/
+/-- **Uniqueness.** For `Ch, Cc > 0`, every solution of the parallel-flow equations on `[0, L]`
+with inlets `Thi`, `Tci` at `x = 0` is the closed form on `[0, L]`. -/
 lemma IsParallelFlowSolution.eq_closedForm {Ch Cc K L Thi Tci : ℝ} {Th Tc : ℝ → ℝ}
     (hCh : 0 < Ch) (hCc : 0 < Cc) (h : IsParallelFlowSolution Ch Cc K L Thi Tci Th Tc) :
     ∀ x ∈ Set.Icc 0 L,
@@ -377,8 +377,8 @@ of them is `0` and when `Δ₁ = -Δ₂ ≠ 0`. -/
 noncomputable def logMeanTempDiff (Δ₁ Δ₂ : ℝ) : ℝ :=
   if Δ₁ = Δ₂ then Δ₁ else (Δ₁ - Δ₂) / Real.log (Δ₁ / Δ₂)
 
-/-- **Outlet temperatures.** For `K = UA / L` with `L > 0`, every solution has the outlet values
-`Th(L) = Thi - Cc / (Ch + Cc) * (Thi - Tci) * (1 - exp (-UA (1 / Ch + 1 / Cc)))` and
+/-- **Outlet temperatures.** For `Ch, Cc > 0` and `K = UA / L` with `L > 0`, every solution has the
+outlet values `Th(L) = Thi - Cc / (Ch + Cc) * (Thi - Tci) * (1 - exp (-UA (1 / Ch + 1 / Cc)))` and
 `Tc(L) = Tci + Ch / (Ch + Cc) * (Thi - Tci) * (1 - exp (-UA (1 / Ch + 1 / Cc)))`. -/
 lemma IsParallelFlowSolution.outlet {Ch Cc UA L Thi Tci : ℝ} {Th Tc : ℝ → ℝ} (hCh : 0 < Ch)
     (hCc : 0 < Cc) (hL : 0 < L) (h : IsParallelFlowSolution Ch Cc (UA / L) L Thi Tci Th Tc) :
@@ -486,8 +486,8 @@ lemma IsParallelFlowSolution.heat_eq_UA_mul_logMean {Ch Cc UA L Thi Tci : ℝ} {
           ((Thi - Tci) * (1 - Real.exp (-(UA * (1 / Ch + 1 / Cc)))))).symm
     rw [hQ, hdiff, hlog, hrhs, hkey]
 
-/-- **Temperature bounds.** With `K ≥ 0` and the hot inlet no colder than the cold one, every
-solution satisfies `Tci ≤ Tc x` and `Th x ≤ Thi` on `[0, L]`. -/
+/-- **Temperature bounds.** With `Ch, Cc > 0`, `K ≥ 0` and the hot inlet no colder than the cold
+one, every solution satisfies `Tci ≤ Tc x` and `Th x ≤ Thi` on `[0, L]`. -/
 lemma IsParallelFlowSolution.bounds {Ch Cc K L Thi Tci : ℝ} {Th Tc : ℝ → ℝ} (hCh : 0 < Ch)
     (hCc : 0 < Cc) (hK : 0 ≤ K) (hin : Tci ≤ Thi)
     (h : IsParallelFlowSolution Ch Cc K L Thi Tci Th Tc) :
@@ -522,9 +522,9 @@ lemma IsParallelFlowSolution.bounds {Ch Cc K L Thi Tci : ℝ} {Th Tc : ℝ → �
       mul_nonneg (mul_nonneg hcc hDT) hterm
     linarith [hpos]
 
-/-- **Parallel-flow outlet order.** For `K = UA / L` with `L > 0`, `UA > 0` and `Thi > Tci`, the
-outlets satisfy `Tci < Tc(L) < Th(L) < Thi`: the cold outlet stays strictly below the hot
-outlet. -/
+/-- **Parallel-flow outlet order.** For `Ch, Cc > 0` and `K = UA / L` with `L > 0`, `UA > 0` and
+`Thi > Tci`, the outlets satisfy `Tci < Tc(L) < Th(L) < Thi`: the cold outlet stays strictly below
+the hot outlet. -/
 lemma IsParallelFlowSolution.outlet_order {Ch Cc UA L Thi Tci : ℝ} {Th Tc : ℝ → ℝ}
     (hCh : 0 < Ch) (hCc : 0 < Cc) (hL : 0 < L) (hUA : 0 < UA) (hin : Tci < Thi)
     (h : IsParallelFlowSolution Ch Cc (UA / L) L Thi Tci Th Tc) :
@@ -575,8 +575,8 @@ noncomputable def expDecayIntegral (s x : ℝ) : ℝ :=
 
 /-- Boundary constant of the counterflow solution: the temperature difference
 `Th(0) - Tc(0) = (Thi - Tci) / (1 + K / Cc * ∫₀ᴸ exp (-s y) dy)` at the hot inlet, fixed by the
-cold inlet condition `Tc(L) = Tci`, with `s = counterflowRate Ch Cc K`. The denominator is at
-least `1` for `K, L ≥ 0` and `Cc > 0`; elsewhere `u / 0 = 0` applies. -/
+cold inlet condition `Tc(L) = Tci`, with `s = counterflowRate Ch Cc K`. Where the denominator
+vanishes, `u / 0 = 0` applies. -/
 noncomputable def counterflowInletDiff (Ch Cc K L Thi Tci : ℝ) : ℝ :=
   (Thi - Tci) / (1 + K / Cc * expDecayIntegral (counterflowRate Ch Cc K) L)
 
@@ -735,8 +735,8 @@ lemma counterflowHotTemp_sub_counterflowColdTemp (Ch Cc K L Thi Tci x : ℝ) :
     field_simp [hs]
     try ring
 
-/-- **Boundary constant for unequal capacity rates.** For `Ch ≠ Cc`, `K, L ≥ 0`, the inlet-end
-difference is `(Cc - Ch) (Thi - Tci) / (Cc - Ch exp (-s L))`, the textbook form, whose
+/-- **Boundary constant for unequal capacity rates.** For `Ch, Cc > 0`, `Ch ≠ Cc` and `K, L ≥ 0`,
+the inlet-end difference is `(Cc - Ch) (Thi - Tci) / (Cc - Ch exp (-s L))`, the textbook form, whose
 denominator does not vanish. -/
 lemma counterflowInletDiff_eq_of_ne {Ch Cc K L : ℝ} (hCh : 0 < Ch) (hCc : 0 < Cc) (hK : 0 ≤ K)
     (hL : 0 ≤ L) (hne : Ch ≠ Cc) (Thi Tci : ℝ) :
@@ -788,8 +788,8 @@ lemma counterflowInletDiff_eq_of_ne {Ch Cc K L : ℝ} (hCh : 0 < Ch) (hCc : 0 < 
     rw [hden]
     field_simp [hden2, hCd]
 
-/-- **Existence.** For `K ≥ 0` and `L ≥ 0` the closed form solves the counterflow equations on
-`[0, L]` with the hot inlet at `x = 0` and the cold inlet at `x = L`. -/
+/-- **Existence.** For `Ch, Cc > 0`, `K ≥ 0` and `L ≥ 0` the closed form solves the counterflow
+equations on `[0, L]` with the hot inlet at `x = 0` and the cold inlet at `x = L`. -/
 lemma isCounterflowSolution_closedForm {Ch Cc K L : ℝ} (hCh : 0 < Ch) (hCc : 0 < Cc)
     (hK : 0 ≤ K) (hL : 0 ≤ L) (Thi Tci : ℝ) :
     IsCounterflowSolution Ch Cc K L Thi Tci (counterflowHotTemp Ch Cc K L Thi Tci)
@@ -855,8 +855,9 @@ lemma isCounterflowSolution_closedForm {Ch Cc K L : ℝ} (hCh : 0 < Ch) (hCc : 0
         ring
       exact hcomp.hasDerivWithinAt.congr_deriv hder
 
-/-- **Uniqueness.** For `K ≥ 0`, every solution of the counterflow equations on `[0, L]` with the
-hot inlet `Thi` at `x = 0` and the cold inlet `Tci` at `x = L` is the closed form on `[0, L]`. -/
+/-- **Uniqueness.** For `Ch, Cc > 0` and `K ≥ 0`, every solution of the counterflow equations on
+`[0, L]` with the hot inlet `Thi` at `x = 0` and the cold inlet `Tci` at `x = L` is the closed form
+on `[0, L]`. -/
 lemma IsCounterflowSolution.eq_closedForm {Ch Cc K L Thi Tci : ℝ} {Th Tc : ℝ → ℝ}
     (hCh : 0 < Ch) (hCc : 0 < Cc) (hK : 0 ≤ K)
     (h : IsCounterflowSolution Ch Cc K L Thi Tci Th Tc) :
@@ -1104,8 +1105,8 @@ lemma IsCounterflowSolution.eq_closedForm {Ch Cc K L Thi Tci : ℝ} {Th Tc : ℝ
 
 /-! ## D. Counterflow bounds, heat balance and equal capacity rates -/
 
-/-- **The hot stream stays above the cold one.** For `K ≥ 0` and `Thi > Tci`, every solution has
-`Tc x < Th x` on `[0, L]`. -/
+/-- **The hot stream stays above the cold one.** For `Ch, Cc > 0`, `K ≥ 0` and `Thi > Tci`, every
+solution has `Tc x < Th x` on `[0, L]`. -/
 lemma IsCounterflowSolution.cold_lt_hot {Ch Cc K L Thi Tci : ℝ} {Th Tc : ℝ → ℝ} (hCh : 0 < Ch)
     (hCc : 0 < Cc) (hK : 0 ≤ K) (hin : Tci < Thi)
     (h : IsCounterflowSolution Ch Cc K L Thi Tci Th Tc) :
@@ -1122,7 +1123,7 @@ lemma IsCounterflowSolution.cold_lt_hot {Ch Cc K L Thi Tci : ℝ} {Th Tc : ℝ �
     exact mul_pos hD0 (Real.exp_pos _)
   exact sub_pos.mp hpos
 
-/-- **Cold-stream bounds.** For `K ≥ 0`, `L ≥ 0` and `Thi > Tci`, the cold outlet
+/-- **Cold-stream bounds.** For `Ch, Cc > 0`, `K ≥ 0`, `L ≥ 0` and `Thi > Tci`, the cold outlet
 `Tc_out = Tc 0` lies below the hot inlet, and `Tci ≤ Tc x ≤ Tc_out` on `[0, L]`. -/
 lemma IsCounterflowSolution.cold_bounds {Ch Cc K L Thi Tci : ℝ} {Th Tc : ℝ → ℝ}
     (hCh : 0 < Ch) (hCc : 0 < Cc) (hK : 0 ≤ K) (hL : 0 ≤ L) (hin : Tci < Thi)
@@ -1170,9 +1171,9 @@ lemma IsCounterflowSolution.cold_bounds {Ch Cc K L Thi Tci : ℝ} {Th Tc : ℝ �
     exact hle
   · exact hanti h0mem hx hx.1
 
-/-- **Hot-stream bounds.** For `K ≥ 0`, `L ≥ 0` and `Thi > Tci`, the hot outlet `Th_out = Th L`
-lies above the cold inlet, and `Th_out ≤ Th x ≤ Thi` on `[0, L]`. No order between `Th_out` and
-`Tc_out` is asserted. -/
+/-- **Hot-stream bounds.** For `Ch, Cc > 0`, `K ≥ 0`, `L ≥ 0` and `Thi > Tci`, the hot outlet
+`Th_out = Th L` lies above the cold inlet, and `Th_out ≤ Th x ≤ Thi` on `[0, L]`. No order between
+`Th_out` and `Tc_out` is asserted. -/
 lemma IsCounterflowSolution.hot_bounds {Ch Cc K L Thi Tci : ℝ} {Th Tc : ℝ → ℝ}
     (hCh : 0 < Ch) (hCc : 0 < Cc) (hK : 0 ≤ K) (hL : 0 ≤ L) (hin : Tci < Thi)
     (h : IsCounterflowSolution Ch Cc K L Thi Tci Th Tc) :
@@ -1221,17 +1222,17 @@ lemma IsCounterflowSolution.hot_bounds {Ch Cc K L Thi Tci : ℝ} {Th Tc : ℝ �
 
 /-- **Counterflow heat balance.** Along a solution the heat lost by the hot stream between `0` and
 `x` equals the heat gained by the cold stream over the same stretch:
-`Ch * (Thi - Th x) = Cc * (Tc 0 - Tc x)`. At `x = L` this is the port balance
+`Ch * (Thi - Th x) = Cc * (Tc 0 - Tc x)`. For `L ≥ 0`, at `x = L` this is the port balance
 `Ch (Thi - Th_out) = Cc (Tc_out - Tci)`. -/
 lemma IsCounterflowSolution.heat_balance {Ch Cc K L Thi Tci : ℝ} {Th Tc : ℝ → ℝ}
     (h : IsCounterflowSolution Ch Cc K L Thi Tci Th Tc) :
     ∀ x ∈ Set.Icc 0 L, Ch * (Thi - Th x) = Cc * (Tc 0 - Tc x) := by
   exact IsCounterflowSolution.balance_aux h
 
-/-- **The parallel-flow sign breaks counterflow accounting.** If the cold equation is given the
-parallel-flow sign `Cc * Tc' = K * (Th - Tc)` while the cold stream still enters at `x = L`, then
-`Ch * Th + Cc * Tc` is conserved, and whenever the hot temperature changes between the ends the
-port balance `Ch (Th 0 - Th L) = Cc (Tc 0 - Tc L)` of counterflow fails. -/
+/-- **The parallel-flow sign breaks counterflow accounting.** For `Ch > 0` and `L ≥ 0`, if the cold
+equation is given the parallel-flow sign `Cc * Tc' = K * (Th - Tc)` while the cold stream still
+enters at `x = L`, then `Ch * Th + Cc * Tc` is conserved, and whenever the hot temperature changes
+between the ends the port balance `Ch (Th 0 - Th L) = Cc (Tc 0 - Tc L)` of counterflow fails. -/
 lemma parallelSign_violates_counterflow_balance {Ch Cc K L : ℝ} {Th Tc : ℝ → ℝ} (hCh : 0 < Ch)
     (hL : 0 ≤ L)
     (hpar : ∀ x ∈ Set.Icc 0 L,
@@ -1340,9 +1341,9 @@ lemma capacityRatio_domain {Ch Cc UA : ℝ} (hCh : 0 < Ch) (hCc : 0 < Cc) (hUA :
 
 /-! ## F. Effectiveness from the two solutions -/
 
-/-- **Parallel-flow effectiveness.** For `K = UA / L` with `L > 0`, every parallel-flow solution
-loses `Q = ε_p(NTU, Cr) Cmin (Thi - Tci)` from the hot stream and passes the same `Q` to the cold
-stream. -/
+/-- **Parallel-flow effectiveness.** For `Ch, Cc > 0` and `K = UA / L` with `L > 0`, every
+parallel-flow solution loses `Q = ε_p(NTU, Cr) Cmin (Thi - Tci)` from the hot stream and passes the
+same `Q` to the cold stream. -/
 lemma IsParallelFlowSolution.heat_eq_effectiveness {Ch Cc UA L Thi Tci : ℝ} {Th Tc : ℝ → ℝ}
     (hCh : 0 < Ch) (hCc : 0 < Cc) (hL : 0 < L)
     (h : IsParallelFlowSolution Ch Cc (UA / L) L Thi Tci Th Tc) :
@@ -1473,10 +1474,10 @@ private lemma counterflowEffectiveness_mul_min_of_ne {Ch Cc UA : ℝ} (hCh : 0 <
     field_simp
     linear_combination (Ch - Cc) * hFE
 
-/-- **Counterflow effectiveness.** For `K = UA / L` with `L > 0` and `UA ≥ 0`, every counterflow
-solution loses `Q = ε_c(NTU, Cr) Cmin (Thi - Tci)` from the hot stream and passes the same `Q` to
-the cold stream, whose outlet is at `x = 0`; at equal capacity rates `ε_c` takes its `Cr = 1`
-branch. -/
+/-- **Counterflow effectiveness.** For `Ch, Cc > 0` and `K = UA / L` with `L > 0` and `UA ≥ 0`,
+every counterflow solution loses `Q = ε_c(NTU, Cr) Cmin (Thi - Tci)` from the hot stream and passes
+the same `Q` to the cold stream, whose outlet is at `x = 0`; at equal capacity rates `ε_c` takes its
+`Cr = 1` branch. -/
 lemma IsCounterflowSolution.heat_eq_effectiveness {Ch Cc UA L Thi Tci : ℝ} {Th Tc : ℝ → ℝ}
     (hCh : 0 < Ch) (hCc : 0 < Cc) (hUA : 0 ≤ UA) (hL : 0 < L)
     (h : IsCounterflowSolution Ch Cc (UA / L) L Thi Tci Th Tc) :

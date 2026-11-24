@@ -4,4 +4,5 @@ For real `C`, `K_rad`, `Q`, `T_min`, `T_max` and `T`, the clipped radiator rate 
 [radiator rate](radiator-rate.md) at the clipped temperature `min(max(T, T_min), T_max)`. It is
 meant for `T_min ≤ T_max`, where the clipped temperature lies in `[T_min, T_max]`; it is defined for
 every real `T` and agrees with the radiator rate on the box
-([agreement](clipped-radiator-rate-eq-of-mem.md)).
+([agreement](clipped-radiator-rate-eq-of-mem.md)). For `T_min > T_max` the clipped temperature is
+`T_max` for every `T`, so the rate is constant.

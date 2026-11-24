@@ -57,4 +57,4 @@
 - [For NTU, C_r ≥ 0, the parallel-flow effectiveness is between 0 and 1](parallel-effectiveness-bounds.md)
 - [For NTU ≥ 0, C_r ≤ 1, the counterflow effectiveness is between 0 and 1](counterflow-effectiveness-bounds.md)
 - [For NTU ≥ 0 and 0 ≤ C_r ≤ 1, counterflow is at least as effective](parallel-effectiveness-le-counterflow-ef.md)
-- [At C_r = 1 the general counterflow formula is 0, not the effectiveness](counterflow-effectiveness-one-substituti.md)
+- [For NTU > 0 the C_r = 1 substitution gives 0, not the effectiveness](counterflow-effectiveness-one-substituti.md)

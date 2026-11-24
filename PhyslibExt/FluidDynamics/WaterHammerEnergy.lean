@@ -56,10 +56,11 @@ private lemma bound_of_contOn {X : Type*} [TopologicalSpace X] {f : X → ℝ} {
   have hC' : ∀ x, x ∈ f '' K → ‖x‖ ≤ C := hC
   exact ⟨|C|, abs_nonneg C, fun x hx => (hC' _ ⟨x, hx, rfl⟩).trans (le_abs_self C)⟩
 
-/-- Energy flux identity for the water-hammer system on `[0, L]`:
+/-- Energy flux identity for the water-hammer system on `[0, L]`, for `a, g, A, L > 0`:
 with energy density `e t x = (gA/a²) h²/2 + q²/(2 gA)` built from
 state functions `h q` whose supplied partial derivatives `ht hx qt qx`
-satisfy `ht + (a²/(gA)) qx = 0` and `qt + gA hx = 0` on the interval,
+(in `t`, and in `x` within `[0, L]`) satisfy `ht + (a²/(gA)) qx = 0` and
+`qt + gA hx = 0` on the interval, with `ht` and `qt` continuous on `ℝ × [0, L]`,
 the total energy `E t = ∫ x in 0..L, e t x` has derivative
 `h t 0 * q t 0 - h t L * q t L` (times the physical factor `rho * g`
 for physical energy, not part of this identity). -/

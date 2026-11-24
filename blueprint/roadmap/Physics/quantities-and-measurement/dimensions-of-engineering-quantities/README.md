@@ -35,7 +35,6 @@
 - [Converting a force to other units and back returns it](force-dim-dim-scale-round-trip.md)
 - [Converting a stress value to other units and back returns it](stress-dim-dim-scale-round-trip.md)
 - [Stress times area converts with the force factor](stress-mul-area-with-dim-dim-scale.md)
-- [Stress factor times area factor is the force factor](dim-scale-stress-mul-area.md)
 - [Power factor times time factor is the energy factor](dim-scale-power-mul-time.md)
 - [Molar-mass factor times molar-flow factor is the mass-flow factor](dim-scale-molar-mass-mul-molar-flow.md)
 - [Torsional stiffness and energy have the same conversion factor](dim-scale-torsional-stiffness-eq-energy.md)

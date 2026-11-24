@@ -12,5 +12,4 @@ matrix $B_{ie} = [h(e) = i] - [t(e) = i]$; parallel and antiparallel arcs stay d
 arc has a zero column. Here $H$ is the piezometric head, $q_e$ the volumetric flow from $t(e)$ to
 $h(e)$ and $d_i$ is positive at consumers and negative at sources. The resistances are
 unconstrained, so a negative resistance (an active element) can satisfy the equations;
-[passive pipe flows](is-passive-pipe-flow.md) add $r_e \geq 0$. No existence of solutions is
-claimed.
+[passive pipe flows](is-passive-pipe-flow.md) add $r_e \geq 0$.

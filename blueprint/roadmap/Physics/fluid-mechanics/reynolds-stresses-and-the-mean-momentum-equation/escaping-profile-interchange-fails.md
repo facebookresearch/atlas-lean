@@ -10,4 +10,5 @@ For the [escaping profile](escaping-profile.md) `φ(s, ω) = (s³ / ω²) exp(-s
 - there is no `ε > 0` and no function `B` integrable on `(0, 1]` with `|φ′(s, ω)| ≤ B(ω)` for
   almost every `ω` and every `s` with `|s| < ε`.
 
-So the domination hypothesis of the [mean momentum equation](mean-momentum.md) cannot be dropped.
+So without domination the interchange of derivative and ensemble mean, on which the
+[mean momentum equation](mean-momentum.md) rests, can fail.

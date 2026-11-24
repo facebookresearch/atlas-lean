@@ -77,8 +77,8 @@ theorem greenshields_characteristicSpeed {vf kj : ℝ} (hkj : 0 < kj) :
   rw [hderiv.deriv]
   field_simp
 
-/-- At jam density the vehicle speed is zero while the
-characteristic speed is `-vf`. -/
+/-- For `0 < kj`, at jam density the vehicle speed is zero while the characteristic speed is
+`-vf`. -/
 theorem greenshields_speeds_at_jam {vf kj : ℝ} (hkj : 0 < kj) :
     greenshieldsVehicleSpeed vf kj kj = 0
       ∧ vf * (1 - 2 * kj / kj) = -vf := by
@@ -99,8 +99,8 @@ theorem greenshields_speeds_at_zero {vf kj : ℝ} :
     simp
   · simp
 
-/-- For densities above half of jam, the characteristic speed is
-negative while the vehicle speed stays positive. -/
+/-- For `0 < vf`, `0 < kj` and densities `kj / 2 < k < kj`, the characteristic speed is negative
+while the vehicle speed stays positive. -/
 theorem greenshields_characteristicSpeed_neg {vf kj k : ℝ}
     (hvf : 0 < vf) (hkj : 0 < kj) (h1 : kj / 2 < k) (h2 : k < kj) :
     vf * (1 - 2 * k / kj) < 0 ∧ 0 < greenshieldsVehicleSpeed vf kj k := by

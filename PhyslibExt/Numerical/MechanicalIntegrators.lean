@@ -59,8 +59,9 @@ namespace MechanicalIntegrators
 oscillator with mass `m`, stiffness `k`, and step `h`, acting on the
 state `(q, p)`: `p' = p - h * k * q`, `q' = q + h * p' / m`, so
 `M = [[1 - h^2 * k / m, h / m], [-h * k, 1]]` in `(q, p)` coordinates,
-written with `Matrix.of` over `Fin 2`. With `a / 0 = 0` the entries with `m` in the
-denominator are `0` when `m = 0`; the intended domain is `m > 0`. -/
+written with `Matrix.of` over `Fin 2`. With `a / 0 = 0`, at `m = 0` the quotients
+`h^2 * k / m` and `h / m` vanish, so the matrix is `[[1, 0], [-h * k, 1]]`; the intended domain is
+`m > 0`. -/
 noncomputable def symplecticEulerMatrix (m k h : ℝ) :
     Matrix (Fin 2) (Fin 2) ℝ :=
   Matrix.of ![![1 - h ^ 2 * k / m, h / m], ![-h * k, 1]]
@@ -107,8 +108,8 @@ lemma symplecticEulerMatrix_transpose_mul {m k h : ℝ} (hm : m ≠ 0) :
     ring
 
 /-- Symplecticity does not imply exact energy preservation: at
-`m = k = h = 1` the symplectic Euler step sends the state `(q, p) =
-(0, 1)` to `(1, 1)`, whose oscillator energy `1` differs from the
+`m = k = h = 1` the symplectic Euler step sends the state
+`(q, p) = (0, 1)` to `(1, 1)`, whose oscillator energy `1` differs from the
 initial energy `1 / 2`. -/
 lemma symplecticEuler_energy_not_preserved :
     oscillatorEnergy 1 1

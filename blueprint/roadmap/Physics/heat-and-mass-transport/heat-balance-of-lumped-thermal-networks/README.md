@@ -2,12 +2,11 @@
 
 ## Heat inventory and quadratic dissipation
 
-- [At one time, the zone heat inventory changes at the external power](heat-inventory-has-deriv-at.md)
-- [The zone heat inventory changes at the total external power](heat-inventory-deriv.md)
+- [For symmetric G the zone heat inventory changes at the external power](heat-inventory-deriv.md)
 - [Dissipation identity of the quadratic functional at one time](quadratic-dissipation-has-deriv-at.md)
 - [Dissipation identity of the quadratic functional at every time](quadratic-dissipation-deriv.md)
-- [Without heating and with G, g0 ≥ 0 the derivative is nonpositive](quadratic-dissipation-nonpos.md)
-- [Without heating and with G, g0 ≥ 0 the functional is nonincreasing](quadratic-dissipation-antitone.md)
+- [Symmetric G ≥ 0, g0 ≥ 0, no heating: the derivative is nonpositive](quadratic-dissipation-nonpos.md)
+- [Symmetric G ≥ 0, g0 ≥ 0, no heating: the functional is nonincreasing](quadratic-dissipation-antitone.md)
 
 ## State-space form of the zone network
 

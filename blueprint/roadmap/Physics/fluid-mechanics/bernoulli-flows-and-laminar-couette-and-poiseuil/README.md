@@ -101,7 +101,7 @@
 ## The pipe restriction and its lateral wall
 
 - [No slip on the lateral wall of the pipe](pipe-poiseuille-velocity-lateral-wall.md)
-- [The axial velocity is positive inside the pipe](pipe-poiseuille-velocity-pos-inside.md)
+- [For G, μ > 0 the axial velocity is positive inside the pipe](pipe-poiseuille-velocity-pos-inside.md)
 - [Cylindrical Poiseuille flow with physical parameters](pipe-poiseuille-flow-witness.md)
 
 ## Reversed pressure gradient
@@ -119,10 +119,10 @@
 - [Area of the pipe cross-section](pipe-disk-measure-real.md)
 - [Hagen–Poiseuille flow rate](pipe-flow-rate-eq.md)
 - [Mean velocity of the Hagen–Poiseuille flow](pipe-mean-velocity-eq.md)
-- [The mean velocity is positive for a positive pressure gradient](pipe-mean-velocity-pos.md)
+- [The mean velocity is positive when the pressure falls along the pipe](pipe-mean-velocity-pos.md)
 - [The mean velocity is nonzero for a nonzero pressure gradient](pipe-mean-velocity-ne-zero.md)
 - [The Poiseuille pressure drop points along the mean flow](pipe-drop-mul-mean-velocity-pos.md)
-- [The centerline speed is twice the mean velocity](pipe-centerline-eq-two-mul-mean-velocity.md)
+- [The centerline velocity is twice the mean velocity](pipe-centerline-eq-two-mul-mean-velocity.md)
 
 ## Reynolds number and the Darcy and Fanning factors
 

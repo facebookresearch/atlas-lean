@@ -344,9 +344,9 @@ private lemma convective_balance
   rw [hconst x, Time.deriv_const, zero_add] at hconv
   simpa using hconv
 
-/-- For a steady constant-density inviscid flow satisfying Physlib's Euler equations
-with body-force potential `Φ`, the projected Euler premise of
-`EarthScience.bernoulli_along_streamline` holds at every coordinate point. -/
+/-- For a steady flow of constant density `ρ > 0` with a velocity differentiable in space,
+satisfying Physlib's Euler equations with body-force potential `Φ`, the projected Euler premise
+of `EarthScience.bernoulli_along_streamline` holds at every coordinate point. -/
 lemma projected_euler_coord
     (flow : CauchyFlow 3) (pressure : ScalarField 3) (Φ : Space → ℝ) (ρ : ℝ)
     (hρ : 0 < ρ) (hrho : ∀ t x, flow.rho t x = ρ)
@@ -377,9 +377,10 @@ lemma projected_euler_coord
   field_simp
   linear_combination hbal
 
-/-- Bernoulli's theorem along a streamline in `Space`, for a steady constant-density
-inviscid Physlib Euler flow with body-force potential: the head `p / ρ + ‖u‖² / 2 + Φ`
-takes the same value at any two points of an integral curve of the velocity. -/
+/-- Bernoulli's theorem along a streamline in `Space`, for a steady inviscid Physlib Euler flow
+of constant density `ρ > 0` with a velocity differentiable in space and a body-force potential:
+the head `p / ρ + ‖u‖² / 2 + Φ` takes the same value at any two points of an integral curve of
+the velocity on an open preconnected parameter set, with `p` and `Φ` differentiable along it. -/
 lemma bernoulli_along_streamline_space
     (flow : CauchyFlow 3) (pressure : ScalarField 3) (Φ : Space → ℝ) (ρ : ℝ)
     (hρ : 0 < ρ) (hrho : ∀ t x, flow.rho t x = ρ)
@@ -411,8 +412,11 @@ lemma bernoulli_along_streamline_space
     ha hb
   simpa only [vsub_vadd] using key
 
-/-- Physlib's enthalpy Bernoulli function is constant along a streamline when the
-specific enthalpy is `p / ρ + e₀` (constant specific internal energy `e₀`). Without that
+/-- For a steady inviscid Physlib Euler flow of constant density `ρ > 0` with a velocity
+differentiable in space and a body-force potential, Physlib's enthalpy Bernoulli function is
+constant along a streamline (an integral curve on an open preconnected parameter set, with `p`
+and `Φ` differentiable along it) when the specific enthalpy is `p / ρ + e₀` (constant specific
+internal energy `e₀`). Without that
 hypothesis the enthalpy field is independent data; see `polytropic_enthalpy_not_pOverRho`. -/
 lemma bernoulliFunction_along_streamline
     (flow : ThermodynamicCauchyFlow 3) (pressure : ScalarField 3) (Φ : Space → ℝ) (ρ : ℝ)
@@ -547,7 +551,7 @@ lemma rotFlow_bodyForcePotential (ρ Ω g : ℝ) :
   ext i
   fin_cases i <;> simp [rotFlow]
 
-/-- The fixture is a nonzero flow. -/
+/-- For `Ω ≠ 0` the fixture is a nonzero flow. -/
 lemma rotVelocity_ne_zero {Ω : ℝ} (hΩ : Ω ≠ 0) :
     rotVelocity Ω (circle 1 Ω 0 0) ≠ 0 := by
   intro h
@@ -595,8 +599,8 @@ lemma circle_isIntegralCurveOn_coord (R Ω z : ℝ) (o : Space) :
   intro t _
   simpa only [vsub_vadd] using (circle_hasDerivAt_coord R Ω z o t).hasDerivWithinAt
 
-/-- The head is constant along each streamline but differs between streamlines, so the
-result is streamline constancy, not global constancy. -/
+/-- For `ρ > 0` and `Ω ≠ 0` the head is constant along each streamline but differs between
+streamlines, so the result is streamline constancy, not global constancy. -/
 lemma rot_head_differs_across_streamlines {ρ Ω g : ℝ} (hρ : 0 < ρ) (hΩ : Ω ≠ 0) :
     rotPressure ρ Ω g (circle 1 Ω 0 0) / ρ + ‖rotVelocity Ω (circle 1 Ω 0 0)‖ ^ 2 / 2 +
         gravPotential g (circle 1 Ω 0 0) ≠
@@ -623,8 +627,8 @@ noncomputable def polytropicFlow (ρ Ω g : ℝ) : ThermodynamicCauchyFlow 3 :=
     entropy := fun _ _ => 0
     enthalpy := fun _ x => (7 / 2 : ℝ) * rotPressure ρ Ω g x / ρ }
 
-/-- The enthalpy hypothesis is not automatic: a compressible-gas enthalpy
-`(7 / 2) p / ρ` is not of the form `p / ρ + e₀`, so
+/-- The enthalpy hypothesis is not automatic: for `ρ > 0` and `g ≠ 0`, a compressible-gas
+enthalpy `(7 / 2) p / ρ` is not of the form `p / ρ + e₀`, so
 `bernoulliFunction_along_streamline` cannot be applied to this fixture without
 checking the hypothesis. (Along each circular streamline of the fixture the
 Bernoulli function is nevertheless constant, since pressure, enthalpy, kinetic
@@ -815,7 +819,7 @@ lemma couetteVelocity_lower_wall (Uwall H : ℝ) (x : Space) (hx : x 1 = 0) :
   ext i
   fin_cases i <;> simp [couetteVelocity, hx]
 
-/-- The upper wall `y = H` moves with velocity `(Uwall, 0, 0)`. -/
+/-- For `H > 0` the upper wall `y = H` moves with velocity `(Uwall, 0, 0)`. -/
 lemma couetteVelocity_upper_wall {Uwall H : ℝ} (hH : 0 < H) (x : Space) (hx : x 1 = H) :
     couetteVelocity Uwall H x = WithLp.toLp 2 ![Uwall, 0, 0] := by
   ext i
@@ -1090,8 +1094,9 @@ lemma planePoiseuilleFlow_witness {ρ μ H G : ℝ} (lam p₀ : ℝ) (hH : 0 < H
 /-! ## K. No pressure gradient versus a moving wall -/
 
 /-- No pressure gradient and stationary walls give no flow: with `G = 0` the Poiseuille velocity
-vanishes everywhere, whereas plane Couette flow, also without a pressure gradient, has the
-nonzero flow rate `Uwall H / 2` when its upper wall moves with speed `Uwall ≠ 0`. -/
+vanishes everywhere, whereas plane Couette flow of height `H > 0`, also without a pressure
+gradient, has the nonzero flow rate `Uwall H / 2` when its upper wall moves with speed
+`Uwall ≠ 0`. -/
 lemma planePoiseuille_zero_gradient_vs_couette {Uwall H : ℝ} (hU : Uwall ≠ 0) (hH : 0 < H)
     (μ s z : ℝ) :
     (∀ x, planePoiseuilleVelocity 0 μ H x = 0) ∧
@@ -1563,7 +1568,7 @@ lemma pipe_drop_mul_meanVelocity_pos {G μ R L : ℝ} (hG : G ≠ 0) (hμ : 0 < 
   rw [h]
   exact div_pos (mul_pos (mul_pos hGG hL) (pow_pos hR 2)) (by positivity)
 
-/-- **Centerline speed.** For `μ, R > 0` the axial velocity on the axis is twice the mean
+/-- **Centerline velocity.** For `μ, R > 0` the axial velocity on the axis is twice the mean
 velocity: `G R² / (4 μ) = 2 V`. -/
 lemma pipeCenterline_eq_two_mul_meanVelocity {μ R : ℝ} (hμ : 0 < μ) (hR : 0 < R) (G z : ℝ) :
     pipePoiseuilleVelocity G μ R (crossSectionPoint z (0, 0)) 2 =

@@ -5,5 +5,6 @@ Fick flux at `(x, t)` is
 
 `J(x, t) = -D ∂c/∂x(x, t)`.
 
-The derivative is the total one: it is `0` where `c(·, t)` is not differentiable at `x`, so results
-about the flux assume that differentiability separately. In the physical reading `D > 0`.
+The derivative is taken in `x` at fixed `t` and is defined everywhere: it is `0` where `c(·, t)` is
+not differentiable at `x`, so results about the flux assume that differentiability separately. In
+the physical reading `D > 0`.

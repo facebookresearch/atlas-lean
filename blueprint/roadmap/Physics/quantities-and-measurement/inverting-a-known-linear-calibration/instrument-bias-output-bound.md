@@ -1,4 +1,4 @@
-# A bias bound B limits the estimator error to B over the modulus of a
+# For a ≠ 0, a bias bound B limits the error to B over the modulus of a
 
 Let the reading of an instrument follow the known linear calibration `y = a x + b + ε`, with slope
 `a ≠ 0`, offset `b`, true value `x` and error `ε` (all real), and let the bias satisfy `|ε| ≤ B`.

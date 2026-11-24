@@ -54,9 +54,8 @@ it is `0` when `kL = kR`. -/
 noncomputable def shockSpeed (q : ℝ → ℝ) (kL kR : ℝ) : ℝ :=
   (q kR - q kL) / (kR - kL)
 
-/-- For a flux concave on the closed interval `[kL, kR]` and
-differentiable at the endpoints, the shock speed lies between the
-characteristic speeds: `q'(kR) ≤ s ≤ q'(kL)`. -/
+/-- For `kL < kR` and a flux concave on the closed interval `[kL, kR]` and differentiable at the
+endpoints, the shock speed lies between the characteristic speeds: `q'(kR) ≤ s ≤ q'(kL)`. -/
 theorem shockSpeed_between_of_concave {q : ℝ → ℝ} {kL kR : ℝ}
     (hconc : ConcaveOn ℝ (Set.Icc kL kR) q)
     (hL : HasDerivAt q (deriv q kL) kL)

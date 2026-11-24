@@ -24,7 +24,7 @@
 - [Boussinesq closure Rm = (2 k / 3) I − 2 νt S of the Reynolds stress](modeled-reynolds-stress.md)
 - [Production −∑ᵢ ∑ⱼ Rᵢⱼ Sᵢⱼ of turbulent kinetic energy](mean-flow-extraction.md)
 - [For a trace-free strain the closure extracts P = 2 νt ‖S‖²](mean-flow-extraction-modeled-reynolds-st.md)
-- [A nonnegative eddy viscosity extracts energy from the mean flow](mean-flow-extraction-modeled-reynolds-st-2.md)
+- [For a trace-free strain and νt ≥ 0, the extraction P is nonnegative](mean-flow-extraction-modeled-reynolds-st-2.md)
 - [For a nonzero trace-free strain, P ≥ 0 exactly when νt ≥ 0](mean-flow-extraction-modeled-reynolds-st-3.md)
 - [At zero strain, P ≥ 0 does not force νt ≥ 0](mean-flow-extraction-nonneg-converse-fai.md)
 - [Plane strain diag(1, −1, 0): Rm = diag(−4/3, 8/3, 2/3) and P = 4](modeled-reynolds-stress-plane-strain.md)

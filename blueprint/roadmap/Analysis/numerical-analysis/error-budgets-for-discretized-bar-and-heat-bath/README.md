@@ -9,7 +9,6 @@
 - [Error of the reconstructed bar displacement](physical-error.md)
 - [The unit profile solves −û″ = 2 with zero end values](unit-profile-is-classical-solution.md)
 - [The bar displacement is the amplitude times the rescaled unit profile](axial-displacement-eq-bar-amplitude-mul.md)
-- [The rescaled unit profile solves the fixed-fixed bar problem](is-fixed-fixed-solution-bar-amplitude-mu.md)
 - [The reconstruction vanishes at both ends of the bar](physical-p1-zero-and-length.md)
 - [The reconstruction is the amplitude times the unit Galerkin solution](physical-p1-eq-galerkin.md)
 
@@ -65,7 +64,7 @@
 - [A Runge–Kutta step of the bath field multiplies the excess by R(z)](bath-field-rk4-step.md)
 - [Runge–Kutta steps of size τ/10 multiply the excess by 72387/80000](bath-rk4-closed-form.md)
 - [Excess temperature after ten Runge–Kutta steps of size τ/10](bath-rk4-ten-step-excess.md)
-- [Ten Runge–Kutta steps of size τ/10 err by less than a millionth of Δ](bath-rk4-ten-step-error.md)
+- [The ten-step Runge–Kutta error is below 10⁻⁶ of a nonzero excess](bath-rk4-ten-step-error.md)
 - [The ten-step Runge–Kutta error is positive for a nonzero excess](bath-rk4-ten-step-error-pos.md)
 - [Runge–Kutta steps of size 3τ multiply the excess by 11/8](bath-rk4-three-tau.md)
 

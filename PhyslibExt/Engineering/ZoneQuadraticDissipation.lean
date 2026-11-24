@@ -31,8 +31,9 @@ is claimed) satisfies
         + Σ i, g0 i * (T i - Tout) ^ 2 ) + Σ i, (T i - Tout) * P i`:
 
 weighted edge-difference dissipation, boundary squares, and the
-input power pairing. With no input power and nonnegative
-conductances, `V` is nonincreasing along solutions.
+input power pairing. With no input power, nonnegative
+conductances `G` and nonnegative boundary conductances `g0`, `V` is
+nonincreasing along solutions.
 
 ## ii. Key results
 
@@ -202,9 +203,9 @@ theorem quadratic_dissipation_deriv {ι : Type*} [Fintype ι]
   quadratic_dissipation_hasDerivAt C G g0 Tout T Tv P t hG (fun i => hT i t)
     (fun i => hzone i t)
 
-/-- With no input power and symmetric nonnegative conductances, the derivative of the quadratic
-functional at every time is the dissipation, which is nonpositive; monotonicity is
-`quadratic_dissipation_antitone`. -/
+/-- With no input power, symmetric nonnegative conductances `G` and nonnegative boundary
+conductances `g0`, the derivative of the quadratic functional at every time is the dissipation,
+which is nonpositive; monotonicity is `quadratic_dissipation_antitone`. -/
 theorem quadratic_dissipation_nonpos {ι : Type*} [Fintype ι]
     (C : ι → ℝ) (G : ι → ι → ℝ) (g0 : ι → ℝ) (Tout : ℝ)
     (T Tv : ι → ℝ → ℝ)
@@ -245,8 +246,9 @@ theorem quadratic_dissipation_nonpos {ι : Type*} [Fintype ι]
   exact ⟨hderiv, hle⟩
 
 
-/-- Without input power and with symmetric nonnegative conductances, the quadratic functional is
-nonincreasing along solutions: its derivative is everywhere the nonpositive dissipation. -/
+/-- Without input power, with symmetric nonnegative conductances `G` and nonnegative boundary
+conductances `g0`, the quadratic functional is nonincreasing along solutions: its derivative is
+everywhere the nonpositive dissipation. -/
 theorem quadratic_dissipation_antitone {ι : Type*} [Fintype ι]
     (C : ι → ℝ) (G : ι → ι → ℝ) (g0 : ι → ℝ) (Tout : ℝ)
     (T Tv : ι → ℝ → ℝ)

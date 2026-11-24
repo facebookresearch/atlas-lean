@@ -69,13 +69,13 @@ noncomputable def queueLen (lam mu R : ℝ) (t : ℝ) : ℝ :=
   if t ≤ R then lam * t
   else max 0 (lam * R - (mu - lam) * (t - R))
 
-/-- The queue starts empty. -/
+/-- For `0 ≤ R`, the queue starts empty. -/
 theorem queueLen_zero {lam mu R : ℝ} (hR : 0 ≤ R) :
     queueLen lam mu R 0 = 0 := by
   simp [queueLen, hR]
 
-/-- The queue is empty at the cycle end, under
-`lam * (R + G) ≤ mu * G` with `0 < lam < mu`. -/
+/-- The queue is empty at the cycle end, under `lam * (R + G) ≤ mu * G` with `0 < lam < mu`, `0 ≤ R`
+and `0 ≤ G`. -/
 theorem queueLen_cycle_end {lam mu R G : ℝ} (hlam : 0 < lam)
     (hmu : lam < mu) (hR : 0 ≤ R) (hG : 0 ≤ G)
     (hcap : lam * (R + G) ≤ mu * G) :
@@ -97,7 +97,7 @@ theorem queueLen_cycle_end {lam mu R G : ℝ} (hlam : 0 < lam)
       linarith
     exact max_eq_left hX
 
-/-- Clearance offset: the queue is zero from time
+/-- Clearance offset: for `0 < lam < mu` and `0 ≤ R`, the queue is zero from time
 `R + lam * R / (mu - lam)` onward. -/
 theorem queueLen_eq_zero_of_clearance {lam mu R : ℝ} (hlam : 0 < lam)
     (hmu : lam < mu) (hR : 0 ≤ R) {t : ℝ}
@@ -126,7 +126,7 @@ theorem queueLen_eq_zero_of_clearance {lam mu R : ℝ} (hlam : 0 < lam)
     have hX : lam * R - (mu - lam) * (t - R) ≤ 0 := by linarith
     exact max_eq_left hX
 
-/-- Nonnegativity at every nonnegative time. -/
+/-- For `0 < lam`, nonnegativity at every nonnegative time. -/
 theorem queueLen_nonneg {lam mu R : ℝ} (hlam : 0 < lam)
     {t : ℝ} (ht0 : 0 ≤ t) :
     0 ≤ queueLen lam mu R t := by
@@ -139,7 +139,7 @@ theorem queueLen_nonneg {lam mu R : ℝ} (hlam : 0 < lam)
     rw [heq]
     exact le_max_left _ _
 
-/-- Continuity on the cycle interval `[0, R + G]`. -/
+/-- For `0 ≤ lam`, `0 ≤ R` and `0 ≤ G`, continuity on the cycle interval `[0, R + G]`. -/
 theorem queueLen_continuousOn {lam mu R G : ℝ} (hlam : 0 ≤ lam)
     (hR : 0 ≤ R) (hG : 0 ≤ G) :
     ContinuousOn (queueLen lam mu R) (Set.Icc 0 (R + G)) := by
@@ -179,8 +179,8 @@ theorem queueLen_deriv_red {lam mu R t : ℝ} (ht0 : 0 < t) (ht : t < R) :
     deriv (queueLen lam mu R) t = lam := by
   exact (queueLen_hasDerivAt_red ht0 ht).deriv
 
-/-- Green-phase rate before clearance: the derivative is
-`-(mu - lam)`. -/
+/-- Green-phase rate before clearance: for `0 < lam < mu` and `R < t` with
+`t < R + lam * R / (mu - lam)` and `t < R + G`, the derivative is `-(mu - lam)`. -/
 theorem queueLen_hasDerivAt_green {lam mu R G t : ℝ} (hlam : 0 < lam)
     (hmu : lam < mu) (htR : R < t)
     (htc : t < R + lam * R / (mu - lam)) (htG : t < R + G) :
@@ -206,15 +206,16 @@ theorem queueLen_hasDerivAt_green {lam mu R G t : ℝ} (hlam : 0 < lam)
   show queueLen lam mu R t' = lam * R - (mu - lam) * (t' - R)
   simp [queueLen, not_le_of_gt htR'', max_eq_right (le_of_lt hX)]
 
-/-- Green-phase rate before clearance: the derivative is
-`-(mu - lam)`. -/
+/-- Green-phase rate before clearance: for `0 < lam < mu` and `R < t` with
+`t < R + lam * R / (mu - lam)` and `t < R + G`, the derivative is `-(mu - lam)`. -/
 theorem queueLen_deriv_green {lam mu R G t : ℝ} (hlam : 0 < lam)
     (hmu : lam < mu) (htR : R < t)
     (htc : t < R + lam * R / (mu - lam)) (htG : t < R + G) :
     deriv (queueLen lam mu R) t = -(mu - lam) := by
   exact (queueLen_hasDerivAt_green hlam hmu htR htc htG).deriv
 
-/-- After clearance the queue stays at zero: derivative `0`. -/
+/-- After clearance the queue stays at zero: for `0 < lam < mu`, `0 ≤ R` and
+`R + lam * R / (mu - lam) < t ≤ R + G`, the derivative is `0`. -/
 theorem queueLen_hasDerivAt_after_clearance {lam mu R G t : ℝ}
     (hlam : 0 < lam)
     (hmu : lam < mu) (hR : 0 ≤ R) (htG : t ≤ R + G)
@@ -238,7 +239,8 @@ theorem queueLen_hasDerivAt_after_clearance {lam mu R G t : ℝ}
   show queueLen lam mu R t' = 0
   simp [queueLen, not_le_of_gt htR'', max_eq_left hX]
 
-/-- After clearance the queue stays at zero: derivative `0`. -/
+/-- After clearance the queue stays at zero: for `0 < lam < mu`, `0 ≤ R` and
+`R + lam * R / (mu - lam) < t ≤ R + G`, the derivative is `0`. -/
 theorem queueLen_deriv_after_clearance {lam mu R G t : ℝ} (hlam : 0 < lam)
     (hmu : lam < mu) (hR : 0 ≤ R) (htG : t ≤ R + G)
     (ht : R + lam * R / (mu - lam) < t) :

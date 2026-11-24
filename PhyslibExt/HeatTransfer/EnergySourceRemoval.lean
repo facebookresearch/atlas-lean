@@ -359,8 +359,8 @@ noncomputable def coolantTemperature (mdot cp q0 Le L Tin z : ℝ) : ℝ :=
     (Real.pi * mdot * cp)
 
 /-- Coolant outlet temperature `Tout = Tin + 2 q₀ Lₑ sin (π L / (2 Lₑ)) / (π ṁ cp)`. Intended for
-`ṁ > 0` and `cp > 0`; at `ṁ = 0` or `cp = 0` the convention `x / 0 = 0` gives the junk value `Tin`,
-while blocked flow has no steady state (`fixture_blocked_flow`). -/
+`ṁ > 0` and `cp > 0`; at `ṁ = 0`, `cp = 0` or `Lₑ = 0` the convention `x / 0 = 0` gives the value
+`Tin`, which at `ṁ = 0` or `cp = 0` is a convention, not an outlet temperature. -/
 noncomputable def coolantOutletTemp (mdot cp q0 Le L Tin : ℝ) : ℝ :=
   Tin + 2 * q0 * Le * Real.sin (Real.pi * L / (2 * Le)) / (Real.pi * mdot * cp)
 
@@ -537,8 +537,8 @@ lemma IsSteadyCoolantProfile.eq_coolantTemperature {mdot cp q0 Le L Tin : ℝ} {
 
 /-! ### D.2. Outlet temperature and enthalpy rise -/
 
-/-- **Outlet temperature.** A steady coolant profile on `[-L/2, L/2]` with `0 < L ≤ Lₑ` leaves at
-`T(L/2) = Tin + 2 q₀ Lₑ sin (π L / (2 Lₑ)) / (π ṁ cp)`. -/
+/-- **Outlet temperature.** For `ṁ > 0` and `cp > 0`, a steady coolant profile on `[-L/2, L/2]` with
+`0 < L ≤ Lₑ` leaves at `T(L/2) = Tin + 2 q₀ Lₑ sin (π L / (2 Lₑ)) / (π ṁ cp)`. -/
 lemma IsSteadyCoolantProfile.outlet {mdot cp q0 Le L Tin : ℝ} {T : ℝ → ℝ} (hm : 0 < mdot)
     (hcp : 0 < cp) (hL : 0 < L) (hLLe : L ≤ Le)
     (hT : IsSteadyCoolantProfile mdot cp q0 Le L Tin T) :
@@ -555,8 +555,9 @@ lemma IsSteadyCoolantProfile.outlet {mdot cp q0 Le L Tin : ℝ} {T : ℝ → ℝ
   rw [harg]
   ring
 
-/-- **Enthalpy rise.** The coolant enthalpy rise between the ports equals the integrated linear
-power: `ṁ cp (T(L/2) - Tin) = ∫ q' = 2 q₀ Lₑ sin (π L / (2 Lₑ)) / π`. -/
+/-- **Enthalpy rise.** For `ṁ > 0`, `cp > 0` and `0 < L ≤ Lₑ`, the enthalpy rise of a steady coolant
+profile between the ports equals the integrated linear power:
+`ṁ cp (T(L/2) - Tin) = ∫ q' = 2 q₀ Lₑ sin (π L / (2 Lₑ)) / π`. -/
 lemma IsSteadyCoolantProfile.enthalpy_rise {mdot cp q0 Le L Tin : ℝ} {T : ℝ → ℝ}
     (hm : 0 < mdot) (hcp : 0 < cp) (hL : 0 < L) (hLLe : L ≤ Le)
     (hT : IsSteadyCoolantProfile mdot cp q0 Le L Tin T) :
@@ -610,8 +611,8 @@ lemma coolantOutletTemp_le_of_le_mdot {mdotMin mdot cp q0 Le L : ℝ} (hmin : 0 
 
 /-! ### D.3. Clad-temperature envelope -/
 
-/-- With `q₀ ≥ 0` and `0 < L ≤ Lₑ` the coolant warms monotonically, so on the heated length
-every steady profile stays at or below the outlet temperature. -/
+/-- With `ṁ > 0`, `cp > 0`, `q₀ ≥ 0` and `0 < L ≤ Lₑ` the coolant warms monotonically, so on the
+heated length every steady profile stays at or below the outlet temperature. -/
 lemma IsSteadyCoolantProfile.le_outlet {mdot cp q0 Le L Tin : ℝ} {T : ℝ → ℝ} (hm : 0 < mdot)
     (hcp : 0 < cp) (hq0 : 0 ≤ q0) (hL : 0 < L) (hLLe : L ≤ Le)
     (hT : IsSteadyCoolantProfile mdot cp q0 Le L Tin T) :
@@ -629,7 +630,8 @@ lemma IsSteadyCoolantProfile.le_outlet {mdot cp q0 Le L Tin : ℝ} {T : ℝ → 
   have h2 : mdot * cp * T z ≤ mdot * cp * T (L / 2) := by linarith [hnonneg]
   exact le_of_mul_le_mul_left h2 hmc
 
-/-- **Clad-temperature envelope.** If the clad surface temperature obeys the prescribed film law
+/-- **Clad-temperature envelope.** For `ṁ > 0`, `cp > 0`, `q₀ ≥ 0`, `0 < L ≤ Lₑ` and a steady
+coolant profile `T`, if the clad surface temperature obeys the prescribed film law
 `h_film * P * (T_clad - T) = q'` with `h_film, P > 0`, then on the heated length
 `T_clad ≤ Tout + q₀ / (h_film P)`. -/
 lemma IsSteadyCoolantProfile.clad_le {mdot cp q0 Le L Tin hfilm perimeter : ℝ}
