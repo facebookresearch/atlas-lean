@@ -9,7 +9,11 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.Combinatorics.Enumerative.Partition.CappedDiagonalSequences
+public import MathlibExt.Combinatorics.Enumerative.Partition.ConsecutiveVnArrangements
 public import MathlibExt.Combinatorics.Enumerative.Partition.ExtremalDiagonalSequences
+public import MathlibExt.Combinatorics.Enumerative.Partition.RepeatedPartsDiagonalSequences
+public import MathlibExt.Combinatorics.Enumerative.Partition.TruncateDiagonalSequences
 public import Mathlib.Data.Nat.Choose.Multinomial
 public import Mathlib.Data.Int.Interval
 
@@ -97,29 +101,6 @@ public theorem_wanted ncard_diagonalSequences_eq_card_distincts (n : ℕ) :
         (Nat.Partition.distincts n).card ∧
       (Nat.Partition.distincts n).card = (Nat.Partition.odds n).card
 
-/-- **Repeated parts and large gaps in a diagonal class.** Let $q \ge 0$ and
-$s_1, \dots, s_q \ge 0$ be natural numbers, write $v^{(m)}$ for $m$ copies of $v$, and let
-$\bar\alpha$ and $\underline\alpha$ be the partitions with parts
-$\bar\alpha_i = q - i + 1 + s_i + s_{i+1} + \dots + s_q$ for $1 \le i \le q$ and
-$\underline\alpha = (q^{(s_q + 1)}, (q-1)^{(s_{q-1} + 1)}, \dots, 1^{(s_1 + 1)})$. Let $\alpha$
-be a partition of $n$ with parts $\alpha_1 \ge \dots \ge \alpha_t$, set $\alpha_{t+1} = 0$, and
-suppose that the diagonal sequence of $\alpha$, indexed from $0$, is
-$(0, 1, 2, \dots, q, q^{(s_q)}, \dots, 1^{(s_1)}, 0, 0, \dots)$. If $\alpha \ne \bar\alpha$, then
-$\alpha_i = \alpha_{i+1}$ for some $i$ with $1 \le i < t$. If $\alpha \ne \underline\alpha$, then
-$\alpha_i - \alpha_{i+1} \ge 2$ for some $i$ with $1 \le i \le t$.
-
-Source: Michael Neubauer and Harmony Vargas, *Diagonal Sequences of Integer Partitions*,
-INTEGERS 25 (2025), Article A60, Corollary 4. -/
-public theorem_wanted exists_eq_succ_of_ne_diagonalMaxPartition {n : ℕ} (p : Nat.Partition n)
-    (q : ℕ) (s : ℕ → ℕ)
-    (hd : diagonalSequence p.parts = diagonalOfList (diagonalNormalForm q s)) :
-    (p.parts.sort (· ≥ ·) ≠ diagonalMaxPartition q s →
-      ∃ i, i + 1 < p.parts.card ∧
-        (p.parts.sort (· ≥ ·)).getD i 0 = (p.parts.sort (· ≥ ·)).getD (i + 1) 0) ∧
-    (p.parts.sort (· ≥ ·) ≠ diagonalMinPartition q s →
-      ∃ i, i < p.parts.card ∧
-        (p.parts.sort (· ≥ ·)).getD (i + 1) 0 + 1 < (p.parts.sort (· ≥ ·)).getD i 0)
-
 /-- **The largest part of a partition with given diagonal sequence.** Let $\alpha$ be a partition
 of $n$, let $q$ and $s_1, s_2, \dots$ be natural numbers, and suppose the diagonal sequence of
 $\alpha$ is $(1, 2, \dots, q, q^{(s_q)}, (q-1)^{(s_{q-1})}, \dots, 1^{(s_1)})$ followed by zeros,
@@ -198,16 +179,6 @@ INTEGERS 25 (2025), Article A60, Proposition 6. -/
 public theorem_wanted vnArrangementCount_one_eq_prod (t : ℕ) (b : ℕ → ℕ) :
     vnArrangementCount 1 (∑ i ∈ Finset.range (t + 1), Multiset.replicate (b i) (i : ℤ)) =
       ∏ i ∈ Finset.range t, (b i + b (i + 1)).choose (b i)
-
-/-- **Vn-arrangements of consecutive integers.** For every integer $a$ and every natural number
-$t \ge 1$, the set $\{a, a + 1, \dots, a + t - 1\}$ of $t$ consecutive integers has exactly
-$2^{t-1}$ vn-arrangements, that is, orderings $(v_1, \dots, v_t)$ of its elements with
-$v_{i+1} - v_i \le 1$ for all $i$.
-
-Source: Michael Neubauer and Harmony Vargas, *Diagonal Sequences of Integer Partitions*,
-INTEGERS 25 (2025), Article A60, Corollary 5. -/
-public theorem_wanted vnArrangementCount_consecutive (a : ℤ) (t : ℕ) (ht : 1 ≤ t) :
-    vnArrangementCount 1 (Finset.Ico a (a + t)).val = 2 ^ (t - 1)
 
 /-- **Counting $k$-vn-arrangements of a multiset.** Let $k \le t$ be natural numbers, let
 $b_0, b_1, \dots$ be natural numbers, and let $M$ be the multiset of integers containing $b_i$
@@ -314,39 +285,6 @@ public theorem_wanted card_diagonalClass_of_two_le_s {n : ℕ} (p : Nat.Partitio
       (1 ≤ s q → (diagonalClass p).card =
         ∏ i ∈ Finset.Icc q (q + ∑ j ∈ Finset.Icc 1 q, s j),
           (diagonalSequence p.parts i - diagonalSequence p.parts (i + 1) + 1))
-
-/-- **Truncating the staircase of a diagonal sequence.** For $m \ge 0$ and a sequence
-$s = (s_1, s_2, \dots)$ of natural numbers, let $d(m, s)$ be the sequence
-$(1, 2, \dots, m, m^{(s_m)}, (m-1)^{(s_{m-1})}, \dots, 1^{(s_1)})$ followed by zeros, where
-$v^{(r)}$ means $r$ copies of $v$, and let $n(m, s) = m(m+1)/2 + \sum_{j=1}^{m} j s_j$. Let
-$1 \le k < q$ with $s_k \ge 2$ and $s_j = 0$ for all $k < j \le q$. Then the number of partitions
-of $n(q, s)$ with diagonal sequence $d(q, s)$ equals the number of partitions of $n(k, s)$ with
-diagonal sequence $d(k, s)$.
-
-Source: Michael Neubauer and Harmony Vargas, *Diagonal Sequences of Integer Partitions*,
-INTEGERS 25 (2025), Article A60, Corollary 6 (4). -/
-public theorem_wanted card_diagonalClassOf_truncate (q k : ℕ) (s : ℕ → ℕ) (hk : 1 ≤ k)
-    (hkq : k < q) (hsk : 2 ≤ s k) (hs : ∀ j ∈ Finset.Ioc k q, s j = 0) :
-    (diagonalClassOf (q * (q + 1) / 2 + ∑ j ∈ Finset.Icc 1 q, j * s j)
-        (diagonalOfList (diagonalNormalForm q s))).card =
-      (diagonalClassOf (k * (k + 1) / 2 + ∑ j ∈ Finset.Icc 1 k, j * s j)
-        (diagonalOfList (diagonalNormalForm k s))).card
-
-/-- **Capping the multiplicities of a diagonal sequence at two.** For $m \ge 0$ and a sequence
-$s = (s_1, s_2, \dots)$ of natural numbers, let $d(m, s)$ be the sequence
-$(1, 2, \dots, m, m^{(s_m)}, (m-1)^{(s_{m-1})}, \dots, 1^{(s_1)})$ followed by zeros, where
-$v^{(r)}$ means $r$ copies of $v$, and let $n(m, s) = m(m+1)/2 + \sum_{j=1}^{m} j s_j$. Let
-$q \ge 1$ and $\sigma_j = \min(s_j, 2)$ for all $j$. Then the number of partitions of $n(q, s)$
-with diagonal sequence $d(q, s)$ equals the number of partitions of $n(q, \sigma)$ with diagonal
-sequence $d(q, \sigma)$.
-
-Source: Michael Neubauer and Harmony Vargas, *Diagonal Sequences of Integer Partitions*,
-INTEGERS 25 (2025), Article A60, Corollary 6 (5). -/
-public theorem_wanted card_diagonalClassOf_min_two (q : ℕ) (hq : 1 ≤ q) (s : ℕ → ℕ) :
-    (diagonalClassOf (q * (q + 1) / 2 + ∑ j ∈ Finset.Icc 1 q, j * s j)
-        (diagonalOfList (diagonalNormalForm q s))).card =
-      (diagonalClassOf (q * (q + 1) / 2 + ∑ j ∈ Finset.Icc 1 q, j * min (s j) 2)
-        (diagonalOfList (diagonalNormalForm q fun j => min (s j) 2))).card
 
 /-- **Diagonal classes of size at most three.** Let $\alpha$ be a partition of $n \ge 1$, let
 $d = \delta(\alpha)$ be its diagonal sequence, written without its trailing zeros, and let

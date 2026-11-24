@@ -22,6 +22,8 @@ copies of the total minus `r` preserves this pattern. This module also defines t
 partitions associated to ordered factorizations and counts those factorizations.
 The theorem `exists_partition_unique_subsums_but_one_iff` classifies the possible counts
 when a single interior sum is allowed to have more than one subpartition.
+The theorem `typeADoublePerfect_forms` gives the two ordered-factorization shapes of
+Type-A double-perfect partitions.
 -/
 
 namespace MetaMathlibExt
@@ -444,6 +446,220 @@ theorem isDoublePerfectOfOrder_add_replicate (r n : ℕ) (hr : 1 ≤ r)
       -- Both counts contribute on [d, n], where k and k - d each have one representation.
       have htotal : d + r = n := by omega
       split_ifs <;> omega
+
+namespace typeADoublePerfect_forms
+
+-- A prefix of total b - 1 represents every residue modulo b. Copies of b
+-- extend this interval by successive blocks of length b.
+private theorem cover_blocks {p : Multiset ℕ} {b : ℕ} (hb : 0 < b)
+    (cover : ∀ k < b, ∃ s ≤ p, s.sum = k) (c : ℕ) :
+    ∀ k < b * (c + 1), ∃ s ≤ p + Multiset.replicate c b, s.sum = k := by
+  intro k hk
+  obtain ⟨s, hs, hsum⟩ := cover (k % b) (Nat.mod_lt k hb)
+  have hdiv : k / b ≤ c := by
+    have := (Nat.div_lt_iff_lt_mul hb).2 (Nat.mul_comm b (c + 1) ▸ hk)
+    omega
+  refine ⟨s + Multiset.replicate (k / b) b, add_le_add hs (Multiset.replicate_mono b hdiv), ?_⟩
+  simpa [hsum, Nat.mul_comm] using Nat.mod_add_div k b
+
+-- A subpartition that does not fit in the prefix uses a part from the tail.
+private theorem meets_tail {s p t : Multiset ℕ} (hs : s ≤ p + t) (hp : ¬ s ≤ p) :
+    ∃ x ∈ s, x ∈ t := by
+  by_contra! avoid
+  apply hp
+  apply Multiset.le_iff_count.mpr
+  intro x
+  by_cases hx : x ∈ s
+  · simpa [Multiset.count_eq_zero_of_notMem (avoid x hx)] using Multiset.le_iff_count.mp hs x
+  · simp [Multiset.count_eq_zero_of_notMem hx]
+
+-- Unique sums force the next part of a perfect partition to be the first
+-- integer beyond the covered interval. Its multiplicity determines the next radix.
+private theorem factor_tail {n : ℕ} {β : Multiset ℕ} (hβ : IsPerfectPartition n β)
+    (p t : Multiset ℕ) (b : ℕ) (hsplit : p + t = β) (hb : p.sum + 1 = b)
+    (cover : ∀ k < b, ∃ s ≤ p, s.sum = k) (sep : ∀ x ∈ t, x ∉ p) :
+    ∃ as : List ℕ, (∀ a ∈ as, 2 ≤ a) ∧
+      t = (perfectPartitionOfFactorization as).map (b * ·) := by
+  by_cases ht : t = 0
+  · exact ⟨[], by simp, by simp [ht, perfectPartitionOfFactorization]⟩
+  have hpβ : p ≤ β := hsplit ▸ Multiset.le_add_right _ _
+  have htβ : t ≤ β := hsplit ▸ Multiset.le_add_left _ _
+  have lower (x : ℕ) (hx : x ∈ t) : b ≤ x := by
+    by_contra! h
+    obtain ⟨s, hs, hsum⟩ := cover x h
+    have hxβ := Multiset.mem_of_le htβ hx
+    have hxn := Multiset.le_sum_of_mem hxβ
+    have hc : (subpartitions β x).card = 1 :=
+      hβ.2.2 x (Finset.mem_Icc.mpr ⟨hβ.1 x hxβ, hβ.2.1 ▸ hxn⟩)
+    have he := Finset.card_le_one.mp hc.le s (mem_subpartitions.mpr ⟨hs.trans hpβ, hsum⟩)
+      {x} (mem_subpartitions.mpr ⟨Multiset.singleton_le.mpr hxβ, by simp⟩)
+    exact sep x hx (Multiset.singleton_le.mp (he ▸ hs))
+  obtain ⟨x, hx⟩ := Multiset.exists_mem_of_ne_zero ht
+  have hxn := Multiset.le_sum_of_mem (Multiset.mem_of_le htβ hx)
+  have hbn : b ≤ n := (lower x hx).trans (hβ.2.1 ▸ hxn)
+  have hc : (subpartitions β b).card = 1 := hβ.2.2 b (Finset.mem_Icc.mpr ⟨by omega, hbn⟩)
+  obtain ⟨s, hs⟩ := Finset.card_pos.mp (by omega : 0 < (subpartitions β b).card)
+  obtain ⟨hs, hsum⟩ := mem_subpartitions.mp hs
+  obtain ⟨y, hys, hyt⟩ := meets_tail (hsplit ▸ hs) (fun hp => by
+    have := sum_le_of_le hp
+    omega)
+  have hy : y = b := le_antisymm (hsum ▸ Multiset.le_sum_of_mem hys) (lower y hyt)
+  have hbt : b ∈ t := hy ▸ hyt
+  let c := t.count b
+  let rest := t.filter (· ≠ b)
+  have ht' : Multiset.replicate c b + rest = t := by
+    simpa only [Multiset.filter_eq'] using t.filter_add_not (· = b)
+  have hcpos : 0 < c := Multiset.count_pos.mpr hbt
+  have hcard := congrArg Multiset.card ht'
+  simp only [Multiset.card_add, Multiset.card_replicate] at hcard
+  have hlt : rest.card < t.card := by omega
+  have hrec := factor_tail hβ (p + Multiset.replicate c b) rest (b * (c + 1))
+    (by rwa [add_assoc, ht']) (by simp [Nat.mul_add, Nat.mul_comm, ← hb]; omega)
+    (cover_blocks (by omega) cover c) (by
+      intro y hy hymem
+      obtain ⟨hyt, hne⟩ := Multiset.mem_filter.mp hy
+      rcases Multiset.mem_add.mp hymem with hyp | hyr
+      · exact sep y hyt hyp
+      · exact hne (Multiset.eq_of_mem_replicate hyr))
+  obtain ⟨as, has, he⟩ := hrec
+  refine ⟨(c + 1) :: as, List.forall_mem_cons.mpr ⟨by omega, has⟩, ?_⟩
+  rw [← ht', he]
+  simp [perfectPartitionOfFactorization, Multiset.map_map, Nat.mul_assoc]
+termination_by t.card
+decreasing_by exact hlt
+
+private theorem first_interior_card {r N : ℕ} {l : Multiset ℕ} (hN : 2 * (r + 1) ≤ N)
+    (hl : IsDoublePerfectOfOrder r N l) : (subpartitions l (r + 1)).card = 2 := by
+  change subpartitionCount l (r + 1) = 2
+  rw [count_at hl]
+  split_ifs <;> omega
+
+-- The first sum with two representations is r + 1. With extra ones this
+-- must be the least part larger than one.
+private theorem head_of_extra_ones {r N a : ℕ} {t l : Multiset ℕ} (ha : 2 ≤ a)
+    (hN : 2 * (r + 1) ≤ N) (hl : IsDoublePerfectOfOrder r N l)
+    (lower : ∀ x ∈ t, a ≤ x) (first : t ≠ 0 → a ∈ t)
+    (he : l = Multiset.replicate (a - 1 + (r + 1)) 1 + t) : a = r + 1 := by
+  have hc := first_interior_card hN hl
+  obtain ⟨s, hmem, hne⟩ := Finset.exists_mem_ne (by omega :
+    1 < (subpartitions l (r + 1)).card) (Multiset.replicate (r + 1) 1)
+  obtain ⟨hs, hsum⟩ := mem_subpartitions.mp hmem
+  obtain ⟨x, hxs, hxt⟩ := meets_tail (he ▸ hs) (by
+    intro hp
+    obtain ⟨k, _, rfl⟩ := Multiset.le_replicate_iff.mp hp
+    have hk : k = r + 1 := by simpa using hsum
+    exact hne (hk ▸ rfl))
+  have hx := Multiset.le_sum_of_mem hxs
+  have hax := lower x hxt
+  by_contra hne'
+  have ha₁ : a ≤ r := by omega
+  have hc₁ : (subpartitions l a).card = 1 := by
+    change subpartitionCount l a = 1
+    rw [count_at hl]
+    split_ifs <;> omega
+  have ha_mem : a ∈ t := first (by rintro rfl; simp at hxt)
+  have hsingle : {a} ∈ subpartitions l a := mem_subpartitions.mpr
+    ⟨Multiset.singleton_le.mpr (he ▸ Multiset.mem_add.mpr (Or.inr ha_mem)), by simp⟩
+  have hones : Multiset.replicate a 1 ∈ subpartitions l a := by
+    refine mem_subpartitions.mpr ⟨?_, by simp⟩
+    rw [he]
+    exact (Multiset.replicate_mono 1 (by omega)).trans (Multiset.le_add_right _ _)
+  have heq := Finset.card_le_one.mp hc₁.le _ hones _ hsingle
+  have := congrArg Multiset.card heq
+  simp at this
+  omega
+
+-- If there are only r ones and all other parts are at least r + 1, the
+-- singleton is the only possible representation of r + 1.
+private theorem head_of_extra_part {r N a : ℕ} {t l : Multiset ℕ}
+    (hN : 2 * (r + 1) ≤ N) (hl : IsDoublePerfectOfOrder r N l)
+    (lower : ∀ x ∈ t, a ≤ x)
+    (he : l = Multiset.replicate (a - 1) 1 + t + {r + 1}) : a ≠ r + 1 := by
+  intro heq
+  have hc : (subpartitions l a).card = 2 := heq ▸ first_interior_card hN hl
+  obtain ⟨s, hmem, hne⟩ := Finset.exists_mem_ne (by omega : 1 < (subpartitions l a).card)
+    ({a} : Multiset ℕ)
+  obtain ⟨hs, hsum⟩ := mem_subpartitions.mp hmem
+  rw [add_assoc] at he
+  obtain ⟨x, hxs, hxt⟩ := meets_tail (he ▸ hs) (by
+    intro hp
+    have := sum_le_of_le hp
+    simp at this
+    omega)
+  have hx : a ≤ x := by
+    rcases Multiset.mem_add.mp hxt with hx | hx
+    · exact lower x hx
+    · exact (heq.trans (Multiset.mem_singleton.mp hx).symm).le
+  have := Multiset.le_sum_of_mem hxs
+  obtain rfl : x = a := by omega
+  obtain ⟨u, rfl⟩ := Multiset.exists_cons_of_mem hxs
+  rw [Multiset.sum_cons] at hsum
+  by_cases hu : u = 0
+  · simp [hu] at hne
+  obtain ⟨y, hy⟩ := Multiset.exists_mem_of_ne_zero hu
+  have := hl.1 y (Multiset.mem_of_le hs (Multiset.mem_cons_of_mem hy))
+  have := Multiset.le_sum_of_mem hy
+  omega
+
+end typeADoublePerfect_forms
+
+/-- **Shapes of Type-A double-perfect partitions.** Let $r \ge 1$ and $N \ge 2(r+1)$. For a
+finite sequence $(a_1, \dots, a_k)$ write
+$P(a_1, \dots, a_k) = (1^{a_1-1}, a_1^{a_2-1}, \dots, (a_1\cdots a_{k-1})^{a_k-1})$ for the
+partition that MacMahon's bijection attaches to the ordered factorization $a_1 \cdots a_k$,
+where $x^e$ denotes $e$ parts equal to $x$, and let $\cup$ join parts with multiplicity. Every
+Type-A double-perfect partition $\lambda$ of $N$ of order $r$ has one of two shapes. Either
+there are $k \ge 1$ and integers $a_2, \dots, a_k \ge 2$ with $(r+1) a_2 \cdots a_k = N - r$ and
+$\lambda = (1^{r+1}) \cup P(r+1, a_2, \dots, a_k) =
+(1^{2r+1}, (r+1)^{a_2-1}, ((r+1)a_2)^{a_3-1}, \dots)$; or there are $k \ge 0$ and integers
+$a_1, \dots, a_k \ge 2$ with $a_1 \cdots a_k = N - r$, with $a_1 \ne r + 1$ if $k \ge 1$, and
+$\lambda = P(a_1, \dots, a_k) \cup (r+1)$.
+
+Source: Augustine O. Munagi, *Double Perfect Partitions of Higher Order*, INTEGERS 25 (2025),
+Article A109, Corollary 2 with displays (14)-(17) (`integers-2025-A109-cor-2`). -/
+theorem typeADoublePerfect_forms (r N : ℕ) (hr : 1 ≤ r) (hN : 2 * (r + 1) ≤ N)
+    (l : Multiset ℕ) (hl : IsTypeADoublePerfect r N l) :
+    (∃ as : List ℕ, (∀ a ∈ as, 2 ≤ a) ∧ (r + 1) * as.prod = N - r ∧
+      l = Multiset.replicate (r + 1) 1 + perfectPartitionOfFactorization ((r + 1) :: as)) ∨
+    (∃ as : List ℕ, (∀ a ∈ as, 2 ≤ a) ∧ as.prod = N - r ∧ as.head? ≠ some (r + 1) ∧
+      l = perfectPartitionOfFactorization as + {r + 1}) := by
+  obtain ⟨hd, β, hβ, hshape⟩ := hl
+  obtain ⟨as, has, hfac⟩ := typeADoublePerfect_forms.factor_tail hβ 0 β 1 (by simp) (by simp)
+    (by intro k hk; exact ⟨0, le_rfl, by simp; omega⟩) (by simp)
+  simp only [Nat.one_mul, Multiset.map_id'] at hfac
+  have hprod := perfectPartitionOfFactorization_sum_add_one as fun x hx =>
+    (has x hx).trans' (by decide)
+  rw [← hfac, hβ.2.1] at hprod
+  have htotal : as.prod = N - r := by omega
+  cases as with
+  | nil => simp at htotal; omega
+  | cons a as =>
+    obtain ⟨ha, has⟩ := List.forall_mem_cons.mp has
+    let t := (perfectPartitionOfFactorization as).map (a * ·)
+    have hparts : β = Multiset.replicate (a - 1) 1 + t := hfac
+    have lower (x : ℕ) (hx : x ∈ t) : a ≤ x := by
+      obtain ⟨y, _, hxy⟩ := Multiset.mem_map.mp hx
+      exact Nat.le_of_dvd (hβ.1 x (hparts ▸ Multiset.mem_add.mpr (Or.inr hx))) ⟨y, hxy.symm⟩
+    rcases hshape with he | he
+    · have first : t ≠ 0 → a ∈ t := by
+        cases as with
+        | nil => simp [t, perfectPartitionOfFactorization]
+        | cons b bs =>
+          intro _
+          have hb := has b (by simp)
+          apply Multiset.mem_map.mpr
+          refine ⟨1, Multiset.mem_add.mpr (.inl (Multiset.mem_replicate.mpr ⟨?_, rfl⟩)), by simp⟩
+          omega
+      have he' : l = Multiset.replicate (a - 1 + (r + 1)) 1 + t := by
+        rw [he, hparts, Multiset.replicate_add (a - 1) (r + 1)]
+        ac_rfl
+      have heq := typeADoublePerfect_forms.head_of_extra_ones ha hN hd lower first he'
+      exact Or.inl ⟨as, has, by simpa only [List.prod_cons, heq] using htotal,
+        by rw [he, hfac, heq, add_comm]⟩
+    · have hne := typeADoublePerfect_forms.head_of_extra_part hN hd lower
+        (he.trans (by rw [hparts]))
+      exact Or.inr ⟨a :: as, List.forall_mem_cons.mpr ⟨ha, has⟩, htotal, by simpa using hne,
+        by rw [he, hfac]⟩
 
 end
 

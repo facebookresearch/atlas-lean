@@ -49,4 +49,32 @@ example : ∃ p : Nat.Partition 2, subpartitionCount p.parts 1 = 0 ∧
   refine ⟨Nat.Partition.indiscrete 2, by decide, ?_⟩
   omega
 
+-- Both shapes can describe the same partition, using different factorizations of four.
+example : IsTypeADoublePerfect 1 5 {1, 1, 1, 2} ∧
+    ({1, 1, 1, 2} : Multiset ℕ) =
+      Multiset.replicate 2 1 + perfectPartitionOfFactorization [2, 2] ∧
+    ({1, 1, 1, 2} : Multiset ℕ) = perfectPartitionOfFactorization [4] + {2} := by
+  refine ⟨⟨?_, {1, 2}, ?_, Or.inl ?_⟩, ?_⟩
+  · unfold IsDoublePerfectOfOrder subpartitionCount
+    decide
+  · unfold IsPerfectPartition subpartitionCount
+    decide
+  · decide
+  · decide
+
+-- At the lower bound for order two, three cannot be the first factor of four.
+example : ∃ as : List ℕ, (∀ a ∈ as, 2 ≤ a) ∧ as.prod = 4 ∧ as.head? ≠ some 3 ∧
+    ({1, 1, 1, 3} : Multiset ℕ) = perfectPartitionOfFactorization as + {3} := by
+  have hl : IsTypeADoublePerfect 2 6 {1, 1, 1, 3} := by
+    refine ⟨?_, {1, 1, 1}, ?_, Or.inr ?_⟩
+    · unfold IsDoublePerfectOfOrder subpartitionCount
+      decide
+    · unfold IsPerfectPartition subpartitionCount
+      decide
+    · decide
+  rcases typeADoublePerfect_forms 2 6 (by decide) (by decide) _ hl with h | h
+  · obtain ⟨as, _, hprod, _⟩ := h
+    omega
+  · exact h
+
 end MetaMathlibExt

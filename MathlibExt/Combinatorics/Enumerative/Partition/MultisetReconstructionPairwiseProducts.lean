@@ -12,6 +12,8 @@ public import Mathlib.Combinatorics.Enumerative.Partition.Basic
 public import Mathlib.Data.Multiset.Powerset
 import Mathlib.Algebra.BigOperators.Ring.Multiset
 import Mathlib.Algebra.Order.Ring.Pow
+import Mathlib.Algebra.Order.Sub.Basic
+import Mathlib.Data.Multiset.Lattice
 import Mathlib.Tactic.Ring
 
 /-!
@@ -20,6 +22,16 @@ import Mathlib.Tactic.Ring
 Li's theorem states that the pairwise products determine a partition of a fixed positive integer.
 The common total and products give equal power sums at exponents `2 ^ k`. For large enough
 exponents, these sums distinguish the multiplicity of the largest part.
+
+Li's lemma recovers a partition from its largest part and its pairwise products. Once the
+products formed entirely from the parts the two partitions share are removed, the largest
+remaining product is the common largest part times the largest unshared part. So the unshared
+parts of both partitions have the same maximum, which forces them to be empty.
+
+## References
+
+* Stella Jiahui Li, "A Note on Multiset Reconstruction from Pairwise Products and Total Sum",
+  *INTEGERS* 26 (2026), Article A16 (<https://math.colgate.edu/~integers/aa16/aa16.pdf>).
 -/
 
 @[expose] public section
@@ -147,6 +159,81 @@ theorem partition_pairwiseProducts_eq_iff
     rw [hpre, ih] at hl
     rw [pow_succ]
     omega
+
+private theorem sup_map_mul (x : ℕ) (s : Multiset ℕ) : (s.map (x * ·)).sup = x * s.sup := by
+  induction s using Multiset.induction with
+  | empty => simp
+  | cons y s ih =>
+    rw [map_cons, sup_cons, sup_cons, ih]
+    exact (mul_max ..).symm
+
+-- Once the products internal to c are removed, the largest remaining product pairs
+-- the largest part of s with the largest part of c.
+private theorem sup_remaining_products (s c : Multiset ℕ) (hs : s.sup ≤ c.sup) :
+    (pairwiseProducts (s + c) - pairwiseProducts c).sup = s.sup * c.sup := by
+  induction s using Multiset.induction with
+  | empty => simp
+  | cons x s ih =>
+    rw [sup_cons, sup_le_iff] at hs
+    have hle : pairwiseProducts c ≤ pairwiseProducts (s + c) :=
+      map_le_map (powersetCard_mono 2 (Multiset.le_add_left ..))
+    rw [cons_add, pairwiseProducts_cons, add_comm (pairwiseProducts (s + c)),
+      Multiset.add_sub_assoc hle, Multiset.sup_add, sup_map_mul, Multiset.sup_add,
+      sup_eq_right.mpr hs.2, ih hs.2, sup_cons]
+    exact (max_mul ..).symm
+
+private theorem sup_mem_of_pos {s : Multiset ℕ} (h : 0 < s.sup) : s.sup ∈ s := by
+  induction s using Multiset.induction with
+  | empty => simp at h
+  | cons x s ih =>
+    by_cases hx : s.sup ≤ x
+    · simp [sup_eq_left.mpr hx]
+    · rw [sup_cons, sup_eq_right.mpr (le_of_not_ge hx)] at h ⊢
+      exact mem_cons_of_mem (ih h)
+
+set_option linter.unusedVariables false in
+/-- **Li's lemma: reconstruction from the largest part and pairwise products.** Let $n$ be a
+positive integer and let $\lambda$ and $\mu$ be partitions of $n$ with a common largest part,
+that is, some $a$ is a part of both $\lambda$ and $\mu$ and no part of either exceeds $a$. If the
+pairwise products of the parts of $\lambda$ and the pairwise products of the parts of $\mu$ form
+the same multiset, then $\lambda = \mu$.
+
+Source: Stella Jiahui Li, "A Note on Multiset Reconstruction from
+Pairwise Products and Total Sum", Lemma 1. -/
+theorem partition_eq_of_pairwiseProducts_eq_of_max_eq
+    {n : ℕ} (hn : 0 < n) (lam mu : Nat.Partition n)
+    (hmax : ∃ a : ℕ, a ∈ lam.parts ∧ a ∈ mu.parts ∧
+      (∀ x ∈ lam.parts, x ≤ a) ∧ (∀ x ∈ mu.parts, x ≤ a))
+    (hpre : pairwiseProducts lam.parts = pairwiseProducts mu.parts) :
+    lam = mu := by
+  obtain ⟨a, hal, ham, hl, hm⟩ := hmax
+  let c := lam.parts ∩ mu.parts
+  have hac : a ∈ c := mem_inter.mpr ⟨hal, ham⟩
+  have hsup (p : Nat.Partition n) (hc : c ≤ p.parts) (hp : ∀ x ∈ p.parts, x ≤ a) :
+      (pairwiseProducts p.parts - pairwiseProducts c).sup = (p.parts - c).sup * c.sup := by
+    have hb : (p.parts - c).sup ≤ c.sup :=
+      (sup_le.mpr fun x hx => hp x (mem_of_le (Multiset.sub_le_self ..) hx)).trans (le_sup hac)
+    simpa only [Multiset.sub_add_cancel hc] using sup_remaining_products (p.parts - c) c hb
+  have heq : (lam.parts - mu.parts).sup = (mu.parts - lam.parts).sup := by
+    have he := hsup lam inter_le_left hl
+    rw [hpre, hsup mu inter_le_right hm] at he
+    have hpos : 0 < c.sup := (lam.parts_pos hal).trans_le (le_sup hac)
+    have h := Nat.eq_of_mul_eq_mul_right hpos he.symm
+    dsimp only [c] at h
+    rwa [sub_inter, inter_comm lam.parts mu.parts, sub_inter] at h
+  -- A positive common maximum of the two differences would have a larger count on both sides.
+  have parts_le (p q : Nat.Partition n) (h : (p.parts - q.parts).sup = (q.parts - p.parts).sup) :
+      p.parts ≤ q.parts := by
+    apply le_iff_count.mpr
+    intro x
+    by_contra! hx
+    have hx' := mem_sub.mpr hx
+    have hpos := (p.parts_pos (mem_of_le (Multiset.sub_le_self ..) hx')).trans_le (le_sup hx')
+    have hp := mem_sub.mp (sup_mem_of_pos hpos)
+    have hq := mem_sub.mp (sup_mem_of_pos (h ▸ hpos))
+    rw [← h] at hq
+    exact asymm hp hq
+  exact Nat.Partition.ext (le_antisymm (parts_le lam mu heq) (parts_le mu lam heq.symm))
 
 end MultisetReconstructionPairwiseProductsWanted
 end MathlibExt.Combinatorics.Enumerative.Partition

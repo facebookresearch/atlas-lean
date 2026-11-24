@@ -76,3 +76,35 @@ example : (catalanCapacityDist 5 3).eval 0 = 7 := by
 example (n : ℕ) (hn : 2 ≤ n) : (catalanCapacityDist n n).eval 0 = 1 := by
   rw [catalanCapacityDist_eval_zero n n hn le_rfl]
   simp
+
+-- The restriction removes 1123 from the length-four words ending in 3.
+example : wordsEndingIn (restrictedSmoothWords 4) 3 = {![1, 2, 2, 3], ![1, 2, 3, 3]} := by
+  decide
+
+-- Both words are restricted and end in 3. The valley in 12323 holds one cell of water.
+example : wordCapacity ![1, 2, 3, 4, 3] = 0 ∧ wordCapacity ![1, 2, 3, 2, 3] = 1 := by
+  decide
+
+example : (restrictedSmoothCapacityDist 5 3).eval 0 = 4 := by
+  rw [restrictedSmoothCapacityDist_eval_zero 5 3 (by decide) (by decide)]
+  decide
+
+-- At the upper endpoint the strictly increasing word is the only possibility.
+example (n : ℕ) (hn : 3 ≤ n) : (restrictedSmoothCapacityDist n n).eval 0 = 1 := by
+  rw [restrictedSmoothCapacityDist_eval_zero n n hn le_rfl]
+  simp
+
+-- At i = 2 the sum contains the entire binomial row.
+example (n : ℕ) (hn : 2 ≤ n) : (smoothCapacityDist n 2).eval 0 = 2 ^ (n - 2) := by
+  rw [smoothCapacityDist_eval_zero n 2 le_rfl hn, Nat.sub_self, ← Nat.range_succ_eq_Icc_zero]
+  exact_mod_cast Nat.sum_range_choose (n - 2)
+
+-- The four zero-capacity words include 1112 and the word 1232 with a final descent.
+example : (wordsEndingIn (smoothWords 4) 2).filter (fun w => wordCapacity w = 0) =
+    {![1, 1, 1, 2], ![1, 1, 2, 2], ![1, 2, 2, 2], ![1, 2, 3, 2]} := by
+  decide
+
+-- At i = n the strictly increasing word is the sole contribution.
+example (n : ℕ) (hn : 2 ≤ n) : (smoothCapacityDist n n).eval 0 = 1 := by
+  rw [smoothCapacityDist_eval_zero n n hn le_rfl]
+  simp

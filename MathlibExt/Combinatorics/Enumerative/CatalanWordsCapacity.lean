@@ -25,7 +25,10 @@ words with a given last letter, following Mansour and Shattuck.
 The two Fibonacci identities express even Fibonacci numbers and binomial sums of odd Fibonacci
 numbers as double sums of binomially weighted odd Fibonacci numbers. The second one gives
 `catalanCapacityDist_eval_zero`, the number of Catalan words of capacity zero with a given last
-letter $i \ge 2$.
+letter $i \ge 2$. For restricted smooth words ending in $i \ge 3$,
+`restrictedSmoothCapacityDist_eval_zero` expresses the count as a tail of a binomial row.
+For smooth words ending in $i \ge 2$, `smoothCapacityDist_eval_zero` gives the corresponding tail
+of row $n-2$.
 -/
 
 namespace MetaMathlibExt
@@ -471,6 +474,370 @@ public theorem catalanCapacityDist_eval_zero (n i : ℕ) (hi : 2 ≤ i) (hin : i
       ∑ m ∈ Finset.range (n - i + 1),
         (((n - m - 2).choose (i - 2) * (if m = 0 then 1 else Nat.fib (2 * m - 1)) : ℕ) : ℤ) := by
   rw [eval_zero_eq_card, card_zero_eq n i hi hin, Nat.cast_sum]
+
+/-- **Smooth words.** For $n \ge 0$, the set $\mathcal{R}_n$ of smooth words of length $n$ consists
+of the words $w = w_1 \cdots w_n$ of positive integers with $w_1 = 1$ (when $n \ge 1$) and
+$|w_{i+1} - w_i| \le 1$ for $1 \le i < n$.
+
+The letters of a smooth word of length $n$ are at most $n$, so $\mathcal{R}_n$ is finite.
+
+Source: Toufik Mansour and Mark Shattuck, *Enumeration of Catalan and Smooth Words According
+to Capacity*, INTEGERS 25 (2025), Article A5, Section 1, definition of smooth words. -/
+public def smoothWords (n : ℕ) : Finset (Fin n → ℕ) :=
+  (Fintype.piFinset fun _ : Fin n => Finset.Icc 1 n).filter fun w =>
+    (∀ i : Fin n, i.val = 0 → w i = 1) ∧
+      ∀ i j : Fin n, j.val = i.val + 1 → w j ≤ w i + 1 ∧ w i ≤ w j + 1
+
+/-- **Characterization of smooth words.** For a natural number $n$, let $\mathcal{R}_n$ be the
+set of smooth words of length $n$, defined as the words $w = w_1 \cdots w_n$ with letters in
+$\{1, \dots, n\}$ such that $w_1 = 1$ when $n \ge 1$, and $w_{k+1} \le w_k + 1$ and
+$w_k \le w_{k+1} + 1$ for $1 \le k < n$. A word $w = w_1 \cdots w_n$ of natural numbers belongs
+to $\mathcal{R}_n$ if and only if $w_k \ge 1$ for every $k$, $w_1 = 1$ when $n \ge 1$, and
+$w_{k+1} \le w_k + 1$ and $w_k \le w_{k+1} + 1$ for $1 \le k < n$. In particular, the bound
+$w_k \le n$ on the letters is automatic.
+
+Source: Toufik Mansour and Mark Shattuck, *Enumeration of Catalan and Smooth Words According
+to Capacity*, INTEGERS 25 (2025), Article A5, Section 1, definition of smooth words. -/
+public theorem mem_smoothWords_iff {n : ℕ} (w : Fin n → ℕ) :
+    w ∈ smoothWords n ↔ (∀ i, 1 ≤ w i) ∧ (∀ i : Fin n, i.val = 0 → w i = 1) ∧
+      ∀ i j : Fin n, j.val = i.val + 1 → w j ≤ w i + 1 ∧ w i ≤ w j + 1 := by
+  simp only [smoothWords, Finset.mem_filter, Fintype.mem_piFinset, Finset.mem_Icc]
+  constructor
+  · rintro ⟨hb, h0, hg⟩
+    exact ⟨fun i => (hb i).1, h0, hg⟩
+  · rintro ⟨h1, h0, hg⟩
+    have key : ∀ k (hk : k < n), w ⟨k, hk⟩ ≤ k + 1 := by
+      intro k
+      induction k with
+      | zero => intro hk; rw [h0 ⟨0, hk⟩ rfl]
+      | succ k ih =>
+        intro hk
+        have h₁ := (hg ⟨k, by omega⟩ ⟨k + 1, hk⟩ rfl).1
+        have h₂ := ih (by omega)
+        omega
+    refine ⟨fun i => ⟨h1 i, ?_⟩, h0, hg⟩
+    have := key i.val i.isLt
+    rw [Fin.eta] at this
+    omega
+
+/-- **Restricted smooth words.** For $n \ge 0$, the set $\mathcal{R}^{\ast}_n$ of restricted smooth
+words of length $n$ consists of the smooth words of length $n$ in which no two adjacent letters
+are both equal to $1$.
+
+Source: Toufik Mansour and Mark Shattuck, *Enumeration of Catalan and Smooth Words According
+to Capacity*, INTEGERS 25 (2025), Article A5, Section 4, definition of restricted smooth words. -/
+public def restrictedSmoothWords (n : ℕ) : Finset (Fin n → ℕ) :=
+  (smoothWords n).filter fun w => ∀ i j : Fin n, j.val = i.val + 1 → ¬(w i = 1 ∧ w j = 1)
+
+/-- **Capacity distribution of restricted smooth words with a given last letter.** For natural
+numbers $n$ and $i$, $r^*(n, i; q)$ is the polynomial $\sum_w q^{\mathrm{cap}(w)}$ in
+$\mathbb{Z}[q]$, where $w$ ranges over the restricted smooth words of length $n$ (smooth words
+with no two adjacent letters equal to $1$) whose last letter is $i$, and $\mathrm{cap}(w)$ is the
+capacity of $w$.
+
+Source: Toufik Mansour and Mark Shattuck, *Enumeration of Catalan and Smooth Words According
+to Capacity*, INTEGERS 25 (2025), Article A5, Section 4, definition of `r*(n, i; q)`. -/
+public noncomputable def restrictedSmoothCapacityDist (n i : ℕ) : ℤ[X] :=
+  capacityDist (wordsEndingIn (restrictedSmoothWords n) i)
+
+namespace restrictedSmoothCapacityDist_eval_zero
+
+open catalanCapacityDist_eval_zero
+
+private theorem mem_restricted {n : ℕ} (w : Fin (n + 1) → ℕ) :
+    w ∈ restrictedSmoothWords (n + 1) ↔ (∀ j, 1 ≤ w j) ∧ w 0 = 1 ∧
+      ∀ j : Fin n, w j.succ ≤ w j.castSucc + 1 ∧ w j.castSucc ≤ w j.succ + 1 ∧
+        ¬(w j.castSucc = 1 ∧ w j.succ = 1) := by
+  simp only [restrictedSmoothWords, mem_filter, mem_smoothWords_iff]
+  constructor
+  · rintro ⟨⟨hp, h₀, hs⟩, hr⟩
+    exact ⟨hp, h₀ 0 rfl, fun j =>
+      ⟨(hs j.castSucc j.succ rfl).1, (hs j.castSucc j.succ rfl).2, hr _ _ rfl⟩⟩
+  · rintro ⟨hp, h₀, hs⟩
+    have adj (a b : Fin (n + 1)) (h : b.val = a.val + 1) :
+        w b ≤ w a + 1 ∧ w a ≤ w b + 1 ∧ ¬(w a = 1 ∧ w b = 1) := by
+      let j : Fin n := ⟨a, by omega⟩
+      have hj : j.succ = b := Fin.ext h.symm
+      simpa only [hj, show j.castSucc = a from Fin.ext rfl] using hs j
+    exact ⟨⟨hp, fun j hj => (Fin.ext hj : j = 0) ▸ h₀,
+      fun a b h => ⟨(adj a b h).1, (adj a b h).2.1⟩⟩, fun a b h => (adj a b h).2.2⟩
+
+-- The appended letter is at least two, so the final pair cannot be a pair of ones.
+private theorem snoc_mem {n : ℕ} (w : Fin (n + 1) → ℕ) {a : ℕ} (ha : 2 ≤ a) :
+    Fin.snoc (α := fun _ => ℕ) w a ∈ restrictedSmoothWords (n + 2) ↔
+      w ∈ restrictedSmoothWords (n + 1) ∧ a ≤ w (Fin.last n) + 1 ∧ w (Fin.last n) ≤ a + 1 := by
+  have h₀ : Fin.snoc (α := fun _ => ℕ) w a 0 = w 0 :=
+    Fin.snoc_castSucc (α := fun _ => ℕ) (p := w) (x := a) (i := 0)
+  rw [mem_restricted, mem_restricted, h₀]
+  simp only [Fin.forall_fin_succ', Fin.snoc_castSucc, Fin.snoc_last, Fin.succ_castSucc,
+    Fin.succ_last, show 1 ≤ a by omega, show a ≠ 1 by omega, and_false, not_false_eq_true]
+  tauto
+
+private theorem card_snoc {n a : ℕ} (ha : 2 ≤ a)
+    (P : (Fin (n + 2) → ℕ) → Prop) [DecidablePred P] :
+    ((restrictedSmoothWords (n + 2)).filter fun w => w (Fin.last (n + 1)) = a ∧ P w).card =
+      ((restrictedSmoothWords (n + 1)).filter fun w => (a ≤ w (Fin.last n) + 1 ∧
+        w (Fin.last n) ≤ a + 1) ∧ P (Fin.snoc (α := fun _ => ℕ) w a)).card := by
+  symm
+  apply card_nbij' (fun w => Fin.snoc (α := fun _ => ℕ) w a) Fin.init
+  · intro w hw
+    simp only [mem_coe, mem_filter] at hw ⊢
+    exact ⟨(snoc_mem w ha).mpr ⟨hw.1, hw.2.1⟩, Fin.snoc_last .., hw.2.2⟩
+  · intro w hw
+    simp only [mem_coe, mem_filter] at hw ⊢
+    obtain ⟨hmem, hlast, hP⟩ := hw
+    rw [← Fin.snoc_init_self w, hlast, snoc_mem _ ha] at hmem
+    refine ⟨hmem.1, hmem.2, ?_⟩
+    rwa [← hlast, Fin.snoc_init_self]
+  · exact fun _ _ => Fin.init_snoc ..
+  · intro w hw
+    rw [← (mem_filter.mp hw).2.1]
+    exact Fin.snoc_init_self w
+
+private def monoCount (n a : ℕ) :=
+  ((restrictedSmoothWords (n + 1)).filter fun w =>
+    w (Fin.last n) = a ∧ ∀ k j, j < k → w j ≤ w k).card
+
+private def zeroCount (n a : ℕ) :=
+  ((restrictedSmoothWords (n + 1)).filter fun w =>
+    w (Fin.last n) = a ∧ wordCapacity w = 0).card
+
+private theorem monoCount_succ (n k : ℕ) :
+    monoCount (n + 1) (k + 2) = monoCount n (k + 2) + monoCount n (k + 1) := by
+  unfold monoCount
+  rw [card_snoc (by omega : 2 ≤ k + 2), filter_congr
+    (q := fun w => (w (Fin.last n) = k + 2 ∧ ∀ l j, j < l → w j ≤ w l) ∨
+      (w (Fin.last n) = k + 1 ∧ ∀ l j, j < l → w j ≤ w l)) fun w _ => ?_]
+  · rw [filter_or, card_union_of_disjoint (disjoint_filter.mpr fun w _ h h' => by omega)]
+  · rw [mono_snoc_iff]
+    constructor
+    · rintro ⟨⟨hle, _⟩, hm, hbound⟩
+      have := hbound (Fin.last n)
+      exact (show w (Fin.last n) = k + 2 ∨ w (Fin.last n) = k + 1 by omega).imp
+        (fun h => ⟨h, hm⟩) (fun h => ⟨h, hm⟩)
+    · rintro (⟨hl, hm⟩ | ⟨hl, hm⟩) <;>
+        exact ⟨⟨by omega, by omega⟩, hm, fun j => (le_last_of_mono hm j).trans (by omega)⟩
+
+private theorem monoCount_one (n : ℕ) : monoCount (n + 1) 1 = 0 := by
+  rw [monoCount, card_eq_zero, filter_eq_empty_iff]
+  intro w hw ⟨hl, hm⟩
+  obtain ⟨hp, h₀, hs⟩ := (mem_restricted w).mp hw
+  have h := (hs 0).2.2
+  have hle := le_last_of_mono hm (0 : Fin (n + 1)).succ
+  have hpos := hp (0 : Fin (n + 1)).succ
+  exact h ⟨h₀, by omega⟩
+
+private theorem last_le_length {n : ℕ} {w : Fin (n + 1) → ℕ}
+    (hw : w ∈ restrictedSmoothWords (n + 1)) : w (Fin.last n) ≤ n + 1 :=
+  (mem_Icc.mp ((Fintype.mem_piFinset.mp (mem_filter.mp (mem_filter.mp hw).1).1) _)).2
+
+-- A monotone restricted word starts with 12. Each later step is flat or rises by one.
+private theorem monoCount_eq (n k : ℕ) : monoCount (n + 1) (k + 2) = n.choose k := by
+  induction n generalizing k with
+  | zero =>
+    cases k with
+    | zero => decide
+    | succ k =>
+      rw [Nat.choose_zero_succ, monoCount, card_eq_zero, filter_eq_empty_iff]
+      rintro w hw ⟨hl, _⟩
+      have hb := last_le_length hw
+      rw [hl] at hb
+      omega
+  | succ n ih =>
+    rw [monoCount_succ, ih]
+    cases k with
+    | zero => simp [monoCount_one]
+    | succ k => rw [ih, Nat.choose_succ_succ']; omega
+
+-- A final rise forces a monotone prefix. A flat step or fall preserves zero capacity.
+private theorem zeroCount_succ (n k : ℕ) :
+    zeroCount (n + 1) (k + 3) =
+      zeroCount n (k + 3) + zeroCount n (k + 4) + monoCount n (k + 2) := by
+  unfold zeroCount monoCount
+  rw [card_snoc (by omega : 2 ≤ k + 3), filter_congr
+    (q := fun w => ((w (Fin.last n) = k + 3 ∧ wordCapacity w = 0) ∨
+      (w (Fin.last n) = k + 4 ∧ wordCapacity w = 0)) ∨
+      (w (Fin.last n) = k + 2 ∧ ∀ l j, j < l → w j ≤ w l)) fun w _ => ?_]
+  · rw [filter_or, card_union_of_disjoint (disjoint_filter.mpr fun w _ h h' => by
+      rcases h with h | h <;> omega), filter_or,
+      card_union_of_disjoint (disjoint_filter.mpr fun w _ h h' => by omega)]
+  · by_cases h : k + 3 ≤ w (Fin.last n)
+    · rw [wordCapacity_snoc_eq_zero_iff_of_le w h]
+      omega
+    · rw [wordCapacity_snoc_eq_zero_iff_of_lt w (by omega)]
+      constructor
+      · rintro ⟨⟨hle, _⟩, hm⟩
+        exact Or.inr ⟨by omega, hm⟩
+      · rintro ((h' | h') | ⟨hl, hm⟩)
+        · omega
+        · omega
+        · exact ⟨⟨by omega, by omega⟩, hm⟩
+
+-- Remove the first term of the new binomial tail and split all later terms by Pascal's rule.
+private theorem tail_succ (n k : ℕ) :
+    ∑ j ∈ Icc k (n + 1), (n + 1).choose j =
+      (∑ j ∈ Icc k n, n.choose j) + (∑ j ∈ Icc (k + 1) n, n.choose j) + (n + 1).choose k := by
+  by_cases hk : k ≤ n
+  · simp only [← Ico_add_one_right_eq_Icc]
+    rw [sum_eq_sum_Ico_succ_bot (by omega : k < n + 1 + 1),
+      ← sum_Ico_add' _ k (n + 1) 1]
+    simp_rw [Nat.choose_succ_succ']
+    rw [sum_add_distrib, sum_Ico_add' _ k (n + 1) 1,
+      sum_Ico_succ_top (by omega : k + 1 ≤ n + 1), Nat.choose_succ_self]
+    omega
+  · rw [Icc_eq_empty_of_lt (show n < k by omega),
+      Icc_eq_empty_of_lt (show n < k + 1 by omega)]
+    rcases (show n + 1 ≤ k by omega).eq_or_lt with rfl | h
+    · simp
+    · simp [Icc_eq_empty_of_lt h, Nat.choose_eq_zero_of_lt h]
+
+private theorem zeroCount_eq (n k : ℕ) :
+    zeroCount (n + 2) (k + 3) = ∑ j ∈ Icc k n, n.choose j := by
+  induction n generalizing k with
+  | zero =>
+    cases k with
+    | zero => decide
+    | succ k =>
+      rw [Icc_eq_empty_of_lt (Nat.zero_lt_succ _), sum_empty, zeroCount, card_eq_zero,
+        filter_eq_empty_iff]
+      rintro w hw ⟨hl, _⟩
+      have hb := last_le_length hw
+      rw [hl] at hb
+      omega
+  | succ n ih =>
+    rw [zeroCount_succ, ih, ih (k + 1), monoCount_eq, tail_succ]
+
+private theorem eval_zero_eq_count (n i : ℕ) :
+    (restrictedSmoothCapacityDist (n + 1) i).eval 0 = (zeroCount n i : ℤ) := by
+  rw [restrictedSmoothCapacityDist, capacityDist, eval_finsetSum, zeroCount, ← filter_filter,
+    ← wordsEndingIn_succ, card_filter]
+  push_cast
+  refine sum_congr rfl fun w _ => ?_
+  simp [zero_pow_eq]
+
+end restrictedSmoothCapacityDist_eval_zero
+
+open restrictedSmoothCapacityDist_eval_zero in
+/-- **Zero-capacity restricted smooth words with a given last letter.** For natural numbers $n$
+and $i$ with $3 \le i \le n$, let $r^*(n, i; q)$ be the capacity distribution of the restricted
+smooth words of length $n$ ending in $i$. Its value at $q = 0$, which is the number of such words
+of capacity $0$, is
+$$r^*(n, i; 0) = \sum_{j=i-3}^{n-3} \binom{n-3}{j}.$$
+
+Source: Toufik Mansour and Mark Shattuck, *Enumeration of Catalan and Smooth Words According
+to Capacity*, INTEGERS 25 (2025), Article A5, Theorem 10 (`integers-2025-A5-thm-10`). -/
+public theorem restrictedSmoothCapacityDist_eval_zero (n i : ℕ) (hi : 3 ≤ i)
+    (hin : i ≤ n) :
+    (restrictedSmoothCapacityDist n i).eval 0 =
+      ∑ j ∈ Finset.Icc (i - 3) (n - 3), ((n - 3).choose j : ℤ) := by
+  obtain ⟨k, rfl⟩ : ∃ k, i = k + 3 := ⟨i - 3, by omega⟩
+  obtain ⟨m, rfl⟩ : ∃ m, n = m + 3 := ⟨n - 3, by omega⟩
+  rw [eval_zero_eq_count, zeroCount_eq, Nat.cast_sum]
+  simp
+
+/-- **Capacity distribution of smooth words by last letter.** For $n, i \ge 0$, $r(n, i; q)$ is the
+polynomial $\sum_w q^{\operatorname{cap}(w)} \in \mathbb{Z}[q]$, where $w$ runs over the smooth
+words of length $n$ whose last letter is $i$ and $\operatorname{cap}(w)$ is the capacity of $w$.
+
+Source: Toufik Mansour and Mark Shattuck, *Enumeration of Catalan and Smooth Words According
+to Capacity*, INTEGERS 25 (2025), Article A5, Section 3, definition of `r(n, i; q)`. -/
+public noncomputable def smoothCapacityDist (n i : ℕ) : ℤ[X] :=
+  capacityDist (wordsEndingIn (smoothWords n) i)
+
+namespace smoothCapacityDist_eval_zero
+
+open catalanCapacityDist_eval_zero
+
+-- Raising the word by one and prepending a 1 puts a 2 at its second position.
+private def raiseWord {n : ℕ} (w : Fin n → ℕ) : Fin (n + 1) → ℕ :=
+  Fin.cons 1 fun j => w j + 1
+
+private theorem raiseWord_mem_iff {n : ℕ} (w : Fin (n + 1) → ℕ) (hp : ∀ j, 1 ≤ w j) :
+    raiseWord w ∈ restrictedSmoothWords (n + 2) ↔ w ∈ smoothWords (n + 1) := by
+  have hne (j) : w j ≠ 0 := Nat.ne_of_gt (hp j)
+  have hstart : w 0 ≤ 1 ↔ w 0 = 1 := ⟨fun h => h.antisymm (hp 0), fun h => h.le⟩
+  simp [raiseWord, restrictedSmoothWords, mem_smoothWords_iff, Fin.forall_fin_succ (n := n + 1),
+    hp, Fin.val_eq_zero_iff, hne, hstart]
+
+private theorem raiseWord_zero_iff {n : ℕ} (w : Fin n → ℕ) :
+    wordCapacity (raiseWord w) = 0 ↔ wordCapacity w = 0 := by
+  simp [wordCapacity_eq_zero_iff, raiseWord, Fin.forall_fin_succ (n := n)]
+
+-- A return to 1 after the initial 12 would trap water between the 2 and the last letter.
+private theorem tail_ge_two {n : ℕ} {v : Fin (n + 2) → ℕ}
+    (hv : v ∈ restrictedSmoothWords (n + 2)) (hc : wordCapacity v = 0)
+    (hl : 2 ≤ v (Fin.last (n + 1))) (j : Fin (n + 1)) : 2 ≤ v j.succ := by
+  obtain ⟨hp, h₀, hadj⟩ := (restrictedSmoothCapacityDist_eval_zero.mem_restricted v).mp hv
+  have hsecond : 2 ≤ v (0 : Fin (n + 1)).succ := by
+    have h := (hadj 0).2.2
+    have := hp (0 : Fin (n + 1)).succ
+    simp only [Fin.castSucc_zero, h₀, true_and] at h
+    omega
+  rcases (wordCapacity_eq_zero_iff v).mp hc j.succ with h | h
+  · rcases (Fin.zero_le j).lt_or_eq with hj | hj
+    · exact hsecond.trans (h _ (Fin.succ_lt_succ_iff.mpr hj))
+    · simpa [← hj] using hsecond
+  · rcases (Fin.le_last j.succ).lt_or_eq with hj | hj
+    · exact hl.trans (h _ hj)
+    · rwa [hj]
+
+private theorem card_zero_eq_restricted (n i : ℕ) (hi : 2 ≤ i) :
+    ((smoothWords (n + 1)).filter fun w => w (Fin.last n) = i ∧ wordCapacity w = 0).card =
+      ((restrictedSmoothWords (n + 2)).filter fun v =>
+        v (Fin.last (n + 1)) = i + 1 ∧ wordCapacity v = 0).card := by
+  apply card_bij (fun w _ => raiseWord w)
+  · intro w hw
+    obtain ⟨hw, hl, hc⟩ := mem_filter.mp hw
+    exact mem_filter.mpr ⟨(raiseWord_mem_iff w ((mem_smoothWords_iff w).mp hw).1).mpr hw,
+      by simpa [← Fin.succ_last, raiseWord] using hl, (raiseWord_zero_iff w).mpr hc⟩
+  · intro w _ u _ h
+    funext j
+    simpa [raiseWord] using congrFun h j.succ
+  · intro v hv
+    obtain ⟨hv, hl, hc⟩ := mem_filter.mp hv
+    let w (j : Fin (n + 1)) := v j.succ - 1
+    have htail := tail_ge_two hv hc (by omega : 2 ≤ v (Fin.last (n + 1)))
+    have hp (j : Fin (n + 1)) : 1 ≤ w j := by
+      dsimp [w]
+      have := htail j
+      omega
+    have heq : raiseWord w = v := by
+      funext j
+      refine Fin.cases ?_ (fun k => ?_) j
+      · exact ((restrictedSmoothCapacityDist_eval_zero.mem_restricted v).mp hv).2.1.symm
+      · change v k.succ - 1 + 1 = v k.succ
+        have := htail k
+        omega
+    refine ⟨w, mem_filter.mpr ⟨(raiseWord_mem_iff w hp).mp (heq ▸ hv), ?_,
+      (raiseWord_zero_iff w).mp (heq ▸ hc)⟩, heq⟩
+    simp [w, hl]
+
+private theorem eval_zero_eq_card {n : ℕ} (S : Finset (Fin (n + 1) → ℕ)) (i : ℕ) :
+    (capacityDist (wordsEndingIn S i)).eval 0 =
+      (((S.filter fun w => w (Fin.last n) = i ∧ wordCapacity w = 0).card) : ℤ) := by
+  rw [capacityDist, eval_finsetSum, ← filter_filter, ← wordsEndingIn_succ, card_filter]
+  push_cast
+  refine sum_congr rfl fun w _ => ?_
+  simp [zero_pow_eq]
+
+end smoothCapacityDist_eval_zero
+
+open smoothCapacityDist_eval_zero in
+/-- **Zero-capacity smooth words with a given last letter.** For $2 \le i \le n$, the number of
+smooth words of length $n$ ending in $i$ with capacity $0$, that is, the value at $q = 0$ of their
+capacity distribution $r(n, i; q)$, equals $\sum_{j=i-2}^{n-2} \binom{n-2}{j}$.
+
+Source: Toufik Mansour and Mark Shattuck, *Enumeration of Catalan and Smooth Words According
+to Capacity*, INTEGERS 25 (2025), Article A5, Theorem 6 (`integers-2025-A5-thm-6`). -/
+public theorem smoothCapacityDist_eval_zero (n i : ℕ) (hi : 2 ≤ i) (hin : i ≤ n) :
+    (smoothCapacityDist n i).eval 0 = ∑ j ∈ Finset.Icc (i - 2) (n - 2), ((n - 2).choose j : ℤ) := by
+  obtain ⟨m, rfl⟩ : ∃ m, n = m + 1 := ⟨n - 1, by omega⟩
+  calc
+    _ = (restrictedSmoothCapacityDist (m + 2) (i + 1)).eval 0 := by
+      rw [smoothCapacityDist, restrictedSmoothCapacityDist, eval_zero_eq_card, eval_zero_eq_card,
+        card_zero_eq_restricted m i hi]
+    _ = _ := by
+      simpa using restrictedSmoothCapacityDist_eval_zero (m + 2) (i + 1) (by omega) (by omega)
 
 end
 
