@@ -32,6 +32,20 @@ example : ¬ PointSetContainsPattern (Icc (0 : ℝ) 1 ×ˢ Icc (0 : ℝ) 1) {(3,
 
 end MetaMathlibExt.opx_translate
 
+namespace MetaMathlibExt.opx_mono_left
+
+-- The square at zero is a singleton, so monotonicity forces every nonpositive side to give zero.
+example (P : Set (ℝ × ℝ)) {m : ℝ} (hm : m ≤ 0) : opx m P = 0 := by
+  refine le_antisymm ((opx_mono_left P hm).trans ?_) (opx_nonneg m P)
+  apply Real.sSup_le _ le_rfl
+  rintro _ ⟨S, ⟨_, hS, _⟩, rfl⟩
+  have hzero : volume S = 0 := measure_mono_null hS (by
+    rw [Measure.volume_eq_prod, Measure.prod_prod]
+    simp)
+  simp [hzero]
+
+end MetaMathlibExt.opx_mono_left
+
 namespace MetaMathlibExt.opxD_add_lt
 
 -- At the first admissible dimension the coefficient is 8 for n = 2 and ε = 1.
