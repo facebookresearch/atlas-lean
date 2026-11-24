@@ -24,13 +24,11 @@ $\theta d$. With zero migration it is instead $\theta$ within a deme.
 ## Proof depends on
 
 - [Integrability of a conditionally Poisson count](../poisson-mutation-on-the-kingman-genealogy/integrable-nat-cast-of-has-cond-distrib.md)
-- [Conditional mean of a conditionally Poisson count](../poisson-mutation-on-the-kingman-genealogy/cond-exp-nat-cast-of-has-cond-distrib-po.md)
-- [Integrability of a conditionally Poisson count](../poisson-mutation-on-the-kingman-genealogy/integrable-nat-cast-of-has-cond-distrib.md)
 - [Conditional Poisson mean](../poisson-mutation-on-the-kingman-genealogy/cond-exp-nat-cast-of-has-cond-distrib-po.md)
 
 ## Background
 
-- [Existing Kingman genealogy instance](../pairwise-differences-under-poisson-mutation/integral-pair-diff-of-mutation.md)
+- [Kingman genealogy instance](../pairwise-differences-under-poisson-mutation/integral-pair-diff-of-mutation.md)
 - [Symmetric-island within-deme mean](within-time.md)
 
 ## Expansion

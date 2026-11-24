@@ -39,9 +39,13 @@ $e^{-d}(\cosh(\varepsilon d)-1)\le\varepsilon^2 d^2e^{-d/2}/2$.
 The maximum of $d^2e^{-d/2}$ is $16e^{-2}$, so the result follows from
 $8e^{-2}<2$.
 
-Injectivity for arbitrary finite measures on $[0,\infty)$ is a separate
-Laplace-transform theorem, not established by this finite Vandermonde
-argument. That requested extension remains open in this topic.
+Injectivity for arbitrary finite measures on $[0,\infty)$ is the separate
+[uniqueness theorem for Laplace transforms](../../../Analysis/harmonic-analysis/integral-transforms/laplace-transform/uniqueness-of-laplace-transforms-for-finite-nonn.md); the finite Vandermonde
+argument above does not establish it.
+
+## Related topics
+
+- [Laplace transforms at the nonnegative integers determine a finite measure on the half-line](../../../Analysis/harmonic-analysis/integral-transforms/laplace-transform/uniqueness-of-laplace-transforms-for-finite-nonn.md)
 
 ## Sources
 

@@ -16,7 +16,7 @@ Symmetry of the roots and cyclicity of trace give
 
 $$\|S_1^{-1}XS_2^{-1}\|_F^2=\operatorname{tr}(S_1^{-1}XV_2^{-1}X^{\mathsf T}S_1^{-1})=\operatorname{tr}(V_1^{-1}XV_2^{-1}X^{\mathsf T}).$$
 
-The column-stacking identity $\operatorname{vec}(PXQ)=(Q^{\mathsf T}\otimes P)\operatorname{vec}(X)$ gives the quadratic-form equality. The map $G\mapsto S_1^{-1}GS_2^{-1}$ is a rank-preserving bijection, with inverse $H\mapsto S_1HS_2$. Apply the whitened Eckart–Young theorem named in the Expansion and pull back the truncated minimizer. This reduction discharges the strict-SPD hypotheses and identifies the covariance norm; it is not a new whitening theorem for arbitrary invertible factors.
+The column-stacking identity $\operatorname{vec}(PXQ)=(Q^{\mathsf T}\otimes P)\operatorname{vec}(X)$ gives the quadratic-form equality. The map $G\mapsto S_1^{-1}GS_2^{-1}$ is a rank-preserving bijection, with inverse $H\mapsto S_1HS_2$. Apply the [Eckart–Young theorem](is-least-frobenius-sub-sq.md) to $\widetilde F$ and pull back the truncated minimizer. This reduction discharges the strict-SPD hypotheses and identifies the covariance norm; it is not a new whitening theorem for arbitrary invertible factors.
 
 The order $V_2\otimes V_1$ follows from column stacking, not from ordinary commutation of the factors. Even commuting diagonal factors can distinguish the two orders. With $V_1=\operatorname{diag}(9,1)$, $V_2=\operatorname{diag}(4,1)$ and $X=\left(\begin{smallmatrix}0&1\\0&0\end{smallmatrix}\right)$, the correct quadratic form is $1/9$, whereas replacing the covariance by $V_1\otimes V_2$ while retaining the same vectorization gives $1/4$. For differently sized factors, ordinary matrix commutation is not even defined.
 
@@ -30,9 +30,12 @@ Strict positive definiteness and the separable covariance are essential to this 
 
 - [Truncated singular value decomposition](trunc-svd.md)
 
+## Proof depends on
+
+- [Eckart–Young, best-approximation form](is-least-frobenius-sub-sq.md)
+
 ## Expansion
 
-- Proof prerequisite: the whitened Eckart–Young theorem: for invertible $P$ and $Q$, the minimum of $\|P(F-G)Q\|_F^2$ over $\operatorname{rank}G\le k$ is the tail sum of squared singular values of $PFQ$, attained by pulling back a truncated singular value decomposition. It is applied with $P=S_1^{-1}$ and $Q=S_2^{-1}$.
 - The existence, symmetry and invertibility of the positive definite square roots, the trace and column-stacking identities, the displayed minimizer and the worked application.
 
 ## Sources

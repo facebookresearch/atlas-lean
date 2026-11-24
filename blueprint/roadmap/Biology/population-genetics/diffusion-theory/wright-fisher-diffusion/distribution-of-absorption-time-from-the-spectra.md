@@ -61,8 +61,8 @@ Dividing by $h_i$ gives exactly the displayed coefficients.
 Completeness identifies the series with $T$ in $L^2(dx/g)$;
 the uniform convergence and continuity identify it at every point.
 
-The original probabilistic objective remains open until the separate
-killed-density identification is proved. **Conditional on that result**,
+The probabilistic interpretation requires the separate identification of
+the killed transition density. **Given that identification**,
 $S_t(x)=\mathbb P_x(\tau>t)$, the absorption CDF is $1-S_t(x)$, and the
 time integral is $\mathbb E_x\tau$. Without it, this page calls $S_t$
 an integrated series, not an established survival function.

@@ -51,8 +51,6 @@ This is convergence of the stationary laws, distinct from the long-time converge
 - [Global balance of the ancestral selection graph chain](asg-stationary-global-balance.md)
 - [Stationary weights under selection sum to one](has-sum-asg-stationary.md)
 
-## Related
-
 ## Scope
 
 The stationary-weight identities are the linked statements. A proof page must still supply invariance of $\pi^\sigma$ for the realized semigroup, the recurrence and convergence theorem for countable-state chains, and the skeleton-chain argument.
