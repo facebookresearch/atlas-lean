@@ -16,6 +16,7 @@ public import Mathlib.Algebra.Order.Field.Rat
 public import MathlibExt.NumberTheory.CoveringSystem
 public import MathlibExt.NumberTheory.CoveringSystem.DiscardPrimePower
 public import MathlibExt.NumberTheory.CoveringSystem.SwapResidues
+public import MathlibExt.NumberTheory.CoveringSystem.Translate
 public import MathlibExt.NumberTheory.CoveringSystem.TrifonovCovering
 
 /-!
@@ -107,18 +108,6 @@ public theorem_wanted exists_isCoveringSystem_merge_prime_power (classes : Finse
     ∃ r : ℤ, Int.IsCoveringSystem
       (insert (r, p ^ (a - 1) * (classes.filter fun c => p ^ a ∣ c.2).lcm fun c => c.2 / p ^ a)
         (classes.filter fun c => ¬ p ^ a ∣ c.2))
-
-/-- **Translating a covering system.** Let $C$ be a covering system: a finite set of
-congruences $x \equiv a_i \pmod{m_i}$ with $a_i \in \mathbb{Z}$ and $m_i \in \mathbb{N}$ (where
-$x \equiv a_i \pmod 0$ means $x = a_i$) such that every integer satisfies at least one of them.
-Then for every $t \in \mathbb{Z}$ the congruences $x \equiv a_i + t \pmod{m_i}$ also form a
-covering system.
-
-Source: Jonah Klein, *On a Conjecture of Krukenberg and a Problem of Dalton and Trifonov*,
-INTEGERS 26 (2026), Article A38, Lemma 3 (`integers-2026-A38-lem-3`). -/
-public theorem_wanted isCoveringSystem_translate (classes : Finset (ℤ × ℕ))
-    (hcov : Int.IsCoveringSystem classes) (t : ℤ) :
-    Int.IsCoveringSystem (classes.image fun c => (c.1 + t, c.2))
 
 /-- **Mirsky–Newman bound for distinct covering systems.** Let $a_1 \bmod m_1, \dots,
 a_k \bmod m_k$ be residue classes that cover $\mathbb{Z}$, that is, every integer lies in at

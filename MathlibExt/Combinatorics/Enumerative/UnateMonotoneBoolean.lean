@@ -10,6 +10,10 @@ module
 
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.SetTheory.Cardinal.Finite
+import Mathlib.Data.Finset.Piecewise
+import Mathlib.Data.Set.Card
+import Mathlib.Logic.Equiv.Bool
+import Mathlib.Logic.Equiv.Fin.Basic
 import MathlibExt.Combinatorics.Enumerative.SelfDualMonotoneBoolean
 
 namespace MetaMathlibExt
@@ -163,6 +167,66 @@ public theorem boolFunConcat_cons {n : ℕ} (g h : (Fin n → Bool) → Bool) (b
     (x : Fin n → Bool) : boolFunConcat g h (Fin.cons b x) = cond b (h x) (g x) := by
   simp [boolFunConcat]
 
+/-- **Monotone concatenations of Boolean functions (Bakoev).** Let $g$ and $h$ be Boolean
+functions on $n$ variables, and let $g \parallel h$ be their concatenation, the function on
+$n + 1$ variables that equals $g$ of the remaining variables when its first variable is $0$ and
+$h$ of them when it is $1$. Then $g \parallel h$ is monotone if and only if $g$ and $h$ are both
+monotone and $g(x) \le h(x)$ for every $x \in \{0,1\}^n$.
+
+Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
+under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
+Sequences 28 (2025), Article 25.3.4, Proposition 4 (`jis-2025-25.3.4-prop-4`),
+quoting Bakoev. -/
+public theorem monotone_boolFunConcat_iff {n : ℕ} (g h : (Fin n → Bool) → Bool) :
+    Monotone (boolFunConcat g h) ↔ Monotone g ∧ Monotone h ∧ g ≤ h := by
+  constructor
+  · intro hmono
+    have compare {a b : Bool} {x y : Fin n → Bool} (hab : a ≤ b) (hxy : x ≤ y) :
+        cond a (h x) (g x) ≤ cond b (h y) (g y) := by
+      simpa only [boolFunConcat_cons] using
+        hmono ((Fin.cons_le_cons (α := fun _ => Bool)).2 ⟨hab, hxy⟩)
+    exact ⟨fun _ _ hxy => compare (le_refl false) hxy,
+      fun _ _ hxy => compare (le_refl true) hxy,
+      fun x => compare (Bool.false_le true) (le_refl x)⟩
+  · rintro ⟨hg, hh, hgh⟩ x y hxy
+    have htail : Fin.tail x ≤ Fin.tail y := fun i => hxy i.succ
+    have hhead := hxy 0
+    unfold boolFunConcat
+    cases hx : x 0 <;> cases hy : y 0
+    · exact hg htail
+    · exact (hgh _).trans (hh htail)
+    · simp [hx, hy, Bool.le_iff_imp] at hhead
+    · exact hh htail
+
+/-- **Unateness of a concatenation.** Let $g$ and $h$ be $n$-variable Boolean functions and let
+$g \| h$ be their concatenation, the $(n+1)$-variable function equal to $g$ of the remaining
+variables when the first variable is $0$ and to $h$ of them when it is $1$. Then $g \| h$ is
+unate if and only if $g$ and $h$ are unate, for each variable $x_i$ either both $g$ and $h$
+are monotone increasing in $x_i$ or both are monotone decreasing in $x_i$, and $g \le h$
+pointwise or $h \le g$ pointwise.
+
+Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
+under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
+Sequences 28 (2025), Article 25.3.4, Proposition 6 (`jis-2025-25.3.4-prop-6`). -/
+public theorem isUnateBoolFun_boolFunConcat_iff {n : ℕ}
+    (g h : (Fin n → Bool) → Bool) :
+    IsUnateBoolFun (boolFunConcat g h) ↔
+      IsUnateBoolFun g ∧ IsUnateBoolFun h ∧
+        (∀ i : Fin n, (IsBoolFunIncreasingIn g i ∧ IsBoolFunIncreasingIn h i) ∨
+          (IsBoolFunDecreasingIn g i ∧ IsBoolFunDecreasingIn h i)) ∧
+        (g ≤ h ∨ h ≤ g) := by
+  -- Split the coordinates at zero, then write each input as a head bit and a tail.
+  rw [IsUnateBoolFun, Fin.forall_fin_succ]
+  simp only [IsBoolFunIncreasingIn, IsBoolFunDecreasingIn, Fin.forall_fin_succ_pi, Bool.forall_bool,
+    Fin.cons_zero, Fin.cons_succ, Fin.update_cons_zero, ← Fin.cons_update, boolFunConcat_cons,
+    Bool.cond_false, Bool.cond_true, Bool.true_eq_false, false_implies, forall_const, and_true]
+  constructor
+  · rintro ⟨horder, hdirs⟩
+    exact ⟨fun i => (hdirs i).imp And.left And.left, fun i => (hdirs i).imp And.right And.right,
+      hdirs, horder⟩
+  · rintro ⟨_, _, hdirs, horder⟩
+    exact ⟨horder, hdirs⟩
+
 /-- **Permutation equivalence of Boolean functions.** An $n$-variable Boolean function $f$ is
 permutation-equivalent to $g$ when $g$ is obtained from $f$ by permuting the variables: there
 is a permutation $\sigma$ of $\{1, \ldots, n\}$ such that
@@ -205,6 +269,97 @@ Sequences 28 (2025), Article 25.3.4, Proposition 13. -/
 public theorem isBoolFunNNEquiv_refl {n : ℕ} (f : (Fin n → Bool) → Bool) :
     IsBoolFunNNEquiv f f :=
   ⟨fun _ => false, false, fun x => by simp⟩
+
+namespace isBoolFunNNEquiv_monotone_iff
+
+open Function
+
+/-- Agreement on the non-degenerate coordinates suffices to give the same output. -/
+private theorem dependsOn_nondegenerate {n : ℕ} (f : (Fin n → Bool) → Bool) :
+    DependsOn f {i | IsBoolFunNondegenerateOn f i} := by
+  intro x y hagree
+  suffices ∀ s : Finset (Fin n), f (s.piecewise x y) = f y by simpa using this .univ
+  intro s
+  induction s using Finset.induction_on with
+  | empty => simp
+  | insert i s hi ih =>
+    rw [Finset.piecewise_insert, ← ih]
+    rcases Bool.eq_or_eq_not (x i) (s.piecewise x y i) with he | he
+    · rw [he, update_eq_self]
+    · by_contra hdiff
+      have hnd : IsBoolFunNondegenerateOn f i := ⟨_, by rwa [← he, ne_comm]⟩
+      have heq : x i = s.piecewise x y i := by simpa [hi] using hagree i hnd
+      exact Bool.eq_not_iff.mp he heq
+
+/-- On a non-degenerate coordinate, the input and output negation bits must agree. -/
+private theorem mask_eq_output {n : ℕ} {f g : (Fin n → Bool) → Bool}
+    (hf : Monotone f) (hg : Monotone g) {a : Fin n → Bool} {c : Bool}
+    (h : ∀ x, g x = xor (f fun j => xor (x j) (a j)) c)
+    (i : Fin n) (hi : IsBoolFunNondegenerateOn f i) : a i = c := by
+  obtain ⟨x, hx⟩ := hi
+  have hne : f (update x i false) ≠ f (update x i true) := by
+    intro he
+    apply hx
+    calc
+      f x = f (update x i (x i)) := by rw [update_eq_self]
+      _ = f (update x i (!x i)) := by
+        cases x i
+        · exact he
+        · exact he.symm
+  -- The masked endpoints of this edge of the cube are also endpoints of an edge for g.
+  let y (j : Fin n) := xor (x j) (a j)
+  have edge (b : Bool) : g (update y i b) = xor (f (update x i (xor b (a i)))) c := by
+    rw [h]
+    congr 2
+    funext j
+    rcases eq_or_ne j i with rfl | hji
+    · simp
+    · simp [hji, y]
+  have h₁ : f (update x i false) ≤ f (update x i true) := hf (update_le_update_iff'.2 (by decide))
+  have h₂ : g (update y i false) ≤ g (update y i true) := hg (update_le_update_iff'.2 (by decide))
+  rw [edge, edge] at h₂
+  obtain ⟨hfalse, htrue⟩ := Bool.lt_iff.mp (lt_of_le_of_ne h₁ hne)
+  cases ha : a i <;> cases c <;> simp [ha, hfalse, htrue, Bool.le_iff_imp] at h₂ ⊢
+
+end isBoolFunNNEquiv_monotone_iff
+
+open isBoolFunNNEquiv_monotone_iff in
+/-- **NN-equivalence of monotone Boolean functions.** Let $f$ and $g$ be monotone $n$-variable
+Boolean functions. Then $f$ and $g$ are NN-equivalent ($g$ is obtained from $f$ by negating
+some inputs and possibly the output) if and only if either $g = f$, or $g(x) = \lnot f(x \oplus a)$
+for all $x$, where $a \in \{0,1\}^n$ has $a_i = 1$ exactly for the variables $x_i$ on which $f$
+is non-degenerate and $\oplus$ is coordinatewise exclusive or.
+
+This does not mean that every NN-class of monotone functions has two elements: for $n = 1$
+and $f(x) = x_1$, the only monotone function NN-equivalent to $f$ is $f$ itself.
+
+Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
+under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
+Sequences 28 (2025), Article 25.3.4, Proposition 13 (`jis-2025-25.3.4-prop-13`). -/
+public theorem isBoolFunNNEquiv_monotone_iff {n : ℕ}
+    {f g : (Fin n → Bool) → Bool} (hf : Monotone f) (hg : Monotone g) :
+    IsBoolFunNNEquiv f g ↔
+      g = f ∨ ∃ a : Fin n → Bool, (∀ i, a i = true ↔ IsBoolFunNondegenerateOn f i) ∧
+        ∀ x : Fin n → Bool, g x = !f fun i => xor (x i) (a i) := by
+  classical
+  constructor
+  · rintro ⟨a, c, h⟩
+    have ha := mask_eq_output hf hg h
+    cases c
+    · left
+      funext x
+      rw [h, Bool.xor_false]
+      exact dependsOn_nondegenerate f fun i hi => by simp [ha i hi]
+    · right
+      refine ⟨fun i => decide (IsBoolFunNondegenerateOn f i), by simp, fun x => ?_⟩
+      rw [h, Bool.xor_true]
+      apply congrArg Bool.not
+      exact dependsOn_nondegenerate f fun i hi => by
+        change IsBoolFunNondegenerateOn f i at hi
+        simp [hi, ha i hi]
+  · rintro (rfl | ⟨a, _, h⟩)
+    · exact isBoolFunNNEquiv_refl _
+    · exact ⟨a, true, fun x => by simpa using h x⟩
 
 /-- **NPN-equivalence of Boolean functions.** An $n$-variable Boolean function $f$ is
 NPN-equivalent to $g$ when $g$ is obtained from $f$ by permuting the variables, negating some
@@ -259,6 +414,256 @@ public theorem boolFunClassCount_false {n : ℕ}
   left
   exact ⟨fun ⟨_, f, hf, _⟩ => hf⟩
 
+namespace boolFunClassCount_varPerm_nondegenerate_eq_sub
+
+open Function
+
+/-- The classes counted by `boolFunClassCount`, as a set of sets. -/
+private theorem classCount_eq_ncard {n : ℕ}
+    (R : ((Fin n → Bool) → Bool) → ((Fin n → Bool) → Bool) → Prop)
+    (P : ((Fin n → Bool) → Bool) → Prop) :
+    boolFunClassCount R P = {S | ∃ f, P f ∧ S = {g | P g ∧ R f g}}.ncard :=
+  Nat.card_coe_set_eq {S | ∃ f, P f ∧ S = {g | P g ∧ R f g}}
+
+/-- A class only sees the property on the functions related to its representative. -/
+private theorem setOf_and_congr {α : Type*} {R : α → α → Prop} {B B' : α → Prop} {f : α}
+    (h : ∀ g, R f g → (B g ↔ B' g)) : {g | B g ∧ R f g} = {g | B' g ∧ R f g} :=
+  Set.ext fun g => ⟨fun hg => ⟨(h g hg.2).1 hg.1, hg.2⟩, fun hg => ⟨(h g hg.2).2 hg.1, hg.2⟩⟩
+
+/-- Splitting a property along an invariant property `A` adds up the class counts. -/
+private theorem classCount_split {n : ℕ}
+    {R : ((Fin n → Bool) → Bool) → ((Fin n → Bool) → Bool) → Prop} (hR : ∀ f, R f f)
+    {A : ((Fin n → Bool) → Bool) → Prop} (hA : ∀ f g, R f g → (A f ↔ A g))
+    (Q : ((Fin n → Bool) → Bool) → Prop) :
+    boolFunClassCount R Q =
+      boolFunClassCount R (fun f => A f ∧ Q f) + boolFunClassCount R (fun f => ¬ A f ∧ Q f) := by
+  simp only [classCount_eq_ncard]
+  rw [← Set.ncard_union_eq]
+  · congr 1
+    ext S
+    simp only [Set.mem_ofPred_eq, Set.mem_union]
+    constructor
+    · rintro ⟨f, hf, rfl⟩
+      by_cases hAf : A f
+      · refine Or.inl ⟨f, ⟨hAf, hf⟩, setOf_and_congr fun g hg => ?_⟩
+        exact ⟨fun hQ => ⟨(hA f g hg).1 hAf, hQ⟩, And.right⟩
+      · refine Or.inr ⟨f, ⟨hAf, hf⟩, setOf_and_congr fun g hg => ?_⟩
+        exact ⟨fun hQ => ⟨fun hAg => hAf ((hA f g hg).2 hAg), hQ⟩, And.right⟩
+    · rintro (⟨f, ⟨hAf, hf⟩, rfl⟩ | ⟨f, ⟨hAf, hf⟩, rfl⟩)
+      · refine ⟨f, hf, setOf_and_congr fun g hg => ?_⟩
+        exact ⟨And.right, fun hQ => ⟨(hA f g hg).1 hAf, hQ⟩⟩
+      · refine ⟨f, hf, setOf_and_congr fun g hg => ?_⟩
+        exact ⟨And.right, fun hQ => ⟨fun hAg => hAf ((hA f g hg).2 hAg), hQ⟩⟩
+  · rw [Set.disjoint_left]
+    rintro S ⟨f, ⟨hAf, hf⟩, rfl⟩ ⟨_, -, heq⟩
+    have hmem : f ∈ {g | (A g ∧ Q g) ∧ R f g} := ⟨⟨hAf, hf⟩, hR f⟩
+    rw [heq] at hmem
+    exact hmem.1.1 hAf
+
+/-- Class counts agree along a map `φ` that reflects the relations and the properties and
+meets every class. -/
+private theorem classCount_eq_of_map {m k : ℕ}
+    {R : ((Fin m → Bool) → Bool) → ((Fin m → Bool) → Bool) → Prop}
+    {R' : ((Fin k → Bool) → Bool) → ((Fin k → Bool) → Bool) → Prop}
+    (hR : Equivalence R) (hR' : Equivalence R')
+    {P : ((Fin m → Bool) → Bool) → Prop} {Q : ((Fin k → Bool) → Bool) → Prop}
+    (φ : ((Fin m → Bool) → Bool) → (Fin k → Bool) → Bool)
+    (hQP : ∀ g, Q (φ g) ↔ P g) (hRφ : ∀ g₁ g₂, R' (φ g₁) (φ g₂) ↔ R g₁ g₂)
+    (hQ : ∀ f f', R' f f' → Q f → Q f') (hφ : ∀ f, Q f → ∃ g, R' f (φ g)) :
+    boolFunClassCount R' Q = boolFunClassCount R P := by
+  simp only [classCount_eq_ncard]
+  -- The class of `g` is sent to the class of `φ g`.
+  have himage {g₀ : (Fin m → Bool) → Bool} (hg₀ : P g₀) :
+      {f | Q f ∧ ∃ g ∈ {g | P g ∧ R g₀ g}, R' (φ g) f} = {f | Q f ∧ R' (φ g₀) f} := by
+    ext f
+    simp only [Set.mem_ofPred_eq]
+    refine and_congr_right fun _ => ⟨?_, fun hf => ⟨g₀, ⟨hg₀, hR.refl g₀⟩, hf⟩⟩
+    rintro ⟨g, ⟨-, hg⟩, hf⟩
+    exact hR'.trans ((hRφ g₀ g).2 hg) hf
+  -- Related representatives have the same class.
+  have hclass {α : Type} {S : α → α → Prop} (hS : Equivalence S) {B : α → Prop} {a b : α}
+      (hab : S a b) : {c | B c ∧ S a c} = {c | B c ∧ S b c} :=
+    Set.ext fun c => and_congr_right fun _ => ⟨hS.trans (hS.symm hab), hS.trans hab⟩
+  symm
+  refine Set.ncard_congr (fun S _ => {f | Q f ∧ ∃ g ∈ S, R' (φ g) f}) ?_ ?_ ?_
+  · rintro S ⟨g₀, hg₀, rfl⟩
+    exact ⟨φ g₀, (hQP g₀).2 hg₀, himage hg₀⟩
+  · rintro S T ⟨g₁, hg₁, rfl⟩ ⟨g₂, hg₂, rfl⟩ heq
+    simp only [himage hg₁, himage hg₂] at heq
+    have hmem : φ g₂ ∈ {f | Q f ∧ R' (φ g₂) f} := ⟨(hQP g₂).2 hg₂, hR'.refl _⟩
+    rw [← heq] at hmem
+    exact hclass hR ((hRφ g₁ g₂).1 hmem.2)
+  · rintro T ⟨f₀, hf₀, rfl⟩
+    obtain ⟨g, hg⟩ := hφ f₀ hf₀
+    have hPg : P g := (hQP g).1 (hQ f₀ (φ g) hg hf₀)
+    exact ⟨_, ⟨g, hPg, rfl⟩, (himage hPg).trans (hclass hR' (hR'.symm hg))⟩
+
+/-- Permutation equivalence is an equivalence relation. -/
+private theorem equivalence_isBoolFunVarPermEquiv (n : ℕ) :
+    Equivalence (IsBoolFunVarPermEquiv (n := n)) where
+  refl := isBoolFunVarPermEquiv_refl
+  symm := by
+    rintro f g ⟨σ, hσ⟩
+    refine ⟨σ⁻¹, fun x => ?_⟩
+    rw [hσ]
+    congr 1
+    funext i
+    simp
+  trans := by
+    rintro f g k ⟨σ, hσ⟩ ⟨τ, hτ⟩
+    exact ⟨τ * σ, fun x => by rw [hτ, hσ]; rfl⟩
+
+/-- Permuting the variables preserves non-degeneracy. -/
+private theorem isNondegenerateBoolFun_of_isBoolFunVarPermEquiv {n : ℕ}
+    {f g : (Fin n → Bool) → Bool} (h : IsBoolFunVarPermEquiv f g)
+    (hf : IsNondegenerateBoolFun f) : IsNondegenerateBoolFun g := by
+  obtain ⟨σ, hσ⟩ := h
+  intro i
+  obtain ⟨z, hz⟩ := hf (σ.symm i)
+  refine ⟨z ∘ σ.symm, ?_⟩
+  rw [hσ, hσ, update_comp_equiv]
+  simpa [comp_assoc] using hz
+
+/-- Permuting the variables preserves a property invariant under renaming variables. -/
+private theorem iff_of_isBoolFunVarPermEquiv (P : ∀ n : ℕ, ((Fin n → Bool) → Bool) → Prop)
+    (hP : ∀ (m n : ℕ) (e : Fin m ↪ Fin n) (g : (Fin m → Bool) → Bool),
+      P n (fun x => g (x ∘ e)) ↔ P m g)
+    {n : ℕ} {f g : (Fin n → Bool) → Bool} (h : IsBoolFunVarPermEquiv f g) : P n f ↔ P n g := by
+  obtain ⟨σ, hσ⟩ := h
+  obtain rfl : g = fun x => f (x ∘ σ.toEmbedding) := funext hσ
+  exact (hP n n σ.toEmbedding f).symm
+
+/-- A function of the first `n` of `n + 1` variables is degenerate on the last one. -/
+private theorem not_isNondegenerateBoolFun_comp_castSucc {n : ℕ}
+    (g : (Fin n → Bool) → Bool) :
+    ¬ IsNondegenerateBoolFun fun x : Fin (n + 1) → Bool => g (x ∘ Fin.castSuccEmb) := by
+  intro h
+  obtain ⟨x, hx⟩ := h (Fin.last n)
+  apply hx
+  dsimp only
+  congr 1
+  funext i
+  simp [Fin.castSucc_ne_last]
+
+/-- Adding a dummy last variable reflects permutation equivalence. -/
+private theorem isBoolFunVarPermEquiv_comp_castSucc_iff {n : ℕ}
+    (g₁ g₂ : (Fin n → Bool) → Bool) :
+    IsBoolFunVarPermEquiv (fun x : Fin (n + 1) → Bool => g₁ (x ∘ Fin.castSuccEmb))
+        (fun x => g₂ (x ∘ Fin.castSuccEmb)) ↔ IsBoolFunVarPermEquiv g₁ g₂ := by
+  constructor
+  · rintro ⟨τ, hτ⟩
+    -- Delete the last variable from `τ`: the variable that `τ` sends to the last one is sent
+    -- where `τ` sends the last one.
+    let e := finSuccEquivLast.permCongr τ
+    refine ⟨Equiv.removeNone e, fun y => ?_⟩
+    -- Extend `y` by its value at `τ (Fin.last n)`, or by `false` if `τ` fixes the last variable.
+    let x : Fin (n + 1) → Bool :=
+      Fin.snoc y (Fin.snoc (α := fun _ => Bool) y false (τ (Fin.last n)))
+    have hx : x ∘ Fin.castSuccEmb = y := by
+      funext i
+      simp [x]
+    have hxτ : (x ∘ τ) ∘ Fin.castSuccEmb = y ∘ Equiv.removeNone e := by
+      funext i
+      simp only [comp_apply, Fin.coe_castSuccEmb]
+      cases h : finSuccEquivLast (τ (Fin.castSucc i)) with
+      | none =>
+        have h' := Equiv.removeNone_none (e := e) (x := i) (by simpa [e] using h)
+        have hlast : τ (Fin.castSucc i) = Fin.last n := by
+          simpa using congrArg finSuccEquivLast.symm h
+        simp only [e, Equiv.permCongr_apply, finSuccEquivLast_symm_none] at h'
+        have hτlast : τ (Fin.last n) = Fin.castSucc (Equiv.removeNone e i) := by
+          simpa using congrArg finSuccEquivLast.symm h'.symm
+        rw [hlast]
+        simp [x, hτlast]
+      | some j =>
+        have h' := Equiv.removeNone_some (e := e) (x := i) ⟨j, by simpa [e] using h⟩
+        have hj : τ (Fin.castSucc i) = Fin.castSucc j := by
+          simpa using congrArg finSuccEquivLast.symm h
+        rw [show e (some i) = some j by simpa [e] using h, Option.some_inj] at h'
+        rw [hj, h']
+        simp [x]
+    have := hτ x
+    simp only at this
+    rwa [hx, hxτ] at this
+  · rintro ⟨σ, hσ⟩
+    refine ⟨finSuccEquivLast.symm.permCongr (Equiv.optionCongr σ), fun x => ?_⟩
+    simp only
+    rw [hσ]
+    congr 1
+    funext i
+    simp [Equiv.permCongr_apply]
+
+/-- A degenerate function is a permutation of one that ignores its last variable. -/
+private theorem exists_isBoolFunVarPermEquiv_comp_castSucc {n : ℕ}
+    {f : (Fin (n + 1) → Bool) → Bool} (hf : ¬ IsNondegenerateBoolFun f) :
+    ∃ g : (Fin n → Bool) → Bool,
+      IsBoolFunVarPermEquiv f fun x => g (x ∘ Fin.castSuccEmb) := by
+  obtain ⟨i, hi⟩ := not_forall.mp hf
+  simp only [IsBoolFunNondegenerateOn, not_exists, not_not] at hi
+  have hconst (x : Fin (n + 1) → Bool) (b : Bool) : f (update x i b) = f x := by
+    rcases Bool.eq_or_eq_not b (x i) with rfl | rfl
+    · rw [update_eq_self]
+    · exact (hi x).symm
+  -- Swap the ignored variable with the last one.
+  let τ := Equiv.swap i (Fin.last n)
+  refine ⟨fun y => f (Fin.snoc (α := fun _ => Bool) y false ∘ τ), τ, fun x => ?_⟩
+  have hsnoc : (Fin.snoc (α := fun _ => Bool) (x ∘ Fin.castSuccEmb) false) =
+      update x (Fin.last n) false := by
+    funext j
+    induction j using Fin.lastCases with
+    | last => simp
+    | cast j => simp [Fin.castSucc_ne_last]
+  simp only
+  rw [hsnoc, update_comp_equiv]
+  simp [τ, hconst]
+
+end boolFunClassCount_varPerm_nondegenerate_eq_sub
+
+open boolFunClassCount_varPerm_nondegenerate_eq_sub in
+/-- **Non-degenerate permutation classes as a difference.** Let $(P_n)_{n \ge 0}$ be a family of
+properties, $P_n$ a property of $n$-variable Boolean functions, that is invariant under renaming
+variables: for all $m$ and $n$, every injection $e$ from $\{1, \dots, m\}$ to $\{1, \dots, n\}$
+and every $m$-variable function $g$, the $n$-variable function $x \mapsto g(x \circ e)$ has $P_n$
+if and only if $g$ has $P_m$. Write $[P]_n$ for the number of classes of $n$-variable functions
+with $P_n$ under permutation of the variables, and $\mathrm{nd}[P]_n$ for the same count over the
+non-degenerate $n$-variable functions with $P_n$. Then for every $n$,
+$$\mathrm{nd}[P]_{n+1} = [P]_{n+1} - [P]_n,$$
+where the subtraction is truncated at $0$; this is the paper's
+$\mathrm{nd}[P]_n = [P]_n - [P]_{n-1}$ for $n \ge 1$.
+
+The paper assumes only closure under permutations of the variables, which is not enough; see the
+summation form of Proposition 11.
+
+Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
+under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
+Sequences 28 (2025), Article 25.3.4, Proposition 11 (`jis-2025-25.3.4-prop-11`). -/
+public theorem boolFunClassCount_varPerm_nondegenerate_eq_sub
+    (P : ∀ n : ℕ, ((Fin n → Bool) → Bool) → Prop)
+    (hP : ∀ (m n : ℕ) (e : Fin m ↪ Fin n) (g : (Fin m → Bool) → Bool),
+      P n (fun x => g (x ∘ e)) ↔ P m g)
+    (n : ℕ) :
+    boolFunClassCount IsBoolFunVarPermEquiv (fun f => IsNondegenerateBoolFun f ∧ P (n + 1) f)
+      = boolFunClassCount IsBoolFunVarPermEquiv (P (n + 1))
+        - boolFunClassCount IsBoolFunVarPermEquiv (P n) := by
+  have hR := equivalence_isBoolFunVarPermEquiv
+  -- Non-degeneracy splits the classes of `P (n + 1)` ...
+  have hsplit := classCount_split (hR (n + 1)).refl
+    (fun f g h => ⟨isNondegenerateBoolFun_of_isBoolFunVarPermEquiv h,
+      isNondegenerateBoolFun_of_isBoolFunVarPermEquiv ((hR (n + 1)).symm h)⟩) (P (n + 1))
+  -- ... and the degenerate classes are those of `P n`, with a dummy last variable added.
+  have hdeg : boolFunClassCount IsBoolFunVarPermEquiv
+      (fun f => ¬ IsNondegenerateBoolFun f ∧ P (n + 1) f) =
+        boolFunClassCount IsBoolFunVarPermEquiv (P n) := by
+    refine classCount_eq_of_map (hR n) (hR (n + 1)) (fun g x => g (x ∘ Fin.castSuccEmb))
+      (fun g => ?_) isBoolFunVarPermEquiv_comp_castSucc_iff (fun f f' h hf => ?_)
+      (fun f hf => exists_isBoolFunVarPermEquiv_comp_castSucc hf.1)
+    · exact ⟨fun h => (hP n (n + 1) Fin.castSuccEmb g).1 h.2,
+        fun h => ⟨not_isNondegenerateBoolFun_comp_castSucc g,
+          (hP n (n + 1) Fin.castSuccEmb g).2 h⟩⟩
+    · exact ⟨fun hnd => hf.1 (isNondegenerateBoolFun_of_isBoolFunVarPermEquiv
+        ((hR (n + 1)).symm h) hnd), (iff_of_isBoolFunVarPermEquiv P hP h).1 hf.2⟩
+  omega
+
 /-- **Weight symmetry of monotone Boolean functions.** For all $n \ge 0$ and all $w$ with
 $0 \le w \le 2^n$, the number of monotone $n$-variable Boolean functions of weight $w$ equals
 the number of monotone $n$-variable Boolean functions of weight $2^n - w$.
@@ -277,6 +682,28 @@ public theorem card_monotone_boolFun_weight_symm (n w : ℕ) (hw : w ≤ 2 ^ n) 
   simp only [Function.Involutive.coe_toPerm, monotone_booleanFunctionDual_iff, weight,
     card_true_booleanFunctionDual]
   exact and_congr_right fun _ => (tsub_right_inj (card_true_le_two_pow n f) hw).symm
+
+/-- **Weight symmetry of unate Boolean functions.** For all $n \ge 0$ and all $w$ with
+$0 \le w \le 2^n$, the number of unate $n$-variable Boolean functions of weight $w$ equals the
+number of unate $n$-variable Boolean functions of weight $2^n - w$.
+
+The source assumes $n \ge 1$; the case $n = 0$ is included here.
+
+Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
+under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
+Sequences 28 (2025), Article 25.3.4, Proposition 9 (`jis-2025-25.3.4-prop-9`). -/
+public theorem card_unate_boolFun_weight_symm (n w : ℕ) (hw : w ≤ 2 ^ n) :
+    Nat.card {f : (Fin n → Bool) → Bool // IsUnateBoolFun f ∧ boolFunWeight f = w}
+      = Nat.card {f : (Fin n → Bool) → Bool // IsUnateBoolFun f ∧ boolFunWeight f = 2 ^ n - w} := by
+  refine Nat.card_congr ((Equiv.piCongrRight fun _ => Equiv.boolNot).subtypeEquiv fun f => ?_)
+  apply and_congr
+  · change IsUnateBoolFun f ↔ IsUnateBoolFun (fun x => !f x)
+    exact ⟨isUnateBoolFun_not, fun h => by simpa using isUnateBoolFun_not h⟩
+  · change boolFunWeight f = w ↔ boolFunWeight (fun x => !f x) = 2 ^ n - w
+    have hsum : boolFunWeight f + boolFunWeight (fun x => !f x) = 2 ^ n := by
+      simpa [boolFunWeight] using
+        (Finset.card_filter_add_card_filter_not (s := Finset.univ) (fun x => f x = true))
+    omega
 
 end
 

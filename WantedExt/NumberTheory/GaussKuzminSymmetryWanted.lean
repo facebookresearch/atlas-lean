@@ -9,183 +9,15 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Algebra.ContinuedFractions.Computation.Basic
-public import Mathlib.Analysis.SpecialFunctions.Log.Base
-public import Mathlib.LinearAlgebra.Matrix.Notation
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+public import MathlibExt.NumberTheory.GaussKuzminSymmetry
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
 open MeasureTheory Filter Topology Real
-
-/-- **Convergent matrix.** For a finite string $a = (a_1, \ldots, a_n)$ of natural numbers, the
-convergent matrix $C(a)$ is the $2 \times 2$ integer matrix given by the ordered product
-$C(a) = \begin{pmatrix} 0 & 1 \\ 1 & a_1 \end{pmatrix} \cdots
-\begin{pmatrix} 0 & 1 \\ 1 & a_n \end{pmatrix}$ (the identity matrix when $n = 0$). Its entries
-are written $C(a) = \begin{pmatrix} p' & p \\ q' & q \end{pmatrix}$.
-
-When $n \ge 1$ and all $a_i$ are positive, $p/q = [0; a_1, \ldots, a_n]$ and $p'/q'$ is the
-preceding convergent.
-
-Source: Shreyas Singh, Zhuo Zhang and AJ Hildebrand, *An Elementary Characterization of the
-Gauss-Kuzmin Measure in the Theory of Continued Fractions*, INTEGERS 25 (2025), Article A89,
-Definition 2.1 and equation (2.8). -/
-def convergentMatrix (a : List ℕ) : Matrix (Fin 2) (Fin 2) ℤ :=
-  (a.map fun t => !![0, 1; 1, (t : ℤ)]).prod
-
-/-- **Convergent matrix of the empty string.** The convergent matrix of the empty string is the
-$2 \times 2$ identity matrix.
-
-Source: Shreyas Singh, Zhuo Zhang and AJ Hildebrand, *An Elementary Characterization of the
-Gauss-Kuzmin Measure in the Theory of Continued Fractions*, INTEGERS 25 (2025), Article A89,
-Section 2.2. -/
-theorem convergentMatrix_nil : convergentMatrix [] = 1 := rfl
-
-/-- **Prepending a digit to a string.** For every natural number $t$ and every finite string $a$
-of natural numbers, the convergent matrix of the string $(t, a)$, obtained by prepending $t$ to
-$a$, is $C(t, a) = \begin{pmatrix} 0 & 1 \\ 1 & t \end{pmatrix} C(a)$.
-
-Source: Shreyas Singh, Zhuo Zhang and AJ Hildebrand, *An Elementary Characterization of the
-Gauss-Kuzmin Measure in the Theory of Continued Fractions*, INTEGERS 25 (2025), Article A89,
-equation (2.8). -/
-theorem convergentMatrix_cons (t : ℕ) (a : List ℕ) :
-    convergentMatrix (t :: a) = !![0, 1; 1, (t : ℤ)] * convergentMatrix a := by
-  simp [convergentMatrix]
-
-/-- **Fundamental interval of a string.** For a finite string $a = (a_1, \ldots, a_n)$ of natural
-numbers, the fundamental interval $I(a)$ is the set of real numbers $x \in [0, 1)$ whose
-continued fraction expansion $x = [0; a_1(x), a_2(x), \ldots]$ has at least $n$ digits, with
-$a_i(x) = a_i$ for $1 \le i \le n$.
-
-The digits are those produced by the continued fraction algorithm, so a rational $x$ uses the
-finite expansion whose last digit is at least $2$ (the resolution in the paper's footnote 2).
-
-Source: Shreyas Singh, Zhuo Zhang and AJ Hildebrand, *An Elementary Characterization of the
-Gauss-Kuzmin Measure in the Theory of Continued Fractions*, INTEGERS 25 (2025), Article A89,
-equation (1.4). -/
-def cfCylinder (a : List ℕ) : Set ℝ :=
-  {x | x ∈ Set.Ico 0 1 ∧
-    ∀ i (hi : i < a.length), (GenContFract.of x).partDens.get? i = some (a[i] : ℝ)}
-
-/-- **Fundamental interval of the empty string.** The fundamental interval of the empty string is
-the whole interval: $I(()) = [0, 1)$.
-
-Source: Shreyas Singh, Zhuo Zhang and AJ Hildebrand, *An Elementary Characterization of the
-Gauss-Kuzmin Measure in the Theory of Continued Fractions*, INTEGERS 25 (2025), Article A89,
-equation (1.4). -/
-theorem cfCylinder_nil : cfCylinder [] = Set.Ico 0 1 := by
-  ext x
-  simp [cfCylinder]
-
-/-- **Half-open interval between two reals.** For real numbers $\alpha$ and $\beta$, the interval
-$\langle \alpha, \beta \rangle$ is $[\alpha, \beta)$ if $\alpha < \beta$, and $(\beta, \alpha]$
-otherwise.
-
-Source: Shreyas Singh, Zhuo Zhang and AJ Hildebrand, *An Elementary Characterization of the
-Gauss-Kuzmin Measure in the Theory of Continued Fractions*, INTEGERS 25 (2025), Article A89,
-Section 2.3 (interval notation). -/
-noncomputable def fundInterval (α β : ℝ) : Set ℝ :=
-  if α < β then Set.Ico α β else Set.Ioc β α
-
-/-- **Half-open interval between increasing endpoints.** For real numbers $\alpha$ and $\beta$,
-write $\langle \alpha, \beta \rangle$ for $[\alpha, \beta)$ if $\alpha < \beta$ and for
-$(\beta, \alpha]$ otherwise. If $\alpha < \beta$, then
-$\langle \alpha, \beta \rangle = [\alpha, \beta)$.
-
-Source: Shreyas Singh, Zhuo Zhang and AJ Hildebrand, *An Elementary Characterization of the
-Gauss-Kuzmin Measure in the Theory of Continued Fractions*, INTEGERS 25 (2025), Article A89,
-Section 2.3. -/
-theorem fundInterval_of_lt {α β : ℝ} (h : α < β) : fundInterval α β = Set.Ico α β := by
-  simp [fundInterval, h]
-
-/-- **Gauss–Kuzmin mass of a string.** For a finite string $a$ of natural numbers with
-fundamental interval $I(a)$, the Gauss–Kuzmin mass of $a$ is
-$P_{GK}(a) = \frac{1}{\log 2} \int_{I(a)} \frac{dx}{1 + x}$, the measure of $I(a)$ under the
-Gauss–Kuzmin measure with density $\frac{1}{(1 + x) \log 2}$.
-
-Source: Shreyas Singh, Zhuo Zhang and AJ Hildebrand, *An Elementary Characterization of the
-Gauss-Kuzmin Measure in the Theory of Continued Fractions*, INTEGERS 25 (2025), Article A89,
-equations (1.5) and (1.6). -/
-noncomputable def gaussKuzminMass (a : List ℕ) : ℝ :=
-  (∫ x in cfCylinder a, 1 / (1 + x)) / log 2
-
-/-- **Gauss–Kuzmin mass of the empty string.** The Gauss–Kuzmin mass of the empty string is
-$P_{GK}(()) = \frac{1}{\log 2} \int_{[0, 1)} \frac{dx}{1 + x}$.
-
-Source: Shreyas Singh, Zhuo Zhang and AJ Hildebrand, *An Elementary Characterization of the
-Gauss-Kuzmin Measure in the Theory of Continued Fractions*, INTEGERS 25 (2025), Article A89,
-equation (1.6). -/
-theorem gaussKuzminMass_nil :
-    gaussKuzminMass [] = (∫ x in Set.Ico (0 : ℝ) 1, 1 / (1 + x)) / log 2 := by
-  rw [gaussKuzminMass, cfCylinder_nil]
-
-/-- **Characteristic number of a string.** For a finite string $a$ of natural numbers with
-convergent matrix $C(a) = \begin{pmatrix} p' & p \\ q' & q \end{pmatrix}$, the characteristic
-number of $a$ is the integer $\chi(a) = (p + q)(q' + q)$.
-
-Source: Shreyas Singh, Zhuo Zhang and AJ Hildebrand, *An Elementary Characterization of the
-Gauss-Kuzmin Measure in the Theory of Continued Fractions*, INTEGERS 25 (2025), Article A89,
-Definition 5.1, equation (5.2). -/
-def characteristicNumber (a : List ℕ) : ℤ :=
-  (convergentMatrix a 0 1 + convergentMatrix a 1 1) *
-    (convergentMatrix a 1 0 + convergentMatrix a 1 1)
-
-/-- **Characteristic number of the empty string.** The characteristic number of the empty string
-is $\chi(()) = 1$.
-
-Source: Shreyas Singh, Zhuo Zhang and AJ Hildebrand, *An Elementary Characterization of the
-Gauss-Kuzmin Measure in the Theory of Continued Fractions*, INTEGERS 25 (2025), Article A89,
-Definition 5.1. -/
-theorem characteristicNumber_nil : characteristicNumber [] = 1 := by
-  simp [characteristicNumber, convergentMatrix_nil]
-
-/-- **Stable strings.** For a finite string $a = (a_1, \dots, a_n)$ of natural numbers, let
-$M(t) = \begin{pmatrix} 0 & 1 \\ 1 & t \end{pmatrix}$ and write the convergent matrix of $a$ as
-
-$$C(a) = M(a_1) M(a_2) \cdots M(a_n) = \begin{pmatrix} p' & p \\ q' & q \end{pmatrix},$$
-
-computed over the integers, with the empty product equal to the identity matrix. The string $a$ is
-stable if $p = 2q'$.
-
-Source: Shreyas Singh, Zhuo Zhang and AJ Hildebrand, *An Elementary Characterization of the
-Gauss-Kuzmin Measure in the Theory of Continued Fractions*, INTEGERS 25 (2025), Article A89,
-Definition 5.4, equation (5.9). -/
-def IsStableString (a : List ℕ) : Prop :=
-  convergentMatrix a 0 1 = 2 * convergentMatrix a 1 0
-
-/-- **The empty string is stable.** The empty string is a stable string.
-
-Its convergent matrix is the identity matrix, so its top-right entry $p$ and its bottom-left entry
-$q'$ are both $0$, and $p = 2q'$ holds.
-
-Source: Shreyas Singh, Zhuo Zhang and AJ Hildebrand, *An Elementary Characterization of the
-Gauss-Kuzmin Measure in the Theory of Continued Fractions*, INTEGERS 25 (2025), Article A89,
-Definition 5.4. -/
-theorem isStableString_nil : IsStableString [] := by
-  simp [IsStableString, convergentMatrix_nil]
-
-/-- **Nontrivial symmetry of a string.** A finite string $a$ of natural numbers has a nontrivial
-symmetry if there is a string $b$ that is a rearrangement of $a$ (the same entries with the same
-multiplicities, in some order) such that $b \ne a$, $b$ is not the reverse of $a$, and
-$P_{GK}(b) = P_{GK}(a)$, where $P_{GK}$ denotes the Gauss–Kuzmin measure of a string.
-
-Source: Shreyas Singh, Zhuo Zhang and AJ Hildebrand, *An Elementary Characterization of the
-Gauss-Kuzmin Measure in the Theory of Continued Fractions*, INTEGERS 25 (2025), Article A89,
-Definition 1.4. -/
-def HasNontrivialSymmetry (a : List ℕ) : Prop :=
-  ∃ b : List ℕ, b.Perm a ∧ b ≠ a ∧ b ≠ a.reverse ∧ gaussKuzminMass b = gaussKuzminMass a
-
-/-- The empty string has no nontrivial symmetry.
-
-Source: Shreyas Singh, Zhuo Zhang and AJ Hildebrand, *An Elementary Characterization of the
-Gauss-Kuzmin Measure in the Theory of Continued Fractions*, INTEGERS 25 (2025), Article A89,
-Definition 1.4. -/
-theorem not_hasNontrivialSymmetry_nil : ¬ HasNontrivialSymmetry [] := by
-  rintro ⟨b, hb, hne, -⟩
-  exact hne (List.perm_nil.mp hb)
 
 /-- **Generalized Gauss–Kuzmin theorem.** For a real number $x$, let $a_1(x), a_2(x), \dots$ be
 the partial denominators of the continued fraction expansion of $x$. For almost every real $x$,
@@ -389,17 +221,6 @@ Lemma 5.2 (`integers-2025-A89-lem-5-2`). -/
 public theorem_wanted gaussKuzminMass_eq_iff_characteristicNumber_eq (a b : List ℕ)
     (ha : (∀ x ∈ a, 0 < x)) (hb : ∀ x ∈ b, 0 < x) (hpar : a.length % 2 = b.length % 2) :
     gaussKuzminMass a = gaussKuzminMass b ↔ characteristicNumber a = characteristicNumber b
-
-/-- **Swapping the first two of three digits changes the characteristic number.** For positive
-integers $a$, $b$, $c$ with $a \ne b$, the strings $(a, b, c)$ and $(b, a, c)$ have different
-characteristic numbers: $\chi(a, b, c) \ne \chi(b, a, c)$.
-
-Source: Shreyas Singh, Zhuo Zhang and AJ Hildebrand, *An Elementary Characterization of the
-Gauss-Kuzmin Measure in the Theory of Continued Fractions*, INTEGERS 25 (2025), Article A89,
-Lemma 5.3 (`integers-2025-A89-lem-5-3`). -/
-public theorem_wanted characteristicNumber_swap_ne (a b c : ℕ) (ha : 0 < a) (hb : 0 < b)
-    (hc : 0 < c) (hab : a ≠ b) :
-    characteristicNumber [a, b, c] ≠ characteristicNumber [b, a, c]
 
 /-- **Families of stable strings.** (i) For every positive integer $t$, the strings $(t, 2t)$ and
 $(t, 1, 2t + 1)$ are stable. (ii) If $a = (a_1, \dots, a_m)$ is a stable string of positive

@@ -46,7 +46,7 @@ open CoefficientBettiModels CoefficientCompactSupportModels CoefficientProperDua
 attribute [local instance] HasDerivedCategory.standard
 
 /-- Only the actual integer cohomological degree is changed. -/
-def cohomologyCast {Z : TopCat.{0}} {i j : ℤ} (h : i=j) :
+def cohomologyCast {Z : TopCat.{0}} {i j : ℤ} (h : i = j) :
     CoefficientBettiModels.Cohomology ℂ Z i →ₗ[ℂ] CoefficientBettiModels.Cohomology ℂ Z j := by
   cases h
   exact LinearMap.id
@@ -152,16 +152,29 @@ def ZeroEulerGeometry.euler (G : ZeroEulerGeometry O X E r) :
   (LinearEquiv.ofBijective (cohomologyPullback ℂ (spaceMap G.bundle.projection) (2*r))
     (G.homotopy (2*r))).symm G.zeroClass
 
-/-- In rank zero, when the zero section is an isomorphism (as for the zero bundle, whose total
-space represents the sections of the zero module), the Euler class is the unit class for every
-orientation datum. -/
+/-- The zero section of a bundle of rank zero is an isomorphism: the module is zero, so its
+total space represents the morphisms to the base, with the projection as inverse. -/
+instance zeroSection_isIso_of_rank_zero {k : Type} [Field k] {Y : Over (Spec (.of k))}
+    {F : Y.left.Modules} (B : GlobalZeroSectionRecipe.VectorBundleModel Y F 0) :
+    IsIso (GlobalZeroSectionRecipe.zeroSection B) := by
+  have hF : IsZero F := CurveVectorBundles.isZero_of_isVectorBundle_zero B.locallyFree
+  have hz : IsZero ((Scheme.Modules.pullback B.projection.left).obj F) :=
+    Functor.map_isZero _ hF
+  have key : B.projection ≫ GlobalZeroSectionRecipe.zeroSection B = 𝟙 B.total :=
+    (B.universal B.total B.projection 0).unique
+      ⟨by rw [Category.assoc, GlobalZeroSectionRecipe.zeroSection_projection, Category.comp_id],
+        hz.eq_of_tgt _ _⟩
+      ⟨Category.id_comp _, hz.eq_of_tgt _ _⟩
+  exact ⟨B.projection, GlobalZeroSectionRecipe.zeroSection_projection B, key⟩
+
+/-- In rank zero the Euler class is the unit class for every orientation datum: the module is
+zero, so the zero section is an isomorphism (`zeroSection_isIso_of_rank_zero`). -/
 theorem ZeroEulerGeometry.euler_eq_unitClass {O : OrientationData} {X : SchemeData}
-    {E : X.scheme.left.Modules} (G : ZeroEulerGeometry O X E 0)
-    [IsIso (GlobalZeroSectionRecipe.zeroSection G.bundle)] :
+    {E : X.scheme.left.Modules} (G : ZeroEulerGeometry O X E 0) :
     G.euler = unitClass ℂ (space X.scheme) := by
-  haveI : SmoothOfRelativeDimension G.dimension G.bundle.total.hom := G.totalSmooth
-  haveI := G.baseSeparated
-  haveI := G.baseQuasiCompact
+  have : SmoothOfRelativeDimension G.dimension G.bundle.total.hom := G.totalSmooth
+  have := G.baseSeparated
+  have := G.baseQuasiCompact
   have hpush := borelMoorePushforward_fundamentalClass ℂ G.zeroPullback
     (O.duality X.scheme G.dimension) (O.duality G.bundle.total G.dimension) G.dimension
     (O.purity X.scheme G.dimension) (O.purity G.bundle.total G.dimension)
