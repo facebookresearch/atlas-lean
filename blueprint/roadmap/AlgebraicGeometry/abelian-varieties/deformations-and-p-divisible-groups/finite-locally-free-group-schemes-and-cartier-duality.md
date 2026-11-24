@@ -38,15 +38,16 @@ exact sequences that define the Serre dual (Chai–Oort, (1.20)). These argument
 $p$-divisible group, for instance $\mu_{p^\infty}$, of height $1$, which is not the $p$-divisible
 group of an abelian scheme. The pages on the [dual abelian variety](../dual-abelian-variety.md) and
 the [dual abelian scheme](../dual-abelian-scheme.md) use 3 with $X = A$, $G = \operatorname{Ker}(f)$
-and $Y = B$ for an isogeny $f \colon A \to B$, to identify the kernel of the dual isogeny with
-$\operatorname{Ker}(f)^D$ (van der Geer–Moonen, Theorem (7.5)).
+and $Y = B$ for an isogeny $f \colon A \to B$, which is faithfully flat with $A \times_B A \cong A
+\times_S \operatorname{Ker}(f)$, so that $B$ is the quotient, to identify the kernel of the dual
+isogeny with $\operatorname{Ker}(f)^D$ (van der Geer–Moonen, Theorem (7.5)).
 
 A good expansion has pages for: the representability of $G^D$ by the dual of the Hopf algebra of $G$
 and biduality (Oort, I.2); the existence of fppf quotients of finite locally free group schemes by
-finite locally free closed subgroups, with the multiplicativity of ranks; the exactness of Cartier
-duality (Tate, §§1.2–1.3); and, for 3, the existence of the quotient of a scheme by a free action of
-a finite locally free group scheme and descent along it (Stacks Project, Tag 07S7; van der
-Geer–Moonen, (7.2)–(7.4)).
+finite locally free closed subgroups, with the multiplicativity of ranks (Stacks Project, Tag 07S7,
+which applies to the action of $H$ on the affine $S$-scheme $G$); the exactness of Cartier duality
+(Tate, §§1.2–1.3); and, for 3, where the quotient is assumed to be a scheme, the descent of line
+bundles along the $G$-torsor $X \to Y$ (van der Geer–Moonen, (7.2)–(7.4)).
 
 ## Depends on
 
@@ -65,8 +66,7 @@ $\underline{\operatorname{Hom}}(G, \mathbb{G}_m)$, which no page states yet.
 The other steps of its proof are not pages yet: the representability of the Cartier dual and
 biduality, the existence of fppf quotients by finite locally free subgroups with the
 multiplicativity of ranks, the exactness of Cartier duality (Oort, I.2; Tate, §§1.2–1.3), and, for
-3, the quotient by a free action and the descent of line bundles along it (van der Geer–Moonen,
-(7.2)–(7.4)).
+3, the descent of line bundles along the $G$-torsor $X \to Y$ (van der Geer–Moonen, (7.2)–(7.4)).
 
 ## Sources
 

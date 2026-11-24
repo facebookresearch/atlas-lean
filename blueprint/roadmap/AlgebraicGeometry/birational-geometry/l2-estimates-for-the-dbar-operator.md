@@ -23,16 +23,19 @@ A good expansion has pages for:
   inequality (4.7) and the computation (4.10) of the curvature term for line bundles;
 - the $L^2$ existence theorem (5.1) on Kähler manifolds with complete geodesic distance; its form
   (5.2) for a line bundle with positive curvature on a weakly pseudoconvex Kähler manifold, with the
-  estimate by the sum $\gamma_1 + \dots + \gamma_q$ of the smallest curvature eigenvalues; and
-  Corollary (5.3) on a weakly pseudoconvex Kähler manifold, for a line bundle with a singular metric
-  written as the quadratic form $H = e^{-\varphi}$ with $\varphi \in L^1_{\mathrm{loc}}$ and
-  $i\Theta_{F,h} = i\partial\bar\partial \varphi \ge \varepsilon\omega$ for a constant $\varepsilon >
-  0$: every $D''$-closed $g \in L^2(X, \Lambda^{n,q} T^*_X \otimes F)$, $q \ge 1$, is $D'' f$ with
-  $\int_X |f|^2 e^{-\varphi} \, dV_\omega \le \frac{1}{q\varepsilon} \int_X |g|^2 e^{-\varphi} \,
-  dV_\omega$. Here the weight is $e^{-\varphi}$, whereas the Nadel vanishing theorem writes the norm
-  as $|\theta(\xi)| e^{-\varphi}$, with weight $e^{-2\varphi}$, and allows a continuous positive
-  function $\varepsilon$; the coherence of multiplier ideal sheaves (5.7) and the Nadel vanishing
-  theorem (5.11) rest on this corollary;
+  estimate by the sum $\gamma_1 + \dots + \gamma_q$ of the smallest curvature eigenvalues, which
+  extends to singular metrics with positive curvature current by regularization (the remark after
+  (5.2)); and Corollary (5.3) on a weakly pseudoconvex Kähler manifold, for a line bundle with a
+  singular metric written as the quadratic form $H = e^{-\varphi}$ with $\varphi \in
+  L^1_{\mathrm{loc}}$ and $i\Theta_{F,h} = i\partial\bar\partial \varphi \ge \varepsilon\omega$ for
+  a constant $\varepsilon > 0$: every $D''$-closed $g \in L^2(X, \Lambda^{n,q} T^*_X \otimes F)$, $q
+  \ge 1$, is $D'' f$ with $\int_X |f|^2 e^{-\varphi} \, dV_\omega \le \frac{1}{q\varepsilon} \int_X
+  |g|^2 e^{-\varphi} \, dV_\omega$. Here the weight is $e^{-\varphi}$, whereas the Nadel vanishing
+  theorem writes the norm as $|\theta(\xi)| e^{-\varphi}$, with weight $e^{-2\varphi}$, and allows a
+  continuous positive function $\varepsilon$, which on a noncompact manifold need not be bounded
+  below by a positive constant; the coherence of multiplier ideal sheaves (5.7) and the local
+  exactness in the proof of the Nadel vanishing theorem (5.11) rest on this corollary, and the
+  global step of (5.11) on (5.2) for singular metrics;
 - Ohsawa's twisted a priori inequality (Demailly, Lemma 13.1 and (13.3)), the existence theorem
   (13.4) deduced from it and its approximate form (13.5), which Demailly uses for the extension
   theorem (13.6); and, for Ohsawa and Takegoshi's own proof, the identities of their §1 (after

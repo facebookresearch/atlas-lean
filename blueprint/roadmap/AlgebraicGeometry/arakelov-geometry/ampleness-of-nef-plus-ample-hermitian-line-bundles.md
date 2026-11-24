@@ -1,7 +1,7 @@
 # Ampleness of nef plus ample hermitian line bundles
 
-This node is still to be broken down: the statement is precise, and the plan below deduces it from
-published results, which are not pages yet; no source states it in this form.
+This node is still to be broken down: the statement is precise, and the plan below derives it from
+published results, which are not pages yet.
 
 Let $X$ be a projective arithmetic variety in Moriwaki's sense, an integral scheme projective and
 flat over $\operatorname{Spec} \mathbb{Z}$ whose generic fibre need not be smooth, and let $\bar L$

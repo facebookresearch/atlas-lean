@@ -25,10 +25,16 @@ Every compact complex manifold is weakly pseudoconvex, with the exhaustion funct
 every Stein manifold. Demailly's proof: the $(n, q)$-forms $u$ with values in $F$ and measurable
 coefficients such that $|u|^2 e^{-2\varphi}$ and $|\bar\partial u|^2 e^{-2\varphi}$ are locally
 integrable form a resolution of $\mathcal{O}(K_X + F) \otimes \mathcal{I}(h)$ by fine sheaves, exact
-by Hörmander's $L^2$ estimate for singular metrics (Corollary 5.3) on small balls; the same estimate
-on $X$, with the metric of $F$ multiplied by $e^{-\chi \circ \psi}$ for a plurisubharmonic
-exhaustion function $\psi$ and a convex increasing function $\chi$ growing fast enough, shows that
-the complex of global sections is exact in degrees $q \ge 1$. The coherence of
+by Hörmander's $L^2$ estimate for singular metrics (Corollary 5.3) on small balls. On $X$ itself the
+constant of Corollary 5.3 is not available, as a continuous positive $\varepsilon$ on a noncompact
+manifold need not be bounded below by a positive constant; the global step uses instead Theorem 5.2,
+whose estimate involves the sum $\gamma_1 + \dots + \gamma_q \ge q\varepsilon(x)$ of the smallest
+curvature eigenvalues and which extends to singular metrics by regularization (the remark after it).
+Multiplying the metric of $F$ by $e^{-\chi \circ \psi}$, for a plurisubharmonic exhaustion function
+$\psi$ and a convex increasing function $\chi$, does not decrease the curvature, and for $\chi$
+growing fast enough it makes $\int_X (q\varepsilon)^{-1} |g|^2 e^{-2\varphi - \chi \circ \psi}$
+finite for a given global section $g$, $(q\varepsilon)^{-1}$ being bounded on the compact sublevel
+sets of $\psi$; so the complex of global sections is exact in degrees $q \ge 1$. The coherence of
 $\mathcal{I}(\varphi)$ is also proved with Corollary 5.3 (Demailly, Proposition 5.7): on a small
 ball, by the
 [strong Noetherian property](../../Analysis/complex-analysis/several-complex-variables/strong-noetherian-property-of-coherent-analytic-sheaves.md)
@@ -55,7 +61,10 @@ associated with the [multiplier ideal](multiplier-ideal-of-a-q-divisor.md) $\mat
 ## Proof depends on
 
 - [L² estimates for the ∂̄ operator](l2-estimates-for-the-dbar-operator.md), for Hörmander's $L^2$
-  estimates for singular metrics (Demailly, Corollary 5.3)
+  estimates: Corollary 5.3 on small balls, for the exactness of the resolution and the coherence of
+  $\mathcal{I}(\varphi)$, and, on $X$, Theorem 5.2 with a variable lower bound of the curvature,
+  extended to singular metrics by regularization (Demailly, §5.A), for the vanishing of the
+  cohomology of the global sections
 - [Multiplier ideal of an effective Q-divisor](multiplier-ideal-of-a-q-divisor.md), for its analytic
   description (Lazarsfeld, Proposition 1.8), which identifies $\mathcal{I}(\sum_j a_j \log|g_j|)$
   with the analytic sheaf of $\mathcal{J}(D)$

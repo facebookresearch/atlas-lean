@@ -28,11 +28,12 @@ D$: the projection formula $((n_A^* D)^g) = \deg(n_A) (D^g)$, with $((n^2 D)^g) 
 $(D^g) > 0$, gives $\deg(n_A) = n^{2g}$; the degree of the pulled-back divisor is not that of $D$,
 for an elliptic curve and $n = 2$, $\deg 3[0] = 3$ but $\deg 2^* (3[0]) = 12$). Being flat and of
 finite presentation, $n_A$ is étale at the points of a fibre $A_s$ exactly when its restriction to
-$A_s$ is, and it is étale on $A_s$ exactly when its differential, multiplication by $n$ on the
-tangent space $\operatorname{Lie}(A_s)$ of dimension $g(s)$, is an isomorphism: when $n$ is
-invertible in $k(s)$ or $g(s) = 0$. For 3, a finite étale group scheme over a separably closed field
-is the constant group scheme of its $k$-points, so the rank $n^{2g}$ of $A[n]$ is the number of
-points of order dividing $n$; the finite flat statement alone counts the rank, not geometric points.
+$A_s$ is, and, $A$ being commutative, so that $n_A$ is a homomorphism, it is étale on $A_s$ exactly
+when its differential, multiplication by $n$ on the tangent space $\operatorname{Lie}(A_s)$ of
+dimension $g(s)$, is an isomorphism: when $n$ is invertible in $k(s)$ or $g(s) = 0$. For 3, a finite
+étale group scheme over a separably closed field is the constant group scheme of its $k$-points, so
+the rank $n^{2g}$ of $A[n]$ is the number of points of order dividing $n$; the finite flat statement
+alone counts the rank, not geometric points.
 
 ## Depends on
 
@@ -54,6 +55,9 @@ points of order dividing $n$; the finite flat statement alone counts the rank, n
   the flatness on the fibres of a surjective homomorphism onto a smooth group scheme and the
   étaleness of $n_A$ on a fibre through its differential (item 3); and for the passage from the
   fibres to $S$ (item 2)
+- [Homomorphisms of abelian schemes and commutativity](homomorphisms-of-abelian-schemes.md), for the
+  commutativity of $A$ (item 3), which makes $n_A$ a homomorphism, to which the criteria for
+  homomorphisms of group schemes apply
 
 ## Sources
 

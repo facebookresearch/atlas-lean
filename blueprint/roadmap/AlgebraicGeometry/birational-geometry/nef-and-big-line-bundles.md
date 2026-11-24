@@ -1,9 +1,10 @@
 # Nef and big line bundles
 
-Let $X$ be an integral projective variety over a field and $L$ an invertible sheaf on $X$. If
-$H^0(X, L^\nu) \ne 0$ for some $\nu \ge 1$, the sections of $L^\nu$ define a rational map
-$\varphi_\nu \colon X \dashrightarrow \mathbb{P}(H^0(X, L^\nu))$. The *Iitaka dimension* of $L$ is
-$\kappa(L) = -\infty$ if $H^0(X, L^\nu) = 0$ for all $\nu \ge 1$, and otherwise
+Let $X$ be an integral scheme projective over a field $k$, not necessarily geometrically reduced
+over $k$, and $L$ an invertible sheaf on $X$. If $H^0(X, L^\nu) \ne 0$ for some $\nu \ge 1$, the
+sections of $L^\nu$ define a rational map $\varphi_\nu \colon X \dashrightarrow \mathbb{P}(H^0(X,
+L^\nu))$. The *Iitaka dimension* of $L$ is $\kappa(L) = -\infty$ if $H^0(X, L^\nu) = 0$ for all $\nu
+\ge 1$, and otherwise
 
 $$\kappa(L) = \max\{\dim \varphi_\nu(X) : \nu \ge 1,\ H^0(X, L^\nu) \ne 0\};$$
 
@@ -58,8 +59,10 @@ curves and letting $\varepsilon \to 0$.
 - [Simple normal crossing divisor](simple-normal-crossing-divisor.md), for $\mathbb{Q}$-divisors on
   a smooth projective variety
 - [Geometrically reduced variety over a field](../schemes-and-morphisms/varieties-over-a-field/is-variety.md),
-  for the underlying variety over a field, which the algebraic definitions take integral and
-  projective
+  for the smooth projective varieties of the $\mathbb{Q}$-divisor definitions; the algebraic
+  definitions are made more generally for integral projective schemes over a field, which need not
+  be geometrically reduced: for $k = \mathbb{F}_p(t)$, the projective line over $k(t^{1/p})$ is
+  integral and projective over $k$, but not geometrically reduced over $k$
 
 ## Proof depends on
 

@@ -111,7 +111,8 @@ The other inputs are the following pages; those that are nodes are themselves st
 [Zarhin's trick for abelian schemes](../../../AlgebraicGeometry/abelian-varieties/zarhin-trick-for-abelian-schemes.md),
 [the semistable reduction theorem for abelian varieties](../../../AlgebraicGeometry/abelian-varieties/semistable-reduction-theorem.md),
 [deformations of abelian schemes](../../../AlgebraicGeometry/abelian-varieties/deformations-and-p-divisible-groups/deformations-of-abelian-schemes.md),
-[de Rham cohomology of abelian schemes](../../../AlgebraicGeometry/abelian-varieties/deformations-and-p-divisible-groups/de-rham-cohomology-of-abelian-schemes.md)
+[de Rham cohomology of abelian schemes](../../../AlgebraicGeometry/abelian-varieties/deformations-and-p-divisible-groups/de-rham-cohomology-of-abelian-schemes.md),
+[the crystalline nature of the de Rham cohomology of abelian schemes](../../../AlgebraicGeometry/abelian-varieties/deformations-and-p-divisible-groups/crystalline-nature-of-the-de-rham-cohomology-of-abelian-schemes.md)
 and [Grothendieck's existence theorem](../../../AlgebraicGeometry/abelian-varieties/deformations-and-p-divisible-groups/grothendieck-existence-theorem.md).
 
 ## Proof depends on
@@ -184,7 +185,8 @@ and [Grothendieck's existence theorem](../../../AlgebraicGeometry/abelian-variet
 - [Zarhin's trick for abelian schemes](../../../AlgebraicGeometry/abelian-varieties/zarhin-trick-for-abelian-schemes.md), for its form over the valuation rings of real-valued valuations, with a symmetric polarizing line bundle
 - [Semistable reduction theorem for abelian varieties](../../../AlgebraicGeometry/abelian-varieties/semistable-reduction-theorem.md), with the identity component of the Néron model as semi-abelian model
 - [Deformations of abelian schemes](../../../AlgebraicGeometry/abelian-varieties/deformations-and-p-divisible-groups/deformations-of-abelian-schemes.md), for rings in which $p$ is nilpotent and, unsourced, for arbitrary rings
-- [De Rham cohomology of abelian schemes](../../../AlgebraicGeometry/abelian-varieties/deformations-and-p-divisible-groups/de-rham-cohomology-of-abelian-schemes.md), for the package on de Rham homology with the annihilator filtration, unsourced over arbitrary rings
+- [De Rham cohomology of abelian schemes](../../../AlgebraicGeometry/abelian-varieties/deformations-and-p-divisible-groups/de-rham-cohomology-of-abelian-schemes.md), for de Rham homology with the annihilator filtration, its base change and the polarization forms, the clauses `Free`, `Hodge`, `BaseChange` and `Duality` of the library's `AbelianDeRham`, unsourced as a package over arbitrary rings
+- [Crystalline nature of the de Rham cohomology of abelian schemes](../../../AlgebraicGeometry/abelian-varieties/deformations-and-p-divisible-groups/crystalline-nature-of-the-de-rham-cohomology-of-abelian-schemes.md), for the clause `Rigid` of the same package: the geometric comparison of first crystalline and de Rham cohomology, which Masullo proves over general divided power bases, and its identification with the library's primitive cohomology and pullback map, which is unsourced
 - [Grothendieck's existence theorem](../../../AlgebraicGeometry/abelian-varieties/deformations-and-p-divisible-groups/grothendieck-existence-theorem.md), for the algebraization of morphisms and of proper formal schemes with a line bundle ample on the closed fibre
 
 ## Sources

@@ -19,7 +19,7 @@ Resolution of singularities and principalization of ideals in characteristic zer
 - [Kodaira vanishing theorem](kodaira-vanishing-theorem.md)
 - [Volume of a line bundle](volume-of-a-line-bundle.md)
 - [Kawamata–Viehweg vanishing theorem](kawamata-viehweg-vanishing-theorem.md)
-- [Relative vanishing theorem for proper morphisms](relative-vanishing-for-proper-morphisms.md)
+- [Relative vanishing theorem for birational morphisms](relative-vanishing-for-birational-morphisms.md)
 - [Local vanishing theorem for multiplier ideals](local-vanishing-for-multiplier-ideals.md)
 - [Nadel vanishing theorem](nadel-vanishing-theorem.md)
 - [Nadel vanishing for pairs and separation of points by sections](nadel-vanishing-for-klt-pairs-and-point-separation.md)

@@ -11,13 +11,14 @@ $\mathcal{J}(D)$ without higher direct images.
 
 Lazarsfeld sketches the proof: one reduces to the case where $X$ is projective and applies the
 Kawamata–Viehweg vanishing theorem in that global setting (Positivity II, §9.4.A). Esnault and
-Viehweg carry out this argument for their
-[relative vanishing theorem](relative-vanishing-for-proper-morphisms.md), whose case 2 gives the
-statement. Write $D = \Delta / N$ with $\Delta$ an effective integral divisor, Cartier as $X$ is
-smooth; $\mu^* \Delta$ has snc support, $\mu$ being a log resolution, and $\lfloor \mu^* \Delta / N
-\rfloor = \lfloor \mu^* D \rfloor$, so $R^j \mu_*(\omega_{X'} \otimes \mathcal{O}_{X'}(-\lfloor
-\mu^* D \rfloor)) = 0$ for $j > 0$. As $\mathcal{O}_{X'}(K_{X'/X}) = \omega_{X'} \otimes \mu^*
-\omega_X^{-1}$, the projection formula gives the vanishing above.
+Viehweg carry out this argument for the
+[relative vanishing theorem for birational morphisms](relative-vanishing-for-birational-morphisms.md),
+which gives the statement. On each connected component of $X$, write $D = \Delta / N$ with $\Delta$
+an effective integral divisor, Cartier as $X$ is smooth; $\mu^* \Delta$ has snc support, $\mu$ being
+a log resolution, and $\lfloor \mu^* \Delta / N \rfloor = \lfloor \mu^* D \rfloor$, so $R^j
+\mu_*(\omega_{X'} \otimes \mathcal{O}_{X'}(-\lfloor \mu^* D \rfloor)) = 0$ for $j > 0$. As
+$\mathcal{O}_{X'}(K_{X'/X}) = \omega_{X'} \otimes \mu^* \omega_X^{-1}$, the projection formula gives
+the vanishing above.
 
 ## Depends on
 
@@ -28,9 +29,10 @@ smooth; $\mu^* \Delta$ has snc support, $\mu$ being a log resolution, and $\lflo
 
 ## Proof depends on
 
-- [Relative vanishing theorem for proper morphisms](relative-vanishing-for-proper-morphisms.md), for
-  its case 2, the birational case (Esnault–Viehweg, Corollary 6.11 b)), which contains the reduction
-  to a projective $X$ and the global Kawamata–Viehweg vanishing
+- [Relative vanishing theorem for birational morphisms](relative-vanishing-for-birational-morphisms.md),
+  applied on each connected component of $X$ to $\mu$ and an effective Cartier $\Delta$ with $D =
+  \Delta / N$ (Esnault–Viehweg, Corollary 6.11 b)); its proof contains the reduction to a projective
+  $X$ and the global Kawamata–Viehweg vanishing
 - [Standard results of coherent cohomology on projective varieties](standard-results-of-coherent-cohomology.md),
   for the projection formula (item 1)
 

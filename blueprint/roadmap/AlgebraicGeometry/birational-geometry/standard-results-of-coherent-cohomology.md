@@ -106,6 +106,9 @@ Project, Tags 0E8S, 0BDC and 0BDG).
   $k$ and equal to $k$ when $k$ is algebraically closed, in the proofs of 7 and 8 (Stacks Project,
   Tags 0E8S and 0BDC): such a residue field is finite over a polynomial subalgebra, which is then
   itself a field, so has no variables
+- [Finite morphisms are the proper locally quasi-finite morphisms](../schemes-and-morphisms/zariski-s-main-theorem/finite-iff-proper-and-locally-quasi-finite.md),
+  for the finiteness of a proper morphism with finite fibres, in the proof of the embedding
+  criterion 7 (Stacks Project, Tag 0E8S)
 
 The other steps of its proof are not pages yet. Item 1 rests on the Leray spectral sequence (Tags
 01E8, 01F2 and 01F4); item 2 on Serre's proofs of vanishing and global generation, the dévissage of
@@ -114,10 +117,11 @@ coherent sheaves and Chow's lemma in the proof of the finiteness theorem (EGA II
 02KH), Serre's proof of GAGA and the duality theory of Tags 0FVV and 0FW0; item 3 on the Euler
 polynomial (Tags 0BEM, 0BEN and 0BEP), Hirzebruch–Riemann–Roch being cited as a statement (Tag
 02UO); item 4 on Kleiman's proof of Bertini's theorem; items 5 and 6 on Seshadri's and Nakai's
-criteria with Kleiman's nonnegativity of mixed intersections of nef sheaves (Keeler, Propositions
-2.10–2.14); items 7 and 8 on the embedding and descent arguments of Milne and of Tags 0E8S, 0BDC and
-0BDG; and items 9 and 10 on the growth estimates that Esnault and Viehweg take from Mori (Properties
-5.4).
+criteria (Keeler, Propositions 2.10, 2.11, 2.13 and 2.14) and on Kleiman's nonnegativity of mixed
+intersection numbers of nef sheaves (Keeler, Lemma 2.12), which is stated, without a page of its
+own, on the page on intersection numbers of nef line bundles, itself a consumer of this node; items
+7 and 8 on the embedding and descent arguments of Milne and of Tags 0E8S, 0BDC and 0BDG; and items 9
+and 10 on the growth estimates that Esnault and Viehweg take from Mori (Properties 5.4).
 
 ## Sources
 
