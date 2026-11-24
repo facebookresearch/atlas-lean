@@ -7,3 +7,5 @@ claims, not consequences of normalization alone.
 - [Balance distribution of the M/M/s queue](mms-balance-distribution.md)
 - [Balance distribution of the M/M/1 queue](mm1-balance-distribution.md)
 - [Erlang's loss formula](erlang-loss-formula.md)
+- [Stationary law of the M/M/1 queue-length process](stationary-law-of-the-mm1-queue-length-process.md)
+- [The Erlang C formula for a real number of servers](erlang-c-for-real-server-numbers.md)

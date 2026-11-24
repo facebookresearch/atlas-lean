@@ -6,6 +6,10 @@
 - [Objective function of a linear program](objective.md)
 - [Maximum principle for linear programming](lp-maximum-principle.md)
 - [Optimal vertices of linear programs](simplex-algorithm.md)
+- [Complementary slackness and the feasibility–boundedness trichotomy](complementary-slackness-and-the-lp-trichotomy.md)
+- [Optimal dual solutions are supergradients of the LP value function](lp-value-supporting-price-inequality.md)
+- [Differentiability of the LP value function and shadow prices](differentiability-of-the-lp-value-function.md)
+- [Optimal dual solutions are the supergradients of the LP value function](optimal-dual-solutions-are-the-supergradients-of-the-lp-value.md)
 
 ## Related topics
 
