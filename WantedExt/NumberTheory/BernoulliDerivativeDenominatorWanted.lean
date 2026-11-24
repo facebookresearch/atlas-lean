@@ -9,141 +9,15 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Analysis.Asymptotics.AsymptoticEquivalent
-public import Mathlib.Analysis.Real.Sqrt
-public import Mathlib.Analysis.SpecialFunctions.Log.Basic
-public import Mathlib.NumberTheory.ArithmeticFunction.Misc
-public import Mathlib.NumberTheory.BernoulliPolynomials
 public import Mathlib.RingTheory.Radical.Basic
 public import Mathlib.RingTheory.UniqueFactorizationDomain.Nat
-public import MathlibExt.Algebra.Polynomial.CoefficientDenominator
+public import MathlibExt.NumberTheory.Bernoulli.DerivativeDenominator
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
-open Polynomial Filter Asymptotics UniqueFactorizationMonoid
-
-/-- **The Bernoulli polynomial $B_0(x)$ has denominator one.** The Bernoulli polynomial
-$B_0(x) = 1$ has denominator $\operatorname{denom}(B_0(x)) = 1$. In the source's notation
-$\mathfrak{D}_n = \operatorname{denom}(B_n(x))$, this is the convention $\mathfrak{D}_0 = 1$.
-
-Source: Bernd C. Kellner, *On the Finiteness of Bernoulli Polynomials Whose Derivative Has Only
-Integral Coefficients*, Journal of Integer Sequences 27 (2024), Article 24.2.8, Section 2, after
-Theorem 7. -/
-theorem polynomialDenominator_bernoulli_zero :
-    polynomialDenominator (Polynomial.bernoulli 0) = 1 := by
-  rw [polynomialDenominator_eq_one_iff, Polynomial.bernoulli_zero]
-  intro i
-  rw [Polynomial.coeff_one]
-  split_ifs <;> rfl
-
-/-- **Denominator of $B_n(x) - B_n$.** For a natural number $n$ and a prime $p$, let $s_p(n)$ be
-the sum of the base-$p$ digits of $n$. Define
-$\mathbb{D}_n = \prod_{p \text{ prime},\ s_p(n) \ge p} p$, the product of all primes $p$ with
-$s_p(n) \ge p$; every such prime satisfies $p \le n$, so the product is finite.
-
-By a theorem of Kellner (2017, Section 5), for $n \ge 1$ the number $\mathbb{D}_n$ is the
-denominator of $B_n(x) - B_n$, where $B_n(x)$ is the $n$-th Bernoulli polynomial and $B_n$ the
-$n$-th Bernoulli number.
-
-Source: Bernd C. Kellner, *On the Finiteness of Bernoulli Polynomials Whose Derivative Has Only
-Integral Coefficients*, Journal of Integer Sequences 27 (2024), Article 24.2.8, Section 2, equation
-(2.3) (`eq:ddprod`); OEIS A195441. -/
-def bernoulliDiffDenominator (n : ℕ) : ℕ :=
-  ∏ p ∈ (Finset.range (n + 1)).filter (fun p => p.Prime ∧ p ≤ (Nat.digits p n).sum), p
-
-/-- **First values of $\mathbb{D}_n$.** For a natural number $n$ let $\mathbb{D}_n$ be the product
-of the primes $p$ whose base-$p$ digit sum $s_p(n)$ satisfies $s_p(n) \ge p$. Then
-$(\mathbb{D}_1, \mathbb{D}_2, \dots, \mathbb{D}_{10}) = (1, 1, 2, 1, 6, 2, 6, 3, 10, 2)$.
-
-Source: Bernd C. Kellner, *On the Finiteness of Bernoulli Polynomials Whose Derivative Has Only
-Integral Coefficients*, Journal of Integer Sequences 27 (2024), Article 24.2.8, Section 2 (displayed
-values of `𝔻_n`). -/
-theorem bernoulliDiffDenominator_small :
-    [bernoulliDiffDenominator 1, bernoulliDiffDenominator 2, bernoulliDiffDenominator 3,
-      bernoulliDiffDenominator 4, bernoulliDiffDenominator 5, bernoulliDiffDenominator 6,
-      bernoulliDiffDenominator 7, bernoulliDiffDenominator 8, bernoulliDiffDenominator 9,
-      bernoulliDiffDenominator 10] = [1, 1, 2, 1, 6, 2, 6, 3, 10, 2] := by
-  decide +kernel
-
-/-- **Kellner's product $\mathbb{D}^\perp_n$ over primes not dividing $n$.** For
-$n \in \mathbb{N}$, write $s_p(n)$ for the sum of the base-$p$ digits of $n$. The number
-$\mathbb{D}^\perp_n$ is the product of all primes $p$ with $p \nmid n$ and $s_p(n) \ge p$; every
-such prime satisfies $p \le n$.
-
-Source: Bernd C. Kellner, *On the Finiteness of Bernoulli Polynomials Whose Derivative Has Only
-Integral Coefficients*, Journal of Integer Sequences 27 (2024), Article 24.2.8, Section 2, equation
-(2.8) (`eq:ddprod2`); OEIS A324370. -/
-def bernoulliDiffDenominatorCoprimePart (n : ℕ) : ℕ :=
-  ∏ p ∈ (Finset.range (n + 1)).filter
-    (fun p => p.Prime ∧ ¬ p ∣ n ∧ p ≤ (Nat.digits p n).sum), p
-
-/-- **Small values of $\mathbb{D}^\perp_n$.** Write $s_p(n)$ for the sum of the base-$p$ digits
-of $n$, and let $\mathbb{D}^\perp_n$ be the product of the primes $p$ with $p \nmid n$ and
-$s_p(n) \ge p$. Then $\mathbb{D}^\perp_1 = 1$, $\mathbb{D}^\perp_2 = 1$,
-$\mathbb{D}^\perp_3 = 2$, $\mathbb{D}^\perp_5 = 6$ and $\mathbb{D}^\perp_9 = 10$.
-
-Source: Bernd C. Kellner, *On the Finiteness of Bernoulli Polynomials Whose Derivative Has Only
-Integral Coefficients*, Journal of Integer Sequences 27 (2024), Article 24.2.8, Section 2, equation
-(2.8). -/
-theorem bernoulliDiffDenominatorCoprimePart_small :
-    [bernoulliDiffDenominatorCoprimePart 1, bernoulliDiffDenominatorCoprimePart 2,
-      bernoulliDiffDenominatorCoprimePart 3, bernoulliDiffDenominatorCoprimePart 5,
-      bernoulliDiffDenominatorCoprimePart 9] = [1, 1, 2, 6, 10] := by
-  decide +kernel
-
-/-- **Kellner's product $\mathbb{D}^+_n$ over primes above $\sqrt{n}$.** For $n \in \mathbb{N}$,
-write $s_p(n)$ for the sum of the base-$p$ digits of $n$. The number $\mathbb{D}^+_n$ is the
-product of all primes $p$ with $p > \sqrt{n}$ (that is, $p^2 > n$) and $s_p(n) \ge p$; every
-such prime satisfies $p \le n$.
-
-Source: Bernd C. Kellner, *On the Finiteness of Bernoulli Polynomials Whose Derivative Has Only
-Integral Coefficients*, Journal of Integer Sequences 27 (2024), Article 24.2.8, Section 1, equation
-(1.4) (`eq:ddp`). -/
-def bernoulliDiffDenominatorLargePart (n : ℕ) : ℕ :=
-  ∏ p ∈ (Finset.range (n + 1)).filter
-    (fun p => p.Prime ∧ n < p ^ 2 ∧ p ≤ (Nat.digits p n).sum), p
-
-/-- **Small values of $\mathbb{D}^+_n$.** Write $s_p(n)$ for the sum of the base-$p$ digits of
-$n$, and let $\mathbb{D}^+_n$ be the product of the primes $p$ with $p^2 > n$ and
-$s_p(n) \ge p$. Then $\mathbb{D}^+_4 = 1$, $\mathbb{D}^+_5 = 3$ and $\mathbb{D}^+_9 = 5$.
-
-Source: Bernd C. Kellner, *On the Finiteness of Bernoulli Polynomials Whose Derivative Has Only
-Integral Coefficients*, Journal of Integer Sequences 27 (2024), Article 24.2.8, Section 1, equation
-(1.4). -/
-theorem bernoulliDiffDenominatorLargePart_small :
-    [bernoulliDiffDenominatorLargePart 4, bernoulliDiffDenominatorLargePart 5,
-      bernoulliDiffDenominatorLargePart 9] = [1, 3, 5] := by
-  decide +kernel
-
-/-- **Indices of Bernoulli polynomials with integral $k$-th derivative.** For $k \in \mathbb{N}$,
-$\overline{\mathcal{S}}_k$ is the set of $n \ge 1$ such that the $k$-th derivative $B_n^{(k)}(x)$
-of the Bernoulli polynomial $B_n(x)$ has only integer coefficients, that is, has denominator
-equal to $1$. We write $\overline{\mathcal{S}}$ for $\overline{\mathcal{S}}_1$.
-
-Source: Bernd C. Kellner, *On the Finiteness of Bernoulli Polynomials Whose Derivative Has Only
-Integral Coefficients*, Journal of Integer Sequences 27 (2024), Article 24.2.8, Section 1
-(`\overline{𝒮}`) and Section 3 (`\overline{𝒮}_k`). -/
-def bernoulliIntegralDerivativeIndices (k : ℕ) : Set ℕ :=
-  {n | 1 ≤ n ∧ polynomialDenominator (derivative^[k] (Polynomial.bernoulli n)) = 1}
-
-/-- **The derivative of $B_1(x)$ has integer coefficients.** The Bernoulli polynomial
-$B_1(x) = x - \tfrac{1}{2}$ has derivative $B_1'(x) = 1 \in \mathbb{Z}[x]$, so $1$ belongs to
-the set $\overline{\mathcal{S}}$ of indices $n \ge 1$ for which $B_n'(x)$ has only integer
-coefficients.
-
-Source: Bernd C. Kellner, *On the Finiteness of Bernoulli Polynomials Whose Derivative Has Only
-Integral Coefficients*, Journal of Integer Sequences 27 (2024), Article 24.2.8, Section 1 (`1 ∈ 𝒮`).
--/
-theorem one_mem_bernoulliIntegralDerivativeIndices_one :
-    1 ∈ bernoulliIntegralDerivativeIndices 1 := by
-  refine ⟨le_rfl, ?_⟩
-  rw [polynomialDenominator_eq_one_iff]
-  intro i
-  simp only [Function.iterate_one, Polynomial.bernoulli_one, derivative_sub, derivative_X,
-    derivative_C, sub_zero, Polynomial.coeff_one]
-  split_ifs <;> rfl
+open Polynomial UniqueFactorizationMonoid
 
 /-- **Product formula for the denominator of $B_n(x) - B_n$.** Let $n \ge 1$, let $B_n(x)$ be
 the $n$-th Bernoulli polynomial and $B_n = B_n(0)$ the $n$-th Bernoulli number, and write
@@ -156,31 +30,6 @@ definition of `𝔻_n` and equation (2.3), quoting Kellner (2017), Section 5. -/
 public theorem_wanted bernoulliDiffDenominator_eq_polynomialDenominator (n : ℕ) (hn : 1 ≤ n) :
     bernoulliDiffDenominator n =
       polynomialDenominator (Polynomial.bernoulli n - C (_root_.bernoulli n))
-
-/-- **Kellner's large-part conjecture.** For a natural number $n$, let $\mathbb{D}^+_n$ be the
-product of the primes $p > \sqrt{n}$ with $s_p(n) \ge p$, where $s_p(n)$ is the sum of the
-base-$p$ digits of $n$. This definition is the proposition that $\mathbb{D}^+_n > 1$ for every
-natural number $n > 192$.
-
-Source: Bernd C. Kellner, *On the Finiteness of Bernoulli Polynomials Whose Derivative Has Only
-Integral Coefficients*, Journal of Integer Sequences 27 (2024), Article 24.2.8, Conjecture 2 (i),
-quoting Kellner (2017), Conjectures 1, 2. -/
-def KellnerLargePartConjecture : Prop :=
-  ∀ n : ℕ, 192 < n → 1 < bernoulliDiffDenominatorLargePart n
-
-/-- **Kellner's asymptotic conjecture on large prime factors.** For $n \in \mathbb{N}$ let
-$\mathbb{D}^{+}_n$ be the product of the primes $p > \sqrt{n}$ whose base-$p$ digit sum $s_p(n)$
-satisfies $s_p(n) \ge p$, and let $\omega(m)$ be the number of distinct prime factors of $m$. The
-conjecture asserts that there is a real number $\kappa > 1$ such that
-$\omega(\mathbb{D}^{+}_n) \sim \kappa \sqrt{n} / \log n$ as $n \to \infty$.
-
-Source: Bernd C. Kellner, *On the Finiteness of Bernoulli Polynomials Whose Derivative Has Only
-Integral Coefficients*, Journal of Integer Sequences 27 (2024), Article 24.2.8, Conjecture 2 (ii),
-equation (1.6). -/
-def KellnerLargePartAsymptoticConjecture : Prop :=
-  ∃ κ : ℝ, 1 < κ ∧
-    (fun n : ℕ => (ArithmeticFunction.cardDistinctFactors (bernoulliDiffDenominatorLargePart n) :
-      ℝ)) ~[atTop] fun n : ℕ => κ * Real.sqrt n / Real.log n
 
 /-- **Kellner's large-prime conjectures imply the Bernoulli derivative conjectures.** For
 $n \in \mathbb{N}$ let $\mathbb{D}^{+}_n$ be the product of the primes $p > \sqrt{n}$ whose
@@ -382,17 +231,6 @@ public theorem_wanted bernoulliDiffDenominator_parity_radical_lcm (n : ℕ) (hn 
       radical (n + 1) ∣ bernoulliDiffDenominatorCoprimePart n) ∧
     (3 ≤ n → Odd n →
       bernoulliDiffDenominator n = Nat.lcm (bernoulliDiffDenominator (n + 1)) (radical (n + 1)))
-
-/-- **The large-prime part divides the coprime part.** Write $s_p(n)$ for the sum of the base-$p$
-digits of $n$, let $\mathbb{D}^+_n$ be the product of the primes $p$ with $p^2 > n$ and
-$s_p(n) \ge p$, and let $\mathbb{D}^\perp_n$ be the product of the primes $p$ with $p \nmid n$
-and $s_p(n) \ge p$. Then $\mathbb{D}^+_n$ divides $\mathbb{D}^\perp_n$ for every $n \ge 1$.
-
-Source: Bernd C. Kellner, *On the Finiteness of Bernoulli Polynomials Whose Derivative Has Only
-Integral Coefficients*, Journal of Integer Sequences 27 (2024), Article 24.2.8, Lemma 17
-(`jis-2024-24.2.8-lem-17`). -/
-public theorem_wanted bernoulliDiffDenominatorLargePart_dvd_coprimePart (n : ℕ) (hn : 1 ≤ n) :
-    bernoulliDiffDenominatorLargePart n ∣ bernoulliDiffDenominatorCoprimePart n
 
 /-- **$\mathbb{D}^+_n$ eventually exceeds every fixed rising product.** Write $s_p(n)$ for the sum
 of the base-$p$ digits of $n$ and let $\mathbb{D}^+_n$ be the product of the primes $p$ with

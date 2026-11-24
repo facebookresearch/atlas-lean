@@ -65,3 +65,22 @@ example (k : ℕ) : ulamResidueCount 3 (2 * k + 1) 0 = ulamResidueCount 3 (2 * k
   simpa using (ulamResidueCount_mod_two_three (2 * k + 1) (by omega)).2 0
 
 end MetaMathlibExt.ulamResidueCount_mod_two_three
+
+namespace MetaMathlibExt.isUlamWord_zeros_four_ones_zeros_iff
+
+-- One zero gives a unique split at either boundary. A zero on each side gives several splits.
+example : IsUlamWord [false, true, true, true, true] ∧
+    IsUlamWord [true, true, true, true, false] ∧
+    ¬IsUlamWord [false, true, true, true, true, false] := by
+  decide
+
+-- Five zeros split between the two sides give the first two-sided positive case.
+example : IsUlamWord [false, false, true, true, true, true, false, false, false] := by
+  decide
+
+example (k : ℕ) :
+    IsUlamWord (List.replicate (4 * k + 2) false ++ List.replicate 4 true ++
+      List.replicate 3 false) := by
+  exact (isUlamWord_zeros_four_ones_zeros_iff _ _ (by omega)).2 (by omega)
+
+end MetaMathlibExt.isUlamWord_zeros_four_ones_zeros_iff
