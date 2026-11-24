@@ -20,7 +20,7 @@ universe u
 
 open scoped TensorProduct
 
-theorem exactSource
+private theorem exactSource
     (A : Type u) [CommRing A] (B : Type u) [CommRing B] [Algebra A B]
     [Module.Finite A B] [Module.Free A B]
     (H : Type u) [CommRing H] [Algebra B H] :

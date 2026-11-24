@@ -17,8 +17,7 @@ Sequences* 28 (2025), Article 25.4.3
 `avoidZZ1Z k n` counts words of length `n` over a
 `k`-letter alphabet with no consecutive pattern
 `z, z+1, z`; the recurrence and initial values were
-verified by brute force for `k ≤ 4`, `n ≤ 7`. The
-bit-length formula was verified for `n ≤ 8`, and the
+verified by brute force for `k ≤ 4`, `n ≤ 7`, and the
 cube-root floor formula at `n = 3`.
 
 Theorem 1, Corollary 2, Theorem 4, Theorem 8 and
@@ -31,6 +30,9 @@ does not involve `a_n` and omits distinctness) and is
 stated in the reading its proof uses. Not stated:
 Corollary 5 (a claim about OEIS conjectures that the
 paper does not state).
+
+Proved in `MathlibExt.NumberTheory.SizeChooseTwoPow`, which this module imports: Theorem 6
+(`size_choose_two_pow`, the bit length of `Nat.choose (2 ^ n) (2 ^ (n - 1))`).
 -/
 module
 
@@ -43,49 +45,14 @@ public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Data.Nat.Size
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.RingTheory.PowerSeries.Inverse
+public import MathlibExt.Combinatorics.Words.AvoidZZ1Z
+public import MathlibExt.NumberTheory.SizeChooseTwoPow
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.OeisConjecturesWanted
-
-/-- **Words avoiding the consecutive pattern $z, z+1, z$.** For natural numbers $k$ and $n$,
-$f_k(n)$ is the number of words $w_0 w_1 \cdots w_{n-1}$ of length $n$ over the alphabet
-$\{0, 1, \dots, k-1\}$ with no position $i$ such that $i + 2 < n$, $w_{i+1} = w_i + 1$ and
-$w_{i+2} = w_i$. -/
-def avoidZZ1Z (k n : ℕ) : ℕ :=
-  ((Finset.univ : Finset (Fin n → Fin k)).filter (fun w =>
-    ∀ i : Fin n, ∀ h1 : (i : ℕ) + 1 < n,
-      ∀ h2 : (i : ℕ) + 2 < n,
-        ¬ (w ⟨(i : ℕ) + 2, h2⟩ = w i ∧
-          (w ⟨(i : ℕ) + 1, h1⟩ : ℕ) = (w i : ℕ) + 1))).card
-
-/-- **Recurrence for words avoiding the pattern $z, z+1, z$.** Let $k \ge 1$ and, for each
-natural number $n$, let $f_k(n)$ be the number of words of length $n$ over the alphabet
-$\{0, 1, \dots, k-1\}$ that avoid the consecutive pattern $z, z+1, z$. Then $f_k(0) = 1$,
-$f_k(1) = k$, $f_k(2) = k^2$, and $f_k(n) = k f_k(n-1) - f_k(n-2) + f_k(n-3)$ for every $n \ge 3$.
-
-At $k = 0$ the recurrence would read $0 = 1$ at $n = 3$.
-
-Source: Sela Fried, "Proofs of Several Conjectures From
-the OEIS", Theorem 3. -/
-theorem_wanted avoidZZ1Z_spec (k : ℕ) (hk : 1 ≤ k) :
-    avoidZZ1Z k 0 = 1 ∧ avoidZZ1Z k 1 = k ∧
-      avoidZZ1Z k 2 = k ^ 2 ∧
-      ∀ n : ℕ, 3 ≤ n →
-        (avoidZZ1Z k n : ℤ) =
-          (k : ℤ) * avoidZZ1Z k (n - 1) -
-            avoidZZ1Z k (n - 2) + avoidZZ1Z k (n - 3)
-
-/-- **Bit length of $\binom{2^n}{2^{n-1}}$.** For every integer $n \ge 1$, the binary expansion of
-the binomial coefficient $\binom{2^n}{2^{n-1}}$ has exactly $2^n - \lfloor n/2 \rfloor$ digits.
-
-Source: Sela Fried, "Proofs of Several Conjectures From
-the OEIS", Theorem 6. -/
-theorem_wanted size_choose_two_pow (n : ℕ) (hn : 1 ≤ n) :
-    Nat.size (Nat.choose (2 ^ n) (2 ^ (n - 1))) =
-      2 ^ n - n / 2
 
 /-- **Floor of a sum of cube roots.** For every integer $m \ge 1$, the sum
 $S_m = \sum_{i=1}^{10^{3m}} i^{1/3}$ of the real cube roots of $1, 2, \dots, 10^{3m}$ satisfies

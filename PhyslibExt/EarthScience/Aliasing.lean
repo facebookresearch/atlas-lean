@@ -67,8 +67,8 @@ theorem uniform_samples_aliasing {f : ℝ} {k n : ℤ} {dt : ℝ} (hdt : dt ≠ 
 
 /-! ## B. Sine and cosine pairs -/
 
-/-- Aliased sine pair: the sampled sines coincide for `f` and
-`f + k / dt`. -/
+/-- Aliased sine pair: for `dt ≠ 0` and integers `k` and `n`, the sampled sines
+`sin(2π f n dt)` coincide for `f` and `f + k / dt`. -/
 theorem uniform_samples_aliasing_sin {f : ℝ} {k n : ℤ} {dt : ℝ} (hdt : dt ≠ 0) :
     Real.sin (2 * Real.pi * (f + (k : ℝ) / dt) * (n : ℝ) * dt)
       = Real.sin (2 * Real.pi * f * (n : ℝ) * dt) := by
@@ -81,8 +81,8 @@ theorem uniform_samples_aliasing_sin {f : ℝ} {k n : ℤ} {dt : ℝ} (hdt : dt 
   rw [hangle]
   exact Real.sin_add_int_mul_two_pi _ _
 
-/-- Aliased cosine pair: the sampled cosines coincide for `f` and
-`f + k / dt`. -/
+/-- Aliased cosine pair: for `dt ≠ 0` and integers `k` and `n`, the sampled cosines
+`cos(2π f n dt)` coincide for `f` and `f + k / dt`. -/
 theorem uniform_samples_aliasing_cos {f : ℝ} {k n : ℤ} {dt : ℝ} (hdt : dt ≠ 0) :
     Real.cos (2 * Real.pi * (f + (k : ℝ) / dt) * (n : ℝ) * dt)
       = Real.cos (2 * Real.pi * f * (n : ℝ) * dt) := by
