@@ -425,6 +425,16 @@ out of the queue, use **Remove from queue** on the PR or on the queue's page, or
 the GraphQL mutation `dequeuePullRequest` (for example through `gh api
 graphql`); there is no `gh pr` command for it.
 
+The Merge queue retry workflow (`.github/workflows/merge-queue-retry.yml`)
+re-runs a merge group's failed jobs once when every failed required check of
+that merge group failed for an infrastructure reason (a lost runner, or a
+truncated answer or server error from GitHub's API) while the PR is still
+queued with it, so that a flaky check does not remove the PR and
+restart the builds behind it. It never removes a PR from the queue; for other
+failures its run summary only records whether it would have removed the PR
+early. It records what it would do, and re-runs nothing, unless the repository
+variable `MERGE_QUEUE_RETRY` is `active`.
+
 Queue a Lean or Mathlib bump like any other PR, preferably at a quiet time. With
 new pins, CI can fetch Mathlib's cache but must rebuild ATLAS when there is no
 matching `.lake/build` cache; the v4.36.0 bump's PR build took 316 minutes.

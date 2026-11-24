@@ -10,7 +10,7 @@ module
 
 import MathlibExt.Combinatorics.RamseyFamily
 
-/-! # Tests for ultrafilters in Ramsey families on a two-element set -/
+/-! # Tests for ultrafilters in Ramsey families -/
 
 namespace MetaMathlibExt.betaFamily_isLeftIdeal_iff.Tests
 
@@ -71,3 +71,16 @@ example : ¬ IsRamseyFamily {A : Set Bool | ∃ p ∈ (∅ : Set (Ultrafilter Bo
   exact hp
 
 end MetaMathlibExt.isRamseyFamily_and_betaFamily_eq_of_isClosed.Tests
+
+namespace MetaMathlibExt.mem_iff_exists_mem_betaFamily.Tests
+
+-- Every infinite set of naturals has a witnessing ultrafilter that contains no singleton.
+example {A : Set ℕ} (hA : A.Infinite) :
+    ∃ p : Ultrafilter ℕ, A ∈ p ∧ ∀ n : ℕ, ({n} : Set ℕ) ∉ p := by
+  have hF : IsRamseyFamily {B : Set ℕ | B.Infinite} :=
+    ⟨⟨Set.univ, Set.infinite_univ⟩, fun h => h Set.finite_empty,
+      fun _ _ h hsub => Set.Infinite.mono hsub h, fun _ _ => Set.infinite_union.mp⟩
+  obtain ⟨p, hp, hAp⟩ := (mem_iff_exists_mem_betaFamily hF A).mp hA
+  exact ⟨p, hAp, fun n hn => hp {n} hn (Set.finite_singleton n)⟩
+
+end MetaMathlibExt.mem_iff_exists_mem_betaFamily.Tests
