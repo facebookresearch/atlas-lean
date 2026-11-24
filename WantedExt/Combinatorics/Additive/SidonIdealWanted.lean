@@ -66,19 +66,6 @@ public theorem_wanted sidonIdeal_isFSigma :
     ∃ F : ℕ → Set (ℕ → Bool), (∀ k, IsClosed (F k)) ∧
       {f : ℕ → Bool | {n | f n = true} ∈ sidonIdeal} = ⋃ k, F k
 
-/-- **Positive sets whose elements at least double are Sidon.** Let $A \subseteq \mathbb{N}$ with
-$0 \notin A$, and write $A(n)$ for the $n$-th element of $A$ in increasing order, counting from
-$n = 0$, with $A(n) = 0$ when $A$ has at most $n$ elements. If $2 A(n) \le A(n+1)$ for every
-$n \in \mathbb{N}$, then $A$ is a Sidon set.
-
-The hypotheses force $A$ to be empty or infinite, so the source's standing assumption that $A$
-is infinite is not needed.
-
-Source: Andrzej Nowik, *On the Sidon Ideal*, INTEGERS 25 (2025), Article A91,
-Lemma 1 (`integers-2025-A91-lem-1`). -/
-public theorem_wanted isSidon_of_two_mul_nth_le {A : Set ℕ} (h0 : 0 ∉ A)
-    (h : ∀ n, 2 * Nat.nth (· ∈ A) n ≤ Nat.nth (· ∈ A) (n + 1)) : A.IsSidon
-
 /-- **Mian–Chowla lower bound for an infinite Sidon set.** There exist a Sidon set
 $A \subseteq \mathbb{N}$ and a real constant $c > 0$ such that
 $|A \cap \{1, \dots, n\}| > c\, n^{1/3}$ for every natural number $n \ge 1$.
