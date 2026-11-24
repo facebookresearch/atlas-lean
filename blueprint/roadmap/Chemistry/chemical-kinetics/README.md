@@ -9,4 +9,3 @@ Rates of chemical reactions and well-mixed reactors: integrated rate laws and ha
 
 - [Plug-flow reactors](plug-flow-reactor/README.md)
 - [Residence-time distributions](residence-time-distributions/README.md)
-- [Diffusion and reaction in catalyst pellets](catalyst-pellet-diffusion-and-reaction/README.md)

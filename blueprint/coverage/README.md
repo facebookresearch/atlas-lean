@@ -43,7 +43,6 @@ source modules; planned destinations are listed separately when added.
 
 - [Plug-flow reactors](../roadmap/Chemistry/chemical-kinetics/plug-flow-reactor/README.md)
 - [Residence-time distributions](../roadmap/Chemistry/chemical-kinetics/residence-time-distributions/README.md)
-- [Diffusion and reaction in catalyst pellets](../roadmap/Chemistry/chemical-kinetics/catalyst-pellet-diffusion-and-reaction/README.md)
 - [Chemostat dynamics](../roadmap/Biology/population-dynamics/chemostat/README.md)
 
 **Related mathematical topics**, whose links do not assign library membership:
