@@ -30,7 +30,8 @@ in google-deepmind/formal-conjectures (cycle-length fragment only).
 
 namespace SimpleGraph
 
-/-- `G.cycleLengths` is the set of lengths of the cycles in `G`. -/
+/-- **Cycle lengths.** For a simple graph $G$, the set of cycle lengths of $G$ is the set of
+natural numbers $m$ such that $G$ contains a cycle of length $m$. -/
 def cycleLengths {α : Type*} (G : SimpleGraph α) : Set ℕ :=
   {m | ∃ (a : α) (w : G.Walk a a), w.IsCycle ∧ w.length = m}
 
@@ -38,7 +39,9 @@ def cycleLengths {α : Type*} (G : SimpleGraph α) : Set ℕ :=
     m ∈ G.cycleLengths ↔ ∃ (a : α) (w : G.Walk a a), w.IsCycle ∧ w.length = m :=
   Iff.rfl
 
-/-- `G.oddCycleLengths` is the set of lengths of odd cycles in `G`. -/
+/-- **Odd cycle lengths.** For a simple graph $G$, the set of odd cycle lengths of $G$ is the set
+of those cycle lengths of $G$ that are odd, that is, the odd natural numbers $m$ such that $G$
+contains a cycle of length $m$. -/
 def oddCycleLengths {α : Type*} (G : SimpleGraph α) : Set ℕ :=
   {m ∈ G.cycleLengths | Odd m}
 

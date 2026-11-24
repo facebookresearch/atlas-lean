@@ -2,6 +2,11 @@
 
 The Lebesgue integral and its convergence theorems, modes of convergence of measurable functions, approximation by simple functions, product measures and the limits of the Fubini–Tonelli theorem, convolution, differentiation under the integral sign and integral inequalities.
 
+- [Nonnegative Lebesgue integral](nonnegative-lebesgue-integral/README.md)
+- [Monotone convergence theorem](monotone-convergence-theorem/README.md)
+- [Dominated convergence theorem for nonnegative functions](dominated-convergence-theorem/README.md)
+- [Fubini–Tonelli theorem for iterated integrals](iterated-integrals/README.md)
+- [Layer-cake formula](layer-cake-formula/README.md)
 - [Almost everywhere convergence](almost-everywhere-convergence/README.md)
 - [Approximation by simple functions](approximation-by-simple-functions/README.md)
 - [Bounded convergence theorem](bounded-convergence-theorem/README.md)

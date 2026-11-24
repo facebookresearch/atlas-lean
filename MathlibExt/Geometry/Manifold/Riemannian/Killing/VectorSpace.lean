@@ -38,8 +38,10 @@ noncomputable section
 variable {F : Type*} [NormedAddCommGroup F] [InnerProductSpace ℝ F]
   [FiniteDimensional ℝ F]
 
-/-- A field on Euclidean space is Killing iff it is smooth with skew-adjoint
-derivative at every point. -/
+/-- **Killing fields on Euclidean space.** Let $F$ be a finite-dimensional real inner product
+space, viewed as a Riemannian manifold with the metric given by its inner product. A vector field
+$V$ on $F$ is Killing if and only if $V$ is $C^\infty$ and its derivative is skew-adjoint at every
+point: for all $x, u, w \in F$, $\langle DV(x)\,u, w \rangle + \langle u, DV(x)\,w \rangle = 0$. -/
 theorem Manifold.isKillingVectorField_vectorSpace_iff
     {V : Π y : F, TangentSpace 𝓘(ℝ, F) y} :
     Manifold.IsKillingVectorField 𝓘(ℝ, F) V ↔ ContDiff ℝ ∞ V ∧
@@ -72,7 +74,9 @@ theorem Manifold.isKillingVectorField_vectorSpace_iff
     rw [eU, eV]
     exact hSkew x u v
 
-/-- Translations are Killing: the constant field with value `c` is Killing. -/
+/-- **Translations are Killing.** Let $F$ be a finite-dimensional real inner product space,
+viewed as a Riemannian manifold with the metric given by its inner product. For every $c \in F$,
+the constant vector field $y \mapsto c$ on $F$ is Killing. -/
 theorem Manifold.isKillingVectorField_const (c : F) :
     Manifold.IsKillingVectorField 𝓘(ℝ, F)
       (fun y : F => show TangentSpace 𝓘(ℝ, F) y from c) := by
@@ -87,8 +91,11 @@ theorem Manifold.isKillingVectorField_const (c : F) :
     rw [hDer x]
     exact hPlain u w
 
-/-- Infinitesimal rotations: the linear field `y ↦ A y` is Killing iff `A`
-satisfies `⟪A u, w⟫ + ⟪u, A w⟫ = 0` for all `u w`. -/
+/-- **Linear Killing fields on Euclidean space.** Let $F$ be a finite-dimensional real inner
+product space, viewed as a Riemannian manifold with the metric given by its inner product, and let
+$A \colon F \to F$ be a continuous linear map. The linear vector field $y \mapsto A y$ is Killing
+if and only if $A$ is skew-adjoint: $\langle A u, w \rangle + \langle u, A w \rangle = 0$ for all
+$u, w \in F$. -/
 theorem Manifold.isKillingVectorField_continuousLinearMap_iff (A : F →L[ℝ] F) :
     Manifold.IsKillingVectorField 𝓘(ℝ, F)
       (fun y : F => show TangentSpace 𝓘(ℝ, F) y from A y) ↔

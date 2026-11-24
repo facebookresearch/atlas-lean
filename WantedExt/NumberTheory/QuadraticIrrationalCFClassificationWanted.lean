@@ -29,10 +29,13 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Proposition 1 (quoted from [7]): for `l ≥ 3` and a symmetric sequence of positive integers
-`a₁, …, a_{l-1}`, some positive nonsquare `d` has `√d = [a₀; a₁, …, a_{l-1}, 2a₀]` if and only
-if (i) `q_{l-1}` is odd, or (ii) `q_{l-1}` and `r_{l-2}` are even and `q_{l-2}` is odd. The
-cases `l ≤ 2`, where `r_{l-2}` needs the convention `r_0 = 0`, are omitted.
+/-- **Parity criterion for $\sqrt{d}$ with a given symmetric period.** Let $l \ge 3$ and let
+$a_1, \dots, a_{l-1}$ be positive integers with $a_i = a_{l-i}$ for $1 \le i < l$. Let $q_j$ be the
+denominator of the $j$-th convergent of $[a_0; a_1, a_2, \dots]$ (so $q_0 = 1$, $q_1 = a_1$ and
+$q_{j+2} = a_{j+2} q_{j+1} + q_j$), and let $r_{l-2}$ be the denominator of the $(l-3)$-th
+convergent of $[a_1; a_2, a_3, \dots]$. There are natural numbers $d$ and $a_0$ with $d$ not a
+perfect square and $\sqrt{d} = [a_0; \overline{a_1, \dots, a_{l-1}, 2a_0}]$ if and only if
+$q_{l-1}$ is odd, or $q_{l-1}$ and $r_{l-2}$ are even and $q_{l-2}$ is odd.
 
 Source: Jun Ho Lee, *Classification for Existence of the Continued Fraction Expansions of √D and
 (1 + √D)/2*, INTEGERS 24 (2024), Article A50, Proposition 1 (`integers-2024-A50-prop-1`). -/
@@ -44,13 +47,18 @@ public theorem_wanted sqrt_hasPeriodicCF_exists_iff_parity (l : ℕ) (hl : 3 ≤
         (Even (convergentDen a (l - 1)) ∧ Even (convergentDen (fun n => a (n + 1)) (l - 3)) ∧
           Odd (convergentDen a (l - 2)))
 
-/-- Proposition 2 (quoted from [10]): for `l ≥ 3` and a symmetric sequence of positive integers
-`a₁, …, a_{l-1}`, some positive nonsquare `d ≡ 1 (mod 4)` has
-`(1 + √d)/2 = [a₀; a₁, …, a_{l-1}, 2a₀ - 1]` if and only if (i) `q_{l-1}` is odd, or (ii) `q_{l-2}` and `r_{l-2}` are odd and `q_{l-1}` is
-even. The paper's primed letters `a'_i, q'_i, r'_i` are written unprimed; the cases `l ≤ 2`
-are omitted as in Proposition 1. The restriction `d ≡ 1 (mod 4)` (the setting of
-`(1 + √d)/2`) is needed: `(1 + √2)/2 = [1; 4, 1, 4, 1, 4, 1, …]` fits `l = 6` with
-`a₁, …, a₅ = 4, 1, 4, 1, 4`, where `q₅ = 140` and `q₄ = 29`, `r₄ = 6` violate the criterion.
+/-- **Parity criterion for $(1 + \sqrt{d})/2$ with a given symmetric period.** Let $l \ge 3$ and
+let $a_1, \dots, a_{l-1}$ be positive integers with $a_i = a_{l-i}$ for $1 \le i < l$. Let $q_j$ be
+the denominator of the $j$-th convergent of $[a_0; a_1, a_2, \dots]$ (so $q_0 = 1$, $q_1 = a_1$ and
+$q_{j+2} = a_{j+2} q_{j+1} + q_j$), and let $r_{l-2}$ be the denominator of the $(l-3)$-th
+convergent of $[a_1; a_2, a_3, \dots]$. There are natural numbers $d$ and $a_0$ with
+$d \equiv 1 \pmod 4$, $d$ not a perfect square, and
+$(1 + \sqrt{d})/2 = [a_0; \overline{a_1, \dots, a_{l-1}, 2a_0 - 1}]$ if and only if $q_{l-1}$ is
+odd, or $q_{l-2}$ and $r_{l-2}$ are odd and $q_{l-1}$ is even.
+
+The restriction $d \equiv 1 \pmod 4$ is needed: $(1 + \sqrt{2})/2 = [1; \overline{4, 1}]$ fits
+$l = 6$ with $(a_1, \dots, a_5) = (4, 1, 4, 1, 4)$, where $q_5 = 140$, $q_4 = 29$ and $r_4 = 6$
+violate the criterion.
 
 Source: Jun Ho Lee, *Classification for Existence of the Continued Fraction Expansions of √D and
 (1 + √D)/2*, INTEGERS 24 (2024), Article A50, Proposition 2 (`integers-2024-A50-prop-2`). -/
@@ -62,9 +70,11 @@ public theorem_wanted half_one_add_sqrt_hasPeriodicCF_exists_iff_parity (l : ℕ
         (Odd (convergentDen a (l - 2)) ∧ Odd (convergentDen (fun n => a (n + 1)) (l - 3)) ∧
           Even (convergentDen a (l - 1)))
 
-/-- Theorem 3: for a symmetric sequence of positive integers `a₁, …, a_{l-1}`, (i) if `l` is
-odd, some positive nonsquare `d ≡ 1 (mod 4)` has `(1 + √d)/2 = [a₀; a₁, …, a_{l-1}, 2a₀ - 1]`; (ii) if `l`
-is even (and positive), such a `d` exists if and only if `a_{l/2}` is odd.
+/-- **Existence of $(1 + \sqrt{d})/2$ with a given symmetric period.** Let $l$ be a natural number
+and $a_1, \dots, a_{l-1}$ positive integers with $a_i = a_{l-i}$ for $1 \le i < l$. If $l$ is odd,
+there are natural numbers $d$ and $a_0$ with $d \equiv 1 \pmod 4$, $d$ not a perfect square, and
+$(1 + \sqrt{d})/2 = [a_0; \overline{a_1, \dots, a_{l-1}, 2a_0 - 1}]$. If $l$ is even and positive,
+such $d$ and $a_0$ exist if and only if $a_{l/2}$ is odd.
 
 Source: Jun Ho Lee, *Classification for Existence of the Continued Fraction Expansions of √D and
 (1 + √D)/2*, INTEGERS 24 (2024), Article A50, Theorem 3 (`integers-2024-A50-thm-3`). -/
@@ -78,15 +88,17 @@ public theorem_wanted half_one_add_sqrt_hasPeriodicCF_exists_classification (l :
         Odd (a (l / 2))))
 
 
-/-- Theorem 1 (quoted from [4, 12]): let `d ≥ 2` be squarefree, `ε_d` the fundamental unit of
-`ℚ(√d)`, `l_d` the length of the period of the continued fraction of `√d` and
-`p_{l_d-1}/q_{l_d-1}` its `(l_d - 1)`-th convergent. Then `ε_d = p_{l_d-1} + q_{l_d-1}√d` or
-`ε_d³ = p_{l_d-1} + q_{l_d-1}√d`, and the latter can only occur if `d ≡ 5 (mod 8)`.
-The fundamental unit is pinned as the least real number `> 1` of the form `(x + y√d)/2` with
-`x, y ∈ ℤ` and `x² - d y² = ±4` (for squarefree `d` these numbers are exactly the units of the
-ring of integers of `ℚ(√d)`); `l_d` is the least `l > 0` with `a_{k+l} = a_k` for all `k ≥ 1`;
-`p_k, q_k` are Mathlib's `nums`, `dens` of `GenContFract.of √d`. The paper's "positive
-squarefree" `d` is restricted to `d ≥ 2` (`ℚ(√1)` is not a quadratic field).
+/-- **Fundamental unit from the period of $\sqrt{d}$.** Let $d \ge 2$ be a squarefree integer, let
+$\varepsilon$ be the least real number $u > 1$ of the form $u = (x + y\sqrt{d})/2$ with
+$x, y \in \mathbb{Z}$ and $x^2 - d y^2 = \pm 4$ (the fundamental unit of $\mathbb{Q}(\sqrt{d})$),
+let $\sqrt{d} = [a_0; a_1, a_2, \dots]$ be the regular continued fraction of $\sqrt{d}$, with
+convergents $p_k / q_k$ (so $p_0 = a_0$ and $q_0 = 1$), and let $l$ be the least positive integer
+such that $a_{k+l} = a_k$ for all $k \ge 1$. Then $p_{l-1} + q_{l-1}\sqrt{d} = \varepsilon$, or
+$p_{l-1} + q_{l-1}\sqrt{d} = \varepsilon^3$ and $d \equiv 5 \pmod 8$.
+
+For squarefree $d$ the numbers $(x + y\sqrt{d})/2$ above are exactly the units of the ring of
+integers of $\mathbb{Q}(\sqrt{d})$. The paper's positive squarefree $d$ is restricted to $d \ge 2$,
+since $\mathbb{Q}(\sqrt{1})$ is not a quadratic field.
 
 Source: Jun Ho Lee, *Classification for Existence of the Continued Fraction Expansions of √D and
 (1 + √D)/2*, INTEGERS 24 (2024), Article A50, Theorem 1 (`integers-2024-A50-thm-1`). -/

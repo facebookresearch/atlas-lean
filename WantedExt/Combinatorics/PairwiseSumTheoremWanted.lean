@@ -9,8 +9,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Combinatorics.Hindman
-public import Mathlib.Data.PNat.Basic
+public import MathlibExt.Combinatorics.FiniteSumsWitness
+public import MathlibExt.Combinatorics.PairwiseSumTheorem
+public import MathlibExt.Combinatorics.RamseyWitnessTensorSquare
 
 /-!
 # From Schur's theorem to the pairwise sum theorem
@@ -23,6 +24,12 @@ A finite coloring is a map `c : S → Fin r`; a set `F` is monochromatic when `c
 Ultrafilters on `ℕ+` carry Mathlib's sum `Ultrafilter.add` (`A ∈ U + V` iff
 `{n | {m | n + m ∈ A} ∈ V} ∈ U`) and the Stone–Čech topology. The tensor product of ultrafilters
 on `ℕ` is `X ∈ U ⊗ V ↔ {n | {m | (n, m) ∈ X} ∈ V} ∈ U`.
+
+The characterization of Ramsey's witnesses on `ℕ × ℕ` as the closure of the tensor squares
+`U ⊗ U` of non-principal ultrafilters (`ramseyWitness_iff_mem_closure_tensor_squares`) is
+proved in `MathlibExt.Combinatorics.RamseyWitnessTensorSquare`, which this module imports.
+The pairwise sum theorem (`exists_infinite_pairwiseSums_monochromatic`) is proved in
+`MathlibExt.Combinatorics.PairwiseSumTheorem` using Hindman's finite sums theorem.
 -/
 
 open Filter
@@ -30,27 +37,6 @@ open Filter
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Hindman's finite sums theorem.** For every finite coloring of
-$\mathbb{N} = \{0, 1, 2, \dots\}$ there is an infinite set $A \subseteq \mathbb{N}$ whose set of
-finite sums $\mathrm{FS}(A) = \{\sum_{a \in F} a : F \subseteq A \text{ finite and nonempty}\}$ is
-monochromatic.
-
-Source: Mauro Di Nasso and Renling Jin, *From Schur's Theorem to the Pairwise Sum Theorem*,
-INTEGERS 25 (2025), Article A105, Theorem 1.1 (`integers-2025-A105-thm-1-1`). -/
-public theorem_wanted exists_infinite_finiteSums_monochromatic {r : ℕ} (c : ℕ → Fin r) :
-    ∃ A : Set ℕ, A.Infinite ∧ ∃ k : Fin r, ∀ F : Finset ℕ, F.Nonempty → (F : Set ℕ) ⊆ A →
-      c (∑ a ∈ F, a) = k
-
-/-- **Pairwise sum theorem.** For every finite coloring of $\mathbb{N} = \{0, 1, 2, \dots\}$ there
-is an infinite set $A \subseteq \mathbb{N}$ such that $A \cup \{a + a' : a, a' \in A, a \ne a'\}$
-is monochromatic.
-
-Source: Mauro Di Nasso and Renling Jin, *From Schur's Theorem to the Pairwise Sum Theorem*,
-INTEGERS 25 (2025), Article A105, Theorem 1.2 (`integers-2025-A105-thm-1-2`). -/
-public theorem_wanted exists_infinite_pairwiseSums_monochromatic {r : ℕ} (c : ℕ → Fin r) :
-    ∃ A : Set ℕ, A.Infinite ∧ ∃ k : Fin r, (∀ a ∈ A, c a = k) ∧
-      ∀ a ∈ A, ∀ a' ∈ A, a ≠ a' → c (a + a') = k
 
 /-- **Disjoint infinite sets with monochromatic union and sumset.** For every finite coloring of
 $\mathbb{N} = \{0, 1, 2, \dots\}$ there are disjoint infinite sets $A, B \subseteq \mathbb{N}$ such
@@ -91,41 +77,6 @@ public theorem_wanted weaklyPartitionRegular_iff_exists_ultrafilter {S : Type*}
     (𝓕 : Set (Set S)) :
     (∀ (r : ℕ) (c : S → Fin r), ∃ F ∈ 𝓕, ∃ k : Fin r, ∀ x ∈ F, c x = k) ↔
       ∃ U : Ultrafilter S, ∀ A ∈ U, ∃ F ∈ 𝓕, F ⊆ A
-
-/-- **PR-witnesses of the finite sums family.** Let $\beta\mathbb{N}^+$ be the space of
-ultrafilters on the positive integers $\mathbb{N}^+$, with the Stone–Čech topology and the sum
-for which $A \in U + V$ if and only if $\{n : \{m : n + m \in A\} \in V\} \in U$. For
-$X \subseteq \mathbb{N}^+$ let $\mathrm{FS}(X)$ be the set of sums of nonempty finite subsets of
-$X$. An ultrafilter $U \in \beta\mathbb{N}^+$ is a PR-witness of the Hindman family, that is,
-every $A \in U$ contains $\mathrm{FS}(X)$ for some infinite $X \subseteq \mathbb{N}^+$, if and
-only if $U$ lies in the closure of the set of idempotents $\{V \in \beta\mathbb{N}^+ : V + V = V\}$.
-
-Source: Mauro Di Nasso and Renling Jin, *From Schur's Theorem to the Pairwise Sum Theorem*,
-INTEGERS 25 (2025), Article A105, Proposition 3.3 (`integers-2025-A105-prop-3-3`), quoting
-Hindman and Strauss, Lemma 5.19. -/
-public theorem_wanted finiteSums_witness_iff_mem_closure_idempotents (U : Ultrafilter ℕ+) :
-    letI : Add (Ultrafilter ℕ+) := Ultrafilter.add
-    (∀ A ∈ U, ∃ X : Set ℕ+, X.Infinite ∧
-        ∀ F : Finset ℕ+, F.Nonempty → (F : Set ℕ+) ⊆ X →
-          ∃ y ∈ A, (y : ℕ) = ∑ x ∈ F, (x : ℕ)) ↔
-      U ∈ closure {V : Ultrafilter ℕ+ | V + V = V}
-
-/-- **Ramsey's witnesses are the closure of tensor squares.** For an ultrafilter $U$ on
-$\mathbb{N} = \{0, 1, 2, \dots\}$, the tensor square $U \otimes U$ is the ultrafilter on
-$\mathbb{N} \times \mathbb{N}$ whose members are the sets $X$ with
-$\{n : \{m : (n, m) \in X\} \in U\} \in U$. An ultrafilter $W$ on $\mathbb{N} \times \mathbb{N}$ is
-a Ramsey's witness when every $X \in W$ contains $[H]^2 = \{(h, h') \in H \times H : h < h'\}$ for
-some infinite $H \subseteq \mathbb{N}$. An ultrafilter $W$ on $\mathbb{N} \times \mathbb{N}$ is a
-Ramsey's witness if and only if $W$ lies in the closure, in the Stone–Čech space
-$\beta(\mathbb{N} \times \mathbb{N})$, of the set of tensor squares $U \otimes U$ of non-principal
-ultrafilters $U$ on $\mathbb{N}$.
-
-Source: Mauro Di Nasso and Renling Jin, *From Schur's Theorem to the Pairwise Sum Theorem*,
-INTEGERS 25 (2025), Article A105, Proposition 3.5 (`integers-2025-A105-prop-3-5`). -/
-public theorem_wanted ramseyWitness_iff_mem_closure_tensor_squares (W : Ultrafilter (ℕ × ℕ)) :
-    (∀ X ∈ W, ∃ H : Set ℕ, H.Infinite ∧ ∀ h ∈ H, ∀ h' ∈ H, h < h' → (h, h') ∈ X) ↔
-      W ∈ closure {V : Ultrafilter (ℕ × ℕ) | ∃ U : Ultrafilter ℕ, (U : Filter ℕ) ≤ cofinite ∧
-        V = U.bind fun n => U.map (Prod.mk n)}
 
 /-- **PR-witnesses of the pairwise sum family.** An ultrafilter $W$ on
 $\mathbb{N} \times \mathbb{N}$, where $\mathbb{N} = \{0, 1, 2, \dots\}$, is a Ramsey's witness

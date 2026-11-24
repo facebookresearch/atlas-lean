@@ -1897,15 +1897,20 @@ end
 namespace MetaMathlibExt
 
 /--
-For every positive `n`, the number of overpartitions of `5n` is congruent modulo `5`
-to `(-1)ⁿ` times the number of ordered representations of `n` as three integer squares.
+**Overpartitions of $5n$ modulo $5$, explicit form.** For every integer $n \ge 1$, the number of
+pairs $(P, S)$, where $P$ is a finite multiset of positive integers with sum $5n$ and $S$ is a
+finite set of natural numbers each belonging to $P$, is congruent modulo $5$ to $(-1)^n$ times the
+number of ordered triples $(x, y, z)$ of integers with $x^2 + y^2 + z^2 = n$.
 
-Liuquan Wang, "Another Proof of a Conjecture by Hirschhorn and Sellers on Overpartitions,"
+These pairs encode the overpartitions of $5n$: $P$ is the multiset of parts and $S$ is the set of
+overlined part sizes.
+
+Proves `Wanted` entry `overpartition_mul_five_mod_five`.
+
+Source: Liuquan Wang, "Another Proof of a Conjecture by Hirschhorn and Sellers on Overpartitions,"
 Journal of Integer Sequences 17 (2014), Article 14.9.8,
 Theorem (label thm1), lines 110–114.
 `https://cs.uwaterloo.ca/journals/JIS/VOL17/Wang2/wang15.tex`
-
-Proves `Wanted` entry `overpartition_mul_five_mod_five`.
 -/
 public theorem overpartition_mul_five_mod_five
     (n : ℕ) (hn : 1 ≤ n) :
@@ -2090,7 +2095,9 @@ end MetaMathlibExt
 namespace Nat
 namespace Overpartition
 
-/-- Cardinality of overpartitions as the explicit pair subtype. -/
+/-- **Overpartitions as pairs of a multiset and a set.** For every natural number $m$, the number
+of overpartitions of $m$ equals the number of pairs $(P, S)$ in which $P$ is a finite multiset of
+positive integers with sum $m$ and $S$ is a finite set of natural numbers each belonging to $P$. -/
 public lemma natCard_eq_card_subtype (m : ℕ) :
     Nat.card (Nat.Overpartition m) =
       Nat.card { p : Multiset ℕ × Finset ℕ //
@@ -2128,7 +2135,9 @@ end Nat
 
 namespace Nat
 
-/-- Count of three-square representations as the cardinality of solutions. -/
+/-- **The three-square count counts all integer solutions.** For every natural number $n$, the
+three-square representation count $r_3(n)$ equals the number of ordered triples $(x, y, z)$ of
+integers with $x^2 + y^2 + z^2 = n$. -/
 public lemma threeSquareRepresentationCount_eq_natCard (n : ℕ) :
     threeSquareRepresentationCount n =
       Nat.card { x : ℤ × ℤ × ℤ //
@@ -2193,7 +2202,9 @@ end Nat
 
 namespace MetaMathlibExt
 
-/-- Canonical API form of the overpartition congruence. -/
+/-- **Overpartitions of $5n$ modulo $5$.** For every integer $n \ge 1$, the number of
+overpartitions of $5n$ is congruent modulo $5$ to $(-1)^n r_3(n)$, where $r_3(n)$ is the number of
+ordered triples $(x, y, z)$ of integers with $x^2 + y^2 + z^2 = n$. -/
 public theorem overpartition_card_mul_five_modEq (n : ℕ) (hn : 1 ≤ n) :
     Int.ModEq 5 (Nat.card (Nat.Overpartition (5 * n)))
       (((-1 : ℤ) ^ n) * Nat.threeSquareRepresentationCount n) := by

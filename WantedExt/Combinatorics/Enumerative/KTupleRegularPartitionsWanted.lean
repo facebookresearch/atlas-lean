@@ -13,7 +13,7 @@ public import Mathlib.RingTheory.PowerSeries.Basic
 public import Mathlib.Combinatorics.Enumerative.Partition.Basic
 public import Mathlib.NumberTheory.LegendreSymbol.Basic
 public import Mathlib.Data.Int.Interval
-public import MathlibExt.Combinatorics.Enumerative.Partition.QEulerProduct
+public import MathlibExt.Combinatorics.Enumerative.Partition.QEulerProductCongruence
 import Mathlib
 
 namespace MetaMathlibExt
@@ -315,23 +315,6 @@ f22/f4.
 public theorem_wanted qEulerProduct_two_square_identity :
     qEulerProduct 2 ^ 2 = qEulerProduct 4 *
       (1 + 2 * positiveUnilateralSeries (fun n => 2 * n ^ 2) (fun n => (-1 : ℤ) ^ n))
-
-/--
-**Iterated prime-power congruence for Euler products.** For a natural number $l$ write
-$f_l = \prod_{i \ge 1} (1 - q^{li})$, an integer power series in $q$. Let $p$ be a prime and let
-$k, l, s, m$ be natural numbers with $l \ge 1$, $s \ge 1$, $m \ge 1$ and $s \le k$. Then for
-every natural number $n$, the coefficients of $q^n$ in $f_l^{p^k m}$ and in
-$f_{l p^s}^{p^{k-s} m}$ are congruent modulo $p^{k-s+1}$.
-
-Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia,
-and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Lemma 7, equation
-cor.modp^k.
--/
-public theorem_wanted qEulerProduct_iterated_primePower_congruence (p k l s m : ℕ)
-    (hp : Nat.Prime p) (hl : 0 < l) (hs : 0 < s) (hm : 0 < m) (hsk : s ≤ k) (n : ℕ) :
-    PowerSeries.coeff n (qEulerProduct l ^ (p ^ k * m)) ≡
-      PowerSeries.coeff n (qEulerProduct (l * p ^ s) ^ (p ^ (k - s) * m))
-        [ZMOD (p : ℤ) ^ (k - s + 1)]
 
 /--
 **Parity of triples of 2-regular partitions.** For a natural number $n$, let $T_2(n)$ be the

@@ -70,9 +70,16 @@ namespace MeasureTheory
 variable {Ω : Type*} {m0 : MeasurableSpace Ω} {μ : Measure Ω} {𝒢 : Filtration ℕ m0}
   {f : ℕ → Ω → ℝ} {τ π : Ω → WithTop ℕ}
 
-/-- **Bounded optional stopping, expectation form, for supermartingales.**
-Dual of Mathlib's `Submartingale.expected_stoppedValue_mono`, obtained by
-applying it to `-f`. -/
+/-- **Optional stopping for supermartingales at two bounded stopping times.** Let $\mu$ be a
+measure on $\Omega$ and $(\mathcal G_n)_{n \ge 0}$ a filtration such that the restriction of $\mu$
+to each $\mathcal G_n$ is σ-finite, and let $(f_n)_{n \ge 0}$ be a real-valued supermartingale
+with respect to $(\mathcal G_n)$ and $\mu$. Let $\tau$ and $\pi$ be stopping times for
+$(\mathcal G_n)$ with values in $\mathbb N \cup \{\infty\}$, and let $N$ be a natural number such
+that $\tau(\omega) \le \pi(\omega) \le N$ for every $\omega \in \Omega$. Then
+$\int f_\pi \, d\mu \le \int f_\tau \, d\mu$, where $f_\tau(\omega) = f_{\tau(\omega)}(\omega)$.
+
+This is the dual of the submartingale form of bounded optional stopping, obtained by applying
+it to $-f$. -/
 theorem Supermartingale.expected_stoppedValue_anti_mono
     [SigmaFiniteFiltration μ 𝒢]
     (hf : Supermartingale f 𝒢 μ) (hτ : IsStoppingTime 𝒢 τ) (hπ : IsStoppingTime 𝒢 π)
@@ -83,9 +90,13 @@ theorem Supermartingale.expected_stoppedValue_anti_mono
   simp only [Pi.neg_apply, integral_neg] at h
   exact neg_le_neg_iff.mp h
 
-/-- **Bounded optional stopping, expectation form, for supermartingales**
-(v1's `Supermartingale.expected_stoppedValue_le`): for a bounded stopping
-time `τ`, `E[f_τ] ≤ E[f_0]`. -/
+/-- **Optional stopping for supermartingales at a bounded stopping time.** Let $\mu$ be a measure
+on $\Omega$ and $(\mathcal G_n)_{n \ge 0}$ a filtration such that the restriction of $\mu$ to each
+$\mathcal G_n$ is σ-finite, and let $(f_n)_{n \ge 0}$ be a real-valued supermartingale with
+respect to $(\mathcal G_n)$ and $\mu$. Let $\tau$ be a stopping time for $(\mathcal G_n)$ with
+values in $\mathbb N \cup \{\infty\}$, and let $N$ be a natural number such that
+$\tau(\omega) \le N$ for every $\omega \in \Omega$. Then $\int f_\tau \, d\mu \le \int f_0 \, d\mu$,
+where $f_\tau(\omega) = f_{\tau(\omega)}(\omega)$. -/
 theorem Supermartingale.expected_stoppedValue_le
     [SigmaFiniteFiltration μ 𝒢]
     (hf : Supermartingale f 𝒢 μ) (hτ : IsStoppingTime 𝒢 τ)
@@ -95,8 +106,13 @@ theorem Supermartingale.expected_stoppedValue_le
     (isStoppingTime_const 𝒢 (0 : ℕ)) hτ (fun _ => bot_le) hbdd
   rwa [stoppedValue_const] at h
 
-/-- **Bounded optional stopping, expectation form, for martingales:**
-for stopping times `τ ≤ π` with `π` bounded, `E[f_τ] = E[f_π]`. -/
+/-- **Optional stopping for martingales at two bounded stopping times.** Let $\mu$ be a measure
+on $\Omega$ and $(\mathcal G_n)_{n \ge 0}$ a filtration such that the restriction of $\mu$ to each
+$\mathcal G_n$ is σ-finite, and let $(f_n)_{n \ge 0}$ be a real-valued martingale with respect to
+$(\mathcal G_n)$ and $\mu$. Let $\tau$ and $\pi$ be stopping times for $(\mathcal G_n)$ with
+values in $\mathbb N \cup \{\infty\}$, and let $N$ be a natural number such that
+$\tau(\omega) \le \pi(\omega) \le N$ for every $\omega \in \Omega$. Then
+$\int f_\tau \, d\mu = \int f_\pi \, d\mu$, where $f_\tau(\omega) = f_{\tau(\omega)}(\omega)$. -/
 theorem Martingale.expected_stoppedValue_eq
     [SigmaFiniteFiltration μ 𝒢]
     (hf : Martingale f 𝒢 μ) (hτ : IsStoppingTime 𝒢 τ) (hπ : IsStoppingTime 𝒢 π)
@@ -106,8 +122,13 @@ theorem Martingale.expected_stoppedValue_eq
     (hf.submartingale.expected_stoppedValue_mono hτ hπ hle hbdd)
     (hf.supermartingale.expected_stoppedValue_anti_mono hτ hπ hle hbdd)
 
-/-- **Bounded optional stopping, expectation form, for martingales:**
-for a bounded stopping time `τ`, `E[f_τ] = E[f_0]`. -/
+/-- **Optional stopping for martingales at a bounded stopping time.** Let $\mu$ be a measure on
+$\Omega$ and $(\mathcal G_n)_{n \ge 0}$ a filtration such that the restriction of $\mu$ to each
+$\mathcal G_n$ is σ-finite, and let $(f_n)_{n \ge 0}$ be a real-valued martingale with respect to
+$(\mathcal G_n)$ and $\mu$. Let $\tau$ be a stopping time for $(\mathcal G_n)$ with values in
+$\mathbb N \cup \{\infty\}$, and let $N$ be a natural number such that $\tau(\omega) \le N$ for
+every $\omega \in \Omega$. Then $\int f_\tau \, d\mu = \int f_0 \, d\mu$, where
+$f_\tau(\omega) = f_{\tau(\omega)}(\omega)$. -/
 theorem Martingale.expected_stoppedValue_eq_zero
     [SigmaFiniteFiltration μ 𝒢]
     (hf : Martingale f 𝒢 μ) (hτ : IsStoppingTime 𝒢 τ)

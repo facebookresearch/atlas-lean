@@ -43,8 +43,9 @@ open MeasureTheory Filter
 
 namespace MathlibExt.Analysis.OperatorTheory.HilbertAdjointClosedRangeWanted
 
-/-- Show that if $X, Y$ are Hilbert spaces, $A \in L(X, Y)$, and $\mathrm{Ran}\,A$ is closed then
-$\mathrm{Ran}\,A^*$ is closed (where $A^* \in L(Y, X)$ is the Hilbert space adjoint).
+/-- **Closed range passes to the Hilbert space adjoint.** Let $X$ and $Y$ be complex Hilbert spaces
+and let $A : X \to Y$ be a bounded linear operator with Hilbert space adjoint $A^* : Y \to X$. If
+the range of $A$ is closed in $Y$, then the range of $A^*$ is closed in $X$.
 
 Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level II (Operator theory; General
 theory of linear operators), `benchmark/level2/ma_proofbench_l2_85.lean` at

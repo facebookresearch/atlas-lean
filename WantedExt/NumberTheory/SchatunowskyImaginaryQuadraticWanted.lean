@@ -16,6 +16,7 @@ public import Mathlib.NumberTheory.Zsqrtd.GaussianInt
 public import Mathlib.RingTheory.Norm.Basic
 public import Mathlib.NumberTheory.NumberField.ClassNumber
 public import Mathlib.Data.Nat.Nth
+public import MathlibExt.NumberTheory.Schatunowsky
 
 /-!
 # Bertrand postulates and Schatunowsky-type theorems in ℕ and Gaussian and Eisenstein integers
@@ -69,18 +70,6 @@ public theorem_wanted eisenstein_exists_prime_norm_between
     ∃ ρ : 𝓞 (CyclotomicField 3 ℚ), Prime ρ ∧
       Algebra.norm ℚ (π : CyclotomicField 3 ℚ) < Algebra.norm ℚ (ρ : CyclotomicField 3 ℚ) ∧
       Algebra.norm ℚ (ρ : CyclotomicField 3 ℚ) ≤ 2 * Algebra.norm ℚ (π : CyclotomicField 3 ℚ)
-
-/-- **Schatunowsky's theorem.** The natural numbers $a \ge 2$ such that every natural number $b$
-with $1 < b < a$ and $\gcd(a, b) = 1$ is prime are exactly $2, 3, 4, 6, 8, 12, 18, 24$ and $30$.
-
-The numbers $a = 0$ and $a = 1$, for which no such $b$ exists, are excluded.
-
-Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Theorem 1,
-quoting Schatunowsky (`integers-2026-A110-thm-1`). -/
-public theorem_wanted nat_schatunowsky :
-    {a : ℕ | 2 ≤ a ∧ ∀ b : ℕ, 1 < b → b < a → Nat.Coprime a b → b.Prime} =
-      {2, 3, 4, 6, 8, 12, 18, 24, 30}
 
 /-- **Iwata's generalization of Schatunowsky's theorem.** For every natural number $\ell$, there
 are only finitely many natural numbers $a$ such that every natural number $b$ with $1 < b < a$

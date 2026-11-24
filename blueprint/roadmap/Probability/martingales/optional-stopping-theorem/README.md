@@ -8,7 +8,7 @@ A martingale models a fair game, and optional stopping says that no rule for whe
 
 $$f_\pi - f_\tau = \sum_{k < N} \mathbf{1}_{\{\tau \le k < \pi\}} (f_{k+1} - f_k),$$
 
-and each indicator is $\mathcal{G}_k$-measurable, so each term has integral zero. Boundedness matters: a simple random walk started at $0$ and stopped when it first reaches $1$ has stopped value $1$ although it starts at $0$, and the stopping time is finite almost surely. For unbounded times, uniform integrability replaces boundedness. The card also holds the supermartingale inequalities, the conditional forms, the forms for uniformly integrable martingales and submartingales at unbounded times, and a continuous-time version.
+and each indicator is $\mathcal{G}_k$-measurable, so each term has integral zero. Boundedness matters: a simple random walk started at $0$ and stopped when it first reaches $1$ has stopped value $1$ although it starts at $0$, and the stopping time is finite almost surely. For unbounded times, uniform integrability replaces boundedness. The card also holds the supermartingale inequalities, the submartingale form at an almost surely bounded time with the lemma that a stopped submartingale is again a submartingale, the conditional forms, the forms for uniformly integrable martingales and submartingales at unbounded times, and a continuous-time version.
 
 ## Statements
 
@@ -16,6 +16,8 @@ and each indicator is $\mathcal{G}_k$-measurable, so each term has integral zero
 - [Optional stopping for martingales at a bounded stopping time](expected-stopped-value-eq-zero.md): one stopping time
 - [Optional stopping for supermartingales at two bounded stopping times](expected-stopped-value-anti-mono.md): supermartingale form
 - [Optional stopping for supermartingales at a bounded stopping time](expected-stopped-value-le.md): supermartingale form, one stopping time
+- [Optional stopping for submartingales at a bounded stopping time](bounded-optional-stopping.md): the submartingale form at an almost surely bounded time
+- [Stopped submartingales are submartingales](stopped-process.md): lemma used for optional stopping at bounded times
 - [Bounded optional stopping, conditional form](stopped-value-le-cond-exp-stopped-value.md): conditional form
 - [Bounded optional stopping, conditional form, supermartingale dual](cond-exp-stopped-value-le-stopped-value.md): conditional form, supermartingale dual
 - [Value of a process at a possibly infinite time](stopped-value-at-top.md): definition used by the unbounded forms

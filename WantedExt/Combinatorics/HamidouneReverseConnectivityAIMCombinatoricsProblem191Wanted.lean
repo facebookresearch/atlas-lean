@@ -42,7 +42,9 @@ from `y` to `x`, no two sharing an internal vertex. The problem is posed for eve
 refuted part is stated existentially (some `r ≥ 3` for which the conjecture holds) and refuted.
 -/
 
-/-- A directed path: a duplicate-free vertex list whose consecutive vertices are joined by arcs. -/
+/-- **Directed paths.** A directed path in a digraph $D$ is a finite, possibly empty, sequence of
+vertices of $D$ with no vertex repeated in which each vertex is joined to the next by an arc of
+$D$. -/
 def IsDirectedPath {V : Type} (D : Digraph V) (p : List V) : Prop :=
   p.Nodup ∧ p.IsChain D.Adj
 
@@ -50,25 +52,42 @@ def IsDirectedPath {V : Type} (D : Digraph V) (p : List V) : Prop :=
 def internalVertices {V : Type} (p : List V) : List V :=
   p.tail.dropLast
 
-/-- `κ(y, x) ≥ r`: there are `r` pairwise distinct directed paths from `y` to `x`, no two of which
-share an internal vertex. -/
+/-- **Internally disjoint directed paths.** Let $D$ be a digraph, $r$ a natural number and $y$, $x$
+vertices of $D$. We write $\kappa(y, x) \ge r$ when there are $r$ pairwise distinct directed paths
+in $D$ from $y$ to $x$, no two of which share an internal vertex. Here a directed path from $y$ to
+$x$ is a sequence of distinct vertices starting at $y$ and ending at $x$ in which each vertex is
+joined to the next by an arc of $D$, and its internal vertices are all its vertices except the
+first and the last. -/
 def HasInternallyDisjointPaths {V : Type} (D : Digraph V) (r : ℕ) (y x : V) : Prop :=
   ∃ P : Fin r → List V,
     (∀ i, IsDirectedPath D (P i) ∧ (P i).head? = some y ∧ (P i).getLast? = some x) ∧
       ∀ i j, i ≠ j → P i ≠ P j ∧ ∀ v ∈ internalVertices (P i), v ∉ internalVertices (P j)
 
-/-- Hamidoune's conjecture holds for some `r ≥ 3`: every finite nonempty loopless digraph with
-minimum out-degree and minimum in-degree at least `r` has an arc `(x, y)` with `κ(y, x) ≥ r`. -/
+/-- **Hamidoune's reverse-connectivity conjecture for some $r \ge 3$.** The statement that there
+is a natural number $r \ge 3$ such that every digraph $D$ without loops or parallel arcs on a
+finite nonempty vertex set, in which every vertex has at least $r$ out-neighbours and at least
+$r$ in-neighbours, has an arc $(x, y)$ from $x$ to $y$ with $\kappa(y, x) \ge r$, that is, with
+$r$ pairwise distinct directed paths from $y$ to $x$, no two of which share an internal vertex.
+Here a directed path is a sequence of distinct vertices in which each vertex is joined to the
+next by an arc, and its internal vertices are all its vertices except the first and the last. -/
 def hamidouneSomeRAtLeastThree : Prop :=
   ∃ r : ℕ, 3 ≤ r ∧ ∀ (V : Type) [Finite V] [Nonempty V] (D : Digraph V), (∀ v : V, ¬ D.Adj v v) →
     (∀ v : V, r ≤ {w | D.Adj v w}.ncard) → (∀ v : V, r ≤ {u | D.Adj u v}.ncard) →
       ∃ x y : V, D.Adj x y ∧ HasInternallyDisjointPaths D r y x
 
-/--
-Resolved false: for every `r ≥ 3` the conjecture fails. Thomassen constructed, for every positive
-integer `r`, a digraph without digons with minimum out-degree and minimum in-degree at least `r` in
-which no edge `(x, y)` has `κ(y, x) ≥ 3`; the report notes after Conjecture 6.21 that this is a
-counterexample for all `r ≥ 3`. Source: B. D. Sullivan, A Summary of Problems and Results related to
+/-- **Hamidoune's reverse-connectivity conjecture fails for every $r \ge 3$.** For no natural
+number $r \ge 3$ does the following hold: every digraph $D$ without loops or parallel arcs on a
+finite nonempty vertex set, in which every vertex has at least $r$ out-neighbours and at least
+$r$ in-neighbours, has an arc $(x, y)$ from $x$ to $y$ with $\kappa(y, x) \ge r$, that is, with
+$r$ pairwise distinct directed paths from $y$ to $x$, no two of which share an internal vertex.
+Here a directed path is a sequence of distinct vertices in which each vertex is joined to the
+next by an arc, and its internal vertices are all its vertices except the first and the last.
+
+Thomassen constructed, for every positive integer $r$, a digraph without digons with minimum
+out-degree and minimum in-degree at least $r$ in which no arc $(x, y)$ has $\kappa(y, x) \ge 3$;
+the report notes after Conjecture 6.21 that this is a counterexample for all $r \ge 3$.
+
+Source: B. D. Sullivan, A Summary of Problems and Results related to
 the Caccetta-Haggkvist Conjecture, arXiv:math/0605646, Conjecture 6.21; resolution: C. Thomassen,
 Even cycles in directed graphs, European J. Combin. 6 (1985) 85-89, as stated in the report's
 Theorem 5.2 (part ii) and the note after Conjecture 6.21,

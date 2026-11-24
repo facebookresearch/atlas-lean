@@ -16,3 +16,7 @@ graph is at least as long as the segment joining its endpoints.
 ## Statements
 
 - [Two-sided bound for the integral of the square root of one plus a square](sqrt-one-add-sq-integral-le-and-le-one-a.md)
+
+## Background
+
+- [Jensen's inequality](../jensen-s-inequality/README.md): gives the lower bound

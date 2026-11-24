@@ -39,12 +39,14 @@ namespace NumberField
 
 universe u
 
-/-- Finite number-field characterization of the Hilbert class field of `K`.
-
-`L` is the Hilbert class field of `K` if `L / K` is finite-dimensional abelian Galois,
-unramified at every finite height-one prime of `𝓞 K` and at infinite places, and maximal
-among such extensions: every other finite-dimensional abelian Galois number field `M / K`
-unramified at all finite and infinite places embeds into `L` over `K`. -/
+/-- **Hilbert class field of a number field.** Let $K$ and $L$ be number fields with $L$ an
+extension of $K$. Then $L$ is a Hilbert class field of $K$ if $L/K$ is a finite-dimensional
+abelian Galois extension, every nonzero prime ideal of the ring of integers $\mathcal{O}_K$ is
+unramified in $\mathcal{O}_L$, every infinite place of $L$ is unramified over $K$, and $L$ is
+maximal with these properties: every number field $M$ that is a finite-dimensional abelian Galois
+extension of $K$, such that every nonzero prime ideal of $\mathcal{O}_K$ is unramified in
+$\mathcal{O}_M$ and every infinite place of $M$ is unramified over $K$, admits a $K$-algebra
+homomorphism $M \to L$. -/
 structure IsHilbertClassField (K L : Type u) [Field K] [Field L] [NumberField K]
     [NumberField L] [Algebra K L] : Prop where
   /-- `L / K` is finite-dimensional. -/
@@ -69,7 +71,11 @@ structure IsHilbertClassField (K L : Type u) [Field K] [Field L] [NumberField K]
 variable {K L : Type u} [Field K] [Field L] [NumberField K] [NumberField L]
   [Algebra K L]
 
-/-- Maximality applied: an admissible competitor `M / K` embeds into `L` over `K`. -/
+/-- **Abelian unramified extensions embed in the Hilbert class field.** Let $K$ and $L$ be number
+fields with $L$ an extension of $K$ that is a Hilbert class field of $K$. If $M$ is a number field
+that is a finite-dimensional abelian Galois extension of $K$, such that every nonzero prime ideal
+of the ring of integers $\mathcal{O}_K$ is unramified in $\mathcal{O}_M$ and every infinite place
+of $M$ is unramified over $K$, then there is a $K$-algebra homomorphism $M \to L$. -/
 theorem IsHilbertClassField.apply_maximal {M : Type u} [Field M] [NumberField M]
     [Algebra K M] (h : IsHilbertClassField K L)
     (hfin : FiniteDimensional K M)

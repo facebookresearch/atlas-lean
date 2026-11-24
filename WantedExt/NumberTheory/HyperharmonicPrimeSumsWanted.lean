@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Analysis.Asymptotics.AsymptoticEquivalent
+public import MathlibExt.Analysis.Asymptotics.Jakimczuk
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import Mathlib.NumberTheory.PrimeCounting
@@ -22,7 +22,7 @@ public import WantedExt.NumberTheory.GeneralizedHarmonicGammaWanted
 # Sums over primes II (statements)
 
 Statement-only targets from Rusen Li, *Sums over Primes II*: the asymptotic of hyperharmonic
-numbers, Jakimczuk's summation lemma, the asymptotics of the `n`-th (squarefree) number with
+numbers, the asymptotics of the `n`-th (squarefree) number with
 exactly `k` prime factors, two power-log summation asymptotics, the explicit formulas and
 asymptotics of the generalized (alternating) hyperharmonic numbers `H_n^{(p,r)}` and
 `H_n^{(p,r,i)}` (`i = 1, 2, 3`), and the asymptotics of sums over primes and over squarefree
@@ -92,18 +92,6 @@ Article 24.4.1, Lemma 1 (`jis-2024-24.4.1-lem-1`). -/
 public theorem_wanted hyperharmonic_isEquivalent (r : ℕ) (hr : 1 ≤ r) :
     (fun n : ℕ => (hyperharmonic r n : ℝ)) ~[atTop]
       fun n : ℕ => (n : ℝ) ^ (r - 1) * Real.log n / (r - 1).factorial
-
-/-- **Jakimczuk's lemma on sums of asymptotically equivalent terms.** Let $(a_i)_{i \ge 0}$ and
-$(b_i)_{i \ge 0}$ be real sequences with $a_i > 0$ and $b_i > 0$ for every $i \ge 1$. If
-$a_i \sim b_i$ as $i \to \infty$ and $\sum_{i=1}^{n} b_i \to +\infty$ as $n \to \infty$, then
-$$\sum_{i=1}^{n} a_i \sim \sum_{i=1}^{n} b_i \qquad (n \to \infty).$$
-
-Source: Rusen Li, *Sums over Primes II*, Journal of Integer Sequences 27 (2024),
-Article 24.4.1, Lemma 7 (`jis-2024-24.4.1-lem-7`). -/
-public theorem_wanted sum_isEquivalent_of_isEquivalent (a b : ℕ → ℝ)
-    (ha : ∀ i, 1 ≤ i → 0 < a i) (hb : ∀ i, 1 ≤ i → 0 < b i) (hab : a ~[atTop] b)
-    (hdiv : Tendsto (fun n => ∑ i ∈ Icc 1 n, b i) atTop atTop) :
-    (fun n => ∑ i ∈ Icc 1 n, a i) ~[atTop] fun n => ∑ i ∈ Icc 1 n, b i
 
 /-- **Asymptotics of the $n$-th number with $k$ prime factors.** Let $k \ge 1$. For $n \ge 1$ let
 $p_{n,k}$ be the $n$-th squarefree natural number with exactly $k$ distinct prime factors, and let

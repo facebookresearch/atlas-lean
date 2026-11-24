@@ -351,7 +351,9 @@ theorem IsSolution.tendsto_equilibrium (h : IsSolution k₁ kb k₂ kb₂ s c e 
     with hKdef
   -- the compatibility class is compact and convex
   have hKclosed : IsClosed K := by
-    refine IsClosed.inter ?_ (IsClosed.inter ?_ ?_)
+    refine IsClosed.inter (s₁ := {x : Fin 4 → ℝ | ∀ i, 0 ≤ x i}) ?_
+      (IsClosed.inter (s₁ := {x : Fin 4 → ℝ | x 2 + x 1 = ET})
+        (s₂ := {x : Fin 4 → ℝ | x 0 + x 1 + x 3 = ST}) ?_ ?_)
     · have : {x : Fin 4 → ℝ | ∀ i, 0 ≤ x i} = Ici 0 := by ext x; simp [Pi.le_def]
       have hc0 : IsClosed {x : Fin 4 → ℝ | ∀ i, 0 ≤ x i} := by rw [this]; exact isClosed_Ici
       exact hc0

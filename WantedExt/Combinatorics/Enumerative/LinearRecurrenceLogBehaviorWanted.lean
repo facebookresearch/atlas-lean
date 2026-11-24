@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Factorial.Basic
 public import Mathlib.Basic.Real.Basic
+public import MathlibExt.Combinatorics.Enumerative.LinearRecurrenceLogBehavior
 
 /-!
 # Log-behavior of sequences related to A005773
@@ -25,28 +26,16 @@ recurrence (1); OEIS A005773, `1, 1, 2, 5, 13, 35, …`). Forward differences ar
 `Δ³A n = A (n + 3) - 3 A (n + 2) + 3 A (n + 1) - A n`. A sequence `(z n)_{n ≥ m}` is
 log-convex (log-concave) if `z n ^ 2 ≤ z (n - 1) z (n + 1)` (`≥`) for every `n ≥ m + 1`, and
 log-balanced (Došlić) if it is log-convex and `(z n / n!)_{n ≥ m}` is log-concave.
+
+Proved in `MathlibExt.Combinatorics.Enumerative.LinearRecurrenceLogBehavior`: Lemma 1
+(`MetaMathlibExt.a005773Recurrence_ratio_bounds`), the weighted log-concavity result
+(`MetaMathlibExt.a005773Recurrence_weighted_logConcave`), and Theorem 4
+(`MetaMathlibExt.a005773Recurrence_pow_logConvex`).
 -/
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Ratio bounds for the A005773 recurrence.**
-Let $(A_n)_{n \ge 0}$ be a sequence of real numbers with $A_0 = A_1 = 1$ and
-$(n+1) A_{n+1} = 2(n+1) A_n + 3(n-1) A_{n-1}$ for every $n \ge 1$. Write
-$x_n = A_{n+1}/A_n$ and $\varphi_n = 3(2n+1)/(2(n+1))$. Then for every $n \ge 0$ we have
-$x_n \le \varphi_n$ and
-$$\frac{x_{n+1}}{x_n} \ge \frac{2(3n^2+6n+2)}{(n+2)(2n+1)\,\varphi_n}.$$
-
-Source: Feng-Zhen Zhao, *The Log-Behavior of Some Sequences Related to a Linear Recurrence
-Sequence*, INTEGERS 25 (2025), Article A100, Lemma 1. -/
-public theorem_wanted a005773Recurrence_ratio_bounds (A : ℕ → ℝ) (h0 : A 0 = 1) (h1 : A 1 = 1)
-    (hrec : ∀ n : ℕ, 1 ≤ n →
-      ((n : ℝ) + 1) * A (n + 1) = 2 * ((n : ℝ) + 1) * A n + 3 * ((n : ℝ) - 1) * A (n - 1))
-    (n : ℕ) :
-    A (n + 1) / A n ≤ 3 * (2 * n + 1) / (2 * (n + 1)) ∧
-      2 * (3 * (n : ℝ) ^ 2 + 6 * n + 2) / ((n + 2) * (2 * n + 1) * (3 * (2 * n + 1) / (2 * (n + 1))))
-        ≤ (A (n + 2) / A (n + 1)) / (A (n + 1) / A n)
 
 /-- **The first and second differences of A005773 are log-balanced.**
 Let $(A_n)_{n \ge 0}$ be a sequence of real numbers with $A_0 = A_1 = 1$ and
@@ -94,44 +83,6 @@ public theorem_wanted a005773Recurrence_thirdDiff_logConvex_logBalanced (A : ℕ
       ∀ n, 4 ≤ n →
         D₃ (n - 1) / (n - 1).factorial * (D₃ (n + 1) / (n + 1).factorial) ≤
           (D₃ n / n.factorial) ^ 2
-
-/-- **Log-concave weighted sequences built from A005773.**
-Let $(A_n)_{n \ge 0}$ be a sequence of real numbers with $A_0 = A_1 = 1$ and
-$(n+1) A_{n+1} = 2(n+1) A_n + 3(n-1) A_{n-1}$ for every $n \ge 1$, and write
-$\Delta A_n = A_{n+1} - A_n$ and $\Delta^2 A_n = A_{n+2} - 2A_{n+1} + A_n$. Then for every
-$n \ge 2$, each of the four sequences $z_m = m A_m$, $z_m = (m+1) A_{m+1} - m A_m$,
-$z_m = m\,\Delta A_m$ and $z_m = m\,\Delta^2 A_m$ satisfies $z_{n-1} z_{n+1} \le z_n^2$. That
-is, these four sequences, indexed from $m = 1$, are log-concave.
-
-Source: Feng-Zhen Zhao, *The Log-Behavior of Some Sequences Related to a Linear Recurrence
-Sequence*, INTEGERS 25 (2025), Article A100, Theorem 3. -/
-public theorem_wanted a005773Recurrence_weighted_logConcave (A : ℕ → ℝ) (h0 : A 0 = 1)
-    (h1 : A 1 = 1)
-    (hrec : ∀ n : ℕ, 1 ≤ n →
-      ((n : ℝ) + 1) * A (n + 1) = 2 * ((n : ℝ) + 1) * A n + 3 * ((n : ℝ) - 1) * A (n - 1))
-    (n : ℕ) (hn : 2 ≤ n) :
-    let W : ℕ → ℝ := fun m => m * A m
-    let V : ℕ → ℝ := fun m => (m + 1 : ℕ) * A (m + 1) - m * A m
-    let U : ℕ → ℝ := fun m => m * (A (m + 1) - A m)
-    let T : ℕ → ℝ := fun m => m * (A (m + 2) - 2 * A (m + 1) + A m)
-    W (n - 1) * W (n + 1) ≤ W n ^ 2 ∧ V (n - 1) * V (n + 1) ≤ V n ^ 2 ∧
-      U (n - 1) * U (n + 1) ≤ U n ^ 2 ∧ T (n - 1) * T (n + 1) ≤ T n ^ 2
-
-/-- **Log-convexity of $(n A_n)^n$ for A005773.**
-Let $(A_n)_{n \ge 0}$ be a sequence of real numbers with $A_0 = A_1 = 1$ and
-$(n+1) A_{n+1} = 2(n+1) A_n + 3(n-1) A_{n-1}$ for every $n \ge 1$, and let
-$z_m = (m A_m)^m$. Then $z_n^2 \le z_{n-1} z_{n+1}$ for every $n \ge 2$; that is, the sequence
-$(n^n A_n^n)_{n \ge 1}$ is log-convex.
-
-Source: Feng-Zhen Zhao, *The Log-Behavior of Some Sequences Related to a Linear Recurrence
-Sequence*, INTEGERS 25 (2025), Article A100, Theorem 4. -/
-public theorem_wanted a005773Recurrence_pow_logConvex (A : ℕ → ℝ) (h0 : A 0 = 1)
-    (h1 : A 1 = 1)
-    (hrec : ∀ n : ℕ, 1 ≤ n →
-      ((n : ℝ) + 1) * A (n + 1) = 2 * ((n : ℝ) + 1) * A n + 3 * ((n : ℝ) - 1) * A (n - 1))
-    (n : ℕ) (hn : 2 ≤ n) :
-    let z : ℕ → ℝ := fun m => ((m : ℝ) * A m) ^ m
-    z n ^ 2 ≤ z (n - 1) * z (n + 1)
 
 end
 

@@ -12,7 +12,9 @@ import Batteries.Util.ProofWanted
 import Mathlib.Tactic.NormNum.LegendreSymbol
 public import Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
 public import Mathlib.NumberTheory.LucasLehmer
-public import Mathlib.NumberTheory.Pell
+public import MathlibExt.NumberTheory.MersenneOmega
+public import MathlibExt.NumberTheory.OrderOfTwoMulCoprime
+public import MathlibExt.NumberTheory.PellEulerSolutions
 
 /-!
 # The Lucas–Lehmer test with the rational seed `6/5`
@@ -138,76 +140,7 @@ public theorem_wanted mersenne_dvd_lehmerV_of_diophantine {n : ℕ} (hn : Odd n)
     (hrd : jacobiSym (r * d) (mersenne n) = -1) (hqr : jacobiSym (q * r) (mersenne n) = -1) :
     (mersenne n : ℤ) ∣ lehmerV (r * X ^ 2) (q * Y ^ 2) (2 ^ (n - 1))
 
-/-- **Euler's family of solutions of $aT^2 - bU^2 = c$.** Let $a$, $b$, $c$ be integers
-with $ab > 1$, $ab$ not a perfect square and $c \ne 0$, and let $T_1$, $U_1$ be integers with
-$aT_1^2 - bU_1^2 = c$. Let $\varepsilon = x_1 + y_1\sqrt{ab}$ be the fundamental solution of
-$x^2 - ab\,y^2 = 1$ and, for every natural number $j$, write
-$\varepsilon^j = x_j + y_j\sqrt{ab}$. Then for every $j \ge 0$ the integers
-$T = T_1 x_j + b U_1 y_j$ and $U = a T_1 y_j + U_1 x_j$ satisfy $aT^2 - bU^2 = c$, and different
-$j$ give different pairs $(T, U)$.
-
-The hypothesis $c \ne 0$ is added to the source statement: for $c = 0$ the only integer solution
-is $(0, 0)$, since $ab$ is not a square.
-
-Source: E. L. Roettger and H. C. Williams, *Some Remarks Concerning the Lucas-Lehmer Primality
-Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Theorem 8. -/
-public theorem_wanted pell_euler_solutions (a b c T₁ U₁ : ℤ) (hab : 1 < a * b)
-    (hsq : ¬ IsSquare (a * b)) (hc : c ≠ 0) (h₁ : a * T₁ ^ 2 - b * U₁ ^ 2 = c)
-    (ε : Pell.Solution₁ (a * b)) (hε : Pell.IsFundamental ε) :
-    (∀ j : ℕ, a * (T₁ * (ε ^ j).x + b * U₁ * (ε ^ j).y) ^ 2 -
-        b * (a * T₁ * (ε ^ j).y + U₁ * (ε ^ j).x) ^ 2 = c) ∧
-      Function.Injective fun j : ℕ =>
-        (T₁ * (ε ^ j).x + b * U₁ * (ε ^ j).y, a * T₁ * (ε ^ j).y + U₁ * (ε ^ j).x)
-
 /-! ### Squarefree parts, the order of `2`, and condition (etar) -/
-
-/-- **Odd squarefree part.** For an integer $N$ and a natural number $k$, $k$ is an odd
-squarefree part of $N$, written $N^* = k$, when $k$ is odd and squarefree and $N = 2^a m^2 k$
-for some natural number $a$ and some integer $m$.
-
-For positive $N$ such a $k$ is unique: it is the squarefree part of $N$ when that is odd, and
-half of it otherwise.
-
-Source: E. L. Roettger and H. C. Williams, *Some Remarks Concerning the Lucas-Lehmer Primality
-Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Section 7 (definition of `N^*`). -/
-def IsOddSquarefreePart (N : ℤ) (k : ℕ) : Prop :=
-  Odd k ∧ Squarefree k ∧ ∃ a : ℕ, ∃ m : ℤ, N = 2 ^ a * m ^ 2 * k
-
-/-- **The odd squarefree part of $360$.** The number $5$ is the odd squarefree part of $360$:
-$5$ is odd and squarefree, and $360 = 2^a m^2 \cdot 5$ for some natural number $a$ and some
-integer $m$.
-
-Source: E. L. Roettger and H. C. Williams, *Some Remarks Concerning the Lucas-Lehmer Primality
-Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Section 7 (example
-`10 = sqf(360)`). -/
-theorem isOddSquarefreePart_360 : IsOddSquarefreePart 360 5 :=
-  ⟨by decide, Nat.prime_five.prime.squarefree, 1, 6, by norm_num⟩
-
-/-- **The order $\Omega(m)$ of $2$, doubled when odd.** For a natural number $m$, let $\omega(m)$
-be the multiplicative order of $2$ modulo $m$, taken to be $0$ when no positive power of $2$ is
-congruent to $1$ modulo $m$ (that is, when $m$ is even). Then $\Omega(m) = 2\omega(m)$ if
-$\omega(m)$ is odd, and $\Omega(m) = \omega(m)$ otherwise.
-
-Source: E. L. Roettger and H. C. Williams, *Some Remarks Concerning the Lucas-Lehmer Primality
-Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Section 7 (definitions of `ω(m)` and
-`Ω(m)`). -/
-noncomputable def mersenneOmega (m : ℕ) : ℕ :=
-  if Odd (orderOf (2 : ZMod m)) then 2 * orderOf (2 : ZMod m) else orderOf (2 : ZMod m)
-
-/-- **$\Omega$ for the seed $37$.** We have $\Omega(1365) = 12$, where $\Omega(m)$ is the
-multiplicative order of $2$ modulo $m$, doubled when that order is odd. Here $1365 = 35 \cdot 39$
-is the product of the odd squarefree parts $35$ of $37 - 2$ and $39$ of $37 + 2$, the parts
-$s_1^-$ and $s_1^+$ for the seed $s_1 = 37$.
-
-Source: E. L. Roettger and H. C. Williams, *Some Remarks Concerning the Lucas-Lehmer Primality
-Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Section 7 (example `s_1 = 37`). -/
-theorem mersenneOmega_1365 : mersenneOmega 1365 = 12 := by
-  have h : orderOf (2 : ZMod 1365) = 12 := by
-    rw [orderOf_eq_iff (by norm_num)]
-    refine ⟨by decide, fun m hm hm0 => ?_⟩
-    interval_cases m <;> decide
-  rw [mersenneOmega, h]
-  decide
 
 /-- **Condition (etar) on Jacobi symbols of $M_n$.** Let $s^-$, $s^+$ and $n$ be natural
 numbers and let $M_n = 2^n - 1$. For a natural number $s$ write $\left(\frac{M_n}{s}\right)$ for
@@ -260,35 +193,6 @@ public theorem_wanted infinite_acceptableSeeds_same_parts {n : ℕ} (h3 : 3 ≤ 
       (mersenne n : ℤ) ∣ (fun x : ℤ => x ^ 2 - 2)^[n - 2] s₁) :
     {S : ℤ | 3 ≤ S ∧ IsOddSquarefreePart (S - 2) sm ∧ IsOddSquarefreePart (S + 2) sp ∧
       ((mersenne n).Prime ↔ (mersenne n : ℤ) ∣ (fun x : ℤ => x ^ 2 - 2)^[n - 2] S)}.Infinite
-
-/-- **Order of $2$ modulo a product of coprime odd numbers.** Let $m_1$ and $m_2$ be coprime odd
-natural numbers, and write $\omega(m)$ for the multiplicative order of $2$ modulo $m$. Then
-$\omega(m_1 m_2) = \operatorname{lcm}(\omega(m_1), \omega(m_2))$.
-
-The printed $\operatorname{lcm}(\omega(m_1)\omega(m_2))$ is read as
-$\operatorname{lcm}(\omega(m_1), \omega(m_2))$; the product reading fails, since $\omega(15) = 4$
-while $\omega(3)\omega(5) = 8$.
-
-Source: E. L. Roettger and H. C. Williams, *Some Remarks Concerning the Lucas-Lehmer Primality
-Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Proposition 11. -/
-public theorem_wanted orderOf_two_mul_coprime {m₁ m₂ : ℕ} (h₁ : Odd m₁) (h₂ : Odd m₂)
-    (hc : m₁.Coprime m₂) :
-    orderOf (2 : ZMod (m₁ * m₂)) =
-      Nat.lcm (orderOf (2 : ZMod m₁)) (orderOf (2 : ZMod m₂))
-
-/-- **A zero Legendre symbol forces $\gcd(n, \Omega) > 1$.** Let $s_1 \ge 3$ be an integer, let
-$s_1^-$ and $s_1^+$ be the odd squarefree parts of $s_1 - 2$ and $s_1 + 2$, and let
-$\Omega = \Omega(s_1^- s_1^+)$. Let $p$ be a prime dividing $s_1^- s_1^+$, let $n$ be a natural
-number and let $M_n = 2^n - 1$. If the Legendre symbol $\left(\frac{M_n}{p}\right)$ is $0$, then
-$\gcd(n, \Omega) > 1$.
-
-Source: E. L. Roettger and H. C. Williams, *Some Remarks Concerning the Lucas-Lehmer Primality
-Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Proposition 12. -/
-public theorem_wanted one_lt_gcd_mersenneOmega_of_legendreSym_eq_zero (s₁ : ℤ) (hs₁ : 3 ≤ s₁)
-    (sm sp : ℕ) (hsm : IsOddSquarefreePart (s₁ - 2) sm) (hsp : IsOddSquarefreePart (s₁ + 2) sp)
-    (p : ℕ) [Fact p.Prime] (hp : p ∣ sm * sp) (n : ℕ)
-    (h : legendreSym p (mersenne n) = 0) :
-    1 < Nat.gcd n (mersenneOmega (sm * sp))
 
 /-- **Condition (etar) fails for some reduced residue when $s_1^- \equiv 3 \pmod 4$.** Let
 $s_1 \ge 3$ be an integer, let $s_1^-$ and $s_1^+$ be the odd squarefree parts of $s_1 - 2$ and

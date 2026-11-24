@@ -16,6 +16,8 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.MeasureTheory.Integral.CircleIntegral
 public import Mathlib.NumberTheory.MulChar.Basic
 public import Mathlib.RingTheory.UniqueFactorizationDomain.Moebius
+public import MathlibExt.NumberTheory.FunctionField.KappaPowMoebius
+public import MathlibExt.NumberTheory.FunctionField.MonicCount
 
 /-!
 # Dirichlet convolutions over `𝔽_q[T]`
@@ -159,17 +161,6 @@ public theorem_wanted monic_sum_moebius_mul_natDegree_div_norm {F : Type*} [Fiel
         ∑ᶠ P ∈ {P : F[X] | P.Monic ∧ Irreducible P ∧ P ∣ f},
           (P.natDegree : ℝ) / (1 - (Fintype.card F : ℝ) ^ P.natDegree)
 
-/-- **Number of monic polynomials of bounded degree.** Let $F$ be a finite field with $q$
-elements and let $N$ be a natural number. The number of monic polynomials in $F[T]$ of degree at
-most $N$ is $(q^{N+1} - 1)/(q - 1)$.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Proposition 4
-(`integers-2026-A80-prop-4`), case `h = 1`, `m = 1`. -/
-public theorem_wanted monic_count_natDegree_le {F : Type*} [Field F] [Fintype F] (N : ℕ) :
-    (Nat.card {f : F[X] // f.Monic ∧ f.natDegree ≤ N} : ℚ) =
-      ((Fintype.card F : ℚ) ^ (N + 1) - 1) / (Fintype.card F - 1)
-
 /-- **Summatory divisor function for monic polynomials over a finite field.** Let $F$ be a finite
 field with $q$ elements. For monic $f \in F[T]$, the Dirichlet convolution $(1 * 1)(f)$ of the
 constant function $1$ with itself is the number of monic divisors of $f$. Then for every natural
@@ -256,65 +247,6 @@ public theorem isBFree_one {F : Type*} [Field F] (κ : F[X] → ℕ)
     (hκ : ∀ P : F[X], P.Monic → Irreducible P → κ P ≠ 0) : IsBFree κ (1 : F[X]) := by
   intro P hm hP hdvd
   exact hP.not_isUnit ((isUnit_pow_iff (hκ P hm hP)).mp (isUnit_of_dvd_one hdvd))
-
-/-- **The minimal exponent $\kappa_{\min}$.** Let $F$ be a field and let $\kappa$ be a function
-from $F[T]$ to the natural numbers. Then $\kappa_{\min}$ is the minimum of $\kappa(P)$ over all
-monic irreducible polynomials $P \in F[T]$.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 1, definition of
-`κ_min`. -/
-public noncomputable def kappaMin {F : Type*} [Field F] (κ : F[X] → ℕ) : ℕ :=
-  ⨅ P : {P : F[X] // P.Monic ∧ Irreducible P}, κ P
-
-/-- **$\kappa_{\min}$ is a lower bound for $\kappa$.** Let $F$ be a field, let $\kappa$ assign a
-natural number to each polynomial in $F[T]$, and let $\kappa_{\min}$ be the minimum of $\kappa(P)$
-over the monic irreducible $P \in F[T]$. Then $\kappa_{\min} \le \kappa(P)$ for every monic
-irreducible $P \in F[T]$.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 1, definition of
-`κ_min`. -/
-public theorem kappaMin_le {F : Type*} [Field F] (κ : F[X] → ℕ) {P : F[X]} (hm : P.Monic)
-    (hP : Irreducible P) : kappaMin κ ≤ κ P :=
-  ciInf_le (OrderBot.bddBelow _) (⟨P, hm, hP⟩ : {P : F[X] // P.Monic ∧ Irreducible P})
-
-/-- **The $\kappa$-power of a polynomial.** Let $F$ be a field and let $\kappa$ be a function
-from $F[T]$ to the natural numbers. For nonzero $f \in F[T]$ and a monic irreducible $P$, write
-$\nu_P(f)$ for the multiplicity of $P$ in $f$. The $\kappa$-power of $f$ is
-$f^\kappa = \prod_P P^{\nu_P(f)\, \kappa(P)}$, the product over the monic irreducible $P$ dividing
-$f$; it does not depend on the leading coefficient of $f$. For $f = 0$ the product is empty and
-$0^\kappa = 1$.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 3, definition of
-`f ^ κ`. -/
-public noncomputable def kappaPow {F : Type*} [Field F] (κ : F[X] → ℕ) (f : F[X]) : F[X] :=
-  open scoped Classical in
-  ((normalizedFactors f).map fun P => P ^ κ P).prod
-
-/-- **The $\kappa$-power of $1$.** Let $F$ be a field and let $\kappa$ be a function from $F[T]$
-to the natural numbers. Then the $\kappa$-power of the constant polynomial $1$ is $1^\kappa = 1$.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 3, definition of
-`f ^ κ`. -/
-public theorem kappaPow_one {F : Type*} [Field F] (κ : F[X] → ℕ) :
-    kappaPow κ (1 : F[X]) = 1 := by
-  classical
-  simp [kappaPow]
-
-/-- **The $\kappa$-power of a monic irreducible polynomial.** Let $F$ be a field and let $\kappa$
-be a function from $F[T]$ to the natural numbers. For every monic irreducible $P \in F[T]$, the
-$\kappa$-power of $P$ is $P^\kappa = P^{\kappa(P)}$.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 3, definition of
-`f ^ κ`. -/
-public theorem kappaPow_of_irreducible {F : Type*} [Field F] (κ : F[X] → ℕ) {P : F[X]}
-    (hm : P.Monic) (hP : Irreducible P) : kappaPow κ P = P ^ κ P := by
-  classical
-  simp [kappaPow, normalizedFactors_irreducible hP, hm.normalize_eq_self]
 
 /-- **The $h$-fold divisor function.** Let $F$ be a field and $h$ a natural number. For
 $f \in F[T]$, $d_h(f)$ is the number of $h$-tuples $(g_1, \dots, g_h)$ of monic polynomials in
@@ -581,28 +513,6 @@ public theorem_wanted monicDirichletConv_bFreeIndicator_moebius {F : Type*} [Fie
     (hf : f.Monic) :
     monicDirichletConv ({g : F[X] | IsBFree κ g}.indicator 1) (fun g => (moebius g : ℂ)) f =
       ∑ᶠ r ∈ {r : F[X] | r.Monic ∧ kappaPow κ r = f}, (moebius r : ℂ)
-
-/-- **Bound on the Möbius sum over κ-th powers.** Let $F$ be a finite field with $q$ elements and
-let $\kappa$ assign a natural number to each polynomial in $F[T]$, with $\kappa(P) \ge 2$ for
-every monic irreducible $P$. Let $\kappa_{\min}$ be the minimum of $\kappa(P)$ over the monic
-irreducible $P$, and for monic $r = \prod_P P^{\nu_P}$ write
-$r^\kappa = \prod_P P^{\nu_P \kappa(P)}$. Then for every natural number $N \ge 1$,
-$$
-\Bigl|\sum_{r} \mu(r) \sum_{f \mid r^\kappa} \sum_{\ell \mid f} \mu(\ell)\Bigr| \le
-q^{N/\kappa_{\min}},
-$$
-where $r$ runs over the monic polynomials with $\deg r^\kappa \le N$, $f$ and $\ell$ run over monic
-divisors, $\mu$ is the Möbius function, and the exponent $N/\kappa_{\min}$ is a real number.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Lemma 8, eq. (6)
-(`integers-2026-A80-lem-8`). -/
-public theorem_wanted abs_sum_moebius_kappaPow_le {F : Type*} [Field F] [Fintype F]
-    (κ : F[X] → ℕ) (hκ : ∀ P : F[X], P.Monic → Irreducible P → 2 ≤ κ P) {N : ℕ} (hN : 1 ≤ N) :
-    |∑ᶠ r ∈ {r : F[X] | r.Monic ∧ (kappaPow κ r).natDegree ≤ N},
-        (moebius r : ℝ) * ∑ᶠ f ∈ {f : F[X] | f.Monic ∧ f ∣ kappaPow κ r},
-          ∑ᶠ ℓ ∈ {ℓ : F[X] | ℓ.Monic ∧ ℓ ∣ f}, (moebius ℓ : ℝ)| ≤
-      (Fintype.card F : ℝ) ^ ((N : ℝ) / kappaMin κ)
 
 /-- **Divisor-count bound over $\kappa$-th powers of monic polynomials.** Let $F$ be a finite
 field with $q$ elements and let $\kappa$ assign a natural number to each polynomial in $F[T]$,

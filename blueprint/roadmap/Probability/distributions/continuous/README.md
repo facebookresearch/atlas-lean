@@ -10,5 +10,7 @@ Laws with densities, with their moments and tails: beta, gamma, exponential, chi
 - [Gamma distribution](gamma-distribution/README.md)
 - [Conditioning of Gaussian vectors](gaussian-conditioning/README.md)
 - [Laplace distribution](laplace-distribution/README.md)
+- [Log-normal distribution](log-normal-distribution/README.md)
 - [Multivariate normal distribution](multivariate-normal-distribution/README.md)
 - [Poisson–Gamma duality](poisson-gamma-duality/README.md)
+- [Weibull distribution](weibull-distribution/README.md)
