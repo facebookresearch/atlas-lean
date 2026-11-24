@@ -11,6 +11,8 @@ module
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.SetTheory.Cardinal.Finite
 import Mathlib.Algebra.BigOperators.Ring.Finset
+import Mathlib.Data.Finset.Powerset
+import Mathlib.Data.Fintype.Fin
 import Mathlib.Data.Nat.Digits.Lemmas
 
 /-! # Word models for generalized Rascal numbers -/
@@ -139,6 +141,145 @@ private theorem sum_rascalGen_eq_card (j n : ℕ) :
   intro w hw
   have hlen := ((List.mem_fixedLengthDigits_iff _).mp (Finset.mem_filter.mp hw).1).1
   exact Finset.mem_range.mpr (Nat.lt_succ_of_le (hlen ▸ List.count_le_length))
+
+-- For binary digits, swapping 0 with the previous bit gives 1 exactly when the bit changes.
+private def changeFlags (prev : ℕ) : List ℕ → List ℕ
+  | [] => []
+  | b :: w => Equiv.swap 0 prev b :: changeFlags b w
+
+private def scanChanges (prev : ℕ) : List ℕ → List ℕ
+  | [] => []
+  | f :: w =>
+    let b := Equiv.swap 0 prev f
+    b :: scanChanges b w
+
+private def changeFlagsEquiv (prev : ℕ) : List ℕ ≃ List ℕ where
+  toFun := changeFlags prev
+  invFun := scanChanges prev
+  left_inv w := by induction w generalizing prev <;> simp [changeFlags, scanChanges, *]
+  right_inv w := by induction w generalizing prev <;> simp [changeFlags, scanChanges, *]
+
+private theorem changeFlags_mem_iff (n : ℕ) (w : List ℕ) (prev : ℕ) (hp : prev < 2) :
+    changeFlags prev w ∈ List.fixedLengthDigits (b := 2) (by decide) n ↔
+      w ∈ List.fixedLengthDigits (b := 2) (by decide) n := by
+  have hlen (l : List ℕ) (p : ℕ) : (changeFlags p l).length = l.length := by
+    induction l generalizing p <;> simp [changeFlags, *]
+  simp only [List.mem_fixedLengthDigits_iff, hlen]
+  refine and_congr Iff.rfl ?_
+  induction w generalizing prev with
+  | nil => simp [changeFlags]
+  | cons b w ih =>
+    have hswap : Equiv.swap 0 prev b < 2 ↔ b < 2 := by
+      by_cases h0 : b = 0
+      · simp [h0, hp]
+      by_cases hprev : b = prev
+      · simp [hprev, hp]
+      rw [Equiv.swap_apply_of_ne_of_ne h0 hprev]
+    simp only [changeFlags, List.forall_mem_cons, hswap]
+    exact and_congr_right (ih b)
+
+-- A 0 sentinel makes the first change an ascent; a 1 sentinel makes the second an ascent.
+private theorem ascents_eq_half_changes (w : List ℕ) (prev : ℕ) (hp : prev < 2)
+    (hw : ∀ b ∈ w, b < 2) :
+    wordAscents (prev :: w) = ((changeFlags prev w).count 1 + (1 - prev)) / 2 := by
+  induction w generalizing prev with
+  | nil => simp [wordAscents, changeFlags]; omega
+  | cons b w ih =>
+    rw [List.forall_mem_cons] at hw
+    have htail := ih b hw.1 hw.2
+    have hb := hw.1
+    interval_cases prev <;> interval_cases b <;>
+      simp [wordAscents, changeFlags] at htail ⊢ <;> omega
+
+-- A binary word with k ones is specified by a k-element set of positions.
+private theorem card_fixedLengthBits_count (n k : ℕ) :
+    ((List.fixedLengthDigits (b := 2) (by decide) n).filter (fun w => w.count 1 = k)).card =
+      n.choose k := by
+  let word (s : Finset (Fin n)) : List ℕ := List.ofFn fun i => if i ∈ s then 1 else 0
+  have hcard (s : Finset (Fin n)) : (word s).count 1 = s.card := by
+    dsimp only [word]
+    rw [List.count_ofFn]
+    congr 1
+    ext i
+    simp
+  rw [← show ((Finset.univ : Finset (Fin n)).powersetCard k).card = n.choose k by simp]
+  symm
+  refine Finset.card_bij (fun s _ => word s) ?_ ?_ ?_
+  · intro s hs
+    refine Finset.mem_filter.mpr ⟨(List.mem_fixedLengthDigits_iff _).mpr ⟨by simp [word], ?_⟩, ?_⟩
+    · simp only [word, List.forall_mem_ofFn_iff]
+      intro i
+      split <;> decide
+    · rw [hcard]
+      exact (Finset.mem_powersetCard.mp hs).2
+  · intro s _ t _ h
+    have heq := List.ofFn_injective h
+    ext i
+    have hi := congrFun heq i
+    by_cases hs : i ∈ s <;> by_cases ht : i ∈ t <;> simp_all
+  · intro w hw
+    obtain ⟨hw, hcount⟩ := Finset.mem_filter.mp hw
+    obtain ⟨hlen, hbits⟩ := (List.mem_fixedLengthDigits_iff _).mp hw
+    subst n
+    let s : Finset (Fin w.length) := Finset.univ.filter fun i => w.get i = 1
+    have hs : word s = w := calc
+      word s = List.ofFn w.get := by
+        unfold word
+        congr 1
+        funext i
+        have hi := hbits (w.get i) (List.get_mem w i)
+        have hb : w.get i = 0 ∨ w.get i = 1 := by omega
+        rcases hb with h | h <;>
+          simp only [s, Finset.mem_filter, Finset.mem_univ, true_and, h, zero_ne_one,
+            ite_false, ite_true]
+      _ = w := List.ofFn_get w
+    exact ⟨s, Finset.mem_powersetCard.mpr ⟨Finset.subset_univ _, by rw [← hcard, hs, hcount]⟩, hs⟩
+
+/-- **Row sums of generalized Rascal numbers.** Write $R^{(j)}_{n,k}$ for the number of binary
+words of length $n$ with exactly $k$ ones and at most $j$ ascents (positions where a $0$ is
+immediately followed by a $1$). For all natural numbers $j$ and $n$,
+$\sum_{k=0}^{n} R^{(j)}_{n,k} = \sum_{k=0}^{2j+1} \binom{n}{k}$, where $\binom{n}{k} = 0$ for
+$k > n$.
+
+Source: Amelia Gibbs and Brian K. Miceli, "Two Combinatorial
+Interpretations of Rascal Numbers", Theorem 20. -/
+theorem sum_rascalGen_row (j n : ℕ) :
+    ∑ k ∈ Finset.range (n + 1), (rascalGen j k n : ℤ) =
+      ∑ k ∈ Finset.range (2 * j + 2), (Nat.choose n k : ℤ) := by
+  let words := List.fixedLengthDigits (b := 2) (by decide) n
+  let flags := words.filter (fun w => w.count 1 ≤ 2 * j + 1)
+  have hflags : (words.filter (wordAscents · ≤ j)).card = flags.card := by
+    apply Finset.card_bijective (changeFlags 1) (changeFlagsEquiv 1).bijective
+    intro w
+    simp only [flags, Finset.mem_filter, words, changeFlags_mem_iff n w 1 (by decide)]
+    apply and_congr_right
+    intro hw
+    have hbits := ((List.mem_fixedLengthDigits_iff _).mp hw).2
+    have hchanges := ascents_eq_half_changes w 1 (by decide) hbits
+    have hsentinel : wordAscents (1 :: w) = wordAscents w := by
+      cases w with
+      | nil => rfl
+      | cons b w =>
+        have hb := hbits b (by simp)
+        simp [wordAscents, show ¬ 1 < b by omega]
+    rw [hsentinel] at hchanges
+    omega
+  have hcount : flags.card = ∑ k ∈ Finset.range (2 * j + 2), n.choose k := by
+    calc
+      flags.card = ∑ k ∈ Finset.range (2 * j + 2),
+          (flags.filter (fun w => w.count 1 = k)).card := by
+        apply Finset.card_eq_sum_card_fiberwise
+        intro w hw
+        exact Finset.mem_range.mpr (Nat.lt_succ_of_le (Finset.mem_filter.mp hw).2)
+      _ = _ := by
+        apply Finset.sum_congr rfl
+        intro k hk
+        rw [← card_fixedLengthBits_count n k]
+        congr 1
+        ext w
+        simp only [flags, words, Finset.mem_filter, Finset.mem_range, and_assoc] at hk ⊢
+        exact and_congr_right (fun _ => and_iff_right_of_imp (fun h => by omega))
+  rw [← Nat.cast_sum, ← Nat.cast_sum, sum_rascalGen_eq_card, hflags, hcount]
 
 /-- **A power-of-two row sum of generalized Rascal numbers.** Write $R^{(j)}_{n,k}$ for the number
 of binary words of length $n$ with exactly $k$ ones and at most $j$ ascents (positions where a
