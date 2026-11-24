@@ -10,7 +10,7 @@ Let $(\Omega, \mathcal F, (\mathcal F_t)_{t=0}^T, \mathbb P)$ be a filtered prob
 
 This page becomes ready once:
 
-- the equivalence of global and one-period no arbitrage, and the pasting of the conditional densities, are stated (proof prerequisite; not yet stated)
+- the equivalence of global and one-period no arbitrage, and the pasting of the conditional densities, are stated (proof prerequisite)
 
 ## Sources
 

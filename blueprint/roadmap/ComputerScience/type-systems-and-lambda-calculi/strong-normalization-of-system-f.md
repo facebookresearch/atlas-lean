@@ -6,8 +6,8 @@ In Girard's System F, the second-order polymorphic lambda calculus with type abs
 
 This page becomes ready once these prerequisites are stated:
 
-- System F terms, typing and one-step reduction (statement prerequisite; not yet stated)
-- Confluence (the Church–Rosser property) of System F reduction, which with strong normalization gives the uniqueness of normal forms (proof prerequisite; not yet stated)
+- System F terms, typing and one-step reduction (statement prerequisite)
+- Confluence (the Church–Rosser property) of System F reduction, which with strong normalization gives the uniqueness of normal forms (proof prerequisite)
 
 ## Sources
 

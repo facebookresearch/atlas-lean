@@ -10,7 +10,7 @@ so that under $Q = Z \cdot \mathbb P$, an equivalent probability measure with bo
 
 This page becomes ready once:
 
-- the measurable-selection and closedness argument for the set of attainable conditional gains on a general probability space is stated (statement prerequisite; not yet stated)
+- the measurable-selection and closedness argument for the set of attainable conditional gains on a general probability space is stated (statement prerequisite)
 
 ## Sources
 

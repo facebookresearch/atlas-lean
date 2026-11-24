@@ -15,7 +15,7 @@ holds up to maturity, with $V_T = \lim_{t \uparrow T} C(t, S_t) = (S_T - K)^+$ a
 
 This page becomes ready once:
 
-- Itô's formula for $C(t, S_t)$ and the Black–Scholes partial differential equation on $[0, T) \times (0, \infty)$ are stated (statement prerequisite; not yet stated)
+- Itô's formula for $C(t, S_t)$ and the Black–Scholes partial differential equation on $[0, T) \times (0, \infty)$ are stated (statement prerequisite)
 - the extension of the gains identity to $t = T$, through the limit of the stochastic integral and of $C(t, S_t)$ as $t \uparrow T$, is established (proof obligation)
 
 ## Sources

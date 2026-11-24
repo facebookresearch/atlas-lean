@@ -10,7 +10,7 @@ The difficulties are identified only up to a common shift, so normalize $\sum_i 
 
 This page becomes ready once:
 
-- the Rasch family and the conditional likelihood given raw scores are fixed as a statement prerequisite (statement prerequisite; not yet stated)
+- the Rasch family and the conditional likelihood given raw scores are fixed as a statement prerequisite (statement prerequisite)
 - Fischer's condition is proved by strict concavity of the conditional log-likelihood on the normalized parameter space and coercivity under strong connectivity (proof obligation)
 
 ## Sources

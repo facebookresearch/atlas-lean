@@ -6,7 +6,7 @@ Let $S$ be a locally bounded $\mathbb R^d$-valued semimartingale on a filtered p
 
 This page becomes ready once:
 
-- semimartingales, the stochastic integral $H \cdot S$ and local martingales are stated as prerequisites (statement prerequisite; not yet stated)
+- semimartingales, the stochastic integral $H \cdot S$ and local martingales are stated as prerequisites (statement prerequisite)
 
 ## Sources
 

@@ -22,7 +22,7 @@ These are estimators derived under the stated assumptions with approximations fo
 
 This page becomes ready once:
 
-- the exact process-variance formula $\operatorname{Var}(C_{i,n} \mid \mathcal D) = C_{i,n-i} \sum_{k=n-i}^{n-1} \bigl(\prod_{j=n-i}^{k-1} f_j\bigr)\, \sigma_k^2 \bigl(\prod_{j=k+1}^{n-1} f_j^2\bigr)$ and the decomposition of the conditional mean squared error of prediction into process variance plus squared estimation error are stated as results (statement prerequisite; not yet stated)
+- the exact process-variance formula $\operatorname{Var}(C_{i,n} \mid \mathcal D) = C_{i,n-i} \sum_{k=n-i}^{n-1} \bigl(\prod_{j=n-i}^{k-1} f_j\bigr)\, \sigma_k^2 \bigl(\prod_{j=k+1}^{n-1} f_j^2\bigr)$ and the decomposition of the conditional mean squared error of prediction into process variance plus squared estimation error are stated as results (statement prerequisite)
 - unbiasedness of $\hat f_k$ and $\hat\sigma_k^2$ given the past, and the approximation used for the parameter-error term, are stated as separate results
 
 ## Sources
