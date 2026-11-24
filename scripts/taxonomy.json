@@ -12260,6 +12260,7 @@
   "MathlibExt/NumberTheory/GibonacciPolynomialSquareSum": {"to": "NumberTheory/linear-recurrences/fibonacci-polynomials", "title": "Sums of powers of gibonacci polynomials"},
   "MathlibExt/NumberTheory/GiugaNumber": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Giuga numbers"},
   "MathlibExt/NumberTheory/GobelNonIntegrality": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Göbel sequences"},
+  "MathlibExt/NumberTheory/GobelResidueExponentPeriod": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Göbel sequences"},
   "MathlibExt/NumberTheory/GobelSequence": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Göbel sequences"},
   "MathlibExt/NumberTheory/GobelSequenceRoots": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Göbel sequences"},
   "MathlibExt/NumberTheory/GobelSequenceSomosBound": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Göbel sequences"},
