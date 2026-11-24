@@ -1,6 +1,6 @@
 # Cut-off symbolic paths have full cost
 
-In bounded symbolic execution with budget $k$, as in [soundness of bounded symbolic execution](soundness-of-bounded-symbolic-execution.md), every cut-off [symbolic path](symbolic-path.md) has cost exactly $k$.
+In bounded symbolic execution with budget $k$, as in [soundness of bounded symbolic execution](soundness-of-bounded-symbolic-execution.md), every cut-off symbolic path has cost exactly $k$.
 
 ## Sources
 

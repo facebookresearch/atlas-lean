@@ -1,6 +1,6 @@
 # Substitution lemma for arithmetic expressions
 
-For every [symbolic store](symbolic-store.md) $\sigma$, arithmetic expression $e$ and state $s$, evaluating the [substitution](substitution-into-arithmetic-expressions.md) $\sigma(e)$ in $s$ gives the value of $e$ in the state $x \mapsto [\![\sigma(x)]\!]\,s$.
+For every symbolic store $\sigma$, a map from the variables of IMP to arithmetic expressions over the initial state, arithmetic expression $e$ and state $s$, evaluating the substitution $\sigma(e)$, which replaces every variable $x$ of $e$ by $\sigma(x)$, in $s$ gives the value of $e$ in the state $x \mapsto [\![\sigma(x)]\!]\,s$.
 
 ## Sources
 

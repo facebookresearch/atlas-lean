@@ -1,6 +1,6 @@
 # Bounded completeness of symbolic execution
 
-In bounded symbolic execution with budget $k$ of an IMP command $c$, as in [soundness of bounded symbolic execution](soundness-of-bounded-symbolic-execution.md): if $c$ runs from $s$ to $f$ entering loop bodies $n \le k$ times, some terminated [symbolic path](symbolic-path.md) has guard true at $s$, store evaluating to $f$ at $s$, and cost $n$.
+In bounded symbolic execution with budget $k$ of an IMP command $c$, as in [soundness of bounded symbolic execution](soundness-of-bounded-symbolic-execution.md): if $c$ runs from $s$ to $f$ entering loop bodies $n \le k$ times, some terminated symbolic path has guard true at $s$, store evaluating to $f$ at $s$, and cost $n$.
 
 ## Sources
 

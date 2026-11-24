@@ -1,6 +1,6 @@
 # Symbolic execution leaves cover every initial state
 
-In bounded symbolic execution with budget $k$ of an IMP command $c$, as in [soundness of bounded symbolic execution](soundness-of-bounded-symbolic-execution.md), every initial state satisfies the guard of some leaf, a terminated or a cut-off [symbolic path](symbolic-path.md).
+In bounded symbolic execution with budget $k$ of an IMP command $c$, as in [soundness of bounded symbolic execution](soundness-of-bounded-symbolic-execution.md), every initial state satisfies the guard of some leaf, a terminated or a cut-off symbolic path.
 
 ## Sources
 

@@ -1,6 +1,6 @@
 # Budget exhaustion without a terminated path
 
-In bounded symbolic execution with budget $k$ of an IMP command $c$, as in [soundness of bounded symbolic execution](soundness-of-bounded-symbolic-execution.md): if no terminated [symbolic path](symbolic-path.md) has a guard true at the initial state $s$, then some cut-off path has a guard true at $s$, and every execution of $c$ from $s$ enters loop bodies more than $k$ times.
+In bounded symbolic execution with budget $k$ of an IMP command $c$, as in [soundness of bounded symbolic execution](soundness-of-bounded-symbolic-execution.md): if no terminated symbolic path has a guard true at the initial state $s$, then some cut-off path has a guard true at $s$, and every execution of $c$ from $s$ enters loop bodies more than $k$ times.
 
 ## Sources
 
