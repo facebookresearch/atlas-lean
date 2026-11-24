@@ -57,10 +57,8 @@ def freshState (l r : ℕ) : ParserState l r :=
 /-- **Reset rule, one step.** From every state, `start` moves to the fresh candidate state
 and emits nothing. -/
 theorem step_start (l r : ℕ) (taps : BitVec r) (q : ParserState l r) :
-    (frameParser l r taps).step q FrameToken.start = (freshState l r, []) := by
-  cases q with
-  | mk phase reg count =>
-      cases phase <;> rfl
+    (frameParser l r taps).step q FrameToken.start = (freshState l r, []) :=
+  frame_step_start l r taps q
 
 /-- **Reset rule, runs.** After `start`, the run from any state coincides, in final state and
 in output, with the run from the fresh candidate state: the unfinished frame's register,
@@ -76,35 +74,6 @@ theorem run_start_cons (l r : ℕ) (taps : BitVec r) (q : ParserState l r)
   · simp only [SequentialTransducer.runOut_cons, step_start,
       List.nil_append]
 
-private theorem satCount_step (l r n : ℕ) :
-    satCount l r (min n (l + r + 1) + 1) = satCount l r (n + 1) := by
-  simp only [satCount, Fin.mk.injEq]
-  omega
-
-private theorem satCount_val_lt (l r n : ℕ) :
-    (satCount l r n).val < l ↔ n < l := by
-  change min n (l + r + 1) < l ↔ n < l
-  omega
-
-private theorem step_inBody_bit (l r : ℕ) (taps : BitVec r)
-    (reg : BitVec r) (n : ℕ) (b : Bool) :
-    (frameParser l r taps).step
-        { phase := ParserPhase.inBody, register := reg, count := satCount l r n }
-        (FrameToken.bit b) =
-      ({ phase := ParserPhase.inBody, register := stepRegister r taps reg b,
-         count := satCount l r (n + 1) },
-       if n < l then [b] else []) := by
-  have hcount : satCount l r ((satCount l r n).val + 1) = satCount l r (n + 1) :=
-    satCount_step l r n
-  have hcond : (satCount l r n).val < l ↔ n < l := satCount_val_lt l r n
-  have h : (frameParser l r taps).step
-        { phase := ParserPhase.inBody, register := reg, count := satCount l r n }
-        (FrameToken.bit b) =
-        ({ phase := ParserPhase.inBody, register := stepRegister r taps reg b,
-           count := satCount l r ((satCount l r n).val + 1) },
-         if (satCount l r n).val < l then [b] else []) := rfl
-  simp only [h, hcount, hcond]
-
 private theorem runState_inBody_bits (l r : ℕ) (taps : BitVec r)
     (reg : BitVec r) (n : ℕ) (body : List Bool) :
     (frameParser l r taps).runState
@@ -113,20 +82,7 @@ private theorem runState_inBody_bits (l r : ℕ) (taps : BitVec r)
       { phase := ParserPhase.inBody,
         register := (serialLFSR r taps).runState reg body,
         count := satCount l r (n + body.length) } := by
-  induction body generalizing reg n with
-  | nil => rfl
-  | cons b bs ih =>
-      simp only [List.map_cons, List.length_cons,
-        SequentialTransducer.runState_cons, step_inBody_bit, ih]
-      have hmealy : (serialLFSR r taps).runState reg (b :: bs) =
-          (serialLFSR r taps).runState (stepRegister r taps reg b) bs := rfl
-      have hlen : n + 1 + bs.length = n + (bs.length + 1) := by omega
-      rw [hmealy, hlen]
-
-private theorem satCount_val_eq (l r n : ℕ) :
-    (satCount l r n).val = l + r ↔ n = l + r := by
-  change min n (l + r + 1) = l + r ↔ n = l + r
-  constructor <;> intro h <;> omega
+  rw [run_bits_inBody_state, satCount_add]
 
 private theorem step_nostart_failed (l r : ℕ) (taps : BitVec r)
     (q : ParserState l r) (a : FrameToken)
@@ -183,24 +139,9 @@ private theorem runOut_inBody_bits (l r : ℕ) (taps : BitVec r)
     (frameParser l r taps).runOut
         { phase := ParserPhase.inBody, register := reg, count := satCount l r n }
         (body.map FrameToken.bit) = body.take (l - n) := by
-  induction body generalizing reg n with
-  | nil =>
-      simp only [List.map_nil, SequentialTransducer.runOut_nil]
-      cases h : l - n
-      · rfl
-      · rfl
-  | cons b bs ih =>
-      simp only [List.map_cons, SequentialTransducer.runOut_cons,
-        step_inBody_bit]
-      rw [ih]
-      by_cases hn : n < l
-      · rw [ite_eq_left hn, List.singleton_append]
-        have hln : l - n = (l - (n + 1)) + 1 := by omega
-        rw [hln, List.take_succ_cons]
-      · rw [ite_eq_right hn, List.nil_append]
-        have hz1 : l - (n + 1) = 0 := by omega
-        have hz2 : l - n = 0 := by omega
-        rw [hz1, hz2, List.take_zero, List.take_zero]
+  rw [run_bits_inBody_out, satCount_val]
+  congr 1
+  omega
 
 /-- **Length counter.** Reading body bits from the fresh state stays inside the body, with
 the serial register of the bits read and the saturating count of how many were read. -/
@@ -228,7 +169,7 @@ theorem runState_freshState_frame_phase (l r : ℕ) (taps : BitVec r) (body : Li
           count := satCount l r body.length } := rfl
   rw [SequentialTransducer.runState_append, runState_freshState_bits,
     hfull]
-  simp only [satCount_val_eq]
+  simp only [satCount_val_eq_iff]
 
 /-! ### Rejection clauses -/
 

@@ -160,11 +160,6 @@ theorem monicModulus_natDegree {s : Nat} (g : BitVec s) : g.monicModulus.natDegr
       (g.toBoolListLE.map fun b => if b then (1 : ZMod 2) else 0))).trans
     (Polynomial.natDegree_X_pow s)
 
-private theorem if_decide_eq_one_zmod_two (c : ZMod 2) :
-    (if decide (c = 1) then 1 else 0) = c := by
-  revert c
-  decide
-
 /-- The taps word of a monic binary polynomial recovers it as the canonical
 modulus `X^s + taps`: `(f.toBitVec s).monicModulus = f` whenever `f.Monic` and
 `f.natDegree = s`. -/
@@ -178,7 +173,7 @@ theorem monicModulus_toBitVec {s : Nat} (f : Polynomial (ZMod 2))
   · rw [ite_eq_right hn.ne, zero_add, Polynomial.toBitVec,
       BitVec.getLsbD_cast, BitVec.getLsbD_ofBoolListLE,
       List.getD_eq_getElem _ _ (by simpa using hn), List.getElem_ofFn,
-      if_decide_eq_one_zmod_two]
+      Polynomial.if_decide_eq_one_zmod_two]
   · by_cases heq : n = s
     · subst n
       rw [ite_eq_left rfl, BitVec.getLsbD_of_ge _ _ le_rfl]

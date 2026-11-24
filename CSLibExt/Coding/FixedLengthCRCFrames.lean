@@ -142,14 +142,17 @@ def encodeFrame (r : ℕ) (taps : BitVec r) (bits : List Bool) :
 
 /-! ### Helper lemmas -/
 
-private theorem satCount_val (l r n : ℕ) : (satCount l r n).val = min n (l + r + 1) :=
+/-- The saturating count is `min n (l + r + 1)`. -/
+theorem satCount_val (l r n : ℕ) : (satCount l r n).val = min n (l + r + 1) :=
   rfl
 
 private theorem satCount_zero_val (l r : ℕ) : (satCount l r 0).val = 0 := by
   rw [satCount_val]
   omega
 
-private theorem satCount_add (l r n m : ℕ) :
+/-- Adding `m` to a saturated count and saturating again gives the saturated count of
+`n + m`. -/
+theorem satCount_add (l r n m : ℕ) :
     satCount l r ((satCount l r n).val + m) = satCount l r (n + m) := by
   apply Fin.ext
   simp only [satCount_val]
@@ -161,19 +164,23 @@ private theorem satCount_self (l r : ℕ) (c : Fin (l + r + 2)) : satCount l r c
   rw [satCount_val]
   omega
 
-private theorem satCount_val_eq_iff (l r n : ℕ) :
+/-- The saturating count equals the frame length `l + r` exactly when the plain count does. -/
+theorem satCount_val_eq_iff (l r n : ℕ) :
     (satCount l r n).val = l + r ↔ n = l + r := by
   rw [satCount_val]
   constructor <;> intro h <;> omega
 
-private theorem frame_step_start (l r : ℕ) (taps : BitVec r) (q : ParserState l r) :
+/-- From every state, `start` enters a fresh body with the zero register and emits nothing. -/
+theorem frame_step_start (l r : ℕ) (taps : BitVec r) (q : ParserState l r) :
     (frameParser l r taps).step q FrameToken.start =
       ({ phase := ParserPhase.inBody, register := 0#r, count := satCount l r 0 }, []) := by
   cases q with
   | mk phase reg cnt =>
       cases phase <;> simp [frameParser]
 
-private theorem frame_step_bit_inBody (l r : ℕ) (taps : BitVec r)
+/-- Inside a body, a bit steps the serial register, advances the saturating count, and is
+emitted while fewer than `l` bits have been read. -/
+theorem frame_step_bit_inBody (l r : ℕ) (taps : BitVec r)
     (reg : BitVec r) (c : Fin (l + r + 2)) (b : Bool) :
     (frameParser l r taps).step
         { phase := ParserPhase.inBody, register := reg, count := c }
@@ -215,7 +222,9 @@ private theorem serial_step_fst (r : ℕ) (taps : BitVec r) (w : BitVec r)
     (b : Bool) :
     ((serialLFSR r taps).step w b).1 = stepRegister r taps w b := rfl
 
-private theorem run_bits_inBody_state (l r : ℕ) (taps : BitVec r)
+/-- Reading body bits inside a body runs the serial register over them and adds their
+number to the saturating count. -/
+theorem run_bits_inBody_state (l r : ℕ) (taps : BitVec r)
     (reg : BitVec r) (c : Fin (l + r + 2)) (body : List Bool) :
     (frameParser l r taps).runState
         { phase := ParserPhase.inBody, register := reg, count := c }
@@ -243,7 +252,8 @@ private theorem run_bits_inBody_state (l r : ℕ) (taps : BitVec r)
         omega
       rw [hMealy, satCount_add, hLen]
 
-private theorem run_bits_inBody_out (l r : ℕ) (taps : BitVec r)
+/-- Reading body bits inside a body emits those of them that fall among the first `l`. -/
+theorem run_bits_inBody_out (l r : ℕ) (taps : BitVec r)
     (reg : BitVec r) (c : Fin (l + r + 2)) (body : List Bool) :
     (frameParser l r taps).runOut
         { phase := ParserPhase.inBody, register := reg, count := c }

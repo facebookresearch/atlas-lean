@@ -77,12 +77,14 @@ def runRegister (r : ℕ) (taps : BitVec r) (bits : List Bool) : BitVec r :=
 def finalRegister (r : ℕ) (taps : BitVec r) (bits : List Bool) : BitVec r :=
   runRegister r taps (bits ++ List.replicate r false)
 
-/-! ### Private helpers -/
+/-! ### Message polynomial recurrences -/
 
-private theorem messagePoly_nil : messagePoly [] = 0 := by
+/-- The empty payload has the zero message polynomial. -/
+theorem messagePoly_nil : messagePoly [] = 0 := by
   simp [messagePoly]
 
-private theorem messagePoly_cons (b : Bool) (bits : List Bool) :
+/-- Prepending a bit adds it at the top position `X ^ bits.length`. -/
+theorem messagePoly_cons (b : Bool) (bits : List Bool) :
     messagePoly (b :: bits) = bitPoly b * Polynomial.X ^ bits.length + messagePoly bits := by
   unfold messagePoly
   simp only [List.length_cons, Fin.sum_univ_succ]
@@ -94,7 +96,8 @@ private theorem messagePoly_cons (b : Bool) (bits : List Bool) :
       omega
     rw [List.get_cons_succ', Fin.val_succ, hexp]
 
-private theorem messagePoly_append (a b : List Bool) :
+/-- Concatenation shifts the first block past the second: `m(a ++ b) = m(a) * X ^ |b| + m(b)`. -/
+theorem messagePoly_append (a b : List Bool) :
     messagePoly (a ++ b) = messagePoly a * Polynomial.X ^ b.length + messagePoly b := by
   induction a generalizing b with
   | nil => simp [messagePoly_nil]
@@ -103,17 +106,14 @@ private theorem messagePoly_append (a b : List Bool) :
       pow_add]
     ring
 
-private theorem messagePoly_replicate_false (n : ℕ) :
+/-- An all-zero payload of any length has the zero message polynomial. -/
+theorem messagePoly_replicate_false (n : ℕ) :
     messagePoly (List.replicate n false) = 0 := by
   induction n with
   | zero => exact messagePoly_nil
   | succ n ih => rw [List.replicate_succ, messagePoly_cons, ih]; simp [bitPoly]
 
-private theorem degree_toPolynomial_lt (r : ℕ) (w : BitVec r) :
-    w.toPolynomial.degree < r := by
-  rw [Polynomial.degree_lt_iff_coeff_zero]
-  intro m hm
-  simp [BitVec.coeff_toPolynomial, BitVec.getLsbD_of_ge w m hm]
+/-! ### Private helpers -/
 
 private theorem degree_monicModulus (r : ℕ) (taps : BitVec r) :
     taps.monicModulus.degree = r := by
@@ -174,7 +174,7 @@ theorem toPolynomial_stepRegister (r : ℕ) (taps w : BitVec r) (b : Bool) :
     have hdeg : (stepRegister (r + 1) taps w b).toPolynomial.degree <
         taps.monicModulus.degree := by
       rw [degree_monicModulus]
-      exact degree_toPolynomial_lt _ _
+      exact BitVec.degree_toPolynomial_lt _
     have hself := (Polynomial.modByMonic_eq_self_iff hmod).mpr hdeg
     have hdvd : taps.monicModulus ∣ (stepRegister (r + 1) taps w b).toPolynomial -
         (w.toPolynomial * Polynomial.X + bitPoly b) := by
@@ -199,7 +199,7 @@ private theorem toPolynomial_runState_from (r : ℕ) (taps : BitVec r) (q : BitV
     have hmod := BitVec.monicModulus_monic taps
     have hdeg : q.toPolynomial.degree < taps.monicModulus.degree := by
       rw [degree_monicModulus]
-      exact degree_toPolynomial_lt _ _
+      exact BitVec.degree_toPolynomial_lt _
     have hself := (Polynomial.modByMonic_eq_self_iff hmod).mpr hdeg
     have hnil : (serialLFSR r taps).runState q [] = q := rfl
     have hexp : ([] : List Bool).length = 0 := rfl
