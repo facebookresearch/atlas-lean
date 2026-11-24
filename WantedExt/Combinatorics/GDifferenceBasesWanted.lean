@@ -70,20 +70,6 @@ public theorem_wanted singer_product_diffBasis (g q v : ℕ) (a : Fin (q + 1) �
       g ≤ subRepCount
         ((Finset.univ ×ˢ B).image fun ib : Fin (q + 1) × ℤ => a ib.1 + (q ^ 2 + q + 1) * ib.2) s
 
-/-- **Products of difference bases.** Let $G_1, G_2$ be abelian groups, $g_1, g_2 \in \mathbb{N}$,
-and $A_1 \subseteq G_1$, $A_2 \subseteq G_2$ finite sets. If every element of $G_1$ equals $a - a'$
-for at least $g_1$ ordered pairs $(a, a') \in A_1 \times A_1$, and every element of $G_2$ equals
-$a - a'$ for at least $g_2$ ordered pairs $(a, a') \in A_2 \times A_2$, then every element of
-$G_1 \times G_2$ equals $z - z'$ for at least $g_1 g_2$ ordered pairs
-$(z, z') \in (A_1 \times A_2) \times (A_1 \times A_2)$.
-
-Source: Eric Schmutz and Michael Tait, *Cardinalities of g-Difference Sets*, INTEGERS 25
-(2025), Article A77, Lemma 5 (`integers-2025-A77-lem-5`). -/
-public theorem_wanted subRepCount_prod_ge {G₁ G₂ : Type*} [AddCommGroup G₁] [AddCommGroup G₂]
-    [DecidableEq G₁] [DecidableEq G₂] (g₁ g₂ : ℕ) (A₁ : Finset G₁) (A₂ : Finset G₂)
-    (h₁ : ∀ x, g₁ ≤ subRepCount A₁ x) (h₂ : ∀ x, g₂ ≤ subRepCount A₂ x) :
-    ∀ x : G₁ × G₂, g₁ * g₂ ≤ subRepCount (A₁ ×ˢ A₂) x
-
 /-- **Difference bases of the square of a finite field.** For an abelian group $G$ let
 $\eta_1(G)$ be the least size of a set $A \subseteq G$ such that every element of $G$ is a
 difference $a - a'$ of two elements of $A$. If $K$ is a finite field with $q$ elements whose

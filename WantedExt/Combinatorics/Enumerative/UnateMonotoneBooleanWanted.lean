@@ -70,19 +70,6 @@ public theorem_wanted card_unate_boolFun_relations (n : ℕ) :
         ≤ 2 ^ n * Nat.card {f : (Fin n → Bool) → Bool //
             Monotone f ∧ 2 * boolFunWeight f = 2 ^ n}
 
-/-- **Monotone concatenations of Boolean functions (Bakoev).** Let $g$ and $h$ be Boolean
-functions on $n$ variables, and let $g \parallel h$ be their concatenation, the function on
-$n + 1$ variables that equals $g$ of the remaining variables when its first variable is $0$ and
-$h$ of them when it is $1$. Then $g \parallel h$ is monotone if and only if $g$ and $h$ are both
-monotone and $g(x) \le h(x)$ for every $x \in \{0,1\}^n$.
-
-Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
-under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
-Sequences 28 (2025), Article 25.3.4, Proposition 4 (`jis-2025-25.3.4-prop-4`),
-quoting Bakoev. -/
-public theorem_wanted monotone_boolFunConcat_iff {n : ℕ} (g h : (Fin n → Bool) → Bool) :
-    Monotone (boolFunConcat g h) ↔ Monotone g ∧ Monotone h ∧ g ≤ h
-
 /-- **Unateness of a concatenation.** Let $g$ and $h$ be $n$-variable Boolean functions and let
 $g \| h$ be their concatenation, the $(n+1)$-variable function equal to $g$ of the remaining
 variables when the first variable is $0$ and to $h$ of them when it is $1$. Then $g \| h$ is
