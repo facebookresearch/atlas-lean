@@ -81,7 +81,7 @@ diagram, `l1 = λ₂₃₅` and the first coordinate is `²⁰⁷Pb*/²³⁵U`, 
 noncomputable def concordiaPoint (l1 l2 t : ℝ) : ℝ × ℝ :=
   (Real.exp (l1 * t) - 1, Real.exp (l2 * t) - 1)
 
-/-- The first concordia coordinate is strictly increasing on nonnegative time. -/
+/-- For `l1 > 0`, the first concordia coordinate is strictly increasing on nonnegative time. -/
 theorem concordia_first_strictMonoOn {l1 l2 : ℝ} (h1 : 0 < l1) :
     StrictMonoOn (fun t => (concordiaPoint l1 l2 t).1) (Set.Ici 0) := by
   intro a _ b _ hab
@@ -91,7 +91,8 @@ theorem concordia_first_strictMonoOn {l1 l2 : ℝ} (h1 : 0 < l1) :
   have he : Real.exp (l1 * a) < Real.exp (l1 * b) := Real.exp_lt_exp.mpr h
   exact sub_lt_sub_right he 1
 
-/-- The second concordia coordinate is strictly increasing on nonnegative time. -/
+/-- For `l2 > 0`, the second concordia coordinate is strictly increasing on nonnegative
+time. -/
 theorem concordia_second_strictMonoOn {l1 l2 : ℝ} (h2 : 0 < l2) :
     StrictMonoOn (fun t => (concordiaPoint l1 l2 t).2) (Set.Ici 0) := by
   intro a _ b _ hab
@@ -123,7 +124,8 @@ theorem concordia_injectiveOn {l1 l2 : ℝ} (h1 : 0 < l1) (_h2 : 0 < l2)
     Set.InjOn (concordiaPoint l1 l2) (Set.Ici 0) :=
   concordia_injectiveOn_of_first_pos h1
 
-/-- Time is recovered from the first concordia coordinate by the logarithm. -/
+/-- For `l1 > 0`, time is recovered from the first concordia coordinate `x` by the logarithm:
+`log (x + 1) / l1 = t`. -/
 theorem concordia_recover_time {l1 l2 : ℝ} (h1 : 0 < l1) (t : ℝ) :
     Real.log ((concordiaPoint l1 l2 t).1 + 1) / l1 = t := by
   have h : (concordiaPoint l1 l2 t).1 + 1 = Real.exp (l1 * t) := by
