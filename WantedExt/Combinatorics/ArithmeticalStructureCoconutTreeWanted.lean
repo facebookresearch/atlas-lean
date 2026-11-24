@@ -14,6 +14,7 @@ public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Set.Card
 public import Mathlib.Order.Interval.Finset.Nat
 public import MathlibExt.Combinatorics.ArithmeticalStructureCoconutTree
+public import MathlibExt.Combinatorics.ArithmeticalStructureStar
 public import MathlibExt.Combinatorics.EuclideanChainLength
 
 namespace MetaMathlibExt
@@ -162,21 +163,6 @@ public theorem_wanted ncard_arithmeticalStructure_coconutTree_two {p : ℕ} (hp 
           ballotNumber (p - 1) (p + 2 - i) *
             Set.ncard {z : (Fin (i - 2) ⊕ Fin 2 → ℕ) × (Fin (i - 2) ⊕ Fin 2 → ℕ) |
               IsSmoothCoconut (i - 2) 2 z.1 z.2}
-
-/-- **Number of arithmetical structures on stars.** For $s \ge 2$, the number of arithmetical
-structures on the star $CT(1, s)$, a centre joined to $s$ leaves, is
-$$1 + \sum_{j=0}^{s-2} \binom{s}{j} N(s - j),$$
-where $N(t)$ is the number of smooth arithmetical structures on the star $CT(1, t)$.
-
-Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
-Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Corollary 3
-(`integers-2025-A82-cor-3`). -/
-public theorem_wanted ncard_arithmeticalStructure_coconutTree_star {s : ℕ} (hs : 2 ≤ s) :
-    Set.ncard {x : (Fin 1 ⊕ Fin s → ℕ) × (Fin 1 ⊕ Fin s → ℕ) |
-      IsArithmeticalStructure (coconutTree 1 s) x.1 x.2}
-      = 1 + ∑ j ∈ Finset.range (s - 1), s.choose j *
-          Set.ncard {z : (Fin 1 ⊕ Fin (s - j) → ℕ) × (Fin 1 ⊕ Fin (s - j) → ℕ) |
-            IsSmoothCoconut 1 (s - j) z.1 z.2}
 
 /-- **Euclidean chain function under adding multiples.** For natural numbers $x \ge 1$, $y$ and
 $k$, the Euclidean chain function $F$ satisfies $F(x + k y, y) = F(x, y)$ and

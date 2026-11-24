@@ -29,6 +29,7 @@ public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Cotangent
 public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 public import Mathlib.NumberTheory.Harmonic.Defs
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
+public import MathlibExt.Analysis.CentralBinomDigammaSeries
 public import MathlibExt.Analysis.OddWeightedCatalanSeries
 
 namespace MetaMathlibExt
@@ -298,23 +299,6 @@ Nörlund*, INTEGERS 25 (2025), Article A18, Theorem 8, identities (17) and (18)
 public theorem_wanted tsum_four_pow_div_centralBinom_mul_sq_special :
     ∑' n : ℕ, (4 : ℝ) ^ n / (((n + 1).centralBinom : ℝ) * ((n : ℝ) + 1) ^ 2) = Real.pi ^ 2 / 8 ∧
       ∑' n : ℕ, 1 / ((2 * (n : ℝ) + 1) * ((n : ℝ) + 1)) = 2 * Real.log 2
-
-/-- **Digamma evaluation of a central binomial series with a complex binomial parameter.** Let
-$\Gamma$ be the Gamma function and $\psi$ the digamma function, and let $h$ be a complex number
-that is not a nonnegative integer and has $\operatorname{Re} h > -1/2$. Writing $\binom{n}{h}^{-1}$
-for $\Gamma(h+1)\,\Gamma(n-h+1)/n!$, we have
-$$\sum_{n=0}^{\infty} \frac{4^n}{\binom{n}{h} \binom{2(n+1)}{n+1} (n+1)^2} =
-\frac{\pi}{4} \cdot \frac{\psi(h + \tfrac12) - \psi(\tfrac12)}{\sin(\pi h)}.$$
-
-Source: Kunle Adegoke and Robert Frontczak, *Series Associated with a Forgotten Identity of
-Nörlund*, INTEGERS 25 (2025), Article A18, Theorem 8, identity (19)
-(`integers-2025-A18-thm-8`). -/
-public theorem_wanted tsum_four_pow_div_binom_mul_centralBinom_mul_sq {h : ℂ}
-    (hh : ∀ m : ℕ, h ≠ m) (hre : -1 / 2 < h.re) :
-    ∑' n : ℕ, (4 : ℂ) ^ n * (Complex.Gamma (h + 1) * Complex.Gamma (n - h + 1) / n.factorial) /
-        (((n + 1).centralBinom : ℂ) * ((n : ℂ) + 1) ^ 2) =
-      Real.pi / 4 * (Complex.digamma (h + 1 / 2) - Complex.digamma (1 / 2)) /
-        Complex.sin (Real.pi * h)
 
 /-- **A shifted central binomial series.** For every natural number $h$, with
 $H_h = \sum_{j=1}^{h} \frac{1}{j}$ the $h$th harmonic number,
