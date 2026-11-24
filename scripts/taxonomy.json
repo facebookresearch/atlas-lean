@@ -15881,7 +15881,6 @@
   "WantedExt/Topology/HouseWithTwoRoomsWanted": {"to": "Topology/algebraic-topology", "title": "Bing's house with two rooms"},
   "WantedExt/Topology/HurewiczWanted": {"to": "Topology/algebraic-topology", "title": "Hurewicz theorem"},
   "WantedExt/Topology/LinkingWanted": {"to": "Topology/knot-theory", "title": "Knots, links and ambient isotopy"},
-  "WantedExt/Topology/MaciasCoprimeTopologyWanted": {"to": "NumberTheory/primes-primality", "title": "Topological proofs of the infinitude of primes"},
   "WantedExt/Topology/Manifold/ScottishBook29Wanted": {"to": "Topology/manifolds-geometric-topology", "title": "Homeomorphism and diffeomorphism groups of spheres"},
   "WantedExt/Topology/ManolescuTriangulationWanted": {"to": "Topology/manifolds-geometric-topology", "title": "Triangulation conjecture"},
   "WantedExt/Topology/MilnorExoticSphereSevenWanted": {"to": "Topology/manifolds-geometric-topology", "title": "Exotic spheres"},
