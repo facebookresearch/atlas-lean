@@ -64,18 +64,38 @@ def IsFiniteEtale {P Q : TatePair p} (f : P ⟶ Q) : Prop :=
   Module.Finite Q.ring P.ring ∧ Algebra.Etale Q.ring P.ring ∧
     ∀ s : P.ring, s ∈ P.plus ↔ (f.hom.comp Q.plus.subtype).IsIntegralElem s
 
+/-- Standard étale maps of Tate pairs: a rational localization of a finite étale map, up to an
+isomorphism of Tate pairs. -/
+def IsStandardEtale {P Q : TatePair p} (f : P ⟶ Q) : Prop :=
+  ∃ (W : TatePair p) (g : W ⟶ Q) (D : RationalTateModel p W) (e : D.pair.ring ≃+* P.ring),
+    IsFiniteEtale p g ∧ Continuous e ∧ Continuous e.symm ∧
+      (∀ a, a ∈ D.pair.plus ↔ e a ∈ P.plus) ∧
+      f.hom = e.toRingHom.comp (D.map.hom.comp g.hom)
+
+/-- Étale maps of Tate pairs (Scholze, *Étale cohomology of diamonds*, Def. 6.2(ii): locally an
+open embedding followed by a finite étale map): every point `x` of the source has a rational
+neighbourhood `V`, and `f x` a rational neighbourhood `U` of the target, such that `f` restricts to
+a standard étale map from `V` to `U`. -/
+def IsEtale {P Q : TatePair p} (f : P ⟶ Q) : Prop :=
+  ∀ x : P.Space, ∃ (V : RationalTateModel p P) (U : RationalTateModel p Q) (g : V.pair ⟶ U.pair),
+    x ∈ V.domain ∧ f.spa p x ∈ U.domain ∧
+      (show V.pair ⟶ P from V.map) ≫ f = g ≫ (show U.pair ⟶ Q from U.map) ∧
+      IsStandardEtale p g
+
 def CompatiblePoints {I : Type} [SmallCategory I] (D : I ⥤ TatePair p) :=
   {x : ∀ i, (D.obj i).Space |
     ∀ {i j} (f : i ⟶ j), (D.map f).spa p (x i) = x j}
 
-/-- Actual complete-ring and all-rank point limits of original finite-étale charts. -/
+/-- Actual complete-ring and all-rank point limits of étale charts with finite étale transition
+maps. The stages are only étale over the target, not finite étale: rational localizations are
+pro-étale. -/
 structure ProEtalePresentation {P Q : TatePair p} (f : P ⟶ Q) where
   index : Type
   [category : SmallCategory index]
   [cofiltered : IsCofiltered index]
   diagram : index ⥤ TatePair p
   base : diagram ⟶ (Functor.const index).obj Q
-  finite_etale : ∀ i, IsFiniteEtale p (base.app i)
+  etale : ∀ i, IsEtale p (base.app i)
   transition_finite_etale : ∀ {i j} (g : i ⟶ j), IsFiniteEtale p (diagram.map g)
   transition_surjective : ∀ {i j} (g : i ⟶ j), Function.Surjective ((diagram.map g).spa p)
   cone : (Functor.const index).obj P ⟶ diagram
