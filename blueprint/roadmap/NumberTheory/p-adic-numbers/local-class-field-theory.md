@@ -17,8 +17,10 @@ with the following two properties.
 - **Reciprocity.** For every finite abelian extension $L/K$ in $K^{\mathrm{sep}}$, the norm group
   $\mathrm{Nm}_{L/K}(L^\times)$ is contained in the kernel of $a \mapsto \mathrm{rec}_K(a)|_L$, and the
   induced homomorphism
-  $$\mathrm{rec}_{L/K} \colon K^\times / \mathrm{Nm}_{L/K}(L^\times) \to \mathrm{Gal}(L/K)$$
-  is an isomorphism. In particular $(K^\times : \mathrm{Nm}_{L/K}(L^\times)) = [L : K]$.
+
+    $$\mathrm{rec}_{L/K} \colon K^\times / \mathrm{Nm}_{L/K}(L^\times) \to \mathrm{Gal}(L/K)$$
+
+    is an isomorphism. In particular $(K^\times : \mathrm{Nm}_{L/K}(L^\times)) = [L : K]$.
 
 The map $\mathrm{rec}_K$ is the local Artin map, or local reciprocity map, of $K$, and $\mathrm{rec}_{L/K}$
 the local Artin map of $L/K$. By the normalization, $\mathrm{rec}_K(\pi)$ acts on $K^{\mathrm{ur}}$ as its
