@@ -4,4 +4,6 @@ Reaction–diffusion models of biological spread and spatial patterning, includi
 
 - [Fisher–KPP travelling waves](fisher-kpp-travelling-waves/README.md)
 - [Morphogen gradients and the French flag model](morphogen-gradients-and-the-french-flag-model/README.md)
+- [Turing instability with cross-diffusion](turing-instability-with-cross-diffusion/README.md)
 - [Turing patterns and diffusion-driven instability](turing-patterns-and-diffusion-driven-instability/README.md)
+- [Well-posedness of the Turing reaction–diffusion system](well-posedness-of-the-turing-reaction-diffusion/README.md)
