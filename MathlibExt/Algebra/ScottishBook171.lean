@@ -32,22 +32,16 @@ def IsPermutationInvariant (A : Type*)
   ∀ (p : Equiv.Perm A) (f g : A → A),
     U (p.symm ∘ f ∘ p) (p.symm ∘ g ∘ p) = p.symm ∘ U f g ∘ p
 
-/--
-**Scottish Book Problem 171 is false.** Not every associative, permutation-invariant operation
-on self-maps is composition: there are a set $A$, an operation $U$ that assigns to any two maps
-$f, g \colon A \to A$ a map $U(f, g) \colon A \to A$ and is both associative (condition (1) of
-Problem 171) and invariant under permutations of $A$ (condition (2)), and maps
-$f, g \colon A \to A$ with $U(f, g) \ne f \circ g$, where $(f \circ g)(x) = f(g(x))$.
+/-- **Associativity and permutation invariance do not force composition.** There are a set $A$,
+an associative operation $U$ on self-maps of $A$ that is invariant under conjugation by
+permutations of $A$, and self-maps $f, g$ for which $U(f, g) \ne f \circ g$.
 
-Reverse composition $U(f, g) = g \circ f$ and the two projections $U(f, g) = f$ and
-$U(f, g) = g$ satisfy (1) and (2) but are not composition in general. The typescript's
-parenthetical $(U(f,g) \ne 1)$ is of unclear meaning and is not read as excluding these
-counterexamples.
+The left projection $U(f, g) = f$ is a counterexample to the implication from the two numbered
+conditions of Scottish Book Problem 171 alone. This does not address any extra restriction
+from the typescript's parenthetical $(U(f,g) \ne 1)$.
 
-Source: J. Schreier – S. Ulam, Problem 171 of the
-Scottish Book, typescript p. 76.
--/
-theorem scottishBook171_refuted :
+Source: J. Schreier – S. Ulam, Scottish Book, Problem 171, typescript p. 76. -/
+theorem not_forall_eq_comp_of_associative_permutationInvariant :
     ¬ ∀ (A : Type*) (U : (A → A) → (A → A) → (A → A)),
       IsAssociative A U → IsPermutationInvariant A U →
       ∀ f g : A → A, U f g = f ∘ g := by
@@ -57,5 +51,10 @@ theorem scottishBook171_refuted :
     (by intro f g k; rfl) (by intro p f g; rfl) id (fun x => ⟨!x.down⟩)
   have hfalse : false = true := congrArg ULift.down (congrFun hcomp (ULift.up false))
   cases hfalse
+
+/-- Deprecated name for `not_forall_eq_comp_of_associative_permutationInvariant`.
+It concerns the two numbered conditions only, not the full question in the typescript. -/
+@[deprecated (since := "2026-11-23")]
+alias scottishBook171_refuted := not_forall_eq_comp_of_associative_permutationInvariant
 
 end MathlibExt.Algebra.ScottishBook171Wanted

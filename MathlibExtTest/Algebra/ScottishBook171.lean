@@ -17,4 +17,4 @@ example :
     ¬ ∀ (A : Type 1) (U : (A → A) → (A → A) → (A → A)),
       IsAssociative A U → IsPermutationInvariant A U →
       ∀ f g : A → A, U f g = f ∘ g :=
-  scottishBook171_refuted
+  not_forall_eq_comp_of_associative_permutationInvariant

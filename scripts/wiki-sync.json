@@ -24042,7 +24042,7 @@
 "MathlibExt.Algebra.Ring.JacobsonCommutativity.jacobson_commutativity": "2e0f22cb5e6fffc8",
 "MathlibExt.Algebra.ScottishBook171Wanted.IsAssociative": "ddeb5d3479937942",
 "MathlibExt.Algebra.ScottishBook171Wanted.IsPermutationInvariant": "528f81b0048f1b31",
-"MathlibExt.Algebra.ScottishBook171Wanted.scottishBook171_refuted": "bb9f10acf6b59a86",
+"MathlibExt.Algebra.ScottishBook171Wanted.not_forall_eq_comp_of_associative_permutationInvariant": "486769df1e417d75",
 "MathlibExt.Algebra.SkewBracePerfectAlmostSimpleKourovka20Problem109Wanted.IsSkewBrace": "e8953eb021047285",
 "MathlibExt.Algebra.SkewBracePerfectAlmostSimpleKourovka20Problem109Wanted.finiteSkewBracePerfectAdditiveAlmostSimpleMultiplicative": "29ae29acb827f4d7",
 "MathlibExt.Algebra.SkewBracePerfectAlmostSimpleKourovka20Problem109Wanted.finiteSkewBracePerfectAdditiveAlmostSimpleMultiplicative_holds": "1202ae0ff5aac262",
