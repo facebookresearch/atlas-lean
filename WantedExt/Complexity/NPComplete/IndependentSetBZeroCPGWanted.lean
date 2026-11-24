@@ -19,7 +19,7 @@ results", Discrete Applied Mathematics 290 (2021), 17-35, doi:10.1016/j.dam.2020
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Computability.Complexity.Karp.Color
 public import WantedExt.Complexity.NPComplete.PartitionIntoCliquesBZeroCPGWanted
 public import Mathlib.Combinatorics.SimpleGraph.Clique
