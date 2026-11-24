@@ -10788,6 +10788,7 @@
   "MathlibExt/Combinatorics/Enumerative/Partition/TriangularQBinomial": {"to": "Combinatorics/integer-partitions/young-diagrams-statistics", "title": "Lit cells in integer partitions"},
   "MathlibExt/Combinatorics/Enumerative/Partition/TwoColorSevenPowerPartition": {"to": "NumberTheory/modular-forms-q-series/partition-congruences", "title": "Two-color partitions modulo powers of 7"},
   "MathlibExt/Combinatorics/Enumerative/Partition/TwoDistantPolarized": {"to": "Combinatorics/integer-partitions/partition-identities", "title": "Polarized partitions and 2-distant parts"},
+  "MathlibExt/Combinatorics/Enumerative/PartitionGenus": {"to": "Combinatorics/set-partitions", "title": "Genus of a set partition"},
   "MathlibExt/Combinatorics/Enumerative/PartitionDiamondsEulerMahonian": {"to": "Combinatorics/integer-partitions/counting-partitions", "title": "Multifold partition diamonds"},
   "MathlibExt/Combinatorics/Enumerative/PartitionNumberArray": {"to": "Combinatorics/set-partitions", "title": "Partition number arrays"},
   "MathlibExt/Combinatorics/Enumerative/PartitionSumBinomialCoefficient": {"to": "Combinatorics/binomial-coefficients/binomial-sums", "title": "Partition-sum expansion of binomial coefficients"},
