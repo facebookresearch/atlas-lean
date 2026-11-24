@@ -1,0 +1,17 @@
+# Carrier Limit Lift
+
+- [Cone Label](cone-label.md)
+- [Cone Label projection](cone-label-projection.md)
+- [Restriction](restriction.md)
+- [Restricted Projection](restricted-projection.md)
+- [Restricted Projection original](restricted-projection-original.md)
+- [Restricted Projection naturality](restricted-projection-naturality.md)
+- [Fixed Leg](fixed-leg.md)
+- [Fixed Leg fac](fixed-leg-fac.md)
+- [Fixed Cone](fixed-cone.md)
+- [Restricted Is Limit](restricted-is-limit.md)
+- [Fixed Lift](fixed-lift.md)
+- [Fixed Lift fac](fixed-lift-fac.md)
+- [Lift](lift.md)
+- [Lift obj](lift-obj.md)
+- [Lift fac](lift-fac.md)

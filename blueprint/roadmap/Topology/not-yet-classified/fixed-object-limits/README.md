@@ -1,0 +1,16 @@
+# Fixed Object Limits
+
+- [Object](object.md)
+- [Object hom](object-hom.md)
+- [Object identity](object-identity.md)
+- [Object composition](object-composition.md)
+- [Projection Hom](projection-hom.md)
+- [Projection](projection.md)
+- [Hom Map projection](hom-map-projection.md)
+- [Cone](cone.md)
+- [Hom Cone](hom-cone.md)
+- [Hom Lift](hom-lift.md)
+- [Lift](lift.md)
+- [Hom Map lift](hom-map-lift.md)
+- [Lift projection](lift-projection.md)
+- [Is Limit](is-limit.md)

@@ -1,0 +1,16 @@
+# Fixed Object Free Monad Algebra
+
+- [Path Monad](path-monad.md)
+- [Pair Word](pair-word.md)
+- [Pair Word evaluate](pair-word-evaluate.md)
+- [Pair Word map](pair-word-map.md)
+- [Action](action.md)
+- [Generator action](generator-action.md)
+- [Algebra Identity](algebra-identity.md)
+- [Algebra Composition](algebra-composition.md)
+- [Action composition](action-composition.md)
+- [Action comp apply](action-comp-apply.md)
+- [Action generator apply](action-generator-apply.md)
+- [Algebra Enrichment](algebra-enrichment.md)
+- [Of Algebra](of-algebra.md)
+- [Action Map](action-map.md)
