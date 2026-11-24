@@ -11,7 +11,7 @@ module
 import MathlibExt.Combinatorics.SumsetSetsOfSizeK
 import Mathlib.Algebra.Order.Group.Int
 
-/-! # Tests for iterated sumsets with a missing penultimate term -/
+/-! # Tests for iterated sumsets and their trivial elements -/
 
 open scoped Pointwise
 open MetaMathlibExt
@@ -28,3 +28,19 @@ example : (2 : ℕ) • ({0, 1, 3} : Finset ℤ) = {0, 1, 2, 3, 4, 6} := by deci
 -- In the same double sumset, 3 is the only sum absent from the list of trivial elements.
 example : sumsetTrivialElements 2 3 (fun n => if n = 2 then (3 : ℤ) else n) =
     {0, 1, 2, 4, 6} := by decide
+
+-- The nonadjacent sum 0 + 3 stays nontrivial when 4 is added to {0, 1, 3}.
+example : let a : ℕ → ℤ := fun n => if n < 2 then n else n + 1
+    3 ∈ (2 : ℕ) • (Finset.range 4).image a ∧ 3 ∉ sumsetTrivialElements 2 4 a := by
+  intro a
+  have hinc : ∀ i : Fin 3, a i < a (i.val + 1) := by decide
+  obtain ⟨hsub, hnontriv⟩ := nsmul_sumset_erase_max_nontrivial 2 4 (by decide) a
+    (fun i hi => hinc ⟨i, by omega⟩)
+  have hmem : (3 : ℤ) ∈ (2 : ℕ) • (Finset.range (4 - 1)).image a := by decide
+  exact ⟨hsub hmem, hnontriv 3 hmem (by decide)⟩
+
+-- With zero summands and a singleton prefix, even its largest sum is trivial on both lists.
+example (a : ℕ → ℤ) :
+    (0 : ℕ) • (Finset.range 1).image a = sumsetTrivialElements 0 1 a ∧
+      sumsetTrivialElements 0 1 a = sumsetTrivialElements 0 2 a := by
+  simp [sumsetTrivialElements, Finset.singleton_zero]
