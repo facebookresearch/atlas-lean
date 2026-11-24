@@ -8,11 +8,16 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Nat.Find
 public import Mathlib.Order.Interval.Finset.Nat
 import Mathlib.Data.Finset.Max
+import Mathlib.Logic.Function.Iterate
+import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.IntervalCases
+import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Ring
 
 /-!
 # Maximum Nim and the Josephus problem
@@ -339,6 +344,87 @@ theorem maximumNimGrundy_div_eq_of_dvd (k x : ℕ) (hk : 2 ≤ k)
       Nat.add_sub_cancel]
   rw [Finset.eq_of_subset_of_card_le hsub (by rw [hcard, Finset.card_range])]
   exact ⟨Finset.notMem_range_self, fun n hn => Finset.mem_range.mpr hn⟩
+
+/-- **The Maximum Nim map $h_k$.** For natural numbers $k$ and $x$, let
+$h_k(x) = x + \lfloor x/(k-1) \rfloor + 1$. The paper takes $k \ge 2$; for $k \le 1$ the definition
+gives $h_k(x) = x + 1$, because $k - 1$ is truncated to $0$ and $\lfloor x/0 \rfloor$ is taken to
+be $0$.
+
+Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
+        INTEGERS 24 (2024), Article G5, Definition 3.1. -/
+public def maximumNimH (k x : ℕ) : ℕ := x + x / (k - 1) + 1
+
+/-- **Linear bounds on h_k and their iterates.** Let $k \ge 2$ be a natural number, let
+$h_k(x) = x + \lfloor x/(k-1) \rfloor + 1$ on natural numbers, and define the real maps
+$h_k^-(x) = x + \frac{x}{k-1}$ and $h_k^+(x) = x + \frac{x}{k-1} + 1$. Writing $g^p$ for the
+$p$-fold iterate of a map $g$, for all natural numbers $p$ and $x$: (i)
+$(h_k^-)^p(x) = \left(\frac{k}{k-1}\right)^p x$, (ii)
+$(h_k^+)^p(x) = \left(\frac{k}{k-1}\right)^p (x + k - 1) - (k - 1)$, and (iii)
+$h_k^-(x) \le h_k(x) \le h_k^+(x)$.
+
+Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
+        INTEGERS 24 (2024), Article G5, Lemma 7 (`integers-2024-G5-lem-7`). -/
+public theorem maximumNimH_iterate_bounds (k : ℕ) (hk : 2 ≤ k) :
+    let hMinus : ℝ → ℝ := fun x => x + x / ((k : ℝ) - 1)
+    let hPlus : ℝ → ℝ := fun x => x + x / ((k : ℝ) - 1) + 1
+    (∀ (p x : ℕ), Nat.iterate hMinus p x = ((k : ℝ) / (k - 1)) ^ p * x) ∧
+    (∀ (p x : ℕ), Nat.iterate hPlus p x = ((k : ℝ) / (k - 1)) ^ p * (x + k - 1) - (k - 1)) ∧
+    (∀ x : ℕ, hMinus x ≤ maximumNimH k x ∧ (maximumNimH k x : ℝ) ≤ hPlus x) := by
+  intro hMinus hPlus
+  let d : ℝ := (k : ℝ) - 1
+  let a : ℝ := (k : ℝ) / d
+  have hdNat : 0 < k - 1 := by omega
+  have hdCast : ((k - 1 : ℕ) : ℝ) = d := by
+    dsimp only [d]
+    rw [Nat.cast_sub (show 1 ≤ k by omega), Nat.cast_one]
+  have hd : 0 < d := by
+    rw [← hdCast]
+    exact_mod_cast hdNat
+  have hMinus_mul (y : ℝ) : hMinus y = a * y := by
+    change y + y / ((k : ℝ) - 1) = ((k : ℝ) / ((k : ℝ) - 1)) * y
+    have hd' : (k : ℝ) - 1 ≠ 0 := ne_of_gt hd
+    field_simp [hd']
+    ring
+  -- Translation by `d` turns the upper map into multiplication by `a`.
+  have hPlus_shift (y : ℝ) : hPlus y + d = a * (y + d) := by
+    change hMinus y + 1 + d = _
+    have had : a * d = (k : ℝ) := div_mul_cancel₀ _ (ne_of_gt hd)
+    rw [hMinus_mul, mul_add, had]
+    dsimp only [d]
+    ring
+  have lower (p : ℕ) (y : ℝ) : Nat.iterate hMinus p y = a ^ p * y := by
+    induction p with
+    | zero => simp
+    | succ p ih => rw [Function.iterate_succ_apply', hMinus_mul, ih, pow_succ', mul_assoc]
+  have upper (p : ℕ) (y : ℝ) : Nat.iterate hPlus p y + d = a ^ p * (y + d) := by
+    induction p with
+    | zero => simp
+    | succ p ih => rw [Function.iterate_succ_apply', hPlus_shift, ih, pow_succ', mul_assoc]
+  refine ⟨fun p x => lower p x, fun p x => ?_, fun x => ?_⟩
+  · simpa only [d, add_sub_assoc] using eq_sub_of_add_eq (upper p x)
+  · let q : ℝ := (x / (k - 1) : ℕ)
+    let r : ℝ := (x % (k - 1) : ℕ)
+    have hqr : r + d * q = (x : ℝ) := by
+      dsimp only [r, q]
+      rw [← hdCast]
+      exact_mod_cast Nat.mod_add_div x (k - 1)
+    have hr0 : 0 ≤ r := Nat.cast_nonneg _
+    have hrd : r < d := by
+      dsimp only [r]
+      rw [← hdCast]
+      exact_mod_cast Nat.mod_lt x hdNat
+    have hlo : q ≤ (x : ℝ) / d := (le_div_iff₀ hd).2 (by
+      rw [mul_comm q d]
+      linarith only [hqr, hr0])
+    have hhi : (x : ℝ) / d ≤ q + 1 := (div_le_iff₀ hd).2 (by
+      rw [add_mul, one_mul, mul_comm q d]
+      linarith only [hqr, hrd])
+    have hh : (maximumNimH k x : ℝ) = (x : ℝ) + q + 1 := by
+      simp [maximumNimH, q]
+    change (x : ℝ) + (x : ℝ) / d ≤ (maximumNimH k x : ℝ) ∧
+      (maximumNimH k x : ℝ) ≤ (x : ℝ) + (x : ℝ) / d + 1
+    rw [hh]
+    exact ⟨by linarith only [hhi], by linarith only [hlo]⟩
 
 end
 
