@@ -80493,6 +80493,7 @@
 "MetaMathlibExt.overpartitionOdd_pentagonal_recurrence": "c59a5a946a0a4493",
 "MetaMathlibExt.overpartitionOdd_pentagonal_sum_eq_oddDistincts": "f34ebd8ad3d6610c",
 "MetaMathlibExt.overpartitionOdd_square_recurrence": "6514417c970be4f6",
+"MetaMathlibExt.overpartitionOdd_square_recurrence.theta_mul_rescale_genFun": "1b43dd8508e3ffd0",
 "MetaMathlibExt.overpartitionOdd_triangular_recurrence": "9310519d9709f537",
 "MetaMathlibExt.overpartitionOdd_triangular_sum_eq_distincts": "236057e9a0087c49",
 "MetaMathlibExt.overpartitionPairEvenDistinct": "6db4ba89480625a4",
