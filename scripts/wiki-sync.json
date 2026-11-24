@@ -52852,7 +52852,7 @@
 "MathlibExt.NumberTheory.LehmerConstant.intMahlerMeasure_X_sub_C": "b85aac6b865df995",
 "MathlibExt.NumberTheory.LehmerConstant.intMahlerMeasure_X_sub_one": "484a9eaca117f81c",
 "MathlibExt.NumberTheory.LehmerConstant.intMahlerMeasure_X_sub_two": "a5049bd483398ada",
-"MathlibExt.NumberTheory.LehmerConstant.intMahlerMeasure_lehmerPolynomial_le": "e54586ddde907e7a",
+"MathlibExt.NumberTheory.LehmerConstant.intMahlerMeasure_lehmerPolynomial_le": "fab6204f1c9390ca",
 "MathlibExt.NumberTheory.LehmerConstant.lehmer1933UpperBound_wanted": "3b473c942a4f4843",
 "MathlibExt.NumberTheory.LehmerConstant.lehmerConstant": "8e7925f0997069f9",
 "MathlibExt.NumberTheory.LehmerConstant.lehmerConstant_eq_one_iff": "13a83468139f8b8d",

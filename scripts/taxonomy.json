@@ -12533,6 +12533,7 @@
   "MathlibExt/NumberTheory/Height/AbsoluteLogHeightRoots": {"to": "NumberTheory/heights-mahler-measure", "title": "Absolute height and Mahler measure"},
   "MathlibExt/NumberTheory/Height/AsymptoticDobrowolski": {"to": "NumberTheory/heights-mahler-measure", "title": "Asymptotic Dobrowolski constant"},
   "MathlibExt/NumberTheory/Height/LehmerConstant": {"to": "NumberTheory/heights-mahler-measure", "title": "Lehmer's Mahler measure problem"},
+  "MathlibExt/NumberTheory/Height/LehmerPolynomial": {"to": "NumberTheory/heights-mahler-measure", "title": "Lehmer's Mahler measure problem"},
   "MathlibExt/NumberTheory/Height/PrimitiveMahler": {"to": "NumberTheory/heights-mahler-measure", "title": "Absolute height and Mahler measure"},
   "MathlibExt/NumberTheory/Height/SchurSiegelSmyth": {"to": "NumberTheory/heights-mahler-measure", "title": "Schur–Siegel–Smyth trace problem"},
   "MathlibExt/NumberTheory/Height/SchurSiegelSmyth/AbsoluteTrace": {"to": "NumberTheory/heights-mahler-measure", "title": "Schur–Siegel–Smyth trace problem"},
