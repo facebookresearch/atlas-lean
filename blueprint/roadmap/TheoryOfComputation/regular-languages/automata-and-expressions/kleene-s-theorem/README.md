@@ -25,6 +25,8 @@
 - [Solving a system of language equations](exists-regex-of-system.md)
 - [Languages of DFAs on finitely many numbered states are regex-denoted](exists-regex-of-dfa-fin.md)
 - [Kleene's theorem: DFA languages are regex-denoted](exists-regex-of-dfa.md)
+- [Exists regex of da](exists-regex-of-da.md)
+- [Exists regex of na](exists-regex-of-na.md)
 - [Letters occurring in a regular expression](regex-letters.md)
 - [Letters of matched words occur in the regular expression](mem-matches-letters.md)
 - [DFA accepting the one-letter words](singleton-dfa.md)

@@ -1,0 +1,18 @@
+# Syntactic monoids and Boolean operations
+
+- [Syntactic Rel compl iff](syntactic-rel-compl-iff.md)
+- [Syntactic Con compl](syntactic-con-compl.md)
+- [Syntactic Monoid Compl Equiv](syntactic-monoid-compl-equiv.md)
+- [Finite syntactic Monoid compl iff](finite-syntactic-monoid-compl-iff.md)
+- [Syntactic Rel inter](syntactic-rel-inter.md)
+- [Syntactic Rel union](syntactic-rel-union.md)
+- [Syntactic Rel diff](syntactic-rel-diff.md)
+- [Syntactic Con inf le inter](syntactic-con-inf-le-inter.md)
+- [Syntactic Con inf le union](syntactic-con-inf-le-union.md)
+- [Syntactic Con inf le diff](syntactic-con-inf-le-diff.md)
+- [Inter](inter.md)
+- [Union](union.md)
+- [Diff](diff.md)
+- [Finite syntactic Monoid inter](finite-syntactic-monoid-inter.md)
+- [Finite syntactic Monoid union](finite-syntactic-monoid-union.md)
+- [Finite syntactic Monoid diff](finite-syntactic-monoid-diff.md)

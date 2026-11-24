@@ -1,6 +1,7 @@
 # Inverse homomorphic images of regular languages
 
 - [Alphabet preimage](alphabet-preimage.md)
+- [Alphabet Preimage eq preimage](alphabet-preimage-eq-preimage.md)
 - [Alphabet preimage morphism](alphabet-preimage-morphism.md)
 - [The alphabet preimage morphism recognizes the alphabet preimage](recognizes-alphabet-preimage-morphism.md)
 - [Syntactic equivalence pulls back along an alphabet map](syntactic-rel-alphabet-preimage-of-map.md)
@@ -10,7 +11,11 @@
 - [Regular languages are closed under alphabet preimages](alphabet-preimage-2.md)
 - [Renaming letters by a bijection preserves and reflects regularity](is-regular-alphabet-preimage-equiv-iff.md)
 - [Finiteness of the syntactic monoid is invariant under renaming letters](finite-syntactic-monoid-alphabet-preimag-2.md)
+- [Of Free Monoid Hom](of-free-monoid-hom.md)
+- [Of Free Monoid Hom apply](of-free-monoid-hom-apply.md)
 - [Inverse image under a word morphism](word-morphism-preimage.md)
+- [Word Morphism Preimage eq preimage](word-morphism-preimage-eq-preimage.md)
+- [Hom Image eq image](hom-image-eq-image.md)
 - [Word morphisms act letter by letter](to-list-word-morphism-of-list.md)
 - [Letterwise description of the inverse image under a word morphism](word-morphism-preimage-eq-flatten.md)
 - [Recognizing morphism of an inverse image](word-morphism-recognizer.md)

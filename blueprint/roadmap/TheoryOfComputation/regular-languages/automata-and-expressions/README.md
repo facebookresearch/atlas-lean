@@ -9,9 +9,11 @@ is used, for example, in the closure of regular languages under homomorphic imag
 equivalence test for regular expressions.
 
 - [Closure properties of regular languages](closure-properties-of-regular-languages/README.md)
+- [CSLib nondeterministic automata and Mathlib NFAs](cslib-nondeterministic-automata-and-mathlib-nfas/README.md)
 - [Finite languages](finite-languages/README.md)
 - [Kleene's theorem](kleene-s-theorem/README.md)
 - [Sequential transducers, Mealy and Moore machines](sequential-transducers-mealy-and-moore-machines/README.md)
 - [Star height](star-height/README.md)
+- [The pumping lemma for regular languages](the-pumping-lemma-for-regular-languages/README.md)
 - [Thompson's construction](thompson-s-construction/README.md)
 - [Two-way finite automata](two-way-finite-automata/README.md)

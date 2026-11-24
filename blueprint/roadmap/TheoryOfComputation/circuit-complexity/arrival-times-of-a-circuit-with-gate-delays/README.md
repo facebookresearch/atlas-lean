@@ -1,0 +1,18 @@
+# Arrival times of a circuit with gate delays
+
+- [Arrival](arrival.md)
+- [Arrivals](arrivals.md)
+- [Wire Arrivals](wire-arrivals.md)
+- [Output Arrivals](output-arrivals.md)
+- [Arrival of arity eq zero](arrival-of-arity-eq-zero.md)
+- [Add wire Arrival le arrival](add-wire-arrival-le-arrival.md)
+- [Arrival le of forall le](arrival-le-of-forall-le.md)
+- [Arrivals gate last](arrivals-gate-last.md)
+- [Arrivals gate cast Succ](arrivals-gate-cast-succ.md)
+- [Wire Arrivals input](wire-arrivals-input.md)
+- [Wire Arrivals le add mul wire Depths of nonneg bound](wire-arrivals-le-add-mul-wire-depths-of.md)
+- [Wire Arrivals le add mul wire Depths](wire-arrivals-le-add-mul-wire-depths.md)
+- [Output Arrivals le add mul output Depths of nonneg bound](output-arrivals-le-add-mul-output-depths.md)
+- [Output arrival times are bounded by the circuit depth for any nonnegative delay bound](output-arrivals-le-add-mul-depth-of-nonn.md)
+- [Output Arrivals le add mul output Depths](output-arrivals-le-add-mul-output-depths-2.md)
+- [Output arrival times are bounded by the circuit depth](output-arrivals-le-add-mul-depth.md)

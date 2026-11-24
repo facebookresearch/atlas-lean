@@ -17,4 +17,5 @@
 ## Complexity
 
 - [Polynomial time on single-tape machines](single-tape-p.md)
+- [CSLib's polynomial-time functions decide `SingleTapeP` problems](mem-single-tape-p-of-poly-time-computabl.md)
 - [Problems in P are decided in polynomial time by single-tape machines](p-subset-single-tape-p.md)

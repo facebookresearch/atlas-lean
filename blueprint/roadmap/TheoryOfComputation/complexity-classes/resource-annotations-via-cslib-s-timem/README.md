@@ -1,0 +1,15 @@
+# Resource annotations via CSLib's `TimeM`
+
+- [Cost](cost.md)
+- [Zero cost](zero.md)
+- [Add](add.md)
+- [Add assoc](add-assoc.md)
+- [Add comm](add-comm.md)
+- [Zero add](zero-add.md)
+- [Add zero](add-zero.md)
+- [Building a costed computation](mk.md)
+- [Return value of a costed computation](value.md)
+- [Cost of a costed computation](cost-2.md)
+- [Zero-cost computation](pure.md)
+- [Sequential composition of costed computations](bind.md)
+- [Charge](charge.md)

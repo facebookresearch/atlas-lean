@@ -1,5 +1,16 @@
 # Consensus from test-and-set
 
+- [Stage](stage.md)
+- [State](state.md)
+- [The other process in test-and-set consensus](other.md)
 - [Two-process consensus protocol from test-and-set](step.md)
+- [Init](init.md)
+- [Lts](lts.md)
+- [Reachable](reachable.md)
+- [Run](run.md)
+- [Reachable init](reachable-init.md)
+- [Reachable states of test-and-set consensus are closed under steps](step-2.md)
+- [M Tr iff eq run](m-tr-iff-eq-run.md)
+- [Reachable run](reachable-run.md)
 - [Safety of test-and-set consensus](safety.md)
 - [Wait-free termination of test-and-set consensus](decision-is-some-of-three-le-count.md)

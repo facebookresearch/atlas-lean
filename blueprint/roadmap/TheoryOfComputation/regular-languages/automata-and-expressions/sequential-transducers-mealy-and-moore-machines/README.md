@@ -14,6 +14,7 @@
 - [Final state of a sequential transducer on a concatenation](run-state-append.md)
 - [Output of a sequential transducer on a concatenation](run-out-append.md)
 - [Translation by a sequential transducer](translates.md)
+- [Translates iff](translates-iff.md)
 - [Composition of sequential transducers](comp.md)
 - [One step of a composite transducer: the successor state](comp-step-fst.md)
 - [One step of a composite transducer: the output](comp-step-snd.md)
@@ -48,6 +49,7 @@
 - [Initial output of the sequential transducer of a Mealy machine](to-sequential-init-out.md)
 - [Final outputs of the sequential transducer of a Mealy machine](to-sequential-final-out.md)
 - [The sequential transducer of a Mealy machine computes its transduction](translates-to-sequential-iff.md)
+- [Translates iff](translates-iff-2.md)
 
 ## Automata
 
@@ -67,3 +69,4 @@
 - [Initial output of the sequential transducer of a Moore machine](to-sequential-init-out-2.md)
 - [Final outputs of the sequential transducer of a Moore machine](to-sequential-final-out-2.md)
 - [The sequential transducer of a Moore machine computes its transduction](translates-to-sequential-iff-2.md)
+- [Translates iff](translates-iff-3.md)
