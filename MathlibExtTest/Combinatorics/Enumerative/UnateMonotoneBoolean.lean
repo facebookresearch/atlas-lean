@@ -12,6 +12,12 @@ import MathlibExt.Combinatorics.Enumerative.UnateMonotoneBoolean
 
 open MetaMathlibExt
 
+-- Before negation, `x 0 && !x 1` is increasing in coordinate 0 and decreasing in coordinate 1.
+example : IsUnateBoolFun (fun x : Fin 2 → Bool => !(x 0 && !x 1)) := by
+  apply isUnateBoolFun_not
+  unfold IsUnateBoolFun IsBoolFunIncreasingIn IsBoolFunDecreasingIn
+  decide
+
 -- With no variables the unique input gives one function of each weight, zero and one.
 example : Nat.card {f : (Fin 0 → Bool) → Bool // Monotone f ∧ boolFunWeight f = 0} = 1 := by
   rw [card_monotone_boolFun_weight_symm 0 0 (by decide), Nat.card_eq_fintype_card]
@@ -24,3 +30,13 @@ example : Nat.card {f : (Fin 2 → Bool) → Bool // Monotone f ∧ boolFunWeigh
 
 example : boolFunWeight (boolFunConcat (fun _ : Fin 1 → Bool => false) (fun x => x 0)) = 1 := by
   decide
+
+-- With an empty tail, monotonicity is exactly the order of the two constant values.
+example (a b : Bool) :
+    Monotone (boolFunConcat (fun _ : Fin 0 → Bool => a) (fun _ => b)) ↔ a ≤ b := by
+  rw [monotone_boolFunConcat_iff]
+  exact ⟨fun h => h.2.2 Fin.elim0, fun hab => ⟨monotone_const, monotone_const, fun _ => hab⟩⟩
+
+-- Concatenating a projection with constant true gives the disjunction of the two inputs.
+example : Monotone (boolFunConcat (fun x : Fin 1 → Bool => x 0) (fun _ => true)) :=
+  (monotone_boolFunConcat_iff _ _).2 ⟨fun _ _ hxy => hxy 0, monotone_const, fun _ => le_top⟩

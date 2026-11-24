@@ -1347,7 +1347,7 @@ private theorem ff3_model_eq_tilingCount :
     ∀ n : ℕ, 1 ≤ n → (ff3ModelCount n : ℤ) = tilingCount n := by
   intro n
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
       intro hn
       by_cases hsmall : n ≤ 6
       · interval_cases n <;>

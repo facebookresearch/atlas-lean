@@ -17,7 +17,7 @@ public import Mathlib.Combinatorics.Young.SemistandardTableau
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Multiset.Powerset
 public import Mathlib.Order.Interval.Finset.Nat
-public import MathlibExt.Combinatorics.Enumerative.ParkingFunction
+public import MathlibExt.Combinatorics.Enumerative.ParkingFunctionStatistics
 public import MathlibExt.Combinatorics.FineNumber
 
 /-!
@@ -157,22 +157,6 @@ public theorem_wanted parkingFunction_descentSet_card_eq_ascentSet_reflect (n : 
     ((pfSet n).filter (fun f => desSet f = I)).card =
       ((pfSet n).filter (fun f => ascSet f = I.image (fun i => n - i))).card
 
-/-- **Descent sets and ascent sets of parking functions are equidistributed.** Write a parking
-function $f$ of length $n$ as the sequence $(a_1, \dots, a_n)$ with $a_j = f(j-1) + 1$. Its
-descent set is the set of $j \in \{1, \dots, n-1\}$ with $a_j > a_{j+1}$, and its ascent set the
-set of such $j$ with $a_j < a_{j+1}$. For every $n$ and every $I \subseteq \{1, \dots, n-1\}$, the
-number of parking functions of length $n$ with descent set $I$ equals the number of parking
-functions of length $n$ with ascent set $I$.
-
-Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
-Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
-Functions*, Journal of Integer Sequences 27 (2024), Article 24.8.6, Corollary 15
-(`jis-2024-24.8.6-cor-15`). -/
-public theorem_wanted parkingFunction_descentSet_card_eq_ascentSet (n : ℕ) (I : Finset ℕ)
-    (hI : I ⊆ Finset.Ico 1 n) :
-    ((pfSet n).filter (fun f => desSet f = I)).card =
-      ((pfSet n).filter (fun f => ascSet f = I)).card
-
 /-- **Reflection symmetry of descent sets of parking functions.** Write a parking function $f$ of
 length $n$ as the sequence $(a_1, \dots, a_n)$ with $a_j = f(j-1) + 1$. Its descent set is the set
 of $j \in \{1, \dots, n-1\}$ with $a_j > a_{j+1}$. For every $n$ and every
@@ -187,23 +171,6 @@ public theorem_wanted parkingFunction_descentSet_card_reflect (n : ℕ) (I : Fin
     (hI : I ⊆ Finset.Ico 1 n) :
     ((pfSet n).filter (fun f => desSet f = I)).card =
       ((pfSet n).filter (fun f => desSet f = I.image (fun i => n - i))).card
-
-/-- **Counting parking functions with a given descent set by their content.** The descent set
-of a word $w = (w_1, \dots, w_n)$ is $\{i : 1 \le i \le n - 1,\ w_i > w_{i+1}\}$. Let
-$n \in \mathbb{N}$ and $I \subseteq \{1, \dots, n - 1\}$. Then the number of parking functions of
-length $n$ with descent set $I$ equals the sum, over the nondecreasing parking functions $\beta$
-of length $n$, of the number of words of length $n$ with descent set $I$ whose multiset of
-letters is the multiset of entries of $\beta$.
-
-Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
-Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
-Functions*, Journal of Integer Sequences 27 (2024), Article 24.8.6, Lemma 17
-(`jis-2024-24.8.6-lem-17`). -/
-public theorem_wanted sum_ndpf_multisetDescent_eq (n : ℕ) (I : Finset ℕ)
-    (hI : I ⊆ Finset.Ico 1 n) :
-    ∑ β ∈ ndpfSet n, (Finset.univ.filter (fun w : Fin n → Fin n =>
-        Finset.univ.val.map w = Finset.univ.val.map β ∧ desSet w = I)).card =
-      ((pfSet n).filter (fun f => desSet f = I)).card
 
 /-- **Recursion for parking functions with a given descent set.** The descent set of a word
 $w = (w_1, \dots, w_\ell)$ is $\{i : 1 \le i \le \ell - 1,\ w_i > w_{i+1}\}$, and $d(J; n)$ denotes

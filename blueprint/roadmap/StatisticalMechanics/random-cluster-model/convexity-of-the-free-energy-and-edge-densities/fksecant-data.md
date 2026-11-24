@@ -5,3 +5,11 @@ Let $d, N \in \mathbb{N}$ and let $e$ be an unordered pair of vertices of the bo
 $$\varepsilon \le \frac{2^{S_n}\, \lambda^{(\theta^1_e(p') - \theta^0_e(p) - 2\varepsilon) V_n}}{\varepsilon} \quad \text{for all } n \ge n_0, \qquad \lambda = \frac{p'(1 - p)}{(1 - p')\,p},$$
 
 where $\lambda$ is the [tilt factor](../random-cluster-measures-on-finite-graphs/tilt-factor.md) and $\theta^1_e$, $\theta^0_e$ are the [wired](../per-box-agreement-of-free-and-wired-random-clust/wired-edge-density.md) and [free edge densities](../per-box-agreement-of-free-and-wired-random-clust/free-edge-density.md) of $e$ at $q = 2$: the probabilities that $e$ is open under the wired and free infinite-volume random-cluster measures on $\mathbb{Z}^d$ (chosen subsequential weak limits of the box measures).
+
+## Depends on
+
+- [Vertices of the box $\{-n, \dots, n\}^d$](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/box-verts.md)
+- [Inclusion of box edges into $\mathbb{Z}^d$](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/edge-incl.md)
+- [Free infinite-volume edge density](../per-box-agreement-of-free-and-wired-random-clust/free-edge-density.md)
+- [Wired infinite-volume edge density](../per-box-agreement-of-free-and-wired-random-clust/wired-edge-density.md)
+- [Tilt factor between two edge parameters](../random-cluster-measures-on-finite-graphs/tilt-factor.md)

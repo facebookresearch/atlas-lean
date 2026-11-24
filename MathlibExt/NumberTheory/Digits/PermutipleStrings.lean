@@ -11,6 +11,7 @@ module
 public import Mathlib.Data.Multiset.Bind
 public import Mathlib.Logic.Relation
 public import MathlibExt.NumberTheory.Digits.Permutiple
+import Mathlib.GroupTheory.Perm.Finite
 
 /-!
 # A multigraph characterization of permutiple strings (Holt)
@@ -147,6 +148,37 @@ public def IsPermutipleString (n b : ℕ) (s : List (ℕ × ℕ)) : Prop :=
   s ∈ hoeySloaneLanguage n b ∧
     ∃ (k : ℕ) (d : Fin (k + 1) → ℕ) (σ : Equiv.Perm (Fin (k + 1))),
       IsPermutiple n b d σ ∧ s = List.ofFn fun j => (d j, d (σ j))
+
+/-- **Inputs of a permutiple string lie on mother-graph cycles.** Let $1 < n < b$ and let $s$ be
+an $(n, b)$-permutiple string. Then every input $(d, \hat d)$ of $s$ is an edge of the
+$(n, b)$-mother graph, and $\hat d$ reaches $d$ along a (possibly empty) directed path in the
+graph whose edges are the inputs of $s$, so $(d, \hat d)$ lies on a directed cycle of that graph.
+In this sense the inputs of $s$ form a union of cycles of the mother graph.
+
+Source: Benjamin V. Holt, *A Multigraph Characterization of Permutiple Strings*,
+INTEGERS 25 (2025), Article A111, Corollary 1 (`integers-2025-A111-cor-1`), quoting Holt,
+*Finding Permutiples of a Known Base and Multiplier*. -/
+public theorem isPermutipleString_inputs_isUnion_motherGraphCycles (n b : ℕ) (hn : 1 < n)
+    (hnb : n < b) {s : List (ℕ × ℕ)} (hs : IsPermutipleString n b s) (e : ℕ × ℕ)
+    (he : e ∈ s) :
+    IsMotherGraphEdge n b e.1 e.2 ∧ Relation.ReflTransGen (fun u v => (u, v) ∈ s) e.2 e.1 := by
+  obtain ⟨_, k, d, σ, hp, hs⟩ := hs
+  have hinput (i : Fin (k + 1)) : (d i, d (σ i)) ∈ s := by
+    rw [hs]
+    exact List.mem_ofFn.mpr ⟨i, rfl⟩
+  rw [hs] at he
+  obtain ⟨j, rfl⟩ := List.mem_ofFn.mp he
+  constructor
+  · refine ⟨hp.1 j, hp.1 (σ j), ?_⟩
+    simpa using permutiple_basePerm_residue_le n b hn.le (hn.trans hnb) d σ 1 σ hp hp j
+  · -- Positions whose digits are reachable from d (σ j) are closed under σ and hence σ⁻¹.
+    let reachable (i : Fin (k + 1)) :=
+      Relation.ReflTransGen (fun u v => (u, v) ∈ s) (d (σ j)) (d i)
+    have forward (i : Fin (k + 1)) (hi : reachable i) : reachable (σ i) :=
+      hi.tail (hinput i)
+    have start : reachable (σ j) := .refl
+    simpa only [Equiv.symm_apply_apply] using
+      Equiv.Perm.perm_symm_on_of_perm_on_finite forward start
 
 /-- **The permutiple string of $87912 = 4 \cdot 21978$.** The string of inputs
 $(2, 8)(1, 7)(9, 9)(7, 1)(8, 2)$ is a $(4, 10)$-permutiple string. It is produced by the

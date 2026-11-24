@@ -29,11 +29,12 @@ private theorem factor_odd_mul_pow (j n : ℕ) :
 /-- Factor a positive non-multiple of `2 ^ J` into a power of two and an odd part. -/
 private def indexEquiv (J : ℕ) : Fin J × ℕ ≃ {p : ℕ // 0 < p ∧ ¬ 2 ^ J ∣ p} where
   toFun x := ⟨(2 * x.2 + 1) * 2 ^ (x.1 : ℕ), by positivity, by
-    rw [Nat.pow_dvd_iff_le_padicValNat (by decide) (by positivity), padicValNat,
-      factor_odd_mul_pow]
+    rw [Nat.pow_dvd_iff_le_multiplicity (by decide) (by positivity), ← Nat.padicValNat_def,
+      padicValNat, factor_odd_mul_pow]
     exact Nat.not_le_of_lt x.1.isLt⟩
   invFun p := (⟨padicValNat 2 p, lt_of_not_ge fun h =>
-    p.2.2 ((Nat.pow_dvd_iff_le_padicValNat (by decide) p.2.1.ne').2 h)⟩, p.val.divMaxPow 2 / 2)
+    p.2.2 ((Nat.pow_dvd_iff_le_multiplicity (by decide) p.2.1.ne').2 (Nat.padicValNat_def ▸ h))⟩,
+    p.val.divMaxPow 2 / 2)
   left_inv := by
     rintro ⟨j, n⟩
     simp [padicValNat, Nat.divMaxPow, factor_odd_mul_pow]

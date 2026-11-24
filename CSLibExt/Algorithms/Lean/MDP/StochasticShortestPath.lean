@@ -136,14 +136,14 @@ theorem transitionMatrix_pow_nonneg_and_sum_le (hM : M.Substochastic) (μ : S �
   induction k with
   | zero =>
       refine ⟨fun s s' => ?_, fun s => ?_⟩
-      · rw [pow_zero, one_apply]; split_ifs <;> norm_num
-      · simp only [pow_zero, one_apply]
+      · rw [pow_zero, Matrix.one_apply]; split_ifs <;> norm_num
+      · simp only [pow_zero, Matrix.one_apply]
         rw [Finset.sum_ite_eq]; simp
   | succ k ih =>
       refine ⟨fun s s' => ?_, fun s => ?_⟩
-      · rw [pow_succ', mul_apply]
+      · rw [pow_succ', Matrix.mul_apply]
         exact Finset.sum_nonneg fun j _ => mul_nonneg (hM.1 _ _ _) (ih.1 j s')
-      · simp only [pow_succ', mul_apply]
+      · simp only [pow_succ', Matrix.mul_apply]
         rw [Finset.sum_comm]
         calc ∑ j, ∑ s', transitionMatrix M μ s j * (transitionMatrix M μ ^ k) j s'
             = ∑ j, transitionMatrix M μ s j * ∑ s', (transitionMatrix M μ ^ k) j s' := by

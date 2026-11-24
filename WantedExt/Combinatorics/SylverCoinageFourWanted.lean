@@ -40,19 +40,6 @@ Theorem 1 (`integers-2024-G2-thm-1`). -/
 public theorem_wanted isSylverPPosition_prime_opening {p : ℕ} (hp : p.Prime) (h3 : 3 < p) :
     IsSylverPPosition {p}
 
-/-- **In an ender, every smaller move eliminates the largest legal move.** Let $M$ be a set of
-natural numbers whose set of legal moves $L(M)$ has a greatest element $F > 1$, and suppose that
-$F$ is the only end of $M$ (so $M$ is an ender). Then for every legal move $x$ of $M$ with
-$x < F$, the number $F$ is not a legal move of $M \cup \{x\}$.
-
-Source: Morgan Boyers, Natalie Burton, Jeff Rushall, James Warner and Tara Zurick, *On Winning
-Strategies in Sylver Coinage When 4 Has Been Chosen*, INTEGERS 24 (2024), Article G2,
-Proposition 1 (`integers-2024-G2-prop-1`). -/
-public theorem_wanted sylverEnder_eliminates_largest_move {M : Set ℕ} {F : ℕ}
-    (hF : IsGreatest (sylverLegalMoves M) F) (hender : ∀ x, IsSylverEnd M x → x = F)
-    (hF1 : 1 < F) :
-    ∀ x ∈ sylverLegalMoves M, x < F → F ∉ sylverLegalMoves (insert x M)
-
 /-- **Enders with largest legal move above 1 are N-positions.** Let $M$ be a position of Sylver
 Coinage whose set of legal moves $L(M)$ has a greatest element $F$ with $F > 1$. If every end of
 $M$ equals $F$ (that is, $M$ is an ender), then $M$ is an N-position.

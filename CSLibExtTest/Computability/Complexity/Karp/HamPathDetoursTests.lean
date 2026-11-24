@@ -14,7 +14,7 @@ public import CSLibExt.Computability.Complexity.Karp.HamPathDetours
 
 namespace Cslib.Complexity.Karp.HamPathDetoursTests
 
-open Cslib.CookLevin Cslib.Logic.PL
+open Cslib.CookLevin Cslib.Logic.LegacyPL
 
 -- `[[(0, true)]]`: clause `0`, top `1`, row `2, 3, 4, 5`, bottom `6`. The path goes left to right
 -- and detours from `3` through clause `0` to `4`; the theorem's hypothesis is inhabited.

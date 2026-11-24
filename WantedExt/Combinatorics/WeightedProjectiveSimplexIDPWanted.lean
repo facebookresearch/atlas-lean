@@ -12,7 +12,9 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Convex.Hull
 public import Mathlib.Topology.Instances.Real.Lemmas
 public import Mathlib.RingTheory.PowerSeries.Basic
+public import MathlibExt.Combinatorics.WeightedProjectiveSimplexCoefficients
 public import MathlibExt.Combinatorics.WeightedProjectiveSimplexIDP
+public import MathlibExt.Combinatorics.WeightedProjectiveSimplexReflexive
 public import MathlibExt.Geometry.LatticePointEnumerator
 
 /-!
@@ -33,42 +35,6 @@ open Filter
 
 /-! ## Basic geometric and enumerative definitions -/
 
-/-- **Weighted projective space simplex.** For a tuple $q = (q_1, \dots, q_n)$ of natural
-numbers, the weighted projective space simplex $\Delta_{(1,q)}$ is the convex hull in
-$\mathbb{R}^n$ of the standard basis vectors $e_1, \dots, e_n$ and the vector
-$-(q_1 e_1 + \dots + q_n e_n)$, whose $i$th coordinate is $-q_i$.
-
-Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
-Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-A60, Theorem 1. -/
-public def weightedSimplex {n : ℕ} (q : Fin n → ℕ) : Set (Fin n → ℝ) :=
-  convexHull ℝ (Set.range (fun i : Fin n => Pi.single i (1 : ℝ)) ∪
-    {fun i => -(q i : ℝ)})
-
-/-- **Dilate of a set.** For a natural number $t$ and a set $P \subseteq \mathbb{R}^\iota$ of real
-vectors indexed by a type $\iota$, the dilate of $P$ by $t$ is the set
-$tP = \{t y : y \in P\} \subseteq \mathbb{R}^\iota$.
-
-Only natural-number factors $t \ge 0$ are used, matching the paper's nonnegative integral
-dilations.
-
-Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
-Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-A60, Theorem 4. -/
-public def polytopeDilate {ι : Type*} (t : ℕ) (P : Set (ι → ℝ)) : Set (ι → ℝ) :=
-  {x | ∃ y ∈ P, x = fun i => (t : ℝ) * y i}
-
-/-- **Lattice points of a set.** Let $P \subseteq \mathbb{R}^\iota$ for an index set $\iota$. An
-integer vector $x \in \mathbb{Z}^\iota$ is a lattice point of $P$ when $x$, viewed as a real vector
-coordinate by coordinate, lies in $P$; thus the lattice points of $P$ are the points of
-$P \cap \mathbb{Z}^\iota$.
-
-Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
-Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-A60, Theorem 4. -/
-public def IsLatticePoint {ι : Type*} (P : Set (ι → ℝ)) (x : ι → ℤ) : Prop :=
-  (fun i => (x i : ℝ)) ∈ P
-
 /-- **Integer decomposition property.** A set $P \subseteq \mathbb{R}^\iota$, for a finite index
 set $\iota$, has the integer decomposition property (IDP) if for every integer $m \ge 1$, every
 lattice point $w \in \mathbb{Z}^\iota$ of the dilate $mP = \{m y : y \in P\}$ is a sum
@@ -85,24 +51,6 @@ public def HasIDP {ι : Type*} [Fintype ι] (P : Set (ι → ℝ)) : Prop :=
   ∀ m : ℕ, 1 ≤ m → ∀ w : ι → ℤ, IsLatticePoint (polytopeDilate m P) w →
     ∃ x : Fin m → ι → ℤ,
       (∀ k, IsLatticePoint P (x k)) ∧ (∀ i, ∑ k, x k i = w i)
-
-/-- **Reflexive polytopes.** Let $P \subseteq \mathbb{R}^n$, with coordinates indexed by a finite
-set of size $n$, and write $tP = \{t y : y \in P\}$. Then $P$ is reflexive when there is a lattice
-point $c$ in the interior of $P$ such that, for every integer $t \ge 1$, the lattice points in the
-interior of $tP$ are exactly the points $c + y$ with $y$ a lattice point of $(t-1)P$.
-
-This is the interior-point characterisation of reflexivity, stated height by height; it is not
-the divisibility criterion for weighted simplices.
-
-Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
-Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-A60, Theorem 1. -/
-public def IsReflexive {ι : Type*} [Fintype ι] (P : Set (ι → ℝ)) : Prop :=
-  ∃ c : ι → ℤ, IsLatticePoint (interior P) c ∧
-    ∀ t : ℕ, 1 ≤ t → ∀ x : ι → ℤ,
-      IsLatticePoint (interior (polytopeDilate t P)) x ↔
-        ∃ y : ι → ℤ, IsLatticePoint (polytopeDilate (t - 1) P) y ∧
-          x = fun i => c i + y i
 
 /-- **Ehrhart function.** For a finite index set $\iota$, a set $P \subseteq \mathbb{R}^\iota$
 and a natural number $t$, the Ehrhart function $L_P(t)$ is the number of integer vectors
@@ -229,18 +177,6 @@ Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (20
 A60, Theorem 1. -/
 public def ValidSupport {d : ℕ} (r x : Fin d → ℕ) : Prop :=
   0 < d ∧ Function.Injective r ∧ (∀ i, 1 ≤ r i) ∧ (∀ i, 1 ≤ x i)
-
-/-- **Weighted projective space simplex of a list of weights.** For a list
-$q = (q_1, \dots, q_n)$ of natural numbers, with coordinates indexed by the positions of the
-list, this is the convex hull in $\mathbb{R}^n$ of the standard basis vectors
-$e_1, \dots, e_n$ and the vector $-(q_1 e_1 + \dots + q_n e_n)$, whose $i$th coordinate is
-$-q_i$.
-
-Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
-Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-A60, Theorem 1. -/
-public def weightedSimplexList (q : List ℕ) : Set (Fin q.length → ℝ) :=
-  weightedSimplex q.get
 
 /-- **Least common multiple of a list of weights.** For a finite list $q = (q_1, \dots, q_n)$ of
 natural numbers, $\operatorname{lcm}(q)$ is
@@ -767,31 +703,6 @@ public theorem_wanted eighth_three_supported_family_is_not_idp (x : Fin 3 → �
 
 /-! ## Reflexive stabilizations and Theorems 10--13 -/
 
-/-- **Reflexive stabilization number.** For a list of natural-number weights
-$q = (q_1, \dots, q_n)$, the reflexive stabilization number $\mathrm{rsn}(q)$ is the least natural
-number $k$ such that the weighted projective simplex with weights $(1^k, q_1, \dots, q_n)$, that
-is, $k$ entries equal to $1$ followed by $q$, is reflexive. If no such $k$ exists, then
-$\mathrm{rsn}(q) = 0$.
-
-For positive weights such a $k$ always exists by the reflexivity criterion of Theorem 1.
-
-Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
-Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-A60, Theorem 10. -/
-public noncomputable def reflexiveStabilizationNumber (q : List ℕ) : ℕ :=
-  sInf {k : ℕ | IsReflexive (weightedSimplexList (List.replicate k 1 ++ q))}
-
-/-- **Reflexive stabilization.** For a list of natural-number weights $q = (q_1, \dots, q_n)$,
-the reflexive stabilization of $q$ is the list $\mathrm{rs}(q) = (1^k, q_1, \dots, q_n)$ obtained
-by prepending $k = \mathrm{rsn}(q)$ entries equal to $1$, where $\mathrm{rsn}(q)$ is the
-reflexive stabilization number of $q$.
-
-Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
-Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-A60, Theorem 10. -/
-public noncomputable def reflexiveStabilization (q : List ℕ) : List ℕ :=
-  List.replicate (reflexiveStabilizationNumber q) 1 ++ q
-
 /-- **Higher reflexive stabilizations.** For a list of natural-number weights
 $q = (q_1, \dots, q_n)$ and a natural number $m$, the $m$th reflexive stabilization of $q$ is the
 list $\mathrm{rs}(q, m) = (1^k, q_1, \dots, q_n)$ obtained by prepending $k$ entries equal to $1$,
@@ -949,33 +860,6 @@ A60, Theorem 13. -/
 public def hilbertBasis {n : ℕ} (P : Set (Fin n → ℝ)) : Set (ℕ × (Fin n → ℤ)) :=
   {a | IsHilbertBasisElement P a}
 
-/-- **The almost-IDP weight vector.** For a natural number $n \ge 1$, the weight vector
-$q(n) \in \mathbb{N}^{2n+2}$ has its first $2n-1$ coordinates equal to $1$ and its last three
-coordinates equal to $3n$, $10n$ and $15n$, in that order; that is,
-$q(n) = (1^{2n-1}, 3n, 10n, 15n)$, where $1^{2n-1}$ denotes $2n-1$ entries equal to $1$.
-
-For $n = 0$ the definition gives the vector $(0, 0)$.
-
-Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
-Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-A60, Theorem 13. -/
-public def almostIDPWeights (n : ℕ) : Fin (2 * n + 2) → ℕ := fun i =>
-  if i.val < 2 * n - 1 then 1
-  else if i.val = 2 * n - 1 then 3 * n
-  else if i.val = 2 * n then 10 * n
-  else 15 * n
-
-/-- **$(1^{2n-1}, 3n, 10n, 15n)$ is a reflexive stabilization.** For every $n \ge 1$, the weight
-vector $(1^{2n-1}, 3n, 10n, 15n)$, consisting of $2n - 1$ ones followed by $3n$, $10n$, $15n$, is
-the first reflexive stabilization of $(3n, 10n, 15n)$.
-
-Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
-Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-A60, Theorem 13. -/
-public theorem_wanted almostIDPWeights_eq_reflexiveStabilization (n : ℕ) (hn : 1 ≤ n) :
-    List.ofFn (almostIDPWeights n) =
-      reflexiveStabilization [3 * n, 10 * n, 15 * n]
-
 /-- **Homogenized vertices of a weighted simplex.** For weights $q = (q_1, \dots, q_n)$, the
 homogenized vertex set is the subset of $\mathbb{N} \times \mathbb{Z}^n$ consisting of the
 point $(1, -q) = (1, (-q_1, \dots, -q_n))$ and the points $(1, e_i)$ for $i = 1, \dots, n$, where
@@ -1045,38 +929,6 @@ public theorem_wanted almostIDP_exactly_two_height_two (n : ℕ) (hn : 2 ≤ n) 
     Set.ncard {a ∈ hilbertBasis (weightedSimplex (almostIDPWeights n)) | 1 < a.1} = 2 ∧
     ∀ a ∈ hilbertBasis (weightedSimplex (almostIDPWeights n)), 1 < a.1 → a.1 = 2
 
-/-- **Even geometric factor.** For a natural number $n$, the even geometric factor is the
-polynomial $\sum_{k=0}^{n-1} z^{2k} = 1 + z^2 + \dots + z^{2n-2}$ with integer coefficients;
-for $n = 0$ it is the zero polynomial.
-
-Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
-Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-A60, Theorem 13. -/
-public noncomputable def evenGeometricFactor (n : ℕ) : Polynomial ℤ :=
-  ∑ k ∈ Finset.range n, Polynomial.X ^ (2 * k)
-
-/-- **The quartic $1 + 7z + 14z^2 + 7z^3 + z^4$.** The polynomial $1 + 7z + 14z^2 + 7z^3 + z^4$ with
-integer coefficients, the quartic factor from Theorem 13.
-
-Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
-Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-A60, Theorem 13. -/
-public noncomputable def almostIDPQuartic : Polynomial ℤ :=
-  1 + 7 * Polynomial.X + 14 * Polynomial.X ^ 2 +
-    7 * Polynomial.X ^ 3 + Polynomial.X ^ 4
-
-/-- **Coefficient vector $(1, 7, 15, 14, \dots, 15, 7, 1)$.** For a natural number $n$, the list of
-integers $(1, 7, 15, 14)$, followed by $n - 2$ copies of the pair $(16, 14)$, followed by
-$(15, 7, 1)$. The middle block is empty when $n \le 2$.
-
-It makes exact the ellipsis in the coefficient vector displayed in Theorem 13.
-
-Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
-Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-A60, Theorem 13. -/
-public def almostIDPCoefficientVector (n : ℕ) : List ℤ :=
-  [1, 7, 15, 14] ++ (List.replicate (n - 2) [16, 14]).flatten ++ [15, 7, 1]
-
 /-- **The $h^*$-polynomial of $\Delta_{(1,q(n))}$ factors.** Let $n \ge 2$, let
 $q(n) = (1^{2n-1}, 3n, 10n, 15n)$, that is, $2n - 1$ ones followed by $3n$, $10n$, $15n$, and let
 $\Delta_{(1,q(n))} \subseteq \mathbb{R}^{2n+2}$ be the weighted projective simplex. For $t \ge 0$,
@@ -1093,19 +945,6 @@ A60, Theorem 13. -/
 public theorem_wanted almostIDP_hStar_factorization (n : ℕ) (hn : 2 ≤ n) :
     IsHStarPolynomial (weightedSimplex (almostIDPWeights n))
       (evenGeometricFactor n * almostIDPQuartic)
-
-/-- **Coefficients of $(1 + z^2 + \dots + z^{2n-2})(1 + 7z + 14z^2 + 7z^3 + z^4)$.** Let $n \ge 2$.
-The coefficients of $z^0, z^1, \dots, z^{2n+2}$ in the integer polynomial
-$(1 + z^2 + \dots + z^{2n-2})(1 + 7z + 14z^2 + 7z^3 + z^4)$ are, in order, $1, 7, 15, 14$, then
-$n - 2$ repetitions of $16, 14$, then $15, 7, 1$.
-
-Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
-Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-A60, Theorem 13. -/
-public theorem_wanted almostIDP_hStar_coefficients (n : ℕ) (hn : 2 ≤ n) :
-    List.ofFn (fun k : Fin (2 * n + 3) =>
-      (evenGeometricFactor n * almostIDPQuartic).coeff k.val) =
-      almostIDPCoefficientVector n
 
 /-- **Example of support expansion.** Expanding the support values $r = (1, 3)$ with
 multiplicities $x = (2, 1)$, that is, taking $2$ copies of $1$ followed by $1$ copy of $3$,
@@ -1157,16 +996,6 @@ Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (20
 example after Theorem 6. -/
 public theorem setupEll_example : setupEll ![1, 3, 5] ![7, 4, 5] = 3 := by
   decide
-
-/-- **Dilation by one.** For every index type $\iota$ and every set $P \subseteq \mathbb{R}^\iota$,
-the dilate $1P = \{1 \cdot y : y \in P\}$ equals $P$.
-
-Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
-Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article A60,
-Section 2.3 (dilates `tP`). -/
-public theorem polytopeDilate_one {ι : Type*} (P : Set (ι → ℝ)) : polytopeDilate 1 P = P := by
-  ext x
-  simp [polytopeDilate]
 
 /-- **The almost-IDP weight vector for $n = 1$.** The weight vector
 $q(n) = (1^{2n-1}, 3n, 10n, 15n)$ of Theorem 13, where $1^{2n-1}$ denotes $2n-1$ entries

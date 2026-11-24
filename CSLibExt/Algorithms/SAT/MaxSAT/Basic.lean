@@ -37,16 +37,16 @@ formula gives an assignment satisfying at least that fraction of the clauses.
 * `max_sat_half_finset` and `max_e3sat_seven_eighths_finset` are the special
   case of a duplicate-free formula, given as a finset of clauses.
 * `cnf_max_sat_half` and `cnf_max_e3sat_seven_eighths` state the bounds for the
-  canonical formulas `Cslib.Logic.PL.CNF` (lists of clauses, so repeated
+  canonical formulas `Cslib.Logic.LegacyPL.CNF` (lists of clauses, so repeated
   clauses are kept) under the canonical semantics
-  `Cslib.Logic.PL.CNFClause.Satisfies`, counting satisfied clause positions.
+  `Cslib.Logic.LegacyPL.CNFClause.Satisfies`, counting satisfied clause positions.
 -/
 
 @[expose] public section
 
 namespace Cslib.Algorithms.SAT.MaxSAT
 
-open Cslib.Logic.PL
+open Cslib.Logic.LegacyPL
 
 /-- A literal over variables `Fin n`: `(var, positive)`. -/
 abbrev Lit (n : ℕ) := Fin n × Bool

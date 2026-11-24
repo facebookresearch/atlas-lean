@@ -16,13 +16,14 @@ Sequences* 29 (2026), Article 26.1.8
 Stated: Theorem 2 (a diagonal coefficient), Theorem 3 (triangular numbers near squares along
 `⌊n√2⌋`), Theorem 5 (arithmetic progressions of `[n]`), Theorem 6 (digit insertion and the digit
 sum), Theorem 7 (a binomial sum modulo `4`), Theorem 8 (the Bala-Somos parity conjectures from
-A067567 and A305123), Lemmas 9-11 and Theorem 12 (the ceiling of `cot (π / (2m))`), Theorem 13
-(A285273), Theorem 14 and Corollary 15 (cevians), and Theorem 16 and Corollaries 17 and 21
+A067567 and A305123), Lemmas 9-11 and Theorem 12 (the ceiling of `cot (π / (2m))`),
+Theorem 14 and Corollary 15 (cevians), and Theorem 16 and Corollaries 17 and 21
 (intersections and regions in the two-fan construction). Theorems 18 and 20 and Corollary 19 stay
 blocked (see the source audit table).
 
 Proved in `MathlibExt.Combinatorics.Enumerative.FriedAlternatingBinomialIdentity`, which this
 module imports: Lemma 1 (`fried_alternating_binomial_identity`).
+Theorem 13 (A285273) is proved in `MathlibExt.Combinatorics.Enumerative.RepeatingDecimalRatio`.
 -/
 module
 
@@ -42,6 +43,7 @@ public import Mathlib.NumberTheory.Divisors
 public import Mathlib.Topology.Connected.Clopen
 public import MathlibExt.Combinatorics.AP.Basic
 public import MathlibExt.Combinatorics.Enumerative.FriedAlternatingBinomialIdentity
+public import MathlibExt.Combinatorics.Enumerative.RepeatingDecimalRatio
 
 namespace MetaMathlibExt
 
@@ -193,19 +195,6 @@ public theorem_wanted jeffery_floor_cot_singletons (n : ℕ) (hn : 1 ≤ n) :
     let A : ℕ → Prop := fun k => 1 ≤ k ∧ ∃! m : ℕ, 2 ≤ m ∧ -(k : ℤ) = f (-(m : ℤ))
     let B : ℕ → Prop := fun k => 2 ≤ k ∧ f (-(k : ℤ) - 1) < f (-(k : ℤ)) ∧ f (-(k : ℤ)) < f (-(k : ℤ) + 1)
     2 * Nat.nth A (n - 1) = Nat.nth B (n - 1) + n - 1
-
-/-- **Counting solutions of a repeating-decimal ratio equation.** For every natural number
-$n \ge 1$, the number of natural numbers $x$ with $10^n \le x < 10^{n+1}$ for which there is a
-natural number $k$ with $x \le k < 2x$ and $k / x = 1 + (x - 10^n) / (10^n - 1)$, computed in the
-rationals, (OEIS A285273) equals $2^{\omega(10^n - 1)}$, where $\omega(m)$ is the number of
-distinct prime factors of $m$.
-
-Source: Sela Fried, *Proofs of Ten Conjectures From the OEIS*, Journal of Integer Sequences 29
-(2026), Article 26.1.8, Theorem 13 (`jis-2026-26.1.8-thm-13`). -/
-public theorem_wanted ncard_repeating_decimal_ratio_eq_two_pow_omega (n : ℕ) (hn : 1 ≤ n) :
-    {x : ℕ | 10 ^ n ≤ x ∧ x < 10 ^ (n + 1) ∧ ∃ k : ℕ, x ≤ k ∧ k < 2 * x ∧
-        (k : ℚ) / x = 1 + ((x : ℚ) - 10 ^ n) / (10 ^ n - 1)}.ncard =
-      2 ^ ArithmeticFunction.cardDistinctFactors (10 ^ n - 1)
 
 /-- **Zakharov's conjecture on regions cut by cevians.** Let $A$, $B$, $C$ be affinely independent
 points of $\mathbb{R}^2$ and $T$ the triangle they span; a cevian is a segment joining a vertex

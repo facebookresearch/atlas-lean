@@ -81,15 +81,6 @@ public theorem_wanted rLarge_sdiff_finite (r : ℕ) (D F : Set ℕ)
     (hD : IsRLarge r D) (hF : F.Finite) :
     IsRLarge r (D \ F)
 
-/-- **Largeness is partition regular.** If $D_1, D_2 \subseteq \mathbb{N}$ and their union
-$D = D_1 \cup D_2$ is large, then $D_1$ is large or $D_2$ is large.
-
-Source: Oscar Quester, *On Some Properties of Accessible Sets*, INTEGERS 25 (2025), Article A64,
-        Theorem 4. -/
-public theorem_wanted large_union_partition (D D₁ D₂ : Set ℕ)
-    (hD : D = D₁ ∪ D₂) (hlarge : IsLarge D) :
-    IsLarge D₁ ∨ IsLarge D₂
-
 /-- **Sets growing by a factor of three are not 2-large.** Let $d_0 < d_1 < d_2 < \cdots$ be a
 strictly increasing sequence of natural numbers with $d_0 > 0$ and $d_{n+1} \ge 3 d_n$ for every
 $n \in \mathbb{N}$, and let $D = \{d_n : n \in \mathbb{N}\}$. Then $D$ is not $2$-large.
@@ -165,19 +156,6 @@ public theorem_wanted accessible_of_colored_subset_diffsequences (c r : ℕ)
           IsDDiffSequence {e : ℕ | ∃ d ∈ D, e = d + c}
             (fun i => (((x i : {n : ℕ+ // (n : ℕ) ∈ D}) : ℕ+) : ℕ))) :
     IsRAccessible r {e : ℕ | ∃ d ∈ D, e = d + c}
-
-/-- **Sets containing their own long diffsequences are 2-accessible.** Let $D$ be a set of
-positive integers. If for every $k \ge 1$ there are positive integers $x_1, \dots, x_k$, all in
-$D$, that form a $D$-diffsequence, then $D$ is $2$-accessible.
-
-Source: Oscar Quester, *On Some Properties of Accessible Sets*, INTEGERS 25 (2025), Article A64,
-        Corollary 2. -/
-public theorem_wanted two_accessible_of_internal_diffsequences (D : Set ℕ)
-    (hD : D ⊆ Set.Ioi 0)
-    (hseq : ∀ k : ℕ, 1 ≤ k → ∃ x : Fin k → ℕ+,
-      (∀ i, (x i : ℕ) ∈ D) ∧
-        IsDDiffSequence D (fun i => ((x i : ℕ) : ℤ))) :
-    IsRAccessible 2 D
 
 /-- **Integral quotients of an accessible set.** Let $d \ge 1$ and $r$ be natural numbers and let
 $A$ be a set of natural numbers. If $A$ is $rd$-accessible, then the set $\{n \ge 1 : nd \in A\}$,

@@ -273,13 +273,29 @@ jobs:
           uvx --from "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}"
           autoform check blueprint --lean-root .
 
+      # The move ledger the site serves (docs/cards.md#move-ledger), checked on
+      # its own, independently of the strict card check: the site keeps the
+      # moved addresses only with the receipt this step writes for this commit,
+      # its ledger and its annotations, so a card error never costs a redirect.
+      # It removes any earlier receipt first and writes one only when the
+      # ledger is valid. This step can neither fail this job nor hold it past
+      # its timeout.
+      - name: Check the move ledger the site serves
+        continue-on-error: true
+        timeout-minutes: 5
+        run: |
+          set -euo pipefail
+          rm -f build/card-moves.json
+          uv run --no-project --with "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}" \
+            python scripts/cards.py moves build/card-moves.json
+
       # The card data the site shows (docs/cards.md#reading): this checkout's
       # own rollup, from the extraction and the Mathlib registry above, as the
       # `check the cards` job makes it (that job alone also checks the moves
       # against the base commit). It fails closed: an error leaves no card data,
-      # the site then renders exactly as without cards, and that job reports
-      # the error. This step can neither fail this job nor hold it past its
-      # timeout.
+      # the site then shows no card (it still keeps the moved addresses, with
+      # the step above), and that job reports the error. This step can neither
+      # fail this job nor hold it past its timeout.
       - name: Derive the card data the site shows
         continue-on-error: true
         timeout-minutes: 10

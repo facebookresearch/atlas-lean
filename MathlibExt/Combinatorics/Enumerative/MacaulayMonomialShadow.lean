@@ -615,7 +615,7 @@ private lemma mms_macaulay_extended (r n : ℕ) (hr : 0 < r) (ext : Fin (r + 1) 
     mms_macaulay r n =
       ∑ i, if i.1 = 0 then 0 else Nat.choose (ext i - 1) (i.1 - 1) := by
   induction r using Nat.strong_induction_on generalizing n with
-  | h r ih =>
+  | ind r ih =>
     obtain rfl | s := r
     · omega
     obtain rfl | s := s
@@ -763,7 +763,7 @@ private lemma mms_extended_or_step (r a : ℕ) (hr : 0 < r) (ha : 0 < a) :
       a = ∑ i, Nat.choose (ext i) i.1) ∨
       mms_macaulay r a = mms_macaulay r (a - 1) + 1 := by
   induction r using Nat.strong_induction_on generalizing a with
-  | h r ih =>
+  | ind r ih =>
     obtain rfl | s := r
     · omega
     let d := mms_digits (s + 1) a
@@ -1096,11 +1096,11 @@ private lemma mms_split_ineq (r n a b : ℕ) (hr : 0 < r) (hadd : a + b = n)
     (hlt : a < mms_macaulay (r + 1) n) :
     mms_macaulay r a + mms_macaulay (r + 1) b ≥ mms_macaulay (r + 1) n := by
   induction r using Nat.strong_induction_on generalizing n a b with
-  | h r ihR =>
+  | ind r ihR =>
     obtain rfl | s := r
     · omega
     induction a using Nat.strong_induction_on generalizing n b with
-    | h a ihA =>
+    | ind a ihA =>
       by_cases ha0 : a = 0
       · subst a
         have hb : b = n := by omega
@@ -1510,7 +1510,7 @@ public theorem macaulay_multiset_shadow_minimal
     (∑ i, if digits i = 0 then 0 else Nat.choose (digits i - 1) i.1) ≤
       (A.biUnion fun a => a.support.image fun i => a.update i (a i - 1)).card := by
   induction hm : k + A.card using Nat.strong_induction_on generalizing k A digits with
-  | h n ih =>
+  | ind n ih =>
   obtain rfl | k := k
   · exact macaulay_degree_one A digits hdegree hcard
   · by_cases hA : A.Nonempty

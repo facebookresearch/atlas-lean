@@ -28,7 +28,7 @@ public import Cslib.Computability.Circuit.Basic
 
 namespace MetaMathlibExt.Complexity.NPComplete.TruthFunctionallyCompleteConnectives
 
-open Cslib.Logic.PL
+open Cslib.Logic.LegacyPL
 
 /-!
 # TRUTH-FUNCTIONALLY COMPLETE CONNECTIVES is NP-complete

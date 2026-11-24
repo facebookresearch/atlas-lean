@@ -14,6 +14,7 @@ public import Mathlib.FieldTheory.Separable
 public import Mathlib.Algebra.LinearRecurrence
 public import Mathlib.Algebra.Polynomial.Roots
 public import MathlibExt.NumberTheory.GeneralizedPadovanPerrinCompanion
+public import MathlibExt.NumberTheory.GeneralizedPadovanPerrinExpansion
 public import MathlibExt.NumberTheory.GeneralizedPadovanPerrinModel
 
 namespace MetaMathlibExt
@@ -237,21 +238,6 @@ Source: Elen Viviani Pereira Spreafico, Mustapha Rachidi, and Paula Maria Machad
 (2024), Article A49, equation (14) and Table 1. -/
 theorem padovanPerrinRho_one_one_one_two_twelve : padovanPerrinRho (1 : ℤ) 1 1 2 12 = 5 := by
   decide
-
-/-- **Expansion in the Fibonacci fundamental system.** Let $R$ be a commutative ring, let
-$k_1, k_2 \in R$ and $p, s \in \mathbb{N}$, and for $1 \le j \le s + p$ let $v^{(j)}$ be the
-solution of the $([k]; p; s)$-Padovan–Perrin recurrence with $v^{(j)}(m) = 1$ if $m + 1 = j$ and
-$v^{(j)}(m) = 0$ otherwise, for $0 \le m < s + p$. Then every solution $v \colon \mathbb{N} \to R$
-of the recurrence satisfies, for every $n \ge 0$,
-$$v(n) = \sum_{j=0}^{s+p-1} v(j)\, v^{(j+1)}(n).$$
-
-Source: Elen Viviani Pereira Spreafico, Mustapha Rachidi, and Paula Maria Machado Cruz Catarino,
-*On a Model of (k;p;s)-Generalized Padovan-Perrin and Fibonacci Fundamental System*, INTEGERS 24
-(2024), Article A49, Proposition 1 (`integers-2024-A49-prop-1`). -/
-public theorem_wanted padovanPerrin_eq_sum_fundamental [CommRing R] (k₁ k₂ : R) (p s : ℕ)
-    (v : ℕ → R)
-    (hv : (padovanPerrinRecurrence k₁ k₂ p s).IsSolution v) (n : ℕ) :
-    v n = ∑ j ∈ Finset.range (s + p), v j * padovanPerrinFundamental k₁ k₂ p s (j + 1) n
 
 /-- **Solutions agreeing on a window agree afterwards.** Let $R$ be a commutative ring, let
 $k_1, k_2 \in R$, let $p, s$ be natural numbers and let $v, w \colon \mathbb{N} \to R$ be solutions

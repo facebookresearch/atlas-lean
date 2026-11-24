@@ -4,6 +4,12 @@ Let $(\mathbb{Z}^2)^\ast = (\tfrac12, \tfrac12) + \mathbb{Z}^2$ be the dual latt
 
 For $a, b, c, d \in \mathbb{Z}$, the configuration $\omega$ has a dual left–right crossing of $R = [a, b] \times [c, d]$ if $\omega^\ast$ has an open path of dual edges inside the dual rectangle $R^\ast = (\tfrac12, \tfrac12) + R$ from its left side $\{x_1 = a + \tfrac12\}$ to its right side $\{x_1 = b + \tfrac12\}$.
 
+## Depends on
+
+- [Open left–right crossing of a general rectangle](horizontal-crossing.md)
+- [Configuration space of a statistical-mechanics model](../../../../random-fields/spin-and-bond-configuration-spaces/config-space.md)
+- [Site of the hypercubic lattice](../../../../../GraphTheory/graph-families-and-operations/hypercubic-lattice-graphs/site.md)
+
 ## Sources
 
 - Hugo Duminil-Copin, *Introduction to Bernoulli percolation*, lecture notes, IHÉS (version of 7 October 2018), §4.1 (dual lattice and dual configuration).

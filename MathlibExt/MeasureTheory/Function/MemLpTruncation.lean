@@ -72,7 +72,7 @@ theorem lintegral_eq_iSup_lintegral_Icc_inter
       apply le_antisymm
       · apply iSup_le; intro n
         simp only [hF_def]
-        rw [Set.indicator_of_notMem (fun h => hx h.2)]
+        rw [Set.indicator_of_notMem (fun h : x ∈ Set.Icc (-(n : ℝ)) n ∩ S => hx h.2)]
       · exact zero_le
   have h_meas : ∀ n : ℕ, Measurable (F n) :=
     fun n => hg.indicator (measurableSet_Icc.inter hS)

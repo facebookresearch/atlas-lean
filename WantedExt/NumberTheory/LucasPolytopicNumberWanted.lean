@@ -14,7 +14,7 @@ public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.RingTheory.PowerSeries.Basic
 public import Mathlib.Topology.Algebra.InfiniteSum.Defs
-public import MathlibExt.NumberTheory.LucasPolytopicNumber
+public import MathlibExt.NumberTheory.LucasnomialSum
 public import MathlibExt.NumberTheory.LucasSequence
 public import MathlibExt.NumberTheory.PellNumberSequence
 
@@ -37,26 +37,6 @@ orderings), and in the series identities they are the paper's
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Sum formula for Lucasnomial coefficients.** Let $(s, t)$ be nondegenerate Lucas parameters,
-with Lucasnomial coefficients $\binom{n}{k}_{s,t}$, and let $\varphi$ and $\varphi'$ be real
-numbers with $\varphi + \varphi' = s$ and $\varphi \varphi' = -t$. For all natural numbers
-$n \ge 1$ and $d$,
-$$\binom{n+d}{d+1}_{s,t} = \sum_{k=1}^{n} \varphi^{(d+1)(n-k)} \varphi'^{k-1}
-\binom{k+d-1}{d}_{s,t},$$
-and the same holds with $\varphi$ and $\varphi'$ exchanged.
-
-Source: Ronald Orozco López, *Simplicial d-Polytopic Numbers Defined on Lucas Sequences*,
-Journal of Integer Sequences 28 (2025), Article 25.5.6, Theorem 2
-(`jis-2025-25.5.6-thm-2`). -/
-public theorem_wanted lucasnomial_succ_eq_sum_lucasPolytopic (P : LucasParameters) (φ φ' : ℝ)
-    (hsum : φ + φ' = P.s) (hprod : φ * φ' = -P.t) (n d : ℕ) (hn : 1 ≤ n) :
-    lucasnomial P (n + d) (d + 1) =
-        ∑ k ∈ Finset.Icc 1 n, φ ^ ((d + 1) * (n - k)) * φ' ^ (k - 1) *
-          lucasnomial P (k + d - 1) d ∧
-      lucasnomial P (n + d) (d + 1) =
-        ∑ k ∈ Finset.Icc 1 n, φ' ^ ((d + 1) * (n - k)) * φ ^ (k - 1) *
-          lucasnomial P (k + d - 1) d
 
 /-- **Identities for the Lucas triangular numbers.** Let $(s, t)$ be nondegenerate Lucas
 parameters and let $\varphi, \varphi'$ be real numbers with $\varphi + \varphi' = s$ and

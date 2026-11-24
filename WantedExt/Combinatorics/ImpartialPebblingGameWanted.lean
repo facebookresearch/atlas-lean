@@ -229,29 +229,6 @@ public theorem_wanted pebbling_completeThree_isN_of_ge_fourKAddOne (k : ℕ) (hk
 
 /-! ### `(2:1)`-pebbling on `C_4` -/
 
-/-- **Invariance of the mod-$3$ pattern classes under symmetric replies on $C_4$.** Consider the
-$(2:1)$-pebbling game on the cycle $C_4$ with vertices $v_0, v_1, v_2, v_3$, indices read modulo
-$4$, and let $a = (a_0, a_1, a_2, a_3)$ be a position with $a_i$ pebbles on $v_i$. Let $j$ be an
-index with $a_j \ge 2$, let $\varepsilon \in \{1, -1\}$, and let $b$ be the position obtained from
-$a$ by the move from $v_j$ to $v_{j+\varepsilon}$, which removes two pebbles from $v_j$ and adds
-one pebble to $v_{j+\varepsilon}$. Let $c$ be obtained from $b$ either by the move from $v_{j+2}$
-to $v_{j-\varepsilon}$, where $b_{j+2} \ge 2$, or by the move from $v_{j-\varepsilon}$ to
-$v_{j+2}$, where $b_{j-\varepsilon} \ge 2$. Then for each of the sets $X_{aaab}$, $X_{abab}$,
-$X_{aabc}$, $X_{abac}$ and $\hat X_{aabb}$, if $a$ lies in the set, then so does $c$.
-
-Source: Barker, DeStefano, Fiorini, Gohn, Miller, Roeder, and Wong, *Generalized Impartial
-Two-player Pebbling Games on `K_3` and `C_4`*, Journal of Integer Sequences 27 (2024),
-Article 24.5.8, Lemma 14. -/
-public theorem_wanted c4Pattern_invariant_rotationalSymmetric_reflectional (a : Fin 4 → ℕ)
-    (j ε : Fin 4) (hε : ε = 1 ∨ ε = -1) (hj : 2 ≤ a j) (c : Fin 4 → ℕ)
-    (hc : (2 ≤ pebblingStep 1 a j (j + ε) (j + 2) ∧
-        c = pebblingStep 1 (pebblingStep 1 a j (j + ε)) (j + 2) (j - ε)) ∨
-      (2 ≤ pebblingStep 1 a j (j + ε) (j - ε) ∧
-        c = pebblingStep 1 (pebblingStep 1 a j (j + ε)) (j - ε) (j + 2))) :
-    (C4PatternAAAB a → C4PatternAAAB c) ∧ (C4PatternABAB a → C4PatternABAB c) ∧
-      (C4PatternAABC a → C4PatternAABC c) ∧ (C4PatternABAC a → C4PatternABAC c) ∧
-      (C4PatternAABBHat a → C4PatternAABBHat c)
-
 /-- **Closure of the mod-$3$ pattern classes under moves on $C_4$.** Let $a$ and $b$ be
 distributions of pebbles on the vertices of the $4$-cycle $C_4$ such that $b$ is obtained from $a$
 by one $(2:1)$-pebbling move, that is, by removing two pebbles from a vertex holding at least two

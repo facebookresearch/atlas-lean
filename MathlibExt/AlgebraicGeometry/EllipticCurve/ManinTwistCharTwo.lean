@@ -72,7 +72,7 @@ private lemma intDegree_add_le_of_le {x y : RatFunc F} {m : ℤ}
   · simp [hxy, hm]
   by_cases hy0 : y = 0
   · simpa [hy0] using hx
-  exact (RatFunc.intDegree_add_le hy0 hxy).trans (max_le hx hy)
+  exact (RatFunc.intDegree_add_le hxy).trans (max_le hx hy)
 
 private lemma intDegree_mul_le_of_le {x y : RatFunc F} {m n : ℤ}
     (hmn : 0 ≤ m + n) (hx : x.intDegree ≤ m) (hy : y.intDegree ≤ n) :
@@ -96,12 +96,11 @@ private lemma intDegree_add_eq_left_of_lt {x y : RatFunc F}
     rw [RatFunc.intDegree_neg] at hdegrees
     omega
   apply le_antisymm
-  · exact (RatFunc.intDegree_add_le hy0 hsum0).trans
+  · exact (RatFunc.intDegree_add_le hsum0).trans
       (max_le le_rfl hdegree.le)
-  · have hneg : -y ≠ 0 := neg_ne_zero.mpr hy0
-    have hrecover : (x + y) + -y = x := by ring
+  · have hrecover : (x + y) + -y = x := by ring
     have hrecover0 : (x + y) + -y ≠ 0 := by rw [hrecover]; exact hx0
-    have hbound := RatFunc.intDegree_add_le hneg hrecover0
+    have hbound := RatFunc.intDegree_add_le hrecover0
     rw [hrecover, RatFunc.intDegree_neg] at hbound
     by_contra hnot
     have hlt : (x + y).intDegree < x.intDegree := lt_of_not_ge hnot
@@ -535,7 +534,7 @@ private lemma eval_charTwoFrobeniusPolynomial [Finite F] (x : F) :
 private lemma charTwoFrobeniusPolynomial_ne_zero [Finite F] :
     (charTwoFrobeniusPolynomial : F[X]) ≠ 0 := by
   let fintypeF : Fintype F := Fintype.ofFinite F
-  have hdegree := FiniteField.X_pow_card_sub_X_natDegree_eq F
+  have hdegree := Polynomial.natDegree_X_pow_sub_X (R := F)
     (@Fintype.one_lt_card F fintypeF _)
   intro hzero
   unfold charTwoFrobeniusPolynomial at hzero
@@ -552,7 +551,7 @@ private lemma charTwoFrobeniusPolynomial_splits [Finite F] :
   unfold charTwoFrobeniusPolynomial
   rw [@Nat.card_eq_fintype_card F fintypeF,
     FiniteField.roots_X_pow_card_sub_X,
-    FiniteField.X_pow_card_sub_X_natDegree_eq F Fintype.one_lt_card]
+    Polynomial.natDegree_X_pow_sub_X Fintype.one_lt_card]
   simp
 
 private lemma exists_mem_charTwoFiber_of_value_eq_zero [Finite F] [CharP F 2]
