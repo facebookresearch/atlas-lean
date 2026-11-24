@@ -4378,3 +4378,4 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/Analysis/control-theory/linear-quadratic-control/infinite-horizon-linear-quadratic-control-and-the-algebraic-riccati-equation.md"}], "id": "af_1a0c67337514f28ae90016b3", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Analysis/ordinary-differential-equations/stability-of-linear-systems/real-and-complex-stability-of-a-real-linear-system-agree.md"}], "id": "af_a7e91675b771a951ed801881", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Analysis/control-theory/average-consensus-on-a-connected-undirected-graph.md"}], "id": "af_9a2927c97777cfd455464910", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Analysis/control-theory/linear-quadratic-control/README.md"}], "id": "af_d2e5b8f31586f75caab746d4"}
