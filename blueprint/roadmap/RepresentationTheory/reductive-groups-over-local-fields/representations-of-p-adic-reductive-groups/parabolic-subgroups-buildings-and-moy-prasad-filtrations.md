@@ -67,13 +67,15 @@ listed above, each citing the sources below with locators.
 
 ## Depends on
 
-- Not yet a page: connected reductive groups over $F$, with their parabolic $F$-subgroups, maximal split tori, roots and Lie algebras, for all the items
-- Not yet a page: $\ell$-spaces and $\ell$-sheaves (Bernstein–Zelevinsky 1976), for the filtration of induced representations along the Bruhat decomposition
+- [Linear algebraic groups over local fields and their groups of rational points](../linear-algebraic-groups-over-local-fields.md), for connected reductive groups over $F$, their maximal split tori and the topology of $G = \mathbf{G}(F)$
+- [Parabolic subgroups and the rational Bruhat decomposition of reductive groups](../../../GroupTheory/linear-groups/parabolic-subgroups-and-rational-bruhat-decomposition.md), for parabolic $F$-subgroups, Levi decompositions, standard parabolic and Levi subgroups and Weyl groups
+- Not yet a page: relative roots and Lie algebras of reductive groups over $F$, for the affine roots and the lattices $\mathfrak{g}_{x,r}$
+- Not yet a page: $\ell$-spaces and $\ell$-sheaves (Bernstein–Zelevinsky 1976, Chapter I, §1; Bernstein–Zelevinsky 1977, §5), for the filtration of induced representations along the Bruhat decomposition
 
 ## Proof depends on
 
-- Not yet a page: the structure theory of reductive groups over a field (Borel–Tits), for the parabolic subgroups, Levi decompositions, Weyl groups and the Bruhat decomposition
-- Not yet a page: Bruhat–Tits theory (Bruhat–Tits I and II), for the building, the parahoric subgroups and their integral models, on which Moy and Prasad construct the filtrations
+- [Parabolic subgroups and the rational Bruhat decomposition of reductive groups](../../../GroupTheory/linear-groups/parabolic-subgroups-and-rational-bruhat-decomposition.md), for the Bruhat decomposition of $G$ into double cosets of standard parabolic subgroups (Borel–Tits, 5.15 and 5.20, as cited by Bernstein–Zelevinsky 1977, §6.4)
+- Not yet a page: Bruhat–Tits theory, the building with its affine root system and the integral models of the parahoric subgroups (Bruhat–Tits I, §§2 and 7; II, §4.6, Proposition 4.6.28), on which Moy and Prasad construct the filtrations
 
 ## Sources
 

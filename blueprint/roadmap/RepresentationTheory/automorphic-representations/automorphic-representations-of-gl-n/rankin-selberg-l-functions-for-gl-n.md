@@ -62,9 +62,14 @@ Rankin–Selberg integrals", 2009) consulted for hypotheses.
 
 ## Proof depends on
 
-- Not yet a page: Shintani's formula for the unramified Whittaker functions of $\mathrm{GL}_n$, for the unramified computation (Cogdell, Lecture 7)
-- Not yet a page: Gelbart and Shahidi's boundedness in vertical strips (J. Amer. Math. Soc. 14 (2001)), cited by Cogdell, Lecture 9, §5
-- Not yet a page: Shahidi's method of constant terms of Eisenstein series on larger groups (Shahidi, 1981), for the non-vanishing on $\operatorname{Re} s = 1$
+- [Fourier expansion and global Whittaker models of cusp forms on GLₙ](whittaker-fourier-expansion.md), for the unfolding of the global integrals into Euler products of local Whittaker integrals
+- [L- and ε-factors of pairs for GLₙ and of Weil–Deligne representations](../../reductive-groups-over-local-fields/representations-of-p-adic-gl-n/l-and-epsilon-factors-of-pairs.md), for the local generators and local functional equations at the finite places
+- [Rapid decay of cusp forms](../automorphic-forms-on-reductive-groups/rapid-decay-of-cusp-forms.md), for the convergence of the global integrals
+- [Poisson summation formula for adeles](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/adelic-poisson-summation.md), for the functional equation of the mirabolic Eisenstein series $E(g, \Phi, s)$ when $m = n$
+- [Eisenstein series and their meromorphic continuation](../automorphic-forms-on-reductive-groups/eisenstein-series.md), for the holomorphy of Eisenstein series on the imaginary axis, used in the non-vanishing on $\operatorname{Re} s = 1$
+- Not yet a page: Shintani's formula for the normalized spherical Whittaker functions of $\mathrm{GL}_n$ (Shintani; Casselman–Shalika), with $W(1) = 1$, the Cauchy identity for products of Schur polynomials, and the test function $1_{\mathcal{O}_v^n}$ when $m = n$, for the unramified computation (Cogdell, Lecture 7)
+- Not yet a page: the boundedness of $L(s, \pi \times \pi')$ in vertical strips of finite width away from its poles (Gelbart–Shahidi, J. Amer. Math. Soc. 14 (2001)), which Cogdell, Lecture 9, §5, uses for the lower ranks
+- Not yet a page: Shahidi's non-vanishing on $\operatorname{Re} s = 1$, through the non-degenerate Whittaker Fourier coefficient, not the constant term, of the Eisenstein series on $\mathrm{GL}_{n+m}$ induced from $\pi \otimes \pi'$ on a maximal parabolic subgroup, which unfolds to the reciprocal of the partial $L$-function, with nonzero local data at the excluded places (Shahidi, Amer. J. Math. 103 (1981), as cited by Jacquet–Shalika II, §3.7, p. 804)
 
 ## Sources
 

@@ -6,10 +6,10 @@ This node is still to be broken down. It covers basic properties of
 and [constituents of induced representations](automorphic-representations-as-constituents-of-induced-representations.md).
 Let $k$, $G$, $K = K_\infty K_f$, $G_\infty$ and the centre $\mathcal{Z}$ of the enveloping algebra be as for automorphic forms.
 
-- **Convolution identity** (Harish-Chandra). For a smooth function $\varphi$ on $G(k) \backslash G(\mathbb{A})$ that is $K$-finite
-  and $\mathcal{Z}$-finite, in particular an automorphic form, and every neighbourhood $U$ of $1$ in $G_\infty$, there is a
-  function $\alpha \in C^\infty_c(U)$, invariant under conjugation by $K_\infty$, with $\varphi = \varphi \star \alpha$. Consequently every automorphic
-  form is of uniform moderate growth.
+- **Convolution identity** (Harish-Chandra). Every automorphic form $\varphi$ satisfies $\varphi = \varphi \star \alpha$ for some
+  $\alpha \in C^\infty_c(U)$, $U$ any neighbourhood of $1$ in $G_\infty$, and is of uniform moderate growth: the case of automorphic
+  forms of [Harish-Chandra's convolution identity](harish-chandra-convolution-identity.md), which is stated there for all smooth
+  $K$-finite and $\mathcal{Z}$-finite functions on $G(k) \backslash G(\mathbb{A})$, so that the definition of automorphic forms can use it.
 - **The split centre.** An automorphic form is finite under translation by the centre $Z_G(\mathbb{A})$ (Langlands's
   Lemma 3). Along the split component $A_G(\mathbb{R})^0$ of the centre, a smooth $\mathcal{Z}$-finite function satisfies
   $\varphi(xa) = \sum_i Q_i(a) (P_i \varphi)(x)$ for $a \in A_G(\mathbb{R})^0$ and $x \in G(\mathbb{A})^1$, with exponential polynomials $Q_i$ and elements $P_i$ of
@@ -45,8 +45,10 @@ precise statement and the locators below.
 
 ## Proof depends on
 
-- [Siegel sets and reduction theory for adelic groups](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/reduction-theory-for-adelic-groups.md), for the properties of heights behind uniform moderate growth (Borel, §4.3)
-- Not yet a page: Harish-Chandra's homomorphism $\mathcal{Z}(\mathfrak{g}) \to \mathcal{Z}(\mathfrak{m})$, with the finiteness of $\mathcal{Z}(\mathfrak{m})$ over its image, for the $\mathcal{Z}(\mathfrak{m})$-finiteness of constant terms (Borel, 7.4)
+- [Harish-Chandra's convolution identity and uniform moderate growth](harish-chandra-convolution-identity.md), for the convolution identity and uniform moderate growth of automorphic forms
+- [Siegel sets and reduction theory for adelic groups](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/reduction-theory-for-adelic-groups.md), for the stability of moderate growth under right translation by the compact support of $\alpha$, used through $D(\varphi \star \alpha) = \varphi \star D\alpha$ (Borel, §4.3); this does not prove the convolution identity itself
+- Not yet a page: Harish-Chandra's homomorphism $\mathcal{Z}(\mathfrak{g}) \to \mathcal{Z}(\mathfrak{m})$ with $(z\varphi)_P = \nu(z)\varphi_P$, and the finiteness of $\mathcal{Z}(\mathfrak{m})$ as a module over its image, which give the finite codimension of the annihilator of a constant term (Borel, 7.4 (c))
+- Not yet a page: the decomposition of the Hilbert space $L^2_0(M(k) \backslash M(\mathbb{A}), \chi)$ of cuspidal functions with central character $\chi$, weighted by $\nu^{-2}$, into irreducible invariant subspaces (Langlands, pp. 3–4), for the second step of the last item; the page on discreteness of the cuspidal spectrum depends on this node through rapid decay, so it cannot be linked here, and the fixed-character subquotient lemma (Langlands, Lemma 6) is a separate step
 
 ## Sources
 

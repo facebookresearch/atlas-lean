@@ -62,13 +62,19 @@ sources below.
 
 - [Adelic norm](adeles-and-ideles/adelic-norm.md), for the normalized absolute values of the completions
 - [Product formula for principal ideles](adeles-and-ideles/adelic-norm-principal-embedding.md), for the product formula on $k^\times$
+- [Parabolic subgroups and the rational Bruhat decomposition of reductive groups](../../../GroupTheory/linear-groups/parabolic-subgroups-and-rational-bruhat-decomposition.md), for the minimal and standard parabolic $k$-subgroups, Levi decompositions and simple roots
+- [Parabolic subgroups, Bruhat–Tits buildings and Moy–Prasad filtrations](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-p-adic-reductive-groups/parabolic-subgroups-buildings-and-moy-prasad-filtrations.md), for the decomposition $G(k_v) = P_0(k_v) K_v$ at the finite places, through which $H_P$ is defined
+- Not yet a page: the Iwasawa decomposition of the real points at the archimedean places, also used to define $H_P$
 
 ## Proof depends on
 
-- [Dirichlet's unit theorem: the logarithmic image of the units is a full lattice](../discriminants-ramification/dirichlet-unit-theorem.md), for the case of $\mathrm{GL}_1$, where the norm-one ideles modulo $k^\times$ form a compact group
-- [Minkowski's bound: every ideal class of a number field contains an integral ideal of small norm](../number-fields-embeddings/minkowski-bound.md), for the finiteness of the class group of $k$, the case $G = \mathrm{GL}_1$ of the finiteness of class numbers
-- [Compactness of the completed ring of integers](adeles-and-ideles/is-compact-adic-completion-integers.md), for the compactness of the balls of the height
-- Not yet a page: the reduction theory of $\mathrm{GL}_n$ over $\mathbb{Q}$ and the structure theory of reductive groups over $k$ (parabolic subgroups, Bruhat and Iwasawa decompositions), on which Borel and Harish-Chandra build the covering by Siegel sets and the maps $H_P$
+- [Dirichlet's unit theorem: the logarithmic image of the units is a full lattice](../discriminants-ramification/dirichlet-unit-theorem.md), for the archimedean factor in the compactness of the norm-one idele classes, the case of $\mathrm{GL}_1$
+- [Compactness of the local integral units](adeles-and-ideles/is-compact-local-integral-unit-subgroup.md), for the compact product of the local unit groups at the finite places, the other factor in that case
+- [Minkowski's bound: every ideal class of a number field contains an integral ideal of small norm](../number-fields-embeddings/minkowski-bound.md), for a representative of small norm in each ideal class
+- [Bound on the number of ideals of bounded norm, floor form](../discriminants-ramification/counting-ideals-of-bounded-norm/card-nonzero-abs-norm-le-real.md), for the finiteness of the ideals of bounded norm, so that with Minkowski's bound the class group of $k$ is finite: the class number for the standard maximal compact subgroup of $\mathrm{GL}_1$; an arbitrary compact open subgroup gives a finite refinement
+- [Compactness of the completed ring of integers](adeles-and-ideles/is-compact-adic-completion-integers.md), for the compactness of the balls of the height, together with one finite set of places for the whole ball: the local factors of the height are at least $1$ at the finite places and take values in $q_v^{\mathbb{Z}}$, so on a ball they exceed $1$ only at places of norm bounded in terms of the radius, finitely many by the counting of ideals above, and the ball is a closed subset of a product of compact sets
+- [Parabolic subgroups and the rational Bruhat decomposition of reductive groups](../../../GroupTheory/linear-groups/parabolic-subgroups-and-rational-bruhat-decomposition.md), for the rational parabolic subgroups, their finitely many $G(k)$-conjugacy classes (one for each standard parabolic subgroup) and the rational Bruhat decomposition
+- Not yet a page: the classical reduction theory of $\mathrm{GL}_n$ over $\mathbb{Q}$ and the theorem of Borel and Harish-Chandra (covering by Siegel sets, finite volume, compactness criterion), with the archimedean Iwasawa decomposition and the globalization from the local decompositions, for the covering and the finiteness statements
 
 ## Sources
 

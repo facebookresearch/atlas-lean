@@ -44,8 +44,8 @@ general case should be sourced from Kudla–Rallis or from a published account c
 
 ## Proof depends on
 
-- [Eisenstein series and their meromorphic continuation](../automorphic-forms-on-reductive-groups/eisenstein-series.md), for the constant term along the line parabolic subgroup and the functional equation (Tan's Propositions 4.4 and 4.8)
-- Not yet a page: the Bruhat decomposition of $G_n(F)$ into $Q(F)$-double cosets, which unfolds the non-singular Fourier coefficients into Euler products
+- [Eisenstein series and their meromorphic continuation](../automorphic-forms-on-reductive-groups/eisenstein-series.md), for the intertwining operators and the functional equation, which Tan applies to the normalized series (Proposition 4.8); the constant term formula there is for cuspidal Levi data, and $\chi \circ \det$ on $\mathrm{GL}_n$, $n > 1$, is not cuspidal, so the recursion along the line parabolic subgroup behind Proposition 4.4 is Tan's own computation
+- [Parabolic subgroups and the rational Bruhat decomposition of reductive groups](../../../GroupTheory/linear-groups/parabolic-subgroups-and-rational-bruhat-decomposition.md), for the decomposition of $G_n(F)$ into $Q(F)$-double cosets, after which a non-degenerate $\beta$ kills all but the open cell and the Fourier coefficient of a factorizable section is a product of local integrals
 
 ## Sources
 

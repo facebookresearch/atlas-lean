@@ -30,7 +30,7 @@ for the exact hypotheses.
 
 ## Proof depends on
 
-- Not yet a page: the Gelfand–Kazhdan criterion for invariant distributions on $\mathrm{GL}_n(F)$, $F$ archimedean, on which Shalika's proof of uniqueness rests (Shalika, 1974)
+- Not yet a page: an archimedean Gelfand–Kazhdan argument for $\mathrm{GL}_n(F)$: a distribution criterion together with the symmetry of the relevant bi-$(N, \psi)$-equivariant distributions under transpose-inverse twisted by $w_n$, which bounds the product of the dimensions of the continuous Whittaker functionals of $\pi$ and of its contragredient by $1$, hence each by $1$ (Shalika, 1974; Sun–Zhu); the Whittaker model of the contragredient and the injectivity of the restriction to $P_n$ need separate arguments (Cogdell, Lecture 4, §§4.2–4.4)
 
 ## Sources
 

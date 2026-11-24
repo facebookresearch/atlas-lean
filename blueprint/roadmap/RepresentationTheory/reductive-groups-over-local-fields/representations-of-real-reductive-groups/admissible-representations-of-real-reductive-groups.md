@@ -21,13 +21,14 @@ multiplicity.
 
 ## Depends on
 
-- Not yet a page: Zariski-connected reductive algebraic groups over $\mathbb{R}$, their groups of real points as Lie groups, and maximal compact subgroups
+- [Linear algebraic groups over local fields and their groups of rational points](../linear-algebraic-groups-over-local-fields.md), for the real points of a Zariski-connected reductive group over $\mathbb{R}$ as a Lie group and for its maximal compact subgroups
+- [Smooth vectors and K-finite vectors of continuous representations](../../lie-and-topological-representations/smooth-and-k-finite-vectors.md), for the action of the complexified Lie algebra on smooth vectors in item 2
 
 ## Proof depends on
 
-- [Peter–Weyl theorem: unitary representations separate points](../../lie-and-topological-representations/representations-of-compact-groups/peter-weyl-point-separation.md), for the density of the $K$-finite vectors in item 2: with the Stone–Weierstrass theorem it makes the matrix coefficients of the finite-dimensional representations of $K$ dense in $C(K)$, and integrating $\pi$ against them gives $K$-finite vectors
-- Not yet a page: Segal's theorem that the centre of $U(\mathfrak{g})$ acts by scalars on the smooth vectors of an irreducible unitary representation, and Harish-Chandra's theorem that an irreducible representation on which it so acts has finite $K$-multiplicities, at most $\dim V_i$ for $G$ connected semisimple with finite centre: the route to item 1, which the cited sources quote without proof
-- Not yet a page: Gårding's theorem that the smooth vectors are dense, through Dirac sequences $\pi(f_n)v \to v$, for item 2
+- [Proof of Harish-Chandra's admissibility theorem](proof-of-harish-chandra-admissibility-theorem.md), for item 1, which the sources cited here quote without proof
+- [Smooth vectors and K-finite vectors of continuous representations](../../lie-and-topological-representations/smooth-and-k-finite-vectors.md), for item 2: the smooth vectors are dense (Dirac sequences on $G$), the isotypic projections are continuous and preserve smoothness, and the $K$-finite vectors are dense; for admissible $V$ each isotypic component is finite-dimensional and contains the dense image of the smooth vectors, so it consists of smooth vectors, and a $K$-finite linear form on $V_K$ extends uniquely by composing with the continuous projection onto finitely many isotypic components
+- [Peter–Weyl theorem: unitary representations separate points](../../lie-and-topological-representations/representations-of-compact-groups/peter-weyl-point-separation.md), for the density of the $K$-finite vectors in item 2: through the complex Stone–Weierstrass theorem it makes the matrix coefficients of finite-dimensional representations of $K$ dense in $C(K)$, which with a Dirac sequence on $K$ gives the density
 
 ## Sources
 

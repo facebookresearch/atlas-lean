@@ -46,7 +46,8 @@ $\mathrm{Cor} \circ \mathrm{Res} = (G : H)$ and its consequences.
 
 ## Depends on
 
-This node has no prerequisites.
+- [Abelianization of a group](../../GroupTheory/commutators-and-engel-conditions/abelianization.md), for $G^{\mathrm{ab}}$ and $H^{\mathrm{ab}}$ and the map $H^{\mathrm{ab}} \to G^{\mathrm{ab}}$ in items 1 and 4
+- Not yet a page: Tate cohomology of finite groups as a definition (the vault has the cardinality of $\hat H^n(G, M)$ and the Herbrand quotient, not the groups), and cup products, for all the items
 
 ## Proof depends on
 

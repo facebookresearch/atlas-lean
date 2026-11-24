@@ -84,9 +84,10 @@ Lapid–Rallis, Yamana's Inventiones paper) should be consulted for the exact st
 
 ## Proof depends on
 
-- [Global theta lifts of cusp forms](global-theta-lifts.md), for the tower property (its item 2), in the refinement
-- Not yet a page: the orbits of $Q(F)$ on $\mathrm{U}(W_n)(F) / \iota(\mathrm{U}(U) \times \mathrm{U}(U))(F)$ (Piatetski-Shapiro and Rallis), for the basic identity
-- Not yet a page: Yamana's theorem relating a pole of $L(s + \tfrac12, \pi \times \chi_V)$ to a non-zero lift to a Hermitian space of dimension $2n - m$, and the local conservation relation, for the refinement
+- [Constant terms of theta lifts for unitary groups](constant-terms-of-theta-lifts.md), for the persistence of a nonzero theta lift up a Witt tower, in the refinement: if the lift $\theta_{n,r}(\varphi, f)$ is nonzero, extending $\varphi$ by a Schwartz factor equal to $1$ at zero gives a datum for $V_{r+1}$ whose lift has $\theta_{n,r}(\varphi, f)$ in its constant term (its constant term formula), so the higher lift is nonzero too (Wu, §3, Proposition 3.1); cuspidality at the first occurrence alone would allow a zero lift
+- Not yet a page: the orbits of $Q(F)$ on $\mathrm{U}(W_n)(F) / \iota(\mathrm{U}(U) \times \mathrm{U}(U))(F)$ and the vanishing, by cuspidality, of the contributions of all but the open orbit (Piatetski-Shapiro and Rallis), for the basic identity
+- Not yet a page: Yamana's theorem that a pole of $L(s + \tfrac12, \pi \times \chi_V)$ at $s_{m,n}$ gives a nonzero theta lift of $\pi$ to a Hermitian space of dimension $2n - m$ with the same splitting character, in another Witt tower (Gan–Qiu–Takeda, the proof of Theorem 11.4 (ii)), for the refinement
+- Not yet a page: the local conservation relation between the first occurrences of $\pi_v$ in the two Witt towers with the same splitting character, for the refinement
 
 ## Sources
 

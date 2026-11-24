@@ -60,7 +60,7 @@ statement and the sources below.
 
 ## Proof depends on
 
-- Not yet a page: the exact sequences of Schwartz–Bruhat functions attached to an open subset and its closed complement in an $\ell$-space (Bernstein–Zelevinsky 1976), for Kudla's filtration and the orbit filtrations
+- Not yet a page: the exact sequences of Schwartz–Bruhat functions attached to an open subset and its closed complement in an $\ell$-space (Bernstein–Zelevinsky 1976, Chapter I, §1, as cited by Mínguez), for Kudla's filtration and the orbit filtrations
 
 ## Sources
 

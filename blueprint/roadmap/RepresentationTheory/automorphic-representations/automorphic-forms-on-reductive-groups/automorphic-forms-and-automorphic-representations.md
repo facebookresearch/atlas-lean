@@ -50,14 +50,17 @@ smooth if it is $C^\infty$ in the variable of $G_\infty$ and locally constant in
 ## Depends on
 
 - [Topological idele class group](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/adeles-and-ideles/topological-idele-class-group.md), on which the central characters $\omega$ are defined
+- [Parabolic subgroups and the rational Bruhat decomposition of reductive groups](../../../GroupTheory/linear-groups/parabolic-subgroups-and-rational-bruhat-decomposition.md), for parabolic $k$-subgroups $P = MN$ and, for $\mathrm{GL}_n$, the standard maximal ones
+- [Compactness of adelic quotients of unipotent groups](compactness-of-unipotent-adelic-quotients.md), for the compact quotient $N(k) \backslash N(\mathbb{A})$ and its invariant probability measure, which define the constant term $\varphi_P$
+- [The Hecke algebra of a real reductive group](../../reductive-groups-over-local-fields/representations-of-real-reductive-groups/hecke-algebra-of-a-real-reductive-group.md), for the archimedean Hecke algebras $\mathcal{H}_v$, their idempotents and their description as $\mathcal{U}(\mathfrak{g}_v) \otimes_{\mathcal{U}(\mathfrak{k}_v)} \mathcal{A}(K_v)$
 
 ## Proof depends on
 
 - [Product formula for principal ideles](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/adeles-and-ideles/adelic-norm-principal-embedding.md), for the remark that with the entries of $r(x)$ alone every element of $\mathbb{Q}^\times$ would have height $1$
-- [Compactness of the completed ring of integers](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/adeles-and-ideles/is-compact-adic-completion-integers.md), for the compactness of the balls of the height: on a ball, $r(x)_v$ and its inverse have entries in $\mathcal{O}_v$ at almost all finite places $v$, so the ball lies in a product of compact sets
-- Not yet a page: the compactness of $k \backslash \mathbb{A}$, which, $N$ having a filtration by normal subgroups with quotients $\mathbb{G}_a$, makes $N(k) \backslash N(\mathbb{A})$ compact
-- Not yet a page: every proper parabolic subgroup of $\mathrm{GL}_n$ over $k$ is $\mathrm{GL}_n(k)$-conjugate to a standard one, which lies in a standard maximal one, for the reduction to standard maximal parabolic subgroups
-- Not yet a page: the description of the archimedean Hecke algebra $\mathcal{H}_v$ as $\mathcal{U}(\mathfrak{g}_v) \otimes_{\mathcal{U}(\mathfrak{k}_v)} \mathcal{A}(K_v)$ (Cogdell, Lecture 3, §1.0.1)
+- [Siegel sets and reduction theory for adelic groups](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/reduction-theory-for-adelic-groups.md), for the compactness of the balls of the two-sided height, which its item on heights states, and for $\lVert xy \rVert \le c \lVert x \rVert \lVert y \rVert$, so that right convolution by compactly supported functions at the finite places preserves moderate growth; changing $r$ changes the height by bounded powers, the entries of $r'(x)$ and $r'(x)^{-1}$ being polynomials in those of $r(x)$ and $r(x)^{-1}$
+- [Additive duality of adeles and the volume of A/K](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/additive-duality-of-adeles.md), for the compactness of $k \backslash \mathbb{A}$, from which that of $N(k) \backslash N(\mathbb{A})$ follows along a filtration of $N$ by vector groups
+- [Parabolic subgroups and the rational Bruhat decomposition of reductive groups](../../../GroupTheory/linear-groups/parabolic-subgroups-and-rational-bruhat-decomposition.md), for the reduction to standard maximal parabolic subgroups of $\mathrm{GL}_n$: every proper parabolic $k$-subgroup is $\mathrm{GL}_n(k)$-conjugate to a standard one, contained in a standard maximal one $Q$; $\varphi_{\gamma P \gamma^{-1}}(g) = \varphi_P(\gamma^{-1} g)$ for $\gamma \in \mathrm{GL}_n(k)$, and for $P \subseteq Q$ the constant term along $P$ is the constant term of $\varphi_Q$ along $N_P \cap M_Q$, as $N_P = N_Q (N_P \cap M_Q)$, so $\varphi_Q = 0$ implies $\varphi_P = 0$ (Cogdell, Lecture 2, §5)
+- [Harish-Chandra's convolution identity and uniform moderate growth](harish-chandra-convolution-identity.md), for the action of the archimedean Hecke algebras on $\mathcal{A}(G)$: the derivatives $D\varphi$ of an automorphic form have moderate growth
 
 ## Sources
 

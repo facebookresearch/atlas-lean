@@ -20,9 +20,13 @@ attached to $\pi_v$ by the archimedean local Langlands correspondence.
   $\tau$ and at its conjugate $\bar\tau$, the corresponding statement is a symmetry $z \mapsto w' - z$ for an integer
   $w'$ determined by $w$ and $n$ through this shift.
 - **Cohomological representations** (Clozel). A cuspidal regular algebraic representation is
-  cohomological: its archimedean component has non-zero $(\mathfrak{g}, K)$-cohomology with coefficients in an
-  algebraic representation, so that it contributes to the cohomology of the locally symmetric spaces of
-  $\mathrm{GL}_n$. This is a separate statement from the purity lemma.
+  cohomological after possibly twisting by a quadratic character: some such twist has an archimedean
+  component with non-zero $(\mathfrak{g}, K)$-cohomology with coefficients in an algebraic representation,
+  $K$ the full maximal compact subgroup, so that it contributes to the cohomology of the locally symmetric
+  spaces of $\mathrm{GL}_n$. The twist cannot be omitted: over $\mathbb{Q}$, an odd finite-order Hecke
+  character of $\mathrm{GL}_1$ is cuspidal and regular algebraic, but its archimedean component, the sign
+  character of $\mathbb{R}^\times$, has zero $(\mathfrak{g}, \mathrm{O}(1))$-cohomology with coefficients in every
+  algebraic representation. This is a separate statement from the purity lemma.
 
 A good expansion has pages for the definitions of algebraic, regular algebraic and cohomological
 representations, for the purity lemma, and for the equivalence of regular algebraicity and
@@ -35,14 +39,19 @@ the archimedean local Langlands correspondence for $\mathrm{GL}_n$ as a page of 
 
 - [Harish-Chandra modules](../../reductive-groups-over-local-fields/representations-of-real-reductive-groups/harish-chandra-modules.md), for the archimedean components, their infinitesimal characters and their $(\mathfrak{g}, K)$-modules
 - [Tensor product theorem for automorphic representations](../automorphic-forms-on-reductive-groups/tensor-product-theorem.md), for the archimedean components $\pi_v$ of an automorphic representation
+- Not yet a page: the archimedean local Langlands correspondence for $\mathrm{GL}_n$, which attaches $\sigma_v$ to $\pi_v$; the algebraicity, regularity and weight conditions are conditions on $\sigma_v$
 
 ## Proof depends on
 
-- Not yet a page: the archimedean local Langlands correspondence for $\mathrm{GL}_n$, which attaches $\sigma_v$ to $\pi_v$, for all the items
-- Not yet a page: the inputs of Clozel's proofs of the purity lemma and of the cohomological criterion (Clozel, 1990), which the cited source quotes without proof
+- Not yet a page: Clozel's proof of the purity lemma, which Ramakrishnan quotes as a result; its inputs are to be named after reading Clozel (1990), not reconstructed
+- Not yet a page: Clozel's Lemme 3.14, as Buzzard and Gee report it (§7.2, p. 37): a regular algebraic cuspidal representation of $\mathrm{GL}_n$ is cohomological after possibly twisting by a quadratic character, which the third item uses; Ramakrishnan's introduction quotes purity, not this
 
 ## Sources
 
+- K. Buzzard and T. Gee, "The conjectural connections between automorphic representations and Galois
+  representations", arXiv:1009.0785 (version 3): §7.2, p. 37 ("for $\mathrm{GL}_n$ any regular C-algebraic
+  representation is cohomological after possibly twisting by a quadratic character (see Lemme 3.14 of
+  [Clo90])") and Definition 7.2.1 (cohomological representations).
 - D. Ramakrishnan, "Decomposition and parity of Galois representations attached to GL(4)",
   arXiv:1301.1668 (version 2): introduction, p. 1 (isobaric algebraic representations "([Cℓ1])", regular
   representations, the fixed archimedean weight $w$ defined by the restriction to $\mathbb{C}^*$ of

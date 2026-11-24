@@ -56,9 +56,11 @@ Math. 544, Springer, 1976) and Mœglin–Waldspurger's *Spectral decomposition a
 
 ## Proof depends on
 
-- [Constant terms and Harish-Chandra's convolution identity for automorphic forms](constant-terms-and-convolution-identity.md), for the automorphy of constant terms on the Levi factors, used for the constant terms and the automorphy of Eisenstein series
-- Not yet a page: the Bruhat decomposition of $G(k)$ into double cosets $P(k) w Q(k)$, for the constant term formula
-- Not yet a page: the Paley–Wiener theorem on $i\mathfrak{a}_P^*$, for the wave packets (Arthur, §12)
+- [Constant terms and Harish-Chandra's convolution identity for automorphic forms](constant-terms-and-convolution-identity.md), for the automorphy of constant terms of automorphic forms on Levi factors, applied once an Eisenstein series is known to be automorphic, in the analysis along smaller parabolic subgroups; the constant term formula itself comes from the Bruhat decomposition and unfolding
+- [Parabolic subgroups and the rational Bruhat decomposition of reductive groups](../../../GroupTheory/linear-groups/parabolic-subgroups-and-rational-bruhat-decomposition.md), for the decomposition of $G(k)$ into the double cosets $P(k) w Q(k)$, which unfolds the constant terms
+- [Siegel sets and reduction theory for adelic groups](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/reduction-theory-for-adelic-groups.md), for the Siegel-set estimates in the proof of absolute convergence
+- [Discreteness of the cuspidal spectrum](discreteness-of-the-cuspidal-spectrum.md), for the cuspidal spectrum of the Levi factors, whose cuspidal data index the wave packets of the spectral decomposition
+- Not yet a page: the Paley–Wiener theorem on $\mathfrak{a}_P$: entire functions on $\mathfrak{a}_{P,\mathbb{C}}^*$ of Paley–Wiener type, with values in a finite-dimensional space, are the Fourier–Laplace transforms of smooth compactly supported functions on $\mathfrak{a}_P$, for the wave packets (Arthur, §12)
 
 ## Sources
 

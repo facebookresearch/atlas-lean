@@ -60,7 +60,7 @@ and should get their own pages if wanted.
 ## Proof depends on
 
 - Not yet a page: Harish-Chandra's theorem that a finitely generated $(\mathfrak{g}, K)$-module annihilated by an ideal of finite codimension of the centre of $U(\mathfrak{g})$ is admissible, for the admissibility of the algebraic theta lifts
-- Not yet a page: the complete reducibility of the polynomial representations of the complex classical groups (Weyl's unitarian trick), for the isotypic decompositions
+- [Representations of compact groups are semisimple](../../lie-and-topological-representations/representations-of-compact-groups/compact-group-semisimple.md), for the complete reducibility of the finite-dimensional representations of the compact real forms, from which that of the polynomial representations of the complex classical groups follows by taking complex-linear complements and the Zariski density of the compact form (Weyl's unitarian trick), for the isotypic decompositions
 
 ## Sources
 

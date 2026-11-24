@@ -35,8 +35,9 @@ theorem.
 
 ## Proof depends on
 
-- [Additive duality of adeles and the volume of A/K](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/additive-duality-of-adeles.md), for the self-duality $a \mapsto \psi(a\,\cdot)$ of the local field (its local duality, stated for completions of number fields), through which $Y$ is the Pontryagin dual of $X$
-- Not yet a page: Pontryagin duality for locally compact abelian groups, for the unitary form
+- [Additive duality of adeles and the volume of A/K](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/additive-duality-of-adeles.md), for the self-duality $a \mapsto \psi(a\,\cdot)$ of the completions of number fields (its local duality), which identifies $Y$ with the Pontryagin dual of $X$ for local fields of characteristic $0$
+- Not yet a page: the same self-duality for every local field and nontrivial character (Poonen, §4.3, Theorem 4.4), for the local fields of positive characteristic that the page allows, such as $\mathbb{F}_3((t))$
+- Not yet a page: Pontryagin duality for locally compact abelian groups, and the decomposition of $L^2$ of a compact abelian group into character spaces (A. Prasad, §4.2), for the unitary form
 
 ## Sources
 

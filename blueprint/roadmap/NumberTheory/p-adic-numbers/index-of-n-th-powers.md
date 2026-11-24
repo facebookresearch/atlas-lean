@@ -30,6 +30,7 @@ and $U[n] = \mu_n(K)$, which gives $(U : U^n) = |\mu_n(K)| \, h_n(U)$.
 
 - [Herbrand quotients agree across a map with finite kernel and cokernel](../../RepresentationTheory/group-cohomology/tate-cohomology-and-the-herbrand-quotient/herbrand-quotient-finite-kernel-cokernel.md), for the trivial action of a cyclic group of order $n$
 - [The p-adic exponential on a neighbourhood of zero](p-adic-exponential.md), for open subgroups of finite index of $\mathcal{O}_K$ and $U$ that are isomorphic
+- [Natural numbers that are units in a local ring](../../RingTheory/ramification/ramification-index-and-inertia-degree/is-unit-nat-cast-iff-ring-char-not-dvd.md), for $\lvert n \rvert = 1$ in the example: $n$ is a unit of $\mathcal{O}_K$ when the residue characteristic does not divide $n$
 
 ## Sources
 

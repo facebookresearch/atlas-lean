@@ -38,8 +38,8 @@ Gelfand–Kazhdan theorem on invariant distributions, each citing the sources be
 
 ## Proof depends on
 
-- Not yet a page: Bernstein and Zelevinsky's Theorem 5.2 on compositions of induction and restriction functors, in the mirabolic situations of their Proposition 4.13 (proved in their §7), for the Leibniz rule (their Lemma 4.5 and Corollary 4.6, proved in 4.14)
-- Not yet a page: distributions on $\ell$-spaces and $\ell$-sheaves (Bernstein–Zelevinsky 1976), for the Gelfand–Kazhdan method and Bernstein's $P$-invariant distributions
+- Not yet a page: Bernstein and Zelevinsky's Theorem 5.2 (1977), the filtration of a composition of an induction functor and a restriction functor with characters, of which the parabolic geometric lemma is the case of trivial characters (their §6.4); applied in the mirabolic situations of their Proposition 4.13 (proved in their §7), it gives the filtration of the derivatives of a product by products of derivatives (their Lemma 4.5, proved in 4.14 (c)), and Corollary 4.6 in the Grothendieck group, for the Leibniz rule
+- Not yet a page: distributions on $\ell$-spaces and $\ell$-sheaves (Bernstein–Zelevinsky 1976, Chapter I, §1) and the method of invariant distributions (ibid., Chapter III), for the Gelfand–Kazhdan method and Bernstein's $P$-invariant distributions
 
 ## Sources
 

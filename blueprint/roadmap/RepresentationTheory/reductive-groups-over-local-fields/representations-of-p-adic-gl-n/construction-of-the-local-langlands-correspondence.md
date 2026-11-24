@@ -41,15 +41,17 @@ fields.
 
 - [Cuspidal representations and Jacquet's embedding theorem](../representations-of-p-adic-reductive-groups/cuspidal-representations-and-jacquet-embedding.md), for supercuspidal representations
 - [Smooth and admissible representations of p-adic groups](../representations-of-p-adic-reductive-groups/smooth-representations-of-p-adic-groups.md), for twists, central characters and contragredients
-- [L- and ε-factors of pairs for GLₙ and of Weil–Deligne representations](l-and-epsilon-factors-of-pairs.md), for the Weil group $W_F$, the factors of pairs on both sides and the Weil–Deligne representations $\mathrm{Sp}(m)$
+- [L- and ε-factors of pairs for GLₙ and of Weil–Deligne representations](l-and-epsilon-factors-of-pairs.md), for the factors of pairs on both sides and the Weil–Deligne representations $\mathrm{Sp}(m)$; that page uses the Weil group $W_F$ without defining it
 - [Langlands classification for GLₙ](langlands-classification-for-gl-n.md), for the representations $L(\Delta_1, \dots, \Delta_r)$ of the reductions
 - [Local class field theory: the local Artin map](../../../NumberTheory/p-adic-numbers/local-class-field-theory.md), for the compatibility with local class field theory for $n = 1$
+- [Galois cohomology and p-adic Hodge theory](../../../NumberTheory/algebraic-number-theory/galois-representations/galois-cohomology-and-p-adic-hodge-theory.md), for the Weil group $W_F$ and its representations, planned there with the Weil–Deligne representations
 
 ## Proof depends on
 
 - [Langlands classification for GLₙ](langlands-classification-for-gl-n.md), for the extension from supercuspidal to all irreducible representations through the representations $L(\Delta_1, \dots, \Delta_r)$
 - [L- and ε-factors of pairs for GLₙ and of Weil–Deligne representations](l-and-epsilon-factors-of-pairs.md), for the Weil–Deligne representations $\mathrm{Sp}(m)$, the decomposition into indecomposables $\rho_0 \otimes \mathrm{Sp}(m)$, the inductive description of the factors of pairs on both sides, the poles of the $L$-factors of pairs of supercuspidal representations and the conductors
 - [Cuspidal representations and Jacquet's embedding theorem](../representations-of-p-adic-reductive-groups/cuspidal-representations-and-jacquet-embedding.md), for supercuspidal representations
+- [Local converse theorem for GLₙ](local-converse-theorem-for-gl-n.md), for the uniqueness of such a family of maps, Wedhorn's reduction (4.2.3), through Henniart's theorem that supercuspidal representations are determined by their $\varepsilon$-factors of pairs
 
 ## Sources
 

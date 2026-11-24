@@ -39,7 +39,7 @@ classification, each citing the sources below with locators.
 ## Proof depends on
 
 - [Parabolic subgroups, Bruhat–Tits buildings and Moy–Prasad filtrations](parabolic-subgroups-buildings-and-moy-prasad-filtrations.md), for the compact open subgroups with an Iwahori factorization in Jacquet's lemmas and for the cones $A^-_\Theta$
-- Not yet a page: the Cartan decomposition $G = K A^- K$ for a good maximal compact subgroup $K$, through which the asymptotics on $A^-$ control the matrix coefficients on $G$, for Casselman's criteria
+- Not yet a page: Casselman's Proposition 1.4.6 (p. 15): there is an open subgroup $\Gamma$ of $G$, compact modulo the centre and containing $A_\emptyset(\mathcal{O})$, with $G = \Gamma A_\emptyset^- \Gamma$; the proof of his Theorem 4.4.6 (p. 45) covers $G$ by finitely many sets $K \gamma_i A_\emptyset^- \gamma_j K$ with it. The decomposition $G = K A^- K$ with $K$ maximal compact holds when the centre is anisotropic (his Lemma 1.4.5, p. 15) and for $\mathrm{GL}_n$, but not for every connected reductive group: for $\mathrm{R}_{E/F}\mathbb{G}_m$ with $E/F$ ramified quadratic, $K = \mathcal{O}_E^\times$ and $A^- = F^\times$, every element of $K A^- K$ has even $E$-valuation
 
 ## Sources
 

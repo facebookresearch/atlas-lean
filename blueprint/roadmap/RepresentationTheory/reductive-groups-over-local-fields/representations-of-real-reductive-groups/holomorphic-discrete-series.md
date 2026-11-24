@@ -38,9 +38,8 @@ these modules are not unitarizable.
 
 ## Proof depends on
 
-- [Harish-Chandra modules](harish-chandra-modules.md), for the closed $G$-invariant subspaces of $\mathbf{F}_\lambda$, which correspond to the $(\mathfrak{g}, K)$-submodules of its $K$-finite vectors (its item 2), $\mathbf{F}_\lambda$ being admissible as its $K$-finite vectors form $V_\mu \otimes S(\mathfrak{p}_+)$
-- Not yet a page: Harish-Chandra's realization of $G/K$ as a bounded domain in $\mathfrak{p}_+$, through $G \subseteq P_+ K^{\mathbb{C}} P_-$, on which holomorphic sections become holomorphic $V_\mu$-valued functions and the $K$-finite ones are the polynomials, for $V_\mu \otimes S(\mathfrak{p}_+)$
-- Not yet a page: the completeness of the space of holomorphic sections for uniform convergence on compact sets, for the Fréchet space
+- [Harish-Chandra's construction of the holomorphic discrete series](harish-chandra-construction-of-holomorphic-discrete-series.md), for the realization of $G/K$ as a bounded domain in $\mathfrak{p}_-$ through $G \subseteq P_- K^{\mathbb{C}} P_+$, on which the $K$-finite holomorphic sections are the polynomial functions on $\mathfrak{p}_-$, a $K$-module isomorphic to $V_\mu \otimes S(\mathfrak{p}_+)$ by the duality of $\mathfrak{p}_+$ and $\mathfrak{p}_-$ (Schmid, §7, p. 125); for the Fréchet topology; for the lowest $K$-type argument, by evaluation at the base point; and for Harish-Chandra's square-integrability under $(\lambda, \alpha) > 0$ for all $\alpha \in \Psi$
+- [Smooth vectors and K-finite vectors of continuous representations](../../lie-and-topological-representations/smooth-and-k-finite-vectors.md), for the continuous projection onto the $V_\mu$-isotypic component in the lowest $K$-type argument: a nonzero closed $G$-invariant subspace contains, after translation, a section nonzero at the base point, evaluation there maps its $V_\mu$-isotypic part onto the fibre $V_\mu$, and $V_\mu$ occurs only once in $\mathbf{F}_\lambda$
 
 ## Sources
 

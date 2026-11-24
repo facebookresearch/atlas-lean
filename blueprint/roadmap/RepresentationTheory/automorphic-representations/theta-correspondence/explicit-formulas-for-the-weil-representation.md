@@ -47,9 +47,9 @@ precise statement and the sources below.
 
 ## Proof depends on
 
-- [Hilbert's Theorem 90 for the multiplicative group](../../../FieldTheory/galois-theory/multiplicative-hilbert-s-theorem-90.md), for the character twists of the splittings
-- [Additive duality of adeles and the volume of A/K](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/additive-duality-of-adeles.md), for the self-duality of $\mathbb{A}_F$ under which $F$ is its own annihilator, which puts $X_{\mathbb{A}}$ and its discrete subgroup $X_F$ in the situation of Weil's Théorème 5 (Weil, §29, p. 178)
-- Not yet a page: Weil's Théorème 5 (§20, p. 169): $\gamma(f) = 1$ for a character $f$ of the second degree, trivial on a closed subgroup $\Gamma$, whose associated morphism maps $(G, \Gamma)$ isomorphically onto $(G^*, \Gamma_*)$; he proves it through his Théorème 4 (§19, p. 168), which for discrete $\Gamma$ and $\Gamma_*$ contains Poisson's formula as a special case (p. 169), not through the adelic Poisson summation formula. With $G = X_{\mathbb{A}}$ and $\Gamma = X_F$ it gives $\gamma(q) = 1$, and his Corollaire 2 of Théorème 2 (§14, p. 162), applied to factorizable Schwartz–Bruhat functions, gives $\gamma(q) = \prod_v \gamma_{\psi_v}(q_v)$ (§30, the proof of Proposition 5, p. 179), for the product formula for Weil indices
+- [Hilbert's Theorem 90 for the multiplicative group](../../../FieldTheory/galois-theory/multiplicative-hilbert-s-theorem-90.md), for the character twists of the splittings when $E/F$ is a quadratic field extension, through the norm-one elements $x/\sigma(x)$ (Harris–Kudla–Sweet, (1.7)–(1.8)); for the split algebra $E = F \times F$ the analogous map is $(a, b) \mapsto (a/b, b/a)$, with no field extension
+- [Additive duality of adeles and the volume of A/K](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/additive-duality-of-adeles.md), for the self-duality of $\mathbb{A}_F$ under which $F$ is its own annihilator, which Weil extends to $X_{\mathbb{A}}$ and $X_F$ coordinatewise (Weil, §29, p. 178)
+- Not yet a page: Weil's Théorème 5 (§20, p. 169): $\gamma(f) = 1$ for a character of the second degree $f$, trivial on a closed subgroup $\Gamma$, whose associated symmetric morphism maps $(G, \Gamma)$ isomorphically onto $(G^*, \Gamma_*)$. Weil proves it from the proof of his Théorème 2 (§14): $\gamma(f)$ is the scalar by which the lifts of the two sides of relation (9) differ; under the hypotheses all factors of (9) preserve $\Gamma$, where the lifts agree with those given by the representation $r_\Gamma$ of §20, so $\gamma(f) = 1$ because $r_\Gamma$ is a representation. Théorème 4 (§19, p. 168), which contains Poisson's formula, is related but is not this proof. With $G = X_{\mathbb{A}}$, $\Gamma = X_F$ and $f = \psi \circ q$ it gives $\gamma(q) = 1$, and Corollaire 2 of Théorème 2 (§14, p. 162), applied to a factorizable Schwartz–Bruhat function and to its local factors, almost all the characteristic functions of the unit lattices, gives $\gamma(q) = \prod_v \gamma_{\psi_v}(q_v)$ (§30, the proof of Proposition 5, p. 179), for the product formula for Weil indices
 
 ## Sources
 
@@ -62,7 +62,9 @@ precise statement and the sources below.
   Weil indices for one global character, Hilbert reciprocity as a formally weaker consequence), §26 (the real
   indices $e^{\pm \pi i/4}$), §29 (the global character and its local components; p. 178, the self-duality of the adeles in
   which the field is its own dual), §45 (the rational lift in the twofold cover); and, for the proof of Proposition 5 (p. 179),
-  §14, Théorème 2 and its Corollaire 2 (pp. 161–162), §19, Théorème 4 (p. 168), and §20, Théorème 5 and the remark before it (p. 169).
+  §14, Théorème 2 and its Corollaire 2 (pp. 161–162), and §20, Théorème 5 and its proof (p. 169), which goes
+  back to the proof of Théorème 2 and uses that $r_\Gamma$ is a representation; §19, Théorème 4 (p. 168), and the remark before
+  Théorème 5 that it contains Poisson's formula, are related.
 - S. S. Kudla, "Notes on the local theta correspondence", lecture notes, European School in Group
   Theory, 1996, <https://www.math.toronto.edu/~skudla/castle.pdf>: §I.4, Theorem 4.5, Corollaries 4.8 and
   4.9 (the twofold cover via the Rao cocycle), §I.6, Lemma 6.1 (the $\mathbb{C}^\times$-extension splits over

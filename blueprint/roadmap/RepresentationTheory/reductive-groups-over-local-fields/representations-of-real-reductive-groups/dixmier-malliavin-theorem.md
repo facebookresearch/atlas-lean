@@ -21,8 +21,7 @@ This node has no prerequisites.
 
 ## Proof depends on
 
-- Not yet a page: Dixmier and Malliavin's Lemme 2.5 (Francis, Theorem 6): for every sequence $c_k > 0$ there are $f, g \in C_c^\infty(\mathbb{R})$ and scalars $a_k$ with $\lvert a_k \rvert \le c_k$ such that $\delta = g + \sum_k a_k f^{(k)}$, proved through the reciprocals of the infinite products $\prod_i (1 + z^2/\lambda_i^2)$
-- Not yet a page: the factorization this lemma gives along the flow of a one-parameter group (Francis, Theorem 3, for functions), applied along one-parameter subgroups of $G$, for both items
+- [The Dixmier–Malliavin lemma and factorization along one-parameter subgroups](dixmier-malliavin-lemma-and-factorization.md), for both items: the lemma on $\delta$, with convergence in compactly supported distributions and $f, g$ supported in a prescribed neighbourhood of $0$; for item 1, the factorization of functions along flows assembled into kernels on $G$ in product coordinates; for item 2, the separate vector form, with convergence in the seminorms of $V^\infty$
 
 ## Sources
 

@@ -32,6 +32,7 @@ the degrees $[E : F]$ with the indices $(B : F^{\times n})$.
 ## Proof depends on
 
 - [Hilbert's Theorem 90 for the multiplicative group](multiplicative-hilbert-s-theorem-90.md), for $H^1(G, E^\times) = 0$
+- [A finite abelian group is isomorphic to its dual group](../../GroupTheory/abelian-groups/dual-groups-of-finite-abelian-groups/finite-abelian-dual-iso.md), for $\lvert \mathrm{Hom}(G, \mu_n) \rvert = \lvert G \rvert$ in the comparison of $[E : F]$ with $(B : F^{\times n})$: $G$ is finite abelian and killed by $n$, and a choice of primitive $n$-th roots of unity identifies $\mu_n$ with the $n$-th roots of unity in $\mathbb{C}$, so that $\mathrm{Hom}(G, \mu_n)$ is the dual group of $G$
 
 ## Sources
 

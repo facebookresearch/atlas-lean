@@ -55,10 +55,11 @@ sources below, with the Satake isomorphism for hyperspecial subgroups as a prere
 
 - [Splitting characters and the Weil representation of unitary dual pairs](weil-representation-of-unitary-dual-pairs.md), for the Weil representation of a unitary dual pair
 - [Howe duality for unitary dual pairs over p-adic fields](howe-duality-over-p-adic-fields.md), for the local theta correspondence and the split case
+- Not yet a page: the Satake isomorphism for the spherical Hecke algebras of the unramified unitary groups and their hyperspecial subgroups, in whose coordinates the Satake parameters of the statements are written (Liu, Appendix)
 
 ## Proof depends on
 
-- Not yet a page: the Satake isomorphism for hyperspecial maximal compact subgroups, for the Satake parameters
+- Not yet a page: the Satake isomorphism for hyperspecial maximal compact subgroups, for the calculation in the Hecke algebras behind the matching of Satake parameters
 
 ## Sources
 

@@ -57,9 +57,9 @@ has been consulted.
 
 ## Proof depends on
 
-- [Rankin–Selberg L-functions for GLₙ × GLₘ](rankin-selberg-l-functions-for-gl-n.md), for the last step of the comparison (Arthur, the proof through (26.8))
-- [Jacquet–Shalika classification of automorphic representations of GLₙ](jacquet-shalika-classification.md), for strong multiplicity one for isobaric sums, which gives the uniqueness
-- Not yet a page: the invariant trace formula of $\mathrm{GL}_n$ over $F$, the twisted trace formula of $\mathrm{R}_{E/F}\mathrm{GL}_n$ for $\sigma$, the fundamental lemma for base change and the local base change of representations (Arthur–Clozel, Chapter 3), for the comparison
+- [Rankin–Selberg L-functions for GLₙ × GLₘ](rankin-selberg-l-functions-for-gl-n.md), for the operations on Rankin–Selberg $L$-functions after the comparison of trace formulas, which determine the image and the fibres (Arthur, §26, after (26.8)); not for the comparison of orbital integrals itself
+- [Jacquet–Shalika classification of automorphic representations of GLₙ](jacquet-shalika-classification.md), for the uniqueness of an isobaric sum of unitary cuspidal representations with given Satake parameters at almost all places, which gives the uniqueness of the extended maps; this is not ordinary multiplicity one for cusp forms
+- Not yet a page: the comparison of the invariant trace formula of $\mathrm{GL}_n$ over $F$ with the $\sigma$-twisted trace formula of $\mathrm{R}_{E/F}\mathrm{GL}_n$, through the matching of twisted orbital integrals by the norm map, the fundamental lemma for base change (for the unit element, then for spherical Hecke functions), the local base change lifting and the averaging over the twists by powers of $\eta$ (Clozel's ICM report, §2, Theorems 2.1 and 2.4 and the statements between them; Arthur, §26, pp. 189–191)
 
 ## Sources
 
