@@ -12703,6 +12703,7 @@
   "MathlibExt/NumberTheory/WalkingToInfinity": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Walking to infinity on primes"},
   "MathlibExt/NumberTheory/WardSBinomialCarryProduct": {"to": "Combinatorics/binomial-coefficients/generalized-binomial-coefficients", "title": "Ward's generalized binomial coefficients"},
   "MathlibExt/NumberTheory/WatsonAlternatingBounds": {"to": "NumberTheory/exponential-sums", "title": "Watson's cosecant and cosine sums"},
+  "MathlibExt/NumberTheory/WeightedZeroSumCosets": {"to": "Combinatorics/additive-combinatorics/zero-sum-subset-sums", "title": "Weighted Davenport constant"},
   "MathlibExt/NumberTheory/WesleyFractionalConstant": {"to": "Combinatorics/ramsey-theory/van-der-waerden-theorems", "title": "Accessible sets and diffsequences"},
   "MathlibExt/NumberTheory/WieferichOrder": {"to": "NumberTheory/primes-primality/special-primes", "title": "Square prime factors of Fermat numbers"},
   "MathlibExt/NumberTheory/WieferichPrime": {"to": "NumberTheory/primes-primality/special-primes", "title": "Wieferich primes"},
