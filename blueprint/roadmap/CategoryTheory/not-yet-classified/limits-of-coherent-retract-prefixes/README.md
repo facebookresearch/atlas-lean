@@ -1,4 +1,4 @@
-# Limits
+# Limits of coherent retract prefixes
 
 ## Succ Struct
 

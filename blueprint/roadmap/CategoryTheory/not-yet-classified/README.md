@@ -504,7 +504,7 @@ Topics added since this subject's fields were last revised.
 - [Initial Order Family Glue](initial-order-family-glue/README.md)
 - [Iso Eligibility](iso-eligibility/README.md)
 - [Lexicographic Order](lexicographic-order/README.md)
-- [Limits](limits/README.md)
+- [Limits of coherent retract prefixes](limits-of-coherent-retract-prefixes/README.md)
 - [Lower Restriction](lower-restriction/README.md)
 - [Lower Set Colimits](lower-set-colimits/README.md)
 - [Mapped Cell Source Smallness](mapped-cell-source-smallness/README.md)

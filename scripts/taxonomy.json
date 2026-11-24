@@ -10341,6 +10341,7 @@
   "MathlibExt/CategoryTheory/Abelian/LeftDerived/Additive": {"to": "CategoryTheory/homological-algebra", "title": "Additivity of derived functors"},
   "MathlibExt/CategoryTheory/Monoidal/Braided": {"to": "CategoryTheory/monoidal-categories", "title": "Braided monoidal categories"},
   "MathlibExt/CategoryTheory/Monoidal/Tor/Additive": {"to": "CategoryTheory/homological-algebra", "title": "Additivity of derived functors"},
+  "MathlibExt/CategoryTheory/SmallObject/CoherentRetracts/Limits": {"title": "Limits of coherent retract prefixes", "to": "CategoryTheory/not-yet-classified"},
   "MathlibExt/Combinatorics/AP/Basic": {"to": "Combinatorics/additive-combinatorics/progressions-dense-sets", "title": "Arithmetic progressions and progression-free sets"},
   "MathlibExt/Combinatorics/AcceleratedZeckendorfGame": {"to": "GameTheory/combinatorial-games", "title": "Accelerated Zeckendorf game"},
   "MathlibExt/Combinatorics/AccessibleSets": {"to": "Combinatorics/ramsey-theory/van-der-waerden-theorems", "title": "Accessible sets and diffsequences"},
