@@ -51,7 +51,7 @@ theorem tendsto_map_of_tendsto_of_ae_continuousAt {Ω Ω' ι : Type*}
   have hae : g ⁻¹' G =ᵐ[(μ : Measure Ω)] interior (g ⁻¹' G) := by
     have hcont : ∀ᵐ x ∂(μ : Measure Ω), ContinuousAt g x := by
       rw [ae_iff]; exact hdisc
-    refine EventuallyLE.antisymm ?_ interior_subset.eventuallyLE
+    refine EventuallySubset.antisymm ?_ (EventuallySubset.of_subset interior_subset)
     filter_upwards [hcont] with x hx hxin
     exact mem_interior_iff_mem_nhds.mpr (hx (hG.mem_nhds hxin))
   rw [ProbabilityMeasure.map_apply' _ hg.aemeasurable hG.measurableSet]

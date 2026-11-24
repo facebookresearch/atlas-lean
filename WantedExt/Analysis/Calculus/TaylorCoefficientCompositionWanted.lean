@@ -19,13 +19,15 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Faà di Bruno's formula for Taylor coefficients: writing `Tₙ(f; a) = f⁽ⁿ⁾(a) / n!`,
-`Tₙ(f ∘ g; a) = ∑_{π ∈ P(n)} (l(π) choose π₁, …, πₙ) · T_{l(π)}(f; g(a)) · ∏_{i=1}^{n} Tᵢ(g; a)^{πᵢ}`,
-where a partition `π` of `n` is described by the multiplicities `πᵢ` of its parts `i`,
-`l(π) = π₁ + ⋯ + πₙ` is its number of parts, and the multinomial coefficient is
-`l(π)! / (π₁! ⋯ πₙ!)`. The hypothesis "`f` and `g` have `n`th derivatives" is read as
-`f` being `Cⁿ` near `g(a)` and `g` being `Cⁿ` near `a` (`ContDiffAt ℝ n`), so that Mathlib's
-`iteratedDeriv` is the classical `n`th derivative; real functions of a real variable.
+/-- **Faà di Bruno's formula for Taylor coefficients.** Let $f, g : \mathbb{R} \to \mathbb{R}$,
+let $a \in \mathbb{R}$ and let $n$ be a natural number. Suppose that $g$ is $n$ times continuously
+differentiable on a neighbourhood of $a$ and that $f$ is $n$ times continuously differentiable on a
+neighbourhood of $g(a)$. For a partition $\pi$ of $n$, let $m_i(\pi)$ be the number of parts of
+$\pi$ equal to $i$, and let $\ell(\pi) = m_1(\pi) + \cdots + m_n(\pi)$ be its number of parts. Then
+$$\frac{(f \circ g)^{(n)}(a)}{n!} = \sum_{\pi} \frac{\ell(\pi)!}{\prod_{i=1}^{n} m_i(\pi)!} \cdot
+\frac{f^{(\ell(\pi))}(g(a))}{\ell(\pi)!} \cdot
+\prod_{i=1}^{n} \Bigl(\frac{g^{(i)}(a)}{i!}\Bigr)^{m_i(\pi)},$$
+where the sum runs over all partitions $\pi$ of $n$.
 
 Source: Serge Iovleff, *About Some Nested Sums of Reciprocal Squared Numbers*, INTEGERS 26
 (2026), Article A114, Corollary 1 (quoted as Corollary 4 from the paper's reference [8]). -/
@@ -38,15 +40,17 @@ public theorem_wanted taylorCoeff_comp_eq_sum_partitions (f g : ℝ → ℝ) (a 
           (iteratedDeriv π.parts.card f (g a) / π.parts.card.factorial) *
           ∏ i ∈ Finset.Icc 1 n, (iteratedDeriv i g a / i.factorial) ^ π.parts.count i
 
-/-- **Nested sums of reciprocal odd squares** (Iovleff's `R₁(k)`): for every `k ≥ 0`,
-`R₁(k) = ∑_{1 ≤ i_k ≤ ⋯ ≤ i_1} ∏_j (2 i_j - 1)^{-2} = (π/2)^{2k} E*_{2k} / (2k)!`, where the
-Euler (zig) number `E*_{2k}` (OEIS A000364) is written as the Taylor data
-`sec^{(2k)}(0)` of `sec x = 1 / cos x`. The nesting `i_1 ≥ i_2 ≥ ⋯ ≥ i_k ≥ 1` ranges over the
-weakly decreasing positive tuples `MultipleZeta.WeaklyDecreasingTuple k` (the summation domain
-of `MultipleZeta.starValue`); for `k = 0` the sum is `1` (the paper's convention `R(0) = 1`).
-The paper's second equality `R₁(k) = (π/4) β(2k + 1)` is false as printed and is not
-stated: at `k = 0`, `R₁(0) = 1` but `(π/4) β(1) = π²/16`; at `k = 1`, `R₁(1) = π²/8` but
-`(π/4) β(3) = π⁴/128` (the correct factor is `4/π`).
+/-- **Nested sums of reciprocal odd squares.** For every natural number $k$,
+$$\sum_{i_1 \ge i_2 \ge \cdots \ge i_k \ge 1} \prod_{j=1}^{k} \frac{1}{(2 i_j - 1)^2} =
+\frac{(\pi/2)^{2k} E^*_{2k}}{(2k)!},$$
+where the sum runs over all weakly decreasing $k$-tuples $(i_1, \ldots, i_k)$ of positive integers
+and $E^*_{2k} = \sec^{(2k)}(0)$ is the $2k$-th derivative at $0$ of $\sec x = 1/\cos x$ (the Euler
+zig number, OEIS A000364). For $k = 0$ the sum has the single empty term and both sides equal $1$.
+
+The source also claims that the sum equals $(\pi/4)\,\beta(2k+1)$, where $\beta$ is Dirichlet's beta
+function; this is false as printed and is not stated here: at $k = 0$ the sum is $1$ but
+$(\pi/4)\,\beta(1) = \pi^2/16$, and at $k = 1$ it is $\pi^2/8$ but $(\pi/4)\,\beta(3) = \pi^4/128$
+(the correct factor is $4/\pi$).
 
 Source: Serge Iovleff, *About Some Nested Sums of Reciprocal Squared Numbers*, INTEGERS 26
 (2026), Article A114, Theorem 1. -/
@@ -56,11 +60,16 @@ public theorem_wanted tsum_weaklyDecreasing_prod_inv_odd_sq_eq (k : ℕ) :
       (Real.pi / 2) ^ (2 * k) * iteratedDeriv (2 * k) (fun x => (Real.cos x)⁻¹) 0 /
         (2 * k).factorial
 
-/-- **Nested sums of reciprocal squares** (Iovleff's `R₀(k) = ζ*({2}^k)`): for every `k ≥ 0`,
-`ζ*({2}^k) = 2 π^{2k} |(2^{2k-1} - 1) B_{2k}| / (2k)! = 2 η(2k)`, with the multiple-zeta-star
-value `MultipleZeta.starValue` at the all-two index `MultipleZeta.Index.replicate k 2` and
-Dirichlet's `η(s) = (1 - 2^{1-s}) ζ(s)` written through `riemannZeta` (valid also at `s = 0`).
-For `k = 0` both sides are `1`.
+/-- **Nested sums of reciprocal squares.** For every natural number $k$, the multiple zeta-star
+value
+$$\zeta^\star(\{2\}^k) =
+\sum_{n_1 \ge n_2 \ge \cdots \ge n_k \ge 1} \frac{1}{n_1^2 n_2^2 \cdots n_k^2},$$
+which is $1$ for $k = 0$, satisfies
+$$\zeta^\star(\{2\}^k) = \frac{2\pi^{2k} |(2^{2k-1} - 1) B_{2k}|}{(2k)!} =
+2\,(1 - 2^{1-2k})\,\zeta(2k),$$
+where $B_{2k}$ is the $2k$-th Bernoulli number and $\zeta$ is the Riemann zeta function. The
+right-hand side is $2\eta(2k)$ for Dirichlet's eta function $\eta(s) = (1 - 2^{1-s})\,\zeta(s)$;
+at $k = 0$ all three expressions equal $1$, since $\zeta(0) = -1/2$.
 
 Source: Serge Iovleff, *About Some Nested Sums of Reciprocal Squared Numbers*, INTEGERS 26
 (2026), Article A114, Theorem 2. -/
@@ -73,12 +82,13 @@ public theorem_wanted starValue_replicate_two_eq (k : ℕ) :
           (MultipleZeta.Index.replicate_isAdmissibleOrEmpty k le_rfl) : ℝ) : ℂ) =
         2 * ((1 - (2 : ℂ) ^ ((1 : ℤ) - 2 * k)) * riemannZeta (2 * k))
 
-/-- **Strictly nested sums of reciprocal odd squares** (Iovleff's `A₁(k)`):
-`A₁(k) = ∑_{1 ≤ i_1 < ⋯ < i_k} ∏_j (2 i_j - 1)^{-2} = (π/2)^{2k} / (2k)!`. The paper states
-`k > 0`; the identity also holds at `k = 0` (empty sum convention `A₁(0) = 1`, used in the
-paper's proof), so `k > 0` is not assumed. The strictly nested positive indices are listed in
-decreasing order as `MultipleZeta.StrictDecreasingTuple k` (the summation domain of
-`MultipleZeta.strictValue`); the summand is symmetric, so the order does not matter.
+/-- **Strictly nested sums of reciprocal odd squares.** For every natural number $k$,
+$$\sum_{i_1 > i_2 > \cdots > i_k \ge 1} \prod_{j=1}^{k} \frac{1}{(2 i_j - 1)^2} =
+\frac{(\pi/2)^{2k}}{(2k)!},$$
+where the sum runs over all strictly decreasing $k$-tuples $(i_1, \ldots, i_k)$ of positive
+integers. For $k = 0$ the sum has the single empty term and both sides equal $1$.
+
+The source states the identity for $k > 0$; the case $k = 0$ is included here.
 
 Source: Serge Iovleff, *About Some Nested Sums of Reciprocal Squared Numbers*, INTEGERS 26
 (2026), Article A114, Corollary 2. -/

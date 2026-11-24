@@ -17,6 +17,11 @@ hooks:
   # A page that only says where an old explorer URL moved is a bare redirect,
   # and every page loses the indentation the theme writes.
   - hooks/trim_pages.py
+  # Each card's folder page shows the card, and every address the card move
+  # ledger retired keeps leading to its page (docs/cards.md#reading), with the
+  # ledger check's receipt of the commit being built. Without card data of that
+  # commit, it shows no card but still keeps those addresses.
+  - hooks/card_pages.py
 
 # The nav is not listed here. `autoform render` writes it to SUMMARY.md from
 # the vault's own page order, which mkdocs-literate-nav reads, so a project's

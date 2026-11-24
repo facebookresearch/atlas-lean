@@ -1,42 +1,53 @@
 name: Bump guard
 
-# Validate any PR that touches the Lean/Mathlib pin files. Runs on
-# pull_request_target so the guard script is always the trusted base
-# version, never PR-modified code; it reads the PR's pin files as data
-# via the API and runs no PR code. Fails the PR when the pin change is
-# neither a forward move to a single final release tag shared by every
-# pinned dependency (with a manifest exactly derived from those tags)
-# nor a same-pin change (new dependency/library at the current pin, with
-# the config extended monotonically in the same PR).
+# Validate any PR that touches the Lean/Mathlib pin files. The guard
+# script always comes from a checkout of the base (the PR's base branch,
+# or the merge group's base SHA), never from the PR's tree; it reads the
+# PR's pin files as data via the API and runs no PR code. Fails the PR
+# when the pin change is neither a forward move to a single final
+# release tag shared by every pinned dependency (with a manifest exactly
+# derived from those tags) nor a same-pin change (new dependency/library
+# at the current pin, with the config extended monotonically in the same
+# PR).
 # Runs for every PR (no paths filter: path filtering only considers a
 # bounded file list) and on `edited` (a base retarget emits `edited`,
 # not `synchronize`, and must revalidate against the new base).
 # See scripts/bump/pinned_bump.py (guard).
 #
-# Base advance: a pull_request_target run does NOT rerun when the base
+# Trigger: pull_request, not pull_request_target. From 2 December 2026
+# GitHub blocks pull_request_target runs by default in public
+# repositories unless an Actions event policy allows them, and a
+# required check that never runs blocks every PR. The guard needs only
+# read access, which a pull_request run has, fork PRs included. As on
+# merge_group, a pull_request run takes this workflow file from the PR's
+# tree: the guard catches mistaken pin changes, while a PR that edits
+# this workflow is left to review.
+#
+# Base advance: a pull_request run does NOT rerun when the base
 # branch advances, so a still-green guard can go stale (two bump PRs
 # pass against the same base; the older one merges after the newer and
 # downgrades the pins). This workflow therefore also runs on
 # merge_group, revalidating the PR against the merge group's current
 # base before it can merge via the merge queue. The merge-group run
 # checks out the merge group's base SHA, so the guard script it runs
-# is trusted base code, not merge-group tree code. This only helps
+# is base code, not merge-group tree code. This only helps
 # when the repo uses the merge queue for these PRs; a repo merging
 # directly should additionally enable "Require branches to be up to
 # date before merging" in branch protection.
 
 on:
-  pull_request_target:
+  pull_request:
     types: [opened, synchronize, reopened, edited]
   merge_group:
+    types: [checks_requested]
 
 permissions:
   contents: read
   pull-requests: read
 
-# github.ref is the base ref under pull_request_target, and the merge
-# group ref under merge_group, so key the concurrency group by PR
-# number / merge-group head ref: one PR's activity must not cancel
+# github.ref is the PR's own refs/pull/<number>/merge under pull_request,
+# and the merge group ref under merge_group. The group is keyed by PR
+# number / merge-group head ref, so one PR's activity never cancels
 # another PR's guard run.
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.merge_group.head_ref || github.event.pull_request.number }}
@@ -47,10 +58,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      # Trusted base code only: the PR's base ref under
-      # pull_request_target, the merge group's base SHA under
-      # merge_group. Never check out the PR / merge-group tree here:
-      # that tree can contain PR-modified guard code.
+      # Base code only: the PR's base branch under pull_request, the
+      # merge group's base SHA under merge_group. Never check out the
+      # PR / merge-group tree here: that tree can contain PR-modified
+      # guard code.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.event.merge_group.base_sha || github.event.pull_request.base.ref }}
@@ -115,8 +126,8 @@ jobs:
             # Containment: the resolved destination must stay beneath
             # its guard-tree root. A PR-controlled path with .. segments
             # must never redirect a download outside the tree -- in
-            # particular over the trusted checkout's guard script, which
-            # this workflow executes below under pull_request_target.
+            # particular over the base checkout's guard script, which
+            # this workflow executes below.
             # Checked BEFORE mkdir, so traversal cannot create dirs either.
             _dest="$(realpath -m "/tmp/guard/${_dir}/${_file}")"
             case "$_dest" in

@@ -178,7 +178,7 @@ private theorem sml_closure_mem {K : Type*} [Field K] (k : ℕ) (c u : ℕ → K
     ∀ n, u n ∈ R := by
   intro n
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     by_cases hn : n < k
     · exact hu n hn
     · have hnn : u n = u ((n - k) + k) := by congr 1; omega
@@ -440,15 +440,15 @@ private theorem sml_pow_div_factorial_norm (p : ℕ) [Fact p.Prime] (hp : 3 ≤ 
     Nat.cast_ne_zero.mpr (Nat.factorial_ne_zero j)
   have h1 : ‖(p : ℚ_[p]) ^ j‖ = (p : ℝ) ^ (-(j : ℤ)) := Padic.norm_p_pow j
   have h2 : ‖((Nat.factorial j : ℕ) : ℚ_[p])‖
-      = (p : ℝ) ^ (-((padicValNat p (Nat.factorial j) : ℕ) : ℤ)) := by
+      = (p : ℝ) ^ (-((multiplicity p (Nat.factorial j) : ℕ) : ℤ)) := by
     rw [Padic.norm_eq_zpow_neg_valuation hfact, Padic.valuation_natCast]
-  have hleg : (p - 1) * padicValNat p (Nat.factorial j) = j - (Nat.digits p j).sum :=
-    sub_one_mul_padicValNat_factorial j
-  have h2v : 2 * padicValNat p (Nat.factorial j) ≤ j := by
+  have hleg : (p - 1) * multiplicity p (Nat.factorial j) = j - (Nat.digits p j).sum :=
+    (Fact.out : p.Prime).sub_one_mul_multiplicity_factorial
+  have h2v : 2 * multiplicity p (Nat.factorial j) ≤ j := by
     have h1' : 2 ≤ p - 1 := by omega
-    have h2' : 2 * padicValNat p (Nat.factorial j) ≤ (p - 1) * padicValNat p (Nat.factorial j) :=
+    have h2' : 2 * multiplicity p (Nat.factorial j) ≤ (p - 1) * multiplicity p (Nat.factorial j) :=
       mul_le_mul_of_nonneg_right h1' (Nat.zero_le _)
-    have h3' : (p - 1) * padicValNat p (Nat.factorial j) ≤ j := by
+    have h3' : (p - 1) * multiplicity p (Nat.factorial j) ≤ j := by
       rw [hleg]
       exact Nat.sub_le _ _
     omega
@@ -457,7 +457,7 @@ private theorem sml_pow_div_factorial_norm (p : ℕ) [Fact p.Prime] (hp : 3 ≤ 
   rw [norm_div, h1, h2, ← zpow_sub₀ hP0, pow_two, ← zpow_add₀ hP0,
     inv_pow, ← zpow_natCast, ← zpow_neg]
   apply zpow_le_zpow_right₀ hP1
-  have h2vZ : 2 * ((padicValNat p (Nat.factorial j) : ℕ) : ℤ) ≤ (j : ℤ) := by
+  have h2vZ : 2 * ((multiplicity p (Nat.factorial j) : ℕ) : ℤ) ≤ (j : ℤ) := by
     exact_mod_cast h2v
   omega
 
@@ -898,19 +898,24 @@ private theorem sml_main {K : Type*} [Field K] [CharZero K] (m : ℕ)
 
 @[expose] public section
 
-/-- Skolem–Mahler–Lech theorem: a linear recurrence sequence over a field of
-characteristic zero has zero set equal to a finite union of a finite set and
-finitely many full arithmetic progressions.
+/-- **Skolem–Mahler–Lech theorem.** Let $K$ be a field of characteristic zero, let $k$ be a
+natural number, let $c_0, \dots, c_{k-1} \in K$, and let $u_0, u_1, u_2, \dots$ be a sequence in
+$K$ satisfying the linear recurrence $u_{n+k} = \sum_{i=0}^{k-1} c_i u_{n+i}$ for all $n \ge 0$
+(for $k = 0$ the sum is empty and every $u_n$ is $0$). Then there are a finite set
+$F \subseteq \mathbb{N}$ and finitely many pairs $(a_1, d_1), \dots, (a_m, d_m)$ of natural numbers
+with every $d_j > 0$ such that the zero set of the sequence is
+$$\{n \in \mathbb{N} : u_n = 0\} = F \cup \bigcup_{j=1}^{m} \{a_j + d_j t : t \in \mathbb{N}\}.$$
+
+The proof follows Lech's $p$-adic method: the data embed in $\mathbb{Z}_p$ for a suitable prime $p$
+(a Cassels-type embedding), on each residue class modulo the period of the companion matrix
+modulo $p$ the sequence is given by a convergent $p$-adic power series, and Strassmann's theorem
+bounds its zeros. C. Lech, A note on recurring series, Ark. Mat. 2 (1953), 417–421;
+J. W. S. Cassels, An embedding theorem for fields, Bull. Austral. Math. Soc. 14 (1976), 193–198.
+
+Proves `Wanted` entry `skolemMahlerLech`.
+
 Source: https://en.wikipedia.org/wiki/Skolem%E2%80%93Mahler%E2%80%93Lech_theorem
-(statement id `skolem-lech-s1`).
-
-Proof: Lech's `p`-adic method. The data embed in `ℤ_[p]` for a suitable prime `p`
-(Cassels-type embedding), each residue class modulo the period of the companion matrix
-mod `p` is a convergent `p`-adic power series, and Strassmann's theorem bounds its zeros.
-C. Lech, A note on recurring series, Ark. Mat. 2 (1953), 417–421; J. W. S. Cassels,
-An embedding theorem for fields, Bull. Austral. Math. Soc. 14 (1976), 193–198.
-
-Proves `Wanted` entry `skolemMahlerLech`. -/
+(statement id `skolem-lech-s1`). -/
 public theorem skolemMahlerLech {K : Type*} [Field K] [CharZero K]
     (k : ℕ) (c : ℕ → K) (u : ℕ → K)
     (hrec : ∀ n, u (n + k) = ∑ i ∈ Finset.range k, c i * u (n + i)) :

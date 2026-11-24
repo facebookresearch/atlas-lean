@@ -17,14 +17,17 @@ public import Mathlib.Analysis.Real.Sqrt
 namespace MathlibExt.Combinatorics.ScottishBook179Wanted
 
 /--
-The sharp Littlewood-Offord bound answering Offord's Problem 179 from
-the Scottish Book: for real `a 0, ..., a n` with `1 ≤ |a i|`, the number
-of sign choices `ε` for which the signed sum `a 0 + ∑ ε i * a (i + 1)`
-falls in `(-1, 1)` is at most `A * 2 ^ n / √n` for an absolute constant
-`A`. In the original notation the bound is on the exceptional set of
-signed sums `a 0 + ε 1 a 1 + ... + ε n a n` whose absolute value is
-below `min |a nu|`; the statement here is the rescaled form with
-`min |a nu| = 1`. Source: A. C. Offord, Problem 179 of the Scottish
+**Sharp Littlewood–Offord bound.** There is a real constant $A \ge 0$ such that for every
+integer $n \ge 1$ and all real numbers $a_0, a_1, \dots, a_n$ with $|a_i| \ge 1$ for every $i$,
+the number of sign vectors $(\varepsilon_1, \dots, \varepsilon_n) \in \{-1, 1\}^n$ with
+$|a_0 + \varepsilon_1 a_1 + \dots + \varepsilon_n a_n| < 1$ is at most $A \cdot 2^n / \sqrt{n}$.
+
+This answers Offord's Problem 179 from the Scottish Book. In the original notation the bound is
+on the exceptional set of signed sums $a_0 + \varepsilon_1 a_1 + \dots + \varepsilon_n a_n$
+whose absolute value is below $\min_\nu |a_\nu|$; the statement here is the rescaled form with
+$\min_\nu |a_\nu| = 1$.
+
+Source: A. C. Offord, Problem 179 of the Scottish
 Book; the Littlewood-Offord lemma (Littlewood-Offord, 1938) and Erdős's
 proof giving the sharp `O(2 ^ n / √n)` bound, attained when all the
 `a nu` are equal. See the commentary in R. D. Mauldin (ed.),

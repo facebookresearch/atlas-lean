@@ -14,6 +14,7 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Topology.Order.IntermediateValue
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+public import PhyslibExt.FluidDynamics.PerfectGasPorts
 import Mathlib.Analysis.Calculus.Deriv.Inv
 import Mathlib.Analysis.Calculus.Deriv.Mul
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
@@ -28,7 +29,7 @@ import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
 
 /-!
-# Combustion acoustics and thermal runaway bounds
+# Combustion acoustics, thermal runaway bounds and the Chapman-Jouguet algebra
 
 ## i. Overview
 
@@ -54,6 +55,32 @@ in the box until then, and reaches `b` no later than
 `(b - θ₀) / (1 + log δ)`. Nothing is claimed after the exit, and the
 no-equilibrium property does not transfer to the exact law, which always
 has an equilibrium (`arrhenius_equilibrium_exists`).
+
+Section E is the algebra of a steady one-dimensional reactive wave in a
+calorically perfect gas (gas constant `R > 0`, one heat-capacity ratio
+`γ > 1` on both sides), with velocities in the wave frame and the
+upstream gas entering at `u1 > 0`. The declared model inputs are the
+ideal-gas law at both states and the conservation of the mass flux
+`ρ u`, the momentum flux `p + ρ u ^ 2` and the reactive total enthalpy
+`cp T1 + u1 ^ 2 / 2 + q = cp T2 + u2 ^ 2 / 2`, `cp = γ R / (γ - 1)`,
+with heat release `q` per unit mass (`IsReactiveJump`); at `q = 0` they
+are exactly the normal-shock jump conditions
+`FluidDynamics.PerfectGasPorts.IsNormalShockJump`. With the upstream
+sound speed `a1 ^ 2 = γ R T1`, `M1 = |u1| / a1`, `m = M1 ^ 2` and
+`Q = (γ ^ 2 - 1) q / a1 ^ 2`, a jump to a sonic downstream state (the
+Chapman-Jouguet condition `|u2| / a2 = 1` with `a2 ^ 2 = γ R T2`)
+forces `m ^ 2 - 2 (1 + Q) m + 1 = 0` and fixes
+`ρ2 / ρ1 = (γ + 1) m / (1 + γ m)` and `p2 / p1 = (1 + γ m) / (γ + 1)`,
+with every downstream quantity positive. For `q > 0` the quadratic has
+the two positive roots `1 + Q ± √(Q (Q + 2))`, with product `1`, one on
+each side of `1`. The detonation branch is selected explicitly as the
+root above `1`, a supersonic upstream state, and it compresses; the
+root below `1`, the Chapman-Jouguet deflagration point, is named and is
+never the detonation branch. As `q → 0⁺` the detonation root tends to
+`1`, and at `q = 0` the sonic condition admits only the trivial normal
+shock. This is the algebra of the declared jump conditions, not the
+existence, structure or stability of a detonation wave, and not a
+flame-speed result.
 
 ## ii. Key results
 
@@ -86,6 +113,30 @@ has an equilibrium (`arrhenius_equilibrium_exists`).
 - `Chemistry.CombustionAcoustics.fk_exists_box_exit`: existence (local
   Picard-Lindelöf for the field frozen outside the box) and exit through
   the top of a validity box by time `(b - θ₀) / (1 + log δ)`.
+- `Chemistry.CombustionAcoustics.isReactiveJump_zero_iff`: with no heat
+  release the reactive jump conditions are the normal-shock ones.
+- `Chemistry.CombustionAcoustics.cj_machSq_quadratic`,
+  `Chemistry.CombustionAcoustics.cj_downstream_ratios`: a reactive jump
+  to a sonic downstream state forces the Chapman-Jouguet quadratic and
+  fixes the positive downstream state through the ratios at
+  `m = M1 ^ 2`.
+- `Chemistry.CombustionAcoustics.cjHeatParameter_pos`,
+  `Chemistry.CombustionAcoustics.cjMachSq_quadratic_iff`,
+  `Chemistry.CombustionAcoustics.cjMachSq_roots_lt_one_lt`: for `q > 0`
+  the quadratic has exactly the deflagration and the detonation roots,
+  one on each side of `1`, with product `1`.
+- `Chemistry.CombustionAcoustics.cj_detonation_branch_iff`,
+  `Chemistry.CombustionAcoustics.cj_detonation_compression`: the upstream
+  state is on the detonation root exactly when it is supersonic, and
+  there density, pressure and temperature rise; on the deflagration root
+  density and pressure fall.
+- `Chemistry.CombustionAcoustics.isReactiveJump_cj`: the state built from
+  the ratios at the detonation root solves the jump conditions and is
+  sonic.
+- `Chemistry.CombustionAcoustics.tendsto_cjDetonationMachSq`,
+  `Chemistry.CombustionAcoustics.normalShock_sonic_trivial`: the
+  detonation root tends to `1` as `q → 0⁺`, and at `q = 0` the sonic
+  condition admits only the trivial normal shock.
 
 ## iii. Table of contents
 
@@ -93,6 +144,7 @@ has an equilibrium (`arrhenius_equilibrium_exists`).
 - B. Acoustic modal energy
 - C. Semenov critical ratio and folds
 - D. Frank-Kamenetskii criticality and box exit
+- E. The reactive Chapman-Jouguet algebra
 
 ## iv. References
 
@@ -120,6 +172,14 @@ has an equilibrium (`arrhenius_equilibrium_exists`).
   the acoustic energy density then gives `L/4`. The energy
   here is total energy per unit duct cross-section. The
   formal statement is self-contained.
+- Section E: F. A. Williams, *Combustion Theory*, 2nd ed.,
+  Benjamin/Cummings, 1985, Chapter 2 (Rankine-Hugoniot relations and the
+  Chapman-Jouguet points); W. Fickett and W. C. Davis, *Detonation:
+  Theory and Experiment*, Dover, 2000, Chapter 2 (the steady
+  Chapman-Jouguet state of a polytropic gas); J. H. S. Lee, *The
+  Detonation Phenomenon*, Cambridge University Press, 2008, Chapter 2
+  (detonations, deflagrations and the two Chapman-Jouguet points). The
+  `q = 0` jump conditions are `FluidDynamics.PerfectGasPorts.IsNormalShockJump`.
 
 ## A. Arrhenius equilibrium and trapping
 
@@ -132,11 +192,12 @@ namespace Chemistry.CombustionAcoustics
 /-- Zeroth-order Arrhenius heat-release rate with Newton cooling:
 `rate(T) = G * exp(-B / T) - H * (T - Ta)`, for heat-generation scale
 `G`, cooling coefficient `H`, activation ratio `B = E / R`, and
-ambient `Ta`. Read for `T > 0`. -/
+ambient `Ta`. Read for `T > 0`. It is defined for every real `T`: for
+`T = 0` the convention `x / 0 = 0` makes it `G + H * Ta`. -/
 noncomputable def arrheniusRate (G H B Ta T : ℝ) : ℝ :=
   G * Real.exp (-B / T) - H * (T - Ta)
 
-/-- At ambient temperature the rate is the positive generation term:
+/-- At ambient temperature the rate is the generation term (positive for `G > 0`):
 `rate(Ta) = G * exp(-B / Ta)`. -/
 lemma arrheniusRate_ambient (G H B Ta : ℝ) :
     arrheniusRate G H B Ta Ta = G * Real.exp (-B / Ta) := by
@@ -361,7 +422,7 @@ theorem arrhenius_equilibrium_exists {G H B Ta : ℝ} (hG : 0 < G)
   obtain ⟨T, hTmem, hTeq⟩ := himg
   exact ⟨T, hTmem, hTeq⟩
 
-/-- Finite-horizon trapping: if `T` has within-derivative
+/-- Finite-horizon trapping: for positive `G`, `H`, `B`, `Ta`, if `T` has within-derivative
 `arrheniusRate G H B Ta (T s) / C` on `Set.Icc 0 t` at every
 `s ∈ [0, t]`, with `C > 0` and `0 < T s` on the interval (the
 rate is a thermal model only for positive temperatures), then
@@ -429,9 +490,9 @@ lemma arrhenius_solution_trapped_on_interval {G H B Ta C : ℝ} (hG : 0 < G)
 
 
 /-- Forward trapping for a forward solution defined for all
-`t ≥ 0`: if `T` has within-derivative
+`t ≥ 0`: for positive `G`, `H`, `B`, `Ta`, if `T` has within-derivative
 `arrheniusRate G H B Ta (T t) / C` on `Set.Ici 0` at every
-`t ≥ 0`, with `C > 0`, then `T t` lies in `[lo, hi]` where
+`t ≥ 0`, with `C > 0` and `0 < T s` for every `s ≥ 0`, then `T t` lies in `[lo, hi]` where
 `lo = min (T 0) Ta` and `hi = max (T 0) (Ta + G / H)`, for every
 `t ≥ 0`. This is the finite-horizon trapping lemma applied on
 `[0, t]`; it presupposes a solution existing for all forward
@@ -453,7 +514,10 @@ lemma arrhenius_solution_trapped {G H B Ta C : ℝ} (hG : 0 < G)
 /-- Acoustic modal energy for one standing mode with pressure amplitude
 `A` and velocity amplitude `B` in a duct of length `L`, ratio of
 specific heats `γ`, mean pressure `pbar`, and density `ρ`:
-`E = L * (A^2 / (γ * pbar) + ρ * B^2) / 4`. -/
+`E = L * (A^2 / (γ * pbar) + ρ * B^2) / 4`. It is defined for all real
+arguments: for `γ * pbar = 0` the convention `x / 0 = 0` drops the
+pressure term, leaving `L * ρ * B^2 / 4`. The intended domain is
+`γ, pbar > 0`. -/
 noncomputable def acousticModeEnergy (γ pbar ρ L A B : ℝ) : ℝ :=
   L * (A ^ 2 / (γ * pbar) + ρ * B ^ 2) / 4
 
@@ -472,8 +536,8 @@ private lemma hasDerivAt_div_const' {f : ℝ → ℝ} {f' x : ℝ}
     (h : HasDerivAt f f' x) (c : ℝ) : HasDerivAt (fun y => f y / c) (f' / c) x :=
   h.div_const c
 
-/-- Energy identity for the acoustic mode: if `A` and `B` are
-differentiable in time with
+/-- Energy identity for the acoustic mode: for nonzero `γ`, `pbar` and `L`,
+if `A` and `B` are differentiable in time with
 `A' = -γ * pbar * (π / L) * B + (γ - 1) * H` and
 `ρ * B' = (π / L) * A - r * B` (with `B'` the derivative value), then
 the energy `E(t) = L * (A(t)^2 / (γ * pbar) + ρ * B(t)^2) / 4` has
@@ -517,9 +581,8 @@ lemma hasDerivAt_acousticModeEnergy
   exact hE.congr_of_eventuallyEq (Filter.Eventually.of_forall fun s => by
     simp only [acousticModeEnergy, Pi.add_apply])
 
-/-- Signed dissipation with no heat release: under `0 ≤ r` and
-`0 < L`, with `H = 0`, the modal energy derivative is
-`-(r * L * B(t)^2 / 2)`, which is nonpositive. -/
+/-- Signed dissipation with no heat release: under `γ ≠ 0`, `pbar ≠ 0`, `0 ≤ r` and `0 < L`, with
+`H = 0`, the modal energy derivative is `-(r * L * B(t)^2 / 2)`, which is nonpositive. -/
 lemma acousticModeEnergy_deriv_nonpos_of_no_heat
     {γ pbar ρ L r : ℝ} (hγ : γ ≠ 0) (hpbar : pbar ≠ 0)
     (hL : 0 < L) (hr : 0 ≤ r) {A B : ℝ → ℝ} {A' B' : ℝ} {t : ℝ}
@@ -538,10 +601,9 @@ lemma acousticModeEnergy_deriv_nonpos_of_no_heat
     div_nonneg (mul_nonneg (mul_nonneg hr (le_of_lt hL)) (sq_nonneg _)) (by norm_num)
   linarith
 
-/-- Integrated energy balance over a time interval `[t0, t1]`: under
-the same modal equations at every time, the energy change equals the
-integral of the heat-release source minus the algebraic
-damping term. -/
+/-- Integrated energy balance over a time interval `[t0, t1]`: for positive `γ`, `pbar` and `L`,
+under the modal equations at every time of the interval, the energy change equals the integral of
+the heat-release source minus the algebraic damping term. -/
 lemma acousticModeEnergy_sub_eq_integral
     {γ pbar ρ L r H : ℝ} (hγ : 0 < γ) (hpbar : 0 < pbar)
     (hL : 0 < L) {A B A' B' : ℝ → ℝ} (t0 t1 : ℝ)
@@ -582,10 +644,9 @@ lemma acousticModeEnergy_sub_eq_integral
       MeasureTheory.volume t0 t1 := hcont.intervalIntegrable
   exact (intervalIntegral.integral_eq_sub_of_hasDerivAt hderiv hint).symm
 
-/-- With no heat release and no dissipation, the modal energy has
-zero derivative at any single time satisfying the modal equations.
-Genuine conservation between two times is
-`acousticModeEnergy_eq_of_conserved`. -/
+/-- With no heat release and no dissipation, and with `γ`, `pbar` and `L` nonzero, the modal energy
+has zero derivative at any single time satisfying the modal equations. Genuine conservation between
+two times is `acousticModeEnergy_eq_of_conserved`. -/
 lemma hasDerivAt_acousticModeEnergy_conserved
     {γ pbar ρ L : ℝ} (hγ : γ ≠ 0) (hpbar : pbar ≠ 0)
     (hL : L ≠ 0) {A B : ℝ → ℝ} {A' B' : ℝ} {t : ℝ}
@@ -603,9 +664,9 @@ lemma hasDerivAt_acousticModeEnergy_conserved
   rw [e] at h
   exact h
 
-/-- Genuine conservation: if the modal equations with no heat
-release (`H = 0`) and no damping (`r = 0`) hold at every time, the
-modal energy takes the same value at any two times. -/
+/-- Genuine conservation: for positive `γ`, `pbar` and `L`, if the modal equations with no heat
+release (`H = 0`) and no damping (`r = 0`) hold at every time, the modal energy takes the same value
+at any two times. -/
 theorem acousticModeEnergy_eq_of_conserved
     {γ pbar ρ L : ℝ} (hγ : 0 < γ) (hpbar : 0 < pbar)
     (hL : 0 < L) {A B A' B' : ℝ → ℝ}
@@ -630,7 +691,9 @@ theorem acousticModeEnergy_eq_of_conserved
 /-! ## C. Semenov critical ratio and folds -/
 
 /-- Semenov critical ratio `q(T) = (T - Ta) * exp(B / T)`: for
-`H, T > 0`, equilibrium of the Arrhenius rate is `G / H = q(T)`. -/
+`H, T > 0`, equilibrium of the Arrhenius rate is `G / H = q(T)`. It is
+defined for every real `T`: for `T = 0` the convention `x / 0 = 0` makes
+it `-Ta`. The intended domain is `T > 0`. -/
 noncomputable def critRatio (Ta B T : ℝ) : ℝ :=
   (T - Ta) * Real.exp (B / T)
 
@@ -788,7 +851,7 @@ theorem critRatio_two_folds {Ta B : ℝ} (hTa : 0 < Ta)
   have hdp := (critRatio_deriv_eq_zero_iff hTa hTp).mpr hQp
   exact ⟨hdm, hdp, hTm, hord⟩
 
-/-- Degenerate fold: at `B = 4 * Ta` there is exactly one stationary
+/-- Degenerate fold: for `Ta > 0` and `B = 4 * Ta` there is exactly one stationary
 point above `Ta`, at `T = 2 * Ta`; it is not two ordinary folds. -/
 theorem critRatio_degenerate_fold {Ta : ℝ} (hTa : 0 < Ta) {T : ℝ}
     (hT : Ta < T) :
@@ -1135,7 +1198,8 @@ lemma one_add_log_le_fkField {δ : ℝ} (hδ : 0 < δ) (θ : ℝ) :
   change 1 + Real.log δ ≤ δ * Real.exp θ - θ
   linarith
 
-/-- The bound is positive exactly in the supercritical range `δ > exp (-1)`. -/
+/-- For `δ > 0`, the lower bound `1 + log δ` of the field is positive exactly in the supercritical
+range `δ > exp (-1)`. -/
 lemma one_add_log_pos_iff {δ : ℝ} (hδ : 0 < δ) :
     0 < 1 + Real.log δ ↔ Real.exp (-1) < δ := by
   rw [← Real.lt_log_iff_exp_lt hδ]
@@ -1451,5 +1515,487 @@ lemma fk_exists_box_exit {δ a b θ₀ : ℝ} (hδ : Real.exp (-1) < δ) (ha : a
     rw [hθ0'] at h
     rwa [hcdef]
   exact ⟨τ, hτpos, hτle, θ, hθ0', hτeq, hbox, hode⟩
+
+/-! ## E. The reactive Chapman-Jouguet algebra -/
+
+section ReactiveChapmanJouguet
+
+open Filter Topology
+
+/-- The reactive jump conditions between an upstream state `(ρ1, u1, p1, T1)` and a downstream
+state `(ρ2, u2, p2, T2)` of a calorically perfect gas with gas constant `R`, heat-capacity ratio
+`γ` (the same on both sides) and heat release `q` per unit mass: the ideal-gas law `p = ρ R T` at
+both states, conservation of the mass flux `ρ u` and the momentum flux `p + ρ u ^ 2`, and the
+reactive total-enthalpy jump `cp T1 + u1 ^ 2 / 2 + q = cp T2 + u2 ^ 2 / 2` with
+`cp = γ R / (γ - 1)`. Read for `γ > 1`; velocities are in the wave frame. It is defined for every
+real `γ`: for `γ = 1` the convention `x / 0 = 0` makes `cp = 0`, so the energy condition reads
+`u1 ^ 2 / 2 + q = u2 ^ 2 / 2`. -/
+def IsReactiveJump (γ R q ρ1 u1 p1 T1 ρ2 u2 p2 T2 : ℝ) : Prop :=
+  p1 = ρ1 * R * T1 ∧ p2 = ρ2 * R * T2 ∧ ρ1 * u1 = ρ2 * u2 ∧
+    p1 + ρ1 * u1 ^ 2 = p2 + ρ2 * u2 ^ 2 ∧
+    γ * R / (γ - 1) * T1 + u1 ^ 2 / 2 + q = γ * R / (γ - 1) * T2 + u2 ^ 2 / 2
+
+/-- The heat-release parameter `Q = (γ ^ 2 - 1) q / a1 ^ 2` of the heat release `q` per unit mass
+against the upstream sound speed `a1`. Read for `a1 ^ 2 = γ R T1 > 0`. It is defined for every
+real `a1`: for `a1 = 0` the convention `x / 0 = 0` makes it `0`. -/
+noncomputable def cjHeatParameter (γ q a1 : ℝ) : ℝ :=
+  (γ ^ 2 - 1) * q / a1 ^ 2
+
+/-- The detonation root `1 + Q + √(Q (Q + 2))` of `m ^ 2 - 2 (1 + Q) m + 1 = 0`, the larger of
+its two roots. Read for `Q ≥ 0`. It is defined for every real `Q`: for `-2 < Q < 0` it is `1 + Q`,
+since `√x = 0` for `x < 0`. -/
+noncomputable def cjDetonationMachSq (Q : ℝ) : ℝ :=
+  1 + Q + Real.sqrt (Q * (Q + 2))
+
+/-- The other root `1 + Q - √(Q (Q + 2))` of `m ^ 2 - 2 (1 + Q) m + 1 = 0`, the
+Chapman-Jouguet deflagration point. For `Q > 0` it is below the detonation root. Read for
+`Q ≥ 0`. It is defined for every real `Q`: for `-2 < Q < 0` it is `1 + Q`, since `√x = 0` for
+`x < 0`. -/
+noncomputable def cjDeflagrationMachSq (Q : ℝ) : ℝ :=
+  1 + Q - Real.sqrt (Q * (Q + 2))
+
+/-- The density ratio `ρ2 / ρ1 = (γ + 1) m / (1 + γ m)` of a reactive jump to a sonic downstream
+state, at the squared upstream Mach number `m = M1 ^ 2 > 0`. It is defined for all real `γ` and
+`m`: where `1 + γ m = 0` the convention `x / 0 = 0` makes it `0`. The intended domain is `γ > 1`
+and `m > 0`. -/
+noncomputable def cjDensityRatio (γ m : ℝ) : ℝ :=
+  (γ + 1) * m / (1 + γ * m)
+
+/-- The pressure ratio `p2 / p1 = (1 + γ m) / (γ + 1)` of a reactive jump to a sonic downstream
+state, at `m = M1 ^ 2`. It is defined for every real `γ`: for `γ = -1` the convention `x / 0 = 0`
+makes it `0`. The intended domain is `γ > 1`. -/
+noncomputable def cjPressureRatio (γ m : ℝ) : ℝ :=
+  (1 + γ * m) / (γ + 1)
+
+/-- The temperature ratio `T2 / T1` of a reactive jump to a sonic downstream state: the pressure
+ratio over the density ratio, `(1 + γ m) ^ 2 / ((γ + 1) ^ 2 m)` for `m > 0`. It is defined for all
+real `γ` and `m`: for `m = 0` or `γ = -1` the convention `x / 0 = 0` makes it `0`. The intended
+domain is `γ > 1` and `m > 0`. -/
+noncomputable def cjTemperatureRatio (γ m : ℝ) : ℝ :=
+  cjPressureRatio γ m / cjDensityRatio γ m
+
+/-- With no heat release the reactive jump conditions are exactly the normal-shock jump
+conditions. -/
+lemma isReactiveJump_zero_iff {γ R ρ1 u1 p1 T1 ρ2 u2 p2 T2 : ℝ} :
+    IsReactiveJump γ R 0 ρ1 u1 p1 T1 ρ2 u2 p2 T2 ↔
+      FluidDynamics.PerfectGasPorts.IsNormalShockJump γ R ρ1 u1 p1 T1 ρ2 u2 p2 T2 := by
+  unfold IsReactiveJump FluidDynamics.PerfectGasPorts.IsNormalShockJump
+  simp only [add_zero]
+
+/-- For `γ > 1`, a positive upstream temperature with sound speed `a1 ^ 2 = γ R T1`, `R > 0` and a
+positive heat release `q`, the heat-release parameter is positive. -/
+lemma cjHeatParameter_pos {γ R T1 q a1 : ℝ} (hγ : 1 < γ) (hR : 0 < R) (hT1 : 0 < T1)
+    (hq : 0 < q) (ha1 : a1 ^ 2 = γ * R * T1) :
+    0 < cjHeatParameter γ q a1 := by
+  unfold cjHeatParameter
+  rw [ha1]
+  have hγ2 : 0 < γ ^ 2 - 1 := by nlinarith
+  have hK : 0 < γ * R * T1 := by
+    have : 0 < γ := by linarith
+    positivity
+  exact div_pos (mul_pos hγ2 hq) hK
+
+/-- For `Q ≥ 0` the solutions of `m ^ 2 - 2 (1 + Q) m + 1 = 0` are exactly the detonation root
+and the deflagration root. -/
+lemma cjMachSq_quadratic_iff {Q : ℝ} (hQ : 0 ≤ Q) (m : ℝ) :
+    m ^ 2 - 2 * (1 + Q) * m + 1 = 0 ↔ m = cjDetonationMachSq Q ∨ m = cjDeflagrationMachSq Q := by
+  have hs : Real.sqrt (Q * (Q + 2)) ^ 2 = Q * (Q + 2) := Real.sq_sqrt (by positivity)
+  have hfac : m ^ 2 - 2 * (1 + Q) * m + 1 =
+      (m - cjDetonationMachSq Q) * (m - cjDeflagrationMachSq Q) := by
+    unfold cjDetonationMachSq cjDeflagrationMachSq
+    linear_combination hs
+  rw [hfac, mul_eq_zero, sub_eq_zero, sub_eq_zero]
+
+/-- For `Q > 0` the two roots are positive with product `1`, the deflagration root below `1` and
+the detonation root above `1`. -/
+lemma cjMachSq_roots_lt_one_lt {Q : ℝ} (hQ : 0 < Q) :
+    0 < cjDeflagrationMachSq Q ∧ cjDeflagrationMachSq Q < 1 ∧ 1 < cjDetonationMachSq Q ∧
+      cjDeflagrationMachSq Q * cjDetonationMachSq Q = 1 := by
+  have hs : Real.sqrt (Q * (Q + 2)) ^ 2 = Q * (Q + 2) := Real.sq_sqrt (by positivity)
+  have hs0 : 0 ≤ Real.sqrt (Q * (Q + 2)) := Real.sqrt_nonneg _
+  have hlt : Real.sqrt (Q * (Q + 2)) < 1 + Q := by nlinarith
+  have hgt : Q < Real.sqrt (Q * (Q + 2)) := by nlinarith
+  unfold cjDetonationMachSq cjDeflagrationMachSq
+  exact ⟨by linarith, by linarith, by linarith, by linear_combination (-1 : ℝ) * hs⟩
+
+/-- The jump relations behind the Chapman-Jouguet algebra, with `K = γ R T1 = a1 ^ 2`: the sonic
+condition `u2 ^ 2 = γ R T2`, `K + γ u1 ^ 2 = (γ + 1) u1 u2` from mass and momentum,
+`2 K + (γ - 1) u1 ^ 2 + 2 (γ - 1) q = (γ + 1) u2 ^ 2` from energy, `M1 ^ 2 K = u1 ^ 2`,
+`γ p2 = ρ1 u1 u2`, and `u2 ≠ 0`. -/
+private lemma cj_core {γ R q ρ1 u1 p1 T1 ρ2 u2 p2 T2 a1 M1 a2 : ℝ} (hγ : 1 < γ)
+    (hR : 0 < R) (hρ1 : 0 < ρ1) (hT1 : 0 < T1) (hu1 : 0 < u1) (ha1 : a1 ^ 2 = γ * R * T1)
+    (hM1 : M1 = |u1| / a1) (ha2 : a2 ^ 2 = γ * R * T2) (hM2 : |u2| / a2 = 1)
+    (hjump : IsReactiveJump γ R q ρ1 u1 p1 T1 ρ2 u2 p2 T2) :
+    u2 ^ 2 = γ * R * T2 ∧ γ * R * T1 + γ * u1 ^ 2 = (γ + 1) * u1 * u2 ∧
+      2 * (γ * R * T1) + (γ - 1) * u1 ^ 2 + 2 * (γ - 1) * q = (γ + 1) * u2 ^ 2 ∧
+      M1 ^ 2 * (γ * R * T1) = u1 ^ 2 ∧ γ * p2 = ρ1 * u1 * u2 ∧ u2 ≠ 0 ∧
+      p1 = ρ1 * R * T1 ∧ p2 = ρ2 * R * T2 ∧ ρ1 * u1 = ρ2 * u2 := by
+  obtain ⟨h1, h2, h3, h4, h5⟩ := hjump
+  have hγpos : 0 < γ := by linarith
+  have hγ1 : γ - 1 ≠ 0 := by linarith
+  have hK : 0 < γ * R * T1 := by positivity
+  have hm : M1 ^ 2 * (γ * R * T1) = u1 ^ 2 := by
+    rw [hM1, div_pow, sq_abs, ha1, div_mul_cancel₀ _ hK.ne']
+  have ha2ne : a2 ≠ 0 := by
+    rintro rfl
+    simp at hM2
+  have hu2a : |u2| = a2 := (div_eq_one_iff_eq ha2ne).mp hM2
+  have hs : u2 ^ 2 = γ * R * T2 := by rw [← sq_abs, hu2a, ha2]
+  have hj : 0 < ρ1 * u1 := mul_pos hρ1 hu1
+  have hu2ne : u2 ≠ 0 := by
+    rintro rfl
+    rw [mul_zero] at h3
+    linarith
+  have hC' : ρ1 * (γ * R * T1 + γ * u1 ^ 2 - (γ + 1) * u1 * u2) = 0 := by
+    linear_combination γ * h4 - γ * h1 - (γ + 1) * u2 * h3 + γ * h2 - ρ2 * hs
+  have hC : γ * R * T1 + γ * u1 ^ 2 = (γ + 1) * u1 * u2 := by
+    rcases mul_eq_zero.mp hC' with h | h
+    · linarith
+    · linarith
+  have h5' : γ * R / (γ - 1) * (γ - 1) = γ * R := by field_simp
+  have hD : 2 * (γ * R * T1) + (γ - 1) * u1 ^ 2 + 2 * (γ - 1) * q = (γ + 1) * u2 ^ 2 := by
+    linear_combination 2 * (γ - 1) * h5 - 2 * T1 * h5' + 2 * T2 * h5' - 2 * hs
+  have hp2 : γ * p2 = ρ1 * u1 * u2 := by
+    linear_combination γ * h2 - ρ2 * hs - u2 * h3
+  exact ⟨hs, hC, hD, hm, hp2, hu2ne, h1, h2, h3⟩
+
+/-- **The Chapman-Jouguet quadratic.** For `γ > 1`, `R > 0`, a positive upstream state
+(`ρ1, T1 > 0`) entering the wave at `u1 > 0`, upstream sound speed `a1 ^ 2 = γ R T1` and Mach
+number `M1 = |u1| / a1`, and a reactive jump with heat release `q` to a sonic downstream state
+(`a2 ^ 2 = γ R T2` and `|u2| / a2 = 1`), the squared Mach number `m = M1 ^ 2` solves
+`m ^ 2 - 2 (1 + Q) m + 1 = 0` with `Q = (γ ^ 2 - 1) q / a1 ^ 2`. -/
+lemma cj_machSq_quadratic {γ R q ρ1 u1 p1 T1 ρ2 u2 p2 T2 a1 M1 a2 : ℝ} (hγ : 1 < γ)
+    (hR : 0 < R) (hρ1 : 0 < ρ1) (hT1 : 0 < T1) (hu1 : 0 < u1) (ha1 : a1 ^ 2 = γ * R * T1)
+    (hM1 : M1 = |u1| / a1) (ha2 : a2 ^ 2 = γ * R * T2) (hM2 : |u2| / a2 = 1)
+    (hjump : IsReactiveJump γ R q ρ1 u1 p1 T1 ρ2 u2 p2 T2) :
+    (M1 ^ 2) ^ 2 - 2 * (1 + cjHeatParameter γ q a1) * M1 ^ 2 + 1 = 0 := by
+  obtain ⟨hs, hC, hD, hm, -, -, -, -, -⟩ :=
+    cj_core hγ hR hρ1 hT1 hu1 ha1 hM1 ha2 hM2 hjump
+  have hγpos : 0 < γ := by linarith
+  have hK : 0 < γ * R * T1 := by positivity
+  set K := γ * R * T1 with hKdef
+  have hV : K ^ 2 - 2 * K * u1 ^ 2 + u1 ^ 4 - 2 * (γ ^ 2 - 1) * q * u1 ^ 2 = 0 := by
+    linear_combination (K + γ * u1 ^ 2 + (γ + 1) * u1 * u2) * hC - (γ + 1) * u1 ^ 2 * hD
+  unfold cjHeatParameter
+  rw [ha1]
+  set Q := (γ ^ 2 - 1) * q / K with hQdef
+  have hQ : Q * K = (γ ^ 2 - 1) * q := by
+    rw [hQdef]
+    field_simp
+  have hmain : K ^ 2 * ((M1 ^ 2) ^ 2 - 2 * (1 + Q) * M1 ^ 2 + 1) = 0 := by
+    linear_combination hV + (M1 ^ 2 * K + u1 ^ 2 - 2 * K - 2 * (γ ^ 2 - 1) * q) * hm -
+      2 * M1 ^ 2 * K * hQ
+  rcases mul_eq_zero.mp hmain with h | h
+  · exact absurd h (pow_ne_zero 2 hK.ne')
+  · exact h
+
+/-- **The downstream ratios.** Under the hypotheses of `cj_machSq_quadratic` the downstream state
+is positive, and `ρ2 / ρ1`, `u2 / u1`, `p2 / p1` and `T2 / T1` are the density ratio, its
+inverse, the pressure ratio and the temperature ratio at `m = M1 ^ 2`. -/
+lemma cj_downstream_ratios {γ R q ρ1 u1 p1 T1 ρ2 u2 p2 T2 a1 M1 a2 : ℝ} (hγ : 1 < γ)
+    (hR : 0 < R) (hρ1 : 0 < ρ1) (hT1 : 0 < T1) (hu1 : 0 < u1) (ha1 : a1 ^ 2 = γ * R * T1)
+    (hM1 : M1 = |u1| / a1) (ha2 : a2 ^ 2 = γ * R * T2) (hM2 : |u2| / a2 = 1)
+    (hjump : IsReactiveJump γ R q ρ1 u1 p1 T1 ρ2 u2 p2 T2) :
+    (0 < ρ2 ∧ 0 < u2 ∧ 0 < p2 ∧ 0 < T2) ∧
+      ρ2 / ρ1 = cjDensityRatio γ (M1 ^ 2) ∧ u2 / u1 = 1 / cjDensityRatio γ (M1 ^ 2) ∧
+      p2 / p1 = cjPressureRatio γ (M1 ^ 2) ∧ T2 / T1 = cjTemperatureRatio γ (M1 ^ 2) := by
+  obtain ⟨hs, hC, -, hm, hp2, hu2ne, h1, h2, h3⟩ :=
+    cj_core hγ hR hρ1 hT1 hu1 ha1 hM1 ha2 hM2 hjump
+  have hγpos : 0 < γ := by linarith
+  have hK : 0 < γ * R * T1 := by positivity
+  set K := γ * R * T1 with hKdef
+  set m := M1 ^ 2 with hmdef
+  have hmpos : 0 < m := by
+    have : 0 < u1 ^ 2 := by positivity
+    by_contra hneg
+    push Not at hneg
+    nlinarith
+  have hu2 : u2 = u1 * (1 + γ * m) / ((γ + 1) * m) := by
+    field_simp
+    nlinarith [hC, hm]
+  have hu2pos : 0 < u2 := by
+    rw [hu2]
+    positivity
+  have hρ2 : ρ2 = ρ1 * u1 / u2 := by
+    field_simp
+    linarith
+  have hρ2pos : 0 < ρ2 := by
+    rw [hρ2]
+    positivity
+  have hT2 : T2 = u2 ^ 2 / (γ * R) := by
+    field_simp
+    linarith
+  have hT2pos : 0 < T2 := by
+    rw [hT2]
+    positivity
+  have hp2pos : 0 < p2 := by
+    rw [h2]
+    positivity
+  have hp1pos : 0 < p1 := by
+    rw [h1]
+    positivity
+  have hD1 : 0 < 1 + γ * m := by positivity
+  refine ⟨⟨hρ2pos, hu2pos, hp2pos, hT2pos⟩, ?_, ?_, ?_, ?_⟩
+  · rw [hρ2, hu2]
+    unfold cjDensityRatio
+    field_simp
+  · rw [hu2]
+    unfold cjDensityRatio
+    field_simp
+  · have hp2' : p2 = ρ1 * u1 * u2 / γ := by
+      field_simp
+      linarith
+    rw [hp2', h1, hu2]
+    unfold cjPressureRatio
+    field_simp
+    rw [← hm]
+    ring
+  · rw [hT2, hu2]
+    unfold cjTemperatureRatio cjPressureRatio cjDensityRatio
+    field_simp
+    rw [← hm]
+    ring
+
+/-- **Selection of the detonation branch.** Under the hypotheses of `cj_machSq_quadratic` with
+`q > 0`, the upstream state is on the detonation root exactly when it is supersonic, and on the
+deflagration root exactly when it is subsonic. -/
+lemma cj_detonation_branch_iff {γ R q ρ1 u1 p1 T1 ρ2 u2 p2 T2 a1 M1 a2 : ℝ} (hγ : 1 < γ)
+    (hR : 0 < R) (hq : 0 < q) (hρ1 : 0 < ρ1) (hT1 : 0 < T1) (hu1 : 0 < u1)
+    (ha1 : a1 ^ 2 = γ * R * T1) (hM1 : M1 = |u1| / a1) (ha2 : a2 ^ 2 = γ * R * T2)
+    (hM2 : |u2| / a2 = 1) (hjump : IsReactiveJump γ R q ρ1 u1 p1 T1 ρ2 u2 p2 T2) :
+    (M1 ^ 2 = cjDetonationMachSq (cjHeatParameter γ q a1) ↔ 1 < M1 ^ 2) ∧
+      (M1 ^ 2 = cjDeflagrationMachSq (cjHeatParameter γ q a1) ↔ M1 ^ 2 < 1) := by
+  have hquad := cj_machSq_quadratic hγ hR hρ1 hT1 hu1 ha1 hM1 ha2 hM2 hjump
+  have hQ := cjHeatParameter_pos hγ hR hT1 hq ha1
+  obtain ⟨-, hlo, hhi, -⟩ := cjMachSq_roots_lt_one_lt hQ
+  rcases (cjMachSq_quadratic_iff hQ.le (M1 ^ 2)).mp hquad with h | h
+  · constructor
+    · exact ⟨fun _ => h ▸ hhi, fun _ => h⟩
+    · constructor
+      · intro h'
+        rw [h'] at h
+        linarith
+      · intro h'
+        linarith
+  · constructor
+    · constructor
+      · intro h'
+        rw [h'] at h
+        linarith
+      · intro h'
+        linarith
+    · exact ⟨fun _ => h ▸ hlo, fun _ => h⟩
+
+/-- **The detonation branch compresses.** Under the hypotheses of `cj_machSq_quadratic` with
+`q > 0`, on the detonation root the density, pressure and temperature rise and the gas slows;
+on the deflagration root the density and pressure fall. -/
+lemma cj_detonation_compression {γ R q ρ1 u1 p1 T1 ρ2 u2 p2 T2 a1 M1 a2 : ℝ} (hγ : 1 < γ)
+    (hR : 0 < R) (hq : 0 < q) (hρ1 : 0 < ρ1) (hT1 : 0 < T1) (hu1 : 0 < u1)
+    (ha1 : a1 ^ 2 = γ * R * T1) (hM1 : M1 = |u1| / a1) (ha2 : a2 ^ 2 = γ * R * T2)
+    (hM2 : |u2| / a2 = 1) (hjump : IsReactiveJump γ R q ρ1 u1 p1 T1 ρ2 u2 p2 T2) :
+    (M1 ^ 2 = cjDetonationMachSq (cjHeatParameter γ q a1) →
+        ρ1 < ρ2 ∧ p1 < p2 ∧ T1 < T2 ∧ u2 < u1) ∧
+      (M1 ^ 2 = cjDeflagrationMachSq (cjHeatParameter γ q a1) → ρ2 < ρ1 ∧ p2 < p1) := by
+  obtain ⟨⟨hρ2pos, hu2pos, hp2pos, hT2pos⟩, hr, hu, hP, hθ⟩ :=
+    cj_downstream_ratios hγ hR hρ1 hT1 hu1 ha1 hM1 ha2 hM2 hjump
+  have hQ := cjHeatParameter_pos hγ hR hT1 hq ha1
+  obtain ⟨hlo0, hlo, hhi, -⟩ := cjMachSq_roots_lt_one_lt hQ
+  have hp1pos : 0 < p1 := by
+    rw [hjump.1]
+    positivity
+  have hγpos : 0 < γ := by linarith
+  constructor
+  · intro hm
+    set m := M1 ^ 2 with hmdef
+    have hm1 : 1 < m := hm ▸ hhi
+    have hD1 : 0 < 1 + γ * m := by positivity
+    have hr1 : 1 < cjDensityRatio γ m := by
+      unfold cjDensityRatio
+      rw [one_lt_div hD1]
+      nlinarith
+    have hP1 : 1 < cjPressureRatio γ m := by
+      unfold cjPressureRatio
+      rw [one_lt_div (by linarith)]
+      nlinarith
+    have hθ1 : 1 < cjTemperatureRatio γ m := by
+      unfold cjTemperatureRatio cjPressureRatio cjDensityRatio
+      have hmpos : 0 < m := by linarith
+      rw [div_div_eq_mul_div, one_lt_div (by positivity)]
+      have h1 : (1 + γ * m) * (1 + γ * m) - (γ + 1) * m * (γ + 1) = (γ ^ 2 * m - 1) * (m - 1) := by
+        ring
+      have h2 : 0 < (γ ^ 2 * m - 1) * (m - 1) := by
+        apply mul_pos
+        · nlinarith
+        · linarith
+      rw [div_mul_eq_mul_div, lt_div_iff₀ (by linarith)]
+      nlinarith
+    have hu1' : u2 / u1 < 1 := by
+      rw [hu, div_lt_one (by linarith)]
+      exact hr1
+    refine ⟨?_, ?_, ?_, ?_⟩
+    · have h1 := (div_eq_iff hρ1.ne').mp hr
+      have h2 := mul_lt_mul_of_pos_right hr1 hρ1
+      linarith
+    · have h1 := (div_eq_iff hp1pos.ne').mp hP
+      have h2 := mul_lt_mul_of_pos_right hP1 hp1pos
+      linarith
+    · have h1 := (div_eq_iff hT1.ne').mp hθ
+      have h2 := mul_lt_mul_of_pos_right hθ1 hT1
+      linarith
+    · rwa [div_lt_one hu1] at hu1'
+  · intro hm
+    set m := M1 ^ 2 with hmdef
+    have hm1 : m < 1 := hm ▸ hlo
+    have hmpos : 0 < m := hm ▸ hlo0
+    have hD1 : 0 < 1 + γ * m := by positivity
+    have hr1 : cjDensityRatio γ m < 1 := by
+      unfold cjDensityRatio
+      rw [div_lt_one hD1]
+      linarith [show (γ + 1) * m = γ * m + m by ring]
+    have hP1 : cjPressureRatio γ m < 1 := by
+      unfold cjPressureRatio
+      rw [div_lt_one (by linarith)]
+      have h := mul_pos hγpos (sub_pos.mpr hm1)
+      linarith [show γ * (1 - m) = γ - γ * m by ring]
+    constructor
+    · have h1 := (div_eq_iff hρ1.ne').mp hr
+      have h2 := mul_lt_mul_of_pos_right hr1 hρ1
+      linarith
+    · have h1 := (div_eq_iff hp1pos.ne').mp hP
+      have h2 := mul_lt_mul_of_pos_right hP1 hp1pos
+      linarith
+
+/-- **The Chapman-Jouguet detonation state solves the jump.** For `γ > 1`, `R > 0`, `q ≥ 0`, an
+upstream perfect-gas state `p1 = ρ1 R T1` with `T1 > 0` entering at `u1 > 0`, sound speed
+`a1 ^ 2 = γ R T1` and Mach number `M1 = |u1| / a1` on the detonation root, the state with the
+density, velocity, pressure and temperature ratios at `m = M1 ^ 2` satisfies the reactive jump
+conditions and is sonic, `u2 ^ 2 = γ R T2`. -/
+lemma isReactiveJump_cj {γ R q ρ1 u1 p1 T1 a1 M1 : ℝ} (hγ : 1 < γ) (hR : 0 < R) (hq : 0 ≤ q)
+    (hT1 : 0 < T1) (hu1 : 0 < u1) (hp1 : p1 = ρ1 * R * T1) (ha1 : a1 ^ 2 = γ * R * T1)
+    (hM1 : M1 = |u1| / a1) (hm : M1 ^ 2 = cjDetonationMachSq (cjHeatParameter γ q a1)) :
+    IsReactiveJump γ R q ρ1 u1 p1 T1 (ρ1 * cjDensityRatio γ (M1 ^ 2))
+        (u1 / cjDensityRatio γ (M1 ^ 2)) (p1 * cjPressureRatio γ (M1 ^ 2))
+        (T1 * cjTemperatureRatio γ (M1 ^ 2)) ∧
+      (u1 / cjDensityRatio γ (M1 ^ 2)) ^ 2 = γ * R * (T1 * cjTemperatureRatio γ (M1 ^ 2)) := by
+  have hγpos : 0 < γ := by linarith
+  have hγ1 : γ - 1 ≠ 0 := by linarith
+  have hγ1' : γ + 1 ≠ 0 := by linarith
+  have hγ2 : γ ^ 2 - 1 ≠ 0 := by nlinarith
+  have hRne : R ≠ 0 := hR.ne'
+  have hT1ne : T1 ≠ 0 := hT1.ne'
+  have hγne : γ ≠ 0 := hγpos.ne'
+  have hK : 0 < γ * R * T1 := by positivity
+  have hQ0 : 0 ≤ cjHeatParameter γ q a1 := by
+    unfold cjHeatParameter
+    rw [ha1]
+    have h2 : 0 ≤ γ ^ 2 - 1 := by nlinarith
+    positivity
+  have hquad : (M1 ^ 2) ^ 2 - 2 * (1 + cjHeatParameter γ q a1) * M1 ^ 2 + 1 = 0 :=
+    (cjMachSq_quadratic_iff hQ0 (M1 ^ 2)).mpr (Or.inl hm)
+  have hmK : M1 ^ 2 * (γ * R * T1) = u1 ^ 2 := by
+    rw [hM1, div_pow, sq_abs, ha1, div_mul_cancel₀ _ hK.ne']
+  have hmpos : 0 < M1 ^ 2 := by
+    have : 0 < u1 ^ 2 := by positivity
+    by_contra hneg
+    push Not at hneg
+    nlinarith
+  have hM1ne : M1 ≠ 0 := by
+    rintro rfl
+    simp at hmpos
+  have hD1 : 0 < 1 + γ * M1 ^ 2 := by positivity
+  have hD1ne : 1 + γ * M1 ^ 2 ≠ 0 := hD1.ne'
+  have hu1ne : u1 ≠ 0 := hu1.ne'
+  have hr : cjDensityRatio γ (M1 ^ 2) ≠ 0 := by
+    unfold cjDensityRatio
+    positivity
+  refine ⟨⟨hp1, ?_, ?_, ?_, ?_⟩, ?_⟩
+  · rw [hp1]
+    unfold cjTemperatureRatio
+    field_simp
+  · field_simp
+  · have hkey : p1 + ρ1 * u1 ^ 2 - (p1 * cjPressureRatio γ (M1 ^ 2) +
+        ρ1 * cjDensityRatio γ (M1 ^ 2) * (u1 / cjDensityRatio γ (M1 ^ 2)) ^ 2) = 0 := by
+      rw [hp1, div_pow, ← hmK]
+      unfold cjPressureRatio cjDensityRatio
+      field_simp
+      ring
+    linarith
+  · have hkey : γ * R / (γ - 1) * T1 + u1 ^ 2 / 2 + q -
+        (γ * R / (γ - 1) * (T1 * cjTemperatureRatio γ (M1 ^ 2)) +
+          (u1 / cjDensityRatio γ (M1 ^ 2)) ^ 2 / 2) =
+        -(γ * R * T1) / (2 * (γ ^ 2 - 1) * M1 ^ 2) *
+          ((M1 ^ 2) ^ 2 - 2 * (1 + cjHeatParameter γ q a1) * M1 ^ 2 + 1) := by
+      rw [div_pow, ← hmK]
+      unfold cjTemperatureRatio cjPressureRatio cjDensityRatio cjHeatParameter
+      rw [ha1]
+      field_simp
+      ring
+    rw [hquad, mul_zero] at hkey
+    linarith
+  · have hkey : (u1 / cjDensityRatio γ (M1 ^ 2)) ^ 2 -
+        γ * R * (T1 * cjTemperatureRatio γ (M1 ^ 2)) = 0 := by
+      rw [div_pow, ← hmK]
+      unfold cjTemperatureRatio cjPressureRatio cjDensityRatio
+      field_simp
+      ring
+    linarith
+
+/-- **Vanishing heat release.** For any `γ` and `a1`, as `q → 0⁺` the detonation root tends to the
+sonic value `1`. For `a1 = 0` the heat parameter is `0` for every `q` by the convention `x / 0 = 0`,
+and the root is `1` throughout. -/
+lemma tendsto_cjDetonationMachSq (γ a1 : ℝ) :
+    Tendsto (fun q => cjDetonationMachSq (cjHeatParameter γ q a1)) (𝓝[>] 0) (𝓝 1) := by
+  have hc : Continuous (fun q => cjDetonationMachSq (cjHeatParameter γ q a1)) := by
+    unfold cjDetonationMachSq cjHeatParameter
+    fun_prop
+  have h0 : cjDetonationMachSq (cjHeatParameter γ 0 a1) = 1 := by
+    simp [cjDetonationMachSq, cjHeatParameter]
+  have h := hc.tendsto 0
+  rw [h0] at h
+  exact tendsto_nhdsWithin_of_tendsto_nhds h
+
+/-- **A normal shock with a sonic downstream state is trivial.** For `γ > 1`, `R > 0`, a positive
+upstream state entering at `u1 > 0` and a normal-shock jump to a sonic downstream state,
+`M1 ^ 2 = 1` and the downstream state is the upstream one: the sonic condition admits only the
+trivial normal shock. -/
+lemma normalShock_sonic_trivial {γ R ρ1 u1 p1 T1 ρ2 u2 p2 T2 a1 M1 a2 : ℝ} (hγ : 1 < γ)
+    (hR : 0 < R) (hρ1 : 0 < ρ1) (hT1 : 0 < T1) (hu1 : 0 < u1) (ha1 : a1 ^ 2 = γ * R * T1)
+    (hM1 : M1 = |u1| / a1) (ha2 : a2 ^ 2 = γ * R * T2) (hM2 : |u2| / a2 = 1)
+    (hjump : FluidDynamics.PerfectGasPorts.IsNormalShockJump γ R ρ1 u1 p1 T1 ρ2 u2 p2 T2) :
+    M1 ^ 2 = 1 ∧ ρ2 = ρ1 ∧ u2 = u1 ∧ p2 = p1 ∧ T2 = T1 := by
+  rw [← isReactiveJump_zero_iff] at hjump
+  have hquad := cj_machSq_quadratic hγ hR hρ1 hT1 hu1 ha1 hM1 ha2 hM2 hjump
+  have hQ0 : cjHeatParameter γ 0 a1 = 0 := by simp [cjHeatParameter]
+  rw [hQ0] at hquad
+  have hm1 : M1 ^ 2 = 1 := by nlinarith [sq_nonneg (M1 ^ 2 - 1)]
+  obtain ⟨-, hr, hu, hP, hθ⟩ :=
+    cj_downstream_ratios hγ hR hρ1 hT1 hu1 ha1 hM1 ha2 hM2 hjump
+  have hγpos : 0 < γ := by linarith
+  have hp1pos : 0 < p1 := by
+    rw [hjump.1]
+    positivity
+  have hr1 : cjDensityRatio γ 1 = 1 := by
+    unfold cjDensityRatio
+    field_simp
+    ring
+  have hP1 : cjPressureRatio γ 1 = 1 := by
+    unfold cjPressureRatio
+    field_simp
+    ring
+  have hθ1 : cjTemperatureRatio γ 1 = 1 := by
+    unfold cjTemperatureRatio
+    rw [hr1, hP1, div_one]
+  rw [hm1] at hr hu hP hθ
+  rw [hr1] at hr hu
+  rw [hP1] at hP
+  rw [hθ1] at hθ
+  refine ⟨hm1, ?_, ?_, ?_, ?_⟩
+  · exact (div_eq_one_iff_eq hρ1.ne').mp hr
+  · rw [div_one] at hu
+    exact (div_eq_one_iff_eq hu1.ne').mp hu
+  · exact (div_eq_one_iff_eq hp1pos.ne').mp hP
+  · exact (div_eq_one_iff_eq hT1.ne').mp hθ
+
+end ReactiveChapmanJouguet
 
 end Chemistry.CombustionAcoustics

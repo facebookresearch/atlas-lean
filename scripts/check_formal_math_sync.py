@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Check, and record divergences in, provenance/formal-math-sync.json.
+"""Check and update the Formal-Math ledger in provenance/.
 
     scripts/check_formal_math_sync.py                      check (check.sh preflight); exit 1 on failure
     scripts/check_formal_math_sync.py --record-divergence PATH... --rationale TEXT --backport pending|<url>
     scripts/check_formal_math_sync.py --retire PATH...
+    scripts/check_formal_math_sync.py --split-by-domain    convert the legacy ledger without row changes
 
 The manifest pins a fairinternal/formal-math commit and has a row for every root-library Lean file
 taken from it (see `provenance/README.md`). The check is offline, deterministic, standard library
@@ -24,7 +25,8 @@ only, and scoped to those synced files, so a pull request fails only if it touch
   the pin only with the `formal-math-sync` label (pushes and merge groups are maintainer-only). In CI the base is the push's
   `before` commit, the merge group's base, or for a pull request the merge ref's first parent,
   fetched if the checkout is shallow (unreadable fails closed); locally the merge-base with
-  origin/main, else the comparison is skipped with a warning;
+  origin/main (including the incoming parent during a local merge), falling back to HEAD's
+  first parent;
 - files without a row (ATLAS-only work) are ignored; new upstream files enter at sync time.
 
 A pull request that changes or deletes a synced or diverged file records that with
@@ -39,14 +41,18 @@ import json
 import os
 import re
 import shlex
+import shutil
+import stat
 import subprocess
 import sys
+import tempfile
 from pathlib import Path, PurePosixPath
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from check_copyright import META  # noqa: E402  (the one definition of the Meta header)
 
 SCHEMA_VERSION = 1
+SHARDED_SCHEMA_VERSION = 2
 MANIFEST = "provenance/formal-math-sync.json"
 # Every path the manifest has had. A base commit is compared through whichever of these it has, so
 # moving the manifest cannot make the base look manifest-less; add a new path here, keep old ones.
@@ -330,17 +336,188 @@ def file_problems(root: Path, row: dict) -> list[str]:
     return []
 
 
-def load(manifest_path: Path) -> tuple[dict | None, list[str]]:
-    """Parse the manifest and check its shape. Returns (manifest or None, problems)."""
+def shard_directory(manifest_path: Path) -> Path:
+    """The sibling directory containing the v2 ledger's row files."""
+    return manifest_path.with_suffix(".d")
+
+
+def shard_path(manifest_path: Path, path: str) -> Path:
+    """Route a source path by library and first directory, with separate root modules."""
+    if not isinstance(path, str) or "\\" in path or "\x00" in path:
+        raise ValueError(f"invalid source path: {path!r}")
+    parts = path.split("/")
+    if (len(parts) < 2 or parts[0] not in ROOTS or not path.endswith(".lean")
+            or any(part in ("", ".", "..") for part in parts)):
+        raise ValueError(f"invalid source path: {path!r}")
+    directory = shard_directory(manifest_path)
+    if len(parts) == 2:
+        return directory / f"{parts[0]}.json"
+    return directory / parts[0] / f"{parts[1]}.json"
+
+
+def unique_fields(pairs: list[tuple[str, object]]) -> dict:
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError(f"duplicate JSON key {key!r}")
+        result[key] = value
+    return result
+
+
+def manifest_documents(manifest_path: Path, manifest: dict) -> dict[Path, str]:
+    """Serialize the logical ledger to its on-disk layout without changing any row."""
+    version = manifest["schema_version"]
+    if version == SCHEMA_VERSION:
+        return {manifest_path: dump_manifest(manifest)}
+    if version != SHARDED_SCHEMA_VERSION:
+        raise ValueError(f"unsupported manifest schema_version: {version!r}")
+    groups: dict[Path, list[dict]] = {}
+    for row in manifest["rows"]:
+        groups.setdefault(shard_path(manifest_path, row["path"]), []).append(row)
+    header = {key: value for key, value in manifest.items() if key != "rows"}
+    documents = {manifest_path: json.dumps(header, indent=2, ensure_ascii=False, sort_keys=True) + "\n"}
+    for shard, rows in sorted(groups.items()):
+        documents[shard] = dump_manifest({"rows": sorted(rows, key=lambda row: row["path"])})
+    return documents
+
+
+def parse_manifest(manifest_path: Path, header: str, shards: dict[Path, str]) -> dict:
+    """Assemble one logical ledger from either format, rejecting ambiguous storage."""
+    manifest = json.loads(header, object_pairs_hook=unique_fields)
+    if not isinstance(manifest, dict):
+        raise ValueError("manifest is not a JSON object")
+    version = manifest.get("schema_version")
+    if type(version) is not int or version not in (SCHEMA_VERSION, SHARDED_SCHEMA_VERSION):
+        raise ValueError(f"unsupported schema_version: {version!r}")
+    if version == SCHEMA_VERSION:
+        if shards:
+            raise ValueError("monolithic manifest has a shard directory with files")
+        if not isinstance(manifest.get("rows"), list):
+            raise ValueError("manifest has no rows list")
+        return manifest
+    if "rows" in manifest:
+        raise ValueError("sharded manifest metadata must not contain inline rows")
+    all_rows = []
+    for shard, text in sorted(shards.items()):
+        try:
+            document = json.loads(text, object_pairs_hook=unique_fields)
+            if not (isinstance(document, dict) and set(document) == {"rows"}
+                    and isinstance(document["rows"], list) and document["rows"]):
+                raise ValueError("expected a nonempty rows list and no shard-local metadata")
+            paths = []
+            for row in document["rows"]:
+                if not isinstance(row, dict) or shard_path(manifest_path, row.get("path")) != shard:
+                    raise ValueError(f"row belongs in another shard: {row!r}")
+                paths.append(row["path"])
+            if paths != sorted(set(paths)):
+                raise ValueError("shard rows must be sorted and unique")
+            all_rows.extend(document["rows"])
+        except ValueError as error:
+            raise ValueError(f"{shard}: {error}") from error
+    return {**manifest, "rows": sorted(all_rows, key=lambda row: row["path"])}
+
+
+def worktree_shards(manifest_path: Path) -> dict[Path, str]:
+    """Read only the two fixed levels of the ledger directory, never through symlinks."""
+    directory = shard_directory(manifest_path)
+    if directory.is_symlink() or (directory.exists() and not directory.is_dir()):
+        raise ValueError(f"{directory}: shard directory is not a real directory")
+    if not directory.exists():
+        return {}
+    shards = {}
+    for entry in sorted(directory.iterdir()):
+        if entry.is_symlink():
+            raise ValueError(f"{entry}: shard path must not go through a symlink")
+        files = sorted(entry.iterdir()) if entry.is_dir() else [entry]
+        for shard in files:
+            if shard.is_symlink():
+                raise ValueError(f"{shard}: shard path must not go through a symlink")
+            if not shard.is_file() or shard.suffix != ".json":
+                raise ValueError(f"{shard}: expected a regular JSON shard file")
+            shards[shard] = shard.read_text(encoding="utf-8")
+    return shards
+
+
+def write_manifest(manifest_path: Path, manifest: dict, *, paths: list[str] | None = None) -> None:
+    """Write the ledger, or just the shards owning the edited paths."""
+    documents = manifest_documents(manifest_path, manifest)
+    if paths is not None and manifest["schema_version"] == SHARDED_SCHEMA_VERSION:
+        targets = {shard_path(manifest_path, path) for path in paths}
+        documents = {target: text for target, text in documents.items() if target in targets}
+    # Validate and stage every changed file before replacing any ledger document.
+    changes: dict[Path, tuple[bytes, bytes | None, int]] = {}
+    for target, text in documents.items():
+        absolute = target.absolute()
+        if symlinked_component(Path(absolute.anchor), absolute):
+            raise ValueError(f"{target}: manifest path must not go through a symlink")
+        if target.exists() and not target.is_file():
+            raise ValueError(f"{target}: expected a regular manifest file")
+        original = target.read_bytes() if target.exists() else None
+        data = text.encode("utf-8")
+        if data != original:
+            mode = stat.S_IMODE(target.stat().st_mode) if original is not None else 0o644
+            changes[target] = data, original, mode
+    if not changes:
+        return
+    manifest_path.parent.mkdir(parents=True, exist_ok=True)
+    staging = Path(tempfile.mkdtemp(prefix=".formal-math-write-", dir=manifest_path.parent))
+    staged: dict[Path, tuple[Path, Path | None]] = {}
+    replaced: list[Path] = []
+    keep_backups = False
     try:
-        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        for index, (target, (data, original, mode)) in enumerate(changes.items()):
+            new = staging / f"{index}.new"
+            new.write_bytes(data)
+            new.chmod(mode)
+            backup = None
+            if original is not None:
+                backup = staging / f"{index}.old"
+                backup.write_bytes(original)
+                backup.chmod(mode)
+            staged[target] = new, backup
+        recovery = {str(target): str(backup) for target, (_, backup) in staged.items()}
+        (staging / "targets.json").write_text(json.dumps(recovery), encoding="utf-8")
+        for target in sorted(staged, key=lambda target: (target == manifest_path, target)):
+            target.parent.mkdir(parents=True, exist_ok=True)
+            os.replace(staged[target][0], target)
+            replaced.append(target)
+    except BaseException as error:
+        failures = []
+        for target in reversed(replaced):
+            try:
+                backup = staged[target][1]
+                if backup is None:
+                    target.unlink()
+                else:
+                    os.replace(backup, target)
+            except OSError as rollback_error:
+                failures.append(f"{target}: {rollback_error}")
+        if failures:
+            keep_backups = True
+            raise OSError(f"ledger rollback failed: {'; '.join(failures)}; backups in {staging}") from error
+        raise
+    finally:
+        if not keep_backups:
+            shutil.rmtree(staging)
+
+
+def load(manifest_path: Path) -> tuple[dict | None, list[str]]:
+    """Parse either layout and check shared metadata. Return (logical ledger, problems)."""
+    try:
+        absolute = manifest_path.absolute()
+        if symlinked_component(Path(absolute.anchor), absolute):
+            raise ValueError("manifest path must not go through a symlink")
+        if not manifest_path.is_file():
+            raise ValueError("expected a regular manifest file")
+        manifest = parse_manifest(manifest_path, manifest_path.read_text(encoding="utf-8"),
+                                  worktree_shards(manifest_path))
     except (OSError, ValueError) as error:
         return None, [f"{manifest_path}: cannot read manifest: {error}"]
-    if not isinstance(manifest, dict) or not isinstance(manifest.get("rows"), list):
-        return None, [f"{manifest_path}: manifest has no rows list"]
+    return manifest, metadata_problems(manifest)
+
+
+def metadata_problems(manifest: dict) -> list[str]:
     problems = []
-    if manifest.get("schema_version") != SCHEMA_VERSION:
-        problems.append(f"manifest: schema_version is {manifest.get('schema_version')!r}, expected {SCHEMA_VERSION}")
     upstream = manifest.get("upstream")
     if not (isinstance(upstream, dict) and upstream.get("repository") == UPSTREAM_REPOSITORY
             and isinstance(upstream.get("commit"), str) and COMMIT.fullmatch(upstream["commit"])):
@@ -349,7 +526,7 @@ def load(manifest_path: Path) -> tuple[dict | None, list[str]]:
         problems.append(f"manifest: roots are {manifest.get('roots')!r}, expected {list(ROOTS)!r}")
     if not isinstance(manifest.get("lean_toolchain"), str):
         problems.append("manifest: lean_toolchain is not a string")
-    return manifest, problems
+    return problems
 
 
 def manifest_rel(root: Path, manifest_path: Path) -> str:
@@ -438,6 +615,49 @@ def git(root: Path, *args: str) -> str | None:
     return done.stdout.strip() if done.returncode == 0 else None
 
 
+def load_revision(
+    root: Path, revision: str, manifest_path: str = MANIFEST
+) -> tuple[dict | None, list[str]]:
+    """Load the full historical ledger from Git, checking file modes as well as contents."""
+    header = Path(manifest_path)
+    for parent in reversed(header.parents):
+        if parent == Path("."):
+            continue
+        listing = git(root, "ls-tree", "--full-tree", "-z", revision, "--", parent.as_posix())
+        if listing is None:
+            return None, [f"cannot read {parent} in the manifest tree at {revision}"]
+        if not listing:
+            return None, []  # no ancestor (and hence no ledger) in this revision
+        if not listing.startswith("040000 tree "):
+            return None, [f"{revision}:{parent}: expected a real manifest directory"]
+    directory = shard_directory(header)
+    listing = git(root, "ls-tree", "--full-tree", "-r", "-z", revision, "--",
+                  header.as_posix(), directory.as_posix())
+    if listing is None:
+        return None, [f"cannot read the manifest tree at {revision}"]
+    documents = {}
+    try:
+        for line in listing.split("\0"):
+            if not line:
+                continue
+            entry, name = line.split("\t", 1)
+            mode, kind, oid = entry.split()
+            if mode not in ("100644", "100755") or kind != "blob":
+                raise ValueError(f"{name}: expected a regular manifest file")
+            contents = git(root, "cat-file", "blob", oid)
+            if contents is None:
+                raise ValueError(f"{name}: Git blob is missing")
+            documents[Path(name)] = contents
+        if not documents:
+            return None, []
+        if header not in documents:
+            raise ValueError(f"{header}: missing manifest metadata file")
+        manifest = parse_manifest(header, documents.pop(header), documents)
+        return manifest, metadata_problems(manifest)
+    except ValueError as error:
+        return None, [f"{revision}:{manifest_path}: cannot read manifest: {error}"]
+
+
 def last_committed_text(root: Path, path: str) -> str | None:
     """A deleted file's last committed text: from HEAD, or from before the commit that deleted it."""
     text = git(root, "show", f"HEAD:{path}")
@@ -512,7 +732,8 @@ def ci_base(root: Path) -> tuple[str | None, str]:
     return first_parent(root), "first parent of HEAD"
 
 
-def base_commit(root: Path, base: str | None) -> tuple[str | None, str | None]:
+def base_commit(root: Path, base: str | None,
+                merge_head: str | None = None) -> tuple[str | None, str | None]:
     """The commit whose manifest this tree is compared with: (commit, None) or (None, why not)."""
     if git(root, "rev-parse", "--show-toplevel") != str(root.resolve()):
         return None, "not a git checkout"
@@ -526,7 +747,9 @@ def base_commit(root: Path, base: str | None) -> tuple[str | None, str | None]:
         if candidate and git(root, "cat-file", "-e", f"{candidate}^{{commit}}") is not None:
             return candidate, None
         return None, f"cannot read the base commit ({source})"
-    for candidate in (git(root, "merge-base", "HEAD", "origin/main"), first_parent(root)):
+    # With multiple heads, git finds the base of origin/main and their hypothetical merge.
+    heads = ("HEAD", merge_head) if merge_head else ("HEAD",)
+    for candidate in (git(root, "merge-base", "origin/main", *heads), first_parent(root)):
         if candidate and git(root, "cat-file", "-e", f"{candidate}^{{commit}}") is not None:
             return candidate, None
     return None, "no origin/main merge-base and no readable parent commit"
@@ -574,13 +797,14 @@ def row_transition_problems(path: str, before: dict | None, row: dict, short: st
     return []
 
 
-def copy_and_rename_status(root: Path, commit: str) -> str | None:
+def copy_and_rename_status(root: Path, commit: str, *, staged: bool) -> str | None:
     """`git diff --name-status -z` of the roots with rename (50%) and near-copy (90%) detection,
     copies searched from every base file, not only modified ones. None if git fails or skips
     detection (too many files for the limit)."""
+    revisions = ("--cached", commit) if staged else (commit, "HEAD")
     try:
         done = subprocess.run(["git", "-C", str(root), "diff", "--no-ext-diff", "-M", "-C90%", "--find-copies-harder",
-                               "-l100000", "--name-status", "-z", commit, "HEAD", "--", *ROOTS],
+                               "-l100000", "--name-status", "-z", *revisions, "--", *ROOTS],
                               capture_output=True, text=True, timeout=600)
     except (OSError, subprocess.TimeoutExpired):
         return None
@@ -604,43 +828,59 @@ def base_problems(root: Path, manifest_path: Path, base: str | None) -> tuple[li
             return [f"manifest: {why}; cannot compare with the base manifest"], []
         return [], [f"skipping the base-manifest comparison: {why}"]
 
-    commit, why = base_commit(root, base)
+    merge_head = None
+    if not os.environ.get("GITHUB_ACTIONS"):
+        merge_head = git(root, "rev-parse", "--verify", "MERGE_HEAD")
+    commit, why = base_commit(root, base, merge_head)
     if commit is None:
         return unreadable(why or "no base commit")
     if symlinked_component(root, manifest_path):
         return [], []  # check() reports it
     rel = manifest_rel(root, manifest_path)
-    candidates = [rel] + [p for p in MANIFEST_PATHS if p != rel] + [CHECKER]
-    listing = git(root, "ls-tree", "--name-only", commit, "--", *candidates)
-    if listing is None:
-        return unreadable(f"cannot read the tree of base {commit}")
-    present = set(listing.splitlines())
-    base_rel = next((p for p in candidates[:-1] if p in present), None)
-    if base_rel is None:
-        if CHECKER in present:  # only the cutover itself may compare against a base without a manifest
-            return [f"manifest: base {commit[:12]} has {CHECKER} but no manifest at {', '.join(candidates[:-1])}; "
+    candidates = [*MANIFEST_PATHS, *([rel] if rel not in MANIFEST_PATHS else [])]
+    for candidate in candidates:
+        old_manifest, errors = load_revision(root, commit, candidate)
+        if errors:
+            return unreadable(f"cannot parse the base manifest at {commit}: {'; '.join(errors)}")
+        if old_manifest is not None:
+            break
+    else:
+        listing = git(root, "ls-tree", "--name-only", commit, "--", CHECKER)
+        if listing is None:
+            return unreadable(f"cannot read the tree of base {commit}")
+        if CHECKER in listing.splitlines():  # only the original cutover may predate the ledger
+            return [f"manifest: base {commit[:12]} has {CHECKER} but no manifest at {', '.join(candidates)}; "
                     "keep the manifest at a known path (MANIFEST_PATHS)"], []
-        return [], []  # the cutover: the base predates the manifest
+        return [], []
     try:
-        old_manifest = json.loads(git(root, "show", f"{commit}:{base_rel}") or "")
         old = {row["path"]: row for row in old_manifest["rows"]}
+        if len(old) != len(old_manifest["rows"]) or not all(isinstance(path, str) for path in old):
+            raise ValueError("base row paths must be unique strings")
         old_pin = old_manifest["upstream"]["commit"]
     except (ValueError, KeyError, TypeError):
         return unreadable(f"cannot parse the base manifest at {commit}")
-    try:
-        new_manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-        new = {row.get("path"): row for row in new_manifest["rows"] if isinstance(row, dict)}
-        pin = new_manifest.get("upstream", {}).get("commit")
-    except (OSError, ValueError, KeyError, TypeError, AttributeError):
-        return [], []  # check() reports a malformed manifest
+    new_manifest, errors = load(manifest_path)
+    if new_manifest is None or errors:
+        return [], []  # check() reports an invalid manifest
+    new = {row["path"]: row for row in new_manifest["rows"]
+           if isinstance(row, dict) and isinstance(row.get("path"), str)}
+    pin = new_manifest["upstream"]["commit"]
+    if old_manifest["schema_version"] == SHARDED_SCHEMA_VERSION:
+        if new_manifest["schema_version"] != SHARDED_SCHEMA_VERSION:
+            return ["manifest: cannot return to the monolithic layout after sharding"], []
+    elif new_manifest["schema_version"] == SHARDED_SCHEMA_VERSION:
+        if old_manifest != {**new_manifest, "schema_version": SCHEMA_VERSION}:
+            return ["manifest: sharding must preserve every existing row and all shared metadata; "
+                    "convert the base ledger separately from any sync or row edit"], []
     short = commit[:12]
     problems = [f"{path}: row removed or renamed (base {short}); rows are never dropped: restore it, then use "
                 "--record-divergence for a changed file or --retire for a deleted one"
                 for path in sorted(old.keys() - new.keys())]
     tracked = {path for path, row in old.items() if row.get("disposition") in (*SYNCED, "diverged")}
-    moves = copy_and_rename_status(root, commit)
+    moves = copy_and_rename_status(root, commit, staged=bool(merge_head))
     if moves is None:
-        found, note = unreadable(f"cannot diff base {commit} with HEAD for renames")
+        target = "the index" if merge_head else "HEAD"
+        found, note = unreadable(f"cannot diff base {commit} with {target} for renames")
         problems += found
         warnings = note
     else:
@@ -684,15 +924,57 @@ def fix_commands(fixes: dict[str, list[str]]) -> list[str]:
     return commands
 
 
+def row_structure_problems(root: Path, manifest: dict) -> list[str]:
+    """Check record shape without requiring old hashes to match edited Lean files."""
+    paths = []
+    problems = []
+    for index, row in enumerate(manifest["rows"]):
+        if not isinstance(row, dict):
+            problems.append(f"row {index}: not an object")
+            continue
+        path = row.get("path")
+        why = path_problem(root, path)
+        if why:
+            problems.append(f"{path!r}: {why}")
+            continue
+        paths.append(path)
+        problems.extend(field_problems(row))
+    if paths != sorted(set(paths)):
+        problems.append("manifest: rows must be sorted and unique")
+    return problems
+
+
+def split_by_domain(root: Path, manifest_path: Path) -> int:
+    """Convert only the file layout. No upstream checkout or record edits are involved."""
+    manifest, problems = load(manifest_path)
+    if manifest is not None:
+        problems.extend(row_structure_problems(root, manifest))
+    if problems or manifest is None:
+        print("\n".join(problems), file=sys.stderr)
+        return 1
+    if manifest["schema_version"] == SHARDED_SCHEMA_VERSION:
+        print(f"{manifest_path}: already sharded")
+        return 0
+    try:
+        write_manifest(manifest_path, {**manifest, "schema_version": SHARDED_SCHEMA_VERSION})
+    except (OSError, ValueError) as error:
+        print(f"cannot shard {manifest_path}: {error}", file=sys.stderr)
+        return 1
+    print(f"sharded {len(manifest['rows'])} rows from {manifest_path} by library and domain")
+    return 0
+
+
 def edit(root: Path, manifest_path: Path, paths: list[str], new_row, create: bool = False) -> int:
     """Apply `new_row(old_row, path) -> row` to each path's row and rewrite the manifest.
 
     With `create`, a path without a row starts from an empty row (a tracked file's new path)."""
     manifest, problems = load(manifest_path)
-    if manifest is None:
+    if manifest is not None:
+        problems.extend(row_structure_problems(root, manifest))
+    if problems or manifest is None:
         print("\n".join(problems), file=sys.stderr)
         return 1
-    rows = {row.get("path"): row for row in manifest["rows"] if isinstance(row, dict)}
+    rows = {row["path"]: row for row in manifest["rows"]}
     errors = []
     for path in paths:
         why = path_problem(root, path)
@@ -707,11 +989,15 @@ def edit(root: Path, manifest_path: Path, paths: list[str], new_row, create: boo
             else:
                 rows[path] = result
     if errors:
-        print("\n".join(f"FAIL [formal-math-sync]: {e}" for e in errors), file=sys.stderr)
+        print("\n".join(f"FAIL [formal-math-sync]: {error}" for error in errors), file=sys.stderr)
         return 1
-    manifest["rows"] = [rows[p] for p in sorted(rows)]
-    manifest_path.write_text(dump_manifest(manifest), encoding="utf-8")
-    print(f"updated {manifest_path}: {len(paths)} row(s)")
+    manifest["rows"] = [rows[path] for path in sorted(rows)]
+    try:
+        write_manifest(manifest_path, manifest, paths=paths)
+    except (OSError, ValueError) as error:
+        print(f"cannot update {manifest_path}: {error}", file=sys.stderr)
+        return 1
+    print(f"updated the ledger at {manifest_path}: {len(paths)} row(s)")
     return 0
 
 
@@ -719,15 +1005,19 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--root", type=Path, default=Path(__file__).resolve().parent.parent, help="ATLAS checkout")
     ap.add_argument("--manifest", type=Path, help=f"manifest path (default: <root>/{MANIFEST})")
-    ap.add_argument("--record-divergence", nargs="+", metavar="PATH", help="mark synced files as reviewed divergences")
+    writers = ap.add_mutually_exclusive_group()
+    writers.add_argument("--record-divergence", nargs="+", metavar="PATH", help="mark synced files as reviewed divergences")
+    writers.add_argument("--retire", nargs="+", metavar="PATH", help="mark deleted synced files as retired")
+    writers.add_argument("--split-by-domain", action="store_true", help="convert a legacy ledger to domain shards without changing any row")
     ap.add_argument("--rationale", help="why ATLAS differs from formal-math (with --record-divergence)")
     ap.add_argument("--backport", help="'pending', 'not-needed', or the formal-math backport PR URL")
-    ap.add_argument("--retire", nargs="+", metavar="PATH", help="mark deleted synced files as retired")
     ap.add_argument("--base", help="commit to compare rows with (default: in CI the event's base, "
                     "else the merge-base with origin/main)")
     a = ap.parse_args(argv)
     manifest_path = a.manifest or a.root / MANIFEST
 
+    if a.split_by_domain:
+        return split_by_domain(a.root, manifest_path)
     if a.record_divergence:
         if not (a.rationale and a.rationale.strip()) or not (a.backport and BACKPORT.fullmatch(a.backport)):
             ap.error("--record-divergence needs a non-empty --rationale and --backport pending|not-needed|<https URL>")
@@ -753,6 +1043,8 @@ def main(argv: list[str] | None = None) -> int:
         return edit(a.root, manifest_path, a.retire, retire)
 
     problems, fixes, rows = check(a.root, manifest_path)
+    if os.environ.get("GITHUB_ACTIONS") and manifest_rel(a.root, manifest_path) != MANIFEST:
+        problems.append(f"manifest: CI requires the canonical ledger at {MANIFEST}")
     removed, warnings = base_problems(a.root, manifest_path, a.base)
     problems += removed
     for warning in warnings:

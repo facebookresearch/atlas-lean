@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Algorithms.Lean.Finance.RationalTree
-public import MathlibExt.Economics.Finance.BinomialOptimalStopping
+public import MathlibExt.Probability.OptimalStopping.FiniteBinomialTree
 public import Mathlib.Data.Rat.Cast.Order
 
 /-!

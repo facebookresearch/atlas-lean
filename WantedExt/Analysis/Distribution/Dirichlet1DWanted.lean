@@ -11,26 +11,17 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.Calculus.ContDiff.Basic
+public import MathlibExt.Analysis.ODE.Dirichlet1D
 
 @[expose] public section
 
 namespace MathlibExt.Analysis.Distribution.Dirichlet1DWanted
 
 /--
-One-dimensional Dirichlet problem, existence: every continuous `f` on `[0, 1]` is the second
-derivative of a `C²` function vanishing at both endpoints.
-
-Sources: Mathlib `docs/undergrad.yaml`, section "Topology" / "Hilbert spaces" /
-entry "H^1_0([0,1]) and its application to the one-dimensional Dirichlet problem";
-L. Evans, *Partial Differential Equations*, Ch. 6.
--/
-public theorem_wanted dirichlet_1d_exists {f : ℝ → ℝ} (hf : ContinuousOn f (Set.Icc 0 1)) :
-    ∃ u : ℝ → ℝ, ContDiff ℝ 2 u ∧ u 0 = 0 ∧ u 1 = 0 ∧
-      ∀ x ∈ Set.Ioo 0 1, deriv (deriv u) x = f x
-
-/--
-One-dimensional Dirichlet problem, uniqueness: the zero-boundary `C²` solution is unique
-on `[0, 1]`.
+**Uniqueness for the one-dimensional Dirichlet problem.** Let $f : \mathbb{R} \to \mathbb{R}$ be
+any function, and let $u_1, u_2 : \mathbb{R} \to \mathbb{R}$ be twice continuously
+differentiable functions such that, for $i = 1, 2$, $u_i(0) = u_i(1) = 0$ and
+$u_i''(x) = f(x)$ for every $x \in (0, 1)$. Then $u_1(x) = u_2(x)$ for every $x \in [0, 1]$.
 
 Sources: Mathlib `docs/undergrad.yaml`, section "Topology" / "Hilbert spaces" /
 entry "H^1_0([0,1]) and its application to the one-dimensional Dirichlet problem";

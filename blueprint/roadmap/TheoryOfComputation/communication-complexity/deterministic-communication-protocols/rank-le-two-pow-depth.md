@@ -11,7 +11,7 @@ depth of $p$; equivalently $d \ge \log_2 \operatorname{rank}_K M_f$.
 
 ## Background
 
-- [Rank of a product of matrices](../../../LinearAlgebra/linear-maps-and-duality/rank-of-a-product.md): writing $M_f = UV$ with $U$ and $V$ indexed by the leaves shows that the rank is at most the number of leaves; the source sums rank-one matrices instead.
+- [Rank of a product of matrices](../../../LinearAlgebra/linear-maps-and-duality/rank-of-a-matrix-product/rank-of-a-product.md): writing $M_f = UV$ with $U$ and $V$ indexed by the leaves shows that the rank is at most the number of leaves; the source sums rank-one matrices instead.
 
 ## Sources
 

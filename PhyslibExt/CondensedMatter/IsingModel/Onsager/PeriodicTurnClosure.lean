@@ -1375,14 +1375,14 @@ lemma ons_allPeriodStates_map_direction {n : ℕ}
   intro r hr
   congr 1
 
+set_option linter.unusedVariables false in
+@[deprecated "Use `List.dropLast_take`." (since := "2026-11-12")]
 lemma ons_dropLast_take_of_pos_le {X : Type*}
     (l : List X) (k : ℕ) (hk : 0 < k) (hle : k ≤ l.length) :
-    (l.take k).dropLast = l.take (k - 1) := by
-  rw [List.dropLast_eq_take, List.length_take, Nat.min_eq_left hle,
-    List.take_take]
-  rw [Nat.min_eq_left]
-  omega
+    (l.take k).dropLast = l.take (k - 1) :=
+  List.dropLast_take hle
 
+set_option linter.unusedVariables false in
 lemma ons_periodicArcDirections_eq_slice {n : ℕ} [NeZero n]
     (d : Fin n → Fin 4) (N : ℕ) (hN : 1 ≤ N)
     (imin imax : Fin n) :
@@ -1391,10 +1391,6 @@ lemma ons_periodicArcDirections_eq_slice {n : ℕ} [NeZero n]
         (N * n + imax.val - imin.val) := by
   let count := N * n + imax.val + 1 - imin.val
   have hn : 0 < n := Nat.pos_of_ne_zero (NeZero.ne n)
-  have hmul : n ≤ N * n := Nat.le_mul_of_pos_left n (by omega)
-  have hcount : 0 < count := by
-    dsimp [count]
-    omega
   have hle : count ≤
       ((ons_directionPeriods d (N + 1)).drop imin.val).length := by
     rw [List.length_drop]
@@ -1405,7 +1401,7 @@ lemma ons_periodicArcDirections_eq_slice {n : ℕ} [NeZero n]
   rw [ons_periodicArcDirections, ons_periodicArcStates,
     List.map_dropLast, List.map_take, List.map_drop,
     ons_allPeriodStates_map_direction,
-    ons_dropLast_take_of_pos_le _ count hcount hle]
+    List.dropLast_take hle]
   congr 1
   dsimp [count]
   omega
