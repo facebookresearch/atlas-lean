@@ -17,3 +17,5 @@ Logics of necessity and possibility interpreted on Kripke models, their axiomati
 - [Standard translation of modal logic](standard-translation-of-modal-logic/README.md)
 
 - [Intuitionistic modal logics CK and IK](intuitionistic-modal-logics-ck-and-ik.md)
+
+- [Action model logic](action-model-logic.md)
