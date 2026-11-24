@@ -113,7 +113,7 @@ private lemma weakDepth_le_krullDim_support [Nontrivial M] [Module.Finite R M] :
   clear this
   simp only [WithBot.coe_le_coe, ge_iff_le]
   induction n using Nat.strong_induction_on generalizing M with
-  | h n IH =>
+  | ind n IH =>
     rw [weakDepth, sSup_le_iff]
     rintro _ ⟨l, hl, hl', rfl⟩
     apply WithTop.coe_le_coe.mpr ?_
@@ -667,9 +667,9 @@ private lemma exists_forall_smul_eq_zero_notMem_smul_top {M : Type*} [AddCommGro
     have hmK' : m ∈ pTorsion p M := hmK
     exact (Submodule.mem_smul_pointwise_iff_exists k x (pTorsion p M)).mpr ⟨m, hmK', hm⟩
   have hKbot : pTorsion p M = ⊥ := by
-    refine Submodule.eq_bot_of_le_smul_of_le_jacobson_bot (Ideal.span {x}) (pTorsion p M)
+    refine Submodule.eq_bot_of_le_smul_of_le_jacobson (Ideal.span {x}) (pTorsion p M)
       (IsNoetherian.noetherian (pTorsion p M)) hKxK ?_
-    refine le_trans ?_ (IsLocalRing.maximalIdeal_le_jacobson ⊥)
+    refine le_trans ?_ (IsLocalRing.ringJacobson_eq_maximalIdeal R).ge
     rw [Ideal.span_le, Set.singleton_subset_iff]
     exact hx
   have hzK : z ∈ pTorsion p M := hzann
