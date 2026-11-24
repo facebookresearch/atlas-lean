@@ -87,54 +87,38 @@ variable {I : Type i} {J : Type j} {c : ComplexShape I} {d : ComplexShape J}
   {C : Type u} [Category.{v} C] [HasZeroMorphisms C] [HasZeroObject C]
   (K : HomologicalComplex C d) (e : c.Embedding d) [e.IsTruncLE]
 
-/-- The actual original projection onto the native brutal cotruncation. -/
-def πStupidTrunc : K ⟶ K.stupidTrunc e :=
-  e.liftExtend (𝟙 (K.restriction e)) (e.hasLift_of_isTruncLE _)
-
 /-- The projection is the genuine unit of the earned restriction/extension adjunction. -/
 theorem πStupidTrunc_eq_unit :
-    K.πStupidTrunc e = (e.restrictionExtendAdjunction (C := C)).unit.app K := rfl
+    K.πStupidTrunc e = (e.restrictionExtendAdjunction (C := C)).unit.app K := by
+  change K.πStupidTrunc e =
+    e.liftExtend (𝟙 (K.restriction e)) (e.hasLift_of_isTruncLE _)
+  ext q
+  by_cases hq : ∃ p, e.f p = q
+  · obtain ⟨p, rfl⟩ := hq
+    rw [HomologicalComplex.πStupidTrunc_f, HomologicalComplex.πStupidTruncf_eq,
+      e.liftExtend_f (𝟙 (K.restriction e)) (e.hasLift_of_isTruncLE _) (i := p) rfl]
+    change ((K.restriction e).extendXIso e (i := p) rfl).inv =
+      𝟙 _ ≫ 𝟙 _ ≫ ((K.restriction e).extendXIso e (i := p) rfl).inv
+    simp only [Category.id_comp]
+  · exact (K.isZero_stupidTrunc_X e q (by simpa using hq)).eq_of_tgt _ _
 
 /-- On the retained original range, the projection is the inverse actual coordinate. -/
-theorem πStupidTrunc_f {p : I} {q : J} (h : e.f p = q) :
+theorem πStupidTrunc_f_eq {p : I} {q : J} (h : e.f p = q) :
     (K.πStupidTrunc e).f q = (K.stupidTruncXIso e h).inv := by
   subst q
-  let t := (K.restriction e).extendXIso e (i := p) rfl
-  have hf := e.liftExtend_f (𝟙 (K.restriction e)) (e.hasLift_of_isTruncLE _)
-    (i := p) rfl
-  have hR : (K.restrictionXIso e (i := p) rfl).inv = 𝟙 (K.X (e.f p)) := rfl
-  have hValue : (K.πStupidTrunc e).f (e.f p) = t.inv :=
-    hf.trans ((congrArg (fun z => z ≫
-      (show K.restriction e ⟶ K.restriction e from 𝟙 _).f p ≫ t.inv) hR).trans
-      ((Category.id_comp _).trans (Category.id_comp _)))
-  have hCoordinate : (K.stupidTruncXIso e (i := p) rfl).inv = t.inv := by
-    unfold HomologicalComplex.stupidTruncXIso HomologicalComplex.stupidTrunc
-    rw [Iso.trans_inv]
-    exact Category.id_comp _
-  exact hValue.trans hCoordinate.symm
+  rw [HomologicalComplex.πStupidTrunc_f, HomologicalComplex.πStupidTruncf_eq,
+    HomologicalComplex.stupidTruncXIso_rfl]
 
 /-- Off the original range, the projection has the actual zero target. -/
 theorem πStupidTrunc_f_zero (q : J) (h : ∀ p, e.f p ≠ q) :
     (K.πStupidTrunc e).f q = 0 :=
   (K.isZero_stupidTrunc_X e q h).eq_of_tgt _ _
 
-instance πStupidTrunc_f_epi (q : J) : Epi ((K.πStupidTrunc e).f q) := by
-  by_cases h : ∃ p, e.f p = q
-  · obtain ⟨p, hp⟩ := h
-    rw [πStupidTrunc_f K e hp]
-    infer_instance
-  · exact (K.isZero_stupidTrunc_X e q (by simpa using h)).epi _
+instance πStupidTrunc_f_epi (q : J) : Epi ((K.πStupidTrunc e).f q) := inferInstance
 
-instance πStupidTrunc_epi : Epi (K.πStupidTrunc e) :=
-  HomologicalComplex.epi_of_epi_f _ (fun q => inferInstance)
+instance πStupidTrunc_epi : Epi (K.πStupidTrunc e) := inferInstance
 
-variable {K} {L : HomologicalComplex C d}
-
-/-- Actual original maps commute with the brutal cotruncation projections. -/
-@[reassoc]
-theorem πStupidTrunc_naturality (f : K ⟶ L) :
-    f ≫ L.πStupidTrunc e = K.πStupidTrunc e ≫ stupidTruncMap f e :=
-  (e.restrictionExtendAdjunction (C := C)).unit.naturality f
+variable {K}
 
 /-- Agreement after the actual projection determines a map out of the cotruncation. -/
 theorem πStupidTrunc_hom_ext {X : HomologicalComplex C d}

@@ -1,0 +1,16 @@
+# Directional left-derived comparison for exact source restriction
+
+- [Map Chain Augmentation](map-chain-augmentation.md)
+- [Map Chain Augmentation f zero](map-chain-augmentation-f-zero.md)
+- [Map Chain Augmentation quasi Iso](map-chain-augmentation-quasi-iso.md)
+- [Map Chain Augmentation naturality](map-chain-augmentation-naturality.md)
+- [Map Chain Augmentation opcycles composition](map-chain-augmentation-opcycles-composit.md)
+- [Map Chain Augmentation homology Zero composition](map-chain-augmentation-homology-zero-com.md)
+- [Left Derived Precomp Hom With Resolution](left-derived-precomp-hom-with-resolution.md)
+- [Left Derived Precomp Hom With Resolution naturality](left-derived-precomp-hom-with-resolution-2.md)
+- [Left Derived Precomp Hom With Resolution independent](left-derived-precomp-hom-with-resolution-3.md)
+- [Left Derived Precomp Hom Of Preserves Homology](left-derived-precomp-hom-of-preserves-ho.md)
+- [Left Derived Precomp Hom Of Preserves Homology app](left-derived-precomp-hom-of-preserves-ho-2.md)
+- [Left Derived Precomp Hom Of Preserves Homology eq inv](left-derived-precomp-hom-of-preserves-ho-3.md)
+- [Left Derived Precomp Hom Of Preserves Homology zero augmentation](left-derived-precomp-hom-of-preserves-ho-4.md)
+- [Left Derived Precomp Hom Of Preserves Homology naturality functor](left-derived-precomp-hom-of-preserves-ho-5.md)

@@ -123,7 +123,7 @@ theorem quasiIso_toSingle₀_of_augment_acyclic
           change (ShortComplex.mk (K.d 1 0) f w).Exact at h₁
           change (ShortComplex.mk (K.d 1 0) (π.f 0) _).Exact
           convert h₁ using 1
-          all_goals simp [hπ]
+          simp [hπ]
         · have h₀ := h 0
           rw [HomologicalComplex.exactAt_iff'
             (K.augment f w) 1 0 0 (by simp) (by simp)] at h₀

@@ -1,0 +1,20 @@
+# Homotopy and derived categories
+
+Chain homotopies, mapping cones and cylinders, the homotopy category of complexes and its triangulated structure, and derived categories obtained by inverting quasi-isomorphisms; triangulated categories in general are in the triangulated categories field.
+
+- [An additive normal form for raw cochains](an-additive-normal-form-for-raw-cochains/README.md)
+- [Cochain-level chain-map naturality and square identities](cochain-level-chain-map-naturality-and-square-id/README.md)
+- [Generic cocycle pre/post laws](generic-cocycle-pre-post-laws/README.md)
+- [Homotopy cofiber reindexing](homotopy-cofiber-reindexing/README.md)
+- [Literal lifts from bounded projective cochain complexes](literal-lifts-from-bounded-projective-cochain-co/README.md)
+- [Naturality of raw quotient/kernel Hom-complex normal forms](naturality-of-raw-quotient-kernel-hom-complex-no/README.md)
+- [Quasi-isomorphisms of the mapping cones](quasi-isomorphisms-of-the-mapping-cones/README.md)
+- [Raw cochains out of a complex coproduct](raw-cochains-out-of-a-complex-coproduct/README.md)
+- [Raw cochains through cokernels and kernels](raw-cochains-through-cokernels-and-kernels/README.md)
+- [Raw cokernel generators in degree zero](raw-cokernel-generators-in-degree-zero/README.md)
+- [Tensor bifunctors on homotopy categories](tensor-bifunctors-on-homotopy-categories/README.md)
+- [The two-sided annihilator cochain complex](the-two-sided-annihilator-cochain-complex/README.md)
+- [Homology of a mapping-cone composition triangle](homology-sequence-mapping-cone-comp-tria.md)
+- [Homotopy cofiber projection](snd-x-eq-xiso-biprod.md)
+- [Homotopy cofiber quasi-isomorphism for short exact chain complexes](quasi-iso-desc-short-complex-up.md)
+- [Mapping-cone composition and short-complex quotients](mapping-cone-comp-triangle-mor-comp-desc.md)

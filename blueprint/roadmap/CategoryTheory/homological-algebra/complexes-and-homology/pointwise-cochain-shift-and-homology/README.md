@@ -1,0 +1,16 @@
+# Pointwise cochain shift and homology
+
+- [Has Homology shift](has-homology-shift.md)
+- [Shift Cycles Iso](shift-cycles-iso.md)
+- [Shift Homology Iso](shift-homology-iso.md)
+- [Shift Cycles Iso hom i Cycles](shift-cycles-iso-hom-i-cycles.md)
+- [Shift Cycles Iso inv i Cycles](shift-cycles-iso-inv-i-cycles.md)
+- [Shift Homology Iso homologyπ](shift-homology-iso-homology.md)
+- [Shift Cycles Iso naturality](shift-cycles-iso-naturality.md)
+- [Shift Homology Iso naturality](shift-homology-iso-naturality.md)
+- [Has Kernel homologyπ shift](has-kernel-homology-shift.md)
+- [Has Cokernel i Cycles shift](has-cokernel-i-cycles-shift.md)
+- [Shift Boundary Iso](shift-boundary-iso.md)
+- [Shift Boundary Iso hom ι](shift-boundary-iso-hom.md)
+- [Shift Outgoing Iso](shift-outgoing-iso.md)
+- [Shift Outgoing Iso π hom](shift-outgoing-iso-hom.md)

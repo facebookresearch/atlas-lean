@@ -5,4 +5,5 @@
 - [Right Derived Iso Of Nat Iso](right-derived-iso-of-nat-iso.md)
 - [An exact functor may be pulled out of a right derived functor wherever it is exact on the resolution used](right-derived-comp-iso-of-preserves-left.md)
 - [Map Injective Resolution](map-injective-resolution.md)
+- [Map Injective Resolution Hom](map-injective-resolution-hom.md)
 - [Precomposing with an exact functor which preserves injective objects](right-derived-comp-iso-of-preserves-inje.md)

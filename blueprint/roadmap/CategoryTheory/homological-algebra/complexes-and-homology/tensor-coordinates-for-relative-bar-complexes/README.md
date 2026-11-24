@@ -1,0 +1,16 @@
+# Tensor coordinates for relative Bar complexes
+
+- [Merge Tuple](merge-tuple.md)
+- [Split Index](split-index.md)
+- [Split Index symm inl](split-index-symm-inl.md)
+- [Split Index symm inr](split-index-symm-inr.md)
+- [Split Power](split-power.md)
+- [Power Coordinates](power-coordinates.md)
+- [Power Coordinates zero](power-coordinates-zero.md)
+- [Power Coordinates succ](power-coordinates-succ.md)
+- [Power Pure](power-pure.md)
+- [Power Pure succ](power-pure-succ.md)
+- [Power Pure ext](power-pure-ext.md)
+- [Bar Coordinates](bar-coordinates.md)
+- [Bar Pure](bar-pure.md)
+- [Bar Pure ext](bar-pure-ext.md)

@@ -4,6 +4,8 @@
 
 - [Ι tensor Hom](tensor-hom.md)
 - [Zero tensor Hom](zero-tensor-hom.md)
+- [Tensor Hom sum](tensor-hom-sum.md)
+- [Sum tensor Hom](sum-tensor-hom.md)
 - [Tensor Hom zero](tensor-hom-zero.md)
 - [Tensor Hom eq map Bifunctor Map](tensor-hom-eq-map-bifunctor-map.md)
 - [Whisker Left eq map Bifunctor Map](whisker-left-eq-map-bifunctor-map.md)

@@ -1,0 +1,16 @@
+# Changing the objects of a short complex by specified isomorphisms
+
+- [Change Objects](change-objects.md)
+- [Change Objects f](change-objects-f.md)
+- [Change Objects g](change-objects-g.md)
+- [Change Objects Iso](change-objects-iso.md)
+- [Change Objects exact iff](change-objects-exact-iff.md)
+- [Change Objects short Exact iff](change-objects-short-exact-iff.md)
+- [Change Objects Map](change-objects-map.md)
+- [Change Objects Map τ₁](change-objects-map-2.md)
+- [Change Objects Map τ₂](change-objects-map-3.md)
+- [Change Objects Map τ₃](change-objects-map-4.md)
+- [Change Objects Iso hom naturality](change-objects-iso-hom-naturality.md)
+- [Change Objects Iso inv naturality](change-objects-iso-inv-naturality.md)
+- [Change Objects Map id](change-objects-map-id.md)
+- [Change Objects Map comp](change-objects-map-comp.md)

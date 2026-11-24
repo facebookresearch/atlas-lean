@@ -1,0 +1,18 @@
+# Raw cokernel generators in degree zero
+
+- [Cokernel precomp injective](cokernel-precomp-injective.md)
+- [Cokernel Shift Generator](cokernel-shift-generator.md)
+- [Cokernel Shift Generator recover](cokernel-shift-generator-recover.md)
+- [Cokernel Shift Generator unique](cokernel-shift-generator-unique.md)
+- [Cokernel Shift Generator proof irrel](cokernel-shift-generator-proof-irrel.md)
+- [Cokernel Shift Generator zero](cokernel-shift-generator-zero.md)
+- [Cokernel Shift Generator comp](cokernel-shift-generator-comp.md)
+- [Cokernel Shift Generator reconstruction vanish](cokernel-shift-generator-reconstruction.md)
+- [Cokernel Shift Generator of reconstruction](cokernel-shift-generator-of-reconstructi.md)
+- [Cokernel Shift Generator add](cokernel-shift-generator-add.md)
+- [Cokernel Shift Generator neg](cokernel-shift-generator-neg.md)
+- [Cokernel Shift Generator precomp](cokernel-shift-generator-precomp.md)
+- [Cokernel Shift Generator δ recover](cokernel-shift-generator-recover-2.md)
+- [Cokernel Shift Generator δ degree one](cokernel-shift-generator-degree-one.md)
+- [Cokernel Shift Generator recover v](cokernel-shift-generator-recover-v.md)
+- [Cokernel Shift Generator recover v degree one](cokernel-shift-generator-recover-v-degre.md)

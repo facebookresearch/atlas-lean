@@ -1,0 +1,15 @@
+# Scalar transport of relative lifting properties
+
+- [Is Relative Projective restrict comp iff](is-relative-projective-restrict-comp-iff.md)
+- [Is Relative Injective restrict comp iff](is-relative-injective-restrict-comp-iff.md)
+- [Is Relative Projective restrict of comp](is-relative-projective-restrict-of-comp.md)
+- [Is Relative Injective restrict of comp](is-relative-injective-restrict-of-comp.md)
+- [Counit is Split Epi of relative Projective comp](counit-is-split-epi-of-relative-projecti.md)
+- [Unit is Split Mono of relative Injective comp](unit-is-split-mono-of-relative-injective.md)
+- [Is Relative Projective restrict congr](is-relative-projective-restrict-congr.md)
+- [Is Relative Injective restrict congr](is-relative-injective-restrict-congr.md)
+- [Is Relative Projective induced comp](is-relative-projective-induced-comp.md)
+- [Is Relative Projective iterated induced](is-relative-projective-iterated-induced.md)
+- [Is Relative Projective retract iterated induced](is-relative-projective-retract-iterated.md)
+- [Is Relative Injective coextended comp](is-relative-injective-coextended-comp.md)
+- [Is Relative Injective retract coextended comp](is-relative-injective-retract-coextended.md)

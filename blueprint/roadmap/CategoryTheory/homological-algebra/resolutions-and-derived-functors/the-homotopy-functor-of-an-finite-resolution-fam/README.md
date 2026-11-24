@@ -1,0 +1,16 @@
+# The homotopy functor of an finite-resolution family
+
+- [Finite Resolution Homotopy Functor](finite-resolution-homotopy-functor.md)
+- [Finite Resolution Homotopy Functor obj](finite-resolution-homotopy-functor-obj.md)
+- [Finite Resolution Homotopy Functor obj as](finite-resolution-homotopy-functor-obj-a.md)
+- [Finite Resolution Homotopy Functor obj X](finite-resolution-homotopy-functor-obj-x.md)
+- [Finite Resolution Homotopy Functor obj d](finite-resolution-homotopy-functor-obj-d.md)
+- [Finite Resolution Homotopy Functor obj is Zero above](finite-resolution-homotopy-functor-obj-i.md)
+- [Finite Resolution Homotopy Functor map](finite-resolution-homotopy-functor-map.md)
+- [Finite Resolution Homotopy Functor Map Out Homotopy](finite-resolution-homotopy-functor-map-o.md)
+- [Finite Resolution Comparison Iso](finite-resolution-comparison-iso.md)
+- [Finite Resolution Homotopy Functor Comparison](finite-resolution-homotopy-functor-compa.md)
+- [Finite Resolution Homotopy Functor Comparison hom app](finite-resolution-homotopy-functor-compa-2.md)
+- [Finite Resolution Homotopy Functor Comparison inv app](finite-resolution-homotopy-functor-compa-3.md)
+- [Finite Resolution Homotopy Functor Comparison refl](finite-resolution-homotopy-functor-compa-4.md)
+- [Finite Resolution Homotopy Functor Comparison trans](finite-resolution-homotopy-functor-compa-5.md)

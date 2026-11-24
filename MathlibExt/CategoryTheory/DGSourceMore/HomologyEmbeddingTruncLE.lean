@@ -9,13 +9,15 @@ module
 This completed proof port retains the original Apache 2.0 license and author credit.
 Source: https://github.com/TauCetiProject/TauCeti/blob/62bbc0596dc3539d488232e4e924a338548ea0a9/TauCeti/Algebra/Homology/Embedding/TruncLE.lean
 Original license: https://github.com/TauCetiProject/TauCeti/blob/62bbc0596dc3539d488232e4e924a338548ea0a9/LICENSE
-Modifications: only module/namespace paths are adapted for Atlas.
-Mathematical operations, hypotheses and proof bodies are retained.
+Modifications: module paths are adapted for Atlas. The two truncation-component
+formulas are imported from the general homological-complex module; the remaining
+mathematical statements and maps are retained.
 -/
 
 public import Mathlib.Algebra.Homology.Embedding.Boundary
 public import Mathlib.Algebra.Homology.Embedding.TruncLEHomology
 public import Mathlib.Algebra.Homology.Embedding.ExtendHomology
+public import MathlibExt.Algebra.Homology.Embedding.PositiveTruncation
 
 /-!
 # Good truncation of complexes
@@ -61,47 +63,6 @@ namespace HomologicalComplex
 variable {ι ι' : Type*} {c : ComplexShape ι} {c' : ComplexShape ι'}
   {C : Type*} [Category* C] [HasZeroMorphisms C]
   (K : HomologicalComplex C c') (e : c.Embedding c') [e.IsTruncLE] [∀ i', K.HasHomology i']
-
-/-- Away from the boundary, the comparison `K.truncLE' e ⟶ K.restriction e` is the identity of
-`K.X i'` up to the canonical isomorphisms. -/
-lemma truncLE'ToRestriction_f_eq_iso_hom_iso_inv {i : ι} {i' : ι'} (hi' : e.f i = i')
-    (hi : ¬ e.BoundaryLE i) :
-    (K.truncLE'ToRestriction e).f i =
-      (K.truncLE'XIso e hi' hi).hom ≫ (K.restrictionXIso e hi').inv := by
-  -- Mathlib defines `truncLE'` and its comparison maps by dualizing `truncGE'`, so we dualize the
-  -- description of `restrictionToTruncGE'` away from the boundary.
-  have h := congrArg Quiver.Hom.unop
-    (K.op.restrictionToTruncGE'_f_eq_iso_hom_iso_inv e.op hi' (by simpa using hi))
-  subst hi'
-  refine h.trans ?_
-  simp only [restrictionXIso, eqToIso.hom, eqToIso.inv, unop_comp, eqToHom_unop]
-  -- `(K.truncLE'XIso e _ hi).hom` is by definition `(K.op.truncGE'XIso e.op _ _).inv.unop`.
-  rfl
-
-/-- At the boundary, the comparison `K.truncLE' e ⟶ K.restriction e` is the inclusion of the
-cycles of `K`, up to the canonical isomorphisms. -/
-lemma truncLE'ToRestriction_f_eq_iso_hom_iCycles_iso_inv {i : ι} {i' : ι'} (hi' : e.f i = i')
-    (hi : e.BoundaryLE i) :
-    (K.truncLE'ToRestriction e).f i =
-      (K.truncLE'XIsoCycles e hi' hi).hom ≫ K.iCycles i' ≫ (K.restrictionXIso e hi').inv := by
-  have hi₀ : e.op.BoundaryGE i := by simpa using hi
-  -- Mathlib defines `truncLE'` and its comparison maps by dualizing `truncGE'`, so we dualize the
-  -- description of `restrictionToTruncGE'` at the boundary; pass through `opcyclesOpIso` first.
-  have h₁ : (K.opcyclesOpIso i').inv.unop ≫ K.iCycles i' = (K.op.pOpcycles i').unop := by
-    have h : K.op.pOpcycles i' ≫ (K.opcyclesOpIso i').hom = (K.iCycles i').op :=
-      (K.sc i').op_pOpcycles_opcyclesOpIso_hom
-    rw [← Quiver.Hom.unop_op (K.iCycles i'), ← h, ← unop_comp]
-    simp
-  have h₂ : (K.truncLE'XIsoCycles e hi' hi).hom ≫ K.iCycles i' =
-      (K.op.truncGE'XIsoOpcycles e.op hi' hi₀).inv.unop ≫ (K.op.pOpcycles i').unop :=
-    (Category.assoc _ _ _).trans (congrArg _ h₁)
-  have h₃ := congrArg Quiver.Hom.unop
-    (K.op.restrictionToTruncGE'_f_eq_iso_hom_pOpcycles_iso_inv e.op hi' hi₀)
-  rw [← Category.assoc, h₂]
-  subst hi'
-  refine h₃.trans ?_
-  simp only [restrictionXIso, eqToIso.hom, eqToIso.inv, unop_comp, Category.assoc]
-  exact (Category.assoc _ _ _).symm
 
 /-- At the boundary, the comparison `K.truncLE' e ⟶ K.restriction e` lands in the cycles of `K`:
 it is killed by the differential of `K`. -/

@@ -8,13 +8,16 @@ module
 /-
 This completed source port retains the original Apache 2.0 license and author credit.
 Source: https://github.com/TauCetiProject/TauCeti/blob/62bbc0596dc3539d488232e4e924a338548ea0a9/TauCeti/Algebra/Homology/Monoidal/Summand.lean
-Only module/namespace paths are adapted for Atlas; source operations and hypotheses are retained.
+Modification notice: the general tensor zero laws reuse
+`MathlibExt.Algebra.Homology.TensorHomFunctoriality`. The remaining source
+operations and hypotheses are retained.
 -/
 
 public import Mathlib.Algebra.Category.ModuleCat.Colimits
 public import Mathlib.Algebra.Category.ModuleCat.Monoidal.Closed
 public import Mathlib.Algebra.Homology.Monoidal
 public import Mathlib.CategoryTheory.Monoidal.Closed.Braided
+public import MathlibExt.Algebra.Homology.TensorHomFunctoriality
 public import MathlibExt.CategoryTheory.DGSource.CochainBifunctor
 
 /-!
@@ -81,18 +84,6 @@ lemma ι_tensorHom {K₁ K₂ L₁ L₂ : HomologicalComplex C c} (f₁ : K₁ �
       (f₁.f i₁ ⊗ₘ f₂.f i₂) ≫ ιTensorObj L₁ L₂ i₁ i₂ j h := by
   refine (ι_mapBifunctorMap _ _ _ _ _ _ _ _).trans ?_
   simp [tensorHom_def]
-
-/-- The tensor product of homological complexes of the zero morphism with any morphism is zero. -/
-lemma zero_tensorHom {K₁ K₂ L₁ L₂ : HomologicalComplex C c} (f₂ : K₂ ⟶ L₂)
-    [HasTensor K₁ K₂] [HasTensor L₁ L₂] :
-    tensorHom (0 : K₁ ⟶ L₁) f₂ = 0 :=
-  mapBifunctorMap_zero_left (curriedTensor C) c K₁ L₁ f₂
-
-/-- The tensor product of homological complexes of any morphism with the zero morphism is zero. -/
-lemma tensorHom_zero {K₁ K₂ L₁ L₂ : HomologicalComplex C c} (f₁ : K₁ ⟶ L₁)
-    [HasTensor K₁ K₂] [HasTensor L₁ L₂] :
-    tensorHom f₁ (0 : K₂ ⟶ L₂) = 0 :=
-  mapBifunctorMap_zero_right (curriedTensor C) c f₁ K₂ L₂
 
 variable [HasZeroObject C] (c) [∀ (X₁ X₂ : GradedObject I C), GradedObject.HasTensor X₁ X₂]
   [∀ X₂, PreservesColimit (CategoryTheory.Functor.empty.{0} C) ((curriedTensor C).flip.obj X₂)]

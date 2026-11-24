@@ -16,6 +16,7 @@ Categories of modules and finitely generated modules over a ring: abelian and mo
 - [Outer scalar actions on balanced tensor functors](outer-scalar-actions-on-balanced-tensor-functors/README.md)
 - [Relative injectivity of coextended modules](relative-injectivity-of-coextended-modules/README.md)
 - [Relative projectivity of induced modules](relative-projectivity-of-induced-modules/README.md)
+- [Scalar transport of relative lifting properties](scalar-transport-of-relative-lifting-properties/README.md)
 - [Scalar-split lifting from induced modules](scalar-split-lifting-from-induced-modules/README.md)
 - [Tensor products of modules in independent universes](tensor-products-of-modules-in-independent-univer/README.md)
 - [Tensoring augmented complexes of flat modules](tensoring-augmented-complexes-of-flat-modules/README.md)

@@ -21,6 +21,7 @@ module
 
 public import Mathlib.Algebra.Homology.ShortComplex.PreservesHomology
 public import MathlibExt.Algebra.Homology.HomologicalComplex.MapHomologyIso
+public import MathlibExt.CategoryTheory.Abelian.Injective.MapResolution
 public import Mathlib.CategoryTheory.Abelian.RightDerived
 public import Mathlib.CategoryTheory.Preadditive.Injective.Preserves
 
@@ -158,17 +159,6 @@ def rightDerivedCompIsoOfPreservesLeftHomology {D : Type*} [Category* D] (P : D 
     exact ShortComplex.mapHomologyIso_inv_naturality
       ((HomologicalComplex.shortComplexFunctor B (ComplexShape.up ℕ) n).map
         ((F.mapHomologicalComplex (ComplexShape.up ℕ)).map ψ)) E
-
-/-- The image of an injective resolution under an additive functor which preserves homology and
-injective objects is an injective resolution of the image. -/
-noncomputable def mapInjectiveResolution {A' B'' : Type*} [Category* A'] [Category* B'']
-    [Abelian A'] [Abelian B''] (G : A' ⥤ B'') [G.Additive] [G.PreservesHomology]
-    [G.PreservesInjectiveObjects] {F : A'} (R : InjectiveResolution F) :
-    InjectiveResolution (G.obj F) where
-  cocomplex := (G.mapHomologicalComplex (.up ℕ)).obj R.cocomplex
-  injective n := G.injective_obj_of_injective (R.injective n)
-  ι := (HomologicalComplex.singleMapHomologicalComplex G (.up ℕ) 0).inv.app F ≫
-    (G.mapHomologicalComplex (.up ℕ)).map R.ι
 
 /-- **Precomposing with an exact functor which preserves injective objects.** For additive
 functors `G : A ⥤ B` and `H : B ⥤ C` with `G` preserving homology and injective objects, the
