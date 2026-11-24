@@ -49,15 +49,6 @@ conjecture, recorded as a proposition and not asserted. -/
 def omegaEqualsTwoConjecture : Prop :=
   ∀ (F : Type u) [Field F], squareMatrixMultiplicationCircuitExponent F = 2
 
-/-- **Naive bound for square matrix multiplication.** For every field $F$, the square matrix
-multiplication exponent $\omega(F)$ of the arithmetic-circuit model satisfies $\omega(F) \le 3$.
-
-Source: C15a, trivial upper bound. The general finite naive circuit
-construction is not supplied upstream, so this remains a proof request. -/
-theorem_wanted naiveUpperThree :
-    ∀ (F : Type u) [Field F],
-      squareMatrixMultiplicationCircuitExponent F ≤ ENNReal.ofReal 3
-
 /-- **Pan's 1978 bound on the square exponent.** For every field $F$, the square matrix
 multiplication exponent $\omega(F)$ of the arithmetic-circuit model satisfies
 $\omega(F) \le \log_{70} 143640$.

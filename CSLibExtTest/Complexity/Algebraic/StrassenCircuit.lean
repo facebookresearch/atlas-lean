@@ -32,4 +32,13 @@ example :
   rw [hc]
   decide
 
+universe u
+
+example (F : Type u) [Field F] :
+    squareMatrixMultiplicationCircuitExponent F ≤ ENNReal.ofReal 3 :=
+  naiveUpperThree F
+
+example : squareMatrixMultiplicationCircuitExponent (ZMod 2) ≤ ENNReal.ofReal 3 :=
+  naiveUpperThree (ZMod 2)
+
 end Cslib.Complexity.Algebraic.SquareMatrixMultiplicationBoundsWanted
