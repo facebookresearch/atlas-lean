@@ -28,10 +28,13 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Group.Basic
 public import Mathlib.Order.Defs.LinearOrder
 public import MathlibExt.GroupTheory.Orderability
+public import WantedExt.GroupTheory.StrictlyIsolatedAbelianInvariantOrderKourovka1Problem49Wanted
 
 @[expose] public section
 
 namespace MathlibExt.GroupTheory.SGroupNotOrderableKourovka1Problem47Wanted
+
+open MathlibExt.GroupTheory.StrictlyIsolatedAbelianInvariantOrderKourovka1Problem49Wanted
 
 export MathlibExt.GroupTheory (IsBiInvariantOrder IsOrderable)
 
@@ -45,11 +48,6 @@ order invariant under multiplication on both sides (`IsOrderable`). For the iden
 strict isolation says that `x g₁⁻¹xg₁ ⋯ gₙ⁻¹xgₙ = 1` implies `x = 1` (the conjugates are then `1` as
 well).
 -/
-
-/-- `G` is an `S`-group: the identity subgroup is strictly isolated, that is,
-`x · g₁⁻¹xg₁ ⋯ gₙ⁻¹xgₙ = 1` implies `x = 1` (and then every `gᵢ⁻¹xgᵢ = 1`). -/
-def IsSGroup (G : Type) [Group G] : Prop :=
-  ∀ (x : G) (gs : List G), x * (gs.map fun g => g⁻¹ * x * g).prod = 1 → x = 1
 
 /-- Kourovka 1.47 (A. I. Kokorin): there is an `S`-group that is not orderable. -/
 def existsNonOrderableSGroup : Prop :=

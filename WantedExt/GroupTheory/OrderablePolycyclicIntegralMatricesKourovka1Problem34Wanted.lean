@@ -26,10 +26,13 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.GroupTheory.Solvable
 public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
 public import MathlibExt.GroupTheory.Orderability
+public import WantedExt.GroupTheory.GroupClassesShared
 
 @[expose] public section
 
 namespace MathlibExt.GroupTheory.OrderablePolycyclicIntegralMatricesKourovka1Problem34Wanted
+
+open MathlibExt.GroupTheory.GroupClassesShared
 
 export MathlibExt.GroupTheory (IsBiInvariantOrder IsOrderable)
 
@@ -39,16 +42,12 @@ Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Pro
 Kargapolov). UnsolvedMath record UM-00700029 (`KOU-1.34`), dataset ulamai/UnsolvedMath v1.8.0.
 
 "Orderable" is the Kokorin-Kopytov sense of the problem list (fully ordered): `G` admits a linear
-order invariant under multiplication on both sides (`IsOrderable`). Polycyclic is taken in Hirsch's
-characterization: soluble with every subgroup finitely generated. A faithful representation is an
+order invariant under multiplication on both sides (`IsOrderable`). Polycyclic is the
+finite-series notion (`IsPolycyclic` in `GroupClassesShared`), equivalent by Hirsch's theorem
+to soluble with every subgroup finitely generated. A faithful representation is an
 injective homomorphism into some `GL_n(ℤ)`. The resolution covers all polycyclic groups; the
 orderability hypothesis of the problem is kept.
 -/
-
-/-- `G` is polycyclic, in Hirsch's characterization: soluble with every subgroup finitely
-generated. -/
-def IsPolycyclic (G : Type) [Group G] : Prop :=
-  Group.IsSolvable G ∧ ∀ H : Subgroup G, H.FG
 
 /-- Kourovka 1.34 (M. I. Kargapolov): every orderable polycyclic group has a faithful
 representation by integer matrices, an injective homomorphism into some `GL_n(ℤ)`. -/
