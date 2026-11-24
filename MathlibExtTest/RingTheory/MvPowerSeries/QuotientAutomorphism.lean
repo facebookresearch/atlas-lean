@@ -16,7 +16,7 @@ open MvPowerSeries
 
 /-- `exactSource`: the original statement, with its original `Type` binders,
 is exactly the public theorem. -/
-theorem exactSource
+private theorem exactSource
     (W₀ W : Type) [CommRing W₀] [IsNoetherianRing W₀] [CommRing W] [IsNoetherianRing W]
     (ψ : W₀ →+* W) (g₀ : MvPowerSeries (Fin 2) W₀) (g : MvPowerSeries (Fin 2) W)
     (hg : Ideal.span {g} = Ideal.span {MvPowerSeries.map ψ g₀})
