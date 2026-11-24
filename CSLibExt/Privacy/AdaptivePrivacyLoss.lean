@@ -1275,7 +1275,10 @@ theorem transcript_isApproxDP_of_tail {C Y Database : Type*} [Fintype C]
 
 /-- Pure-stage advanced composition.
 
-Each stage is pure-DP; the transcript is approximately DP with deviation
+This is the pure-stage (per-stage `δ = 0`) specialization of advanced
+composition (Dwork and Roth, *The Algorithmic Foundations of Differential
+Privacy*, 2014, Theorem 3.20) for adaptive discrete PMF transcripts;
+per-stage `δ > 0` is not covered here. Each stage is pure-DP; the transcript is approximately DP with deviation
 `t = eps * sqrt (2 * k * log (1 / δ'))` on top of the summed drift
 `k * eps * (exp eps - 1)`. The degenerate cases are exact with zero budget:
 at `k = 0` the transcript law does not depend on the database, and at
