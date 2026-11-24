@@ -47,7 +47,7 @@ fields.
 - [Langlands classification for GLₙ](langlands-classification-for-gl-n.md), for the representations $L(\Delta_1, \dots, \Delta_r)$ of the reductions
 - [Local class field theory: the local Artin map](../../../NumberTheory/p-adic-numbers/local-class-field-theory.md), for the compatibility with local class field theory for $n = 1$
 - [Weil–Deligne representations](../../../NumberTheory/algebraic-number-theory/galois-representations/weil-deligne-representations/weil-deligne-representations.md), for the Weil–Deligne representations and their monodromy
-- [Weil groups of local fields and the archimedean local Langlands correspondence for GLₙ](../weil-groups-and-the-archimedean-local-langlands-correspondence.md), for the Weil group $W_F$ of a non-archimedean local field and its representations (Wedhorn, §1.1), for the Galois side
+- [Weil group of a p-adic field](../../../NumberTheory/algebraic-number-theory/galois-representations/weil-deligne-representations/weil-group-of-a-p-adic-field.md), for the Weil group $W_F$ of the finite extension $F$ of $\mathbb{Q}_p$ (Wedhorn, §1.1), for the Galois side; its representations are the Weil–Deligne representations with $N = 0$
 
 ## Proof depends on
 
