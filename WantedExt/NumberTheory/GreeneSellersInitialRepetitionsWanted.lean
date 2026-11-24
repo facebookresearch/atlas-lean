@@ -14,6 +14,7 @@ public import Mathlib.Combinatorics.Enumerative.Partition.Basic
 public import Mathlib.Data.Int.ModEq
 public import Mathlib.NumberTheory.LegendreSymbol.Basic
 public import MathlibExt.Analysis.SpecialFunctions.QPochhammer
+public import MathlibExt.NumberTheory.InitialRepetitionsC3
 public import MathlibExt.NumberTheory.InitialRepetitionsC8
 public import MathlibExt.NumberTheory.SquaresModTwoPow
 
@@ -128,22 +129,6 @@ public def initialRepetitionsC2 (n : ℕ) : ℕ :=
     ∃ j ∈ Finset.Icc 1 n, p.parts.count j = j ∧ (∀ a ∈ p.parts, a = j ∨ 2 * j + 1 ≤ a) ∧
       ∀ a ∈ p.parts, Even a → 2 * j + 2 ≤ a → p.parts.count a = 1).card
 
-/-- **The initial-repetitions partition function $c_3$.** For $n \ge 0$, $c_3(n)$ is the number
-of partitions of $n$ for which there is an integer $j$ with $1 \le j \le n$ such that the part $1$
-appears exactly $j^2$ or $j^2 + 1$ times, every odd part larger than $1$ appears exactly once,
-every even part appears exactly once, and every even part greater than $2j$ is at least $4j + 4$
-and divisible by $4$.
-
-Source: John Greene and James A. Sellers, *Extending Recent Parity Results of Nyirenda and
-Mugwangwavari for Partitions with Initial Repetitions*, INTEGERS 25 (2025), Article A32,
-Section 3 (definition of `c₃`, from Nyirenda and Mugwangwavari). -/
-public def initialRepetitionsC3 (n : ℕ) : ℕ :=
-  ((Finset.univ : Finset (Nat.Partition n)).filter fun p =>
-    ∃ j ∈ Finset.Icc 1 n, (p.parts.count 1 = j ^ 2 ∨ p.parts.count 1 = j ^ 2 + 1) ∧
-      (∀ a ∈ p.parts, Odd a → 1 < a → p.parts.count a = 1) ∧
-      (∀ a ∈ p.parts, Even a → p.parts.count a = 1) ∧
-      ∀ a ∈ p.parts, Even a → 2 * j < a → 4 * j + 4 ≤ a ∧ 4 ∣ a).card
-
 /-- **The initial-repetitions partition function $c_8'$.** For $n \ge 0$, $c_8'(n)$ is the number
 of partitions of $n$ into distinct even parts plus the sum, over $m = 1, \dots, n$, of the number
 of partitions of $n$ in which every even number $2i$ with $1 \le i \le m$ is a part, every even
@@ -223,22 +208,6 @@ Theorem 6 (`integers-2025-A32-thm-6`). -/
 public theorem_wanted initialRepetitionsC3_eleven_mul_add_even (n : ℕ) :
     Even (initialRepetitionsC3 (11 * n + 5)) ∧ Even (initialRepetitionsC3 (11 * n + 7)) ∧
       Even (initialRepetitionsC3 (11 * n + 9))
-
-/-- **Parity of $c_3$ on residue classes modulo a prime.** Let $c_3$ be the initial-repetitions
-partition function of Nyirenda and Mugwangwavari. Let $p \ge 5$ be a prime and let $r$ be an
-integer with $1 \le r \le p - 1$ such that neither $12r + 1$ nor $8r + 1$ is a square modulo $p$.
-Then $c_3(pn + r)$ is even for every integer $n \ge 0$.
-
-Here $x$ is a square modulo $p$ when $x \equiv y^2 \pmod{p}$ for some integer $y$, so multiples
-of $p$ count as squares.
-
-Source: John Greene and James A. Sellers, *Extending Recent Parity Results of Nyirenda and
-Mugwangwavari for Partitions with Initial Repetitions*, INTEGERS 25 (2025), Article A32,
-Theorem 7 (`integers-2025-A32-thm-7`). -/
-public theorem_wanted initialRepetitionsC3_prime_mul_add_even (p r n : ℕ) (hp : p.Prime)
-    (hp5 : 5 ≤ p) (hr : r ∈ Finset.Icc 1 (p - 1))
-    (h12 : ¬ IsSquare ((12 * r + 1 : ℕ) : ZMod p)) (h8 : ¬ IsSquare ((8 * r + 1 : ℕ) : ZMod p)) :
-    Even (initialRepetitionsC3 (p * n + r))
 
 /-- **$c_8$ is even on six residue classes modulo $49$.** Let $c_8$ be the initial-repetitions
 partition function of Nyirenda and Mugwangwavari. For every integer $n \ge 0$ and every
