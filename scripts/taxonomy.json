@@ -12257,6 +12257,7 @@
   "MathlibExt/NumberTheory/JacobiTwoSquareCount": {"to": "NumberTheory/quadratic-forms-sums-of-squares/sums-of-squares", "title": "Jacobi's two-square theorem"},
   "MathlibExt/NumberTheory/JacobsthalLucasNumber": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Jacobsthal and Jacobsthal–Lucas numbers"},
   "MathlibExt/NumberTheory/JosephusFixedSuccCases": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Josephus problem"},
+  "MathlibExt/NumberTheory/KFibonacciAlternatingBinomial": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "k-generalized Fibonacci numbers"},
   "MathlibExt/NumberTheory/JosephusHighExtremal": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Josephus problem"},
   "MathlibExt/NumberTheory/KFull": {"to": "NumberTheory/arithmetic-functions/special-integer-classes", "title": "Powerful and k-full numbers"},
   "MathlibExt/NumberTheory/KMahlerFunction": {"to": "NumberTheory/digits-numeration/numeration-automatic", "title": "Mahler functions"},
