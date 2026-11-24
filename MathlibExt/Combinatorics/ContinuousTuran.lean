@@ -21,7 +21,8 @@ import Mathlib.NumberTheory.Bertrand
 /-!
 # Continuous Turán numbers in finite dimensions
 
-Translating a planar pattern preserves its continuous Turán number.
+Translating a planar pattern preserves its continuous Turán number, and enlarging the square
+can only increase it.
 The volume gained by enlarging the ambient cube bounds the increase in the supremum of volumes
 of open sets avoiding a fixed pattern.
 
@@ -115,6 +116,25 @@ public theorem opx_translate (n : ℝ) (P : Set (ℝ × ℝ)) (v : ℝ × ℝ) :
     simpa only [Set.image_image, add_assoc, add_neg_cancel, add_zero, Set.image_id'] using
       opx_translate.contains_translate ht (-v)
   simp only [opx, h]
+
+open Set MeasureTheory in
+/-- **Monotonicity of the continuous Turán number in the side length.** For every set
+$P \subseteq \mathbb{R}^2$ and all real numbers $m \le n$, the continuous Turán numbers satisfy
+$\operatorname{opx}(m, P) \le \operatorname{opx}(n, P)$.
+
+The paper assumes $0 < m$. This is not needed, since $\operatorname{opx}(m, P) = 0$ for $m \le 0$.
+
+Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Lemma 2.4
+(`integers-2024-A1-lem-2-4`). -/
+public theorem opx_mono_left (P : Set (ℝ × ℝ)) {m n : ℝ} (hmn : m ≤ n) :
+    opx m P ≤ opx n P := by
+  have hI : Icc 0 m ⊆ Icc 0 n := Icc_subset_Icc_right hmn
+  apply Real.sSup_le _ (opx_nonneg n P)
+  rintro _ ⟨S, ⟨hopen, hSm, hfree⟩, rfl⟩
+  refine le_csSup ?_ ⟨S, ⟨hopen, hSm.trans (prod_mono hI hI), hfree⟩, rfl⟩
+  refine ⟨volume.real (Icc 0 n ×ˢ Icc 0 n), ?_⟩
+  rintro _ ⟨T, ⟨_, hTn, _⟩, rfl⟩
+  exact measureReal_mono hTn (isCompact_Icc.prod isCompact_Icc).measure_ne_top
 
 /-- **Containment of point sets in $\mathbb{R}^d$.** Let $d$ be a natural number and let
 $S, P \subseteq \mathbb{R}^d$. Then $S$ contains $P$ when there are maps

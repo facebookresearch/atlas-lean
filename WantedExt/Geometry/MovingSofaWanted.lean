@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
-public import MathlibExt.Geometry.MovingSofa
+public import MathlibExt.Geometry.MovingSofaHammersley
 
 /-!
 # Moving sofa catalogue bounds: unproved public requests
@@ -29,14 +29,6 @@ open scoped ENNReal
 @[expose] public section
 
 namespace MovingSofaWanted
-
-/-- **Hammersley's upper bound for the moving sofa constant.** The moving sofa constant, the
-supremum of the areas of connected Lebesgue-measurable planar shapes that a continuous rigid motion
-can carry through the right-angled corridor of width $1$, is at most $2\sqrt{2}$.
-
-Source: catalogue line 13, attributed to Hammersley (1968). Primary not retained. -/
-public theorem_wanted hammersley_upper :
-    MovingSofa.optimalArea ≤ ENNReal.ofReal (2 * Real.sqrt 2)
 
 /-- **Kallus–Romik upper bound for the moving sofa constant.** The moving sofa constant, the
 supremum of the areas of connected Lebesgue-measurable planar shapes that a continuous rigid motion

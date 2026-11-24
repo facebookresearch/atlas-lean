@@ -16,7 +16,7 @@ The permutations `U` and `V` act on Mathlib's `Composition n`; the counts are ov
 positive integers, as in `kArndtCompositionCount`. The number `a(n, k)` of generalized Arndt
 compositions of `n` (pairwise condition `c_{2i-1} > c_{2i} + k`) is `kArndtTotalCount k n`, the
 sum over the number of parts of `kArndtCompositionCount k n m`
-(`WantedExt/Combinatorics/Enumerative/ArndtCompositionsGeneratingFunctionsWanted.lean`).
+(`MathlibExt/Combinatorics/Enumerative/KArndtRecurrence.lean`).
 `c^{2k}_o(n)` and `c^{2k+1}_e(n)` are `oddOrSmallEvenCompositionCount k n` and
 `evenOrSmallOddCompositionCount k n`. The permutations `U` and `V` of the paper act on the list of
 parts pair by pair; a final unpaired part `c` is the pair `(c, 0)` and maps to `c` parts `1`.
@@ -25,6 +25,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.Enumerative.ArndtV
+public import MathlibExt.Combinatorics.Enumerative.KArndtRecurrence
 public import Mathlib.Data.Nat.Fib.Basic
 public import MathlibExt.NumberTheory.PadovanSequence
 public import WantedExt.Combinatorics.Enumerative.ArndtCompositionsGeneratingFunctionsWanted
@@ -32,27 +33,6 @@ public import WantedExt.Combinatorics.Enumerative.ArndtCompositionsGeneratingFun
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Generalized Arndt compositions.** For an integer $k$ and a natural number $n$, $a(n, k)$ is
-the number of compositions $(c_1, \dots, c_m)$ of $n$, with any number $m \ge 0$ of parts, such
-that $c_{2i-1} > c_{2i} + k$ for every $i$ with $2i \le m$; a final unpaired part is
-unconstrained. The empty composition gives $a(0, k) = 1$, and $k = 0$ gives Arndt compositions.
-
-Source: Brian Hopkins and Aram Tangboonduangjit, *Arndt and De Morgan Compositions*, INTEGERS 26
-(2026), Article A64, Definition 4. -/
-def kArndtTotalCount (k : ℤ) (n : ℕ) : ℕ :=
-  ∑ m ∈ Finset.range (n + 1), kArndtCompositionCount k n m
-
-/-- **Generalized Arndt counts for compositions of five.** The numbers $a(5, k)$ of generalized
-Arndt compositions of $5$ (compositions $(c_1, \dots, c_m)$ of $5$ with $c_{2i-1} > c_{2i} + k$
-whenever $2i \le m$) are $a(5, 0) = 5$, $a(5, -1) = 10$, $a(5, -2) = 14$ and $a(5, 1) = 3$.
-
-Source: Brian Hopkins and Aram Tangboonduangjit, *Arndt and De Morgan Compositions*, INTEGERS 26
-(2026), Article A64, Table 9. -/
-theorem kArndtTotalCount_five :
-    kArndtTotalCount 0 5 = 5 ∧ kArndtTotalCount (-1) 5 = 10 ∧ kArndtTotalCount (-2) 5 = 14 ∧
-      kArndtTotalCount 1 5 = 3 := by
-  decide
 
 /-- **Compositions into odd or small even parts.** For natural numbers $k$ and $n$, $c^{2k}_o(n)$
 is the number of compositions of $n$, with any number of parts, in which every part is odd or at
@@ -194,30 +174,6 @@ public theorem_wanted arndtV_fixed_iff_and_count :
           Nat.fib (j - 1) ∧
         (Finset.univ.filter fun c : Composition (2 * j + 1) =>
           arndtV c.blocks = c.blocks).card = Nat.fib (j - 1)
-
-/-- **Recurrences for generalized Arndt counts.** Let $a(n, k)$ be the number of generalized
-Arndt compositions of $n$ with shift $k$, set $a(m, k) = 0$ for $m < 0$, and note that
-$a(0, k) = 1$ counts the empty composition. For every natural number $j$ and every $n \ge 3$,
-$$a(n, -j) = a(n - 1, -j) + 2a(n - 2, -j) - a(n - 2 - j, -j),$$
-and for every natural number $k$ and every $n \ge 3$,
-$$a(n, k) = a(n - 1, k) + a(n - 2, k) - a(n - 3, k) + a(n - 3 - k, k).$$
-
-The paper sets $a(n - 2 - j, -j) = 0$ whenever $n - 2 - j \le 0$; at $n - 2 - j = 0$ that is
-false ($j = 1$, $n = 3$: $a(3, -1) = 3$, while $a(2, -1) + 2a(1, -1) - 0 = 4$), and its own
-bijection uses the empty composition there. At $n = 2$ the recurrences fail for every shift
-(for instance $a(2, k) \ne a(1, k) + 2a(0, k)$), so $n \ge 3$ is assumed.
-
-Source: Brian Hopkins and Aram Tangboonduangjit, *Arndt and De Morgan Compositions*, INTEGERS 26
-(2026), Article A64, Theorem 4 (`integers-2026-A64-thm-4`). -/
-public theorem_wanted kArndtTotalCount_recurrence :
-    (∀ j n : ℕ, 3 ≤ n →
-      (kArndtTotalCount (-(j : ℤ)) n : ℤ) =
-        kArndtTotalCount (-(j : ℤ)) (n - 1) + 2 * kArndtTotalCount (-(j : ℤ)) (n - 2) -
-          if j + 2 ≤ n then (kArndtTotalCount (-(j : ℤ)) (n - 2 - j) : ℤ) else 0) ∧
-    ∀ k n : ℕ, 3 ≤ n →
-      (kArndtTotalCount k n : ℤ) =
-        kArndtTotalCount k (n - 1) + kArndtTotalCount k (n - 2) - kArndtTotalCount k (n - 3) +
-          if k + 3 ≤ n then (kArndtTotalCount k (n - 3 - k) : ℤ) else 0
 
 /-- **Generalized Arndt compositions with negative even shift.** For every natural number
 $j \ge 1$ and every natural number $n$, the number $a(n, -2j)$ of compositions
