@@ -18,6 +18,12 @@ open MetaMathlibExt
 -- Two different ordered pairs give difference 2, even though one uses a negative integer.
 example : subRepCount ({-1, 0, 1, 2} : Finset ℤ) 2 = 2 := by decide
 
+-- Multiplicities multiply for coordinate differences in different finite groups.
+example :
+    4 ≤ subRepCount (({0, 1} : Finset (ZMod 2)) ×ˢ ({0, 1, 2} : Finset (ZMod 4))) (1, 3) :=
+  subRepCount_prod_ge 2 2 ({0, 1} : Finset (ZMod 2)) ({0, 1, 2} : Finset (ZMod 4))
+    (by decide) (by decide) (1, 3)
+
 -- At multiplicity zero the empty set attains the minimum.
 example (n : ℕ) : diffBasisNumber 0 n = 0 := by
   apply Nat.eq_zero_of_le_zero
