@@ -6,3 +6,4 @@ Elementary theory of semirings, rings, division rings and fields: homomorphisms 
 - [Field](field.md)
 - [Ring with identity](ring-with-identity.md)
 - [Commutative ring, not necessarily with an identity element](commutative-ring.md)
+- [Ring, not necessarily with an identity element](ring.md)
