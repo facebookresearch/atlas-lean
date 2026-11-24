@@ -23,8 +23,8 @@ almost primes.
 
 ## Proof depends on
 
-- [Vinogradov–Korobov zero-free region](../../arithmetic-functions/special-integer-classes/mean-value-of-2-n-over-squareful-numbers/zeta-ne-zero-vinogradov-korobov.md)
-- [Classical zero-free region for the Riemann zeta function](../riemann-zeta/zero-free-regions-for-the-riemann-zeta-function/riemann-zeta-ne-zero-of-classical-zero-f.md)
+- [Vinogradov–Korobov zero-free region](../../../arithmetic-functions/special-integer-classes/mean-value-of-2-n-over-squareful-numbers/zeta-ne-zero-vinogradov-korobov.md)
+- [Classical zero-free region for the Riemann zeta function](../../riemann-zeta/zero-free-regions-for-the-riemann-zeta-function/riemann-zeta-ne-zero-of-classical-zero-f.md)
 
 ## Sources
 

@@ -6,7 +6,7 @@ L-function is the Riemann zeta function, the pole $s = 1$ is excluded.
 
 The proof treats one primitive character $\psi$ at a time, together with the family $K_\psi$ of the
 primitive characters that induce the powers of $\psi$. It applies the
-[criterion on windows](../../distribution-of-primes/primes-in-progressions/zero-free-half-planes-from-chebyshev-bounds-on-windows.md) to $K_\psi$, with
+[criterion on windows](zeros-of-dirichlet-l-functions/zero-free-half-planes-from-chebyshev-bounds-on-windows.md) to $K_\psi$, with
 weight $1$ for the trivial character modulo $1$ and weight $1/(3o + 1)$ for the other characters,
 where $o$ is the order of $\psi$. The hypothesis of the criterion, for every exponent
 $\theta \in (1/2, 1)$ and on windows $[Y, Y^{3/2}]$, is the
@@ -24,7 +24,7 @@ This node has no prerequisites.
 
 ## Proof depends on
 
-- [Zero-free half-planes from one-sided bounds for weighted Chebyshev sums on windows](../../distribution-of-primes/primes-in-progressions/zero-free-half-planes-from-chebyshev-bounds-on-windows.md), for the step from the window bounds to the zero-free half-plane, applied to the families $K_\psi$
+- [Zero-free half-planes from one-sided bounds for weighted Chebyshev sums on windows](zeros-of-dirichlet-l-functions/zero-free-half-planes-from-chebyshev-bounds-on-windows.md), for the step from the window bounds to the zero-free half-plane, applied to the families $K_\psi$
 - [Window bounds for weighted Chebyshev sums of cyclic families of characters](../../distribution-of-primes/primes-in-progressions/chebyshev-window-bounds-for-cyclic-character-families.md), for the window bounds, which it derives from Green's description, the window bound for Tate–Shafarevich groups and the definite-side hypotheses
 
 ## Sources

@@ -14,8 +14,8 @@ The constants may depend on $N$, but not on $x$, $q$, or $a$.
 ## Informally uses
 
 - [Truncated explicit formula for $\psi(x, \chi)$](../../../zeta-l-functions/dirichlet-l-functions/truncated-explicit-formula.md), for $\psi(x, \chi)$ with $\chi$ non-principal, and in Tao's route also for the principal character
-- [Classical zero-free region for Dirichlet L-functions of a fixed modulus](../../../zeta-l-functions/dirichlet-l-functions/dirichlet-l-function-zero-free-region-fixed-modulus.md), for the zeros of height at most $T$ other than a possible exceptional real zero, at most one for each modulus
-- [Siegel's theorem](../../../zeta-l-functions/dirichlet-l-functions/siegel-theorem.md), for the exceptional real zero $\beta$ of a real character, through $\beta < 1 - c(\varepsilon) q^{-\varepsilon}$
+- [Classical zero-free region for Dirichlet L-functions of a fixed modulus](../../../zeta-l-functions/dirichlet-l-functions/zeros-of-dirichlet-l-functions/dirichlet-l-function-zero-free-region-fixed-modulus.md), for the zeros of height at most $T$ other than a possible exceptional real zero, at most one for each modulus
+- [Siegel's theorem](../../../zeta-l-functions/dirichlet-l-functions/zeros-of-dirichlet-l-functions/siegel-theorem.md), for the exceptional real zero $\beta$ of a real character, through $\beta < 1 - c(\varepsilon) q^{-\varepsilon}$
 - [Prime number theorem with error term for Chebyshev's $\theta$](../../prime-number-theorem/error-term-in-the-prime-number-theorem/prime-number-theorem-chebyshev-theta-err.md), for the principal character in Teräväinen's proof: $\psi(x, \chi_0)$ differs from $\theta(x)$ only by terms from the prime powers $p^k \le x$ with $k \ge 2$ and from the primes dividing $q$
 
 ## Sources
