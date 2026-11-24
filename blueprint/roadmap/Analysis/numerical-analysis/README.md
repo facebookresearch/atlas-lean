@@ -16,6 +16,7 @@ Algorithms with error analysis: bisection and Newton's method, Euler and Rungeâ€
 - [Quasi-Newton methods](quasi-newton-methods/README.md)
 - [Rungeâ€“Kutta methods](runge-kutta-methods/README.md)
 - [Strang's lemma](strang-s-lemma/README.md)
+- [Theta rule for exponential decay](theta-rule-for-exponential-decay/README.md)
 - [Trust-region methods](trust-region-methods/README.md)
 - [Upwind scheme](upwind-scheme/README.md)
 
