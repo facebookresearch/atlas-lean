@@ -30,7 +30,6 @@ noncomputable section
 
 open CategoryTheory CategoryTheory.Limits
 
-attribute [local implicit_reducible] HomologicalComplex.homologyFunctor
 
 universe uC vC uD vD uE vE uE' vE'
 
@@ -46,7 +45,7 @@ existing composite comparison: an invertible idempotent is identity.
 theorem mapHomologyFunctorIso_id_hom (K : HomologicalComplex C c) (i : ι) :
     letI : (𝟭 C).PreservesHomology := Functor.preservesHomologyOfExact (𝟭 C)
     (mapHomologyFunctorIso (c := c) i (𝟭 C)).hom.app K = 𝟙 _ := by
-  letI : (𝟭 C).PreservesHomology := Functor.preservesHomologyOfExact (𝟭 C)
+  let : (𝟭 C).PreservesHomology := Functor.preservesHomologyOfExact (𝟭 C)
   let e := (mapHomologyFunctorIso (c := c) i (𝟭 C)).hom.app K
   have h : e = e ≫ e := by
     exact ShortComplex.mapHomologyIso_comp_hom (K.sc i) (𝟭 C) (𝟭 C)
@@ -120,8 +119,8 @@ theorem leftDerivedSquareHomWithResolution_naturality (n : ℕ)
   let b := (U.mapHomologicalComplex (ComplexShape.down ℕ)).map a
   let ρP := mapChainAugmentation U P.π
   let ρQ := mapChainAugmentation U Q.π
-  letI : QuasiIso ρP := mapChainAugmentation_quasiIso U P.π
-  letI : QuasiIso ρQ := mapChainAugmentation_quasiIso U Q.π
+  let : QuasiIso ρP := mapChainAugmentation_quasiIso U P.π
+  let : QuasiIso ρQ := mapChainAugmentation_quasiIso U Q.π
   let H := HomologicalComplex.homologyFunctor E (ComplexShape.down ℕ) n
   let H' := HomologicalComplex.homologyFunctor E' (ComplexShape.down ℕ) n
   let tP := leftDerivedObjToAugmentedHom F
@@ -224,7 +223,7 @@ theorem leftDerivedSquareHom_app_canonical (n : ℕ) (X : D) :
   unfold leftDerivedPrecompHomWithResolution leftDerivedSquareHomWithResolution
   unfold mapSquareHomologicalComplex
   dsimp only [Q]
-  simp only [NatTrans.comp_app, Functor.map_comp, hχ, Functor.map_id,
+  simp only [NatTrans.comp_app, Functor.map_comp, hχ,
     Category.assoc, Iso.inv_hom_id_assoc, Category.comp_id]
 
 /-- Every target-ring resolution computes the canonical derived square. -/
@@ -250,7 +249,7 @@ theorem leftDerivedSquareHom_eq_with_lift (n : ℕ) {X : D}
         (HomologicalComplex.mapHomologyFunctorIso (c := ComplexShape.down ℕ) n V).hom.app
           ((G.mapHomologicalComplex (ComplexShape.down ℕ)).obj Q.complex) ≫
         V.map (Q.isoLeftDerivedObj G n).inv := by
-  letI : QuasiIso (mapChainAugmentation U Q.π) := mapChainAugmentation_quasiIso U Q.π
+  let : QuasiIso (mapChainAugmentation U Q.π) := mapChainAugmentation_quasiIso U Q.π
   rw [leftDerivedSquareHom_app U V F G α n Q]
   unfold leftDerivedSquareHomWithResolution
   dsimp only
@@ -290,7 +289,7 @@ theorem leftDerivedSquareHom_eq_with_source_lift (n : ℕ) {X : C} {Y : D}
           ((G.mapHomologicalComplex (ComplexShape.down ℕ)).obj Q.complex) ≫
         V.map (Q.isoLeftDerivedObj G n).inv := by
   let ρ := mapChainAugmentation U Q.π
-  letI : QuasiIso ρ := mapChainAugmentation_quasiIso U Q.π
+  let : QuasiIso ρ := mapChainAugmentation_quasiIso U Q.π
   let H := HomologicalComplex.homologyFunctor E (ComplexShape.down ℕ) n
   rw [leftDerivedSquareHom_app U V F G α n Q]
   unfold leftDerivedSquareHomWithResolution
@@ -399,11 +398,11 @@ theorem comparisonHom_comp
   let H'' := homologyFunctor C (ComplexShape.down ℕ) n
   let K := (V'.mapHomologicalComplex (ComplexShape.down ℕ)).obj T
   let χ := Functor.mapHomologicalComplexCompIso (F := V') (G := V) e (ComplexShape.down ℕ)
-  letI : PreservesFiniteLimits V := Functor.preservesFiniteLimits_of_preservesHomology V
-  letI : PreservesFiniteColimits V := Functor.preservesFiniteColimits_of_preservesHomology V
-  letI : PreservesFiniteLimits V' := Functor.preservesFiniteLimits_of_preservesHomology V'
-  letI : PreservesFiniteColimits V' := Functor.preservesFiniteColimits_of_preservesHomology V'
-  letI : (V' ⋙ V).PreservesHomology := Functor.preservesHomologyOfExact (V' ⋙ V)
+  let : PreservesFiniteLimits V := Functor.preservesFiniteLimits_of_preservesHomology V
+  let : PreservesFiniteColimits V := Functor.preservesFiniteColimits_of_preservesHomology V
+  let : PreservesFiniteLimits V' := Functor.preservesFiniteLimits_of_preservesHomology V'
+  let : PreservesFiniteColimits V' := Functor.preservesFiniteColimits_of_preservesHomology V'
+  let : (V' ⋙ V).PreservesHomology := Functor.preservesHomologyOfExact (V' ⋙ V)
   let mV := mapHomologyFunctorIso (c := ComplexShape.down ℕ) n V
   let mV' := mapHomologyFunctorIso (c := ComplexShape.down ℕ) n V'
   let mVV := mapHomologyFunctorIso (c := ComplexShape.down ℕ) n (V' ⋙ V)

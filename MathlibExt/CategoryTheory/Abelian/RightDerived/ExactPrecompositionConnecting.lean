@@ -27,8 +27,6 @@ functors; no exactness of the functor being derived or injectivity of the image 
 noncomputable section
 open CategoryTheory CategoryTheory.Limits
 
-attribute [local implicit_reducible] HomologicalComplex.homologyFunctor
-
 universe uC vC uD vD uA vA
 
 namespace CategoryTheory.Functor
@@ -71,9 +69,9 @@ theorem rightDerivedPrecompHomOfPreservesHomology_connecting
   let ι₃ : (CochainComplex.single₀ D).obj (U.obj S.X₃) ⟶
       (U.mapHomologicalComplex (ComplexShape.up ℕ)).obj H.res₃.cocomplex :=
     mapCochainCoaugmentation U H.res₃.ι
-  letI : QuasiIso ι₁ := mapCochainCoaugmentation_quasiIso U H.res₁.ι
-  letI : QuasiIso ι₂ := mapCochainCoaugmentation_quasiIso U H.res₂.ι
-  letI : QuasiIso ι₃ := mapCochainCoaugmentation_quasiIso U H.res₃.ι
+  let : QuasiIso ι₁ := mapCochainCoaugmentation_quasiIso U H.res₁.ι
+  let : QuasiIso ι₂ := mapCochainCoaugmentation_quasiIso U H.res₂.ι
+  let : QuasiIso ι₃ := mapCochainCoaugmentation_quasiIso U H.res₃.ι
   have hf : ι₁.f 0 ≫ P.f.f 0 = (S.map U).f ≫ ι₂.f 0 := by
     change (mapCochainCoaugmentation U H.res₁.ι).f 0 ≫ U.map (H.φf.f 0) =
       U.map S.f ≫ (mapCochainCoaugmentation U H.res₂.ι).f 0
@@ -130,15 +128,15 @@ theorem rightDerivedPrecompHomOfPreservesHomology_connecting
     HomologicalComplex.HomologySequence.δ_naturality φ hLow hQ n (n + 1) rfl
   have hLast : dHigh ≫ q₁ = q₃ ≫ dL := by
     let κ₁ : (CochainComplex.single₀ D).obj (S.map U).X₁ ⟶ P.X₁ := ι₁
-    letI : QuasiIso κ₁ := by
+    let : QuasiIso κ₁ := by
       change QuasiIso (mapCochainCoaugmentation U H.res₁.ι)
       exact mapCochainCoaugmentation_quasiIso U H.res₁.ι
     let κ₂ : (CochainComplex.single₀ D).obj (S.map U).X₂ ⟶ P.X₂ := ι₂
-    letI : QuasiIso κ₂ := by
+    let : QuasiIso κ₂ := by
       change QuasiIso (mapCochainCoaugmentation U H.res₂.ι)
       exact mapCochainCoaugmentation_quasiIso U H.res₂.ι
     let κ₃ : (CochainComplex.single₀ D).obj (S.map U).X₃ ⟶ P.X₃ := ι₃
-    letI : QuasiIso κ₃ := by
+    let : QuasiIso κ₃ := by
       change QuasiIso (mapCochainCoaugmentation U H.res₃.ι)
       exact mapCochainCoaugmentation_quasiIso U H.res₃.ι
     have h := L.augmentedResolutionToRightDerivedHom_connecting
