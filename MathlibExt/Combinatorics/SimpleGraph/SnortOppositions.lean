@@ -129,7 +129,9 @@ abbrev strongProd [DecidableEq V] [DecidableEq W] (G : SimpleGraph V) (H : Simpl
     [DecidableRel G.Adj] [DecidableRel H.Adj] : SimpleGraph (V × W) :=
   formulaProduct (fun eG eH qG qH => (qG && eH) || (eG && qH) || (eG && eH)) G H
 
-private theorem strongProd_adj [DecidableEq V] [DecidableEq W]
+/-- Adjacency in the strong product consists of an edge in one coordinate with equality in
+ the other, or edges in both coordinates. -/
+theorem strongProd_adj [DecidableEq V] [DecidableEq W]
     (G : SimpleGraph V) (H : SimpleGraph W) [DecidableRel G.Adj] [DecidableRel H.Adj]
     (x y : V × W) : (strongProd G H).Adj x y ↔
       x.1 = y.1 ∧ H.Adj x.2 y.2 ∨ G.Adj x.1 y.1 ∧ x.2 = y.2 ∨

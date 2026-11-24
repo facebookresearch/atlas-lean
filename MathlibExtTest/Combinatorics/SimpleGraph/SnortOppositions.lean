@@ -43,22 +43,23 @@ private abbrev pathSquare := strongProd (pathGraph 3) (pathGraph 3)
 
 -- Strong-product edges can change either coordinate or both; they are not loops.
 example : pathSquare.Adj (0, 0) (1, 0) := by
-  simp [pathSquare, strongProd, formulaProduct, SimpleGraph.fromRel_adj]
+  rw [pathSquare, MetaMathlibExt.strongProd_adj]
   decide
 
 example : pathSquare.Adj (0, 0) (0, 1) := by
-  simp [pathSquare, strongProd, formulaProduct, SimpleGraph.fromRel_adj]
+  rw [pathSquare, MetaMathlibExt.strongProd_adj]
   decide
 
 example : pathSquare.Adj (0, 0) (1, 1) := by
-  simp [pathSquare, strongProd, formulaProduct, SimpleGraph.fromRel_adj]
+  rw [pathSquare, MetaMathlibExt.strongProd_adj]
   decide
 
 example : ¬ pathSquare.Adj (0, 0) (0, 0) := by
-  simp [pathSquare, strongProd, formulaProduct]
+  rw [pathSquare, MetaMathlibExt.strongProd_adj]
+  decide
 
 example : ¬ pathSquare.Adj (0, 0) (1, 2) := by
-  simp [pathSquare, strongProd, formulaProduct, SimpleGraph.fromRel_adj]
+  rw [pathSquare, MetaMathlibExt.strongProd_adj]
   decide
 
 -- The residual graph is empty and the one vertex of H is universal vacuously.
