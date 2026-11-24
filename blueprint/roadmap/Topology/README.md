@@ -41,3 +41,4 @@ and draws data sets with [Mapper](algebraic-topology/mapper/README.md); its zero
 - [Knot theory](knot-theory/README.md)
 - [Compactness and compactifications](compactness/README.md)
 - [Simplicial homotopy theory](simplicial-homotopy-theory/README.md)
+- [Metric spaces](metric-spaces/README.md)

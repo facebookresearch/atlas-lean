@@ -8,13 +8,16 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Algebra.GCDMonoid.Finset
 public import Mathlib.Algebra.Group.Submonoid.Basic
 public import MathlibExt.NumberTheory.BinomidIndex
 
 /-!
 # The monoid of lex-minimal extensions
 
-We use zero-based indexing for the binomid indices of Caalim and Tanaka.
+We use zero-based indexing for the binomid indices of Caalim and Tanaka. The gcd of the
+maximizing prefix lengths divides every length attaining the same average in a lex-minimal
+extension.
 -/
 
 namespace MetaMathlibExt
@@ -54,6 +57,114 @@ of Lexicographically Minimal Extensions*, INTEGERS 26 (2026), Article A113,
 Section 3. -/
 public theorem maxAverageIndices_one (η : ℕ → ℕ) : maxAverageIndices η 1 = {1} := by
   simp [maxAverageIndices]
+
+namespace IsLexMinimalExtensionOf
+
+private abbrev prefixSum (η : ℕ → ℕ) (n : ℕ) : ℕ := ∑ k ∈ Finset.range n, η k
+
+/-- Beyond the given prefix a partial sum must be tight at some proper split.
+Otherwise lowering just that partial sum preserves superadditivity and gives a smaller extension. -/
+private theorem exists_tight_split {η : ℕ → ℕ} {m r : ℕ}
+    (hη : IsLexMinimalExtensionOf η m) (hm : 0 < m) (hr : m < r) :
+    ∃ a b : ℕ, 0 < a ∧ 0 < b ∧ a + b = r ∧ prefixSum η a + prefixSum η b = prefixSum η r := by
+  obtain ⟨n, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (hm.trans hr).ne'
+  have hsuper (a b : ℕ) : prefixSum η a + prefixSum η b ≤ prefixSum η (a + b) := by
+    have h := hη.1 b (a + b) (by omega)
+    rw [Nat.add_sub_cancel] at h
+    simpa only [prefixSum, Finset.sum_range_add_sum_Ico η (Nat.le_add_right a b)] using
+      Nat.add_le_add_left h (prefixSum η a)
+  by_contra hsplit
+  have hstrict (a b : ℕ) (ha : 0 < a) (hb : 0 < b) (hab : a + b = n + 1) :
+      prefixSum η a + prefixSum η b < prefixSum η (n + 1) := by
+    exact lt_of_le_of_ne (hab ▸ hsuper a b) fun he => hsplit ⟨a, b, ha, hb, hab, he⟩
+  let T (k : ℕ) := if k = n + 1 then prefixSum η k - 1 else prefixSum η k
+  have hT0 : T 0 = 0 := by simp [T, prefixSum]
+  have hle (k : ℕ) : T k ≤ prefixSum η k := by
+    by_cases hk : k = n + 1 <;> simp [T, hk]
+  have hT (a b : ℕ) : T a + T b ≤ T (a + b) := by
+    by_cases hab : a + b = n + 1
+    · obtain rfl | ha := Nat.eq_zero_or_pos a
+      · simp [hT0]
+      obtain rfl | hb := Nat.eq_zero_or_pos b
+      · simp [hT0]
+      apply (add_le_add (hle a) (hle b)).trans
+      simpa [T, hab] using Nat.le_pred_of_lt (hstrict a b ha hb hab)
+    · exact (add_le_add (hle a) (hle b)).trans (by simpa [T, hab] using hsuper a b)
+  have hmono : Monotone T :=
+    monotone_nat_of_le_succ fun k => (Nat.le_add_right _ _).trans (hT k 1)
+  let γ (k : ℕ) := T (k + 1) - T k
+  have hsum (k : ℕ) : prefixSum γ k = T k := by
+    simpa [prefixSum, γ, hT0] using Finset.sum_range_tsub hmono k
+  have hγ : IsBinomidIndex γ := by
+    intro k r hkr
+    have h := hT (r - k) k
+    simp only [Nat.sub_add_cancel hkr, ← hsum] at h
+    exact Nat.le_of_add_le_add_left
+      (h.trans_eq (Finset.sum_range_add_sum_Ico γ (Nat.sub_le r k)).symm)
+  have hearly (k : ℕ) (hk : k < n) : γ k = η k := by
+    simp [γ, T, hk.ne, show k ≠ n + 1 by omega, prefixSum, Finset.sum_range_succ]
+  have hdrop : γ n < η n := by
+    have h := hstrict n 1 (by omega) (by decide) rfl
+    simp only [prefixSum, Finset.sum_range_succ] at h
+    simp [γ, T, prefixSum, Finset.sum_range_succ]
+    omega
+  rcases hη.2 γ hγ (fun k hk => hearly k (by omega)) with heq | ⟨j, hj, hlt⟩
+  · exact (congrFun heq n).not_gt hdrop
+  · rcases lt_trichotomy j n with h | rfl | h
+    · exact (hearly j h).not_gt hlt
+    · exact (not_lt_of_gt hdrop) hlt
+    · exact (hj n h).not_gt hdrop
+
+end IsLexMinimalExtensionOf
+
+/-- **Every index with maximal average is a multiple of the gcd of those up to $m$.** Let
+$m \ge 0$, let $\eta = (e_1, e_2, \dots)$ be the lex-minimal extension of its first $m$ entries,
+with averages $A_i = (e_1 + \dots + e_i)/i$, let $J$ be the set of indices $1 \le j \le m$ with
+$A_j = \max \{A_{j'} \mid 1 \le j' \le m\}$, and let $g = \gcd J$. Then $g$ divides every
+$i \ge 1$ such that $A_i = A_j$ for some $j \in J$.
+
+Since every element of $J$ is such an index, $g$ is also the greatest common divisor of all
+$i \ge 1$ with $A_i = A_j$ for some $j \in J$.
+
+Source: Caalim and Tanaka, *Generalized Binomial Coefficients and the Monoid
+of Lexicographically Minimal Extensions*, INTEGERS 26 (2026), Article A113,
+Lemma 2 (`integers-2026-A113-lem-2`). -/
+public theorem IsLexMinimalExtensionOf.gcd_maxAverageIndices_dvd {η : ℕ → ℕ}
+    {m : ℕ} (hη : IsLexMinimalExtensionOf η m) {i : ℕ} (hi : 1 ≤ i)
+    (hmax : ∃ j ∈ maxAverageIndices η m, binomidAverage η i = binomidAverage η j) :
+    (maxAverageIndices η m).gcd id ∣ i := by
+  classical
+  obtain ⟨j, hj, heq⟩ := hmax
+  simp only [maxAverageIndices, Finset.mem_filter] at hj
+  obtain ⟨hjmem, hbest⟩ := hj
+  let A := binomidAverage η j
+  let g := (maxAverageIndices η m).gcd id
+  -- Bound each partial sum by its length times A, tracking divisibility in the equality case.
+  have bound (k : ℕ) (hk : 0 < k) :
+      (prefixSum η k : ℚ) ≤ A * k ∧ ((prefixSum η k : ℚ) = A * k → g ∣ k) := by
+    induction k using Nat.strong_induction_on with
+    | ind k ih =>
+      by_cases hkm : k ≤ m
+      · have hmem := Finset.mem_Icc.mpr ⟨hk, hkm⟩
+        have hk' : (0 : ℚ) < k := by exact_mod_cast hk
+        refine ⟨(div_le_iff₀ hk').mp (hbest k hmem), fun ht => ?_⟩
+        have hAk : binomidAverage η k = A := (div_eq_iff hk'.ne').mpr ht
+        apply Finset.gcd_dvd (f := id) (b := k)
+        simp only [maxAverageIndices, Finset.mem_filter]
+        exact ⟨hmem, fun l hl => (hbest l hl).trans_eq hAk.symm⟩
+      · obtain ⟨hjpos, hjle⟩ := Finset.mem_Icc.mp hjmem
+        obtain ⟨a, b, ha, hb, rfl, hs⟩ :=
+          hη.exists_tight_split (hjpos.trans hjle) (lt_of_not_ge hkm)
+        obtain ⟨ha_le, ha_dvd⟩ := ih a (by omega) ha
+        obtain ⟨hb_le, hb_dvd⟩ := ih b (by omega) hb
+        have hs' : (prefixSum η (a + b) : ℚ) = prefixSum η a + prefixSum η b := by
+          exact_mod_cast hs.symm
+        rw [hs', Nat.cast_add, mul_add]
+        refine ⟨add_le_add ha_le hb_le, fun ht => ?_⟩
+        obtain ⟨ha_eq, hb_eq⟩ := (add_eq_add_iff_eq_and_eq ha_le hb_le).mp ht
+        exact dvd_add (ha_dvd ha_eq) (hb_dvd hb_eq)
+  have hi' : (0 : ℚ) < i := by exact_mod_cast (show 0 < i from hi)
+  exact (bound i hi).2 ((div_eq_iff hi'.ne').mp heq)
 
 /-- **Basis of a submonoid.** Let $M$ and $B$ be subsets of an additive commutative monoid.
 Then $B$ is a basis of $M$ when $M$ is the submonoid $\langle B \rangle$ generated by $B$ and
