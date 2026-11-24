@@ -356,8 +356,9 @@ noncomputable def abdMatrix (z : Fin (n + 1) → ℝ) (Q : Fin n → Matrix (Fin
   Matrix.fromBlocks (extensionalStiffness z Q) (couplingStiffness z Q) (couplingStiffness z Q)
     (bendingStiffness z Q)
 
-/-- A reflected stack: interfaces symmetric about the midplane, `z (n - k) = -z k`, and each ply
-with the stiffness of its mirror ply, `Q̄ (n - 1 - i) = Q̄ i`. -/
+/-- A reflected stack: interfaces symmetric about the reference plane `s = 0` (which is then the
+midplane), `z (n - k) = -z k`, and each ply with the stiffness of its mirror ply,
+`Q̄ (n - 1 - i) = Q̄ i`. -/
 def IsReflectedStack (z : Fin (n + 1) → ℝ) (Q : Fin n → Matrix (Fin 3) (Fin 3) ℝ) : Prop :=
   (∀ k, z k.rev = -z k) ∧ ∀ i, Q i.rev = Q i
 
@@ -367,12 +368,12 @@ def IsReflectedStack (z : Fin (n + 1) → ℝ) (Q : Fin n → Matrix (Fin 3) (Fi
 def plyStress (Q : Matrix (Fin 3) (Fin 3) ℝ) (ε κ : Fin 3 → ℝ) (s : ℝ) : Fin 3 → ℝ :=
   Q *ᵥ (ε + s • κ)
 
-/-- Force resultant `N = ∑ ∫_{z i}^{z (i + 1)} σ ds`. -/
+/-- Force resultant `N = ∑ ∫_{z i}^{z (i + 1)} σ ds` (oriented interval integrals). -/
 noncomputable def forceResultant (z : Fin (n + 1) → ℝ) (Q : Fin n → Matrix (Fin 3) (Fin 3) ℝ)
     (ε κ : Fin 3 → ℝ) : Fin 3 → ℝ :=
   ∑ i, ∫ s in z i.castSucc..z i.succ, plyStress (Q i) ε κ s
 
-/-- Moment resultant `M = ∑ ∫_{z i}^{z (i + 1)} s σ ds`. -/
+/-- Moment resultant `M = ∑ ∫_{z i}^{z (i + 1)} s σ ds` (oriented interval integrals). -/
 noncomputable def momentResultant (z : Fin (n + 1) → ℝ) (Q : Fin n → Matrix (Fin 3) (Fin 3) ℝ)
     (ε κ : Fin 3 → ℝ) : Fin 3 → ℝ :=
   ∑ i, ∫ s in z i.castSucc..z i.succ, s • plyStress (Q i) ε κ s
@@ -583,8 +584,8 @@ lemma abdMatrix_posDef (hn : 0 < n) {z : Fin (n + 1) → ℝ} (hz : StrictMono z
       cases i <;> rfl
     exact abdMatrix_energy_pos_aux hn hz hQ hne
 
-/-- The block energy of every nonzero `(ε⁰, κ)` is positive, under the hypotheses of
-`abdMatrix_posDef`. -/
+/-- The block energy of every nonzero `(ε⁰, κ)` is positive, for at least one ply, strictly
+increasing interfaces and symmetric positive definite ply stiffnesses. -/
 lemma abdMatrix_energy_pos (hn : 0 < n) {z : Fin (n + 1) → ℝ} (hz : StrictMono z)
     {Q : Fin n → Matrix (Fin 3) (Fin 3) ℝ} (hQ : ∀ i, (Q i).PosDef) {ε κ : Fin 3 → ℝ}
     (hεκ : ε ≠ 0 ∨ κ ≠ 0) :

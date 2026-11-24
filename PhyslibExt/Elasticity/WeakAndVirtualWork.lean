@@ -294,7 +294,8 @@ lemma WeakH10On.toUnit_ofUnit {L : ℝ} (hL : 0 < L) (w : WeakH10) :
 
 /-! ## B. Transport of the weak integrals and of the hypotheses -/
 
-/-- The unit diffusivity `κ ξ = EA (L ξ) / L`. -/
+/-- The unit diffusivity `κ ξ = EA (L ξ) / L`. With `a / 0 = 0` it is `0` when `L = 0`; the
+intended domain is `L > 0`. -/
 noncomputable def scaledRigidity (EA : ℝ → ℝ) (L ξ : ℝ) : ℝ :=
   EA (L * ξ) / L
 
@@ -390,7 +391,8 @@ lemma ae_bounds_scaledRigidity {L : ℝ} (hL : 0 < L) {EA : ℝ → ℝ} {EAmin 
 /-! ## C. Existence and uniqueness -/
 
 /-- `u` is a weak solution of the fixed-fixed bar problem `-(EA u')' = q` on `[0, L]`:
-`∫₀ᴸ EA u' v' = ∫₀ᴸ q v` for every `v ∈ H¹₀(0, L)`. -/
+`∫₀ᴸ EA u' v' = ∫₀ᴸ q v` for every `v ∈ H¹₀(0, L)`. The integral of a non-integrable function
+is `0`. -/
 def IsWeakBarSolution {L : ℝ} (EA q : ℝ → ℝ) (u : WeakH10On L) : Prop :=
   ∀ v : WeakH10On L,
     ∫ x in (0 : ℝ)..L, EA x * u.weakDeriv x * v.weakDeriv x = ∫ x in (0 : ℝ)..L, q x * v.toFun x
@@ -607,7 +609,8 @@ open MathlibExt.Probability.FokkerPlanck (divergence)
 
 /-! ## E. Stress divergence and face works -/
 
-/-- The divergence of a stress field, row by row: `(div σ)ᵢ = ∑ⱼ ∂ⱼ σᵢⱼ`. -/
+/-- The divergence of a stress field, row by row: `(div σ)ᵢ = ∑ⱼ ∂ⱼ σᵢⱼ`, each partial derivative
+being the Fréchet derivative applied to `eⱼ` (`0` where the component is not differentiable). -/
 noncomputable def stressDivergence (σ : (Fin 3 → ℝ) → Matrix (Fin 3) (Fin 3) ℝ)
     (x : Fin 3 → ℝ) : Fin 3 → ℝ :=
   fun i => divergence (fun y => σ y i) x

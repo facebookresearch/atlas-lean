@@ -262,7 +262,8 @@ namespace Elasticity.ContactAndLubrication
 /-! ### A.1. Film, model and closed-form pressure -/
 
 /-- Linear film thickness of the plane slider: `h0` at the inlet `x = 0` and `hL` at the
-outlet `x = L`. -/
+outlet `x = L`. With `a / 0 = 0` it is the constant `h0` when `L = 0`; the intended domain is
+`L > 0`. -/
 noncomputable def sliderFilm (h0 hL L x : ℝ) : ℝ :=
   h0 + (hL - h0) * x / L
 
@@ -278,17 +279,18 @@ def IsReynoldsSolution (μ U h0 hL L : ℝ) (p p' : ℝ → ℝ) : Prop :=
     p 0 = 0 ∧ p L = 0
 
 /-- Closed-form plane-slider pressure `6 μ U L (h0 - h) (h - hL) / ((h0² - hL²) h²)` with
-`h = sliderFilm h0 hL L x`. -/
+`h = sliderFilm h0 hL L x`. With `a / 0 = 0` it is `0` when `h0² = hL²` or `h = 0`. -/
 noncomputable def sliderPressure (μ U h0 hL L x : ℝ) : ℝ :=
   6 * μ * U * L * (h0 - sliderFilm h0 hL L x) * (sliderFilm h0 hL L x - hL) /
     ((h0 ^ 2 - hL ^ 2) * sliderFilm h0 hL L x ^ 2)
 
 /-- Plane-slider pressure gradient `6 μ U (h - 2 h0 hL / (h0 + hL)) / h³` with
-`h = sliderFilm h0 hL L x`. -/
+`h = sliderFilm h0 hL L x`. With `a / 0 = 0` it is `0` when `h = 0`. -/
 noncomputable def sliderPressureGradient (μ U h0 hL L x : ℝ) : ℝ :=
   6 * μ * U * (sliderFilm h0 hL L x - 2 * h0 * hL / (h0 + hL)) / sliderFilm h0 hL L x ^ 3
 
-/-- Load per unit width: the integral of the slider pressure over `[0, L]`. -/
+/-- Load per unit width: the (oriented) integral of the slider pressure from `0` to `L`; the
+integral of a non-integrable function is `0`. -/
 noncomputable def sliderLoad (μ U h0 hL L : ℝ) : ℝ :=
   ∫ x in (0 : ℝ)..L, sliderPressure μ U h0 hL L x
 
@@ -887,7 +889,8 @@ def admissibleSet (g : ℝ) : Set ℝ := Set.Iic g
 noncomputable def stiffnessMap (k : ℝ) : ℝ →L[ℝ] ℝ := k • ContinuousLinearMap.id ℝ ℝ
 
 /-- The contact displacement `min g (f / k)` of a spring of stiffness `k` under the load `f`
-below an obstacle at `g`. -/
+below an obstacle at `g`. With `a / 0 = 0` it is `min g 0` when `k = 0`; the intended domain is
+`k > 0`. -/
 noncomputable def contactDisplacement (k g f : ℝ) : ℝ := min g (f / k)
 
 /-- The magnitude `λ = f - k u` of the contact force; the obstacle pushes on the body with `-λ`

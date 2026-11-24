@@ -322,7 +322,8 @@ lemma madelung_one_dim :
 
 /-! ## C. Bond modulus estimate -/
 
-/-- Model estimate of an elastic modulus from bond stiffness, not a theorem about real solids. -/
+/-- Model estimate of an elastic modulus from bond stiffness, not a theorem about real solids.
+With `a / 0 = 0` it is `0` when `r₀ = 0`; the intended domain is `r₀ > 0`. -/
 noncomputable def bondModulusEstimate (S₀ r₀ : ℝ) : ℝ := S₀ / r₀
 
 /-- The bond-model estimate at Lennard-Jones stiffness and spacing. -/
@@ -351,7 +352,9 @@ lemma bondModulusEstimate_lennardJones (ε σ : ℝ) (hε : 0 < ε) (hσ : 0 < �
 
 /-- Born-Lande lattice energy: `N_A` Avogadro number, `M` Madelung constant, `zPlus`/`zMinus`
 cation/anion charge numbers, `e` elementary charge, `eps0` vacuum permittivity, `r₀` equilibrium
-spacing, `n` the empirical Born exponent. Attractive lattice energy is negative. -/
+spacing, `n` the empirical Born exponent. Attractive lattice energy is negative (for positive
+constants and `1 < n`). With `a / 0 = 0` it is `0` when `eps0 * r₀ = 0`, and `1 - 1 / n = 1` when
+`n = 0`. -/
 noncomputable def bornLandeEnergy (N_A M zPlus zMinus e eps0 r₀ n : ℝ) : ℝ :=
   -(N_A * M * zPlus * zMinus * e ^ 2 / (4 * Real.pi * eps0 * r₀)) * (1 - 1 / n)
 

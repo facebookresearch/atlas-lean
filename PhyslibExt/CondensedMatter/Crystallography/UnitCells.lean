@@ -225,7 +225,8 @@ def conventionalCell (Λc : BravaisLattice) : Set (EuclideanSpace ℝ (Fin 3)) :
 cardinality of the quotient of the fine lattice by the coarse sublattice (the index). It is not
 the number of `Λf` points in the closed set `conventionalCell Λc`. Meaningful when
 `IsSublatticeOf Λc Λf`, in which case `pointsPerCell_eq_volume_ratio` shows it equals
-`V_conv / V_prim`. -/
+`V_conv / V_prim`. In general it is the index of `Λc.lattice ∩ Λf.lattice` in `Λf.lattice`, and
+it is `0` when that index is infinite (`Nat.card` of an infinite type is `0`). -/
 noncomputable def pointsPerCell (Λc Λf : BravaisLattice) : ℕ :=
   Nat.card (↥Λf.lattice ⧸ (Λc.lattice.comap Λf.lattice.subtype))
 

@@ -88,9 +88,9 @@ at that load and negative quadratic energy above it.
 
 namespace Elasticity
 
-/-- The clamped-clamped column mode `w(x) = 1 - cos (2πx / L)` on a column
-of length `L`. This is one explicit buckling eigenfunction; nothing here
-claims it is the lowest mode or part of a complete set. -/
+/-- The clamped-clamped column mode `w(x) = 1 - cos (2πx / L)` on a column of length `L` (`0`
+everywhere when `L = 0`, by the convention `x / 0 = 0`). This is one explicit buckling
+eigenfunction; nothing here claims it is the lowest mode or part of a complete set. -/
 noncomputable def clampedClampedMode (L : ℝ) (x : ℝ) : ℝ :=
   1 - Real.cos (2 * Real.pi * x / L)
 
@@ -109,14 +109,14 @@ private lemma hasDerivAt_phase {L : ℝ} (x : ℝ) :
 lemma clampedClampedMode_zero (L : ℝ) : clampedClampedMode L 0 = 0 := by
   simp [clampedClampedMode]
 
-/-- The clamped-clamped mode vanishes at the right support. -/
+/-- For `L ≠ 0` the clamped-clamped mode vanishes at the right support. -/
 lemma clampedClampedMode_length {L : ℝ} (hL : L ≠ 0) :
     clampedClampedMode L L = 0 := by
   have hph : 2 * Real.pi * L / L = 2 * Real.pi := by field_simp
   simp only [clampedClampedMode, hph, Real.cos_two_pi, sub_self]
 
-/-- Nonzero midspan displacement: the clamped-clamped mode takes the
-value `2` at `x = L / 2`. -/
+/-- Nonzero midspan displacement: for `L ≠ 0` the clamped-clamped mode takes the value `2` at
+`x = L / 2`. -/
 lemma clampedClampedMode_midspan {L : ℝ} (hL : L ≠ 0) :
     clampedClampedMode L (L / 2) = 2 := by
   have hph : 2 * Real.pi * (L / 2) / L = Real.pi := by
@@ -124,7 +124,7 @@ lemma clampedClampedMode_midspan {L : ℝ} (hL : L ≠ 0) :
   simp only [clampedClampedMode, hph, Real.cos_pi]
   norm_num
 
-/-- First derivative of the clamped-clamped mode. -/
+/-- First derivative of the clamped-clamped mode, for `L ≠ 0`. -/
 lemma deriv_clampedClampedMode {L : ℝ} (hL : L ≠ 0) :
     deriv (clampedClampedMode L) =
       fun x => (2 * Real.pi / L) * Real.sin (2 * Real.pi * x / L) := by
@@ -135,7 +135,7 @@ lemma deriv_clampedClampedMode {L : ℝ} (hL : L ≠ 0) :
   rw [h]
   ring
 
-/-- Second derivative of the clamped-clamped mode. -/
+/-- Second derivative of the clamped-clamped mode, for `L ≠ 0`. -/
 lemma iteratedDeriv_two_clampedClampedMode {L : ℝ} (hL : L ≠ 0) (x : ℝ) :
     iteratedDeriv 2 (clampedClampedMode L) x =
       (2 * Real.pi / L) ^ 2 * Real.cos (2 * Real.pi * x / L) := by
@@ -149,7 +149,7 @@ lemma iteratedDeriv_two_clampedClampedMode {L : ℝ} (hL : L ≠ 0) (x : ℝ) :
   rw [h]
   ring
 
-/-- Fourth derivative of the clamped-clamped mode. -/
+/-- Fourth derivative of the clamped-clamped mode, for `L ≠ 0`. -/
 lemma iteratedDeriv_four_clampedClampedMode {L : ℝ} (hL : L ≠ 0) (x : ℝ) :
     iteratedDeriv 4 (clampedClampedMode L) x =
       -((2 * Real.pi / L) ^ 4) * Real.cos (2 * Real.pi * x / L) := by
@@ -224,10 +224,10 @@ theorem clampedClamped_eigenpair {EI L : ℝ} (hEI : 0 < EI) (hL : 0 < L) :
 
 /-! ## B. The clamped-free mode -/
 
-/-- The clamped-free column mode `w(x) = 1 - cos (πx / (2L))` on a column
-of length `L`, clamped at `x = 0` and free at `x = L`. This is one
-explicit buckling eigenfunction; nothing here claims it is the lowest
-mode or part of a complete set. -/
+/-- The clamped-free column mode `w(x) = 1 - cos (πx / (2L))` on a column of length `L`, clamped at
+`x = 0` and free at `x = L` (`0` everywhere when `L = 0`, by the convention `x / 0 = 0`). This is
+one explicit buckling eigenfunction; nothing here claims it is the lowest mode or part of a complete
+set. -/
 noncomputable def clampedFreeMode (L : ℝ) (x : ℝ) : ℝ :=
   1 - Real.cos (Real.pi * x / (2 * L))
 
@@ -235,8 +235,8 @@ noncomputable def clampedFreeMode (L : ℝ) (x : ℝ) : ℝ :=
 lemma clampedFreeMode_zero (L : ℝ) : clampedFreeMode L 0 = 0 := by
   simp [clampedFreeMode]
 
-/-- Nonzero tip displacement: the clamped-free mode takes the value `1`
-at the free end `x = L`. -/
+/-- Nonzero tip displacement: for `L ≠ 0` the clamped-free mode takes the value `1` at the free end
+`x = L`. -/
 lemma clampedFreeMode_tip {L : ℝ} (hL : L ≠ 0) :
     clampedFreeMode L L = 1 := by
   unfold clampedFreeMode
@@ -245,7 +245,7 @@ lemma clampedFreeMode_tip {L : ℝ} (hL : L ≠ 0) :
   rw [hphase, Real.cos_pi_div_two]
   ring
 
-/-- First derivative of the clamped-free mode. -/
+/-- First derivative of the clamped-free mode, for `L ≠ 0`. -/
 lemma deriv_clampedFreeMode {L : ℝ} (hL : L ≠ 0) :
     deriv (clampedFreeMode L) =
       fun x => (Real.pi / (2 * L)) * Real.sin (Real.pi * x / (2 * L)) := by
@@ -268,7 +268,7 @@ lemma deriv_clampedFreeMode {L : ℝ} (hL : L ≠ 0) :
     ring
   exact hw.deriv
 
-/-- Second derivative of the clamped-free mode. -/
+/-- Second derivative of the clamped-free mode, for `L ≠ 0`. -/
 lemma iteratedDeriv_two_clampedFreeMode {L : ℝ} (hL : L ≠ 0) (x : ℝ) :
     iteratedDeriv 2 (clampedFreeMode L) x =
       (Real.pi / (2 * L)) ^ 2 * Real.cos (Real.pi * x / (2 * L)) := by
@@ -301,7 +301,7 @@ lemma iteratedDeriv_two_clampedFreeMode {L : ℝ} (hL : L ≠ 0) (x : ℝ) :
   rw [hiter]
   exact hderiv2
 
-/-- Third derivative of the clamped-free mode. -/
+/-- Third derivative of the clamped-free mode, for `L ≠ 0`. -/
 lemma iteratedDeriv_three_clampedFreeMode {L : ℝ} (hL : L ≠ 0) (x : ℝ) :
     iteratedDeriv 3 (clampedFreeMode L) x =
       -((Real.pi / (2 * L)) ^ 3) * Real.sin (Real.pi * x / (2 * L)) := by
@@ -338,7 +338,7 @@ lemma iteratedDeriv_three_clampedFreeMode {L : ℝ} (hL : L ≠ 0) (x : ℝ) :
   rw [hiter]
   exact hderiv3
 
-/-- Fourth derivative of the clamped-free mode. -/
+/-- Fourth derivative of the clamped-free mode, for `L ≠ 0`. -/
 lemma iteratedDeriv_four_clampedFreeMode {L : ℝ} (hL : L ≠ 0) (x : ℝ) :
     iteratedDeriv 4 (clampedFreeMode L) x =
       -((Real.pi / (2 * L)) ^ 4) * Real.cos (Real.pi * x / (2 * L)) := by
@@ -536,8 +536,9 @@ private theorem aux_cos_sq {L : ℝ} (hL : 0 < L) :
     rw [hdiv, hcos0, zero_div]
   rw [hc1, hc2, add_zero]
 
-/-- Integration by parts for a `C^2` deflection vanishing at both
-ends: `∫ (w')^2 = -∫ w * w''` on `[0, L]`. -/
+/-- Integration by parts for `L > 0` and `w` with derivative `w'` and `w'` with derivative `w''` at
+every point of `[0, L]`, `w''` continuous on `[0, L]` and `w 0 = w L = 0`: `∫ (w')^2 = -∫ w * w''`
+on `[0, L]`. -/
 theorem integral_deriv_sq_eq_neg {L : ℝ} (hL : 0 < L) {w w' w'' : ℝ → ℝ}
     (hw : ∀ x ∈ Set.Icc 0 L, HasDerivAt w (w' x) x)
     (hw' : ∀ x ∈ Set.Icc 0 L, HasDerivAt w' (w'' x) x)
@@ -571,8 +572,8 @@ theorem integral_deriv_sq_eq_neg {L : ℝ} (hL : 0 < L) {w w' w'' : ℝ → ℝ}
   rw [econg] at hFTC
   linarith [hFTC]
 
-/-- The pinned-column energy threshold: for `L > 0` and a `C^2`
-deflection vanishing at both ends,
+/-- The pinned-column energy threshold: for `L > 0` and `w` with derivative `w'` and `w'` with
+derivative `w''` at every point of `[0, L]`, `w''` continuous on `[0, L]` and `w 0 = w L = 0`,
 `∫ (w')^2 ≤ (L / π)^2 * ∫ (w'')^2`. -/
 theorem integral_deriv_sq_le {L : ℝ} (hL : 0 < L)
     {w w' w'' : ℝ → ℝ}
@@ -708,8 +709,9 @@ theorem integral_deriv_sq_le {L : ℝ} (hL : 0 < L)
       exact hA2
     exact le_of_mul_le_mul_left hA2' hApos
 
-/-- Lower bound for the pinned-column quadratic energy
-`Q = EI * ∫ (w'')^2 - P * ∫ (w')^2`: it is at least
+/-- Lower bound for the pinned-column quadratic energy `Q = EI * ∫ (w'')^2 - P * ∫ (w')^2`, for
+`EI > 0`, `L > 0`, every real `P` and `w` with derivative `w'` and `w'` with derivative `w''` at
+every point of `[0, L]`, `w''` continuous on `[0, L]` and `w 0 = w L = 0`: it is at least
 `(π^2 * EI / L^2 - P) * ∫ (w')^2`. -/
 theorem quadratic_energy_lower {EI L P : ℝ} (hEI : 0 < EI)
     (hL : 0 < L) {w w' w'' : ℝ → ℝ}
@@ -738,8 +740,9 @@ theorem quadratic_energy_lower {EI L P : ℝ} (hEI : 0 < EI)
   rw [h2] at h1
   linarith [h1]
 
-/-- If the deflection is nonzero somewhere on `[0, L]`, the slope
-energy `∫ (w')^2` is strictly positive. -/
+/-- For `L > 0` and `w` with derivative `w'` at every point of `[0, L]`, `w'` continuous on `[0, L]`
+and `w 0 = 0`: if the deflection is nonzero somewhere on `[0, L]`, the slope energy `∫ (w')^2` is
+strictly positive. -/
 theorem integral_deriv_sq_pos {L : ℝ} (hL : 0 < L)
     {w w' : ℝ → ℝ}
     (hw : ∀ x ∈ Set.Icc 0 L, HasDerivAt w (w' x) x)
@@ -796,9 +799,10 @@ theorem integral_deriv_sq_pos {L : ℝ} (hL : 0 < L)
   obtain ⟨x, hxmem, hxne⟩ := hne
   exact hxne (hwall x hxmem)
 
-/-- Below the critical load `π^2 * EI / L^2`, the quadratic energy
-of a deflection that is nonzero somewhere on `[0, L]` is strictly
-positive. -/
+/-- Below the critical load `π^2 * EI / L^2`, for `EI > 0`, `L > 0` and `w` with derivative `w'` and
+`w'` with derivative `w''` at every point of `[0, L]`, `w''` continuous on `[0, L]` and
+`w 0 = w L = 0`, the quadratic energy of a deflection that is nonzero somewhere on `[0, L]` is
+strictly positive. -/
 theorem quadratic_energy_pos_of_lt {EI L P : ℝ} (hEI : 0 < EI)
     (hL : 0 < L) (hP : P < Real.pi ^ 2 * EI / L ^ 2)
     {w w' w'' : ℝ → ℝ}
@@ -831,7 +835,8 @@ private lemma hasDerivAt_pinnedPhase {L : ℝ} (x : ℝ) :
     ring
   rwa [heq]
 
-/-- The first pinned mode `x ↦ sin (π * x / L)`. -/
+/-- The first pinned mode `x ↦ sin (π * x / L)` (`0` everywhere when `L = 0`, by the convention
+`x / 0 = 0`). -/
 noncomputable def pinnedMode (L x : ℝ) : ℝ := Real.sin (Real.pi * x / L)
 
 /-- The pinned mode vanishes at the left support. -/
@@ -876,14 +881,14 @@ lemma iteratedDeriv_two_pinnedMode (L x : ℝ) :
   rw [hder] at h
   exact h.deriv
 
-/-- Integral of the squared pinned mode over `[0, L]` is `L / 2`. -/
+/-- For `L > 0`, the integral of the squared pinned mode over `[0, L]` is `L / 2`. -/
 theorem integral_pinnedMode_sq {L : ℝ} (hL : 0 < L) :
     (∫ x in (0 : ℝ)..L, (pinnedMode L x) ^ 2) = L / 2 := by
   simp only [pinnedMode]
   exact aux_sin_sq hL
 
-/-- Integral of the squared derivative of the pinned mode over
-`[0, L]` is `(π / L)^2 * (L / 2)`. -/
+/-- For `L > 0`, the integral of the squared derivative of the pinned mode over `[0, L]` is
+`(π / L)^2 * (L / 2)`. -/
 theorem integral_pinnedMode_slope_sq {L : ℝ} (hL : 0 < L) :
     (∫ x in (0 : ℝ)..L, (deriv (pinnedMode L) x) ^ 2) =
       (Real.pi / L) ^ 2 * (L / 2) := by
@@ -897,8 +902,8 @@ theorem integral_pinnedMode_slope_sq {L : ℝ} (hL : 0 < L) :
     intervalIntegral.integral_const_mul _ _
   rw [hcm, aux_cos_sq hL]
 
-/-- Integral of the squared second derivative of the pinned mode
-over `[0, L]` is `(π / L)^4 * (L / 2)`. -/
+/-- For `L > 0`, the integral of the squared second derivative of the pinned mode over `[0, L]` is
+`(π / L)^4 * (L / 2)`. -/
 theorem integral_pinnedMode_curvature_sq {L : ℝ} (hL : 0 < L) :
     (∫ x in (0 : ℝ)..L, (iteratedDeriv 2 (pinnedMode L) x) ^ 2) =
       (Real.pi / L) ^ 4 * (L / 2) := by
@@ -912,8 +917,8 @@ theorem integral_pinnedMode_curvature_sq {L : ℝ} (hL : 0 < L) :
     intervalIntegral.integral_const_mul _ _
   rw [hcm, aux_sin_sq hL]
 
-/-- At the critical load `P = π^2 * EI / L^2`, the quadratic energy
-of the pinned sine mode is exactly zero. -/
+/-- At the critical load `P = π^2 * EI / L^2`, for `EI > 0` and `L > 0`, the quadratic energy of the
+pinned sine mode is exactly zero. -/
 theorem pinnedMode_energy_eq_zero {EI L : ℝ} (hEI : 0 < EI)
     (hL : 0 < L) :
     EI * (∫ x in (0 : ℝ)..L, (iteratedDeriv 2 (pinnedMode L) x) ^ 2) -
@@ -925,8 +930,8 @@ theorem pinnedMode_energy_eq_zero {EI L : ℝ} (hEI : 0 < EI)
   field_simp
   ring
 
-/-- Above the critical load, the quadratic energy of the pinned
-sine mode is strictly negative. -/
+/-- Above the critical load, for `EI > 0` and `L > 0`, the quadratic energy of the pinned sine mode
+is strictly negative. -/
 theorem pinnedMode_energy_neg {EI L P : ℝ} (hEI : 0 < EI)
     (hL : 0 < L) (hP : Real.pi ^ 2 * EI / L ^ 2 < P) :
     EI * (∫ x in (0 : ℝ)..L, (iteratedDeriv 2 (pinnedMode L) x) ^ 2) -

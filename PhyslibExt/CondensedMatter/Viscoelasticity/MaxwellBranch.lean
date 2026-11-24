@@ -124,7 +124,8 @@ noncomputable def dissipationRate (b : MaxwellBranch) (s : ℝ) : ℝ :=
   s ^ 2 / b.viscosity
 
 /-- Canonical constitutive relation of the branch on the time set `I`: at every `t ∈ I` the
-stress history `σ` has rate `σ' t`, the strain history `ε` has rate `ε' t`, and the strain
+stress history `σ` has rate `σ' t`, the strain history `ε` has rate `ε' t` (two-sided
+derivatives, also at an endpoint of `I`), and the strain
 rate is the spring strain rate `σ' t / E` plus the dashpot strain rate `σ t / η`. -/
 def IsHistory (b : MaxwellBranch) (I : Set ℝ) (σ σ' ε ε' : ℝ → ℝ) : Prop :=
   ∀ t ∈ I, HasDerivAt σ (σ' t) t ∧ HasDerivAt ε (ε' t) t ∧

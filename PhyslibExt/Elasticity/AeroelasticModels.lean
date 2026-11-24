@@ -293,7 +293,8 @@ def circulatoryForce (q : ℝ) (z : Fin 2 → ℝ) : Fin 2 → ℝ :=
   q • (circulatoryJ *ᵥ z)
 
 /-- The residual `z'' + 2 z' + z - q J z` of the normalized circulatory model at time `t`; a
-solution makes it vanish at every `t`. -/
+solution makes it vanish at every `t`. Here `deriv` is `0` where the function is not
+differentiable. -/
 noncomputable def circulatoryResidual (q : ℝ) (z : ℝ → Fin 2 → ℝ) (t : ℝ) : Fin 2 → ℝ :=
   deriv (deriv z) t + (2 : ℝ) • deriv z t + z t - q • (circulatoryJ *ᵥ z t)
 
@@ -363,8 +364,8 @@ lemma loadedStiffness_dotProduct_self (q : ℝ) (v : Fin 2 → ℝ) :
     smul_zero, sub_zero]
 
 /-- For `q ≠ 0` the loaded stiffness `1 - q J` is not symmetric, hence not positive
-semidefinite in Mathlib's sense: the symmetric congruence diagonalization behind a
-mass-orthonormal modal basis does not apply to it. -/
+semidefinite in the sense that requires symmetry: the symmetric congruence diagonalization
+behind a mass-orthonormal modal basis does not apply to it. -/
 lemma loadedStiffness_not_isSymm {q : ℝ} (hq : q ≠ 0) :
     ¬ (1 - q • circulatoryJ).IsSymm ∧ ¬ (1 - q • circulatoryJ).PosSemidef := by
   have hentry : (1 - q • circulatoryJ) 0 1 = q ∧ (1 - q • circulatoryJ) 1 0 = -q := by

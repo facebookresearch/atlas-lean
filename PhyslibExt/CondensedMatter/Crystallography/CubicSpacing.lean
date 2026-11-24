@@ -92,7 +92,7 @@ theorem div_sqrt_sumSq_sq {a : ℝ} {h k l : ℤ}
   rw [div_pow, Real.sq_sqrt (le_of_lt hpos)]
 
 /-- The expression `a / √(h ^ 2 + k ^ 2 + l ^ 2)` is positive when `a > 0` and
-`h ^ 2 + k ^ 2 + l ^ 2 > 0`. -/
+`h ^ 2 + k ^ 2 + l ^ 2 > 0` (at `h = k = l = 0` it is `a / 0 = 0`, by `u / 0 = 0`). -/
 theorem div_sqrt_sumSq_pos {a : ℝ} (ha : 0 < a) {h k l : ℤ}
     (hpos : 0 < (h : ℝ) ^ 2 + (k : ℝ) ^ 2 + (l : ℝ) ^ 2) :
     0 < a / Real.sqrt ((h : ℝ) ^ 2 + (k : ℝ) ^ 2 + (l : ℝ) ^ 2) := by

@@ -294,15 +294,14 @@ lemma theoreticalDensity_eq_raw (n : ℕ) (A Vc NA : ℝ) (hA : 0 < A) (hVc : 0 
 lemma theoreticalDensityRaw_eq (n : ℕ) (A Vc NA : ℝ) :
     theoreticalDensityRaw n A Vc NA = n * A / (Vc * NA) := rfl
 
-/-- Unit conversion for the MAT-C1 fixture: `Vc = 4³ = 64 Å³` with
-`1 Å = 1e-8 cm` gives `Vc = 64e-24 cm³`. -/
+/-- Unit conversion for the synthetic density example: `Vc = 4³ = 64 Å³` with `1 Å = 1e-8 cm` gives
+`Vc = 64e-24 cm³`. -/
 lemma angstrom_cubed_to_cm_cubed : (4 : ℝ) ^ 3 * (1e-8) ^ 3 = 64e-24 := by
   norm_num
 
-/-- MAT-C1 numeric instance: with `a = 4` (Å), `n = 4`, `A = 64` (g/mol),
-`Vc = 64e-24` (cm³), and `NA` the exact SI Avogadro constant, the density is
-`6.64216 g/cm³` up to `0.001`. This is a synthetic fixture; it does not
-identify a real metal. -/
+/-- Numeric instance: with `a = 4` (Å), `n = 4`, `A = 64` (g/mol), `Vc = 64e-24` (cm³), and `NA` the
+exact SI Avogadro constant, the density is `6.64216 g/cm³` up to `0.001`. This is a synthetic
+fixture; it does not identify a real metal. -/
 lemma density_mat_c1 (NA : ℝ) (hNA : NA = 6.02214076e23) :
     |theoreticalDensityRaw 4 64 (64e-24) NA - 6.64216| < 0.001 := by
   rw [hNA]
