@@ -107,6 +107,26 @@ example : (testC2.subst testD).evaluate (fun i => if i.val = 0 then 2 else 3) 0 
   simp [evaluate, testC2, testD, ArithmeticOperand.evaluate, evaluateNode.eq_1,
     ArithmeticGate.evaluate]
 
+example : (testC.parallel 2).size = 2 := by
+  rw [size_parallel]
+  decide
+
+example : (testC.parallel 2).evaluate
+    (fun p => if p.1.val = 0 then (if p.2.val = 0 then 2 else 3)
+      else (if p.2.val = 0 then 4 else 5)) ((0 : Fin 2), (0 : Fin 1)) = 6 := by
+  rw [evaluate_parallel]
+  simp only [evaluate, testC, ArithmeticOperand.evaluate,
+    evaluateNode.eq_1, ArithmeticGate.evaluate]
+  decide
+
+example : (testC.parallel 2).evaluate
+    (fun p => if p.1.val = 0 then (if p.2.val = 0 then 2 else 3)
+      else (if p.2.val = 0 then 4 else 5)) ((1 : Fin 2), (0 : Fin 1)) = 20 := by
+  rw [evaluate_parallel]
+  simp only [evaluate, testC, ArithmeticOperand.evaluate,
+    evaluateNode.eq_1, ArithmeticGate.evaluate]
+  decide
+
 end ArithmeticCircuit
 
 end
