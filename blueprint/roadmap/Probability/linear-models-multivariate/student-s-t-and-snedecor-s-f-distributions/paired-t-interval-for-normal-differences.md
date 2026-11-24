@@ -4,7 +4,7 @@ Let $n \ge 2$ and $0 < \alpha < 1$, and let $(X_i, Y_i)$, $i = 1, \dots, n$, be 
 
 ## Proof depends on
 
-- [One-sample $t$ statistic](../linear-models-multivariate/student-s-t-and-snedecor-s-f-distributions/map-t-statistic-pi-gaussian-real.md): the one-sample $t$ statistic of i.i.d. normal data has the Student $t$ law with $n - 1$ degrees of freedom.
+- [One-sample $t$ statistic](map-t-statistic-pi-gaussian-real.md): the one-sample $t$ statistic of i.i.d. normal data has the Student $t$ law with $n - 1$ degrees of freedom.
 
 ## Sources
 

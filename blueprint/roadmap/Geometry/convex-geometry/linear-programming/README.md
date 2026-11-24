@@ -11,6 +11,8 @@
 - [Differentiability of the LP value function and shadow prices](differentiability-of-the-lp-value-function.md)
 - [Optimal dual solutions are the supergradients of the LP value function](optimal-dual-solutions-are-the-supergradients-of-the-lp-value.md)
 - [Existence and uniqueness of the central path of a linear program](central-path-of-a-linear-program.md)
+- [Deterministic equivalent of a two-stage stochastic linear program](deterministic-equivalent-of-a-two-stage-program.md)
+- [Consistency of sample average approximation over finitely many decisions; validity of Benders cuts](sample-average-approximation-and-benders-cuts.md)
 
 ## Related topics
 

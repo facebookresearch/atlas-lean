@@ -10,6 +10,7 @@ Brouwer's fixed-point theorem for products of simplices, by Nash's 1951 argument
 - [Strictly dominated actions are not played in a pure Nash equilibrium](strictly-dominated-actions-are-never-played-in-equilibrium.md)
 - [Matching pennies has no pure equilibrium; weak-dominance elimination depends on order](matching-pennies-and-order-dependence-of-weak-dominance.md)
 - [Support characterization of mixed best responses](support-characterization-of-mixed-best-responses.md)
+- [Pure deviations suffice to check a mixed Nash equilibrium](pure-deviations-suffice-for-mixed-nash-equilibrium.md)
 
 ## Related topics
 

@@ -23,7 +23,6 @@ Convex functions and sets in analysis and optimization: first-order and second-o
 - [Second-order condition for convexity](second-order-condition-for-convexity/README.md)
 - [Self-concordant functions and barriers](self-concordant-functions-and-barriers/README.md)
 - [Stampacchia's theorem](stampacchia-s-theorem/README.md)
-- [Stochastic programming](stochastic-programming/README.md)
 - [Tikhonov regularization](tikhonov-regularization/README.md)
 - [Convexity via the tangent-plane inequality](convex-on-iff-forall-le-add-fderiv-withi.md)
 - [Karush–Kuhn–Tucker conditions for inequality constraints](karush-kuhn-tucker-inequality.md)

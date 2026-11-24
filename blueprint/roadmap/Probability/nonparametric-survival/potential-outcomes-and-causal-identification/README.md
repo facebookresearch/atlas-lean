@@ -34,6 +34,7 @@
 ## Inverse probability weighting with a general covariate
 
 - [Inverse probability weighting with a general covariate](integral-ipw-treated-cond-exp.md)
+- [Inverse probability weighting equals standardization](inverse-probability-weighting-equals-standardization.md)
 
 ## Potential outcomes and the local average treatment effect
 

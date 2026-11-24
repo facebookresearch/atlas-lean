@@ -17,6 +17,7 @@
 - [Wilks' theorem (simple null)](tendsto-in-distribution-two-mul-log-like.md)
 - [Wilks' theorem, supremum form](tendsto-in-distribution-two-mul-i-sup-lo.md)
 - [Likelihood ratio on the boundary](tendsto-in-distribution-two-mul-log-like-2.md)
+- [Asymptotic normality of the difference of two sample proportions](asymptotic-difference-in-proportions-interval.md)
 
 ## Kernel score statistics
 

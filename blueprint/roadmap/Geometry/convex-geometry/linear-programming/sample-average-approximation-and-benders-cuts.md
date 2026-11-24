@@ -5,5 +5,5 @@
 ## Proof depends on
 
 - [Strong law of large numbers from the ergodic theorem](../../../Dynamics/ergodic-theory/birkhoff-ergodic-theorem/tendsto-average-coordinates-ae.md): almost-sure convergence for each of the finitely many $x$, after transporting the i.i.d. sequence to the coordinate process of the product law.
-- [Weak duality](../lagrange-duality/dual-value-le-primal-value.md): weak duality for the cut.
-- [Strong linear programming duality](../../../Geometry/convex-geometry/linear-programming/strong-linear-programming-duality.md): strong duality for the attained cut, after writing the equality constraints as paired inequalities.
+- [Weak duality](../../../Analysis/convex-analysis-and-variations/lagrange-duality/dual-value-le-primal-value.md): weak duality for the cut.
+- [Strong linear programming duality](strong-linear-programming-duality.md): strong duality for the attained cut, after writing the equality constraints as paired inequalities.

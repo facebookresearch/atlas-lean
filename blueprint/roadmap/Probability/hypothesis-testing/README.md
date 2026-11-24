@@ -53,5 +53,3 @@ Meta-analysis combines evidence from several studies and measures how much their
 
 ## Interval estimation
 
-- [Paired t interval for normal differences](paired-t-interval-for-normal-differences.md)
-- [Asymptotic normality of the difference of two sample proportions](asymptotic-difference-in-proportions-interval.md)

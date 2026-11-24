@@ -1246,3 +1246,5 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/Geometry/convex-geometry/integer-programming/branch-and-bound-and-chvatal-gomory-cuts.md"}], "id": "af_2244a6be625e2fd0e8089291", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Geometry/convex-geometry/integer-programming/time-indexed-formulation-of-resource-constrained-scheduling.md"}], "id": "af_b809975095d2c6ead99ef59a", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Geometry/convex-geometry/integer-programming/README.md"}], "id": "af_ee794e0c202028a2937a335d"}
+{"subject": [{"type": "generic", "uri": "../roadmap/Geometry/convex-geometry/linear-programming/deterministic-equivalent-of-a-two-stage-program.md"}], "id": "af_6a086e8e7a68316ceef9c8be", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Geometry/convex-geometry/linear-programming/sample-average-approximation-and-benders-cuts.md"}], "id": "af_e6d9d10e1d1aadb1d295c735", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}

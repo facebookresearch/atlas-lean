@@ -4,4 +4,4 @@ Let components $e$ of a finite nonempty system have measurable lifetimes $T_e \g
 
 ## Proof depends on
 
-- [Layer-cake formula](../../../MeasureTheory/integration/layer-cake-formula/README.md): the mean as the integral of the survival function.
+- [Layer-cake formula for powers](../../../MeasureTheory/integration/layer-cake-formula/lintegral-rpow-eq-lintegral-meas-le-mul.md): the mean as the integral of the survival function, with $p = 1$; the sets $\{T \ge t\}$ and $\{T > t\}$ have equal probability for all but countably many $t$.

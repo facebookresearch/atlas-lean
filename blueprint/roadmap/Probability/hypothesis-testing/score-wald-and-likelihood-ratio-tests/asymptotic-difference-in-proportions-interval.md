@@ -4,7 +4,7 @@ Let $X \sim \mathrm{Bin}(m, p_1)$ and $Y \sim \mathrm{Bin}(n, p_2)$ be independe
 
 ## Proof depends on
 
-- [Slutsky's theorem (ratio form)](../statistical-estimation/asymptotic-normality-of-maximum-likelihood/div-of-tendsto-in-measure-const.md): the ratio of the asymptotically normal numerator and the consistent standard error.
+- [Slutsky's theorem (ratio form)](../../statistical-estimation/asymptotic-normality-of-maximum-likelihood/div-of-tendsto-in-measure-const.md): the ratio of the asymptotically normal numerator and the consistent standard error.
 
 ## Expansion
 
