@@ -1,6 +1,6 @@
 # C-tightness of rescaled Wright–Fisher chains with selection and mutation
 
-For $M$ gene copies, selection coefficient $s = \alpha / M$ and mutation probabilities $u_i = \theta_i / (2M)$, let $X^M$ be the Wright–Fisher frequency chain with selection and mutation: from frequency $x$, mutation gives the [frequency after mutation](mutated-freq.md) $p'$, genic selection gives $p'' = (1 + s) p' / (1 + s p')$, and the next frequency is $k/M$ with $k \sim \mathrm{Bin}(M, p'')$; for $s = 0$ this is the chain whose [drift](integral-binomial-mutated-freq-drift.md) is the mutation drift. Fix $T > 0$ and a compact set of parameters $(\alpha, \theta)$. Then, uniformly over that set:
+For $M$ gene copies, selection coefficient $s = \alpha / M$ and mutation probabilities $u_i = \theta_i / (2M)$, let $X^M$ be the Wright–Fisher frequency chain with selection and mutation: from frequency $x$, mutation gives the [frequency after mutation](mutated-freq.md) $p'$, genic selection gives $p'' = (1 + s) p' / (1 + s p')$, and the next frequency is $k/M$ with $k \sim \mathrm{Bin}(M, p'')$; for $s = 0$ this is the chain whose [drift](integral-binomial-mutated-freq-drift.md) is the mutation drift. Fix $T > 0$ and a compact set of parameters $(\alpha, \theta)$, and consider only $M$ larger than $\lvert\alpha\rvert$ and $\theta_i/2$ for every parameter in that set, so that $0 \le u_i \le 1$, $s > -1$ and the chain is well defined. Then, uniformly over that set:
 
 1. the increments satisfy the fourth-moment bound
 

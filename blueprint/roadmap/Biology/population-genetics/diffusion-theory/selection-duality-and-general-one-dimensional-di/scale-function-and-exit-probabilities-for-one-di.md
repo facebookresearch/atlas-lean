@@ -1,6 +1,6 @@
 # Scale function and exit probabilities for one-dimensional diffusions (process level)
 
-Let $X$ be a continuous $[l, r]$-valued solution of the martingale problem for $L = b\, \frac{d}{dx} + \frac{1}{2} a\, \frac{d^2}{dx^2}$, with $a > 0$ and $b$ continuous on $(l, r)$, and let
+Let $X$ be a continuous $[l, r]$-valued solution of the martingale problem for $L = b\, \frac{d}{dx} + \frac{1}{2} a\, \frac{d^2}{dx^2}$, with $a$ and $b$ continuous on $(l, r)$ and $a > 0$ there, so that $s$ below is $C^2$ on $(l, r)$ with $Ls = 0$, and let
 
 $$s(x) = \int_c^x \exp\Bigl(-\int_c^y \frac{2 b}{a}\Bigr)\, dy$$
 
