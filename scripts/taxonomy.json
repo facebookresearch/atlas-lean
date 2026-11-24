@@ -12828,6 +12828,7 @@
   "MathlibExt/NumberTheory/WieferichOrder": {"to": "NumberTheory/primes-primality/special-primes", "title": "Square prime factors of Fermat numbers"},
   "MathlibExt/NumberTheory/WieferichPrime": {"to": "NumberTheory/primes-primality/special-primes", "title": "Wieferich primes"},
   "MathlibExt/NumberTheory/WilsonQuotient": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Wilson quotients"},
+  "MathlibExt/NumberTheory/WilsonQuotientPrimality": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Wilson quotients"},
   "MathlibExt/NumberTheory/WilsonQuotients": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Wilson quotients"},
   "MathlibExt/NumberTheory/Wolstenholme": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Wolstenholme's theorem"},
   "MathlibExt/NumberTheory/WolstenholmeBinomialExtension": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Wolstenholme's theorem"},
