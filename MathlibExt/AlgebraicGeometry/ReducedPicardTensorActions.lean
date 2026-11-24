@@ -8,9 +8,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.AlgebraicGeometry.NumericalCompactifiedJacobians
-public import MathlibExt.AlgebraicGeometry.RelativeLambdaReindexing
-public import MathlibExt.AlgebraicGeometry.GeometricHiggsFamilies
-public import MathlibExt.AlgebraicGeometry.LinearizedLineBundles
+public import MathlibExt.AlgebraicGeometry.SheafTensorSections
+public import Mathlib.CategoryTheory.Monoidal.Mod
 
 /-!
 # Actual reduced-curve Picard tensor action
@@ -38,7 +37,7 @@ open _root_.CategoryTheory _root_.CategoryTheory.Limits
 open _root_.CategoryTheory.MonoidalCategory _root_.CategoryTheory.CartesianMonoidalCategory
 open _root_.CategoryTheory.MonObj _root_.AlgebraicGeometry
 open CoherentCurveLinearSeries AlgebraicLineBundleFamilies PointedPicardFamilies
-open NumericalCompactifiedJacobians RelativeLambdaReindexing
+open NumericalCompactifiedJacobians SheafTensorSections NativeTensorComparisons
 
 variable {k : Type} [Field k] [IsAlgClosed k]
 
@@ -122,7 +121,7 @@ def pointFamilyIso (A : PicardTensorAction C q s M J) (T : Over (Spec (.of k)))
     (A.tensorPullback T h).iso
       (familyPullback C M.J (actionBase C q s M J) M.F (CartesianMonoidalCategory.snd J.J M.J))
       (familyPullback C J.J (actionBase C q s M J) J.P (CartesianMonoidalCategory.fst J.J M.J)) ≪≫
-    GeometricHiggsFamilies.tensorIso
+    NativeTensorComparisons.tensorIso
       (familyCompositionIso C M.J T (actionBase C q s M J) M.F h
           (CartesianMonoidalCategory.snd J.J M.J) ≪≫
         eqToIso (by simp [h]))

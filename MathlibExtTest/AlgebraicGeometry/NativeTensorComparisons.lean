@@ -20,7 +20,6 @@ namespace MathlibExt.AlgebraicGeometry.NativeTensorComparisons
 open _root_.CategoryTheory _root_.CategoryTheory.MonoidalCategory _root_.AlgebraicGeometry
 open MathlibExt.AlgebraicGeometry.LineBundleTaskContracts
 open MathlibExt.AlgebraicGeometry.AlgebraicLineBundleFamilies
-open MathlibExt.AlgebraicGeometry.DeligneFaltingsCategories
 open scoped TensorProduct
 
 universe u

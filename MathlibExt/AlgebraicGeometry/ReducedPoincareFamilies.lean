@@ -39,7 +39,7 @@ open CoherentCurveLinearSeries AlgebraicLineBundleFamilies PointedPicardFamilies
 open NumericalCompactifiedJacobians ReducedPicardTensorActions
 open FourierMukai PositiveCurveDeterminants CurveCohomologyDeterminantModels
 open SchemeDeterminantPresentations AffineDerivedCoefficientModules NativeLineDuals
-open RelativeLambdaReindexing
+open SheafTensorSections NativeTensorComparisons
 
 attribute [local instance] HasDerivedCategory.standard FineCompactifiedJacobian.proper
 
@@ -142,8 +142,8 @@ def rigidificationIso :
   exact (P.pointTensor.iso (rawPoincareModule S A C q s M J D)
       ((Scheme.Modules.pullback (prod.snd : parameterBase C q s M J ⟶ J.J).left).obj
         (dualModule J.J.left H))) ≪≫
-    GeometricHiggsFamilies.tensorIso (Iso.refl H) pullDual ≪≫
-    GeometricHiggsFamilies.tensorIso (Iso.refl H) (eqToIso E.object_eq.symm) ≪≫
+    NativeTensorComparisons.tensorIso (Iso.refl H) pullDual ≪≫
+    NativeTensorComparisons.tensorIso (Iso.refl H) (eqToIso E.object_eq.symm) ≪≫
     asIso E.evaluation.evaluation
 
 def beta : J.J ⟶ P.target.J :=
