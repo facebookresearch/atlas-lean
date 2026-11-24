@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import CSLibExt.MachineLearning.PACLearning.GrowthFunction
 public import CSLibExt.MachineLearning.PACLearning.SignNetworkGrowth
 public import CSLibExt.MachineLearning.PACLearning.TraceCard
 public import Cslib.MachineLearning.PACLearning.VCDimension
@@ -279,63 +280,6 @@ private theorem paramCount_le_vcBound (d : ℕ) (w : ℕ → ℕ) (L : ℕ) :
         by ring
   exact le_trans h1 h4
 
-/-- Vector and subset trace counts agree: the labelings `s → Bool` and the
-positive subsets of `s` realized by `C` are in bijection. -/
-private theorem traceSetVec_card_eq_traceFamily_card {α : Type*}
-    (C : ConceptClass α Bool) (s : Finset α) :
-    (traceSetVec C s).card = (traceFamily C s).card := by
-  classical
-  have hfwd : ∀ t : s → Bool, t ∈ traceSetVec C s →
-      Finset.univ.filter (fun x : s => t x = true) ∈ traceFamily C s := by
-    intro t ht
-    rw [mem_traceSetVec] at ht
-    obtain ⟨c, hc, hcu⟩ := ht
-    rw [mem_traceFamily]
-    exact ⟨c, hc, fun x => by
-      simp only [Finset.mem_filter, Finset.mem_univ, true_and]
-      rw [hcu x]⟩
-  have hbwd : ∀ u : Finset s, u ∈ traceFamily C s →
-      (fun x : s => decide (x ∈ u)) ∈ traceSetVec C s := by
-    intro u hu
-    rw [mem_traceFamily] at hu
-    obtain ⟨c, hc, hcu⟩ := hu
-    rw [mem_traceSetVec]
-    exact ⟨c, hc, fun x => by
-      by_cases hx : x ∈ u
-      · have hcx : c x.val = true := (hcu x).mp hx
-        simp [hx, hcx]
-      · cases hcx : c x.val
-        · simp [hx]
-        · exact absurd hcx (fun h => hx ((hcu x).mpr h))⟩
-  have hcard : Fintype.card ↥(traceSetVec C s) =
-      Fintype.card ↥(traceFamily C s) := by
-    refine Fintype.card_congr
-      { toFun := fun a =>
-          ⟨Finset.univ.filter (fun x : s => a.val x = true),
-            hfwd a.val a.property⟩
-        invFun := fun b =>
-          ⟨fun x : s => decide (x ∈ b.val), hbwd b.val b.property⟩
-        left_inv := by
-          rintro ⟨t, ht⟩
-          refine Subtype.ext ?_
-          change (fun x : s => decide
-            (x ∈ Finset.univ.filter (fun x : s => t x = true))) = t
-          funext x
-          by_cases h : t x = true
-          · simp [h]
-          · cases hx : t x
-            · simp [hx]
-            · exact absurd hx h
-        right_inv := by
-          rintro ⟨u, hu⟩
-          refine Subtype.ext ?_
-          change Finset.univ.filter
-            (fun x : s => decide (x ∈ u) = true) = u
-          ext x
-          simp only [Finset.mem_filter, Finset.mem_univ, true_and,
-            decide_eq_true_eq] }
-  rwa [Fintype.card_coe, Fintype.card_coe] at hcard
-
 /-- Every shattered sample is below the VC bound: either some fan-in
 already exceeds the sample (and `paramCount` dominates that fan-in), or
 the collapsed growth bound applies and the numeric inversion finishes. -/
@@ -376,14 +320,11 @@ private theorem card_le_bound_of_shatters (d : ℕ) (w : ℕ → ℕ) (L : ℕ)
       exact hsmall ⟨i, hiL, hcon⟩
     have hE : 1 ≤ paramCount d w L := one_le_paramCount d w L
     have h1 := setShatters_iff_card_traceFamily.mp hW
-    have h1' : (traceSetVec (networkClass d w L) W).card = 2 ^ W.card := by
-      rw [traceSetVec_card_eq_traceFamily_card]
-      exact h1
-    have h2 : (traceSetVec (networkClass d w L) W).card ≤
-        growthFunctionVec (networkClass d w L) W.card :=
-      traceSetVec_card_le_growthFunctionVec _ _
+    have h2 : (traceFamily (networkClass d w L) W).card ≤
+        growthFunction (networkClass d w L) W.card :=
+      traceFamily_card_le_growthFunction _ _
     have h3 : 2 ^ W.card ≤ growthFunctionVec (networkClass d w L) W.card := by
-      rw [← h1']
+      rw [← h1, growthFunctionVec_bool_eq]
       exact h2
     have h4 : (2 : ℝ) ^ W.card ≤
         (growthFunctionVec (networkClass d w L) W.card : ℝ) := by
