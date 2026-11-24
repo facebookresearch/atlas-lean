@@ -17,6 +17,7 @@ Continuous-time processes with continuous paths or independent increments: the c
 - [Scalar SDE stability and uniqueness](scalar-sde-stability-and-uniqueness/README.md)
 - [Scalar SDE Picard iteration](scalar-sde-picard-iteration/README.md)
 - [Scalar SDE Picard convergence](scalar-sde-picard-convergence/README.md)
+- [Scalar SDE strong existence](scalar-sde-strong-existence/README.md)
 - [Itô's formula](it-s-formula/README.md)
 - [Girsanov's theorem for a constant drift](has-law-sub-drift-with-density.md)
 - [Strong solutions of SDEs with Lipschitz coefficients](sde-lipschitz-exists-unique.md)
