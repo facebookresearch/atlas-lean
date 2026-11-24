@@ -10686,6 +10686,7 @@
   "MathlibExt/Combinatorics/Enumerative/EulerianPolynomialHankel": {"to": "Combinatorics/stirling-bell-eulerian/eulerian-numbers", "title": "Hankel determinants of Eulerian polynomials"},
   "MathlibExt/Combinatorics/Enumerative/EvenOddCompositions": {"to": "Combinatorics/integer-compositions", "title": "Even and odd compositions"},
   "MathlibExt/Combinatorics/Enumerative/EvenTableWeight": {"to": "Combinatorics/designs-latin-squares", "title": "Even tables in random determinant moments"},
+  "MathlibExt/Combinatorics/Enumerative/ExtendedTrinomialAlternating": {"to": "Combinatorics/binomial-coefficients/generalized-binomial-coefficients", "title": "Trinomial coefficients and the 2-Pascal triangle"},
   "MathlibExt/Combinatorics/Enumerative/ExtraTribLeftExtension": {"to": "Combinatorics/combinatorics-on-words/automatic-sequences", "title": "Tribonacci representations and the Trithoff array"},
   "MathlibExt/Combinatorics/Enumerative/ExtraTribReversal": {"to": "Combinatorics/combinatorics-on-words/automatic-sequences", "title": "Tribonacci representations and the Trithoff array"},
   "MathlibExt/Combinatorics/Enumerative/FallingBinomialTransform": {"to": "Combinatorics/riordan-arrays-transforms/sequence-transforms", "title": "Binomial transforms"},
