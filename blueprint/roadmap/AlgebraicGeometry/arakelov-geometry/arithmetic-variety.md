@@ -91,9 +91,19 @@ over $X$; it is integral, dominates $\operatorname{Spec} \mathbb{Z}$, hence is f
 $\mathbb{Z}$, and is projective and birational over $X$. It need not be regular at the finite
 places.
 
+## Depends on
+
+- [Currents of integration and the support theorems](../birational-geometry/currents-of-integration.md),
+  for the currents of type $(p, q)$ on $X_\infty$
+
 ## Proof depends on
 
 - [Resolution of singularities of quasi-projective varieties](../birational-geometry/resolution-of-singularities/resolution-of-singularities-of-quasi-projective-varieties.md), for the resolution of the generic fibre in the existence of a generic resolution of singularities
+- [Standard results of coherent cohomology on projective varieties](../birational-geometry/standard-results-of-coherent-cohomology.md),
+  for the finiteness theorem, which makes $H^0(X, L)$ a finitely generated $\mathbb{Z}$-module for
+  $X$ projective over $\mathbb{Z}$, and for flat base change along the flat ring map $\mathbb{Z} \to
+  \mathbb{C}$ and GAGA, which identify $H^0(X, L) \otimes_\mathbb{Z} \mathbb{C}$ with the
+  holomorphic sections of $L$ over $X(\mathbb{C})$
 
 ## Sources
 

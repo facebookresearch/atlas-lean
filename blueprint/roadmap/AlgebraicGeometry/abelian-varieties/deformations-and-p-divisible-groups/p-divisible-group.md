@@ -29,6 +29,23 @@ duality of the kernels of isogenies gives $(A[p^\infty])^t = A^t[p^\infty]$.
 - [Isogenies of abelian schemes](../isogenies-of-abelian-schemes.md), for the finite flat kernels
   $A[p^i]$ and their ranks
 - [Dual abelian scheme](../dual-abelian-scheme.md), for $A^t$ and the duality of kernels of isogenies
+- [Finite locally free group schemes and Cartier duality](finite-locally-free-group-schemes-and-cartier-duality.md),
+  for finite locally free group schemes, exact sequences of fppf sheaves and the Cartier duals
+  $G_i^D$
+
+## Proof depends on
+
+- [Isogenies of abelian schemes](../isogenies-of-abelian-schemes.md), for the kernels $A[p^i]$ of
+  multiplication by $p^i$, finite locally free of rank $p^{2gi}$, which form $A[p^\infty]$
+- [Dual abelian scheme](../dual-abelian-scheme.md), for the duality of the kernels of an isogeny and
+  of its dual, which gives $(A[p^\infty])^t = A^t[p^\infty]$
+- [Homomorphisms of abelian schemes and commutativity](../homomorphisms-of-abelian-schemes.md), for
+  the commutativity of $A$ (item 3), which makes the $A[p^i]$ commutative group schemes
+- [Finite locally free group schemes and Cartier duality](finite-locally-free-group-schemes-and-cartier-duality.md),
+  for the quotients and ranks of finite locally free group schemes, which give the epimorphisms
+  induced by $p^s$ and the exact sequences of the finite stages of every $p$-divisible group (Tate,
+  §2.1; Chai–Oort, (1.18)), and for Cartier duality, which makes $(G_i^D)$ a $p$-divisible group of
+  the same height (Tate, §2.3; Chai–Oort, (1.20))
 
 ## Sources
 
@@ -38,5 +55,7 @@ duality of the kernels of isogenies gives $(A[p^\infty])^t = A^t[p^\infty]$.
   and homomorphisms), (1.10) and (1.20) (Serre dual, and $(A[p^\infty])^t = A^t[p^\infty]$), (2.6)–(2.7)
   (abelian schemes over $S$ without restriction on the dimension) and (10.11) (group schemes are taken
   commutative).
-- J. Tate, "p-divisible groups", in *Proceedings of a Conference on Local Fields* (Driebergen, 1966),
-  Springer, 1967, 158–183: §2.1 (height $h \ge 0$).
+- J. Tate, "p-divisible groups", in *Proceedings of a Conference on Local Fields* (Driebergen,
+  1966), Springer, 1967, 158–183: §§1.2–1.3 (finite locally free commutative group schemes, their
+  orders in exact sequences and Cartier duality), §2.1 (height $h \ge 0$, and the exact sequences of
+  the finite stages) and §2.3 (the dual).

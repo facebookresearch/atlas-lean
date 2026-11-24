@@ -20,6 +20,7 @@ public import Mathlib.RingTheory.PowerSeries.Exp
 public import Mathlib.RingTheory.PowerSeries.Substitution
 public import MathlibExt.Algebra.DeepPowerSumCongruences
 public import MathlibExt.Algebra.DeepPowerSumCongruences.DividedPowerIdeal
+public import MathlibExt.Algebra.DeepPowerSumCongruences.Moebius
 public import MathlibExt.Algebra.DeepPowerSumCongruences.PartitionProduct
 
 /-!
@@ -330,17 +331,6 @@ public theorem_wanted padicValNat_multinomial_eq_sum_carries {p : ℕ} [Fact p.P
     (s : Finset ι) (r : ι → ℕ) :
     padicValNat p (Nat.multinomial s r) =
       ∑ i ∈ Finset.Icc 1 (∑ j ∈ s, r j), (∑ j ∈ s, r j % p ^ i) / p ^ i
-
-/-- **Möbius sum over the divisors prime to a given prime.** Let $p$ be a prime, $\mu$ the Möbius
-function and $n \ge 1$. The sum of $\mu(d)$ over the divisors $d$ of $n$ with $p \nmid d$ is $1$ if
-$n$ is a power of $p$ (including $n = 1 = p^0$) and $0$ otherwise.
-
-Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
-Congruences*, INTEGERS 24 (2024), Article A46, Lemma 28 (`integers-2024-A46-lem-28`). -/
-public theorem_wanted sum_moebius_divisors_not_dvd_prime {p : ℕ} (hp : p.Prime) {n : ℕ}
-    (hn : n ≠ 0) :
-    ∑ d ∈ n.divisors with ¬ p ∣ d, ArithmeticFunction.moebius d =
-      if p ^ Nat.log p n = n then 1 else 0
 
 /-- **The Artin–Hasse exponential has $p$-integral coefficients.** Let $p$ be a prime and let
 $F(z) = \exp\big(\sum_{j \ge 0} z^{p^j} / p^j\big) \in \mathbb{Q}[[z]]$ be the Artin–Hasse

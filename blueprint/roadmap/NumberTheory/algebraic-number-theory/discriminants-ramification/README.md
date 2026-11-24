@@ -21,3 +21,4 @@ Discriminants and their bounds, ramification and inertia, orders, units, ideal c
 - [Dirichlet's unit theorem: the logarithmic image of the units is a full lattice](dirichlet-unit-theorem.md)
 - [Dirichlet's S-unit theorem](s-unit-theorem.md)
 - [An algebraic integer of a number field is a unit if and only if its norm is ±1](unit-iff-norm-plus-minus-one.md)
+- [Kummer–Dedekind theorem](kummer-dedekind-theorem.md)

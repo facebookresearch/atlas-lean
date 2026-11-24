@@ -13,6 +13,7 @@ public import Mathlib.Algebra.Polynomial.AlgebraMap
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.Topology.Algebra.InfiniteSum.Real
 public import MathlibExt.NumberTheory.GeneralizedFibonacciPolynomial
+public import MathlibExt.NumberTheory.GibonacciPolynomialInverseRatio
 
 /-!
 # More sums involving gibonacci polynomial squares, revisited (statements)
@@ -60,23 +61,6 @@ public theorem_wanted tsum_gibonacciPoly_pow_ratio_telescope {x : ℝ} (hx : 0 <
     ∑' n : ℕ, (aeval x (g ((2 * n + 1) * k + r)) ^ lam / aeval x (g ((2 * n + 1) * k)) ^ lam -
         aeval x (g ((2 * n + 3) * k + r)) ^ lam / aeval x (g ((2 * n + 3) * k)) ^ lam) =
       aeval x (g (k + r)) ^ lam / aeval x (g k) ^ lam - ((x + √(x ^ 2 + 4)) / 2) ^ (r * lam)
-
-/-- **Telescoping sum of powers of inverse gibonacci polynomial ratios.** Let $f_n$ and $l_n$
-denote the Fibonacci and Lucas polynomials, given by $f_0 = 0$, $f_1 = 1$, $l_0 = 2$, $l_1 = x$
-and $g_{n+2} = x g_{n+1} + g_n$ for $g \in \{f, l\}$, evaluated at a real number $x > 0$, and
-let $\beta = (x - \sqrt{x^2 + 4})/2$. Then for $g \in \{f, l\}$, every positive integer $k$ and
-all natural numbers $r$ and $\lambda$,
-$$\sum_{n \ge 0} \left(\frac{g_{(2n+1)k}^\lambda}{g_{(2n+1)k+r}^\lambda} -
-\frac{g_{(2n+3)k}^\lambda}{g_{(2n+3)k+r}^\lambda}\right)
-= \frac{g_k^\lambda}{g_{k+r}^\lambda} - (-\beta)^{r\lambda}.$$
-
-Source: Thomas Koshy, *More Sums Involving Gibonacci Polynomial Squares Revisited*,
-The Fibonacci Quarterly 62 (2024), Article koshy07202023, Lemma 2.2. -/
-public theorem_wanted tsum_gibonacciPoly_pow_inv_ratio_telescope {x : ℝ} (hx : 0 < x)
-    {g : ℕ → ℤ[X]} (hg : g = 𝔣 ∨ g = 𝔩) {k : ℕ} (hk : 0 < k) (r lam : ℕ) :
-    ∑' n : ℕ, (aeval x (g ((2 * n + 1) * k)) ^ lam / aeval x (g ((2 * n + 1) * k + r)) ^ lam -
-        aeval x (g ((2 * n + 3) * k)) ^ lam / aeval x (g ((2 * n + 3) * k + r)) ^ lam) =
-      aeval x (g k) ^ lam / aeval x (g (k + r)) ^ lam - (-((x - √(x ^ 2 + 4)) / 2)) ^ (r * lam)
 
 /-- **Gibonacci polynomial square sums at even multiples of the index.** Let $f_n$ and $l_n$
 denote the Fibonacci and Lucas polynomials, given by $f_0 = 0$, $f_1 = 1$, $l_0 = 2$, $l_1 = x$

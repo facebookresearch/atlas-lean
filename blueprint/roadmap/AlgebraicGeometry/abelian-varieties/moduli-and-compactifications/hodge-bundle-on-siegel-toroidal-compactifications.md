@@ -47,6 +47,21 @@ prescribed by the values $d\,\varphi(n\gamma_i)$ of the fan on the period forms 
 
 - [Moduli of principally polarized abelian varieties and their compactifications](moduli-of-principally-polarized-abelian-varieties.md)
 
+## Proof depends on
+
+- [Moduli of principally polarized abelian varieties and their compactifications](moduli-of-principally-polarized-abelian-varieties.md),
+  for the toroidal compactifications at fine level for smooth projective cone decompositions, with
+  their semi-abelian extensions, the minimal compactification and Lan's relatively ample
+  boundary-supported divisor $D'$ (Corollary 6.7)
+
+## Expansion
+
+A good expansion also states and links:
+
+- one polarized cone decomposition serving all the levels $n$ of the statement, for its quantifiers
+- the charts of 3, at every point of $S$ and in the detail stated there, beyond the local charts of
+  the toroidal compactification (Lan, Theorem 6.1), for 3
+
 ## Sources
 
 - G. Faltings and C.-L. Chai, *Degeneration of Abelian Varieties*, Ergebnisse der Mathematik (3) 22,

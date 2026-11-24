@@ -84,6 +84,9 @@ of fields and closed embeddings of 4–5.
 
 - [Order reduction for marked ideals](order-reduction-for-marked-ideals.md), for Kollár's Theorem 69,
   with the functoriality he states for it, and Claim 71.2
+- [Blow-ups along smooth centres and total transforms](blow-ups-along-smooth-centres.md), for the
+  smoothness over the base field of the successive blow-ups (item 2) and the snc property of the
+  successive total transforms (item 6)
 
 ## Sources
 

@@ -34,16 +34,17 @@ targets are:
 5. Every finite subgroup scheme of $A$, for instance the kernel of an isogeny, is contained in
    $A[m]$ for some integer $m \ge 1$.
 
-A good expansion has pages for: the surjectivity of $\varphi_L$ (van der Geer–Moonen, Theorem
-(6.18), and, over an algebraically closed field, Milne's Proposition I.8.14, after Mumford's
-*Abelian Varieties*, §8); Mumford's Riemann–Roch and vanishing theorems (Mumford, §16; Milne,
-Theorem I.11.1; Robert, Theorem 2.2.10, and Proposition 2.3.14 over a base); theta groups and the
-Weil pairings $e_\lambda$, with the descent criterion of van der Geer and Moonen (Propositions
-(11.21), (11.25) and (11.28), through their Example (8.26)); and, for 5, the existence for an
-isogeny $f$ of an isogeny $h$ and an integer $n \ne 0$ with $h \circ f = n_A$ (used in the proof of
-Conrad's Proposition 4.1), or Deligne's theorem that a finite commutative group scheme over a field
-is killed by its order. Milne's Lemma I.13.1, Proposition I.13.2 and Corollaries I.13.10–I.13.11 are
-the case of kernels of order prime to the characteristic.
+That $\varphi_L$ is an isogeny for ample $L$, hence surjective as a morphism of schemes, is the
+second target on the [dual abelian variety](dual-abelian-variety.md) (van der Geer–Moonen, Theorem
+(6.18); over an algebraically closed field, Milne's Proposition I.8.14, after Mumford's *Abelian
+Varieties*, §8). A good expansion has pages for: Mumford's Riemann–Roch and vanishing theorems
+(Mumford, §16; Milne, Theorem I.11.1; Robert, Theorem 2.2.10, and Proposition 2.3.14 over a base);
+theta groups and the Weil pairings $e_\lambda$, with the descent criterion of van der Geer and
+Moonen (Propositions (11.21), (11.25) and (11.28), through their Example (8.26)); and, for 5, the
+existence for an isogeny $f$ of an isogeny $h$ and an integer $n \ne 0$ with $h \circ f = n_A$ (used
+in the proof of Conrad's Proposition 4.1), or Deligne's theorem that a finite commutative group
+scheme over a field is killed by its order. Milne's Lemma I.13.1, Proposition I.13.2 and Corollaries
+I.13.10–I.13.11 are the case of kernels of order prime to the characteristic.
 
 ## Depends on
 
@@ -53,6 +54,20 @@ the case of kernels of order prime to the characteristic.
   $K(L)$
 - [Isogenies of abelian schemes](isogenies-of-abelian-schemes.md), for isogenies and their degrees
 - [Polarization](polarization.md), for the polarizations whose descent 4 describes
+
+## Proof depends on
+
+- [Dual abelian variety](dual-abelian-variety.md), for $\varphi_L$, an isogeny for ample $L$ (its
+  item 2), which gives the surjectivity in 1, and for the dual homomorphisms used in 1 and 4
+- [Theorem of the cube, theorem of the square and the seesaw principle](theorem-of-the-cube.md), for
+  the theorem of the square and the group $K(L)$
+- [Isogenies of abelian schemes](isogenies-of-abelian-schemes.md), for the degrees of isogenies and
+  of $n_A$, used in 2, 4 and 5
+- [Standard results of coherent cohomology on projective varieties](../birational-geometry/standard-results-of-coherent-cohomology.md),
+  for the Riemann–Roch polynomial and Serre duality used in 2 and 3
+- [Smith normal form with a divisibility chain](../../LinearAlgebra/eigenvalues-and-canonical-forms/smith-normal-form/exists-smith-normal-form-dvd-chain.md),
+  for the reduction of a nonsingular integral matrix to elementary divisors, applied to the image of
+  $\alpha$ in $\mathbb{Z}^r$, in the degree formula of 4 (van der Geer–Moonen, (11.28) (i))
 
 ## Sources
 

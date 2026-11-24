@@ -84,6 +84,12 @@ the moduli application, which is the concern of 3 and of the pages it uses.
 - [Toroidal compactifications of unitary Shimura varieties](toroidal-compactifications-of-unitary-shimura-varieties.md),
   for the compactifications in the library's form of 3
 
+## Proof depends on
+
+- [Toroidal compactifications of unitary Shimura varieties](toroidal-compactifications-of-unitary-shimura-varieties.md),
+  for the toroidal compactifications in the unitary application of 3, not for the proportionality
+  factor or the push-forward along flag bundles
+
 ## Sources
 
 - D. Mumford, "Hirzebruch's proportionality theorem in the non-compact case", Invent. Math. 42

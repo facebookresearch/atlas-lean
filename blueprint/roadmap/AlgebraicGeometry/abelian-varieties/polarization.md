@@ -13,12 +13,21 @@ it has degree $1$, that is, if it is an isomorphism. This is not quite the same 
 $\lambda = \varphi_L$ for an ample invertible sheaf $L$ on $A$ itself.
 
 For an abelian scheme $A \to S$ with [dual abelian scheme](dual-abelian-scheme.md) $A^t \to S$, a
-polarization is an [isogeny](isogenies-of-abelian-schemes.md) $\lambda \colon A \to A^t$ such that for
-every geometric point $s$ of $S$ there is an ample divisor $D$ on the fibre $A_s$ with
+polarization is an [isogeny](isogenies-of-abelian-schemes.md) $\lambda \colon A \to A^t$ such that
+for every geometric point $s$ of $S$ there is an ample divisor $D$ on the fibre $A_s$ with
 $\lambda_s = \varphi_D$; it is principal if it is an isomorphism. A polarization is symmetric:
-$\lambda = \lambda^t \circ \kappa$, where $\lambda^t$ is the dual homomorphism and $\kappa \colon A \to
-A^{tt}$ the biduality isomorphism; over a field this is the identity $\varphi_L = \varphi_L^\vee \circ
-\kappa_A$ of the dual abelian variety.
+$\lambda = \lambda^t \circ \kappa$, where $\lambda^t$ is the dual homomorphism and $\kappa \colon A
+\to A^{tt}$ the biduality isomorphism; over a field this is the identity $\varphi_L = \varphi_L^\vee
+\circ \kappa_A$ of the dual abelian variety. Over an arbitrary base it follows from the field case.
+The homomorphism $\delta = \lambda - \lambda^t \circ \kappa \colon A \to A^t$ is zero on every
+geometric fibre, since $\lambda^t$ and $\kappa$ restrict there to the dual homomorphism and the
+biduality isomorphism of the dual abelian varieties. Let $s \in S$, let $S_0$ be an affine open
+neighbourhood of $s$ and $U \subset A^t_{S_0}$ an affine open subscheme containing the zero of
+$A^t_s$. As $\pi \colon A \to S$ is proper, the points of $S_0$ over which $\delta$ maps the fibre
+of $A$ into $U$ form an open neighbourhood of $s$; let $V$ be an affine open neighbourhood of $s$
+inside it. Then $\delta$ maps $A_V$ into the affine $V$-scheme $U \times_{S_0} V$, and as $(\pi_V)_*
+\mathcal{O}_{A_V} = \mathcal{O}_V$ it factors through $V$; as it preserves the zero section, it is
+zero on $A_V$.
 
 ## Depends on
 
@@ -27,6 +36,17 @@ A^{tt}$ the biduality isomorphism; over a field this is the identity $\varphi_L 
   base
 - [Isogenies of abelian schemes](isogenies-of-abelian-schemes.md), for isogenies and their degrees
 - [Abelian scheme](abelian-scheme.md), for abelian schemes
+
+## Proof depends on
+
+- [Dual abelian variety](dual-abelian-variety.md), for $\varphi_L = \varphi_L^\vee \circ \kappa_A$
+  (item 4), the symmetry of a polarization over a field
+- [Dual abelian scheme](dual-abelian-scheme.md), for the dual homomorphism $\lambda^t$ and the
+  biduality isomorphism $\kappa$ over $S$, which restrict on the fibres to those of the dual abelian
+  varieties
+- [Rigidity lemma](rigidity-lemma.md), for the cohomological flatness $(\pi_V)_* \mathcal{O}_{A_V} =
+  \mathcal{O}_V$ of an abelian scheme after every base change (Robert, Lemma A.2.1), a step of its
+  proof plan, which the argument over an arbitrary base uses
 
 ## Sources
 

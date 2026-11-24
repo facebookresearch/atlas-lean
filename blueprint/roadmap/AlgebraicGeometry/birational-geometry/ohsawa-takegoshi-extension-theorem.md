@@ -53,6 +53,11 @@ with a finite set of points, the constant $34/\delta$ and the weight $\gamma(\de
 compact manifold is Demailly's later [extension theorem for log canonical
 weights](l2-extension-from-log-canonical-subvarieties.md).
 
+## Depends on
+
+- [Nadel vanishing theorem for singular hermitian metrics](nadel-vanishing-for-singular-hermitian-metrics.md),
+  for weakly pseudoconvex Kähler manifolds, in Demailly's general form
+
 ## Proof depends on
 
 - [L² estimates for the ∂̄ operator](l2-estimates-for-the-dbar-operator.md), for the twisted a priori

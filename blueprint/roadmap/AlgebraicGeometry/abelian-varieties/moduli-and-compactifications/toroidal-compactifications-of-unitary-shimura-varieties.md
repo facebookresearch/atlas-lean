@@ -32,6 +32,11 @@ $Y \setminus Y^\circ$.
    bundle, the line bundle $\omega_Y^{\otimes k} \otimes \mathcal{O}_Y(-B)$ is ample whenever
    $\omega_Y$ is invertible; and the logarithmic Kodaira–Spencer isomorphism of 1 holds on $Y$.
 
+In Alpöge's library 1 is deduced from 2: the target of the node on the
+[Hodge bundle on toroidal compactifications of Siegel moduli schemes](hodge-bundle-on-siegel-toroidal-compactifications.md)
+(`SiegelToroidalIntegral`) supplies a polarized fan without self-intersections, to which 2 applies
+(`exists_model` in `PublishedTheorems/Divisors₂/ToroidalCompactificationBis.lean`).
+
 The hypotheses of the classical constructions are different from these data: Lan constructs toroidal
 compactifications of PEL type for a neat level and a smooth projective compatible collection of cone
 decompositions (Definitions 2.1–2.2, Remark 2.3, Theorem 6.1), and Madapusi Pera, for Hodge type,
@@ -46,6 +51,13 @@ without self-intersections; and the ampleness of $\omega_Y^{\otimes k} \otimes \
 ## Depends on
 
 - [Moduli of principally polarized abelian varieties and their compactifications](moduli-of-principally-polarized-abelian-varieties.md)
+- [Simple normal crossing divisor](../../birational-geometry/simple-normal-crossing-divisor.md), for
+  the boundary with simple normal crossings over the characteristic-zero field $F$, in 1 and 2
+
+## Proof depends on
+
+- [Hodge bundle on toroidal compactifications of Siegel moduli schemes](hodge-bundle-on-siegel-toroidal-compactifications.md),
+  for the polarized fan of its target, from which Alpöge's library deduces 1 from 2
 
 ## Sources
 

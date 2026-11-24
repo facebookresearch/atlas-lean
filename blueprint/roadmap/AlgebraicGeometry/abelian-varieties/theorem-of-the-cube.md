@@ -45,7 +45,8 @@ This node is still to be broken down. It covers the first results on line bundle
 
 A good expansion follows van der Geer and Moonen, Chapter II, and has pages for 1, 2, 3 and 4–5 in
 this order: the proof of the theorem of the cube (their (2.5)) shows that the maximal subscheme of 2
-over which $L$ is trivial is open, using the seesaw principle 1 and Krull's intersection theorem;
+over which $L$ is trivial is open, using the seesaw principle 1 and
+[Krull's intersection theorem](../../RingTheory/local-rings/krull-intersection-theorem.md);
 Milne's notes state the same results (Theorem I.5.1 and its corollaries, Theorems I.5.5 and I.5.16),
 but the version 2.00 of his notes leaves the last step of the proof of the theorem of the cube to a
 later version, referring to Mumford's *Abelian Varieties*, pp. 57–58.
@@ -53,6 +54,24 @@ later version, referring to Mumford's *Abelian Varieties*, pp. 57–58.
 ## Depends on
 
 - [Abelian scheme](abelian-scheme.md), for abelian varieties over a field
+
+## Proof depends on
+
+- [Krull's intersection theorem for finitely generated modules over a Noetherian local ring](../../RingTheory/local-rings/krull-intersection-theorem.md),
+  for the theorem of the cube, whose proof shows with it that the locus over which $L$ is trivial is
+  open (van der Geer–Moonen, (2.5))
+- [Nakayama's lemma for maps onto a finite module](../../RingTheory/local-rings/nakayama-surjectivity-criterion.md),
+  for the surjectivity of the evaluation map on the stalks, from its surjectivity on the fibres, in
+  the seesaw principle 1 (van der Geer–Moonen, (2.1))
+
+## Expansion
+
+A good expansion also states and links:
+
+- cohomology and base change in degree zero for the evaluation map (van der Geer–Moonen, (2.1)), for
+  the seesaw principle 1
+- the Künneth identification $H^1(X \times Y, \mathcal{O}) \cong H^1(X, \mathcal{O}) \oplus H^1(Y,
+  \mathcal{O})$ (van der Geer–Moonen, (2.5)), for the decisive step of the theorem of the cube 3
 
 ## Sources
 

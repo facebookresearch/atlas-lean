@@ -37,12 +37,19 @@ $(x, y) \mapsto (x, y + j_2(x))$ and $(x, y) \mapsto (x - j_1(y), y)$. For 3, Ko
 with a general linear projection, which needs $k$ to be infinite; this is the only case he uses.
 
 A good expansion has one page for each of 1, 2 and 3, the first with the descent of centres along
-smooth surjections and the compatibility of blowing up with flat base change.
+smooth surjections; the compatibility of blowing up with flat base change, for arbitrary schemes, is
+item 4 of [Blow-ups along smooth centres and total transforms](blow-ups-along-smooth-centres.md).
 
 ## Depends on
 
 - [Simple normal crossing divisor](../simple-normal-crossing-divisor.md), for blow-up sequences and blow-up
   sequence functors
+
+## Proof depends on
+
+- [Blow-ups along smooth centres and total transforms](blow-ups-along-smooth-centres.md), for the
+  compatibility of blowing up with flat base change (item 4), which holds for arbitrary schemes,
+  applied in 1 along the smooth surjections $X' \to X$ and $V \to X'$
 
 ## Sources
 

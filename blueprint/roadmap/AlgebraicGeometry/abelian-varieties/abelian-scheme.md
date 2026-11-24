@@ -9,12 +9,20 @@ $\operatorname{Spec} k$. An **isogeny** $\varphi \colon A \to B$ of abelian sche
 homomorphism that is finite and surjective; that its kernel is then finite and flat over $S$ is a
 theorem, recorded with the [isogenies of abelian schemes](isogenies-of-abelian-schemes.md).
 
-Over a field this is Milne's definition of an abelian variety as a complete connected group variety,
-with his convention that varieties are geometrically reduced and separated: with it, Milne shows that
-a group variety is nonsingular and that a connected group variety is geometrically connected. Over a
-variety $S$ over a field, an abelian scheme is what Milne calls a family of abelian varieties over
-$S$: a proper smooth map with a law of composition and a section such that each fibre is an abelian
-variety.
+As an explanatory comparison, not part of the definition: over a field this is Milne's definition of
+an abelian variety as a complete connected group variety, with his convention that varieties are
+geometrically reduced and separated: with it, Milne shows that a group variety is nonsingular and
+that a connected group variety is geometrically connected. Over a variety $S$ over a field, an
+abelian scheme is what Milne calls a family of abelian varieties over $S$: a proper smooth map with
+a law of composition and a section such that each fibre is an abelian variety.
+
+## Depends on
+
+This node has no prerequisites.
+
+## Proof depends on
+
+This node has no prerequisites.
 
 ## Sources
 

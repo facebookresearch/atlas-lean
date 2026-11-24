@@ -1,7 +1,8 @@
 # Kodaira vanishing theorem
 
-Let $X$ be a smooth projective variety of dimension $n$ over a field of characteristic zero, with
-canonical sheaf $\omega_X = \Omega^n_X$, and let $A$ be an ample invertible sheaf on $X$. Then
+Let $X$ be an integral smooth projective variety of dimension $n$ over a field of characteristic
+zero, with canonical sheaf $\omega_X = \Omega^n_X$, and let $A$ be an ample invertible sheaf on $X$.
+Then
 
 $$H^b(X, \omega_X \otimes A) = 0 \quad \text{for } b > 0, \qquad \text{equivalently} \qquad H^b(X, A^{-1}) = 0 \quad \text{for } b < n,$$
 
@@ -23,6 +24,11 @@ coefficient $1 < N$) and to $D' = D$, shows that $H^b(X, A^{-1}(-D)) \to H^b(X, 
 surjective for every $b$; as $A^{-1}(-D) \cong A^{-N-1}$, the target vanishes for $b < n$. Theorem
 5.1 is their vanishing theorem for restriction maps, which they derive from the $E_1$-degeneration
 of the logarithmic de Rham complexes of cyclic covers.
+
+## Depends on
+
+- [Geometrically reduced variety over a field](../schemes-and-morphisms/varieties-over-a-field/is-variety.md),
+  for the underlying variety over a field, which the statement takes smooth, projective and integral
 
 ## Proof depends on
 

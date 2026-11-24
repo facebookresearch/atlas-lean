@@ -37,6 +37,18 @@ with $\operatorname{div}(g) = \operatorname{div}(f)$, $g - f$ a boundary, and $g
 $\mathcal{Z}$ almost properly: the divisor of each summand meets $\mathcal{Z}$ properly, though its
 support need not.
 
+## Depends on
+
+- [Geometrically reduced variety over a field](../schemes-and-morphisms/varieties-over-a-field/is-variety.md),
+  for the variety convention in the moving-lemma case; smoothness and quasi-projectivity are
+  hypotheses of that lemma
+
+## Proof depends on
+
+Its proof uses the inputs listed under Expansion.
+
+## Expansion
+
 A good expansion has pages for:
 
 - Chow groups with supports in a closed subset and in a family of supports, with the exact sequence
@@ -50,6 +62,12 @@ A good expansion has pages for:
 - Chow's moving lemma for cycles on smooth quasi-projective varieties (Roberts), and the moving
   lemma for $K_1$-chains above, which the proof of the arithmetic intersection product uses on the
   generic fibre (Gillet–Soulé 4.2.5–4.2.6 and p. 143).
+
+A good expansion also states and links:
+
+- the Grothendieck group of complexes of locally free sheaves acyclic off a closed subset, with its
+  $\gamma$-filtration, and $K_1$-chains (Gillet–Soulé, *Adams operations*, §1.2; Gillet–Soulé,
+  4.2.5), for the statement
 
 ## Sources
 

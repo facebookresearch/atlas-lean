@@ -23,10 +23,10 @@ compact Kähler and $L$ is nef, as a consequence of the holomorphic Morse inequa
 $h^0(X, kL) = \chi(X, kL) + o(k^n) = \frac{(L^n)}{n!} k^n + o(k^n)$ (proof of Corollary 6.19, which
 states the criterion for bigness).
 
-**Algebraic form.** Let $X$ be a smooth projective variety of dimension $n$ over an algebraically
-closed field of characteristic zero and $L$ a nef invertible sheaf on $X$. Then $\kappa(L) = n$ if
-and only if $c_1(L)^n > 0$ (Esnault–Viehweg, Lemma 5.8 a)). Their proof combines the
-Hirzebruch–Riemann–Roch theorem, by which $\chi(X, L^\nu)$ is a polynomial in $\nu$ of degree at
+**Algebraic form.** Let $X$ be an integral smooth projective variety of dimension $n$ over an
+algebraically closed field of characteristic zero and $L$ a nef invertible sheaf on $X$. Then
+$\kappa(L) = n$ if and only if $c_1(L)^n > 0$ (Esnault–Viehweg, Lemma 5.8 a)). Their proof combines
+the Hirzebruch–Riemann–Roch theorem, by which $\chi(X, L^\nu)$ is a polynomial in $\nu$ of degree at
 most $n$ whose coefficient of $\nu^n$ is $c_1(L)^n / n!$ (for $L = \mathcal{O}$ on $\mathbb{P}^1$ it
 is the constant $1$), with the bounds $\dim H^b(X, F \otimes L^\nu) \le c_b\, \nu^{n-b}$ for every
 invertible sheaf $F$ and every $b \ge 0$ (Lemma 5.8 b)), which they prove by induction on the
@@ -39,6 +39,8 @@ projective varieties and notes that it holds for nef $\mathbb{Q}$-divisors (Lemm
 ## Depends on
 
 - [Nef and big line bundles](nef-and-big-line-bundles.md)
+- [Geometrically reduced variety over a field](../schemes-and-morphisms/varieties-over-a-field/is-variety.md),
+  for the underlying variety of the algebraic form, which it takes smooth, projective and integral
 
 ## Proof depends on
 

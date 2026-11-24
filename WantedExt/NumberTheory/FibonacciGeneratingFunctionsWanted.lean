@@ -38,19 +38,6 @@ public theorem_wanted gibonacci_powerSeries_mul (a b : ℤ) :
       = PowerSeries.C (a : ℚ)
         + PowerSeries.C ((b : ℚ) - (a : ℚ)) * PowerSeries.X
 
-/-- **Goodness passes to two transformed fractions.** Let $a$, $b$, $p$, $q$ be integers with
-$q \ne 0$ and $\gcd(p, q) = 1$, and suppose that $p/q$ is good for $(a, b)$. If $p + q \ne 0$,
-then $q/(p + q)$ is good for $(a, b)$; and if $p \ne 0$, then $(q - p)/p$ is good for $(a, b)$.
-
-Source: Knapp, *Fibonacci Generating Functions*, Journal of Integer
-Sequences 27 (2024), Article 24.3.1, Theorem 1
-(`jis-2024-24.3.1-thm-1`). -/
-public theorem_wanted isGibonacciGood_transform (a b p q : ℤ)
-    (hcop : Int.gcd p q = 1) (hq : q ≠ 0)
-    (h : IsGibonacciGood a b ((p : ℚ) / (q : ℚ))) :
-    (p + q ≠ 0 → IsGibonacciGood a b ((q : ℚ) / ((p : ℚ) + (q : ℚ)))) ∧
-    (p ≠ 0 → IsGibonacciGood a b (((q : ℚ) - (p : ℚ)) / (p : ℚ)))
-
 /-- **Congruence criterion for good fractions.** Let $a, b, p, q$ be integers with
 $(a, b) \ne (0, 0)$, $q \ne 0$ and $\gcd(p, q) = 1$, and put $m = |q^2 - pq - p^2|$. Then
 $p / q$ is good for $(a, b)$ if and only if there are integers $u$ and $v$ with

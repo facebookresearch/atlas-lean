@@ -127,6 +127,8 @@ formula applies.
 - [Arithmetic intersection product](arithmetic-intersection-product.md)
 - [Arithmetic varieties and hermitian vector bundles](arithmetic-variety.md)
 - [Geometric degrees as integrals of first Chern forms](geometric-degrees-as-integrals-of-chern-forms.md), for the effect of a constant rescaling of a metric in item 2
+- [Arithmetic Chow groups](arithmetic-chow-group.md), for the arithmetic Chow groups and the maps
+  $a$ and $\zeta$
 
 ## Proof depends on
 

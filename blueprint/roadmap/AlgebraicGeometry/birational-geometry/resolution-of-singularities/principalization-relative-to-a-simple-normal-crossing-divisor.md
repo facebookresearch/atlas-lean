@@ -61,6 +61,8 @@ and birational transforms, and his conclusion $\operatorname{max\text{-}ord} I_r
 
 - [Order reduction for marked ideals](order-reduction-for-marked-ideals.md), for the case $m = 1$ with
   boundary $E$
+- [Blow-ups along smooth centres and total transforms](blow-ups-along-smooth-centres.md), for the
+  total transforms of the boundary
 
 ## Sources
 
