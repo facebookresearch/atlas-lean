@@ -16,6 +16,7 @@ import Mathlib.Tactic.Ring
 /-!
 # Explicit formula for the supergeneralized Leonardo p-numbers
 
+`fibonacciP_succ_eq_sum_choose` writes the Fibonacci p-numbers as sums of binomial coefficients.
 The binomial sums in `superLeonardoP_eq_sum_choose` give the coefficients of the initial
 values and of the constant increment in the Leonardo recurrence.
 -/
@@ -66,9 +67,24 @@ private theorem diagonalSum_step (p t r : ℕ) :
   rw [Finset.sum_add_distrib]
   ac_rfl
 
-private theorem fibonacciP_diagonalSum (p : ℕ) (hp : 1 ≤ p) (t : ℕ) :
-    fibonacciP p (t + 1) = diagonalSum p t 0 := by
-  induction t using Nat.strong_induction_on with
+/-- **Binomial sum formula for Fibonacci p-numbers.** For all natural numbers $p \ge 1$ and $n$,
+the Fibonacci $p$-numbers $F_p$ satisfy
+$$F_p(n+1) = \sum_{i=0}^{\lfloor n/(p+1) \rfloor} \binom{n-ip}{i}.$$
+
+The paper (Theorem 8, quoting Kuhapatanakul) also gives the form
+$F_p(n) = \sum_{i=0}^{\lfloor (n-1)/(p+1) \rfloor} \binom{n-1-ip}{i}$, which is the same identity
+with $n$ shifted by one. The paper allows all natural $p$, but at $p = 0$ the sequence is
+identically zero ($F_0(1) = F_0(0) + F_0(0) = 0$) while the sum at $n = 0$ is
+$\binom{0}{0} = 1$, so $p \ge 1$ is assumed.
+
+Source: Clemens Schütz and Kristian Kelly, *An Explicit Formula for Supergeneralized
+Leonardo `p`-numbers*, Journal of Integer Sequences 28 (2025), Article 25.8.2,
+Theorem 8 (Kuhapatanakul). -/
+public theorem fibonacciP_succ_eq_sum_choose (p n : ℕ) (hp : 1 ≤ p) :
+    fibonacciP p (n + 1) = ∑ i ∈ Finset.range (n / (p + 1) + 1), (n - i * p).choose i := by
+  -- The right side is the diagonal sum with offset zero.
+  change fibonacciP p (n + 1) = diagonalSum p n 0
+  induction n using Nat.strong_induction_on with
   | _ t ih =>
     by_cases ht : t ≤ p
     · rw [diagonalSum_initial p t 0 ht, Nat.choose_zero_right]
@@ -137,7 +153,7 @@ public theorem superLeonardoP_eq_sum_choose (p k : ℕ) (hp : 1 ≤ p) (x : ℕ 
   rw [superLeonardoP_forcing, superLeonardoP_zero_eq p hp, ite_eq_right (by omega)]
   have weight (t : ℕ) : (fibonacciP p (t + 1) : ℝ) =
       ∑ j ∈ Finset.range (t / (p + 1) + 1), ((t - j * p).choose j : ℝ) := by
-    simp [fibonacciP_diagonalSum p hp, diagonalSum]
+    rw [fibonacciP_succ_eq_sum_choose p t hp, Nat.cast_sum]
   rw [weight]
   congr 2
   · apply Finset.sum_congr rfl

@@ -23,3 +23,13 @@ example (k : ℕ) (x : ℕ → ℝ) :
     superLeonardoP 2 k x 6 = 3 * x 2 + (2 * x 0 + x 1) + 5 * k := by
   rw [superLeonardoP_eq_sum_choose 2 k (by decide) x 6 (by decide)]
   norm_num [Finset.sum_range_succ, Nat.choose]
+
+-- At p = 1 the Fibonacci formula is the classical sum along shallow diagonals of Pascal's triangle.
+example (n : ℕ) : Nat.fib (n + 1) = ∑ i ∈ Finset.range (n / 2 + 1), (n - i).choose i := by
+  rw [← fibonacciP_one, fibonacciP_succ_eq_sum_choose 1 n le_rfl]
+  simp
+
+-- The last summand is needed: F_2(7) = C(6, 0) + C(4, 1) + C(2, 2) = 6.
+example : fibonacciP 2 7 = 6 := by
+  rw [fibonacciP_succ_eq_sum_choose 2 6 (by decide)]
+  decide
