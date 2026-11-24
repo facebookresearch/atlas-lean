@@ -1253,3 +1253,6 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/Logic/proof-theory/superpolynomial-lower-bounds-for-frege-proofs.md"}], "id": "af_2bdf47b854cff898d5ef238d", "extensions": {"org.autoform": {"not_ready": true}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Logic/model-theory/decidability-of-laurent-series-fields-in-positive-characteristic.md"}], "id": "af_e43bb221ba0e78e199d1159f", "extensions": {"org.autoform": {"not_ready": true}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Logic/model-theory/vaught-s-conjecture.md"}], "id": "af_31524801492c824df4c8314a", "extensions": {"org.autoform": {"not_ready": true}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Logic/model-theory/omitting-types-theorem.md"}], "id": "af_6dfa5ab54f58a038d9667bf1", "extensions": {"org.atlas-wiki": {"kind": "theorem"}, "org.autoform": {"not_ready": true}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Logic/modal-logic/intuitionistic-modal-logics-ck-and-ik.md"}], "id": "af_e91b8dba8bb9fd1db18046c3", "extensions": {"org.autoform": {"not_ready": true}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Logic/proof-theory/substructural-calculi-beyond-classical-linear-logic.md"}], "id": "af_40b6825351ac142b2ce7303f", "extensions": {"org.autoform": {"not_ready": true}}}

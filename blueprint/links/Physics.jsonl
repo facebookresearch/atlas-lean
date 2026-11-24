@@ -163,3 +163,4 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/Physics/elasticity-and-structures/pin-jointed-trusses/README.md"}], "id": "af_f91b730dcdecd656cd0cf118", "extensions": {"org.autoform": {"navigation": "module"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Physics/fluid-mechanics/pipe-flow-networks/README.md"}], "id": "af_fa1d3ed057a45250c80af5f7", "extensions": {"org.autoform": {"navigation": "module"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Physics/quantum-mechanics/sharp-ionization-conjecture.md"}], "id": "af_4f3147f04738744d39af9b27", "extensions": {"org.autoform": {"not_ready": true}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Physics/quantum-mechanics/anderson-localization-for-the-two-dimensional-bernoulli-model.md"}], "id": "af_3d6eecc25b018dcd810cb337", "extensions": {"org.autoform": {"not_ready": true}}}

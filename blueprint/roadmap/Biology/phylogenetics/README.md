@@ -33,3 +33,6 @@ Reconstruction of evolutionary trees from sequence data: substitution models, li
 
 - [Phylogenetic diversity](phylogenetic-diversity/README.md)
 - [Phylogenetic invariants](phylogenetic-invariants/README.md)
+
+- [Identifiability of phylogenetic networks under the multispecies coalescent](identifiability-of-phylogenetic-networks-under-the-coalescent.md)
+- [Information requirements for CRISPR lineage tracing](information-requirements-for-crispr-lineage-tracing.md)

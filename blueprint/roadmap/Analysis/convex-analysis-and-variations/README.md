@@ -38,3 +38,5 @@ Convex functions and sets in analysis and optimization: first-order and second-o
 ## Research directions
 
 - [Existence of minimizers for quasiconvex elastic energies](existence-of-minimizers-for-quasiconvex-elastic-energies.md)
+
+- [Regularity and singularities of elastic energy minimizers](regularity-and-singularities-of-elastic-minimizers.md)

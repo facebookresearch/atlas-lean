@@ -154,7 +154,7 @@
     {"slug": "population-dynamics", "title": "Population and evolutionary dynamics", "description": "Differential-equation models of population growth, species interaction and evolutionary change, such as logistic growth, predator–prey systems, replicator dynamics and quasispecies.", "msc": ["92D25", "92D15", "91A22"], "subfields": []},
     {"slug": "pattern-formation", "title": "Reaction–diffusion and pattern formation", "description": "Reaction–diffusion models of biological spread and spatial patterning, including travelling waves, morphogen gradients and Turing instabilities.", "msc": ["92C15", "35K57", "35C07"], "subfields": []},
     {"slug": "epidemiology", "title": "Mathematical epidemiology", "description": "Compartmental, renewal and branching-process models of infectious disease transmission and their reproduction numbers.", "msc": ["92D30"], "subfields": []},
-     {"slug": "neuroscience", "title": "Neuroscience", "description": "Mathematical models of neurons, neural populations and other excitable biological oscillators, including membrane dynamics, integrate-and-fire models, pulse coupling and synchronization.", "msc": ["92C20", "92B25"], "subfields": []}
+    {"slug": "neuroscience", "title": "Neuroscience", "description": "Mathematical models of neurons, neural populations and other excitable biological oscillators, including membrane dynamics, integrate-and-fire models, pulse coupling and synchronization.", "msc": ["92C20", "92B25"], "subfields": []}
    ]
   },
   "CategoryTheory": {

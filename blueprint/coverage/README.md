@@ -50,6 +50,9 @@ source modules; planned destinations are listed separately when added.
 - [Queueing theory](../roadmap/Probability/queueing-theory/README.md)
 - [Birth–death balance weights](../roadmap/Probability/markov-chains/birth-death-processes/README.md)
 - [Population genetics](../roadmap/Biology/population-genetics/README.md), including selection, inbreeding, effective size and diffusion models.
+- [Systems biology](../roadmap/Biology/systems-biology/README.md)
+- [Phylogenetics](../roadmap/Biology/phylogenetics/README.md)
+- [Neuroscience and biological oscillators](../roadmap/Biology/neuroscience/README.md)
 
 ### CSLibExt
 
@@ -66,6 +69,10 @@ Computer-science developments, including algorithms applied to other domains.
 - [Proof theory](../roadmap/Logic/proof-theory/README.md)
 - [Type-theoretic foundations](../roadmap/Logic/type-theoretic-foundations/README.md)
 - [Propositional dynamic logic](../roadmap/Logic/modal-logic/propositional-dynamic-logic/README.md)
+- [Databases](../roadmap/ComputerScience/databases/README.md)
+- [Machine learning](../roadmap/ComputerScience/machine-learning/README.md)
+- [Heuristic search and planning](../roadmap/ComputerScience/heuristic-search-and-planning/README.md)
+- [Quantum algorithms](../roadmap/ComputerScience/quantum-algorithms/README.md)
 
 ### PhyslibExt
 
@@ -81,6 +88,8 @@ Physics developments. **Implemented examples:**
 - [Observability](../roadmap/Analysis/control-theory/observability-of-linear-systems/README.md)
 - [Realization theory](../roadmap/Analysis/control-theory/realization-theory/README.md)
 - [Sampled-data systems](../roadmap/Analysis/control-theory/sampled-data-systems/README.md)
+- [Quantum states, distances and entropy](../roadmap/QuantumInformation/quantum-states-distances-and-entropy/README.md)
+- [Quantum Shannon theory](../roadmap/QuantumInformation/quantum-shannon-theory/README.md)
 
 Shared mathematical prerequisites retain their own canonical pages. Appearing
 as a prerequisite does not make them members of the dependent result's library.

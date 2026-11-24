@@ -18,3 +18,5 @@ Dynamics of biochemical reaction networks and gene regulatory circuits: mass-act
 - [Gene regulatory network dynamics](gene-regulatory-network-dynamics/README.md)
 - [Stochastic reaction networks](stochastic-reaction-networks/README.md)
 - [Chemical reaction network theory](chemical-reaction-network-theory/README.md)
+
+- [Minimal experiments for identifiable compartmental models](minimal-experiments-for-identifiable-compartmental-models.md)

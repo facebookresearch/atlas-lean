@@ -31,3 +31,5 @@ Every finite game has a mixed equilibrium ([Nash's theorem](nash-s-theorem/READM
 - [Undiscounted equilibria of multiplayer stochastic games](undiscounted-equilibria-of-stochastic-games.md)
 - [Polynomial-time approximate Nash equilibria in bimatrix games](polynomial-time-approximate-nash-equilibria-in-bimatrix-games.md)
 - [Optimal rate of sequential calibration](optimal-rate-of-sequential-calibration.md)
+
+- [Maximum number of Nash equilibria in bimatrix games](maximum-number-of-nash-equilibria-in-bimatrix-games.md)

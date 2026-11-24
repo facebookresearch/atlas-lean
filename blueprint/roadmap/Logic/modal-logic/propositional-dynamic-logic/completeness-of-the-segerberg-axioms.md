@@ -20,6 +20,14 @@ Its rules are modus ponens and modal generalization, from $\varphi$ infer $[a]\v
 when it is valid in every model. PDL is not compact, so this is weak completeness, not
 completeness for arbitrary sets of hypotheses.
 
+## Depends on
+
+- [PDL formulas](propositional-dynamic-logic-pdl/formula.md)
+- [PDL programs](propositional-dynamic-logic-pdl/program.md)
+- [PDL model](propositional-dynamic-logic-pdl/model.md)
+- [Relation denoted by a PDL program](propositional-dynamic-logic-pdl/prog-rel.md)
+- [Satisfaction of PDL formulas](propositional-dynamic-logic-pdl/sat.md)
+
 ## Expansion
 
 A sound expansion has separate pages for:

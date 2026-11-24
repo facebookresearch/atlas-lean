@@ -11,9 +11,28 @@ effect between weakly selected alleles.
 
 ## Expansion
 
-A sound expansion defines a two-locus Wright–Fisher model with selection, recombination and random
-sampling, proves the exact statements that hold without recombination, and states any dependence of
-joint fixation probabilities on the recombination rate only as a conjecture unless a source proves it.
+A sound expansion first defines the model of Hill and Robertson (1966): two biallelic loci with
+additive effects $\alpha$ and $\beta$ (in units of the phenotypic standard deviation) on a selected
+character, no interaction between the loci, selection of intensity $i$ in standard units, crossover fraction
+$c$ and random sampling in a population of effective size $N$, started at linkage equilibrium. Then, as
+separate pages:
+
+- the exact statement for $c = 0$ with no mutation: a haplotype absent from the population stays absent,
+  so if the two favoured alleles start only in repulsion, at most one of them can be fixed (the
+  Fisher–Muller argument that Felsenstein (1974) relates to this interference);
+- the reported dependence of the process only on $Ni\alpha$, $Ni\beta$, $Nc$ and the initial gene
+  frequencies and linkage disequilibrium, stated for an explicit large-population approximation, or held
+  as a conjecture until a source proves it;
+- the simulation findings of Hill and Robertson (1966) on the chance of fixation at the first locus: its
+  approximately linear relation to $2Nc/(2Nc + 1)$ in most runs, no detectable effect of the second locus
+  when its effect is less than half that of the first, and a minimum as the second locus's effect or
+  initial frequency varies; each is a conjecture or a numerical record, not a theorem, unless a source
+  proves it;
+- the two-locus fate of a novel weakly selected variant and the multilocus equilibrium with reversible
+  mutation of McVean and Charlesworth (2000), each in that paper's model and approximation.
+
+Any dependence of joint fixation probabilities on the recombination rate is stated only as a conjecture
+unless a source proves it.
 
 ## Sources
 

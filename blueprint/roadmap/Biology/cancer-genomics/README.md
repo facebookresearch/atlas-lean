@@ -12,3 +12,6 @@ Mathematical models for tumour sequencing data: purity and copy number, cancer c
 
 - [Forbidden structures for persistent perfect phylogenies](forbidden-structures-for-persistent-perfect-phylogenies.md)
 - [Complexity of the copy-number triplet problem](complexity-of-the-copy-number-triplet-problem.md)
+
+- [Identifiability of tumor histories with copy-number change and mutation loss](identifiability-of-tumor-histories-with-copy-number-change-and-mutation-loss.md)
+- [Number of samples for unique clone-tree reconstruction](number-of-samples-for-unique-clone-tree-reconstruction.md)

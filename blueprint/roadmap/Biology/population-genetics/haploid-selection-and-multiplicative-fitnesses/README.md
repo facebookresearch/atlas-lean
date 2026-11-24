@@ -7,3 +7,5 @@
 - [Diploid selection with multiplicative fitnesses as haploid selection](diploid-eq-haploid-of-mul.md)
 - [Multiplicative haploid selection preserves linkage equilibrium](recombine-select-eq-mul.md)
 - [Multiplicative selection and recombination create no disequilibrium](linkage-diseq-recombine-select-of-mul.md)
+
+- [Haploid selection and the crossproduct ratio: epistasis generates linkage disequilibrium](epistasis-generates-linkage-disequilibrium.md)

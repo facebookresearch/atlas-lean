@@ -12,9 +12,24 @@ interference in finite populations.
 
 ## Expansion
 
-A sound expansion separates exact finite statements about a fixed asexual Wright–Fisher model (for
-example about which mutations can fix together without recombination) from the asymptotic results on
-substitution rates, which need the precisely stated large-population regime of one source.
+A sound expansion first defines an asexual Wright–Fisher model with beneficial mutations of given
+rate and distribution of fitness increments, and then states, as separate pages:
+
+- the exact statement that, without recombination, two beneficial mutations that arise in different
+  lineages cannot both be fixed unless a further mutation produces a genotype carrying both, since an
+  absent genotype can arise only by mutation in an existing lineage;
+- the quantities Gerrish and Lenski (1998) derive for their model of clonal interference: the fixation
+  probability of a beneficial mutation, the expected substitution rate, the expected selection coefficient
+  of realized substitutions, the expected rate of fitness increase, and the probabilities that a
+  beneficial mutation transiently reaches a frequency of at least $1\%$ or a majority, each with the
+  population size, mutation rate and effect distribution of that model;
+- the regime of Desai and Fisher (2007), in which beneficial mutations are common: a steady-state
+  fitness variation set by the balance between selection and beneficial mutation, which grows
+  logarithmically with population size and mutation rate, as does the rate of adaptation, stated with
+  the scaling assumptions of that paper.
+
+The asymptotic statements need the precisely stated large-population regime of their source and stay
+separate from the exact finite statement.
 
 ## Sources
 
@@ -26,4 +41,5 @@ substitution rates, which need the precisely stated large-population regime of o
   <https://doi.org/10.1093/genetics/78.2.737>.
 - R. A. Neher, "Genetic draft, selective interference, and population genetics of rapid adaptation",
   Annual Review of Ecology, Evolution, and Systematics 44 (2013), 195–215,
-  <https://doi.org/10.1146/annurev-ecolsys-110512-135920>.
+  <https://doi.org/10.1146/annurev-ecolsys-110512-135920> (review of genetic draft and selective
+  interference in rapidly adapting populations).

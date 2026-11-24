@@ -8,3 +8,5 @@ Reaction–diffusion models of biological spread and spatial patterning, includi
 
 - [Slow traveling pulse of the Hodgkin–Huxley equations](slow-traveling-pulse-of-the-hodgkin-huxley-equations.md)
 - [Reduced dynamics of meandering spiral waves](reduced-dynamics-of-meandering-spiral-waves.md)
+
+- [Threshold for pulse initiation in excitable media](threshold-for-pulse-initiation-in-excitable-media.md)

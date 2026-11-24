@@ -9,3 +9,5 @@ Structural study of formal proofs and provability: sequent calculi, linear logic
 - [Cut elimination for the intuitionistic sequent calculus LJ](cut-elimination-for-the-intuitionistic-sequent-calculus.md)
 - [Gödel–Gentzen negative translation](goedel-gentzen-negative-translation.md)
 - [Superpolynomial lower bounds for Frege proofs](superpolynomial-lower-bounds-for-frege-proofs.md)
+
+- [Substructural sequent calculi beyond classical linear logic](substructural-calculi-beyond-classical-linear-logic.md)

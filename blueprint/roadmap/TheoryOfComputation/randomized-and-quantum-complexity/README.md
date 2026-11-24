@@ -17,3 +17,5 @@ Probabilistic classes (RP, BPP), Arthur–Merlin and interactive proofs (AM, MA,
 - [Deterministic polynomial identity testing](deterministic-polynomial-identity-testing.md)
 
 - [Path-sum expansion of quantum circuit amplitudes](path-sum-expansion-of-quantum-circuit-amplitudes.md)
+
+- [Hardness of the planted clique problem](hardness-of-the-planted-clique-problem.md)
