@@ -24,7 +24,7 @@ parts pair by pair; a final unpaired part `c` is the pair `(c, 0)` and maps to `
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Combinatorics.Enumerative.Composition
+public import MathlibExt.Combinatorics.Enumerative.ArndtV
 public import Mathlib.Data.Nat.Fib.Basic
 public import MathlibExt.NumberTheory.PadovanSequence
 public import WantedExt.Combinatorics.Enumerative.ArndtCompositionsGeneratingFunctionsWanted
@@ -123,35 +123,6 @@ theorem arndtU_examples :
       arndtU [1, 1, 1, 2] = [2, 1, 2] ∧ arndtU [1, 3, 1] = [4, 1] := by
   decide
 
-/-- **The map $V$ on lists.** The map $V$ sends a list $(c_1, c_2, \dots)$ of natural
-numbers to the concatenation of the images of its consecutive pairs $(c_1, c_2)$, $(c_3, c_4)$,
-and so on, where $1^j$ denotes $j$ parts equal to $1$: a pair $(a, b)$ with $b \le a$ goes to
-$(1^{a - b}, 2b)$; a pair $(a, b)$ with $b > a$ goes to $(1^{a + b - 2k - 1}, 2k + 1)$, where
-$k = \lfloor (b - a + 1)/2 \rfloor$ is the integer $k \ge 1$ with $2k - 1 \le b - a < 2k + 1$;
-and a final unpaired entry $a$ goes to $1^a$. The empty list goes to itself. The exponent
-$a + b - 2k - 1$ is read as $0$ when it is negative, which happens only when $a = 0$.
-
-Source: Brian Hopkins and Aram Tangboonduangjit, *Arndt and De Morgan Compositions*, INTEGERS 26
-(2026), Article A64, Theorem 3 and its proof. -/
-def arndtV : List ℕ → List ℕ
-  | [] => []
-  | [a] => List.replicate a 1
-  | a :: b :: rest =>
-      (if b ≤ a then List.replicate (a - b) 1 ++ [2 * b]
-        else List.replicate (a + b - 2 * ((b - a + 1) / 2) - 1) 1 ++
-          [2 * ((b - a + 1) / 2) + 1]) ++
-        arndtV rest
-
-/-- **Values of the map $V$.** The map $V$ sends $(2, 3)$ to $(1, 1, 3)$, $(1, 4)$ to $(5)$,
-$(4, 1)$ to $(1, 1, 1, 2)$, $(1, 3, 1)$ to $(1, 3, 1)$ and $(2, 2, 1)$ to $(4, 1)$.
-
-Source: Brian Hopkins and Aram Tangboonduangjit, *Arndt and De Morgan Compositions*, INTEGERS 26
-(2026), Article A64, Table 6. -/
-theorem arndtV_examples :
-    arndtV [2, 3] = [1, 1, 3] ∧ arndtV [1, 4] = [5] ∧ arndtV [4, 1] = [1, 1, 1, 2] ∧
-      arndtV [1, 3, 1] = [1, 3, 1] ∧ arndtV [2, 2, 1] = [4, 1] := by
-  decide
-
 /-- **Arndt compositions and compositions into odd parts are equinumerous.** For every natural
 number $n$, the number $a(n, 0)$ of Arndt compositions of $n$ (compositions $(c_1, \dots, c_m)$
 of $n$ with $c_{2i-1} > c_{2i}$ whenever $2i \le m$) equals the number $c^0_o(n)$ of compositions
@@ -172,15 +143,6 @@ Source: Brian Hopkins and Aram Tangboonduangjit, *Arndt and De Morgan Compositio
 (2026), Article A64, Theorem 2 (`integers-2026-A64-thm-2`). -/
 public theorem_wanted exists_perm_composition_blocks_eq_arndtU (n : ℕ) :
     ∃ σ : Equiv.Perm (Composition n), ∀ c, (σ c).blocks = arndtU c.blocks
-
-/-- **The map $V$ permutes compositions.** For every natural number $n$, the map $V$ sends
-compositions of $n$ to compositions of $n$, and it is a permutation of the set of compositions
-of $n$.
-
-Source: Brian Hopkins and Aram Tangboonduangjit, *Arndt and De Morgan Compositions*, INTEGERS 26
-(2026), Article A64, Theorem 3 (`integers-2026-A64-thm-3`). -/
-public theorem_wanted exists_perm_composition_blocks_eq_arndtV (n : ℕ) :
-    ∃ σ : Equiv.Perm (Composition n), ∀ c, (σ c).blocks = arndtV c.blocks
 
 /-- **Compositions fixed by $U$ and their Padovan count.** A composition $(c_1, \dots, c_m)$ of
 $n$ is fixed by the map $U$ if and only if $c_i = 1$ for every odd $i$ and $c_i$ is even for
