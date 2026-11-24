@@ -56,9 +56,11 @@ Both sums are unconditional sums of real numbers, which take the value $0$ for a
 not summable; the statement asserts only the inequality between these values, not that the
 series converge.
 
-Source: Cheng, Kinlaw and Nguyen, *The Reciprocal Sum of Even Pseudoprimes*, Journal of
-Integer Sequences 29 (2026), Article 26.1.3, Lemma 8, display (smooth1)
-(`jis-2026-26.1.3-lem-8`). -/
+Source: Nguyen and Pomerance, *The Reciprocal Sum of the Amicable Numbers*, Mathematics of
+Computation 88 (2019), no. 317, 1503–1526, Lemma 2.9 (first inequality)
+(<https://doi.org/10.1090/mcom/3362>). Also stated in Cheng, Kinlaw and Nguyen, *The Reciprocal
+Sum of Even Pseudoprimes*, Journal of Integer Sequences 29 (2026), Article 26.1.3, Lemma 8,
+display (smooth1) (`jis-2026-26.1.3-lem-8`). -/
 public theorem smoothReciprocalTail_le_rpow_mul_smoothZeta {x y s : ℝ} (hy : 2 ≤ y)
     (hyx : y < x) (hs0 : 0 < s) (hs1 : s < 1) :
     ∑' n : {n : ℕ // n ∈ Nat.smoothNumbers (⌊y⌋₊ + 1) ∧ x < n}, (1 : ℝ) / n ≤
