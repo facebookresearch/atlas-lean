@@ -1,7 +1,7 @@
 # Solution concepts of graph games (Deng-Papadimitriou)
 
 Let $G$ be a finite undirected graph without loops, with real edge weights (possibly negative), and let the cooperative game on its vertex
-set be $v_G(S) = $ the total weight of the edges with both endpoints in $S$. Then the Shapley value of vertex $i$ is half the total weight of
+set be $v_G(S) =$ the total weight of the edges with both endpoints in $S$. Then the Shapley value of vertex $i$ is half the total weight of
 the edges incident to $i$; and the following are equivalent: the core of $v_G$ is nonempty; $G$ has no negative cut (no vertex set $S$ for which
 the total weight of edges between $S$ and its complement is negative); the Shapley value lies in the core. The source takes integer weights;
 the statement and its proof hold verbatim for real weights. The NP-completeness of deciding whether a negative cut exists is cited, not part of

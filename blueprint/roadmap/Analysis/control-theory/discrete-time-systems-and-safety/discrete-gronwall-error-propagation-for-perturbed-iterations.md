@@ -2,7 +2,9 @@
 
 Let $X$ be a normed space and $F : X \to X$ an $L$-Lipschitz map with $L \ge 0$. Let $x_{k+1} = F(x_k)$
 and $y_{k+1} = F(y_k) + e_k$ with $\lVert e_k \rVert \le \tau$ for all $k$. Then for every $k \ge 0$,
+
 $$\lVert y_k - x_k \rVert \le L^k \lVert y_0 - x_0 \rVert + \tau \sum_{j=0}^{k-1} L^j.$$
+
 Consequently:
 
 - if $L = 1 + ch$ with $c \ge 0$ and $h \ge 0$, then

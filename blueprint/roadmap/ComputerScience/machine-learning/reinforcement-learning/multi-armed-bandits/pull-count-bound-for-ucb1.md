@@ -4,6 +4,7 @@ Let UCB1 run on $K \ge 2$ arms with independent rewards supported in $[0,1]$, pl
 then an arm maximizing $\bar x_j + \sqrt{2 \ln t / n_j}$, where $t$ is the number of plays made so far and
 $n_j$ the number of plays of arm $j$. For every arm $i$ with gap
 $\Delta_i > 0$ and every $n \ge K$,
+
 $$\mathbb{E}[T_i(n)] \le \frac{8 \ln n}{\Delta_i^2} + 1 + \frac{\pi^2}{3}.$$
 
 ## Expansion

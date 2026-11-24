@@ -19,7 +19,9 @@ communication. Rate $0$ is achievable for both, so $Q(\Phi) \le C(\Phi)$.
 and take $n$ large enough that $M = 2^{\lfloor Rn \rfloor}$ messages are encoded as states $\sigma_a$ on $X^{\otimes n}$ and
 decoded by a measurement $\{\mu_b\}$ on the output of $\Phi^{\otimes n}$ with every error probability below $\varepsilon$.
 The operators $\nu_b = (\Phi^{\otimes n})^*(\mu_b)$ form a measurement on $X^{\otimes n}$, and $\sigma_a \le I$, so
+
 $$M (1 - \varepsilon) < \sum_a \langle \nu_a, \sigma_a \rangle \le \sum_a \operatorname{Tr} \nu_a \le \sum_b \operatorname{Tr} \nu_b = \operatorname{Tr} I_{X^{\otimes n}} = (\dim X)^n .$$
+
 Thus $\lfloor Rn \rfloor < n \log_2 \dim X + \log_2 \tfrac{1}{1 - \varepsilon}$ for all large $n$. Dividing by $n$ and letting
 $n \to \infty$ gives $R \le \log_2 \dim X$.
 

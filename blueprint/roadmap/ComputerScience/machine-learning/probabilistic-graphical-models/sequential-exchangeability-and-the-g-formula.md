@@ -9,7 +9,9 @@ likewise for covariates), sequential exchangeability ($Y^{\bar a}$ is independen
 $\bar L_t = \bar l_t$ and $\bar A_{t-1} = \bar a_{t-1}$, for every $t$) and positivity
 ($P(A_t = a_t \mid \bar L_t = \bar l_t, \bar A_{t-1} = \bar a_{t-1}) > 0$ whenever the conditioning event has
 positive probability). Then
+
 $$\mathbb{E}[Y^{\bar a}] = \sum_{\bar l} \mathbb{E}[Y \mid \bar L = \bar l, \bar A = \bar a] \prod_{t=0}^{K-1} P(L_t = l_t \mid \bar L_{t-1} = \bar l_{t-1}, \bar A_{t-1} = \bar a_{t-1}),$$
+
 the sum ranging over covariate histories whose conditioning events have positive probability.
 
 ## Expansion

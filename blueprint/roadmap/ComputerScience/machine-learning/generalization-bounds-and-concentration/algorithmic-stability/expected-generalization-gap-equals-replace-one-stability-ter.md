@@ -1,7 +1,9 @@
 # Expected generalization gap equals replace-one stability term
 
 For $m \ge 1$, a possibly randomized learner $A$, a distribution $D$ and a loss with all the expectations below finite,
+
 $$\mathbb{E}_{S \sim D^m}\bigl[L_D(A(S)) - L_S(A(S))\bigr] = \mathbb{E}\bigl[\ell(A(S^{(i)}), z_i) - \ell(A(S), z_i)\bigr],$$
+
 where on the right $S \sim D^m$, $z' \sim D$ and $i$ uniform on $\{1, \dots, m\}$ are independent, $S^{(i)}$ replaces $z_i$
 by $z'$, and both sides also average over $A$'s randomness (Shalev-Shwartz and Ben-David, Theorem 13.2).
 

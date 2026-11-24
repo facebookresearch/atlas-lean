@@ -5,8 +5,10 @@ binary computational tree of height $h$ whose leaves are the $x_j$ and whose int
 two children. Assume every addition satisfies the standard model
 $\mathrm{fl}(a + b) = (a + b)(1 + \delta)$ with $\lvert \delta \rvert \le u$, as IEEE arithmetic does for finite
 inputs, a fixed rounding to nearest and no underflow or overflow. Then the computed sum $\hat s$ satisfies
+
 $$\Bigl\lvert \hat s - \textstyle\sum_j x_j \Bigr\rvert \le \bigl((1 + u)^h - 1\bigr) \sum_j \lvert x_j \rvert
 \le (1 + u)^h\, h\, u \sum_j \lvert x_j \rvert.$$
+
 Indeed, $\hat s = \sum_j x_j \prod_{i \in \pi_j} (1 + \delta_i)$, where $\pi_j$ is the set of at most $h$ additions on the
 path from $x_j$ to the root; expanding $\prod_{i \in \pi_j}(1 + \delta_i) - 1$ as a sum over nonempty subsets of $\pi_j$
 bounds its absolute value by $(1 + u)^{\lvert \pi_j \rvert} - 1 \le (1 + u)^h - 1$. The second, weaker bound is the

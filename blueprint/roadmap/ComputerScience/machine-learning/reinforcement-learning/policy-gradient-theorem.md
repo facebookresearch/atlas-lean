@@ -4,7 +4,9 @@ Let a finite discounted MDP have discount $0 \le \gamma < 1$ and start distribut
 $\theta \mapsto \pi_\theta(a \mid s)$ be a stationary policy class, differentiable in $\theta$ on an open set,
 with $\pi_\theta(a \mid s) > 0$ for every $s$, $a$ and $\theta$. With the normalized discounted state
 occupancy $d^{\pi_\theta}_\mu(s) = (1-\gamma) \sum_{t \ge 0} \gamma^t \Pr^{\pi_\theta}_\mu(s_t = s)$,
+
 $$\nabla_\theta V^{\pi_\theta}(\mu) = \frac{1}{1-\gamma}\, \mathbb{E}_{s \sim d^{\pi_\theta}_\mu}\, \mathbb{E}_{a \sim \pi_\theta(\cdot \mid s)} \bigl[\nabla_\theta \log \pi_\theta(a \mid s)\, Q^{\pi_\theta}(s, a)\bigr].$$
+
 Without positivity, the same identity holds in the form
 $\frac{1}{1-\gamma} \mathbb{E}_{s \sim d^{\pi_\theta}_\mu} \sum_a \nabla_\theta \pi_\theta(a \mid s)\, Q^{\pi_\theta}(s,a)$.
 

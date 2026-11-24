@@ -2,7 +2,7 @@
 
 The cake is $[0,1]$. Each of $n \ge 1$ agents has a valuation $V_i$, a nonatomic measure on $[0,1]$ with $V_i([0,1]) = 1$, absolutely
 continuous with respect to length or at least assigning zero value to points. Robertson–Webb queries are evaluation queries
-$\mathrm{eval}_i(x, y) = V_i([x, y])$ and cut queries $\mathrm{cut}_i(x, \alpha) = $ the least $y \ge x$ with $V_i([x, y]) = \alpha$, defined for
+$\mathrm{eval}_i(x, y) = V_i([x, y])$ and cut queries $\mathrm{cut}_i(x, \alpha) =$ the least $y \ge x$ with $V_i([x, y]) = \alpha$, defined for
 $0 \le \alpha \le V_i([x, 1])$ (such $y$ exists by continuity). An allocation assigns to each agent a finite union $A_i$ of intervals, with
 disjoint interiors; it is proportional if $V_i(A_i) \ge 1/n$ for every $i$ and envy-free if $V_i(A_i) \ge V_i(A_j)$ for all $i, j$. The query
 complexity of a protocol is the worst-case number of queries.

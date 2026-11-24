@@ -2,9 +2,13 @@
 
 Let $(S, A, P, r, \gamma)$ be a finite discounted MDP with $S$ and $A$ nonempty and $0 \le \gamma < 1$, and let $w : S \to \mathbb{R}$
 be a weighting with $w(s) > 0$ for every $s$. Consider the linear program
+
 $$\text{minimize } \sum_s w(s) V(s) \quad \text{subject to} \quad V(s) \ge r(s,a) + \gamma \sum_{s'} P(s, a, s')\, V(s') \text{ for all } s, a,$$
+
 and its dual
+
 $$\text{maximize } \sum_{s,a} d(s,a)\, r(s,a) \quad \text{subject to} \quad d \ge 0, \quad \sum_a d(s',a) - \gamma \sum_{s,a} P(s, a, s')\, d(s,a) = w(s') \text{ for all } s'.$$
+
 Then:
 
 1. the optimal value $V^*$ is the unique optimal solution of the primal;

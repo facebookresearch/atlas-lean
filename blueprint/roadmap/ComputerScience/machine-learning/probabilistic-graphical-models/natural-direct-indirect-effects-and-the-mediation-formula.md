@@ -7,7 +7,9 @@ effect is $\mathrm{NIE} = \mathbb{E}[Y_{x_0, Z_{x_1}}] - \mathbb{E}[Y_{x_0}]$. A
 unmeasured confounding of the $X$–$Y$, $X$–$Z$ and $Z$–$Y$ relations, that no confounder of $Z$ and $Y$ is
 affected by $X$, and positivity: $P(X = x) > 0$ for $x \in \{x_0, x_1\}$, and $P(Z = z, X = x) > 0$ for both values of
 $x$ whenever $P(Z = z \mid X = x_0) > 0$ or $P(Z = z \mid X = x_1) > 0$. Then
+
 $$\mathrm{NDE} = \sum_z \bigl(\mathbb{E}[Y \mid X = x_1, Z = z] - \mathbb{E}[Y \mid X = x_0, Z = z]\bigr) P(Z = z \mid X = x_0),$$
+
 $$\mathrm{NIE} = \sum_z \mathbb{E}[Y \mid X = x_0, Z = z] \bigl(P(Z = z \mid X = x_1) - P(Z = z \mid X = x_0)\bigr).$$
 
 ## Expansion

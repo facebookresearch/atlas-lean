@@ -5,7 +5,9 @@ probabilities $Z(o \mid s', a)$, a belief is a probability distribution $b$ on $
 probability of observation $o$ after action $a$ is
 $\Pr(o \mid b, a) = \sum_{s'} Z(o \mid s', a) \sum_s P(s' \mid s, a)\, b(s)$. When it is positive, the
 updated belief is
+
 $$\tau(b, a, o)(s') = \frac{Z(o \mid s', a) \sum_s P(s' \mid s, a)\, b(s)}{\Pr(o \mid b, a)}.$$
+
 The update is undefined for observations of zero predictive probability; any convention for that case
 (for example, leaving the belief unchanged) is a separate choice that no statement may rely on.
 

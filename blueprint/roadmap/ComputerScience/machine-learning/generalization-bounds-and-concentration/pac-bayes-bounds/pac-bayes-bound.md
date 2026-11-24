@@ -3,7 +3,9 @@
 Let $\ell : H \times Z \to [0,1]$ be measurable, let $P$ be a prior distribution on $H$ chosen before the sample, let
 $m \ge 2$ be an integer and $\delta \in (0,1)$. With probability at least $1 - \delta$ over $S \sim D^m$, simultaneously for
 every posterior $Q$ on $H$ (which may depend on $S$),
+
 $$L_D(Q) \le L_S(Q) + \sqrt{\frac{\mathrm{KL}(Q \Vert P) + \ln(m/\delta)}{2(m-1)}},$$
+
 where $L(Q) = \mathbb{E}_{h \sim Q} L(h)$; when $\mathrm{KL}(Q \Vert P) = \infty$ the bound is vacuous (Shalev-Shwartz and
 Ben-David, Theorem 31.1).
 

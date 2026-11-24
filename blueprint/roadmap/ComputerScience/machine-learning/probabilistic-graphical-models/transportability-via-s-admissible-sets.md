@@ -6,6 +6,7 @@ mechanisms may differ between the populations. Let $X$, $Y$, $Z$ be disjoint set
 with $Z$ containing no descendant of $X$, and suppose $Z$ is S-admissible: $Y$ is d-separated from $S$ by
 $X \cup Z$ in the diagram with all arrows into $X$ removed. If $P(y \mid \mathrm{do}(x), z)$ is available from
 the source and $P^*(z) > 0$ implies that this conditional is defined, then
+
 $$P^*(y \mid \mathrm{do}(x)) = \sum_z P(y \mid \mathrm{do}(x), z)\, P^*(z).$$
 
 ## Expansion
