@@ -10,7 +10,7 @@ module
 
 import MathlibExt.NumberTheory.RamirezAlfonsinSkalba
 
-/-! # Tests for two representations by coprime generators -/
+/-! # Tests for representations by two coprime generators -/
 
 open MetaMathlibExt
 
@@ -23,3 +23,17 @@ example : (2 : ℤ) ∣ -2 ∧ (3 : ℤ) ∣ 3 :=
 example (x x' y : ℕ) : (0 : ℤ) ∣ (y : ℤ) - y ∧ (1 : ℤ) ∣ (x : ℤ) - x' :=
   twoGenerator_dvd_sub_of_eq (c := 0) (d := 1) (x := x) (x' := x') (y := y) (y' := y)
     (by decide) (by simp)
+
+-- For ℓ = 0 the primes represented by 3 and 7 up to 11 are 3 and 7.
+example : ((Finset.range 12).filter fun n =>
+    n.Prime ∧ 0 < {p : ℕ × ℕ | 3 * p.1 + 7 * p.2 = n}.ncard).card = 2 := by
+  refine (card_primes_ellNumericalSemigroup_eq (c := 3) (d := 7)
+    (by decide) (by decide) (by decide) 0).trans ?_
+  decide
+
+-- Up to 32 only the prime 31 has two representations: 3 * 8 + 7 and 3 + 7 * 4.
+example : ((Finset.range 33).filter fun n =>
+    n.Prime ∧ 1 < {p : ℕ × ℕ | 3 * p.1 + 7 * p.2 = n}.ncard).card = 1 := by
+  refine (card_primes_ellNumericalSemigroup_eq (c := 3) (d := 7)
+    (by decide) (by decide) (by decide) 1).trans ?_
+  decide

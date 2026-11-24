@@ -9,18 +9,20 @@ LICENSE file in the root directory of this source tree.
 /-
 # Ermentrout–McLeod: travelling fronts in a bistable neural field
 
-For the scalar neural field `u_t = -u + ∫ w(x - y) f(u(y, t)) dy` with a nonnegative, even,
-normalized kernel `w` and a smooth increasing firing rate `f` such that `u = f(u)` has exactly
+For the scalar neural field `u_t = -u + ∫ w(x - y) f(u(y, t)) dy` with a strictly positive,
+bounded, even, normalized spatial kernel `w` that is absolutely continuous with an integrable
+derivative, and a smooth increasing firing rate `f` such that `u = f(u)` has exactly
 three solutions `u₁ < u₂ < u₃`, the outer two stable (`f'(uᵢ) < 1`) and the middle one unstable
 (`f'(u₂) > 1`), Ermentrout and McLeod (1993) proved that there is a monotone travelling front
 `u(x, t) = U(x - ct)` connecting the two stable states, unique up to translation, with a unique
 speed `c`, whose sign is the sign of `∫_{u₁}^{u₃} (f(u) - u) du`.
 
 Conventions fixed here: the profile `U` is nonincreasing with `U(-∞) = u₃` and `U(+∞) = u₁`, so
-`c > 0` means the upper state invades the lower one. Regularity assumptions are explicit and
-declared: `w` continuous with a finite first moment, `f` continuously differentiable with
-`f' > 0`. This is the bistable front problem, not the monostable Fisher–KPP speed result of
-`Domains.Biology.Dynamics.FisherKPP`.
+`c > 0` means the upper state invades the lower one. The firing rate is assumed continuously
+differentiable with `f' > 0`. In the source the response to past input is a general temporal
+kernel with a finite first moment; this module is its specialization to the exponential kernel,
+which gives the equation above. This is the bistable front problem, not the monostable Fisher–KPP
+speed result of `Domains.Biology.Dynamics.FisherKPP`.
 
 Sources: G. B. Ermentrout and J. B. McLeod, "Existence and uniqueness of travelling waves for a
 neural network", Proc. Roy. Soc. Edinburgh Sect. A 123 (1993) 461–478.
@@ -38,15 +40,16 @@ namespace WantedExt.Biology.Neuroscience.NeuralFieldFrontWanted
 
 open MeasureTheory Filter Topology
 
-/-- Standing hypotheses on the kernel: `w` is continuous, nonnegative, even, integrable with
-`∫ w = 1`, and has a finite first moment `∫ |x| w(x) dx < ∞`. -/
+/-- Standing hypotheses on the spatial kernel (Ermentrout and McLeod 1993): `w` is strictly
+positive, bounded, even and integrable with `∫ w = 1`, and absolutely continuous with an integrable
+derivative, written as `w x = w 0 + ∫_0^x w'` for an integrable `w'`. -/
 structure IsNeuralKernel (w : ℝ → ℝ) : Prop where
-  continuous : Continuous w
-  nonneg : ∀ x, 0 ≤ w x
+  pos : ∀ x, 0 < w x
+  bounded : ∃ M, ∀ x, |w x| ≤ M
   even : ∀ x, w (-x) = w x
   integrable : Integrable w
   integral_eq_one : ∫ x, w x = 1
-  integrable_moment : Integrable (fun x => |x| * w x)
+  absolutelyContinuous : ∃ w' : ℝ → ℝ, Integrable w' ∧ ∀ x, w x = w 0 + ∫ y in (0 : ℝ)..x, w' y
 
 /-- Standing hypotheses on the firing rate: `f` is `C¹` with `f' > 0`, and `u = f(u)` has exactly
 the three solutions `u₁ < u₂ < u₃`, with `f'(u₁) < 1`, `f'(u₃) < 1` and `f'(u₂) > 1`. -/
@@ -72,7 +75,8 @@ def IsTravellingFront (w f : ℝ → ℝ) (u₁ u₃ c : ℝ) (U : ℝ → ℝ) 
       (-U (x - c * t) + ∫ y, w (x - y) * f (U (y - c * t))) t
 
 /-- **Existence and uniqueness of the bistable front** (Ermentrout and McLeod 1993). Let `w` be
-continuous, nonnegative, even and integrable with `∫ w = 1` and `∫ |x| w(x) dx < ∞`, and let `f`
+strictly positive, bounded, even and integrable with `∫ w = 1`, and absolutely continuous with an
+integrable derivative (`w x = w 0 + ∫_0^x w'`, `w'` integrable), and let `f`
 be `C¹` with `f' > 0` whose fixed points are exactly `u₁ < u₂ < u₃`, with `f'(u₁) < 1`,
 `f'(u₃) < 1`, `f'(u₂) > 1`. Then there are a speed `c` and a profile `U` of a travelling front
 from `u₃` to `u₁`; every travelling front from `u₃` to `u₁`, with speed `c'` and profile `U'`, has

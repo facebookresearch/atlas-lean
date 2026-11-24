@@ -92,17 +92,20 @@ public theorem_wanted tendsto_spikeTriggeredAverage {Ω : Type*} [MeasurableSpac
         (covMatrix (P.map fun ω' => (Z 0 ω').1) *ᵥ k)))
 
 /-- **Consistency can fail without elliptical symmetry** (Paninski 2003). There are a probability
-law `ν` on `ℝ²` with finite second moments, a filter `k`, and a measurable nonlinearity `g ≥ 0`
-with `g(k · x)` integrable and `∫ g(k · x) dν > 0`, such that the population spike-triggered
-average `(∫ g(k · x) dν)⁻¹ ∫ g(k · x) x dν`, the almost-sure limit of `STA_N`, is not a multiple
-of `Σ k`.
+law `ν` on `ℝ²` that is centered (`∫ x_i dν = 0` for each `i`), has finite second moments and is
+not elliptically symmetric, a filter `k` with positive variance `kᵀ Σ k > 0`, and a measurable
+nonlinearity `g ≥ 0` with `g(k · x)` and `g(k · x) x` integrable and `∫ g(k · x) dν > 0`, such
+that the population spike-triggered average `(∫ g(k · x) dν)⁻¹ ∫ g(k · x) x dν` (the almost sure
+limit of `STA_N` under the strong law) is not a multiple of `Σ k`.
 
 Source: Paninski (2003). -/
 public theorem_wanted exists_spikeTriggeredAverage_not_parallel :
     ∃ ν : Measure (Fin 2 → ℝ), IsProbabilityMeasure ν ∧
-      (∀ i j, Integrable (fun x => x i * x j) ν) ∧
-      ∃ k : Fin 2 → ℝ, ∃ g : ℝ → ℝ, Measurable g ∧ (∀ s, 0 ≤ g s) ∧
-        Integrable (fun x => g (k ⬝ᵥ x)) ν ∧ 0 < ∫ x, g (k ⬝ᵥ x) ∂ν ∧
+      (∀ i, Integrable (fun x => x i) ν ∧ ∫ x, x i ∂ν = 0) ∧
+      (∀ i j, Integrable (fun x => x i * x j) ν) ∧ ¬ IsElliptical ν ∧
+      ∃ k : Fin 2 → ℝ, 0 < k ⬝ᵥ covMatrix ν *ᵥ k ∧ ∃ g : ℝ → ℝ, Measurable g ∧ (∀ s, 0 ≤ g s) ∧
+        Integrable (fun x => g (k ⬝ᵥ x)) ν ∧ Integrable (fun x => g (k ⬝ᵥ x) • x) ν ∧
+        0 < ∫ x, g (k ⬝ᵥ x) ∂ν ∧
         ¬ ∃ κ : ℝ, (∫ x, g (k ⬝ᵥ x) ∂ν)⁻¹ • ∫ x, g (k ⬝ᵥ x) • x ∂ν = κ • (covMatrix ν *ᵥ k)
 
 end WantedExt.Biology.Neuroscience.SpikeTriggeredAverageWanted
