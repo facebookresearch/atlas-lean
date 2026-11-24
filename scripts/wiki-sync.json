@@ -47022,7 +47022,7 @@
 "MathlibExt.MeasureTheory.Geometry.BesicovitchKakeyaWanted.besicovitch_kakeya_compact_measure_zero": "2d617f7ceded0431",
 "MathlibExt.MeasureTheory.Geometry.BrunnMinkowskiWanted.brunn_minkowski": "93f21e1e56d33a9d",
 "MathlibExt.MeasureTheory.Geometry.HamSandwichWanted.ham_sandwich": "fe1eef17b57c6584",
-"MathlibExt.MeasureTheory.Geometry.SphericalCoordinatesWanted.integral_comp_spherical_symm": "b937dfcb26a7036a",
+"MathlibExt.MeasureTheory.Geometry.SphericalCoordinatesWanted.integral_comp_spherical_symm": "ff485800b0a7aab6",
 "MathlibExt.MeasureTheory.GraphMeasurableNullWanted.measurableSet_and_volume_eq_zero_graph": "62f25b4a9eb13461",
 "MathlibExt.MeasureTheory.IndicatorIccNotAEContinuousWanted.not_exists_continuous_ae_eq_indicator_Icc": "d0e5831384359b92",
 "MathlibExt.MeasureTheory.InfConvolutionLipschitzWanted.abs_toReal_g_sub_le_mul_dist": "1a40b6d2fca634e0",
