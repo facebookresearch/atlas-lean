@@ -46,3 +46,25 @@ example {d : ℕ} (h : IsLeast (lengths ((Fin 0 → ZMod 2) × ZMod 2)) d) : 2 �
   exact davenport_prod_ge {1} htrivial factor_two h
 
 end MetaMathlibExt.davenport_prod_ge
+
+namespace MetaMathlibExt.davenport_prod_ring_ge
+
+private abbrev productLengths : Set ℕ :=
+  {k : ℕ | 0 < k ∧ ∀ x : Fin k → ZMod 2 × ZMod 3, ∃ I : Finset (Fin k), I.Nonempty ∧
+    ∃ a : Fin k → ZMod 2 × ZMod 3, (∀ i ∈ I, a i ∈ ({1} : Set (ZMod 2)) ×ˢ {0}) ∧
+      ∑ i ∈ I, ((a i).1 • (x i).1, (a i).2 • (x i).2) = 0}
+
+/-- With weights `{1} ×ˢ {0}`, the second factor has constant one and the bound is sharp. -/
+example : IsLeast productLengths 2 := by
+  have hB : IsLeast {k : ℕ | 0 < k ∧ ∀ x : Fin k → ZMod 3, ∃ I : Finset (Fin k), I.Nonempty ∧
+      ∃ a : Fin k → ZMod 3, (∀ i ∈ I, a i ∈ ({0} : Set (ZMod 3))) ∧ ∑ i ∈ I, a i • x i = 0} 1 :=
+    ⟨by decide, fun _ hk => hk.1⟩
+  have htwo : 2 ∈ productLengths := by decide
+  classical
+  have hne : productLengths.Nonempty := ⟨2, htwo⟩
+  have hd := hne.isLeast_natFind
+  have hge := davenport_prod_ring_ge {1} {0} davenport_prod_ge.factor_two hB hd
+  have hle := hd.2 htwo
+  exact (show Nat.find hne = 2 by omega) ▸ hd
+
+end MetaMathlibExt.davenport_prod_ring_ge

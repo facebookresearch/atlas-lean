@@ -17,6 +17,17 @@ import MathlibExt.NumberTheory.OresmeConvolutions
 
 open MetaMathlibExt
 
+-- At zero the sole summand vanishes, even though the rational factor n - 1 is negative.
+example : ∑ k ∈ Finset.range 1, ((k : ℚ) / 2 ^ k) * (((0 - k : ℕ) : ℚ) / 2 ^ (0 - k)) = 0 := by
+  rw [oresme_convolution_self 0]
+  norm_num
+
+-- At index four the three interior terms contribute 3/16, 4/16 and 3/16.
+example : ∑ k ∈ Finset.range 5, ((k : ℚ) / 2 ^ k) * (((4 - k : ℕ) : ℚ) / 2 ^ (4 - k)) =
+    5 / 8 := by
+  rw [oresme_convolution_self 4]
+  norm_num
+
 -- The initial convolution consists of the single term at zero.
 example : ∑ k ∈ Finset.range 1, (Nat.fib k : ℚ) * (((0 - k : ℕ) : ℚ) / 2 ^ (0 - k)) = 0 := by
   rw [fib_oresme_convolution 0]

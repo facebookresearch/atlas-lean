@@ -22,6 +22,9 @@ The first `2 ^ a` columns form a sequence of length equal to the order of the gr
 `Fin a → ZMod 2`. A consecutive zero sum in that group vanishes in every row
 (`exists_consecutive_orthogonal`).
 
+For the indicator vectors of sets of natural numbers, the resulting block in `{1, …, m}`
+meets each set in an even number of elements (`exists_consecutive_even_inter`).
+
 When `a < m`, the `2 ^ m` vectors of `Fin m → ZMod 2` have only `2 ^ a` possible products with
 `a` given vectors, so the difference of two vectors with equal products is a nonzero common
 orthogonal vector (`exists_ne_zero_orthogonal`). Applied to the indicator vectors on
@@ -52,6 +55,22 @@ public theorem exists_consecutive_orthogonal {a m : ℕ} (hm : 2 ^ a ≤ m)
   simp only [Finset.sum_apply, Pi.smul_apply, Pi.zero_apply] at hrow
   exact (Finset.sum_congr rfl fun j hj => by
     simp [show w j = 1 from hw j hj]).trans hrow
+
+/-- **A block of consecutive integers meeting $a$ given sets evenly.** Let $2^a \le m$ and let
+$X_1, \dots, X_a$ be finite sets of natural numbers. Then there are integers $s, t$ with
+$1 \le s \le t \le m$ such that $|\{s, s + 1, \dots, t\} \cap X_i|$ is even for every $i$.
+
+Source: Santanu Mondal, Krishnendu Paul and Shameek Paul, *On Unit-Weighted Zero-Sum Constants
+of `ℤ_n`*, INTEGERS 24 (2024), Article A38, Lemma 3.3 (`integers-2024-A38-lem-3-3`). -/
+public theorem exists_consecutive_even_inter {a m : ℕ} (hm : 2 ^ a ≤ m)
+    (X : Fin a → Finset ℕ) :
+    ∃ s t : ℕ, 1 ≤ s ∧ s ≤ t ∧ t ≤ m ∧ ∀ i, Even (Finset.Icc s t ∩ X i).card := by
+  obtain ⟨s, t, hst, hsum⟩ := exists_consecutive_orthogonal hm
+    fun i j => if j.val + 1 ∈ X i then (1 : ZMod 2) else 0
+  refine ⟨(s.succ : ℕ), (t.succ : ℕ), Nat.succ_pos _, Nat.succ_le_succ hst, t.isLt, fun i => ?_⟩
+  rw [← ZMod.natCast_eq_zero_iff_even, ← Finset.filter_mem_eq_inter, Finset.natCast_card_filter,
+    ← Fin.map_valEmbedding_Icc s.succ t.succ, ← Fin.map_succEmb_Icc, Finset.sum_map, Finset.sum_map]
+  exact hsum i
 
 /-- **A nonzero vector of $\mathbb{Z}_2^m$ orthogonal to $a$ vectors when $a < m$.** Let
 $\mathbb{Z}_2 = \mathbb{Z}/2\mathbb{Z}$, let $a + 1 \le m$ and let
