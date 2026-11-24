@@ -181,3 +181,6 @@ Topics added since this subject's fields were last revised.
 - [Relative Latching Functor](relative-latching-map-arrow-functor.md)
 - [Relative Matching Functor](relative-matching-map-arrow-functor.md)
 - [Cofibrantly Generated](cofibrant-generation-data.md)
+- [Bounded Generators](bounded-generators/README.md)
+- [Compact Base Generators](compact-base-generators/README.md)
+- [Small Generator](small-generator/README.md)
