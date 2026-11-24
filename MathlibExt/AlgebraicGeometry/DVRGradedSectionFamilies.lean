@@ -255,19 +255,21 @@ structure LogFanoFibre (X : Over (Spec (.of R))) (L : X.left.Modules)
 
 attribute [instance] LogFanoFibre.proper
 
-/-- The valuative semistability condition uses the actual volume integral and discrepancy. Every
-valuation must have discrepancy charts (`HasDiscrepancyCharts`), so that the discrepancy is an
-actual chart supremum and no inequality holds vacuously; the condition then compares it with the
-expected vanishing order at every valuation. No stability score or nonarchimedean functional is
-supplied. -/
+/-- Valuative semistability of the log-Fano fibre (the Fujita--Li valuative criterion
+`β(E) = A(E) − S(E) ≥ 0` for every prime divisor `E` over the fibre): at every divisorial valuation,
+given by a divisor `R.prime` on a birational model with scale `R.scale`, the normalized expected
+vanishing order `S` is at most the log discrepancy `R.scale · A(R.prime)`. Divisorial valuations
+suffice for valuative semistability (Fujita; Li; as used by Blum--Xu). The log discrepancy is
+the intrinsic one of the divisor, so no chart or monomialization hypothesis is involved, and the
+condition is not vacuous (prime divisors on the fibre itself are divisorial valuations). No
+stability score or nonarchimedean functional is supplied. -/
 def LogFanoFibre.IsValuativelySemistable
     {X : Over (Spec (.of R))} {L : X.left.Modules} {I : X.left.IdealSheafData}
     {n e : ℕ} (F : LogFanoFibre X L I n e) : Prop :=
-  (∀ v : CenteredValuationSections.CenteredValuation F.pair.variety,
-    MonomialModelRetractions.HasDiscrepancyCharts (P := F.pair) v) ∧
-  ∀ v : CenteredValuationSections.CenteredValuation F.pair.variety,
+  ∀ (v : CenteredValuationSections.CenteredValuation F.pair.variety)
+    (D : MonomialModelRetractions.DivisorialRealization (P := F.pair) v),
     ((CenteredValuationSections.expectedVanishing (F.sectionSeries v)) : EReal) / (e : EReal) ≤
-      MonomialModelRetractions.extendedDiscrepancy (P := F.pair) v
+      ((D.scale * LogPairs.logDiscrepancy D.model D.prime : ℝ) : EReal)
 
 /-- Both actual special log-Fano pairs and their native valuative inequalities.
 Finite generation of the resulting Rees ring remains a paper theorem,

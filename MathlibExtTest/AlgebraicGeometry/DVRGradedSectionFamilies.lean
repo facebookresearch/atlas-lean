@@ -13,7 +13,8 @@ import MathlibExt.AlgebraicGeometry.DVRGradedSectionFamilies
 # Tests for log-Fano fibres of DVR models
 
 A log-Fano fibre needs a boundary ideal whose restriction to the special fibre is nonzero: the
-zero ideal, like the ideal of the special fibre itself, has none. Its log pair is proper. The
+zero ideal, like the ideal of the special fibre itself, has none. Its log pair is proper, and its
+valuative semistability is the divisorial inequality `S ≤ A` at every divisorial valuation. The
 two-model comparisons depend on the chosen generic line comparison only through its powers: the
 identity change of comparison changes nothing.
 -/
@@ -32,6 +33,18 @@ example {X : CategoryTheory.Over (Spec (.of R))} {L : X.left.Modules} {n e : ℕ
 example {X : CategoryTheory.Over (Spec (.of R))} {L : X.left.Modules} {I : X.left.IdealSheafData}
     {n e : ℕ} (F : LogFanoFibre X L I n e) : IsProper F.pair.variety.X.hom :=
   inferInstance
+
+/-- Valuative semistability gives `S(v)/e ≤ c · A(E)` at a divisorial valuation `v = c · ord_E`. -/
+example {X : CategoryTheory.Over (Spec (.of R))} {L : X.left.Modules} {I : X.left.IdealSheafData}
+    {n e : ℕ} (F : LogFanoFibre X L I n e) (h : F.IsValuativelySemistable)
+    (v : MathlibExt.AlgebraicGeometry.CenteredValuationSections.CenteredValuation F.pair.variety)
+    (D : MathlibExt.AlgebraicGeometry.MonomialModelRetractions.DivisorialRealization
+      (P := F.pair) v) :
+    ((MathlibExt.AlgebraicGeometry.CenteredValuationSections.expectedVanishing
+        (F.sectionSeries v)) : EReal) / (e : EReal) ≤
+      ((D.scale * MathlibExt.AlgebraicGeometry.LogPairs.logDiscrepancy D.model D.prime : ℝ) :
+        EReal) :=
+  h v D
 
 section TwoModels
 

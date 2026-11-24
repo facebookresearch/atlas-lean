@@ -18,11 +18,16 @@ All mixed intersections, energy, entropy and J use the native scheme
 projections, actual Cartier polarizations and fixed divisorial valuation
 normalizations. Every model carries that the base polarization is an ample
 line bundle; entropy is stated for semipositive models (relatively nef model
-polarization), where its Monge--Ampère masses are defined. The requests prove
-descent through the actual proper birational common-model pullback; their
-conclusions are not input fields.
+polarization), where its Monge--Ampère masses are defined. The requests are
+model-independence statements: the values agree on a model and on a refinement of
+it (`ModelRefinement`), as follows from the projection formula along the proper
+birational refinement map, the components contracted by it carrying zero
+Monge--Ampère mass. Their conclusions are not input fields.
 
-Reference: Boucksom--Hisamoto--Jonsson, arXiv:1504.06568v3, Proposition 7.24.
+Reference: Boucksom--Hisamoto--Jonsson, arXiv:1504.06568v3, §§6--7 (functionals of
+model metrics, which do not depend on the model computing them); their
+Proposition 7.24 is the related invariance under birational pullback of the
+polarized variety.
 -/
 
 set_option autoImplicit false
