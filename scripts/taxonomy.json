@@ -11866,6 +11866,7 @@
   "MathlibExt/NumberTheory/Digits/MersenneTenPowBlockLength": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Decimal expansion of reciprocals of Mersenne primes"},
   "MathlibExt/NumberTheory/Digits/Midy": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Midy's theorem"},
   "MathlibExt/NumberTheory/Digits/MinBasePalindrome": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Palindromic representations of powers of two"},
+  "MathlibExt/NumberTheory/Digits/NegTwoCubeDvd": {"to": "NumberTheory/congruences/covering-systems", "title": "Exact covering system digraphs"},
   "MathlibExt/NumberTheory/Digits/NineDvdExponent": {"to": "NumberTheory/congruences/covering-systems", "title": "Exact covering system digraphs"},
   "MathlibExt/NumberTheory/Digits/OneCOneTwoPow": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Palindromic representations of powers of two"},
   "MathlibExt/NumberTheory/Digits/Permutiple": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Permutiples"},
