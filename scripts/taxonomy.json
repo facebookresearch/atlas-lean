@@ -13228,6 +13228,7 @@
   "MathlibExt/Probability/ItoFormula": {"to": "Probability/stochastic-calculus", "title": "Itô's formula"},
   "MathlibExt/Probability/ItoIntegral": {"to": "Probability/stochastic-calculus", "title": "Itô integral"},
   "MathlibExt/Probability/ItoAdaptedContinuous": {"to": "Probability/stochastic-calculus", "title": "Adapted continuous versions of the Itô integral"},
+  "MathlibExt/Probability/SDE/PicardIteration": {"to": "Probability/stochastic-calculus", "title": "Scalar SDE Picard iteration"},
   "MathlibExt/Probability/SDE/ItoVersionEnergy": {"to": "Probability/stochastic-calculus", "title": "Integrated energy of Itô versions"},
   "MathlibExt/Probability/SDE/LipschitzIntegrands": {"to": "Probability/stochastic-calculus", "title": "Lipschitz stochastic integrands"},
   "MathlibExt/Probability/ItoIntegralContinuous": {"to": "Probability/stochastic-calculus", "title": "Itô integral"},
