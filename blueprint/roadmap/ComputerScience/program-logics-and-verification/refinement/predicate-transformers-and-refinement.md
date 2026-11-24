@@ -1,7 +1,7 @@
 # Predicate transformers and refinement
 
 Let $\Sigma$ be a state space and $\mathcal{P} = 2^\Sigma$ the predicates on it, ordered by inclusion. A *predicate transformer* is a monotone
-function $S : \mathcal{P} \to \mathcal{P}$, read as a weakest precondition: $S(Q)$ is the set of initial states from which $S$ is guaranteed to
+function $S : \mathcal{P} \to \mathcal{P}$. Arbitrary monotone transformers may be *miraculous*, with $S(\emptyset) \ne \emptyset$, as refinement calculi allow. A *strict* transformer, one with $S(\emptyset) = \emptyset$, is read as a weakest precondition: $S(Q)$ is the set of initial states from which $S$ is guaranteed to
 terminate in a state of $Q$.
 
 - *Refinement*: $S \sqsubseteq T$ if $S(Q) \subseteq T(Q)$ for every $Q \in \mathcal{P}$.
@@ -9,7 +9,7 @@ terminate in a state of $Q$.
   $(S \sqcup T)(Q) = S(Q) \cup T(Q)$; meets and joins of arbitrary families are taken pointwise in the same way.
 - *Total correctness*: $S$ satisfies the triple $[P]\, S\, [Q]$ if $P \subseteq S(Q)$.
 - The *specification statement* $[P, Q]$ is the transformer mapping $R$ to $P$ if $Q \subseteq R$ and to $\emptyset$ otherwise. For a monotone $T$,
-  $[P, Q] \sqsubseteq T$ exactly when $P \subseteq T(Q)$, that is, when $T$ satisfies $[P]\, T\, [Q]$.
+  $[P, Q] \sqsubseteq T$ exactly when $P \subseteq T(Q)$, that is, when $T$ satisfies $[P]\, T\, [Q]$. With $Q = \emptyset$ and $P$ nonempty, $[P, Q]$ is miraculous.
 
 ## Expansion
 
