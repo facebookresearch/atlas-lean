@@ -11,3 +11,4 @@ Lamport one-time signatures, Schnorr identification and Sigma protocols, and zer
 - [Zero-knowledge proofs](zero-knowledge-proofs/README.md)
 
 - [Protocol analysis](protocol-analysis/README.md)
+- [Interactive arguments and arguments of knowledge](zero-knowledge-and-arguments/README.md)
