@@ -86,9 +86,9 @@ def relationRight {M N : RightModule R C} (L : ActionModel C o N) :
   (α_ (value C o M) (coefficientAlgebra C o).X (value C o N)).hom ≫ (𝟙 _ ⊗ₘ L.map)
 
 /-- The coequalizer of the two coefficient actions on `M ⊗ N`. It is the balanced tensor
-`M ⊗_A N` when the coefficient algebra `A` is graded-commutative (`IsCommutativeCoefficient`): only
-then is the action of `A` on the second right module also a left action. For noncommutative
-coefficients this is not `M ⊗_A N`; `DerivedTensorModel` requires commutativity. -/
+`M ⊗_A N` when the coefficient algebra `A` is graded-commutative (`IsCommutativeCoefficient`),
+since the action of `A` on the second right module is then also a left action. Without this
+hypothesis the coequalizer need not compute `M ⊗_A N`; `DerivedTensorModel` requires it. -/
 def balancedTensor {M N : RightModule R C}
     (L : ActionModel C o M) (K : ActionModel C o N) : Cochains R :=
   coequalizer (relationLeft C o (N := N) L) (relationRight C o (M := M) K)
