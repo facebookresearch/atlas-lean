@@ -7,4 +7,4 @@ $$\sum_{k=1}^{\lceil n/2 \rceil} \frac{1}{2k+1} \binom{n}{2k-1} =
 
 ## Sources
 
-- Kunle Adegoke, *A Short Proof of Knuth's Old Sum, Generalizations and Related Sums*, [arXiv:2412.00040, equation (4.5)](https://arxiv.org/html/2412.00040#S4.E5). The identity follows from the even-index reciprocal sum in Proposition 4 of the journal version, INTEGERS 26 (2026), Article A19.
+- Kunle Adegoke, *A Short Proof of Knuth's Old Sum, Generalizations and Related Sums*, INTEGERS 26 (2026), Article A19, [Proposition 1, equation (18)](https://math.colgate.edu/~integers/aa19/aa19.pdf#page=7). The proof uses the even-index reciprocal sum in the second identity of Proposition 4.
