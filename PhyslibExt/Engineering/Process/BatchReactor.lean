@@ -49,11 +49,13 @@ namespace Engineering.Process.BatchReactor
 /-- Concentration consumed by time `t` in a closed constant-volume
 first-order batch reaction with initial concentration `c0` and rate
 constant `k`: `c0 - c(t)` for the explicit solution
-`c(t) = c0 * exp (-k * t)`. -/
+`c(t) = c0 * exp (-k * t)`. It is meant for `k, c0, t ≥ 0`; the formula takes all real inputs and
+is negative when `c0 > 0` and `k * t < 0`. -/
 noncomputable def consumed (k c0 t : ℝ) : ℝ :=
   c0 - c0 * Real.exp (-k * t)
 
-/-- Remaining concentration at time `t`: `c0 * exp (-k * t)`. -/
+/-- Remaining concentration at time `t`: for `c0 ≥ 0`, `c0 * exp (-k * t)` is nonnegative, for
+all real `k` and `t`. -/
 lemma remaining_nonneg {k c0 t : ℝ} (hc0 : 0 ≤ c0) :
     0 ≤ c0 * Real.exp (-k * t) := by
   exact mul_nonneg hc0 (Real.exp_nonneg _)

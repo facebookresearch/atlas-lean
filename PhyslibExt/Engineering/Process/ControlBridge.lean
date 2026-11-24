@@ -66,7 +66,8 @@ namespace Engineering.Process.ControlBridge
 
 /-- The deviation-variable CSTR as a one-state SISO linear system:
 state matrix `-(Q / V + k)`, input vector `Q / V`, output gain `C`, and
-zero feedthrough. -/
+zero feedthrough. The physical reading has `V > 0`, `Q > 0` and `k ≥ 0`; with `a / 0 = 0`,
+`V = 0` gives state matrix `-k` and input vector `0`. -/
 noncomputable def cstrLinearSystem (V Q k C : ℝ) :
     LinearSystem (Fin 1) where
   A := Matrix.of ![![-(Q / V + k)]]
@@ -76,7 +77,7 @@ noncomputable def cstrLinearSystem (V Q k C : ℝ) :
 
 set_option linter.flexible false in
 /-- The mapped field is exactly `-(Q / V + k) * x + (Q / V) * u` in the
-single state component. -/
+single state component. With `a / 0 = 0`, at `V = 0` it is `-k * x 0`. -/
 lemma cstrLinearSystem_field_eq (V Q k C : ℝ) (x : Fin 1 → ℝ) (u : ℝ) :
     (cstrLinearSystem V Q k C).field x u =
       ![-(Q / V + k) * x 0 + (Q / V) * u] := by

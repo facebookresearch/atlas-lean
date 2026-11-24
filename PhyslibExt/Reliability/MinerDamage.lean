@@ -98,13 +98,15 @@ namespace Reliability
 variable {ι κ : Type*}
 
 /-- Palmgren–Miner damage sum `D = ∑ i, n i / N i`: `n i` declared cycles and calibrated life
-`N i` cycles in class `i`. Defined only for positive lives, so a zero life is rejected. An
-empirical index: no failure is asserted at `D = 1`. -/
+`N i` cycles in class `i`. Defined only for positive lives, so a zero life is rejected. Counts
+are reals with no sign condition. With no class the sum is `0`. An empirical index: no failure is
+asserted at `D = 1`. -/
 noncomputable def minerDamage [Fintype ι] (n N : ι → ℝ) (_hN : ∀ i, 0 < N i) : ℝ :=
   ∑ i, n i / N i
 
 /-- Class counts of declared records: record `k` carries `r k` cycles of class `g k`, and the
-count of class `i` is the sum of `r k` over the records with `g k = i`. -/
+count of class `i` is the sum of `r k` over the records with `g k = i`; it is `0` for a class with
+no record. No sign condition is put on the record counts. -/
 def cycleClassCounts [Fintype κ] [DecidableEq ι] (g : κ → ι) (r : κ → ℝ) (i : ι) : ℝ :=
   ∑ k with g k = i, r k
 
@@ -186,8 +188,8 @@ lemma minerDamage_nonneg_and_eq_zero_iff [Fintype ι] {n N : ι → ℝ} (hn : �
 
 /-- Monotonicity. More declared cycles and shorter calibrated lives never decrease the damage:
 for nonnegative counts `n ≤ n'` and positive lives `N' ≤ N`, `D(n, N) ≤ D(n', N')`. Damage only
-accumulates as cycles are added, and a shorter-life (conservative) calibration gives a larger
-`D`. -/
+accumulates as cycles are added, and a shorter-life (conservative) calibration gives a `D` at
+least as large. -/
 lemma minerDamage_mono [Fintype ι] {n n' N N' : ι → ℝ} (hn : ∀ i, 0 ≤ n i)
     (hnn' : ∀ i, n i ≤ n' i) (hN' : ∀ i, 0 < N' i) (hNN' : ∀ i, N' i ≤ N i) :
     minerDamage n N (fun i => (hN' i).trans_le (hNN' i)) ≤ minerDamage n' N' hN' := by

@@ -160,31 +160,38 @@ lemma volumetricRate_volatility_form {k a H H_pc p c : ℝ} (hHpc : H_pc ≠ 0)
 
 /-- Overall liquid-side coefficient `KL` defined by
 `1 / KL = 1 / kL + H / kG`: film resistances in series, on a liquid
-concentration driving-force basis. -/
+concentration driving-force basis. Defined for all reals with
+`x / 0 = 0`: `KL = kL` when `kG = 0`, `KL = kG / H` when `kL = 0`, and
+`KL = 0` when `1 / kL + H / kG = 0`; physically `H`, `kG`, `kL > 0`. -/
 noncomputable def overallKL (H kG kL : ℝ) : ℝ :=
   1 / (1 / kL + H / kG)
 
 /-- Overall gas-side coefficient `KG` defined by
 `1 / KG = 1 / kG + 1 / (H * kL)`, on a gas partial-pressure driving-force
-basis. -/
+basis. Defined for all reals with `x / 0 = 0`: `KG = kG` when `H = 0`
+or `kL = 0`, `KG = H * kL` when `kG = 0`, and `KG = 0` when
+`1 / kG + 1 / (H * kL) = 0`; physically `H`, `kG`, `kL > 0`. -/
 noncomputable def overallKG (H kG kL : ℝ) : ℝ :=
   1 / (1 / kG + 1 / (H * kL))
 
 set_option linter.unusedVariables false in
-/-- The resistance-addition identity for `KL`. -/
+/-- The resistance-addition identity for `KL`, for positive `H`, `kG`, `kL`
+(with `0⁻¹ = 0` the identity of reciprocals holds for all reals). -/
 lemma overallKL_inv_eq {H kG kL : ℝ} (hH : 0 < H) (hkG : 0 < kG)
     (hkL : 0 < kL) : (overallKL H kG kL)⁻¹ = 1 / kL + H / kG := by
   unfold overallKL
   rw [one_div, inv_inv]
 
 set_option linter.unusedVariables false in
-/-- The resistance-addition identity for `KG`. -/
+/-- The resistance-addition identity for `KG`, for positive `H`, `kG`, `kL`
+(with `0⁻¹ = 0` the identity of reciprocals holds for all reals). -/
 lemma overallKG_inv_eq {H kG kL : ℝ} (hH : 0 < H) (hkG : 0 < kG)
     (hkL : 0 < kL) : (overallKG H kG kL)⁻¹ = 1 / kG + 1 / (H * kL) := by
   unfold overallKG
   rw [one_div, inv_inv]
 
-/-- Both overall coefficients are positive for positive film data. -/
+/-- Both overall coefficients are positive for positive film data
+`kG`, `kL` and positive `H`. -/
 lemma overall_pos {H kG kL : ℝ} (hH : 0 < H) (hkG : 0 < kG) (hkL : 0 < kL) :
     0 < overallKL H kG kL ∧ 0 < overallKG H kG kL := by
   constructor
@@ -193,8 +200,9 @@ lemma overall_pos {H kG kL : ℝ} (hH : 0 < H) (hkG : 0 < kG) (hkL : 0 < kL) :
   · unfold overallKG
     positivity
 
-/-- **Two-film elimination, liquid basis.** Under interfacial equilibrium
-and the two film laws, the common flux is
+/-- **Two-film elimination, liquid basis.** For positive `H`, `kG`, `kL`,
+under interfacial equilibrium `ci = H * pi` and the two film laws
+`N = kG * (pb - pi)` and `N = kL * (ci - cb)`, the common flux is
 `N = KL * (H * pb - cb)`. -/
 theorem twoFilm_overall_KL {H kG kL pb cb pi ci N : ℝ} (hH : 0 < H)
     (hkG : 0 < kG) (hkL : 0 < kL) (heq : ci = H * pi)
@@ -218,8 +226,9 @@ theorem twoFilm_overall_KL {H kG kL pb cb pi ci N : ℝ} (hH : 0 < H)
   rw [hNe] at hfactor
   exact hfactor.symm
 
-/-- **Two-film elimination, gas basis.** Under the same hypotheses, the
-common flux is `N = KG * (pb - cb / H)`. -/
+/-- **Two-film elimination, gas basis.** For positive `H`, `kG`, `kL`, under
+interfacial equilibrium `ci = H * pi` and the two film laws
+`N = kG * (pb - pi)` and `N = kL * (ci - cb)`, the common flux is `N = KG * (pb - cb / H)`. -/
 theorem twoFilm_overall_KG {H kG kL pb cb pi ci N : ℝ} (hH : 0 < H)
     (hkG : 0 < kG) (hkL : 0 < kL) (heq : ci = H * pi)
     (hG : N = kG * (pb - pi)) (hL : N = kL * (ci - cb)) :
@@ -248,7 +257,7 @@ theorem twoFilm_overall_KG {H kG kL pb cb pi ci N : ℝ} (hH : 0 < H)
   exact hfactor.symm
 
 set_option linter.unusedVariables false in
-/-- Vanishing gas-side resistance: as `kG → ∞`, the liquid-basis overall
+/-- Vanishing gas-side resistance: for `H > 0` and `kL > 0`, as `kG → ∞`, the liquid-basis overall
 coefficient tends to the liquid film coefficient `kL`. -/
 theorem tendsto_overallKL_kG_atTop {H kL : ℝ} (hH : 0 < H) (hkL : 0 < kL) :
     Filter.Tendsto (fun kG => overallKL H kG kL) Filter.atTop (nhds kL) := by
@@ -275,7 +284,7 @@ theorem tendsto_overallKL_kG_atTop {H kL : ℝ} (hH : 0 < H) (hkL : 0 < kL) :
   simpa [one_div, hlim] using hinv
 
 set_option linter.unusedVariables false in
-/-- Vanishing liquid-side resistance: as `kL → ∞`, the gas-basis overall
+/-- Vanishing liquid-side resistance: for `H > 0` and `kG > 0`, as `kL → ∞`, the gas-basis overall
 coefficient tends to the gas film coefficient `kG`. -/
 theorem tendsto_overallKG_kL_atTop {H kG : ℝ} (hH : 0 < H) (hkG : 0 < kG) :
     Filter.Tendsto (fun kL => overallKG H kG kL) Filter.atTop (nhds kG) := by

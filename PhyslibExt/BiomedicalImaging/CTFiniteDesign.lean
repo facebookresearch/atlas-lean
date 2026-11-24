@@ -57,7 +57,9 @@ lemma ct_design_apply {ι α : Type*} [MeasurableSpace α] {s : Finset ι}
 /-- The finite CT design entry for basis element `phi i` at
 Radon parameters `xi, p` (an arbitrary hyperplane level; the
 signed-distance reading additionally needs `‖xi‖ = 1`): the
-Euclidean Radon transform of the basis element. -/
+Euclidean Radon transform of the basis element. For `xi = 0` the set `⟪y, xi⟫ = p` is empty
+when `p ≠ 0` (entry `0`) and the whole plane when `p = 0`; a basis element that is not
+integrable on the set gets the entry `0`. -/
 noncomputable def ctDesignEntry {ι : Type*} (phi : ι → EuclideanSpace ℝ (Fin 2) → ℝ)
     (xi : EuclideanSpace ℝ (Fin 2)) (p : ℝ) (i : ι) : ℝ :=
   MetaMathlibExt.euclideanRadonTransform (phi i) xi p

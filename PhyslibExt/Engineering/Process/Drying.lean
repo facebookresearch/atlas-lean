@@ -39,8 +39,8 @@ mass units; dimensions are not tracked.
   bases of one material determine each other.
 - `Drying.wetOfDry_dryOfWet` and `Drying.dryOfWet_wetOfDry`: the basis maps
   are inverse on their domains.
-- `Drying.dryOfWet_unbounded`: the dry basis is unbounded as the wet basis
-  approaches `1`.
+- `Drying.dryOfWet_unbounded`: the dry basis is unbounded above on
+  `0 ≤ w < 1`.
 - `Drying.tendsto_dryOfWet_at_one`: that endpoint divergence as a limit
   from below.
 - `Drying.wetBasis_eq_one_of_zero_solids`: with no dry solids the wet basis
@@ -60,29 +60,38 @@ mass units; dimensions are not tracked.
 
 namespace Engineering.Process.Drying
 
-/-- Wet-basis moisture fraction `w = mw / (mw + ms)`. -/
+/-- Wet-basis moisture fraction `w = mw / (mw + ms)`. The intended domain is
+`mw ≥ 0` and `ms > 0`, where `0 ≤ w < 1`. With the convention `x / 0 = 0` it
+is `0` when `mw + ms = 0`, and with no dry solids (`ms = 0 < mw`) it is `1`. -/
 noncomputable def wetBasis (mw ms : ℝ) : ℝ :=
   mw / (mw + ms)
 
-/-- Dry-basis moisture ratio `X = mw / ms`. -/
+/-- Dry-basis moisture ratio `X = mw / ms`. The intended domain is `mw ≥ 0`
+and `ms > 0`, where `X ≥ 0`. With the convention `x / 0 = 0` it is `0` when
+`ms = 0`. -/
 noncomputable def dryBasis (mw ms : ℝ) : ℝ :=
   mw / ms
 
-/-- Dry basis as a function of wet basis alone: `X = w / (1 - w)`. -/
+/-- Dry basis as a function of wet basis alone: `X = w / (1 - w)`, intended
+for `0 ≤ w < 1`. With the convention `x / 0 = 0` its value at `w = 1` is `0`,
+although it tends to `+∞` as `w → 1⁻`; for `w > 1` it is negative. -/
 noncomputable def dryOfWet (w : ℝ) : ℝ :=
   w / (1 - w)
 
-/-- Wet basis as a function of dry basis alone: `w = X / (1 + X)`. -/
+/-- Wet basis as a function of dry basis alone: `w = X / (1 + X)`, intended
+for `X ≥ 0`, where `0 ≤ w < 1`. With the convention `x / 0 = 0` its value at
+`X = -1` is `0`. -/
 noncomputable def wetOfDry (X : ℝ) : ℝ :=
   X / (1 + X)
 
-/-- The wet basis is nonnegative. -/
+/-- The wet basis is nonnegative for `mw ≥ 0` and `ms > 0`. -/
 lemma wetBasis_nonneg {mw ms : ℝ} (hmw : 0 ≤ mw) (hms : 0 < ms) :
     0 ≤ wetBasis mw ms := by
   unfold wetBasis
   exact div_nonneg hmw (by linarith)
 
-/-- With dry solids present, the wet basis is strictly below `1`. -/
+/-- With dry solids present (`ms > 0`) and `mw ≥ 0`, the wet basis is
+strictly below `1`. -/
 lemma wetBasis_lt_one {mw ms : ℝ} (hmw : 0 ≤ mw) (hms : 0 < ms) :
     wetBasis mw ms < 1 := by
   have hpos : 0 < mw + ms := by linarith
@@ -90,14 +99,14 @@ lemma wetBasis_lt_one {mw ms : ℝ} (hmw : 0 ≤ mw) (hms : 0 < ms) :
   rw [div_lt_one hpos]
   linarith
 
-/-- The dry basis is nonnegative. -/
+/-- The dry basis is nonnegative for `mw ≥ 0` and `ms > 0`. -/
 lemma dryBasis_nonneg {mw ms : ℝ} (hmw : 0 ≤ mw) (hms : 0 < ms) :
     0 ≤ dryBasis mw ms := by
   unfold dryBasis
   exact div_nonneg hmw (le_of_lt hms)
 
-/-- **Wet to dry.** The dry basis of a material is `w / (1 - w)` of its
-wet basis. -/
+/-- **Wet to dry.** For `ms > 0` and `mw ≥ 0`, the dry basis of a material
+is `w / (1 - w)` of its wet basis `w`. -/
 lemma dryBasis_of_wetBasis {mw ms : ℝ} (hms : 0 < ms) (hmw : 0 ≤ mw) :
     dryBasis mw ms = dryOfWet (wetBasis mw ms) := by
   have hms' : ms ≠ 0 := ne_of_gt hms
@@ -109,8 +118,10 @@ lemma dryBasis_of_wetBasis {mw ms : ℝ} (hms : 0 < ms) (hmw : 0 ≤ mw) :
   rw [h1]
   field_simp
 
-/-- **Dry to wet.** The wet basis of a material is `X / (1 + X)` of its
-dry basis. -/
+/-- **Dry to wet.** For `ms > 0` and `mw ≥ 0`, the wet basis of a material
+is `X / (1 + X)` of its dry basis `X`. With no dry solids (`ms = 0 < mw`)
+this fails: the wet basis is `1`, while `x / 0 = 0` makes the dry basis `0`
+and `X / (1 + X) = 0`. -/
 lemma wetBasis_dryBasis_inv {mw ms : ℝ} (hms : 0 < ms) (hmw : 0 ≤ mw) :
     wetBasis mw ms = wetOfDry (dryBasis mw ms) := by
   have hms' : ms ≠ 0 := ne_of_gt hms
@@ -122,7 +133,9 @@ lemma wetBasis_dryBasis_inv {mw ms : ℝ} (hms : 0 < ms) (hmw : 0 ≤ mw) :
   rw [h1]
   field_simp
 
-/-- The two basis maps are inverse on `w < 1`. -/
+/-- The two basis maps are inverse on `w < 1`. The hypothesis excludes
+`w = 1`, where `dryOfWet 1 = 0` by the convention `x / 0 = 0` and the
+composite is `0`. -/
 lemma wetOfDry_dryOfWet {w : ℝ} (h1 : w < 1) :
     wetOfDry (dryOfWet w) = w := by
   have hne : (1 : ℝ) - w ≠ 0 := ne_of_gt (by linarith)
@@ -144,8 +157,9 @@ lemma dryOfWet_wetOfDry {X : ℝ} (hX : 0 ≤ X) :
   rw [h1]
   field_simp
 
-/-- Divergence at the wet end: the dry basis is unbounded as the wet
-basis approaches `1` from below. -/
+/-- The dry basis is unbounded above on the wet-basis range `[0, 1)`:
+every real `M` is exceeded by `dryOfWet w` for some `0 ≤ w < 1`. That all
+`w` close enough to `1` exceed `M` is `tendsto_dryOfWet_at_one`. -/
 lemma dryOfWet_unbounded (M : ℝ) :
     ∃ w : ℝ, 0 ≤ w ∧ w < 1 ∧ M < dryOfWet w := by
   set N : ℝ := |M| + 1 with hN
@@ -168,7 +182,8 @@ lemma dryOfWet_unbounded (M : ℝ) :
 
 /-- **Endpoint divergence.** The dry basis tends to infinity as the wet
 basis approaches `1` from below: inputs sufficiently close to `1` exceed
-every bound, not merely some input somewhere in `[0, 1)`. -/
+every bound, not merely some input somewhere in `[0, 1)`. At `w = 1`
+itself `dryOfWet 1 = 0`, by the convention `x / 0 = 0`. -/
 lemma tendsto_dryOfWet_at_one :
     Filter.Tendsto dryOfWet (nhdsWithin 1 (Set.Iio 1)) Filter.atTop := by
   rw [Filter.tendsto_atTop]

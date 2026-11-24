@@ -23,8 +23,7 @@ cancels and the total holdup of each species changes only through the
 external terms and generation. This is one instantiation of the finite
 compartment result `EarthScience.hasDerivAt_total_stock`, imported here.
 The unit balances are hypotheses of the model; no dynamics existence is
-claimed. This `Flowsheet` structure is the single graph type reused by
-later network models.
+claimed.
 
 ## ii. Key results
 
@@ -53,9 +52,8 @@ namespace Engineering.Process.Flowsheets
 species, every unit obeys a holdup balance whose internal transfer from
 unit `i` to unit `j` appears once as an outflow of `i` and once as an
 inflow of `j`; external inflow, external outflow, and generation are
-supplied separately. This is the single graph type reused by later network
-models; dynamics existence is not claimed, since the unit balances are
-hypotheses. -/
+supplied separately. Dynamics existence is not claimed, since the unit
+balances are hypotheses. -/
 structure Flowsheet (Unit Species : Type*) [Fintype Unit] where
   /-- Holdup (amount stock) of each species in each unit over time. -/
   holdup : Species → Unit → ℝ → ℝ

@@ -130,14 +130,16 @@ open Elasticity.PrismaticMembers
 
 /-! ## A. The bar under a tip force: zero distributed load -/
 
-/-- At zero distributed load the constructed fixed-traction displacement is `F * x / EA`. -/
+/-- At zero distributed load the constructed fixed-traction displacement is `F * x / EA`, for all
+real inputs; at `EA = 0` both sides are `0` by `x / 0 = 0`. -/
 lemma fixedTractionDisplacement_zero_load (EA L F x : ℝ) :
     fixedTractionDisplacement EA L F (fun _ => 0) x = F * x / EA := by
   rw [fixedTractionDisplacement_const, fixedFreeDisplacement]
   ring
 
-/-- `u x = F * x / EA` solves the fixed-traction problem with zero distributed load: `u 0 = 0`,
-`u'' = 0` and `EA * u' L = F`. -/
+/-- For `L > 0` and `EA ≠ 0`, `u x = F * x / EA` solves the fixed-traction problem with zero
+distributed load: `u` is `C²` on `[0, L]`, `u'' = 0`, `u 0 = 0` and `EA * u' L = F`, with
+derivatives within `[0, L]`. -/
 lemma isFixedTractionSolution_zero_load {EA L F : ℝ} (hL : 0 < L) (hEA : EA ≠ 0) :
     IsFixedTractionSolution EA L F (fun _ => 0) (fun x => F * x / EA) := by
   have h := isFixedTractionSolution_fixedTractionDisplacement (P := F) (f := fun _ => (0 : ℝ))
@@ -145,8 +147,8 @@ lemma isFixedTractionSolution_zero_load {EA L F : ℝ} (hL : 0 < L) (hEA : EA �
   rwa [show fixedTractionDisplacement EA L F (fun _ => 0) = fun x => F * x / EA from
     funext (fixedTractionDisplacement_zero_load EA L F)] at h
 
-/-- Every solution of the fixed-traction problem with zero distributed load is `F * x / EA` on
-`[0, L]`. -/
+/-- For `EA ≠ 0`, every solution of the fixed-traction problem with zero distributed load is
+`F * x / EA` on `[0, L]`. No condition is put on `L`: for `L < 0` the interval is empty. -/
 lemma eqOn_zero_load_of_isFixedTractionSolution {EA L F : ℝ} {u : ℝ → ℝ} (hEA : EA ≠ 0)
     (hu : IsFixedTractionSolution EA L F (fun _ => 0) u) :
     Set.EqOn u (fun x => F * x / EA) (Set.Icc 0 L) := by
@@ -156,22 +158,22 @@ lemma eqOn_zero_load_of_isFixedTractionSolution {EA L F : ℝ} {u : ℝ → ℝ}
 /-! ## B. Spring stiffness, tip displacement, load work and the adjoint -/
 
 /-- Effective axial stiffness `k = EA / L` (force per length) of a bar of axial rigidity `EA`
-and length `L`. -/
+and length `L`. With `x / 0 = 0` it is `0` at `L = 0`. -/
 noncomputable def axialStiffness (EA L : ℝ) : ℝ :=
   EA / L
 
 /-- Tip displacement `u_tip = F / k` (a length) of a spring of stiffness `k` under the end
-force `F`. -/
+force `F`. With `x / 0 = 0` it is `0` at `k = 0`. -/
 noncomputable def tipDisplacement (F k : ℝ) : ℝ :=
   F / k
 
 /-- Compliance `J = F * u_tip` (an energy): the work of the end force on the tip
-displacement. -/
+displacement. With `x / 0 = 0` it is `0` at `k = 0`. -/
 noncomputable def compliance (F k : ℝ) : ℝ :=
   F * tipDisplacement F k
 
-/-- Scalar adjoint `p = F / k` (a length): the solution of the adjoint equation
-`k * p = ∂J/∂u_tip = F`. -/
+/-- Scalar adjoint `p = F / k` (a length): for `k ≠ 0`, the solution of the adjoint equation
+`k * p = ∂J/∂u_tip = F`. With `x / 0 = 0` it is `0` at `k = 0`. -/
 noncomputable def adjointDisplacement (F k : ℝ) : ℝ :=
   F / k
 
@@ -180,8 +182,8 @@ lemma axialStiffness_pos {EA L : ℝ} (hEA : 0 < EA) (hL : 0 < L) : 0 < axialSti
   unfold axialStiffness
   exact div_pos hEA hL
 
-/-- The tip displacement of every zero-load solution is `F / k` with `k = EA / L`, and its load
-work is the compliance `J = F * u_tip`. -/
+/-- For `L > 0` and `EA ≠ 0`, the tip displacement of every zero-load solution is `F / k` with
+`k = EA / L`, and its load work is the compliance `J = F * u_tip`. -/
 lemma tip_eq_of_isFixedTractionSolution {EA L F : ℝ} {u : ℝ → ℝ} (hL : 0 < L) (hEA : EA ≠ 0)
     (hu : IsFixedTractionSolution EA L F (fun _ => 0) u) :
     u L = tipDisplacement F (axialStiffness EA L) ∧
@@ -199,7 +201,7 @@ lemma tip_eq_of_isFixedTractionSolution {EA L F : ℝ} {u : ℝ → ℝ} (hL : 0
     unfold compliance
     rw [← htip]
 
-/-- The scalar adjoint solves the adjoint equation `k * p = F`. -/
+/-- For `k ≠ 0`, the scalar adjoint solves the adjoint equation `k * p = F`. -/
 lemma stiffness_mul_adjointDisplacement {k : ℝ} (hk : k ≠ 0) (F : ℝ) :
     k * adjointDisplacement F k = F := by
   unfold adjointDisplacement
@@ -222,7 +224,8 @@ lemma hasDerivAt_compliance {k : ℝ} (hk : 0 < k) (F : ℝ) :
   rw [hderiv] at hmul
   exact hmul
 
-/-- The adjoint expression is `-p * u_tip = -F² / k²`. -/
+/-- The adjoint expression is `-p * u_tip = -F² / k²`, for all `F` and `k`; both sides are `0`
+at `k = 0` by `x / 0 = 0`. -/
 lemma neg_adjointDisplacement_mul_tipDisplacement (F k : ℝ) :
     -(adjointDisplacement F k * tipDisplacement F k) = -F ^ 2 / k ^ 2 := by
   unfold adjointDisplacement tipDisplacement
@@ -231,7 +234,9 @@ lemma neg_adjointDisplacement_mul_tipDisplacement (F k : ℝ) :
   · field_simp
 
 /-- Restricted to the feasible interval `[kmin, kmax]` with `0 < kmin`, the compliance has the
-derivative `-F² / k²` within the interval at every feasible `k`, endpoints included. -/
+derivative `-F² / k²` within the interval at every feasible `k`, endpoints included. For
+`kmin = kmax` the interval is one point, within which every number is a derivative, so the
+statement carries no information there. -/
 lemma hasDerivWithinAt_compliance_Icc {kmin kmax k : ℝ} (hkmin : 0 < kmin)
     (hk : k ∈ Set.Icc kmin kmax) (F : ℝ) :
     HasDerivWithinAt (compliance F) (-F ^ 2 / k ^ 2) (Set.Icc kmin kmax) k := by
@@ -244,7 +249,8 @@ lemma hasDerivWithinAt_compliance_Icc {kmin kmax k : ℝ} (hkmin : 0 < kmin)
 /-! ## D. Feasible directions -/
 
 /-- Feasible directions at the design `k` for the interval `[kmin, kmax]`: the `d` with
-`k + t * d ∈ [kmin, kmax]` for every step `0 < t ≤ ε`, for some `ε > 0`. -/
+`k + t * d ∈ [kmin, kmax]` for every step `0 < t ≤ ε`, for some `ε > 0`. For a design outside
+`[kmin, kmax]`, in particular for an empty interval, no direction is feasible. -/
 def feasibleDirections (kmin kmax k : ℝ) : Set ℝ :=
   {d | ∃ ε > 0, ∀ t ∈ Set.Ioc (0 : ℝ) ε, k + t * d ∈ Set.Icc kmin kmax}
 
@@ -348,7 +354,8 @@ lemma feasibleDirections_self (k : ℝ) : feasibleDirections k k k = {0} := by
 
 /-! ## E. Endpoints: one-sided conditions, not stationarity -/
 
-/-- For `F ≠ 0` the compliance has no stationary point on `k > 0`. -/
+/-- For `F ≠ 0` the compliance has no stationary point on `k > 0`. At `F = 0` the compliance is
+identically `0`. -/
 lemma deriv_compliance_ne_zero {F k : ℝ} (hF : F ≠ 0) (hk : 0 < k) :
     deriv (compliance F) k ≠ 0 := by
   have h := (hasDerivAt_compliance hk F).deriv
@@ -356,10 +363,10 @@ lemma deriv_compliance_ne_zero {F k : ℝ} (hF : F ≠ 0) (hk : 0 < k) :
   rw [h]
   exact div_ne_zero (neg_ne_zero.mpr (pow_ne_zero 2 hF)) (pow_ne_zero 2 (ne_of_gt hk))
 
-/-- At the upper endpoint of a nondegenerate feasible interval the derivative within the
-interval is `-F² / kmax² < 0`, so the endpoint is not stationary; along every feasible
-direction `d` the first-order change `-F² / kmax² * d` is nonnegative and vanishes only for
-`d = 0`. -/
+/-- For `F ≠ 0` and `0 < kmin < kmax`, at the upper endpoint `kmax` the derivative of the
+compliance within `[kmin, kmax]` is `-F² / kmax² < 0`, so the endpoint is not stationary; along
+every feasible direction `d` (these are the `d ≤ 0`) the first-order change `-F² / kmax² * d` is
+nonnegative and vanishes only for `d = 0`. -/
 lemma compliance_upper_endpoint {F kmin kmax : ℝ} (hF : F ≠ 0) (hkmin : 0 < kmin)
     (hlt : kmin < kmax) :
     HasDerivWithinAt (compliance F) (-F ^ 2 / kmax ^ 2) (Set.Icc kmin kmax) kmax ∧
@@ -501,11 +508,14 @@ lemma abs_compliance_sub_compliance_le {Fmax kmin F Fhat k khat : ℝ} (hkmin : 
     _ ≤ (2 * Fmax / kmin) * |F - Fhat| + (Fmax ^ 2 / kmin ^ 2) * |k - khat| :=
         add_le_add hforce hstiff
 
-/-- **Composition with supplied terms.** The compliance `J(Fhat, khat)` at the estimated inputs,
-the compliance `Jmodel` of the analysis model, its discretization `Jdisc`, the algebraic solver
-output `Jsolve` and the computed value `Jcomp` are successive values of the same compliance;
-with the supplied bounds `eModel`, `eDisc`, `eSolve`, `eArith` on their successive differences,
-`|J(F, k) - Jcomp|` is at most the parameter bound plus the four supplied terms. -/
+/-- **Composition with supplied terms.** For `|F|, |Fhat| ≤ Fmax` and `k, khat ≥ kmin > 0`, and
+reals `Jmodel`, `Jdisc`, `Jsolve`, `Jcomp` with the supplied bounds
+`|J(Fhat, khat) - Jmodel| ≤ eModel`, `|Jmodel - Jdisc| ≤ eDisc`, `|Jdisc - Jsolve| ≤ eSolve` and
+`|Jsolve - Jcomp| ≤ eArith`, the error `|J(F, k) - Jcomp|` is at most the parameter bound
+`(2 Fmax / kmin) |F - Fhat| + (Fmax² / kmin²) |k - khat|` plus `eModel + eDisc + eSolve + eArith`.
+In the intended reading `(Fhat, khat)` are the estimated inputs and `Jmodel`, `Jdisc`, `Jsolve`,
+`Jcomp` the compliance of the analysis model, its discretization, the algebraic solver output and
+the computed value; the inequality holds for any reals satisfying the four bounds. -/
 lemma abs_compliance_sub_computed_le {Fmax kmin F Fhat k khat Jmodel Jdisc Jsolve Jcomp eModel
     eDisc eSolve eArith : ℝ} (hkmin : 0 < kmin) (hF : |F| ≤ Fmax) (hFhat : |Fhat| ≤ Fmax)
     (hk : kmin ≤ k) (hkhat : kmin ≤ khat) (hmodel : |compliance Fhat khat - Jmodel| ≤ eModel)
@@ -634,11 +644,12 @@ lemma not_exists_residual_compliance_error_bound {F : ℝ} (hF : F ≠ 0) :
   rw [hval2] at hsmall
   linarith
 
-/-- **A bare residual is not an error.** Over all stiffnesses `k > 0`, with no lower bound, no
-constant `C` makes `C |k u - F|` a bound on the state error, and for `F ≠ 0` none makes it a
-bound on the compliance error: the trial `u = F / k + 1` has residual `k`, state error `1` and
-compliance error `|F|`. This combines `not_exists_residual_state_error_bound`, which holds for
-every `F`, and `not_exists_residual_compliance_error_bound`. -/
+/-- **A bare residual is not an error.** For an end force `F ≠ 0`, over all stiffnesses `k > 0`,
+with no lower bound, no constant `C` makes `C |k u - F|` a bound on the state error, and none
+makes it a bound on the compliance error: the trial `u = F / k + 1` has residual `k`, state error
+`1` and compliance error `|F|`. The state-error half holds for every `F`
+(`not_exists_residual_state_error_bound`); the compliance-error half needs `F ≠ 0`
+(`not_exists_residual_compliance_error_bound`). -/
 lemma not_exists_residual_error_bound {F : ℝ} (hF : F ≠ 0) :
     (¬ ∃ C : ℝ, ∀ k u : ℝ, 0 < k → |tipDisplacement F k - u| ≤ C * |k * u - F|) ∧
       ¬ ∃ C : ℝ, ∀ k u : ℝ, 0 < k → |compliance F k - F * u| ≤ C * |k * u - F| := by

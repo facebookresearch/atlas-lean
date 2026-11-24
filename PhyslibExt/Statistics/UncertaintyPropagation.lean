@@ -136,9 +136,10 @@ namespace Statistics.UncertaintyPropagation
 /-! ## A. Finite means and exact affine covariance propagation -/
 
 /-- The coordinate-wise finite mean of a random vector `X : Ω → Fin n → ℝ`: coordinate `i`
-is the expectation `FiniteProbability.expectation p (X · i)`. For a finite distribution
-(`0 ≤ p`, `∑ ω, p ω = 1`) this is the mean vector of `X`; the distribution conditions are
-hypotheses of the lemmas below, not part of the definition. -/
+is the expectation `FiniteProbability.expectation p (X · i) = ∑ ω, p ω * X ω i`, for any real
+weights `p` (the zero vector when `Ω` is empty). For a finite distribution (`0 ≤ p`,
+`∑ ω, p ω = 1`) this is the mean vector of `X`; the distribution conditions are hypotheses of
+the lemmas below, not part of the definition. -/
 noncomputable def meanVec {Ω : Type*} [Fintype Ω] {n : ℕ} (p : Ω → ℝ)
     (X : Ω → Fin n → ℝ) : Fin n → ℝ :=
   fun i => expectation p (fun ω => X ω i)
@@ -183,7 +184,9 @@ lemma covMatrix_affine {Ω : Type*} [Fintype Ω] {m n : ℕ} (p : Ω → ℝ)
 
 /-- **Correlated two-input variance**, via `covMatrix` entries so the cross term is
 explicit: the variance of `a₁ X₁ + a₂ X₂` is
-`a₁² Var X₁ + a₂² Var X₂ + 2 a₁ a₂ Cov(X₁, X₂)`, for every weight. The linear combination
+`a₁² Var X₁ + a₂² Var X₂ + 2 a₁ a₂ Cov(X₁, X₂)`, for every weight. These are the weighted
+variance and covariance; they are a variance and a covariance in the probabilistic sense for
+nonnegative weights summing to `1`. The linear combination
 is the single entry of a `1 × 2` measurement matrix, so this is
 `FiniteProbability.covMatrix_mulVec`; the `2 a₁ a₂` cross term comes from the symmetry
 `covariance_comm`, not from any independence assumption. -/
@@ -200,10 +203,11 @@ lemma covMatrix_two_linear {Ω : Type*} [Fintype Ω] (p : Ω → ℝ) (X : Ω �
   rw [hsymm]
   ring
 
-/-- **Quadrature is a SPECIAL case, not the general law**: only when the
-cross-covariance entry vanishes does the variance of `a₁ X₁ + a₂ X₂` reduce to
-`a₁² Var X₁ + a₂² Var X₂`. Correlated errors must keep the cross term of
-`covMatrix_two_linear`. -/
+/-- **Quadrature is a SPECIAL case, not the general law**: when the cross-covariance entry
+vanishes, the variance of `a₁ X₁ + a₂ X₂` reduces to `a₁² Var X₁ + a₂² Var X₂`, for every
+weight. The condition is sufficient, not necessary: in general the two sides differ by
+`2 a₁ a₂ Cov(X₁, X₂)`, which also vanishes when `a₁ = 0` or `a₂ = 0`. Correlated errors must
+keep the cross term of `covMatrix_two_linear`. -/
 lemma variance_linear_two_uncorrelated {Ω : Type*} [Fintype Ω] (p : Ω → ℝ)
     (X : Ω → Fin 2 → ℝ) (a₁ a₂ : ℝ) (hcov : covMatrix p X 0 1 = 0) :
     covMatrix p (fun ω => Matrix.of ![![a₁, a₂]] *ᵥ X ω) 0 0
@@ -217,9 +221,8 @@ lemma variance_linear_two_uncorrelated {Ω : Type*} [Fintype Ω] (p : Ω → ℝ
 endpoints) with `|deriv (deriv f) y| ≤ H` on the closed interval `Set.Icc a b`, and
 `x`, `x + δ` both in that interval,
 `|f (x + δ) - f x - deriv f x * δ| ≤ H / 2 * δ ^ 2`. The proof reuses Mathlib's
-`taylor_mean_remainder_lagrange_iteratedDeriv` at `n = 1`. The side conditions are
-exact: global `C²` for the derivative identification at the base point, the
-second-derivative bound only on `Icc a b`, and both endpoints in `Icc a b`. -/
+`taylor_mean_remainder_lagrange_iteratedDeriv` at `n = 1`. The second-derivative bound is
+assumed only on `Icc a b`, while the smoothness is assumed on all of `ℝ`. -/
 lemma taylor_first_order_bound {a b H : ℝ} {f : ℝ → ℝ} (hf : ContDiff ℝ 2 f)
     (hH : ∀ y ∈ Set.Icc a b, |deriv (deriv f) y| ≤ H)
     {x δ : ℝ} (hx : x ∈ Set.Icc a b) (hxd : x + δ ∈ Set.Icc a b) :
@@ -277,10 +280,10 @@ noncomputable def jacobianRemainder {n m : ℕ} (f : (Fin n → ℝ) → (Fin m 
 /-- **Componentwise Jacobian remainder bound, unit-step form.** If `f` is differentiable at
 `x` and the one-variable segment function `φᵢ t = f i (x + t • δ)` of the selected component
 `i` is `C²` with `|φᵢ'' t| ≤ H i` on `[0, 1]`, then `|jacobianRemainder f x δ i| ≤ H i / 2`;
-the other components need no smoothness. This is the scalar bound applied to `φᵢ`
-with unit step; the `fderiv`/`φᵢ'` identification uses the chain rule along the
-segment. The second derivative of `φᵢ` already carries two factors of `δ`, so `H i` bounds
-it along this one segment and is not a Hessian bound; see
+the other components need no smoothness beyond the differentiability of `f` at `x`. This is
+the scalar bound applied to `φᵢ` with unit step; the `fderiv`/`φᵢ'` identification uses the
+chain rule along the segment. The second derivative of `φᵢ` already carries two factors of
+`δ`, so `H i` bounds it along this one segment and is not a Hessian bound; see
 `jacobianRemainder_component_le_of_scaled` for the `‖δ‖ ^ 2`-scaled form and
 `jacobianRemainder_component_le_of_hessian` for the bound from a Hessian bound. -/
 lemma jacobianRemainder_component_le {n m : ℕ} (f : (Fin n → ℝ) → (Fin m → ℝ))
@@ -346,9 +349,9 @@ lemma jacobianRemainder_component_le_of_scaled {n m : ℕ} (f : (Fin n → ℝ) 
 let its component `i` be `C²` on an open set `U` containing the box `Set.Icc lo hi`, and let
 the second Fréchet derivative of that component satisfy
 `‖fderiv ℝ (fderiv ℝ (fun y => f y i)) y‖ ≤ H i` on the box, the operator norm for the sup
-norm on `Fin n → ℝ`; the other components need no smoothness. For `x` and `x + δ` in the box,
-`|jacobianRemainder f x δ i| ≤ H i / 2 * ‖δ‖ ^ 2`. This is
-`Chemistry.Uncertainty.measurementFunction_firstOrder_remainder_le` for the component
+norm on `Fin n → ℝ`; the other components need no smoothness beyond the differentiability of
+`f` at `x`. For `x` and `x + δ` in the box, `|jacobianRemainder f x δ i| ≤ H i / 2 * ‖δ‖ ^ 2`.
+This is `Chemistry.Uncertainty.measurementFunction_firstOrder_remainder_le` for the component
 `fun y => f y i`; the chain rule identifies its derivative at `x` with component `i` of
 `fderiv ℝ f x`. -/
 lemma jacobianRemainder_component_le_of_hessian {n m : ℕ} (f : (Fin n → ℝ) → (Fin m → ℝ))
@@ -387,8 +390,8 @@ lemma lipschitz_error_propagation {E F : Type*} [NormedAddCommGroup E]
   rw [dist_eq_norm, dist_eq_norm, add_sub_cancel_left] at h
   exact h
 
-/-- **Error-budget form**: if the input error satisfies `‖δ‖ ≤ ε` then the output
-error satisfies `‖f (x + δ) - f x‖ ≤ L * ε`. -/
+/-- **Error-budget form**: if `f` is Lipschitz with constant `L` and the input error
+satisfies `‖δ‖ ≤ ε`, then the output error satisfies `‖f (x + δ) - f x‖ ≤ L * ε`. -/
 lemma lipschitz_error_budget {E F : Type*} [NormedAddCommGroup E]
     [NormedAddCommGroup F] {f : E → F} {L : NNReal} (hf : LipschitzWith L f)
     {x δ : E} {ε : ℝ} (hδε : ‖δ‖ ≤ ε) :
@@ -444,8 +447,8 @@ lemma exists_distinct_of_nontrivial_ker {m n : ℕ} (A : Matrix (Fin m) (Fin n) 
     exact hne (add_left_cancel h2)
   · rw [Matrix.mulVec_add, hy, h0, add_zero]
 
-/-- **Rank deficiency implies non-identifiability**: if `m < n`, the linear map
-`A.mulVecLin : (Fin n → ℝ) →ₗ[ℝ] (Fin m → ℝ)` has a nontrivial kernel by
+/-- **Fewer observations than parameters imply non-identifiability**: if `m < n`, the
+linear map `A.mulVecLin : (Fin n → ℝ) →ₗ[ℝ] (Fin m → ℝ)` has a nontrivial kernel by
 `LinearMap.ker_ne_bot_of_finrank_lt` (rank-nullity: `finrank` of source `n` exceeds
 `finrank` of target `m`, via `Module.finrank_fin_fun`), and any nonzero kernel
 vector defeats injectivity. -/
@@ -491,7 +494,7 @@ lemma normalEquations_unique {m n : ℕ} (A : Matrix (Fin m) (Fin n) ℝ) (hA : 
 
 /-- Identifiability on a declared affine parameter space:
 parameters in the affine subspace `S` with the same
-observation under `A` are equal. -/
+observation under `A` are equal (vacuous when `S` is empty). -/
 def IdentifiableOnAffine {nm np : ℕ} (A : Matrix (Fin nm) (Fin np) ℝ)
     (S : AffineSubspace ℝ (Fin np → ℝ)) : Prop :=
   Set.InjOn (fun θ => A *ᵥ θ) S

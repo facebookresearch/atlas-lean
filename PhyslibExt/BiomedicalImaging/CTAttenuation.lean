@@ -49,15 +49,22 @@ namespace PhyslibExt.BiomedicalImaging.CTAttenuation
 /-- **Monochromatic attenuation inversion.** For incident
 intensity `I0 > 0` and line integral `L`, the transmitted
 intensity `I = I0 * Real.exp (-L)` satisfies
-`-Real.log (I / I0) = L`. -/
+`-Real.log (I / I0) = L`. In the CT reading `L ≥ 0`, the line integral of a
+nonnegative attenuation coefficient; the identity holds for every real `L`.
+At `I0 = 0` the left side is `0` (by `x / 0 = 0` and `Real.log 0 = 0`), so
+the identity then fails for `L ≠ 0`. -/
 lemma attenuation_log_inversion {I0 L : ℝ} (hI0 : 0 < I0) :
     -Real.log ((I0 * Real.exp (-L)) / I0) = L := by
   have hI0' : I0 ≠ 0 := ne_of_gt hI0
   have h : (I0 * Real.exp (-L)) / I0 = Real.exp (-L) := by field_simp
   rw [h, Real.log_exp, neg_neg]
 
-/-- **Attenuation as log ratio.** With the same hypotheses,
-`Real.log (I0 / I) = L` for `I = I0 * Real.exp (-L)`. -/
+/-- **Attenuation as log ratio.** For incident intensity `I0 > 0` and
+line integral `L`, `Real.log (I0 / I) = L` for `I = I0 * Real.exp (-L)`.
+In the CT reading `L ≥ 0`, the line integral of a nonnegative attenuation
+coefficient; the identity holds for every real `L`. At `I0 = 0` the left
+side is `0` (by `x / 0 = 0` and `Real.log 0 = 0`), so the identity then
+fails for `L ≠ 0`. -/
 lemma attenuation_log_ratio {I0 L : ℝ} (hI0 : 0 < I0) :
     Real.log (I0 / (I0 * Real.exp (-L))) = L := by
   have hI0' : I0 ≠ 0 := ne_of_gt hI0
