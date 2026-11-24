@@ -184,9 +184,10 @@ def baseLine {P : LogPair k n} {L : P.variety.X.left.Modules} (M : VerticalModel
     LineBundle P.variety.X.left :=
   ⟨L, M.polarization⟩
 
-/-- Actual normalized model function value at a central divisorial valuation. -/
+/-- Actual normalized model function value at a central component `p`: `D_p / (r · ord_p(t))`.
+Centrality (`hp`) makes the denominator positive (`central_normalized`). -/
 def modelValue {P : LogPair k n} {L : P.variety.X.left.Modules}
-    (M : VerticalModel P L) (p : PrimePoint M.model) : ℝ :=
+    (M : VerticalModel P L) (p : PrimePoint M.model) (_hp : p ∈ M.central) : ℝ :=
   (M.divisor p : ℝ) /
     ((M.exponent : ℝ) * (M.model.X.left.ord (M.rationalParameter : FunctionField M.model) p.val))
 

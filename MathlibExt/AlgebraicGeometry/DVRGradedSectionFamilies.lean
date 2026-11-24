@@ -174,8 +174,10 @@ structure LogAnticanonicalModels (D : TwoModels (R := R) (K := K)) (n : ℕ) whe
       (secondBoundary.comap (genericProjection (K := K) D.second)).comap D.genericIso.hom.left
 
 
-/-- A genuine polarized log-Fano fibre of an actual DVR model.
-Its boundary coefficients come from the actual ideal I_(eB), whose restriction to the integral
+/-- A genuine polarized log-Fano fibre of an actual DVR model: a proper (`proper`) klt log pair
+whose anticanonical class is ample, as for the geometric fibres of Blum--Xu's flat proper
+families. Its boundary coefficients come from the actual ideal I_(eB), whose restriction to the
+integral
 special fibre is nonzero (`boundaryRestricts`: the boundary has a restriction to the fibre, so
 e.g. the ideal of the special fibre itself is excluded), and its line comparison uses the fixed
 relative log-anticanonical line. -/
@@ -183,6 +185,7 @@ structure LogFanoFibre (X : Over (Spec (.of R))) (L : X.left.Modules)
     (I : X.left.IdealSheafData) (n e : ℕ) where
   positive : 0 < e
   pair : LogPairs.LogPair (IsLocalRing.ResidueField R) n
+  [proper : IsProper pair.variety.X.hom]
   calculus : LogPairs.HasModelCalculus pair
   klt : LogPairs.IsKlt pair
   schemeIso : specialFiber X ≅ pair.variety.X
@@ -200,6 +203,8 @@ structure LogFanoFibre (X : Over (Spec (.of R))) (L : X.left.Modules)
   sectionSeries : ∀ v : CenteredValuationSections.CenteredValuation pair.variety,
     CenteredValuationSections.SectionSeries pair.variety v
   sectionLine : ∀ v, (sectionSeries v).line = dual adjoint.cartier.line.val
+
+attribute [instance] LogFanoFibre.proper
 
 /-- The valuative semistability condition uses the actual volume integral and discrepancy. Every
 valuation must have discrepancy charts (`HasDiscrepancyCharts`), so that the discrepancy is an

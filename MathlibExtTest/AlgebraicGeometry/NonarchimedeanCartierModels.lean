@@ -66,3 +66,8 @@ example (M : VerticalModel P L) (hM : IsSemipositive M) (p : PrimePoint M.model)
         componentIntersection M p hp /
           ((M.exponent : ℝ) ^ n * (haveI := M.baseProper; baseVolume P (baseLine M))) :=
   rfl
+
+/-- A model value is only formed at a central component, where the parameter vanishes. -/
+example (M : VerticalModel P L) {p : PrimePoint M.model} (hp : p ∈ M.central) :
+    0 < M.model.X.left.ord (M.rationalParameter : FunctionField M.model) p.val :=
+  (M.central_normalized p).mp hp

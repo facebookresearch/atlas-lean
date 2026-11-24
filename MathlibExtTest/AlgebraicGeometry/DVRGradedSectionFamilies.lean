@@ -13,7 +13,7 @@ import MathlibExt.AlgebraicGeometry.DVRGradedSectionFamilies
 # Tests for log-Fano fibres of DVR models
 
 A log-Fano fibre needs a boundary ideal whose restriction to the special fibre is nonzero: the
-zero ideal, like the ideal of the special fibre itself, has none.
+zero ideal, like the ideal of the special fibre itself, has none. Its log pair is proper.
 -/
 
 open _root_.AlgebraicGeometry
@@ -25,3 +25,8 @@ variable {R : Type} [CommRing R] [IsDomain R] [IsDiscreteValuationRing R]
 example {X : CategoryTheory.Over (Spec (.of R))} {L : X.left.Modules} {n e : ℕ}
     (F : LogFanoFibre X L ⊥ n e) : False :=
   F.boundaryRestricts (Scheme.IdealSheafData.comap_bot _)
+
+/-- The log pair of a log-Fano fibre is proper. -/
+example {X : CategoryTheory.Over (Spec (.of R))} {L : X.left.Modules} {I : X.left.IdealSheafData}
+    {n e : ℕ} (F : LogFanoFibre X L I n e) : IsProper F.pair.variety.X.hom :=
+  inferInstance
