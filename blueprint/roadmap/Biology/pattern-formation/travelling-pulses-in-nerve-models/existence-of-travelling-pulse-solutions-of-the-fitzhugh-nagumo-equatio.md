@@ -4,15 +4,19 @@ Consider the FitzHugh–Nagumo equation
 
 $$\partial_t w_1 = \partial_x^2 w_1 + f(w_1) - w_2, \qquad \partial_t w_2 = \epsilon(w_1 - \gamma w_2), \qquad f(r) = r(r - a)(1 - r),\ 0 < a < \tfrac12,\ \epsilon, \gamma > 0$$
 
-(Arioli and Koch 2015, Eqs. (1.1)–(1.2)). A travelling wave $w_j(x, t) = \phi_j(x - ct)$ satisfies a system of ordinary differential equations, and a travelling pulse is a solution of this system homoclinic to the rest state. Arioli and Koch recall (Section 1) that single-pulse solutions appear to exist for exactly two speeds, a fast and a slow pulse, both with explicit singular limits as $\epsilon \to 0$, and that for all sufficiently small $\epsilon > 0$ the existence of the fast pulse has been proved by perturbative methods (Hastings 1976; Carpenter 1977; Langer; Jones, Kopell and Langer), and the existence of the slow pulse by Flores. Arioli and Koch report these results only for $\epsilon > 0$ sufficiently small and do not state the hypotheses on $a$ and $\gamma$ under which the original papers prove them. For the specific values $\epsilon = 1/100$, $\gamma = 5$, $a = 1/10$, Arioli and Koch give a computer-assisted proof of a real-analytic travelling pulse, on a circular axon of length $128$ (Theorem 1.1) and on the line (Theorem 1.2).
+(Arioli and Koch 2015, Eqs. (1.1)–(1.2)). A travelling wave $w_j(x, t) = \phi_j(x - ct)$ satisfies a system of ordinary differential equations, and a travelling pulse is a solution of this system homoclinic to the rest state.
+
+For the parameter values $\epsilon = 1/100$, $\gamma = 5$ and $a = 1/10$, Arioli and Koch prove, with computer-assisted estimates, that the equation has a real-analytic travelling pulse on a circular axon of length $128$ (Theorem 1.1) and on the line (Theorem 1.2). This page states the existence result for these parameter values only.
+
+The perturbative existence results for small $\epsilon > 0$, for the fast pulse by Hastings (1976) and Carpenter (1977) and for the slow pulse by Flores, which Arioli and Koch recall in Section 1 without their hypotheses on $a$ and $\gamma$, are not part of this statement; they are separate targets in the Expansion.
 
 ## Expansion
 
 1. The model and the travelling-wave system, with the conditions on $f$, $a$, $\gamma$ under which the rest state is the only equilibrium.
 2. The singular limit $\epsilon = 0$: the fast front and back (heteroclinic orbits of the fast subsystem) joined by slow segments.
-3. Persistence of a homoclinic orbit for small $\epsilon > 0$, by Hastings's shooting argument or by geometric singular perturbation theory (Carpenter).
+3. Separate target: persistence of a homoclinic orbit for small $\epsilon > 0$, by Hastings's shooting argument or by geometric singular perturbation theory (Carpenter), with the hypotheses on $a$ and $\gamma$ recovered from the original papers.
 4. The slow pulse and periodic wave trains, as separate statements.
-5. The computer-assisted existence results of Arioli and Koch for $\epsilon = 1/100$, and the [stability of the fast pulse](../../../Biology/pattern-formation/travelling-pulses-in-nerve-models/jones-stability-of-the-fitzhugh-nagumo-travelling-pulse.md).
+5. The computer-assisted proof of Arioli and Koch for $\epsilon = 1/100$, $\gamma = 5$, $a = 1/10$, the statement of this page, and the [stability of the fast pulse](../../../Biology/pattern-formation/travelling-pulses-in-nerve-models/jones-stability-of-the-fitzhugh-nagumo-travelling-pulse.md).
 
 ## Sources
 
