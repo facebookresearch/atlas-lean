@@ -106,8 +106,9 @@ private theorem ac02t03_filter_loss {ι : Type*} [Fintype ι] (kind : ι → Inv
       rw [h] at hc
       exact absurd hc (by decide)
 
-/-- Inventory identity: beginning inventory plus purchases equals cost of goods sold plus
-ending inventory, when every movement is classified. -/
+/-- Inventory identity: beginning inventory plus purchases equals cost of goods sold, with loss
+adjustments charged to it, plus ending inventory, where each movement is a purchase, a cost of
+sale or a loss adjustment. -/
 theorem beginning_add_purchases {ι : Type*} [Fintype ι] (beginning : ℝ)
     (kind : ι → InventoryFlow) (amount : ι → ℝ) :
     beginning + flowTotal kind InventoryFlow.purchase amount =
