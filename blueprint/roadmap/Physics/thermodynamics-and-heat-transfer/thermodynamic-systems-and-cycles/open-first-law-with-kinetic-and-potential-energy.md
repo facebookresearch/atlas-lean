@@ -9,8 +9,9 @@ streams at the ports is $\dot m_k P_k/\rho_k$ and no boundary moves. Then
 $$E' = \sum_{\mathrm{in}} \dot m_k\Bigl(h_k + \tfrac12 v_k^2 + g z_k\Bigr) - \sum_{\mathrm{out}} \dot m_k\Bigl(h_k + \tfrac12 v_k^2 + g z_k\Bigr)
 + \dot Q - \dot W_s,$$
 
-with the steady ($E' = 0$), no-flow ($E' = \dot Q - \dot W_s$) and adiabatic ($\dot Q = 0$) cases. Dropping the kinetic or potential
-terms is an approximation that must be made on both the storage and the streams. Since $H = U + PV$ gives $H' = U' + (PV)'$,
+with the steady ($E' = 0$), no-flow ($E' = \dot Q - \dot W_s$) and adiabatic ($\dot Q = 0$) cases. Dropping a stored or a stream kinetic
+or potential term is an approximation justified for that term alone, by its own smallness or constancy: a steady nozzle has $E' = 0$
+while its stream kinetic terms are essential. Since $H = U + PV$ gives $H' = U' + (PV)'$,
 replacing $U'$ by $H'$ requires $(PV)' = 0$; a constant volume (incompressible contents) leaves $(PV)' = V P'$, which is not zero
 when the pressure changes.
 
