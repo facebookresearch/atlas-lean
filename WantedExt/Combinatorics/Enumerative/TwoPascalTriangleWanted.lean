@@ -15,7 +15,10 @@ public import Mathlib.RingTheory.PowerSeries.Derivative
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import Mathlib.RingTheory.PowerSeries.Substitution
 public import MathlibExt.Combinatorics.Enumerative.RiordanArraySum
+public import MathlibExt.Combinatorics.Enumerative.TrinomialAlternatingColumn
+public import MathlibExt.Combinatorics.Enumerative.TrinomialBinomialTransform
 public import MathlibExt.Combinatorics.Enumerative.TrinomialConvolution
+public import MathlibExt.Combinatorics.Enumerative.TrinomialUpperHalf
 public import MathlibExt.NumberTheory.LucasSequence
 public import MathlibExt.NumberTheory.TribonacciSequenceWithInitialValues001
 public import MathlibExt.NumberTheory.TrinomialCoefficient
@@ -150,40 +153,6 @@ public theorem_wanted sum_trinomialCoefficient_odd (n : ℕ) (z s : ℂ) (hs : s
     ∑ k ∈ Finset.range (n + 1), (trinomialCoefficient n (2 * k + 1) : ℂ) * z ^ k =
       ((1 + s + z) ^ n - (1 - s + z) ^ n) / (2 * s)
 
-/-- **Alternating binomial transform of a row of trinomial coefficients.** Write
-$\binom{n}{k}_2$ for the trinomial coefficient, the coefficient of $t^k$ in $(1+t+t^2)^n$. For all
-$n, m \in \mathbb{N}$
-$$\sum_{k=m}^{2n} \binom{n}{k}_2 \binom{k}{m} (-1)^k = \binom{n}{m}_2.$$
-
-Source: Yassine Otmani, *The 2-Pascal Triangle and a Related Riordan Array*, Journal of
-Integer Sequences 28 (2025), Article 25.3.5, Theorem 16 (`jis-2025-25.3.5-thm-16`). -/
-public theorem_wanted sum_trinomialCoefficient_mul_choose_alternating (n m : ℕ) :
-    ∑ k ∈ Finset.Icc m (2 * n), (trinomialCoefficient n k : ℤ) * k.choose m * (-1) ^ k =
-      (trinomialCoefficient n m : ℤ)
-
-/-- **Two binomial transforms of a row of trinomial coefficients agree.** Write
-$\binom{n}{k}_2$ for the trinomial coefficient, the coefficient of $t^k$ in $(1+t+t^2)^n$. For all
-$n, m \in \mathbb{N}$
-$$\sum_{k=0}^{m} \binom{n}{k}_2 \binom{m}{k} =
-\sum_{k=0}^{2n} \binom{n}{k}_2 \binom{m+k}{k} (-1)^k.$$
-
-Source: Yassine Otmani, *The 2-Pascal Triangle and a Related Riordan Array*, Journal of
-Integer Sequences 28 (2025), Article 25.3.5, Theorem 17 (`jis-2025-25.3.5-thm-17`). -/
-public theorem_wanted sum_trinomialCoefficient_mul_choose_eq (n m : ℕ) :
-    ∑ k ∈ Finset.range (m + 1), (trinomialCoefficient n k : ℤ) * m.choose k =
-      ∑ k ∈ Finset.range (2 * n + 1),
-        (trinomialCoefficient n k : ℤ) * (m + k).choose k * (-1) ^ k
-
-/-- **Alternating binomial sum down a trinomial column.** Write $\binom{n}{k}_2$ for the
-trinomial coefficient, the coefficient of $x^k$ in $(1+x+x^2)^n$. For natural numbers $n \le m$,
-$\sum_{k=0}^{n} (-1)^k \binom{n}{k} \binom{n-k}{m}_2 = \binom{n}{m-n}$.
-
-Source: Yassine Otmani, *The 2-Pascal Triangle and a Related Riordan Array*, Journal of
-Integer Sequences 28 (2025), Article 25.3.5, Theorem 18 (`jis-2025-25.3.5-thm-18`). -/
-public theorem_wanted sum_trinomialCoefficient_sub_mul_choose (n m : ℕ) (h : n ≤ m) :
-    ∑ k ∈ Finset.range (n + 1), (trinomialCoefficient (n - k) m : ℤ) * n.choose k * (-1) ^ k =
-      (n.choose (m - n) : ℤ)
-
 /-- **Alternating binomial sum of trinomial coefficients over even rows.** Write
 $\binom{n}{k}_2$ for the trinomial coefficient, the coefficient of $x^k$ in $(1+x+x^2)^n$. For
 every natural number $n$, $\sum_{k=0}^{n} (-1)^k \binom{n}{k} \binom{2n-2k}{n}_2 = 2^n$.
@@ -226,18 +195,6 @@ public theorem_wanted sum_trinomialCoefficient_even_sq (n : ℕ) :
         (trinomialCoefficient (2 * n) n : ℚ) / 2 +
           (if Even n then (trinomialCoefficient n (n / 2) : ℚ) else 0) / 2
 
-/-- **Absorption identity for trinomial coefficients.** Write $\binom{n}{k}_2$ for the
-trinomial coefficient, the coefficient of $x^k$ in $(1+x+x^2)^n$. For natural numbers $n \ge 1$
-and $k$, $\frac{k}{n} \binom{n}{k}_2 = \binom{n-1}{k-1}_2 + 2 \binom{n-1}{k-2}_2$, where a term
-whose lower index is negative is read as $0$.
-
-Source: Yassine Otmani, *The 2-Pascal Triangle and a Related Riordan Array*, Journal of
-Integer Sequences 28 (2025), Article 25.3.5, Lemma 31 (`jis-2025-25.3.5-lem-31`). -/
-public theorem_wanted trinomialCoefficient_absorption (n k : ℕ) (hn : 0 < n) :
-    (k : ℚ) / n * trinomialCoefficient n k =
-      (if 1 ≤ k then (trinomialCoefficient (n - 1) (k - 1) : ℚ) else 0) +
-        2 * (if 2 ≤ k then (trinomialCoefficient (n - 1) (k - 2) : ℚ) else 0)
-
 /-- **Weighted diagonal sums of trinomial coefficients by coefficient extraction.** Write
 $\binom{n}{k}_2$ for the trinomial coefficient, the coefficient of $t^k$ in $(1+t+t^2)^n$,
 $[t^m]\,g$ for the coefficient of $t^m$ in a power series $g$, and $f_k = [t^k]\,f$. For every
@@ -267,21 +224,6 @@ public theorem_wanted sum_trinomialCoefficient_diagonal_alternating (n : ℕ) (h
     let S := ∑ k ∈ Finset.range (2 * n / 3 + 1),
       (trinomialCoefficient (n - k) k : ℚ) * n / (n - k : ℕ) * (-1) ^ k
     (n % 4 = 1 ∨ n % 4 = 3 → S = 1) ∧ (n % 4 = 2 → S = -1) ∧ (n % 4 = 0 → S = 3)
-
-/-- **Generating sum of the upper half of a trinomial row.** Write $\binom{n}{k}_2$ for the
-trinomial coefficient, the coefficient of $x^k$ in $(1+x+x^2)^n$. For every natural number $n$
-and every complex number $w$,
-$$\sum_{k=0}^{n} \binom{n}{n-k}_2 w^{n+k} = \frac{(1+w+w^2)^n}{2} + \frac{\binom{n}{n}_2 w^n}{2} +
-\frac{w^2-1}{2} \sum_{k=0}^{n-1} \binom{k}{k}_2 (1+w+w^2)^{n-1-k} w^k.$$
-
-Source: Yassine Otmani, *The 2-Pascal Triangle and a Related Riordan Array*, Journal of
-Integer Sequences 28 (2025), Article 25.3.5, Corollary 40 (`jis-2025-25.3.5-cor-40`). -/
-public theorem_wanted sum_trinomialCoefficient_upper_half (n : ℕ) (w : ℂ) :
-    ∑ k ∈ Finset.range (n + 1), (trinomialCoefficient n (n - k) : ℂ) * w ^ (n + k) =
-      (1 + w + w ^ 2) ^ n / 2 + (trinomialCoefficient n n : ℂ) * w ^ n / 2 +
-        (w ^ 2 - 1) / 2 * ∑ k ∈ Finset.range n,
-          (trinomialCoefficient k k : ℂ) * (1 + w + w ^ 2) ^ (n - 1 - k) * w ^ k
-
 
 /-- **Trinomial coefficients along lines from a square-root series.** Write
 $\binom{n}{k}_2$ for the trinomial coefficient, the coefficient of $x^k$ in $(1+x+x^2)^n$, and

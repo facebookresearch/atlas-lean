@@ -58,38 +58,13 @@ public import Mathlib.Combinatorics.Enumerative.Composition
 public import Mathlib.Combinatorics.Enumerative.Partition.Basic
 public import Mathlib.Data.Finset.Card
 public import Mathlib.SetTheory.Cardinal.Finite
+public import MathlibExt.Combinatorics.Enumerative.SchreierSparseCount
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.Combinatorics.Enumerative.SchreierTypeSetsWanted
-
-/-- **Schreier sets.** A finite set $A$ of natural numbers is *Schreier* if $|A| \le a$ for
-every $a \in A$; equivalently, $A$ is empty or $\min A \ge |A|$. -/
-def IsSchreier (A : Finset ℕ) : Prop := ∀ a ∈ A, A.card ≤ a
-
-instance (A : Finset ℕ) : Decidable (IsSchreier A) := by
-  unfold IsSchreier; infer_instance
-
-/-- **Strong Schreier sets.** For a natural number $\ell$, a finite set $A$ of natural numbers is
-*$\ell$-strong Schreier* if $\ell |A| + 1 \le a + \ell$ for every $a \in A$; equivalently, $A$ is
-empty or $\min A \ge \ell |A| - \ell + 1$. -/
-def IsStrongSchreier (l : ℕ) (A : Finset ℕ) : Prop :=
-  ∀ a ∈ A, l * A.card + 1 ≤ a + l
-
-instance (l : ℕ) (A : Finset ℕ) : Decidable (IsStrongSchreier l A) := by
-  unfold IsStrongSchreier; infer_instance
-
-/-- **Sparse sets.** A finite set of natural numbers is *sparse* if the differences between
-consecutive elements in increasing order are non-decreasing. -/
-def IsSparse (A : Finset ℕ) : Prop :=
-  ∀ a ∈ A, ∀ b ∈ A, ∀ c ∈ A, a < b → b < c →
-    (∀ x ∈ A, a < x → b ≤ x) → (∀ x ∈ A, b < x → c ≤ x) →
-      b - a ≤ c - b
-
-instance (A : Finset ℕ) : Decidable (IsSparse A) := by
-  unfold IsSparse; infer_instance
 
 /-- **Strongly sparse sets.** A finite set of natural numbers is *strongly sparse* if the
 differences between consecutive elements in increasing order are strictly increasing. -/
@@ -107,22 +82,12 @@ def partitionExactCount (u k : ℕ) : ℕ :=
   (Finset.univ.filter (fun P : Nat.Partition u =>
     P.parts.card = k)).card
 
-/-- **The partition number $p(u)$.** For a natural number $u$, $p(u)$ is the number of partitions
-of $u$, that is, of multisets of positive integers summing to $u$; in particular $p(0) = 1$. -/
-def partitionCount (u : ℕ) : ℕ := Fintype.card (Nat.Partition u)
-
 /-- **Number of Schreier sparse sets with given minimum and maximum.** For natural numbers $n$
 and $m$, $|F_{n,m}|$ is the number of sets $F \subseteq \{1, \dots, n\}$ that are Schreier and
 sparse, contain $n$, and have minimum $m$. -/
 def schreierSparseMinCount (n m : ℕ) : ℕ :=
   ((Finset.Icc 1 n).powerset.filter (fun F => IsSchreier F ∧
     IsSparse F ∧ n ∈ F ∧ m ∈ F ∧ ∀ a ∈ F, m ≤ a)).card
-
-/-- **Number of Schreier sparse sets with maximum $n$.** For a natural number $n$, $|F_n|$ is the
-number of sets $F \subseteq \{1, \dots, n\}$ with $n \in F$ that are Schreier and sparse. -/
-def schreierSparseCount (n : ℕ) : ℕ :=
-  ((Finset.Icc 1 n).powerset.filter (fun F => IsSchreier F ∧
-    IsSparse F ∧ n ∈ F)).card
 
 /-- **Number of sparse strong Schreier sets with maximum $n$.** For natural numbers $n$ and
 $\ell$, $|A_{n,\ell}|$ is the number of sets $A \subseteq \{1, \dots, n\}$ with $n \in A$ that
@@ -166,13 +131,6 @@ def partitionDistinctMinPartCount (n l : ℕ) : ℕ :=
   (Nat.Partition.restricted n (fun x => l ≤ x) ∩
     Nat.Partition.distincts n).card
 
-/-- **Partitions with a given number of parts, all at least a given size.** For natural numbers
-$n$, $\ell$ and $k$, $|E_{n,\ell,k}|$ is the number of partitions of $n$ into exactly $k$ parts,
-all of which are at least $\ell$. -/
-def partitionMinPartExactCount (n l k : ℕ) : ℕ :=
-  ((Nat.Partition.restricted n (fun x => l ≤ x)).filter
-    (fun P => P.parts.card = k)).card
-
 /-- **Partitions with a given gap between the two largest parts.** For natural numbers $n$,
 $\ell$, $k$ and $q$, $|E_{n,\ell,k,q}|$ is the number of partitions of $n$ into exactly $k$ parts,
 all at least $\ell$, whose largest part exceeds the second largest part (counted with
@@ -212,22 +170,6 @@ whose parts are at least $v$. -/
 def compositionMinPartCount (u v : ℕ) : ℕ :=
   Fintype.card {c : Composition u // ∀ x ∈ c.blocks, v ≤ x}
 
-/-- **The refined Schreier family $F_{n,\ell}$.** For natural numbers $n$ and $\ell$, a finite
-set $A$ of natural numbers belongs to $F_{n,\ell}$ if $n + 1$ is the largest element of $A$,
-$A$ has at least three elements, $A$ is sparse and $\ell$-strong Schreier, and the two largest
-elements $a < b$ of $A$ below $n + 1$ satisfy $n + 1 + a = 2b$. -/
-def IsRefinedSchreier (n l : ℕ) (A : Finset ℕ) : Prop :=
-  n + 1 ∈ A ∧ (∀ x ∈ A, x ≤ n + 1) ∧ 3 ≤ A.card ∧ IsSparse A ∧
-    IsStrongSchreier l A ∧
-      ∃ a ∈ A, ∃ b ∈ A, a < b ∧ b < n + 1 ∧
-        (∀ x ∈ A, x ≤ b ∨ x = n + 1) ∧
-          (∀ x ∈ A, x ≤ a ∨ x = b ∨ x = n + 1) ∧
-            n + 1 + a = 2 * b
-
-instance (n l : ℕ) (A : Finset ℕ) :
-    Decidable (IsRefinedSchreier n l A) := by
-  unfold IsRefinedSchreier; infer_instance
-
 /-- **Refined Schreier count.** For natural numbers $n$ and $\ell$, $|F_{n,\ell}|$ is the number of
 finite sets $A$ of natural numbers such that $n + 1 \in A$, every element of $A$ is at most
 $n + 1$, $A$ has at least three elements, $A$ is sparse and $\ell$-strong Schreier, and the two
@@ -236,17 +178,6 @@ contained in $\{0, \dots, n + 1\}$. -/
 def refinedSchreierCount (n l : ℕ) : ℕ :=
   ((Finset.Icc 0 (n + 1)).powerset.filter
     (IsRefinedSchreier n l)).card
-
-/-- **Refined Schreier sets with a given number of elements.** For natural numbers $n$ and
-$\ell$, let $F_{n,\ell}$ be the family of finite sets $A$ of natural numbers such that $A$ has
-largest element $n + 1$ and at least three elements, $A$ is sparse (the differences of
-consecutive elements, in increasing order, are non-decreasing) and $\ell$-strong Schreier
-($\ell|A| + 1 \le a + \ell$ for every $a \in A$), and the second and third largest elements
-$b > a$ of $A$ satisfy $n + 1 + a = 2b$. For a natural number $k$, $|F_{n,\ell,k}|$ is the
-number of sets in $F_{n,\ell}$ with exactly $k$ elements. -/
-def refinedSchreierCardCount (n l k : ℕ) : ℕ :=
-  ((Finset.Icc 0 (n + 1)).powerset.filter
-    (fun A => IsRefinedSchreier n l A ∧ A.card = k)).card
 
 /-- **Refined Schreier sets with a given size and minimum.** For natural numbers $n$ and
 $\ell$, let $F_{n,\ell}$ be the family of finite sets $A$ of natural numbers such that $A$ has
@@ -270,15 +201,6 @@ Source: Kevin Beanland and Hùng Việt Chu, "On Schreier-Type
 Sets, Partitions, and Compositions", Proposition 2. -/
 theorem_wanted schreierSparseMinCount_eq (m n : ℕ) (hmn : m + 1 ≤ n) :
     schreierSparseMinCount n (m + 1) = partitionExactCount (n - 1) m
-
-/-- **Counting Schreier sparse sets by partition numbers.** For every integer $n \ge 1$, the
-number of Schreier sparse sets $F \subseteq \{1, \dots, n\}$ with $n \in F$ equals $p(n - 1)$,
-the number of partitions of $n - 1$.
-
-Source: Kevin Beanland and Hùng Việt Chu, "On Schreier-Type
-Sets, Partitions, and Compositions", Corollary 3. -/
-theorem_wanted schreierSparseCount_eq (n : ℕ) (hn : 1 ≤ n) :
-    schreierSparseCount n = partitionCount (n - 1)
 
 /-- **Sparse strong Schreier sets as a sum of partition counts.** For every integer $n \ge 1$
 and every natural number $\ell$, the number of sparse $\ell$-strong Schreier sets
@@ -376,23 +298,6 @@ theorem_wanted refinedSchreierCardMinCount_eq (n l k q : ℕ)
     (hn : l + 1 ≤ n) (hk : 2 ≤ k) (hq : 1 ≤ q) :
     refinedSchreierCardMinCount n l (k + 1) (l * k + q) =
       partitionMinPartGapCount n (l + 1) k (q - 1)
-
-/-- **Partitions with a fixed number of large parts and refined Schreier sets.** Let $n$,
-$\ell$ and $k$ be natural numbers with $n \ge \ell + 1$ and $k \ge 2$. Let $F_{n,\ell}$ be the
-family of finite sets $A$ of natural numbers such that $A$ has largest element $n + 1$ and at
-least three elements, $A$ is sparse (the differences of consecutive elements, in increasing
-order, are non-decreasing) and $\ell$-strong Schreier ($\ell|A| + 1 \le a + \ell$ for every
-$a \in A$), and the second and third largest elements $b > a$ of $A$ satisfy
-$n + 1 + a = 2b$. Then the number $|E_{n,\ell+1,k}|$ of partitions of $n$ into exactly $k$
-parts, all at least $\ell + 1$, equals the number $|F_{n,\ell,k+1}|$ of sets in $F_{n,\ell}$
-with exactly $k + 1$ elements.
-
-Source: Kevin Beanland and Hùng Việt Chu, "On Schreier-Type
-Sets, Partitions, and Compositions", Corollary 12. -/
-theorem_wanted partitionMinPartExactCount_eq_refined (n l k : ℕ)
-    (hn : l + 1 ≤ n) (hk : 2 ≤ k) :
-    partitionMinPartExactCount n (l + 1) k =
-      refinedSchreierCardCount n l (k + 1)
 
 /-- **Partitions into large parts and the refined Schreier family.** Let $n$ and $\ell$ be
 natural numbers with $n \ge \ell + 1$. Let $F_{n,\ell}$ be the family of finite sets $A$ of

@@ -19,25 +19,14 @@ Fibonacci Quarterly 62 (2024), no. 3 (primary text: arXiv:2607.09105).
 module
 
 import Batteries.Util.ProofWanted
-public import MathlibExt.NumberTheory.LucasSequence
+public import MathlibExt.NumberTheory.Recurrences.LucasBinomialSum
+public import MathlibExt.NumberTheory.Recurrences.LucasRootPower
 public import Mathlib.Analysis.SpecialFunctions.Log.Base
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Powers of a root of the Lucas characteristic polynomial.** Let $x$ and $y \neq 0$ be
-integers and let $(U_n)$ be the Lucas sequence with parameters $(x, y)$, given by $U_0 = 0$,
-$U_1 = 1$ and $U_{n+2} = x U_{n+1} - y U_n$. If $\alpha$ is a complex number with
-$\alpha^2 - x\alpha + y = 0$, then $\alpha^n = \alpha U_n - y U_{n-1}$ for every $n \geq 1$.
-
-Source: Benjamin Earp-Lynch, Simon Earp-Lynch, Omar Kihel and Puntani Pongsumpun, *Extension of the
-Equation ∑ j F_j^p = F_n^q to a Family of Lucas Sequences*, The Fibonacci Quarterly 62 (2024),
-no. 3, Lemma 2.1 (i), (ii) (`fq-2024-earplynch07182024-lem-2.1`). -/
-public theorem_wanted lucasU_root_pow (P : LucasSequenceParams) {α : ℂ}
-    (hα : α ^ 2 - P.p * α + P.q = 0) {n : ℕ} (hn : 1 ≤ n) :
-    α ^ n = α * lucasU P n - P.q * lucasU P (n - 1)
 
 /-- **The companion Lucas sequence in terms of the fundamental one.** Let $x$ and $y \neq 0$ be
 integers and let $(U_n)$ and $(V_n)$ be the Lucas sequences with parameters $(x, y)$, given by
@@ -72,20 +61,6 @@ Equation ∑ j F_j^p = F_n^q to a Family of Lucas Sequences*, The Fibonacci Quar
 no. 3, Lemma 2.1 (vi) (`fq-2024-earplynch07182024-lem-2.1`). -/
 public theorem_wanted lucasV_sq_eq (P : LucasSequenceParams) (n : ℕ) :
     lucasV P n ^ 2 = (P.p ^ 2 - 4 * P.q) * lucasU P n ^ 2 + 4 * P.q ^ n
-
-/-- **Binomial-sum formula for the Lucas sequence $U$.** Let $x$ and $y \neq 0$ be integers and
-let $(U_n)$ be the Lucas sequence with parameters $(x, y)$, given by $U_0 = 0$, $U_1 = 1$ and
-$U_{n+2} = x U_{n+1} - y U_n$. Then for every $r \geq 1$,
-$$
-U_r = \sum_{i=0}^{\lfloor (r-1)/2 \rfloor} (-y)^i \binom{r-i-1}{i} x^{r-2i-1}.
-$$
-
-Source: Benjamin Earp-Lynch, Simon Earp-Lynch, Omar Kihel and Puntani Pongsumpun, *Extension of the
-Equation ∑ j F_j^p = F_n^q to a Family of Lucas Sequences*, The Fibonacci Quarterly 62 (2024),
-no. 3, Lemma 2.1 (vii) (`fq-2024-earplynch07182024-lem-2.1`). -/
-public theorem_wanted lucasU_eq_sum_choose (P : LucasSequenceParams) {r : ℕ} (hr : 1 ≤ r) :
-    lucasU P r = ∑ i ∈ Finset.range ((r - 1) / 2 + 1),
-      (-P.q) ^ i * ((r - i - 1).choose i : ℤ) * P.p ^ (r - 2 * i - 1)
 
 /-- **Bounds on Lucas sequences by powers of the dominant root.** Let $x$ and $y \neq 0$ be
 integers with $x \geq 1$, $|y + 1| \leq x$ and $D = x^2 - 4y > 0$, let $(U_n)$ and $(V_n)$ be the

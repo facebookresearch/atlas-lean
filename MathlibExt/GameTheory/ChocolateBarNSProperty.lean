@@ -50,6 +50,19 @@ public theorem not_hasNSProperty_id : ¬ HasNSProperty id := fun h ↦ by
   have := h.2 0 1 1 Nat.one_pos rfl
   simp at this
 
+/-- **Halving functions have the NS property.** For every natural number $m \ge 1$, the function
+$x \mapsto \lfloor x / 2^m \rfloor$ on $\mathbb{N}$ has the NS property.
+
+Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
+Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
+Article G3, Lemma 7 (`integers-2025-G3-lem-7`). -/
+public theorem hasNSProperty_div_two_pow {m : ℕ} (hm : 0 < m) :
+    HasNSProperty fun x ↦ x / 2 ^ m := by
+  refine ⟨fun _ _ hab ↦ Nat.div_le_div_right hab, fun z z' i hi h ↦ ?_⟩
+  have he : m + (i - 1) = i + (m - 1) := by omega
+  simpa only [Nat.div_div_eq_div_mul, ← Nat.pow_add, he] using
+    congrArg (fun q : ℕ ↦ q / 2 ^ (m - 1)) h
+
 /-- **Indicator functions with the NS property.** Let $f : \mathbb{N} \to \mathbb{N}$ be monotone,
 with $f(x) \le 1$ for all $x$ and $f(x) = 1$ for some $x$. Then $f$ has the NS property if and
 only if there is an even $m \in \mathbb{N}$ such that $f$ is the indicator function of

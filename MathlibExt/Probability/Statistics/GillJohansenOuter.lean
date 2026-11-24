@@ -509,7 +509,7 @@ theorem TendstoInDistributionOuter.extended_comp {α β : Type*} [TopologicalSpa
     filter_upwards [eventually_ge_atTop k] with n hn
     refine (measure_mono fun ω hω ↦ ?_).trans (measure_union_le _ _)
     by_cases hωD : U n ω ∈ D n
-    · exact Or.inl (subset_closure (Set.mem_biUnion hn ⟨hωD, hω⟩))
+    · exact Or.inl (subset_closure (Set.mem_iUnion₂_of_mem hn ⟨hωD, hω⟩))
     · exact Or.inr hωD
   -- Step 2: points of `α₀` in every `S k` are mapped by `g₀` into `K`.
   have h2 : ∀ x ∈ α₀, x ∈ ⋂ k, S k → g₀ x ∈ K := by

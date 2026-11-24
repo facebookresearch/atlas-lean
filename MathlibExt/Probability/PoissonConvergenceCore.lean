@@ -336,7 +336,7 @@ private theorem esymm_tendsto (hp : ∀ n i, 0 ≤ p n i)
       (𝓝 ((lam : ℝ) ^ j / (Nat.factorial j : ℝ))) := by
   intro j
   induction j using Nat.strong_induction_on with
-  | h j IH =>
+  | ind j IH =>
     cases j with
     | zero =>
       simp [esymmSum]

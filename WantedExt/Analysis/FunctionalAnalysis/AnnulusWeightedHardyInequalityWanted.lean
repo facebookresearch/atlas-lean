@@ -50,19 +50,19 @@ abbrev R2 : Type := EuclideanSpace ℝ (Fin 2)
 /-- **Open discs about the origin for the annulus Hardy inequality.** For a real number $r$,
 $B_r = \{x \in \mathbb{R}^2 : |x| < r\}$ is the open disc of radius $r$ about the origin of the
 Euclidean plane $\mathbb{R}^2$, where $|x|$ is the Euclidean norm. -/
-abbrev B (r : ℝ) : Set R2 := Metric.ball (0 : R2) r
+noncomputable abbrev B (r : ℝ) : Set R2 := Metric.ball (0 : R2) r
 
 /-- **Full annulus of the weighted Hardy inequality.** $\Omega_1 = B_3 \setminus \overline{B}_1$,
 where $B_r$ is the open disc of radius $r$ about the origin of the Euclidean plane $\mathbb{R}^2$
 and $\overline{B}_1$ is the closure of $B_1$; that is, writing $|x|$ for the Euclidean norm,
 $\Omega_1$ is the annulus $\{x \in \mathbb{R}^2 : 1 < |x| < 3\}$. -/
-abbrev Omega1 : Set R2 := B 3 \ closure (B 1)
+noncomputable abbrev Omega1 : Set R2 := B 3 \ closure (B 1)
 
 /-- **Outer annulus of the weighted Hardy inequality.** $\Omega_2 = B_3 \setminus \overline{B}_2$,
 where $B_r$ is the open disc of radius $r$ about the origin of the Euclidean plane $\mathbb{R}^2$
 and $\overline{B}_2$ is the closure of $B_2$; that is, writing $|x|$ for the Euclidean norm,
 $\Omega_2$ is the annulus $\{x \in \mathbb{R}^2 : 2 < |x| < 3\}$. -/
-abbrev Omega2 : Set R2 := B 3 \ closure (B 2)
+noncomputable abbrev Omega2 : Set R2 := B 3 \ closure (B 2)
 
 /-- **Weight of the annulus Hardy inequality.** For $x$ in the Euclidean plane $\mathbb{R}^2$,
 $\phi(x) = \max\{|x| - 1, 0\}$, where $|x|$ is the Euclidean norm; this is the distance from $x$

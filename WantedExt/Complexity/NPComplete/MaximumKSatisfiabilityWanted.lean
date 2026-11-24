@@ -21,7 +21,7 @@ P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems* (web
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.MaxSatWanted
@@ -52,7 +52,7 @@ holds for any `k` (an assignment is a certificate). For `k = 1` the problem is p
 (satisfy, for each variable, the more frequent of its two literals), so the theorem quantifies
 over `k ≥ 2`.
 
-The instance (variable count, CNF formula as in `Cslib.Logic.PL.CNF`, bound `K`), the variable
+The instance (variable count, CNF formula as in `Cslib.Logic.LegacyPL.CNF`, bound `K`), the variable
 range condition and the question (an assignment and a sub-list of at least `K` satisfied
 clauses) are those of MAXIMUM SATISFIABILITY (`MaxSatWanted`); `WellFormed k` adds that every
 clause has at most `k` literals, as `MaxTwoSatWanted` does for `k = 2`, and that `K` is positive
