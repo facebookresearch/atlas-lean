@@ -46,9 +46,11 @@ source modules; planned destinations are listed separately when added.
 - [Diffusion and reaction in catalyst pellets](../roadmap/Chemistry/chemical-kinetics/catalyst-pellet-diffusion-and-reaction/README.md)
 - [Chemostat dynamics](../roadmap/Biology/population-dynamics/chemostat/README.md)
 
-**Related mathematical topics**, not application-library members:
-[queueing theory](../roadmap/Probability/queueing-theory/README.md) and
-[birth–death balance weights](../roadmap/Probability/markov-chains/birth-death-processes/README.md).
+**Related mathematical topics**, whose links do not assign library membership:
+
+- [Queueing theory](../roadmap/Probability/queueing-theory/README.md)
+- [Birth–death balance weights](../roadmap/Probability/markov-chains/birth-death-processes/README.md)
+- [Population genetics](../roadmap/Biology/population-genetics/README.md), including selection, inbreeding, effective size and diffusion models.
 
 ### CSLibExt
 
@@ -59,6 +61,13 @@ Computer-science developments, including algorithms applied to other domains.
   in `CSLibExt/Algorithms/Lean/DynamicProgramming/AffineAlignment.lean`.
   Its mathematical home is bioinformatics, not a second copy under computer science.
 
+**Related mathematical topics**, whose links do not assign library membership:
+
+- [Intuitionistic propositional logic](../roadmap/Logic/propositional-logic/kripke-semantics-for-intuitionistic-propositional-logic.md)
+- [Proof theory](../roadmap/Logic/proof-theory/README.md)
+- [Type-theoretic foundations](../roadmap/Logic/type-theoretic-foundations/README.md)
+- [Propositional dynamic logic](../roadmap/Logic/modal-logic/propositional-dynamic-logic/README.md)
+
 ### PhyslibExt
 
 Physics developments. **Implemented examples:**
@@ -66,7 +75,7 @@ Physics developments. **Implemented examples:**
 - [Uniqueness of pipe-network flows and heads with one anchored head](../roadmap/Physics/fluid-mechanics/pipe-flow-networks/pipe-flow-equations-unique-of-anchor.md),
   in `PhyslibExt/FluidDynamics/Hydraulics/PipeNetworkHeads.lean`.
 
-**Related mathematical topics**, not physics-library members:
+**Related mathematical topics**, whose links do not assign library membership:
 
 - [Linear-system stability](../roadmap/Analysis/ordinary-differential-equations/stability-of-linear-systems/README.md)
 - [Controllability](../roadmap/Analysis/control-theory/controllability-of-linear-systems/README.md)

@@ -20,6 +20,7 @@ Condition 2 does not depend on the norm, since all norms on $\mathbb{R}^n$ are e
 
 ## Background
 
+- [Asymptotic stability of linear ODEs with eigenvalues in the open left half-plane](../lyapunov-s-indirect-method/linear-ode-asymptotic-stability.md): the implication 1 $\Rightarrow$ 3 in the maximum norm.
 - [Exponential stability of linear difference equations](asymptotic-stability-linear-difference-equations.md): the discrete-time counterpart.
 
 ## Sources
