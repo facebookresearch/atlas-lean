@@ -11928,6 +11928,7 @@
   "MathlibExt/NumberTheory/ArithmeticFunction/Antimultiplicative": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Antimultiplicative arithmetic functions"},
   "MathlibExt/NumberTheory/ArithmeticFunction/BinomialPowerRealizability": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Dold and realizable sequences"},
   "MathlibExt/NumberTheory/ArithmeticFunction/BiunitaryDivisor": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Biunitary divisors"},
+  "MathlibExt/NumberTheory/ArithmeticFunction/BiunitaryDivisorParity": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Biunitary triperfect numbers"},
   "MathlibExt/NumberTheory/ArithmeticFunction/BiunitaryFortyOne": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Biunitary triperfect numbers"},
   "MathlibExt/NumberTheory/ArithmeticFunction/CompletelyMultiplicative": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Completely multiplicative functions"},
   "MathlibExt/NumberTheory/ArithmeticFunction/CoprimalityIndicatorMultiplicativity": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Tuples coprime along the edges of a graph"},
