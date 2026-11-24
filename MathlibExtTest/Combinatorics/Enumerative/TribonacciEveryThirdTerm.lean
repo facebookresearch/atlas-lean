@@ -12,18 +12,18 @@ import MathlibExt.Combinatorics.Enumerative.TribonacciEveryThirdTerm
 
 namespace MetaMathlibExt.TribonacciEveryThirdTermTest
 
-private def a077943 : ℕ → ℤ
+private def paddedA077943 : ℕ → ℤ
   | 0 => 0
   | 1 => 0
   | 2 => 1
-  | n + 3 => 2 * a077943 (n + 2) - 2 * a077943 (n + 1) + 2 * a077943 n
+  | n + 3 => 2 * paddedA077943 (n + 2) - 2 * paddedA077943 (n + 1) + 2 * paddedA077943 n
 
--- The first sampled index is three.
-example : a077943 3 = 2 :=
-  (two_pow_mul_tribonacci_eq a077943 rfl rfl rfl a077943.eq_4 0).symm
+-- Padded index 3 is OEIS index 1, the first sampled term.
+example : paddedA077943 3 = 2 :=
+  (two_pow_mul_tribonacci_eq paddedA077943 rfl rfl rfl paddedA077943.eq_4 0).symm
 
--- The first term beyond the three base cases uses the subsequence recurrence.
-example : a077943 12 = 64 :=
-  (two_pow_mul_tribonacci_eq a077943 rfl rfl rfl a077943.eq_4 3).symm
+-- Padded index 12 is OEIS index 10, the first sample beyond the three base cases.
+example : paddedA077943 12 = 64 :=
+  (two_pow_mul_tribonacci_eq paddedA077943 rfl rfl rfl paddedA077943.eq_4 3).symm
 
 end MetaMathlibExt.TribonacciEveryThirdTermTest

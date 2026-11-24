@@ -17,7 +17,9 @@ import Mathlib.Tactic.Ring
 /-!
 # Tribonacci numbers from every third term of A077943
 
-The terms of A077943 at positive multiples of three are Tribonacci numbers scaled by powers of two.
+With OEIS A077943 indexed from zero, its term at $3n+1$ is $2^{n+1} T_{n+2}$,
+where $T$ is the Tribonacci sequence starting with $0,0,1$. The theorem prepends two zeros
+to A077943, placing this term at index $3(n+1)$ in the resulting sequence.
 -/
 
 namespace MetaMathlibExt

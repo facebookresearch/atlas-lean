@@ -6,6 +6,9 @@ $(y_n)_{n \ge 0}$ be a sequence of integers with $y_0 = y_1 = 0$, $y_2 = 1$ and
 $y_{n+3} = 2y_{n+2} - 2y_{n+1} + 2y_n$ for all $n \ge 0$ (the sequence A077943). Then for
 every $n \ge 0$, $2^{n+1} T_{n+2} = y_{3(n+1)}$.
 
+If $a$ denotes OEIS A077943 indexed from zero, then
+$y_{k+2} = a_k$ for all $k \ge 0$, so the sampled term is $a_{3n+1}$.
+
 ## Sources
 
 - Yassine Otmani, *The 2-Pascal Triangle and a Related Riordan Array*, J. Integer Seq. 28 (2025), Article 25.3.5, Theorem 27, <https://cs.uwaterloo.ca/journals/JIS/VOL28/Otmani/otmani10.html> (catalogue key jis-2025-25.3.5-thm-27).
