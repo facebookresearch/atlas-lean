@@ -1,0 +1,15 @@
+# Coalgebra
+
+- [Signed Insertion](signed-insertion.md)
+- [Signed Insertion comp self](signed-insertion-comp-self.md)
+- [Coproduct](coproduct.md)
+- [Coproduct ι mul](coproduct-mul.md)
+- [Augmentation](augmentation.md)
+- [Tensor Parity](tensor-parity.md)
+- [Coproduct involute](coproduct-involute.md)
+- [Coproduct coassoc apply](coproduct-coassoc-apply.md)
+- [Augmentation r Tensor coproduct](augmentation-r-tensor-coproduct.md)
+- [Augmentation l Tensor coproduct](augmentation-l-tensor-coproduct.md)
+- [Ι is Primitive](is-primitive.md)
+- [Involute map apply](involute-map-apply.md)
+- [Coproduct naturality](coproduct-naturality.md)
