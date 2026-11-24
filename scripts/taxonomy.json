@@ -12325,6 +12325,7 @@
   "MathlibExt/NumberTheory/LcmDenseSets": {"to": "NumberTheory/additive-number-theory", "title": "Reciprocal lcm sums of integer sets"},
   "MathlibExt/NumberTheory/LegendreSymbol/EisensteinJacobiSymbol": {"to": "NumberTheory/congruences/power-residues-reciprocity", "title": "Eisenstein's lemma"},
   "MathlibExt/NumberTheory/LegendreSymbol/LinearSum": {"to": "NumberTheory/congruences/power-residues-reciprocity", "title": "Sums of Legendre symbols"},
+  "MathlibExt/NumberTheory/LehmerBoundsFormula": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Spoof Lehmer factorizations"},
   "MathlibExt/NumberTheory/LehmerBoundsMonotonicity": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Spoof Lehmer factorizations"},
   "MathlibExt/NumberTheory/LeonardoPTilings": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Leonardo p-numbers"},
   "MathlibExt/NumberTheory/LexMinimalExtensionMonoid": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Binomid indices and generalized binomial coefficients"},
