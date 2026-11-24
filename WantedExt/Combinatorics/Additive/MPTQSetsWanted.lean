@@ -87,15 +87,6 @@ INTEGERS 24 (2024), Article A96, Lemma 5 (`integers-2024-A96-lem-5`). -/
 public theorem_wanted not_isMPTQSet_of_card_five_two_neg {A : Finset ℝ} (hcard : A.card = 5)
     (hneg : (A.filter (· < 0)).card = 2) : ¬ IsMPTQSet A
 
-/-- **Adjoining negatives preserves the MPTQ property.** Let $A$ be a finite set of positive real
-numbers and $-A = \{-a : a \in A\}$. Then $A \cup (-A)$ is an MPTQ set if and only if $A$ is an
-MPTQ set.
-
-Source: Anupriya Shetty and B. R. Shankar, *On The Minimum Cardinality of MPTQ Sets*,
-INTEGERS 24 (2024), Article A96, Proposition 1 (`integers-2024-A96-prop-1`). -/
-public theorem_wanted isMPTQSet_union_neg_iff {A : Finset ℝ} (hpos : ∀ a ∈ A, 0 < a) :
-    IsMPTQSet (A ∪ -A) ↔ IsMPTQSet A
-
 /-- **No MPTQ set has five elements.** No set of five real numbers is an MPTQ set.
 
 Source: Anupriya Shetty and B. R. Shankar, *On The Minimum Cardinality of MPTQ Sets*,

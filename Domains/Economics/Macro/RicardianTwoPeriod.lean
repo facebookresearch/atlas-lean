@@ -49,7 +49,7 @@ Atlas roadmap target MA07.T04.
 
 namespace MathlibExt.Economics.Macro.RicardianTwoPeriod
 
-/-- **Government present-value budget (two periods).** With period budgets
+/-- **Government present-value budget (two periods).** For `1 + r ≠ 0`, with period budgets
 `g0 = t0 + b0` (date 0: spending is met by taxes plus new debt) and
 `g1 + (1+r) * b0 = t1` (date 1: spending plus debt repayment is met by taxes,
 terminal debt zero), the present value of taxes equals the present value of
@@ -65,7 +65,7 @@ theorem government_presentValue_budget {r g0 g1 t0 t1 b0 : ℝ} (h1r : 1 + r ≠
   ring
 
 /-- **Ricardian tax-timing invariance, two-period finite model (MA07.T04).**
-In a finite two-period model with frictionless lump-sum taxes, if two tax paths
+In a finite two-period model with frictionless lump-sum taxes and `1 + r ≠ 0`, if two tax paths
 `(t0, t1)` and `(t0', t1')` both finance the SAME government spending path
 `(g0, g1)` at the same rate `r` (each with its own debt path, terminal debt
 zero), then the household present-value budget — after-tax income
