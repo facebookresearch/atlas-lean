@@ -20,6 +20,7 @@ public import MathlibExt.NumberTheory.Recurrences.GelinCesaroAlternatingSum
 public import MathlibExt.NumberTheory.Recurrences.GibonacciDOcagneIdentity
 public import MathlibExt.NumberTheory.Recurrences.GibonacciFibonacciFactorIdentity
 public import MathlibExt.NumberTheory.Recurrences.GibonacciFibonacciLucasIdentity
+public import MathlibExt.NumberTheory.Recurrences.GibonacciIndexDoubling
 public import MathlibExt.NumberTheory.Recurrences.GibonacciLucasLikeSum
 public import MathlibExt.NumberTheory.Recurrences.GibonacciLucasMultiplier
 public import MathlibExt.NumberTheory.Recurrences.GibonacciProductSum
@@ -338,20 +339,6 @@ public theorem_wanted gibonacci_triple_product_recurrence
     G (k + 1) * H (r + 1) * I (s + 1) =
       3 * G k * H r * I s + 6 * G (k - 1) * H (r - 1) * I (s - 1) -
         3 * G (k - 2) * H (r - 2) * I (s - 2) - G (k - 3) * H (r - 3) * I (s - 3)
-
-/-- **Gibonacci index doubling via Fibonacci squares.** Let $F_m$ be the Fibonacci numbers
-extended to all integers $m$ ($F_0 = 0$, $F_1 = 1$, $F_{m+2} = F_{m+1} + F_m$), and let
-$G \colon \mathbb{Z} \to \mathbb{R}$ satisfy $G_{j+2} = G_{j+1} + G_j$ for every integer $j$.
-Then for all integers $k$, $s$,
-$$G_{2k+s} = F_{k+1}^2 G_{s+1} + F_k^2 G_s - F_{k-1}^2 G_{s-1}.$$
-
-Source: Kunle Adegoke, *Fibonacci Identities via Fibonacci Functions*, Journal of
-Integer Sequences 27 (2024), Article 24.6.2, Proposition 26
-(`jis-2024-24.6.2-prop-26`). -/
-public theorem_wanted gibonacci_two_mul_add_eq_fib_sq_combination
-    (G : ℤ → ℝ) (hG : ∀ j : ℤ, G (j + 2) = G (j + 1) + G j) (k s : ℤ) :
-    G (2 * k + s) = (Int.fib (k + 1) : ℝ) ^ 2 * G (s + 1) + (Int.fib k : ℝ) ^ 2 * G s -
-      (Int.fib (k - 1) : ℝ) ^ 2 * G (s - 1)
 
 /-- **Seed expansion of a triple gibonacci product.** Let $G, H, I \colon \mathbb{Z} \to \mathbb{R}$
 satisfy $G_{j+2} = G_{j+1} + G_j$, $H_{j+2} = H_{j+1} + H_j$ and $I_{j+2} = I_{j+1} + I_j$ for
