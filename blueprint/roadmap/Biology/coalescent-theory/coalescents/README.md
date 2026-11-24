@@ -20,3 +20,6 @@
 - [Merger rates of the Bolthausen–Sznitman coalescent](merger-rate-volume.md)
 - [Total merger rate of the Bolthausen–Sznitman coalescent](total-merger-rate-volume.md)
 - [Pitman's representation theorem, existence half](exists-measure-of-consistent.md)
+
+- [The Λ-coalescent rate matrix on partitions of a finite sample](the-coalescent-rate-matrix-on-partitions-of-a-fi.md)
+- [Path laws of the Λ-coalescent on a finite sample are consistent under restriction](path-laws-of-the-coalescent-on-a-finite-sample-a.md)

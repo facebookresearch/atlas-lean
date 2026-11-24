@@ -38,3 +38,6 @@
 - [No-coalescence probability tends to one](tendsto-no-coal-prob-one.md)
 - [Kingman's coalescence rate](tendsto-coalescence-rate.md)
 - [Wright–Fisher coalescence times converge to exponential laws](tendsto-no-coal-prob-pow-floor.md)
+
+- [Time to the most recent common ancestor of the whole population under Kingman’s coalescent](time-to-the-most-recent-common-ancestor-of-the-w.md)
+- [Law of the total branch length of Kingman's coalescent](law-of-the-total-branch-length-of-kingman-s-coal.md)
