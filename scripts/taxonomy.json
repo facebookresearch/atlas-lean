@@ -10550,6 +10550,7 @@
   "MathlibExt/Combinatorics/Enumerative/NarayanaPolynomial": {"to": "Combinatorics/catalan-numbers-lattice-paths/catalan-numbers", "title": "Narayana numbers and polynomials"},
   "MathlibExt/Combinatorics/Enumerative/NarayanaSequence": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Narayana's cows sequence"},
   "MathlibExt/Combinatorics/Enumerative/NondecreasingDyckSubwords": {"to": "Combinatorics/catalan-numbers-lattice-paths/dyck-paths-lattice-walks", "title": "Subwords in non-decreasing Dyck paths"},
+  "MathlibExt/Combinatorics/Enumerative/NonmultiplesFloor": {"to": "Combinatorics/elementary-enumeration", "title": "Schreier sets"},
   "MathlibExt/Combinatorics/Enumerative/Nontrivial1234_3412Classes": {"to": "Combinatorics/permutations/permutation-patterns", "title": "Pattern replacement for 1234 and 3412"},
   "MathlibExt/Combinatorics/Enumerative/OctagonalPyramidalComposition": {"to": "Combinatorics/integer-compositions", "title": "Compositions avoiding parts 2, 3 and 4"},
   "MathlibExt/Combinatorics/Enumerative/OctagonalPyramidalNumber": {"to": "Combinatorics/integer-compositions", "title": "Compositions avoiding parts 2, 3 and 4"},
