@@ -19,8 +19,10 @@ More generally (Godement), let $\pi$ and $\pi'$ be square-integrable irreducible
 representations of a unimodular locally compact group $G$, that is, irreducible subrepresentations
 of the left regular representation on $L^2(G)$. Then for all vectors $\xi, \eta$ of $\pi$ and
 $\xi', \eta'$ of $\pi'$,
+
 $$\int_G \langle \pi(g)\xi, \eta \rangle \, \overline{\langle \pi'(g)\xi', \eta' \rangle} \, dg =
 \begin{cases} 0 & \text{if } \pi \not\cong \pi', \\ d_\pi^{-1} \langle \xi, \xi' \rangle \overline{\langle \eta, \eta' \rangle} & \text{if } \pi = \pi', \end{cases}$$
+
 with a constant $d_\pi > 0$, the formal degree, depending on the Haar measure (inner products are
 linear in the first variable). Here $\pi = \pi'$ means the same representation on the same space;
 if $\pi'$ is only equivalent to $\pi$, through a unitary intertwiner $T$ from the space of $\pi$ to
