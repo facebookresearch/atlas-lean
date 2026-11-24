@@ -13009,6 +13009,7 @@
   "MathlibExt/NumberTheory/Recurrences/HigherFibonacciWalks": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Self-convolutions of m-step Fibonacci numbers"},
   "MathlibExt/NumberTheory/Recurrences/HonsbergerFibonacciP": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Fibonacci p-numbers"},
   "MathlibExt/NumberTheory/Recurrences/HoradamGeneralizedCatalanIdentity": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Horadam and generalized Fibonacci sequences"},
+  "MathlibExt/NumberTheory/Recurrences/HyperFibonacciBinomial": {"to": "LinearAlgebra/special-matrices", "title": "Total positivity"},
   "MathlibExt/NumberTheory/Recurrences/JacobsthalClosedForm": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Jacobsthal and Jacobsthal–Lucas numbers"},
   "MathlibExt/NumberTheory/Recurrences/JacobsthalPolynomialSquareFamilySums": {"to": "NumberTheory/linear-recurrences/fibonacci-polynomials", "title": "Reciprocal sums of squares of gibonacci polynomials"},
   "MathlibExt/NumberTheory/Recurrences/KJacobsthal": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Integral representations of k-Jacobsthal numbers"},
