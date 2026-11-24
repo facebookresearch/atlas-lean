@@ -13,10 +13,12 @@
 - [Positivity of the number of pairs](choose-two-pos.md)
 - [Integrability of coalescent holding times](integrable-t.md)
 - [Expected coalescent holding time](integral-t.md)
+- [Square integrability of coalescent holding times](mem-lp-t.md)
 - [Expected time to the most recent common ancestor](integral-tmrca.md)
 - [Integrability of the total branch length](integrable-total-length.md)
 - [Expected total branch length of the coalescent](integral-total-length.md)
 - [Variance of the time to the most recent common ancestor](variance-tmrca.md)
+- [Second moments of the holding times](integral-t-mul-t.md)
 
 ## Watterson's estimator
 
