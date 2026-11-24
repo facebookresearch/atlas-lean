@@ -91,6 +91,25 @@ example : opxD 1 3 {0, fun _ => 4} = opxD 1 2 {0, fun _ => 4} + 1 := by
 
 end MetaMathlibExt.opxD_add_lt
 
+namespace MetaMathlibExt.opxD_mono_of_containsPatternD
+
+-- Doubling the gap from four to eight preserves the lower bound from the open interval (0, 2).
+example : 2 ≤ opxD 1 2 {0, fun _ => 8} := by
+  refine (opxD_add_lt.opxD_interval (r := 2) (by norm_num) (by norm_num)).ge.trans ?_
+  apply opxD_mono_of_containsPatternD
+  refine ⟨fun _ x => 2 * x, ?_, ?_⟩
+  · intro i p hp q hq hlt
+    linarith
+  · rintro p (rfl | rfl)
+    · left
+      funext i
+      norm_num
+    · right
+      funext i
+      norm_num
+
+end MetaMathlibExt.opxD_mono_of_containsPatternD
+
 namespace MetaMathlibExt.opxD_plus_stack_isTheta
 
 -- With unit arms and unit spacing, an explicit constant bounds the two-layer number by `n^(5/2)`.

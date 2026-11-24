@@ -35,15 +35,27 @@ local field $F$ of characteristic different from $2$ and a symplectic space $W$ 
   Hilbert reciprocity follows by taking the norm form of a quaternion algebra (Weil calls reciprocity formally
   weaker); through it the rational points of $\mathrm{Sp}(W)$ lift to the twofold cover of the adelic group (Weil, §45).
 
+## Expansion
+
 A good expansion has pages for Rao's cocycle and the explicit formulas, for the twofold cover and its
 non-splitting, for the real Fock model, for Kudla's splittings of unitary dual pairs and their global
 compatibility, for the doubling intertwiner, and for the product formula for Weil indices, each with a
 precise statement and the sources below.
 
+A good expansion also writes out these steps of its own proof:
+
+- the specialization of Weil's theorems on characters of the second degree to $G = X_{\mathbb{A}}$, $\Gamma = X_F$ and $f = \psi \circ q$: Théorème 5 gives $\gamma(q) = 1$, and Corollaire 2 of Théorème 2, applied to a factorizable Schwartz–Bruhat function and to its local factors, almost all the characteristic functions of the unit lattices, gives $\gamma(q) = \prod_v \gamma_{\psi_v}(q_v)$ (§30, the proof of Proposition 5, p. 179), for the product formula for Weil indices.
+
 ## Depends on
 
 - [Stone–von Neumann theorem for Heisenberg groups over local fields](stone-von-neumann-theorem.md), for the Heisenberg representation whose normalizer defines the Weil representation
 - [Additive duality of adeles and the volume of A/K](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/additive-duality-of-adeles.md), for the global additive characters of $\mathbb{A}_F/F$ and their local components, used in the product formula for Weil indices
+
+## Proof depends on
+
+- [Hilbert's Theorem 90 for the multiplicative group](../../../FieldTheory/galois-theory/multiplicative-hilbert-s-theorem-90.md), for the character twists of the splittings when $E/F$ is a quadratic field extension, through the norm-one elements $x/\sigma(x)$ (Harris–Kudla–Sweet, (1.7)–(1.8)); for the split algebra $E = F \times F$ the analogous map is $(a, b) \mapsto (a/b, b/a)$, with no field extension
+- [Additive duality of adeles and the volume of A/K](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/additive-duality-of-adeles.md), for the self-duality of $\mathbb{A}_F$ under which $F$ is its own annihilator, which Weil extends to $X_{\mathbb{A}}$ and $X_F$ coordinatewise (Weil, §29, p. 178)
+- [Weil's theorems on characters of the second degree](../../../Analysis/harmonic-analysis/weil-characters-of-the-second-degree.md), for Weil's Théorème 5 (§20, p. 169), the triviality of the Weil index of a character of the second degree trivial on a closed subgroup that its symmetric morphism maps onto the orthogonal, and Corollaire 2 of his Théorème 2 (§14, p. 162), which the product formula for Weil indices specializes to the adelic quadratic space
 
 ## Sources
 
@@ -54,8 +66,11 @@ precise statement and the sources below.
 - A. Weil, "Sur certains groupes d'opérateurs unitaires", Acta Math. 111 (1964), 143–211,
   <https://doi.org/10.1007/BF02391012>: §30, Proposition 5 and the remarks after it (the product formula for
   Weil indices for one global character, Hilbert reciprocity as a formally weaker consequence), §26 (the real
-  indices $e^{\pm \pi i/4}$), §29 (the global character and its local components), §45 (the rational lift in the twofold
-  cover).
+  indices $e^{\pm \pi i/4}$), §29 (the global character and its local components; p. 178, the self-duality of the adeles in
+  which the field is its own dual), §45 (the rational lift in the twofold cover); and, for the proof of Proposition 5 (p. 179),
+  §14, Théorème 2 and its Corollaire 2 (pp. 161–162), and §20, Théorème 5 and its proof (p. 169), which goes
+  back to the proof of Théorème 2 and uses that $r_\Gamma$ is a representation; §19, Théorème 4 (p. 168), and the remark before
+  Théorème 5 that it contains Poisson's formula, are related.
 - S. S. Kudla, "Notes on the local theta correspondence", lecture notes, European School in Group
   Theory, 1996, <https://www.math.toronto.edu/~skudla/castle.pdf>: §I.4, Theorem 4.5, Corollaries 4.8 and
   4.9 (the twofold cover via the Rao cocycle), §I.6, Lemma 6.1 (the $\mathbb{C}^\times$-extension splits over
