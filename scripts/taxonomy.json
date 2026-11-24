@@ -13682,6 +13682,7 @@
   "MathlibExt/RingTheory/ClusterAlgebra/Mutation": {"to": "RingTheory/cluster-algebras", "title": "Seed mutation and the Laurent phenomenon"},
   "MathlibExt/RingTheory/ClusterAlgebra/RankTwo": {"to": "RingTheory/cluster-algebras", "title": "Cluster algebras of rank two"},
   "MathlibExt/RingTheory/ClusterAlgebra/SomosFour": {"to": "RingTheory/cluster-algebras", "title": "Seed mutation and the Laurent phenomenon"},
+  "MathlibExt/RingTheory/ClusterAlgebra/SomosFourIntegrality": {"to": "RingTheory/cluster-algebras", "title": "Seed mutation and the Laurent phenomenon"},
   "MathlibExt/RingTheory/ConductorIdeal": {"to": "RingTheory/dedekind-domains", "title": "Conductor ideal"},
   "MathlibExt/RingTheory/ConductorResidue": {"to": "RingTheory/dedekind-domains", "title": "Conductor ideal"},
   "MathlibExt/RingTheory/DedekindDomain/AdicCompletionIntegers": {"to": "RingTheory/dedekind-domains", "title": "Completions of Dedekind domains at primes"},
