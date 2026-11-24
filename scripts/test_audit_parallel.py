@@ -342,7 +342,7 @@ class ParallelAuditTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             marker = Path(folder, 'still-running')
             lean = Path(folder, 'lean')
-            lean.write_text(f'#!/bin/sh\nsleep 2\ntouch {marker}\n')
+            lean.write_text('#!/bin/sh\nsleep 2\ntouch still-running\n')  # runs in `folder`
             lean.chmod(0o755)
             real_run = subprocess.run
 
@@ -393,7 +393,7 @@ class ParallelAuditTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             marker = Path(folder, 'child-survived')
             admission = audit.Admission(gated=False)
-            script = f'sleep 1 && touch {marker} & wait'
+            script = 'sleep 1 && touch child-survived & wait'  # runs in `folder`
             with mock.patch.object(audit, 'LIST_ENVIRONMENT', False):
                 process = admission.launch(0, True, lambda: audit.launch_lean(['sh', '-c', script], Path(folder), None))
                 time.sleep(0.2)
