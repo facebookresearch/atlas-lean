@@ -4,7 +4,7 @@ If a language $L$ is decided by a Turing machine in time $t(n) \ge n$, then $L$ 
 
 ## Depends on
 
-- [Polynomial time with polynomial advice](../../complexity-classes/time-and-space-complexity-classes/ppoly.md)
+- [Polynomial time with polynomial advice](ppoly.md)
 
 ## Expansion
 

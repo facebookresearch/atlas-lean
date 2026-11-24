@@ -12,6 +12,14 @@ Let $\ell$ be a length bound and consider messages of at most $\ell$ blocks, and
 
 The raw CBC-MAC is not a secure PRF on variable-length messages: from the tag $t$ of a one-block message $m$, the two-block message $(m, m \oplus t)$ has tag $t$ as well.
 
+## Expansion
+
+This page collects several results; it becomes ready once each is stated separately:
+
+- Security of ECBC, as a page of its own
+- Security of NMAC, as a page of its own
+- Insecurity of the raw CBC-MAC on variable-length messages, as a page of its own
+
 ## Depends on
 
 - [PRF advantage](../pseudorandom-functions/prf-advantage.md)

@@ -10,6 +10,13 @@ Let $G : S \to R \times S$ be a secure pseudorandom generator and let $n \ge 1$ 
 
 - [The hybrid step](../../security-games/games-and-advantages/advantage-hybrid-uniform.md)
 
+## Expansion
+
+This page collects several results; it becomes ready once each is stated separately:
+
+- Security of sequential (Blum–Micali) composition, as a page of its own
+- Security of parallel composition, as a page of its own
+
 ## Sources
 
 - D. Boneh and V. Shoup, *A Graduate Course in Applied Cryptography*, version 0.4, 2017, <https://toc.cryptobook.us/>, Theorems 3.2 and 3.3

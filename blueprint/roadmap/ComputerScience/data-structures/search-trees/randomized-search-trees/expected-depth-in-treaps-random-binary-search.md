@@ -12,6 +12,8 @@ Let $1 \le k \le n$. In a treap on keys $1 < \cdots < n$ whose priorities are in
 This page becomes ready once:
 
 - Dictionary and ordered-set abstract data types (statement prerequisite; formal statement exists, page pending)
+- Expected depth in treaps and random binary search trees, as a page of its own
+- Expected search cost in skip lists, as a page of its own
 
 ## Sources
 

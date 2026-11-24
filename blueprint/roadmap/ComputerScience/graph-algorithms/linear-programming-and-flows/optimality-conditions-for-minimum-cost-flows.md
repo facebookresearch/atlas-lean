@@ -13,6 +13,9 @@ Suppose moreover that all capacities are integers. Cycle canceling, started from
 This page becomes ready once these prerequisites are stated:
 
 - Single-source shortest paths (proof prerequisite; not yet stated)
+- The negative-cycle optimality condition for minimum-cost flows, as a page of its own
+- Correctness of cycle canceling, as a page of its own
+- Correctness of successive shortest paths, as a page of its own
 
 ## Sources
 

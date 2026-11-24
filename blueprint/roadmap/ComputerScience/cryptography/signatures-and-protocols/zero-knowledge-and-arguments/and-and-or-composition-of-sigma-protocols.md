@@ -6,6 +6,13 @@ Let $(P_0, V_0)$ and $(P_1, V_1)$ be Sigma protocols for relations $R_0 \subsete
 - *OR.* Suppose moreover that $C = \{0,1\}^n$ and that both protocols are special honest-verifier zero knowledge with simulators $\mathrm{Sim}_0$, $\mathrm{Sim}_1$. For $R_{\mathrm{OR}} = \{((b, x), (y_0, y_1)) : (x, y_b) \in R_b\}$, a prover with witness $(b, x)$ and $d = 1 - b$ picks a uniformly random $c_d \in C$, computes $(t_d, z_d) = \mathrm{Sim}_d(y_d, c_d)$, runs $P_b(x, y_b)$ for a commitment $t_b$ and sends $(t_0, t_1)$; on the verifier's random challenge $c$ it answers $c_b = c \oplus c_d$ in $P_b$, obtaining $z_b$, and sends $(c_0, z_0, z_1)$; the verifier sets $c_1 = c \oplus c_0$ and accepts if $(t_0, c_0, z_0)$ and $(t_1, c_1, z_1)$ are accepting conversations for $y_0$ and $y_1$. This is a special honest-verifier zero-knowledge Sigma protocol for $R_{\mathrm{OR}}$, and it provides knowledge soundness if both protocols do.
 - *Witness independence.* Every special honest-verifier zero-knowledge Sigma protocol is witness independent; in particular the OR protocol is.
 
+## Expansion
+
+This page collects several results; it becomes ready once each is stated separately:
+
+- AND composition of Sigma protocols, as a page of its own
+- OR composition of Sigma protocols, as a page of its own
+
 ## Depends on
 
 - [A Sigma protocol](../zero-knowledge-proofs/sigma-protocol.md)
