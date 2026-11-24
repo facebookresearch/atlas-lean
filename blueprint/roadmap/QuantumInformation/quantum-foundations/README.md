@@ -17,3 +17,5 @@ Quantum foundations studies what quantum mechanics rules out and allows at the l
 - [Purification and unitary equivalence of purifications](purification-and-unitary-equivalence-of-purifications.md)
 - [Superdense coding](superdense-coding.md)
 - [Classical and entangled values of the CHSH game](classical-and-entangled-values-of-the-chsh-game.md)
+
+- [Exact universality of CNOT and single-qubit gates](exact-universality-of-cnot-and-single-qubit-gates.md)
