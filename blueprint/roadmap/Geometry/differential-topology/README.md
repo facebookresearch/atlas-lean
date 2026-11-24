@@ -14,3 +14,4 @@ Smooth manifolds and smooth maps between them: immersions, submersions, transver
 - [Hadamard–Caccioppoli global inverse theorem](hadamard-caccioppoli-global-inverse.md)
 - [Hairy ball theorem](hairy-ball-even-sphere-ambient.md)
 - [Smooth retraction onto a closed embedded manifold in $\mathbb{R}^n$](tubular-smooth-retraction.md)
+- [Existence of smooth partitions of unity](partition-of-unity-existence.md)
