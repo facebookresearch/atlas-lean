@@ -13,7 +13,7 @@ $W = X \oplus Y$ and a non-trivial character $\psi$ of $F$.
   $H(Y) = Y \oplus F$ (trivial on $Y$); the smooth representation of $H(W)$ smoothly induced from it, whose
   functions are shown to have compact support modulo $H(Y)$ because of the central character (in compact
   induction this support condition is imposed instead); its realization on the Schwartz–Bruhat functions on $X$;
-  its irreducibility and admissibility; and, for an arbitrary smooth irreducible representation of $H(W)$ with
+  its irreducibility and admissibility; and for an arbitrary smooth irreducible representation of $H(W)$ with
   central character $\psi$, the construction of a non-zero $H(Y)$-equivariant functional to $\psi_Y$, through which
   Frobenius reciprocity identifies the representation with the induced one. These are the inputs of the smooth
   existence and uniqueness statements of the Stone–von Neumann theorem, which this node does not restate.
@@ -22,6 +22,8 @@ $W = X \oplus Y$ and a non-trivial character $\psi$ of $F$.
   ($z \mapsto z \cdot \mathrm{Id}$): the representation on $L^2(L)$ is irreducible, and every such representation is a multiple
   of it; the comparison with $H(W)$ by pushing out its centre $F$ along $\psi$; the identification of $Y$ with the
   Pontryagin dual of $X$ through $\psi$ and the pairing.
+
+## Expansion
 
 A good expansion has pages for smooth and compact induction of representations of $\ell$-groups with the
 correct adjunctions, for the irreducibility and the decomposition of the representation induced from a
@@ -33,6 +35,12 @@ theorem.
 
 - [Smooth and admissible representations of p-adic groups](../../reductive-groups-over-local-fields/representations-of-p-adic-reductive-groups/smooth-representations-of-p-adic-groups.md), for smooth representations of $\ell$-groups
 
+## Proof depends on
+
+- [Additive duality of adeles and the volume of A/K](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/additive-duality-of-adeles.md), for the self-duality $a \mapsto \psi(a\,\cdot)$ of the completions of number fields (its local duality), which identifies $Y$ with the Pontryagin dual of $X$ for local fields of characteristic $0$
+- [Pontryagin duality and the self-duality of local fields](../../../Analysis/harmonic-analysis/pontryagin-duality-and-self-duality-of-local-fields.md), for the self-duality $a \mapsto \psi(a\,\cdot)$ of every local field, for every nontrivial character $\psi$ (Poonen, §4.3, Theorem 4.4), for the local fields of positive characteristic that the statement allows, such as $\mathbb{F}_3((t))$; and for Pontryagin duality for locally compact abelian groups, for the unitary form
+- [Unitary representations of locally compact groups and representations of compact groups](../../lie-and-topological-representations/unitary-representations-and-representations-of-compact-groups.md), for the decomposition of every strongly continuous unitary representation of a compact abelian group into the orthogonal sum of its character spaces, with arbitrary multiplicities, which A. Prasad (§4.2, p. 4) applies to the given representation restricted to $G \times G^\perp$, for the unitary form; the decomposition of $L^2$ of the group, where each character occurs once, is not enough
+
 ## Sources
 
 - S. S. Kudla, "Notes on the local theta correspondence", lecture notes, European School in Group
@@ -43,7 +51,8 @@ theorem.
   Théorème I.2, pp. 28–31, as cited by Kudla.
 - A. Prasad, "An easy proof of the Stone–von Neumann–Mackey theorem", arXiv:0912.0574 (2009): §4.1 (the
   theorem for Heisenberg groups of locally compact abelian groups, with the tautological action of the
-  circle), §4.2 (groups with compact open subgroups), §4.3 ($\mathbb{R}^n$) and §4.4 (general locally compact abelian
+  circle), §4.2, p. 4 (groups with compact open subgroups; the given representation decomposed under the compact
+  abelian group $G \times G^\perp$ by the Peter–Weyl theorem), §4.3 ($\mathbb{R}^n$) and §4.4 (general locally compact abelian
   groups); §§4.2–4.3 suffice for local fields.
 - I. N. Bernstein and A. V. Zelevinsky, "Induced representations of reductive p-adic groups. I", Ann. Sci.
   Éc. Norm. Supér. (4) 10 (1977), 441–472, <http://www.numdam.org/item?id=ASENS_1977_4_10_4_441_0>: §1.8 and

@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.RingTheory.Radical.Basic
 public import MathlibExt.NumberTheory.ReducedResidueLongestAP
+public import MathlibExt.NumberTheory.ReducedResiduePrimeBound
 
 /-!
 # Longest arithmetic progressions in the reduced residue systems `R_m(n)`
@@ -35,18 +36,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open UniqueFactorizationMonoid
-
-/-- **Prime bound for progressions with a fixed difference.** Let $m$ be an integer, $n > 1$ and
-$d > 0$ natural numbers, and $p$ a prime that divides $n$ but not $d$. Then $f_m(d, n) \le p - 1$,
-where $f_m(d, n)$ is the length of the longest arithmetic progression with common difference $d$
-contained in the set $R_m(n)$ of integers $a$ with $m + 1 \le a \le m + n$ and $\gcd(a, n) = 1$.
-
-Source: Chaninat Phothila, Natthakan Thoket and Narakorn Rompurk Kanasri, *Length of the Longest
-Arithmetic Progressions in a Certain Reduced Residue System*, INTEGERS 26 (2026), Article A6,
-Lemma 1(i) (`integers-2026-A6-lem-1`). -/
-public theorem_wanted longestAPLengthWithDiff_le_prime_sub_one (m : ℤ) {n d p : ℕ}
-    (hn : 1 < n) (hd : 0 < d) (hp : p.Prime) (hpn : p ∣ n) (hpd : ¬ p ∣ d) :
-    longestAPLengthWithDiff m n d ≤ p - 1
 
 /-- **Longest progressions of absolute least residues: primes congruent to 1 mod 4.** For a
 prime $p \equiv 1 \pmod 4$, the length $g(p)$ of the longest arithmetic progression in the

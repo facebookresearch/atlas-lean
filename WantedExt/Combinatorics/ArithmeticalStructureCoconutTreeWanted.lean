@@ -164,28 +164,6 @@ public theorem_wanted ncard_arithmeticalStructure_coconutTree_two {p : ℕ} (hp 
             Set.ncard {z : (Fin (i - 2) ⊕ Fin 2 → ℕ) × (Fin (i - 2) ⊕ Fin 2 → ℕ) |
               IsSmoothCoconut (i - 2) 2 z.1 z.2}
 
-/-- **Euclidean chain function under adding multiples.** For natural numbers $x \ge 1$, $y$ and
-$k$, the Euclidean chain function $F$ satisfies $F(x + k y, y) = F(x, y)$ and
-$F(x, k x + y) = F(x, y) + k$.
-
-The source quotes this result from Archer et al.
-
-Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
-Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Proposition 6
-(`integers-2025-A82-prop-6`). -/
-public theorem_wanted euclideanChainLength_add_mul {x : ℕ} (hx : 0 < x) (y k : ℕ) :
-    euclideanChainLength (x + k * y) y = euclideanChainLength x y ∧
-      euclideanChainLength x (k * x + y) = euclideanChainLength x y + k
-
-/-- **Euclidean chain function when the first argument divides the second.** For natural numbers
-$x, y \ge 1$ with $x \mid y$, the Euclidean chain function $F$ satisfies $F(x, y) = 1 + y / x$.
-
-Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
-Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Corollary 4
-(`integers-2025-A82-cor-4`). -/
-public theorem_wanted euclideanChainLength_of_dvd {x y : ℕ} (hx : 0 < x) (hy : 0 < y)
-    (hxy : x ∣ y) : euclideanChainLength x y = 1 + y / x
-
 /-- **Smooth coconut structures with prescribed labels.** Let $s \ge 1$ and let $c$ and
 $a_1, \dots, a_s$ be natural numbers with $a_i > 0$, $a_i \mid c$ and $a_i < c$ for every $i$, such
 that the only natural number dividing $c$ and all of $a_1, \dots, a_s$ is $1$. Write $CT(p, s)$ for
