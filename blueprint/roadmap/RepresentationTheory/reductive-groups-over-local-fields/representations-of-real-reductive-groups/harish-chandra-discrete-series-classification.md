@@ -23,15 +23,18 @@ for every Cartan subgroup $B$ of $G$.
    $w\lambda - \rho_\lambda \in \Lambda$ for every $w \in W$. For every nonsingular
    $\lambda \in \Lambda + \rho_0$ there is exactly one invariant eigendistribution $\Theta_\lambda$ on
    $G$, bounded at infinity, whose restriction to $H \cap G'$ is the function
-   $$(-1)^q \frac{\sum_{w \in W} \varepsilon(w) e^{w\lambda - \rho_\lambda}}{\prod_{\alpha \in \Phi,\ (\alpha, \lambda) > 0} (1 - e^{-\alpha})}, \qquad q = \tfrac12 \dim G/K,$$
-   in which every exponential is a character of $H$. The sources print it as
-   $(-1)^q \sum_{w} \varepsilon(w) e^{w\lambda} / \prod_{(\alpha, \lambda) > 0} (e^{\alpha/2} - e^{-\alpha/2})$,
-   whose numerator and denominator need not be defined on $H$ separately when
-   $\rho_0 \notin \Lambda$; multiplying both by $e^{-\rho_\lambda}$ gives the expression above.
-   Each $\Theta_\lambda$ is the character of a discrete series representation $\pi_\lambda$, every
-   discrete series representation is some $\pi_\lambda$, and $\Theta_{\lambda_1} = \Theta_{\lambda_2}$
-   exactly when $\lambda_1$ and $\lambda_2$ are conjugate under $W$. So the discrete series is
-   parametrized by the nonsingular elements of $\Lambda + \rho_0$ modulo $W$.
+
+    $$(-1)^q \frac{\sum_{w \in W} \varepsilon(w) e^{w\lambda - \rho_\lambda}}{\prod_{\alpha \in \Phi,\ (\alpha, \lambda) > 0} (1 - e^{-\alpha})}, \qquad q = \tfrac12 \dim G/K,$$
+
+    in which every exponential is a character of $H$. The sources print it as
+    $(-1)^q \sum_{w} \varepsilon(w) e^{w\lambda} / \prod_{(\alpha, \lambda) > 0} (e^{\alpha/2} - e^{-\alpha/2})$,
+    whose numerator and denominator need not be defined on $H$ separately when
+    $\rho_0 \notin \Lambda$; multiplying both by $e^{-\rho_\lambda}$ gives the expression above.
+    Each $\Theta_\lambda$ is the character of a discrete series representation $\pi_\lambda$, every
+    discrete series representation is some $\pi_\lambda$, and $\Theta_{\lambda_1} = \Theta_{\lambda_2}$
+    exactly when $\lambda_1$ and $\lambda_2$ are conjugate under $W$. So the discrete series is
+    parametrized by the nonsingular elements of $\Lambda + \rho_0$ modulo $W$.
+
 3. **Lowest $K$-type** (Schmid; Atiyah–Schmid). Let $\Psi = \{\alpha \in \Phi \mid (\alpha, \lambda) > 0\}$
    and let $\rho_c$ and $\rho_n$ be half the sums of the compact and of the noncompact roots in
    $\Psi$. In the restriction of $\pi_\lambda$ to $K$, the irreducible representation of highest

@@ -58,4 +58,30 @@ example : trib 32 + trib 30 =
     2 + 2 * ∑ i ∈ Finset.range 10, trib (3 * ((10 : ℕ) : ℤ) + 2 - 3 * (i : ℤ) - 1) := by
   simpa using trib_add_two_sub_three_mul_add_two 10 (by decide)
 
+-- At `k = 0` the sole summand uses the two negative indices.
+example : trib 0 = 1 + (trib (-1) + trib (-2)) := by
+  simpa [Finset.sum_range_one] using trib_three_mul (k := 0)
+
+-- At `k = 2` the sum has two nonnegative index pairs and one negative pair.
+example :
+    trib 6 = 1 + ((trib 5 + trib 4) + (trib 2 + trib 1) + (trib (-1) + trib (-2))) ∧
+      trib 6 = 11 := by
+  refine ⟨?_, by decide⟩
+  simpa [Finset.sum_range_succ] using trib_three_mul (k := 2)
+
+-- The first admissible values `n = 3, 4`, each with one summand.
+example :
+    (trib 3 + trib 1 = 2 * trib 2 ∧ trib 4 + trib 2 = 2 * trib 3) ∧
+      (trib 3 + trib 1 = 2 ∧ trib 4 + trib 2 = 4) := by
+  refine ⟨?_, by decide⟩
+  simpa [Finset.sum_range_one] using trib_add_two_sub_three_mul (k := 1) (hk := le_rfl)
+
+-- At `n = 6, 7` each progression adds a second summand, three indices apart.
+example :
+    (trib 6 + trib 4 = 2 * (trib 5 + trib 2) ∧
+      trib 7 + trib 5 = 2 * (trib 6 + trib 3)) ∧
+      (trib 6 + trib 4 = 14 ∧ trib 7 + trib 5 = 26) := by
+  refine ⟨?_, by decide⟩
+  simpa [Finset.sum_range_succ] using trib_add_two_sub_three_mul (k := 2) (hk := by decide)
+
 end MathlibExtTest.NColorCompositions

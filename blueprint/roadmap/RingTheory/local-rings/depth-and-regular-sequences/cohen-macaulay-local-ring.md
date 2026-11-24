@@ -4,7 +4,11 @@ A commutative Noetherian local ring $(R, \mathfrak m)$ is *Cohen–Macaulay* if 
 
 ## Expansion
 
-A good expansion of this node links each notion it is built from: the depth of a module; Krull dimension; local rings; Noetherian rings.
+A good expansion of this node links each notion it is built from: the depth of a module; local rings; Noetherian rings.
+
+## Depends on
+
+- [Krull dimension of a commutative semiring](../krull-dimension/krull-dimension.md)
 
 ## Sources
 

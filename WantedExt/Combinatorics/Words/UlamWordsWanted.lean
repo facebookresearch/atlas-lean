@@ -31,16 +31,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Ulam words with a block of four ones.** For natural numbers $a$ and $b$ with $a + b \ge 1$,
-the binary word $0^a 1111 0^b$ ($a$ zeros, then four ones, then $b$ zeros) is an Ulam word if
-and only if $a + b \equiv 1 \pmod 4$.
-
-Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
-*Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Lemma 1. -/
-public theorem_wanted isUlamWord_zeros_four_ones_zeros_iff (a b : ℕ) (hab : 1 ≤ a + b) :
-    IsUlamWord (List.replicate a false ++ List.replicate 4 true ++ List.replicate b false) ↔
-      (a + b) % 4 = 1
-
 /-- **Square of the Ulam word count is at most a block sum.** For every natural number $n$,
 $(\#U_n)^2 \le \sum_{i=n}^{2n} \#U_i$, where $\#U_i$ is the number of Ulam words of length $i$.
 
@@ -96,17 +86,6 @@ public theorem_wanted card_ulam_zeros_one_zeros (n : ℕ) (hn : 1 ≤ n) :
     ((Finset.range n).filter fun a =>
         IsUlamWord (List.replicate a false ++ [true] ++ List.replicate (n - 1 - a) false)).card =
       2 ^ (Nat.digits 2 (n - 1)).sum
-
-/-- **Ulam words with a block of two ones.** For natural numbers $a$ and $b$, the binary word
-$0^a 11 0^b$ ($a$ zeros, then two ones, then $b$ zeros) is an Ulam word if and only if $a + b$ is
-odd.
-
-Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
-*Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Theorem 6
-(Theorem 3.5 of Bade, Cui, Labelle, and Li). -/
-public theorem_wanted isUlamWord_zeros_two_ones_zeros_iff (a b : ℕ) :
-    IsUlamWord (List.replicate a false ++ List.replicate 2 true ++ List.replicate b false) ↔
-      (a + b) % 2 = 1
 
 /-- **Ulam words with one 101 block.** For natural numbers $a$ and $b$ with $a + b \ge 2$, the
 binary word $0^a 101 0^b$ ($a$ zeros, then the letters $1, 0, 1$, then $b$ zeros) is an Ulam word
