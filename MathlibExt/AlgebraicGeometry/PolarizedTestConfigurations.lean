@@ -12,6 +12,7 @@ public import MathlibExt.AlgebraicGeometry.LinearizedLineBundles
 public import Mathlib.RingTheory.HopfAlgebra.MonoidAlgebra
 public import MathlibExt.AlgebraicGeometry.RelativeProjectivity
 public import Mathlib.AlgebraicGeometry.Morphisms.Flat
+public import MathlibExt.AlgebraicGeometry.ProjectiveLineSystems
 
 /-!
 # Actual polarized test-configuration geometry
@@ -19,7 +20,9 @@ public import Mathlib.AlgebraicGeometry.Morphisms.Flat
 The base is Spec k[t] and the torus is Spec k[t,t^-1] with its native Hopf
 group structure. Actions, linearizations, generic trivializations, fibres,
 flatness and projectivity refer to literal scheme maps. A test configuration
-is not encoded by its weight sequence or an arbitrary degeneration score.
+is not encoded by its weight sequence or an arbitrary degeneration score. Its
+linearized polarization is ample on the total space, which over the affine base
+`𝔸¹` is relative ampleness: these are BHJ's ample test configurations.
 
 Source: Boucksom--Hisamoto--Jonsson, arXiv1504.06568v3, Definition 2.1.
 Mathlib's completed Laurent Hopf algebra and affine group-scheme producer,
@@ -69,7 +72,11 @@ def affinePoint (a : k) : Over.mk (𝟙 (Base k)) ⟶ AffineLine k :=
     rw [h]
     exact Spec.map_id _)
 
-/-- Fixed ordinary geometric test-configuration inputs; no stability conclusion. -/
+/-- A test configuration for `(X, L)`: a flat, proper, H-projective `𝔾ₘ`-equivariant family over
+`𝔸¹` with a linearized polarization restricting to `L^r` (`r = exponent`) on the fibre over one
+and trivial off zero. The polarization is ample on the (Noetherian) total space, equivalently
+relatively ample over the affine base `𝔸¹` (BHJ, Definition 2.2, ample test configurations).
+No stability conclusion is included. -/
 structure TestConfiguration (X : Over (Base k)) (L : X.left.Modules) where
   total : Over (Base k)
   projection : total ⟶ AffineLine k
@@ -91,6 +98,8 @@ structure TestConfiguration (X : Over (Base k)) (L : X.left.Modules) where
           ((Scheme.ΓSpecIso (.of (Polynomial k))).inv Polynomial.X)
   polarization : total.left.Modules
   line : IsLineBundle polarization
+  [noetherian : IsNoetherian total.left]
+  ample : ProjectiveLineSystems.IsAmpleLine ⟨polarization, line⟩
   linearization : Linearization (Torus k) total polarization
   exponent : ℕ
   positiveExponent : 0 < exponent
@@ -108,7 +117,7 @@ structure TestConfiguration (X : Over (Base k)) (L : X.left.Modules) where
         ((Scheme.Modules.pullback (fst X (Torus k)).left).obj (power L exponent))
 
 attribute [instance] TestConfiguration.flat TestConfiguration.proper
-  TestConfiguration.action
+  TestConfiguration.action TestConfiguration.noetherian
 
 
 /-- The actual inclusion of the identified fibre over one into the total scheme. -/

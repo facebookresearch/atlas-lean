@@ -24,7 +24,9 @@ base polarization tensored with the completed O(D) sheaf. The base
 polarization L is an ample line bundle on the proper base, which is part
 of every model, so the model polarization is a line bundle and the Euler
 differences below are intersection numbers of line bundles. The central
-components are Gauss, so model values are values at base valuations. Model values,
+components are Gauss, so model values are values at base valuations. Monge--Ampère
+masses and entropy are defined for semipositive models (relatively nef polarization
+over ℙ¹), as in BHJ. Model values,
 Monge--Ampère weights, energy and entropy are computed from actual orders,
 Euler-intersection differences and actual valuation discrepancies.
 
@@ -199,9 +201,21 @@ def componentIntersection {P : LogPair k n} {L : P.variety.X.left.Modules}
       ⟨DivisorialModuleSheaves.sheaf M.model (Finsupp.single p (C.index : ℤ)), C.line⟩
       else modelPolarizationLine M) : ℝ) / C.index
 
-/-- The actual central Monge--Ampère mass, not a supplied numerical weight. -/
+/-- The model is semipositive (BHJ's semipositive model metrics): its polarization is relatively
+nef over `ℙ¹`, i.e. has nonnegative degree on every curve that the projection to `ℙ¹` contracts
+to a point. -/
+def IsSemipositive {P : LogPair k n} {L : P.variety.X.left.Modules} (M : VerticalModel P L) :
+    Prop :=
+  ∀ C : NumericalCurveCones.Curve M.model.X,
+    (Set.range (C.map.left ≫ (M.map ≫ snd P.variety.X M.parameter.line).left).base).Subsingleton →
+      0 ≤ NumericalCurveCones.curveDegrees C (modelPolarizationLine M)
+
+/-- The actual central Monge--Ampère mass of a semipositive model, not a supplied numerical
+weight: `ord_E(t) · (E · ℒⁿ) / (rⁿ (Lⁿ))`. Semipositivity (`IsSemipositive`) makes it
+nonnegative; without it this coefficient can be negative and is not a Monge--Ampère mass. -/
 def componentMass {P : LogPair k n} {L : P.variety.X.left.Modules}
-    (M : VerticalModel P L) (p : PrimePoint M.model) (hp : p ∈ M.central) : ℝ :=
+    (M : VerticalModel P L) (_hM : IsSemipositive M) (p : PrimePoint M.model)
+    (hp : p ∈ M.central) : ℝ :=
   (M.model.X.left.ord (M.rationalParameter : FunctionField M.model) p.val : ℝ) *
     componentIntersection M p hp /
       ((M.exponent : ℝ)^n * (haveI := M.baseProper; baseVolume P (baseLine M)))
@@ -227,10 +241,13 @@ structure ComponentValuation {P : LogPair k n} {L : P.variety.X.left.Modules}
       (M.model.X.left.ord (fieldMap M a) p.val : ℝ) /
         (M.model.X.left.ord (M.rationalParameter : FunctionField M.model) p.val : ℝ)
 
-/-- Entropy uses the actual normalized component valuations and discrepancy supremum. -/
+/-- The entropy of a semipositive model: the Monge--Ampère masses weighted by the actual
+normalized component valuations' discrepancies (BHJ's nonarchimedean entropy). -/
 def entropy {P : LogPair k n} {L : P.variety.X.left.Modules}
-    (M : VerticalModel P L) (V : ∀ p (hp : p ∈ M.central), ComponentValuation M p hp) : EReal :=
+    (M : VerticalModel P L) (hM : IsSemipositive M)
+    (V : ∀ p (hp : p ∈ M.central), ComponentValuation M p hp) : EReal :=
   ∑ p : {p : PrimePoint M.model // p ∈ M.central},
-    (componentMass M p.val p.property : EReal) * extendedDiscrepancy (V p.val p.property).valuation
+    (componentMass M hM p.val p.property : EReal) *
+      extendedDiscrepancy (V p.val p.property).valuation
 
 end MathlibExt.AlgebraicGeometry.NonarchimedeanCartierModels

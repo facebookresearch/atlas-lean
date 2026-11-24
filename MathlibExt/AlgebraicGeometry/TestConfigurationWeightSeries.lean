@@ -128,11 +128,21 @@ structure WeightSeries (T : NormalizedTestConfiguration k X L) where
     letI := centralData.action
     ∀ m, FiniteWeights (coaction m)
 
-/-- Geometric section-action measure, with the actual torus antipode applied to coaction weights. -/
+/-- Geometric section-action measure, with the actual torus antipode applied to coaction weights.
+It is normalized relative to the declared polarization `L`: the polarization of the test
+configuration restricts to `L^r` (`r = exponent`) on the general fibre, so the weights of the
+degree-`m` sections are divided by `r · m` (BHJ's Duistermaat--Heckman normalization). -/
 def sectionMeasure {T : NormalizedTestConfiguration k X L} (S : WeightSeries T) (m : ℕ) :
     MeasureTheory.Measure ℝ := by
   letI := S.centralData.action
-  exact MeasureTheory.Measure.map (fun x : ℝ => -x) (weightMeasure (S.finiteWeights m) m)
+  exact MeasureTheory.Measure.map (fun x : ℝ => -x)
+    (weightMeasure (S.finiteWeights m) (T.toTestConfiguration.exponent * m))
+
+theorem sectionMeasure_eq {T : NormalizedTestConfiguration k X L} (S : WeightSeries T) (m : ℕ) :
+    letI := S.centralData.action
+    sectionMeasure S m = MeasureTheory.Measure.map (fun x : ℝ => -x)
+      (weightMeasure (S.finiteWeights m) (T.toTestConfiguration.exponent * m)) :=
+  rfl
 
 /-- Weak convergence against every actual bounded continuous test function. -/
 def HasWeakLimit {T : NormalizedTestConfiguration k X L} (S : WeightSeries T)

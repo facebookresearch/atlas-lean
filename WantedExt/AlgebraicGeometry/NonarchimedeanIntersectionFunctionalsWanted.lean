@@ -16,9 +16,11 @@ public import Batteries.Util.ProofWanted
 
 All mixed intersections, energy, entropy and J use the native scheme
 projections, actual Cartier polarizations and fixed divisorial valuation
-normalizations. Every model carries that the base polarization is a line
-bundle of positive volume. The requests prove descent through the actual proper
-birational common-model pullback; their conclusions are not input fields.
+normalizations. Every model carries that the base polarization is an ample
+line bundle; entropy is stated for semipositive models (relatively nef model
+polarization), where its Monge--Ampère masses are defined. The requests prove
+descent through the actual proper birational common-model pullback; their
+conclusions are not input fields.
 
 Reference: Boucksom--Hisamoto--Jonsson, arXiv:1504.06568v3, Proposition 7.24.
 -/
@@ -59,8 +61,9 @@ theorem_wanted commonModelEntropy
       MathlibExt.AlgebraicGeometry.ProjectiveSpace.projectiveSpace k N,
       IsClosedImmersion i.left)
     (M N : VerticalModel P L) (_refinement : ModelRefinement M N)
+    (hM : IsSemipositive M) (hN : IsSemipositive N)
     (V : ∀ p (hp : p ∈ M.central), ComponentValuation M p hp)
     (W : ∀ p (hp : p ∈ N.central), ComponentValuation N p hp) :
-    entropy M V = entropy N W
+    entropy M hM V = entropy N hN W
 
 end WantedExt.AlgebraicGeometry.NonarchimedeanIntersectionFunctionalsWanted
