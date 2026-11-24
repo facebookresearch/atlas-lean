@@ -23,3 +23,8 @@ example : ¬ IsMPTQSet ({1} : Finset ℝ) :=
 
 example (x : ℝ) : ¬ IsMPTQSet {0, x} :=
   not_isMPTQSet_of_zero_mem (by simp)
+
+open scoped Pointwise in
+example : ¬ IsMPTQSet (({1} : Finset ℝ) ∪ -{1}) := by
+  have hpos : ∀ a ∈ ({1} : Finset ℝ), 0 < a := by simp
+  exact mt (isMPTQSet_union_neg_iff hpos).mp (not_isMPTQSet_singleton 1)
