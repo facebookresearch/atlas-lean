@@ -11,6 +11,7 @@ Continuous-time processes with continuous paths or independent increments: the c
 - [Quadratic variation of Brownian motion](quadratic-variation-of-brownian-motion/README.md)
 - [Itô integral](it-integral/README.md)
 - [Adapted continuous versions of the Itô integral](adapted-continuous-versions-of-the-it-integral/README.md)
+- [Integrated energy of Itô versions](integrated-energy-of-it-versions/README.md)
 - [Lipschitz stochastic integrands](lipschitz-stochastic-integrands/README.md)
 - [Ordinary integrals of progressive processes](ordinary-integrals-of-progressive-processes/README.md)
 - [Scalar SDE stability and uniqueness](scalar-sde-stability-and-uniqueness/README.md)
