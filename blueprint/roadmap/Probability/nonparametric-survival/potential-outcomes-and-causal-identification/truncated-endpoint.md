@@ -1,4 +1,6 @@
-# Truncated Endpoint
+# Event time truncated at a horizon
 
-The prespecified truncated endpoint of event time `T i` at
-horizon `h`: `min (T i) h`.
+For event times `T i` of units `i`, indexed by any set, and a horizon `h`, all real, the
+prespecified truncated endpoint of unit `i` is `min (T i) h`: the event time when `T i ≤ h`, and the
+horizon `h` otherwise. It is the observed time `min (T i) (C i)` when every unit is censored at the
+same time `C i = h`.

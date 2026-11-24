@@ -1,4 +1,5 @@
-# Monotonicity of the steady-state current
+# The squid steady-state current increases strictly for −12 ≤ V ≤ 115
 
-For the squid parameters
-`I∞(V) = ionic squid V m∞(V) h∞(V) n∞(V)` is strictly increasing on `[-12, 115]`.
+For the [squid parameters](squid.md), the [steady-state current](steady-current.md) $I_\infty$ is
+strictly increasing on the closed interval $[-12, 115]$ (mV): its
+[derivative is positive there](steady-current-deriv-squid-pos.md).

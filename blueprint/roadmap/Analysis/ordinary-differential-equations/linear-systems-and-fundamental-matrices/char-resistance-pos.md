@@ -1,3 +1,4 @@
-# Char Resistance pos
+# The characteristic resistance is positive for positive resistances
 
-The characteristic resistance of a cable with positive resistances is positive.
+For real numbers $r_m>0$ and $r_i>0$, the [characteristic resistance](char-resistance.md)
+$r_\infty=\sqrt{r_m r_i}$ is positive.

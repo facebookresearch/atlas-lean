@@ -1,32 +1,46 @@
 # One-compartment linear pharmacokinetics
 
-- [Elim Rate](elim-rate.md)
-- [Concentration](concentration.md)
+## Model and mass balance
+
+- [Elimination rate constant](elim-rate.md)
+- [Concentration in the one-compartment model](concentration.md)
 - [Mass balance](add-integral-eq.md)
-- [Amount add eliminated](amount-add-eliminated.md)
-- [Concentration bolus](concentration-bolus.md)
+- [Mass balance of the explicit amount](amount-add-eliminated.md)
+
+## Bolus: concentration and area under the curve
+
+- [Concentration after a bolus](concentration-bolus.md)
 - [Finite-horizon AUC](integral-concentration-bolus.md)
-- [Integrable On concentration bolus](integrable-on-concentration-bolus.md)
-- [Bolus AUC](integral-ici-concentration-bolus.md)
-- [Tendsto integral concentration bolus](tendsto-integral-concentration-bolus.md)
-- [Half Life elim Rate](half-life-elim-rate.md)
-- [Tendsto concentration](tendsto-concentration.md)
-- [Amount monotone](amount-monotone.md)
-- [Amount rate zero input zero](amount-rate-zero-input-zero.md)
-- [Tendsto amount rate zero at Top](tendsto-amount-rate-zero-at-top.md)
-- [Not tendsto amount rate zero](not-tendsto-amount-rate-zero.md)
-- [Not is Solution const rate zero](not-is-solution-const-rate-zero.md)
-- [Tendsto amount bolus](tendsto-amount-bolus.md)
+- [The bolus concentration is integrable on the half-line](integrable-on-concentration-bolus.md)
+- [Total AUC after a bolus is the dose over the clearance](integral-ici-concentration-bolus.md)
+- [The finite-horizon AUC tends to the total AUC](tendsto-integral-concentration-bolus.md)
+- [Half-life in terms of clearance and volume](half-life-elim-rate.md)
+
+## Constant infusion and boundary cases
+
+- [Under constant infusion the concentration tends to R / CL](tendsto-concentration.md)
+- [Starting at or below the steady state the amount is nondecreasing](amount-monotone.md)
+- [With no elimination and no input the amount is constant](amount-rate-zero-input-zero.md)
+- [Without elimination a positive input makes the amount unbounded](tendsto-amount-rate-zero-at-top.md)
+- [Without elimination a positive input gives no finite limit](not-tendsto-amount-rate-zero.md)
+- [Without elimination a nonzero input has no constant solution](not-is-solution-const-rate-zero.md)
+- [After a bolus the amount washes out to zero](tendsto-amount-bolus.md)
+
+## Identifying the parameters from bolus observations
+
 - [Absolute bolus reconstruction](bolus-absolute-reconstruction.md)
-- [Bolus absolute injective](bolus-absolute-injective.md)
+- [Two exact bolus observations determine volume and clearance](bolus-absolute-injective.md)
 - [Normalized washout identifies the elimination rate](normalized-washout-rate.md)
 - [Scaling obstruction for separate parameters](normalized-scaling-same-washout.md)
+
+## Repeated dosing
+
 - [Finite-horizon dose budget](dose-budget-from-integral-equation.md)
-- [Event-time bridge](post-dose-amount-at-event.md)
+- [Amount just after the n-th dose of a periodic schedule](post-dose-amount.md)
+- [Decay between events](periodic-amount-decay.md)
+- [At a dose time the trajectory equals the post-dose amount](post-dose-amount-at-event.md)
 - [Post-dose amounts satisfy the affine recurrence](post-dose-amount-succ.md)
-- [No-elimination boundary](post-dose-amount-zero-elimination.md)
+- [Without elimination the post-dose amount is n + 1 doses](post-dose-amount-zero-elimination.md)
 - [Post-dose closed form for the periodic trajectory](post-dose-amount-closed-form.md)
 - [Steady-state post-dose limit](post-dose-tendsto.md)
 - [Steady-state trough](trough-tendsto.md)
-- [Post Dose Amount](post-dose-amount.md)
-- [Decay between events](periodic-amount-decay.md)

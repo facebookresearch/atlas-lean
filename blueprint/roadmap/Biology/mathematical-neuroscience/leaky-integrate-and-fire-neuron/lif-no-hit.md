@@ -1,6 +1,6 @@
-# No finite hit at or below threshold equilibrium
+# Without superthreshold drive the threshold is never reached
 
-If
-`ur < uinf ≤ theta` and `tau > 0`, the trajectory stays strictly
-below `theta` at every finite `t ≥ 0`; at `uinf = theta` the approach
-is asymptotic only.
+Let `u_r < u_∞ ≤ θ` and `τ > 0`. Then `u_∞ - (u_∞ - u_r) e^(-t/τ) < θ` for every `t ≥ 0`: the
+voltage relaxing from the reset value `u_r` toward the steady value `u_∞` never reaches the
+threshold `θ`. At `u_∞ = θ` it approaches the threshold only asymptotically
+([asymptotic approach](lif-tendsto.md)).

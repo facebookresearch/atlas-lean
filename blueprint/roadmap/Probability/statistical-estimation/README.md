@@ -17,5 +17,5 @@ Point estimation theory and confidence sets: bias, risk and mean squared error, 
 - [Minimax lower bounds](minimax-lower-bounds/README.md)
 - [Stein's lemma and James–Stein estimation](stein-s-lemma-and-james-stein-estimation/README.md)
 - [Sufficient statistics and the factorization theorem](sufficient-statistics-and-the-factorization-theo/README.md)
-- [Estimation coverage transfer](coverage-transfer-image.md)
+- [Coverage of a confidence set transfers to its image under a map](coverage-transfer-image.md)
 - [Rao–Blackwell theorem](rao-blackwell-theorem/README.md)

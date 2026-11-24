@@ -1,7 +1,4 @@
-# Asymptotic approach at threshold equilibrium
+# With steady value at threshold, the voltage tends to the threshold
 
-At
-`uinf = theta` with `tau > 0`, the trajectory
-`theta - (theta - ur) * exp (-t / tau)` tends to `theta` as
-`t → ∞`; when additionally `ur < theta` it does not attain `theta`
-at any finite time (`lif_no_hit`).
+Let `τ > 0` and `θ`, `u_r` real. As `t → ∞`, `θ - (θ - u_r) e^(-t/τ)` tends to `θ`. For `u_r < θ`
+this voltage stays below `θ` at every time `t ≥ 0` ([no finite hit](lif-no-hit.md)).

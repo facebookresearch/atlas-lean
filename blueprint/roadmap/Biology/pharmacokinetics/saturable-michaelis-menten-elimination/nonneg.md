@@ -1,4 +1,5 @@
-# Nonnegativity
+# Solutions starting nonnegative stay nonnegative
 
-For `Vmax ≥ 0`, `Km > 0`, `R ≥ 0`, every solution with `C(0) ≥ 0` stays
-nonnegative on `[0, ∞)`.
+Let `Vmax ≥ 0`, `Km > 0` and `R ≥ 0`, and let `C` solve the
+[saturable-elimination equation](is-solution.md) `C'(t) = R - Vmax * C(t) / (Km + C(t))` at every
+time `t ≥ 0`, with `C(0) ≥ 0`. Then `C(t) ≥ 0` for every `t ≥ 0`.

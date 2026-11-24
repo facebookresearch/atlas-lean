@@ -1,10 +1,8 @@
-# PK log-observation law (multiplicative form)
+# Log-linear form of a bolus concentration with multiplicative error
 
-For known
-`D > 0`, `V > 0`, the concentration observation
-`Y j = (D / V) * exp (-k * t j) * exp (ε j)` (the bolus concentration
-times a log-additive error factor) has log exactly the linear form
-`1 * log (D / V) + (-t j) * k + ε j`: the design row is `(1, -t j)`
-and the coefficient vector is `(log (D / V), k)`. This is the exact
-log law; additive concentration noise would not be additive log
-noise.
+For `D > 0` and `V > 0` and all real `k`, sampling times `t j` and errors `ε j` (`j` among `n`
+observations), the concentration observation `Y j = (D / V) * exp (-k * t j) * exp (ε j)`, the bolus
+concentration times a log-additive error factor, has logarithm
+`log (Y j) = 1 * log (D / V) + (-t j) * k + ε j`: a linear model with design row `(1, -t j)` and
+coefficient vector `(log (D / V), k)`. This is the exact log law for a multiplicative error; an
+additive concentration error would not be an additive log error.

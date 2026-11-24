@@ -1,5 +1,6 @@
-# Is Cable Solution infinite Green
+# Restricted to a segment, the infinite-cable kernel is a cable solution
 
-The restriction of `infiniteGreen_cable` to a finite segment `[0, L]`, in the form of
-`IsCableSolution` (any `L`; the segment is empty for `L < 0`). For positions outside `[0, L]`,
-including `x < 0`, use `infiniteGreen_cable`.
+For real numbers `τ > 0` and `ℓ ≠ 0` and all real `L` and `x₀`, the [Green's function of the infinite cable](infinite-green.md)
+`G(t, x; x₀)` is a [classical solution](is-cable-solution.md) of `τ ∂ₜG = ℓ² ∂ₓ²G - G` on the
+segment `[0, L]` at every time `t > 0`; the segment is empty when `L < 0`. The equation holds at
+every position of `ℝ` ([whole line](infinite-green-cable.md)).

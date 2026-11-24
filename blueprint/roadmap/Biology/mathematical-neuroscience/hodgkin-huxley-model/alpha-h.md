@@ -1,3 +1,5 @@
-# Alpha H
+# Sodium inactivation recovery rate α_h
 
-Sodium inactivation recovery rate `α_h(V) = 0.07 exp (-V / 20)`.
+The rate at which the sodium inactivation gate $h$ opens (recovery from inactivation), in 1/ms, at
+membrane depolarization $V$ (mV): $\alpha_h(V) = 0.07\,e^{-V/20}$ for every real $V$. It is
+positive.

@@ -1,7 +1,10 @@
-# Exponential decay to rest
+# For ε > 0, an exponential bound on the centred energy along solutions
 
-For `ε > 0` and an equilibrium `(vr, wr)`: if
-`restFactor vr (v s - vr) ≤ -c` along a solution for `s ∈ [0, t]`, then
-`restEnergy(t) ≤ e^{-2 min c (b ε) t} restEnergy(0)`.
+Let `a`, `b`, `I`, `c` be real, `ε > 0`, `(vr, wr)` an [equilibrium](is-equilibrium.md), `(v, w)` a
+[solution](is-solution.md) and `t ≥ 0`. If `1 - vr² - vr x - x²/3 ≤ -c` with `x = v(s) - vr` for
+every `s ∈ [0, t]`, then
 
-Proof: `restFlux_le` and Mathlib's Grönwall bound `le_gronwallBound_of_liminf_deriv_right_le`.
+`E(t) ≤ e^(-2 min(c, b ε) t) E(0)`,
+
+where `E(s)` is the [centred energy](rest-energy.md) `(v(s) - vr)² + (w(s) - wr)²/ε`. The proof
+applies Grönwall's inequality to the [dissipation bound](rest-flux-le.md).

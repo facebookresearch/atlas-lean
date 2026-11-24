@@ -1,4 +1,4 @@
-# Tendsto concentration
+# Under constant infusion the concentration tends to R / CL
 
-Under constant infusion the concentration tends to `C∞ = R / CL`, for `V > 0` and
-`CL > 0`.
+For a clearance `CL > 0`, a volume `V > 0`, every real infusion rate `R` and every initial amount
+`A₀`, the [concentration](concentration.md) `C(t) = A(t) / V` tends to `C∞ = R / CL` as `t → ∞`.

@@ -1,3 +1,5 @@
-# Tendsto amount rate zero at Top
+# Without elimination a positive input makes the amount unbounded
 
-`k = 0`, `R > 0`: the amount grows without bound.
+For a positive input `R > 0` and every real `A₀`, the amount `A(t) = A₀ + R * t` of the
+one-compartment model with no elimination, `k = 0`, constant input `R` and initial amount `A₀`,
+tends to `∞` as `t → ∞`.

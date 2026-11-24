@@ -1,8 +1,7 @@
 # Absorption AUC, distinct rates
 
-For `ka ≠ k`, `ka, k > 0`,
-the central amount component
-`F * D * ka * (exp (-k t) - exp (-ka t)) / (ka - k)` is integrable
-on `Set.Ici 0` with integral `F * D / k` (hence concentration AUC
-`F * D / (k * V)` after dividing by `V`). FK: the set integral
-statement below is exactly that claim for the amount.
+For an absorption rate `ka > 0` and an elimination rate `k > 0` with `ka ≠ k`, and all real `F` and
+`D`, the [distinct-rate central amount](central-amount.md)
+`Ac(t) = F * D * ka * (exp (-k * t) - exp (-ka * t)) / (ka - k)` is integrable on `[0, ∞)` and
+`∫₀^∞ Ac(t) dt = F * D / k`. Dividing by a volume `V > 0` gives the concentration AUC
+`F * D / (k * V)`.

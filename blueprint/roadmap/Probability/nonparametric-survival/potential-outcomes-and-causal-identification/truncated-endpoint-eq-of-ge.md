@@ -1,4 +1,4 @@
-# Truncated endpoint beyond the horizon
+# An event time at or beyond the horizon truncates to the horizon
 
-If `h ≤ T i`, the
-truncated endpoint is the horizon.
+For event times `T i` and a horizon `h`, all real, if `h ≤ T i` then the
+[truncated endpoint](truncated-endpoint.md) of unit `i` is the horizon: `min (T i) h = h`.

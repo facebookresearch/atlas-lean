@@ -1,3 +1,4 @@
-# Time Constant pos
+# For positive resistance and capacitance, the time constant is positive
 
-The cable time constant is positive for positive parameters.
+For real numbers `r_m > 0` and `c_m > 0`, the [membrane time constant](time-constant.md)
+`τ = r_m c_m` is positive.

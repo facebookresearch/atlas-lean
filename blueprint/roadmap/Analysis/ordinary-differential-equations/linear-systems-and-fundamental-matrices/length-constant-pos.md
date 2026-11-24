@@ -1,3 +1,4 @@
-# Length Constant pos
+# The length constant is positive for positive resistances
 
-The length constant of a cable with positive resistances is positive.
+For real numbers $r_m>0$ and $r_i>0$, the [length constant](length-constant.md)
+$\lambda=\sqrt{r_m/r_i}$ is positive.

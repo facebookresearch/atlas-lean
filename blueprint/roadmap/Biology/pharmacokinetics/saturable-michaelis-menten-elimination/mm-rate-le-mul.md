@@ -1,3 +1,4 @@
-# Mm Rate le mul
+# Michaelis–Menten elimination is at most first order
 
-First-order bound: elimination is at most the linear rate `(Vmax / Km) c`.
+For `Vmax ≥ 0`, `Km > 0` and a concentration `c ≥ 0`, the elimination rate is at most the linear
+rate: `Vmax * c / (Km + c) ≤ (Vmax / Km) * c`.

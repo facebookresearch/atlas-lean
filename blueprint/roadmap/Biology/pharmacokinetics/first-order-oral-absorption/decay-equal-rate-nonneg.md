@@ -1,4 +1,4 @@
-# Equal-rate limit form
+# The equal-rate decay component is nonnegative
 
-At equal rates the component is
-`A * t * exp (-ka * t) ≥ 0` on `t ≥ 0`.
+For `A ≥ 0`, `ka ≥ 0` and `t ≥ 0`, the equal-rate (limiting) form of a decay component is
+nonnegative: `A * t * exp (-ka * t) ≥ 0`.

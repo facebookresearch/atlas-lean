@@ -1,12 +1,13 @@
-# Single-pulse response
+# Response of the full system to a single pulse from rest
 
-Let `(vr, wr)` be a rest state, let a solution start at the
-post-pulse state `(vr + δ, wr)`, and let `T ≥ 0`. Suppose `|v + a - b w| ≤ M` on `[0, T]` (for
-`b, ε > 0` such an
-`M` comes from the trapping ellipse, `abs_le_of_energy_le`), and put `η = |ε| M T`.
+Let `a`, `b`, `ε` and `I` be real, `(vr, wr)` an [equilibrium](is-equilibrium.md), and `(v, w)` a
+[solution](is-solution.md) starting at the post-pulse state of a pulse of amplitude `δ`:
+`v(0) = vr + δ` and `w(0) = wr`. Let `T ≥ 0` and `M` be real with `|v(s) + a - b w(s)| ≤ M` for
+every `s ∈ [0, T]`, and put `η = |ε| M T`.
 
-* If the post-pulse drift is negative with margin `η`, i.e. `δ (1 - vr² - vr δ - δ²/3) + η < 0`,
-  the voltage never exceeds its post-pulse value `vr + δ` on `[0, T]`.
-* If the voltage field at the frozen recovery value satisfies `vField I u wr ≥ m > η` on
-  `[vr + δ, γ]` (in particular the voltage rises after the pulse, with margin `η`) and
-  `γ - (vr + δ) ≤ (m - η) T`, the voltage reaches `γ` within `[0, T]`.
+- If `δ (1 - vr² - vr δ - δ²/3) + η < 0`, then `v(t) ≤ vr + δ` for every `t ∈ [0, T]`.
+- If `γ ≥ vr + δ`, `m > η`, `u - u³/3 - wr + I ≥ m` for every `u ∈ [vr + δ, γ]` and
+  `γ - (vr + δ) ≤ (m - η) T`, then `v(t) ≥ γ` for some `t ∈ [0, T]`.
+
+For `b, ε > 0` such an `M` exists: every solution stays in a fixed
+[energy ellipse](energy-le-max.md), on which `|v + a - b w|` is [bounded](abs-le-of-energy-le.md).

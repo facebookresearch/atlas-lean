@@ -1,4 +1,7 @@
-# Bolus AUC
+# Area under the bolus concentration curve
 
-For `Vmax, Km > 0` and `C(0) ≥ 0`, the total area under the curve is
-`∫₀^∞ C = C₀ (Km + C₀ / 2) / Vmax` (a convergent integral, `IsSolution.integrableOn_Ioi_bolus`).
+Let `Vmax > 0` and `Km > 0`, and let `C` solve the [saturable-elimination equation](is-solution.md)
+with no infusion (a bolus), `C'(t) = -Vmax * C(t) / (Km + C(t))` at every time `t ≥ 0`, with
+`C(0) ≥ 0`. Then the total area under the curve is `∫₀^∞ C(t) dt = C(0) * (Km + C(0) / 2) / Vmax`,
+the [closed-form bolus AUC](bolus-auc.md) at `C₀ = C(0)`; the integral
+[converges](integrable-on-ioi-bolus.md).

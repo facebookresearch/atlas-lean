@@ -1,3 +1,4 @@
-# Re neg of quad eq zero
+# Roots of μ² + p μ + q with p, q > 0 have negative real part
 
-Roots of `μ² + p μ + q` with `p, q > 0` lie in the open left half-plane.
+For real `p > 0` and `q > 0`, every complex root `μ` of `μ² + p μ + q` has `Re μ < 0`: both roots
+lie in the open left half-plane.

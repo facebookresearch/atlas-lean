@@ -1,5 +1,5 @@
-# Forward invariance of a basin of the rest state
+# For b, ε > 0, small centred-energy balls around rest are invariant
 
-For `b, ε > 0`, an equilibrium
-`(vr, wr)` and `ρ > 0` with `|vr| ρ < vr² - 1`, a solution starting in `restEnergy ≤ ρ²` stays
-there for all `t ≥ 0`.
+Let `a`, `I` be real, `b > 0`, `ε > 0`, `(vr, wr)` an [equilibrium](is-equilibrium.md), `(v, w)` a
+[solution](is-solution.md), and `ρ > 0` with `|vr| ρ < vr² - 1`. If
+`(v(0) - vr)² + (w(0) - wr)²/ε ≤ ρ²`, then `(v(t) - vr)² + (w(t) - wr)²/ε ≤ ρ²` for every `t ≥ 0`.

@@ -1,4 +1,6 @@
-# Steady Conc
+# Steady-state concentration under constant infusion
 
-Steady-state concentration `C∞ = R Km / (Vmax - R)` under constant infusion `R`. Meaningful
-for `0 ≤ R < Vmax`, where it is the unique nonnegative root of `mmRate Vmax Km C = R`.
+For real numbers `Vmax`, `Km` and `R`, the steady-state concentration under constant infusion at the
+rate `R` is `C∞ = R * Km / (Vmax - R)`. It is defined for all real inputs; with the convention
+`x / 0 = 0` it is `0` at `R = Vmax`. For `Vmax > 0`, `Km > 0` and `0 ≤ R < Vmax` it is the unique
+nonnegative concentration at which elimination balances the infusion, `Vmax * C∞ / (Km + C∞) = R`.

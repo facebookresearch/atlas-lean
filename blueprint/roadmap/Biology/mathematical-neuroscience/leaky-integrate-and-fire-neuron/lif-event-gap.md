@@ -1,6 +1,5 @@
-# LIF event-time gaps
+# Reset event times have the constant positive gap T + t_ref
 
-With active duration `T > 0` and
-refractory duration `tref ≥ 0`, successive reset event times
-`t n = n * (T + tref)` are separated by the constant gap
-`T + tref > 0`.
+Let `T > 0` and `t_ref ≥ 0`. For every natural `n`, the reset event times `t_n = n (T + t_ref)`
+satisfy `t_(n+1) - t_n = T + t_ref`, and `T + t_ref > 0`. Here `T` is the active duration and
+`t_ref` the refractory period.

@@ -1,4 +1,4 @@
-# Zero refractory period
+# Without refractory period, the event gap is the active duration
 
-At `tref = 0` the event gap is
-exactly the active duration `T`.
+For every real `T` and natural `n`, `(n + 1)(T + 0) - n (T + 0) = T`: with refractory period `0`,
+successive reset event times `n T` are `T` apart.

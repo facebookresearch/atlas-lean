@@ -1,5 +1,6 @@
 # AUC is not proportional to dose
 
-**AUC is not proportional to dose** for `Vmax > 0`: there is no constant `a` with
-`AUC(C₀) = a C₀` for all `C₀ ≥ 0`. (For linear elimination `AUC = D / CL` is proportional,
-`CompartmentKinetics.integral_Ici_concentration_bolus`.)
+For `Vmax > 0` and every real `Km`, the [bolus AUC](bolus-auc.md)
+`AUC(C₀) = C₀ * (Km + C₀ / 2) / Vmax` is not proportional to the initial concentration: there is no
+constant `a` with `AUC(C₀) = a * C₀` for every `C₀ ≥ 0`. For linear elimination, by contrast, the
+[AUC `D / CL` is proportional to the dose](../one-compartment-linear-pharmacokinetics/integral-ici-concentration-bolus.md).

@@ -1,9 +1,7 @@
-# Global existence
+# For b, ε > 0, solutions exist for all forward time
 
-For `b, ε > 0` every initial state `(v₀, w₀)` has a solution of the
-FitzHugh–Nagumo system on `[0, ∞)`.
-
-Proof: the maximal solution of `ode_maximal_solution_exit_compact` (`U = univ`, `t₀ = 0`) stays
-over `[0, T] ∩ J` in the compact set `[0, T] ×ˢ {energy ≤ R}`, `R = max (energy₀) (trapRadius + 1)`
-(`IsSolution.energy_le`, applied on `[0, T]`); if some `T ≥ 0` were not in its open interval
-`J`, the time `max c 0` would contradict the forward exit from that compact set.
+Let `b > 0`, `ε > 0`, `a` and `I` real. For every initial state `(v₀, w₀)` there are `v, w : ℝ → ℝ`
+forming a [solution](is-solution.md) of the FitzHugh–Nagumo system with `v(0) = v₀` and `w(0) = w₀`.
+The maximal solution stays, over every interval `[0, T]`, in the [compact](is-compact-energy-le.md)
+ellipse of level `max(E(0), C / κ + 1)` ([forward invariance](energy-le.md)), so it cannot leave
+every compact set in finite forward time.

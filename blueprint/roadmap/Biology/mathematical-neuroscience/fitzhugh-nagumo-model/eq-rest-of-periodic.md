@@ -1,9 +1,10 @@
-# Periodic orbits must enter the band `restFactor > 0`
+# A periodic solution with nonpositive post-pulse factor is at rest
 
-For `b, ε > 0` and an equilibrium
-`(vr, wr)`, a `T`-periodic solution (`T > 0`) along which `restFactor vr (v - vr) ≤ 0` at all
-times is the constant rest state.
+Let `a`, `I` be real, `b > 0`, `ε > 0`, `(vr, wr)` an [equilibrium](is-equilibrium.md), `T > 0`, and
+`(v, w)` a [solution](is-solution.md) with `v(t + T) = v(t)` and `w(t + T) = w(t)` for every
+`t ≥ 0`. If `1 - vr² - vr x - x²/3 ≤ 0` with `x = v(t) - vr` for every `t ≥ 0`, then `v(t) = vr` and
+`w(t) = wr` for every `t ≥ 0`.
 
-Proof: `restEnergy` is antitone (its derivative is `restFlux ≤ -2 b (w - wr)² ≤ 0`) and
-`T`-periodic, hence constant on `[0, ∞)`; so `restFlux = 0` on `(0, ∞)`, forcing `w = wr` there,
-and then `w' = ε (v - vr) = 0` forces `v = vr`. The time `0` follows by periodicity.
+The [centred energy](rest-energy.md) is nonincreasing along the solution (its derivative is at most
+`-2 b (w - wr)²`) and `T`-periodic, hence constant on `[0, ∞)`; this forces `w = wr`, and then
+`w' = ε (v - vr) = 0` forces `v = vr`.

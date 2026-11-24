@@ -1,4 +1,6 @@
 # Finite-horizon AUC
 
-After a bolus dose `D`, `∫₀ᵀ C = (D / CL)(1 - e^{-k T})` with
-`k = CL / V`, for `CL > 0` and `V > 0` (the frozen model domain).
+For a clearance `CL > 0`, a volume `V > 0`, every real dose `D` and every real `T`, the bolus
+[concentration](concentration-bolus.md) `C(t) = (D / V) * exp (-(CL / V) * t)` after a dose `D` with
+no infusion satisfies `∫₀ᵀ C(t) dt = (D / CL) * (1 - exp (-k * T))` with `k = CL / V`; for `T < 0`
+the integral is oriented, `∫₀ᵀ C(t) dt = -∫_T^0 C(t) dt`.

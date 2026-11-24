@@ -1,3 +1,9 @@
-# Has Deriv At cos Mode
+# Slope of a sealed-end mode at each point
 
-Slope of the `n`-th mode: `(cos (n π x / L))' = -(n π / L) sin (n π x / L)`.
+For every real `L`, natural number `n` and real `x`, the [mode](cos-mode.md)
+`y ↦ cos (n π y / L)` is differentiable at `x`, with derivative
+
+`-(n π / L) sin (n π x / L)`.
+
+With the convention `u / 0 = 0`, at `L = 0` the mode is constant and both the derivative and the
+formula are `0`.

@@ -1,8 +1,12 @@
-# Post-pulse drift at a stable rest state
+# Hurwitz rest states with −2 ≤ v < −1 and their post-pulse drift
 
-In the classical regime `0 < b < 1`, `ε > 0`, at
-an equilibrium on the left branch `-2 ≤ v < -1` the Jacobian is Hurwitz and `pulseRootLow v` is
-positive: the voltage falls after pulses `0 < δ < pulseRootLow v` and rises after pulses
-`pulseRootLow v < δ < pulseRootHigh v`. At the endpoint `v = -2` the two roots coincide
-(`pulseRootLow (-2) = pulseRootHigh (-2) = 3`), so the last statement is vacuous and the voltage
-rises after no positive pulse; `stable_rest_rising_pulse_window` treats `-2 < v < -1`.
+Let `0 < b < 1`, `ε > 0`, `a` and `I` real, and let `(v, w)` be an [equilibrium](is-equilibrium.md)
+with `-2 ≤ v < -1`. Then the [Jacobian](jacobian.md) at `v` is Hurwitz, the
+[lower root](pulse-root-low.md) `r₋ = (-3v - √(12 - 3v²))/2` is positive, the voltage falls after
+every pulse `0 < δ < r₋`, and it rises after every pulse `r₋ < δ < r₊`, where
+`r₊ = (-3v + √(12 - 3v²))/2` is the [upper root](pulse-root-high.md).
+
+At `v = -2` the two roots coincide (`r₋ = r₊ = 3`), so the last statement is vacuous and the voltage
+rises after no positive pulse; for `-2 < v < -1` the window is nonempty
+([rising window at these rest states](stable-rest-rising-pulse-window.md)). The pulse statements
+concern the instantaneous drift, not the trajectory.

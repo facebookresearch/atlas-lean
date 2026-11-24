@@ -1,9 +1,7 @@
-# Peripheral amount nonnegativity (Duhamel form)
+# Nonnegative rates and dose give a nonnegative peripheral amount
 
-With
-nonnegative transfer `k12 ≥ 0`, elimination `k21 ≥ 0`, central rate
-`k10 ≥ 0` and dose `D ≥ 0`, the peripheral amount at `a ≥ 0` in
-Duhamel form,
-`∫ s in 0..a, exp (-k21 (a - s)) * (k12 * D * exp (-(k10+k12) s))`,
-is nonnegative: mass transferred in is nonnegative and decays
-without sign change.
+For rates `k10 ≥ 0`, `k12 ≥ 0` and `k21 ≥ 0`, a dose `D ≥ 0` and a time `a ≥ 0`, the Duhamel
+integral `∫₀ᵃ exp (-k21 * (a - s)) * (k12 * (D * exp (-(k10 + k12) * s))) ds` is nonnegative. It is
+the amount at time `a` of a compartment that receives `k12` times the central amount
+`D * exp (-(k10 + k12) * s)` and loses its content at rate `k21`: the mass transferred in is
+nonnegative and decays without sign change.

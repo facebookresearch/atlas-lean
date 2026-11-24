@@ -80,14 +80,14 @@
 - [For m ≥ 2 and positive shared variance, naive mean variance is too low](variance-cluster-row-div-lt-mean.md)
 - [A nonempty cluster mean has variance at least the shared variance](le-variance-cluster-mean.md)
 
-## Population PK observation
+## Log-normal visit concentrations with a shared intercept
 
-- [Fixed-latent visit law](visit-law-fixed-latent.md)
-- [Zero-variance elimination rate](pop-zero-rate.md)
-- [Zero latent variance collapses the subject law](pop-zero-law-agreement.md)
+- [At fixed latent values the visits are independent log-normals](visit-law-fixed-latent.md)
 - [Shared random intercept cancels within subject](intercept-cancels-within-subject.md)
 - [A common nonzero offset shifts both visits](common-offset-present-in-both.md)
 - [Exponentiated shared intercept is a common factor](intercept-exp-factor.md)
+- [Zero latent variance collapses the subject law](pop-zero-law-agreement.md)
+- [Zero-variance elimination rate](pop-zero-rate.md)
 
 ## Related topics
 

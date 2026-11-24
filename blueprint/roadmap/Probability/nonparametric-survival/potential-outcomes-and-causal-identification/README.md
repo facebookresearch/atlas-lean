@@ -55,6 +55,13 @@
 - [Unrestricted algebraic identity behind the LATE theorem](wald-estimand-eq-late-totalized.md)
 - [Local average treatment effect theorem](wald-estimand-eq-late.md)
 
+## Truncated endpoints at a horizon
+
+- [Event time truncated at a horizon](truncated-endpoint.md)
+- [An event time at or before the horizon is its own truncated endpoint](truncated-endpoint-eq-of-le.md)
+- [An event time at or beyond the horizon truncates to the horizon](truncated-endpoint-eq-of-ge.md)
+- [Truncation changes event times beyond the horizon](truncation-changes-value.md)
+
 ## Related topics
 
 - [Causal Bayesian networks](../../../ComputerScience/machine-learning/probabilistic-graphical-models/causal-bayesian-networks/README.md):
@@ -62,11 +69,3 @@
   ignorability.
 - [Structural causal models and counterfactuals](../../../ComputerScience/machine-learning/probabilistic-graphical-models/structural-causal-models-and-counterfactuals/README.md):
   potential outcomes defined as solutions of submodels, with consistency as a theorem.
-
-- [Truncated Endpoint](truncated-endpoint.md)
-
-- [Truncated endpoint beyond the horizon](truncated-endpoint-eq-of-ge.md)
-
-- [Truncated endpoint at or inside the horizon](truncated-endpoint-eq-of-le.md)
-
-- [Truncation changes event times beyond the horizon](truncation-changes-value.md)

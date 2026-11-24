@@ -1,4 +1,5 @@
-# Bolus AUC
+# Total AUC after a bolus is the dose over the clearance
 
-**Bolus AUC** (Gibaldi–Perrier): the total area under the concentration curve after a bolus
-dose `D` is `∫_{[0, ∞)} C = D / CL`, for `V > 0` and `CL > 0`.
+For a clearance `CL > 0`, a volume `V > 0` and every real dose `D`, the total area under the bolus
+[concentration](concentration-bolus.md) `C(t) = (D / V) * exp (-(CL / V) * t)` after a dose `D` with
+no infusion is `∫₀^∞ C(t) dt = D / CL` (Gibaldi and Perrier).

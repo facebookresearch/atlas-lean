@@ -1,5 +1,4 @@
-# LIF event times do not accumulate
+# Reset event times do not accumulate
 
-The event-time sequence
-`t n = n * (T + tref)` tends to infinity, so only finitely many
-events occur in any bounded time interval.
+Let `T > 0` and `t_ref ≥ 0`. The reset event times `t_n = n (T + t_ref)` tend to infinity as
+`n → ∞`, so only finitely many of them lie in any bounded time interval.

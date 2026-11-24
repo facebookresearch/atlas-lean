@@ -1,3 +1,4 @@
-# Rest Factor le of abs le
+# Bound on the post-pulse factor for displacements up to ρ
 
-On the strip `|x| ≤ ρ`, `restFactor vr x ≤ -(vr² - 1 - |vr| ρ)`.
+For real `vr`, `x` and `ρ` with `|x| ≤ ρ`, the [post-pulse factor](rest-factor.md) satisfies
+`1 - vr² - vr x - x²/3 ≤ -(vr² - 1 - |vr| ρ)`.

@@ -1,7 +1,5 @@
-# Eigen-decay expansion at distinct rates
+# The distinct-rate decay component is nonnegative
 
-At distinct rates
-`ka ≠ ke`, any solution component of the form
-`A (exp (-ke * t) - exp (-ka * t)) / (ka - ke)` is nonnegative on
-`t ≥ 0` whenever `A ≥ 0` and `ka, ke ≥ 0`: the slower exponential
+For `A ≥ 0`, distinct rates `ka ≥ 0` and `ke ≥ 0` with `ka ≠ ke`, and `t ≥ 0`, a solution component
+of the form `A * (exp (-ke * t) - exp (-ka * t)) / (ka - ke)` is nonnegative: the slower exponential
 dominates the faster one.

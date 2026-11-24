@@ -1,10 +1,7 @@
-# Fixed-latent visit law
+# At fixed latent values the visits are independent log-normals
 
-At a fixed latent `z`, the visit
-error vector `e` with independent centered Gaussian coordinates
-(`Measure.pi (fun j : Fin n => gaussianReal (0 : ℝ) (v j))`) pushed through the
-coordinatewise map `e ↦ (fun j => Real.exp (m j + e j))` is exactly
-the product of the per-visit lognormal laws
-`Measure.pi (fun j : Fin n => (gaussianReal (m j) (v j)).map Real.exp)`:
-each visit is the exp-pushforward of its Gaussian (the lognormal
-visit law), with mutual independence of visit errors.
+Let `n` visits have means `m j` (real numbers) and variances `v j ≥ 0`. If the visit errors `e j`
+are independent centered Gaussians `N(0, v j)`, the vector of visit concentrations `exp (m j + e j)`
+has as law the product of the log-normal laws, the images of `N(m j, v j)` under `exp`: the visits
+are independent and each is log-normal (a point mass when `v j = 0`). In the population model the
+means `m j` are those of one subject at fixed values of the latent subject parameters.

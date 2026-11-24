@@ -1,3 +1,4 @@
-# Jac Trace
+# Trace of the FitzHugh–Nagumo Jacobian
 
-Trace of the Jacobian: `τ = 1 - v² - ε b`.
+For real `b`, `ε` and `v`, `τ = 1 - v² - ε b`, the trace of the [Jacobian](jacobian.md) at voltage
+`v`.

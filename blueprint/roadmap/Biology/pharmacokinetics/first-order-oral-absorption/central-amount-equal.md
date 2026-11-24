@@ -1,3 +1,4 @@
-# Central Amount Equal
+# Central amount at equal absorption and elimination rates
 
-The central amount for equal rates.
+For a bioavailability `F`, a dose `D`, a common absorption and elimination rate `ka` and a time `t`
+(real numbers), the central amount at equal rates is `F * D * ka * t * exp (-ka * t)`.

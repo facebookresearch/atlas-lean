@@ -1,58 +1,58 @@
 # Saturable Michaelis–Menten elimination
 
-- [Is Solution](is-solution.md)
-- [Steady Conc](steady-conc.md)
-- [Bolus AUC](bolus-auc.md)
+- [Saturable-elimination equation under constant infusion](is-solution.md)
+- [Steady-state concentration under constant infusion](steady-conc.md)
+- [Closed-form bolus AUC](bolus-auc.md)
 
 ## The elimination rate
 
-- [Mm Rate nonneg](mm-rate-nonneg.md)
-- [Mm Rate le](mm-rate-le.md)
-- [Mm Rate le mul](mm-rate-le-mul.md)
-- [Mul le mm Rate](mul-le-mm-rate.md)
-- [Sub mm Rate eq](sub-mm-rate-eq.md)
+- [Elimination is nonnegative at nonnegative concentrations](mm-rate-nonneg.md)
+- [Michaelis–Menten elimination never exceeds Vmax](mm-rate-le.md)
+- [Michaelis–Menten elimination is at most first order](mm-rate-le-mul.md)
+- [On a bounded range elimination is at least first order](mul-le-mm-rate.md)
+- [The infusion-minus-elimination field in deviation form](sub-mm-rate-eq.md)
 
 ## Existence, uniqueness, positivity
 
-- [Nonnegativity](nonneg.md)
-- [Existence](exists-is-solution.md)
-- [Uniqueness](eq-of-initial.md)
+- [Solutions starting nonnegative stay nonnegative](nonneg.md)
+- [Existence of a nonnegative solution](exists-is-solution.md)
+- [Two solutions with the same nonnegative start agree](eq-of-initial.md)
+- [Solutions starting positive stay positive](pos.md)
 
 ## Bounds and mass balance
 
 - [Linear lower barrier](amount-le.md)
-- [Positivity](pos.md)
-- [Input bound](le-add-mul.md)
-- [Zero-order bound](add-mul-le.md)
+- [The concentration never exceeds the elimination-free accumulation](le-add-mul.md)
+- [Zero-order lower bound](add-mul-le.md)
 - [Mass balance](add-integral-eq.md)
 
 ## Bolus: washout
 
-- [Antitone On bolus](antitone-on-bolus.md)
+- [After a bolus the concentration is nonincreasing](antitone-on-bolus.md)
 - [Upper barrier after a bolus](le-amount-bolus.md)
-- [Tendsto bolus](tendsto-bolus.md)
+- [After a bolus the concentration washes out to zero](tendsto-bolus.md)
 
 ## Bolus: area under the curve
 
 - [Integrated balance after a bolus](integral-bolus.md)
 - [The bolus AUC is finite](integrable-on-ioi-bolus.md)
-- [Bolus AUC](integral-ioi-bolus.md)
+- [Area under the bolus concentration curve](integral-ioi-bolus.md)
 
 ## Dose–AUC nonlinearity
 
 - [AUC splits into a linear and a saturation part](bolus-auc-eq-integral-linear-add.md)
-- [Superproportionality](two-mul-bolus-auc-lt.md)
-- [Bolus AUC div](bolus-auc-div.md)
-- [Strict Mono On bolus AUC div](strict-mono-on-bolus-auc-div.md)
+- [Doubling the dose more than doubles the bolus AUC](two-mul-bolus-auc-lt.md)
+- [Bolus AUC per unit initial concentration](bolus-auc-div.md)
+- [The bolus AUC per unit initial concentration is strictly increasing](strict-mono-on-bolus-auc-div.md)
 - [AUC is not proportional to dose](not-exists-bolus-auc-eq-mul.md)
 - [Low-dose limit](tendsto-bolus-auc-div.md)
 
 ## Constant infusion: steady state
 
-- [Is Solution const iff](is-solution-const-iff.md)
-- [Steady Conc nonneg](steady-conc-nonneg.md)
-- [Mm Rate steady Conc](mm-rate-steady-conc.md)
-- [Steady state](is-solution-steady-conc.md)
+- [A constant is a solution exactly when elimination balances infusion](is-solution-const-iff.md)
+- [The steady-state concentration is nonnegative](steady-conc-nonneg.md)
+- [Elimination at the steady-state concentration balances the infusion](mm-rate-steady-conc.md)
+- [The steady-state concentration is a constant solution](is-solution-steady-conc.md)
 - [Uniqueness of the steady state](eq-steady-conc-of-mm-rate-eq.md)
 - [No steady state when infusion reaches capacity](not-is-solution-const-of-le.md)
 - [Unbounded accumulation](tendsto-at-top.md)

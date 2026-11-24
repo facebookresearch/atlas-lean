@@ -1,4 +1,5 @@
-# Slow drift
+# Bound on the drift of the recovery variable
 
-While `|v + a - b w| ≤ M` on `[0, T]`, the recovery variable moves by at most
-`|ε| M t` by time `t ∈ [0, T]`.
+Let `a`, `b`, `ε` and `I` be real, `(v, w)` a [solution](is-solution.md), and `T`, `M` real with
+`|v(s) + a - b w(s)| ≤ M` for every `s ∈ [0, T]`. Then `|w(t) - w(0)| ≤ |ε| M t` for every
+`t ∈ [0, T]`.

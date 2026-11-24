@@ -1,4 +1,6 @@
-# Dissipation at an equilibrium
+# For ε > 0, a bound on the centred flux from a bound on the factor
 
-For `ε > 0`, at a state whose voltage displacement `x`
-has `restFactor vr x ≤ -c`, `restFlux ≤ -2 min c (b ε) · restEnergy`.
+Let `a`, `b`, `I`, `c` be real, `ε > 0` and `(vr, wr)` an [equilibrium](is-equilibrium.md). At every
+state `(v, w)` whose [post-pulse factor](rest-factor.md) satisfies `1 - vr² - vr x - x²/3 ≤ -c` for
+`x = v - vr`, the [flux](rest-flux.md) is at most `-2 min(c, b ε) E`, where
+[centred energy](rest-energy.md) `E = (v - vr)² + (w - wr)²/ε`.
