@@ -11153,6 +11153,7 @@
   "MathlibExt/Combinatorics/SimpleGraph/GraphLimits/WeakRegularity": {"to": "GraphTheory/random-graphs", "title": "Graph limits"},
   "MathlibExt/Combinatorics/SimpleGraph/GraphProducts/LexProduct": {"to": "GraphTheory/graph-families-and-operations", "title": "Lexicographic product of graphs"},
   "MathlibExt/Combinatorics/SimpleGraph/GridDominationTransfer": {"to": "GraphTheory/independence-and-domination", "title": "Domination polynomials of grids"},
+  "MathlibExt/Combinatorics/SimpleGraph/GridDominationTransferMatrix": {"to": "GraphTheory/independence-and-domination", "title": "Domination polynomials of grids"},
   "MathlibExt/Combinatorics/SimpleGraph/HajnalSzemeredi": {"to": "GraphTheory/graph-coloring", "title": "Hajnal–Szemerédi theorem"},
   "MathlibExt/Combinatorics/SimpleGraph/HamiltonianCycle": {"to": "GraphTheory/paths-cycles-connectivity", "title": "Hamiltonian cycles"},
   "MathlibExt/Combinatorics/SimpleGraph/HypercubeExtremal": {"to": "GraphTheory/extremal-graph-theory", "title": "Turán problems in the hypercube"},
