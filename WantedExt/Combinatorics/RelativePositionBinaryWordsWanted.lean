@@ -19,6 +19,7 @@ public import Mathlib.NumberTheory.Real.GoldenRatio
 public import Mathlib.Topology.Instances.EReal.Lemmas
 public import MathlibExt.Combinatorics.InfiniteWord.FibonacciWord
 public import MathlibExt.Combinatorics.InfiniteWord.ThueMorse
+public import MathlibExt.Combinatorics.Words.AntitoneRelativePosition
 public import MathlibExt.Combinatorics.Words.EquilibriousWord
 public import MathlibExt.Combinatorics.Words.FibonacciIccanobiF
 public import MathlibExt.Combinatorics.Words.PisaEigenvector
@@ -96,19 +97,6 @@ Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, L
 public theorem_wanted exists_word_relativePosition_eq_of_monotone (r : ℕ → ℕ)
     (hpos : ∀ n, 1 ≤ n → 1 ≤ r n) (hmono : ∀ n, 1 ≤ n → r n ≤ r (n + 1)) :
     ∃ w, BothLettersInfinite w ∧ w 0 = true ∧ ∀ n, 1 ≤ n → relativePosition w n = r n
-
-/-- **Non-increasing functions as relative position functions.** Let $r$ be a function from the
-natural numbers to the integers with $r(1) < 0$ and $r(n+1) \le r(n)$ for every $n \ge 1$. Then
-there is an infinite word $w$ over the letters $a$ and $b$ that starts with $b$, in which both
-letters occur infinitely often, and whose relative position function satisfies $r_w(n) = r(n)$
-for every $n \ge 1$.
-
-Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
-Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Corollary 9
-(`jis-2025-25.1.5-cor-9`). -/
-public theorem_wanted exists_word_relativePosition_eq_of_antitone (r : ℕ → ℤ) (h₁ : r 1 < 0)
-    (hanti : ∀ n, 1 ≤ n → r (n + 1) ≤ r n) :
-    ∃ w, BothLettersInfinite w ∧ w 0 = false ∧ ∀ n, 1 ≤ n → relativePosition w n = r n
 
 /-- **Runs of one letter and gaps between letter positions.** Let $w = \ell_0 \ell_1 \ell_2 \cdots$
 be an infinite word over the letters $a$ and $b$ in which both letters occur infinitely often and

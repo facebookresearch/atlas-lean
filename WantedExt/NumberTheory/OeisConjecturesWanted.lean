@@ -17,8 +17,7 @@ Sequences* 28 (2025), Article 25.4.3
 `avoidZZ1Z k n` counts words of length `n` over a
 `k`-letter alphabet with no consecutive pattern
 `z, z+1, z`; the recurrence and initial values were
-verified by brute force for `k ≤ 4`, `n ≤ 7`. The
-bit-length formula was verified for `n ≤ 8`, and the
+verified by brute force for `k ≤ 4`, `n ≤ 7`, and the
 cube-root floor formula at `n = 3`.
 
 Theorem 1, Corollary 2, Theorem 4, Theorem 8 and
@@ -31,6 +30,9 @@ does not involve `a_n` and omits distinctness) and is
 stated in the reading its proof uses. Not stated:
 Corollary 5 (a claim about OEIS conjectures that the
 paper does not state).
+
+Proved in `MathlibExt.NumberTheory.SizeChooseTwoPow`, which this module imports: Theorem 6
+(`size_choose_two_pow`, the bit length of `Nat.choose (2 ^ n) (2 ^ (n - 1))`).
 -/
 module
 
@@ -43,6 +45,7 @@ public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Data.Nat.Size
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.RingTheory.PowerSeries.Inverse
+public import MathlibExt.NumberTheory.SizeChooseTwoPow
 
 set_option autoImplicit false
 
@@ -77,15 +80,6 @@ theorem_wanted avoidZZ1Z_spec (k : ℕ) (hk : 1 ≤ k) :
         (avoidZZ1Z k n : ℤ) =
           (k : ℤ) * avoidZZ1Z k (n - 1) -
             avoidZZ1Z k (n - 2) + avoidZZ1Z k (n - 3)
-
-/-- **Bit length of $\binom{2^n}{2^{n-1}}$.** For every integer $n \ge 1$, the binary expansion of
-the binomial coefficient $\binom{2^n}{2^{n-1}}$ has exactly $2^n - \lfloor n/2 \rfloor$ digits.
-
-Source: Sela Fried, "Proofs of Several Conjectures From
-the OEIS", Theorem 6. -/
-theorem_wanted size_choose_two_pow (n : ℕ) (hn : 1 ≤ n) :
-    Nat.size (Nat.choose (2 ^ n) (2 ^ (n - 1))) =
-      2 ^ n - n / 2
 
 /-- **Floor of a sum of cube roots.** For every integer $m \ge 1$, the sum
 $S_m = \sum_{i=1}^{10^{3m}} i^{1/3}$ of the real cube roots of $1, 2, \dots, 10^{3m}$ satisfies

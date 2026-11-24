@@ -65,7 +65,7 @@ theorem forward_replication_payoff {Ω : Type*} {S : Ω → ℝ} {S0 R inc F : �
   ring
 
 /-- **Forward cost of carry.** Replicating a forward with borrowing and the underlying
-yields the frozen cost-of-carry price: if state prices `ψ` price the riskless unit
+yields the frozen cost-of-carry price: for `R ≠ 0`, if state prices `ψ` price the riskless unit
 payoff at `1 / R`, price the underlying (spot plus known terminal income `inc`) at `S0`,
 and price the forward (payoff `S ω - F`, zero entry cost) at `0`, then
 `F = (S0 - inc / R) * R`, i.e. the spot price less the present value of the income,
