@@ -580,32 +580,6 @@ public theorem_wanted bisector_equation_form_two (l m n : ℤ) (hlm : |l| ≠ |m
     ∀ c ∈ ({((l : ℚ) * m - n ^ 2) / ((l + m) * n), -(((l : ℚ) + m) * n) / (l * m - n ^ 2)} :
         Set ℚ), (a - c) ^ 2 * (b ^ 2 + 1) = (b - c) ^ 2 * (a ^ 2 + 1)
 
-/-- **Rational solutions of the bisector equation for square-free $d > 1$.** Let $d > 1$ be a
-square-free integer and let $a, b, c$ be rational numbers with $|a| \ne |b|$ and
-$$(a - c)^2 (b^2 + 1) = (b - c)^2 (a^2 + 1).$$
-Suppose there are rational numbers $u, v$ with $a^2 - d u^2 = -1$ and $b^2 - d v^2 = -1$. Then
-there are rational numbers $a_2, b_2$ with $a^2 - d a_2^2 = -1$ and $b^2 - d b_2^2 = -1$ such
-that either $a_2 + b_2 \ne 0$ and $c = (a b_2 + a_2 b) / (a_2 + b_2)$, or $a b_2 + a_2 b \ne 0$
-and $c = -(a_2 + b_2) / (a b_2 + a_2 b)$.
-
-In terms of $\alpha = a + a_2 \sqrt{d}$ and $\beta = b + b_2 \sqrt{d}$, which have norm $-1$, and
-the conjugation $'$ of $\mathbb{Q}(\sqrt{d})$, the first quotient is
-$(\alpha\beta - (\alpha\beta)') / (\alpha + \beta - (\alpha + \beta)')$.
-
-Source: the theorem's second part (the factorization of $\alpha, \beta$ through $\eta$, $\xi_p$
-and $S(d)$) is not formalized.
-
-Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
-Rational Slopes*, INTEGERS 24 (2024), Article A111, Theorem 1(ii), first
-sentence (`integers-2024-A111-thm-1`). -/
-public theorem_wanted bisector_equation_rat_solution_negPell (d : ℤ) (hd : 1 < d)
-    (hsq : Squarefree d) (a b c : ℚ) (hab : |a| ≠ |b|)
-    (h : (a - c) ^ 2 * (b ^ 2 + 1) = (b - c) ^ 2 * (a ^ 2 + 1))
-    (ha : ∃ a₂ : ℚ, a ^ 2 - d * a₂ ^ 2 = -1) (hb : ∃ b₂ : ℚ, b ^ 2 - d * b₂ ^ 2 = -1) :
-    ∃ a₂ b₂ : ℚ, a ^ 2 - d * a₂ ^ 2 = -1 ∧ b ^ 2 - d * b₂ ^ 2 = -1 ∧
-      ((a₂ + b₂ ≠ 0 ∧ c = (a * b₂ + a₂ * b) / (a₂ + b₂)) ∨
-        (a * b₂ + a₂ * b ≠ 0 ∧ c = -(a₂ + b₂) / (a * b₂ + a₂ * b)))
-
 /-- **Powers of strictly primitive solutions.** Let $d > 1$ be a square-free integer, $p$ an odd
 prime, and $m, n > 0$ natural numbers. Write elements of $\mathbb{Z}[\sqrt{d}]$ as $u + v\sqrt{d}$
 with integers $u, v$, and let $N(u + v\sqrt{d}) = u^2 - d v^2$ be the norm. If
