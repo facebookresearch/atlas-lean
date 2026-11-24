@@ -11,10 +11,10 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Fib.Basic
 public import MathlibExt.Combinatorics.Enumerative.NarayanaSequence
-public import MathlibExt.NumberTheory.BinomialModTwoRunLength
 public import MathlibExt.NumberTheory.BinomialParitySum
 public import MathlibExt.NumberTheory.LucasSequence
 public import MathlibExt.NumberTheory.PadovanSequence
+public import MathlibExt.NumberTheory.RunLengthTransformLinearRecurrence
 
 /-!
 # Sums of products of binomial coefficients mod 2 as run length transforms
@@ -31,31 +31,6 @@ the product of `S(ℓ)` over the lengths `ℓ` of the maximal runs of `1`s in th
 namespace MetaMathlibExt
 
 @[expose] public section
-
-open Matrix
-
-/-- **Run length transform of a linear recurrence (Rampersad–Wiebe Theorem 1).** Let $r \ge 0$, let
-$d_0, \dots, d_r$ be integers, and let $S : \mathbb{N} \to \mathbb{Z}$ satisfy $S(0) = 1$ and
-$S(m + 1) = d_0 S(m) + d_1 S(m - 1) + \dots + d_r S(m - r)$ for all $m \ge r$. Let $T$ be the run
-length transform of $S$, let $v = (1, 0, \dots, 0)$ and $w = (S(0), \dots, S(r))^\top$, let
-$\gamma(0)$ be the $(r + 1) \times (r + 1)$ matrix with first column $w$ and zeros elsewhere, and
-let $\gamma(1)$ be the $(r + 1) \times (r + 1)$ companion matrix with ones on the superdiagonal,
-last row $(d_r, \dots, d_0)$ and zeros elsewhere. Then for every natural number $n$ with binary
-digits $b_1 b_2 \cdots b_t$, most significant first,
-$T(n) = v \, \gamma(b_1) \gamma(b_2) \cdots \gamma(b_t) \, w$, where for $n = 0$ the product of
-matrices is empty and equals the identity.
-
-Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and
-2-Regular Sequences*, INTEGERS 24 (2024), Article A73, Theorem 1. -/
-public theorem_wanted runLengthTransform_linearRecurrence_eq_linearRep (r : ℕ)
-    (d : Fin (r + 1) → ℤ) (S : ℕ → ℤ) (hS0 : S 0 = 1)
-    (hrec : ∀ m, r ≤ m → S (m + 1) = ∑ i : Fin (r + 1), d i * S (m - i)) (n : ℕ) :
-    runLengthTransform S n = Pi.single 0 1 ⬝ᵥ
-      ((((Nat.digits 2 n).reverse.map fun b =>
-          if b = 0 then Matrix.of fun i j : Fin (r + 1) => if j = 0 then S i else 0
-          else Matrix.of fun i j : Fin (r + 1) =>
-            if (i : ℕ) < r then (if (j : ℕ) = i + 1 then 1 else 0) else d (Fin.rev j)).prod) *ᵥ
-        fun i => S i)
 
 /-- **Rampersad–Wiebe Theorem 2.** Let $(F_j)_{j \ge 0}$ be the Fibonacci numbers, $F_0 = 0$,
 $F_1 = 1$, and let $T$ be the run length transform of $S(i) = F_{i+1}$, i.e. of
