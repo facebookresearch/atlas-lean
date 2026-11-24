@@ -31,7 +31,6 @@
 - [Assignments contradicting an intervention have probability zero](joint-intervene-eq-zero.md)
 - [Joint law as interventional law times the node's table](joint-eq-intervene-mul-cpt.md)
 - [Intervening on a node does not change the law of its non-descendants](marginal-intervene-of-not-is-descendant.md)
-- [Overwriting an assignment on a set of nodes](fill.md)
 - [Splitting a sum by the values on a set of nodes](sum-filter-mul-eq-sum-marginal.md)
 - [Relating two nested interventions](joint-mutilate-set-mul.md)
 - [The empty intervention](joint-mutilate-set-empty.md)
