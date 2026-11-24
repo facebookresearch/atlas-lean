@@ -12557,6 +12557,8 @@
   "MathlibExt/Probability/Statistics/CovarianceMatrix": {"to": "Probability/moments", "title": "Covariance matrices"},
   "MathlibExt/Probability/Statistics/DeltaMethod": {"to": "Probability/convergence-of-measures", "title": "Slutsky's theorem and the delta method"},
   "MathlibExt/Probability/Statistics/EstimationRisk": {"to": "Probability/statistical-estimation", "title": "Bias and mean squared error of estimators"},
+  "MathlibExt/Probability/Statistics/ExactTests/BinomialTest": {"to": "Probability/hypothesis-testing", "title": "Exact binomial tests and the Clopper–Pearson interval"},
+  "MathlibExt/Probability/Statistics/ExactTests/ClopperPearson": {"to": "Probability/hypothesis-testing", "title": "Exact binomial tests and the Clopper–Pearson interval"},
   "MathlibExt/Probability/Statistics/ExactTests/ConditionalBinomial": {"to": "Probability/hypothesis-testing", "title": "Conditional binomial tests"},
   "MathlibExt/Probability/Statistics/ExactTests/FisherExact": {"to": "Probability/hypothesis-testing", "title": "Fisher's exact test"},
   "MathlibExt/Probability/Statistics/ExactTests/HardyWeinbergExact": {"to": "Probability/hypothesis-testing", "title": "Exact test for Hardy–Weinberg equilibrium"},
