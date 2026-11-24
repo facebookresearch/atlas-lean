@@ -10941,6 +10941,7 @@
   "MathlibExt/Combinatorics/IsolationLemma": {"to": "Combinatorics/probabilistic-combinatorics", "title": "Isolation lemma"},
   "MathlibExt/Combinatorics/JaccardLattice": {"to": "Order/lattices-boolean-algebras", "title": "Lattice valuations and the Jaccard distance"},
   "MathlibExt/Combinatorics/KCyclicPartition": {"to": "Combinatorics/stirling-bell-eulerian/generalized-stirling-numbers", "title": "Graphical Stirling and Lah numbers"},
+  "MathlibExt/Combinatorics/KnuthEvenBinomialReciprocal": {"to": "Combinatorics/binomial-coefficients/binomial-sums", "title": "Knuth's old sum"},
   "MathlibExt/Combinatorics/KnuthOldSum": {"to": "Combinatorics/binomial-coefficients/binomial-sums", "title": "Knuth's old sum"},
   "MathlibExt/Combinatorics/KnuthOldSumBinomialQuotients": {"to": "Combinatorics/binomial-coefficients/binomial-sums", "title": "Knuth's old sum"},
   "MathlibExt/Combinatorics/KnuthOldSumPowers": {"to": "Combinatorics/binomial-coefficients/binomial-sums", "title": "Knuth's old sum"},
