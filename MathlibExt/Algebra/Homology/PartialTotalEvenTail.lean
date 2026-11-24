@@ -125,7 +125,7 @@ def outerExtensionTotalXIso (s n q : ℕ) (h : q + s = n) :
             D.ιTotal (ComplexShape.down ℕ) (e.f r) j n htj =
           D.ιTotal (ComplexShape.down ℕ) (e.f r) j n htj
         exact aCell.hom_inv_id_assoc _
-      rw [ι_totalDesc_assoc, dif_pos hk, Category.assoc, ι_totalDesc]
+      rw [ι_totalDesc_assoc, dite_eq_left hk, Category.assoc, ι_totalDesc]
       simp only [Category.comp_id]
       exact hCancel ((k + s) - s) (k + s)
         (by change ((k + s) - s) + s = k + s; exact Nat.sub_add_cancel hk) hij
@@ -155,7 +155,7 @@ def outerExtensionTotalXIso (s n q : ℕ) (h : q + s = n) :
         B.ιTotal (ComplexShape.down ℕ) i j q hij
       exact aCell.inv_hom_id_assoc _
     rw [ι_totalDesc_assoc, Category.assoc, ι_totalDesc]
-    simp only [dif_pos hi, Category.comp_id]
+    simp only [dite_eq_left hi, Category.comp_id]
     exact hCancel ((i + s) - s)
       (by change ((i + s) - s) + s = i + s; exact Nat.sub_add_cancel hi)
       (by change ((i + s) - s) + j = q; change i + j = q at hij; omega)
@@ -436,7 +436,7 @@ def evenOuterExtensionTotalIso (r : ℕ) :
               (T.extend e).d n₀ n₁ =
             (D.total (ComplexShape.down ℕ)).d n₀ n₁ ≫
               (outerExtensionTotalDegreeIso B s n₁).hom
-          simp only [outerExtensionTotalDegreeIso, dif_pos h₀, dif_pos h₁,
+          simp only [outerExtensionTotalDegreeIso, dite_eq_left h₀, dite_eq_left h₁,
             Iso.trans_hom, Iso.symm_hom]
           rw [T.extend_d_eq e hq₀ hq₁]
           change
@@ -565,7 +565,8 @@ theorem evenOuterExtensionTotalIso_hom_naturality (φ : B ⟶ L) (r : ℕ) :
       (outerExtensionTotalDegreeIso B s n).hom ≫
         (HomologicalComplex.extendMap (c' := ComplexShape.down ℕ)
           (total.map φ (ComplexShape.down ℕ)) e).f n
-    simp only [outerExtensionTotalDegreeIso, dif_pos hn, Iso.trans_hom, Iso.symm_hom]
+    simp only [outerExtensionTotalDegreeIso, dite_eq_left hn,
+      Iso.trans_hom, Iso.symm_hom]
     rw [HomologicalComplex.extendMap_f (c' := ComplexShape.down ℕ)
       (total.map φ (ComplexShape.down ℕ)) e hq]
     change
@@ -704,7 +705,10 @@ theorem initialOuterTailSequence_shortExact (p : ℕ) :
   · let j : Fin (p + 1) := ⟨i, hi⟩
     have hFi : Si.f = (K.stupidTruncXIso e₀ (show e₀.f j = i from rfl)).hom := by
       change (K.ιStupidTrunc e₀).f i = _
-      exact HomologicalComplex.ιStupidTrunc_f K e₀ (show e₀.f j = i from rfl)
+      rw [HomologicalComplex.ιStupidTrunc_f K e₀ i]
+      simpa only [HomologicalComplex.stupidTruncXIso, HomologicalComplex.restrictionXIso,
+        Iso.trans_hom] using
+        (HomologicalComplex.ιStupidTruncf'_eq K e₀ (show e₀.f j = i from rfl))
     have hf : IsIso Si.f := by rw [hFi]; infer_instance
     have hZero : IsZero Si.X₃ := by
       change IsZero ((K.stupidTrunc e).X i)
@@ -720,7 +724,7 @@ theorem initialOuterTailSequence_shortExact (p : ℕ) :
         (K.restrictionXIso e hj).inv ≫ ((K.restriction e).extendXIso e hj).inv := by
       change (HomologicalComplex.natTailProjection K (p + 1)).f i = _
       exact HomologicalComplex.natTailProjection_f K (p + 1) j i hj
-    letI : IsIso Si.g := by rw [hGi]; infer_instance
+    let : IsIso Si.g := by rw [hGi]; infer_instance
     have hZero : IsZero Si.X₁ := by
       change IsZero ((K.stupidTrunc e₀).X i)
       exact K.isZero_stupidTrunc_X e₀ i (by
