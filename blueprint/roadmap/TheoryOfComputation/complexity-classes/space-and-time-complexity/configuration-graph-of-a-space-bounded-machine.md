@@ -1,21 +1,20 @@
 # Configuration graph of a space-bounded machine
 
-Let $M$ be a (possibly nondeterministic) Turing machine with a read-only input tape and work tapes, using space $s(n) \ge \log n$ on inputs of length $n$. For an input $x$ the *configuration graph* $G_{M,x}$ has as vertices the configurations of $M$ on $x$ that use at most $s(|x|)$ work cells (state, input-head position, work-head positions and work-tape contents) and an edge from $C$ to $C'$ when $M$ can move from $C$ to $C'$ in one step. It has at most $2^{c \cdot s(|x|)}$ vertices for a constant $c$ depending on $M$, whether $(C, C')$ is an edge can be decided in space $O(s(|x|))$, and $M$ accepts $x$ exactly when an accepting configuration is reachable from the start configuration.
+Let $M$ be a deterministic or nondeterministic Turing machine with a read-only input tape and work tapes, all of whose computation branches halt, and let
+$S(n) \ge \log n$ be a space bound for $M$. A *configuration* of $M$ consists of its state, its head positions and the contents of its non-blank work-tape
+cells. For an input $x$, the *configuration graph* $G_{M,x}$ is the directed graph whose vertices are the configurations that $M$ can reach from the start
+configuration $C^x_{\mathrm{start}}$, with an edge from $C$ to $C'$ when $C'$ is reached from $C$ in one step of the transition function; it has out-degree one if $M$ is
+deterministic and at most two if $M$ is nondeterministic.
+
+- After modifying $M$ to erase its work tapes before accepting, there is a single accepting configuration $C_{\mathrm{accept}}$, and $M$ accepts $x$ if and only if
+  $G_{M,x}$ has a directed path from $C^x_{\mathrm{start}}$ to $C_{\mathrm{accept}}$.
+- If $M$ uses space $S(n)$, every vertex of $G_{M,x}$ is described by $c\,S(n)$ bits for a constant $c$ depending on $M$, so $G_{M,x}$ has at most $2^{c S(n)}$
+  vertices, and there is a CNF formula $\varphi_{M,x}$ of size $O(S(n))$ such that $\varphi_{M,x}(C, C') = 1$ exactly when $C$ and $C'$ encode neighboring configurations.
 
 ## Depends on
 
 - [Nondeterministic decision in bounded time](../time-and-space-complexity-classes/ntmdecides-in-time.md)
-- [Reachability in a labelled transition system is transitive](../../../ComputerScience/process-calculi/labelled-transition-systems/trans.md)
-
-## Expansion
-
-This page becomes ready once:
-
-- Configurations of a Turing machine with a read-only input tape and work tapes, with their one-step relation (statement prerequisite; not yet stated)
-- A machine with k work tapes, state set Q and tape alphabet Γ has at most |Q| s^k |Γ|^{k s} configurations using s work cells on inputs of length n (proof prerequisite; not yet stated)
-- Acceptance as reachability of an accepting configuration must be proved for possibly nonhalting nondeterministic machines
 
 ## Sources
 
-- S. Arora and B. Barak, *Computational Complexity: A Modern Approach*, Cambridge University Press, 2009
-- M. Sipser, *Introduction to the Theory of Computation*, 3rd ed., Cengage Learning, 2013
+- S. Arora and B. Barak, *Computational Complexity: A Modern Approach*, web draft of 2007-01-08, <https://theory.cs.princeton.edu/complexity/>: Definition 4.1 and Remark 4.2 (space-bounded computation), Section 4.1 (configuration graphs, Figure 4.2) and Claim 4.4.
