@@ -45,7 +45,7 @@ variable {k : Type} [Field k]
 structure Family (T : Over (Spec (.of k))) where
   rubber : RubberFamily O P D R S T g n a
   parameter : T ⟶ ParameterSpace k m
-  frame : StandardFamilyIdentification P R S rubber.target m parameter
+  frame : rubber.target.StandardFrame m parameter
 
 variable {T : Over (Spec (.of k))}
 

@@ -134,7 +134,7 @@ structure ReducedTarget where
   original_cartesian : IsPullback original family.projection C.family.rubber.target.projection
     (reductionBaseMap C z t)
   original_zero : zeroIdeal O P D R S family =
-    (zeroIdeal O P D R S C.family.rubber.target).comap original.left
+    C.family.rubber.target.zero.comap original.left
   original_infinity : family.boundary.left.ker =
     C.family.rubber.target.boundary.left.ker.comap original.left
   sectionMap : Spec (.of (localChart C z t).source) ⟶ family.scheme.left
