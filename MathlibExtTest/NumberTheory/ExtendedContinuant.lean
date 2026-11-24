@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.Tactic.NormNum
 import MathlibExt.NumberTheory.ExtendedContinuant
 
 /-! # Tests for extended continuants and the westbound matrix product -/
@@ -56,3 +57,28 @@ example (z : ℤ → ℤ) (hz : z 0 = 1) :
     rw [extendedContinuant_zero, extendedContinuant_neg_one, hz]
     decide
   | succ i => exact h (i + 1) (Nat.succ_pos i)
+
+namespace MetaMathlibExt.silentTerms_table_five_mod_six
+
+private def tableSequence (i : ℤ) : ℤ :=
+  if i ≤ -4 then (if (-i) % 3 = 2 then -1 else 1)
+  else if i = -3 then 4 else if i = -2 then 1 else if i = -1 then -1 else 3
+
+-- At the first admissible order, c₁ = 1 and c₂ = 0 give a zero numerator.
+example :
+    -1 + extendedContinuant tableSequence 5 (-7) +
+      3 * extendedContinuant tableSequence 6 (-7) = 0 := by
+  have h := silentTerms_table_five_mod_six tableSequence 11 (by decide) (by decide)
+    1 0 (by decide) (by decide) (by decide) (by decide) (by
+      intro m hm _
+      simp [tableSequence, show -m ≤ -4 by omega])
+  have hnum := h.2
+  norm_num [show tableSequence 0 = 3 by decide] at hnum
+  exact hnum
+
+-- One six-term block later the denominator is still -1.
+example :
+    -extendedContinuant tableSequence 12 (-14) - 3 * extendedContinuant tableSequence 13 (-14) =
+      -1 := by decide
+
+end MetaMathlibExt.silentTerms_table_five_mod_six
