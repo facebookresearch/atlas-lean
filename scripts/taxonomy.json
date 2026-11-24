@@ -13118,6 +13118,7 @@
   "MathlibExt/RingTheory/PowerSeries/KaluzaCoefficientBounds": {"to": "RingTheory/formal-power-series", "title": "Kaluza's theorem on reciprocal power series"},
   "MathlibExt/RingTheory/PowerSeries/LagrangeBurmannCoefficient": {"to": "RingTheory/formal-power-series", "title": "Lagrange inversion theorem"},
   "MathlibExt/RingTheory/PowerSeries/PowerRecursion": {"to": "NumberTheory/modular-forms-q-series/theta-q-series-partitions", "title": "Glaisher's divisor functions and infinite products"},
+  "MathlibExt/RingTheory/PowerSeries/RationalityDescent": {"to": "Algebra/polynomials", "title": "Binomial convolutions of rational power series"},
   "MathlibExt/RingTheory/PowerSeries/RegularLocalRing": {"to": "RingTheory/local-rings", "title": "Regular local rings"},
   "MathlibExt/RingTheory/PowerSeries/SeriesDivisorInverseConvolution": {"to": "NumberTheory/modular-forms-q-series/theta-q-series-partitions", "title": "Glaisher's divisor functions and infinite products"},
   "MathlibExt/RingTheory/PowerSeries/SeriesDivisorPowRecursion": {"to": "NumberTheory/modular-forms-q-series/theta-q-series-partitions", "title": "Glaisher's divisor functions and infinite products"},
