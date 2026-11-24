@@ -13,6 +13,7 @@ public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import MathlibExt.Combinatorics.Enumerative.BinomialSumRecurrences
 public import MathlibExt.Combinatorics.Enumerative.CatalanTriangleStepFive
+public import MathlibExt.Combinatorics.Enumerative.RootsOfUnityProduct
 
 /-!
 # Recurrences for step-`k` sums of binomial coefficients and Riordan arrays
@@ -29,22 +30,6 @@ namespace MetaMathlibExt
 open Polynomial
 
 @[expose] public section
-
-/-- **Roots-of-unity products of integer polynomials.** Let $f \in \mathbb{Z}[x]$ have degree
-$r$, let $k > 0$ be a natural number and let $\omega = e^{2\pi i/k}$. Then there are
-$G, T \in \mathbb{Z}[x]$ such that $G(x) = f(\omega x) f(\omega^2 x) \cdots f(\omega^{k-1} x)$
-as polynomials over $\mathbb{C}$, $T$ has degree $r$, and $f(x) G(x) = T(x^k)$.
-
-Source: Eduardo H. M. Brietzke, *Recurrence Relations for Sums of Binomial Coefficients and
-Some Generalizations*, Journal of Integer Sequences 27 (2024), Article 24.3.4, Proposition 2. -/
-public theorem_wanted rootsOfUnity_product_mul_eq_comp_pow (f : ℤ[X]) (r k : ℕ) (hk : 0 < k)
-    (hf : f.degree = r) :
-    ∃ G T : ℤ[X],
-      G.map (Int.castRingHom ℂ) =
-        ∏ j ∈ Finset.Ico 1 k,
-          (f.map (Int.castRingHom ℂ)).comp
-            (C (Complex.exp (2 * Real.pi * Complex.I / k) ^ j) * X) ∧
-      T.natDegree = r ∧ f * G = T.comp (X ^ k)
 
 /-- **Window criterion for step sums of binomial coefficients.** Let $\alpha, k, \gamma, p, s$
 be natural numbers with $\alpha > 1$, $k > 1$, $\gamma \ge 1$ and $p < k$, and let
@@ -88,31 +73,6 @@ public theorem_wanted shiftedBinomialStepSum_recurrence_of_window (α β k γ p 
         ((α * n + β).choose m : ℤ)
     (∀ n, s ≤ n → n ≤ k ^ 2 + s - 1 → c n = ∑ i ∈ Finset.Icc 1 s, δ i * c (n - i)) →
       ∀ n, s ≤ n → c n = ∑ i ∈ Finset.Icc 1 s, δ i * c (n - i)
-
-/-- **Step sums of a rational Riordan array satisfy a common recurrence.** Let
-$g_1, g_2, h_1, h_2 \in \mathbb{Z}[x]$ with $g_2(0) = h_1(0) = h_2(0) = 1$, let $\nu \ge 1$ and
-$k \ge 1$ be natural numbers, and in $\mathbb{Q}[[x]]$ let $g = g_1/g_2$ and
-$h = x^\nu h_1/h_2$. For $p, n \in \mathbb{N}$ let
-$a_p(n) = \sum_{j=0}^{n} [x^n]\, g h^{kj+p}$. Then there are $r \in \mathbb{N}$ and integers
-$\alpha_1, \ldots, \alpha_r$ such that $a_p(n) = \sum_{i=1}^{r} \alpha_i a_p(n - i)$ for every
-$p < k$ and every $n \ge r$.
-
-Since $h$ has no constant term, $[x^n]\, g h^m = 0$ for $m > n$, so $a_p(n)$ is the full sum
-over all $j \ge 0$.
-
-Source: Eduardo H. M. Brietzke, *Recurrence Relations for Sums of Binomial Coefficients and
-Some Generalizations*, Journal of Integer Sequences 27 (2024), Article 24.3.4,
-Proposition 11. -/
-public theorem_wanted rationalRiordan_stepSum_linearRecurrence (g₁ g₂ h₁ h₂ : ℤ[X]) (ν : ℕ)
-    (hg₂ : g₂.eval 0 = 1) (hh₁ : h₁.eval 0 = 1) (hh₂ : h₂.eval 0 = 1) (hν : 1 ≤ ν)
-    (k : ℕ) (hk : 0 < k) :
-    let toQ : ℤ[X] → PowerSeries ℚ := fun q => ((q.map (Int.castRingHom ℚ)) : PowerSeries ℚ)
-    let g : PowerSeries ℚ := toQ g₁ * (toQ g₂)⁻¹
-    let h : PowerSeries ℚ := PowerSeries.X ^ ν * toQ h₁ * (toQ h₂)⁻¹
-    let a : ℕ → ℕ → ℚ := fun p n =>
-      ∑ j ∈ Finset.range (n + 1), PowerSeries.coeff n (g * h ^ (k * j + p))
-    ∃ (r : ℕ) (αs : ℕ → ℤ), ∀ p < k, ∀ n, r ≤ n →
-      a p n = ∑ i ∈ Finset.Icc 1 r, (αs i : ℚ) * a p (n - i)
 
 end
 
