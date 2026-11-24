@@ -41,9 +41,10 @@ conditions read literally without end segments, the string
 `0` would be a counterexample at `n = 2`, `b = 3`.
 
 Proved in `MathlibExt.Combinatorics.Enumerative.NColorCompositions`,
-which this module imports: the identity for `t(n) + t(n-2)` when
+which this module imports: the partial-sum identity for `t(3k)`
+(`trib_three_mul`) and the identity for `t(n) + t(n-2)` when
 `n ≡ 2 (mod 3)` (`trib_add_two_sub_three_mul_add_two`). The
-tribonacci numbers `tribNat` and `trib` moved there with it, with
+tribonacci numbers `tribNat` and `trib` moved there as well, with
 unchanged names, bodies and docstrings.
 -/
 module
@@ -289,20 +290,6 @@ Proposition 7. -/
 theorem_wanted trib_eq_add_one_add_sum (n : ℤ) (hn : 3 ≤ n) :
     trib n = trib (n - 1) + 1 +
       2 * ∑ i ∈ Finset.Icc 1 (n / 2 - 1), trib (n - 2 * i - 1)
-
-/-- **Tribonacci partial-sum identity for $t(3k)$.** Let $t$ be the tribonacci numbers with
-$t(0) = 1$, $t(1) = 0$, $t(2) = 1$ and $t(n) = t(n-1) + t(n-2) + t(n-3)$ for $n \ge 3$,
-extended by $t(n) = 0$ for $n < 0$. For every natural number $k$,
-$$t(3k) = 1 + \sum_{i=0}^{k} \bigl(t(3k-3i-1) + t(3k-3i-2)\bigr).$$
-
-Source: Brian Hopkins and Hua Wang, "Allowing or Prohibiting
-Two Consecutive Colors in `n`-Color Compositions",
-Theorem 8. -/
-theorem_wanted trib_three_mul (k : ℕ) :
-    trib (3 * (k : ℤ)) = 1 +
-      ∑ i ∈ Finset.range (k + 1),
-        (trib (3 * (k : ℤ) - 3 * (i : ℤ) - 1) +
-          trib (3 * (k : ℤ) - 3 * (i : ℤ) - 2))
 
 /-- **Tribonacci partial-sum identity for $t(3k+1)$.** Let $t$ be the tribonacci numbers with
 $t(0) = 1$, $t(1) = 0$, $t(2) = 1$ and $t(n) = t(n-1) + t(n-2) + t(n-3)$ for $n \ge 3$,
