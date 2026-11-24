@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.Enumerative.Partition.FixedPerimeterDistinctArmLeg
+public import MathlibExt.Combinatorics.Enumerative.Partition.FixedPerimeterPMResidueArmLeg
 
 /-!
 # Alder-type inequalities for fixed perimeter partitions
@@ -75,30 +76,6 @@ public theorem_wanted perimeterResidueArmLegCount_ne_zero_iff_and_eq_choose {d a
     (perimeterResidueArmLegCount d a m k ≠ 0 ↔ a ≤ m ∧ m ≡ a [MOD d + 1]) ∧
       (a ≤ m → m ≡ a [MOD d + 1] →
         perimeterResidueArmLegCount d a m k = ((m - a) / (d + 1) + k - 1).choose (k - 1))
-
-/-- **Nonvanishing and binomial count for parts $\equiv \pm a \pmod{d+3}$.** Let $d$, $a$,
-$\alpha$ and $\lambda$ be positive integers with $a < (d + 3)/2$, and let
-$\ell_d^{(a)}(\alpha, \lambda)$ be the number of partitions into parts congruent to $a$ or $-a$
-modulo $d + 3$ with largest part $\alpha$ and exactly $\lambda$ parts. Then
-$\ell_d^{(a)}(\alpha, \lambda) \ne 0$ if and only if $\alpha \ge a$ and
-$\alpha \equiv \pm a \pmod{d + 3}$. Moreover, if $\alpha \ge a$ and $\alpha \equiv a \pmod{d + 3}$,
-then $\ell_d^{(a)}(\alpha, \lambda) = \binom{2(\alpha - a)/(d + 3) + \lambda - 1}{\lambda - 1}$,
-and if $\alpha \ge a$ and $\alpha \equiv -a \pmod{d + 3}$, then
-$\ell_d^{(a)}(\alpha, \lambda) = \binom{2(\alpha + a)/(d + 3) + \lambda - 2}{\lambda - 1}$.
-
-Source: Ling Chen, Isabelle Hernandez, Zain Shields, and Holly Swisher, *Analogues of Alder-Type
-Partition Inequalities for Fixed Perimeter Partitions*, INTEGERS 24 (2024), Article A102,
-Lemma 4. -/
-public theorem_wanted perimeterPMResidueArmLegCount_ne_zero_iff_and_eq_choose {d a m k : ℕ}
-    (hd : 0 < d) (ha : 0 < a) (hm : 0 < m) (hk : 0 < k) (had : 2 * a < d + 3) :
-    (perimeterPMResidueArmLegCount d a m k ≠ 0 ↔
-        a ≤ m ∧ ((m : ℤ) ≡ a [ZMOD d + 3] ∨ (m : ℤ) ≡ -a [ZMOD d + 3])) ∧
-      (a ≤ m → (m : ℤ) ≡ a [ZMOD d + 3] →
-        perimeterPMResidueArmLegCount d a m k =
-          (2 * ((m - a) / (d + 3)) + k - 1).choose (k - 1)) ∧
-      (a ≤ m → (m : ℤ) ≡ -a [ZMOD d + 3] →
-        perimeterPMResidueArmLegCount d a m k =
-          (2 * ((m + a) / (d + 3)) + k - 2).choose (k - 1))
 
 /-- **Reverse Alder-type inequality for fixed perimeter partitions.** Let $d$, $n$ and $a$ be
 positive integers with $a < (d + 3)/2$. Then the number $h_d^{(a)}(n)$ of partitions of perimeter

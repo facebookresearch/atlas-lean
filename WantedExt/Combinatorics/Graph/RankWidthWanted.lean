@@ -16,9 +16,9 @@ public import MathlibExt.Combinatorics.SimpleGraph.TreeDecomposition
 /-!
 # Rank-width: wanted theorems
 
-Central theorems on cut-rank and rank-width whose proofs are deferred: submodularity of
-cut-rank, the comparison of rank-width with clique-width (Oum–Seymour), vertex-minor
-monotonicity, the bound of rank-width by tree-width, and the excluded vertex-minor theorem.
+Central theorems on rank-width whose proofs are deferred: the comparison of rank-width with
+clique-width (Oum–Seymour), vertex-minor monotonicity, the bound of rank-width by tree-width, and
+the excluded vertex-minor theorem.
 
 ## References
 
@@ -35,13 +35,6 @@ monotonicity, the bound of rank-width by tree-width, and the excluded vertex-min
 namespace SimpleGraph
 
 variable {V : Type*} [Fintype V]
-
-/-- **Cut-rank is submodular.** For every finite graph `G` and vertex sets `X, Y`,
-`ρ_G(X ∩ Y) + ρ_G(X ∪ Y) ≤ ρ_G(X) + ρ_G(Y)` (Oum and Seymour, *Approximating clique-width and
-branch-width*, J. Combin. Theory Ser. B 96 (2006), Corollary 6.2, second statement, from the
-submodularity of ranks of submatrices, Proposition 6.1). -/
-theorem_wanted cutRank_inter_add_cutRank_union_le (G : SimpleGraph V) (X Y : Set V) :
-    G.cutRank (X ∩ Y) + G.cutRank (X ∪ Y) ≤ G.cutRank X + G.cutRank Y
 
 /-- **Rank-width is at most clique-width (Oum–Seymour).** If a finite graph has clique-width at
 most `k`, it has rank-width at most `k`; this is the inequality `rw(G) ≤ cw(G)` of Oum and

@@ -54,5 +54,32 @@ example : (X ^ 2 + X + C (-1)) * binomialPolynomial 2 3 =
   norm_num at h ⊢
   exact h
 
+-- The degree-zero case uses only the constant h-star coefficient of the input.
+example : IsSNN ((2 * X + 1) * (1 : Polynomial ℂ)) := by
+  apply two_mul_X_add_one_preserves_snn
+  refine ⟨one_ne_zero, ?_⟩
+  intro i hi
+  have : i = 0 := Nat.eq_zero_of_le_zero (by simpa using hi)
+  subst i
+  simp [hStarCoeff]
+
+-- X has h-star coefficients 0 and 1, so the highest output coefficient need not vanish.
+example : IsSNN ((2 * X + 1) * (X : Polynomial ℂ)) := by
+  apply two_mul_X_add_one_preserves_snn
+  refine ⟨X_ne_zero, ?_⟩
+  intro i hi
+  have hi' : i ≤ 1 := by simpa using hi
+  rcases i with _ | (_ | i)
+  · simp [hStarCoeff]
+  · norm_num [hStarCoeff, Finset.sum_range_succ, Nat.choose]
+  · omega
+
+example : hStarCoeff ((2 * X + 1) * (X : Polynomial ℂ))
+    (((2 * X + 1) * (X : Polynomial ℂ)).natDegree) = 1 := by
+  have hd : ((2 * X + 1) * (X : Polynomial ℂ)).natDegree = 2 := by compute_degree!
+  rw [hd]
+  norm_num [hStarCoeff, hd, Finset.sum_range_succ, Nat.choose]
+
 #print axioms MetaMathlibExt.binomialPolynomial
 #print axioms MetaMathlibExt.quadratic_mul_binomialPolynomial
+#print axioms MetaMathlibExt.two_mul_X_add_one_preserves_snn

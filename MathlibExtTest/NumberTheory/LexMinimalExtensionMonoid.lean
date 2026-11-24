@@ -56,3 +56,43 @@ example : ¬ IsAtomicBinomidIndex (fun _ => 2) := by
   intro h
   rcases h.2.2 _ _ (isBinomidIndex_const 1) (isBinomidIndex_const 1) rfl with hz | hz <;>
     exact Nat.one_ne_zero (congrFun hz 0)
+
+/-- In the zero submonoid the empty sum generates everything and the only basis is empty. -/
+example {ι : Type*} (B : Set (ι → ℕ)) :
+    IsAddMonoidBasis (↑(⊥ : AddSubmonoid (ι → ℕ))) B ↔ B = ∅ := by
+  rw [isAddMonoidBasis_iff_eq_atoms]
+  · simp
+  · intro x hx
+    simp [AddSubmonoid.mem_bot.mp hx]
+
+/-- On one coordinate, the unique basis of the full monoid consists of the unit vector. -/
+example (B : Set (Unit → ℕ)) :
+    IsAddMonoidBasis (Set.univ : Set (Unit → ℕ)) B ↔ B = {1} := by
+  let M : AddSubmonoid (Unit → ℕ) := ⊤
+  have atoms : {a | a ∈ M ∧ a ≠ 0 ∧ ∀ y ∈ M, ∀ z ∈ M, a = y + z → y = 0 ∨ z = 0} = {1} := by
+    ext a
+    constructor
+    · rintro ⟨_, ha, hsplit⟩
+      have hpos : 0 < a () := Nat.pos_of_ne_zero fun h => ha (funext fun _ => h)
+      let b : Unit → ℕ := fun i => a i - 1
+      have hab : a = 1 + b := funext fun _ => by
+        change a () = 1 + (a () - 1)
+        omega
+      rcases hsplit 1 (by trivial) b (by trivial) hab with h | h
+      · exact (Nat.one_ne_zero (congrFun h ())).elim
+      · simpa [h] using hab
+    · rintro rfl
+      refine ⟨by trivial, fun h => Nat.one_ne_zero (congrFun h ()), ?_⟩
+      intro y _ z _ heq
+      have h : 1 = y () + z () := congrFun heq ()
+      rcases Nat.eq_zero_or_pos (y ()) with hy | hy
+      · exact Or.inl (funext fun _ => hy)
+      · exact Or.inr (funext fun _ => (show z () = 0 by omega))
+  change IsAddMonoidBasis (M : Set (Unit → ℕ)) B ↔ B = {1}
+  rw [isAddMonoidBasis_iff_eq_atoms, atoms]
+  intro x _
+  rw [atoms]
+  have hx : x = x () • (1 : Unit → ℕ) := by
+    ext i
+    simp
+  exact hx ▸ AddSubmonoid.nsmul_mem _ (AddSubmonoid.subset_closure rfl) _
