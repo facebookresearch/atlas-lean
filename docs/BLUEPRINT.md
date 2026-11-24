@@ -258,8 +258,8 @@ pages for one declaration (`duplicate-lean-target`). `autoform work` lists the
 tasks once `lean-facts` has run. The wiki build writes that list, with the
 commit and the Autoform pin, to `tasks.json`: the site publishes it after each
 `main` build, at <https://facebookresearch.github.io/atlas-lean/tasks.json>, and
-every run keeps it as the `tasks` artifact. CONTRIBUTING.md says how to
-[pick a task](../CONTRIBUTING.md#picking-a-task).
+every build of the wiki keeps it as the `tasks` artifact. CONTRIBUTING.md says
+how to [pick a task](../CONTRIBUTING.md#picking-a-task).
 
 ### Procedures
 
@@ -734,26 +734,60 @@ receipt of that commit and with or without card data
 ## GitHub Actions and publication
 
 `Blueprint Pages` runs on `main` once a day at 03:17 UTC and on manual runs
-(**Actions → Blueprint Pages → Run workflow**), and on
-PRs that touch the wiki: `blueprint/`, the wiki scripts and
-their tests, `scripts/check_public_references.py`, which the importer imports,
-`scripts/taxonomy.json`, `scripts/wiki-sync.json`,
-`scripts/mathgraph-map.jsonl`, the site
-configuration (`mkdocs.yml`, `theme/`, `hooks/`), this document,
-`docs/mathgraph-import.md`, the workflow, the `Graph sync` workflow,
-`.github/autoform-ref`, or the toolchain pins (`lean-toolchain`,
-`lake-manifest.json`, `lakefile.toml`). A Lean-only PR skips it, because
+(**Actions → Blueprint Pages → Run workflow**), and builds the site on each. It
+starts on every PR too, but its first job, `decide whether to build`, lets the
+build run only when the PR's merge commit changes, compared with its first
+parent, what builds and checks the site: the scripts its jobs run and their
+tests, `scripts/check_public_references.py`, which the importer imports, the
+site configuration (`mkdocs.yml`, `theme/`, `hooks/`), the documents the build
+reads (`docs/mathgraph-import.md`, whose JSON schemas a test of the importer
+compares with the importer's, and `docs/mathlib-layer.md`, which the Mathlib
+layer job copies into its artifact), the workflows, which its tests read,
+`.github/autoform-ref`, the toolchain pins (`lean-toolchain`,
+`lake-manifest.json`, `lakefile.toml`, or a `lakefile.lean`, which Lake would
+prefer), or a Python toolchain file uv would read from the root
+(`.python-version`, `.python-versions`, `uv.toml`, `pyproject.toml`, or an
+environment in `.venv/`); a `.gitattributes` file anywhere counts too, since it
+can change how the checkout writes what the build reads, and so does a file
+committed where the build writes or fetches its outputs (`build/`, `site/`,
+`mathlib-graph/` and the like), and so does a `publication.json` or
+`manifest.json` anywhere, in any letter case, file or directory, which can make
+Autoform leave its directory out of the Lean source index. It also lets it run
+when the PR changes the wiki (`blueprint/`), whose pages, annotations and site
+inputs it builds and checks, or one of the two ledgers its checks compare with
+the PR's base commit, the import map `scripts/mathgraph-map.jsonl`
+([The map](mathgraph-import.md#the-map)) and the card move ledger
+`scripts/card-moves.jsonl` ([Move ledger](cards.md#move-ledger)). Only a PR's
+build checks the wiki's moves and card retirements since that base against the
+move ledger, and fails on a Mathlib source link that disagrees with its title:
+`main`'s runs have no base commit and report such a link without failing
+([mathlib-pages.md](mathlib-pages.md)). The job reads the PR's whole diff: a
+`paths` filter would be matched against its first 300 changed files only, so a
+PR with more changed files outside the list, Lean files say, could hide a listed
+file after them. On any other PR, the build's jobs are skipped and
+`test the site scripts` runs the build's unit tests alone, in a few minutes, so
+that PRs that change only Lean library files, `scripts/taxonomy.json` or
+`scripts/wiki-sync.json` do not wait about 50 minutes for the build, while the
+tests that read such files still run: some check the committed taxonomy as the
+wiki, the Mathlib layer's strict join and the Mathlib pages read it.
 `lean-facts` turns a renamed or deleted declaration into an unlinked page rather
-than a failure; `main` still builds the whole wiki once a day, and `Graph sync`
-checks every PR's declarations. Merge groups skip
-it too: it is not a required check, so a merge-group run could not stop a merge,
-and CI's required build already imports every v2 module together
-(`scripts/check_declaration_collisions.sh`). Do not make
-`build the wiki` a required status check: a workflow that `paths` skips never
-reports on that PR, so a required check would block every PR it skips. Making
-it requirable would need a first job that checks the changed paths and a
-job-level `if` on the wiki job. Its unique `build the wiki` check must succeed
-before deployment. Tests, Lean compilation, dependency extraction, rendering,
+than a failure, CI's `check the graph` checks the graph as committed,
+`Graph sync` checks every PR's declarations, and `main`'s daily build checks the
+whole wiki, its site and its cards as they stand, a failure there being fixed on
+`main`.
+With write access, build and check a branch before it merges with
+`gh workflow run blueprint-pages.yml --ref <branch>`, or pick the branch under
+**Run workflow**: the run builds the branch as a run of `main` does, without a
+base commit, but skips what only publication needs (packing the wiki job's
+site for GitHub Pages, keeping the full site, the Pages uploads and the
+deployments, below). Merge groups do not run the workflow at all: it is not a
+required check, so a merge-group run could not stop a merge, and CI's required
+build already imports every v2 module together
+(`scripts/check_declaration_collisions.sh`). Do not make `build the wiki` a
+required status check: merge groups never report it, so a required check would
+hold every merge group until the queue's timeout removed it. Its unique
+`build the wiki` check must succeed before deployment. Tests, Lean compilation,
+dependency extraction, rendering,
 and strict site checks run in one read-only job from one checkout. The job
 restores the builds CI saves from `main`, under CI's keys: the `lake-build-*`
 build of the commit a PR is tested against, else `main`'s newest, and the
@@ -802,7 +836,9 @@ Publication is disabled until a repository maintainer:
    for the reason above.
 
 Only successful `main` builds publish. PRs, merge groups, and manual runs on
-other branches never upload a Pages artifact or request deployment. Every
+other branches never upload a Pages artifact or request deployment: the first
+job compares the run's ref with `refs/heads/main` exactly, since an
+expression's `==` ignores case and would take a branch `Main` for `main`. Every
 successful build keeps the built site for a day as the `blueprint-site`
 artifact, which `build the Mathlib pages` reads; `main`'s can be downloaded or
 mirrored. Successful `main` builds also keep the site with its Mathlib pages
