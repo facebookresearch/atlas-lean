@@ -17,6 +17,7 @@ public import Mathlib.RingTheory.MvPolynomial.Basic
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import MathlibExt.Combinatorics.Enumerative.SymmetricPeaksCompositions
 public import MathlibExt.Combinatorics.Enumerative.SymmetricPeakHeightGeneratingFunction
+public import MathlibExt.Combinatorics.Enumerative.SymmetricValleyDepthClosedForm
 public import MathlibExt.Combinatorics.Enumerative.SymmetricValleyDepthGeneratingFunction
 
 /-!
@@ -94,25 +95,6 @@ public theorem_wanted symmetricPeakHeightSum_compositions_closed_form (n : ℕ) 
           (441 * (1 + Complex.I * (Real.sqrt 3 : ℂ)) ^ (n + 1)) +
         (-33 + 15 * Complex.I * (Real.sqrt 3 : ℂ)) * (-2) ^ n /
           (441 * (1 - Complex.I * (Real.sqrt 3 : ℂ)) ^ (n + 1)) + 1 / 3
-
-/-- **Closed form for the total depth of symmetric valleys over compositions.** For $n \ge 0$,
-let $\operatorname{dsv}(n)$ be the sum, over all compositions $c$ of $n$, of the total depth of
-the symmetric valleys of the sequence of parts of $c$, and write $\omega_\pm = 1 \pm i\sqrt{3}$.
-Then, as complex numbers,
-$$\operatorname{dsv}(n) = \frac{(-6n+7)(-1)^n}{108} + \frac{2^n(21n-79)}{1323} +
-\frac{(-33-15\sqrt{3}\,i)(-2)^n}{441\,\omega_+^{n+1}} +
-\frac{(-33+15\sqrt{3}\,i)(-2)^n}{441\,\omega_-^{n+1}} + \frac{1}{12}.$$
-
-Source: Walaa Asakly and Noor Kezil, *The Heights of Symmetric Peaks and the Depths of
-Symmetric Valleys over Compositions of an Integer*, INTEGERS 26 (2026), Article A65,
-Corollary 2, (12) (`integers-2026-A65-cor-2`). -/
-public theorem_wanted symmetricValleyDepthSum_compositions_closed_form (n : ℕ) :
-    ((∑ c : Composition n, symmetricValleyDepthSum c.blocks : ℕ) : ℂ) =
-      (-6 * n + 7) / 108 * (-1) ^ n + (2 : ℂ) ^ n * (21 * n - 79) / 1323 +
-        (-33 - 15 * (Real.sqrt 3 : ℂ) * Complex.I) * (-2) ^ n /
-          (441 * (1 + Complex.I * (Real.sqrt 3 : ℂ)) ^ (n + 1)) +
-        (-33 + 15 * (Real.sqrt 3 : ℂ) * Complex.I) * (-2) ^ n /
-          (441 * (1 - Complex.I * (Real.sqrt 3 : ℂ)) ^ (n + 1)) + 1 / 12
 
 /-- **Total symmetric peak height over compositions with a fixed number of parts.** For
 $n, k \ge 0$ let $\mathrm{hsp}(n, k)$ be the sum, over all compositions $c$ of $n$ with exactly
