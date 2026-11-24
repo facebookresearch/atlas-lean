@@ -4859,5 +4859,5 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/Probability/statistical-estimation/item-response-models/README.md"}], "id": "af_1f953b2880ed1dcf4d087c18"}
 {"subject": [{"type": "generic", "uri": "../roadmap/Probability/statistical-estimation/item-response-models/ability-estimation.md"}], "id": "af_d615e86b78a3ff0c650486c4", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Probability/statistical-estimation/item-response-models/continuous-latent-trait-models.md"}], "id": "af_a7e68bbc7f9b6f5ec75f0cfe", "extensions": {"org.atlas-wiki": {"kind": "def"}}}
-{"subject": [{"type": "generic", "uri": "../roadmap/Probability/hypothesis-testing/bayes-rule-for-binary-classification.md"}], "id": "af_663bcbd807669eb0785cc9f5", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Probability/hypothesis-testing/bayes-rule-for-binary-classification.md"}], "id": "af_663bcbd807669eb0785cc9f5", "object": [{"location": {"declaration": "MathlibExt.Probability.Decision.BinaryCostAdapter.binaryCostRule_minimizes_binaryCostAvgRisk"}}]}
 {"subject": [{"type": "generic", "uri": "../roadmap/Probability/distributions/discrete/finite-distributions-as-probability-measures.md"}], "id": "af_7925c324ec70043c41fc127e", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
