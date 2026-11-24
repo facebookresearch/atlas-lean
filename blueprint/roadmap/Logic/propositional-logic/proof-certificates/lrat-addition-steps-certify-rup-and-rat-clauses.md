@@ -14,7 +14,7 @@ $i'_1, \dots, i'_r$, then groups $(-i_k, \mathit{hints}_k)$ for $k = 1, \dots, n
 **Theorem.** If a deletion step or an accepted addition step turns the formula $F$ into $F'$, then $F'$ is satisfiable whenever $F$ is. An
 addition accepted in step 1 makes $C_j$ AT with respect to $F$, so $F \models C_j$ and $F \cup \{C_j\}$ is logically equivalent to $F$. An
 addition accepted in step 2 makes $C_j$ RAT on $p$ with respect to $F$, so $F \cup \{C_j\}$ is satisfiability-equivalent to $F$, though in
-general not logically equivalent. Hence if an accepted LRAT proof derives the empty clause from $F$, then $F$ is unsatisfiable.
+general not logically equivalent. The end-to-end consequence for a whole proof is [accepted LRAT proofs refute CNF formulas](accepted-lrat-proofs-refute-cnf-formulas.md).
 
 For RAT: if $\tau$ satisfies $F$ but falsifies $C_j$, every resolvent on $p$ is satisfied by $\tau$, so each clause of $F$ containing $\bar p$ has
 another literal true under $\tau$, and flipping $p$ to true satisfies both $F$ and $C_j$.
