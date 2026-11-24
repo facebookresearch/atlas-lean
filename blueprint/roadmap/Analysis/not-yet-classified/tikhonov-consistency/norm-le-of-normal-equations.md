@@ -1,3 +1,3 @@
-# Norm le of normal equations
+# Norm bound for a Tikhonov normal-equation solution
 
-Norm bound for a normal-equation solution: `‖x‖ ≤ ‖z‖ / (2 * sqrt lam)`.
+Let $A$ be a bounded linear operator between real Hilbert spaces and $\lambda > 0$. If $x$ solves the Tikhonov normal equations $(A^*A + \lambda I)x = A^*z$, then $\lVert x\rVert \le \lVert z\rVert/(2\sqrt\lambda)$.

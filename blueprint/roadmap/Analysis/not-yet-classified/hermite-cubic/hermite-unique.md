@@ -1,5 +1,3 @@
-# Hermite unique
+# Uniqueness of the Hermite cubic
 
-Uniqueness: any cubic polynomial function of degree at most three
-matching the four end conditions equals the Hermite cubic everywhere.
-Stated for functions given as `fun x => a*x^3+b*x^2+c*x+d`.
+For $L > 0$, any cubic $p(x) = ax^3 + bx^2 + cx + d$ with $p(0) = v_1$, $p(L) = v_2$, $p'(0) = t_1$ and $p'(L) = t_2$ equals the Hermite cubic with those end values and slopes at every $x$.

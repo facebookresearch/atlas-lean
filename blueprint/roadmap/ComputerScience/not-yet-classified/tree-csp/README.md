@@ -14,7 +14,7 @@
 ## Greedy assignment
 
 - [Greedy](greedy.md)
-- [Greedy is sound](is-solution-of-greedy-eq-some.md)
+- [Greedy assignment is sound on a tree-structured CSP](is-solution-of-greedy-eq-some.md)
 - [Greedy ne none iff](greedy-ne-none-iff.md)
 
 ## The tree-CSP algorithm

@@ -1,7 +1,7 @@
 # Hermite Cubic
 
-- [Hermite](hermite.md)
+- [Hermite cubic](hermite.md)
 - [Derivative of a cubic polynomial](deriv-cubic.md)
-- [Hermite end values](hermite-end-values.md)
-- [Hermite end slopes](hermite-end-slopes.md)
-- [Hermite unique](hermite-unique.md)
+- [End values of the Hermite cubic](hermite-end-values.md)
+- [End slopes of the Hermite cubic](hermite-end-slopes.md)
+- [Uniqueness of the Hermite cubic](hermite-unique.md)
