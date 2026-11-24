@@ -49,7 +49,7 @@ theorem isJointArcCover_singleton {X Y : QcqsScheme} {f : Y ⟶ X} (hf : IsArcCo
     fun V x => ⟨PUnit.unit, hf V x⟩⟩
 
 def precoverage : Precoverage QcqsScheme where
-  coverings X := {s | IsJointArcCover s}
+  coverings _ := {s | IsJointArcCover s}
 
 def topology : GrothendieckTopology QcqsScheme := precoverage.toGrothendieck
 
