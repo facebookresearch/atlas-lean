@@ -14,6 +14,7 @@ public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.SetTheory.Cardinal.Finite
 public import MathlibExt.Order.BooleanFunction.SelfDual
 public import MathlibExt.Combinatorics.Enumerative.BooleanFunctionInclusionExclusion
+public import MathlibExt.Combinatorics.Enumerative.UnateMonotoneBoolean
 
 namespace MetaMathlibExt
 
@@ -99,15 +100,6 @@ public theorem_wanted isUnateBoolFun_boolFunConcat_iff {n : ℕ}
         (∀ i : Fin n, (IsBoolFunIncreasingIn g i ∧ IsBoolFunIncreasingIn h i) ∨
           (IsBoolFunDecreasingIn g i ∧ IsBoolFunDecreasingIn h i)) ∧
         (g ≤ h ∨ h ≤ g)
-
-/-- **The negation of a unate function is unate.** If an $n$-variable Boolean function $f$ is
-unate, then so is its negation $x \mapsto \lnot f(x)$.
-
-Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
-under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
-Sequences 28 (2025), Article 25.3.4, Proposition 7 (`jis-2025-25.3.4-prop-7`). -/
-public theorem_wanted isUnateBoolFun_not {n : ℕ} {f : (Fin n → Bool) → Bool}
-    (hf : IsUnateBoolFun f) : IsUnateBoolFun fun x => !f x
 
 /-- **Weight symmetry of unate Boolean functions.** For all $n \ge 0$ and all $w$ with
 $0 \le w \le 2^n$, the number of unate $n$-variable Boolean functions of weight $w$ equals the
