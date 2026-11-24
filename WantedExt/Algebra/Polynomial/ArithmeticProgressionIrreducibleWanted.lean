@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import MathlibExt.Algebra.Polynomial.ArithmeticProgressionAuxiliaryRoot
 public import MathlibExt.Algebra.Polynomial.ArithmeticProgressionPolynomial
 public import MathlibExt.Algebra.Polynomial.ArithmeticProgressionRootPower
+public import MathlibExt.Algebra.Polynomial.PerronIrreducibility
 public import MathlibExt.Analysis.SpecialFunctions.RpowRationalLowerBound
 public import Mathlib.Algebra.Polynomial.AlgebraMap
 public import Mathlib.Algebra.Polynomial.Monic
@@ -39,19 +40,6 @@ open Polynomial
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Perron's irreducibility criterion.** Let $f = x^n + a_{n-1} x^{n-1} + \cdots + a_0$ be a
-monic polynomial in $\mathbb{Z}[x]$ of degree $n \ge 1$ with $a_0 \neq 0$ and
-$|a_{n-1}| > 1 + \sum_{i=0}^{n-2} |a_i|$. Then $f$ is irreducible in $\mathbb{Z}[x]$.
-
-Source: Hiroaki Kakuma, *Irreducibility of Polynomials with Coefficients in a Positive
-Arithmetic Progression*, INTEGERS 26 (2026), Article A92, Theorem 1 (Perron's criterion,
-quoted from the paper's reference [6]) (`integers-2026-A92-thm-1`). -/
-public theorem_wanted perron_irreducible {f : ℤ[X]} (hmonic : f.Monic) (hdeg : 1 ≤ f.natDegree)
-    (h0 : f.coeff 0 ≠ 0)
-    (hbig : 1 + ∑ i ∈ Finset.range (f.natDegree - 1), |f.coeff i| <
-      |f.coeff (f.natDegree - 1)|) :
-    Irreducible f
 
 /-- **Irreducibility of polynomials with coefficients in an arithmetic progression.** Let
 $m \ge 2$ and let $a$, $d$ be coprime positive integers with $m^2 d^2 < 8a$. Then the polynomial
