@@ -25,6 +25,8 @@ open CategoryTheory CategoryTheory.Limits CategoryTheory.Preadditive
 namespace CategoryTheory.ProjectiveResolution
 variable {C : Type u} [Category.{v} C] [Abelian C]
 
+local instance : ChainComplex.kernelTailEmbedding.IsRelIff :=
+  ComplexShape.instIsRelIffEmbeddingDown'Add 1 1
 
 /-- The cross coefficient of the kernel-tail horseshoe in differential degree n+1. -/
 def normalizationCrossSign (n : ℕ) : ℤ := (-1) ^ (n + 1)

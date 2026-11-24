@@ -36,7 +36,6 @@ universe uC vC uD vD uA vA
 
 namespace CategoryTheory.Functor
 
-attribute [local implicit_reducible] HomologicalComplex.homologyFunctor
 
 variable {C : Type uC} [Category.{vC} C] [Abelian C]
   {D : Type uD} [Category.{vD} D] [Abelian D]
@@ -170,7 +169,8 @@ theorem rightDerivedPrecompHomWithResolution_naturality (n : ℕ)
 /-- The map is independent of the source resolution used to compute it. -/
 theorem rightDerivedPrecompHomWithResolution_independent (n : ℕ) {X : C}
     (I J : InjectiveResolution X) :
-    rightDerivedPrecompHomWithResolution U L n I = rightDerivedPrecompHomWithResolution U L n J := by
+    rightDerivedPrecompHomWithResolution U L n I =
+      rightDerivedPrecompHomWithResolution U L n J := by
   have h := rightDerivedPrecompHomWithResolution_naturality U L n (𝟙 X) I J
   simpa only [Functor.map_id, Category.id_comp, Category.comp_id] using h.symm
 
@@ -207,7 +207,7 @@ theorem rightDerivedPrecompHomOfPreservesHomology_eq_hom
           (Iso.refl (U ⋙ L)) (ComplexShape.up ℕ)).inv.app I.cocomplex) n ≫
         L.augmentedResolutionToRightDerivedHom J.cocomplex J.ι n = _
   rw [augmentedResolutionToRightDerivedHom_injectiveResolution]
-  simp only [Iso.trans_hom, Iso.symm_hom, Functor.mapIso_hom, Category.assoc]
+  simp only [Iso.trans_hom, Iso.symm_hom]
   unfold rightDerivedPrecompHomologyIso
   rfl
 
