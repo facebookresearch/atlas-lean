@@ -10,6 +10,7 @@
 - [Optimal dual solutions are supergradients of the LP value function](lp-value-supporting-price-inequality.md)
 - [Differentiability of the LP value function and shadow prices](differentiability-of-the-lp-value-function.md)
 - [Optimal dual solutions are the supergradients of the LP value function](optimal-dual-solutions-are-the-supergradients-of-the-lp-value.md)
+- [Existence and uniqueness of the central path of a linear program](central-path-of-a-linear-program.md)
 
 ## Related topics
 

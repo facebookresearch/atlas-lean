@@ -13,6 +13,9 @@ Theory of reinforcement learning in finite discounted Markov decision processes,
 
 - [Multi-armed bandits](multi-armed-bandits/README.md)
 
+- [Bellman values are expected discounted returns](bellman-values-are-expected-discounted-returns.md)
+- [Verification theorem for average-cost Markov decision processes](average-cost-optimality-inequality.md)
+
 ## Related topics
 
 - [Value iteration](../../heuristic-search-and-planning/value-iteration/README.md)

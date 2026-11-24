@@ -13,6 +13,8 @@ Optimization problems solved by tabulated recurrences: knapsack variants, subset
 - [Weighted interval scheduling](weighted-interval-scheduling/README.md)
 - [Zero-one knapsack problem](zero-one-knapsack-problem/README.md)
 
+- [Backward induction for deterministic finite-horizon control](deterministic-finite-horizon-dynamic-programming.md)
+
 ## Related topics
 
 - [Value iteration](../heuristic-search-and-planning/value-iteration/README.md): dynamic programming over an infinite horizon, where the recurrence becomes Bellman's equation, a fixed-point equation solved by iterating the Bellman operator.

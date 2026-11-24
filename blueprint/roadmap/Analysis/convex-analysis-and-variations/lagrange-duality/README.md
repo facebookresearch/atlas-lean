@@ -22,6 +22,7 @@ Equality constraints are not covered yet: Boyd–Vandenberghe's Slater theorem a
 - [Slater's theorem, multiplier form](exists-multiplier-of-slater.md)
 - [Strong duality under Slater's condition](dual-value-eq-primal-value-of-slater.md)
 - [Dual attainment under Slater's condition](exists-dual-function-eq-primal-value-of.md)
+- [Weak duality and strong duality for conic programs](conic-duality.md)
 
 ## Duals through conjugates
 
