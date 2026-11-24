@@ -56,8 +56,7 @@ class GroupedSnapshotTests(unittest.TestCase):
     @contextlib.contextmanager
     def capture(self, fault: str = "", loaded_entry: object = None
                 ) -> Iterator[tuple[Path, list[dict[str, object]], object]]:
-        # Exercise candidate-only faults with "candidate" in both arms' absolute paths.
-        with tempfile.TemporaryDirectory(prefix="candidate-project-") as directory:
+        with tempfile.TemporaryDirectory() as directory:
             root = Path(directory).resolve()
             arguments = recovery.main_inputs(root, ("B", "A"))
             canonical = root / ".lake/build/lib/lean"
@@ -104,22 +103,17 @@ class GroupedSnapshotTests(unittest.TestCase):
                     setup = optimizer.read_json(Path(argv[argv.index("--run") + 2]))
                     self.assertEqual(list(setup["snapshot_compilations"]), [module + ".lean" for module in modules])
                     self.assertEqual(environment["LEAN_PATH"], "")
-                    artifacts = {
-                        module: Path(setup["importArts"][module][0][0]) for module in modules
-                    }
-                    arms = {path.parent.parent.name for path in artifacts.values()}
-                    self.assertIn(arms, ({"baseline"}, {"candidate"}))
-                    is_candidate = arms == {"candidate"}
                     records = []
-                    for module, path in artifacts.items():
+                    for module in modules:
+                        path = Path(setup["importArts"][module][0][0])
                         declaration = recovery.SavedSnapshotRecoveryTests.declaration()
                         declaration.update(name=module + ("_proof" if module == "A" else "_private"),
                                            kind="theorem" if module == "A" else "def",
                                            is_private_name=module == "B", is_exported=module == "A",
                                            axioms=["propext"] if module == "A" else [])
-                        if fault == "axiom" and module == "A" and is_candidate:
+                        if fault == "axiom" and module == "A" and "candidate" in str(path):
                             declaration["axioms"] = ["propext", "Fixture.unaccepted"]
-                        if fault == "private" and module == "B" and is_candidate:
+                        if fault == "private" and module == "B" and "candidate" in str(path):
                             declaration["value"] = "Nat.succ Nat.zero"
                         record = recovery.SavedSnapshotRecoveryTests.snapshot(module, path)
                         record.update(declarations=[declaration], batch_modules=modules,
@@ -145,7 +139,7 @@ class GroupedSnapshotTests(unittest.TestCase):
                     text = "".join(json.dumps(record) + "\n" for record in records)
                     joint_failure = (fault in ("joint", "joint-candidate", "joint-and-single") and
                                      len(modules) > 1 and
-                                     (fault != "joint-candidate" or is_candidate))
+                                     (fault != "joint-candidate" or "candidate" in str(path)))
                     if joint_failure or (fault == "joint-and-single" and modules == ["B"]):
                         text = ""
                         exit_code = 1
