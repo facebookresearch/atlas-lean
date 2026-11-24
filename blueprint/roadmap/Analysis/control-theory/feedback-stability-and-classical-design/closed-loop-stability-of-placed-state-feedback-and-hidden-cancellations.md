@@ -1,7 +1,7 @@
 # Closed-loop stability of placed state feedback, and hidden cancellations
 
 1. **Placed state feedback is internally stable.** Let $A \in \mathbb{R}^{n \times n}$ and $b \in \mathbb{R}^n$ satisfy the Kalman rank condition. Let $P$ be a monic real polynomial of degree $n$, and $k^\top$ a row vector with $\det(sI - (A - b k^\top)) = P(s)$. If every root of $P$ has negative real part, every solution of $\dot x = (A - b k^\top) x$ decays exponentially. If every root of $P$ has modulus less than $1$, every solution of $x(t+1) = (A - b k^\top) x(t)$ decays geometrically.
-2. **Scalar gain range.** For $\dot x = a x + b u$ with $u = -k x$ ($a, b, k \in \mathbb{R}$), the closed loop $\dot x = (a - bk) x$ is exponentially stable if and only if $a - bk < 0$. In discrete time, $x(t+1) = (a - bk) x(t)$ is, if and only if $|a - bk| < 1$.
+2. **Scalar gain range.** For $\dot x = a x + b u$ with $u = -k x$ ($a, b, k \in \mathbb{R}$), the closed loop $\dot x = (a - bk) x$ is exponentially stable if and only if $a - bk < 0$. In discrete time, $x(t+1) = (a - bk) x(t)$ is exponentially stable, that is, its solutions decay geometrically, if and only if $|a - bk| < 1$.
 3. **An unstable cancellation stays unstable.** Take the plant $\dot x = x + u$, $y = x$, with transfer function $1/(s - 1)$, and the controller $\dot x_K = -x_K + e$, $u = -2 x_K + e$, with transfer function $(s - 1)/(s + 1)$. Close the loop with $e = r - y$. The loop transfer function is $1/(s + 1)$, and the transfer function from $r$ to $y$ is $1/(s + 2)$. Both have their only pole in the open left half-plane. But the closed-loop state matrix is
 
     $$A_{cl} = \begin{bmatrix} 0 & -2 \\ -1 & -1 \end{bmatrix},$$
