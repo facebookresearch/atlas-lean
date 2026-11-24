@@ -16,6 +16,7 @@ Discrete-time martingales, sub- and supermartingales: convergence theorems (almo
 - [Doob's $L^p$ maximal inequality](doob-s-lp-maximal-inequality/README.md)
 - [Lévy's upward theorem](levy-s-upward-theorem/README.md)
 - [Uniform integrability](uniform-integrability/README.md)
+- [Prophet inequalities](prophet-inequalities/README.md)
 
 ## Related topics
 

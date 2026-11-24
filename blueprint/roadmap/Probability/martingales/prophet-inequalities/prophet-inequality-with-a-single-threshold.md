@@ -4,7 +4,7 @@ Let $n \ge 1$ and let $v_1, \dots, v_n$ be independent, nonnegative, integrable 
 
 ## Background
 
-- [Every bounded stopping time earns at most the expected envelope at time zero](integral-stopped-value-le-integral-snell.md): optimal stopping by the Snell envelope.
+- [Every bounded stopping time earns at most the expected envelope at time zero](../optimal-stopping-and-the-snell-envelope/integral-stopped-value-le-integral-snell.md): optimal stopping by the Snell envelope.
 
 ## Sources
 

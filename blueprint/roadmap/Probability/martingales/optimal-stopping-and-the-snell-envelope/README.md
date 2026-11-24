@@ -32,7 +32,6 @@ A gain $G_n$ is observed in sequence, and one must decide when to stop, using on
 - [The first meeting time from $n$ on is a stopping time](is-stopping-time-snell-stopping-time-fro.md): lemma used for the conditional form
 - [The first meeting time from $n$ on attains the envelope conditionally](snell-envelope-ae-eq-cond-exp-stopped-va.md): conditional form from time $n$
 - [Stopping rules sampled on a finite nonuniform schedule](stopping-rules-sampled-on-a-finite-schedule.md)
-- [Prophet inequality with a single threshold](prophet-inequality-with-a-single-threshold.md)
 
 ## Background
 

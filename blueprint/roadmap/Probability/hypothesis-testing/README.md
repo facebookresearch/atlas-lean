@@ -52,4 +52,3 @@ Meta-analysis combines evidence from several studies and measures how much their
 - [Large-deviation bound for the biased empirical MMD](measure-real-abs-mmd-biased-sub-mmd-gt-l.md)
 
 ## Interval estimation
-
