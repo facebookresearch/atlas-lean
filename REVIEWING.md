@@ -109,11 +109,21 @@ physics literature (`lemma` otherwise).
 
 A graph PR changes the ATLAS wiki: `blueprint/roadmap/`, `blueprint/links/`,
 `blueprint/atlas.json`, `blueprint/coverage/`, `scripts/taxonomy.json`,
-`scripts/wiki-sync.json`, `scripts/card-moves.jsonl`, or
+`scripts/wiki-sync.json`, the card move ledger (`scripts/card-moves.jsonl` and
+`scripts/card-moves.d/`), or
 `scripts/mathgraph-map.jsonl`, except for a Lean PR's edits for the
 declarations it renames, moves or removes, and a graph-sync batch (below).
 Hold it against the [graph rules](docs/BLUEPRINT.md#graph-rules) and the
-[graph PR requirements](CONTRIBUTING.md#graph-prs). Beyond the required
+[graph PR requirements](CONTRIBUTING.md#graph-prs). The required
+`check the graph` job's move-ledger step checks the ledger from its rows (and,
+against the base, its unchanged frozen file and published fragments, new
+fragments' stamps and their independence), reading only Git tree-entry
+metadata for regular roadmap `README.md` files, not page contents. Whether each
+move ends at a live page of its article, and who owns it, is checked by the
+site build's ledger step (`scripts/cards.py moves`, which also writes the
+receipt the site serves); whether every move since the base has its row is
+checked only by `check the cards`. Neither gates the merge, so read their
+results on a PR that moves pages. Beyond the required
 `check the graph` job
 ([What the tools own](docs/BLUEPRINT.md#what-the-tools-own)), check what it
 only warns about, what `autoform audit` reports, and what only a reader can:

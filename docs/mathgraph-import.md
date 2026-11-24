@@ -82,7 +82,8 @@ What a run guarantees:
   repository path the importer writes or removes, and on the files whose content
   it reads, each checked on the path it is then opened by: the manifest when it
   lies in the repository, the links files, `scripts/taxonomy.json`, the card
-  move ledger, the map, the folder pages it edits or whose part copies it
+  move ledger (`scripts/card-moves.jsonl`, the folder `scripts/card-moves.d/`
+  and each entry of it), the map, the folder pages it edits or whose part copies it
   refreshes, the pages a dependency names and the pages the cycle check reads.
   Such a path is refused when it, or a folder between it and the repository
   root, is a link, a dangling link counting as there. A manifest that is itself
@@ -450,7 +451,7 @@ existing or new. A page's file name is its `stem`. New folders take their names
 first; pages then take theirs in manifest order. A stem that its folder's list
 already has, from an existing page or folder, a new folder or an earlier row
 placed anywhere in that list, that is reserved (`readme`, `index`, `part-NN`) or
-whose address `scripts/card-moves.jsonl` records is refused, with the collision
+whose address the card move ledger records is refused, with the collision
 named: it is never numbered, as a numbered name could hide a duplicate. A new
 field, subfield or topic folder takes its name from the taxonomy, which may not
 have a part's form, and is refused if its folder's list has that name or the
