@@ -4,7 +4,7 @@ Let the environment $e_t$ follow either an i.i.d. sequence with distribution $\n
 
 $$a = \lim_{t \to \infty} \frac1t \log N_t(i) = \lim_{t \to \infty} \frac1t \log \frac{\sum_i N_t(i)}{\sum_i N_0(i)}$$
 
-exists, is the same in every realization and for every stage $i$; it is the stochastic growth rate, the leading Lyapunov exponent of the random matrix product (Steinsaltz, Tuljapurkar and Horvitz, Section 2, conditions (i)–(iii)). The normalized structure $N_t/\sum_i N_t(i)$ does not converge to a fixed limit but converges in distribution. The existence of the leading Lyapunov exponent goes back to Furstenberg and Kesten (1960).
+exists almost surely and is deterministic: almost every realization gives the same value, for every stage $i$, because the environmental process is ergodic; it is the stochastic growth rate, the leading Lyapunov exponent of the random matrix product (Steinsaltz, Tuljapurkar and Horvitz, Section 2, conditions (i)–(iii)). The normalized structure $N_t/\sum_i N_t(i)$ does not converge to a fixed limit but converges in distribution. The existence of the leading Lyapunov exponent goes back to Furstenberg and Kesten (1960).
 
 ## Proof depends on
 
