@@ -438,8 +438,8 @@ The rearranged word $w \circ \sigma$ need not be a Stirling permutation.
 
 Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
 Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
-Lemma 5.2 (`jis-2024-24.6.7-lem-37`), quoting Elder, Harris, Kretschmann, and
-Martínez Mori, Lemma 3.1. -/
+Lemma 37 (`jis-2024-24.6.7-lem-37`; Lemma 5.2 in arXiv:2403.03280v1), quoting
+Elder, Harris, Kretschmann, and Martínez Mori, Lemma 3.1. -/
 public theorem stirlingTotalDisplacement_comp_perm (n : ℕ) (w : Fin (2 * n) → ℕ)
     (hw : IsStirlingPermutation n w) (σ : Equiv.Perm (Fin (2 * n))) :
     stirlingTotalDisplacement (w ∘ σ) = stirlingTotalDisplacement w := by
