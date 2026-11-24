@@ -64,22 +64,19 @@ resistance is positive.
 namespace Engineering.ThermalInterfaces
 
 
-/-- Total series-resistance formula for `n` planar layers and
-two films at common area `A` (the same formula as the
-series-resistance package). As a definition this is the
-totalized algebraic formula; its physical resistance
-interpretation is the positive domain in
-`thermalTotalResistance_pos`. -/
+/-- Total series-resistance formula for `n` planar layers and two films at common area `A` (the same
+formula as the series-resistance package). As a definition this is the totalized algebraic formula
+(with `x / 0 = 0`, a film or layer term is `0` when its denominator is `0`); its physical resistance
+interpretation is the positive domain in `thermalTotalResistance_pos`. -/
 noncomputable def thermalTotalResistance {n : ℕ} (A hin hout : ℝ)
     (L k : ℕ → ℝ) : ℝ :=
   1 / (hin * A) + (∑ i ∈ Finset.range n, L i / (k i * A))
     + 1 / (hout * A)
 
-/-- Interface temperature after the inside film and the first
-`m` layers, reconstructed from the inside air temperature
-`Tin` and the common steady heat rate `Q` by cumulative
-resistance drops. The total layer count is not part of
-this cumulative definition; end matching chooses `m = n`. -/
+/-- Interface temperature after the inside film and the first `m` layers, reconstructed from the
+inside air temperature `Tin` and the common steady heat rate `Q` by cumulative resistance drops. The
+total layer count is not part of this cumulative definition; end matching chooses `m = n`. With
+`x / 0 = 0`, a film or layer term is `0` when its denominator is `0`. -/
 noncomputable def thermalInterfaceTemp (A hin Tin Q : ℝ)
     (L k : ℕ → ℝ) (m : ℕ) : ℝ :=
   Tin - Q * (1 / (hin * A)

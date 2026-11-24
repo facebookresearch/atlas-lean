@@ -65,7 +65,7 @@ namespace ZoneHeatInventory
 
 /-! ## A. The dissipation identity -/
 
-/-- Derivative of the quadratic thermal functional at one time `t`:
+/-- Derivative of the quadratic thermal functional at one time `t`, for symmetric conductances:
 dissipation identity from the zone equations at `t` only. -/
 theorem quadratic_dissipation_hasDerivAt {ι : Type*} [Fintype ι]
     (C : ι → ℝ) (G : ι → ι → ℝ) (g0 : ι → ℝ) (Tout : ℝ)
@@ -184,8 +184,8 @@ theorem quadratic_dissipation_hasDerivAt {ι : Type*} [Fintype ι]
   rw [hval] at hV
   exact hV
 
-/-- Derivative of the quadratic thermal functional: dissipation
-identity. -/
+/-- Derivative of the quadratic thermal functional at every time, for symmetric conductances:
+dissipation identity. -/
 theorem quadratic_dissipation_deriv {ι : Type*} [Fintype ι]
     (C : ι → ℝ) (G : ι → ι → ℝ) (g0 : ι → ℝ) (Tout : ℝ)
     (T Tv P : ι → ℝ → ℝ)
@@ -202,9 +202,9 @@ theorem quadratic_dissipation_deriv {ι : Type*} [Fintype ι]
   quadratic_dissipation_hasDerivAt C G g0 Tout T Tv P t hG (fun i => hT i t)
     (fun i => hzone i t)
 
-/-- With no input power and nonnegative conductances, the
-quadratic functional is nonincreasing along solutions: its
-derivative is nonpositive. -/
+/-- With no input power and symmetric nonnegative conductances, the derivative of the quadratic
+functional at every time is the dissipation, which is nonpositive; monotonicity is
+`quadratic_dissipation_antitone`. -/
 theorem quadratic_dissipation_nonpos {ι : Type*} [Fintype ι]
     (C : ι → ℝ) (G : ι → ι → ℝ) (g0 : ι → ℝ) (Tout : ℝ)
     (T Tv : ι → ℝ → ℝ)
@@ -245,9 +245,8 @@ theorem quadratic_dissipation_nonpos {ι : Type*} [Fintype ι]
   exact ⟨hderiv, hle⟩
 
 
-/-- Without input power and with nonnegative conductances, the
-quadratic functional is nonincreasing along solutions: its
-derivative is everywhere the nonpositive dissipation. -/
+/-- Without input power and with symmetric nonnegative conductances, the quadratic functional is
+nonincreasing along solutions: its derivative is everywhere the nonpositive dissipation. -/
 theorem quadratic_dissipation_antitone {ι : Type*} [Fintype ι]
     (C : ι → ℝ) (G : ι → ι → ℝ) (g0 : ι → ℝ) (Tout : ℝ)
     (T Tv : ι → ℝ → ℝ)

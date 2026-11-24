@@ -128,7 +128,8 @@ open MeasureTheory MathlibExt.Analysis.Integration MathlibExt.Analysis.ODE.Finit
 
 /-! ## A. The interior hat: stiffness, load and coefficient -/
 
-/-- The physical stiffness `K = 4 * EA / L` of the interior node of the two-cell bar. -/
+/-- The physical stiffness `K = 4 * EA / L` of the interior node of the two-cell bar. With
+`a / 0 = 0` it is `0` when `L = 0`. -/
 noncomputable def twoCellStiffness (EA L : ℝ) : ℝ :=
   4 * EA / L
 
@@ -147,7 +148,7 @@ noncomputable def twoCellResidual (EA L q c : ℝ) : ℝ :=
   twoCellLoad L q - twoCellStiffness EA L * c
 
 /-- The reconstruction `c * φ (x / L)` of an interior coefficient `c` through the hat `φ` of the
-interior node of `twoCells`. -/
+interior node of `twoCells`. With `a / 0 = 0`, `x / L = 0` when `L = 0`. -/
 noncomputable def twoCellReconstruction (L c x : ℝ) : ℝ :=
   c * hat twoCells 1 (x / L)
 
@@ -346,7 +347,7 @@ lemma twoCellStiffness_eq_stiffness (EA L : ℝ) :
   ring
 
 /-- The physical stiffness is the energy of the pulled-back interior hat:
-`∫₀ᴸ EA (φ (x / L))'² = 4 * EA / L`. -/
+`∫₀ᴸ EA (φ (x / L))'² = 4 * EA / L`. Derivatives are `0` where not differentiable. -/
 lemma integral_energy_hat (EA : ℝ) {L : ℝ} (hL : 0 < L) :
     ∫ x in (0 : ℝ)..L, EA * deriv (fun x => hat twoCells 1 (x / L)) x ^ 2 =
       twoCellStiffness EA L := by
@@ -391,7 +392,8 @@ lemma physicalP1_eq_twoCellReconstruction {L : ℝ} (hL : L ≠ 0) (EA q x : ℝ
     interp_unitProfile_apply]
   ring
 
-/-- The interior coefficient in closed form: `c = α / 4 = q * L ^ 2 / (8 * EA)`. -/
+/-- The interior coefficient in closed form: `c = α / 4 = q * L ^ 2 / (8 * EA)`. With `a / 0 = 0`
+it is `0` when `EA = 0`. -/
 lemma twoCellCoeff_eq {L : ℝ} (hL : L ≠ 0) (EA q : ℝ) :
     twoCellCoeff EA L q = q * L ^ 2 / (8 * EA) := by
   rw [twoCellCoeff_eq_barAmplitude hL, barAmplitude]
@@ -455,7 +457,8 @@ lemma abs_physicalP1_sub_twoCellReconstruction_le {EA L : ℝ} (hEA : 0 < EA) (h
       exact abs_twoCellCoeff_sub_le hEA hL q c
 
 /-- The energy of the displacement error carries the factor `K`:
-`∫₀ᴸ EA ((u_h - ũ_h)')² = K * (c - c̃) ^ 2 = L * r ^ 2 / (4 * EA)`. -/
+`∫₀ᴸ EA ((u_h - ũ_h)')² = K * (c - c̃) ^ 2 = L * r ^ 2 / (4 * EA)`. Derivatives are `0` where not
+differentiable. -/
 lemma integral_energy_reconstruction_error {EA L : ℝ} (hEA : 0 < EA) (hL : 0 < L) (q c : ℝ) :
     ∫ x in (0 : ℝ)..L,
         EA * deriv (fun x => physicalP1 twoCells EA L q x - twoCellReconstruction L c x) x ^ 2 =
@@ -618,11 +621,13 @@ lemma quad_defects_twoCells :
 
 /-! ## E. The physical quadratic load -/
 
-/-- The amplitude `β = Q * L ^ 2 / EA` of the quadratic load `Q * (x / L) ^ 2`. -/
+/-- The amplitude `β = Q * L ^ 2 / EA` of the quadratic load `Q * (x / L) ^ 2`. With `a / 0 = 0`
+it is `0` when `EA = 0`. -/
 noncomputable def quadAmplitude (EA L Q : ℝ) : ℝ :=
   Q * L ^ 2 / EA
 
-/-- The physical displacement `u x = β * û (x / L)` under the quadratic load. -/
+/-- The physical displacement `u x = β * û (x / L)` under the quadratic load. With `a / 0 = 0`,
+`x / L = 0` when `L = 0`. -/
 noncomputable def quadDisplacement (EA L Q x : ℝ) : ℝ :=
   quadAmplitude EA L Q * quadProfile (x / L)
 
@@ -735,11 +740,11 @@ lemma quad_physical_loads {L : ℝ} (hL : 0 < L) (Q : ℝ) :
 
 /-! ## F. Coefficients and the reconstructed quadrature error -/
 
-/-- The exact-load interior coefficient `F / K`. -/
+/-- The exact-load interior coefficient `F / K`, `0` when `K = 0` (`a / 0 = 0`). -/
 noncomputable def quadCoeff (EA L Q : ℝ) : ℝ :=
   quadLoad L Q / twoCellStiffness EA L
 
-/-- The midpoint-quadrature interior coefficient `F_mid / K`. -/
+/-- The midpoint-quadrature interior coefficient `F_mid / K`, `0` when `K = 0` (`a / 0 = 0`). -/
 noncomputable def quadMidpointCoeff (EA L Q : ℝ) : ℝ :=
   physMidpointLoad L (fun x => Q * (x / L) ^ 2) / twoCellStiffness EA L
 
@@ -791,7 +796,7 @@ lemma quadMidpointCoeff_sub_quadCoeff {EA L : ℝ} (hEA : EA ≠ 0) (hL : 0 < L)
     norm_num
 
 /-- The reconstructed coefficient error has squared energy norm
-`(4 * EA / L) * (β / 384) ^ 2`. -/
+`(4 * EA / L) * (β / 384) ^ 2`. Derivatives are `0` where not differentiable. -/
 lemma integral_energy_quadrature_error {EA L : ℝ} (hEA : 0 < EA) (hL : 0 < L) (Q : ℝ) :
     ∫ x in (0 : ℝ)..L, EA * deriv (fun x => twoCellReconstruction L (quadCoeff EA L Q) x -
         twoCellReconstruction L (quadMidpointCoeff EA L Q) x) x ^ 2 =
@@ -1020,7 +1025,7 @@ private lemma integral_sq_sub_twoCellReconstruction {u : ℝ → ℝ} (hu : Cont
 /-- Composed energy-norm bound: the energy error of the reconstruction `c φ (x / L)` of an
 approximate midpoint coefficient is at most the reconstructed discretization error of the
 exact-load coefficient, plus the quadrature term `√K * |β| / 384`, plus the algebraic term
-`√K * L * |r| / (4 * EA)`. -/
+`√K * L * |r| / (4 * EA)`. Derivatives are `0` where not differentiable. -/
 lemma sqrt_energy_quad_error_le {EA L : ℝ} (hEA : 0 < EA) (hL : 0 < L) (Q c : ℝ) :
     √(∫ x in (0 : ℝ)..L,
         EA * deriv (fun x => quadDisplacement EA L Q x - twoCellReconstruction L c x) x ^ 2) ≤

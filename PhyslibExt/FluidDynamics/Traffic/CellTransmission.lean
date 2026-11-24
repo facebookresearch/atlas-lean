@@ -54,7 +54,8 @@ namespace FluidDynamics.Traffic.CellTransmission
 
 /-- Capacity of the triangular fundamental diagram with free-flow
 speed `v`, wave speed `w`, jam density `kj`: the peak flow
-`v * w * kj / (v + w)`, attained at the critical density. -/
+`v * w * kj / (v + w)`, attained at the critical density. With the convention `x / 0 = 0` it is
+`0` when `v + w = 0`. -/
 noncomputable def capacity (v w kj : ℝ) : ℝ := v * w * kj / (v + w)
 
 /-- Demand of a cell with density `k` under the triangular diagram:
@@ -95,8 +96,8 @@ theorem faceFlux_le_supply {v w kj kup kdown : ℝ} :
   unfold faceFlux
   exact min_le_right _ _
 
-/-- Demand is nonnegative and capacity-bounded on admissible
-densities. -/
+/-- For `v, w > 0`, `kj ≥ 0` and `k ≥ 0`, demand is nonnegative and capacity-bounded; no upper
+bound on `k` is needed. -/
 theorem demand_nonneg_le {v w kj k : ℝ} (hv : 0 < v) (hw : 0 < w)
     (hkj : 0 ≤ kj) (hk : 0 ≤ k) :
     0 ≤ demand v w kj k ∧ demand v w kj k ≤ capacity v w kj := by
@@ -105,8 +106,8 @@ theorem demand_nonneg_le {v w kj k : ℝ} (hv : 0 < v) (hw : 0 < w)
   unfold demand
   exact ⟨le_min (mul_nonneg hv.le hk) hcap, min_le_right _ _⟩
 
-/-- Supply is nonnegative and capacity-bounded on admissible
-densities. -/
+/-- For `v, w > 0`, `kj ≥ 0` and `k ≤ kj`, supply is nonnegative and capacity-bounded; no lower
+bound on `k` is needed. -/
 theorem supply_nonneg_le {v w kj k : ℝ} (hv : 0 < v) (hw : 0 < w)
     (hkj : 0 ≤ kj) (hk : k ≤ kj) :
     0 ≤ supply v w kj k ∧ supply v w kj k ≤ capacity v w kj := by
@@ -115,7 +116,7 @@ theorem supply_nonneg_le {v w kj k : ℝ} (hv : 0 < v) (hw : 0 < w)
   unfold supply
   exact ⟨le_min (mul_nonneg hw.le (sub_nonneg.mpr hk)) hcap, min_le_right _ _⟩
 
-/-- The capacity is attained at the critical density
+/-- For `v, w, kj > 0`, the capacity is attained at the critical density
 `kc = w * kj / (v + w)` from both branches. -/
 theorem capacity_attained {v w kj : ℝ} (hv : 0 < v) (hw : 0 < w)
     (_hkj : 0 < kj) :

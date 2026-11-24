@@ -121,10 +121,10 @@ noncomputable def thermalA {ι : Type*} [Fintype ι] [DecidableEq ι] (C : ι �
     (G : ι → ι → ℝ) (g0 : ι → ℝ) : Matrix ι ι ℝ :=
   diagonal (fun i => 1 / C i) * (of G - diagonal fun i => (∑ j, G i j) + g0 i)
 
-/-- Input matrix `diagonal (1 / C) * [g0 | 1]` for the input `(Tout, P)`: the outside
-temperature (column `Sum.inl ()`) enters zone `i` with gain `g0 i / C i`, and the heating
-power of zone `j` (column `Sum.inr j`) enters zone `j` alone, with gain `1 / C j`.
-Meaningful for `C i > 0`. -/
+/-- Input matrix `diagonal (1 / C) * [g0 | 1]` for the input `(Tout, P)`: the outside temperature
+(column `Sum.inl ()`) enters zone `i` with gain `g0 i / C i`, and the heating power of zone `j`
+(column `Sum.inr j`) enters zone `j` alone, with gain `1 / C j`. Meaningful for `C i > 0`; at
+`C i = 0` the totalized division makes row `i` zero. -/
 noncomputable def thermalB {ι : Type*} [Fintype ι] [DecidableEq ι] (C : ι → ℝ)
     (g0 : ι → ℝ) : Matrix ι (Unit ⊕ ι) ℝ :=
   diagonal (fun i => 1 / C i) * fromCols (replicateCol Unit g0) 1

@@ -185,10 +185,10 @@ theorem fick_continuity_imply_diffusion (D : ℝ) (c : ℝ → ℝ → ℝ) (x t
 -/
 
 /-- The Gaussian solution on the line with total mass `M`:
-`gauss M D x t = M / √(4πDt) · exp(-x² / (4Dt))`. It is meant for `D > 0` and `t > 0`. For
-`D > 0` and `t ≤ 0` the square root is `0` and Lean's convention `M / 0 = 0` makes the value `0`.
-It is the point-release kernel of `PhyslibExt.EarthScience.PointRelease` with no drift and no
-reaction. -/
+`gauss M D x t = M / √(4πDt) · exp(-x² / (4Dt))`. It is meant for `D > 0` and `t > 0`. When
+`D t ≤ 0` (for example `D > 0` and `t ≤ 0`) the square root is `0` and the convention `M / 0 = 0`
+makes the value `0`. It is the point-release kernel of `PhyslibExt.EarthScience.PointRelease` with
+no drift and no reaction. -/
 noncomputable def gauss (M D x t : ℝ) : ℝ :=
   (M / Real.sqrt (4 * Real.pi * D * t)) * Real.exp (-x ^ 2 / (4 * D * t))
 
@@ -1061,11 +1061,11 @@ lemma erfc_le_gauss (u : ℝ) (hu : 0 ≤ u) :
 -/
 
 /-- The constant-surface-concentration profile on the half-line `x ≥ 0`:
-`erfcProfile cs D x t = cs · erfc(x / √(4Dt))`, the concentration at depth `x` and time `t` when
-the surface `x = 0` is held at `cs` and the medium is initially empty. It is meant for `D > 0`,
-`t > 0` and `x ≥ 0`. For `D > 0` and `t ≤ 0` the square root is `0`, `x / 0 = 0` and the value is
-`cs` at every `x` (Lean's division convention), not the initial concentration `0`; the initial
-condition is the limit `erfcProfile_initial`. -/
+`erfcProfile cs D x t = cs · erfc(x / √(4Dt))`, the concentration at depth `x` and time `t` when the
+surface `x = 0` is held at `cs` and the medium is initially empty. It is meant for `D > 0`, `t > 0`
+and `x ≥ 0`. When `D t ≤ 0` (for example `D > 0` and `t ≤ 0`) the square root is `0`, `x / 0 = 0`
+and the value is `cs` at every `x`, not the initial concentration `0`; the initial condition is the
+limit `erfcProfile_initial`. -/
 noncomputable def erfcProfile (cs D x t : ℝ) : ℝ :=
   cs * erfc (x / Real.sqrt (4 * D * t))
 
@@ -1109,7 +1109,7 @@ lemma erfcProfile_xxderiv_value (cs D x t : ℝ) (hD : 0 < D) (ht : 0 < t) :
   exact hchain
 
 /-- The time derivative of the profile for `D > 0` and `t > 0`, by the chain rule through
-`x / √(4Dt)`. -/
+`ξ = x / √(4Dt)`; the value equals `-cs x erfc'(ξ) / (2t √(4Dt))`. -/
 lemma erfcProfile_tderiv_value (cs D x t : ℝ) (hD : 0 < D) (ht : 0 < t) :
     HasDerivAt (fun t => erfcProfile cs D x t)
       (cs * (erfcDeriv (x / Real.sqrt (4 * D * t))
@@ -1155,7 +1155,8 @@ theorem erfcProfile_pde (cs D x t : ℝ) (hD : 0 < D) (ht : 0 < t) :
 
 -/
 
-/-- The surface is held at the concentration `cs`: `erfcProfile cs D 0 t = cs`. -/
+/-- For `D > 0` and `t > 0`, the surface is held at the concentration `cs`:
+`erfcProfile cs D 0 t = cs`. -/
 lemma erfcProfile_surface (cs D t : ℝ) (_ht : 0 < t) (_hD : 0 < D) :
     erfcProfile cs D 0 t = cs := by
   simp only [erfcProfile]
@@ -1406,9 +1407,9 @@ lemma continuousOn_energy {a b T : ℝ} (hab : a ≤ b) {w : ℝ → ℝ → ℝ
     exact (hw.comp (continuous_const.prodMk continuous_id).continuousOn
       fun t ht => ⟨Ioc_subset_Icc_self hx, ht⟩).pow 2
 
-/-- **Energy identity at an interior time.** Let `w` and the functions `wx`, `wxx`, `wt` be
-continuous on `[a, b] × (0, T)`; let `wx`, `wxx`, `wt` be the derivatives `∂ₓw`, `∂ₓₓw`, `∂ₜw`
-at the points of `(a, b) × (0, T)`, where `∂ₜw = D ∂ₓₓw`; and let `w` vanish at `x = a` and
+/-- **Energy identity at an interior time.** Let `a < b` and let `w` and the functions `wx`, `wxx`,
+`wt` be continuous on `[a, b] × (0, T)`; let `wx`, `wxx`, `wt` be the derivatives `∂ₓw`, `∂ₓₓw`,
+`∂ₜw` at the points of `(a, b) × (0, T)`, where `∂ₜw = D ∂ₓₓw`; and let `w` vanish at `x = a` and
 `x = b` for `0 < t < T`. Then at every `t₀ ∈ (0, T)` the energy `E(t) = ∫ₐᵇ w(x, t)² dx` has the
 derivative `-2D ∫ₐᵇ wx(x, t₀)² dx`. -/
 lemma energy_identity_deriv {a b T D : ℝ} (hab : a < b) {w wx wxx wt : ℝ → ℝ → ℝ}
@@ -1487,9 +1488,9 @@ lemma energy_identity_deriv {a b T D : ℝ} (hab : a < b) {w wx wxx wt : ℝ →
   rw [hpde', hibp]
   ring
 
-/-- **Uniqueness for the Dirichlet problem** (energy method). Let `w` equal `c₁ - c₂` on the
-closed rectangle `[a, b] × [0, T]` and be continuous there; let `wx`, `wxx`, `wt` be continuous
-on `[a, b] × (0, T)` and be the derivatives `∂ₓw`, `∂ₓₓw`, `∂ₜw` at the points of
+/-- **Uniqueness for the Dirichlet problem** (energy method). Let `a < b` and let `w` equal
+`c₁ - c₂` on the closed rectangle `[a, b] × [0, T]` and be continuous there; let `wx`, `wxx`, `wt`
+be continuous on `[a, b] × (0, T)` and be the derivatives `∂ₓw`, `∂ₓₓw`, `∂ₜw` at the points of
 `(a, b) × (0, T)`, where `∂ₜw = D ∂ₓₓw` with `D > 0`. If `w` vanishes at `x = a` and `x = b` for
 `0 < t < T` and at `t = 0` on `[a, b]`, then `c₁ = c₂` on `[a, b] × [0, T]`. Nothing is assumed
 outside the rectangle, so `c₁` and `c₂` may be solutions that exist only up to time `T`. -/
@@ -1595,9 +1596,9 @@ lemma similarity_pde_at (D lam : ℝ) (c cx cxx ct : ℝ → ℝ → ℝ) (x t :
   rw [hts.deriv, hxx2.deriv, hpde]
   ring
 
-/-- **Parabolic scaling.** If `c` solves `∂ₜc = D ∂ₓₓc` on all of `ℝ × ℝ`, with the derivatives
-`cx`, `cxx`, `ct` given at every point, then so does its rescaling `scaledSol c λ`. For a
-solution on part of the plane, such as the Gaussian for `t > 0`, use `similarity_pde_at`. -/
+/-- **Parabolic scaling.** For `λ > 0`, if `c` solves `∂ₜc = D ∂ₓₓc` on all of `ℝ × ℝ`, with the
+derivatives `cx`, `cxx`, `ct` given at every point, then so does its rescaling `scaledSol c λ`. For
+a solution on part of the plane, such as the Gaussian for `t > 0`, use `similarity_pde_at`. -/
 theorem similarity_pde (D lam : ℝ) (_hlam : 0 < lam) (c cx cxx ct : ℝ → ℝ → ℝ)
     (ht : ∀ X T, HasDerivAt (fun σ => c X σ) (ct X T) T)
     (hx : ∀ X T, HasDerivAt (fun u => c u T) (cx X T) X)
@@ -1650,15 +1651,16 @@ lemma steady_boundary_L (c₁ c₂ L : ℝ) (hL : 0 < L) : steadyProfile c₁ c�
   field_simp
   ring
 
-/-- The steady profile has the constant slope `(c₂ - c₁) / L`. -/
+/-- The steady profile has the constant slope `(c₂ - c₁) / L` (`0` when `L = 0`, since
+`y / 0 = 0`). -/
 lemma steady_xderiv_value (c₁ c₂ L x : ℝ) :
     HasDerivAt (fun x => steadyProfile c₁ c₂ L x) (((c₂ - c₁) / L) * 1) x := by
   have hmul : HasDerivAt (fun x : ℝ => ((c₂ - c₁) / L) * x) (((c₂ - c₁) / L) * 1) x := by
     simpa using (hasDerivAt_id' x).const_mul ((c₂ - c₁) / L)
   simpa [steadyProfile] using hmul.const_add c₁
 
-/-- The steady profile solves the steady diffusion equation: it does not depend on time, and
-`D ∂ₓₓc = 0`. -/
+/-- For `L > 0`, the steady profile solves the steady diffusion equation: it does not depend on
+time, and `D ∂ₓₓc = 0`. -/
 lemma steady_pde (c₁ c₂ L D x t : ℝ) (_hL : 0 < L) :
     deriv (fun _ => steadyProfile c₁ c₂ L x) t = 0
       ∧ D * deriv (fun x' => deriv (fun u => steadyProfile c₁ c₂ L u) x') x = 0 := by

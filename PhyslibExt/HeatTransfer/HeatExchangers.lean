@@ -161,16 +161,18 @@ namespace HeatTransfer.HeatExchangers
 /-! ## A. The parallel-flow solution -/
 
 /-- Decay rate `r = K (1 / Ch + 1 / Cc)` of the stream temperature difference in parallel flow,
-for the conductance per unit length `K` and the capacity rates `Ch`, `Cc`. -/
+for the conductance per unit length `K` and the capacity rates `Ch`, `Cc` (`1 / 0 = 0`). -/
 noncomputable def parallelDecayRate (Ch Cc K : ℝ) : ℝ := K * (1 / Ch + 1 / Cc)
 
 /-- Hot-stream temperature of the parallel-flow solution with inlets `Thi`, `Tci` at `x = 0`:
-`Th(x) = Thi - Cc / (Ch + Cc) * (Thi - Tci) * (1 - exp (-r x))`. Intended for `Ch, Cc > 0`. -/
+`Th(x) = Thi - Cc / (Ch + Cc) * (Thi - Tci) * (1 - exp (-r x))`. Intended for `Ch, Cc > 0`;
+the fraction is `0` when `Ch + Cc = 0`, by `u / 0 = 0`. -/
 noncomputable def parallelHotTemp (Ch Cc K Thi Tci x : ℝ) : ℝ :=
   Thi - Cc / (Ch + Cc) * (Thi - Tci) * (1 - Real.exp (-(parallelDecayRate Ch Cc K * x)))
 
 /-- Cold-stream temperature of the parallel-flow solution with inlets `Thi`, `Tci` at `x = 0`:
-`Tc(x) = Tci + Ch / (Ch + Cc) * (Thi - Tci) * (1 - exp (-r x))`. Intended for `Ch, Cc > 0`. -/
+`Tc(x) = Tci + Ch / (Ch + Cc) * (Thi - Tci) * (1 - exp (-r x))`. Intended for `Ch, Cc > 0`;
+the fraction is `0` when `Ch + Cc = 0`, by `u / 0 = 0`. -/
 noncomputable def parallelColdTemp (Ch Cc K Thi Tci x : ℝ) : ℝ :=
   Tci + Ch / (Ch + Cc) * (Thi - Tci) * (1 - Real.exp (-(parallelDecayRate Ch Cc K * x)))
 
@@ -370,7 +372,8 @@ lemma IsParallelFlowSolution.eq_closedForm {Ch Cc K L Thi Tci : ℝ} {Th Tc : �
 /-- Logarithmic mean of the end temperature differences `Δ₁`, `Δ₂`:
 `(Δ₁ - Δ₂) / log (Δ₁ / Δ₂)` when `Δ₁ ≠ Δ₂`, and the equal-difference branch `Δ₁` when
 `Δ₁ = Δ₂`, its limit, so that no value divides by `log 1 = 0`. Intended for `Δ₁`, `Δ₂` of one
-strict sign. -/
+strict sign; by `u / 0 = 0`, `log 0 = 0` and `log x = log |x|` the value is `0` when exactly one
+of them is `0` and when `Δ₁ = -Δ₂ ≠ 0`. -/
 noncomputable def logMeanTempDiff (Δ₁ Δ₂ : ℝ) : ℝ :=
   if Δ₁ = Δ₂ then Δ₁ else (Δ₁ - Δ₂) / Real.log (Δ₁ / Δ₂)
 
@@ -561,8 +564,8 @@ lemma IsParallelFlowSolution.outlet_order {Ch Cc UA L Thi Tci : ℝ} {Th Tc : �
 /-! ## C. The counterflow solution -/
 
 /-- Decay rate `s = K (1 / Ch - 1 / Cc)` of the stream temperature difference in counterflow,
-for the conductance per unit length `K` and the capacity rates `Ch`, `Cc`. It vanishes for equal
-capacity rates and is negative when `Ch > Cc` and `K > 0`. -/
+for the conductance per unit length `K` and the capacity rates `Ch`, `Cc` (`1 / 0 = 0`). It
+vanishes for equal capacity rates and is negative when `Ch > Cc > 0` and `K > 0`. -/
 noncomputable def counterflowRate (Ch Cc K : ℝ) : ℝ := K * (1 / Ch - 1 / Cc)
 
 /-- The integral `∫₀ˣ exp (-s y) dy` in closed form: `(1 - exp (-s x)) / s` for `s ≠ 0` and its
@@ -573,20 +576,20 @@ noncomputable def expDecayIntegral (s x : ℝ) : ℝ :=
 /-- Boundary constant of the counterflow solution: the temperature difference
 `Th(0) - Tc(0) = (Thi - Tci) / (1 + K / Cc * ∫₀ᴸ exp (-s y) dy)` at the hot inlet, fixed by the
 cold inlet condition `Tc(L) = Tci`, with `s = counterflowRate Ch Cc K`. The denominator is at
-least `1` for `K, L ≥ 0` and `Cc > 0`. -/
+least `1` for `K, L ≥ 0` and `Cc > 0`; elsewhere `u / 0 = 0` applies. -/
 noncomputable def counterflowInletDiff (Ch Cc K L Thi Tci : ℝ) : ℝ :=
   (Thi - Tci) / (1 + K / Cc * expDecayIntegral (counterflowRate Ch Cc K) L)
 
 /-- Hot-stream temperature of the counterflow solution with the hot inlet `Thi` at `x = 0` and the
 cold inlet `Tci` at `x = L`: `Th(x) = Thi - K / Ch * D₀ * ∫₀ˣ exp (-s y) dy`, where
-`D₀ = counterflowInletDiff Ch Cc K L Thi Tci`. Intended for `Ch, Cc > 0`. -/
+`D₀ = counterflowInletDiff Ch Cc K L Thi Tci`. Intended for `Ch, Cc > 0` (`K / 0 = 0`). -/
 noncomputable def counterflowHotTemp (Ch Cc K L Thi Tci x : ℝ) : ℝ :=
   Thi - K / Ch * counterflowInletDiff Ch Cc K L Thi Tci *
     expDecayIntegral (counterflowRate Ch Cc K) x
 
 /-- Cold-stream temperature of the counterflow solution:
 `Tc(x) = Thi - D₀ - K / Cc * D₀ * ∫₀ˣ exp (-s y) dy`, so `Tc(0) = Thi - D₀` is the cold outlet.
-Intended for `Ch, Cc > 0`. -/
+Intended for `Ch, Cc > 0` (`K / 0 = 0`). -/
 noncomputable def counterflowColdTemp (Ch Cc K L Thi Tci x : ℝ) : ℝ :=
   Thi - counterflowInletDiff Ch Cc K L Thi Tci -
     K / Cc * counterflowInletDiff Ch Cc K L Thi Tci * expDecayIntegral (counterflowRate Ch Cc K) x
@@ -1271,8 +1274,9 @@ lemma IsCounterflowSolution.equalCapacity_sub_const {C UA L Thi Tci : ℝ} {Th T
   rw [hTh, hTc, hsub]
   exact counterflowInletDiff_eq_of_equalCap hC hL
 
-/-- **Equal capacity rates: heat duty.** Under the same hypotheses the heat lost by the hot stream
-and the heat gained by the cold stream are both `Q = UA * (Thi - Tci) / (1 + UA / C)`. -/
+/-- **Equal capacity rates: heat duty.** For `Ch = Cc = C > 0`, `K = UA / L` with `L > 0` and
+`UA ≥ 0`, the heat lost by the hot stream and the heat gained by the cold stream are both
+`Q = UA * (Thi - Tci) / (1 + UA / C)`. -/
 lemma IsCounterflowSolution.equalCapacity_heat {C UA L Thi Tci : ℝ} {Th Tc : ℝ → ℝ}
     (hC : 0 < C) (hUA : 0 ≤ UA) (hL : 0 < L)
     (h : IsCounterflowSolution C C (UA / L) L Thi Tci Th Tc) :
@@ -1302,15 +1306,16 @@ lemma IsCounterflowSolution.equalCapacity_heat {C UA L Thi Tci : ℝ} {Th Tc : �
 /-! ## E. Capacity-rate ratio, transfer units and effectiveness -/
 
 /-- The capacity-rate ratio `Cr = Cmin / Cmax`, with `Cmin = min Ch Cc` and `Cmax = max Ch Cc`, of
-an exchanger with stream capacity rates `Ch`, `Cc`. For finite positive rates `0 < Cr ≤ 1`. -/
+an exchanger with stream capacity rates `Ch`, `Cc`. For finite positive rates `0 < Cr ≤ 1`; it
+is `0` when `max Ch Cc = 0`, by `u / 0 = 0`. -/
 noncomputable def capacityRatio (Ch Cc : ℝ) : ℝ := min Ch Cc / max Ch Cc
 
 /-- The number of transfer units `NTU = UA / Cmin` of an exchanger with overall conductance `UA`
-and stream capacity rates `Ch`, `Cc`. -/
+and stream capacity rates `Ch`, `Cc` (`0` when `min Ch Cc = 0`, by `u / 0 = 0`). -/
 noncomputable def transferUnits (UA Ch Cc : ℝ) : ℝ := UA / min Ch Cc
 
 /-- Parallel-flow effectiveness `ε_p = (1 - exp (-NTU (1 + Cr))) / (1 + Cr)`. Domain `NTU ≥ 0`,
-`0 < Cr ≤ 1`, where the denominator is at least `1`. -/
+`0 < Cr ≤ 1`, where the denominator is at least `1`; it is `0` at `Cr = -1`, by `u / 0 = 0`. -/
 noncomputable def parallelEffectiveness (NTU Cr : ℝ) : ℝ :=
   (1 - Real.exp (-(NTU * (1 + Cr)))) / (1 + Cr)
 

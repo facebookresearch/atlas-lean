@@ -49,7 +49,8 @@ Lax entropy condition for increasing-density shocks).
 
 namespace FluidDynamics.Traffic.ShockOrdering
 
-/-- Shock speed between two densities: the secant slope of the flux. -/
+/-- Shock speed between two densities: the secant slope of the flux. With the convention `x / 0 = 0`
+it is `0` when `kL = kR`. -/
 noncomputable def shockSpeed (q : ℝ → ℝ) (kL kR : ℝ) : ℝ :=
   (q kR - q kL) / (kR - kL)
 

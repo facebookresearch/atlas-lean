@@ -132,12 +132,13 @@ noncomputable def shearFlow (ρ μ lam : ℝ) (p : Time → ℝ) (U : ℝ → �
   specificBodyForce := fun _ _ => 0
 
 /-- Kinetic energy per unit wall area of the shear layer `0 ≤ y ≤ L`,
-`K(t) = ∫₀ᴸ ρ U(t, y)² / 2 dy`. For `L < 0` the interval integral is signed and is not the energy
-of a layer. -/
+`K(t) = ∫₀ᴸ ρ U(t, y)² / 2 dy`. For `L < 0` the interval integral is signed and is not the energy of
+a layer. It is `0` when `U(t, ·)²` is not integrable on the interval. -/
 noncomputable def shearKineticEnergy (ρ L : ℝ) (U : ℝ → ℝ → ℝ) (t : ℝ) : ℝ :=
   ∫ y in (0 : ℝ)..L, ρ * U t y ^ 2 / 2
 
-/-- The steady member `U = Uwall y / H` of the shear family is the plane Couette velocity. -/
+/-- The steady member `U = Uwall y / H` of the shear family is the plane Couette velocity. With the
+convention `x / 0 = 0` both are zero when `H = 0`. -/
 lemma shearVelocity_couette (Uwall H : ℝ) (t : Time) :
     shearVelocity (fun _ y => Uwall * y / H) t =
       FlowCoordinateBernoulli.couetteVelocity Uwall H := by
@@ -428,12 +429,12 @@ lemma shearFlow_kineticEnergy_hasDerivAt {ρ L : ℝ} (hρ : 0 < ρ) (hL : 0 ≤
 
 /-! ## D. A single-mode transient with a moving wall -/
 
-/-- Single-mode transient between a wall at rest at `y = 0` and a wall moving with velocity `A`
-at `y = L` (for `L ≠ 0`, `singleModeProfile_walls`):
+/-- Single-mode transient between a wall at rest at `y = 0` and a wall moving with velocity `A` at
+`y = L` (for `L ≠ 0`, `singleModeProfile_walls`):
 `U(t, y) = A y / L - (A / π) sin(π y / L) exp(-ν (π / L)² t)`, the plane Couette profile minus one
-decaying sine mode. It is not a start from rest: for `L > 0` and `A ≠ 0` the initial data
-`A y / L - (A / π) sin(π y / L)` is nonzero at every interior point `0 < y < L`, and the wall
-`y = L` moves at every time. -/
+decaying sine mode. With the convention `x / 0 = 0` it is identically `0` when `L = 0`. It is not a
+start from rest: for `L > 0` and `A ≠ 0` the initial data `A y / L - (A / π) sin(π y / L)` is
+nonzero at every interior point `0 < y < L`, and the wall `y = L` moves at every time. -/
 noncomputable def singleModeProfile (A L ν t y : ℝ) : ℝ :=
   A * y / L - A / Real.pi * Real.sin (Real.pi * y / L) * Real.exp (-ν * (Real.pi / L) ^ 2 * t)
 

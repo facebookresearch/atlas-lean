@@ -51,17 +51,16 @@ included.
 
 /-! ## A. Series resistance and heat rate -/
 
-/-- Total resistance of `n` planar layers and two films in
-series at common area `A`: inside film `1 / (hin * A)`, layer
-resistances `L i / (k i * A)`, and outside film
-`1 / (hout * A)`. -/
+/-- Total resistance of `n` planar layers and two films in series at common area `A`: inside film
+`1 / (hin * A)`, layer resistances `L i / (k i * A)`, and outside film `1 / (hout * A)`. With
+`x / 0 = 0`, a film or layer term is `0` when its denominator is `0`. -/
 noncomputable def thermalSeriesResistance {n : ℕ} (A hin hout : ℝ)
     (L k : ℕ → ℝ) : ℝ :=
   1 / (hin * A) + (∑ i ∈ Finset.range n, L i / (k i * A))
     + 1 / (hout * A)
 
-/-- Overall heat-transfer coefficient `U = 1 / (A * R)` for the
-series resistance. -/
+/-- Overall heat-transfer coefficient `U = 1 / (A * R)` for the series resistance (`0` when
+`A * R = 0`, since `x / 0 = 0`). -/
 noncomputable def thermalOverallCoefficient {n : ℕ}
     (A hin hout : ℝ) (L k : ℕ → ℝ) : ℝ :=
   1 / (A * thermalSeriesResistance (n := n) A hin hout L k)
@@ -85,14 +84,12 @@ theorem thermalSeriesResistance_pos {n : ℕ} {A hin hout : ℝ}
     positivity
   linarith
 
-/-- Series heat-rate recovery from interface drop laws. Let
-`Temp 0` be the inside air temperature, `Temp 1, ..., Temp (n+1)`
-the successive interface temperatures after the inside film and
-each layer, and `Temp (n+2)` the outside air temperature. If a
-common steady heat rate `Q` produces the film and layer drops
-`Q * (1 / (h * A))` and `Q * (L i / (k i * A))`, then `Q` is the
-total temperature difference divided by the total series
-resistance. -/
+/-- Series heat-rate recovery from interface drop laws, for positive `A`, `hin`, `hout`, `L i` and
+`k i`. Let `Temp 0` be the inside air temperature, `Temp 1, ..., Temp (n+1)` the successive
+interface temperatures after the inside film and each layer, and `Temp (n+2)` the outside air
+temperature. If a common steady heat rate `Q` produces the film and layer drops `Q * (1 / (h * A))`
+and `Q * (L i / (k i * A))`, then `Q` is the total temperature difference divided by the total
+series resistance. -/
 theorem thermalSeriesHeatRate_of_drops {n : ℕ} {A hin hout Q : ℝ}
     {L k Temp : ℕ → ℝ} (hA : 0 < A) (hhin : 0 < hin)
     (hhout : 0 < hout) (hL : ∀ i < n, 0 < L i)
@@ -126,7 +123,8 @@ theorem thermalSeriesHeatRate_of_drops {n : ℕ} {A hin hout Q : ℝ}
   rw [eq_div_iff hRne]
   exact htot.symm
 
-/-- In overall-coefficient form, the recovered heat rate is
+/-- In overall-coefficient form, for positive `A`, `hin`, `hout`, `L i` and `k i` and the interface
+drop laws of the common heat rate `Q`, the recovered heat rate is
 `Q = A * U * (Temp 0 - Temp (n + 2))`. -/
 theorem thermalSeriesHeatRate_eq_area_mul_U {n : ℕ}
     {A hin hout Q : ℝ} {L k Temp : ℕ → ℝ} (hA : 0 < A)

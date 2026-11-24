@@ -46,23 +46,26 @@ namespace FluidDynamics.TravelingWave
 `h(t,x) = F (x - a t)`, `q(t,x) = (gA/a) F (x - a t)`. -/
 noncomputable def hR (a : ℝ) (F : ℝ → ℝ) (t x : ℝ) : ℝ := F (x - a * t)
 
-/-- Right-traveling discharge. -/
+/-- Right-traveling discharge `q(t,x) = (gA/a) F (x - a t)`. With the convention `x / 0 = 0` it
+is `0` when `a = 0`. -/
 noncomputable def qR (g A a : ℝ) (F : ℝ → ℝ) (t x : ℝ) : ℝ :=
   (g * A / a) * F (x - a * t)
 
 /-- Left-traveling water-hammer state: `h(t,x) = F (x + a t)`. -/
 noncomputable def hL (a : ℝ) (F : ℝ → ℝ) (t x : ℝ) : ℝ := F (x + a * t)
 
-/-- Left-traveling discharge. -/
+/-- Left-traveling discharge `q(t,x) = -(gA/a) F (x + a t)`. With the convention `x / 0 = 0` it
+is `0` when `a = 0`. -/
 noncomputable def qL (g A a : ℝ) (F : ℝ → ℝ) (t x : ℝ) : ℝ :=
   -(g * A / a) * F (x + a * t)
 
-/-- Right-traveling waves satisfy `q = (gA/a) h` pointwise. -/
+/-- Right-traveling waves satisfy `q = (gA/a) h` pointwise, for all real inputs; with the
+convention `x / 0 = 0` both sides are `0` when `a = 0`. -/
 theorem qR_eq {g A a : ℝ} (F : ℝ → ℝ) (t x : ℝ) :
     qR g A a F t x = (g * A / a) * hR a F t x := by
   rfl
 
-/-- Joukowsky relation, right-traveling: with pressure
+/-- Joukowsky relation, right-traveling: for `a ≠ 0` and `A ≠ 0`, with pressure
 `p = rho * g * h` and velocity `v = q / A`,
 `Δp = rho * a * Δv` between any two states at the same time. -/
 theorem jump_right {rho g A a : ℝ} (ha : a ≠ 0) (hA : A ≠ 0) (F : ℝ → ℝ) (t x₁ x₂ : ℝ) :
@@ -71,7 +74,8 @@ theorem jump_right {rho g A a : ℝ} (ha : a ≠ 0) (hA : A ≠ 0) (F : ℝ → 
   unfold hR qR
   field_simp
 
-/-- Joukowsky relation, left-traveling: `Δp = - rho * a * Δv`. -/
+/-- Joukowsky relation, left-traveling: for `a ≠ 0` and `A ≠ 0`, with pressure `p = rho * g * h`
+and velocity `v = q / A`, `Δp = - rho * a * Δv` between any two states at the same time. -/
 theorem jump_left {rho g A a : ℝ} (ha : a ≠ 0) (hA : A ≠ 0) (F : ℝ → ℝ) (t x₁ x₂ : ℝ) :
     rho * g * (hL a F t x₂ - hL a F t x₁)
       = - rho * a * ((qL g A a F t x₂ - qL g A a F t x₁) / A) := by

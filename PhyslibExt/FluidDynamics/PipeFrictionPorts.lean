@@ -272,7 +272,7 @@ lemma powerLawFriction_darcyFactor_pos {c a : ℝ} (hc : 0 < c) {citation : Stri
 
 /-- The Darcy-Weisbach loss coefficient `c = f L ρ / (2 D A ^ 2)` of a duct of length `L`,
 hydraulic diameter `D` and flow area `A` carrying a fluid of density `ρ`, for the Darcy factor
-`f`. -/
+`f`. With the convention `x / 0 = 0` it is `0` when `D = 0` or `A = 0`. -/
 noncomputable def darcyCoefficient (f L D A ρ : ℝ) : ℝ := f * L * ρ / (2 * D * A ^ 2)
 
 /-- The oriented pressure drop `Δp = c Q |Q|` from the inlet to the outlet face at the

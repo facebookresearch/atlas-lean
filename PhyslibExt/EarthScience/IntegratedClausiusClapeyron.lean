@@ -59,9 +59,9 @@ on `[T₁, T₂]` under the differential form.
 
 namespace EarthScience
 
-/-- Clausius-Clapeyron differential form under the ideal-vapor approximation:
-if `dp / dT = L / (T * (v₂ - v₁))` (latent-heat Clapeyron form) and the vapour
-specific volume dominates, `v₂ - v₁ = R * T / p`, then `dp / dT = L * p / (R * T ^ 2)`. -/
+/-- Clausius-Clapeyron differential form under the ideal-vapor approximation, for `T`, `p` and `R`
+nonzero: if `dp / dT = L / (T * (v₂ - v₁))` (latent-heat Clapeyron form) and the vapour specific
+volume dominates, `v₂ - v₁ = R * T / p`, then `dp / dT = L * p / (R * T ^ 2)`. -/
 theorem clausius_clapeyron_differential {dp_dT L R T p v₂ v₁ : ℝ}
     (hT : T ≠ 0) (hp : p ≠ 0) (hR : R ≠ 0)
     (hclap : dp_dT = L / (T * (v₂ - v₁)))

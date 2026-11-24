@@ -52,7 +52,8 @@ namespace EarthScience
 set_option linter.unusedVariables false in
 /-- With nonnegative conductivity `k`, the conductive dissipation is
 nonnegative: pointwise, `0 ≤ k * (T'(z))^2`, and integrated over
-`[a, b]`, `0 ≤ ∫ z in a..b, k * (T'(z))^2`. -/
+`[a, b]` (`a ≤ b`, integrand interval-integrable), `0 ≤ ∫ z in a..b, k * (T'(z))^2`. Here
+`T' = deriv T`, which is `0` where `T` is not differentiable. -/
 theorem conductive_dissipation_nonneg
     {k : ℝ} (hk : 0 ≤ k) {T : ℝ → ℝ} {a b z : ℝ} (hab : a ≤ b)
     (hInt : IntervalIntegrable (fun z => k * (deriv T z) ^ 2) volume a b) :

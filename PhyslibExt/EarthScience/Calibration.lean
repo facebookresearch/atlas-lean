@@ -51,14 +51,14 @@ open MeasureTheory ProbabilityTheory
 
 namespace EarthScience
 
-/-- Pointwise calibration error: with `y = a * x + b + ε`, the
+/-- Pointwise calibration error: with `y = a * x + b + ε` and `a ≠ 0`, the
 calibrated estimator `(y - b) / a` differs from `x` by `ε / a`. -/
 theorem calibration_estimator_error {a b x ε : ℝ} (ha : a ≠ 0) :
     ((a * x + b + ε - b) / a) - x = ε / a := by
   field_simp
   ring
 
-/-- Calibrated-value form of `calibration_estimator_error`: the
+/-- Calibrated-value form of `calibration_estimator_error`: for `a ≠ 0`, the
 calibrated value itself is `x + ε / a`. -/
 theorem calibrated_value {a b x ε : ℝ} (ha : a ≠ 0) :
     (a * x + b + ε - b) / a = x + ε / a := by
@@ -68,8 +68,8 @@ theorem calibrated_value {a b x ε : ℝ} (ha : a ≠ 0) :
 /-! ## B. Expectation -/
 
 /-- Unbiasedness of the calibrated estimator: with known calibration
-`y = a * x + b + ε`, `a ≠ 0`, integrable error `ε` whose expectation is
-`e`, the expectation of the estimator `(y - b) / a` is `x + e / a`.
+`y = a * x + b + ε`, `a ≠ 0`, and an error `ε` integrable under a probability
+measure `μ` with expectation `e`, the expectation of the estimator `(y - b) / a` is `x + e / a`.
 In particular when `E[ε] = 0` it is exactly `x`. A fitted `a` creates
 a different nonlinear bias problem and is out of scope. -/
 theorem calibration_estimator_expectation {Ω : Type*} {mΩ : MeasurableSpace Ω}

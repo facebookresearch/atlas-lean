@@ -616,7 +616,8 @@ lemma rot_head_differs_across_streamlines {ρ Ω g : ℝ} (hρ : 0 < ρ) (hΩ : 
   have hsq : Ω ^ 2 = 0 := by linarith
   exact hΩ (pow_eq_zero_iff two_ne_zero |>.mp hsq)
 
-/-- The rotating fixture with a polytropic enthalpy `h = (γ / (γ - 1)) p / ρ`, `γ = 7/5`. -/
+/-- The rotating fixture with a polytropic enthalpy `h = (γ / (γ - 1)) p / ρ`, `γ = 7/5`. With the
+convention `x / 0 = 0`, `h = 0` when `ρ = 0`. -/
 noncomputable def polytropicFlow (ρ Ω g : ℝ) : ThermodynamicCauchyFlow 3 :=
   { rotFlow ρ Ω g with
     entropy := fun _ _ => 0
@@ -648,8 +649,8 @@ lemma polytropic_enthalpy_not_pOverRho {ρ Ω g : ℝ} (hρ : 0 < ρ) (hg : g �
 
 /-! ## D. Plane Couette flow -/
 
-/-- Plane Couette velocity `(Uwall * y / H, 0, 0)` with `y = x 1` the wall-normal coordinate.
--/
+/-- Plane Couette velocity `(Uwall * y / H, 0, 0)` with `y = x 1` the wall-normal coordinate. With
+the convention `x / 0 = 0` it is `0` when `H = 0`. -/
 noncomputable def couetteVelocity (Uwall H : ℝ) : Space → EuclideanSpace ℝ (Fin 3) :=
   fun x => WithLp.toLp 2 ![Uwall * x 1 / H, 0, 0]
 
@@ -734,8 +735,9 @@ private lemma velocityGradient_couette (ρ Uwall H : ℝ) (t : Time) (x : Space)
 
 /-! ## E. Newtonian stress -/
 
-/-- The Newtonian stress of plane Couette flow is the constant matrix with normal entries
-`-p₀` and shear entries `μ Uwall / H`; the second viscosity drops out. -/
+/-- The Newtonian stress of plane Couette flow is the constant matrix with normal entries `-p₀` and
+shear entries `μ Uwall / H`; the second viscosity drops out. With the convention `x / 0 = 0` the
+shear entries are `0` when `H = 0`. -/
 lemma couetteFlow_stress (ρ μ lam p₀ Uwall H : ℝ) (t : Time) (x : Space) :
     (couetteFlow ρ μ lam p₀ Uwall H).stress t x =
       !![-p₀, μ * Uwall / H, 0; μ * Uwall / H, -p₀, 0; 0, 0, -p₀] := by
@@ -845,7 +847,8 @@ lemma couetteFlow_witness {ρ μ H Uwall : ℝ} (lam p₀ : ℝ) (hH : 0 < H) (h
 /-! ## H. Plane Poiseuille flow -/
 
 /-- Plane Poiseuille velocity `(G y (H - y) / (2 μ), 0, 0)` with `y = x 1` the wall-normal
-coordinate and `G = -∂p/∂x` the signed pressure-drop rate. -/
+coordinate and `G = -∂p/∂x` the signed pressure-drop rate. With the convention `x / 0 = 0` it is `0`
+when `μ = 0`. -/
 noncomputable def planePoiseuilleVelocity (G μ H : ℝ) : Space → EuclideanSpace ℝ (Fin 3) :=
   fun x => WithLp.toLp 2 ![G * x 1 * (H - x 1) / (2 * μ), 0, 0]
 
@@ -1044,7 +1047,7 @@ lemma planePoiseuilleVelocity_upper_wall (G μ H : ℝ) (x : Space) (hx : x 1 = 
   fin_cases i <;> simp [planePoiseuilleVelocity, hx]
 
 /-- The flow rate per unit width through any cross-section `x = s`, `z` fixed, is
-`∫₀ᴴ u dy = G H³ / (12 μ)`. -/
+`∫₀ᴴ u dy = G H³ / (12 μ)`. With the convention `x / 0 = 0` both sides are `0` when `μ = 0`. -/
 lemma planePoiseuille_flowRate (G μ H s z : ℝ) :
     ∫ y in (0 : ℝ)..H, planePoiseuilleVelocity G μ H ⟨![s, y, z]⟩ 0 = G * H ^ 3 / (12 * μ) := by
   have hF : ∀ y ∈ Set.uIcc (0 : ℝ) H, HasDerivAt
@@ -1114,8 +1117,9 @@ lemma planePoiseuille_zero_gradient_vs_couette {Uwall H : ℝ} (hU : Uwall ≠ 0
 
 /-! ## L. Cylindrical Poiseuille flow -/
 
-/-- Cylindrical Poiseuille velocity `(0, 0, G (R² - x² - y²) / (4 μ))`, with `x = x 0`,
-`y = x 1` the transverse coordinates and `G = -∂p/∂z` the signed pressure-drop rate. -/
+/-- Cylindrical Poiseuille velocity `(0, 0, G (R² - x² - y²) / (4 μ))`, with `x = x 0`, `y = x 1`
+the transverse coordinates and `G = -∂p/∂z` the signed pressure-drop rate. With the convention
+`x / 0 = 0` it is `0` when `μ = 0`. -/
 noncomputable def pipePoiseuilleVelocity (G μ R : ℝ) : Space → EuclideanSpace ℝ (Fin 3) :=
   fun x => WithLp.toLp 2 ![0, 0, G * (R ^ 2 - x 0 ^ 2 - x 1 ^ 2) / (4 * μ)]
 

@@ -435,7 +435,7 @@ noncomputable def movingStep (uL uR c : ℝ) (t x : ℝ) : ℝ :=
 /-- Weak residual `∫∫ (u * φ_t + f u * φ_x)` over the whole `(t, x)` plane
 (Lebesgue measure on `ℝ × ℝ`, time first) of a field `u` against a test function
 whose time and space partial derivatives are `φt` and `φx`. This is a plain
-Bochner integral; no distribution space is introduced. -/
+Bochner integral, `0` for a non-integrable integrand; no distribution space is introduced. -/
 noncomputable def weakResidual (f : ℝ → ℝ) (u φt φx : ℝ → ℝ → ℝ) : ℝ :=
   ∫ p : ℝ × ℝ, (u p.1 p.2 * φt p.1 p.2 + f (u p.1 p.2) * φx p.1 p.2)
 

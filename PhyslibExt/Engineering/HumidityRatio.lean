@@ -59,7 +59,7 @@ namespace Engineering.HumidityRatio
 
 /-! ## A. Humidity ratio and conversion -/
 
-/-- Humidity ratio: vapor mass per unit dry-air mass. -/
+/-- Humidity ratio: vapor mass per unit dry-air mass (`0` when `mDryAir = 0`, by `u / 0 = 0`). -/
 noncomputable def humidityRatio (mVapor mDryAir : ℝ) : ℝ :=
   mVapor / mDryAir
 

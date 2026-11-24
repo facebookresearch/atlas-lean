@@ -302,8 +302,8 @@ lemma NusseltCorrelation.applies_pos {C : NusseltCorrelation} {r : CorrelationRe
     (h : C.Applies r) : 0 < r.reynolds ∧ 0 < r.prandtl := by
   exact C.validity_pos _ h.2.2.2.2.2.2
 
-/-- The Reynolds number of a positive density, a nonzero velocity and a positive length is
-positive. -/
+/-- The Reynolds number of a positive density, a nonzero velocity, a positive length and a
+positive viscosity is positive. -/
 lemma reynoldsNumber_pos {ρ : WithDim massDensityDim ℝ} {U : WithDim velocityDim ℝ}
     {L : WithDim (single ISQDimensionBase.length) ℝ} {μ : WithDim dynamicViscosityDim ℝ}
     (hρ : 0 < ρ.val) (hU : U.val ≠ 0) (hL : 0 < L.val) (hμ : 0 < μ.val) :
@@ -311,7 +311,7 @@ lemma reynoldsNumber_pos {ρ : WithDim massDensityDim ℝ} {U : WithDim velocity
   rw [reynoldsNumber_val]
   exact div_pos (mul_pos (mul_pos hρ (abs_pos.mpr hU)) hL) hμ
 
-/-- The Prandtl number of a positive viscosity and heat capacity is positive. -/
+/-- The Prandtl number of a positive viscosity, heat capacity and conductivity is positive. -/
 lemma prandtlNumber_pos {μ : WithDim dynamicViscosityDim ℝ}
     {cp : WithDim specificHeatCapacityDim ℝ} {k : WithDim thermalConductivityDim ℝ}
     (hμ : 0 < μ.val) (hcp : 0 < cp.val) (hk : 0 < k.val) :

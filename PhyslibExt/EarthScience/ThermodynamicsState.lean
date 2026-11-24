@@ -69,7 +69,8 @@ theorem isochoric_heating {C Q U0 U1 T0 T1 : ℝ} (hC : 0 < C) (_hQ : 0 ≤ Q)
   · have h := isochoric_temperature_change hC hbalance hconst
     linarith
 
-/-- Zero heat input gives zero temperature change in the same model. -/
+/-- Zero heat input gives zero temperature change in the same model (`C > 0`,
+`U1 - U0 = 0` and `U1 - U0 = C * (T1 - T0)`). -/
 theorem isochoric_zero_heating {C U0 U1 T0 T1 : ℝ} (hC : 0 < C)
     (hbalance : U1 - U0 = 0) (hconst : U1 - U0 = C * (T1 - T0)) :
     T1 = T0 := by

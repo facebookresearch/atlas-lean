@@ -59,17 +59,20 @@ namespace MechanicalIntegrators
 oscillator with mass `m`, stiffness `k`, and step `h`, acting on the
 state `(q, p)`: `p' = p - h * k * q`, `q' = q + h * p' / m`, so
 `M = [[1 - h^2 * k / m, h / m], [-h * k, 1]]` in `(q, p)` coordinates,
-written with `Matrix.of` over `Fin 2`. -/
+written with `Matrix.of` over `Fin 2`. With `a / 0 = 0` the entries with `m` in the
+denominator are `0` when `m = 0`; the intended domain is `m > 0`. -/
 noncomputable def symplecticEulerMatrix (m k h : ℝ) :
     Matrix (Fin 2) (Fin 2) ℝ :=
   Matrix.of ![![1 - h ^ 2 * k / m, h / m], ![-h * k, 1]]
 
 /-- The explicit Euler step matrix for the same oscillator:
-`q' = q + h * p / m`, `p' = p - h * k * q`. -/
+`q' = q + h * p / m`, `p' = p - h * k * q`. With `a / 0 = 0` the entry `h / m` is `0`
+when `m = 0`; the intended domain is `m > 0`. -/
 noncomputable def explicitEulerMatrix (m k h : ℝ) : Matrix (Fin 2) (Fin 2) ℝ :=
   Matrix.of ![![1, h / m], ![-h * k, 1]]
 
-/-- Oscillator energy of the state `(q, p)`: `p^2 / (2m) + k q^2 / 2`. -/
+/-- Oscillator energy of the state `(q, p)`: `p^2 / (2m) + k q^2 / 2`. With `a / 0 = 0` the
+kinetic term is `0` when `m = 0`. -/
 noncomputable def oscillatorEnergy (m k : ℝ) (state : Fin 2 → ℝ) : ℝ :=
   state 1 ^ 2 / (2 * m) + k * state 0 ^ 2 / 2
 

@@ -43,7 +43,7 @@ derivative `0`; the Fourier heat flux is `q = -k * (TL - T0) / L`.
 
 namespace EarthScience
 
-/-- The linear slab profile meets both boundary temperatures. -/
+/-- For `L > 0`, the linear slab profile meets both boundary temperatures. -/
 theorem slab_profile_boundary {T0 TL L : ℝ} (hL : 0 < L) :
     (fun z => T0 + (TL - T0) * z / L) 0 = T0 ∧
       (fun z => T0 + (TL - T0) * z / L) L = TL := by

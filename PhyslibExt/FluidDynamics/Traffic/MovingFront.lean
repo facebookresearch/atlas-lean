@@ -89,8 +89,8 @@ private lemma inventory_deriv_eq_iff (kL kR a b s xi0 qL qR t : ℝ) :
     rw [heq]
     exact inventory_hasDerivAt kL kR a b s xi0 t
 
-/-- When the two states differ, the front speed is forced to be the
-Rankine-Hugoniot speed `(qR - qL) / (kR - kL)`. -/
+/-- When the two states differ (`kR ≠ kL`) and the balance `s * (kR - kL) = qR - qL` holds, the
+front speed is forced to be the Rankine-Hugoniot speed `(qR - qL) / (kR - kL)`. -/
 theorem front_speed_eq_of_ne {kL kR s qL qR : ℝ} (h : kR ≠ kL)
     (hbal : s * (kR - kL) = qR - qL) : s = (qR - qL) / (kR - kL) := by
   have hne : kR - kL ≠ 0 := sub_ne_zero.mpr h

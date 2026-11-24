@@ -124,17 +124,17 @@ so the results assume `ṁ > 0`. Each result assumes only the hypotheses its pro
 
 namespace HeatTransfer
 
-/-- Temperature profile of the steady one-dimensional slab with constant
-conductivity and uniform volumetric heat source `H`: on a slab of
-thickness `L` with surface temperatures `Ts` and `Tb`,
-`T(d) = Ts + ((Tb - Ts) / L + H * L / (2k)) * d - H * d^2 / (2k)`. This is
-the existing geotherm profile shape read as a slab model; `H` is an
-externally supplied heat source. It is intended for `L ≠ 0`, `k ≠ 0`. -/
+/-- Temperature profile of the steady one-dimensional slab with constant conductivity and uniform
+volumetric heat source `H`: on a slab of thickness `L` with surface temperatures `Ts` and `Tb`,
+`T(d) = Ts + ((Tb - Ts) / L + H * L / (2k)) * d - H * d^2 / (2k)`. This is the existing geotherm
+profile shape read as a slab model; `H` is an externally supplied heat source. It is intended for
+`L ≠ 0`, `k ≠ 0`; with `x / 0 = 0` the quotients by `L` are `0` when `L = 0` and those by `k` are
+`0` when `k = 0`. -/
 noncomputable def slabTemperature (Ts Tb L k H d : ℝ) : ℝ :=
   Ts + ((Tb - Ts) / L + H * L / (2 * k)) * d - H * d ^ 2 / (2 * k)
 
-/-- Temperature gradient of the slab profile,
-`T'(d) = (Tb - Ts) / L + H * L / (2k) - H * d / k`. -/
+/-- Temperature gradient of the slab profile, `T'(d) = (Tb - Ts) / L + H * L / (2k) - H * d / k`;
+with `x / 0 = 0` the quotients by `L` are `0` when `L = 0` and those by `k` are `0` when `k = 0`. -/
 noncomputable def slabGradient (Ts Tb L k H d : ℝ) : ℝ :=
   (Tb - Ts) / L + H * L / (2 * k) - H * d / k
 
@@ -142,7 +142,7 @@ noncomputable def slabGradient (Ts Tb L k H d : ℝ) : ℝ :=
 lemma slabTemperature_zero (Ts Tb L k H : ℝ) : slabTemperature Ts Tb L k H 0 = Ts := by
   simp [slabTemperature]
 
-/-- Right surface value of the slab profile. -/
+/-- Right surface value of the slab profile, `T(L) = Tb`, for `L ≠ 0` and `k ≠ 0`. -/
 lemma slabTemperature_length {Ts Tb L k H : ℝ} (hL : L ≠ 0) (hk : k ≠ 0) :
     slabTemperature Ts Tb L k H L = Tb := by
   unfold slabTemperature
@@ -150,11 +150,10 @@ lemma slabTemperature_length {Ts Tb L k H : ℝ} (hL : L ≠ 0) (hk : k ≠ 0) :
   field_simp
   ring
 
-/-- Total outward heat removal per unit area from both slab faces:
-`(k * T'(0)) - (k * T'(L)) = H * L`. The conductive flux in this
-coordinate is `-k * T'`, so the two terms are the outward fluxes at the
-left and right faces; their sum balances the uniform source integrated
-over the thickness. -/
+/-- Total outward heat removal per unit area from both slab faces, for `k ≠ 0`:
+`(k * T'(0)) - (k * T'(L)) = H * L`. The conductive flux in this coordinate is `-k * T'`, so the two
+terms are the outward fluxes at the left and right faces; their sum balances the uniform source
+integrated over the thickness. -/
 lemma outwardFluxSum {Ts Tb L k H : ℝ} (hk : k ≠ 0) :
     k * slabGradient Ts Tb L k H 0 - k * slabGradient Ts Tb L k H L = H * L := by
   unfold slabGradient
@@ -164,8 +163,7 @@ lemma outwardFluxSum {Ts Tb L k H : ℝ} (hk : k ≠ 0) :
   field_simp
   ring
 
-/-- Equal surface temperatures: the midplane temperature is
-`Ts + H * L^2 / (8k)`. -/
+/-- Equal surface temperatures and `k ≠ 0`: the midplane temperature is `Ts + H * L^2 / (8k)`. -/
 lemma slabTemperature_midplane {Ts L k H : ℝ} (hk : k ≠ 0) :
     slabTemperature Ts Ts L k H (L / 2) = Ts + H * L ^ 2 / (8 * k) := by
   unfold slabTemperature
@@ -175,9 +173,8 @@ lemma slabTemperature_midplane {Ts L k H : ℝ} (hk : k ≠ 0) :
   field_simp
   ring
 
-/-- Equal surface temperatures with nonnegative source: the midplane is
-the maximum of the profile on the slab, and its value is the midplane
-temperature above. -/
+/-- Equal surface temperatures with nonnegative source, `k > 0` and `0 ≤ d ≤ L`: the midplane is the
+maximum of the profile on the slab, and its value is the midplane temperature above. -/
 lemma slabTemperature_le_midplane {Ts L k H d : ℝ} (hk : 0 < k)
     (hH : 0 ≤ H) (hd0 : 0 ≤ d) (hdL : d ≤ L) :
     slabTemperature Ts Ts L k H d ≤ Ts + H * L ^ 2 / (8 * k) := by
@@ -208,27 +205,25 @@ lemma slabTemperature_hasDerivAt {Ts Tb L k H d : ℝ} :
     HasDerivAt (slabTemperature Ts Tb L k H) (slabGradient Ts Tb L k H d) d :=
   EarthScience.geotherm_hasDerivAt
 
-/-- The slab gradient itself has derivative `-H / k`, and the steady
-balance `k * T'' + H = 0` holds: `EarthScience.geotherm_second_deriv`
-for the same profile. -/
+/-- For `k > 0`, the slab gradient itself has derivative `-H / k`, and the steady balance
+`k * T'' + H = 0` holds: `EarthScience.geotherm_second_deriv` for the same profile. -/
 lemma slabGradient_hasDerivAt {Ts Tb L k H d : ℝ} (hk : 0 < k) :
     HasDerivAt (slabGradient Ts Tb L k H) (-H / k) d ∧ k * (-H / k) + H = 0 :=
   EarthScience.geotherm_second_deriv hk
 
 /-! ## C. Regular heated cylinder -/
 
-/-- Temperature profile of the steady solid cylinder with constant
-conductivity `k` and uniform volumetric heat source `qvol`: at radius
-`r` in a cylinder of radius `R` with surface temperature `Ts`,
-`T(r) = Ts + qvol * (R^2 - r^2) / (4k)`. This is the regular polynomial
-profile; at `r = 0` it is read through its polynomial extension, not by
-evaluating a radial flux divided by `r`. Intended for `k ≠ 0`; the
-physical profile is the restriction to `0 ≤ r ≤ R` with `0 < R`. -/
+/-- Temperature profile of the steady solid cylinder with constant conductivity `k` and uniform
+volumetric heat source `qvol`: at radius `r` in a cylinder of radius `R` with surface temperature
+`Ts`, `T(r) = Ts + qvol * (R^2 - r^2) / (4k)`. This is the regular polynomial profile; at `r = 0` it
+is read through its polynomial extension, not by evaluating a radial flux divided by `r`. Intended
+for `k ≠ 0` (with `x / 0 = 0` it is `Ts` when `k = 0`); the physical profile is the restriction to
+`0 ≤ r ≤ R` with `0 < R`. -/
 noncomputable def cylinderTemperature (Ts R k qvol r : ℝ) : ℝ :=
   Ts + qvol * (R ^ 2 - r ^ 2) / (4 * k)
 
-/-- Radial temperature gradient of the cylinder profile,
-`T'(r) = -qvol * r / (2k)`. -/
+/-- Radial temperature gradient of the cylinder profile, `T'(r) = -qvol * r / (2k)` (`0` when
+`k = 0`, since `x / 0 = 0`). -/
 noncomputable def cylinderGradient (k qvol r : ℝ) : ℝ :=
   -qvol * r / (2 * k)
 
@@ -260,7 +255,7 @@ radial slope at `r = 0`. -/
 lemma cylinderGradient_zero (k qvol : ℝ) : cylinderGradient k qvol 0 = 0 := by
   simp [cylinderGradient]
 
-/-- Derivative of the cylinder profile is the stated gradient. -/
+/-- For `k ≠ 0`, the derivative of the cylinder profile is the stated gradient. -/
 lemma hasDerivAt_cylinderTemperature {Ts R k qvol r : ℝ} (hk : k ≠ 0) :
     HasDerivAt (cylinderTemperature Ts R k qvol) (cylinderGradient k qvol r) r := by
   have h2k : (2 : ℝ) * k ≠ 0 := mul_ne_zero (by norm_num) hk
@@ -344,9 +339,9 @@ theorem cylinder_outwardPower_of_pos {R k qvol : ℝ} (hR : 0 < R)
 /-! ### D.1. Power shape and the steady coolant profile -/
 
 /-- Chopped-cosine linear power `q'(z) = q₀ * cos (π z / Lₑ)` (power per unit length) at axial
-position `z`, with peak `q₀` at the midplane and extrapolated length `Lₑ`; a prescribed model
-input. Intended for `Lₑ > 0`; on the heated length `[-L/2, L/2]` with `L ≤ Lₑ` its values lie in
-`[0, q₀]` for `q₀ ≥ 0`. -/
+position `z`, with peak `q₀` at the midplane and extrapolated length `Lₑ`; a prescribed model input.
+Intended for `Lₑ > 0` (with `x / 0 = 0` it is the constant `q₀` when `Lₑ = 0`); on the heated length
+`[-L/2, L/2]` with `L ≤ Lₑ` its values lie in `[0, q₀]` for `q₀ ≥ 0`. -/
 noncomputable def cosineLinearPower (q0 Le z : ℝ) : ℝ := q0 * Real.cos (Real.pi * z / Le)
 
 /-- `T` is a steady coolant temperature on the heated length `[-L/2, L/2]` with inlet value
@@ -358,14 +353,14 @@ def IsSteadyCoolantProfile (mdot cp q0 Le L Tin : ℝ) (T : ℝ → ℝ) : Prop 
 
 /-- Coolant temperature obtained by integrating `ṁ * cp * T' = q'` from the inlet:
 `T(z) = Tin + q₀ Lₑ (sin (π z / Lₑ) + sin (π L / (2 Lₑ))) / (π ṁ cp)`. Intended for `ṁ > 0`,
-`cp > 0`, `Lₑ > 0`. -/
+`cp > 0`, `Lₑ > 0`; with `x / 0 = 0` it is `Tin` when `ṁ cp = 0` or `Lₑ = 0`. -/
 noncomputable def coolantTemperature (mdot cp q0 Le L Tin z : ℝ) : ℝ :=
   Tin + q0 * Le * (Real.sin (Real.pi * z / Le) + Real.sin (Real.pi * L / (2 * Le))) /
     (Real.pi * mdot * cp)
 
 /-- Coolant outlet temperature `Tout = Tin + 2 q₀ Lₑ sin (π L / (2 Lₑ)) / (π ṁ cp)`. Intended for
-`ṁ > 0` and `cp > 0`; at `ṁ = 0` Lean's `x / 0 = 0` gives the junk value `Tin`, while blocked flow
-has no steady state (`fixture_blocked_flow`). -/
+`ṁ > 0` and `cp > 0`; at `ṁ = 0` or `cp = 0` the convention `x / 0 = 0` gives the junk value `Tin`,
+while blocked flow has no steady state (`fixture_blocked_flow`). -/
 noncomputable def coolantOutletTemp (mdot cp q0 Le L Tin : ℝ) : ℝ :=
   Tin + 2 * q0 * Le * Real.sin (Real.pi * L / (2 * Le)) / (Real.pi * mdot * cp)
 

@@ -96,12 +96,15 @@ namespace FluidDynamics.IdealAirfoilModels
 
 namespace JoukowskiBranch
 
-/-- The Joukowski map `J(ζ) = ζ + a^2 / ζ` (totalized at `ζ = 0`). -/
+/-- The Joukowski map `J(ζ) = ζ + a^2 / ζ`, meant for `ζ ≠ 0`; with the convention `x / 0 = 0`,
+`J(0) = 0`. -/
 noncomputable def joukowski (a ζ : ℂ) : ℂ := ζ + a ^ 2 / ζ
 
 /-- The far-field inverse branch
 `ζ(z) = (z / 2) * (1 + sqrt (1 - 4 * a^2 / z^2))` with the principal
-square root. -/
+square root (`sqrt w = exp (log w / 2)` for `w ≠ 0`, `sqrt 0 = 0`; on the negative reals it is
+`I * √|w|`). With `x / 0 = 0`, `ζ(0) = 0`. It is meant for real `0 < a` and `2 * a < ‖z‖`; at
+`z = ±2 * a` the root vanishes and `ζ = ±a`. -/
 noncomputable def farFieldZeta (a z : ℂ) : ℂ :=
   (z / 2) * (1 + Complex.sqrt (1 - 4 * a ^ 2 / z ^ 2))
 
@@ -116,7 +119,8 @@ private theorem sq_sqrt_of_mem_slitPlane {w : ℂ} (hw : w ∈ Complex.slitPlane
   rw [hlog, Complex.exp_log hw0]
 
 /-- Boundary parametrization: the circle point `a * exp (θ * I)`
-maps to the real slit point `2 * a * cos θ`. -/
+maps to the real slit point `2 * a * cos θ`. It holds for every real `a`; at `a = 0` both sides
+are `0`, the left one by the convention `x / 0 = 0`. -/
 theorem joukowski_circle {a θ : ℝ} :
     joukowski a (a * Complex.exp (θ * Complex.I)) =
       (2 * a * Real.cos θ : ℂ) := by
@@ -166,7 +170,7 @@ theorem radicand_mem_slitPlane {a : ℝ} (ha : 0 < a) {z : ℂ}
   linarith [hnorm, hle]
 
 /-- The far-field branch is a right inverse of the Joukowski map
-on the exterior region `2 * a < ‖z‖`. -/
+on the exterior region `2 * a < ‖z‖`, for `0 < a`. -/
 theorem joukowski_farFieldZeta {a : ℝ} (ha : 0 < a) {z : ℂ}
     (hz : 2 * a < ‖z‖) :
     joukowski a (farFieldZeta a z) = z := by
@@ -220,7 +224,7 @@ theorem joukowski_farFieldZeta {a : ℝ} (ha : 0 < a) {z : ℂ}
     linear_combination hquad
   linear_combination e
 
-/-- Route step: on the exterior region the branch satisfies
+/-- For `0 < a`, on the exterior region `2 * a < ‖z‖` the branch satisfies
 `‖z‖ / 2 < ‖ζ(z)‖`. -/
 lemma norm_farFieldZeta_gt_half {a : ℝ} (ha : 0 < a) {z : ℂ}
     (hz : 2 * a < ‖z‖) :
@@ -291,14 +295,14 @@ lemma norm_farFieldZeta_gt_half {a : ℝ} (ha : 0 < a) {z : ℂ}
   rwa [mul_one] at hlt
 
 /-- The far-field branch lands outside the circle of radius `a`:
-`a < ‖ζ(z)‖` whenever `2 * a < ‖z‖`. -/
+`a < ‖ζ(z)‖` whenever `0 < a` and `2 * a < ‖z‖`. -/
 theorem abs_farFieldZeta_gt {a : ℝ} (ha : 0 < a) {z : ℂ}
     (hz : 2 * a < ‖z‖) :
     a < ‖farFieldZeta a z‖ := by
   have h := norm_farFieldZeta_gt_half ha hz
   linarith [h, hz]
 
-/-- The far-field branch is holomorphic on the exterior region. -/
+/-- For `0 < a`, the far-field branch is holomorphic on the exterior region `2 * a < ‖z‖`. -/
 theorem differentiableAt_farFieldZeta {a : ℝ} (ha : 0 < a) {z : ℂ}
     (hz : 2 * a < ‖z‖) :
     DifferentiableAt ℂ (farFieldZeta a) z := by
@@ -324,7 +328,7 @@ theorem differentiableAt_farFieldZeta {a : ℝ} (ha : 0 < a) {z : ℂ}
   unfold farFieldZeta
   exact hleft.fun_mul hright
 
-/-- Kutta cancellation at the trailing edge `ζ = a`: if the
+/-- Kutta cancellation at the trailing edge `ζ = a`, for `0 < a`: if the
 circle-plane numerator
 `U * (exp (-α * I) - a^2 * exp (α * I) / ζ^2) + Γ / (2 * π * I * ζ)`
 vanishes at `ζ = a`, then `Γ = -4 * π * a * U * sin α`. -/
@@ -390,7 +394,10 @@ private theorem denominator_ne_zero {a : ℝ} (ha : 0 < a) {z : ℂ}
 /-! ### Physical complex velocity and its far-field remainder -/
 
 /-- Circle-plane complex velocity (the Kutta numerator):
-`U * (exp (-α * I) - a^2 * exp (α * I) / ζ^2) + Γ / (2 * π * I * ζ)`. -/
+`U * (exp (-α * I) - a^2 * exp (α * I) / ζ^2) + Γ / (2 * π * I * ζ)`.
+It is meant for `ζ ≠ 0`; with the convention `x / 0 = 0` its value at `ζ = 0` is
+`U * exp (-α * I)`. It is read as `u - I * v`, with free stream `U * (cos α, sin α)` and `Γ > 0`
+counterclockwise. -/
 noncomputable def circleVelocity (a U Γ α : ℝ) (ζ : ℂ) : ℂ :=
   (U : ℂ) * (Complex.exp (-α * Complex.I) -
       a ^ 2 * Complex.exp (α * Complex.I) / ζ ^ 2) +
@@ -398,12 +405,14 @@ noncomputable def circleVelocity (a U Γ α : ℝ) (ζ : ℂ) : ℂ :=
 
 /-- Physical complex velocity on the far-field branch:
 `W(z) = circleVelocity (ζ(z)) / (1 - a^2 / ζ(z)^2)` with `ζ = farFieldZeta a z`
-(division totalized; the denominator vanishes only at `ζ = ±a`). -/
+(division totalized; the denominator vanishes only at `ζ = ±a`). With `x / 0 = 0`, for `0 < a`
+it is `0` at `z = ±2 * a`, where `ζ = ±a`; `W(0) = U * exp (-α * I)`; for `a = 0` it is
+`U * exp (-α * I) + Γ / (2 * π * I * z)`. It is meant for `0 < a` and `2 * a < ‖z‖`. -/
 noncomputable def physicalVelocity (a U Γ α : ℝ) (z : ℂ) : ℂ :=
   circleVelocity a U Γ α (farFieldZeta a z) /
     (1 - a ^ 2 / (farFieldZeta a z) ^ 2)
 
-/-- Kutta value at the trailing edge: with the Kutta circulation
+/-- Kutta value at the trailing edge, for `0 < a`: with the Kutta circulation
 `Γ = -4πaU sin α` from `kutta_cancellation`, the circle velocity
 vanishes at `ζ = a`. -/
 lemma circleVelocity_kutta_trailingEdge {a U α : ℝ} (ha : 0 < a) :
@@ -436,7 +445,7 @@ lemma circleVelocity_kutta_trailingEdge {a U α : ℝ} (ha : 0 < a) :
   rw [mul_div_cancel_left₀ _ ha20, hD, ← Complex.ofReal_sin, hΓ]
   exact add_neg_cancel _
 
-/-- Route step: for `4 * a ≤ ‖z‖` the conformal denominator is bounded
+/-- For `0 < a` and `4 * a ≤ ‖z‖` the conformal denominator is bounded
 away from zero, `3 / 4 ≤ ‖1 - a^2 / ζ(z)^2‖`. -/
 lemma norm_denominator_ge {a : ℝ} (ha : 0 < a) {z : ℂ}
     (hz : 4 * a ≤ ‖z‖) :
@@ -456,7 +465,7 @@ lemma norm_denominator_ge {a : ℝ} (ha : 0 < a) {z : ℂ}
   rw [norm_one] at h1
   linarith [h1, hw]
 
-/-- Holomorphy: the physical complex velocity is complex-differentiable on
+/-- Holomorphy: for `0 < a`, the physical complex velocity is complex-differentiable on
 the whole far-field exterior `2 * a < ‖z‖`. -/
 lemma differentiableOn_physicalVelocity {a : ℝ} (ha : 0 < a) (U Γ α : ℝ) :
     DifferentiableOn ℂ (physicalVelocity a U Γ α) {z : ℂ | 2 * a < ‖z‖} := by
@@ -505,7 +514,7 @@ lemma differentiableOn_physicalVelocity {a : ℝ} (ha : 0 < a) (U Γ α : ℝ) :
     hNcomp.fun_div hD hD0
   exact hfinal.differentiableWithinAt
 
-/-- Explicit far-field remainder: with `R1 = 4 * a` and
+/-- Explicit far-field remainder, for `0 < a`: with `R1 = 4 * a` and
 `K = 12 * |U| * a^2 + a * |Γ|`,
 `‖W(z) - U * exp (-α * I) - Γ / (2 * π * I * z)‖ ≤ K / ‖z‖^2`
 for every `z` with `4 * a ≤ ‖z‖`. -/
@@ -750,7 +759,7 @@ lemma physicalVelocity_farField_bound {a : ℝ} (ha : 0 < a) (U Γ α : ℝ)
     ring
   exact le_trans (norm_add_le _ _) (le_trans (add_le_add hT1 hT2) hsum.le)
 
-/-- Existential packaging of the leaf: holomorphy on `2 * a < ‖z‖` and
+/-- Existential form of the far-field bound, for `0 < a`: holomorphy on `2 * a < ‖z‖` and
 constants `R1 > 2 * a`, `K ≥ 0` with the `K / ‖z‖^2` remainder bound for
 `R1 ≤ ‖z‖`. -/
 lemma exists_physicalVelocity_farField {a : ℝ} (ha : 0 < a) (U Γ α : ℝ) :
@@ -771,15 +780,19 @@ namespace BlasiusForce
 
 /-- Blasius force per unit span (as `Fx - I * Fy`) for the complex
 velocity `W` on the circle of radius `R` about `0`, at density
-`ρ`: `(I * ρ / 2) * ∮ W^2`. -/
+`ρ`: `(I * ρ / 2) * ∮ W^2`. The integral runs once counterclockwise over the circle of radius
+`|R|`: it is `0` for `R = 0`, a negative `R` gives the value at `|R|`, and it is `0` when `W ^ 2`
+is not circle integrable. Meant for `0 < ρ` and `0 < R`. This is the expression of Blasius'
+theorem, taken here as a definition; it is compared with a surface-pressure force only for the
+cylinder (`CylinderPressure.blasiusForce_eq_surfaceForce`). -/
 noncomputable def blasiusForce (ρ : ℝ) (W : ℂ → ℂ) (R : ℝ) : ℂ :=
   (Complex.I * ρ / 2) * ∮ z in C(0, R), (W z) ^ 2
 
-/-- Kutta-Joukowski from a far-field expansion: let `W` be
-holomorphic on the exterior `R0 < ‖z‖`, with
+/-- Kutta-Joukowski from a far-field expansion: for `0 < ρ`, `0 < U` and `0 < R0 < R1`, let `W`
+be holomorphic on the exterior `R0 < ‖z‖`, with
 `W z = A + B / z + e z` for `‖z‖ ≥ R1`, where
-`A = U * exp (-α * I)`, `B = Γ / (2 * π * I)`, and the remainder
-satisfies `‖e z‖ ≤ K / ‖z‖^2` there. Then at every radius
+`A = U * exp (-α * I)`, `B = Γ / (2 * π * I)`, and the remainder `e` is
+complex differentiable and satisfies `‖e z‖ ≤ K / ‖z‖^2` there. Then at every radius
 `R > R0`, the Blasius force is `I * ρ * U * Γ * exp (-α * I)`. -/
 theorem blasiusForce_eq {ρ U Γ α R0 R1 K : ℝ} (hρ : 0 < ρ)
     (hU : 0 < U) (hR0 : 0 < R0) (hR1 : R0 < R1)
@@ -1018,14 +1031,15 @@ noncomputable def signedLift (C : ℂ) (α : ℝ) : ℝ :=
 
 /-- Lift coefficient for a two-dimensional force per unit span:
 `L / (ρ * U^2 * c / 2)`, where `L` is signed lift and `c` is chord.
-As usual in Lean, division by zero is totalized; the coefficient
-formulas below assume the factors being cancelled are nonzero. -/
+With the convention `x / 0 = 0` it is `0` when `ρ`, `U` or `c` is `0`; it is meant for
+`0 < ρ`, `0 < U`, `0 < c`, and the coefficient formulas below assume the factors being cancelled
+are nonzero. -/
 noncomputable def liftCoefficient (L ρ U c : ℝ) : ℝ :=
   L / (ρ * U ^ 2 * c / 2)
 
 /-- Bridge from the far-field package to the force value used below:
-for the physical velocity at any circulation `Γ` and any contour
-radius `R > 2 * a`, the Blasius force is `I * ρ * U * Γ * exp (-α * I)`.
+for `0 < a`, `0 < ρ`, `0 < U`, any circulation `Γ` and any contour radius `R > 2 * a`, the
+Blasius force of the physical velocity is `I * ρ * U * Γ * exp (-α * I)`.
 This combines `JoukowskiBranch.exists_physicalVelocity_farField` with
 `BlasiusForce.blasiusForce_eq`, taking the decomposition remainder to
 be the difference from the two-term far-field expansion. -/
@@ -1109,9 +1123,10 @@ lemma signedLift_of_blasiusForce_eq {a ρ U Γ α R : ℝ}
 
 /-- Lift coefficient for the Kutta circulation
 `Γ = -4 * π * a * U * sin α`, signed lift `-ρ * U * Γ`, and chord
-`c = 4 * a`: the coefficient is `2 * π * sin α`. The nonzero
-hypotheses are the factors cancelled in
-`(-ρ * U * Γ) / (ρ * U^2 * (4 * a) / 2)`. -/
+`c = 4 * a`: the coefficient is `2 * π * sin α`. The hypotheses
+`a ≠ 0`, `ρ ≠ 0`, `U ≠ 0` are the factors cancelled in
+`(-ρ * U * Γ) / (ρ * U^2 * (4 * a) / 2)`; if one of them is `0`, the coefficient is `0`
+(`x / 0 = 0`). -/
 lemma liftCoefficient_kutta {a ρ U α : ℝ}
     (ha : a ≠ 0) (hρ : ρ ≠ 0) (hU : U ≠ 0) :
     liftCoefficient (-ρ * U * (-4 * Real.pi * a * U * Real.sin α))
@@ -1141,7 +1156,8 @@ lemma abs_two_pi_sin_sub_two_pi_le {α : ℝ} :
     _ = Real.pi * |α| ^ 3 / 3 := by ring
 
 /-- Kutta-selected signed lift, lift coefficient, and small-angle
-bound for the physical velocity, at any contour radius `R > 2 * a`.
+bound for the physical velocity, for `0 < a`, `0 < ρ`, `0 < U`, at any contour radius
+`R > 2 * a`.
 
 The Blasius force value at radius `R` comes from the far-field
 package through `blasiusForce_physicalVelocity`. With chord
@@ -1192,13 +1208,16 @@ namespace CylinderFlow
 for freestream `U`, radius `a`, circulation `Γ`, at `(x, y)` with
 `r² = x² + y²`,
 `u = U * (1 - a²(x² - y²)/r⁴) - Γy/(2πr²)`. This is the real part
-of `W(z) = U(1 - a²/z²) + Γ/(2πiz)` read as `u - iv`. -/
+of `W(z) = U(1 - a²/z²) + Γ/(2πiz)` read as `u - iv`. It is meant for `r ≠ 0`; with division
+by zero giving `0`, `u = U` at the origin. In the model `0 < a`, `a ≤ r`, and `Γ > 0` is
+counterclockwise. -/
 noncomputable def cylU (U a Γ x y : ℝ) : ℝ :=
   U * (1 - a ^ 2 * (x ^ 2 - y ^ 2) / (x ^ 2 + y ^ 2) ^ 2) -
     Γ * y / (2 * Real.pi * (x ^ 2 + y ^ 2))
 
 /-- Vertical velocity: `v = -2Ua²xy/r⁴ + Γx/(2πr²)`, the negative
-imaginary part of `W` under the `u - iv` convention. -/
+imaginary part of `W` under the `u - iv` convention. It is meant for `r ≠ 0`; with division by
+zero giving `0`, `v = 0` at the origin. -/
 noncomputable def cylV (U a Γ x y : ℝ) : ℝ :=
   -2 * U * a ^ 2 * x * y / (x ^ 2 + y ^ 2) ^ 2 +
     Γ * x / (2 * Real.pi * (x ^ 2 + y ^ 2))
@@ -1206,7 +1225,9 @@ noncomputable def cylV (U a Γ x y : ℝ) : ℝ :=
 /-- Stream function
 `ψ(x, y) = U(y - a²y/r²) - (Γ/2π) log(r/a)`, a single-valued real
 function on `r > 0` (no logarithmic potential or branch choice):
-`u = ψ_y`, `v = -ψ_x`. -/
+`u = ψ_y`, `v = -ψ_x` for `0 < a` and `r ≠ 0`. With division by zero giving `0`, `log 0 = 0`
+and `log s = log |s|`: `ψ = 0` at the origin, `ψ = U * y` for `a = 0`, and for `a < 0` the
+value is that for `|a|`. -/
 noncomputable def cylStream (U a Γ x y : ℝ) : ℝ :=
   U * (y - a ^ 2 * y / (x ^ 2 + y ^ 2)) -
     Γ / (2 * Real.pi) * Real.log (Real.sqrt (x ^ 2 + y ^ 2) / a)
@@ -1390,12 +1411,16 @@ namespace CylinderPressure
 
 /-- The `x` component of the pressure force per unit span on the circle `r = a`. On the arc
 element `a dθ` at `a e^{iθ}` the pressure pushes along the normal `-(cos θ, sin θ)` that points
-into the body, so `Fx = -∫₀^{2π} p (a e^{iθ}) cos θ a dθ`. -/
+into the body, so `Fx = -∫₀^{2π} p (a e^{iθ}) cos θ a dθ`. It is meant for `0 < a` and an
+integrable pressure; it is `0` when the integrand is not interval integrable and when `a = 0`,
+and a negative `a` gives the value at `|a|`. -/
 noncomputable def surfaceForceX (p : ℂ → ℝ) (a : ℝ) : ℝ :=
   -(a * ∫ θ in (0 : ℝ)..2 * Real.pi, p (circleMap 0 a θ) * Real.cos θ)
 
 /-- The `y` component of the pressure force per unit span on the circle `r = a`,
-`Fy = -∫₀^{2π} p (a e^{iθ}) sin θ a dθ`. -/
+`Fy = -∫₀^{2π} p (a e^{iθ}) sin θ a dθ`. It is meant for `0 < a` and an integrable pressure;
+it is `0` when the integrand is not interval integrable and when `a = 0`, and a negative `a`
+gives the value at `|a|`. -/
 noncomputable def surfaceForceY (p : ℂ → ℝ) (a : ℝ) : ℝ :=
   -(a * ∫ θ in (0 : ℝ)..2 * Real.pi, p (circleMap 0 a θ) * Real.sin θ)
 
@@ -1434,7 +1459,7 @@ lemma circleVelocity_zero_eq_cyl {a U Γ : ℝ} {z : ℂ} (hz : z ≠ 0) :
     field_simp
     ring
 
-/-- On the cylinder `z = a e^{iθ}` the squared speed `‖W‖ ^ 2` is
+/-- For `0 < a`, on the cylinder `z = a e^{iθ}` the squared speed `‖W‖ ^ 2` is
 `(2 * U * sin θ - Γ / (2 * π * a)) ^ 2`. -/
 lemma norm_sq_circleVelocity_zero_circleMap {a U Γ : ℝ} (ha : 0 < a) (θ : ℝ) :
     ‖JoukowskiBranch.circleVelocity a U Γ 0 (circleMap 0 a θ)‖ ^ 2 =
@@ -1463,7 +1488,8 @@ lemma norm_sq_circleVelocity_zero_circleMap {a U Γ : ℝ} (ha : 0 < a) (θ : �
   rw [hc]
   ring
 
-/-- Under the whole-domain pressure law, the pressure on the cylinder is
+/-- For `0 < a`, under the pressure law `p z = pInf + ρ * (U ^ 2 - ‖w z‖ ^ 2) / 2` on
+`a ≤ ‖z‖` (`w` the circle velocity at `α = 0`), the pressure on the cylinder is
 `p (a e^{iθ}) = p∞ + ρ * (U ^ 2 - (2 * U * sin θ - Γ / (2 * π * a)) ^ 2) / 2`. -/
 lemma surfacePressure_circleMap {p : ℂ → ℝ} {pInf ρ a U Γ : ℝ} (ha : 0 < a)
     (hp : ∀ z : ℂ, a ≤ ‖z‖ →
@@ -1486,7 +1512,8 @@ lemma surfaceForce_const (c a : ℝ) :
     rw [intervalIntegral.integral_const_mul, integral_sin, Real.cos_two_pi, Real.cos_zero]
     ring
 
-/-- Under the whole-domain pressure law, both surface-pressure integrands are interval
+/-- For `0 < a`, under the pressure law `p z = pInf + ρ * (U ^ 2 - ‖w z‖ ^ 2) / 2` on
+`a ≤ ‖z‖` (`w` the circle velocity at `α = 0`), both surface-pressure integrands are interval
 integrable on `[0, 2π]`: the surface integral is a regular integral. -/
 lemma surfacePressure_intervalIntegrable {p : ℂ → ℝ} {pInf ρ a U Γ : ℝ} (ha : 0 < a)
     (hp : ∀ z : ℂ, a ≤ ‖z‖ →
@@ -1505,7 +1532,8 @@ lemma surfacePressure_intervalIntegrable {p : ℂ → ℝ} {pInf ρ a U Γ : ℝ
   exact ⟨(hc.mul Real.continuous_cos).intervalIntegrable _ _,
     (hc.mul Real.continuous_sin).intervalIntegrable _ _⟩
 
-/-- Under the whole-domain pressure law, the surface-pressure force on the cylinder is
+/-- For `0 < a`, under the pressure law `p z = pInf + ρ * (U ^ 2 - ‖w z‖ ^ 2) / 2` on
+`a ≤ ‖z‖` (`w` the circle velocity at `α = 0`), the surface-pressure force on the cylinder is
 `(Fx, Fy) = (0, -ρ * U * Γ)`. -/
 lemma surfaceForce_eq {p : ℂ → ℝ} {pInf ρ a U Γ : ℝ} (ha : 0 < a)
     (hp : ∀ z : ℂ, a ≤ ‖z‖ →
@@ -1552,7 +1580,8 @@ lemma surfaceForce_eq {p : ℂ → ℝ} {pInf ρ a U Γ : ℝ} (ha : 0 < a)
     have hpi : Real.pi ≠ 0 := Real.pi_ne_zero
     field_simp
 
-/-- The Blasius contour force at zero incidence, on every circle `|z| = R` with `a ≤ R`, is
+/-- For `0 < ρ`, `0 < a` and `0 < U`, the Blasius contour force at zero incidence, on every
+circle `|z| = R` with `a ≤ R`, is
 `I * ρ * U * Γ`: `Fx = 0` and `Fy = -ρ * U * Γ`. -/
 lemma blasiusForce_circleVelocity_zero {ρ a U Γ R : ℝ} (hρ : 0 < ρ) (ha : 0 < a)
     (hU : 0 < U) (hR : a ≤ R) :
@@ -1605,7 +1634,8 @@ lemma blasiusForce_circleVelocity_zero {ρ a U Γ R : ℝ} (hρ : 0 < ρ) (ha : 
 
 /-- The regular surface-pressure force agrees with the contour force: on every circle
 `|z| = R` with `a ≤ R`, the Blasius force is `Fx - I * Fy` for the surface-pressure force
-`(Fx, Fy)` of the whole-domain pressure law. -/
+`(Fx, Fy)` of the whole-domain pressure law `p z = pInf + ρ * (U ^ 2 - ‖w z‖ ^ 2) / 2` on
+`a ≤ ‖z‖` (`w` the circle velocity at `α = 0`), for `0 < ρ`, `0 < a` and `0 < U`. -/
 lemma blasiusForce_eq_surfaceForce {p : ℂ → ℝ} {pInf ρ a U Γ R : ℝ} (hρ : 0 < ρ)
     (ha : 0 < a) (hU : 0 < U)
     (hp : ∀ z : ℂ, a ≤ ‖z‖ →

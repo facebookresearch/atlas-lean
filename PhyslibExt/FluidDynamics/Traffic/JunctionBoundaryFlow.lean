@@ -116,13 +116,15 @@ open MathlibExt.Combinatorics.Graph.ArcNetwork
 
 /-! ## A. Turning flows and link boundary flows -/
 
-/-- Downstream boundary flow of commodity `c` on link `e`: its total turning flow from `e` into
-the junction at `head e`. -/
+/-- Downstream boundary flow of commodity `c` on link `e`: its total turning flow out of `e`, summed
+over all links; for a certificate supported on movements only the links starting at `head e`
+contribute. -/
 def linkOutflow {E C : Type*} [Fintype E] (q : C → E → E → ℝ) (c : C) (e : E) : ℝ :=
   ∑ e', q c e e'
 
-/-- Upstream boundary flow of commodity `c` on link `e`: its total turning flow from the
-junction at `tail e` into `e`. -/
+/-- Upstream boundary flow of commodity `c` on link `e`: its total turning flow into `e`, summed
+over all links; for a certificate supported on movements only the links ending at `tail e`
+contribute. -/
 def linkInflow {E C : Type*} [Fintype E] (q : C → E → E → ℝ) (c : C) (e : E) : ℝ :=
   ∑ e₀, q c e₀ e
 
@@ -132,9 +134,10 @@ noncomputable def turningFraction {E C : Type*} [Fintype E] (q : C → E → E �
     (e e' : E) : ℝ :=
   q c e e' / linkOutflow q c e
 
-/-- Junction-local receiving constraint: for every link `e'`, the turning flows into `e'` from
-the incoming links of the junction `tail e'`, summed over commodities, are at most the
-receiving supply of the first cell of `e'`. -/
+/-- Junction-local receiving constraint: for every link `e'`, the turning flows into `e'` from the
+incoming links of the junction `tail e'`, summed over commodities, are at most the receiving supply
+of the first cell of `e'`. With the convention `x / 0 = 0` the capacity term of the supply is `0`
+when `vf e' + w e' = 0`. -/
 def IsSupplyFeasible {V E C : Type*} [DecidableEq V] [Fintype E] [Fintype C]
     (tail head : E → V) (vf w kj kFirst : E → ℝ) (q : C → E → E → ℝ) : Prop :=
   ∀ e', ∑ c, ∑ e with head e = tail e', q c e e' ≤ supply (vf e') (w e') (kj e') (kFirst e')

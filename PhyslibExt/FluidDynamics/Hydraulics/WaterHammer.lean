@@ -82,8 +82,8 @@ open PhyslibExt.ClassicalMechanics.WaveEquation.Scalar
 /-! ## A. Mixed-partial criteria and eliminations -/
 
 set_option linter.unusedVariables false in
-/-- Mixed-partial criterion for the head. For the water-hammer pair with first partials
-`ht hx qt qx`, second derivatives `hxx = ∂ₓ hx`, `qxt = ∂ₜ qx` and `qtx = ∂ₓ qt`, the head
+/-- Mixed-partial criterion for the head. For `a, g, A > 0` and the water-hammer pair with first
+partials `ht hx qt qx`, second derivatives `hxx = ∂ₓ hx`, `qxt = ∂ₜ qx` and `qtx = ∂ₓ qt`, the head
 satisfies `h_tt = a² h_xx` at `(t, x)` exactly when `qxt t x = qtx t x`. The four basic
 slice-derivative premises are interface premises and are idle in this pointwise criterion. -/
 lemma head_wave_iff_mixed {a g A : ℝ} (ha : 0 < a) (hg : 0 < g) (hA : 0 < A)
@@ -150,10 +150,10 @@ lemma head_wave_iff_mixed {a g A : ℝ} (ha : 0 < a) (hg : 0 < g) (hA : 0 < A)
     exact hneg.congr_of_eventuallyEq (Filter.Eventually.of_forall fun s => rfl)
 
 set_option linter.unusedVariables false in
-/-- Mixed-partial criterion for the discharge. With `hxt = ∂ₜ hx`, `htx = ∂ₓ ht` and
-`qxx = ∂ₓ qx`, the discharge satisfies `q_tt = a² q_xx` at `(t, x)` exactly when
-`hxt t x = htx t x`. The four basic slice-derivative premises are interface premises and
-are idle in this pointwise criterion. -/
+/-- Mixed-partial criterion for the discharge. For `a, g, A > 0` and the water-hammer pair, with
+`hxt = ∂ₜ hx`, `htx = ∂ₓ ht` and `qxx = ∂ₓ qx`, the discharge satisfies `q_tt = a² q_xx` at
+`(t, x)` exactly when `hxt t x = htx t x`. The four basic slice-derivative premises are interface
+premises and are idle in this pointwise criterion. -/
 lemma discharge_wave_iff_mixed {a g A : ℝ} (ha : 0 < a) (hg : 0 < g) (hA : 0 < A)
     {h q ht hx qt qx qxx hxt htx : ℝ → ℝ → ℝ}
     (hht : ∀ t x, HasDerivAt (fun s => h s x) (ht t x) t)
@@ -224,8 +224,8 @@ lemma discharge_wave_iff_mixed {a g A : ℝ} (ha : 0 < a) (hg : 0 < g) (hA : 0 <
     have hneg := hC.neg
     exact hneg.congr_of_eventuallyEq (Filter.Eventually.of_forall fun s => rfl)
 
-/-- Head wave equation: eliminating `q` from the water-hammer pair, under the second
-derivatives `hxx = ∂ₓ hx`, `qxt = ∂ₜ qx`, `qtx = ∂ₓ qt` and the mixed-partial equality
+/-- Head wave equation: for `a, g, A > 0`, eliminating `q` from the water-hammer pair, under the
+second derivatives `hxx = ∂ₓ hx`, `qxt = ∂ₜ qx`, `qtx = ∂ₓ qt` and the mixed-partial equality
 `qxt = qtx`, gives `h_tt = a² h_xx` (as a derivative of the time-derivative field `ht`). -/
 theorem head_wave {a g A : ℝ} (ha : 0 < a) (hg : 0 < g) (hA : 0 < A)
     {h q ht hx qt qx hxx qxt qtx : ℝ → ℝ → ℝ}
@@ -243,8 +243,9 @@ theorem head_wave {a g A : ℝ} (ha : 0 < a) (hg : 0 < g) (hA : 0 < A)
   exact (head_wave_iff_mixed ha hg hA hht hqt hhx hqx hpde1 hpde2 hhxx hqxt hqtx t x).mpr
     (hmix t x)
 
-/-- Discharge wave equation: eliminating `h`, under `qxx = ∂ₓ qx`, `hxt = ∂ₜ hx`,
-`htx = ∂ₓ ht` and the mixed-partial equality `hxt = htx`, gives `q_tt = a² q_xx`. -/
+/-- Discharge wave equation: for `a, g, A > 0`, eliminating `h`, under `qxx = ∂ₓ qx`,
+`hxt = ∂ₜ hx`, `htx = ∂ₓ ht` and the mixed-partial equality `hxt = htx`, gives
+`q_tt = a² q_xx`. -/
 theorem discharge_wave {a g A : ℝ} (ha : 0 < a) (hg : 0 < g) (hA : 0 < A)
     {h q ht hx qt qx qxx hxt htx : ℝ → ℝ → ℝ}
     (hht : ∀ t x, HasDerivAt (fun s => h s x) (ht t x) t)

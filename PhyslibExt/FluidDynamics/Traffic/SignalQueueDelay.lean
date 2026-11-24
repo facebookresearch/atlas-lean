@@ -107,7 +107,7 @@ namespace FluidDynamics.Traffic.SignalQueue
 /-! ## A. Cumulative counts of the signal queue -/
 
 /-- Cumulative arrivals by time `s`: `lam * s` vehicles at the constant arrival rate `lam`, as an
-`ℝ≥0` count through `Real.toNNReal` (exact for `0 ≤ lam`). -/
+`ℝ≥0` count through `Real.toNNReal` (exact for `0 ≤ lam`; `0` for `lam < 0`). -/
 noncomputable def arrivals (lam : ℝ) (s : ℝ≥0) : ℝ≥0 :=
   Real.toNNReal (lam * s)
 

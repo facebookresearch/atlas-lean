@@ -226,7 +226,8 @@ def shaftAxis : Fin 3 → ℝ := ![0, 0, 1]
 
 /-- The local cylindrical frame at azimuth `φ` about the shaft: the rotation by `φ` about the third
 axis, whose columns are the radial, tangential and axial unit vectors `e_r = (cos φ, sin φ, 0)`,
-`e_θ = (-sin φ, cos φ, 0)` and `e₃`. -/
+`e_θ = (-sin φ, cos φ, 0)` and `e₃`. A positive `φ` turns `e₁` towards `e₂`, counterclockwise
+seen from the tip of `e₃`. -/
 noncomputable def cylFrame (φ : ℝ) : Matrix.specialOrthogonalGroup (Fin 3) ℝ :=
   ⟨rotZ φ, rotZ_mem_specialOrthogonalGroup φ⟩
 
@@ -234,9 +235,10 @@ noncomputable def cylFrame (φ : ℝ) : Matrix.specialOrthogonalGroup (Fin 3) �
 point of azimuth `φ`, radius `r` and axial station `z`, with the port area `A`. No port surface is
 modelled, and `r` is the port's effective moment radius (see `axialMomentFlux`). In the local
 cylindrical frame at the representative point the inertial fluid velocity has the components
-`(cr, cθ, cz)`, so `cθ` is the inertial swirl velocity, positive along `e_θ`, and the outward
-unit normal has the meridional components `(nr, 0, nz)`, `nr ^ 2 + nz ^ 2 = 1`. The density `ρ`,
-the area `A` and the radius `r` are nonnegative. -/
+`(cr, cθ, cz)`, so `cθ` is the inertial swirl velocity, positive along `e_θ`, the sense of
+increasing azimuth (counterclockwise seen from the tip of `e₃`), and the outward unit normal has
+the meridional components `(nr, 0, nz)`, `nr ^ 2 + nz ^ 2 = 1`. The density `ρ`, the area `A` and
+the radius `r` are nonnegative. -/
 structure RotorPort where
   /-- The density `ρ`. -/
   ρ : ℝ
@@ -287,8 +289,8 @@ noncomputable def normal (P : RotorPort) : Fin 3 → ℝ :=
 
 /-- The lumped mass flow `ρ A (c ⬝ n)`: the local mass flux through the outward normal at the
 representative point times the port area. As `ρ` and `A` are nonnegative, it is nonnegative for
-flow out of the control volume (`c ⬝ n ≥ 0`) and nonpositive for flow into it, strictly when
-`ρ A > 0`. -/
+flow out of the control volume (`c ⬝ n ≥ 0`) and nonpositive for flow into it (`c ⬝ n ≤ 0`). For
+`ρ A > 0` it has the sign of `c ⬝ n`, and it is `0` when `c ⬝ n = 0` or `ρ A = 0`. -/
 noncomputable def lumpedMassFlow (P : RotorPort) : ℝ :=
   P.ρ * P.A * (P.velocity ⬝ᵥ P.normal)
 
@@ -374,14 +376,15 @@ lemma torqueOnFluid_eq {o : Fin 3 → ℝ} {inlet outlet : RotorPort} {mdot τ M
 
 /-! ## C. Power on the fluid and shaft power out -/
 
-/-- The axial torque about the shaft of forces `F k` exerted on the fluid at the points `x k`. -/
+/-- The axial torque about the shaft of finitely many forces `F k` exerted on the fluid at the
+points `x k`. -/
 noncomputable def axialTorque {ι : Type*} [Fintype ι] (o : Fin 3 → ℝ) (x F : ι → Fin 3 → ℝ) :
     ℝ :=
   shaftAxis ⬝ᵥ ∑ k, (x k - o) ⨯₃ F k
 
-/-- The power of forces `F k` exerted on the fluid at the points `x k` of a rotor turning at the
-signed angular speed `ω` about the shaft axis through `o`: the point `x k` moves with the rotor
-velocity `ω e₃ ⨯₃ (x k - o)`. -/
+/-- The power of finitely many forces `F k` exerted on the fluid at the points `x k` of a rotor
+turning at the signed angular speed `ω` (positive counterclockwise seen from the tip of `e₃`) about
+the shaft axis through `o`: the point `x k` moves with the rotor velocity `ω e₃ ⨯₃ (x k - o)`. -/
 noncomputable def rotorPower {ι : Type*} [Fintype ι] (ω : ℝ) (o : Fin 3 → ℝ)
     (x F : ι → Fin 3 → ℝ) : ℝ :=
   ∑ k, F k ⬝ᵥ (ω • (shaftAxis ⨯₃ (x k - o)))
@@ -415,8 +418,8 @@ on the fluid is exerted by forces `F k` at points `x k` moving with the rotor, w
 lumped balances of `powerOnFluid_eq`; the rotor turns steadily, so the axial torques on it balance,
 `τ_shaft + τ_reaction = 0` (no bearing torque), and the fluid reacts on the rotor with
 `τ_reaction = -τ`, `τ` the axial torque of those forces. Then the shaft torque on the rotor is
-`τ`, and the engineering shaft power out `workOut (ω τ_shaft)` is minus the power of the forces on
-the fluid, `ṁ (U₁ cθ₁ - U₂ cθ₂)`. -/
+`τ`, and the engineering shaft power out `workOut (ω τ_shaft) = -ω τ_shaft` is minus the power of
+the forces on the fluid, `ṁ (U₁ cθ₁ - U₂ cθ₂)`. -/
 lemma shaftPowerOut_eq {ι : Type*} [Fintype ι] {ω : ℝ} {o : Fin 3 → ℝ} {x F : ι → Fin 3 → ℝ}
     {inlet outlet : RotorPort} {mdot τShaft τReaction : ℝ}
     (hin : inlet.lumpedMassFlow = -mdot) (hout : outlet.lumpedMassFlow = mdot)
@@ -436,7 +439,8 @@ angular momentum (axial angular momentum per unit mass), `r₁ cθ₁ = r₂ cθ
 fluid is exerted by forces at points moving with the rotor, no other external moment acts and the
 steady lumped balances hold, then the torque of those forces on the fluid and their power vanish,
 for every throughflow and every rotor speed, and a steadily turning rotor without bearing torque
-has no shaft power out. The swirl velocities themselves may differ: only `r cθ` enters. -/
+has zero shaft power out `workOut (ω τ_shaft) = -ω τ_shaft`. The swirl velocities themselves may
+differ: only `r cθ` enters. -/
 lemma torqueOnFluid_eq_zero_of_specificAngularMomentum_eq {ι : Type*} [Fintype ι] {ω : ℝ}
     {o : Fin 3 → ℝ} {x F : ι → Fin 3 → ℝ} {inlet outlet : RotorPort} {mdot τShaft τReaction : ℝ}
     (hin : inlet.lumpedMassFlow = -mdot) (hout : outlet.lumpedMassFlow = mdot)
@@ -452,7 +456,7 @@ lemma torqueOnFluid_eq_zero_of_specificAngularMomentum_eq {ι : Type*} [Fintype 
 /-- **Compressor or pump sign.** With positive throughflow `ṁ > 0`, the rotor torque on the fluid
 exerted by forces at points moving with the rotor, the steady lumped balances, and a steadily
 turning rotor without bearing torque: the power of those forces on the fluid is positive, and the
-shaft power out negative, exactly when `U₁ cθ₁ < U₂ cθ₂`. -/
+shaft power out `workOut (ω τ_shaft) = -ω τ_shaft` negative, exactly when `U₁ cθ₁ < U₂ cθ₂`. -/
 lemma compressor_iff {ι : Type*} [Fintype ι] {ω : ℝ} {o : Fin 3 → ℝ} {x F : ι → Fin 3 → ℝ}
     {inlet outlet : RotorPort} {mdot τShaft τReaction : ℝ} (hm : 0 < mdot)
     (hin : inlet.lumpedMassFlow = -mdot) (hout : outlet.lumpedMassFlow = mdot)
@@ -472,8 +476,8 @@ lemma compressor_iff {ι : Type*} [Fintype ι] {ω : ℝ} {o : Fin 3 → ℝ} {x
 
 /-- **Turbine sign.** With positive throughflow `ṁ > 0`, the rotor torque on the fluid exerted by
 forces at points moving with the rotor, the steady lumped balances, and a steadily turning rotor
-without bearing torque: the shaft power out is positive, and the power of those forces on the
-fluid negative, exactly when `U₂ cθ₂ < U₁ cθ₁`. -/
+without bearing torque: the shaft power out `workOut (ω τ_shaft) = -ω τ_shaft` is positive, and
+the power of those forces on the fluid negative, exactly when `U₂ cθ₂ < U₁ cθ₁`. -/
 lemma turbine_iff {ι : Type*} [Fintype ι] {ω : ℝ} {o : Fin 3 → ℝ} {x F : ι → Fin 3 → ℝ}
     {inlet outlet : RotorPort} {mdot τShaft τReaction : ℝ} (hm : 0 < mdot)
     (hin : inlet.lumpedMassFlow = -mdot) (hout : outlet.lumpedMassFlow = mdot)
@@ -511,7 +515,8 @@ lemma relativeSwirl_eq (ω : ℝ) (o : Fin 3 → ℝ) (P : RotorPort) :
 /-- The state of an ideal actuator disk in a steady stream: density, disk area, axial speeds far
 upstream, at the disk and in the far wake (positive along the flow), the ambient pressure, the
 static pressures on the upstream and downstream faces of the disk, and the axial force of the
-fluid on the disk, positive along the flow. -/
+fluid on the disk, positive along the flow. No sign constraint is imposed; in the physical reading
+`ρ > 0` and `A > 0`. -/
 structure ActuatorDisk where
   /-- The density `ρ`. -/
   ρ : ℝ
@@ -551,13 +556,14 @@ structure PortLaws (d : ActuatorDisk) : Prop where
 end ActuatorDisk
 
 /-- The freestream kinetic power `ρ A U³ / 2` through the area `A`, the normalization of the power
-coefficient. -/
+coefficient, for real inputs; in the physical reading `ρ`, `A` and `U` are positive. -/
 noncomputable def powerNormalization (ρ A U : ℝ) : ℝ := ρ * A * U ^ 3 / 2
 
 /-! ## E. Disk speed and pressure jump -/
 
 /-- **Pressure jump from Bernoulli on each side.** The port laws give
-`p⁺ - p⁻ = ρ (U∞² - U_w²) / 2` and the force `T = ρ A (U∞² - U_w²) / 2`. -/
+`p⁺ - p⁻ = ρ (U∞² - U_w²) / 2` and the force `T = ρ A (U∞² - U_w²) / 2`. No sign condition is
+needed; in the physical reading `ρ > 0` and `A > 0`. -/
 lemma pressureJump_eq {d : ActuatorDisk} (h : d.PortLaws) :
     d.pUp - d.pDown = d.ρ * (d.uInf ^ 2 - d.uWake ^ 2) / 2 ∧
       d.force = d.ρ * d.A * (d.uInf ^ 2 - d.uWake ^ 2) / 2 := by
@@ -579,11 +585,13 @@ lemma uDisk_eq {d : ActuatorDisk} (h : d.PortLaws) (hρ : 0 < d.ρ) (hA : 0 < d.
   have h2 := (mul_eq_zero.mp key).resolve_left hne
   linarith
 
-/-- The power `T U_d` extracted from the stream by the disk. -/
+/-- The power `T U_d` extracted from the stream by the disk, negative when the disk adds power to
+the stream. -/
 noncomputable def extractedPower (d : ActuatorDisk) : ℝ := d.force * d.uDisk
 
 /-- **Energy reading of the pressure jump.** The extracted power is the loss of kinetic power of
-the stream through the disk: `T U_d = ρ A U_d (U∞² - U_w²) / 2 = ṁ (U∞² - U_w²) / 2`. -/
+the stream through the disk: `T U_d = ρ A U_d (U∞² - U_w²) / 2 = ṁ (U∞² - U_w²) / 2`. No sign
+condition is needed; in the physical reading `ρ > 0` and `A > 0`. -/
 lemma extractedPower_eq {d : ActuatorDisk} (h : d.PortLaws) :
     extractedPower d = d.ρ * d.A * d.uDisk * (d.uInf ^ 2 - d.uWake ^ 2) / 2 := by
   unfold extractedPower
@@ -608,10 +616,12 @@ lemma totalPressure_drop {d : ActuatorDisk} (h : d.PortLaws) (hρ : 0 < d.ρ) (h
 
 /-! ## F. Power coefficient and the Betz limit -/
 
-/-- The axial induction factor `a = 1 - U_d / U∞`. -/
+/-- The axial induction factor `a = 1 - U_d / U∞`. With the convention `x / 0 = 0` it is `1` when
+`U∞ = 0`; the intended domain is `U∞ > 0`. -/
 noncomputable def inductionFactor (d : ActuatorDisk) : ℝ := 1 - d.uDisk / d.uInf
 
-/-- The power coefficient `C_P = T U_d / (ρ A U∞³ / 2)`, meaningful for `U∞ > 0` only. -/
+/-- The power coefficient `C_P = T U_d / (ρ A U∞³ / 2)`, meaningful for `ρ, A, U∞ > 0`. With the
+convention `x / 0 = 0` it is `0` when `ρ A U∞³ = 0`, in particular in still air (`U∞ = 0`). -/
 noncomputable def powerCoefficient (d : ActuatorDisk) : ℝ :=
   extractedPower d / powerNormalization d.ρ d.A d.uInf
 
@@ -670,7 +680,8 @@ lemma powerCoefficient_le_betz {d : ActuatorDisk} (h : d.PortLaws) (hρ : 0 < d.
 
 /-- The ideal disk state with axial induction factor `a`, for density `ρ`, disk area `A`,
 freestream speed `U∞` and ambient pressure `p∞`: `U_d = (1 - a) U∞`, `U_w = (1 - 2 a) U∞`, the
-face pressures from Bernoulli on each side and the force `2 ρ A U∞² a (1 - a)`. -/
+face pressures from Bernoulli on each side and the force `2 ρ A U∞² a (1 - a)`. In the physical
+reading `ρ`, `A` and `U∞` are positive, and the wind-extraction branch is `0 < a < 1/2`. -/
 noncomputable def ActuatorDisk.ofInduction (ρ A uInf pAmb a : ℝ) : ActuatorDisk where
   ρ := ρ
   A := A
@@ -685,7 +696,9 @@ noncomputable def ActuatorDisk.ofInduction (ρ A uInf pAmb a : ℝ) : ActuatorDi
 /-- **Every induction factor is realized.** For every `a` the state `ofInduction` satisfies the
 port laws; for `U∞ ≠ 0` its induction factor is `a`, and for `ρ, A, U∞ > 0` its power coefficient
 is `4 a (1 - a)²`. This includes both limits of the wind-extraction branch: the zero-extraction
-state `a = 0` (`U_d = U_w = U∞`, no force) and the wake-degenerate state `a = 1/2` (`U_w = 0`). -/
+state `a = 0` (`U_d = U_w = U∞`, no force) and the wake-degenerate state `a = 1/2` (`U_w = 0`).
+At `U∞ = 0` its induction factor is `1`, whatever `a`, by the convention `x / 0 = 0`. In the
+physical reading `ρ`, `A` and `U∞` are positive. -/
 lemma ofInduction_spec (ρ A uInf pAmb a : ℝ) :
     (ActuatorDisk.ofInduction ρ A uInf pAmb a).PortLaws ∧
       (uInf ≠ 0 → inductionFactor (ActuatorDisk.ofInduction ρ A uInf pAmb a) = a) ∧
@@ -706,7 +719,8 @@ lemma ofInduction_spec (ρ A uInf pAmb a : ℝ) :
 /-! ## G. The hovering rotor -/
 
 /-- The induced power `ṁ (U_w² - U∞²) / 2` with the mass flow `ṁ = ρ A U_d`: the kinetic power the
-disk adds to the stream through it. -/
+disk adds to the stream through it, negative when the stream loses kinetic power. In the physical
+reading `ρ > 0` and `A > 0`. -/
 noncomputable def inducedPower (d : ActuatorDisk) : ℝ :=
   d.ρ * d.A * d.uDisk * (d.uWake ^ 2 - d.uInf ^ 2) / 2
 
@@ -714,7 +728,8 @@ noncomputable def inducedPower (d : ActuatorDisk) : ℝ :=
 the negative of the extracted power `F U_d`, with `F` the axial force of the fluid on the disk: it
 is the power `-F U_d` of the disk on the stream and, with the rotor thrust `T = -F`, it equals
 `T U_d`. No still air, sign or powered assumption is needed, so the identities also cover the
-reversed and zero-thrust states outside `hover_power_eq`. -/
+reversed and zero-thrust states outside `hover_power_eq`. In the physical reading `ρ > 0` and
+`A > 0`. -/
 lemma inducedPower_eq {d : ActuatorDisk} (h : d.PortLaws) {T : ℝ} (hT : d.force = -T) :
     inducedPower d = -extractedPower d ∧ inducedPower d = T * d.uDisk ∧
       inducedPower d = -(d.force * d.uDisk) := by
@@ -767,7 +782,8 @@ lemma hover_thrust_eq {d : ActuatorDisk} (h : d.PortLaws) (hρ : 0 < d.ρ) (hA :
   rw [hT, hw] at e1
   linear_combination -e1
 
-/-- **Induced velocity.** For a powered hovering disk, one whose thrust does positive work on the
+/-- **Induced velocity.** For a powered hovering disk in still air (`U∞ = 0`), with positive
+density and area and positive rotor thrust `T = -F`, one whose thrust does positive work on the
 stream (`T v_i > 0`), the induced velocity is `v_i = √(T / (2 ρ A))`. -/
 lemma hover_inducedVelocity_eq {d : ActuatorDisk} (h : d.PortLaws) (hρ : 0 < d.ρ)
     (hA : 0 < d.A) (h0 : d.uInf = 0) {T : ℝ} (hT : d.force = -T) (hTpos : 0 < T)
@@ -781,9 +797,9 @@ lemma hover_inducedVelocity_eq {d : ActuatorDisk} (h : d.PortLaws) (hρ : 0 < d.
   calc d.uDisk = Real.sqrt (d.uDisk ^ 2) := (Real.sqrt_sq hv.le).symm
     _ = Real.sqrt (T / (2 * d.ρ * d.A)) := by rw [hsq]
 
-/-- **Hover power.** The induced power of the hovering disk is `P = T v_i`; it equals the power
-`-F v_i` of the disk on the stream and, for a powered disk (`T v_i > 0`),
-`P = T √(T / (2 ρ A))`. -/
+/-- **Hover power.** For a powered hovering disk in still air (`U∞ = 0`), with positive density
+and area, positive rotor thrust `T = -F` and `T v_i > 0`, the induced power is `P = T v_i`; it
+equals the power `-F v_i` of the disk on the stream, and `P = T √(T / (2 ρ A))`. -/
 lemma hover_power_eq {d : ActuatorDisk} (h : d.PortLaws) (hρ : 0 < d.ρ) (hA : 0 < d.A)
     (h0 : d.uInf = 0) {T : ℝ} (hT : d.force = -T) (hTpos : 0 < T) (hpow : 0 < T * d.uDisk) :
     inducedPower d = T * d.uDisk ∧ inducedPower d = -(d.force * d.uDisk) ∧

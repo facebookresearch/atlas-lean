@@ -53,7 +53,8 @@ namespace FluidDynamics.Traffic
 
 /-! ## A. Characteristic and vehicle speeds -/
 
-/-- Vehicle speed under the Greenshields closure. -/
+/-- Vehicle speed under the Greenshields closure. With the convention `x / 0 = 0` it is the constant
+`vf` when `kj = 0`. -/
 noncomputable def greenshieldsVehicleSpeed (vf kj k : ℝ) : ℝ :=
   vf * (1 - k / kj)
 

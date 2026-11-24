@@ -446,8 +446,9 @@ lemma stagnation_energy_not_isentropic {γ R T T0 cp a u M ρ p : ℝ} (hγ : 1 
 
 /-- The isentropic mass flux per unit area of a perfect gas with stagnation pressure `p0`,
 stagnation temperature `T0`, specific gas constant `R` and heat-capacity ratio `γ`, at the Mach
-number `M`: `G(M) = p0 √(γ / (R T0)) M (1 + (γ - 1) M ^ 2 / 2) ^ (-(γ + 1) / (2 (γ - 1)))`, with
-a real power. -/
+number `M`: `G(M) = p0 √(γ / (R T0)) M (1 + (γ - 1) M ^ 2 / 2) ^ (-(γ + 1) / (2 (γ - 1)))`, with a
+real power. Outside the physical domain (`p0, T0, R > 0`, `γ > 1`, `M ≥ 0`) the conventions `√x = 0`
+for `x < 0`, `x / 0 = 0` and the real power of a negative base (only for `γ < 1`) give the value. -/
 noncomputable def isentropicMassFlux (p0 T0 R γ M : ℝ) : ℝ :=
   p0 * Real.sqrt (γ / (R * T0)) * M * (1 + (γ - 1) * M ^ 2 / 2) ^ (-(γ + 1) / (2 * (γ - 1)))
 
@@ -553,8 +554,9 @@ lemma massFlux_eq_isentropicMassFlux {γ R T T0 cp a u M ρ ρ0 p p0 : ℝ} (hγ
   linear_combination (p0 * Real.sqrt (γ / (R * T0)) * M) * h_rpow
 
 /-- **Derivative of the flux.** For `γ > 1`, at every `M`,
-`G'(M) = p0 √(γ / (R T0)) (1 - M ^ 2) (1 + (γ - 1) M ^ 2 / 2) ^ (-(γ + 1) / (2 (γ - 1)) - 1)`.
-The base `1 + (γ - 1) M ^ 2 / 2` is at least `1`, so the real power is differentiable. -/
+`G'(M) = p0 √(γ / (R T0)) (1 - M ^ 2) (1 + (γ - 1) M ^ 2 / 2) ^ (-(γ + 1) / (2 (γ - 1)) - 1)`. The
+base `1 + (γ - 1) M ^ 2 / 2` is at least `1`, so the real power is differentiable. When `R T0 ≤ 0`
+the square-root factor is `0`, and both `G` and the formula vanish. -/
 lemma hasDerivAt_isentropicMassFlux {γ : ℝ} (hγ : 1 < γ) (p0 T0 R M : ℝ) :
     HasDerivAt (isentropicMassFlux p0 T0 R γ)
       (p0 * Real.sqrt (γ / (R * T0)) * (1 - M ^ 2) *
@@ -940,26 +942,28 @@ lemma mach_eq_one_of_choked {γ R T T0 cp a u M ρ ρ0 p p0 A mdot : ℝ} (hγ :
 
 /-- The steady normal-shock jump conditions between an upstream state `(ρ1, u1, p1, T1)` and a
 downstream state `(ρ2, u2, p2, T2)` of a calorically perfect gas with gas constant `R` and
-heat-capacity ratio `γ`: the ideal-gas law `p = ρ R T` at both states, and conservation of the
-mass flux `ρ u`, the momentum flux `p + ρ u ^ 2` and the total enthalpy `cp T + u ^ 2 / 2` with
-`cp = γ R / (γ - 1)`. -/
+heat-capacity ratio `γ`: the ideal-gas law `p = ρ R T` at both states, and conservation of the mass
+flux `ρ u`, the momentum flux `p + ρ u ^ 2` and the total enthalpy `cp T + u ^ 2 / 2` with
+`cp = γ R / (γ - 1)` (`0` at `γ = 1`, by the convention `x / 0 = 0`). -/
 def IsNormalShockJump (γ R ρ1 u1 p1 T1 ρ2 u2 p2 T2 : ℝ) : Prop :=
   p1 = ρ1 * R * T1 ∧ p2 = ρ2 * R * T2 ∧ ρ1 * u1 = ρ2 * u2 ∧
     p1 + ρ1 * u1 ^ 2 = p2 + ρ2 * u2 ^ 2 ∧
     γ * R / (γ - 1) * T1 + u1 ^ 2 / 2 = γ * R / (γ - 1) * T2 + u2 ^ 2 / 2
 
-/-- The density ratio `ρ2 / ρ1 = (γ + 1) m / ((γ - 1) m + 2)` of the distinct normal-shock
-branch, at the squared upstream Mach number `m = M1 ^ 2`. -/
+/-- The density ratio `ρ2 / ρ1 = (γ + 1) m / ((γ - 1) m + 2)` of the distinct normal-shock branch,
+at the squared upstream Mach number `m = M1 ^ 2`. With the convention `x / 0 = 0` it is `0` when
+`(γ - 1) m + 2 = 0`. -/
 noncomputable def shockDensityRatio (γ m : ℝ) : ℝ :=
   (γ + 1) * m / ((γ - 1) * m + 2)
 
-/-- The pressure ratio `p2 / p1 = (2 γ m - (γ - 1)) / (γ + 1)` of the distinct normal-shock
-branch, at `m = M1 ^ 2`. -/
+/-- The pressure ratio `p2 / p1 = (2 γ m - (γ - 1)) / (γ + 1)` of the distinct normal-shock branch,
+at `m = M1 ^ 2` (`0` at `γ = -1`, by the convention `x / 0 = 0`). -/
 noncomputable def shockPressureRatio (γ m : ℝ) : ℝ :=
   (2 * γ * m - (γ - 1)) / (γ + 1)
 
-/-- The temperature ratio `T2 / T1` of the distinct normal-shock branch: the pressure ratio over
-the density ratio. -/
+/-- The temperature ratio `T2 / T1` of the distinct normal-shock branch: the pressure ratio over the
+density ratio. With the convention `x / 0 = 0` it is `0` where the density ratio is `0`, in
+particular at `m = 0`. -/
 noncomputable def shockTemperatureRatio (γ m : ℝ) : ℝ :=
   shockPressureRatio γ m / shockDensityRatio γ m
 
@@ -1362,7 +1366,8 @@ lemma shockRatio_eq_one_iff {γ m : ℝ} (hγ : 1 < γ) (hm : 0 ≤ m) :
 /-- The entropy change per unit mass of a calorically perfect gas from the state `(T1, v1)` to the
 state `(T2, v2)`: `cv log (T2 / T1) + R log (v2 / v1)`, with the specific heat at constant volume
 `cv`, the specific gas constant `R` and the specific volumes `v1`, `v2` (`v = 1 / ρ`). Domain:
-positive temperatures and specific volumes; elsewhere `Real.log` returns a junk value. -/
+positive temperatures and specific volumes; elsewhere the conventions `x / 0 = 0`, `log 0 = 0` and
+`log x = log |x|` give the value. -/
 noncomputable def specificEntropyChange (cv R T1 v1 T2 v2 : ℝ) : ℝ :=
   cv * Real.log (T2 / T1) + R * Real.log (v2 / v1)
 
@@ -1388,8 +1393,8 @@ lemma specificEntropyChange_perfectGas {γ R ρ1 p1 T1 ρ2 p2 T2 : ℝ} (hγ : 1
 
 /-- The dimensionless entropy jump `Δs / R = log P / (γ - 1) - γ log r / (γ - 1)` of the distinct
 normal-shock branch at `m = M1 ^ 2`, with its pressure ratio `P` and density ratio `r`. Domain:
-`γ > 1` and `m > (γ - 1) / (2 γ)`, where `P, r > 0`; below the threshold `P ≤ 0` and
-`Real.log` returns a junk value. -/
+`γ > 1` and `m > (γ - 1) / (2 γ)`, where `P, r > 0`; below the threshold `P ≤ 0`, and the value
+comes from the conventions `log 0 = 0` and `log x = log |x|`. -/
 noncomputable def shockEntropyJump (γ m : ℝ) : ℝ :=
   Real.log (shockPressureRatio γ m) / (γ - 1) - γ * Real.log (shockDensityRatio γ m) / (γ - 1)
 

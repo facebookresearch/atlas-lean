@@ -52,11 +52,11 @@ namespace FluidDynamics.Traffic
 
 /-! ## A. Flux, range, and capacity -/
 
-/-- Greenshields traffic flux at density `k`, with free-flow speed `vf` and
-jam density `kj`: `q(k) = vf * k * (1 - k / kj)`. This is the linear
-speed–density empirical closure of the Greenshields fundamental diagram,
-in a fixed lane and unit convention; it is physically meaningful for
-`0 < vf`, `0 < kj`, and `0 ≤ k ≤ kj`. -/
+/-- Greenshields traffic flux at density `k`, with free-flow speed `vf` and jam density `kj`:
+`q(k) = vf * k * (1 - k / kj)`. This is the linear speed–density empirical closure of the
+Greenshields fundamental diagram, in a fixed lane and unit convention; it is physically meaningful
+for `0 < vf`, `0 < kj`, and `0 ≤ k ≤ kj`. With the convention `x / 0 = 0` it is `vf * k` when
+`kj = 0`. -/
 noncomputable def greenshieldsFlux (vf kj k : ℝ) : ℝ :=
   vf * k * (1 - k / kj)
 
@@ -80,10 +80,8 @@ theorem greenshieldsFlux_nonneg_le {vf kj k : ℝ} (hvf : 0 < vf)
   · show vf * k * (1 - k / kj) ≤ vf * kj / 4
     linarith
 
-/-- Midpoint value: at half the jam density the flux equals
-`vf * kj / 4`. This is a value identity for any `vf`; it is capacity
-attainment only under `0 < vf`, as in
-`greenshieldsFlux_capacity_attained`. -/
+/-- Midpoint value: at half the jam density the flux equals `vf * kj / 4`. This is a value identity
+for any `vf`; it is the capacity only for `0 < vf`. -/
 lemma greenshieldsFlux_half {vf kj : ℝ} (hkj : 0 < kj) :
     greenshieldsFlux vf kj (kj / 2) = vf * kj / 4 := by
   have hkj' : kj ≠ 0 := ne_of_gt hkj

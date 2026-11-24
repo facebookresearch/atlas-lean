@@ -145,14 +145,14 @@ namespace AdvectionError
 
 /-- Upwind face flux through face `i`, the face between cell `i - 1` and cell `i`, positive
 toward increasing index: the cross-section `area` times the advective flux `v c` taken on the
-upstream side, `max v 0 * c (i - 1) + min v 0 * c i`. -/
+upstream side, `max v 0 * c (i - 1) + min v 0 * c i`. For `n = 0` the index set `ZMod 0` is `ℤ`. -/
 noncomputable def upwindFaceFlux {n : ℕ} (area v : ℝ) (c : ZMod n → ℝ) (i : ZMod n) : ℝ :=
   area * (max v 0 * c (i - 1) + min v 0 * c i)
 
 /-- Conservative shared-face step in mass form on `n` periodic cells of length `dx` and
 cross-section `area`: over the time step `dt` the mass `area * dx * c i` of cell `i` gains the
 inflow `dt * F i` through its left face `i` and loses the outflow `dt * F (i + 1)` through its
-right face `i + 1`. -/
+right face `i + 1`. For `n = 0` the index set `ZMod 0` is `ℤ`. -/
 def IsConservativeStep {n : ℕ} (area dx dt : ℝ) (F c cNext : ZMod n → ℝ) : Prop :=
   ∀ i, area * dx * cNext i = area * dx * c i + dt * (F i - F (i + 1))
 
@@ -232,7 +232,7 @@ lemma upwindStep_nonneg {n : ℕ} [NeZero n] {area dx dt v : ℝ} (harea : 0 < a
 /-! ## D. The traveling wave and its derivatives -/
 
 /-- The traveling sine wave `c(t, x) = c₀ + a sin(2π (x - v t) / L)` with mean `c₀`, amplitude
-`a`, speed `v` and spatial period `L`. -/
+`a`, speed `v` and spatial period `L`. With `a / 0 = 0` it is the constant `c₀` when `L = 0`. -/
 noncomputable def travelingWave (c₀ a v L t x : ℝ) : ℝ :=
   c₀ + a * Real.sin (2 * Real.pi * (x - v * t) / L)
 

@@ -43,7 +43,9 @@ namespace FluidDynamics.Traffic.SignalQueue
 
 /-! ## A. The one-cycle area formula -/
 
-/-- Area under the queue-length curve over one cycle. -/
+/-- Area under the queue-length curve over one cycle: for `0 < lam < mu`, `0 ≤ R`, `0 ≤ G` and
+`lam * (R + G) ≤ mu * G` (the queue clears within the cycle), the integral of `queueLen` over
+`[0, R + G]` is `lam * R ^ 2 * mu / (2 * (mu - lam))`. -/
 theorem queueLen_integral_cycle {lam mu R G : ℝ} (hlam : 0 < lam)
     (hmu : lam < mu) (hR : 0 ≤ R) (hG : 0 ≤ G)
     (hcap : lam * (R + G) ≤ mu * G) :

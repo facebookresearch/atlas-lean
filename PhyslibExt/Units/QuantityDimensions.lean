@@ -322,7 +322,8 @@ lemma dimScale_round_trip {B : Type} [DimensionBasis B] [Fintype B] (u1 u2 : Uni
   rw [← mul_assoc, ← NNReal.coe_mul, UnitScale.dimScale_transitive, UnitScale.dimScale_self,
     NNReal.coe_one, one_mul]
 
-/-- The ratio of two converted coordinates of one dimension is the ratio of the coordinates. -/
+/-- The ratio of two converted coordinates of one dimension is the ratio of the coordinates.
+With the convention `z / 0 = 0`, both sides are `0` when `y = 0`. -/
 lemma dimScale_ratio {B : Type} [DimensionBasis B] [Fintype B] (u1 u2 : UnitScale B)
     (d : Dimension B) (x y : ℝ) :
     (u1.dimScale u2 d : ℝ) * x / ((u1.dimScale u2 d : ℝ) * y) = x / y :=
@@ -384,7 +385,8 @@ def boltzmannDim : Dimension ISQDimensionBase := energyDim / temperatureDim
 
 /-- The amount of substance `n = N / N_A` of a dimensionless particle count `N`, given the
 Avogadro constant `N_A` as an inverse-amount quantity. The quotient is a `WithDim`
-division, so its dimension `1 * (N⁻¹)⁻¹ = N` is computed by the type system. -/
+division, so its dimension `1 * (N⁻¹)⁻¹ = N` is computed by the type system. With the
+convention `x / 0 = 0`, it is `0` when `N_A = 0`. -/
 noncomputable def amountOfCount (NA : WithDim avogadroDim ℝ) (N : WithDim dimensionlessDim ℝ) :
     WithDim amountDim ℝ :=
   WithDim.cast (N / NA) (by unfold dimensionlessDim avogadroDim; rw [inv_inv, one_mul])
@@ -396,7 +398,8 @@ def countOfAmount (NA : WithDim avogadroDim ℝ) (n : WithDim amountDim ℝ) :
     WithDim dimensionlessDim ℝ :=
   WithDim.cast (n * NA) (by unfold dimensionlessDim avogadroDim; rw [mul_inv_cancel])
 
-/-- The coordinate of `amountOfCount N_A N` is `N / N_A`. -/
+/-- The coordinate of `amountOfCount N_A N` is `N / N_A` (`0` when `N_A = 0`, by the convention
+`x / 0 = 0`). -/
 lemma amountOfCount_val (NA : WithDim avogadroDim ℝ) (N : WithDim dimensionlessDim ℝ) :
     (amountOfCount NA N).val = N.val / NA.val := rfl
 
@@ -404,18 +407,18 @@ lemma amountOfCount_val (NA : WithDim avogadroDim ℝ) (N : WithDim dimensionles
 lemma countOfAmount_val (NA : WithDim avogadroDim ℝ) (n : WithDim amountDim ℝ) :
     (countOfAmount NA n).val = n.val * NA.val := rfl
 
-/-- The amount of a nonnegative particle count is nonnegative. -/
+/-- For `N_A > 0`, the amount of a nonnegative particle count is nonnegative. -/
 lemma amountOfCount_nonneg {NA : WithDim avogadroDim ℝ} {N : WithDim dimensionlessDim ℝ}
     (hNA : 0 < NA.val) (hN : 0 ≤ N.val) : 0 ≤ amountOfCount NA N :=
   (WithDim.le_def _ _).mpr (div_nonneg hN hNA.le)
 
-/-- The particle count of the amount of a particle count is that count. -/
+/-- For `N_A > 0`, the particle count of the amount of a particle count is that count. -/
 lemma countOfAmount_amountOfCount {NA : WithDim avogadroDim ℝ} (hNA : 0 < NA.val)
     (N : WithDim dimensionlessDim ℝ) : countOfAmount NA (amountOfCount NA N) = N := by
   apply WithDim.ext
   rw [countOfAmount_val, amountOfCount_val, div_mul_cancel₀ N.val hNA.ne']
 
-/-- The amount of the particle count of an amount is that amount. -/
+/-- For `N_A > 0`, the amount of the particle count of an amount is that amount. -/
 lemma amountOfCount_countOfAmount {NA : WithDim avogadroDim ℝ} (hNA : 0 < NA.val)
     (n : WithDim amountDim ℝ) : amountOfCount NA (countOfAmount NA n) = n := by
   apply WithDim.ext
@@ -444,7 +447,7 @@ noncomputable def gasConstant (NA : WithDim avogadroDim ℝ) (kB : WithDim boltz
 lemma gasConstant_val (NA : WithDim avogadroDim ℝ) (kB : WithDim boltzmannDim ℝ) :
     (gasConstant NA kB).val = NA.val * kB.val := rfl
 
-/-- The molar gas constant is positive. -/
+/-- The molar gas constant is positive when `N_A > 0` and `k_B > 0`. -/
 lemma gasConstant_pos {NA : WithDim avogadroDim ℝ} {kB : WithDim boltzmannDim ℝ}
     (hNA : 0 < NA.val) (hkB : 0 < kB.val) : 0 < gasConstant NA kB :=
   mul_pos hNA hkB
@@ -461,8 +464,8 @@ def molarEnergy (NA : WithDim avogadroDim ℝ) (e : WithDim energyDim ℝ) :
 lemma molarEnergy_val (NA : WithDim avogadroDim ℝ) (e : WithDim energyDim ℝ) :
     (molarEnergy NA e).val = NA.val * e.val := rfl
 
-/-- The molar energy `E = N_A e` satisfies `E / N_A = e`, as a quantity of dimension
-`energyDim`. -/
+/-- For `N_A > 0`, the molar energy `E = N_A e` satisfies `E / N_A = e`, as a quantity of
+dimension `energyDim`. -/
 lemma molarEnergy_div {NA : WithDim avogadroDim ℝ} (hNA : 0 < NA.val)
     (e : WithDim energyDim ℝ) :
     WithDim.cast ((molarEnergy NA e) / NA)
@@ -471,7 +474,8 @@ lemma molarEnergy_div {NA : WithDim avogadroDim ℝ} (hNA : 0 < NA.val)
   change (NA.val * e.val) / NA.val = e.val
   rw [mul_div_cancel_left₀ e.val hNA.ne']
 
-/-- The per-particle energy `e = E / N_A` of a molar energy `E` satisfies `N_A e = E`. -/
+/-- For `N_A > 0`, the per-particle energy `e = E / N_A` of a molar energy `E` satisfies
+`N_A e = E`. -/
 lemma molarEnergy_div_molarEnergy {NA : WithDim avogadroDim ℝ} (hNA : 0 < NA.val)
     (E : WithDim molarEnergyDim ℝ) :
     molarEnergy NA (WithDim.cast (E / NA)
@@ -497,7 +501,8 @@ lemma countOfAmount_dimScale (u1 u2 : UnitScale ISQDimensionBase)
   rw [dimScale_inv]
   field_simp
 
-/-- Rescaling `N_A` and a count together rescales the amount by the amount factor. -/
+/-- For `N_A > 0`, rescaling `N_A` and a count together rescales the amount by the amount
+factor. -/
 lemma amountOfCount_dimScale (u1 u2 : UnitScale ISQDimensionBase)
     (NA : WithDim avogadroDim ℝ) (hNA : 0 < NA.val) (N : WithDim dimensionlessDim ℝ) :
     amountOfCount ⟨(u1.dimScale u2 avogadroDim : ℝ) * NA.val⟩
@@ -663,7 +668,8 @@ lemma expScaledEnergy_dimScale (u1 u2 : UnitScale ISQDimensionBase)
   simp only [expScaledEnergy_val]
   rw [hE, mul_mul_mul_comm, mul_div_mul_left _ _ hne]
 
-/-- For `E = N_A e` and `R = N_A k_B`, `expScaledEnergy E R T` is `exp (-(e / (k_B T)))`. -/
+/-- For `E = N_A e` and `R = N_A k_B` with `N_A > 0`, `k_B > 0` and `T > 0`,
+`expScaledEnergy E R T` is `exp (-(e / (k_B T)))`. -/
 lemma expScaledEnergy_molarEnergy_gasConstant
     {NA : WithDim avogadroDim ℝ} {kB : WithDim boltzmannDim ℝ} (hNA : 0 < NA.val)
     (hkB : 0 < kB.val) (e : WithDim energyDim ℝ) {T : WithDim temperatureDim ℝ}

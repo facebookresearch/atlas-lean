@@ -117,7 +117,7 @@ namespace ThermalPowerPorts
 
 /-- Radiator temperature rate for heat capacity `C`, radiation
 coefficient `Krad`, and constant heat input `Q`:
-`rate(T) = (Q - Krad * T^4) / C`. -/
+`rate(T) = (Q - Krad * T^4) / C` (`0` at `C = 0`, by `u / 0 = 0`). -/
 noncomputable def radiatorRate (C Krad Q T : ℝ) : ℝ :=
   (Q - Krad * T ^ 4) / C
 
@@ -662,7 +662,7 @@ theorem radiator_solution_trapped {C Krad Q Tmin Tmax : ℝ}
 
 /-- Box trapping for a solution of the CLIPPED field: if `T` has
 within-derivative `clippedRadiatorRate C Krad Q Tmin Tmax (T s)` on
-`Set.Ici 0` at every `s ≥ 0`, with the same inward signs, and
+`Set.Ici 0` at every `s ≥ 0`, with `C > 0`, `Tmin ≤ Tmax`, the same inward signs, and
 `T 0 ∈ [Tmin, Tmax]`, then `T t ∈ [Tmin, Tmax]` for every `t ≥ 0`.
 On the box the clipped and physical rates agree, so such a
 trajectory also solves the original field there. -/
@@ -972,7 +972,7 @@ theorem glued_trapped {C Krad Tmin Tmax : ℝ} {m : ℕ} {τ : ℕ → ℝ}
 
 /-- Heat dissipated in the battery (W) when it is charged with the terminal power `Pc` and
 discharged with the terminal power `Pd`, with charge and discharge efficiencies `ηc` and `ηd`:
-`(1 - ηc) Pc + (1 / ηd - 1) Pd`. -/
+`(1 - ηc) Pc + (1 / ηd - 1) Pd` (`1 / ηd = 0` at `ηd = 0`, by `u / 0 = 0`). -/
 noncomputable def batteryLossHeat (ηc ηd Pc Pd : ℝ) : ℝ :=
   (1 - ηc) * Pc + (1 / ηd - 1) * Pd
 
@@ -1034,7 +1034,8 @@ lemma battery_port_of_complementary {ηc ηd Pc Pd : ℝ} (hPc : 0 ≤ Pc) (hPd 
 
 /-! ### B.2. Stored energy on the mission ledger -/
 
-/-- Stored-energy flow of schedule interval `k` (J): `dt k * (ηc Pc k - Pd k / ηd)`. -/
+/-- Stored-energy flow of schedule interval `k` (J): `dt k * (ηc Pc k - Pd k / ηd)`
+(`Pd k / ηd = 0` at `ηd = 0`, by `u / 0 = 0`). -/
 noncomputable def batteryFlow (ηc ηd : ℝ) (dt Pc Pd : ℕ → ℝ) (k : ℕ) : ℝ :=
   dt k * (ηc * Pc k - Pd k / ηd)
 

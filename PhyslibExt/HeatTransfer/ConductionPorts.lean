@@ -138,23 +138,18 @@ connected networks is claimed.
 
 namespace ConductionPorts
 
-/-- Quadratic heat-energy identity with explicit boundary work, at
-one time `t`: for a temperature field `u` with actual time
-derivative `ut`, spatial derivatives `ux`, `uxx` in `HasDerivAt`
-form on `Set.uIcc 0 L` (`0 ≤ L`), satisfying
-`ut t x = D * uxx t x + src t x` there, the energy
+/-- Quadratic heat-energy identity with explicit boundary work, at one time `t`: for a temperature
+field `u` with actual time derivative `ut`, spatial derivatives `ux`, `uxx` in `HasDerivAt` form on
+`Set.uIcc 0 L` (`0 ≤ L`), satisfying `ut t x = D * uxx t x + src t x` there, the energy
 `E(τ) = ∫₀ᴸ u(τ, x)^2 / 2 dx` has derivative at `t` equal to
-`-D * ∫₀ᴸ ux^2 dx + D * (u(t, L) * ux(t, L) - u(t, 0) * ux(t, 0))
-+ ∫₀ᴸ u * src dx`. The boundary terms are retained, not discarded.
-All hypotheses are scoped to the single time `t` and the interval
-`[0, L]`. The hypothesis `hE` is the differentiation under the
-integral, as a `HasDerivAt` for the energy itself; `ut` is
-required to be the actual time derivative (`hut`). No joint
-regularity hypothesis is declared: the assumptions are exactly
-the pointwise derivative and continuity data at this `t`. The integration by parts is proved
-from the stated derivative and continuity data. The first term is
-the diffusion contribution; it is a dissipation only when
-`0 ≤ D` (see `diffusion_contribution_nonpos`). -/
+`-D * ∫₀ᴸ ux^2 dx + D * (u(t, L) * ux(t, L) - u(t, 0) * ux(t, 0)) + ∫₀ᴸ u * src dx`. The boundary
+terms are retained, not discarded. All hypotheses are scoped to the single time `t` and the interval
+`[0, L]`. The hypothesis `hE` is the differentiation under the integral, as a `HasDerivAt` for the
+energy itself; `ut` is required to be the actual time derivative (`hut`), and `u t x * ut t x` is
+interval integrable on `[0, L]` (`hint`). No joint regularity hypothesis is declared: the
+assumptions are exactly the pointwise derivative, continuity and integrability data at this `t`. The
+integration by parts is proved from the stated derivative and continuity data. The first term is the
+diffusion contribution; it is a dissipation when `0 ≤ D` (see `diffusion_contribution_nonpos`). -/
 theorem heatEnergy_hasDerivAt {D L : ℝ} (hL : 0 ≤ L)
     {u ut ux uxx src : ℝ → ℝ → ℝ} {t : ℝ}
     (hut : ∀ x ∈ Set.uIcc 0 L, HasDerivAt (fun τ : ℝ => u τ x) (ut t x) t)
@@ -262,8 +257,8 @@ theorem heatEnergy_hasDerivAt_zeroDirichlet {D L : ℝ} (hL : 0 ≤ L)
   rw [hval] at h
   exact h
 
-/-- The diffusion contribution is nonpositive when the diffusivity
-is nonnegative: `-D * ∫₀ᴸ ux^2 ≤ 0` for `0 ≤ D` and `0 ≤ L`. -/
+/-- The diffusion contribution is nonpositive when the diffusivity is nonnegative:
+`-D * ∫₀ᴸ ux^2 ≤ 0` for `0 ≤ D` and `0 ≤ L`, when `ux t ^ 2` is interval integrable on `[0, L]`. -/
 lemma diffusion_contribution_nonpos {D L : ℝ} (hD : 0 ≤ D) (hL : 0 ≤ L)
     (ux : ℝ → ℝ → ℝ) (t : ℝ)
     (hint : IntervalIntegrable (fun x : ℝ => ux t x ^ 2)
@@ -276,9 +271,9 @@ lemma diffusion_contribution_nonpos {D L : ℝ} (hD : 0 ≤ D) (hL : 0 ≤ L)
 
 /-! ## B. Outward Robin/Neumann dissipation -/
 
-/-- Robin energy identity at one time `t`. From the upstream boundary-work identity
-for `θ = u - Ta` with no source (`hE`), the outward Robin conditions at `0` and `L`
-turn the boundary work into `-(D / k) * (h0 * θ(0)^2 + hL * θ(L)^2)`. -/
+/-- Robin energy identity at one time `t`, for `k > 0`. From the upstream boundary-work identity for
+`θ = u - Ta` with no source (`hE`), the outward Robin conditions at `0` and `L` turn the boundary
+work into `-(D / k) * (h0 * θ(0)^2 + hL * θ(L)^2)`. -/
 theorem robinEnergy_hasDerivAt {D L k h0 hL Ta t : ℝ} (hk : 0 < k)
     {u ux : ℝ → ℝ → ℝ}
     (hBC0 : k * ux t 0 = h0 * (u t 0 - Ta))
@@ -327,13 +322,13 @@ theorem robinEnergy_deriv_nonpos {D L k h0 hL Ta t : ℝ} (hD : 0 ≤ D) (hL0 : 
     mul_nonneg hDk hS
   exact sub_nonpos.mpr (le_trans h1 h2)
 
-/-- Uniqueness for the source-free Robin problem on `[0, T] × [0, L]`. Two fields
-`u1`, `u2` share `D`, `k`, `h0`, `hL`, `Ta` and satisfy the outward Robin
-conditions at every `t ∈ (0, T)`. `hEw` is the upstream heat-energy identity for the difference
-`w = u1 - u2` with zero source (its PDE `w_t = D * w_xx` follows from the two
-source-free PDEs), at every `t ∈ (0, T)`. The difference energy is continuous on
-`[0, T]` (`hEcont`), `w t` is continuous on `[0, L]` for `t ∈ [0, T]` (`hwcont`),
-and the initial data agree on `[0, L]`. Then `u1 = u2` on `[0, T] × [0, L]`. -/
+/-- Uniqueness for the source-free Robin problem on `[0, T] × [0, L]`, for `0 ≤ D`, `0 < L`,
+`0 < k`, `0 ≤ h0` and `0 ≤ hL`. Two fields `u1`, `u2` share `D`, `k`, `h0`, `hL`, `Ta` and satisfy
+the outward Robin conditions at every `t ∈ (0, T)`. `hEw` is the upstream heat-energy identity for
+the difference `w = u1 - u2` with zero source (its PDE `w_t = D * w_xx` follows from the two
+source-free PDEs), at every `t ∈ (0, T)`. The difference energy is continuous on `[0, T]`
+(`hEcont`), `w t` is continuous on `[0, L]` for `t ∈ [0, T]` (`hwcont`), and the initial data agree
+on `[0, L]`. Then `u1 = u2` on `[0, T] × [0, L]`. -/
 theorem robin_uniqueness {D L k h0 hL Ta T : ℝ} (hD : 0 ≤ D) (hL0 : 0 < L)
     (hk : 0 < k) (hh0 : 0 ≤ h0) (hhL : 0 ≤ hL)
     {u1 u2 ux1 ux2 : ℝ → ℝ → ℝ}
@@ -438,11 +433,11 @@ theorem robin_uniqueness {D L k h0 hL Ta T : ℝ} (hD : 0 ≤ D) (hL0 : 0 < L)
 
 /-! ## C. Fixtures -/
 
-/-- Robin cosine mode (nonzero fixture). `u t x = Ta + exp (-D * μ^2 * t) *
-cos (μ * (x - L / 2))` with `ux` its `x`-derivative solves `u_t = D * u_xx` at
-every point, satisfies the outward Robin conditions at both ends with
-`h = k * μ * tan (μ * L / 2)`, has `h ≥ 0` when `0 ≤ μ`, `0 ≤ L` and
-`μ * L / 2 < π / 2`, and has `θ(t, 0) ≠ 0` there. -/
+/-- Robin cosine mode (nonzero fixture), for `k > 0`.
+`u t x = Ta + exp (-D * μ^2 * t) * cos (μ * (x - L / 2))` with `ux` its `x`-derivative solves
+`u_t = D * u_xx` at every point, satisfies the outward Robin conditions at both ends with
+`h = k * μ * tan (μ * L / 2)`, has `h ≥ 0` when `0 ≤ μ`, `0 ≤ L` and `μ * L / 2 < π / 2`, and has
+`θ(t, 0) ≠ 0` there. -/
 lemma robinCosineMode {D k μ L Ta : ℝ} (hk : 0 < k) (hμ : 0 ≤ μ) (hL0 : 0 ≤ L)
     (hμL : μ * L / 2 < Real.pi / 2) :
     let u : ℝ → ℝ → ℝ := fun t x => Ta + Real.exp (-D * μ ^ 2 * t) * Real.cos (μ * (x - L / 2))
@@ -552,10 +547,9 @@ lemma robinCosineMode {D k μ L Ta : ℝ} (hk : 0 < k) (hμ : 0 ≤ μ) (hL0 : 0
     rw [heq]
     exact mul_ne_zero (Real.exp_ne_zero _) hC1
 
-/-- Neumann cosine mode (nonzero boundary fixture, `h0 = hL = 0`). With
-`μ = π / L`, `u t x = Ta + exp (-D * μ^2 * t) * cos (μ * x)` has zero flux
-at both ends and `θ(t, 0) ≠ 0`. This fixture records only the first
-spatial derivative and the zero-flux boundary conditions; the
+/-- Neumann cosine mode (nonzero boundary fixture, `h0 = hL = 0`). For `L > 0` and `μ = π / L`,
+`u t x = Ta + exp (-D * μ^2 * t) * cos (μ * x)` has zero flux at both ends and `θ(t, 0) ≠ 0`. This
+fixture records only the first spatial derivative and the zero-flux boundary conditions; the
 heat-equation content for cosine modes is in `robinCosineMode`. -/
 lemma neumannCosineMode {D k L Ta : ℝ} (hL0 : 0 < L) :
     let μ : ℝ := Real.pi / L
@@ -637,7 +631,8 @@ structure IsFinSteadyState (k A h P Ta L : ℝ) (T q : ℝ → ℝ) : Prop where
   hasDerivWithinAt_heat :
     ∀ x ∈ Icc 0 L, HasDerivWithinAt q (-(h * P * (T x - Ta))) (Icc 0 L) x
 
-/-- Fin parameter `m = sqrt (h P / (k A))` (inverse length). -/
+/-- Fin parameter `m = sqrt (h P / (k A))` (inverse length); with `x / 0 = 0` and `√x = 0` for
+`x < 0` it is `0` when `k A = 0` or `h P / (k A) < 0`. -/
 noncomputable def finParameter (h P k A : ℝ) : ℝ := Real.sqrt (h * P / (k * A))
 
 /-- Division by a reciprocal is multiplication (holds even for `b = 0`). -/
@@ -716,7 +711,7 @@ lemma isFinSteadyState_iff {k A h P Ta L : ℝ} {T q : ℝ → ℝ} :
       rw [← hheat x] at hC
       exact hC
 
-/-- The cable length constant of the fin is `1 / m`. -/
+/-- For positive `k`, `A`, `h` and `P`, the cable length constant of the fin is `1 / m`. -/
 lemma lengthConstant_fin {k A h P : ℝ} (hk : 0 < k) (hA : 0 < A) (hh : 0 < h) (hP : 0 < P) :
     lengthConstant (1 / (h * P)) (1 / (k * A)) = 1 / finParameter h P k A := by
   have hdiv : (1:ℝ) / (h * P) / (1 / (k * A)) = (k * A) / (h * P) := by
@@ -725,7 +720,8 @@ lemma lengthConstant_fin {k A h P : ℝ} (hk : 0 < k) (hA : 0 < A) (hh : 0 < h) 
   unfold lengthConstant finParameter
   rw [hdiv, hinv, Real.sqrt_inv, one_div]
 
-/-- The cable characteristic resistance of the fin is `1 / sqrt (h P k A)`. -/
+/-- For positive `k`, `A`, `h` and `P`, the cable characteristic resistance of the fin is
+`1 / sqrt (h P k A)`. -/
 lemma charResistance_fin {k A h P : ℝ} (hk : 0 < k) (hA : 0 < A) (hh : 0 < h) (hP : 0 < P) :
     charResistance (1 / (h * P)) (1 / (k * A)) = 1 / Real.sqrt (h * P * k * A) := by
   have hmul : (1:ℝ) / (h * P) * (1 / (k * A)) = (h * P * k * A)⁻¹ := by
@@ -740,8 +736,8 @@ private lemma div_lengthConstant_fin {k A h P : ℝ} (hk : 0 < k) (hA : 0 < A) (
   rw [lengthConstant_fin hk hA hh hP, div_one_div_eq]
   exact mul_comm _ _
 
-/-- Adiabatic tip (`q L = 0`), from the sealed-end solution: the excess is
-`θ x = θ 0 * cosh (m (L - x)) / cosh (m L)` on `[0, L]`. -/
+/-- For positive `k`, `A`, `h`, `P` and `L`: adiabatic tip (`q L = 0`), from the sealed-end
+solution: the excess is `θ x = θ 0 * cosh (m (L - x)) / cosh (m L)` on `[0, L]`. -/
 lemma IsFinSteadyState.temperature_adiabatic {k A h P Ta L : ℝ} {T q : ℝ → ℝ}
     (hfin : IsFinSteadyState k A h P Ta L T q) (hk : 0 < k) (hA : 0 < A) (hh : 0 < h)
     (hP : 0 < P) (hL : 0 < L) (htip : q L = 0) :
@@ -756,8 +752,8 @@ lemma IsFinSteadyState.temperature_adiabatic {k A h P Ta L : ℝ} {T q : ℝ →
   simp only [div_lengthConstant_fin hk hA hh hP] at hx'
   exact hx'
 
-/-- Adiabatic-tip heat rate, from the sealed-end input relation:
-`q 0 = sqrt (h P k A) * θ 0 * tanh (m L)`. -/
+/-- For positive `k`, `A`, `h`, `P` and `L`: adiabatic-tip heat rate, from the sealed-end input
+relation: `q 0 = sqrt (h P k A) * θ 0 * tanh (m L)`. -/
 lemma IsFinSteadyState.heatRate_adiabatic {k A h P Ta L : ℝ} {T q : ℝ → ℝ}
     (hfin : IsFinSteadyState k A h P Ta L T q) (hk : 0 < k) (hA : 0 < A) (hh : 0 < h)
     (hP : 0 < P) (hL : 0 < L) (htip : q L = 0) :
@@ -788,8 +784,9 @@ lemma IsFinSteadyState.heatRate_adiabatic {k A h P Ta L : ℝ} {T q : ℝ → �
   rw [hrw, eq_div_iff hc0]
   exact h2.symm
 
-/-- Adiabatic-tip efficiency: the heat rate over the rate `h (P L) θ 0` of a fin at the base
-temperature is `tanh (m L) / (m L)`, for a nonzero base excess. -/
+/-- For positive `k`, `A`, `h`, `P` and `L`: adiabatic-tip efficiency: the heat rate over the rate
+`h (P L) θ 0` of a fin at the base temperature is `tanh (m L) / (m L)`, for a nonzero base
+excess. -/
 lemma IsFinSteadyState.efficiency_adiabatic {k A h P Ta L : ℝ} {T q : ℝ → ℝ}
     (hfin : IsFinSteadyState k A h P Ta L T q) (hk : 0 < k) (hA : 0 < A) (hh : 0 < h)
     (hP : 0 < P) (hL : 0 < L) (htip : q L = 0) (hθ : T 0 - Ta ≠ 0) :
@@ -804,7 +801,8 @@ lemma IsFinSteadyState.efficiency_adiabatic {k A h P Ta L : ℝ} {T q : ℝ → 
   rw [hq, div_eq_div_iff hden1 hden2]
   linear_combination (T 0 - Ta) * Real.tanh (finParameter h P k A * L) * L * hSm
 
-/-- Convective tip `q L = h A (T L - Ta)` (outward normal `+x`), through the transfer solution:
+/-- For positive `k`, `A`, `h`, `P` and `L`: convective tip `q L = h A (T L - Ta)` (outward normal
+`+x`), through the transfer solution:
 `q 0 = sqrt (h P k A) θ 0 (sinh (m L) + (h / (m k)) cosh (m L)) /
 (cosh (m L) + (h / (m k)) sinh (m L))`. -/
 lemma IsFinSteadyState.heatRate_convectiveTip {k A h P Ta L : ℝ} {T q : ℝ → ℝ}
@@ -873,8 +871,8 @@ lemma IsFinSteadyState.heatRate_convectiveTip {k A h P Ta L : ℝ} {T q : ℝ �
   rw [hrw, eq_div_iff hden]
   exact hfield
 
-/-- Sign check: with an adiabatic tip, a base hotter than the fluid feeds heat into the fin
-(`q 0 > 0`, flow in `+x`, out of the wall). -/
+/-- Sign check: for positive `k`, `A`, `h`, `P` and `L` with an adiabatic tip, a base hotter than
+the fluid feeds heat into the fin (`q 0 > 0`, flow in `+x`, out of the wall). -/
 lemma IsFinSteadyState.heatRate_pos_of_base_pos {k A h P Ta L : ℝ} {T q : ℝ → ℝ}
     (hfin : IsFinSteadyState k A h P Ta L T q) (hk : 0 < k) (hA : 0 < A) (hh : 0 < h)
     (hP : 0 < P) (hL : 0 < L) (htip : q L = 0) (hθ : 0 < T 0 - Ta) :

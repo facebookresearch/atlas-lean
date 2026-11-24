@@ -344,7 +344,8 @@ theorem pipeFlowEquations_flow_unique {V : Type*} [Fintype V]
       mul_left_cancel₀ hrne hcancel
     exact hinj hbase
 
-/-- Passive form of flow uniqueness. -/
+/-- Passive form of flow uniqueness: with strictly positive resistances and the same demand, two
+passive pipe flows have identical edge flows (heads need not agree). -/
 theorem passivePipeFlow_flow_unique {V : Type*} [Fintype V]
     [DecidableEq V] {E : Type*} [Fintype E] [DecidableEq E]
     {tail head : E → V} {r q₁ q₂ : E → ℝ} {d h₁ h₂ : V → ℝ}

@@ -71,11 +71,10 @@ namespace Engineering.VentilationBalance
 
 /-! ## A. Equilibrium and the amount-parameterized concentration -/
 
-/-- Well-mixed ventilation equilibrium concentration for outdoor
-concentration `c_out`, constant indoor source strength `G` (mass per
-time), and volumetric flow `Q`: `c_out + G / Q`. Concentrations are
-in one consistent unit (mass per volume); a ppm figure must be
-converted before it is used here. -/
+/-- Well-mixed ventilation equilibrium concentration for outdoor concentration `c_out`, constant
+indoor source strength `G` (mass per time), and volumetric flow `Q`: `c_out + G / Q`, meant for
+`Q > 0` (with `x / 0 = 0` it is `c_out` when `Q = 0`). Concentrations are in one consistent unit
+(mass per volume); a ppm figure must be converted before it is used here. -/
 noncomputable def ventilationEquilibrium (Q c_out G : ℝ) : ℝ :=
   c_out + G / Q
 
@@ -230,23 +229,23 @@ private lemma ventilationConcentration_tendsto_equilibrium_of
 
 /-! ## C. Ventilation concentration from the canonical amount -/
 
-/-- Well-mixed ventilation concentration: the canonical
-one-compartment amount at exchange rate `Q / V` and input rate
-`(Q * c_out + G) / V`. -/
+/-- Well-mixed ventilation concentration: the canonical one-compartment amount at exchange rate
+`Q / V` and input rate `(Q * c_out + G) / V`; with `x / 0 = 0` it is the constant `c0` when
+`V = 0`. -/
 noncomputable def ventilationConcentration (V Q c_out G c0 t : ℝ) : ℝ :=
   amount (Q / V) ((Q * c_out + G) / V) c0 t
 
 
-/-- The compartment steady amount at the mapped parameters is
-the ventilation equilibrium. -/
+/-- For `V > 0` and `Q > 0`, the compartment steady amount at the mapped parameters is the
+ventilation equilibrium. -/
 theorem steadyAmount_eq_ventilationEquilibrium {V Q : ℝ}
     (hV : 0 < V) (hQ : 0 < Q) (c_out G : ℝ) :
     steadyAmount (Q / V) ((Q * c_out + G) / V)
       = ventilationEquilibrium Q c_out G :=
   equilibrium_bridge hV hQ c_out G
 
-/-- Explicit exponential form: the concentration is the
-equilibrium plus the initial excess decayed at rate `Q / V`. -/
+/-- Explicit exponential form, for `V > 0` and `Q > 0`: the concentration is the equilibrium plus
+the initial excess decayed at rate `Q / V`. -/
 theorem ventilationConcentration_eq_explicit {V Q : ℝ}
     (hV : 0 < V) (hQ : 0 < Q) (c_out G c0 t : ℝ) :
     ventilationConcentration V Q c_out G c0 t
@@ -256,9 +255,8 @@ theorem ventilationConcentration_eq_explicit {V Q : ℝ}
   ventilationConcentration_eq_explicit_of amount_eq_of_ne_zero hV hQ
     c_out G c0 t
 
-/-- The ventilation balance in CSTR form: the rate of change is
-the flow term `(Q / V) * (c_out - c)` plus the indoor source
-term `G / V`. -/
+/-- The ventilation balance in CSTR form, for `V ≠ 0`: the rate of change is the flow term
+`(Q / V) * (c_out - c)` plus the indoor source term `G / V`. -/
 theorem ventilationConcentration_hasDerivAt {V : ℝ} (hV : V ≠ 0)
     (Q c_out G c0 t : ℝ) :
     HasDerivAt (ventilationConcentration V Q c_out G c0)
@@ -272,7 +270,7 @@ theorem ventilationConcentration_zero (V Q c_out G c0 : ℝ) :
     ventilationConcentration V Q c_out G c0 0 = c0 :=
   ventilationConcentration_zero_of amount_zero V Q c_out G c0
 
-/-- Starting at the equilibrium keeps the concentration at the
+/-- For `V > 0` and `Q > 0`, starting at the equilibrium keeps the concentration at the
 equilibrium. -/
 theorem ventilationConcentration_at_equilibrium {V Q : ℝ}
     (hV : 0 < V) (hQ : 0 < Q) (c_out G t : ℝ) :
@@ -282,7 +280,8 @@ theorem ventilationConcentration_at_equilibrium {V Q : ℝ}
   ventilationConcentration_at_equilibrium_of amount_eq_of_ne_zero hV hQ
     c_out G t
 
-/-- Starting below the equilibrium stays below it. -/
+/-- For `V > 0` and `Q > 0`, starting at or below the equilibrium stays at or below it at every time
+`t`. -/
 theorem ventilationConcentration_le_equilibrium
     {V Q c_out G c0 : ℝ} (hV : 0 < V) (hQ : 0 < Q)
     (h : c0 ≤ ventilationEquilibrium Q c_out G) (t : ℝ) :
@@ -291,7 +290,8 @@ theorem ventilationConcentration_le_equilibrium
   ventilationConcentration_le_equilibrium_of
     (fun hk h t => amount_le_steadyAmount hk h t) hV hQ h t
 
-/-- Starting above the equilibrium stays above it. -/
+/-- For `V > 0` and `Q > 0`, starting at or above the equilibrium stays at or above it at every time
+`t`. -/
 theorem ventilationConcentration_ge_equilibrium
     {V Q c_out G c0 : ℝ} (hV : 0 < V) (hQ : 0 < Q)
     (h : ventilationEquilibrium Q c_out G ≤ c0) (t : ℝ) :
@@ -300,15 +300,15 @@ theorem ventilationConcentration_ge_equilibrium
   ventilationConcentration_ge_equilibrium_of
     (fun hk h t => steadyAmount_le_amount hk h t) hV hQ h t
 
-/-- Nonnegative data give a nonnegative concentration for
-nonnegative times. -/
+/-- For `V > 0` and `Q ≥ 0`, nonnegative data give a nonnegative concentration for nonnegative
+times. -/
 theorem ventilationConcentration_nonneg {V Q c_out G c0 t : ℝ}
     (hV : 0 < V) (hQ : 0 ≤ Q) (hc : 0 ≤ c_out) (hG : 0 ≤ G)
     (hc0 : 0 ≤ c0) (ht : 0 ≤ t) :
     0 ≤ ventilationConcentration V Q c_out G c0 t :=
   ventilationConcentration_nonneg_of amount_nonneg hV hQ hc hG hc0 ht
 
-/-- The concentration tends to the equilibrium. -/
+/-- For `V > 0` and `Q > 0`, the concentration tends to the equilibrium as `t → ∞`. -/
 theorem ventilationConcentration_tendsto_equilibrium {V Q : ℝ}
     (hV : 0 < V) (hQ : 0 < Q) (c_out G c0 : ℝ) :
     Tendsto (ventilationConcentration V Q c_out G c0) atTop

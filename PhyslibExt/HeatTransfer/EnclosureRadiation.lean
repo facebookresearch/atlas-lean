@@ -125,7 +125,8 @@ structure IsBlackEnclosure (A : ι → ℝ) (F : ι → ι → ℝ) : Prop where
 def netPower (σ : ℝ) (A : ι → ℝ) (F : ι → ι → ℝ) (T : ι → ℝ) (i : ι) : ℝ :=
   ∑ j, A i * F i j * σ * (T i ^ 4 - T j ^ 4)
 
-/-- Net radiative flux leaving surface `i`: the net power per unit area, `P i / A i`. -/
+/-- Net radiative flux leaving surface `i`: the net power per unit area, `P i / A i` (`0` when
+`A i = 0`, by `u / 0 = 0`). -/
 noncomputable def netFlux (σ : ℝ) (A : ι → ℝ) (F : ι → ι → ℝ) (T : ι → ℝ) (i : ι) : ℝ :=
   netPower σ A F T i / A i
 
@@ -493,7 +494,9 @@ def parallelPlateViewFactor : Fin 2 → Fin 2 → ℝ :=
 infinite-plane idealization (`parallelPlateViewFactor`), with emissivities `ε₁, ε₂`, absolute
 temperatures `T₁, T₂` and plate area `A`: `σ * A * (T₁ ^ 4 - T₂ ^ 4) / (1 / ε₁ + 1 / ε₂ - 1)`
 (watts). Positive values are a net outflow from plate 1. It is the power through the area `A`,
-not a flux. For finite plates, whose view factor is below one, it is an approximation. -/
+not a flux. For finite plates, whose view factor is below one, it is an approximation. For
+`0 < ε₁, ε₂ ≤ 1` the denominator is at least `1`; with `u / 0 = 0`, `1 / ε = 0` at `ε = 0` and the
+value is `0` when the denominator vanishes. -/
 noncomputable def parallelPlatePower (σ A ε₁ ε₂ T₁ T₂ : ℝ) : ℝ :=
   σ * A * (T₁ ^ 4 - T₂ ^ 4) / (1 / ε₁ + 1 / ε₂ - 1)
 

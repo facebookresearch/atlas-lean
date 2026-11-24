@@ -168,7 +168,8 @@ lemma checkThermalTrace_terminal {y : List ℚ} (h : checkThermalTrace y = true)
 
 /-- The physical endpoint `T_amb + Δ y_10` reconstructed from a trace `y` of coefficients,
 `T_j = T_amb + Δ y_j`, for the bath temperature `T_amb` and the initial excess `Δ = T_0 - T_amb`.
-`Δ` may be `0`; the endpoint is then `T_amb` for every trace. -/
+`Δ` may be `0`; the endpoint is then `T_amb` for every trace. The entry `y_10` is read with the
+default `0` when the list is shorter. -/
 noncomputable def traceEndpoint (Tamb Δ : ℝ) (y : List ℚ) : ℝ :=
   Tamb + Δ * (y.getD 10 0 : ℝ)
 
@@ -202,7 +203,8 @@ lemma traceEndpoint_error {C G : ℝ} (hC : 0 < C) (hG : 0 < G) (Tamb Δ : ℝ) 
 
 /-! ## D. Bounded decoding of an encoded trace -/
 
-/-- The value `0, …, 9` of the ASCII decimal digit characters `'0', …, '9'`. -/
+/-- The value `0, …, 9` of the ASCII decimal digit characters `'0', …, '9'`. For any other
+character it is the code point minus that of `'0'`, with truncated subtraction. -/
 def digitValue (c : Char) : ℕ := c.toNat - '0'.toNat
 
 /-- **Positional value.** The natural number a run of decimal digits denotes, most significant
@@ -288,7 +290,7 @@ def Admissible (t : TraceToken) : Prop :=
     |t.numerator| ≤ 10 ^ 10 ∧ 1 ≤ t.denominator ∧ t.denominator ≤ 10 ^ 10
 
 /-- The rational a token denotes, `numerator / denominator`; for an admissible token a quotient by
-a denominator of at least `1`. -/
+a denominator of at least `1`. With `a / 0 = 0` it is `0` when the denominator is `0`. -/
 def value (t : TraceToken) : ℚ := (t.numerator : ℚ) / (t.denominator : ℚ)
 
 end TraceToken

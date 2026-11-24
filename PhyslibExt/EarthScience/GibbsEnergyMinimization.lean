@@ -63,7 +63,7 @@ theorem gibbs_min_two_phase {μ₁ μ₂ N n₁ : ℝ} (hN : 0 ≤ N)
     mul_le_mul_of_nonneg_left hμ h1
   linarith
 
-/-- Strict version: if `μ₁ < μ₂` and `n₁ < N`, the all-phase-1 split is
+/-- Strict version: if `μ₁ < μ₂` and `0 ≤ n₁ < N`, the all-phase-1 split is
 strictly better. -/
 theorem gibbs_min_two_phase_strict {μ₁ μ₂ N n₁ : ℝ}
     (hn : 0 ≤ n₁) (hnN : n₁ < N) (hμ : μ₁ < μ₂) :

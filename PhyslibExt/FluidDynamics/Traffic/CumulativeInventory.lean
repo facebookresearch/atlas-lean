@@ -57,7 +57,7 @@ namespace FluidDynamics.Traffic.CumulativeInventory
 /-! ## A. Cumulative inventory -/
 
 /-- Cumulative vehicle inventory from per-step link balance.
-If the vehicle count `N` evolves by
+If, for a time step `dt ≥ 0`, the vehicle count `N` evolves by
 `N (j + 1) = N j + dt * (Fin j - Fout j)` at every step (the
 finite-cell balance with boundary in/out fluxes), then after
 `n` steps the count is the initial count plus cumulative
@@ -78,8 +78,8 @@ theorem cumulative_link_inventory (N Fin Fout : ℕ → ℝ)
       rw [hstep n, ih, Finset.sum_range_succ, Finset.sum_range_succ]
       ring
 
-/-- The same inventory with the cumulative curves combined:
-`N n - N 0` is the single summed net inflow. -/
+/-- The same inventory with the cumulative curves combined: for `dt ≥ 0` and the same per-step
+balance, `N n - N 0` is the single summed net inflow. -/
 theorem cumulative_link_inventory_sub (N Fin Fout : ℕ → ℝ)
     (dt : ℝ) (hdt : 0 ≤ dt)
     (hstep : ∀ j, N (j + 1) = N j + dt * (Fin j - Fout j))
@@ -98,7 +98,7 @@ theorem cumulative_link_inventory_sub (N Fin Fout : ℕ → ℝ)
   ring
 
 /-- Cumulative inventory for the total vehicle count of a
-finite cell chain. If densities `k j i` evolve by the
+finite cell chain. If, for `dt ≥ 0` and `dx > 0`, densities `k j i` evolve by the
 conservative update
 `k (j + 1) i = k j i + dt / dx * (F j i - F j (i + 1))` with
 face fluxes `F j`, then after `nSteps` steps the total count

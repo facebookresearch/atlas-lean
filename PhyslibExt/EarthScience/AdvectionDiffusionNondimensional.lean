@@ -56,13 +56,11 @@ excluded. `U * L / D` is dimensionless.
 
 namespace EarthScience
 
-/-- Nondimensionalization of the advection-diffusion equation: with
-`x = L * x̂`, `t = (L / U) * t̂`, `c = C0 * ĉ`, the chain rule gives
-`c_t = C0 * (U / L) * ĉ_t̂`, `c_x = (C0 / L) * ĉ_x̂`,
-`c_xx = (C0 / L ^ 2) * ĉ_x̂x̂` (as derivative values at corresponding
-points). If `c` satisfies `c_t + U * c_x = D * c_xx`, then the scaled
-derivatives satisfy `ĉ_t̂ + ĉ_x̂ = (1 / Pe) * ĉ_x̂x̂` with
-`Pe = U * L / D`. -/
+/-- Nondimensionalization of the advection-diffusion equation, for positive scales `L`, `U`, `D` and
+`C0`: with `x = L * x̂`, `t = (L / U) * t̂`, `c = C0 * ĉ`, the chain rule gives
+`c_t = C0 * (U / L) * ĉ_t̂`, `c_x = (C0 / L) * ĉ_x̂`, `c_xx = (C0 / L ^ 2) * ĉ_x̂x̂` (as derivative
+values at corresponding points). If `c` satisfies `c_t + U * c_x = D * c_xx`, then the scaled
+derivatives satisfy `ĉ_t̂ + ĉ_x̂ = (1 / Pe) * ĉ_x̂x̂` with `Pe = U * L / D`. -/
 theorem advection_diffusion_nondimensional {L U D C0 : ℝ}
     (hL : 0 < L) (hU : 0 < U) (hD : 0 < D) (hC0 : 0 < C0)
     {ct cx cxx chat chatx chatxx : ℝ}
@@ -88,7 +86,7 @@ theorem advection_diffusion_nondimensional {L U D C0 : ℝ}
 
 /-! ## B. Péclet number -/
 
-/-- The Péclet number is positive and its reciprocal is `D / (U * L)`. -/
+/-- For `L`, `U`, `D > 0`, the Péclet number is positive and its reciprocal is `D / (U * L)`. -/
 theorem peclet_pos {L U D : ℝ} (hL : 0 < L) (hU : 0 < U) (hD : 0 < D) :
     0 < U * L / D ∧ 1 / (U * L / D) = D / (U * L) := by
   refine ⟨div_pos (mul_pos hU hL) hD, ?_⟩

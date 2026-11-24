@@ -231,8 +231,9 @@ theorem point_release_hasDerivAt_t (M D k U t x : ℝ) (hD : 0 < D) (ht : 0 < t)
         Real.sqrt (4 * Real.pi * D * t)) t) t :=
   (point_release_hasDerivAt_t_explicit M D k U t x hD ht).differentiableAt.hasDerivAt
 
-/-- The first spatial derivative in `point_release_solves_adr` exists: the kernel
-has derivative `deriv (fun x => c t x) x` in `x`, for all parameter values. -/
+/-- The first spatial derivative in `point_release_solves_adr` exists: the kernel has derivative
+`deriv (fun x => c t x) x` in `x`, for all parameter values (for `D t ≤ 0` the kernel is the
+constant `0` in `x`, since `√y = 0` for `y < 0` and `y / 0 = 0`). -/
 theorem point_release_hasDerivAt_x (M D k U t x : ℝ) :
     HasDerivAt (fun x => M * Real.exp (-k * t) * Real.exp (-(x - U * t) ^ 2 / (4 * D * t)) /
         Real.sqrt (4 * Real.pi * D * t))

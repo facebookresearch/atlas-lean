@@ -314,7 +314,8 @@ def RCTimeConstant (τ : WithDim T𝓭 ℝ) (R : WithDim resistanceDim ℝ)
     (C : WithDim capacitanceDim ℝ) : Prop :=
   τ.val = R.val * C.val
 
-/-- The L/R time constant `τ = L / R`. -/
+/-- The L/R time constant `τ = L / R`. With the convention `x / 0 = 0`, for `R = 0` it reads
+`τ = 0`. -/
 def LRTimeConstant (τ : WithDim T𝓭 ℝ) (L : WithDim inductanceDim ℝ)
     (R : WithDim resistanceDim ℝ) : Prop :=
   τ.val = L.val / R.val
@@ -357,7 +358,8 @@ theorem rcTimeConstant_isDimensionallyCorrect : IsDimensionallyCorrect RCTimeCon
   intros
   rw [WithDim.scaleUnit_val_eq_scaleUnit_val_of_dim_eq (by rfl)]
 
-/-- The L/R time constant `τ = L / R` is unchanged by every change of units. -/
+/-- The L/R time constant `τ = L / R` is unchanged by every change of units. With the convention
+`x / 0 = 0`, this includes `R = 0`, where the law reads `τ = 0`. -/
 theorem lrTimeConstant_isDimensionallyCorrect : IsDimensionallyCorrect LRTimeConstant := by
   simp only [isDimensionallyCorrect_fun_iff, funext_iff, UnitDependent.scaleUnit_apply_fun,
     UnitDependent.scaleUnit_apply_fun_left, LRTimeConstant,

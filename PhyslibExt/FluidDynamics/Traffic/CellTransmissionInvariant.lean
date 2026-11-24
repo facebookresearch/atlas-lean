@@ -46,7 +46,8 @@ namespace FluidDynamics.Traffic.CellTransmission
 /-! ## A. Invariance of the density interval -/
 
 /-- One cell-transmission update step preserves the admissible
-density interval `[0, kj]` under the CFL condition. -/
+density interval `[0, kj]`: for `v, w, kj > 0`, densities `k`, `kin`, `kout` in `[0, kj]`,
+`dt ≥ 0`, `dx > 0` and the CFL condition `(dt / dx) * max v w ≤ 1`. -/
 theorem update_mem_Icc {v w kj k kin kout dt dx : ℝ} (hv : 0 < v)
     (hw : 0 < w) (hkj : 0 < kj) (hk : 0 ≤ k ∧ k ≤ kj)
     (hkin : 0 ≤ kin ∧ kin ≤ kj) (hkout : 0 ≤ kout ∧ kout ≤ kj)

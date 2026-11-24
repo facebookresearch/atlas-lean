@@ -152,27 +152,32 @@ variable {Ω : Type*} [MeasurableSpace Ω] {n : ℕ}
 /-! ## A. Ensemble means and the Reynolds stress -/
 
 /-- Ensemble mean of a vector field over the realizations:
-`ensembleMean μ v τ y i = 𝔼[vᵢ (τ, y)] = ∫ ω, v ω τ y i ∂μ`. -/
+`ensembleMean μ v τ y i = 𝔼[vᵢ (τ, y)] = ∫ ω, v ω τ y i ∂μ`. It is an expectation when `μ` is a
+probability measure and the component is integrable; a non-integrable component has integral `0`. -/
 noncomputable def ensembleMean (μ : Measure Ω)
     (v : Ω → ℝ → (Fin (n + 1) → ℝ) → Fin (n + 1) → ℝ) (τ : ℝ) (y : Fin (n + 1) → ℝ) :
     Fin (n + 1) → ℝ :=
   fun i => ∫ ω, v ω τ y i ∂μ
 
-/-- Ensemble mean of a stress field, `𝔼[σⱼᵢ (τ, y)]`. -/
+/-- Ensemble mean of a stress field, `𝔼[σⱼᵢ (τ, y)] = ∫ ω, σ ω τ y j i ∂μ`. It is an expectation
+when `μ` is a probability measure and the component is integrable; a non-integrable component has
+integral `0`. -/
 noncomputable def ensembleMeanStress (μ : Measure Ω)
     (σ : Ω → ℝ → (Fin (n + 1) → ℝ) → Fin (n + 1) → Fin (n + 1) → ℝ) (τ : ℝ)
     (y : Fin (n + 1) → ℝ) : Fin (n + 1) → Fin (n + 1) → ℝ :=
   fun j i => ∫ ω, σ ω τ y j i ∂μ
 
 /-- Reynolds stress per unit density, `𝔼[u'ⱼ u'ᵢ]` with the fluctuation `u' = u - 𝔼[u]`: the
-covariance of the velocity components at `(τ, y)`. As a stress acting on the mean flow it enters
-as `-ρ 𝔼[u'ⱼ u'ᵢ]`. -/
+covariance of the velocity components at `(τ, y)`. For a general measure it is
+`∫ (uⱼ - ∫ uⱼ) (uᵢ - ∫ uᵢ) ∂μ`; the covariance reading needs a probability measure and `L²`
+components. As a stress acting on the mean flow it enters as `-ρ 𝔼[u'ⱼ u'ᵢ]`. -/
 noncomputable def reynoldsStress (μ : Measure Ω)
     (u : Ω → ℝ → (Fin (n + 1) → ℝ) → Fin (n + 1) → ℝ) (τ : ℝ) (y : Fin (n + 1) → ℝ) :
     Fin (n + 1) → Fin (n + 1) → ℝ :=
   fun j i => cov[fun ω => u ω τ y j, fun ω => u ω τ y i; μ]
 
-/-- Covariance identity for the Reynolds stress: for `L²` velocity components,
+/-- Covariance identity for the Reynolds stress: for a probability measure and `L²` velocity
+components,
 `𝔼[u'ⱼ u'ᵢ] = 𝔼[uⱼ uᵢ] - 𝔼[uⱼ] 𝔼[uᵢ]` (`covariance_eq_sub`). -/
 lemma reynoldsStress_eq {μ : Measure Ω} [IsProbabilityMeasure μ]
     {u : Ω → ℝ → (Fin (n + 1) → ℝ) → Fin (n + 1) → ℝ} {τ : ℝ} {y : Fin (n + 1) → ℝ}
@@ -184,9 +189,9 @@ lemma reynoldsStress_eq {μ : Measure Ω} [IsProbabilityMeasure μ]
   rw [covariance_eq_sub hj hi]
   rfl
 
-/-- The Reynolds stress is positive semidefinite: `∑ⱼ ∑ᵢ aⱼ aᵢ 𝔼[u'ⱼ u'ᵢ] ≥ 0` for every vector
-`a`, for `L²` velocity components. It is the covariance form of the law of the velocity at
-`(τ, y)`, so this is Mathlib's `isPosSemidef_covarianceBilin`, not a new proof. -/
+/-- The Reynolds stress is positive semidefinite: `∑ⱼ ∑ᵢ aⱼ aᵢ 𝔼[u'ⱼ u'ᵢ] ≥ 0` for every vector `a`,
+for a probability measure and `L²` velocity components. It is the covariance form of the law of the
+velocity at `(τ, y)`, so this is Mathlib's `isPosSemidef_covarianceBilin`, not a new proof. -/
 lemma reynoldsStress_posSemidef {μ : Measure Ω} [IsProbabilityMeasure μ]
     {u : Ω → ℝ → (Fin (n + 1) → ℝ) → Fin (n + 1) → ℝ} {τ : ℝ} {y : Fin (n + 1) → ℝ}
     (hu : ∀ i, MemLp (fun ω => u ω τ y i) 2 μ) (a : Fin (n + 1) → ℝ) :
@@ -220,9 +225,10 @@ lemma reynoldsStress_posSemidef {μ : Measure Ω} [IsProbabilityMeasure μ]
       refine Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun i _ => ?_
       ring
 
-/-- Zero fluctuation recovers the laminar mean: if at every `(τ, y)` almost every realization
-equals the field `U τ y`, then the ensemble mean is `U` and the Reynolds stress and its
-divergence vanish, so the mean momentum equation is the laminar law for `U`. -/
+/-- Zero fluctuation recovers the laminar mean: for a probability measure, if at every `(τ, y)`
+almost every realization equals the field `U τ y`, then the ensemble mean is `U` and the Reynolds
+stress and its divergence vanish, so the Reynolds-stress term of the mean momentum equation
+vanishes. -/
 lemma reynoldsStress_eq_zero_of_ae_eq {μ : Measure Ω} [IsProbabilityMeasure μ]
     {u : Ω → ℝ → (Fin (n + 1) → ℝ) → Fin (n + 1) → ℝ}
     {U : ℝ → (Fin (n + 1) → ℝ) → Fin (n + 1) → ℝ} (hU : ∀ τ y, ∀ᵐ ω ∂μ, u ω τ y = U τ y)
@@ -278,17 +284,17 @@ private lemma pderiv_ensemble {μ : Measure Ω} {m : ℕ} {G : Ω → (Fin m →
   simp only [MathlibExt.Probability.FokkerPlanck.pderiv]
   rw [h.fderiv, hL, ContinuousLinearMap.integral_apply hint]
 
-/-- **Exact ensemble-averaged momentum equation.** At a point `(t, x)` and for constant density
-`ρ`, suppose: the velocity components are `L²` and the stress components are integrable over
-the realizations; almost every realization is differentiable in time near `t`
-(velocity at `x`) and in space near `x` (velocity and stress at time `t`); the derivatives at the
-point are a.e.-strongly measurable; one integrable `B` dominates, almost surely, the time
-derivatives of the velocity on `ball t ε` and the space derivatives of the velocity, of the
-velocity products `uⱼ uᵢ` and of the stress on `ball x ε`; and almost every realization obeys the
-local Cauchy law `∂ₜ(ρ uⱼ) + div (momentumFlux ρ u σ j) = fⱼ` at the point. Then the ensemble
-means obey the same law with the extra divergence of the Reynolds stress:
-`∂ₜ(ρ 𝔼[uⱼ]) + div (momentumFlux ρ 𝔼[u] 𝔼[σ] j) = 𝔼[fⱼ] - ρ div 𝔼[u'ⱼ u']`. No integrability of
-the body force is assumed: the law makes it almost surely equal to an integrable function. -/
+/-- **Exact ensemble-averaged momentum equation.** For a probability measure `μ`, at a point
+`(t, x)`, for constant density `ρ` and a radius `ε > 0`, suppose: the velocity components are `L²`
+and the stress components are integrable over the realizations; almost every realization is
+differentiable in time near `t` (velocity at `x`) and in space near `x` (velocity and stress at time
+`t`); the derivatives at the point are a.e.-strongly measurable; one integrable `B` dominates,
+almost surely, the time derivatives of the velocity on `ball t ε` and the space derivatives of the
+velocity, of the velocity products `uⱼ uᵢ` and of the stress on `ball x ε`; and almost every
+realization obeys the local Cauchy law `∂ₜ(ρ uⱼ) + div (momentumFlux ρ u σ j) = fⱼ` at the point.
+Then the ensemble means obey the same law with the extra divergence of the Reynolds stress:
+`∂ₜ(ρ 𝔼[uⱼ]) + div (momentumFlux ρ 𝔼[u] 𝔼[σ] j) = 𝔼[fⱼ] - ρ div 𝔼[u'ⱼ u']`. No integrability of the
+body force is assumed: the law makes it almost surely equal to an integrable function. -/
 lemma mean_momentum {μ : Measure Ω} [IsProbabilityMeasure μ] {ρ t ε : ℝ}
     {x : Fin (n + 1) → ℝ} {u f : Ω → ℝ → (Fin (n + 1) → ℝ) → Fin (n + 1) → ℝ}
     {σ : Ω → ℝ → (Fin (n + 1) → ℝ) → Fin (n + 1) → Fin (n + 1) → ℝ} {B : Ω → ℝ}
@@ -468,9 +474,9 @@ lemma mean_momentum {μ : Measure Ω} [IsProbabilityMeasure μ] {ρ t ε : ℝ}
   congr 1
   exact Finset.sum_congr rfl fun i _ => hmean_i i
 
-/-- The mean of an incompressible ensemble is incompressible: with integrable velocity
-components, almost-sure differentiability near `x`, measurable derivatives at `x` and an
-integrable bound on the velocity derivatives near `x`, if almost every realization has
+/-- The mean of an incompressible ensemble is incompressible: for a probability measure, with
+integrable velocity components, almost-sure differentiability near `x`, measurable derivatives at
+`x` and an integrable bound on the velocity derivatives near `x`, if almost every realization has
 `div u = 0` at `(t, x)` then `div 𝔼[u] = 0` there. -/
 lemma divergence_ensembleMean_eq_zero {μ : Measure Ω} [IsProbabilityMeasure μ] {t ε : ℝ}
     {x : Fin (n + 1) → ℝ} {u : Ω → ℝ → (Fin (n + 1) → ℝ) → Fin (n + 1) → ℝ} {B : Ω → ℝ}
@@ -505,7 +511,8 @@ lemma divergence_ensembleMean_eq_zero {μ : Measure Ω} [IsProbabilityMeasure μ
 /-! ## C. The interchange without domination -/
 
 /-- Counterexample profile for the case without domination:
-`escapingProfile s ω = s ^ 3 / ω ^ 2 * exp (-s ^ 2 / ω)`. -/
+`escapingProfile s ω = s ^ 3 / ω ^ 2 * exp (-s ^ 2 / ω)`. With the convention `x / 0 = 0` it is
+`0` at `ω = 0`. -/
 noncomputable def escapingProfile (s ω : ℝ) : ℝ := s ^ 3 / ω ^ 2 * Real.exp (-s ^ 2 / ω)
 
 /-- Derivative in `s` of the escaping profile, for every realization `ω`. -/

@@ -194,7 +194,8 @@ open MeasureTheory MathlibExt.Analysis.Integration MathlibExt.Analysis.ODE.Finit
 
 /-! ## A. Amplitude, unit profile and the physical reconstruction -/
 
-/-- The amplitude `α = q * L ^ 2 / (2 * EA)` of the uniform-load fixed-fixed bar. -/
+/-- The amplitude `α = q * L ^ 2 / (2 * EA)` of the uniform-load fixed-fixed bar. With `a / 0 = 0`
+it is `0` when `EA = 0`. -/
 noncomputable def barAmplitude (EA L q : ℝ) : ℝ :=
   q * L ^ 2 / (2 * EA)
 
@@ -207,7 +208,8 @@ def unitProfile (ξ : ℝ) : ℝ :=
 noncomputable def unitError (P : Partition (0 : ℝ) 1) (ξ : ℝ) : ℝ :=
   unitProfile ξ - interp P unitProfile ξ
 
-/-- The physical P1 reconstruction `u_h x = α * (I_P û) (x / L)`. -/
+/-- The physical P1 reconstruction `u_h x = α * (I_P û) (x / L)`. With `a / 0 = 0`, `x / L = 0`
+when `L = 0`. -/
 noncomputable def physicalP1 (P : Partition (0 : ℝ) 1) (EA L q x : ℝ) : ℝ :=
   barAmplitude EA L q * interp P unitProfile (x / L)
 
@@ -306,7 +308,7 @@ lemma zero_load (P : Partition (0 : ℝ) 1) (EA L : ℝ) :
   simp [physicalError, physicalP1, barAmplitude, axialDisplacement]
 
 /-- At zero load the inverse amplitude map does not recover the unit profile: at `ξ = 1 / 2` it
-gives `0`, while `û (1 / 2) = 1 / 4`. -/
+gives `0` (with `0⁻¹ = 0`), while `û (1 / 2) = 1 / 4`. -/
 lemma zero_load_inverse_ne (EA L : ℝ) :
     (barAmplitude EA L 0)⁻¹ * axialDisplacement EA L 0 (L * (1 / 2)) ≠ unitProfile (1 / 2) := by
   norm_num [barAmplitude, axialDisplacement, unitProfile]
@@ -319,7 +321,8 @@ lemma physicalError_eq (P : Partition (0 : ℝ) 1) {L : ℝ} (hL : L ≠ 0) (EA 
   rw [physicalError, axialDisplacement_eq_barAmplitude_mul hL, physicalP1, unitError]
   ring
 
-/-- Energy scaling: `∫₀ᴸ EA (e')² = (EA / L) α² ∫₀¹ (ê')²`. -/
+/-- Energy scaling: `∫₀ᴸ EA (e')² = (EA / L) α² ∫₀¹ (ê')²`. Derivatives are `0` where not
+differentiable. -/
 lemma integral_energy_physicalError (P : Partition (0 : ℝ) 1) {L : ℝ} (hL : 0 < L) (EA q : ℝ) :
     ∫ x in (0 : ℝ)..L, EA * deriv (physicalError P EA L q) x ^ 2 =
       EA / L * barAmplitude EA L q ^ 2 * ∫ ξ in (0 : ℝ)..1, deriv (unitError P) ξ ^ 2 := by
@@ -360,7 +363,8 @@ lemma integral_sq_physicalError (P : Partition (0 : ℝ) 1) {L : ℝ} (hL : 0 < 
 /-! ## D. The mesh estimates in physical form -/
 
 /-- The existing energy estimate `‖ê‖²_a ≤ (h / π)² ‖2‖²_{L²}` in physical form:
-`∫₀ᴸ EA (e')² ≤ (EA / L) α² (4 (h / π)²)`, with `h` the mesh size of `P`. -/
+`∫₀ᴸ EA (e')² ≤ (EA / L) α² (4 (h / π)²)`, with `h` the mesh size of `P`. Derivatives are `0`
+where not differentiable. -/
 lemma integral_energy_physicalError_le_mesh (P : Partition (0 : ℝ) 1) {EA L : ℝ} (hL : 0 < L)
     (hEA : 0 < EA) (q : ℝ) :
     ∫ x in (0 : ℝ)..L, EA * deriv (physicalError P EA L q) x ^ 2 ≤
@@ -443,7 +447,7 @@ private lemma integral_poly4 (a b c0 c1 c2 c3 c4 : ℝ) :
   ring
 
 /-- Two cells, unit problem: the error vanishes at the nodes but is `1 / 16` at `ξ = 1 / 4`;
-`∫₀¹ (ê')² = 1 / 12` and `∫₀¹ ê² = 1 / 480`. -/
+`∫₀¹ (ê')² = 1 / 12` and `∫₀¹ ê² = 1 / 480`. Derivatives are `0` where not differentiable. -/
 lemma unitError_twoCells :
     (∀ j, unitError twoCells (twoCells.points j) = 0) ∧ unitError twoCells (1 / 4) = 1 / 16 ∧
       ∫ ξ in (0 : ℝ)..1, deriv (unitError twoCells) ξ ^ 2 = 1 / 12 ∧
@@ -544,7 +548,7 @@ lemma unitError_twoCells :
     norm_num
 
 /-- Two cells, physical bar: `e (L / 4) = α / 16`, energy `(EA / L) α² / 12` and squared `L²`
-error `L α² / 480`. -/
+error `L α² / 480`. Derivatives are `0` where not differentiable. -/
 lemma physicalError_twoCells {L : ℝ} (hL : 0 < L) (EA q : ℝ) :
     physicalError twoCells EA L q (L / 4) = barAmplitude EA L q / 16 ∧
       ∫ x in (0 : ℝ)..L, EA * deriv (physicalError twoCells EA L q) x ^ 2 =
@@ -567,14 +571,16 @@ conductance `G` to a body at temperature `T`. -/
 def bathPower (G Tamb T : ℝ) : ℝ := -G * (T - Tamb)
 
 /-- The thermal time constant `τ = C / G` of a body of heat capacity `C` coupled to a bath through
-the conductance `G`. -/
+the conductance `G`. With `a / 0 = 0` it is `0` when `G = 0`. -/
 noncomputable def thermalTimeConstant (C G : ℝ) : ℝ := C / G
 
-/-- The bath-cooling trajectory `T(t) = T_amb + Δ exp(-t / τ)` with `τ = C / G`. -/
+/-- The bath-cooling trajectory `T(t) = T_amb + Δ exp(-t / τ)` with `τ = C / G`. With `a / 0 = 0`
+it is the constant `T_amb + Δ` when `τ = 0`. -/
 noncomputable def bathTrajectory (C G Tamb Δ t : ℝ) : ℝ :=
   Tamb + Δ * Real.exp (-t / thermalTimeConstant C G)
 
-/-- One explicit Euler step `T ↦ T + dt Q(T) / C` of `C T' = Q(T)` with the time step `dt`. -/
+/-- One explicit Euler step `T ↦ T + dt Q(T) / C` of `C T' = Q(T)` with the time step `dt`. With
+`a / 0 = 0` it leaves `T` unchanged when `C = 0`. -/
 noncomputable def bathEulerStep (C G Tamb dt T : ℝ) : ℝ := T + dt * bathPower G Tamb T / C
 
 /-- **The trajectory solves the bath equation.** For `C, G > 0`, `T(0) = T_amb + Δ` and
@@ -729,7 +735,8 @@ section RungeKuttaComparison
 open MathlibExt.Analysis.ODE.RungeKutta
 
 /-- The right side `(t, T) ↦ Q(T) / C` of the bath-cooling equation `C T' = Q(T)` of
-`PhysicalErrorBudgets`, as a field that does not depend on the time `t`. -/
+`PhysicalErrorBudgets`, as a field that does not depend on the time `t`. With `a / 0 = 0` it is
+`0` when `C = 0`. -/
 noncomputable def bathField (C G Tamb : ℝ) (_t T : ℝ) : ℝ := bathPower G Tamb T / C
 
 /-- The stages of an explicit Runge–Kutta method for a field that ignores time do not depend on
@@ -782,7 +789,7 @@ lemma bathField_rk4_time_indep (C G Tamb t T dt : ℝ) :
 
 /-- **Ambient-temperature shift.** One RK4 step of the bath field from `T` is `T_amb` plus the RK4
 step of the linear decay `θ' = (-1 / τ) θ` from the excess `T - T_amb`; an identity for all real
-parameters. -/
+parameters, with `-1 / τ = 0` when `τ = 0` (`a / 0 = 0`). -/
 lemma bathField_rk4_shift (C G Tamb t T dt : ℝ) :
     rkStep rk4 (bathField C G Tamb) t T dt =
       Tamb + rkStep rk4 (fun _ y => -1 / thermalTimeConstant C G * y) 0 (T - Tamb) dt := by
@@ -793,7 +800,7 @@ lemma bathField_rk4_shift (C G Tamb t T dt : ℝ) :
 
 /-- **The step through the stability polynomial.** One RK4 step of size `dt` of the bath field
 multiplies the excess `T - T_amb` by `R(z) = 1 + z + z² / 2 + z³ / 6 + z⁴ / 24` with
-`z = (-1 / τ) dt`: `rk4_stability` after the shift. -/
+`z = (-1 / τ) dt`: `rk4_stability` after the shift. With `a / 0 = 0`, `-1 / τ = 0` when `τ = 0`. -/
 lemma bathField_rk4_step (C G Tamb t T dt : ℝ) :
     rkStep rk4 (bathField C G Tamb) t T dt =
       Tamb + (T - Tamb) * (1 + -1 / thermalTimeConstant C G * dt +
