@@ -12358,6 +12358,7 @@
   "MathlibExt/NumberTheory/PisotRoot": {"to": "NumberTheory/heights-mahler-measure", "title": "Pisot numbers"},
   "MathlibExt/NumberTheory/PocklingtonPrimePowerCriterion": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Pocklington primality test"},
   "MathlibExt/NumberTheory/PolygonalNumber": {"to": "NumberTheory/quadratic-forms-sums-of-squares/waring-figurate", "title": "Polygonal numbers"},
+  "MathlibExt/NumberTheory/PolygonalSumParity": {"to": "NumberTheory/additive-number-theory", "title": "Sums of practical and polygonal numbers"},
   "MathlibExt/NumberTheory/Polynomial/DumasIrreducibilityCriterion": {"to": "Algebra/polynomials", "title": "Irreducibility criteria for integer polynomials"},
   "MathlibExt/NumberTheory/PolynomialCubes": {"to": "NumberTheory/diophantine-equations/higher-degree-equations", "title": "Sums of cubes of polynomials"},
   "MathlibExt/NumberTheory/PolynomialTL1": {"to": "Combinatorics/binomial-coefficients/central-binomial-harmonic-sums", "title": "Series of reciprocal central binomial coefficients"},
