@@ -10458,6 +10458,7 @@
   "MathlibExt/Combinatorics/SetFamily/UnionFreeVanishingDensity": {"to": "Combinatorics/extremal-set-theory/intersecting-families", "title": "Union-free families"},
   "MathlibExt/Combinatorics/SetFamily/VCDim": {"to": "Combinatorics/extremal-set-theory", "title": "VC dimension"},
   "MathlibExt/Combinatorics/SimpleGraph/AlgebraicGraphTheory/Homomorphisms": {"to": "GraphTheory/algebraic-graph-theory", "title": "Graph homomorphisms, cores and covers"},
+  "MathlibExt/Combinatorics/SimpleGraph/AlgebraicGraphTheory/IntegralCayleyGraphs": {"to": "GraphTheory/algebraic-graph-theory", "title": "Integral Cayley graphs"},
   "MathlibExt/Combinatorics/SimpleGraph/AlgebraicGraphTheory/LPRelaxations/FractionalClique": {"to": "GraphTheory/graph-coloring", "title": "Fractional coloring"},
   "MathlibExt/Combinatorics/SimpleGraph/AlgebraicGraphTheory/LPRelaxations/FractionalColouring": {"to": "GraphTheory/graph-coloring", "title": "Fractional coloring"},
   "MathlibExt/Combinatorics/SimpleGraph/AlgebraicGraphTheory/SArcs": {"to": "GraphTheory/algebraic-graph-theory", "title": "Arc-transitive graphs"},
