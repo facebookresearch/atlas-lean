@@ -39,4 +39,15 @@ example :
   rw [hone] at h
   exact h
 
+-- Negative shifts use the same parity rule. The last entry has order four, not two.
+example :
+    let s : Fin 4 → ZMod 4 := ![0, 0, 2, 1]
+    coverCount (s ∘ Fin.castSucc) 2 = 4 ∧ coverCount (s ∘ Fin.castSucc) 3 = 0 := by
+  intro s
+  have hs : IsPerfectMCover (2 ^ 2) s := by decide +revert
+  have hzero : coverCount (s ∘ Fin.castSucc) 0 = 4 := by decide +revert
+  have h := coverCount_init_add_zsmul_last hs 0 (-1)
+  rw [hzero] at h
+  exact h
+
 end MetaMathlibExt
