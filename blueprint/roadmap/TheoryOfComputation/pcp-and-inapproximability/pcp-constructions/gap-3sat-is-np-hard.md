@@ -5,7 +5,7 @@ whether $\varphi$ is satisfiable (a YES instance) or $\mathrm{val}(\varphi) \le 
 language $L \in \mathsf{NP}$ has a polynomial-time map $f$ sending members of $L$ to YES instances and non-members to NO instances.
 
 **Theorem.** There is a constant $\rho \in (0, 1)$ such that $\rho$-GAP 3SAT is NP-hard. This is equivalent to the PCP theorem
-$\mathsf{NP} \subseteq \mathsf{PCP}(\log n, 1)$: NP-hardness of $\rho$-GAP 3SAT gives a verifier that checks one random clause of $f(x)$, and conversely a PCP
+$\mathsf{NP} = \mathsf{PCP}(O(\log n), O(1))$: NP-hardness of $\rho$-GAP 3SAT gives a verifier that reads the three variables of one random clause of $f(x)$, and conversely a PCP
 verifier yields NP-hardness of a gap $q$CSP problem, which reduces to gap 3SAT with a constant loss in the gap.
 
 ## Proof depends on

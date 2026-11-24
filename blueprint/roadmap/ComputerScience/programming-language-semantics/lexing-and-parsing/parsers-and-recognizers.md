@@ -5,12 +5,12 @@ Fix a context-free grammar $G$ with start symbol $S$. A *parse tree* for a word 
 - A *parser* for $G$ maps each input to a parse tree, or a semantic value, or to *reject*. It is *sound* if every tree or value it returns for $w$ comes from a derivation $S \xrightarrow{v} w$, that is, it accepts only valid inputs. It is *complete* if it returns some tree or value whenever $w \in L(G)$.
 
 **Theorem.**
-1. Erasing the output of a sound and complete parser, so that it answers *accept* whenever it returns a tree, gives a recognizer for $L(G)$.
-2. If $G$ is unambiguous, so that every $w \in L(G)$ has exactly one parse tree, then a sound and complete parser returns that tree on every $w \in L(G)$. Its output is then determined by $G$ alone.
+1. Erasing the output of a sound and complete parser, so that it answers *accept* whenever it returns a tree or a semantic value, gives a recognizer for $L(G)$.
+2. If $G$ is unambiguous, so that every $w \in L(G)$ has exactly one parse tree, then a sound and complete parser whose results are parse trees returns that tree on every $w \in L(G)$. Its output is then determined by $G$ alone.
 3. A recognizer's yes-or-no answer carries no parse tree. For example, the CYK and Earley recognition tables certify membership, and producing a parse tree requires an extra step that reads a tree back from the table.
 
 **Proof.**
-1. Soundness gives $w \in L(G)$ whenever the parser returns a tree, and completeness gives a tree whenever $w \in L(G)$.
+1. Soundness gives $w \in L(G)$ whenever the parser returns a result, and completeness gives a result whenever $w \in L(G)$.
 2. By soundness, the returned tree is a parse tree of $w$, and there is only one.
 3. Membership is a single bit, while a parse tree records a derivation.
 

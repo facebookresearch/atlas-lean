@@ -11,6 +11,10 @@ constant $d$, or by any constant in $(0, 1/2)$.
 
 - [BPP](../../complexity-classes/time-and-space-complexity-classes/bpp.md)
 
+## Proof depends on
+
+- [Hoeffding lower-tail bound for Bernoulli sums](../../../Probability/concentration-inequalities/hoeffding-s-inequality/hoeffding-binomial-lower-tail.md)
+
 ## Sources
 
 - S. Arora and B. Barak, *Computational Complexity: A Modern Approach*, web draft of 2007-01-08, <https://theory.cs.princeton.edu/complexity/>: Theorem 7.10 (error reduction) with its proof.
