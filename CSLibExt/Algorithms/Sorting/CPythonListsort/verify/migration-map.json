@@ -1785,6 +1785,6 @@
  "issue": "https://github.com/facebookresearch/atlas-lean/issues/5408",
  "declaration_namespace": "CPythonListsort",
  "production_module_prefix": "CSLibExt.Algorithms.Sorting.CPythonListsort",
- "root_toolchain": "leanprover/lean4:v4.35.0",
- "validation_status": "Validated on the root toolchain leanprover/lean4:v4.35.0: 117 production and 10 test modules build with no errors; scripts/check_axioms.lean run over exactly those 127 modules reports no policy violation; the 6392 declarations they contribute depend only on propext, Quot.sound, and Classical.choice; the twelve IO regressions execute through #eval during the CSLibExtTest build; verify_trust_boundary.py, verify_citations.py and verify_excerpts.py pass. Correspondence between the Lean model and the pinned C is not machine-checked."
+ "root_toolchain": "leanprover/lean4:v4.36.0",
+ "validation_status": "Validated on the root toolchain leanprover/lean4:v4.36.0 with the pinned Mathlib revision: 117 production and 10 test modules build with no errors; the compiled policy audit reports no policy violation across those 127 modules. They own 10,967 distinct declaration names, and their only transitive axioms are propext, Quot.sound, and Classical.choice. The twelve IO regressions pass through #eval during the CSLibExtTest build. The trust-boundary checks, their eight unit tests, the citation verifier, and reproduction of the two pinned source excerpts also pass. This scoped reproduction does not establish that the Lean model refines the pinned C."
 }

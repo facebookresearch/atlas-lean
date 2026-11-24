@@ -2,7 +2,7 @@
 
 ## Root integration checks
 
-Use the root `lean-toolchain` (`leanprover/lean4:v4.35.0`) and Lake
+Use the root `lean-toolchain` (`leanprover/lean4:v4.36.0`) and Lake
 environment. From the repository root:
 
 ```sh
@@ -30,18 +30,19 @@ and the twelve original propositions are in
 
 ### What the integration was checked against
 
-- 117 production and 10 test modules compile on 4.35.0 with no errors.
-- `scripts/check_axioms.lean`, run over exactly those 127 modules, reports no
-  policy violation: no forbidden axiom, no `unsafe` declaration, no
-  `implemented_by`, no wanted declaration outside `WantedExt`, and no
-  cross-library import the policy forbids.
-- Across the 6392 declarations those modules contribute, the only axioms that
-  occur are `propext`, `Quot.sound`, and `Classical.choice`. No
-  `native_decide` axiom and no `sorryAx` occurs anywhere.
+- 117 production and 10 test modules compile on Lean 4.36.0 with the root Mathlib pin.
+- The compiled policy audit, run over exactly those 127 modules, reports no
+  forbidden axiom, unsafe declaration or `implemented_by` attribute outside the
+  compiler-generated exceptions, wanted declaration outside `WantedExt`, or
+  forbidden cross-library import. All 127 modules can also be imported together.
+- Those modules own 10,967 distinct declaration names. The only transitive axioms
+  are `propext`, `Quot.sound`, and `Classical.choice`; neither `native_decide` nor
+  `sorryAx` occurs as an axiom.
 - The five principal theorems remain polymorphic in two independent universe
   parameters; the key and payload universes were not collapsed.
-- `verify_excerpts.py` re-downloads the pinned CPython commit and confirms
-  both generated Markdown sources byte-for-byte.
+- Reproduction fetched the two public source files at the immutable CPython pin,
+  checked their SHA-256 hashes, and ran `verify_excerpts.py` offline using those
+  bytes. Both generated Markdown files matched byte for byte.
 - `verify_citations.py` confirms that every `path:line` citation in this
   development's Markdown resolves to an existing, non-blank line, and that
   the roadmap trust ledger cites each of the twelve regressions at its
@@ -283,7 +284,7 @@ verified sources/listsort.md
 ```
 
 The reviewed transcription uses the 32-bit mask operation at
-`Transcription/Minrun.lean:58-49`. Exact quotient/remainder results carry
+`Transcription/Minrun.lean:57`. Exact quotient/remainder results carry
 the explicit `mr_e < 32` premise, while the top-level scan consumes the
 unconditional arbitrary-call band through
 `Assembly/ListSortSupport.lean:261`.
