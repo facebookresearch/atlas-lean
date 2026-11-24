@@ -13,6 +13,7 @@ public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import Mathlib.NumberTheory.LSeries.Basic
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
+public import MathlibExt.NumberTheory.ArithmeticFunction.SquarefulTwoPowOmega
 public import MathlibExt.NumberTheory.KFull
 
 /-!
@@ -59,26 +60,6 @@ public theorem_wanted squareful_two_pow_omega_LSeries_eq_zeta_quotient_fifteen :
               riemannZeta (13 * s) ^ 14 * riemannZeta (14 * s) ^ 5 /
             (riemannZeta (4 * s) * riemannZeta (5 * s) ^ 2 * riemannZeta (6 * s) ^ 3 *
               riemannZeta (10 * s) ^ 5 * riemannZeta (11 * s) ^ 6) * LSeries h s
-
-open Classical in
-/-- **Coarse zeta factorization of the squareful $2^{\omega(n)}$ Dirichlet series.** Let
-$\omega(n)$ be the number of distinct prime factors of $n$, call $n$ squareful when $n \ne 0$ and
-$p^2 \mid n$ for every prime $p \mid n$ (that is, $n$ is $2$-full), and let
-$F(s) = \sum_{n \text{ squareful}} 2^{\omega(n)} n^{-s}$. There is a sequence
-$h : \mathbb{N} \to \mathbb{C}$ whose Dirichlet series $H(s) = \sum_{n \ge 1} h(n) n^{-s}$
-converges absolutely for $\operatorname{Re} s > 1/5$, such that for every complex $s$ with
-$\operatorname{Re} s > 1/2$,
-$$F(s) = \frac{\zeta(2s)^2 \zeta(3s)^2}{\zeta(4s)} H(s).$$
-
-Source: Kampamolla Venkatasubbareddy and Ayyadurai Sankaranarayanan, *On the
-Distribution of the Restricted Sequence of Integers 2^{ω(n)}*, INTEGERS 24
-(2024), Article A110, Lemma 2 (`integers-2024-A110-lem-2`). -/
-public theorem_wanted squareful_two_pow_omega_LSeries_eq_zeta_quotient_five :
-    ∃ h : ℕ → ℂ, (∀ s : ℂ, 1 / 5 < s.re → LSeriesSummable h s) ∧
-      ∀ s : ℂ, 1 / 2 < s.re →
-        LSeries (fun n => if Nat.IsKFull 2 n then
-            (2 : ℂ) ^ ArithmeticFunction.cardDistinctFactors n else 0) s =
-          riemannZeta (2 * s) ^ 2 * riemannZeta (3 * s) ^ 2 / riemannZeta (4 * s) * LSeries h s
 
 /-- **Uniform fourth-moment bound for the Riemann zeta function.** There are real constants $C$
 and $T_0$ such that for every real $\sigma$ with $1/2 \le \sigma \le 1$ and every real

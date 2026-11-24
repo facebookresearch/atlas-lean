@@ -24,6 +24,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
+public import MathlibExt.NumberTheory.NearPerfectPowerTwoDivisibility
 public import MathlibExt.NumberTheory.TwoNearPerfectEquationSeven
 public import MathlibExt.NumberTheory.TwoNearPerfectEquationSix
 public import MathlibExt.NumberTheory.TwoNearPerfectOddDivisor
@@ -126,18 +127,6 @@ Source: Vedant Aryan, Dev Madhavani, Savan Parikh, Ingrid Slattery and Joshua Ze
 public theorem_wanted lt_two_mul_of_strong_two_near_perfect_form {a k p : ℕ} (hp : p.Prime)
     (hak : a ≤ k) (hform : (p : ℤ) * (1 + 2 ^ (k - a)) = 2 ^ (k + 1) - 2 ^ a - 1) :
     k < 2 * a
-
-/-- **If $b \ge 1$ and $2^b + 1$ divides $3 \cdot 2^a + 1$, then $b = 2$.** Let $a$ and $b$ be
-natural numbers with $b \ge 1$. If $2^b + 1$ divides $3 \cdot 2^a + 1$, then $b = 2$.
-
-The source prints the lemma with no range for $b$; its proof divides $a$ by $b$, so $b \ge 1$ is
-assumed here. The hypothesis is needed: for $b = 0$, $2^0 + 1 = 2$ divides $3 \cdot 2^0 + 1 = 4$.
-
-Source: Vedant Aryan, Dev Madhavani, Savan Parikh, Ingrid Slattery and Joshua Zelinsky,
-*On 2-Near Perfect Numbers*, INTEGERS 24 (2024), Article A61, Lemma 10
-(`integers-2024-A61-lem-10`). -/
-public theorem_wanted eq_two_of_two_pow_add_one_dvd {a b : ℕ} (hb : 1 ≤ b)
-    (h : 2 ^ b + 1 ∣ 3 * 2 ^ a + 1) : b = 2
 
 /-- **No $2$-near perfect $2^k p^2$ with omitted divisors $2^i$ and $p$ or $p^2$.** Let $p$ be an
 odd prime, let $k$ and $i$ be natural numbers with $i \le k$, let $m$ be $1$ or $2$, and let
