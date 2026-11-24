@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Computability.Complexity.Classes
+public import MathlibExt.Data.BitVec.BoolList
 import Mathlib.Data.Nat.Bitwise
 import Mathlib.Data.Nat.BinaryRec
 import Mathlib.Algebra.Group.Monoid
@@ -41,9 +42,16 @@ namespace Cslib.Complexity.Classes
 set_option autoImplicit false
 
 /-- The `M`-bit least-significant-bit-first expansion of a measurement
-outcome `y`, as read by classical post-processing. -/
+outcome `y`, as read by classical post-processing. This is the canonical
+little-endian `BitVec` codec, so its length, indexing, and round-trip lemmas
+apply. -/
 def measuredBits (M : ℕ) (y : Fin (2 ^ M)) : List Bool :=
-  (List.finRange M).map (fun k => Nat.testBit y.val k)
+  (BitVec.ofFin y).toBoolListLE
+
+/-- `measuredBits` is the canonical little-endian `BitVec` codec. -/
+theorem measuredBits_eq_toBoolListLE (M : ℕ) (y : Fin (2 ^ M)) :
+    measuredBits M y = (BitVec.ofFin y).toBoolListLE :=
+  rfl
 
 private theorem coe_finRange_eq_range (M : ℕ) :
     (↑(List.finRange M) : List ℕ) = List.range M := by
@@ -51,20 +59,25 @@ private theorem coe_finRange_eq_range (M : ℕ) :
     List.map_eq_flatMap.symm
   rw [h, List.map_coe_finRange_eq_range]
 
-private theorem measuredBits_eq_range_map (M : ℕ) (y : Fin (2 ^ M)) :
-    measuredBits M y = (List.range M).map (fun k => Nat.testBit y.val k) := by
-  unfold measuredBits
-  rw [coe_finRange_eq_range]
-
 /-- The measured bit list has one entry per qubit. -/
 theorem measuredBits_length (M : ℕ) (y : Fin (2 ^ M)) :
     (measuredBits M y).length = M := by
-  simp only [measuredBits_eq_range_map, List.length_map, List.length_range]
+  simp only [measuredBits_eq_toBoolListLE, BitVec.length_toBoolListLE]
 
 /-- The `k`-th measured bit is the `k`-th bit of the outcome. -/
 theorem measuredBits_getElem (M : ℕ) (y : Fin (2 ^ M)) (k : ℕ) (hk : k < M) :
     (measuredBits M y)[k]'(by rwa [measuredBits_length]) = Nat.testBit y.val k := by
-  simp only [measuredBits_eq_range_map, List.getElem_map, List.getElem_range]
+  have hlsb : (BitVec.ofFin y).getLsbD k = Nat.testBit y.val k :=
+    BitVec.getLsbD_ofFin y k
+  simp only [measuredBits_eq_toBoolListLE, BitVec.getElem_toBoolListLE, hlsb]
+
+private theorem measuredBits_eq_range_map (M : ℕ) (y : Fin (2 ^ M)) :
+    measuredBits M y = (List.range M).map (fun k => Nat.testBit y.val k) := by
+  apply List.ext_getElem
+  · simp only [measuredBits_length, List.length_map, List.length_range]
+  · intro k h1 h2
+    have hk : k < M := by rwa [measuredBits_length] at h1
+    rw [measuredBits_getElem M y k hk, List.getElem_map, List.getElem_range]
 
 private theorem qNumOf_range_map_testBit (M : ℕ) (v : ℕ) (hv : v < 2 ^ M) :
     qNumOf ((List.range M).map (fun k => Nat.testBit v k)) = v := by
