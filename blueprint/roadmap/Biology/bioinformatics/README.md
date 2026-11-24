@@ -18,3 +18,5 @@ Algorithms and statistical models on biological sequences and data: sequence ali
 
 - [Transposition diameter of the symmetric group](transposition-diameter-of-the-symmetric-group.md)
 - [Approximation ratio for sorting by transpositions](approximation-ratio-for-sorting-by-transpositions.md)
+
+- [Genome rearrangements](genome-rearrangements/README.md)

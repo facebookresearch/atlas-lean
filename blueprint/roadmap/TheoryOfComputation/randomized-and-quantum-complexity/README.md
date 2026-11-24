@@ -15,3 +15,5 @@ Probabilistic classes (RP, BPP), Arthur–Merlin and interactive proofs (AM, MA,
 - [Sipser-Gács-Lautemann: BPP is in $\Sigma_2^p$ and $\Pi_2^p$](sipser-gacs-lautemann.md)
 
 - [Deterministic polynomial identity testing](deterministic-polynomial-identity-testing.md)
+
+- [Path-sum expansion of quantum circuit amplitudes](path-sum-expansion-of-quantum-circuit-amplitudes.md)

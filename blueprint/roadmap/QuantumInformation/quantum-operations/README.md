@@ -6,6 +6,10 @@ Quantum operations and channels covers the physically allowed transformations of
 - [No-cloning theorem for two states](no-cloning-two-state.md)
 - [No-cloning theorem (linear form)](no-cloning-linear.md)
 
+- [Converse bounds for the capacities of a quantum channel](converse-bounds-for-the-capacities-of-a-quantum-channel.md)
+- [Monotonicity of fidelity under channels](monotonicity-of-fidelity-under-channels.md)
+- [Holevo–Helstrom theorem](holevohelstrom-theorem.md)
+
 ## Related topics
 
 - [Quantum error correction](../quantum-error-correction/README.md): encoding protects quantum information without copying it, and the no-cloning theorem bounds the length of codes (Preskill, Chapter 7, Section 7.8.2).

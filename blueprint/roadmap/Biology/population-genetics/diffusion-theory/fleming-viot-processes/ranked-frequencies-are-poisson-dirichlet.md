@@ -1,14 +1,23 @@
 # Ranked masses of the stationary Fleming–Viot measure
 
 This node covers the ranked allele frequencies of the stationary infinitely-many-neutral-alleles model.
-The Dirichlet process with parameter $\theta\nu_0$ has the series representation
+The [Dirichlet process](../../../../Probability/bayesian-statistics/dirichlet-process/dirichlet-process.md) $\mathrm{DP}(\theta, \nu_0)$ (parameter $\theta\nu_0$ in the notation of the first
+source below), which is the
+[stationary law of the Fleming–Viot process](dirichlet-process-stationary-law.md) for $\theta > 0$ and
+atomless $\nu_0$, has the series representation
 $\sum_i W_i \delta_{Y_i}$ with $Y_i$ independent with law $\nu_0$ and independent of the weights
 $W_i = Q_i / \sum_j Q_j$, where the $Q_i$ are the jumps of a gamma process with mean measure
 $\theta y^{-1} e^{-y}\,dy$; the decreasingly ranked weights have the Poisson–Dirichlet distribution
 with parameter $\theta$ (Kingman, 1975; in Pitman's notation, Poisson–Dirichlet$(0, \theta)$ frequencies are the ranked jumps of a gamma process on $[0, \theta]$ conditioned to have total $1$). When $\nu_0$ has no atoms, the $Y_i$ are almost surely
-distinct, so the ranked atom masses of the stationary measure are Poisson–Dirichlet($\theta$). Ethier
+distinct, so the ranked atom masses of a measure with law $\mathrm{DP}(\theta, \nu_0)$, in particular of the stationary
+measure, are Poisson–Dirichlet($\theta$). Ethier
 and Kurtz (1981) construct the diffusion of ranked frequencies directly and show that it has a unique
 stationary distribution and is reversible and ergodic.
+
+## Depends on
+
+- [Dirichlet process](../../../../Probability/bayesian-statistics/dirichlet-process/dirichlet-process.md)
+- [Dirichlet-process stationary law of the Fleming–Viot process](dirichlet-process-stationary-law.md)
 
 ## Expansion
 

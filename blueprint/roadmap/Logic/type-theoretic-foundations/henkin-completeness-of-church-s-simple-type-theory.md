@@ -27,15 +27,25 @@ development proves it at every infinite value carrier for signatures with infini
 parameters, needing nothing beyond well-formedness for a finite context, and, for derivability from
 some finite part of an arbitrary context of open formulas, over any infinite signature once the
 carrier is at least as large as the signature. These conditions are kept, not
-replaced by an unconditional statement. The limits of standard semantics are a separate page: for
-standard models no consistent recursively axiomatized extension of the axioms derives every formula
-valid in all standard models, and compactness fails. Church's simple type theory is distinct from rank-one polymorphic
-higher-order logic and from System F.
+replaced by an unconditional statement. The limits of standard semantics are a separate page. By Gödel's
+incompleteness theorem, no recursively axiomatized extension of the axioms that is sound for standard
+models derives every formula valid in all standard models. If the axioms include an axiom of infinity,
+consistency of the extension already suffices for this conclusion. Consistency alone does not suffice
+for the calculus without such an axiom: it has standard models with a finite domain of individuals,
+and for such a model with computably interpreted constants, the set of formulas valid in the model is
+a consistent, decidable extension of the axioms that contains every formula valid in all standard
+models. Compactness also fails for standard semantics. Church's simple type theory is distinct from
+rank-one polymorphic higher-order logic and from System F.
 
 ## Sources
 
 - C. Benzmüller and P. Andrews, *Church's type theory*, Stanford Encyclopedia of Philosophy,
   substantive revision 16 January 2024, §2. <https://plato.stanford.edu/entries/type-theory-church/>
+- J. Väänänen, *Second-order and higher-order logic*, Stanford Encyclopedia of Philosophy,
+  substantive revision 31 August 2024: second-order logic has no complete axiomatization (a finite
+  categorical axiomatization of arithmetic together with Gödel's incompleteness theorem), and an axiom
+  of infinity is expressible in the empty vocabulary.
+  <https://plato.stanford.edu/entries/logic-higher-order/>
 - C. Benzmüller, C. E. Brown and M. Kohlhase, *Higher-order semantics and extensionality*,
   Journal of Symbolic Logic 69(4) (2004), 1027–1088, Theorem 7.3 and Corollary 7.7.
   <https://doi.org/10.2178/jsl/1102022211>

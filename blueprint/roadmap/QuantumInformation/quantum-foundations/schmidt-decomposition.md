@@ -1,0 +1,24 @@
+# Schmidt decomposition
+
+Every unit vector $u \in \mathcal{X} \otimes \mathcal{Y}$ can be written as
+
+$$u = \sum_{i=1}^r \sqrt{p_i}\, x_i \otimes y_i$$
+
+with $r \le \min(\dim\mathcal{X}, \dim\mathcal{Y})$, positive numbers $p_1, \dots, p_r$ summing to $1$, and
+orthonormal families $\{x_i\}$ in $\mathcal{X}$ and $\{y_i\}$ in $\mathcal{Y}$. The $p_i$ are the nonzero
+eigenvalues of both reduced states of $uu^*$, which therefore have the same nonzero spectrum.
+
+## Expansion
+
+This node states a precise result. A good expansion adds a page for each of the following
+prerequisites and links it under the dependency sections below:
+
+- Statement prerequisite: Finite-dimensional quantum state (pure and mixed).
+
+## Depends on
+
+- [Left partial trace of a rank-one matrix](../../LinearAlgebra/linear-maps-and-duality/partial-trace/partial-trace-left-vec-mul-vec-star.md)
+
+## Sources
+
+- M. M. Wilde, *From Classical to Quantum Shannon Theory*, arXiv:1106.1445v8, Theorem 3.8.1. <https://arxiv.org/pdf/1106.1445v8>

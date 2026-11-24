@@ -30,3 +30,6 @@ Reconstruction of evolutionary trees from sequence data: substitution models, li
 - [Sample complexity of maximum parsimony](sample-complexity-of-maximum-parsimony.md)
 - [Admissibility of maximum-likelihood tree estimation](admissibility-of-maximum-likelihood-tree-estimation.md)
 - [Phylogenetic complexity of group-based models](phylogenetic-complexity-of-group-based-models.md)
+
+- [Phylogenetic diversity](phylogenetic-diversity/README.md)
+- [Phylogenetic invariants](phylogenetic-invariants/README.md)

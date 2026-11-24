@@ -17,6 +17,11 @@ In the [PAC-Bayes bounds](pac-bayes-bounds/README.md), Catoni's bound for bounde
 - [PAC-Bayes bounds](pac-bayes-bounds/README.md)
 - [Algorithmic stability](algorithmic-stability/README.md)
 
+- [Generalization bound for sample compression schemes](generalization-bound-for-sample-compression-schemes.md)
+- [Generalization bound for norm-bounded linear predictors with Lipschitz loss](generalization-bound-for-norm-bounded-linear-predictors-with.md)
+- [Stability of regularized loss minimization](stability-of-regularized-loss-minimization.md)
+- [Shattering lower bound for PAC learning](shattering-lower-bound-for-pac-learning.md)
+
 ## Related topics
 
 - [Hedge algorithm](../online-learning-and-boosting/hedge-algorithm/README.md): regret bounds, the online counterpart of uniform deviation bounds; the $\sqrt{T \log n}$ regret of Hedge mirrors the $\sqrt{\log \lvert \mathcal{F} \rvert / n}$ deviation of a finite class.

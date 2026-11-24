@@ -5,12 +5,18 @@ metric space $S$ and parent-independent mutation operator
 $(Af)(x) = \tfrac12 \theta \int_S (f(\xi) - f(x))\,\nu_0(d\xi)$ (Ethier and Griffiths, 1993).
 In the setting of the second source below ($\theta > 0$ and atomless $\nu_0$), started from $x$, the law
 at time $t > 0$ is a mixture over $m \ge 0$, with weights $d_m(t)$, of the laws
-$\int \Pi_{\theta\nu_0 + \sum_{i \le m} \delta_{y_i}}\, x^{\otimes m}(dy_1, \dots, dy_m)$, where
-$\Pi_\alpha$ is the Dirichlet process with parameter $\alpha$ and $d_m(t)$ is the probability that a
+$\int \Pi_{\theta\nu_0 + \sum_{i \le m} \delta_{y_i}}\, x^{\otimes m}(dy_1, \dots, dy_m)$, where,
+for a finite nonzero measure $\alpha$, $\Pi_\alpha$ is the [Dirichlet process](../../../../Probability/bayesian-statistics/dirichlet-process/dirichlet-process.md)
+$\mathrm{DP}(\alpha(S), \alpha/\alpha(S))$ (so $\Pi_{\theta\nu_0 + \sum_{i \le m} \delta_{y_i}}$ has concentration
+$\theta + m$), and $d_m(t)$ is the probability that a
 death process started at infinity at time $0$, jumping from $m$ to $m - 1$ at rate
 $\tfrac12 m(\theta + m - 1)$, is at $m$ at time $t$. At $t = 0$ the transition kernel is the identity; the mixture is a statement for
 $t > 0$ only, and as $t \to 0$ the weights move to ever larger $m$ and the law at time $t$ concentrates at
 $x$.
+
+## Depends on
+
+- [Dirichlet process](../../../../Probability/bayesian-statistics/dirichlet-process/dirichlet-process.md)
 
 ## Expansion
 

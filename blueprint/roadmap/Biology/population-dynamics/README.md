@@ -9,3 +9,5 @@ Differential-equation models of population growth, species interaction and evolu
 - [Replicator dynamics](replicator-dynamics/README.md)
 
 - [Chemostat dynamics](chemostat/README.md)
+
+- [Matrix population models](matrix-population-models/README.md)

@@ -29,3 +29,5 @@ Mathematical models of allele frequencies in populations under random mating, se
 - [Effective population size](effective-population-size/README.md)
 - [Interference between linked selected loci](interference-between-linked-selected-loci/README.md)
 - [Modifier theory and the evolution of recombination](modifier-theory-and-the-evolution-of-recombination/README.md)
+
+- [Bernstein's law for the ABO blood groups](bernstein-s-law-for-the-abo-blood-groups/README.md)

@@ -14,3 +14,7 @@ Dynamics of biochemical reaction networks and gene regulatory circuits: mass-act
 - [Nondegeneracy Conjecture for reaction networks](nondegeneracy-conjecture-for-reaction-networks.md)
 - [Maximal multistationarity of multisite phosphorylation](maximal-multistationarity-of-multisite-phosphorylation.md)
 - [Leak removal in linear compartmental models](leak-removal-in-linear-compartmental-models.md)
+
+- [Gene regulatory network dynamics](gene-regulatory-network-dynamics/README.md)
+- [Stochastic reaction networks](stochastic-reaction-networks/README.md)
+- [Chemical reaction network theory](chemical-reaction-network-theory/README.md)

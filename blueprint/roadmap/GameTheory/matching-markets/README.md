@@ -6,6 +6,8 @@ Two-sided matching markets: stable matchings of marriage and college-admissions 
 - [Rural hospitals theorem](rural-hospitals-theorem/README.md)
 - [Stable matching mechanisms and incentives](stable-matching-mechanisms-and-incentives/README.md)
 
+- [Housing markets](housing-markets/README.md)
+
 ## Related topics
 
 - [Stable marriage problem](../../GraphTheory/matchings-and-flows/stable-marriage-problem/README.md): the marriage model (strict preferences, perfect matchings, blocking pairs) and the Gale–Shapley existence theorem that every page here builds on.

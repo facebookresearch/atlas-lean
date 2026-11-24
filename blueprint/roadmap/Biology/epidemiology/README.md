@@ -8,3 +8,5 @@ Compartmental, renewal and branching-process models of infectious disease transm
 - [Next-generation matrix and the basic reproduction number](next-generation-matrix-and-the-basic-reproductio/README.md)
 - [SIS epidemic model](sis-epidemic-model/README.md)
 - [Superspreading and negative-binomial offspring](superspreading-and-negative-binomial-offspring/README.md)
+
+- [Epidemics on networks](epidemics-on-networks/README.md)

@@ -11,3 +11,10 @@ Valiant's model of learning from random examples (error, learners, version space
 
 - [Sample compression conjecture](sample-compression-conjecture.md)
 - [Distribution-free PAC learning of DNF formulas](distribution-free-learning-of-dnf-formulas.md)
+
+- [Angluin's observation-table theorem](angluin-s-observation-table-theorem.md)
+- [Minimum description length bound](minimum-description-length-bound.md)
+- [Finite-sample bound for the 1-nearest-neighbor rule](finite-sample-bound-for-the-1-nearest-neighbor-rule.md)
+- [Nonuniform learnability and structural risk minimization](nonuniform-learnability-and-structural-risk-minimization.md)
+- [Optimal sample complexity of realizable PAC learning](optimal-sample-complexity-of-realizable-pac-learning.md)
+- [Statistical-query learning implies noise-tolerant PAC learning](statistical-query-learning-implies-noise-tolerant-pac-learni.md)

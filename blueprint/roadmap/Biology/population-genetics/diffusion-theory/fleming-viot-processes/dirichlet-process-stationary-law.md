@@ -2,11 +2,16 @@
 
 This node covers the stationary law of the Fleming–Viot process with parent-independent mutation (the
 labelled infinitely-many-neutral-alleles model): with mutation rate $\theta > 0$ and an atomless mutation
-distribution $\nu_0$ (the setting of the first source below), the process has the law of the Dirichlet process with parameter $\theta\nu_0$ as a
+distribution $\nu_0$ (the setting of the first source below), the process has the law of the [Dirichlet process](../../../../Probability/bayesian-statistics/dirichlet-process/dirichlet-process.md) $\mathrm{DP}(\theta, \nu_0)$ (concentration
+$\theta$, base measure $\nu_0$; parameter $\theta\nu_0$ in the source's notation) as a
 stationary and reversible measure, and its transition law converges to it as $t \to \infty$. Projecting
 the process onto a measurable partition $A_1, \dots, A_K$ with $\nu_0(A_i) > 0$ for every $i$ gives a $K$-allele Wright–Fisher diffusion that
 is reversible and stationary with respect to the Dirichlet distribution with parameters
 $\theta\nu_0(A_1), \dots, \theta\nu_0(A_K)$.
+
+## Depends on
+
+- [Dirichlet process](../../../../Probability/bayesian-statistics/dirichlet-process/dirichlet-process.md)
 
 ## Expansion
 
