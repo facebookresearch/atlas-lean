@@ -351,21 +351,6 @@ public theorem_wanted maximumNimGrundy_sub_eq_zero (k j : ℕ) (hk : 2 ≤ k)
     (hj : 1 ≤ j) (hjk : j ≤ k) :
     maximumNimGrundy (· / k) (k - j) = 0
 
-/-- **A Maximum Nim non-divisibility lemma for $s < t$.** Let $k, n, t, h, s, i$ be natural
-numbers with $h \ge 1$, $k = nt + h$, $h \le n$ and $s < t$. If $1 \le i \le n$, then $k$ does
-not divide $n(k - s) - i$.
-
-The hypotheses force $n \ge 1$, $s < k$ and $i \le n(k - s)$, so both subtractions are ordinary
-differences of natural numbers.
-
-Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
-        INTEGERS 24 (2024), Article G5, Lemma 4(i) (`integers-2024-G5-lem-4`). -/
-public theorem_wanted maximumNim_not_dvd_mul_sub_of_lt (k n t h s i : ℕ)
-    (hh : 1 ≤ h)
-    (hdecomp : k = n * t + h) (hhn : h ≤ n) (hst : s < t)
-    (hi : 1 ≤ i) (hin : i ≤ n) :
-    ¬k ∣ n * (k - s) - i
-
 /-- **A Maximum Nim non-divisibility lemma for $i \ne h$.** Let $k, n, t, h, i$ be natural numbers
 with $t \ge 1$, $h \ge 1$, $k = nt + h$ and $h \le n$. If $1 \le i \le n$ and $i \ne h$, then $k$
 does not divide $n(k - t) - i$.
@@ -453,15 +438,6 @@ public theorem_wanted maximumNimGrundy_mul_sub_eq_succ_iterate_F (k n t h i : �
         maximumNimGrundy (· / k) (Nat.iterate F (t + 1) (n * k - i)) ∧
       maximumNimGrundy (· / k) (Nat.iterate F (t + 1) (n * k - i)) =
         maximumNimGrundy (· / k) ((n - 1) * k - (n - h + i))
-
-/-- **The Maximum Nim map $h_k$ is strictly increasing.** Let $k \ge 2$ be a natural number and
-let $h_k$ be the map $x \mapsto x + \lfloor x/(k-1) \rfloor + 1$ on the natural numbers. For all
-natural numbers $x$ and $x'$ with $x < x'$, we have $h_k(x) < h_k(x')$.
-
-Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
-        INTEGERS 24 (2024), Article G5, Lemma 6(i) (`integers-2024-G5-lem-6`). -/
-public theorem_wanted maximumNimH_strictMono (k x x' : ℕ) (hk : 2 ≤ k) (hxx' : x < x') :
-    maximumNimH k x < maximumNimH k x'
 
 /-- **The Maximum Nim map $h_k$ exceeds its argument.** Let $k \ge 2$ be a natural number and let
 $h_k$ be the map $x \mapsto x + \lfloor x/(k-1) \rfloor + 1$ on the natural numbers. Every natural

@@ -11400,6 +11400,7 @@
   "MathlibExt/Combinatorics/SulankeNumber": {"to": "Combinatorics/catalan-numbers-lattice-paths/dyck-paths-lattice-walks", "title": "Sulanke arrays"},
   "MathlibExt/Combinatorics/SumsetSetsOfSizeK": {"to": "Combinatorics/additive-combinatorics/sumsets-inverse-theorems", "title": "Possible sizes of h-fold sumsets"},
   "MathlibExt/Combinatorics/SylverCoinage": {"to": "GameTheory/combinatorial-games", "title": "Sylver coinage"},
+  "MathlibExt/Combinatorics/SylverCoinagePrimeOpening": {"to": "GameTheory/combinatorial-games", "title": "Sylver coinage"},
   "MathlibExt/Combinatorics/SymmetricFunctionsYoungTableaux": {"to": "Combinatorics/symmetric-functions-q-analogues", "title": "Symmetric functions and skew Young tableaux"},
   "MathlibExt/Combinatorics/TensorNetwork": {"to": "TheoryOfComputation/fine-grained-complexity", "title": "Tensor-network contraction"},
   "MathlibExt/Combinatorics/ThreeChromaticHypergraphDegreeErdosProblem833": {"to": "Combinatorics/extremal-set-theory/hypergraph-colouring-matching", "title": "Degrees in 3-chromatic hypergraphs"},
