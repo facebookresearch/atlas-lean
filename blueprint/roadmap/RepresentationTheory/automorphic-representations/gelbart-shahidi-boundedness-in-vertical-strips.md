@@ -32,14 +32,16 @@ A good expansion has statement pages for the theorem, for the highly ramified tw
 the sources below with locators, and compares the first with Gelbart and Shahidi's own Theorem 4.1 after reading their
 paper.
 
-It also writes out this step of its own proof:
+It also plans this step, which is not complete:
 
-- the verification of (5.1) for the data $(\mathrm{GL}_{n+m}, \mathrm{GL}_n \times \mathrm{GL}_m, \pi \otimes \tilde\pi')$, which the case of pairs needs.
-  At a finite place Kim's argument applies: $N(s, \pi_v, w_0)$ factors into rank-one normalized operators of the same kind,
-  those attached to tempered data are holomorphic and nonzero for $\operatorname{Re} s > -1$ (Mœglin and Waldspurger, Kim's
-  Proposition 4.5), and the generic unitary local components are induced from such data twisted by exponents of absolute
-  value less than $\tfrac12$ (Tadić, as Kim uses it), so that the shifted parameters stay in that region for $\operatorname{Re} s \ge \tfrac12$. The
-  archimedean places need the corresponding statements, which the expansion sources separately.
+- the verification of (5.1) for the data $(\mathrm{GL}_{n+m}, \mathrm{GL}_n \times \mathrm{GL}_m, \pi \otimes \tilde\pi')$, which the case of pairs needs, and
+  without which that case stays conditional. At a finite place Kim's argument applies: $N(s, \pi_v, w_0)$ factors into rank-one
+  normalized operators of the same kind, those attached to tempered data are holomorphic and nonzero for $\operatorname{Re} s > -1$
+  (Mœglin and Waldspurger, Kim's Proposition 4.5), and the generic unitary local components are induced from such data
+  twisted by exponents of absolute value less than $\tfrac12$ (Tadić, as Kim uses it), so that the shifted parameters stay in that
+  region for $\operatorname{Re} s \ge \tfrac12$; the nonvanishing of the product comes from Zhang's lemma (Kim's Lemma 4.7, p. 586), under its
+  hypothesis on the rank-one tempered local factors. At the archimedean places no source is recorded yet, and the
+  verification remains open there.
 
 ## Depends on
 
@@ -67,6 +69,7 @@ Its proof is that of the sources below, as the Expansion describes.
   p. 538 (the normalization $A = rN$), §4, p. 584 (Assumption (A), the same condition for every place), Proposition 4.5,
   p. 585 (the normalized operators for tempered data of $\mathrm{GL}_k \times \mathrm{GL}_l \subset \mathrm{GL}_{k+l}$, after Mœglin and
   Waldspurger), and p. 589 (Tadić's classification of generic unitary representations of $\mathrm{GL}_n$ over a finite place, with
-  exponents less than $\tfrac12$, and the reduction to rank-one operators).
+  exponents less than $\tfrac12$, and the reduction to rank-one operators), with Lemma 4.7, p. 586 (Zhang's lemma, for the
+  nonvanishing).
 - S. Gelbart and F. Shahidi, "Boundedness of automorphic L-functions in vertical strips", J. Amer. Math. Soc. 14 (2001),
   79–107, Theorem 4.1, as cited by Cogdell ([2]) and by Shahidi ([15]); not read for this node.

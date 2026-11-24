@@ -40,9 +40,9 @@ the ideal of norms of the elements of the different, and its absolute norm $\lve
   <https://math.mit.edu/~poonen/786/notes.pdf>: Proposition 4.8, p. 16 (the self-dual Haar measure gives $\mathcal{O}$ the volume $(N\mathcal{D})^{-1/2}$, $\mathcal{D}$ the different of
   $F/F_0$), and §5.3, Proposition 5.5 and its proof, p. 28 (the volume of $\mathbb{A}/K$ through the covolume of $\mathcal{O}_K$ and the norm
   of the different).
-- A. V. Sutherland, 18.785 Number theory I, Fall 2021, Lecture 11, "Dedekind extensions and completion" (title of the
-  notes), <https://math.mit.edu/classes/18.785/2021fa/LectureNotes11.pdf>: Theorem 11.23 (5), pp. 7–8
-  ($L \otimes_K K_{\mathfrak{p}} \cong \prod_{\mathfrak{q} \mid \mathfrak{p}} L_{\mathfrak{q}}$), and Corollary 11.26, p. 9 ($B \otimes_A \hat A_{\mathfrak{p}} \cong \prod_{\mathfrak{q} \mid \mathfrak{p}} \hat B_{\mathfrak{q}}$ as
+- A. V. Sutherland, 18.785 Number theory I, Fall 2021, Lecture 11, "Totally ramified extensions and Krasner's lemma",
+  <https://math.mit.edu/classes/18.785/2021fa/LectureNotes11.pdf>: Theorem 11.23 (5), p. 8, with its proof through p. 9
+  ($L \otimes_K K_{\mathfrak{p}} \cong \prod_{\mathfrak{q} \mid \mathfrak{p}} L_{\mathfrak{q}}$), and Corollary 11.26, p. 10 ($B \otimes_A \hat A_{\mathfrak{p}} \cong \prod_{\mathfrak{q} \mid \mathfrak{p}} \hat B_{\mathfrak{q}}$ as
   $\hat A_{\mathfrak{p}}$-algebras).
 - A. V. Sutherland, 18.785 Number theory I, Fall 2021, Lecture 12, "The different and the discriminant",
   <https://math.mit.edu/classes/18.785/2021fa/LectureNotes12.pdf>: Proposition 12.3 (the different respects localization)

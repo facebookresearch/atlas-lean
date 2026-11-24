@@ -41,12 +41,13 @@ local Langlands correspondence, on base change and on archimedean $L$-factors us
   $W_k^{\mathrm{ab}} = k^\times$ correspond to characters of $\mathrm{GL}_1(k)$, and $\tau_{\ell, t}$ to the essentially discrete series
   representation $D_\ell \otimes \lvert \det \rvert^t$ of $\mathrm{GL}_2(\mathbb{R})$, where $D_\ell$ is the discrete series of weight $\ell + 1$, extended
   by the trivial character of the positive scalar matrices. Write each irreducible $\tau_i$ of dimension $n_i$ as
-  $\tau_i^\circ \otimes \lvert \cdot \rvert^{t_i}$ with $\tau_i^\circ$ bounded, so that $\pi(\tau_i) = \pi(\tau_i^\circ) \otimes \lvert \det \rvert^{t_i}$ with determinant exponent $t_i$
+  $\tau_i^\circ \otimes \lvert \cdot \rvert_k^{t_i}$ with $\tau_i^\circ$ bounded, so that $\pi(\tau_i) = \pi(\tau_i^\circ) \otimes \lvert \det \rvert_k^{t_i}$ with determinant exponent $t_i$
   ($t_i = t$ for $\tau_{\ell, t}$ and for $\chi \lvert \cdot \rvert^t$). For $\tau = \bigoplus_{i=1}^r \tau_i$ ordered so that
   $\operatorname{Re} t_1 \ge \dots \ge \operatorname{Re} t_r$, the representation normalized-induced from $\pi(\tau_1) \otimes \dots \otimes \pi(\tau_r)$ on the
   block upper triangular parabolic subgroup is a standard module, and $\pi(\tau)$ is its unique irreducible quotient, the
-  Langlands quotient. In terms of the exponent $a_i = n_i t_i$ of the central character $x \mapsto x^{a_i}$ on the positive scalar
-  matrices $x I_{n_i}$, the condition reads $\operatorname{Re}(a_1)/n_1 \ge \dots \ge \operatorname{Re}(a_r)/n_r$; dividing the determinant exponents by $n_i$
+  Langlands quotient. The twist acts on the positive real scalar matrices $x I_{n_i}$ by $\lvert \det(x I_{n_i}) \rvert_k^{t_i} = \lvert x \rvert_k^{n_i t_i}$, with
+  $\lvert x \rvert_{\mathbb{C}} = x^2$, and the central character of $\pi(\tau_i)$ there is this character times a unitary one. In terms of the
+  exponent $a_i = n_i t_i$ of $x \mapsto \lvert x \rvert_k^{a_i}$, the condition reads $\operatorname{Re}(a_1)/n_1 \ge \dots \ge \operatorname{Re}(a_r)/n_r$; dividing the determinant exponents by $n_i$
   would give a different, wrong order when blocks of sizes $1$ and $2$ are mixed.
 - **Factors.** With $\Gamma_{\mathbb{R}}(s) = \pi^{-s/2}\Gamma(s/2)$ and $\Gamma_{\mathbb{C}}(s) = 2(2\pi)^{-s}\Gamma(s)$, there are factors
   $L(s, \tau)$ and $\varepsilon(s, \tau, \psi)$ of representations of $W_k$ (the existence of $\varepsilon$ for all local fields is a theorem of

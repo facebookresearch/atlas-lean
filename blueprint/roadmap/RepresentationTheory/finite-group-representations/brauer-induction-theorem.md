@@ -22,7 +22,8 @@ representation is induced from a one-dimensional character of a subgroup, and on
 $v = \sum_i n_i \mathrm{Ind}_{H_i}^G [\chi_i]$ through such monomial decompositions of the irreducible constituents of $v$. The centre $Z$ of
 $G$ acts by scalars on each irreducible $\mathrm{Ind}_{H_i}^G [\chi_i]$, so it fixes the cosets of $H_i$ that support it and lies in $H_i$.
 Then $v = \sum_i n_i \mathrm{Ind}_{H_i}^G([\chi_i] - [1_{H_i}]) + \sum_i n_i \mathrm{Ind}_{H_i}^G [1_{H_i}]$, and the last sum, of degree zero, is inflated
-from $G/Z$, nontrivial if $G$ is, so induction on $\# G$ concludes. For an arbitrary expression of $v$ by induced characters
+from $G/Z$. The centre $Z$ is nontrivial when $G$ is, an elementary group being the product of a cyclic group and a
+$p$-group, so $\# (G/Z) < \# G$ and induction on $\# G$ concludes. For an arbitrary expression of $v$ by induced characters
 the inflation fails: for $G$ of order $2$ and $v = \mathrm{Ind}_1^G 1 - 2 \cdot 1_G$, the residual sum is $v$ itself, not inflated from the
 trivial quotient.
 

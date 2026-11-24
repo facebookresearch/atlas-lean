@@ -25,8 +25,9 @@ there.
 - **Constants.** $d_{D,\epsilon}$ is the constant attached to the type of the $-\epsilon$-Hermitian spaces: $0$, $1$, $2$, $3$ or $4$ when
   these spaces are symplectic, quaternionic Hermitian, Hermitian or skew-Hermitian, quaternionic skew-Hermitian, or
   symmetric bilinear. When $F$ is non-archimedean it is the largest dimension of an anisotropic $-\epsilon$-Hermitian space;
-  over $\mathbb{R}$ or $\mathbb{C}$ there is no such maximum, definite spaces being anisotropic in every dimension, and
-  $d_{D,\epsilon}$ is only this constant, $2$ in the unitary case. For $F$ non-archimedean, the anti-split Witt tower
+  over $\mathbb{R}$ or $\mathbb{C}$ it is not in general such a maximum: the maximum is $0$ for symplectic spaces and $1$ for complex
+  symmetric ones, but definite Hermitian spaces over $\mathbb{C}/\mathbb{R}$ are anisotropic in every dimension, and $d_{D,\epsilon}$ is there
+  only this constant, $2$ in the unitary case. For $F$ non-archimedean, the anti-split Witt tower
   $t^\circ_U \in \mathcal{W}_U$ is characterized by $n_{t^\circ_U}(1_U) = 2 \dim U + d_{D,\epsilon}$ for the trivial representation $1_U$.
 - **Non-archimedean case** (Sun–Zhu, Theorem 1.10). Let $F$ be non-archimedean. If $t_1, t_2 \in \mathcal{W}_U$ differ by
   $t^\circ_U$, then $n_{t_1}(\pi) + n_{t_2}(\pi) = 2 \dim U + d_{D,\epsilon}$ for every irreducible $\pi$ genuine with respect to $t_1$

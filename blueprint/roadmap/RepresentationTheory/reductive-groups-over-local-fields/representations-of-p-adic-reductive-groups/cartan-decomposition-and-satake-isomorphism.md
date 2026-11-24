@@ -51,7 +51,9 @@ $\tilde K$-fixed line.
   $\mathcal{H}_{\tilde K} \cong \mathbb{C}[X_*(A)]^W$ and the Cartan decomposition for unramified groups, after Cartier; for
   general connected reductive groups, Cartier's $\mathcal{H}_{\tilde K} \cong \mathbb{C}[\tilde\Lambda_M]^W$ and
   $\tilde K \backslash G(F) / \tilde K \cong W \backslash \tilde\Lambda_M$), Theorem 1.0.1 with the paragraph after it, and §9.2, (9.2.2), p. 11 (the
-  Satake transform, with $dn$ giving $N(F) \cap K(F)$ measure $1$; $N(F) \cap K = N(F) \cap \tilde K$, unipotent elements lying in the
-  kernel of the Kottwitz homomorphism).
+  Satake transform, with $dn$ giving $N(F) \cap K(F)$ measure $1$; $N(F) \cap K = N(F) \cap \tilde K$, since $N(F)$ lies in the kernel
+  of the Kottwitz homomorphism $\kappa$: each $n \in N(F)$ is contracted to $1$ by conjugation by powers of a suitable element
+  $a \in A(F)$, and $\kappa$ is locally constant with $\kappa(a^k n a^{-k}) = \kappa(n)$; this is a property of $N(F)$, not of all unipotent
+  elements).
 - P. Cartier, "Representations of p-adic groups: a survey", Proc. Sympos. Pure Math. 33, Part 1, 1979, 111–155,
   as cited by Haines and Rostami ([Car]).

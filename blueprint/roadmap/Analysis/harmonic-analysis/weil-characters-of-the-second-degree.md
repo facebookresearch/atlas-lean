@@ -27,12 +27,16 @@ $f(x + y) = f(x) f(y) \langle x, y\rho \rangle$ for a continuous homomorphism $\
 A good expansion has definition pages for characters of the second degree and their symmetric morphisms, and statement
 pages for Théorème 2 with its Corollaires 1 and 2 and for Théorème 5, each citing the source below with locators.
 
-- Every automorphism of the Heisenberg group of $G \times G^*$ that fixes its central circle, the group $B_0(G)$ of Weil's §6, is
+- Every automorphism of the Heisenberg group of $G \times G^*$ that fixes its central circle, the group $B_0(G)$ of Weil's §6,
+  whose elements are the pairs $s = (\sigma, h)$ of an automorphism $\sigma$ of $G \times G^*$ and a character of the second degree
+  $h$ of $G \times G^*$ acting by $(w, t) \mapsto (w\sigma, h(w) t)$, is
   implemented on $L^2(G)$ by a unitary operator unique up to a scalar of absolute value $1$ (Weil, §§8–10, after Segal), by
   the uniqueness of the irreducible representation on which the centre acts tautologically. Weil obtains $\gamma(f)$ as the
   scalar by which two chosen implementations of the two sides of a relation in $B_0(G)$ differ (his relation (9), §7).
-- Under the hypotheses of Théorème 5 all the factors of that relation lie in the subgroup $B_0(G, \Gamma)$ of the
-  automorphisms that preserve $\Gamma \times \Gamma_*$ and act trivially on it (§19, p. 167). There the chosen implementations
+- Under the hypotheses of Théorème 5 all the factors of that relation lie in the subgroup $B_0(G, \Gamma)$ of the elements
+  $s = (\sigma, h)$ for which $\sigma$ induces an automorphism of $\Gamma \times \Gamma_*$, preserving it as a set, and $h$ takes the value $1$
+  on it (§19, p. 167). It is $h$, not $\sigma$, that is trivial there: for $G = \mathbb{R}$ and $\Gamma = \mathbb{Z}$, the automorphism $-1$ of $\mathbb{R} \times \mathbb{R}$ preserves $\mathbb{Z} \times \mathbb{Z}$
+  without fixing it pointwise. There the chosen implementations
   agree with those given by the representation $r_\Gamma$ of $B_0(G, \Gamma)$ (§20), and $r_\Gamma$ respects the relation, so the
   scalar is $1$.
 - Applied to an adelic group and its rational points, Théorème 5 gives the global value $\gamma(f) = 1$; the product formula

@@ -27,7 +27,10 @@ representation and the differentiated action of $\mathfrak{k}$ on $\mathfrak{g}$
 A good expansion has a statement page for the centre of $U(\mathfrak{g})$, definition pages for compatible pairs,
 $(\mathfrak{g}, K)$-modules, admissibility and Harish-Chandra modules, and statement pages for Harish-Chandra's admissibility of
 finitely generated $Z(\mathfrak{g})$-finite modules and for the homomorphism $\nu$ and its finiteness, each citing the sources
-below with locators. Howe states the admissibility for a quasisimple module, on which $Z(\mathfrak{g})$ acts by scalars. A
+below with locators. Howe states the admissibility for a quasisimple module: for a connected group, one on which the
+whole centre $Z(\mathfrak{g})$ acts by scalars; for a disconnected group $E$, one on which only the subalgebra of $Z(\mathfrak{g})$ invariant
+under the adjoint action of all of $E$ acts by scalars. On the complexified standard representation of $\mathrm{O}(2)$ a reflection
+permutes the two infinitesimal characters of the Lie algebra, while the invariant subalgebra acts by scalars. A
 finitely generated module $M$ annihilated by an ideal of finite codimension of $Z(\mathfrak{g})$ is the direct sum of finitely
 many generalized eigenspaces $M_\chi$ for characters $\chi$ of $Z(\mathfrak{g})$, but a disconnected $K$ need not preserve them, since
 it acts on $Z(\mathfrak{g})$: for the standard representation of $\mathrm{O}(2)$, a reflection swaps the two eigenlines of the Lie
@@ -58,6 +61,7 @@ subalgebra $\mathfrak{h} \subseteq \mathfrak{l}$.
   <http://homepages.math.uic.edu/~rtakloo/papers/borel/borel3.pdf>: §7.4 (c) (the homomorphism $\nu \colon Z(\mathfrak{g}) \to Z(\mathfrak{l}_P)$ with $z \in \nu(z) + U(\mathfrak{g}).\mathfrak{n}_P$,
   and, "by a theorem of Harish-Chandra", $Z(\mathfrak{l}_P)$ finitely generated over $Z(\mathfrak{g})$).
 - R. Howe, "Transcending classical invariant theory", J. Amer. Math. Soc. 2 (1989), 535–552,
-  <https://doi.org/10.1090/S0894-0347-1989-0985172-6>: §1, p. 536 ($(\mathfrak{g}, K)$-modules after Dixmier) and p. 547
-  (a finitely generated quasisimple $(\mathfrak{g}', K')$-module, on which the centre acts by scalars, is admissible, "a
+  <https://doi.org/10.1090/S0894-0347-1989-0985172-6>: §1, p. 536 ($(\mathfrak{g}, K)$-modules after Dixmier; quasisimplicity, through
+  the centre for a connected group and through its $\mathrm{Ad}\, E$-invariant subalgebra for a disconnected group $E$) and p. 547
+  (a finitely generated quasisimple $(\mathfrak{g}', K')$-module, on which $Z(U(\mathfrak{g}'))^{K'}$ acts by scalars, is admissible, "a
   general result [D]", J. Dixmier, *Enveloping algebras*, North-Holland, 1977).
