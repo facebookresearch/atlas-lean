@@ -13139,6 +13139,7 @@
   "MathlibExt/NumberTheory/StrongPseudoprime": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Strong pseudoprimes"},
   "MathlibExt/NumberTheory/StrongPseudoprimeBaseCount": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Strong pseudoprimes"},
   "MathlibExt/NumberTheory/StrongPseudoprimeZPowNeg": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Strong pseudoprimes"},
+  "MathlibExt/NumberTheory/StrongTwoNearPerfectExponentBound": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Near-perfect and deficient-perfect numbers"},
   "MathlibExt/NumberTheory/SumProductPrimeCover": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Small solutions of diagonal congruences"},
   "MathlibExt/NumberTheory/SumSquares/RepresentationCount": {"to": "NumberTheory/quadratic-forms-sums-of-squares/sums-of-squares", "title": "Representation numbers of sums of squares"},
   "MathlibExt/NumberTheory/SumSquaredDivisorsProduct": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Zumkeller numbers"},
