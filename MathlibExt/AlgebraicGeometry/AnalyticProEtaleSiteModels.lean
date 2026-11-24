@@ -73,11 +73,14 @@ def IsStandardEtale {P Q : TatePair p} (f : P ⟶ Q) : Prop :=
       f.hom = e.toRingHom.comp (D.map.hom.comp g.hom)
 
 /-- Étale maps of Tate pairs (Scholze, *Étale cohomology of diamonds*, Def. 6.2(ii): locally an
-open embedding followed by a finite étale map): every point of the source has a rational
-neighbourhood on which the map is standard étale. -/
+open embedding followed by a finite étale map): every point `x` of the source has a rational
+neighbourhood `V`, and `f x` a rational neighbourhood `U` of the target, such that `f` restricts to
+a standard étale map from `V` to `U`. -/
 def IsEtale {P Q : TatePair p} (f : P ⟶ Q) : Prop :=
-  ∀ x : P.Space, ∃ D : RationalTateModel p P, x ∈ D.domain ∧
-    IsStandardEtale p ((show D.pair ⟶ P from D.map) ≫ f)
+  ∀ x : P.Space, ∃ (V : RationalTateModel p P) (U : RationalTateModel p Q) (g : V.pair ⟶ U.pair),
+    x ∈ V.domain ∧ f.spa p x ∈ U.domain ∧
+      (show V.pair ⟶ P from V.map) ≫ f = g ≫ (show U.pair ⟶ Q from U.map) ∧
+      IsStandardEtale p g
 
 def CompatiblePoints {I : Type} [SmallCategory I] (D : I ⥤ TatePair p) :=
   {x : ∀ i, (D.obj i).Space |
