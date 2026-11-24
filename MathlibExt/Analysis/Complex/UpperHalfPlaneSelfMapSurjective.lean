@@ -39,7 +39,6 @@ module
 
 public import Mathlib.Analysis.Calculus.FDeriv.Basic
 public import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.Analysis.Complex.Liouville
 import Mathlib.Analysis.Complex.OpenMapping
 import MathlibExt.Analysis.Complex.GreatPicard
 import MathlibExt.Analysis.Complex.SchwarzReflection
@@ -51,39 +50,10 @@ A nonconstant holomorphic self-map that extends continuously to the real axis
 with real boundary values maps the open upper half-plane onto itself.
 -/
 
-open Set Filter Topology Bornology
+open Set
 open MathlibExt.Analysis.Complex.GreatPicardWanted
 
 namespace MathlibExt.Analysis.Complex.UpperHalfPlaneSelfMapSurjectiveWanted
-
-/-- A nonconstant entire function omits at most one value, by great Picard at infinity. -/
-private lemma omitted_values_eq {g : ℂ → ℂ} (hg : Differentiable ℂ g)
-    (hnc : ¬ ∃ c, ∀ z, g z = c) {a b : ℂ}
-    (ha : ∀ z, g z ≠ a) (hb : ∀ z, g z ≠ b) : a = b := by
-  let G (z : ℂ) := g z⁻¹
-  have hinv : Tendsto (Inv.inv : ℂ → ℂ) (cocompact ℂ) (𝓝[≠] 0) := by
-    rw [← Metric.cobounded_eq_cocompact]
-    exact tendsto_inv₀_cobounded'
-  have hess : IsEssentialIsolatedSingularityAt G 0 := by
-    refine ⟨⟨1, zero_lt_one, fun z hz ↦ ?_⟩, ?_, ?_⟩
-    · exact ((hg _).comp z (differentiableAt_inv (show z ≠ 0 from hz.2))).differentiableWithinAt
-    · rintro ⟨c, hc⟩
-      have hlim : Tendsto g (cocompact ℂ) (𝓝 c) := by
-        simpa [Function.comp_def, G] using hc.comp hinv
-      exact hnc ⟨c, fun z ↦ hg.apply_eq_of_tendsto_cocompact z hlim⟩
-    · intro h
-      -- A pole at infinity would make the entire reciprocal of g - a tend to zero.
-      have hlim : Tendsto g (cocompact ℂ) (cobounded ℂ) := by
-        simpa [Function.comp_def, G] using (tendsto_norm_atTop_iff_cobounded.mp h).comp hinv
-      have hdiff := (hg.sub_const a).inv (fun z ↦ sub_ne_zero.mpr (ha z))
-      have heq := hdiff.apply_eq_of_tendsto_cocompact 0
-        (tendsto_inv₀_cobounded.comp ((tendsto_sub_const_cobounded a).comp hlim))
-      exact inv_ne_zero (sub_ne_zero.mpr (ha 0)) heq
-  have exceptional (w : ℂ) (hw : ∀ z, g z ≠ w) :
-      ∃ r : ℝ, 0 < r ∧ Set.Finite {z ∈ Metric.ball 0 r \ {0} | G z = w} := by
-    refine ⟨1, zero_lt_one, Set.finite_empty.subset ?_⟩
-    exact fun z hz ↦ (hw z⁻¹ hz.2).elim
-  exact greatPicard hess (exceptional a ha) (exceptional b hb)
 
 /-- **Surjectivity for half-plane self-maps that are real on the real axis.** Let
 $\mathbb{C}_{+} = \{z \in \mathbb{C} : \operatorname{Im} z > 0\}$ be the open upper half-plane and
@@ -135,7 +105,7 @@ public theorem image_upperHalfPlane_eq_of_real_on_real
     have homit' (z : ℂ) : g z ≠ star w := by
       intro heq
       exact homit (star z) (by rw [hconj, heq, star_star])
-    have heq := omitted_values_eq (differentiableOn_univ.mp hg) hnc homit homit'
+    have heq : w = star w := littlePicard (differentiableOn_univ.mp hg) hnc homit homit'
     exact hw.ne' (Complex.conj_eq_iff_im.mp heq.symm)
 
 end MathlibExt.Analysis.Complex.UpperHalfPlaneSelfMapSurjectiveWanted

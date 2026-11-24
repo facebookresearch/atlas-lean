@@ -44,3 +44,4 @@ compatibility class.
 - [Reaction–diffusion and pattern formation](pattern-formation/README.md)
 - [Mathematical neuroscience](mathematical-neuroscience/README.md)
 - [Mathematical epidemiology](epidemiology/README.md)
+- [Not yet classified](not-yet-classified/README.md)
