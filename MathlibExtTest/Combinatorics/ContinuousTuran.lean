@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.Combinatorics.ContinuousTuran
+import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 import Mathlib.MeasureTheory.Measure.Real
 
 open MetaMathlibExt Set MeasureTheory
@@ -75,3 +76,40 @@ example : opxD 1 3 {0, fun _ => 4} = opxD 1 2 {0, fun _ => 4} + 1 := by
   norm_num
 
 end MetaMathlibExt.opxD_add_lt
+
+namespace MetaMathlibExt.opxD_plus_stack_isTheta
+
+-- With unit arms and unit spacing, an explicit constant bounds the two-layer number by `n^(5/2)`.
+example : ∃ C : ℝ, ∀ᶠ n in Filter.atTop, opxD 3 n {v | |v 0| ≤ 1 ∧ |v 1| ≤ 1 ∧
+    (v 0 = 0 ∨ v 1 = 0) ∧ ∃ i : ℕ, 1 ≤ i ∧ i ≤ 2 ∧ v 2 = i * 1} ≤ C * n ^ (5 / 2 : ℝ) := by
+  obtain ⟨C, hC⟩ := (opxD_plus_stack_isTheta one_pos one_pos).1.isBigO.bound
+  refine ⟨C, ?_⟩
+  filter_upwards [hC, Filter.eventually_ge_atTop 0] with n hn hn0
+  rwa [Real.norm_of_nonneg (opxD_nonneg _ _ _), Real.norm_of_nonneg (by positivity)] at hn
+
+-- The lower bound makes the three-layer number unbounded.
+example {r c : ℝ} (hr : 0 < r) (hc : 0 < c) :
+    Filter.Tendsto (fun n : ℝ => opxD 3 n {v | |v 0| ≤ r ∧ |v 1| ≤ r ∧ (v 0 = 0 ∨ v 1 = 0) ∧
+      ∃ i : ℕ, 1 ≤ i ∧ i ≤ 3 ∧ v 2 = i * c}) Filter.atTop Filter.atTop := by
+  have h := (opxD_plus_stack_isTheta hr hc).2.tendsto_norm_atTop_iff.2
+    (tendsto_norm_atTop_atTop.comp (tendsto_rpow_atTop (by norm_num : (0 : ℝ) < 8 / 3)))
+  exact h.congr fun n => Real.norm_of_nonneg (opxD_nonneg _ _ _)
+
+-- Combining both parts: two layers are negligible against three layers.
+example {r c : ℝ} (hr : 0 < r) (hc : 0 < c) :
+    (fun n : ℝ => opxD 3 n {v | |v 0| ≤ r ∧ |v 1| ≤ r ∧ (v 0 = 0 ∨ v 1 = 0) ∧
+      ∃ i : ℕ, 1 ≤ i ∧ i ≤ 2 ∧ v 2 = i * c}) =o[Filter.atTop]
+    (fun n : ℝ => opxD 3 n {v | |v 0| ≤ r ∧ |v 1| ≤ r ∧ (v 0 = 0 ∨ v 1 = 0) ∧
+      ∃ i : ℕ, 1 ≤ i ∧ i ≤ 3 ∧ v 2 = i * c}) := by
+  have hpow : (fun n : ℝ => n ^ (5 / 2 : ℝ)) =o[Filter.atTop] (fun n : ℝ => n ^ (8 / 3 : ℝ)) := by
+    refine Asymptotics.isLittleO_iff_tendsto' ?_ |>.2 ?_
+    · filter_upwards [Filter.eventually_gt_atTop 0] with n hn h
+      exact absurd h (by positivity)
+    · refine (tendsto_rpow_neg_atTop (by norm_num : (0 : ℝ) < 1 / 6)).congr' ?_
+      filter_upwards [Filter.eventually_gt_atTop 0] with n hn
+      rw [← Real.rpow_sub hn]
+      norm_num
+  exact (opxD_plus_stack_isTheta hr hc).1.isBigO.trans_isLittleO
+    (hpow.trans_isBigO (opxD_plus_stack_isTheta hr hc).2.symm.isBigO)
+
+end MetaMathlibExt.opxD_plus_stack_isTheta

@@ -62,13 +62,15 @@ theorem excessDemand_pos (D S : ℝ → ℝ) {c pstar : ℝ}
   have heq : IsEquilibrium D S c := sub_eq_zero.mp hzero.symm
   exact lt_irrefl c (hb.2 c heq)
 
-/-- A binding ceiling creates a shortage when demand is strictly decreasing. -/
+/-- A binding ceiling creates a shortage when demand is strictly decreasing and supply weakly
+increasing between the ceiling and the equilibrium price. -/
 theorem excessDemand_pos_of_strictAntiOn (D S : ℝ → ℝ) {c pstar : ℝ}
     (hb : IsBindingCeiling D S c pstar) (hD : StrictAntiOn D (Set.Icc c pstar))
     (hS : MonotoneOn S (Set.Icc c pstar)) : 0 < excessDemand D S c := by
   exact excessDemand_pos D S hb hD.antitoneOn hS
 
-/-- A binding ceiling creates a shortage when supply is strictly increasing. -/
+/-- A binding ceiling creates a shortage when supply is strictly increasing and demand weakly
+decreasing between the ceiling and the equilibrium price. -/
 theorem excessDemand_pos_of_strictMonoOn (D S : ℝ → ℝ) {c pstar : ℝ}
     (hb : IsBindingCeiling D S c pstar) (hD : AntitoneOn D (Set.Icc c pstar))
     (hS : StrictMonoOn S (Set.Icc c pstar)) : 0 < excessDemand D S c := by
