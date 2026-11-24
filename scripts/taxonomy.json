@@ -12724,6 +12724,7 @@
   "MathlibExt/NumberTheory/RegularResidues": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Regular integers modulo n"},
   "MathlibExt/NumberTheory/RepetendTable": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Repetend tables"},
   "MathlibExt/NumberTheory/RepetendTable/BaseShift": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Repetend tables"},
+  "MathlibExt/NumberTheory/RepetendTable/DigitDifference": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Repetend tables"},
   "MathlibExt/NumberTheory/RepetendTable/InversePairs": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Repetend tables"},
   "MathlibExt/NumberTheory/RepetendTable/OrderCount": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Repetend tables"},
   "MathlibExt/NumberTheory/RepetendTable/OrderSix": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Repetend tables"},
