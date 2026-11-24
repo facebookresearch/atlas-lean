@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import CSLibExt.Algorithms.Lean.DataStructures.Amortized.Examples
 public import CSLibExt.Algorithms.Lean.DataStructures.Amortized.Framework
 public import CSLibExt.Algorithms.Lean.DataStructures.Amortized.Unary
 
@@ -64,6 +65,42 @@ example :
     (∑ i ∈ Finset.range 2, unaryA countUp (fun _ => ()) i) -
       countUp.Phi (unaryState countUp (fun _ => ()) 2) :=
   unary_aeq countUp _ 2
+
+/-- The identity transfer over the binary counter: `hom = id`, same
+operations, same costs — a concrete `AmortizedTransfer` instance. -/
+def binCounterTransfer : AmortizedTransfer BinCounterOp (List Bool) (List Bool)
+    binCounterAmortized where
+  exec' := binCounterExec
+  inv' := fun _ => True
+  cost' := binCounterCost
+  U' := binCounterU
+  hom := id
+  exec'_hom := by
+    intro f ts _ _
+    rw [List.map_id]
+    rfl
+  inv_exec' := by intro _ _ _ _; trivial
+  inv_hom := by intro _ _; trivial
+  cost'_hom := by
+    intro f ts _ _
+    rw [List.map_id]
+    rfl
+  U'_hom := by
+    intro f ts _ _
+    rw [List.map_id]
+    rfl
+
+-- The transferred potential is `Phi ∘ hom`, here just `Phi` since `hom = id`.
+example : (amortizedTransfer binCounterTransfer).Phi [true, false] =
+    binCounterPhi [true, false] :=
+  rfl
+
+-- The amortized bound survives the transfer: `incr` on `[true]` has
+-- amortized cost `1 + 0 - 1 = 0 ≤ U = 2`.
+example : acost (amortizedTransfer binCounterTransfer) .incr [[true]] ≤
+    (amortizedTransfer binCounterTransfer).U .incr [[true]] :=
+  a_le_U (A := amortizedTransfer binCounterTransfer)
+    (by intro s _; simp [amortizedTransfer, binCounterTransfer]) rfl
 
 #check @t_sum_a_sum
 #check @t_sum_le_U_sum

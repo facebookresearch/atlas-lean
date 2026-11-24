@@ -149,14 +149,14 @@ noncomputable def dynTab3Amortized : AmortizedData DynTab3Op (ℕ × ℕ) where
               exact hinv
             by_cases hnl : n < l
             · have hexec : (n + 1, if n < l then l else if l = 0 then 1 else 2 * l) = (n + 1, l) := by
-                simp [hnl]
+                rw [ite_eq_left hnl]
               rw [hexec]
               simp only [dynTab3Inv, ite_eq_right hl]
               exact ⟨by omega, by omega⟩
             · have hnl' : n = l := by omega
               subst hnl'
               have hexec : (n + 1, if n < n then n else if n = 0 then 1 else 2 * n) = (n + 1, 2 * n) := by
-                simp [hl]
+                rw [ite_eq_right (Nat.lt_irrefl n), ite_eq_right hl]
               rw [hexec]
               have h2n : 2 * n ≠ 0 := by omega
               simp only [dynTab3Inv, ite_eq_right h2n]
@@ -239,8 +239,8 @@ noncomputable def dynTab3Amortized : AmortizedData DynTab3Op (ℕ × ℕ) where
               exact hinv
             by_cases hnl : n < l
             · have hexec : (n + 1, if n < l then l else if l = 0 then 1 else 2 * l) = (n + 1, l) := by
-                simp [hnl]
-              have hcost : (if n < l then (1 : ℕ) else n + 1) = 1 := by simp [hnl]
+                rw [ite_eq_left hnl]
+              have hcost : (if n < l then (1 : ℕ) else n + 1) = 1 := by rw [ite_eq_left hnl]
               by_cases hA : 2 * (n : ℝ) < (l : ℝ)
               · by_cases hB : 2 * ((n + 1 : ℕ) : ℝ) < (l : ℝ)
                 · have hPhiA : dynTab3Phi (n + 1, l) = (l : ℝ) / 2 - ((n + 1 : ℕ) : ℝ) := by
@@ -273,8 +273,9 @@ noncomputable def dynTab3Amortized : AmortizedData DynTab3Op (ℕ × ℕ) where
             · have hnl' : n = l := by omega
               subst hnl'
               have hexec : (n + 1, if n < n then n else if n = 0 then 1 else 2 * n) = (n + 1, 2 * n) := by
-                simp [hl]
-              have hcost : (if n < n then (1 : ℕ) else n + 1) = n + 1 := by simp
+                rw [ite_eq_right (Nat.lt_irrefl n), ite_eq_right hl]
+              have hcost : (if n < n then (1 : ℕ) else n + 1) = n + 1 := by
+                rw [ite_eq_right (Nat.lt_irrefl n)]
               have hPhiA : dynTab3Phi (n + 1, 2 * n) = 2 := by
                 simp only [dynTab3Phi]
                 push_cast
@@ -878,7 +879,11 @@ noncomputable def dynTab2Amortized (a c : ℝ) (hc : 1 < c) (ha : c / (c - 1) �
           · subst hl
             have hn : n = 0 := by simp [dynTab2Inv] at hinv; exact hinv
             subst hn
-            have hexec : dynTab2Ins c (0, 0) = (1, 1) := by simp [dynTab2Ins]
+            have hexec : dynTab2Ins c (0, 0) = (1, 1) := by
+              show (0 + 1, if (0 : ℕ) < 0 then (0 : ℕ) else
+                  if (0 : ℕ) = 0 then 1 else
+                    Int.toNat (Int.ceil (c * ((0 : ℕ) : ℝ)))) = (1, 1)
+              rw [ite_eq_right (show ¬(0 : ℕ) < 0 by norm_num), ite_eq_left (rfl : (0 : ℕ) = 0)]
             rw [hexec]
             simp only [dynTab2Inv, ite_eq_right (show (1 : ℕ) ≠ 0 by norm_num)]
             refine ⟨by norm_num, ?_⟩
@@ -889,8 +894,9 @@ noncomputable def dynTab2Amortized (a c : ℝ) (hc : 1 < c) (ha : c / (c - 1) �
               exact hinv
             by_cases hnl : n < l
             · have hexec : dynTab2Ins c (n, l) = (n + 1, l) := by
-                simp only [dynTab2Ins]
-                simp [hnl]
+                show (n + 1, if n < l then l else if l = 0 then 1 else
+                    Int.toNat (Int.ceil (c * (l : ℝ)))) = (n + 1, l)
+                rw [ite_eq_left hnl]
               rw [hexec]
               simp only [dynTab2Inv, ite_eq_right hl]
               refine ⟨by omega, by push_cast; linarith [hn.2]⟩
@@ -898,8 +904,10 @@ noncomputable def dynTab2Amortized (a c : ℝ) (hc : 1 < c) (ha : c / (c - 1) �
               subst hnl'
               have hexec : dynTab2Ins c (n, n) =
                   (n + 1, Int.toNat (Int.ceil (c * (n : ℝ)))) := by
-                simp only [dynTab2Ins]
-                simp [hl]
+                show (n + 1, if n < n then n else if n = 0 then 1 else
+                    Int.toNat (Int.ceil (c * (n : ℝ)))) =
+                  (n + 1, Int.toNat (Int.ceil (c * (n : ℝ))))
+                rw [ite_eq_right hnl, ite_eq_right hl]
               rw [hexec]
               have hn1 : (1 : ℝ) ≤ (n : ℝ) := by
                 have : 1 ≤ n := by omega
@@ -1002,7 +1010,11 @@ noncomputable def dynTab2Amortized (a c : ℝ) (hc : 1 < c) (ha : c / (c - 1) �
           · subst hl
             have hn : n = 0 := by simp [dynTab2Inv] at hinv; exact hinv
             subst hn
-            have hexec : dynTab2Ins c (0, 0) = (1, 1) := by simp [dynTab2Ins]
+            have hexec : dynTab2Ins c (0, 0) = (1, 1) := by
+              show (0 + 1, if (0 : ℕ) < 0 then (0 : ℕ) else
+                  if (0 : ℕ) = 0 then 1 else
+                    Int.toNat (Int.ceil (c * ((0 : ℕ) : ℝ)))) = (1, 1)
+              rw [ite_eq_right (show ¬(0 : ℕ) < 0 by norm_num), ite_eq_left (rfl : (0 : ℕ) = 0)]
             have hcost : (if (0 : ℕ) < 0 then (1 : ℕ) else 0 + 1) = 1 := by norm_num
             have hPhi1 : dynTab2Phi a c (1, 1) = a - 1 / (c - 1) := by simp [dynTab2Phi]
             have hPhi0 : dynTab2Phi a c (0, 0) = 0 := by simp [dynTab2Phi]
@@ -1014,9 +1026,10 @@ noncomputable def dynTab2Amortized (a c : ℝ) (hc : 1 < c) (ha : c / (c - 1) �
               exact hinv
             by_cases hnl : n < l
             · have hexec : dynTab2Ins c (n, l) = (n + 1, l) := by
-                simp only [dynTab2Ins]
-                simp [hnl]
-              have hcost : (if n < l then (1 : ℕ) else n + 1) = 1 := by simp [hnl]
+                show (n + 1, if n < l then l else if l = 0 then 1 else
+                    Int.toNat (Int.ceil (c * (l : ℝ)))) = (n + 1, l)
+                rw [ite_eq_left hnl]
+              have hcost : (if n < l then (1 : ℕ) else n + 1) = 1 := by rw [ite_eq_left hnl]
               have hPhi : dynTab2Phi a c (n + 1, l) = dynTab2Phi a c (n, l) + a := by
                 simp only [dynTab2Phi]
                 push_cast
@@ -1028,9 +1041,12 @@ noncomputable def dynTab2Amortized (a c : ℝ) (hc : 1 < c) (ha : c / (c - 1) �
               subst hnl'
               have hexec : dynTab2Ins c (n, n) =
                   (n + 1, Int.toNat (Int.ceil (c * (n : ℝ)))) := by
-                simp only [dynTab2Ins]
-                simp [hl]
-              have hcost : (if n < n then (1 : ℕ) else n + 1) = n + 1 := by simp
+                show (n + 1, if n < n then n else if n = 0 then 1 else
+                    Int.toNat (Int.ceil (c * (n : ℝ)))) =
+                  (n + 1, Int.toNat (Int.ceil (c * (n : ℝ))))
+                rw [ite_eq_right hnl, ite_eq_right hl]
+              have hcost : (if n < n then (1 : ℕ) else n + 1) = n + 1 := by
+                rw [ite_eq_right (Nat.lt_irrefl n)]
               have hmR : ((Int.toNat (Int.ceil (c * (n : ℝ))) : ℕ) : ℝ) =
                   (Int.ceil (c * (n : ℝ)) : ℝ) := by
                 have hceil : (1 : ℤ) < Int.ceil (c * (n : ℝ)) := by

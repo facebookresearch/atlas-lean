@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import CSLibExt.Algorithms.Lean.DataStructures.PotentialMethod
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Basic.Real.Basic
 import Mathlib.Tactic
@@ -20,8 +21,11 @@ on a single state type, in a sequence starting from `init`.
 Superseded by the rose-tree framework in `Amortized.Framework`, but
 still of interest because of its simplicity — and it is the form
 closest to the book's presentation (Ch. 19: a sequence of
-operations from an initial state, `Phi init = 0`). Main results:
-`unary_aeq` (telescoping), `unary_TA`, `unary_aa1`, `unary_ub`.
+operations from an initial state, `Phi init = 0`). The telescoping
+results (`unary_aeq`, `unary_TA`, `unary_ub`) are specializations of
+the generic potential-method API in `PotentialMethod`; the Isabelle
+names are retained here as compatibility wrappers. `unary_aa1` is the
+locale's own per-operation `U` bound.
 
 Ported from the Chapter 22 Lean conversion in
 `converted_proofs/ch22/lean/Chapter22.lean`, itself a conversion of the
@@ -72,10 +76,13 @@ def unaryState (A : UnaryAmortized Op State) (f : ℕ → Op) : ℕ → State
   | 0 => A.init
   | n + 1 => A.nxt (f n) (unaryState A f n)
 
-/-- `A f i`: the amortized cost of the `i`-th operation. -/
+/-- `A f i`: the amortized cost of the `i`-th operation. This is
+`PotentialMethod.amortizedCost` specialized to the run `unaryState A f`
+with actual costs `A.T (f i) (unaryState A f i)`; the Isabelle name is
+retained as a compatibility wrapper. -/
 def unaryA (A : UnaryAmortized Op State) (f : ℕ → Op) (i : ℕ) : ℝ :=
-  A.T (f i) (unaryState A f i) + A.Phi (unaryState A f (i + 1)) -
-    A.Phi (unaryState A f i)
+  PotentialMethod.amortizedCost A.Phi (unaryState A f)
+    (fun i => A.T (f i) (unaryState A f i)) i
 
 /-- `inv_state`. -/
 theorem unary_inv_state (A : UnaryAmortized Op State) (f : ℕ → Op) (n : ℕ) :
@@ -84,35 +91,64 @@ theorem unary_inv_state (A : UnaryAmortized Op State) (f : ℕ → Op) (n : ℕ)
   | zero => exact A.inv_init
   | succ n ih => exact A.inv_nxt ih
 
-/-- `aeq`: telescoping, `∑ T = ∑ A - Φ (state n)`. -/
+/-- `aeq`: telescoping, `∑ T = ∑ A - Φ (state n)`.
+Specialization of `PotentialMethod.sum_cost_eq` (the `Φ (state 0)` term
+vanishes by `p0`). -/
 theorem unary_aeq (A : UnaryAmortized Op State) (f : ℕ → Op) (n : ℕ) :
     (∑ i ∈ Finset.range n, A.T (f i) (unaryState A f i)) =
       (∑ i ∈ Finset.range n, unaryA A f i) - A.Phi (unaryState A f n) := by
-  induction n with
-  | zero => simp [unaryA, unaryState, A.p0]
-  | succ n ih =>
-    rw [Finset.sum_range_succ, Finset.sum_range_succ, ih]
-    simp only [unaryA]
-    ring
+  have h := PotentialMethod.sum_cost_eq A.Phi (unaryState A f)
+    (fun i => A.T (f i) (unaryState A f i)) n
+  have h0 : A.Phi (unaryState A f 0) = 0 := A.p0
+  rw [h0, add_zero] at h
+  calc (∑ i ∈ Finset.range n, A.T (f i) (unaryState A f i))
+      = (∑ i ∈ Finset.range n, PotentialMethod.amortizedCost A.Phi (unaryState A f)
+          (fun i => A.T (f i) (unaryState A f i)) i) - A.Phi (unaryState A f n) := h
+    _ = (∑ i ∈ Finset.range n, unaryA A f i) - A.Phi (unaryState A f n) := by
+        have hsum : (∑ i ∈ Finset.range n, PotentialMethod.amortizedCost A.Phi (unaryState A f)
+            (fun i => A.T (f i) (unaryState A f i)) i) =
+          (∑ i ∈ Finset.range n, unaryA A f i) :=
+        Finset.sum_congr rfl (fun i _ => rfl)
+        rw [hsum]
 
-/-- `TA`: total actual cost ≤ total amortized cost. -/
+/-- `TA`: total actual cost ≤ total amortized cost.
+Specialization of
+`PotentialMethod.sum_cost_le_sum_amortizedCost_of_nonneg` (initial
+potential zero by `p0`, potential nonnegative by `ppos`). -/
 theorem unary_TA (A : UnaryAmortized Op State) (f : ℕ → Op) (n : ℕ) :
     (∑ i ∈ Finset.range n, A.T (f i) (unaryState A f i)) ≤
       (∑ i ∈ Finset.range n, unaryA A f i) := by
-  rw [unary_aeq]
-  have h := A.ppos (unary_inv_state A f n)
-  linarith
+  have h := PotentialMethod.sum_cost_le_sum_amortizedCost_of_nonneg A.Phi
+    (unaryState A f) (fun i => A.T (f i) (unaryState A f i))
+    A.p0 (fun i => A.ppos (unary_inv_state A f i)) n
+  have hsum : (∑ i ∈ Finset.range n,
+      PotentialMethod.amortizedCost A.Phi (unaryState A f)
+        (fun i => A.T (f i) (unaryState A f i)) i) =
+      (∑ i ∈ Finset.range n, unaryA A f i) :=
+    Finset.sum_congr rfl (fun i _ => rfl)
+  rw [hsum] at h
+  exact h
 
 /-- `aa1`: one operation's amortized cost is bounded by `U`. -/
 theorem unary_aa1 (A : UnaryAmortized Op State) (f : ℕ → Op) (i : ℕ) :
     unaryA A f i ≤ A.U (f i) (unaryState A f i) :=
   A.U_bound (unary_inv_state A f i)
 
-/-- `ub`: total actual cost ≤ total `U` bound. -/
+/-- `ub`: total actual cost ≤ total `U` bound.
+Specialization of `PotentialMethod.sum_cost_le_of_amortizedCost_le`
+with per-operation bound `unary_aa1` (the final-potential term is
+nonpositive by `ppos`). -/
 theorem unary_ub (A : UnaryAmortized Op State) (f : ℕ → Op) (n : ℕ) :
     (∑ i ∈ Finset.range n, A.T (f i) (unaryState A f i)) ≤
-      (∑ i ∈ Finset.range n, A.U (f i) (unaryState A f i)) :=
-  le_trans (unary_TA A f n) (Finset.sum_le_sum fun i _ => unary_aa1 A f i)
+      (∑ i ∈ Finset.range n, A.U (f i) (unaryState A f i)) := by
+  have h := PotentialMethod.sum_cost_le_of_amortizedCost_le A.Phi (unaryState A f)
+    (fun i => A.T (f i) (unaryState A f i))
+    (fun i => A.U (f i) (unaryState A f i)) n
+    (fun i _ => unary_aa1 A f i)
+  have h0 : A.Phi (unaryState A f 0) = 0 := A.p0
+  have hnn : 0 ≤ A.Phi (unaryState A f n) := A.ppos (unary_inv_state A f n)
+  rw [h0, add_zero] at h
+  exact le_trans h (sub_le_self _ hnn)
 
 
 end Amortized

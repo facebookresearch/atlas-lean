@@ -90,4 +90,42 @@ example :
       queue3Phi ([1], [2]) + 3 :=
   queue3Enq_bound 5 [1] [2]
 
+-- Dynamic tables, generalised growth factor: the ceiling `⌈2 * 5⌉ = 10`.
+example : Int.ceil ((2 : ℝ) * ((5 : ℕ) : ℝ)) = (10 : ℤ) := by
+  rw [Int.ceil_eq_iff]
+  norm_num
+
+-- Dynamic tables, generalised growth factor: resizing from `(5, 5)`
+-- with `c = 2` doubles the size to `⌈2 * 5⌉₊ = 10`, and the amortized
+-- bound holds with equality (`6 + 2 - 5 = 3 ≤ 3`).
+example :
+    (dynTab2Cost .ins [(5, 5)] : ℝ) +
+      dynTab2Phi 2 2 (dynTab2Exec 2 .ins [(5, 5)]) -
+      dynTab2Phi 2 2 (5, 5) ≤ dynTab2U 2 2 .ins [(5, 5)] := by
+  rw [dynTab2Cost_ins, dynTab2Exec_ins, dynTab2U_ins]
+  have hins : dynTab2Ins 2 (5, 5) = (6, 10) := by
+    simp only [dynTab2Ins]
+    rw [ite_eq_right (by norm_num : ¬(5 : ℕ) < 5), ite_eq_right (by norm_num : ¬(5 : ℕ) = 0)]
+    have hceil : Int.ceil ((2 : ℝ) * ((5 : ℕ) : ℝ)) = (10 : ℤ) := by
+      rw [Int.ceil_eq_iff]
+      norm_num
+    rw [hceil]
+    rfl
+  rw [hins, ite_eq_right (by norm_num : ¬(5 : ℕ) < 5)]
+  simp only [dynTab2Phi]
+  norm_num
+
+-- Queue: `deq` on an empty front list reverses the rear list.
+example : queueExec .deq [([1, 2], ([] : List ℕ))] = ([], [1]) := by
+  simp [queueExec]
+
+-- Queue: the reversal case of the amortized bound (`2 + 0 - 2 ≤ 0`).
+example :
+    (queueCost .deq [([1, 2], ([] : List ℕ))] : ℝ) +
+      queuePhi (queueExec .deq [([1, 2], ([] : List ℕ))]) -
+      queuePhi ([1, 2], ([] : List ℕ)) ≤ queueU .deq [([1, 2], ([] : List ℕ))] := by
+  rw [show queueExec .deq [([1, 2], ([] : List ℕ))] = ([], [1]) by simp [queueExec],
+    queueCost_deq, queueU_deq]
+  norm_num [queuePhi]
+
 end Cslib.Algorithms.Lean.Amortized.ExamplesTests
