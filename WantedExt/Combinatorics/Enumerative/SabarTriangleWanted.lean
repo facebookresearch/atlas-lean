@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.Combinatorics.Enumerative.SabarFineNumberWhitt
 public import MathlibExt.Combinatorics.Enumerative.SabarFineNumber
 public import MathlibExt.Combinatorics.Enumerative.WhittGeneralizedCatalan
 public import MathlibExt.Combinatorics.Enumerative.SabarTriangle
@@ -142,17 +143,6 @@ public theorem_wanted sabarNumber_central_eq_whittGeneralizedCatalan (n : ℕ) (
     (sabarNumber (2 * n) n : ℚ) =
       (2 / 3) * ((2 * n).choose n : ℚ) - (1 / 3) * whittGeneralizedCatalan 2 n / 2 ^ (n + 1) +
         (-1) ^ (n + 1) + (-1) ^ n / 2 ^ (n + 1)
-
-/-- **Fine numbers from Whitt's generalized Catalan numbers.** For every natural number $n \ge 1$,
-the Fine number $F(n)$, indexed so that $F(0) = 1$ and $F(1) = 0$, and Whitt's generalized Catalan
-number $C(2, n+1)$ at $\alpha = 2$ satisfy
-
-$$2^{n+2} F(n) = C(2, n+1) + 3(-1)^n.$$
-
-Source: Sabar Taoufik, *A New Triangle of Numbers: Properties and Observations*, INTEGERS 26
-(2026), Article A27, Corollary 4 (`integers-2026-A27-cor-4`). -/
-public theorem_wanted two_pow_mul_fineNumber_eq_whittGeneralizedCatalan (n : ℕ) (hn : 1 ≤ n) :
-    2 ^ (n + 2) * fineNumber n = whittGeneralizedCatalan 2 (n + 1) + 3 * (-1) ^ n
 
 end
 

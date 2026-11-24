@@ -11,13 +11,16 @@ module
 public import Mathlib.Algebra.Group.Pointwise.Finset.Basic
 public import Mathlib.Algebra.Order.Group.Defs
 import Mathlib.Algebra.Group.Nat.Hom
+import Mathlib.Algebra.Order.BigOperators.Group.List
 import Mathlib.Algebra.Order.Monoid.Unbundled.Pow
+import Mathlib.Order.Fin.Basic
 
 /-!
 # Sumsets of sets of size `k`
 
-We describe the trivial elements of an iterated sumset and compute the size of the
-sumset of an arithmetic progression with its penultimate term removed.
+We describe the trivial elements of an iterated sumset, show that adjoining a new maximum
+preserves nontrivial sums, and compute the size of the sumset of an arithmetic progression
+with its penultimate term removed.
 -/
 
 open scoped Pointwise
@@ -113,6 +116,55 @@ public theorem mem_sumsetTrivialElements_iff {G : Type*} [AddCommMonoid G] [Deci
   · rintro (⟨-, hx⟩ | ⟨j, i, hj, hi, rfl⟩)
     · exact Or.inl hx
     · exact Or.inr ⟨j, i, ⟨by omega, by omega⟩, rfl⟩
+
+/-- **Dropping the largest element keeps nontrivial sums nontrivial.** Let $G$ be a linearly
+ordered additive commutative group, let $h$ and $k > 1$ be natural numbers, and let
+$a_0, a_1, \ldots$ be a sequence in $G$ with $a_0 < a_1 < \cdots < a_{k-1}$. Put
+$A = \{a_0, \ldots, a_{k-1}\}$ and $B = \{a_0, \ldots, a_{k-2}\}$, and write $hX$ for the
+$h$-fold sumset of a set $X$, the set of sums of $h$ elements of $X$. Then $hB \subseteq hA$,
+and every element of $hB$ that is not a trivial element of the $h$-fold sumset of
+$a_0, \ldots, a_{k-2}$ is not a trivial element of the $h$-fold sumset of $a_0, \ldots, a_{k-1}$.
+
+The paper takes $h > 1$; the statement holds for every $h$ (for $h = 0$ there are no
+nontrivial elements).
+
+Source: Vincent Schinina, *On the Sumset of Sets of Size k*, INTEGERS 26 (2026),
+Article A31, Lemma 1 (`integers-2026-A31-lem-1`; arXiv:2505.07679v2, Lemma 3.2). -/
+public theorem nsmul_sumset_erase_max_nontrivial
+    {G : Type*} [AddCommGroup G] [LinearOrder G] [IsOrderedAddMonoid G]
+    (h k : ℕ) (hk : 1 < k) (a : ℕ → G) (ha : ∀ i, i + 1 < k → a i < a (i + 1)) :
+    h • (Finset.range (k - 1)).image a ⊆ h • (Finset.range k).image a ∧
+      ∀ c ∈ h • (Finset.range (k - 1)).image a,
+        c ∉ sumsetTrivialElements h (k - 1) a → c ∉ sumsetTrivialElements h k a := by
+  constructor
+  · exact Finset.nsmul_subset_nsmul_left
+      (Finset.image_subset_image (Finset.range_mono (Nat.sub_le k 1)))
+  intro c hc hnontriv htriv
+  apply hnontriv
+  rw [mem_sumsetTrivialElements_iff] at htriv ⊢
+  rcases htriv with ⟨_, hc₀⟩ | ⟨j, i, hj, hi, hci⟩
+  · exact Or.inl ⟨by omega, hc₀⟩
+  by_cases hold : j + 1 < k - 1
+  · exact Or.inr ⟨j, i, hold, hi, hci⟩
+  obtain rfl : k = j + 2 := by omega
+  -- On the last adjacent pair, the only sum reachable from the shorter list is its maximum.
+  have hmono : Monotone (fun n : Fin (j + 1) => a n) :=
+    Fin.monotone_iff_le_succ.mpr fun n => (ha n (by omega)).le
+  have hmax : c ≤ h • a j := by
+    obtain ⟨f, rfl⟩ := Finset.mem_nsmul.mp hc
+    simpa only [List.length_ofFn] using List.sum_le_length_nsmul _ (a j)
+      (List.forall_mem_ofFn_iff.mpr fun t => by
+        obtain ⟨n, hn, heq⟩ := Finset.mem_image.mp (f t).property
+        rw [← heq]
+        exact hmono (Fin.le_last ⟨n, Finset.mem_range.mp hn⟩))
+  have heq : c = h • a j := hmax.antisymm <| calc
+    h • a j = (h - i) • a j + i • a j := by rw [← add_nsmul, Nat.sub_add_cancel hi]
+    _ ≤ c := by
+      rw [hci]
+      exact add_le_add_right (nsmul_le_nsmul_right (ha j hj).le i) _
+  cases j with
+  | zero => exact Or.inl ⟨by omega, heq⟩
+  | succ j => exact Or.inr ⟨j, h, by omega, le_rfl, by simpa using heq⟩
 
 namespace card_nsmul_arithProg_skip_penultimate
 

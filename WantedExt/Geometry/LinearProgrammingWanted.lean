@@ -36,6 +36,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib
+public import MathlibExt.Geometry.LinearProgramming
 
 @[expose] public section
 
@@ -53,7 +54,9 @@ namespace ConvexGeometry
   topological frontier of the feasible region.
 * **Vertex optimality** (additional, the existence content of Dantzig's simplex
   algorithm): every linear program with a nonempty bounded feasible region
-  attains its optimum at an extreme point (vertex) of that region.
+  attains its optimum at an extreme point (vertex) of that region. It is proved,
+  as `simplex_algorithm`, in `MathlibExt.Geometry.LinearProgramming`, which also
+  defines the linear program, its feasible region and its objective.
 
 The program is the standard inequality form `maximise c · x` subject to
 `A x ≤ b` and `0 ≤ x`. mathlib has the convex-geometry primitives used here
@@ -61,39 +64,6 @@ The program is the standard inequality form `maximise c · x` subject to
 neither the LP maximum principle nor the existence of an optimal vertex as named
 results.
 -/
-
-open Matrix
-
-/-- **Linear program.** A linear program in standard inequality form with $m$ variables and
-$n$ constraints is given by an objective vector $c \in \mathbb{R}^m$, a right-hand side
-$b \in \mathbb{R}^n$ and an $n \times m$ real constraint matrix $A$; it stands for the problem
-of maximising $c \cdot x$ over $x \in \mathbb{R}^m$ subject to $A x \le b$ and $x \ge 0$. -/
-structure LinearProgram (m n : ℕ) where
-  /-- Coefficient vector of the objective `c · x`. -/
-  c : Fin m → ℝ
-  /-- Right-hand side of the inequality constraints `A x ≤ b`. -/
-  b : Fin n → ℝ
-  /-- Constraint matrix. -/
-  A : Matrix (Fin n) (Fin m) ℝ
-
-namespace LinearProgram
-
-variable {m n : ℕ}
-
-/-- **Feasible region of a linear program.** The feasible region of a linear program with
-$m$ variables, constraint matrix $A$ and right-hand side $b$ is the set of vectors
-$x \in \mathbb{R}^m$ with $A x \le b$ and $x \ge 0$, both inequalities holding componentwise.
-It is a convex polyhedron in $\mathbb{R}^m$. -/
-def feasible (lp : LinearProgram m n) : Set (Fin m → ℝ) :=
-  {x | lp.A *ᵥ x ≤ lp.b ∧ 0 ≤ x}
-
-/-- **Objective function of a linear program.** The objective function of a linear program
-with $m$ variables and objective vector $c \in \mathbb{R}^m$ is the map
-$f \colon \mathbb{R}^m \to \mathbb{R}$ given by $f(x) = c \cdot x = \sum_i c_i x_i$. -/
-def objective (lp : LinearProgram m n) (x : Fin m → ℝ) : ℝ :=
-  lp.c ⬝ᵥ x
-
-end LinearProgram
 
 /- **Maximum principle for linear programming** (§101). A local maximiser of
 the LP objective on the feasible region is automatically a global maximiser; and
@@ -115,24 +85,6 @@ public theorem_wanted lp_maximum_principle {m n : ℕ} (lp : LinearProgram m n)
     (_hlocal : IsLocalMaxOn lp.objective lp.feasible x) :
     IsMaxOn lp.objective lp.feasible x ∧
       (lp.c ≠ 0 → x ∈ frontier lp.feasible)
-
-/- **Vertex optimality** (§101; the existence content of Dantzig's 1947 simplex
-algorithm). Every linear program with a nonempty bounded feasible region admits a
-global maximiser that is an extreme point (vertex) of the feasible region. -/
-/-- **Optimal vertices of linear programs.** Consider a linear program with $m$ variables and
-objective vector $c \in \mathbb{R}^m$, and let $P \subseteq \mathbb{R}^m$ be its feasible region
-and $f(x) = c \cdot x$ its objective function. If $P$ is nonempty and bounded, then some
-$x \in P$ maximises $f$ on $P$ and is an extreme point of $P$, that is, $x$ does not lie in the
-open segment between two distinct points of $P$.
-
-Source: G. B. Dantzig (1947), simplex algorithm. Listed as §101 in O. Knill, Some Fundamental
-Theorems in Mathematics
-(https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via
-leanprover/lean-eval@38361be, problem `lp_maximum_principle`. -/
-public theorem_wanted simplex_algorithm {m n : ℕ} (lp : LinearProgram m n)
-    (_hfeas : lp.feasible.Nonempty) (_hbdd : Bornology.IsBounded lp.feasible) :
-    ∃ x ∈ lp.feasible, IsMaxOn lp.objective lp.feasible x ∧
-      x ∈ Set.extremePoints ℝ lp.feasible
 
 end ConvexGeometry
 

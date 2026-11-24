@@ -25,6 +25,16 @@ example : genDelannoyUpper 1 2 3 + genDelannoyUpper 1 2 4 = 84 := by
   rw [genDelannoyUpper_add_succ_right 1 2 3]
   decide
 
+-- At the first positive row and column zero, the difference is always two.
+example (k : ℕ) : (genDelannoyUpper k 1 1 : ℤ) - genDelannoyUpper k 1 0 = 2 := by
+  rw [genDelannoyUpper_succ_right_sub k 1 0 le_rfl]
+  simp [genDelannoyUpper]
+
+-- The adjacent entries 33 and 51 have difference 18.
+example : (genDelannoyUpper 1 2 4 : ℤ) - genDelannoyUpper 1 2 3 = 18 := by
+  rw [genDelannoyUpper_succ_right_sub 1 2 3 (by decide)]
+  decide
+
 -- At the lower family's boundary m = n = k, the first binomial factor is always one.
 example : genDelannoyLower 3 3 3 = 8 := by decide
 
