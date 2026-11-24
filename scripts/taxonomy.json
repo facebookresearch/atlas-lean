@@ -10501,6 +10501,7 @@
   "MathlibExt/Combinatorics/Enumerative/EvenOddCompositions": {"to": "Combinatorics/integer-compositions", "title": "Even and odd compositions"},
   "MathlibExt/Combinatorics/Enumerative/EvenTableWeight": {"to": "Combinatorics/designs-latin-squares", "title": "Even tables in random determinant moments"},
   "MathlibExt/Combinatorics/Enumerative/ExtraTribLeftExtension": {"to": "Combinatorics/combinatorics-on-words/automatic-sequences", "title": "Tribonacci representations and the Trithoff array"},
+  "MathlibExt/Combinatorics/Enumerative/ExtraTribReversal": {"to": "Combinatorics/combinatorics-on-words/automatic-sequences", "title": "Tribonacci representations and the Trithoff array"},
   "MathlibExt/Combinatorics/Enumerative/FallingBinomialTransform": {"to": "Combinatorics/riordan-arrays-transforms/sequence-transforms", "title": "Binomial transforms"},
   "MathlibExt/Combinatorics/Enumerative/FallingKBinomialTransform": {"to": "Combinatorics/riordan-arrays-transforms/sequence-transforms", "title": "Binomial transforms"},
   "MathlibExt/Combinatorics/Enumerative/FaultFree3xnTiling": {"to": "Combinatorics/tilings-board-placements", "title": "Fault-free tilings of 3 × n rectangles"},
