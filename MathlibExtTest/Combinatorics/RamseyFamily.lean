@@ -10,12 +10,18 @@ module
 
 import MathlibExt.Combinatorics.RamseyFamily
 
-/-! # Tests for the left-ideal criterion on two-element semigroups -/
+/-! # Tests for ultrafilters in Ramsey families on a two-element set -/
 
 namespace MetaMathlibExt.betaFamily_isLeftIdeal_iff.Tests
 
 private theorem contains_true_isRamseyFamily : IsRamseyFamily {A : Set Bool | true ∈ A} :=
   ⟨⟨Set.univ, Set.mem_univ true⟩, id, fun _ _ hA hAB => hAB hA, fun _ _ h => h⟩
+
+-- The singleton {false} excludes the principal ultrafilter at false even from the closure.
+example : (pure false : Ultrafilter Bool) ∉ closure (betaFamily {A : Set Bool | true ∈ A}) := by
+  rw [(isClosed_betaFamily contains_true_isRamseyFamily).closure_eq]
+  intro h
+  exact Bool.noConfusion (h {false} (by simp))
 
 attribute [local instance] Ultrafilter.semigroup
 
