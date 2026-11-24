@@ -288,4 +288,70 @@ public theorem sqrt_two_mul_le_diffBasisNumber_div_sqrt (g n : ℕ) (hn : 1 < n)
 
 end
 
+/-- **Rédei–Rényi difference basis.** Let $n \ge 1$ and $k = \lceil \sqrt{n} \rceil$. The set
+of integers $B_n = \{1, \dots, k - 1\} \cup \{k, 2k, \dots, k^2, (k + 1)k\}$ has $2k$ elements,
+and every $x \in \{1, \dots, n\}$ is a difference $b - b'$ of two elements of $B_n$.
+
+Source: Eric Schmutz and Michael Tait, *Cardinalities of g-Difference Sets*, INTEGERS 25
+(2025), Article A77, Lemma 2 (`integers-2025-A77-lem-2`). -/
+public theorem redeiRenyi_diffBasis (n : ℕ) (hn : 0 < n) :
+    let k : ℕ := ⌈Real.sqrt n⌉₊
+    let B : Finset ℤ :=
+      Finset.Icc 1 ((k : ℤ) - 1) ∪ (Finset.Icc (1 : ℤ) (k + 1)).image (· * (k : ℤ))
+    B.card = 2 * k ∧ ∀ x ∈ Finset.Icc (1 : ℤ) n, 1 ≤ subRepCount B x := by
+  let k : ℕ := ⌈Real.sqrt n⌉₊
+  let L := Finset.Icc (1 : ℤ) ((k : ℤ) - 1)
+  let M := Finset.Icc (1 : ℤ) ((k : ℤ) + 1)
+  let R := M.image (· * (k : ℤ))
+  change (L ∪ R).card = 2 * k ∧ ∀ x ∈ Finset.Icc (1 : ℤ) n, 1 ≤ subRepCount (L ∪ R) x
+  have hceil : Real.sqrt (n : ℝ) ≤ (k : ℝ) := Nat.le_ceil _
+  have hnreal : (0 : ℝ) < n := by exact_mod_cast hn
+  have hkreal : (0 : ℝ) < k := (Real.sqrt_pos.2 hnreal).trans_le hceil
+  have hk : (0 : ℤ) < k := by exact_mod_cast hkreal
+  have hsq : (n : ℤ) ≤ (k : ℤ) * (k : ℤ) := by
+    exact_mod_cast (show (n : ℝ) ≤ (k : ℝ) * (k : ℝ) from calc
+      (n : ℝ) = Real.sqrt n * Real.sqrt n := (Real.mul_self_sqrt hnreal.le).symm
+      _ ≤ (k : ℝ) * (k : ℝ) := mul_le_mul hceil hceil (Real.sqrt_nonneg _) hkreal.le)
+  constructor
+  · have hdis : Disjoint L R := Finset.disjoint_left.2 fun a ha hb => by
+      have ha' := (Finset.mem_Icc.1 ha).2
+      obtain ⟨j, hj, rfl⟩ := Finset.mem_image.1 hb
+      have hlow := mul_le_mul_of_nonneg_right (Finset.mem_Icc.1 hj).1 hk.le
+      rw [one_mul] at hlow
+      omega
+    have hinj : Function.Injective fun j : ℤ => j * (k : ℤ) :=
+      fun _ _ heq => mul_right_cancel₀ hk.ne' heq
+    rw [Finset.card_union_of_disjoint hdis, show R.card = M.card from
+      Finset.card_image_of_injective M hinj]
+    dsimp [L, M]
+    rw [Int.card_Icc, Int.card_Icc]
+    omega
+  · intro x hx
+    obtain ⟨hx₁, hx₂⟩ := Finset.mem_Icc.1 hx
+    let q := x / (k : ℤ)
+    let r := x % (k : ℤ)
+    have hr₀ : 0 ≤ r := Int.emod_nonneg _ hk.ne'
+    have hrk : r < (k : ℤ) := Int.emod_lt_of_pos _ hk
+    have hdiv : q * (k : ℤ) + r = x := by
+      simpa [q, r, add_comm] using Int.emod_add_ediv_mul x (k : ℤ)
+    have hq₀ : 0 ≤ q := Int.ediv_nonneg (by omega) hk.le
+    have hqk : q ≤ (k : ℤ) := le_of_mul_le_mul_right
+      ((show q * (k : ℤ) ≤ x by omega).trans (hx₂.trans hsq)) hk
+    have hmultiple (j : ℤ) (hj₁ : 1 ≤ j) (hj₂ : j ≤ (k : ℤ) + 1) :
+        j * (k : ℤ) ∈ L ∪ R :=
+      Finset.mem_union_right L (Finset.mem_image.2 ⟨j, Finset.mem_Icc.2 ⟨hj₁, hj₂⟩, rfl⟩)
+    -- The complement of the remainder is in the short interval unless it equals k.
+    have hright : (k : ℤ) - r ∈ L ∪ R := by
+      by_cases hzero : r = 0
+      · simpa [hzero] using hmultiple 1 le_rfl (by omega)
+      · exact Finset.mem_union_left R (Finset.mem_Icc.2 ⟨by omega, by omega⟩)
+    have hleft := hmultiple (q + 1) (by omega) (by omega)
+    change 1 ≤ (((L ∪ R) ×ˢ (L ∪ R)).filter (fun p : ℤ × ℤ => p.1 - p.2 = x)).card
+    apply Nat.succ_le_of_lt
+    refine Finset.card_pos.2 ⟨((q + 1) * (k : ℤ), (k : ℤ) - r), ?_⟩
+    refine Finset.mem_filter.2 ⟨Finset.mem_product.2 ⟨hleft, hright⟩, ?_⟩
+    change (q + 1) * (k : ℤ) - ((k : ℤ) - r) = x
+    rw [add_mul, one_mul]
+    omega
+
 end MetaMathlibExt
