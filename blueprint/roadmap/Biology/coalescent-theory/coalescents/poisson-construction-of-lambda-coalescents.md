@@ -4,7 +4,7 @@ Let $\Lambda$ be a finite measure on $[0, 1]$ with $\Lambda(\{0\}) = 0$, and let
 
 ## Expansion
 
-1. [Pitman's merger rates](../../../Biology/coalescent-theory/coalescents/merger-rate.md) and their [consistency relation](../../../Biology/coalescent-theory/coalescents/merger-rate-consistent.md) (on the graph).
+1. [Pitman's merger rates](../../../Biology/coalescent-theory/coalescents/merger-rate.md) and their [consistency relation](../../../Biology/coalescent-theory/coalescents/merger-rate-consistent.md).
 2. The marked Poisson process restricted to $\{1, \dots, n\}$: finitely many effective points on bounded intervals, and the induced jump rates $\lambda_{b,k}$ for each set of $k$ of $b$ blocks.
 3. Consistency of the restrictions and the process on partitions of $\mathbb{N}$.
 4. Equality in law with the generator construction of the $\Lambda$-coalescent on $\mathbb{N}$.

@@ -4,7 +4,7 @@ A demographic model can be identifiable — distinct histories give distinct exp
 
 ## Expansion
 
-1. The forward map from piecewise histories to expected spectra, and its injectivity (on the graph for piecewise-constant histories).
+1. The forward map from piecewise histories to expected spectra, and its injectivity, known for piecewise-constant histories.
 2. A modulus of continuity of the inverse on a compact class of histories, and explicit pairs of histories with close spectra.
 3. Total variation or KL distance between the induced data distributions, and the consequence for the error of any estimator.
 4. The role of regularization or prior information, as a separate statement.

@@ -15,3 +15,5 @@
 - [Expected number of sites derived in the whole neutral sample](expected-sfs-neutral-self.md)
 - [Expected number of segregating sites in a neutral sample](sum-expected-sfs-neutral.md)
 - [Expected pairwise diversity of a neutral sample is θ](sum-pairwise-diversity-expected-sfs-neut.md)
+- [Site-frequency counts in the Poisson random field are independent Poisson](independent-poisson-site-counts.md)
+- [Fixation flux and divergence in the Poisson random field](fixation-flux-and-divergence.md)

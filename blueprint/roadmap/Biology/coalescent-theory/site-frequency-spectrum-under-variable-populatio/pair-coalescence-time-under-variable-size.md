@@ -7,8 +7,7 @@ With relative size $\eta$ and clock $R(t) = \int_0^t \eta(s)^{-1}\, ds$ as in th
 1. The survival function from the time change of an $\mathrm{Exp}(1)$ variable: $T_2 = R^{-1}(E)$ with $E \sim \mathrm{Exp}(1)$.
 2. Mass at infinity when $R(\infty) < \infty$.
 3. The density and hazard, by absolute continuity of $R$ (Lebesgue differentiation of $\int 1/\eta$).
-4. The expectation by the layer-cake formula; the [first-coalescence quantity in survival-integral form](../../../Biology/coalescent-theory/site-frequency-spectrum-under-variable-populatio/first-coal-mean-eq-integral.md) for $m = 2$ (on the graph).
-5. The time-changed coalescent is also planned in the canonical population-genetics part of the graph.
+4. The expectation by the layer-cake formula; the [first-coalescence quantity in survival-integral form](../../../Biology/coalescent-theory/site-frequency-spectrum-under-variable-populatio/first-coal-mean-eq-integral.md) for $m = 2$.
 
 ## Sources
 

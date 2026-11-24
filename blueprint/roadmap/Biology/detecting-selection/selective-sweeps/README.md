@@ -23,3 +23,4 @@
 - [iHS as the log ratio of genealogy ages](ihs-eq-log-div.md)
 - [iHS is negative exactly when the derived allele is younger](ihs-neg-iff.md)
 - [EHH after a complete sweep](sweep-ehh-sweep-duration-full.md)
+- [The hitchhiking approximation of a selective sweep](hitchhiking-approximation.md)

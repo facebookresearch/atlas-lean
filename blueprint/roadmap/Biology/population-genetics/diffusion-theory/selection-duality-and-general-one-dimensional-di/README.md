@@ -76,3 +76,5 @@
 - [Neutral mean absorption time from the conditional times](mul-neutral-fixation-time-add-mul-neutra.md)
 
 - [Type of the common ancestor under selection and mutation](common-ancestor-type-distribution.md)
+- [Ancestral selection graph and duality for the selected diffusion](asg-duality-for-the-selected-diffusion.md)
+- [Construction of the ancestral selection graph](ancestral-selection-graph-construction.md)

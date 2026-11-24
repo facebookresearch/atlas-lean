@@ -41,3 +41,4 @@
 - [Mean coalescence time at locus B, path form](lintegral-coalescence-time-b.md)
 - [Product moment of the two coalescence times, path form](lintegral-coalescence-time-a-mul-coalesc.md)
 - [Covariance of the coalescence times, path form](covariance-coalescence-times.md)
+- [Duality between the two-locus diffusion and the coalescent with recombination](two-locus-diffusion-coalescent-duality.md)

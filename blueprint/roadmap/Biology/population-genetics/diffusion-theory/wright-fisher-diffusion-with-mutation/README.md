@@ -15,3 +15,4 @@
 - [Allele frequency after one generation of two-way mutation](mutated-freq.md)
 - [Drift of the Wright–Fisher chain with mutation](integral-binomial-mutated-freq-drift.md)
 - [Infinitesimal variance of the Wright–Fisher chain with mutation](integral-binomial-mutated-freq-sq.md)
+- [Dirichlet stationary law under parent-independent mutation](dirichlet-stationary-law-under-parent-independent-mutation.md)

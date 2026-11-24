@@ -7,7 +7,7 @@ Under the Kingman coalescent with $n$ lineages and infinite-sites mutation, muta
 1. The marked genealogy and the conditional Poisson structure of the spectrum.
 2. The joint generating function as a functional of $(L_1, \dots, L_{n-1})$.
 3. A recursion over the coalescent events for the joint law, or for the joint moment generating function of $(L_i)$.
-4. The first two moments as checks: $E\xi_i = \theta/i$ and Fu's covariances (on the graph).
+4. The first two moments as checks: $E\xi_i = \theta/i$ and Fu's covariances.
 5. An explicit pair $i \ne j$ with $\mathrm{Cov}(L_i, L_j) \ne 0$.
 
 ## Sources

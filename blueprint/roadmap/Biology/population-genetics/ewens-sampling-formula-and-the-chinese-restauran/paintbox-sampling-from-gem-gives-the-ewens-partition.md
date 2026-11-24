@@ -5,7 +5,7 @@ Let $(P_1, P_2, \dots)$ have the GEM($\theta$) distribution, $P_1 = W_1$ and $P_
 ## Expansion
 
 1. The GEM($\theta$) and PD($\theta$) distributions, and the size-biased permutation relating them.
-2. The [Ewens sampling formula](../../../Biology/population-genetics/ewens-sampling-formula-and-the-chinese-restauran/ewens-prob.md) and the [Chinese restaurant process and Hoppe's urn](../../../Biology/population-genetics/ewens-sampling-formula-and-the-chinese-restauran/crp-map-block-sizes.md) (on the graph).
+2. The [Ewens sampling formula](../../../Biology/population-genetics/ewens-sampling-formula-and-the-chinese-restauran/ewens-prob.md) and the [Chinese restaurant process and Hoppe's urn](../../../Biology/population-genetics/ewens-sampling-formula-and-the-chinese-restauran/crp-map-block-sizes.md).
 3. The computation of $P(\Pi_n = \pi)$ given GEM weights, by conditioning on the order of first appearance and Beta integrals.
 4. The equality with the Chinese restaurant law, and the corresponding allele-count configuration (Ewens) law.
 
