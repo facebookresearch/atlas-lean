@@ -40810,6 +40810,7 @@
 "MathlibExt.Combinatorics.Additive.GowersUniformityWanted.u3_inverse_F5": "06a5e0b2d5dfc20b",
 "MathlibExt.Combinatorics.Additive.SarkozyWanted.furstenberg_sarkozy": "aa5f83b75e65e81c",
 "MathlibExt.Combinatorics.Additive.SarkozyWanted.initialSegmentCount": "c1ee1ec8ed159ddb",
+"MathlibExt.Combinatorics.Additive.SarkozyWanted.sarkozy_vdc_tendsto": "a343b06a4a677208",
 "MathlibExt.Combinatorics.Additive.SzemerediWanted.szemeredi": "076a1051dbefb2df",
 "MathlibExt.Combinatorics.Additive.ThreeAPFreeValuesWanted.capSet_dim_five": "24f644f77b92bfd7",
 "MathlibExt.Combinatorics.Additive.ThreeAPFreeValuesWanted.capSet_dim_four": "6d4bc0d68e4d16e1",
