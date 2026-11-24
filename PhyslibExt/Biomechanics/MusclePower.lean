@@ -132,10 +132,11 @@ lemma muscle_power_max {a b F0 : ℝ} (ha : 0 < a) (hb : 0 < b) (hF0 : 0 < F0) :
 
 /-! ## B. Power and work. -/
 
-/-- Hill shortening velocity at force `F`: `v(F) = b (F0 - F)/(F + a)`. -/
+/-- Hill shortening velocity at force `F`: `v(F) = b (F0 - F)/(F + a)`. In the model
+`a, b, F0 > 0` and `F ∈ [0, F0]`; with `u / 0 = 0` it is `0` at `F = -a`. -/
 noncomputable def hillVelocity (a b F0 F : ℝ) : ℝ := b * (F0 - F) / (F + a)
 
-/-- Mechanical power at force `F`: `P(F) = F * v(F)`. -/
+/-- Mechanical power at force `F`: `P(F) = F * v(F)` (`0` at `F = -a`, by `u / 0 = 0`). -/
 noncomputable def hillPower (a b F0 F : ℝ) : ℝ := F * hillVelocity a b F0 F
 
 /-- Hill velocity formula. -/
@@ -153,10 +154,10 @@ lemma muscle_power_formula {a b F0 F : ℝ} (ha : 0 < a) (hb : 0 < b)
   ring
 
 set_option linter.unusedVariables false in
-/-- **Work at constant force.** If the displacement `x` has constant
-derivative `x' = v(c) = b * (F0 - c) / (c + a)` (constant force `c`
-under the Hill law), then the mechanical work over `[0, T]`, the time
-integral of the power `c * x'`, equals `c * (x T - x 0)`. -/
+/-- **Work at constant force.** Let `a, b, F0 > 0`, `c ∈ [0, F0]` and `T ≥ 0`. If the
+displacement `x` has constant derivative `x' = v(c) = b * (F0 - c) / (c + a)` at every point of
+`[0, T]` (constant force `c` under the Hill law), then the mechanical work over `[0, T]`, the
+time integral of the power `c * x'`, equals `c * (x T - x 0)`. -/
 lemma muscle_work_constant {a b F0 c T : ℝ} (ha : 0 < a) (hb : 0 < b)
     (hF0 : 0 < F0) (hc : c ∈ Set.Icc 0 F0) (hT : 0 ≤ T) {x : ℝ → ℝ}
     (hx : ∀ t ∈ Set.uIcc 0 T, HasDerivAt x (b * (F0 - c) / (c + a)) t) :

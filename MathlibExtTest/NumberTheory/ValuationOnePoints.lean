@@ -15,6 +15,7 @@ import Mathlib.Tactic.NormNum
 # Tests for polynomial lifts modulo a prime square
 
 Modulo three, the root two of `x - 8` lifts at index two.
+Modulo two, the nonsingular root `(1, 0)` of `x² + y + 1` has two lifts of valuation one.
 At the origin modulo three, `x² + y² + 3` has nine lifts with valuation one, and `xy` has none.
 -/
 
@@ -39,6 +40,16 @@ example (p : ℕ) (hp : p.Prime) :
   simpa [g] using h
 
 open MvPolynomial
+
+-- Only the y derivative is nonzero modulo two, and the base value is already two.
+example :
+    ((Finset.range 2 ×ˢ Finset.range 2).filter fun kl : ℕ × ℕ =>
+      let z : ℤ := (1 + (kl.1 : ℤ) * 2) ^ 2 + kl.2 * 2 + 1
+      2 ∣ z ∧ ¬ 4 ∣ z).card = 2 := by
+  let f : MvPolynomial (Fin 2) ℤ := X 0 ^ 2 + X 1 + 1
+  have h := card_lift_padicVal_eq_one Nat.prime_two f (r := 1) (s := 0)
+    (by decide) (by decide) (by norm_num [f]) (by norm_num [f, pderiv_X])
+  simpa [f] using h
 
 example :
     ((Finset.range 3 ×ˢ Finset.range 3).filter fun kl : ℕ × ℕ =>

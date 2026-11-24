@@ -9,6 +9,7 @@ Vertex, edge, list and precoloring-extension coloring, achromatic number, graph 
 - [Graph bandwidth](graph-bandwidth/README.md)
 - [Graph coloring](graph-coloring/README.md)
 - [Graph homomorphism](graph-homomorphism/README.md)
+- [Grid embeddings and layouts](grid-embeddings-and-layouts/README.md)
 - [Linear ordering of tournaments](linear-ordering-of-tournaments/README.md)
 - [List coloring](list-coloring/README.md)
 - [Maximum cut](maximum-cut/README.md)
