@@ -43,20 +43,20 @@ open Filter MeasureTheory
 
 namespace MathlibExt.MeasureTheory.LpVanishingHalfLineIntegralBorelWanted
 
-/-- Elements of `Lᵖ(ℝ)` whose integrals over `[0, L]` tend to `0` as `L → ∞`. -/
+/-- **Functions with vanishing integrals over $[0, L]$.** For $0 \le p \le \infty$, this is the set
+of real-valued $f \in L^p(\mathbb{R})$ (with respect to Lebesgue measure) such that
+$\int_{[0, L]} f(x)\,dx \to 0$ as $L \to +\infty$, where the integral of a function that is not
+integrable on $[0, L]$ counts as $0$. -/
 def vanishingIntegralSet (p : ENNReal) : Set (Lp ℝ p (volume : Measure ℝ)) :=
   {f |
     Tendsto
       (fun L : ℝ => ∫ x in Set.Icc (0 : ℝ) L, f x ∂(volume : Measure ℝ))
       atTop (nhds 0)}
 
-/-- Let $p$ be a real number such that $1\le p\le +\infty$.
-
-Let $A\subset L^{p}(\mathbb{R})$ denote those functions for which
-\[
-\lim_{L\to +\infty}\int_{0}^{L} f(x)\,dx=0.
-\]
-Show that $A$ is a Borel subset of $L^{p}(\mathbb{R})$.
+/-- **$L^p$ functions whose integrals over $[0, L]$ tend to $0$ form a Borel set.** Let
+$1 \le p \le \infty$. The set of real-valued $f \in L^p(\mathbb{R})$ (with respect to Lebesgue
+measure) such that $\int_0^L f(x)\,dx \to 0$ as $L \to +\infty$ is a Borel subset of
+$L^p(\mathbb{R})$.
 
 Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level II (Measure and integration; Set
 functions, measures and integrals with values in abstract spaces),

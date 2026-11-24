@@ -37,10 +37,13 @@ variable {𝕜 : Type*} [RCLike 𝕜]
 variable {E F : Type*} [NormedAddCommGroup E] [InnerProductSpace 𝕜 E] [CompleteSpace E]
   [NormedAddCommGroup F] [InnerProductSpace 𝕜 F] [CompleteSpace F]
 
-/-- The set-theoretic range of a continuous linear map is the coercion of its
-linear range. This bridges `IsClosed (Set.range T)` (used by the anti-Lipschitz
-criterion) and `IsClosed (LinearMap.range T)` (used by the adjoint
-orthogonality identities). -/
+/-- **The range of a bounded operator as a set.** Let $E'$ and $F'$ be Hilbert spaces over
+$\mathbb{K}$, where $\mathbb{K}$ is $\mathbb{R}$ or $\mathbb{C}$, and let $S : E' \to F'$ be a
+bounded linear operator. The set of values of $S$ equals the underlying set of the range of $S$
+regarded as a linear subspace of $F'$.
+
+This lets closedness of the range pass between the anti-Lipschitz criterion, stated for the
+set of values, and the adjoint orthogonality identities, stated for the linear subspace. -/
 theorem setRange_eq_coe_linearMap_range {E' F' : Type*} [NormedAddCommGroup E']
     [InnerProductSpace 𝕜 E'] [CompleteSpace E'] [NormedAddCommGroup F']
     [InnerProductSpace 𝕜 F'] [CompleteSpace F'] (S : E' →L[𝕜] F') :
@@ -48,9 +51,12 @@ theorem setRange_eq_coe_linearMap_range {E' F' : Type*} [NormedAddCommGroup E']
   rw [LinearMap.coe_range, ContinuousLinearMap.coe_coe]
 
 omit [CompleteSpace F] in
-/-- Restricting a bounded operator to the orthogonal complement of its kernel
-does not change its range: every value `T x` is attained at the orthogonal
-projection of `x` onto `(ker T)⊥`, since the difference lies in `ker T`. -/
+/-- **Restriction to the orthogonal complement of the kernel keeps the range.** Let $E$ be a
+Hilbert space and $F$ an inner product space over $\mathbb{K}$, where $\mathbb{K}$ is
+$\mathbb{R}$ or $\mathbb{C}$, and let $T : E \to F$ be a bounded linear operator. Then the
+restriction of $T$ to the orthogonal complement $(\ker T)^\perp$ of its kernel has the same
+range as $T$: every value $T x$ is attained at the orthogonal projection of $x$ onto
+$(\ker T)^\perp$, since the difference lies in $\ker T$. -/
 theorem range_comp_subtypeL_orthogonalComplement_ker (S : E →L[𝕜] F) :
     Set.range (S.comp (Submodule.subtypeL (LinearMap.ker S.toLinearMap)ᗮ)) =
       Set.range S := by
@@ -72,8 +78,11 @@ theorem range_comp_subtypeL_orthogonalComplement_ker (S : E →L[𝕜] F) :
     exact ⟨⟨x', hx'_mem⟩, by simp [ContinuousLinearMap.comp_apply, hSx]⟩
 
 omit [CompleteSpace E] [CompleteSpace F] in
-/-- The restriction of a bounded operator to the orthogonal complement of its
-kernel is injective: a vector lying in both `ker T` and `(ker T)⊥` is zero. -/
+/-- **Restriction to the orthogonal complement of the kernel is injective.** Let $E$ and $F$
+be inner product spaces over $\mathbb{K}$, where $\mathbb{K}$ is $\mathbb{R}$ or $\mathbb{C}$,
+and let $T : E \to F$ be a bounded linear operator. Then the restriction of $T$ to the
+orthogonal complement $(\ker T)^\perp$ of its kernel is injective: a vector lying in both
+$\ker T$ and $(\ker T)^\perp$ is zero. -/
 theorem injective_comp_subtypeL_orthogonalComplement_ker (S : E →L[𝕜] F) :
     Function.Injective (S.comp (Submodule.subtypeL (LinearMap.ker S.toLinearMap)ᗮ)) := by
   intro a b hab
@@ -91,16 +100,20 @@ theorem injective_comp_subtypeL_orthogonalComplement_ker (S : E →L[𝕜] F) :
   rw [Submodule.inf_orthogonal_eq_bot] at hbot
   exact Subtype.ext (eq_of_sub_eq_zero ((Submodule.mem_bot 𝕜).mp hbot))
 
-/-- The closed-range theorem for adjoints, one direction: if the range of `T`
-is closed, then the range of its adjoint `T†` is closed.
+/-- **Closed range passes to the adjoint.** Let $E$ and $F$ be Hilbert spaces over $\mathbb{K}$,
+where $\mathbb{K}$ is $\mathbb{R}$ or $\mathbb{C}$, and let $T : E \to F$ be a bounded linear
+operator with adjoint $T^\dagger$. If the range of $T$ is closed in $F$, then the range of
+$T^\dagger$ is closed in $E$.
 
-Proof sketch: if `Range T` is closed, then `T` is bounded below on
-`(ker T)⊥` (the anti-Lipschitz criterion for its injective restriction).
-Every `y ∈ (ker T†)⊥` lies in `Range T` (by `(Ran T)⊥ = ker T†` and
-closedness), so writing `y = T x` with `x ∈ (ker T)⊥` gives
-`‖y‖² = Re ⟪x, T† y⟫ ≤ ‖x‖ ‖T† y‖ ≤ C ‖y‖ ‖T† y‖`; cancelling `‖y‖`
-shows `T†` is bounded below on `(ker T†)⊥`, hence its range — the range of
-its restriction to `(ker T†)⊥` — is closed. -/
+Proof sketch: if the range of $T$ is closed, then $T$ is bounded below on $(\ker T)^\perp$
+(the anti-Lipschitz criterion for its injective restriction), say $\|x\| \le C \|T x\|$ there.
+Every $y \in (\ker T^\dagger)^\perp$ lies in the range of $T$, because
+$(\operatorname{ran} T)^\perp = \ker T^\dagger$ and the range is closed. Writing $y = T x$ with
+$x \in (\ker T)^\perp$ gives
+$\|y\|^2 = \operatorname{Re} \langle x, T^\dagger y \rangle \le \|x\| \|T^\dagger y\| \le
+C \|y\| \|T^\dagger y\|$; cancelling $\|y\|$ shows that $T^\dagger$ is bounded below on
+$(\ker T^\dagger)^\perp$, so its range, which is the range of its restriction to
+$(\ker T^\dagger)^\perp$, is closed. -/
 theorem isClosed_range_adjoint_of_isClosed_range (T : E →L[𝕜] F)
     (hT : IsClosed (LinearMap.range T.toLinearMap : Set F)) :
     IsClosed (LinearMap.range (adjoint T).toLinearMap : Set E) := by
@@ -177,10 +190,13 @@ theorem isClosed_range_adjoint_of_isClosed_range (T : E →L[𝕜] F)
     setRange_eq_coe_linearMap_range (adjoint T)] at hT₂_closed
   exact hT₂_closed
 
-/-- The closed-range theorem for adjoints: for a bounded operator `T` between
-Hilbert spaces, the range of `T` is closed if and only if the range of its
-adjoint `T†` is closed. The reverse direction is the one-direction statement
-applied to `T†`, using `T†† = T`. -/
+/-- **Closed range theorem for adjoints.** Let $E$ and $F$ be Hilbert spaces over $\mathbb{K}$,
+where $\mathbb{K}$ is $\mathbb{R}$ or $\mathbb{C}$, and let $T : E \to F$ be a bounded linear
+operator with adjoint $T^\dagger$. Then the range of $T$ is closed in $F$ if and only if the
+range of $T^\dagger$ is closed in $E$.
+
+The reverse direction is the forward direction applied to $T^\dagger$, using
+$T^{\dagger\dagger} = T$. -/
 theorem isClosed_range_adjoint_iff (T : E →L[𝕜] F) :
     IsClosed (LinearMap.range T.toLinearMap : Set F) ↔
       IsClosed (LinearMap.range (adjoint T).toLinearMap : Set E) :=

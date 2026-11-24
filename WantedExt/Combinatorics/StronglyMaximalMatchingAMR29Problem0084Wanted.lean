@@ -34,24 +34,38 @@ infinite. A matching is a set of pairwise disjoint edges, and it is strongly max
 EGRES.
 -/
 
-/-- A matching of the hypergraph with edge set `E`: a set of pairwise disjoint edges. -/
+/-- **Matching in a hypergraph.** For a hypergraph on a vertex set $V$ whose edges form a set $E$
+of finite subsets of $V$, a set $M$ is a matching when $M \subseteq E$ and any two distinct
+members of $M$ are disjoint. -/
 def IsMatching {V : Type} (E M : Set (Finset V)) : Prop :=
   M ⊆ E ∧ M.Pairwise Disjoint
 
-/-- A strongly maximal matching (Aharoni): a matching `M` such that `|M' \ M| ≤ |M \ M'|`, as
-cardinals, for every matching `M'`. -/
+/-- **Strongly maximal matching.** For a hypergraph with edge set $E$, a set $M$ is a strongly
+maximal matching (Aharoni) when $M$ is a matching of $E$ and every matching $M'$ of $E$
+satisfies $|M' \setminus M| \le |M \setminus M'|$, comparing the cardinalities as cardinal
+numbers. -/
 def IsStronglyMaximal {V : Type} (E M : Set (Finset V)) : Prop :=
   IsMatching E M ∧ ∀ M', IsMatching E M' → Cardinal.mk ↥(M' \ M) ≤ Cardinal.mk ↥(M \ M')
 
-/-- The refuted EGRES claim: every hypergraph whose edges all have size at most
-`k`, for some `k`, has a strongly maximal matching. -/
+/-- **Strongly maximal matchings in hypergraphs with bounded edges.** The statement that for
+every vertex set $V$ and every set $E$ of finite subsets of $V$ such that some natural number $k$
+bounds the number of elements of every edge in $E$, the hypergraph with edge set $E$ has a
+strongly maximal matching.
+
+This is the claim from the EGRES list of open problems; it has since been refuted. -/
 def boundedEdgesStronglyMaximalMatching : Prop :=
   ∀ (V : Type) (E : Set (Finset V)) (k : ℕ), (∀ e ∈ E, e.card ≤ k) →
     ∃ M, IsStronglyMaximal E M
 
 /--
-Resolved false: Hollom and Randall Shaw (Theorem 1.2) construct a `3`-uniform (infinite) hypergraph
-with no strongly maximal matching, so bounded edge size does not suffice. Source: EGRES Open
+**Bounded edge size does not guarantee a strongly maximal matching.** There are a vertex set
+$V$, a set $E$ of finite subsets of $V$ and a natural number $k$ such that every edge in $E$ has
+at most $k$ elements, but the hypergraph with edge set $E$ has no strongly maximal matching.
+
+Hollom and Randall Shaw (Theorem 1.2) construct a $3$-uniform (infinite) hypergraph with no
+strongly maximal matching, so bounded edge size does not suffice.
+
+Source: EGRES Open
 (Egerváry Research Group), list of open problems, Strongly maximal matchings,
 https://oldlemon.cs.elte.hu/egres/open/Strongly_maximal_matchings; resolution: L. Hollom and B.
 Randall Shaw, Counterexamples to conjectures on strong maximality and minimality, Electron. J.

@@ -16,7 +16,7 @@ import Mathlib.Algebra.Field.ZMod
 universe u v
 
 /-- Exact-source consumer, with the original binders and explicit universes. -/
-theorem exactSource
+private theorem exactSource
     {O : Type u} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O]
     {M : Type v} [CommRing M] [IsDomain M] [Algebra O M]
     (hinj : Function.Injective (algebraMap O M))

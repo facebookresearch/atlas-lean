@@ -47,21 +47,34 @@ namespace MathlibExt.Analysis.Distribution.PlemeljLimitTemperedDistributionWante
 noncomputable section
 
 
-/-- The pairing `φ ↦ ∫ (x + i ε)⁻¹ * φ x dx` with a Schwartz function. -/
+/-- **The pairing with $(x + i\varepsilon)^{-1}$.** For a real number $\varepsilon$ and a Schwartz
+function $\phi : \mathbb{R} \to \mathbb{C}$, $u_{+,\varepsilon}(\phi)$ is the complex number
+$\int_{\mathbb{R}} (x + i\varepsilon)^{-1}\phi(x)\, dx$.
+
+The integral is the Lebesgue integral, taken to be $0$ when the integrand is not integrable;
+this can happen only for $\varepsilon = 0$.
+-/
 def uPlusEps (ε : ℝ) (φ : SchwartzMap ℝ ℂ) : ℂ :=
   ∫ x : ℝ, (((x : ℂ) + (ε : ℂ) * Complex.I)⁻¹) * φ x
 
-/-- The pairing `φ ↦ ∫ (x - i ε)⁻¹ * φ x dx` with a Schwartz function. -/
+/-- **The pairing with $(x - i\varepsilon)^{-1}$.** For a real number $\varepsilon$ and a Schwartz
+function $\phi : \mathbb{R} \to \mathbb{C}$, $u_{-,\varepsilon}(\phi)$ is the complex number
+$\int_{\mathbb{R}} (x - i\varepsilon)^{-1}\phi(x)\, dx$.
+
+The integral is the Lebesgue integral, taken to be $0$ when the integrand is not integrable;
+this can happen only for $\varepsilon = 0$.
+-/
 def uMinusEps (ε : ℝ) (φ : SchwartzMap ℝ ℂ) : ℂ :=
   ∫ x : ℝ, (((x : ℂ) - (ε : ℂ) * Complex.I)⁻¹) * φ x
 
-/-- For $\varepsilon > 0$, define $u_{\pm,\varepsilon} : S(\mathbb{R}) \to \mathbb{C}$ by
-$u_{\pm,\varepsilon}(\phi) = \int_{\mathbb{R}} (x \pm i\varepsilon)^{-1}\phi(x)\, dx$, $\phi \in
-S(\mathbb{R})$.
-
-Show that for all $\varepsilon > 0$, $u_{\pm,\varepsilon} \in S'(\mathbb{R})$, and that there exist
-$u_\pm \in S'(\mathbb{R})$ such that for all $\phi \in S(\mathbb{R})$, $u_{\pm,\varepsilon}(\phi)
-\to u_\pm(\phi)$ as $\varepsilon \to 0$.
+/-- **The tempered distributions $(x \pm i\varepsilon)^{-1}$ converge as $\varepsilon \to 0^+$.**
+Write $S(\mathbb{R})$ for the space of complex-valued Schwartz functions on $\mathbb{R}$, and for
+$\varepsilon > 0$ and $\phi \in S(\mathbb{R})$ let
+$u_{\pm,\varepsilon}(\phi) = \int_{\mathbb{R}} (x \pm i\varepsilon)^{-1}\phi(x)\, dx$. Then for
+every $\varepsilon > 0$ both $u_{+,\varepsilon}$ and $u_{-,\varepsilon}$ are tempered
+distributions, that is, continuous $\mathbb{C}$-linear functionals on $S(\mathbb{R})$, and there
+are tempered distributions $u_+$ and $u_-$ such that $u_{+,\varepsilon}(\phi) \to u_+(\phi)$ and
+$u_{-,\varepsilon}(\phi) \to u_-(\phi)$ as $\varepsilon \to 0^+$ for every $\phi \in S(\mathbb{R})$.
 
 Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level II (Functional analysis;
 Distributions, generalized functions, distribution spaces),

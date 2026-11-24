@@ -38,10 +38,15 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Second-derivative test for exponential sums: let `a < b` be integers and `f` a real `C²`
-function with `f'' ≥ ρ` on `[a, b]` or `f'' ≤ -ρ` on `[a, b]` for some `ρ > 0`. Then
-`|∑_{n=a}^{b} e(f(n))| ≤ (|f'(b) - f'(a)| + 2) (4/√ρ + 3)`, where `e(x) = exp(2πix)`. Here `f`
-is `C²` on all of `ℝ`; every `C²` function on `[a, b]` extends to one, so this loses nothing.
+/-- **Second-derivative test for exponential sums.** Let $a < b$ be integers, let $\rho > 0$,
+and let $f : \mathbb{R} \to \mathbb{R}$ be twice continuously differentiable, with either
+$f''(t) \ge \rho$ for every $t \in [a, b]$ or $f''(t) \le -\rho$ for every $t \in [a, b]$. Then
+$$\Bigl|\sum_{n=a}^{b} e(f(n))\Bigr| \le \bigl(|f'(b) - f'(a)| + 2\bigr)
+\Bigl(\frac{4}{\sqrt{\rho}} + 3\Bigr),$$
+where $e(x) = e^{2\pi i x}$.
+
+Here $f$ is $C^2$ on all of $\mathbb{R}$; every $C^2$ function on $[a, b]$ extends to one, so
+this loses nothing.
 
 Source: Anji Dong, Katerina Saettone, Kendra Song and Alexandru Zaharescu, *An Equidistribution
 Result for Differences Associated with Square Pyramidal Numbers*, Journal of Integer Sequences 29
@@ -54,12 +59,18 @@ public theorem_wanted norm_sum_exp_two_pi_I_le_of_iteratedDeriv_two {a b : ℤ} 
     ‖∑ n ∈ Finset.Icc a b, Complex.exp (2 * Real.pi * Complex.I * (f n : ℂ))‖ ≤
       (|deriv f b - deriv f a| + 2) * (4 / Real.sqrt ρ + 3)
 
-/-- Let `q(t) = a t³ + b t² + c t + d` with real coefficients and `a > 0`. There is an integer
-`T ≥ 1` such that `q(t) > 0` for real `t ≥ T`, the sequence `(√q(n))_{n ≥ T}` is uniformly
-distributed modulo one (each interval `[α, β) ⊆ [0, 1]` receives asymptotic proportion `β - α`
-of the fractional parts of `√q(T + n)`, `n = 0, 1, …`), and, with a constant `C` depending only on
-`q`, for every integer `N ≥ T` and every nonzero integer `γ`,
-`|∑_{n=T}^{N} e(γ √q(n))| ≤ C (|γ|^{1/2} N^{3/4} + |γ| N^{1/2} + |γ|^{-1/2} N^{1/4} + 1)`.
+/-- **Square roots of cubics with positive leading coefficient are uniformly distributed modulo
+one.** Let $q(t) = a t^3 + b t^2 + c t + d$ with real coefficients $a, b, c, d$ and $a > 0$,
+write $\{x\} = x - \lfloor x \rfloor$ for the fractional part of a real $x$, and let
+$e(x) = e^{2\pi i x}$. Then there is an integer $T \ge 1$ with three properties. First,
+$q(t) > 0$ for every real $t \ge T$. Second, the sequence $\sqrt{q(T)}, \sqrt{q(T + 1)}, \dots$
+is uniformly distributed modulo one: for all real $\alpha, \beta$ with $0 \le \alpha < \beta \le 1$,
+$$\lim_{N \to \infty} \frac{1}{N}
+\#\bigl\{0 \le n < N : \alpha \le \{\sqrt{q(T + n)}\} < \beta\bigr\} = \beta - \alpha.$$
+Third, there is a real constant $C$ such that for every integer $N \ge T$ and every nonzero
+integer $\gamma$,
+$$\Bigl|\sum_{n=T}^{N} e\bigl(\gamma \sqrt{q(n)}\bigr)\Bigr| \le
+C \bigl(|\gamma|^{1/2} N^{3/4} + |\gamma| N^{1/2} + |\gamma|^{-1/2} N^{1/4} + 1\bigr).$$
 
 Source: Anji Dong, Katerina Saettone, Kendra Song and Alexandru Zaharescu, *An Equidistribution
 Result for Differences Associated with Square Pyramidal Numbers*, Journal of Integer Sequences 29
@@ -82,7 +93,8 @@ public theorem_wanted exists_sqrt_cubic_equidistributed_mod_one {a b c d : ℝ} 
             |(γ : ℝ)| ^ (-(1 / 2) : ℝ) * (N : ℝ) ^ (1 / 4 : ℝ) + 1)
 
 
-/-- The square pyramidal number `P_n = 1² + 2² + ⋯ + n²`.
+/-- **Square pyramidal number.** For a natural number $n$, the $n$-th square pyramidal number
+is $P_n = 1^2 + 2^2 + \dots + n^2 = \sum_{i=1}^{n} i^2$ (so $P_0 = 0$).
 
 Source: Anji Dong, Katerina Saettone, Kendra Song and Alexandru Zaharescu, *An Equidistribution
 Result for Differences Associated with Square Pyramidal Numbers*, Journal of Integer Sequences 29
@@ -90,9 +102,14 @@ Result for Differences Associated with Square Pyramidal Numbers*, Journal of Int
 def squarePyramidalNumber (n : ℕ) : ℕ :=
   ∑ i ∈ Finset.Icc 1 n, i ^ 2
 
-/-- `a_n = |P_n - y_n²|`, the distance from `P_n` to the nearest square `y_n²` (no ties occur,
-since `m² + m + 1/2` is never an integer), computed from `s = ⌊√P_n⌋` as
-`min (P_n - s²) ((s + 1)² - P_n)`.
+/-- **Distance from a square pyramidal number to the nearest square.** For a natural number
+$n$, let $P_n$ be the $n$-th square pyramidal number and $s = \lfloor \sqrt{P_n} \rfloor$. The
+distance from $P_n$ to the nearest square is
+$$a_n = \min\bigl(P_n - s^2, (s + 1)^2 - P_n\bigr).$$
+Since $s^2 \le P_n < (s + 1)^2$, this is $a_n = |P_n - y_n^2|$, where $y_n^2$ is the square
+nearest to $P_n$.
+
+No ties occur, since the midpoint $m^2 + m + 1/2$ of two consecutive squares is never an integer.
 
 Source: Anji Dong, Katerina Saettone, Kendra Song and Alexandru Zaharescu, *An Equidistribution
 Result for Differences Associated with Square Pyramidal Numbers*, Journal of Integer Sequences 29
@@ -101,8 +118,10 @@ def squarePyramidalSquareDistance (n : ℕ) : ℕ :=
   min (squarePyramidalNumber n - Nat.sqrt (squarePyramidalNumber n) ^ 2)
     ((Nat.sqrt (squarePyramidalNumber n) + 1) ^ 2 - squarePyramidalNumber n)
 
-/-- `P_1, …, P_4 = 1, 5, 14, 30`, `a_2 = 1` (`P_2 = 5`, nearest square `4`), and
-`P_24 = 4900 = 70²`, so `a_24 = 0` (the cannonball solution).
+/-- **Small square pyramidal numbers and their distances to squares.** Let $P_n$ be the $n$-th
+square pyramidal number and $a_n$ the distance from $P_n$ to the nearest square. Then
+$P_1, P_2, P_3, P_4$ are $1, 5, 14, 30$; $a_2 = 1$ (since $P_2 = 5$ and the nearest square is
+$4$); $P_{24} = 4900 = 70^2$; and $a_{24} = 0$ (the cannonball solution).
 
 Source: Anji Dong, Katerina Saettone, Kendra Song and Alexandru Zaharescu, *An Equidistribution
 Result for Differences Associated with Square Pyramidal Numbers*, Journal of Integer Sequences 29
@@ -117,9 +136,12 @@ theorem squarePyramidalSquareDistance_examples :
   have s24 : Nat.sqrt 4900 = 70 := (Nat.eq_sqrt.2 ⟨by norm_num, by norm_num⟩).symm
   refine ⟨by decide, ?_, h24, ?_⟩ <;> simp [squarePyramidalSquareDistance, h2, h24, s2, s24]
 
-/-- The average `A(x) = (1/x) ∑_{1 ≤ n ≤ x} a_n` of the distance from a square pyramidal number
-to the nearest square satisfies `A(x) = x^{3/2} / (5√3) + O(x^{5/4})` for real `x ≥ 1`, with an
-absolute implied constant.
+/-- **Average distance from square pyramidal numbers to the nearest square.** Let $a_n$ be the
+distance from the $n$-th square pyramidal number to the nearest square, and for real $x \ge 1$
+let $A(x) = \frac{1}{x} \sum_{1 \le n \le x} a_n$. There is a real constant $C$ such that for
+every real $x \ge 1$,
+$$\Bigl|A(x) - \frac{x^{3/2}}{5\sqrt{3}}\Bigr| \le C x^{5/4},$$
+that is, $A(x) = x^{3/2} / (5\sqrt{3}) + O(x^{5/4})$ with an absolute implied constant.
 
 Source: Anji Dong, Katerina Saettone, Kendra Song and Alexandru Zaharescu, *An Equidistribution
 Result for Differences Associated with Square Pyramidal Numbers*, Journal of Integer Sequences 29
@@ -130,8 +152,11 @@ public theorem_wanted squarePyramidalSquareDistance_average_asymptotic :
       |(1 / x) * ∑ n ∈ Finset.Icc 1 ⌊x⌋₊, (squarePyramidalSquareDistance n : ℝ) -
           x ^ (3 / 2 : ℝ) / (5 * Real.sqrt 3)| ≤ C * x ^ (5 / 4 : ℝ)
 
-/-- For each positive integer `k`, the `k`-th moment `M_k(x) = ∑_{1 ≤ n ≤ x} a_n^k` satisfies
-`M_k(x) = x^{3k/2 + 1} / (3^{k/2} (3k/2 + 1)(k + 1)) + O_k(x^{3k/2 + 3/4})` for real `x ≥ 1`.
+/-- **Moments of the distance from square pyramidal numbers to the nearest square.** Let $a_n$
+be the distance from the $n$-th square pyramidal number to the nearest square, and for a
+positive integer $k$ and real $x \ge 1$ let $M_k(x) = \sum_{1 \le n \le x} a_n^k$. For every
+positive integer $k$ there is a real constant $C_k$ such that for every real $x \ge 1$,
+$$\Bigl|M_k(x) - \frac{x^{3k/2 + 1}}{3^{k/2} (3k/2 + 1)(k + 1)}\Bigr| \le C_k x^{3k/2 + 3/4}.$$
 
 Source: Anji Dong, Katerina Saettone, Kendra Song and Alexandru Zaharescu, *An Equidistribution
 Result for Differences Associated with Square Pyramidal Numbers*, Journal of Integer Sequences 29
@@ -144,13 +169,19 @@ public theorem_wanted squarePyramidalSquareDistance_moment_asymptotic (k : ℕ) 
             ((3 : ℝ) ^ ((k : ℝ) / 2) * (3 / 2 * (k : ℝ) + 1) * ((k : ℝ) + 1))| ≤
         C * x ^ (3 / 2 * (k : ℝ) + 3 / 4)
 
-/-- Let `y n` be a nonnegative integer whose square is a closest square to `P_n` and
-`d_n = |√P_n - y_n|`. Then `d_n = ‖√P_n‖ ≤ 1/2`, where `‖x‖ = |x - round x|` is the distance to
-the nearest integer, and `(d_n)_{n ≥ 1}` is uniformly distributed in `[0, 1/2]`: for
-`0 ≤ α < β ≤ 1/2` the proportion of `n ≤ N` with `d_n ∈ [α, β]` tends to `2(β - α)`.
+/-- **The distance from the square root of a square pyramidal number to the nearest integer is
+uniformly distributed.** Let $P_n$ be the $n$-th square pyramidal number, write
+$\|x\| = |x - \operatorname{round}(x)|$ for the distance from a real $x$ to the nearest integer,
+and let $(y_n)_{n \ge 0}$ be natural numbers such that $|P_n - y_n^2| \le |P_n - z^2|$ for all
+natural numbers $n$ and $z$ (so $y_n^2$ is a square nearest to $P_n$). Put
+$d_n = |\sqrt{P_n} - y_n|$. Then $d_n = \|\sqrt{P_n}\|$ and $d_n \le 1/2$ for every $n \ge 0$,
+and $(d_n)_{n \ge 1}$ is uniformly distributed in $[0, 1/2]$: for all real $\alpha, \beta$ with
+$0 \le \alpha < \beta \le 1/2$,
+$$\lim_{N \to \infty} \frac{1}{N}
+\#\{1 \le n \le N : \alpha \le d_n \le \beta\} = 2(\beta - \alpha).$$
 
-`y` is any choice of closest-square roots (the source shows the choice is unique); the limit over
-real `x → ∞` is taken along integers `N`, which is equivalent.
+The source shows that $y_n$ is unique, and takes the limit over real $x \to \infty$, which is
+equivalent to the limit along integers $N$.
 
 Source: Anji Dong, Katerina Saettone, Kendra Song and Alexandru Zaharescu, *An Equidistribution
 Result for Differences Associated with Square Pyramidal Numbers*, Journal of Integer Sequences 29
@@ -166,14 +197,15 @@ public theorem_wanted squarePyramidal_dist_nearest_square_root_equidistributed (
         ((Finset.filter (fun n : ℕ => |Real.sqrt (squarePyramidalNumber n) - y n| ∈ Set.Icc α β)
           (Finset.Icc 1 N)).card : ℝ) / (N : ℝ)) atTop (nhds (2 * (β - α)))
 
-/-- Fourier expansion of `g_k(u) = ‖u‖^k = |u - round u|^k` for a positive integer `k`: with
-`c_k(m) = ∫_0^1 g_k(u) e(-mu) du` and `e(x) = exp(2πix)`, one has
-`c_k(0) = μ_k = 1/(2^k (k+1))`, `|c_k(m)| ≤ C_k / m²` for `m ≠ 0`, the Fourier series converges
-absolutely (`∑ |c_k(m)| < ∞`) and uniformly to `g_k` (symmetric partial sums over `|m| ≤ H`),
-and for every integer `H ≥ 1`, uniformly in real `u`,
-`g_k(u) = μ_k + ∑_{0 < |m| ≤ H} c_k(m) e(mu) + O_k(1/H)`.
-
-`μ_k` is written as its value `1/(2^k (k+1))` from the source's equation (periodicmean).
+/-- **Fourier expansion of a power of the distance to the nearest integer.** Let $k$ be a
+positive integer, let $g(u) = |u - \operatorname{round}(u)|^k$ be the $k$-th power of the
+distance from a real $u$ to the nearest integer, let $e(x) = e^{2\pi i x}$, and for every
+integer $m$ let $c(m) = \int_0^1 g(u)\, e(-mu)\, du$. Then $c(0) = 1/(2^k (k + 1))$, the mean of
+$g$ over a period; there is a real constant $C$ with $|c(m)| \le C / m^2$ for every integer
+$m \ne 0$; the series $\sum_{m \in \mathbb{Z}} |c(m)|$ converges; the symmetric partial sums
+$\sum_{|m| \le H} c(m)\, e(mu)$ converge to $g(u)$ uniformly in real $u$ as $H \to \infty$; and
+there is a real constant $C'$ such that for every integer $H \ge 1$ and every real $u$,
+$$\Bigl|g(u) - c(0) - \sum_{0 < |m| \le H} c(m)\, e(mu)\Bigr| \le \frac{C'}{H}.$$
 
 Source: Anji Dong, Katerina Saettone, Kendra Song and Alexandru Zaharescu, *An Equidistribution
 Result for Differences Associated with Square Pyramidal Numbers*, Journal of Integer Sequences 29
@@ -192,11 +224,15 @@ public theorem_wanted dist_round_pow_fourier_expansion (k : ℕ) (hk : 1 ≤ k) 
         ‖(g u : ℂ) - c 0 - ∑ m ∈ (Finset.Icc (-(H : ℤ)) H).erase 0,
             c m * Complex.exp (2 * Real.pi * Complex.I * (m : ℂ) * (u : ℂ))‖ ≤ C / H
 
-/-- For every positive integer `k` and real `t ≥ 1`,
-`G_k(t) = ∑_{1 ≤ n ≤ t} ‖√P_n‖^k = μ_k t + O_k(t^{3/4})`, where `‖x‖ = |x - round x|` and
-`μ_k = 1/(2^k (k+1))`.
+/-- **Power sums of the distance from the square root of a square pyramidal number to the nearest
+integer.** Let $P_n$ be the $n$-th square pyramidal number and write
+$\|x\| = |x - \operatorname{round}(x)|$ for the distance from a real $x$ to the nearest integer.
+For every positive integer $k$ there is a real constant $C_k$ such that for every real $t \ge 1$,
+$$\Bigl|\sum_{1 \le n \le t} \|\sqrt{P_n}\|^k - \frac{t}{2^k (k + 1)}\Bigr| \le C_k t^{3/4},$$
+that is, with $\mu_k = 1/(2^k (k + 1))$ and $G_k(t) = \sum_{1 \le n \le t} \|\sqrt{P_n}\|^k$,
+one has $G_k(t) = \mu_k t + O_k(t^{3/4})$.
 
-The source's `h(n) = √(n(n+1)(2n+1)/6)` is `√P_n`; `μ_k` is written as its value.
+The source writes $h(n) = \sqrt{n(n+1)(2n+1)/6}$, which is $\sqrt{P_n}$.
 
 Source: Anji Dong, Katerina Saettone, Kendra Song and Alexandru Zaharescu, *An Equidistribution
 Result for Differences Associated with Square Pyramidal Numbers*, Journal of Integer Sequences 29

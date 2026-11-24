@@ -4,3 +4,4 @@
 - [Diagonal action of the general linear group on tensor powers](gl-action.md)
 - [Schur–Weyl duality: the symmetric group side](sym-action-range-eq-centralizer-gl-actio.md)
 - [Schur–Weyl duality: the general linear side](gl-action-range-eq-centralizer-sym-actio.md)
+- [$(\mathrm{GL}_m, \mathrm{GL}_n)$ duality on symmetric algebras of tensor products](gl-m-gl-n-howe-duality.md)

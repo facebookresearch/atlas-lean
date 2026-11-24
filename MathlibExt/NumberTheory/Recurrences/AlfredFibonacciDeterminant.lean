@@ -386,25 +386,24 @@ private theorem pair_diff_prod_fin (r : ℕ) (f : ℕ → ℤ) :
   exact pair_diff_prod_range r f
 
 /--
-Alfred identity for consecutive Fibonacci powers: for integers `r`,
-`s`, `k` with `r ≥ 0`, the `(r+1) × (r+1)` matrix with row `i` and
-column `j` equal to `Int.fib (s + i * k) ^ (r - j) * Int.fib (s +
-(i + 1) * k) ^ j` has determinant `(-1) ^ ((s + 1) * C(r+1,2) + k *
-C(r+1,3)) * Int.fib k ^ C(r+1,2)` times the finite product over
-`ℓ = 1, ..., r` of `Int.fib (k * ℓ) ^ (r + 1 - ℓ)`.
+**Alfred's determinant of consecutive Fibonacci powers.** Let $F_n$ denote the Fibonacci numbers
+extended to all integers $n$ by $F_0 = 0$, $F_1 = 1$ and $F_{n+2} = F_{n+1} + F_n$, so that
+$F_{-n} = (-1)^{n+1} F_n$. For every natural number $r$ and all integers $s$ and $k$, the
+$(r+1) \times (r+1)$ integer matrix whose entry in row $i$ and column $j$, for
+$0 \le i, j \le r$, is $F_{s+ik}^{\,r-j} \, F_{s+(i+1)k}^{\,j}$ has determinant
+$(-1)^{|e|} \, F_k^{\binom{r+1}{2}} \prod_{\ell=1}^{r} F_{k\ell}^{\,r+1-\ell}$, where
+$e = (s+1)\binom{r+1}{2} + k\binom{r+1}{3}$.
+
+This is a slight variation of a result of Brother U. Alfred, "Some determinants involving
+powers of Fibonacci numbers," Fibonacci Quarterly 2 (1964), 81–92.
+
+Proves `Wanted` entry `alfred_consecutive_fibonacci_powers_determinant`.
 
 Source: Aram Tangboonduangjit and Thotsaporn Thanatipanonda,
 "Determinants Containing Powers of Generalized Fibonacci Numbers,"
 Journal of Integer Sequences 19 (2016), Article 16.7.1, Corollary
 (label Alfred), lines 406–418,
 https://cs.uwaterloo.ca/journals/JIS/VOL19/Tangboonduangjit/aram5.tex
-
-A slight variation of the result of Brother U. Alfred, "Some
-determinants involving powers of Fibonacci numbers," Fibonacci
-Quarterly 2 (1964), 81–92; the source's integer `r ≥ 0` is
-rendered as `r : ℕ`, and `(-1)` to a possibly negative source
-exponent via `Int.natAbs`.
-Proves `Wanted` entry `alfred_consecutive_fibonacci_powers_determinant`.
 -/
 theorem alfred_consecutive_fibonacci_powers_determinant
     (r : ℕ) (s k : ℤ) :

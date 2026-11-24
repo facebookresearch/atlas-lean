@@ -38,16 +38,20 @@ some prime `p`, so its refutation covers every prime. Groups are taken in `Type`
 def IsLocallyNilpotent (G : Type*) [Group G] : Prop :=
   ∀ H : Subgroup G, H.FG → Group.IsNilpotent H
 
-/-- Kourovka 14.86 (J. Wiegold): for some prime `p` there is an infinite locally nilpotent `p`-group
-`G` with `G = [G, G]` all of whose proper subgroups are nilpotent. -/
+/-- **Kourovka 14.86: perfect locally nilpotent $p$-groups with nilpotent proper subgroups.** The
+proposition that for some prime $p$ there is an infinite locally nilpotent $p$-group $G$ (every
+element of $G$ has order a power of $p$) such that $G = [G, G]$ and every proper subgroup of $G$
+is nilpotent. -/
 def perfectLocallyNilpotentPGroupWithNilpotentProperSubgroups : Prop :=
   ∃ p : ℕ, p.Prime ∧ ∃ (G : Type) (_ : Group G), Infinite G ∧ IsPGroup p G ∧
     IsLocallyNilpotent G ∧ commutator G = ⊤ ∧ ∀ H : Subgroup G, H ≠ ⊤ → Group.IsNilpotent H
 
 /--
-Resolved false: the Kourovka Archive answers 14.86 "No, it does not exist", citing Asar: no infinite
-locally nilpotent `p`-group equals its commutator subgroup while all of its proper subgroups are
-nilpotent. Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The
+**No infinite perfect locally nilpotent $p$-group has only nilpotent proper subgroups.** There is
+no prime $p$ and no infinite locally nilpotent $p$-group $G$ (every element of $G$ has order a
+power of $p$) such that $G = [G, G]$ and every proper subgroup of $G$ is nilpotent.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The
 Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 14.86
 (J. Wiegold); resolution: A. O. Asar, Locally nilpotent p-groups whose proper subgroups are
 hypercentral or nilpotent-by-Chernikov, J. London Math. Soc. (2) 61 (2000), no. 2, 412-422, Kourovka

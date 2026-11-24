@@ -36,24 +36,33 @@ open MathlibExt.GroupTheory.FormationVarietyPGroupsKourovka11Problem21Wanted (Sa
 open MathlibExt.GroupTheory.QuasivarietyMaximalSubquasivarietiesKourovka14Problem25Wanted
   (QuasiIdentity Models)
 
-/-- The law `w` is a consequence of the laws `W`: it holds in every group satisfying `W`. -/
+/-- **Consequence of a set of laws.** Let $F$ be the free group on countably many generators
+$x_0, x_1, x_2, \dots$, let $W \subseteq F$ be a set of laws and let $w \in F$. Then $w$ is a
+consequence of $W$ if $w$ holds in every group $G$ satisfying all laws in $W$: whenever every
+homomorphism $F \to G$ sends each element of $W$ to $1$, every homomorphism $F \to G$ sends $w$
+to $1$. -/
 def LawConsequence (W : Set (FreeGroup ℕ)) (w : FreeGroup ℕ) : Prop :=
   ∀ (G : Type) [Group G], SatisfiesLaws W G → SatisfiesLaws {w} G
 
-/-- The variety defined by `W` has an independent basis of identities: a set `B` of laws with the
-same consequences as `W` none of which is a consequence of the others. -/
+/-- **Independent basis of laws.** Let $F$ be the free group on countably many generators
+$x_0, x_1, x_2, \dots$ and let $W \subseteq F$ be a set of laws. The variety defined by $W$ has an
+independent basis of identities if there is a set $B \subseteq F$ of laws such that a law is a
+consequence of $B$ exactly when it is a consequence of $W$, and no $b \in B$ is a consequence of
+$B \setminus \{b\}$. -/
 def HasIndependentLawBasis (W : Set (FreeGroup ℕ)) : Prop :=
   ∃ B : Set (FreeGroup ℕ), (∀ w, LawConsequence B w ↔ LawConsequence W w) ∧
     ∀ b ∈ B, ¬ LawConsequence (B \ {b}) b
 
-/-- The quasi-identity `q` is a consequence of the set `Q` of quasi-identities: it holds in every
-group in which all members of `Q` hold. -/
+/-- **Consequence of a set of quasi-identities.** Let $Q$ be a set of quasi-identities and $q$ a
+quasi-identity. Then $q$ is a consequence of $Q$ if $q$ holds in every group in which all members
+of $Q$ hold. -/
 def QuasiIdentityConsequence (Q : Set QuasiIdentity) (q : QuasiIdentity) : Prop :=
   ∀ (G : Type) [Group G], Models Q G → q.HoldsIn G
 
-/-- The quasi-identities of `G` have an independent basis: a set `B` of quasi-identities whose
-consequences are exactly the quasi-identities holding in `G`, none of which is a consequence of
-the others. -/
+/-- **Independent basis of quasi-identities.** The quasi-identities of a group $G$ have an
+independent basis if there is a set $B$ of quasi-identities such that a quasi-identity is a
+consequence of $B$ exactly when it holds in $G$, and no $b \in B$ is a consequence of
+$B \setminus \{b\}$. -/
 def HasIndependentQuasiIdentityBasis (G : Type) [Group G] : Prop :=
   ∃ B : Set QuasiIdentity, (∀ q, QuasiIdentityConsequence B q ↔ q.HoldsIn G) ∧
     ∀ b ∈ B, ¬ QuasiIdentityConsequence (B \ {b}) b

@@ -49,25 +49,42 @@ open scoped ENNReal
 
 variable {α X : Type*} [Fintype α] {N : ℕ}
 
-/-- The average **cross-entropy (log) loss** of a probabilistic classifier `f` on a labelled
-sample `D`, in bits. -/
+/-- **Cross-entropy loss.** Let $f$ be a probabilistic classifier, assigning to each input
+$x \in X$ a probability distribution $f(x)$ on a finite set of labels, and let
+$D = ((x_1, y_1), \dots, (x_N, y_N))$ be a labelled sample. The cross-entropy (log) loss of $f$
+on $D$, in bits, is the value in $[0, \infty]$
+$$\Big(\sum_{n=1}^{N} H\big(\delta_{y_n}, f(x_n)\big)\Big) / N,$$
+where $H$ is the cross-entropy and $\delta_y$ is the point mass at $y$; it is $0$ when $N = 0$. -/
 noncomputable def crossEntropyLoss (f : X → PMF α) (D : Fin N → X × α) : ℝ≥0∞ :=
   (∑ n, crossEntropy (PMF.pure (D n).2) (f (D n).1)) / N
 
-/-- **The cross-entropy loss is the average negative log-likelihood**: the average surprisal of the
-labels. -/
+/-- **The cross-entropy loss is the average negative log-likelihood.** Let $f$ be a probabilistic
+classifier, assigning to each input $x \in X$ a probability distribution $f(x)$ on a finite set
+of labels, and let $D = ((x_1, y_1), \dots, (x_N, y_N))$ be a labelled sample. The cross-entropy
+loss of $f$ on $D$ equals the average surprisal of the labels,
+$$\Big(\sum_{n=1}^{N} s\big(f(x_n)(y_n)\big)\Big) / N,$$
+where $s(q) = -\log_2 q$ is the surprisal of a probability $q$, with $s(0) = \infty$, and the
+average is computed in $[0, \infty]$. -/
 theorem crossEntropyLoss_eq (f : X → PMF α) (D : Fin N → X × α) :
     crossEntropyLoss f D = (∑ n, surprisal (f (D n).1 (D n).2)) / N := by
   simp only [crossEntropyLoss, crossEntropy_pure]
 
-/-- The loss is infinite exactly when some label is predicted to be impossible. -/
+/-- **The cross-entropy loss is infinite exactly when a label is ruled out.** Let $f$ be a
+probabilistic classifier, assigning to each input $x \in X$ a probability distribution $f(x)$ on
+a finite set of labels, and let $D = ((x_1, y_1), \dots, (x_N, y_N))$ be a labelled sample with
+$N \ge 1$. The cross-entropy loss of $f$ on $D$ is $\infty$ if and only if $f(x_n)(y_n) = 0$ for
+some $n$. -/
 theorem crossEntropyLoss_eq_top_iff (f : X → PMF α) (D : Fin N → X × α) (hN : N ≠ 0) :
     crossEntropyLoss f D = ∞ ↔ ∃ n, f (D n).1 (D n).2 = 0 := by
   rw [crossEntropyLoss_eq, ENNReal.div_eq_top]
   simp [hN, ENNReal.sum_eq_top, surprisal_eq_top_iff]
 
-/-- When every label has positive probability, the loss is `-log₂ L / N` for the likelihood `L`
-of the sample. -/
+/-- **Cross-entropy loss via the likelihood.** Let $f$ be a probabilistic classifier, assigning
+to each input $x \in X$ a probability distribution $f(x)$ on a finite set of labels, and let
+$D = ((x_1, y_1), \dots, (x_N, y_N))$ be a labelled sample with $f(x_n)(y_n) \ne 0$ for every $n$.
+Then the cross-entropy loss of $f$ on $D$ equals $-\log_2(L) / N$, where
+$L = \prod_{n=1}^{N} f(x_n)(y_n)$ is the likelihood of the sample and the division is computed in
+$[0, \infty]$, so that both sides are $0$ when $N = 0$. -/
 theorem crossEntropyLoss_eq_neg_logb_prod (f : X → PMF α) (D : Fin N → X × α)
     (hpos : ∀ n, f (D n).1 (D n).2 ≠ 0) :
     crossEntropyLoss f D =
@@ -83,7 +100,12 @@ theorem crossEntropyLoss_eq_neg_logb_prod (f : X → PMF α) (D : Fin N → X ×
   rw [← ENNReal.ofReal_sum_of_nonneg fun n _ ↦ hnonneg n, logb_prod Finset.univ _ fun n _ ↦ hne n,
     Finset.sum_neg_distrib]
 
-/-- The cross-entropy ordering when both classifiers give every label positive probability. -/
+/-- **Comparing cross-entropy losses of classifiers that rule out no label.** Let $f$ and $g$ be
+probabilistic classifiers, each assigning to every input $x \in X$ a probability distribution on
+a finite set of labels, and let $D = ((x_1, y_1), \dots, (x_N, y_N))$ be a labelled sample with
+$N \ge 1$ such that $f(x_n)(y_n) \ne 0$ and $g(x_n)(y_n) \ne 0$ for every $n$. Then the
+cross-entropy loss of $f$ on $D$ is at most that of $g$ if and only if
+$\prod_{n=1}^{N} g(x_n)(y_n) \le \prod_{n=1}^{N} f(x_n)(y_n)$. -/
 theorem crossEntropyLoss_le_iff_of_ne_zero (f g : X → PMF α) (D : Fin N → X × α) (hN : N ≠ 0)
     (hf : ∀ n, f (D n).1 (D n).2 ≠ 0) (hg : ∀ n, g (D n).1 (D n).2 ≠ 0) :
     crossEntropyLoss f D ≤ crossEntropyLoss g D ↔
@@ -105,9 +127,14 @@ theorem crossEntropyLoss_le_iff_of_ne_zero (f g : X → PMF α) (D : Fin N → X
     ENNReal.ofReal_le_ofReal_iff (hnn g hg), neg_le_neg_iff,
     logb_le_logb one_lt_two (hpos g hg) (hpos f hf)]
 
-/-- **Minimizing cross-entropy is maximum likelihood**: on a nonempty sample, `f` has loss at most
-that of `g` exactly when it gives the labels at least as large a likelihood. A label predicted to be
-impossible gives likelihood `0` and loss `∞`. -/
+/-- **Minimizing cross-entropy is maximum likelihood.** Let $f$ and $g$ be probabilistic
+classifiers, each assigning to every input $x \in X$ a probability distribution on a finite set of
+labels, and let $D = ((x_1, y_1), \dots, (x_N, y_N))$ be a labelled sample with $N \ge 1$. Then
+the cross-entropy loss of $f$ on $D$ is at most that of $g$ if and only if
+$\prod_{n=1}^{N} g(x_n)(y_n) \le \prod_{n=1}^{N} f(x_n)(y_n)$, that is, $f$ gives the labels at
+least as large a likelihood as $g$.
+
+A label predicted to be impossible gives likelihood $0$ and loss $\infty$. -/
 theorem crossEntropyLoss_le_iff (f g : X → PMF α) (D : Fin N → X × α) (hN : N ≠ 0) :
     crossEntropyLoss f D ≤ crossEntropyLoss g D ↔
       ∏ n, (g (D n).1 (D n).2).toReal ≤ ∏ n, (f (D n).1 (D n).2).toReal := by

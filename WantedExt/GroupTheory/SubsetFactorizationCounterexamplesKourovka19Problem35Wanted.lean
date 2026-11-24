@@ -38,23 +38,36 @@ with singletons would give every `k ≥ 3` trivially. Products of subsets are ta
 order, `A₀ A₁ ⋯ A_{k-1}`.
 -/
 
-/-- The group `G` is the product `A₀ A₁ ⋯ A_{k-1}` of subsets with `|Aᵢ| = aᵢ`. -/
+/-- **Factorization of a group into subsets of given sizes.** Let $G$ be a group, $k$ a natural
+number and $a_0, \dots, a_{k-1}$ natural numbers. The group $G$ has a subset factorization of
+type $(a_0, \dots, a_{k-1})$ when there are finite subsets $A_0, \dots, A_{k-1}$ of $G$ with
+$|A_i| = a_i$ for every $i$ such that $G = A_0 A_1 \cdots A_{k-1}$, that is, every $g \in G$ can be
+written as $g = x_0 x_1 \cdots x_{k-1}$ with $x_i \in A_i$ for every $i$. -/
 def HasSubsetFactorization (G : Type) [Group G] (k : ℕ) (a : Fin k → ℕ) : Prop :=
   ∃ A : Fin k → Finset G, (∀ i, (A i).card = a i) ∧
     ∀ g : G, ∃ x : Fin k → G, (∀ i, x i ∈ A i) ∧ (List.ofFn x).prod = g
 
-/-- Kourovka 19.35 (M. H. Hooshmand), strongest recorded answer: for every `k ≥ 3` some finite
-group `G` and some factorization `|G| = a₀ ⋯ a_{k-1}` into factors `aᵢ ≥ 2` admit no subsets
-`A₀, …, A_{k-1}` with `|Aᵢ| = aᵢ` and `G = A₀ ⋯ A_{k-1}`. -/
+/-- **Kourovka Problem 19.35: counterexamples to subset factorization of every length.** The
+statement that for every natural number $k \ge 3$ there are a finite group $G$ and natural numbers
+$a_0, \dots, a_{k-1}$, each at least $2$, with $a_0 a_1 \cdots a_{k-1} = |G|$, such that $G$ has
+no subset factorization of type $(a_0, \dots, a_{k-1})$: there are no subsets
+$A_0, \dots, A_{k-1}$ of $G$ with $|A_i| = a_i$ for every $i$ and $G = A_0 A_1 \cdots A_{k-1}$. -/
 def subsetFactorizationCounterexampleEveryLength : Prop :=
   ∀ k : ℕ, 3 ≤ k → ∃ (G : Type) (_ : Group G) (_ : Finite G) (a : Fin k → ℕ),
     (∀ i, 2 ≤ a i) ∧ ∏ i, a i = Nat.card G ∧ ¬ HasSubsetFactorization G k a
 
 /--
-Resolved: the answer to 19.35 is no, and for every `k ≥ 3` there is a counterexample with `k`
-factors all at least `2` (McCulloch, Theorem 2.3: the Frobenius group of order `2^(k-1) (2^(k-1) -
-1)` and the factorization `(2, …, 2, 2^(k-1) - 1, 2)`; the case `k = 3` is Bergman's `A₄`), as the
-Kourovka Archive records. Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group
+**Finite groups without subset factorizations exist for every length.** For every natural number
+$k \ge 3$ there are a finite group $G$ and natural numbers $a_0, \dots, a_{k-1}$, each at least
+$2$, with $a_0 a_1 \cdots a_{k-1} = |G|$, such that there are no subsets $A_0, \dots, A_{k-1}$ of
+$G$ with $|A_i| = a_i$ for every $i$ and $G = A_0 A_1 \cdots A_{k-1}$, that is, with every element
+of $G$ a product $x_0 x_1 \cdots x_{k-1}$ where $x_i \in A_i$ for every $i$.
+
+In McCulloch's Theorem 2.3, $G$ is a Frobenius group of order $2^{k-1}(2^{k-1} - 1)$ and the
+factors are $(2, \dots, 2, 2^{k-1} - 1, 2)$; the case $k = 3$ is Bergman's example in the
+alternating group $A_4$. This answers Kourovka Problem 19.35 (M. H. Hooshmand) in the negative.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group
 Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems,
 Problem 19.35 (M. H. Hooshmand); resolution: R. McCulloch, Some answers regarding factorizations of
 finite groups, arXiv:2607.20569 (2026); counterexamples first given by M. Kabenyuk, Factorizations

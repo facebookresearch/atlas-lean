@@ -47,28 +47,35 @@ open scoped ContDiff
 
 namespace MathlibExt.Analysis.FunctionalAnalysis.RadialSobolevExteriorBallWanted
 
-/-- Euclidean space `ℝⁿ`. -/
+/-- **Real $n$-space with the Euclidean norm.** For a natural number $n$, $\mathbb{R}^n$ denotes the
+$n$-dimensional real Euclidean space: real $n$-tuples with the Euclidean inner product and norm. -/
 abbrev Rn (n : ℕ) : Type := EuclideanSpace ℝ (Fin n)
 
-/-- The closed unit ball of `ℝⁿ`. -/
+/-- **Closed unit ball of $\mathbb{R}^n$.** For a natural number $n$, the closed unit ball of
+$\mathbb{R}^n$ is the set $\{x \in \mathbb{R}^n : \|x\| \le 1\}$, where $\|\cdot\|$ is the Euclidean
+norm. -/
 def ClosedUnitBall (n : ℕ) : Set (Rn n) := {x : Rn n | ‖x‖ ≤ 1}
 
-/-- `f` depends only on `‖x‖`. -/
+/-- **Radial functions on $\mathbb{R}^n$.** A function $f \colon \mathbb{R}^n \to \mathbb{R}$ is
+radial if $f(x) = f(y)$ for all $x, y \in \mathbb{R}^n$ with $\|x\| = \|y\|$, where $\|\cdot\|$ is
+the Euclidean norm. -/
 def IsRadial {n : ℕ} (f : Rn n → ℝ) : Prop :=
   ∀ x y : Rn n, ‖x‖ = ‖y‖ → f x = f y
 
-/-- Assume that $n\ge 2$, $p\in(1,2)$, and $q\in[p,+\infty]$.
+/-- **Radial Sobolev embedding outside the unit ball.** Let $n \ge 2$, let $B$ be the closed unit
+ball of $\mathbb{R}^n$, and let $1 < p < 2$ and $p \le q \le \infty$. Then there is a constant
+$C > 0$ such that every radial function $f \colon \mathbb{R}^n \to \mathbb{R}$ that has compact
+support, whose closed support is contained in $\mathbb{R}^n \setminus B$, and which is $C^\infty$
+on $\mathbb{R}^n \setminus B$, satisfies
 
-Show that there exists a constant $C$ (may depend on $p,q,n$) such that for all radial function
-$f\in C_c^\infty(\mathbb{R}^n\setminus B)$, there holds:
-\[
-\|f\|_{L^q(\mathbb{R}^n)}\le C\|f\|_{W^{1,p}(\mathbb{R}^n)}.
-\]
-Here $B$ is the closed unit ball in $\mathbb{R}^n$.
+$$\|f\|_{L^q} \le C \left( \|f\|_{L^p} + \big\| |Df| \big\|_{L^p} \right),$$
 
-Lean variant: the source writes `ContDiffOn ℝ ⊤`, and `(⊤ : WithTop ℕ∞) = ω` is real-analyticity in
-current Mathlib; an analytic, radial, compactly supported `f` vanishes outside the ball, so that
-reading is vacuous. The intended smoothness `ContDiffOn ℝ ∞` is used.
+where the norms are taken with respect to Lebesgue measure and $|Df(x)|$ is the operator norm of
+the derivative of $f$ at $x$.
+
+Smoothness here means $C^\infty$. The source's formal statement asked for real-analyticity
+instead, which makes the claim vacuous: an analytic, radial, compactly supported $f$ vanishes
+outside the ball.
 
 Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level II (Functional analysis; Linear
 function spaces and their duals), `benchmark/level2/ma_proofbench_l2_80.lean` at

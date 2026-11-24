@@ -3,8 +3,91 @@
 We want to make contributing to this project as easy and transparent as
 possible.
 
-## Our Development Process
-... (in particular how this is synced with internal changes to the project)
+## Ways to help
+
+People and agents work on ATLAS side by side, and writing Lean is only one way
+to help:
+
+- **Formalize a result.** Take a statement to write in Lean or to prove
+  ([Picking a task](#picking-a-task)) and open a pull request.
+- **Check a page.** Compare it with its source and, when it links a Lean
+  declaration, with that declaration too: Lean checks proofs, not whether a
+  statement means what was intended, so this takes readers. A page with no
+  Lean link is checked against its source alone; its declaration may not exist
+  yet, or may be held back until a known problem is fixed
+  ([Writing pages](docs/BLUEPRINT.md#writing-pages)). Search the open issues,
+  then
+  [report a page problem](https://github.com/facebookresearch/atlas-lean/issues/new?template=page-problem.yml);
+  [Mathematical faithfulness](REVIEWING.md#mathematical-faithfulness) lists
+  what to compare. The pull request that fixes it says `Closes #…`.
+- **Review an area against a source.** Each open
+  [`source-review`](https://github.com/facebookresearch/atlas-lean/labels/source-review)
+  issue names a source and the folders to start from: add the source's central
+  definitions and results that the graph lacks, check the existing pages
+  against it, and propose the changes as pull requests. Where the issue and the
+  [graph rules](docs/BLUEPRINT.md#graph-rules) differ, follow the rules and say
+  so in the pull request.
+- **Propose a target.** To ask for results the site lacks,
+  [propose a target](https://github.com/facebookresearch/atlas-lean/issues/new?template=target.yml):
+  give a source for each result and say what has to be on the site for the
+  issue to close. For whole areas, see the roadmaps labelled
+  [`community-roadmap`](https://github.com/facebookresearch/atlas-lean/labels/community-roadmap)
+  (contributed by collaborators) and
+  [`tauceti-roadmap`](https://github.com/facebookresearch/atlas-lean/labels/tauceti-roadmap)
+  (to bring in from Tau Ceti).
+- **Improve the tools and the agent skills.** Pull requests to `scripts/`, the
+  workflows, [`AGENTS.md`](AGENTS.md) and the skills in `.agents/skills/`
+  follow the steps below. A maintainer approves a change to `.github/`,
+  `REVIEWING.md`, `AGENTS.md`, `.agents/` or `.claude/` before it is queued:
+  these files steer CI, the automated reviews and the agents that work here.
+- **Build on the data.** The site publishes
+  [`tasks.json`](https://facebookresearch.github.io/atlas-lean/tasks.json) and
+  [`dependencies/index.json`](https://facebookresearch.github.io/atlas-lean/dependencies/index.json):
+  the ready tasks, and every node of the dependency explorer with its status
+  and its relations. Both are public; their formats can still change.
+
+## Picking a task
+
+The [site](https://facebookresearch.github.io/atlas-lean/) lists the
+formalization tasks that are ready now: statements to write in Lean and
+statements to prove, as `autoform work` finds them
+([What the tools own](docs/BLUEPRINT.md#what-the-tools-own)). It publishes
+them as
+[`tasks.json`](https://facebookresearch.github.io/atlas-lean/tasks.json), which
+each `main` build writes with `autoform work list --json`, together with the
+commit it was computed from. You don't need to build the repository to pick
+one, and people and agents follow the same steps:
+
+1. Take a task from `tasks.json`. `python3 scripts/next_task.py` prints the
+   next ones, with a GitHub token in `GH_TOKEN`; `--json` prints them for
+   agents. It prints the statements to write first, then the tasks by
+   [priority](#which-areas-come-first).
+2. Skip a task that an open pull request names, by its article id (`af_…`) or
+   its Lean declaration, in its title, body or branch. `next_task.py` skips
+   those, including those an older pull request names, in its title, branch or
+   code, by the end of a declaration's name that no other task shares, and the
+   tasks of pull requests merged into `main` since `tasks.json` was computed.
+3. Open a draft pull request early, with the task's article id in its body, so
+   that others see the task is taken. Mark it ready for review when it is done,
+   or close it if you stop.
+
+### Which areas come first
+
+[`blueprint/priorities.json`](blueprint/priorities.json) weighs the areas of
+the graph so that ATLAS and [Tau Ceti](https://github.com/TauCetiProject/TauCetiRoadmap)
+complement each other: 2 for an area ATLAS takes first, where Tau Ceti has
+few or no roadmaps (applications, computer science, discrete mathematics,
+probability), 1 as usual, and 0.5 for one it leaves for later, as Tau Ceti's
+roadmaps already cover it. A weight belongs to a subject (`Combinatorics`) or
+a field (`NumberTheory/zeta-l-functions`) of `scripts/taxonomy.json`, named as
+its folder under `blueprint/roadmap/`, which starts the node ids of the tasks
+under it; a field's weight overrides its subject's, and `default` gives the
+others theirs.
+`next_task.py` lists the statements to write first, then the proofs; within
+each, the free tasks of higher weight come first, and those of equal weight in
+`tasks.json`'s order. `--priorities` reads another file, or a URL.
+Tools that pick tasks their own way can call its `load_priorities` and
+`priority`. The weights change by pull request, like the code.
 
 ## Pull Requests
 We actively welcome your pull requests.
@@ -15,6 +98,80 @@ We actively welcome your pull requests.
 4. Ensure the test suite passes.
 5. Make sure your code lints.
 6. If you haven't already, complete the Contributor License Agreement ("CLA").
+
+### Claim the work you start
+
+Many people and agents open pull requests here at once. Claim a substantial
+piece of work before you start it, so that others can steer around it:
+
+- **Open a draft pull request** when you start, as
+  [Picking a task](#picking-a-task) says. Its title names the topic, and its
+  description names each ready task it takes by article id, on a line
+  `Tasks: af_…`. When the work takes on an issue, such as a source-review
+  issue, a page problem or a target, also comment on the issue that you are
+  working on it, with a link to the draft. The draft claims its tasks until it
+  is closed: mark it ready for review when it is done, or close it if you stop
+  and then say so on any issue you commented on. If a draft that names a task
+  you want has had no push for a week, ask on it whether its author goes on.
+- **Or open an issue** whose title starts with `[Claim]` and that names the
+  area, the modules or the task ids you are taking, for work that spans several
+  pull requests. It is a claim while it is open and has been updated in the
+  last 30 days: comment on it to renew it, and close it to release it. Link it
+  from each pull request that continues it.
+
+Look for an open pull request and an active `[Claim]` issue that cover the work
+before you start, and read the comments on the work's issue if it has one;
+`next_task.py` skips the tasks that open pull requests name, but does not read
+issues. A pull request that only cites a tracking issue, as the proofs of ready
+statements cite
+[#6002](https://github.com/facebookresearch/atlas-lean/issues/6002), does not
+take it on and leaves no comment there: the issue's page lists the pull
+requests that cite it. When two claims cover the same task, the one that has
+been active longer without a break keeps it; a pull request that continues an
+active `[Claim]` issue counts from the issue. A claim only saves duplicated
+work: it reserves nothing else, and anyone may still review, fix or improve
+merged code.
+
+To update a branch that someone else may also push to, such as another
+contributor's pull request, push a fast-forward of the tip you fetched. If you
+must rewrite it, use
+`git push --force-with-lease=<branch>:<tip you fetched> <remote> HEAD:<branch>`,
+which refuses the rewrite if the branch no longer points at the tip you
+fetched.
+
+### Say how a pull request touches the graph
+
+Each pull request description has one `Graph:` line, which ties its Lean to
+the [graph](docs/BLUEPRINT.md#graph-rules). It lists the article ids (`af_…`)
+of the pages the pull request proves, fixes or extends, such as the ready tasks
+it takes, and adds `new` when it adds declarations that get pages under
+[Maintaining articles](docs/BLUEPRINT.md#maintaining-articles). It is
+`Graph: none` only when the pull request changes nothing the graph shows.
+
+- **A new declaration gets its page in the same pull request.** Run the sync
+  scoped to the pull request ([Maintaining
+  articles](docs/BLUEPRINT.md#maintaining-articles)) and commit what it writes.
+  For a pull request that targets `main`, from a clone whose `origin` is this
+  repository:
+
+  ```sh
+  python scripts/sync_wiki.py declarations --base "$(git merge-base origin/main HEAD)"
+  ```
+
+  A pull request that targets another branch uses its merge base with that
+  branch. The sync writes only what the pull request's own declarations need,
+  and the `graph sync` check reports a pull request that is not in step, with
+  the command to run. When the sync cannot find a new module's subject, or puts
+  it in the wrong place, also place the module in `scripts/taxonomy.json`.
+- **A renamed or removed declaration keeps its pages.** In the same pull
+  request, point each link to it at its successor, keeping every article id. A
+  link that is only a reference may instead be removed: the page keeps its own
+  declaration. When a page's own declaration goes with no successor, remove its
+  link and keep the page as a planned page
+  ([Writing pages](docs/BLUEPRINT.md#writing-pages)). Update or remove a `held`
+  marker that names it in the same way.
+
+These are graph changes; [Graph PRs](#graph-prs) says what they need.
 
 ### Public references
 
@@ -190,15 +347,23 @@ is advisory CI, not a standalone merge barrier.
 ### Graph PRs
 
 A graph PR changes the ATLAS wiki; its content follows the
-[graph rules](docs/BLUEPRINT.md#graph-rules).
+[graph rules](docs/BLUEPRINT.md#graph-rules). When a pull request's only wiki
+changes are what `scripts/sync_wiki.py declarations` writes for its own
+declarations, as the `graph sync` check reports, it needs no issue for them,
+and they need no code owner's approval unless GitHub requires one; Codex still
+reviews them. Any other code-owned file the pull request changes, the sync's
+own code included, still needs a code owner's approval. Any other wiki change,
+a new place in `scripts/taxonomy.json` included, makes it a graph PR in full.
 
 - **Keep it under 3,000 changed files and name its issue** (`Closes #…` or
-  `Part of #…`). GitHub shows at most 3,000 files in one diff.
+  `Part of #…`); a pull request whose only wiki changes are the sync's, as
+  above, need not name one. GitHub shows at most 3,000 files in one diff.
 - **An expansion changes no Lean outside `WantedExt`,** so its reviewer need
   not also review proofs.
 - **Leave what the tools own alone** ([What the tools
   own](docs/BLUEPRINT.md#what-the-tools-own)).
-- **A code owner approves it** (`.github/CODEOWNERS`) **and Codex reviews it:**
+- **A code owner approves it** (`.github/CODEOWNERS`), except the wiki files
+  the sync writes, as above, **and Codex reviews it:**
   automatically for the repository's owners, members and collaborators and for
   forks on `codex.yml`'s trusted list; on any other fork PR a maintainer
   comments `@codex` for an advisory review. Agents produce graph changes faster
@@ -207,36 +372,75 @@ A graph PR changes the ATLAS wiki; its content follows the
 
 ## How PRs merge
 
-`main` takes changes through GitHub's merge queue; do not push to it directly.
-When a PR is ready to merge and its required checks have passed, add it to the
-queue. The queue tests it on top of the current `main` and the PRs queued ahead
-of it, and squash-merges it only if the required checks pass on that combined
-tree, so each commit it adds to `main` has passed them on its own tree.
+`main` takes changes only through GitHub's merge queue; do not push to it
+directly. When a PR is ready to merge and its required checks have passed, add
+it to the queue. The queue tests it on top of the current `main` and the PRs
+queued ahead of it, and adds it to `main` as a merge commit only if the required
+checks pass on that combined tree (**Only merge non-failing pull requests**), so
+each commit the queue adds to `main`'s first-parent history has passed them on
+its own tree.
 
-To queue a PR, use one of:
+To queue a standalone PR, use one of:
 
-- **Merge when ready** in the PR's merge box.
-- `gh pr merge <number>`, with `--match-head-commit <sha>` to queue only the
-  commit you checked. It queues the PR at once if its required checks have
-  passed; otherwise it turns on auto-merge, which queues the PR when they pass.
-  The queue sets the merge method and the commit message, so `--squash`,
-  `--subject` and `--body` have no effect, and `gh` refuses `--delete-branch`.
+- **Merge when ready** in the PR's merge box. Someone with write access can
+  select it before the checks pass, even while the repository's **Allow
+  auto-merge** setting is off; the PR then joins the queue when they pass.
+- `gh pr merge <number>`, which needs the repository's **Allow auto-merge**
+  setting: on a queue branch, `gh` 2.105.0 asks GitHub to turn on auto-merge,
+  which GitHub refuses while that setting is off
+  ([cli/cli#13398](https://github.com/cli/cli/issues/13398)). With it on, the
+  PR is queued at once if its required checks have passed, and otherwise when
+  they pass. `--match-head-commit <sha>` checks the head only when you run the
+  command. The queue sets the merge method and the commit message, so
+  `--merge`, `--squash`, `--subject` and `--body` have no effect, and `gh`
+  refuses `--delete-branch`.
 - The GraphQL mutation `enqueuePullRequest` (`pullRequestId`, and
   `expectedHeadOid` to pin the head). It queues the PR only if it can be queued
-  now; otherwise it returns an error that says why.
+  now, and otherwise returns an error that says why; it never merges directly.
 
-The REST endpoint `PUT /repos/{owner}/{repo}/pulls/{number}/merge` does not
-support merge queues, so it stops working for `main` once the queue is
-required. Scripts and bots that merge with it must switch to `gh pr merge`,
-`enqueuePullRequest`, or `PUT /repos/{owner}/{repo}/pulls/{number}/merge-async`
-with `"merge_action": "merge_queue"`. Each of these only queues the PR: read the
-PR's state afterwards to learn whether it merged or left the queue.
+To queue a stack of pull requests (its branches must be in this repository), use
+the merge box of the highest PR you want to merge, or `PUT /repos/{owner}/{repo}/pulls/{number}/merge-async` with
+`"merge_action": "merge_queue"` on that PR. Either queues that PR together with
+every open PR below it in the stack.
 
-The queue removes a PR whose required checks fail on its merge group, or do not
-report before the queue's timeout; the PR's timeline says why, and the PRs
-behind it rebuild without it. Fix the PR and queue it again. To take a PR out
-of the queue, use **Remove from queue** on the PR or on the queue's page, or the
-GraphQL mutation `dequeuePullRequest`; `gh` cannot do it.
+`main` refuses direct merges, including those of the REST endpoint
+`PUT /repos/{owner}/{repo}/pulls/{number}/merge`, which does not support merge
+queues, and of the GraphQL mutation `mergePullRequest`. Scripts and bots should
+use `enqueuePullRequest` for a standalone PR, or
+`PUT /repos/{owner}/{repo}/pulls/{number}/merge-async` with
+`"merge_action": "merge_queue"`, which GitHub requires for a stack of pull
+requests; both only ever queue. `merge-async` answers `202` when it accepts the
+request, `200` if the PR is already queued or merged, and `409` if another
+request is pending; `GET .../merge-async/{uuid}` gives a request's result. A
+queue request is not a merge: read the PR's state afterwards to learn whether
+it was queued, merged, or removed from the queue.
+
+The queue builds up to 100 merge groups at once, and consecutive PRs that pass
+land together, up to 30 at a time; GitHub may exceed that by up to half to keep
+a stack together. The queue removes a PR whose required checks fail on its merge
+group, or do not conclude within 6 hours; the PR's timeline says why, and the
+PRs behind it rebuild without it. In a stack of pull requests, the PRs above it
+in the stack leave the queue too. Fix the PR and queue it again. To take a PR
+out of the queue, use **Remove from queue** on the PR or on the queue's page, or
+the GraphQL mutation `dequeuePullRequest` (for example through `gh api
+graphql`); there is no `gh pr` command for it.
+
+The Merge queue retry workflow (`.github/workflows/merge-queue-retry.yml`)
+re-runs a merge group's failed jobs once when every failed required check of
+that merge group failed for an infrastructure reason (a lost runner, or a
+truncated answer or server error from GitHub's API) while the PR is still
+queued with it, so that a flaky check does not remove the PR and
+restart the builds behind it. It never removes a PR from the queue; for other
+failures its run summary only records whether it would have removed the PR
+early. It records what it would do, and re-runs nothing, unless the repository
+variable `MERGE_QUEUE_RETRY` is `active`.
+
+Queue a Lean or Mathlib bump like any other PR, preferably at a quiet time. With
+new pins, CI can fetch Mathlib's cache but must rebuild ATLAS when there is no
+matching `.lake/build` cache; the v4.36.0 bump's PR build took 316 minutes.
+Merge groups behind the bump can build in parallel but cannot land ahead of it,
+and they may repeat that rebuild until a successful `main` build saves a cache
+for the new pins.
 
 ### Required checks
 
@@ -245,18 +449,50 @@ group before it merges:
 
 - `repository integrity` (CI): the deterministic repository checks.
 - `build` (CI): the Lean build and its policy checks.
+- `check the graph` (CI): `autoform check` on the graph as committed.
 - `source-diagnostics` (Source diagnostics).
 - `guard` (Bump guard): the Lean and Mathlib pin check. On a merge group it
   checks a pin change again against the queue's base.
 
-Each of them runs on every PR and every merge group;
+The three workflows that report these five checks are configured for
+`pull_request` and `merge_group`, without branch or path filters. If a PR has a merge conflict, resolve it before expecting
+its PR checks; a fork PR may also need a maintainer to approve the workflow run.
 `scripts/test_merge_queue_checks.py`, run by `scripts/check.sh preflight`,
-fails if a change would stop that. The other checks are advisory. Codex runs on
-PR events only. `public-references` runs on PRs and merge groups, but stays
-advisory until the workflow governance described under
-[Public references](#public-references) is in place. Blueprint Pages, Check
-workflows and Binary64 conformance run only on PRs that touch their files, and
-Blueprint Pages also builds `main` once a day.
+checks their pull-request and merge-group triggers, filters and concurrency
+groups, and that each required check comes from exactly one job, with no
+job-level `if` or `strategy`.
+
+The other checks are advisory. Codex does not run on merge groups, but a formal
+Codex change request can cancel the PR's CI run while it is still queued or
+running; if `build` is cancelled, CI must pass before the PR can be queued. A
+completed build is unaffected. `public-references` is configured to run on PRs
+and merge groups, but stays advisory until the workflow governance described
+under [Public references](#public-references) is in place. `graph sync` is
+configured to run on every PR and merge group, without filters, and reports
+whether the PR's wiki is in step with its Lean
+([Maintaining articles](docs/BLUEPRINT.md#maintaining-articles)).
+Check workflows and Binary64 conformance are path-filtered on PRs. Blueprint
+Pages builds `main` once a day. On a PR, its first job reads the whole diff and
+lets the build run only when the PR changes the wiki (`blueprint/`), the import
+map, the card move ledger, the tooling that builds and checks the site, the
+toolchain pins, a path where the build writes or fetches its outputs, Git
+attributes, or a file named like an Autoform output marker; PRs that change
+only Lean library files, `scripts/taxonomy.json` or `scripts/wiki-sync.json`
+run only its unit tests, in a few minutes
+([GitHub Actions and publication](docs/BLUEPRINT.md#github-actions-and-publication)).
+With write access, `gh workflow run blueprint-pages.yml --ref <branch>` builds
+and checks a branch on demand; only `main` publishes.
+
+## Lean and Mathlib bumps
+
+Lean, Mathlib, CSLib and Physlib move together to the next final release that
+all of them have tagged, and `guard` checks the pins. A bump touches many files
+and starts CI from an empty cache, so it follows its own routine, described in
+[docs/BUMPS.md](docs/BUMPS.md): one owner keeps the bump branch close to `main`
+with `scripts/bump/bump_branch.py`, warms CI's cache with `bump-cache.yml` right
+before queueing it, and queues it at the front of the queue at a quiet hour. If
+the queue removes your PR just after a bump, merge `main`, fix the PR on the new
+toolchain, and queue it again.
 
 ## Contributor License Agreement ("CLA")
 In order to accept your pull request, we need you to submit a CLA. You only need
@@ -265,17 +501,23 @@ to do this once to work on any of Meta's open source projects.
 Complete your CLA here: <https://code.facebook.com/cla>
 
 ## Issues
-We use GitHub issues to track public bugs. Please ensure your description is
-clear and has sufficient instructions to be able to reproduce the issue.
+We use GitHub issues to track public bugs and the work listed under
+[Ways to help](#ways-to-help). For a page problem or a target, use its issue
+form. For a bug, please ensure your description is clear and has sufficient
+instructions to be able to reproduce it.
 
 Meta has a [bounty program](https://bugbounty.meta.com/) for the safe
 disclosure of security bugs. In those cases, please go through the process
 outlined on that page and do not file a public issue.
 
 ## Coding Style
-* 2 spaces for indentation rather than tabs
-* 80 character line length
-* ...
+Lean code follows the
+[Mathlib style guide](https://leanprover-community.github.io/contribute/style.html).
+`lakefile.toml` turns on Mathlib's standard linter set
+(`linter.mathlibStandardSet`) for the five production libraries, minus the
+linters it turns off by name, and turns the set off for the four test
+libraries. `PhyslibExt` also follows Physlib's conventions
+([Library roles](REVIEWING.md#library-roles)).
 
 ## Copyright headers
 Every Lean file starts with the Meta header:

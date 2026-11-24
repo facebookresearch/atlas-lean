@@ -7,3 +7,8 @@ linking of $r_x$ and $r_y$ in the node array of $S_2$. It returns the array prod
 linking, with cost $((a, b), (t, p, w))$, where $a$ and $b$ are the total numbers of root tests
 and parent writes of the two FIND calls, and $(t, p, w)$ counts the rank tests, parent writes and
 rank writes of the linking.
+
+## Depends on
+
+- [Cost-counted FIND](counted-find.md)
+- [Linking by rank with operation counts](counted-link-aux.md)

@@ -36,6 +36,13 @@ freestream no coefficient normalizes a nonzero power; without extraction the por
 disk speed undetermined; and the state built from the induction factor `1/5` has the power
 coefficient `64/125`, below the limit.
 
+For the hovering rotor: the disk in still air with `ρ = 1`, `A = 2`, induced velocity `3` and far
+wake `6` satisfies the port laws, has thrust `36 = 2 ρ A v_i²`, induced velocity `3 = √(36 / 4)`
+and induced power `108`; the wind-extraction normalization vanishes in hover; and the state with
+every speed reversed keeps the port laws and the thrust but is not powered, and its induced
+velocity is not the square root. The energy balance still gives the reversed state the induced
+power `-108`, and a still-air state with no force the induced power `0`.
+
 ## i. Overview
 
 These are elaboration and non-vacuity checks, not new results.
@@ -44,13 +51,15 @@ These are elaboration and non-vacuity checks, not new results.
 
 No new results are introduced here. Section A defines the compressor ports and computes the torque,
 power and shaft power in both flow directions; section B realizes them by blade forces and applies
-the sign, equal-angular-momentum and swirl lemmas; section C checks the actuator disk.
+the sign, equal-angular-momentum and swirl lemmas; section C checks the actuator disk and section D
+the hovering rotor.
 
 ## iii. Table of contents
 
 - A. A compressor and its reversed flow
 - B. Blade forces, signs and swirl
 - C. The actuator disk and the Betz limit
+- D. The hovering rotor
 
 ## iv. References
 
@@ -356,5 +365,120 @@ example :
     (by simp [ActuatorDisk.ofInduction]) (by norm_num [ActuatorDisk.ofInduction])
     (by norm_num [ActuatorDisk.ofInduction])).2.2.1
   refine ⟨hlaws, hind (by norm_num), by rw [hcp']; norm_num, hle⟩
+
+/-! ## D. The hovering rotor -/
+
+/-- The hover fixture: `ρ = 1`, `A = 2`, still air, induced velocity `3`, far wake `6`, gauge
+pressures `p∞ = 0`, `p⁺ = -9/2`, `p⁻ = 27/2`, and the force `-36` of the fluid on the disk (rotor
+thrust `36`, against the flow). -/
+noncomputable def hoverFixture : ActuatorDisk where
+  ρ := 1
+  A := 2
+  uInf := 0
+  uDisk := 3
+  uWake := 6
+  pAmb := 0
+  pUp := -9 / 2
+  pDown := 27 / 2
+  force := -36
+
+/-- **Nonzero hover thrust and power.** The fixture satisfies the port laws; its thrust is
+`36 = 2 ρ A v_i²`, its induced velocity is `3 = √(36 / (2 ρ A))` and its induced power is
+`108 = 36 · 3`. -/
+lemma fixture_hover :
+    hoverFixture.PortLaws ∧
+      (36 : ℝ) = 2 * hoverFixture.ρ * hoverFixture.A * hoverFixture.uDisk ^ 2 ∧
+      hoverFixture.uDisk = Real.sqrt (36 / (2 * hoverFixture.ρ * hoverFixture.A)) ∧
+      inducedPower hoverFixture = 108 := by
+  have hPL : hoverFixture.PortLaws := ⟨by norm_num [hoverFixture],
+    by norm_num [hoverFixture], by norm_num [hoverFixture], by norm_num [hoverFixture]⟩
+  have hρ : (0:ℝ) < hoverFixture.ρ := by norm_num [hoverFixture]
+  have hA : (0:ℝ) < hoverFixture.A := by norm_num [hoverFixture]
+  have h0 : hoverFixture.uInf = 0 := rfl
+  have hT : hoverFixture.force = -(36:ℝ) := rfl
+  have hTpos : (0:ℝ) < 36 := by norm_num
+  have hT2 := hover_thrust_eq hPL hρ hA h0 hT hTpos
+  have hpow : (0:ℝ) < 36 * hoverFixture.uDisk := by norm_num [hoverFixture]
+  have hvi := hover_inducedVelocity_eq hPL hρ hA h0 hT hTpos hpow
+  have hP := (hover_power_eq hPL hρ hA h0 hT hTpos hpow).1
+  have hP108 : inducedPower hoverFixture = 108 := by
+    have h3 : hoverFixture.uDisk = 3 := rfl
+    rw [h3] at hP
+    norm_num at hP
+    exact hP
+  exact ⟨hPL, hT2, hvi, hP108⟩
+
+/-- **The freestream normalization is undefined in hover.** At `U∞ = 0` the normalization
+`ρ A U∞³ / 2` of the wind-extraction power coefficient vanishes, so no coefficient `C` gives the
+fixture's induced power `108` as `C ρ A U∞³ / 2`. -/
+lemma fixture_hoverNoCoefficient :
+    powerNormalization hoverFixture.ρ hoverFixture.A hoverFixture.uInf = 0 ∧
+      ¬ ∃ C : ℝ, inducedPower hoverFixture =
+        C * powerNormalization hoverFixture.ρ hoverFixture.A hoverFixture.uInf := by
+  have hN : powerNormalization hoverFixture.ρ hoverFixture.A hoverFixture.uInf = 0 := by
+    norm_num [powerNormalization, hoverFixture]
+  refine ⟨hN, ?_⟩
+  rintro ⟨C, hC⟩
+  have hP : inducedPower hoverFixture = 108 := by
+    norm_num [inducedPower, hoverFixture]
+  rw [hP, hN, mul_zero] at hC
+  norm_num at hC
+
+/-- **The powered hypothesis cannot be dropped.** Reversing every speed of the hover fixture keeps
+the port laws, the still air and the rotor thrust `36`, but the reversed state is not powered: its
+thrust does the negative work `36 · (-3) = -108` on the stream, and its induced velocity `-3` is
+not `√(36 / (2 ρ A)) = 3`. -/
+lemma fixture_hoverReversed :
+    ({ hoverFixture with uDisk := -3, uWake := -6 } : ActuatorDisk).PortLaws ∧
+      36 * ({ hoverFixture with uDisk := -3, uWake := -6 } : ActuatorDisk).uDisk = -108 ∧
+      ({ hoverFixture with uDisk := -3, uWake := -6 } : ActuatorDisk).uDisk ≠
+        Real.sqrt (36 / (2 * hoverFixture.ρ * hoverFixture.A)) := by
+  have hPL : ({ hoverFixture with uDisk := -3, uWake := -6 } : ActuatorDisk).PortLaws :=
+    ⟨by norm_num [hoverFixture], by norm_num [hoverFixture],
+      by norm_num [hoverFixture], by norm_num [hoverFixture]⟩
+  have hW : (36:ℝ) * ({ hoverFixture with uDisk := -3, uWake := -6 } : ActuatorDisk).uDisk
+      = -108 := by
+    norm_num [hoverFixture]
+  have hne : ({ hoverFixture with uDisk := -3, uWake := -6 } : ActuatorDisk).uDisk ≠
+      Real.sqrt (36 / (2 * hoverFixture.ρ * hoverFixture.A)) := by
+    have h9 : (36:ℝ) / (2 * hoverFixture.ρ * hoverFixture.A) = 9 := by
+      norm_num [hoverFixture]
+    have h3 : Real.sqrt (9:ℝ) = 3 := by
+      rw [show (9:ℝ) = 3 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
+    have hd : ({ hoverFixture with uDisk := -3, uWake := -6 } : ActuatorDisk).uDisk = -3 := rfl
+    rw [hd, h9, h3]
+    norm_num
+  exact ⟨hPL, hW, hne⟩
+
+/-- The energy balance needs no powered hypothesis: the reversed fixture state, which
+`hover_power_eq` excludes, has the induced power `36 · (-3) = -108`, the negative of its extracted
+power. -/
+example :
+    inducedPower ({ hoverFixture with uDisk := -3, uWake := -6 } : ActuatorDisk) = -108 ∧
+      inducedPower ({ hoverFixture with uDisk := -3, uWake := -6 } : ActuatorDisk) =
+        -extractedPower ({ hoverFixture with uDisk := -3, uWake := -6 } : ActuatorDisk) := by
+  have hT : ({ hoverFixture with uDisk := -3, uWake := -6 } : ActuatorDisk).force = -(36:ℝ) := rfl
+  obtain ⟨hE, hP, -⟩ := inducedPower_eq fixture_hoverReversed.1 hT
+  refine ⟨?_, hE⟩
+  rw [hP]
+  norm_num [hoverFixture]
+
+/-- A still-air disk with no force: induced velocity `3`, far wake `0`, gauge pressures
+`p⁺ = p⁻ = -9/2`. -/
+noncomputable def zeroThrustFixture : ActuatorDisk :=
+  { hoverFixture with uWake := 0, pDown := -9 / 2, force := 0 }
+
+/-- The energy balance also covers zero thrust, outside `hover_power_eq`: the zero-thrust state
+satisfies the port laws and its induced power is `0 · 3 = 0`. Its far wake `0` is not `2 · 3`, so
+the nonzero-force hypothesis of `hover_uWake_eq` cannot be dropped either. -/
+example :
+    zeroThrustFixture.PortLaws ∧ inducedPower zeroThrustFixture = 0 ∧
+      zeroThrustFixture.uWake ≠ 2 * zeroThrustFixture.uDisk := by
+  have hPL : zeroThrustFixture.PortLaws :=
+    ⟨by norm_num [zeroThrustFixture, hoverFixture], by norm_num [zeroThrustFixture, hoverFixture],
+      by norm_num [zeroThrustFixture, hoverFixture], by norm_num [zeroThrustFixture, hoverFixture]⟩
+  have hT : zeroThrustFixture.force = -(0:ℝ) := by norm_num [zeroThrustFixture]
+  refine ⟨hPL, ?_, by norm_num [zeroThrustFixture, hoverFixture]⟩
+  rw [(inducedPower_eq hPL hT).2.1, zero_mul]
 
 end PhyslibExtTest.FluidDynamics.RotorPorts
