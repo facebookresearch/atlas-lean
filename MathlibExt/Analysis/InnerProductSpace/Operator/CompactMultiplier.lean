@@ -157,12 +157,18 @@ private theorem exists_operator_with_actions_of_norm_one (e : H) (he : ‖e‖ =
   · intro a
     apply ContinuousLinearMap.ext
     intro x
+    have hrank : InnerProductSpace.rankOne ℂ x e e = x := by
+      rw [InnerProductSpace.rankOne_apply, heInner, one_smul]
     have h := congrArg (fun b : K => (b : EndH) e) (m.central a (θ x))
     change (m.snd a : EndH) (InnerProductSpace.rankOne ℂ x e e) =
       (a : EndH) ((m.fst (θ x) : EndH) e) at h
-    rw [InnerProductSpace.rankOne_apply, heInner, one_smul] at h
     change (m.snd a : EndH) x = (a : EndH) (T x)
-    exact h.trans (congrArg (a : EndH) ((hT x).symm))
+    calc
+      _ = (m.snd a : EndH) (InnerProductSpace.rankOne ℂ x e e) :=
+        congrArg (fun y : H => (m.snd a : EndH) y) hrank.symm
+      _ = (a : EndH) ((m.fst (θ x) : EndH) e) := h
+      _ = (a : EndH) (T x) :=
+        congrArg (fun y : H => (a : EndH) y) (hT x).symm
 
 /-- Every multiplier of the actual compact ideal is induced by a bounded operator.
 No unit vector, nontriviality or desired action law is a caller hypothesis. -/

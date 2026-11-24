@@ -14,6 +14,7 @@ public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Nat.Factorization.Defs
 public import Mathlib.NumberTheory.Divisors
 public import MathlibExt.NumberTheory.ArithmeticFunction.HBCCalibrating
+public import MathlibExt.NumberTheory.ArithmeticFunction.HBCFirstElementBounds
 public import MathlibExt.NumberTheory.ArithmeticFunction.OddPerfectMinFac
 
 namespace MetaMathlibExt
@@ -34,22 +35,6 @@ public theorem_wanted prod_one_sub_inv_le_of_prefix_prod_le (k : ℕ) (z y : Fin
       ∏ i ∈ Finset.univ.filter (fun i : Fin k => (i : ℕ) < l), y i) :
     ∏ i, (1 - 1 / z i) ≤ ∏ i, (1 - 1 / y i) ∧
       (∏ i, (1 - 1 / z i) = ∏ i, (1 - 1 / y i) ↔ z = y)
-
-/-- **First-element bounds for HBC-admissible tuples at $1/2$.** Let $k \ge 1$ and let
-$y_1 < y_2 < \dots < y_k$ be positive integers with
-$\prod_{i=1}^{k} (1 - 1/y_i) \le 1/2 < \prod_{i=1}^{k-1} (1 - 1/y_i)$. Then $y_1 \le k + 1$; if
-every $y_i$ is odd, then $y_1 < 2(k + 3)/3$; and if every $y_i$ is prime, then $y_1 < 3k/7 + 3$.
-
-Source: Andrew Stone, *Improved Upper Bounds for Odd Perfect Numbers -- Part I*, INTEGERS 24
-(2024), Article A114, Lemma 5 (`integers-2024-A114-lem-5`). -/
-public theorem_wanted hbcAdmissible_half_first_le (k : ℕ) (hk : 0 < k) (y : Fin k → ℕ)
-    (hmono : StrictMono y) (hpos : ∀ i, 0 < y i)
-    (hle : ∏ i, (1 - 1 / (y i : ℚ)) ≤ 1 / 2)
-    (hlt : 1 / 2 < ∏ i ∈ Finset.univ.filter (fun i : Fin k => (i : ℕ) < k - 1),
-      (1 - 1 / (y i : ℚ))) :
-    y ⟨0, hk⟩ ≤ k + 1 ∧
-      ((∀ i, Odd (y i)) → (y ⟨0, hk⟩ : ℚ) < 2 * (k + 3) / 3) ∧
-      ((∀ i, (y i).Prime) → (y ⟨0, hk⟩ : ℚ) < 3 * k / 7 + 3)
 
 /-- **Sylvester's bound on the number of prime divisors of an odd perfect number.** Every odd
 perfect number has at least five distinct prime divisors.

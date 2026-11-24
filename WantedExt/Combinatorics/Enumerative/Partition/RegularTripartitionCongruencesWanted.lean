@@ -9,11 +9,10 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Combinatorics.Enumerative.Partition.Basic
 public import Mathlib.Data.Nat.Prime.Defs
 public import MathlibExt.Analysis.SpecialFunctions.QPochhammer
 public import MathlibExt.Combinatorics.Enumerative.Partition.QEulerProduct
+public import MathlibExt.Combinatorics.Enumerative.Partition.RegularTripartitionCongruences
 public import MathlibExt.NumberTheory.ModularForms.JacobiTheta.Ramanujan
 
 /-!
@@ -42,55 +41,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Regular tripartition counts.** For natural numbers $\ell$ and $n$, $T_\ell(n)$ is the number
-of triples $(\lambda_1, \lambda_2, \lambda_3)$ of integer partitions with
-$|\lambda_1| + |\lambda_2| + |\lambda_3| = n$ in which no part of any $\lambda_i$ is divisible by
-$\ell$; these triples are the $\ell$-regular tripartitions of $n$.
-
-Source: Mohammed L. Nadji and Moussa Ahmia, *Congruences for l-Regular Tripartitions for
-l in {2,3}*, INTEGERS 24 (2024), Article A86, Section 1, definition of `T_ℓ(n)` (with
-generating function `f_ℓ³ / f_1³`, Section 1, eq. (1)). -/
-public def regularTripartitionCount (l n : ℕ) : ℕ :=
-  ∑ x ∈ Finset.antidiagonal n, ∑ y ∈ Finset.antidiagonal x.2,
-    (Nat.Partition.restricted x.1 (¬ l ∣ ·)).card *
-      (Nat.Partition.restricted y.1 (¬ l ∣ ·)).card *
-      (Nat.Partition.restricted y.2 (¬ l ∣ ·)).card
-
-private theorem card_restricted_zero (p : ℕ → Prop) [DecidablePred p] :
-    (Nat.Partition.restricted 0 p).card = 1 := by
-  rw [Finset.card_eq_one]
-  refine ⟨default, ?_⟩
-  ext x
-  simp [Nat.Partition.restricted, Subsingleton.elim x default]
-
-private theorem card_restricted_one (p : ℕ → Prop) [DecidablePred p] (h : p 1) :
-    (Nat.Partition.restricted 1 p).card = 1 := by
-  rw [Finset.card_eq_one]
-  refine ⟨default, ?_⟩
-  ext x
-  simp [Nat.Partition.restricted, Subsingleton.elim x default, h]
-
-/-- **The regular tripartition count at zero.** For every natural number $\ell$, $T_\ell(0) = 1$,
-where $T_\ell(n)$ is the number of $\ell$-regular tripartitions of $n$: the only tripartition of
-$0$ is the triple of empty partitions.
-
-Source: Mohammed L. Nadji and Moussa Ahmia, *Congruences for l-Regular Tripartitions for
-l in {2,3}*, INTEGERS 24 (2024), Article A86 (definition of `T_ℓ(n)`). -/
-public theorem regularTripartitionCount_zero (l : ℕ) : regularTripartitionCount l 0 = 1 := by
-  simp [regularTripartitionCount, card_restricted_zero]
-
-/-- **The number of $\ell$-regular tripartitions of $1$.** For every natural number $\ell \ne 1$,
-the number $T_\ell(1)$ of $\ell$-regular tripartitions of $1$ is $3$: the single part $1$ lies in
-one of the three components.
-
-Source: Mohammed L. Nadji and Moussa Ahmia, *Congruences for l-Regular Tripartitions for
-l in {2,3}*, INTEGERS 24 (2024), Article A86 (definition of `T_ℓ(n)`). -/
-public theorem regularTripartitionCount_one (l : ℕ) (hl : l ≠ 1) :
-    regularTripartitionCount l 1 = 3 := by
-  have h1 : ¬ l ∣ 1 := by simpa using hl
-  simp [regularTripartitionCount, Finset.Nat.antidiagonal_succ, card_restricted_zero,
-    card_restricted_one (fun x => ¬ l ∣ x) h1]
-
 /-- **Congruences modulo 3 and 6 for 2-regular tripartitions.** Let $T_2(m)$ be the number of
 $2$-regular tripartitions of $m$. For every natural number $n$, $3 \mid T_2(3n + 1)$ and
 $6 \mid T_2(3n + 2)$.
@@ -99,15 +49,6 @@ Source: Mohammed L. Nadji and Moussa Ahmia, *Congruences for l-Regular Tripartit
 l in {2,3}*, INTEGERS 24 (2024), Article A86, Corollary 1. -/
 public theorem_wanted regularTripartitionCount_two_mod_three_six (n : ℕ) :
     3 ∣ regularTripartitionCount 2 (3 * n + 1) ∧ 6 ∣ regularTripartitionCount 2 (3 * n + 2)
-
-/-- **Congruences modulo 3 and 9 for 3-regular tripartitions.** Let $T_3(m)$ be the number of
-$3$-regular tripartitions of $m$. For every natural number $n$, $3 \mid T_3(3n + 1)$ and
-$9 \mid T_3(3n + 2)$.
-
-Source: Mohammed L. Nadji and Moussa Ahmia, *Congruences for l-Regular Tripartitions for
-l in {2,3}*, INTEGERS 24 (2024), Article A86, Corollary 2 (congruences (53), (54)). -/
-public theorem_wanted regularTripartitionCount_three_mod_three_nine (n : ℕ) :
-    3 ∣ regularTripartitionCount 3 (3 * n + 1) ∧ 9 ∣ regularTripartitionCount 3 (3 * n + 2)
 
 /-- **A congruence modulo 6 for 3-regular tripartitions.** Let $T_3(m)$ be the number of
 $3$-regular tripartitions of $m$. For every natural number $n$, $6 \mid T_3(6n + 4)$.

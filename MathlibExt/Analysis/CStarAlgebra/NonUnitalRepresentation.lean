@@ -14,6 +14,7 @@ module
 public import MathlibExt.Analysis.CStarAlgebra.Landmark
 public import Mathlib.Analysis.CStarAlgebra.Unitization
 public import Mathlib.Analysis.CStarAlgebra.Hom
+public import Mathlib.Analysis.CStarAlgebra.ContinuousLinearMap
 
 /-!
 # Isometric Hilbert representations of nonunital C-star algebras

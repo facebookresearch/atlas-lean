@@ -79,7 +79,7 @@ def haarLeftRegular : StronglyContinuousUnitaryRepresentation G (Lp H 2 μ) := b
     have hpres : MeasurePreserving (fun x : G => g⁻¹ * x) μ μ :=
       measurePreserving_smul g⁻¹ μ
     have hquasi : QuasiMeasurePreserving (fun x : G => g⁻¹ * x) μ μ :=
-      ⟨hpres.measurable, by rw [hpres.map_eq]⟩
+      hpres.quasiMeasurePreserving
     have hcomposed := hquasi.ae_eq_comp hinner
     filter_upwards [hwhole, houter, hcomposed] with x h₁ h₂ h₃
     change (DomMulAct.mk (g * h)⁻¹ • ξ) x = ξ ((g * h)⁻¹ * x) at h₁
