@@ -9,4 +9,3 @@ Syntax, proof calculi and semantics of first-order predicate logic, including so
 - [Gödel's completeness theorem](g-del-s-completeness-theorem/README.md)
 - [Peano arithmetic and Robinson's Q](peano-arithmetic-and-robinson-s-q/README.md)
 - [Complete theory of a first-order structure](theory-of-structure.md)
-- [Background theories in typed first-order logic](background-theories-in-typed-first-order-logic.md)

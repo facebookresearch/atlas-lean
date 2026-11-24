@@ -12,7 +12,3 @@ Operational and denotational semantics of programming languages and correctness 
 - [Heap semantics of IMP](heap-semantics-of-imp/README.md)
 - [PCF and computational adequacy](pcf-and-computational-adequacy/README.md)
 - [Models of the untyped lambda calculus](models-of-the-untyped-lambda-calculus/README.md)
-
-- [Lexing and parsing](lexing-and-parsing/README.md)
-- [Static analysis](static-analysis/README.md)
-- [Compiler correctness](compiler-correctness/README.md)

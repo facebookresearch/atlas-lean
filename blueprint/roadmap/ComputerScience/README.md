@@ -52,7 +52,6 @@ mistake bound and the Freund–Schapire bound on the training error of AdaBoost.
 - [Online algorithms](online-algorithms/README.md)
 - [Randomized algorithms and probabilistic analysis](randomized-algorithms/README.md)
 - [Parallel algorithms](parallel-algorithms/README.md)
-- [Memory-hierarchy algorithms](memory-hierarchy-algorithms/README.md)
 - [Algebraic and numerical algorithms](algebraic-and-numerical-algorithms/README.md)
 - [Computational geometry](computational-geometry/README.md)
 - [String algorithms](string-algorithms/README.md)
