@@ -89,31 +89,6 @@ public theorem_wanted shiftedBinomialStepSum_recurrence_of_window (α β k γ p 
     (∀ n, s ≤ n → n ≤ k ^ 2 + s - 1 → c n = ∑ i ∈ Finset.Icc 1 s, δ i * c (n - i)) →
       ∀ n, s ≤ n → c n = ∑ i ∈ Finset.Icc 1 s, δ i * c (n - i)
 
-/-- **Step sums of a rational Riordan array satisfy a common recurrence.** Let
-$g_1, g_2, h_1, h_2 \in \mathbb{Z}[x]$ with $g_2(0) = h_1(0) = h_2(0) = 1$, let $\nu \ge 1$ and
-$k \ge 1$ be natural numbers, and in $\mathbb{Q}[[x]]$ let $g = g_1/g_2$ and
-$h = x^\nu h_1/h_2$. For $p, n \in \mathbb{N}$ let
-$a_p(n) = \sum_{j=0}^{n} [x^n]\, g h^{kj+p}$. Then there are $r \in \mathbb{N}$ and integers
-$\alpha_1, \ldots, \alpha_r$ such that $a_p(n) = \sum_{i=1}^{r} \alpha_i a_p(n - i)$ for every
-$p < k$ and every $n \ge r$.
-
-Since $h$ has no constant term, $[x^n]\, g h^m = 0$ for $m > n$, so $a_p(n)$ is the full sum
-over all $j \ge 0$.
-
-Source: Eduardo H. M. Brietzke, *Recurrence Relations for Sums of Binomial Coefficients and
-Some Generalizations*, Journal of Integer Sequences 27 (2024), Article 24.3.4,
-Proposition 11. -/
-public theorem_wanted rationalRiordan_stepSum_linearRecurrence (g₁ g₂ h₁ h₂ : ℤ[X]) (ν : ℕ)
-    (hg₂ : g₂.eval 0 = 1) (hh₁ : h₁.eval 0 = 1) (hh₂ : h₂.eval 0 = 1) (hν : 1 ≤ ν)
-    (k : ℕ) (hk : 0 < k) :
-    let toQ : ℤ[X] → PowerSeries ℚ := fun q => ((q.map (Int.castRingHom ℚ)) : PowerSeries ℚ)
-    let g : PowerSeries ℚ := toQ g₁ * (toQ g₂)⁻¹
-    let h : PowerSeries ℚ := PowerSeries.X ^ ν * toQ h₁ * (toQ h₂)⁻¹
-    let a : ℕ → ℕ → ℚ := fun p n =>
-      ∑ j ∈ Finset.range (n + 1), PowerSeries.coeff n (g * h ^ (k * j + p))
-    ∃ (r : ℕ) (αs : ℕ → ℤ), ∀ p < k, ∀ n, r ≤ n →
-      a p n = ∑ i ∈ Finset.Icc 1 r, (αs i : ℚ) * a p (n - i)
-
 end
 
 end MetaMathlibExt
