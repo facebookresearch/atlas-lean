@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.Enumerative.ConsecutiveCyclicStackCount
+public import MathlibExt.Combinatorics.Enumerative.CyclicPatternAvoidingStacks
 public import MathlibExt.Combinatorics.Enumerative.CyclicSortingMachineSuperimpose
 
 /-!
@@ -69,23 +70,6 @@ Source: Alex Zhan and Stella Bie, *Cyclic-Pattern-Avoiding Stacks*, INTEGERS 26 
 Article A15, Theorem 3 (`integers-2026-A15-thm-3`). -/
 public theorem_wanted sortedPermutations_consecutiveCyclicStackSort_123 {n : ℕ} (hn : 4 ≤ n) :
     (sortedPermutations (consecutiveCyclicStackSort [1, 2, 3]) n).card = 0
-
-/-- **Reducing before the $123$ cyclic sorting machine does not change the reduced output.** For
-every permutation $\pi$ of $[n] = \{1, \ldots, n\}$, applying the cyclic sorting machine
-$\mathrm{SC}_{[123]}$ to the reduction $\operatorname{red}(\pi)$ and reducing the result gives the
-reduction of $\mathrm{SC}_{[123]}(\pi)$:
-$\operatorname{red}(\mathrm{SC}_{[123]}(\operatorname{red}(\pi))) =
-\operatorname{red}(\mathrm{SC}_{[123]}(\pi))$.
-
-Only this identity is stated; the lemma's further assertion that blocks $a, a+1, \ldots, a+k$ of
-$\pi$ enter and leave the stack together is not part of the statement.
-
-Source: Alex Zhan and Stella Bie, *Cyclic-Pattern-Avoiding Stacks*, INTEGERS 26 (2026),
-Article A15, Lemma 1 (`integers-2026-A15-lem-1`). -/
-public theorem_wanted reductionSeq_cyclicSortingMachine_123_reductionSeq {n : ℕ} {π : List ℕ}
-    (hπ : π.Perm (List.range' 1 n)) :
-    reductionSeq (cyclicSortingMachine [1, 2, 3] (reductionSeq π)) =
-      reductionSeq (cyclicSortingMachine [1, 2, 3] π)
 
 /-- **After one pass of the $123$ cyclic sorting machine, the reduction is shorter.** For every
 $n \ge 2$ and every permutation $\pi$ of $[n] = \{1, \ldots, n\}$, the reduction

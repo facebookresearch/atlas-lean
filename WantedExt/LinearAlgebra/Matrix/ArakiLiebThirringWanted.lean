@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
+public import MathlibExt.LinearAlgebra.Matrix.ArakiLiebThirring
 public import Mathlib.Analysis.Matrix.HermitianFunctionalCalculus
 public import Mathlib.Analysis.Matrix.PosDef
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
@@ -25,7 +26,7 @@ arXiv:math/0701129). The case `q = 1` is the Lieb–Thirring trace inequality
 *Studies in Mathematical Physics*, Princeton University Press, 1976, 269–303; E. A. Carlen, *Trace
 inequalities and quantum entropy: an introductory course*, lecture-notes draft of May 3, 2009,
 Theorem 7.4). Matrix powers are the continuous functional calculus `cfc (· ^ p)` of the real
-power function. The proofs are deferred.
+power function. The reversed range is proved in the imported module.
 -/
 
 @[expose] public section
@@ -49,18 +50,5 @@ theorem_wanted araki_lieb_thirring {A B : Matrix n n ℂ} (hA : A.PosSemidef) (h
       RCLike.re (cfc (· ^ q : ℝ → ℝ)
         (cfc (· ^ (r / 2) : ℝ → ℝ) A * cfc (· ^ r : ℝ → ℝ) B *
           cfc (· ^ (r / 2) : ℝ → ℝ) A)).trace
-
-/-- **Araki–Lieb–Thirring inequality, reversed range.** For positive-semidefinite complex
-matrices `A` and `B` and reals `q ≥ 0`, `0 ≤ r ≤ 1`,
-`tr (A^{r/2} B^r A^{r/2})^q ≤ tr (A^{1/2} B A^{1/2})^{rq}`
-(H. Araki, Lett. Math. Phys. 19 (1990) 167–170; K. M. R. Audenaert, arXiv:math/0701129,
-Theorem 1, the case `0 ≤ r ≤ 1`). -/
-theorem_wanted araki_lieb_thirring_of_le_one {A B : Matrix n n ℂ} (hA : A.PosSemidef)
-    (hB : B.PosSemidef) {q r : ℝ} (hq : 0 ≤ q) (hr₀ : 0 ≤ r) (hr₁ : r ≤ 1) :
-    RCLike.re (cfc (· ^ q : ℝ → ℝ)
-        (cfc (· ^ (r / 2) : ℝ → ℝ) A * cfc (· ^ r : ℝ → ℝ) B *
-          cfc (· ^ (r / 2) : ℝ → ℝ) A)).trace ≤
-      RCLike.re (cfc (· ^ (r * q) : ℝ → ℝ)
-        (cfc (· ^ (2⁻¹ : ℝ) : ℝ → ℝ) A * B * cfc (· ^ (2⁻¹ : ℝ) : ℝ → ℝ) A)).trace
 
 end MathlibExt.LinearAlgebra.Matrix.ArakiLiebThirringWanted
