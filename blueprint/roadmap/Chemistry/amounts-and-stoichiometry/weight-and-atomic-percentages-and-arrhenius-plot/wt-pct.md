@@ -5,4 +5,4 @@ For a finite set `ι` of components, molar masses `M : ι → ℝ` and amounts (
 [mass fraction](../amount-of-substance-and-molar-mass/mass-fraction.md). With the convention
 `x / 0 = 0` it is `0` for every component when `∑_j x_j M_j = 0`. For positive molar masses and
 nonnegative amounts, not all zero, this is the weight percent in the usual sense; for other real
-inputs the formula still applies but is not a percentage.
+inputs the formula still applies but need not be a percentage.
