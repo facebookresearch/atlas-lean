@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Algebra.Polynomial.Derivative
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Combinatorics.Enumerative.Stirling
 public import Mathlib.Data.Nat.Choose.Sum
 public import Mathlib.Data.Nat.Fib.Basic
@@ -284,5 +286,38 @@ public theorem sum_pow_mul_choose_mul_fib_small (N : ℕ) :
     Finset.Ico_add_one_right_eq_Icc] at moment
   simpa [Finset.sum_range_succ, Nat.stirlingSecond, Nat.descFactorial, mul_assoc, mul_comm,
     mul_left_comm] using (show _ ∧ _ ∧ _ ∧ _ from ⟨moment 1, moment 2, moment 3, moment 4⟩)
+
+open Polynomial in
+/-- **Scherk's identity.** Write $S(r, i)$ for the Stirling numbers of the second kind. Let $N$ and
+$r$ be natural numbers, let $a_0, \dots, a_N$ be real numbers, and let $f$ be the polynomial
+$f(y) = \sum_{k=0}^{N} a_k y^k$, with $i$-th derivative $f^{(i)}$. Then for every real number $x$,
+with the convention $0^0 = 1$,
+$$\sum_{k=0}^{N} k^r a_k x^k = \sum_{i=0}^{r} S(r, i) \, x^i f^{(i)}(x).$$
+
+Source: Andreea M. Stănică, Gabriela N. Stănică, and Pantelimon Stănică, *An Evaluation of
+Rationally Weighted Binomial Sums Via Some Differential and Integral Operators*, The Fibonacci
+Quarterly 62 (2024), Article 62-1/stanica09202023, Theorem 2.1, equation (2.1). -/
+public theorem sum_pow_mul_coeff_eq_sum_stirlingSecond_derivative (a : ℕ → ℝ) (N r : ℕ)
+    (x : ℝ) :
+    ∑ k ∈ Finset.range (N + 1), (k : ℝ) ^ r * a k * x ^ k =
+      ∑ i ∈ Finset.range (r + 1), (Nat.stirlingSecond r i : ℝ) * x ^ i *
+        (derivative^[i] (∑ k ∈ Finset.range (N + 1), C (a k) * X ^ k)).eval x := by
+  have hpow (k : ℕ) : (k : ℝ) ^ r =
+      ∑ i ∈ Finset.range (r + 1), (Nat.stirlingSecond r i : ℝ) * k.descFactorial i := by
+    exact_mod_cast Nat.pow_eq_sum_stirlingSecond_mul_descFactorial k r
+  simp_rw [hpow, Finset.sum_mul]
+  rw [Finset.sum_comm]
+  refine Finset.sum_congr rfl fun i _ => ?_
+  rw [iterate_derivative_sum, eval_finsetSum, Finset.mul_sum]
+  refine Finset.sum_congr rfl fun k _ => ?_
+  simp only [iterate_derivative_C_mul, iterate_derivative_X_pow_eq_C_mul,
+    eval_mul, eval_C, eval_pow, eval_X]
+  by_cases hik : i ≤ k
+  · have hx : x ^ i * x ^ (k - i) = x ^ k := by
+      rw [← pow_add, Nat.add_comm i (k - i), Nat.sub_add_cancel hik]
+    rw [← hx]
+    ring
+  · simp only [Nat.descFactorial_eq_zero_iff_lt.mpr (Nat.lt_of_not_ge hik),
+      Nat.cast_zero, mul_zero, zero_mul]
 
 end MetaMathlibExt
