@@ -10,6 +10,7 @@ LICENSE file in the root directory of this source tree.
 Portions of this file are adapted from:
 
 `Definitions/Def_GaloisRep_Adic.lean`,
+`Definitions/Def_GaloisRep_ResidualEquiv.lean`,
 `Definitions/Def_GaloisRep_Flat.lean`,
 `Definitions/Def_GaloisRep_CompletionBridge.lean`,
 `Theorems/Thm_GaloisRepAdic_exists_finiteFlat_padicInt_model_of_isFlatAt.lean`
@@ -47,6 +48,14 @@ public import Mathlib.RingTheory.LocalRing.ResidueField.Basic
 public import MathlibExt.NumberTheory.Padics.DecompositionSubgroup
 public import MathlibExt.RingTheory.DiscreteValuationRing.RatLocalizedAt
 public import Mathlib.RingTheory.Bialgebra.Convolution
+public import Mathlib.LinearAlgebra.Charpoly.BaseChange
+public import Mathlib.LinearAlgebra.Dimension.Free
+public import Mathlib.LinearAlgebra.Trace
+public import MathlibExt.FieldTheory.Galois.ResidualGaloisRep
+public import MathlibExt.RingTheory.Valuation.InertiaRootsOfUnity
+public import MathlibExt.RingTheory.Valuation.LiesOverPrime
+public import Mathlib.RingTheory.TensorProduct.Basic
+public import Mathlib.RepresentationTheory.Intertwining
 import Mathlib.Algebra.Algebra.Operations
 import Mathlib.Algebra.Module.ZMod
 import Mathlib.Analysis.Normed.Unbundled.SpectralNorm
@@ -55,12 +64,12 @@ import Mathlib.LinearAlgebra.TensorProduct.Tower
 import Mathlib.NumberTheory.Padics.Complex
 import Mathlib.RingTheory.Flat.Stability
 import Mathlib.RingTheory.HopfAlgebra.TensorProduct
-import Mathlib.RingTheory.TensorProduct.Basic
 import Mathlib.RingTheory.TensorProduct.Finite
+import Mathlib.RingTheory.Valuation.ValuationSubring
 
 @[expose] public section
 
-universe u
+universe u v
 
 open scoped TensorProduct
 
@@ -68,7 +77,7 @@ open scoped TensorProduct
 trivial modulo the `n`-th power of the maximal ideal on the subgroup fixing
 some finite-dimensional intermediate field. -/
 public def GaloisActionIsAdicContinuous (A : Type u) [CommRing A] [IsLocalRing A]
-    {V : Type u} [AddCommGroup V] [Module A V]
+    {V : Type v} [AddCommGroup V] [Module A V]
     (ρ : (AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) →* Module.End A V) :
     Prop :=
   ∀ n : ℕ, ∃ L : IntermediateField ℚ (AlgebraicClosure ℚ),
@@ -82,9 +91,9 @@ public def GaloisActionIsAdicContinuous (A : Type u) [CommRing A] [IsLocalRing A
 a free finite `A`-module of rank two with an adically continuous action of
 the absolute Galois group of `ℚ`. -/
 public structure GaloisRepAdic (A : Type u) [CommRing A] [IsLocalRing A] :
-    Type (u + 1) where
+    Type (max u v + 1) where
   /-- The underlying module. -/
-  V : Type u
+  V : Type v
   [instAddCommGroup : AddCommGroup V]
   [instModule : Module A V]
   [instFree : Module.Free A V]
@@ -450,3 +459,217 @@ public theorem GaloisRepAdic.exists_finiteFlat_padicInt_model_of_isFlatAt
     apply FiniteFlatPoints.ptsQbar_apply_of_forall_eq σ
     intro h'
     exact hFG ((1 : ℤ_[p]) ⊗ₜ[Rat.localizedAt p] h')
+
+namespace ResidualGaloisRep
+
+variable {k : Type u} [Field k]
+
+/-- An equivalence of residual Galois representations: an equivalence of the
+underlying representations of the absolute Galois group of `ℚ`, with the
+standard `refl`, `symm` and `trans` of `Representation.Equiv`. -/
+public abbrev Equiv (ρ₁ ρ₂ : ResidualGaloisRep k) : Type _ :=
+  Representation.Equiv ρ₁.ρ ρ₂.ρ
+
+/-- Two residual Galois representations are equivalent when there is an
+equivalence between them. -/
+public def IsEquiv (ρ₁ ρ₂ : ResidualGaloisRep k) : Prop :=
+  Nonempty (Equiv ρ₁ ρ₂)
+
+end ResidualGaloisRep
+
+namespace GaloisRepAdic
+
+variable {A : Type u} [CommRing A] [IsLocalRing A]
+
+/-- An adic Galois representation is unramified at `q` when every element
+of an inertia subgroup over `q` acts trivially. -/
+public def IsUnramifiedAt (ρ : GaloisRepAdic A) (q : ℕ) : Prop :=
+  ∀ P : ValuationSubring (AlgebraicClosure ℚ), P.LiesOverPrime q →
+    ∀ σ ∈ P.inertiaSubgroupIn ℚ, ρ.ρ σ = 1
+
+/-- The determinant of an adic Galois representation, as a character with
+values in the units of the coefficient ring. -/
+public noncomputable def det (ρ : GaloisRepAdic A) :
+    (AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) →* Aˣ :=
+  (LinearMap.det.comp ρ.ρ).toHomUnits
+
+/-- The determinant is the unit attached to the linear determinant. -/
+theorem det_apply (ρ : GaloisRepAdic A)
+    (σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) :
+    (ρ.det σ : A) = LinearMap.det (ρ.ρ σ) :=
+  rfl
+
+/-- The trace of a Galois element in an adic Galois representation. -/
+public noncomputable def trace (ρ : GaloisRepAdic A)
+    (σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) : A :=
+  LinearMap.trace A ρ.V (ρ.ρ σ)
+
+/-- The trace is the linear trace of the representing endomorphism. -/
+theorem trace_def (ρ : GaloisRepAdic A)
+    (σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) :
+    ρ.trace σ = LinearMap.trace A ρ.V (ρ.ρ σ) :=
+  rfl
+
+/-- Base change of an adic Galois representation along a local ring
+homomorphism. -/
+public noncomputable def baseChangeAlong {B : Type v} [CommRing B]
+    [IsLocalRing B] (φ : A →+* B) (hφ : IsLocalHom φ)
+    (ρ : GaloisRepAdic A) : GaloisRepAdic B :=
+  letI : Algebra A B := φ.toAlgebra
+  { V := B ⊗[A] ρ.V
+    finrank_eq := by rw [Module.finrank_baseChange, ρ.finrank_eq]
+    ρ := { toFun := fun σ => (ρ.ρ σ).baseChange B
+           map_one' := by rw [map_one, LinearMap.baseChange_one]
+           map_mul' := fun σ τ => by rw [map_mul, LinearMap.baseChange_mul] }
+    isAdicContinuous := by
+      intro n
+      obtain ⟨L, hL, h1⟩ := ρ.isAdicContinuous n
+      refine ⟨L, hL, fun σ hσ => ?_⟩
+      have hmap : (IsLocalRing.maximalIdeal A ^ n).map φ ≤
+          IsLocalRing.maximalIdeal B ^ n := by
+        rw [Ideal.map_pow]
+        exact Ideal.pow_right_mono (Ideal.map_le_iff_le_comap.mpr fun a ha =>
+          Ideal.mem_comap.mpr (haveI := hφ; map_nonunit φ a ha)) n
+      have hpure : ∀ (b : B) (v : ρ.V),
+          (ρ.ρ σ).baseChange B (b ⊗ₜ[A] v) - b ⊗ₜ[A] v ∈
+            (IsLocalRing.maximalIdeal B ^ n) • (⊤ : Submodule B (B ⊗[A] ρ.V)) := by
+        intro b v
+        rw [LinearMap.baseChange_tmul, ← TensorProduct.tmul_sub]
+        refine Submodule.smul_induction_on (p := fun x => b ⊗ₜ[A] x ∈
+          (IsLocalRing.maximalIdeal B ^ n) • (⊤ : Submodule B (B ⊗[A] ρ.V)))
+          (h1 σ hσ v) ?_ ?_
+        · intro a ha w _
+          rw [TensorProduct.tmul_smul, TensorProduct.smul_tmul', Algebra.smul_def,
+            ← smul_eq_mul, ← TensorProduct.smul_tmul']
+          exact Submodule.smul_mem_smul (hmap (Ideal.mem_map_of_mem φ ha))
+            Submodule.mem_top
+        · intro x y hx hy
+          rw [TensorProduct.tmul_add]
+          exact Submodule.add_mem _ hx hy
+      intro w
+      induction w using TensorProduct.induction_on with
+      | zero => rw [map_zero, sub_zero]; exact Submodule.zero_mem _
+      | tmul b v => exact hpure b v
+      | add x y hx hy =>
+        rw [map_add, add_sub_add_comm]
+        exact Submodule.add_mem _ hx hy }
+
+/-- The residual representation of an adic Galois representation, obtained
+by base change to the residue field. -/
+public noncomputable def residual (ρ : GaloisRepAdic A) :
+    ResidualGaloisRep (IsLocalRing.ResidueField A) :=
+  { V := IsLocalRing.ResidueField A ⊗[A] ρ.V
+    finrank_eq := by rw [Module.finrank_baseChange, ρ.finrank_eq]
+    ρ := { toFun := fun σ => (ρ.ρ σ).baseChange (IsLocalRing.ResidueField A)
+           map_one' := by rw [map_one, LinearMap.baseChange_one]
+           map_mul' := fun σ τ => by rw [map_mul, LinearMap.baseChange_mul] }
+    factorsThroughFiniteLevel := by
+      obtain ⟨L, hL, h1⟩ := ρ.isAdicContinuous 1
+      refine ⟨L, hL, fun σ hσ => ?_⟩
+      have hkill : ∀ x ∈ (IsLocalRing.maximalIdeal A ^ 1) • (⊤ : Submodule A ρ.V),
+          ∀ c : IsLocalRing.ResidueField A, c ⊗ₜ[A] x = 0 := by
+        intro x hx c
+        refine Submodule.smul_induction_on
+          (p := fun x => c ⊗ₜ[A] x = (0 : IsLocalRing.ResidueField A ⊗[A] ρ.V))
+          hx ?_ ?_
+        · intro a ha w _
+          rw [pow_one] at ha
+          rw [TensorProduct.tmul_smul, TensorProduct.smul_tmul', Algebra.smul_def,
+            IsLocalRing.ResidueField.algebraMap_eq,
+            (IsLocalRing.residue_eq_zero_iff a).mpr ha, zero_mul,
+            TensorProduct.zero_tmul]
+        · intro x y hx hy
+          rw [TensorProduct.tmul_add, hx, hy, add_zero]
+      refine LinearMap.ext fun w => ?_
+      rw [MonoidHom.coe_mk, OneHom.coe_mk]
+      induction w using TensorProduct.induction_on with
+      | zero => rw [map_zero, map_zero]
+      | tmul c v =>
+        rw [LinearMap.baseChange_tmul, Module.End.one_apply, ← sub_eq_zero,
+          ← TensorProduct.tmul_sub]
+        exact hkill _ (h1 σ hσ v) c
+      | add x y hx hy => rw [map_add, map_add, hx, hy] }
+
+/-- An equivalence of adic Galois representations: an equivalence of the
+underlying representations of the absolute Galois group of `ℚ`, with the
+standard `refl`, `symm` and `trans` of `Representation.Equiv`. -/
+public abbrev Equiv (ρ₁ ρ₂ : GaloisRepAdic A) : Type _ :=
+  Representation.Equiv ρ₁.ρ ρ₂.ρ
+
+/-- Two adic Galois representations are equivalent when there is an
+equivalence between them. -/
+public def IsEquiv (ρ₁ ρ₂ : GaloisRepAdic A) : Prop :=
+  Nonempty (Equiv ρ₁ ρ₂)
+
+namespace Equiv
+
+/-- Base change of an equivalence of adic Galois representations. -/
+public noncomputable def baseChangeAlong {B : Type v} [CommRing B]
+    [IsLocalRing B] (φ : A →+* B) (hφ : IsLocalHom φ)
+    {ρ₁ ρ₂ : GaloisRepAdic A} (e : Equiv ρ₁ ρ₂) :
+    Equiv (ρ₁.baseChangeAlong φ hφ) (ρ₂.baseChangeAlong φ hφ) :=
+  letI : Algebra A B := φ.toAlgebra
+  .mk (e.toLinearEquiv.baseChange A B ρ₁.V ρ₂.V) fun σ => LinearMap.ext fun x => by
+    show e.toLinearEquiv.baseChange A B ρ₁.V ρ₂.V ((ρ₁.ρ σ).baseChange B x) =
+      (ρ₂.ρ σ).baseChange B (e.toLinearEquiv.baseChange A B ρ₁.V ρ₂.V x)
+    induction x using TensorProduct.induction_on with
+    | zero => simp only [map_zero]
+    | tmul b v =>
+      rw [LinearMap.baseChange_tmul, LinearEquiv.baseChange_tmul,
+        LinearEquiv.baseChange_tmul, LinearMap.baseChange_tmul]
+      exact congrArg (b ⊗ₜ[A] ·) (e.toIntertwiningMap.isIntertwining _ _ σ v)
+    | add x y hx hy => simp only [map_add, hx, hy]
+
+/-- The residual equivalence induced by an equivalence of adic Galois
+representations. -/
+public noncomputable def residual {ρ₁ ρ₂ : GaloisRepAdic A}
+    (e : Equiv ρ₁ ρ₂) :
+    ResidualGaloisRep.Equiv ρ₁.residual ρ₂.residual :=
+  .mk (e.toLinearEquiv.baseChange A (IsLocalRing.ResidueField A) ρ₁.V ρ₂.V)
+    fun σ => LinearMap.ext fun x => by
+      show e.toLinearEquiv.baseChange A (IsLocalRing.ResidueField A) ρ₁.V ρ₂.V
+          ((ρ₁.ρ σ).baseChange (IsLocalRing.ResidueField A) x) =
+        (ρ₂.ρ σ).baseChange (IsLocalRing.ResidueField A)
+          (e.toLinearEquiv.baseChange A (IsLocalRing.ResidueField A) ρ₁.V ρ₂.V x)
+      induction x using TensorProduct.induction_on with
+      | zero => simp only [map_zero]
+      | tmul b v =>
+        rw [LinearMap.baseChange_tmul, LinearEquiv.baseChange_tmul,
+          LinearEquiv.baseChange_tmul, LinearMap.baseChange_tmul]
+        exact congrArg (b ⊗ₜ[A] ·) (e.toIntertwiningMap.isIntertwining _ _ σ v)
+      | add x y hx hy => simp only [map_add, hx, hy]
+
+end Equiv
+
+/-- The residual representation underlying an adic representation over a
+field, viewed as an adic representation itself. -/
+public def toResidualGaloisRep {k : Type u} [Field k] (ρ : GaloisRepAdic k) :
+    ResidualGaloisRep k :=
+  { V := ρ.V
+    finrank_eq := ρ.finrank_eq
+    ρ := ρ.ρ
+    factorsThroughFiniteLevel := by
+      obtain ⟨L, hL, h1⟩ := ρ.isAdicContinuous 1
+      refine ⟨L, hL, fun σ hσ => LinearMap.ext fun v => ?_⟩
+      have hbot : IsLocalRing.maximalIdeal k = ⊥ :=
+        (Ideal.eq_bot_or_top _).resolve_right
+          (Ideal.IsMaximal.ne_top inferInstance)
+      have h := h1 σ hσ v
+      rw [hbot, pow_one, Submodule.bot_smul, Submodule.mem_bot, sub_eq_zero] at h
+      exact h }
+
+/-- An adic Galois representation over a field obtained from a residual
+Galois representation. -/
+public def ofResidualGaloisRep {k : Type u} [Field k]
+    (ρ : ResidualGaloisRep k) : GaloisRepAdic k :=
+  { V := ρ.V
+    finrank_eq := ρ.finrank_eq
+    ρ := ρ.ρ
+    isAdicContinuous := by
+      intro n
+      obtain ⟨L, hL, h1⟩ := ρ.factorsThroughFiniteLevel
+      refine ⟨L, hL, fun σ hσ v => ?_⟩
+      rw [h1 σ hσ, Module.End.one_apply, sub_self]
+      exact Submodule.zero_mem _ }
+
+end GaloisRepAdic

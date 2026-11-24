@@ -23,3 +23,4 @@ Clique, independent set, vertex cover, domination variants, feedback vertex and 
 - [Odd cycle transversal](odd-cycle-transversal/README.md)
 - [Roman domination](roman-domination/README.md)
 - [Total dominating set](total-dominating-set/README.md)
+- [Zero forcing](zero-forcing/README.md)
