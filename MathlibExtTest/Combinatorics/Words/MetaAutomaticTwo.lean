@@ -25,3 +25,25 @@ example (n : ℕ) : metaAutomaticTwo (2 * n + 1) = !metaAutomaticTwo (2 * n) := 
   have h := metaAutomaticTwo_balanced n
   cases he : metaAutomaticTwo (2 * n) <;> cases ho : metaAutomaticTwo (2 * n + 1) <;>
     simp_all
+
+example : metaAutomaticTwo (2 * 0) = false ∧ metaAutomaticTwo (2 * 0 + 1) = true := by
+  have h : xor (metaAutomaticTwo 0)
+      (metaAutomaticTwo (2 * 0 + (metaAutomaticTwo 0).toNat)) = false := by decide +kernel
+  simpa only [h, Bool.not_false] using metaAutomaticTwo_recover 0
+
+-- At n = 4 the selector is false, so the nested term is the even term.
+example : metaAutomaticTwo (2 * 4) = true ∧ metaAutomaticTwo (2 * 4 + 1) = false := by
+  have hx : metaAutomaticTwo 4 = false := by decide +kernel
+  have hy : metaAutomaticTwo (2 * 4 + (metaAutomaticTwo 4).toNat) = true := by
+    decide +kernel
+  have h := metaAutomaticTwo_recover 4
+  rw [hy, hx] at h
+  simpa only [Bool.false_xor, Bool.not_true] using h
+
+-- At n = 5 the selector is true, so the nested term is the odd term.
+example : metaAutomaticTwo (2 * 5) = false ∧ metaAutomaticTwo (2 * 5 + 1) = true := by
+  have hx : metaAutomaticTwo 5 = true := by decide +kernel
+  have hy : metaAutomaticTwo (2 * 5 + (metaAutomaticTwo 5).toNat) = true := by decide +kernel
+  have h := metaAutomaticTwo_recover 5
+  rw [hy, hx] at h
+  simpa only [Bool.true_xor, Bool.not_true, Bool.not_false] using h

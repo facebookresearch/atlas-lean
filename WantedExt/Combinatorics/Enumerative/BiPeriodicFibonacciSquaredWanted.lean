@@ -25,7 +25,8 @@ own, covering two whole cells) exactly when `k` is even.
 The statements with `a = b = 1` use `Nat.fib`; `ξ(n) = n % 2`.
 
 Proved in `MathlibExt.Combinatorics.Enumerative.FibonacciSquaredAddition`, which this module
-imports: `fib_add_sq_eq` and `two_mul_sum_fib_sq`.
+imports: `fib_add_sq_eq` and `two_mul_sum_fib_sq`. The weighted sum `fib_succ_sq_sub_parity_eq_sum`
+is proved in `MathlibExt.Combinatorics.Enumerative.FibonacciSquaredWeightedSum`.
 -/
 module
 
@@ -36,6 +37,7 @@ public import Mathlib.Algebra.Group.Nat.Even
 public import Mathlib.Data.Finset.Powerset
 public import Mathlib.Data.Nat.Fib.Basic
 public import MathlibExt.Combinatorics.Enumerative.FibonacciSquaredAddition
+public import MathlibExt.Combinatorics.Enumerative.FibonacciSquaredWeightedSum
 
 namespace MetaMathlibExt
 
@@ -186,7 +188,8 @@ Source: Nassima Belaggoun and Hacène Belbachir, *Combinatorial Identities for t
 Fibonacci Numbers Squared*, The Fibonacci Quarterly 62 (2024), Article belaggoun01132024,
 proof of Theorem 2.2. -/
 @[simp]
-theorem fenceTilingSum_one {R : Type*} [CommSemiring R] (a b : R) : fenceTilingSum a b 1 = a ^ 2 := by
+theorem fenceTilingSum_one {R : Type*} [CommSemiring R] (a b : R) :
+    fenceTilingSum a b 1 = a ^ 2 := by
   simp [fenceTilingSum, fenceTilings, fenceTilingWeight, filter_singleton, prod_range_succ, sq]
 
 /-- **Weighted count of bifence-free fence tilings.** Let $a$, $b$ be elements of a commutative
@@ -317,21 +320,6 @@ public theorem_wanted fib_succ_sq_eq_sum_choose_mul_choose (n : ℕ) :
     Nat.fib (n + 1) ^ 2 =
       ∑ i ∈ range (2 * n / 3 + 1), ∑ j ∈ range (i + 1),
         i.choose j * (2 * n - 3 * i).choose j * 2 ^ j
-
-/-- **Squared Fibonacci numbers as weighted sums of squares.** Let $F_k$ denote the Fibonacci
-numbers ($F_0 = 0$, $F_1 = 1$) and let $\xi(m) = m \bmod 2$. For every natural number $n \ge 1$,
-$$
-F_{n+1}^2 - \xi(n+1) = \sum_{k=1}^{n} (n-k+1) F_k^2 = \sum_{k=1}^{n} k F_{n-k+1}^2.
-$$
-
-Source: Nassima Belaggoun and Hacène Belbachir, *Combinatorial Identities for the Bi-Periodic
-Fibonacci Numbers Squared*, The Fibonacci Quarterly 62 (2024), Article belaggoun01132024,
-Corollary 3.10 (`fq-2024-belaggoun01132024-cor-3.10`). -/
-public theorem_wanted fib_succ_sq_sub_parity_eq_sum {n : ℕ} (hn : 1 ≤ n) :
-    (Nat.fib (n + 1) : ℤ) ^ 2 - ((n + 1) % 2 : ℕ) =
-        ∑ k ∈ Icc 1 n, ((n - k + 1 : ℕ) : ℤ) * (Nat.fib k : ℤ) ^ 2 ∧
-      (Nat.fib (n + 1) : ℤ) ^ 2 - ((n + 1) % 2 : ℕ) =
-        ∑ k ∈ Icc 1 n, (k : ℤ) * (Nat.fib (n - k + 1) : ℤ) ^ 2
 
 /-- **Recurrence for weighted tilings with no free bifence.** Let $a$ and $b$ be nonzero elements
 of a field, and let $R_n$ be the weighted number of tilings of an $n$-board by half-squares and
