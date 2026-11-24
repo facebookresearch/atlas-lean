@@ -11830,6 +11830,7 @@
   "MathlibExt/NumberTheory/AlmostBeattyPartition": {"to": "NumberTheory/diophantine-approximation/uniform-distribution-metric", "title": "Beatty sequences"},
   "MathlibExt/NumberTheory/AlmostPrimeIndex": {"to": "NumberTheory/distribution-of-primes/sieve-methods", "title": "Almost primes of almost prime index"},
   "MathlibExt/NumberTheory/AlternatingBinomialTransformHarmonic": {"to": "NumberTheory/special-numbers/harmonic-numbers", "title": "Binomial identities for harmonic numbers"},
+  "MathlibExt/NumberTheory/AlternatingChooseSums": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Wolstenholme's theorem"},
   "MathlibExt/NumberTheory/AlternatingFloorSqrtSum": {"to": "NumberTheory/diophantine-approximation/uniform-distribution-metric", "title": "Floor and ceiling function sums"},
   "MathlibExt/NumberTheory/AlternatingReciprocalIntegral": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Residues of rounded quotients n/k"},
   "MathlibExt/NumberTheory/AlternatingSumFloorDiv": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Residues of rounded quotients n/k"},
