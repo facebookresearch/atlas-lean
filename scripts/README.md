@@ -35,3 +35,9 @@ in preflight; model inference is never launched by repository CI.
 For the Formal-Math sync manifest, its offline checker (run by preflight on
 files synced from Formal-Math), the divergence helper and the refresh script, see
 [`provenance/README.md`](../provenance/README.md).
+
+For opt-in import optimization, see [`import_optimizer/README.md`](import_optimizer/README.md).
+The inventory generator and optimizer use the pinned Lean tools, compile isolated
+candidates, and compare owned declarations before saving patches. They never apply
+those patches to library sources. Python regressions run in preflight; native
+optimization and its smoke test are explicit commands, not CI-wide import rewrites.
