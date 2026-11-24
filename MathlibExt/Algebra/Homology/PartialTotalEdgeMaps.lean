@@ -222,7 +222,7 @@ noncomputable def partialTotalTopRowStableToPage (p : ℕ) :
       stableIntervalLeft, stableIntervalMiddle, stableIntervalRight,
       n₀, n₁, n₂]
     congr 1
-    all_goals omega
+    omega
   exact (eqToIso hSource).inv ≫ leftOuterMap ≫ eRight.inv ≫ ePage.inv
 
 /-- Total homology maps to the page-two top row through the exhaustive top

@@ -634,12 +634,12 @@ private theorem partialTotalE₁_delta_conjugation (m q : ℕ) :
     dsimp only [F, fIdx, d₀₀₁, D₀,
       partialTotalE₁AdjacentCoreDiagram]
     convert rfl using 1
-    all_goals subsingleton
+    subsingleton
   have hdG : F.map gIdx = d₀₁₂ := by
     dsimp only [F, gIdx, d₀₁₂, D₀,
       partialTotalE₁AdjacentCoreDiagram]
     convert rfl using 1
-    all_goals subsingleton
+    subsingleton
   let iF : ComposableArrows.mk₁ (F.map fIdx) ≅
       ComposableArrows.mk₁ d₀₀₁ :=
     ComposableArrows.isoMk₁ (Iso.refl _) (Iso.refl _) (by
@@ -666,7 +666,7 @@ private theorem partialTotalE₁_delta_conjugation (m q : ℕ) :
     have ht : F.map (eqToHom hmid.symm) = t.inv := by
       dsimp only [t, partialTotalE₁MiddleTransportIso]
       convert CategoryTheory.eqToHom_map F hmid.symm using 1
-      all_goals subsingleton
+      subsingleton
     have he10 : ComposableArrows.app' e₁.inv 0 = (e₁.app 0).inv := rfl
     have he11 : ComposableArrows.app' e₁.inv 1 = (e₁.app 1).inv := rfl
     have heC0 : ComposableArrows.app' eC.inv 0 = 𝟙 _ := rfl
@@ -675,7 +675,7 @@ private theorem partialTotalE₁_delta_conjugation (m q : ℕ) :
         ((F.mapComposableArrows 1).map γIdx.inv) 0 =
         F.map (eqToHom hmid.symm) := by
       convert rfl using 1
-      all_goals subsingleton
+      subsingleton
     have hγ1 : ComposableArrows.app'
         ((F.mapComposableArrows 1).map γIdx.inv) 1 = 𝟙 _ := by
       change F.map (𝟙 _) = 𝟙 _
@@ -1498,12 +1498,6 @@ private theorem partialTotalHorizontalRowShift_homology_coordinate
     (((B.totalRow (p + 1)).extend eNat).homologyπ nPlus)]
   dsimp [CategoryTheory.Functor.shiftMap,
     CochainComplex.homologyFunctor_shift]
-  have hMapZ :
-      (HomologicalComplex.homologyFunctor C
-        (ComplexShape.up ℤ) nPlus).map z =
-        HomologicalComplex.homologyMap z nPlus :=
-    rfl
-  rw [hMapZ]
   slice_lhs 1 2 =>
     rw [HomologicalComplex.homologyπ_naturality]
   let x := Kext.iCycles nPlus ≫ z.f nPlus
