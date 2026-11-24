@@ -21,6 +21,8 @@ public import MathlibExt.NumberTheory.RepetendTable
 public import MathlibExt.NumberTheory.RepetendTable.BaseShift
 public import MathlibExt.NumberTheory.RepetendTable.TwoRowColumns
 public import MathlibExt.NumberTheory.RepetendTable.InversePairs
+public import MathlibExt.NumberTheory.RepetendTable.OrderCount
+public import MathlibExt.NumberTheory.RepetendTable.OrderSix
 public import MathlibExt.Analysis.Series.InversePowerTail
 
 /-!
@@ -42,6 +44,12 @@ INTEGERS 25 (2025), Article A26. The `j`-th base-`B` digit of `m/n` is written
 `MetaMathlibExt.even_card_small_bases_orderOf` is proved in
 `MathlibExt.NumberTheory.RepetendTable.InversePairs`.
 
+`MetaMathlibExt.totient_dvd_card_orderOf_eq` is proved in
+`MathlibExt.NumberTheory.RepetendTable.OrderCount`.
+
+`MetaMathlibExt.orderOf_eq_six_ne_small_residues` is proved in
+`MathlibExt.NumberTheory.RepetendTable.OrderSix`.
+
 `MetaMathlibExt.tsum_inv_pow_succ_lt` is proved in
 `MathlibExt.Analysis.Series.InversePowerTail`.
 -/
@@ -49,15 +57,6 @@ INTEGERS 25 (2025), Article A26. The `j`-th base-`B` digit of `m/n` is written
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **The number of units of order $L$ is a multiple of $\varphi(L)$.** For natural numbers
-$n \ge 1$ and $L$, the number $E(L, n)$ of elements of order $L$ in the unit group
-$(\mathbb{Z}/n\mathbb{Z})^\times$ is divisible by Euler's totient $\varphi(L)$.
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Corollary 4 (`integers-2025-A26-cor-4`). -/
-public theorem_wanted totient_dvd_card_orderOf_eq (L n : ℕ) [NeZero n] : L.totient ∣
-    (Finset.univ.filter fun u : (ZMod n)ˣ => orderOf u = L).card
 
 /-- **Moduli with exactly $\varphi(L)$ units of even order $L$.** Let $n \ge 1$ and let $L \ge 2$
 be even. If the number of elements of multiplicative order $L$ in
@@ -79,18 +78,6 @@ Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, 
 Article A26, Corollary 6 (`integers-2025-A26-cor-6`). -/
 public theorem_wanted card_orderOf_eq_two_eq_two_pow_sub_one (n : ℕ) [NeZero n] :
     ∃ k : ℕ, (Finset.univ.filter fun u : (ZMod n)ˣ => orderOf u = 2).card = 2 ^ k - 1
-
-/-- **Order-six elements modulo a power of a prime congruent to $1$ mod $6$.** Let $p$ be a prime
-with $p \equiv 1 \pmod 6$, let $k \ge 1$ and put $n = p^k$. If $b \in \mathbb{Z}/n\mathbb{Z}$ has
-multiplicative order $6$, then $b \ne 0$, $2b \ne 1$, $b \ne 1$, $b \ne -1$ and $b \ne 2$ in
-$\mathbb{Z}/n\mathbb{Z}$.
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Lemma 16 (`integers-2025-A26-lem-16`). -/
-public theorem_wanted orderOf_eq_six_ne_small_residues (p k : ℕ) (hp : p.Prime) (hp6 : p % 6 = 1)
-    (hk : 0 < k) (b : ZMod (p ^ k))
-    (hb : orderOf b = 6) :
-    b ≠ 0 ∧ 2 * b ≠ 1 ∧ b ≠ 1 ∧ b ≠ -1 ∧ b ≠ 2
 
 /-- **Sign balance for differences of shifted linear residues.** Let $p$ be prime, $j \ge 1$ and
 $Q = p^j$. Let $g_1, g_2, f_1, f_2$ be natural numbers with $g_1, g_2 < Q$ and $f_1 \le f_2 < Q$

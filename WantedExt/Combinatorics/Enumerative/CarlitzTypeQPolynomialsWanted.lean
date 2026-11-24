@@ -39,23 +39,6 @@ public theorem_wanted isCarlitzType_iff_sum_choose (q : ℝ) (hq0 : 0 < q) (hq1 
       ∀ n x, T n x = ∑ k ∈ range (n + 1),
         (n.choose k : ℝ) * T k 0 * q ^ ((k : ℝ) * x) * qBracket q x ^ (n - k)
 
-/-- **Sums of $q^{rk} [k]^n$ via Carlitz-type sequences.** Let $q > 0$ with $q \ne 1$, let
-$[x] = (q^x - 1)/(q - 1)$, and let $r \ge 1$ be a natural number. Let $S_m(x)$
-($m \in \mathbb{N}$, $x \in \mathbb{R}$) be the Carlitz-type sequence with associated sequence
-$a_k = 1/((q - 1)[k + r])$, that is,
-$$S_m(x) = (q - 1)^{-m} \sum_{k=0}^{m} (-1)^{m-k} \binom{m}{k} a_k q^{kx}$$
-for all $m$ and all real $x$. Then for all natural numbers $n$ and $N$,
-$$\sum_{k=0}^{N-1} q^{rk} [k]^n = q^{rN} S_n(N) - S_n(0),$$
-where $0^0 = 1$.
-
-Source: Bakir Farhi, *q-Analogues of Sums of Consecutive Powers of Natural Numbers and Extended
-Carlitz q-Bernoulli Numbers and Polynomials*, INTEGERS 26 (2026), Article A85, Theorem 2.3
-(`integers-2026-A85-thm-2-3`). -/
-public theorem_wanted sum_qpow_mul_qBracket_pow (q : ℝ) (hq0 : 0 < q) (hq1 : q ≠ 1)
-    (r n N : ℕ) (hr : 0 < r) (S : ℕ → ℝ → ℝ)
-    (hS : IsCarlitzTypeWith q S fun k => 1 / ((q - 1) * qBracket q ((k + r : ℕ) : ℝ))) :
-    ∑ k ∈ range N, q ^ (r * k) * qBracket q k ^ n = q ^ (r * N) * S n N - S n 0
-
 /-- **Sums of $q^{rk} [k]^{n-d}$ via Carlitz-type sequences.** Let $q > 0$ with $q \ne 1$, let
 $[x] = (q^x - 1)/(q - 1)$, and let $r$, $d$ and $n$ be natural numbers with $r \ge 1$, $d \le r$
 and $d \le n$. Write $(k)_d = k(k-1)\cdots(k-d+1)$ for the falling factorial (with $(k)_0 = 1$).
@@ -95,22 +78,6 @@ public theorem_wanted carlitzType_symbolic_recurrence (q : ℝ) (hq0 : 0 < q) (h
     (ha : ∀ k : ℕ, qBracket q ((k + r : ℕ) : ℝ) * a k = P.eval (k : ℝ))
     (T : ℕ → ℝ → ℝ) (hT : IsCarlitzTypeWith q T a) (n : ℕ) (hn : P.natDegree < n) :
     q ^ r * ∑ j ∈ range (n + 1), (n.choose j : ℝ) * q ^ j * T j 0 = T n 0
-
-/-- **Weighted $q$-power sums via Carlitz's $q$-Bernoulli polynomials.** Let $q > 0$ with
-$q \ne 1$, let $[x] = (q^x - 1)/(q - 1)$, and let $\beta_n(x)$ be Carlitz's $q$-Bernoulli
-polynomials, with $\beta_n = \beta_n(0)$. Then for all natural numbers $n$ and $N$,
-$$n \sum_{k=0}^{N-1} q^{2k} [k]^{n-1} + (q - 1) \sum_{k=0}^{N-1} q^k [k]^n =
-q^N \beta_n(N) - \beta_n,$$
-where $0^0 = 1$, and the first term is $0$ when $n = 0$.
-
-Source: Bakir Farhi, *q-Analogues of Sums of Consecutive Powers of Natural Numbers and Extended
-Carlitz q-Bernoulli Numbers and Polynomials*, INTEGERS 26 (2026), Article A85, Corollary 2.8
-(`integers-2026-A85-cor-2-8`). -/
-public theorem_wanted sum_qpow_mul_qBracket_pow_eq_carlitzBeta (q : ℝ) (hq0 : 0 < q)
-    (hq1 : q ≠ 1) (n N : ℕ) :
-    n * ∑ k ∈ range N, q ^ (2 * k) * qBracket q k ^ (n - 1) +
-        (q - 1) * ∑ k ∈ range N, q ^ k * qBracket q k ^ n =
-      q ^ N * carlitzBetaPoly q n N - carlitzBetaPoly q n 0
 
 /-- **Closed forms for the extended Carlitz $q$-Bernoulli polynomials.** Let $q > 0$ with
 $q \ne 1$ be real, write $[x] = (q^x - 1)/(q - 1)$, let $r$ be a natural number, and let

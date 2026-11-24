@@ -12,7 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Ring.Finset
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import MathlibExt.Combinatorics.AP.Basic
-public import MathlibExt.Combinatorics.Additive.RestrictedSignedSumset
+public import MathlibExt.Combinatorics.Additive.RestrictedSignedSumsetFour
 
 /-!
 # Restricted signed sumsets (statements)
@@ -388,22 +388,6 @@ public theorem_wanted card_restrictedSignedSumset_four_five_ge
     ((restrictedSignedSumset 4 A).card : ℤ) ≥ 25 ∧
     (((restrictedSignedSumset 4 A).card : ℤ) = 25 ↔
       ∃ m ∈ A, (∀ a ∈ A, m ≤ a) ∧ A = scaleFinset m (oddProgression 5))
-
-/-- **Lower bound for restricted signed 4-fold sumsets of nonnegative sets containing zero.**
-Let $k \ge 5$, let $A$ be a set of $k$ nonnegative integers with $0 \in A$, and write
-$4^{\wedge}_{\pm} A$ for the restricted signed 4-fold sumset of $A$. Then
-$|4^{\wedge}_{\pm} A| \ge 8k - 19$.
-
-The inverse statement of the source, that equality forces $A = d \cdot \{0, 1, \dots, k - 1\}$
-for some integer $d$ (where $d \cdot B = \{db : b \in B\}$), is omitted: $A = \{0, 1, 2, 4, 6\}$
-has $|4^{\wedge}_{\pm} A| = 21 = 8 \cdot 5 - 19$ but is not of that form.
-
-Source: Mohan, Raj Kumar Mistri, Ram Krishna Pandey, *Some Direct and Inverse Problems for the
-Restricted Signed Sumset in the Set of Integers*, INTEGERS 24 (2024), Article A81, Theorem 11. -/
-public theorem_wanted card_restrictedSignedSumset_four_nonnegative_ge
-    (k : ℕ) (A : Finset ℤ) (hk : 5 ≤ k) (hcard : A.card = k)
-    (hnonneg : ∀ a ∈ A, 0 ≤ a) (hzero : 0 ∈ A) :
-    ((restrictedSignedSumset 4 A).card : ℤ) ≥ 8 * (k : ℤ) - 19
 
 /-- **Extending a restricted signed sumset bound from the first $h+1$ elements.** Let $h \ge 3$
 and $k \ge h + 1$, let $a_1 < a_2 < \dots < a_k$ be positive integers, and let $t \ge 0$ be an

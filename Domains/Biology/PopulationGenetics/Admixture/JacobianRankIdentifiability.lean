@@ -62,20 +62,24 @@ namespace MathlibExt.Biology.PopulationGenetics.Admixture
 
 /-- Lineage weights of the three-population admixture model on four edges
 (shared stem, `A` edge, `B` edge, `C` private edge): populations `A = 0` and
-`B = 1` have binary weights on the stem and their own edge; `C = 2` is the
-`α : 1 - α` mixture of the `A` and `B` lineages followed by private drift. -/
+`B = 1` have binary weights on the stem and their own edge; for `0 ≤ α ≤ 1`, `C = 2`
+is the `α : 1 - α` mixture of the `A` and `B` lineages followed by private drift.
+The definition takes any real `α`. -/
 def threePopWeights (α : ℝ) : Fin 3 → Fin 4 → ℝ :=
   !![1, 1, 0, 0; 1, 0, 1, 0; 1, α, 1 - α, 1]
 
 /-- The parametrization `(α, s, a, b, c) ↦ (f2 A B, f2 A C, f2 B C)` of the
-three-population admixture graph, as an explicit polynomial map. -/
+three-population admixture graph, as an explicit polynomial map defined for all real
+parameters. For nonnegative lengths it is the `f2` vector of a matching drift model
+(`threePopF2_eq_f2`), and `0 ≤ α ≤ 1` for an admixture proportion; for negative lengths it
+need not be an `f2` vector (at `a = -1`, `b = c = 0` the first entry is `-1`). -/
 def threePopF2 (p : Fin 5 → ℝ) : Fin 3 → ℝ :=
   ![p 2 + p 3, (1 - p 0) ^ 2 * (p 2 + p 3) + p 4, (p 0) ^ 2 * (p 2 + p 3) + p 4]
 
-/-- The polynomial map is the `f2` vector of the drift model with weights
-`threePopWeights α` and edge lengths `(s, a, b, c)`; such a model
-exists for nonnegative lengths by the drift-model realization of arbitrary
-weights and nonnegative lengths already on main. -/
+/-- The polynomial map is the `f2` vector of every drift model on the counting measure of
+`Fin 4` with weights `threePopWeights α` and edge lengths `(s, a, b, c)`. Such a model
+exists for all nonnegative lengths: take the increment of edge `e` equal to `√ℓ_e` at the
+point `e` and `0` elsewhere. -/
 theorem threePopF2_eq_f2 {α s a b c : ℝ}
     (M : DriftModel (Measure.count : Measure (Fin 4)) (Fin 4) (Fin 3))
     (hw : M.weight = threePopWeights α) (hl : M.len = ![s, a, b, c]) :

@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Basic.Real.Basic
+import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.LinearCombination
@@ -17,14 +18,15 @@ import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
 
 /-!
-# Ratio bounds for the A005773 recurrence
+# Log-behavior of the A005773 recurrence
 
 Let `A : ℕ → ℝ` satisfy `A 0 = A 1 = 1` and
 `(n + 1) A (n + 1) = 2 (n + 1) A n + 3 (n - 1) A (n - 1)` for `n ≥ 1` (OEIS A005773,
 `1, 1, 2, 5, 13, 35, …`). With `x n = A (n + 1) / A n` and `φ n = 3 (2n + 1) / (2 (n + 1))`,
 Lemma 1 of Zhao's paper states that, for every `n ≥ 0`, `x n ≤ φ n` and
 `x (n + 1) / x n ≥ 2 (3n² + 6n + 2) / ((n + 2)(2n + 1) φ n)`. Both inequalities are equalities
-at `n = 2`, where `x 2 = 5 / 2 = φ 2` and `x 3 / x 2 = 26 / 25`.
+at `n = 2`, where `x 2 = 5 / 2 = φ 2` and `x 3 / x 2 = 26 / 25`. The ratio bounds also give
+log-convexity of `(n * A n) ^ n` for indices starting at one.
 
 ## Proof
 
@@ -41,11 +43,13 @@ whose first factor is nonnegative by `x n ≤ φ n` and whose second factor is p
 ## Main results
 
 * `MetaMathlibExt.a005773Recurrence_ratio_bounds`: both bounds, for every `n`.
+* `MetaMathlibExt.a005773Recurrence_weighted_logConcave`: log-concavity of four weighted sequences.
+* `MetaMathlibExt.a005773Recurrence_pow_logConvex`: log-convexity of `(n * A n) ^ n`.
 
 ## References
 
 * Feng-Zhen Zhao, *The Log-Behavior of Some Sequences Related to a Linear Recurrence
-  Sequence*, INTEGERS 25 (2025), Article A100, Lemma 1.
+  Sequence*, INTEGERS 25 (2025), Article A100.
 -/
 
 namespace MetaMathlibExt
@@ -144,6 +148,104 @@ public theorem a005773Recurrence_ratio_bounds (A : ℕ → ℝ) (h0 : A 0 = 1) (
       mul_nonneg (by linarith) (by positivity)
     rw [hφ, div_div_div_eq, div_le_div_iff₀ (by positivity) (by positivity)]
     linarith
+
+/-- **Log-concave weighted sequences built from A005773.**
+Let $(A_n)_{n \ge 0}$ be a sequence of real numbers with $A_0 = A_1 = 1$ and
+$(n+1) A_{n+1} = 2(n+1) A_n + 3(n-1) A_{n-1}$ for every $n \ge 1$, and write
+$\Delta A_n = A_{n+1} - A_n$ and $\Delta^2 A_n = A_{n+2} - 2A_{n+1} + A_n$. Then for every
+$n \ge 2$, each of the four sequences $z_m = m A_m$, $z_m = (m+1) A_{m+1} - m A_m$,
+$z_m = m\,\Delta A_m$ and $z_m = m\,\Delta^2 A_m$ satisfies $z_{n-1} z_{n+1} \le z_n^2$. That
+is, these four sequences, indexed from $m = 1$, are log-concave.
+
+Source: Feng-Zhen Zhao, *The Log-Behavior of Some Sequences Related to a Linear Recurrence
+Sequence*, INTEGERS 25 (2025), Article A100, Theorem 3. -/
+public theorem a005773Recurrence_weighted_logConcave (A : ℕ → ℝ) (h0 : A 0 = 1)
+    (h1 : A 1 = 1)
+    (hrec : ∀ n : ℕ, 1 ≤ n →
+      ((n : ℝ) + 1) * A (n + 1) = 2 * ((n : ℝ) + 1) * A n + 3 * ((n : ℝ) - 1) * A (n - 1))
+    (n : ℕ) (hn : 2 ≤ n) :
+    let W : ℕ → ℝ := fun m => m * A m
+    let V : ℕ → ℝ := fun m => (m + 1 : ℕ) * A (m + 1) - m * A m
+    let U : ℕ → ℝ := fun m => m * (A (m + 1) - A m)
+    let T : ℕ → ℝ := fun m => m * (A (m + 2) - 2 * A (m + 1) + A m)
+    W (n - 1) * W (n + 1) ≤ W n ^ 2 ∧ V (n - 1) * V (n + 1) ≤ V n ^ 2 ∧
+      U (n - 1) * U (n + 1) ≤ U n ^ 2 ∧ T (n - 1) * T (n + 1) ≤ T n ^ 2 := by
+  obtain ⟨k, rfl⟩ : ∃ k, n = k + 2 := ⟨n - 2, by omega⟩
+  -- The slacks in the ratio bounds at k + 1 give nonnegative coordinates for
+  -- the pair of consecutive terms. Solve the two slack equations to recover both terms.
+  obtain ⟨hlo, hhi⟩ := a005773Recurrence_ratio_mem h0 h1 hrec (k + 1)
+  push_cast at hlo hhi
+  let lo := ((2 * ((k : ℝ) + 1) + 1) * A (k + 2) - 6 * (k + 1) * A (k + 1)) / 3
+  let hi := (3 * (2 * ((k : ℝ) + 1) + 1) * A (k + 1) - 2 * (k + 1 + 1) * A (k + 2)) / 3
+  have hl : 0 ≤ lo := div_nonneg (sub_nonneg.mpr hlo) (by norm_num)
+  have hu : 0 ≤ hi := div_nonneg (sub_nonneg.mpr hhi) (by norm_num)
+  have ha : A (k + 1) = 2 * ((k : ℝ) + 2) * lo + (2 * k + 3) * hi := by
+    dsimp [lo, hi]
+    ring
+  have hb : A (k + 2) = 3 * (2 * (k : ℝ) + 3) * lo + 6 * (k + 1) * hi := by
+    dsimp [lo, hi]
+    ring
+  have step (j : ℕ) : A (j + 2) =
+      (2 * ((j : ℝ) + 2) * A (j + 1) + 3 * j * A j) / (j + 2) := by
+    apply eq_div_of_mul_eq (by positivity)
+    rw [mul_comm]
+    exact a005773Recurrence_succ hrec j
+  -- Eliminate the next three terms. After clearing positive denominators, each difference
+  -- of products has nonnegative coefficients in k, lo, and hi.
+  dsimp only
+  rw [show k + 2 - 1 = k + 1 by omega, step (k + 3), step (k + 2), step (k + 1), ha, hb]
+  push_cast
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> apply sub_nonneg.mp <;> field_simp <;> ring_nf <;> positivity
+
+/-- **Log-convexity of $(n A_n)^n$ for A005773.**
+Let $(A_n)_{n \ge 0}$ be a sequence of real numbers with $A_0 = A_1 = 1$ and
+$(n+1) A_{n+1} = 2(n+1) A_n + 3(n-1) A_{n-1}$ for every $n \ge 1$, and let
+$z_m = (m A_m)^m$. Then $z_n^2 \le z_{n-1} z_{n+1}$ for every $n \ge 2$; that is, the sequence
+$(n^n A_n^n)_{n \ge 1}$ is log-convex.
+
+Source: Feng-Zhen Zhao, *The Log-Behavior of Some Sequences Related to a Linear Recurrence
+Sequence*, INTEGERS 25 (2025), Article A100, Theorem 4. -/
+public theorem a005773Recurrence_pow_logConvex (A : ℕ → ℝ) (h0 : A 0 = 1)
+    (h1 : A 1 = 1)
+    (hrec : ∀ n : ℕ, 1 ≤ n →
+      ((n : ℝ) + 1) * A (n + 1) = 2 * ((n : ℝ) + 1) * A n + 3 * ((n : ℝ) - 1) * A (n - 1))
+    (n : ℕ) (hn : 2 ≤ n) :
+    let z : ℕ → ℝ := fun m => ((m : ℝ) * A m) ^ m
+    z n ^ 2 ≤ z (n - 1) * z (n + 1) := by
+  obtain _ | k := n
+  · omega
+  have hk : 0 < (k : ℝ) := by exact_mod_cast (show 0 < k by omega)
+  obtain ⟨ha, hb⟩ := a005773Recurrence_pos h0 h1 hrec k
+  have hc : 0 < A (k + 2) := (a005773Recurrence_pos h0 h1 hrec (k + 1)).2
+  have hinc : A (k + 1) ≤ A (k + 2) := by
+    apply le_of_mul_le_mul_left (a := (k : ℝ) + 2) ?_ (by positivity)
+    nlinarith only [a005773Recurrence_succ hrec k, mul_pos (by positivity : 0 < (k : ℝ) + 2) hb,
+      mul_pos (mul_pos (by norm_num : (0 : ℝ) < 3) hk) ha]
+  -- The lower bound on the quotient of successive ratios is at least one.
+  have hconv : A (k + 1) ^ 2 ≤ A k * A (k + 2) := by
+    suffices h : A (k + 1) / A k ≤ A (k + 2) / A (k + 1) by
+      simpa only [sq, mul_comm] using (div_le_div_iff₀ ha hb).mp h
+    apply (one_le_div₀ (div_pos hb ha)).mp
+    refine le_trans ?_ (a005773Recurrence_ratio_bounds A h0 h1 hrec k).2
+    field_simp
+    linarith only [hk]
+  -- At the midpoint, convexity of x log x handles the index factor.
+  have hmid := Real.convexOn_mul_log.2 (Set.mem_Ici.mpr hk.le)
+    (Set.mem_Ici.mpr (by positivity : 0 ≤ (k : ℝ) + 2))
+    (by norm_num : (0 : ℝ) ≤ 1 / 2) (by norm_num : (0 : ℝ) ≤ 1 / 2) (by norm_num)
+  simp only [smul_eq_mul] at hmid
+  rw [show (1 / 2 : ℝ) * k + 1 / 2 * (k + 2) = k + 1 by ring] at hmid
+  have hlog := Real.log_le_log (sq_pos_of_pos hb) hconv
+  rw [Real.log_pow, Real.log_mul ha.ne' hc.ne', Nat.cast_ofNat] at hlog
+  -- Weight the log-convexity inequality for A by k and use monotonicity for the two
+  -- remaining copies of log (A (k + 1)).
+  dsimp only
+  simp only [Nat.add_sub_cancel, Nat.cast_add, Nat.cast_one,
+    show k + 1 + 1 = k + 2 from rfl]
+  apply (Real.log_le_log_iff (by positivity) (by positivity)).mp
+  simp (disch := positivity) only [Real.log_pow, Real.log_mul, Nat.cast_add, Nat.cast_one,
+    Nat.cast_ofNat]
+  linarith only [hmid, mul_le_mul_of_nonneg_left hlog hk.le, Real.log_le_log hb hinc]
 
 end
 

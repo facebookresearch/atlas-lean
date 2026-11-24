@@ -1,0 +1,5 @@
+{
+  "rows": [
+    {"path": "WantedExt/QuantumInformation/ShorFactoringWanted.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "510ef19ea1299298a63aaeefd35c17c78cb7a3197e026f2a7207ab0c54ac8c78", "rationale": "ATLAS-side edit not in formal-math; last ATLAS change ac886a301 (Make the IsShorOutput Decidable instance computable)", "upstream_sha256": "792aec8fb7d21868831a453f1a8c857fd4102f295d7273bb099f6f1cd76a44bd"}
+  ]
+}
