@@ -1,0 +1,17 @@
+# Bousfield Kan Point Fiber Comparison
+
+- [Bk Point Outer Component](bk-point-outer-component.md)
+- [Bk Point Outer Data Map](bk-point-outer-data-map.md)
+- [Bk Point Outer Map](bk-point-outer-map.md)
+- [Bk Point Source Iso](bk-point-source-iso.md)
+- [Bk Point Inclusion](bk-point-inclusion.md)
+- [Bk Diagram To Point](bk-diagram-to-point.md)
+- [Bk Hocolim To Nerve](bk-hocolim-to-nerve.md)
+- [Bk Point Iso Nerve hom wbar Incl](bk-point-iso-nerve-hom-wbar-incl.md)
+- [Bk Point Inclusion comp bk Hocolim To Nerve](bk-point-inclusion-comp-bk-hocolim-to-ne.md)
+- [Bk Point Realized Vertex](bk-point-realized-vertex.md)
+- [Bk Point Constant Path](bk-point-constant-path.md)
+- [Bk Point Inclusion realized projection](bk-point-inclusion-realized-projection.md)
+- [Bk Point Fiber Comparison](bk-point-fiber-comparison.md)
+- [Bk Point Fiber Comparison to Total](bk-point-fiber-comparison-to-total.md)
+- [Bk Point Fiber Comparison path](bk-point-fiber-comparison-path.md)

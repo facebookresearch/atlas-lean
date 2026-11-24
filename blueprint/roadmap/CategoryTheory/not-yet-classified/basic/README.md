@@ -224,3 +224,7 @@
 - [Barδ zero mk₁](bar-zero-mk.md)
 - [Barδ last mk₁](bar-last-mk.md)
 - [Barσ zero mk₀](bar-zero-mk-2.md)
+- [Category Homology Functor](category-homology-functor.md)
+- [Category Homology Map eq of nat Trans](category-homology-map-eq-of-nat-trans.md)
+- [Category Homology Map eq of nat Iso](category-homology-map-eq-of-nat-iso.md)
+- [Category Homology Iso Of Equivalence](category-homology-iso-of-equivalence.md)
