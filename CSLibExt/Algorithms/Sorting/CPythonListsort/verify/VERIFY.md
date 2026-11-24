@@ -15,9 +15,10 @@ python3 CSLibExt/Algorithms/Sorting/CPythonListsort/verify/verify_excerpts.py
 scripts/check.sh
 ```
 
-Building `CSLibExtTest.Algorithms.Sorting.CPythonListsort` executes the twelve
-asserting `IO Unit` witnesses through their `#eval` calls; a false assertion
-raises an `IO` error and fails that build. They are not theorem axioms and no
+Building `CSLibExtTest.Algorithms.Sorting.CPythonListsort` compiles both
+fixed-input gallop examples and executes the twelve asserting `IO Unit`
+witnesses through their `#eval` calls; a false assertion raises an `IO` error
+and fails that build. The IO witnesses are not theorem axioms, and no
 production declaration depends on them. The last command is the repository's
 own gate: `scripts/check_axioms.sh` reruns `scripts/check_axioms.lean` over
 every compiled module of every root library, and `scripts/check_diagnostics.sh`
@@ -30,14 +31,11 @@ and the twelve original propositions are in
 
 ### What the integration was checked against
 
-- 117 production and 10 test modules compile on Lean 4.36.0 with the root Mathlib pin.
-- The compiled policy audit, run over exactly those 127 modules, reports no
+- 117 production and 11 test modules compile on Lean 4.36.0 with the root Mathlib pin.
+- The compiled policy audit imports all 128 modules together and reports no
   forbidden axiom, unsafe declaration or `implemented_by` attribute outside the
   compiler-generated exceptions, wanted declaration outside `WantedExt`, or
-  forbidden cross-library import. All 127 modules can also be imported together.
-- Those modules own 10,967 distinct declaration names. The only transitive axioms
-  are `propext`, `Quot.sound`, and `Classical.choice`; neither `native_decide` nor
-  `sorryAx` occurs as an axiom.
+  forbidden cross-library import. All ten local verifier unit tests pass.
 - The five principal theorems remain polymorphic in two independent universe
   parameters; the key and payload universes were not collapsed.
 - Reproduction fetched the two public source files at the immutable CPython pin,

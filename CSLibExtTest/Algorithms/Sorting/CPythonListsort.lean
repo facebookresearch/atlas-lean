@@ -12,6 +12,7 @@ import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Correctness.FoundNewRunCo
 import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Correctness.MergeForceCollapseCorrectness
 import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Correctness.ScanStepCorrectness
 import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Correctness.ListSortCorrectness
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Assembly.GallopCorrectness
 import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Assembly.MergeMemorySafety
 import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Assembly.PowerSortCostRegression
 
