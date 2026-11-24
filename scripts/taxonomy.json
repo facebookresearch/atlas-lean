@@ -13839,6 +13839,7 @@
   "PhyslibExt/Engineering/Resource/DeclineCurve": {"to": "EarthScience/hydrology-and-surface-processes", "title": "Exponential and hyperbolic production decline"},
   "PhyslibExt/FluidDynamics/Hydraulics/PipeNetworkHeads": {"to": "Physics/fluid-mechanics", "title": "Pipe-flow networks"},
   "PhyslibExt/Mechanics/TrussCompatibility": {"to": "Physics/elasticity-and-structures", "title": "Pin-jointed trusses"},
+  "PhyslibExt/QuantumInfo/AbsolutelyMaximallyEntangled": {"to": "QuantumInformation/quantum-foundations", "title": "Absolutely maximally entangled states"},
   "PhyslibExt/QuantumInfo/LiebConcavity": {"to": "LinearAlgebra/positive-definite-matrices", "title": "Lieb's concavity theorem"},
   "PhyslibExt/QuantumInfo/LownerHeinz": {"to": "Analysis/operator-algebras", "title": "Operator monotone and operator convex functions"},
   "PhyslibExt/StatisticalMechanics/RandomCluster": {"to": "StatisticalMechanics/random-cluster-model", "title": "Infinite-volume random-cluster measures"},
