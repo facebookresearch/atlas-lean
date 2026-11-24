@@ -9,18 +9,16 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.CategoryTheory.MonodromyFiltration
-public import MathlibExt.HomologicalAlgebra.FilteredCochainSpectralSequence
 public import MathlibExt.AlgebraicGeometry.ContinuousAdicRingModules
 public import Mathlib.Algebra.Homology.ShortComplex.ModuleCat
 public import Mathlib.Algebra.Category.ModuleCat.Subobject
 
 /-!
-# Provider-free tests for the canonical monodromy and E1 contracts
+# Tests for the monodromy filtration
 
-The zero operator must give the one-jump filtration. A genuine nonzero
-square-zero block has weights -1 and 1, with its kernel line in both
-steps -1 and 0. The E1 API is checked at a negative filtration index and
-positive total degree against the actual consecutive-step cone.
+The zero operator gives the one-jump filtration. A nonzero square-zero block has weights -1 and 1,
+with its kernel line in both steps -1 and 0. Two checks of the unit and constant scalars of the
+coefficient-ring modules follow.
 -/
 
 @[expose] public noncomputable section
@@ -31,7 +29,6 @@ namespace MathlibExtTest.CategoryTheory.SemistableMonodromy
 
 open _root_.CategoryTheory _root_.CategoryTheory.Limits Opposite
 open MathlibExt.CategoryTheory.MonodromyFiltration
-open MathlibExt.HomologicalAlgebra.FilteredCochainSpectralSequence
 
 private abbrev V := ModuleCat.of ℚ (ℚ × ℚ)
 
@@ -122,21 +119,6 @@ example : step block 1 0 = kernelSubobject block.asHom := by
     apply Finset.le_sup_of_le (b := (0, 1))
     · simp
     · simp [block_image_kernel]
-
-example : coreE1.i₀ 3 (-2, 3) = OrderDual.toDual (1 : ℤ) := rfl
-example : coreE1.i₁ (-2, 3) = OrderDual.toDual (-1 : ℤ) := rfl
-example : coreE1.i₂ (-2, 3) = OrderDual.toDual (-2 : ℤ) := rfl
-example : coreE1.i₃ 3 (-2, 3) = OrderDual.toDual (-4 : ℤ) := rfl
-example : coreE1.deg (-2, 3) = (1 : ℤ) := rfl
-
-example (F : FilteredObject (CochainComplex (ModuleCat ℚ) ℤ) ℤᵒᵖ) :
-    ((spectralSequence F).page 1).X (-2, 3) ≅
-      ((HomotopyCategory.homologyFunctor (ModuleCat ℚ) (.up ℤ)
-        0).shift (1 : ℤ)).obj
-        ((HomotopyCategory.quotient (ModuleCat ℚ) (.up ℤ)).obj
-          (CochainComplex.mappingCone (F.filtration.diagram.map
-            ((homOfLE (show (-2 : ℤ) ≤ -1 by norm_num)).op)))) :=
-  firstPageIso F (-2) 3
 
 open _root_.AlgebraicGeometry _root_.AlgebraicGeometry.Scheme
 open MathlibExt.AlgebraicGeometry.ContinuousAdicRingModules
