@@ -19,3 +19,4 @@ Contour integrals, Cauchy's theorem, residues, argument principle, Rouché, Laur
 - [Looman–Menchoff theorem](looman-menchoff.md)
 - [Residue theorem on a disc](residue-theorem-closed-ball.md)
 - [Schwarz reflection principle](schwarz-reflection.md)
+- [A holomorphic map into a strictly convex space is constant if its norm attains a maximum on a connected open set](maximum-modulus-principle.md)
