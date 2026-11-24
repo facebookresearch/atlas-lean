@@ -29,7 +29,9 @@ The exactness hypotheses (`PullbackSourceUnit`) and normalized derived adjunctio
 inverse-image ring, which are exact; they are requested by
 `RelativeIntegralPeriodComparisonWanted.inverseUnitPullbackExact` and
 `inverseUnitDerivedAdjunction`. No request here assumes the exactness of a `B_dR⁺` or structural
-period scalar extension.
+period scalar extension. The exactness of restriction of scalars and of tensoring with the base
+forms (`ExactCochainUnit`) is requested by `RelativeGaussManinSourcesWanted.originalRestrictionExact`
+and `baseFormsTensorExact`, and by `integralRestrictionExact` below.
 -/
 set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 3000000
@@ -332,7 +334,12 @@ local instance originalZRestrictionAdditive :
 
 variable [PreservesFiniteLimits (NativeRestrictionCohomologyMaps.restrictY (Zhat p Y.left PY) (Zhat p Y.left PY) (𝟙 (Zhat p Y.left PY)))]
   [PreservesFiniteColimits (NativeRestrictionCohomologyMaps.restrictY (Zhat p Y.left PY) (Zhat p Y.left PY) (𝟙 (Zhat p Y.left PY)))]
-  [ExactCochainUnit (NativeRestrictionCohomologyMaps.restrictX (baseZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)) (Zhat p X.left PX) (baseZScalar (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q) (N := N) (PS := PS)))]
+
+/-- Restriction of scalars from `Ẑ_p` on `X` to the inverse image of `Ẑ_p` on `Y` is exact. -/
+public def_wanted integralRestrictionExact (h : RelativeScope p B X Y f) :
+    ExactCochainUnit (NativeRestrictionCohomologyMaps.restrictX (baseZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)) (Zhat p X.left PX) (baseZScalar (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q) (N := N) (PS := PS)))
+
+variable [ExactCochainUnit (NativeRestrictionCohomologyMaps.restrictX (baseZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)) (Zhat p X.left PX) (baseZScalar (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q) (N := N) (PS := PS)))]
 
 public def_wanted originalLisseRestrictionSquare (h : RelativeScope p B X Y f) :
   NativeRestrictionCohomologyMaps.SourceSquare Q.functor (Zhat p Y.left PY) (Zhat p Y.left PY) (baseZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)) (Zhat p X.left PX) (𝟙 (Zhat p Y.left PY)) (baseZScalar (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q) (N := N) (PS := PS)) (baseZUnit (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)) (coefficientScalar p K B X Y f PX PY E Q N PS)

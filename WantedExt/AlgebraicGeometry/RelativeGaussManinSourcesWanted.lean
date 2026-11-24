@@ -26,7 +26,9 @@ The exactness hypotheses (`PullbackSourceUnit`) and normalized derived adjunctio
 inverse-image ring, which are exact; they are requested by
 `RelativeIntegralPeriodComparisonWanted.inverseUnitPullbackExact` and
 `inverseUnitDerivedAdjunction`. No request here assumes the exactness of a `B_dR⁺` or structural
-period scalar extension.
+period scalar extension. The exactness of restriction of scalars and of tensoring with the base
+forms (`ExactCochainUnit`) is requested by `originalRestrictionExact` and `baseFormsTensorExact`
+below.
 -/
 set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 3000000
@@ -253,7 +255,18 @@ variable [(NativeRestrictionCohomologyMaps.restrictY (AnalyticAbsoluteDeRhamSour
   [PreservesFiniteColimits (NativeRestrictionCohomologyMaps.restrictY (AnalyticAbsoluteDeRhamSources.constantK p K B Y PY) SY.regular (AnalyticAbsoluteDeRhamSources.proKScalar p K B Y PY SY H.scalarY))]
   [PreservesFiniteLimits (NativeTensorProjectionMaps.tensorY SY.regular (AnalyticAbsoluteDeRhamSources.forms p K B Y PY SY H.absoluteFormsY))]
   [PreservesFiniteColimits (NativeTensorProjectionMaps.tensorY SY.regular (AnalyticAbsoluteDeRhamSources.forms p K B Y PY SY H.absoluteFormsY))]
-  [ExactCochainUnit (NativeRestrictionCohomologyMaps.restrictX (AnalyticAbsoluteDeRhamSources.constantK p K B X PX) (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q) (ax (E := E) (Q := Q) (H := H)))]
+
+/-- Restriction of scalars of modules from the inverse image of `O_Y` to the constant field `K` is
+exact. -/
+public def_wanted originalRestrictionExact (h : RelativeScope p B X Y f) :
+    ExactCochainUnit (NativeRestrictionCohomologyMaps.restrictX (AnalyticAbsoluteDeRhamSources.constantK p K B X PX) (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q) (ax (E := E) (Q := Q) (H := H)))
+
+/-- Tensoring with the inverse image of the absolute one-forms of `Y` is exact: they are locally
+free, since `Y` is smooth (part of `RelativeScope`). -/
+public def_wanted baseFormsTensorExact (h : RelativeScope p B X Y f) :
+    ExactCochainUnit (NativeTensorProjectionMaps.tensorX Q.functor SY.regular (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q) (inverseUnit (J := proTopology p Y.left PY) (T := proTopology p X.left PX) Q.functor SY.regular) (AnalyticAbsoluteDeRhamSources.forms p K B Y PY SY H.absoluteFormsY))
+
+variable [ExactCochainUnit (NativeRestrictionCohomologyMaps.restrictX (AnalyticAbsoluteDeRhamSources.constantK p K B X PX) (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q) (ax (E := E) (Q := Q) (H := H)))]
   [ExactCochainUnit (NativeTensorProjectionMaps.tensorX Q.functor SY.regular (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q) (inverseUnit (J := proTopology p Y.left PY) (T := proTopology p X.left PX) Q.functor SY.regular) (AnalyticAbsoluteDeRhamSources.forms p K B Y PY SY H.absoluteFormsY))]
 
 public def_wanted originalScalarRestrictionSquare (h : RelativeScope p B X Y f) :
