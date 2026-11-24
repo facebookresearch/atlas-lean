@@ -15,11 +15,14 @@ public import MathlibExt.AlgebraicGeometry.RubberModuliStackModels
 
 Signed contact ideals, pure node equations, combined automorphisms,
 Cartesian family reindexing, and marked-curve stabilization are fixed by
-the native models. The stable-range and balanced signed contact are the
-source conditions for epsilon. Virtual obstruction and Pixton comparison
-remain independent requests.
+the native models. The requested stack has as fibres the stable rubber
+families whose targets are framed fppf-locally on the base, including
+twisted targets, so the fibre groupoids satisfy descent. The stable-range
+and balanced signed contact are the source conditions for epsilon. Virtual
+obstruction and Pixton comparison remain independent requests.
 Source: JPPZ arXiv:1602.04705v2, Section0.2.4, printed p6;
-Jun Li arXiv:math/0009097v1 and math/0110113v1.
+Jun Li arXiv:math/0009097v1 and math/0110113v1;
+Marcus–Wise arXiv:1310.5981, Sections 2.1–2.2.
 -/
 
 set_option autoImplicit false
