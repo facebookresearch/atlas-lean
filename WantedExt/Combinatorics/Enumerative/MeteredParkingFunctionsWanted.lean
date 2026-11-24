@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Real.Sqrt
 public import MathlibExt.Combinatorics.Enumerative.MeteredParkingFunctions
+public import MathlibExt.Combinatorics.Enumerative.OneMeteredParkingFunctions
 public import MathlibExt.Combinatorics.Enumerative.ParkingFunction
 
 namespace MetaMathlibExt
@@ -186,23 +187,6 @@ Functions*, INTEGERS 25 (2025), Article A73, Corollary 4 (`integers-2025-A73-cor
 public theorem_wanted meteredParkingCount_one_diag {n : ℕ} (hn : 2 < n) :
     meteredParkingCount 1 n n =
       ∑ k ∈ Finset.range (n + 1), (n - 2) ^ (n - k) * (2 * n + 1 - k).choose k
-
-/-- **Binet formula for 1-metered parking functions.** Let $m, n$ be natural numbers with
-$m \le n + 1$ and $n > 2$. Then the number $\mathrm{mpf}_{m,n}(1)$ of $1$-metered
-$(m, n)$-parking functions satisfies, as real numbers,
-$$\mathrm{mpf}_{m,n}(1) = \frac{n(n + \sqrt{n^2-4}) - 2}{n(n + \sqrt{n^2-4}) - 4}
-\left(\frac{n + \sqrt{n^2-4}}{2}\right)^m +
-\frac{n(n - \sqrt{n^2-4}) - 2}{n(n - \sqrt{n^2-4}) - 4}
-\left(\frac{n - \sqrt{n^2-4}}{2}\right)^m.$$
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, Corollary 5 (`integers-2025-A73-cor-5`). -/
-public theorem_wanted meteredParkingCount_one_binet {m n : ℕ} (hm : m ≤ n + 1) (hn : 2 < n) :
-    (meteredParkingCount 1 m n : ℝ) =
-      (n * (n + Real.sqrt (n ^ 2 - 4)) - 2) / (n * (n + Real.sqrt (n ^ 2 - 4)) - 4) *
-          ((n + Real.sqrt (n ^ 2 - 4)) / 2) ^ m +
-        (n * (n - Real.sqrt (n ^ 2 - 4)) - 2) / (n * (n - Real.sqrt (n ^ 2 - 4)) - 4) *
-          ((n - Real.sqrt (n ^ 2 - 4)) / 2) ^ m
 
 /-- **1-metered parking functions with three cars.** For every natural number $n \ge 2$, the
 number of $1$-metered $(3, n)$-parking functions is $\mathrm{mpf}_{3,n}(1) = n^3 - 2n$.
