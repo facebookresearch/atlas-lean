@@ -822,3 +822,5 @@
 {"statement": "af_8c3b1f7cbd289256a6751243", "page": "NumberTheory/algebraic-number-theory/adeles-class-field-theory/idele-class-tate-cohomology-of-cyclic-extension", "replaced_by": "af_a13c3e0fa45ae5675c444f5f"}
 {"statement": "af_e50af38f5314c5fa51e48ec0", "page": "RepresentationTheory/reductive-groups-over-local-fields/smooth-representations-of-p-adic-gl-n-and-local-langlands", "replaced_by": "af_a82a54e2c8574485030acd39"}
 {"statement": "af_d53c84abb7efa0382fbd5838", "page": "RepresentationTheory/reductive-groups-over-local-fields/representations-of-u-p-q", "replaced_by": "af_d769e7a2226e34d99ae55aee"}
+{"statement": "af_d7889a5a58abc1d57679409f", "page": "RepresentationTheory/automorphic-representations/automorphic-representations-of-gl-n-and-unitary-groups", "replaced_by": "af_ac83704f8c354374553e39b8"}
+{"statement": "af_6b6ef5d9c85eaa3eafd15d91", "page": "RepresentationTheory/automorphic-representations/theta-correspondence-for-unitary-dual-pairs", "replaced_by": "af_6d2e09d54a6f4a9c2871e5df"}
