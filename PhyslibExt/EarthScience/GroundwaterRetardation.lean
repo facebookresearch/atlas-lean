@@ -68,7 +68,8 @@ namespace EarthScience
 
 /-- Retardation factor `R = 1 + rho_b * Kd / phi` for saturated
 transport with linear sorption: `phi` porosity, `rho_b` dry bulk
-density, `Kd` distribution coefficient. -/
+density, `Kd` distribution coefficient. With the convention `x / 0 = 0` it is `1` when
+`phi = 0`; the intended domain is `phi > 0`, `rho_b ≥ 0`, `Kd ≥ 0`. -/
 noncomputable def retardationFactor (phi rho_b Kd : ℝ) : ℝ :=
   1 + rho_b * Kd / phi
 
@@ -100,8 +101,8 @@ theorem total_storage_eq (phi rho_b Kd c : ℝ) :
   unfold totalStorage
   ring
 
-/-- Total storage equals `phi * R * c`: the dissolved storage `phi * c`
-scaled by the retardation factor. -/
+/-- For nonzero porosity `phi`, total storage equals `phi * R * c`: the
+dissolved storage `phi * c` scaled by the retardation factor. -/
 theorem total_storage_eq_retardation (phi rho_b Kd c : ℝ) (hphi : phi ≠ 0) :
     totalStorage phi rho_b Kd c = phi * retardationFactor phi rho_b Kd * c := by
   unfold totalStorage retardationFactor
@@ -157,7 +158,8 @@ theorem retardation_eq_one_of_rho_b_eq_zero (phi Kd : ℝ) (hphi : 0 < phi) :
   field_simp
   ring
 
-/-- Retardation is at least `1` for admissible parameters. -/
+/-- Retardation is at least `1` for admissible parameters `phi > 0`,
+`rho_b ≥ 0` and `Kd ≥ 0`. -/
 theorem one_le_retardationFactor {phi rho_b Kd : ℝ} (hphi : 0 < phi)
     (hrho : 0 ≤ rho_b) (hKd : 0 ≤ Kd) :
     1 ≤ retardationFactor phi rho_b Kd := by
@@ -165,7 +167,8 @@ theorem one_le_retardationFactor {phi rho_b Kd : ℝ} (hphi : 0 < phi)
   have h : 0 ≤ rho_b * Kd / phi := div_nonneg (mul_nonneg hrho hKd) (le_of_lt hphi)
   exact le_add_of_nonneg_right h
 
-/-- Retardation is positive for admissible parameters. -/
+/-- Retardation is positive for admissible parameters `phi > 0`,
+`rho_b ≥ 0` and `Kd ≥ 0`. -/
 theorem retardationFactor_pos {phi rho_b Kd : ℝ} (hphi : 0 < phi)
     (hrho : 0 ≤ rho_b) (hKd : 0 ≤ Kd) :
     0 < retardationFactor phi rho_b Kd := by

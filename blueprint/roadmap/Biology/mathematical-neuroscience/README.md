@@ -1,0 +1,19 @@
+# Mathematical neuroscience
+
+Models of excitable membranes and neurons: the Nernst potential and passive cable theory, the Hodgkin–Huxley and FitzHugh–Nagumo equations, integrate-and-fire neurons and Wilson–Cowan models of neural populations. Also coupled biological oscillators and their synchronization, Hopfield and other attractor networks, neural field models, neural coding, and first-passage times of neuron models.
+
+- [Nernst potential and the steady-state cable equation](nernst-potential-and-the-steady-state-cable-equa/README.md)
+- [Time-dependent passive cable equation](time-dependent-passive-cable-equation/README.md)
+- [Hodgkin–Huxley model](hodgkin-huxley-model/README.md)
+- [Hodgkin–Huxley equilibria under an applied current](hodgkin-huxley-equilibria-under-an-applied-curre/README.md)
+- [FitzHugh–Nagumo model](fitzhugh-nagumo-model/README.md)
+- [Leaky integrate-and-fire neuron](leaky-integrate-and-fire-neuron/README.md)
+- [Wilson–Cowan neural population model](wilson-cowan-neural-population-model/README.md)
+- [Coupled biological oscillators](coupled-oscillators/README.md)
+- [Hopfield networks](hopfield-networks/README.md)
+- [Excitable membrane models](excitable-membrane-models/README.md)
+- [Cable theory of dendrites](cable-theory-of-dendrites/README.md)
+- [First-passage times of neuron models](neuronal-first-passage-times/README.md)
+- [Neural field models](neural-field-models/README.md)
+- [Neural coding](neural-coding/README.md)
+- [Oja's rule extracts the principal component](ojas-rule-extracts-the-principal-component-oja-1982-oja-karhunen-1985.md)

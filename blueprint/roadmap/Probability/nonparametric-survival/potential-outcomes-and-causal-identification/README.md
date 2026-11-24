@@ -60,6 +60,13 @@
 - [Collapsibility of effect measures without confounding](collapsibility-odds-ratio-non-collapsibility-without-confounding.md)
 - [Natural direct and indirect effects: the mediation formula](natural-direct-and-indirect-effects-mediation-formula.md)
 
+## Truncated endpoints at a horizon
+
+- [Event time truncated at a horizon](truncated-endpoint.md)
+- [An event time at or before the horizon is its own truncated endpoint](truncated-endpoint-eq-of-le.md)
+- [An event time at or beyond the horizon truncates to the horizon](truncated-endpoint-eq-of-ge.md)
+- [Truncation changes event times beyond the horizon](truncation-changes-value.md)
+
 ## Related topics
 
 - [Causal Bayesian networks](../../../ComputerScience/machine-learning/probabilistic-graphical-models/causal-bayesian-networks/README.md):

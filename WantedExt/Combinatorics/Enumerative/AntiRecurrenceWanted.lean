@@ -13,7 +13,7 @@ public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Algebra.Order.Group.Nat
 public import Mathlib.Data.Int.Basic
 public import Mathlib.Data.Nat.ModEq
-public import MathlibExt.Combinatorics.Enumerative.AntiBonacci
+public import MathlibExt.Combinatorics.Enumerative.AntiRecurrenceGaps
 public import MathlibExt.Combinatorics.Words.Automatic
 public import WantedExt.Combinatorics.Enumerative.WalnutOeisProblemsWanted
 
@@ -34,22 +34,6 @@ and anti-Tribonacci numbers `antiFibonacciC` and `antiTribonacciD` of `WalnutOei
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Non-anti-recurrence numbers.** Let $a = (a_1, \dots, a_k)$ be a linear form with natural
-number coefficients. Its non-anti-recurrence numbers $B_1, B_2, \dots$ are produced in blocks of
-$k$ by the mex rule: for $n \ge 1$, each of $B_{(n-1)k+1}, \dots, B_{nk}$ in turn is the least
-positive integer not among $B_1, \dots, B_{(n-1)k}$, the anti-recurrence numbers
-$A_1, \dots, A_{n-1}$ and the earlier entries of its block, and then
-$A_n = a_1 B_{(n-1)k+1} + \dots + a_k B_{nk}$. For $k = 2$ the subsequences $B^1_n = B_{2n-1}$
-and $B^2_n = B_{2n}$ are the paper's $B^1$ and $B^2$.
-
-By Lemma 2 of the source, for a positive form with $k > 1$ the numbers $B_m$ are the positive
-integers that are not anti-recurrence numbers, listed in increasing order.
-
-Source: Robbert Fokkink and Gandhar Joshi, *Anti-Recurrence Sequences*, INTEGERS 26 (2026),
-Article A24, Section 2 (definition of anti-recurrence sequences). -/
-def antiRecurrenceComplement (a : List ℕ) (m : ℕ) : ℕ :=
-  (antiRecurrenceState a ((m - 1) / a.length + 1)).1.getD ((m - 1) % a.length) 0
 
 /-- **First anti-Fibonacci anti-recurrence numbers.** The anti-recurrence numbers
 $A_1, A_2, A_3, A_4$ of the linear form $(1, 1)$ are $3, 9, 13, 18$, and the first four
@@ -96,29 +80,6 @@ theorem antiRecurrence_antiTribonacci_small :
     (List.range 4).map (fun n => antiRecurrence [1, 1, 1] (n + 1)) = [6, 16, 27, 36] ∧
       (List.range 4).map (fun n => antiTribonacciD (n + 1)) = [6, 16, 27, 36] := by
   decide +kernel
-
-/-- **Gaps between successive anti-recurrence numbers.** Let $a = (a_1, \dots, a_k)$ be a linear
-form with positive integer coefficients and $k > 1$, let $\tau = a_1 + \dots + a_k$ be its trace,
-and let $A_n$ and $B_m$ be the anti-recurrence and non-anti-recurrence numbers of $a$; for
-$m \ge 1$, block $m$ consists of $B_{(m-1)k+1}, \dots, B_{mk}$, and it is an interval when
-$B_{mk} = B_{(m-1)k+1} + k - 1$. Then for every $n \ge 1$ we have $A_{n+1} \ge A_n + k\tau$.
-Equality holds if $B_{(n-1)k+1+j} = B_{(n-1)k+1} + j$ for every $j$ with $0 \le j < 2k$, that
-is, if $B_{(n-1)k+1}, \dots, B_{(n+1)k}$ are consecutive integers. The inequality is strict if
-exactly one of the blocks $n$ and $n + 1$ is an interval.
-
-Source: Robbert Fokkink and Gandhar Joshi, *Anti-Recurrence Sequences*, INTEGERS 26 (2026),
-Article A24, Lemma 1 (`integers-2026-A24-lem-1`). -/
-public theorem_wanted antiRecurrence_add_length_mul_sum_le (a : List ℕ) (ha : ∀ x ∈ a, 0 < x)
-    (hk : 1 < a.length) {n : ℕ} (hn : 1 ≤ n) :
-    antiRecurrence a n + a.length * a.sum ≤ antiRecurrence a (n + 1) ∧
-      ((∀ j < 2 * a.length, antiRecurrenceComplement a ((n - 1) * a.length + j + 1) =
-          antiRecurrenceComplement a ((n - 1) * a.length + 1) + j) →
-        antiRecurrence a (n + 1) = antiRecurrence a n + a.length * a.sum) ∧
-      (¬ (antiRecurrenceComplement a (n * a.length) =
-            antiRecurrenceComplement a ((n - 1) * a.length + 1) + (a.length - 1) ↔
-          antiRecurrenceComplement a ((n + 1) * a.length) =
-            antiRecurrenceComplement a (n * a.length + 1) + (a.length - 1)) →
-        antiRecurrence a n + a.length * a.sum < antiRecurrence a (n + 1))
 
 /-- **Characterization of anti-recurrence sequences.** Let $a = (a_1, \dots, a_k)$ be a linear
 form with positive integer coefficients and $k > 1$, with anti-recurrence numbers

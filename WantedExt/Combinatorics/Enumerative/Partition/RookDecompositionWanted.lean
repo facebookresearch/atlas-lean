@@ -27,7 +27,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Asymptotics.AsymptoticEquivalent
-public import MathlibExt.Combinatorics.Enumerative.Partition.RookDecomposition
+public import MathlibExt.Combinatorics.Enumerative.Partition.RookPeriodicity
 public import MathlibExt.Analysis.SpecialFunctions.QPochhammer
 
 namespace MetaMathlibExt
@@ -112,16 +112,6 @@ public theorem_wanted maxRookPartitionCount_three_formula (m : ℕ) (a : Fin 3)
     (h : 9 < 3 * m + (a : ℕ)) :
     (maxRookPartitionCount 3 (3 * m + (a : ℕ)) : ℤ) =
       6 * (m : ℤ) ^ 2 + ![-15, -11, -7] a * m + ![7, 2, -1] a
-
-/-- **Periodicity of $R_3(n)$ modulo $p$.** Let $R_3(n)$ be the number of partitions of $n$
-with max-rook number $3$. For all natural numbers $p \ge 2$ and $n > 9$,
-$R_3(n + 3p) \equiv R_3(n) \pmod{p}$.
-
-Source: N. Guru Sharan, *Rook Decomposition of the Partition Function*,
-Journal of Integer Sequences 29 (2026), Article 26.2.6, Theorem 6, second part
-(`jis-2026-26.2.6-thm-6`). -/
-public theorem_wanted maxRookPartitionCount_three_modEq (p n : ℕ) (hp : 2 ≤ p) (hn : 9 < n) :
-    maxRookPartitionCount 3 (n + 3 * p) ≡ maxRookPartitionCount 3 n [MOD p]
 
 /-- **Asymptotic growth of $R_3(n)$.** Let $R_3(n)$ be the number of partitions of $n$ with
 max-rook number $3$. Then $R_3(n) \sim \frac{2}{3} n^2$ as $n \to \infty$.

@@ -21,7 +21,7 @@ problem", ACM SIGDA Newsletter 5 (1975), 31-36, doi:10.1145/1061425.1061430.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Computability.Complexity.Karp.Color
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
