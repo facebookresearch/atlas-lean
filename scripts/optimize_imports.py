@@ -349,11 +349,11 @@ def _owned_child_exited_without_reaping(pid: int, observation_timeout: float = 1
     return states[0][0] in {"Z", "X"}
 
 
-def _owned_group_only_has_zombies(pid: int) -> bool:
-    """Confirm the unreaped leader and every group member have exited."""
+def _owned_group_only_has_zombies(pid: int, *, require_leader: bool = True) -> bool:
+    """Check for live group members, optionally requiring the unreaped leader as evidence."""
     result = subprocess.run(["ps", "-A", "-o", "pid=,pgid=,stat="], capture_output=True,
                             text=True, timeout=1.0, check=False)
-    if result.returncode != 0 or result.stderr.strip():
+    if result.returncode != 0 or result.stderr.strip() or not result.stdout.strip():
         return False
     leader_present = False
     for line in result.stdout.splitlines():
@@ -366,7 +366,26 @@ def _owned_group_only_has_zombies(pid: int) -> bool:
         if fields[2][0] not in {"Z", "X"}:
             return False
         leader_present |= member == pid
-    return leader_present
+    return leader_present or not require_leader
+
+
+def _wait_for_group_exit(pgid: int) -> None:
+    """Wait for SIGKILL to take effect, even when orphaned zombies await reaping."""
+    deadline = time.monotonic() + 10
+    while True:
+        time.sleep(0.02)
+        try:
+            os.kill(-pgid, 0)
+        except ProcessLookupError:
+            return
+        except PermissionError:
+            # Darwin can report EPERM when the group contains only zombies.
+            if sys.platform != "darwin":
+                raise
+        if _owned_group_only_has_zombies(pgid, require_leader=False):
+            return
+        if time.monotonic() >= deadline:
+            raise RuntimeError(f"Could not confirm process group {pgid} exited after SIGKILL")
 
 
 def run_command(argv: list[str], cwd: Path, label: Path,
@@ -443,7 +462,7 @@ def run_command(argv: list[str], cwd: Path, label: Path,
             if signal.SIGKILL not in group_signals_attempted:
                 remaining_group_killed = signal_owned_group(signal.SIGKILL)
             if remaining_group_killed:
-                time.sleep(0.02)
+                _wait_for_group_exit(process_group)
     result: dict[str, object] = {
         "argv": argv, "cwd": str(cwd), "exit_code": code, "timed_out": timed_out,
         "elapsed_seconds": time.monotonic() - started,
