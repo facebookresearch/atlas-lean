@@ -824,3 +824,4 @@
 {"statement": "af_d53c84abb7efa0382fbd5838", "page": "RepresentationTheory/reductive-groups-over-local-fields/representations-of-u-p-q", "replaced_by": "af_d769e7a2226e34d99ae55aee"}
 {"statement": "af_d7889a5a58abc1d57679409f", "page": "RepresentationTheory/automorphic-representations/automorphic-representations-of-gl-n-and-unitary-groups", "replaced_by": "af_ac83704f8c354374553e39b8"}
 {"statement": "af_6b6ef5d9c85eaa3eafd15d91", "page": "RepresentationTheory/automorphic-representations/theta-correspondence-for-unitary-dual-pairs", "replaced_by": "af_6d2e09d54a6f4a9c2871e5df"}
+{"page": "Combinatorics/combinatorics-on-words/finite-words/consecutive-patterns-in-words/size-choose-two-pow", "to": "NumberTheory/special-numbers/binomial-coefficients/size-choose-two-pow", "article_id": "af_aaaf84a0b68bcebbef6f9529"}

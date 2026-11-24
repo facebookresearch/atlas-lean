@@ -11991,7 +11991,7 @@
   "MathlibExt/NumberTheory/SierpinskiRieselRepdigits": {"to": "NumberTheory/primes-primality/special-primes", "title": "Sierpiński and Riesel numbers"},
   "MathlibExt/NumberTheory/SignedBinarySum": {"to": "NumberTheory/digits-numeration/numeration-automatic", "title": "Signed binary representations"},
   "MathlibExt/NumberTheory/SimsekNumber": {"to": "Combinatorics/stirling-bell-eulerian/generalized-stirling-numbers", "title": "Simsek numbers"},
-  "MathlibExt/NumberTheory/SizeChooseTwoPow": {"to": "Combinatorics/combinatorics-on-words/finite-words", "title": "Consecutive patterns in words"},
+  "MathlibExt/NumberTheory/SizeChooseTwoPow": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Bit length of central binomial coefficients at powers of two"},
   "MathlibExt/NumberTheory/SlHurwitzNumbers": {"to": "NumberTheory/algebraic-number-theory/quadratic-fields", "title": "Class number congruences for imaginary quadratic fields"},
   "MathlibExt/NumberTheory/SocialistPrime": {"to": "NumberTheory/primes-primality/special-primes", "title": "Socialist primes"},
   "MathlibExt/NumberTheory/SophieGermain": {"to": "NumberTheory/diophantine-equations/higher-degree-equations", "title": "Sophie Germain's theorem"},
