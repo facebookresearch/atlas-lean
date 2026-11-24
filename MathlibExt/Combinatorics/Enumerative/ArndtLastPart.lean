@@ -294,9 +294,9 @@ private lemma parts_injective (m : ℕ) : Function.Injective (parts m) := by
 -- An odd-length composition ends in [m]. An even-length composition ends in [m + k + 1, m].
 -- In both cases the remaining parts form a sequence of complete descending pairs.
 private def endings (n m : ℕ) : Finset Ending :=
-  (pairs (n - m)).disjSum (excess (n - 2 * m - 1))
+  (pairs (n - m)).disjSum (if 2 * m + 1 ≤ n then excess (n - 2 * m - 1) else ∅)
 
-private lemma mem_endings {n m : ℕ} (hm : 0 < m) (hn : 2 * m + 1 ≤ n) (e : Ending) :
+private lemma mem_endings {n m : ℕ} (hm : 0 < m) (hn : m ≤ n) (e : Ending) :
     e ∈ endings n m ↔ (parts m e).sum = n ∧ valid m (parts m e) := by
   cases e with
   | inl ps =>
@@ -304,10 +304,10 @@ private lemma mem_endings {n m : ℕ} (hm : 0 < m) (hn : 2 * m + 1 ≤ n) (e : E
     omega
   | inr p =>
     obtain ⟨k, ps⟩ := p
-    simp [endings, parts, mem_excess, sum_unpack, valid_unpack hm]
-    omega
+    by_cases h : 2 * m + 1 ≤ n <;>
+      simp [endings, h, parts, mem_excess, sum_unpack, valid_unpack hm] <;> omega
 
-private lemma count_eq_card {n m : ℕ} (hm : 0 < m) (hn : 2 * m + 1 ≤ n) :
+private lemma count_eq_card {n m : ℕ} (hm : 0 < m) (hn : m ≤ n) :
     arndtLastPartCount n m = (endings n m).card := by
   let index := fun e : Ending => (parts m e).length - 1
   have bounded : (endings n m : Set Ending).MapsTo index (Finset.range n) := by
@@ -353,12 +353,37 @@ private lemma count_eq_card {n m : ℕ} (hm : 0 < m) (hn : 2 * m + 1 ≤ n) :
       ⟨(mem_endings hm hn _).mpr (hc ▸ hf), by simp [index, hc]⟩
     exact ⟨c, hmem, List.ofFn_injective ((ofFn_tuple c hmem).trans hc)⟩
 
+end arndtLastPartCount_isEquivalent
+
+open arndtLastPartCount_isEquivalent in
+/-- The contributions from a terminal singleton and a terminal descending pair, respectively.
+At their minimum weights the singleton and the pair each have just the empty paired prefix. -/
+theorem arndtLastPart_atMost_atLeast.count_by_terminal_block {n m : ℕ}
+    (hm : 0 < m) (hn : m ≤ n) :
+    arndtLastPartCount n m =
+      (if n = m then 1 else Nat.fib (n - m - 2)) +
+        (if n = 2 * m + 1 then 1 else Nat.fib (n - 2 * m - 1)) := by
+  rw [count_eq_card hm hn, endings, Finset.card_disjSum]
+  congr 1
+  · generalize hd : n - m = d
+    match d with
+    | 0 => simp [pairs, show n = m by omega]
+    | 1 | 2 => simp [pairs, show n ≠ m by omega]
+    | d + 3 => simp [card_pairs, show n ≠ m by omega]
+  · by_cases h : 2 * m + 1 ≤ n
+    · simp only [h, ↓reduceIte]
+      generalize hd : n - 2 * m - 1 = d
+      cases d with
+      | zero => simp [excess, show n = 2 * m + 1 by omega]
+      | succ d => simp [card_excess, show n ≠ 2 * m + 1 by omega]
+    · simp [h, show n ≠ 2 * m + 1 by omega, show n - 2 * m - 1 = 0 by omega]
+
+namespace arndtLastPartCount_isEquivalent
+
 private lemma count_large {n m : ℕ} (hm : 0 < m) (hn : 2 * m + 3 ≤ n) :
     arndtLastPartCount n m = Nat.fib (n - (m + 2)) + Nat.fib (n - (2 * m + 1)) := by
-  rw [count_eq_card hm (by omega), endings, Finset.card_disjSum,
-    show n - m = (n - m - 3) + 3 by omega, card_pairs,
-    show n - 2 * m - 1 = (n - 2 * m - 2) + 1 by omega, card_excess]
-  congr 2 <;> omega
+  simp [arndtLastPart_atMost_atLeast.count_by_terminal_block hm (show m ≤ n by omega),
+    show n ≠ m by omega, show n ≠ 2 * m + 1 by omega, Nat.sub_sub]
 
 open Filter Asymptotics
 open scoped Topology goldenRatio

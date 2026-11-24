@@ -70,7 +70,7 @@ Setting $c_k = 0$ for $k > N$ lets the trace recurrence be stated uniformly for 
 noncomputable def charpolyDescendingCoeff {R : Type*} [CommRing R]
     (A : Matrix n n R) (k : ℕ) : R :=
   if k ≤ Fintype.card n then
-    Polynomial.coeff A.charpoly (Fintype.card n - k)
+    A.charpoly.coeff (Fintype.card n - k)
   else
     0
 

@@ -43,7 +43,7 @@ namespace MathlibExt.Analysis.Complex.InjectiveDiskMapExtremalDerivWanted
 
 /-- **Open unit disc.** The open unit disc is the set of complex numbers $z$ with $|z| < 1$, the
 open ball of radius $1$ about $0$ in $\mathbb{C}$. -/
-abbrev unitDisk : Set ℂ := Metric.ball (0 : ℂ) 1
+noncomputable abbrev unitDisk : Set ℂ := Metric.ball (0 : ℂ) 1
 
 /-- **Admissible maps into the unit disc.** For a set $\Omega \subseteq \mathbb{C}$, the
 admissible family of $\Omega$ is the set of functions $f : \mathbb{C} \to \mathbb{C}$ that are

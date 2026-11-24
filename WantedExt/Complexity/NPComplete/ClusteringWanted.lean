@@ -21,7 +21,7 @@ Computer Science 38 (1985), 293-306, doi:10.1016/0304-3975(85)90224-5.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 

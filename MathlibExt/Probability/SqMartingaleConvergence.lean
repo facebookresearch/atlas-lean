@@ -379,7 +379,7 @@ private theorem exists_ae_tendsto_of_forall_quadVar_le [IsProbabilityMeasure μ]
     exact h1.trans h2
   obtain ⟨R, hR⟩ := hg_L1
   have hg_conv : ∀ᵐ ω ∂μ, ∃ c, Tendsto (fun n => g n ω) atTop (𝓝 c) :=
-    hg_mart.submartingale.exists_ae_tendsto_of_bdd hR
+    hg_mart.submartingale.exists_ae_tendsto_of_bdd ((iSup_le hR).trans_lt ENNReal.coe_lt_top)
   filter_upwards [hg_conv] with ω hω hbnd
   have hτ_top : τ ω = ⊤ := by
     rw [hτ_def]

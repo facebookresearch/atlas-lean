@@ -10,28 +10,14 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Choose.Central
-public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 public import MathlibExt.Data.Set.Density
+public import MathlibExt.NumberTheory.Padics.FactorialQuotient
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
 open Nat Filter Topology
-
-/-- **Valuation of a product of consecutive integers.** Let $m$ and $k$ be natural numbers and
-$p$ a prime, and write $v_p(n)$ for the exponent of $p$ in a positive integer $n$. Then
-$v_p\bigl((m+k)!/m!\bigr) \le v_p(k!) + \max \{ v_p(m + i) : 1 \le i \le k \}$, where the
-maximum is $0$ when $k = 0$.
-
-The quotient $(m+k)!/m! = (m+1) \cdots (m+k)$ is an integer. Unlike the source, the inequality
-is stated also for $m = 0$ and $k = 0$.
-
-Source: Carl Pomerance, *Remarks on the Middle Binomial Coefficient*, INTEGERS 26 (2026),
-Article A47, Lemma 3 (`integers-2026-A47-lem-3`). -/
-public theorem_wanted padicValNat_factorial_div_factorial_le (m k p : ℕ) (hp : p.Prime) :
-    padicValNat p ((m + k)! / m !) ≤
-      padicValNat p k ! + (Finset.Icc 1 k).sup fun i => padicValNat p (m + i)
 
 /-- **Valuations of the middle binomial coefficient on a set of density one.** Write $v_p(n)$ for
 the exponent of a prime $p$ in a positive integer $n$, and for $m \ge 2$ let

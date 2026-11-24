@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.Polynomial.Roots
-public import Mathlib.Analysis.Complex.Basic
+public import Mathlib.Analysis.Complex.Norm
 public import Mathlib.FieldTheory.Minpoly.Basic
 
 namespace MetaMathlibExt

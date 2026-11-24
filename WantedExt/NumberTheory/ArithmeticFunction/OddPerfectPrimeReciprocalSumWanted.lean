@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.NumberTheory.PrimeCounting
 public import MathlibExt.Analysis.SpecialFunctions.Log.Zelinsky
+public import MathlibExt.NumberTheory.ArithmeticFunction.AbundancySupDivIndex
 public import MathlibExt.NumberTheory.ArithmeticFunction.OddPerfectPrimeProduct
 public import MathlibExt.NumberTheory.EulerPrime
 public import WantedExt.NumberTheory.PrimitiveNondeficientWanted
@@ -109,24 +110,6 @@ public theorem_wanted tsum_log_sq_div_sq_sub_one_primes_ge_le
         Real.log (((p : ℕ) : ℝ) ^ 2 / (((p : ℕ) : ℝ) ^ 2 - 1)) ≤
       1 / ((q : ℝ) * Real.log q) * (1 + 2 * Real.log (Real.log q) / Real.log q) +
         4 / (q : ℝ) ^ 3
-
-/-- **Suryanarayana's bound for $H(n)/h(n)$ with one odd exponent.** For a positive integer
-$n$ write $h(n) = \sigma(n)/n$ for its abundancy index, where $\sigma(n)$ is the sum of the
-divisors of $n$, and $H(n) = \prod_{p \mid n} p/(p-1)$ for the product over its prime divisors.
-Let $n$ be odd and let $j$ be a prime divisor of $n$ whose exponent in $n$ is odd, while the
-exponent of every other prime divisor of $n$ is even. Then
-$$\frac{H(n)}{h(n)} \le \frac{j^2}{j^2 - 1} \prod_{p \mid n,\ p \ne j} \frac{p^3}{p^3 - 1},$$
-where $p$ runs over the prime divisors of $n$ other than $j$.
-
-Source: Joshua Zelinsky, *The Sum of the Reciprocals of the Prime Divisors of an Odd
-Perfect or Odd Primitive Non-deficient Number*, INTEGERS 25 (2025), Article A59,
-Lemma 9 (`integers-2025-A59-lem-9`). -/
-public theorem_wanted abundancySup_div_abundancyIndex_le_of_single_odd_exponent
-    (n j : ℕ) (hn : Odd n) (hj : j ∈ n.primeFactors) (hjodd : Odd (n.factorization j))
-    (heven : ∀ p ∈ n.primeFactors, p ≠ j → Even (n.factorization p)) :
-    abundancySup n / abundancyIndex n ≤
-      (j : ℚ) ^ 2 / ((j : ℚ) ^ 2 - 1) *
-        ∏ p ∈ n.primeFactors.erase j, (p : ℚ) ^ 3 / ((p : ℚ) ^ 3 - 1)
 
 /-- **Odd perfect numbers divisible by 165 contain 5 exactly once.** If $n$ is an odd perfect
 number divisible by $165$, then $5$ divides $n$ exactly once: $5 \mid n$ but $25 \nmid n$.

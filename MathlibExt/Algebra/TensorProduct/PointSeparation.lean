@@ -24,6 +24,7 @@ public import Mathlib.RingTheory.TensorProduct.Maps
 public import Mathlib.Algebra.Algebra.Pi
 import Mathlib.RingTheory.Flat.Basic
 import Mathlib.LinearAlgebra.Basis.VectorSpace
+import Mathlib.LinearAlgebra.TensorProduct.Basis
 
 /-!
 # Separation of tensors by pairs of algebraic points

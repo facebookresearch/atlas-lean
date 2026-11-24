@@ -149,22 +149,24 @@ noncomputable def lambdaHat (z : Fin m → ℝ) : ℝ :=
   (∑ k, z k ^ 2) / m
 
 /-- The genomic-control statistic of gene `j` with the estimated factor: `S_j / λ̂ = z_j² / λ̂`.
-When all scores vanish, `λ̂ = 0` and Lean's convention `x / 0 = 0` makes the statistic `0`. -/
+The intended domain is a score vector that is not identically zero, where `λ̂ > 0`. When all
+scores vanish, `λ̂ = 0` and the convention `x / 0 = 0` makes the statistic `0`. -/
 noncomputable def gcStat (z : Fin m → ℝ) (j : Fin m) : ℝ :=
   z j ^ 2 / lambdaHat z
 
-/-- The estimate `λ̂` is nonnegative. -/
+/-- The estimate `λ̂` is nonnegative (for `m = 0` it is `0`). -/
 theorem lambdaHat_nonneg (z : Fin m → ℝ) : 0 ≤ lambdaHat z := by
   unfold lambdaHat
   positivity
 
-/-- The corrected statistic is nonnegative. -/
+/-- The corrected statistic is nonnegative; it is `0` when all scores vanish (`x / 0 = 0`). -/
 theorem gcStat_nonneg (z : Fin m → ℝ) (j : Fin m) : 0 ≤ gcStat z j := by
   unfold gcStat
   have := lambdaHat_nonneg z
   positivity
 
-/-- `S_j / λ̂ = m z_j² / ∑ₖ zₖ²`: gene `j` enters its own denominator. -/
+/-- `S_j / λ̂ = m z_j² / ∑ₖ zₖ²` for every score vector: gene `j` enters its own denominator.
+When all scores vanish both sides are `0`, by the convention `x / 0 = 0`. -/
 theorem gcStat_eq (z : Fin m → ℝ) (j : Fin m) :
     gcStat z j = m * z j ^ 2 / ∑ k, z k ^ 2 := by
   rw [gcStat, lambdaHat, div_div_eq_mul_div, mul_comm]
@@ -172,7 +174,8 @@ theorem gcStat_eq (z : Fin m → ℝ) (j : Fin m) :
 /-! ### Deterministic coupling -/
 
 /-- **Self-coupling bound.** Because `z_j²` is one of the summands of `m λ̂`, the corrected
-statistic never exceeds the number of genes: `S_j / λ̂ ≤ m`, for every score vector. -/
+statistic never exceeds the number of genes: `S_j / λ̂ ≤ m`, for every score vector (when all
+scores vanish it is `0`, by the convention `x / 0 = 0`). -/
 theorem gcStat_le_card (z : Fin m → ℝ) (j : Fin m) : gcStat z j ≤ m := by
   rw [gcStat_eq]
   rcases (Finset.sum_nonneg fun k _ => sq_nonneg (z k) :
@@ -183,16 +186,19 @@ theorem gcStat_le_card (z : Fin m → ℝ) (j : Fin m) : gcStat z j ≤ m := by
     exact mul_le_mul_of_nonneg_left
       (Finset.single_le_sum (fun k _ => sq_nonneg (z k)) (Finset.mem_univ j)) (Nat.cast_nonneg m)
 
-/-- **Constant sum.** Whenever some score is nonzero, the corrected statistics of all genes sum
-to exactly `m`: `∑ⱼ S_j / λ̂ = m`. The family lives on a simplex, so a large corrected statistic
-for one gene forces small ones elsewhere. -/
+/-- **With some score nonzero, the λ̂-corrected statistics sum to m.** Whenever some score is
+nonzero, the corrected statistics of all genes sum to exactly `m`: `∑ⱼ S_j / λ̂ = m`. The family
+lives on a simplex, so a large corrected statistic for one gene forces small ones elsewhere. When
+all scores vanish, every statistic is `0` by the convention `x / 0 = 0`, and the sum is `0`. -/
 theorem sum_gcStat (z : Fin m → ℝ) (h : ∑ k, z k ^ 2 ≠ 0) : ∑ j, gcStat z j = m := by
   simp_rw [gcStat_eq]
   rw [← Finset.sum_div, ← Finset.mul_sum, mul_div_assoc, div_self h, mul_one]
 
-/-- **Cross-coupling.** Raising the statistic of a different gene `k ≠ j` strictly lowers the
-corrected statistic of gene `j` (when `z_j ≠ 0`): a strong non-null signal at `k` inflates `λ̂`
-and makes every other gene more conservative. -/
+/-- **Raising another gene's statistic lowers Tⱼ when zⱼ ≠ 0.** Raising the statistic of a
+different gene `k ≠ j` (replacing `z_k` by any `t` with `z_k² < t²`) strictly lowers the
+corrected statistic of gene `j` when `z_j ≠ 0`: a strong non-null signal at `k` inflates `λ̂` and
+makes the test of every other gene with a nonzero score strictly more conservative. A gene with
+zero score keeps the statistic `0`. -/
 theorem gcStat_update_lt (z : Fin m → ℝ) {j k : Fin m} (hjk : k ≠ j) (hj : z j ≠ 0) {t : ℝ}
     (ht : z k ^ 2 < t ^ 2) : gcStat (Function.update z k t) j < gcStat z j := by
   rw [gcStat_eq, gcStat_eq, Function.update_of_ne hjk.symm]
@@ -248,7 +254,8 @@ theorem ofReal_chiSqOneTailReal (c : ℝ) : ENNReal.ofReal (chiSqOneTailReal c) 
 variable {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
 
 /-- The corrected statistics `S_j / λ̂` of a family of random scores `Z : Fin m → Ω → ℝ`,
-with `λ̂` computed on the same sample point from all genes. -/
+with `λ̂` computed on the same sample point from all genes. At a sample point where all scores
+vanish the statistic is `0`, by the convention `x / 0 = 0`. -/
 noncomputable def gcStatRV (Z : Fin m → Ω → ℝ) : Fin m → Ω → ℝ :=
   fun j ω => gcStat (fun k => Z k ω) j
 
@@ -274,32 +281,35 @@ theorem measure_lt_gcStatRV_lt_chiSqOneTail (Z : Fin m → Ω → ℝ) (j : Fin 
   rw [measure_lt_gcStatRV_eq_zero Z j hc]
   exact chiSqOneTail_pos ((Nat.cast_nonneg m).trans hc)
 
-/-- **True-`λ` calibration does not transfer to `λ̂`.** In T38's exact model
-(`CommonInflationModel`: every null score is `𝒩(0, λ)`), dividing by the true `λ` is calibrated
-at every threshold, while dividing by the mean estimate `λ̂` of the same scores is not
-calibrated at any threshold `c ≥ m`. No independence or other dependence assumption is needed
-for either half. -/
+/-- **Calibrated with the true λ, strictly conservative with λ̂ at c ≥ m.** In the
+common-inflation model (`CommonInflationModel`: every null score is `𝒩(0, λ)`, `λ > 0`),
+dividing by the true `λ` is calibrated at every threshold, while dividing by the mean estimate
+`λ̂` of the same scores is strictly conservative at every threshold `c ≥ m`:
+`P(S_j / λ̂ > c) < P(χ²₁ > c)`. No independence or other dependence assumption is needed for
+either half. -/
 theorem calibrated_true_and_not_calibrated_estimated (G : CommonInflationModel P (Fin m))
     (j : Fin m) :
     (∀ c, P {ω | c < G.score j ω ^ 2 / G.lam} = chiSqOneTail c) ∧
       ∀ c, (m : ℝ) ≤ c → P {ω | c < gcStatRV G.score j ω} < chiSqOneTail c :=
   ⟨G.measure_reject_eq j, fun _ hc => measure_lt_gcStatRV_lt_chiSqOneTail _ j hc⟩
 
-/-- Exact `χ²₁` calibration of `S_j / λ̂` at every threshold is false for every law of the scores,
-in particular in T38's model. -/
+/-- Exact `χ²₁` calibration of `S_j / λ̂` at every threshold is false for every measure and all
+scores (it fails at `c = m`), in particular in the common-inflation model
+(`CommonInflationModel`). -/
 theorem not_forall_measure_lt_gcStatRV_eq (Z : Fin m → Ω → ℝ) (j : Fin m) :
     ¬ ∀ c, P {ω | c < gcStatRV Z j ω} = chiSqOneTail c := fun h =>
   (measure_lt_gcStatRV_lt_chiSqOneTail (P := P) Z j le_rfl).ne (h m)
 
 /-! ### Calibration of `S / λ̂` as an assumption -/
 
-/-- **Calibration of `S / λ̂` is an assumption on `S / λ̂` itself.** The estimated-`λ̂` family is a
-tail-calibrated family in the sense of `RareVariantInference.MultipleTesting` (reference tail
-`χ²₁`) exactly when every null corrected statistic is conservative against `χ²₁`:
-`P(S_i / λ̂ ≥ s) ≤ P(χ²₁ > s)` for all `s`. This is not implied by T38's true-`λ` model
-(`not_isTailCalibratedFamily_gcStatRV_two`), and it is impossible when every gene is null
-(`not_isTailCalibratedFamily_gcStatRV_univ`): it can hold only if some non-null genes inflate
-`λ̂`. -/
+/-- **The λ̂ family is tail-calibrated iff its null tails lie below χ²₁.** For measurable
+scores, the estimated-`λ̂` family is a tail-calibrated family in the sense of
+`RareVariantInference.MultipleTesting` (reference tail `χ²₁`) exactly when every null corrected
+statistic is conservative against `χ²₁`: `P(S_i / λ̂ ≥ s) ≤ P(χ²₁ > s)` for all `s`. This is not
+implied by the common-inflation model (`not_isTailCalibratedFamily_gcStatRV_two`), and under the
+global null it is impossible for a probability measure, `m ≥ 1` and scores almost surely not all
+zero (`not_isTailCalibratedFamily_gcStatRV_univ`): for such scores it can hold only if some gene
+is not a true null. -/
 theorem isTailCalibratedFamily_gcStatRV_iff {Z : Fin m → Ω → ℝ} (hZ : ∀ k, Measurable (Z k))
     (H0 : Finset (Fin m)) :
     MultipleTesting.IsTailCalibratedFamily P (gcStatRV Z) (fun _ => chiSqOneTailReal) H0 ↔
@@ -313,7 +323,8 @@ theorem isTailCalibratedFamily_gcStatRV_iff {Z : Fin m → Ω → ℝ} (hZ : ∀
 
 /-- **Bonferroni needs no dependence assumption.** Under the calibration assumption for
 `S / λ̂` at threshold `s`, the probability that some true null is rejected is at most
-`|H0| · P(χ²₁ > s)`, however strongly `λ̂` couples the statistics. -/
+`|H0| · P(χ²₁ > s)`, however strongly `λ̂` couples the statistics. The scores need not be
+measurable (`P` of a non-measurable set is its outer measure). -/
 theorem measure_exists_le_gcStatRV_le (Z : Fin m → Ω → ℝ) {H0 : Finset (Fin m)} {s : ℝ}
     (hcal : ∀ i ∈ H0, P {ω | s ≤ gcStatRV Z i ω} ≤ chiSqOneTail s) :
     P {ω | ∃ i ∈ H0, s ≤ gcStatRV Z i ω} ≤ H0.card * chiSqOneTail s := by
@@ -343,9 +354,11 @@ theorem lintegral_chiSqOneTail : ∫⁻ t in Set.Ioi 0, chiSqOneTail t = 1 := by
   simp only [sub_zero, NNReal.coe_one] at hv
   rw [hv, ENNReal.ofReal_one]
 
-/-- Under the calibration assumption for gene `j`, `E[S_j / λ̂] < 1 = E[χ²₁]`: the layer-cake
-integral of `P(T_j ≥ s)` stops at `s = m` (`gcStat_le_card`), while the `χ²₁` tail keeps
-positive mass beyond `m`. -/
+/-- For measurable scores, under the calibration assumption for gene `j`
+(`P(T_j ≥ s) ≤ P(χ²₁ > s)` for all `s`), the integral of `T_j = S_j / λ̂` against `P` is below
+`1 = E[χ²₁]` (it is `E[T_j]` when `P` is a probability measure): the layer-cake integral of
+`P(T_j ≥ s)` stops at `s = m` (`gcStat_le_card`), while the `χ²₁` tail keeps positive mass
+beyond `m`. -/
 theorem lintegral_gcStatRV_lt_one {Z : Fin m → Ω → ℝ} (hZ : ∀ k, Measurable (Z k)) (j : Fin m)
     (hcal : ∀ s, P {ω | s ≤ gcStatRV Z j ω} ≤ chiSqOneTail s) :
     ∫⁻ ω, ENNReal.ofReal (gcStatRV Z j ω) ∂P < 1 := by
@@ -386,7 +399,8 @@ theorem lintegral_gcStatRV_lt_one {Z : Fin m → Ω → ℝ} (hZ : ∀ k, Measur
         ENNReal.lt_add_right ha hb
     _ = 1 := htail
 
-/-- `E[∑ⱼ S_j / λ̂] = m` when the scores are almost surely not all zero. -/
+/-- For a probability measure and measurable scores that are almost surely not all zero,
+`∑ⱼ E[S_j / λ̂] = m`. -/
 theorem sum_lintegral_gcStatRV {Z : Fin m → Ω → ℝ} [IsProbabilityMeasure P]
     (hZ : ∀ k, Measurable (Z k)) (hne : ∀ᵐ ω ∂P, ∑ k, Z k ω ^ 2 ≠ 0) :
     ∑ j, ∫⁻ ω, ENNReal.ofReal (gcStatRV Z j ω) ∂P = m := by
@@ -397,12 +411,13 @@ theorem sum_lintegral_gcStatRV {Z : Fin m → Ω → ℝ} [IsProbabilityMeasure 
       fun j _ => gcStat_nonneg _ _]
     simpa [gcStatRV] using congrArg ENNReal.ofReal (sum_gcStat (fun k => Z k ω) h)
 
-/-- **The calibration assumption is impossible under the global null, for every `m`.** If the
-scores are almost surely not all zero, the estimated-`λ̂` family is never tail-calibrated against
-`χ²₁` on the set of all genes: calibration would give `E[T_j] < 1` for every `j`
-(`lintegral_gcStatRV_lt_one`), hence `E[∑ⱼ T_j] < m`, while `∑ⱼ T_j = m` almost surely.
-No Gaussianity, independence or other assumption on the law of the scores is used. So the
-assumption can hold only when some genes are non-null and inflate `λ̂`. -/
+/-- **Global null: tail calibration fails when scores are a.s. not all zero.** For a probability
+measure, `m ≥ 1` and measurable scores that are almost surely not all zero, the estimated-`λ̂`
+family is never tail-calibrated against `χ²₁` on the set of all genes: calibration would give
+`E[T_j] < 1` for every `j` (`lintegral_gcStatRV_lt_one`), hence `E[∑ⱼ T_j] < m`, while
+`∑ⱼ T_j = m` almost surely. No Gaussianity, independence or other assumption on the law of the
+scores is used. So, for such scores, the assumption can hold only when some genes are not true
+nulls. -/
 theorem not_isTailCalibratedFamily_gcStatRV_univ [IsProbabilityMeasure P] {Z : Fin m → Ω → ℝ}
     (hZ : ∀ k, Measurable (Z k)) (hne : ∀ᵐ ω ∂P, ∑ k, Z k ω ^ 2 ≠ 0) (hm : 0 < m) :
     ¬ MultipleTesting.IsTailCalibratedFamily P (gcStatRV Z) (fun _ => chiSqOneTailReal)
@@ -422,8 +437,10 @@ Here `L : Ω → ℝ` is any random estimate of the inflation factor (mean, medi
 about the joint law of the score and `L`: the coupling is absorbed into the probability
 `P Eᶜ` of the event where `L` is far from `λ`. -/
 
-/-- **Upper sandwich.** If `L ≥ κ λ` on an event `E` (`κ > 0`, e.g. `κ = 1 - δ`), then for
-`c ≥ 0`, `P(Z² / L > c) ≤ P(χ²₁ > c κ) + P(Eᶜ)`. -/
+/-- **Upper tail bound for Z²/L when L ≥ κλ on a set E.** For a score `Z` with law `𝒩(0, λ)`,
+`λ > 0`, and any function `L`: if `L ≥ κ λ` on a set `E` (`κ > 0`, e.g. `κ = 1 - δ`), then for
+`c ≥ 0`, `P(Z² / L > c) ≤ P(χ²₁ > c κ) + P(Eᶜ)`. Nothing is assumed about `L` off `E`; neither
+`L` nor `E` need be measurable (`P` of a non-measurable set is its outer measure). -/
 theorem measure_lt_div_le_chiSqOneTail_add {Z : Ω → ℝ} {lam : ℝ≥0} (hlam : lam ≠ 0)
     (hZ : HasLaw Z (gaussianReal 0 lam) P) {L : Ω → ℝ} {κ : ℝ} (hκ : 0 < κ) {E : Set Ω}
     (hE : ∀ ω ∈ E, κ * lam ≤ L ω) {c : ℝ} (hc : 0 ≤ c) :
@@ -446,8 +463,10 @@ theorem measure_lt_div_le_chiSqOneTail_add {Z : Ω → ℝ} {lam : ℝ≥0} (hla
         · exact fun ω hω => hω.2
     _ = chiSqOneTail (c * κ) + P Eᶜ := by rw [htrue]
 
-/-- **Lower sandwich.** If `0 < L ≤ κ λ` on an event `E` (e.g. `κ = 1 + δ`), then for `c ≥ 0`,
-`P(χ²₁ > c κ) ≤ P(Z² / L > c) + P(Eᶜ)`. -/
+/-- **Lower tail bound for Z²/L when 0 < L ≤ κλ on a set E.** For a score `Z` with law
+`𝒩(0, λ)`, `λ > 0`, and any function `L`: if `0 < L ≤ κ λ` on a set `E` (e.g. `κ = 1 + δ`),
+then for `c ≥ 0`, `P(χ²₁ > c κ) ≤ P(Z² / L > c) + P(Eᶜ)`. Nothing is assumed about `L` off `E`;
+neither `L` nor `E` need be measurable (`P` of a non-measurable set is its outer measure). -/
 theorem chiSqOneTail_le_measure_lt_div_add {Z : Ω → ℝ} {lam : ℝ≥0} (hlam : lam ≠ 0)
     (hZ : HasLaw Z (gaussianReal 0 lam) P) {L : Ω → ℝ} {κ : ℝ} {E : Set Ω}
     (hE : ∀ ω ∈ E, 0 < L ω ∧ L ω ≤ κ * lam) {c : ℝ} (hc : 0 ≤ c) :
@@ -471,8 +490,10 @@ theorem chiSqOneTail_le_measure_lt_div_add {Z : Ω → ℝ} {lam : ℝ≥0} (hla
 
 /-! ### When calibration fails: a biased `λ̂` -/
 
-/-- **Under-estimated `λ̂` is anti-conservative.** If `0 < L ≤ κ λ` everywhere with `κ < 1`,
-then `P(Z² / L > c) > P(χ²₁ > c)` at every `c > 0`. -/
+/-- **An estimate always below κλ with κ < 1 is strictly anti-conservative.** For a score `Z`
+with law `𝒩(0, λ)`, `λ > 0`: if `0 < L ≤ κ λ` everywhere with `κ < 1`, then
+`P(Z² / L > c) > P(χ²₁ > c)` at every `c > 0`. `L` need not be measurable (`P` of a
+non-measurable set is its outer measure). -/
 theorem chiSqOneTail_lt_measure_lt_div_of_le_mul {Z : Ω → ℝ} {lam : ℝ≥0} (hlam : lam ≠ 0)
     (hZ : HasLaw Z (gaussianReal 0 lam) P) {L : Ω → ℝ} {κ : ℝ} (hκ1 : κ < 1)
     (hL : ∀ ω, 0 < L ω ∧ L ω ≤ κ * lam) {c : ℝ} (hc : 0 < c) :
@@ -489,9 +510,11 @@ theorem chiSqOneTail_lt_measure_lt_div_of_le_mul {Z : Ω → ℝ} {lam : ℝ≥0
   refine lt_of_lt_of_le (chiSqOneTail_lt_of_lt (by positivity) ?_) h
   nlinarith
 
-/-- **Over-estimated `λ̂` is conservative.** If `L ≥ κ λ` everywhere with `κ > 1`, then
-`P(Z² / L > c) < P(χ²₁ > c)` at every `c > 0`. Contamination of `λ̂` by non-null genes
-(`gcStat_update_lt`) pushes in this direction. -/
+/-- **An estimate always above κλ with κ > 1 is strictly conservative.** For a score `Z` with
+law `𝒩(0, λ)`, `λ > 0`: if `L ≥ κ λ` everywhere with `κ > 1`, then `P(Z² / L > c) < P(χ²₁ > c)`
+at every `c > 0`. `L` need not be measurable (`P` of a non-measurable set is its outer
+measure). Contamination of `λ̂` by non-null genes (`gcStat_update_lt`) pushes in this
+direction. -/
 theorem measure_lt_div_lt_chiSqOneTail_of_mul_le {Z : Ω → ℝ} {lam : ℝ≥0} (hlam : lam ≠ 0)
     (hZ : HasLaw Z (gaussianReal 0 lam) P) {L : Ω → ℝ} {κ : ℝ} (hκ1 : 1 < κ)
     (hL : ∀ ω, κ * lam ≤ L ω) {c : ℝ} (hc : 0 < c) :
@@ -504,14 +527,16 @@ theorem measure_lt_div_lt_chiSqOneTail_of_mul_le {Z : Ω → ℝ} {lam : ℝ≥0
 
 /-! ### Dependence: negative coupling and failure of PRDS -/
 
-/-- The corrected statistics are bounded (in `[0, m]`), hence square integrable. -/
+/-- For a finite measure and measurable scores, the corrected statistics are bounded (in
+`[0, m]`), hence square integrable. -/
 theorem memLp_gcStatRV [IsFiniteMeasure P] {Z : Fin m → Ω → ℝ} (hZ : ∀ k, Measurable (Z k))
     (j : Fin m) : MemLp (gcStatRV Z j) 2 P :=
   memLp_of_bounded (a := 0) (b := m)
     (ae_of_all _ fun _ => ⟨gcStat_nonneg _ _, gcStat_le_card _ _⟩)
     (measurable_gcStatRV hZ j).aestronglyMeasurable 2
 
-/-- The covariances of the corrected statistics sum to zero: `∑ᵢ ∑ₖ Cov(Tᵢ, Tₖ) = 0`, because
+/-- For a probability measure and measurable scores that are almost surely not all zero, the
+covariances of the corrected statistics sum to zero: `∑ᵢ ∑ₖ Cov(Tᵢ, Tₖ) = 0`, because
 `∑ᵢ Tᵢ = m` almost surely (`sum_gcStat`). -/
 theorem sum_sum_covariance_gcStatRV [IsProbabilityMeasure P] {Z : Fin m → Ω → ℝ}
     (hZ : ∀ k, Measurable (Z k)) (hne : ∀ᵐ ω ∂P, ∑ k, Z k ω ^ 2 ≠ 0) :
@@ -521,10 +546,12 @@ theorem sum_sum_covariance_gcStatRV [IsProbabilityMeasure P] {Z : Fin m → Ω �
     simpa [gcStatRV] using sum_gcStat (fun k => Z k ω) h)]
   simp [variance_eq_integral]
 
-/-- **Negative coupling.** If some corrected statistic is nondegenerate (`Var(T_j) > 0`), then
-some pair of distinct genes has strictly negative covariance, so pairwise nonnegative covariance
-is impossible for the mean-`λ̂` family. That positive dependence (PRDS, association) would give
-pairwise nonnegative covariance of these statistics is standard but not formalized here. -/
+/-- **Scores a.s. not all zero, Tⱼ nondegenerate: a covariance is negative.** For a probability
+measure and measurable scores that are almost surely not all zero, if some corrected statistic
+is nondegenerate (`Var(T_j) > 0`), then some pair of distinct genes has strictly negative
+covariance, so pairwise nonnegative covariance is impossible for the mean-`λ̂` family; in
+particular the statistics are not associated, since association would make every covariance
+nonnegative. -/
 theorem exists_covariance_gcStatRV_neg [IsProbabilityMeasure P] {Z : Fin m → Ω → ℝ}
     (hZ : ∀ k, Measurable (Z k)) (hne : ∀ᵐ ω ∂P, ∑ k, Z k ω ^ 2 ≠ 0) {j : Fin m}
     (hvar : 0 < Var[gcStatRV Z j; P]) :
@@ -548,9 +575,11 @@ theorem exists_covariance_gcStatRV_neg [IsProbabilityMeasure P] {Z : Fin m → �
             (fun i _ => Finset.sum_nonneg fun k _ => hnn i k) (Finset.mem_univ j)
   linarith
 
-/-- **Size of the coupling with equal second moments.** If all corrected statistics have the
-same variance `v` and all distinct pairs the same covariance `γ` (as for exchangeable scores),
-then `γ = -v / (m - 1)`: the negative coupling is exact and of order `1 / m`. -/
+/-- **Equal pairwise covariances of λ̂-corrected statistics are −v/(m − 1).** For a
+probability measure, `m ≥ 2` and measurable scores that are almost surely not all zero, if all
+corrected statistics have the same variance `v` and all distinct pairs the same covariance `γ`
+(as for exchangeable scores), then `γ = -v / (m - 1)`: the negative coupling is exact,
+`|γ| = v / (m - 1)`. -/
 theorem covariance_gcStatRV_eq_of_forall_eq [IsProbabilityMeasure P] {Z : Fin m → Ω → ℝ}
     (hZ : ∀ k, Measurable (Z k)) (hne : ∀ᵐ ω ∂P, ∑ k, Z k ω ^ 2 ≠ 0) (hm : 2 ≤ m) {v γ : ℝ}
     (hv : ∀ i, Var[gcStatRV Z i; P] = v)
@@ -580,11 +609,12 @@ theorem gcStat_two_add (z : Fin 2 → ℝ) (h : ∑ k, z k ^ 2 ≠ 0) : gcStat z
   rw [this]
   norm_num
 
-/-- **PRDS fails for the coupled two-gene family.** With `m = 2` genes and the mean estimate
-`λ̂`, the `χ²₁` p-values `pⱼ = P(χ²₁ > Sⱼ / λ̂)` are not PRDS on any set of true nulls
-containing gene `0`, as soon as both `{T₀ ≥ 1}` and `{T₀ < 1}` have positive probability and
-the scores do not vanish simultaneously (almost surely). No independence, Gaussianity or other
-assumption on the scores is involved: `T₁ = 2 - T₀` makes `p₁` a decreasing function of `p₀`. -/
+/-- **Two-gene λ̂ p-values are not PRDS when T₀ falls on both sides of 1.** With `m = 2` genes
+and the mean estimate `λ̂`, for a nonzero finite measure `P` and measurable scores that do not
+vanish simultaneously (almost surely), the `χ²₁` p-values `pⱼ = P(χ²₁ > Sⱼ / λ̂)` are not PRDS on
+any set of true nulls containing gene `0`, as soon as both `{T₀ ≥ 1}` and `{T₀ < 1}` have
+positive measure. No independence, Gaussianity or other assumption on the scores is involved:
+`T₁ = 2 - T₀` makes `p₁` a decreasing function of `p₀`. -/
 theorem not_isPRDSOn_tailPValue_gcStatRV_two [IsFiniteMeasure P] [NeZero P] {Z : Fin 2 → Ω → ℝ}
     (hZ : ∀ k, Measurable (Z k)) (hne : ∀ᵐ ω ∂P, ∑ k, Z k ω ^ 2 ≠ 0) {H0 : Finset (Fin 2)}
     (h0 : 0 ∈ H0) (hA : P {ω | 1 ≤ gcStatRV Z 0 ω} ≠ 0) (hB : P {ω | gcStatRV Z 0 ω < 1} ≠ 0) :
@@ -697,7 +727,7 @@ theorem chiSqOneTail_one_lt_half : chiSqOneTail 1 < 1 / 2 := by
         ENNReal.add_lt_add_left (by norm_num) h
 
 /-- With two genes and a nonzero score vector, `T₀ ≥ 1` iff `z₁² ≤ z₀²`, and `T₀ < 1` iff
-`z₀² < z₁²`. -/
+`z₀² < z₁²`. If both scores are zero, `T₀ = 0 < 1` by the convention `x / 0 = 0`. -/
 theorem one_le_gcStat_two_iff (z : Fin 2 → ℝ) (h : ∑ k, z k ^ 2 ≠ 0) :
     (1 ≤ gcStat z 0 ↔ z 1 ^ 2 ≤ z 0 ^ 2) ∧ (gcStat z 0 < 1 ↔ z 0 ^ 2 < z 1 ^ 2) := by
   rw [Fin.sum_univ_two] at h
@@ -747,7 +777,8 @@ private theorem measure_sq_eq_sq_eq_zero (hmeas : ∀ i, Measurable (G.score i))
   exact lintegral_zero
 
 omit [IsProbabilityMeasure P] in
-/-- Under T38's model the scores do not vanish simultaneously, almost surely. -/
+/-- In the two-gene common-inflation model (`CommonInflationModel`: scores with law `𝒩(0, λ)`,
+`λ > 0`), measurable scores do not vanish simultaneously, almost surely. -/
 theorem ae_sum_sq_ne_zero (hmeas : ∀ i, Measurable (G.score i)) :
     ∀ᵐ ω ∂P, ∑ k, G.score k ω ^ 2 ≠ 0 := by
   have h0 : P (G.score 0 ⁻¹' {0}) = 0 := by
@@ -779,8 +810,10 @@ private theorem half_le_measure_sq_le_sq (hmeas : ∀ i, Measurable (G.score i))
   rw [ENNReal.add_halves] at this
   exact absurd hcover (not_le.2 this)
 
-/-- **The calibration assumption fails at `s = 1`.** With two genes whose null scores are
-independent `𝒩(0, λ)` (T38's model plus independence), `P(S₀ / λ̂ ≥ 1) ≥ 1/2`. -/
+/-- **Two independent 𝒩(0, λ) null scores give P(T₀ ≥ 1) ≥ 1/2.** With two genes whose
+measurable null scores are independent `𝒩(0, λ)` (the common-inflation model plus
+independence), `P(S₀ / λ̂ ≥ 1) ≥ 1/2`; since `P(χ²₁ > 1) < 1/2`, the calibration assumption fails
+at `s = 1`. -/
 theorem half_le_measure_one_le_gcStatRV_two (hmeas : ∀ i, Measurable (G.score i))
     (hind : IndepFun (G.score 0) (G.score 1) P) :
     1 / 2 ≤ P {ω | 1 ≤ gcStatRV G.score 0 ω} := by
@@ -789,7 +822,7 @@ theorem half_le_measure_one_le_gcStatRV_two (hmeas : ∀ i, Measurable (G.score 
   filter_upwards [ae_sum_sq_ne_zero G hmeas] with ω hω
   exact ((one_le_gcStat_two_iff (fun k => G.score k ω) hω).1).symm
 
-/-- With two independent `𝒩(0, λ)` null scores, `P(S₀ / λ̂ < 1) ≥ 1/2`. -/
+/-- With two independent measurable `𝒩(0, λ)` null scores, `P(S₀ / λ̂ < 1) ≥ 1/2`. -/
 theorem half_le_measure_gcStatRV_two_lt_one (hmeas : ∀ i, Measurable (G.score i))
     (hind : IndepFun (G.score 0) (G.score 1) P) :
     1 / 2 ≤ P {ω | gcStatRV G.score 0 ω < 1} := by
@@ -806,17 +839,19 @@ theorem half_le_measure_gcStatRV_two_lt_one (hmeas : ∀ i, Measurable (G.score 
   rw [(one_le_gcStat_two_iff (fun k => G.score k ω) hω).2]
   exact ⟨fun h => lt_of_le_of_ne h hne, le_of_lt⟩
 
-/-- **Anti-conservative in T38's model.** With two independent `𝒩(0, λ)` null scores the
-estimated-`λ̂` test rejects at threshold `1` with probability at least `1/2`, more than the
-nominal `P(χ²₁ > 1) ≈ 0.317`, although dividing by the true `λ` is exactly calibrated. -/
+/-- **Two independent null genes: the λ̂ test is anti-conservative at 1.** With two independent
+measurable `𝒩(0, λ)` null scores the estimated-`λ̂` test rejects at threshold `1` with
+probability at least `1/2`, more than the nominal `P(χ²₁ > 1) ≈ 0.317`, although dividing by the
+true `λ` is exactly calibrated. -/
 theorem chiSqOneTail_lt_measure_one_le_gcStatRV_two (hmeas : ∀ i, Measurable (G.score i))
     (hind : IndepFun (G.score 0) (G.score 1) P) :
     chiSqOneTail 1 < P {ω | 1 ≤ gcStatRV G.score 0 ω} :=
   chiSqOneTail_one_lt_half.trans_le (half_le_measure_one_le_gcStatRV_two G hmeas hind)
 
-/-- **Calibration of `S / λ̂` does not follow from true-`λ` calibration.** In T38's model with two
-independent null genes, the estimated-`λ̂` family is not a tail-calibrated family against
-`χ²₁` on any null set containing gene `0`. -/
+/-- **Two independent null genes: the λ̂ family is not tail-calibrated.** In the
+common-inflation model with two independent measurable null scores, the estimated-`λ̂` family
+is not a tail-calibrated family against `χ²₁` on any null set containing gene `0`, although
+dividing by the true `λ` is calibrated there. -/
 theorem not_isTailCalibratedFamily_gcStatRV_two (hmeas : ∀ i, Measurable (G.score i))
     (hind : IndepFun (G.score 0) (G.score 1) P) {H0 : Finset (Fin 2)} (h0 : 0 ∈ H0) :
     ¬ MultipleTesting.IsTailCalibratedFamily P (gcStatRV G.score) (fun _ => chiSqOneTailReal)
@@ -824,8 +859,9 @@ theorem not_isTailCalibratedFamily_gcStatRV_two (hmeas : ∀ i, Measurable (G.sc
   absurd (((isTailCalibratedFamily_gcStatRV_iff hmeas H0).1 h) 0 h0 1)
     (not_le.2 (chiSqOneTail_lt_measure_one_le_gcStatRV_two G hmeas hind))
 
-/-- **PRDS fails in T38's model.** With two independent `𝒩(0, λ)` null scores, the `χ²₁`
-p-values of the estimated-`λ̂` statistics are not PRDS on any null set containing gene `0`. -/
+/-- **Two independent null genes: the λ̂ p-values are not PRDS.** With two independent
+measurable `𝒩(0, λ)` null scores, the `χ²₁` p-values of the estimated-`λ̂` statistics are not
+PRDS on any null set containing gene `0`. -/
 theorem not_isPRDSOn_tailPValue_gcStatRV_two_of_indep (hmeas : ∀ i, Measurable (G.score i))
     (hind : IndepFun (G.score 0) (G.score 1) P) {H0 : Finset (Fin 2)} (h0 : 0 ∈ H0) :
     ¬ IsPRDSOn P (MultipleTesting.tailPValue (gcStatRV G.score) fun _ => chiSqOneTailReal) H0 :=
@@ -833,7 +869,8 @@ theorem not_isPRDSOn_tailPValue_gcStatRV_two_of_indep (hmeas : ∀ i, Measurable
     (lt_of_lt_of_le (by norm_num) (half_le_measure_one_le_gcStatRV_two G hmeas hind)).ne'
     (lt_of_lt_of_le (by norm_num) (half_le_measure_gcStatRV_two_lt_one G hmeas hind)).ne'
 
-/-- With two independent `𝒩(0, λ)` null scores the corrected statistic `T₀` is nondegenerate. -/
+/-- With two independent measurable `𝒩(0, λ)` null scores the corrected statistic `T₀` is
+nondegenerate: `Var(T₀) > 0`. -/
 theorem variance_gcStatRV_two_pos (hmeas : ∀ i, Measurable (G.score i))
     (hind : IndepFun (G.score 0) (G.score 1) P) : 0 < Var[gcStatRV G.score 0; P] := by
   refine lt_of_le_of_ne (variance_nonneg _ _) fun h => ?_
@@ -851,8 +888,8 @@ theorem variance_gcStatRV_two_pos (hmeas : ∀ i, Measurable (G.score i))
     rw [hω] at hle
     exact absurd hle hE
 
-/-- **Negative covariance in T38's model.** With two independent `𝒩(0, λ)` null scores,
-`Cov(S₀ / λ̂, S₁ / λ̂) < 0`. -/
+/-- **Two independent null genes: T₀ and T₁ have negative covariance.** With two independent
+measurable `𝒩(0, λ)` null scores, `Cov(S₀ / λ̂, S₁ / λ̂) < 0`. -/
 theorem covariance_gcStatRV_two_neg (hmeas : ∀ i, Measurable (G.score i))
     (hind : IndepFun (G.score 0) (G.score 1) P) :
     cov[gcStatRV G.score 0, gcStatRV G.score 1; P] < 0 := by

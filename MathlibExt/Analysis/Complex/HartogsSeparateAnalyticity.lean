@@ -58,7 +58,7 @@ theorem hartogs_posLog_norm_le_circleAverage {c : ℂ} {R : ℝ} {f : ℂ → �
     exact Real.circleAverage_nonneg_of_nonneg fun _ _ ↦ Real.posLog_nonneg
   have hfc : f c ≠ 0 := fun h ↦ hc (by simp [h])
   have hlog : Real.log ‖f c‖ ≤ Real.circleAverage (fun z ↦ Real.log ‖f z‖) c R := by
-    rw [hf_abs.circleAverage_log_norm hR.ne' hfc]
+    rw [hf_abs.circleAverage_log_norm hfc]
     simp only [le_add_iff_nonneg_left]
     apply finsum_nonneg
     intro u

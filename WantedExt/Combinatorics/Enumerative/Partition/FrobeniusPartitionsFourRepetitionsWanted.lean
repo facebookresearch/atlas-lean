@@ -24,7 +24,7 @@ public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Data.Int.ModEq
 public import Mathlib.Data.Fintype.Pi
 public import MathlibExt.Combinatorics.Enumerative.Partition.QEulerProduct
-public import MathlibExt.NumberTheory.ModularForms.JacobiTheta.Ramanujan
+public import MathlibExt.NumberTheory.ModularForms.JacobiTheta.RamanujanProduct
 
 open PowerSeries
 
@@ -140,24 +140,6 @@ public theorem_wanted frobeniusPartitionRepCount_four_two_dissection :
     𝔣 1 ^ 6 * 𝔣 4 ^ 2 * 𝔣 5 ^ 2 *
         PowerSeries.mk (fun n => (frobeniusPartitionRepCount 4 (2 * n + 1) : ℤ)) =
       𝔣 2 ^ 7 * 𝔣 10 ^ 2
-
-/-- **Ramanujan's theta product identity for $ab = cd$.** Let
-$f(a,b) = \sum_{n \in \mathbb{Z}} a^{n(n+1)/2} b^{n(n-1)/2}$ be Ramanujan's general theta
-function. If $a, b, c, d$ are complex numbers with $a \ne 0$, $|ab| < 1$ and $ab = cd$, then
-$$f(a,b)\,f(c,d) = f(ad,bc)\,f(ac,bd) + a\,f(c/a, a^2bd)\,f(d/a, a^2bc).$$
-
-In each of the six theta functions the two arguments have product of modulus $|ab|$ or
-$|ab|^2$, which is less than $1$, so every series converges.
-
-Source: Bipul Kumar Sarmah and Satyajit Gayan, *Congruences for F-partitions with 4
-Repetitions*, INTEGERS 25 (2025), Article A17, Lemma 1, eq. (12), quoting
-Berndt, *Ramanujan's Notebooks, Part III*, p. 45, Entry 29 (`integers-2025-A17-lem-1`). -/
-public theorem_wanted ramanujanTheta_mul_of_mul_eq {a b c d : ℂ} (ha : a ≠ 0)
-    (hab : ‖a * b‖ < 1) (h : a * b = c * d) :
-    ramanujanThetaRaw a b * ramanujanThetaRaw c d =
-      ramanujanThetaRaw (a * d) (b * c) * ramanujanThetaRaw (a * c) (b * d) +
-        a * ramanujanThetaRaw (c / a) (a ^ 2 * b * d) *
-          ramanujanThetaRaw (d / a) (a ^ 2 * b * c)
 
 /-- **A 2-dissection of the reciprocal Euler product of levels 1 and 5.** Let
 $f_k = \prod_{m \ge 1} (1 - q^{km})$ in the ring of integer power series in $q$. Then

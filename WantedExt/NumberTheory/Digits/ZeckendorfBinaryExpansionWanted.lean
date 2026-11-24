@@ -1077,7 +1077,7 @@ public theorem zeckendorfGenericExponent_spec {Q Q' : ℕ → ℝ}
     0 < zeckendorfGenericExponent Q Q' ∧
       Real.logb (Q' 0) (Q 0) * Q' 0 ^ (zeckendorfGenericExponent Q Q' - 1) <
         Q 0 ^ zeckendorfGenericExponent Q Q' :=
-  Nat.sInf_mem h
+  Nat.sInf_mem (s := .ofPred _) h
 
 /-- **The set $U$ of evaluations of $\tilde E^* \setminus \bar E^*$.** For lists $L$ and
 $\tilde L$ and a real sequence $\tilde Q$, let $\tilde E^*$ be the $\tilde L^*$-collection and

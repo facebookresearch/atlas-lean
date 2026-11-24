@@ -31,16 +31,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Ulam words with a block of four ones.** For natural numbers $a$ and $b$ with $a + b \ge 1$,
-the binary word $0^a 1111 0^b$ ($a$ zeros, then four ones, then $b$ zeros) is an Ulam word if
-and only if $a + b \equiv 1 \pmod 4$.
-
-Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
-*Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Lemma 1. -/
-public theorem_wanted isUlamWord_zeros_four_ones_zeros_iff (a b : ℕ) (hab : 1 ≤ a + b) :
-    IsUlamWord (List.replicate a false ++ List.replicate 4 true ++ List.replicate b false) ↔
-      (a + b) % 4 = 1
-
 /-- **Square of the Ulam word count is at most a block sum.** For every natural number $n$,
 $(\#U_n)^2 \le \sum_{i=n}^{2n} \#U_i$, where $\#U_i$ is the number of Ulam words of length $i$.
 
@@ -97,17 +87,6 @@ public theorem_wanted card_ulam_zeros_one_zeros (n : ℕ) (hn : 1 ≤ n) :
         IsUlamWord (List.replicate a false ++ [true] ++ List.replicate (n - 1 - a) false)).card =
       2 ^ (Nat.digits 2 (n - 1)).sum
 
-/-- **Ulam words with a block of two ones.** For natural numbers $a$ and $b$, the binary word
-$0^a 11 0^b$ ($a$ zeros, then two ones, then $b$ zeros) is an Ulam word if and only if $a + b$ is
-odd.
-
-Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
-*Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Theorem 6
-(Theorem 3.5 of Bade, Cui, Labelle, and Li). -/
-public theorem_wanted isUlamWord_zeros_two_ones_zeros_iff (a b : ℕ) :
-    IsUlamWord (List.replicate a false ++ List.replicate 2 true ++ List.replicate b false) ↔
-      (a + b) % 2 = 1
-
 /-- **Ulam words with one 101 block.** For natural numbers $a$ and $b$ with $a + b \ge 2$, the
 binary word $0^a 101 0^b$ ($a$ zeros, then the letters $1, 0, 1$, then $b$ zeros) is an Ulam word
 if and only if $a + b$ is odd.
@@ -153,43 +132,6 @@ public theorem_wanted isUlamWord_zeros_10101_zeros_iff (a b : ℕ) (hab : 1 ≤ 
     IsUlamWord (List.replicate a false ++ [true, false, true, false, true] ++
         List.replicate b false) ↔
       Even a ∧ Even b ∧ (a = 0 ∨ b = 0)
-
-/-- **Complement symmetry of Ulam words.** For a word $w$ over $\{0, 1\}$, let $\bar w$ be its
-complement (every letter swapped) and let $\pi(w)$ be the integer whose binary expansion is $w$,
-most significant letter first. If $w$ is an Ulam word of length $n$, then $\bar w$ is an Ulam
-word and $\pi(\bar w) + \pi(w) = 2^n - 1$. Moreover, for all natural numbers $N$ and $n$ and every
-$a \in \mathbb{Z}/N\mathbb{Z}$, the number of Ulam words $w$ of length $n$ with
-$\pi(w) \equiv a \pmod N$ equals the number of Ulam words $w$ of length $n$ with
-$\pi(w) \equiv 2^n - 1 - a \pmod N$.
-
-For $n \ge 1$, writing $\rho_{a,N}(n)$ for the proportion of Ulam words $w$ of length $n$ with
-$\pi(w) \equiv a \pmod N$ among all Ulam words of length $n$, the second statement says
-$\rho_{a,N}(n) = \rho_{2^n-1-a,N}(n)$.
-
-Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
-*Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Theorem 11. -/
-public theorem_wanted isUlamWord_map_not_and_ulamResidueCount_eq :
-    (∀ w : List Bool, IsUlamWord w →
-      IsUlamWord (w.map not) ∧
-        Nat.ofDigits 2 ((w.map not).reverse.map Bool.toNat) +
-            Nat.ofDigits 2 (w.reverse.map Bool.toNat) = 2 ^ w.length - 1) ∧
-      ∀ (N n : ℕ) (a : ZMod N),
-        ulamResidueCount N n a = ulamResidueCount N n (2 ^ n - 1 - a)
-
-/-- **Residue symmetries of Ulam words modulo 2 and 3.** For natural numbers $N$ and $n$ and a
-residue $a \in \mathbb{Z}/N\mathbb{Z}$, let $c_{a,N}(n)$ be the number of Ulam words of length
-$n$ whose value as a binary numeral, most significant letter first, is congruent to $a$ modulo
-$N$. Then for every $n \ge 1$ we have $c_{0,2}(n) = c_{1,2}(n)$, and for every
-$a \in \mathbb{Z}/3\mathbb{Z}$ we have $c_{a,3}(n) = c_{-a,3}(n)$ if $n$ is even and
-$c_{a,3}(n) = c_{1-a,3}(n)$ if $n$ is odd.
-
-Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
-*Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102,
-Corollary 2. -/
-public theorem_wanted ulamResidueCount_mod_two_three (n : ℕ) (hn : 1 ≤ n) :
-    ulamResidueCount 2 n 0 = ulamResidueCount 2 n 1 ∧
-      ∀ a : ZMod 3, ulamResidueCount 3 n a =
-        if Even n then ulamResidueCount 3 n (-a) else ulamResidueCount 3 n (1 - a)
 
 end
 
