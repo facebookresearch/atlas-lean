@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import MathlibExt.Analysis.SpecialFunctions.QPochhammer
 public import MathlibExt.Combinatorics.Enumerative.Partition.Overpartition
+public import MathlibExt.NumberTheory.ModularForms.JacobiTheta.RamanujanPhiDissection
 
 /-!
 # Congruences for `spt2‾(n)` (statements)
@@ -297,28 +298,6 @@ public theorem_wanted ramanujanPsi_neg_dissection (q : ℂ) (hq : ‖q‖ < 1) :
       q * qPochhammerInfRaw (q ^ 9) (q ^ 9) *
           qPochhammerInfRaw (q ^ 36) (q ^ 36) /
         qPochhammerInfRaw (q ^ 18) (q ^ 18)
-
-/--
-**3-dissection of the product form of Ramanujan's phi function at negated argument.** Let $q$ be
-a complex number with $|q| < 1$, and for $k \ge 1$ let
-$f_k = (q^k; q^k)_\infty = \prod_{n=0}^{\infty} (1 - q^k (q^k)^n)$ be the raw infinite
-q-Pochhammer product. Then
-$$\frac{f_1^2}{f_2} = \frac{f_9^2}{f_{18}} - 2q \frac{f_3 f_{18}^2}{f_6 f_9}.$$
-
-Here $f_1^2/f_2$ is the product form of $\varphi(-q)$, where
-$\varphi(q) = \sum_{n \in \mathbb{Z}} q^{n^2}$ is Ramanujan's theta function.
-
-Source: Robson da Silva, *Extending Congruences for the Number of Smallest Parts in
-Overpartitions with Smallest Part Even*, INTEGERS 26 (2026), Article A62, Lemma 5.
--/
-public theorem_wanted ramanujanPhi_neg_dissection (q : ℂ) (hq : ‖q‖ < 1) :
-    qPochhammerInfRaw q q ^ 2 / qPochhammerInfRaw (q ^ 2) (q ^ 2) =
-      qPochhammerInfRaw (q ^ 9) (q ^ 9) ^ 2 /
-          qPochhammerInfRaw (q ^ 18) (q ^ 18) -
-        2 * q * qPochhammerInfRaw (q ^ 3) (q ^ 3) *
-            qPochhammerInfRaw (q ^ 18) (q ^ 18) ^ 2 /
-          (qPochhammerInfRaw (q ^ 6) (q ^ 6) *
-            qPochhammerInfRaw (q ^ 9) (q ^ 9))
 
 end
 

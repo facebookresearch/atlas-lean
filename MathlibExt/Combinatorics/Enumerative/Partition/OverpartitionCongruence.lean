@@ -17,13 +17,13 @@ public import MathlibExt.NumberTheory.QuadraticForms.ThreeSquares
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Combinatorics.Enumerative.Partition.Basic
 import Mathlib.Combinatorics.Enumerative.Partition.GenFun
-import Mathlib.Combinatorics.Enumerative.Pentagonal.PowerSeries
+public import Mathlib.Combinatorics.Enumerative.Pentagonal.PowerSeries
 import Mathlib.Data.Finset.Powerset
 import Mathlib.Data.Int.Cast.Lemmas
 import Mathlib.Data.Int.Interval
 import Mathlib.Data.ZMod.Basic
 import Mathlib.RingTheory.PowerSeries.Basic
-import Mathlib.RingTheory.PowerSeries.Expand
+public import Mathlib.RingTheory.PowerSeries.Expand
 import Mathlib.RingTheory.PowerSeries.NoZeroDivisors
 import Mathlib.Tactic.Ring
 import Mathlib.Tactic.NormNum.Prime
@@ -1877,6 +1877,67 @@ private theorem opc_theta_mul_rescale_genFun :
     rw [one_mul]
     exact hmul
   exact mul_right_cancel₀ hC hmul2
+
+namespace phiFiveCoreAnalog_five_pow_mul
+
+/-- The signed square theta series satisfies Gauss's product formula. -/
+public theorem theta_euler_product (t : ℤ⟦X⟧)
+    (ht : ∀ n, t.coeff n = (Nat.card {x : ℤ // x.natAbs ^ 2 = n} : ℤ)) :
+    rescale (-1) t * expand 2 two_ne_zero (pentagonalSeries ℤ) = pentagonalSeries ℤ ^ 2 := by
+  have he : t = opcTheta := PowerSeries.ext (fun n => (ht n).trans (opc_theta_coeff_eq_card n).symm)
+  subst t
+  simpa [map_mul, map_pow, opc_rescale_expand_two, rescale_rescale] using
+    congrArg (rescale (-1 : ℤ)) opc_theta_mul_expand_two
+
+/-- Splitting the square theta series by residues gives two off-diagonal components.
+Their product is determined by the sum of two squares identity at 5. -/
+public theorem theta_five_components (t : ℤ⟦X⟧)
+    (ht : ∀ n, t.coeff n = (Nat.card {x : ℤ // x.natAbs ^ 2 = n} : ℤ)) :
+    ∃ b c : ℤ⟦X⟧, t = expand 25 (by decide) t + b + c ∧
+      expand 25 (by decide) t ^ 2 + b * c = expand 5 (by decide) (t ^ 2) ∧
+      (∀ n, b.coeff n ≠ 0 → n % 5 = 1) ∧ (∀ n, c.coeff n ≠ 0 → n % 5 = 4) := by
+  have he : t = opcTheta := PowerSeries.ext (fun n => (ht n).trans (opc_theta_coeff_eq_card n).symm)
+  subst t
+  have ha : opcA = expand 25 (by decide) opcTheta := by
+    ext n
+    rw [coeff_expand]
+    rw [opcA, opcThetaOn, opc_coeff_weight]
+    change (Nat.card {x : {z : ℤ // z % 5 = 0} // x.val.natAbs ^ 2 = n} : ℤ) = _
+    split_ifs with hd
+    · obtain ⟨m, rfl⟩ := hd
+      rw [Nat.mul_div_cancel_left _ (by decide : 0 < 25), opc_theta_coeff_eq_card]
+      apply congrArg Nat.cast
+      apply Nat.card_congr
+      exact {
+        toFun x := ⟨x.val.val / 5, by
+          have h : 5 * (x.val.val / 5) = x.val.val := by have := x.val.property; omega
+          have hs := x.property
+          rw [← h, Int.natAbs_mul] at hs
+          change (5 * _) ^ 2 = 25 * m at hs
+          nlinarith only [hs]⟩
+        invFun y := ⟨⟨5 * y.val, by simp⟩, by
+          simp [Int.natAbs_mul, mul_pow, y.property]⟩
+        left_inv x := by
+          apply Subtype.ext
+          apply Subtype.ext
+          change 5 * (x.val.val / 5) = x.val.val
+          have := x.val.property
+          omega
+        right_inv y := by ext; simp }
+    · apply Nat.cast_eq_zero.mpr
+      apply Nat.card_eq_zero.mpr
+      left
+      refine ⟨fun x => hd ?_⟩
+      obtain ⟨⟨z, hz⟩, rfl⟩ := x
+      obtain ⟨k, rfl⟩ := Int.dvd_of_emod_eq_zero hz
+      exact ⟨k.natAbs ^ 2, by simp [Int.natAbs_mul, mul_pow]⟩
+  rw [← ha]
+  refine ⟨opcB, opcC, opc_theta_eq_dissection, opc_dissection_sq_add_mul_eq_expand,
+    fun n h => ?_, fun n h => ?_⟩
+  · exact congrArg ZMod.val (opc_supportB n h)
+  · exact congrArg ZMod.val (opc_supportC n h)
+
+end phiFiveCoreAnalog_five_pow_mul
 
 /-- The mod-5 theta series. -/
 private noncomputable def opcPhi5 : (ZMod 5)⟦X⟧ :=

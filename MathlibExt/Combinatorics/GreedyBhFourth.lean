@@ -25,9 +25,8 @@ The greedy `B_h`-set starts with `a₀(h) = 0`, and `a_{k+1}(h)` is the least in
 and `h² + h + 1`. This file expresses the greedy choice stage by stage (`IsNextGreedyBh`,
 `IsFourthGreedyBh`) with `AdditiveCombinatorics.IsBhSet`, defines the quasipolynomial
 `fourthValue h`, equal to `(h³ + 3h² + 3h + 1)/2` for odd `h` and `(h³ + 2h² + 3h + 2)/2` for even
-`h`, and proves the upper bound `a₄(h) ≤ fourthValue h` for every `h ≥ 1`
-(`isFourthGreedyBh_le_fourthValue`), and proves the matching lower bound for `h ≥ 2`
-(`fourthValue_le_of_isFourthGreedyBh`).
+`h`, and proves that this value is the fourth greedy term for every `h ≥ 1`
+(`isFourthGreedyBh_fourthValue`).
 
 ## Proof of the upper bound
 
@@ -298,46 +297,49 @@ section
 
 open AdditiveCombinatorics
 
--- Pad both lists with zeros. The candidate occurs only on the left.
+-- Pad two equal sums with zeros to length `h`. Only the first list contains `b`.
+private theorem not_isBhSet_insert_of_sum_eq {A : Set ℕ} {h b : ℕ} (h₀ : 0 ∈ A)
+    (hb : b ∉ A) (l r : List ℕ) (hl : ∀ x ∈ l, x ∈ A) (hr : ∀ x ∈ r, x ∈ A)
+    (hlen : l.length + 1 ≤ h) (hren : r.length ≤ h) (heq : b + l.sum = r.sum) :
+    ¬ IsBhSet (insert b A) h := by
+  intro hbh
+  let left := b :: (l ++ List.replicate (h - (l.length + 1)) 0)
+  let right := r ++ List.replicate (h - r.length) 0
+  have hrmem (x : ℕ) (hx : x ∈ right) : x ∈ A := by
+    simp only [right, List.mem_append, List.mem_replicate] at hx
+    rcases hx with hx | ⟨_, rfl⟩
+    · exact hr x hx
+    · exact h₀
+  have hlmem (x : ℕ) (hx : x ∈ left) : x ∈ insert b A := by
+    simp only [left, List.mem_cons, List.mem_append, List.mem_replicate] at hx
+    rcases hx with rfl | hx | ⟨_, rfl⟩
+    · exact Set.mem_insert _ _
+    · exact Set.mem_insert_of_mem _ (hl x hx)
+    · exact Set.mem_insert_of_mem _ h₀
+  have hleft : left.length = h := by simp [left]; omega
+  have hright : right.length = h := by simp [right]; omega
+  have hrne : right ≠ [] := by
+    intro e
+    simp [e] at hright
+    omega
+  have hp := hbh.2.2 left right hlmem (fun x hx => Set.mem_insert_of_mem _ (hrmem x hx))
+    hleft hright (by simp [left]) hrne (by simpa [sumNE_eq_sum, left, right] using heq)
+  exact hb (hrmem b (hp.mem_iff.mp (by simp [left])))
+
 private theorem not_isBhSet_of_collision {h b : ℕ} (hb : h ^ 2 + h + 1 < b)
     {x₁ x₂ y₁ y₂ y₃ : ℕ} (hx : 1 + x₁ + x₂ ≤ h) (hy : y₁ + y₂ + y₃ ≤ h)
     (heq : b + x₁ + x₂ * (h + 1) = y₁ + y₂ * (h + 1) + y₃ * (h ^ 2 + h + 1)) :
     ¬ IsBhSet (insert b ({0, 1, h + 1, h ^ 2 + h + 1} : Set ℕ)) h := by
-  intro hbh
-  let l := b :: (List.replicate x₁ 1 ++ List.replicate x₂ (h + 1) ++
-    List.replicate (h - (1 + x₁ + x₂)) 0)
-  let r := List.replicate y₁ 1 ++ List.replicate y₂ (h + 1) ++
-    List.replicate y₃ (h ^ 2 + h + 1) ++ List.replicate (h - (y₁ + y₂ + y₃)) 0
-  have hlmem (j : ℕ) (hj : j ∈ l) :
-      j ∈ (insert b {0, 1, h + 1, h ^ 2 + h + 1} : Set ℕ) := by
-    simp only [l, List.mem_cons, List.mem_append, List.mem_replicate] at hj
-    simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+  apply not_isBhSet_insert_of_sum_eq (by simp) (by simp; omega)
+    (List.replicate x₁ 1 ++ List.replicate x₂ (h + 1))
+    (List.replicate y₁ 1 ++ List.replicate y₂ (h + 1) ++ List.replicate y₃ (h ^ 2 + h + 1))
+  · simp only [List.mem_append, List.mem_replicate, Set.mem_insert_iff, Set.mem_singleton_iff]
     tauto
-  have hrmem (j : ℕ) (hj : j ∈ r) :
-      j ∈ (insert b {0, 1, h + 1, h ^ 2 + h + 1} : Set ℕ) := by
-    simp only [r, List.mem_append, List.mem_replicate] at hj
-    simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+  · simp only [List.mem_append, List.mem_replicate, Set.mem_insert_iff, Set.mem_singleton_iff]
     tauto
-  have hllen : l.length = h := by
-    simp only [l, List.length_cons, List.length_append, List.length_replicate]
-    omega
-  have hrlen : r.length = h := by
-    simp only [r, List.length_append, List.length_replicate]
-    omega
-  have hln : l ≠ [] := by simp [l]
-  have hrn : r ≠ [] := by
-    intro hr
-    rw [hr, List.length_nil] at hrlen
-    omega
-  have hsum : l.sum = r.sum := by
-    simp only [l, r, List.sum_cons, List.sum_append, List.sum_replicate, nsmul_eq_mul,
-      Nat.cast_id, mul_one, mul_zero, add_zero]
-    omega
-  have hp := hbh.2.2 l r hlmem hrmem hllen hrlen hln hrn
-    (by simpa only [sumNE_eq_sum] using hsum)
-  have hbr : b ∈ r := hp.mem_iff.mp (by simp [l])
-  simp only [r, List.mem_append, List.mem_replicate] at hbr
-  omega
+  · simp; omega
+  · simpa [add_assoc] using hy
+  · simpa [nsmul_eq_mul, ← add_assoc] using heq
 
 -- Integer counts make the interval arithmetic independent of casts.
 private def HasCollision (h : ℕ) (b : ℤ) : Prop :=
@@ -517,6 +519,17 @@ private theorem tailHi_add_one_eq_fourthValue {h : ℕ} (hh : 2 ≤ h) :
     push_cast
     ring
 
+private theorem not_isBhSet_insert_of_lt_fourthValue {h b : ℕ} (hh : 0 < h)
+    (hthird : h ^ 2 + h + 1 < b) (hlt : b < fourthValue h) :
+    ¬ IsBhSet (insert b ({0, 1, h + 1, h ^ 2 + h + 1} : Set ℕ)) h := by
+  by_cases hh₂ : 2 ≤ h
+  · have hl : (h : ℤ) + 2 ≤ (b : ℤ) := by exact_mod_cast (show h + 2 ≤ b by omega)
+    have hu : (b : ℤ) < (fourthValue h : ℤ) := by exact_mod_cast hlt
+    have htail := tailHi_add_one_eq_fourthValue hh₂
+    exact (hasCollision_up_to_tail hh₂ hl (by omega)).not_isBhSet hthird
+  · obtain rfl : h = 1 := by omega
+    exact absurd hthird (by change ¬3 < b; change b < 4 at hlt; omega)
+
 /-- **Lower bound for the fourth greedy $B_h$ term.** Let $h$ and $a$ be natural numbers with
 $h \ge 2$. If $a$ is the fourth positive element $a_4(h)$ of the greedy $B_h$-set, then
 $a \ge v(h)$, where $v(h) = (h^3 + 3h^2 + 3h + 1)/2$ if $h$ is odd and
@@ -530,10 +543,79 @@ theorem fourthValue_le_of_isFourthGreedyBh
     fourthValue h ≤ a := by
   by_contra! hn
   have hthird : h ^ 2 + h + 1 < a := ha.2.2.2.1 _ (by simp)
-  have hl : (h : ℤ) + 2 ≤ (a : ℤ) := by exact_mod_cast (show h + 2 ≤ a by omega)
-  have hu : (a : ℤ) < (fourthValue h : ℤ) := by exact_mod_cast hn
-  have htail := tailHi_add_one_eq_fourthValue hh
-  exact (hasCollision_up_to_tail hh hl (by omega)).not_isBhSet hthird ha.2.2.2.2.1
+  exact not_isBhSet_insert_of_lt_fourthValue (by omega) hthird hn ha.2.2.2.2.1
+
+-- Write a candidate below the third term as `q * (h + 1) + r`. For `r ≤ 1` this is
+-- already a sum of at most `h` old terms. Otherwise add ones to reach the next multiple.
+private theorem not_isBhSet_insert_of_lt_third {h b : ℕ} (hh : 0 < h) (hb : h + 1 < b)
+    (hlt : b < h ^ 2 + h + 1) : ¬ IsBhSet (insert b ({0, 1, h + 1} : Set ℕ)) h := by
+  let q := b / (h + 1)
+  let r := b % (h + 1)
+  have heq : r + q * (h + 1) = b := by
+    simpa [r, q, Nat.mul_comm] using Nat.mod_add_div b (h + 1)
+  have hr : r < h + 1 := Nat.mod_lt _ (by omega)
+  have hmax : b ≤ h * (h + 1) := by nlinarith
+  have hq : q ≤ h := Nat.le_of_mul_le_mul_right (by omega : q * (h + 1) ≤ h * (h + 1))
+    (by omega)
+  have hqr : q = h → r = 0 := by
+    intro e
+    rw [e] at heq
+    omega
+  have hnot : b ∉ ({0, 1, h + 1} : Set ℕ) := by simp; omega
+  by_cases hr₁ : r ≤ 1
+  · apply not_isBhSet_insert_of_sum_eq (by simp) hnot []
+      (List.replicate r 1 ++ List.replicate q (h + 1))
+    · simp
+    · simp only [List.mem_append, List.mem_replicate, Set.mem_insert_iff, Set.mem_singleton_iff]
+      tauto
+    · simp; omega
+    · simp; omega
+    · simpa [nsmul_eq_mul] using heq.symm
+  · apply not_isBhSet_insert_of_sum_eq (by simp) hnot (List.replicate (h + 1 - r) 1)
+      (List.replicate (q + 1) (h + 1))
+    · simp +contextual
+    · simp +contextual
+    · simp; omega
+    · simp; omega
+    · simp [nsmul_eq_mul, Nat.add_mul]
+      omega
+
+/-- **Formula for the fourth greedy $B_h$ term.** For every integer $h \ge 1$, the fourth positive
+element $a_4(h)$ of the greedy $B_h$-set is $(h^3 + 3h^2 + 3h + 1)/2$ if $h$ is odd and
+$(h^3 + 2h^2 + 3h + 2)/2$ if $h$ is even.
+
+Source: Melvyn B. Nathanson and Kevin O'Bryant, "The Fourth Positive
+Element in the Greedy `B_h`-Set", Theorem 1. -/
+theorem isFourthGreedyBh_fourthValue
+    (h : ℕ) (hh : 0 < h) :
+    IsFourthGreedyBh h (fourthValue h) := by
+  have hsub {A : Set ℕ} (hA : A.Nonempty)
+      (hs : A ⊆ insert (fourthValue h) {0, 1, h + 1, h ^ 2 + h + 1}) : IsBhSet A h := by
+    refine ⟨hA, hh, ?_⟩
+    intro l r hl hr
+    exact (isBhSet_insert_fourthValue hh).2.2 l r (fun x hx => hs (hl x hx))
+      (fun x hx => hs (hr x hx))
+  have hsquare : 0 < h ^ 2 := by positivity
+  have hv := sq_add_add_one_lt_fourthValue hh
+  refine ⟨⟨by simp, hsub (Set.insert_nonempty ..) (by intro x; simp; tauto), ?_⟩,
+    ⟨by simp; omega, hsub (Set.insert_nonempty ..) (by intro x; simp; tauto), ?_⟩,
+    ⟨by simp; omega, hsub (Set.insert_nonempty ..) (by intro x; simp; tauto), ?_⟩,
+    ⟨by simp; omega, isBhSet_insert_fourthValue hh, ?_⟩⟩
+  · intro b hb hlt
+    have := hb 0 (by simp)
+    omega
+  · intro b hb hlt
+    have hb₁ := hb 1 (by simp)
+    apply not_isBhSet_insert_of_sum_eq (by simp) (by simp; omega) [] (List.replicate b 1)
+    · simp
+    · simp +contextual
+    · simpa using Nat.succ_le_of_lt hh
+    · simp; omega
+    · simp
+  · intro b hb hlt
+    exact not_isBhSet_insert_of_lt_third hh (hb _ (by simp)) hlt
+  · intro b hb hlt
+    exact not_isBhSet_insert_of_lt_fourthValue hh (hb _ (by simp)) hlt
 
 end
 

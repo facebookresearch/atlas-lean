@@ -12,14 +12,17 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 public import Mathlib.Algebra.Group.Pointwise.Finset.Basic
 public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.Data.ZMod.Defs
+public import MathlibExt.Combinatorics.AP.Basic
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Combinatorics.Additive.CauchyDavenport
 import Mathlib.Data.ZMod.Basic
+import MathlibExt.Combinatorics.Additive.VosperTheorem
 
 /-!
 # Sumsets in cyclic groups
 
-This file gives the Cauchy–Davenport bound for iterated sumsets modulo a prime.
+This file proves the Cauchy–Davenport bound for iterated sumsets modulo a prime
+and Vosper's characterization of equality when the sumset omits at least two residues.
 It also proves Bajnok's lemma, which realizes every residue modulo `d` as a sum
 of `t` distinct residues for each `0 < t < d`.
 -/
@@ -54,6 +57,42 @@ public theorem cauchy_davenport_nsmul {p : ℕ} (hp : p.Prime) (A : Finset (ZMod
       have hsat' : p ≤ (h • A).card + A.card - 1 := by omega
       exact (min_le_left _ _).trans hsat'
     · exact (min_le_right _ _).trans (by rw [Nat.succ_mul]; omega)
+
+/-- **Vosper's theorem for iterated sumsets.** Let $p$ be a prime, let $A$ be a subset of the
+cyclic group $\mathbb{Z}/p\mathbb{Z}$ with $k = |A| \ge 2$ elements, let $h \ge 2$ be an integer,
+and let $hA = \{a_1 + \dots + a_h : a_1, \dots, a_h \in A\}$ be the $h$-fold sumset of $A$. If
+$|hA| = hk - h + 1$ and $hk - h + 1 \le p - 2$, then $A$ is an arithmetic progression of
+length $k$ in $\mathbb{Z}/p\mathbb{Z}$.
+
+Source: Jagannath Bhanja, *Sumsets with a Minimum Number of Distinct Terms*, INTEGERS 25 (2025),
+Article A12, Theorem 3 (Vosper's theorem) (`integers-2025-A12-thm-3`). -/
+public theorem vosper_nsmul {p : ℕ} (hp : p.Prime) (A : Finset (ZMod p))
+    (hk : 2 ≤ A.card) (h : ℕ) (hh : 2 ≤ h) (hcard : (h • A).card = h * A.card - h + 1)
+    (hsmall : h * A.card - h + 1 ≤ p - 2) :
+    (A : Set (ZMod p)).IsAPOfLength A.card := by
+  have : Fact p.Prime := ⟨hp⟩
+  have hp₂ := hp.two_le
+  have hA : A.Nonempty := card_pos.mp (by omega)
+  obtain ⟨n, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (show h ≠ 0 by omega)
+  have hn : 1 ≤ n := by omega
+  have hB : (n • A).Nonempty := hA.nsmul
+  rw [← Nat.mul_sub_one, Nat.succ_mul] at hcard hsmall
+  rw [succ_nsmul] at hcard
+  -- The lower bound for nA forces equality in the last Cauchy–Davenport step.
+  have hprev := cauchy_davenport_nsmul hp A hA n hn
+  rw [← Nat.mul_sub_one, min_eq_right (by omega)] at hprev
+  have hcd := ZMod.cauchy_davenport hp hB hA
+  have hcrit : (n • A + A).card = (n • A).card + A.card - 1 := by omega
+  have hproper : n • A + A ≠ univ := by
+    intro heq
+    rw [heq, card_univ, ZMod.card] at hcard
+    omega
+  have hpos : 0 < n * (A.card - 1) := Nat.mul_pos hn (by omega)
+  rcases (vosper_eq_iff (n • A) A hB hA hproper).mp hcrit with hmin | ⟨hfull, _⟩ | hAP
+  · omega
+  · omega
+  · obtain ⟨d, _, a, _, ha⟩ := hAP
+    exact ⟨a, d, ha⟩
 
 /-- **Bajnok's lemma on subset sums in $\mathbb{Z}/d\mathbb{Z}$.** Let $d$ and $t$ be natural
 numbers with $1 \le t \le d - 1$. Then every $\ell \in \mathbb{Z}/d\mathbb{Z}$ is the sum of the

@@ -15,31 +15,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Alternating and binomial sums of degenerate hyperharmonic numbers.** Let $\lambda > 0$ and
-$\alpha > 0$ be real numbers and let $n$ be a natural number. Write $H_{m,\lambda}(\alpha)$ for the
-generalized degenerate harmonic numbers, $H^s_{m,\lambda}(\alpha)$ for the generalized degenerate
-hyperharmonic numbers of order $s$, and $D_{n,\lambda}$ for the degenerate Daehee numbers. Then
-$$
-\sum_{k=0}^{n} (-1)^k H^{k+1}_{n-k+1,\lambda}(\alpha) =
-\frac{(-1)^n D_{n,\lambda}}{\alpha^{n+1}\, n!},
-$$
-and for every natural number $r$,
-$$
-\sum_{k=0}^{n} \binom{k+r}{r} H_{n-k+1,\lambda}(\alpha) = H^{r+2}_{n+1,\lambda}(\alpha).
-$$
-
-Source: Ömer Duran, Neşe Ömür and Sibel Koparal, *Generalized Degenerate Harmonic Numbers and
-Their Applications with Riordan Arrays*, INTEGERS 24 (2024), Article A41, Theorem 1
-(`integers-2024-A41-thm-1`). -/
-public theorem_wanted degenerateHyperharmonic_alternating_and_binomial_sums {lam α : ℝ}
-    (hlam : 0 < lam) (hα : 0 < α) (n : ℕ) :
-    ∑ k ∈ Finset.range (n + 1),
-        (-1 : ℝ) ^ k * generalizedDegenerateHyperharmonic lam α (k + 1) (n - k + 1) =
-      (-1) ^ n * degenerateDaehee lam n / (α ^ (n + 1) * n.factorial) ∧
-    ∀ r : ℕ, ∑ k ∈ Finset.range (n + 1),
-        ((k + r).choose r : ℝ) * generalizedDegenerateHarmonic lam α (n - k + 1) =
-      generalizedDegenerateHyperharmonic lam α (r + 2) (n + 1)
-
 /-- **Alternating degenerate exponential sum of degenerate harmonic numbers of rank.** Let
 $\lambda > 0$ and $\alpha > 0$ be real and let $n$ be a natural number. Write
 $(1)_{k,\lambda} = 1 \cdot (1 - \lambda) \cdots (1 - (k-1)\lambda)$ for the generalized falling

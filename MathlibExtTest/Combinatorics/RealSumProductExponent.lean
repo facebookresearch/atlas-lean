@@ -47,3 +47,11 @@ example (ε : ℝ) (hε : 0 < ε) :
 
 example {s : ℝ} (hs : sumProductExponent < s) : ¬ HasUniformSumProductLowerGrowth s :=
   fun h => hs.not_ge (epsilonUniformLowerGrowthCharacterization_holds.2 h)
+
+-- Every set of sufficiently large cardinality beats any fixed exponent below 4/3.
+example {t : ℝ} (ht : t < 4 / 3) :
+    ∀ᶠ n : ℕ in Filter.atTop, ∀ A : Finset ℝ, A.card = n → t < sumProductRatio A := by
+  have hlt : t < sumProductExponent := ht.trans_le solymosiFourThirdsLowerBound_holds
+  filter_upwards [Filter.eventually_lt_of_lt_liminf hlt sumProductLevelMinimum_isBoundedUnder_ge]
+    with n hn A hA
+  exact hn.trans_le ((sumProductLevelMinimum_isLeast n).2 ⟨A, hA, rfl⟩)

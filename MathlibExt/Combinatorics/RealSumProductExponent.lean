@@ -15,6 +15,7 @@ public import Mathlib.Data.Set.Finite.Lemmas
 public import Mathlib.Order.LiminfLimsup
 public import Mathlib.Topology.Order.Monotone
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
+import MathlibExt.Combinatorics.SolymosiSumProduct
 
 /-!
 # Optimization Problem 84b: real sum-product exponent
@@ -486,6 +487,74 @@ def solymosiFourteenEleventhsLowerBound : Prop :=
 exponent is at least $4/3$. -/
 def solymosiFourThirdsLowerBound : Prop :=
   (4 : ℝ) / 3 ≤ sumProductExponent
+
+/--
+**Solymosi's $4/3$ lower bound for the real sum-product exponent.** Let $C$ be the real
+sum-product exponent: the limit inferior, as $n \to \infty$, of the least value of
+$\log \max(|A + A|, |AA|) / \log |A|$ over $n$-element sets $A \subset \mathbb{R}$, where
+$A + A$ and $AA$ are the sets of sums $a + b$ and products $ab$ of elements $a, b \in A$. Then
+$C \ge 4/3$.
+
+Optimization Problems 84b lists the lower bound $4/3$ [So09] (Solymosi, Adv. Math. 222 (2009));
+Bloom's history lists Solymosi 2009 with exponent $1 + 1/3$.
+
+Source: Paul Erdős and Endre Szemerédi, On sums and products of integers, Studies in Pure
+Mathematics (1983), 213-218, https://doi.org/10.1007/978-3-0348-5438-2_19; György Elekes, On the
+number of sums and products, Acta Arithmetica 81 (1997), no. 4, 365-367,
+https://doi.org/10.4064/aa-81-4-365-367; József Solymosi, On the number of sums and products,
+Bulletin of the London Mathematical Society 37 (2005), no. 4, 491-494,
+https://doi.org/10.1112/S0024609305004261; József Solymosi, Bounding multiplicative energy by
+the sumset, Advances in Mathematics 222 (2009), no. 2, 402-408,
+https://doi.org/10.1016/j.aim.2009.04.006; Misha Rudnev and Sophie Stevens, An update on the
+sum-product problem, Mathematical Proceedings of the Cambridge Philosophical Society 173 (2022),
+no. 2, 411-430, https://arxiv.org/abs/2005.11145; Thomas F. Bloom, A history of the sum-product
+problem, https://thomasbloom.org/notes/sumproduct.html; Adam Cushman, A note on the sum-product
+problem and the convex sumset problem, arXiv:2512.13849 (2025),
+https://arxiv.org/abs/2512.13849; Thomas F. Bloom, Will Sawin, Carl Schildkraut, and Dmitrii
+Zhelezov, The sum-product conjecture is false for real numbers, arXiv:2605.28781 (2026),
+https://arxiv.org/abs/2605.28781; Optimization Problems, record 84b, Sum-product exponent for
+the reals, tables of known upper and lower bounds (source commit
+2c1968cd520b60f1cf3cf50749f7285e800e4e15),
+https://github.com/teorth/optimizationproblems/blob/2c1968cd520b60f1cf3cf50749f7285e800e4e15/constants/84b.md.
+Moved from `OpenConjectures/Combinatorics/RealSumProductExponent`.
+-/
+public theorem solymosiFourThirdsLowerBound_holds : solymosiFourThirdsLowerBound := by
+  apply (le_liminf_iff' sumProductLevelMinimum_isBoundedUnder_le.isCoboundedUnder_ge
+    sumProductLevelMinimum_isBoundedUnder_ge).2
+  intro t ht
+  -- The logarithmic loss in the finite estimate is absorbed by n^(4 - 3t).
+  let δ := 4 - 3 * t
+  have hδ : 0 < δ := by dsimp [δ]; linarith
+  have h₂ : 0 < Real.log 2 := Real.log_pos (by norm_num)
+  have hlog := ((isLittleO_log_rpow_atTop hδ).comp_tendsto tendsto_natCast_atTop_atTop).bound
+    (show 0 < Real.log 2 / 1296 by positivity)
+  filter_upwards [eventually_ge_atTop 2, hlog] with n hn hlog
+  obtain ⟨A, rfl, hmin⟩ := (sumProductLevelMinimum_isLeast n).1
+  rw [hmin, ← card_rpow_le_maxCard_iff hn]
+  have hn' : (1 : ℝ) < A.card := by exact_mod_cast hn
+  have hcard := zero_lt_one.trans hn'
+  have hl : Real.log A.card ≤ Real.log 2 / 1296 * (A.card : ℝ) ^ δ := by
+    simpa only [Function.comp_apply, Real.norm_eq_abs, abs_of_nonneg (Real.log_pos hn').le,
+      abs_of_nonneg (Real.rpow_nonneg hcard.le δ)] using hlog
+  let M : ℝ := sumProductMaxCard A
+  have hs : ((A + A).card : ℝ) ≤ M := by
+    dsimp [M, sumProductMaxCard]
+    exact_mod_cast (le_max_left _ _)
+  have hp : ((A * A).card : ℝ) ≤ M := by
+    dsimp [M, sumProductMaxCard]
+    exact_mod_cast (le_max_right _ _)
+  change (A.card : ℝ) ^ t ≤ M
+  apply le_of_pow_le_pow_left₀ (n := 3) (by decide) (by dsimp [M]; positivity)
+  apply le_of_mul_le_mul_right (a := Real.log 2 * (A.card : ℝ) ^ δ) _ (by positivity)
+  calc
+    ((A.card : ℝ) ^ t) ^ 3 * (Real.log 2 * (A.card : ℝ) ^ δ) =
+        Real.log 2 * (A.card : ℝ) ^ 4 := by
+      rw [mul_left_comm, ← Real.rpow_mul_natCast hcard.le, ← Real.rpow_add hcard,
+        show t * (3 : ℕ) + δ = (4 : ℝ) by dsimp [δ]; ring]
+      norm_num
+    _ ≤ _ := solymosi_sum_product A hn
+    _ ≤ 1296 * M * M ^ 2 * (Real.log 2 / 1296 * (A.card : ℝ) ^ δ) := by gcongr
+    _ = M ^ 3 * (Real.log 2 * (A.card : ℝ) ^ δ) := by ring
 
 /-- **Statement of the Rudnev–Stevens lower bound.** The proposition that the real sum-product
 exponent is at least $1558/1167 = 4/3 + 2/1167$. -/

@@ -58,19 +58,6 @@ public theorem_wanted dias_da_silva_hamidoune {p : ℕ} (hp : p.Prime) (A : Fins
     (hA : A.Nonempty) (h : ℕ) (hh : 1 ≤ h) (hhk : h ≤ A.card) :
     min p (h * A.card - h ^ 2 + 1) ≤ (restrictedSumset h A).card
 
-/-- **Vosper's theorem for iterated sumsets.** Let $p$ be a prime, let $A$ be a subset of the
-cyclic group $\mathbb{Z}/p\mathbb{Z}$ with $k = |A| \ge 2$ elements, let $h \ge 2$ be an integer,
-and let $hA = \{a_1 + \dots + a_h : a_1, \dots, a_h \in A\}$ be the $h$-fold sumset of $A$. If
-$|hA| = hk - h + 1$ and $hk - h + 1 \le p - 2$, then $A$ is an arithmetic progression of
-length $k$ in $\mathbb{Z}/p\mathbb{Z}$.
-
-Source: Jagannath Bhanja, *Sumsets with a Minimum Number of Distinct Terms*, INTEGERS 25 (2025),
-Article A12, Theorem 3 (Vosper's theorem) (`integers-2025-A12-thm-3`). -/
-public theorem_wanted vosper_nsmul {p : ℕ} (hp : p.Prime) (A : Finset (ZMod p))
-    (hk : 2 ≤ A.card) (h : ℕ) (hh : 2 ≤ h) (hcard : (h • A).card = h * A.card - h + 1)
-    (hsmall : h * A.card - h + 1 ≤ p - 2) :
-    (A : Set (ZMod p)).IsAPOfLength A.card
-
 /-- **Freiman's $3k - 4$ theorem.** Let $A$ be a finite set of integers with $|A| = k \ge 3$,
 $\min A = 0$ and $\gcd(A) = 1$, and let $b$ be a natural number. If
 $|2A| = 2k - 1 + b \le 3k - 4$, where $2A = \{a + a' : a, a' \in A\}$, then $A$ is contained in

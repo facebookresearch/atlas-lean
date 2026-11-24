@@ -50,3 +50,22 @@ example : degenerateHarmonicRank (1 / 2) 2 2 0 - degenerateHarmonicRank (1 / 2) 
     (show (0 : ℝ) < 1 / 2 by norm_num) (show (0 : ℝ) < 2 by norm_num) 1
   norm_num [Finset.sum_range_succ, generalizedFallingFactorial, Nat.factorial] at h
   linarith
+
+-- The first two terms of the alternating diagonal give a negative value at this scale.
+example :
+    generalizedDegenerateHyperharmonic 2 3 1 2 - generalizedDegenerateHyperharmonic 2 3 2 1 =
+      -(1 / 18) := by
+  have h := (degenerateHyperharmonic_alternating_and_binomial_sums
+    (show (0 : ℝ) < 2 by norm_num) (show (0 : ℝ) < 3 by norm_num) 1).1
+  have hchoose : Ring.choose (2 : ℝ) 2 = 1 := by
+    simpa using Ring.choose_natCast (R := ℝ) 2 2
+  norm_num [Finset.sum_range_succ, degenerateDaehee, hchoose, sub_eq_add_neg] at h ⊢
+  exact h
+
+-- At index two the binomial weights are 1 and r + 1 for every order parameter r.
+example {lam α : ℝ} (hlam : 0 < lam) (hα : 0 < α) (r : ℕ) :
+    generalizedDegenerateHyperharmonic lam α (r + 2) 2 =
+      generalizedDegenerateHarmonic lam α 2 +
+        (r + 1 : ℝ) * generalizedDegenerateHarmonic lam α 1 := by
+  simpa [Finset.sum_range_succ, Nat.add_comm 1 r] using
+    ((degenerateHyperharmonic_alternating_and_binomial_sums hlam hα 1).2 r).symm
