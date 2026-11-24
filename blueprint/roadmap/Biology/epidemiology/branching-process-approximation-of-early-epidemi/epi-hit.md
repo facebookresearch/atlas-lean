@@ -1,4 +1,6 @@
-# Epi Hit
+# Contact that infects its target
 
-Contact number `j` (to the individual `U j`) infects its target: the target is initially
-susceptible and no earlier contact went to it.
+For contact targets `U_0, U_1, …` in a type `α` of individuals (contact number `j` goes to `U_j`)
+and a finite set `S₀ ⊆ α` of initially susceptible individuals, contact number `j` hits if
+`U_j ∈ S₀` and `U_{j'} ≠ U_j` for every `j' < j`: its target is initially susceptible and no earlier
+contact went to it.

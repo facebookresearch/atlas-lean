@@ -1,3 +1,4 @@
-# Dot
+# Dot product on the plane
 
-The Euclidean dot product `⟨a, b⟩ = a₁ b₁ + a₂ b₂` on `ℝ × ℝ` (whose norm is the sup norm).
+For $a, b \in \mathbb{R}^2$, the dot product is $\langle a, b \rangle = a_1 b_1 + a_2 b_2$. The norm
+used on $\mathbb{R}^2$ is the sup norm, not the norm of this inner product.

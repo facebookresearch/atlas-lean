@@ -1,3 +1,4 @@
-# Ode Path
+# Deterministic path as a vector over the compartments
 
-A deterministic path `(s, e, i, r)` as a function into `Compartment → ℝ`.
+For real functions `s`, `e`, `i`, `r`, the path `x(t) = (s(t), e(t), i(t), r(t))` of
+[vectors](vec4.md) in `ℝ^{S, E, I, R}`.

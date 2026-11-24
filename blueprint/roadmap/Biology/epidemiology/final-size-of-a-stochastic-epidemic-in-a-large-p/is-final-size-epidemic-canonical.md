@@ -1,5 +1,9 @@
-# Non-vacuity
+# The coordinates of the canonical product space form a final-size model
 
-The coordinate maps of the canonical product space (`canonicalMeasure`) form
-a model of the final-size theorem: on top of `IsEarlyEpidemic`, the targets are measurable and
-independent of the offspring numbers.
+Let $\nu$ be a probability measure on $\mathbb{N}$ and $N \ge 1$. On the
+[canonical product space](../branching-process-approximation-of-early-epidemi/canonical-measure.md)
+$(\mathbb{N} \times \mathbb{N} \to \mathbb{N}) \times (\mathbb{N} \to \{0, \dots, N-1\})$, carrying
+i.i.d. offspring numbers with law $\nu$ independent of i.i.d. uniform targets, the coordinate maps
+$\xi_{n,i}(\omega) = \omega_1(n, i)$ and $U_j(\omega) = \omega_2(j)$ form a
+[final-size epidemic model](is-final-size-epidemic.md) with offspring law $\nu$. In particular the
+hypotheses of the final-size results are satisfiable.

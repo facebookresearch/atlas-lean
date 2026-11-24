@@ -1,4 +1,7 @@
-# Exists perron left
+# Perron left vector of the colonization network
 
-The Perron–Frobenius left vector of the network: for irreducible `C` and `e > 0` there are
-`r ≥ R₀` and `w > 0` with `∑_j w_j C_ji = r e_i w_i` for every patch `i`.
+For a nonempty finite set `ι` of patches, an irreducible matrix `C` (nonnegative entries, and the
+directed graph on the patches with an edge between `i` and `j` when `C_ij > 0` is strongly
+connected) and positive rates `e`, there are a real `r ≥ R₀`, where `R₀` is the
+[persistence number](persistence-number.md), and a vector `w` with positive entries such that
+`∑_j w_j C_ji = r e_i w_i` for every patch `i`.

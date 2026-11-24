@@ -1,6 +1,6 @@
 # Sensitivity, specificity and predictive values
 
-- [Ppv](ppv.md)
-- [Ppv eq](ppv-eq.md)
-- [PPV coverage transfer](ppv-coverage-transfer.md)
-- [Ppv one one one](ppv-one-one-one.md)
+- [Positive predictive value of diagnostic parameters](ppv.md)
+- [Formula for the positive predictive value](ppv-eq.md)
+- [Coverage of a joint confidence set transfers to the PPV](ppv-coverage-transfer.md)
+- [At full prevalence, sensitivity and specificity the PPV is one](ppv-one-one-one.md)

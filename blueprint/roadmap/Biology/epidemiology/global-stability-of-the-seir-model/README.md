@@ -1,83 +1,85 @@
 # Global stability of the SEIR model
 
-- [Is Solution](is-solution.md)
-- [Without vital dynamics (`μ = 0`) the system is the closed SEIR model](is-solution-zero-iff.md)
-- [R0](r0.md)
-- [R0 zero](r0-zero.md)
-- [Endemic S](endemic-s.md)
-- [Endemic E](endemic-e.md)
-- [Endemic I](endemic-i.md)
-- [Endemic eq infected](endemic-eq-infected.md)
-- [The threshold](endemic-s-lt.md)
-- [Endemic eq infection](endemic-eq-infection.md)
-- [Endemic eq exposed](endemic-eq-exposed.md)
-- [Endemic eq susceptible](endemic-eq-susceptible.md)
+## The model and its endemic equilibrium
 
-## The scalar Volterra function `x - a - a log (x / a)`
+- [Solution of the SEIR system with vital dynamics](is-solution.md)
+- [Without vital dynamics the system is the closed SEIR model](is-solution-zero-iff.md)
+- [Basic reproduction number of the SEIR model with vital dynamics](r0.md)
+- [Without vital dynamics the reproduction number is β / γ](r0-zero.md)
+- [Susceptible level of the endemic equilibrium](endemic-s.md)
+- [Exposed level of the endemic equilibrium](endemic-e.md)
+- [Infectious level of the endemic equilibrium](endemic-i.md)
+- [Equilibrium identity for the infectious class](endemic-eq-infected.md)
+- [Above the threshold the endemic susceptible level is below N](endemic-s-lt.md)
+- [Equilibrium identity for the infection rate](endemic-eq-infection.md)
+- [Equilibrium identity for the exposed class](endemic-eq-exposed.md)
+- [Equilibrium identity for the susceptible class](endemic-eq-susceptible.md)
 
-- [Volterra](volterra.md)
-- [Le of volterra le](le-of-volterra-le.md)
-- [Le two mul of volterra le](le-two-mul-of-volterra-le.md)
-- [Sq le volterra](sq-le-volterra.md)
+## The Volterra function
 
-## Three-term AM–GM via `log y ≤ y - 1`
+- [Volterra function](volterra.md)
+- [A sublevel bound on the Volterra function keeps x away from 0](le-of-volterra-le.md)
+- [A sublevel bound on the Volterra function bounds x above](le-two-mul-of-volterra-le.md)
+- [Quadratic lower bound for the Volterra function](sq-le-volterra.md)
 
-- [Three le add of mul eq one](three-le-add-of-mul-eq-one.md)
-- [Eq one of add eq three](eq-one-of-add-eq-three.md)
+## Arithmetic and geometric means
+
+- [Three-term AM–GM inequality](three-le-add-of-mul-eq-one.md)
+- [Equality case of the three-term AM–GM inequality](eq-one-of-add-eq-three.md)
 
 ## The Lyapunov function and its derivative
 
-- [Lyapunov](lyapunov.md)
-- [Lyapunov Deriv](lyapunov-deriv.md)
-- [Lyapunov deriv identity](lyapunov-deriv-identity.md)
-- [`V ≥ 0`](lyapunov-nonneg.md)
-- [`V` vanishes only at the endemic equilibrium](lyapunov-eq-zero-iff.md)
+- [Korobeinikov Lyapunov function of the endemic equilibrium](lyapunov.md)
+- [Lyapunov derivative for the endemic equilibrium](lyapunov-deriv.md)
+- [Algebraic identity behind the Lyapunov derivative](lyapunov-deriv-identity.md)
+- [The Lyapunov function is nonnegative on the open orthant](lyapunov-nonneg.md)
+- [The Lyapunov function vanishes only at the endemic equilibrium](lyapunov-eq-zero-iff.md)
 - [The Lyapunov derivative is nonpositive](lyapunov-deriv-nonpos.md)
-- [Lyapunov Deriv le](lyapunov-deriv-le.md)
-- [The zero set of `V̇`](lyapunov-deriv-eq-zero-iff.md)
-- [Volterra le lyapunov](volterra-le-lyapunov.md)
-- [Exists box](exists-box.md)
-- [Continuous At lyapunov](continuous-at-lyapunov.md)
+- [Quadratic bound on the Lyapunov derivative](lyapunov-deriv-le.md)
+- [Zero set of the Lyapunov derivative](lyapunov-deriv-eq-zero-iff.md)
+- [Each Volterra term is bounded by the Lyapunov function](volterra-le-lyapunov.md)
+- [Sublevel sets of the Lyapunov function lie in a positive box](exists-box.md)
+- [The Lyapunov function is continuous at the endemic equilibrium](continuous-at-lyapunov.md)
 
-## Calculus lemmas on `[0, ∞)`
+## Positivity and convergence along solutions
 
 - [Derivative of the Lyapunov function along solutions](has-deriv-at-lyapunov.md)
-- [Lyapunov le of pos on](lyapunov-le-of-pos-on.md)
-- [Forward invariance of the open positive orthant](pos.md)
-- [`V` is nonincreasing along solutions](lyapunov-le-initial.md)
-- [Uniform persistence and boundedness](exists-box-forall.md)
-- [Global attractivity of the endemic equilibrium](tendsto-endemic.md)
+- [The Lyapunov function does not increase while the solution is positive](lyapunov-le-of-pos-on.md)
+- [For R₀ > 1 the open positive orthant is forward invariant](pos.md)
+- [The Lyapunov function stays below its initial value](lyapunov-le-initial.md)
+- [Persistence and boundedness of positive solutions for R₀ > 1](exists-box-forall.md)
+- [Convergence to the endemic equilibrium when R₀ > 1](tendsto-endemic.md)
 
-## Lyapunov stability and global asymptotic stability
+## Stability of the endemic equilibrium
 
-- [Lyapunov stability of the endemic equilibrium](endemic-lyapunov-stable.md)
-- [Global asymptotic stability of the SEIR endemic equilibrium](endemic-globally-asymptotically-stable.md)
+- [Lyapunov stability of the endemic equilibrium when R₀ > 1](endemic-lyapunov-stable.md)
+- [Stability and attractivity of the endemic equilibrium when R₀ > 1](endemic-globally-asymptotically-stable.md)
 
 ## The removed class and the total population
 
-- [Endemic R](endemic-r.md)
+- [Removed level of the endemic equilibrium](endemic-r.md)
 - [The removed class follows the infectives](tendsto-removed.md)
-- [The total population relaxes to `N`](tendsto-total.md)
-- [`R → R*` at the endemic equilibrium](tendsto-removed-endemic.md)
+- [The total population relaxes to N](tendsto-total.md)
+- [Convergence of the removed class when R₀ > 1](tendsto-removed-endemic.md)
 
-## The disease-free equilibrium when `R₀ ≤ 1`
+## The disease-free equilibrium when R₀ ≤ 1
 
-- [Dfe Lyapunov](dfe-lyapunov.md)
-- [Dfe Lyapunov Deriv](dfe-lyapunov-deriv.md)
-- [Beta le of R0 le one](beta-le-of-r0-le-one.md)
-- [Lyapunov decrease at the disease-free equilibrium](dfe-lyapunov-deriv-le.md)
-- [Le dfe Lyapunov](le-dfe-lyapunov.md)
-- [Continuous At dfe Lyapunov](continuous-at-dfe-lyapunov.md)
-- [Derivative of `V₀` along solutions](has-deriv-at-dfe-lyapunov.md)
-- [Dfe Lyapunov le of pos on](dfe-lyapunov-le-of-pos-on.md)
-- [Forward invariance of the open positive orthant](pos-of-r0-le-one.md)
-- [`V₀` is nonincreasing along solutions](dfe-lyapunov-le-initial.md)
-- [Attractivity of the disease-free equilibrium from the open positive orthant](tendsto-disease-free.md)
-- [`R → 0` at the disease-free equilibrium](tendsto-removed-disease-free.md)
-- [Lyapunov stability of the disease-free equilibrium relative to the open positive orthant](disease-free-lyapunov-stable-of-pos.md)
-- [Stability and attractivity of the SEIR disease-free equilibrium from the open positive orthant](disease-free-lyapunov-stable-and-attract.md)
+- [Lyapunov function of the disease-free equilibrium](dfe-lyapunov.md)
+- [Disease-free Lyapunov derivative](dfe-lyapunov-deriv.md)
+- [R₀ ≤ 1 bounds the transmission rate](beta-le-of-r0-le-one.md)
+- [Bound on the disease-free Lyapunov derivative when R₀ ≤ 1](dfe-lyapunov-deriv-le.md)
+- [Each term is bounded by the disease-free Lyapunov function](le-dfe-lyapunov.md)
+- [The disease-free Lyapunov function is continuous at (N, 0, 0)](continuous-at-dfe-lyapunov.md)
+- [Derivative of the disease-free Lyapunov function along solutions](has-deriv-at-dfe-lyapunov.md)
+- [The disease-free Lyapunov function does not increase while positive](dfe-lyapunov-le-of-pos-on.md)
+- [For R₀ ≤ 1 the open positive orthant is forward invariant](pos-of-r0-le-one.md)
+- [The disease-free Lyapunov function stays below its initial value](dfe-lyapunov-le-initial.md)
+- [Convergence to the disease-free state when R₀ ≤ 1](tendsto-disease-free.md)
+- [Convergence of the removed class to 0 when R₀ ≤ 1](tendsto-removed-disease-free.md)
+- [Lyapunov stability of the disease-free state when R₀ ≤ 1](disease-free-lyapunov-stable-of-pos.md)
+- [Stability and attractivity of the disease-free state when R₀ ≤ 1](disease-free-lyapunov-stable-and-attract.md)
 
-## Forward-global existence in the feasible region
+## Forward-global existence
 
-- [Forward-global solutions in the feasible region (nonnegative rates)](exists-is-solution-of-nonneg.md)
-- [Existence of solutions of the SEIR system with vital dynamics](exists-is-solution.md)
+- [Forward-global solutions for nonnegative rates and data](exists-is-solution-of-nonneg.md)
+- [Existence of nonnegative solutions for positive σ, μ and N](exists-is-solution.md)

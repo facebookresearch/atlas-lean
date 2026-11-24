@@ -1,5 +1,11 @@
-# Exponential decay of the Lyapunov function
+# For $R_0 > 1$, exponential decay of the Lyapunov function
 
-There is `c > 0` with
-`V(S(t), I(t)) ≤ V(S(0), I(0)) e^{-c t}` for all `t ≥ 0` (take `c = β m / N`, `m` the
-persistence bound).
+Let $0 < \gamma < \beta$ and $N > 0$, and let $(S, I)$ be a [solution of the SIS system](is-solution.md) with
+$S(0) + I(0) = N$, $S(0) > 0$ and $I(0) > 0$. Then there is $c > 0$ such that the
+[Goh–Volterra Lyapunov function](lyapunov.md) satisfies
+
+$$V(S(t), I(t)) \le V(S(0), I(0))\, e^{-c t} \quad \text{for every } t \ge 0.$$
+
+The rate depends on the solution: $c = \beta m / N$ works, where
+$m = I^* \exp(-(V(S(0), I(0)) + I^*)/I^*)$ with $I^* = N(1 - \gamma/\beta)$ is the lower bound on
+$I$ from [persistence](persistence.md).

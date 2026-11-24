@@ -32,7 +32,7 @@
 
 ## Allele-label symmetry of the Wright–Fisher martingale problem
 
-- [Generator neg one sub](generator-neg-one-sub.md)
-- [Allele relabeling with selection](one-sub.md)
-- [Absorption Time one sub](absorption-time-one-sub.md)
+- [Reflecting the frequency negates σ in the Wright–Fisher generator](generator-neg-one-sub.md)
+- [Reflecting a Wright–Fisher solution negates the selection coefficient](one-sub.md)
+- [Reflecting the frequency path leaves the absorption time unchanged](absorption-time-one-sub.md)
 - [Kimura's loss probability, process form](measure-real-loss.md)

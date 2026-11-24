@@ -1,5 +1,6 @@
-# Forward invariance of the open positive orthant
+# For R₀ ≤ 1 the open positive orthant is forward invariant
 
-**Forward invariance of the open positive orthant** for `R₀ ≤ 1`: `V₀ ≤ V₀(0)` keeps `S`
-above a fixed positive level, and `E e^{(μ + σ) t}`, `I e^{(μ + γ) t}` are nondecreasing while
-`S, E, I > 0`; so no compartment reaches `0`.
+Let [solution](is-solution.md) `(S, E, I, R)` of the SEIR system with vital dynamics, under `β ≥ 0`,
+`σ > 0`, `γ ≥ 0`, `μ > 0`, `N > 0` and `R₀ ≤ 1`, where `R₀` is the
+[basic reproduction number](r0.md) `R₀ = β σ / ((μ + σ) (μ + γ))`, with `S(0), E(0), I(0) > 0`. Then
+`S(t), E(t), I(t) > 0` for every `t ≥ 0`.

@@ -1,3 +1,4 @@
-# One sub final Size Root
+# For $R > 1$, $\tau(R)$ solves the final-size equation
 
-`τ` solves the final-size equation `1 - τ = e^{-R τ}`.
+For every real $R > 1$, the [positive root](final-size-root.md) $\tau(R) \in (0, 1)$ satisfies
+$1 - \tau(R) = e^{-R\,\tau(R)}$.

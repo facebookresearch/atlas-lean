@@ -1,4 +1,10 @@
-# Eq add integral drift
+# The SIR densities satisfy the integral equation of the drift
 
-A solution of the SIR system (with `N = 1`, i.e. in densities) satisfies the integral
-equation `x(t) = x(0) + ∫₀ᵗ F(x(s)) ds` for `t ≥ 0`, where `x = (s, i)`.
+For all real $\beta$ and $\gamma$, let $(s, i, r)$ be a
+[solution of the SIR system](../kermack-mckendrick-sir-model/is-solution.md) with transmission rate
+$\beta$, removal rate $\gamma$ and population size $1$ (in densities), and $x(t) = (s(t), i(t))$.
+Then for every $t \ge 0$
+
+$$x(t) = x(0) + \int_0^t F(x(u))\, du,$$
+
+with the [drift](drift.md) $F$.

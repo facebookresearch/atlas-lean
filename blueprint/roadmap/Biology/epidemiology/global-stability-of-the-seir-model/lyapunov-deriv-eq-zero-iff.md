@@ -1,7 +1,8 @@
-# The zero set of `V̇`
+# Zero set of the Lyapunov derivative
 
-**The zero set of `V̇`** on the positive orthant is `{S = S*, E / E* = I / I*}`
-(written `E I* = E* I`). It is a half-line through the equilibrium, not the equilibrium alone,
-so `V̇ ≤ 0` does not by itself give convergence: the invariance step
-(`IsSolution.tendsto_endemic`) shows that the only trajectory staying in this set is the
-equilibrium.
+Under `σ > 0`, `γ ≥ 0`, `μ > 0`, `N > 0` and `R₀ > 1`, where `R₀` is the
+[basic reproduction number](r0.md) `R₀ = β σ / ((μ + σ) (μ + γ))`, for all `S, E, I > 0` the
+[Lyapunov derivative](lyapunov-deriv.md) `V̇` vanishes if and only if `S = S*` and `E I* = E* I`,
+with the [endemic levels](endemic-s.md) `S*`, [`E*`](endemic-e.md) and [`I*`](endemic-i.md). In the
+open positive orthant this is a half-line through the equilibrium, not the equilibrium alone, so
+`V̇ ≤ 0` does not by itself give convergence.

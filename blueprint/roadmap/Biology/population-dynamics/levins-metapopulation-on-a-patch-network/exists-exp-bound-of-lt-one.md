@@ -1,6 +1,8 @@
-# Uniform exponential extinction
+# Uniform exponential extinction below the threshold
 
-For `C ≥ 0`, `e > 0` and `R₀ < 1` there are `κ > 0` and
-`M` such that every solution on `[0, ∞)` starting in `[0, 1]^ι` satisfies `p_i(t) ≤ M e^{-κ t}`
-for all `t ≥ 0` and all patches `i`. The bound is the same for every such solution; it does not
-scale with the initial state.
+For a finite set `ι` of patches, a matrix `C` with nonnegative entries, positive rates `e` and
+[persistence number](persistence-number.md) `R₀ < 1`, there are `κ > 0` and a real `M` such that
+every [solution](is-solution.md) `p` with `p_i(0) ∈ [0, 1]` for every patch `i` satisfies
+`p_i(t) ≤ M e^(−κ t)` for all `t ≥ 0` and all patches `i`. The constants are the same for every such
+solution; the bound does not scale with the initial state. The existence of solutions is not part of
+the statement.

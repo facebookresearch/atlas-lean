@@ -1,3 +1,4 @@
-# Is Solution const zero
+# The constant function 0 solves the Levins equation
 
-The extinction equilibrium `p ≡ 0` is a solution.
+For all real numbers `c` and `e`, the constant function `p ≡ 0` (extinction) is a
+[solution](is-solution-2.md) of the Levins equation `p' = c p (1 - p) - e p`.

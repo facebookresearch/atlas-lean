@@ -1,4 +1,11 @@
-# Lyapunov Deriv le
+# For γ ≥ 0 the Lyapunov derivative is at most its two squared terms
 
-`V' ≤ -(β/N) I (x - a)² / x - ((1 - ε) β / N) I (y - c)² / y` for `x, y > 0` and `γ ≥ 0`:
-the dropped term `γ (x c - y a)² / ((a + c) x y)` is nonnegative.
+Let $(a, c)$ be an [endemic equilibrium](is-endemic-eq.md) at coverage $p$, let $\gamma \ge 0$ and
+$x, y > 0$. Then the [Lyapunov derivative](lyapunov-deriv.md) satisfies
+
+$$
+\dot V(x, y) \le -\frac{\beta (x + y)(x - a)^2}{N x} -
+\frac{(1 - \varepsilon) \beta (x + y)(y - c)^2}{N y},
+$$
+
+since the dropped term $\gamma (x c - y a)^2 / ((a + c) x y)$ is nonnegative.

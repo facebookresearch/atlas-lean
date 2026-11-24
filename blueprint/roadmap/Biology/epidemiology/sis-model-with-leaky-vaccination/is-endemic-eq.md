@@ -1,4 +1,12 @@
-# Is Endemic Eq
+# Endemic equilibrium of the vaccination model
 
-`(I_u*, I_v*) = (a, c)` is an **endemic equilibrium**: both infected levels are positive and
-the infected equations vanish with `S_u = (1 - p) N - a`, `S_v = p N - c`.
+For real $\beta$, $\gamma$, $\varepsilon$, $N$ and a coverage $p$, a pair $(a, c)$ is an endemic
+equilibrium when $a > 0$, $c > 0$ and
+
+$$
+\frac{\beta \bigl((1 - p) N - a\bigr)(a + c)}{N} = \gamma a, \qquad
+\frac{(1 - \varepsilon) \beta (p N - c)(a + c)}{N} = \gamma c,
+$$
+
+with the quotients by $N$ read as $0$ when $N = 0$: the infected equations of the
+[model](is-solution.md) vanish at $I_u = a$, $I_v = c$, $S_u = (1 - p) N - a$ and $S_v = p N - c$.

@@ -1,9 +1,16 @@
-# Is Fluctuation Path
+# Solution of the linear fluctuation equation
 
-`U` solves the **linear fluctuation equation** on `[0, T]` driven by the path `m`, with
-initial value `u₀`, around the deterministic path `x`:
-`U(t) = u₀ + (m(t) - m(0)) + ∫₀ᵗ DF(x(s)) U(s) ds`, and `U` is continuous on `[0, T]`. The
-driving path enters only through its increments, so `U(0) = u₀` for every `m`
-(`IsFluctuationPath.initial`). With `m` the Gaussian martingale of the module docstring, which
-starts at `0`, this is the Ornstein–Uhlenbeck-type SDE `dU = DF(x(t)) U dt + dM(t)` of the
-diffusion approximation, solved pathwise.
+For real $\beta$, $\gamma$ and $T$, a path $x : \mathbb{R} \to \mathbb{R}^2$, an initial value
+$u_0 \in \mathbb{R}^2$ and a driving path $m : \mathbb{R} \to \mathbb{R}^2$, a path $U$ solves the
+linear fluctuation equation on $[0, T]$ if $U$ is continuous on $[0, T]$ and
+
+$$
+U(t) = u_0 + \bigl(m(t) - m(0)\bigr) + \int_0^t DF(x(s))\, U(s)\, ds
+\quad \text{for } t \in [0, T],
+$$
+
+with the [Jacobian](jacobian.md) $DF$ and the Bochner integral, which is $0$ when the integrand is
+not integrable; the results assume $x$ continuous on $[0, T]$. The driving path enters only through
+its increments, so $U(0) = u_0$ [for every](initial.md) $m$. Driven by a Gaussian martingale
+starting at $0$, this is the stochastic equation $dU = DF(x(t))\, U\, dt + dM(t)$ of the diffusion
+approximation, solved path by path.

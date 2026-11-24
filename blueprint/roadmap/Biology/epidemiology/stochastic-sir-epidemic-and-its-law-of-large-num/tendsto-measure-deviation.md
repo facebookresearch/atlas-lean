@@ -1,18 +1,27 @@
 # Kurtz's law of large numbers for the stochastic SIR epidemic
 
-**Kurtz's law of large numbers for the stochastic SIR epidemic** (Kurtz 1970, Thm 3.1;
-Ethier–Kurtz 1986, ch. 11, Thm 2.1, SIR instance). For each population size `N` let
-`(S N, I N, R N)` be the SIR chain driven by unit-rate Poisson processes `Y₁ N` (infection) and
-`Y₂ N` (recovery), i.e. almost every sample path solves the random time-change equations of
-`IsChainPath` with infection rate `β S I / N` and recovery rate `γ I`. Let `(s, i, r)` solve the
-SIR system `s' = -β s i`, `i' = β s i - γ i`, `r' = γ i` from a point of the simplex. If the
-scaled initial state converges to `(s 0, i 0, r 0)` in probability, then the scaled chain
-converges to `(s, i, r)` in probability, uniformly on every time interval `[0, T]`: the
-probability that the deviation reaches `ε` at some time of `[0, T]` tends to `0`,
+(Kurtz 1970, Thm 3.1; Ethier–Kurtz 1986, ch. 11, Thm 2.1, SIR instance.)
 
-`P(∃ t ∈ [0, T], |S/N - s| + |I/N - i| + |R/N - r| ≥ ε) → 0`  as `N → ∞`.
+Let $(\Omega, P)$ be a probability space and $\beta, \gamma \ge 0$. For each natural number $N$,
+let $Y_{1,N}$ (infection) and $Y_{2,N}$ (recovery) be unit-rate [Poisson processes](../../../Probability/point-processes/poisson-processes/is-poisson-process.md) on
+$\Omega$, not necessarily independent, and let $S_N, I_N, R_N$ be random paths such that for
+$P$-almost every $\omega$ the paths $(S_N, I_N, R_N)(\omega)$ satisfy the [random time-change equations of the SIR chain](is-chain-path.md) with
+population size $N$ and driving functions $Y_{1,N}(\cdot, \omega)$, $Y_{2,N}(\cdot, \omega)$. Let
+$(s, i, r)$ be a [solution of the SIR system](../kermack-mckendrick-sir-model/is-solution.md) with population size $1$,
+$s' = -\beta s i$, $i' = \beta s i - \gamma i$, $r' = \gamma i$, with $s(0), i(0), r(0) \ge 0$ and
+$s(0) + i(0) + r(0) = 1$. Write $D_N(t)$ for the [deviation](deviation.md)
+$|S_N(t)/N - s(t)| + |I_N(t)/N - i(t)| + |R_N(t)/N - r(t)|$, and suppose the scaled initial state
+converges in probability: $P(D_N(0) \ge \delta) \to 0$ as $N \to \infty$ for every $\delta > 0$.
+Then for every real $T$ and every $\varepsilon > 0$,
 
-This event contains the strict supremum event `sup_{t ∈ [0, T]} deviation > ε`. A supremum need
-not be attained, so the non-strict supremum event `sup deviation ≥ ε` is the separate corollary
-`tendsto_measure_iSup_deviation`. The event is not assumed measurable; `μ` is applied as an outer
-measure.
+$$P\left(\exists\, t \in [0, T],\ D_N(t) \ge \varepsilon\right) \to 0 \quad (N \to \infty).$$
+
+The events involved are not assumed measurable; $P$ is applied to them as an outer measure. When
+$Y_{1,N}$ and $Y_{2,N}$ are independent and $N \ge 1$, $(S_N, I_N, R_N)$ is the stochastic SIR
+chain, which jumps
+$(S, I, R) \to (S - 1, I + 1, R)$ at rate $\beta S I / N$ and $(S, I, R) \to (S, I - 1, R + 1)$ at
+rate $\gamma I$; independence is not needed. The event contains
+$\{\sup_{t \in [0, T]} D_N(t) > \varepsilon\}$, so the scaled chain converges to $(s, i, r)$ in
+probability, uniformly on $[0, T]$. A supremum need not be attained, so the event
+$\{\sup_{t \in [0, T]} D_N(t) \ge \varepsilon\}$ is treated in the
+[supremum form](tendsto-measure-i-sup-deviation.md).

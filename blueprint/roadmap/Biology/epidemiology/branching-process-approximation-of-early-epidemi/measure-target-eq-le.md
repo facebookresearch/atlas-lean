@@ -1,3 +1,4 @@
-# Measure target eq le
+# Two contacts meet the same individual with probability at most 1/N
 
-Two distinct contacts go to the same individual with probability at most `1 / N`.
+For a [model](is-early-epidemic.md) with population size `N` and contacts `j ≠ j'`,
+`P(U_{j'} = U_j) ≤ 1/N`, in `[0, ∞]` with `1/0 = ∞`.

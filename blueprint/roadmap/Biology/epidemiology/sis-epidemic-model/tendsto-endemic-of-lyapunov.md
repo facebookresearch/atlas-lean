@@ -1,5 +1,9 @@
-# Global attractivity via the Lyapunov function
+# For $R_0 > 1$, interior solutions converge to the endemic equilibrium
 
-If `γ > 0` and `R₀ = β / γ > 1`, every
-solution of the SIS model starting in the open segment `{S + I = N, S > 0, I > 0}` of the
-positive orthant converges to the endemic equilibrium `(S*, I*) = (N γ / β, N (1 - γ / β))`.
+Let $\gamma > 0$ and $R_0 = \beta/\gamma > 1$, and let $(S, I)$ be a [solution of the SIS system](is-solution.md) starting
+in the open segment $\{S + I = N,\ S > 0,\ I > 0\}$: $S(0) + I(0) = N$, $S(0) > 0$ and $I(0) > 0$
+(so $N > 0$). Then, with $S^* = N\gamma/\beta$ and $I^* = N(1 - \gamma/\beta)$,
+
+$$(S(t), I(t)) \to (S^*, I^*) \quad \text{as } t \to \infty.$$
+
+The proof uses the [Goh–Volterra Lyapunov function](lyapunov.md).

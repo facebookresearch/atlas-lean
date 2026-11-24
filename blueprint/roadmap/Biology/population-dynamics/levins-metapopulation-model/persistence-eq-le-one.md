@@ -1,3 +1,4 @@
-# Persistence Eq le one
+# For c > 0 and e ≥ 0, the persistence equilibrium is at most 1
 
-`p* ≤ 1` for `c > 0`, `e ≥ 0`.
+For real numbers `c > 0` and `e ≥ 0`, the [persistence equilibrium](persistence-eq.md)
+`p* = 1 - e / c` satisfies `p* ≤ 1`.

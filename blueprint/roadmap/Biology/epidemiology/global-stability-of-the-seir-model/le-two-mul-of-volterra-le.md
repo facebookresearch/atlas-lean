@@ -1,3 +1,4 @@
-# Le two mul of volterra le
+# A sublevel bound on the Volterra function bounds x above
 
-A sublevel bound `g(a, x) ≤ C` bounds `x` above: `x ≤ 2 (C + a)` (from `log y ≤ y / 2`).
+For `a > 0`, `x > 0` and a real `C` with `g(a, x) ≤ C`, where `g` is the
+[Volterra function](volterra.md) `g(a, x) = x − a − a log(x / a)`, `x ≤ 2 (C + a)`.

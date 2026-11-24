@@ -1,7 +1,13 @@
-# Global asymptotic stability of the SEIR endemic equilibrium
+# Stability and attractivity of the endemic equilibrium when R₀ > 1
 
-If `σ > 0`, `γ ≥ 0`,
-`μ > 0`, `N > 0` and the threshold condition `R₀ = β σ / ((μ + σ) (μ + γ)) > 1` holds, the
-endemic equilibrium `(S*, E*, I*)` is Lyapunov stable and attracts every solution starting in
-the open positive orthant `S, E, I > 0`; both facts are proved from the Korobeinikov function
-`lyapunov`.
+Under `σ > 0`, `γ ≥ 0`, `μ > 0`, `N > 0` and `R₀ > 1`, where `R₀` is the
+[basic reproduction number](r0.md) `R₀ = β σ / ((μ + σ) (μ + γ))`, the endemic equilibrium
+`(S*, E*, I*)` is Lyapunov stable relative to the open positive orthant and attracts it. Stability:
+for every `ε > 0` there is `δ > 0` such that every [solution](is-solution.md) `(S, E, I, R)` of the
+SEIR system with vital dynamics with `S(0), E(0), I(0) > 0` and `(S(0), E(0), I(0))` within distance
+`δ` of `(S*, E*, I*)` stays within distance `ε` of it: `(S(t), E(t), I(t))` is within `ε` of
+`(S*, E*, I*)` for every `t ≥ 0`. Attractivity: every [solution](is-solution.md) `(S, E, I, R)` of
+the SEIR system with vital dynamics with `S(0), E(0), I(0) > 0` satisfies
+`(S(t), E(t), I(t)) → (S*, E*, I*)` as `t → ∞`. Distances on `ℝ³` are the maximum of the coordinate
+distances. Only solutions starting in the open positive orthant are covered; initial states on its
+boundary are not.

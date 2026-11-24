@@ -1,3 +1,4 @@
-# Balance eq mul of eq
+# Factorization of the balance through any positive equilibrium
 
-If `q > 0` is an equilibrium, `f(p) = -(p - q) (c p + m / q)`.
+For all real `c`, `e` and `m`: if `q > 0` and the [balance](balance.md) vanishes at `q`, `f(q) = 0`,
+then for every real `p`, `f(p) = -(p - q) (c p + m / q)`.

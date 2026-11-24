@@ -1,8 +1,10 @@
-# Background-only reporting intensity at `rho = 0`
+# At zero reporting fraction the intensity is the background term
 
-When the
-reporting fraction is zero, the interval intensity
-`rho * (∫ t in a..b, beta * S t * I t / N) + background * (b - a)`
-reduces to the background term alone: at `rho = 0` the reporting
-intensity depends only on the fixed background and the interval
-width, not on the epidemic rates (`beta`, the trajectory, or `N`).
+For all real numbers $\beta$, $c$, $N$, $a$ and $b$ and all functions
+$S, I : \mathbb{R} \to \mathbb{R}$, the interval intensity with reporting fraction $\rho = 0$ is
+the background term alone:
+
+$$0 \cdot \int_a^b \frac{\beta\, S(t)\, I(t)}{N}\, dt + c\,(b - a) = c\,(b - a).$$
+
+So at zero reporting the intensity depends only on the background rate $c$ and the window width
+$b - a$, not on the transmission rate $\beta$, the trajectory $(S, I)$ or the population size $N$.

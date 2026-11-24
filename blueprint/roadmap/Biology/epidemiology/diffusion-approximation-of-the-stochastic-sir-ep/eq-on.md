@@ -1,5 +1,5 @@
 # Uniqueness of the limit covariance
 
-Two solutions of the Lyapunov equation around a path
-`x` continuous on `[0, T]`, with the same initial covariance, agree on `[0, T]`. In particular
-the limit covariance `V(t)` is determined by `β`, `γ`, `x` and `V₀`.
+Let $\beta, \gamma \ge 0$ and let $x$ be continuous on $[0, T]$. Two
+[limit covariances](is-limit-covariance.md) $V$ and $V'$ around $x$ with the same initial value
+$V_0$ agree on $[0, T]$: the limit covariance is determined by $\beta$, $\gamma$, $x$ and $V_0$.

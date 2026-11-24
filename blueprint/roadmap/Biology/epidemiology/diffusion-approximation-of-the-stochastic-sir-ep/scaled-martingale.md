@@ -1,7 +1,20 @@
-# Scaled Martingale
+# Scaled compensated increment of the density paths
 
-The scaled martingale `M_N(t) = √N (X_N(t) - X_N(0) - ∫₀ᵗ F(X_N(s)) ds)`. For the SIR chain
-in its random time-change representation this is
-`Σ_ℓ ℓ N^{-1/2} (Y_ℓ(N ∫₀ᵗ λ_ℓ(X_N)) - N ∫₀ᵗ λ_ℓ(X_N))` with unit Poisson processes `Y_ℓ`. For a
-general family `X` it is just the process above: it is a martingale only when `X` is the scaled
-SIR chain, and no result here uses the martingale property.
+For real $\beta$, $\gamma$ and paths $X_N(\omega) : \mathbb{R} \to \mathbb{R}^2$, the scaled
+compensated increment is
+
+$$
+M_N(\omega)(t) = \sqrt N\, \Bigl(X_N(\omega)(t) - X_N(\omega)(0) -
+\int_0^t F\bigl(X_N(\omega)(s)\bigr)\, ds\Bigr),
+$$
+
+with the [drift](drift.md) $F$ and the Bochner integral, which is $0$ when the integrand is not
+integrable. For the SIR chain in its random time-change representation it is the scaled compensated
+Poisson martingale
+
+$$
+\sum_\ell \ell\, N^{-1/2} \Bigl(Y_\ell\Bigl(N \int_0^t \lambda_\ell(X_N)\Bigr) -
+N \int_0^t \lambda_\ell(X_N)\Bigr),
+$$
+
+with unit Poisson processes $Y_\ell$; for a general family of paths it need not be a martingale.

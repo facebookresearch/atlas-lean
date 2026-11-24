@@ -1,6 +1,10 @@
-# Critical Coverage
+# Critical vaccination coverage
 
-The **critical vaccination coverage** `p_c = (1 - 1 / R₀) / ε = (1 - γ / β) / ε`. It has its
-epidemiological meaning for `β, ε > 0`; Lean's convention `x / 0 = 0` makes it `0` at `ε = 0` and
-`1 / ε` at `β = 0`, and the threshold theorems (`Rv_lt_one_iff` and its variants) assume
-`β, γ, ε > 0`.
+For real $\beta$, $\gamma$ and $\varepsilon$, the critical vaccination coverage is
+
+$$p_c(\beta, \gamma, \varepsilon) = \frac{1 - \gamma / \beta}{\varepsilon},$$
+
+with the convention $x / 0 = 0$: it is $0$ at $\varepsilon = 0$, and $1 / \varepsilon$ at
+$\beta = 0$. For $\beta, \gamma, \varepsilon > 0$ it is $(1 - 1 / R_0) / \varepsilon$ with
+$R_0 = \beta / \gamma$, the coverage at which the [vaccinated reproduction number](rv.md)
+[equals one](rv-le-one-iff.md).

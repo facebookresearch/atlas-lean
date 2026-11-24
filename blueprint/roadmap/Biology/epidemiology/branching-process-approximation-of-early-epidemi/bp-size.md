@@ -1,5 +1,5 @@
-# Bp Size
+# Generation sizes of the branching process
 
-Generation sizes of the branching process: `Z 0 = 1` and `Z (n + 1) = ∑_{i < Z n} ξ n i`,
-where `ξ n i` is the number of offspring (contacts) of the `i`-th individual of generation
-`n`.
+For offspring numbers `ξ_n(i) ∈ ℕ` (the contacts of the `i`-th infective of generation `n`), the
+generation sizes of the branching process are `Z_0 = 1` and `Z_{n+1} = ∑_{i < Z_n} ξ_n(i)`: every
+contact produces a new individual.

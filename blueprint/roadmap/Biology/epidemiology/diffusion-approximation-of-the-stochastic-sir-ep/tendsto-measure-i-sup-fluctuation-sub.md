@@ -1,11 +1,29 @@
 # Diffusion approximation, supremum form
 
-Under the hypotheses of
-`tendsto_measure_fluctuation_sub`, the supremum over `[0, T]` of
-`‖√N (X_N(t) - x(t)) - U(t)‖` is at least `ε` with probability tending to `0`:
+Let $\mu$ be a finite measure on $\Omega$ and $\beta, \gamma \ge 0$, let $(s, i, r)$ be a
+[solution of the SIR system](../kermack-mckendrick-sir-model/is-solution.md) with transmission rate
+$\beta$, removal rate $\gamma$ and population size $1$ (in densities), and $x(t) = (s(t), i(t))$.
+Let $X_N(\omega) : \mathbb{R} \to \mathbb{R}^2$ ($N \in \mathbb{N}$, $\omega \in \Omega$) be
+measurable density paths, $U_0 : \Omega \to \mathbb{R}^2$ measurable, $M(\omega)$ paths continuous
+on $[0, T]$ whose values $\omega \mapsto M(\omega)(t)$ are measurable, and, for every $\omega$,
+$U(\omega)$ the [fluctuation path](is-fluctuation-path.md) driven by $M(\omega)$ from $U_0(\omega)$
+around $x$. Write $U_N = \sqrt N (X_N - x)$ for the [scaled fluctuation](fluctuation.md) and $M_N$
+for the [scaled compensated increment](scaled-martingale.md), with the sup norm
+$\|h\| = \max(|h_1|, |h_2|)$ on $\mathbb{R}^2$. Assume that for every $\delta > 0$, as
+$N \to \infty$,
 
-`P(sup_{t ∈ [0, T]} ‖√N (X_N(t) - x(t)) - U(t)‖ ≥ ε) → 0`  as `N → ∞`.
+- (law of large numbers)
+  $\mu\{\omega : \exists\, t \in [0, T],\ \|X_N(t) - x(t)\| \ge \delta\} \to 0$;
+- (initial fluctuations) $\mu\{\omega : \|U_N(0) - U_0\| \ge \delta\} \to 0$;
+- (martingale central limit theorem, coupled form)
+  $\mu\{\omega : \exists\, t \in [0, T],\ \|M_N(t) - M(t)\| \ge \delta\} \to 0$.
 
-The supremum is taken in `ℝ≥0∞`, so it exists for every path, bounded or not, and need not be
-attained. The event lies inside the event of `tendsto_measure_fluctuation_sub` at threshold
-`ε / 2`; it is not assumed measurable, and `μ` is applied as an outer measure.
+Then for every $\varepsilon > 0$
+
+$$
+\mu\Bigl\{\omega : \sup_{t \in [0, T]} \|U_N(t) - U(t)\| \ge \varepsilon\Bigr\} \to 0
+\quad (N \to \infty),
+$$
+
+with the supremum taken in $[0, \infty]$, so it exists for every path and need not be attained. The
+events over $[0, T]$ are not assumed measurable, and $\mu$ is applied to them as an outer measure.

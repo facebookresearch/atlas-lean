@@ -1,4 +1,4 @@
-# Sq le volterra
+# Quadratic lower bound for the Volterra function
 
-`(x - a)² ≤ 2 M g(a, x)` for `0 < x ≤ M`, `0 < a ≤ M`: the difference has derivative
-`2 (x - a) (M - x) / x`, so it is minimal (`= 0`) at `x = a`.
+For `0 < a ≤ M` and `0 < x ≤ M`, the [Volterra function](volterra.md)
+`g(a, x) = x − a − a log(x / a)` satisfies `(x − a)² ≤ 2 M g(a, x)`.

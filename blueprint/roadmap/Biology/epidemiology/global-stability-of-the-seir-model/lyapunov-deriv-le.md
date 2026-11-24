@@ -1,3 +1,6 @@
-# Lyapunov Deriv le
+# Quadratic bound on the Lyapunov derivative
 
-`V̇ ≤ -μ (S - S*)² / S`: the AM–GM part is nonpositive.
+Under `σ > 0`, `γ ≥ 0`, `μ > 0`, `N > 0` and `R₀ > 1`, where `R₀` is the
+[basic reproduction number](r0.md) `R₀ = β σ / ((μ + σ) (μ + γ))`, for all `S, E, I > 0` the
+[Lyapunov derivative](lyapunov-deriv.md) `V̇` satisfies `V̇(S, E, I) ≤ −μ (S − S*)² / S`, with `S*`
+the [susceptible level](endemic-s.md).

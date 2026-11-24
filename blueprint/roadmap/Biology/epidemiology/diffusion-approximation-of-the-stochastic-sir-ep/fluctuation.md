@@ -1,5 +1,8 @@
-# Fluctuation
+# Scaled fluctuation around the deterministic path
 
-The scaled fluctuation `U_N(t) = √N (X_N(t) - x(t))` of a family of density paths
-`X N ω : ℝ → ℝ × ℝ` around the deterministic path `x`. For the SIR chain,
-`X N ω t = (S(t) / N, I(t) / N)`.
+For paths $X_N(\omega) : \mathbb{R} \to \mathbb{R}^2$ ($N \in \mathbb{N}$, $\omega \in \Omega$) and
+a deterministic path $x$, the scaled fluctuation is
+
+$$U_N(\omega)(t) = \sqrt N\, \bigl(X_N(\omega)(t) - x(t)\bigr).$$
+
+For the SIR chain, $X_N(\omega)(t) = (S(t) / N, I(t) / N)$.

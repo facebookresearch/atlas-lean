@@ -1,9 +1,13 @@
-# Is Limit Covariance
+# Limit covariance of the SIR diffusion approximation
 
-`V = (V₁₁, V₁₂, V₂₂)` is the **limit covariance** of the SIR diffusion approximation around
-`x`, started from `V₀`: it solves the Lyapunov equation `V' = DF(x) V + V DF(x)ᵀ + G(x)`
-(`lyapunovField`, written out in `lyapunovField_apply`) for `t ≥ 0`, with `V(0) = V₀`. The
-derivative is taken within `[0, ∞)`, so it is one-sided at `t = 0` and the values of `V` at
-negative times play no role. This is the covariance of the solution of `dU = DF(x(t)) U dt + dM`
-when `M` is a Gaussian martingale with `d⟨M⟩ = G(x(t)) dt` and `U(0)` is centered Gaussian with
-covariance `V₀`, independent of `M`: `hasGaussianLaw_isFluctuationPath`.
+For real $\beta$, $\gamma$, a path $x : \mathbb{R} \to \mathbb{R}^2$ and $V_0$, a map $V$ from
+$\mathbb{R}$ to symmetric $2 \times 2$ matrices, stored as triples $(V_{11}, V_{12}, V_{22})$, is a
+limit covariance around $x$ from $V_0$ if $V(0) = V_0$ and, at every $t \ge 0$,
+
+$$V'(t) = DF(x(t))\, V(t) + V(t)\, DF(x(t))^{\mathsf T} + G(x(t)),$$
+
+the [Lyapunov field](lyapunov-field.md), with the derivative taken within $[0, \infty)$: one-sided
+at $t = 0$, and the values of $V$ at negative times play no role. It is the covariance of the
+solution of $dU = DF(x(t))\, U\, dt + dM$ when $M$ is a Gaussian martingale with
+$d\langle M \rangle = G(x(t))\, dt$ and $U(0)$ is centered Gaussian with covariance $V_0$,
+independent of $M$: see the [Gaussian limit](has-gaussian-law-is-fluctuation-path.md).

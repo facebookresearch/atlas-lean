@@ -1,33 +1,35 @@
 # Levins metapopulation on a patch network
 
-- [Field](field.md)
-- [Is Solution](is-solution.md)
-- [Persistence Number](persistence-number.md)
+## The model and its persistence number
+
+- [Vector field of the Levins model on a patch network](field.md)
+- [Solution of the Levins system on a patch network](is-solution.md)
+- [Persistence number of a patch network](persistence-number.md)
 
 ## The linearization at the empty landscape
 
-- [Field zero](field-zero.md)
-- [Field eq sub mul Vec](field-eq-sub-mul-vec.md)
-- [Linear threshold, stability half](is-hurwitz-iff.md)
-- [Linear threshold, instability half](exists-re-pos-iff.md)
+- [The empty landscape is an equilibrium](field-zero.md)
+- [Linear part and crowding term of the vector field](field-eq-sub-mul-vec.md)
+- [The empty landscape is linearly stable if and only if R₀ < 1](is-hurwitz-iff.md)
+- [The empty landscape is linearly unstable if and only if R₀ > 1](exists-re-pos-iff.md)
 
-## Forward invariance of the box `[0, 1]^ι`
+## Forward invariance of the unit box
 
-- [Invariance of the box](mem-icc.md)
-- [Has Deriv At sum](has-deriv-at-sum.md)
+- [The unit box is forward invariant for nonnegative rates](mem-icc.md)
+- [Derivative of a weighted total along a solution](has-deriv-at-sum.md)
 
-## Extinction below the threshold
+## Below the threshold
 
-- [Uniform exponential extinction](exists-exp-bound-of-lt-one.md)
+- [Uniform exponential extinction below the threshold](exists-exp-bound-of-lt-one.md)
 - [Extinction below the threshold](tendsto-zero-of-lt-one.md)
 
-## Persistence above the threshold
+## Above the threshold
 
-- [Exists perron left](exists-perron-left.md)
-- [Uniform weak persistence above the threshold](exists-lt-of-one-lt.md)
-- [Persistence above the threshold](not-tendsto-zero-of-one-lt.md)
+- [Perron left vector of the colonization network](exists-perron-left.md)
+- [Uniform weak persistence above the threshold on an irreducible network](exists-lt-of-one-lt.md)
+- [Persistence above the threshold on an irreducible network](not-tendsto-zero-of-one-lt.md)
 
 ## The well-mixed case
 
-- [Bridge to the well-mixed model](is-solution-uniform.md)
-- [The well-mixed persistence number](persistence-number-of-row-sum.md)
+- [Uniform states follow the well-mixed Levins equation](is-solution-uniform.md)
+- [Persistence number with constant row sums and a common extinction rate](persistence-number-of-row-sum.md)

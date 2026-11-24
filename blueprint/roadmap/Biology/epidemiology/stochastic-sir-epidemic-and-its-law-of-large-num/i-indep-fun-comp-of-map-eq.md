@@ -1,4 +1,9 @@
-# I Indep Fun comp of map eq
+# Composing with a measure-preserving map preserves independence
 
-Independence is preserved by composing with a map that pushes the measure forward to the
-law under which the variables are independent.
+Let $g : \Omega \to \Omega'$ be a measurable map between measurable spaces and let $\mu$, $\mu'$ be
+measures on $\Omega$, $\Omega'$ with image measure $g_* \mu = \mu'$. Let $(X_i)_{i \in \iota}$ be a
+family of measurable maps $X_i : \Omega' \to E_i$ into measurable spaces $E_i$ that is mutually
+independent under $\mu'$. Then the family $(X_i \circ g)_{i \in \iota}$ is mutually independent
+under $\mu$. The measures need not be probability measures: mutual independence means that, for
+finitely many indices, the measure of the intersection of the preimages of measurable sets is the
+product of their measures.

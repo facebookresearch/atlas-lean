@@ -1,3 +1,3 @@
-# Eq one of add eq three
+# Equality case of the three-term AM–GM inequality
 
-Equality in `p + q + r ≥ 3` (`p q r = 1`) holds only at `p = q = r = 1`.
+For positive real `p, q, r` with `p q r = 1` and `p + q + r = 3`, `p = q = r = 1`.

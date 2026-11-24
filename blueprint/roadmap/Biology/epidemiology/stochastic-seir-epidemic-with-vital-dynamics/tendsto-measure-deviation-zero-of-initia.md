@@ -1,6 +1,13 @@
-# Tendsto measure deviation zero of initial
+# Convergent deterministic initial counts converge in probability
 
-Deterministic initial counts: if almost surely `S N 0 = S₀ N`, …, `R N 0 = R₀ N` and
-`S₀ N / N → s 0`, …, `R₀ N / N → r 0`, then the scaled initial state converges to
-`(s 0, e 0, i 0, r 0)` in probability (the hypothesis `hinit` of `tendsto_measure_deviation`).
-Derived from `StochasticCRNLLN.tendsto_measure_deviation_zero_of_initial`.
+Let `P` be a measure on a space `Ω`, let `S_N, E_N, I_N, R_N` be count paths depending on `ω ∈ Ω`,
+and let `s`, `e`, `i`, `r` be real functions. Suppose that for each `N`, almost surely,
+`S_N(0) = S⁰_N`, `E_N(0) = E⁰_N`, `I_N(0) = I⁰_N` and `R_N(0) = R⁰_N` for natural numbers `S⁰_N`,
+`E⁰_N`, `I⁰_N`, `R⁰_N`, and that `S⁰_N / N → s(0)`, `E⁰_N / N → e(0)`, `I⁰_N / N → i(0)` and
+`R⁰_N / N → r(0)` as `N → ∞`. Then for every `δ > 0`,
+
+`P(D_N(0) ≥ δ) → 0`  as `N → ∞`,
+
+where `D_N` is the [deviation](deviation.md) of `(S_N, E_N, I_N, R_N) / N` from `(s, e, i, r)`: this
+is the initial-condition hypothesis of [Kurtz's law of large numbers](tendsto-measure-deviation.md).
+The measure `P` need not be a probability measure.

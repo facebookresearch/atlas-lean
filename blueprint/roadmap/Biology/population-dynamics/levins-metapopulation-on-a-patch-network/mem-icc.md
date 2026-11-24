@@ -1,4 +1,5 @@
-# Invariance of the box
+# The unit box is forward invariant for nonnegative rates
 
-For `C ≥ 0` and `e ≥ 0`, a solution starting in `[0, 1]^ι` stays
-there for all `t ≥ 0`.
+For a finite set `ι` of patches, a matrix `C` with nonnegative entries, nonnegative rates `e` and a
+[solution](is-solution.md) `p` with `p_i(0) ∈ [0, 1]` for every patch `i`, `p_i(t) ∈ [0, 1]` for
+every `t ≥ 0` and every patch `i`.

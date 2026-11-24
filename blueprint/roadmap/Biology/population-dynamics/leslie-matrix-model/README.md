@@ -30,7 +30,7 @@
 
 ## Stable-age convergence for primitive Leslie matrices
 
-- [Leslie projection](leslie-projection.md)
-- [Tendsto leslie Matrix pow mul Vec div pow](tendsto-leslie-matrix-pow-mul-vec-div-po.md)
-- [Tendsto leslie age distribution](tendsto-leslie-age-distribution.md)
-- [Exists stable age distribution](exists-stable-age-distribution.md)
+- [Population after t steps of the Leslie model](leslie-projection.md)
+- [Growth at the Perron rate for a primitive Leslie matrix](tendsto-leslie-matrix-pow-mul-vec-div-po.md)
+- [Convergence of the age distribution for a primitive Leslie matrix](tendsto-leslie-age-distribution.md)
+- [A primitive Leslie matrix has an attracting stable age distribution](exists-stable-age-distribution.md)

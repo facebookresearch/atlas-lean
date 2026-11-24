@@ -1,3 +1,3 @@
-# Three le add of mul eq one
+# Three-term AM–GM inequality
 
-`p + q + r ≥ 3` for positive `p, q, r` with `p q r = 1`.
+For positive real `p, q, r` with `p q r = 1`, `p + q + r ≥ 3`.

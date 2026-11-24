@@ -1,70 +1,70 @@
 # SIS model with leaky vaccination
 
-## Two calculus lemmas on `[0, ∞)`
+## Two comparison lemmas for differential inequalities
 
-- [Nonnegativity propagates](nonneg-of-has-deriv-at.md)
-- [Exponential comparison](le-mul-exp-of-has-deriv-at.md)
+- [Nonnegativity propagates along a differential inequality](nonneg-of-has-deriv-at.md)
+- [Exponential comparison for a linear differential inequality](le-mul-exp-of-has-deriv-at.md)
 
-## The model
+## The model, the reproduction number and the critical coverage
 
-- [Is Solution](is-solution.md)
-- [Rv](rv.md)
-- [Critical Coverage](critical-coverage.md)
+- [Solution of the SIS model with leaky vaccination](is-solution.md)
+- [Vaccinated reproduction number](rv.md)
+- [Critical vaccination coverage](critical-coverage.md)
 
 ## Threshold algebra
 
-- [Rv zero transmission](rv-zero-transmission.md)
-- [Rv zero coverage eq R0](rv-zero-coverage-eq-r0.md)
-- [Critical coverage, strict](rv-lt-one-iff.md)
-- [Critical coverage](rv-le-one-iff.md)
-- [One lt Rv iff](one-lt-rv-iff.md)
-- [Herd immunity is attainable](critical-coverage-le-one-iff.md)
-- [Critical Coverage nonpos](critical-coverage-nonpos.md)
+- [Without transmission the vaccinated reproduction number is zero](rv-zero-transmission.md)
+- [At zero coverage the vaccinated reproduction number is the SIS R₀](rv-zero-coverage-eq-r0.md)
+- [For β, γ, ε > 0, Rᵥ < 1 iff p exceeds the critical coverage](rv-lt-one-iff.md)
+- [For β, γ, ε > 0, Rᵥ ≤ 1 iff p is at least the critical coverage](rv-le-one-iff.md)
+- [For β, γ, ε > 0, Rᵥ > 1 iff p is below the critical coverage](one-lt-rv-iff.md)
+- [For ε > 0, the critical coverage is at most one iff ε ≥ 1 − γ/β](critical-coverage-le-one-iff.md)
+- [If R₀ is at most one the critical coverage is nonpositive](critical-coverage-nonpos.md)
 
-## Conservation and the reduction to SIS
+## Conservation and the reduction to the SIS model
 
-- [Unvaccinated total](unvaccinated-total.md)
-- [Vaccinated total](vaccinated-total.md)
-- [A vaccine of zero efficacy changes nothing](to-sis.md)
-- [Tendsto total Infected endemic of efficacy zero](tendsto-total-infected-endemic-of-effica.md)
+- [The unvaccinated group size is conserved](unvaccinated-total.md)
+- [The vaccinated group size is conserved](vaccinated-total.md)
+- [A vaccine of zero efficacy gives the unvaccinated SIS model](to-sis.md)
+- [With zero efficacy and γ < β, infection settles at the SIS level](tendsto-total-infected-endemic-of-effica.md)
 - [The total-infected equation](has-deriv-at-total-infected.md)
 
 ## Forward invariance of the nonnegative orthant
 
-- [Total Infected nonneg](total-infected-nonneg.md)
+- [The total infected stays nonnegative](total-infected-nonneg.md)
 - [Forward invariance of the nonnegative orthant](nonneg.md)
 
-## The disease-free side: `R_v ≤ 1`
+## The disease-free side
 
-- [Stability of the disease-free state](total-infected-le-initial.md)
+- [With Rᵥ ≤ 1 the total infected never exceeds its initial value](total-infected-le-initial.md)
 - [Exponential bound on the total infected](total-infected-le-exp.md)
-- [Algebraic extinction at threshold](total-infected-le-critical.md)
-- [Global attractivity of the disease-free equilibrium](tendsto-dfe.md)
-- [Vaccinating at or above the critical coverage eliminates the infection](tendsto-dfe-of-critical-coverage-le.md)
+- [At Rᵥ = 1 the total infected obeys an algebraic bound](total-infected-le-critical.md)
+- [For Rᵥ < 1, or Rᵥ = 1 with ε < 1 and β > 0, the infection dies out](tendsto-dfe.md)
+- [For 0 < ε < 1, reaching the critical coverage clears the infection](tendsto-dfe-of-critical-coverage-le.md)
 
 ## The endemic equilibrium
 
-- [Is Endemic Eq](is-endemic-eq.md)
-- [Is Solution const endemic](is-solution-const-endemic.md)
-- [Is Solution const dfe](is-solution-const-dfe.md)
-- [An endemic equilibrium forces `R_v > 1`](one-lt-rv-of-is-endemic-eq.md)
-- [Existence of the endemic equilibrium above threshold](exists-is-endemic-eq.md)
-
-## The Lyapunov function
-
-- [Lyapunov](lyapunov.md)
-- [Lyapunov Deriv](lyapunov-deriv.md)
-- [Volterra le sq div](volterra-le-sq-div.md)
-- [The derivative identity](lyapunov-deriv-eq.md)
-- [Lyapunov Deriv le](lyapunov-deriv-le.md)
-- [Lt groups](lt-groups.md)
-- [The Lyapunov derivative along solutions](has-deriv-at-lyapunov.md)
-- [Positivity of the infectives](infected-pos.md)
-- [`V` is nonincreasing](lyapunov-le-initial.md)
-- [Uniform persistence](persistence.md)
-- [Exponential decay of the Lyapunov function](exists-lyapunov-le-exp.md)
-- [Sq add sq le lyapunov](sq-add-sq-le-lyapunov.md)
-- [Global attractivity of the endemic equilibrium](tendsto-endemic.md)
-- [Lyapunov stability of the endemic equilibrium](endemic-stability.md)
+- [Endemic equilibrium of the vaccination model](is-endemic-eq.md)
+- [An endemic equilibrium is a constant solution](is-solution-const-endemic.md)
+- [The disease-free state is a constant solution](is-solution-const-dfe.md)
+- [An endemic equilibrium forces Rᵥ > 1](one-lt-rv-of-is-endemic-eq.md)
+- [For 0 < p < 1 and ε < 1, Rᵥ > 1 gives an endemic equilibrium](exists-is-endemic-eq.md)
+- [Endemic infective levels lie below the group sizes](lt-groups.md)
 - [Uniqueness of the endemic equilibrium](unique.md)
-- [The threshold theorem for coverage](tendsto-endemic-of-lt.md)
+
+## The Lyapunov function and global stability
+
+- [Lyapunov function of the endemic equilibrium](lyapunov.md)
+- [Derivative of the Lyapunov function along the infected field](lyapunov-deriv.md)
+- [The Volterra function is at most the squared gap over x](volterra-le-sq-div.md)
+- [The Lyapunov derivative identity at an endemic equilibrium](lyapunov-deriv-eq.md)
+- [For γ ≥ 0 the Lyapunov derivative is at most its two squared terms](lyapunov-deriv-le.md)
+- [The Lyapunov derivative along solutions](has-deriv-at-lyapunov.md)
+- [Infectives present in both groups at time zero stay positive](infected-pos.md)
+- [Along solutions the Lyapunov function never exceeds its initial value](lyapunov-le-initial.md)
+- [Uniform persistence of the unvaccinated infectives](persistence.md)
+- [With β > 0 the Lyapunov function decays exponentially](exists-lyapunov-le-exp.md)
+- [The squared distance to equilibrium is at most 2N times V](sq-add-sq-le-lyapunov.md)
+- [Attractivity of the endemic equilibrium for infections in both groups](tendsto-endemic.md)
+- [Lyapunov stability of the endemic equilibrium](endemic-stability.md)
+- [Below the critical coverage, solutions tend to an endemic equilibrium](tendsto-endemic-of-lt.md)

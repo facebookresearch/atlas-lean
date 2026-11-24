@@ -1,5 +1,6 @@
-# The adjoint equation
+# Existence of solutions of the adjoint equation
 
-For every terminal time `t` and terminal value `ℓ` the backward
-linear equation `y' = -DF(x(s))ᵀ y`, `y(t) = ℓ`, has a solution on `[0, T]` (indeed a continuous
-function on `ℝ`).
+Let $\beta, \gamma \ge 0$, $T \ge 0$ and $x$ continuous on $[0, T]$. For every real $t$ and every
+$\ell \in \mathbb{R}^2$ there is a continuous $y : \mathbb{R} \to \mathbb{R}^2$ with $y(t) = \ell$
+that solves the backward linear equation $y'(s) = -DF(x(s))^{\mathsf T} y(s)$ at every
+$s \in [0, T]$, with the [transposed Jacobian](jacobian-t.md).

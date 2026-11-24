@@ -1,4 +1,12 @@
-# Tendsto total Infected endemic of efficacy zero
+# With zero efficacy and γ < β, infection settles at the SIS level
 
-For `ε = 0`, `0 ≤ γ < β`, `N > 0` and `I(0) > 0`, the total infected converges to the SIS
-endemic level `N (1 - γ / β)` (`SIS.IsSolution.tendsto_infected_endemic`).
+Let $0 \le \gamma < \beta$ and $N > 0$, and let $(S_u, I_u, S_v, I_v)$ be a
+[solution](is-solution.md) $(S_u, I_u, S_v, I_v)$ of the SIS model with leaky vaccination, with
+transmission rate $\beta$, recovery rate $\gamma$, vaccine efficacy $0$ and population size $N$,
+with total population $S_u(0) + S_v(0) + I_u(0) + I_v(0) = N$ and $I_u(0) + I_v(0) > 0$. Then the
+total infected converges to the endemic level of the SIS model:
+
+$$I_u(t) + I_v(t) \to N \Bigl(1 - \frac{\gamma}{\beta}\Bigr) \quad (t \to \infty).$$
+
+This is the [endemic limit of the SIS model](../sis-epidemic-model/tendsto-infected-endemic.md)
+applied to the totals.

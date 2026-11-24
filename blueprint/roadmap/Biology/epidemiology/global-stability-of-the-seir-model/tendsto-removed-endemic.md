@@ -1,4 +1,6 @@
-# `R → R*` at the endemic equilibrium
+# Convergence of the removed class when R₀ > 1
 
-**`R → R*` at the endemic equilibrium.** Under the hypotheses of `tendsto_endemic`
-(`R₀ > 1`), the removed class converges to `R* = γ I* / μ`.
+Let [solution](is-solution.md) `(S, E, I, R)` of the SEIR system with vital dynamics, under `σ > 0`,
+`γ ≥ 0`, `μ > 0`, `N > 0` and `R₀ > 1`, where `R₀` is the [basic reproduction number](r0.md)
+`R₀ = β σ / ((μ + σ) (μ + γ))`, with `S(0), E(0), I(0) > 0`. Then `R(t) → R* = γ I* / μ` as `t → ∞`,
+where `R*` is the [removed level](endemic-r.md).

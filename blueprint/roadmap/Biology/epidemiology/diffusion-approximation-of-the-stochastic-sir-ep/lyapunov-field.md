@@ -1,5 +1,12 @@
-# Lyapunov Field
+# Lyapunov vector field of the limit covariance
 
-The Lyapunov vector field `V ↦ DF(p) V + V DF(p)ᵀ + G(p)` on symmetric `2 × 2` matrices,
-with `V` stored as `(V₁₁, V₁₂, V₂₂)`. The columns of `DF(p) V` are `DF(p)` applied to the columns
-`(V₁₁, V₁₂)` and `(V₁₂, V₂₂)` of `V`.
+For real $\beta$, $\gamma$, a point $p = (s, i)$ and a symmetric $2 \times 2$ matrix stored as a
+triple $c = (c_1, c_2, c_3)$, standing for $\begin{pmatrix} c_1 & c_2 \\ c_2 & c_3 \end{pmatrix}$,
+the Lyapunov field is
+
+$$L_p(V) = DF(p)\, V + V\, DF(p)^{\mathsf T} + G(p),$$
+
+stored as a triple in the same way, with the [Jacobian](jacobian.md) $DF(p)$ and the
+[infinitesimal covariance](diffusion-matrix.md) $G(p)$. The columns of $DF(p)\, V$ are $DF(p)$
+applied to the columns $(c_1, c_2)$ and $(c_2, c_3)$ of $V$; its
+[coordinates](lyapunov-field-apply.md) are explicit.

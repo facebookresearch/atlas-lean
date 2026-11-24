@@ -1,5 +1,8 @@
-# Lyapunov
+# Korobeinikov Lyapunov function of the endemic equilibrium
 
-The **Korobeinikov Lyapunov function** of the SEIR endemic equilibrium
-`(S*, E*, I*)`:
-`V(S, E, I) = g(S*, S) + g(E*, E) + ((μ + σ) / σ) g(I*, I)`, `g` the Volterra function.
+For real parameters `β, σ, γ, μ, N` and real `S, E, I`,
+`V(S, E, I) = g(S*, S) + g(E*, E) + ((μ + σ) / σ) g(I*, I)`, where `g` is the
+[Volterra function](volterra.md) `g(a, x) = x − a − a log(x / a)` and `S*`, `E*`, `I*` are the
+[susceptible](endemic-s.md), [exposed](endemic-e.md) and [infectious](endemic-i.md) endemic levels;
+with the convention `x / 0 = 0`, the coefficient `(μ + σ) / σ` is `0` when `σ = 0`. The intended
+domain is `σ > 0`, `γ ≥ 0`, `μ > 0`, `N > 0`, `R₀ > 1` and `S, E, I > 0`.

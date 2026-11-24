@@ -1,3 +1,4 @@
-# Vec4
+# Vectors indexed by the four compartments
 
-The vector with entries `a, b, c, d` at `S, E, I, R`.
+For any type `α` and `a, b, c, d ∈ α`, the function on the [compartments](compartment.md) with value
+`a` at `S`, `b` at `E`, `c` at `I` and `d` at `R`.

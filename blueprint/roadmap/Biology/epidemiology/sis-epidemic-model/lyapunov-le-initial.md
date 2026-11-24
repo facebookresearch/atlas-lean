@@ -1,3 +1,5 @@
-# `V` is nonincreasing along solutions
+# Along solutions, the Lyapunov function never exceeds its initial value
 
-`V(S(t), I(t)) ≤ V(S(0), I(0))` for `t ≥ 0`.
+Let $0 < \gamma < \beta$ and $N > 0$, and let $(S, I)$ be a [solution of the SIS system](is-solution.md) with
+$S(0) + I(0) = N$, $S(0) > 0$ and $I(0) > 0$. Then the [Goh–Volterra Lyapunov function](lyapunov.md) satisfies
+$V(S(t), I(t)) \le V(S(0), I(0))$ for every $t \ge 0$.

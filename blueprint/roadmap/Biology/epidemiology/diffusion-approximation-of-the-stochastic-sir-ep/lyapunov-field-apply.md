@@ -1,5 +1,12 @@
-# Lyapunov Field apply
+# Lyapunov field in coordinates
 
-The Lyapunov field written out: with `p = (s, i)` and `V = (a, b, c)`,
-`a' = -2 β (i a + s b) + β s i`, `b' = β i (a - b) + (β s - γ) b - β s c - β s i`,
-`c' = 2 β i b + 2 (β s - γ) c + β s i + γ i`.
+For real $\beta$, $\gamma$, $p = (s, i)$ and $V = (a, b, c)$, the
+[Lyapunov field](lyapunov-field.md) $L_p(V) = (a', b', c')$ is
+
+$$
+\begin{aligned}
+a' &= -2 \beta (i a + s b) + \beta s i, \\
+b' &= \beta i (a - b) + (\beta s - \gamma) b - \beta s c - \beta s i, \\
+c' &= 2 \beta i b + 2 (\beta s - \gamma) c + \beta s i + \gamma i.
+\end{aligned}
+$$

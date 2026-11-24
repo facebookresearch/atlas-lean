@@ -1,5 +1,9 @@
-# Rv
+# Vaccinated reproduction number
 
-The **vaccinated reproduction number** `R_v = R₀ (1 - ε p)`, `R₀ = β / γ`: coverage `p`,
-efficacy `ε`. It has its epidemiological meaning for `γ > 0`; at `γ = 0` Lean's convention
-`β / 0 = 0` makes it `0`.
+For real $\beta$, $\gamma$, $\varepsilon$ and $p$, the vaccinated reproduction number is
+
+$$R_v(\beta, \gamma, \varepsilon, p) = \frac{\beta}{\gamma} (1 - \varepsilon p),$$
+
+with the convention $x / 0 = 0$, so it is $0$ at $\gamma = 0$. For $\gamma > 0$ it is
+$R_0 (1 - \varepsilon p)$, with $R_0 = \beta / \gamma$ the basic reproduction number of the SIS
+model, $p$ the vaccination coverage and $\varepsilon$ the vaccine efficacy.

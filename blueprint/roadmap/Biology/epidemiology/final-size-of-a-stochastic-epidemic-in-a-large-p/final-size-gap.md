@@ -1,4 +1,4 @@
-# Final Size Gap
+# The final-size function $1 - e^{-Rx} - x$
 
-The final-size function `g(x) = 1 - e^{-R x} - x`; its zeros are the solutions of the
-final-size equation `1 - x = e^{-R x}`.
+For real numbers $R$ and $x$ let $g_R(x) = 1 - e^{-Rx} - x$. Its zeros are the solutions of the
+final-size equation $1 - x = e^{-Rx}$; $x = 0$ is one for every $R$.

@@ -1,3 +1,5 @@
-# G
+# Parent-to-child digraph of a phylogenetic network
 
-The digraph of the network (the name under which it was originally recorded).
+Let $N$ be a [phylogenetic network](phylo-network.md) on a finite set $V$ of nodes, with root $\rho$
+and parent sets $\mathrm{pa}(v)$. The parent-to-child digraph of $N$ has vertex set $V$ and an edge
+$u \to v$ exactly when $u$ is a parent of $v$, $u \in \mathrm{pa}(v)$.

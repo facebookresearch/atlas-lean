@@ -1,17 +1,30 @@
-# The limit fluctuation is Gaussian with covariance `V(t)`
+# The limit fluctuation is Gaussian with the limit covariance
 
-Let the driving data `(U₀, M)`
-be jointly Gaussian as one random element `Z` of `ℝ² × C([0, T], ℝ²)` (`hZ`, `hZU₀`, `hZM`),
-centered, with `U₀` of covariance `V₀` and uncorrelated with the increments of `M`, and with
-`E[(M(s) - M(0)) (M(r) - M(0))ᵀ] = K(min s r)` for `K(t) = ∫₀ᵗ G(x)` (`quadCov`): the
-covariance of the Gaussian martingale with `d⟨M⟩ = G(x(t)) dt` of the diffusion approximation.
-Then the solution `U` of the fluctuation equation has, at each `t ∈ [0, T]`, a Gaussian law with
-mean `0` and second moments `E[⟨a, U(t)⟩ ⟨b, U(t)⟩] = ⟨a, V(t) b⟩`, where `V` is the limit
-covariance (`IsLimitCovariance`); `covariance_isFluctuationPath` restates the last part entrywise.
+Let $\beta, \gamma \ge 0$, let $x$ be continuous on $[0, T]$, and let $V$ be a
+[limit covariance](is-limit-covariance.md) around $x$ from $V_0$. Let $P$ be a measure on $\Omega$
+and $Z : \Omega \to \mathbb{R}^2 \times C([0, T], \mathbb{R}^2)$ a random element with a Gaussian
+law under $P$, for the Borel $\sigma$-algebra of $C([0, T], \mathbb{R}^2)$ (so $P$ is a probability
+measure), whose first component is $U_0$ and whose second component is $M$ on $[0, T]$. Write $E$
+for integrals against $P$, $\langle a, b \rangle$ for the [dot product](dot.md) and $K$ for the
+[integrated diffusion matrix](quad-cov.md). Assume that, for all $a, b \in \mathbb{R}^2$ and
+$s, r \in [0, T]$,
 
-The proof writes `⟨ℓ, U(t)⟩` as the integration-by-parts Wiener integral
-`⟨y(0), U₀⟩ + ∫₀ᵗ ⟨y(s), dM(s)⟩` against the adjoint solution `y' = -DF(x)ᵀ y`, `y(t) = ℓ`
-(`IsFluctuationPath.dot_eq`), a continuous linear functional of `Z`. Gaussianity follows; the
-Wiener isometry `E[(∫ y_a dM) (∫ y_b dM)] = ∫₀ᵗ ⟨y_b, G y_a⟩` follows from the covariance of `M`
-(`wienerIsometry_aux`); and the Lyapunov equation transports `⟨y_a, V y_b⟩` along the same flow
-(`IsLimitCovariance.quadForm_eq`).
+- $E\, U_0 = 0$ and $E\,(M(s) - M(0)) = 0$;
+- $E\, \langle a, U_0 \rangle \langle b, U_0 \rangle = \langle a, V_0 b \rangle$ and
+  $E\, \langle a, U_0 \rangle \langle b, M(s) - M(0) \rangle = 0$;
+- $E\, \langle a, M(s) - M(0) \rangle \langle b, M(r) - M(0) \rangle =
+  \langle a, K(\min(s, r))\, b \rangle$;
+
+and let $U(\omega)$ be the [fluctuation path](is-fluctuation-path.md) driven by $M(\omega)$ from
+$U_0(\omega)$ around $x$, for every $\omega$.
+
+Then for every $t \in [0, T]$, $U(t)$ has a Gaussian law with $E\, U(t) = 0$ and
+
+$$
+E\, \langle a, U(t) \rangle \langle b, U(t) \rangle = \langle a, V(t)\, b \rangle
+\quad \text{for all } a, b \in \mathbb{R}^2.
+$$
+
+The proof writes $\langle \ell, U(t) \rangle$ as the integration-by-parts Wiener integral
+$\langle y(0), U_0 \rangle + \int_0^t \langle y(s), dM(s) \rangle$ against the solution of the
+adjoint equation $y' = -DF(x)^{\mathsf T} y$, $y(t) = \ell$, a continuous linear functional of $Z$.

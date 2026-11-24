@@ -1,14 +1,21 @@
 # Kurtz's pathwise estimate for the fluctuations
 
-Let `x` solve `x(t) = x(0) + ∫₀ᵗ F(x)`
-on `[0, T]` with `‖x‖ ≤ B`, let `X` be a measurable path with `‖X - x‖ ≤ δ ≤ 1` on `[0, T]`,
-and let `U` solve the fluctuation equation driven by `m` from `u₀`, with `‖u₀‖, ‖m‖ ≤ k`. If the
-initial fluctuation `√N (X(0) - x(0))` is within `ρ` of `u₀` and the scaled martingale
-`√N (X(t) - X(0) - ∫₀ᵗ F(X))` is within `ρ` of `m(t)` on `[0, T]`, then on `[0, T]`
+Let $\beta, \gamma \ge 0$, $N \in \mathbb{N}$, and real $B \ge 0$, $\delta \le 1$, $\rho$ and $k$,
+with the sup norm $\|h\| = \max(|h_1|, |h_2|)$ on $\mathbb{R}^2$. Let $x$ be continuous on $[0, T]$
+with $\|x(t)\| \le B$ and $x(t) = x(0) + \int_0^t F(x(s))\, ds$ there, for the [drift](drift.md)
+$F$. Let $X : \mathbb{R} \to \mathbb{R}^2$ be measurable with $\|X(t) - x(t)\| \le \delta$ on
+$[0, T]$, and let $U$ be a [fluctuation path](is-fluctuation-path.md): $U$ is continuous on $[0, T]$
+and $U(t) = u_0 + (m(t) - m(0)) + \int_0^t DF(x(s))\, U(s)\, ds$ for $t \in [0, T]$, with
+$\|u_0\| \le k$ and $\|m(t)\| \le k$ on $[0, T]$. If $\|\sqrt N (X(0) - x(0)) - u_0\| \le \rho$ and
+$\|\sqrt N \bigl(X(t) - X(0) - \int_0^t F(X(s))\, ds\bigr) - m(t)\| \le \rho$ for $t \in [0, T]$,
+then for every $t \in [0, T]$
 
-`‖√N (X(t) - x(t)) - U(t)‖ ≤ (3 ρ + β δ T · 3 k e^{L T}) e^{(L + β) T}`,  `L = 2 β B + γ`.
+$$
+\bigl\|\sqrt N\, (X(t) - x(t)) - U(t)\bigr\| \le
+\bigl(3 \rho + \beta \delta T \cdot 3 k\, e^{L T}\bigr)\, e^{(L + \beta) T},
+\qquad L = 2 \beta B + \gamma.
+$$
 
-The scaled martingale vanishes at `t = 0`, so `‖m(0)‖ ≤ ρ`; this third `ρ` and the `3 k` of
-`IsFluctuationPath.norm_le` come from the increment `m(t) - m(0)` in the fluctuation equation.
-The proof writes `√N (F(X) - F(x)) = DF(x) U_N + β (U_N)₁ (X - x)₂ (-1, 1)` (`drift_add`) and
-applies Gronwall's inequality to `‖U_N - U‖`.
+The proof writes $\sqrt N (F(X) - F(x)) = DF(x)\, U_N + \beta (U_N)_1 (X - x)_2\, (-1, 1)$ with
+$U_N = \sqrt N (X - x)$, by the [exact linearization](drift-add.md), and applies Gronwall's
+inequality to $\|U_N - U\|$.

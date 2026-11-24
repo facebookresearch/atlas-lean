@@ -1,5 +1,9 @@
 # Derivative of the Lyapunov function along solutions
 
-For `0 < γ < β`, `N > 0`, a
-solution with `S(0) + I(0) = N` and a time `t ≥ 0` with `S(t), I(t) > 0`,
-`d/dt V(S(t), I(t)) = -β (S(t) - S*)² / S(t)`.
+Let $0 < \gamma < \beta$ and $N > 0$, and let $(S, I)$ be a [solution of the SIS system](is-solution.md) with
+$S(0) + I(0) = N$. At every time $t \ge 0$ with $S(t) > 0$ and $I(t) > 0$, the function
+$s \mapsto V(S(s), I(s))$, with $V$ the [Goh–Volterra Lyapunov function](lyapunov.md), is differentiable at $t$ with
+
+$$\frac{d}{dt} V(S(t), I(t)) = -\frac{\beta\, (S(t) - S^*)^2}{S(t)},$$
+
+where $S^* = N\gamma/\beta$.

@@ -1,4 +1,8 @@
-# Crude Rate mem Icc
+# Crude rate of a valid population lies between the extreme rates
 
-The crude rate of a valid population lies in any interval `[a, b]` that
- contains every category rate.
+For a finite set $\iota$ of categories, a [valid population](is-valid-population.md) with real sizes
+$N_i \ge 0$ and $\sum_j N_j > 0$, real rates $T_i$, and real numbers $a$ and $b$ with
+$a \le T_i \le b$ for every category $i$, the [crude rate](crude-rate.md)
+$(\sum_i N_i T_i) / \sum_i N_i$ lies in $[a, b]$. The bounds are required for every category,
+including categories of size $0$. A valid population has at least one category, so taking for $a$
+and $b$ the smallest and the largest rate shows that the crude rate lies between them.

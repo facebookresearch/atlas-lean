@@ -1,46 +1,55 @@
 # Stochastic SEIR epidemic with vital dynamics
 
+The stochastic SEIR epidemic with births and deaths at population scale `N`: natural-number counts
+`(S, E, I, R)` that change by births into `S`, infections `S → E`, progressions `E → I`, recoveries
+`I → R` and deaths from each compartment, given by Kurtz's random time-change equations. The pages
+relate the chain to the stochastic mass-action system of a reaction network and compare the scaled
+counts with the SEIR system with vital dynamics at scale `1`.
+
 ## Channels and intensities
 
-- [Channel](channel.md)
-- [Scaled Rate](scaled-rate.md)
-- [Rate Bound](rate-bound.md)
-- [Scaled Rate le](scaled-rate-le.md)
+- [Reaction channels of the SEIR chain](channel.md)
+- [Scaled intensities of the eight channels](scaled-rate.md)
+- [Common bound for the scaled intensities](rate-bound.md)
+- [The scaled intensities are bounded on a box](scaled-rate-le.md)
 - [Lipschitz bound for the scaled intensities](abs-scaled-rate-sub-le.md)
 
-## The chain
+## Chain paths, clocks and deviation
 
-- [Rate](rate.md)
-- [Clock](clock.md)
-- [Clock eq](clock-eq.md)
-- [Clock birth](clock-birth.md)
-- [One sample path of the stochastic SEIR chain with vital dynamics](is-chain-path.md)
-- [Deviation](deviation.md)
+- [Intensities of the channels along count paths](rate.md)
+- [Internal clocks of the channels](clock.md)
+- [Internal clocks in scaled form](clock-eq.md)
+- [The birth clock does not depend on the state](clock-birth.md)
+- [Chain paths of the stochastic SEIR model with vital dynamics](is-chain-path.md)
+- [Deviation of the scaled chain from a deterministic path](deviation.md)
 
 ## The reaction network
 
-- [Compartment](compartment.md)
-- [Vec4](vec4.md)
-- [Network Src](network-src.md)
-- [Network Prod](network-prod.md)
-- [The SEIR network with vital dynamics](network.md)
-- [Rate Const](rate-const.md)
-- [Chain CRN](chain-crn.md)
-- [Network Rate eq](network-rate-eq.md)
-- [The rates match exactly](propensity-chain-crn.md)
-- [Stoich Norm network](stoich-norm-network.md)
-- [To Path](to-path.md)
-- [Ode Path](ode-path.md)
-- [The deviations agree](deviation-to-path.md)
-- [The ODEs agree](has-deriv-at-ode-path.md)
-- [The clocks agree](clock-to-path.md)
+- [Compartments of the SEIR model](compartment.md)
+- [Vectors indexed by the four compartments](vec4.md)
+- [Reactant complexes of the SEIR network](network-src.md)
+- [Product complexes of the SEIR network](network-prod.md)
+- [The SEIR reaction network with vital dynamics](network.md)
+- [Rate constants of the SEIR network](rate-const.md)
+- [Stochastic mass-action system of the SEIR network](chain-crn.md)
+- [Mass-action rates of the SEIR network are the scaled intensities](network-rate-eq.md)
+- [Mass-action propensities equal the chain's intensities](propensity-chain-crn.md)
+- [Total ℓ¹ norm of the SEIR reaction vectors is 11](stoich-norm-network.md)
+
+## Bridge to the mass-action system
+
+- [Count vector path frozen at negative times](to-path.md)
+- [Deterministic path as a vector over the compartments](ode-path.md)
+- [At nonnegative times the two forms of the deviation agree](deviation-to-path.md)
+- [SEIR solutions solve the mass-action system of the network](has-deriv-at-ode-path.md)
+- [At nonnegative times the two forms of the internal clocks agree](clock-to-path.md)
 - [The population grows only by births](total-le.md)
-- [The path bridge](to-crn.md)
+- [SEIR chain paths are chain paths of the mass-action system](to-crn.md)
+
+## Kurtz's estimate and law of large numbers
+
 - [Kurtz's pathwise estimate for SEIR with vital dynamics](deviation-le.md)
-
-## Kurtz's theorem for SEIR with vital dynamics
-
-- [Kurtz's law of large numbers for the stochastic SEIR epidemic with vital dynamics](tendsto-measure-deviation.md)
+- [Kurtz's law of large numbers for SEIR with vital dynamics](tendsto-measure-deviation.md)
 - [Kurtz's theorem for SEIR with vital dynamics, supremum form](tendsto-measure-i-sup-deviation.md)
-- [Tendsto measure deviation zero of initial](tendsto-measure-deviation-zero-of-initia.md)
-- [The scaled chain settles near the endemic equilibrium](eventually-tendsto-measure-endemic.md)
+- [Convergent deterministic initial counts converge in probability](tendsto-measure-deviation-zero-of-initia.md)
+- [When R₀ > 1, the scaled chain settles near the endemic equilibrium](eventually-tendsto-measure-endemic.md)

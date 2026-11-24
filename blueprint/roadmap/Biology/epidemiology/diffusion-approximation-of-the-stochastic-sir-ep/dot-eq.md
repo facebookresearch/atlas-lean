@@ -1,6 +1,14 @@
-# Duality identity
+# Duality identity for fluctuation paths
 
-**Duality identity** (the integration-by-parts Wiener integral). If `y` solves the adjoint
-equation `y' = -DF(x)ᵀ y` on `[0, t]`, then for the fluctuation path driven by `m`,
-`⟨y(t), U(t)⟩ = ⟨y(0), u₀⟩ + ⟨y(t), m(t) - m(0)⟩ + ∫₀ᵗ ⟨DF(x(s))ᵀ y(s), m(s) - m(0)⟩ ds`.
-The last two terms are `∫₀ᵗ ⟨y(s), dm(s)⟩`, integrated by parts.
+Let $x$ and $m$ be continuous on $[0, T]$, let $U$ be a [fluctuation path](is-fluctuation-path.md):
+$U$ is continuous on $[0, T]$ and $U(t) = u_0 + (m(t) - m(0)) + \int_0^t DF(x(s))\, U(s)\, ds$ for
+$t \in [0, T]$, and let $t \in [0, T]$. If $y$ is continuous on $[0, t]$ and
+$y'(s) = -DF(x(s))^{\mathsf T} y(s)$ for $s \in (0, t)$, then
+
+$$
+\langle y(t), U(t) \rangle = \langle y(0), u_0 \rangle + \langle y(t), m(t) - m(0) \rangle +
+\int_0^t \bigl\langle DF(x(s))^{\mathsf T} y(s), m(s) - m(0) \bigr\rangle\, ds,
+$$
+
+with the [dot product](dot.md). The last two terms are $\int_0^t \langle y(s), dm(s) \rangle$
+integrated by parts: the Wiener integral in integration-by-parts form.

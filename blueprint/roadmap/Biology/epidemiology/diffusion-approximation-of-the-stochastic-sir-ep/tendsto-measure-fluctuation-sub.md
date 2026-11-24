@@ -1,20 +1,31 @@
 # Diffusion approximation for the stochastic SIR epidemic
 
-**Diffusion approximation for the stochastic SIR epidemic** (Kurtz 1971;
-Ethier–Kurtz 1986, ch. 11, Thm 2.3), with the law of large numbers and the martingale
-functional CLT as hypotheses.
+Let $\mu$ be a finite measure on $\Omega$ and $\beta, \gamma \ge 0$, let $(s, i, r)$ be a
+[solution of the SIR system](../kermack-mckendrick-sir-model/is-solution.md) with transmission rate
+$\beta$, removal rate $\gamma$ and population size $1$ (in densities), and $x(t) = (s(t), i(t))$.
+Let $X_N(\omega) : \mathbb{R} \to \mathbb{R}^2$ ($N \in \mathbb{N}$, $\omega \in \Omega$) be
+measurable density paths, $U_0 : \Omega \to \mathbb{R}^2$ measurable, $M(\omega)$ paths continuous
+on $[0, T]$ whose values $\omega \mapsto M(\omega)(t)$ are measurable, and, for every $\omega$,
+$U(\omega)$ the [fluctuation path](is-fluctuation-path.md) driven by $M(\omega)$ from $U_0(\omega)$
+around $x$. Write $U_N = \sqrt N (X_N - x)$ for the [scaled fluctuation](fluctuation.md) and $M_N$
+for the [scaled compensated increment](scaled-martingale.md), with the sup norm
+$\|h\| = \max(|h_1|, |h_2|)$ on $\mathbb{R}^2$. Assume that for every $\delta > 0$, as
+$N \to \infty$,
 
-Let `x = (s, i)` solve the Kermack–McKendrick system in densities (`SIR.IsSolution β γ 1`), and
-let `X N ω : ℝ → ℝ × ℝ` be measurable density paths. Assume, for every `δ > 0`,
+- (law of large numbers)
+  $\mu\{\omega : \exists\, t \in [0, T],\ \|X_N(t) - x(t)\| \ge \delta\} \to 0$;
+- (initial fluctuations) $\mu\{\omega : \|U_N(0) - U_0\| \ge \delta\} \to 0$;
+- (martingale central limit theorem, coupled form)
+  $\mu\{\omega : \exists\, t \in [0, T],\ \|M_N(t) - M(t)\| \ge \delta\} \to 0$.
 
-* (law of large numbers) `P(∃ t ∈ [0, T], ‖X_N(t) - x(t)‖ ≥ δ) → 0`;
-* (initial fluctuations) `P(‖U_N(0) - U₀‖ ≥ δ) → 0`, with `U₀` measurable;
-* (martingale CLT, coupled form) `P(∃ t ∈ [0, T], ‖M_N(t) - M(t)‖ ≥ δ) → 0`, for a process
-  `M` with continuous paths on `[0, T]` and measurable marginals;
+Then the scaled fluctuations converge to $U$ uniformly on $[0, T]$ in measure: for every
+$\varepsilon > 0$,
 
-and let `U` solve the linear fluctuation equation `U(t) = U₀ + (M(t) - M(0)) + ∫₀ᵗ DF(x) U`
-pathwise.
-Then the scaled fluctuations converge to `U` uniformly on `[0, T]` in probability:
-`P(∃ t ∈ [0, T], ‖√N (X_N(t) - x(t)) - U(t)‖ ≥ ε) → 0` for every `ε > 0`. This event contains
-the strict supremum event `sup > ε`; the non-strict supremum event `sup ≥ ε` is
-`tendsto_measure_iSup_fluctuation_sub`.
+$$
+\mu\bigl\{\omega : \exists\, t \in [0, T],\ \|U_N(t) - U(t)\| \ge \varepsilon\bigr\} \to 0
+\quad (N \to \infty).
+$$
+
+The events over $[0, T]$ are not assumed measurable, and $\mu$ is applied to them as an outer
+measure. This is Kurtz's diffusion approximation (Kurtz 1971; Ethier and Kurtz 1986, chapter 11,
+Theorem 2.3), with the law of large numbers and the martingale central limit theorem as hypotheses.

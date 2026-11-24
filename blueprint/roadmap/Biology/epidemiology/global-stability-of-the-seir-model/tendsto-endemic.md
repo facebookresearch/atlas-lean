@@ -1,10 +1,9 @@
-# Global attractivity of the endemic equilibrium
+# Convergence to the endemic equilibrium when R₀ > 1
 
-If `σ > 0`, `γ ≥ 0`, `μ > 0`, `N > 0`
-and `R₀ = β σ / ((μ + σ) (μ + γ)) > 1`, every solution starting in the open positive orthant
-(`S(0), E(0), I(0) > 0`) converges to `(S*, E*, I*)`.
-
-The invariance step, done along the trajectory: `V̇ ≤ -μ (S - S*)² / S` and `V` converges, so
-by Barbalat's lemma `S → S*`; then Barbalat for `S` gives `S' → 0`, i.e. `I → I*`; and for `I`
-it gives `I' → 0`, i.e. `E → E*`. This is the statement that the only trajectory inside the
-zero set of `V̇` (`lyapunovDeriv_eq_zero_iff`) is the equilibrium.
+Let [solution](is-solution.md) `(S, E, I, R)` of the SEIR system with vital dynamics, under `σ > 0`,
+`γ ≥ 0`, `μ > 0`, `N > 0` and `R₀ > 1`, where `R₀` is the [basic reproduction number](r0.md)
+`R₀ = β σ / ((μ + σ) (μ + γ))`, with `S(0), E(0), I(0) > 0`. Then
+`(S(t), E(t), I(t)) → (S*, E*, I*)` as `t → ∞`, where `S*`, `E*`, `I*` are the
+[susceptible](endemic-s.md), [exposed](endemic-e.md) and [infectious](endemic-i.md) endemic levels.
+Only solutions starting in the open positive orthant are covered; initial states on its boundary are
+not.
