@@ -10448,6 +10448,7 @@
   "MathlibExt/Combinatorics/Enumerative/BinaryMatrixRotationOrbitCount": {"to": "Combinatorics/designs-latin-squares", "title": "Binary matrices up to rotation"},
   "MathlibExt/Combinatorics/Enumerative/BinomialDoubleSum": {"to": "Combinatorics/binomial-coefficients/binomial-sums", "title": "Binomial sums with Fibonacci evaluations"},
   "MathlibExt/Combinatorics/Enumerative/BinomialInversion": {"to": "Combinatorics/stirling-bell-eulerian/bernoulli-euler-genocchi", "title": "Carlitz q-Bernoulli polynomials"},
+  "MathlibExt/Combinatorics/Enumerative/BinomialSumRecurrences": {"to": "Combinatorics/binomial-coefficients/binomial-sums", "title": "Recurrences for step sums of binomial coefficients"},
   "MathlibExt/Combinatorics/Enumerative/BinomialTMotzkinPaths": {"to": "Combinatorics/catalan-numbers-lattice-paths/motzkin-numbers", "title": "Binomial Motzkin paths"},
   "MathlibExt/Combinatorics/Enumerative/BinomialTransformExponentialGeneratingFunction": {"to": "Combinatorics/riordan-arrays-transforms/sequence-transforms", "title": "Binomial transforms"},
   "MathlibExt/Combinatorics/Enumerative/BooleanFunctionInclusionExclusion": {"to": "Combinatorics/boolean-functions", "title": "Unate and monotone Boolean functions"},
