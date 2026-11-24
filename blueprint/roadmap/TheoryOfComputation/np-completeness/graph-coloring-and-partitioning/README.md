@@ -4,6 +4,7 @@ Vertex, edge, list and precoloring-extension coloring, achromatic number, graph 
 
 - [Achromatic number](achromatic-number/README.md)
 - [Clique cover](clique-cover/README.md)
+- [Domatic number, connection and layout](domatic-number-connection-and-layout/README.md)
 - [Edge coloring](edge-coloring/README.md)
 - [Graph 3-coloring](graph-3-coloring/README.md)
 - [Graph bandwidth](graph-bandwidth/README.md)
@@ -19,4 +20,5 @@ Vertex, edge, list and precoloring-extension coloring, achromatic number, graph 
 - [Multiway cut](multiway-cut/README.md)
 - [Partition into paths of length 2](partition-into-paths-of-length-2/README.md)
 - [Partition into triangles](partition-into-triangles/README.md)
+- [Planarity, thickness and drawing](planarity-thickness-and-drawing/README.md)
 - [Precoloring extension](precoloring-extension/README.md)

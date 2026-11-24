@@ -19,3 +19,4 @@
 - [Set cover](set-cover/README.md)
 - [Set packing](set-packing/README.md)
 - [Set splitting](set-splitting/README.md)
+- [Set systems and covering](set-systems-and-covering/README.md)

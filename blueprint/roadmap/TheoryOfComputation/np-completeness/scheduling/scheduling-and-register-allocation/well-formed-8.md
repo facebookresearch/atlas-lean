@@ -1,0 +1,3 @@
+# Well-formed instances of TWO-PROCESSOR SCHEDULING TO MINIMIZE WEIGHTED COMPLETION TIME
+
+A SCHEDULING TO MINIMIZE WEIGHTED COMPLETION TIME instance is well-formed for TWO-PROCESSOR SCHEDULING TO MINIMIZE WEIGHTED COMPLETION TIME when it is well-formed for that problem and has $m = 2$ processors.
