@@ -14,7 +14,7 @@ public import MathlibExt.Probability.FiniteWeight
 
 The recursion of the ID algorithm (Shpitser and Pearl, "Identification of
 joint interventional distributions in recursive semi-Markovian causal
-models", UAI 2006, Fig. 2, lines 1-7), as a function on finite vertex sets of
+models", AAAI 2006, Fig. 3, lines 1-7), as a function on finite vertex sets of
 an acyclic directed mixed graph: `ADMG.ID` runs `ADMG.idRec` on the whole
 vertex set with the observed law, returning either an identifying expression
 (`IdExpr`, built from sums, products and conditionals of the observed law) or

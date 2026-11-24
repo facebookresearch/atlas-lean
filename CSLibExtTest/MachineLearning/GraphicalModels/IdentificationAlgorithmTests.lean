@@ -17,47 +17,47 @@ variable {V : Type*} [Fintype V] [DecidableEq V] (G : ADMG V)
   (σ : V ≃ Fin (Fintype.card V))  -- π, "some topological ordering of nodes in G"; the recursion
   -- is defined for every ordering, and identifies under a topological one (module doc)
 
-/-- Fig. 1(a) directed edges strictly increase the vertex number. -/
-theorem figDirA_edge {u w : Fin 3}
+/-- Synthetic graph A directed edges strictly increase the vertex number. -/
+theorem synDirA_edge {u w : Fin 3}
     (h : (u, w) = (0, 1) ∨ (u, w) = (1, 2)) : u.val < w.val := by
   rcases h with h | h <;> rw [Prod.mk.injEq] at h <;> obtain ⟨rfl, rfl⟩ := h <;> decide
 
-/-- Transitive closure of the Fig. 1(a) edges strictly increases the vertex number. -/
-theorem figTransGenA {u w : Fin 3}
+/-- Transitive closure of the synthetic graph A edges strictly increases the vertex number. -/
+theorem synTransGenA {u w : Fin 3}
     (h : Relation.TransGen (fun u w : Fin 3 => (u, w) = (0, 1) ∨ (u, w) = (1, 2)) u w) :
     u.val < w.val := by
   induction h with
-  | single hd => exact figDirA_edge hd
-  | tail _ hd ih => have h2 := figDirA_edge hd; omega
+  | single hd => exact synDirA_edge hd
+  | tail _ hd ih => have h2 := synDirA_edge hd; omega
 
-/-- Fig. 1(b) directed edges target `1` from elsewhere. -/
-theorem figDirB_edge {u w : Fin 3}
+/-- Synthetic graph B directed edges target `1` from elsewhere. -/
+theorem synDirB_edge {u w : Fin 3}
     (h : (u, w) = (0, 1) ∨ (u, w) = (2, 1)) : w = 1 ∧ u ≠ 1 := by
   rcases h with h | h <;> rw [Prod.mk.injEq] at h <;> obtain ⟨rfl, rfl⟩ := h <;>
     exact ⟨rfl, by decide⟩
 
-/-- Transitive closure of the Fig. 1(b) edges targets `1` from elsewhere. -/
-theorem figTransGenB {u w : Fin 3}
+/-- Transitive closure of the synthetic graph B edges targets `1` from elsewhere. -/
+theorem synTransGenB {u w : Fin 3}
     (h : Relation.TransGen (fun u w : Fin 3 => (u, w) = (0, 1) ∨ (u, w) = (2, 1)) u w) :
     w = 1 ∧ u ≠ 1 := by
   induction h with
-  | single hd => exact figDirB_edge hd
+  | single hd => exact synDirB_edge hd
   | tail _ hd ih =>
     obtain ⟨hb, -⟩ := ih
-    obtain ⟨-, hb'⟩ := figDirB_edge hd
+    obtain ⟨-, hb'⟩ := synDirB_edge hd
     exact absurd hb hb'
 
-/-- Reflexive-transitive closure of the Fig. 1(a) edges never decreases the vertex number. -/
-theorem figReflTransGenA_le {u w : Fin 3}
+/-- Reflexive-transitive closure of the synthetic graph A edges never decreases the vertex number. -/
+theorem synReflTransGenA_le {u w : Fin 3}
     (h : Relation.ReflTransGen
       (fun u w : Fin 3 => (u, w) = (0, 1) ∨ (u, w) = (1, 2)) u w) :
     u.val ≤ w.val := by
   induction h with
   | refl => exact le_refl _
-  | tail _ hd ih => have h2 := figDirA_edge hd; omega
+  | tail _ hd ih => have h2 := synDirA_edge hd; omega
 
-/-- Only `2` reaches `2` along the Fig. 1(b) directed edges. -/
-theorem figReflTransGenB_eq {u w : Fin 3}
+/-- Only `2` reaches `2` along the Synthetic graph B directed edges. -/
+theorem synReflTransGenB_eq {u w : Fin 3}
     (h : Relation.ReflTransGen
       (fun u w : Fin 3 => (u, w) = (0, 1) ∨ (u, w) = (2, 1)) u w) :
     w = 2 → u = 2 := by
@@ -68,8 +68,8 @@ theorem figReflTransGenB_eq {u w : Fin 3}
     rw [hw2] at hd
     rcases hd with hd | hd <;> rw [Prod.mk.injEq] at hd <;> exact absurd hd.2 (by decide)
 
-/-- The Fig. 1 bidirected edge only joins `0` and `1`. -/
-theorem figBidir_adj {a b : Fin 3}
+/-- The shared bidirected edge only joins `0` and `1`. -/
+theorem synBidir_adj {a b : Fin 3}
     (h : (SimpleGraph.fromRel (fun u w : Fin 3 => (u, w) = (0, 1))).Adj a b) :
     (a = 0 ∧ b = 1) ∨ (a = 1 ∧ b = 0) := by
   rw [SimpleGraph.fromRel_adj] at h
@@ -78,12 +78,12 @@ theorem figBidir_adj {a b : Fin 3}
   · right; rw [Prod.mk.injEq] at h; exact ⟨h.2, h.1⟩
 
 /-- Induced-subgraph directed edges live inside the set and come from the host graph. -/
-theorem figInduceDir {G : ADMG (Fin 3)} {D : Finset (Fin 3)} {a b : Fin 3}
+theorem synInduceDir {G : ADMG (Fin 3)} {D : Finset (Fin 3)} {a b : Fin 3}
     (h : (G.induce ↑D).dir a b) : a ∈ (↑D : Set (Fin 3)) ∧ b ∈ ↑D ∧ G.dir a b := h
 
-/-- Induced-subgraph bidirected edges of a Fig. 1 graph live inside the set and join
+/-- Induced-subgraph bidirected edges of a synthetic graph live inside the set and join
 `0` with `1`. -/
-theorem figInduceBidir_adj {G : ADMG (Fin 3)}
+theorem synInduceBidir_adj {G : ADMG (Fin 3)}
     (hb : G.bidir = SimpleGraph.fromRel (fun u w : Fin 3 => (u, w) = (0, 1)))
     {D : Finset (Fin 3)} {a b : Fin 3}
     (h : (SimpleGraph.fromRel
@@ -92,21 +92,21 @@ theorem figInduceBidir_adj {G : ADMG (Fin 3)}
   rw [SimpleGraph.fromRel_adj, hb] at h
   obtain ⟨-, h | h⟩ := h
   · obtain ⟨ham, hbm, hadj⟩ := h
-    exact ⟨ham, hbm, figBidir_adj hadj⟩
+    exact ⟨ham, hbm, synBidir_adj hadj⟩
   · obtain ⟨hbm, ham, hadj⟩ := h
-    obtain h | h := figBidir_adj hadj
+    obtain h | h := synBidir_adj hadj
     · exact ⟨ham, hbm, Or.inr ⟨h.2, h.1⟩⟩
     · exact ⟨ham, hbm, Or.inl ⟨h.2, h.1⟩⟩
 
 /-- Membership in `ancIn`, through the classical filter. -/
-theorem figAncIn_mem (D Y : Finset V) (x : V) :
+theorem synAncIn_mem (D Y : Finset V) (x : V) :
     x ∈ G.ancIn D Y ↔ x ∈ D ∧ ∃ y ∈ Y, Relation.ReflTransGen (G.induce ↑D).dir x y := by
   classical
   unfold ancIn
   rw [Finset.mem_filter]
 
 /-- Membership in `ancCut`, through the classical filter. -/
-theorem figAncCut_mem (D X Y : Finset V) (x : V) :
+theorem synAncCut_mem (D X Y : Finset V) (x : V) :
     x ∈ G.ancCut D X Y ↔ x ∈ D ∧ ∃ y ∈ Y, Relation.ReflTransGen
       (fun a b => (G.induce ↑D).dir a b ∧ b ∉ X) x y := by
   classical
@@ -114,51 +114,51 @@ theorem figAncCut_mem (D X Y : Finset V) (x : V) :
   rw [Finset.mem_filter]
 
 /-- Membership in `compIn`, through the classical filter. -/
-theorem figCompIn_mem (D : Finset V) (v x : V) :
+theorem synCompIn_mem (D : Finset V) (v x : V) :
     x ∈ G.compIn D v ↔ x ∈ D ∧ x ∈ (G.induce ↑D).cComponent v := by
   classical
   unfold compIn
   rw [Finset.mem_filter]
 
-/-- Test graph Fig. 1(a): X -> Z -> Y with X <-> Z, on Fin 3 with 0 = X, 1 = Z,
-2 = Y. -/
-def fig1a : ADMG (Fin 3) where
+/-- Synthetic test graph A: X -> Z -> Y with X <-> Z, on Fin 3 with 0 = X, 1 = Z,
+2 = Y. P_x(y) is not identifiable here (a hedge), and `ID` fails at line 5. -/
+def synA : ADMG (Fin 3) where
   dir u w := (u, w) = (0, 1) ∨ (u, w) = (1, 2)
   bidir := SimpleGraph.fromRel fun u w => (u, w) = (0, 1)
   acyclic := by
     show ∀ v : Fin 3,
       ¬ Relation.TransGen (fun u w : Fin 3 => (u, w) = (0, 1) ∨ (u, w) = (1, 2)) v v
     intro v h
-    exact absurd (figTransGenA h) (lt_irrefl _)
+    exact absurd (synTransGenA h) (lt_irrefl _)
 
-/-- Test graph Fig. 1(b): X -> Z <- Y with X <-> Z, on Fin 3 with 0 = X, 1 = Z,
-2 = Y. -/
-def fig1b : ADMG (Fin 3) where
+/-- Synthetic test graph B: X -> Z <- Y with X <-> Z, on Fin 3 with 0 = X, 1 = Z,
+2 = Y. P_x(z) is identifiable here. -/
+def synB : ADMG (Fin 3) where
   dir u w := (u, w) = (0, 1) ∨ (u, w) = (2, 1)
   bidir := SimpleGraph.fromRel fun u w => (u, w) = (0, 1)
   acyclic := by
     show ∀ v : Fin 3,
       ¬ Relation.TransGen (fun u w : Fin 3 => (u, w) = (0, 1) ∨ (u, w) = (2, 1)) v v
     intro v h
-    obtain ⟨hv, hne⟩ := figTransGenB h
+    obtain ⟨hv, hne⟩ := synTransGenB h
     exact hne hv
 
 /-- The identity ordering on `Fin 3` (`0 = X`, `1 = Z`, `2 = Y`), passed to `ID` as its
 ordering parameter. -/
-def fig1order : Fin 3 ≃ Fin 3 := Equiv.refl _
+def synOrder : Fin 3 ≃ Fin 3 := Equiv.refl _
 
-theorem fig1a_fail : fig1a.ID fig1order {2} {0} = .error ({0, 1}, {1}) := by
-  have hA1 : fig1a.ancIn Finset.univ {2} = Finset.univ := by
+theorem synA_fail : synA.ID synOrder {2} {0} = .error ({0, 1}, {1}) := by
+  have hA1 : synA.ancIn Finset.univ {2} = Finset.univ := by
     ext x
-    rw [figAncIn_mem]
+    rw [synAncIn_mem]
     have hx3 : x = 0 ∨ x = 1 ∨ x = 2 := by fin_cases x <;> decide
     have h01 : (0 : Fin 3) ∈ (↑(Finset.univ : Finset (Fin 3)) : Set (Fin 3)) ∧ (1 : Fin 3) ∈ (↑(Finset.univ : Finset (Fin 3)) : Set (Fin 3)) ∧
-        fig1a.dir 0 1 := by
+        synA.dir 0 1 := by
       refine ⟨Finset.mem_coe.mpr (by decide), Finset.mem_coe.mpr (by decide), ?_⟩
       show ((0, 1) : Fin 3 × Fin 3) = (0, 1) ∨ (0, 1) = (1, 2)
       exact Or.inl rfl
     have h12 : (1 : Fin 3) ∈ (↑(Finset.univ : Finset (Fin 3)) : Set (Fin 3)) ∧ (2 : Fin 3) ∈ (↑(Finset.univ : Finset (Fin 3)) : Set (Fin 3)) ∧
-        fig1a.dir 1 2 := by
+        synA.dir 1 2 := by
       refine ⟨Finset.mem_coe.mpr (by decide), Finset.mem_coe.mpr (by decide), ?_⟩
       show ((1, 2) : Fin 3 × Fin 3) = (0, 1) ∨ (1, 2) = (1, 2)
       exact Or.inr rfl
@@ -179,21 +179,21 @@ theorem fig1a_fail : fig1a.ID fig1order {2} {0} = .error ({0, 1}, {1}) := by
       · intro _
         refine ⟨Finset.mem_univ _, 2, by decide, ?_⟩
         exact Relation.ReflTransGen.refl
-  have hA2 : fig1a.ancCut Finset.univ {0} {2} = Finset.univ := by
+  have hA2 : synA.ancCut Finset.univ {0} {2} = Finset.univ := by
     ext x
-    rw [figAncCut_mem]
+    rw [synAncCut_mem]
     have hx3 : x = 0 ∨ x = 1 ∨ x = 2 := by fin_cases x <;> decide
-    have h01 : (fig1a.induce ↑(Finset.univ : Finset (Fin 3))).dir 0 1 ∧ (1 : Fin 3) ∉ ({0} : Finset (Fin 3)) := by
+    have h01 : (synA.induce ↑(Finset.univ : Finset (Fin 3))).dir 0 1 ∧ (1 : Fin 3) ∉ ({0} : Finset (Fin 3)) := by
       refine ⟨?_, by decide⟩
       show (0 : Fin 3) ∈ (↑(Finset.univ : Finset (Fin 3)) : Set (Fin 3)) ∧ (1 : Fin 3) ∈ (↑(Finset.univ : Finset (Fin 3)) : Set (Fin 3)) ∧
-        fig1a.dir 0 1
+        synA.dir 0 1
       refine ⟨Finset.mem_coe.mpr (by decide), Finset.mem_coe.mpr (by decide), ?_⟩
       show ((0, 1) : Fin 3 × Fin 3) = (0, 1) ∨ (0, 1) = (1, 2)
       exact Or.inl rfl
-    have h12 : (fig1a.induce ↑(Finset.univ : Finset (Fin 3))).dir 1 2 ∧ (2 : Fin 3) ∉ ({0} : Finset (Fin 3)) := by
+    have h12 : (synA.induce ↑(Finset.univ : Finset (Fin 3))).dir 1 2 ∧ (2 : Fin 3) ∉ ({0} : Finset (Fin 3)) := by
       refine ⟨?_, by decide⟩
       show (1 : Fin 3) ∈ (↑(Finset.univ : Finset (Fin 3)) : Set (Fin 3)) ∧ (2 : Fin 3) ∈ (↑(Finset.univ : Finset (Fin 3)) : Set (Fin 3)) ∧
-        fig1a.dir 1 2
+        synA.dir 1 2
       refine ⟨Finset.mem_coe.mpr (by decide), Finset.mem_coe.mpr (by decide), ?_⟩
       show ((1, 2) : Fin 3 × Fin 3) = (0, 1) ∨ (1, 2) = (1, 2)
       exact Or.inr rfl
@@ -214,16 +214,16 @@ theorem fig1a_fail : fig1a.ID fig1order {2} {0} = .error ({0, 1}, {1}) := by
       · intro _
         refine ⟨Finset.mem_univ _, 2, by decide, ?_⟩
         exact Relation.ReflTransGen.refl
-  have hA4 : fig1a.ancIn Finset.univ {1} = {0, 1} := by
+  have hA4 : synA.ancIn Finset.univ {1} = {0, 1} := by
     ext x
-    rw [figAncIn_mem]
+    rw [synAncIn_mem]
     have hx3 : x = 0 ∨ x = 1 ∨ x = 2 := by fin_cases x <;> decide
-    have hle : (fig1a.induce ↑(Finset.univ : Finset (Fin 3))).dir ≤
+    have hle : (synA.induce ↑(Finset.univ : Finset (Fin 3))).dir ≤
         (fun u w : Fin 3 => (u, w) = (0, 1) ∨ (u, w) = (1, 2)) := by
       intro a b hab
-      exact (figInduceDir hab).2.2
+      exact (synInduceDir hab).2.2
     have h01 : (0 : Fin 3) ∈ (↑(Finset.univ : Finset (Fin 3)) : Set (Fin 3)) ∧ (1 : Fin 3) ∈ (↑(Finset.univ : Finset (Fin 3)) : Set (Fin 3)) ∧
-        fig1a.dir 0 1 := by
+        synA.dir 0 1 := by
       refine ⟨Finset.mem_coe.mpr (by decide), Finset.mem_coe.mpr (by decide), ?_⟩
       show ((0, 1) : Fin 3 × Fin 3) = (0, 1) ∨ (0, 1) = (1, 2)
       exact Or.inl rfl
@@ -242,15 +242,15 @@ theorem fig1a_fail : fig1a.ID fig1order {2} {0} = .error ({0, 1}, {1}) := by
       · rintro ⟨-, y, hy, hr⟩
         have hy1 : y = 1 := Finset.mem_singleton.mp hy
         subst hy1
-        have hle' := figReflTransGenA_le ((Relation.ReflTransGen.mono hle) _ _ hr)
+        have hle' := synReflTransGenA_le ((Relation.ReflTransGen.mono hle) _ _ hr)
         exact absurd hle' (by decide)
       · intro hcon; exact absurd hcon (by decide)
-  have hA5 : fig1a.ancIn {0, 1} {1} = {0, 1} := by
+  have hA5 : synA.ancIn {0, 1} {1} = {0, 1} := by
     ext x
-    rw [figAncIn_mem]
+    rw [synAncIn_mem]
     have hx3 : x = 0 ∨ x = 1 ∨ x = 2 := by fin_cases x <;> decide
     have h01 : (0 : Fin 3) ∈ (↑(({0, 1} : Finset (Fin 3))) : Set (Fin 3)) ∧
-        (1 : Fin 3) ∈ (↑(({0, 1} : Finset (Fin 3))) : Set (Fin 3)) ∧ fig1a.dir 0 1 := by
+        (1 : Fin 3) ∈ (↑(({0, 1} : Finset (Fin 3))) : Set (Fin 3)) ∧ synA.dir 0 1 := by
       refine ⟨Finset.mem_coe.mpr (by decide), Finset.mem_coe.mpr (by decide), ?_⟩
       show ((0, 1) : Fin 3 × Fin 3) = (0, 1) ∨ (0, 1) = (1, 2)
       exact Or.inl rfl
@@ -268,15 +268,15 @@ theorem fig1a_fail : fig1a.ID fig1order {2} {0} = .error ({0, 1}, {1}) := by
     · constructor
       · rintro ⟨hmem, -⟩; exact absurd hmem (by decide)
       · intro hcon; exact absurd hcon (by decide)
-  have hA6 : fig1a.ancCut {0, 1} {0} {1} = {0, 1} := by
+  have hA6 : synA.ancCut {0, 1} {0} {1} = {0, 1} := by
     ext x
-    rw [figAncCut_mem]
+    rw [synAncCut_mem]
     have hx3 : x = 0 ∨ x = 1 ∨ x = 2 := by fin_cases x <;> decide
-    have h01 : (fig1a.induce ↑(({0, 1} : Finset (Fin 3)))).dir 0 1 ∧
+    have h01 : (synA.induce ↑(({0, 1} : Finset (Fin 3)))).dir 0 1 ∧
         (1 : Fin 3) ∉ ({0} : Finset (Fin 3)) := by
       refine ⟨?_, by decide⟩
       show (0 : Fin 3) ∈ (↑(({0, 1} : Finset (Fin 3))) : Set (Fin 3)) ∧
-        (1 : Fin 3) ∈ (↑(({0, 1} : Finset (Fin 3))) : Set (Fin 3)) ∧ fig1a.dir 0 1
+        (1 : Fin 3) ∈ (↑(({0, 1} : Finset (Fin 3))) : Set (Fin 3)) ∧ synA.dir 0 1
       refine ⟨Finset.mem_coe.mpr (by decide), Finset.mem_coe.mpr (by decide), ?_⟩
       show ((0, 1) : Fin 3 × Fin 3) = (0, 1) ∨ (0, 1) = (1, 2)
       exact Or.inl rfl
@@ -295,21 +295,21 @@ theorem fig1a_fail : fig1a.ID fig1order {2} {0} = .error ({0, 1}, {1}) := by
       · rintro ⟨hmem, -⟩; exact absurd hmem (by decide)
       · intro hcon; exact absurd hcon (by decide)
   have hreach1 : ∀ {w : Fin 3},
-      (fig1a.induce ↑(({1, 2} : Finset (Fin 3)))).bidir.Reachable 1 w → w = 1 := by
+      (synA.induce ↑(({1, 2} : Finset (Fin 3)))).bidir.Reachable 1 w → w = 1 := by
     intro w h
     rw [SimpleGraph.reachable_iff_reflTransGen] at h
     induction h with
     | refl => rfl
     | tail _ hstep ih =>
       rw [ih] at hstep
-      obtain ⟨-, hmem, h | h⟩ := figInduceBidir_adj (G := fig1a) rfl hstep
+      obtain ⟨-, hmem, h | h⟩ := synInduceBidir_adj (G := synA) rfl hstep
       · exact absurd h.1 (by decide)
       · have h0mem : (0 : Fin 3) ∈ (({1, 2} : Finset (Fin 3))) := by
           rw [← h.2]; exact Finset.mem_coe.mp hmem
         exact absurd h0mem (by decide)
-  have hC11 : fig1a.compIn {1, 2} 1 = {1} := by
+  have hC11 : synA.compIn {1, 2} 1 = {1} := by
     ext x
-    rw [figCompIn_mem]
+    rw [synCompIn_mem]
     have hx3 : x = 0 ∨ x = 1 ∨ x = 2 := by fin_cases x <;> decide
     rcases hx3 with rfl | rfl | rfl
     · constructor
@@ -323,25 +323,25 @@ theorem fig1a_fail : fig1a.ID fig1order {2} {0} = .error ({0, 1}, {1}) := by
         exact (SimpleGraph.ConnectedComponent.mem_supp_iff _ _).mpr rfl
     · constructor
       · rintro ⟨-, hr⟩
-        rw [(fig1a.induce ↑(({1, 2} : Finset (Fin 3)))).mem_cComponent_iff] at hr
+        rw [(synA.induce ↑(({1, 2} : Finset (Fin 3)))).mem_cComponent_iff] at hr
         have h21 := hreach1 hr
         rw [h21]
         decide
       · intro hcon; exact absurd hcon (by decide)
   have hreach2 : ∀ {w : Fin 3},
-      (fig1a.induce ↑(({1, 2} : Finset (Fin 3)))).bidir.Reachable 2 w → w = 2 := by
+      (synA.induce ↑(({1, 2} : Finset (Fin 3)))).bidir.Reachable 2 w → w = 2 := by
     intro w h
     rw [SimpleGraph.reachable_iff_reflTransGen] at h
     induction h with
     | refl => rfl
     | tail _ hstep ih =>
       rw [ih] at hstep
-      obtain ⟨-, -, h | h⟩ := figInduceBidir_adj (G := fig1a) rfl hstep
+      obtain ⟨-, -, h | h⟩ := synInduceBidir_adj (G := synA) rfl hstep
       · exact absurd h.1 (by decide)
       · exact absurd h.1 (by decide)
-  have hC12 : fig1a.compIn {1, 2} 2 = {2} := by
+  have hC12 : synA.compIn {1, 2} 2 = {2} := by
     ext x
-    rw [figCompIn_mem]
+    rw [synCompIn_mem]
     have hx3 : x = 0 ∨ x = 1 ∨ x = 2 := by fin_cases x <;> decide
     rcases hx3 with rfl | rfl | rfl
     · constructor
@@ -349,7 +349,7 @@ theorem fig1a_fail : fig1a.ID fig1order {2} {0} = .error ({0, 1}, {1}) := by
       · intro hcon; exact absurd hcon (by decide)
     · constructor
       · rintro ⟨-, hr⟩
-        rw [(fig1a.induce ↑(({1, 2} : Finset (Fin 3)))).mem_cComponent_iff] at hr
+        rw [(synA.induce ↑(({1, 2} : Finset (Fin 3)))).mem_cComponent_iff] at hr
         have h12 := hreach2 hr
         rw [h12]
         decide
@@ -360,12 +360,12 @@ theorem fig1a_fail : fig1a.ID fig1order {2} {0} = .error ({0, 1}, {1}) := by
         refine ⟨by decide, ?_⟩
         unfold ADMG.cComponent
         exact (SimpleGraph.ConnectedComponent.mem_supp_iff _ _).mpr rfl
-  have hC3 : fig1a.cComponentsIn {1, 2} = {{1}, {2}} := by
+  have hC3 : synA.cComponentsIn {1, 2} = {{1}, {2}} := by
     unfold cComponentsIn
     rw [Finset.image_insert, Finset.image_singleton, hC11, hC12]
-  have hC1 : fig1a.compIn {1} 1 = {1} := by
+  have hC1 : synA.compIn {1} 1 = {1} := by
     ext x
-    rw [figCompIn_mem]
+    rw [synCompIn_mem]
     have hx3 : x = 0 ∨ x = 1 ∨ x = 2 := by fin_cases x <;> decide
     rcases hx3 with rfl | rfl | rfl
     · constructor
@@ -380,12 +380,12 @@ theorem fig1a_fail : fig1a.ID fig1order {2} {0} = .error ({0, 1}, {1}) := by
     · constructor
       · rintro ⟨hmem, -⟩; exact absurd hmem (by decide)
       · intro hcon; exact absurd hcon (by decide)
-  have hA7 : fig1a.cComponentsIn {1} = {{1}} := by
+  have hA7 : synA.cComponentsIn {1} = {{1}} := by
     unfold cComponentsIn
     rw [Finset.image_singleton, hC1]
-  have hC2 : fig1a.compIn {2} 2 = {2} := by
+  have hC2 : synA.compIn {2} 2 = {2} := by
     ext x
-    rw [figCompIn_mem]
+    rw [synCompIn_mem]
     have hx3 : x = 0 ∨ x = 1 ∨ x = 2 := by fin_cases x <;> decide
     rcases hx3 with rfl | rfl | rfl
     · constructor
@@ -400,12 +400,12 @@ theorem fig1a_fail : fig1a.ID fig1order {2} {0} = .error ({0, 1}, {1}) := by
         refine ⟨by decide, ?_⟩
         unfold ADMG.cComponent
         exact (SimpleGraph.ConnectedComponent.mem_supp_iff _ _).mpr rfl
-  have hA10 : fig1a.cComponentsIn {2} = {{2}} := by
+  have hA10 : synA.cComponentsIn {2} = {{2}} := by
     unfold cComponentsIn
     rw [Finset.image_singleton, hC2]
   have hadj01 : (SimpleGraph.fromRel
         (fun x y : Fin 3 => x ∈ (↑(({0, 1} : Finset (Fin 3))) : Set (Fin 3)) ∧ y ∈ (↑(({0, 1} : Finset (Fin 3))) : Set (Fin 3)) ∧
-          fig1a.bidir.Adj x y)).Adj 0 1 := by
+          synA.bidir.Adj x y)).Adj 0 1 := by
     rw [SimpleGraph.fromRel_adj]
     refine ⟨by decide,
       Or.inl ⟨Finset.mem_coe.mpr (by decide), Finset.mem_coe.mpr (by decide), ?_⟩⟩
@@ -415,7 +415,7 @@ theorem fig1a_fail : fig1a.ID fig1order {2} {0} = .error ({0, 1}, {1}) := by
     exact hb01
   have hadj10 : (SimpleGraph.fromRel
         (fun x y : Fin 3 => x ∈ (↑(({0, 1} : Finset (Fin 3))) : Set (Fin 3)) ∧ y ∈ (↑(({0, 1} : Finset (Fin 3))) : Set (Fin 3)) ∧
-          fig1a.bidir.Adj x y)).Adj 1 0 := by
+          synA.bidir.Adj x y)).Adj 1 0 := by
     rw [SimpleGraph.fromRel_adj]
     refine ⟨by decide,
       Or.inl ⟨Finset.mem_coe.mpr (by decide), Finset.mem_coe.mpr (by decide), ?_⟩⟩
@@ -423,9 +423,9 @@ theorem fig1a_fail : fig1a.ID fig1order {2} {0} = .error ({0, 1}, {1}) := by
       rw [SimpleGraph.fromRel_adj]
       exact ⟨by decide, Or.inr rfl⟩
     exact hb10
-  have hc0 : fig1a.compIn {0, 1} 0 = {0, 1} := by
+  have hc0 : synA.compIn {0, 1} 0 = {0, 1} := by
     ext x
-    rw [figCompIn_mem]
+    rw [synCompIn_mem]
     have hx3 : x = 0 ∨ x = 1 ∨ x = 2 := by fin_cases x <;> decide
     rcases hx3 with rfl | rfl | rfl
     · constructor
@@ -438,22 +438,22 @@ theorem fig1a_fail : fig1a.ID fig1order {2} {0} = .error ({0, 1}, {1}) := by
       · intro _; decide
       · intro _
         refine ⟨by decide, ?_⟩
-        rw [(fig1a.induce ↑(({0, 1} : Finset (Fin 3)))).mem_cComponent_iff,
+        rw [(synA.induce ↑(({0, 1} : Finset (Fin 3)))).mem_cComponent_iff,
           SimpleGraph.reachable_iff_reflTransGen]
         exact Relation.ReflTransGen.single hadj01
     · constructor
       · rintro ⟨hmem, -⟩; exact absurd hmem (by decide)
       · intro hcon; exact absurd hcon (by decide)
-  have hc1 : fig1a.compIn {0, 1} 1 = {0, 1} := by
+  have hc1 : synA.compIn {0, 1} 1 = {0, 1} := by
     ext x
-    rw [figCompIn_mem]
+    rw [synCompIn_mem]
     have hx3 : x = 0 ∨ x = 1 ∨ x = 2 := by fin_cases x <;> decide
     rcases hx3 with rfl | rfl | rfl
     · constructor
       · intro _; decide
       · intro _
         refine ⟨by decide, ?_⟩
-        rw [(fig1a.induce ↑(({0, 1} : Finset (Fin 3)))).mem_cComponent_iff,
+        rw [(synA.induce ↑(({0, 1} : Finset (Fin 3)))).mem_cComponent_iff,
           SimpleGraph.reachable_iff_reflTransGen]
         exact Relation.ReflTransGen.single hadj10
     · constructor
@@ -465,52 +465,52 @@ theorem fig1a_fail : fig1a.ID fig1order {2} {0} = .error ({0, 1}, {1}) := by
     · constructor
       · rintro ⟨hmem, -⟩; exact absurd hmem (by decide)
       · intro hcon; exact absurd hcon (by decide)
-  have hA8 : fig1a.cComponentsIn {0, 1} = {{0, 1}} := by
+  have hA8 : synA.cComponentsIn {0, 1} = {{0, 1}} := by
     unfold cComponentsIn
     rw [Finset.image_insert, Finset.image_singleton, hc0, hc1]
     decide
   have hreachU0 : ∀ {w : Fin 3},
-      (fig1a.induce ↑(({0, 1, 2} : Finset (Fin 3)))).bidir.Reachable 0 w → w = 0 ∨ w = 1 := by
+      (synA.induce ↑(({0, 1, 2} : Finset (Fin 3)))).bidir.Reachable 0 w → w = 0 ∨ w = 1 := by
     intro w h
     rw [SimpleGraph.reachable_iff_reflTransGen] at h
     induction h with
     | refl => exact Or.inl rfl
     | tail _ hstep ih =>
       rcases ih with rfl | rfl
-      · obtain ⟨-, -, h | h⟩ := figInduceBidir_adj (G := fig1a) rfl hstep
+      · obtain ⟨-, -, h | h⟩ := synInduceBidir_adj (G := synA) rfl hstep
         · exact Or.inr h.2
         · exact absurd h.1 (by decide)
-      · obtain ⟨-, -, h | h⟩ := figInduceBidir_adj (G := fig1a) rfl hstep
+      · obtain ⟨-, -, h | h⟩ := synInduceBidir_adj (G := synA) rfl hstep
         · exact absurd h.1 (by decide)
         · exact Or.inl h.2
   have hreachU1 : ∀ {w : Fin 3},
-      (fig1a.induce ↑(({0, 1, 2} : Finset (Fin 3)))).bidir.Reachable 1 w → w = 0 ∨ w = 1 := by
+      (synA.induce ↑(({0, 1, 2} : Finset (Fin 3)))).bidir.Reachable 1 w → w = 0 ∨ w = 1 := by
     intro w h
     rw [SimpleGraph.reachable_iff_reflTransGen] at h
     induction h with
     | refl => exact Or.inr rfl
     | tail _ hstep ih =>
       rcases ih with rfl | rfl
-      · obtain ⟨-, -, h | h⟩ := figInduceBidir_adj (G := fig1a) rfl hstep
+      · obtain ⟨-, -, h | h⟩ := synInduceBidir_adj (G := synA) rfl hstep
         · exact Or.inr h.2
         · exact absurd h.1 (by decide)
-      · obtain ⟨-, -, h | h⟩ := figInduceBidir_adj (G := fig1a) rfl hstep
+      · obtain ⟨-, -, h | h⟩ := synInduceBidir_adj (G := synA) rfl hstep
         · exact absurd h.1 (by decide)
         · exact Or.inl h.2
   have hreachU2 : ∀ {w : Fin 3},
-      (fig1a.induce ↑(({0, 1, 2} : Finset (Fin 3)))).bidir.Reachable 2 w → w = 2 := by
+      (synA.induce ↑(({0, 1, 2} : Finset (Fin 3)))).bidir.Reachable 2 w → w = 2 := by
     intro w h
     rw [SimpleGraph.reachable_iff_reflTransGen] at h
     induction h with
     | refl => rfl
     | tail _ hstep ih =>
       rw [ih] at hstep
-      obtain ⟨-, -, h | h⟩ := figInduceBidir_adj (G := fig1a) rfl hstep
+      obtain ⟨-, -, h | h⟩ := synInduceBidir_adj (G := synA) rfl hstep
       · exact absurd h.1 (by decide)
       · exact absurd h.1 (by decide)
   have hu01 : (SimpleGraph.fromRel
         (fun x y : Fin 3 => x ∈ (↑(({0, 1, 2} : Finset (Fin 3))) : Set (Fin 3)) ∧
-          y ∈ (↑(({0, 1, 2} : Finset (Fin 3))) : Set (Fin 3)) ∧ fig1a.bidir.Adj x y)).Adj 0 1 := by
+          y ∈ (↑(({0, 1, 2} : Finset (Fin 3))) : Set (Fin 3)) ∧ synA.bidir.Adj x y)).Adj 0 1 := by
     rw [SimpleGraph.fromRel_adj]
     refine ⟨by decide,
       Or.inl ⟨Finset.mem_coe.mpr (by decide), Finset.mem_coe.mpr (by decide), ?_⟩⟩
@@ -520,7 +520,7 @@ theorem fig1a_fail : fig1a.ID fig1order {2} {0} = .error ({0, 1}, {1}) := by
     exact hb01
   have hu10 : (SimpleGraph.fromRel
         (fun x y : Fin 3 => x ∈ (↑(({0, 1, 2} : Finset (Fin 3))) : Set (Fin 3)) ∧
-          y ∈ (↑(({0, 1, 2} : Finset (Fin 3))) : Set (Fin 3)) ∧ fig1a.bidir.Adj x y)).Adj 1 0 := by
+          y ∈ (↑(({0, 1, 2} : Finset (Fin 3))) : Set (Fin 3)) ∧ synA.bidir.Adj x y)).Adj 1 0 := by
     rw [SimpleGraph.fromRel_adj]
     refine ⟨by decide,
       Or.inl ⟨Finset.mem_coe.mpr (by decide), Finset.mem_coe.mpr (by decide), ?_⟩⟩
@@ -528,9 +528,9 @@ theorem fig1a_fail : fig1a.ID fig1order {2} {0} = .error ({0, 1}, {1}) := by
       rw [SimpleGraph.fromRel_adj]
       exact ⟨by decide, Or.inr rfl⟩
     exact hb10
-  have cu0 : fig1a.compIn {0, 1, 2} 0 = {0, 1} := by
+  have cu0 : synA.compIn {0, 1, 2} 0 = {0, 1} := by
     ext x
-    rw [figCompIn_mem]
+    rw [synCompIn_mem]
     have hx3 : x = 0 ∨ x = 1 ∨ x = 2 := by fin_cases x <;> decide
     rcases hx3 with rfl | rfl | rfl
     · constructor
@@ -543,26 +543,26 @@ theorem fig1a_fail : fig1a.ID fig1order {2} {0} = .error ({0, 1}, {1}) := by
       · intro _; decide
       · intro _
         refine ⟨by decide, ?_⟩
-        rw [(fig1a.induce ↑(({0, 1, 2} : Finset (Fin 3)))).mem_cComponent_iff,
+        rw [(synA.induce ↑(({0, 1, 2} : Finset (Fin 3)))).mem_cComponent_iff,
           SimpleGraph.reachable_iff_reflTransGen]
         exact Relation.ReflTransGen.single hu01
     · constructor
       · rintro ⟨-, hr⟩
-        rw [(fig1a.induce ↑(({0, 1, 2} : Finset (Fin 3)))).mem_cComponent_iff] at hr
+        rw [(synA.induce ↑(({0, 1, 2} : Finset (Fin 3)))).mem_cComponent_iff] at hr
         rcases hreachU0 hr with h | h
         · rw [h]; decide
         · rw [h]; decide
       · intro hcon; exact absurd hcon (by decide)
-  have cu1 : fig1a.compIn {0, 1, 2} 1 = {0, 1} := by
+  have cu1 : synA.compIn {0, 1, 2} 1 = {0, 1} := by
     ext x
-    rw [figCompIn_mem]
+    rw [synCompIn_mem]
     have hx3 : x = 0 ∨ x = 1 ∨ x = 2 := by fin_cases x <;> decide
     rcases hx3 with rfl | rfl | rfl
     · constructor
       · intro _; decide
       · intro _
         refine ⟨by decide, ?_⟩
-        rw [(fig1a.induce ↑(({0, 1, 2} : Finset (Fin 3)))).mem_cComponent_iff,
+        rw [(synA.induce ↑(({0, 1, 2} : Finset (Fin 3)))).mem_cComponent_iff,
           SimpleGraph.reachable_iff_reflTransGen]
         exact Relation.ReflTransGen.single hu10
     · constructor
@@ -573,25 +573,25 @@ theorem fig1a_fail : fig1a.ID fig1order {2} {0} = .error ({0, 1}, {1}) := by
         exact (SimpleGraph.ConnectedComponent.mem_supp_iff _ _).mpr rfl
     · constructor
       · rintro ⟨-, hr⟩
-        rw [(fig1a.induce ↑(({0, 1, 2} : Finset (Fin 3)))).mem_cComponent_iff] at hr
+        rw [(synA.induce ↑(({0, 1, 2} : Finset (Fin 3)))).mem_cComponent_iff] at hr
         rcases hreachU1 hr with h | h
         · rw [h]; decide
         · rw [h]; decide
       · intro hcon; exact absurd hcon (by decide)
-  have cu2 : fig1a.compIn {0, 1, 2} 2 = {2} := by
+  have cu2 : synA.compIn {0, 1, 2} 2 = {2} := by
     ext x
-    rw [figCompIn_mem]
+    rw [synCompIn_mem]
     have hx3 : x = 0 ∨ x = 1 ∨ x = 2 := by fin_cases x <;> decide
     rcases hx3 with rfl | rfl | rfl
     · constructor
       · rintro ⟨-, hr⟩
-        rw [(fig1a.induce ↑(({0, 1, 2} : Finset (Fin 3)))).mem_cComponent_iff] at hr
+        rw [(synA.induce ↑(({0, 1, 2} : Finset (Fin 3)))).mem_cComponent_iff] at hr
         have h02 := hreachU2 hr
         rw [h02]; decide
       · intro hcon; exact absurd hcon (by decide)
     · constructor
       · rintro ⟨-, hr⟩
-        rw [(fig1a.induce ↑(({0, 1, 2} : Finset (Fin 3)))).mem_cComponent_iff] at hr
+        rw [(synA.induce ↑(({0, 1, 2} : Finset (Fin 3)))).mem_cComponent_iff] at hr
         have h12 := hreachU2 hr
         rw [h12]; decide
       · intro hcon; exact absurd hcon (by decide)
@@ -601,55 +601,55 @@ theorem fig1a_fail : fig1a.ID fig1order {2} {0} = .error ({0, 1}, {1}) := by
         refine ⟨by decide, ?_⟩
         unfold ADMG.cComponent
         exact (SimpleGraph.ConnectedComponent.mem_supp_iff _ _).mpr rfl
-  have hA11 : fig1a.cComponentsIn Finset.univ = {{0, 1}, {2}} := by
+  have hA11 : synA.cComponentsIn Finset.univ = {{0, 1}, {2}} := by
     rw [show (Finset.univ : Finset (Fin 3)) = {0, 1, 2} from by decide]
     unfold cComponentsIn
     rw [Finset.image_insert, Finset.image_insert, Finset.image_singleton, cu0, cu1, cu2]
     decide
   have heqA := fun (Y X D : Finset (Fin 3)) (P : IdExpr (Fin 3)) =>
-    idRec.eq_def fig1a fig1order Y X D P
+    idRec.eq_def synA synOrder Y X D P
   have hUX1 : (Finset.univ \ ({1} : Finset (Fin 3))) = {0, 2} := by decide
-  have hcall1 : fig1a.idRec fig1order {1} (Finset.univ \ {1}) Finset.univ IdExpr.obs =
+  have hcall1 : synA.idRec synOrder {1} (Finset.univ \ {1}) Finset.univ IdExpr.obs =
       .error (({0, 1} : Finset (Fin 3)), ({1} : Finset (Fin 3))) := by
     rw [hUX1, heqA]
     have h1ne : (({0, 2} : Finset (Fin 3))) ≠ ∅ := by decide
     rw [ite_eq_right h1ne]
-    have h2yes : fig1a.ancIn Finset.univ {1} ≠ Finset.univ := by rw [hA4]; decide
+    have h2yes : synA.ancIn Finset.univ {1} ≠ Finset.univ := by rw [hA4]; decide
     rw [dite_eq_left h2yes, hA4]
     have hcap : ((({0, 2} : Finset (Fin 3))) ∩ {0, 1}) = {0} := by decide
     have hsd : (Finset.univ \ (({0, 1} : Finset (Fin 3)))) = {2} := by decide
     rw [hcap, hsd, heqA]
     have h1ne' : (({0} : Finset (Fin 3))) ≠ ∅ := by decide
     rw [ite_eq_right h1ne']
-    have h2no : ¬ (fig1a.ancIn {0, 1} {1} ≠ {0, 1}) := by rw [hA5]; decide
+    have h2no : ¬ (synA.ancIn {0, 1} {1} ≠ {0, 1}) := by rw [hA5]; decide
     rw [dite_eq_right h2no]
     have hDX3 : ((({0, 1} : Finset (Fin 3))) \ {0}) = {1} := by decide
     have h3no : ¬ (((({0, 1} : Finset (Fin 3)) \ {0}) \
-        fig1a.ancCut {0, 1} {0} {1}).Nonempty) := by
+        synA.ancCut {0, 1} {0} {1}).Nonempty) := by
       rw [hDX3, hA6]
       rw [show ((({1} : Finset (Fin 3))) \ {0, 1}) = ∅ from by decide]
       exact Finset.not_nonempty_empty
     rw [dite_eq_right h3no]
     have h4no : ¬ (((({0, 1} : Finset (Fin 3)) \ {0}) ∉
-        fig1a.cComponentsIn ((({0, 1} : Finset (Fin 3))) \ {0}))) := by
+        synA.cComponentsIn ((({0, 1} : Finset (Fin 3))) \ {0}))) := by
       rw [hDX3, hA7]; decide
     rw [dite_eq_right h4no]
-    have h5yes : ({0, 1} : Finset (Fin 3)) ∈ fig1a.cComponentsIn {0, 1} := by
+    have h5yes : ({0, 1} : Finset (Fin 3)) ∈ synA.cComponentsIn {0, 1} := by
       rw [hA8]; decide
     rw [dite_eq_left h5yes, hDX3]
   have hUX2 : (Finset.univ \ ({2} : Finset (Fin 3))) = {0, 1} := by decide
   have hcall2 : ∃ v,
-      fig1a.idRec fig1order {2} (Finset.univ \ {2}) Finset.univ IdExpr.obs = .ok v := by
+      synA.idRec synOrder {2} (Finset.univ \ {2}) Finset.univ IdExpr.obs = .ok v := by
     rw [hUX2, heqA]
     have h1ne : (({0, 1} : Finset (Fin 3))) ≠ ∅ := by decide
     rw [ite_eq_right h1ne]
-    have h2no : ¬ (fig1a.ancIn Finset.univ {2} ≠ Finset.univ) := by rw [hA1]; decide
+    have h2no : ¬ (synA.ancIn Finset.univ {2} ≠ Finset.univ) := by rw [hA1]; decide
     rw [dite_eq_right h2no]
     have hDX3 : (Finset.univ \ (({0, 1} : Finset (Fin 3)))) = {2} := by decide
-    have h2mem : (2 : Fin 3) ∈ fig1a.ancCut Finset.univ {0, 1} {2} := by
-      rw [figAncCut_mem]
+    have h2mem : (2 : Fin 3) ∈ synA.ancCut Finset.univ {0, 1} {2} := by
+      rw [synAncCut_mem]
       exact ⟨Finset.mem_univ _, 2, by decide, Relation.ReflTransGen.refl⟩
-    have hempty : ((({2} : Finset (Fin 3))) \ fig1a.ancCut Finset.univ {0, 1} {2}) = ∅ := by
+    have hempty : ((({2} : Finset (Fin 3))) \ synA.ancCut Finset.univ {0, 1} {2}) = ∅ := by
       ext x
       rw [Finset.mem_sdiff]
       constructor
@@ -660,26 +660,26 @@ theorem fig1a_fail : fig1a.ID fig1order {2} {0} = .error ({0, 1}, {1}) := by
       · intro hcon
         simp at hcon
     have h3no : ¬ ((((Finset.univ : Finset (Fin 3)) \ {0, 1}) \
-        fig1a.ancCut Finset.univ {0, 1} {2}).Nonempty) := by
+        synA.ancCut Finset.univ {0, 1} {2}).Nonempty) := by
       rw [hDX3, hempty]
       exact Finset.not_nonempty_empty
     rw [dite_eq_right h3no]
     have h4no : ¬ ((((Finset.univ : Finset (Fin 3)) \ {0, 1}) ∉
-        fig1a.cComponentsIn ((Finset.univ : Finset (Fin 3)) \ {0, 1}))) := by
+        synA.cComponentsIn ((Finset.univ : Finset (Fin 3)) \ {0, 1}))) := by
       rw [hDX3, hA10]; decide
     rw [dite_eq_right h4no]
-    have h5no : ¬ ((Finset.univ : Finset (Fin 3)) ∈ fig1a.cComponentsIn Finset.univ) := by
+    have h5no : ¬ ((Finset.univ : Finset (Fin 3)) ∈ synA.cComponentsIn Finset.univ) := by
       rw [hA11]; decide
     rw [dite_eq_right h5no]
-    have h6yes : ((Finset.univ : Finset (Fin 3)) \ {0, 1}) ∈ fig1a.cComponentsIn Finset.univ := by
+    have h6yes : ((Finset.univ : Finset (Fin 3)) \ {0, 1}) ∈ synA.cComponentsIn Finset.univ := by
       rw [hDX3, hA11]; decide
     rw [ite_eq_left h6yes]
     exact ⟨_, rfl⟩
   have hDX : (Finset.univ \ (({0} : Finset (Fin 3)))) = {1, 2} := by decide
   have hmap : List.mapM
-        (fun S : { S : Finset (Fin 3) // S ∈ (fig1a.cComponentsIn (Finset.univ \ {0})).toList } =>
-          fig1a.idRec fig1order S.1 (Finset.univ \ S.1) Finset.univ IdExpr.obs)
-        (fig1a.cComponentsIn (Finset.univ \ {0})).toList.attach =
+        (fun S : { S : Finset (Fin 3) // S ∈ (synA.cComponentsIn (Finset.univ \ {0})).toList } =>
+          synA.idRec synOrder S.1 (Finset.univ \ S.1) Finset.univ IdExpr.obs)
+        (synA.cComponentsIn (Finset.univ \ {0})).toList.attach =
       .error (({0, 1} : Finset (Fin 3)), ({1} : Finset (Fin 3))) := by
     rw [hDX, hC3]
     have hall : ∀ e ∈ ((({{1}, {2}} : Finset (Finset (Fin 3)))).toList.attach),
@@ -703,7 +703,7 @@ theorem fig1a_fail : fig1a.ID fig1order {2} {0} = .error ({0, 1}, {1}) := by
         List.mapM
           (fun S : { S : Finset (Fin 3) //
             S ∈ (({{1}, {2}} : Finset (Finset (Fin 3)))).toList } =>
-            fig1a.idRec fig1order S.1 (Finset.univ \ S.1) Finset.univ IdExpr.obs) l =
+            synA.idRec synOrder S.1 (Finset.univ \ S.1) Finset.univ IdExpr.obs) l =
           .error (({0, 1} : Finset (Fin 3)), ({1} : Finset (Fin 3))) := by
       intro l
       induction l with
@@ -716,17 +716,17 @@ theorem fig1a_fail : fig1a.ID fig1order {2} {0} = .error ({0, 1}, {1}) := by
         rcases hall0 a (by simp) with ha1 | ha2
         · have hfa : (fun S : { S : Finset (Fin 3) //
                 S ∈ (({{1}, {2}} : Finset (Finset (Fin 3)))).toList } =>
-              fig1a.idRec fig1order S.1 (Finset.univ \ S.1) Finset.univ IdExpr.obs) a =
+              synA.idRec synOrder S.1 (Finset.univ \ S.1) Finset.univ IdExpr.obs) a =
               .error (({0, 1} : Finset (Fin 3)), ({1} : Finset (Fin 3))) := by
-            show fig1a.idRec fig1order a.1 (Finset.univ \ a.1) Finset.univ IdExpr.obs = _
+            show synA.idRec synOrder a.1 (Finset.univ \ a.1) Finset.univ IdExpr.obs = _
             rw [ha1]
             exact hcall1
           simp only [List.mapM_cons, hfa]
           rfl
         · have hfa : ∃ v, (fun S : { S : Finset (Fin 3) //
                 S ∈ (({{1}, {2}} : Finset (Finset (Fin 3)))).toList } =>
-              fig1a.idRec fig1order S.1 (Finset.univ \ S.1) Finset.univ IdExpr.obs) a = .ok v := by
-            show ∃ v, fig1a.idRec fig1order a.1 (Finset.univ \ a.1) Finset.univ IdExpr.obs =
+              synA.idRec synOrder S.1 (Finset.univ \ S.1) Finset.univ IdExpr.obs) a = .ok v := by
+            show ∃ v, synA.idRec synOrder a.1 (Finset.univ \ a.1) Finset.univ IdExpr.obs =
               .ok v
             rw [ha2]
             exact hcall2
@@ -745,56 +745,56 @@ theorem fig1a_fail : fig1a.ID fig1order {2} {0} = .error ({0, 1}, {1}) := by
           rfl
     exact hind _ hall hex
   have hXne : (({0} : Finset (Fin 3))) ≠ ∅ := by decide
-  show fig1a.idRec fig1order {2} {0} Finset.univ IdExpr.obs = .error ({0, 1}, {1})
+  show synA.idRec synOrder {2} {0} Finset.univ IdExpr.obs = .error ({0, 1}, {1})
   rw [heqA, ite_eq_right hXne]
-  have h2no : ¬ (fig1a.ancIn Finset.univ {2} ≠ Finset.univ) := by rw [hA1]; decide
+  have h2no : ¬ (synA.ancIn Finset.univ {2} ≠ Finset.univ) := by rw [hA1]; decide
   rw [dite_eq_right h2no]
   have h3no : ¬ ((((Finset.univ : Finset (Fin 3)) \ {0}) \
-      fig1a.ancCut Finset.univ {0} {2}).Nonempty) := by
+      synA.ancCut Finset.univ {0} {2}).Nonempty) := by
     rw [hDX, hA2]
     rw [show ((({1, 2} : Finset (Fin 3))) \ Finset.univ) = ∅ from by decide]
     exact Finset.not_nonempty_empty
   rw [dite_eq_right h3no]
   have h4yes : ((Finset.univ : Finset (Fin 3)) \ {0}) ∉
-      fig1a.cComponentsIn (Finset.univ \ {0}) := by
+      synA.cComponentsIn (Finset.univ \ {0}) := by
     rw [hDX, hC3]; decide
   rw [dite_eq_left h4yes, hmap]
   rfl
 
-def fig1bOrder : Fin 3 ≃ Fin 3 := Equiv.swap 1 2
+def synBOrder : Fin 3 ≃ Fin 3 := Equiv.swap 1 2
 
-theorem fig1order_topological {u w : Fin 3} (h : fig1a.dir u w) : fig1order u < fig1order w := by
+theorem synOrder_topological {u w : Fin 3} (h : synA.dir u w) : synOrder u < synOrder w := by
   have h' : (u, w) = (0, 1) ∨ (u, w) = (1, 2) := h
   rcases h' with h' | h' <;> rw [Prod.mk.injEq] at h' <;> obtain ⟨rfl, rfl⟩ := h' <;>
     decide
 
-theorem fig1bOrder_topological {u w : Fin 3} (h : fig1b.dir u w) : fig1bOrder u < fig1bOrder w := by
+theorem synBOrder_topological {u w : Fin 3} (h : synB.dir u w) : synBOrder u < synBOrder w := by
   have h' : (u, w) = (0, 1) ∨ (u, w) = (2, 1) := h
   rcases h' with h' | h' <;> rw [Prod.mk.injEq] at h' <;> obtain ⟨rfl, rfl⟩ := h' <;>
     decide
 
-theorem fig1b_ok : fig1b.ID fig1bOrder {2} {0} = .ok (.sum ∅ (.sum {0, 1} .obs)) := by
-  have hB1 : fig1b.ancIn Finset.univ {2} = {2} := by
+theorem synB_ok : synB.ID synBOrder {2} {0} = .ok (.sum ∅ (.sum {0, 1} .obs)) := by
+  have hB1 : synB.ancIn Finset.univ {2} = {2} := by
     ext x
-    rw [figAncIn_mem]
+    rw [synAncIn_mem]
     have hx3 : x = 0 ∨ x = 1 ∨ x = 2 := by fin_cases x <;> decide
-    have hle : (fig1b.induce ↑(Finset.univ : Finset (Fin 3))).dir ≤
+    have hle : (synB.induce ↑(Finset.univ : Finset (Fin 3))).dir ≤
         (fun u w : Fin 3 => (u, w) = (0, 1) ∨ (u, w) = (2, 1)) := by
       intro a b hab
-      exact (figInduceDir hab).2.2
+      exact (synInduceDir hab).2.2
     rcases hx3 with rfl | rfl | rfl
     · constructor
       · rintro ⟨-, y, hy, hr⟩
         have hy2 : y = 2 := Finset.mem_singleton.mp hy
         subst hy2
-        have h02 := figReflTransGenB_eq ((Relation.ReflTransGen.mono hle) _ _ hr) rfl
+        have h02 := synReflTransGenB_eq ((Relation.ReflTransGen.mono hle) _ _ hr) rfl
         exact absurd h02 (by decide)
       · intro hcon; exact absurd hcon (by decide)
     · constructor
       · rintro ⟨-, y, hy, hr⟩
         have hy2 : y = 2 := Finset.mem_singleton.mp hy
         subst hy2
-        have h12 := figReflTransGenB_eq ((Relation.ReflTransGen.mono hle) _ _ hr) rfl
+        have h12 := synReflTransGenB_eq ((Relation.ReflTransGen.mono hle) _ _ hr) rfl
         exact absurd h12 (by decide)
       · intro hcon; exact absurd hcon (by decide)
     · constructor
@@ -803,13 +803,13 @@ theorem fig1b_ok : fig1b.ID fig1bOrder {2} {0} = .ok (.sum ∅ (.sum {0, 1} .obs
         refine ⟨Finset.mem_univ _, 2, by decide, ?_⟩
         exact Relation.ReflTransGen.refl
   have heqB := fun (Y X D : Finset (Fin 3)) (P : IdExpr (Fin 3)) =>
-    idRec.eq_def fig1b fig1bOrder Y X D P
+    idRec.eq_def synB synBOrder Y X D P
   have hcap : ((({0} : Finset (Fin 3))) ∩ {2}) = ∅ := by decide
   have hsd : ((Finset.univ : Finset (Fin 3)) \ {2}) = {0, 1} := by decide
   have hXne : (({0} : Finset (Fin 3))) ≠ ∅ := by decide
-  show fig1b.idRec fig1bOrder {2} {0} Finset.univ IdExpr.obs = .ok (.sum ∅ (.sum {0, 1} .obs))
+  show synB.idRec synBOrder {2} {0} Finset.univ IdExpr.obs = .ok (.sum ∅ (.sum {0, 1} .obs))
   rw [heqB, ite_eq_right hXne]
-  have h2yes : fig1b.ancIn Finset.univ {2} ≠ Finset.univ := by rw [hB1]; decide
+  have h2yes : synB.ancIn Finset.univ {2} ≠ Finset.univ := by rw [hB1]; decide
   rw [dite_eq_left h2yes, hB1, hcap, hsd, heqB]
   have h1yes : ((∅ : Finset (Fin 3))) = ∅ := rfl
   rw [ite_eq_left h1yes]
@@ -851,7 +851,7 @@ theorem chain2InduceBidir_false {D : Finset (Fin 2)} {a b : Fin 2}
 theorem chain2_line6 : chain2.ID chain2order {1} {0} = .ok (.sum ∅ (condChain chain2order (Finset.univ : Finset (Fin 2)) ({1} : Finset (Fin 2)) .obs)) := by
   have hA1c : chain2.ancIn Finset.univ {1} = Finset.univ := by
     ext x
-    rw [figAncIn_mem]
+    rw [synAncIn_mem]
     have hx2 : x = 0 ∨ x = 1 := by fin_cases x <;> decide
     have h01 : (0 : Fin 2) ∈ (↑(Finset.univ : Finset (Fin 2)) : Set (Fin 2)) ∧
       (1 : Fin 2) ∈ (↑(Finset.univ : Finset (Fin 2)) : Set (Fin 2)) ∧ chain2.dir 0 1 := by
@@ -871,7 +871,7 @@ theorem chain2_line6 : chain2.ID chain2order {1} {0} = .ok (.sum ∅ (condChain 
         exact Relation.ReflTransGen.refl
   have hA2c : chain2.ancCut Finset.univ {0} {1} = Finset.univ := by
     ext x
-    rw [figAncCut_mem]
+    rw [synAncCut_mem]
     have hx2 : x = 0 ∨ x = 1 := by fin_cases x <;> decide
     have h01 : (chain2.induce ↑(Finset.univ : Finset (Fin 2))).dir 0 1 ∧
       (1 : Fin 2) ∉ ({0} : Finset (Fin 2)) := by
@@ -903,7 +903,7 @@ theorem chain2_line6 : chain2.ID chain2order {1} {0} = .ok (.sum ∅ (condChain 
       exact (chain2InduceBidir_false hstep).elim
   have hCc0 : chain2.compIn {0, 1} 0 = {0} := by
     ext x
-    rw [figCompIn_mem]
+    rw [synCompIn_mem]
     have hx2 : x = 0 ∨ x = 1 := by fin_cases x <;> decide
     rcases hx2 with rfl | rfl
     · constructor
@@ -920,7 +920,7 @@ theorem chain2_line6 : chain2.ID chain2order {1} {0} = .ok (.sum ∅ (condChain 
         exact absurd hcon (by decide)
   have hCc1 : chain2.compIn {0, 1} 1 = {1} := by
     ext x
-    rw [figCompIn_mem]
+    rw [synCompIn_mem]
     have hx2 : x = 0 ∨ x = 1 := by fin_cases x <;> decide
     rcases hx2 with rfl | rfl
     · constructor
@@ -937,7 +937,7 @@ theorem chain2_line6 : chain2.ID chain2order {1} {0} = .ok (.sum ∅ (condChain 
         rw [mem_cComponent_iff, SimpleGraph.reachable_iff_reflTransGen]
   have hCcS : chain2.compIn {1} 1 = {1} := by
     ext x
-    rw [figCompIn_mem]
+    rw [synCompIn_mem]
     have hx2 : x = 0 ∨ x = 1 := by fin_cases x <;> decide
     rcases hx2 with rfl | rfl
     · constructor
@@ -1450,7 +1450,7 @@ theorem gate4reachS {v w : Fin 4} (hv : v = 1 ∨ v = 2)
 
 theorem gate4compU0 : gate4.compIn Finset.univ 0 = {0, 1, 2} := by
   ext x
-  rw [figCompIn_mem]
+  rw [synCompIn_mem]
   have hx4 : x = 0 ∨ x = 1 ∨ x = 2 ∨ x = 3 := by fin_cases x <;> decide
   rcases hx4 with rfl | rfl | rfl | rfl
   · constructor
@@ -1487,7 +1487,7 @@ theorem gate4compU0 : gate4.compIn Finset.univ 0 = {0, 1, 2} := by
 
 theorem gate4compU1 : gate4.compIn Finset.univ 1 = {0, 1, 2} := by
   ext x
-  rw [figCompIn_mem]
+  rw [synCompIn_mem]
   have hx4 : x = 0 ∨ x = 1 ∨ x = 2 ∨ x = 3 := by fin_cases x <;> decide
   rcases hx4 with rfl | rfl | rfl | rfl
   · constructor
@@ -1523,7 +1523,7 @@ theorem gate4compU1 : gate4.compIn Finset.univ 1 = {0, 1, 2} := by
 
 theorem gate4compU2 : gate4.compIn Finset.univ 2 = {0, 1, 2} := by
   ext x
-  rw [figCompIn_mem]
+  rw [synCompIn_mem]
   have hx4 : x = 0 ∨ x = 1 ∨ x = 2 ∨ x = 3 := by fin_cases x <;> decide
   rcases hx4 with rfl | rfl | rfl | rfl
   · constructor
@@ -1561,7 +1561,7 @@ theorem gate4compU2 : gate4.compIn Finset.univ 2 = {0, 1, 2} := by
 
 theorem gate4compU3 : gate4.compIn Finset.univ 3 = {3} := by
   ext x
-  rw [figCompIn_mem]
+  rw [synCompIn_mem]
   have hx4 : x = 0 ∨ x = 1 ∨ x = 2 ∨ x = 3 := by fin_cases x <;> decide
   rcases hx4 with rfl | rfl | rfl | rfl
   · constructor
@@ -1606,7 +1606,7 @@ theorem gate4_cComponents_univ :
 
 theorem gate4compS1 : gate4.compIn {1, 2} 1 = {1, 2} := by
   ext x
-  rw [figCompIn_mem]
+  rw [synCompIn_mem]
   have hx4 : x = 0 ∨ x = 1 ∨ x = 2 ∨ x = 3 := by fin_cases x <;> decide
   rcases hx4 with rfl | rfl | rfl | rfl
   · constructor
@@ -1631,7 +1631,7 @@ theorem gate4compS1 : gate4.compIn {1, 2} 1 = {1, 2} := by
 
 theorem gate4compS2 : gate4.compIn {1, 2} 2 = {1, 2} := by
   ext x
-  rw [figCompIn_mem]
+  rw [synCompIn_mem]
   have hx4 : x = 0 ∨ x = 1 ∨ x = 2 ∨ x = 3 := by fin_cases x <;> decide
   rcases hx4 with rfl | rfl | rfl | rfl
   · constructor
@@ -1661,7 +1661,7 @@ theorem gate4_cComponents_sdiff : gate4.cComponentsIn {1, 2} = {{1, 2}} := by
 
 theorem gate4_ancIn_univ : gate4.ancIn Finset.univ {2} = Finset.univ := by
   ext x
-  rw [figAncIn_mem]
+  rw [synAncIn_mem]
   have hx4 : x = 0 ∨ x = 1 ∨ x = 2 ∨ x = 3 := by fin_cases x <;> decide
   have h12 : (1 : Fin 4) ∈ (↑(Finset.univ : Finset (Fin 4)) : Set (Fin 4)) ∧
       (2 : Fin 4) ∈ (↑(Finset.univ : Finset (Fin 4)) : Set (Fin 4)) ∧ gate4.dir 1 2 := by
@@ -1746,7 +1746,7 @@ theorem gate4ancS0 {y : Fin 4}
 theorem gate4_ancCut_univ :
     gate4.ancCut Finset.univ {0, 3} {2} = {1, 2, 3} := by
   ext x
-  rw [figAncCut_mem]
+  rw [synAncCut_mem]
   have hx4 : x = 0 ∨ x = 1 ∨ x = 2 ∨ x = 3 := by fin_cases x <;> decide
   have h12 : (gate4.induce ↑(Finset.univ : Finset (Fin 4))).dir 1 2 ∧
       (2 : Fin 4) ∉ (({0, 3} : Finset (Fin 4))) := by
@@ -1790,7 +1790,7 @@ theorem gate4_ancCut_univ :
 
 theorem gate4_ancIn_S' : gate4.ancIn {0, 1, 2} {2} = {1, 2} := by
   ext x
-  rw [figAncIn_mem]
+  rw [synAncIn_mem]
   have hx4 : x = 0 ∨ x = 1 ∨ x = 2 ∨ x = 3 := by fin_cases x <;> decide
   have h12 : (1 : Fin 4) ∈ (↑(({0, 1, 2} : Finset (Fin 4))) : Set (Fin 4)) ∧
       (2 : Fin 4) ∈ (↑(({0, 1, 2} : Finset (Fin 4))) : Set (Fin 4)) ∧
@@ -1956,7 +1956,7 @@ theorem g3InduceCComponent_eq {D : Finset (Fin 3)} (v : Fin 3) :
 theorem g3CompIn_eq {D : Finset (Fin 3)} {v : Fin 3} (hv : v ∈ D) :
     G3.compIn D v = {v} := by
   ext x
-  rw [figCompIn_mem, g3InduceCComponent_eq]
+  rw [synCompIn_mem, g3InduceCComponent_eq]
   constructor
   · rintro ⟨-, hxvc⟩
     rw [Set.mem_singleton_iff] at hxvc
@@ -1982,7 +1982,7 @@ theorem g3CC_univ : G3.cComponentsIn Finset.univ = {{0}, {1}, {2}} := by
 
 theorem g3AncIn : G3.ancIn Finset.univ {2} = Finset.univ := by
   ext x
-  rw [figAncIn_mem]
+  rw [synAncIn_mem]
   have hx3 : x = 0 ∨ x = 1 ∨ x = 2 := by fin_cases x <;> decide
   have h10 : (1 : Fin 3) ∈ (↑(Finset.univ : Finset (Fin 3)) : Set (Fin 3)) ∧
       (0 : Fin 3) ∈ (↑(Finset.univ : Finset (Fin 3)) : Set (Fin 3)) ∧ G3.dir 1 0 := by
@@ -2032,7 +2032,7 @@ theorem g3CutFrom1 {X : Finset (Fin 3)} (h0X : (0 : Fin 3) ∈ X) {y : Fin 3}
 theorem g3AncCut {X : Finset (Fin 3)} (h0X : (0 : Fin 3) ∈ X) (h2X : (2 : Fin 3) ∉ X) :
     G3.ancCut Finset.univ X {2} = {0, 2} := by
   ext x
-  rw [figAncCut_mem]
+  rw [synAncCut_mem]
   have hx3 : x = 0 ∨ x = 1 ∨ x = 2 := by fin_cases x <;> decide
   have h02 : (G3.induce ↑(Finset.univ : Finset (Fin 3))).dir 0 2 ∧ (2 : Fin 3) ∉ X := by
     refine ⟨?_, h2X⟩
@@ -2044,7 +2044,7 @@ theorem g3AncCut {X : Finset (Fin 3)} (h0X : (0 : Fin 3) ∈ X) (h2X : (2 : Fin 
   have hle : (fun a b : Fin 3 => (G3.induce ↑(Finset.univ : Finset (Fin 3))).dir a b ∧ b ∉ X)
       ≤ (fun a b : Fin 3 => ((a, b) = (1, 0) ∨ (a, b) = (0, 2)) ∧ b ∉ X) := by
     intro a b hab
-    exact ⟨(figInduceDir hab.1).2.2, hab.2⟩
+    exact ⟨(synInduceDir hab.1).2.2, hab.2⟩
   rcases hx3 with rfl | rfl | rfl
   · constructor
     · intro _; decide
@@ -2189,7 +2189,7 @@ theorem g4dir23 : G4.dir 2 3 := by
 
 theorem g4AncIn_univ3 : G4.ancIn Finset.univ {3} = Finset.univ := by
   ext x
-  rw [figAncIn_mem]
+  rw [synAncIn_mem]
   have hx4 : x = 0 ∨ x = 1 ∨ x = 2 ∨ x = 3 := by fin_cases x <;> decide
   have h01 : (G4.induce ↑(Finset.univ : Finset (Fin 4))).dir 0 1 :=
     ⟨Finset.mem_coe.mpr (by decide), Finset.mem_coe.mpr (by decide), g4dir01⟩
@@ -2222,7 +2222,7 @@ theorem g4AncIn_univ3 : G4.ancIn Finset.univ {3} = Finset.univ := by
 
 theorem g4AncCut_univ03 : G4.ancCut Finset.univ {0} {3} = Finset.univ := by
   ext x
-  rw [figAncCut_mem]
+  rw [synAncCut_mem]
   have hx4 : x = 0 ∨ x = 1 ∨ x = 2 ∨ x = 3 := by fin_cases x <;> decide
   have h01 : (G4.induce ↑(Finset.univ : Finset (Fin 4))).dir 0 1 ∧
       (1 : Fin 4) ∉ ({0} : Finset (Fin 4)) := by
@@ -2261,7 +2261,7 @@ theorem g4AncCut_univ03 : G4.ancCut Finset.univ {0} {3} = Finset.univ := by
 
 theorem g4AncIn_univ12 : G4.ancIn Finset.univ {1, 2} = {0, 1, 2} := by
   ext x
-  rw [figAncIn_mem]
+  rw [synAncIn_mem]
   have hx4 : x = 0 ∨ x = 1 ∨ x = 2 ∨ x = 3 := by fin_cases x <;> decide
   have h01 : (G4.induce ↑(Finset.univ : Finset (Fin 4))).dir 0 1 :=
     ⟨Finset.mem_coe.mpr (by decide), Finset.mem_coe.mpr (by decide), g4dir01⟩
@@ -2294,7 +2294,7 @@ theorem g4AncIn_univ12 : G4.ancIn Finset.univ {1, 2} = {0, 1, 2} := by
 
 theorem g4AncIn_01212 : G4.ancIn {0, 1, 2} {1, 2} = {0, 1, 2} := by
   ext x
-  rw [figAncIn_mem]
+  rw [synAncIn_mem]
   have hx4 : x = 0 ∨ x = 1 ∨ x = 2 ∨ x = 3 := by fin_cases x <;> decide
   have h01 : (G4.induce ↑(({0, 1, 2} : Finset (Fin 4)))).dir 0 1 :=
     ⟨Finset.mem_coe.mpr (by decide), Finset.mem_coe.mpr (by decide), g4dir01⟩
@@ -2338,7 +2338,7 @@ theorem g4CutConf0 {x : Fin 4}
 theorem g4AncCut_univ0123 :
     G4.ancCut Finset.univ {0, 1, 2} {3} = {1, 2, 3} := by
   ext x
-  rw [figAncCut_mem]
+  rw [synAncCut_mem]
   have hx4 : x = 0 ∨ x = 1 ∨ x = 2 ∨ x = 3 := by fin_cases x <;> decide
   have h13 : (G4.induce ↑(Finset.univ : Finset (Fin 4))).dir 1 3 ∧
       (3 : Fin 4) ∉ ({0, 1, 2} : Finset (Fin 4)) := by
@@ -2374,7 +2374,7 @@ theorem g4AncCut_univ0123 :
 
 theorem g4AncCut_012012 : G4.ancCut {0, 1, 2} {0} {1, 2} = {0, 1, 2} := by
   ext x
-  rw [figAncCut_mem]
+  rw [synAncCut_mem]
   have hx4 : x = 0 ∨ x = 1 ∨ x = 2 ∨ x = 3 := by fin_cases x <;> decide
   have h01 : (G4.induce ↑(({0, 1, 2} : Finset (Fin 4)))).dir 0 1 ∧
       (1 : Fin 4) ∉ ({0} : Finset (Fin 4)) := by
@@ -2470,7 +2470,7 @@ theorem g4InduceAdj21 {D : Finset (Fin 4)} (h2 : (2 : Fin 4) ∈ D)
 
 theorem g4CompIn_mem (D : Finset (Fin 4)) (v x : Fin 4) :
     x ∈ G4.compIn D v ↔ x ∈ D ∧ (G4.induce ↑D).bidir.Reachable v x := by
-  rw [figCompIn_mem, (G4.induce ↑D).mem_cComponent_iff]
+  rw [synCompIn_mem, (G4.induce ↑D).mem_cComponent_iff]
 
 theorem g4CompIn_123_1 : G4.compIn {1, 2, 3} 1 = {1, 2} := by
   ext x
