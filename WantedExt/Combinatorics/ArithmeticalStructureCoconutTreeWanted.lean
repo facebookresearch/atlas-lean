@@ -237,18 +237,6 @@ public theorem_wanted IsSmoothCoconut.one_lt_center_iff {p s : ℕ} (hp : 0 < p)
     {d r : Fin p ⊕ Fin s → ℕ} (h : IsSmoothCoconut p s d r) :
     1 < d (.inl ⟨p - 1, by omega⟩) ↔ r (.inl ⟨p - 1, by omega⟩) < ∑ j, r (.inr j)
 
-/-- **Smooth structures on coconut trees with two leaves.** Let $p \ge 1$ and let $(d, r)$ be a
-smooth arithmetical structure on the coconut tree $CT(p, 2)$, whose path is
-$v_1, \dots, v_p$ and whose two leaves are attached to the central vertex $v_p$. Then
-$d(v_p) \le 1$.
-
-Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
-Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Corollary 7
-(`integers-2025-A82-cor-7`). -/
-public theorem_wanted IsSmoothCoconut.center_le_one_of_two {p : ℕ} (hp : 0 < p)
-    {d r : Fin p ⊕ Fin 2 → ℕ} (h : IsSmoothCoconut p 2 d r) :
-    d (.inl ⟨p - 1, by omega⟩) ≤ 1
-
 /-- **Smoothing at a path vertex of a coconut tree.** Let the coconut tree $CT(p + 1, s)$ have
 path vertices $v_1, \dots, v_{p+1}$, central vertex $v_{p+1}$ and leaves $\ell_1, \dots, \ell_s$,
 let $d$ and $r$ be labelings of its vertices by natural numbers, and let $1 \le k \le p + 1$.

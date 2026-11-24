@@ -28,3 +28,14 @@ example : ¬ IsVanishingFamily (fun (l : ℕ) (b : Fin l → ZMod 0) => ∑ i, b
 -- The empty block has sum zero and product one.
 example {n : ℕ} (c : ZMod n) (b : Fin 0 → ZMod n) : sumAddMulProdFamily c 0 b = c := by
   simp [sumAddMulProdFamily]
+
+-- On the constant sequence of ones the product stays one, so six must divide the length plus one.
+example : ∃ l : ℕ, 1 < l ∧ 6 ∣ l + 1 := by
+  obtain ⟨l, hl, s, hs⟩ := isMVanishingFamily_one_sumAddMulProd_one_six (fun _ => 1)
+  exact ⟨l, hl, (ZMod.natCast_eq_zero_iff (l + 1) 6).mp
+    (by simpa [sumAddMulProdFamily] using hs 0 Nat.zero_lt_one)⟩
+
+-- The adjacent residues 1 and 5 have zero sum, but their sum plus product is 5.
+example : sumAddMulProdFamily (1 : ZMod 6) 2 (fun i => if i = 0 then 1 else 5) = 5 := by
+  rw [sumAddMulProdFamily_two]
+  decide
