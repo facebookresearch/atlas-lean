@@ -6,7 +6,9 @@ compact subgroup $K = K_\infty K_f$ of $G(\mathbb{A})$, with $K_f = \prod_{v < \
 $\mathfrak{g}$ be the complexified Lie algebra of $G_\infty$, $\mathcal{U}(\mathfrak{g})$ its enveloping algebra
 and $\mathcal{Z}$ the centre of $\mathcal{U}(\mathfrak{g})$ (not to be confused with the centre of $G$). Fix a faithful
 representation $r \colon G \to \mathrm{GL}_m$ over $k$ and the two-sided height
+
 $$\lVert x \rVert = \prod_v \max_{i,j}\bigl(\lvert r(x)_{ij} \rvert_v, \lvert (r(x)^{-1})_{ij} \rvert_v\bigr), \qquad x \in G(\mathbb{A}),$$
+
 which takes into account the entries of $r(x)$ and of its inverse (with only the entries of $r(x)$, every
 element of $\mathbb{Q}^\times = \mathrm{GL}_1(\mathbb{Q})$ would have height $1$ by the product formula); its balls are
 compact and changing $r$ changes it by bounded powers. A function on $G(\mathbb{A})$ is
