@@ -17,6 +17,12 @@ These are Jurdziński's progress measures with the order of priorities reversed:
 - [Progress measures give winning strategies in parity games](progress-measures-give-winning-strategies-in.md)
 - [Reversing priorities exchanges the min-parity and max-parity conditions](../parity-condition-on-infinite-sequences/reversing-priorities-exchanges-min-parity-and.md)
 
+## Expansion
+
+This page becomes ready once:
+
+- Winner-preserving compression of parity-game priorities, which closes gaps and merges consecutive used priorities of equal parity so that $d$ is at most the number of positions (statement prerequisite; not yet stated)
+
 ## Sources
 
 - M. Jurdziński, "Small progress measures for solving parity games", *STACS 2000*, LNCS 1770, Springer, 2000

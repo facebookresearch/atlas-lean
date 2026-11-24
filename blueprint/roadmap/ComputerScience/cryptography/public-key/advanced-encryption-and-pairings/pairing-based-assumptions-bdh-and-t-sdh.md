@@ -1,13 +1,14 @@
 # Pairing-based assumptions: BDH and t-SDH
 
-Let $(\mathbb{G}, \mathbb{G}_T, e)$ be a symmetric bilinear group of prime order $p$ with generator $g$. Each assumption asserts that every efficient algorithm solves the stated problem with negligible probability.
+Let $\mathcal{G}$ be a probabilistic polynomial-time group generator that on input $1^\lambda$ outputs a symmetric bilinear group $(\mathbb{G}, \mathbb{G}_T, e)$ of prime order $p$ with generator $g$, and let $t = t(\lambda) \ge 1$ be polynomially bounded. Each assumption asserts that every [efficient adversary](../../security-games/asymptotic-security/efficient-adversaries.md), given the output of $\mathcal{G}(1^\lambda)$ and the instance below, solves the stated problem with probability negligible in $\lambda$.
 
 - **Bilinear Diffie–Hellman (BDH):** given $(g, g^a, g^b, g^c)$ for uniform $a, b, c \in \mathbb{Z}_p^*$, compute $e(g, g)^{abc}$.
-- **$t$-strong Diffie–Hellman ($t$-SDH)**, for $t \ge 1$: given $(g, g^\alpha, g^{\alpha^2}, \dots, g^{\alpha^t})$ for uniform $\alpha \in \mathbb{Z}_p^*$, output a pair $(c, g^{1/(\alpha + c)})$ with $c \in \mathbb{Z}_p \setminus \{-\alpha\}$.
+- **$t$-strong Diffie–Hellman ($t$-SDH):** given $(g, g^\alpha, g^{\alpha^2}, \dots, g^{\alpha^t})$ for uniform $\alpha \in \mathbb{Z}_p^*$, output a pair $(c, g^{1/(\alpha + c)})$ with $c \in \mathbb{Z}_p \setminus \{-\alpha\}$.
 
 ## Depends on
 
 - [Bilinear groups](bilinear-groups.md)
+- [Efficient adversaries](../../security-games/asymptotic-security/efficient-adversaries.md)
 - [Winning probability of a game](../../security-games/games-and-advantages/win-prob.md)
 
 ## Sources
