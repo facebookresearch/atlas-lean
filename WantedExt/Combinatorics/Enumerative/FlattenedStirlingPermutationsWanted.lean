@@ -33,7 +33,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Order.Floor.Semiring
 public import Mathlib.Analysis.SpecialFunctions.Exponential
 public import Mathlib.Combinatorics.Enumerative.Stirling
-public import MathlibExt.Combinatorics.Enumerative.FlattenedStirlingPermutations
+public import MathlibExt.Combinatorics.Enumerative.FlattenedStirlingTwoRuns
 public import MathlibExt.Combinatorics.Enumerative.QRWhitneyNumbers
 public import MathlibExt.NumberTheory.QRDowlingPolynomial
 
@@ -94,18 +94,6 @@ public theorem_wanted isGreatest_flattenedStirling_runCount (n : ℕ) (hn : 1 �
     IsGreatest {r : ℕ | ∃ w : Fin (2 * n) → ℕ,
         IsStirlingPermutation n w ∧ IsFlattenedWord w ∧ wordRunCount w = r}
       ⌈(2 * n : ℚ) / 3⌉₊
-
-/-- **Recursion for flattened Stirling permutations with two runs.** Write
-$|\mathrm{flat}_2(Q_n)|$ for the number of flattened Stirling permutations of order $n$ with
-exactly two runs. Then $|\mathrm{flat}_2(Q_1)| = 0$, and for every natural number $n \ge 1$,
-$|\mathrm{flat}_2(Q_{n+1})| = 2\,|\mathrm{flat}_2(Q_n)| + 2n - 1$.
-
-Source: Buck, Elder, Figueroa, Harris, Harry, Simpson, *Flattened Stirling
-Permutations*, INTEGERS 24 (2024), Article A104, Proposition 2, part 2. -/
-public theorem_wanted flattenedStirlingRunCount_two_recursion :
-    flattenedStirlingRunCount 1 2 = 0 ∧
-      ∀ n : ℕ, 1 ≤ n →
-        flattenedStirlingRunCount (n + 1) 2 = 2 * flattenedStirlingRunCount n 2 + 2 * n - 1
 
 /-- **Closed form for flattened Stirling permutations with two runs.** For every natural number
 $n \ge 1$, the number $|\mathrm{flat}_2(Q_{n+1})|$ of flattened Stirling permutations of order

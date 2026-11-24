@@ -57,4 +57,49 @@ public theorem add_mul_not_mem_nat_of_coprime_den (x d : ℝ) (s₁ s₂ p₁ p�
   exact ⟨by simpa using exclude 1 i (by decide) (by omega),
     by simpa using exclude 2 j (by decide) (by omega)⟩
 
+/-- **Uniqueness of a nonnegative integer point for a rational difference.** Let $x$ be a real
+number, let $s, p, q$ be natural numbers with $0 < p < q$ and $\gcd(p, q) = 1$, and let
+$d = s + p/q$. If $i, j \in \{1, \dots, q - 1\}$ and $x + id$ and $x + jd$ are both nonnegative
+integers, then $i = j$.
+
+Source: Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions
+with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58, Lemma 11
+(`integers-2026-A58-lem-11`). -/
+public theorem eq_of_add_mul_rat_mem_nat (x d : ℝ) (s p q : ℕ) (hp : 0 < p) (hpq : p < q)
+    (hcop : Nat.Coprime p q)
+    (hd : d = s + (p : ℝ) / q) (i j : ℕ)
+    (hi₁ : 1 ≤ i) (hi₂ : i ≤ q - 1) (hj₁ : 1 ≤ j) (hj₂ : j ≤ q - 1)
+    (hxi : x + i * d ∈ Set.range ((↑) : ℕ → ℝ)) (hxj : x + j * d ∈ Set.range ((↑) : ℕ → ℝ)) :
+    i = j := by
+  have hq : 0 < q := hp.trans hpq
+  have hq' : (q : ℝ) ≠ 0 := by exact_mod_cast hq.ne'
+  have no_lt {k l : ℕ} (hk : 1 ≤ k) (hl : l ≤ q - 1) (hkl : k < l)
+      (hxk : x + k * d ∈ Set.range ((↑) : ℕ → ℝ))
+      (hxl : x + l * d ∈ Set.range ((↑) : ℕ → ℝ)) : False := by
+    obtain ⟨a, ha⟩ := hxk
+    obtain ⟨b, hb⟩ := hxl
+    let t := l - k
+    have ht : 0 < t := Nat.sub_pos_of_lt hkl
+    have htq : t < q := by dsimp [t]; omega
+    have hl' : (l : ℝ) = k + t := by
+      exact_mod_cast (Nat.add_sub_of_le hkl.le).symm
+    have hdiff : (b : ℝ) - a = (t : ℝ) * d := by
+      rw [hl'] at hb
+      linear_combination hb - ha
+    -- Clear the denominator in the difference of the two natural-number points.
+    rw [hd] at hdiff
+    field_simp [hq'] at hdiff
+    have heq : q * (a + t * s) + t * p = q * b := by
+      rify
+      linear_combination -hdiff
+    have hdvp : q ∣ t * p := by
+      apply (Nat.dvd_add_right (Nat.dvd_mul_right q _)).mp
+      rw [heq]
+      exact Nat.dvd_mul_right _ _
+    exact htq.not_ge (Nat.le_of_dvd ht (hcop.symm.dvd_of_dvd_mul_right hdvp))
+  rcases lt_trichotomy i j with hij | hij | hji
+  · exact (no_lt hi₁ hj₂ hij hxi hxj).elim
+  · exact hij
+  · exact (no_lt hj₁ hi₂ hji hxj hxi).elim
+
 end MetaMathlibExt
