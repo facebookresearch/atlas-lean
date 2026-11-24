@@ -93,6 +93,31 @@ public theorem exists_polygonal_add_polygonal_modEq_prime (p n s : ℕ) (hp : p.
     rw [← sub_eq_zero]
     simpa [f, sub_eq_add_neg, ← add_assoc] using hxy
 
+/-- **Quadratic upper bound for polygonal numbers.** For a natural number $s > 3$ and a natural
+number $x$, let $P_s(x) = (s-2)\binom{x}{2} + x$ be the $x$-th $s$-gonal number. For every natural
+number $c$ there is a natural number $A$ such that $2 P_s(2cx) \le A x^2$ for every natural
+number $x \ge 1$.
+
+The paper states this only for one specific prime $c$, the prime chosen in Lemma 9 (arXiv
+Lemma 4.4), and for real $x$; here $c$ is an arbitrary natural number and $x$ is a natural number.
+
+Source: Sai Teja Somu and Duc Van Khanh Tran, *On Sums of Practical Numbers and Polygonal
+Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1, Lemma 10
+(arXiv Lemma 4.5; `jis-2024-24.5.1-lem-10`). -/
+public theorem exists_two_polygonal_two_mul_le_mul_sq (s c : ℕ) (hs : 3 < s) :
+    ∃ A : ℕ, ∀ x : ℕ, 1 ≤ x → 2 * Nat.polygonalNumber s (2 * c * x) ≤ A * x ^ 2 := by
+  refine ⟨(s - 2) * (2 * c) ^ 2, fun x _ ↦ ?_⟩
+  let n := 2 * c * x
+  calc
+    2 * Nat.polygonalNumber s n = (s - 2) * (2 * n.choose 2) + 2 * n := by
+      unfold Nat.polygonalNumber
+      ring
+    _ ≤ (s - 2) * (2 * n.choose 2) + (s - 2) * n :=
+      Nat.add_le_add_left (Nat.mul_le_mul_right n (by omega)) _
+    _ = (s - 2) * Nat.polygonalNumber 4 n := (Nat.mul_add ..).symm
+    _ = (s - 2) * (2 * c) ^ 2 * x ^ 2 := by
+      simp only [Nat.polygonalNumber_four, n, mul_pow, mul_assoc]
+
 /-- **Practical numbers divisible by neither 3 nor 4.** If $q$ is a practical number that is
 divisible by neither $3$ nor $4$, then $q = 1$ or $q = 2$.
 

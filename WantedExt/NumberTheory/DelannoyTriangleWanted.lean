@@ -50,7 +50,8 @@ public import WantedExt.Combinatorics.Enumerative.GeneralizedMotzkinModPWanted
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.NumberTheory.LegendreSymbol.Basic
 public import MathlibExt.LinearAlgebra.Matrix.OrdinaryRiordanPascalLikeMatrix
-public import MathlibExt.NumberTheory.ArithmeticFunction.BinomialPowerRealizability
+public import MathlibExt.NumberTheory.BinomialHarmonicExpansion
+public import MathlibExt.NumberTheory.DelannoyBinomialSum
 public import MathlibExt.NumberTheory.FermatQuotient
 
 set_option autoImplicit false
@@ -58,21 +59,6 @@ set_option autoImplicit false
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.DelannoyTriangleWanted
-
-/-- **Harmonic numbers modulo $m$.** For natural numbers $m$ and $k$, the harmonic number
-$H_k$ modulo $m$ is the residue $\sum_{i=1}^{k} i^{-1}$ in $\mathbb{Z}/m\mathbb{Z}$, where
-$i^{-1}$ is the inverse of $i$ modulo $m$ when $i$ is coprime to $m$; for other $i$ it is the
-conventional value that Mathlib assigns to the inverse of a non-unit. -/
-def harmonicMod (m k : ℕ) : ZMod m :=
-  ∑ i ∈ Finset.Icc 1 k, (i : ZMod m)⁻¹
-
-/-- **Harmonic numbers of order two modulo $m$.** For natural numbers $m$ and $k$, the
-harmonic number $H_{k,2}$ of order two modulo $m$ is the residue $\sum_{i=1}^{k} (i^2)^{-1}$
-in $\mathbb{Z}/m\mathbb{Z}$, where $(i^2)^{-1}$ is the inverse of $i^2$ modulo $m$ when $i$ is
-coprime to $m$; for other $i$ it is the conventional value that Mathlib assigns to the
-inverse of a non-unit. -/
-def harmonic2Mod (m k : ℕ) : ZMod m :=
-  ∑ i ∈ Finset.Icc 1 k, ((i : ZMod m) ^ 2)⁻¹
 
 /-- **Delannoy triangle entries $T(2p, p; 1)$ and $T(2p-1, p-1; 1)$ modulo $p^3$.** Let
 $p \ge 5$ be a prime, let $q_p(2) = (2^{p-1} - 1)/p$ be the Fermat quotient of $2$, and let
@@ -118,32 +104,6 @@ theorem_wanted delannoy_mul_sub_one (p n : ℕ)
           (Int.fermatQuotient p hp 2 h2p : ZMod (p ^ 3)) *
         (2 - (p : ZMod (p ^ 3)) *
           (Int.fermatQuotient p hp 2 h2p : ZMod (p ^ 3)))
-
-/-- **Expansion of $\binom{sp-1}{k}$ modulo $p^3$.** Let $p$ be an odd prime, $s$ an integer
-and $k$ a natural number with $1 \le k \le p - 1$, and let $H_k = \sum_{i=1}^{k} i^{-1}$ and
-$H_{k,2} = \sum_{i=1}^{k} (i^2)^{-1}$ be the harmonic numbers of orders one and two in
-$\mathbb{Z}/p^3\mathbb{Z}$. Then in $\mathbb{Z}/p^3\mathbb{Z}$
-$$
-\frac{1}{k!} \prod_{i=1}^{k} (sp - i) =
-(-1)^k \Bigl(1 - sp\,H_k + \frac{s^2 p^2}{2} \bigl(H_k^2 - H_{k,2}\bigr)\Bigr),
-$$
-where $1/k!$ and $1/2$ are inverses in $\mathbb{Z}/p^3\mathbb{Z}$; the left side is the
-binomial coefficient $\binom{sp-1}{k}$.
-
-Source: Chahinaze Djadi and Hacène Belbachir,
-"Congruence Properties for the Delannoy Triangle
-Coefficients", Lemma 5. -/
-theorem_wanted choose_mul_sub_one_mod (p : ℕ)
-    (hp : p.Prime) (hp2 : p ≠ 2) (s : ℤ) (k : ℕ)
-    (hk : 1 ≤ k ∧ k ≤ p - 1) :
-    (∏ i ∈ Finset.Icc 1 k,
-        ((s * (p : ℤ) - (i : ℤ)) : ZMod (p ^ 3))) *
-        ((Nat.factorial k : ZMod (p ^ 3)))⁻¹ =
-      (-1) ^ k * (1 - (s : ZMod (p ^ 3)) * (p : ZMod (p ^ 3)) *
-          harmonicMod (p ^ 3) k +
-        (s : ZMod (p ^ 3)) ^ 2 * (p : ZMod (p ^ 3)) ^ 2 *
-          (2 : ZMod (p ^ 3))⁻¹ *
-          (harmonicMod (p ^ 3) k ^ 2 - harmonic2Mod (p ^ 3) k))
 
 /-- **Sums of $2^k/k$ and $2^k/k^2$ over $1 \le k \le p - 1$.** Let $p > 3$ be a prime and let
 $q_p(2) = (2^{p-1} - 1)/p$ be the Fermat quotient of $2$. Then
@@ -206,20 +166,6 @@ theorem_wanted choose_add_choose_mod (p j k : ℕ)
     (hp : p.Prime) (hjk : j ≤ k) (hk : k ≤ p - 2) :
     (Nat.choose (p - j) (k + 1) : ZMod p) +
         (-1) ^ k * (Nat.choose (k + j) (k + 1) : ZMod p) = 0
-
-/-- **A binomial sum through central Delannoy numbers.** For every natural number $k$,
-$$4 \sum_{j=0}^{k} \binom{k}{j} \binom{k+j}{k+1} = D_{k+1} - 3 D_k,$$
-where $D_n = A_{1,1}(n) = \sum_{i=0}^{n} \binom{n}{i} \binom{n+i}{i}$ is the binomial-power
-number with $r = s = 1$, that is, the $n$-th central Delannoy number.
-
-Source: Chahinaze Djadi and Hacène Belbachir,
-"Congruence Properties for the Delannoy Triangle
-Coefficients", Lemma 13. -/
-theorem_wanted sum_choose_choose_binomialPowerSeq (k : ℕ) :
-    4 * (∑ j ∈ Finset.range (k + 1),
-        (Nat.choose k j * Nat.choose (k + j) (k + 1) : ℤ)) =
-      (MetaMathlibExt.binomialPowerSeq 1 1 (k + 1) : ℤ) -
-        3 * (MetaMathlibExt.binomialPowerSeq 1 1 k : ℤ)
 
 /-- Bridge to the existing symmetric-case API: the constant
 term of `(a x⁻¹ + b + a x)ⁿ`

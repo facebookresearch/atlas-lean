@@ -17,11 +17,14 @@ public import Mathlib.Basic.Real.Basic
 public import Mathlib.GroupTheory.SpecificGroups.Cyclic
 public import Mathlib.NumberTheory.Padics.PadicVal.Defs
 public import Mathlib.Data.Nat.Factorization.Defs
-public import Mathlib.Topology.Algebra.InfiniteSum.Real
 public import MathlibExt.NumberTheory.RepetendTable
 public import MathlibExt.NumberTheory.RepetendTable.BaseShift
+public import MathlibExt.NumberTheory.RepetendTable.DigitDifference
 public import MathlibExt.NumberTheory.RepetendTable.TwoRowColumns
 public import MathlibExt.NumberTheory.RepetendTable.InversePairs
+public import MathlibExt.NumberTheory.RepetendTable.OrderCount
+public import MathlibExt.NumberTheory.RepetendTable.OrderSix
+public import MathlibExt.Analysis.Series.InversePowerTail
 
 /-!
 # Repetend tables
@@ -36,25 +39,28 @@ INTEGERS 25 (2025), Article A26. The `j`-th base-`B` digit of `m/n` is written
 `MetaMathlibExt.digit_add_mul_modulus_eq` is proved in
 `MathlibExt.NumberTheory.RepetendTable.BaseShift`.
 
+`MetaMathlibExt.repetend_digit_sub_eq` is proved in
+`MathlibExt.NumberTheory.RepetendTable.DigitDifference`.
+
 `MetaMathlibExt.repetend_digit_diff_of_columns_eq` is proved in
 `MathlibExt.NumberTheory.RepetendTable.TwoRowColumns`.
 
 `MetaMathlibExt.even_card_small_bases_orderOf` is proved in
 `MathlibExt.NumberTheory.RepetendTable.InversePairs`.
+
+`MetaMathlibExt.totient_dvd_card_orderOf_eq` is proved in
+`MathlibExt.NumberTheory.RepetendTable.OrderCount`.
+
+`MetaMathlibExt.orderOf_eq_six_ne_small_residues` is proved in
+`MathlibExt.NumberTheory.RepetendTable.OrderSix`.
+
+`MetaMathlibExt.tsum_inv_pow_succ_lt` is proved in
+`MathlibExt.Analysis.Series.InversePowerTail`.
 -/
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **The number of units of order $L$ is a multiple of $\varphi(L)$.** For natural numbers
-$n \ge 1$ and $L$, the number $E(L, n)$ of elements of order $L$ in the unit group
-$(\mathbb{Z}/n\mathbb{Z})^\times$ is divisible by Euler's totient $\varphi(L)$.
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Corollary 4 (`integers-2025-A26-cor-4`). -/
-public theorem_wanted totient_dvd_card_orderOf_eq (L n : ℕ) [NeZero n] : L.totient ∣
-    (Finset.univ.filter fun u : (ZMod n)ˣ => orderOf u = L).card
 
 /-- **Moduli with exactly $\varphi(L)$ units of even order $L$.** Let $n \ge 1$ and let $L \ge 2$
 be even. If the number of elements of multiplicative order $L$ in
@@ -76,18 +82,6 @@ Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, 
 Article A26, Corollary 6 (`integers-2025-A26-cor-6`). -/
 public theorem_wanted card_orderOf_eq_two_eq_two_pow_sub_one (n : ℕ) [NeZero n] :
     ∃ k : ℕ, (Finset.univ.filter fun u : (ZMod n)ˣ => orderOf u = 2).card = 2 ^ k - 1
-
-/-- **Order-six elements modulo a power of a prime congruent to $1$ mod $6$.** Let $p$ be a prime
-with $p \equiv 1 \pmod 6$, let $k \ge 1$ and put $n = p^k$. If $b \in \mathbb{Z}/n\mathbb{Z}$ has
-multiplicative order $6$, then $b \ne 0$, $2b \ne 1$, $b \ne 1$, $b \ne -1$ and $b \ne 2$ in
-$\mathbb{Z}/n\mathbb{Z}$.
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Lemma 16 (`integers-2025-A26-lem-16`). -/
-public theorem_wanted orderOf_eq_six_ne_small_residues (p k : ℕ) (hp : p.Prime) (hp6 : p % 6 = 1)
-    (hk : 0 < k) (b : ZMod (p ^ k))
-    (hb : orderOf b = 6) :
-    b ≠ 0 ∧ 2 * b ≠ 1 ∧ b ≠ 1 ∧ b ≠ -1 ∧ b ≠ 2
 
 /-- **Sign balance for differences of shifted linear residues.** Let $p$ be prime, $j \ge 1$ and
 $Q = p^j$. Let $g_1, g_2, f_1, f_2$ be natural numbers with $g_1, g_2 < Q$ and $f_1 \le f_2 < Q$
@@ -240,19 +234,6 @@ public theorem_wanted repetend_columns_match_iff_triple_sum_eq (p k a b : ℕ) (
     (∀ i < L, Nat.Coprime i L →
         (b ^ i % n + b ^ (i + L / 3) % n + b ^ (i + 2 * L / 3) % n) / n = 1) ↔
       (C (2 * a + 1) = C (4 * a + 2) ∧ C (8 * a + 4) = C (10 * a + 5))
-
-/-- **Differences of repetend digits.** Let $n \ge 1$ and $b$ be natural numbers with
-$\gcd(b, n) = 1$. For $x, j \ge 0$ put $b_x = b^x \bmod n$ and
-$r_{x,j} = \lfloor b_x^{j+1}/n \rfloor \bmod b_x$. Then for all natural numbers $y, m, d, e$,
-$$n (r_{ym,e} - r_{y,d}) = b_{ym} b_{yme} - b_{ym(e+1)} - b_y b_{yd} + b_{y(d+1)}.$$
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Lemma 7 (`integers-2025-A26-lem-7`). -/
-public theorem_wanted repetend_digit_sub_eq (n b y m d e : ℕ) (hn : 0 < n) (hb : Nat.Coprime b n) :
-    let r : ℕ → ℕ → ℕ := fun x j => (b ^ x % n) ^ (j + 1) / n % (b ^ x % n)
-    (n : ℤ) * ((r (y * m) e : ℤ) - r y d) =
-      ((b ^ (y * m) % n : ℕ) : ℤ) * (b ^ (y * m * e) % n : ℕ) - (b ^ (y * m * (e + 1)) % n : ℕ) -
-        ((b ^ y % n : ℕ) : ℤ) * (b ^ (y * d) % n : ℕ) + (b ^ (y * (d + 1)) % n : ℕ)
 
 /-- **The $p$-adic valuation of $B^2 - B + 1$ for a base of order $6p^j$.** Let $p$ be a prime
 with $p \equiv 1 \pmod 6$, let $i$ and $j$ be natural numbers with $j \ge 1$ and $i \ge 2j$, and
@@ -580,14 +561,6 @@ public theorem_wanted repetend_columns_ne_of_card_le_three (n L : ℕ) :
     let B := (Finset.Ico 1 n).filter fun b => Nat.Coprime b n ∧ orderOf (b : ZMod n) = L
     1 ≤ B.card → B.card ≤ 3 → ∀ i < L, ∀ j < L, i ≠ j →
       (B.val.map fun b => b ^ (i + 1) / n % b) ≠ B.val.map fun b => b ^ (j + 1) / n % b
-
-/-- **Tail bound for sums of inverse powers.** For natural numbers $m \ge 2$ and $s \ge 1$,
-$\sum_{n = s+1}^{\infty} n^{-m} < \dfrac{1}{(m-1)\, s^{m-1}}$.
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Lemma 42 (`integers-2025-A26-lem-42`). -/
-public theorem_wanted tsum_inv_pow_succ_lt (m s : ℕ) (hm : 2 ≤ m) (hs : 0 < s) :
-    ∑' k : ℕ, (((k + s + 1 : ℕ) : ℝ) ^ m)⁻¹ < (((m - 1 : ℕ) : ℝ) * (s : ℝ) ^ (m - 1))⁻¹
 
 end
 

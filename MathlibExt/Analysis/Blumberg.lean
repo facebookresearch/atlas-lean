@@ -213,7 +213,7 @@ private theorem blum_isMeagre_not_good (f : ℝ → ℝ) :
   exact Set.mem_iUnion.mpr ⟨k, Set.mem_iUnion.mpr ⟨q, hmem⟩⟩
 
 -- Dyadic open intervals and dyadic rationals.
-private def blumDyI (m : ℕ) (a : ℤ) : Set ℝ :=
+private noncomputable def blumDyI (m : ℕ) (a : ℤ) : Set ℝ :=
   Set.Ioo ((a : ℝ) / 2 ^ m) (((a : ℝ) + 1) / 2 ^ m)
 
 private def blumDyadic : Set ℝ :=

@@ -9,7 +9,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.Combinatorics.Additive.LinearCongruenceSolutions
 public import MathlibExt.Combinatorics.Additive.ModularSchurNumbers
+public import MathlibExt.Combinatorics.Additive.SingletonSumFreeMod
 
 /-!
 # Wanted results on modular Schur numbers
@@ -54,18 +56,6 @@ public theorem_wanted modularSchurNumber_lt_of_modEq (m k l a : ℕ) (hk : 0 < k
     (ha : 0 < a) (ham : a ≤ m - 1) (hla : l ≡ 1 [MOD m / Nat.gcd a m]) :
     modularSchurNumber m k l < a
 
-/-- **Modular Schur numbers attaining $m - 1$.** Let $l \ge 2$ and $m \ge 2$ be natural numbers
-such that $l \not\equiv 1 \pmod{d}$ for every divisor $d \ne 1$ of $m$, and let $k \ge m - 1$.
-Then the generalized Schur number $S_m(k, l)$, the largest $n$ such that $\{1, \dots, n\}$
-admits a partition into $k$ classes that are $l$-sum-free modulo $m$, equals $m - 1$.
-
-Source: Jourdan D'orville, Kai An Sim, Kok Bin Wong, and Chee Kit Ho, *Modular
-Generalizations of Schur Numbers*, INTEGERS 25 (2025), Article A62, Corollary 5
-(`integers-2025-A62-cor-5`). -/
-public theorem_wanted modularSchurNumber_eq_sub_one (m k l : ℕ) (hl : 2 ≤ l) (hm : 2 ≤ m)
-    (hd : ∀ d : ℕ, d ∣ m → d ≠ 1 → ¬ l ≡ 1 [MOD d]) (hk : m - 1 ≤ k) :
-    modularSchurNumber m k l = m - 1
-
 /-- **Lower bound for modular Schur numbers modulo a prime power.** Let $p$ be a prime, let $i$
 and $l$ be positive integers with $l \not\equiv 1 \pmod{p}$, and let $1 \le k \le p - 1$. Then
 the generalized Schur number $S_{p^i}(k, l)$, the largest $n$ such that $\{1, \dots, n\}$ admits
@@ -90,32 +80,6 @@ public theorem_wanted modularSchurNumber_prime (p l : ℕ) (hp : p.Prime) (hl : 
     (hlp1 : p - 1 ≤ l) (hlp : ¬ l ≡ 1 [MOD p]) :
     (∀ k, 1 ≤ k → k ≤ p - 1 → modularSchurNumber p k l = k) ∧
       (∀ k, p - 1 ≤ k → modularSchurNumber p k l = p - 1)
-
-/-- **Singletons are sum-free modulo a prime power.** Let $p$ be a prime, let $i$ and $l$ be
-positive integers with $l \not\equiv 1 \pmod{p}$, and let $a$ be a natural number not divisible
-by $p^i$. Then the singleton $\{a\}$ is $l$-sum-free modulo $p^i$.
-
-Source: Jourdan D'orville, Kai An Sim, Kok Bin Wong, and Chee Kit Ho, *Modular
-Generalizations of Schur Numbers*, INTEGERS 25 (2025), Article A62, Lemma 1
-(`integers-2025-A62-lem-1`). -/
-public theorem_wanted isSumFreeMod_singleton_prime_pow (p a i l : ℕ) (hp : p.Prime) (hi : 0 < i)
-    (hl : 0 < l) (ha : ¬ p ^ i ∣ a) (hlp : ¬ l ≡ 1 [MOD p]) :
-    IsSumFreeMod (p ^ i) l {(a : ℤ)}
-
-/-- **Elements of a sum-free pair are congruent modulo $p$.** Let $p$ be a prime, let $i$ be a
-positive integer, and let $l$ be a natural number with $l \ge p^i - 1$ and
-$l \not\equiv 1 \pmod{p}$. If $a$ and $b$ are natural numbers such that $\{a, b\}$ is
-$l$-sum-free modulo $p^i$, then $a \equiv b \pmod{p}$.
-
-Since subsets of $l$-sum-free sets are $l$-sum-free, the hypothesis says exactly that $a$ and
-$b$ lie in a common $l$-sum-free set modulo $p^i$.
-
-Source: Jourdan D'orville, Kai An Sim, Kok Bin Wong, and Chee Kit Ho, *Modular
-Generalizations of Schur Numbers*, INTEGERS 25 (2025), Article A62, Lemma 2, part 1
-(`integers-2025-A62-lem-2`). -/
-public theorem_wanted modEq_of_isSumFreeMod_pair (p a b i l : ℕ) (hp : p.Prime) (hi : 0 < i)
-    (hl : p ^ i - 1 ≤ l) (hlp : ¬ l ≡ 1 [MOD p])
-    (hab : IsSumFreeMod (p ^ i) l {(a : ℤ), (b : ℤ)}) : a ≡ b [MOD p]
 
 /-- **Modular Schur numbers modulo $2$.** For all positive integers $k$ and $l$, the modular
 Schur number $S_2(k, l)$ equals $0$ when $l$ is odd and equals $1$ when $l$ is even.
@@ -144,37 +108,6 @@ public theorem_wanted modularSchurNumber_three (k l : ℕ) (hk : 0 < k) (hl : 0 
     (l ≡ 1 [MOD 3] → modularSchurNumber 3 k l = 0) ∧
       (¬ l ≡ 1 [MOD 3] →
         (k = 1 → modularSchurNumber 3 k l = 1) ∧ (2 ≤ k → modularSchurNumber 3 k l = 2))
-
-/-- **Solutions of a linear congruence.** Let $a$ and $b$ be integers, let $m$ be a positive
-integer, and let $d = \gcd(a, m)$. The congruence $a x \equiv b \pmod{m}$ has an integer
-solution if and only if $d \mid b$. If $d \mid b$, then exactly $d$ of the numbers
-$x \in \{0, 1, \dots, m - 1\}$ are solutions. Moreover, if $x_0$ is a solution, then an integer
-$x$ is a solution if and only if $x \equiv x_0 + u \cdot (m / d) \pmod{m}$ for some integer $u$
-with $0 \le u \le d - 1$.
-
-Source: Jourdan D'orville, Kai An Sim, Kok Bin Wong, and Chee Kit Ho, *Modular
-Generalizations of Schur Numbers*, INTEGERS 25 (2025), Article A62, Theorem 3, quoting a
-textbook result ([3]) (`integers-2025-A62-thm-3`). -/
-public theorem_wanted linear_congruence_solutions (a b : ℤ) (m : ℕ) (hm : 0 < m) :
-    ((∃ x : ℤ, a * x ≡ b [ZMOD m]) ↔ (Int.gcd a m : ℤ) ∣ b) ∧
-      ((Int.gcd a m : ℤ) ∣ b →
-        ((Finset.range m).filter fun x : ℕ => a * x ≡ b [ZMOD m]).card = Int.gcd a m) ∧
-      ∀ x₀ : ℤ, a * x₀ ≡ b [ZMOD m] → ∀ x : ℤ,
-        (a * x ≡ b [ZMOD m] ↔
-          ∃ u : ℕ, u < Int.gcd a m ∧ x ≡ x₀ + u * ((m : ℤ) / Int.gcd a m) [ZMOD m])
-
-/-- **When a singleton set is sum-free.** Let $a$, $l$ and $m$ be natural numbers with
-$l \ge 1$, $m \ge 1$ and $m \nmid a$, and let $d = \gcd(a, m)$. If $d = 1$, then $\{a\}$ is not
-$l$-sum-free modulo $m$ if and only if $l \equiv 1 \pmod{m}$. If $d > 1$, then $\{a\}$ is not
-$l$-sum-free modulo $m$ if and only if $l \equiv 1 \pmod{m/d}$.
-
-Source: Jourdan D'orville, Kai An Sim, Kok Bin Wong, and Chee Kit Ho, *Modular
-Generalizations of Schur Numbers*, INTEGERS 25 (2025), Article A62, Theorem 4
-(`integers-2025-A62-thm-4`). -/
-public theorem_wanted not_isSumFreeMod_singleton_iff (a l m : ℕ) (hl : 0 < l) (hm : 0 < m)
-    (ha : ¬ m ∣ a) :
-    (Nat.gcd a m = 1 → (¬ IsSumFreeMod m l {(a : ℤ)} ↔ l ≡ 1 [MOD m])) ∧
-      (1 < Nat.gcd a m → (¬ IsSumFreeMod m l {(a : ℤ)} ↔ l ≡ 1 [MOD m / Nat.gcd a m]))
 
 /-- **When the one-class modular Schur number equals one.** Let $l$ and $m$ be natural numbers with
 $l \ge 2$, $m \ge 2$ and $l \not\equiv 1 \pmod m$. Then the generalized Schur number $S_m(1, l)$

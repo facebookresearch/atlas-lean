@@ -49,13 +49,14 @@ private theorem choose_blocks_eq_quotient (d m p : ℕ) :
     intro j _
     exact_mod_cast Nat.choose_ne_zero (show p ≤ (j + 1) * p by simp [Nat.succ_mul])
 
+set_option linter.unusedVariables false in
 /-- For prime `p` and `1 ≤ m ≤ n`, the binomial coefficient at `(n * p, m * p)` is a
 quotient of products of binomial coefficients with lower index `p - 1` or `p`.
 
 Source: Walid Kehila, *An Extension of Wolstenholme's Theorem by Binomial
 Coefficients*, INTEGERS 26 (2026), Article A32, Lemma 6
 (`integers-2026-A32-lem-6`). -/
-public theorem choose_mul_prime_eq_prod_div_prod (p m n : ℕ) (hp : p.Prime) (_hm : 1 ≤ m)
+public theorem choose_mul_prime_eq_prod_div_prod (p m n : ℕ) (hp : p.Prime) (hm : 1 ≤ m)
     (hmn : m ≤ n) :
     ((n * p).choose (m * p) : ℚ) =
         (n.choose m : ℚ) * (∏ j ∈ Finset.range m, (((n - m + j + 1) * p - 1).choose (p - 1) : ℚ)) /

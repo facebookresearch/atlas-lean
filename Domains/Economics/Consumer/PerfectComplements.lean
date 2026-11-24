@@ -53,8 +53,10 @@ open Matrix
 noncomputable def leontief (a b : ℝ) (x : Fin 2 → ℝ) : ℝ :=
   min (a * x 0) (b * x 1)
 
-/-- The kink bundle `(t / a, t / b)` with `t = w / (p₀ / a + p₁ / b)`: the cheapest bundle
-on the ray `a x₀ = b x₁` that exhausts wealth. -/
+/-- The kink bundle `(t / a, t / b)` with `t = w / (p₀ / a + p₁ / b)`: for `a, b > 0` and positive
+prices, the bundle on the ray `a x₀ = b x₁` that exhausts wealth. It is defined for all real
+arguments: under the convention `x / 0 = 0`, `x₀ = 0` when `a = 0`, `x₁ = 0` when `b = 0`, and the
+bundle is `(0, 0)` when `p₀ / a + p₁ / b = 0`. -/
 noncomputable def leontiefDemand (a b : ℝ) (p : Fin 2 → ℝ) (w : ℝ) : Fin 2 → ℝ :=
   ![w / (p 0 / a + p 1 / b) / a, w / (p 0 / a + p 1 / b) / b]
 
@@ -122,8 +124,9 @@ theorem isMarshallianDemand_leontief {a b w : ℝ} {p : Fin 2 → ℝ} (ha : 0 <
       exact hyB
     exact le_trans hsum hyB'
 
-/-- At the demanded kink bundle with positive wealth, the perfect-complements utility is not
-differentiable, so no first-order condition is available there. -/
+/-- With positive coefficients and prices, at the demanded kink bundle with positive wealth, the
+perfect-complements utility is not differentiable, so no first-order condition is available
+there. -/
 theorem not_differentiableAt_leontief_leontiefDemand {a b w : ℝ} {p : Fin 2 → ℝ}
     (ha : 0 < a) (hb : 0 < b) (hp : ∀ i, 0 < p i) (hw : 0 < w) :
     ¬ DifferentiableAt ℝ (leontief a b) (leontiefDemand a b p w) := by

@@ -109,6 +109,68 @@ theorem isSumFreeMod_three_two_singleton_one : IsSumFreeMod 3 2 {1} := by
   rw [Fin.sum_univ_two, hx 0, hx 1]
   decide
 
+set_option linter.unusedVariables false in
+/-- **When a singleton set is sum-free.** Let $a$, $l$ and $m$ be natural numbers with
+$l \ge 1$, $m \ge 1$ and $m \nmid a$, and let $d = \gcd(a, m)$. If $d = 1$, then $\{a\}$ is not
+$l$-sum-free modulo $m$ if and only if $l \equiv 1 \pmod{m}$. If $d > 1$, then $\{a\}$ is not
+$l$-sum-free modulo $m$ if and only if $l \equiv 1 \pmod{m/d}$.
+
+Source: Jourdan D'orville, Kai An Sim, Kok Bin Wong, and Chee Kit Ho, *Modular
+Generalizations of Schur Numbers*, INTEGERS 25 (2025), Article A62, Theorem 4
+(`integers-2025-A62-thm-4`). -/
+theorem not_isSumFreeMod_singleton_iff (a l m : ℕ) (hl : 0 < l) (hm : 0 < m)
+    (ha : ¬ m ∣ a) :
+    (Nat.gcd a m = 1 → (¬ IsSumFreeMod m l {(a : ℤ)} ↔ l ≡ 1 [MOD m])) ∧
+      (1 < Nat.gcd a m → (¬ IsSumFreeMod m l {(a : ℤ)} ↔ l ≡ 1 [MOD m / Nat.gcd a m])) := by
+  have hle : a ≤ l * a := by simpa using Nat.mul_le_mul_right a hl
+  have criterion : ¬ IsSumFreeMod m l {(a : ℤ)} ↔ l ≡ 1 [MOD m / Nat.gcd a m] := calc
+    ¬ IsSumFreeMod m l {(a : ℤ)} ↔ l * a ≡ a [MOD m] := by
+      rw [← Int.natCast_modEq_iff]
+      simp [IsSumFreeMod, ← funext_iff (g := fun _ : Fin l => (a : ℤ))]
+    _ ↔ m ∣ a * (l - 1) := by
+      rw [Nat.ModEq.comm, Nat.modEq_iff_dvd' hle, Nat.mul_sub, Nat.mul_one, Nat.mul_comm a l]
+    _ ↔ m / Nat.gcd a m ∣ l - 1 := by
+      rw [Nat.gcd_comm a m, Nat.div_dvd_iff_dvd_mul (Nat.gcd_dvd_left m a)
+        (Nat.gcd_pos_of_pos_left a hm), Nat.dvd_gcd_mul_iff_dvd_mul]
+    _ ↔ l ≡ 1 [MOD m / Nat.gcd a m] := (Nat.modEq_iff_dvd' hl).symm.trans Nat.ModEq.comm
+  exact ⟨fun hd => by simpa only [hd, Nat.div_one] using criterion, fun _ => criterion⟩
+
+/-- **Elements of a sum-free pair are congruent modulo $p$.** Let $p$ be a prime, let $i$ be a
+positive integer, and let $l$ be a natural number with $l \ge p^i - 1$ and
+$l \not\equiv 1 \pmod{p}$. If $a$ and $b$ are natural numbers such that $\{a, b\}$ is
+$l$-sum-free modulo $p^i$, then $a \equiv b \pmod{p}$.
+
+Since subsets of $l$-sum-free sets are $l$-sum-free, the hypothesis says exactly that $a$ and
+$b$ lie in a common $l$-sum-free set modulo $p^i$.
+
+Source: Jourdan D'orville, Kai An Sim, Kok Bin Wong, and Chee Kit Ho, *Modular
+Generalizations of Schur Numbers*, INTEGERS 25 (2025), Article A62, Lemma 2, part 1
+(`integers-2025-A62-lem-2`). -/
+theorem modEq_of_isSumFreeMod_pair (p a b i l : ℕ) (hp : p.Prime) (hi : 0 < i)
+    (hl : p ^ i - 1 ≤ l) (hlp : ¬ l ≡ 1 [MOD p])
+    (hab : IsSumFreeMod (p ^ i) l {(a : ℤ), (b : ℤ)}) : a ≡ b [MOD p] := by
+  wlog hle : a ≤ b generalizing a b
+  · exact (this b a (by simpa [Set.pair_comm] using hab) (by omega)).symm
+  by_contra h
+  rw [Nat.modEq_iff_dvd' hle] at h
+  have hcop := (hp.coprime_iff_not_dvd.mpr h).symm.pow_right i
+  -- Choose the number of copies of a so that the mixed sum is congruent to b.
+  obtain ⟨t, ht, hmod⟩ := Nat.exists_mul_mod_eq_of_coprime ((l - 1) * b) hcop
+    (pow_ne_zero i hp.ne_zero)
+  have hpos : 1 ≤ l := by
+    have := Nat.one_lt_pow hi.ne' hp.one_lt
+    omega
+  have hstep := Int.natCast_modEq_iff.mpr
+    (show (b - a) * t ≡ (l - 1) * b [MOD p ^ i] from hmod)
+  obtain ⟨s, rfl⟩ := Nat.exists_eq_add_of_le (show t ≤ l by omega)
+  refine hab (Fin.append (fun _ : Fin t => (a : ℤ)) (fun _ : Fin s => (b : ℤ))) ?_ b (by simp) ?_
+  · simp [Fin.forall_fin_add]
+  · simp only [Fin.sum_univ_add, Fin.append_left, Fin.append_right, Fin.sum_const, nsmul_eq_mul]
+    apply Int.modEq_iff_dvd.mpr
+    convert hstep.symm.dvd using 1
+    push_cast [Int.ofNat_sub hle, Int.ofNat_sub hpos]
+    ring
+
 namespace modularSchurNumber_two_mul
 
 -- Give each integer its own color, so all summands in its class must equal it.
@@ -199,6 +261,37 @@ theorem modularSchurNumber_two_mul (k l n : ℕ) (hk : 2 ≤ k) (hn : 2 ≤ n)
       · simpa using hl1
       · exact fun hmod => h (htwo.mp hmod)
 
+private theorem modularSchurNumber_eq_sub_one.of_coprime {m k l : ℕ} (hm : 2 ≤ m)
+    (hk : m - 1 ≤ k) (hcop : m.Coprime (l - 1)) : modularSchurNumber m k l = m - 1 := by
+  apply IsGreatest.csSup_eq
+  constructor
+  · apply partition_of_not_modEq (by omega) hk
+    intro a ha ha' hmod
+    have hdvd : m ∣ (l - 1) * a := by
+      simpa only [Nat.sub_mul, one_mul] using hmod.symm.dvd'
+    have := Nat.le_of_dvd ha (hcop.dvd_of_dvd_mul_left hdvd)
+    omega
+  · intro n hn
+    have := lt_of_modEq hn (by omega : 0 < m) (by simp [Nat.ModEq])
+    omega
+
+/-- **Modular Schur numbers attaining $m - 1$.** Let $l \ge 2$ and $m \ge 2$ be natural numbers
+such that $l \not\equiv 1 \pmod{d}$ for every divisor $d \ne 1$ of $m$, and let $k \ge m - 1$.
+Then the generalized Schur number $S_m(k, l)$, the largest $n$ such that $\{1, \dots, n\}$
+admits a partition into $k$ classes that are $l$-sum-free modulo $m$, equals $m - 1$.
+
+Source: Jourdan D'orville, Kai An Sim, Kok Bin Wong, and Chee Kit Ho, *Modular
+Generalizations of Schur Numbers*, INTEGERS 25 (2025), Article A62, Corollary 5
+(`integers-2025-A62-cor-5`). -/
+theorem modularSchurNumber_eq_sub_one (m k l : ℕ) (hl : 2 ≤ l) (hm : 2 ≤ m)
+    (hd : ∀ d : ℕ, d ∣ m → d ≠ 1 → ¬ l ≡ 1 [MOD d]) (hk : m - 1 ≤ k) :
+    modularSchurNumber m k l = m - 1 := by
+  apply modularSchurNumber_eq_sub_one.of_coprime hm hk
+  rw [Nat.coprime_iff_gcd_eq_one]
+  by_contra h
+  apply hd _ (Nat.gcd_dvd_left m (l - 1)) h
+  exact ((Nat.modEq_iff_dvd' (by omega : 1 ≤ l)).mpr (Nat.gcd_dvd_right m (l - 1))).symm
+
 /-- **Modular Schur numbers modulo a prime power for many classes.** Let $p$ be a prime, let $i$
 and $l$ be positive integers with $l \not\equiv 1 \pmod p$, and let $k$ be a natural number with
 $k \ge p^i - 1$. Then the generalized Schur number modulo $p^i$ satisfies
@@ -214,19 +307,7 @@ theorem modularSchurNumber_prime_pow_eq (p i k l : ℕ) (hp : p.Prime) (hi : 0 <
   have hcop : (p ^ i).Coprime (l - 1) := by
     apply Nat.Coprime.pow_left
     exact hp.coprime_iff_not_dvd.mpr fun h => hlp ((Nat.modEq_iff_dvd' hl).mpr h).symm
-  apply IsGreatest.csSup_eq
-  constructor
-  · apply partition_of_not_modEq (by omega) hk
-    intro a ha ha' hmod
-    have hdvd : p ^ i ∣ (l - 1) * a := by
-      simpa only [Nat.sub_mul, one_mul] using hmod.symm.dvd'
-    have := Nat.le_of_dvd ha (hcop.dvd_of_dvd_mul_left hdvd)
-    omega
-  · -- Any longer range puts the modulus itself in one of the classes.
-    rintro n ⟨c, hc⟩
-    by_contra! hn
-    refine not_isSumFreeMod_of_dvd_mem (p ^ i) l ?_ (dvd_refl _) (hc (c (p ^ i)))
-    exact ⟨p ^ i, by omega, by omega, rfl, rfl⟩
+  exact modularSchurNumber_eq_sub_one.of_coprime hm hk hcop
 
 end
 

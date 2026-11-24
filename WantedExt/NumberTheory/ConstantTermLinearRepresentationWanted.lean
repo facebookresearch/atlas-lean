@@ -223,21 +223,6 @@ public theorem_wanted coeff_pow_modEq_sum_gamma_mul_V {r p : ℕ} (hp : p.Prime)
       ∑ j ∈ Fintype.piFinset (fun _ : Fin r => Finset.Icc (-(m : ℤ)) m),
         (P ^ k).coeff (p • j - i) * (P ^ n).coeff (-j) [ZMOD p]
 
-/-- **Powers of $\gamma(0)$ modulo $p$ stabilize at a matrix unit.** Let $p$ be a prime, let
-$r, m \ge 0$ be natural numbers, let $T = \{-m, \dots, m\}^r \subseteq \mathbb{Z}^r$, and let
-$\gamma(0)$ be the $T \times T$ matrix over $\mathbb{Z}/p\mathbb{Z}$ whose $(i, j)$ entry is $1$
-if $i = p j$ and $0$ otherwise. Then there is $s \in \mathbb{N}$ such that for every $s' \ge s$,
-$\gamma(0)^{s'}$ is the matrix whose $(0, 0)$ entry is $1$ and whose other entries are $0$.
-
-Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
-Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
-Lemma 11 (`jis-2026-26.4.2-lem-11`). -/
-public theorem_wanted exists_gammaZero_pow_eq_single {p : ℕ} (hp : p.Prime) (r m : ℕ) :
-    ∃ s : ℕ, ∀ s' ≥ s,
-      (Matrix.of fun i j : ↥(Fintype.piFinset fun _ : Fin r => Finset.Icc (-(m : ℤ)) m) =>
-        if (i : Fin r → ℤ) = p • (j : Fin r → ℤ) then (1 : ZMod p) else 0) ^ s' =
-        Matrix.single ⟨0, by simp⟩ ⟨0, by simp⟩ 1
-
 /-! ### Section 4: classification mod `p` -/
 
 /-- **Divisibility of constant terms of powers is decided on a bounded prefix.** Let $p$ be a
@@ -358,50 +343,6 @@ public theorem_wanted isRecurrentSeq_constantTerm_mod_prime {r p : ℕ} (hp : p.
 `P̃` is any integer Laurent polynomial with `P^{p^{a-1}}(x) ≡ P̃(x^{p^ℓ}) (mod p^a)`
 coefficientwise; the substitution `x ↦ x^q` is `AddMonoidAlgebra.mapDomain (q • ·)`. The paper
 takes `ℓ` as large as possible; the statements below hold for every such pair `(ℓ, P̃)`. -/
-
-/-- **Divisibility of constant terms of powers of $P$ and $\tilde P$.** Let $p$ be a prime, let
-$a \ge 1$ and $\ell$ be natural numbers, and let $P$ and $\tilde P$ be Laurent polynomials in $r$
-variables with integer coefficients such that $P^{p^{a-1}} \equiv \tilde P(x^{p^\ell}) \pmod{p^a}$
-coefficientwise, where $\tilde P(x^q)$ is obtained from $\tilde P$ by replacing each monomial
-$x^e$ with $x^{qe}$. Write $\operatorname{ct}[F]$ for the constant term of a Laurent polynomial
-$F$. Then $p$ divides $\operatorname{ct}[P^{n_0}]$ for some natural number $n_0$ if and only if
-$p$ divides $\operatorname{ct}[\tilde P^{n_1}]$ for some natural number $n_1$; moreover, for every
-natural number $n_0$ with $p \mid \operatorname{ct}[P^{n_0}]$, also
-$p \mid \operatorname{ct}[\tilde P^{n_0}]$.
-
-Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
-Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
-Lemma 22 (`jis-2026-26.4.2-lem-22`). -/
-public theorem_wanted exists_constantTerm_pow_dvd_iff_tilde {r p a ℓ : ℕ} (hp : p.Prime)
-    (ha : 0 < a) (P Pt : AddMonoidAlgebra ℤ (Fin r → ℤ))
-    (hPt : ∀ j, (P ^ (p ^ (a - 1))).coeff j ≡
-      (AddMonoidAlgebra.mapDomain (fun j => p ^ ℓ • j) Pt).coeff j [ZMOD (p : ℤ) ^ a]) :
-    ((∃ n₀, (p : ℤ) ∣ (P ^ n₀).coeff 0) ↔ ∃ n₁, (p : ℤ) ∣ (Pt ^ n₁).coeff 0) ∧
-      ∀ n₀, (p : ℤ) ∣ (P ^ n₀).coeff 0 → (p : ℤ) ∣ (Pt ^ n₀).coeff 0
-
-/-- **Rowland–Zeilberger congruence modulo $p^a$.** Let $p$ be a prime, let $a$ be a natural
-number, and let $\tilde P$ be a Laurent polynomial in $r$ variables with integer coefficients
-such that $\tilde P^p \equiv \tilde P(x^p) \pmod{p^a}$ coefficientwise, where $\tilde P(x^p)$
-is obtained from $\tilde P$ by replacing each monomial $x^e$ with $x^{pe}$. Write
-$\operatorname{ct}[F]$ for the constant term of a Laurent polynomial $F$ and $\Lambda_p$ for
-Kohen's operator, which keeps the terms whose exponents are all divisible by $p$ and replaces
-$x^{pj}$ by $x^j$. Then for every Laurent polynomial $Q$ in $r$ variables with integer
-coefficients and all natural numbers $n$ and $k$,
-$\operatorname{ct}[\tilde P^{pn+k} Q] \equiv
-\operatorname{ct}[\tilde P^n \Lambda_p(\tilde P^k Q)] \pmod{p^a}$.
-
-The statement holds for every natural number $k$; the paper states it for $k \in \mathbb{F}_p$.
-
-Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
-Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
-Lemma 24 (`jis-2026-26.4.2-lem-24`). -/
-public theorem_wanted constantTerm_tilde_pow_mul_modEq_laurentCartier {r p a : ℕ}
-    (hp : p.Prime) (Pt : AddMonoidAlgebra ℤ (Fin r → ℤ))
-    (hPt : ∀ j, (Pt ^ p).coeff j ≡
-      (AddMonoidAlgebra.mapDomain (fun j => p • j) Pt).coeff j [ZMOD (p : ℤ) ^ a])
-    (Q : AddMonoidAlgebra ℤ (Fin r → ℤ)) (n k : ℕ) :
-    (Pt ^ (p * n + k) * Q).coeff 0 ≡ (Pt ^ n * laurentCartier p (Pt ^ k * Q)).coeff 0
-      [ZMOD (p : ℤ) ^ a]
 
 /-- **Degree bound for the Rowland–Zeilberger states mod $p^a$.** Let $p$ be a prime, let $a$
 be a natural number, and let $\tilde P$ and $Q_0$ be Laurent polynomials in $r$ variables with

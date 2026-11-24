@@ -127,7 +127,7 @@ private lemma eq_sum_weight {r : ℕ} (hr : 2 ≤ r) (x : A) (y : Aˣ) (n m : �
     negRFibonacci r x y (n + 1) = ∑ k ∈ Finset.range m, weight r (↑y⁻¹ : A) (-x) n k := by
   have hr' : 0 < r := by omega
   induction n using Nat.strong_induction_on generalizing m with
-  | h n ih =>
+  | ind n ih =>
     by_cases hn : n ≤ r
     · rw [Finset.sum_eq_single_of_mem 0 (Finset.mem_range.mpr (Nat.zero_lt_of_lt hm))]
       · by_cases hn₀ : n = 0

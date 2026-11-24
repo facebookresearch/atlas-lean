@@ -13,9 +13,13 @@ public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.Data.List.Palindrome
 public import Mathlib.Data.Nat.Digits.Lemmas
 public import Mathlib.Data.Nat.Prime.Defs
+public import MathlibExt.NumberTheory.Digits.BinomialDigits
 public import MathlibExt.NumberTheory.Digits.BinomialFormTwoPowBase
+public import MathlibExt.NumberTheory.Digits.DigitsPowAndPowAddOne
 public import MathlibExt.NumberTheory.Digits.MinBasePalindrome
+public import MathlibExt.NumberTheory.Digits.OneCOneTwoPow
 public import MathlibExt.NumberTheory.Digits.ThreeDigitBinomialForm
+public import MathlibExt.NumberTheory.Digits.ThreeDigitPalindromeTwoPow
 
 /-!
 # Minimum-base palindromic representations of powers of 2
@@ -102,19 +106,6 @@ Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Theorem 1
 public theorem_wanted minPalindromicBase_eq_pred (N : ℕ) (hN : 1 ≤ N)
     (h : minPalindromicBase N = N - 1) : N = 3 ∨ N = 4 ∨ N = 6 ∨ (6 < N ∧ N.Prime)
 
-/-- **Digits of a multiple of a power of one more than the base.** Let $\alpha \ge 1$, $k$ and $b$
-be natural numbers with $\alpha\binom{k}{\lceil k/2 \rceil} < b$. Then the base-$b$
-representation of $\alpha(1 + b)^k$ has exactly the $k + 1$ digits
-$\alpha\binom{k}{k}, \alpha\binom{k}{k-1}, \dots, \alpha\binom{k}{0}$, from the most significant
-to the least significant.
-
-Source: D. L. Kreher and D. R. Stinson, *On Minimum-Base Palindromic
-Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Lemma 1
-(`integers-2024-A69-lem-1`). -/
-public theorem_wanted digits_mul_one_add_pow (α k b : ℕ) (hα : 1 ≤ α)
-    (h : α * k.choose ((k + 1) / 2) < b) :
-    Nat.digits b (α * (1 + b) ^ k) = (List.range (k + 1)).map fun i => α * k.choose i
-
 /-- **Sufficient condition for a binomial form of a power of 2.** Let $n$, $x$, $k$ and $r$ be
 natural numbers with $k \ge 1$, $n = xk + r$ and $2^r\binom{k}{\lceil k/2 \rceil} < 2^x - 1$.
 Then $2^n$ has a base-$(2^x - 1)$ representation in binomial form.
@@ -124,47 +115,6 @@ Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Corollary 1
 (`integers-2024-A69-cor-1`). -/
 public theorem_wanted hasBinomialForm_two_pow (n x k r : ℕ) (hk : 1 ≤ k) (hn : n = x * k + r)
     (h : 2 ^ r * k.choose ((k + 1) / 2) < 2 ^ x - 1) : HasBinomialForm (2 ^ x - 1) (2 ^ n)
-
-/-- **Even-length palindromic powers of 2 have base one less than a power of 2.** Let $n$ and
-$b \ge 2$ be natural numbers. If the base-$b$ representation of $2^n$ is a palindrome with an
-even number of digits, then $b = 2^x - 1$ for some natural number $x$.
-
-Source: D. L. Kreher and D. R. Stinson, *On Minimum-Base Palindromic
-Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Corollary 2
-(`integers-2024-A69-cor-2`). -/
-public theorem_wanted base_eq_two_pow_sub_one_of_palindrome (n b : ℕ) (hb : 2 ≤ b)
-    (hp : (Nat.digits b (2 ^ n)).Palindrome) (he : Even (Nat.digits b (2 ^ n)).length) :
-    ∃ x, b = 2 ^ x - 1
-
-/-- **Three-digit palindromic powers of two.** Let $n$ be a natural number, let $b \ge 2$ be a
-base, and let $c = 2^n \bmod b$. The base-$b$ representation of $2^n$ is a palindrome with exactly
-three digits if and only if $b^2 + 1 \le 2^n \le b^3 - 1$, $c \ne 0$, and
-$\frac{1}{b} \lfloor 2^n / b \rfloor - \frac{b - 1}{b} \le c \le
-\frac{1}{b} \lfloor 2^n / b \rfloor$.
-
-Source: D. L. Kreher and D. R. Stinson, *On Minimum-Base Palindromic
-Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Theorem 2
-(`integers-2024-A69-thm-2`). -/
-public theorem_wanted three_digit_palindrome_two_pow_iff (n b : ℕ) (hb : 2 ≤ b) :
-    ((Nat.digits b (2 ^ n)).Palindrome ∧ (Nat.digits b (2 ^ n)).length = 3) ↔
-      b ^ 2 + 1 ≤ 2 ^ n ∧ 2 ^ n ≤ b ^ 3 - 1 ∧ 2 ^ n % b ≠ 0 ∧
-        ((2 ^ n / b : ℕ) : ℚ) / b - ((b : ℚ) - 1) / b ≤ ((2 ^ n % b : ℕ) : ℚ) ∧
-        ((2 ^ n % b : ℕ) : ℚ) ≤ ((2 ^ n / b : ℕ) : ℚ) / b
-
-/-- **Three-digit representations of powers of two with outer digits one.** Let $n$ be a natural
-number and $b \ge 2$ a base. There is a digit $c \ne 2$ such that the base-$b$ representation of
-$2^n$ is $(1, c, 1)_b$, that is, $2^n = 1 + cb + b^2$ with $0 \le c < b$, if and only if
-(i) $2^n - 1 = kb$ for some natural number $k$ with $b \le k \le 2b - 1$, and (ii) it is not the
-case that $n$ is even and $b = 2^{n/2} - 1$.
-
-The excluded digit $c = 2$ gives the binomial form $(1, 2, 1)_b = (b + 1)^2$.
-
-Source: D. L. Kreher and D. R. Stinson, *On Minimum-Base Palindromic
-Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Theorem 4
-(`integers-2024-A69-thm-4`). -/
-public theorem_wanted one_c_one_two_pow_iff (n b : ℕ) (hb : 2 ≤ b) :
-    (∃ c, c ≠ 2 ∧ Nat.digits b (2 ^ n) = [1, c, 1]) ↔
-      (∃ k, 2 ^ n - 1 = k * b ∧ b ≤ k ∧ k ≤ 2 * b - 1) ∧ ¬ (Even n ∧ b = 2 ^ (n / 2) - 1)
 
 /-- **Palindromic powers of two in a base one less than a power of two.** Let $x \ge 2$ and
 $n \ge 1$ be natural numbers, let $b = 2^x - 1$, and suppose that the base-$b$ representation
@@ -193,20 +143,6 @@ Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Theorem 5
 (`integers-2024-A69-thm-5`). -/
 public theorem_wanted exists_small_base_binomialForm_two_pow (n : ℕ) (hn : 2 ≤ n) :
     ∃ y b : ℕ, y ≤ ⌈Real.sqrt (2 * n)⌉₊ + 1 ∧ 2 ≤ b ∧ b ≤ 2 ^ y - 1 ∧ HasBinomialForm b (2 ^ n)
-
-/-- **Digits of a power of the base and of its successor.** Let $z \ge 2$ and $n$ be natural
-numbers. Then the base-$z$ digits of $z^n$ are a $1$ followed by $n$ zeros, and, if $n \ge 1$,
-the base-$z$ digits of $z^n + 1$ are a $1$, then $n - 1$ zeros, then a $1$.
-
-Part (III) of the source theorem is omitted: as printed ($z^n - 1 = (1, 1, \dots, 1)_z$) it is
-false for $z \ge 3$, for example $3^2 - 1 = 8 = (2, 2)_3$.
-
-Source: D. L. Kreher and D. R. Stinson, *On Minimum-Base Palindromic
-Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Theorem 7
-(`integers-2024-A69-thm-7`), parts (I) and (II). -/
-public theorem_wanted digits_pow_and_pow_add_one (z n : ℕ) (hz : 2 ≤ z) :
-    Nat.digits z (z ^ n) = List.replicate n 0 ++ [1] ∧
-      (1 ≤ n → Nat.digits z (z ^ n + 1) = [1] ++ List.replicate (n - 1) 0 ++ [1])
 
 /-- **The Nagell–Ljunggren equation in natural numbers (Bugeaud–Mihăilescu).** Let $x, y, n, q$
 be natural numbers with $x \ge 2$, $y \ge 2$, $n \ge 3$ and $q \ge 2$ such that

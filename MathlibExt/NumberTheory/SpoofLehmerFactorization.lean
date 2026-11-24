@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Algebra.Order.Archimedean.Real.Basic
 public import Mathlib.Algebra.BigOperators.Group.Multiset.Defs
+import Mathlib.Algebra.BigOperators.Ring.Multiset
 import Mathlib.Algebra.Order.BigOperators.GroupWithZero.List
 import Mathlib.Data.List.Perm.Basic
 import Mathlib.Tactic.Linarith
@@ -106,6 +107,29 @@ Source: Grant Molnar and Guntas Singh, *Spoof Lehmer Factorizations*, INTEGERS 2
 Article A33, Definition 6. -/
 def IsTrivialSpoof (F : Multiset (ℕ × ℕ)) : Prop :=
   ∀ p ∈ F, p.1 = 1
+
+/-- **Spoof Lehmer factorizations with a base $1$ are trivial.** If a finite multiset $F$ of pairs
+$(x, a)$ of natural numbers is a $k$-Lehmer factorization for some integer $k$, and some pair in
+$F$ has base $x = 1$, then every base of $F$ equals $1$, that is, $F$ is trivial.
+
+Source: Grant Molnar and Guntas Singh, *Spoof Lehmer Factorizations*, INTEGERS 26 (2026),
+Article A33, Proposition 1 (`integers-2026-A33-prop-1`). -/
+theorem isTrivialSpoof_of_isSpoofLehmer_of_one_mem (F : Multiset (ℕ × ℕ))
+    (hL : ∃ k : ℤ, IsSpoofLehmer k F) (h1 : ∃ p ∈ F, p.1 = 1) :
+    IsTrivialSpoof F := by
+  obtain ⟨k, hpos, heq, _⟩ := hL
+  obtain ⟨p, hp, hbase⟩ := h1
+  have hzero : spoofTotient F = 0 := by
+    apply Multiset.prod_eq_zero
+    exact Multiset.mem_map.mpr ⟨p, hp, by simp [hbase]⟩
+  have heval : spoofEval F = 1 := by
+    simpa [hzero, sub_eq_zero] using heq.symm
+  intro q hq
+  have hdvd : (q.1 : ℤ) ∣ spoofEval F :=
+    (dvd_pow_self _ (hpos q hq).2.ne').trans
+      (Multiset.dvd_prod (Multiset.mem_map_of_mem _ hq))
+  rw [heval] at hdvd
+  exact Nat.dvd_one.mp (Int.ofNat_dvd.mp hdvd)
 
 /-- **Odd spoof factorizations.** A finite multiset $F$ of pairs $(x, a)$ of natural numbers, read
 as a spoof factorization with bases $x$ and exponents $a$, is odd if every base $x$ occurring in

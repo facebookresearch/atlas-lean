@@ -55,7 +55,7 @@ theorem hasDerivAt_pointMass_potential {G M : ℝ} {r : ℝ} (hr : 0 < r) :
   convert h using 1
   field_simp
 
-/-- The radial acceleration is the negative potential gradient:
+/-- For `r > 0`, the radial acceleration is the negative potential gradient:
 `-dΦ/dr = -G * M / r ^ 2`, and for `G > 0`, `M > 0` it is negative (inward). -/
 theorem pointMass_radial_acceleration {G M : ℝ} {r : ℝ} (hr : 0 < r) (hG : 0 < G)
     (hM : 0 < M) :

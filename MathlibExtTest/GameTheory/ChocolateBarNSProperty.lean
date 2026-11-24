@@ -35,3 +35,28 @@ example : ¬ HasNSProperty ((Set.Ici 3).indicator (1 : ℕ → ℕ)) := by
   intro hns
   have hpair := hns.2 2 3 1 (by decide) (by decide)
   simp [Set.indicator] at hpair
+
+-- Inputs in the same block of eight have quotients by four in the same block of four.
+example {a b : ℕ} (h : a / 8 = b / 8) : a / 4 / 4 = b / 4 / 4 :=
+  (hasNSProperty_div_two_pow (m := 2) (by decide)).2 a b 3 (by decide) h
+
+-- Exponent zero gives the identity, so positivity of the exponent is necessary.
+example : ¬ HasNSProperty (fun x : ℕ ↦ x / 2 ^ 0) := by
+  intro h
+  have hpair := h.2 0 1 1 (by decide) rfl
+  exact absurd hpair (by decide)
+
+-- At cutoff zero, every function qualifies regardless of its values at positive inputs.
+example (h : ℕ → ℕ) : HasNSProperty (fun x ↦ if x ≤ 0 then h x else h 0) := by
+  apply hasNSProperty_extend_const
+  · intro a b hab hb
+    have : a = b := by omega
+    simp [this]
+  · intro a b i ha hb _ _
+    simp [Nat.le_zero.mp ha, Nat.le_zero.mp hb]
+
+-- The dyadic block {2, 3} straddles the cutoff of this nonconstant extension.
+example : HasNSProperty (fun x : ℕ ↦ if x ≤ 2 then x / 2 else 1) := by
+  have hh := hasNSProperty_div_two_pow (m := 1) (by decide)
+  exact hasNSProperty_extend_const 2 (fun x ↦ x / 2)
+    (fun _ _ hab _ ↦ hh.1 hab) (fun a b i _ _ ↦ hh.2 a b i)

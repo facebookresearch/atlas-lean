@@ -580,67 +580,6 @@ public theorem_wanted bisector_equation_form_two (l m n : ℤ) (hlm : |l| ≠ |m
     ∀ c ∈ ({((l : ℚ) * m - n ^ 2) / ((l + m) * n), -(((l : ℚ) + m) * n) / (l * m - n ^ 2)} :
         Set ℚ), (a - c) ^ 2 * (b ^ 2 + 1) = (b - c) ^ 2 * (a ^ 2 + 1)
 
-/-- **Rational solutions of the bisector equation for square-free $d > 1$.** Let $d > 1$ be a
-square-free integer and let $a, b, c$ be rational numbers with $|a| \ne |b|$ and
-$$(a - c)^2 (b^2 + 1) = (b - c)^2 (a^2 + 1).$$
-Suppose there are rational numbers $u, v$ with $a^2 - d u^2 = -1$ and $b^2 - d v^2 = -1$. Then
-there are rational numbers $a_2, b_2$ with $a^2 - d a_2^2 = -1$ and $b^2 - d b_2^2 = -1$ such
-that either $a_2 + b_2 \ne 0$ and $c = (a b_2 + a_2 b) / (a_2 + b_2)$, or $a b_2 + a_2 b \ne 0$
-and $c = -(a_2 + b_2) / (a b_2 + a_2 b)$.
-
-In terms of $\alpha = a + a_2 \sqrt{d}$ and $\beta = b + b_2 \sqrt{d}$, which have norm $-1$, and
-the conjugation $'$ of $\mathbb{Q}(\sqrt{d})$, the first quotient is
-$(\alpha\beta - (\alpha\beta)') / (\alpha + \beta - (\alpha + \beta)')$.
-
-Source: the theorem's second part (the factorization of $\alpha, \beta$ through $\eta$, $\xi_p$
-and $S(d)$) is not formalized.
-
-Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
-Rational Slopes*, INTEGERS 24 (2024), Article A111, Theorem 1(ii), first
-sentence (`integers-2024-A111-thm-1`). -/
-public theorem_wanted bisector_equation_rat_solution_negPell (d : ℤ) (hd : 1 < d)
-    (hsq : Squarefree d) (a b c : ℚ) (hab : |a| ≠ |b|)
-    (h : (a - c) ^ 2 * (b ^ 2 + 1) = (b - c) ^ 2 * (a ^ 2 + 1))
-    (ha : ∃ a₂ : ℚ, a ^ 2 - d * a₂ ^ 2 = -1) (hb : ∃ b₂ : ℚ, b ^ 2 - d * b₂ ^ 2 = -1) :
-    ∃ a₂ b₂ : ℚ, a ^ 2 - d * a₂ ^ 2 = -1 ∧ b ^ 2 - d * b₂ ^ 2 = -1 ∧
-      ((a₂ + b₂ ≠ 0 ∧ c = (a * b₂ + a₂ * b) / (a₂ + b₂)) ∨
-        (a * b₂ + a₂ * b ≠ 0 ∧ c = -(a₂ + b₂) / (a * b₂ + a₂ * b)))
-
-/-- **Bisector-equation solutions from two solutions of $x^2 - d y^2 = -1$.** Let $d$ be an integer
-and let $a, a_2, b, b_2$ be rational numbers with $a^2 - d a_2^2 = -1$ and $b^2 - d b_2^2 = -1$.
-If $a_2 + b_2 \ne 0$, then $c = (a b_2 + a_2 b) / (a_2 + b_2)$ satisfies
-$$(a - c)^2 (b^2 + 1) = (b - c)^2 (a^2 + 1),$$
-and if $a b_2 + a_2 b \ne 0$, then $c = -(a_2 + b_2) / (a b_2 + a_2 b)$ satisfies it as well.
-
-Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
-Rational Slopes*, INTEGERS 24 (2024), Article A111, Theorem 1, converse
-for (3) (`integers-2024-A111-thm-1`). -/
-public theorem_wanted bisector_equation_form_three (d : ℤ) (a a₂ b b₂ : ℚ)
-    (ha : a ^ 2 - d * a₂ ^ 2 = -1) (hb : b ^ 2 - d * b₂ ^ 2 = -1) :
-    (a₂ + b₂ ≠ 0 → let c := (a * b₂ + a₂ * b) / (a₂ + b₂)
-      (a - c) ^ 2 * (b ^ 2 + 1) = (b - c) ^ 2 * (a ^ 2 + 1)) ∧
-    (a * b₂ + a₂ * b ≠ 0 → let c := -(a₂ + b₂) / (a * b₂ + a₂ * b)
-      (a - c) ^ 2 * (b ^ 2 + 1) = (b - c) ^ 2 * (a ^ 2 + 1))
-
-/-- **Products of strictly primitive solutions.** Let $d > 1$ be a square-free integer. Write
-elements of $\mathbb{Z}[\sqrt{d}]$ as $u + v\sqrt{d}$ with integers $u, v$, and let
-$N(u + v\sqrt{d}) = u^2 - d v^2$ be the norm. Let $p_1, \dots, p_r$ be distinct primes and
-$n_1, \dots, n_r$ natural numbers, and suppose that each $a_i = u_i + v_i\sqrt{d}$ satisfies
-$|N(a_i)| = p_i^{n_i}$ with $u_i$ and $d v_i$ coprime. Then $a = a_1 \cdots a_r = u + v\sqrt{d}$
-satisfies $|N(a)| = p_1^{n_1} \cdots p_r^{n_r}$ with $u$ and $d v$ coprime; that is, $a$ gives a
-strictly primitive solution of $|x^2 - d y^2| = p_1^{n_1} \cdots p_r^{n_r}$.
-
-The sign $\pm$ in the source's equation (13) is dropped; negation preserves both conclusions.
-
-Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
-Rational Slopes*, INTEGERS 24 (2024), Article A111, Proposition 3(a)
-(`integers-2024-A111-prop-3`). -/
-public theorem_wanted strictlyPrimitive_prod (d : ℤ) (hd : 1 < d) (hsq : Squarefree d) {r : ℕ}
-    (p : Fin r → ℕ) (hp : ∀ i, (p i).Prime) (hinj : Function.Injective p) (n : Fin r → ℕ)
-    (a : Fin r → ℤ√d) (ha : ∀ i, IsCoprime (a i).re (d * (a i).im))
-    (hN : ∀ i, |(a i).norm| = (p i : ℤ) ^ n i) :
-    IsCoprime (∏ i, a i).re (d * (∏ i, a i).im) ∧ |(∏ i, a i).norm| = ∏ i, (p i : ℤ) ^ n i
-
 /-- **Powers of strictly primitive solutions.** Let $d > 1$ be a square-free integer, $p$ an odd
 prime, and $m, n > 0$ natural numbers. Write elements of $\mathbb{Z}[\sqrt{d}]$ as $u + v\sqrt{d}$
 with integers $u, v$, and let $N(u + v\sqrt{d}) = u^2 - d v^2$ be the norm. If
@@ -659,19 +598,6 @@ public theorem_wanted strictlyPrimitive_pow (d : ℤ) (hd : 1 < d) (hsq : Square
     (hp : p.Prime) (hp2 : p ≠ 2) (m n : ℕ) (hm : 0 < m) (hn : 0 < n) (a : ℤ√d)
     (ha : IsCoprime a.re (d * a.im)) (hN : |a.norm| = (p : ℤ) ^ m) :
     IsCoprime (a ^ n).re (d * (a ^ n).im) ∧ |(a ^ n).norm| = (p : ℤ) ^ (m * n)
-
-/-- **Negating the value of a strictly primitive solution.** Let $d > 1$ be a square-free integer
-such that $x^2 - d y^2 = -1$ has an integral solution, and let $z \ne 0$ be an integer. If
-$x^2 - d y^2 = z$ has an integral solution with $x$ and $d y$ coprime, then so does
-$x^2 - d y^2 = -z$.
-
-Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
-Rational Slopes*, INTEGERS 24 (2024), Article A111, Proposition 4
-(`integers-2024-A111-prop-4`). -/
-public theorem_wanted strictlyPrimitive_neg (d : ℤ) (hd : 1 < d) (hsq : Squarefree d) (z : ℤ)
-    (hz : z ≠ 0) (hneg : ∃ x y : ℤ, x ^ 2 - d * y ^ 2 = -1)
-    (h : ∃ x y : ℤ, IsCoprime x (d * y) ∧ x ^ 2 - d * y ^ 2 = z) :
-    ∃ x y : ℤ, IsCoprime x (d * y) ∧ x ^ 2 - d * y ^ 2 = -z
 
 /-- **Strictly primitive solutions modulo p and splitting of p.** Let $d > 1$ be a square-free
 integer, let $K$ be a number field of degree $2$ over $\mathbb{Q}$ containing an element $s$ with

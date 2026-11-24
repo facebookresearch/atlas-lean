@@ -33,6 +33,10 @@ $G$ into the orthogonal complement of its column space and vanishes on the row s
 remark. When $r = k$ one of $m - r$ and $n - r$ is $0$, so $Z$ is empty and the minimizer is unique;
 when $r < k$ every $Z$ with $\|Z\|_2 \le 1$ gives one. No von Neumann trace inequality is needed.
 
+## Depends on
+
+- [Canonical polar factor of a rectangular matrix](../../polar-decomposition/polar-decomposition-theorem/rectangular-polar-factor.md)
+
 ## Informally uses
 
 - [Real singular value decomposition](../singular-value-decomposition-theorem/real-singular-value-decomposition.md): mathematical

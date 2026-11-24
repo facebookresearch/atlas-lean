@@ -236,7 +236,7 @@ theorem mem_apollonianPacking (C₀ : Fin 4 → PlaneCircle) (i : Fin 4) :
 
 /-- **Residual set of an Apollonian packing.** The closure of the union of the circles of the
 packing (H. Oh, arXiv:1312.1383v2, Section 1, definition of `Res(P)`). -/
-def residualSet (C₀ : Fin 4 → PlaneCircle) : Set ℂ :=
+noncomputable def residualSet (C₀ : Fin 4 → PlaneCircle) : Set ℂ :=
   closure (⋃ D ∈ apollonianPacking C₀, (D.toSphere : Set ℂ))
 
 /-- **Circle-counting function.** `N_P(T)`, the number of circles of the packing whose curvature
