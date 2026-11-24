@@ -10,3 +10,6 @@ Projective, free and finitely generated modules over commutative rings and modul
 - [Quillen–Suslin theorem](quillen-suslin.md)
 - [Support of a module](module-support.md)
 - [Ideal criterion for flatness of a module over a commutative ring](flatness-ideal-criterion.md)
+- [Finitely generated module](finitely-generated-module.md)
+- [Support of the quotient M/IM of a finitely generated module](support-quotient-by-ideal-times-module.md)
+- [Tensoring with a flat module preserves exactness](tensor-with-a-flat-module-preserves-exactness.md)

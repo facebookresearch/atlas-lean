@@ -13,7 +13,7 @@ public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Algebra.Group.Pointwise.Finset.Scalar
 public import Mathlib.Data.Int.Interval
 public import MathlibExt.Combinatorics.AP.Basic
-public import MathlibExt.Combinatorics.Additive.BoundedSubsetSums
+public import MathlibExt.Combinatorics.Additive.BoundedSubsequenceSums
 
 /-!
 # Subset and subsequence sums with bounded numbers of terms (statements)
@@ -107,41 +107,6 @@ public theorem_wanted yangChen_card_generalizedHFoldSumset_eq_four (a : Fin 4 �
 
 /-! ## Subset sums as generalized `h`-fold sumsets -/
 
-/-- **Bounded subset sums as a generalized h-fold sumset when zero is not in the set.** Let $G$
-be an abelian group and let $A = \{a_1, \dots, a_k\}$ be a set of $k$ distinct nonzero elements
-of $G$. If $\alpha, \beta$ are natural numbers with $\alpha + \beta \le k - 1$, then
-$\Sigma^\beta_\alpha(A)$, the set of sums of subsets $B \subseteq A$ with
-$\alpha \le |B| \le k - \beta$, equals the generalized $(k - \beta)$-fold sumset
-$(k - \beta)^{(\bar r)} A_0$ of $A_0 = (a_0, a_1, \dots, a_k)$, where $a_0 = 0$, with
-$\bar r = (k - \alpha - \beta, 1, \dots, 1)$, that is, the set of sums $\sum_{j=0}^{k} s_j a_j$
-with $0 \le s_j \le r_j$ for all $j$ and $\sum_j s_j = k - \beta$.
-
-Source: Raj Kumar Mistri, *Subset and Subsequence Sums with Bounded Numbers of Terms*, INTEGERS 24
-(2024), Article A116, Lemma 1 (`integers-2024-A116-lem-1`). -/
-public theorem_wanted boundedSubsetSums_eq_generalizedHFoldSumset_of_zero_not_mem
-    {G : Type*} [AddCommGroup G] [DecidableEq G] {k : ℕ} (b : Fin k → G)
-    (hb : Function.Injective b) (hb0 : ∀ i, b i ≠ 0) (α β : ℕ) (hαβ : α + β + 1 ≤ k) :
-    boundedSubsetSums α β (Finset.univ.image b) =
-      generalizedHFoldSumset (Fin.cons 0 b : Fin (k + 1) → G)
-        (Fin.cons (k - α - β) fun _ => 1 : Fin (k + 1) → ℕ) (k - β)
-
-/-- **Reordering invariance of the generalized $h$-fold sumset.** Let $G$ be an additive
-commutative monoid, $a_0, \dots, a_{k-1} \in G$, $r_0, \dots, r_{k-1}$ and $h$ natural numbers,
-and write $h^{(\bar r)}A = \{\sum_j s_j a_j : 0 \le s_j \le r_j, \sum_j s_j = h\}$ for the
-generalized $h$-fold sumset of $A = (a_0, \dots, a_{k-1})$ with $\bar r = (r_0, \dots, r_{k-1})$.
-For every permutation $\pi$ of $\{0, \dots, k-1\}$, the generalized $h$-fold sumset of
-$(a_{\pi(0)}, \dots, a_{\pi(k-1)})$ with $(r_{\pi(0)}, \dots, r_{\pi(k-1)})$ equals
-$h^{(\bar r)}A$.
-
-The paper assumes $h \ge 2$, all $r_j$ positive and the $a_j$ distinct; none of this is assumed
-here.
-
-Source: Raj Kumar Mistri, *Subset and Subsequence Sums with Bounded Numbers of Terms*, INTEGERS 24
-(2024), Article A116, Lemma 3 (`integers-2024-A116-lem-3`). -/
-public theorem_wanted generalizedHFoldSumset_comp_perm {G : Type*} [AddCommMonoid G]
-    [DecidableEq G] {k : ℕ} (a : Fin k → G) (r : Fin k → ℕ) (h : ℕ) (π : Equiv.Perm (Fin k)) :
-    generalizedHFoldSumset (a ∘ π) (r ∘ π) h = generalizedHFoldSumset a r h
-
 /-- **Bounded subsequence sums as a generalized h-fold sumset when zero is not a term.** Let $G$
 be an abelian group and let $a_1, \dots, a_k$ be distinct nonzero elements of $G$. Let
 $t_1, \dots, t_k$ be positive integers, let $\mathcal{A}$ be the sequence in which each $a_i$
@@ -162,27 +127,6 @@ public theorem_wanted boundedSubsequenceSums_eq_generalizedHFoldSumset_of_zero_n
     boundedSubsequenceSums α β (repetitionSequence b t) =
       generalizedHFoldSumset (Fin.cons 0 b : Fin (k + 1) → G)
         (Fin.cons (h - α - β) t : Fin (k + 1) → ℕ) (h - β)
-
-/-- **Bounded subsequence sums as a generalized h-fold sumset when zero is a term.** Let $G$ be
-an abelian group, let $m$ be a natural number, let $a_1, \dots, a_m$ be distinct nonzero elements
-of $G$, and put $a_0 = 0$. Let $t_0, \dots, t_m$ be positive integers, let $\mathcal{A}$ be the
-sequence in which each $a_i$ occurs $t_i$ times, and let $h = t_0 + \dots + t_m$ be its length.
-If $\alpha, \beta$ are natural numbers with $\alpha \ge 1$, $\beta \le h - 1$ and
-$\alpha + \beta \le h$, then $\Sigma^\beta_\alpha(\mathcal{A})$, the set of sums of subsequences
-of $\mathcal{A}$ with at least $\alpha$ and at most $h - \beta$ terms, equals the generalized
-$(h - \beta)$-fold sumset $(h - \beta)^{(\bar r)} A$ of $A = (a_0, a_1, \dots, a_m)$ with
-$\bar r = (h - \alpha - \beta + t_0, t_1, \dots, t_m)$, that is, the set of sums
-$\sum_{j=0}^{m} s_j a_j$ with $0 \le s_j \le r_j$ for all $j$ and $\sum_j s_j = h - \beta$.
-
-Source: Raj Kumar Mistri, *Subset and Subsequence Sums with Bounded Numbers of Terms*, INTEGERS 24
-(2024), Article A116, Lemma 5 (`integers-2024-A116-lem-5`). -/
-public theorem_wanted boundedSubsequenceSums_eq_generalizedHFoldSumset_of_zero_mem
-    {G : Type*} [AddCommGroup G] [DecidableEq G] {m : ℕ} (b : Fin m → G)
-    (hb : Function.Injective b) (hb0 : ∀ i, b i ≠ 0) (t : Fin (m + 1) → ℕ) (ht : ∀ i, 0 < t i)
-    (h : ℕ) (hh : h = ∑ i, t i) (α β : ℕ) (hα : 1 ≤ α) (hβ : β + 1 ≤ h) (hαβ : α + β ≤ h) :
-    boundedSubsequenceSums α β (repetitionSequence (Fin.cons 0 b : Fin (m + 1) → G) t) =
-      generalizedHFoldSumset (Fin.cons 0 b : Fin (m + 1) → G)
-        (Fin.cons (h - α - β + t 0) (Fin.tail t) : Fin (m + 1) → ℕ) (h - β)
 
 /-! ## Direct and inverse theorems for subset sums -/
 

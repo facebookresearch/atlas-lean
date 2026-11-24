@@ -10,13 +10,14 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.Algebra.Polynomial.ArithmeticProgressionAuxiliaryRoot
+public import MathlibExt.Algebra.Polynomial.ArithmeticProgressionPolynomial
 public import MathlibExt.Algebra.Polynomial.ArithmeticProgressionRootPower
+public import MathlibExt.Analysis.SpecialFunctions.RpowRationalLowerBound
 public import Mathlib.Algebra.Polynomial.AlgebraMap
 public import Mathlib.Algebra.Polynomial.Monic
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.GroupTheory.OrderOfElement
-public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Data.Nat.PrimeFin
 public import Mathlib.Data.Set.Card
 
@@ -93,20 +94,6 @@ public theorem_wanted arithProgPoly_irreducible_of_primitiveRoot {m a d p : ℕ}
     (hroot : orderOf (p : ZMod (m + 1)) = m) :
     Irreducible (∑ i ∈ Finset.range (m + 1), C ((a : ℤ) + i * d) * X ^ (m - i))
 
-/-- **The arithmetic-progression polynomial times $(x - 1)^2$.** For all natural numbers $m$, $a$,
-$d$, the polynomial $A_m(x) = \sum_{i=0}^{m} (a + id) x^{m-i}$ satisfies, in $\mathbb{Z}[x]$,
-
-$$A_m(x)(x - 1)^2 = a x^{m+2} - (a - d) x^{m+1} - (a + (m + 1)d) x + (a + md).$$
-
-The source assumes $m$, $a$, $d$ positive.
-
-Source: Hiroaki Kakuma, *Irreducibility of Polynomials with Coefficients in a Positive
-Arithmetic Progression*, INTEGERS 26 (2026), Article A92, Lemma 1 (`integers-2026-A92-lem-1`). -/
-public theorem_wanted arithProgPoly_mul_sub_one_sq (m a d : ℕ) :
-    (∑ i ∈ Finset.range (m + 1), C ((a : ℤ) + i * d) * X ^ (m - i)) * (X - 1) ^ 2 =
-      C (a : ℤ) * X ^ (m + 2) - C ((a : ℤ) - d) * X ^ (m + 1) -
-        C ((a : ℤ) + (m + 1) * d) * X + C ((a : ℤ) + m * d)
-
 /-- **Bound on the zeros of the arithmetic-progression polynomial.** Let $m \ge 2$, let $a$, $d$
 be integers with $0 < d \le a$, and let $\lambda > 0$ be a real number with
 $a \lambda^{m+2} + (a - d) \lambda^{m+1} - (a + (m + 1)d) \lambda - (a + md) = 0$. Then every
@@ -135,16 +122,6 @@ public theorem_wanted arithProgPoly_lam_pow_gt {m a d : ℕ} (hm : 2 ≤ m) (hd 
     (hG : (a : ℝ) * lam ^ (m + 2) + ((a : ℝ) - d) * lam ^ (m + 1) -
       ((a : ℝ) + (m + 1) * d) * lam - ((a : ℝ) + m * d) = 0) :
     (a : ℝ) + m * d < a * lam ^ m
-
-/-- **A rational lower bound for $(1 + mx)^{1/m}$.** For every natural number $m \ge 2$ and every
-real $x > 0$,
-
-$$\frac{2 + (m + 1)x}{2 + (m - 1)x} < (1 + mx)^{1/m}.$$
-
-Source: Hiroaki Kakuma, *Irreducibility of Polynomials with Coefficients in a Positive
-Arithmetic Progression*, INTEGERS 26 (2026), Article A92, Lemma 3 (`integers-2026-A92-lem-3`). -/
-public theorem_wanted one_add_mul_rpow_inv_gt {m : ℕ} (hm : 2 ≤ m) {x : ℝ} (hx : 0 < x) :
-    (2 + (m + 1) * x) / (2 + (m - 1) * x) < (1 + m * x) ^ (1 / (m : ℝ))
 
 /-- **Strict upper bound on floors at powers of the auxiliary root.** Let $m \ge 2$, let $a$, $d$
 be natural numbers with $d > 0$ and $(m + 1)d < 2a$, and let $\lambda > 0$ be a real number with

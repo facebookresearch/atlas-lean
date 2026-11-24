@@ -116,22 +116,27 @@ namespace MathlibExt.Biology.Omics.HierarchicalCount
 
 variable {ι : Type*} [Fintype ι]
 
-/-- The log marginal likelihood of hyperparameters `(a, b)` (prior shape and rate) for counts
-`kᵢ` observed at size factors `sᵢ`, one independent rate `λᵢ ~ Gamma(a, b)` per observation:
-`ℓ(a, b) = ∑ᵢ log P(kᵢ ∣ a, b, sᵢ)`, with
-`P(k ∣ a, b, s) = marginalLik a b s k = NB(a, s a / b)`. -/
+/-- The log marginal likelihood of hyperparameters `(a, b)` (prior shape and rate) for counts `kᵢ`
+observed at size factors `sᵢ`, one independent rate `λᵢ ~ Gamma(a, b)` per observation:
+`ℓ(a, b) = ∑ᵢ log P(kᵢ ∣ a, b, sᵢ)`, with `P(k ∣ a, b, s) = marginalLik a b s k`, which is
+`NB(a, s a / b)` for `a, b > 0` and `s ≥ 0`. The logarithm is the real one, with `log 0 = 0` and
+`log x = log |x|`; for `a, b > 0` and positive size factors every term is the logarithm of a
+positive probability. -/
 noncomputable def logMarginalLik (a b : ℝ) (s : ι → ℝ) (k : ι → ℕ) : ℝ :=
   ∑ i, log (marginalLik a b (s i) (k i))
 
-/-- The digamma increment `∑_{j<k} 1 / (a + j)`, equal to `ψ(a + k) - ψ(a)` for `a > 0`; it is the
-derivative in `a` of `log (a (a + 1) ⋯ (a + k - 1))`. -/
+/-- The digamma increment `∑_{j<k} 1 / (a + j)` (a term with `a + j = 0` is `0`, by the convention
+`0⁻¹ = 0`), equal to `ψ(a + k) - ψ(a)` for `a > 0`; it is the derivative in `a` of
+`log (a (a + 1) ⋯ (a + k - 1))`. -/
 noncomputable def digammaIncrement (a : ℝ) (k : ℕ) : ℝ := ∑ j ∈ range k, (a + j)⁻¹
 
-/-- The shape score `∂ℓ/∂a = ∑ᵢ (∑_{j<kᵢ} 1 / (a + j) + log b - log (b + sᵢ))`. -/
+/-- The shape score `∑ᵢ (∑_{j<kᵢ} 1 / (a + j) + log b - log (b + sᵢ))`, defined for all real
+arguments with the real logarithm; it is `∂ℓ/∂a` for `a, b > 0` and positive size factors. -/
 noncomputable def shapeScore (a b : ℝ) (s : ι → ℝ) (k : ι → ℕ) : ℝ :=
   ∑ i, (digammaIncrement a (k i) + log b - log (b + s i))
 
-/-- The rate score `∂ℓ/∂b = ∑ᵢ (a / b - (a + kᵢ) / (b + sᵢ))`. -/
+/-- The rate score `∑ᵢ (a / b - (a + kᵢ) / (b + sᵢ))`, defined for all real arguments with
+`x / 0 = 0`; it is `∂ℓ/∂b` for `a, b > 0` and positive size factors. -/
 noncomputable def rateScore (a b : ℝ) (s : ι → ℝ) (k : ι → ℕ) : ℝ :=
   ∑ i, (a / b - (a + k i) / (b + s i))
 
@@ -290,8 +295,9 @@ theorem strictConcaveOn_logMarginalLik_shape {b : ℝ} (hb : 0 < b) {s : ι → 
   rw [deriv_logMarginalLik_shape hx hb hs, deriv_logMarginalLik_shape hy hb hs]
   exact shapeScore_strictAnti hx hxy s hk
 
-/-- The rate score times the rate, `b ∂ℓ/∂b = ∑ᵢ (a - (a + kᵢ) · b / (b + sᵢ))`; it has the sign
-of the rate score for `b > 0` and is the derivative of `ℓ` in `log b`. -/
+/-- The rate score times the rate, `b ∂ℓ/∂b = ∑ᵢ (a - (a + kᵢ) · b / (b + sᵢ))`; for `b > 0` and
+positive size factors it is `b` times the rate score, so it has its sign, and for `a > 0` it is the
+derivative of `ℓ` in `log b`. -/
 noncomputable def rateScoreLog (a b : ℝ) (s : ι → ℝ) (k : ι → ℕ) : ℝ :=
   ∑ i, (a - (a + k i) * (b / (b + s i)))
 
@@ -449,8 +455,8 @@ private lemma continuousOn_rateScoreLog (a : ℝ) {s : ι → ℝ} (hs : ∀ i, 
   positivity
 
 /-- **Existence of the rate MLE at a fixed shape.** If at least one count is positive, then for
-every shape `a > 0` the rate score equation has a positive solution (unique by
-`rateScore_eq_zero_unique`). -/
+every shape `a > 0` and positive size factors the rate score equation has a positive solution (the
+only positive one, by `rateScore_eq_zero_unique`). -/
 theorem exists_rateScore_eq_zero {a : ℝ} [Nonempty ι] (ha : 0 < a) {s : ι → ℝ}
     (hs : ∀ i, 0 < s i) {k : ι → ℕ} (hk : ∃ i, 0 < k i) :
     ∃ b, 0 < b ∧ rateScore a b s k = 0 := by
@@ -480,8 +486,9 @@ theorem exists_rateScore_eq_zero {a : ℝ} [Nonempty ι] (ha : 0 < a) {s : ι �
   rw [hc0] at this
   exact (mul_eq_zero.1 this).resolve_right hc0'
 
-/-- **The rate root is the global maximizer.** For a fixed shape `a > 0`, a positive root `b̂` of
-the rate score equation is the unique maximizer of `b ↦ ℓ(a, b)` over `b > 0`. -/
+/-- **The rate root is the global maximizer.** For a fixed shape `a > 0`, positive size factors and
+a nonempty sample, a positive root `b̂` of the rate score equation is the unique maximizer of
+`b ↦ ℓ(a, b)` over `b > 0`. -/
 theorem logMarginalLik_lt_of_rateScore_eq_zero {a bhat b : ℝ} [Nonempty ι] (ha : 0 < a)
     (hbhat : 0 < bhat) (hb : 0 < b) (hne : b ≠ bhat) {s : ι → ℝ} (hs : ∀ i, 0 < s i) {k : ι → ℕ}
     (h : rateScore a bhat s k = 0) : logMarginalLik a b s k < logMarginalLik a bhat s k := by
@@ -513,7 +520,8 @@ theorem logMarginalLik_lt_of_rateScore_eq_zero {a bhat b : ℝ} [Nonempty ι] (h
 
 /-! ### A common size factor: profile likelihood and comparison with moments -/
 
-/-- The sample mean `M = (∑ᵢ kᵢ) / n` of a finite sample of `n` counts. -/
+/-- The sample mean `M = (∑ᵢ kᵢ) / n` of a finite sample of `n` counts (`0` for an empty sample, by
+the convention `x / 0 = 0`). -/
 noncomputable def countMean (k : ι → ℕ) : ℝ := (∑ i, (k i : ℝ)) / Fintype.card ι
 
 /-- The rate score at a common size factor `σ`: `n a / b - (n a + ∑ᵢ kᵢ) / (b + σ)`. -/
@@ -523,8 +531,9 @@ theorem rateScore_const (a b σ : ℝ) (k : ι → ℕ) :
   simp only [rateScore, sum_sub_distrib, ← sum_div, sum_add_distrib, sum_const, card_univ,
     nsmul_eq_mul]
 
-/-- **Rate score equation at a common size factor.** For `a, b, σ > 0`, the rate score vanishes
-iff `b M = σ a`, i.e. iff the fitted marginal mean `σ a / b` equals the sample mean `M`. -/
+/-- **Rate score equation at a common size factor.** For `b, σ > 0`, every real `a` and a nonempty
+sample, the rate score vanishes iff `b M = σ a`, i.e. iff the fitted marginal mean `σ a / b` equals
+the sample mean `M`. -/
 theorem rateScore_const_eq_zero_iff {a b σ : ℝ} [Nonempty ι] (hb : 0 < b) (hσ : 0 < σ)
     (k : ι → ℕ) : rateScore a b (fun _ => σ) k = 0 ↔ b * countMean k = σ * a := by
   have hn : (0 : ℝ) < Fintype.card ι := by exact_mod_cast Fintype.card_pos
@@ -546,10 +555,11 @@ theorem momRate_eq_mul_momShape_div {σ M V : ℝ} (hM : M ≠ 0) :
     momRate σ M V = σ * momShape M V / M := by
   rw [momRate, momShape]; field_simp
 
-/-- **Method of moments solves the rate score equation.** At a common size factor `σ > 0`, if
-the sample is overdispersed (`0 < M < V`, with `M` the sample mean), the moment estimates
-`(momShape M V, momRate σ M V)` solve the rate score equation of the marginal likelihood exactly.
-They do not solve the shape score equation in general (see the tests). -/
+/-- **Method of moments solves the rate score equation.** At a common size factor `σ > 0`, for every
+real `V` with `0 < M < V`, `M` the sample mean (for example `V` the biased sample variance of an
+overdispersed sample), the moment estimates `(momShape M V, momRate σ M V)` solve the rate score
+equation of the marginal likelihood exactly. They do not solve the shape score equation in general
+(see the tests). -/
 theorem rateScore_mom_eq_zero {σ V : ℝ} [Nonempty ι] (hσ : 0 < σ) {k : ι → ℕ}
     (hM : 0 < countMean k) (hMV : countMean k < V) :
     rateScore (momShape (countMean k) V) (momRate σ (countMean k) V) (fun _ => σ) k = 0 := by
@@ -558,9 +568,9 @@ theorem rateScore_mom_eq_zero {σ V : ℝ} [Nonempty ι] (hσ : 0 < σ) {k : ι 
   rw [momRate_eq_mul_momShape_div hM.ne']
   exact rateScore_const_eq_zero ha hσ hM
 
-/-- The profile shape score at a common size factor: the shape score along the rate root
-`b̂(a) = σ a / M`, `∑ᵢ ∑_{j<kᵢ} 1 / (a + j) - n (log (a + M) - log a)`. It does not depend on
-`σ`. -/
+/-- The profile shape score at a common size factor: for `a, σ, M > 0` the shape score along the
+rate root `b̂(a) = σ a / M`, `∑ᵢ ∑_{j<kᵢ} 1 / (a + j) - n (log (a + M) - log a)`. It does not depend
+on `σ`. -/
 noncomputable def profileShapeScore (a : ℝ) (k : ι → ℕ) : ℝ :=
   ∑ i, digammaIncrement a (k i) - Fintype.card ι * (log (a + countMean k) - log a)
 
@@ -597,10 +607,10 @@ theorem score_eq_zero_iff_const {a b σ : ℝ} [Nonempty ι] (ha : 0 < a) (hb : 
     exact ⟨by rw [shapeScore_const_rateRoot ha hσ hM, hp], rateScore_const_eq_zero ha hσ hM⟩
 
 /-- **Every root of the rate equation shares the moment fitted mean.** At a common size factor
-`σ > 0`, every solution `(a, b)` of the rate score equation has plug-in prior mean
-`a / b = M / σ`, which is also the moment plug-in prior mean `momShape M V / momRate σ M V` for
-any `V > M`. The two sets of estimating equations differ only in the shape equation: a root of the
-score equations solves `∑ᵢ ∑_{j<kᵢ} 1 / (a + j) = n log (1 + M / a)`, the moment estimator
+`σ > 0`, every solution `(a, b)` of the rate score equation with `b > 0` has plug-in prior mean
+`a / b = M / σ`, which is also the moment plug-in prior mean `momShape M V / momRate σ M V` for any
+`V > M`. The two sets of estimating equations differ only in the shape equation: a root of the score
+equations solves `∑ᵢ ∑_{j<kᵢ} 1 / (a + j) = n log (1 + M / a)`, the moment estimator
 `M + M² / a = V`. -/
 theorem div_eq_mom_of_rateScore_eq_zero {a b σ V : ℝ} [Nonempty ι] (hb : 0 < b) (hσ : 0 < σ)
     {k : ι → ℕ} (hM : 0 < countMean k) (hMV : countMean k < V)
@@ -631,11 +641,10 @@ theorem hasSum_rateScore_term_mul_marginalLik {a b s : ℝ} (ha : 0 < a) (hb : 0
   rw [marginalLik_eq_negBinomialReal ha hb hs]
   ring
 
-/-- **The log marginal likelihood is not jointly concave.** For one zero count at size factor
-`1`, `ℓ(a, b) = a log (b / (b + 1))` violates midpoint concavity between `(1, 1)` and `(3, 3)`:
-`ℓ(2, 2) < (ℓ(1, 1) + ℓ(3, 3)) / 2`, because `2¹¹ < 3⁷`. Concavity holds only in each
-hyperparameter separately (`concaveOn_logMarginalLik_shape`,
-`strictConcaveOn_logMarginalLik_logRate`). -/
+/-- **The log marginal likelihood is not jointly concave.** For one zero count at size factor `1`,
+`ℓ(a, b) = a log (b / (b + 1))` violates midpoint concavity between `(1, 1)` and `(3, 3)`:
+`ℓ(2, 2) < (ℓ(1, 1) + ℓ(3, 3)) / 2`, because `2¹¹ < 3⁷`. Concavity holds in the shape and in the log
+rate separately (`concaveOn_logMarginalLik_shape`, `strictConcaveOn_logMarginalLik_logRate`). -/
 theorem not_concaveOn_logMarginalLik :
     ¬ ConcaveOn ℝ (Set.Ioi (0 : ℝ) ×ˢ Set.Ioi (0 : ℝ))
       (fun p : ℝ × ℝ => logMarginalLik p.1 p.2 (fun _ : Unit => (1 : ℝ)) (fun _ => 0)) := by
@@ -665,8 +674,13 @@ theorem not_concaveOn_logMarginalLik :
 /-! ### Consistency -/
 
 /-- The population profile shape score of a count random variable `K`:
-`E[∑_{j<K} 1 / (a + j)] - (log (a + E K) - log a)`. It is the almost sure limit of
-`n⁻¹ · profileShapeScore a (K₁, …, Kₙ)` for i.i.d. copies `Kᵢ` of `K`. -/
+`E[∑_{j<K} 1 / (a + j)] - (log (a + E K) - log a)`. The integrals are Bochner integrals with respect
+to `μ` (`0` for a non-integrable integrand), expectations when `μ` is a probability measure; for
+such `μ`, an integrable `K` and `a > 0` it is the almost sure limit of
+`n⁻¹ · profileShapeScore a (K₁, …, Kₙ)` for i.i.d. copies `Kᵢ` of `K`. The logarithm is the real
+one, with `log 0 = 0` and `log x = log |x|`, and a term with `a + j = 0` is `0` (`0⁻¹ = 0`); the
+intended domain is `a > 0`, where every `a + j` and, as `E K ≥ 0`, both arguments of `log` are
+positive. -/
 noncomputable def popProfileShapeScore {Ω : Type*} {_ : MeasurableSpace Ω} (μ : Measure Ω)
     (K : Ω → ℕ) (a : ℝ) : ℝ :=
   μ[fun ω => digammaIncrement a (K ω)] - (log (a + μ[fun ω => (K ω : ℝ)]) - log a)
@@ -692,7 +706,8 @@ private lemma continuousOn_profileShapeScore (k : ι → ℕ) (hM : 0 ≤ countM
 
 /-! ### Overdispersion gives a solution of the score equations -/
 
-/-- The biased (divisor `n`) sample variance `V = n⁻¹ ∑ᵢ kᵢ² - M²` of a finite sample of counts. -/
+/-- The biased (divisor `n`) sample variance `V = n⁻¹ ∑ᵢ kᵢ² - M²` of a finite sample of counts (`0`
+for an empty sample, by the convention `x / 0 = 0`). -/
 noncomputable def countVar (k : ι → ℕ) : ℝ :=
   (∑ i, (k i : ℝ) ^ 2) / Fintype.card ι - countMean k ^ 2
 
@@ -884,11 +899,12 @@ private lemma ae_tendsto_digammaIncrement {a : ℝ} (ha : 0 < a) (hmeas : Measur
     (fun i j hij => (hindep hij).comp hc hc) (fun i => (hident i).comp hc)] with ω hω
   simpa [Fin.sum_univ_eq_sum_range (fun i => digammaIncrement a (X i ω))] using hω
 
-/-- **Strong consistency of the rate MLE at a known shape.** Let `X₀, X₁, …` be pairwise
-independent, identically distributed counts with mean `E X₀ = σ a / b` (the marginal mean of the
-hierarchy with size factor `σ > 0`, shape `a > 0` and rate `b > 0`). Almost surely, for all large
-`n` the rate MLE `b̂ₙ = σ a / Mₙ` at the true shape solves the rate score equation of the first `n`
-counts, and `b̂ₙ → b`. -/
+/-- **Strong consistency of the rate MLE at a known shape.** Let `X₀, X₁, …` be counts that are
+pairwise independent and identically distributed under a measure `μ` (in applications a probability
+measure), with `X₀` integrable and `∫ X₀ ∂μ = σ a / b` (the marginal mean of the hierarchy with size
+factor `σ > 0`, shape `a > 0` and rate `b > 0`). Almost surely, for all large `n` the rate MLE
+`b̂ₙ = σ a / Mₙ` at the true shape solves the rate score equation of the first `n` counts, and
+`b̂ₙ → b`. -/
 theorem ae_tendsto_rateMLE {a b σ : ℝ} (ha : 0 < a) (hb : 0 < b) (hσ : 0 < σ)
     (hindep : Pairwise ((· ⟂ᵢ[μ] ·) on X)) (hident : ∀ i, IdentDistrib (X i) (X 0) μ μ)
     (hint : Integrable (fun ω => (X 0 ω : ℝ)) μ) (hmean : μ[fun ω => (X 0 ω : ℝ)] = σ * a / b) :
@@ -909,22 +925,19 @@ theorem ae_tendsto_rateMLE {a b σ : ℝ} (ha : 0 < a) (hb : 0 < b) (hσ : 0 < �
   · have h := (tendsto_const_nhds (x := σ * a)).div hω hm.ne'
     rwa [show σ * a / (σ * a / b) = b by field_simp] at h
 
-/-- **Consistency of a root of the score equations (Cramér).** Let `X₀, X₁, …` be
-pairwise independent, identically distributed counts, observed at a common size factor `σ > 0`,
-with mean `E X₀ = σ a₀ / b₀`, the marginal mean of the hierarchy at the true hyperparameters
-`a₀, b₀ > 0`. Assume local identifiability of the shape: the population profile shape score
-`popProfileShapeScore μ X₀` is positive just left of `a₀` and negative just right of it. Then
-almost surely, for every `ε > 0` and all large `n`, the score equations of the first `n` counts
-have a solution `(â, b̂)` with `|â - a₀| < ε` and `|b̂ - b₀| < ε`: there is a strongly consistent
-sequence of roots of the score equations.
+/-- **Consistency of a root of the score equations (Cramér).** Let `X₀, X₁, …` be counts that are
+pairwise independent and identically distributed under a measure `μ` (in applications a probability
+measure), observed at a common size factor `σ > 0`, with `X₀` measurable and integrable and
+`∫ X₀ ∂μ = σ a₀ / b₀`, the marginal mean of the hierarchy at the true hyperparameters `a₀, b₀ > 0`.
+Assume local identifiability of the shape: the population profile shape score
+`popProfileShapeScore μ X₀` is positive just left of `a₀` and negative just right of it. Then almost
+surely, for every `ε > 0` and all large `n`, the score equations of the first `n` counts have a
+solution `(â, b̂)` with `â, b̂ > 0`, `|â - a₀| < ε` and `|b̂ - b₀| < ε`: there is a strongly
+consistent sequence of roots of the score equations.
 
-For the negative binomial marginal law the sign hypothesis follows from the identity
+The crossing is a hypothesis. For the negative binomial marginal law it follows from the identity
 `E[∑_{j<X₀} 1 / (a₀ + j)] = log (1 + σ / b₀)` (the expected shape score vanishes at the truth)
-together with positivity of the profile information at `a₀`; neither is proved here, so the
-crossing is assumed. The tests show the hypotheses can hold together, for a two-point count law
-(values `0` and `3`, which is not negative binomial) with `a₀ ∈ (3/10, 1/2)` given by the
-intermediate value theorem. The mean hypothesis is the proved marginal mean of `marginalLik`
-(`marginalLik_eq_negBinomialReal`, `ProbabilityTheory.hasSum_mul_negBinomialReal`). -/
+together with positivity of the profile information at `a₀`. -/
 theorem ae_eventually_exists_score_root {a₀ b₀ σ : ℝ} (ha₀ : 0 < a₀) (hb₀ : 0 < b₀)
     (hσ : 0 < σ) (hmeas : Measurable (X 0)) (hindep : Pairwise ((· ⟂ᵢ[μ] ·) on X))
     (hident : ∀ i, IdentDistrib (X i) (X 0) μ μ) (hint : Integrable (fun ω => (X 0 ω : ℝ)) μ)
