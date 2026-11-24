@@ -16,7 +16,7 @@ Coordinate classes are actual zero-section Euler classes of the
 character line at the scheme point, relative to the coefficient system's
 one orientation datum, transported by the native finite Borel and
 point-projection comparisons. They are the usual generators of equivariant
-cohomology of a point exactly when that datum is the complex orientation;
+cohomology of a point when that datum is the complex orientation;
 otherwise each is a unit multiple of it. Each polynomial generator acts by
 the corresponding actual Borel cup on every cohomology class. The
 endomorphism algebra is not assumed commutative.

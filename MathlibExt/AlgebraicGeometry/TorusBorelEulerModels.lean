@@ -18,10 +18,11 @@ The Euler class is the actual proper zero-section push of the smooth
 fundamental class, followed by the inverse of the actual bundle-projection
 cohomology map. Fundamental classes and Poincaré duality are taken from one
 shared `OrientationData`: a dualizing representation with smooth purity for
-every smooth complex variety, compatible with isomorphisms. Two orientation
+every smooth separated complex variety of finite type, compatible with
+isomorphisms. Two orientation
 data differ on each space by a locally constant unit, so the Euler classes are
-determined up to such units; they are the usual complex Euler classes exactly
-when the datum is the complex orientation, which is not encoded here. The
+determined up to such units; they are the usual complex Euler classes when
+the datum is the complex orientation, which is not encoded here. The
 rank-zero Euler class is `1` for every datum
 (`ZeroEulerGeometry.euler_eq_unitClass`). The equivariant class uses the native
 finite-approximation comparison. The associated module is identified with the
