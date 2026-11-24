@@ -49,9 +49,6 @@ over a field to a scheme, through its dense schematic open subspace.
 
 - [Abelian scheme](abelian-scheme.md), for the abelian schemes of 4 and the abelian varieties of 5
 
-Relative Picard functors are defined above; the fppf sheaves and algebraic spaces in which the
-statement places them are not stated on any page yet.
-
 ## Proof depends on
 
 - [Standard results of coherent cohomology on projective varieties](../birational-geometry/standard-results-of-coherent-cohomology.md),
@@ -59,12 +56,16 @@ statement places them are not stated on any page yet.
   extension of the base field (item 2), by which van der Geer and Moonen pass to an algebraic
   closure in 5 ((6.14)–(6.15))
 
-The other steps of its proof are not pages yet: Artin's representability criterion for algebraic
-spaces and its application to Picard functors, Grothendieck's construction through Hilbert and Quot
-schemes, Raynaud's theorem, the passage from a group algebraic space over a field to a scheme, and,
-for 5, the Künneth formula for the cohomology of the structure sheaf, which gives the coproduct, the
-vanishing of coherent cohomology above the dimension, and the Borel–Hopf structure theorem for
-graded bialgebras over a perfect field (van der Geer–Moonen, (6.12)–(6.15)).
+## Expansion
+
+A good expansion also states and links:
+
+- fppf sheaves (Stacks Project, Section 34.7, Tag 021L) and algebraic spaces, in which the statement
+  places the relative Picard functors defined above, for the statement
+- the Künneth formula for the cohomology of the structure sheaf, which gives the coproduct, and the
+  vanishing of coherent cohomology above the dimension (van der Geer–Moonen, (6.14)–(6.15)), for 5
+- the Borel–Hopf structure theorem for graded bialgebras over a perfect field (van der Geer–Moonen,
+  (6.12)–(6.13)), for 5
 
 ## Sources
 

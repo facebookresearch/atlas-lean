@@ -48,13 +48,7 @@ polarization, a bridge for which no source has yet been identified.
 - [Lagrange's four-square theorem](../../NumberTheory/quadratic-forms-sums-of-squares/sums-of-squares/lagrange-four-square-theorem.md),
   for the representation of an integer as a sum of four squares in Moret-Bailly's IX, 1.4–1.6
 
-The other steps of its proof are not pages yet: Moret-Bailly's abelian schemes $A \otimes_\mathbb{Z}
-M$ with their polarizations $\varphi \otimes B$ and degrees (IX, 1.2–1.3), the descent of
-polarizations along isogenies of abelian schemes through isotropic finite flat subgroup schemes and
-Weil pairings over $S$, and his quaternionic lattice (IX, 1.4–1.6); and, for 2, the relative theorem
-of the cube over $R$ and the existence over $R$ of a symmetric line bundle inducing a given
-principal polarization, for which no source has been identified. The theorem over a field of
-Zarhin's trick is the case of a point, not a step of these proofs.
+The theorem over a field of Zarhin's trick is the case of a point, not a step of these two proofs.
 
 ## Sources
 

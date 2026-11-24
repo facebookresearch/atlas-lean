@@ -19,16 +19,29 @@ uses the property for the coherence of multiplier ideal sheaves (*Analytic Metho
 
 ## Depends on
 
-Its statement uses complex manifolds and coherent analytic sheaves, which no page states yet.
+Its statement uses the notions listed under Expansion.
 
 ## Proof depends on
 
 - [Weierstrass preparation theorem](weierstrass-preparation.md), for the Weierstrass polynomial $P$
   in $\mathcal{F}_{k_0}$ near a point
+- [Identity theorem for holomorphic maps](../../../Geometry/complex-and-symplectic-geometry/identity-and-open-mapping-theorems-for-holomorph/holomorphic-identity-on-connected-comple.md),
+  for the analytic continuation by which a coherent ideal sheaf on a connected complex manifold with
+  one nonzero stalk has all its stalks nonzero
 
-The other steps of its proof are not pages yet: the reduction to subsheaves of
-$\mathcal{O}_M^{\oplus q}$ and then of $\mathcal{O}_M$, analytic continuation, the Weierstrass
-division theorem and the induction on the dimension (Demailly, Chapter II, (3.22)).
+## Expansion
+
+A good expansion states and links:
+
+- complex manifolds and coherent analytic sheaves (Demailly, *Complex Analytic and Differential
+  Geometry*, Chapter II, §3), for the statement
+- the reduction to subsheaves of $\mathcal{O}_M^{\oplus q}$ and then of $\mathcal{O}_M$ (Demailly,
+  Chapter II, proof of (3.22), by reductions like those in the proof of Theorem (3.14)), for the
+  reduction to ideal sheaves
+- the Weierstrass division theorem (Demailly, Chapter II, (2.3)), for the generation of the stalks
+  by a Weierstrass polynomial and by polynomials of lower degree in $z_n$
+- the induction on the dimension, through the coherent module of polynomials of degree at most $\mu$
+  in $z_n$ (Demailly, Chapter II, proof of (3.22)), for the stationarity of the sequence
 
 ## Sources
 

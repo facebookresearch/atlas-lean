@@ -69,11 +69,6 @@ Rham homology for abelian schemes, and the bijection and lifting criterion of (4
   classical Hodge sequence of de Rham homology, through universal vector extensions (its items 1–2),
   with which (3) compares the crystal
 
-The other steps of its proof are not pages yet: the universal extension of a $p$-divisible group by
-a vector group and its Lie algebra, the construction of the Dieudonné crystal and its values on
-nilpotent divided power thickenings, and the bijection and lifting criterion of (4) (Messing; Zink,
-Theorems 2.49–2.54).
-
 ## Sources
 
 - C.-L. Chai and F. Oort, "Moduli of abelian varieties and p-divisible groups: density of Hecke

@@ -15,6 +15,16 @@ abelian variety by a torus, such as the semi-abelian schemes of
    $\omega_{G/C} = e^* \Omega^1_{G/C}$, has $\deg \det W \le 0$; equivalently, every quotient bundle
    of $\omega_{G/C}$ has nonnegative degree.
 
+## Depends on
+
+- [Abelian scheme](abelian-scheme.md)
+
+## Proof depends on
+
+Its proof uses the inputs listed under Expansion.
+
+## Expansion
+
 A good expansion has pages for: the extension of homomorphisms of semi-abelian schemes over normal
 bases (Faltings–Chai, chapter I), which cannot simply extend the homomorphisms of the torus parts
 and of the abelian quotients, since these need not exist over the whole base when the toric rank
@@ -22,22 +32,13 @@ varies (for the Tate curve over a discrete valuation ring the toric rank is $0$ 
 and $1$ on the special fibre; Mumford's introduction separates the case of constant toric rank): the
 expansion first extends over the local rings of $S$ at points of codimension one, which are discrete
 valuation rings, and then over $S$ by normality, or follows a source that proves the theorem for
-varying toric rank; and, for 2, the semipositivity of the Hodge bundle of a semi-abelian scheme over
-a curve in characteristic zero, through the variation of Hodge structure of the abelian part and the
-degeneration at the points where $G$ is not abelian. No source stating 2 in this generality has been
-identified, and this plan is not a proof of it.
-
-## Depends on
-
-- [Abelian scheme](abelian-scheme.md)
-
-## Proof depends on
-
-The steps of its proof are not pages yet: the extension of homomorphisms of semi-abelian schemes
-from a dense open subscheme of a normal locally noetherian base (Robert, Proposition 3.1.21, after
-Faltings, Lemma 2.1, through Néron models locally of finite type, the closure of the graph and
-Zariski's main theorem), and, for 2, the semipositivity of the Hodge bundle of a semi-abelian scheme
-over a curve in characteristic zero, for which no source in this generality has been identified.
+varying toric rank, such as Robert, Proposition 3.1.21, after Faltings, Lemma 2.1, which extends a
+homomorphism from a dense open subscheme of a normal locally noetherian base through Néron models
+locally of finite type, the closure of the graph and Zariski's main theorem; and, for 2, the
+semipositivity of the Hodge bundle of a semi-abelian scheme over a curve in characteristic zero,
+through the variation of Hodge structure of the abelian part and the degeneration at the points
+where $G$ is not abelian. No source stating 2 in this generality has been identified, and this plan
+is not a proof of it.
 
 ## Sources
 

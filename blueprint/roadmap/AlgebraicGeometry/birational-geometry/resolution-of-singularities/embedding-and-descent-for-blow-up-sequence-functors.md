@@ -51,9 +51,6 @@ item 4 of [Blow-ups along smooth centres and total transforms](blow-ups-along-sm
   compatibility of blowing up with flat base change (item 4), which holds for arbitrary schemes,
   applied in 1 along the smooth surjections $X' \to X$ and $V \to X'$
 
-The other steps of its proof are not pages yet: the descent of the centres along smooth surjections,
-stage by stage, and, for 3, Kollár's local general linear projection over an infinite field.
-
 ## Sources
 
 - J. Kollár, "Resolution of singularities – Seattle lecture", arXiv:math/0508332 (version 3),

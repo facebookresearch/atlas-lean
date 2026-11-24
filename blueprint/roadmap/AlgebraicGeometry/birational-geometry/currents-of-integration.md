@@ -11,35 +11,41 @@ supported in an analytic set of dimension less than $p$ is zero; a closed curren
 bidimension $(p, p)$ supported in $A$ is a combination $\sum_j \lambda_j [A_j]$ of the currents of the
 irreducible components of $A$, with constant coefficients (support theorems).
 
+## Depends on
+
+Its statement uses the notions listed under Expansion.
+
+## Proof depends on
+
+Its proof uses the inputs listed under Expansion.
+
+## Expansion
+
 A good expansion has pages for:
 
 - currents on manifolds, their derivatives defined by duality, push-forwards by proper maps and
   pull-backs by submersions (Demailly, *Complex Analytic and Differential Geometry*, Chapter I, §2);
 - positive forms and positive currents (Chapter III, §1);
-- Lelong's theorem on currents of integration, with the local finiteness of the volume of $A_{\mathrm{reg}}$
-  near $A_{\mathrm{sing}}$ (Chapter III, (2.5)–(2.7)), and the Skoda–El Mir extension theorem
-  (Demailly, *Analytic Methods*, Theorem (1.18));
+- Lelong's theorem on currents of integration, with the local finiteness of the volume of
+  $A_{\mathrm{reg}}$ near $A_{\mathrm{sing}}$ (Chapter III, (2.5)–(2.7)), and the Skoda–El Mir
+  extension theorem (Demailly, *Analytic Methods*, Theorem (1.18));
 - the first and second support theorems and their corollaries (Chapter III, (2.10)–(2.14));
 - the fundamental solution $\frac{i}{\pi} \partial\bar\partial \log |z| = \delta_0$ on $\mathbb{C}$
   (Chapter I, Corollary 3.4).
 
-## Depends on
+A good expansion also states and links:
 
-Its statement uses closed analytic subsets of complex manifolds, their regular loci and currents on
-complex manifolds, which no page states yet.
-
-## Proof depends on
-
-The steps of its proof are not pages yet. Lelong's theorem (Demailly, *Complex Analytic and
-Differential Geometry*, Chapter III, (2.6)–(2.7)) rests on decomposable test forms and the finite
-ramified projections of $A$ onto coordinate subspaces (Chapter II, Proposition (4.8) and the local
-parametrization theorem (4.19), which the proof of (2.6) cites as II.3.8 and II.3.19), which give
-the local finiteness of the volume of $A_{\mathrm{reg}}$ near $A_{\mathrm{sing}}$, and on the
-Skoda–El Mir extension theorem across the pluripolar set $A_{\mathrm{sing}}$ (*Analytic Methods*,
-Theorem (1.18)), which gives the closedness of $[A]$; the support theorems (Chapter III,
-(2.10)–(2.14)) rest on the local structure of currents of order zero along a submanifold and their
-normal order. Both use currents with their derivatives, push-forwards and pull-backs (Chapter I, §2)
-and positive currents (Chapter III, §1).
+- closed analytic subsets of complex manifolds, their regular loci and currents on complex manifolds
+  (Demailly, *Complex Analytic and Differential Geometry*, Chapter I, §2, and Chapter II, §4), for
+  the statement
+- decomposable test forms and the finite ramified projections of $A$ onto coordinate subspaces
+  (Chapter II, Proposition (4.8) and the local parametrization theorem (4.19), which the proof of
+  Chapter III, (2.6), cites as II.3.8 and II.3.19), for the local finiteness of the volume of
+  $A_{\mathrm{reg}}$ near $A_{\mathrm{sing}}$ in Lelong's theorem (Chapter III, (2.6)–(2.7)), whose
+  closedness of $[A]$ comes from the Skoda–El Mir extension theorem across the pluripolar set
+  $A_{\mathrm{sing}}$
+- the local structure of currents of order zero along a submanifold and their normal order, for the
+  support theorems (Chapter III, (2.10)–(2.14))
 
 ## Sources
 

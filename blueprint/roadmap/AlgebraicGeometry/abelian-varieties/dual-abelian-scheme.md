@@ -1,7 +1,6 @@
 # Dual abelian scheme
 
-This node is still to be broken down: the statement is precise, but three inputs of its proof are
-not yet pages.
+This node is still to be broken down: the statement is precise, but its proof is not.
 
 Let $S$ be a scheme and $A \to S$ an [abelian scheme](abelian-scheme.md) with zero section $e$. Its
 relative Picard functor $\mathcal{P}ic_{A/S}$ sends an $S$-scheme $T$ to the group of isomorphism

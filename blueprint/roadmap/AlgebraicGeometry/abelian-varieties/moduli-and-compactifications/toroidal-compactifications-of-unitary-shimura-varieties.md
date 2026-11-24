@@ -59,12 +59,6 @@ without self-intersections; and the ampleness of $\omega_Y^{\otimes k} \otimes \
 - [Hodge bundle on toroidal compactifications of Siegel moduli schemes](hodge-bundle-on-siegel-toroidal-compactifications.md),
   for the polarized fan of its target, from which Alpöge's library deduces 1 from 2
 
-The other steps of its proof are not pages yet: the moduli problems of PEL type attached to unitary
-groups and their integral models, their toroidal compactifications for smooth projective cone
-decompositions, the logarithmic Kodaira–Spencer isomorphism on the compactification, the comparison
-of their charts with toric charts, and the ampleness of $\omega_Y^{\otimes k} \otimes
-\mathcal{O}_Y(-B)$.
-
 ## Sources
 
 - K.-W. Lan, "Integral models of toroidal compactifications with projective cone decompositions",

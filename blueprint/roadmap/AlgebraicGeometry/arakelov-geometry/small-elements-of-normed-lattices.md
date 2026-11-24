@@ -40,6 +40,16 @@ Moreover, for a free $\mathbb{Z}$-module $M$ of rank $m$ and the open unit ball,
 gives $\log \#\{ x \in M : \lVert x \rVert < 1 \} \ge \log (\operatorname{vol}\{ \lVert x \rVert < 1
 \} / \operatorname{covol}(M)) - m \log 2$.
 
+## Depends on
+
+This node has no prerequisites.
+
+## Proof depends on
+
+Its proof uses the inputs listed under Expansion.
+
+## Expansion
+
 A good expansion has pages for:
 
 - Minkowski's first theorem on lattice points in convex symmetric bodies and its counting form
@@ -50,17 +60,6 @@ A good expansion has pages for:
   \mathbb{R}^n$ and its polar body $K^*$, and Gillet and Soulé's estimates for the numbers of
   lattice points in $K$ and $K^*$, from which Moriwaki deduces items 1–5 (Moriwaki, proof of
   Proposition 2.1, pp. 13–14).
-
-## Depends on
-
-This node has no prerequisites.
-
-## Proof depends on
-
-The steps of its proof are not pages yet: Minkowski's first theorem in its counting form,
-Minkowski's second theorem on successive minima, Mahler's inequality $V(K) V(K^*) \ge 4^n / (n!)^2$
-and Gillet and Soulé's estimates for the numbers of lattice points in $K$ and $K^*$ (Moriwaki, proof
-of Proposition 2.1).
 
 ## Sources
 

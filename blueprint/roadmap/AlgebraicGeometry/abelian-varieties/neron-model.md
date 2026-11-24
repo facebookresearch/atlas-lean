@@ -50,10 +50,13 @@ A good expansion follows Bosch, Lütkebohmert and Raynaud and has pages for:
 - [Abelian varieties are projective](abelian-varieties-are-projective.md), for the projective
   embedding of $A$ by which Conrad presents it as a quotient of a Jacobian (Proposition 4.3)
 
-The other steps of its proof are not pages yet: Néron's existence theorem with its construction and
-the basic properties of Néron models (Bosch–Lütkebohmert–Raynaud); the uniqueness, which is the
-Yoneda lemma; and, for the reduction to Jacobians, the presentation of $A$ as a quotient of a
-Jacobian through Bertini slicing and Poincaré's reducibility theorem (Conrad, Proposition 4.3).
+## Expansion
+
+A good expansion also states and links:
+
+- the Yoneda lemma, for the uniqueness of the Néron model up to unique isomorphism
+- Bertini slicing, with Poincaré's reducibility theorem, for the presentation of $A$ as a quotient
+  of a Jacobian (Conrad, Proposition 4.3)
 
 ## Sources
 

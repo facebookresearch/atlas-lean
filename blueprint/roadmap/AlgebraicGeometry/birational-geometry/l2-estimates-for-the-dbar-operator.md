@@ -71,26 +71,20 @@ A good expansion has pages for:
 - [Currents of integration and the support theorems](currents-of-integration.md), for the curvature
   currents of singular metrics in Corollary (5.3)
 
-Its statement also uses Kähler manifolds with complete metrics and hermitian vector bundles with
-their curvature operators on $L^2$ forms, which no page states yet.
-
 ## Proof depends on
 
 - [Schwarz–Pick lemma](../../Analysis/complex-analysis/geometric-function-theory/schwarz-pick-lemma/schwarz-pick.md),
   for the Schwarz bound $|f(z)| \le |z|$ on the unit disc, its case $w = 0$ when $f(0) = 0$, from
   which Demailly proves the Serre–Siegel lemma (6.13)
 
-The other steps of its proof are not pages yet: the commutation relations of Kähler geometry and the
-Bochner–Kodaira–Nakano identity with its a priori inequality (Demailly (4.5)–(4.7)), from which
-(5.1) follows by cut-off functions, which the completeness of the metric provides, and the
-Hahn–Banach theorem in $L^2$ (only a one-step extension of Hahn–Banach is a page), with the passage
-from (5.1) to (5.2) and (5.3); Ohsawa's twisted inequality (13.1) and Ohsawa and Takegoshi's §§1–3;
-the spectral theory of the complex Laplace operator behind the holomorphic Morse inequalities
-(8.1)–(8.2); the Riemann–Roch formula $\chi(X, kL) = \frac{(L^n)}{n!} k^n + o(k^n)$ on a compact
-complex manifold, which the standard results give only for projective varieties; the complete Kähler
-metrics on weakly pseudoconvex manifolds and on complements of analytic subsets (Lemma (12.9);
-Demailly 1982, Théorème 1.5); and the reduction of the Serre–Siegel bound to the Schwarz lemma on
-polydiscs in (6.13).
+## Expansion
+
+A good expansion also states and links:
+
+- Kähler manifolds with complete metrics and hermitian vector bundles with their curvature operators
+  on $L^2$ forms (Demailly, §§4–5), for the statement
+- the cut-off functions that the completeness of the metric provides and the Hahn–Banach theorem in
+  $L^2$ (Demailly, proof of (5.1)), for the passage from the a priori inequality (4.7) to (5.1)
 
 ## Sources
 

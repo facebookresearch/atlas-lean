@@ -28,23 +28,27 @@ The page on [isogenies of abelian schemes](isogenies-of-abelian-schemes.md) uses
 $n$ are flat; by 3, $n_A$ is étale on a fibre $A_s$ exactly when $n$ is invertible in $k(s)$ or
 $A_s$ has dimension $0$, and 2 passes from the fibres to $S$.
 
-A good expansion has pages for: the local criterion of flatness and its fibrewise form (EGA IV₃,
-§11.3; Stacks Project, Section 37.16); the description of étale morphisms through flatness and their
-fibres (Stacks Project, Section 29.37); and, over a field, the flatness of a surjective homomorphism
-onto a smooth group scheme, through generic flatness and translations, and the Jacobian criterion
-for étaleness at the identity, carried to every point by translations.
-
 ## Depends on
 
-Its statement uses flat, étale and smooth morphisms, group schemes and their Lie algebras, which no
-page states yet.
+Its statement uses the notions listed under Expansion.
 
 ## Proof depends on
 
-The steps of its proof are not pages yet: the local and fibrewise criteria of flatness (EGA IV₃,
-(11.3.10)), the characterization of étale morphisms at a point (Stacks Project, Tag 02GU), generic
-flatness with translations for 3, the Jacobian criterion for smooth schemes over a field and the
-homogeneity of the étale locus of a homomorphism.
+Its proof uses the inputs listed under Expansion.
+
+## Expansion
+
+A good expansion has pages for: the local criterion of flatness and its fibrewise form (EGA IV₃,
+§11.3, Théorème (11.3.10); Stacks Project, Section 37.16); the description of étale morphisms
+through flatness and their fibres (Stacks Project, Section 29.37, Lemma 29.37.15, Tag 02GU); and,
+over a field, the flatness of a surjective homomorphism onto a smooth group scheme, through generic
+flatness and translations, and the Jacobian criterion for étaleness at the identity, carried to
+every point by translations.
+
+A good expansion also states and links:
+
+- flat, smooth and étale morphisms (Stacks Project, Sections 29.26, 29.35 and 29.37) and group
+  schemes over a base (Section 39.4), with their Lie algebras, for the statement
 
 ## Sources
 

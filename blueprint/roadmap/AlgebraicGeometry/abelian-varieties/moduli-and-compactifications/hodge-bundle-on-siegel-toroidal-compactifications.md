@@ -54,10 +54,13 @@ prescribed by the values $d\,\varphi(n\gamma_i)$ of the fan on the period forms 
   their semi-abelian extensions, the minimal compactification and Lan's relatively ample
   boundary-supported divisor $D'$ (Corollary 6.7)
 
-The other steps of its proof are not pages yet: one polarized cone decomposition serving all the
-levels $n$ of the statement, the charts of 3 in the detail stated and the global generation of a
-power of the Hodge bundle in the form used, and the identification of the prescribed divisor $B$
-with a relatively ample $D'$, which Lan does not prove and for which no source has been identified.
+## Expansion
+
+A good expansion also states and links:
+
+- one polarized cone decomposition serving all the levels $n$ of the statement, for its quantifiers
+- the charts of 3, at every point of $S$ and in the detail stated there, beyond the local charts of
+  the toroidal compactification (Lan, Theorem 6.1), for 3
 
 ## Sources
 

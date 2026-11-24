@@ -58,12 +58,6 @@ unitary Shimura varieties](toroidal-compactifications-of-unitary-shimura-varieti
   for the totally toric case of the inverse of the degeneration data, which Faltings and Chai
   generalize
 
-Its targets are housed on this node until it is split, and these steps of their proofs are not pages
-yet: the representability of the moduli functors with level structure and the irreducibility of
-their geometric fibres, the degeneration data of polarized semi-abelian schemes and their inverse,
-the toroidal and minimal compactifications, and the Koecher principle (Faltings–Chai; Lan; Madapusi
-Pera).
-
 ## Sources
 
 - G. Faltings and C.-L. Chai, *Degeneration of Abelian Varieties*, Ergebnisse der Mathematik (3) 22,

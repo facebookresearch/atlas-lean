@@ -1,8 +1,7 @@
 # Crystalline nature of the de Rham cohomology of abelian schemes
 
 This node is still to be broken down: its geometric statement has a source, Masullo's comparison
-theorem, but its proof is not yet a page, and its identification with the form that Alpöge's library
-states is open.
+theorem, and its identification with the form that Alpöge's library states is open.
 
 Let $R \to R_0$ be a surjection of rings whose kernel $I$ carries nilpotent divided powers, $A$ an
 [abelian scheme](../abelian-scheme.md) over $R$ and $A_0 = A \times_R R_0$. Then the comparison map
@@ -35,11 +34,6 @@ primitive cohomology of the lift to the primitive crystalline cohomology of the 
 `crysToDR` being its dual on homology. No source identifies these models and maps with the geometric
 comparison above; that identification is part of this target.
 
-A good expansion has pages for: Masullo's crystalline site and his comparison theorem, with the
-computation of the divided power envelope of $A_0$ in a smooth lift and of its pd-adic completion;
-and the identification of the cohomology of primitive classes and of the pullback map of Alpöge's
-library with that comparison, including its compatibility with the group law.
-
 ## Depends on
 
 - [Abelian scheme](../abelian-scheme.md)
@@ -50,11 +44,15 @@ library with that comparison, including its compatibility with the group law.
 
 ## Proof depends on
 
-The steps of its proof are not pages yet: Masullo's crystalline site over a general divided power
-base and his comparison theorem (Definition 6.1.1, Theorem 6.2.1), the computation of the divided
-power envelope of $A_0$ in $A$ and of its pd-adic completion, and the identification with the
-cohomology of primitive classes and the pullback map of Alpöge's library, for which no source has
-been identified.
+Its proof uses the inputs listed under Expansion.
+
+## Expansion
+
+A good expansion has pages for: Masullo's crystalline site and his comparison theorem (Definition
+6.1.1, Theorem 6.2.1), with the computation of the divided power envelope of $A_0$ in a smooth lift
+and of its pd-adic completion; and the identification of the cohomology of primitive classes and of
+the pullback map of Alpöge's library with that comparison, including its compatibility with the
+group law.
 
 ## Sources
 

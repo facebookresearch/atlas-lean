@@ -69,12 +69,6 @@ I.13.10–I.13.11 are the case of kernels of order prime to the characteristic.
   for the reduction of a nonsingular integral matrix to elementary divisors, applied to the image of
   $\alpha$ in $\mathbb{Z}^r$, in the degree formula of 4 (van der Geer–Moonen, (11.28) (i))
 
-Its other targets are housed on this node until it is split, and these steps of their proofs are not
-pages yet: Mumford's Riemann–Roch and vanishing theorems for 2 and 3 (Mumford, §16), theta groups
-with the Weil pairings $e_\lambda$ and van der Geer and Moonen's descent criterion for 4, and, for
-5, an isogeny $h$ with $h \circ f = n_A$ or Deligne's theorem that a finite commutative group scheme
-over a field is killed by its order.
-
 ## Sources
 
 - G. van der Geer and B. Moonen, *Abelian Varieties*, book draft, Chapter VI, "The Picard scheme of

@@ -42,17 +42,9 @@ and $Y = B$ for an isogeny $f \colon A \to B$, which is faithfully flat with $A 
 \times_S \operatorname{Ker}(f)$, so that $B$ is the quotient, to identify the kernel of the dual
 isogeny with $\operatorname{Ker}(f)^D$ (van der Geer–Moonen, Theorem (7.5)).
 
-A good expansion has pages for: the representability of $G^D$ by the dual of the Hopf algebra of $G$
-and biduality (Oort, I.2); the existence of fppf quotients of finite locally free group schemes by
-finite locally free closed subgroups, with the multiplicativity of ranks (Stacks Project, Tag 07S7,
-which applies to the action of $H$ on the affine $S$-scheme $G$); the exactness of Cartier duality
-(Tate, §§1.2–1.3); and, for 3, where the quotient is assumed to be a scheme, the descent of line
-bundles along the $G$-torsor $X \to Y$ (van der Geer–Moonen, (7.2)–(7.4)).
-
 ## Depends on
 
-Its statement uses fppf sheaves of groups, their quotients and the sheaf
-$\underline{\operatorname{Hom}}(G, \mathbb{G}_m)$, which no page states yet.
+Its statement uses the notions listed under Expansion.
 
 ## Proof depends on
 
@@ -63,10 +55,19 @@ $\underline{\operatorname{Hom}}(G, \mathbb{G}_m)$, which no page states yet.
   for the converse in 1: a closed immersion $G / K \to G''$ between finite locally free $S$-schemes
   of the same rank is an isomorphism
 
-The other steps of its proof are not pages yet: the representability of the Cartier dual and
-biduality, the existence of fppf quotients by finite locally free subgroups with the
-multiplicativity of ranks, the exactness of Cartier duality (Oort, I.2; Tate, §§1.2–1.3), and, for
-3, the descent of line bundles along the $G$-torsor $X \to Y$ (van der Geer–Moonen, (7.2)–(7.4)).
+## Expansion
+
+A good expansion has pages for: the representability of $G^D$ by the dual of the Hopf algebra of $G$
+and biduality (Oort, I.2); the existence of fppf quotients of finite locally free group schemes by
+finite locally free closed subgroups, with the multiplicativity of ranks (Stacks Project, Tag 07S7,
+which applies to the action of $H$ on the affine $S$-scheme $G$); the exactness of Cartier duality
+(Tate, §§1.2–1.3); and, for 3, where the quotient is assumed to be a scheme, the descent of line
+bundles along the $G$-torsor $X \to Y$ (van der Geer–Moonen, (7.2)–(7.4)).
+
+A good expansion also states and links:
+
+- fppf sheaves of groups (Stacks Project, Section 34.7, Tag 021L), their quotients and the sheaf
+  $\underline{\operatorname{Hom}}(G, \mathbb{G}_m)$, for the statement
 
 ## Sources
 

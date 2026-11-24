@@ -70,12 +70,6 @@ expansion has pages for:
 - [Arithmetic characteristic classes of hermitian vector bundles](arithmetic-chern-classes.md), for
   the secondary Bott–Chern classes in the anomaly formulas
 
-The other steps of its proof are not pages yet: zeta-regularized determinants and analytic torsion,
-the smoothness, curvature theorem and anomaly formulas of the Quillen metric (Bismut–Gillet–Soulé),
-the immersion formula (Bismut–Lebeau; Bismut–Gillet–Soulé, Theorem 4.13), Gillet and Soulé's
-computation of the analytic torsion of the trivial bundle on projective spaces, and the asymptotics
-of Bismut and Vasserot.
-
 ## Sources
 
 - H. Gillet and C. Soulé, "An arithmetic Riemann–Roch theorem", Invent. Math. 110 (1992), 473–543,

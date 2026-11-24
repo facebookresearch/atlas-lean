@@ -90,11 +90,6 @@ the moduli application, which is the concern of 3 and of the pages it uses.
   for the toroidal compactifications in the unitary application of 3, not for the proportionality
   factor or the push-forward along flag bundles
 
-The other steps of its proof are not pages yet: good forms and good metrics with Mumford's Theorem
-1.4, the Gysin formula for flag bundles and its conversion into the identity 2, the canonical
-extensions of automorphic vector bundles to toroidal compactifications with their good invariant
-metrics, and proportionality in the form 3 (Mumford, §§1–3; Burgos Gil–Kramer–Kühn).
-
 ## Sources
 
 - D. Mumford, "Hirzebruch's proportionality theorem in the non-compact case", Invent. Math. 42

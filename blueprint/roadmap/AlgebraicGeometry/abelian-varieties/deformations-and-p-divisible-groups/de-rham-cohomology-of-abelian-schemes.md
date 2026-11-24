@@ -38,9 +38,6 @@ e^* \Omega^q_{A^\natural/R}$ for all $q$ (Mazur–Messing, I.2.6.7 and I.4.1.7, 
 Fonseca–Matthes, §2.2 and Remark 2.8, and by Česnavičius, §3.2). That $H^1$ depends only on $A
 \times_R R_0$ for a divided power thickening $R \to R_0$ is the subject of the node on the
 [crystalline nature of the de Rham cohomology of abelian schemes](crystalline-nature-of-the-de-rham-cohomology-of-abelian-schemes.md).
-A good expansion has pages for: the Hodge–de Rham spectral sequence of an abelian scheme over a ring
-and its degeneration, with base change; universal vector extensions and the identifications above;
-and the polarization form of 4 with its isotropy and perfectness.
 
 ## Depends on
 
@@ -49,9 +46,13 @@ and the polarization form of 4 with its isotropy and perfectness.
 
 ## Proof depends on
 
-The steps of its proof are not pages yet: the Hodge–de Rham spectral sequence of an abelian scheme
-over a ring, its degeneration and base change; universal vector extensions and the identifications
-of Mazur and Messing; and the polarization form of 4 with its isotropy and perfectness.
+Its proof uses the inputs listed under Expansion.
+
+## Expansion
+
+A good expansion has pages for: the Hodge–de Rham spectral sequence of an abelian scheme over a ring
+and its degeneration, with base change; universal vector extensions and the identifications of Mazur
+and Messing above; and the polarization form of 4 with its isotropy and perfectness.
 
 ## Sources
 

@@ -1,7 +1,7 @@
 # Ampleness of nef plus ample hermitian line bundles
 
 This node is still to be broken down: the statement is precise, and the plan below derives it from
-published results, which are not pages yet.
+published results.
 
 Let $X$ be a projective arithmetic variety in Moriwaki's sense, an integral scheme projective and
 flat over $\operatorname{Spec} \mathbb{Z}$ whose generic fibre need not be smooth, and let $\bar L$
@@ -60,11 +60,6 @@ A good expansion follows this derivation, with pages for:
 - [Zhang's arithmetic ampleness theorem](arithmetic-ampleness-theorem.md), for Zhang's theorem,
   whose arguments Moriwaki's Corollary 5.1 adapts once the metric is semiample, and which gives the
   small sections directly when the generic fibre is smooth
-
-The other steps of its proof are not pages yet: Moriwaki's nonnegativity of mixed arithmetic
-intersection numbers of nef hermitian line bundles and the positivity of the top intersections of an
-ample one on horizontal subschemes (1998, Proposition 2.3 (1) and the proof of Lemma 2.4), and his
-Corollary 5.1 of 2015, with its Theorem 0.2 on semiample metrics.
 
 ## Sources
 

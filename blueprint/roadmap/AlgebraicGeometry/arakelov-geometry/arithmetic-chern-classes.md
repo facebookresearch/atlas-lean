@@ -99,15 +99,18 @@ A good expansion has pages for:
   Chow groups and $K$-theory with supports and their products, on which the arithmetic Chern
   character with supports is built
 
-The other steps of its proof are not pages yet: the secondary Bott–Chern classes and their
-properties (Bismut–Gillet–Soulé, I; Gillet–Soulé, Inventiones, 2.4.1), the splitting principle for
-hermitian vector bundles, the arithmetic Grothendieck group and its action on the arithmetic Chow
-groups graded by dimension (Inventiones, Theorem 4), the cap product $\widehat{CH}^p(P) \otimes
-\widehat{CH}_q(X) \to \widehat{CH}_{q-p}(X)_{\mathbb{Q}}$ for a map from $X$ to a regular $P$
-(Inventiones, §2.3.1, Theorem 3), the arithmetic Chern character with supports of a metrized
-complex, through the Grassmann graph construction and its singular-current correction (Inventiones,
-§3.1, Definition 6), and the comparisons of Inventiones, §2.6 and §3 (Proposition 1, Lemmas 21 and
-25, Theorems 5 and 6).
+## Expansion
+
+A good expansion also states and links:
+
+- the properties of the secondary Bott–Chern classes (Bismut–Gillet–Soulé, I; Gillet–Soulé,
+  Inventiones, 2.4.1), and the splitting principle for hermitian vector bundles, for the arithmetic
+  Chern classes
+- the cap product $\widehat{CH}^p(P) \otimes \widehat{CH}_q(X) \to
+  \widehat{CH}_{q-p}(X)_{\mathbb{Q}}$ for a map from $X$ to a regular $P$ (Inventiones, §2.3.1,
+  Theorem 3), for the classes on a possibly singular $X$
+- the Grassmann graph construction and its singular-current correction (Inventiones, §3.1,
+  Definition 6), for the arithmetic Chern character with supports
 
 ## Sources
 

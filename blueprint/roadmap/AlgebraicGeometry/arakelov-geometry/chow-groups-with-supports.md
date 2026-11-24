@@ -37,6 +37,18 @@ with $\operatorname{div}(g) = \operatorname{div}(f)$, $g - f$ a boundary, and $g
 $\mathcal{Z}$ almost properly: the divisor of each summand meets $\mathcal{Z}$ properly, though its
 support need not.
 
+## Depends on
+
+- [Geometrically reduced variety over a field](../schemes-and-morphisms/varieties-over-a-field/is-variety.md),
+  for the variety convention in the moving-lemma case; smoothness and quasi-projectivity are
+  hypotheses of that lemma
+
+## Proof depends on
+
+Its proof uses the inputs listed under Expansion.
+
+## Expansion
+
 A good expansion has pages for:
 
 - Chow groups with supports in a closed subset and in a family of supports, with the exact sequence
@@ -51,22 +63,11 @@ A good expansion has pages for:
   lemma for $K_1$-chains above, which the proof of the arithmetic intersection product uses on the
   generic fibre (Gillet–Soulé 4.2.5–4.2.6 and p. 143).
 
-## Depends on
+A good expansion also states and links:
 
-- [Geometrically reduced variety over a field](../schemes-and-morphisms/varieties-over-a-field/is-variety.md),
-  for the variety convention in the moving-lemma case; smoothness and quasi-projectivity are
-  hypotheses of that lemma
-
-Its statement also uses the Grothendieck group of complexes of locally free sheaves acyclic off a
-closed subset, with its $\gamma$-filtration, and $K_1$-chains, which no page states yet.
-
-## Proof depends on
-
-The steps of its proof are not pages yet: $K$-theory with supports, its $\lambda$-operations and
-$\gamma$-filtration, with the isomorphism above (Gillet–Soulé, *Adams operations*, Theorem 8.2;
-Soulé, Theorem 4); the products and their agreement with Serre's Tor formula (Theorem C; Serre,
-Chapter V); Chow's moving lemma for cycles (Roberts) and the moving lemma for $K_1$-chains
-(Gillet–Soulé 4.2.5–4.2.6).
+- the Grothendieck group of complexes of locally free sheaves acyclic off a closed subset, with its
+  $\gamma$-filtration, and $K_1$-chains (Gillet–Soulé, *Adams operations*, §1.2; Gillet–Soulé,
+  4.2.5), for the statement
 
 ## Sources
 

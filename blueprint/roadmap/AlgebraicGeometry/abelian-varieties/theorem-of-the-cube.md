@@ -61,11 +61,14 @@ later version, referring to Mumford's *Abelian Varieties*, pp. 57–58.
   for the theorem of the cube, whose proof shows with it that the locus over which $L$ is trivial is
   open (van der Geer–Moonen, (2.5))
 
-The other steps of its proof are not pages yet: the seesaw principle, through cohomology and base
-change in degree zero for the evaluation map and Nakayama's lemma (van der Geer–Moonen, (2.1)); the
-Künneth identification $H^1(X \times Y, \mathcal{O}) \cong H^1(X, \mathcal{O}) \oplus H^1(Y,
-\mathcal{O})$, the decisive step of the theorem of the cube (2.5); and the deductions of 3–5 in van
-der Geer and Moonen's Chapter II.
+## Expansion
+
+A good expansion also states and links:
+
+- cohomology and base change in degree zero for the evaluation map, with Nakayama's lemma (van der
+  Geer–Moonen, (2.1)), for the seesaw principle 1
+- the Künneth identification $H^1(X \times Y, \mathcal{O}) \cong H^1(X, \mathcal{O}) \oplus H^1(Y,
+  \mathcal{O})$ (van der Geer–Moonen, (2.5)), for the decisive step of the theorem of the cube 3
 
 ## Sources
 

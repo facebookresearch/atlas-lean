@@ -37,13 +37,6 @@ every point of a smooth scheme of finite type over $k$. Items 3 and 4 hold for a
    $\Pi^{-1}_{\mathrm{tot}}(E)$, the reduced union of the birational transform of $E$ and of the
    exceptional divisors, is an snc divisor.
 
-A good expansion has pages for: the computations in a regular system of parameters behind 1 (Kollár,
-16 and Definition 24); the charts $z_j = z_i u_j$ of the blow-up of a coordinate centre, after étale
-coordinates, for 2 and 6; the Rees algebra of an ideal sheaf, the blow-up of an effective Cartier
-divisor (Stacks Project, Tag 0807) and the compatibility of the Rees algebra with flat base change
-(Tag 0805), for 3 and 4; and the purity of the exceptional set of a birational morphism to a smooth
-variety, for 5 (Shafarevich, II.4.4).
-
 ## Depends on
 
 - [Simple normal crossing divisor](../simple-normal-crossing-divisor.md), for snc divisors,
@@ -53,10 +46,16 @@ variety, for 5 (Shafarevich, II.4.4).
 
 ## Proof depends on
 
-The steps of its proof are not pages yet: the computations in a regular system of parameters, the
-charts of the blow-up of a coordinate centre, the Rees algebra and its compatibility with flat base
-change (Stacks Project, Tag 0805), the blow-up of an effective Cartier divisor (Tag 0807), and the
-purity of the exceptional set (Shafarevich, II.4.4).
+Its proof uses the inputs listed under Expansion.
+
+## Expansion
+
+A good expansion has pages for: the computations in a regular system of parameters behind 1 (Kollár,
+16 and Definition 24); the charts $z_j = z_i u_j$ of the blow-up of a coordinate centre, after étale
+coordinates, for 2 and 6; the Rees algebra of an ideal sheaf, the blow-up of an effective Cartier
+divisor (Stacks Project, Tag 0807) and the compatibility of the Rees algebra with flat base change
+(Tag 0805), for 3 and 4; and the purity of the exceptional set of a birational morphism to a smooth
+variety, for 5 (Shafarevich, II.4.4).
 
 ## Sources
 
