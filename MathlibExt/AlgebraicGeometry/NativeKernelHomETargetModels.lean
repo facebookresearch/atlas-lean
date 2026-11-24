@@ -95,11 +95,6 @@ variable (N : OrdinaryBetaModuleSource (TopCat.of X) (analyticDifferentialRing n
 
 variable
   [(coefficientEnhancedQ X CoefficientExact CoefficientBounded Boundary Projection).IsRightAdjoint]
-  [(coefficientEnhancedQ X CoefficientExact CoefficientBounded Boundary Projection).IsLeftAdjoint]
-
-
-variable [∀ K : EnhancedCategory ℂ (TopCat.of X) Boundary Projection,
-  IsIso ((coefficientLeftAdjunction X CoefficientExact CoefficientBounded Boundary Projection).unit.app K)]
 
 
 variable [∀ H : BoundedModules (KY X) (KY X),
@@ -111,9 +106,6 @@ variable [∀ H : BoundedModules (KY X) (KY X),
     ((solutionsWithKernel n X Real First Graph Geometry N Normalize BetaExact
       Representatives Kernel).obj (Opposite.op M)))
 
-
-variable [IsIso ((coefficientRightAdjunction X CoefficientExact CoefficientBounded Boundary Projection).unit.app
-  (sourceSolution n X Real First Graph Geometry N Normalize BetaExact Representatives Kernel M BoundedSolution))]
 
 
 open EnhancedSheafHomModels IndSheafDerivedAlphaModels

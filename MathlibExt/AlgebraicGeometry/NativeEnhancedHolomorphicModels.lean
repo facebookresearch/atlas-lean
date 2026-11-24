@@ -371,23 +371,18 @@ def actualRegularHolonomicEnhancedSol :=
         Representatives CoefficientExact Boundary Projection SolBounded
 
 variable
-  [(coefficientEnhancedQ X CoefficientExact CoefficientBounded Boundary Projection).IsRightAdjoint]
-  [(coefficientEnhancedQ X CoefficientExact CoefficientBounded Boundary Projection).IsLeftAdjoint]
-  [∀ K : EnhancedCategory ℂ (TopCat.of X) Boundary Projection,
-    IsIso ((coefficientLeftAdjunction X CoefficientExact CoefficientBounded Boundary Projection).unit.app K)]
-  [∀ H : BoundedModules (KY X) (KY X),
+  [quotientLeftAdjoint :
+    (coefficientEnhancedQ X CoefficientExact CoefficientBounded Boundary Projection).IsRightAdjoint]
+  [tensorClosed : ∀ H : BoundedModules (KY X) (KY X),
     ((boundedCoefficientTensor n X Real IX Graph).obj H).IsLeftAdjoint]
-  [(originalOrdinaryBetaPull n X Real IX Graph Geometry Ordinary Normalize BetaExact).IsLeftAdjoint]
+  [betaPullRightAdjoint :
+    (originalOrdinaryBetaPull n X Real IX Graph Geometry Ordinary Normalize BetaExact).IsLeftAdjoint]
   (M : DerivedCategory (RingedComplexCoefficientModels.OrdinaryModule (TopCat.of X)
     (analyticDifferentialRing n X)))
   (BoundedSolution : IsBoundedDerived (Bimod (KY X) (KY X))
     ((actualEnhancedSolRaw n X IX IP NX NP PX PP Structure Operators MX MP V Ot HE Exp Plus
       Real Graph Proper Adj Image Derivation Geometry BoundedO Ordinary Normalize BetaExact
         Representatives).obj (Opposite.op M)))
-  [IsIso ((coefficientRightAdjunction X CoefficientExact CoefficientBounded Boundary Projection).unit.app
-    (sourceSolution n X Real IX Graph Geometry Ordinary Normalize BetaExact Representatives
-      (actualEnhancedO n X IX IP NX NP PX PP Structure Operators MX MP V Ot HE Exp Plus
-        Real Graph Proper Adj Image Derivation Geometry BoundedO) M BoundedSolution))]
 
 variable [(Bimod.forget (B := KY X) (RealInverseDX n X Real IX Graph)).Additive]
   (OCoefficientExact : ExactCoefficientSource (RealInverseDX n X Real IX Graph) (KY X))

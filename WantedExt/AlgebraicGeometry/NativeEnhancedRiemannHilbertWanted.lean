@@ -24,6 +24,12 @@ not supplied as an independent oracle or assumed invertible. The request is
 that this ringed mate is an isomorphism; its compatibility with the canonical
 scalar morphism of Proposition9.5.1 is a separate question, not part of it.
 
+The adjoints the reconstruction map is built from (the left adjoint of the
+enhanced quotient, the internal Hom of the coefficient tensor and the right
+adjoint of the β-pullback) are requested below and passed to the final
+request as those named holes; no unit of the quotient adjunctions is assumed
+invertible.
+
 The structural classes assumed below are not free hypotheses: each is supplied
 by a direct request, and the statements are conditional only on those requests.
 `CompactSheafSource` is `IndSheafSourceRequests.actual_compact_sheaf_source`;
@@ -206,24 +212,29 @@ variable [T2Space X] [(Bimod.forget (B := KY X) (KY X)).Additive]
   (Boundary : ProperSource ℂ (boundaryInclusion (enhancedSpace (TopCat.of X))))
   (Projection : InverseSource ℂ (baseProjection (TopCat.of X)))
 
+/-- The enhanced quotient functor has a left adjoint, the functor `L^E` of D'Agnolo--Kashiwara
+(arXiv:1311.2374v2, §4). The reconstruction map uses only this adjunction and its counit. -/
+theorem_wanted coefficient_enhanced_quotient_left_adjoint :
+  (coefficientEnhancedQ X CoefficientExact CoefficientBounded Boundary Projection).IsRightAdjoint
+
+/-- Tensoring with a bounded coefficient complex has a right adjoint, the internal Hom of
+ind-sheaf modules (Kashiwara--Schapira, Ind-sheaves; D'Agnolo--Kashiwara, §4). -/
+theorem_wanted bounded_coefficient_tensor_closed :
+  ∀ H : BoundedModules (KY X) (KY X),
+    ((boundedCoefficientTensor n X Real IX Graph).obj H).IsLeftAdjoint
+
+/-- The β-pullback of D-modules has a right adjoint: `β` is left adjoint to `α`, and the inverse
+images are left adjoint to the direct images (Kashiwara--Schapira, Ind-sheaves). -/
+theorem_wanted ordinary_beta_pull_right_adjoint :
+  (originalOrdinaryBetaPull n X Real IX Graph Geometry Ordinary Normalize BetaExact).IsLeftAdjoint
+
 variable
-  [(coefficientEnhancedQ X CoefficientExact CoefficientBounded Boundary Projection).IsRightAdjoint]
-  [(coefficientEnhancedQ X CoefficientExact CoefficientBounded Boundary Projection).IsLeftAdjoint]
-  [∀ K : EnhancedCategory ℂ (TopCat.of X) Boundary Projection,
-    IsIso ((coefficientLeftAdjunction X CoefficientExact CoefficientBounded Boundary Projection).unit.app K)]
-  [∀ H : BoundedModules (KY X) (KY X),
-    ((boundedCoefficientTensor n X Real IX Graph).obj H).IsLeftAdjoint]
-  [(originalOrdinaryBetaPull n X Real IX Graph Geometry Ordinary Normalize BetaExact).IsLeftAdjoint]
   (M : DerivedCategory (RingedComplexCoefficientModels.OrdinaryModule (TopCat.of X)
     (analyticDifferentialRing n X)))
   (BoundedSolution : IsBoundedDerived (Bimod (KY X) (KY X))
     ((actualEnhancedSolRaw n X IX IP NX NP PX PP Structure Operators MX MP V Ot HE Exp Plus
       Real Graph Proper Adj Image Derivation Geometry BoundedO Ordinary Normalize BetaExact
         Representatives).obj (Opposite.op M)))
-  [IsIso ((coefficientRightAdjunction X CoefficientExact CoefficientBounded Boundary Projection).unit.app
-    (sourceSolution n X Real IX Graph Geometry Ordinary Normalize BetaExact Representatives
-      (actualEnhancedO n X IX IP NX NP PX PP Structure Operators MX MP V Ot HE Exp Plus
-        Real Graph Proper Adj Image Derivation Geometry BoundedO) M BoundedSolution))]
 
 /-- Complete carrier constructors retain all original source normalizations. -/
 def_wanted actual_tempered_O_packet [LocallyCompactSpace X]
@@ -307,12 +318,20 @@ variable [LocallyCompactSpace X] [SecondCountableTopology X]
     (((Opens.grothendieckTopology X).over U).over W).WEqualsLocallyBijective AddCommGrpCat.{0}]
 
 /-- For a bounded holonomic M, the ringed-mate reconstruction map built from the computed O^E is an
-isomorphism (the ringed form of DK Theorem 9.5.3). -/
+isomorphism (the ringed form of DK Theorem 9.5.3). The map is formed with the left adjoint of the
+quotient and the internal Hom supplied by the requests above; `hBetaPull` is the statement of the
+request `ordinary_beta_pull_right_adjoint`. -/
 theorem_wanted actual_holonomic_reconstruction_isIso
-    (hHolonomic : HolonomicCharacteristicSupportModels.IsBoundedHolonomic n X M) :
+    (hHolonomic : HolonomicCharacteristicSupportModels.IsBoundedHolonomic n X M)
+    (hBetaPull :
+      (originalOrdinaryBetaPull n X Real IX Graph Geometry Ordinary Normalize BetaExact).IsLeftAdjoint) :
   IsIso (actualReconstructionMap n X IX IP NX NP PX PP Structure Operators MX MP V Ot HE Exp Plus
     Real Graph Proper Adj Image Derivation Geometry BoundedO Ordinary Normalize BetaExact
-      Representatives CoefficientExact CoefficientBounded Boundary Projection M BoundedSolution)
+      Representatives CoefficientExact CoefficientBounded Boundary Projection M BoundedSolution
+      (quotientLeftAdjoint := ❰coefficient_enhanced_quotient_left_adjoint❱ X CoefficientExact
+        CoefficientBounded Boundary Projection)
+      (tensorClosed := ❰bounded_coefficient_tensor_closed❱ n X IX Real Graph)
+      (betaPullRightAdjoint := hBetaPull))
 
 
 end WantedExt.AlgebraicGeometry.NativeEnhancedRiemannHilbertWanted

@@ -16,8 +16,9 @@ public import MathlibExt.CategoryTheory.NativeBoundedBimoduleModels
 # Original native D-module reconstruction evaluation and its source mates
 
 The source solution is actual left-D module Hom. Evaluation is the
-original native counit in the endpoint D-module category. L^E maps to
-that right-local source through both actual coefficient quotient units.
+original native counit in the endpoint D-module category. L^E Q maps to
+that source by the counit of L^E ⊣ Q; no quotient unit is assumed
+invertible.
 The first mate uses the ambient coefficient tensor/module Hom; the
 second uses the actual beta-pull/ringed-projection adjunction. The final
 ordinary D-module map is computed here. Its IsIso under holonomicity is
@@ -154,13 +155,15 @@ def coefficientBorderedProjection
 
 variable
   [(coefficientEnhancedQ X CoefficientExact CoefficientBounded Boundary Projection).IsRightAdjoint]
-  [(coefficientEnhancedQ X CoefficientExact CoefficientBounded Boundary Projection).IsLeftAdjoint]
 
 def coefficientLeftRepresentative : EnhancedCategory ℂ (TopCat.of X) Boundary Projection ⥤
     BoundedModules (KY X) (KY X) :=
   (coefficientEnhancedQ X CoefficientExact CoefficientBounded Boundary Projection).leftAdjoint
 
-def coefficientRightRepresentative : EnhancedCategory ℂ (TopCat.of X) Boundary Projection ⥤
+def coefficientRightRepresentative
+    [(coefficientEnhancedQ X CoefficientExact CoefficientBounded Boundary
+      Projection).IsLeftAdjoint] :
+    EnhancedCategory ℂ (TopCat.of X) Boundary Projection ⥤
     BoundedModules (KY X) (KY X) :=
   (coefficientEnhancedQ X CoefficientExact CoefficientBounded Boundary Projection).rightAdjoint
 
@@ -168,12 +171,12 @@ def coefficientLeftAdjunction : coefficientLeftRepresentative X CoefficientExact
     Boundary Projection ⊣ coefficientEnhancedQ X CoefficientExact CoefficientBounded Boundary Projection :=
   Adjunction.ofIsRightAdjoint (coefficientEnhancedQ X CoefficientExact CoefficientBounded Boundary Projection)
 
-def coefficientRightAdjunction : coefficientEnhancedQ X CoefficientExact CoefficientBounded Boundary Projection ⊣
+def coefficientRightAdjunction
+    [(coefficientEnhancedQ X CoefficientExact CoefficientBounded Boundary
+      Projection).IsLeftAdjoint] :
+    coefficientEnhancedQ X CoefficientExact CoefficientBounded Boundary Projection ⊣
     coefficientRightRepresentative X CoefficientExact CoefficientBounded Boundary Projection :=
   Adjunction.ofIsLeftAdjoint (coefficientEnhancedQ X CoefficientExact CoefficientBounded Boundary Projection)
-
-variable [∀ K : EnhancedCategory ℂ (TopCat.of X) Boundary Projection,
-  IsIso ((coefficientLeftAdjunction X CoefficientExact CoefficientBounded Boundary Projection).unit.app K)]
 
 abbrev boundedCoefficientTensor : BoundedModules (KY X) (KY X) ⥤
     DerivedCategory (Bimod (RY n X Real First Graph) (KY X)) ⥤
@@ -192,9 +195,6 @@ variable [∀ H : BoundedModules (KY X) (KY X),
 def sourceSolution : BoundedModules (KY X) (KY X) :=
   ⟨(solutionsWithKernel n X Real First Graph Geometry N Normalize BetaExact
     Representatives Kernel).obj (Opposite.op M), BoundedSolution⟩
-
-variable [IsIso ((coefficientRightAdjunction X CoefficientExact CoefficientBounded Boundary Projection).unit.app
-  (sourceSolution n X Real First Graph Geometry N Normalize BetaExact Representatives Kernel M BoundedSolution))]
 
 /-- The computed reconstruction target uses the actual ambient tensor-Hom and beta-pi right adjoints. -/
 def originalReconstructionTarget :
@@ -215,9 +215,7 @@ def originalReconstructionMap : M ⟶
   MathlibExt.CategoryTheory.NativeRingedReconstructionMaps.reconstructionMap
     (coefficientEnhancedQ X CoefficientExact CoefficientBounded Boundary Projection)
     (coefficientLeftRepresentative X CoefficientExact CoefficientBounded Boundary Projection)
-    (coefficientRightRepresentative X CoefficientExact CoefficientBounded Boundary Projection)
     (coefficientLeftAdjunction X CoefficientExact CoefficientBounded Boundary Projection)
-    (coefficientRightAdjunction X CoefficientExact CoefficientBounded Boundary Projection)
     (boundedCoefficientTensor n X Real First Graph)
     (originalOrdinaryBetaPull n X Real First Graph Geometry N Normalize BetaExact)
     (originalOrdinaryBetaPull n X Real First Graph Geometry N Normalize BetaExact).rightAdjoint

@@ -25,6 +25,13 @@ in M nor required to carry the constructed map to the morphism of
 Proposition9.5.1, so it does not identify (9.5.1) itself. The holonomic
 IsIso request concerns the separate ringed-mate reconstruction map.
 
+The three adjoint-existence hypotheses (the left adjoint of the enhanced
+quotient, the internal Hom of the coefficient tensor and the right adjoint
+of the β-pullback) are the instance requests
+`coefficient_enhanced_quotient_left_adjoint`, `bounded_coefficient_tensor_closed`
+and `ordinary_beta_pull_right_adjoint` of NativeEnhancedRiemannHilbertWanted;
+no unit of the quotient adjunctions is assumed invertible.
+
 Source: DK1311.2374v2 Definition4.5.13, Proposition9.5.1, Theorem9.5.3.
 -/
 
@@ -98,11 +105,6 @@ variable (N : OrdinaryBetaModuleSource (TopCat.of X) (analyticDifferentialRing n
 
 variable
   [(coefficientEnhancedQ X CoefficientExact CoefficientBounded Boundary Projection).IsRightAdjoint]
-  [(coefficientEnhancedQ X CoefficientExact CoefficientBounded Boundary Projection).IsLeftAdjoint]
-
-
-variable [∀ K : EnhancedCategory ℂ (TopCat.of X) Boundary Projection,
-  IsIso ((coefficientLeftAdjunction X CoefficientExact CoefficientBounded Boundary Projection).unit.app K)]
 
 
 variable [∀ H : BoundedModules (KY X) (KY X),
@@ -114,9 +116,6 @@ variable [∀ H : BoundedModules (KY X) (KY X),
     ((solutionsWithKernel n X Real First Graph Geometry N Normalize BetaExact
       Representatives Kernel).obj (Opposite.op M)))
 
-
-variable [IsIso ((coefficientRightAdjunction X CoefficientExact CoefficientBounded Boundary Projection).unit.app
-  (sourceSolution n X Real First Graph Geometry N Normalize BetaExact Representatives Kernel M BoundedSolution))]
 
 
 open EnhancedSheafHomModels IndSheafDerivedAlphaModels

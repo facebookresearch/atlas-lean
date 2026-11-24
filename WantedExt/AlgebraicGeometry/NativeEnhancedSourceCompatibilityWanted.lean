@@ -30,6 +30,13 @@ criterion on the full native D-module carrier. The regular comparison
 is a natural isomorphism with actual ordinary DR followed by the computed
 e functor, using coefficient tensor with the stable unit and no shift.
 
+The three adjoint-existence hypotheses (the left adjoint of the enhanced
+quotient, the internal Hom of the coefficient tensor and the right adjoint
+of the β-pullback) are the instance requests
+`coefficient_enhanced_quotient_left_adjoint`, `bounded_coefficient_tensor_closed`
+and `ordinary_beta_pull_right_adjoint` of NativeEnhancedRiemannHilbertWanted;
+no unit of the quotient adjunctions is assumed invertible.
+
 Source: DK1311.2374v2 Definitions4.9.1--2,9.1.1, Proposition9.1.3,
 Theorems9.3.2,9.5.3; regularity source/normalization in RegularHolonomicModels.
 -/
@@ -201,9 +208,6 @@ variable [T2Space X] [(Bimod.forget (B := KY X) (KY X)).Additive]
 
 variable
   [(coefficientEnhancedQ X CoefficientExact CoefficientBounded Boundary Projection).IsRightAdjoint]
-  [(coefficientEnhancedQ X CoefficientExact CoefficientBounded Boundary Projection).IsLeftAdjoint]
-  [∀ K : EnhancedCategory ℂ (TopCat.of X) Boundary Projection,
-    IsIso ((coefficientLeftAdjunction X CoefficientExact CoefficientBounded Boundary Projection).unit.app K)]
   [∀ H : BoundedModules (KY X) (KY X),
     ((boundedCoefficientTensor n X Real IX Graph).obj H).IsLeftAdjoint]
   [(originalOrdinaryBetaPull n X Real IX Graph Geometry Ordinary Normalize BetaExact).IsLeftAdjoint]
@@ -213,10 +217,6 @@ variable
     ((actualEnhancedSolRaw n X IX IP NX NP PX PP Structure Operators MX MP V Ot HE Exp Plus
       Real Graph Proper Adj Image Derivation Geometry BoundedO Ordinary Normalize BetaExact
         Representatives).obj (Opposite.op M)))
-  [IsIso ((coefficientRightAdjunction X CoefficientExact CoefficientBounded Boundary Projection).unit.app
-    (sourceSolution n X Real IX Graph Geometry Ordinary Normalize BetaExact Representatives
-      (actualEnhancedO n X IX IP NX NP PX PP Structure Operators MX MP V Ot HE Exp Plus
-        Real Graph Proper Adj Image Derivation Geometry BoundedO) M BoundedSolution))]
 
 
 variable
