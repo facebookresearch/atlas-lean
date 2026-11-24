@@ -33,9 +33,8 @@ removed and the names restated in Mathlib style.
 
 module
 
-public import Mathlib.Analysis.SpecialFunctions.Gamma.Deligne
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
-public import Mathlib.Data.ZMod.Basic
+public import MathlibExt.Analysis.MellinArchDatum
 public import MathlibExt.NumberTheory.AutomorphicForm.FnTwist
 
 import Mathlib.Tactic.Linarith
@@ -46,65 +45,7 @@ noncomputable section
 
 namespace LanglandsTunnell
 
-/-- The sign contribution of a `ZMod 2` parity to an archimedean
-parameter, as a complex number. -/
-def signShift (a : ZMod 2) : ℂ := if a = 0 then 0 else 1
-
-/-- A real archimedean Langlands parameter: either a principal-series
-pair or a discrete-series parameter. Only the central exponent and
-central sign are used by the Whittaker datum below. -/
-inductive RealArchParam where
-  | principal (u₁ : ℂ) (a₁ : ZMod 2) (u₂ : ℂ) (a₂ : ZMod 2) : RealArchParam
-  | discrete (u : ℂ) (k : ℕ) (hk : 1 ≤ k) : RealArchParam
-
-namespace RealArchParam
-
-/-- The exponent of the central character of a real parameter. -/
-def centralExponent : RealArchParam → ℂ
-  | principal u₁ _ u₂ _ => u₁ + u₂
-  | discrete u _ _ => 2 * u
-
-/-- The sign of the central character of a real parameter. -/
-def centralSign : RealArchParam → ZMod 2
-  | principal _ a₁ _ a₂ => a₁ + a₂
-  | discrete _ k _ => (k : ZMod 2) + 1
-
-end RealArchParam
-
 namespace Converse
-
-namespace ArchR
-
-/-- The diagonal matrix `!![y, 0; 0, 1]`. -/
-def diagOne (y : ℝ) : Matrix (Fin 2) (Fin 2) ℝ := !![y, 0; 0, 1]
-
-/-- The unipotent matrix `!![1, x; 0, 1]`. -/
-def unip (x : ℝ) : Matrix (Fin 2) (Fin 2) ℝ := !![1, x; 0, 1]
-
-/-- The standard additive character of `ℝ`, `x ↦ exp (2πi x)`. -/
-def psi (x : ℝ) : ℂ := Complex.exp (2 * (Real.pi : ℂ) * Complex.I * x)
-
-/-- The quasi-character of `ℝˣ` attached to an exponent and a parity. -/
-def quasiChar (u : ℂ) (a : ZMod 2) (y : ℝ) : ℂ :=
-  ((|y| : ℝ) : ℂ) ^ u * (if a = 0 then 1 else ((SignType.sign y : ℝ) : ℂ))
-
-/-- The central character of a real archimedean parameter. -/
-def centralChar (P : RealArchParam) (y : ℝ) : ℂ :=
-  quasiChar P.centralExponent P.centralSign y
-
-end ArchR
-
-/-- A real archimedean Whittaker datum: a function on `2 × 2` real
-matrices satisfying the unipotent and central transformation laws.
-These are the only two laws used by the Iwasawa-coordinate evaluation
-below; smoothness and zeta-integral data from the source datum are
-not needed for this identity. -/
-structure ArchDatumR (P : RealArchParam) where
-  W : Matrix (Fin 2) (Fin 2) ℝ → ℂ
-  unip_law : ∀ (x : ℝ) (g : Matrix (Fin 2) (Fin 2) ℝ),
-    W (ArchR.unip x * g) = ArchR.psi x * W g
-  central_law : ∀ (z : ℝ) (g : Matrix (Fin 2) (Fin 2) ℝ), z ≠ 0 →
-    W (z • g) = ArchR.centralChar P z * ((|z| : ℝ) : ℂ) * W g
 
 namespace ArchR
 
