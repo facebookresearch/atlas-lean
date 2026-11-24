@@ -4,11 +4,11 @@ Let $A \in \mathbb{R}^{n \times n}$, $B \in \mathbb{R}^{n \times m}$ and $C \in 
 
 1. **Stabilizability.** There is $F \in \mathbb{R}^{m \times n}$ such that $A + BF$ is Hurwitz (every eigenvalue has negative real part) if and only if
 
-   $$\operatorname{rank} \begin{bmatrix} \lambda I - A & B \end{bmatrix} = n \quad \text{for every } \lambda \in \mathbb{C} \text{ with } \operatorname{Re} \lambda \ge 0 .$$
+    $$\operatorname{rank} \begin{bmatrix} \lambda I - A & B \end{bmatrix} = n \quad \text{for every } \lambda \in \mathbb{C} \text{ with } \operatorname{Re} \lambda \ge 0 .$$
 
 2. **Detectability.** There is $L \in \mathbb{R}^{n \times p}$ such that $A + LC$ is Hurwitz if and only if
 
-   $$\operatorname{rank} \begin{bmatrix} \lambda I - A \\ C \end{bmatrix} = n \quad \text{for every } \lambda \in \mathbb{C} \text{ with } \operatorname{Re} \lambda \ge 0 .$$
+    $$\operatorname{rank} \begin{bmatrix} \lambda I - A \\ C \end{bmatrix} = n \quad \text{for every } \lambda \in \mathbb{C} \text{ with } \operatorname{Re} \lambda \ge 0 .$$
 
 Writing the feedback as $u = -Kx$ instead of $u = Fx$ changes nothing ($F = -K$), and likewise $L$ may be replaced by $-L$. Part 2 is part 1 applied to the transposed pair $(A^\top, C^\top)$, since a matrix and its transpose have the same eigenvalues.
 

@@ -4,11 +4,11 @@ Let $A \in \mathbb{R}^{n \times n}$, $B \in \mathbb{R}^{n \times m}$ and $C \in 
 
 1. **Stabilizability.** There is $F \in \mathbb{R}^{m \times n}$ such that $A + BF$ is convergent (every eigenvalue has modulus less than $1$; a Schur matrix) if and only if
 
-   $$\operatorname{rank} \begin{bmatrix} \lambda I - A & B \end{bmatrix} = n \quad \text{for every } \lambda \in \mathbb{C} \text{ with } |\lambda| \ge 1 .$$
+    $$\operatorname{rank} \begin{bmatrix} \lambda I - A & B \end{bmatrix} = n \quad \text{for every } \lambda \in \mathbb{C} \text{ with } |\lambda| \ge 1 .$$
 
 2. **Detectability.** There is $L \in \mathbb{R}^{n \times p}$ such that $A + LC$ is convergent if and only if
 
-   $$\operatorname{rank} \begin{bmatrix} \lambda I - A \\ C \end{bmatrix} = n \quad \text{for every } \lambda \in \mathbb{C} \text{ with } |\lambda| \ge 1 .$$
+    $$\operatorname{rank} \begin{bmatrix} \lambda I - A \\ C \end{bmatrix} = n \quad \text{for every } \lambda \in \mathbb{C} \text{ with } |\lambda| \ge 1 .$$
 
 Writing the feedback as $u = -Kx$ changes nothing ($F = -K$), and $L$ may be replaced by $-L$. Part 2 is part 1 for $(A^\top, C^\top)$.
 

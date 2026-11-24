@@ -9,9 +9,10 @@ The inverse exists for positive semidefinite $M$. Say that $(A,B)$ is **stabiliz
 1. **Zero terminal cost, without detectability.** If $(A,B)$ is stabilizable, the sequence $M_0=0$, $M_{j+1}=\mathcal{R}(M_j)$ is nondecreasing and bounded above in the positive semidefinite order. It converges to a positive semidefinite matrix $P$ satisfying $P=\mathcal{R}(P)$.
 2. **Arbitrary terminal cost and stability.** If, in addition, $(C,A)$ is detectable, then for every positive semidefinite initial matrix $M_0$ the same recursion converges to the $P$ in part 1. With
 
-$$K=(R+B^\top P B)^{-1}B^\top P A,$$
+    $$K=(R+B^\top P B)^{-1}B^\top P A,$$
 
-the closed-loop matrix $A-BK$ is convergent. Under these two hypotheses, $P$ is the only positive semidefinite solution of the algebraic Riccati equation. For each $M_0$ there are constants $a\ge0$ and $0<\theta<1$ such that $\|M_j-P\|\le a\theta^j$ for all $j\ge0$, in the Euclidean operator norm; no optimal rate is asserted.
+    the closed-loop matrix $A-BK$ is convergent. Under these two hypotheses, $P$ is the only positive semidefinite solution of the algebraic Riccati equation. For each $M_0$ there are constants $a\ge0$ and $0<\theta<1$ such that $\|M_j-P\|\le a\theta^j$ for all $j\ge0$, in the Euclidean operator norm; no optimal rate is asserted.
+
 3. **Uniqueness among stabilizing solutions, without detectability.** Independently of the detectability hypothesis, if $P_1,P_2$ are positive semidefinite fixed points and both $A-BK_i$ are convergent, where $K_i=(R+B^\top P_iB)^{-1}B^\top P_iA$, then $P_1=P_2$. This does not assert uniqueness among nonstabilizing or indefinite solutions.
 
 For parts 1 and 2, use the source's filtering equation with $F=A^\top$, $H=B$, process-noise matrix $G=C^\top$ and process-noise covariance $I_q$, keeping the same $R$. The variance equation becomes $M_{j+1}=\mathcal{R}(M_j)$. Detectability of the filter's observation pair $(H^\top,F)$ becomes stabilizability of $(A,B)$; stabilizability of its process pair $(F,G)$ becomes detectability of $(C,A)$. The steady prediction gain is $K_{\mathrm f}=A^\top P B(R+B^\top P B)^{-1}=K^\top$, and

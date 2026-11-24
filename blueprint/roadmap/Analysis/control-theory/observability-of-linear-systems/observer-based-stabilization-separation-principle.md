@@ -8,10 +8,12 @@ whose observer uses the same plant model $(A, B, C)$. In discrete time, replace 
 
 1. The closed loop is the linear system on $(x, z)$ with matrix $\begin{bmatrix} A & BF \\ -LC & A + LC + BF \end{bmatrix}$. In the coordinates $(x, e)$ with $e = z - x$, it becomes the block upper triangular matrix
 
-   $$\begin{bmatrix} A + BF & BF \\ 0 & A + LC \end{bmatrix},$$
+    $$\begin{bmatrix} A + BF & BF \\ 0 & A + LC \end{bmatrix},$$
 
-   by the similarity $T = \begin{bmatrix} I & 0 \\ -I & I \end{bmatrix}$.
+    by the similarity $T = \begin{bmatrix} I & 0 \\ -I & I \end{bmatrix}$.
+
 2. Hence the characteristic polynomial of the closed loop is $\det(sI - A - BF) \cdot \det(sI - A - LC)$: its eigenvalues are those of $A + BF$ together with those of $A + LC$.
+
 3. If $A + BF$ and $A + LC$ are both Hurwitz (resp. both convergent), the closed loop is Hurwitz (resp. convergent). The origin is then exponentially stable, and every closed-loop solution tends to $0$.
 
 No reachability, observability or pole placement is assumed here: the gains are given. Written with $u = -Kz$ and observer gain $-L$, the triangular form has diagonal blocks $A - BK$ and $A - LC$.
