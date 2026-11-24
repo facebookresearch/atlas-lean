@@ -136,14 +136,17 @@
    "description": "Mathematical biology models populations, genomes, and biochemical networks, from coalescents and reaction dynamics to the algorithms that read biological sequences.",
    "fields": [
     {"slug": "population-genetics", "title": "Population genetics", "description": "Mathematical models of allele frequencies in populations under random mating, selection, mutation, migration and genetic drift, including the Wright–Fisher and Moran models and their diffusion limits.", "msc": ["92D10", "92D15", "60J70"], "subfields": [
-     {"slug": "diffusion-theory", "title": "Diffusion theory", "description": "The Wright–Fisher diffusion as the continuum limit of allele-frequency dynamics: generator and semigroup, fixation probabilities, absorption and sojourn times, mutation and stationary laws, allele age and the Poisson random field."}
+     {"slug": "diffusion-theory", "title": "Diffusion theory", "description": "The Wright–Fisher diffusion as the continuum limit of allele-frequency dynamics: generator and semigroup, fixation probabilities, absorption and sojourn times, mutation and stationary laws, allele age and the Poisson random field."},
+     {"slug": "selection-migration-and-transmission", "title": "Selection, migration and transmission", "description": "Allele-frequency dynamics under viability selection and biased transmission, migration-selection balance, interference between linked selected loci and modifiers of transmission. Deterministic recurrences and finite-population stochastic interference remain distinct models."}
     ]},
     {"slug": "coalescent-theory", "title": "Coalescent theory", "description": "Backward-in-time models of the genealogy of a sample of genes, from Kingman's coalescent and its generalizations to the site frequency spectrum, recombination and population structure.", "msc": ["92D15", "60J90", "92D10"], "subfields": [
      {"slug": "multiple-merger-coalescents", "title": "Cannings models and multiple-merger coalescents", "description": "Exchangeable Cannings models of reproduction and the limits of their genealogies: convergence to Kingman's coalescent under the Möhle–Sagitov conditions, Λ-coalescent limits for heavy-tailed offspring, merger rates and the Beta-coalescents, coming down from infinity, and the site frequency spectrum under multiple mergers."}
     ]},
     {"slug": "detecting-selection", "title": "Detecting natural selection", "description": "Statistical tests of neutrality and genome scans for selection based on polymorphism, divergence and haplotype structure, and models of the distribution of fitness effects.", "msc": ["92D10", "92D15", "62P10"], "subfields": []},
     {"slug": "population-structure", "title": "Population structure and admixture", "description": "f-statistics, admixture graphs, ancestry models and linkage-disequilibrium methods for inferring the relationships and mixture histories of populations.", "msc": ["92D10", "62P10"], "subfields": []},
-    {"slug": "phylogenetics", "title": "Phylogenetics", "description": "Reconstruction of evolutionary trees from sequence data: substitution models, likelihood and parsimony, distance methods, tree metrics, splits and the enumeration of phylogenetic trees.", "msc": ["92D15", "92B10", "05C05"], "subfields": []},
+    {"slug": "phylogenetics", "title": "Phylogenetics", "description": "Reconstruction of evolutionary trees from sequence data: substitution models, likelihood and parsimony, distance methods, tree metrics, splits and the enumeration of phylogenetic trees.", "msc": ["92D15", "92B10", "05C05"], "subfields": [
+     {"slug": "inference-and-comparison", "title": "Phylogenetic inference and comparison", "description": "Statistical guarantees and identifiability for evolutionary trees, networks and recorded cell lineages, together with agreement-subtree models for comparing trees. Each article retains its own observation, sampling and evolutionary model."}
+    ]},
     {"slug": "quantitative-genetics", "title": "Quantitative genetics", "description": "The genetics of continuously varying traits: decomposition of genetic variance, resemblance between relatives, kinship, mixed models and the response to selection.", "msc": ["92D10", "62P10"], "subfields": []},
     {"slug": "statistical-genetics", "title": "Statistical genetics", "description": "Statistical methods for genome-wide association studies, heritability estimation from summary statistics, fine-mapping, Mendelian randomization and gene constraint scores.", "msc": ["62P10", "92D10"], "subfields": []},
     {"slug": "cancer-genomics", "title": "Cancer genomics", "description": "Mathematical models for tumour sequencing data: purity and copy number, cancer cell fractions, mutation detection power, mutational signatures and the timing of genomic events.", "msc": ["92C50", "62P10"], "subfields": []},
@@ -11879,6 +11882,7 @@
   "MathlibExt/NumberTheory/GeneralizedFermatGCD": {"to": "NumberTheory/primes-primality/special-primes", "title": "Square prime factors of Fermat numbers"},
   "MathlibExt/NumberTheory/GeneralizedFermatNumber": {"to": "NumberTheory/primes-primality/special-primes", "title": "Generalized Fermat numbers"},
   "MathlibExt/NumberTheory/GeneralizedFermatPeriod": {"to": "NumberTheory/primes-primality/special-primes", "title": "Square prime factors of Fermat numbers"},
+  "MathlibExt/NumberTheory/GeneralizedFermatSquareFactors": {"to": "NumberTheory/primes-primality/special-primes", "title": "Square prime factors of Fermat numbers"},
   "MathlibExt/NumberTheory/GeneralizedFermatWieferich": {"to": "NumberTheory/primes-primality/special-primes", "title": "Square prime factors of Fermat numbers"},
   "MathlibExt/NumberTheory/GeneralizedFibocatalanNumber": {"to": "NumberTheory/special-numbers/catalan-numbers", "title": "FiboCatalan numbers"},
   "MathlibExt/NumberTheory/GeneralizedFibonacciPolynomial": {"to": "NumberTheory/linear-recurrences/fibonacci-polynomials", "title": "Generalized Fibonacci polynomials"},
@@ -13109,6 +13113,7 @@
   "MathlibExt/Topology/MaciasArithmeticProgressions": {"to": "NumberTheory/primes-primality", "title": "Topological proofs of the infinitude of primes"},
   "MathlibExt/Topology/MaciasCoprimeTopology": {"to": "NumberTheory/primes-primality", "title": "Topological proofs of the infinitude of primes"},
   "MathlibExt/Topology/MaciasPrimeClosure": {"to": "NumberTheory/primes-primality", "title": "Topological proofs of the infinitude of primes"},
+  "MathlibExt/Topology/MaciasPrimeDensity": {"to": "NumberTheory/primes-primality", "title": "Topological proofs of the infinitude of primes"},
   "MathlibExt/Topology/MetricSpace/BoundedMetricTopologicallyEquivalent": {"to": "Topology/general-topology", "title": "Bounded equivalent metrics"},
   "MathlibExt/Topology/MetricSpace/Geodesic": {"to": "Geometry/metric-geometry", "title": "Geodesics in metric spaces"},
   "MathlibExt/Topology/MetricSpace/GeodesicSpace": {"to": "Geometry/metric-geometry", "title": "Geodesics in metric spaces"},

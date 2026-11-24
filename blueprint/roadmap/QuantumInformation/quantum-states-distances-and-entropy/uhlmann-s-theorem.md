@@ -14,7 +14,15 @@ prerequisites and links it under the dependency sections below:
 
 - Statement prerequisite: Fidelity of quantum states.
 - Proof prerequisite: Purification and unitary equivalence of purifications.
-- Proof prerequisite: Trace-norm duality via polar decomposition.
+- Proof prerequisite: the trace-norm identity $\|X\|_1 = \max_U |\langle U, X\rangle|$ over unitary $U$, and the
+  unitary invariance of the trace norm.
+- Proof prerequisite: the identity $F(AA^*, BB^*) = \|A^*B\|_1$, proved from a polar decomposition of the block
+  operator $\begin{pmatrix} 0 & A \\ 0 & 0 \end{pmatrix}$ (Watrous, Lemma 3.21); the polar decomposition below is
+  applied to the adjoint to obtain the form $PU$ with $P$ positive semidefinite on the left.
+
+## Proof depends on
+
+- [Polar decomposition of a complex square matrix](../../LinearAlgebra/matrix-decompositions/polar-decomposition/polar-decomposition-theorem/exists-unitary-group-pos-semidef.md)
 
 ## Sources
 
