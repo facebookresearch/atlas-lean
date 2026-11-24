@@ -45,3 +45,6 @@ A randomized algorithm (a *mechanism*) is differentially private when changing o
 - [Blatant non-privacy and distortion of subset-sum mechanisms](blatant-non-privacy-and-distortion-of-subset.md)
 - [Dinur–Nissim reconstruction attack](dinurnissim-reconstruction-attack.md)
 - [Packing lower bound for pure differential privacy](packing-lower-bound-for-pure-differential.md)
+- [Differential privacy as hypothesis testing](differential-privacy-as-hypothesis-testing.md)
+- [Optimal composition theorem for differential privacy](optimal-composition-theorem-for-differential.md)
+- [Simplified composition bound of Kairouz, Oh and Viswanath](simplified-composition-bound-of-kairouz-oh-and.md)
