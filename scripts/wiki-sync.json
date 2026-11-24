@@ -39464,7 +39464,7 @@
 "MathlibExt.Combinatorics.KnuthOldSumWanted.knuthOldSum_eq_sum_pow": "9de64f17cd9b7ece",
 "MathlibExt.Combinatorics.LacunaryAvoidingBoundedGapSumsetErdosProblem1112Wanted.HasLacunaryThreshold": "3aa3996e7de68c71",
 "MathlibExt.Combinatorics.LacunaryAvoidingBoundedGapSumsetErdosProblem1112Wanted.lacunaryThresholdGapsTwoThreeThreeFold": "fac15c4ac93dd882",
-"MathlibExt.Combinatorics.LacunaryAvoidingBoundedGapSumsetErdosProblem1112Wanted.lacunaryThresholdGapsTwoThreeThreeFold_refuted": "5fe23ad5273127e1",
+"MathlibExt.Combinatorics.LacunaryAvoidingBoundedGapSumsetErdosProblem1112Wanted.lacunaryThresholdGapsTwoThreeThreeFold_refuted": "7e43446f7378e87e",
 "MathlibExt.Combinatorics.LineCompatibleSequencesErdosProblem733Wanted.lineCompatibleCount": "5a76105dfb47fbbc",
 "MathlibExt.Combinatorics.LineCompatibleSequencesErdosProblem733Wanted.lineCompatibleCountSubexponential": "37e0b82f93ac7f69",
 "MathlibExt.Combinatorics.LineCompatibleSequencesErdosProblem733Wanted.lineCompatibleCountSubexponential_holds": "f6590c39a1ab300b",
