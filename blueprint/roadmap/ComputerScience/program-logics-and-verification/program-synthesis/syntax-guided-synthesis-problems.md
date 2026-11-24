@@ -4,14 +4,8 @@ A syntax-guided synthesis (SyGuS) instance consists of a background first-order 
 
 ## Depends on
 
+- [Background theories in typed first-order logic](../../../Logic/first-order-logic/background-theories-in-typed-first-order-logic.md)
 - [Language generated from a nonterminal](../../../TheoryOfComputation/context-free-languages/grammars-and-pushdown-automata/context-free-grammars/language-from.md)
-
-## Expansion
-
-This node states a precise result. A good expansion adds a page for each of the following
-prerequisites and links it under the dependency sections below:
-
-- Statement prerequisite: First-order signatures, terms, formulas, theories and semantic consequence.
 
 ## Sources
 
