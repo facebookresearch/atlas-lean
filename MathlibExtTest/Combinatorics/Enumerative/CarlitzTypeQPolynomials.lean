@@ -66,6 +66,23 @@ example {q : ℝ} (hq1 : q ≠ 1) :
   have h00 : (0 : ℝ) = q - 1 := by simpa using h 0 0
   exact hq1 (sub_eq_zero.mp h00.symm)
 
+-- At degree zero the initial bracket contributes 0^0 = 1, even for q below one.
+example (S : ℕ → ℝ → ℝ)
+    (hS : IsCarlitzTypeWith (1 / 2) S fun k =>
+      1 / (((1 / 2 : ℝ) - 1) * qBracket (1 / 2) ((k + 2 : ℕ) : ℝ))) :
+    1 / 16 * S 0 2 - S 0 0 = 5 / 4 := by
+  have h := sum_qpow_mul_qBracket_pow (1 / 2) (by norm_num) (by norm_num) 2 0 2 (by decide) S hS
+  norm_num [sum_range_succ] at h ⊢
+  linarith
+
+-- For q = 2 and r = n = 2, the first three summands are 0, 4 and 144.
+example (S : ℕ → ℝ → ℝ)
+    (hS : IsCarlitzTypeWith 2 S fun k => 1 / ((2 - 1) * qBracket 2 ((k + 2 : ℕ) : ℝ))) :
+    64 * S 2 3 - S 2 0 = 148 := by
+  have h := sum_qpow_mul_qBracket_pow 2 (by norm_num) (by norm_num) 2 2 3 (by decide) S hS
+  norm_num [sum_range_succ, qBracket] at h
+  exact h.symm
+
 -- At degree one the initial summand is 0^0 = 1.
 example {q : ℝ} (hq0 : 0 < q) (hq1 : q ≠ 1) : carlitzEtaPoly q 1 1 = 1 := by
   simpa [carlitzEtaPoly_one_zero hq1] using
