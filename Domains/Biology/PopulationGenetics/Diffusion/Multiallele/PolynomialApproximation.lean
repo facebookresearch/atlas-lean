@@ -17,6 +17,7 @@ import Mathlib.Analysis.Calculus.BumpFunction.Normed
 import Mathlib.Geometry.Manifold.PartitionOfUnity
 import Mathlib.Topology.Algebra.MvPolynomial
 import Mathlib.Topology.ContinuousMap.StoneWeierstrass
+import MathlibExt.Analysis.Calculus.MvPolynomial
 
 /-!
 # C² polynomial approximation on compact sets and the simplex
@@ -60,106 +61,7 @@ theorem hasFDerivAt_mvPolynomial_eval {n : ℕ} (p : MvPolynomial (Fin n) ℝ) (
     HasFDerivAt (fun y => eval y p)
       (∑ i, eval x (pderiv i p) • ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin n => ℝ) i)
       x := by
-  induction p using MvPolynomial.induction_on with
-  | C a =>
-    simp only [pderiv_C, map_zero, zero_smul, Finset.sum_const_zero]
-    simp only [eval_C]
-    exact hasFDerivAt_const a x
-  | add p q hp hq =>
-    have hpd : ∀ i : Fin n, pderiv i (p + q) = pderiv i p + pderiv i q := fun i => map_add _ _ _
-    simp only [hpd, map_add]
-    have hsum : (∑ i, (eval x (pderiv i p) + eval x (pderiv i q)) •
-        ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin n => ℝ) i)
-        = (∑ i, eval x (pderiv i p) • ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin n => ℝ) i)
-        + (∑ i, eval x (pderiv i q) •
-            ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin n => ℝ) i) := by
-      rw [← Finset.sum_add_distrib]
-      apply Finset.sum_congr rfl
-      intro i _
-      exact add_smul _ _ _
-    rw [hsum]
-    exact HasFDerivAt.add hp hq
-  | mul_X p k hp =>
-    have hX : HasFDerivAt (fun y : Fin n → ℝ => eval y (MvPolynomial.X k : MvPolynomial (Fin n) ℝ))
-        (ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin n => ℝ) k) x := by
-      have hfun : (fun y : Fin n → ℝ => eval y (MvPolynomial.X k : MvPolynomial (Fin n) ℝ))
-          = ⇑(ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin n => ℝ) k) := by
-        funext y
-        simp [eval_X]
-      rw [hfun]
-      exact ContinuousLinearMap.hasFDerivAt _
-    have hmul := HasFDerivAt.mul hp hX
-    simp only [eval_X] at hmul
-    have hfun_eq : (fun y => eval y (p * MvPolynomial.X k))
-        = (fun y => eval y p) * (fun y : Fin n → ℝ => y k) := by
-      funext y
-      simp [eval_mul, eval_X, Pi.mul_apply]
-    rw [hfun_eq]
-    have hpdX : ∀ i : Fin n, eval x (pderiv i (MvPolynomial.X k : MvPolynomial (Fin n) ℝ))
-        = if i = k then 1 else 0 := by
-      intro i
-      by_cases h : i = k
-      · subst h
-        simp
-      · have hk : k ≠ i := Ne.symm h
-        simp [pderiv_X_of_ne hk, h]
-    have hexpand : ∀ i : Fin n, eval x (pderiv i (p * MvPolynomial.X k))
-        = eval x (pderiv i p) * x k + eval x p * (if i = k then 1 else 0) := by
-      intro i
-      rw [pderiv_mul, map_add, map_mul, map_mul, eval_X, hpdX i]
-    have hsum_eq : (∑ i, eval x (pderiv i (p * MvPolynomial.X k)) •
-          ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin n => ℝ) i)
-        = ∑ i, ((eval x (pderiv i p) * x k + eval x p * (if i = k then 1 else 0)) •
-          ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin n => ℝ) i) := by
-      apply Finset.sum_congr rfl
-      intro i _
-      rw [hexpand i]
-    have hderiv : (∑ i, eval x (pderiv i (p * MvPolynomial.X k)) •
-          ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin n => ℝ) i)
-        = eval x p • ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin n => ℝ) k
-          + x k • (∑ i, eval x (pderiv i p) •
-            ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin n => ℝ) i) := by
-      rw [hsum_eq]
-      have hsplit : (∑ i, ((eval x (pderiv i p) * x k + eval x p * (if i = k then 1 else 0)) •
-          ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin n => ℝ) i))
-          = (∑ i, (eval x (pderiv i p) * x k) •
-              ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin n => ℝ) i)
-            + (∑ i, (eval x p * (if i = k then 1 else 0)) •
-              ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin n => ℝ) i) := by
-        rw [← Finset.sum_add_distrib]
-        apply Finset.sum_congr rfl
-        intro i _
-        exact add_smul _ _ _
-      rw [hsplit]
-      have hfirst : (∑ i, (eval x (pderiv i p) * x k) •
-              ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin n => ℝ) i)
-          = x k • (∑ i, eval x (pderiv i p) •
-            ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin n => ℝ) i) := by
-        have hpoint : ∀ i : Fin n, (eval x (pderiv i p) * x k) •
-              ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin n => ℝ) i
-            = x k • (eval x (pderiv i p) •
-              ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin n => ℝ) i) := by
-          intro i
-          rw [mul_comm, mul_smul]
-        simp only [hpoint]
-        exact (Finset.smul_sum).symm
-      have hsecond : (∑ i, (eval x p * (if i = k then (1 : ℝ) else 0)) •
-              ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin n => ℝ) i)
-          = eval x p • ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin n => ℝ) k := by
-        have h0 : ∀ i : Fin n, i ≠ k →
-            (eval x p * (if i = k then (1 : ℝ) else 0)) •
-              ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin n => ℝ) i = 0 := by
-          intro i hi
-          simp [hi]
-        have hk : (eval x p * (if k = k then (1 : ℝ) else 0)) •
-              ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin n => ℝ) k
-            = eval x p • ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin n => ℝ) k := by
-          simp
-        rw [Finset.sum_eq_single k (fun i _ hi => h0 i hi) (by simp)]
-        exact hk
-      rw [hfirst, hsecond, add_comm]
-    rw [hderiv]
-    exact hmul
+  exact MvPolynomial.hasFDerivAt_eval p x
 
 section
 

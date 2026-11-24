@@ -138,8 +138,10 @@ def forwardKernel : FourierMukai.D (pullback M.J.hom N.J.hom) :=
   singleModule ((Scheme.Modules.pullback P.forward.inv).obj
     (mixedKernelModule S A C q q' s M N L L' D))
 
-/-- The reverse kernel: the transposed dual, shifted by `dim J̄ = h¹(C, 𝒪_C)` (the arithmetic
-genus of `C`, the dimension field of the compactified Jacobian). -/
+/-- The reverse kernel: the transposed dual, shifted by `h¹(C, 𝒪_C)`, which is the dimension of
+the compactified Jacobian (its `dimension` field), the shift of the inverse Fourier–Mukai kernel.
+For a reduced connected proper curve over an algebraically closed field, where
+`H⁰(C, 𝒪_C) = k`, this is the arithmetic genus `p_a(C) = h¹ - h⁰ + 1`. -/
 def reverseKernel : FourierMukai.D (pullback N.J.hom M.J.hom) :=
   (singleModule ((Scheme.Modules.pullback P.reverse.inv).obj
     (transposedDual S A C q q' s M N L L' D)))⟦(Module.finrank k

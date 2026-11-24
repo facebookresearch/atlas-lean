@@ -28,3 +28,20 @@ example : schreierSparseCount 1 = 1 := by
 example : partitionCount 4 = 5 := by
   rw [← schreierSparseCount_eq 5 (by decide)]
   decide
+
+-- The minimum of an `ℓ`-strong Schreier set is at least `ℓ |A| - ℓ + 1`.
+example : IsStrongSchreier 1 {3, 4, 5} ∧ ¬ IsStrongSchreier 1 {2, 4, 5} := by decide
+
+-- The first refined set of the source, `{2ℓ + 1, 2ℓ + 2, 2ℓ + 3}` for `ℓ = 1` and `n = 4`.
+example : IsRefinedSchreier 4 1 {3, 4, 5} := by decide
+
+-- The two largest gaps must be equal, and a refined set has at least three elements.
+example : ¬ IsRefinedSchreier 5 0 {1, 3, 6} ∧ ¬ IsRefinedSchreier 2 0 {1, 3} := by decide
+
+-- The partitions `3 + 1` and `2 + 2` of four match the sets `{1, 3, 5}` and `{3, 4, 5}`.
+example : partitionMinPartExactCount 4 1 2 = 2 :=
+  (partitionMinPartExactCount_eq_refined 4 0 2 (by decide) (by decide)).trans (by decide)
+
+-- Both counts vanish when `n < k (ℓ + 1)`: four has no partition into two parts at least three.
+example : partitionMinPartExactCount 4 3 2 = 0 :=
+  (partitionMinPartExactCount_eq_refined 4 2 2 (by decide) (by decide)).trans (by decide)

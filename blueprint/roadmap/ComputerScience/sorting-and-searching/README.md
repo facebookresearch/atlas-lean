@@ -9,6 +9,7 @@ Comparison and distribution sorting algorithms (including their expected-cost an
 - [Insertion sort](insertion-sort/README.md)
 - [Bucket sort](bucket-sort/README.md)
 - [Linear search](linear-search/README.md)
+- [Lower bound for comparison sorting](lower-bound-for-comparison-sorting/README.md)
 - [Radix sort](radix-sort/README.md)
 - [Rearranging a permutation into unimodal order](rearranging-a-permutation-into-unimodal-order/README.md)
 - [Selection sort](selection-sort/README.md)
