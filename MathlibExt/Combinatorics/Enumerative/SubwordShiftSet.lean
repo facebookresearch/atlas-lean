@@ -20,20 +20,21 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-public def IsWellBased (Q : Finset ℕ) : Prop :=
-  ∀ x ∈ Q, ∀ a, 0 < a → a < x → a ∈ Q ∨ x - a ∈ Q
+/-- **Well-based sets.** A finite set `Q` of natural numbers satisfies the split condition if for
+all $x \in Q$ and $0 < a < x$, at least one of $a$ and $x - a$ lies in $Q$. The condition allows `0`
+in `Q`; for example, the singleton `{0}` satisfies it vacuously.
 
-/-- **Well-based sets.** A finite set $Q$ of positive integers is well based (Kitaev;
-Valyuzhenich) if for every $x \in Q$ and every natural number $a$ with $0 < a < x$, at least one
-of $a$ and $x - a$ lies in $Q$.
-
-The empty set is well based, as in Allen's equivalent formulation. If $Q$ is nonempty, its least
-element is $1$: otherwise the split of its least element $x$ into $1$ and $x - 1$ would have
-neither part in $Q$.
+For sets of positive integers, this is the well-based condition of Kitaev and Valyuzhenich.
+`IsPositiveWellBased Q` adds `0 ∉ Q`, as in Allen's formulation. The empty set satisfies both
+conditions, and a nonempty set satisfying the positive version has least element $1$: otherwise
+neither part of the split $x = 1 + (x - 1)$ of its least element $x$ could lie in `Q`.
 
 Source: Michael A. Allen, *Connections Between Combinations Without Specified Separations and
 Strongly Restricted Permutations, Compositions, and Bit Strings*, Journal of Integer
 Sequences 28 (2025), Article 25.3.7, Section 5.1. -/
+public def IsWellBased (Q : Finset ℕ) : Prop :=
+  ∀ x ∈ Q, ∀ a, 0 < a → a < x → a ∈ Q ∨ x - a ∈ Q
+
 public def IsPositiveWellBased (Q : Finset ℕ) : Prop :=
   0 ∉ Q ∧ IsWellBased Q
 

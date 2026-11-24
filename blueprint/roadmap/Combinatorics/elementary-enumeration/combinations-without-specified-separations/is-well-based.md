@@ -1,16 +1,15 @@
 # Well-based sets
 
-A finite set $Q$ of positive integers is well based (Kitaev;
-Valyuzhenich) if for every $x \in Q$ and every natural number $a$ with $0 < a < x$, at least one
-of $a$ and $x - a$ lies in $Q$.
+A finite set $Q$ of natural numbers satisfies the split condition if for every $x \in Q$ and
+every natural number $a$ with $0 < a < x$, at least one of $a$ and $x - a$ lies in $Q$.
+The Lean predicate `IsWellBased Q` states this condition alone: for example, $\{0\}$ satisfies
+it vacuously.
 
-The empty set is well based, as in Allen's equivalent formulation. If $Q$ is nonempty, its least
-element is $1$: otherwise the split of its least element $x$ into $1$ and $x - 1$ would have
-neither part in $Q$.
-
-In Lean, `IsWellBased Q` is the split condition alone on a finite set of natural numbers. For
-example, $\{0\}$ satisfies it vacuously. Allen's notion is `IsPositiveWellBased Q`, which also
-requires $0 \notin Q$.
+For sets of positive integers, this is the well-based condition of Kitaev and Valyuzhenich.
+Lean's `IsPositiveWellBased Q` adds $0 \notin Q$, as in Allen's formulation. The empty set
+satisfies both conditions. A nonempty set satisfying the positive version has least element
+$1$: otherwise neither part of the split $x = 1 + (x - 1)$ of its least element $x$ could lie
+in $Q$.
 
 ## Sources
 
