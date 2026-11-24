@@ -11,6 +11,7 @@ PDE existence, regularity and qualitative results: Cauchy–Kovalevskaya, heat a
 - [Heat-kernel Duhamel integral](heat-kernel-duhamel-integral/README.md)
 - [Hessian estimates for the σ₂ equation](hessian-estimates-for-the-equation/README.md)
 - [Iterated heat and Duhamel derivatives](iterated-heat-and-duhamel-derivatives/README.md)
+- [Potential-heat positivity and order](potential-heat-positivity-and-order/README.md)
 - [Potential-heat restart and spatial regularity](potential-heat-restart-and-spatial-regularity/README.md)
 - [Potential-heat spatial bootstrap](potential-heat-spatial-bootstrap/README.md)
 - [Potential-heat time evolution and smoothness](potential-heat-time-evolution-and-smoothness/README.md)
