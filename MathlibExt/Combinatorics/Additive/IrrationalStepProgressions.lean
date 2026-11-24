@@ -43,4 +43,23 @@ public theorem add_mul_not_mem_nat_of_rat_of_irrational (x d : ℝ)
     · exact not_mem q hi
   · simpa using not_mem (2 * q) (Nat.ne_of_gt hj)
 
+/-- **At most one nonnegative integer point on a progression with irrational difference.** Let $x$
+and $d$ be real numbers with $d$ irrational. If $i$ and $j$ are natural numbers such that $x + id$
+and $x + jd$ are both nonnegative integers, then $i = j$.
+
+Source: Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions
+with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58, Lemma 8
+(`integers-2026-A58-lem-8`). -/
+public theorem eq_of_add_mul_irrational_mem_nat (x d : ℝ) (hirr : Irrational d) (i j : ℕ)
+    (hi : x + i * d ∈ Set.range ((↑) : ℕ → ℝ)) (hj : x + j * d ∈ Set.range ((↑) : ℕ → ℝ)) :
+    i = j := by
+  obtain ⟨a, ha⟩ := hi
+  obtain ⟨b, hb⟩ := hj
+  by_contra hij
+  have hsub : (i : ℤ) - (j : ℤ) ≠ 0 := fun h => hij (Int.ofNat.inj (sub_eq_zero.mp h))
+  have heq : (↑((i : ℤ) - (j : ℤ)) : ℝ) * d = ↑((a : ℤ) - (b : ℤ)) := by
+    simpa only [Int.cast_sub, Int.cast_natCast, sub_mul, add_sub_add_left_eq_sub] using
+      (congrArg₂ (fun y z : ℝ => y - z) ha hb).symm
+  exact (hirr.intCast_mul hsub).ne_int _ heq
+
 end MetaMathlibExt
