@@ -33,22 +33,31 @@ FreeGroup (Fin n)`; a subgroup of a free group has finite rank exactly when it i
 generated, so `H` is required to be finitely generated.
 -/
 
-/-- `R` is a retract of the group `F`: some endomorphism of `F` has image `R` and is the identity
-on `R`. -/
+/-- **Retract of a group.** A subgroup $R$ of a group $F$ is a retract of $F$ when there is an
+endomorphism $r \colon F \to F$ whose image is $R$ and which fixes every element of $R$. -/
 def IsRetract {F : Type*} [Group F] (R : Subgroup F) : Prop :=
   ∃ r : F →* F, r.range = R ∧ ∀ x ∈ R, r x = x
 
-/-- Kourovka 17.19 (G. M. Bergman): if `R` is a retract of a free group `F` of finite rank and `H`
-is a finitely generated (equivalently, finite rank) subgroup of `F`, then `H ∩ R` is a retract of
-`H`. -/
+/-- **Bergman's retract intersection question (Kourovka Problem 17.19).** The statement that for
+every natural number $n$, every retract $R$ of the free group $F_n$ on $n$ generators and every
+finitely generated subgroup $H$ of $F_n$, the intersection $H \cap R$ is a retract of $H$.
+
+A subgroup of a free group is finitely generated exactly when it has finite rank. -/
 def retractIntersectionIsRetract : Prop :=
   ∀ (n : ℕ) (R H : Subgroup (FreeGroup (Fin n))), IsRetract R → H.FG →
     IsRetract ((H ⊓ R).subgroupOf H)
 
 /--
-Resolved false: the Kourovka Archive answers 17.19 "No, it need not", citing Snopce, Tanushevski and
-Zalesskii (2022): there are a free group `F` of finite rank, a retract `R` of `F` and a finitely
-generated subgroup `H` of `F` such that `H ∩ R` is not a retract of `H`. Source: E. I. Khukhro and
+**Negative answer to Bergman's retract intersection question (Kourovka Problem 17.19).** It is not
+the case that for every natural number $n$, every retract $R$ of the free group $F_n$ on $n$
+generators and every finitely generated subgroup $H$ of $F_n$, the intersection $H \cap R$ is a
+retract of $H$.
+
+Snopce, Tanushevski and Zalesskii (2022) give a free group $F$ of finite rank, a retract $R$ of $F$
+and a finitely generated subgroup $H$ of $F$ such that $H \cap R$ is not a retract of $H$; the
+Kourovka Archive answers 17.19 "No, it need not".
+
+Source: E. I. Khukhro and
 V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue,
 arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 17.19 (G. M. Bergman); resolution: I.
 Snopce, S. Tanushevski and P. Zalesskii, Int. Math. Res. Notices 2022, no. 11 (2022), 8280-8294,

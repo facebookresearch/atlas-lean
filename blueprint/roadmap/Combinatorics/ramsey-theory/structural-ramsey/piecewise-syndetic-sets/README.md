@@ -1,0 +1,18 @@
+# Piecewise syndetic sets
+
+- [Lattice cube](lattice-cube.md)
+- [Membership in a lattice cube](mem-lattice-cube.md)
+- [Lattice cube of side one](lattice-cube-one.md)
+- [Density in subcubes](is-dense-in-cubes.md)
+- [Density one means containment](is-dense-in-cubes-one-iff.md)
+- [Piecewise syndetic set](is-piecewise-syndetic.md)
+- [The whole space is piecewise syndetic](is-piecewise-syndetic-univ.md)
+- [The empty set is not piecewise syndetic](not-is-piecewise-syndetic-empty.md)
+- [A color class is dense in a subcube (Brown, Lemma 1)](exists-subcube-is-dense-in-cubes-color-c.md)
+- [A color class is dense in a large subcube (Brown, Lemma 2)](exists-cube-bound-is-dense-in-cubes.md)
+- [Piecewise syndeticity is partition regular](exists-of-eq-i-union.md)
+- [Gap size](cube-gap-size.md)
+- [Density bounds the gap size](cube-gap-size-le-of-is-dense-in-cubes.md)
+- [Finite sets in positive dimension have positive gap size](cube-gap-size-pos.md)
+- [Gap size of a singleton](cube-gap-size-singleton.md)
+- [Monochromatic sets that are large relative to their gap size](exists-cube-bound-monochromatic-card-gt.md)

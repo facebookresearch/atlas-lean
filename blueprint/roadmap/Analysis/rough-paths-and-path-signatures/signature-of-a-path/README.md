@@ -61,12 +61,12 @@ for a continuous velocity.
   the signature as the extension of a multiplicative functional, and its factorial decay.
 - [Picard iteration](../../../Analysis/ordinary-differential-equations/picard-iteration/README.md):
   the Picard iterates of a linear controlled equation are the truncated signature series.
-- Euler method: on each step the
+- [Euler method](../../../Analysis/numerical-analysis/euler-method/README.md): on each step the
   Euler scheme for a controlled equation uses only the first level of the signature, the
   increment; higher-order schemes for controlled equations use the higher levels.
-- Quadratic variation of Brownian motion:
+- [Quadratic variation of Brownian motion](../../../Probability/stochastic-calculus/quadratic-variation-of-brownian-motion/README.md):
   Brownian paths have unbounded variation, so their iterated integrals are not Riemann–Stieltjes
   integrals; a rough path supplies the second level (the Lévy area) as extra data.
-- Itô integral: the Itô (or
+- [Itô integral](../../../Probability/stochastic-calculus/it-integral/README.md): the Itô (or
   Stratonovich) integral defines the iterated integrals of Brownian motion; the Stratonovich lift
   is the geometric rough path.

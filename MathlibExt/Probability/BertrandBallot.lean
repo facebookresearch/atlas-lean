@@ -743,17 +743,20 @@ private lemma ballot_all : ∀ n p q : ℕ, p + q = n →
         rw [hrec]
         exact ballot_arith (by omega) hlt' h1 h2
 
-/-- Bertrand's ballot theorem (statement `bertrand-ballot-s1`):
-in an election with `p` votes for A and `q` votes for B with `p > q ≥ 1`, counted in
-uniformly random order, the probability that A is always strictly ahead of B throughout
-the count equals `(p - q) / (p + q)`, stated here by counting ballot sequences
-(lattice paths): the number of favourable sequences times `(p + q)` equals
-`(p - q)` times the total number `(p + q).choose q` of sequences.
+/-- **Bertrand's ballot theorem.** Let $p$ and $q$ be natural numbers with $1 \le q < p$. Call a
+sequence of $p + q$ votes, each for A or for B, favourable if it contains exactly $p$ votes for A
+and, for every $k$ with $1 \le k \le p + q$, strictly more of its first $k$ votes are for A than
+for B. Then the number of favourable sequences, multiplied by $p + q$, equals
+$(p - q)\binom{p+q}{q}$.
+
+Equivalently, when the $p + q$ votes are counted in uniformly random order, the probability that
+A is strictly ahead of B throughout the count is $\frac{p-q}{p+q}$, since there are
+$\binom{p+q}{q}$ sequences with exactly $p$ votes for A.
+
+Proves `Wanted` entry `bertrand_ballot`.
 
 Source: *Bertrand's ballot theorem*, Wikipedia,
 https://en.wikipedia.org/wiki/Bertrand%27s_ballot_theorem.
-
-Proves `Wanted` entry `bertrand_ballot`.
 -/
 theorem bertrand_ballot : ∀ (p q : ℕ), 1 ≤ q → q < p →
   (Finset.univ.filter (fun σ : Fin (p + q) → Bool =>

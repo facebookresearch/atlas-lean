@@ -45,35 +45,31 @@ open Filter MeasureTheory
 
 namespace MathlibExt.MeasureTheory.DerivIntegralSeriesAbsContWanted
 
-/-- Let $\Omega$ be an open subset of $\mathbb{R}^d$ and $a<b$ be real numbers. For any positive
-integer $n$ let $f_n(x,y)$ be a complex-valued measurable function on $\Omega\times(a,b)$. Let
-$a<c<b$. Assume that for each positive integer $n$ the following three conditions are satisfied.
-\begin{enumerate}
-\item For each $n$ and for almost all $x\in\Omega$ the function $f_n(x,y)$ as a function of $y$ is
-absolutely continuous in $y$ for $y\in(a,b)$.
-\item The function $\partial f_n/\partial y$ is measurable on $\Omega\times(a,b)$ for each $n$ and
-the function
-\[
-\sum_{n=1}^\infty \left|\frac{\partial f_n}{\partial y}(x,y)\right|
-\]
-is integrable on $\Omega\times(a,b)$.
-\item The function $\sum_{n=1}^\infty |f_n(x,c)|$ is integrable on $\Omega$.
-\end{enumerate}
-Prove that the function
-\[
-y\mapsto \int_{x\in\Omega}\sum_{n=1}^\infty f_n(x,y)\,dx
-\]
-is a well-defined function for almost all $y\in(a,b)$ and that
-\[
-\frac{d}{dy}\int_{x\in\Omega}\sum_{n=1}^\infty f_n(x,y)\,dx
-=
-\sum_{n=1}^\infty \int_{x\in\Omega} \frac{\partial f_n}{\partial y}(x,y)\,dx
-\]
-for almost all $y\in(a,b)$.
+/-- **Differentiating an integral of a series term by term.** Let $d \in \mathbb{N}$, let $\Omega$
+be an open subset of $\mathbb{R}^d$, let $a < c < b$ be real numbers, and for each
+$n \in \mathbb{N}$ let $f_n : \mathbb{R}^d \times \mathbb{R} \to \mathbb{C}$ be almost everywhere
+measurable on $\Omega \times (a, b)$ with respect to Lebesgue measure. Write
+$\partial_y f_n(x, y)$ for the derivative of $t \mapsto f_n(x, t)$ at $y$, taken to be $0$ where
+this derivative does not exist, and give every series that does not converge absolutely the
+sum $0$. Assume that:
+(1) for each $n$ and almost every $x \in \Omega$, the function $y \mapsto f_n(x, y)$ is
+absolutely continuous on $[a, b]$;
+(2) each $\partial_y f_n$ is almost everywhere measurable on $\Omega \times (a, b)$, the series
+$\sum_n |\partial_y f_n(x, y)|$ converges for almost every $(x, y) \in \Omega \times (a, b)$,
+and its sum is integrable on $\Omega \times (a, b)$;
+(3) the series $\sum_n |f_n(x, c)|$ converges for almost every $x \in \Omega$, and its sum is
+integrable on $\Omega$.
+Then there is a function $F : \mathbb{R} \to \mathbb{C}$ such that for almost every
+$y \in (a, b)$ the function $x \mapsto \sum_n f_n(x, y)$ is integrable on $\Omega$,
+$F(y) = \int_\Omega \sum_n f_n(x, y)\, dx$, and $F$ is differentiable at $y$ with
+$$
+F'(y) = \sum_n \int_\Omega \partial_y f_n(x, y)\, dx.
+$$
 
-Lean variant: the source assumes each `f n` measurable on `Ω × (a, b)`, which the original Lean
-statement omitted (a non-measurable `f 0` of modulus one with `f n = 0` otherwise satisfies every
-other hypothesis and breaks the conclusion); it is restored as `h_meas`.
+The joint measurability of each $f_n$ is a hypothesis of the source that the first formalization
+dropped. It is needed: for $d \ge 1$ and nonempty bounded $\Omega$, a non-measurable $f_0$ of
+modulus one that does not depend on $y$, with $f_n = 0$ for $n \ge 1$, satisfies the other
+hypotheses but not the conclusion.
 
 Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level II (Measure and integration;
 Classical measure theory), `benchmark/level2/ma_proofbench_l2_50.lean` at

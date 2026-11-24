@@ -6,7 +6,7 @@ Multiplying polynomials thus adds their Newton polygons, which is why Minkowski 
 
 ## Background
 
-- Mixed area: the Minkowski sums of Newton polygons that this theorem realizes as Newton polygons of products are what Bernstein's count measures.
+- [Mixed area](../../../AlgebraicGeometry/varieties-and-projective-geometry/bernstein-s-theorem-on-sparse-polynomial-systems/mixed-area.md): the Minkowski sums of Newton polygons that this theorem realizes as Newton polygons of products are what Bernstein's count measures.
 
 ## Sources
 

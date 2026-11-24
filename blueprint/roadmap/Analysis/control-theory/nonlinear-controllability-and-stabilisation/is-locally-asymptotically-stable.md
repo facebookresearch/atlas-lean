@@ -10,4 +10,4 @@ For $E$ finite-dimensional, $X$ continuous and $X(0) = 0$, it is Coron, *Control
 
 - [Cauchy–Peano existence theorem](../../ordinary-differential-equations/cauchy-peano-exists.md): solutions of continuous vector fields exist but need not be unique.
 - [Asymptotic stability of linear ODEs with eigenvalues in the open left half-plane](../../ordinary-differential-equations/lyapunov-s-indirect-method/linear-ode-asymptotic-stability.md): the linear case (Coron, Theorem 10.9).
-- LaSalle's invariance principle: a classical way to prove asymptotic stability with a Lyapunov function.
+- [LaSalle's invariance principle](../../../Dynamics/smooth-dynamics/lasalle-s-invariance-principle/lasalle.md): a classical way to prove asymptotic stability with a Lyapunov function.

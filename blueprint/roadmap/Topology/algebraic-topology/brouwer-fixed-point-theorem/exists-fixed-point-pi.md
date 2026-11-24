@@ -14,4 +14,4 @@ the players' mixed-strategy simplices is the domain of the fixed-point map.
 
 ## Background
 
-- Nash's theorem: the application for which this form is stated.
+- [Nash's theorem](../../../GameTheory/noncooperative-games/nash-s-theorem/exists-is-mixed-nash.md): the application for which this form is stated.

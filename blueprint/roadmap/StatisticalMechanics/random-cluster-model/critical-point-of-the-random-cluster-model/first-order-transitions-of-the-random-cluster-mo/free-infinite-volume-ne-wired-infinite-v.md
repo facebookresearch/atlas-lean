@@ -1,0 +1,3 @@
+# Free and wired measures differ at a first-order transition
+
+Let $d \in \mathbb{N}$, $0 < p < 1$ and $q > 0$. If $(p, q)$ is a [first-order transition](is-first-order-transition.md) on $\mathbb{Z}^d$, then the [free](../../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/free-infinite-volume.md) and [wired infinite-volume random-cluster measures](../../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/wired-infinite-volume.md) $\phi^0_{p,q}$ and $\phi^1_{p,q}$ (the chosen subsequential weak limits of the free and wired box measures) are different.

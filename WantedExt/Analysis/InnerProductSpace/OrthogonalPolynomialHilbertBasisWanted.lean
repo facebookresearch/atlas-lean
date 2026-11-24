@@ -22,9 +22,13 @@ open MeasureTheory
 
 namespace MathlibExt.Analysis.InnerProductSpace.OrthogonalPolynomialHilbertBasisWanted
 
-/-- Classical Hilbert basis of orthogonal polynomials: `L²([-1, 1])` admits a
-Hilbert basis whose `n`-th element is represented almost everywhere by a real
-polynomial of exact degree `n` (the normalized Legendre basis).
+/-- **Hilbert basis of orthogonal polynomials on $[-1, 1]$.** Let $L^2([-1, 1])$ be the real
+Hilbert space of square-integrable real-valued functions on $[-1, 1]$ with respect to
+Lebesgue measure. There is a Hilbert basis $(b_n)_{n \in \mathbb{N}}$ of $L^2([-1, 1])$ such
+that for every $n \in \mathbb{N}$ there is a real polynomial $q_n$ of degree exactly $n$ (for
+$n = 0$, a constant polynomial) with $b_n(x) = q_n(x)$ for almost every $x \in [-1, 1]$.
+
+The normalized Legendre polynomials form such a basis.
 
 Sources:
 - Mathlib `docs/undergrad.yaml`, section "Topology / Hilbert spaces", entry

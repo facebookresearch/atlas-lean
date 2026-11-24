@@ -43,4 +43,4 @@ difference (internal tangency) of their radii.
 - [Apollonian group](../apollonian-group/README.md)
 - [Descartes' circle theorem](../descartes-circle-theorem.md)
 - [Local-global conjecture for Apollonian circle packings](../../../../NumberTheory/arithmetic-geometry/local-global-conjecture-for-apollonian-circle-pa/README.md)
-- Unipotent flows
+- [Unipotent flows](../../../../Dynamics/homogeneous-dynamics/unipotent-flows/README.md)

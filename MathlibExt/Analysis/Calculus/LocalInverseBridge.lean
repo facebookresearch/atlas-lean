@@ -11,6 +11,7 @@ module
 public import Mathlib.Analysis.Calculus.InverseFunctionTheorem.FDeriv
 public import Mathlib.Analysis.Calculus.ContDiff.RCLike
 public import Mathlib.Analysis.Normed.Module.FiniteDimension
+import Mathlib.Analysis.Calculus.ContDiff.Comp
 
 /-!
 # Local injectivity from a nonsingular derivative
@@ -60,5 +61,35 @@ theorem exists_mem_nhds_injOn_of_contDiffAt {E F : Type*} [NormedAddCommGroup E]
     (hf : ContDiffAt ℝ n f a) (hf' : HasFDerivAt f (f' : E →L[ℝ] F) a) (hn : n ≠ 0) :
     ∃ s ∈ 𝓝 a, InjOn f s :=
   exists_mem_nhds_injOn_of_hasStrictFDerivAt (hf.hasStrictFDerivAt' hf' hn)
+
+/-- **Local injectivity from an injective derivative** (immersion form).
+Between finite-dimensional real normed spaces, if `f` is `Cⁿ` at `a` for some
+`n ≠ 0` and its derivative at `a` is injective, then `f` is injective on a
+neighbourhood of `a`. -/
+theorem exists_mem_nhds_injOn_of_contDiffAt_injective {E F : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E]
+    [NormedAddCommGroup F] [NormedSpace ℝ F] [FiniteDimensional ℝ F]
+    {f : E → F} {f' : E →L[ℝ] F} {a : E} {n : WithTop ℕ∞}
+    (hf : ContDiffAt ℝ n f a) (hf' : HasFDerivAt f f' a) (hn : n ≠ 0)
+    (hinj : Function.Injective f') :
+    ∃ s ∈ 𝓝 a, InjOn f s := by
+  obtain ⟨g, hg⟩ := f'.toLinearMap.exists_leftInverse_of_injective
+    (LinearMap.ker_eq_bot.mpr hinj)
+  set G : F →L[ℝ] E := ⟨g, LinearMap.continuous_of_finiteDimensional g⟩ with hG
+  have hGf : G.comp f' = ContinuousLinearMap.id ℝ E := by
+    ext x
+    have h := LinearMap.congr_fun hg x
+    simpa [G] using h
+  have hcont : ContDiffAt ℝ n (fun x => G (f x)) a :=
+    G.contDiff.contDiffAt.comp a hf
+  have hderiv : HasFDerivAt (fun x => G (f x))
+      ((ContinuousLinearEquiv.refl ℝ E : E ≃L[ℝ] E) : E →L[ℝ] E) a := by
+    have h := G.hasFDerivAt.comp a hf'
+    rw [hGf] at h
+    exact h
+  obtain ⟨s, hs, hinjs⟩ := exists_mem_nhds_injOn_of_contDiffAt hcont hderiv hn
+  refine ⟨s, hs, fun x hx y hy hxy => hinjs hx hy ?_⟩
+  change G (f x) = G (f y)
+  rw [hxy]
 
 end MathlibExt.Analysis.Calculus.LocalInverseBridge

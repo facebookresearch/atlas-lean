@@ -1,0 +1,4 @@
+# Column weight of a matrix
+
+The column weight of column $c$ of a matrix $H$ over a field is the number of nonzero entries in
+that column. Over $\mathrm{GF}(2)$ it is the number of ones.

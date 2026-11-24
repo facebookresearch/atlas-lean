@@ -22,7 +22,9 @@ These bounds concern encoded bit length, not the verifier's physical memory usag
 
 namespace Cslib.Algorithms.Lean.Graph
 
-/-- An accepted certificate has the exact fixed-word size and is no longer than the graph. -/
+/-- **Size of an accepted Hamiltonian-cycle certificate.** If the Hamiltonian-cycle verifier
+accepts the bit strings $x$ and $y$, then $|y| = mw$, where $m = \lfloor \sqrt{|x|} \rfloor$ and
+$w$ is the least natural number with $m \le 2^w$, and moreover $|y| \le |x|$. -/
 public theorem verifyHamiltonianCycle_certificate_size (x y : Array Bool)
     (h : (verifyHamiltonianCycle x y).ret = true) :
     y.size = Nat.sqrt x.size * Nat.clog 2 (Nat.sqrt x.size) ∧ y.size ≤ x.size := by
@@ -37,7 +39,9 @@ public theorem verifyHamiltonianCycle_certificate_size (x y : Array Bool)
     _ ≤ Nat.sqrt x.size * Nat.sqrt x.size := Nat.mul_le_mul_left _ hw
     _ = x.size := hs
 
-/-- The actual verifier's selected events are polynomially bounded for every input. -/
+/-- **Quadratic step bound for the Hamiltonian-cycle verifier.** There is a constant $c > 0$ such
+that for all bit strings $x$ and $y$, the step count of the Hamiltonian-cycle verifier on $x$ and
+$y$ is at most $c\,(|x| + |y| + 1)^2$. -/
 public theorem verifyHamiltonianCycle_time_le :
     ∃ c : Nat, 0 < c ∧ ∀ x y : Array Bool,
       (verifyHamiltonianCycle x y).time ≤ c * (x.size + y.size + 1) ^ 2 := by
@@ -49,7 +53,9 @@ public theorem verifyHamiltonianCycle_time_le :
   have hb := Nat.mul_le_mul_left 16 hp
   omega
 
-/-- Accepted certificates give a bound in the graph's encoded bit length alone. -/
+/-- **Step bound for accepted Hamiltonian-cycle certificates.** There is a constant $c > 0$ such
+that for all bit strings $x$ and $y$ that the Hamiltonian-cycle verifier accepts, its step count
+on $x$ and $y$ is at most $c\,(|x| + 1)^2$. -/
 public theorem verifyHamiltonianCycle_time_le_of_accept :
     ∃ c : Nat, 0 < c ∧ ∀ x y : Array Bool,
       (verifyHamiltonianCycle x y).ret = true →

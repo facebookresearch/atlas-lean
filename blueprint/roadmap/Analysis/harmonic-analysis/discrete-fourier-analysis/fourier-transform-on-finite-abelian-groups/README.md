@@ -7,4 +7,4 @@
 
 ## Related topics
 
-- Gowers uniformity norms: the $U^2$ norm is the $\ell^4$ norm of the Fourier transform, and higher Gowers norms measure what Fourier analysis cannot see.
+- [Gowers uniformity norms](../../../../Combinatorics/additive-combinatorics/progressions-dense-sets/gowers-uniformity-norms/README.md): the $U^2$ norm is the $\ell^4$ norm of the Fourier transform, and higher Gowers norms measure what Fourier analysis cannot see.

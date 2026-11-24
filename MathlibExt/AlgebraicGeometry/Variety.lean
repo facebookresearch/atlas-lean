@@ -55,9 +55,9 @@ namespace AlgebraicGeometry
 
 variable (k : Type u) [Field k]
 
-/-- A scheme `X` over a field `k` (via a chosen structure morphism `X ⟶ Spec k`) is a
-*variety* over `k` if that morphism is separated, of finite type (quasi-compact and
-locally of finite type), and geometrically reduced. -/
+/-- **Variety over a field.** Let $k$ be a field. A scheme $X$ with a chosen structure morphism
+$X \to \operatorname{Spec} k$ is a *variety* over $k$ if this morphism is separated, of finite
+type (quasi-compact and locally of finite type), and geometrically reduced. -/
 class IsVariety (X : Scheme.{u}) [X.Over (Spec (CommRingCat.of k))] : Prop where
   /-- The structure morphism `X ⟶ Spec k` is separated. -/
   isSeparated : IsSeparated (X ↘ Spec (CommRingCat.of k))
@@ -86,8 +86,10 @@ instance [IsVariety k X] : GeometricallyReduced (X ↘ Spec (CommRingCat.of k)) 
   IsVariety.geometricallyReduced
 
 variable (k X) in
-/-- Characterization of `IsVariety` as the conjunction of its four defining morphism
-properties on the structure morphism. -/
+/-- **Characterization of varieties.** Let $k$ be a field and let $X$ be a scheme with a
+structure morphism $X \to \operatorname{Spec} k$. Then $X$ is a variety over $k$ if and only if
+this structure morphism is separated, locally of finite type, quasi-compact and geometrically
+reduced. -/
 theorem isVariety_iff :
     IsVariety k X ↔
       IsSeparated (X ↘ Spec (CommRingCat.of k)) ∧
@@ -96,7 +98,8 @@ theorem isVariety_iff :
             GeometricallyReduced (X ↘ Spec (CommRingCat.of k)) :=
   ⟨fun h => ⟨h.1, h.2, h.3, h.4⟩, fun ⟨a, b, c, d⟩ => ⟨a, b, c, d⟩⟩
 
-/-- The structure morphism of a variety is quasi-separated (being separated). -/
+/-- **Varieties are quasi-separated.** If $X$ is a variety over a field $k$, then its structure
+morphism $X \to \operatorname{Spec} k$ is quasi-separated, since it is separated. -/
 theorem quasiSeparated [IsVariety k X] :
     QuasiSeparated (X ↘ Spec (CommRingCat.of k)) :=
   inferInstance

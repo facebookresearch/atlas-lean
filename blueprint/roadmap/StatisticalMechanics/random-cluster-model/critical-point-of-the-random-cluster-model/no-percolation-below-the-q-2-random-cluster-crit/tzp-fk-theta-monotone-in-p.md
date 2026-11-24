@@ -1,0 +1,3 @@
+# Monotonicity of $\theta^1(p, 2)$ in $p$
+
+Let $d \in \mathbb{N}$ and $0 < p_1 \le p_2 < 1$. Then $\theta^1(p_1, 2) \le \theta^1(p_2, 2)$, where $\theta^1(p, q)$ is the probability, under the [wired infinite-volume random-cluster measure](../../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/wired-infinite-volume.md) $\phi^1_{p,q}$ on $\mathbb{Z}^d$ (a chosen subsequential weak limit of the wired box measures), that the open cluster of the origin is infinite (the [wired percolation probability](../the-critical-point-of-the-random-cluster-model/fk-theta.md)).

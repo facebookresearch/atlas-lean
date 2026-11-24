@@ -20,7 +20,7 @@ Definitions 1 and 2 (the problem) and Section 3 ("Purely rigid E-unification is 
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.ModelTheory.Semantics
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity

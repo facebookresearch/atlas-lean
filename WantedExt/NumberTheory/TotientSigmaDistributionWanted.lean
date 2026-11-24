@@ -31,10 +31,10 @@ over positive integers `n ≤ x`, i.e. `n ∈ Finset.Icc 1 ⌊x⌋₊`. The pape
 open Filter Asymptotics
 
 open Classical in
-/-- The Pollack–Pomerance sieve bound quoted by the paper: uniformly in the set of primes `P`
-and in `x > 1`, the proportion of positive integers `n ≤ x` with no prime factor in `P` is
-`O(exp(-A(x)))`, where `A(x) = ∑_{p ≤ x, p ∈ P} 1/p`. Stated with an absolute constant `C`
-as `#{n ≤ x : n free of P} ≤ C · x · exp(-A(x))`.
+/-- **Pollack–Pomerance sieve bound.** There is an absolute constant $C > 0$ such that for every
+set $P$ of primes and every real $x > 1$, the number of integers $n$ with $1 \le n \le x$ that
+are divisible by no prime in $P$ is at most $C x \exp(-A_P(x))$, where
+$A_P(x) = \sum_{p \in P,\ p \le x} 1/p$.
 
 Source: Anup B. Dixit and Saunak Bhattacharjee, *On the Distribution of φ(σ(n))*,
 INTEGERS 24 (2024), Article A65, Lemma 1 (`integers-2024-A65-lem-1`), quoting Pollack and
@@ -44,9 +44,10 @@ public theorem_wanted card_free_of_prime_set_le_exp_neg_sum_inv :
       ((((Finset.Icc 1 ⌊x⌋₊).filter fun n => ∀ p ∈ P, ¬ p ∣ n).card : ℕ) : ℝ) ≤
         C * x * Real.exp (-∑ p ∈ (Finset.Iic ⌊x⌋₊).filter (· ∈ P), (1 : ℝ) / p)
 
-/-- For every prime `p` and every `x ≥ e^p`, the number `S_p(x)` of positive integers
-`n ≤ x` with `p ∤ σ(n)` is `O(x (log log x / log x)^(1/(p-1)))`, with an absolute implied
-constant.
+/-- **Integers whose sum of divisors is not divisible by $p$.** There is an absolute constant
+$C > 0$ such that for every prime $p$ and every real $x \ge e^p$, the number of integers $n$ with
+$1 \le n \le x$ for which $p$ does not divide the sum of divisors $\sigma(n)$ is at most
+$C x (\log \log x / \log x)^{1/(p-1)}$.
 
 Source: Anup B. Dixit and Saunak Bhattacharjee, *On the Distribution of φ(σ(n))*,
 INTEGERS 24 (2024), Article A65, Lemma 3 (`integers-2024-A65-lem-3`). -/
@@ -56,11 +57,17 @@ public theorem_wanted card_not_dvd_sigma_le :
           ℝ) ≤
         C * x * (Real.log (Real.log x) / Real.log x) ^ ((1 : ℝ) / ((p : ℝ) - 1))
 
-/-- For every `c > 0`,
-`#{n ≤ x : φ(σ(n)) ≥ c n} ≤ π² x / (6 c log₄ x) + O(x log₃ x / ((log x)^(1/log₃ x) log₄ x))`,
-with the implied constant depending only on `c`. The bound is stated for all sufficiently
-large `x` (it needs `log₄ x > 0`, i.e. `x > e^(e^e)`). The record's follow-up remarks are
-not part of the statement.
+/-- **Upper bound for the number of $n$ with $\varphi(\sigma(n)) \ge c n$.** Write $\log_k$ for
+the $k$-fold iterated natural logarithm, so $\log_3 x = \log \log \log x$, and let $\varphi$ be
+Euler's totient function and $\sigma$ the sum of divisors. For every real $c > 0$ there is a
+constant $C$ such that for all sufficiently large $x$, the number of integers $n$ with
+$1 \le n \le x$ and $\varphi(\sigma(n)) \ge c n$ is at most
+$$
+\frac{\pi^2 x}{6 c \log_4 x} +
+C \, \frac{x \log_3 x}{(\log x)^{1/\log_3 x} \log_4 x}.
+$$
+
+The bound is only claimed for large $x$ since it needs $\log_4 x > 0$, that is, $x > e^{e^e}$.
 
 Source: Anup B. Dixit and Saunak Bhattacharjee, *On the Distribution of φ(σ(n))*,
 INTEGERS 24 (2024), Article A65, Theorem 1 (`integers-2024-A65-thm-1`). -/
@@ -73,11 +80,16 @@ public theorem_wanted card_totient_sigma_ge_mul_le (c : ℝ) (hc : 0 < c) :
             (Real.log x ^ (1 / Real.log (Real.log (Real.log x))) *
               Real.log (Real.log (Real.log (Real.log x)))))
 
-/-- Let `f : ℝ⁺ → ℝ⁺` be non-decreasing with `f(x) = o(log₄ x)`, and let
-`P_f(x) = {n ≤ x : φ(σ(n)) ≥ n / f(n)}`. Then
-`|P_f(x)| = O(x f(x) / log₄ x + x log₃ x / ((log x)^(1/log₃ x) log₄ x))` and
-`|P_f(x)| = o(x)` as `x → ∞`. The function is taken on `ℝ`, with positivity and
-monotonicity required on `(0, ∞)` only.
+/-- **How often $\varphi(\sigma(n)) \ge n / f(n)$.** Write $\log_k$ for the $k$-fold iterated
+natural logarithm, so $\log_3 x = \log \log \log x$, and let $\varphi$ be Euler's totient function
+and $\sigma$ the sum of divisors. Let $f$ be a real function that is positive and non-decreasing
+on $(0, \infty)$ with $f(x) = o(\log_4 x)$ as $x \to \infty$, and let $P_f(x)$ be the number of
+integers $n$ with $1 \le n \le x$ and $\varphi(\sigma(n)) \ge n / f(n)$. Then, as $x \to \infty$,
+$$
+P_f(x) = O\left(\frac{x f(x)}{\log_4 x} +
+\frac{x \log_3 x}{(\log x)^{1/\log_3 x} \log_4 x}\right)
+$$
+and $P_f(x) = o(x)$.
 
 Source: Anup B. Dixit and Saunak Bhattacharjee, *On the Distribution of φ(σ(n))*,
 INTEGERS 24 (2024), Article A65, Theorem 2 (`integers-2024-A65-thm-2`). -/
@@ -95,9 +107,13 @@ public theorem_wanted card_totient_sigma_ge_div_isBigO (f : ℝ → ℝ)
         (n : ℝ) / f n ≤ (Nat.totient (ArithmeticFunction.sigma 1 n) : ℝ)).card : ℕ) : ℝ))
       =o[atTop] fun x => x)
 
-/-- Except for `O(x log₅ x / log₄ x)` positive integers `n ≤ x`, `φ(σ(n)) ≤ n / log₅ n`.
-The finitely many small `n` for which `log₅ n` is not a positive real are absorbed by the
-`O`-term.
+/-- **Exceptions to $\varphi(\sigma(n)) \le n / \log_5 n$.** Write $\log_k$ for the $k$-fold
+iterated natural logarithm, and let $\varphi$ be Euler's totient function and $\sigma$ the sum of
+divisors. The number of integers $n$ with $1 \le n \le x$ and $\varphi(\sigma(n)) > n / \log_5 n$
+is $O(x \log_5 x / \log_4 x)$ as $x \to \infty$.
+
+The finitely many small $n$ for which $\log_5 n$ is not a positive real are absorbed by the
+$O$-term.
 
 Source: Anup B. Dixit and Saunak Bhattacharjee, *On the Distribution of φ(σ(n))*,
 INTEGERS 24 (2024), Article A65, Corollary 1 (`integers-2024-A65-cor-1`). -/

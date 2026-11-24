@@ -11,7 +11,7 @@ transform $\sum_s \psi(s) P(s)$.
 
 ## Background
 
-- Discrete Fourier transform on a finite abelian group:
+- [Discrete Fourier transform on a finite abelian group](../../../Analysis/harmonic-analysis/discrete-fourier-analysis/fourier-transform-on-finite-abelian-groups/dft-fun.md):
   the one-dimensional case.
 
 ## Sources

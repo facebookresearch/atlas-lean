@@ -25,8 +25,8 @@ subsolutions, uniqueness on bounded domains, and the one-dimensional Cauchy prob
 
 ## Related topics
 
-- Wasserstein gradient flows and the JKO scheme:
+- [Wasserstein gradient flows and the JKO scheme](../../../MeasureTheory/optimal-transport/wasserstein-gradient-flows-and-the-jko-scheme/README.md):
   with zero potential the Fokker–Planck equation is the heat equation, the Wasserstein gradient flow
   of the Boltzmann entropy (Jordan, Kinderlehrer and Otto).
-- Fokker–Planck equation:
+- [Fokker–Planck equation](../../../Probability/stochastic-calculus/fokker-planck-equation/README.md):
   the drift–diffusion equation that reduces to the heat equation without drift.

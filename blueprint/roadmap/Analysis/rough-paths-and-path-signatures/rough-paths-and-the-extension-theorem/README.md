@@ -30,5 +30,5 @@ signals*, Rev. Mat. Iberoam. 14 (1998), §2.1–2.2).
 
 - [Signature of a path](../signature-of-a-path/README.md): the iterated integrals of a path of
   bounded variation, the model case $p = 1$; Chen's identity is the multiplicative property.
-- Quadratic variation of Brownian motion:
+- [Quadratic variation of Brownian motion](../../../Probability/stochastic-calculus/quadratic-variation-of-brownian-motion/README.md):
   Brownian paths have finite $p$-variation only for $p > 2$, so they need two levels.

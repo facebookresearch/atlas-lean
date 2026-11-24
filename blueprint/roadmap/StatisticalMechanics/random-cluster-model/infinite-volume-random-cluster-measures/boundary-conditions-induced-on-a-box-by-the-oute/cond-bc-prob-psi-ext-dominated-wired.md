@@ -1,0 +1,7 @@
+# Wired box measure dominates the induced-wiring measure for $q \ge 1$
+
+Let $d, n \in \mathbb{N}$, let $\Lambda_m = \{-m, \dots, m\}^d$ carry its nearest-neighbour edges (so $\Lambda_n \subseteq \Lambda_{n+1}$), and let $\psi$ be an assignment of open/closed states to the unordered pairs of vertices of $\Lambda_{n+1}$ (the outer configuration). Let $0 < p < 1$ and $q \ge 1$. For every increasing set $A$ of configurations of $\Lambda_n$ (assignments of states to the unordered pairs of vertices of $\Lambda_n$),
+
+$$\sum_{\omega \in A} \phi^{W_\psi}_{\Lambda_n,p,q}(\omega) \le \sum_{\omega \in A} \phi^w_{\Lambda_n,\partial\Lambda_n,p,q}(\omega),$$
+
+where $W_\psi$ is the [induced wiring](induced-wiring.md) on $\Lambda_n$ (distinct vertices of $\Lambda_n$ joined by a path in the outer graph $O_\psi$), $\phi^C_{G,p,q}$ is the [random-cluster probability with boundary wiring $C$](../../fkg-inequality-and-monotonicity-of-random-cluste/bc-prob.md), with weight $p^{o(\omega)}(1 - p)^{c(\omega)} q^{k_C(\omega)}$ ($k_C$ counting the components of the graph of open edges together with the edges of $C$), $\phi^w_{\Lambda_n,\partial\Lambda_n,p,q}$ is the [wired random-cluster probability](../finite-and-infinite-volume-fk-measures-on-d/wired-fk-prob.md) on $\Lambda_n$ with boundary $\partial\Lambda_n$, and $\partial\Lambda_m$ is the vertex boundary of $\Lambda_m$ (the sites of $\Lambda_m$ not in $\Lambda_{m-1}$, with $m - 1$ truncated at $0$).

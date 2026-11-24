@@ -14,7 +14,7 @@ for matrices of positive size this says equivalently that $A \mapsto \log \opera
 
 ## Background
 
-- Golden–Thompson inequality: the other classical upper bound on $\operatorname{tr} e^{A + B}$-type quantities.
+- [Golden–Thompson inequality](../../../../LinearAlgebra/positive-definite-matrices/golden-thompson-inequality/golden-thompson.md): the other classical upper bound on $\operatorname{tr} e^{A + B}$-type quantities.
 
 ## Sources
 

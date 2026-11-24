@@ -8,7 +8,7 @@ forming $X^{\mathsf{T}}X$, whose condition number is the square of that of $X$.
 
 ## Informally uses
 
-- Least squares and the normal equations: minimizers are the solutions of the normal equations.
+- [Least squares and the normal equations](../../../ComputerScience/machine-learning/supervised-learning/least-squares-ridge-and-lasso-regression/rss-le-iff-normal.md): minimizers are the solutions of the normal equations.
 
 ## Related topics
 

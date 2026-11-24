@@ -1,0 +1,15 @@
+# Same-name linear guards at a compatible interface communicate to Qualified progress at reachable closed runtime states
+
+- [Same-name linear guards at a compatible interface communicate](same-name-linear-guards-step.md)
+- [Balanced runtime frontiers are idle or step given availability](progress.md)
+- [Choice selection is the identity on runtime-typed processes](select-eq.md)
+- [Subject reduction for runtime typing at compatible interfaces](subject-reduction.md)
+- [Subject reduction for runtime typing at balanced interfaces](subject-reduction-balanced.md)
+- [Subject reduction for runtime typing at the empty interface](subject-reduction-empty.md)
+- [Multi-step subject reduction at compatible interfaces](reachable.md)
+- [Multi-step subject reduction at balanced interfaces](reachable-balanced.md)
+- [Multi-step subject reduction at the empty interface](reachable-empty.md)
+- [Global runtime progress at balanced interfaces given availability](progress-balanced.md)
+- [Closed runtime processes are idle or step given availability](progress-empty.md)
+- [Qualified progress at every reachable runtime state](reachable-progress.md)
+- [Qualified progress at reachable closed runtime states](reachable-progress-empty.md)

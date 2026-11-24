@@ -34,13 +34,16 @@ $H^1_0(U)$ for Poisson's equation; and interior $H^2$ regularity.
 - [Existence and uniqueness of weak solutions of the Dirichlet problem for Poisson's equation](exists-unique-weak-solution-poisson.md)
 - [The hypotheses of interior $H^2$ regularity are satisfiable](interior-h2-regularity-hypotheses-laplac.md)
 - [Interior $H^2$ regularity](interior-h2-regularity.md)
+- [Elements of H¹₀(0, 1) as primitives of square-integrable derivatives](weak-h10.md)
+- [Weak solutions of steady diffusion on (0, 1) exist and are unique](weak-diffusion-exists-unique.md)
+- [Integration by parts of a primitive against a function of H¹₀(0, 1)](weak-diffusion-ibp.md)
 
 ## Related topics
 
-- Céa's lemma: the Lax–Milgram solution of a
+- [Céa's lemma](../../numerical-analysis/c-a-s-lemma/README.md): the Lax–Milgram solution of a
   coercive variational problem and its Galerkin approximation in subspaces, the basis of the finite
   element method for these weak formulations.
-- Stampacchia's theorem:
+- [Stampacchia's theorem](../../convex-analysis-and-variations/stampacchia-s-theorem/README.md):
   the extension of Lax–Milgram to variational inequalities on closed convex sets (obstacle
   problems).
 - [Sobolev embedding theorem](../../function-spaces/sobolev-embedding-theorem/README.md): Sobolev
@@ -49,6 +52,6 @@ $H^1_0(U)$ for Poisson's equation; and interior $H^2$ regularity.
   the one-dimensional Dirichlet problem $-u'' = f$, solved explicitly.
 - [Pólya's conjecture on Laplacian eigenvalues](../p-lya-s-conjecture-on-laplacian-eigenvalues/README.md):
   the spectrum of the Dirichlet Laplacian, whose weak formulation lives on $H^1_0(U)$.
-- Bayesian inverse problems:
+- [Bayesian inverse problems](../../../Probability/bayesian-statistics/bayesian-inverse-problems/README.md):
   the well-posedness theory there is stated for an abstract forward map; solution operators of
   elliptic equations are a standard example of such maps.

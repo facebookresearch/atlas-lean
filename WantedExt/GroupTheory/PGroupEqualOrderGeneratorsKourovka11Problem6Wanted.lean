@@ -32,16 +32,20 @@ some odd prime. A generating set is any subset `S` with `closure S = ⊤` whose 
 same order.
 -/
 
-/-- Kourovka 11.6 (C. Bagiński): for every odd prime `p`, every finite `p`-group has a generating
-set all of whose elements have the same order. -/
+/-- **Generating sets of equal order in finite p-groups (Kourovka 11.6).** The statement that for
+every odd prime $p$, every finite $p$-group $G$ has a generating set $S$ all of whose elements have
+the same order. -/
 def pGroupEqualOrderGenerators : Prop :=
   ∀ p : ℕ, p.Prime → Odd p → ∀ (G : Type) [Group G] [Finite G], IsPGroup p G →
     ∃ S : Set G, Subgroup.closure S = ⊤ ∧ ∃ m : ℕ, ∀ x ∈ S, orderOf x = m
 
 /--
-Resolved false: the Kourovka Archive answers 11.6 "No, it is not true" (O'Brien, Scoppola and
-Vaughan-Lee): for odd primes there are finite `p`-groups with no generating set of elements of equal
-order. Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The
+**Finite p-groups without a generating set of elements of equal order.** For some odd prime $p$
+there is a finite $p$-group $G$ such that no generating set of $G$ consists of elements that all
+have the same order. This answers Kourovka Problem 11.6 (Bagiński) in the negative (O'Brien,
+Scoppola and Vaughan-Lee).
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The
 Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 11.6
 (C. Bagiński); resolution: E. A. O'Brien, C. M. Scoppola and M. R. Vaughan-Lee, Proc. Amer. Math.
 Soc. 134, no. 12 (2006), 3457-3464, Kourovka Archive, Problem 11.6: "No, it is not true",

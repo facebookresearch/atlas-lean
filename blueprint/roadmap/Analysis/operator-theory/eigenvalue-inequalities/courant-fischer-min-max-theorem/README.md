@@ -22,4 +22,4 @@
 
 ## Related topics
 
-- Graph Laplacians and Cheeger's inequality: Courant–Fischer gives the second Laplacian eigenvalue $\lambda_2$ as a minimum of Rayleigh quotients over vectors orthogonal to the constants.
+- [Graph Laplacians and Cheeger's inequality](../../../../GraphTheory/algebraic-graph-theory/part-01/graph-laplacians-and-cheeger-s-inequality/README.md): Courant–Fischer gives the second Laplacian eigenvalue $\lambda_2$ as a minimum of Rayleigh quotients over vectors orthogonal to the constants.

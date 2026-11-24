@@ -1,0 +1,5 @@
+# Bit-blasting a word into literals
+
+Let $n \in \mathbb{N}$, let $\ell : \{0, \dots, n-1\} \to \mathbb{N}$ be a length profile, and let $u$ be a
+finite word over $\{0, 1\} \cup \{x_0, \dots, x_{n-1}\}$. The bit-blasting of a word $u$ over $\{0, 1\} \cup \{x_0, \dots, x_{n-1}\}$ at a length profile $\ell$ is the list of literals obtained by replacing each constant $b \in \{0, 1\}$ by the literal $(0, b)$ (variable $0$, polarity true for $1$ and false for $0$) and each variable $x_i$ by the $\ell(i)$ positive literals $(\langle i, 0\rangle + 1, \mathrm{true}), \dots, (\langle i, \ell(i) - 1\rangle + 1, \mathrm{true})$, where $\langle i, p\rangle$ denotes the pairing bijection $\mathbb{N}^2 \to \mathbb{N}$ given by $\langle i, p\rangle = p^2 + i$ if $i < p$ and $\langle i, p\rangle = i^2 + i + p$ otherwise. A literal is a pair of a SAT variable in
+$\mathbb{N}$ and a polarity.

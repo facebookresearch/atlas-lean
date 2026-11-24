@@ -4,7 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 SPDX-License-Identifier: Apache-2.0
 
 Modified for Atlas: extracted the general estimates, narrowed imports, consolidated the
-two exponential estimates, and added boundary and importing-client tests.
+two exponential estimates, and added boundary and importing-client tests; later added the
+`(e D / r) ^ r` bound `sum_choose_le_exp_mul_div_pow`.
 -/
 module
 
@@ -15,7 +16,8 @@ import Mathlib.Analysis.Complex.ExponentialBounds
 
 For `0 ≤ x ≤ 1` and `r ≤ D`, multiplying the partial binomial sum by `x ^ r`
 gives a quantity at most `(1 + x) ^ D`, hence at most `exp (D * x)`.
-Choosing `x = r / D` gives the counting bound `(3 * D / r) ^ r` when `r > 0`.
+Choosing `x = r / D` gives the counting bound `(3 * D / r) ^ r` when `r > 0`, and its sharp
+form `(e * D / r) ^ r` (`sum_choose_le_exp_mul_div_pow`).
 
 Adapted from `eth/proof/rates/ClauseBound/Rec/Few.lean` and
 `eth/proof/machines/StepMachines/Math/SparsifyCount.lean` in
@@ -79,6 +81,24 @@ theorem sum_choose_le_pow {D r : ℕ} (hr0 : 1 ≤ r) (hrD : r ≤ D) :
     rw [← div_pow]
     congr 1
     field_simp
+  rw [heq, le_div_iff₀ (by positivity), mul_comm]
+  exact h
+
+/-- **Partial binomial sums are at most `(e D / r) ^ r`.** For `1 ≤ r ≤ D`,
+`∑_{j ≤ r} C(D, j) ≤ (e D / r) ^ r`, the sharp form of `sum_choose_le_pow` (which has `3` in
+place of `e`), from `pow_mul_sum_choose_le_exp` with the weight `x = r / D`. Shalev-Shwartz and
+Ben-David (*Understanding Machine Learning*, CUP 2014, Lemma 6.10 and Lemma A.5) state it for
+`r ≤ D - 2`, as a corollary of the Sauer–Shelah lemma; the proof here covers `1 ≤ r ≤ D`. -/
+theorem sum_choose_le_exp_mul_div_pow {D r : ℕ} (hr0 : 1 ≤ r) (hrD : r ≤ D) :
+    (∑ j ∈ range (r + 1), (D.choose j : ℝ)) ≤ (exp 1 * D / r) ^ r := by
+  have hr : (0 : ℝ) < r := by exact_mod_cast hr0
+  have hD : (0 : ℝ) < D := by exact_mod_cast lt_of_lt_of_le (by omega : 0 < r) hrD
+  have hx1 : (r : ℝ) / D ≤ 1 := (div_le_one hD).mpr (by exact_mod_cast hrD)
+  have h := pow_mul_sum_choose_le_exp hrD (div_pos hr hD).le hx1
+  rw [mul_div_cancel₀ _ hD.ne'] at h
+  have heq : (exp 1 * D / r) ^ r = exp (r : ℝ) / ((r : ℝ) / D) ^ r := by
+    rw [show exp (r : ℝ) = exp 1 ^ r by rw [← exp_nat_mul, mul_one], ← div_pow]
+    congr 1; field_simp
   rw [heq, le_div_iff₀ (by positivity), mul_comm]
   exact h
 

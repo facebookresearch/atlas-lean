@@ -14,7 +14,7 @@ For $n \ge 1$, where all these traces are positive, this says equivalently that 
 
 ## Background
 
-- Golden–Thompson inequality: another trace inequality for $\operatorname{tr} e^{A + B}$, from the same circle of statistical-mechanics bounds.
+- [Golden–Thompson inequality](../../../../LinearAlgebra/positive-definite-matrices/golden-thompson-inequality/golden-thompson.md): another trace inequality for $\operatorname{tr} e^{A + B}$, from the same circle of statistical-mechanics bounds.
 
 ## Sources
 

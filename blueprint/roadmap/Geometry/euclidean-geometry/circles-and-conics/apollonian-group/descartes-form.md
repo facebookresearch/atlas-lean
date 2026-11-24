@@ -14,7 +14,7 @@ circles form a Descartes quadruple; Kontorovich and Oh use the form with an extr
 
 ## Related topics
 
-- Descartes matrix:
+- [Descartes matrix](../../../../NumberTheory/arithmetic-geometry/local-global-conjecture-for-apollonian-circle-pa/descartes-matrix.md):
   the same form, as the matrix of the local-global statements.
 
 ## Sources

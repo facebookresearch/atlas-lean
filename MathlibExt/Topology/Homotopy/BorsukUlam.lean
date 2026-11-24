@@ -3667,11 +3667,15 @@ private theorem bu_no_zero {n : ℕ} [Nonempty (Fin n)]
   linarith
 
 /--
-Every continuous `S^n → ℝ^n` identifies an antipodal pair `∃ x, f x = f (-x)`. Source: K. Borsuk,
-Fund. Math. 20 (1933) 177–190 antipodal theorem; S. Ulam; J. Matoušek, Using the Borsuk–Ulam
-Theorem; Lean states `EuclideanSpace ℝ (Fin (n+1))` to `Fin n` specialization.
+**Borsuk–Ulam theorem.** Let $n$ be a natural number and let $S^n$ be the unit sphere in the
+Euclidean space $\mathbb{R}^{n+1}$. For every continuous map $f \colon S^n \to \mathbb{R}^n$ there
+is a point $x \in S^n$ with $f(x) = f(-x)$.
 
 Proves `Wanted` entry `borsukUlam`.
+
+Source: K. Borsuk,
+Fund. Math. 20 (1933) 177–190 antipodal theorem; S. Ulam; J. Matoušek, Using the Borsuk–Ulam
+Theorem; Lean states `EuclideanSpace ℝ (Fin (n+1))` to `Fin n` specialization.
 -/
 public theorem borsukUlam
     {n : ℕ} (f : sphere (0 : EuclideanSpace ℝ (Fin (n + 1))) 1 → EuclideanSpace ℝ (Fin n))

@@ -15,5 +15,5 @@
 
 ## Related topics
 
-- Matrix concentration inequalities
+- [Matrix concentration inequalities](../../../../Probability/concentration-inequalities/matrix-concentration-inequalities/README.md)
 - [Lieb's concavity theorem](../../../../LinearAlgebra/positive-definite-matrices/lieb-s-concavity-theorem/README.md)

@@ -9,6 +9,6 @@ $(\theta - \theta_0)^\top P_0^{-1} (\theta - \theta_0) + \sum_{k<t} (y_{k+1} - \
 
 ## Background
 
-- Least squares and the normal equations: minimisers of a residual sum of squares are
+- [Least squares and the normal equations](../../../ComputerScience/machine-learning/supervised-learning/least-squares-ridge-and-lasso-regression/rss-le-iff-normal.md): minimisers of a residual sum of squares are
   exactly the solutions of its normal equations; the regularised problem here adds the positive definite quadratic
   penalty $(\theta - \theta_0)^\top P_0^{-1} (\theta - \theta_0)$.

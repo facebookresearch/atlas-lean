@@ -1,0 +1,3 @@
+# No percolation below the critical point at $q = 2$
+
+Let $d \in \mathbb{N}$ and $0 < p < 1$. If $p < p_c(2)$, then $\theta^1(p, 2) = 0$, where $p_c(2)$ is the [critical point](../the-critical-point-of-the-random-cluster-model/fk-pc.md) $\sup\{p \in (0, 1) : \theta^1(p, 2) = 0\}$ of $\mathbb{Z}^d$ and $\theta^1(p, q)$ is the probability, under the [wired infinite-volume random-cluster measure](../../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/wired-infinite-volume.md) $\phi^1_{p,q}$ on $\mathbb{Z}^d$ (a chosen subsequential weak limit of the wired box measures), that the open cluster of the origin is infinite (the [wired percolation probability](../the-critical-point-of-the-random-cluster-model/fk-theta.md)).

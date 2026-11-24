@@ -120,10 +120,6 @@ private theorem eval₂_toPolynomial {s : Nat} {R : Type*} [CommRing R]
     w.toPolynomial.eval₂ φ r = evalBits r w.toBoolListLE := by
   simpa [toPolynomial] using eval₂_ofBoolList φ r w.toBoolListLE
 
-private theorem zero_toPolynomial (s : Nat) : (0#s).toPolynomial = 0 := by
-  ext i
-  simp [coeff_toPolynomial]
-
 private theorem eval₂_mulModAux {s : Nat} {R : Type*} [CommRing R]
     (φ : ZMod 2 →+* R) (r : R) (g x : BitVec s)
     (hr : r ^ s = g.toPolynomial.eval₂ φ r) (bits : List Bool) :
@@ -131,7 +127,7 @@ private theorem eval₂_mulModAux {s : Nat} {R : Type*} [CommRing R]
         (0#s)).toPolynomial.eval₂ φ r =
       x.toPolynomial.eval₂ φ r * evalBits r bits := by
   induction bits with
-  | nil => simp [evalBits, zero_toPolynomial]
+  | nil => simp [evalBits, toPolynomial_zero]
   | cons b bits ih =>
       simp only [List.foldr]
       cases b
@@ -156,11 +152,6 @@ theorem eval₂_mulMod {s t : Nat} {R : Type*} [CommRing R]
       eval₂_mulModAux φ r g x hr y.toBoolListLE
     _ = _ := by rw [← eval₂_toPolynomial φ r y]
 
-private theorem one_toPolynomial {s : Nat} (hs : 0 < s) : (1#s).toPolynomial = 1 := by
-  ext i
-  rw [coeff_toPolynomial, BitVec.getLsbD_one, Polynomial.coeff_one]
-  simp [hs]
-
 private theorem powMod_succ {s t : Nat} (g : BitVec s) (u : BitVec t) (e : Nat) :
     g.powMod u (e + 1) = g.mulMod (g.powMod u e) u := by
   simp [powMod, ← Nat.fold_eq_foldTR, Nat.fold_succ]
@@ -172,7 +163,7 @@ theorem eval₂_powMod {s t : Nat} {R : Type*} [CommRing R]
     (g.powMod u e).toPolynomial.eval₂ φ r =
       (u.toPolynomial.eval₂ φ r) ^ e := by
   induction e with
-  | zero => simp [powMod, ← Nat.fold_eq_foldTR, one_toPolynomial hs]
+  | zero => simp [powMod, ← Nat.fold_eq_foldTR, toPolynomial_one hs]
   | succ e ih =>
       rw [show e + 1 = Nat.succ e by rfl, powMod_succ,
         eval₂_mulMod φ r g _ u hr, ih, pow_succ]

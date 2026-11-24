@@ -34,8 +34,8 @@ the starting point of the Brownian snake and of the Brownian map.
   real tree exactly when it is $0$-hyperbolic.
 - [Pointed Gromov–Hausdorff convergence](../pointed-gromov-hausdorff-convergence/README.md): the
   topology in which coded trees converge when their coding functions converge uniformly.
-- Galton–Watson process:
+- [Galton–Watson process](../../../Probability/branching-processes/galton-watson-process/README.md):
   the discrete trees whose rescaled contour functions converge to the Brownian excursion
   (Aldous's theorem).
-- Construction and sample paths of Brownian motion:
+- [Construction and sample paths of Brownian motion](../../../Probability/stochastic-calculus/construction-and-sample-paths-of-brownian-motion/README.md):
   Brownian excursions code the continuum random tree.

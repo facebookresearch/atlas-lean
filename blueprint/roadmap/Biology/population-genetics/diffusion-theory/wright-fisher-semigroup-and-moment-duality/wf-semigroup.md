@@ -1,0 +1,3 @@
+# Neutral Wright–Fisher diffusion semigroup
+
+For a real number $t$, the operator $T_t$ on the continuous real functions on $[0, 1]$ such that $T_t f$ is the uniform limit of $W_M^{\lfloor tM \rfloor} f$ as $M \to \infty$, where $W_M$ is the [Wright–Fisher generation operator](wf-step.md) and $\lfloor tM \rfloor$ the natural floor ([the limit exists](cauchy-seq-wf-step-pow-floor.md)). It is a continuous linear operator of norm at most $1$. For $t \ge 0$ it is the neutral Wright–Fisher diffusion semigroup, with time in units of $M = 2N$ generations; for $t < 0$ it is the identity, since then $\lfloor tM \rfloor = 0$.

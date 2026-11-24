@@ -36,6 +36,9 @@ conductances, `V` is nonincreasing along solutions.
 
 ## ii. Key results
 
+- `ZoneHeatInventory.quadratic_dissipation_hasDerivAt`: the
+  dissipation identity at one time, from the zone equations at that
+  time.
 - `ZoneHeatInventory.quadratic_dissipation_deriv`: the dissipation
   identity.
 - `ZoneHeatInventory.quadratic_dissipation_nonpos`: nonpositive
@@ -62,23 +65,22 @@ namespace ZoneHeatInventory
 
 /-! ## A. The dissipation identity -/
 
-/-- Derivative of the quadratic thermal functional: dissipation
-identity. -/
-theorem quadratic_dissipation_deriv {ι : Type*} [Fintype ι]
+/-- Derivative of the quadratic thermal functional at one time `t`:
+dissipation identity from the zone equations at `t` only. -/
+theorem quadratic_dissipation_hasDerivAt {ι : Type*} [Fintype ι]
     (C : ι → ℝ) (G : ι → ι → ℝ) (g0 : ι → ℝ) (Tout : ℝ)
-    (T Tv P : ι → ℝ → ℝ)
+    (T Tv P : ι → ℝ → ℝ) (t : ℝ)
     (hG : ∀ i j, G i j = G j i)
-    (hT : ∀ i t, HasDerivAt (T i) (Tv i t) t)
-    (hzone : ∀ i t, C i * Tv i t
+    (hT : ∀ i, HasDerivAt (T i) (Tv i t) t)
+    (hzone : ∀ i, C i * Tv i t
       = (∑ j, G i j * (T j t - T i t)) + g0 i * (Tout - T i t)
-        + P i t)
-    (t : ℝ) :
+        + P i t) :
     HasDerivAt (fun s => (1 / 2) * ∑ i, C i * (T i s - Tout) ^ 2)
       (-((1 / 2) * ∑ i, ∑ j, G i j * (T j t - T i t) ^ 2
         + ∑ i, g0 i * (T i t - Tout) ^ 2)
         + ∑ i, (T i t - Tout) * P i t) t := by
   have hsub : ∀ i, HasDerivAt (fun s => T i s - Tout) (Tv i t) t :=
-    fun i => (hT i t).sub_const Tout
+    fun i => (hT i).sub_const Tout
   have hsq : ∀ i, HasDerivAt (fun s => (T i s - Tout) ^ 2)
       (Tv i t * (T i t - Tout) + (T i t - Tout) * Tv i t) t := by
     intro i
@@ -157,7 +159,7 @@ theorem quadratic_dissipation_deriv {ι : Type*} [Fintype ι]
     calc C i * (Tv i t * (T i t - Tout) + (T i t - Tout) * Tv i t)
         = 2 * ((T i t - Tout) * (C i * Tv i t)) := by ring
       _ = 2 * ((T i t - Tout) * ((∑ j, G i j * (T j t - T i t))
-          + g0 i * (Tout - T i t) + P i t)) := by rw [hzone i t]
+          + g0 i * (Tout - T i t) + P i t)) := by rw [hzone i]
   have hval : (1 / 2) * ∑ i, C i * (Tv i t * (T i t - Tout) + (T i t - Tout) * Tv i t)
       = -((1 / 2) * ∑ i, ∑ j, G i j * (T j t - T i t) ^ 2
         + ∑ i, g0 i * (T i t - Tout) ^ 2)
@@ -181,6 +183,24 @@ theorem quadratic_dissipation_deriv {ι : Type*} [Fintype ι]
           ring
   rw [hval] at hV
   exact hV
+
+/-- Derivative of the quadratic thermal functional: dissipation
+identity. -/
+theorem quadratic_dissipation_deriv {ι : Type*} [Fintype ι]
+    (C : ι → ℝ) (G : ι → ι → ℝ) (g0 : ι → ℝ) (Tout : ℝ)
+    (T Tv P : ι → ℝ → ℝ)
+    (hG : ∀ i j, G i j = G j i)
+    (hT : ∀ i t, HasDerivAt (T i) (Tv i t) t)
+    (hzone : ∀ i t, C i * Tv i t
+      = (∑ j, G i j * (T j t - T i t)) + g0 i * (Tout - T i t)
+        + P i t)
+    (t : ℝ) :
+    HasDerivAt (fun s => (1 / 2) * ∑ i, C i * (T i s - Tout) ^ 2)
+      (-((1 / 2) * ∑ i, ∑ j, G i j * (T j t - T i t) ^ 2
+        + ∑ i, g0 i * (T i t - Tout) ^ 2)
+        + ∑ i, (T i t - Tout) * P i t) t :=
+  quadratic_dissipation_hasDerivAt C G g0 Tout T Tv P t hG (fun i => hT i t)
+    (fun i => hzone i t)
 
 /-- With no input power and nonnegative conductances, the
 quadratic functional is nonincreasing along solutions: its

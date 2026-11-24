@@ -6,7 +6,7 @@ The ball of radius $n$ of $G$ maps into a ball of radius $L' n + C'$ around $f(1
 
 ## Background
 
-- Quasi-isometric embedding: the general metric notion, here written out for word metrics.
+- [Quasi-isometric embedding](../../../Geometry/metric-geometry/quasi-isometries/is-quasi-isometric-embedding.md): the general metric notion, here written out for word metrics.
 - [Gromov's polynomial growth theorem](virtually-nilpotent-of-has-polynomial-gr.md): the theorem that turns this invariance into the quasi-isometric rigidity of virtually nilpotent groups.
 
 ## Sources

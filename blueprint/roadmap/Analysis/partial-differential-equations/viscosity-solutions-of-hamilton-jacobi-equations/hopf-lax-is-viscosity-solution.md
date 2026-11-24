@@ -17,13 +17,13 @@ Calder's sketch.
 
 ## Background
 
-- Fenchel conjugate:
+- [Fenchel conjugate](../../convex-analysis-and-variations/fenchel-moreau-theorem/fenchel-conj.md):
   $L$ is the convex conjugate of $H$, and $H = L^*$ by the Fenchel–Moreau theorem; here both are
   real valued, so the statement writes the supremum directly.
-- Linear quadratic regulator:
+- [Linear quadratic regulator](../../../ComputerScience/machine-learning/reinforcement-learning/linear-quadratic-regulator/README.md):
   dynamic programming in discrete time, where the Riccati recursion plays the role of the
   Hamilton–Jacobi–Bellman equation for quadratic value functions.
-- Kantorovich duality:
+- [Kantorovich duality](../../../MeasureTheory/optimal-transport/kantorovich-duality/README.md):
   for $H(p) = |p|^2/2$ the formula is $u(x, t) = \inf_y (g(y) + |x - y|^2 / 2t)$, an
   inf-convolution of $g$ with the quadratic cost $|x - y|^2/2t$, the operation that defines
   $c$-transforms (up to sign conventions) in the dual problem of optimal transport.

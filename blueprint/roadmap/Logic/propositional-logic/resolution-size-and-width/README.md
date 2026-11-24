@@ -23,4 +23,4 @@ Ben-Sasson and Wigderson showed that short refutations are narrow: a [tree-like 
 ## Related topics
 
 - [Resolution](../resolution/README.md): the resolution rule, soundness and refutation completeness, without proof objects.
-- Monotone circuit lower bound for clique: lower bounds for a restricted computational model, the circuit-complexity counterpart of lower bounds for a restricted proof system.
+- [Monotone circuit lower bound for clique](../../../TheoryOfComputation/circuit-complexity/monotone-circuit-lower-bound-for-clique/README.md): lower bounds for a restricted computational model, the circuit-complexity counterpart of lower bounds for a restricted proof system.

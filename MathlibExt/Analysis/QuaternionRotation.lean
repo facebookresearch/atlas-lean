@@ -41,12 +41,15 @@ The pure imaginary quaternions are the kernel of the real-part map
 - `QuaternionRotation.unitaryHomSpecialOrthogonalGroup`: the packaged
   monoid homomorphism from `unitary ℍ` into
   `Matrix.specialOrthogonalGroup (Fin 3) ℝ`.
+- `QuaternionRotation.rotMatrix_eq_one_iff`: on unit quaternions, the
+  rotation matrix is the identity exactly at `q = 1` and `q = -1`.
 
 ## iii. Table of contents
 
 - A. Pure imaginary quaternions and coordinates
 - B. The rotation matrix and its group properties
 - C. Fixtures
+- D. Kernel and sign invariance
 
 ## iv. References
 
@@ -86,13 +89,15 @@ private theorem det_rotMatrix_general (q : ℍ) : (rotMatrix q).det = (normSq q)
   simp [rotMatrix, imCoords, imBasis, Matrix.det_fin_three, Quaternion.normSq_def']
   ring
 
-private theorem rotMatrix_transpose_mul_self (q : ℍ) :
+/-- For every quaternion `q`, `(rotMatrix q)ᵀ * rotMatrix q = (normSq q) ^ 2 • 1`, that is
+`Rᵀ R = |q|⁴ 1`; no unit hypothesis is needed. -/
+theorem rotMatrix_transpose_mul_self (q : ℍ) :
     Matrix.transpose (rotMatrix q) * rotMatrix q
       = (normSq q) ^ 2 • (1 : Matrix (Fin 3) (Fin 3) ℝ) := by
   ext a b
   fin_cases a <;> fin_cases b <;>
     simp [rotMatrix, imCoords, imBasis, Matrix.mul_apply, Matrix.transpose_apply,
-      Fin.sum_univ_three, Quaternion.normSq_def'] <;>
+      Fin.sum_univ_three, Quaternion.normSq_def', Function.swap] <;>
     ring
 
 /-- For unit `q`, conjugation `v ↦ q * v * star q` restricts to a real linear
@@ -267,5 +272,78 @@ theorem two_not_rotation :
     rw [hdet2] at hdet1
     norm_num at hdet1
   exact ⟨hNotUnit, hNotSO⟩
+
+/-- Kernel on unit quaternions: `rotMatrix q` is the identity matrix
+exactly when `q = 1` or `q = -1`. -/
+theorem rotMatrix_eq_one_iff {q : ℍ} (hq : ‖q‖ = 1) :
+    rotMatrix q = 1 ↔ q = 1 ∨ q = -1 := by
+  constructor
+  · intro h
+    have e00 : rotMatrix q 0 0 = q.re^2 + q.imI^2 - q.imJ^2 - q.imK^2 := by
+      simp [rotMatrix, imCoords, imBasis]
+      ring
+    have e11 : rotMatrix q 1 1 = q.re^2 - q.imI^2 + q.imJ^2 - q.imK^2 := by
+      simp [rotMatrix, imCoords, imBasis]
+      ring
+    have h00 : q.re^2 + q.imI^2 - q.imJ^2 - q.imK^2 = 1 := by
+      have h0 := congrFun (congrFun h (0 : Fin 3)) (0 : Fin 3)
+      rw [e00] at h0
+      simpa using h0
+    have h11 : q.re^2 - q.imI^2 + q.imJ^2 - q.imK^2 = 1 := by
+      have h1 := congrFun (congrFun h (1 : Fin 3)) (1 : Fin 3)
+      rw [e11] at h1
+      simpa using h1
+    have hnorm : q.re^2 + q.imI^2 + q.imJ^2 + q.imK^2 = 1 := by
+      have hmul : ‖q‖ * ‖q‖ = 1 := by rw [hq]; norm_num
+      have hN : Quaternion.normSq q = 1 := by
+        rw [Quaternion.normSq_eq_norm_mul_self, hmul]
+      rw [Quaternion.normSq_def'] at hN
+      linarith
+    have hJ2 : q.imJ^2 = 0 := by
+      have hC := sq_nonneg q.imJ
+      have hD := sq_nonneg q.imK
+      have hCD : q.imJ^2 + q.imK^2 = 0 := by linarith
+      linarith
+    have hK2 : q.imK^2 = 0 := by
+      have hC := sq_nonneg q.imJ
+      have hD := sq_nonneg q.imK
+      have hCD : q.imJ^2 + q.imK^2 = 0 := by linarith
+      linarith
+    have hJ0 : q.imJ = 0 := sq_eq_zero_iff.mp hJ2
+    have hK0 : q.imK = 0 := sq_eq_zero_iff.mp hK2
+    have hI2 : q.imI^2 = 0 := by
+      have hB := sq_nonneg q.imI
+      have hD := sq_nonneg q.imK
+      linarith
+    have hI0 : q.imI = 0 := sq_eq_zero_iff.mp hI2
+    have hA : q.re^2 = 1 := by linarith
+    rcases sq_eq_one_iff.mp hA with hr | hr
+    · left
+      rw [Quaternion.ext_iff]
+      simp [hr, hI0, hJ0, hK0]
+    · right
+      rw [Quaternion.ext_iff]
+      simp [hr, hI0, hJ0, hK0]
+  · rintro (rfl | rfl)
+    · ext a b
+      fin_cases a <;> fin_cases b <;> simp [rotMatrix, imCoords, imBasis]
+    · ext a b
+      fin_cases a <;> fin_cases b <;> simp [rotMatrix, imCoords, imBasis]
+
+/-- Sign invariance: `q` and `-q` determine the same rotation matrix,
+for every quaternion `q`. -/
+theorem rotMatrix_neg (q : ℍ) : rotMatrix (-q) = rotMatrix q := by
+  ext a b
+  fin_cases a <;> fin_cases b <;> simp [rotMatrix, imCoords, imBasis]
+
+/-- The quaternions `1` and `-1` determine the same rotation matrix. -/
+theorem rotMatrix_one_eq_rotMatrix_neg_one :
+    rotMatrix (1 : ℍ) = rotMatrix (-1 : ℍ) := by
+  exact (rotMatrix_neg 1).symm
+
+/-- The quarter turn about the `i` axis is not the identity rotation. -/
+theorem quarterTurn_rotMatrix_ne_one :
+    rotMatrix ⟨√2 / 2, √2 / 2, 0, 0⟩ ≠ 1 := by
+  exact quarterTurn_rotMatrix.2.2
 
 end QuaternionRotation
