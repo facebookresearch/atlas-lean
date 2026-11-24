@@ -10,6 +10,12 @@ If $f$ and $g$ are space-constructible, $g(n) \ge \log n$ and $f(n) = o(g(n))$, 
 
 - [Parametrized s-m-n theorem](../../computability/exists-computable-code.md)
 
+## Expansion
+
+This page becomes ready once:
+
+- Space-constructible functions (statement prerequisite; not yet stated)
+
 ## Sources
 
 - R. E. Stearns, J. Hartmanis and P. M. Lewis II, "Hierarchies of memory limited computations", *Proceedings of the 6th IEEE Symposium on Switching Circuit Theory and Logical Design*, 1965

@@ -17,6 +17,12 @@ which first evaluates the argument.
 
 - [Termination of the call-by-value simply typed lambda calculus](../../type-systems-and-lambda-calculi/normalization-of-the-simply-typed-lambda-calculu/terminates-closed.md)
 
+## Expansion
+
+This page becomes ready once:
+
+- The Church–Rosser property of $\beta$-reduction for simply typed terms (statement prerequisite; not yet stated)
+
 ## Sources
 
 - J.-Y. Girard, Y. Lafont and P. Taylor, *Proofs and Types*, Cambridge University Press, 1989: Section 4.4 and Chapter 6 (strong normalization of the simply typed lambda calculus) and Section 4.1 (Church–Rosser property and uniqueness of normal forms). The agreement statement is derived on this page from these two results.
