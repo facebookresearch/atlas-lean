@@ -17,15 +17,15 @@ public import Mathlib.Probability.Distributions.Uniform
 /-!
 # Early epidemic and its branching-process approximation
 
-A generation-based SIR epidemic in a population `α` (finite, `N` individuals) is started by one
-*index case*: an infective who is not an individual of `α` (an external ancestor, such as an
-imported case). The individuals of `S₀ ⊆ α` are initially susceptible; the others are immune and
-are never infected. The `i`-th infective of generation `n` (generation `0` is the index case)
-makes `ξ n i` contacts; the contacts of the epidemic are numbered `0, 1, 2, …` in the order they
-are made (generation by generation, and within a generation infective by infective), and contact
-number `j` goes to the individual `U j`. A contact infects its target iff the target is initially
-susceptible (`U j ∈ S₀`) and has not been contacted before (`epiHit`); the infected targets form
-the next generation.
+A generation-based SIR epidemic in a population `α` (an arbitrary type; `Fin N`, with `N`
+individuals, when the contact targets are uniform) is started by one *index case*: an infective who
+is not an individual of `α` (an external ancestor, such as an imported case). The individuals of a
+finite set `S₀ ⊆ α` are initially susceptible; the others are immune and are never infected. The
+`i`-th infective of generation `n` (generation `0` is the index case) makes `ξ n i` contacts; the
+contacts of the epidemic are numbered `0, 1, 2, …` in the order they are made (generation by
+generation, and within a generation infective by infective), and contact number `j` goes to the
+individual `U j`. A contact infects its target iff the target is initially susceptible (`U j ∈ S₀`)
+and has not been contacted before (`epiHit`); the infected targets form the next generation.
 
 An index case who is an individual `i₀` of the population is the special case `i₀ ∉ S₀`:
 contacts to `i₀` never infect, and the infectives of all generations, index case included, never
@@ -45,9 +45,9 @@ Deterministic coupling (any offspring numbers and contact targets):
 * `epiSize_le_bpSize`: the epidemic is dominated by the branching process, `I n ≤ Z n`.
 * `epi_eq_of_forall_hit`: the two agree, `I n = Z n`, as long as every one of the first
   `bpContacts n` contacts hits a fresh susceptible (no susceptible has yet been depleted).
-* `epiSize_card_add_one_eq_zero`: in a finite population the epidemic is extinct by
-  generation `#S₀ + 1`; minor versus major outbreak is therefore a large-population notion
-  (see "Minor and major outbreaks" below).
+* `epiSize_card_add_one_eq_zero`: in every population (only `S₀` is finite) the epidemic is
+  extinct by generation `#S₀ + 1`; minor versus major outbreak is therefore a large-population
+  notion (see "Minor and major outbreaks" below).
 * `sum_epiSize_le_card`: if the index case is an individual `i₀ ∉ S₀` of a finite population, the
   infectives of generations `0, …, n` number at most `Fintype.card α`.
 
@@ -241,8 +241,9 @@ theorem card_filter_epiHit_le (D : ℕ) : ((range D).filter (epiHit U S₀)).car
   · exact h
   · exact absurd hU.symm ((mem_filter.1 hj).2.2 j' h)
 
-/-- In a finite population the epidemic is extinct by generation `#S₀ + 1`: every infective
-of generations `1, …, n` is a distinct initially susceptible individual. -/
+/-- In every population the epidemic is extinct by generation `#S₀ + 1`: every infective of
+generations `1, …, n` is a distinct initially susceptible individual. Only the set `S₀` needs to be
+finite, not the population. -/
 theorem epiSize_card_add_one_eq_zero : epiSize ξ U S₀ (S₀.card + 1) = 0 := by
   by_contra h
   have hpos : ∀ m ≤ S₀.card, 0 < epiSize ξ U S₀ (m + 1) := fun m hm =>
@@ -347,9 +348,9 @@ theorem measurable_bpSize (hξ : IsOffspringFamily P ν ξ) (n : ℕ) :
     Measurable fun ω => bpSize (ξ · · ω) n :=
   (measurable_bpSize_genOn n).mono (genOn_le hξ _) le_rfl
 
-/-- **The path-space Galton–Watson process.** `Z n` has the Galton–Watson law `law ν n`: given
-`Z n = z`, the next generation is the total offspring of `z` fresh individuals, which is
-independent of `Z n` and has law `ν^{∗z}`. -/
+/-- **The path-space Galton–Watson process.** For an offspring family whose law `ν` is a probability
+measure, `Z n` has the Galton–Watson law `law ν n`: given `Z n = z`, the next generation is the
+total offspring of `z` fresh individuals, which is independent of `Z n` and has law `ν^{∗z}`. -/
 theorem hasLaw_bpSize (hξ : IsOffspringFamily P ν ξ) [IsProbabilityMeasure ν] (n : ℕ) :
     HasLaw (fun ω => bpSize (ξ · · ω) n) (law ν n) P := by
   have := hξ.isProbabilityMeasure
@@ -391,15 +392,17 @@ theorem hasLaw_bpSize (hξ : IsOffspringFamily P ν ξ) [IsProbabilityMeasure ν
     · exact fun z => (hξ.measurable_bpSize n (measurableSet_singleton z)).inter
         (hsum z (measurableSet_singleton k))
 
-/-- `P(Z n = 0) = (law ν n){0} = f^[n](0)`. -/
+/-- For an offspring family whose law `ν` is a probability measure,
+`P(Z n = 0) = (law ν n){0} = f^[n](0)`. -/
 theorem measureReal_bpSize_eq_zero (hξ : IsOffspringFamily P ν ξ) [IsProbabilityMeasure ν]
     (n : ℕ) : P.real {ω | bpSize (ξ · · ω) n = 0} = (law ν n).real {0} := by
   rw [← (hasLaw_bpSize hξ n).map_eq, map_measureReal_apply (hξ.measurable_bpSize n)
     (measurableSet_singleton 0)]
   rfl
 
-/-- **Extinction of the path-space process.** The branching process dies out with probability
-`extinctionProb ν`, the least fixed point of the offspring generating function in `[0, 1]`. -/
+/-- **Extinction of the path-space process.** For an offspring family whose law `ν` is a probability
+measure, the branching process dies out with probability `extinctionProb ν`, the least fixed point
+of the offspring generating function in `[0, 1]`. -/
 theorem measureReal_exists_bpSize_eq_zero (hξ : IsOffspringFamily P ν ξ)
     [IsProbabilityMeasure ν] :
     P.real {ω | ∃ n, bpSize (ξ · · ω) n = 0} = extinctionProb ν := by
@@ -415,7 +418,8 @@ theorem measureReal_exists_bpSize_eq_zero (hξ : IsOffspringFamily P ν ξ)
   rw [Set.ofPred_exists, tendsto_nhds_unique ht' (tendsto_law_real_zero ν)]
 
 /-- By domination, the epidemic is extinct by generation `n` at least as often as the branching
-process: `P(Z n = 0) ≤ P(I n = 0)`, whatever the contact targets. -/
+process: `P(Z n = 0) ≤ P(I n = 0)`, whatever the contact targets; `P` of the epidemic event is its
+outer measure, since its measurability is not assumed. -/
 theorem law_real_zero_le_measureReal_epiSize_eq_zero (hξ : IsOffspringFamily P ν ξ)
     [IsProbabilityMeasure ν] {α : Type*} [DecidableEq α] (U : ℕ → Ω → α) (S₀ : Finset α)
     (n : ℕ) : (law ν n).real {0} ≤ P.real {ω | epiSize (ξ · · ω) (U · ω) S₀ n = 0} := by
@@ -441,7 +445,9 @@ namespace IsEarlyEpidemic
 
 variable {N : ℕ} {ξ : ℕ → ℕ → Ω → ℕ} {U : ℕ → Ω → Fin N}
 
-/-- Two distinct contacts go to the same individual with probability at most `1 / N`. -/
+/-- Two distinct contacts go to the same individual with probability at most `1 / N` (in `[0, ∞]`,
+with `1 / 0 = ∞`); `P` of the event is its outer measure, since its measurability is not
+assumed. -/
 theorem measure_target_eq_le (h : IsEarlyEpidemic P ν N ξ U) {j j' : ℕ} (hjj' : j' ≠ j) :
     P {ω | U j' ω = U j ω} ≤ (N : ℝ≥0∞)⁻¹ := by
   have hind := h.indep_target.indepFun hjj'
@@ -460,8 +466,9 @@ theorem measure_target_eq_le (h : IsEarlyEpidemic P ν N ξ U) {j j' : ℕ} (hjj
         · simp
         · rw [ENNReal.mul_inv_cancel (Nat.cast_ne_zero.2 hN) (ENNReal.natCast_ne_top N), one_mul]
 
-/-- Contact number `j` is wasted (its target is not initially susceptible, or was contacted
-before) with probability at most `(N - #S₀ + j) / N`. -/
+/-- Contact number `j` is wasted (its target is not initially susceptible, or was contacted before)
+with probability at most `(N - #S₀ + j) / N` (in `[0, ∞]`, with `1 / 0 = ∞`; the probability of an
+event whose measurability is not assumed is its outer measure). -/
 theorem measure_not_epiHit_le (h : IsEarlyEpidemic P ν N ξ U) (S₀ : Finset (Fin N)) (j : ℕ) :
     P {ω | ¬ epiHit (U · ω) S₀ j} ≤ ((N - S₀.card + j : ℕ) : ℝ≥0∞) * (N : ℝ≥0∞)⁻¹ := by
   have hsub : {ω | ¬ epiHit (U · ω) S₀ j} ⊆
@@ -485,7 +492,8 @@ theorem measure_not_epiHit_le (h : IsEarlyEpidemic P ν N ξ U) (S₀ : Finset (
           nsmul_eq_mul, ← add_mul, Nat.cast_add]
 
 /-- **Birthday bound.** Some of the first `M` contacts is wasted with probability at most
-`(M (N - #S₀) + C(M, 2)) / N`. -/
+`(M (N - #S₀) + C(M, 2)) / N` (in `[0, ∞]`, with `1 / 0 = ∞`; the probability of an event whose
+measurability is not assumed is its outer measure). -/
 theorem measure_exists_not_epiHit_le (h : IsEarlyEpidemic P ν N ξ U) (S₀ : Finset (Fin N))
     (M : ℕ) : P {ω | ∃ j < M, ¬ epiHit (U · ω) S₀ j} ≤
       ((M * (N - S₀.card) + M.choose 2 : ℕ) : ℝ≥0∞) * (N : ℝ≥0∞)⁻¹ := by
@@ -510,9 +518,11 @@ theorem ne_zero (h : IsEarlyEpidemic P ν N ξ U) [IsProbabilityMeasure ν] : N 
   exact zero_ne_one h1
 
 /-- **The approximation bound.** For every `L`, the probability that the epidemic is extinct by
-generation `n` exceeds the branching-process value `P(Z n = 0)` by at most the probability that
-some generation `≤ n` of the branching process exceeds `L`, plus the probability that one of the
-first `n L` contacts is wasted. -/
+generation `n` exceeds the branching-process value `P(Z n = 0)` by at most
+`∑_{m<n} P(Z_{m+1} > L)`, which bounds the probability that some generation `1, …, n` of the
+branching process exceeds `L`, plus `(n L (N - #S₀) + C(n L, 2)) / N`, which bounds the probability
+that one of the first `n L` contacts is wasted; `P` of the epidemic event is its outer measure,
+since its measurability is not assumed. -/
 theorem measureReal_epiSize_eq_zero_le (h : IsEarlyEpidemic P ν N ξ U) [IsProbabilityMeasure ν]
     (S₀ : Finset (Fin N)) (n L : ℕ) :
     P.real {ω | epiSize (ξ · · ω) (U · ω) S₀ n = 0} ≤ (law ν n).real {0} +
@@ -565,7 +575,7 @@ section Canonical
 
 variable (ν : Measure ℕ) [IsProbabilityMeasure ν] (N : ℕ) [NeZero N]
 
-/-- The uniform law on the population `Fin N` is a probability measure. -/
+/-- The uniform law on the population `Fin N`, `N ≥ 1`, is a probability measure. -/
 theorem isProbabilityMeasure_uniformOfFinset_univ :
     IsProbabilityMeasure (Measure.uniformOfFinset (univ : Finset (Fin N))) := by
   refine ⟨?_⟩
@@ -574,8 +584,9 @@ theorem isProbabilityMeasure_uniformOfFinset_univ :
     Fintype.card_fin, nsmul_eq_mul]
   exact ENNReal.mul_inv_cancel (Nat.cast_ne_zero.2 (NeZero.ne N)) (ENNReal.natCast_ne_top N)
 
-/-- The canonical probability space of the coupled model: i.i.d. `ν` offspring numbers indexed by
-`(generation, individual)`, independent of i.i.d. uniform contact targets. -/
+/-- The canonical probability space of the coupled model, for a probability law `ν` and `N ≥ 1`:
+i.i.d. `ν` offspring numbers indexed by `(generation, individual)`, independent of i.i.d. uniform
+contact targets. -/
 noncomputable def canonicalMeasure : Measure ((ℕ × ℕ → ℕ) × (ℕ → Fin N)) :=
   have := isProbabilityMeasure_uniformOfFinset_univ N
   (Measure.infinitePi fun _ : ℕ × ℕ => ν).prod
@@ -670,9 +681,10 @@ theorem tendsto_one_sub_law_real_zero :
     Tendsto (fun n => 1 - (law ν n).real {0}) atTop (𝓝 (1 - extinctionProb ν)) :=
   (tendsto_law_real_zero ν).const_sub 1
 
-/-- In a finite population the epidemic dies out almost surely, whatever the offspring law and
-the contact targets (`epiSize_card_add_one_eq_zero`). This is why eventual extinction cannot
-distinguish minor from major outbreaks; see the module docstring. -/
+/-- With finitely many initially susceptible individuals (always the case here, `S₀` being a finite
+set) the epidemic dies out almost surely, under every probability measure and whatever the offspring
+numbers and the contact targets (`epiSize_card_add_one_eq_zero`). This is why eventual extinction
+cannot distinguish minor from major outbreaks. -/
 theorem measureReal_exists_epiSize_eq_zero {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
     [IsProbabilityMeasure P] (ξ : ℕ → ℕ → Ω → ℕ) {α : Type*} [DecidableEq α]
     (U : ℕ → Ω → α) (S₀ : Finset α) :
@@ -682,9 +694,12 @@ theorem measureReal_exists_epiSize_eq_zero {Ω : Type*} [MeasurableSpace Ω] (P 
   rw [h, probReal_univ]
 
 universe u v in
-/-- **Minor outbreaks only when `R₀ ≤ 1`, uniformly in the population.** For every `ε > 0` there
-is a number of generations `n₀` such that, in every population, with every law of the contact
-targets, the epidemic is extinct by generation `n` (any `n ≥ n₀`) with probability `> 1 - ε`. -/
+/-- **Only minor outbreaks when `R₀ ≤ 1` and `ν {1} ≠ 1`, uniformly in the population.** If
+`R₀ = mean ν ≤ 1` and `ν {1} ≠ 1`, then for every `ε > 0` there is a number of generations `n₀`
+such that, for every offspring family with law `ν`, in every population, with every law of the
+contact targets, the epidemic is extinct by generation `n` (any `n ≥ n₀`) with probability
+`> 1 - ε`; `P` of the epidemic event is its outer measure, since its measurability is not
+assumed. -/
 theorem exists_forall_measureReal_epiSize_eq_zero_gt (h1 : ν {1} ≠ 1) (hm : mean ν ≤ 1)
     {ε : ℝ} (hε : 0 < ε) : ∃ n₀, ∀ n ≥ n₀, ∀ {Ω : Type u} [MeasurableSpace Ω] {P : Measure Ω}
       {ξ : ℕ → ℕ → Ω → ℕ} {α : Type v} [DecidableEq α] (U : ℕ → Ω → α) (S₀ : Finset α),
@@ -712,7 +727,8 @@ variable {Ω : ℕ → Type*} [∀ k, MeasurableSpace (Ω k)] {P : ∀ k, Measur
 `N k → ∞` in which all but `o(N k)` individuals are initially susceptible (an index case inside
 the population is one of these `o(N k)` individuals), the probability that the epidemic is
 extinct by generation `n` converges to the branching-process value
-`P(Z n = 0) = f^[n](0)`. As `n → ∞` these values increase to the extinction probability `q`
+`P(Z n = 0) = f^[n](0)`; `P k` of the epidemic event is its outer measure, since its measurability
+is not assumed. As `n → ∞` these values increase to the extinction probability `q`
 (`tendsto_law_real_zero`): `q` is the probability of a minor outbreak in the sense of the
 module docstring. -/
 theorem tendsto_measureReal_epiSize_eq_zero (h : ∀ k, IsEarlyEpidemic (P k) ν (N k) (ξ k) (U k))
@@ -742,8 +758,9 @@ theorem tendsto_measureReal_epiSize_eq_zero (h : ∀ k, IsEarlyEpidemic (P k) ν
     _ < b := by linarith
 
 /-- **Survival in the large-population limit.** The probability that the epidemic is still
-alive at generation `n` converges to `1 - P(Z n = 0) ≥ 1 - q`; when `R₀ > 1` this limit is
-positive for every `n` (`one_sub_extinctionProb_pos`, `one_sub_extinctionProb_le`). -/
+alive at generation `n` converges to `1 - P(Z n = 0) ≥ 1 - q`, where `P k` of the epidemic event is
+its outer measure, since its measurability is not assumed; when `R₀ > 1` this limit is positive
+for every `n` (`one_sub_extinctionProb_pos`, `one_sub_extinctionProb_le`). -/
 theorem tendsto_measureReal_epiSize_ne_zero (h : ∀ k, IsEarlyEpidemic (P k) ν (N k) (ξ k) (U k))
     (hN : Tendsto N atTop atTop)
     (hS : Tendsto (fun k => ((N k - (S₀ k).card : ℕ) : ℝ) / N k) atTop (𝓝 0)) (n : ℕ) :
