@@ -373,17 +373,6 @@ theorem branchAssignment_append (t : CGTree) (u b : List Bool) :
   show decide (u ++ b ∈ t.branchAddresses u) = decide (b ∈ t.branchAddresses [])
   simp only [hiff]
 
-/-- The existing weight at `(p, 1 - p)` is nonnegative on `[0, 1]`. -/
-theorem weight_nonneg {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (t : CGTree) :
-    0 ≤ t.weight p (1 - p) := by
-  induction t with
-  | leaf =>
-      show (0 : ℝ) ≤ 1 - p
-      exact sub_nonneg.mpr hp1
-  | node l r ihl ihr =>
-      show (0 : ℝ) ≤ p * l.weight p (1 - p) * r.weight p (1 - p)
-      exact mul_nonneg (mul_nonneg hp0 ihl) ihr
-
 /-- No non-empty continuation of a leaf address is active. -/
 private theorem not_mem_active_of_leaf_helper (t : CGTree) :
     ∀ (a b : List Bool), a ∈ t.leafAddresses [] → b ≠ [] → a ++ b ∉ t.activeAddresses [] := by
@@ -591,7 +580,8 @@ theorem cylinder_mass_active {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (t : CGTr
       rw [Finset.prod_congr rfl hpointL, Finset.prod_congr rfl hpointR, if_pos hu_true, ihL, ihR]
       have hw : (CGTree.node l r).weight p (1 - p) =
           p * l.weight p (1 - p) * r.weight p (1 - p) := rfl
-      rw [hw, ENNReal.ofReal_mul (mul_nonneg hp0 (weight_nonneg hp0 hp1 l)),
+      rw [hw, ENNReal.ofReal_mul
+          (mul_nonneg hp0 (cgWeight_nonneg p (1 - p) hp0 (sub_nonneg.mpr hp1) l)),
         ENNReal.ofReal_mul hp0, mul_assoc]
 
 theorem treeCylinder_def (t : CGTree) :
