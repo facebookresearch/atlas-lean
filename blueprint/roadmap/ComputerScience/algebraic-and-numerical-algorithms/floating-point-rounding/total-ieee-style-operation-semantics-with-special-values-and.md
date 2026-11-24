@@ -4,7 +4,7 @@ The value domain of a binary floating-point format consists of the finite number
 $-\infty$ and NaN; whether NaN payloads are tracked or all NaNs are identified (canonical NaN) is part of the model. Each basic
 operation ($+$, $-$, $\times$, $\div$, $\sqrt{\ }$) is total: the exact result is rounded in the current rounding mode when finite;
 overflow gives $\pm\infty$ or the largest finite number according to the mode; results below the normal range are rounded to
-subnormals (gradual underflow); invalid operations ($\infty - \infty$, $0 \times \infty$, $0/0$, $\infty/\infty$, $\sqrt{x}$ for $x < 0$) give NaN; an operation with
+subnormals (gradual underflow); invalid operations give NaN and raise the invalid flag; they are the addition of opposite infinities, $(+\infty) + (-\infty)$ and $(-\infty) + (+\infty)$, the subtraction of like infinities, $(+\infty) - (+\infty)$ and $(-\infty) - (-\infty)$, $0 \times \pm\infty$ and $\pm\infty \times 0$, $0/0$, $\pm\infty/\pm\infty$, and $\sqrt{x}$ for $x < 0$; an operation with
 a NaN operand gives NaN; division of a nonzero finite number by zero gives an infinity with the sign rule; other operations
 on infinities give the exact infinite result; and the status flags (invalid, divide by zero, overflow, underflow, inexact) are raised as specified. Comparison has four
 outcomes (less, equal, greater, unordered), NaN is unordered with everything including itself, and $+0 = -0$; the relation

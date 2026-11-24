@@ -2,12 +2,16 @@
 
 In binary floating-point arithmetic with round-to-nearest, precision $p$, unit roundoff $\varepsilon = 2^{-p}$, no overflow and no underflow, run Kahan's
 compensated summation on $x_1, \dots, x_N$: $s = x_1$, $c = 0$, and for $j = 2, \dots, N$: $y = \mathrm{fl}(x_j - c)$,
-$t = \mathrm{fl}(s + y)$, $c = \mathrm{fl}(\mathrm{fl}(t - s) - y)$, $s = t$. The result satisfies
-$s = \sum_j x_j (1 + \delta_j) + O(N\varepsilon^2) \sum_j \lvert x_j \rvert$ with $\lvert \delta_j \rvert \le 2\varepsilon$ (Goldberg, Theorem 8),
-where the $O$ term is a first-order summary; a version with explicit constants in place of the $O$ term is a separate
-statement. For comparison, recursive summation $s = \mathrm{fl}(\cdots\mathrm{fl}(x_1 + x_2) \cdots + x_N)$ gives
-$\sum_j x_j(1 + \delta_j)$ with $\lvert \delta_1 \rvert$ up to about $(N - 1)\varepsilon$ and $\lvert \delta_j \rvert$ up to about
-$(N - j + 1)\varepsilon$ for $j \ge 2$ (Goldberg writes $(N - j)\varepsilon$), so perturbations as large as about $N\varepsilon$.
+$t = \mathrm{fl}(s + y)$, $c = \mathrm{fl}(\mathrm{fl}(t - s) - y)$, $s = t$. The result has the form $s = \sum_j x_j (1 + \delta_j) + r$, where every
+summand is perturbed by a relative error $\lvert \delta_j \rvert \le 2\varepsilon$, independent of $N$, and $r$ is a remainder of second order in $\varepsilon$
+(Goldberg, Theorem 8). Recursive summation, by contrast, perturbs early summands by relative errors that grow linearly in $N$.
+
+## Expansion
+
+This page becomes ready once these prerequisites are stated:
+
+- An explicit bound on the remainder $r$, of the form $\lvert r \rvert \le C(N, \varepsilon) \sum_j \lvert x_j \rvert$ with all constants given, together with the hypothesis on $N\varepsilon$ under which it holds (statement prerequisite; not yet stated)
+- The matching explicit bound for recursive summation, with relative errors bounded in terms of $(N - j + 1)\varepsilon$ (statement prerequisite; not yet stated)
 
 ## Depends on
 
