@@ -12666,6 +12666,7 @@
   "MathlibExt/NumberTheory/SmoothPrimeGaps": {"to": "NumberTheory/distribution-of-primes/prime-gaps-short-intervals", "title": "Smooth gaps between primes"},
   "MathlibExt/NumberTheory/SpectralNormUnitBall": {"to": "NumberTheory/p-adic-numbers", "title": "Spectral norm on algebraic extensions"},
   "MathlibExt/NumberTheory/SpoofLehmerFactorization": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Spoof Lehmer factorizations"},
+  "MathlibExt/NumberTheory/SpoofLehmerResidues": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Spoof Lehmer factorizations"},
   "MathlibExt/NumberTheory/SquareModEight": {"to": "NumberTheory/congruences/power-residues-reciprocity", "title": "Squares modulo powers of two"},
   "MathlibExt/NumberTheory/SquareRepresentationCongruences": {"to": "NumberTheory/quadratic-forms-sums-of-squares/sums-of-squares", "title": "Representations by squares and triangular numbers"},
   "MathlibExt/NumberTheory/SquareSplittingConvolution": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Square-splitting convolution"},
