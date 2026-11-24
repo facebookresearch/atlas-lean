@@ -25,6 +25,16 @@ example : ∑ j ∈ Finset.range 6, fibStep 2 j * fibStep 3 (5 - j) = 11 := by
   rw [sum_fib_mul_trib 5]
   decide
 
+-- At the smallest allowed index the convolution has a single zero term.
+example : fibStep 3 2 - fibStep 2 2 = 0 := by
+  rw [trib_sub_fib_eq_sum 1 (by decide)]
+  decide
+
+-- At index six the convolution includes unequal Fibonacci and tribonacci factors.
+example : fibStep 3 7 - fibStep 2 7 = 11 := by
+  rw [trib_sub_fib_eq_sum 6 (by decide)]
+  decide
+
 -- At the lower endpoint the shifted convolution has just one summand.
 example : ∑ j ∈ Finset.range 2, fibStep 2 j * (fibStep 3 (1 - j) - fibStep 4 (1 - j)) = 0 := by
   rw [sum_fib_mul_sub_eq 1 (by decide)]
