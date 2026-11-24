@@ -19,10 +19,10 @@ attached to $\pi_v$ by the archimedean local Langlands correspondence.
   $a_j + b_j = w - (n-1)$. Over a totally complex field, for the infinitesimal characters at an embedding
   $\tau$ and at its conjugate $\bar\tau$, the corresponding statement is a symmetry $z \mapsto w' - z$ for an integer
   $w'$ determined by $w$ and $n$ through this shift.
-- **Cohomological representations** (Clozel). A cuspidal regular algebraic representation is
-  cohomological after possibly twisting by a quadratic character: some such twist has archimedean
-  component $\pi_\infty$, equivalently every $\pi_v$ with $v \mid \infty$, with non-zero $(\mathfrak{g}, K)$-cohomology with
-  coefficients in an algebraic representation,
+- **Cohomological representations** (Clozel). A cuspidal regular algebraic representation $\pi$ is
+  cohomological after possibly twisting by a quadratic character: there is a quadratic Hecke character
+  $\eta$ such that $(\pi \otimes \eta)_\infty$, equivalently every $(\pi \otimes \eta)_v$ with $v \mid \infty$, has
+  non-zero $(\mathfrak{g}, K)$-cohomology with coefficients in an algebraic representation,
   $K$ the full maximal compact subgroup, so that it contributes to the cohomology of the locally symmetric
   spaces of $\mathrm{GL}_n$. The twist cannot be omitted: over $\mathbb{Q}$, an odd finite-order Hecke
   character of $\mathrm{GL}_1$ is cuspidal and regular algebraic, but its archimedean component, the sign
