@@ -61,7 +61,13 @@ def goodAffineSheaves : GoodAffine p ⥤ Sheaf (originalVTopology p) (Type 1) :=
   (show ObjectProperty (AffineUntilting p) from
     fun P ↦ HasBoundedTotallyDisconnectedMap p P.tilt.pair).ι ⋙ affineSheafFunctor p
 
-/-- A categorical local diagram with actual local DG scalar-extension normalization. -/
+/-- A categorical local diagram with actual local DG scalar-extension normalization. The local
+dictionaries `coefficients` and the strict pullbacks `pullback` are chosen together. The field
+`scalar_normalized` identifies each arrow of the assembled functor `diagram` with the corresponding
+geometric pullback up to an equivalence homotopy, one arrow at a time: no coherence of these
+homotopies over composites is required. Hence statements about limits of `diagram` concern this
+chosen diagram; they are not determined by the geometric pullbacks alone, and a homotopy-coherent
+identification with the geometric pullback diagram is not part of this structure. -/
 structure LocalDiagram where
   coefficients : ∀ P : GoodAffine p, LocalModel p P.obj
   pullback : ∀ {P Q : GoodAffine p} (f : P ⟶ Q),

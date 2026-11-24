@@ -111,16 +111,11 @@ theorem continuous_coefficientMap {P Q : AffineUntilting p} (f : P ⟶ Q) :
     ULift.up (⟨f.original.hom a.down, f.original.plus _ a.down.2⟩ : P.pair.plus))
   fun_prop
 
-/-- Native scalar-extension inputs, including the source-normalized derived shift. -/
-structure ExtensionInput {P Q : AffineUntilting p} (f : P ⟶ Q) where
-  [adjoint : (GeometricTopologicalRestriction.restriction
-    (coefficientMap p f) (continuous_coefficientMap p f)).IsRightAdjoint]
-  [derived : GeometricTopologicalRestriction.HasDerivedExtension
-    (coefficientMap p f) (continuous_coefficientMap p f)]
-  [shift : (GeometricTopologicalRestriction.derivedExtension
-    (coefficientMap p f) (continuous_coefficientMap p f)).CommShift ℤ]
-  [unitShift : NatTrans.CommShift (GeometricTopologicalRestriction.derivedExtensionCounit
-    (coefficientMap p f) (continuous_coefficientMap p f)) ℤ]
+/-- Native scalar-extension inputs, including the source-normalized derived shift: the shifted
+geometric extension package along the actual plus-ring map. -/
+abbrev ExtensionInput {P Q : AffineUntilting p} (f : P ⟶ Q) :=
+  GeometricTopologicalRestriction.ShiftedExtensionModel (coefficientMap p f)
+    (continuous_coefficientMap p f)
 
 /-- Actual geometric extension, followed by the displayed analytic and adic reflectors. -/
 def completedGeometricExtension {P Q : AffineUntilting p} (f : P ⟶ Q)
@@ -164,7 +159,12 @@ def shiftedComparison {A B : Type 1} [CommRing A] [TopologicalSpace A]
       (shiftFunctor (GeometricDerived B) n).mapIso e ≪≫
         ((DerivedCategory.Q.commShiftIso n).app Y).symm
 
-/-- A coefficient pullback retains actual compact geometry and the complete module adjunction. -/
+/-- A coefficient pullback retains actual compact geometry and the complete module adjunction.
+The enhanced pullback is the raw DG-module extension along the strict pullback of dictionaries,
+not followed by an almost localization; the field `almost` requires the chosen models to make this
+raw extension preserve almost-local modules. That is a requirement on the models: Mann instead
+composes the raw extension with the target almost localization (Mann, proof of Lemma 2.2.22(ii)),
+and this preservation is not derived from that construction. -/
 structure PullbackModel {P Q : AffineUntilting p} (f : P ⟶ Q)
     (MP : LocalModel p P) (MQ : LocalModel p Q) where
   input : ExtensionInput p f
@@ -172,6 +172,7 @@ structure PullbackModel {P Q : AffineUntilting p} (f : P ⟶ Q)
     MQ.compact.objectsᵒᵖ MP.compact.objectsᵒᵖ
   restriction : RestrictionModel (coefficientMap p f) compactFunctor
   extension : ExtensionModel (coefficientMap p f) restriction
+  /-- The raw extension preserves almost-local modules (a requirement on the chosen models). -/
   almost : ∀ N : DGDerivedModules (Coefficient p Q) MQ.compact.objects,
     IsAlmostLocal (Coefficient p Q) MQ.almost.ideal N.obj →
       IsAlmostLocal (Coefficient p P) MP.almost.ideal (extension.functor.obj N).obj

@@ -20,8 +20,10 @@ public import Mathlib.Tactic.FunProp
 
 An untilting diagram specifies actual perfectoid pairs on the affine
 tests of a v-sheaf, their local integral tilt identifications and actual
-continuous restriction maps. The sharp comparison on every integral
-numerator fixes these maps against the characteristic-p chart maps.
+continuous restriction maps, together with functorial restriction maps of
+the integral tilt rings. These are extended by the characteristic-p chart
+maps and commute with `sharp`, which fixes the restrictions of untilts
+against the characteristic-p chart maps.
 The integral coefficient ring is the plus ring of this actual untilt.
 It is not the plus ring of the characteristic-p test unless that is
 the specified untilt.
@@ -64,16 +66,37 @@ structure UntiltingDiagram (F : VSheaf p) where
   restriction_id : ∀ T, (restriction (𝟙 T)).hom = RingHom.id _
   restriction_comp : ∀ {T U V : AffineTest p F} (f : T ⟶ U) (g : U ⟶ V),
     (restriction (f ≫ g)).hom = (restriction f).hom.comp (restriction g).hom
-  sharp_naturality : ∀ {T U : AffineTest p F} (f : T ⟶ U)
-    (a : IntegralRing p (pair U)), ∃ b : IntegralRing p (pair T),
-      ((identification T).hom ≫ (projection p F).map f ≫
-        (identification U).inv).hom
-          (TiltModel.integralMap p (pair U) (tilt U) a) =
-            TiltModel.integralMap p (pair T) (tilt T) b ∧
-      (restriction f).hom (sharp p (pair U) (D := input U) a) =
-        sharp p (pair T) (D := input T) b
+  /-- The integral tilt rings restrict functorially along every map of tests, as the integral map
+  of `AffineUntiltingGeometry.Hom` does. -/
+  integral : ∀ {T U : AffineTest p F} (_f : T ⟶ U),
+    IntegralRing p (pair U) →+* IntegralRing p (pair T)
+  integral_id : ∀ T, integral (𝟙 T) = RingHom.id _
+  integral_comp : ∀ {T U V : AffineTest p F} (f : T ⟶ U) (g : U ⟶ V),
+    integral (f ≫ g) = (integral f).comp (integral g)
+  /-- The projected characteristic-`p` chart map extends the integral map. -/
+  tilted_integral : ∀ {T U : AffineTest p F} (f : T ⟶ U),
+    ((identification T).hom ≫ (projection p F).map f ≫ (identification U).inv).hom.comp
+        (TiltModel.integralMap p (pair U) (tilt U)) =
+      (TiltModel.integralMap p (pair T) (tilt T)).comp (integral f)
+  /-- The restriction of untilts commutes with `sharp` along the integral map. -/
+  sharp_integral : ∀ {T U : AffineTest p F} (f : T ⟶ U) (a : IntegralRing p (pair U)),
+    (restriction f).hom (sharp p (pair U) (D := input U) a) =
+      sharp p (pair T) (D := input T) (integral f a)
 
 variable {p}
+
+/-- Every integral numerator has a compatible restriction, given by the integral map: its tilt
+is the projected characteristic-`p` restriction, and its `sharp` is the restriction of `sharp`. -/
+theorem UntiltingDiagram.sharp_naturality {F : VSheaf p} (D : UntiltingDiagram p F)
+    {T U : AffineTest p F} (f : T ⟶ U) (a : IntegralRing p (D.pair U)) :
+    ∃ b : IntegralRing p (D.pair T),
+      ((D.identification T).hom ≫ (projection p F).map f ≫
+        (D.identification U).inv).hom
+          (TiltModel.integralMap p (D.pair U) (D := D.input U) (D.tilt U) a) =
+            TiltModel.integralMap p (D.pair T) (D := D.input T) (D.tilt T) b ∧
+      (D.restriction f).hom (sharp p (D.pair U) (D := D.input U) a) =
+        sharp p (D.pair T) (D := D.input T) b :=
+  ⟨D.integral f a, congrArg (fun φ ↦ φ a) (D.tilted_integral f), D.sharp_integral f a⟩
 
 /-- The actual plus ring of the geometric untilt on a chart. -/
 abbrev IntegralCoefficient {F : VSheaf p} (D : UntiltingDiagram p F)

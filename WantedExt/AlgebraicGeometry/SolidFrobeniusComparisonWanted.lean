@@ -24,6 +24,16 @@ disconnected original chart. Full faithfulness and the perfect-object
 equivalence are separate theorem requests. Overconvergence uses the
 actual geometric-point derived adjunction unit.
 
+Scope. The torsion model is chosen together with its Frobenius (a strict
+Frobenius on an arbitrary DG presentation need not exist). The local RH
+adjunction holds up to quasi-isomorphism of Hom complexes, between the DG
+source and the DG enhancement of φ-modules; identifying these endpoints
+with Mann's geometric ones, and this functor with his Riemann--Hilbert
+functor, is a separate prerequisite not requested here. The etale
+operations live on the naive small-site derived category
+(`DiamondEtaleCoefficientOperations.Derived`), not on Scholze's
+v-descended `D_et`.
+
 Sources: Mann, arXiv:2206.02022v1, Theorem 1.2.7,
 Definitions 3.7.1(c), 3.9.10, 3.9.17 and 3.9.21;
 Anschuetz--Mann, arXiv:2403.01951v2, Remark 4.5.
@@ -49,9 +59,12 @@ variable (p : ℕ) [Fact p.Prime] (P : AffineUntilting p)
 /-- The actual torsion analytic compact model, with no additional completed-modification layer. -/
 public def_wanted torsionCoefficients : TorsionModel p P π
 
-/-- Frobenius scalar extension is normalized against actual native derived geometric extension. -/
-public def_wanted normalizedFrobenius (M : TorsionModel p P π) :
-    {F : FrobeniusModel p P π h M // IsGeometricallyNormalized p P π F}
+/-- Frobenius scalar extension is normalized against actual native derived geometric extension, on
+a torsion model chosen together with it: a strict Frobenius endofunctor of an arbitrary given
+compact dictionary need not exist (Mann, Lemma 3.9.9, gives Frobenius on the almost ∞-category, not
+on every DG presentation). -/
+public def_wanted normalizedFrobenius :
+    Σ M : TorsionModel p P π, {F : FrobeniusModel p P π h M // IsGeometricallyNormalized p P π F}
 
 /-- The discrete unit induction has the actual coefficient-unit
 realization and full Hom adjunction. -/
@@ -100,7 +113,8 @@ public def_wanted fpUnitHomFunctor : UnitHomFunctor p P π h M F B
 
 variable (R : UnitHomFunctor p P π h M F B)
 
-/-- Construct the full local RH adjunction to the prescribed unit-Hom functor. -/
+/-- Construct the local RH adjunction to the prescribed unit-Hom functor, up to quasi-isomorphism
+of Hom complexes. -/
 public def_wanted localRH (hP : IsStrictlyTotallyDisconnected p P) :
     RHPModel p P π h M F B R
 

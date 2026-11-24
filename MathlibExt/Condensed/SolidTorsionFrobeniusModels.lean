@@ -128,7 +128,10 @@ attribute [instance] TorsionModel.analyticShift TorsionModel.analyticUnitShift
 abbrev TorsionCategory (M : TorsionModel p P π) :=
   AlmostModifiedModules (TorsionRing p P π) M.compact (torsionAlmostIdeal p P π M.almost)
 
-/-- Actual infinity-category values retain full torsion DG mapping complexes. -/
+/-- The infinity-category of torsion coefficients: the coherent nerve of the enhancement. Its
+mapping spaces are the derived mapping spaces (good truncation followed by Dold--Kan of the DG
+mapping complexes); the full complexes, including positive degrees, are available in the DG
+enhancement before taking its nerve. -/
 def torsionNerve (M : TorsionModel p P π) : SSet.{2} :=
   integerNerve (R := TorsionRing p P π) (TorsionCategory p P π M)
 
@@ -160,7 +163,10 @@ end GeometricFrobenius
 abbrev torsionComplex (M : TorsionModel p P π) (x : M.compact.objects) :=
   (M.compact.realization.obj x).obj
 
-/-- A scalar-Frobenius model is the full actual module adjunction on the fixed coefficient map. -/
+/-- A scalar-Frobenius model is the full actual module adjunction on the fixed coefficient map. As
+for local pullbacks, the enhanced Frobenius is the raw DG-module extension, and the field `almost`
+requires the chosen model to make it preserve almost-local modules, rather than composing with the
+target almost localization as in Mann's construction. -/
 structure FrobeniusModel (h : π.element ∣ (p : P.pair.plus)) (M : TorsionModel p P π) where
   compactFunctor : SemilinearFunctor (coefficientFrobenius p P π h)
     M.compact.objectsᵒᵖ M.compact.objectsᵒᵖ

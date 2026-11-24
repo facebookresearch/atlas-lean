@@ -33,6 +33,15 @@ Overconvergence is tested on that unit for the original geometric
 point's inclusion Spa(C,C-circle) -> Spa(C,C-plus). The inclusion has the
 actual same-field isomorphism and actual maximal plus ring.
 
+Scope: `Derived` is the ordinary unbounded derived category of sheaves on
+the small representable-etale site, a naive small-site analogue of
+Scholze's `D_et`. The latter is defined by v-descent, and even for locally
+spatial diamonds it compares with the left completion of this category
+(Scholze, arXiv:1709.07343v4, Def. 14.13, Rem. 14.14, Prop. 14.15); on
+strictly totally disconnected charts the two agree. The overconvergence
+condition below is Mann's condition transported to this analogue; its
+comparison with `D_et` in general is not asserted here.
+
 Source: Mann, arXiv:2206.02022v1, Definition 3.9.17.
 No generic unnamed source or target functor substitutes for these maps.
 -/
@@ -58,7 +67,9 @@ attribute [local instance] HasDerivedCategory.standard
 abbrev Coefficients (G : VSheaf p) :=
   Sheaf (diamondEtaleTopology p G) (ModuleCat.{2} (ULift.{2} (ZMod p)))
 
-/-- The actual derived etale coefficient category. -/
+/-- The derived etale coefficient category: the ordinary unbounded derived category of sheaves
+on the small representable-etale site, a naive small-site analogue of Scholze's `D_et` (which is
+defined by v-descent and compares with the left completion of this category in general). -/
 abbrev Derived (G : VSheaf p) := DerivedCategory (Coefficients p G)
 
 /-- Stability refers to the actual native sheaf pullback. -/

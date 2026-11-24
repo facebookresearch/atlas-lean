@@ -20,10 +20,17 @@ The coefficient-unit functor fixes the actual scalar map into A^+/pi
 and has zero homotopy component on those scalars. Its right adjoint is
 the literal module Hom from that unit, with its original Fp action.
 
-The comparison is specified by the full DG Hom adjunction with this
-fixed right adjoint, including its closed unit and homogeneous
-naturality. Full faithfulness and the perfect-object equivalence are
-separate proof requests. They are not fields of its construction model.
+The comparison is specified by the DG Hom adjunction with this fixed
+right adjoint, given by its closed unit with homogeneous naturality and
+holding up to quasi-isomorphism of Hom complexes. Full faithfulness and
+the perfect-object equivalence are separate proof requests. They are not
+fields of its construction model.
+
+Scope: this is a local comparison between the DG source and the DG
+enhancement of φ-modules. Identifying these endpoints with Mann's
+geometric source and target, and this functor with Mann's
+Riemann--Hilbert functor and the overconvergence condition, is a
+separate prerequisite that is not asserted here.
 
 Source: Mann, arXiv:2206.02022v1, Theorem 1.2.7,
 Definitions 3.9.17 and 3.9.21; Lemma 3.9.18(iii).
@@ -120,7 +127,11 @@ structure UnitHomFunctor {E : Enhancement p P π h M F}
       (dgPostcomp Integers.{1} (op (B.functor.obj x.unop)) n a)
 
 set_option maxHeartbeats 1200000 in
-/-- The local RH construction has the full adjunction with the prescribed Hom module. -/
+/-- The local RH construction: an adjunction with the prescribed Hom module, given by the unit and
+holding up to quasi-isomorphism of Hom complexes. Its endpoints are the DG source `Source` and the
+DG enhancement of φ-modules; their identification with Mann's geometric source and target, and the
+relation of this functor to Mann's Riemann--Hilbert functor and to `IsOverconvergent`, is a separate
+prerequisite that is not asserted here (Mann, Prop. 3.9.8, Lemma 3.9.18(iii), Def. 3.9.21). -/
 structure RHPModel {E : Enhancement p P π h M F}
     {U : UnitInductionModel p P π M} {A : CompactUnit p P π h M F U}
     {V : AlmostUnit p P π h M F U A} {S : FpScalarModel p P π}
@@ -130,29 +141,35 @@ structure RHPModel {E : Enhancement p P π h M F}
   unit : letI := E.category
     ∀ X : Source p P, DGHom Integers.{1} 0 X.obj (R.functor.obj (functor.obj X))
   closed : letI := E.category; ∀ X, dgDifferential Integers.{1} 0 (unit X) = 0
-  homIso : ∀ (X : Source p P) (Y : PhiObject p P π h M F),
+  /-- The adjunction map of Hom complexes, `a ↦ unit X ≫ R a` (see `hom_formula`). It is required
+  to be a quasi-isomorphism, i.e. an equivalence of derived mapping complexes as in Mann's
+  ∞-adjunction, not an isomorphism of the literal complexes. -/
+  homMap : ∀ (X : Source p P) (Y : PhiObject p P π h M F),
     letI := E.category
-    dgHomComplex Integers.{1} (functor.obj X) Y ≅
+    dgHomComplex Integers.{1} (functor.obj X) Y ⟶
       dgHomComplex Integers.{1} X.obj (R.functor.obj Y)
+  quasiIso : ∀ (X : Source p P) (Y : PhiObject p P π h M F),
+    letI := E.category
+    QuasiIso (homMap X Y)
   hom_formula : ∀ (X : Source p P) (Y : PhiObject p P π h M F) (n : ℤ)
     (a : letI := E.category; DGHom Integers.{1} n (functor.obj X) Y),
     letI := E.category
-    ((homIso X Y).hom.f n) a =
+    ((homMap X Y).f n) a =
       dgComp Integers.{1} (unit X) (R.functor.dgMap n a) (by omega)
   target_naturality : ∀ (X : Source p P) (Y Z : PhiObject p P π h M F)
     (i j n : ℤ)
     (a : letI := E.category; DGHom Integers.{1} i (functor.obj X) Y)
     (b : letI := E.category; DGHom Integers.{1} j Y Z) (e : i + j = n),
     letI := E.category
-    ((homIso X Z).hom.f n) (dgComp Integers.{1} a b e) =
-      dgComp Integers.{1} (((homIso X Y).hom.f i) a) (R.functor.dgMap j b) e
+    ((homMap X Z).f n) (dgComp Integers.{1} a b e) =
+      dgComp Integers.{1} (((homMap X Y).f i) a) (R.functor.dgMap j b) e
   source_naturality : ∀ (X Y : Source p P) (Z : PhiObject p P π h M F)
     (i j n : ℤ) (a : DGHom Integers.{1} i X Y)
     (b : letI := E.category; DGHom Integers.{1} j (functor.obj Y) Z) (e : i + j = n),
     letI := E.category
-    ((homIso X Z).hom.f n) (dgComp Integers.{1} (functor.dgMap i a) b e) =
+    ((homMap X Z).f n) (dgComp Integers.{1} (functor.dgMap i a) b e) =
       dgComp Integers.{1} (X := X.obj) (Y := Y.obj) (Z := R.functor.obj Z)
-        a (((homIso Y Z).hom.f j) b) e
+        a (((homMap Y Z).f j) b) e
 
 /-- The source nerve retains the entire one-object Fp algebra and its native modules. -/
 def sourceNerve : SSet.{2} := coherentNerve (R := Integers.{1}) (Source p P)

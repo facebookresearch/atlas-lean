@@ -20,6 +20,16 @@ classes. Global values and affine/hypercover comparisons use the fixed
 native categorical limits. Hyperdescent and affine identification are
 outputs of construction requests.
 
+Strict DG pullbacks cannot be requested between arbitrary, independently chosen compact
+dictionaries (for instance a source dictionary containing a literal zero object and a target
+dictionary padded by a contractible complex admit no strictly unital functor). The requests below
+therefore choose the dictionaries together with the pullbacks: `localSolidPullback` chooses the
+target model with its pullback, and `globalSolidCoefficients` chooses its local diagram, which later
+constructions use through its first component. The descent and affine statements concern the limit
+of that chosen diagram; its identification with the geometric pullbacks is only arrowwise (see
+`GlobalSolidCoefficientLimits.LocalDiagram`), and a homotopy-coherent identification is not
+requested here.
+
 Source: Anschuetz--Mann, arXiv:2403.01951v2, Theorems 1.1 and 4.7,
 Definitions 2.3--2.4 and 4.2.
 -/
@@ -52,15 +62,16 @@ public theorem_wanted compactTestContinuity (p : ℕ) [Fact p.Prime]
 public def_wanted localSolidCoefficients (p : ℕ) [Fact p.Prime] (P : AffineUntilting p) :
     LocalModel p P
 
-/-- Actual geometric coefficient pullback and the complete scalar-changing module adjunction. -/
+/-- Actual geometric coefficient pullback and the complete scalar-changing module adjunction, for
+a target local model chosen together with the pullback (a strict pullback between arbitrary given
+models need not exist). -/
 public def_wanted localSolidPullback (p : ℕ) [Fact p.Prime]
-    {P Q : AffineUntilting p} (f : P ⟶ Q) (MP : LocalModel p P) (MQ : LocalModel p Q) :
-    PullbackModel p f MP MQ
+    {P Q : AffineUntilting p} (f : P ⟶ Q) (MQ : LocalModel p Q) :
+    Σ MP : LocalModel p P, PullbackModel p f MP MQ
 
-/-- Assemble the actual local coefficient diagram, with its prescribed scalar nerve maps. -/
-public def_wanted localSolidDiagram (p : ℕ) [Fact p.Prime] : LocalDiagram p
-
-/-- Assemble normalized global coefficients with actual affine identification and v-hyperdescent. -/
+/-- Assemble normalized global coefficients with actual affine identification and v-hyperdescent,
+together with the local coefficient diagram (dictionaries, strict pullbacks and assembled diagram,
+chosen jointly) whose limit they are. -/
 public def_wanted globalSolidCoefficients (p : ℕ) [Fact p.Prime] :
     Σ G : LocalDiagram p,
       {M : GlobalModel p G // IsAffineNormalized p M ∧ IsHypercomplete p M}
