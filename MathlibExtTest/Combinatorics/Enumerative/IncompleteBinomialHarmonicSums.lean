@@ -37,8 +37,26 @@ example (a : ℕ → ℝ) : a 0 + 3 * a 1 + 3 * a 2 =
   norm_num [Finset.sum_range_succ, Nat.choose] at h
   exact h
 
+-- At the half-row cutoff m = n = 2, the endpoint contributes 3 * a 2.
+example (a : ℕ → ℝ) : a 0 + 4 * a 1 + 6 * a 2 =
+    (a 0 + a 1) + 3 * (a 1 + a 2) + 3 * a 2 := by
+  have h := sum_range_choose_two_mul_mul_eq a 2 2 (by decide) (by decide) le_rfl
+  norm_num [Finset.sum_range_succ, Nat.choose] at h
+  exact h
+
 -- The auxiliary sums start with an empty interval and include the upper endpoint.
 example : invPowTwoSum 0 = 0 ∧ centralBinomWeightedSum 0 = 0 := by decide
 example : invPowTwoSum 2 = 5 / 8 ∧ centralBinomWeightedSum 2 = 11 / 32 := by
   have h : Finset.Icc 1 2 = ({1, 2} : Finset ℕ) := by decide
   norm_num [invPowTwoSum, centralBinomWeightedSum, h, Nat.choose]
+
+-- At n = 1 only H₀ occurs and the central-binomial auxiliary sum is empty.
+example : harmonic 1 - 2 * invPowTwoSum 1 + centralBinomWeightedSum 0 = 0 := by
+  simpa using (sum_range_choose_two_mul_sub_one_mul_harmonic 1 (by decide)).symm
+
+-- At n = 3 the half-row contributes 5 H₁ + 10 H₂ = 20.
+example : (2 : ℚ) ^ 4 * (harmonic 5 - 2 * invPowTwoSum 5 + centralBinomWeightedSum 2) = 20 := by
+  calc
+    _ = ∑ i ∈ Finset.range 3, (Nat.choose 5 i : ℚ) * harmonic i :=
+      (sum_range_choose_two_mul_sub_one_mul_harmonic 3 (by decide)).symm
+    _ = 20 := by norm_num [Finset.sum_range_succ, Nat.choose, harmonic_succ]

@@ -12,7 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Factorization.Defs
 public import Mathlib.Data.Rat.Defs
 public import MathlibExt.NumberTheory.PrimitivePrimeDivisorPowAddOne
-public import MathlibExt.NumberTheory.ArithmeticFunction.BiunitaryDivisor
+public import MathlibExt.NumberTheory.ArithmeticFunction.BiunitaryFortyOne
 
 /-!
 # Biunitary triperfect numbers divisible by `27`
@@ -78,20 +78,6 @@ Source: Tomohiro Yamada, *Determining all Biunitary Triperfect Numbers of a Cert
 Journal of Integer Sequences 28 (2025), Article 25.4.5, Lemma 2 (`jis-2025-25.4.5-lem-2`). -/
 public theorem_wanted two_pow_card_primeFactors_sub_one_dvd_sigmaBiunitary_of_even (n : ℕ)
     (hn : 0 < n) (he : Even n) : 2 ^ (n.primeFactors.card - 1) ∣ sigmaBiunitary n
-
-/-- **Lower bounds for the biunitary divisor sum of a prime power.** Let $p$ be a prime and
-$e \ge 1$, and write $\sigma^{**}$ for the biunitary divisor sum. Then, in $\mathbb{Q}$,
-$\sigma^{**}(p^e)/p^e \ge 1 + 1/p^2$; if moreover $e \ne 2$, then
-$\sigma^{**}(p^e)/p^e \ge 1 + 1/p$; and if $e \ge 3$, then
-$\sigma^{**}(p^e)/p^e \ge (1 + 1/p)(1 + 1/p^3)$.
-
-Source: Tomohiro Yamada, *Determining all Biunitary Triperfect Numbers of a Certain Form*,
-Journal of Integer Sequences 28 (2025), Article 25.4.5, Lemma 3 (`jis-2025-25.4.5-lem-3`). -/
-public theorem_wanted sigmaBiunitary_prime_pow_div_ge (p e : ℕ) (hp : p.Prime) (he : 0 < e) :
-    (1 + 1 / (p : ℚ) ^ 2 ≤ (sigmaBiunitary (p ^ e) : ℚ) / (p : ℚ) ^ e) ∧
-      (e ≠ 2 → 1 + 1 / (p : ℚ) ≤ (sigmaBiunitary (p ^ e) : ℚ) / (p : ℚ) ^ e) ∧
-      (3 ≤ e → (1 + 1 / (p : ℚ)) * (1 + 1 / (p : ℚ) ^ 3) ≤
-        (sigmaBiunitary (p ^ e) : ℚ) / (p : ℚ) ^ e)
 
 /-- **Comparison bounds for the biunitary divisor sum of a prime power.** Let $p$ be a prime and
 let $m \ge 1$ and $e \ge 2m - 1$ be natural numbers, and write $\sigma^{**}$ for the biunitary
@@ -200,14 +186,6 @@ public theorem_wanted exists_two_primes_dvd_sigmaBiunitary_thirteen_pow (g : ℕ
     ∃ q₁ q₂, q₁ ≠ q₂ ∧ q₁.Prime ∧ q₂.Prime ∧ q₁ ∣ sigmaBiunitary (13 ^ g) ∧
       q₂ ∣ sigmaBiunitary (13 ^ g) ∧ q₁ ∉ ({2, 3, 41, 547} : Finset ℕ) ∧
       q₂ ∉ ({2, 3, 41, 547} : Finset ℕ)
-
-/-- **Prime factors of the biunitary divisor sum of $41^g$.** For every integer $g \ge 1$, the
-biunitary divisor sum $\sigma^{**}(41^g)$ has a prime factor $q$ with $q \notin \{2, 3, 5, 13\}$.
-
-Source: Tomohiro Yamada, *Determining all Biunitary Triperfect Numbers of a Certain Form*,
-Journal of Integer Sequences 28 (2025), Article 25.4.5, Lemma 8 (V) (`jis-2025-25.4.5-lem-8`). -/
-public theorem_wanted exists_prime_dvd_sigmaBiunitary_fortyOne_pow (g : ℕ) (hg : 1 ≤ g) :
-    ∃ q, q.Prime ∧ q ∣ sigmaBiunitary (41 ^ g) ∧ q ∉ ({2, 3, 5, 13} : Finset ℕ)
 
 /-- **Biunitary triperfect numbers divisible by $27$ are divisible by $16$.** Let $N$ be a
 biunitary triperfect number, that is, a positive integer with $\sigma^{**}(N) = 3N$, where

@@ -30,6 +30,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+public import MathlibExt.Combinatorics.BridgeTorchThreeUpperBound
 public import MathlibExt.Combinatorics.BridgeTorchTwo
 public import MathlibExt.Combinatorics.BridgeTorchWeights
 
@@ -230,18 +231,6 @@ and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
 Proposition 11 (`jis-2026-26.5.6-prop-11`). -/
 public theorem_wanted bridgeTime_three_le_sub_six (k : ℕ) (hk : 9 ≤ k) :
     bridgeTime 3 k ≤ bridgeTime 3 (k - 6) + 2 * k + 6
-
-/-- **Upper bound for capacity three.** Let $T_3(n)$ be the optimal crossing time of $n$ people
-with crossing times $1, \dots, n$ on a bridge of capacity $3$ with one torch. For every
-$n \ge 7$,
-$$T_3(n) \le \frac{n^2}{6} + 2n - \frac{181}{36} + \frac{(-1)^n}{4} - \frac{2}{9}\cos(2n\pi/3).$$
-
-Source: Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge
-and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
-Theorem 12 (`jis-2026-26.5.6-thm-12`). -/
-public theorem_wanted bridgeTime_three_le_closed_form (n : ℕ) (hn : 7 ≤ n) :
-    (bridgeTime 3 n : ℝ) ≤ (n : ℝ) ^ 2 / 6 + 2 * n - 181 / 36 + (-1 : ℝ) ^ n / 4 -
-      2 / 9 * Real.cos (2 * n * Real.pi / 3)
 
 /-- **Lower bound for capacity-three schedules.** Let $n \ge 7$. Every bridge schedule of
 capacity $3$ for the $n$ people $1, \dots, n$ (person $i$ crossing in time $i$) has total cost at

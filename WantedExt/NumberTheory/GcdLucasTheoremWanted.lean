@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.NumberTheory.Real.Irrational
 public import MathlibExt.NumberTheory.ChoosePowMulModEq
+public import MathlibExt.NumberTheory.ExistsUniqueRadicalExpansionCoeffs
 public import MathlibExt.NumberTheory.GcdPowAddNegOnePow
 public import MathlibExt.NumberTheory.PrimeDvdChoosePowMulPowMul
 
@@ -31,22 +32,6 @@ lines and are not restated.
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Unique integer coordinates of powers of $u + v^{1/N}$.** Let $N$ be a natural number with
-at least two distinct prime divisors, let $u, v$ be coprime positive integers such that
-$x^N - v$ is irreducible over $\mathbb{Q}$, and let $\theta = v^{1/N}$ be the positive real
-$N$-th root of $v$. Then for every natural number $n$ there is exactly one tuple of integers
-$(a_0, \dots, a_{N-1})$ with $(u + \theta)^n = \sum_{i=0}^{N-1} a_i \theta^i$.
-
-Source: John Ferdinands and Timothy Ferdinands, *Greatest Common Divisors and Lucas's
-Theorem*, Journal of Integer Sequences 28 (2025), Article 25.2.2, Lemma 3
-(`jis-2025-25.2.2-lem-3`). -/
-public theorem_wanted existsUnique_radical_expansion_coeffs {N u v : ℕ}
-    (hN : ∃ p q : ℕ, p.Prime ∧ q.Prime ∧ p ≠ q ∧ p ∣ N ∧ q ∣ N) (hu : 0 < u) (hv : 0 < v)
-    (huv : u.Coprime v)
-    (hirr : Irreducible (Polynomial.X ^ N - Polynomial.C (v : ℚ))) (n : ℕ) :
-    ∃! a : Fin N → ℤ, ((u : ℝ) + (v : ℝ) ^ (1 / (N : ℝ))) ^ n =
-      ∑ i : Fin N, (a i : ℝ) * ((v : ℝ) ^ (1 / (N : ℝ))) ^ (i : ℕ)
 
 /-- **Coprime coefficients of $(u + v^{1/N})^n$ when $N$ has two distinct prime factors.** Let
 $N$ be a natural number with at least two distinct prime divisors, let $u, v$ be coprime positive

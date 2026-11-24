@@ -102,18 +102,6 @@ theorem_wanted complexity_two_pow_mul_three_pow (a b : ℕ)
     (ha : a ≤ 2) (hab : 1 ≤ 2 * a + 3 * b) :
     cx (2 ^ a * 3 ^ b) = 2 * a + 3 * b
 
-/-- **The function $g$ bounds integer complexity from below.** Write $\lVert n \rVert$ for the
-integer complexity of a positive integer $n$, the least number of ones needed to write $n$ using
-$1$, $+$, $\times$ and parentheses. For a positive integer $n$, let $a$ be the largest natural
-number with $3^a \le n$, and let $g(n) = 3a$ if $n < \frac{4}{3} \cdot 3^a$, $g(n) = 3a + 1$ if
-$\frac{4}{3} \cdot 3^a \le n < 2 \cdot 3^a$, and $g(n) = 3a + 2$ if $n \ge 2 \cdot 3^a$. Then
-$g(n) \le \lVert n \rVert$ for every positive integer $n$.
-
-Source: Juan Arias de Reyna, "Complexity of Natural
-Numbers", Corollary 2. -/
-theorem_wanted complexityLowerBoundG_le (n : ℕ) (hn : 1 ≤ n) :
-    complexityLowerBoundG n ≤ cx n
-
 /-- **Proposition 3**: `‖n‖ ≤ L(n)` for every positive `n`,
 where `L` is the function of Definition 1, given by its
 defining equations `L(1) = 1`, `L(p) = 1 + L(p - 1)` for

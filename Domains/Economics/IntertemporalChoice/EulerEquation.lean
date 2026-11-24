@@ -69,7 +69,8 @@ borrowing. -/
 def feasibleConsumption (r y₀ y₁ : ℝ) : Set ℝ :=
   {c₀ | 0 ≤ c₀ ∧ 0 ≤ secondPeriodConsumption r y₀ y₁ c₀}
 
-/-- Derivative of lifetime utility along the budget line (chain rule). -/
+/-- If `u` is differentiable at `c₀` and at `c₁ = (1 + r) (y₀ - c₀) + y₁`, lifetime utility
+along the budget line has derivative `u'(c₀) - β (1 + r) u'(c₁)` at `c₀` (chain rule). -/
 theorem hasDerivAt_lifetimeUtility {u : ℝ → ℝ} {β r y₀ y₁ c₀ : ℝ}
     (hu₀ : DifferentiableAt ℝ u c₀)
     (hu₁ : DifferentiableAt ℝ u (secondPeriodConsumption r y₀ y₁ c₀)) :

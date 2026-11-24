@@ -11,7 +11,8 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.RingTheory.PowerSeries.Inverse
-public import Mathlib.Data.Nat.Fib.Basic
+public import MathlibExt.Combinatorics.Enumerative.BinomialSumRecurrences
+public import MathlibExt.Combinatorics.Enumerative.CatalanTriangleStepFive
 
 /-!
 # Recurrences for step-`k` sums of binomial coefficients and Riordan arrays
@@ -28,21 +29,6 @@ namespace MetaMathlibExt
 open Polynomial
 
 @[expose] public section
-
-/-- **Finite window criterion for linear recurrences.** Let $R$ be a commutative ring, let
-$x, A, a : \mathbb{N} \to R$ and let $r, s, N \in \mathbb{N}$. Suppose that
-$x_n = \sum_{i=1}^{r} A_i x_{n-i}$ for all $n \ge r$, that $N \ge r + s - 1$, and that
-$x_n = \sum_{i=1}^{s} a_i x_{n-i}$ for all $n$ with $s \le n \le N$. Then
-$x_n = \sum_{i=1}^{s} a_i x_{n-i}$ for all $n \ge s$.
-
-Source: Eduardo H. M. Brietzke, *Recurrence Relations for Sums of Binomial Coefficients and
-Some Generalizations*, Journal of Integer Sequences 27 (2024), Article 24.3.4, Proposition 1. -/
-public theorem_wanted linearRecurrence_of_finite_window {R : Type*} [CommRing R]
-    (x A a : ℕ → R) (r s N : ℕ)
-    (hA : ∀ n, r ≤ n → x n = ∑ i ∈ Finset.Icc 1 r, A i * x (n - i))
-    (hN : r + s - 1 ≤ N)
-    (ha : ∀ n, s ≤ n → n ≤ N → x n = ∑ i ∈ Finset.Icc 1 s, a i * x (n - i)) :
-    ∀ n, s ≤ n → x n = ∑ i ∈ Finset.Icc 1 s, a i * x (n - i)
 
 /-- **Roots-of-unity products of integer polynomials.** Let $f \in \mathbb{Z}[x]$ have degree
 $r$, let $k > 0$ be a natural number and let $\omega = e^{2\pi i/k}$. Then there are
@@ -142,26 +128,6 @@ public theorem_wanted rationalRiordan_stepSum_linearRecurrence (g₁ g₂ h₁ h
       ∑ j ∈ Finset.range (n + 1), PowerSeries.coeff n (g * h ^ (k * j + p))
     ∃ (r : ℕ) (αs : ℕ → ℤ), ∀ p < k, ∀ n, r ≤ n →
       a p n = ∑ i ∈ Finset.Icc 1 r, (αs i : ℚ) * a p (n - i)
-
-/-- **Alternating step-five sums of Catalan's triangle are Fibonacci numbers.** For natural
-numbers $n$ and $k$ let $d(n, k) = \frac{k + 1}{n + 1} \binom{2(n + 1)}{n - k}$ if $k \le n$,
-and $d(n, k) = 0$ if $k > n$. Let $F_m$ be the Fibonacci numbers ($F_0 = 0$, $F_1 = 1$). Then
-for every $n \in \mathbb{N}$,
-$\sum_{j=0}^{n} \bigl(d(n, 5j + 1) - d(n, 5j + 2)\bigr) = F_{2n}$ and
-$\sum_{j=0}^{n} \bigl(d(n, 5j) - d(n, 5j + 3)\bigr) = F_{2n+1}$.
-
-The numbers $d(n, k)$ form Catalan's triangle (OEIS A039598), the Riordan array $(g, xg)$ with
-$g(x) = (1 - 2x - \sqrt{1 - 4x})/(2x^2)$; since $d(n, m) = 0$ for $m > n$, the sums are the full
-sums over all $j \ge 0$.
-
-Source: Eduardo H. M. Brietzke, *Recurrence Relations for Sums of Binomial Coefficients and
-Some Generalizations*, Journal of Integer Sequences 27 (2024), Article 24.3.4,
-Proposition 13. -/
-public theorem_wanted catalanTriangle_stepFive_sub_eq_fib (n : ℕ) :
-    let d : ℕ → ℕ → ℚ := fun n k =>
-      if k ≤ n then (k + 1 : ℚ) / (n + 1) * ((2 * (n + 1)).choose (n - k) : ℚ) else 0
-    ∑ j ∈ Finset.range (n + 1), (d n (5 * j + 1) - d n (5 * j + 2)) = Nat.fib (2 * n) ∧
-      ∑ j ∈ Finset.range (n + 1), (d n (5 * j) - d n (5 * j + 3)) = Nat.fib (2 * n + 1)
 
 end
 

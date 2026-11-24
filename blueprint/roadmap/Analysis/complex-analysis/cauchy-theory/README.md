@@ -10,6 +10,7 @@ Contour integrals, Cauchy's theorem, residues, argument principle, Rouché, Laur
 - [Normal families](normal-families/README.md)
 - [Removable lines for holomorphic functions](removable-lines-for-holomorphic-functions/README.md)
 - [Rouché's theorem](rouch-s-theorem/README.md)
+- [A dominated series of holomorphic functions is holomorphic](holomorphic-sum-of-dominated-series.md)
 - [A holomorphic function not identically zero has finitely many zeros in a disc](finite-zeros-in-ball-of-not-identically.md)
 - [A three-circles inequality for circles tangent at the origin](sq-s-sup-norm-circle-one-le-mul.md)
 - [Casorati–Weierstrass theorem](casorati-weierstrass.md)
@@ -18,3 +19,4 @@ Contour integrals, Cauchy's theorem, residues, argument principle, Rouché, Laur
 - [Looman–Menchoff theorem](looman-menchoff.md)
 - [Residue theorem on a disc](residue-theorem-closed-ball.md)
 - [Schwarz reflection principle](schwarz-reflection.md)
+- [A holomorphic map into a strictly convex space is constant if its norm attains a maximum on a connected open set](maximum-modulus-principle.md)
