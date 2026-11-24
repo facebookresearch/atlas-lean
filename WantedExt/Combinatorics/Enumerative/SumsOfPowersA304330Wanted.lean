@@ -169,29 +169,6 @@ theorem_wanted inversion_uU (a b : ℕ → ℝ) :
     (∀ k : ℕ, 1 ≤ k → b k =
       ∑ m ∈ Finset.Icc 1 k, (arrayU k m : ℝ) * a m)
 
-/-- **Closed form for the array $R(k, m)$.** Let $k$ and $m$ be natural numbers with
-$1 \le m \le k$, and let $R(k, m) = \sum_{j=0}^{m} (-1)^j \binom{2m}{j} (m - j)^{2k}$. Then
-$$R(k, m) = 2^{2k+m-1}\, m! \sum_{b} \frac{(2k)!}{b_1! \cdots b_k!}
-\prod_{r=1}^{k} \left(\frac{1}{4^r (2r)!}\right)^{b_r},$$
-where the sum runs over all $k$-tuples $b = (b_1, \dots, b_k)$ of natural numbers with
-$b_1 + 2 b_2 + \dots + k b_k = k$ and $b_1 + \dots + b_k = m$ (each such $b_r$ is at most $k$).
-
-Source: José L. Cereceda, "Sums of Powers of Integers and the
-Sequence A304330", Corollary 6. -/
-theorem_wanted arrayR_eq_closedForm (k m : ℕ) (hm1 : 1 ≤ m)
-    (hmk : m ≤ k) :
-    (arrayR k m : ℚ) =
-      (2 : ℚ) ^ (2 * k + m - 1) * (Nat.factorial m : ℚ) *
-        ∑ b ∈ Finset.univ.filter
-            (fun b : Fin k → Fin (k + 1) =>
-              (∑ r : Fin k, (r.val + 1) * (b r).val) = k ∧
-              (∑ r : Fin k, (b r).val) = m),
-          ((Nat.factorial (2 * k) : ℚ) /
-            ∏ r : Fin k, (Nat.factorial (b r).val : ℚ)) *
-            ∏ r : Fin k,
-              (1 / ((4 : ℚ) ^ (r.val + 1) *
-                (Nat.factorial (2 * (r.val + 1)) : ℚ))) ^ ((b r).val)
-
 /-- **Odd power sums in terms of $\binom{n+m}{2m-1}$.** For natural numbers $k \ge 1$ and $n$,
 write $S_{2k-1}(n) = 1^{2k-1} + 2^{2k-1} + \dots + n^{2k-1}$, let
 $R(p, q) = \sum_{j=0}^{q} (-1)^j \binom{2q}{j} (q - j)^{2p}$, and let $Q_{k,1}(n) = n^{2k-1}$ and

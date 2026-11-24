@@ -12,6 +12,7 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Finset.Powerset
 import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Algebra.Order.BigOperators.Group.List
+import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Data.List.GetD
 import Mathlib.Data.List.Induction
 import Mathlib.Tactic.Ring
@@ -375,6 +376,160 @@ private theorem sum_extensions (m : ℕ) (x : ℤ) {b : List ℕ} {h : ℕ}
   ring
 
 end weightedFileNumber_factorization
+
+section
+
+open Finset weightedFileNumber_factorization
+
+-- Any occupied column strictly to the right of a cell in level `l` is
+-- complete in that level. If the left column stops there, the singleton
+-- condition forces the next column to reach at least the end of the level.
+private theorem level_full_to_right {m : ℕ} (hm : 0 < m) {b : List ℕ}
+    (hb : IsSingletonBoard m b) {l : ℕ} {c : ℕ × ℕ}
+    (hc : c ∈ ferrersBoardCells b) (hl : c.2 / m = l) {j : ℕ}
+    (hij : c.1 < j) (hj : j < b.length) : (l + 1) * m ≤ b.getD j 0 := by
+  have hmono {i : ℕ} (hi : i ≤ j) : b.getD i 0 ≤ b.getD j 0 := by
+    rcases hi.eq_or_lt with rfl | hlt
+    · rfl
+    · rw [b.getD_eq_getElem _ (hlt.trans hj), b.getD_eq_getElem _ hj]
+      exact List.pairwise_iff_getElem.mp hb.1 _ _ _ _ hlt
+  have hlow : l * m < b.getD c.1 0 := by
+    rw [← hl]
+    exact (Nat.div_mul_le_self _ _).trans_lt (mem_cells.mp hc).2
+  have hle := (Nat.le_div_iff_mul_le hm).2 hlow.le
+  rcases hle.eq_or_lt with heq | hlt
+  · have hrem : b.getD c.1 0 % m ≠ 0 := by
+      intro hzero
+      have h := Nat.div_add_mod (b.getD c.1 0) m
+      rw [← heq, hzero, Nat.add_zero, Nat.mul_comm m l] at h
+      exact hlow.ne h
+    have hstep := hb.2 c.1 (by omega) hrem
+    rw [← heq] at hstep
+    exact ((Nat.le_div_iff_mul_le hm).1 (Nat.lt_of_mul_lt_mul_right hstep)).trans
+      (hmono (by omega))
+  · exact ((Nat.le_div_iff_mul_le hm).1 hlt).trans (hmono hij.le)
+
+-- The chosen-level hypothesis already rules out a level rook placement.
+-- Keep `hF₀r` in the original public signature.
+set_option linter.unusedVariables false in
+/-- **Size of the block $P(F_0)$.** Let $m \ge 2$, let $B$ be a singleton board for $m$, and call
+the rows $r$ with $\lfloor r/m \rfloor = l$ level $l$. Let $F_0$ be a file placement on $B$ that is
+not an $m$-level rook placement, let $l$ and $c_0$ be its chosen level and the leftmost cell of
+$F_0$ in that level, and suppose level $l$ contains $n$ cells of $F_0$. Then the block $P(F_0)$
+determined by $l$ and $c_0$ has exactly $m^{n-1}$ members.
+
+Source: Kenny Barrese, *Weighted File Placements on Singleton Boards*, INTEGERS 24 (2024),
+Article A58, Lemma 7 (`integers-2024-A58-lem-7`). -/
+public theorem filePlacementBlock_card (m : ℕ) (hm : 2 ≤ m) (b : List ℕ)
+    (hb : IsSingletonBoard m b) (F₀ : Finset (ℕ × ℕ)) (hF₀ : F₀ ∈ filePlacements b)
+    (hF₀r : F₀ ∉ levelRookPlacements m b) (l : ℕ) (c₀ : ℕ × ℕ)
+    (hl : IsChosenLevelAndLeftmost m F₀ l c₀) (n : ℕ)
+    (hn : (F₀.filter fun c => c.2 / m = l).card = n) :
+    (filePlacementBlock m b F₀ l c₀).card = m ^ (n - 1) := by
+  classical
+  obtain ⟨_, _, hc₀, hc₀l, hleft⟩ := hl
+  obtain ⟨hboard, hinj⟩ := mem_placements.mp hF₀
+  have hm₀ : 0 < m := by omega
+  let L := F₀.filter fun c => c.2 / m = l
+  let moving := L.erase c₀
+  have hL : c₀ ∈ L := mem_filter.mpr ⟨hc₀, hc₀l⟩
+  have moves {c : ℕ × ℕ} (hc : c ∈ moving) : c ≠ c₀ ∧ c ∈ F₀ ∧ c.2 / m = l := by
+    obtain ⟨hne, hmem⟩ := mem_erase.mp hc
+    exact ⟨hne, mem_filter.mp hmem⟩
+  have hfull (c : moving) : (l + 1) * m ≤ b.getD c.1.1 0 := by
+    obtain ⟨hne, hc, hcl⟩ := moves c.2
+    have hlt := (hleft c hc hcl).lt_of_ne fun he => hne (hinj hc hc₀ he.symm)
+    exact level_full_to_right hm₀ hb (hboard hc₀) hc₀l hlt (mem_cells.mp (hboard hc)).1
+  -- Index the offsets by the original cells: their columns are distinct.
+  let move (f : moving → Fin m) (c : ℕ × ℕ) : ℕ × ℕ :=
+    if hc : c ∈ moving then (c.1, (f ⟨c, hc⟩ : ℕ) + l * m) else c
+  have col (f : moving → Fin m) (c : ℕ × ℕ) : (move f c).1 = c.1 := by
+    unfold move
+    split <;> rfl
+  have level (f : moving → Fin m) (c : ℕ × ℕ) : (move f c).2 / m = c.2 / m := by
+    by_cases hc : c ∈ moving
+    · simp [move, hc, (moves hc).2.2, Nat.add_mul_div_right _ _ hm₀,
+        Nat.div_eq_of_lt (f ⟨c, hc⟩).isLt]
+    · simp [move, hc]
+  have fixed (f : moving → Fin m) {c : ℕ × ℕ} (hc : c.2 / m ≠ l) : move f c = c :=
+    dite_eq_right fun h => hc (moves h).2.2
+  have count : (univ : Finset (moving → Fin m)).card = (filePlacementBlock m b F₀ l c₀).card := by
+    refine card_nbij (fun f => F₀.image (move f)) (fun f _ => ?_) (fun f _ g _ he => ?_)
+      (fun F hF => ?_)
+    · change F₀.image (move f) ∈ filePlacementBlock m b F₀ l c₀
+      refine mem_filter.mpr ⟨mem_placements.mpr ⟨?_, ?_⟩, ?_, ?_, ?_⟩
+      · intro d hd
+        obtain ⟨c, hc, rfl⟩ := mem_image.mp hd
+        by_cases h : c ∈ moving
+        · have hr := (f ⟨c, h⟩).isLt
+          have hlt := hfull ⟨c, h⟩
+          refine mem_cells.mpr ⟨by simpa only [col] using (mem_cells.mp (hboard hc)).1, ?_⟩
+          simp only [move, dite_eq_left h]
+          rw [Nat.add_mul, Nat.one_mul, Nat.add_comm (l * m)] at hlt
+          exact (Nat.add_lt_add_right hr _).trans_le hlt
+        · simpa [move, h] using hboard hc
+      · intro d hd e he hde
+        obtain ⟨c, hc, rfl⟩ := mem_image.mp hd
+        obtain ⟨a, ha, rfl⟩ := mem_image.mp he
+        exact congrArg (move f) (hinj hc ha (by simpa only [col] using hde))
+      · simp only [filter_image, level]
+        exact (image_congr fun _ hc => fixed f (mem_filter.mp hc).2).trans image_id'
+      · simp [filter_image, level, image_image, Function.comp_def, col]
+      · exact mem_image.mpr ⟨c₀, hc₀, by simp [move, moving]⟩
+    · change F₀.image (move f) = F₀.image (move g) at he
+      funext c
+      have hc := mem_image_of_mem (move f) (moves c.2).2.1
+      rw [he] at hc
+      obtain ⟨d, hd, hd'⟩ := mem_image.mp hc
+      have hdc := hinj hd (moves c.2).2.1 (by simpa only [col] using congrArg Prod.fst hd')
+      subst d
+      apply Fin.ext
+      exact Nat.add_right_cancel (by
+        simpa only [move, dite_eq_left c.2] using congrArg Prod.snd hd'.symm)
+    · obtain ⟨hF, hout, hcols, hfix⟩ := mem_filter.mp hF
+      have hFinj := (mem_placements.mp hF).2
+      have existsCell (c : moving) : ∃ d ∈ F, d.1 = c.1.1 ∧ d.2 / m = l := by
+        have hc : c.1 ∈ L := (mem_erase.mp c.2).2
+        have hcol := mem_image_of_mem Prod.fst hc
+        rw [← hcols] at hcol
+        obtain ⟨d, hd, hdcol⟩ := mem_image.mp hcol
+        exact ⟨d, (mem_filter.mp hd).1, hdcol, (mem_filter.mp hd).2⟩
+      choose d hd hdcol hdl using existsCell
+      let f (c : moving) : Fin m := ⟨(d c).2 % m, Nat.mod_lt _ hm₀⟩
+      have hmove (c : ℕ × ℕ) (hc : c ∈ F₀) : move f c ∈ F := by
+        by_cases hv : c ∈ moving
+        · have heq : move f c = d ⟨c, hv⟩ := by
+            apply Prod.ext
+            · exact (col f c).trans (hdcol ⟨c, hv⟩).symm
+            · simp only [move, dite_eq_left hv, f]
+              rw [Nat.mul_comm l m, ← hdl ⟨c, hv⟩]
+              exact Nat.mod_add_div _ _
+          exact heq ▸ hd ⟨c, hv⟩
+        · rw [show move f c = c from dite_eq_right hv]
+          by_cases hcl : c.2 / m = l
+          · have heq : c = c₀ := by
+              by_contra hne
+              exact hv (mem_erase.mpr ⟨hne, mem_filter.mpr ⟨hc, hcl⟩⟩)
+            exact heq ▸ hfix
+          · have hc' : c ∈ F₀.filter (fun a => a.2 / m ≠ l) := mem_filter.mpr ⟨hc, hcl⟩
+            rw [← hout] at hc'
+            exact (mem_filter.mp hc').1
+      refine ⟨f, mem_univ _, le_antisymm (image_subset_iff.mpr hmove) ?_⟩
+      intro e he
+      by_cases hel : e.2 / m = l
+      · have he' : e ∈ F.filter (fun a => a.2 / m = l) := mem_filter.mpr ⟨he, hel⟩
+        have hecol := mem_image_of_mem Prod.fst he'
+        rw [hcols] at hecol
+        obtain ⟨c, hc, hce⟩ := mem_image.mp hecol
+        have hc' := (mem_filter.mp hc).1
+        exact mem_image.mpr ⟨c, hc', hFinj (hmove c hc') he ((col f c).trans hce)⟩
+      · have he' : e ∈ F.filter (fun a => a.2 / m ≠ l) := mem_filter.mpr ⟨he, hel⟩
+        rw [hout] at he'
+        exact mem_image.mpr ⟨e, (mem_filter.mp he').1, fixed f hel⟩
+  rw [← count, card_univ, Fintype.card_fun, Fintype.card_fin, Fintype.card_coe,
+    card_erase_of_mem hL, hn]
+
+end
 
 open weightedFileNumber_factorization in
 /-- **Factorization theorem for weighted file placements.** Let $m \ge 1$ and let $B$ be a Ferrers

@@ -20,6 +20,7 @@ Convex functions and sets in analysis and optimization: first-order and second-o
 - [Nesterov smoothing](nesterov-smoothing/README.md)
 - [Newton's method for minimization](newton-s-method-for-minimization/README.md)
 - [Polar sets](polar-sets/README.md)
+- [Random reshuffling](random-reshuffling/README.md)
 - [Second-order condition for convexity](second-order-condition-for-convexity/README.md)
 - [Self-concordant functions and barriers](self-concordant-functions-and-barriers/README.md)
 - [Stampacchia's theorem](stampacchia-s-theorem/README.md)

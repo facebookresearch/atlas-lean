@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.LinearRecurrence
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
+public import MathlibExt.NumberTheory.RoughNumberSieve
 
 /-!
 Statements from Luca and Manape on the Euler function of linearly recurrent sequences.
@@ -42,20 +43,6 @@ public theorem_wanted totient_div_gg_and_sigma_div_ll_log_log :
         C / Real.log (Real.log n) ≤ (Nat.totient n : ℝ) / n) ∧
       ∃ C : ℝ, ∀ n : ℕ, 3 ≤ n →
         (ArithmeticFunction.sigma 1 n : ℝ) / n ≤ C * Real.log (Real.log n)
-
-/-- **Sieve bound for integers without small prime factors.** Write $p(n)$ for the least prime
-factor of an integer $n \ge 2$, and set $p(1) = 1$. There is a constant $C$ such that for all real
-$x$ and $y$ with $2 \le y \le x$, the number of integers $1 \le n \le x$ with $p(n) > y$ is at
-most $C x / \log y$.
-
-Source: Florian Luca and Makoko Campbell Manape, *On the Euler Function of Linearly Recurrence
-Sequences*, Fibonacci Quarterly 62 (2024), Article 62-4/luca09162024rev2,
-Lemma 2 (`fq-2024-luca09162024rev2-lem-2`),
-quoted from Tenenbaum, page 397. -/
-public theorem_wanted card_minFac_gt_le_div_log :
-    ∃ C : ℝ, ∀ x y : ℝ, 2 ≤ y → y ≤ x →
-      ((Finset.Icc 1 ⌊x⌋₊).filter (fun n => y < (Nat.minFac n : ℝ))).card ≤
-        C * x / Real.log y
 
 /-- **Integers with many prime factors are rare.** Let $\Omega(n)$ be the number of prime factors
 of $n$ counted with multiplicity. There is a constant $C$ such that for every real $x \ge 10$, the

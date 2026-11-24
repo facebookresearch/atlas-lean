@@ -393,6 +393,95 @@ public theorem accelZeck_conjecture17_implies_conjecture16
         Finsupp.single_eq_of_ne (show i ≠ 2 by omega)]
     omega
 
+/-- **Unique losing move from $k$ copies of $F_2$ for odd $k$.** Let $k$ be odd and $n \ge 2k$,
+and suppose that for every $i < k$ with $3i \le n$ the state with $i$ copies of $F_3$,
+$n - 3i$ copies of $F_1$ and nothing else is losing. Then $n \ge 3k$; the state $T$ with $k$
+copies of $F_3$, $n - 3k$ copies of $F_1$ and nothing else is losing and is reached in one
+move from the state $S$ with $k$ copies of $F_2$, $n - 2k$ copies of $F_1$ and nothing else;
+and every losing state reached in one move from $S$ equals $T$.
+
+Source: Diego Garcia-Fernandezsesma, Steven J. Miller, Thomas Rascon, Risa Vandegrift, and
+Ajmain Yamin, *The Accelerated Zeckendorf Game*, The Fibonacci Quarterly 62 (2024), no. 1,
+Article milleretal04072023, Lemma 2.4. -/
+public theorem accelZeck_odd_unique_losing_move (k n : ℕ) (hk : Odd k) (hn : 2 * k ≤ n)
+    (hlose : ∀ i < k, 3 * i ≤ n →
+      AccelZeckLosing (Finsupp.single 3 i + Finsupp.single 1 (n - 3 * i))) :
+    3 * k ≤ n ∧
+      AccelZeckMove (Finsupp.single 2 k + Finsupp.single 1 (n - 2 * k))
+        (Finsupp.single 3 k + Finsupp.single 1 (n - 3 * k)) ∧
+      AccelZeckLosing (Finsupp.single 3 k + Finsupp.single 1 (n - 3 * k)) ∧
+      ∀ t, AccelZeckMove (Finsupp.single 2 k + Finsupp.single 1 (n - 2 * k)) t →
+        AccelZeckLosing t → t = Finsupp.single 3 k + Finsupp.single 1 (n - 3 * k) := by
+  let s := accelZeckPiles (n - 2 * k) k 0
+  let u := accelZeckPiles (n - 3 * k) 0 k
+  suffices h : 3 * k ≤ n ∧ AccelZeckMove s u ∧ AccelZeckLosing u ∧
+      ∀ t, AccelZeckMove s t → AccelZeckLosing t → t = u by
+    simpa [s, u, accelZeckPiles, add_comm] using h
+  obtain ⟨r, hr⟩ := hk
+  -- Every such state with positive twos comes from an assumed losing state by a C₁ move.
+  have hwinning (a b : ℕ) (ha : a < k) (hb : 0 < b) (hab : 3 * a + 2 * b ≤ n) :
+      AccelZeckWinning (accelZeckPiles (n - 3 * a - 2 * b) b a) := by
+    obtain ⟨_, hnext⟩ := hlose a ha (by omega)
+    apply hnext
+    refine ⟨b, hb, Or.inr (Or.inl ⟨?_, ?_⟩)⟩
+    · simp
+      omega
+    · ext i
+      simp only [accelZeckPiles, Finsupp.add_apply, Finsupp.tsub_apply, Finsupp.single_apply]
+      split_ifs <;> omega
+  have hnotLosing (a b : ℕ) (ha : a < k) (hb : 0 < b) (hab : 3 * a + 2 * b ≤ n) :
+      ¬ AccelZeckLosing (accelZeckPiles (n - 3 * a - 2 * b) b a) :=
+    fun hl => (accelZeckLosing_iff_not_winning _).mp hl (hwinning a b ha hb hab)
+  have hs_zero {i : ℕ} (hi : 2 < i) : s i = 0 := by
+    simp [s, accelZeckPiles, Finsupp.single_eq_of_ne (show i ≠ 1 by omega),
+      Finsupp.single_eq_of_ne (show i ≠ 2 by omega)]
+  have hs : AccelZeckWinning s := by
+    simpa [s] using hwinning 0 k (by omega) (by omega) (by omega)
+  have hforced {t : ℕ →₀ ℕ} (hmove : AccelZeckMove s t) (ht : AccelZeckLosing t) :
+      3 * k ≤ n ∧ t = u := by
+    -- Only combining all k twos with ones can avoid leaving a winning state.
+    rcases hmove with ⟨m, hm, ⟨i, hi, h₁, h₂, rfl⟩ | ⟨h₁, rfl⟩ | ⟨h₂, rfl⟩ | ⟨i, hi, hᵢ, -⟩⟩
+    · have hi₂ : i = 2 := by
+        by_contra hne
+        have hz := hs_zero (show 2 < i by omega)
+        omega
+      subst i
+      have h₁' : m ≤ n - 2 * k := by simpa [s, accelZeckPiles] using h₁
+      have h₂' : m ≤ k := by simpa [s, accelZeckPiles] using h₂
+      by_cases hmk : m = k
+      · subst m
+        refine ⟨by omega, ?_⟩
+        ext j
+        simp only [s, u, accelZeckPiles, Finsupp.add_apply, Finsupp.tsub_apply,
+          Finsupp.single_apply]
+        split_ifs <;> omega
+      · have hdest : s - Finsupp.single 1 m - Finsupp.single 2 m + Finsupp.single 3 m =
+            accelZeckPiles (n - 3 * m - 2 * (k - m)) (k - m) m := by
+          ext j
+          simp only [s, accelZeckPiles, Finsupp.add_apply, Finsupp.tsub_apply, Finsupp.single_apply]
+          split_ifs <;> omega
+        exact (hnotLosing m (k - m) (by omega) (by omega) (by omega) (hdest ▸ ht)).elim
+    · have h₁' : 2 * m ≤ n - 2 * k := by simpa [s, accelZeckPiles] using h₁
+      have hdest : s - Finsupp.single 1 (2 * m) + Finsupp.single 2 m =
+          accelZeckPiles (n - 3 * 0 - 2 * (k + m)) (k + m) 0 := by
+        ext j
+        simp only [s, accelZeckPiles, Finsupp.add_apply, Finsupp.tsub_apply, Finsupp.single_apply]
+        split_ifs <;> omega
+      exact (hnotLosing 0 (k + m) (by omega) (by omega) (by omega) (hdest ▸ ht)).elim
+    · have h₂' : 2 * m ≤ k := by simpa [s, accelZeckPiles] using h₂
+      have hdest : s - Finsupp.single 2 (2 * m) + Finsupp.single 1 m + Finsupp.single 3 m =
+          accelZeckPiles (n - 3 * m - 2 * (k - 2 * m)) (k - 2 * m) m := by
+        ext j
+        simp only [s, accelZeckPiles, Finsupp.add_apply, Finsupp.tsub_apply, Finsupp.single_apply]
+        split_ifs <;> omega
+      -- Oddness makes the number of remaining twos strictly positive after a split.
+      exact (hnotLosing m (k - 2 * m) (by omega) (by omega) (by omega) (hdest ▸ ht)).elim
+    · have hz := hs_zero (show 2 < i by omega)
+      omega
+  obtain ⟨t, hmove, ht⟩ := (accelZeckWinning_iff s).mp hs
+  obtain ⟨hbound, rfl⟩ := hforced hmove ht
+  exact ⟨hbound, hmove, ht, fun _ hmove' ht' => (hforced hmove' ht').2⟩
+
 end
 
 end MetaMathlibExt

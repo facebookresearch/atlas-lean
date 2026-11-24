@@ -96,6 +96,21 @@ example : fixedTilingCount (cellR2 4 4) (1 : Equiv.Perm Empty) = 0 := by
   rw [squareGrid_r2_even 4 1 (one_pow 2) (by decide), Fintype.card_empty]
   decide
 
+-- At prime width 3, the zero shift fixes all eight binary tilings and each other shift fixes two.
+example : cylinderShiftSum 3 1 id (1 : Equiv.Perm (Fin 2)) = 12 := by
+  rw [cylinder_identity (n := 3) (m := 1) (σ := 1) (hσ := one_pow 1)]
+  decide +kernel
+
+-- At composite width 4 and height 2, the orders 1, 2 and 4 contribute `256`, `16` and `2 * 4`.
+example : cylinderShiftSum 4 2 id (1 : Equiv.Perm (Fin 2)) = 280 := by
+  rw [cylinder_identity (n := 4) (m := 2) (σ := 1) (hσ := one_pow 1)]
+  decide +kernel
+
+-- At width 1 only the zero shift occurs; the two cells are colored independently.
+example : cylinderShiftSum 1 2 id (1 : Equiv.Perm (Fin 3)) = 9 := by
+  rw [cylinder_identity (n := 1) (m := 2) (σ := 1) (hσ := one_pow 1)]
+  decide +kernel
+
 -- On the 2 × 2 torus the zero shift fixes 16 binary tilings and each other shift fixes four.
 example : torusShiftSum 2 2 id (1 : Equiv.Perm (Fin 2)) = 28 := by
   decide +kernel

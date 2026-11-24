@@ -85,9 +85,9 @@ densities, and nonnegative layer thicknesses (`0 ≤ h`, `0 ≤ T`,
 namespace EarthScience
 
 set_option linter.unusedVariables false in
-/-- Signed algebra behind `airy_root_pressure_eq`: the root `r = ρc * h / (ρm - ρc)`
-balances the two pressure expressions for all real `h`, `T`, `D`, including
-negative layer thicknesses that describe no physical column. -/
+/-- Signed algebra behind `airy_root_pressure_eq`: for `0 < ρc < ρm`, the root
+`r = ρc * h / (ρm - ρc)` balances the two pressure expressions for all real `h`, `T`, `D`,
+including negative layer thicknesses that describe no physical column. -/
 theorem airy_root_pressure_eq_signed {ρc ρm h T D : ℝ} (hρc : 0 < ρc) (hρm : ρc < ρm) :
     ρc * (T + h + ρc * h / (ρm - ρc)) + ρm * (D - T - ρc * h / (ρm - ρc))
       = ρc * T + ρm * (D - T) := by
@@ -96,8 +96,8 @@ theorem airy_root_pressure_eq_signed {ρc ρm h T D : ℝ} (hρc : 0 < ρc) (hρ
   ring
 
 set_option linter.unusedVariables false in
-/-- Signed algebra behind `airy_root_of_pressure_eq`: equal pressure expressions
-force the root formula for all real `h`, `T`, `D`, `r`, including negative layer
+/-- Signed algebra behind `airy_root_of_pressure_eq`: for `0 < ρc < ρm`, equal pressure
+expressions force the root formula for all real `h`, `T`, `D`, `r`, including negative layer
 thicknesses that describe no physical column. -/
 theorem airy_root_of_pressure_eq_signed {ρc ρm h T D r : ℝ} (hρc : 0 < ρc) (hρm : ρc < ρm)
     (hpress : ρc * (T + h + r) + ρm * (D - T - r) = ρc * T + ρm * (D - T)) :
@@ -106,7 +106,8 @@ theorem airy_root_of_pressure_eq_signed {ρc ρm h T D r : ℝ} (hρc : 0 < ρc)
   rw [eq_div_iff hne]
   linear_combination -hpress
 
-/-- Airy root is nonnegative, and positive for positive relief. -/
+/-- For `0 < ρc < ρm` and relief `h ≥ 0`, the Airy root is nonnegative, and positive for
+positive relief. -/
 theorem airy_root_nonneg_pos {ρc ρm h : ℝ} (hρc : 0 < ρc) (hρm : ρc < ρm) (hh : 0 ≤ h) :
     0 ≤ ρc * h / (ρm - ρc) ∧ (0 < h → 0 < ρc * h / (ρm - ρc)) := by
   have hd : 0 < ρm - ρc := sub_pos.mpr hρm
@@ -114,7 +115,7 @@ theorem airy_root_nonneg_pos {ρc ρm h : ℝ} (hρc : 0 < ρc) (hρm : ρc < ρ
   exact div_pos (mul_pos hρc hhpos) hd
 
 /-- **Airy root equalizes compensation pressure** for a physical column:
-nonnegative relief `h` and reference crust thickness `T`, the Airy root
+densities `0 < ρc < ρm`, nonnegative relief `h` and reference crust thickness `T`, the Airy root
 `r = ρc * h / (ρm - ρc)`, and a compensation depth `D` at or below the base of
 the root, `T + r ≤ D`. Every layer of the elevated column then has nonnegative
 thickness (root `r`, crust `T + h + r`, mantle `D - T - r`), and its pressure
@@ -131,8 +132,8 @@ theorem airy_root_pressure_eq {ρc ρm h T D r : ℝ} (hρc : 0 < ρc) (hρm : �
   exact airy_root_pressure_eq_signed hρc hρm
 
 /-- **Equal compensation pressure forces the Airy root** for a physical column:
-nonnegative relief `h` and reference crust thickness `T`, and a root `r` whose
-base lies at or above the compensation depth, `T + r ≤ D`. The forced root and
+densities `0 < ρc < ρm`, nonnegative relief `h` and reference crust thickness `T`, and a root
+`r` whose base lies at or above the compensation depth, `T + r ≤ D`. The forced root and
 every layer of the elevated column have nonnegative thickness. -/
 theorem airy_root_of_pressure_eq {ρc ρm h T D r : ℝ} (hρc : 0 < ρc) (hρm : ρc < ρm)
     (hh : 0 ≤ h) (hT : 0 ≤ T) (hD : T + r ≤ D)
