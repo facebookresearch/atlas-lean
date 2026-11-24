@@ -58,19 +58,13 @@ public import Mathlib.Combinatorics.Enumerative.Composition
 public import Mathlib.Combinatorics.Enumerative.Partition.Basic
 public import Mathlib.Data.Finset.Card
 public import Mathlib.SetTheory.Cardinal.Finite
+public import MathlibExt.Combinatorics.Enumerative.SchreierSparseCount
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.Combinatorics.Enumerative.SchreierTypeSetsWanted
-
-/-- **Schreier sets.** A finite set $A$ of natural numbers is *Schreier* if $|A| \le a$ for
-every $a \in A$; equivalently, $A$ is empty or $\min A \ge |A|$. -/
-def IsSchreier (A : Finset ℕ) : Prop := ∀ a ∈ A, A.card ≤ a
-
-instance (A : Finset ℕ) : Decidable (IsSchreier A) := by
-  unfold IsSchreier; infer_instance
 
 /-- **Strong Schreier sets.** For a natural number $\ell$, a finite set $A$ of natural numbers is
 *$\ell$-strong Schreier* if $\ell |A| + 1 \le a + \ell$ for every $a \in A$; equivalently, $A$ is
@@ -80,16 +74,6 @@ def IsStrongSchreier (l : ℕ) (A : Finset ℕ) : Prop :=
 
 instance (l : ℕ) (A : Finset ℕ) : Decidable (IsStrongSchreier l A) := by
   unfold IsStrongSchreier; infer_instance
-
-/-- **Sparse sets.** A finite set of natural numbers is *sparse* if the differences between
-consecutive elements in increasing order are non-decreasing. -/
-def IsSparse (A : Finset ℕ) : Prop :=
-  ∀ a ∈ A, ∀ b ∈ A, ∀ c ∈ A, a < b → b < c →
-    (∀ x ∈ A, a < x → b ≤ x) → (∀ x ∈ A, b < x → c ≤ x) →
-      b - a ≤ c - b
-
-instance (A : Finset ℕ) : Decidable (IsSparse A) := by
-  unfold IsSparse; infer_instance
 
 /-- **Strongly sparse sets.** A finite set of natural numbers is *strongly sparse* if the
 differences between consecutive elements in increasing order are strictly increasing. -/
@@ -107,22 +91,12 @@ def partitionExactCount (u k : ℕ) : ℕ :=
   (Finset.univ.filter (fun P : Nat.Partition u =>
     P.parts.card = k)).card
 
-/-- **The partition number $p(u)$.** For a natural number $u$, $p(u)$ is the number of partitions
-of $u$, that is, of multisets of positive integers summing to $u$; in particular $p(0) = 1$. -/
-def partitionCount (u : ℕ) : ℕ := Fintype.card (Nat.Partition u)
-
 /-- **Number of Schreier sparse sets with given minimum and maximum.** For natural numbers $n$
 and $m$, $|F_{n,m}|$ is the number of sets $F \subseteq \{1, \dots, n\}$ that are Schreier and
 sparse, contain $n$, and have minimum $m$. -/
 def schreierSparseMinCount (n m : ℕ) : ℕ :=
   ((Finset.Icc 1 n).powerset.filter (fun F => IsSchreier F ∧
     IsSparse F ∧ n ∈ F ∧ m ∈ F ∧ ∀ a ∈ F, m ≤ a)).card
-
-/-- **Number of Schreier sparse sets with maximum $n$.** For a natural number $n$, $|F_n|$ is the
-number of sets $F \subseteq \{1, \dots, n\}$ with $n \in F$ that are Schreier and sparse. -/
-def schreierSparseCount (n : ℕ) : ℕ :=
-  ((Finset.Icc 1 n).powerset.filter (fun F => IsSchreier F ∧
-    IsSparse F ∧ n ∈ F)).card
 
 /-- **Number of sparse strong Schreier sets with maximum $n$.** For natural numbers $n$ and
 $\ell$, $|A_{n,\ell}|$ is the number of sets $A \subseteq \{1, \dots, n\}$ with $n \in A$ that
@@ -270,15 +244,6 @@ Source: Kevin Beanland and Hùng Việt Chu, "On Schreier-Type
 Sets, Partitions, and Compositions", Proposition 2. -/
 theorem_wanted schreierSparseMinCount_eq (m n : ℕ) (hmn : m + 1 ≤ n) :
     schreierSparseMinCount n (m + 1) = partitionExactCount (n - 1) m
-
-/-- **Counting Schreier sparse sets by partition numbers.** For every integer $n \ge 1$, the
-number of Schreier sparse sets $F \subseteq \{1, \dots, n\}$ with $n \in F$ equals $p(n - 1)$,
-the number of partitions of $n - 1$.
-
-Source: Kevin Beanland and Hùng Việt Chu, "On Schreier-Type
-Sets, Partitions, and Compositions", Corollary 3. -/
-theorem_wanted schreierSparseCount_eq (n : ℕ) (hn : 1 ≤ n) :
-    schreierSparseCount n = partitionCount (n - 1)
 
 /-- **Sparse strong Schreier sets as a sum of partition counts.** For every integer $n \ge 1$
 and every natural number $\ell$, the number of sparse $\ell$-strong Schreier sets
