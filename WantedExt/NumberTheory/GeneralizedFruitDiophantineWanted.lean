@@ -17,6 +17,7 @@ public import Mathlib.Data.Nat.Totient
 public import Mathlib.NumberTheory.NumberField.Basic
 public import Mathlib.RingTheory.RamificationInertia.Inertia
 public import Mathlib.RingTheory.RamificationInertia.Ramification
+public import MathlibExt.NumberTheory.SquarefreeOneModEight
 
 namespace MetaMathlibExt
 
@@ -91,19 +92,6 @@ public theorem_wanted twoUnramifiedDegreeOnePrimes_nonempty_iff_quadratic (t : �
     (ht : Squarefree t) (ht1 : t ≠ 1) (K : Type*) [Field K] [NumberField K]
     (hK : Module.finrank ℚ K = 2) (α : K) (hα : α ^ 2 = t) :
     (twoUnramifiedDegreeOnePrimes K).Nonempty ↔ t ≡ 1 [ZMOD 8]
-
-/-- **Relative density of square-free integers congruent to $1$ modulo $8$.** As $X \to \infty$
-through the natural numbers, the number of square-free integers $t$ with $1 \le t \le X$ and
-$t \equiv 1 \pmod 8$, divided by the number of square-free integers $t$ with $1 \le t \le X$,
-tends to $1/6$.
-
-Source: Satyabrat Sahoo and Shanta Laishram, *Generalized Fruit Diophantine Equation over
-Number Fields*, INTEGERS 26 (2026), Article A21, Theorem 2 (`integers-2026-A21-thm-2`). -/
-public theorem_wanted squarefree_one_mod_eight_relativeDensity :
-    Tendsto (fun X : ℕ =>
-        ((Finset.Icc 1 X).filter (fun t => Squarefree t ∧ t % 8 = 1)).card /
-          (((Finset.Icc 1 X).filter Squarefree).card : ℝ))
-      atTop (𝓝 (1 / 6))
 
 /-- **Square-free integers in an arithmetic progression.** Let $r \in \mathbb{Z}$ and let $N \ge 1$
 be an integer such that $s = \gcd(r, N)$ is square-free. Then, as the real number $X \to \infty$,
