@@ -38,6 +38,15 @@ open CoherentCurveLinearSeries ValuedLineFibres MetrizedFibrePowerModels
 open LineBundleTaskContracts
 open scoped TensorProduct
 
+/-- The actual algebraic dual is characterized by full sheaf-Hom evaluation. It uses no norm on
+`K`, so it also serves fields with several places. -/
+structure DualLine (K : Type) [Field K] (X : Over (Spec (.of K))) (L : X.left.Modules) where
+  line : X.left.Modules
+  isLine : IsLineBundle line
+  evaluation : CurvePositivity.moduleTensor X.left L line ⟶ structureModule X.left
+  universal : ∀ T : X.left.Modules,
+    Function.Bijective (fun f : T ⟶ line ↦ tensorMap (𝟙 L) f ≫ evaluation)
+
 variable (K : Type) [NormedField K] (X : Over (Spec (.of K)))
 
 /-- The native map of actual valued scheme points, including archimedean valuations. -/
@@ -85,14 +94,6 @@ structure TensorMetric (F : TensorFibre K X L M)
   normalized : ∀ (p : Point K X) (v : Fibre K X L p) (w : Fibre K X M p),
     (metric.fibreNorm p).norm (F.map p (v ⊗ₜ[CompletedResidue K X p] w)) =
       (N.fibreNorm p).norm v * (P.fibreNorm p).norm w
-
-/-- The actual algebraic dual is characterized by full sheaf-Hom evaluation. -/
-structure DualLine where
-  line : X.left.Modules
-  isLine : IsLineBundle line
-  evaluation : CurvePositivity.moduleTensor X.left L line ⟶ structureModule X.left
-  universal : ∀ T : X.left.Modules,
-    Function.Bijective (fun f : T ⟶ line ↦ tensorMap (𝟙 L) f ≫ evaluation)
 
 variable (D : DualLine K X L)
 

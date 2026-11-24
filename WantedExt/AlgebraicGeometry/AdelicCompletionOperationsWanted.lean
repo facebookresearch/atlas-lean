@@ -57,11 +57,9 @@ public def_wanted tensor (F : AllPlaceTensor (A := A) (X := X) (L := L) (M := M)
 public def_wanted power (m : FixedGaugeAdelicMetric (L := L) B) (r : ℕ)
     (F : AllPlacePower (A := A) (X := X) (L := L) r) : PowerResult B m r F
 
-/-- The native algebraic dual retains the full sheaf-Hom evaluation universal property. -/
-public def_wanted algebraicDual (hL : IsLineBundle L) : AlgebraicDual (X := X) (L := L)
-
 /-- Completed dual functionals of an invertible sheaf are normalized by actual
-section-pair evaluation. -/
+section-pair evaluation. The algebraic dual `AlgebraicDual`, which is
+`MetrizedLineOperationModels.DualLine`, is requested by `MetrizedLineOperations.lineDual`. -/
 public def_wanted allPlaceDual (hL : IsLineBundle L) (D : AlgebraicDual (X := X) (L := L)) :
     AllPlaceDual (A := A) D
 

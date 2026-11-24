@@ -79,15 +79,9 @@ structure PowerResult (m : FixedGaugeAdelicMetric (L := L) B) (r : ℕ)
   normalized : ∀ v p z, fibreNorm B metric.val v p (F.map v p z) =
     fibreNorm B m.val v p z ^ r
 
-/-- The global algebraic dual is characterized by its actual full sheaf-Hom evaluation. -/
-structure AlgebraicDual where
-  line : X.left.Modules
-  isLine : IsLineBundle line
-  evaluation : CurvePositivity.moduleTensor X.left L line ⟶
-    structureModule X.left
-  universal : ∀ T : X.left.Modules,
-    Function.Bijective (fun f : T ⟶ line ↦
-      LineBundleTaskContracts.tensorMap (𝟙 L) f ≫ evaluation)
+/-- The global algebraic dual is characterized by its actual full sheaf-Hom evaluation:
+`MetrizedLineOperationModels.DualLine`. -/
+abbrev AlgebraicDual := MetrizedLineOperationModels.DualLine K X L
 
 structure AllPlaceDual (D : AlgebraicDual (X := X) (L := L)) where
   map : ∀ (v : A.places) (p : Point (A := A) (X := X) v), Vector (L := D.line) v p ≃ₗ[

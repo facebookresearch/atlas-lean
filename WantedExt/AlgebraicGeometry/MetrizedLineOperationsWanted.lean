@@ -33,6 +33,10 @@ open MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
 open MathlibExt.AlgebraicGeometry.ValuedLineFibres
 open MathlibExt.AlgebraicGeometry.MetrizedLineOperationModels
 
+/-- The actual algebraic dual is fixed by full module-sheaf evaluation. It needs no norm on `K`. -/
+public def_wanted lineDual (K : Type) [Field K] (X : Over (Spec (.of K))) (L : X.left.Modules)
+    (hL : IsLineBundle L) : DualLine K X L
+
 variable (K : Type) [NormedField K] (X : Over (Spec (.of K)))
   (L M : X.left.Modules)
 
@@ -46,9 +50,6 @@ public def_wanted lineTensorFibre (hL : IsLineBundle L) (hM : IsLineBundle M) :
 /-- Construct tensor norms on the literal tensor line, normalized on every pure tensor. -/
 public def_wanted lineTensorMetric (F : TensorFibre K X L M)
     (N : MetrizedLine K X L) (P : MetrizedLine K X M) : TensorMetric K X L M F N P
-
-/-- The actual algebraic dual is fixed by full module-sheaf evaluation. -/
-public def_wanted lineDual (hL : IsLineBundle L) : DualLine K X L
 
 /-- Native dual fibre functionals of an invertible sheaf agree with actual
 section-pair evaluation. -/
