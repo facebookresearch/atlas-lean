@@ -87,8 +87,8 @@ theorem exists_isMinOn_targetSlice {ι : Type*} [Fintype ι]
     exact continuous_finsetSum _ fun i _ => (continuous_apply i).mul (hmv i)
   exact hcompact.exists_isMinOn hW hobj.continuousOn
 
-/-- Covariance form: for square-integrable returns `R` with expectations
-`μv i = ∫ ω, R i ω ∂μ`, a nonempty long-only target slice attains the
+/-- Covariance form: for square-integrable returns `R` under a probability measure `μ`, with
+expectations `μv i = ∫ ω, R i ω ∂μ`, a nonempty long-only target slice attains the
 minimum of the covariance quadratic form. The matrix is spelled with
 Mathlib `covariance`, entrywise the native `covMatrix`. -/
 theorem exists_isMinOn_targetSlice_covariance {ι : Type*} [Fintype ι]
@@ -103,9 +103,9 @@ theorem exists_isMinOn_targetSlice_covariance {ι : Type*} [Fintype ι]
   have _ := hR
   exact exists_isMinOn_targetSlice _ _ _ hW
 
-/-- Covariance-matrix form naming the native `covMatrix`: for returns
-`R` with expectations as the target means, a nonempty long-only target
-slice attains the minimum of `w ⬝ᵥ (covMatrix μ R *ᵥ w)`. -/
+/-- Covariance-matrix form naming the native `covMatrix`: for square-integrable returns
+`R` under a probability measure `μ`, with expectations as the target means, a nonempty
+long-only target slice attains the minimum of `w ⬝ᵥ (covMatrix μ R *ᵥ w)`. -/
 theorem exists_isMinOn_covMatrix_targetSlice {ι : Type*} [Fintype ι]
     {Ω : Type*} [MeasurableSpace Ω] (μ : MeasureTheory.Measure Ω)
     [MeasureTheory.IsProbabilityMeasure μ] (R : ι → Ω → ℝ)

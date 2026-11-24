@@ -29,7 +29,9 @@ public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Cotangent
 public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 public import Mathlib.NumberTheory.Harmonic.Defs
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
+public import MathlibExt.Analysis.CentralBinomDigammaSeries
 public import MathlibExt.Analysis.OddWeightedCatalanSeries
+public import MathlibExt.Analysis.SpecialFunctions.Gamma.HalfIntegerShifts
 
 namespace MetaMathlibExt
 
@@ -87,26 +89,6 @@ public theorem_wanted harmonic_nat_sub_half_values (k : ℕ) :
       ∑' j : ℕ, (1 / ((j : ℂ) + 1) ^ 3 - 1 / ((j : ℂ) + 1 / 2) ^ 3) = -6 * riemannZeta 3 ∧
       ∀ m : ℕ, ∑' j : ℕ, (1 / ((j : ℂ) + 1 / 2) ^ (m + 1) - 1 / ((j : ℂ) + k + 1 / 2) ^ (m + 1)) =
         2 ^ (m + 1) * ∑ j ∈ Finset.range k, 1 / (2 * (j : ℂ) + 1) ^ (m + 1)
-
-/-- **The Gamma function at $r + \tfrac12$ and at $\tfrac12 - r$.** For every complex number $r$
-that is not a negative integer,
-$$\Gamma\bigl(r + \tfrac12\bigr) =
-\frac{\sqrt{\pi}}{2^{2r}} \cdot \frac{\Gamma(2r + 1)}{\Gamma(r + 1)},$$
-where $2^{2r} = e^{2r \log 2}$; and for every natural number $r$,
-$$\Gamma\bigl(\tfrac12 - r\bigr) = \frac{(-1)^r \, 2^{2r} \sqrt{\pi}}{r! \binom{2r}{r}}.$$
-
-In the first identity $\Gamma$ is taken to be $0$ at the non-positive integers, so for
-$r = -\tfrac12, -\tfrac32, \dots$ both sides are $0$.
-
-Source: Kunle Adegoke and Robert Frontczak, *Series Associated with a Forgotten Identity of
-Nörlund*, INTEGERS 25 (2025), Article A18, Lemma 2 (`integers-2025-A18-lem-2`). -/
-public theorem_wanted Gamma_add_half_and_Gamma_half_sub_nat :
-    (∀ r : ℂ, (∀ m : ℕ, r ≠ -((m : ℂ) + 1)) →
-      Complex.Gamma (r + 1 / 2) =
-        (Real.sqrt Real.pi : ℂ) / (2 : ℂ) ^ (2 * r) *
-          (Complex.Gamma (2 * r + 1) / Complex.Gamma (r + 1))) ∧
-    ∀ r : ℕ, Complex.Gamma (1 / 2 - r) =
-      (Real.sqrt Real.pi : ℂ) * (-1) ^ r / r.factorial * 2 ^ (2 * r) / (2 * r).choose r
 
 /-- **A Catalan series in terms of the digamma function.** Let $z$ be a complex number with
 $\operatorname{Re} z > 0$, let $\binom{n+z}{n} = \prod_{j=1}^{n} \frac{z + j}{j}$, let $C_n$ be the
@@ -298,23 +280,6 @@ Nörlund*, INTEGERS 25 (2025), Article A18, Theorem 8, identities (17) and (18)
 public theorem_wanted tsum_four_pow_div_centralBinom_mul_sq_special :
     ∑' n : ℕ, (4 : ℝ) ^ n / (((n + 1).centralBinom : ℝ) * ((n : ℝ) + 1) ^ 2) = Real.pi ^ 2 / 8 ∧
       ∑' n : ℕ, 1 / ((2 * (n : ℝ) + 1) * ((n : ℝ) + 1)) = 2 * Real.log 2
-
-/-- **Digamma evaluation of a central binomial series with a complex binomial parameter.** Let
-$\Gamma$ be the Gamma function and $\psi$ the digamma function, and let $h$ be a complex number
-that is not a nonnegative integer and has $\operatorname{Re} h > -1/2$. Writing $\binom{n}{h}^{-1}$
-for $\Gamma(h+1)\,\Gamma(n-h+1)/n!$, we have
-$$\sum_{n=0}^{\infty} \frac{4^n}{\binom{n}{h} \binom{2(n+1)}{n+1} (n+1)^2} =
-\frac{\pi}{4} \cdot \frac{\psi(h + \tfrac12) - \psi(\tfrac12)}{\sin(\pi h)}.$$
-
-Source: Kunle Adegoke and Robert Frontczak, *Series Associated with a Forgotten Identity of
-Nörlund*, INTEGERS 25 (2025), Article A18, Theorem 8, identity (19)
-(`integers-2025-A18-thm-8`). -/
-public theorem_wanted tsum_four_pow_div_binom_mul_centralBinom_mul_sq {h : ℂ}
-    (hh : ∀ m : ℕ, h ≠ m) (hre : -1 / 2 < h.re) :
-    ∑' n : ℕ, (4 : ℂ) ^ n * (Complex.Gamma (h + 1) * Complex.Gamma (n - h + 1) / n.factorial) /
-        (((n + 1).centralBinom : ℂ) * ((n : ℂ) + 1) ^ 2) =
-      Real.pi / 4 * (Complex.digamma (h + 1 / 2) - Complex.digamma (1 / 2)) /
-        Complex.sin (Real.pi * h)
 
 /-- **A shifted central binomial series.** For every natural number $h$, with
 $H_h = \sum_{j=1}^{h} \frac{1}{j}$ the $h$th harmonic number,

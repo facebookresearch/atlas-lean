@@ -33,3 +33,12 @@ example (a : ℤ) :
 -- Interpolation at a single node gives a constant polynomial, even away from the node.
 example (a b : ℤ) (f : ℤ → ℤ) : (interpolationPoly {a} f).eval (b : ℚ) = f a := by
   simp [interpolationPoly]
+
+-- The coordinate function can be cancelled even though it vanishes at zero.
+example (f g : lipSubring Set.univ)
+    (h : polynomialToLIP Set.univ X * f = polynomialToLIP Set.univ X * g) : f = g := by
+  have := lipSubring_isDomain (Set.infinite_univ (α := ℤ))
+  apply mul_left_cancel₀ _ h
+  intro hX
+  have h1 := congrArg (fun p : lipSubring Set.univ => p.val ⟨1, Set.mem_univ 1⟩) hX
+  simp at h1

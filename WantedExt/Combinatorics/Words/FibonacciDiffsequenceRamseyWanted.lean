@@ -10,8 +10,11 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.NumberTheory.Real.GoldenRatio
+public import MathlibExt.Combinatorics.EvenFibonacciAccessibility
+public import MathlibExt.Combinatorics.HalfEvenFibonacciSet
 public import MathlibExt.Combinatorics.InfiniteWord.FibonacciWord
 public import MathlibExt.NumberTheory.LucasSequence
+public import MathlibExt.NumberTheory.WesleyFractionalConstant
 public import WantedExt.Combinatorics.AccessibleSetsWanted
 
 /-!
@@ -37,26 +40,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open scoped Pointwise
-
-/-- **Halves of even Fibonacci numbers.** Let $F_m$ be the $m$-th Fibonacci number, with $F_0 = 0$
-and $F_1 = 1$. The set of halves of the positive even Fibonacci numbers is
-$G = \{F_{3n}/2 : n \ge 1\} = \{1, 4, 17, 72, \dots\}$; its elements are written
-$g_n = F_{3n}/2$ for $n \ge 1$.
-
-Source: William J. Wesley, *Improved Ramsey-Type Theorems for Fibonacci Numbers and Other
-Sequences*, INTEGERS 25 (2025), Article A29, Section 2 (notation `G`, `g_n`). -/
-def halfEvenFibonacciSet : Set ℕ :=
-  Set.range fun n => Nat.fib (3 * (n + 1)) / 2
-
-/-- **$4$ is half of an even Fibonacci number.** Let $F_m$ be the $m$-th Fibonacci number, with
-$F_0 = 0$ and $F_1 = 1$. The number $4$ belongs to the set
-$G = \{F_{3n}/2 : n \ge 1\} = \{1, 4, 17, 72, \dots\}$ of halves of the positive even Fibonacci
-numbers; indeed $4 = F_6/2$.
-
-Source: William J. Wesley, *Improved Ramsey-Type Theorems for Fibonacci Numbers and Other
-Sequences*, INTEGERS 25 (2025), Article A29, Section 2 (notation `G`, `g_n`). -/
-theorem four_mem_halfEvenFibonacciSet : 4 ∈ halfEvenFibonacciSet :=
-  ⟨1, by decide⟩
 
 /-- **The Thue–Morse morphism $\mu$.** The morphism $\mu$ on binary words sends the letter $0$ to
 the word $10$ and the letter $1$ to the word $01$.
@@ -115,34 +98,6 @@ theorem wesleyWords_first_ten :
       (List.range 10).map wesleyWordT =
         [true, false, false, true, true, false, false, true, false, false] := by
   decide
-
-/-- **Wesley's constants $c_{n,\varepsilon}$.** For a natural number $n$ and an integer
-$\varepsilon$, the real number $c_{n,\varepsilon}$ is defined by the residue of $n$ modulo $4$:
-if $n \equiv 0 \pmod 4$, then $c_{n,\varepsilon} = (4 + (2\sqrt5 - 5)\varepsilon)/10$;
-if $n \equiv 1 \pmod 4$, then $c_{n,\varepsilon} = (11 - 4\sqrt5)/5$ when $\varepsilon = -4$ and
-$c_{n,\varepsilon} = (4 + (4\sqrt5 - 5)\varepsilon)/20$ otherwise;
-if $n \equiv 2 \pmod 4$, then $c_{n,\varepsilon} = (6 + (2\sqrt5 - 5)\varepsilon)/10$;
-if $n \equiv 3 \pmod 4$, then $c_{n,\varepsilon} = (9 - 4\sqrt5)/5$ when $\varepsilon = -4$ and
-$c_{n,\varepsilon} = (8 + (2\sqrt5 - 5)\varepsilon)/10$ otherwise.
-
-Lemma 5 uses these constants only for $\varepsilon \in \{-4, 0, 4\}$.
-
-Source: William J. Wesley, *Improved Ramsey-Type Theorems for Fibonacci Numbers and Other
-Sequences*, INTEGERS 25 (2025), Article A29, Lemma 5 (definition of `c_{n,ε}`). -/
-noncomputable def wesleyFractionalConstant (n : ℕ) (ε : ℤ) : ℝ :=
-  if n % 4 = 0 then (4 + (2 * √5 - 5) * ε) / 10
-  else if n % 4 = 1 then (if ε = -4 then (11 - 4 * √5) / 5 else (4 + (4 * √5 - 5) * ε) / 20)
-  else if n % 4 = 2 then (6 + (2 * √5 - 5) * ε) / 10
-  else (if ε = -4 then (9 - 4 * √5) / 5 else (8 + (2 * √5 - 5) * ε) / 10)
-
-/-- **Wesley's constant $c_{n,0}$ for $n \equiv 0 \pmod 4$.** For every natural number $n$ with
-$n \equiv 0 \pmod 4$, Wesley's constant satisfies $c_{n,0} = 2/5$.
-
-Source: William J. Wesley, *Improved Ramsey-Type Theorems for Fibonacci Numbers and Other
-Sequences*, INTEGERS 25 (2025), Article A29, Lemma 5 (definition of `c_{n,ε}`). -/
-theorem wesleyFractionalConstant_zero_of_mod_four_eq_zero {n : ℕ} (hn : n % 4 = 0) :
-    wesleyFractionalConstant n 0 = 2 / 5 := by
-  norm_num [wesleyFractionalConstant, hn]
 
 /-! ## Statements -/
 
@@ -214,18 +169,6 @@ public theorem_wanted fibonacciWord_beatty_properties :
     ∀ n : ℕ, 1 ≤ n → (wesleyWordT (n - 1) = true ↔
       ∃ m : ℤ, (n : ℤ) = 2 * ⌊m * Real.goldenRatio⌋ - m)
 
-/-- **Halved even Fibonacci numbers and $4$-accessibility of the Fibonacci numbers.** Write $f_n$
-for the $n$-th Fibonacci number ($f_0 = 0$, $f_1 = 1$). Let $F = \{1, 2, 3, 5, 8, \dots\}$ be the
-set of positive Fibonacci numbers and $G = \{f_{3n}/2 : n \ge 1\} = \{1, 4, 17, 72, \dots\}$ the set
-of halves of the even Fibonacci numbers. If $G$ is not $2$-accessible, then $F$ is not
-$4$-accessible.
-
-Source: William J. Wesley, *Improved Ramsey-Type Theorems for Fibonacci Numbers and Other
-Sequences*, INTEGERS 25 (2025), Article A29, Lemma 3 (`integers-2025-A29-lem-3`). -/
-public theorem_wanted not_accessible_four_of_halfEvenFibonacci
-    (h : ¬ IsRAccessible 2 halfEvenFibonacciSet) :
-    ¬ IsRAccessible 4 positiveFibonacciSet
-
 /-- **Differences of fractional parts of multiples of the golden ratio.** Let $F_m$ be the $m$-th
 Fibonacci number, with $F_0 = 0$ and $F_1 = 1$, let $\varphi = (1 + \sqrt{5})/2$ be the golden
 ratio, and write $\{y\} = y - \lfloor y \rfloor$ for the fractional part. Let $i \ge 1$ be a
@@ -261,32 +204,6 @@ public theorem_wanted fract_goldenRatio_differences (i : ℕ) (hi : 1 ≤ i) (x�
       Int.fract (m₂ * Real.goldenRatio) - Int.fract (m₁ * Real.goldenRatio) <
         (-5 * Real.goldenRatio + 6) / 4 ∧ (-5 * Real.goldenRatio + 6) / 4 < -0.52)
 
-/-- **Fractional parts of shifted Fibonacci numbers divided by $\sqrt{5}$.** Let $F_n$ be the
-$n$-th Fibonacci number, with $F_0 = 0$ and $F_1 = 1$, let $\varphi = (1 + \sqrt{5})/2$ be the
-golden ratio, so that $2\varphi - 1 = \sqrt{5}$, and write $\{y\} = y - \lfloor y \rfloor$ for the
-fractional part. Let $n \ge 13$ be a natural number and $\varepsilon \in \{-4, 0, 4\}$, let
-$c_{n,\varepsilon}$ be Wesley's constant, which depends on $n \bmod 4$ and $\varepsilon$, and put
-$y = (F_n + \varepsilon)/(2\varphi - 1)$. Then
-(i) $\{y\} = -2(-\varphi)^{-n}/5 + c_{n,\varepsilon}$, and
-(ii) $\lfloor y \rfloor$ is even if and only if $\varepsilon = 0$ and
-$n \equiv 0, 1, 2, 3, 5, 10 \pmod{12}$, or $\varepsilon = 4$ and
-$n \equiv 0, 2, 3, 9, 10 \pmod{12}$, or $\varepsilon = -4$ and
-$n \equiv 0, 1, 2, 5, 7, 10, 11 \pmod{12}$.
-
-The paper prints $+2(-\varphi)^{-n}/5$ in (i). The sign $-$ is the one its proof derives
-(Equation (1)); the printed sign fails for every $n \ge 13$, since this term is nonzero.
-
-Source: William J. Wesley, *Improved Ramsey-Type Theorems for Fibonacci Numbers and Other
-Sequences*, INTEGERS 25 (2025), Article A29, Lemma 5 (`integers-2025-A29-lem-5`). -/
-public theorem_wanted fract_fib_add_div_sqrt_five (n : ℕ) (hn : 13 ≤ n) (ε : ℤ)
-    (hε : ε = -4 ∨ ε = 0 ∨ ε = 4) :
-    Int.fract (((Nat.fib n : ℝ) + ε) / (2 * Real.goldenRatio - 1)) =
-        -(2 * (-Real.goldenRatio) ^ (-(n : ℤ)) / 5) + wesleyFractionalConstant n ε ∧
-    (Even ⌊((Nat.fib n : ℝ) + ε) / (2 * Real.goldenRatio - 1)⌋ ↔
-      (ε = 0 ∧ n % 12 ∈ ({0, 1, 2, 3, 5, 10} : Finset ℕ)) ∨
-      (ε = 4 ∧ n % 12 ∈ ({0, 2, 3, 9, 10} : Finset ℕ)) ∨
-      (ε = -4 ∧ n % 12 ∈ ({0, 1, 2, 5, 7, 10, 11} : Finset ℕ)))
-
 /-- **The Lucas numbers are not $4$-accessible.** Let $L = \{2, 1, 3, 4, 7, \dots\}$ be the set of
 Lucas numbers $L_0 = 2$, $L_1 = 1$, $L_{n+2} = L_{n+1} + L_n$. There is a coloring of the positive
 integers with the colors $0, 1, 2, 3$ for which no sequence $x_0, x_1, x_2$ of positive integers is
@@ -298,15 +215,6 @@ public theorem_wanted lucasSet_not_four_accessible :
     (∃ c : ℕ+ → Fin 4, ¬ ∃ x : Fin 3 → ℕ+,
       IsMonochromatic c x ∧ IsDDiffSequence (Set.range lucasNumber) (fun i => ((x i : ℕ) : ℤ))) ∧
     ∀ r, 4 ≤ r → ¬ IsRAccessible r (Set.range lucasNumber)
-
-/-- **The even Fibonacci numbers have degree of accessibility $1$.** The even Fibonacci set
-$\{2, 8, 34, \dots\}$ is $1$-accessible, and it is not $r$-accessible for any natural number
-$r \ge 2$.
-
-Source: William J. Wesley, *Improved Ramsey-Type Theorems for Fibonacci Numbers and Other
-Sequences*, INTEGERS 25 (2025), Article A29, Corollary 2 (`integers-2025-A29-cor-2`). -/
-public theorem_wanted evenFibonacciSet_degreeOfAccessibility_eq_one :
-    IsRAccessible 1 evenFibonacciSet ∧ ∀ r, 2 ≤ r → ¬ IsRAccessible r evenFibonacciSet
 
 end
 

@@ -10,10 +10,18 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.Bernoulli.PolyBernoulliDuality
+public import MathlibExt.NumberTheory.Bernoulli.SumModPrime
 public import MathlibExt.NumberTheory.Bernoulli.WeightedSum
 public import WantedExt.NumberTheory.EulerPolynomialFormulasWanted
 public import WantedExt.NumberTheory.GobelSequenceWanted
 public import Mathlib.NumberTheory.Harmonic.Defs
+
+/-
+Statements of the same source proved in modules this file imports:
+`MathlibExt.NumberTheory.Bernoulli.WeightedSum` (Corollary 2, equation (14)) and
+`MathlibExt.NumberTheory.Bernoulli.SumModPrime` (Corollary 4, equation (23),
+`sum_prime_mul_bernoulli_mod_prime`).
+-/
 
 namespace MetaMathlibExt
 
@@ -130,22 +138,6 @@ Numbers and Its Applications*, INTEGERS 26 (2026), Article A120, Corollary 3.
 public theorem_wanted sum_bernoulli_eq_polyBernoulli (n : ℕ) (hn : 2 ≤ n) :
     (∑ j ∈ Finset.range (n + 1), bernoulli j) =
       polyBernoulliPoly n 2 1 + bernoulli n - polyBernoulli n 2 - 1
-
-/--
-**The congruence $\sum_{j=0}^{p} pB_j \equiv -1 \pmod p$.** Let $B_j$ denote the Bernoulli
-numbers with $B_1 = -\tfrac12$. For every odd prime $p$, the rational number
-$S = \sum_{j=0}^{p} p B_j$ has denominator not divisible by $p$, and its residue modulo $p$ (its
-numerator times the inverse of its denominator in $\mathbb{Z}/p\mathbb{Z}$) equals $-1$.
-
-Source: Levent Kargın and Merve Mutluer, *A New Expression for the Bernoulli
-Numbers and Its Applications*, INTEGERS 26 (2026), Article A120, Corollary 4,
-equation (23).
--/
-public theorem_wanted sum_prime_mul_bernoulli_mod_prime (p : ℕ)
-    (hp : p.Prime) (hp2 : p ≠ 2) :
-    ¬p ∣ (∑ j ∈ Finset.range (p + 1), (p : ℚ) * bernoulli j).den ∧
-      ratResidue p (∑ j ∈ Finset.range (p + 1), (p : ℚ) * bernoulli j) =
-        ratResidue p (-1)
 
 /--
 **The congruence $\sum_{j=0}^{p-3} B_j \equiv -1 \pmod p$.** Let $B_j$ denote the Bernoulli

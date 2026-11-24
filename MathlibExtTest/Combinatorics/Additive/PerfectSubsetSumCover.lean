@@ -1,0 +1,52 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+import Mathlib.Data.Fin.VecNotation
+import MathlibExt.Combinatorics.Additive.PerfectSubsetSumCover
+
+namespace MetaMathlibExt
+
+open PerfectSubsetSumCover
+
+/-- Repeating the first generator gives a double cover with different projection counts. -/
+example :
+    let s : Fin 4 → ZMod 2 × ZMod 4 := ![(1, 0), (0, 1), (0, 2), (1, 0)]
+    IsPerfectMCover 8 (fun i => (s i).1) ∧ IsPerfectMCover 4 (fun i => (s i).2) := by
+  intro s
+  have hs : IsPerfectMCover 2 s := by decide +revert
+  exact isPerfectMCover_fst_snd (m := 1) (n := 2) (by decide) (by decide) hs
+
+/-- A nonzero adjoiner can repeat the value of an existing index. -/
+example : IsPerfectMCover 2 (Fin.cons (1 : ZMod 4) (![1, 2] : Fin 2 → ZMod 4)) := by
+  have hs : IsPerfectMCover 1 (![1, 2] : Fin 2 → ZMod 4) := by decide
+  exact isPerfectMCover_cons hs 1
+
+/-- A zero adjoiner doubles the multiplicity of a cover with repeated entries. -/
+example : IsPerfectMCover 4 (Fin.cons (0 : ZMod 2) (![1, 1] : Fin 2 → ZMod 2)) := by
+  have hs : IsPerfectMCover 2 (![1, 1] : Fin 2 → ZMod 2) := by decide
+  exact isPerfectMCover_cons hs 0
+
+/-- The empty family covers zero exactly once, through the empty subset. -/
+example : coverCount (Fin.elim0 : Fin 0 → ZMod 2) 0 = 1 ∧
+    coverCount (Fin.elim0 : Fin 0 → ZMod 2) 1 = 0 := by decide
+
+/-- The trivial group has one perfect cover, the empty set. -/
+example : count (ZMod 1) = 1 := by
+  rw [count_eq_card_filter]
+  decide
+
+/-- A nonzero even integer cannot be an odd combination of the singleton generator. -/
+example : (2 : ℤ) ∉ oddCombinations {1} := by
+  rintro ⟨c, hc, heq⟩
+  have h := hc 1 (by simp)
+  simp at heq
+  rcases h with hz | ⟨k, hk⟩ <;> omega
+
+end MetaMathlibExt

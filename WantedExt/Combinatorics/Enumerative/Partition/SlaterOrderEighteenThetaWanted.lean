@@ -10,7 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.Analysis.SpecialFunctions.QPochhammer
-public import MathlibExt.NumberTheory.ModularForms.JacobiTheta.Ramanujan
+public import MathlibExt.NumberTheory.ModularForms.JacobiTheta.RamanujanProductDifference
 
 /-!
 # Theta-function lemmas for the order-eighteen Rogers-Ramanujan-Slater relations
@@ -51,24 +51,6 @@ public theorem_wanted ramanujanTheta_mul_add_mul_neg {a b c d : ℂ} (habcd : a 
     ramanujanThetaRaw a b * ramanujanThetaRaw c d +
         ramanujanThetaRaw (-a) (-b) * ramanujanThetaRaw (-c) (-d) =
       2 * ramanujanThetaRaw (a * c) (b * d) * ramanujanThetaRaw (a * d) (b * c)
-
-/-- **Ramanujan's theta function: difference of products when $ab = cd$.** Let
-$f(a,b) = \sum_{n \in \mathbb{Z}} a^{n(n+1)/2} b^{n(n-1)/2}$ be Ramanujan's theta function. For
-complex numbers $a, b, c, d$ with $ab = cd$, $|ab| < 1$, $c \ne 0$ and $d \ne 0$,
-$f(a,b) f(c,d) - f(-a,-b) f(-c,-d) = 2a \, f(b/c, ac^2 d) \, f(b/d, acd^2)$.
-
-This is Entry 29(ii) of Berndt's *Ramanujan's Notebooks*, where the second arguments are written
-$(c/b)abcd = ac^2 d$ and $(d/b)abcd = acd^2$.
-
-Source: A. Vanitha, M. P. Chaudhary, and Madiha Khanum, *Modular Relations for the
-Rogers-Ramanujan-Slater Type Functions of Order Eighteen with Applications to Partitions*,
-INTEGERS 24 (2024), Article A103, Lemma 2, Equation (7) (`integers-2024-A103-lem-2`). -/
-public theorem_wanted ramanujanTheta_mul_sub_mul_neg {a b c d : ℂ} (habcd : a * b = c * d)
-    (hab : ‖a * b‖ < 1) (hc : c ≠ 0) (hd : d ≠ 0) :
-    ramanujanThetaRaw a b * ramanujanThetaRaw c d -
-        ramanujanThetaRaw (-a) (-b) * ramanujanThetaRaw (-c) (-d) =
-      2 * a * ramanujanThetaRaw (b / c) (a * c ^ 2 * d) *
-        ramanujanThetaRaw (b / d) (a * c * d ^ 2)
 
 /-- **Ramanujan's theta function at $(q, q^5)$.** Let
 $f(a,b) = \sum_{n \in \mathbb{Z}} a^{n(n+1)/2} b^{n(n-1)/2}$ be Ramanujan's theta function and

@@ -10,12 +10,11 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Intervals
-public import Mathlib.Combinatorics.SimpleGraph.Metric
 public import Mathlib.Data.Fin.Tuple.Basic
 public import Mathlib.Data.List.OfFn
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.SetTheory.Cardinal.Finite
-public import MathlibExt.Combinatorics.Words.KeywordSubstitutionClasses
+public import MathlibExt.Combinatorics.Words.KeywordGraphDistance
 public import MathlibExt.NumberTheory.Recurrences.MStepFibonacciPartialSums
 
 /-!
@@ -155,26 +154,6 @@ public theorem_wanted keywordGraph_neg_rev_seminegation {m : ℕ} (a : Fin (m + 
       Nonempty (keywordGraph a n ≃g keywordGraph (fun t => a t.rev) n) ∧
       Nonempty (keywordGraph a n ≃g
         keywordGraph (fun t => if t.val % 2 = 0 then a t else !a t) n)
-
-/-- **Intertwining bijections preserve distances in the substitution graph.** Let $a$ and $b$ be
-keywords of length $m + 1$, and write $\varphi_i^{(a)}$ and $\varphi_i^{(b)}$ for the simple maps
-of $a$ and $b$ at letter $i$ on binary words of length $n$. Let $f$ be a bijection of the set of
-binary words of length $n$ and $\sigma$ a permutation of the positions $\{0, \dots, n - 1\}$, and
-suppose that $f(\varphi_i^{(a)}(u)) = \varphi_{\sigma(i)}^{(b)}(f(u))$ for every word $u$ and
-every position $i$. Then for all words $u$ and $v$ of length $n$, the extended graph distance
-(possibly $\infty$) between $u$ and $v$ in the substitution graph $\mathcal{G}_n^{(a)}$ equals the
-extended graph distance between $f(u)$ and $f(v)$ in $\mathcal{G}_n^{(b)}$.
-
-Source: Erik Bates, Blan Morrison, Mason Rogers, Arianna Serafini and Anav Sood,
-*A New Combinatorial Interpretation of Partial Sums of m-Step Fibonacci Numbers*,
-Journal of Integer Sequences 28 (2025), Article 25.6.6, Lemma 16
-(`jis-2025-25.6.6-lem-16`). -/
-public theorem_wanted keywordGraph_edist_eq_of_intertwining {m n : ℕ}
-    (a b : Fin (m + 1) → Bool) (f : (Fin n → Bool) ≃ (Fin n → Bool)) (σ : Equiv.Perm (Fin n))
-    (hf : ∀ (u : Fin n → Bool) (i : Fin n),
-      f (keywordSimpleMap a i u) = keywordSimpleMap b (σ i) (f u))
-    (u v : Fin n → Bool) :
-    (keywordGraph a n).edist u v = (keywordGraph b n).edist (f u) (f v)
 
 end
 

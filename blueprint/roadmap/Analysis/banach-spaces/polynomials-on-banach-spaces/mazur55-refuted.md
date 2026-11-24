@@ -9,6 +9,10 @@ continuous polynomial on $F$. Indeed $\varphi(\tfrac12 r) = \tfrac12 (\varphi(r)
 would make $\varphi(\tfrac12 R)$ bounded too, and a continuous polynomial is bounded on bounded
 sets, so $W$ would be bounded on $\tfrac12 R$.
 
+## Depends on
+
+- [Mazur's factorisation claim (Scottish Book Problem 55)](scottish-book-problem55-claim.md)
+
 ## Sources
 
 - S. Mazur, Problem 55 of the Scottish Book; refuted by V. Pestov, who constructs a continuous scalar-valued 2-polynomial $W$ on the separable Hilbert space $\ell^2$ and an unbounded set $R$ such that $W$ is bounded on an $\varepsilon$-neighbourhood of $R$ but does not factor through any bounded first-degree polynomial sending $R$ to a bounded set ("Two 1935 questions of Mazur about polynomials in Banach spaces: a counter-example", 1997, arXiv:funct-an/9705002). The same counterexample refutes Problem 75. In finite dimensions the answer is positive (Auerbach), so the infinite-dimensional Banach setting is essential.
