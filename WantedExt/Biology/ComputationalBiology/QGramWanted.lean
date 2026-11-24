@@ -13,8 +13,10 @@ Ukkonen conjectured, and Pevzner proved, that two strings with the same
 multiset of q-grams are related by a sequence of two transformations on
 `(q-1)`-grams `z₁`, `z₂` and arbitrary strings `xᵢ`: transposition
 `x₁z₁x₂z₂x₃z₁x₄z₂x₅ ↦ x₁z₁x₄z₂x₃z₁x₂z₂x₅` and rotation
-`z₁x₁z₂x₂z₁ ↦ z₂x₂z₁x₁z₂`. Finer uniqueness characterizations (no
-interleaved or triple repeats) were not verified and are not stated here.
+`z₁x₁z₂x₂z₁ ↦ z₂x₂z₁x₁z₂`. Both strings must contain a q-gram (length at least
+`q`): strings shorter than `q` all have the empty composition, while the two moves preserve length.
+Finer uniqueness characterizations (no interleaved or triple repeats) were not verified and are not
+stated here.
 
 Overlap: none for uniqueness (`CSLibExt/Bioinformatics/Assembly/DeBruijn.lean`
 proves the k-mer walk is Eulerian and every Eulerian trail spells a string
@@ -60,14 +62,15 @@ inductive Related (q : ℕ) : List α → List α → Prop where
       (h₂ : z₂.length = q - 1) :
       Related q (z₁ ++ x₁ ++ z₂ ++ x₂ ++ z₁) (z₂ ++ x₂ ++ z₁ ++ x₁ ++ z₂)
 
-/-- **Ukkonen's conjecture, proved by Pevzner**: hypotheses are the gram
-length (`hq`: at least 2, so the `(q-1)`-grams are nonempty) and two strings
-with the same q-gram multiset (`hsame`). Conclusion: they are related by
+/-- **Ukkonen's conjecture, proved by Pevzner**: for a gram length `q ≥ 2` (so the `(q-1)`-grams
+`z₁`, `z₂` are nonempty) and two strings `s`, `t` of length at least `q` each (so each contains a
+q-gram) with the same q-gram multiset, `s` and `t` are related by a finite sequence of
 transpositions and rotations.
 
 Source: Pevzner (1995), settling Ukkonen (1992). -/
-theorem_wanted qgram_composition_related (q : ℕ) (hq : 2 ≤ q)
-    (s t : List α) (hsame : qGramMultiset (α := α) q s = qGramMultiset q t) :
+public theorem_wanted qgram_composition_related (q : ℕ) (hq : 2 ≤ q) (s t : List α)
+    (hs : q ≤ s.length) (ht : q ≤ t.length)
+    (hsame : qGramMultiset (α := α) q s = qGramMultiset q t) :
     Related q s t
 
 end WantedExt.Biology.ComputationalBiology.QGramWanted

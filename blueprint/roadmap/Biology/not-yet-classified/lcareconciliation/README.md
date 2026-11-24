@@ -1,15 +1,28 @@
 # LCAReconciliation
 
-- [Tree Data](tree-data.md)
-- [Is Reconciliation](is-reconciliation.md)
-- [Is Lca](is-lca.md)
-- [Share Edge](share-edge.md)
-- [Is Dup](is-dup.md)
-- [Dup Cost](dup-cost.md)
+## LCAReconciliation Wanted
+
+- [Rooted Bin Tree](rooted-bin-tree.md)
+
+## Rooted Bin Tree
+
+- [Ancestor](ancestor.md)
+- [Le](le.md)
+- [Children](children.md)
+- [Is Leaf](is-leaf.md)
 - [Dist](dist.md)
-- [Seg Len](seg-len.md)
-- [Loss Cost](loss-cost.md)
-- [LCA reconciliation has minimum duplication cost](lca-dup-cost-min.md)
-- [LCA reconciliation minimizes duplication plus loss](lca-dup-loss-min.md)
-- [LCA reconciliation is the unique loss-optimal reconciliation](lca-loss-cost-unique.md)
-- [LCA reconciliation is the unique deep-coalescence-optimal reconciliation](lca-deep-cost-unique.md)
+- [Path Edges](path-edges.md)
+
+## LCAReconciliation Wanted
+
+- [Is Reconciliation](is-reconciliation.md)
+- [Is LCAReconciliation](is-lcareconciliation.md)
+- [Is Dup](is-dup.md)
+- [Δ](untitled.md)
+- [Gd](gd.md)
+- [Loss At](loss-at.md)
+- [Gl](gl.md)
+- [Extra Lineages](extra-lineages.md)
+- [Dc](dc.md)
+- [Monotonicity of the costs](costs-lt-of-le.md)
+- [Optimality of the LCA reconciliation](lca-optimal.md)

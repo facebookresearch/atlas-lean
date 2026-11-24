@@ -1,3 +1,3 @@
 # Dist
 
-Edge-count distance: vertices on the down-path from `a` to `b`, minus one.
+The number of edges `d(u, v)` on the path from `v` up to its ancestor-or-self `u`.

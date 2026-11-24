@@ -1,3 +1,0 @@
-# Block A
-
-First block.

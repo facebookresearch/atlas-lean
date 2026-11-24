@@ -45,3 +45,4 @@ compatibility class.
 - [Mathematical neuroscience](mathematical-neuroscience/README.md)
 - [Mathematical epidemiology](epidemiology/README.md)
 - [Not yet classified](not-yet-classified/README.md)
+- [Not yet classified](not-yet-classified/README.md)

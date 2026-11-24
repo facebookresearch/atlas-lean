@@ -7,219 +7,192 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# LCA reconciliation minimizes duplication and loss costs
+# LCA reconciliation minimizes duplication, loss and deep-coalescence costs
 
-For a gene tree `G` and a species tree `S` (rooted, binary, uniquely
-leaf-labeled on the `S` side), a reconciliation is a leaf-preserving,
-order-preserving vertex map `V(G) → V(S)`. The LCA reconciliation `M` sends
-each leaf to its labeled species leaf and each internal vertex to the last
-common ancestor of its children's images. It has minimum gene-duplication
-cost, is the unique loss-optimal and deep-coalescence-optimal reconciliation,
-and hence minimizes duplication plus loss.
+Wu and Zhang (2011): gene trees and species trees are rooted binary trees; the species tree is
+uniquely leaf-labeled and every leaf of the gene tree `G` carries the label of a leaf of the species
+tree `S`. Write `v ≤ u` when `u` lies on the path from the root to `v`. A reconciliation is a map
+`f : V(G) → V(S)` that is leaf-preserving (a gene leaf goes to the species leaf with its label) and
+order-preserving (`u ≤ v` implies `f(u) ≤ f(v)`). The LCA reconciliation `M` sends a gene leaf to
+its species leaf and an internal vertex `u` with children `u₁, u₂` to `lca(M(u₁), M(u₂))`. For an
+internal vertex `u`, `f` has a duplication at `u` (`δ_f(u) = 1`) iff (D-i) `f(u) = f(u_i)` for a
+child `u_i`, or (D-ii) the paths `P(f(u), f(u₁))` and `P(f(u), f(u₂))` share an edge. The costs are
 
-Orientation: `le a b` means `a` is an ancestor-or-self of `b` (the root is
-minimal). A map `f` is order-preserving when `le u v` implies
-`le (f u) (f v)`; `M` is minimal when `le (M v) (f v)` for every `v`.
+* `gd(f) = ∑_u δ_f(u)` (gene duplications),
+* `gl(f) = ∑_u l_f(u)`, `l_f(u) = d(f(u), f(u₁)) + d(f(u), f(u₂)) + 2 (δ_f(u) - 1)` for internal
+  `u` and `0` for leaves (gene losses; computed in `ℤ`),
+* `dc(f) = ∑_e τ_f(e)` over the edges `e` of `S`, where `τ_f(e) = k` if exactly `k + 1 ≥ 2` edges
+  `(u, v)` of `G` have `e` on the path `P(f(u), f(v))`, and `0` otherwise (deep coalescence).
 
-Overlap: `WantedExt/Complexity/NPComplete/GeneDuplicationSpeciesTreeWanted.lean`
-defines LCA mappings and duplications for the NP species-tree problem; the
-optimality of the LCA map is not stated there.
+Theorem 2: if `f' ≠ f` are reconciliations with `f'(v) ≤ f(v)` for every `v`, then
+`gd(f') ≤ gd(f)`, `gl(f') < gl(f)` and `dc(f') < dc(f)`. Corollary 4: the LCA reconciliation has
+the minimum duplication cost and is the unique reconciliation with the optimal loss cost and the
+unique one with the optimal deep-coalescence cost; hence it minimizes duplication plus loss.
 
-Sources: T. Wu and L. Zhang, "Structural properties of the reconciliation space
-and their applications in enumerating nearly-optimal reconciliations between a
-gene tree and a species tree", BMC Bioinformatics 12(Suppl 9):S7, 2011,
-doi:10.1186/1471-2105-12-S9-S7, Corollary 4 (from Theorem 2); P. Gorecki and
-J. Tiuryn, "DLS-trees: A model of evolutionary scenarios", Theor. Comput. Sci.
-359(1-3):378-399, 2006, doi:10.1016/j.tcs.2006.05.019.
+A rooted tree is given by a parent map with a root from which every vertex descends; it is binary
+when every vertex has zero or two children. An edge is named by its lower endpoint. The species
+leaves serve as the labels. The definitions of a reconciliation, duplication and the three costs
+follow the source; nothing about the LCA reconciliation's optimality is assumed.
+
+Overlap: `WantedExt/Complexity/NPComplete/GeneDuplicationSpeciesTreeWanted.lean` defines LCA
+mappings and duplications for the NP species-tree problem; the optimality of the LCA map is not
+stated there.
+
+Sources: T. Wu and L. Zhang, "Structural properties of the reconciliation space and their
+applications in enumerating nearly-optimal reconciliations between a gene tree and a species tree",
+BMC Bioinformatics 12 (Suppl 9) (2011) S7, doi:10.1186/1471-2105-12-S9-S7, definitions (1)–(3),
+Theorem 2 and Corollary 4.
 -/
 module
 
 public import Batteries.Util.ProofWanted
-public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Fintype.Card
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Algebra.Order.Group.Int
+public import Mathlib.Order.ConditionallyCompleteLattice.Basic
+public import Mathlib.Order.Lattice.Nat
 
 @[expose] public section
 
 namespace WantedExt.Biology.ComputationalBiology.LCAReconciliationWanted
 
-open Classical
-
-variable {G S : Type*} [Fintype G] [Fintype S] [DecidableEq G] [DecidableEq S]
-
-/-- Finite rooted-tree data: ancestor-or-self order, root, leaf test, and
-children (`none` exactly on leaves). -/
-structure TreeData (V : Type*) [Fintype V] where
-  le : V → V → Prop
+open Classical in
+/-- A **rooted binary tree** on the finite vertex type `V`: a parent map, with `none` exactly at the
+root, from which every vertex descends by iterating the parent map, and in which every vertex has
+zero or two children. -/
+structure RootedBinTree (V : Type*) [Fintype V] where
+  /-- The parent of each vertex (`none` at the root). -/
+  parent : V → Option V
+  /-- The root. -/
   root : V
-  isLeaf : V → Prop
-  children : V → Option (V × V)
+  /-- The root has no parent. -/
+  parent_root : parent root = none
+  /-- Every other vertex has a parent. -/
+  parent_isSome : ∀ v, v ≠ root → (parent v).isSome
+  /-- Every vertex reaches the root by iterating the parent map. -/
+  reach_root : ∀ v, ∃ k, Nat.iterate (fun o => Option.bind o parent) k (some v) = some root
+  /-- Every vertex has zero or two children. -/
+  binary : ∀ u, (Finset.univ.filter fun c => parent c = some u).card = 0 ∨
+    (Finset.univ.filter fun c => parent c = some u).card = 2
 
-/-- A reconciliation is leaf-preserving and order-preserving. -/
-def IsReconciliation (TG : TreeData G) (TS : TreeData S) (leafLabel : G → S)
-    (f : G → S) : Prop :=
-  (∀ x, TG.isLeaf x → f x = leafLabel x) ∧
-    ∀ u v, TG.le u v → TS.le (f u) (f v)
+namespace RootedBinTree
 
-/-- `s` is the last common ancestor of `a` and `b`: above both, and below
-every other common ancestor-or-self. -/
-def IsLca (sle : S → S → Prop) (s a b : S) : Prop :=
-  sle s a ∧ sle s b ∧ ∀ t, sle t a → sle t b → sle t s
+variable {V : Type*} [Fintype V] (T : RootedBinTree V)
 
-/-- Common-edge predicate for (D-ii): the down-paths from `a` to `b₁` and
-`b₂` share a vertex strictly below `a`. -/
-def shareEdge (sle : S → S → Prop) (a b₁ b₂ : S) : Prop :=
-  ∃ w, w ≠ a ∧ sle a w ∧ sle w b₁ ∧ sle w b₂
+/-- The `k`-th ancestor of `v` (`some v` for `k = 0`; `none` above the root). -/
+def ancestor (k : ℕ) (v : V) : Option V :=
+  Nat.iterate (fun o => Option.bind o T.parent) k (some v)
 
-/-- Duplication at `u`: (D-i) the image coincides with a child's image, or
-(D-ii) the down-paths share an edge. Leaves never duplicate. -/
-def IsDup (TG : TreeData G) (share : S → S → S → Prop) (f : G → S)
-    (u : G) : Prop :=
-  match TG.children u with
-  | none => False
-  | some (u₁, u₂) => f u = f u₁ ∨ f u = f u₂ ∨ share (f u) (f u₁) (f u₂)
+/-- `T.Le v u`: `u` lies on the path from the root to `v` (`v ≤ u` in the source's notation), i.e.
+`u` is an ancestor of `v` or `u = v`. -/
+def Le (v u : V) : Prop :=
+  ∃ k, T.ancestor k v = some u
 
-/-- Gene-duplication cost: number of duplicating vertices. -/
-noncomputable def dupCost (TG : TreeData G) (share : S → S → S → Prop) (f : G → S) :
-    ℕ :=
-  Finset.card (Finset.univ.filter (fun u => IsDup TG share f u))
+open Classical in
+/-- The children of `u`. -/
+noncomputable def children (u : V) : Finset V :=
+  Finset.univ.filter fun c => T.parent c = some u
 
-/-- Edge-count distance: vertices on the down-path from `a` to `b`, minus one. -/
-noncomputable def dist (sle : S → S → Prop) (a b : S) : ℕ :=
-  Finset.card (Finset.univ.filter (fun w => sle a w ∧ sle w b)) - 1
+/-- `x` is a leaf: it has no children. -/
+def IsLeaf (x : V) : Prop :=
+  T.children x = ∅
 
-/-- Loss segment at `u`: down-path lengths to the children's images plus the
-duplication adjustment `2 * (δ - 1)`; zero on leaves. -/
-def segLen (TG : TreeData G) (dist : S → S → ℕ) (δ : G → ℕ) (f : G → S)
-    (u : G) : ℕ :=
-  match TG.children u with
-  | none => 0
-  | some (u₁, u₂) =>
-    dist (f u) (f u₁) + dist (f u) (f u₂) + 2 * (δ u - 1)
+/-- The number of edges `d(u, v)` on the path from `v` up to its ancestor-or-self `u`. -/
+noncomputable def dist (u v : V) : ℕ :=
+  sInf {k | T.ancestor k v = some u}
 
-/-- Gene-loss cost: total loss-segment length over all vertices. -/
-noncomputable def lossCost (TG : TreeData G) (dist : S → S → ℕ) (δ : G → ℕ)
-    (f : G → S) : ℕ :=
-  Finset.sum Finset.univ fun u => segLen TG dist δ f u
+open Classical in
+/-- The edges of the path `P(u, v)` from `u` down to `v`, each named by its lower endpoint: the
+vertices `c` with `v ≤ c`, `c ≤ u` and `c ≠ u`. -/
+noncomputable def pathEdges (u v : V) : Finset V :=
+  Finset.univ.filter fun c => T.Le v c ∧ T.Le c u ∧ c ≠ u
 
-/-- **LCA reconciliation has minimum duplication cost** (Wu-Zhang 2011,
-Corollary 4(a)): hypotheses are binary rooted trees with ancestor-or-self
-orders (`hle_refl`, `hle_trans`), leaves exactly the childless vertices
-(`hbin`), the species root above everything (`hroot`), the LCA map `M`
-characterized by leaf agreement (`hMleaf`), the LCA recursion (`hMnode`),
-and pointwise minimality (`hMmin`); `f` is any reconciliation. Conclusion:
-`dupCost M ≤ dupCost f`.
+end RootedBinTree
 
-Source: Wu-Zhang (2011), Corollary 4(a) via Theorem 2. -/
-theorem_wanted lca_dupCost_min (TG : TreeData G) (TS : TreeData S)
-    (leafLabel : G → S) (lcaS : S → S → S)
-    (hle_refl_G : ∀ u : G, TG.le u u)
-    (hle_trans_G : ∀ u v w : G, TG.le u v → TG.le v w → TG.le u w)
-    (hle_refl_S : ∀ s : S, TS.le s s)
-    (hle_trans_S : ∀ a b c : S, TS.le a b → TS.le b c → TS.le a c)
-    (hbin_G : ∀ u : G, (TG.isLeaf u ∧ TG.children u = none) ∨
-      ∃ u₁ u₂, TG.children u = some (u₁, u₂))
-    (hroot : ∀ s : S, TS.le TS.root s)
-    (M f : G → S)
-    (hMleaf : ∀ x, TG.isLeaf x → M x = leafLabel x)
-    (hMnode : ∀ u u₁ u₂, TG.children u = some (u₁, u₂) →
-      IsLca TS.le (M u) (M u₁) (M u₂))
-    (hMmin : ∀ v, TS.le (M v) (f v))
-    (hf : IsReconciliation TG TS leafLabel f) :
-    dupCost TG (shareEdge TS.le) M ≤ dupCost TG (shareEdge TS.le) f
+variable {G S : Type*} [Fintype G] [Fintype S]
 
-/-- **LCA reconciliation minimizes duplication plus loss** (Wu-Zhang 2011,
-consequence of Corollary 4): same tree, LCA-map, and reconciliation
-hypotheses as `lca_dupCost_min`, with `δ` the duplication indicator.
-Conclusion: `dupCost M + lossCost M ≤ dupCost f + lossCost f`.
+/-- `f` is a **reconciliation** of the gene tree `TG` (leaf labels `lab`, gene leaves to species
+leaves) with the species tree `TS`: leaf-preserving and order-preserving. -/
+def IsReconciliation (TG : RootedBinTree G) (TS : RootedBinTree S) (lab : G → S) (f : G → S) :
+    Prop :=
+  (∀ x, TG.IsLeaf x → f x = lab x) ∧ ∀ v u, TG.Le v u → TS.Le (f v) (f u)
 
-Source: Wu-Zhang (2011), Corollary 4. -/
-theorem_wanted lca_dupLoss_min (TG : TreeData G) (TS : TreeData S)
-    (leafLabel : G → S) (lcaS : S → S → S)
-    (δ : G → ℕ)
-    (hle_refl_G : ∀ u : G, TG.le u u)
-    (hle_trans_G : ∀ u v w : G, TG.le u v → TG.le v w → TG.le u w)
-    (hle_refl_S : ∀ s : S, TS.le s s)
-    (hle_trans_S : ∀ a b c : S, TS.le a b → TS.le b c → TS.le a c)
-    (hbin_G : ∀ u : G, (TG.isLeaf u ∧ TG.children u = none) ∨
-      ∃ u₁ u₂, TG.children u = some (u₁, u₂))
-    (hroot : ∀ s : S, TS.le TS.root s)
-    (M f : G → S)
-    (hMleaf : ∀ x, TG.isLeaf x → M x = leafLabel x)
-    (hMnode : ∀ u u₁ u₂, TG.children u = some (u₁, u₂) →
-      IsLca TS.le (M u) (M u₁) (M u₂))
-    (hMmin : ∀ v, TS.le (M v) (f v))
-    (hf : IsReconciliation TG TS leafLabel f) :
-    dupCost TG (shareEdge TS.le) M +
-      lossCost TG (dist TS.le) δ M ≤
-      dupCost TG (shareEdge TS.le) f + lossCost TG (dist TS.le) δ f
+/-- `M` is the **LCA reconciliation**: `M` sends each gene leaf to its species leaf, and each
+internal gene vertex `u` to the least common ancestor of the images of its children (a common
+ancestor-or-self of them lying below every other common ancestor-or-self). -/
+def IsLCAReconciliation (TG : RootedBinTree G) (TS : RootedBinTree S) (lab : G → S)
+    (M : G → S) : Prop :=
+  (∀ x, TG.IsLeaf x → M x = lab x) ∧ ∀ u, ¬ TG.IsLeaf u →
+    (∀ c ∈ TG.children u, TS.Le (M c) (M u)) ∧
+      ∀ s, (∀ c ∈ TG.children u, TS.Le (M c) s) → TS.Le (M u) s
 
-/-- **LCA reconciliation is the unique loss-optimal reconciliation**
-(Wu-Zhang 2011, Corollary 4(b)): same tree, LCA-map, and reconciliation
-hypotheses as `lca_dupCost_min`, with `δ` the duplication indicator and
-`hloss_step` the strict single-step lemma (a strict pointwise improvement
-strictly decreases loss). Conclusion: `lossCost M ≤ lossCost f`, with
-equality only for `f = M`.
+open Classical in
+/-- `f` has a **duplication** at `u` (`δ_f(u) = 1`): `u` is internal and (D-i) `f(u) = f(c)` for a
+child `c`, or (D-ii) the paths from `f(u)` to the images of two distinct children share an edge. -/
+def IsDup (TG : RootedBinTree G) (TS : RootedBinTree S) (f : G → S) (u : G) : Prop :=
+  ¬ TG.IsLeaf u ∧ ((∃ c ∈ TG.children u, f u = f c) ∨
+    ∃ c₁ ∈ TG.children u, ∃ c₂ ∈ TG.children u, c₁ ≠ c₂ ∧
+      (TS.pathEdges (f u) (f c₁) ∩ TS.pathEdges (f u) (f c₂)).Nonempty)
 
-Source: Wu-Zhang (2011), Corollary 4(b). -/
-theorem_wanted lca_lossCost_unique (TG : TreeData G) (TS : TreeData S)
-    (leafLabel : G → S) (lcaS : S → S → S)
-    (δ : G → ℕ)
-    (hle_refl_G : ∀ u : G, TG.le u u)
-    (hle_trans_G : ∀ u v w : G, TG.le u v → TG.le v w → TG.le u w)
-    (hle_refl_S : ∀ s : S, TS.le s s)
-    (hle_trans_S : ∀ a b c : S, TS.le a b → TS.le b c → TS.le a c)
-    (hbin_G : ∀ u : G, (TG.isLeaf u ∧ TG.children u = none) ∨
-      ∃ u₁ u₂, TG.children u = some (u₁, u₂))
-    (hroot : ∀ s : S, TS.le TS.root s)
-    (M f : G → S)
-    (hMleaf : ∀ x, TG.isLeaf x → M x = leafLabel x)
-    (hMnode : ∀ u u₁ u₂, TG.children u = some (u₁, u₂) →
-      IsLca TS.le (M u) (M u₁) (M u₂))
-    (hMmin : ∀ v, TS.le (M v) (f v))
-    (hf : IsReconciliation TG TS leafLabel f)
-    (hloss_step : ∀ g₁ g₂ : G → S, IsReconciliation TG TS leafLabel g₁ →
-      IsReconciliation TG TS leafLabel g₂ →
-      (∀ v, TS.le (g₁ v) (g₂ v)) →
-      (∃ v, TS.le (g₁ v) (g₂ v) ∧ g₁ v ≠ g₂ v) →
-      lossCost TG (dist TS.le) δ g₁ < lossCost TG (dist TS.le) δ g₂) :
-    lossCost TG (dist TS.le) δ M ≤ lossCost TG (dist TS.le) δ f ∧
-      (lossCost TG (dist TS.le) δ f = lossCost TG (dist TS.le) δ M →
-        f = M)
+open Classical in
+/-- The duplication indicator `δ_f(u) ∈ {0, 1}`. -/
+noncomputable def δ (TG : RootedBinTree G) (TS : RootedBinTree S) (f : G → S) (u : G) : ℤ :=
+  if IsDup TG TS f u then 1 else 0
 
-/-- **LCA reconciliation is the unique deep-coalescence-optimal
-reconciliation** (Wu-Zhang 2011, Corollary 4): same tree, LCA-map, and
-reconciliation hypotheses as `lca_dupCost_min`. `deep` is the
-deep-coalescence cost (total excess gene lineages over species branches),
-with `hdeep_mono` (pointwise-smaller maps cost no more) and `hdeep_step`
-(a strict pointwise improvement strictly decreases cost). Conclusion:
-`deep M ≤ deep f`, with equality only for `f = M`.
+/-- The **gene-duplication cost** `gd(f) = ∑_u δ_f(u)`. -/
+noncomputable def gd (TG : RootedBinTree G) (TS : RootedBinTree S) (f : G → S) : ℤ :=
+  ∑ u, δ TG TS f u
 
-Source: Wu-Zhang (2011), Corollary 4. -/
-theorem_wanted lca_deepCost_unique (TG : TreeData G) (TS : TreeData S)
-    (leafLabel : G → S) (lcaS : S → S → S)
-    (deep : (G → S) → ℕ)
-    (hle_refl_G : ∀ u : G, TG.le u u)
-    (hle_trans_G : ∀ u v w : G, TG.le u v → TG.le v w → TG.le u w)
-    (hle_refl_S : ∀ s : S, TS.le s s)
-    (hle_trans_S : ∀ a b c : S, TS.le a b → TS.le b c → TS.le a c)
-    (hbin_G : ∀ u : G, (TG.isLeaf u ∧ TG.children u = none) ∨
-      ∃ u₁ u₂, TG.children u = some (u₁, u₂))
-    (hroot : ∀ s : S, TS.le TS.root s)
-    (M f : G → S)
-    (hMleaf : ∀ x, TG.isLeaf x → M x = leafLabel x)
-    (hMnode : ∀ u u₁ u₂, TG.children u = some (u₁, u₂) →
-      IsLca TS.le (M u) (M u₁) (M u₂))
-    (hMmin : ∀ v, TS.le (M v) (f v))
-    (hf : IsReconciliation TG TS leafLabel f)
-    (hdeep_mono : ∀ g₁ g₂ : G → S, IsReconciliation TG TS leafLabel g₁ →
-      IsReconciliation TG TS leafLabel g₂ →
-      (∀ v, TS.le (g₁ v) (g₂ v)) → deep g₁ ≤ deep g₂)
-    (hdeep_step : ∀ g₁ g₂ : G → S, IsReconciliation TG TS leafLabel g₁ →
-      IsReconciliation TG TS leafLabel g₂ →
-      (∀ v, TS.le (g₁ v) (g₂ v)) →
-      (∃ v, TS.le (g₁ v) (g₂ v) ∧ g₁ v ≠ g₂ v) →
-      deep g₁ < deep g₂) :
-    deep M ≤ deep f ∧ (deep f = deep M → f = M)
+open Classical in
+/-- The **loss count** at `u`: `∑_{c child of u} d(f(u), f(c)) + 2 (δ_f(u) - 1)` for internal `u`
+and `0` for leaves. -/
+noncomputable def lossAt (TG : RootedBinTree G) (TS : RootedBinTree S) (f : G → S) (u : G) : ℤ :=
+  if TG.IsLeaf u then 0
+  else (∑ c ∈ TG.children u, (TS.dist (f u) (f c) : ℤ)) + 2 * (δ TG TS f u - 1)
+
+/-- The **gene-loss cost** `gl(f) = ∑_u l_f(u)`. -/
+noncomputable def gl (TG : RootedBinTree G) (TS : RootedBinTree S) (f : G → S) : ℤ :=
+  ∑ u, lossAt TG TS f u
+
+open Classical in
+/-- `τ_f(e)`: one less than the number of gene edges `(parent c, c)` whose image path contains the
+species edge `e`, when that number is at least `2`, and `0` otherwise. -/
+noncomputable def extraLineages (TG : RootedBinTree G) (TS : RootedBinTree S) (f : G → S)
+    (e : S) : ℕ :=
+  (Finset.univ.filter fun c : G => ∃ u, TG.parent c = some u ∧
+    e ∈ TS.pathEdges (f u) (f c)).card - 1
+
+open Classical in
+/-- The **deep-coalescence cost** `dc(f) = ∑_e τ_f(e)` over the edges `e` of the species tree (the
+non-root vertices). -/
+noncomputable def dc (TG : RootedBinTree G) (TS : RootedBinTree S) (f : G → S) : ℕ :=
+  ∑ e ∈ Finset.univ.filter (· ≠ TS.root), extraLineages TG TS f e
+
+/-- **Monotonicity of the costs** (Wu and Zhang 2011, Theorem 2): for rooted binary trees `TG`, `TS`
+with gene leaf labels `lab` mapping gene leaves to species leaves, and two distinct
+reconciliations `f' ≠ f` with `f'(v) ≤ f(v)` for every gene vertex `v` (`f(v)` an
+ancestor-or-self of `f'(v)`), `gd(f') ≤ gd(f)`, `gl(f') < gl(f)` and `dc(f') < dc(f)`.
+
+Source: Wu and Zhang (2011), Theorem 2. -/
+public theorem_wanted costs_lt_of_le (TG : RootedBinTree G) (TS : RootedBinTree S) (lab : G → S)
+    (hlab : ∀ x, TG.IsLeaf x → TS.IsLeaf (lab x)) (f f' : G → S)
+    (hf : IsReconciliation TG TS lab f) (hf' : IsReconciliation TG TS lab f')
+    (hle : ∀ v, TS.Le (f' v) (f v)) (hne : f' ≠ f) :
+    gd TG TS f' ≤ gd TG TS f ∧ gl TG TS f' < gl TG TS f ∧ dc TG TS f' < dc TG TS f
+
+/-- **Optimality of the LCA reconciliation** (Wu and Zhang 2011, Corollary 4): for rooted binary
+trees `TG`, `TS` with gene leaf labels `lab` mapping gene leaves to species leaves, the LCA
+reconciliation `M` and every reconciliation `f`: `gd(M) ≤ gd(f)`; `gl(M) ≤ gl(f)`, with equality
+only if `f = M`; `dc(M) ≤ dc(f)`, with equality only if `f = M`; and hence
+`gd(M) + gl(M) ≤ gd(f) + gl(f)`.
+
+Source: Wu and Zhang (2011), Corollary 4. -/
+public theorem_wanted lca_optimal (TG : RootedBinTree G) (TS : RootedBinTree S) (lab : G → S)
+    (hlab : ∀ x, TG.IsLeaf x → TS.IsLeaf (lab x)) (M : G → S)
+    (hM : IsLCAReconciliation TG TS lab M) (f : G → S) (hf : IsReconciliation TG TS lab f) :
+    gd TG TS M ≤ gd TG TS f ∧
+      (gl TG TS M ≤ gl TG TS f ∧ (gl TG TS f = gl TG TS M → f = M)) ∧
+      (dc TG TS M ≤ dc TG TS f ∧ (dc TG TS f = dc TG TS M → f = M)) ∧
+      gd TG TS M + gl TG TS M ≤ gd TG TS f + gl TG TS f
 
 end WantedExt.Biology.ComputationalBiology.LCAReconciliationWanted

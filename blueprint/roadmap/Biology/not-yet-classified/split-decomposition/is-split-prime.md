@@ -1,3 +1,4 @@
 # Is Split Prime
 
-Split-prime: no coherent split summand can be peeled off.
+`d` is **split-prime**: it is not a coherent sum `s + r` of a split metric `s` and a metric
+`r`.

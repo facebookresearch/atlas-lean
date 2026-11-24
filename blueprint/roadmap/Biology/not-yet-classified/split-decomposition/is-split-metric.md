@@ -1,4 +1,4 @@
 # Is Split Metric
 
-A split metric is a 0/1 metric separating exactly one bipartition side
-pair: distance 1 across the split, 0 within each side.
+`d` is a **split metric**: `d = c · δ_A` for a proper nonempty `A` and `c > 0` (a metric with
+exactly two zero-distance classes).

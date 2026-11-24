@@ -44,7 +44,6 @@ public import Mathlib.Order.ConditionallyCompleteLattice.Basic
 
 namespace WantedExt.Biology.ComputationalBiology.CenterStarWanted
 
-open Classical
 
 variable {α : Type*} [DecidableEq α]
 

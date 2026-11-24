@@ -7,121 +7,126 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# Canonical split decomposition of a finite metric (Bandelt-Dress)
+# Canonical split decomposition of a finite metric (Bandelt–Dress)
 
-Every metric `d` on a finite set `X` (symmetric, zero diagonal, triangle
-inequality; zeros off the diagonal allowed) has a unique coherent
-decomposition `d = d₁ + … + dₖ + d₀` into pairwise linearly independent
-split metrics plus a split-prime residue `d₀` (possibly zero). Up to scaling,
-the summands are exactly the split metrics below `d` coherent with the
-remainder; for tree-like `d` the residue vanishes. With `|X| = n` there are at
-most `C(n,2)` split summands up to scaling, with Bandelt-Dress isolation
-indices as coefficients.
+A metric here is a pseudometric `d` on a finite set `X` (symmetric, zero diagonal, triangle
+inequality; zeros off the diagonal allowed). A split metric is a metric whose zero-distance classes
+are exactly two; by the triangle inequality it is `c · δ_A` for a proper nonempty `A ⊂ X` and
+`c > 0`, where `δ_A(x, y)` is `1` across the split `A | X \ A` and `0` within its sides. A sum
+`d = d₁ + ⋯ + d_k` of metrics is coherent when every function `f : X → ℝ` dominating `d`
+(`f(x) + f(y) ≥ d(x, y)` for all `x, y`) is a sum `f = f₁ + ⋯ + f_k` of functions dominating the
+summands; equivalently, the injective hull of `d` is the Minkowski sum of those of the summands. A
+metric is split-prime when it is not a coherent sum of a split metric and another metric.
+
+Bandelt and Dress (1992): every metric `d` on a finite set `X` has a unique coherent decomposition
+`d = d₁ + ⋯ + d_k + d₀` into linearly independent split metrics `d₁, …, d_k` and a split-prime
+metric `d₀` (possibly zero); unique means that the residue is determined and the split summands
+are determined up to order; with `|X| = n` there are at most `C(n, 2)` split summands; and if `d`
+is tree-like the residue `d₀` vanishes. Tree-like is expressed by Buneman's four-point condition,
+which characterizes the metrics realized by edge-weighted trees.
+
+Here the coherence condition includes the requirement `f = f₁ + ⋯ + f_k`, which the survey's
+paraphrase omits but which its injective-hull formulation (and the original definition) requires.
+Not recorded here: the characterization of the split summands as the split metrics `d'` with
+`d - d'` a metric coherent with `d'`, and the isolation-index formula for their weights.
 
 Overlap (partial): `CSLibExt/Bioinformatics/Phylogenetics/NeighborJoining.lean`
-`dist_eq_sum_darts` is the split decomposition of a tree metric; the general
-weakly-compatible case with split-prime residue is not present.
+(`dist_eq_sum_darts`) decomposes a tree metric along its edges; the general case with a
+split-prime residue is not present.
 
-Sources: H.-J. Bandelt and A. W. M. Dress, "A canonical decomposition theory
-for metrics on a finite set", Advances in Mathematics 92(1):47-105, 1992,
-doi:10.1016/0001-8708(92)90061-O; statement read in A. Dress, K. T. Huber and
-V. Moulton, "Metric spaces in pure and applied mathematics", Documenta
-Mathematica, Extra Volume (2001), 121-139, pp. 134-135.
+Sources: H.-J. Bandelt and A. W. M. Dress, "A canonical decomposition theory for metrics on a finite
+set", Advances in Mathematics 92 (1992) 47–105, doi:10.1016/0001-8708(92)90061-O; statement read in
+A. Dress, K. T. Huber and V. Moulton, "Metric spaces in pure and applied mathematics", Documenta
+Mathematica, Extra Volume Quadratic Forms LSU (2001) 121–139, pp. 133–135; P. Buneman, "A note on
+the metric properties of trees", Journal of Combinatorial Theory, Series B 17 (1974) 48–50.
 -/
 module
 
 public import Batteries.Util.ProofWanted
-public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Fintype.Card
-public import Mathlib.Data.Fintype.Basic
-public import Mathlib.Basic.Real.Basic
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Order.MinMax
 
 @[expose] public section
 
 namespace WantedExt.Biology.ComputationalBiology.SplitDecompositionWanted
 
-open Classical
-
 variable {X : Type*} [Fintype X] [DecidableEq X]
 
-/-- Sum over an index type. -/
-def finSum {k : ℕ} (g : Fin k → ℝ) : ℝ :=
-  Finset.sum Finset.univ g
+/-- `d` is a **metric** (pseudometric): zero diagonal, symmetric, triangle inequality. -/
+def IsMetric (d : X → X → ℝ) : Prop :=
+  (∀ x, d x x = 0) ∧ (∀ x y, d x y = d y x) ∧ ∀ x y z, d x z ≤ d x y + d y z
 
-/-- A split metric is a 0/1 metric separating exactly one bipartition side
-pair: distance 1 across the split, 0 within each side. -/
-def IsSplitMetric (d : X → X → ℝ) : Prop :=
-  ∃ A : Finset X, A.Nonempty ∧ A ≠ Finset.univ ∧ ∀ x y,
-    d x y = if ((x ∈ A ∧ y ∉ A) ∨ (x ∉ A ∧ y ∈ A)) then 1 else 0
-
-/-- The split metric of a bipartition side. -/
+/-- The split metric `δ_A`: `1` across the split `A | X \ A`, `0` within each side. -/
 def splitMetric (A : Finset X) (x y : X) : ℝ :=
-  if ((x ∈ A ∧ y ∉ A) ∨ (x ∉ A ∧ y ∈ A)) then 1 else 0
+  if (x ∈ A ∧ y ∉ A) ∨ (x ∉ A ∧ y ∈ A) then 1 else 0
 
-/-- Coherent family in the injective-hull sense: every dominating `f`
-splits into dominating `fs i`. -/
-def IsCoherent {k : ℕ} (ds : Fin k → (X → X → ℝ)) : Prop :=
-  ∀ f : X → ℝ,
-    (∀ x y, (finSum fun i => ds i x y) ≤ f x + f y) →
-    ∃ fs : Fin k → (X → ℝ),
-      ∀ i x y, ds i x y ≤ fs i x + fs i y
+/-- `d` is a **split metric**: `d = c · δ_A` for a proper nonempty `A` and `c > 0` (a metric with
+exactly two zero-distance classes). -/
+def IsSplitMetric (d : X → X → ℝ) : Prop :=
+  ∃ A : Finset X, ∃ c : ℝ, A.Nonempty ∧ A ≠ Finset.univ ∧ 0 < c ∧
+    ∀ x y, d x y = c * splitMetric A x y
 
-/-- A coherent pair: every dominating `f` splits into dominators. -/
+/-- `f` **dominates** `d`: `d(x, y) ≤ f(x) + f(y)` for all `x, y`. -/
+def Dominates (f : X → ℝ) (d : X → X → ℝ) : Prop :=
+  ∀ x y, d x y ≤ f x + f y
+
+/-- The family `ds` of `k` summands together with `r` is **coherent**: every function dominating
+`∑ ds i + r` is a sum `∑ fs i + f₀` of functions dominating the respective summands. -/
+def IsCoherent {k : ℕ} (ds : Fin k → X → X → ℝ) (r : X → X → ℝ) : Prop :=
+  ∀ f : X → ℝ, Dominates f (fun x y => ∑ i, ds i x y + r x y) →
+    ∃ (fs : Fin k → X → ℝ) (f₀ : X → ℝ), (∀ x, f x = ∑ i, fs i x + f₀ x) ∧
+      (∀ i, Dominates (fs i) (ds i)) ∧ Dominates f₀ r
+
+/-- `s + r` is a **coherent pair**: every function dominating `s + r` is `f₁ + f₂` with `f₁`
+dominating `s` and `f₂` dominating `r`. -/
 def IsCoherentPair (s r : X → X → ℝ) : Prop :=
-  ∀ f : X → ℝ, (∀ x y, s x y + r x y ≤ f x + f y) →
-    ∃ fs fr : X → ℝ, (∀ x y, s x y ≤ fs x + fs y) ∧
-      ∀ x y, r x y ≤ fr x + fr y
+  ∀ f : X → ℝ, Dominates f (fun x y => s x y + r x y) →
+    ∃ f₁ f₂ : X → ℝ, (∀ x, f x = f₁ x + f₂ x) ∧ Dominates f₁ s ∧ Dominates f₂ r
 
-/-- Split-prime: no coherent split summand can be peeled off. -/
+/-- `d` is **split-prime**: it is not a coherent sum `s + r` of a split metric `s` and a metric
+`r`. -/
 def IsSplitPrime (d : X → X → ℝ) : Prop :=
-  ¬ ∃ s r : X → X → ℝ, IsSplitMetric s ∧ (∃ x y, s x y ≠ 0) ∧
-    IsCoherentPair s r ∧ ∀ x y, d x y = s x y + r x y
+  ¬ ∃ s r : X → X → ℝ, IsSplitMetric s ∧ IsMetric r ∧ IsCoherentPair s r ∧
+    ∀ x y, d x y = s x y + r x y
 
-/-- Canonical decomposition data: split summands, coherent, split-prime
-residue, pointwise sum, linear independence. -/
-def IsCanonicalDecomp (d : X → X → ℝ) (k : ℕ) (ds : Fin k → (X → X → ℝ))
-    (r : X → X → ℝ) : Prop :=
-  (∀ i, IsSplitMetric (ds i)) ∧ IsCoherent ds ∧ IsSplitPrime r ∧
-    (∀ x y, d x y = (finSum fun i => ds i x y) + r x y) ∧
-    ∀ c : Fin k → ℝ,
-      (∀ x y, (finSum fun i => c i * ds i x y) = 0) → ∀ i, c i = 0
+/-- `(ds, r)` is a **canonical split decomposition** of `d`: the `ds i` are split metrics, `r` is a
+split-prime metric, `d = ∑ ds i + r`, the decomposition is coherent, and the `ds i` are linearly
+independent. -/
+def IsCanonicalDecomp (d : X → X → ℝ) (k : ℕ) (ds : Fin k → X → X → ℝ) (r : X → X → ℝ) :
+    Prop :=
+  (∀ i, IsSplitMetric (ds i)) ∧ IsMetric r ∧ IsSplitPrime r ∧
+    (∀ x y, d x y = ∑ i, ds i x y + r x y) ∧ IsCoherent ds r ∧
+    ∀ c : Fin k → ℝ, (∀ x y, ∑ i, c i * ds i x y = 0) → ∀ i, c i = 0
 
-/-- **Bandelt-Dress canonical split decomposition**: hypotheses are a finite
-set `X`, a metric `d` (zero diagonal `hzero`, symmetry `hsymm`, triangle
-inequality `htri`). Conclusions: some `k`, split summands `ds`, and residue
-`r` form a canonical decomposition; the residue is unique and every split
-summand is a positive multiple of a summand of any other canonical
-decomposition (`huniq`); at most `C(n,2)` summands (`hbound`).
+/-- `d` is **tree-like**: Buneman's four-point condition
+`d(x, y) + d(z, w) ≤ max(d(x, z) + d(y, w), d(x, w) + d(y, z))` holds for all `x, y, z, w`. -/
+def IsTreeLike (d : X → X → ℝ) : Prop :=
+  ∀ x y z w, d x y + d z w ≤ max (d x z + d y w) (d x w + d y z)
 
-Source: Bandelt-Dress (1992), via Dress-Huber-Moulton (2001), pp. 134-135. -/
-theorem_wanted splitDecomposition_exists_unique (d : X → X → ℝ)
-    (hzero : ∀ x, d x x = 0)
-    (hsymm : ∀ x y, d x y = d y x)
-    (htri : ∀ x y z, d x z ≤ d x y + d y z) :
-    ∃ k : ℕ, ∃ ds : Fin k → (X → X → ℝ), ∃ r : X → X → ℝ,
-      IsCanonicalDecomp d k ds r ∧
-      (∀ k' : ℕ, ∀ ds' : Fin k' → (X → X → ℝ), ∀ r' : X → X → ℝ,
-        IsCanonicalDecomp d k' ds' r' →
-        (∀ x y, r x y = r' x y) ∧
-        ∀ i, ∃ j, ∃ c : ℝ, 0 < c ∧
-          ∀ x y, ds i x y = c * ds' j x y) ∧
-      k ≤ (Fintype.card X).choose 2
+/-- **Bandelt–Dress canonical split decomposition** (Bandelt and Dress 1992, via Dress, Huber and
+Moulton 2001): for every metric `d` (zero diagonal, symmetric, triangle inequality) on a finite set
+`X`, there is a canonical split decomposition `(ds, r)` of `d` with `k ≤ C(|X|, 2)` split summands,
+and it is unique: for every canonical split decomposition `(ds', r')` of `d`, `r' = r`, `k' = k`,
+and the summands agree up to a reordering `σ` (`ds' j = ds (σ j)`).
 
-/-- **Tree-like case** (Bandelt-Dress): hypotheses are the metric hypotheses
-plus `htree`, i.e. `d` is a tree metric in the sense of
-`CSLibExt/Bioinformatics/Phylogenetics/NeighborJoining.lean`
-(`dist_eq_sum_darts`). Conclusion: the split-prime residue of any canonical
-decomposition vanishes.
+Source: Bandelt and Dress (1992), via Dress, Huber and Moulton (2001), pp. 133–135. -/
+public theorem_wanted exists_unique_canonicalDecomp (d : X → X → ℝ) (hd : IsMetric d) :
+    ∃ (k : ℕ) (ds : Fin k → X → X → ℝ) (r : X → X → ℝ), IsCanonicalDecomp d k ds r ∧
+      k ≤ (Fintype.card X).choose 2 ∧
+      ∀ (k' : ℕ) (ds' : Fin k' → X → X → ℝ) (r' : X → X → ℝ), IsCanonicalDecomp d k' ds' r' →
+        r' = r ∧ ∃ σ : Fin k' ≃ Fin k, ∀ j, ds' j = ds (σ j)
 
-Source: Bandelt-Dress (1992). -/
-theorem_wanted splitDecomposition_tree (d : X → X → ℝ)
-    (hzero : ∀ x, d x x = 0)
-    (hsymm : ∀ x y, d x y = d y x)
-    (htri : ∀ x y z, d x z ≤ d x y + d y z)
-    (htree : True)
-    (k : ℕ) (ds : Fin k → (X → X → ℝ)) (r : X → X → ℝ)
-    (hcanon : IsCanonicalDecomp d k ds r) :
+/-- **Tree-like metrics are totally split-decomposable** (Bandelt and Dress 1992, via Dress, Huber
+and Moulton 2001): for every metric `d` (zero diagonal, symmetric, triangle inequality) on a finite
+set `X` satisfying the four-point condition, and every canonical split decomposition `(ds, r)` of
+`d`, the split-prime residue `r` vanishes.
+
+Source: Bandelt and Dress (1992), via Dress, Huber and Moulton (2001), p. 134. -/
+public theorem_wanted canonicalDecomp_residue_eq_zero_of_treeLike (d : X → X → ℝ)
+    (hd : IsMetric d) (htree : IsTreeLike d) (k : ℕ) (ds : Fin k → X → X → ℝ)
+    (r : X → X → ℝ) (hcanon : IsCanonicalDecomp d k ds r) :
     ∀ x y, r x y = 0
 
 end WantedExt.Biology.ComputationalBiology.SplitDecompositionWanted
