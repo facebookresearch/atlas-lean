@@ -38,3 +38,59 @@ example (M : (pathGraph 4).Subgraph) : ¬ IsOppositionMatching (pathGraph 4) M :
   obtain rfl := right b (M.adj_sub hb)
   have h := (hpairs 0 1 3 2 ha hb (by decide)).1
   exact (by decide : ¬ (pathGraph 4).Adj 0 3) (h.mpr (by decide))
+
+private abbrev pathSquare := strongProd (pathGraph 3) (pathGraph 3)
+
+-- Strong-product edges can change either coordinate or both; they are not loops.
+example : pathSquare.Adj (0, 0) (1, 0) := by
+  rw [pathSquare, MetaMathlibExt.strongProd_adj]
+  decide
+
+example : pathSquare.Adj (0, 0) (0, 1) := by
+  rw [pathSquare, MetaMathlibExt.strongProd_adj]
+  decide
+
+example : pathSquare.Adj (0, 0) (1, 1) := by
+  rw [pathSquare, MetaMathlibExt.strongProd_adj]
+  decide
+
+example : ¬ pathSquare.Adj (0, 0) (0, 0) := by
+  rw [pathSquare, MetaMathlibExt.strongProd_adj]
+  decide
+
+example : ¬ pathSquare.Adj (0, 0) (1, 2) := by
+  rw [pathSquare, MetaMathlibExt.strongProd_adj]
+  decide
+
+-- The residual graph is empty and the one vertex of H is universal vacuously.
+example : IsAlmostOpposable (strongProd (⊥ : SimpleGraph Unit) (⊥ : SimpleGraph Unit)) := by
+  apply isAlmostOpposable_strongProd
+  · refine ⟨(), Set.univ, Set.mem_univ _, ?_, .refl, ?_⟩
+    · intro x _
+      exact Set.mem_insert_iff.mpr (Or.inl (Subsingleton.elim _ _))
+    · intro x
+      exact False.elim (x.2 (Set.mem_univ _))
+  · exact ⟨(), fun w hw => (hw (Subsingleton.elim _ _)).elim⟩
+
+-- Two isolated vertices survive deletion and are swapped; H is a noncomplete path.
+example : IsAlmostOpposable (strongProd (⊥ : SimpleGraph (Fin 3)) (pathGraph 3)) := by
+  apply isAlmostOpposable_strongProd
+  · let S : Set (Fin 3) := {0}
+    refine ⟨0, S, rfl, ?_, ?_⟩
+    · exact fun _ hx => Set.mem_insert_iff.mpr (Or.inl hx)
+    let flip (x : ↥Sᶜ) : ↥Sᶜ :=
+      ⟨if x.val = 1 then 2 else 1, by
+        change (if x.val = 1 then (2 : Fin 3) else 1) ≠ 0
+        split <;> decide⟩
+    have hcases (x : ↥Sᶜ) : x.val = 1 ∨ x.val = 2 := by
+      have hx : x.val ≠ 0 := x.property
+      omega
+    have hinv : Function.Involutive flip := by
+      intro x
+      apply Subtype.ext
+      rcases hcases x with hx | hx <;> simp [flip, hx]
+    refine ⟨⟨hinv.toPerm flip, Iff.rfl⟩, fun x => ⟨hinv x, ?_, id⟩⟩
+    intro heq
+    have hval : (flip x).val = x.val := congrArg Subtype.val heq
+    rcases hcases x with hx | hx <;> simp [flip, hx] at hval
+  · exact ⟨1, by decide⟩

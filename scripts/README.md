@@ -20,6 +20,11 @@ module where the other was used, or make a declaration that only its own test fi
 `private`. The check also rejects a module whose directory or file name is not a Lean
 identifier, since Lean tools cannot import such a module by name, and a source path that
 Git tracks but the audit's directory walk does not find, or the reverse.
+The build checks run in this order: the build with its compiler diagnostics, this
+collision check, then the compiled audit of trust and dependency policies, which takes
+longer than the collision check. Every check runs and every failure is reported, unless
+`ATLAS_CHECK_FAIL_FAST=1`, which CI sets for merge groups: `scripts/check.sh` then stops
+at the first failing check.
 The compiled audit runs its batches in parallel, as many as the available memory
 holds at 6 GiB each; on a shared machine, `ATLAS_AUDIT_WORKERS=N` sets the count
 (`1` runs them one after another).

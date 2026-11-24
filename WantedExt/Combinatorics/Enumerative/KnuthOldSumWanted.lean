@@ -13,10 +13,12 @@ import Mathlib.Analysis.SpecialFunctions.Gamma.Beta
 import Mathlib.Data.Nat.Choose.Cast
 public import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
+public import MathlibExt.Combinatorics.Enumerative.AlternatingBinomialPolynomial
 public import MathlibExt.Combinatorics.Enumerative.AlternatingCentralBinomialSum
 public import MathlibExt.Combinatorics.Enumerative.CentralBinomialBernstein
 public import MathlibExt.Combinatorics.Enumerative.CosinePowerIntegral
 public import MathlibExt.Combinatorics.Enumerative.ParityWeightedBinomialSum
+public import MathlibExt.Combinatorics.KnuthEvenBinomialReciprocal
 
 /-!
 # Knuth's old sum, generalizations and related sums
@@ -750,21 +752,6 @@ public theorem_wanted knuth_poly_gammaBinom_one_sub_pow (n : ℕ) (v : ℝ) (hv 
         (n.choose (2 * k) : ℂ) / 2 ^ (2 * k) * ((2 * k).choose k : ℂ) *
           (gammaBinom ((2 * k + v) / 2) k)⁻¹ * x ^ (n - 2 * k)
 
-/-- **Alternating polynomial identity in $1 - x$ with weights $2^k/(k+1)$.** For every natural
-number $n$ and every complex number $x$,
-$$
-\sum_{k=0}^{n} (-1)^{n-k} \binom{n}{k} \frac{2^k}{k+1} (1-x)^{n-k}
-= \sum_{k=0}^{\lfloor n/2 \rfloor} \frac{1}{2k+1} \binom{n}{2k} x^{n-2k}.
-$$
-
-This is equation (45) of the source.
-
-Source: Kunle Adegoke, *A Short Proof of Knuth's Old Sum, Generalizations and Related
-Sums*, INTEGERS 26 (2026), Article A19, Corollary 4 (`integers-2026-A19-cor-4`). -/
-public theorem_wanted sum_choose_two_pow_div_succ_one_sub_pow (n : ℕ) (x : ℂ) :
-    ∑ k ∈ range (n + 1), (-1) ^ (n - k) * (n.choose k : ℂ) * 2 ^ k / (k + 1) * (1 - x) ^ (n - k) =
-      ∑ k ∈ range (n / 2 + 1), (n.choose (2 * k) : ℂ) / (2 * k + 1) * x ^ (n - 2 * k)
-
 /-- **A polynomial identity for weighted central binomial coefficients.** For every natural
 number $n$ and every complex number $x$,
 $$\sum_{k=0}^{n} (-1)^{n-k} \binom{n}{k} \frac{1}{(k+2) 2^k} \binom{2k+2}{k+1} (1-x)^{n-k} =
@@ -979,14 +966,6 @@ Sums*, INTEGERS 26 (2026), Article A19, Proposition 4 (`integers-2026-A19-prop-4
 public theorem_wanted sum_choose_even_centralBinom_div_four_pow (n : ℕ) :
     ∑ k ∈ range (n / 2 + 1), (n.choose (2 * k) : ℚ) / 2 ^ (2 * k) * ((2 * k).choose k : ℚ) =
       ((2 * n).choose n : ℚ) / 2 ^ n
-
-/-- **Even-index binomial sum with odd reciprocal weights.** For every natural number $n$,
-$$\sum_{k=0}^{\lfloor n/2 \rfloor} \frac{1}{2k+1} \binom{n}{2k} = \frac{2^n}{n+1}.$$
-
-Source: Kunle Adegoke, *A Short Proof of Knuth's Old Sum, Generalizations and Related
-Sums*, INTEGERS 26 (2026), Article A19, Proposition 4 (`integers-2026-A19-prop-4`). -/
-public theorem_wanted sum_choose_even_div_two_mul_add_one (n : ℕ) :
-    ∑ k ∈ range (n / 2 + 1), (n.choose (2 * k) : ℚ) / (2 * k + 1) = 2 ^ n / (n + 1)
 
 /-- **Even-index binomial sum of weighted central binomial coefficients.** Write
 $C_m = \binom{2m}{m}/(m+1)$ for the $m$-th Catalan number. For every natural number $n$,
