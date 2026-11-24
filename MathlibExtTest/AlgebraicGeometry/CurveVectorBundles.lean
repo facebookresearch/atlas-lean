@@ -55,5 +55,16 @@ example (f : X ⟶ Spec (.of k)) [IsProperCurve f] (E : X.Modules) (r : ℕ)
 
 -- Global generation is the existence of generating global sections, with no finiteness
 -- condition: every free sheaf is globally generated, on any index type.
+-- A vector bundle of rank zero is the zero module: every section vanishes.
+example (E : X.Modules) (hE : IsVectorBundle E 0) (U : X.Opens) (s : Γ(E, U)) : s = 0 := by
+  have h := congrArg (fun φ ↦ Scheme.Modules.Hom.app φ U s)
+    ((isZero_of_isVectorBundle_zero hE).eq_of_src (𝟙 E) 0)
+  simpa using h
+
+-- Conversely the zero module is a vector bundle of rank zero.
+example (E : X.Modules) (hE : IsZero E) : IsVectorBundle E 0 := fun _ ↦
+  ⟨⊤, trivial, ⟨((Scheme.Modules.pullback (⊤ : X.Opens).ι).map_isZero hE).iso
+    (isZero_trivialBundle_zero _)⟩⟩
+
 example (I : Type u) : GloballyGenerated (SheafOfModules.free (R := X.ringCatSheaf) I) :=
   ⟨SheafOfModules.free.generatingSections I⟩

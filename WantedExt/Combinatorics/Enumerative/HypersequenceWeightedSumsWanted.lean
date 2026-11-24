@@ -16,6 +16,7 @@ public import MathlibExt.Combinatorics.Enumerative.AlternatingBinomialPowerSumRe
 public import MathlibExt.Combinatorics.Enumerative.AlternatingBinomialPowerSumStirling
 public import MathlibExt.Combinatorics.Enumerative.Hypersequence
 public import MathlibExt.Combinatorics.Enumerative.HypersequenceBinomial
+public import MathlibExt.Combinatorics.Enumerative.HypersequenceRecurrence
 public import MathlibExt.Combinatorics.Enumerative.RingChooseSub
 public import MathlibExt.Combinatorics.Enumerative.SuccPowStirlingSecond
 public import MathlibExt.NumberTheory.LucasSequence
@@ -56,15 +57,6 @@ public theorem hyperFibonacci_eq_hypersequence (r n : ℕ) :
   induction r generalizing n with
   | zero => rfl
   | succ r ih => simp [hyperFibonacci, hypersequence, ih]
-
-/-- **Recurrence between consecutive hypersequence generations.** Let $(a_n)$ be a sequence of
-complex numbers and let $a^{(r)}_n$ denote its hypersequence of generation $r$. For all natural
-numbers $r$ and $n$, $a^{(r+1)}_{n+1} = a^{(r+1)}_n + a^{(r)}_{n+1}$.
-
-Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted Sums*,
-INTEGERS 24 (2024), Article A70, Theorem 2, Equation (2.2) (`integers-2024-A70-thm-2`). -/
-public theorem_wanted hypersequence_succ_succ (a : ℕ → ℂ) (r n : ℕ) :
-    hypersequence a (r + 1) (n + 1) = hypersequence a (r + 1) n + hypersequence a r (n + 1)
 
 /-- **Hyperfibonacci numbers in terms of Fibonacci numbers.** Let $F_k$ denote the $k$th Fibonacci
 number and $F^{(r)}_n$ the hyperfibonacci numbers, given by $F^{(0)}_n = F_n$ and
