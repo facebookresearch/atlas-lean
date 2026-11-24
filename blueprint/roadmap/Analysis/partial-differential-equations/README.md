@@ -4,6 +4,7 @@ PDE existence, regularity and qualitative results: Cauchy–Kovalevskaya, heat a
 
 - [Airy equation and Kato smoothing](airy-equation-and-kato-smoothing/README.md)
 - [Cauchy–Kovalevskaya theorem](cauchy-kovalevskaya-theorem/README.md)
+- [Duhamel spatial smoothing](duhamel-spatial-smoothing/README.md)
 - [Heat equation](heat-equation/README.md)
 - [Heat semigroup and restart](heat-semigroup-and-restart/README.md)
 - [Heat-kernel Duhamel derivatives](heat-kernel-duhamel-derivatives/README.md)
@@ -14,4 +15,5 @@ PDE existence, regularity and qualitative results: Cauchy–Kovalevskaya, heat a
 - [Singularity formation for the Euler equations](singularity-formation-for-the-euler-equations/README.md)
 - [Viscosity solutions of Hamilton–Jacobi equations](viscosity-solutions-of-hamilton-jacobi-equations/README.md)
 - [Weak solutions of elliptic equations](weak-solutions-of-elliptic-equations/README.md)
+- [Weighted heat gradient estimates](weighted-heat-gradient-estimates/README.md)
 - [Analytic elliptic regularity](analytic-elliptic-regularity.md)
