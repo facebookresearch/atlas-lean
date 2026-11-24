@@ -17,9 +17,10 @@ import Mathlib.Tactic.LinearCombination
 Let `t(0) = 1`, `t(1) = 0`, `t(2) = 1` and `t(n) = t(n-1) + t(n-2) + t(n-3)` for `n ≥ 3`, and
 set `t(n) = 0` for `n < 0`; on the naturals this is `tribNat`, on the integers `trib`.
 The theorem `trib_three_mul` expresses `t(3k)` as one plus the sum of the two
-preceding terms at each multiple of three from `0` through `3k`. The theorem
-`trib_add_two_sub_three_mul_add_two` proves that for every natural number
-`k ≥ 1`, with `n = 3k + 2`, `t(n) + t(n-2) = 2 + 2 ∑_{i=0}^{k-1} t(n-3i-1)`.
+preceding terms at each multiple of three from `0` through `3k`. The theorems
+`trib_add_two_sub_three_mul` and `trib_add_two_sub_three_mul_add_two` express `t(n) + t(n-2)` as
+`2 ∑_{i=0}^{k-1} t(n-3i-1)` for `n = 3k, 3k + 1`, and as `2 + 2 ∑_{i=0}^{k-1} t(n-3i-1)` for
+`n = 3k + 2`, respectively, with `k ≥ 1` in each case.
 
 ## Proof outline for `trib_add_two_sub_three_mul_add_two`
 
@@ -144,6 +145,100 @@ theorem trib_three_mul (k : ℕ) :
     rw [Finset.sum_range_succ']
     simp only [hshift, Nat.cast_zero, mul_zero, sub_zero]
     rw [hrec, ih]
+    ac_rfl
+
+/-- One step of length three for the sum `t(n) + t(n-2)`. -/
+private theorem trib_add_two_sub_step (n : ℤ) (hn : 5 ≤ n) :
+    trib n + trib (n - 2) = 2 * trib (n - 1) + (trib (n - 3) + trib (n - 5)) := by
+  have hrec (m : ℤ) (hm : 3 ≤ m) :
+      trib m = trib (m - 1) + trib (m - 2) + trib (m - 3) := by
+    let j := (m - 3).toNat
+    rw [trib_eq_tribNat (m := j + 3) (by omega), trib_eq_tribNat (m := j + 2) (by omega),
+      trib_eq_tribNat (m := j + 1) (by omega), trib_eq_tribNat (m := j) (by omega)]
+    exact tribNat_add_three j
+  have h0 := hrec n (by omega)
+  have h1 := hrec (n - 1) (by omega)
+  have h2 := hrec (n - 2) (by omega)
+  rw [show n - 1 - 1 = n - 2 by omega, show n - 1 - 2 = n - 3 by omega,
+    show n - 1 - 3 = n - 4 by omega] at h1
+  rw [show n - 2 - 1 = n - 3 by omega, show n - 2 - 2 = n - 4 by omega,
+    show n - 2 - 3 = n - 5 by omega] at h2
+  linear_combination h0 - h1 + h2
+
+/-- **Identity for $t(n) + t(n-2)$ when $n \ge 3$ and $n \equiv 0, 1 \pmod 3$.** Let $t$ be the
+tribonacci numbers with $t(0) = 1$, $t(1) = 0$, $t(2) = 1$ and
+$t(n) = t(n-1) + t(n-2) + t(n-3)$ for $n \ge 3$, extended by $t(n) = 0$ for $n < 0$. For every
+natural number $k \ge 1$, both $n = 3k$ and $n = 3k + 1$ satisfy
+$$t(n) + t(n-2) = 2 \sum_{i=0}^{k-1} t(n-3i-1).$$
+
+Source: Brian Hopkins and Hua Wang, "Allowing or Prohibiting
+Two Consecutive Colors in `n`-Color Compositions",
+Theorem 9. -/
+theorem trib_add_two_sub_three_mul (k : ℕ) (hk : 1 ≤ k) :
+    trib (3 * (k : ℤ)) + trib (3 * (k : ℤ) - 2) =
+        2 * ∑ i ∈ Finset.range k,
+          trib (3 * (k : ℤ) - 3 * (i : ℤ) - 1) ∧
+      trib (3 * (k : ℤ) + 1) + trib (3 * (k : ℤ) + 1 - 2) =
+        2 * ∑ i ∈ Finset.range k,
+          trib (3 * (k : ℤ) + 1 - 3 * (i : ℤ) - 1) := by
+  induction k, hk using Nat.le_induction with
+  | base => decide
+  | succ k hk ih =>
+    have hstep (n : ℤ) (hn : 2 ≤ n)
+        (h : trib n + trib (n - 2) =
+          2 * ∑ i ∈ Finset.range k, trib (n - 3 * (i : ℤ) - 1)) :
+        trib (n + 3) + trib (n + 3 - 2) =
+          2 * ∑ i ∈ Finset.range (k + 1), trib (n + 3 - 3 * (i : ℤ) - 1) := by
+      -- Removing the first summand leaves the indices for `n`.
+      have hshift (i : ℕ) :
+          n + 3 - 3 * ((i + 1 : ℕ) : ℤ) = n - 3 * (i : ℤ) := by omega
+      rw [Finset.sum_range_succ']
+      simp only [hshift, Nat.cast_zero, mul_zero, sub_zero]
+      rw [trib_add_two_sub_step (n + 3) (by omega),
+        show n + 3 - 3 = n by omega, show n + 3 - 5 = n - 2 by omega, h, mul_add]
+      ac_rfl
+    constructor
+    · rw [show 3 * ((k + 1 : ℕ) : ℤ) = 3 * (k : ℤ) + 3 by omega]
+      exact hstep _ (by omega) ih.1
+    · rw [show 3 * ((k + 1 : ℕ) : ℤ) + 1 = (3 * (k : ℤ) + 1) + 3 by omega]
+      exact hstep _ (by omega) ih.2
+
+/-- **Tribonacci partial-sum identity for $t(3k+2)$.** Let $t$ be the tribonacci numbers with
+$t(0) = 1$, $t(1) = 0$, $t(2) = 1$ and $t(n) = t(n-1) + t(n-2) + t(n-3)$ for $n \ge 3$,
+extended by $t(n) = 0$ for $n < 0$. For every natural number $k$,
+$$t(3k+2) = \sum_{i=0}^{k} \bigl(t(3k-3i+1) + t(3k-3i)\bigr).$$
+
+Source: Brian Hopkins and Hua Wang, "Allowing or Prohibiting
+Two Consecutive Colors in `n`-Color Compositions",
+Theorem 8. -/
+theorem trib_three_mul_add_two (k : ℕ) :
+    trib (3 * (k : ℤ) + 2) =
+      ∑ i ∈ Finset.range (k + 1),
+        (trib (3 * (k : ℤ) + 2 - 3 * (i : ℤ) - 1) +
+          trib (3 * (k : ℤ) + 2 - 3 * (i : ℤ) - 2)) := by
+  let term (j i : ℕ) :=
+    trib (3 * (j : ℤ) + 2 - 3 * (i : ℤ) - 1) +
+      trib (3 * (j : ℤ) + 2 - 3 * (i : ℤ) - 2)
+  change trib (3 * (k : ℤ) + 2) = ∑ i ∈ Finset.range (k + 1), term k i
+  induction k with
+  | zero => norm_num [term, trib, tribNat, Finset.sum_range_one]
+  | succ k ih =>
+    have hrec : trib (3 * ((k + 1 : ℕ) : ℤ) + 2) =
+        trib (3 * ((k + 1 : ℕ) : ℤ) + 2 - 1) +
+          trib (3 * ((k + 1 : ℕ) : ℤ) + 2 - 2) + trib (3 * (k : ℤ) + 2) := by
+      let j := 3 * k + 2
+      rw [trib_eq_tribNat (m := j + 3) (by dsimp [j]; omega),
+        trib_eq_tribNat (m := j + 2) (by dsimp [j]; omega),
+        trib_eq_tribNat (m := j + 1) (by dsimp [j]; omega),
+        trib_eq_tribNat (m := j) (by dsimp [j])]
+      exact tribNat_add_three j
+    have htail (i : ℕ) : term (k + 1) (i + 1) = term k i := by
+      dsimp [term]
+      exact congrArg₂ (· + ·) (congrArg trib (by omega)) (congrArg trib (by omega))
+    rw [Finset.sum_range_succ', show (∑ i ∈ Finset.range (k + 1), term (k + 1) (i + 1)) =
+      ∑ i ∈ Finset.range (k + 1), term k i from Finset.sum_congr rfl (fun i _ => htail i), ← ih]
+    rw [hrec]
+    simp only [term, Nat.cast_zero, mul_zero, sub_zero]
     ac_rfl
 
 end MathlibExt.Combinatorics.Enumerative.NColorCompositionsWanted

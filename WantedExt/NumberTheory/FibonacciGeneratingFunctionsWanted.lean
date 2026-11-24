@@ -57,22 +57,6 @@ public theorem_wanted isGibonacciGood_iff (a b p q : ℤ)
       a ≡ -b * p * u [ZMOD |q ^ 2 - p * q - p ^ 2|] ∧
       a ≡ -b * q * v [ZMOD |q ^ 2 - p * q - p ^ 2|]
 
-/-- **Two standard families of good values.** Let $a$ and $b$ be integers and let $(G_n)_{n \ge 0}$
-be the Gibonacci sequence with $G_0 = a$ and $G_1 = b$. For every natural number $n$, the ratio
-$F_n / F_{n+1}$ of consecutive Fibonacci numbers is good for $(a, b)$, and if $G_n \ne 0$, then
-$-G_{n+1} / G_n$ is good for $(a, b)$.
-
-The source indexes both families by all integers ($n \ne -1$ for the first).
-
-Source: Knapp, *Fibonacci Generating Functions*, Journal of Integer
-Sequences 27 (2024), Article 24.3.1, Corollary 2
-(`jis-2024-24.3.1-cor-2`). -/
-public theorem_wanted isGibonacciGood_standard_values (a b : ℤ) :
-    (∀ n : ℕ, IsGibonacciGood a b ((Nat.fib n : ℚ) / (Nat.fib (n + 1) : ℚ))) ∧
-    (∀ n : ℕ, gibonacciNumber a b n ≠ 0 →
-      IsGibonacciGood a b
-        (-(gibonacciNumber a b (n + 1) : ℚ) / (gibonacciNumber a b n : ℚ)))
-
 /-- **Consecutive ratios of a shifted Gibonacci sequence are good.** Let $a$ and $b$ be integers
 and let $(H_n)_{n \ge 0}$ be the Gibonacci sequence with $H_0 = -b$ and $H_1 = a$. For every
 natural number $n$ with $H_{n+1} \ne 0$, the ratio $H_n / H_{n+1}$ is good for $(a, b)$.
