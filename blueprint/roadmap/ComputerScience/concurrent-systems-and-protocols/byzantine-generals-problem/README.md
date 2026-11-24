@@ -33,6 +33,13 @@ A commander sends an order to the other generals, some of whom, possibly includi
 - [Agreement under oral messages (IC1)](om-agree.md)
 - [Oral messages achieve interactive consistency](om-interactive-consistency.md)
 - [The oral messages algorithm solves the Byzantine generals problem](byzantine-generals.md)
+- [Traitor relays matching the protocol messages](adv-of-messages.md)
+- [Relay of a traitor along an extended path](adv-of-messages-append-singleton.md)
+- [The protocol runs the oral messages algorithm in the expected number of rounds](decision-to-protocol.md)
+- [The protocol runs the oral messages algorithm](decision-to-protocol-of-le.md)
+- [Oral messages, run as a protocol, solve the Byzantine generals problem](solves-to-protocol.md)
+- [The oral messages algorithm as an oral-message protocol](to-protocol.md)
+- [Solvability of the Byzantine generals problem with oral messages](exists-solves-iff-three-mul-lt-card.md)
 
 ## Related topics
 

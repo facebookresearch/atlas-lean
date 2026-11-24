@@ -62,11 +62,13 @@ private theorem infinite_of_not_finiteDimensional [CompleteSpace H] [SeparableSp
   have hFintype : Fintype ι := Fintype.ofFinite ι
   exact hInf (Module.Basis.finiteDimensional_of_finite b.toOrthonormalBasis.toBasis)
 
-/-- **An infinite-dimensional separable Hilbert space admits a Hilbert basis
-indexed by `ℕ`.** The countable basis from
-`SeparableHilbertCountableBasis.exists_countable_hilbertBasis` has infinite
-index type, hence is equivalent to `ℕ`, and reindexing along that equivalence
-gives a basis indexed by `ℕ`. -/
+/-- **An infinite-dimensional separable Hilbert space admits a Hilbert basis indexed by
+$\mathbb{N}$.** Let $H$ be a separable Hilbert space over $\mathbb{R}$ or $\mathbb{C}$ that is not
+finite-dimensional. Then $H$ has a Hilbert basis $(e_n)_{n \in \mathbb{N}}$ indexed by the natural
+numbers.
+
+A countable Hilbert basis of $H$ has an infinite index set, which is therefore in bijection with
+$\mathbb{N}$; reindexing along this bijection gives the basis. -/
 theorem exists_hilbertBasis_nat [CompleteSpace H] [SeparableSpace H]
     (hInf : ¬FiniteDimensional 𝕜 H) : Nonempty (HilbertBasis ℕ 𝕜 H) := by
   obtain ⟨ι, hι, ⟨b⟩⟩ :=
@@ -88,9 +90,13 @@ theorem exists_hilbertBasis_nat [CompleteSpace H] [SeparableSpace H]
   rw [hrange]
   exact b.dense_span.ge
 
-/-- **An infinite-dimensional separable Hilbert space is isometrically
-isomorphic to `ℓ²`.** This is the book's theorem: the isomorphism is the `repr`
-of a Hilbert basis indexed by `ℕ`, so it preserves norms and inner products. -/
+/-- **An infinite-dimensional separable Hilbert space is isometrically isomorphic to
+$\ell^2$.** Let $H$ be a separable Hilbert space over $\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$
+that is not finite-dimensional. Then there is a $\mathbb{K}$-linear isometric isomorphism from
+$H$ onto $\ell^2(\mathbb{N}, \mathbb{K})$, the space of square-summable sequences in $\mathbb{K}$.
+
+The isomorphism sends a vector to its coefficients with respect to a Hilbert basis of $H$ indexed
+by $\mathbb{N}$, so it preserves norms and inner products. -/
 theorem separable_hilbert_iso_l2 [CompleteSpace H] [SeparableSpace H]
     (hInf : ¬FiniteDimensional 𝕜 H) :
     Nonempty (H ≃ₗᵢ[𝕜] lp (fun _ : ℕ => 𝕜) 2) := by

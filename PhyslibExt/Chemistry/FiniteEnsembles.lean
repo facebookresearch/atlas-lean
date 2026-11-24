@@ -138,8 +138,9 @@ results stay in finite-sum form:
 - `twoLevelEnergy Δ` is the energy of `CanonicalEnsemble.twoState 0 Δ`.
 - `IsCanonical` has no Physlib counterpart; Physlib defines the canonical probabilities directly.
 
-Physlib's `kB` is the constant `Constants.kB` and its temperatures have type `Temperature`; here
-`kB` and `β` are real parameters. New relative to Physlib are the maximum-entropy theorem, the
+Physlib takes the Boltzmann constant as an argument `kB : BoltzmannConstant` (its positive value in
+a chosen system of units) and its temperatures have type `Temperature`; here `kB` and `β` are real
+parameters. New relative to Physlib are the maximum-entropy theorem, the
 finite-sum product identities and the two-level worked example; the Einstein-solid count
 transports Mathlib's `Sym.card_sym_eq_choose` along `Sym.equivNatSumOfFintype`. Besides Mathlib,
 this module imports Physlib's `CanonicalEnsemble.Finite` (for the §H bridge) and the landed
@@ -256,8 +257,10 @@ lemma log_boltzmannProb {ι : Type*} [Fintype ι] (E : ι → ℝ) (β : ℝ) (i
 
 -/
 
-/-- The Shannon entropy `H(p) = -∑ i, p i * log (p i)`. With Mathlib's convention
-`Real.log 0 = 0`, a state with `p i = 0` contributes `0`. -/
+/-- The Shannon entropy `H(p) = -∑ i, p i * log (p i)` of a probability distribution `p` (`p i ≥ 0`,
+`∑ i, p i = 1`). With Mathlib's convention `Real.log 0 = 0`, a state with `p i = 0` contributes `0`.
+The formula accepts any real `p`; for other inputs it need not be an entropy (one state of weight
+`2` gives `-2 log 2 < 0`), and a negative entry uses `log x = log |x|`. -/
 noncomputable def shannonEntropy {ι : Type*} [Fintype ι] (p : ι → ℝ) : ℝ :=
   -∑ i, p i * Real.log (p i)
 
@@ -355,7 +358,8 @@ theorem sum_mul_log_div_nonneg {ι : Type*} [Fintype ι] {p q : ι → ℝ} (hp 
     (fun i _ => hq i)
   rwa [hp1, hq1, div_one, Real.log_one, mul_zero] at h
 
-/-- Equality in Gibbs' inequality: the relative entropy vanishes exactly when `p = q`. -/
+/-- Equality in Gibbs' inequality: for probability distributions `p` and `q` with `0 < q i`, the
+relative entropy vanishes exactly when `p = q`. -/
 lemma sum_mul_log_div_eq_zero_iff {ι : Type*} [Fintype ι] {p q : ι → ℝ} (hp : ∀ i, 0 ≤ p i)
     (hp1 : ∑ i, p i = 1) (hq : ∀ i, 0 < q i) (hq1 : ∑ i, q i = 1) :
     ∑ i, p i * Real.log (p i / q i) = 0 ↔ p = q := by
@@ -375,8 +379,8 @@ lemma sum_mul_log_div_boltzmannProb_nonneg {ι : Type*} [Fintype ι] (E : ι →
   have := nonempty_of_sum_eq_one hp1
   exact sum_mul_log_div_nonneg hp hp1 (boltzmannProb_pos E β) (sum_boltzmannProb_eq_one E β)
 
-/-- The relative entropy to the Boltzmann distribution vanishes exactly at the Boltzmann
-distribution. -/
+/-- For a probability distribution `p`, the relative entropy to the Boltzmann distribution vanishes
+exactly at the Boltzmann distribution. -/
 lemma sum_mul_log_div_boltzmannProb_eq_zero_iff {ι : Type*} [Fintype ι] (E : ι → ℝ) (β : ℝ)
     {p : ι → ℝ} (hp : ∀ i, 0 ≤ p i) (hp1 : ∑ i, p i = 1) :
     ∑ i, p i * Real.log (p i / boltzmannProb E β i) = 0 ↔ p = boltzmannProb E β := by
@@ -445,26 +449,32 @@ lemma shannonEntropy_eq_shannonEntropy_boltzmannProb_iff {ι : Type*} [Fintype �
 
 -/
 
-/-- The mean energy `U = ∑ i, p i * E i` of the Boltzmann distribution. -/
+/-- The mean energy `U = ∑ i, p i * E i` under the Boltzmann probabilities. For a nonempty finite
+state space they form a probability distribution; for an empty one, `Z = 0` and `U = 0`. -/
 noncomputable def meanEnergy {ι : Type*} [Fintype ι] (E : ι → ℝ) (β : ℝ) : ℝ :=
   ∑ i, boltzmannProb E β i * E i
 
-/-- The energy variance `Var(E) = ∑ i, p i * (E i - U) ^ 2` of the Boltzmann distribution. -/
+/-- The energy variance `Var(E) = ∑ i, p i * (E i - U) ^ 2` under the Boltzmann probabilities. For a
+nonempty finite state space it is the variance of the energy under the Boltzmann distribution; for
+an empty one it is `0`. -/
 noncomputable def energyVariance {ι : Type*} [Fintype ι] (E : ι → ℝ) (β : ℝ) : ℝ :=
   ∑ i, boltzmannProb E β i * (E i - meanEnergy E β) ^ 2
 
-/-- The temperature `T = 1 / (kB * β)`: a definition, not a new constant, meaningful for
-`0 < kB` and `0 < β`. -/
+/-- The temperature `T = 1 / (kB * β)`: a definition, not a new constant, meaningful for `0 < kB`
+and `0 < β`. By the convention `x / 0 = 0`, `T = 0` when `kB * β = 0`. -/
 noncomputable def temperature (kB β : ℝ) : ℝ :=
   1 / (kB * β)
 
-/-- The Helmholtz free energy `A = -(log Z) / β`, which is `-kB T log Z` because `kB T = 1 / β`
-(`helmholtzFreeEnergy_eq_neg_mul_temperature_mul_log`). It does not depend on the Boltzmann
-constant, so it takes no `kB` argument. -/
+/-- The Helmholtz free energy `A = -(log Z) / β`. For `kB > 0` and `β > 0` it equals `-kB T log Z`,
+since then `kB T = 1 / β` (`helmholtzFreeEnergy_eq_neg_mul_temperature_mul_log`). It does not depend
+on the Boltzmann constant, so it takes no `kB` argument. By the conventions `x / 0 = 0` and
+`log 0 = 0`, `A = 0` at `β = 0` and for an empty state space. -/
 noncomputable def helmholtzFreeEnergy {ι : Type*} [Fintype ι] (E : ι → ℝ) (β : ℝ) : ℝ :=
   -(Real.log (partitionFunction E β)) / β
 
-/-- The entropy `S = kB * (log Z + β * U)`. -/
+/-- The entropy `S = kB * (log Z + β * U)`. It is defined for every finite state space: for an
+empty one, `Z = 0` and the convention `log 0 = 0` make it `0`. The intended domain is a nonempty
+state space, where `Z > 0`. -/
 noncomputable def entropy {ι : Type*} [Fintype ι] (kB : ℝ) (E : ι → ℝ) (β : ℝ) : ℝ :=
   kB * (Real.log (partitionFunction E β) + β * meanEnergy E β)
 
@@ -477,12 +487,12 @@ lemma energyVariance_nonneg {ι : Type*} [Fintype ι] (E : ι → ℝ) (β : ℝ
     0 ≤ energyVariance E β :=
   Finset.sum_nonneg fun i _ => mul_nonneg (boltzmannProb_nonneg E β i) (sq_nonneg _)
 
-/-- The heat capacity is nonnegative. -/
+/-- For `0 < kB` the heat capacity is nonnegative. -/
 lemma heatCapacity_nonneg {ι : Type*} [Fintype ι] {kB : ℝ} (hkB : 0 < kB) (E : ι → ℝ) (β : ℝ) :
     0 ≤ heatCapacity kB E β :=
   mul_nonneg (mul_nonneg hkB.le (sq_nonneg β)) (energyVariance_nonneg E β)
 
-/-- `Var(E) = ∑ i, p i * E i ^ 2 - U ^ 2`. -/
+/-- For a nonempty finite system, `Var(E) = ∑ i, p i * E i ^ 2 - U ^ 2`. -/
 lemma energyVariance_eq_sum_sub_meanEnergy_sq {ι : Type*} [Fintype ι] [Nonempty ι] (E : ι → ℝ)
     (β : ℝ) :
     energyVariance E β = ∑ i, boltzmannProb E β i * E i ^ 2 - meanEnergy E β ^ 2 := by
@@ -494,15 +504,15 @@ lemma energyVariance_eq_sum_sub_meanEnergy_sq {ι : Type*} [Fintype ι] [Nonempt
     Finset.sum_sub_distrib, ← Finset.mul_sum, ← Finset.mul_sum, hU, sum_boltzmannProb_eq_one]
   ring
 
-/-- `S = kB * H(p)`: the entropy is `kB` times the Shannon entropy of the Boltzmann
-distribution. -/
+/-- For a nonempty finite system, `S = kB * H(p)`: the entropy is `kB` times the Shannon entropy of
+the Boltzmann distribution. -/
 lemma entropy_eq_mul_shannonEntropy {ι : Type*} [Fintype ι] [Nonempty ι] (kB : ℝ) (E : ι → ℝ)
     (β : ℝ) : entropy kB E β = kB * shannonEntropy (boltzmannProb E β) := by
   rw [entropy, shannonEntropy, sum_mul_log_boltzmannProb E β (sum_boltzmannProb_eq_one E β),
     meanEnergy]
   ring
 
-/-- `A = U - S / (kB * β)`. -/
+/-- For `0 < kB` and `0 < β`, `A = U - S / (kB * β)`. -/
 lemma helmholtzFreeEnergy_eq_meanEnergy_sub_entropy_div {ι : Type*} [Fintype ι] {kB β : ℝ}
     (hkB : 0 < kB) (hβ : 0 < β) (E : ι → ℝ) :
     helmholtzFreeEnergy E β = meanEnergy E β - entropy kB E β / (kB * β) := by
@@ -512,18 +522,19 @@ lemma helmholtzFreeEnergy_eq_meanEnergy_sub_entropy_div {ι : Type*} [Fintype ι
   field_simp
   ring
 
-/-- The temperature is positive. -/
+/-- For `0 < kB` and `0 < β` the temperature is positive. -/
 lemma temperature_pos {kB β : ℝ} (hkB : 0 < kB) (hβ : 0 < β) : 0 < temperature kB β :=
   one_div_pos.mpr (mul_pos hkB hβ)
 
-/-- `A = U - T S` with `T = 1 / (kB * β)`. -/
+/-- For `0 < kB` and `0 < β`, `A = U - T S` with `T = 1 / (kB * β)`. -/
 lemma helmholtzFreeEnergy_eq_meanEnergy_sub_temperature_mul_entropy {ι : Type*} [Fintype ι]
     {kB β : ℝ} (hkB : 0 < kB) (hβ : 0 < β) (E : ι → ℝ) :
     helmholtzFreeEnergy E β = meanEnergy E β - temperature kB β * entropy kB E β := by
   rw [helmholtzFreeEnergy_eq_meanEnergy_sub_entropy_div hkB hβ, temperature]
   ring
 
-/-- `A = -kB T log Z`, the form of Physlib's `CanonicalEnsemble.helmholtzFreeEnergy`. -/
+/-- For `0 < kB` and `0 < β`, `A = -kB T log Z`, the form of Physlib's
+`CanonicalEnsemble.helmholtzFreeEnergy`. -/
 lemma helmholtzFreeEnergy_eq_neg_mul_temperature_mul_log {ι : Type*} [Fintype ι] {kB β : ℝ}
     (hkB : 0 < kB) (hβ : 0 < β) (E : ι → ℝ) :
     helmholtzFreeEnergy E β =
@@ -553,18 +564,18 @@ lemma meanEnergy_eq_div {ι : Type*} [Fintype ι] (E : ι → ℝ) (β : ℝ) :
   rw [meanEnergy, Finset.sum_div]
   exact Finset.sum_congr rfl fun i _ => by rw [boltzmannProb]; ring
 
-/-- `d(log Z)/dβ = -U`, as a `HasDerivAt` statement. -/
+/-- For a nonempty finite system, `d(log Z)/dβ = -U`, as a `HasDerivAt` statement. -/
 lemma hasDerivAt_log_partitionFunction {ι : Type*} [Fintype ι] [Nonempty ι] (E : ι → ℝ)
     (β : ℝ) : HasDerivAt (fun b => Real.log (partitionFunction E b)) (-meanEnergy E β) β := by
   rw [meanEnergy_eq_div, ← neg_div]
   exact (hasDerivAt_partitionFunction E β).log (partitionFunction_pos E β).ne'
 
-/-- `d(log Z)/dβ = -U`. -/
+/-- For a nonempty finite system, `d(log Z)/dβ = -U`. -/
 lemma deriv_log_partitionFunction {ι : Type*} [Fintype ι] [Nonempty ι] (E : ι → ℝ) (β : ℝ) :
     deriv (fun b => Real.log (partitionFunction E b)) β = -(meanEnergy E β) :=
   (hasDerivAt_log_partitionFunction E β).deriv
 
-/-- `dU/dβ = -Var(E)`, as a `HasDerivAt` statement. -/
+/-- For a nonempty finite system, `dU/dβ = -Var(E)`, as a `HasDerivAt` statement. -/
 lemma hasDerivAt_meanEnergy {ι : Type*} [Fintype ι] [Nonempty ι] (E : ι → ℝ) (β : ℝ) :
     HasDerivAt (fun b => meanEnergy E b) (-energyVariance E β) β := by
   have hN : HasDerivAt (fun b => ∑ i, E i * Real.exp (-b * E i))
@@ -588,7 +599,7 @@ lemma hasDerivAt_meanEnergy {ι : Type*} [Fintype ι] [Nonempty ι] (E : ι → 
   convert hN.div (hasDerivAt_partitionFunction E β) hZ using 1
   exact key _ _ _ hZ
 
-/-- `dU/dβ = -Var(E)`. -/
+/-- For a nonempty finite system, `dU/dβ = -Var(E)`. -/
 lemma deriv_meanEnergy {ι : Type*} [Fintype ι] [Nonempty ι] (E : ι → ℝ) (β : ℝ) :
     deriv (fun b => meanEnergy E b) β = -(energyVariance E β) :=
   (hasDerivAt_meanEnergy E β).deriv
@@ -600,7 +611,7 @@ theorem heatCapacity_eq_neg_mul_deriv_meanEnergy {ι : Type*} [Fintype ι] [None
   rw [deriv_meanEnergy, heatCapacity]
   ring
 
-/-- `C = Var(E) / (kB * T ^ 2)`, the form of Physlib's
+/-- For `0 < kB` and `0 < β`, `C = Var(E) / (kB * T ^ 2)`, the form of Physlib's
 `CanonicalEnsemble.fluctuation_dissipation_theorem_finite`. -/
 lemma heatCapacity_eq_energyVariance_div {ι : Type*} [Fintype ι] {kB β : ℝ} (hkB : 0 < kB)
     (hβ : 0 < β) (E : ι → ℝ) :
@@ -641,7 +652,7 @@ lemma boltzmannProb_combinedEnergy {ι κ : Type*} [Fintype ι] [Fintype κ] (E�
     Real.exp_add]
   exact mul_div_mul_comm _ _ _ _
 
-/-- The mean energy of independent subsystems is the sum of their mean energies. -/
+/-- The mean energy of two independent nonempty subsystems is the sum of their mean energies. -/
 lemma meanEnergy_combinedEnergy {ι κ : Type*} [Fintype ι] [Fintype κ] [Nonempty ι]
     [Nonempty κ] (E₁ : ι → ℝ) (E₂ : κ → ℝ) (β : ℝ) :
     meanEnergy (combinedEnergy E₁ E₂) β = meanEnergy E₁ β + meanEnergy E₂ β := by
@@ -809,9 +820,11 @@ lemma factorial_two_ne_stirling :
 -/
 
 /-- The canonical postulate as a predicate: `p` is canonical for the energies `E` at inverse
-temperature `β` if `p = boltzmannProb E β`. The postulate (equal a priori probabilities for a
-system and its reservoir) is a modelling assumption, not derived here; the predicate lets a
-result about canonical distributions take `IsCanonical p E β` as an explicit hypothesis. -/
+temperature `β` if `p = boltzmannProb E β`. On a nonempty finite state space these weights form the
+Boltzmann distribution; for an empty one the predicate holds trivially and the weights sum to `0`.
+The postulate (equal a priori probabilities for a system and its reservoir) is a modelling
+assumption, not derived here; the predicate lets a result about canonical distributions take
+`IsCanonical p E β` as an explicit hypothesis. -/
 def IsCanonical {ι : Type*} [Fintype ι] (p : ι → ℝ) (E : ι → ℝ) (β : ℝ) : Prop :=
   p = boltzmannProb E β
 

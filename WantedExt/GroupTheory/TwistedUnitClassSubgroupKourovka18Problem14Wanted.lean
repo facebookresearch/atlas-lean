@@ -36,29 +36,45 @@ for all such groups; commutativity for finitely generated ones); the resolving p
 separately.
 -/
 
-/-- The `φ`-twisted conjugacy class of the identity, `[e]_φ = {g⁻¹ φ(g) | g ∈ G}`. -/
+/-- **Twisted conjugacy class of the identity (Kourovka 18.14).** For a group $G$ and an
+automorphism $\varphi$ of $G$, the $\varphi$-twisted conjugacy class of the identity is the set
+$[e]_\varphi = \{g^{-1}\varphi(g) : g \in G\} \subseteq G$. -/
 def twistedUnitClass {G : Type} [Group G] (φ : G ≃* G) : Set G :=
   Set.range fun g : G => g⁻¹ * φ g
 
-/-- Every set `[e]_φ`, `φ ∈ Aut G`, is a subgroup of `G`. -/
+/-- **Groups whose twisted classes of the identity are all subgroups.** A group $G$ has this
+property when, for every automorphism $\varphi$ of $G$, the twisted conjugacy class of the
+identity $[e]_\varphi = \{g^{-1}\varphi(g) : g \in G\}$ is a subgroup of $G$. -/
 def AllTwistedUnitClassesSubgroups (G : Type) [Group G] : Prop :=
   ∀ φ : G ≃* G, ∃ H : Subgroup G, (H : Set G) = twistedUnitClass φ
 
-/-- Kourovka 18.14 (V. G. Bardakov, M. V. Neshchadim, T. R. Nasybullov), first assertion of the
-conjecture: a group `G` in which `[e]_φ` is a subgroup for every automorphism `φ` is nilpotent. -/
+/-- **Kourovka Problem 18.14, nilpotency assertion.** Every group $G$ in which, for every
+automorphism $\varphi$ of $G$, the twisted conjugacy class of the identity
+$[e]_\varphi = \{g^{-1}\varphi(g) : g \in G\}$ is a subgroup of $G$, is nilpotent.
+
+This is the first assertion of the conjecture of V. G. Bardakov, M. V. Neshchadim and
+T. R. Nasybullov. -/
 def twistedUnitClassesSubgroupsImpliesNilpotent : Prop :=
   ∀ (G : Type) [Group G], AllTwistedUnitClassesSubgroups G → Group.IsNilpotent G
 
-/-- Kourovka 18.14, second assertion of the conjecture: a finitely generated group `G` in which
-`[e]_φ` is a subgroup for every automorphism `φ` is abelian. -/
+/-- **Kourovka Problem 18.14, abelian assertion for finitely generated groups.** Every finitely
+generated group $G$ in which, for every automorphism $\varphi$ of $G$, the twisted conjugacy class
+of the identity $[e]_\varphi = \{g^{-1}\varphi(g) : g \in G\}$ is a subgroup of $G$, is abelian.
+
+This is the second assertion of the conjecture of Kourovka Problem 18.14. -/
 def twistedUnitClassesSubgroupsFGImpliesAbelian : Prop :=
   ∀ (G : Type) [Group G], Group.FG G → AllTwistedUnitClassesSubgroups G →
     ∀ x y : G, x * y = y * x
 
 /--
-Resolved false: Nicotera's Corollary 3.1 gives an infinite non-nilpotent group `G` in which `[e]_φ`
-is a subgroup for every automorphism `φ` (a restricted direct product of the finite groups of
-Theorem 1.2 for pairwise distinct primes), so the first assertion of Conjecture 18.14 fails. Source:
+**Negative answer to the nilpotency assertion of Kourovka Problem 18.14.** There is a group $G$
+that is not nilpotent although, for every automorphism $\varphi$ of $G$, the twisted conjugacy
+class of the identity $[e]_\varphi = \{g^{-1}\varphi(g) : g \in G\}$ is a subgroup of $G$.
+
+Nicotera's Corollary 3.1 gives such an infinite group, a restricted direct product of the finite
+groups of Theorem 1.2 for pairwise distinct primes.
+
+Source:
 E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook,
 21st issue, arXiv:1401.0300v49 (2026), Problem 18.14 (V. G. Bardakov, M. V. Neshchadim, T. R.
 Nasybullov); resolution: C. Nicotera, On finite groups in which the twisted conjugacy classes of the
@@ -71,10 +87,15 @@ public theorem_wanted twistedUnitClassesSubgroupsImpliesNilpotent_refuted :
     ¬ twistedUnitClassesSubgroupsImpliesNilpotent
 
 /--
-Resolved false: Nicotera's Theorem 1.2 gives, for every `n` and every odd prime `p`, a finite (hence
-finitely generated) `p`-group of nilpotency class `n` in which `[e]_φ` is a subgroup for every
-automorphism `φ`; for `n ≥ 2` it is not abelian, so the second assertion fails (as do finite
-non-abelian `p`-groups all of whose automorphisms are central, which Nicotera also cites). Source:
+**Negative answer to the abelian assertion of Kourovka Problem 18.14.** There is a finitely
+generated group $G$ that is not abelian although, for every automorphism $\varphi$ of $G$, the
+twisted conjugacy class of the identity $[e]_\varphi = \{g^{-1}\varphi(g) : g \in G\}$ is a
+subgroup of $G$.
+
+Nicotera's Theorem 1.2 gives, for every $n$ and every odd prime $p$, a finite $p$-group of
+nilpotency class $n$ with this property; for $n \ge 2$ it is not abelian.
+
+Source:
 E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook,
 21st issue, arXiv:1401.0300v49 (2026), Problem 18.14 (V. G. Bardakov, M. V. Neshchadim, T. R.
 Nasybullov); resolution: C. Nicotera, On finite groups in which the twisted conjugacy classes of the

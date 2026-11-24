@@ -114,8 +114,8 @@ theorem le_of_isViscositySubsolution_of_isViscositySupersolution {Ω : Set E} (h
   -- maximise the doubled functional on `K × K`
   set Φ : E × E → ℝ := fun q => u q.1 - v q.2 - α / 2 * ‖q.1 - q.2‖ ^ 2 with hΦ
   have hΦc : ContinuousOn Φ (K ×ˢ K) := by
-    refine ((hu.comp continuousOn_fst fun q hq => hq.1).sub
-      (hv.comp continuousOn_snd fun q hq => hq.2)).sub ?_
+    refine ((hu.comp continuousOn_fst fun q (hq : q ∈ K ×ˢ K) => hq.1).sub
+      (hv.comp continuousOn_snd fun q (hq : q ∈ K ×ˢ K) => hq.2)).sub ?_
     exact (continuous_const.mul ((continuous_fst.sub continuous_snd).norm.pow 2)).continuousOn
   obtain ⟨q, hqK, hqmax⟩ := (hK.prod hK).exists_isMaxOn ⟨(z, z), hzK, hzK⟩ hΦc
   set x := q.1 with hx
@@ -268,8 +268,8 @@ theorem le_of_isViscositySubsolution_of_isViscositySupersolution_of_proper {Ω :
   -- maximisers of the doubled functional for every penalisation
   set Φ : ℝ → E × E → ℝ := fun α q => u q.1 - v q.2 - α / 2 * ‖q.1 - q.2‖ ^ 2 with hΦ
   have hΦc : ∀ α, ContinuousOn (Φ α) (K ×ˢ K) := fun α =>
-    ((hu.comp continuousOn_fst fun q hq => hq.1).sub
-      (hv.comp continuousOn_snd fun q hq => hq.2)).sub
+    ((hu.comp continuousOn_fst fun q (hq : q ∈ K ×ˢ K) => hq.1).sub
+      (hv.comp continuousOn_snd fun q (hq : q ∈ K ×ˢ K) => hq.2)).sub
       (continuous_const.mul ((continuous_fst.sub continuous_snd).norm.pow 2)).continuousOn
   have hex : ∀ α, ∃ q ∈ K ×ˢ K, IsMaxOn (Φ α) (K ×ˢ K) q := fun α =>
     (hK.prod hK).exists_isMaxOn ⟨(z, z), hzK, hzK⟩ (hΦc α)

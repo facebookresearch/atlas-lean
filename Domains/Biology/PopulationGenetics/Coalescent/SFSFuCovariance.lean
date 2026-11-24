@@ -188,8 +188,9 @@ end DoubleCounting
 /-! ### Clade weights and the time-weighted block counts of random joining -/
 
 /-- The weight `2 / (m · C(k, m))` of a set of `m` of `k` blocks (`0` unless `1 ≤ m < k`): the
-expected total time, in units of `E T`, during which a given set of `m` of `k` lineages forms
-exactly one block of Kingman's coalescent (from level `k` down, level `k` included). -/
+expected total time during which a given set of `m` of `k` lineages forms exactly one block of
+Kingman's coalescent (from level `k` down, level `k` included), when the holding time while `l`
+lineages remain has mean `1 / C(l, 2)`. -/
 noncomputable def cladeWeight (k m : ℕ) : ℝ :=
   if 1 ≤ m ∧ m < k then 2 / ((m : ℝ) * (k.choose m : ℝ)) else 0
 
@@ -258,8 +259,9 @@ theorem cladeWeight_succ (k m : ℕ) (hm : m ≤ k + 2) :
     ring
 
 
-/-- The clade statistic of a multiset `B` of `k` block sizes: the sum over all sub-multisets `s`
-(with multiplicity) of `cladeWeight k |s| · φ(Σ s)`. -/
+/-- The clade statistic of a multiset `B` of block sizes: the sum over all sub-multisets `s`
+(with multiplicity) of `cladeWeight k |s| · φ(Σ s)`. It is defined for every `k`; in use, `B` has
+`k` elements. -/
 noncomputable def cladeStat (k : ℕ) (φ : ℕ → ℝ) (B : Multiset ℕ) : ℝ :=
   (B.powerset.map fun s => cladeWeight k s.card * φ s.sum).sum
 
@@ -435,7 +437,8 @@ theorem sum_comps_powersetCard_zero (H K : Multiset ℕ → ℝ) (k N : ℕ) :
 /-- **Splitting a uniform composition along a sub-multiset of its parts.** Summing a product
 statistic `H(s) K(B \ s)` over the `m`-element sub-multisets `s` of the parts `B` of every
 composition of `N` into `k` parts gives `C(k, m)` times the convolution of the sums of `H` over
-compositions into `m` parts and of `K` over compositions into `k - m` parts. -/
+compositions into `m` parts and of `K` over compositions into `k - m` parts. When `m > k` both
+sides are `0`. -/
 theorem sum_comps_powersetCard (H K : Multiset ℕ → ℝ) (k N m : ℕ) :
     ∑ c ∈ comps N k, ((Multiset.powersetCard m (List.ofFn c : Multiset ℕ)).map
         fun s => H s * K ((List.ofFn c : Multiset ℕ) - s)).sum =
@@ -546,7 +549,7 @@ theorem count_coe_ofFn {k : ℕ} (c : Fin k → ℕ) (i : ℕ) :
 noncomputable def sizeInd (j : ℕ) (x : ℕ) : ℝ := if x = j then 1 else 0
 
 /-- **The per-level moment of the clade statistic over uniform compositions**, as a sum over the
-size `m` of the sub-multiset. -/
+size `m` of the sub-multiset, for `1 ≤ i` and `j ≤ n`. -/
 theorem sum_comps_count_mul_cladeStat (n k i j : ℕ) (hi : 1 ≤ i) (hjn : j ≤ n) :
     ∑ c ∈ comps n k, ((List.ofFn c).count i : ℝ) * cladeStat k (sizeInd j) (List.ofFn c) =
       ∑ m ∈ range (k + 1), cladeWeight k m * (k.choose m : ℝ) *
@@ -639,13 +642,19 @@ theorem count_eq_sum_sizeInd (j : ℕ) (y : List ℕ) :
     · subst h; simp; ring
     · simp [h]
 
-/-- The `T̄`-weighted moment at level `k`: `∑_{l=2}^{k} T̄_l E[c_{k,i} c_{l,j}]`. -/
+/-- The `T̄`-weighted moment at level `k`: `∑_{l=2}^{k} T̄_l E[c_{k,i} c_{l,j}]`, with
+`T̄_l = 1 / C(l, 2)`, for `2 ≤ k ≤ n`. For `k > n` the truncated subtraction `n - k = 0` gives
+`count i (replicate n 1) · ∑_{l=2}^{k} T̄_l (joinStep^[n - l] (count j)) (replicate n 1)`
+instead. For `k ≤ 1` the sum over `2 ≤ l ≤ k` is empty and the value is `0` for all `n`, `i`
+and `j`. -/
 noncomputable def levelMoment (n k i j : ℕ) : ℝ :=
   ∑ l ∈ Icc 2 k, ((l.choose 2 : ℕ) : ℝ)⁻¹ *
     joinPair (n - k) (n - l) (fun b => (b.count i : ℝ)) (fun b => (b.count j : ℝ))
       (List.replicate n 1)
 
-/-- The level moment as an average over uniform compositions of the clade statistic. -/
+/-- The level moment as an average over uniform compositions of the clade statistic: for
+`2 ≤ k ≤ n`, `levelMoment n k i j · C(n - 1, k - 1)` is the sum over the compositions `c` of `n`
+into `k` parts of `count i c · cladeStat k (sizeInd j) c`. -/
 theorem levelMoment_eq (n k i j : ℕ) (hk : 2 ≤ k) (hkn : k ≤ n) :
     levelMoment n k i j * ((n - 1).choose (k - 1) : ℝ) =
       ∑ c ∈ comps n k, ((List.ofFn c).count i : ℝ) * cladeStat k (sizeInd j) (List.ofFn c) := by
@@ -700,7 +709,9 @@ private theorem blockCountMoment_of_le {n k l i j : ℕ} (h : k ≤ l) :
     exact congrFun (congrArg (fun F => joinStep^[n - l] F) (funext fun y => mul_comm _ _)) _
   · rfl
 
-/-- **`fuTopologyCov` through level moments.** -/
+/-- **`fuTopologyCov` through level moments.** For `1 ≤ i < n` and `1 ≤ j < n`,
+`fuTopologyCov n i j = S i j + S j i - (2 / i) (2 / j)`, where
+`S i j = ∑_{k=2}^{n} C(k, 2)⁻¹ levelMoment n k i j`. -/
 theorem fuTopologyCov_eq_levelMoment {n i j : ℕ} (hi : 1 ≤ i) (hin : i < n) (hj : 1 ≤ j)
     (hjn : j < n) :
     fuTopologyCov n i j =
@@ -736,7 +747,7 @@ theorem fuTopologyCov_eq_levelMoment {n i j : ℕ} (hi : 1 ≤ i) (hin : i < n) 
 
 /-! ### Harmonic sums of binomial ratios -/
 
-/-- The harmonic number `H_m = ∑_{k=1}^{m} 1/k`. -/
+/-- The harmonic number `H_m = ∑_{k=1}^{m} 1/k` (so `H_0 = 0`). -/
 noncomputable def harm (m : ℕ) : ℝ := ∑ k ∈ Icc 1 m, (k : ℝ)⁻¹
 
 theorem harm_succ (m : ℕ) : harm (m + 1) = harm m + ((m : ℝ) + 1)⁻¹ := by
@@ -793,7 +804,8 @@ theorem sum_Icc_two_choose_sub_div_pred {n : ℕ} (hn : 1 ≤ n) (r : ℕ) :
   · rw [show n - 1 - (k - 1) = n - k by omega, Nat.cast_sub (by omega : 1 ≤ k)]
     simp
 
-/-- `C(n-i-1, k-2) (n-1) C(n-2, i-1) = (k-1) C(n-k, i-1) C(n-1, k-1)`. -/
+/-- `C(n-i-1, k-2) (n-1) C(n-2, i-1) = (k-1) C(n-k, i-1) C(n-1, k-1)` for `2 ≤ k ≤ n` and
+`1 ≤ i < n`, with `C(a, b) = 0` for `b > a` (both sides vanish when `k + i > n + 1`). -/
 theorem choose_mul_choose_eq_conv {n k i : ℕ} (hk : 2 ≤ k) (hkn : k ≤ n) (hi : 1 ≤ i)
     (hin : i < n) :
     (n - i - 1).choose (k - 2) * ((n - 1) * (n - 2).choose (i - 1)) =
@@ -819,7 +831,8 @@ theorem choose_mul_choose_eq_conv {n k i : ℕ} (hk : 2 ≤ k) (hkn : k ≤ n) (
     _ = (a + 1) * ((b + c).choose b * (a + b + c + 1).choose (a + 1)) := by
         rw [← mul_assoc, h2]; ring
 
-/-- `C(j, k-1) C(n-1, i-1) = C(n-k, i-1) C(n-1, k-1)` when `i + j = n`. -/
+/-- `C(j, k-1) C(n-1, i-1) = C(n-k, i-1) C(n-1, k-1)` when `i + j = n`, for `2 ≤ k ≤ n` and
+`1 ≤ i`, with `C(a, b) = 0` for `b > a` (both sides vanish when `k - 1 > j`). -/
 theorem choose_mul_choose_eq_conv' {n k i j : ℕ} (hk : 2 ≤ k) (hkn : k ≤ n) (hi : 1 ≤ i)
     (hij : i + j = n) :
     j.choose (k - 1) * (n - 1).choose (i - 1) =
@@ -833,7 +846,9 @@ theorem choose_mul_choose_eq_conv' {n k i j : ℕ} (hk : 2 ≤ k) (hkn : k ≤ n
     Nat.choose_symm_of_eq_add (show n - 1 = j + (i - 1) by omega)] at h1
   rw [mul_comm, h1, mul_comm]
 
-/-- **The first harmonic sum**: `∑_{k=2}^{n} C(n-i-1, k-2) / (C(n-1, k-1) C(k, 2)) = β_n(i)`. -/
+/-- **The first harmonic sum**: `∑_{k=2}^{n} C(n-i-1, k-2) / (C(n-1, k-1) C(k, 2)) = β_n(i)`
+for `1 ≤ i < n`. The denominators are positive, and with `C(a, b) = 0` for `b > a` the terms
+with `k > n - i + 1` vanish. -/
 theorem sum_choose_div_choose_mul_inv_choose_two {n i : ℕ} (hi : 1 ≤ i) (hin : i < n) :
     ∑ k ∈ Icc 2 n, ((k.choose 2 : ℕ) : ℝ)⁻¹ * ((n - i - 1).choose (k - 2) : ℝ) /
       ((n - 1).choose (k - 1) : ℝ) = fuBeta n i := by
@@ -890,9 +905,10 @@ theorem sum_choose_div_choose_mul_inv_choose_two {n i : ℕ} (hi : 1 ≤ i) (hin
   rw [hcn]
   field_simp
 
-/-- **The second harmonic sum** (`i + j = n`):
-`∑_{k=2}^{n} C(j, k-1) / (C(n-1, k-1) C(k, 2)) 
-= 2 (H_{n-1} - H_{i-1}) - 2 n / (n-i+1) (H_n - H_{i-1}) + 2`. -/
+/-- **The second harmonic sum** (`1 ≤ i`, `1 ≤ j`, `i + j = n`):
+`∑_{k=2}^{n} C(j, k-1) / (C(n-1, k-1) C(k, 2))` equals
+`2 (H_{n-1} - H_{i-1}) - 2 n / (n-i+1) (H_n - H_{i-1}) + 2`. The denominators are positive;
+with `C(a, b) = 0` for `b > a` the terms with `k > j + 1` vanish. -/
 theorem sum_choose_div_choose_mul_inv_choose_two' {n i j : ℕ} (hi : 1 ≤ i) (hj : 1 ≤ j)
     (hij : i + j = n) :
     ∑ k ∈ Icc 2 n, ((k.choose 2 : ℕ) : ℝ)⁻¹ * (j.choose (k - 1) : ℝ) /
@@ -963,7 +979,9 @@ theorem sum_cladeWeight_mul_choose (k : ℕ) (F : ℕ → ℝ) :
     rw [cladeWeight_of h1 h2]
     field_simp
 
-/-- The `m`-sum for blocks nested in the size-`j` set. -/
+/-- The `m`-sum for blocks nested in the size-`j` set (for `2 ≤ k` and `j < n`, with no bound
+`k ≤ n` and `C(a, b) = 0` for `b > a`). The identity is algebraic and holds for every `i`; it
+counts a part of size `i` inside the clade only for `i ≥ 1`, since no part has size `0`. -/
 theorem sum_nested {n k i j : ℕ} (hk : 2 ≤ k) (hjn : j < n) :
     ∑ m ∈ Ico 1 k, (if i ≤ j then ((comps (j - i) (m - 1)).card : ℝ) else 0) *
         ((comps (n - j) (k - m)).card : ℝ) =
@@ -1001,7 +1019,11 @@ theorem sum_nested {n k i j : ℕ} (hk : 2 ≤ k) (hjn : j < n) :
   · simp only [show ¬ i ≤ j by omega, ↓reduceIte, zero_mul, sum_const_zero,
       show ¬ i < j by omega, show i ≠ j by omega, add_zero]
 
-/-- The `m`-sum for blocks disjoint from the size-`j` set. -/
+/-- The `m`-sum for blocks disjoint from the size-`j` set (for `2 ≤ k` and `1 ≤ j < n`, with no
+bound `k ≤ n` and `C(a, b) = 0` for `b > a`). The real differences of binomial terms can be
+negative: `2 C(n-i-1, k-2) - k C(n-i-j-1, k-2) = -5` at `(n, k, i, j) = (10, 3, 1, 1)`.
+The identity is algebraic and holds for every `i`; it counts a part of size `i` outside the clade
+only for `i ≥ 1`, since no part has size `0`. -/
 theorem sum_disjoint {n k i j : ℕ} (hk : 2 ≤ k) (hj : 1 ≤ j) (hjn : j < n) :
     ∑ m ∈ Ico 1 k, 1 / (m : ℝ) * ((comps j m).card : ℝ) * ((k - m : ℕ) *
         (if i ≤ n - j then ((comps (n - j - i) (k - m - 1)).card : ℝ) else 0)) =
@@ -1124,7 +1146,9 @@ theorem sum_disjoint {n k i j : ℕ} (hk : 2 ≤ k) (hj : 1 ≤ j) (hjn : j < n)
 
 /-! ### The level moments in closed form -/
 
-/-- Coefficients of the four binomial-ratio sums in the level moment. -/
+/-- The first of the coefficients of the four binomial-ratio sums in the level moment (that of
+`β_n(i)` in `fuHalfCov`). With `x / 0 = 0` its last term is `0` when `j = 0`; meaningful for
+`1 ≤ i, j ≤ n - 1`. -/
 noncomputable def coefA (n i j : ℕ) : ℝ :=
   (if i < j then 1 else 0) + (if i = j then 1 else 0) +
     (if i + j < n then (((n - i - j - 1 : ℕ) : ℝ) + 2) / j else 0)
@@ -1165,7 +1189,9 @@ theorem levelMoment_closed {n k i j : ℕ} (hk : 2 ≤ k) (hkn : k ≤ n) (hi : 
   have hj0 : (j : ℝ) ≠ 0 := by positivity
   split_ifs <;> first | omega | (field_simp; ring)
 
-/-- The closed form of `∑_k T̄_k E[c_{k,i} R̃_j]` (Fu's covariance before symmetrization). -/
+/-- The closed form of `∑_k T̄_k E[c_{k,i} R̃_j]` (Fu's covariance before symmetrization), for
+`1 ≤ i, j ≤ n - 1`. Defined for all `n i j`, with `x / 0 = 0` (at `j = 0` only the `coefA` term
+can be nonzero) and truncated `n - 1`, `i - 1`. -/
 noncomputable def fuHalfCov (n i j : ℕ) : ℝ :=
   2 * (coefA n i j * fuBeta n i +
     coefB n i j * (if i + 1 < n then fuBeta n (i + 1) else 0) +
@@ -1222,7 +1248,8 @@ theorem tajimaA1_succ_of_pos {i : ℕ} (hi : 1 ≤ i) : tajimaA1 (i + 1) = tajim
 theorem tajimaA1_eq_harm {m : ℕ} (hm : 1 ≤ m) : tajimaA1 m = harm (m - 1) := by
   rw [← tajimaA1_succ_eq_harm, Nat.sub_add_cancel hm]
 
-/-- Fu's `β` satisfies `(n - i + 1) β_n(i) - (n - i - 1) β_n(i + 1) = 2 / i`. -/
+/-- Fu's `β` satisfies `(n - i + 1) β_n(i) - (n - i - 1) β_n(i + 1) = 2 / i` for `1 ≤ i` and
+`i + 1 < n`. -/
 theorem fuBeta_rec {n i : ℕ} (hi : 1 ≤ i) (hin : i + 1 < n) :
     ((n : ℝ) - i + 1) * fuBeta n i - ((n : ℝ) - i - 1) * fuBeta n (i + 1) = 2 / i := by
   rw [fuBeta, fuBeta, tajimaA1_succ_of_pos hi]
@@ -1243,7 +1270,8 @@ private theorem cast_sub_sub_sub {n i j : ℕ} (h : i + j < n) :
     Nat.cast_sub (show i ≤ n by omega)]
   simp
 
-/-- **Fu's closed form from the half covariances**, for `1 ≤ i ≤ j < n`. -/
+/-- **Fu's closed form from the half covariances**, for `1 ≤ i ≤ j < n`:
+`fuHalfCov n i j + fuHalfCov n j i - (2 / i) (2 / j) = 4 σ_{ij}`. -/
 theorem fuHalfCov_add_fuHalfCov {n i j : ℕ} (hi : 1 ≤ i) (hij : i ≤ j) (hjn : j < n) :
     fuHalfCov n i j + fuHalfCov n j i - 2 / i * (2 / j) = 4 * fuSigma n i j := by
   have hiR : (0 : ℝ) < i := by exact_mod_cast hi
@@ -1345,9 +1373,11 @@ section Kingman
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω} [IsProbabilityMeasure μ] {n : ℕ}
   {K : KingmanTimes μ n} {τ : Ω → List (List ℕ)}
 
-/-- **`hσ` (Fu 1995)**: under Kingman's coalescent (holding times `K.T`) with an independent
-block-size history `τ` with the random-joining law, `Cov(L_i, L_j) = 4 σ_{ij}` for
-`1 ≤ i, j ≤ n - 1`. This is the hypothesis `hσ` of the theorems of `SFSFuClosedForm`. -/
+/-- **`hσ` (Fu 1995)**: under a probability measure `μ`, with Kingman holding times `K.T` and a
+block-size history `τ` measurable for the discrete σ-algebra, with the random-joining law from
+`n` singletons and independent of the family `K.T`, `Cov(L_i, L_j) = 4 σ_{ij}` for
+`1 ≤ i, j ≤ n - 1`, with `L_i = sfsLength n i τ K.T` (an absent entry `n - k` of `τ`
+contributes zero blocks). This is the hypothesis `hσ` of the theorems of `SFSFuClosedForm`. -/
 theorem covariance_sfsLength_eq_four_mul_fuSigma
     (hτ : MeasurableSpace.comap τ ⊤ ≤ mΩ)
     (hτ_law : ∀ ps, μ.real (τ ⁻¹' {ps}) = randomJoining (n - 1) (List.replicate n 1) ps)
@@ -1359,8 +1389,12 @@ theorem covariance_sfsLength_eq_four_mul_fuSigma
   covariance_sfsLength_eq_four_mul_fuSigma_of_fuTopologyCov hτ hτ_law h_indep
     (fuTopologyCov_eq_four_mul_fuSigma n)
 
-/-- **Variance of a linear combination of branch lengths** (Fu 1995):
-`Var(∑_i c_i L_i) = 4 ∑_{i,j} c_i c_j σ_{ij}`. -/
+/-- **Variance of a linear combination of branch lengths** (Fu 1995): under the hypotheses of
+`covariance_sfsLength_eq_four_mul_fuSigma` (a probability measure, a measurable random-joining
+history from `n` singletons independent of the holding times), for real `c`,
+`Var(∑_{i=1}^{n-1} c_i L_i) = 4 ∑_{i,j} c_i c_j σ_{ij}`. In `L_i` an absent entry `n - k` of `τ`
+contributes zero blocks. Random joining takes `n - 1` steps, truncated: none for `n = 0`, when
+`τ = [[]]` almost surely. For `n ≤ 1` the sums are empty and both sides are `0`. -/
 theorem variance_sum_sfsLength_eq_fuSigma
     (hτ : MeasurableSpace.comap τ ⊤ ≤ mΩ)
     (hτ_law : ∀ ps, μ.real (τ ⁻¹' {ps}) = randomJoining (n - 1) (List.replicate n 1) ps)
@@ -1374,8 +1408,11 @@ theorem variance_sum_sfsLength_eq_fuSigma
 variable {θ : ℝ} {ξ : ℕ → Ω → ℝ}
 
 /-- **Fu's covariance of the site frequency spectrum** (Fu 1995), for every sample size:
-under Kingman's coalescent with an independent random-joining topology and the infinite-sites
-mutation model, `Cov(ξ_i, ξ_j) = δ_{ij} θ / i + σ_{ij} θ²` for `1 ≤ i, j ≤ n - 1`. -/
+under Kingman's coalescent (measurable holding times) with an independent random-joining
+topology, and counts `ξ` whose first two conditional moments given the genealogy are those of
+independent Poisson counts with means `(θ / 2) L_i`, with square integrability
+(`SFSCondMoments`), `Cov(ξ_i, ξ_j) = δ_{ij} θ / i + σ_{ij} θ²` for `1 ≤ i, j ≤ n - 1`. Here
+`L_i = sfsLength n i τ K.T`, where an absent entry `n - k` of `τ` contributes zero blocks. -/
 theorem covariance_count_kingman_eq_fuSigma (hT : ∀ k, Measurable (K.T k))
     (hτ : MeasurableSpace.comap τ ⊤ ≤ mΩ)
     (hτ_law : ∀ ps, μ.real (τ ⁻¹' {ps}) = randomJoining (n - 1) (List.replicate n 1) ps)
@@ -1389,8 +1426,12 @@ theorem covariance_count_kingman_eq_fuSigma (hT : ∀ k, Measurable (K.T k))
   covariance_count_kingman_of_fuSigma hT hτ hτ_law h_indep h
     (covariance_sfsLength_eq_four_mul_fuSigma hτ hτ_law h_indep) hi hj
 
-/-- **Variance of a linear SFS statistic** (Fu 1995), for every sample size:
-`Var(∑_i a_i ξ_i) = θ ∑_i a_i² / i + θ² ∑_{i,j} a_i a_j σ_{ij}`. -/
+/-- **Variance of a linear SFS statistic** (Fu 1995), for every sample size: under the
+hypotheses of `covariance_count_kingman_eq_fuSigma`, for real `a`,
+`Var(∑_{i=1}^{n-1} a_i ξ_i) = θ ∑_i a_i² / i + θ² ∑_{i,j} a_i a_j σ_{ij}`. In `L_i` an absent
+entry `n - k` of `τ` contributes zero blocks. Random joining takes `n - 1` steps, truncated:
+none for `n = 0`, when `τ = [[]]` almost surely. For `n ≤ 1` the sums are empty and both sides
+are `0`. -/
 theorem variance_sum_kingman_eq_fuSigma (hT : ∀ k, Measurable (K.T k))
     (hτ : MeasurableSpace.comap τ ⊤ ≤ mΩ)
     (hτ_law : ∀ ps, μ.real (τ ⁻¹' {ps}) = randomJoining (n - 1) (List.replicate n 1) ps)

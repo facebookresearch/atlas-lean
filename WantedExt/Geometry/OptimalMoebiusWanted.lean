@@ -57,36 +57,41 @@ open Topology ContDiff
 local notation "ℝ²" => EuclideanSpace ℝ (Fin 2)
 local notation "ℝ³" => EuclideanSpace ℝ (Fin 3)
 
-/-- The set of points `(x, y) ∈ ℝ²` with `0 ≤ x ≤ 1`. -/
+/-- **Unit strip.** The unit strip is the set of points $(x, y) \in \mathbb{R}^2$ with
+$0 \le x \le 1$, that is, $[0, 1] \times \mathbb{R}$. -/
 abbrev unitStrip : Set ℝ² :=
   {x | x 0 ∈ Set.Icc 0 1}
 
-/-- The map `(x, y) ↦ (1 - x, y + a)`. -/
+/-- **Gluing map of the Moebius band.** For a real number $a$, this is the map
+$\mathbb{R}^2 \to \mathbb{R}^2$ given by $(x, y) \mapsto (1 - x, y + a)$. -/
 def period (a : ℝ) : ℝ² → ℝ² :=
   fun x ↦ !₂[1 - x 0, x 1 + a]
 
-/-- The set of points `(x, y) ∈ ℝ²` with `0 ≤ x ≤ 1` and `0 ≤ y < a`. -/
+/-- **Fundamental domain of the Moebius band.** For a real number $a$, this is the set of points
+$(x, y) \in \mathbb{R}^2$ with $0 \le x \le 1$ and $0 \le y < a$. -/
 def fundamentalDomain (a : ℝ) : Set ℝ² :=
   {x | x 0 ∈ Set.Icc 0 1 ∧ x 1 ∈ Set.Ico 0 a}
 
-/-- A Moebius embedding is defined in the paper to be a smooth isometric embedding.
+/-- **Moebius embedding.** Let $a$ be a real number, let $S = [0, 1] \times \mathbb{R}$ be the
+unit strip and let $f : \mathbb{R}^2 \to \mathbb{R}^3$. Then $f$ is a Moebius embedding of
+aspect ratio $a$ if $f(1 - x, y + a) = f(x, y)$ for every $(x, y) \in S$, $f$ is $C^\infty$ on
+$S$, at every point of $S$ the derivative of $f$ within $S$ is a linear isometry
+$\mathbb{R}^2 \to \mathbb{R}^3$, and $f$ is injective on $[0, 1] \times [0, a)$.
 
-We use a function `f` defined on all of `ℝ²`, but only impose conditions on `f` on the unit strip
-`[0, 1] × ℝ`. We glue the strip into a Moebius band by imposing `f(1 - x, y + a) = f(x, y)`.
-
-We require the map to be an embedding by requiring injectivity of `f` on a fundamental domain.
-We require the embedding to be isometric by requiring the derivative of `f` to be an isometry.
--/
+This encodes the paper's smooth isometric embedding of a Moebius band: the strip is glued into
+a band by the first condition, and injectivity on a fundamental domain makes the glued map an
+embedding. -/
 structure IsMoebiusEmbedding (a : ℝ) (f : ℝ² → ℝ³) : Prop where
   periodic : ∀ x ∈ unitStrip, f (period a x) = f x
   smooth : ContDiffOn ℝ ∞ f unitStrip
   isometry : ∀ x ∈ unitStrip, Isometry (fderivWithin ℝ f unitStrip x)
   embedding : Set.InjOn f (fundamentalDomain a)
 
-/--
-Statement of Theorem 1.1 (Main):
+/-- **Schwartz's optimal paper Moebius band theorem.** Let $a > 0$. If
+$f : \mathbb{R}^2 \to \mathbb{R}^3$ is a Moebius embedding of aspect ratio $a$, then
+$a > \sqrt{3}$. That is, a smooth embedded paper Moebius band has aspect ratio greater
+than $\sqrt{3}$.
 
-A smooth embedded paper Moebius band has aspect ratio greater than `√3`.
 Source: R. E. Schwartz, `The optimal paper Moebius band`, Annals of Math, 201 (1) 2025. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2025-201-1-OptimalMoebius.lean Via leanprover/lean-eval@38361be, problem `annals_optimal_moebius`.
 -/
 public theorem_wanted theorem_1_1 (a : ℝ) (ha : a > 0) (f : ℝ² → ℝ³) (hf : IsMoebiusEmbedding a f) :

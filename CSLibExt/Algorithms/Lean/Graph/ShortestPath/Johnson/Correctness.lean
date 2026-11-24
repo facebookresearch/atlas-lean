@@ -146,7 +146,10 @@ private lemma runRow_spec {n : Nat} (edges : List (Edge n))
             prepared.weight source target distance other_distance distance_eq other_prepared
           omega
 
-/-- Johnson reports failure exactly when an original source can reach a negative cycle. -/
+/-- **Johnson's algorithm fails exactly on reachable negative cycles.** For every list $E$ of
+directed edges on the vertices $\{0, \dots, n-1\}$ with integer weights, Johnson's algorithm on
+$E$ returns no table if and only if there is a vertex $s$ from which a negative cycle of $E$ is
+reachable. -/
 public theorem johnson_eq_none_iff {n : Nat} (edges : List (Edge n)) :
     (johnson edges).ret = none ↔ ∃ source : Fin n, HasReachableNegativeCycle edges source := by
   rw [← fresh_negativeCycle_iff]
@@ -159,7 +162,12 @@ public theorem johnson_eq_none_iff {n : Nat} (edges : List (Edge n)) :
       have cycle : HasReachableNegativeCycle (augment edges).ret (Fin.last n) := ⟨witness⟩
       simp [johnson, run_eq, cycle]
 
-/-- Every returned Johnson cell has the canonical infinity, realization and minimum semantics. -/
+/-- **Correctness of Johnson's algorithm.** Let $E$ be a list of directed edges on the vertices
+$\{0, \dots, n-1\}$ with integer weights, and suppose Johnson's algorithm on $E$ returns a
+table $d$. Then for all vertices $s$ and $t$, $d(s, t) = \infty$ if and only if $t$ is not
+reachable from $s$ along edges of $E$. Moreover, if $d(s, t)$ is an integer $x$, then some
+weighted path in $E$ from $s$ to $t$ has weight $x$, and every weighted path in $E$ from $s$ to
+$t$ has weight at least $x$. -/
 public theorem johnson_distance_spec {n : Nat} (edges : List (Edge n))
     (distance : Fin n → Fin n → WithTop Int) (run : (johnson edges).ret = some distance)
     (source target : Fin n) :

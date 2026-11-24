@@ -6,8 +6,11 @@ A required workflow that loses its `merge_group` trigger, skips some PRs with a
 filter, skips its job with a job-level `if` (a skipped job counts as passing),
 renames the job, or lets one merge group's run cancel another's would leave the
 check missing or wrong, and the queue would drop the PR or hold it until its
-timeout. The required checks are the ones listed under "How PRs merge" in
-CONTRIBUTING.md.
+timeout. A required workflow also runs on `pull_request`, never
+`pull_request_target`: from 2 December 2026 GitHub blocks `pull_request_target`
+runs by default in public repositories, and a required check that never reports
+blocks every PR. The required checks are the ones listed under "How PRs merge"
+in CONTRIBUTING.md.
 
 Run with: python3 -m unittest discover -s scripts -p test_merge_queue_checks.py
 """
@@ -26,10 +29,11 @@ WORKFLOWS = ROOT / ".github" / "workflows"
 REQUIRED = {
     "repository integrity": "ci.yml",
     "build": "ci.yml",
+    "check the graph": "ci.yml",
     "source-diagnostics": "source-diagnostics.yml",
     "guard": "bump-guard.yml",
 }
-PR_EVENTS = ("pull_request", "pull_request_target")
+PR_EVENTS = ("pull_request",)
 FILTERS = {"branches", "branches-ignore", "paths", "paths-ignore", "tags", "tags-ignore"}
 # Each merge group has its own ref and commit, so a concurrency group keyed by
 # one of these never lets one merge group's run cancel another's.
@@ -93,6 +97,10 @@ class MergeQueueChecks(unittest.TestCase):
     def test_contributing_lists_the_required_checks(self):
         self.assertEqual(documented_checks(), list(REQUIRED))
 
+    def test_the_graph_job_runs_the_graph_check(self):
+        body = " ".join(jobs(workflow("ci.yml"))["graph"])
+        self.assertIn("autoform check blueprint --lean-root .", body)
+
     def test_required_workflows_run_on_every_pr_and_every_merge_group(self):
         for name in sorted(set(REQUIRED.values())):
             with self.subTest(workflow=name):
@@ -105,6 +113,8 @@ class MergeQueueChecks(unittest.TestCase):
                 self.assertEqual(value(events, "merge_group", 2), "types: [checks_requested]")
                 triggers = [event for event in PR_EVENTS if event in keys(events, 2)]
                 self.assertTrue(triggers, "no pull request trigger")
+                self.assertNotIn("pull_request_target", keys(events, 2),
+                                 "pull_request_target is blocked by default from 2 December 2026")
                 for event in triggers:
                     filters = FILTERS & set(keys(block(events, event, 2), 4))
                     self.assertFalse(filters, f"{event} filters skip some PRs: {filters}")
