@@ -12,9 +12,11 @@ public import Mathlib.Algebra.Polynomial.Degree.Defs
 public import Mathlib.Algebra.Polynomial.Eval.Defs
 public import Mathlib.Basic.Complex.Basic
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+import Mathlib.Algebra.BigOperators.Intervals
 import Mathlib.Algebra.Group.ForwardDiff
 import Mathlib.Algebra.Polynomial.Coeff
 import Mathlib.Algebra.Polynomial.Degree.Lemmas
+import Mathlib.Algebra.Polynomial.Roots
 import Mathlib.Algebra.Ring.Parity
 import Mathlib.Data.Nat.Factorial.Basic
 import Mathlib.Tactic.FieldSimp
@@ -23,9 +25,10 @@ import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
 
 /-!
-# Values of CL-polynomials on the canonical line
+# Ehrhart polynomials and the canonical line
 
 A CL-polynomial of degree `d` takes values in `ℝ · I ^ d` on the line of real part `-1/2`.
+The reflection equation for a polynomial is equivalent to symmetry of its h-star coefficients.
 -/
 
 namespace MetaMathlibExt
@@ -212,6 +215,112 @@ INTEGERS 25 (2025), Article A68, definition of the `h*`-polynomial.
 public def hStarCoeff (f : Polynomial ℂ) (i : ℕ) : ℂ :=
   ∑ j ∈ Finset.range (i + 1),
     (-1 : ℂ) ^ j * (Nat.choose (f.natDegree + 1) j : ℂ) * f.eval (i - j : ℂ)
+
+namespace HStarReflection
+
+open Finset
+
+-- The first i + 1 terms of the binomial convolution, with degree fixed at d.
+private def coeffSum (d i : ℕ) (v : ℂ → ℂ) : ℂ :=
+  ∑ j ∈ range (i + 1), (-1 : ℂ) ^ j * ((d + 1).choose j : ℂ) * v (i - j)
+
+-- The coefficient of v(i) is one, so the convolution determines its samples successively.
+private theorem coeffSum_eq_iff (d : ℕ) (v w : ℂ → ℂ) :
+    (∀ i ≤ d, coeffSum d i v = coeffSum d i w) ↔ ∀ i ≤ d, v i = w i := by
+  constructor
+  · intro h i
+    induction i using Nat.strong_induction_on with
+    | ind i ih =>
+      intro hi
+      have hsum := h i hi
+      simp only [coeffSum, sum_range_succ', pow_zero, Nat.choose_zero_right,
+        Nat.cast_one, one_mul, Nat.cast_zero, sub_zero] at hsum
+      apply add_left_cancel (a := ∑ j ∈ range i,
+        (-1 : ℂ) ^ (j + 1) * ((d + 1).choose (j + 1) : ℂ) * v (i - (j + 1 : ℕ)))
+      convert hsum using 2
+      apply sum_congr rfl
+      intro j hj
+      have hj' := mem_range.mp hj
+      rw [← Nat.cast_sub (R := ℂ) (by omega : j + 1 ≤ i), ih (i - (j + 1)) (by omega) (by omega)]
+  · intro h i hi
+    apply sum_congr rfl
+    intro j hj
+    have hj' := mem_range.mp hj
+    rw [← Nat.cast_sub (R := ℂ) (by omega : j ≤ i), h (i - j) (by omega)]
+
+-- Split the vanishing (d + 1)-st difference at -1-i into its negative and nonnegative samples.
+private theorem reflected_coeffSum (f : Polynomial ℂ) (i : ℕ) (hi : i ≤ f.natDegree) :
+    hStarCoeff f (f.natDegree - i) =
+      coeffSum f.natDegree i (fun x => (-1) ^ f.natDegree * f.eval (-(x + 1))) := by
+  let d := f.natDegree
+  let term (k : ℕ) := (-1 : ℂ) ^ (d + 1 - k) * ((d + 1).choose k : ℂ) *
+    f.eval (-((i : ℂ) + 1) + k)
+  have hzero : ∑ k ∈ range (d + 1 + 1), term k = 0 := by
+    have h := congrFun f.fwdDiff_iter_degree_add_one_eq_zero (-((i : ℂ) + 1))
+    rw [fwdDiff_iter_eq_sum_shift] at h
+    simpa only [term, d, nsmul_one, zsmul_eq_mul, Int.cast_mul, Int.cast_pow, Int.cast_neg,
+      Int.cast_one, Int.cast_natCast, Pi.zero_apply] using h
+  change i ≤ d at hi
+  have hleft : ∑ k ∈ range (i + 1), term k =
+      -coeffSum d i (fun x => (-1) ^ d * f.eval (-(x + 1))) := by
+    rw [coeffSum, ← sum_neg_distrib]
+    apply sum_congr rfl
+    intro k hk
+    have hk' := mem_range.mp hk
+    have hsign : (-1 : ℂ) ^ (d + 1 - k) = (-1) ^ (d + 1 + k) := by
+      apply neg_one_pow_congr
+      simp only [Nat.even_iff]
+      omega
+    simp only [term, hsign, pow_add (-1 : ℂ) (d + 1) k, pow_succ]
+    ring_nf
+  have hright : ∑ k ∈ range (d - i + 1), term (i + 1 + k) = hStarCoeff f (d - i) := by
+    rw [← sum_range_reflect (fun k => term (i + 1 + k))]
+    apply sum_congr rfl
+    intro j hj
+    have hj' := mem_range.mp hj
+    have hidx : i + 1 + (d - i + 1 - 1 - j) = d + 1 - j := by omega
+    have hjd : j ≤ d + 1 := by omega
+    simp only [hidx, term, Nat.sub_sub_self hjd, Nat.choose_symm hjd, d]
+    rw [Nat.cast_sub hjd, Nat.cast_sub hi, Nat.cast_add, Nat.cast_one]
+    ring_nf
+  rw [show d + 1 + 1 = (i + 1) + (d - i + 1) by omega, sum_range_add, hleft, hright] at hzero
+  exact eq_of_sub_eq_zero (by simpa only [sub_eq_neg_add] using hzero)
+
+end HStarReflection
+
+open HStarReflection in
+/-- **Functional equation versus palindromic h-star coefficients.** Let $f$ be a nonzero complex
+polynomial of degree $d$ with $h^*$-coefficients $h^*_0(f), \dots, h^*_d(f)$. Then
+$f(X-1) = (-1)^d f(-X)$ as polynomials if and only if $h^*_i(f) = h^*_{d-i}(f)$ for every
+$i \le d$.
+
+Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Canonical Line*,
+INTEGERS 25 (2025), Article A68, Lemma 1 (quoting Corollary 2.2 in Kölbl's [11]).
+-/
+public theorem functionalEquation_iff_hStar_palindromic (f : Polynomial ℂ) (hf : f ≠ 0) :
+    f.comp (X - 1) = C ((-1 : ℂ) ^ f.natDegree) * f.comp (-X) ↔
+      ∀ i ≤ f.natDegree, hStarCoeff f i = hStarCoeff f (f.natDegree - i) := by
+  let d := f.natDegree
+  have hsymm : (∀ i ≤ d, hStarCoeff f i = hStarCoeff f (d - i)) ↔
+      ∀ i ≤ d, f.eval (i : ℂ) = (-1) ^ d * f.eval (-((i : ℂ) + 1)) := by
+    refine Iff.trans ?_ (coeffSum_eq_iff d f.eval (fun x => (-1) ^ d * f.eval (-(x + 1))))
+    refine forall_congr' fun i => forall_congr' fun hi => ?_
+    rw [reflected_coeffSum f i hi]
+    rfl
+  rw [hsymm]
+  constructor
+  · intro heq i _
+    simpa using congrArg (eval ((i : ℂ) + 1)) heq
+  · intro h
+    apply eq_of_natDegree_lt_card_of_eval_eq _ _ (f := fun i : Fin (d + 1) => (i.val : ℂ) + 1)
+    · intro i j hij
+      exact Fin.ext (Nat.cast_injective (add_right_cancel hij))
+    · intro i
+      simpa using h i.val (by omega)
+    · rw [natDegree_mul (by simp) (by simpa using hf), natDegree_C, zero_add]
+      have hdeg : (X - 1 : Polynomial ℂ).natDegree = 1 := by
+        simpa only [C_1] using natDegree_X_sub_C (1 : ℂ)
+      simp [natDegree_comp, hdeg, d]
 
 /-- **SNN polynomials.** For a complex polynomial $f$ of degree $d$ and a natural number $i$, let
 $h^*_i(f)$ be the coefficient of $t^i$ in $(1 - t)^{d+1} \sum_{k \ge 0} f(k)\, t^k$. Then $f$ is

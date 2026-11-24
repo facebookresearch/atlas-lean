@@ -14,6 +14,7 @@ public import Mathlib.Data.ZMod.Defs
 public import Mathlib.Data.Set.Card
 public import MathlibExt.NumberTheory.QuadraticIrrationalCFNonexistence
 public import MathlibExt.NumberTheory.SymmetricContinuantParity
+public import MathlibExt.NumberTheory.SymmetricConvergentDenParity
 
 /-!
 # Nonexistence of continued fractions of `√d` with a given symmetric period
@@ -66,19 +67,6 @@ public theorem_wanted sqrt_hasPeriodicCF_exists_iff_of_even (l : ℕ) (hl : Even
     (hsymm : ∀ i, 1 ≤ i → i < l → a i = a (l - i)) :
     (∃ d a₀ : ℕ, ¬IsSquare d ∧ HasPeriodicCF √(d : ℝ) a₀ a l (2 * a₀)) ↔
       (Odd (a (l / 2)) ∧ Odd (convergentDen a (l - 1))) ∨ Even (a (l / 2))
-
-/-- **Parity of $q_{l-1}$ for a symmetric sequence, odd $l$.** Let $l \ge 3$ be odd and let
-$a_0, a_1, a_2, \dots$ be natural numbers with convergent denominators $q_0, q_1, q_2, \dots$,
-such that $a_i = a_{l-i}$ for $1 \le i < l$. Then
-$q_{l-1} \equiv q_{(l-1)/2} + q_{(l-3)/2} \pmod 2$.
-
-Source: Jun Ho Lee, *Nonexistence of the Continued Fraction of a Quadratic Irrational
-Number with a Given Sequence*, INTEGERS 26 (2026), Article A69, Corollary 2 (i)
-(`integers-2026-A69-cor-2`). -/
-public theorem_wanted convergentDen_parity_of_odd (l : ℕ) (hl : Odd l) (hl3 : 3 ≤ l)
-    (a : ℕ → ℕ) (hsymm : ∀ i, 1 ≤ i → i < l → a i = a (l - i)) :
-    convergentDen a (l - 1) ≡
-      convergentDen a ((l - 1) / 2) + convergentDen a ((l - 3) / 2) [MOD 2]
 
 /-- **Number of unrealizable parity patterns for $\sqrt{d}$, odd length.** Let $l \ge 3$ be odd.
 Call a parity pattern $(v_1, \dots, v_{(l-1)/2}) \in (\mathbb{Z}/2)^{(l-1)/2}$ realizable if
