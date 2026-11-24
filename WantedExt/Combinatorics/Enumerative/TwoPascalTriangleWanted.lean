@@ -18,6 +18,7 @@ public import MathlibExt.Combinatorics.Enumerative.RiordanArraySum
 public import MathlibExt.Combinatorics.Enumerative.TrinomialAlternatingColumn
 public import MathlibExt.Combinatorics.Enumerative.TrinomialBinomialTransform
 public import MathlibExt.Combinatorics.Enumerative.TrinomialConvolution
+public import MathlibExt.Combinatorics.Enumerative.TrinomialEvenAlternating
 public import MathlibExt.Combinatorics.Enumerative.TrinomialUpperHalf
 public import MathlibExt.NumberTheory.LucasSequence
 public import MathlibExt.NumberTheory.TribonacciSequenceWithInitialValues001
@@ -152,16 +153,6 @@ public theorem_wanted sum_trinomialCoefficient_odd (n : ℕ) (z s : ℂ) (hs : s
     (hs0 : s ≠ 0) :
     ∑ k ∈ Finset.range (n + 1), (trinomialCoefficient n (2 * k + 1) : ℂ) * z ^ k =
       ((1 + s + z) ^ n - (1 - s + z) ^ n) / (2 * s)
-
-/-- **Alternating binomial sum of trinomial coefficients over even rows.** Write
-$\binom{n}{k}_2$ for the trinomial coefficient, the coefficient of $x^k$ in $(1+x+x^2)^n$. For
-every natural number $n$, $\sum_{k=0}^{n} (-1)^k \binom{n}{k} \binom{2n-2k}{n}_2 = 2^n$.
-
-Source: Yassine Otmani, *The 2-Pascal Triangle and a Related Riordan Array*, Journal of
-Integer Sequences 28 (2025), Article 25.3.5, Theorem 19 (`jis-2025-25.3.5-thm-19`). -/
-public theorem_wanted sum_trinomialCoefficient_two_mul_sub (n : ℕ) :
-    ∑ k ∈ Finset.range (n + 1),
-        (trinomialCoefficient (2 * n - 2 * k) n : ℤ) * n.choose k * (-1) ^ k = 2 ^ n
 
 /-- **Alternating sum of squared trinomial coefficients.** Write $\binom{n}{k}_2$ for the
 trinomial coefficient, the coefficient of $x^k$ in $(1+x+x^2)^n$. For every natural number $n$,
