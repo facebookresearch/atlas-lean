@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Basic.Complex.Basic
 public import Mathlib.NumberTheory.ArithmeticFunction.Defs
+public import MathlibExt.NumberTheory.ArithmeticFunction.SquareTriangularAdditiveUniqueness
 
 /-!
 # Squares and triangular numbers as an additive uniqueness pair
@@ -27,15 +28,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open ArithmeticFunction
-
-/-- **A square–triangular number identity.** Let $t_v = v(v + 1)/2$ denote the $v$-th triangular
-number. For every natural number $n \ge 2$, $n^2 + t_{n-2} = (n - 1)^2 + t_n$.
-
-Source: Mingyu Kim and Poo-Sung Park, *An Additive Uniqueness Pair of Sets for
-Multiplicative Functions: Squares and Triangular Numbers*, INTEGERS 26 (2026), Article A103,
-Lemma 1 (`integers-2026-A103-lem-1`). -/
-public theorem_wanted sq_add_triangular_sub_two_eq (n : ℕ) (hn : 2 ≤ n) :
-    n ^ 2 + (n - 2) * (n - 2 + 1) / 2 = (n - 1) ^ 2 + n * (n + 1) / 2
 
 /-- **Square–triangular additivity fixes small squares.** Let $t_v = v(v + 1)/2$ denote the
 $v$-th triangular number, and let $f$ be a complex-valued multiplicative arithmetic function

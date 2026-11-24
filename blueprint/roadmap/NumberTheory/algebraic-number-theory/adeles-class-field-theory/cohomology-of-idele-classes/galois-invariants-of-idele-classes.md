@@ -10,9 +10,13 @@ on $C_L$ through its action on the idèles ($\sigma a$ has component $\sigma(a_w
    $\mathrm{Nm}_{L/K}(b)_v = \prod_{w \mid v} \mathrm{Nm}_{L_w/K_v}(b_w)$, restricts to the field norm on
    $L^\times$, so it induces a norm map $\mathrm{Nm}_{L/K} \colon C_L \to C_K$, which under part 1 is
    the group norm $N_G \colon x \mapsto \prod_{\sigma \in G} \sigma x$. Hence
-   $$\hat H^0(G, C_L) = C_L^G / N_G(C_L) \cong C_K / \mathrm{Nm}_{L/K}(C_L).$$
+
+    $$\hat H^0(G, C_L) = C_L^G / N_G(C_L) \cong C_K / \mathrm{Nm}_{L/K}(C_L).$$
+
+
 3. The quotient map $\mathbb{I}_K \to C_K$ induces an isomorphism
-   $$\mathbb{I}_K / K^\times \mathrm{Nm}_{L/K}(\mathbb{I}_L) \cong C_K / \mathrm{Nm}_{L/K}(C_L).$$
+
+    $$\mathbb{I}_K / K^\times \mathrm{Nm}_{L/K}(\mathbb{I}_L) \cong C_K / \mathrm{Nm}_{L/K}(C_L).$$
 
 Part 1 comes from the cohomology sequence of $1 \to L^\times \to \mathbb{I}_L \to C_L \to 1$: the
 invariants of $L^\times$ and of $\mathbb{I}_L$ are $K^\times$ and the image of $\mathbb{I}_K$, and

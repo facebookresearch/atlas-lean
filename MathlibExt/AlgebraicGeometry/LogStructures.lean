@@ -59,11 +59,6 @@ universe u v w
 
 variable {C : Type u} [Category.{v} C] (J : GrothendieckTopology C)
 
-/-- The completed concrete sheafification provider for commutative monoids.
-The plus construction and its exactness are Mathlib's existing proofs. -/
-instance monoidSheafification : HasSheafify J CommMonCat.{max u v} :=
-  HasSheafify.mk' _ _ (plusPlusAdjunction _ _)
-
 abbrev RingSheaf := Sheaf J CommRingCat.{max u v}
 abbrev MonoidSheaf := Sheaf J CommMonCat.{max u v}
 
@@ -198,15 +193,6 @@ theorem toAssociated_associatedMap {O : RingSheaf J} {P : Prelog J O}
   apply (Over.forget (ringMonoids J O)).map_injective
   change pushout.inl _ _ ≫ pushout.desc f.left (unitMap J L) _ = f.left
   exact pushout.inl_desc ..
-
-/-- The one unresolved shared proof needed to turn the fixed candidate
-into a log structure. No existence instance is asserted here. -/
-class HasAssociation {O : RingSheaf J} (P : Prelog J O) : Prop where
-  logCondition : isLog J O (associatedPrelog J P)
-
-def associatedLog {O : RingSheaf J} (P : Prelog J O) [h : HasAssociation J P] :
-    LogStructure J O :=
-  ⟨associatedPrelog J P, h.logCondition⟩
 
 /-- Changing the ring map uses the actual functor on over categories. -/
 abbrev changeRing {O O' : RingSheaf J} (f : O ⟶ O') : Prelog J O ⥤ Prelog J O' :=
