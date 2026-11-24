@@ -1210,6 +1210,15 @@ def addition_conflict(tools: Tools, path: str, build_root: Path, roots: list[Pat
 IDENTITY_FIELDS = ("dev", "ino", "ctime", "mtime", "size", "mode")
 
 
+def root_artifact_prefixes(root: Path) -> tuple[str, ...]:
+    build = root / ".lake/build/lib/lean"
+    return tuple(dict.fromkeys((str(build) + os.sep, str(resolve_inventory_path(build)) + os.sep)))
+
+
+def is_root_artifact_path(path: object, prefixes: tuple[str, ...]) -> bool:
+    return isinstance(path, str) and path.startswith(prefixes) and artifact_stem(path) != path
+
+
 def record_root_custody(tools: Tools, receipts: Iterable[object]) -> None:
     """Remember the identity of root-package artifacts at their first pin.
 
@@ -1217,16 +1226,64 @@ def record_root_custody(tools: Tools, receipts: Iterable[object]) -> None:
     the cache with the identity it hashed. An existing record is kept, so the
     expectation is the one from the first pin.
     """
-    build = tools.root / ".lake/build/lib/lean"
-    prefixes = tuple(dict.fromkeys((str(build) + os.sep, str(resolve_inventory_path(build)) + os.sep)))
+    prefixes = root_artifact_prefixes(tools.root)
     for receipt in receipts:
         path = receipt.get("path") if isinstance(receipt, dict) else None
-        if (not isinstance(path, str) or path in tools.root_custody or not path.startswith(prefixes) or
-                artifact_stem(path) == path):
+        if not is_root_artifact_path(path, prefixes) or path in tools.root_custody:
             continue
-        cached = tools.file_cache.get(path)
+        cached = tools.file_cache.get(cast(str, path))
         if cached is not None and cached[0] == receipt.get("sha256"):
-            tools.root_custody[path] = (dict(receipt), cached[1])
+            tools.root_custody[cast(str, path)] = (dict(receipt), cached[1])
+
+
+SAVED_INPUT_MANIFEST = re.compile(r"[0-9a-f]{64}\.json")
+
+
+def saved_root_receipts(root: Path, output: Path, growth: dict[str, dict[str, object]]
+                        ) -> dict[str, dict[str, object]]:
+    """Every root-package artifact receipt an earlier invocation of this run saved.
+
+    These are the additions its accepted Lake preparations recorded
+    (`lake-growth/`) and the root-package entries of every compilation input
+    manifest it pinned (`inputs/`), whether or not a successful row refers
+    to them. Each path must have one receipt.
+    """
+    prefixes = root_artifact_prefixes(root)
+    receipts: dict[str, dict[str, object]] = {}
+
+    def add(receipt: object, source: Path) -> None:
+        if (not isinstance(receipt, dict) or not isinstance(receipt.get("path"), str) or
+                type(receipt.get("bytes")) is not int or not isinstance(receipt.get("sha256"), str)):
+            raise ValueError(f"Invalid saved artifact receipt in {source}")
+        if receipts.setdefault(receipt["path"], receipt) != receipt:
+            raise ValueError(f"Saved receipts disagree on a root-package artifact: {receipt['path']}")
+
+    for path, receipt in growth.items():
+        if not is_root_artifact_path(path, prefixes) or not Path(path).is_absolute():
+            raise ValueError(f"Recorded Lake growth is outside the root artifact root: {path}")
+        add(receipt, output / LAKE_GROWTH_DIRECTORY)
+    inputs = output / "inputs"
+    for manifest in sorted(inputs.iterdir()) if inputs.is_dir() else ():
+        if not SAVED_INPUT_MANIFEST.fullmatch(manifest.name):
+            continue
+        files = read_json(manifest).get("files")
+        if not isinstance(files, list):
+            raise ValueError(f"Invalid saved compilation input manifest: {manifest}")
+        for receipt in files:
+            if isinstance(receipt, dict) and is_root_artifact_path(receipt.get("path"), prefixes):
+                add(receipt, manifest)
+    return receipts
+
+
+def verify_saved_root_receipts(receipts: dict[str, dict[str, object]], cache: SourceCache) -> None:
+    """Each saved root-package receipt still describes its file, before any Lake command."""
+    for path, receipt in receipts.items():
+        try:
+            unchanged = file_pin(Path(path), cache) == receipt
+        except (OSError, ValueError):
+            unchanged = False
+        if not unchanged:
+            raise ValueError(f"Saved root-package artifact is missing or changed since it was pinned: {path}")
 
 
 def verify_root_custody(tools: Tools, custody: dict[str, tuple[dict[str, object], SourceIdentity]]) -> None:
@@ -1290,8 +1347,8 @@ def run_lake_preparation(tools: Tools, argv: list[str], label: Path,
     artifacts are checked again, nothing may be removed, and only artifacts
     of new modules among `modules` (the requested targets and their frozen
     local dependencies) may be added. Root inventories are then taken again
-    with new directory custody, and the additions are recorded under the
-    output directory for resume. Compiler and dependency inventories stay
+    with new directory custody, and the additions are taken into custody and
+    recorded under the output directory for resume. Compiler and dependency inventories stay
     cached. Independently of any cache, every artifact path of each module
     in `modules` under every searched root (`LEAN_PATH` entries under both
     spellings, the root artifact root and the compiler library) is probed
@@ -1421,6 +1478,8 @@ def run_lake_preparation(tools: Tools, argv: list[str], label: Path,
                {"namespaces": sorted(path.name for path in namespaces_after),
                 "files": sorted(path.name for path in files_after)})
     if added:
+        # Accepted growth is under custody from now on, as if it had been pinned.
+        record_root_custody(tools, added.values())
         write_json(tools.output / LAKE_GROWTH_DIRECTORY / f"{time.time_ns()}.json",
                    {"preparation": str(label), "added": [added[path] for path in sorted(added)]})
     return result
@@ -5223,7 +5282,8 @@ def main() -> int:
             (options.max_batches is not None and options.max_batches <= 0)):
         parser.error("A pinned Lake executable and a positive timeout are required")
     output.mkdir(parents=True, exist_ok=True)
-    if ((output / "run.json").exists() or (output / "results.jsonl").exists()) and not options.resume:
+    if (any((output / name).exists() for name in ("run.json", "results.jsonl", "inputs", LAKE_GROWTH_DIRECTORY,
+                                                   LAKE_CUSTODY_DIRECTORY)) and not options.resume):
         parser.error("Output already contains a run; use --resume or a new directory")
     def interrupted(signum: int, frame: object) -> None:
         raise KeyboardInterrupt(f"Received signal {signum}")
@@ -5243,6 +5303,14 @@ def main() -> int:
         time_binary = options.time.absolute()
         verify_resume_executables(output / "run.json", lake, lean, time_binary)
         verify_resume_thread_settings(output / "run.json", options.lean_threads, options.lake_jobs)
+        # Before any child process, and whatever the journal holds: every root-package artifact an
+        # earlier invocation recorded as Lake growth or pinned as a compilation input must still have
+        # its receipt. The identities hashed here become this process's custody below.
+        recorded_growth = read_lake_growth(output)
+        saved_receipts = saved_root_receipts(root, output, recorded_growth)
+        if saved_receipts and not (output / "run.json").exists():
+            raise ValueError("Refusing saved artifact receipts without their original run identity")
+        verify_saved_root_receipts(saved_receipts, source_cache)
         try:
             version = subprocess.check_output([str(time_binary), "--version"], stderr=subprocess.STDOUT)
         except (OSError, subprocess.CalledProcessError) as error:
@@ -5283,6 +5351,11 @@ def main() -> int:
         # graph (covers a manifest rename/restore during `lake env`,
         # which before/after byte checks cannot observe).
         validate_captured_environment(tools)
+        record_root_custody(tools, saved_receipts.values())
+        unheld = sorted(set(saved_receipts) - set(tools.root_custody))
+        if unheld:
+            raise ValueError(f"Saved root-package artifact changed before custody was taken: {unheld[0]}")
+        verify_root_custody(tools, {path: tools.root_custody[path] for path in saved_receipts})
         compiler_binary = (Path(environment.get("LEAN_SYSROOT", str(lean.parent.parent))) /
                            "bin/lean").resolve()
         lake_launcher = lake.resolve()
@@ -5327,7 +5400,7 @@ def main() -> int:
         if options.resume and journal_path.exists():
             completed = read_journal(journal_path, cast(dict[str, object], identity["sources"]))
             modules_by_path = {str(row["path"]): row["module"] for row in rows}
-            growth = _recorded_lake_growth.set(read_lake_growth(output))
+            growth = _recorded_lake_growth.set(recorded_growth)
             try:
                 with analysis_validation_phase(tools):
                     for name, result in completed.items():

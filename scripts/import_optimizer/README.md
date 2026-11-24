@@ -103,7 +103,12 @@ in this invocation and in later `--resume` invocations of the same output
 directory; nothing taken during the rejected attempt is trusted. The rejection
 and the top-level listing after the last accepted preparation are recorded
 under `lake-custody/`, and accepted additions under `lake-growth/`, in the
-output directory. A resumed invocation starts from that listing. On resume, a
+output directory. Accepted additions are under custody from their preparation
+on, like pinned artifacts. A resumed invocation starts from that listing, and
+before any child process runs, whatever its journal holds, every root-package
+artifact an earlier invocation recorded under `lake-growth/` or pinned in a
+compilation input manifest under `inputs/` must still have its saved bytes; the
+identities read then are this invocation's custody. On resume, a
 saved row's inputs may differ from the current tree only by recorded additions
 with their recorded bytes, for modules none of its inputs provided and no searched root
 outside the root artifact root provides now. Custody and
@@ -118,7 +123,8 @@ module on platforms without inotify; unpinned sidecars such as `.hash` and
 or ctime; a namespace, or a symlinked searched root, moved and restored inside
 a window where only endpoints are compared; module search paths other than the
 captured `LEAN_PATH` and the compiler library; or identity changes between
-processes (a resume compares bytes). A preparation
+processes (a resume compares bytes, so a same-byte replacement between
+invocations is accepted). A preparation
 interrupted before its growth is recorded can cause resume to fail closed, as
 can another output directory's run on the same worktree. Use a new output
 directory after such a rejection.

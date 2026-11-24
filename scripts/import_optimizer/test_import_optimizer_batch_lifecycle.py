@@ -57,7 +57,8 @@ def lifecycle_inputs(root: Path) -> list[str]:
 
 @contextlib.contextmanager
 def mocked_lake(root: Path, during_build: Callable[[str], None] | None = None,
-                skip_growth: frozenset[str] = frozenset()) -> Iterator[list[list[str]]]:
+                skip_growth: frozenset[str] = frozenset(),
+                rewrite_existing: bool = True) -> Iterator[list[list[str]]]:
     builds: list[list[str]] = []
     namespace = root / ".lake/build/lib/lean/Lib/Sub"
 
@@ -70,8 +71,10 @@ def mocked_lake(root: Path, during_build: Callable[[str], None] | None = None,
         # Lake builds each target's local dependency into the root build tree.
         namespace.mkdir(exist_ok=True)
         for target in targets:
-            if target not in skip_growth:
-                (namespace / (target + ".olean")).write_bytes(f"Lib.Sub.{target} artifact fixture\n".encode())
+            artifact = namespace / (target + ".olean")
+            # Real Lake leaves an up-to-date target's artifacts alone.
+            if target not in skip_growth and (rewrite_existing or not artifact.exists()):
+                artifact.write_bytes(f"Lib.Sub.{target} artifact fixture\n".encode())
             if during_build is not None:
                 during_build(target)
         label.parent.mkdir(parents=True, exist_ok=True)
@@ -411,9 +414,11 @@ class ResumeLifecycleTests(unittest.TestCase):
             "outside_namespace": (lambda root: (root / build / "Lib/Other.olean").write_bytes(b"x\n"),
                                   "unrecorded artifact"),
             "old_artifact_bytes": (lambda root: (root / build / "Lib/Base.olean").write_bytes(b"corrupt\n"),
-                                   "Saved evidence file changed"),
+                                   "Saved root-package artifact is missing or changed since it was pinned: "
+                                   ".*/Lib/Base.olean"),
             "recorded_artifact_bytes": (lambda root: (root / build / "Lib/Sub/C.olean").write_bytes(b"corrupt\n"),
-                                        "unrecorded artifact|Saved evidence file changed"),
+                                        "Saved root-package artifact is missing or changed since it was pinned: "
+                                        ".*/Lib/Sub/C.olean"),
             "compiler_library": (lambda root: (root / "lib/lean/Init/Extra.olean").write_bytes(b"new\n"),
                                  "unrecorded artifact"),
         }
@@ -983,6 +988,221 @@ class SearchedProviderTests(unittest.TestCase):
             self.assertEqual(rows[0]["error"], message)
             for row in rows[1:]:
                 self.assertEqual(row["error"], "An earlier Lake preparation was rejected: " + message)
+
+
+class SavedReceiptResumeTests(unittest.TestCase):
+    """Every saved root-package receipt holds on resume, whatever the journal says."""
+
+    def setUp(self) -> None:
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        self.root = Path(directory.name).resolve()
+        self.arguments = lifecycle_inputs(self.root)
+        self.sub = self.root / ".lake/build/lib/lean/Lib/Sub"
+        self.environment_captures = 0
+
+    @contextlib.contextmanager
+    def lake(self, failing: frozenset[str] = frozenset(), pin_before_failing: bool = False,
+             interrupt_after_preparation: bool = False, during_capture: Callable[[], None] | None = None,
+             during_build: Callable[[str], None] | None = None):
+        actual_preparation = optimizer.run_lake_preparation
+
+        def analyses(tools, rows, headers, directory):
+            if {str(row["module"]) for row in rows} & failing:
+                if pin_before_failing:
+                    optimizer.analysis_inputs(tools, rows)
+                raise ValueError("Mock analysis failure")
+            return recovery.mock_no_change_proposals(tools, rows, headers, directory)
+
+        def preparation(*args, **kwargs):
+            result = actual_preparation(*args, **kwargs)
+            if interrupt_after_preparation:
+                raise KeyboardInterrupt("Received signal 15")
+            return result
+
+        def capture(argv, cwd, label, environment, timeout):
+            self.environment_captures += 1
+            if during_capture is not None:
+                during_capture()
+            return recovery.environment_stub(argv, cwd, label, environment, timeout)
+
+        with mocked_lake(self.root, during_build, rewrite_existing=False) as builds, \
+                patch.object(optimizer, "analyze_batch", side_effect=analyses), \
+                patch.object(optimizer, "run_lake_preparation", side_effect=preparation), \
+                patch.object(optimizer, "run_command", side_effect=capture):
+            yield builds
+
+    def invoke(self, *extra: str, **lake: object) -> tuple[int, list[list[str]]]:
+        with self.lake(**lake) as builds, patch.object(sys, "argv", [*self.arguments, *extra]):
+            return optimizer.main(), builds
+
+    def refused(self, message: str, *extra: str) -> None:
+        captures = self.environment_captures
+        with self.lake() as builds, patch.object(sys, "argv", [*self.arguments, "--resume", *extra]), \
+                self.assertRaisesRegex(ValueError, message):
+            optimizer.main()
+        self.assertEqual(builds, [])
+        self.assertEqual(self.environment_captures, captures, "a Lake command ran before the refusal")
+
+    def change(self, path: Path, mutation: str) -> None:
+        if mutation == "bytes":
+            path.write_bytes(path.read_bytes() + b"changed\n")
+        else:
+            path.unlink()
+
+    def test_interrupted_preparation_growth_is_verified_with_empty_or_missing_journal(self) -> None:
+        for journal_state in ("empty", "missing"):
+            for mutation in ("bytes", "missing"):
+                with self.subTest(journal=journal_state, mutation=mutation):
+                    self.setUp()
+                    with self.assertRaises(KeyboardInterrupt):
+                        self.invoke(interrupt_after_preparation=True)
+                    journal_path = self.root / "output/results.jsonl"
+                    self.assertEqual(journal_path.read_text(), "")
+                    if journal_state == "missing":
+                        journal_path.unlink()
+                    self.assertEqual(list(optimizer.read_lake_growth(self.root / "output")), [str(self.sub / "A.olean")])
+                    self.change(self.sub / "A.olean", mutation)
+                    self.refused("Saved root-package artifact is missing or changed since it was pinned: "
+                                 + str(self.sub / "A.olean"))
+
+    def test_growth_of_blocked_rows_is_verified(self) -> None:
+        for extra in ((), ("--retry-blocked",)):
+            with self.subTest(extra=extra):
+                self.setUp()
+                self.assertEqual(self.invoke("--max-batches", "1", failing=frozenset({"A"})), (1, [["A"]]))
+                self.assertEqual([row["status"] for row in journal(self.root)], ["blocked"])
+                self.change(self.sub / "A.olean", "bytes")
+                self.refused("missing or changed since it was pinned: " + str(self.sub / "A.olean"), *extra)
+
+    def test_growth_no_successful_row_covers_is_verified(self) -> None:
+        self.assertEqual(self.invoke("--max-batches", "2", failing=frozenset({"B"})), (1, [["A"], ["B"]]))
+        self.assertEqual([row["status"] for row in journal(self.root)], ["no_change", "blocked"])
+        self.change(self.sub / "B.olean", "bytes")
+        self.refused("missing or changed since it was pinned: " + str(self.sub / "B.olean"))
+
+    def test_artifacts_pinned_only_by_a_blocked_row_are_verified(self) -> None:
+        other = self.root / ".lake/build/lib/lean/Other/X.olean"
+        other.parent.mkdir(parents=True)
+        other.write_bytes(b"pre-existing artifact only B imports\n")
+        setup = self.root / ".lake/build/ir/B.setup.json"
+        metadata = optimizer.read_json(setup)
+        metadata["importArts"]["Other.X"] = [[str(other)], []]
+        optimizer.write_json(setup, metadata)
+        self.assertEqual(self.invoke("--max-batches", "2", failing=frozenset({"B"}), pin_before_failing=True),
+                         (1, [["A"], ["B"]]))
+        saved = optimizer.saved_root_receipts(self.root, self.root / "output",
+                                              optimizer.read_lake_growth(self.root / "output"))
+        self.assertIn(str(other), saved)
+        self.change(other, "bytes")
+        self.refused("missing or changed since it was pinned: " + str(other))
+
+    def test_unchanged_saved_receipts_resume_normally(self) -> None:
+        self.assertEqual(self.invoke("--max-batches", "2", failing=frozenset({"B"})), (1, [["A"], ["B"]]))
+        before = (self.root / "output/results.jsonl").read_bytes()
+        self.assertEqual(self.invoke("--resume"), (1, [["C"]]))
+        rows = journal(self.root)
+        self.assertTrue((self.root / "output/results.jsonl").read_bytes().startswith(before))
+        self.assertEqual([row["status"] for row in rows], ["no_change", "blocked", "no_change"])
+        self.assertEqual(self.invoke("--resume", "--retry-blocked"), (0, [["B"]]))
+        self.assertEqual([row["status"] for row in journal(self.root)][-1], "no_change")
+
+    def test_a_retried_target_whose_growth_lake_rewrites_is_rejected(self) -> None:
+        self.assertEqual(self.invoke("--max-batches", "1", failing=frozenset({"A"})), (1, [["A"]]))
+        def rewriting(target: str) -> None:
+            # This Lake rewrites the retried target's recorded artifact.
+            if target == "A":
+                (self.sub / "A.olean").write_bytes(b"rebuilt differently\n")
+
+        with self.lake(during_build=rewriting) as builds, \
+                patch.object(sys, "argv", [*self.arguments, "--resume", "--retry-blocked"]):
+            self.assertEqual(optimizer.main(), 1)
+        self.assertEqual(builds, [["A"]])
+        rows = journal(self.root)
+        self.assertEqual(rows[1]["error"], f"Pinned root-package artifact changed (ctime, mtime, size): "
+                         f"{self.sub / 'A.olean'}")
+
+    def test_same_bytes_rewrite_between_invocations_is_accepted(self) -> None:
+        # A resume compares bytes; identities are compared only within one process.
+        self.assertEqual(self.invoke("--max-batches", "1", failing=frozenset({"A"})), (1, [["A"]]))
+        replace_same_bytes(self.sub / "A.olean")
+        self.assertEqual(self.invoke("--resume"), (1, [["B"], ["C"]]))
+
+    def test_change_during_environment_capture_is_rejected_before_any_preparation(self) -> None:
+        self.assertEqual(self.invoke("--max-batches", "1", failing=frozenset({"A"})), (1, [["A"]]))
+        target = self.sub / "A.olean"
+        with self.lake(during_capture=lambda: chmod_and_restore(target)) as builds, \
+                patch.object(sys, "argv", [*self.arguments, "--resume"]), \
+                self.assertRaisesRegex(ValueError, f"Pinned root-package artifact changed \\(ctime\\): {target}"):
+            optimizer.main()
+        self.assertEqual(builds, [])
+
+    def test_accepted_growth_is_under_custody_in_the_same_process(self) -> None:
+        journal_path = self.root / "output/results.jsonl"
+        target = self.sub / "A.olean"
+        validate = optimizer.validate_inventory_sources
+        changed: list[bool] = []
+
+        def change_after_first_row(*args: object, **kwargs: object) -> None:
+            if not changed and journal_path.exists() and len(journal_path.read_text().splitlines()) == 1:
+                before = target.stat()
+                target.write_bytes(b"X" * before.st_size)
+                os.utime(target, ns=(before.st_atime_ns, before.st_mtime_ns))
+                changed.append(True)
+            return validate(*args, **kwargs)
+
+        with patch.object(optimizer, "validate_inventory_sources", side_effect=change_after_first_row):
+            self.assertEqual(self.invoke(failing=frozenset({"A"})), (1, [["A"]]))
+        rows = journal(self.root)
+        self.assertEqual([row["status"] for row in rows], ["blocked", "blocked", "blocked"])
+        self.assertEqual(rows[1]["error"], f"Pinned root-package artifact changed (ctime): {target}")
+
+    def test_saved_receipt_records_must_be_well_formed(self) -> None:
+        def outside_build_root(output: Path) -> None:
+            record = output / optimizer.LAKE_GROWTH_DIRECTORY / "1.json"
+            optimizer.write_json(record, {"added": [optimizer.file_pin(self.root / "A.lean")]})
+
+        def relative_path(output: Path) -> None:
+            record = output / optimizer.LAKE_GROWTH_DIRECTORY / "1.json"
+            optimizer.write_json(record, {"added": [{"path": ".lake/build/lib/lean/Lib/Sub/A.olean",
+                                                     "bytes": 1, "sha256": "0" * 64}]})
+
+        def conflicting_receipts(output: Path) -> None:
+            pin = optimizer.file_pin(self.sub / "A.olean")
+            optimizer.write_json(output / "inputs" / ("a" * 64 + ".json"), {"files": [{**pin, "sha256": "1" * 64}]})
+
+        def malformed_manifest(output: Path) -> None:
+            (output / "inputs" / ("b" * 64 + ".json")).write_text("{not json")
+
+        def malformed_growth(output: Path) -> None:
+            optimizer.write_json(output / optimizer.LAKE_GROWTH_DIRECTORY / "1.json", {"added": {"path": "x"}})
+
+        def missing_run_identity(output: Path) -> None:
+            (output / "run.json").unlink()
+            (output / "results.jsonl").unlink()
+
+        cases = {outside_build_root: "outside the root artifact root",
+                 relative_path: "outside the root artifact root",
+                 conflicting_receipts: "Saved receipts disagree on a root-package artifact",
+                 malformed_manifest: "Expecting property name",
+                 malformed_growth: "Invalid recorded Lake growth",
+                 missing_run_identity: "without their original run identity"}
+        for damage, message in cases.items():
+            with self.subTest(damage=damage.__name__):
+                self.setUp()
+                self.assertEqual(self.invoke("--max-batches", "1"), (0, [["A"]]))
+                damage(self.root / "output")
+                self.refused(message)
+
+    def test_a_new_run_refuses_an_output_directory_with_saved_custody(self) -> None:
+        for name in (optimizer.LAKE_GROWTH_DIRECTORY, optimizer.LAKE_CUSTODY_DIRECTORY, "inputs"):
+            with self.subTest(directory=name):
+                self.setUp()
+                (self.root / "output" / name).mkdir(parents=True)
+                with self.lake(), patch.object(sys, "argv", self.arguments), \
+                        contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit) as raised:
+                    optimizer.main()
+                self.assertEqual(raised.exception.code, 2)
 
 
 if __name__ == "__main__":
