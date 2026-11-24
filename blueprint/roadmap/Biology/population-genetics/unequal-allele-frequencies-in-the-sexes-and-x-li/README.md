@@ -21,3 +21,5 @@
 - [Closed form for the male frequency at an X-linked locus](snd-iterate-sub-pbar.md)
 
 - [X-linked selection and the inheritance-weighted frequency change](x-linked-selection-and-the-1-3-2-3-weighting.md)
+
+- [Boundary invasion under sex-differential and parent-of-origin viability](protected-polymorphism-under-sex-differential-vi.md)
