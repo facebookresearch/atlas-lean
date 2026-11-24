@@ -138,6 +138,40 @@ public theorem euclideanChainLength_one_left_and_one_right (y : ℕ) {x : ℕ}
   · rw [euclideanChainLength_add_one_of_mod_eq (m := 0) (by rw [Nat.mod_one, Nat.mod_one]),
       euclideanChainLength_zero]
 
+/-- **Euclidean chain function under adding multiples.** For natural numbers $x \ge 1$, $y$ and
+$k$, the Euclidean chain function $F$ satisfies $F(x + k y, y) = F(x, y)$ and
+$F(x, k x + y) = F(x, y) + k$.
+
+The source quotes this result from Archer et al.
+
+Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
+Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Proposition 6
+(`integers-2025-A82-prop-6`). -/
+public theorem euclideanChainLength_add_mul {x : ℕ} (hx : 0 < x) (y k : ℕ) :
+    euclideanChainLength (x + k * y) y = euclideanChainLength x y ∧
+      euclideanChainLength x (k * x + y) = euclideanChainLength x y + k := by
+  have add_left (a b n : ℕ) :
+      euclideanChainLength (a + n * b) b = euclideanChainLength a b := by
+    by_cases hb : b = 0
+    · simp [hb, euclideanChainLength_zero]
+    · rw [euclideanChainLength_of_ne_zero (a + n * b) hb,
+        euclideanChainLength_of_ne_zero a hb, Nat.add_mul_mod_self_right]
+  have add_right (z : ℕ) :
+      euclideanChainLength x (z + x) = euclideanChainLength x z + 1 := by
+    have hmod : (z + x - x % (z + x)) % (z + x) = z := by
+      obtain rfl | hz := Nat.eq_zero_or_pos z
+      · simp
+      · rw [Nat.mod_eq_of_lt (show x < z + x by omega), Nat.add_sub_cancel,
+          Nat.mod_eq_of_lt (show z < z + x by omega)]
+    have hleft : euclideanChainLength (z + x) z = euclideanChainLength x z := by
+      simpa only [Nat.one_mul, Nat.add_comm] using add_left x z 1
+    rw [euclideanChainLength_of_ne_zero x (by omega : z + x ≠ 0), hmod, hleft, Nat.add_comm 1]
+  refine ⟨add_left x y k, ?_⟩
+  induction k with
+  | zero => simp
+  | succ k ih =>
+    rw [Nat.succ_mul, Nat.add_right_comm (k * x) x y, add_right, ih, Nat.add_assoc]
+
 end
 
 end MetaMathlibExt
