@@ -7,7 +7,9 @@ LICENSE file in the root directory of this source tree.
 -/
 
 -- Author: @toskua
-import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentHomSimplex
+import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentPathLastMaximum
+import MathlibExt.AlgebraicTopology.SimplicialCategory.EnrichedSingletonHomUnits
+import MathlibExt.AlgebraicTopology.SimplicialCategory.EnrichedEqualityTransport
 
 /-!
 # Whole coherent simplices from actual front-compatible Hom families
@@ -17,7 +19,8 @@ front-prefix union, supplies all Hom maps of a genuine enriched simplex.
 Its front identities, reverse empty intervals, units and composition
 are proved using the original interval nerves. The input consists of
 these actual Hom maps and their generating union law, not a comparison
-or weak-equivalence outcome.
+or weak-equivalence outcome. The original Hom simplex construction of
+`CoherentHomSimplex` is the instance of this one for the maximum maps.
 -/
 
 noncomputable section
@@ -247,6 +250,5 @@ theorem simplex_front (i : Fin (n + 1)) : (simplex x y family).obj (.mk (ULift.u
 /-- The actual last object is the supplied individual original target. -/
 theorem simplex_last : (simplex x y family).obj (.mk (ULift.up (Fin.last (n + 1)))) = y := by
   simp only [simplex, object_last]
-
 
 end CategoryTheory.CoherentRealization.HomFrontFamily

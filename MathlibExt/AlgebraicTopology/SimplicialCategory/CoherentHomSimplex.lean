@@ -7,9 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 -- Author: @toskua
-import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentPathLastMaximum
-import MathlibExt.AlgebraicTopology.SimplicialCategory.EnrichedSingletonHomUnits
-import MathlibExt.AlgebraicTopology.SimplicialCategory.EnrichedEqualityTransport
+import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentHomFrontFamily
 import Mathlib.AlgebraicTopology.SimplicialSet.StdSimplex
 
 /-!
@@ -17,9 +15,10 @@ import Mathlib.AlgebraicTopology.SimplicialSet.StdSimplex
 
 A supplied Hom simplex gives an actual enriched coherent simplex: every
 front object is the specified source and the last object is the specified
-target. The front-to-last maps use the original last-front maximum;
-composition follows from original union composition and actual enriched
-identity laws. No Kan or mapping-comparison outcome is an input.
+target. The front-to-last maps use the original last-front maximum, and
+their union law makes them a `HomFrontFamily.Family`; the whole simplex is
+the front-family construction for that family. No Kan or mapping-comparison
+outcome is an input.
 -/
 
 noncomputable section
@@ -60,41 +59,31 @@ theorem lastMap_compose (i j : Fin (n + 1)) (q : SimplexCategoryᵒᵖ)
   intro k l f
   exact Subsingleton.elim _ _
 
+/-- The original front-to-last maximum maps of the supplied Hom simplex, as a family of
+last-interval maps compatible with every original front-prefix union. -/
+def family : HomFrontFamily.Family x y n where
+  map := lastMap x y τ
+  map_comp := lastMap_compose x y τ
+
+/-! The whole construction below is `HomFrontFamily.simplex` for this family. -/
+
 /-- The supplied source at every original front vertex and supplied target at the actual
 last vertex. -/
-abbrev object (a : Fin (n + 2)) : C := Fin.lastCases y (fun _ => x) a
+abbrev object (a : Fin (n + 2)) : C := HomFrontFamily.object x y a
 
 /-- The original front object reads the supplied source. -/
-theorem object_front (i : Fin (n + 1)) : object x y i.castSucc = x := Fin.lastCases_castSucc i
+theorem object_front (i : Fin (n + 1)) : object x y i.castSucc = x :=
+  HomFrontFamily.object_front x y i
 
 /-- The original last object reads the supplied target. -/
-theorem object_last : object x y (Fin.last (n + 1)) = y := Fin.lastCases_last
+theorem object_last : object x y (Fin.last (n + 1)) = y := HomFrontFamily.object_last x y
 
 /-- The actual whole Hom maps, including constant original front identities and genuinely
 empty reverse intervals. -/
 def homMap (a b : Fin (n + 2)) :
     nerve (SimplicialThickening.Path (ULift.up.{u} a) (ULift.up.{u} b)) ⟶
-      (object x y a ⟶[SSet.{u}] object x y b) := by
-  classical
-  cases a using Fin.lastCases with
-  | last =>
-    cases b using Fin.lastCases with
-    | last =>
-      exact (toUnit _ ≫ eId SSet.{u} y) ≫
-        EqualityTransport.hom (object_last x y).symm (object_last x y).symm
-    | cast i =>
-      exact HomUnitsAndEmpty.emptyMap
-        (show ¬(ULift.up.{u} (Fin.last (n + 1)) : ULift.{u} (Fin (n + 2))) ≤ ULift.up
-          i.castSucc from
-          not_le.mpr (Fin.castSucc_lt_last i)) _
-  | cast i =>
-    cases b using Fin.lastCases with
-    | last =>
-      exact lastMap x y τ i ≫
-        EqualityTransport.hom (object_front x y i).symm (object_last x y).symm
-    | cast j =>
-      exact (toUnit _ ≫ eId SSet.{u} x) ≫
-        EqualityTransport.hom (object_front x y i).symm (object_front x y j).symm
+      (object x y a ⟶[SSet.{u}] object x y b) :=
+  HomFrontFamily.homMap x y (family x y τ) a b
 
 /-- The whole original last Hom map reads back the maximum map after the exact endpoint
 equalities. -/
@@ -102,10 +91,8 @@ theorem homMap_last (i : Fin (n + 1)) :
     homMap x y τ i.castSucc (Fin.last (n + 1)) ≫
       eqToHom (congrArg₂ (fun a b : C => a ⟶[SSet.{u}] b) (object_front x y i)
         (object_last x y)) = lastMap
-        x y τ i := by
-  simp only [homMap, EqualityTransport.hom, Fin.lastCases_castSucc, Fin.lastCases_last,
-    Category.assoc,
-    eqToHom_trans, eqToHom_refl, Category.comp_id]
+        x y τ i :=
+  HomFrontFamily.homMap_last x y (family x y τ) i
 
 /-- The whole original front Hom map reads back the supplied source identity after the same
 exact endpoint
@@ -114,42 +101,23 @@ theorem homMap_front (i j : Fin (n + 1)) :
     homMap x y τ i.castSucc j.castSucc ≫
       eqToHom (congrArg₂ (fun a b : C => a ⟶[SSet.{u}] b) (object_front x y i)
         (object_front x y j)) =
-      toUnit _ ≫ eId SSet.{u} x := by
-  simp only [homMap, EqualityTransport.hom, Fin.lastCases_castSucc, Category.assoc, eqToHom_trans,
-    eqToHom_refl, Category.comp_id]
+      toUnit _ ≫ eId SSet.{u} x :=
+  HomFrontFamily.homMap_front x y (family x y τ) i j
 
 /-- The last whole diagonal Hom map reads back the supplied target identity after its exact
 object equality. -/
 theorem homMap_last_last :
     homMap x y τ (Fin.last (n + 1)) (Fin.last (n + 1)) ≫
       eqToHom (congrArg₂ (fun a b : C => a ⟶[SSet.{u}] b) (object_last x y) (object_last x y)) =
-      toUnit _ ≫ eId SSet.{u} y := by
-  simp only [homMap, EqualityTransport.hom, Fin.lastCases_last, Category.assoc,
-    eqToHom_trans, eqToHom_refl,
-    Category.comp_id]
+      toUnit _ ≫ eId SSet.{u} y :=
+  HomFrontFamily.homMap_last_last x y (family x y τ)
 
 /-- The constructed whole Hom maps preserve the original enriched identity at every original
 vertex. -/
 theorem homMap_id (a : Fin (n + 2)) :
     eId SSet.{u} (SimplicialThickening.mk (ULift.up.{u} a)) ≫ homMap x y τ a a =
-      eId SSet.{u} (object x y a) := by
-  cases a using Fin.lastCases with
-  | last =>
-    simp only [homMap, Fin.lastCases_last]
-    apply EqualityTransport.identity_retarget (C := C) (A :=
-      coherentSimplex.{u} ⦋n + 1⦌) (.mk (ULift.up.{u}
-      (Fin.last (n + 1))) : coherentSimplex.{u} ⦋n + 1⦌)
-      (object_last x y).symm
-    ext q p
-    rfl
-  | cast i =>
-    simp only [homMap, Fin.lastCases_castSucc]
-    apply EqualityTransport.identity_retarget (C := C) (A :=
-      coherentSimplex.{u} ⦋n + 1⦌) (.mk (ULift.up.{u}
-      i.castSucc) : coherentSimplex.{u} ⦋n + 1⦌)
-      (object_front x y i).symm
-    ext q p
-    rfl
+      eId SSet.{u} (object x y a) :=
+  HomFrontFamily.homMap_id x y (family x y τ) a
 
 /-- The constructed whole Hom maps preserve actual original union composition at every
 triple of original vertices. -/
@@ -158,110 +126,19 @@ theorem homMap_comp (a b c : Fin (n + 2)) :
       (SimplicialThickening.mk (ULift.up.{u} b)) (SimplicialThickening.mk (ULift.up.{u} c))
         ≫ homMap x y τ a c =
       (homMap x y τ a b ⊗ₘ homMap x y τ b c) ≫ eComp SSet.{u} (object x y a) (object
-        x y b) (object x y c) := by
-  cases a using Fin.lastCases with
-  | last =>
-    cases b using Fin.lastCases with
-    | last =>
-      cases c using Fin.lastCases with
-      | last =>
-        simp only [homMap, Fin.lastCases_last]
-        apply EqualityTransport.composition_retarget (C := C) (A := coherentSimplex.{u} ⦋n + 1⦌)
-          (.mk (ULift.up.{u} (Fin.last (n + 1))) : coherentSimplex.{u} ⦋n + 1⦌)
-          (SimplicialThickening.mk (ULift.up (Fin.last (n + 1)))) (SimplicialThickening.mk (ULift.up
-            (Fin.last (n + 1))))
-          (object_last x y).symm (object_last x y).symm (object_last x y).symm
-        apply SSet.hom_ext
-        intro q
-        apply ConcreteCategory.hom_ext
-        rintro ⟨p, r⟩
-        change (eId SSet.{u} y).app q PUnit.unit =
-          (eComp SSet.{u} y y y).app q ((eId SSet.{u} y).app q PUnit.unit,
-            (eId SSet.{u} y).app q PUnit.unit)
-        exact congr($(e_id_comp SSet.{u} y y).app q ((eId SSet.{u} y).app q PUnit.unit)).symm
-      | cast k =>
-        apply SSet.hom_ext
-        intro q
-        apply ConcreteCategory.hom_ext
-        rintro ⟨p, r⟩
-        exact False.elim ((not_le.mpr (Fin.castSucc_lt_last k))
-          (show Fin.last (n + 1) ≤ k.castSucc from HomUnitsAndEmpty.source_order
-            (a := ULift.up.{u} (Fin.last (n + 1))) (b := ULift.up.{u} k.castSucc) r))
-    | cast j =>
-      apply SSet.hom_ext
-      intro q
-      apply ConcreteCategory.hom_ext
-      rintro ⟨p, r⟩
-      exact False.elim ((not_le.mpr (Fin.castSucc_lt_last j))
-        (show Fin.last (n + 1) ≤ j.castSucc from HomUnitsAndEmpty.source_order
-          (a := ULift.up.{u} (Fin.last (n + 1))) (b := ULift.up.{u} j.castSucc) p))
-  | cast i =>
-    cases b using Fin.lastCases with
-    | last =>
-      cases c using Fin.lastCases with
-      | last =>
-        exact @SingletonHomUnits.right_comp (coherentSimplex.{u} ⦋n + 1⦌) C
-          (.mk (ULift.up i.castSucc)) (.mk (ULift.up (Fin.last (n + 1))))
-          (object x y i.castSucc) (object x y (Fin.last (n + 1)))
-          (HomUnitsAndEmpty.unit_isIso (ULift.up.{u} (Fin.last (n + 1))))
-          (homMap x y τ (Fin.last (n + 1)) (Fin.last (n + 1)))
-          (homMap x y τ i.castSucc (Fin.last (n + 1))) (homMap_id x y τ (Fin.last (n + 1)))
-      | cast k =>
-        apply SSet.hom_ext
-        intro q
-        apply ConcreteCategory.hom_ext
-        rintro ⟨p, r⟩
-        exact False.elim ((not_le.mpr (Fin.castSucc_lt_last k))
-          (show Fin.last (n + 1) ≤ k.castSucc from HomUnitsAndEmpty.source_order
-            (a := ULift.up.{u} (Fin.last (n + 1))) (b := ULift.up.{u} k.castSucc) r))
-    | cast j =>
-      cases c using Fin.lastCases with
-      | last =>
-        simp only [homMap, Fin.lastCases_castSucc, Fin.lastCases_last]
-        apply EqualityTransport.composition_retarget (C := C) (A := coherentSimplex.{u} ⦋n + 1⦌)
-          (.mk (ULift.up.{u} i.castSucc) : coherentSimplex.{u} ⦋n + 1⦌)
-          (SimplicialThickening.mk (ULift.up j.castSucc)) (SimplicialThickening.mk (ULift.up
-            (Fin.last (n + 1))))
-          (object_front x y i).symm (object_front x y j).symm (object_last x y).symm
-        apply SSet.hom_ext
-        intro q
-        apply ConcreteCategory.hom_ext
-        rintro ⟨p, r⟩
-        change (lastMap x y τ i).app q (p.prod' r ⋙ SimplicialThickening.compFunctor _ _ _) =
-          (eComp SSet.{u} x x y).app q ((eId SSet.{u} x).app q PUnit.unit,
-            (lastMap x y τ j).app q r)
-        have h := lastMap_compose x y τ i j q p r
-        exact h.trans (congr($(e_id_comp SSet.{u} x y).app q ((lastMap x y τ j).app q r))).symm
-      | cast k =>
-        simp only [homMap, Fin.lastCases_castSucc]
-        apply EqualityTransport.composition_retarget (C := C) (A := coherentSimplex.{u} ⦋n + 1⦌)
-          (.mk (ULift.up.{u} i.castSucc) : coherentSimplex.{u} ⦋n + 1⦌)
-          (SimplicialThickening.mk (ULift.up j.castSucc)) (SimplicialThickening.mk (ULift.up
-            k.castSucc))
-          (object_front x y i).symm (object_front x y j).symm (object_front x y k).symm
-        apply SSet.hom_ext
-        intro q
-        apply ConcreteCategory.hom_ext
-        rintro ⟨p, r⟩
-        change (eId SSet.{u} x).app q PUnit.unit =
-          (eComp SSet.{u} x x x).app q ((eId SSet.{u} x).app q PUnit.unit,
-            (eId SSet.{u} x).app q PUnit.unit)
-        exact congr($(e_id_comp SSet.{u} x x).app q ((eId SSet.{u} x).app q PUnit.unit)).symm
+        x y b) (object x y c) :=
+  HomFrontFamily.homMap_comp x y (family x y τ) a b c
 
 /-- The actual enriched coherent simplex, with the original supplied source and target and
 every whole Hom map. -/
-def simplex : coherentSimplex.{u} ⦋n + 1⦌ ⟶ C where
-  obj a := object x y a.as.down
-  map a b := homMap x y τ a.as.down b.as.down
-  map_id a := homMap_id x y τ a.as.down
-  map_comp a b c := homMap_comp x y τ a.as.down b.as.down c.as.down
+def simplex : coherentSimplex.{u} ⦋n + 1⦌ ⟶ C := HomFrontFamily.simplex x y (family x y τ)
 
 /-- Every front object is the supplied individual original source. -/
-theorem simplex_front (i : Fin (n + 1)) : (simplex x y τ).obj (.mk (ULift.up i.castSucc)) = x := by
-  simp only [simplex, object_front]
+theorem simplex_front (i : Fin (n + 1)) : (simplex x y τ).obj (.mk (ULift.up i.castSucc)) = x :=
+  HomFrontFamily.simplex_front x y (family x y τ) i
 
 /-- The actual last object is the supplied individual original target. -/
-theorem simplex_last : (simplex x y τ).obj (.mk (ULift.up (Fin.last (n + 1)))) = y := by
-  simp only [simplex, object_last]
+theorem simplex_last : (simplex x y τ).obj (.mk (ULift.up (Fin.last (n + 1)))) = y :=
+  HomFrontFamily.simplex_last x y (family x y τ)
 
 end CategoryTheory.CoherentRealization.HomSimplex
