@@ -3,8 +3,7 @@
 Let $K$ be a finite extension of $\mathbb{Q}_p$. A $p$-adic representation of $G_K$ is de Rham if and only if it
 is potentially semistable: for every de Rham representation $V$ there is a finite extension $K'/K$ in $\bar K$
 such that $V|_{G_{K'}}$ is semistable. (The converse, that potentially semistable representations are de Rham,
-is elementary.) Consequently, de Rham representations of $G_K$ are equivalent to weakly admissible filtered
-$(\varphi, N, G_K)$-modules over $K$.
+is elementary.)
 
 ## Depends on
 
@@ -14,7 +13,6 @@ $(\varphi, N, G_K)$-modules over $K$.
 ## Proof depends on
 
 - [(φ, Γ)-modules and p-adic differential equations](phi-gamma-modules-and-p-adic-differential-equations.md), for Berger's construction of a $p$-adic differential equation with Frobenius structure from a de Rham representation and Crew's conjecture on its quasi-unipotence (proved by André, Kedlaya and Mebkhout)
-- [Weakly admissible implies admissible](colmez-fontaine-theorem.md), for the equivalence with $(\varphi, N, G_K)$-modules
 
 ## Sources
 
@@ -25,8 +23,7 @@ $(\varphi, N, G_K)$-modules over $K$.
   paper.
 - J.-M. Fontaine and Y. Ouyang, *Theory of p-adic Galois Representations*, book draft (PDF of 2022-05-26),
   archived at <http://web.archive.org/web/20261014003209/http://staff.ustc.edu.cn/~yiouyang/galoisrep.pdf>:
-  §8.3.1, Theorem A and Remark 8.50 (the $p$-adic monodromy conjecture, first proved by Berger), Definitions 8.56
-  and Theorem 8.57 (de Rham representations and admissible filtered $(\varphi, N, G_K)$-modules).
+  §8.3.1, Theorem A and Remark 8.50 (the $p$-adic monodromy conjecture, first proved by Berger).
 - Provenance: L. Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror
   <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>)
   uses the theorem as `GlobalTheory.Published.DeRhamPotSemistable`.
