@@ -8,3 +8,6 @@ the uniqueness of a canonical realization up to similarity.
 - [Hankel factorization of Markov parameters](hankel-factorization-of-markov-parameters.md)
 - [Minimal realizations are exactly the canonical ones](minimal-realizations-are-canonical.md)
 - [Minimal realizations are unique up to a unique similarity](minimal-realizations-are-similar.md)
+
+- [Internal and external stability of minimal realizations](internal-and-external-stability-of-minimal-realizations.md)
+- [Controller-form realization of a proper rational transfer matrix](controller-form-realization-of-a-proper-rational-transfer-matrix.md)

@@ -14,6 +14,7 @@
 - [The predict step is exact](map-predict.md)
 - [The update step is the exact posterior](cond-distrib-update.md)
 - [One filter step is the exact posterior](cond-distrib-step.md)
+- [The Kalman filter gives the conditional law given the whole observation history](kalman-filter-is-the-full-history-posterior.md)
 
 ## Related topics
 
