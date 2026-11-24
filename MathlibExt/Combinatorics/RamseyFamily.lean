@@ -13,8 +13,8 @@ public import Mathlib.Combinatorics.Hindman
 /-!
 # Ultrafilters in Ramsey families
 
-The ultrafilters contained in a Ramsey family form a closed set, and every nonempty closed
-set of ultrafilters arises this way.
+A Ramsey family is the union of the ultrafilters it contains. These ultrafilters form a
+closed set, and every nonempty closed set of ultrafilters arises this way.
 A Ramsey family of sets is invariant under left translation exactly when its ultrafilters
 form a left ideal under the ultrafilter product.
 -/
@@ -111,11 +111,17 @@ theorem isRamseyFamily_and_betaFamily_eq_of_isClosed {K : Set (Ultrafilter S)}
       exact ⟨q, hAq, hq⟩
     · exact fun p hp A hA => ⟨p, hp, hA⟩
 
-namespace betaFamily_isLeftIdeal_iff
+/-- **Theorem 3, part 2: a Ramsey family is the union of its ultrafilters.** Let $F$ be a family
+of subsets of a set $S$ with the Ramsey property, and let $\beta(F)$ be the set of ultrafilters on
+$S$ all of whose members lie in $F$. Then a set $A \subseteq S$ lies in $F$ if and only if
+$A \in p$ for some $p \in \beta(F)$; that is, $F = \bigcup \beta(F)$.
 
-private theorem exists_ultrafilter {F : Set (Set S)} (hF : IsRamseyFamily F)
-    {E : Set S} (hE : E ∈ F) : ∃ q ∈ betaFamily F, E ∈ q := by
+Source: De and Debnath, *Abundance of Arithmetic Progressions in CR-Sets*, INTEGERS
+25 (2025), Article A4, Theorem 3 (`integers-2025-A4-thm-3`). -/
+theorem mem_iff_exists_mem_betaFamily {F : Set (Set S)} (hF : IsRamseyFamily F)
+    (A : Set S) : A ∈ F ↔ ∃ p ∈ betaFamily F, A ∈ p := by
   classical
+  refine ⟨fun hA => ?_, fun ⟨_, hp, hAp⟩ => hp A hAp⟩
   obtain ⟨_, hempty, hsuperset, hunion⟩ := hF
   -- The complements of sets outside the family form its dual filter.
   let dual : Filter S := {
@@ -127,16 +133,14 @@ private theorem exists_ultrafilter {F : Set (Set S)} (hF : IsRamseyFamily F)
       change (A ∩ B)ᶜ ∉ F
       rw [Set.compl_inter]
       exact fun h => (hunion _ _ h).elim hA hB }
-  have hEc : Eᶜ ∉ dual := by simpa [dual] using hE
-  rw [Filter.mem_iff_ultrafilter] at hEc
-  push Not at hEc
-  obtain ⟨q, hq, hEq⟩ := hEc
-  refine ⟨q, ?_, Ultrafilter.compl_notMem_iff.mp hEq⟩
-  intro A hA
+  have hAc : Aᶜ ∉ dual := by simpa [dual] using hA
+  rw [Filter.mem_iff_ultrafilter] at hAc
+  push Not at hAc
+  obtain ⟨q, hq, hAq⟩ := hAc
+  refine ⟨q, ?_, Ultrafilter.compl_notMem_iff.mp hAq⟩
+  intro B hB
   by_contra h
-  exact Filter.compl_notMem hA (hq (show Aᶜ ∈ dual by simpa [dual] using h))
-
-end betaFamily_isLeftIdeal_iff
+  exact Filter.compl_notMem hB (hq (show Bᶜ ∈ dual by simpa [dual] using h))
 
 attribute [local instance] Ultrafilter.semigroup
 
@@ -162,7 +166,7 @@ theorem betaFamily_isLeftIdeal_iff [Semigroup S] {F : Set (Set S)}
       ∀ s : S, ∀ E ∈ F, (fun e => s * e) '' E ∈ F := by
   constructor
   · intro hleft s E hE
-    obtain ⟨q, hq, hEq⟩ := betaFamily_isLeftIdeal_iff.exists_ultrafilter hF hE
+    obtain ⟨q, hq, hEq⟩ := (mem_iff_exists_mem_betaFamily hF E).mp hE
     apply hleft (pure s) q hq
     change (s * ·) ⁻¹' ((s * ·) '' E) ∈ q
     exact Filter.mem_of_superset hEq (Set.subset_preimage_image _ _)
