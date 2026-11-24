@@ -45,11 +45,11 @@ All `min … (2 ^ k)` bounds are written with explicit parentheses:
 
 ## Provenance
 
-Ported from `converted_proofs/ch11/lean/Chapter11.lean` (namespace
-`FDSA11`), itself a Lean conversion of the Chapter 11 Isabelle
-artifacts in `HOL-Data_Structures` (`Braun_Tree.thy`). The book is
-Tobias Nipkow (ed.), *Functional Data Structures and Algorithms*,
-Chapter 11, §11.5.3 and §11.5.3.2.
+A Lean formalisation of the Chapter 11 Isabelle development in the
+Isabelle distribution's `HOL-Data_Structures` theory
+(`Braun_Tree.thy`). The book is Tobias Nipkow (ed.), *Functional
+Data Structures and Algorithms* (ACM Books, 2025; text version of
+July 27, 2026), Chapter 11, §11.5.3 and §11.5.3.2.
 -/
 
 @[expose] public section
@@ -408,12 +408,14 @@ theorem nth_nodes (ls : List (Tree α)) (xs : List α) (rs : List (Tree α)) (i 
 a chunk `ys` of size `2^k` from the input list, recursively converts the
 remainder `zs` into the list `ts` of trees on level `k+1`, and combines
 them with `ys` via `nodes` (the first `2^k` trees of `ts` become left
-children, the rest right children). -/
+children, the rest right children). The recursive result `ts` is bound
+once with `let` and reused, so each level makes a single recursive call
+(the cost model `Tbrauns` counts one recursive call per level). -/
 def brauns : ℕ → List α → List (Tree α)
   | _, [] => []
   | k, x :: xs' =>
-      nodes (brauns (k + 1) ((x :: xs').drop (2 ^ k))) ((x :: xs').take (2 ^ k))
-        ((brauns (k + 1) ((x :: xs').drop (2 ^ k))).drop (2 ^ k))
+      let ts := brauns (k + 1) ((x :: xs').drop (2 ^ k))
+      nodes ts ((x :: xs').take (2 ^ k)) (ts.drop (2 ^ k))
 termination_by _k xs => xs.length
 decreasing_by
   all_goals
@@ -681,16 +683,17 @@ def Tnodes (_ls : List (Tree α)) (xs : List α) (_rs : List (Tree α)) : ℕ :=
   xs.length + 1
 
 /-- `Tbrauns k xs`: running time of `brauns k xs` (book §11.5.3.2). The
-trailing `+ 1` is the cost of the dispatch itself. -/
+trailing `+ 1` is the cost of the dispatch itself. The recursive result
+is bound once (as in `brauns`), so the recurrence counts a single
+recursive call per level. -/
 def Tbrauns : ℕ → List α → ℕ
   | _, [] => 1
   | k, x :: xs' =>
+      let ts := brauns (k + 1) ((x :: xs').drop (2 ^ k))
       (Ttake (2 ^ k) (x :: xs') + Tdrop (2 ^ k) (x :: xs')
         + Tbrauns (k + 1) ((x :: xs').drop (2 ^ k))
-        + Tdrop (2 ^ k) (brauns (k + 1) ((x :: xs').drop (2 ^ k)))
-        + Tnodes (brauns (k + 1) ((x :: xs').drop (2 ^ k)))
-          ((x :: xs').take (2 ^ k))
-          ((brauns (k + 1) ((x :: xs').drop (2 ^ k))).drop (2 ^ k))) + 1
+        + Tdrop (2 ^ k) ts
+        + Tnodes ts ((x :: xs').take (2 ^ k)) (ts.drop (2 ^ k))) + 1
 termination_by _k xs => xs.length
 decreasing_by
   simp only [List.length_drop, List.length_cons]

@@ -34,10 +34,10 @@ traversal, or total runtime.
 
 ## Provenance
 
-Ported from `converted_proofs/ch11/lean/Chapter11.lean` (namespace
-`FDSA11`), itself a Lean conversion of the Chapter 11 Isabelle
-artifacts in `HOL-Data_Structures` (`Balance.thy`). The book is
-Tobias Nipkow (ed.), *Functional Data Structures and Algorithms*,
+A Lean formalisation of the Chapter 11 Isabelle development in the
+Isabelle distribution's `HOL-Data_Structures` theory (`Balance.thy`).
+The book is Tobias Nipkow (ed.), *Functional Data Structures and
+Algorithms* (ACM Books, 2025; text version of July 27, 2026),
 Chapter 4, §4.3.1, and Chapter 11, Exercise 11.4.
 -/
 

@@ -26,9 +26,9 @@ case costs one plus the recursive call. `Tsplice_le` bounds it by
 
 ## Provenance
 
-Ported from `converted_proofs/ch11/lean/Chapter11.lean` (namespace
-`FDSA11`). The book is Tobias Nipkow (ed.), *Functional Data
-Structures and Algorithms*, Chapter 11, §11.3.
+A Lean formalisation of Chapter 11, §11.3 of Tobias Nipkow (ed.),
+*Functional Data Structures and Algorithms* (ACM Books, 2025; text
+version of July 27, 2026).
 -/
 
 @[expose] public section

@@ -55,10 +55,10 @@ functions, not total runtime; see each module for its cost model.
 
 ## Provenance
 
-Ported from `converted_proofs/ch11/lean/Chapter11.lean` (namespace
-`FDSA11`), itself a Lean conversion of the Chapter 11 Isabelle
-artifacts in `HOL-Data_Structures` (`Braun_Tree.thy`,
-`Array_Braun.thy`, `Array_Specs.thy`, `Balance.thy`). The book is
-Tobias Nipkow (ed.), *Functional Data Structures and Algorithms*,
-Chapter 11 (Arrays via Braun Trees) and Chapter 4.
+A Lean formalisation of the Chapter 11 Isabelle development in the
+Isabelle distribution's `HOL-Data_Structures` theories
+(`Braun_Tree.thy`, `Array_Braun.thy`, `Array_Specs.thy`,
+`Balance.thy`). The book is Tobias Nipkow (ed.), *Functional Data
+Structures and Algorithms* (ACM Books, 2025; text version of July 27,
+2026), Chapter 11 (Arrays via Braun Trees) and Chapter 4.
 -/
