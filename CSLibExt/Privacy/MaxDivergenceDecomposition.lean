@@ -1694,29 +1694,4 @@ theorem approxMaxDivLE_of_common_mass {Outcome : Type*} [Fintype Outcome]
     mul_le_mul_of_nonneg_left hQs hexp
   linarith
 
-/-- Composition budget arithmetic: keeping a `(1 - δ)^k` fraction of an inner
-budget and paying the residual mass stays within the linear budget.
-Public for reuse by the adaptive assembly. -/
-theorem composition_budget_le (delta delta' : ℝ) (k : ℕ)
-    (hdelta : 0 ≤ delta) (hdelta_one : delta ≤ 1) (hdelta' : 0 ≤ delta') :
-    (1 - delta) ^ k * delta' + 1 - (1 - delta) ^ k ≤ (k : ℝ) * delta + delta' := by
-  have hq_le : ∀ k : ℕ, (1 - delta) ^ k ≤ 1 := fun k =>
-    pow_le_one₀ (by linarith) (by linarith)
-  have hmain : ∀ k : ℕ, 1 - (1 - delta) ^ k ≤ (k : ℝ) * delta := by
-    intro k
-    induction k with
-    | zero => norm_num
-    | succ k ih =>
-      have hqk : (1 - delta) ^ k ≤ 1 := hq_le k
-      have hqd : (1 - delta) ^ k * delta ≤ 1 * delta :=
-        mul_le_mul_of_nonneg_right hqk hdelta
-      rw [pow_succ]
-      push_cast
-      linarith
-  have hq := hq_le k
-  have hm := hmain k
-  have hqd' : (1 - delta) ^ k * delta' ≤ 1 * delta' :=
-    mul_le_mul_of_nonneg_right hq hdelta'
-  linarith
-
 end CSLibExt.Privacy.MaxDivergenceDecomposition

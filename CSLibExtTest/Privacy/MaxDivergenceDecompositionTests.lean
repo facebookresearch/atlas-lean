@@ -926,22 +926,6 @@ theorem cm_one : approxMaxDivLE Pcm0 Qcm0 0 (1 / 4) := by
   rw [cm_one_delta] at h
   exact h
 
-/-- Budget lemma at `k = 0`. -/
-theorem cbl_at_zero (d d' : ℝ) (hd : 0 ≤ d) (hd1 : d ≤ 1) (hd' : 0 ≤ d') :
-    (1 - d) ^ 0 * d' + 1 - (1 - d) ^ 0 ≤ ((0 : ℕ) : ℝ) * d + d' :=
-  composition_budget_le d d' 0 hd hd1 hd'
-
-/-- Budget lemma at `k = 1`. -/
-theorem cbl_at_one (d d' : ℝ) (hd : 0 ≤ d) (hd1 : d ≤ 1) (hd' : 0 ≤ d') :
-    (1 - d) ^ 1 * d' + 1 - (1 - d) ^ 1 ≤ ((1 : ℕ) : ℝ) * d + d' :=
-  composition_budget_le d d' 1 hd hd1 hd'
-
-/-- Budget lemma at `k = 3`, `delta = 1/10`. -/
-theorem cbl_at_three_tenth :
-    (1 - (1 / 10 : ℝ)) ^ 3 * (1 / 5 : ℝ) + 1 - (1 - (1 / 10 : ℝ)) ^ 3 ≤
-      ((3 : ℕ) : ℝ) * (1 / 10 : ℝ) + (1 / 5 : ℝ) :=
-  composition_budget_le _ _ _ (by norm_num) (by norm_num) (by norm_num)
-
 #print axioms CSLibExt.Privacy.MaxDivergenceDecomposition.approxMaxDivLE_of_common_mass
 
 end CSLibExtTest.Privacy.MaxDivergenceDecompositionCommonMassTests
