@@ -23,13 +23,18 @@ import MathlibExt.Probability.GaussianLogSobolev
 /-!
 # Concentration of Lipschitz functions of a standard Gaussian vector
 
-Let `γ` be the standard Gaussian measure on `ℝⁿ` and let `f : ℝⁿ → ℝ` be `L`-Lipschitz for the
-Euclidean norm. Then `f - ∫ f dγ` is sub-Gaussian with variance proxy `L²`:
+Let `γ` be the standard Gaussian measure on `ℝⁿ`, let `L ≥ 0` and let `f : ℝⁿ → ℝ` be
+`L`-Lipschitz for the Euclidean norm. Then `f - ∫ f dγ` is sub-Gaussian with variance proxy `L²`:
 `∫ exp (t (f - ∫ f dγ)) dγ ≤ exp (L² t² / 2)` for every real `t`, and hence
 `γ {x | t ≤ |f x - ∫ f dγ|} ≤ 2 exp (-t² / (2 L²))` for every `t ≥ 0` (M. J. Wainwright,
 *High-Dimensional Statistics*, 2019, §2.3; R. Vershynin, arXiv:1011.3027, Proposition 5.34, for
-the one-sided tail). The constant is sharp: for a linear `f`, `f - ∫ f dγ` is a centred Gaussian
-variable of variance `L²`.
+the one-sided tail). When `L = 0`, Lean reads `-t² / (2 L²)` as `0`, since it defines division by
+zero as zero, so the right-hand side of the tail bound is `2` and the bound holds trivially (`f`
+is then constant).
+
+The variance proxy `L²` cannot be lowered: for `u` with `‖u‖ = L`, the linear functional
+`x ↦ ⟪u, x⟫` is `L`-Lipschitz and centred, and it is a Gaussian variable of variance exactly `L²`,
+whose moment generating function is `exp (L² t² / 2)`.
 
 ## Proof outline
 
