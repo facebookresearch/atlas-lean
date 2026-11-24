@@ -10,6 +10,8 @@ module
 public import MathlibExt.CategoryTheory.DGModelContracts
 public import Mathlib.Algebra.Homology.HomotopyCategory.HomComplex
 public import Mathlib.CategoryTheory.Localization.Construction
+public import Mathlib.Algebra.Homology.QuasiIso
+import Mathlib.Algebra.Homology.ShortComplex.ModuleCat
 
 /-!
 # Actual DG modules and quasi-representable bimodule models
@@ -174,6 +176,100 @@ category. This retains module action and closed naturality. -/
 def IsCofibrantModule {C : Type u} [DGCategory k C] (M : RightModule k C) : Prop :=
   ∀ (N P : RightModule k C) (p : N ⟶ P), IsModuleTrivialFibration p →
     ∀ f : M ⟶ P, ∃ g : M ⟶ N, g ≫ p = f
+
+/-- A surjective quasi-isomorphism of cochain complexes of modules lifts degree-zero cocycles:
+it suffices that it is a quasi-isomorphism in degree zero and surjective in degree `-1`. Lift the
+class of `c` to a cocycle `z`; then `c - φ z = d w`, and lifting `w` to `u` corrects `z` to the
+cocycle `z + d u` over `c`. -/
+theorem exists_cocycle_lift_of_quasiIsoAt_zero {N P : Cochains k} (φ : N ⟶ P)
+    [QuasiIsoAt φ 0] (hsurj : Function.Surjective (φ.f (-1))) (c : P.X 0)
+    (hc : P.d 0 1 c = 0) :
+    ∃ c' : N.X 0, N.d 0 1 c' = 0 ∧ φ.f 0 c' = c := by
+  have hq : ShortComplex.QuasiIso
+      ((HomologicalComplex.shortComplexFunctor' _ _ (-1) 0 1).map φ) :=
+    (quasiIsoAt_iff' φ (-1) 0 1 (by simp) (by simp)).1 inferInstance
+  set S := N.sc' (-1) 0 1 with hS
+  set S' := P.sc' (-1) 0 1 with hS'
+  set ψ := (HomologicalComplex.shortComplexFunctor' _ _ (-1) 0 1).map φ with hψ
+  have hc' : c ∈ LinearMap.ker S'.g.hom := hc
+  let x' : S'.cycles := S'.moduleCatCyclesIso.inv ⟨c, hc'⟩
+  have hx' : S'.iCycles x' = c := by
+    change (S'.moduleCatCyclesIso.inv ≫ S'.iCycles) ⟨c, hc'⟩ = c
+    rw [S'.moduleCatCyclesIso_inv_iCycles]
+    rfl
+  obtain ⟨h, hh⟩ : ∃ h, ShortComplex.homologyMap ψ h = S'.homologyπ x' :=
+    (ConcreteCategory.bijective_of_isIso (ShortComplex.homologyMap ψ)).2 _
+  obtain ⟨z, rfl⟩ : ∃ z, S.homologyπ z = h :=
+    (ModuleCat.epi_iff_surjective S.homologyπ).1 inferInstance h
+  have key : S'.homologyπ (ShortComplex.cyclesMap ψ z) = S'.homologyπ x' := by
+    rw [← hh, ← ConcreteCategory.comp_apply, ← ShortComplex.homologyπ_naturality,
+      ConcreteCategory.comp_apply]
+  have e : ∀ a, S'.moduleCatHomologyIso.hom (S'.homologyπ a) =
+      S'.moduleCatLeftHomologyData.π (S'.moduleCatCyclesIso.hom a) := fun a => by
+    rw [← ConcreteCategory.comp_apply, S'.π_moduleCatCyclesIso_hom, ConcreteCategory.comp_apply]
+  have key2 := congrArg S'.moduleCatHomologyIso.hom key
+  rw [e, e] at key2
+  change Submodule.Quotient.mk _ = Submodule.Quotient.mk _ at key2
+  obtain ⟨w, hw⟩ := (Submodule.Quotient.eq _).1 key2
+  have hval : ∀ y, S'.moduleCatLeftHomologyData.i (S'.moduleCatCyclesIso.hom y) =
+      S'.iCycles y := fun y => by
+    rw [← S'.moduleCatCyclesIso_hom_i, ConcreteCategory.comp_apply]
+  have hw' : S'.f w = S'.iCycles (ShortComplex.cyclesMap ψ z) - S'.iCycles x' := by
+    rw [← hval, ← hval, ← map_sub, ← hw]
+    rfl
+  rw [hx', ← ConcreteCategory.comp_apply, ShortComplex.cyclesMap_i,
+    ConcreteCategory.comp_apply] at hw'
+  obtain ⟨u, rfl⟩ := hsurj w
+  let z₀ : N.X 0 := S.iCycles z
+  have hz₀ : N.d 0 1 z₀ = 0 := by
+    change (S.iCycles ≫ S.g) z = 0
+    rw [S.iCycles_g]
+    rfl
+  refine ⟨z₀ - N.d (-1) 0 u, ?_, ?_⟩
+  · have h2 : N.d 0 1 (N.d (-1) 0 u) = 0 := by
+      rw [← ConcreteCategory.comp_apply, N.d_comp_d]
+      rfl
+    rw [map_sub, hz₀, h2, sub_zero]
+  · have h3 : φ.f 0 (N.d (-1) 0 u) = P.d (-1) 0 (φ.f (-1) u) := by
+      rw [← ConcreteCategory.comp_apply, ← ConcreteCategory.comp_apply, φ.comm]
+    change P.d (-1) 0 (φ.f (-1) u) = φ.f 0 z₀ - c at hw'
+    rw [map_sub, h3, hw']
+    abel
+
+/-- Component evaluation sends composites of module morphisms to composites. -/
+theorem moduleComponent_comp {C : Type u} [DGCategory k C] {M N P : RightModule k C}
+    (f : M ⟶ N) (g : N ⟶ P) (x : Cᵒᵖ) :
+    moduleComponent (f ≫ g) x = moduleComponent f x ≫ moduleComponent g x :=
+  (moduleEvaluationFunctor x).map_comp f g
+
+/-- Under the DG Yoneda bijection, composing a morphism out of the representable module
+`Hom(-, X)` with `β` applies the component of `β` at `X` to the corresponding cocycle. -/
+theorem dgYonedaEquiv_comp_coe {C : Type u} [DGCategory k C] (X : C) {F G : RightModule k C}
+    (α : (⟨dgRepresentable k X⟩ : RightModule k C) ⟶ F) (β : F ⟶ G) :
+    ((dgYonedaEquiv X G.toEnrichedFunctor (α ≫ β)) : (G.toEnrichedFunctor.obj (op X)).X 0) =
+      (moduleComponent β (op X)).f 0 (dgYonedaEquiv X F.toEnrichedFunctor α) := by
+  rw [dgYonedaEquiv_apply_coe, dgYonedaEquiv_apply_coe]
+  change (moduleComponent (α ≫ β) (op X)).f 0 (dgId k X) =
+    (moduleComponent β (op X)).f 0 ((moduleComponent α (op X)).f 0 (dgId k X))
+  rw [moduleComponent_comp]
+  rfl
+
+/-- **Representable right DG modules are cofibrant.** By the DG Yoneda lemma a morphism
+`Hom(-, X) ⟶ P` is a degree-zero cocycle of `P(X)`; a trivial fibration `N ⟶ P` is a surjective
+quasi-isomorphism at `X`, so the cocycle lifts to a cocycle of `N(X)`
+(`exists_cocycle_lift_of_quasiIsoAt_zero`), which is the required lift. -/
+theorem isCofibrantModule_dgRepresentable {C : Type u} [DGCategory k C] (X : C) :
+    IsCofibrantModule (⟨dgRepresentable k X⟩ : RightModule k C) := by
+  intro N P p hp f
+  obtain ⟨hq, hs⟩ := hp (op X)
+  obtain ⟨c', hc', hlift⟩ := exists_cocycle_lift_of_quasiIsoAt_zero (moduleComponent p (op X))
+    (hs (-1)) (dgYonedaEquiv X P.toEnrichedFunctor f)
+    (LinearMap.mem_ker.1 (dgYonedaEquiv X P.toEnrichedFunctor f).2)
+  refine ⟨(dgYonedaEquiv X N.toEnrichedFunctor).symm ⟨c', LinearMap.mem_ker.2 hc'⟩, ?_⟩
+  apply (dgYonedaEquiv X P.toEnrichedFunctor).injective
+  apply Subtype.ext
+  rw [dgYonedaEquiv_comp_coe, Equiv.apply_symm_apply]
+  exact hlift
 
 /-- The actual DG category of cofibrant right modules, with its source
 Hom complexes. Passing to H0 before this construction would lose the

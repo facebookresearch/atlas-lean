@@ -44,8 +44,8 @@ namespace Mechanics.EulerBernoulli
 
 /-! ## A. Midpoint value and maximum -/
 
-/-- Midpoint value of the uniform-load deflection:
-`5 * w * L ^ 4 / (384 * EI)`. -/
+/-- Midpoint value of the uniform-load deflection: `5 * w * L ^ 4 / (384 * EI)`. With the convention
+`x / 0 = 0` both sides are `0` when `EI = 0`. -/
 theorem uniformLoadDeflection_midpoint (w EI L : ℝ) :
     uniformLoadDeflection w EI L (L / 2) = 5 * w * L ^ 4 / (384 * EI) := by
   unfold uniformLoadDeflection

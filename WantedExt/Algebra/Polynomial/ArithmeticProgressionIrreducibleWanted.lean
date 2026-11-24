@@ -10,7 +10,9 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.Algebra.Polynomial.ArithmeticProgressionAuxiliaryRoot
+public import MathlibExt.Algebra.Polynomial.ArithmeticProgressionPolynomial
 public import MathlibExt.Algebra.Polynomial.ArithmeticProgressionRootPower
+public import MathlibExt.Algebra.Polynomial.PerronIrreducibility
 public import MathlibExt.Analysis.SpecialFunctions.RpowRationalLowerBound
 public import Mathlib.Algebra.Polynomial.AlgebraMap
 public import Mathlib.Algebra.Polynomial.Monic
@@ -38,19 +40,6 @@ open Polynomial
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Perron's irreducibility criterion.** Let $f = x^n + a_{n-1} x^{n-1} + \cdots + a_0$ be a
-monic polynomial in $\mathbb{Z}[x]$ of degree $n \ge 1$ with $a_0 \neq 0$ and
-$|a_{n-1}| > 1 + \sum_{i=0}^{n-2} |a_i|$. Then $f$ is irreducible in $\mathbb{Z}[x]$.
-
-Source: Hiroaki Kakuma, *Irreducibility of Polynomials with Coefficients in a Positive
-Arithmetic Progression*, INTEGERS 26 (2026), Article A92, Theorem 1 (Perron's criterion,
-quoted from the paper's reference [6]) (`integers-2026-A92-thm-1`). -/
-public theorem_wanted perron_irreducible {f : ℤ[X]} (hmonic : f.Monic) (hdeg : 1 ≤ f.natDegree)
-    (h0 : f.coeff 0 ≠ 0)
-    (hbig : 1 + ∑ i ∈ Finset.range (f.natDegree - 1), |f.coeff i| <
-      |f.coeff (f.natDegree - 1)|) :
-    Irreducible f
 
 /-- **Irreducibility of polynomials with coefficients in an arithmetic progression.** Let
 $m \ge 2$ and let $a$, $d$ be coprime positive integers with $m^2 d^2 < 8a$. Then the polynomial
@@ -92,20 +81,6 @@ public theorem_wanted arithProgPoly_irreducible_of_primitiveRoot {m a d p : ℕ}
     (hp : p.Prime) (hpd : p ∣ d) (hpm : ¬ (m + 1) ∣ p)
     (hroot : orderOf (p : ZMod (m + 1)) = m) :
     Irreducible (∑ i ∈ Finset.range (m + 1), C ((a : ℤ) + i * d) * X ^ (m - i))
-
-/-- **The arithmetic-progression polynomial times $(x - 1)^2$.** For all natural numbers $m$, $a$,
-$d$, the polynomial $A_m(x) = \sum_{i=0}^{m} (a + id) x^{m-i}$ satisfies, in $\mathbb{Z}[x]$,
-
-$$A_m(x)(x - 1)^2 = a x^{m+2} - (a - d) x^{m+1} - (a + (m + 1)d) x + (a + md).$$
-
-The source assumes $m$, $a$, $d$ positive.
-
-Source: Hiroaki Kakuma, *Irreducibility of Polynomials with Coefficients in a Positive
-Arithmetic Progression*, INTEGERS 26 (2026), Article A92, Lemma 1 (`integers-2026-A92-lem-1`). -/
-public theorem_wanted arithProgPoly_mul_sub_one_sq (m a d : ℕ) :
-    (∑ i ∈ Finset.range (m + 1), C ((a : ℤ) + i * d) * X ^ (m - i)) * (X - 1) ^ 2 =
-      C (a : ℤ) * X ^ (m + 2) - C ((a : ℤ) - d) * X ^ (m + 1) -
-        C ((a : ℤ) + (m + 1) * d) * X + C ((a : ℤ) + m * d)
 
 /-- **Bound on the zeros of the arithmetic-progression polynomial.** Let $m \ge 2$, let $a$, $d$
 be integers with $0 < d \le a$, and let $\lambda > 0$ be a real number with
