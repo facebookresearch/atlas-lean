@@ -97,13 +97,12 @@ def curveOverField (C : ComplexScheme) (Ω : Type) [Field Ω] [Algebra ℂ Ω] :
   Over.mk (prod.snd : prod C (complexField Ω) ⟶ complexField Ω).left
 
 /-- Every geometric fibre of the family is a stable bundle of rank two and degree one on the
-base-changed curve, a smooth proper integral curve. -/
+base-changed curve, which is a smooth proper integral curve. -/
 def Admissible (C T : ComplexScheme) : ObjectProperty (Family C T) := fun E =>
-  ∀ (Ω : Type) [Field Ω] [Algebra ℂ Ω] [IsAlgClosed Ω]
-    [IsProperCurve (curveOverField C Ω).hom]
-    [SmoothOfRelativeDimension 1 (curveOverField C Ω).hom]
-    [IsIntegral (curveOverField C Ω).left]
-    (x : complexField Ω ⟶ T),
+  ∀ (Ω : Type) [Field Ω] [Algebra ℂ Ω] [IsAlgClosed Ω] (x : complexField Ω ⟶ T),
+    ∃ (_ : IsProperCurve (curveOverField C Ω).hom)
+      (_ : SmoothOfRelativeDimension 1 (curveOverField C Ω).hom)
+      (_ : IsIntegral (curveOverField C Ω).left),
     ∃ P : TensorPullbackComparison (curveMap C x).left,
     ∃ E' : Family C (complexField Ω),
     Nonempty (FamilyPullback C x E E' P) ∧
