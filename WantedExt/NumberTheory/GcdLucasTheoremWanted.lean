@@ -16,6 +16,7 @@ public import MathlibExt.NumberTheory.ExistsUniqueRadicalExpansionCoeffs
 public import MathlibExt.NumberTheory.GcdPowAddNegOnePow
 public import MathlibExt.NumberTheory.PrimeDvdChoosePowMulPowMul
 public import MathlibExt.NumberTheory.PrimeDvdPowAddOfDvdRadicalCoeffsGcd
+public import MathlibExt.NumberTheory.RadicalCoefficientGcdStep
 
 /-!
 # Greatest common divisors of radical-expansion coefficients and Lucas's theorem
@@ -104,25 +105,6 @@ public theorem_wanted gcd_prime_root_expansion_coeffs {p u v : ℕ} (hp : p.Prim
       Finset.univ.gcd (a (n * p + i)) = (p : ℤ) ^ n) ∧
     (p ^ 2 ∣ u ^ p + v → ∀ n i : ℕ, 1 ≤ i → i ≤ p - 1 →
       Finset.univ.gcd (a (n * (p - 1) + i)) = (p : ℤ) ^ n)
-
-/-- **The coefficient gcd of $(u + v^{1/N})^n$ divides that of $(u + v^{1/N})^{n+1}$.** Let
-$N, u, v$ be natural numbers such that $x^N - v$ is irreducible over $\mathbb{Q}$, let
-$\theta = v^{1/N}$ be the nonnegative real $N$-th root of $v$, and let $a_{n,i}$ (for natural $n$
-and $0 \le i \le N - 1$) be integers with $(u + \theta)^n = \sum_{i=0}^{N-1} a_{n,i} \theta^i$
-for every $n \ge 1$. Write $D_n$ for the nonnegative greatest common divisor of
-$a_{n,0}, \dots, a_{n,N-1}$. Then $D_n \mid D_{n+1}$ for every $n \ge 1$.
-
-This holds without the paper's standing assumptions $N \ge 4$ and $\gcd(u, v) = 1$.
-
-Source: John Ferdinands and Timothy Ferdinands, *Greatest Common Divisors and Lucas's
-Theorem*, Journal of Integer Sequences 28 (2025), Article 25.2.2, Lemma 4
-(`jis-2025-25.2.2-lem-4`). -/
-public theorem_wanted gcd_radical_expansion_coeffs_dvd_succ {N u v : ℕ}
-    (hirr : Irreducible (Polynomial.X ^ N - Polynomial.C (v : ℚ))) (a : ℕ → Fin N → ℤ)
-    (ha : ∀ n, 1 ≤ n → ((u : ℝ) + (v : ℝ) ^ (1 / (N : ℝ))) ^ n =
-      ∑ i : Fin N, (a n i : ℝ) * ((v : ℝ) ^ (1 / (N : ℝ))) ^ (i : ℕ))
-    (n : ℕ) (hn : 1 ≤ n) :
-    Finset.univ.gcd (a n) ∣ Finset.univ.gcd (a (n + 1))
 
 /-- **Common prime factors of $u^N + (-1)^{N+1} v$ and the coefficient gcd divide $N$.** Let
 $N \ge 2$, let $u, v$ be coprime natural numbers such that $x^N - v$ is irreducible over

@@ -137,6 +137,21 @@ example : ∑ k ∈ Finset.Icc 1 1, k ^ 4 * (1 : ℕ).choose k * Nat.fib k = 1 :
 example : ∑ k ∈ Finset.Icc 1 4, k ^ 4 * (4 : ℕ).choose k * Nat.fib k = 1516 :=
   (sum_pow_mul_choose_mul_fib_small 4).2.2.2.trans (by decide)
 
+-- At exponent zero the binomial sum advances any solution by twice the row index.
+example (a b : ℝ) (W : ℕ → ℝ) (hW : ∀ n, W (n + 2) = a * W (n + 1) + b * W n) (N : ℕ) :
+    ∑ k ∈ Finset.range (N + 1), (N.choose k : ℝ) * a ^ k * b ^ (N - k) * W k = W (2 * N) := by
+  simpa using sum_pow_mul_choose_mul_secondOrder a b W hW N 0
+
+-- Wₖ = k has a repeated characteristic root for a = 2 and b = -1.
+-- At N = 2 and r = 5 the nonzero terms are -4 and 256, and orders above two vanish.
+example : ∑ k ∈ Finset.range (2 + 1),
+    (k : ℝ) ^ (5 : ℕ) * (2 : ℕ).choose k * 2 ^ k * (-1) ^ (2 - k) * k = 252 := by
+  have hW (n : ℕ) : ((n + 2 : ℕ) : ℝ) = 2 * (n + 1 : ℕ) + (-1) * n := by
+    push_cast
+    ring
+  apply (sum_pow_mul_choose_mul_secondOrder 2 (-1) (fun k ↦ (k : ℝ)) hW 2 5).trans
+  norm_num [Finset.sum_range_succ, Nat.stirlingSecond, Nat.descFactorial]
+
 -- At x = r = 0, the constant coefficient survives by the convention 0^0 = 1.
 example (a : ℕ → ℝ) :
     ∑ k ∈ Finset.range (2 + 1), (k : ℝ) ^ (0 : ℕ) * a k * (0 : ℝ) ^ k = a 0 := by
