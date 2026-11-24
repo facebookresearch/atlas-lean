@@ -10815,6 +10815,7 @@
   "MathlibExt/Combinatorics/InfiniteWord/SquareFreeWord": {"to": "Combinatorics/combinatorics-on-words/repetitions-in-words", "title": "Square-free words"},
   "MathlibExt/Combinatorics/InfiniteWord/SturmianWord": {"to": "Combinatorics/combinatorics-on-words/morphic-sturmian-words", "title": "Sturmian words"},
   "MathlibExt/Combinatorics/InfiniteWord/ThueMorse": {"to": "Combinatorics/combinatorics-on-words/morphic-sturmian-words", "title": "Thue–Morse sequence and its generalizations"},
+  "MathlibExt/Combinatorics/InfiniteWord/ThueMorseFactors": {"to": "Combinatorics/combinatorics-on-words/automatic-sequences", "title": "Meta-automatic sequences"},
   "MathlibExt/Combinatorics/InfiniteWord/Tribonacci": {"to": "Combinatorics/combinatorics-on-words/morphic-sturmian-words", "title": "Tribonacci word"},
   "MathlibExt/Combinatorics/InfiniteWord/WordFactorComplexity": {"to": "Combinatorics/combinatorics-on-words/morphic-sturmian-words", "title": "Factor complexity of infinite words"},
   "MathlibExt/Combinatorics/IsogenyVolcano": {"to": "AlgebraicGeometry/elliptic-curves", "title": "Isogeny volcanoes"},
