@@ -73,7 +73,11 @@ open CategoryTheory CategoryTheory.Limits CategoryTheory.MonoidalCategory Tensor
 
 noncomputable section
 
-namespace MK00Port
+namespace TorPort
+
+/-! Tor machinery shared by both criteria below: the long exact sequence of `Tor` in
+its first argument, the vanishing of higher `Tor` of flat and zero modules, and the
+naturality of the canonical map from `Tor₀` to the tensor product. -/
 
 private abbrev Tor1ResVanishing (R : Type u) [CommRing R] [IsLocalRing R]
     (M : Type u) [AddCommGroup M] [Module R M] : Prop :=
@@ -387,6 +391,17 @@ private theorem ar_tor0_map_fromLeftDerivedZero_naturality
   exact ((Category.assoc _ _ _).trans
     (congrArg ((P.isoLeftDerivedObj ((curriedTensor (ModuleCat.{u} R)).obj X) 0).hom ≫ ·)
       (Category.assoc _ _ _))).symm
+
+end TorZeroBridge
+
+end TorPort
+
+namespace MK00Port
+
+open TorPort
+
+section TorZeroBridge
+variable {R : Type u} [CommRing R]
 
 private theorem ar_rTensor_injective_of_tor1_isZero
     {A B M : Type u} [AddCommGroup A] [Module R A] [AddCommGroup B] [Module R B]
@@ -771,6 +786,10 @@ private theorem dv_tor1_isZero_of_isFiniteLength_00MK (R M : Type u) [CommRing R
 end Devissage
 end MK00Port
 
+/-- Local flatness criterion, `Tor₁` form: let `R → S` be a local homomorphism of
+Noetherian local rings and `M` a finitely generated `S`-module whose `R`-module
+structure comes from `S`. If `Tor₁^R(κ, M) = 0` for the residue field `κ` of `R`,
+then `M` is flat over `R`. -/
 public theorem
   Module.flat_of_isLocalHom_of_isNoetherianRing_of_finite_of_tor_one_residueField_isZero
     {R : Type u} [CommRing R] {S : Type u} [CommRing S] [Algebra R S]
@@ -786,296 +805,7 @@ public theorem
 
 namespace LocalCritPort
 
-private abbrev Igw157LcTor1ResidueVanishing (R : Type u) [CommRing R] [IsLocalRing R]
-    (M : Type u) [AddCommGroup M] [Module R M] : Prop :=
-  IsZero (((Tor (ModuleCat.{u} R) 1).obj
-    (ModuleCat.of R (IsLocalRing.ResidueField R))).obj (ModuleCat.of R M))
-
-section TorLES
-variable {R : Type u} [CommRing R]
-
-private theorem torLES_tensorRight_shortExact {S : ShortComplex (ModuleCat.{u} R)}
-    (hS : S.ShortExact) (M : ModuleCat.{u} R) [Module.Flat R M] :
-    (S.map (tensorRight M)).ShortExact :=
-  ShortComplex.shortExact_of_iso (S.mapNatIso (BraidedCategory.tensorLeftIsoTensorRight M))
-    (hS.map_of_exact (tensorLeft M))
-
-@[reducible, simps]
-private noncomputable def torLES_resolutionTensorSES (S : ShortComplex (ModuleCat.{u} R))
-    {Y : ModuleCat.{u} R} (P : ProjectiveResolution Y) :
-    ShortComplex (HomologicalComplex (ModuleCat.{u} R) (ComplexShape.down ℕ)) :=
-  ShortComplex.mk
-    ((NatTrans.mapHomologicalComplex ((curriedTensor (ModuleCat.{u} R)).map S.f)
-      (ComplexShape.down ℕ)).app P.complex)
-    ((NatTrans.mapHomologicalComplex ((curriedTensor (ModuleCat.{u} R)).map S.g)
-      (ComplexShape.down ℕ)).app P.complex)
-    (by
-      ext i : 1
-      change S.f ▷ (P.complex.X i) ≫ S.g ▷ (P.complex.X i) = 0
-      rw [← comp_whiskerRight, S.zero, MonoidalPreadditive.zero_whiskerRight])
-
-private theorem torLES_resolutionTensorSES_shortExact (S : ShortComplex (ModuleCat.{u} R))
-    (hS : S.ShortExact) {Y : ModuleCat.{u} R} (P : ProjectiveResolution Y) :
-    (torLES_resolutionTensorSES S P).ShortExact := by
-  apply HomologicalComplex.shortExact_of_degreewise_shortExact
-  intro i
-  exact torLES_tensorRight_shortExact hS (P.complex.X i)
-
-variable {Y : ModuleCat.{u} R} (P : ProjectiveResolution Y)
-
-include P in
-private noncomputable def torLES_torIso (P : ProjectiveResolution Y) (X : ModuleCat.{u} R) (n : ℕ) :
-    ((Tor (ModuleCat.{u} R) n).obj X).obj Y ≅
-      ((((curriedTensor (ModuleCat.{u} R)).obj X).mapHomologicalComplex
-        (ComplexShape.down ℕ)).obj P.complex).homology n :=
-  P.isoLeftDerivedObj ((curriedTensor (ModuleCat.{u} R)).obj X) n
-
-include P in
-private theorem torLES_torMap_app_eq {X X' : ModuleCat.{u} R} (f : X ⟶ X') (n : ℕ) :
-    ((Tor (ModuleCat.{u} R) n).map f).app Y =
-      (torLES_torIso (P := P) X n).hom ≫
-        HomologicalComplex.homologyMap
-          ((NatTrans.mapHomologicalComplex ((curriedTensor (ModuleCat.{u} R)).map f)
-            (ComplexShape.down ℕ)).app P.complex) n ≫
-        (torLES_torIso (P := P) X' n).inv :=
-  ProjectiveResolution.leftDerived_app_eq ((curriedTensor (ModuleCat.{u} R)).map f) P n
-
-include P in
-private noncomputable def torLES_torDelta (P : ProjectiveResolution Y)
-    (S : ShortComplex (ModuleCat.{u} R)) (hS : S.ShortExact) (n : ℕ) :
-    ((Tor (ModuleCat.{u} R) (n + 1)).obj S.X₃).obj Y ⟶
-      ((Tor (ModuleCat.{u} R) n).obj S.X₁).obj Y :=
-  (torLES_torIso (P := P) S.X₃ (n + 1)).hom ≫
-    (torLES_resolutionTensorSES_shortExact S hS P).δ (n + 1) n (by simp) ≫
-    (torLES_torIso (P := P) S.X₁ n).inv
-
-include P in
-
-include P in
-private theorem torLES_torMap_comp_eq_zero (S : ShortComplex (ModuleCat.{u} R)) (n : ℕ) :
-    ((Tor (ModuleCat.{u} R) n).map S.f).app Y ≫
-      ((Tor (ModuleCat.{u} R) n).map S.g).app Y = 0 := by
-  have hz : HomologicalComplex.homologyMap (torLES_resolutionTensorSES S P).f n ≫
-      HomologicalComplex.homologyMap (torLES_resolutionTensorSES S P).g n = 0 := by
-    rw [← HomologicalComplex.homologyMap_comp, (torLES_resolutionTensorSES S P).zero,
-      HomologicalComplex.homologyMap_zero]
-  simp only [torLES_resolutionTensorSES_X₁, torLES_resolutionTensorSES_X₂,
-    torLES_resolutionTensorSES_X₃] at hz
-  rw [torLES_torMap_app_eq (P := P) S.f n, torLES_torMap_app_eq (P := P) S.g n]
-  simp only [Category.assoc, Iso.inv_hom_id_assoc]
-  slice_lhs 2 3 => rw [hz]
-  simp
-
-include P in
-private theorem torLES_torMap_comp_torDelta_eq_zero (S : ShortComplex (ModuleCat.{u} R))
-    (hS : S.ShortExact) (n : ℕ) :
-    ((Tor (ModuleCat.{u} R) (n + 1)).map S.g).app Y ≫ torLES_torDelta (P := P) S hS n = 0 := by
-  have hz := (torLES_resolutionTensorSES_shortExact S hS P).comp_δ (n + 1) n (by simp)
-  simp only [torLES_resolutionTensorSES_X₁, torLES_resolutionTensorSES_X₂,
-    torLES_resolutionTensorSES_X₃] at hz
-  dsimp only [torLES_torDelta]
-  rw [torLES_torMap_app_eq (P := P) S.g (n + 1)]
-  simp only [Category.assoc, Iso.inv_hom_id_assoc]
-  slice_lhs 2 3 => rw [hz]
-  simp
-
-include P in
-private theorem torLES_torDelta_comp_eq_zero (S : ShortComplex (ModuleCat.{u} R))
-    (hS : S.ShortExact) (n : ℕ) :
-    torLES_torDelta (P := P) S hS n ≫ ((Tor (ModuleCat.{u} R) n).map S.f).app Y = 0 := by
-  have hz := (torLES_resolutionTensorSES_shortExact S hS P).δ_comp (n + 1) n (by simp)
-  simp only [torLES_resolutionTensorSES_X₁, torLES_resolutionTensorSES_X₂,
-    torLES_resolutionTensorSES_X₃] at hz
-  dsimp only [torLES_torDelta]
-  rw [torLES_torMap_app_eq (P := P) S.f n]
-  simp only [Category.assoc, Iso.inv_hom_id_assoc]
-  slice_lhs 2 3 => rw [hz]
-  simp
-
-include P in
-private theorem torLES_tor_exact₂ (S : ShortComplex (ModuleCat.{u} R)) (hS : S.ShortExact)
-    (n : ℕ) :
-    (ShortComplex.mk (((Tor (ModuleCat.{u} R) n).map S.f).app Y)
-      (((Tor (ModuleCat.{u} R) n).map S.g).app Y)
-      (torLES_torMap_comp_eq_zero (P := P) S n)).Exact := by
-  refine ShortComplex.exact_of_iso
-    (ShortComplex.isoMk (torLES_torIso (P := P) S.X₁ n).symm (torLES_torIso (P := P) S.X₂ n).symm
-      (torLES_torIso (P := P) S.X₃ n).symm ?_ ?_)
-    ((torLES_resolutionTensorSES_shortExact S hS P).homology_exact₂ n)
-  · dsimp only
-    rw [torLES_torMap_app_eq (P := P) S.f n]
-    simp
-  · dsimp only
-    rw [torLES_torMap_app_eq (P := P) S.g n]
-    simp
-
-include P in
-private theorem torLES_tor_exact₃ (S : ShortComplex (ModuleCat.{u} R)) (hS : S.ShortExact)
-    (n : ℕ) :
-    (ShortComplex.mk (((Tor (ModuleCat.{u} R) (n + 1)).map S.g).app Y)
-      (torLES_torDelta (P := P) S hS n)
-      (torLES_torMap_comp_torDelta_eq_zero (P := P) S hS n)).Exact := by
-  refine ShortComplex.exact_of_iso
-    (ShortComplex.isoMk (torLES_torIso (P := P) S.X₂ (n + 1)).symm
-      (torLES_torIso (P := P) S.X₃ (n + 1)).symm (torLES_torIso (P := P) S.X₁ n).symm ?_ ?_)
-    ((torLES_resolutionTensorSES_shortExact S hS P).homology_exact₃ (n + 1) n (by simp))
-  · dsimp only
-    rw [torLES_torMap_app_eq (P := P) S.g (n + 1)]
-    simp
-  · dsimp only [torLES_torDelta]
-    simp
-
-include P in
-private theorem torLES_tor_exact₁ (S : ShortComplex (ModuleCat.{u} R)) (hS : S.ShortExact)
-    (n : ℕ) :
-    (ShortComplex.mk (torLES_torDelta (P := P) S hS n)
-      (((Tor (ModuleCat.{u} R) n).map S.f).app Y)
-      (torLES_torDelta_comp_eq_zero (P := P) S hS n)).Exact := by
-  refine ShortComplex.exact_of_iso
-    (ShortComplex.isoMk (torLES_torIso (P := P) S.X₃ (n + 1)).symm
-      (torLES_torIso (P := P) S.X₁ n).symm (torLES_torIso (P := P) S.X₂ n).symm ?_ ?_)
-    ((torLES_resolutionTensorSES_shortExact S hS P).homology_exact₁ (n + 1) n (by simp))
-  · dsimp only [torLES_torDelta]
-    simp
-  · dsimp only
-    rw [torLES_torMap_app_eq (P := P) S.f n]
-    simp
-
-end TorLES
-
-section TorFV
-variable {R : Type u} [CommRing R]
-
-private theorem torFV_resolutionTensor_exactAt (M : ModuleCat.{u} R) [Module.Flat R M]
-    {Y : ModuleCat.{u} R} (P : ProjectiveResolution Y) (n : ℕ) :
-    ((((curriedTensor (ModuleCat.{u} R)).obj M).mapHomologicalComplex
-      (ComplexShape.down ℕ)).obj P.complex).ExactAt (n + 1) :=
-  Module.Flat.lTensor_shortComplex_exact M (P.complex.sc (n + 1))
-    (P.complex_exactAt_succ n)
-
-private theorem torFV_tor_succ_isZero_of_flat_res (M : ModuleCat.{u} R) [Module.Flat R M]
-    {Y : ModuleCat.{u} R} (P : ProjectiveResolution Y) (n : ℕ) :
-    IsZero (((Tor (ModuleCat.{u} R) (n + 1)).obj M).obj Y) := by
-  refine IsZero.of_iso ?_ (torLES_torIso (P := P) M (n + 1))
-  rw [← HomologicalComplex.exactAt_iff_isZero_homology]
-  exact torFV_resolutionTensor_exactAt M P n
-
-private theorem torFV_tor_succ_isZero_of_flat (M : ModuleCat.{u} R) [Module.Flat R M]
-    (Y : ModuleCat.{u} R) (n : ℕ) :
-    IsZero (((Tor (ModuleCat.{u} R) (n + 1)).obj M).obj Y) := by
-  obtain ⟨P⟩ : Nonempty (ProjectiveResolution Y) := HasProjectiveResolution.out
-  exact torFV_tor_succ_isZero_of_flat_res M P n
-
-private theorem torFV_tor_one_isZero_of_flat (M : ModuleCat.{u} R) [Module.Flat R M]
-    (Y : ModuleCat.{u} R) :
-    IsZero (((Tor (ModuleCat.{u} R) 1).obj M).obj Y) :=
-  torFV_tor_succ_isZero_of_flat M Y 0
-
-end TorFV
-
-section Tor0Nat
-variable {R : Type u} [CommRing R]
-
-private theorem tor0_opcyclesMap_fromLeftDerivedZero'_naturality
-    {Y : ModuleCat.{u} R} (P : ProjectiveResolution Y) {X X' : ModuleCat.{u} R}
-    (f : X ⟶ X') :
-    HomologicalComplex.opcyclesMap
-        ((NatTrans.mapHomologicalComplex ((curriedTensor (ModuleCat.{u} R)).map f)
-          (ComplexShape.down ℕ)).app P.complex) 0 ≫
-        P.fromLeftDerivedZero' ((curriedTensor (ModuleCat.{u} R)).obj X') =
-      P.fromLeftDerivedZero' ((curriedTensor (ModuleCat.{u} R)).obj X) ≫
-        ((curriedTensor (ModuleCat.{u} R)).map f).app Y := by
-  rw [← cancel_epi (HomologicalComplex.pOpcycles
-    ((((curriedTensor (ModuleCat.{u} R)).obj X).mapHomologicalComplex
-      (ComplexShape.down ℕ)).obj P.complex) 0)]
-  rw [HomologicalComplex.p_opcyclesMap_assoc,
-    ProjectiveResolution.pOpcycles_comp_fromLeftDerivedZero', ← Category.assoc,
-    ProjectiveResolution.pOpcycles_comp_fromLeftDerivedZero']
-  exact (((curriedTensor (ModuleCat.{u} R)).map f).naturality (P.π.f 0)).symm
-
-private theorem tor0_tor0_map_fromLeftDerivedZero_naturality
-    {Y : ModuleCat.{u} R} (P : ProjectiveResolution Y) {X X' : ModuleCat.{u} R}
-    (f : X ⟶ X') :
-    ((Tor (ModuleCat.{u} R) 0).map f).app Y ≫
-        ((curriedTensor (ModuleCat.{u} R)).obj X').fromLeftDerivedZero.app Y =
-      ((curriedTensor (ModuleCat.{u} R)).obj X).fromLeftDerivedZero.app Y ≫
-        ((curriedTensor (ModuleCat.{u} R)).map f).app Y := by
-  have hM : ((Tor (ModuleCat.{u} R) 0).map f).app Y =
-      (torLES_torIso (P := P) X 0).hom ≫
-        HomologicalComplex.homologyMap
-          ((NatTrans.mapHomologicalComplex ((curriedTensor (ModuleCat.{u} R)).map f)
-            (ComplexShape.down ℕ)).app P.complex) 0 ≫
-        (torLES_torIso (P := P) X' 0).inv :=
-    torLES_torMap_app_eq (P := P) f 0
-  have hF : ((curriedTensor (ModuleCat.{u} R)).obj X).fromLeftDerivedZero.app Y =
-      (P.isoLeftDerivedObj ((curriedTensor (ModuleCat.{u} R)).obj X) 0).hom ≫
-        HomologicalComplex.homologyι
-          ((((curriedTensor (ModuleCat.{u} R)).obj X).mapHomologicalComplex
-            (ComplexShape.down ℕ)).obj P.complex) 0 ≫
-        P.fromLeftDerivedZero' ((curriedTensor (ModuleCat.{u} R)).obj X) :=
-    ProjectiveResolution.fromLeftDerivedZero_eq P
-      ((curriedTensor (ModuleCat.{u} R)).obj X)
-  have hG : ((curriedTensor (ModuleCat.{u} R)).obj X').fromLeftDerivedZero.app Y =
-      (P.isoLeftDerivedObj ((curriedTensor (ModuleCat.{u} R)).obj X') 0).hom ≫
-        HomologicalComplex.homologyι
-          ((((curriedTensor (ModuleCat.{u} R)).obj X').mapHomologicalComplex
-            (ComplexShape.down ℕ)).obj P.complex) 0 ≫
-        P.fromLeftDerivedZero' ((curriedTensor (ModuleCat.{u} R)).obj X') :=
-    ProjectiveResolution.fromLeftDerivedZero_eq P
-      ((curriedTensor (ModuleCat.{u} R)).obj X')
-  have hι : HomologicalComplex.homologyMap
-        ((NatTrans.mapHomologicalComplex ((curriedTensor (ModuleCat.{u} R)).map f)
-          (ComplexShape.down ℕ)).app P.complex) 0 ≫
-        HomologicalComplex.homologyι
-          ((((curriedTensor (ModuleCat.{u} R)).obj X').mapHomologicalComplex
-            (ComplexShape.down ℕ)).obj P.complex) 0 =
-      HomologicalComplex.homologyι
-          ((((curriedTensor (ModuleCat.{u} R)).obj X).mapHomologicalComplex
-            (ComplexShape.down ℕ)).obj P.complex) 0 ≫
-        HomologicalComplex.opcyclesMap
-          ((NatTrans.mapHomologicalComplex ((curriedTensor (ModuleCat.{u} R)).map f)
-            (ComplexShape.down ℕ)).app P.complex) 0 := by
-    apply HomologicalComplex.homologyι_naturality
-  have hO := tor0_opcyclesMap_fromLeftDerivedZero'_naturality P f
-  have hbr : ∀ {Z : ModuleCat.{u} R}
-      (h : ((((curriedTensor (ModuleCat.{u} R)).obj X').mapHomologicalComplex
-        (ComplexShape.down ℕ)).obj P.complex).homology 0 ⟶ Z),
-      (torLES_torIso (P := P) X' 0).inv ≫
-        (P.isoLeftDerivedObj ((curriedTensor (ModuleCat.{u} R)).obj X') 0).hom ≫ h = h :=
-    fun {Z} h => (torLES_torIso (P := P) X' 0).inv_hom_id_assoc h
-  have hbr2 : (torLES_torIso (P := P) X 0).hom =
-      (P.isoLeftDerivedObj ((curriedTensor (ModuleCat.{u} R)).obj X) 0).hom := rfl
-  have htor : ∀ Z : ModuleCat.{u} R, torLES_torIso (P := P) Z 0 =
-      P.isoLeftDerivedObj ((curriedTensor (ModuleCat.{u} R)).obj Z) 0 := fun _ => rfl
-  rw [hM, hF, hG]
-  have hstep : HomologicalComplex.homologyMap
-        ((NatTrans.mapHomologicalComplex ((curriedTensor (ModuleCat.{u} R)).map f)
-          (ComplexShape.down ℕ)).app P.complex) 0 ≫
-      ((((curriedTensor (ModuleCat.{u} R)).obj X').mapHomologicalComplex
-        (ComplexShape.down ℕ)).obj P.complex).homologyι 0 ≫
-        P.fromLeftDerivedZero' ((curriedTensor (ModuleCat.{u} R)).obj X') =
-      ((((curriedTensor (ModuleCat.{u} R)).obj X).mapHomologicalComplex
-        (ComplexShape.down ℕ)).obj P.complex).homologyι 0 ≫
-        P.fromLeftDerivedZero' ((curriedTensor (ModuleCat.{u} R)).obj X) ≫
-          ((curriedTensor (ModuleCat.{u} R)).map f).app Y :=
-    (Category.assoc _ _ _).symm.trans
-      ((congrArg (· ≫ _) hι).trans
-        ((Category.assoc _ _ _).trans (congrArg _ hO)))
-  refine (Category.assoc _ _ _).trans ?_
-  refine (congrArg ((torLES_torIso (P := P) X 0).hom ≫ ·)
-    (Category.assoc _ _ _)).trans ?_
-  refine (congrArg (fun k => (torLES_torIso (P := P) X 0).hom ≫
-    HomologicalComplex.homologyMap
-      ((NatTrans.mapHomologicalComplex ((curriedTensor (ModuleCat.{u} R)).map f)
-        (ComplexShape.down ℕ)).app P.complex) 0 ≫ k) (hbr _)).trans ?_
-  refine (congrArg (· ≫ _) hbr2).trans ?_
-  refine (congrArg ((P.isoLeftDerivedObj ((curriedTensor (ModuleCat.{u} R)).obj X) 0).hom ≫ ·)
-    hstep).trans ?_
-  exact ((Category.assoc _ _ _).trans
-    (congrArg ((P.isoLeftDerivedObj ((curriedTensor (ModuleCat.{u} R)).obj X) 0).hom ≫ ·)
-      (Category.assoc _ _ _))).symm
-
-end Tor0Nat
+open TorPort
 
 section FF9Engine
 variable {R : Type u} [CommRing R]
@@ -1089,7 +819,7 @@ private theorem kwFF9_tor0_map_mono_of_rTensor_injective {X X' : ModuleCat.{u} R
     PreservesColimitsOfSize.preservesFiniteColimits _
   haveI : PreservesFiniteColimits ((curriedTensor (ModuleCat.{u} R)).obj X') :=
     PreservesColimitsOfSize.preservesFiniteColimits _
-  have hsq := tor0_tor0_map_fromLeftDerivedZero_naturality P f
+  have hsq := ar_tor0_map_fromLeftDerivedZero_naturality P f
   rw [ModuleCat.mono_iff_injective]
   intro a b hab
   have hpt : ∀ z,
@@ -1104,21 +834,6 @@ private theorem kwFF9_tor0_map_mono_of_rTensor_injective {X X' : ModuleCat.{u} R
       ((((curriedTensor (ModuleCat.{u} R)).obj X).fromLeftDerivedZero.app Y).hom) :=
     (ModuleCat.mono_iff_injective _).mp (IsIso.mono_of_iso _)
   apply hiso; apply hinj'; rw [← hpt a, ← hpt b, hab]
-
-private theorem kwFF9_tor1_isZero_of_flat_of_rTensor_inj
-    (S : ShortComplex (ModuleCat.{u} R)) (hS : S.ShortExact) [Module.Flat R S.X₂]
-    (Y : ModuleCat.{u} R)
-    (hinj : Function.Injective (LinearMap.rTensor Y S.f.hom)) :
-    IsZero (((Tor (ModuleCat.{u} R) 1).obj S.X₃).obj Y) := by
-  obtain ⟨P⟩ : Nonempty (ProjectiveResolution Y) := HasProjectiveResolution.out
-  haveI : Mono (((Tor (ModuleCat.{u} R) 0).map S.f).app Y) :=
-    kwFF9_tor0_map_mono_of_rTensor_injective S.f Y hinj
-  have hδ : torLES_torDelta (P := P) S hS 0 = 0 := by
-    rw [← cancel_mono (((Tor (ModuleCat.{u} R) 0).map S.f).app Y),
-      torLES_torDelta_comp_eq_zero (P := P) S hS 0, zero_comp]
-  have h2 : IsZero (((Tor (ModuleCat.{u} R) 1).obj S.X₂).obj Y) :=
-    torFV_tor_one_isZero_of_flat S.X₂ Y
-  exact (torLES_tor_exact₃ (P := P) S hS 0).isZero_X₂ (h2.eq_of_src _ _) hδ
 
 private theorem kwFF9_idealSES_shortExact {S : Type u} [CommRing S] (I : Ideal S) :
     (ShortComplex.mk (ModuleCat.ofHom I.subtype) (ModuleCat.ofHom (Submodule.mkQ I))
@@ -1141,6 +856,14 @@ private theorem kwFF12_tor1_isZero_of_tor1_of_rTensor_inj
     rw [← cancel_mono (((Tor (ModuleCat.{u} R) 0).map S.f).app Y),
       torLES_torDelta_comp_eq_zero (P := P) S hS 0, zero_comp]
   exact (torLES_tor_exact₃ (P := P) S hS 0).isZero_X₂ (h2.eq_of_src _ _) hδ
+
+private theorem kwFF9_tor1_isZero_of_flat_of_rTensor_inj
+    (S : ShortComplex (ModuleCat.{u} R)) (hS : S.ShortExact) [Module.Flat R S.X₂]
+    (Y : ModuleCat.{u} R)
+    (hinj : Function.Injective (LinearMap.rTensor Y S.f.hom)) :
+    IsZero (((Tor (ModuleCat.{u} R) 1).obj S.X₃).obj Y) :=
+  kwFF12_tor1_isZero_of_tor1_of_rTensor_inj S hS Y
+    (torFV_tor_one_isZero_of_flat S.X₂ Y) hinj
 
 end FF9Engine
 
@@ -1292,7 +1015,7 @@ private abbrev KwFF13Stacks10_99_8Pinned : Prop :=
     KwFF3Tor1IdealVanishing S ((IsLocalRing.maximalIdeal R).map (algebraMap R S)) S' →
     Module.Flat (S ⧸ (IsLocalRing.maximalIdeal R).map (algebraMap R S))
       (S' ⧸ (IsLocalRing.maximalIdeal R).map (algebraMap R S')) →
-    Igw157LcTor1ResidueVanishing S S'
+    Tor1ResVanishing S S'
 
 private abbrev KwFF13ResidueQuotKerTensorInjPinned : Prop :=
   ∀ (R S S' : Type u) [CommRing R] [CommRing S] [CommRing S']
@@ -1404,7 +1127,7 @@ private theorem localCriterion00MK_stub {R S M : Type u} [CommRing R] [CommRing 
     [Module R M] [Module S M] [IsScalarTower R S M]
     (hR : IsNoetherianRing R) (hS : IsNoetherianRing S)
     (hloc : IsLocalHom (algebraMap R S)) (hfin : Module.Finite S M)
-    (hκ : Igw157LcTor1ResidueVanishing R M) : Module.Flat R M := by
+    (hκ : Tor1ResVanishing R M) : Module.Flat R M := by
   haveI := hR; haveI := hS; haveI := hloc; haveI := hfin
   exact Module.flat_of_isLocalHom_of_isNoetherianRing_of_finite_of_tor_one_residueField_isZero
     (S := S) hκ
