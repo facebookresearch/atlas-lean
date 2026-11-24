@@ -12056,6 +12056,7 @@
   "MathlibExt/NumberTheory/ModularForms/CuspFormGamma0Two": {"to": "NumberTheory/modular-forms-q-series/modular-forms", "title": "Weight-two cusp forms on Γ₀(2)"},
   "MathlibExt/NumberTheory/ModularForms/JacobiTheta/JacobiCubeEulerProduct": {"to": "NumberTheory/modular-forms-q-series/theta-q-series-partitions", "title": "Jacobi's identity for the cube of Euler's function"},
   "MathlibExt/NumberTheory/ModularForms/JacobiTheta/Ramanujan": {"to": "NumberTheory/modular-forms-q-series/theta-q-series-partitions", "title": "Ramanujan's theta function"},
+  "MathlibExt/NumberTheory/ModularForms/JacobiTheta/RamanujanProduct": {"to": "NumberTheory/modular-forms-q-series/partition-congruences", "title": "Generalized Frobenius partitions"},
   "MathlibExt/NumberTheory/ModularForms/JacobiTheta/RamanujanSummability": {"to": "NumberTheory/modular-forms-q-series/theta-q-series-partitions", "title": "Ramanujan's theta function"},
   "MathlibExt/NumberTheory/ModularForms/MeromorphicAtCusps": {"to": "NumberTheory/modular-forms-q-series/modular-forms", "title": "Modular functions"},
   "MathlibExt/NumberTheory/ModularForms/ModularFunction": {"to": "NumberTheory/modular-forms-q-series/modular-forms", "title": "Modular functions"},
