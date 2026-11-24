@@ -12801,6 +12801,7 @@
   "MathlibExt/NumberTheory/SylvesterCoinTheorem": {"to": "NumberTheory/numerical-semigroups", "title": "Sylvester's coin theorem"},
   "MathlibExt/NumberTheory/SylvesterSchur": {"to": "NumberTheory/distribution-of-primes/prime-gaps-short-intervals", "title": "Sylvester–Schur theorem"},
   "MathlibExt/NumberTheory/SymmetricContinuantParity": {"to": "NumberTheory/continued-fractions-expansions", "title": "Continued fractions of quadratic irrationals"},
+  "MathlibExt/NumberTheory/SymmetricConvergentDenParity": {"to": "NumberTheory/continued-fractions-expansions", "title": "Continued fractions of quadratic irrationals"},
   "MathlibExt/NumberTheory/SymmetricPowerSums": {"to": "NumberTheory/algebraic-number-theory/cyclotomic-fields", "title": "Trace metric on cyclotomic fields"},
   "MathlibExt/NumberTheory/TakagiDyadicIdentities": {"to": "Analysis/real-functions/continuity-and-functional-equations", "title": "Takagi function"},
   "MathlibExt/NumberTheory/TaxicabSeed": {"to": "NumberTheory/diophantine-equations/higher-degree-equations", "title": "Taxicab numbers"},
