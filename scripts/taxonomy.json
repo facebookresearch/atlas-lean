@@ -12493,7 +12493,6 @@
   "MathlibExt/Probability/WaldDiagonalTerms": {"to": "Probability/martingales", "title": "Wald's equations"},
   "MathlibExt/Probability/WaldEquation": {"to": "Probability/martingales", "title": "Wald's equations"},
   "MathlibExt/Probability/WaldSecondEquation": {"to": "Probability/martingales", "title": "Wald's equations"},
-  "MathlibExt/Quantum/ShorGoodUnits": {"to": "ComputerScience/quantum-algorithms", "title": "Shor's reduction of factoring to order finding"},
   "MathlibExt/QuantumInformation/Finite/KnillLaflamme": {"to": "QuantumInformation/quantum-error-correction", "title": "Knill–Laflamme conditions"},
   "MathlibExt/QuantumInformation/Finite/KochenSpecker": {"to": "QuantumInformation/quantum-foundations", "title": "Kochen–Specker theorem"},
   "MathlibExt/QuantumInformation/Finite/NoCloning": {"to": "QuantumInformation/quantum-operations", "title": "No-cloning theorem"},
