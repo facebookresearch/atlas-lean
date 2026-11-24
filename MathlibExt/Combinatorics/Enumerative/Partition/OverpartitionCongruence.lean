@@ -1880,7 +1880,11 @@ private theorem opc_theta_mul_rescale_genFun :
 
 namespace phiFiveCoreAnalog_five_pow_mul
 
-/-- The signed square theta series satisfies Gauss's product formula. -/
+/-- Let $t$ be an integer power series whose coefficient of $q^n$ is, for every $n \ge 0$, the
+number of integers $x$ with $x^2 = n$, so that $t(q) = \sum_{x \in \mathbb{Z}} q^{x^2}$, and let
+$P(q) = \sum_{k \in \mathbb{Z}} (-1)^k q^{k(3k-1)/2}$ be Euler's pentagonal series, which equals
+$\prod_{m \ge 1} (1 - q^m)$ by the pentagonal number theorem. Then the signed square theta series
+$t(-q)$ satisfies Gauss's product formula $t(-q) \, P(q^2) = P(q)^2$. -/
 public theorem theta_euler_product (t : ℤ⟦X⟧)
     (ht : ∀ n, t.coeff n = (Nat.card {x : ℤ // x.natAbs ^ 2 = n} : ℤ)) :
     rescale (-1) t * expand 2 two_ne_zero (pentagonalSeries ℤ) = pentagonalSeries ℤ ^ 2 := by
@@ -1889,8 +1893,16 @@ public theorem theta_euler_product (t : ℤ⟦X⟧)
   simpa [map_mul, map_pow, opc_rescale_expand_two, rescale_rescale] using
     congrArg (rescale (-1 : ℤ)) opc_theta_mul_expand_two
 
-/-- Splitting the square theta series by residues gives two off-diagonal components.
-Their product is determined by the sum of two squares identity at 5. -/
+/-- Let $t$ be an integer power series whose coefficient of $q^n$ is, for every $n \ge 0$, the
+number of integers $x$ with $x^2 = n$, so that $t(q) = \sum_{x \in \mathbb{Z}} q^{x^2}$. Then
+there are integer power series $b$ and $c$ such that $t(q) = t(q^{25}) + b(q) + c(q)$ and
+$t(q^{25})^2 + b(q) \, c(q) = t(q^5)^2$, every $n$ for which the coefficient of $q^n$ in $b$ is
+nonzero satisfies $n \equiv 1 \pmod 5$, and every $n$ for which the coefficient of $q^n$ in $c$
+is nonzero satisfies $n \equiv 4 \pmod 5$.
+
+One may take for $b$ and $c$ the sums of $q^{x^2}$ over the integers $x \equiv \pm 1 \pmod 5$
+and over the integers $x \equiv \pm 2 \pmod 5$, which splits the squares $x^2$ by the residue of
+$x$ modulo 5. -/
 public theorem theta_five_components (t : ℤ⟦X⟧)
     (ht : ∀ n, t.coeff n = (Nat.card {x : ℤ // x.natAbs ^ 2 = n} : ℤ)) :
     ∃ b c : ℤ⟦X⟧, t = expand 25 (by decide) t + b + c ∧
