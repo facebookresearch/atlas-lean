@@ -44,3 +44,6 @@
 - [First-coalescence times depend only on sizes at nonnegative times](first-coal-mean-comp-max.md)
 - [Non-identifiability from a bounded sample size](exists-ne-ae-first-coal-mean-eq-icc.md)
 - [Non-identifiability of general histories](exists-ne-ae-first-coal-mean-eq.md)
+- [Pairwise coalescence time under a variable population size](pair-coalescence-time-under-variable-size.md)
+- [First-coalescence means of the variable-size coalescent](first-coalescence-time-under-variable-size.md)
+- [Scale invariance of coalescent time, population size and mutation rate](scale-invariance-of-coalescent-parameters.md)

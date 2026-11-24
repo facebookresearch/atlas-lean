@@ -21,3 +21,4 @@
 - [Blackwell–MacQueen urn](../../../Probability/bayesian-statistics/blackwell-macqueen-urn/README.md): the ties among draws from a Dirichlet process follow the Chinese restaurant process.
 - [Dirichlet process](../../../Probability/bayesian-statistics/dirichlet-process/README.md): the random measure whose draws, through their ties, produce the Chinese restaurant process.
 - [Indian buffet process](../../../Probability/bayesian-statistics/indian-buffet-process/README.md): the analogue for latent feature models.
+- [Sampling from the Poisson–Dirichlet distribution gives the Ewens partition](paintbox-sampling-from-gem-gives-the-ewens-partition.md)

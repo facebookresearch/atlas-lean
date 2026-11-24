@@ -20,3 +20,4 @@
 - [Merger rates of the Bolthausen–Sznitman coalescent](merger-rate-volume.md)
 - [Total merger rate of the Bolthausen–Sznitman coalescent](total-merger-rate-volume.md)
 - [Pitman's representation theorem, existence half](exists-measure-of-consistent.md)
+- [Poisson construction of the Λ-coalescent](poisson-construction-of-lambda-coalescents.md)
