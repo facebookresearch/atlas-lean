@@ -81,8 +81,23 @@ example : Cslib.CodingTheory.CRC.encode crc3Generator (messagePoly [true, false,
     interval_cases i <;>
       simp [crc3Generator, Polynomial.coeff_add, Polynomial.coeff_X_pow,
         Polynomial.coeff_X, Polynomial.coeff_one] <;> decide
-  rw [encode_eq_messagePoly_shift_add_finalRegister crc3Generator 3 hg hr (by norm_num),
+  rw [encode_eq_messagePoly_shift_add_finalRegister crc3Generator 3 hg hr,
     h1, final_register_crc3_payload_101]
+
+/-- Width zero: the monic generator `g = 1` has degree `0`, and both the remainder theorem
+and the encoder bridge apply to it without a positive-degree hypothesis. -/
+example (bits : List Bool) :
+    (finalRegister 0 ((1 : Polynomial (ZMod 2)).toBitVec 0) bits).toPolynomial
+      = (messagePoly bits * Polynomial.X ^ 0) %ₘ 1 :=
+  final_register_represents_shifted_message_remainder_of_monic 1 0 Polynomial.monic_one
+    Polynomial.natDegree_one bits
+
+example (bits : List Bool) :
+    Cslib.CodingTheory.CRC.encode (1 : Polynomial (ZMod 2)) (messagePoly bits)
+      = messagePoly bits * Polynomial.X ^ 0
+        + (finalRegister 0 ((1 : Polynomial (ZMod 2)).toBitVec 0) bits).toPolynomial :=
+  encode_eq_messagePoly_shift_add_finalRegister 1 0 Polynomial.monic_one
+    Polynomial.natDegree_one bits
 
 /-- The CRC-3 taps word is the modulus `X^3 + X + 1`. -/
 example : crc3Taps.monicModulus = Polynomial.X ^ 3 + Polynomial.X + 1 :=

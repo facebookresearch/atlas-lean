@@ -332,10 +332,10 @@ theorem final_register_represents_shifted_message_remainder (r : ℕ) (taps : Bi
   unfold finalRegister
   rw [toPolynomial_runRegister, messagePoly_append_zeros]
 
-/-- The leaf obligation at v2 strength: for any monic `g` of degree `r ≥ 1`, the register
-run with taps `g.toBitVec r` represents `(m * X ^ r) %ₘ g`. -/
+/-- The leaf obligation at v2 strength: for any monic `g` of degree `r` (including `r = 0`,
+where `g = 1`), the register run with taps `g.toBitVec r` represents `(m * X ^ r) %ₘ g`. -/
 theorem final_register_represents_shifted_message_remainder_of_monic
-    (g : Polynomial (ZMod 2)) (r : ℕ) (hg : g.Monic) (hr : g.natDegree = r) (hr1 : 1 ≤ r)
+    (g : Polynomial (ZMod 2)) (r : ℕ) (hg : g.Monic) (hr : g.natDegree = r)
     (bits : List Bool) :
     (finalRegister r (g.toBitVec r) bits).toPolynomial =
       (messagePoly bits * Polynomial.X ^ r) %ₘ g := by
@@ -348,11 +348,11 @@ encoder `Cslib.CodingTheory.CRC.encode` appends: the codeword is the shifted
 message plus the final register read as a polynomial (characteristic two, so
 appending is addition). -/
 theorem encode_eq_messagePoly_shift_add_finalRegister (g : Polynomial (ZMod 2)) (r : ℕ)
-    (hg : g.Monic) (hr : g.natDegree = r) (hr1 : 1 ≤ r) (bits : List Bool) :
+    (hg : g.Monic) (hr : g.natDegree = r) (bits : List Bool) :
     @Cslib.CodingTheory.CRC.encode (ZMod 2) _ g (messagePoly bits) =
       messagePoly bits * Polynomial.X ^ r +
         (finalRegister r (g.toBitVec r) bits).toPolynomial := by
-  rw [final_register_represents_shifted_message_remainder_of_monic g r hg hr hr1 bits,
+  rw [final_register_represents_shifted_message_remainder_of_monic g r hg hr bits,
     Polynomial.modByMonic_eq_mod _ hg, Cslib.CodingTheory.CRC.encode_eq_add, hr]
 
 
