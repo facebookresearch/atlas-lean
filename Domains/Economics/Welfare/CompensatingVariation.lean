@@ -69,8 +69,8 @@ export MathlibExt.Economics.ExpenditureFunction (expenditure)
 /-- The compensating variation of a price change `p⁰ → p¹` at wealth `w`, with the frozen sign
 `CV = e(p⁰, u⁰) - e(p¹, u⁰)` at the fixed baseline utility `u⁰ = v(p⁰, w)`: the wealth that can be
 taken from the consumer after the change while keeping baseline utility (positive for a welfare
-gain). The expenditure function and the indirect utility are a real infimum and supremum, `0` for an
-empty or unbounded set. -/
+gain). The expenditure function is a real infimum, `0` for an empty set or one unbounded below, and
+the indirect utility a real supremum, `0` for an empty set or one unbounded above. -/
 noncomputable def compensatingVariation {ι : Type*} [Fintype ι] (u : (ι → ℝ) → ℝ)
     (X : Set (ι → ℝ)) (p₀ p₁ : ι → ℝ) (w : ℝ) : ℝ :=
   expenditure u X p₀ (indirectUtility u X p₀ w) - expenditure u X p₁ (indirectUtility u X p₀ w)
