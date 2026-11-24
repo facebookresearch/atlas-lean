@@ -12005,6 +12005,7 @@
   "MathlibExt/NumberTheory/ArithmeticFunction/RelativelyPrimeSubsetCounts": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Relatively prime subsets"},
   "MathlibExt/NumberTheory/ArithmeticFunction/SigmaR": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Divisor-power sums"},
   "MathlibExt/NumberTheory/ArithmeticFunction/SquareTriangularAdditiveUniqueness": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Additive uniqueness of multiplicative functions"},
+  "MathlibExt/NumberTheory/ArithmeticFunction/SquareTriangularSmallSquares": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Additive uniqueness of multiplicative functions"},
   "MathlibExt/NumberTheory/ArithmeticFunction/TothPairwiseNonCoprimeTuples": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Tuples coprime along the edges of a graph"},
   "MathlibExt/NumberTheory/ArithmeticFunction/TotienomialCoefficient": {"to": "Combinatorics/binomial-coefficients/generalized-binomial-coefficients", "title": "Totienomial coefficients"},
   "MathlibExt/NumberTheory/ArithmeticFunction/TotientSqrtLowerBound": {"to": "NumberTheory/linear-recurrences/lucas-sequences-primitive-divisors", "title": "Large Zsigmondy primes"},
