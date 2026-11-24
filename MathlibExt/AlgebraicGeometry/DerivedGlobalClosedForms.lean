@@ -167,6 +167,26 @@ def closedPullbackLift {Q : AlgebraReplacementFunctor k} {D : AffineDRSystem Q}
     (fun j => ⟨MY.closed.mono ((reindex f).obj j), MY.closed.weak ((reindex f).obj j)⟩)
     MX.closed.map)
 
+/-- `ℓ` extends the augmentation of `MX` along the reindexed augmentation of `MY`. Such lifts exist
+by injective fibrancy (`closedPullbackLift` chooses one) but are not unique. -/
+def IsClosedPullbackLift {Q : AlgebraReplacementFunctor k} {D : AffineDRSystem Q}
+    {p : ℕ} {n : ℤ} {NC : NegativeCyclicDiagram D.functor (p : ℤ)}
+    {X Y : Prestack k} (f : X ⟶ Y)
+    (MY : GlobalFormModel D p n NC Y) (MX : GlobalFormModel D p n NC X)
+    (ℓ : reindex f ⋙ MY.closed.diagram ⟶ MX.closed.diagram) : Prop :=
+  Functor.whiskerLeft (reindex f) MY.closed.map ≫ ℓ = MX.closed.map
+
+theorem closedPullbackLift_spec {Q : AlgebraReplacementFunctor k} {D : AffineDRSystem Q}
+    {p : ℕ} {n : ℤ} {NC : NegativeCyclicDiagram D.functor (p : ℤ)}
+    {X Y : Prestack k} (f : X ⟶ Y)
+    (MY : GlobalFormModel D p n NC Y) (MX : GlobalFormModel D p n NC X) :
+    IsClosedPullbackLift f MY MX (closedPullbackLift f MY MX) := by
+  unfold IsClosedPullbackLift closedPullbackLift
+  exact Classical.choose_spec (MX.closed.fibrant _ _
+    (Functor.whiskerLeft (reindex f) MY.closed.map)
+    (fun j => ⟨MY.closed.mono ((reindex f).obj j), MY.closed.weak ((reindex f).obj j)⟩)
+    MX.closed.map)
+
 /-- The full native cone for restriction to all X-families. -/
 def restrictedClosedCone {Q : AlgebraReplacementFunctor k} {D : AffineDRSystem Q}
     {p : ℕ} {n : ℤ} {NC : NegativeCyclicDiagram D.functor (p : ℤ)}
@@ -175,7 +195,9 @@ def restrictedClosedCone {Q : AlgebraReplacementFunctor k} {D : AffineDRSystem Q
   pt := globalClosedForms MY
   π := Functor.whiskerLeft (reindex f) (limit.cone MY.closed.diagram).π
 
-/-- Actual global pullback is the native limit map of the reindexed cone and its lift. -/
+/-- Actual global pullback is the native limit map of the reindexed cone and the chosen lift
+`closedPullbackLift` (`globalClosedPullbackOf` with that lift); it is canonical only after
+inverting weak equivalences. -/
 def globalClosedPullback {Q : AlgebraReplacementFunctor k} {D : AffineDRSystem Q}
     {p : ℕ} {n : ℤ} {NC : NegativeCyclicDiagram D.functor (p : ℤ)}
     {X Y : Prestack k} (f : X ⟶ Y)
@@ -183,6 +205,24 @@ def globalClosedPullback {Q : AlgebraReplacementFunctor k} {D : AffineDRSystem Q
     globalClosedForms MY ⟶ globalClosedForms MX :=
   limit.lift MX.closed.diagram
     ⟨globalClosedForms MY, (restrictedClosedCone f MY).π ≫ closedPullbackLift f MY MX⟩
+
+/-- The global closed-form pullback defined by the lift `ℓ`. Different lifts agree after inverting
+weak equivalences, and pullback is functorial there; these are requested in
+`WantedExt.AlgebraicGeometry.DerivedPullbackFunctorialityWanted`. -/
+def globalClosedPullbackOf {Q : AlgebraReplacementFunctor k} {D : AffineDRSystem Q}
+    {p : ℕ} {n : ℤ} {NC : NegativeCyclicDiagram D.functor (p : ℤ)}
+    {X Y : Prestack k} (f : X ⟶ Y)
+    (MY : GlobalFormModel D p n NC Y) (MX : GlobalFormModel D p n NC X)
+    (ℓ : reindex f ⋙ MY.closed.diagram ⟶ MX.closed.diagram) :
+    globalClosedForms MY ⟶ globalClosedForms MX :=
+  limit.lift MX.closed.diagram ⟨globalClosedForms MY, (restrictedClosedCone f MY).π ≫ ℓ⟩
+
+theorem globalClosedPullback_eq_globalClosedPullbackOf {Q : AlgebraReplacementFunctor k}
+    {D : AffineDRSystem Q} {p : ℕ} {n : ℤ} {NC : NegativeCyclicDiagram D.functor (p : ℤ)}
+    {X Y : Prestack k} (f : X ⟶ Y)
+    (MY : GlobalFormModel D p n NC Y) (MX : GlobalFormModel D p n NC X) :
+    globalClosedPullback f MY MX =
+      globalClosedPullbackOf f MY MX (closedPullbackLift f MY MX) := rfl
 
 /-- The literal space weak-equivalence localization for affine normalization. -/
 def spaceWeakEquivalences : MorphismProperty SSet.{u + 1} :=
