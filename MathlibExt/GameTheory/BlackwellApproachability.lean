@@ -81,8 +81,9 @@ theorem succ_smul_average (y : ℕ → E) (n : ℕ) :
   push_cast at this
   rw [this, natCast_smul_average, sum_range_succ]
 
-/-- **Norm bound for the running averages.** If every vector `y k` has norm at most `R`, then so
-does every average `x̄_n = (1/n) ∑_{k < n} y k`, including `x̄_0 = 0`. -/
+/-- **Norm bound for the running averages.** Let `y : ℕ → E` be a sequence in a real inner product
+space `E`. If every vector `y k` has norm at most `R`, then so does every average
+`x̄_n = (1/n) ∑_{k < n} y k`, including `x̄_0 = 0`. -/
 theorem norm_average_le {y : ℕ → E} {R : ℝ} (hy : ∀ k, ‖y k‖ ≤ R) (n : ℕ) :
     ‖average y n‖ ≤ R := by
   rcases Nat.eq_zero_or_pos n with rfl | hn
@@ -95,8 +96,8 @@ theorem norm_average_le {y : ℕ → E} {R : ℝ} (hy : ∀ k, ‖y k‖ ≤ R) 
           mul_le_mul_of_nonneg_left (sum_le_sum fun k _ => hy k) (by positivity)
       _ = R := by rw [sum_const, card_range, nsmul_eq_mul]; field_simp
 
-/-- **One step of Blackwell's recursion.** Let `x̄_n` be the averages of a sequence `y` and let
-`c ∈ C`. Then, for every `n`,
+/-- **One step of Blackwell's recursion.** Let `y : ℕ → E` be a sequence in a real inner product
+space `E`. Let `x̄_n` be the averages of a sequence `y` and let `c ∈ C`. Then, for every `n`,
 `((n + 1) dist(x̄_{n+1}, C))² ≤ (n ‖x̄_n − c‖)² + 2 n ⟪x̄_n − c, y_n − c⟫ + ‖y_n − c‖²`,
 because `(n + 1)(x̄_{n+1} − c) = n (x̄_n − c) + (y_n − c)` and `dist(x̄_{n+1}, C) ≤ ‖x̄_{n+1} − c‖`
 (Blackwell 1956, (2)–(3); Hart 2005, Appendix, proof of Theorem 5 (ii), the inequality before
