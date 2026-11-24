@@ -1,5 +1,6 @@
-# Finite sum
+# For 0 < e < 1, the flight durations sum to the accumulation time
 
-For `0 < e < 1` the flight durations sum to `t_∞ = 2 u₀ / (g (1 - e))`. The
-identity holds for every `g` and `u₀` (at `g = 0` both sides are `0` by Lean's division); it is the
-accumulation time of the bounces for `g > 0` and `u₀ > 0` (`zeno_accumulation`).
+Let `0 < e < 1`. For all real `g` and `u₀`, the series of the [flight durations](flight-duration.md)
+`T_n = (2 u₀ / g) eⁿ` converges, with sum the accumulation time `t_∞ = 2 u₀ / (g (1 - e))`. At
+`g = 0` both sides are `0` by the convention `x / 0 = 0`. For `g > 0` and `u₀ > 0` it is the time at
+which the [contact times accumulate](zeno-accumulation.md).

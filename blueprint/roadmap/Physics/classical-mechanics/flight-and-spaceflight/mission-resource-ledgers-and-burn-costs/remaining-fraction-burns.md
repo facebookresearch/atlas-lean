@@ -1,7 +1,7 @@
-# Equal exhaust speed composes burns
+# Remaining mass fractions of burns at one exhaust speed multiply
 
-For a consumed-fraction functional with
-`fuel ve 0 = 0` and the two-burn remaining-fraction identity at the exhaust speed `ve`, the
-remaining fractions of `n` burns multiply to the remaining fraction of their summed delta-v. This
-is an unconditional identity of the premises: it holds for every `ve` and every signed delta-v
-`d k`.
+Let `fuel : ℝ → ℝ → ℝ` be a supplied consumed-fraction functional (`fuel ve Δv` is the fraction of a
+burn's initial mass consumed by a burn of delta-v `Δv` at the exhaust speed `ve`), and fix a real
+`ve` with `fuel ve 0 = 0` and `(1 − fuel ve d₁)(1 − fuel ve d₂) = 1 − fuel ve (d₁ + d₂)` for all
+real `d₁`, `d₂`. Then for every sequence `d : ℕ → ℝ` of signed delta-v and every `n ∈ ℕ`,
+`∏_{k < n} (1 − fuel ve (d k)) = 1 − fuel ve (∑_{k < n} d k)`.

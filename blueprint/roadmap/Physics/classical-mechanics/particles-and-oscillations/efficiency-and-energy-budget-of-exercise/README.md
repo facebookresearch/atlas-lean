@@ -1,18 +1,15 @@
 # Efficiency and energy budget of exercise
 
-## A. Pointwise efficiency bound.
+## Efficiency bounds
 
-- [Declared exercise-efficiency bound](exercise-efficiency-bound.md)
+- [Metabolic power is at least the mechanical power](exercise-efficiency-bound.md)
+- [Over a window a ≤ b, metabolic energy is at least mechanical work](exercise-efficiency-integral.md)
 
-## B. Integrated efficiency bound.
+## Energy budget
 
-- [Exercise efficiency integral](exercise-efficiency-integral.md)
+- [Stored energy changes by the integrated net intake](energy-budget.md)
 
-## C. Energy budget identity.
+## Composition of the energy stores
 
-- [Energy budget identity](energy-budget.md)
-
-## D. Energy-preserving composition perturbation.
-
-- [Energy-preserving composition perturbation](energy-composition-perturbation.md)
-- [Nonvacuous witness](energy-composition-witness.md)
+- [Energy-preserving perturbations of the stores change the total mass](energy-composition-perturbation.md)
+- [Two compositions with equal energy and different masses](energy-composition-witness.md)

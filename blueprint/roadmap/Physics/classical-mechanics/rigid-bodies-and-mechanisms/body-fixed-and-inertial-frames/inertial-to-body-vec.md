@@ -1,4 +1,4 @@
-# Inertial To Body Vec
+# Body components of a free vector given in inertial components
 
-The passive component map back: the body components `v_B = Rᵀ v_I` of the free vector with
-inertial components `v_I`.
+For an orientation `R ∈ SO(3)` and inertial components `v_I ∈ ℝ³` of a free vector, the body
+components are `v_B = Rᵀ v_I`: the passive component map back to the body frame.

@@ -1,4 +1,7 @@
-# Longitudinal Lyapunov
+# Quadratic Lyapunov function of the reduced plant
 
-The quadratic Lyapunov function `V(e) = eᵀ P e` of a state `e` with coordinates
-`WithLp.ofLp e`: `x² / 2 + z² / 2 + 3 θ² / 2 + θ q + q² / 2`.
+For a state `e = (x, z, θ, q) ∈ ℝ⁴`, the quadratic Lyapunov function is
+
+`V(e) = eᵀ P e = x² / 2 + z² / 2 + 3 θ² / 2 + θ q + q² / 2`,
+
+with `P` the [Lyapunov matrix](longitudinal-lyapunov-matrix.md).

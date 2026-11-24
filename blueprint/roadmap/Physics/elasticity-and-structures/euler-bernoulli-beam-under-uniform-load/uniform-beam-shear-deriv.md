@@ -1,4 +1,5 @@
-# Uniform Beam Shear deriv
+# The shear force has derivative minus the load
 
-Equilibrium law: the shear derivative is the negative
-uniform load, `V' = -w`, as a standalone function identity.
+For a bending stiffness `EI ≠ 0` and all real `w` and `L`, the [shear force](uniform-beam-shear.md)
+`V(x) = M'(x)` of the uniformly loaded simply supported beam has derivative `V'(x) = -w` at every
+real `x`: the equilibrium law between shear and load.

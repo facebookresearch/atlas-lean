@@ -1,5 +1,5 @@
-# Mul Vec participation
+# The participation factors reconstruct the base-influence vector
 
-Modal expansion of the base-influence vector: for a complete modal
-basis with unit modal masses, the participation factors reconstruct
-the prescribed `r` exactly, `r = ∑ j, Γ j • (column j of Φ)`.
+Let `n` be a finite set and `M`, `Φ` real `n × n` matrices with `Φᵀ M Φ = 1`, and let `r ∈ ℝⁿ`.
+Then the [participation factors](participation.md) `Γ = Φᵀ M r` satisfy `Φ Γ = r`:
+`r = ∑_j Γ_j φ_j`, with `φ_j` the `j`-th column of `Φ`.

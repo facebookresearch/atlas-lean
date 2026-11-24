@@ -1,7 +1,5 @@
-# Sum pairwise antisymmetric eq zero
+# Antisymmetric pair forces sum to zero
 
-Action-reaction cancellation (MC): pair forces on a finite type,
-antisymmetric under pair swap with `F (j, i) = -F (i, j)`, sum to zero.
-Stated for real-valued pair forces: over a general additive group the claim
-is false (diagonal terms are only 2-torsion), so the vector case follows by
-applying this lemma pointwise (see the test file).
+Let `ι` be a finite set and `F : ι × ι → ℝ` a real-valued pair force with `F(j, i) = -F(i, j)`
+for all `i` and `j` (action and reaction). Then `∑_{(i, j) ∈ ι × ι} F(i, j) = 0`. In particular
+`F(i, i) = 0`. For vector-valued pair forces the same conclusion holds component by component.

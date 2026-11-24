@@ -1,8 +1,15 @@
-# Rayleigh modal decoupling
+# Rayleigh-damped equations decouple in modal coordinates
 
-Rayleigh-damped modal decoupling: for a complete mass-orthonormal basis `Φ` of the
-pencil `(K, M)` with `Φᵀ * K * Φ = diagonal μ`, a trajectory `x` satisfies
-`M x'' + (α M + β K) x' + K x = f` at time `t` iff its modal coordinates
-`q = Φᵀ * M *ᵥ x` satisfy the decoupled equations
-`q_j'' + (α + β * μ j) q_j' + μ j q_j = (Φᵀ *ᵥ f t) j` at `t`, for every mode `j`.
-Proportional damping only; holds for every real `α`, `β` and any load `f`.
+Let `n` be a finite set, `M`, `K` and `Φ` real `n × n` matrices and `μ : n → ℝ` with
+`Φᵀ M Φ = 1` and `Φᵀ K Φ = diag(μ)`, let `α` and `β` be real numbers, `x, f : ℝ → ℝⁿ` and `t` a
+time. Then
+
+`M x''(t) + (α M + β K) x'(t) + K x(t) = f(t)`
+
+holds if and only if, for every mode `j`, the modal coordinates `q = Φᵀ M x` satisfy
+
+`q_j''(t) + (α + β μ_j) q_j'(t) + μ_j q_j(t) = (Φᵀ f(t))_j`.
+
+Here `x'`, `x''`, `q'` and `q''` are first and second derivatives, with the convention that a
+derivative is `0` where the function is not differentiable; no regularity of `x` is needed, and
+the physical reading is the classical one for a twice differentiable `x`.

@@ -1,4 +1,6 @@
-# Exists Unique has Deriv At pos Map
+# For positive lengths, each kernel vector is one angle-line velocity
 
-Every kernel vector at `posMap q` is the velocity at `s = 0` of the explicit constrained curve
-`s ↦ posMap (q + s w)`, for exactly one angular velocity `w`.
+Let `l₁ > 0` and `l₂ > 0`, `q` a pair of angles, and `v` a pair of plane vectors in the kernel of
+the [rod constraint Jacobian](rod-jacobian.md) at the configuration given by the
+[angle-to-position map](pos-map.md) at `q`. Then there is exactly one angular velocity `w` such that
+the curve `s ↦ (p₁, p₂)(q + s w)` has derivative `v` at `s = 0`.

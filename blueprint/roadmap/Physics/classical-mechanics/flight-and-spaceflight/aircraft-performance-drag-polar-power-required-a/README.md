@@ -1,127 +1,127 @@
 # Aircraft performance: drag polar, power required and range
 
-## A. Scale height and density
+## Scale height and density
 
-- [Scale Height](scale-height.md)
-- [Isothermal Density](isothermal-density.md)
-- [Isothermal Density eq exp](isothermal-density-eq-exp.md)
-- [Has Deriv At isothermal Pressure density](has-deriv-at-isothermal-pressure-density.md)
-- [Isothermal Density pos](isothermal-density-pos.md)
-- [Scale Height pos](scale-height-pos.md)
+- [Scale height of an isothermal layer](scale-height.md)
+- [Density of an isothermal layer](isothermal-density.md)
+- [For positive g, Rs and T, the density is ρ0 exp(−z / H)](isothermal-density-eq-exp.md)
+- [Hydrostatic balance in density form](has-deriv-at-isothermal-pressure-density.md)
+- [For positive ρ0, Rs and T, the density is positive](isothermal-density-pos.md)
+- [The scale height is positive for positive Rs and T and nonzero g](scale-height-pos.md)
 
-## B. Bounds on a declared band
+## Bounds on a declared band
 
-- [Isothermal Density strict Anti On](isothermal-density-strict-anti-on.md)
-- [Isothermal Density band bounds](isothermal-density-band-bounds.md)
-- [Isothermal Density band bounds fail outside](isothermal-density-band-bounds-fail-outs.md)
+- [For positive ρ0, g, Rs and T, the density decreases with height](isothermal-density-strict-anti-on.md)
+- [Density bounds on a band of heights](isothermal-density-band-bounds.md)
+- [The density bounds of a band fail outside the band](isothermal-density-band-bounds-fail-outs.md)
 
-## C. Change of units
+## Change of units
 
-- [Isothermal Density unit Change](isothermal-density-unit-change.md)
-- [Scale Height unit Change](scale-height-unit-change.md)
+- [The density formula commutes with a change of units](isothermal-density-unit-change.md)
+- [The scale height scales as a length under a change of units](scale-height-unit-change.md)
 
-## D. Level flight on the declared polar
+## Level flight on the declared polar
 
-- [Polar Drag](polar-drag.md)
-- [Level Lift Coeff](level-lift-coeff.md)
-- [Parasite Drag Factor](parasite-drag-factor.md)
-- [Induced Drag Factor](induced-drag-factor.md)
-- [Level Drag](level-drag.md)
-- [Lift level Lift Coeff](lift-level-lift-coeff.md)
-- [Polar Drag eq level Drag](polar-drag-eq-level-drag.md)
-- [Parasite Drag Factor pos](parasite-drag-factor-pos.md)
-- [Induced Drag Factor pos](induced-drag-factor-pos.md)
+- [Drag of the parabolic drag polar](polar-drag.md)
+- [Lift coefficient for level flight](level-lift-coeff.md)
+- [Parasite-drag factor](parasite-drag-factor.md)
+- [Induced-drag factor](induced-drag-factor.md)
+- [Level-flight drag as a function of speed](level-drag.md)
+- [At the level-flight lift coefficient the lift equals the weight](lift-level-lift-coeff.md)
+- [In level flight the polar drag is a V² + b / V²](polar-drag-eq-level-drag.md)
+- [The parasite-drag factor is positive for positive ρ, S and CD0](parasite-drag-factor-pos.md)
+- [The induced-drag factor is positive for nonzero weight](induced-drag-factor-pos.md)
 
-## E. Minimum drag
+## Minimum drag
 
-- [Min Drag Speed](min-drag-speed.md)
-- [Two sqrt le level Drag](two-sqrt-le-level-drag.md)
-- [Level Drag eq two sqrt iff](level-drag-eq-two-sqrt-iff.md)
-- [Min Drag Speed pow four](min-drag-speed-pow-four.md)
-- [Min Drag Speed pos](min-drag-speed-pos.md)
-- [Level Drag eq two sqrt iff eq min Drag Speed](level-drag-eq-two-sqrt-iff-eq-min-drag-s.md)
-- [Is Least level Drag](is-least-level-drag.md)
-- [Two sqrt mul drag Factor eq](two-sqrt-mul-drag-factor-eq.md)
+- [Minimum-drag speed](min-drag-speed.md)
+- [Level-flight drag is at least 2 √(a b)](two-sqrt-le-level-drag.md)
+- [Level-flight drag equals 2 √(a b) exactly when V⁴ = b / a](level-drag-eq-two-sqrt-iff.md)
+- [For nonzero weight the minimum-drag speed solves V⁴ = b / a](min-drag-speed-pow-four.md)
+- [For nonzero weight the minimum-drag speed is positive](min-drag-speed-pos.md)
+- [For positive weight, least drag exactly at the minimum-drag speed](level-drag-eq-two-sqrt-iff-eq-min-drag-s.md)
+- [For positive weight, the least level-flight drag is 2 √(a b)](is-least-level-drag.md)
+- [For nonzero ρ and S, 2 √(a b) is 2 √(CD0 k) times the absolute weight](two-sqrt-mul-drag-factor-eq.md)
 
-## F. The stall-validity interval
+## The stall-validity interval
 
-- [Stall Speed](stall-speed.md)
-- [Level Lift Coeff le iff stall Speed le](level-lift-coeff-le-iff-stall-speed-le.md)
-- [Exists level Drag eq two sqrt iff](exists-level-drag-eq-two-sqrt-iff.md)
-- [Two sqrt lt level Drag of min Drag Speed lt stall Speed](two-sqrt-lt-level-drag-of-min-drag-speed.md)
-- [Min Drag Speed lt stall Speed iff](min-drag-speed-lt-stall-speed-iff.md)
+- [Stall speed](stall-speed.md)
+- [At positive speeds, CL ≤ CLmax exactly when the speed is at least V_s](level-lift-coeff-le-iff-stall-speed-le.md)
+- [Least drag is attainable above stall iff V_s ≤ V_md](exists-level-drag-eq-two-sqrt-iff.md)
+- [If V_md < V_s, every speed above stall has drag above 2 √(a b)](two-sqrt-lt-level-drag-of-min-drag-speed.md)
+- [The minimum-drag speed is below V_s iff CLmax < √(CD0 / k)](min-drag-speed-lt-stall-speed-iff.md)
 
-## G. Isothermal-layer density as the density input
+## Isothermal-layer density as the density input
 
-- [Two sqrt le level Drag isothermal Density](two-sqrt-le-level-drag-isothermal-densit.md)
+- [The drag bound 2 √(a b) at the isothermal-layer density](two-sqrt-le-level-drag-isothermal-densit.md)
 
-## H. Power required
+## Power required
 
-- [Level Power](level-power.md)
-- [Level Power eq](level-power-eq.md)
-- [Polar Drag mul eq level Power](polar-drag-mul-eq-level-power.md)
-- [Has Deriv At level Power](has-deriv-at-level-power.md)
+- [Power required in level flight](level-power.md)
+- [The power required is a V³ + b / V](level-power-eq.md)
+- [In level flight the polar drag times speed is the power required](polar-drag-mul-eq-level-power.md)
+- [Derivative of the power required at a nonzero speed](has-deriv-at-level-power.md)
 
-## I. Minimum power
+## Minimum power
 
-- [Is Min On level Power iff](is-min-on-level-power-iff.md)
-- [Min Power Speed](min-power-speed.md)
-- [Min Power Speed pos](min-power-speed-pos.md)
-- [Min Power Speed pow four](min-power-speed-pow-four.md)
-- [Level Power min Power Speed lt](level-power-min-power-speed-lt.md)
-- [Is Least level Power](is-least-level-power.md)
-- [Level Power strict Anti On](level-power-strict-anti-on.md)
-- [Level Power strict Mono On](level-power-strict-mono-on.md)
+- [A positive speed minimizes power exactly when V⁴ = b / (3a)](is-min-on-level-power-iff.md)
+- [Minimum-power speed](min-power-speed.md)
+- [For nonzero weight the minimum-power speed is positive](min-power-speed-pos.md)
+- [For nonzero weight the minimum-power speed solves V⁴ = b / (3a)](min-power-speed-pow-four.md)
+- [For positive weight, the minimum-power speed is the unique minimizer](level-power-min-power-speed-lt.md)
+- [For positive weight, the least power required is P(V_mp)](is-least-level-power.md)
+- [For positive weight, power decreases up to the minimum-power speed](level-power-strict-anti-on.md)
+- [For positive weight, power increases from the minimum-power speed on](level-power-strict-mono-on.md)
 
-## J. Distinct from the minimum-drag speed
+## Distinct from the minimum-drag speed
 
-- [Min Drag Speed pow four eq](min-drag-speed-pow-four-eq.md)
-- [Min Power Speed lt min Drag Speed](min-power-speed-lt-min-drag-speed.md)
-- [Level Power min Power Speed lt min Drag Speed](level-power-min-power-speed-lt-min-drag.md)
-- [Level Lift Coeff min Power Speed](level-lift-coeff-min-power-speed.md)
+- [For nonzero weight, V_md⁴ = 3 V_mp⁴](min-drag-speed-pow-four-eq.md)
+- [For nonzero weight the minimum-power speed is below V_md](min-power-speed-lt-min-drag-speed.md)
+- [For positive weight, flying at minimum drag needs more power](level-power-min-power-speed-lt-min-drag.md)
+- [For positive weight, CL at the minimum-power speed is √(3 CD0 / k)](level-lift-coeff-min-power-speed.md)
 
-## K. Power on the stall-validity interval
+## Power on the stall-validity interval
 
-- [Min Power Speed lt stall Speed iff](min-power-speed-lt-stall-speed-iff.md)
-- [Level Power max lt](level-power-max-lt.md)
-- [Is Least level Power stall](is-least-level-power-stall.md)
+- [The minimum-power speed is below V_s iff CLmax < √(3 CD0 / k)](min-power-speed-lt-stall-speed-iff.md)
+- [Every other speed above stall needs more power than max(V_s, V_mp)](level-power-max-lt.md)
+- [The least power above stall is at max(V_s, V_mp)](is-least-level-power-stall.md)
 
-## L. Shaft power
+## Shaft power
 
-- [Shaft Power Required](shaft-power-required.md)
-- [Shaft Power Required eq level Power iff](shaft-power-required-eq-level-power-iff.md)
-- [Is Min On shaft Power Required iff](is-min-on-shaft-power-required-iff.md)
+- [Shaft power required at efficiency η](shaft-power-required.md)
+- [For nonzero power required, shaft power equals it iff η = 1](shaft-power-required-eq-level-power-iff.md)
+- [For η > 0 the shaft power has the same positive minimizers](is-min-on-shaft-power-required-iff.md)
 
-## M. Thrust-specific fuel law in quasi-level cruise
+## Thrust-specific fuel law in quasi-level cruise
 
-- [Polar Lift To Drag](polar-lift-to-drag.md)
-- [Polar Drag eq div polar Lift To Drag](polar-drag-eq-div-polar-lift-to-drag.md)
+- [Lift-to-drag ratio of the drag polar](polar-lift-to-drag.md)
+- [At a fixed lift coefficient the polar drag is W / Λ](polar-drag-eq-div-polar-lift-to-drag.md)
 
-## N. The weight history
+## The weight history
 
-- [Cruise Weight](cruise-weight.md)
-- [Cruise Weight solves](cruise-weight-solves.md)
-- [Has Deriv At mul exp eq zero](has-deriv-at-mul-exp-eq-zero.md)
-- [Eq cruise Weight of has Deriv At](eq-cruise-weight-of-has-deriv-at.md)
+- [Weight history of a cruise](cruise-weight.md)
+- [The cruise weight solves the fuel law](cruise-weight-solves.md)
+- [Integrating factor for the fuel law](has-deriv-at-mul-exp-eq-zero.md)
+- [Every solution of the fuel law on an interval is the cruise weight](eq-cruise-weight-of-has-deriv-at.md)
 
-## O. Duration and range
+## Duration and range
 
-- [Breguet Duration](breguet-duration.md)
-- [Cruise Weight eq iff](cruise-weight-eq-iff.md)
-- [Cruise duration eq](cruise-duration-eq.md)
-- [Cruise range eq](cruise-range-eq.md)
-- [Breguet Duration pos](breguet-duration-pos.md)
-- [Breguet Duration self](breguet-duration-self.md)
+- [Breguet endurance](breguet-duration.md)
+- [The cruise weight reaches Wf exactly at the Breguet endurance](cruise-weight-eq-iff.md)
+- [Duration of a cruise from its initial and final weights](cruise-duration-eq.md)
+- [Range of a cruise at constant air speed](cruise-range-eq.md)
+- [A burn to a smaller positive weight takes positive time](breguet-duration-pos.md)
+- [Equal initial and final weights give zero endurance](breguet-duration-self.md)
 
-## P. Mass-based fuel coefficient
+## Mass-based fuel coefficient
 
-- [Has Deriv At weight of mass](has-deriv-at-weight-of-mass.md)
-- [Cruise duration mass eq](cruise-duration-mass-eq.md)
-- [Breguet Duration mass confusion](breguet-duration-mass-confusion.md)
+- [A mass-based fuel coefficient cm gives the weight-based g cm](has-deriv-at-weight-of-mass.md)
+- [Duration of a cruise with a mass-based fuel coefficient](cruise-duration-mass-eq.md)
+- [Using cm in place of g cm multiplies the endurance by g](breguet-duration-mass-confusion.md)
 
-## Q. The cruise schedule
+## The cruise schedule
 
-- [Lift ne cruise Weight of fixed density](lift-ne-cruise-weight-of-fixed-density.md)
-- [Lift cruise Climb](lift-cruise-climb.md)
-- [Eq cruise Climb of lift eq](eq-cruise-climb-of-lift-eq.md)
-- [Cruise Climb mem band iff](cruise-climb-mem-band-iff.md)
+- [At fixed density the lift cannot follow the falling weight](lift-ne-cruise-weight-of-fixed-density.md)
+- [The isothermal cruise-climb keeps the lift equal to the weight](lift-cruise-climb.md)
+- [The cruise-climb is the only height schedule that balances the weight](eq-cruise-climb-of-lift-eq.md)
+- [The cruise-climb stays in a band exactly when its two ends do](cruise-climb-mem-band-iff.md)

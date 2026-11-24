@@ -1,8 +1,8 @@
-# Point Mass gradient inward
+# For G, M > 0 the point-mass acceleration −∇Φ points inward
 
-Outside the origin, the gradient of the point-mass potential
-`Φ(x) = -G*M/‖x‖` is `(G*M/‖x‖^3) • x` (`hasGradientAt_pointMass_potential`,
-stated here through `toDual`), so the acceleration `-∇Φ` is
-`-(G*M/‖x‖^3) • x`; for `G, M > 0` it points inward: its inner product with
-the outward position vector `x` is negative. This is the full vector
-gradient, not only the radial derivative.
+Let $E$ be a complete real inner product space, $G > 0$, $M > 0$ and $x \in E$ with $x \ne 0$, and
+let $\Phi(y) = -GM/\|y\|$. The derivative of $\Phi$ at $x$ is
+$v \mapsto \langle (GM/\|x\|^3)\,x, v\rangle$, so its
+[gradient](has-gradient-at-point-mass-potential.md) is $(GM/\|x\|^3)\,x$; and the acceleration
+$-\nabla\Phi(x) = -(GM/\|x\|^3)\,x$ points inward: its inner product with the position vector,
+$\langle -(GM/\|x\|^3)\,x, x\rangle = -GM/\|x\|$, is negative.

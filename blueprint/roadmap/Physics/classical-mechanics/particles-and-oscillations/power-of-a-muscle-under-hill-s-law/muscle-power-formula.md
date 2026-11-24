@@ -1,5 +1,6 @@
-# Mechanical power under the Hill law
+# Mechanical power under Hill's law as an explicit fraction
 
-On the declared domain
-(`a, b, F0 > 0`, `F ∈ [0, F0]`), the mechanical power is
-`P(F) = b * F * (F0 - F) / (F + a)`.
+Let `a > 0`, `b > 0` and `F₀ > 0`, and let `F ∈ [0, F₀]`. Then the
+[mechanical power](hill-power.md) at force `F` is
+
+`P(F) = b F (F₀ - F) / (F + a)`.

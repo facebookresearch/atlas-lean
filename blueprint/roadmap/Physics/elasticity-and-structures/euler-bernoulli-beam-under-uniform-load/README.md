@@ -1,25 +1,36 @@
 # Euler–Bernoulli beam under uniform load
 
-- [Uniform Load Deflection](uniform-load-deflection.md)
-- [Uniform Load Deflection zero left](uniform-load-deflection-zero-left.md)
-- [Uniform Load Deflection zero right](uniform-load-deflection-zero-right.md)
-- [Uniform Load Deflection second Deriv zero left](uniform-load-deflection-second-deriv-zer.md)
-- [Uniform Load Deflection second Deriv zero right](uniform-load-deflection-second-deriv-zer-2.md)
-- [Uniform Load Deflection ei mul iterated Deriv four](uniform-load-deflection-ei-mul-iterated.md)
-- [Uniform Beam Moment](uniform-beam-moment.md)
-- [Uniform Beam Moment eq iterated Deriv](uniform-beam-moment-eq-iterated-deriv.md)
-- [Uniform Beam Shear](uniform-beam-shear.md)
-- [Uniform Beam Moment eq](uniform-beam-moment-eq.md)
-- [Uniform Beam Shear eq](uniform-beam-shear-eq.md)
-- [Uniform Beam endpoints](uniform-beam-endpoints.md)
-- [Uniform Beam Moment zero](uniform-beam-moment-zero.md)
-- [Uniform Beam Moment at right](uniform-beam-moment-at-right.md)
-- [Uniform Beam Shear zero](uniform-beam-shear-zero.md)
-- [Uniform Beam Shear at right](uniform-beam-shear-at-right.md)
-- [Uniform Beam Shear deriv](uniform-beam-shear-deriv.md)
-- [Uniform Beam Moment midpoint max](uniform-beam-moment-midpoint-max.md)
-- [Uniform Load Deflection midpoint](uniform-load-deflection-midpoint.md)
-- [Uniform Load Deflection le midpoint](uniform-load-deflection-le-midpoint.md)
-- [Quartic Fun](quartic-fun.md)
-- [Quartic unique](quartic-unique.md)
-- [Quartic unique uniform Load Deflection](quartic-unique-uniform-load-deflection.md)
+## Deflection and its boundary conditions
+
+- [Deflection of a simply supported beam under uniform load](uniform-load-deflection.md)
+- [The deflection vanishes at the left support](uniform-load-deflection-zero-left.md)
+- [The deflection vanishes at the right support](uniform-load-deflection-zero-right.md)
+- [The second derivative of the deflection vanishes at the left support](uniform-load-deflection-second-deriv-zer.md)
+- [The second derivative of the deflection vanishes at the right support](uniform-load-deflection-second-deriv-zer-2.md)
+- [The uniform-load deflection solves the beam equation](uniform-load-deflection-ei-mul-iterated.md)
+
+## Bending-moment and shear-force diagrams
+
+- [Bending moment of the uniformly loaded beam](uniform-beam-moment.md)
+- [The moment as stiffness times the second iterated derivative](uniform-beam-moment-eq-iterated-deriv.md)
+- [Shear force of the uniformly loaded beam](uniform-beam-shear.md)
+- [Explicit bending-moment diagram under uniform load](uniform-beam-moment-eq.md)
+- [Explicit shear-force diagram under uniform load](uniform-beam-shear-eq.md)
+- [End moments and end shears under uniform load](uniform-beam-endpoints.md)
+- [Zero bending moment at the left support](uniform-beam-moment-zero.md)
+- [Zero bending moment at the right support](uniform-beam-moment-at-right.md)
+- [Shear force at the left support under uniform load](uniform-beam-shear-zero.md)
+- [Shear force at the right support under uniform load](uniform-beam-shear-at-right.md)
+- [The shear force has derivative minus the load](uniform-beam-shear-deriv.md)
+
+## Maxima
+
+- [The bending moment is greatest at mid-span](uniform-beam-moment-midpoint-max.md)
+- [Mid-span deflection under uniform load](uniform-load-deflection-midpoint.md)
+- [The deflection is greatest at mid-span for a nonnegative load](uniform-load-deflection-le-midpoint.md)
+
+## Uniqueness among quartics
+
+- [Quartic in coefficient form](quartic-fun.md)
+- [A quartic with the beam conditions is the uniform-load deflection](quartic-unique.md)
+- [A quartic with the beam conditions equals the deflection function](quartic-unique-uniform-load-deflection.md)

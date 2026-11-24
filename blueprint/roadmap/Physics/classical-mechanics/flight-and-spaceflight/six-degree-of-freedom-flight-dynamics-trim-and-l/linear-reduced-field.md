@@ -1,5 +1,8 @@
-# Linear Reduced Field
+# Reduced linear plant on the Euclidean state space
 
-The reduced linear plant `e' = A e` on the Euclidean state space: the Jacobian
-`longitudinalJacobian` acting on the coordinates `WithLp.ofLp e`, that is
-`(x, z, θ, q) ↦ (-x, -z, q, -θ - 2 q)`.
+On the state `e = (x, z, θ, q) ∈ ℝ⁴` with the Euclidean norm, the reduced linear plant is the field
+
+`e ↦ A e = (−x, −z, q, −θ − 2 q)`,
+
+the [longitudinal Jacobian](longitudinal-jacobian.md) `A` acting on the coordinates of `e`; the
+plant is `e' = A e`.

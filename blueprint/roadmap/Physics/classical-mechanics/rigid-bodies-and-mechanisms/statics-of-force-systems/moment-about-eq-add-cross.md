@@ -1,3 +1,5 @@
-# Moment About eq add cross
+# Changing the reference point of a moment
 
-Origin transport of the moment: `M_O' = M_O + (O - O') ⨯₃ R`.
+For a finite index set, forces `F_i` applied at points `r_i`, free couples `C_i` in `ℝ³` and
+reference points `O, O' ∈ ℝ³`, the [moments](moment-about.md) satisfy `M_{O'} = M_O + (O - O') × R`,
+where `R = ∑_i F_i` is the resultant.

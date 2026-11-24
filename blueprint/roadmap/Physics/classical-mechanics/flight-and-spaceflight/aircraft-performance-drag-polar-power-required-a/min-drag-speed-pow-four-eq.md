@@ -1,4 +1,5 @@
-# Min Drag Speed pow four eq
+# For nonzero weight, V_md⁴ = 3 V_mp⁴
 
-Identity for the formulas: `V_md ^ 4 = 3 * V_mp ^ 4` for `W ≠ 0` and `ρ, S, CD0, k > 0`, so
-`V_mp = V_md / 3 ^ (1 / 4)`, about `0.76 * V_md`.
+For `W ≠ 0` and `ρ, S, CD0, k > 0`, the [minimum-drag speed](min-drag-speed.md) `V_md` and the
+[minimum-power speed](min-power-speed.md) `V_mp` satisfy `V_md⁴ = 3 V_mp⁴`. Since both are
+[positive](min-drag-speed-pos.md), `V_mp = V_md / 3^(1/4)`, about `0.76 V_md`.

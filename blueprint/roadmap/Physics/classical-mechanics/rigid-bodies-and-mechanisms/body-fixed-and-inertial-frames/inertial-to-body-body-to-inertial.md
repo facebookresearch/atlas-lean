@@ -1,3 +1,5 @@
-# Inertial To Body body To Inertial
+# Body coordinates are recovered from inertial coordinates
 
-The inverse of `x_B ↦ o + R x_B` is `x_I ↦ Rᵀ (x_I - o)`: body coordinates are recovered.
+For every origin `o ∈ ℝ³`, orientation `R ∈ SO(3)` and body coordinates `x_B ∈ ℝ³`,
+`Rᵀ ((o + R x_B) - o) = x_B`: the [body coordinates](inertial-to-body.md) of the point with
+[inertial coordinates](body-to-inertial.md) `o + R x_B` are `x_B`.

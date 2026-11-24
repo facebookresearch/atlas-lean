@@ -1,4 +1,4 @@
-# Min Drag Speed pos
+# For nonzero weight the minimum-drag speed is positive
 
-The formula `minDragSpeed` is positive for `W ≠ 0` and `ρ, S, CD0, k > 0`; it depends on `W`
-only through `W ^ 2`.
+For `W ≠ 0` and `ρ, S, CD0, k > 0`, the [minimum-drag speed](min-drag-speed.md) `V_md` is positive;
+it depends on `W` only through `W²`.

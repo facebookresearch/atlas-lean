@@ -1,21 +1,35 @@
 # Kinetic energy and power of a force
 
-- [Has Deriv At kinetic energy](has-deriv-at-kinetic-energy.md)
-- [Kinetic energy nonneg](kinetic-energy-nonneg.md)
-- [Const Force Position](const-force-position.md)
-- [Const Force Velocity](const-force-velocity.md)
-- [Const Force Position has Deriv At](const-force-position-has-deriv-at.md)
-- [Const Force Velocity has Deriv At](const-force-velocity-has-deriv-at.md)
-- [Const Force actual trajectory](const-force-actual-trajectory.md)
-- [Const Force power port](const-force-power-port.md)
-- [Const Force work](const-force-work.md)
-- [Const Force impulse](const-force-impulse.md)
-- [Spring power port](spring-power-port.md)
-- [Spring work](spring-work.md)
-- [Inverse Square work](inverse-square-work.md)
-- [Has Gradient At inverse Square Potential](has-gradient-at-inverse-square-potential.md)
-- [Inverse Square Potential not continuous At zero](inverse-square-potential-not-continuous.md)
-- [Planar Rigid power port](planar-rigid-power-port.md)
-- [Planar Rigid power port neg torque](planar-rigid-power-port-neg-torque.md)
-- [Kinetic Energy eq planar](kinetic-energy-eq-planar.md)
-- [Axial torque balance](axial-torque-balance.md)
+## Kinetic energy
+
+- [Rate of change of kinetic energy](has-deriv-at-kinetic-energy.md)
+- [For nonnegative mass, kinetic energy is nonnegative](kinetic-energy-nonneg.md)
+
+## Motion under a constant force
+
+- [Position under a constant force](const-force-position.md)
+- [Velocity under a constant force](const-force-velocity.md)
+- [The constant-force velocity is the derivative of the position](const-force-position-has-deriv-at.md)
+- [The constant-force velocity has derivative F / m](const-force-velocity-has-deriv-at.md)
+- [For m > 0, the constant-force path solves Newton's law with its data](const-force-actual-trajectory.md)
+- [Under a constant force, kinetic energy changes at the power ⟨F, v⟩](const-force-power-port.md)
+- [Work of a constant force is the kinetic-energy change and ⟨F, Δx⟩](const-force-work.md)
+- [Impulse of a constant force is the momentum change](const-force-impulse.md)
+
+## Spring force on the oscillator trajectory
+
+- [On an oscillator trajectory, kinetic energy changes at spring power](spring-power-port.md)
+- [Spring work is the kinetic-energy gain and the potential-energy drop](spring-work.md)
+
+## Inverse-square force
+
+- [Away from the centre, inverse-square work is the potential drop](inverse-square-work.md)
+- [Away from the centre, the inverse-square field is a gradient](has-gradient-at-inverse-square-potential.md)
+- [For μ ≠ 0, the inverse-square potential is discontinuous at the centre](inverse-square-potential-not-continuous.md)
+
+## Planar rigid body
+
+- [Kinetic energy of a planar rigid body changes at ⟨F, V⟩ + τ θ′](planar-rigid-power-port.md)
+- [A reversed torque sign breaks the planar rigid-body power balance](planar-rigid-power-port-neg-torque.md)
+- [Kinetic energy of a rigid body turning about a body axis](kinetic-energy-eq-planar.md)
+- [Axial component of the rotational balance law](axial-torque-balance.md)

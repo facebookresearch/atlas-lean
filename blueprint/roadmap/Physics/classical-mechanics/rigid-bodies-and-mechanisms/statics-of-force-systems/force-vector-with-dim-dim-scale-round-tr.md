@@ -1,5 +1,9 @@
-# Force vector with Dim dim Scale round trip
+# Converting a dimensioned force vector there and back returns it
 
-A force vector typed as `WithDim forceDim (ι → ℝ)`
-converts from `u1` to `u2` and back to itself (the scalar
-form is `Units.EngineeringQuantities.force_withDim_round_trip`).
+For unit choices `u₁`, `u₂` and a dimension `d`, let `s_d(u₁, u₂) > 0` be the factor that converts a
+coordinate of dimension `d` from units `u₁` to units `u₂`. For all unit choices `u₁`, `u₂` and every
+force vector `F` (components indexed by a set `ι`, dimension `d = M L T⁻²`), multiplying the
+components of `F` by `s_d(u₁, u₂)` and then by `s_d(u₂, u₁)` and tagging the result as a force gives
+`F` back.
+
+Here `M`, `L` and `T` denote the mass, length and time dimensions.

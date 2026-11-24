@@ -1,4 +1,5 @@
-# Stiffness div damping
+# Stiffness over damping coefficient is a rate
 
-The mean-reversion rate `θ = k / c` is a rate: a stiffness over a damping coefficient has
-the dimension `T⁻¹`.
+The dimension of a translational stiffness, `M T⁻²` (a force per length), divided by the
+[damping dimension](damping-dim.md) `M T⁻¹` is `T⁻¹`: the mean-reversion rate `θ = k / c` is a
+rate.

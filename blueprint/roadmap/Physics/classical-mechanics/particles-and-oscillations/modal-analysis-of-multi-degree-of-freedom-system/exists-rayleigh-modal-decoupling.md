@@ -1,8 +1,13 @@
-# Exists rayleigh modal decoupling
+# Modal basis for Rayleigh damping with nonnegative modal coefficients
 
-Physical-to-canonical bridge: for a positive-definite mass `M`, a positive-semidefinite
-stiffness `K` and Rayleigh coefficients `α, β ≥ 0`, the canonical modal-basis
-theorem (`PhyslibExt.Mechanics.ModalResponse.exists_modalBasis`) yields an invertible
-mass-orthonormal basis `Φ` with `Φᵀ * K * Φ = diagonal μ`, nonnegative `μ j` and
-nonnegative modal damping `α + β * μ j`, in which every trajectory and load decouple as in
-`rayleigh_modal_decoupling`. Repeated eigenvalues and rigid modes (`μ j = 0`) included.
+Let `n` be a finite set, `M` a positive-definite and `K` a positive-semidefinite real `n × n`
+matrix, and `α ≥ 0`, `β ≥ 0`. Then there are an invertible real `n × n` matrix `Φ` and
+`μ : n → ℝ` with `Φᵀ M Φ = 1`, `Φᵀ K Φ = diag(μ)`, `μ_j ≥ 0` and `α + β μ_j ≥ 0` for every `j`,
+such that for all `x, f : ℝ → ℝⁿ` and every time `t`,
+
+`M x''(t) + (α M + β K) x'(t) + K x(t) = f(t)`
+
+holds if and only if `q_j''(t) + (α + β μ_j) q_j'(t) + μ_j q_j(t) = (Φᵀ f(t))_j` for every `j`,
+with `q = Φᵀ M x` ([decoupling](rayleigh-modal-decoupling.md)). Derivatives take the value `0`
+where the function is not differentiable. Repeated eigenvalues and rigid modes (`μ_j = 0`) are
+included.

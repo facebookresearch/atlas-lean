@@ -1,3 +1,3 @@
-# Burn Mass pos
+# For 0 ≤ t ≤ 1 the burn mass is positive
 
-The mass stays positive on the burn interval `[0, 1]`.
+For every `t` with `0 ≤ t ≤ 1`, the [burn mass](burn-mass.md) `m(t) = 2 - t` is positive.

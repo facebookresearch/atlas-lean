@@ -1,4 +1,5 @@
-# Naive Parcel Velocity
+# Velocity after one step that ignores the expelled momentum
 
-Velocity after one step of the balance that ignores the expelled momentum,
-`(m - q h) w_h = m v + F h`, which needs the remaining mass `m - q h` to be nonzero.
+For reals `m`, `v`, `q`, `F` and `h`, `w_h = (m v + F h) / (m − q h)`: the solution of the balance
+`(m − q h) w_h = m v + F h`, which ignores the momentum carried by the expelled mass. With the
+convention `x / 0 = 0`, `w_h = 0` when the remaining mass `m − q h` is `0`.

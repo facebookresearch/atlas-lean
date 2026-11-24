@@ -1,5 +1,10 @@
-# Participation
+# Modal participation factors of a base-influence vector
 
-Modal participation factors of the base-influence vector `r` for
-the modal matrix `Φ` and mass matrix `M`: `Γ = (Φᵀ * M) *ᵥ r`, so
-`Γ j` is the mass-weighted projection of `r` on mode `j`.
+For a finite set `n`, real `n × n` matrices `M` (mass) and `Φ` (modal matrix) and a vector
+`r ∈ ℝⁿ`, the participation factors are
+
+`Γ = Φᵀ M r`,
+
+so `Γ_j` is the mass-weighted projection of `r` on mode `j`. In the base-motion reading, `r_i` is
+the displacement of degree of freedom `i` under a unit static base displacement; `r` is not
+normalised.

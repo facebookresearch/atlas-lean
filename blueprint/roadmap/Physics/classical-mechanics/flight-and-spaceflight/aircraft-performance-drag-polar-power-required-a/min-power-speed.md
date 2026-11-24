@@ -1,7 +1,9 @@
-# Min Power Speed
+# Minimum-power speed
 
-Minimum-power speed `V_mp = √(√(b / (3 * a)))`. For positive weight and `ρ, S, CD0, k > 0` it
-is the unique positive speed of least power required (`levelPower_minPowerSpeed_lt`). As a
-formula it is the positive root of `V ^ 4 = b / (3 * a)` whenever `W ≠ 0` and `ρ, S, CD0, k > 0`
-(`minPowerSpeed_pos`, `minPowerSpeed_pow_four`). If `CD0 = 0`, `k = 0` or `W = 0`, Lean's
-conventions `x / 0 = 0` and `√0 = 0` give the value `0`, which is not a positive speed.
+For reals `W`, `ρ`, `S`, `CD0` and `k`, `V_mp = √(√(b / (3a)))` with `a = ρ S CD0 / 2` and
+`b = 2 k W² / (ρ S)` (the [parasite-drag](parasite-drag-factor.md) and
+[induced-drag](induced-drag-factor.md) factors). For `W ≠ 0` and `ρ, S, CD0, k > 0` it is the
+[positive](min-power-speed-pos.md) root of [`V⁴ = b / (3a)`](min-power-speed-pow-four.md), and for
+`W > 0` it is the [unique positive speed](level-power-min-power-speed-lt.md) of least power
+required. With the conventions `x / 0 = 0` and `√x = 0` for `x ≤ 0`, `V_mp = 0` when `CD0 = 0`,
+`k = 0` or `W = 0` (and when `b / (3a) < 0`); `0` is not a positive speed.

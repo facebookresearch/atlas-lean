@@ -1,4 +1,9 @@
-# Integral exponential Density
+# Column mass of the exponential atmosphere between two heights
 
-Column mass between two heights, for `H ≠ 0`: `∫ ρ = ρ0 * H * (exp (-he / H) - exp (-h / H))`
-over `[he, h]`, by the fundamental theorem of calculus.
+Let `H ≠ 0`, and let `ρ₀`, `h_e` and `h` be real. The integral of the
+[exponential density](exponential-density.md) `ρ(s) = ρ₀ exp(−s / H)` from `h_e` to `h` is
+
+`∫ from h_e to h of ρ(s) ds = ρ₀ H (exp(−h_e / H) − exp(−h / H))`.
+
+The integral is oriented: for `h < h_e` it is minus the mass per unit area of the column between
+`h` and `h_e`.

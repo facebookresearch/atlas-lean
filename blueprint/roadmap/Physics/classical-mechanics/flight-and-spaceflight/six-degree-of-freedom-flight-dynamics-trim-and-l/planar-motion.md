@@ -1,4 +1,6 @@
-# Planar Motion
+# Planar longitudinal motion of a rigid body
 
-The planar longitudinal motion of the mass distribution `B`: the centre of mass at
-`(X₁ t, X₂ t, 0)` in the forward/up plane and the pitch orientation `Rz(θ t)`.
+For a mass distribution `B` in three dimensions and real functions `X₁`, `X₂` and `θ` of time, the
+planar longitudinal motion of `B` is the rigid motion whose centre of mass is at
+`(X₁(t), X₂(t), 0)` in the forward/up plane and whose orientation is the
+[pitch orientation](pitch-orientation.md) `Rz(θ(t))`.

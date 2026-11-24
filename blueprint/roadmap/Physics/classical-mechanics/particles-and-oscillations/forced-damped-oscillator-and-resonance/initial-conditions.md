@@ -1,4 +1,5 @@
-# Initial Conditions
+# Initial position and velocity on the one-dimensional line
 
-Engineering initial position and velocity as Physlib initial conditions on the
-one-dimensional coordinate line.
+For real numbers `x₀` and `v₀`, the initial conditions of the damped oscillator are the initial
+position `x₀ e` and the initial velocity `v₀ e`, where `e` is the unit basis vector of the
+one-dimensional Euclidean space in which the oscillator moves.

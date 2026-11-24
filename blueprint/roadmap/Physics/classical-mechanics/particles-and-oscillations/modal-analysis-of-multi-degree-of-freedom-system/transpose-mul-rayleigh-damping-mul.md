@@ -1,7 +1,11 @@
-# Transpose mul rayleigh Damping mul
+# In a mass-orthonormal modal basis, Rayleigh damping is diagonal
 
-Damping transformation: in a mass-orthonormal basis that diagonalizes the stiffness,
-the Rayleigh damping matrix becomes diagonal with modal damping coefficients
-`α + β * μ j` (for an oscillatory mode `μ j > 0`, twice the modal damping ratio times
-the modal frequency; a rigid mode has coefficient `α` and no damping ratio). Holds for
-every real `α`, `β`; repeated `μ` values are allowed.
+Let `n` be a finite set, `M`, `K` and `Φ` real `n × n` matrices and `μ : n → ℝ` with
+`Φᵀ M Φ = 1` and `Φᵀ K Φ = diag(μ)`, and let `α`, `β` be real numbers. Then the
+[Rayleigh damping matrix](rayleigh-damping.md) becomes diagonal:
+
+`Φᵀ (α M + β K) Φ = diag(α + β μ_j)`.
+
+For an oscillatory mode (`μ_j = ω_j² > 0`) the modal coefficient `α + β μ_j` is `2 ζ_j ω_j`, with
+damping ratio `ζ_j`; a rigid mode (`μ_j = 0`) has coefficient `α`. Repeated values of `μ` are
+allowed.

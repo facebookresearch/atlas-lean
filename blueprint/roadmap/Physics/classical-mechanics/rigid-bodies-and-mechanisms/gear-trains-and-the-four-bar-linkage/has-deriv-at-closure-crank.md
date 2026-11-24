@@ -1,3 +1,4 @@
-# Has Deriv At closure crank
+# Derivative of the loop-closure residuals in the crank angle
 
-Partial derivative of the closure residuals in the input angle `θ₂`.
+For a [four-bar linkage](four-bar.md) with crank `b` and all angles `θ₂, θ₃, θ₄`, the map
+`θ ↦` [residual](closure.md) at `(θ, θ₃, θ₄)` has derivative `(-b sin θ₂, b cos θ₂)` at `θ₂`.

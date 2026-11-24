@@ -1,3 +1,5 @@
-# Cost is not the net change
+# The net velocity change is at most the delta-v cost
 
-The net velocity change is never larger than the cost.
+For a seminormed additive group `E`, all burns `Δv : ℕ → E` and `n ∈ ℕ`, the norm of the
+[net velocity change](net-velocity-change.md) `∑_{k < n} Δv_k` is at most the
+[delta-v cost](burn-cost.md) `∑_{k < n} ‖Δv_k‖`.

@@ -1,5 +1,9 @@
-# Angle Jacobian
+# Derivative of the angle-to-position map
 
-The angle derivative of the position map at `q`, the derivative of `posMap`
-(`hasFDerivAt_posMap`): angular velocities `w = (w₁, w₂)` go to the Cartesian velocities
-`(vel₁ l₁ q₁ w₁, vel₂ l₁ l₂ q₁ q₂ w₁ w₂)` (`angleJacobian_apply`).
+For real `l₁`, `l₂` and angles `q = (q₁, q₂)`, the angle derivative is the linear map sending
+angular velocities `w = (w₁, w₂)` to the pair of plane vectors
+
+`(l₁ w₁ (cos q₁, sin q₁), l₁ w₁ (cos q₁, sin q₁) + l₂ w₂ (cos q₂, sin q₂))`,
+
+the [velocities of the two masses](angle-jacobian-apply.md). It is the
+[derivative](has-fderiv-at-pos-map.md) at `q` of the [angle-to-position map](pos-map.md).

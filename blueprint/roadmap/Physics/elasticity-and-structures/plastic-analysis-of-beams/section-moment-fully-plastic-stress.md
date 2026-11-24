@@ -1,7 +1,6 @@
-# Section Moment fully Plastic Stress
+# Fully plastic moment of a rectangular section
 
-Fully plastic moment of the rectangular section: for positive height,
-the stress block integrates to `σy * b * h ^ 2 / 4`, the yield stress times
-the plastic modulus `b * h ^ 2 / 4`. Any real `b` and `σy`; the physical
-reading is `0 < b`, `0 < σy`. For `h < 0` the oriented integral is
-`-(σy * b * h ^ 2 / 4)`, so the premise `0 < h` cannot be dropped.
+For a section height `h > 0` and all real `b` and `σy`, the [bending moment](section-moment.md) of
+the [fully plastic stress block](fully-plastic-stress.md) is `σy * b * h ^ 2 / 4`, the yield stress
+times the plastic modulus `b * h ^ 2 / 4`. The physical reading is `b > 0` and `σy > 0`. For `h < 0`
+the oriented integral is `-(σy * b * h ^ 2 / 4)`, so the condition `h > 0` cannot be dropped.

@@ -1,6 +1,5 @@
-# Uniform Beam Moment zero
+# Zero bending moment at the left support
 
-Zero bending moment at the left support. This endpoint
-fact needs no nondegeneracy hypothesis on `EI`: it is the
-canonical second-derivative endpoint through the
-iterated-derivative bridge.
+For all real `w`, `EI` and `L`, the [bending moment](uniform-beam-moment.md) `M(x) = -EI * y''(x)`
+of the uniformly loaded simply supported beam vanishes at the left support: `M(0) = 0`. No condition
+on `EI` is needed.

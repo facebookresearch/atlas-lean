@@ -1,4 +1,5 @@
-# Cruise Weight
+# Weight history of a cruise
 
-Weight `W(t) = Wi * exp (-(cW / Λ) * t)` at time `t` of the cruise that starts at the weight
-`Wi`, with weight-based fuel coefficient `cW` (an inverse time) and lift-to-drag ratio `Λ`.
+For reals `Wi` (initial weight), `cW` (weight-based fuel coefficient, an inverse time), `Λ`
+(lift-to-drag ratio) and a time `t`, `W(t) = Wi exp(−(cW / Λ) t)`. With the convention `x / 0 = 0`
+it is the constant `Wi` when `Λ = 0`.

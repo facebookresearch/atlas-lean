@@ -1,7 +1,9 @@
-# Prefix Feasible
+# Prefix feasibility of a resource schedule
 
-Prefix feasibility over a horizon of `N` steps: for every resource `i` and every prefix
-`t ≤ N` (the start `t = 0` and the end `t = N` included), the stock is at least the floor
-`lo i` plus the reserve `r i` and at most the capacity `hi i`. The reserve is deducted once,
-in this lower bound; it is not also a scheduled flow. Reserves are nonnegative (`NNReal`), so
-feasibility never certifies a stock below the floor (`PrefixFeasible.lo_le_stock`).
+For a type `ι` of resources, floors `lo` and capacities `hi : ι → ℝ`, nonnegative reserves
+`r : ι → [0, ∞)`, initial stocks `s₀ : ι → ℝ`, signed flows `flow : ι → ℕ → ℝ` and a horizon
+`N ∈ ℕ`, the schedule is prefix feasible if `lo i + r i ≤ stock(i, t) ≤ hi i` for every resource `i`
+and every `t ≤ N`, the start `t = 0` and the end `t = N` included, where
+`stock(i, t) = s₀ i + ∑_{k < t} flow i k` is the [stock](stock.md). The reserve is deducted once, in
+the lower bound, and is not also a scheduled flow; since it is nonnegative, a feasible schedule
+[never goes below the floor](lo-le-stock.md).

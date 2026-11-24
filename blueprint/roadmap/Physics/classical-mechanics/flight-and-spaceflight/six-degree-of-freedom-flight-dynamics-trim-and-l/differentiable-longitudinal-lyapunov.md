@@ -1,3 +1,4 @@
-# Differentiable longitudinal Lyapunov
+# The Lyapunov function is differentiable
 
-`V` is differentiable: a quadratic polynomial in the coordinates.
+The [quadratic Lyapunov function](longitudinal-lyapunov.md) `V` is differentiable on the state `e = (x, z, θ, q) ∈ ℝ⁴` with the Euclidean norm:
+it is a quadratic polynomial in the coordinates.

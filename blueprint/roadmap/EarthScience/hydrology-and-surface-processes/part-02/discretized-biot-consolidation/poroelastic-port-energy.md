@@ -1,15 +1,14 @@
-# Discretized Biot consolidation
+# Energy balance of the discretized Biot consolidation equations
 
-Finite poroelastic port-energy identity, with distinct
-displacement and pressure index types. Along differentiable
-trajectories `u` (displacement, `m` coordinates) and `p`
-(pressure, `n` coordinates) with supplied derivative functions
-satisfying, at every time, `K*u - Q*p = f` and
-`C*p' + Qᵀ*u' + H*p = s`, for constant symmetric storage
-matrices `K` (`m × m`) and `C` (`n × n`) and rectangular
-coupling `Q` (`m × n`), the stored quadratic energy
-`1/2 * (uᵀKu + pᵀCp)` has derivative equal to input power
-`u'ᵀf + pᵀs` minus dissipation `pᵀHp`. The opposite signs of
-the two coupling terms are essential. Reading the quadratic
-forms as energy and dissipation uses the usual positivity of
-the physical model; the identity itself needs only symmetry.
+Let `m` and `n` be finite index sets, for the displacement and the pressure coordinates. Let `K`
+(`m × m`) and `C` (`n × n`) be symmetric real matrices, `Q` an `m × n` real matrix and `H` an
+`n × n` real matrix. Let `u`, `f` (with values in `ℝ^m`) and `p`, `s` (with values in `ℝ^n`) be
+functions of time, where every coordinate of `u` and of `p` has, at every time `t`, the derivative
+`u'(t)` and `p'(t)` respectively, and suppose that at every time `K u - Q p = f` and
+`C p' + Qᵀ u' + H p = s`.
+
+Then at every time `t` the stored energy `E = (1 / 2) * (u · K u + p · C p)` has the derivative
+`E'(t) = u'(t) · f(t) + p(t) · s(t) - p(t) · H p(t)`: the input power minus the dissipation. The
+opposite signs of the two coupling terms `-Q p` and `+Qᵀ u'` are essential. The identity needs only
+the symmetry of `K` and `C`; reading the quadratic forms as an energy and a dissipation uses the
+positivity of the physical model (`K`, `C` and `H` positive semidefinite).

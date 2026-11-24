@@ -1,8 +1,10 @@
-# Effective loss between
+# Loss of the mean of positive τ₁, τ₂ lies between their losses
 
-Effective transmission loss of two parallel patches lies
-between the two patch losses: for positive transmission
-coefficients `τ1`, `τ2`, the loss `-10 * log10 ((τ1 + τ2) / 2)` of
-the area-averaged coefficient is at least the smaller patch loss
-`-10 * log10 (max τ1 τ2)` and at most the larger patch loss
-`-10 * log10 (min τ1 τ2)`.
+For positive `τ₁` and `τ₂`, the decibel loss of their arithmetic mean lies between their own
+losses: `-10 log₁₀ max(τ₁, τ₂) ≤ -10 log₁₀ ((τ₁ + τ₂) / 2) ≤ -10 log₁₀ min(τ₁, τ₂)`, where
+`log₁₀` is the base-10 logarithm and `-10 log₁₀ τ` is the transmission loss in decibels of a
+transmission coefficient `τ`. Read with `τ₁`, `τ₂` the coefficients of two patches of equal area
+under a uniform incident intensity, whose effective coefficient is the mean
+([two patches](effective-power-transmission-two-patch-e.md)), it says that the effective loss is
+at least the smaller and at most the larger patch loss. Physical transmission coefficients satisfy
+`0 < τ ≤ 1`; the inequalities need only positivity.

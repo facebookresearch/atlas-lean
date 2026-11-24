@@ -1,6 +1,8 @@
-# Shaft Load
+# External torque on a shaft of a gear train
 
-External torque on shaft `j` of massless rigid shafts in equilibrium: the sum of the
-torques shaft `j` applies to the meshes it is the upstream shaft of (`a k` when `j` is upstream
-of mesh `k`) and to the meshes it is the downstream shaft of (`b k` when `j` is downstream of
-mesh `k`).
+For a gear train of `n` [meshes](mesh.md), `n ≥ 0`, port torques `a_k` and `b_k` as for
+[lossless meshes](is-lossless.md), and a shaft `j ∈ {0, …, n}`, the shaft load is
+`T_j = a_j + b_{j-1}`, where `a_j` is counted only when `j < n` (shaft `j` is upstream of mesh
+`j`) and `b_{j-1}` only when `j ≥ 1` (shaft `j` is downstream of mesh `j - 1`). For massless rigid
+shafts in equilibrium it is the external torque applied to shaft `j`, whose power into the train
+is `T_j ω_j`.

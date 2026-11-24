@@ -1,4 +1,8 @@
-# The Lyapunov equation
+# The Lyapunov matrix solves the Lyapunov equation with Q = 1
 
-`Aᵀ P + P A = -Q` with `Q = 1`: every entry of the sum is that of
-`-1`.
+The [longitudinal Jacobian](longitudinal-jacobian.md) `A` and the
+[Lyapunov matrix](longitudinal-lyapunov-matrix.md) `P` satisfy
+
+`Aᵀ P + P A = −1`,
+
+the Lyapunov equation with `Q = 1`, the `4 × 4` identity matrix.

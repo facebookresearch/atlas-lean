@@ -1,4 +1,4 @@
-# Virtual Work
+# Virtual work of a force pair along a velocity pair
 
-The virtual work `⟪F₁, v₁⟫ + ⟪F₂, v₂⟫` of the forces `F = (F₁, F₂)` on the two masses along the
-virtual velocity `v = (v₁, v₂)`.
+For forces `F = (F₁, F₂)` on the two masses and a virtual velocity `v = (v₁, v₂)` (pairs of plane
+vectors), the virtual work is `⟪F₁, v₁⟫ + ⟪F₂, v₂⟫`.

@@ -1,6 +1,11 @@
-# Band Peak Altitude
+# Peak altitude selected on an altitude band
 
-The peak altitude selected on the band `[hmin, he]`: `hstar` clamped to the band, which for
-`hmin < he` is `hstar` when it lies in the band and otherwise the nearer endpoint (`hmin` below the
-band, `he` above it). For `ρ0, H, β, ve > 0`, `sin γ > 0` and `hmin < he` it maximizes the
-deceleration on the band (`isMaxOn_bandPeakAltitude`).
+For real numbers `ρ₀`, `H`, `β`, `γ`, `h_min` and `h_e`, the peak altitude selected on the band
+`[h_min, h_e]` is the [candidate peak altitude](peak-deceleration-altitude.md)
+`h* = H log(2 K)` clamped to the band,
+
+`max(h_min, min(h*, h_e))`.
+
+For `h_min < h_e` it is `h*` when `h*` lies in the band, `h_min` when `h* < h_min` and `h_e` when
+`h* > h_e`; for `h_min ≥ h_e` it is `h_min`. For `ρ₀, H, β, v_e > 0`, `sin γ > 0` and
+`h_min < h_e` it [maximizes the deceleration](is-max-on-band-peak-altitude.md) on the band.

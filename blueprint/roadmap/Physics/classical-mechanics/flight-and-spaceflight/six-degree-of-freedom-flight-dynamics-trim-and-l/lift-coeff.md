@@ -1,3 +1,4 @@
-# Lift Coeff
+# Lift coefficient of the longitudinal fixture
 
-The lift coefficient of the fixture, `C_L = 2`.
+In the synthetic longitudinal fixture, in nondimensional units with mass, pitch inertia, gravity,
+trim speed, air density and reference area `1`, the lift coefficient is the constant `C_L = 2`.

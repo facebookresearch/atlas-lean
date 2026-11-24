@@ -1,3 +1,4 @@
-# Angular Frequency
+# Angular frequency ω = 2πν of a frequency ν
 
-Angular frequency `ω = 2πν` (physics convention).
+For a real frequency `ν`, the angular frequency is `ω = 2πν` (physics convention). Physical
+frequencies are positive; the definition takes any real `ν`.

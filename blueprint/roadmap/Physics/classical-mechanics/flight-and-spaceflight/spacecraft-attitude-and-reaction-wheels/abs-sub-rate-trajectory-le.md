@@ -1,8 +1,12 @@
 # The finite-horizon rate error in physical units
 
-Let `I, k > 0`, `|ω₀| ≤ U_max / k`, and
-let the reconstruction `φ` be continuous on `[0, T]`, with right derivative `φ'` on `[0, T)`,
-`|φ(0) - ω₀| ≤ δ` and `|φ'(t) - τ_b(φ(t)) / I| ≤ ε` on `[0, T)`. Then for every `t ∈ [0, T]`
-`|φ(t) - ω(t)| ≤ δ exp(k T / I) + ε (I / k) (exp(k T / I) - 1)`. With `ω` and `δ` in rad/s, `ε` in
-rad/s², `I` in kg m² and `k` in N m s/rad, the time constant `I / k` is in s and both terms are
-rates in rad/s.
+Let `I > 0`, `k > 0` and `U_max`, `ω₀`, `T`, `δ`, `ε` be real numbers with `|ω₀| ≤ U_max / k`,
+and let the reconstruction `φ` be a real function, continuous on `[0, T]`, with right derivative
+`φ'(t)` at every `t ∈ [0, T)`, `|φ(0) − ω₀| ≤ δ` and `|φ'(t) − τ_b(φ(t)) / I| ≤ ε` at every
+`t ∈ [0, T)`, with `τ_b` the [body torque](body-torque.md). Then for every `t ∈ [0, T]` the
+distance to the [rate trajectory](rate-trajectory.md) `ω(t) = ω₀ exp(−k t / I)` obeys
+
+`|φ(t) − ω(t)| ≤ δ exp(k T / I) + ε (I / k) (exp(k T / I) − 1)`.
+
+With `ω` and `δ` in rad/s, `ε` in rad/s², `I` in kg m² and `k` in N m s/rad, the time constant
+`I / k` is in s and both terms are rates in rad/s. The bound grows with the horizon `T`.

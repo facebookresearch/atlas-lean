@@ -1,3 +1,4 @@
-# The trim is the only zero of `V`
+# The Lyapunov function vanishes only at the trim
 
-`V(e) = 0` exactly when `e = 0`.
+For every state `e ∈ ℝ⁴`, the [quadratic Lyapunov function](longitudinal-lyapunov.md) satisfies
+`V(e) = 0` exactly when `e = 0`, the trim.

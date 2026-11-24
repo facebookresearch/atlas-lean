@@ -1,10 +1,11 @@
-# Supported unit Load identity of kernel
+# Unit-load identity for positive weights and no null mode
 
-Unit-load identity from the physical member data: for positive
-member weights `k` and trivial supported kernel (no supported null
-mode), a supported solution `K *ᵥ u = f` satisfies the same identity
-`aout ⬝ᵥ u = n ⬝ᵥ (D⁻¹ *ᵥ N)` as above, with `N`, `n` and `D⁻¹`
-read there. Positive definiteness enters through the supported
-rigidity certificate. This is the entry point when the member data
-and kernel condition, rather than an abstract definiteness
-certificate, are in hand.
+Let `J` (joints), `M` (members) and `F` (free coordinates) be finite sets, with joint positions
+`r_j` in the plane, member `e` joining joint `a_e` to joint `b_e`, a matrix `S` from the free
+coordinates to the joint displacement coordinates (two per joint), and member weights `k_e`. Let
+`K = (B S)ᵀ diag(k) (B S)` be the supported stiffness, with the
+[compatibility matrix](axial-compatibility.md) `B`. Suppose that every weight is positive,
+`k_e > 0`, and that `B S u = 0` implies `u = 0`. Let `aout` be a fixed output functional on `F`,
+`η = K⁻¹ aout` its [influence vector](influence-vector.md) and `f ↦ η · f` its
+[unit-load response](unit-load-response.md). If `K u = f`, then `aout · u = n · (diag(1 / k) N)`
+with `N = diag(k) (B S u)` and `n = diag(k) (B S η)`.

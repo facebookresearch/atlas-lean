@@ -1,3 +1,4 @@
-# Base Excited D
+# Feedthrough matrix of the base-excited oscillator
 
-Feedthrough matrix `0`: the input does not reach the output directly.
+The feedthrough matrix of the base-excited oscillator is the `1 × 2` zero matrix: the input
+`(p, a_g)` does not reach the output directly.

@@ -1,7 +1,9 @@
-# Com Angular Momentum
+# Angular momentum of a rigid body about its centre of mass
 
-The angular momentum of a rigid body in motion about its centre of mass,
-`L_COM(t) = ∫ (x - X(t)) × (v - V(t)) dm`: for the body point `y`,
-`x - X = displacement t y - comTrajectory t` is its position relative to the centre of mass and
-`v - V = velocityClosedForm t y - centerOfMassVelocity t` its velocity relative to it (Physlib's
-closed-form point velocity, equal to the point velocity for differentiable motions).
+Let `M` be a rigid-body motion in three dimensions: a rigid body given by a mass distribution `ρ`
+(a linear functional on smooth functions of the body point `y`, written `∫ f dm`) with centre of
+mass `c`, a centre-of-mass trajectory `t ↦ X(t)` and an orientation `t ↦ R(t) ∈ SO(3)`. Its angular
+momentum about the centre of mass at time `t` is `L_COM(t) = ∫ (x - X(t)) × (v - V(t)) dm`, where
+`x = X(t) + R(t) (y - c)` is the position of the body point `y`, `v = Ṙ(t) (y - c) + V(t)` its
+velocity and `V = Ẋ` the velocity of the centre of mass. Time derivatives are taken to be `0` where
+the function is not differentiable; for a differentiable motion `v` is the velocity of the point.

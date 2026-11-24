@@ -1,4 +1,5 @@
-# Variance of a Brownian difference quotient
+# A Brownian difference quotient over a step h has variance 1 / h
 
-The difference quotient
-`(W (t + h) - W t) / h` of a pre-Brownian motion has variance `1 / h` for every `h > 0`.
+Let `B` be a process indexed by times `t ≥ 0` whose finite-dimensional laws are those of a
+standard Brownian motion (no path regularity is assumed). Then for every `t ≥ 0` and every step
+`h > 0`, the difference quotient `(B(t + h) - B(t)) / h` has variance `1 / h`.

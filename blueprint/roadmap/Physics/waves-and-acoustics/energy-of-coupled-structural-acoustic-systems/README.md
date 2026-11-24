@@ -1,4 +1,4 @@
 # Energy of coupled structural–acoustic systems
 
-- [Vibroacoustic port energy](vibroacoustic-port-energy.md)
-- [Vibroacoustic port energy all times](vibroacoustic-port-energy-all-times.md)
+- [With symmetric M, K, A, the energy balance of the coupled system at t](vibroacoustic-port-energy.md)
+- [With symmetric M, K, A, the energy balance at every time of a solution](vibroacoustic-port-energy-all-times.md)

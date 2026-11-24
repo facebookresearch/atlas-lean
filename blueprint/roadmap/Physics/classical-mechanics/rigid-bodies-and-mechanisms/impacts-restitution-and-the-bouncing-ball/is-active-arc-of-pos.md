@@ -1,4 +1,4 @@
-# Is Active Arc of pos
+# For e > 0 and u₀ > 0, every arc is active
 
-For `e > 0` and `u₀ > 0` every arc is active: the take-off speeds `e ^ n u₀` stay positive,
-so the bounces never stop.
+Let `e > 0` and `u₀ > 0`. For every `n` the [take-off speed](bounce-speed.md) `u_n = eⁿ u₀` is
+positive, so every arc is [active](is-active-arc.md): the bounces never stop.

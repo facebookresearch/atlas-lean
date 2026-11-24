@@ -1,4 +1,4 @@
-# Fixed Axis Angle
+# Rotation angle with constant angular acceleration
 
-The rotation angle `θ(t) = ω₀ t + α t² / 2` about the third axis: initial rate `ω₀` and
-constant angular acceleration `α`.
+For real numbers `ω₀` and `α`, the rotation angle at time `t` is `θ(t) = ω₀ t + α t² / 2`: initial
+rate `ω₀` and constant angular acceleration `α`.

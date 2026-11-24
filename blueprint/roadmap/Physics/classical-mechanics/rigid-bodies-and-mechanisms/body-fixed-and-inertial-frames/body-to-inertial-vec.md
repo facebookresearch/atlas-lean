@@ -1,4 +1,5 @@
-# Body To Inertial Vec
+# Inertial components of a free vector given in body components
 
-The passive component map of a free vector (a force, a velocity, a moment): the inertial
-components `v_I = R v_B` of the vector with body components `v_B`. No origin enters.
+For an orientation `R ∈ SO(3)` and body components `v_B ∈ ℝ³` of a free vector (a force, a velocity,
+a moment), the inertial components are `v_I = R v_B`: the passive component map, in which no origin
+enters.
