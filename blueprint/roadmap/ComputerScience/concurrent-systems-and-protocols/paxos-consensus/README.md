@@ -56,3 +56,7 @@ Lamport's single-decree Paxos ("the synod algorithm"), the consensus core of his
 ## Sources
 
 - L. Lamport, *Paxos Made Simple*, ACM SIGACT News 32(4), December 2001, 51–58; author's version dated 01 Nov 2001: Section 2.1 (problem and model), Section 2.2 (P1, P2, P2a, P2b, P2c, P1a, Phases 1 and 2).
+
+- [Majority quorums intersect](majority-intersect.md)
+
+- [Paxos proposal-safety step](proposal-safety-step.md)
