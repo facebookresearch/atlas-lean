@@ -101,17 +101,25 @@ def IsOmegaFibrant (E : SymmetricSpectrum) : Prop :=
   (∀ n : ℕ, SSet.KanComplex (level E n).right) ∧
     ∀ n : ℕ, WeakEquivalence (E.smashPowAdjointStructureMap n).right
 
+/-- A cofibrant replacement square of `f`: maps `p : X' ⟶ X` and `q : Y' ⟶ Y` from cofibrant
+spectra that are level trivial fibrations, with `f' : X' ⟶ Y'` lying over `f`. -/
+def IsCofibrantReplacementSquare {X Y X' Y' : SymmetricSpectrum} (f : X ⟶ Y) (p : X' ⟶ X)
+    (q : Y' ⟶ Y) (f' : X' ⟶ Y') : Prop :=
+  IsCofibrant X' ∧ IsCofibrant Y' ∧ IsLevelTrivialFibration p ∧ IsLevelTrivialFibration q ∧
+    f' ≫ q = p ≫ f
+
 /-- The stable equivalences of symmetric spectra (Hovey–Shipley–Smith, Def. 3.1.3, in the
-projective form): after replacing `f` by a map `f'` of cofibrant spectra over it along level
-trivial fibrations, `f'` induces weak equivalences of the mapping spaces `Map(-, E)` (level zero
-of the function spectra) into every Omega-fibrant spectrum `E`. Every such replacement is tested;
-one always exists. -/
+projective form): `f` has a cofibrant replacement square, and for every such square the map `f'`
+induces weak equivalences of the mapping spaces `Map(-, E)` (level zero of the function spectra)
+into every Omega-fibrant spectrum `E`. Replacement squares always exist (projective cofibrant
+replacement); requiring one keeps the test from holding vacuously. -/
 def IsStableEquivalence {X Y : SymmetricSpectrum} (f : X ⟶ Y) : Prop :=
+  (∃ (X' Y' : SymmetricSpectrum) (p : X' ⟶ X) (q : Y' ⟶ Y) (f' : X' ⟶ Y'),
+    IsCofibrantReplacementSquare f p q f') ∧
   ∀ (X' Y' : SymmetricSpectrum) (p : X' ⟶ X) (q : Y' ⟶ Y) (f' : X' ⟶ Y'),
-    IsCofibrant X' → IsCofibrant Y' → IsLevelTrivialFibration p → IsLevelTrivialFibration q →
-      f' ≫ q = p ≫ f → ∀ E : SymmetricSpectrum, IsOmegaFibrant E →
-        WeakEquivalence
-          ((SymmetricSpectrum.evaluation 0).map ((MonoidalClosed.pre f').app E)).right
+    IsCofibrantReplacementSquare f p q f' → ∀ E : SymmetricSpectrum, IsOmegaFibrant E →
+      WeakEquivalence
+        ((SymmetricSpectrum.evaluation 0).map ((MonoidalClosed.pre f').app E)).right
 
 /-- A functor vertex inverts every stable equivalence. -/
 def InvertsStableEquivalences (Z : SSet.{1})
