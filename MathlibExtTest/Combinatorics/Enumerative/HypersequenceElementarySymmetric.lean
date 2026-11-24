@@ -48,3 +48,45 @@ example : hypersequence (fun _ => (1 : ℂ)) 3 2 = 10 := by
   rw [sum_range_succ, sum_range_succ, sum_range_one, h0, h1, h2] at h
   norm_num [sum_range_succ] at h
   exact mul_left_cancel₀ two_ne_zero (h.trans (by norm_num))
+
+/-! ### The coefficients `e_{j,k}(n)` -/
+
+-- At `n = 1` and `j = 3` the variables are `2, 3, 4`, so `e_{3,k}(1) = 1, 9, 26, 24`.
+example : (List.range 4).map ((Icc 1 3).val.map (1 + ·)).esymm = [1, 9, 26, 24] := by
+  decide +kernel
+
+-- The closed form at `n = 1`, `j = 3`, `k = 2` is `1 · 2 · 1 + 2 · 3 · 2 + 3 · 1 · 4 = 26`, with
+-- the Stirling numbers `[3, 1] = 2`, `[3, 2] = 3` and `[3, 3] = 1`.
+example : ((Icc 1 3).val.map (1 + ·)).esymm 2 = 26 :=
+  ((hyperseq_esymm_recurrence_closed_form_row_sums 1).2.2.1 3 2 (by norm_num)).trans
+    (by decide)
+
+-- The row sums at `n = 1`, `j = 3` are `3 · 4 · 5 = 60` and `-(1 · 2 · 3) = -6`: the rising
+-- factorial `Nat.ascFactorial m j` starts at its base `m`.
+example : ∑ k ∈ range 4, ((Icc 1 3).val.map (1 + ·)).esymm k = 60 :=
+  ((hyperseq_esymm_recurrence_closed_form_row_sums 1).2.2.2.1 3).trans (by decide)
+
+example : ∑ k ∈ range 4, (-1 : ℤ) ^ k * (((Icc 1 3).val.map (1 + ·)).esymm k : ℕ) = -6 :=
+  ((hyperseq_esymm_recurrence_closed_form_row_sums 1).2.2.2.2 3).trans (by decide)
+
+-- For `k = 0` the recurrence adds the new variable `n + j + 1` to the sum of the variables.
+example (n j : ℕ) :
+    ((Icc 1 (j + 1)).val.map (n + ·)).esymm 1 =
+      ((Icc 1 j).val.map (n + ·)).esymm 1 + (n + (j + 1)) := by
+  simpa using (hyperseq_esymm_recurrence_closed_form_row_sums n).2.1 j 0
+
+-- For `k = j` the closed form is the expansion of the rising factorial `(n + 1)^{(j)}`, the
+-- product of all the variables, in Stirling numbers of the first kind.
+example (n j : ℕ) :
+    ((Icc 1 j).val.map (n + ·)).esymm j =
+      ∑ ℓ ∈ range (j + 1), Nat.stirlingFirst j ℓ * (n + 1) ^ ℓ := by
+  rw [(hyperseq_esymm_recurrence_closed_form_row_sums n).2.2.1 j j le_rfl]
+  simp
+
+-- At `n = 0` the variable `1` makes `∏ (1 - x)` vanish, so the alternating row sums are `0`
+-- from `j = 1` on.
+example (j : ℕ) :
+    ∑ k ∈ range (j + 1 + 1), (-1 : ℤ) ^ k * (((Icc 1 (j + 1)).val.map (0 + ·)).esymm k : ℕ) =
+      0 := by
+  rw [(hyperseq_esymm_recurrence_closed_form_row_sums 0).2.2.2.2 (j + 1), Nat.zero_ascFactorial]
+  simp

@@ -9,13 +9,15 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Combinatorics.Enumerative.Partition.Basic
+import MathlibExt.Combinatorics.Enumerative.Partition.Counting
 
 /-!
 # Merca's sums of different parts
 
-Merca's identity expresses the sum of distinct parts in a residue class across all partitions
-of `n` in terms of partition numbers. This module also defines the related multiplicity sum,
-rank and crank, and gives their values on small partitions.
+Merca's identities express two sums over the partitions of `n` in terms of partition numbers.
+The first sums distinct parts in a residue class, and the second sums distinct parts occurring
+at least `m` times. The module also gives the values of these sums, Dyson's rank and the
+partition crank on small partitions.
 -/
 
 namespace MetaMathlibExt
@@ -161,6 +163,49 @@ public theorem sumDistinctPartsModEq_eq_sum_partition (m r n : ℕ) (hrm : r < m
         · exact hrepr.le.trans (Finset.mem_range_succ_iff.mp hxn)
       · intros
         rfl
+
+open Finset
+
+/-- **Merca's identity for $s_m(n)$.** Let $m \ge 1$ and $n$ be natural numbers, write $s_m(n)$
+for the sum of the different parts that appear at least $m$ times in partitions of $n$, and
+$p(k)$ for the number of partitions of $k$. Then $s_m(n) = \sum_{j \ge 0,\ mj \le n} j\, p(n - mj)$.
+
+The paper's hypothesis $0 \le r < m$ forces $m \ge 1$; for $m = 0$ the condition $mj \le n$ would
+no longer bound $j$ in the sum.
+
+Source: Cristina Ballantine, *Combinatorial Proofs of Merca's Identities Involving the Sum of
+Different Parts Congruent to r Modulo m in All Partitions of n*, INTEGERS 24 (2024),
+Article A15, Theorem 1 (ii) (`integers-2024-A15-thm-1`). -/
+public theorem sumDistinctPartsMultAtLeast_eq_sum_partition (m n : ℕ) (hm : 0 < m) :
+    sumDistinctPartsMultAtLeast m n =
+      ∑ j ∈ (Finset.range (n + 1)).filter (fun j => m * j ≤ n),
+        j * Fintype.card (Nat.Partition (n - m * j)) := by
+  let sizes := (range (n + 1)).filter (fun j => m * j ≤ n)
+  have parts_eq (μ : n.Partition) :
+      μ.parts.toFinset.filter (fun j => m ≤ μ.parts.count j) =
+        sizes.filter (fun j => m ≤ μ.parts.count j) := by
+    ext j
+    simp only [sizes, mem_filter, Multiset.mem_toFinset, mem_range]
+    constructor
+    · rintro ⟨hj, hcount⟩
+      refine ⟨⟨Nat.lt_succ_of_le (μ.le_of_mem_parts hj), ?_⟩, hcount⟩
+      obtain ⟨rest, hrest⟩ := exists_add_of_le (Multiset.le_count_iff_replicate_le.mp hcount)
+      rw [← μ.parts_sum, hrest, Multiset.sum_add, Multiset.sum_replicate, smul_eq_mul]
+      exact Nat.le_add_right _ _
+    · exact fun ⟨_, hcount⟩ => ⟨Multiset.count_pos.mp (hm.trans_le hcount), hcount⟩
+  calc
+    sumDistinctPartsMultAtLeast m n =
+        ∑ μ : n.Partition, ∑ j ∈ sizes, if m ≤ μ.parts.count j then j else 0 := by
+      unfold sumDistinctPartsMultAtLeast
+      exact sum_congr rfl fun μ _ => by rw [parts_eq, sum_filter]
+    _ = ∑ j ∈ sizes, ∑ μ : n.Partition, if m ≤ μ.parts.count j then j else 0 := sum_comm
+    _ = _ := by
+      refine sum_congr rfl fun j hj => ?_
+      obtain rfl | hjpos := Nat.eq_zero_or_pos j
+      · simp
+      · rw [← sum_filter, sum_const, smul_eq_mul,
+          ← Fintype.card_subtype (fun μ : n.Partition => m ≤ μ.parts.count j),
+          Nat.Partition.card_count_ge hjpos (mem_filter.mp hj).2, mul_comm]
 
 end
 

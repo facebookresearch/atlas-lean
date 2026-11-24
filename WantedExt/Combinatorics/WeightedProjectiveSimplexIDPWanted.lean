@@ -12,7 +12,9 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Convex.Hull
 public import Mathlib.Topology.Instances.Real.Lemmas
 public import Mathlib.RingTheory.PowerSeries.Basic
+public import MathlibExt.Combinatorics.WeightedProjectiveSimplexCoefficients
 public import MathlibExt.Combinatorics.WeightedProjectiveSimplexIDP
+public import MathlibExt.Combinatorics.WeightedProjectiveSimplexOneSupported
 public import MathlibExt.Combinatorics.WeightedProjectiveSimplexReflexive
 public import MathlibExt.Geometry.LatticePointEnumerator
 
@@ -33,23 +35,6 @@ open Filter
 @[expose] public section
 
 /-! ## Basic geometric and enumerative definitions -/
-
-/-- **Integer decomposition property.** A set $P \subseteq \mathbb{R}^\iota$, for a finite index
-set $\iota$, has the integer decomposition property (IDP) if for every integer $m \ge 1$, every
-lattice point $w \in \mathbb{Z}^\iota$ of the dilate $mP = \{m y : y \in P\}$ is a sum
-$w = x_1 + \dots + x_m$ of $m$ lattice points $x_1, \dots, x_m \in \mathbb{Z}^\iota$ of $P$.
-
-This is the height-by-height version of the paper's cone definition; for a convex lattice
-polytope, the height-$m$ slice of the cone is $mP$. It also implements the paper's intended
-$(m,w)$, correcting its displayed $(k,w)$ typo.
-
-Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
-Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-A60, Theorem 2. -/
-public def HasIDP {ι : Type*} [Fintype ι] (P : Set (ι → ℝ)) : Prop :=
-  ∀ m : ℕ, 1 ≤ m → ∀ w : ι → ℤ, IsLatticePoint (polytopeDilate m P) w →
-    ∃ x : Fin m → ι → ℤ,
-      (∀ k, IsLatticePoint P (x k)) ∧ (∀ i, ∑ k, x k i = w i)
 
 /-- **Ehrhart function.** For a finite index set $\iota$, a set $P \subseteq \mathbb{R}^\iota$
 and a natural number $t$, the Ehrhart function $L_P(t)$ is the number of integer vectors
@@ -152,42 +137,6 @@ public def IsHStarUnimodal {ι : Type*} [Fintype ι] (P : Set (ι → ℝ)) : Pr
 
 /-! ## Weight and support notation -/
 
-/-- **Expansion of support values with multiplicities.** For support values
-$r = (r_1, \dots, r_d)$ and multiplicities $x = (x_1, \dots, x_d)$ in $\mathbb{N}$, the
-expansion $(r_1^{x_1}, \dots, r_d^{x_d})$ is the list consisting of $x_1$ copies of $r_1$,
-followed by $x_2$ copies of $r_2$, and so on, ending with $x_d$ copies of $r_d$.
-
-Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
-Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-A60, Theorem 1. -/
-public def expandSupport {d : ℕ} (r x : Fin d → ℕ) : List ℕ :=
-  (List.ofFn fun i => List.replicate (x i) (r i)).flatten
-
-/-- **Valid support data.** For $d \in \mathbb{N}$, a pair of tuples $r = (r_1, \dots, r_d)$ and
-$x = (x_1, \dots, x_d)$ of natural numbers is valid support data when $d \ge 1$, the support
-entries $r_1, \dots, r_d$ are positive and pairwise distinct, and the multiplicities
-$x_1, \dots, x_d$ are positive.
-
-These are the hypotheses implicit in the source's notation $(r_1^{x_1}, \dots, r_d^{x_d})$ for the
-weight vector in which each $r_i$ is repeated $x_i$ times.
-
-Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
-Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-A60, Theorem 1. -/
-public def ValidSupport {d : ℕ} (r x : Fin d → ℕ) : Prop :=
-  0 < d ∧ Function.Injective r ∧ (∀ i, 1 ≤ r i) ∧ (∀ i, 1 ≤ x i)
-
-/-- **Least common multiple of a list of weights.** For a finite list $q = (q_1, \dots, q_n)$ of
-natural numbers, $\operatorname{lcm}(q)$ is
-$\operatorname{lcm}(\cdots\operatorname{lcm}(\operatorname{lcm}(1, q_1), q_2)\cdots, q_n)$, the
-usual least common multiple of $q_1, \dots, q_n$; in particular the empty list has least common
-multiple $1$.
-
-Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
-Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-A60, Lemma 1. -/
-public def weightLcm (q : List ℕ) : ℕ := q.foldl Nat.lcm 1
-
 /-- **The integer $\ell$ of support data.** For tuples $r = (r_1, \dots, r_d)$ and
 $x = (x_1, \dots, x_d)$ of natural numbers, let $L = \operatorname{lcm}(r_1, \dots, r_d)$, with
 $L = 1$ when $d = 0$. Then $\ell(r, x)$ is the natural-number quotient
@@ -201,31 +150,6 @@ Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (20
 A60, Lemma 1. -/
 public def setupEll {d : ℕ} (r x : Fin d → ℕ) : ℕ :=
   (1 + ∑ i, x i * r i) / weightLcm (List.ofFn r)
-
-/-- **Complementary factors of support data.** For a tuple $r = (r_1, \dots, r_d)$ of natural
-numbers and an index $i$, the complementary factor $s_i$ is the natural-number quotient
-$\lfloor \operatorname{lcm}(r_1, \dots, r_d) / r_i \rfloor$, taken to be $0$ when $r_i = 0$.
-
-Since $r_i$ divides the lcm, the quotient is exact when $r_i > 0$, and then
-$s_i = \operatorname{lcm}(r_1, \dots, r_d) / r_i$.
-
-Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
-Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-A60, Lemma 1. -/
-public def setupS {d : ℕ} (r : Fin d → ℕ) (i : Fin d) : ℕ :=
-  weightLcm (List.ofFn r) / r i
-
-/-- **The weight statistic.** For a list $q = (q_1, \dots, q_n)$ of natural numbers and
-$b \in \mathbb{N}$, the weight statistic is
-$w(q, b) = b - \sum_{i=1}^{n} \left\lfloor \frac{q_i b}{1 + q_1 + \cdots + q_n} \right\rfloor$.
-
-The sum of the floors never exceeds $b$, so the difference is a natural number.
-
-Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
-Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-A60, Theorem 5. -/
-public def weightStatistic (q : List ℕ) (b : ℕ) : ℕ :=
-  b - (q.map fun a => a * b / (1 + q.sum)).sum
 
 /-- **The $h^*$ formula of a weight vector.** For a list $q = (q_1, \dots, q_n)$ of natural
 numbers, put $|q| = q_1 + \dots + q_n$ and define the weight statistic
@@ -310,23 +234,6 @@ public theorem_wanted reflexive_support_iff_lcm_dvd {d : ℕ} (r x : Fin d → �
     IsReflexive (weightedSimplexList (expandSupport r x)) ↔
       weightLcm (List.ofFn r) ∣ 1 + ∑ i, x i * r i
 
-/-- **Support gcd and complementary lcm of reflexive support data.** Let $r = (r_1, \dots, r_d)$
-and $x = (x_1, \dots, x_d)$ be valid support data: $d \ge 1$, the $r_i$ are pairwise distinct
-positive integers, and the $x_i$ are positive integers. Let $q = (r_1^{x_1}, \dots, r_d^{x_d})$
-be the weight vector in which each $r_i$ is repeated $x_i$ times, and suppose that the weighted
-projective space simplex $\Delta_{(1, q)}$ is reflexive. Then $\gcd(r_1, \dots, r_d) = 1$ and
-$\operatorname{lcm}(s_1, \dots, s_d) = \operatorname{lcm}(r_1, \dots, r_d)$, where
-$s_i = \operatorname{lcm}(r_1, \dots, r_d) / r_i$ are the complementary factors.
-
-Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
-Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-A60, Lemma 1. -/
-public theorem_wanted support_gcd_and_complementary_lcm {d : ℕ} (r x : Fin d → ℕ)
-    (hvalid : ValidSupport r x)
-    (href : IsReflexive (weightedSimplexList (expandSupport r x))) :
-    Finset.univ.gcd r = 1 ∧
-      Finset.univ.lcm (setupS r) = weightLcm (List.ofFn r)
-
 /-- **Affine free sum.** For sets $P \subseteq \mathbb{R}^n$ and $Q \subseteq \mathbb{R}^m$ and a
 point $v \in \mathbb{R}^m$, the affine free sum $P *_v Q \subseteq \mathbb{R}^n \times \mathbb{R}^m$
 is the convex hull of $(P \times \{0\}) \cup (\{0\} \times (Q - v))$, where
@@ -352,26 +259,6 @@ Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (20
 A60, Theorem 2. -/
 public def negativeWeightVertex {n : ℕ} (q : Fin n → ℕ) : Fin n → ℝ :=
   fun i => -(q i : ℝ)
-
-/-- **Reflexivity of the weighted free sum.** Let $p = (p_1, \dots, p_m)$ and
-$w = (w_1, \dots, w_k)$ be lists of positive integers such that the weighted projective space
-simplices $\Delta_{(1,p)}$ and $\Delta_{(1,w)}$ are reflexive, and let
-$q = (p_1, \dots, p_m, (1 + \sum_i p_i) w_1, \dots, (1 + \sum_i p_i) w_k)$. Then $\Delta_{(1,q)}$
-is reflexive.
-
-Only this direction is stated, and the source's clause that $\Delta_{(1,q)}$ arises as the free
-sum $\Delta_{(1,p)} *_0 \Delta_{(1,w)}$ is not formalized. Without that clause the converse is
-false: $p = (2)$ and $w = (1)$ give $q = (2, 3)$, and $\Delta_{(1,q)}$ is reflexive since $2$ and
-$3$ divide $6$, while $\Delta_{(1,p)}$ is not since $2$ does not divide $3$.
-
-Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
-Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-A60, Theorem 2. -/
-public theorem_wanted weighted_free_sum_reflexive (p w : List ℕ)
-    (hp : ∀ a ∈ p, 1 ≤ a) (hw : ∀ a ∈ w, 1 ≤ a)
-    (hpRef : IsReflexive (weightedSimplexList p))
-    (hwRef : IsReflexive (weightedSimplexList w)) :
-    IsReflexive (weightedSimplexList (p ++ w.map (fun a => (1 + p.sum) * a)))
 
 /-- **Affine free sums of IDP weighted simplices at the negative weight vertex of a reflexive
 summand are IDP.** Let $q = (q_1, \dots, q_n)$ and $p = (p_1, \dots, p_m)$ be tuples of natural
@@ -495,24 +382,6 @@ public theorem_wanted idp_reflexive_implies_necessary {n : ℕ} (q : Fin n → �
     (href : IsReflexive (weightedSimplex q)) (hidp : HasIDP (weightedSimplex q)) :
     SatisfiesIDPNecessary q
 
-/-- **Necessary condition for IDP reflexive weighted simplices, support form.** Let
-$r_1, \dots, r_d$ be pairwise distinct positive integers with $d \ge 1$, let $x_1, \dots, x_d$ be
-positive integers, let $n = x_1 + \dots + x_d$, and let $q = (q_1, \dots, q_n)$ be the weight
-vector $(r_1^{x_1}, \dots, r_d^{x_d})$ in which each $r_i$ is repeated $x_i$ times. If the
-weighted projective space simplex $\Delta_{(1,q)}$, the convex hull of the standard basis
-vectors $e_1, \dots, e_n$ of $\mathbb{R}^n$ and $-\sum_{k=1}^{n} q_k e_k$, is reflexive and has
-the integer decomposition property, then
-$1 + \sum_{i=1}^{d} x_i \, (r_i \bmod r_j) = r_j$ for every $j \in \{1, \dots, d\}$.
-
-Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
-Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-A60, Corollary 1. -/
-public theorem_wanted idp_reflexive_implies_support_necessary {d : ℕ} (r x : Fin d → ℕ)
-    (hvalid : ValidSupport r x)
-    (href : IsReflexive (weightedSimplexList (expandSupport r x)))
-    (hidp : HasIDP (weightedSimplexList (expandSupport r x))) :
-    SatisfiesSupportIDPNecessary r x
-
 /-- **The $h^*$-polynomial of a weighted projective space simplex.** Let $q = (q_1, \dots, q_n)$
 be a list of positive integers, let $\Delta_{(1,q)} \subset \mathbb{R}^n$ be the weighted
 projective space simplex, and let $L(t)$ be the number of lattice points in its $t$-th dilate
@@ -568,19 +437,6 @@ public theorem_wanted idp_reflexive_multiplicity_bounds {d : ℕ} (r x : Fin d �
     (∀ j : Fin d, ∀ h : j.val + 1 < d,
       let last : Fin d := ⟨d - 1, Nat.sub_lt (Nat.zero_lt_of_lt h) (by omega)⟩
       ¬r j ∣ r last → x last ≤ r j / (r last % r j))
-
-/-- **One-supported IDP reflexive weighted simplices have all weights one.** Let $r \ge 1$ and
-$x \ge 1$ be natural numbers, and let $q = (r, \dots, r)$ be the weight vector consisting of $x$
-copies of $r$. If the weighted projective simplex with weights $q$ is reflexive and has the
-integer decomposition property, then $r = 1$.
-
-Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
-Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-A60, Proposition 1. -/
-public theorem_wanted one_supported_idp_reflexive_support_eq_one (r x : ℕ)
-    (hr : 1 ≤ r) (hx : 1 ≤ x)
-    (href : IsReflexive (weightedSimplexList (List.replicate x r)))
-    (hidp : HasIDP (weightedSimplexList (List.replicate x r))) : r = 1
 
 /-- **IDP reflexive two-supported weighted simplices.** Let $r = (r_1, r_2)$ and
 $x = (x_1, x_2)$ be pairs of positive integers with $r_1 < r_2$, and let
@@ -716,18 +572,6 @@ A60, Theorem 10. -/
 public noncomputable def reflexiveStabilizationAt (q : List ℕ) (m : ℕ) : List ℕ :=
   List.replicate (reflexiveStabilizationNumber q + (m - 1) * weightLcm q) 1 ++ q
 
-/-- **The number $\ell(q)$ of a weight list.** For a list $q = (q_1, \dots, q_n)$ of natural
-numbers, $\ell(q) = \lfloor (1 + q_1 + \dots + q_n) / \operatorname{lcm}(q_1, \dots, q_n) \rfloor$,
-where the least common multiple of the empty list is $1$, and $\ell(q) = 0$ when some $q_i = 0$
-(so that the least common multiple is $0$).
-
-When the weights are positive and the weighted simplex of $q$ is reflexive, this division is exact.
-
-Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
-Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-A60, Theorem 12. -/
-public def listEll (q : List ℕ) : ℕ := (1 + q.sum) / weightLcm q
-
 /-- **Higher reflexive stabilizations are not IDP.** Let $q = (q_1, \dots, q_n)$ be a nonempty
 list of integers with $q_i \ge 2$ for all $i$, and let $m \ge 2$. Let $\operatorname{rsn}(q)$ be
 the least $k$ for which the weighted simplex of $(1^k, q)$, the list $q$ preceded by $k$ ones, is
@@ -771,26 +615,6 @@ public theorem_wanted stabilization_eventually_not_unimodal_coefficients_one_or_
       ∀ k : ℕ, k ≤ (hStarFormula (reflexiveStabilizationAt q m)).natDegree →
         (hStarFormula (reflexiveStabilizationAt q m)).coeff k = 1 ∨
           (hStarFormula (reflexiveStabilizationAt q m)).coeff k = 2
-
-/-- **The first reflexive stabilization preserves the weight statistic.** Let
-$q = (q_1, \dots, q_n)$ be a vector of natural numbers whose reflexive stabilization number is
-$1$, so that its first reflexive stabilization is $\operatorname{rs}(q) = (1, q_1, \dots, q_n)$.
-Suppose that $\ell(\operatorname{rs}(q)) = 1$, where for a vector $p$ we write
-$\ell(p) = \lfloor (1 + \sum_i p_i) / \operatorname{lcm}(p) \rfloor$. Then for every natural
-number $b \le \sum_i q_i$, the weight statistics agree: $w(q, b) = w(\operatorname{rs}(q), b)$.
-
-The paper's gloss $1 + \sum_i q_i = \operatorname{lcm}(q) - 1$ is equivalent to
-$2 + \sum_i q_i = \operatorname{lcm}(q)$, the numerator equation for the stabilization with one
-leading $1$; no correction to the printed statement is needed.
-
-Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
-Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-A60, Theorem 12. -/
-public theorem_wanted stabilization_weightStatistic_eq (q : List ℕ)
-    (hrsn : reflexiveStabilizationNumber q = 1)
-    (hell : listEll (reflexiveStabilization q) = 1) :
-    ∀ b : ℕ, b ≤ q.sum →
-      weightStatistic q b = weightStatistic (reflexiveStabilization q) b
 
 /-- **The first reflexive stabilization adds one monomial to the $h^*$-formula.** Let
 $q = (q_1, \dots, q_n)$ be a list of natural numbers whose reflexive stabilization number is
@@ -928,38 +752,6 @@ public theorem_wanted almostIDP_exactly_two_height_two (n : ℕ) (hn : 2 ≤ n) 
     Set.ncard {a ∈ hilbertBasis (weightedSimplex (almostIDPWeights n)) | 1 < a.1} = 2 ∧
     ∀ a ∈ hilbertBasis (weightedSimplex (almostIDPWeights n)), 1 < a.1 → a.1 = 2
 
-/-- **Even geometric factor.** For a natural number $n$, the even geometric factor is the
-polynomial $\sum_{k=0}^{n-1} z^{2k} = 1 + z^2 + \dots + z^{2n-2}$ with integer coefficients;
-for $n = 0$ it is the zero polynomial.
-
-Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
-Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-A60, Theorem 13. -/
-public noncomputable def evenGeometricFactor (n : ℕ) : Polynomial ℤ :=
-  ∑ k ∈ Finset.range n, Polynomial.X ^ (2 * k)
-
-/-- **The quartic $1 + 7z + 14z^2 + 7z^3 + z^4$.** The polynomial $1 + 7z + 14z^2 + 7z^3 + z^4$ with
-integer coefficients, the quartic factor from Theorem 13.
-
-Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
-Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-A60, Theorem 13. -/
-public noncomputable def almostIDPQuartic : Polynomial ℤ :=
-  1 + 7 * Polynomial.X + 14 * Polynomial.X ^ 2 +
-    7 * Polynomial.X ^ 3 + Polynomial.X ^ 4
-
-/-- **Coefficient vector $(1, 7, 15, 14, \dots, 15, 7, 1)$.** For a natural number $n$, the list of
-integers $(1, 7, 15, 14)$, followed by $n - 2$ copies of the pair $(16, 14)$, followed by
-$(15, 7, 1)$. The middle block is empty when $n \le 2$.
-
-It makes exact the ellipsis in the coefficient vector displayed in Theorem 13.
-
-Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
-Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-A60, Theorem 13. -/
-public def almostIDPCoefficientVector (n : ℕ) : List ℤ :=
-  [1, 7, 15, 14] ++ (List.replicate (n - 2) [16, 14]).flatten ++ [15, 7, 1]
-
 /-- **The $h^*$-polynomial of $\Delta_{(1,q(n))}$ factors.** Let $n \ge 2$, let
 $q(n) = (1^{2n-1}, 3n, 10n, 15n)$, that is, $2n - 1$ ones followed by $3n$, $10n$, $15n$, and let
 $\Delta_{(1,q(n))} \subseteq \mathbb{R}^{2n+2}$ be the weighted projective simplex. For $t \ge 0$,
@@ -976,19 +768,6 @@ A60, Theorem 13. -/
 public theorem_wanted almostIDP_hStar_factorization (n : ℕ) (hn : 2 ≤ n) :
     IsHStarPolynomial (weightedSimplex (almostIDPWeights n))
       (evenGeometricFactor n * almostIDPQuartic)
-
-/-- **Coefficients of $(1 + z^2 + \dots + z^{2n-2})(1 + 7z + 14z^2 + 7z^3 + z^4)$.** Let $n \ge 2$.
-The coefficients of $z^0, z^1, \dots, z^{2n+2}$ in the integer polynomial
-$(1 + z^2 + \dots + z^{2n-2})(1 + 7z + 14z^2 + 7z^3 + z^4)$ are, in order, $1, 7, 15, 14$, then
-$n - 2$ repetitions of $16, 14$, then $15, 7, 1$.
-
-Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
-Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-A60, Theorem 13. -/
-public theorem_wanted almostIDP_hStar_coefficients (n : ℕ) (hn : 2 ≤ n) :
-    List.ofFn (fun k : Fin (2 * n + 3) =>
-      (evenGeometricFactor n * almostIDPQuartic).coeff k.val) =
-      almostIDPCoefficientVector n
 
 /-- **Example of support expansion.** Expanding the support values $r = (1, 3)$ with
 multiplicities $x = (2, 1)$, that is, taking $2$ copies of $1$ followed by $1$ copy of $3$,
