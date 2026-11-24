@@ -1,0 +1,41 @@
+# Torus-cocycle subgroup: easy inclusion
+
+- [Torus Cocycle Prod](torus-cocycle-prod.md)
+- [Torus Cocycle Subgroup](torus-cocycle-subgroup.md)
+- [Torus Cocycle Subgroup le inf ker to Stable E finite Stage two](torus-cocycle-subgroup-le-inf-ker-to-sta.md)
+- [Torus Cocycle Subgroup le finite Torus Subgroup](torus-cocycle-subgroup-le-finite-torus-s.md)
+- [Torus Cocycle Subgroup le center](torus-cocycle-subgroup-le-center.md)
+- [Torus Cocycle At mem torus Cocycle Subgroup](torus-cocycle-at-mem-torus-cocycle-subgr.md)
+- [Ker to Stable E inf finite Stage zero le torus Cocycle Subgroup](ker-to-stable-e-inf-finite-stage-zero-le.md)
+- [Ker to Stable E inf finite Stage one le torus Cocycle Subgroup](ker-to-stable-e-inf-finite-stage-one-le.md)
+- [Ker to Stable E last Boundary Block singleton mem torus Cocycle Subgroup](ker-to-stable-e-last-boundary-block-sing.md)
+- [Ker to Stable E last Boundary Block col row pair mem torus Cocycle Subgroup](ker-to-stable-e-last-boundary-block-col.md)
+- [Ker to Stable E last Boundary Block row col pair mem torus Cocycle Subgroup](ker-to-stable-e-last-boundary-block-row.md)
+- [Ker to Stable E last Boundary Block col row col triple mem torus Cocycle Subgroup](ker-to-stable-e-last-boundary-block-col-2.md)
+- [Ker to Stable E last Boundary Block row col row triple mem torus Cocycle Subgroup](ker-to-stable-e-last-boundary-block-row-2.md)
+- [Last Boundary Block inl mul inl](last-boundary-block-inl-mul-inl.md)
+- [Last Boundary Block inr mul inr](last-boundary-block-inr-mul-inr.md)
+- [Last Boundary Block inl one](last-boundary-block-inl-one.md)
+- [Last Boundary Block inr one](last-boundary-block-inr-one.md)
+- [Last Boundary Block one inl mul inl](last-boundary-block-one-inl-mul-inl.md)
+- [Last Boundary Block one inr mul inr](last-boundary-block-one-inr-mul-inr.md)
+- [Last Boundary Block one inl one](last-boundary-block-one-inl-one.md)
+- [Last Boundary Block one inr one](last-boundary-block-one-inr-one.md)
+
+## Alternating normal form via same-side merging (adjacent Chain)
+
+- [Boundary Blocks Alternate](boundary-blocks-alternate.md)
+- [Normalize Boundary Blocks](normalize-boundary-blocks.md)
+- [Normalize Boundary Blocks preserves prod](normalize-boundary-blocks-preserves-prod.md)
+- [Normalize Boundary Blocks chain](normalize-boundary-blocks-chain.md)
+- [Length normalize Boundary Blocks le](length-normalize-boundary-blocks-le.md)
+- [Length normalize Boundary Blocks lt of adjacent inl](length-normalize-boundary-blocks-lt-of-a.md)
+- [Length normalize Boundary Blocks lt of adjacent inr](length-normalize-boundary-blocks-lt-of-a-2.md)
+- [Finite Stage succ exists alternating last Boundary Blocks](finite-stage-succ-exists-alternating-las.md)
+
+## Cyclic same-side endpoint shortening
+
+- [Cyclic Same Side Shortening inl](cyclic-same-side-shortening-inl.md)
+- [Cyclic Same Side Shortening inr](cyclic-same-side-shortening-inr.md)
+- [Torus Cocycle Subgroup mem of conj](torus-cocycle-subgroup-mem-of-conj.md)
+- [Odd Length Normalized Kernel Shortening](odd-length-normalized-kernel-shortening.md)

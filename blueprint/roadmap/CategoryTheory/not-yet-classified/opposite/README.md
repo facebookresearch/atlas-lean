@@ -18,3 +18,6 @@
 - [Monoidal Closed Opposite ihom map](monoidal-closed-opposite-ihom-map.md)
 - [Monoidal Closed Opposite hom Equiv](monoidal-closed-opposite-hom-equiv.md)
 - [Monoidal Closed Opposite counit](monoidal-closed-opposite-counit.md)
+- [Opposite Exact Category](opposite-exact-category.md)
+- [Opposite Exact Category is Admissible Exact iff](opposite-exact-category-is-admissible-ex.md)
+- [Is Admissible Exact op](is-admissible-exact-op.md)

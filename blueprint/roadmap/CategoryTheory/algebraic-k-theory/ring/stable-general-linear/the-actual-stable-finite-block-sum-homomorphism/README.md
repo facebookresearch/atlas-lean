@@ -1,0 +1,18 @@
+# The actual stable finite block-sum homomorphism
+
+- [Block Pair Index](block-pair-index.md)
+- [Block Pair Coefficient Hom](block-pair-coefficient-hom.md)
+- [Block Pair Diagonal Hom](block-pair-diagonal-hom.md)
+- [Block Pair Diagonal Hom apply](block-pair-diagonal-hom-apply.md)
+- [Finite Block Sum Hom](finite-block-sum-hom.md)
+- [Block Sum Hom](block-sum-hom.md)
+- [Finite Block Sum Hom coefficients](finite-block-sum-hom-coefficients.md)
+- [Block Sum Hom apply](block-sum-hom-apply.md)
+- [Block Sum Hom of pair](block-sum-hom-of-pair.md)
+- [Block Sum Hom one](block-sum-hom-one.md)
+- [Block Sum Left Hom](block-sum-left-hom.md)
+- [Block Sum Left Hom apply](block-sum-left-hom-apply.md)
+- [Block Sum Right Hom](block-sum-right-hom.md)
+- [Block Sum Right Hom apply](block-sum-right-hom-apply.md)
+- [Block Sum Hom eq left mul right](block-sum-hom-eq-left-mul-right.md)
+- [Block Sum Left Right commute](block-sum-left-right-commute.md)

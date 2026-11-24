@@ -1,0 +1,18 @@
+# Finite-rank Weyl, torus, and central-kernel subgroups
+
+- [Finite Weyl Subgroup](finite-weyl-subgroup.md)
+- [Finite Torus Subgroup](finite-torus-subgroup.md)
+- [Finite Central Kernel Subgroup](finite-central-kernel-subgroup.md)
+- [Weyl mem finite Weyl Subgroup](weyl-mem-finite-weyl-subgroup.md)
+- [Torus mem finite Torus Subgroup](torus-mem-finite-torus-subgroup.md)
+- [Finite Torus Subgroup le finite Weyl Subgroup](finite-torus-subgroup-le-finite-weyl-sub.md)
+- [Finite Weyl Subgroup le finite Stage](finite-weyl-subgroup-le-finite-stage.md)
+- [Finite Torus Subgroup le finite Stage](finite-torus-subgroup-le-finite-stage.md)
+- [Finite Central Kernel Subgroup le ker](finite-central-kernel-subgroup-le-ker.md)
+- [Finite Central Kernel Subgroup le finite Weyl](finite-central-kernel-subgroup-le-finite.md)
+- [Finite Central Kernel Subgroup le center](finite-central-kernel-subgroup-le-center.md)
+- [Finite Weyl Subgroup zero eq bot](finite-weyl-subgroup-zero-eq-bot.md)
+- [Finite Weyl Subgroup one eq bot](finite-weyl-subgroup-one-eq-bot.md)
+- [Finite Torus Subgroup zero eq bot](finite-torus-subgroup-zero-eq-bot.md)
+- [Finite Torus Subgroup one eq bot](finite-torus-subgroup-one-eq-bot.md)
+- [Finite Weyl Subgroup exists list repr](finite-weyl-subgroup-exists-list-repr.md)
