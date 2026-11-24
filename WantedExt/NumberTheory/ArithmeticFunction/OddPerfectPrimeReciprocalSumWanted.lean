@@ -14,6 +14,7 @@ public import Mathlib.NumberTheory.PrimeCounting
 public import MathlibExt.Analysis.SpecialFunctions.Exp.Zelinsky
 public import MathlibExt.Analysis.SpecialFunctions.Log.Zelinsky
 public import MathlibExt.NumberTheory.ArithmeticFunction.AbundancySupDivIndex
+public import MathlibExt.NumberTheory.ArithmeticFunction.EulerPrimeFifthPower
 public import MathlibExt.NumberTheory.ArithmeticFunction.OddPerfectPrimeProduct
 public import MathlibExt.NumberTheory.EulerPrime
 public import WantedExt.NumberTheory.PrimitiveNondeficientWanted
@@ -245,18 +246,6 @@ public theorem_wanted not_abundancySup_oddPart_succ_lt_two_and_two_lt
     (q : ℕ) (hq : q.Prime) (hodd : Odd q) :
     ¬ (abundancySup (ordCompl[2] (q + 1)) < 2 ∧
       2 < abundancySup (q * ordCompl[2] (q + 1)))
-
-/-- **Fifth-power bound on the Euler prime of an odd perfect number.** If $(n, q, e, m)$ is in
-Eulerian form, that is, $n$ is an odd perfect number, $q$ is a prime coprime to $m$,
-$n = q^e m^2$ and $q \equiv e \equiv 1 \pmod 4$, then $e = 1$ or $q^5 < 2m^2$, that is,
-$q < 2^{1/5} m^{2/5}$.
-
-Source: Joshua Zelinsky, *The Sum of the Reciprocals of the Prime Divisors of an Odd
-Perfect or Odd Primitive Non-deficient Number*, INTEGERS 25 (2025), Article A59,
-Proposition 11 (`integers-2025-A59-prop-11`). -/
-public theorem_wanted eulerianForm_exponent_eq_one_or_pow_five_lt
-    (n q e m : ℕ) (h : EulerianForm n q e m) :
-    e = 1 ∨ q ^ 5 < 2 * m ^ 2
 
 /-- **Refined fifth-power bound on the Euler prime of an odd perfect number.** If $(n, q, e, m)$
 is in Eulerian form, that is, $n$ is an odd perfect number, $q$ is a prime coprime to $m$,
