@@ -143,14 +143,21 @@ private theorem iterate_split {A : Type*} (η : A → List A) {w u v : List A}
     rw [morphIterate, ih, morphExtend_append]
     rfl
 
+private theorem iterate_append {A : Type*} (η : A → List A) (k : ℕ) (u v : List A) :
+    morphIterate η k (u ++ v) = morphIterate η k u ++ morphIterate η k v := by
+  induction k with
+  | zero => rfl
+  | succ k ih => simp only [morphIterate, ih, morphExtend_append]
+
 -- The suffix after the selected letter absorbs the unvisited part of each image.
 private theorem read_with_suffix {A : Type*} (η : A → List A) (s : ℕ → List A × A)
     (p : ℕ) (x : A) (suffix : List A)
     (hs : 0 < p → IsLetterAdmissibleSequence η x s (p - 1)) :
-    (morphIterate η p (x :: suffix))[∑ j ∈ Finset.range p, (morphIterate η j (s j).1).length]? =
-      substitutionAutomaton η x ((List.range p).reverse.map fun j => (s j).1.length) := by
+    ∃ a, (morphIterate η p (x :: suffix))[
+        ∑ j ∈ Finset.range p, (morphIterate η j (s j).1).length]? = some a ∧
+      substitutionAutomaton η x ((List.range p).reverse.map fun j => (s j).1.length) = some a := by
   induction p generalizing x suffix with
-  | zero => simp [morphIterate, substitutionAutomaton]
+  | zero => exact ⟨x, by simp [morphIterate, substitutionAutomaton]⟩
   | succ p ih =>
     obtain ⟨hadm, rest, hrest⟩ := hs (Nat.zero_lt_succ p)
     simp only [Nat.add_one_sub_one] at hadm hrest
@@ -192,8 +199,35 @@ public theorem morphIterate_getElem_eq_substitutionAutomaton_tail {A : Type*}
     (η : A → List A) (_hη : IsSubstitution η) (p : ℕ) (_hp : 1 ≤ p) (x : A)
     (s : ℕ → List A × A) (hs : IsLetterAdmissibleSequence η x s (p - 1)) :
     (morphIterate η p [x])[∑ j ∈ Finset.range p, (morphIterate η j (s j).1).length]? =
-      substitutionAutomaton η x ((List.range p).reverse.map fun j => (s j).1.length) :=
-  morphIterate_getElem_eq_substitutionAutomaton_tail.read_with_suffix η s p x [] (fun _ => hs)
+      substitutionAutomaton η x ((List.range p).reverse.map fun j => (s j).1.length) := by
+  obtain ⟨a, hread, hrun⟩ :=
+    morphIterate_getElem_eq_substitutionAutomaton_tail.read_with_suffix η s p x [] (fun _ => hs)
+  exact hread.trans hrun.symm
+
+-- Keep the source's named hypothesis even though the admissible chain alone gives the bound.
+set_option linter.unusedVariables false in
+/-- **Weighted length of an admissible sequence.** Let $\eta$ be a substitution on an alphabet
+$A$, extended to finite words by concatenation, and let $(m_i, a_i)_{0 \le i \le k}$ be a
+sequence of pairs of a finite word $m_i$ over $A$ and a letter $a_i \in A$ that is admissible
+with respect to $\eta$. Then $\sum_{j=0}^{k} |\eta^j(m_j)| < |\eta^k(m_k a_k)|$, where
+$\eta^j$ is the $j$-th iterate of $\eta$ and $|w|$ is the length of a word $w$.
+
+Source: Sébastien Labbé and Jana Lepšová, *Dumont-Thomas Complement Numeration Systems for
+ℤ*, INTEGERS 24 (2024), Article A112, Lemma 3.3 (Dumont and Thomas, Lemma 1.1). -/
+public theorem admissibleSequence_weightedLength_lt {A : Type*} (η : A → List A)
+    (hη : IsSubstitution η) (s : ℕ → List A × A) (k : ℕ) (hs : IsAdmissibleSequence η s k) :
+    ∑ j ∈ Finset.range (k + 1), (morphIterate η j (s j).1).length <
+      (morphIterate η k ((s k).1 ++ [(s k).2])).length := by
+  -- Read the shorter chain from the terminal letter `aₖ`.
+  have hadm (hk : 0 < k) : IsLetterAdmissibleSequence η (s k).2 s (k - 1) := by
+    refine ⟨fun i hi => hs i (by omega), ?_⟩
+    simpa only [Nat.sub_add_cancel hk] using hs (k - 1) (by omega)
+  obtain ⟨a, hread, _⟩ :=
+    morphIterate_getElem_eq_substitutionAutomaton_tail.read_with_suffix η s k (s k).2 [] hadm
+  obtain ⟨hlen, _⟩ := List.getElem?_eq_some_iff.mp hread
+  rw [Finset.sum_range_succ, morphIterate_getElem_eq_substitutionAutomaton_tail.iterate_append,
+    List.length_append]
+  omega
 
 /-- **Two-sided periodic points.** Let $\eta$ map each letter of an alphabet $A$ to a finite
 word over $A$, extended to finite words by concatenation, with iterates $\eta^j$; let
