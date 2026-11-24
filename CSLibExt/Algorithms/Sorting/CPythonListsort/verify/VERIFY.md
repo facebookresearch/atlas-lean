@@ -32,11 +32,12 @@ and the twelve original propositions are in
 
 ### What the integration was checked against
 
-- 117 production and 30 test modules compile on Lean 4.36.0 with the root Mathlib pin.
-- The compiled policy audit imports all 147 modules together and reports no
-  forbidden axiom, unsafe declaration or `implemented_by` attribute outside the
-  compiler-generated exceptions, wanted declaration outside `WantedExt`, or
-  forbidden cross-library import. All ten local verifier unit tests pass.
+- The root aggregates cover 116 production modules and 44 test modules on Lean 4.36.0 with the
+  root Mathlib pin. Fixed-input regression fixtures are in the test aggregate.
+- The root policy audit checks compiled modules for forbidden axioms, unsafe declarations and
+  `implemented_by` attributes outside compiler-generated exceptions, wanted declarations outside
+  `WantedExt`, and forbidden cross-library imports. The local Python verifier has ten regression
+  tests.
 - The five principal theorems remain polymorphic in two independent universe
   parameters; the key and payload universes were not collapsed.
 - Reproduction fetched the two public source files at the immutable CPython pin,
