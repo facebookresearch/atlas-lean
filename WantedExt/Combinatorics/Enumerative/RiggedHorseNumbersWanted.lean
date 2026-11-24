@@ -34,7 +34,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.NumberTheory.ArithmeticFunction.Carmichael
-public import MathlibExt.Combinatorics.Enumerative.FubiniNumber
+public import MathlibExt.Combinatorics.Enumerative.FubiniPeriods
 public import MathlibExt.Combinatorics.Enumerative.RFubiniPeriodicity
 public import MathlibExt.Combinatorics.Enumerative.StirlingDescPochhammer
 
@@ -65,18 +65,6 @@ Integer Sequences 28 (2025), Article 25.4.1, Corollary 10 (`jis-2025-25.4.1-cor-
 public theorem_wanted fubiniNumber_add_carmichael_modEq (K n : ℕ)
     (hn : K.factorization.support.sup K.factorization ≤ n) :
     fubiniNumber (n + carmichael K) ≡ fubiniNumber n [MOD K]
-
-/-- **Eventual periods of the Fubini numbers modulo an odd number.** Let $K$ be an odd natural
-number and let $\lambda(K)$ be the value of the Carmichael function at $K$. Then a natural number
-$p$ is divisible by $\lambda(K)$ if and only if there is a natural number $N$ such that the Fubini
-numbers $F(n)$ satisfy $F(n + p) \equiv F(n) \pmod K$ for all $n \ge N$. In particular, the
-eventual period of the Fubini numbers modulo $K$ is exactly $\lambda(K)$.
-
-Source: Benjamin Schreyer, *Rigged Horse Numbers and their Modular Periodicity*, Journal of
-Integer Sequences 28 (2025), Article 25.4.1, Corollary 11 (`jis-2025-25.4.1-cor-11`). -/
-public theorem_wanted fubiniNumber_eventuallyPeriodic_iff_carmichael_dvd (K : ℕ) (hK : Odd K)
-    (p : ℕ) :
-    (∃ N, ∀ n ≥ N, fubiniNumber (n + p) ≡ fubiniNumber n [MOD K]) ↔ carmichael K ∣ p
 
 end
 

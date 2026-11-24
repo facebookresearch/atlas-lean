@@ -9,8 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Combinatorics.Hindman
-public import Mathlib.Data.PNat.Basic
+public import MathlibExt.Combinatorics.FiniteSumsWitness
 public import MathlibExt.Combinatorics.PairwiseSumTheorem
 public import MathlibExt.Combinatorics.RamseyWitnessTensorSquare
 
@@ -78,24 +77,6 @@ public theorem_wanted weaklyPartitionRegular_iff_exists_ultrafilter {S : Type*}
     (𝓕 : Set (Set S)) :
     (∀ (r : ℕ) (c : S → Fin r), ∃ F ∈ 𝓕, ∃ k : Fin r, ∀ x ∈ F, c x = k) ↔
       ∃ U : Ultrafilter S, ∀ A ∈ U, ∃ F ∈ 𝓕, F ⊆ A
-
-/-- **PR-witnesses of the finite sums family.** Let $\beta\mathbb{N}^+$ be the space of
-ultrafilters on the positive integers $\mathbb{N}^+$, with the Stone–Čech topology and the sum
-for which $A \in U + V$ if and only if $\{n : \{m : n + m \in A\} \in V\} \in U$. For
-$X \subseteq \mathbb{N}^+$ let $\mathrm{FS}(X)$ be the set of sums of nonempty finite subsets of
-$X$. An ultrafilter $U \in \beta\mathbb{N}^+$ is a PR-witness of the Hindman family, that is,
-every $A \in U$ contains $\mathrm{FS}(X)$ for some infinite $X \subseteq \mathbb{N}^+$, if and
-only if $U$ lies in the closure of the set of idempotents $\{V \in \beta\mathbb{N}^+ : V + V = V\}$.
-
-Source: Mauro Di Nasso and Renling Jin, *From Schur's Theorem to the Pairwise Sum Theorem*,
-INTEGERS 25 (2025), Article A105, Proposition 3.3 (`integers-2025-A105-prop-3-3`), quoting
-Hindman and Strauss, Lemma 5.19. -/
-public theorem_wanted finiteSums_witness_iff_mem_closure_idempotents (U : Ultrafilter ℕ+) :
-    letI : Add (Ultrafilter ℕ+) := Ultrafilter.add
-    (∀ A ∈ U, ∃ X : Set ℕ+, X.Infinite ∧
-        ∀ F : Finset ℕ+, F.Nonempty → (F : Set ℕ+) ⊆ X →
-          ∃ y ∈ A, (y : ℕ) = ∑ x ∈ F, (x : ℕ)) ↔
-      U ∈ closure {V : Ultrafilter ℕ+ | V + V = V}
 
 /-- **PR-witnesses of the pairwise sum family.** An ultrafilter $W$ on
 $\mathbb{N} \times \mathbb{N}$, where $\mathbb{N} = \{0, 1, 2, \dots\}$, is a Ramsey's witness
