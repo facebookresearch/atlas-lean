@@ -409,3 +409,6 @@ Topics added since this subject's fields were last revised.
 - [Quillen Equivalence Total Derived](quillen-equivalence-total-derived/README.md)
 - [Reedy Generated](reedy-generated/README.md)
 - [Structured Replacement Comparisons](structured-replacement-comparisons/README.md)
+- [Derived Adjunction Coherence](derived-adjunction-coherence/README.md)
+- [Quillen Ordinary Ho Hom](quillen-ordinary-ho-hom/README.md)
+- [Quillen Right Mate](quillen-right-mate/README.md)
