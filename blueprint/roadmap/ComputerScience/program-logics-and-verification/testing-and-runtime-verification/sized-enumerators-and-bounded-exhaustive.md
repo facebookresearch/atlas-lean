@@ -14,4 +14,4 @@ statements to the subtype of inputs satisfying the restricting predicate, with a
 
 ## Sources
 
-- K. Claessen and J. Hughes, "QuickCheck: a lightweight tool for random testing of Haskell programs", *Proceedings of ICFP 2000*, ACM, 2000: property-based testing context only; the bounded exhaustive statements here are the formalized deterministic results, not claims about random generators.
+- K. Claessen and J. Hughes, "QuickCheck: a lightweight tool for random testing of Haskell programs", *Proceedings of ICFP 2000*, ACM, 2000: property-based testing context only; the bounded exhaustive statements here are deterministic, not claims about random generators.

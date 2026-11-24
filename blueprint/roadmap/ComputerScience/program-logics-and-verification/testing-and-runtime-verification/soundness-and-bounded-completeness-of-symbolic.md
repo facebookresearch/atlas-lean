@@ -26,4 +26,4 @@ Counting loop-body entries does not change big-step executions: $c$ runs from $s
 
 ## Sources
 
-- J. C. King, "Symbolic execution and program testing", *Communications of the ACM* 19(7):385–394, 1976 (symbolic execution and path conditions; the bounded statements here are the formalized results).
+- J. C. King, "Symbolic execution and program testing", *Communications of the ACM* 19(7):385–394, 1976 (symbolic execution and path conditions).

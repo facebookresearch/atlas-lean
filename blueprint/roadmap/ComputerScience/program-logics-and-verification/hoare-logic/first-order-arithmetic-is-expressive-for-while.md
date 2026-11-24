@@ -21,7 +21,7 @@ fragment is decidable by Presburger's theorem.
 
 ## Expansion
 
-Formalize the definability of the partial recursive functions computed by while programs in $\mathcal{N}$, for example by coding
+State the definability of the partial recursive functions computed by while programs in $\mathcal{N}$, for example by coding
 finite sequences of states with Gödel's $\beta$ function.
 
 ## Sources

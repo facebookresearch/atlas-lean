@@ -21,5 +21,5 @@ quantifiers, need their own source.
 
 ## Sources
 
-- M. Grohe and M. Otto, "Pebble games and linear equations", preprint version 3 (2012), abstract.
+- M. Grohe and M. Otto, "Pebble games and linear equations", preprint version 3 (2015), abstract.
   <https://arxiv.org/abs/1204.1990>
