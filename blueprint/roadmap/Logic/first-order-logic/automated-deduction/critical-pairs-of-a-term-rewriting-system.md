@@ -14,7 +14,7 @@ Let $l_1 \to r_1$ and $l_2 \to r_2$ be rules of a term rewriting system, renamed
 
 This page becomes ready once these prerequisites are stated:
 
-- N-ary ranked-signature adapter for curried unification (proof prerequisite; not yet stated)
+- N-ary ranked-signature adapter for curried unification (proof prerequisite)
 
 ## Sources
 

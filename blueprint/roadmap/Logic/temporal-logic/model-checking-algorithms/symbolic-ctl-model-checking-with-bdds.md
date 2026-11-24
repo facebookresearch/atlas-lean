@@ -11,7 +11,7 @@ Let a finite Kripke structure have a total transition relation (every state has 
 
 This page becomes ready once these prerequisites are stated:
 
-- BDD quantification, renaming, and relational product with their correctness (proof prerequisite; not yet stated)
+- BDD quantification, renaming, and relational product with their correctness (proof prerequisite)
 
 ## Sources
 

@@ -16,7 +16,7 @@ The resulting formula of equality logic with uninterpreted functions is satisfia
 
 This page becomes ready once these prerequisites are stated:
 
-- Flattening and purification of formulas (proof prerequisite; stated in another open change)
+- Flattening and purification of formulas (proof prerequisite)
 
 ## Sources
 

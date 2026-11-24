@@ -6,7 +6,7 @@ Let $R$ be a transition relation and $\mathit{Reach}$ the set of states reachabl
 
 This page becomes ready once these prerequisites are stated:
 
-- Disjunctive well-foundedness via Ramsey (proof prerequisite; formal statement exists, page pending)
+- Disjunctive well-foundedness via Ramsey (proof prerequisite)
 
 ## Sources
 

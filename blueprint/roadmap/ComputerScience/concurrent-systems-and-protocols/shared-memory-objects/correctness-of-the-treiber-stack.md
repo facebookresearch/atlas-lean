@@ -16,8 +16,8 @@ cannot occur, Treiber's stack is linearizable with respect to the sequential sta
 
 This page becomes ready once these prerequisites are stated:
 
-- Linearizability of operation histories (statement prerequisite; formal statement exists, page pending).
-- Progress conditions for concurrent implementations, including lock-freedom (statement prerequisite; page not yet in this batch).
+- Linearizability of operation histories (statement prerequisite).
+- Progress conditions for concurrent implementations, including lock-freedom (statement prerequisite).
 - A shared-memory semantics with atomic reads, writes and compare-and-swap in which the algorithm is expressed.
 - An opened source, with a precise locator, for the algorithm and its correctness and lock-freedom statement.
 

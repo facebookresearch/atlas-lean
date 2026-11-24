@@ -29,9 +29,9 @@ converse follows by dualizing the formula and using determinacy.
 This page becomes ready once these prerequisites are stated:
 
 - Positional determinacy of parity games with finitely many priorities: every position is won by exactly one player, by a positional
-  strategy (proof prerequisite; not yet stated).
+  strategy (proof prerequisite).
 - Correspondence between the binder-stack game with least-priority parity used here and the substitution game with nesting-depth
-  priorities and largest-priority parity (proof prerequisite; not yet stated).
+  priorities and largest-priority parity (proof prerequisite).
 
 ## Sources
 

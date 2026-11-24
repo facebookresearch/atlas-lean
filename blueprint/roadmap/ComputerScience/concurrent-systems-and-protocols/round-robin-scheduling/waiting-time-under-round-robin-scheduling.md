@@ -6,7 +6,7 @@ Consider round-robin scheduling of a fixed set of $n$ jobs kept in a cyclic read
 
 This page becomes ready once these prerequisites are stated:
 
-- Round-robin ready-queue operational model (statement prerequisite; not yet stated)
+- Round-robin ready-queue operational model (statement prerequisite)
 
 ## Sources
 

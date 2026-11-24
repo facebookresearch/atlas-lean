@@ -6,7 +6,7 @@ Consider an execution of the non-blocking work stealer of Arora, Blumofe and Pla
 
 This page becomes ready once these prerequisites are stated:
 
-- Multithreaded computations with enabling edges and the non-blocking work-stealing deque execution (statement prerequisite; not yet stated)
+- Multithreaded computations with enabling edges and the non-blocking work-stealing deque execution (statement prerequisite)
 
 ## Sources
 

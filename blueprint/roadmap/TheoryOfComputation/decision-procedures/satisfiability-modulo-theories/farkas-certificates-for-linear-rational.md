@@ -10,7 +10,7 @@ Let $A \in \mathbb{Q}^{m \times n}$ and $b \in \mathbb{Q}^m$. The system $Ax \le
 
 This page becomes ready once these prerequisites are stated:
 
-- Certificate soundness (existing code without page, backfill referral) (proof prerequisite; formal statement exists, page pending)
+- Certificate soundness (existing code without page, backfill referral) (proof prerequisite)
 
 ## Sources
 

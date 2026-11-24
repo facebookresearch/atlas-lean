@@ -10,7 +10,7 @@ Read clauses as finite multisets of literals. Let $C_1$ and $C_2$ be first-order
 
 This page becomes ready once these prerequisites are stated:
 
-- N-ary ranked-signature adapter for curried unification (proof prerequisite; not yet stated)
+- N-ary ranked-signature adapter for curried unification (proof prerequisite)
 
 ## Sources
 

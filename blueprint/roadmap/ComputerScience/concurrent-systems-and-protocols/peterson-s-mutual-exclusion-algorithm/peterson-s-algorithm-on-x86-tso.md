@@ -10,7 +10,7 @@ Peterson's two-thread mutual-exclusion algorithm, correct under sequential consi
 
 This page becomes ready once these prerequisites are stated:
 
-- The x86-TSO abstract machine (statement prerequisite; stated in another open change)
+- The x86-TSO abstract machine (statement prerequisite)
 
 ## Sources
 

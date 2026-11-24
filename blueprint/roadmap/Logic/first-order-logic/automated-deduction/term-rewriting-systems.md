@@ -10,7 +10,7 @@ A *term rewriting system* over a signature $\Sigma$ and a set of variables $V$ i
 
 This page becomes ready once these prerequisites are stated:
 
-- N-ary ranked-signature adapter for curried unification (proof prerequisite; not yet stated)
+- N-ary ranked-signature adapter for curried unification (proof prerequisite)
 
 ## Sources
 

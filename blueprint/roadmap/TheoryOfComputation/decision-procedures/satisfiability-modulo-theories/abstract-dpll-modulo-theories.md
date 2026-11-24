@@ -8,7 +8,7 @@ A good expansion fixes one version of the rule system and its side conditions ag
 
 This page becomes ready once these prerequisites are stated:
 
-- CDCL correctness for a discipline (proof prerequisite; not yet stated)
+- CDCL correctness for a discipline (proof prerequisite)
 
 ## Sources
 

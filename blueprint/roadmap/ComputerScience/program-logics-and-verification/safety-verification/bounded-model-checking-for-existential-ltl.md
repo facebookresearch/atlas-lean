@@ -11,7 +11,7 @@ Let $M$ be a finite Kripke structure with initial states, in which every state h
 
 This page becomes ready once these prerequisites are stated:
 
-- Kripke structures with initial states, a total transition relation and a labelling (statement prerequisite; not yet stated)
+- Kripke structures with initial states, a total transition relation and a labelling (statement prerequisite)
 
 ## Sources
 

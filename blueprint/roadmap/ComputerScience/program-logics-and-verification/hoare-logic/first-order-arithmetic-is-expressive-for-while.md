@@ -10,8 +10,7 @@ the post relation of $P$ and $A$ in the interpretation.
 
 **Theorem.** $\mathcal{N}$ is expressive for while programs under its standard interpretation in $\mathbb{Z}$.
 
-The post relation is the graph of a partial recursive function of the initial values, restricted to initial values
-satisfying $P$, and every partial recursive function is definable in $\mathcal{N}$. The fragment without multiplication is not
+The relation between initial and final values of $x_1, \dots, x_n$ in terminating executions of $A$ is recursively enumerable and hence definable in $\mathcal{N}$. Conjoining $P$ on the initial values and existentially quantifying them defines the post relation. The fragment without multiplication is not
 expressive: every recursively enumerable set is the post relation of $0 = 0$ and some program, while truth in that
 fragment is decidable by Presburger's theorem.
 
@@ -21,7 +20,7 @@ fragment is decidable by Presburger's theorem.
 
 ## Expansion
 
-State the definability of the partial recursive functions computed by while programs in $\mathcal{N}$, for example by coding
+State the definability in $\mathcal{N}$ of the terminating execution relation of a while program, for example by coding
 finite sequences of states with Gödel's $\beta$ function.
 
 ## Sources

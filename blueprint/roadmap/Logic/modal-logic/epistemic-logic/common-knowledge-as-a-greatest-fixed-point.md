@@ -13,7 +13,7 @@ No frame condition is needed for 1 and 2.
 
 This page becomes ready once these prerequisites are stated:
 
-- Zero-step common-knowledge unfolding and induction (existing formal statements; page pending) (proof prerequisite; formal statement exists, page pending)
+- Zero-step common-knowledge unfolding and induction (proof prerequisite)
 
 ## Sources
 

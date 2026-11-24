@@ -12,7 +12,7 @@ then $\Box[\mathcal{N}]_f \wedge \mathrm{WF}_f(A) \Rightarrow (P \leadsto Q)$: i
 
 This page becomes ready once these prerequisites are stated:
 
-- Weak and strong fairness (statement prerequisite; stated in another open change)
+- Weak and strong fairness (statement prerequisite)
 
 ## Sources
 

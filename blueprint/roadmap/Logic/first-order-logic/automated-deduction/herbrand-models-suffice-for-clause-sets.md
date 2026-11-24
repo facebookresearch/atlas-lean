@@ -10,7 +10,7 @@ Let $S$ be a set of first-order clauses without equality, read as universally cl
 
 This page becomes ready once these prerequisites are stated:
 
-- N-ary ranked-signature adapter for curried unification (statement prerequisite; not yet stated)
+- N-ary ranked-signature adapter for curried unification (statement prerequisite)
 
 ## Sources
 

@@ -6,7 +6,7 @@ For jobs with release times and processing times on a single machine with preemp
 
 This page becomes ready once these prerequisites are stated:
 
-- Single-machine preemptive schedules with release times and their completion times (statement prerequisite; not yet stated)
+- Single-machine preemptive schedules with release times and their completion times (statement prerequisite)
 
 ## Sources
 

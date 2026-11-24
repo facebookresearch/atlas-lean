@@ -6,8 +6,8 @@ Over a fixed set of infinite traces, every hyperproperty (a set of sets of trace
 
 This page becomes ready once these prerequisites are stated:
 
-- Hyperproperties, hypersafety and k-safety (statement prerequisite; stated in another open change)
-- Safety-liveness decomposition (proof prerequisite; formal statement exists, page pending)
+- Hyperproperties, hypersafety and k-safety (statement prerequisite)
+- Safety-liveness decomposition (proof prerequisite)
 
 ## Sources
 

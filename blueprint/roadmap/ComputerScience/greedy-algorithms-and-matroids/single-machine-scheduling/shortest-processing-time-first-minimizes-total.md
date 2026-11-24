@@ -1,12 +1,12 @@
 # Shortest processing time first minimizes total completion time
 
-For jobs with processing times $p_1, \dots, p_n$, all released at time $0$, on a single machine without preemption, scheduling the jobs in nondecreasing order of processing time minimizes the total completion time $\sum_j C_j$. The proof is an exchange argument: swapping two adjacent jobs out of this order does not increase the total.
+For jobs with processing times $p_1, \dots, p_n$, all released at time $0$, on a single machine without preemption, scheduling the jobs in nondecreasing order of processing time minimizes the total completion time $\sum_j C_j$. The proof is an exchange argument: in any schedule, swapping two adjacent jobs that appear in decreasing order of processing time does not increase the total, and repeated swaps reach the nondecreasing order.
 
 ## Expansion
 
 This page becomes ready once these prerequisites are stated:
 
-- Single-machine nonpreemptive schedules and their completion times (statement prerequisite; not yet stated)
+- Single-machine nonpreemptive schedules and their completion times (statement prerequisite)
 
 ## Sources
 

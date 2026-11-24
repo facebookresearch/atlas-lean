@@ -6,8 +6,8 @@ Under the three-valued semantics of LTL on finite prefixes, every safety propert
 
 This page becomes ready once these prerequisites are stated:
 
-- Three-valued semantics of LTL on finite prefixes (statement prerequisite; stated in another open change)
-- Safety-liveness decomposition (proof prerequisite; formal statement exists, page pending)
+- Three-valued semantics of LTL on finite prefixes (statement prerequisite)
+- Safety-liveness decomposition (proof prerequisite)
 
 ## Sources
 

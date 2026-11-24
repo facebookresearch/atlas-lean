@@ -15,7 +15,7 @@ The reduced system explores from each state only the transitions of its ample se
 
 This page becomes ready once these prerequisites are stated:
 
-- Action-deterministic labelled transition system with atomic propositions (statement prerequisite; not yet stated)
+- Action-deterministic labelled transition system with atomic propositions (statement prerequisite)
 
 ## Sources
 

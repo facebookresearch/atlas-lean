@@ -1,14 +1,14 @@
 # Common knowledge cannot be attained without guaranteed communication
 
-Statement under preparation: Halpern and Moses's theorems that, in a distributed system where communication is not guaranteed, common knowledge of a fact that is not common knowledge initially cannot be attained. Halpern and Moses state the result in their runs-and-systems model, for facts that are stable and initially not common knowledge.
+This node covers Halpern and Moses's theorems that, in a distributed system where communication is not guaranteed, common knowledge of a fact that is not common knowledge initially cannot be attained. Halpern and Moses state the result in their runs-and-systems model, for facts that are stable and initially not common knowledge.
 
-Before this page is ready, it fixes the interpreted-system model (runs, points, local states and the knowledge and common-knowledge operators), the notion of a system in which communication is not guaranteed and the stability hypothesis, and states each theorem precisely against the cited paper.
+A precise statement fixes the interpreted-system model (runs, points, local states and the knowledge and common-knowledge operators), the notion of a system in which communication is not guaranteed and the stability hypothesis, and states each theorem against the cited paper.
 
 ## Expansion
 
 This page becomes ready once these prerequisites are stated:
 
-- Runs-and-systems interpreted systems (proof prerequisite; not yet stated)
+- Runs-and-systems interpreted systems (proof prerequisite)
 
 ## Sources
 
