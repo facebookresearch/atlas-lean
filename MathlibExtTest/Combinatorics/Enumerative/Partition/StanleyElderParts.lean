@@ -45,3 +45,16 @@ example : (∑ s ∈ nColorPartitions 4, (s.filter fun p => Even p.1).card) = 12
   decide +kernel
 
 end MetaMathlibExt.nColor_evenParts_generatingFunction
+
+namespace MetaMathlibExt.nColor_partsMultiplicityGe_generatingFunction
+
+-- A partition of one cannot contain two copies of any colored part.
+example : (∑ s ∈ nColorPartitions 1, (s.toFinset.filter fun p => 2 ≤ s.count p).card) = 0 := by
+  decide
+
+-- Three partitions of four contain at least two ones, including the partition with four ones.
+-- Two more contain a repeated two of one color. A pair of different colors does not qualify.
+example : (∑ s ∈ nColorPartitions 4, (s.toFinset.filter fun p => 2 ≤ s.count p).card) = 5 := by
+  decide +kernel
+
+end MetaMathlibExt.nColor_partsMultiplicityGe_generatingFunction

@@ -88,19 +88,6 @@ public theorem_wanted isUnateBoolFun_boolFunConcat_iff {n : ℕ}
           (IsBoolFunDecreasingIn g i ∧ IsBoolFunDecreasingIn h i)) ∧
         (g ≤ h ∨ h ≤ g)
 
-/-- **Weight symmetry of unate Boolean functions.** For all $n \ge 0$ and all $w$ with
-$0 \le w \le 2^n$, the number of unate $n$-variable Boolean functions of weight $w$ equals the
-number of unate $n$-variable Boolean functions of weight $2^n - w$.
-
-The source assumes $n \ge 1$; the case $n = 0$ is included here.
-
-Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
-under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
-Sequences 28 (2025), Article 25.3.4, Proposition 9 (`jis-2025-25.3.4-prop-9`). -/
-public theorem_wanted card_unate_boolFun_weight_symm (n w : ℕ) (hw : w ≤ 2 ^ n) :
-    Nat.card {f : (Fin n → Bool) → Bool // IsUnateBoolFun f ∧ boolFunWeight f = w}
-      = Nat.card {f : (Fin n → Bool) → Bool // IsUnateBoolFun f ∧ boolFunWeight f = 2 ^ n - w}
-
 /-- **Permutation classes counted by non-degenerate ones.** Let $(P_n)_{n \ge 0}$ be a family of
 properties, $P_n$ a property of $n$-variable Boolean functions, that is invariant under renaming
 variables: for all $m$ and $n$, every injection $e$ from $\{1, \dots, m\}$ to $\{1, \dots, n\}$
