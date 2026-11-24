@@ -9363,6 +9363,7 @@
   "MathlibExt/Analysis/Calculus/VanishingMomentsImpliesZero": {"to": "Analysis/real-functions/integration", "title": "Functions with vanishing moments"},
   "MathlibExt/Analysis/Calculus/Wirtinger": {"to": "Analysis/inequalities", "title": "Wirtinger's inequality"},
   "MathlibExt/Analysis/Calculus/XYOverNormSqDiscontinuity": {"to": "Analysis/real-functions/multivariable-calculus", "title": "Continuity and differentiability at the origin in the plane"},
+  "MathlibExt/Analysis/CatalanSeriesSpecialValues": {"to": "Analysis/sequences-and-series/trigonometric-and-harmonic-series", "title": "Series from Nörlund's digamma identity"},
   "MathlibExt/Analysis/CentralBinomDigammaSeries": {"to": "Analysis/sequences-and-series/trigonometric-and-harmonic-series", "title": "Series from Nörlund's digamma identity"},
   "MathlibExt/Analysis/Complex/ArgumentPrinciple": {"to": "Analysis/complex-analysis/cauchy-theory", "title": "Argument principle"},
   "MathlibExt/Analysis/Complex/Bloch": {"to": "Analysis/complex-analysis/geometric-function-theory", "title": "Bloch's theorem"},
