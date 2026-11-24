@@ -11,6 +11,7 @@ module
 public import CSLibExt.Algorithms.Lean.DataStructures.Amortized.Framework
 public import Mathlib.Data.List.Basic
 public import Mathlib.Algebra.Order.Floor.Ring
+public import Mathlib.Algebra.Order.Archimedean.Real.Basic
 import Mathlib.Tactic
 
 /-!
@@ -880,7 +881,7 @@ noncomputable def dynTab2Amortized (a c : ℝ) (hc : 1 < c) (ha : c / (c - 1) �
             have hn : n = 0 := by simp [dynTab2Inv] at hinv; exact hinv
             subst hn
             have hexec : dynTab2Ins c (0, 0) = (1, 1) := by
-              show (0 + 1, if (0 : ℕ) < 0 then (0 : ℕ) else
+              change (0 + 1, if (0 : ℕ) < 0 then (0 : ℕ) else
                   if (0 : ℕ) = 0 then 1 else
                     Int.toNat (Int.ceil (c * ((0 : ℕ) : ℝ)))) = (1, 1)
               rw [ite_eq_right (show ¬(0 : ℕ) < 0 by norm_num), ite_eq_left (rfl : (0 : ℕ) = 0)]
@@ -894,7 +895,7 @@ noncomputable def dynTab2Amortized (a c : ℝ) (hc : 1 < c) (ha : c / (c - 1) �
               exact hinv
             by_cases hnl : n < l
             · have hexec : dynTab2Ins c (n, l) = (n + 1, l) := by
-                show (n + 1, if n < l then l else if l = 0 then 1 else
+                change (n + 1, if n < l then l else if l = 0 then 1 else
                     Int.toNat (Int.ceil (c * (l : ℝ)))) = (n + 1, l)
                 rw [ite_eq_left hnl]
               rw [hexec]
@@ -904,7 +905,7 @@ noncomputable def dynTab2Amortized (a c : ℝ) (hc : 1 < c) (ha : c / (c - 1) �
               subst hnl'
               have hexec : dynTab2Ins c (n, n) =
                   (n + 1, Int.toNat (Int.ceil (c * (n : ℝ)))) := by
-                show (n + 1, if n < n then n else if n = 0 then 1 else
+                change (n + 1, if n < n then n else if n = 0 then 1 else
                     Int.toNat (Int.ceil (c * (n : ℝ)))) =
                   (n + 1, Int.toNat (Int.ceil (c * (n : ℝ))))
                 rw [ite_eq_right hnl, ite_eq_right hl]
@@ -1011,7 +1012,7 @@ noncomputable def dynTab2Amortized (a c : ℝ) (hc : 1 < c) (ha : c / (c - 1) �
             have hn : n = 0 := by simp [dynTab2Inv] at hinv; exact hinv
             subst hn
             have hexec : dynTab2Ins c (0, 0) = (1, 1) := by
-              show (0 + 1, if (0 : ℕ) < 0 then (0 : ℕ) else
+              change (0 + 1, if (0 : ℕ) < 0 then (0 : ℕ) else
                   if (0 : ℕ) = 0 then 1 else
                     Int.toNat (Int.ceil (c * ((0 : ℕ) : ℝ)))) = (1, 1)
               rw [ite_eq_right (show ¬(0 : ℕ) < 0 by norm_num), ite_eq_left (rfl : (0 : ℕ) = 0)]
@@ -1026,7 +1027,7 @@ noncomputable def dynTab2Amortized (a c : ℝ) (hc : 1 < c) (ha : c / (c - 1) �
               exact hinv
             by_cases hnl : n < l
             · have hexec : dynTab2Ins c (n, l) = (n + 1, l) := by
-                show (n + 1, if n < l then l else if l = 0 then 1 else
+                change (n + 1, if n < l then l else if l = 0 then 1 else
                     Int.toNat (Int.ceil (c * (l : ℝ)))) = (n + 1, l)
                 rw [ite_eq_left hnl]
               have hcost : (if n < l then (1 : ℕ) else n + 1) = 1 := by rw [ite_eq_left hnl]
@@ -1041,7 +1042,7 @@ noncomputable def dynTab2Amortized (a c : ℝ) (hc : 1 < c) (ha : c / (c - 1) �
               subst hnl'
               have hexec : dynTab2Ins c (n, n) =
                   (n + 1, Int.toNat (Int.ceil (c * (n : ℝ)))) := by
-                show (n + 1, if n < n then n else if n = 0 then 1 else
+                change (n + 1, if n < n then n else if n = 0 then 1 else
                     Int.toNat (Int.ceil (c * (n : ℝ)))) =
                   (n + 1, Int.toNat (Int.ceil (c * (n : ℝ))))
                 rw [ite_eq_right hnl, ite_eq_right hl]

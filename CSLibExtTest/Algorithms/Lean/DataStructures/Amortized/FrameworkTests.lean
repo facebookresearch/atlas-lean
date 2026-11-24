@@ -11,6 +11,7 @@ module
 public import CSLibExt.Algorithms.Lean.DataStructures.Amortized.Examples
 public import CSLibExt.Algorithms.Lean.DataStructures.Amortized.Framework
 public import CSLibExt.Algorithms.Lean.DataStructures.Amortized.Unary
+import Mathlib.Tactic
 
 /-!
 # Amortized framework regression tests

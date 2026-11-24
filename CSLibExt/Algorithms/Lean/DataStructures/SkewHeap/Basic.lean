@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Data.Multiset.Basic
+public import Mathlib.Algebra.Order.Group.Multiset
 public import Mathlib.Data.List.Basic
 import Mathlib.Tactic
 
@@ -76,11 +76,11 @@ def height : Tree α → ℕ
 /-- `mset_tree t`: the multiset of elements of `t` (book `mset_tree`). -/
 def toMultiset : Tree α → Multiset α
   | .leaf => 0
-  | .node l a r => toMultiset l + {a} + toMultiset r
+  | .node l a r => toMultiset l + ({a} : Multiset α) + toMultiset r
 
 @[simp] theorem toMultiset_leaf : toMultiset (Tree.leaf : Tree α) = 0 := rfl
 @[simp] theorem toMultiset_node (l : Tree α) (a : α) (r : Tree α) :
-    toMultiset (.node l a r) = toMultiset l + {a} + toMultiset r := rfl
+    toMultiset (.node l a r) = toMultiset l + ({a} : Multiset α) + toMultiset r := rfl
 
 /-- `set_mset s`: the set underlying a multiset (Isabelle `set_mset`).
 Mathlib has no `Multiset.toSet` in this toolchain (checked with
@@ -129,7 +129,7 @@ theorem mem_toMultiset_iff_mem_toSet (x : α) (t : Tree α) :
 puts the singleton in the middle (`toMultiset_node`); the two agree
 because multiset addition is commutative. -/
 theorem toMultiset_node_alt (l : Tree α) (a : α) (r : Tree α) :
-    toMultiset (.node l a r) = {a} + toMultiset l + toMultiset r := by
+    toMultiset (.node l a r) = ({a} : Multiset α) + toMultiset l + toMultiset r := by
   rw [toMultiset_node]; ac_rfl
 
 variable {α : Type u} [LinearOrder α]
