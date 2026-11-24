@@ -26,7 +26,7 @@ Water at and below the land surface and the materials it moves through: catchmen
 - [Radial flow to wells, well sources and fractional flow](part-02/radial-flow-to-wells-well-sources-and-fractional/README.md)
 - [Effective hydraulic conductivity of layered media](part-02/effective-hydraulic-conductivity-of-layered-medi/README.md)
 - [Van Genuchten water retention curve](part-02/van-genuchten-water-retention-curve/README.md)
-- [Exponential and hyperbolic production decline](part-02/exponential-and-hyperbolic-production-decline/README.md)
+- [Single-phase reservoir inventory and pore-volume identification](part-02/single-phase-reservoir-inventory-and-pore-volume/README.md)
 - [Solute transport with linear sorption](part-02/solute-transport-with-linear-sorption/README.md)
 - [Retardation of sorbing solutes](part-02/retardation-of-sorbing-solutes/README.md)
 - [Exponential and hyperbolic production decline](part-02/exponential-production-decline/README.md)

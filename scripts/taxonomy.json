@@ -15755,7 +15755,7 @@
   "PhyslibExt/Engineering/Process/Flowsheets": {"to": "Chemistry/amounts-and-stoichiometry", "title": "Species balances over process flowsheets"},
   "PhyslibExt/Engineering/Process/ReactiveBalance": {"to": "Chemistry/chemical-kinetics", "title": "Species balances of variable-volume reactors"},
   "PhyslibExt/Engineering/Process/Streams": {"to": "Chemistry/amounts-and-stoichiometry", "title": "Composition of process streams"},
-  "PhyslibExt/Engineering/Resource/ReservoirBalance": {"to": "EarthScience/hydrology-and-surface-processes", "title": "Exponential and hyperbolic production decline"},
+  "PhyslibExt/Engineering/Resource/ReservoirBalance": {"to": "EarthScience/hydrology-and-surface-processes", "title": "Single-phase reservoir inventory and pore-volume identification"},
   "PhyslibExt/Reliability/ConditionalFailureEvents": {"to": "Physics/elasticity-and-structures", "title": "Damage accumulation and failure probability"},
   "PhyslibExt/Reliability/MinerDamage": {"to": "Physics/elasticity-and-structures", "title": "Damage accumulation and failure probability"},
   "PhyslibExt/Reliability/PhysicalFailureEvents": {"to": "Physics/elasticity-and-structures", "title": "Fracture, fatigue crack growth and failure margins"},
