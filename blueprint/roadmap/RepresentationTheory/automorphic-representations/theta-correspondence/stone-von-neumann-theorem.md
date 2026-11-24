@@ -17,12 +17,14 @@ of $F$.
    unitary representation of $H(W)$ on a Hilbert space on which $(0, t)$ acts by $\psi(t)$.
 3. **Schrödinger model.** Let $W = X \oplus Y$ be a complete polarization ($X$ and $Y$ maximal
    isotropic), and $\mathcal{S}(X)$ the space of Schwartz–Bruhat functions on $X$. The formula
-   $$\rho\bigl((x + y, t)\bigr)\varphi(x_0) = \psi\bigl(t + \langle x_0, y \rangle + \tfrac12 \langle x, y \rangle\bigr)\, \varphi(x_0 + x)$$
-   defines a representation of $H(W)$ on $\mathcal{S}(X)$ that preserves the $L^2$ norm for a Haar
-   measure on $X$ and extends to the irreducible unitary representation of item 2 on $L^2(X)$. If $F$ is
-   non-archimedean, $(\rho, \mathcal{S}(X))$ is a model of $(\rho_\psi, S)$, and $\mathcal{S}(X)$ is the space
-   of smooth vectors of $L^2(X)$: the vectors fixed by some compact open subgroup of $H(W)$, depending on
-   the vector.
+
+    $$\rho\bigl((x + y, t)\bigr)\varphi(x_0) = \psi\bigl(t + \langle x_0, y \rangle + \tfrac12 \langle x, y \rangle\bigr)\, \varphi(x_0 + x)$$
+
+    defines a representation of $H(W)$ on $\mathcal{S}(X)$ that preserves the $L^2$ norm for a Haar
+    measure on $X$ and extends to the irreducible unitary representation of item 2 on $L^2(X)$. If $F$ is
+    non-archimedean, $(\rho, \mathcal{S}(X))$ is a model of $(\rho_\psi, S)$, and $\mathcal{S}(X)$ is the space
+    of smooth vectors of $L^2(X)$: the vectors fixed by some compact open subgroup of $H(W)$, depending on
+    the vector.
 
 Since $\mathrm{Sp}(W)$ fixes the centre, the representation $h \mapsto \rho_\psi(h^g)$ again has central
 character $\psi$, so it is isomorphic to $\rho_\psi$; this is the starting point of the

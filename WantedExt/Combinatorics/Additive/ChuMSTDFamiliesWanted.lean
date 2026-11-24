@@ -109,18 +109,6 @@ public theorem_wanted chuFamilyKLT_card_sub_six_add_four_mul {k l t : ℕ} (hk :
     ((chuFamilyKLT k l t - chuFamilyKLT k l t).filter
         fun d => 6 ≤ d ∧ d % 4 = 2).card = l * t + t
 
-/-- **Elements of the Kumar–Mohan–Pandey sets (Lemma 4).** Let $k$, $l$, $t$ be positive
-integers, let $A = A_{k,l,t}$ be the Kumar–Mohan–Pandey set, and put $T = t(kl + l + 1)$. Then
-$1 + 4i \in A$ for every integer $i$ with $0 \le i \le 1 + T$, and $2 + 4T \in A$ and
-$4 + 4T \in A$.
-
-Source: Manish Kumar, Mohan and Ram Krishna Pandey, *A Conjecture of Chu et al. and a New
-Family of MSTD Sets*, INTEGERS 24 (2024), Article A32, Lemma 4 (`integers-2024-A32-lem-4`). -/
-public theorem_wanted chuFamilyKLT_mem {k l t : ℕ} (hk : 0 < k) (hl : 0 < l) (ht : 0 < t) :
-    (∀ i : ℕ, i ≤ 1 + t * (k * l + l + 1) → 1 + 4 * (i : ℤ) ∈ chuFamilyKLT k l t) ∧
-      2 + 4 * ((t * (k * l + l + 1) : ℕ) : ℤ) ∈ chuFamilyKLT k l t ∧
-      4 + 4 * ((t * (k * l + l + 1) : ℕ) : ℤ) ∈ chuFamilyKLT k l t
-
 /-- **Elements of the sumset of the Chu family set.** Let $k$, $l$, $t$ be positive integers, let
 $A \subseteq \mathbb{Z}$ be the Chu family set with parameters $k$, $l$, $t$, and let
 $T = t(kl + l + 1)$. Then $1 + 4i$ and $2 + 4i$ lie in $A + A$ for every integer $i$ with

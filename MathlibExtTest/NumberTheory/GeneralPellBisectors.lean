@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.NumberTheory.GeneralPellBisectors
+import Mathlib.Data.Nat.Prime.Int
 import Mathlib.Tactic.NormNum.RealSqrt
 
 namespace MetaMathlibExt
@@ -50,5 +51,32 @@ example : ∀ c ∈ ({2, -1 / 2} : Set ℚ),
 example : ((1 : ℚ) - 0) ^ 2 * ((-1) ^ 2 + 1) = (-1 - 0) ^ 2 * (1 ^ 2 + 1) := by
   have h := bisector_equation_form_three 2 1 1 (-1) (-1) (by norm_num) (by norm_num)
   simpa only [add_neg_cancel, neg_zero, zero_div] using h.2 (by norm_num)
+
+-- `1² - 2 · 1² = -1` and `3² - 2 · 1² = 7` with `3` and `2 · 1` coprime give a strictly primitive
+-- solution of `x² - 2 y² = -7` (for instance `(5, 4)`).
+example : ∃ x y : ℤ, IsCoprime x (2 * y) ∧ x ^ 2 - 2 * y ^ 2 = -7 :=
+  strictlyPrimitive_neg 2 (by norm_num) Int.prime_two.squarefree 7 (by norm_num)
+    ⟨1, 1, by norm_num⟩ ⟨3, 1, ⟨1, -1, by norm_num⟩, by norm_num⟩
+
+-- A negative value: `2² - 5 · 1² = -1` itself is strictly primitive, so `x² - 5 y² = 1` has a
+-- strictly primitive solution.
+example : ∃ x y : ℤ, IsCoprime x (5 * y) ∧ x ^ 2 - 5 * y ^ 2 = 1 := by
+  simpa only [neg_neg] using strictlyPrimitive_neg 5 (by norm_num)
+    (Int.prime_ofNat_iff.mpr Nat.prime_five).squarefree (-1) (by norm_num)
+    ⟨2, 1, by norm_num⟩ ⟨2, 1, ⟨-2, 1, by norm_num⟩, by norm_num⟩
+
+#print axioms strictlyPrimitive_neg
+
+-- The solvability of `x² - d y² = -1` cannot be dropped: for `d = 3`, `1² - 3 · 1² = -2` with `1`
+-- and `3 · 1` coprime, but `x² - 3 y² = 2` has no integral solution, as squares are `0` or `1`
+-- modulo `3`.
+example : IsCoprime (1 : ℤ) (3 * 1) ∧ (1 : ℤ) ^ 2 - 3 * 1 ^ 2 = -2 ∧
+    ¬ ∃ x y : ℤ, IsCoprime x (3 * y) ∧ x ^ 2 - 3 * y ^ 2 = 2 := by
+  refine ⟨isCoprime_one_left, by norm_num, ?_⟩
+  rintro ⟨x, y, -, h⟩
+  have hx : x ^ 2 % 3 = 0 ∨ x ^ 2 % 3 = 1 := by
+    rcases (by omega : x % 3 = 0 ∨ x % 3 = 1 ∨ x % 3 = 2) with ht | ht | ht <;>
+      simp [pow_two, Int.mul_emod, ht]
+  omega
 
 end MetaMathlibExt
