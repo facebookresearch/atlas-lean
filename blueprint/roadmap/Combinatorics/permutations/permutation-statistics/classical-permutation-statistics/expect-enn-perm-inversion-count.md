@@ -16,9 +16,9 @@ by $n!$. The expectation is taken in $[0, \infty]$, so no integrability side con
 
 ## Background
 
-- Insertion sort: by this result, straight insertion sort performs
+- [Insertion sort](../../../../ComputerScience/sorting-and-searching/insertion-sort/README.md): by this result, straight insertion sort performs
   $n(n-1)/4$ exchanges on average, about $n^2/4$ and half of its worst case.
-- Expected number of hires is the harmonic number:
+- [Expected number of hires is the harmonic number](../../../../ComputerScience/randomized-algorithms/hiring-problem/hire-assistant-expected-hires-to-real-eq.md):
   the companion average for random permutations, the expected number of
   [left-to-right maxima](perm-left-to-right-max-count.md), $H_n$.
 

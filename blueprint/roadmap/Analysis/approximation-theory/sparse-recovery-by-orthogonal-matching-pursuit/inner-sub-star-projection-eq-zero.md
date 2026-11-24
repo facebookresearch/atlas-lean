@@ -4,7 +4,7 @@ For a subspace $L$ with orthogonal projection $P_L$ and any $s$, the residual $s
 
 ## Background
 
-- Least squares, ridge and lasso regression: background, the same orthogonality of least-squares residuals (normal equations).
+- [Least squares, ridge and lasso regression](../../../ComputerScience/machine-learning/supervised-learning/least-squares-ridge-and-lasso-regression/README.md): background, the same orthogonality of least-squares residuals (normal equations).
 
 ## Sources
 

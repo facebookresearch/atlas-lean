@@ -11,6 +11,6 @@ Lower bounds on the minimax risk $\inf_{\hat\theta} \sup_\theta \mathbb{E}_\thet
 
 ## Related topics
 
-- Total variation and Pinsker's inequality
-- Fano's inequality
+- [Total variation and Pinsker's inequality](../../../InformationTheory/information-inequalities/total-variation-and-pinsker-s-inequality/README.md)
+- [Fano's inequality](../../../InformationTheory/information-inequalities/fano-s-inequality/README.md)
 - [Contiguity and Le Cam's lemmas](../contiguity-and-le-cam-s-lemmas/README.md)

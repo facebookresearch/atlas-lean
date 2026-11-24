@@ -12,7 +12,7 @@ combining the two results below.
 ## Background
 
 - [Restricted isometry implies the restricted nullspace property](restricted-nullspace-of-has-rip.md): the hypothesis $\delta_{2s} < \sqrt{2} - 1$ gives the restricted nullspace property over the support of $x$.
-- Exact recovery by basis pursuit: the restricted nullspace property is equivalent to exact recovery of every vector with that support.
+- [Exact recovery by basis pursuit](../../../Probability/linear-models-multivariate/exact-recovery-by-basis-pursuit/basis-pursuit-unique-iff-restricted-null.md): the restricted nullspace property is equivalent to exact recovery of every vector with that support.
 - [Noiseless recovery, $\ell_1$ error](sum-abs-sub-le-of-has-rip.md): the source's route, the stable bound (4) applied to an $s$-sparse $x$.
 
 ## Sources

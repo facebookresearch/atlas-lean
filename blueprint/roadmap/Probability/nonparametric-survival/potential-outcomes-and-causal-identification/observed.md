@@ -4,6 +4,6 @@ For an event $T$ (treatment) and potential outcomes $Y_0, Y_1 : \Omega \to \math
 
 ## Background
 
-- Consistency of counterfactuals:
+- [Consistency of counterfactuals](../../../ComputerScience/machine-learning/probabilistic-graphical-models/structural-causal-models-and-counterfactuals/counterfactual-eq-solve.md):
   in a structural causal model, the identity of the observed outcome with the potential outcome
   of the received treatment is a theorem rather than an assumption.

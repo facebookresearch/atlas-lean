@@ -8,7 +8,7 @@ For $v = 0$ both sides vanish. This is Gaussian integration by parts: $\varphi_v
 
 ## Background
 
-- Stein's lemma in Lande's form: a special case with extra integrability hypotheses, which follows from this statement.
+- [Stein's lemma in Lande's form](../../../Biology/quantitative-genetics/lande-s-selection-gradient/integral-sub-mul-gaussian-real.md): a special case with extra integrability hypotheses, which follows from this statement.
 - [Posterior mean in the normal–normal model](../../bayesian-statistics/empirical-bayes-and-tweedie-s-formula/gaussian-posterior-mean-gaussian-real.md): applies this identity to the prior $\mathcal N(0, A)$.
 
 ## Sources

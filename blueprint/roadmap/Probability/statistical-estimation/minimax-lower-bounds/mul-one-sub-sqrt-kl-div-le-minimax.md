@@ -8,7 +8,7 @@ where $R^*$ is the minimax risk over randomised estimators and the Kullback–Le
 
 ## Informally uses
 
-- Pinsker's inequality, square-root form:
+- [Pinsker's inequality, square-root form](../../../InformationTheory/information-inequalities/total-variation-and-pinsker-s-inequality/total-variation-dist-le-sqrt-kl-div.md):
   replaces total variation by the divergence.
 - [Le Cam's two-point lower bound](mul-one-sub-total-variation-dist-le-mini.md):
   the bound in total variation.

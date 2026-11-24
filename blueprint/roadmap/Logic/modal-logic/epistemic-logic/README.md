@@ -28,4 +28,4 @@
 
 ## Related topics
 
-- Common knowledge and the agreement theorem: the semantic, event-based model of knowledge with information partitions, common knowledge as the meet of the partitions, and Aumann's agreement theorem.
+- [Common knowledge and the agreement theorem](../../../GameTheory/noncooperative-games/common-knowledge-and-the-agreement-theorem/README.md): the semantic, event-based model of knowledge with information partitions, common knowledge as the meet of the partitions, and Aumann's agreement theorem.

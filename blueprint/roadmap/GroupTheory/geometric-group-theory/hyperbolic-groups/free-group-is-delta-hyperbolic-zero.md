@@ -5,7 +5,7 @@ The word metric of the free group $F(\iota)$ with respect to its free basis is $
 ## Background
 
 - [Word-hyperbolic groups](is-hyperbolic.md): so finitely generated free groups are word-hyperbolic.
-- The integers are $0$-hyperbolic: the rank-one case, as a metric space.
+- [The integers are $0$-hyperbolic](../../../Geometry/metric-geometry/gromov-hyperbolic-spaces/is-delta-hyperbolic-int.md): the rank-one case, as a metric space.
 
 ## Sources
 

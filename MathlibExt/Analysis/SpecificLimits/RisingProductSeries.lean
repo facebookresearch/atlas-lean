@@ -23,8 +23,9 @@ whenever no factor of its denominator vanishes:
 
 namespace Complex
 
-/-- The series `∑ j, (-b) ^ j * x ^ (j + 1) / ∏ r < j + 1, (c + b * (r + 1))` converges whenever
-no factor `c + b * (r + 1)` vanishes. -/
+/-- **Summability of a rising-product series.** Let $b$, $c$ and $x$ be complex numbers such
+that $c + kb \neq 0$ for every integer $k \ge 1$. Then the series
+$\sum_{j=0}^{\infty} \frac{(-b)^j x^{j+1}}{\prod_{k=1}^{j+1} (c + kb)}$ is summable. -/
 theorem summable_neg_pow_mul_pow_div_prod_add_mul {b c : ℂ} (x : ℂ)
     (hc : ∀ r : ℕ, c + b * ((r + 1 : ℕ) : ℂ) ≠ 0) :
     Summable (fun j : ℕ =>

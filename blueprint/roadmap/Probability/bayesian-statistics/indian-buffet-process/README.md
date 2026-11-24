@@ -45,6 +45,6 @@ The finite-model closed forms of the paper serve below as definitions, with thei
 ## Related topics
 
 - [Infinite mixture models](../infinite-mixture-models/README.md): the same $K \to \infty$ construction for class assignments, whose limit is the Chinese restaurant process.
-- Conjugate priors: beta–binomial conjugacy, which integrates out the feature probabilities of the finite model.
+- [Conjugate priors](../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/conjugate-priors/README.md): beta–binomial conjugacy, which integrates out the feature probabilities of the finite model.
 - [Poisson distribution](../../distributions/discrete/poisson-distribution/README.md): closure of the Poisson law under finite independent sums, used for the number of features.
 - [Dirichlet process](../dirichlet-process/README.md): the random measure behind the Chinese restaurant process; stick-breaking constructions exist for both priors.

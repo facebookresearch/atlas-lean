@@ -1,0 +1,17 @@
+# Boolean circuits
+
+- [Boolean gates](boolean-gate.md)
+- [Boolean signature](boolean-signature.md)
+- [Boolean interpretation](boolean-interpretation.md)
+- [Boolean NOT](boolean-interpretation-not.md)
+- [Boolean AND as a left fold](boolean-interpretation-and.md)
+- [Boolean OR as a left fold](boolean-interpretation-or.md)
+- [Appending a gate to a straight-line circuit](snoc-line.md)
+- [Program of a circuit with an appended gate](program-snoc-line.md)
+- [Appending a gate adds one gate](size-snoc-line.md)
+- [Appending a gate keeps the earlier output wires](outputs-snoc-line-cast-succ.md)
+- [The new last output is the appended gate](outputs-snoc-line-last.md)
+- [Appending a gate keeps the earlier output values](eval-snoc-line-cast-succ.md)
+- [Value of an appended gate](eval-snoc-line-last.md)
+- [Appending a gate keeps the earlier output depths](output-depths-snoc-line-cast-succ.md)
+- [Depth of an appended gate](output-depths-snoc-line-last.md)

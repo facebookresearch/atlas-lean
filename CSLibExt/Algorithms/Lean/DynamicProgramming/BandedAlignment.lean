@@ -59,8 +59,11 @@ section Banded
 
 variable (σ : α → α → ℤ) (gap : ℤ) (w : ℕ)
 
-/-- The band check with starting offset `(i, j)`: every prefix of `A`, counted
-from the offset, stays within `|i - j| ≤ w`. -/
+/-- **Band check from a starting offset.** Let $w \in \mathbb{N}$ be a band width. For natural
+numbers $i$, $j$ and an alignment $A$, the band check of $A$ with width $w$ from offset $(i, j)$
+is true exactly when every prefix $P$ of $A$ (including the empty prefix and $A$ itself)
+satisfies $|(i + p) - (j + q)| \le w$, where $p$ and $q$ are the numbers of columns of $P$
+whose first, respectively second, entry is present. -/
 def bandedFrom : ℕ → ℕ → Alignment α → Bool
   | i, j, [] => decide (|(i : ℤ) - (j : ℤ)| ≤ (w : ℤ))
   | i, j, (some _, some _) :: A =>
@@ -72,25 +75,36 @@ def bandedFrom : ℕ → ℕ → Alignment α → Bool
   | i, j, (none, none) :: A =>
       decide (|(i : ℤ) - (j : ℤ)| ≤ (w : ℤ)) && bandedFrom i j A
 
-/-- An alignment is banded when its path, from offset `(0, 0)`, stays in the band. -/
+/-- **Banded alignments.** Let $w \in \mathbb{N}$. An alignment $A$ is banded with width $w$ when,
+for every prefix of $A$ (including the empty prefix and $A$ itself), the number of columns of
+that prefix with a letter in the first row and the number with a letter in the second row
+differ by at most $w$. -/
 def IsBanded (A : Alignment α) : Prop := bandedFrom w 0 0 A = true
 
-/-- A helper: `|a - t| ≤ w` when `t` lies between `0` and `d` and both endpoints
-of the interval satisfy the bound. Used for the gap phases, where the offset
-difference interpolates between its start and end values. -/
+/-- **Bound at an intermediate point, difference form.** For integers $a$, $d$, $t$ and $w$,
+if $|a| \le w$, $|a - d| \le w$ and $0 \le t \le d$, then $|a - t| \le w$.
+
+Used for the gap phases of an alignment, where the offset difference interpolates between its
+start and end values. -/
 theorem abs_le_of_between {a d t w : ℤ} (h0 : |a| ≤ w) (hd : |a - d| ≤ w)
     (ht0 : 0 ≤ t) (htd : t ≤ d) : |a - t| ≤ w := by
   rw [abs_le] at h0 hd ⊢
   constructor <;> linarith
 
-/-- Same, for `a + t`: used for gap-in-`xs` phases, where the difference grows. -/
+/-- **Bound at an intermediate point, sum form.** For integers $a$, $d$, $t$ and $w$, if
+$|a| \le w$, $|a + d| \le w$ and $0 \le t \le d$, then $|a + t| \le w$.
+
+Used for runs of alignment columns that consume only letters of the first sequence, where the
+offset difference grows. -/
 theorem abs_le_of_between_add {a d t w : ℤ} (h0 : |a| ≤ w) (hd : |a + d| ≤ w)
     (ht0 : 0 ≤ t) (htd : t ≤ d) : |a + t| ≤ w := by
   rw [abs_le] at h0 hd ⊢
   constructor <;> linarith
 
-/-- A banded alignment ends within the band: its final offset difference is
-bounded by `w`. -/
+/-- **A passing band check bounds the final offset.** Let $w, i, j \in \mathbb{N}$ and let
+$A$ be an alignment. If the band check of $A$ with width $w$ from offset $(i, j)$ is true, then
+$|(i + p) - (j + q)| \le w$, where $p$ and $q$ are the numbers of columns of $A$ whose first,
+respectively second, entry is present. -/
 theorem bandedFrom_final : ∀ (A : Alignment α) (i j : ℕ),
     bandedFrom w i j A = true →
     |(i + (A.filterMap Prod.fst).length : ℤ)
@@ -129,7 +143,9 @@ theorem bandedFrom_final : ∀ (A : Alignment α) (i j : ℕ),
       have ih := bandedFrom_final A i j h.2
       simpa only [List.filterMap_cons] using ih
 
-/-- A banded alignment of `xs`, `ys` has its length difference within the band. -/
+/-- **Banded alignments force close lengths.** Let $w \in \mathbb{N}$. If $A$ is a valid alignment
+of sequences $x$ and $y$ and $A$ is banded with width $w$, then the lengths of $x$ and $y$ differ
+by at most $w$, that is $\bigl| |x| - |y| \bigr| \le w$. -/
 theorem isBanded_length_diff {A : Alignment α} {xs ys : List α}
     (hA : IsAlignment A xs ys) (hb : IsBanded w A) :
     |(xs.length : ℤ) - (ys.length : ℤ)| ≤ (w : ℤ) := by
@@ -137,13 +153,19 @@ theorem isBanded_length_diff {A : Alignment α} {xs ys : List α}
   rw [hA.2.1, hA.2.2] at hfin
   simpa using hfin
 
-/-- The diagonal alignment: match the common prefix, then gap the remainder. -/
+/-- **Diagonal alignment.** For sequences $x = x_1 \dots x_m$ and $y = y_1 \dots y_n$, let
+$k = \min(m, n)$. The diagonal alignment of $x$ and $y$ consists of the columns
+$(x_1, y_1), \dots, (x_k, y_k)$, which pair letters by position whether or not they are equal,
+followed by one column for each remaining letter of the longer sequence, in order, pairing that
+letter with a gap. -/
 def diagAlign : List α → List α → Alignment α
   | [], ys => ys.map (fun b => (none, some b))
   | a :: xs, [] => (a :: xs).map (fun a => (some a, none))
   | a :: xs, b :: ys => (some a, some b) :: diagAlign xs ys
 
-/-- The diagonal alignment is valid. -/
+/-- **The diagonal alignment is a valid alignment.** For all sequences $x$ and $y$, the diagonal
+alignment of $x$ and $y$ is a valid alignment of $x$ and $y$: none of its columns consists of two
+gaps, and deleting the gaps from its first and second rows gives $x$ and $y$ respectively. -/
 theorem isAlignment_diagAlign (xs ys : List α) :
     IsAlignment (diagAlign xs ys) xs ys := by
   induction xs generalizing ys with
@@ -188,7 +210,11 @@ theorem isAlignment_diagAlign (xs ys : List α) :
           · simp only [diagAlign]
             simp [ih'.2.2]
 
-/-- A gap-only tail in `ys` stays in the band when its endpoints do. -/
+/-- **Second-sequence gap columns stay in the band if both endpoints do.** Let
+$w, i, j \in \mathbb{N}$, let $y$ be a list of length $n$, and let $A$ be the alignment with one
+column for each element $b$ of $y$, in order, with empty first entry and second entry $b$. If
+$|i - j| \le w$ and $|i - (j + n)| \le w$, then the band check of $A$ with width $w$ from offset
+$(i, j)$ is true. -/
 theorem bandedFrom_map_gapY : ∀ (ys : List α) (i j : ℕ),
     |(i : ℤ) - (j : ℤ)| ≤ (w : ℤ) →
     |(i : ℤ) - (j + ys.length)| ≤ (w : ℤ) →
@@ -220,7 +246,11 @@ theorem bandedFrom_map_gapY : ∀ (ys : List α) (i j : ℕ),
         push_cast
         ring
 
-/-- A gap-only tail in `xs` stays in the band when its endpoints do. -/
+/-- **First-sequence gap columns stay in the band if both endpoints do.** Let
+$w, i, j \in \mathbb{N}$, let $x$ be a list of length $n$, and let $A$ be the alignment with one
+column for each element $a$ of $x$, in order, with first entry $a$ and empty second entry. If
+$|i - j| \le w$ and $|(i + n) - j| \le w$, then the band check of $A$ with width $w$ from offset
+$(i, j)$ is true. -/
 theorem bandedFrom_map_gapX : ∀ (xs : List α) (i j : ℕ),
     |(i : ℤ) - (j : ℤ)| ≤ (w : ℤ) →
     |(i + xs.length : ℤ) - (j : ℤ)| ≤ (w : ℤ) →
@@ -252,8 +282,12 @@ theorem bandedFrom_map_gapX : ∀ (xs : List α) (i j : ℕ),
         push_cast
         ring
 
-/-- The diagonal alignment stays in the band whenever its start and end offsets
-do: the match phase keeps the difference, the gap phases interpolate it. -/
+/-- **The diagonal alignment stays in the band if both endpoints do.** Let $w, i, j \in \mathbb{N}$
+and let $x$, $y$ be lists of lengths $m$ and $n$. If $|i - j| \le w$ and
+$|(i + m) - (j + n)| \le w$, then the band check of the diagonal alignment of $x$ and $y$ with width
+$w$ from offset $(i, j)$ is true.
+
+The match phase keeps the offset difference and the gap phases interpolate it. -/
 theorem bandedFrom_diagAlign : ∀ (i j : ℕ) (xs ys : List α),
     |(i : ℤ) - (j : ℤ)| ≤ (w : ℤ) →
     |(i + xs.length : ℤ) - (j + ys.length)| ≤ (w : ℤ) →
@@ -284,7 +318,10 @@ theorem bandedFrom_diagAlign : ∀ (i j : ℕ) (xs ys : List α),
         rw [hcast]
         exact hend
 
-/-- The diagonal alignment is banded when the length difference fits the band. -/
+/-- **The diagonal alignment is $w$-banded if lengths differ by at most $w$.** Let
+$w \in \mathbb{N}$. If two sequences $x$ and $y$ have lengths differing by at most $w$, that is
+$\bigl| |x| - |y| \bigr| \le w$, then the diagonal alignment of $x$ and $y$ is banded with width
+$w$. -/
 theorem isBanded_diagAlign {xs ys : List α}
     (h : |(xs.length : ℤ) - (ys.length : ℤ)| ≤ (w : ℤ)) :
     IsBanded w (diagAlign xs ys) := by
@@ -292,8 +329,12 @@ theorem isBanded_diagAlign {xs ys : List α}
   · simp
   · simpa using h
 
-/-- The banded alignment score: the maximum score over banded alignments,
-`none` when no banded alignment exists. -/
+/-- **Banded alignment score.** Fix a substitution score $\sigma$, assigning an integer
+$\sigma(a, b)$ to each pair of letters $a$, $b$, an integer gap score $g$ and a band width
+$w \in \mathbb{N}$. The banded alignment score of two sequences $x$ and $y$ is the maximum, over
+all valid alignments of $x$ and $y$ that are banded with width $w$, of the (integer) alignment
+score with respect to $\sigma$ and $g$. It has no value (it is the empty optional value) when no
+such alignment exists. -/
 def bandedScore (xs ys : List α) : Option ℤ :=
   List.argmax id (((alignments xs ys).filter (fun A => bandedFrom w 0 0 A)).map
     (alignmentScore σ gap))
@@ -325,7 +366,11 @@ theorem exists_banded_eq_bandedScore {xs ys : List α} {s : ℤ}
   rw [List.mem_filter] at hA
   exact ⟨A, (mem_alignments _ _ _).mp hA.1, hA.2, hAscore⟩
 
-/-- A banded optimum is at most the unrestricted optimum. -/
+/-- **The banded score is at most the Needleman–Wunsch score.** Let $\sigma$ be an integer
+substitution score on an alphabet, $g$ an integer gap score and $w \in \mathbb{N}$ a band
+width. For sequences $x$ and $y$ over the alphabet and an integer $s$, if the banded score of
+$x$ and $y$ (under $\sigma$, $g$ and width $w$) is defined and equals $s$, then $s$ is at most
+the Needleman–Wunsch score of $x$ and $y$. -/
 theorem bandedScore_le_nwScore {xs ys : List α} {s : ℤ}
     (h : bandedScore σ gap w xs ys = some s) : s ≤ nwScore σ gap xs ys := by
   have hmem : s ∈ (((alignments xs ys).filter
@@ -339,7 +384,12 @@ theorem bandedScore_le_nwScore {xs ys : List α} {s : ℤ}
   rw [← hAscore]
   exact alignmentScore_le_nwScore σ gap xs ys A hAmem
 
-/-- If some optimal alignment is banded, the banded score is the optimum. -/
+/-- **Banded alignment is exact when some optimal alignment is banded.** Let $\sigma$ be an
+integer substitution score on an alphabet, $g$ an integer gap score and $w \in \mathbb{N}$ a
+band width. For sequences $x$ and $y$ over the alphabet, if some alignment of $x$ and $y$ is
+banded with width $w$ and has score (under $\sigma$ and $g$) equal to the Needleman–Wunsch
+score of $x$ and $y$, then the banded score of $x$ and $y$ (under $\sigma$, $g$ and width $w$)
+is defined and equals their Needleman–Wunsch score. -/
 theorem bandedScore_eq_nwScore_of_banded_optimal {xs ys : List α}
     (h : ∃ A, IsAlignment A xs ys ∧ IsBanded w A ∧
       alignmentScore σ gap A = nwScore σ gap xs ys) :
@@ -377,7 +427,11 @@ theorem bandedScore_eq_nwScore_of_banded_optimal {xs ys : List α}
   rw [hseq] at hs
   exact hs
 
-/-- If the lengths differ by more than `w`, no banded alignment exists. -/
+/-- **No banded score when the lengths differ by more than the band width.** Let $\sigma$ be
+an integer substitution score on an alphabet, $g$ an integer gap score and $w \in \mathbb{N}$ a
+band width. For sequences $x$ and $y$ over the alphabet, of lengths $m$ and $n$, with
+$w < |m - n|$, the banded score of $x$ and $y$ (under $\sigma$, $g$ and width $w$) is undefined:
+no alignment of $x$ and $y$ is banded with width $w$. -/
 theorem bandedScore_none_of_length_diff_gt {xs ys : List α}
     (h : (w : ℤ) < |(xs.length : ℤ) - (ys.length : ℤ)|) :
     bandedScore σ gap w xs ys = none := by
@@ -396,7 +450,11 @@ theorem bandedScore_none_of_length_diff_gt {xs ys : List α}
       have hdiff := isBanded_length_diff w hAmem hb
       linarith
 
-/-- If the lengths differ by at most `w`, a banded alignment exists. -/
+/-- **The banded score is defined when the lengths are close.** Fix a substitution score
+$\sigma$, assigning an integer $\sigma(a, b)$ to each pair of letters $a$, $b$, an integer gap
+score $g$ and a band width $w \in \mathbb{N}$. If two sequences $x$ and $y$ have lengths differing
+by at most $w$, that is $\bigl| |x| - |y| \bigr| \le w$, then the banded alignment score of $x$
+and $y$ (for $\sigma$, $g$ and $w$) is defined: it equals some integer $s$. -/
 theorem bandedScore_some_of_length_diff_le {xs ys : List α}
     (h : |(xs.length : ℤ) - (ys.length : ℤ)| ≤ (w : ℤ)) :
     ∃ s, bandedScore σ gap w xs ys = some s := by

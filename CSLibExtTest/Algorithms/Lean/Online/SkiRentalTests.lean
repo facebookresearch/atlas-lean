@@ -19,7 +19,7 @@ public meta import Mathlib.Algebra.Order.Field.Rat
 Executed fixtures: for every buying price `B ≤ 20`, the worst ratio `cost / opt` of each
 strategy over seasons of up to `4 B` days is computed exactly; the break-even strategy's worst
 ratio is `(2 B - 1) / B`, and no strategy (buying on any day up to `4 B`, or never) does better,
-matching `cost_breakEven_le` and `exists_cost_ge`. Each run throws on a mismatch. Closed checks
+matching `cost_breakEven_le` and `exists_pos_cost_ge`. Each run throws on a mismatch. Closed checks
 instantiate the theorems.
 -/
 
@@ -52,11 +52,34 @@ private meta def checkB (B : ℕ) : IO Unit := do
 example (d : ℕ) : cost 10 (breakEven 10) d ≤ 2 * opt 10 d :=
   cost_breakEven_le_two_mul (by decide : 1 ≤ 10) d
 
+example (s : Strategy) : ∃ d, 0 < d ∧ 19 * opt 10 d ≤ 10 * cost 10 s d :=
+  exists_pos_cost_ge (by decide : 1 ≤ 10) s
+
 example (s : Strategy) : ∃ d, 19 * opt 10 d ≤ 10 * cost 10 s d :=
   exists_cost_ge (by decide : 1 ≤ 10) s
 
+-- A positive season gives a positive optimum: the bound cannot be witnessed by zero costs.
+example {B : ℕ} (hB : 1 ≤ B) (s : Strategy) :
+    ∃ d, 0 < opt B d ∧ (2 * B - 1) * opt B d ≤ B * cost B s d := by
+  obtain ⟨d, hd, hbound⟩ := exists_pos_cost_ge hB s
+  refine ⟨d, ?_, hbound⟩
+  unfold opt
+  omega
+
+-- Renting forever at price 10 needs at least 19 days to witness the lower bound.
+example : ∃ d, 19 ≤ d ∧ 19 * opt 10 d ≤ 10 * cost 10 none d := by
+  obtain ⟨d, hd, hbound⟩ := exists_pos_cost_ge (by decide : 1 ≤ 10) none
+  refine ⟨d, ?_, hbound⟩
+  simp only [opt, cost] at hbound
+  omega
+
+-- The minimum buying price still has a positive witness, including for `some 0`.
+example : ∃ d, 0 < d ∧ opt 1 d ≤ cost 1 (some 0) d := by
+  simpa using exists_pos_cost_ge (by decide : 1 ≤ 1) (some 0)
+
 #print axioms cost_breakEven_le
 #print axioms cost_breakEven_le_two_mul
+#print axioms exists_pos_cost_ge
 #print axioms exists_cost_ge
 #print axioms opt_le_cost
 

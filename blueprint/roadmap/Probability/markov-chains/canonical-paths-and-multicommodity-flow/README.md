@@ -42,9 +42,9 @@ Sinclair's geometric bounds on the spectral gap of a reversible Markov chain (A.
 
 - [Mixing times of Markov chains](../mixing-times-of-markov-chains/README.md): the total variation distance and the $1/4$-mixing time that Lemma 7 and Theorem 8 start from.
 - [Kolmogorov's criterion for reversibility](../kolmogorov-s-criterion-for-reversibility/README.md): detailed balance, the standing hypothesis of every bound here.
-- Conductance and Cheeger's inequality: Cheeger's inequality for weighted graphs, the graph counterpart of the conductance bound for chains.
-- Graph Laplacians and Cheeger's inequality: the Laplacian quadratic form, which for edge weights $\pi(u) P(u, v)$ is the Dirichlet form compared with the variance here.
-- Complexity of the permanent: Sinclair's 1992 paper uses these path bounds to improve the running time of randomised approximation algorithms for the permanent of a 0-1 matrix, which work by sampling from a Markov chain on matchings.
-- Markov chain Monte Carlo: the sampling algorithms whose running time these bounds control.
+- [Conductance and Cheeger's inequality](../../../GraphTheory/algebraic-graph-theory/part-02/conductance-and-cheeger-s-inequality/README.md): Cheeger's inequality for weighted graphs, the graph counterpart of the conductance bound for chains.
+- [Graph Laplacians and Cheeger's inequality](../../../GraphTheory/algebraic-graph-theory/part-01/graph-laplacians-and-cheeger-s-inequality/README.md): the Laplacian quadratic form, which for edge weights $\pi(u) P(u, v)$ is the Dirichlet form compared with the variance here.
+- [Complexity of the permanent](../../../TheoryOfComputation/counting-complexity/complexity-of-the-permanent/README.md): Sinclair's 1992 paper uses these path bounds to improve the running time of randomised approximation algorithms for the permanent of a 0-1 matrix, which work by sampling from a Markov chain on matchings.
+- [Markov chain Monte Carlo](../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/markov-chain-monte-carlo/README.md): the sampling algorithms whose running time these bounds control.
 - [Dirichlet forms](../dirichlet-forms/README.md): the Poincaré inequalities of this topic are lower bounds on the spectral gap of the Dirichlet form.
-- Effective resistance and electrical networks: single-commodity unit flows in the same network, whose least energy is an effective resistance (Thomson's principle).
+- [Effective resistance and electrical networks](../../../GraphTheory/algebraic-graph-theory/part-01/effective-resistance-and-electrical-networks/README.md): single-commodity unit flows in the same network, whose least energy is an effective resistance (Thomson's principle).

@@ -23,7 +23,7 @@ The rectangular version (Tropp's Theorem 6.1.1, with $d_1 + d_2$ in place of $d$
 
 ## Background
 
-- Hermitian dilation: background, the dilation through which the rectangular version follows.
+- [Hermitian dilation](../../../LinearAlgebra/eigenvalues-and-canonical-forms/eigenvalues-and-spectral-norm-of-hermitian-matri/hermitian-dilation/dilation.md): background, the dilation through which the rectangular version follows.
 - [Two-sided Hoeffding inequality for Bernoulli sums](../hoeffding-s-inequality/hoeffding-bernoulli-sum-abs-tail.md): background, the scalar exponential tail bound for bounded independent summands.
 
 ## Sources

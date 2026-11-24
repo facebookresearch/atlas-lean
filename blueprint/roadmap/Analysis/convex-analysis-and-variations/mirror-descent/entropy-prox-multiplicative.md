@@ -16,7 +16,7 @@ Indeed $\log x^+_i = \log x_i - \gamma c_i - \log Z$, so the linear form is the 
 
 ## Background
 
-- The $\sqrt{T}$ regret bound of Hedge: the same update with losses in $[0, 1]$, analysed there through the potential $\log \sum_i w_i$ instead of the Bregman divergence.
+- [The $\sqrt{T}$ regret bound of Hedge](../../../ComputerScience/machine-learning/online-learning-and-boosting/hedge-algorithm/regret-le-two-sqrt.md): the same update with losses in $[0, 1]$, analysed there through the potential $\log \sum_i w_i$ instead of the Bregman divergence.
 
 ## Sources
 

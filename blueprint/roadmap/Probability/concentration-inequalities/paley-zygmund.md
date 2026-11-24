@@ -11,4 +11,4 @@ $\mathbb{P}(Z > \theta \, \mathbb{E}[Z]) \ge (1 - \theta)^2 (\mathbb{E}[Z])^2 / 
 
 ## Background
 
-- Second moment method, Cauchy–Schwarz form: the case $\theta = 0$, the form used in probabilistic combinatorics to show that a count is positive with probability bounded below.
+- [Second moment method, Cauchy–Schwarz form](../../Combinatorics/probabilistic-combinatorics/first-and-second-moment-methods/sq-integral-le-integral-sq-mul-measure-r.md): the case $\theta = 0$, the form used in probabilistic combinatorics to show that a count is positive with probability bounded below.

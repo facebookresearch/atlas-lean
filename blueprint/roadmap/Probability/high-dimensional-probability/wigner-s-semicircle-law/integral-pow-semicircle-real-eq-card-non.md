@@ -22,7 +22,7 @@ moment-cumulant formula over noncrossing partitions leaves exactly the noncrossi
   the analytic side, $\int x^{2k}\,d\sigma = C_k$.
 - [The odd moments of the semicircle distribution vanish](integral-pow-two-mul-add-one-semicircle.md):
   the odd analytic side.
-- Counting noncrossing pair partitions:
+- [Counting noncrossing pair partitions](../../../Combinatorics/set-partitions/noncrossing-partitions/noncrossing-pair-partitions-and-the-catalan-count/card-noncrossing-pair-partition.md):
   the combinatorial side.
 
 ## Sources

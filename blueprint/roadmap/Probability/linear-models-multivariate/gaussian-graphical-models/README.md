@@ -56,7 +56,7 @@ is.
 
 ## Related topics
 
-- Graph Laplacians and Cheeger's inequality: weighted graph Laplacians and their quadratic forms in general.
-- Bayesian networks:
+- [Graph Laplacians and Cheeger's inequality](../../../GraphTheory/algebraic-graph-theory/part-01/graph-laplacians-and-cheeger-s-inequality/README.md): weighted graph Laplacians and their quadratic forms in general.
+- [Bayesian networks](../../../ComputerScience/machine-learning/probabilistic-graphical-models/bayesian-networks/README.md):
   directed graphical models on finite state spaces, where conditional independence is read off
   the graph by d-separation.

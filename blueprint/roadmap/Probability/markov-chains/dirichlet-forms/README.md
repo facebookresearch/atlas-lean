@@ -115,4 +115,4 @@ in which quasi-regularity is phrased.
 - [Potential theory](../../../Analysis/potential-theory/README.md): Dirichlet forms were introduced by
   Beurling and Deny as an axiomatic potential theory; nests, exceptional sets and quasi-continuity
   extend the classical notions.
-- Effective resistance and electrical networks: for a reversible chain with conductances $\pi(x) P(x, y)$, the Dirichlet form is the network energy, whose minimum over potentials equal to $0$ and $1$ at two states is their effective conductance (Dirichlet's principle).
+- [Effective resistance and electrical networks](../../../GraphTheory/algebraic-graph-theory/part-01/effective-resistance-and-electrical-networks/README.md): for a reversible chain with conductances $\pi(x) P(x, y)$, the Dirichlet form is the network energy, whose minimum over potentials equal to $0$ and $1$ at two states is their effective conductance (Dirichlet's principle).

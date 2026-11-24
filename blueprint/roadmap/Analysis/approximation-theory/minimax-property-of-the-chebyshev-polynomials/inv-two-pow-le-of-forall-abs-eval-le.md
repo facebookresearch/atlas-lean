@@ -11,7 +11,7 @@ $2^{n-1}$.
 ## Background
 
 - [Chebyshev equioscillation theorem (sufficiency)](../chebyshev-equioscillation-theorem/not-lt-of-equioscillates.md): the same fact seen as best approximation: $x^n - 2^{1-n}T_n$ is the best uniform approximation of $x^n$ by polynomials of degree $n - 1$, since $2^{1-n}T_n$ equioscillates at the $n + 1$ points $\cos(j\pi/n)$.
-- The Chebyshev bound for Krylov energy minimizers: where the scaled Chebyshev polynomial gives the CG bound $2((\sqrt\kappa - 1)/(\sqrt\kappa + 1))^k$.
+- [The Chebyshev bound for Krylov energy minimizers](../../../LinearAlgebra/matrix-decompositions/conjugate-gradient-method/energy-norm-le-of-is-min-krylov.md): where the scaled Chebyshev polynomial gives the CG bound $2((\sqrt\kappa - 1)/(\sqrt\kappa + 1))^k$.
 
 ## Sources
 

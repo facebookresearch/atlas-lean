@@ -10,7 +10,7 @@ Griffiths and Ghahramani (2011, Section 2.2) give this expression as the probabi
 
 ## Informally uses
 
-- Evidence-weighted Dirichlet prior: the marginal probability $B(\alpha + \text{counts})/B(\alpha)$ of an assignment vector under the Dirichlet prior (Griffiths and Ghahramani 2011, Equation 3), from which the paper derives Equation 4.
+- [Evidence-weighted Dirichlet prior](../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/conjugate-priors/with-density-categorical-seq-kernel.md): the marginal probability $B(\alpha + \text{counts})/B(\alpha)$ of an assignment vector under the Dirichlet prior (Griffiths and Ghahramani 2011, Equation 3), from which the paper derives Equation 4.
 
 ## Sources
 

@@ -11,5 +11,5 @@ Increasing events, the Harris and FKG inequalities, Holley's inequality, disjoin
 ## Related topics
 
 - [Percolation](../../percolation/README.md): Bernoulli percolation, where these inequalities are the basic toolbox.
-- Janson's inequalities: the Harris inequality gives the lower bound and a key step of the upper bound.
-- Correlation inequalities for spin systems: the Griffiths and FKG inequalities for ferromagnetic Ising models.
+- [Janson's inequalities](../../../Combinatorics/probabilistic-combinatorics/janson-s-inequalities/README.md): the Harris inequality gives the lower bound and a key step of the upper bound.
+- [Correlation inequalities for spin systems](../../../StatisticalMechanics/correlation-inequalities/README.md): the Griffiths and FKG inequalities for ferromagnetic Ising models.

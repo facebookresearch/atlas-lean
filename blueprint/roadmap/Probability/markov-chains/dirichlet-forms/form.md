@@ -27,7 +27,7 @@ $k = 0$.
 - [The Dirichlet form of a reversible matrix](../mixing-times-of-markov-chains/sum-mul-sub-mul-vec-eq.md): Sinclair's identity
   $\sum \pi g (g - P g) = \tfrac12 \sum \pi(x) P(x,y) (g(x) - g(y))^2$, the kernel case $Q = P - 1$ of
   this form ([bridge](form-sub-one-self-eq-sum-mul-sub-mul-vec.md)).
-- Laplacian Rayleigh quotient of a spectral expander: for a graph with adjacency matrix $A$,
+- [Laplacian Rayleigh quotient of a spectral expander](../../../GraphTheory/graph-families-and-operations/expander-graphs/laplacian-rayleigh-quotient.md): for a graph with adjacency matrix $A$,
   degree matrix $D$ and Laplacian $L = D - A$, the generator $Q = A - D = -L$ with $m = 1$ gives
   the quadratic form $f^\top L f$ of the graph Laplacian.
 

@@ -6,13 +6,13 @@ $$\beta\, d\, \max(1 - \tau, 0) \le 4\alpha\, R^*, \qquad R^* = \inf_{\kappa} \s
 
 in $[0, \infty]$ with $0 \cdot \infty = 0$, where $R^*$ is the minimax risk, the infimum running over all randomised estimators, that is Markov kernels $\kappa$ from $\Omega$ to $\Theta$. For $0 < \alpha < \infty$ the minimax risk is therefore at least $\beta\, d\, \max(1 - \tau, 0)/(4\alpha)$. Compared with [Le Cam's two-point bound](mul-one-sub-total-variation-dist-le-mini.md), the bound grows linearly with the dimension $d$ of the cube while only neighbouring hypotheses need to be close.
 
-A randomised estimator $\kappa$ is reduced to the [deterministic bound](mul-one-sub-le-four-mul-i-sup.md) for the identity estimator on the output laws $\kappa \circ P_\theta$, whose neighbours stay within total variation $\tau$ by the data-processing inequality for total variation.
+A randomised estimator $\kappa$ is reduced to the [deterministic bound](mul-one-sub-le-four-mul-i-sup.md) for the identity estimator on the output laws $\kappa \circ P_\theta$, whose neighbours stay within total variation $\tau$ by the [data-processing inequality for total variation](../../../InformationTheory/information-inequalities/strong-data-processing-and-dobrushin-s-coefficie/total-variation-dist-comp-le-self.md).
 
 ## Informally uses
 
 - [Assouad's lemma for one deterministic estimator](mul-one-sub-le-four-mul-i-sup.md):
   applied to the identity estimator on the output laws.
-- Data-processing inequality for total variation:
+- [Data-processing inequality for total variation](../../../InformationTheory/information-inequalities/strong-data-processing-and-dobrushin-s-coefficie/total-variation-dist-comp-le-self.md):
   a randomised estimator keeps neighbouring hypotheses within $\tau$.
 
 ## Background

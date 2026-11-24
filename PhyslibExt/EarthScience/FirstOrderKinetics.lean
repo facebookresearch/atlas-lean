@@ -14,7 +14,7 @@ import Mathlib.Analysis.Calculus.Deriv.Add
 import Mathlib.Analysis.Calculus.Deriv.Mul
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
-import MathlibExt.Biology.Biophysics.CompartmentKinetics
+import MathlibExt.Analysis.ODE.ConstantInputRelaxation
 /-!
 # First-order decay and its integrated consumption
 
@@ -49,9 +49,8 @@ the source of a fitted `k` is empirical metadata, outside this file.
 
 ## iii. References
 
-- `MathlibExt.Biology.Biophysics.CompartmentKinetics` (`amount_bolus`,
-  `hasDerivAt_amount`, `amount_zero`, `amount_add_eliminated`): the
-  compartment model these theorems are corollaries of.
+- `MathlibExt.Analysis.ODE.ConstantInputRelaxation` (`amount_bolus`, `hasDerivAt_amount`,
+  `amount_zero`): the constant-input equation specialized here.
 - `intervalIntegral.integral_eq_sub_of_hasDerivAt` for the consumption integral.
 -/
 

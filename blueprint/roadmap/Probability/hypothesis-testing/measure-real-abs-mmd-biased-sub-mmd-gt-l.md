@@ -11,7 +11,7 @@ Here $\mathrm{MMD}_b$ is the distance between the empirical kernel mean embeddin
 ## Informally uses
 
 - [McDiarmid's inequality](../concentration-inequalities/mcdiarmid-s-inequality/README.md): the proof (Appendix A.2) applies it to the uniform deviation, whose bounded differences are $2\sqrt{K}/m$ and $2\sqrt{K}/n$.
-- Rademacher average of a ball of linear predictors: after symmetrisation, the proof bounds the Rademacher averages of the unit ball of the RKHS by $\sqrt{K/m}$ and $\sqrt{K/n}$, the kernel case of this bound.
+- [Rademacher average of a ball of linear predictors](../../ComputerScience/machine-learning/generalization-bounds-and-concentration/rademacher-average-linear-ball-le.md): after symmetrisation, the proof bounds the Rademacher averages of the unit ball of the RKHS by $\sqrt{K/m}$ and $\sqrt{K/n}$, the kernel case of this bound.
 
 ## Background
 

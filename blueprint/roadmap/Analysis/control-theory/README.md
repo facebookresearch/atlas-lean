@@ -8,8 +8,14 @@ Mathematical control theory of finite-dimensional systems: controllability of li
 - [Recursive least squares](recursive-least-squares/README.md)
 - [Capability and limits of feedback](capability-and-limits-of-feedback/README.md)
 
+## Single-input single-output linear systems
+
+- [Single-input single-output linear time-invariant system](linear-system.md)
+- [Vector field of a linear time-invariant system](field.md)
+- [Output of a linear time-invariant system](output.md)
+
 ## Related topics
 
-- Linear quadratic regulator: optimal state feedback for linear systems with quadratic cost, by dynamic programming (Recht).
-- Optimality of stationary policies and Stochastic shortest path problems: Bertsekas's dynamic programming for Markov decision processes, the discrete-state counterpart of feedback design by optimisation.
+- [Linear quadratic regulator](../../ComputerScience/machine-learning/reinforcement-learning/linear-quadratic-regulator/README.md): optimal state feedback for linear systems with quadratic cost, by dynamic programming (Recht).
+- [Optimality of stationary policies](../../ComputerScience/heuristic-search-and-planning/optimality-of-stationary-policies/README.md) and [Stochastic shortest path problems](../../ComputerScience/heuristic-search-and-planning/stochastic-shortest-path-problems/README.md): Bertsekas's dynamic programming for Markov decision processes, the discrete-state counterpart of feedback design by optimisation.
 - [Viscosity solutions of Hamilton–Jacobi equations](../partial-differential-equations/viscosity-solutions-of-hamilton-jacobi-equations/README.md): value functions of continuous-time optimal control problems solve Hamilton–Jacobi–Bellman equations in the viscosity sense.

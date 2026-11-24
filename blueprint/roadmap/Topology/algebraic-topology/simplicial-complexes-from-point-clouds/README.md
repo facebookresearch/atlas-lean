@@ -29,7 +29,7 @@ an abstract simplicial complex.
 
 - [Persistence modules and barcodes](../persistence-modules-and-barcodes/README.md): the homology
   of these filtrations is a persistence module, summarised by its barcode.
-- Single-linkage hierarchical clustering:
+- [Single-linkage hierarchical clustering](../../../ComputerScience/machine-learning/unsupervised-learning/single-linkage-hierarchical-clustering/README.md):
   the connected components of the Vietoris–Rips complex at scale $\varepsilon$ are the single-linkage
   clusters, the zero-dimensional shadow of these complexes.
 - [Mapper](../mapper/README.md): another nerve construction on data, built from a filter function

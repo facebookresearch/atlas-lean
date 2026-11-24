@@ -1,0 +1,3 @@
+# Conditional free probabilities depend only on the outer configuration
+
+Let $d, n \in \mathbb{N}$, $p, q \in \mathbb{R}$, let $F$ be the set of unordered pairs of vertices of $\Lambda_{n+1} = \{-(n+1), \dots, n+1\}^d$ with both elements in $\Lambda_n$, and let $\psi, \psi', \omega$ be configurations of $\Lambda_{n+1}$. If $\psi$ and $\psi'$ agree off $F$, then $\phi(\omega \mid F, \psi) = \phi(\omega \mid F, \psi')$, where $\phi(\omega \mid F, \psi) = \phi_{\Lambda_{n+1},p,q}(\omega) / \sum_{\rho} \phi_{\Lambda_{n+1},p,q}(\rho)$ is the [conditional random-cluster probability](../../random-cluster-measures-on-finite-graphs/cond-fk-prob.md), the sum running over the configurations $\rho$ agreeing with $\psi$ off $F$ (a zero denominator gives $0$).

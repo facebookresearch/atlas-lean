@@ -121,11 +121,6 @@ is the count-weighted mixture of the deterministic-count masses at `m`. -/
   rw [aggregateLaw_weights, Finsupp.sum_apply]
   simp only [smul_apply_eq]
 
-private theorem decode_apply (L : RationalLossLaw) (n : ℕ) :
-    decode L n = ENNReal.ofReal ((L.weights n : ℚ) : ℝ) := by
-  unfold decode
-  rw [PMF.ofFinset_apply]
-
 private theorem cast_nonneg (L : RationalLossLaw) (a : ℕ) :
     0 ≤ ((L.weights a : ℚ) : ℝ) :=
   Rat.cast_nonneg.mpr (L.nonneg a)

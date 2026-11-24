@@ -18,5 +18,5 @@ clustering is single linkage.
 
 - [Simplicial complexes from point clouds](../simplicial-complexes-from-point-clouds/README.md):
   the nerve construction that Mapper applies to a covering by clusters.
-- Single-linkage hierarchical clustering:
+- [Single-linkage hierarchical clustering](../../../ComputerScience/machine-learning/unsupervised-learning/single-linkage-hierarchical-clustering/README.md):
   the clustering used on each preimage.

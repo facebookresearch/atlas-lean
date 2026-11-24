@@ -1,0 +1,3 @@
+# Inside and outside of a closed walk are connected
+
+Let $w$ be a closed walk at a site $a$ of the square lattice, and let $I$ be its inside by the even–odd rule: the set of sites $z$ whose ray count with respect to $w$ (the number of steps of $w$ along vertical edges $\{(c, z_1 - 1), (c, z_1)\}$ with $c \le z_0 - 1$) is odd. Let $L_I$ be the square lattice with every edge having exactly one endpoint in $I$ removed. The walk $w$ has this property when $I$ is nonempty, $\mathbb{Z}^2 \setminus I$ is nonempty, any two sites of $I$ are joined by a walk in $L_I$, and any two sites of $\mathbb{Z}^2 \setminus I$ are joined by a walk in $L_I$.

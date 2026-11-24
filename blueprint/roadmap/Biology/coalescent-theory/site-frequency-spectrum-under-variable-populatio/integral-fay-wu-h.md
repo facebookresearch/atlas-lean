@@ -1,0 +1,3 @@
+# Fay and Wu's H has mean zero at constant size
+
+Let $\mu$ be a measure, $n \ge 2$ a natural number, $\theta$ a real number and $\xi_i$ ($i \in \mathbb{N}$) $\mu$-integrable real functions with $\int \xi_i \, d\mu = \theta / i$ for every $1 \le i \le n - 1$. Then [Fay and Wu's statistic](fay-wu-h.md) satisfies $\int H \, d\mu = 0$.

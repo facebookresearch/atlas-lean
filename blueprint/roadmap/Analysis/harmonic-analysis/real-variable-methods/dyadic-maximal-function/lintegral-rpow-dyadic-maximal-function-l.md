@@ -15,7 +15,7 @@ The source obtains the constant $p'$ from its Marcinkiewicz interpolation theore
 
 ## Background
 
-- Doob's $L^p$ maximal inequality in continuous time: the martingale inequality with the same constant $(p/(p-1))^p$.
+- [Doob's $L^p$ maximal inequality in continuous time](../../../../Probability/martingales/doob-s-maximal-inequalities/lintegral-i-sup-rpow-le.md): the martingale inequality with the same constant $(p/(p-1))^p$.
 
 ## Sources
 

@@ -18,12 +18,14 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Apostol-Bernoulli numbers `βₖ(α)` (concept `jis_sem_b4b0e1e624b9b6eac0d29207`,
-source statement `jis_5ab17288071712819e845b9a`, equation `eq21111`): for `α ∈ ℂ`
-with `α ≠ 0, 1`, the sequence `β(α)` is characterized by the exponential generating
-function `t / (α * e ^ t - 1) = ∑ βₖ(α) * t ^ k / k!` for `|t| < |log α|`.
-Here `Complex.log` is the principal-branch complex logarithm, so
-`‖Complex.log α‖` renders the source's `|log α|`. -/
+/-- **Apostol–Bernoulli numbers.** Let $\alpha$ be a complex number and let $\log$ denote the
+principal branch of the complex logarithm. A sequence $(\beta_k)_{k \ge 0}$ of complex numbers
+is the sequence of Apostol–Bernoulli numbers $\beta_k(\alpha)$ when $\alpha \ne 0$,
+$\alpha \ne 1$, and for every complex number $t$ with $|t| < |\log \alpha|$ the series
+$\sum_{k \ge 0} \beta_k t^k / k!$ converges unconditionally to $t / (\alpha e^t - 1)$.
+
+Source: concept `jis_sem_b4b0e1e624b9b6eac0d29207`, source statement
+`jis_5ab17288071712819e845b9a`, equation `eq21111`. -/
 public def IsApostolBernoulliSequence (α : ℂ) (β : ℕ → ℂ) : Prop :=
   α ≠ 0 ∧ α ≠ 1 ∧
     ∀ t : ℂ, ‖t‖ < ‖Complex.log α‖ →

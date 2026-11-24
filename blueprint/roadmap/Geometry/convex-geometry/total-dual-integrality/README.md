@@ -9,4 +9,4 @@ A linear system $A x \le b$ is *totally dual integral* (TDI) if for every integr
 ## Related topics
 
 - [Linear programming](../linear-programming/README.md): TDI is a statement about integral optimal solutions of the dual linear program.
-- Matching polytope: Edmonds' description of the matching polytope, the model example of a totally dual integral system.
+- [Matching polytope](../../../GraphTheory/matchings-and-flows/matching-polytope/README.md): Edmonds' description of the matching polytope, the model example of a totally dual integral system.

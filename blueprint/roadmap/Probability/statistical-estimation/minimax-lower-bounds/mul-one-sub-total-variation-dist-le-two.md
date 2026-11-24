@@ -10,17 +10,17 @@ $$
 $$
 
 The expectations are lower Lebesgue integrals, so no integrability is assumed. The proof bounds
-both risks below on the common part
+both risks below on the [common part](../../../InformationTheory/information-inequalities/total-variation-and-pinsker-s-inequality/exists-le-le-measure-univ-eq.md)
 of $P_0$ and $P_1$, which has mass $1 - \mathrm{TV}(P_0, P_1)$.
 
 ## Informally uses
 
-- Common part of two probability measures:
+- [Common part of two probability measures](../../../InformationTheory/information-inequalities/total-variation-and-pinsker-s-inequality/exists-le-le-measure-univ-eq.md):
   the measure on which both risks are compared.
 
 ## Background
 
-- Two-point testing bound:
+- [Two-point testing bound](../../../InformationTheory/information-inequalities/total-variation-and-pinsker-s-inequality/one-sub-total-variation-dist-le-add-comp.md):
   the testing version of the same reduction.
 
 ## Sources

@@ -62,54 +62,61 @@ open Cslib.Algorithms.Lean (TimeM)
 open MetaMathlibExt.ComplexityTheory (DecisionProblem)
 open Polynomial
 
-/-- A `TimeM` decider decides in *declared* polynomial time when its
-declared time is bounded by a polynomial in the input length. This
-constrains only the trusted `time` annotation: it establishes neither
-computability of `(f x).ret` in any machine model nor any relation to
-a language (witness `fun x => pure (L x)`, for arbitrary `L`, in
-`exists_decidesInDeclaredPolyTime`). -/
+/-- **Declared polynomial time for timed deciders.** Let $f$ be a timed function that maps each
+list $x$ of Booleans to a Boolean $f(x)$ together with a declared time $t_f(x) \in \mathbb{N}$.
+Then $f$ decides in declared polynomial time when there is a polynomial $p$ with natural-number
+coefficients such that $t_f(x) \le p(|x|)$ for every list $x$ of Booleans, where $|x|$ is the
+length of $x$.
+
+This constrains only the trusted time annotation: it implies neither that $f$ is computable in
+any machine model nor that $f$ is related to any particular decision problem. -/
 def DecidesInDeclaredPolyTime (f : List Bool → TimeM Nat Bool) : Prop :=
   ∃ p : Polynomial ℕ, ∀ x, (f x).time ≤ p.eval x.length
 
-/-- A `TimeM` function computes in *declared* polynomial time when both
-its declared time and its output length are bounded by a polynomial in
-the input length. This is an annotation discipline only (per review):
-it does not establish that `(f x).ret` is polynomial-time computable in
-any machine model - for an arbitrary language `L`, `fun x => pure [L x]`
-has declared time zero and constant output length. The output-length
-bound is still essential: `TimeM` annotations are trusted, so without it
-a function declaring zero time could emit an exponentially long output,
-and closure under composition of declared bounds would fail. -/
+/-- **Declared polynomial time for timed functions on bitstrings.** Let $f$ be a timed function
+that maps each list $x$ of Booleans to an output list $f(x)$ of Booleans together with a declared
+time $t_f(x) \in \mathbb{N}$. Then $f$ computes in declared polynomial time when there is a
+polynomial $p$ with natural-number coefficients such that, for every list $x$ of Booleans, both
+$t_f(x)$ and the length of $f(x)$ are at most $p(|x|)$, where $|x|$ is the length of $x$.
+
+Declared times are trusted annotations, not checked against any machine model, so this does not
+make $f$ polynomial-time computable: for an arbitrary decision problem $L$, the function returning
+the one-element list $[L(x)]$ with declared time $0$ satisfies it. The output-length bound is what
+lets declared bounds compose. -/
 def ComputesInDeclaredPolyTime (f : List Bool → TimeM Nat (List Bool)) : Prop :=
   ∃ p : Polynomial ℕ, ∀ x, (f x).time ≤ p.eval x.length ∧
     (f x).ret.length ≤ p.eval x.length
 
-/-- A `TimeM` verifier runs in *declared* polynomial time when its
-declared time is bounded by a polynomial in the combined input and
-witness length. Like `DecidesInDeclaredPolyTime`, this constrains only
-the trusted `time` annotation and establishes no computability in any
-machine model. -/
+/-- **Verifiers with polynomial declared time.** A timed verifier $V$, which assigns to each pair
+of bit strings $(x, w)$ (an input and a witness) a timed computation returning a Boolean, runs in
+declared polynomial time when there is a polynomial $q$ with natural coefficients such that the
+declared time of $V(x, w)$ is at most $q(|x| + |w|)$ for all $x$ and $w$.
+
+As for deciders, this constrains only the declared time, which is a trusted annotation, and
+establishes no computability in any machine model. -/
 def VerifierInDeclaredPolyTime (V : List Bool × List Bool → TimeM Nat Bool) : Prop :=
   ∃ q : Polynomial ℕ, ∀ xw, (V xw).time ≤ q.eval (xw.1.length + xw.2.length)
 
-/-- `V` verifies `L` with witness bound `p`: `L x` holds iff some witness
-`w` of length at most `p |x|` is accepted. This is the verifier half of
-`MetaMathlibExt.ComplexityTheory.NP`, phrased for a named `TimeM`
-verifier. -/
+/-- **Verifying a decision problem with a witness bound.** A timed verifier $V$, which assigns to
+each pair of bit strings $(x, w)$ (an input and a witness) a timed computation returning a
+Boolean, verifies a decision problem $L$ with witness bound $p$, a polynomial with natural
+coefficients, when for every bit string $x$, $L(x)$ holds if and only if there is a witness $w$
+with $|w| \le p(|x|)$ such that $V(x, w)$ returns true.
+
+This is the verifier half of the definition of NP, phrased for a named timed verifier. -/
 def Verifies (V : List Bool × List Bool → TimeM Nat Bool)
     (L : DecisionProblem) (p : Polynomial ℕ) : Prop :=
   ∀ x, L x ↔ ∃ w : List Bool, w.length ≤ p.eval x.length ∧
     (V (x, w)).ret = true
 
-/-- The named `TimeM` function `f` is a *declared-time* many-one
-reduction from `L₁` to `L₂`: it is `ComputesInDeclaredPolyTime` and
-preserves membership exactly. This is not a polynomial-time many-one
-reduction in the standard or canonical TM2 sense (per review): no
-computability of `(f x).ret` is established, so it must not be cited as
-`Cslib.CookLevin.PolyManyOneRed` or as evidence about the canonical
-complexity classes. It is the declared-time analogue of that notion,
-with the reducing function named rather than quantified over (see the
-module doc for why). -/
+/-- **Declared-time many-one reduction by a timed function.** Let $L_1$ and $L_2$ be decision
+problems and let $f$ be a timed function that maps each list $x$ of Booleans to a list $f(x)$ of
+Booleans together with a declared time. Then $f$ is a declared-time many-one reduction from $L_1$
+to $L_2$ when $f$ computes in declared polynomial time and $L_1(x) = L_2(f(x))$ for every list $x$
+of Booleans.
+
+Because declared times are trusted annotations, this is not a polynomial-time many-one reduction
+in the Turing-machine sense: nothing is established about the computability of $f$. -/
 def DeclaredPolyManyOneRedVia (f : List Bool → TimeM Nat (List Bool))
     (L₁ L₂ : DecisionProblem) : Prop :=
   ComputesInDeclaredPolyTime f ∧ ∀ x, L₁ x = L₂ (f x).ret
@@ -126,29 +133,34 @@ private theorem polyEval_mono (p : Polynomial ℕ) {m n : ℕ} (h : m ≤ n) :
     simp only [eval_mul, eval_C, eval_pow, eval_X]
     exact Nat.mul_le_mul le_rfl (Nat.pow_le_pow_left h _)
 
-/-- Unrestricted `TimeM` deciders decide every language with declared time
-zero: `fun x => pure (L x)` treats evaluating `L x` as free. This is why
-this file defines no `P`/`NP` sets by quantifying over `TimeM` functions;
-the classes live in `MetaMathlibExt.ComplexityTheory`, and
-`mem_P_of_decides`/`mem_NP_of_verifies` give the exact extra hypothesis
-needed to reach them from named `TimeM` algorithms. -/
+/-- **Every decision problem has a timed decider in declared polynomial time.** For every decision
+problem $L$ there is a timed function $f$ from lists of Booleans to Booleans that decides in
+declared polynomial time and whose output $f(x)$ equals $L(x)$ for every list $x$ of Booleans.
+
+The witness returns $L(x)$ with declared time $0$, treating the evaluation of $L$ as free. This is
+why no complexity classes are defined by quantifying over timed functions. -/
 theorem exists_decidesInDeclaredPolyTime (L : DecisionProblem) :
     ∃ f : List Bool → TimeM Nat Bool, DecidesInDeclaredPolyTime f ∧
       ∀ x, (f x).ret = L x :=
   ⟨fun x => pure (L x), ⟨0, fun x => by simp⟩, fun x => rfl⟩
 
-/-- A decider with polynomial declared time, ignoring the witness, is a
-verifier with polynomial declared time. -/
+/-- **A decider with polynomial declared time gives a verifier with polynomial declared time.**
+If a timed decider $f$ on bit strings has declared time bounded by a polynomial in the input
+length, then the verifier that sends an input $x$ and a witness $w$ to $f(x)$, ignoring $w$, has
+declared time bounded by a polynomial in $|x| + |w|$. -/
 theorem verifierInDeclaredPolyTime_of_decidesInDeclaredPolyTime
     {f : List Bool → TimeM Nat Bool} (hf : DecidesInDeclaredPolyTime f) :
     VerifierInDeclaredPolyTime (fun xw => f xw.1) := by
   obtain ⟨p, hp⟩ := hf
   exact ⟨p, fun xw => le_trans (hp xw.1) (polyEval_mono p (Nat.le_add_right _ _))⟩
 
-/-- A decider for `L`, ignoring the witness, verifies `L` with witness
-bound `0` (the empty witness). Together with
-`verifierInDeclaredPolyTime_of_decidesInDeclaredPolyTime` this is the `TimeM` form of
-`P ⊆ NP`, for named algorithms. -/
+/-- **A decider is a verifier with witness bound zero.** Let $L$ be a decision problem and let $f$
+be a timed decider whose return value on every bit string $x$ equals $L(x)$. Then the verifier
+that sends an input $x$ and a witness $w$ to $f(x)$, ignoring $w$, verifies $L$ with the zero
+polynomial as witness bound, so only the empty witness is allowed.
+
+Together with the fact that this verifier has polynomial declared time whenever $f$ does, this is
+the declared-time form of $\mathrm{P} \subseteq \mathrm{NP}$ for named algorithms. -/
 theorem verifies_of_decides {f : List Bool → TimeM Nat Bool}
     {L : DecisionProblem} (hdec : ∀ x, (f x).ret = L x) :
     Verifies (fun xw => f xw.1) L 0 := by
@@ -160,14 +172,21 @@ theorem verifies_of_decides {f : List Bool → TimeM Nat Bool}
     rw [← hdec x]
     exact hw
 
-/-- Many-one reduction is reflexive, via the identity function. -/
+/-- **Declared-time many-one reduction is reflexive.** For every decision problem $L$, the timed
+identity function, which returns its input with declared time $0$, is a declared-time many-one
+reduction from $L$ to $L$. -/
 theorem declaredPolyManyOneRedVia_refl (L : DecisionProblem) :
     DeclaredPolyManyOneRedVia (fun x => pure x) L L :=
   ⟨⟨Polynomial.X, fun x => by simp⟩, fun x => by simp⟩
 
-/-- Many-one reductions compose. The composed time and output-length
-bound is `p₁ + p₂ ∘ p₁`, using monotonicity of polynomial evaluation
-together with the output-length bound on the first reduction. -/
+/-- **Declared-time many-one reductions compose.** Let $L_1$, $L_2$ and $L_3$ be decision problems.
+If $f_1$ is a declared-time many-one reduction from $L_1$ to $L_2$ and $f_2$ is a declared-time
+many-one reduction from $L_2$ to $L_3$, then the timed function that on input $x$ returns
+$f_2(f_1(x))$, with declared time the declared time of $f_1$ on $x$ plus that of $f_2$ on
+$f_1(x)$, is a declared-time many-one reduction from $L_1$ to $L_3$.
+
+If $p_1$ and $p_2$ bound the declared times and output lengths of $f_1$ and $f_2$, then
+$p_1 + p_2 \circ p_1$ bounds those of the composite. -/
 theorem declaredPolyManyOneRedVia_trans
     {f₁ f₂ : List Bool → TimeM Nat (List Bool)} {L₁ L₂ L₃ : DecisionProblem}
     (h₁₂ : DeclaredPolyManyOneRedVia f₁ L₁ L₂) (h₂₃ : DeclaredPolyManyOneRedVia f₂ L₂ L₃) :
@@ -190,8 +209,14 @@ theorem declaredPolyManyOneRedVia_trans
     rw [hr₁ x]
     exact hr₂ _
 
-/-- Composing a declared reduction with a decider gives a decider with
-polynomial declared time, with bound `p_red + p_dec ∘ p_red`. -/
+/-- **Declared polynomial time is preserved under precomposition with a reduction.** Let $L_1$ and
+$L_2$ be decision problems, let $f$ be a declared-time many-one reduction from $L_1$ to $L_2$, and
+let $g$ be a timed function from lists of Booleans to Booleans that decides in declared polynomial
+time. Then the timed function that on input $x$ returns $g(f(x))$, with declared time the declared
+time of $f$ on $x$ plus that of $g$ on $f(x)$, decides in declared polynomial time.
+
+If $p_f$ bounds the declared time and output length of $f$ and $p_g$ bounds the declared time of
+$g$, then $p_f + p_g \circ p_f$ bounds the declared time of the composite. -/
 theorem decidesInDeclaredPolyTime_comp_reduction
     {f : List Bool → TimeM Nat (List Bool)} {g : List Bool → TimeM Nat Bool}
     {L₁ L₂ : DecisionProblem} (hred : DeclaredPolyManyOneRedVia f L₁ L₂)
@@ -204,10 +229,14 @@ theorem decidesInDeclaredPolyTime_comp_reduction
   simp only [TimeM.time_bind, eval_add, eval_comp]
   exact Nat.add_le_add htf (le_trans (hgt (f x).ret) (polyEval_mono pd hlf))
 
-/-- Composing a reduction with a decider for the target language decides
-the source language. With `decidesInDeclaredPolyTime_comp_reduction`
-this is the `TimeM` declared-time form of closure under reductions,
-for named algorithms (no canonical `P` membership is claimed). -/
+/-- **A declared-time reduction followed by a decider for the target decides the source.** Let
+$L_1$ and $L_2$ be decision problems, let $f$ be a declared-time many-one reduction from $L_1$ to
+$L_2$, and let $g$ be a timed function from lists of Booleans to Booleans whose output on every
+list $y$ is $L_2(y)$. Then for every list $x$ of Booleans, the timed function that runs $f$ on $x$
+and then $g$ on its output returns $L_1(x)$.
+
+Together with the preservation of declared polynomial time under such compositions, this is the
+declared-time form of closure under reductions; no membership in the class P is claimed. -/
 theorem decides_comp_reduction
     {f : List Bool → TimeM Nat (List Bool)} {g : List Bool → TimeM Nat Bool}
     {L₁ L₂ : DecisionProblem} (hred : DeclaredPolyManyOneRedVia f L₁ L₂)
@@ -216,13 +245,18 @@ theorem decides_comp_reduction
   simp only [TimeM.ret_bind]
   rw [hdec, ← hred.2 x]
 
-/-- Composing a reduction with a verifier gives a verifier for the source
-language. The composed verifier first runs the reduction, then the
-original verifier, rejecting witnesses longer than the original bound at
-the reduced input; the witness bound is `p ∘ p_red` and the time bound is
-`p_red + q ∘ (p_red + X)` in terms of `|x| + |w|`. This is the `TimeM`
-declared-time form of closure under reductions, for named algorithms
-(no canonical `NP` membership is claimed). -/
+/-- **Pulling a verifier back along a declared reduction.** Let $L_1$ and $L_2$ be decision
+problems, let $f$ be a declared polynomial-time many-one reduction from $L_1$ to $L_2$, and let
+$V$ be a verifier with polynomial declared time that verifies $L_2$ with witness bound $p$. Let
+$V'$ be the verifier that on input $x$ and witness $w$ first runs $f$ on $x$, obtaining $y$, then
+runs $V$ on $(y, w)$ and accepts when $V$ accepts and $|w| \le p(|y|)$; its declared time is the
+declared time of $f(x)$ plus that of $V(y, w)$. Then $V'$ has polynomial declared time, and there
+is a polynomial $p'$ with natural coefficients such that $V'$ verifies $L_1$ with witness bound
+$p'$.
+
+The proof takes $p' = p \circ r$ and the time bound $r(n) + q(r(n) + n)$ with $n = |x| + |w|$,
+where $r$ bounds the declared time and output length of $f$ and $q$ bounds the declared time of
+$V$. -/
 theorem verifies_comp_reduction
     {f : List Bool → TimeM Nat (List Bool)}
     {V : List Bool × List Bool → TimeM Nat Bool}
@@ -271,15 +305,15 @@ theorem verifies_comp_reduction
       rw [hr x]
       exact (hV (f x).ret).mpr ⟨w, hw.2, hw.1⟩
 
-/-- Repackaging for the canonical class `P`: a named `TimeM` decider
-whose computed function is polynomial-time in the canonical TM2 sense
-puts its language in `MetaMathlibExt.ComplexityTheory.P`. The
-`IsPolyTime` hypothesis is canonical complexity evidence that must be
-proved independently for the specific decider; it cannot be derived
-from `DecidesInDeclaredPolyTime`, which by
-`exists_decidesInDeclaredPolyTime` holds for `fun x => pure (L x)` for
-arbitrary `L`. A sound `TimeM`-to-TM simulation would first need a
-restricted executable representation with enforced cost accounting. -/
+/-- **A timed decider with polynomial-time output function gives membership in P.** Let $L$ be
+a decision problem and let $f$ assign to each bit string $x$ a timed computation, that is, a
+Boolean return value together with a declared time in $\mathbb{N}$, whose return value equals
+$L(x)$ for every $x$. If the function sending $x$ to the return value of $f(x)$ is
+polynomial-time computable, then $L$ belongs to the class P.
+
+The polynomial-time hypothesis must be proved for the specific decider: it does not follow from a
+polynomial bound on the declared times, which are trusted annotations, since every decision
+problem has a decider of declared time zero. -/
 theorem mem_P_of_decides {f : List Bool → TimeM Nat Bool}
     {L : DecisionProblem} (hdec : ∀ x, (f x).ret = L x)
     (h : MetaMathlibExt.ComplexityTheory.IsPolyTime fun x => (f x).ret) :
@@ -288,24 +322,28 @@ theorem mem_P_of_decides {f : List Bool → TimeM Nat Bool}
   rw [hfun] at h
   exact h
 
-/-- Repackaging for the canonical class `NP`: a named `TimeM` verifier
-whose computed function is polynomial-time in the canonical TM2 sense
-puts its language in `MetaMathlibExt.ComplexityTheory.NP`, with the
-same witness bound. As in `mem_P_of_decides`, the `IsPolyTime`
-hypothesis must be proved independently for the specific verifier; it
-does not follow from `VerifierInDeclaredPolyTime`. -/
+/-- **A timed verifier with polynomial-time output function puts its language in NP.** Let $L$ be
+a decision problem, $p$ a polynomial with natural-number coefficients, and $V$ a timed function
+from pairs of lists of Booleans to Booleans that verifies $L$ with witness bound $p$. If the
+function sending $(x, w)$ to the output of $V$ on $(x, w)$ is polynomial-time computable by a
+Turing machine for the canonical bitstring encodings, then $L$ is in NP.
+
+The polynomial-time hypothesis must be proved separately for $V$; it does not follow from any
+bound on the declared time of $V$. -/
 theorem mem_NP_of_verifies {V : List Bool × List Bool → TimeM Nat Bool}
     {L : DecisionProblem} {p : Polynomial ℕ} (hver : Verifies V L p)
     (h : MetaMathlibExt.ComplexityTheory.IsPolyTime fun xw => (V xw).ret) :
     L ∈ MetaMathlibExt.ComplexityTheory.NP :=
   ⟨p, fun xw => (V xw).ret, h, hver⟩
 
-/-- Repackaging for the canonical many-one reduction: a declared
-`TimeM` reduction whose computed function is polynomial-time in the
-canonical TM2 sense is a `Cslib.CookLevin.PolyManyOneRed`. As in
-`mem_P_of_decides`, the `IsPolyTime` hypothesis must be proved
-independently for the specific reduction; it does not follow from
-`ComputesInDeclaredPolyTime`. -/
+/-- **From declared-time to polynomial-time many-one reductions.** Let $L_1$ and $L_2$ be decision
+problems and let $f$ be a declared-time many-one reduction from $L_1$ to $L_2$. If the function
+sending $x$ to the output of $f$ on $x$ is polynomial-time computable by a Turing machine for the
+canonical bitstring encodings, then $L_1$ reduces to $L_2$ by a polynomial-time many-one
+reduction.
+
+The polynomial-time hypothesis must be proved separately for $f$; it does not follow from the
+declared-time bound. -/
 theorem cookLevinPolyManyOneRed_of_declared
     {f : List Bool → TimeM Nat (List Bool)} {L₁ L₂ : DecisionProblem}
     (hred : DeclaredPolyManyOneRedVia f L₁ L₂)

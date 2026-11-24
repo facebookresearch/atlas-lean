@@ -1,0 +1,3 @@
+# All box edges have the same wired $q = 2$ density
+
+Let $d \ge 1$, $N \in \mathbb{N}$, $e'$ an edge of $\Lambda_N = \{-N, \dots, N\}^d$, and $t \in \mathbb{R}$. Then the [wired rotation residue](ocs-wired-rotation-residue.md) holds: every edge $e$ of every box $\Lambda_m$ satisfies $\theta^1_e(\sigma(t)) = \theta^1_{e'}(\sigma(t))$, where $\theta^1_e(p)$ is the [wired edge density](wired-edge-density.md) of $e$ at $q = 2$ (the probability that $e$ is open under the wired infinite-volume random-cluster measure on $\mathbb{Z}^d$) and $\sigma(t) = e^t/(1 + e^t)$ is the [logistic function](../convexity-of-the-free-energy-and-edge-densities/fsc-logistic.md).

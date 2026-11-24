@@ -1,0 +1,3 @@
+# Translated free box mass of an edge set
+
+For $d, N, m \in \mathbb{N}$ with $N \le m$, $v \in \mathbb{Z}^d$, a finite set $t$ of unordered pairs of vertices of $\Lambda_N$, and $p \in \mathbb{R}$, the translated free box mass $\phi_{\Lambda_m + v,p,2}[t^{(m)} + v]$ is the [all-open mass](../infinite-volume-random-cluster-measures/multi-edge-events-and-translation-invariance-of/med-multi-mass-prob.md) of $t^{(m)} + v$ under the [random-cluster probability](../random-cluster-measures-on-finite-graphs/fk-prob.md) of the nearest-neighbour graph on the translated box $\Lambda_m + v$ at $(p, 2)$, where $t^{(m)}$ is $t$ viewed in $\Lambda_m = \{-m, \dots, m\}^d$ and $t^{(m)} + v$ its translate.

@@ -35,30 +35,44 @@ irreducible representations `Sₙ →* GL_d(ℂ)` of one dimension `d`, irreduci
 being as in Problem 16.58.
 -/
 
-/-- The complex representation `ρ : G →* GLₙ(ℂ)` is irreducible: `n ≥ 1` and the only subspaces of
-`ℂⁿ` invariant under every `ρ g` are `0` and `ℂⁿ`. -/
+/-- **Irreducible complex matrix representations (Kourovka 16.67).** Let $G$ be a group and $n$ a
+natural number. A homomorphism $\rho \colon G \to \mathrm{GL}_n(\mathbb{C})$ is irreducible when
+$n \ge 1$ and every subspace $W$ of $\mathbb{C}^n$ such that $\rho(g) v \in W$ for all $g \in G$
+and all $v \in W$ is either $0$ or $\mathbb{C}^n$. -/
 def IsIrreducibleRep {G : Type*} [Group G] {n : ℕ}
     (ρ : G →* Matrix.GeneralLinearGroup (Fin n) ℂ) : Prop :=
   0 < n ∧ ∀ W : Submodule ℂ (Fin n → ℂ),
     (∀ g : G, ∀ v ∈ W, (ρ g : Matrix (Fin n) (Fin n) ℂ).mulVec v ∈ W) → W = ⊥ ∨ W = ⊤
 
-/-- The representations `ρ` and `σ` are equivalent: conjugate by an invertible matrix. -/
+/-- **Equivalent complex matrix representations (Kourovka 16.67).** Let $G$ be a group and $n$ a
+natural number. Two homomorphisms $\rho, \sigma \colon G \to \mathrm{GL}_n(\mathbb{C})$ are
+equivalent when there is a single invertible matrix $P \in \mathrm{GL}_n(\mathbb{C})$ with
+$\sigma(g) = P \rho(g) P^{-1}$ for every $g \in G$. -/
 def IsEquivalentRep {G : Type*} [Group G] {n : ℕ}
     (ρ σ : G →* Matrix.GeneralLinearGroup (Fin n) ℂ) : Prop :=
   ∃ P : Matrix.GeneralLinearGroup (Fin n) ℂ, ∀ g : G, σ g = P * ρ g * P⁻¹
 
-/-- Kourovka 16.67 (A. Moretó), conjecture: for every `k` there is `n₀` such that for all
-`n ≥ n₀` the symmetric group `Sₙ` has at least `k` distinct irreducible complex characters of the
-same degree, i.e. `k` pairwise inequivalent irreducible representations of one dimension `d`. -/
+/-- **Moretó's conjecture on equal character degrees of symmetric groups.** For every natural
+number $k$ there is a natural number $n_0$ such that for every $n \ge n_0$ there are a natural
+number $d$ and irreducible representations $\rho_1, \dots, \rho_k$ of the symmetric group $S_n$
+into $\mathrm{GL}_d(\mathbb{C})$ that are pairwise inequivalent: $\rho_i$ and $\rho_j$ are not
+equivalent whenever $i \ne j$.
+
+Since irreducible complex characters correspond to equivalence classes of irreducible complex
+representations and the degree of a character is the dimension, this says that $S_n$ has at least
+$k$ distinct irreducible complex characters of the same degree. -/
 def symmetricGroupManyCharactersOfEqualDegree : Prop :=
   ∀ k : ℕ, ∃ n₀ : ℕ, ∀ n ≥ n₀, ∃ (d : ℕ)
     (ρ : Fin k → (Equiv.Perm (Fin n) →* Matrix.GeneralLinearGroup (Fin d) ℂ)),
     (∀ i, IsIrreducibleRep (ρ i)) ∧ ∀ i j, i ≠ j → ¬ IsEquivalentRep (ρ i) (ρ j)
 
-/--
-Resolved true: Craven (Theorem 1.2) proves that the size of a largest set of irreducible characters
-of `Sₙ` of one degree tends to infinity with `n`, which is the conjecture; it is the case `k = 1` of
-his Theorem 1.1. The Kourovka Archive records 16.67 as proved. Source: E. I. Khukhro and V. D.
+/-- **Symmetric groups have many irreducible characters of equal degree.** Moretó's conjecture
+holds: for every natural number $k$ there is a natural number $n_0$ such that for every
+$n \ge n_0$ there are a natural number $d$ and irreducible representations
+$\rho_1, \dots, \rho_k$ of the symmetric group $S_n$ into $\mathrm{GL}_d(\mathbb{C})$ that are
+pairwise inequivalent.
+
+Source: E. I. Khukhro and V. D.
 Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue,
 arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 16.67 (A. Moretó); resolution: D. A.
 Craven, Symmetric group character degrees and hook numbers, Proc. London Math. Soc. (3) 96 (2008),

@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Data.Fintype.Pi
+public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Data.Fintype.BigOperators
 public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Data.Rat.Defs
@@ -30,22 +32,149 @@ namespace MetaMathlibExt
 
 open scoped BigOperators
 
-/-- Step height change: `0` is down, `1` is flat, `2` is up. -/
-private def mhStep : Fin 3 → ℤ := fun s => (s.val : ℤ) - 1
+/-- **Height change of a Motzkin step.** The three Motzkin steps are encoded as $0 = D$ (down),
+$1 = F$ (flat) and $2 = U$ (up). The height change of the step encoded by $s \in \{0, 1, 2\}$
+is the integer $s - 1$; thus $D$ changes the height by $-1$, $F$ by $0$ and $U$ by $+1$.
 
-/-- Copy of the Wanted `IsMotzkin` predicate with `mhStep`. -/
-private def mhIsMotzkin (n : ℕ) (p : Fin n → Fin 3) : Prop :=
-  (∀ m : ℕ, m ≤ n →
-    0 ≤ ∑ i : Fin n, if i.val < m then mhStep (p i) else 0) ∧
-  ∑ i : Fin n, mhStep (p i) = 0
+Source: Xiaomei Chen, *Humps in Motzkin Paths and Standard Young Tableaux in a (2,1)-Hook*, Journal
+        of Integer Sequences 28 (2025), Article 25.8.1, Section 1 (definitions).
+-/
+public def motzkinStep (s : Fin 3) : ℤ := (s.val : ℤ) - 1
 
-/-- Copy of the Wanted `IsHump` predicate with `mhStep`. -/
-private def mhIsHump (n k : ℕ) (p : Fin n → Fin 3) (i j : Fin n) : Prop :=
-  i.val < j.val ∧
-  mhStep (p i) = 1 ∧
-  mhStep (p j) = -1 ∧
-  (∀ r : Fin n, i.val < r.val → r.val < j.val → mhStep (p r) = 0) ∧
-  (∑ r : Fin n, if r.val ≤ i.val then mhStep (p r) else 0) = (k : ℤ)
+/-- **Motzkin prefix.** Let $p = p_0 p_1 \cdots p_{n-1}$ be a word of length $n$ in the steps $D$,
+$F$, $U$ (encoded as $0$, $1$, $2$), whose vertical displacements are $-1$, $0$ and $+1$, and let
+$h \in \mathbb{Z}$. The word $p$ is a Motzkin prefix ending at height $h$ when, for every natural
+number $m \le n$, the sum of the displacements of $p_0, \dots, p_{m-1}$ is nonnegative, and the
+sum of the displacements of all $n$ steps is $h$.
+
+Source: Xiaomei Chen, *Humps in Motzkin Paths and Standard Young Tableaux in a (2,1)-Hook*, Journal
+        of Integer Sequences 28 (2025), Article 25.8.1, Section 1 (definitions).
+-/
+public def IsMotzkinPrefix (n : ℕ) (h : ℤ) (p : Fin n → Fin 3) : Prop :=
+  (∀ m : ℕ, m ≤ n → 0 ≤ ∑ i : Fin n, if i.val < m then motzkinStep (p i) else 0) ∧
+  ∑ i : Fin n, motzkinStep (p i) = h
+
+/-- **Motzkin hump.** Let $p = p_0 p_1 \cdots p_{n-1}$ be a word of length $n$ in the steps $D$,
+$F$, $U$ (encoded as $0$, $1$, $2$), whose vertical displacements are $-1$, $0$ and $+1$. For
+$k \in \mathbb{N}$ and positions $i, j \in \{0, \dots, n-1\}$, the pair $(i, j)$ is a hump of
+height $k$ in $p$ when $i < j$, $p_i = U$, $p_j = D$, every $p_r$ with $i < r < j$ is $F$, and the
+height after step $i$, that is, the sum of the displacements of $p_0, \dots, p_i$, equals $k$.
+
+Source: Xiaomei Chen, *Humps in Motzkin Paths and Standard Young Tableaux in a (2,1)-Hook*, Journal
+        of Integer Sequences 28 (2025), Article 25.8.1, Section 1 (definitions).
+-/
+public def IsMotzkinHump (n k : ℕ) (p : Fin n → Fin 3) (i j : Fin n) : Prop :=
+  i.val < j.val ∧ motzkinStep (p i) = 1 ∧ motzkinStep (p j) = -1 ∧
+  (∀ r : Fin n, i.val < r.val → r.val < j.val → motzkinStep (p r) = 0) ∧
+  (∑ r : Fin n, if r.val ≤ i.val then motzkinStep (p r) else 0) = (k : ℤ)
+
+/-- **Unfolding the Motzkin prefix condition.** Let $p = p_0 p_1 \cdots p_{n-1}$ be a word of
+length $n$ in the steps $D$, $F$, $U$, whose vertical displacements are $-1$, $0$ and $+1$, and let
+$h \in \mathbb{Z}$. Then $p$ is a Motzkin prefix ending at height $h$ if and only if, for every
+natural number $m \le n$, the sum of the displacements of $p_0, \dots, p_{m-1}$ is nonnegative,
+and the sum of the displacements of all $n$ steps is $h$.
+
+Source: Xiaomei Chen, *Humps in Motzkin Paths and Standard Young Tableaux in a (2,1)-Hook*, Journal
+        of Integer Sequences 28 (2025), Article 25.8.1, Section 1 (definitions).
+-/
+public theorem isMotzkinPrefix_iff (n : ℕ) (h : ℤ) (p : Fin n → Fin 3) :
+    IsMotzkinPrefix n h p ↔
+      (∀ m : ℕ, m ≤ n →
+        0 ≤ ∑ i : Fin n, if i.val < m then motzkinStep (p i) else 0) ∧
+      ∑ i : Fin n, motzkinStep (p i) = h := by
+  rfl
+
+/-- **Bounded Motzkin prefix condition.** Let $p = p_0 p_1 \cdots p_{n-1}$ be a word of length $n$
+in the steps $D$, $F$, $U$ (encoded as $0$, $1$, $2$), whose vertical displacements are $-1$, $0$
+and $+1$, and let $h \in \mathbb{Z}$. The word $p$ satisfies the bounded Motzkin prefix condition
+for $h$ when, for every $m \in \{0, 1, \dots, n\}$, the sum of the displacements of
+$p_0, \dots, p_{m-1}$ is nonnegative, and the sum of the displacements of all $n$ steps is $h$.
+
+Source: Xiaomei Chen, *Humps in Motzkin Paths and Standard Young Tableaux in a (2,1)-Hook*, Journal
+        of Integer Sequences 28 (2025), Article 25.8.1, Section 1 (definitions).
+-/
+public def IsMotzkinPrefixFinite (n : ℕ) (h : ℤ) (p : Fin n → Fin 3) : Prop :=
+  (∀ m : Fin (n + 1),
+    0 ≤ ∑ i : Fin n, if i.val < m.val then motzkinStep (p i) else 0) ∧
+  ∑ i : Fin n, motzkinStep (p i) = h
+
+/-- **Bounded form of the Motzkin prefix condition.** Let $p$ be a word of length $n$ in the steps
+$D$, $F$, $U$ and let $h \in \mathbb{Z}$. Then $p$ satisfies the bounded Motzkin prefix condition
+for $h$, in which the prefix length $m$ ranges over $\{0, 1, \dots, n\}$, if and only if $p$ is
+a Motzkin prefix ending at height $h$, in which $m$ ranges over all natural numbers with
+$m \le n$.
+
+Source: Xiaomei Chen, *Humps in Motzkin Paths and Standard Young Tableaux in a (2,1)-Hook*, Journal
+        of Integer Sequences 28 (2025), Article 25.8.1, Section 1 (definitions).
+-/
+public theorem isMotzkinPrefixFinite_iff (n : ℕ) (h : ℤ) (p : Fin n → Fin 3) :
+    IsMotzkinPrefixFinite n h p ↔ IsMotzkinPrefix n h p := by
+  constructor
+  · intro hp
+    refine ⟨?_, hp.2⟩
+    intro m hm
+    exact hp.1 ⟨m, Nat.lt_succ_iff.mpr hm⟩
+  · intro hp
+    refine ⟨?_, hp.2⟩
+    intro m
+    exact hp.1 m.val (Nat.lt_succ_iff.mp m.isLt)
+
+/-- Motzkin-prefix membership is decidable via the equivalent bounded prefix condition.
+Source: Xiaomei Chen, *Humps in Motzkin Paths and Standard Young Tableaux in a (2,1)-Hook*, Journal
+        of Integer Sequences 28 (2025), Article 25.8.1, Section 1 (definitions).
+-/
+public instance instDecidableIsMotzkinPrefix (n : ℕ) (h : ℤ) (p : Fin n → Fin 3) :
+    Decidable (IsMotzkinPrefix n h p) := by
+  letI : Decidable (IsMotzkinPrefixFinite n h p) := by
+    unfold IsMotzkinPrefixFinite
+    infer_instance
+  exact decidable_of_iff (IsMotzkinPrefixFinite n h p)
+    (isMotzkinPrefixFinite_iff n h p)
+
+/-- **Characterization of Motzkin humps.** Write a path of length $n$ as a sequence of steps
+$p_0, \dots, p_{n-1}$, and let $s(p_r) \in \{-1, 0, 1\}$ be the vertical displacement of the
+step $p_r$ (down, flat or up). For a natural number $k$ and positions $i, j < n$, the pair
+$(i, j)$ is a hump of height $k$ if and only if $i < j$, $s(p_i) = 1$, $s(p_j) = -1$,
+$s(p_r) = 0$ for every $r$ with $i < r < j$, and $\sum_{r \le i} s(p_r) = k$.
+
+Source: Xiaomei Chen, *Humps in Motzkin Paths and Standard Young Tableaux in a (2,1)-Hook*, Journal
+        of Integer Sequences 28 (2025), Article 25.8.1, Section 1 (definitions).
+-/
+public theorem isMotzkinHump_iff (n k : ℕ) (p : Fin n → Fin 3) (i j : Fin n) :
+    IsMotzkinHump n k p i j ↔
+      i.val < j.val ∧ motzkinStep (p i) = 1 ∧ motzkinStep (p j) = -1 ∧
+      (∀ r : Fin n, i.val < r.val → r.val < j.val → motzkinStep (p r) = 0) ∧
+      (∑ r : Fin n, if r.val ≤ i.val then motzkinStep (p r) else 0) = (k : ℤ) := by
+  rfl
+
+/-- Hump membership is decidable because all marked positions and intervening steps
+range over finite types.
+Source: Xiaomei Chen, *Humps in Motzkin Paths and Standard Young Tableaux in a (2,1)-Hook*, Journal
+        of Integer Sequences 28 (2025), Article 25.8.1, Section 1 (definitions).
+-/
+public instance instDecidableIsMotzkinHump (n k : ℕ) (p : Fin n → Fin 3)
+    (i j : Fin n) : Decidable (IsMotzkinHump n k p i j) := by
+  unfold IsMotzkinHump
+  infer_instance
+
+/-- **Number of humps of a given height in Motzkin paths.** A Motzkin path of length $n$ is a
+word of $n$ steps $U = (1,1)$, $F = (1,0)$ and $D = (1,-1)$ that ends at height $0$ and never
+goes below height $0$. A hump of height $k$ in such a path is a pair consisting of an up step
+and a later down step with only flat steps between them, where the up step ends at height $k$.
+For natural numbers $n$ and $k$, $H_{n,k}$ is the number of pairs $(P, h)$ with $P$ a Motzkin
+path of length $n$ and $h$ a hump of height $k$ in $P$, that is, the number of Motzkin paths of
+length $n$ with one distinguished hump of height $k$.
+
+Source: Xiaomei Chen, *Humps in Motzkin Paths and Standard Young Tableaux in a (2,1)-Hook*, Journal
+        of Integer Sequences 28 (2025), Article 25.8.1, Section 1 (definitions).
+-/
+public def motzkinHumpCount (n k : ℕ) : ℕ :=
+  Fintype.card {q : (Fin n → Fin 3) × Fin n × Fin n //
+    IsMotzkinPrefix n 0 q.1 ∧ IsMotzkinHump n k q.1 q.2.1 q.2.2}
+
+private abbrev mhStep := motzkinStep
+private abbrev mhIsMotzkin (n : ℕ) := IsMotzkinPrefix n 0
+private abbrev mhIsHump := IsMotzkinHump
 
 /-- Copy of the Wanted `IsPeak` predicate with `mhStep`. -/
 private def mhIsPeak (n k : ℕ) (p : Fin n → Fin 3) (i j : Fin n) : Prop :=
@@ -739,7 +868,7 @@ private theorem mh_hump_iff {n k : ℕ} {i j : Fin n} (hij : i.val < j.val)
   have ⟨hpi, hpmid, hpj⟩ := hp
   have eMot : mhIsMotzkin n p ↔
       ((∀ m : ℕ, m ≤ n → 0 ≤ mhHeight p m) ∧ mhHeight p n = 0) := by
-    unfold mhIsMotzkin
+    unfold mhIsMotzkin IsMotzkinPrefix
     constructor
     · rintro ⟨h1, h2⟩
       refine ⟨fun m hm => ?_, ?_⟩
@@ -757,7 +886,7 @@ private theorem mh_hump_iff {n k : ℕ} {i j : Fin n} (hij : i.val < j.val)
       (i.val < j.val ∧ p i = 2 ∧ p j = 0 ∧
         (∀ r : Fin n, i.val < r.val → r.val < j.val → p r = 1) ∧
         mhHeight p (i.val + 1) = (k : ℤ)) := by
-    unfold mhIsHump
+    unfold mhIsHump IsMotzkinHump
     constructor
     · rintro ⟨hlt, hs1, hs2, hs3, hs4⟩
       refine ⟨hlt, ?_, ?_, ?_, ?_⟩
@@ -1573,12 +1702,28 @@ private theorem mhDyckCount_odd_eq_wanted_term (n j k : ℕ) (hk : 1 ≤ k) :
     · omega
 
 /--
-The total numbers of humps and peaks at a fixed height in Motzkin paths have the
-stated binomial-sum formulas. Steps are encoded by `Fin 3`, with values `0`, `1`,
-and `2` representing down, flat, and up steps, respectively.
-Source: Xiaomei Chen, "Humps in Motzkin Paths and Standard Young Tableaux in a $(2,1)$-Hook", Journal of Integer Sequences 28 (2025), Article 25.8.1, Theorem `thm:22`, lines 147-156, <https://cs.uwaterloo.ca/journals/JIS/VOL28/Chen/chen36.tex>.
+**Humps and peaks at a given height in Motzkin paths.** Let $n \ge 2$ and $k \ge 1$. A Motzkin
+path of length $n$ is a sequence of $n$ steps, each up ($+1$), flat ($0$) or down ($-1$), whose
+partial sums are all nonnegative and whose total is $0$. A hump at height $k$ of such a path is
+a pair of positions $i < j$ such that step $i$ is up, step $j$ is down, every step strictly
+between them is flat, and the sum of the steps up to and including step $i$ equals $k$; a peak
+at height $k$ is such a hump with $j = i + 1$. Let $H_{n,k}$ be the number of pairs consisting
+of a Motzkin path of length $n$ and a hump at height $k$ of it, and let $P_{n,k}$ be the same
+count for peaks. Then, as rational numbers,
+
+$$H_{n,k} = \sum_{j} \frac{4k}{n - j + 2k} \binom{n}{j} \binom{n - j - 1}{(n - j)/2 + k - 1}$$
+
+and
+
+$$P_{n,k} = \sum_{j} \frac{4k}{n - j + 2k} \binom{n - 1}{j} \binom{n - j - 1}{(n - j)/2 + k - 1},$$
+
+where both sums run over the integers $0 \le j \le n - 2k$ with $j \equiv n \pmod 2$.
 
 Proves `Wanted` entry `motzkin_hump_peak_height_distribution`.
+
+Source: Xiaomei Chen, "Humps in Motzkin Paths and Standard Young Tableaux in a $(2,1)$-Hook",
+Journal of Integer Sequences 28 (2025), Article 25.8.1, Theorem `thm:22`, lines 147-156,
+<https://cs.uwaterloo.ca/journals/JIS/VOL28/Chen/chen36.tex>.
 -/
 public theorem motzkin_hump_peak_height_distribution
     (n k : ℕ) (hn : 2 ≤ n) (hk : 1 ≤ k) :
@@ -1656,5 +1801,41 @@ public theorem motzkin_hump_peak_height_distribution
     split_ifs with hc
     · ring
     · exact mul_zero _
+
+namespace sytHookCount_add_eq_humpCount_sub
+
+/-- The number of length-`n` walks between two given nonnegative heights, using Motzkin steps. -/
+public def walkCount : ℕ → ℕ → ℕ → ℕ
+  | 0, a, b => if a = b then 1 else 0
+  | n + 1, a, 0 => walkCount n a 0 + walkCount n a 1
+  | n + 1, a, b + 1 => walkCount n a b + walkCount n a (b + 1) + walkCount n a (b + 2)
+
+private theorem walkCount_from_zero (n b : ℕ) : walkCount n 0 b = mhCount n b := by
+  induction n generalizing b with
+  | zero => simp [walkCount, mhCount, eq_comm]
+  | succ n ih =>
+    cases b with
+    | zero =>
+      rw [walkCount, ih, ih, mhCount_succ_of_nonneg (by simp)]
+      simp [mhCount_of_neg]
+    | succ b =>
+      rw [walkCount, ih, ih, ih, mhCount_succ_of_nonneg (by positivity)]
+      push_cast
+      ring_nf
+
+/-- Increasing the path length by one contributes one marked hump for each nonnegative
+prefix ending at height `2 * k - 1`. -/
+public theorem humpCount_succ (n k : ℕ) (hn : 2 ≤ n) (hk : 1 ≤ k) :
+    motzkinHumpCount (n + 1) k = motzkinHumpCount n k + walkCount n 0 (2 * k - 1) := by
+  have card_humps (m : ℕ) (hm : 2 ≤ m) :
+      motzkinHumpCount m k = ∑ l ∈ Finset.range m, mhCount l (2 * (k : ℤ) - 1) := by
+    unfold motzkinHumpCount
+    rw [Fintype.card_eq_nat_card]
+    exact (mh_card_humps_eq_sum m k).trans (mh_hump_sum_eq hm hk)
+  rw [card_humps _ (by omega), card_humps _ hn, Finset.sum_range_succ, walkCount_from_zero]
+  congr 2
+  omega
+
+end sytHookCount_add_eq_humpCount_sub
 
 end MetaMathlibExt

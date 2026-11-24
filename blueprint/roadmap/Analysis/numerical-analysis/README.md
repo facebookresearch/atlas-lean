@@ -10,12 +10,16 @@ Algorithms with error analysis: bisection and Newton's method, Euler and Rungeâ€
 - [Euler method](euler-method/README.md)
 - [Finite element method in one dimension](finite-element-method-in-one-dimension/README.md)
 - [Line search methods](line-search-methods/README.md)
+- [Method of manufactured solutions](method-of-manufactured-solutions/README.md)
 - [Newton's method](newton-s-method/README.md)
 - [Nonlinear conjugate gradient methods](nonlinear-conjugate-gradient-methods/README.md)
 - [Quasi-Newton methods](quasi-newton-methods/README.md)
 - [Rungeâ€“Kutta methods](runge-kutta-methods/README.md)
 - [Strang's lemma](strang-s-lemma/README.md)
 - [Trust-region methods](trust-region-methods/README.md)
+- [Upwind scheme](upwind-scheme/README.md)
+- [Finite-volume schemes for transport](finite-volume-schemes-for-transport/README.md)
+- [Operator splitting](operator-splitting/README.md)
 
 ## Related topics
 
@@ -23,4 +27,4 @@ Algorithms with error analysis: bisection and Newton's method, Euler and Rungeâ€
 - [Chebyshev series and interpolation](../approximation-theory/chebyshev-series-and-interpolation/README.md)
 - [Minimax property of the Chebyshev polynomials](../approximation-theory/minimax-property-of-the-chebyshev-polynomials/README.md)
 - [Perturbation theory for linear systems](../../LinearAlgebra/matrix-decompositions/perturbation-theory-for-linear-systems/README.md)
-- Rounding error analysis
+- [Rounding error analysis](../../ComputerScience/algebraic-and-numerical-algorithms/rounding-error-analysis/README.md)

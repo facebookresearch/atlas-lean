@@ -12,7 +12,7 @@ The proof follows the paper: an eigenvector $f$ for $\mu \ne 1$ has $\pi$-mean z
 
 - [Detailed balance](../finite-continuous-time-markov-chains/stationarity-and-detailed-balance-for-finite-con/is-detailed-balance.md): the hypothesis $\pi(x) P(x,y) = \pi(y) P(y,x)$ used here, shared with the continuous-time chains and substitution models.
 - [Detailed balance](../kolmogorov-s-criterion-for-reversibility/detailed-balance.md): the same equations for the stochastic matrices on $\{0, \dots, M\}$ of Kolmogorov's criterion.
-- Graph Laplacians and Cheeger's inequality: the Dirichlet form $\tfrac12\sum_{x,y} \pi(x)P(x,y)(f(x)-f(y))^2$ is the Laplacian quadratic form of the graph with edge weights $\pi(x)P(x,y)$.
+- [Graph Laplacians and Cheeger's inequality](../../../GraphTheory/algebraic-graph-theory/part-01/graph-laplacians-and-cheeger-s-inequality/README.md): the Dirichlet form $\tfrac12\sum_{x,y} \pi(x)P(x,y)(f(x)-f(y))^2$ is the Laplacian quadratic form of the graph with edge weights $\pi(x)P(x,y)$.
 
 ## Sources
 

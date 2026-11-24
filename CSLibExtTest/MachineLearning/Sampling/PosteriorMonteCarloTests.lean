@@ -41,6 +41,13 @@ example {Ω α : Type*} [MeasurableSpace Ω] [MeasurableSpace α] {μ : Measure 
     variance (mcEstimate f X 1) μ = variance f ν := by
   rw [variance_mcEstimate hf hf2 hX hlaw hind one_ne_zero, Nat.cast_one, div_one]
 
+/-- One draw, with no `Measurable f` hypothesis: only `f ∈ L²(ν)` is assumed. -/
+example {Ω α : Type*} [MeasurableSpace Ω] [MeasurableSpace α] {μ : Measure Ω} {ν : Measure α}
+    {f : α → ℝ} (hf2 : MemLp f 2 ν) {X : ℕ → Ω → α}
+    (hX : ∀ i, Measurable (X i)) (hlaw : ∀ i, μ.map (X i) = ν) (hind : iIndepFun X μ) :
+    variance (mcEstimate f X 1) μ = variance f ν := by
+  rw [variance_mcEstimate_of_memLp hf2 hX hlaw hind one_ne_zero, Nat.cast_one, div_one]
+
 /-- Positive evidence is attainable: the constant-likelihood model with the fair-coin prior. -/
 example : (Kernel.const Bool (Measure.dirac true) ∘ₘ coin) {true} ≠ 0 := by
   rw [Measure.const_comp, measure_univ, one_smul]
@@ -92,6 +99,7 @@ example : ¬ MemLp (fun x : ℝ => x ^ (-(1 / 2 : ℝ))) 2 (volume.restrict (Set
 end CSLibExtTest.MachineLearning.Sampling.PosteriorMonteCarlo
 
 #print axioms Cslib.MachineLearning.Sampling.variance_mcEstimate
+#print axioms Cslib.MachineLearning.Sampling.variance_mcEstimate_of_memLp
 #print axioms Cslib.MachineLearning.Sampling.mcEstimate_bayesPosterior_mean_variance
 
 namespace CSLibExtTest.MachineLearning.Sampling.PosteriorMonteCarloBetaBinomial

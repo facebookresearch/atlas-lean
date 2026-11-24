@@ -18,7 +18,7 @@ The update is the [entropic prox step](entropy-prox-multiplicative.md), so the [
 
 ## Background
 
-- Regret of Hedge for losses in the unit interval: the same update, analysed through the potential $\log \sum_i w_i$.
+- [Regret of Hedge for losses in the unit interval](../../../ComputerScience/machine-learning/online-learning-and-boosting/hedge-algorithm/regret-le.md): the same update, analysed through the potential $\log \sum_i w_i$.
 
 ## Sources
 

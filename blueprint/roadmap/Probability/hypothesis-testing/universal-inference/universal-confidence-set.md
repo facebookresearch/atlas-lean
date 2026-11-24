@@ -14,6 +14,10 @@ for them it matters only on samples of probability zero under the true parameter
 which other parameters belong to the set. When $\mathcal L_0(\hat\theta_1) = 0$, every $\theta$ with
 $\mathcal L_0(\theta) = 0$ is in the set, and this can happen with positive probability.
 
+## Related topics
+
+- [Universal confidence set with real densities](universal-confidence-set-2.md): the form with real-valued densities and the level as a multiplier.
+
 ## Sources
 
 - L. Wasserman, A. Ramdas and S. Balakrishnan, *Universal inference*, arXiv:1912.11436v4 (21 October 2022); published in Proc. Natl. Acad. Sci. USA 117 (2020) 16880–16890. Theorem, remark and equation numbers refer to the arXiv version, which is the one read. Equations (3) and (4).

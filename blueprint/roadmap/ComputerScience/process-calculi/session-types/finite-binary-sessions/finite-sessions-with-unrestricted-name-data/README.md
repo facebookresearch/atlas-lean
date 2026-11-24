@@ -1,0 +1,16 @@
+# Finite sessions with unrestricted name data
+
+- [Finite binary session types](session-type.md)
+- [Dual of a session type](dual.md)
+- [Session type duality is an involution](dual-dual.md)
+- [Length of a session type](length.md)
+- [Dual session types have equal length](length-dual.md)
+- [Per-channel session context of a thread](context.md)
+- [Advancing one endpoint of a session context](advance.md)
+- [Pointwise dual of a session context](dual-context.md)
+- [Dualizing a context commutes with advancing an endpoint](dual-context-advance.md)
+- [Linear session typing of sequential threads](has-type.md)
+- [Payload substitution at any cutoff preserves session typing](subst-proc.md)
+- [Receiving a closed name preserves session typing](subst.md)
+- [Session typing derivations have finite support](finite-support.md)
+- [Session-typed threads are well scoped](closed-at.md)

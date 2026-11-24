@@ -12,12 +12,22 @@ public import Mathlib.Analysis.Complex.CauchyIntegral
 public import Mathlib.Analysis.Complex.SqrtDeriv
 public import Mathlib.Analysis.SpecialFunctions.Complex.Circle
 public import Mathlib.MeasureTheory.Integral.CircleIntegral
+import Mathlib.Analysis.Complex.CauchyIntegral
+import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
+import Mathlib.MeasureTheory.Integral.CircleIntegral
+import Mathlib.Analysis.Calculus.Deriv.Add
+import Mathlib.Analysis.Calculus.Deriv.Comp
+import Mathlib.Analysis.Calculus.Deriv.Mul
+import Mathlib.Analysis.SpecialFunctions.Log.Deriv
+import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Ring
 
 /-!
-# Ideal airfoil models: Joukowski branch and Blasius force
+# Ideal airfoil models: Joukowski branch, Blasius force, and signed lift
 
 ## i. Overview
 
@@ -49,11 +59,25 @@ far-field expansion are hypotheses, not derived from flow equations.
   with `K = 12|U| a^2 + a|Γ|`.
 - `FluidDynamics.IdealAirfoilModels.BlasiusForce.blasiusForce_eq`:
   the Blasius force from a far-field expansion.
+- `FluidDynamics.IdealAirfoilModels.KuttaJoukowski.signedLift_liftCoefficient_kutta`:
+  at the Kutta circulation, signed lift `-ρUΓ`, lift coefficient
+  `2π sin α` at chord `4a`, and the small-angle bound
+  `π |α|^3 / 3`.
+- `FluidDynamics.IdealAirfoilModels.CylinderPressure.blasiusForce_eq_surfaceForce`:
+  the Blasius contour force on the cylinder equals the surface-pressure force
+  `(surfaceForceX, surfaceForceY) = (0, -ρUΓ)` under the Bernoulli pressure law.
+- `FluidDynamics.IdealAirfoilModels.CylinderFlow.cylStream_deriv_y` and
+  `cylStream_deriv_x`: the single-valued stream function
+  `ψ = U(y - a²y/r²) - (Γ / 2π) log (r / a)` generates the cylinder
+  velocity, `u = ψ_y`, `v = -ψ_x`.
 
 ## iii. Table of contents
 
 - A. The Joukowski far-field branch
 - B. Blasius force from a far-field expansion
+- C. Signed lift and lift coefficient
+- D. Cylinder velocity and single-valued stream function
+- E. Cylinder pressure and the contour force
 
 ## iv. References
 
@@ -976,5 +1000,624 @@ theorem blasiusForce_eq {ρ U Γ α R0 R1 K : ℝ} (hρ : 0 < ρ)
   field_simp
 
 end BlasiusForce
+
+/-! ## C. Signed lift and lift coefficient -/
+
+namespace KuttaJoukowski
+
+/-- Signed lift per unit span extracted from a complex force
+`C = Fx - I * Fy` at incidence `α`.
+
+The free-stream direction is `(cos α, sin α)`, and positive lift is
+the component in the counterclockwise normal direction
+`(-sin α, cos α)`. In coordinates this component is
+`-(sin α * C.re + cos α * C.im)`, equivalently
+`-(exp (α * I) * C).im`. At `α = 0` it is `Fy`. -/
+noncomputable def signedLift (C : ℂ) (α : ℝ) : ℝ :=
+  -(Complex.exp (α * Complex.I) * C).im
+
+/-- Lift coefficient for a two-dimensional force per unit span:
+`L / (ρ * U^2 * c / 2)`, where `L` is signed lift and `c` is chord.
+As usual in Lean, division by zero is totalized; the coefficient
+formulas below assume the factors being cancelled are nonzero. -/
+noncomputable def liftCoefficient (L ρ U c : ℝ) : ℝ :=
+  L / (ρ * U ^ 2 * c / 2)
+
+/-- Bridge from the far-field package to the force value used below:
+for the physical velocity at any circulation `Γ` and any contour
+radius `R > 2 * a`, the Blasius force is `I * ρ * U * Γ * exp (-α * I)`.
+This combines `JoukowskiBranch.exists_physicalVelocity_farField` with
+`BlasiusForce.blasiusForce_eq`, taking the decomposition remainder to
+be the difference from the two-term far-field expansion. -/
+lemma blasiusForce_physicalVelocity {a ρ U Γ α R : ℝ} (ha : 0 < a)
+    (hρ : 0 < ρ) (hU : 0 < U) (hR : 2 * a < R) :
+    BlasiusForce.blasiusForce ρ (JoukowskiBranch.physicalVelocity a U Γ α) R =
+      Complex.I * ρ * U * Γ * Complex.exp (-α * Complex.I) := by
+  obtain ⟨hW, R1, K, hR1, hK, hbound⟩ :=
+    JoukowskiBranch.exists_physicalVelocity_farField ha U Γ α
+  refine BlasiusForce.blasiusForce_eq (R0 := 2 * a) (R1 := R1) (K := K)
+    (W := JoukowskiBranch.physicalVelocity a U Γ α)
+    (e := fun z : ℂ => JoukowskiBranch.physicalVelocity a U Γ α z -
+      (U : ℂ) * Complex.exp (-α * Complex.I) -
+      (Γ : ℂ) / (2 * Real.pi * Complex.I * z))
+    hρ hU (by linarith) hR1 hW ?_ ?_ ?_ hR
+  · intro z hz
+    show JoukowskiBranch.physicalVelocity a U Γ α z =
+      (U : ℂ) * Complex.exp (-α * Complex.I) +
+        ((Γ : ℂ) / (2 * Real.pi * Complex.I)) / z +
+        (JoukowskiBranch.physicalVelocity a U Γ α z -
+          (U : ℂ) * Complex.exp (-α * Complex.I) -
+          (Γ : ℂ) / (2 * Real.pi * Complex.I * z))
+    rw [div_div]
+    abel
+  · intro z hz
+    have hz0 : (z : ℂ) ≠ 0 := by
+      intro h
+      rw [h] at hz
+      simp only [norm_zero] at hz
+      linarith
+    have hzext : z ∈ {z : ℂ | 2 * a < ‖z‖} := lt_of_lt_of_le hR1 hz
+    have hWz : DifferentiableAt ℂ (JoukowskiBranch.physicalVelocity a U Γ α) z :=
+      hW.differentiableAt ((isOpen_lt continuous_const continuous_norm).mem_nhds hzext)
+    have hc : (2 * Real.pi * Complex.I : ℂ) ≠ 0 :=
+      mul_ne_zero (mul_ne_zero (by norm_num)
+        (Complex.ofReal_ne_zero.mpr Real.pi_ne_zero)) Complex.I_ne_zero
+    have hterm : DifferentiableAt ℂ
+        (fun z : ℂ => (Γ : ℂ) / (2 * Real.pi * Complex.I * z)) z :=
+      (differentiableAt_const _).div
+        ((differentiableAt_const _).mul differentiableAt_id) (mul_ne_zero hc hz0)
+    exact (hWz.sub_const _).sub hterm
+  · intro z hz
+    exact hbound z hz
+
+/-- Signed lift from the Blasius force value. If the contour force
+for `physicalVelocity a U Γ α` is `I * ρ * U * Γ * exp (-α * I)`,
+then rotating that complex force by `exp (α * I)` gives
+`I * ρ * U * Γ`; hence the component perpendicular to the free
+stream, with the sign convention in `signedLift`, is `-ρ * U * Γ`.
+No positivity or nonvanishing hypothesis is needed for this
+algebraic step. -/
+lemma signedLift_of_blasiusForce_eq {a ρ U Γ α R : ℝ}
+    (hF : BlasiusForce.blasiusForce ρ
+        (JoukowskiBranch.physicalVelocity a U Γ α) R =
+      Complex.I * ρ * U * Γ * Complex.exp (-α * Complex.I)) :
+    signedLift (BlasiusForce.blasiusForce ρ
+        (JoukowskiBranch.physicalVelocity a U Γ α) R) α =
+      -ρ * U * Γ := by
+  have hexp : Complex.exp ((α : ℂ) * Complex.I) *
+      Complex.exp ((-(α : ℂ)) * Complex.I) = 1 := by
+    rw [← Complex.exp_add]
+    have h0 : (α : ℂ) * Complex.I + (-(α : ℂ)) * Complex.I = 0 := by ring
+    rw [h0, Complex.exp_zero]
+  unfold signedLift
+  rw [hF]
+  have hmul : Complex.exp ((α : ℂ) * Complex.I) *
+      (Complex.I * (ρ : ℂ) * (U : ℂ) * (Γ : ℂ) *
+        Complex.exp ((-(α : ℂ)) * Complex.I)) =
+      Complex.I * ((ρ * U * Γ : ℝ) : ℂ) := by
+    have hring : Complex.exp ((α : ℂ) * Complex.I) *
+        (Complex.I * (ρ : ℂ) * (U : ℂ) * (Γ : ℂ) *
+          Complex.exp ((-(α : ℂ)) * Complex.I)) =
+        (Complex.I * (ρ : ℂ) * (U : ℂ) * (Γ : ℂ)) *
+        (Complex.exp ((α : ℂ) * Complex.I) *
+          Complex.exp ((-(α : ℂ)) * Complex.I)) := by ring
+    rw [hring, hexp, mul_one]
+    push_cast
+    ring
+  rw [hmul, Complex.mul_im, Complex.I_re, Complex.I_im, Complex.ofReal_re]
+  ring
+
+/-- Lift coefficient for the Kutta circulation
+`Γ = -4 * π * a * U * sin α`, signed lift `-ρ * U * Γ`, and chord
+`c = 4 * a`: the coefficient is `2 * π * sin α`. The nonzero
+hypotheses are the factors cancelled in
+`(-ρ * U * Γ) / (ρ * U^2 * (4 * a) / 2)`. -/
+lemma liftCoefficient_kutta {a ρ U α : ℝ}
+    (ha : a ≠ 0) (hρ : ρ ≠ 0) (hU : U ≠ 0) :
+    liftCoefficient (-ρ * U * (-4 * Real.pi * a * U * Real.sin α))
+        ρ U (4 * a) =
+      2 * Real.pi * Real.sin α := by
+  unfold liftCoefficient
+  have hden : ρ * U ^ 2 * (4 * a) / 2 ≠ 0 := by
+    have hU2 : U ^ 2 ≠ 0 := pow_ne_zero 2 hU
+    have h4a : (4 : ℝ) * a ≠ 0 := mul_ne_zero (by norm_num) ha
+    exact div_ne_zero (mul_ne_zero (mul_ne_zero hρ hU2) h4a) (by norm_num)
+  field_simp
+
+/-- Small-angle approximation for `2 * π * sin α`, for every real
+`α`: `|2 * π * sin α - 2 * π * α| ≤ π * |α|^3 / 3`. -/
+lemma abs_two_pi_sin_sub_two_pi_le {α : ℝ} :
+    |2 * Real.pi * Real.sin α - 2 * Real.pi * α| ≤
+      Real.pi * |α| ^ 3 / 3 := by
+  have h := Real.abs_sub_sin_le α
+  have h2pi : (0 : ℝ) ≤ 2 * Real.pi := by positivity
+  calc |2 * Real.pi * Real.sin α - 2 * Real.pi * α|
+      = (2 * Real.pi) * |α - Real.sin α| := by
+        have hfactor : 2 * Real.pi * Real.sin α - 2 * Real.pi * α =
+            -((2 * Real.pi) * (α - Real.sin α)) := by ring
+        rw [hfactor, abs_neg, abs_mul, abs_of_nonneg h2pi]
+    _ ≤ (2 * Real.pi) * (|α| ^ 3 / 6) :=
+        mul_le_mul_of_nonneg_left h h2pi
+    _ = Real.pi * |α| ^ 3 / 3 := by ring
+
+/-- Kutta-selected signed lift, lift coefficient, and small-angle
+bound for the physical velocity, at any contour radius `R > 2 * a`.
+
+The Blasius force value at radius `R` comes from the far-field
+package through `blasiusForce_physicalVelocity`. With chord
+`c = 4 * a`, the signed lift is `-ρ * U * Γ` at the Kutta
+circulation `Γ = -4 * π * a * U * sin α`, the lift coefficient is
+`2 * π * sin α`, and it differs from `2 * π * α` by at most
+`π * |α|^3 / 3`. -/
+lemma signedLift_liftCoefficient_kutta {a ρ U α R : ℝ}
+    (ha : 0 < a) (hρ : 0 < ρ) (hU : 0 < U) (hR : 2 * a < R) :
+    signedLift (BlasiusForce.blasiusForce ρ
+        (JoukowskiBranch.physicalVelocity a U
+          (-4 * Real.pi * a * U * Real.sin α) α) R) α =
+        -ρ * U * (-4 * Real.pi * a * U * Real.sin α) ∧
+      liftCoefficient (signedLift (BlasiusForce.blasiusForce ρ
+        (JoukowskiBranch.physicalVelocity a U
+          (-4 * Real.pi * a * U * Real.sin α) α) R) α)
+          ρ U (4 * a) =
+        2 * Real.pi * Real.sin α ∧
+      |liftCoefficient (signedLift (BlasiusForce.blasiusForce ρ
+        (JoukowskiBranch.physicalVelocity a U
+          (-4 * Real.pi * a * U * Real.sin α) α) R) α)
+          ρ U (4 * a) -
+        2 * Real.pi * α| ≤ Real.pi * |α| ^ 3 / 3 := by
+  have hF : BlasiusForce.blasiusForce ρ
+      (JoukowskiBranch.physicalVelocity a U
+        (-4 * Real.pi * a * U * Real.sin α) α) R =
+    Complex.I * ρ * U *
+      ((-4 * Real.pi * a * U * Real.sin α : ℝ) : ℂ) *
+      Complex.exp (-α * Complex.I) :=
+    blasiusForce_physicalVelocity ha hρ hU hR
+  have hL := signedLift_of_blasiusForce_eq hF
+  have hC : liftCoefficient (-ρ * U * (-4 * Real.pi * a * U * Real.sin α))
+      ρ U (4 * a) = 2 * Real.pi * Real.sin α :=
+    liftCoefficient_kutta (ne_of_gt ha) (ne_of_gt hρ) (ne_of_gt hU)
+  refine ⟨hL, ?_, ?_⟩
+  · rw [hL]
+    exact hC
+  · rw [hL, hC]
+    exact abs_two_pi_sin_sub_two_pi_le
+
+end KuttaJoukowski
+
+/-! ## D. Cylinder velocity and single-valued stream function -/
+
+namespace CylinderFlow
+
+/-- Horizontal velocity of the ideal cylinder flow with circulation:
+for freestream `U`, radius `a`, circulation `Γ`, at `(x, y)` with
+`r² = x² + y²`,
+`u = U * (1 - a²(x² - y²)/r⁴) - Γy/(2πr²)`. This is the real part
+of `W(z) = U(1 - a²/z²) + Γ/(2πiz)` read as `u - iv`. -/
+noncomputable def cylU (U a Γ x y : ℝ) : ℝ :=
+  U * (1 - a ^ 2 * (x ^ 2 - y ^ 2) / (x ^ 2 + y ^ 2) ^ 2) -
+    Γ * y / (2 * Real.pi * (x ^ 2 + y ^ 2))
+
+/-- Vertical velocity: `v = -2Ua²xy/r⁴ + Γx/(2πr²)`, the negative
+imaginary part of `W` under the `u - iv` convention. -/
+noncomputable def cylV (U a Γ x y : ℝ) : ℝ :=
+  -2 * U * a ^ 2 * x * y / (x ^ 2 + y ^ 2) ^ 2 +
+    Γ * x / (2 * Real.pi * (x ^ 2 + y ^ 2))
+
+/-- Stream function
+`ψ(x, y) = U(y - a²y/r²) - (Γ/2π) log(r/a)`, a single-valued real
+function on `r > 0` (no logarithmic potential or branch choice):
+`u = ψ_y`, `v = -ψ_x`. -/
+noncomputable def cylStream (U a Γ x y : ℝ) : ℝ :=
+  U * (y - a ^ 2 * y / (x ^ 2 + y ^ 2)) -
+    Γ / (2 * Real.pi) * Real.log (Real.sqrt (x ^ 2 + y ^ 2) / a)
+
+/-! ### Derivative rules used below
+
+The derivative computations use Mathlib's `HasDerivAt` rules in the
+argument order of the proofs; the private names keep the nested
+applications readable. -/
+
+/-- Sum rule (Mathlib's `HasDerivAt.add`). -/
+private lemma hd_add {f g : ℝ → ℝ} {f' g' x : ℝ} (hf : HasDerivAt f f' x)
+    (hg : HasDerivAt g g' x) : HasDerivAt (fun s => f s + g s) (f' + g') x :=
+  hf.add hg
+
+/-- Difference rule (Mathlib's `HasDerivAt.sub`). -/
+private lemma hd_sub {f g : ℝ → ℝ} {f' g' x : ℝ} (hf : HasDerivAt f f' x)
+    (hg : HasDerivAt g g' x) : HasDerivAt (fun s => f s - g s) (f' - g') x :=
+  hf.sub hg
+
+/-- Product rule (Mathlib's `HasDerivAt.mul`). -/
+private lemma hd_mul {f g : ℝ → ℝ} {f' g' x : ℝ} (hf : HasDerivAt f f' x)
+    (hg : HasDerivAt g g' x) : HasDerivAt (fun s => f s * g s) (f' * g x + f x * g') x :=
+  hf.mul hg
+
+/-- Quotient rule (Mathlib's `HasDerivAt.div`, with `g x * g x`). -/
+private lemma hd_div {f g : ℝ → ℝ} {f' g' x : ℝ} (hf : HasDerivAt f f' x)
+    (hg : HasDerivAt g g' x) (hx : g x ≠ 0) :
+    HasDerivAt (fun s => f s / g s) ((f' * g x - f x * g') / (g x * g x)) x := by
+  convert hf.div hg hx using 2
+  rw [pow_two]
+
+/-- Square rule, from the product rule. -/
+private lemma hd_sq {f : ℝ → ℝ} {f' x : ℝ} (hf : HasDerivAt f f' x) :
+    HasDerivAt (fun s => f s ^ 2) (f' * f x + f x * f') x := by
+  convert hf.pow 2 using 1
+  ring
+
+/-- Chain rule (Mathlib's `HasDerivAt.comp`). -/
+private lemma hd_comp {f g : ℝ → ℝ} {f' g' x : ℝ} (hf : HasDerivAt f f' (g x))
+    (hg : HasDerivAt g g' x) : HasDerivAt (fun s => f (g s)) (f' * g') x :=
+  hf.comp x hg
+
+/-- The derivative of `Real.log` at `y > 0` is `y⁻¹`
+(Mathlib's `Real.hasDerivAt_log`). -/
+private lemma hd_log {y : ℝ} (hy : 0 < y) : HasDerivAt Real.log y⁻¹ y :=
+  Real.hasDerivAt_log hy.ne'
+
+/-- No penetration on the cylinder: on `x² + y² = a²` with
+`a ≠ 0`, the radial velocity vanishes, `x * u + y * v = 0`
+(the circulation terms cancel and the freestream part is
+`U * x * (1 - a²/r²)`). -/
+lemma cyl_normal_zero {U a Γ x y : ℝ} (ha : a ≠ 0)
+    (h : x ^ 2 + y ^ 2 = a ^ 2) :
+    x * cylU U a Γ x y + y * cylV U a Γ x y = 0 := by
+  have ha2 : a ^ 2 ≠ 0 := pow_ne_zero 2 ha
+  have hr : x ^ 2 + y ^ 2 ≠ 0 := by rw [h]; exact ha2
+  have hpi : Real.pi ≠ 0 := Real.pi_ne_zero
+  have key : x * cylU U a Γ x y + y * cylV U a Γ x y =
+      U * x * (1 - a ^ 2 / (x ^ 2 + y ^ 2)) := by
+    unfold cylU cylV
+    field_simp
+    ring
+  rw [key, h, div_self ha2, sub_self, mul_zero]
+
+/-- The velocity is divergence-free away from the origin:
+`u_x + v_y = 0` whenever `x² + y² ≠ 0`. -/
+lemma cyl_divergence_free {U a Γ x y : ℝ} (h : x ^ 2 + y ^ 2 ≠ 0) :
+    deriv (fun s : ℝ => cylU U a Γ s y) x +
+      deriv (fun s : ℝ => cylV U a Γ x s) y = 0 := by
+  have hpi : Real.pi ≠ 0 := Real.pi_ne_zero
+  have hR2 : (x ^ 2 + y ^ 2) ^ 2 ≠ 0 := pow_ne_zero 2 h
+  have hpiR : 2 * Real.pi * (x ^ 2 + y ^ 2) ≠ 0 :=
+    mul_ne_zero (mul_ne_zero two_ne_zero hpi) h
+  have hBx : HasDerivAt (fun s : ℝ => s ^ 2 + y ^ 2) _ x :=
+    hd_add (hd_sq (hasDerivAt_id' x)) (hasDerivAt_const x (y ^ 2))
+  have hBy : HasDerivAt (fun s : ℝ => x ^ 2 + s ^ 2) _ y :=
+    hd_add (hasDerivAt_const y (x ^ 2)) (hd_sq (hasDerivAt_id' y))
+  have hux : HasDerivAt (fun s : ℝ => cylU U a Γ s y) _ x :=
+    hd_sub (hd_mul (hasDerivAt_const x U) (hd_sub (hasDerivAt_const x 1)
+        (hd_div (hd_mul (hasDerivAt_const x (a ^ 2))
+          (hd_sub (hd_sq (hasDerivAt_id' x)) (hasDerivAt_const x (y ^ 2)))) (hd_sq hBx) hR2)))
+      (hd_div (hasDerivAt_const x (Γ * y)) (hd_mul (hasDerivAt_const x (2 * Real.pi)) hBx) hpiR)
+  have hvy : HasDerivAt (fun s : ℝ => cylV U a Γ x s) _ y :=
+    hd_add (hd_div (hd_mul (hasDerivAt_const y (-2 * U * a ^ 2 * x)) (hasDerivAt_id' y))
+        (hd_sq hBy) hR2)
+      (hd_div (hasDerivAt_const y (Γ * x)) (hd_mul (hasDerivAt_const y (2 * Real.pi)) hBy) hpiR)
+  rw [hux.deriv, hvy.deriv]
+  field_simp
+  ring
+
+/-- The velocity is curl-free away from the origin:
+`v_x - u_y = 0` whenever `x² + y² ≠ 0`. -/
+lemma cyl_curl_free {U a Γ x y : ℝ} (h : x ^ 2 + y ^ 2 ≠ 0) :
+    deriv (fun s : ℝ => cylV U a Γ s y) x -
+      deriv (fun s : ℝ => cylU U a Γ x s) y = 0 := by
+  have hpi : Real.pi ≠ 0 := Real.pi_ne_zero
+  have hR2 : (x ^ 2 + y ^ 2) ^ 2 ≠ 0 := pow_ne_zero 2 h
+  have hpiR : 2 * Real.pi * (x ^ 2 + y ^ 2) ≠ 0 :=
+    mul_ne_zero (mul_ne_zero two_ne_zero hpi) h
+  have hBx : HasDerivAt (fun s : ℝ => s ^ 2 + y ^ 2) _ x :=
+    hd_add (hd_sq (hasDerivAt_id' x)) (hasDerivAt_const x (y ^ 2))
+  have hBy : HasDerivAt (fun s : ℝ => x ^ 2 + s ^ 2) _ y :=
+    hd_add (hasDerivAt_const y (x ^ 2)) (hd_sq (hasDerivAt_id' y))
+  have hvx : HasDerivAt (fun s : ℝ => cylV U a Γ s y) _ x :=
+    hd_add (hd_div (hd_mul (hd_mul (hasDerivAt_const x (-2 * U * a ^ 2)) (hasDerivAt_id' x))
+          (hasDerivAt_const x y)) (hd_sq hBx) hR2)
+      (hd_div (hd_mul (hasDerivAt_const x Γ) (hasDerivAt_id' x))
+        (hd_mul (hasDerivAt_const x (2 * Real.pi)) hBx) hpiR)
+  have huy : HasDerivAt (fun s : ℝ => cylU U a Γ x s) _ y :=
+    hd_sub (hd_mul (hasDerivAt_const y U) (hd_sub (hasDerivAt_const y 1)
+        (hd_div (hd_mul (hasDerivAt_const y (a ^ 2))
+          (hd_sub (hasDerivAt_const y (x ^ 2)) (hd_sq (hasDerivAt_id' y)))) (hd_sq hBy) hR2)))
+      (hd_div (hd_mul (hasDerivAt_const y Γ) (hasDerivAt_id' y))
+        (hd_mul (hasDerivAt_const y (2 * Real.pi)) hBy) hpiR)
+  rw [hvx.deriv, huy.deriv]
+  field_simp
+  ring
+
+/-- The stream function generates the horizontal velocity:
+`∂ψ/∂y = u` for `0 < a` and `x² + y² ≠ 0`. -/
+lemma cylStream_deriv_y {U a Γ x y : ℝ} (ha : 0 < a)
+    (h : x ^ 2 + y ^ 2 ≠ 0) :
+    deriv (fun s : ℝ => cylStream U a Γ x s) y = cylU U a Γ x y := by
+  have hpi : Real.pi ≠ 0 := Real.pi_ne_zero
+  have hRpos : 0 < x ^ 2 + y ^ 2 := lt_of_le_of_ne (by positivity) (Ne.symm h)
+  have hR : HasDerivAt (fun s : ℝ => x ^ 2 + s ^ 2) _ y :=
+    hd_add (hasDerivAt_const y (x ^ 2)) (hd_sq (hasDerivAt_id' y))
+  have hψ : HasDerivAt (fun s : ℝ => U * (s - a ^ 2 * s / (x ^ 2 + s ^ 2)) -
+      Γ / (2 * Real.pi) * (Real.log (x ^ 2 + s ^ 2) / 2 - Real.log a)) _ y :=
+    hd_sub (hd_mul (hasDerivAt_const y U) (hd_sub (hasDerivAt_id' y)
+        (hd_div (hd_mul (hasDerivAt_const y (a ^ 2)) (hasDerivAt_id' y)) hR h)))
+      (hd_mul (hasDerivAt_const y (Γ / (2 * Real.pi)))
+        (hd_sub (hd_div (hd_comp (hd_log hRpos) hR) (hasDerivAt_const y 2) two_ne_zero)
+          (hasDerivAt_const y (Real.log a))))
+  have heq : (fun s : ℝ => cylStream U a Γ x s) =ᶠ[nhds y] fun s : ℝ =>
+      U * (s - a ^ 2 * s / (x ^ 2 + s ^ 2)) -
+        Γ / (2 * Real.pi) * (Real.log (x ^ 2 + s ^ 2) / 2 - Real.log a) := by
+    filter_upwards [hR.continuousAt.eventually_ne h] with s hs
+    have hspos : 0 < x ^ 2 + s ^ 2 := lt_of_le_of_ne (by positivity) (Ne.symm hs)
+    unfold cylStream
+    rw [Real.log_div (Real.sqrt_pos.mpr hspos).ne' ha.ne', Real.log_sqrt hspos.le]
+  rw [(hψ.congr_of_eventuallyEq heq).deriv]
+  unfold cylU
+  field_simp
+  ring
+
+/-- The stream function generates the vertical velocity:
+`-∂ψ/∂x = v` for `0 < a` and `x² + y² ≠ 0`. -/
+lemma cylStream_deriv_x {U a Γ x y : ℝ} (ha : 0 < a)
+    (h : x ^ 2 + y ^ 2 ≠ 0) :
+    deriv (fun s : ℝ => cylStream U a Γ s y) x = -cylV U a Γ x y := by
+  have hpi : Real.pi ≠ 0 := Real.pi_ne_zero
+  have hRpos : 0 < x ^ 2 + y ^ 2 := lt_of_le_of_ne (by positivity) (Ne.symm h)
+  have hR : HasDerivAt (fun s : ℝ => s ^ 2 + y ^ 2) _ x :=
+    hd_add (hd_sq (hasDerivAt_id' x)) (hasDerivAt_const x (y ^ 2))
+  have hψ : HasDerivAt (fun s : ℝ => U * (y - a ^ 2 * y / (s ^ 2 + y ^ 2)) -
+      Γ / (2 * Real.pi) * (Real.log (s ^ 2 + y ^ 2) / 2 - Real.log a)) _ x :=
+    hd_sub (hd_mul (hasDerivAt_const x U) (hd_sub (hasDerivAt_const x y)
+        (hd_div (hasDerivAt_const x (a ^ 2 * y)) hR h)))
+      (hd_mul (hasDerivAt_const x (Γ / (2 * Real.pi)))
+        (hd_sub (hd_div (hd_comp (hd_log hRpos) hR) (hasDerivAt_const x 2) two_ne_zero)
+          (hasDerivAt_const x (Real.log a))))
+  have heq : (fun s : ℝ => cylStream U a Γ s y) =ᶠ[nhds x] fun s : ℝ =>
+      U * (y - a ^ 2 * y / (s ^ 2 + y ^ 2)) -
+        Γ / (2 * Real.pi) * (Real.log (s ^ 2 + y ^ 2) / 2 - Real.log a) := by
+    filter_upwards [hR.continuousAt.eventually_ne h] with s hs
+    have hspos : 0 < s ^ 2 + y ^ 2 := lt_of_le_of_ne (by positivity) (Ne.symm hs)
+    unfold cylStream
+    rw [Real.log_div (Real.sqrt_pos.mpr hspos).ne' ha.ne', Real.log_sqrt hspos.le]
+  rw [(hψ.congr_of_eventuallyEq heq).deriv]
+  unfold cylV
+  field_simp
+  ring
+
+end CylinderFlow
+
+/-! ## E. Cylinder pressure and the contour force -/
+
+namespace CylinderPressure
+
+/-- The `x` component of the pressure force per unit span on the circle `r = a`. On the arc
+element `a dθ` at `a e^{iθ}` the pressure pushes along the normal `-(cos θ, sin θ)` that points
+into the body, so `Fx = -∫₀^{2π} p (a e^{iθ}) cos θ a dθ`. -/
+noncomputable def surfaceForceX (p : ℂ → ℝ) (a : ℝ) : ℝ :=
+  -(a * ∫ θ in (0 : ℝ)..2 * Real.pi, p (circleMap 0 a θ) * Real.cos θ)
+
+/-- The `y` component of the pressure force per unit span on the circle `r = a`,
+`Fy = -∫₀^{2π} p (a e^{iθ}) sin θ a dθ`. -/
+noncomputable def surfaceForceY (p : ℂ → ℝ) (a : ℝ) : ℝ :=
+  -(a * ∫ θ in (0 : ℝ)..2 * Real.pi, p (circleMap 0 a θ) * Real.sin θ)
+
+/-- At zero incidence the circle-plane velocity is the cylinder field read as `u - I * v`:
+for `z ≠ 0`, `circleVelocity a U Γ 0 z = cylU - cylV * I` at `(z.re, z.im)`. -/
+lemma circleVelocity_zero_eq_cyl {a U Γ : ℝ} {z : ℂ} (hz : z ≠ 0) :
+    JoukowskiBranch.circleVelocity a U Γ 0 z =
+      (CylinderFlow.cylU U a Γ z.re z.im : ℂ) -
+        (CylinderFlow.cylV U a Γ z.re z.im : ℂ) * Complex.I := by
+  have hn : Complex.normSq z ≠ 0 := by
+    rwa [Ne, Complex.normSq_eq_zero]
+  have hr : z.re * z.re + z.im * z.im ≠ 0 := by
+    rwa [Complex.normSq_apply] at hn
+  have hr2 : z.re ^ 2 + z.im ^ 2 ≠ 0 := by
+    simpa [sq] using hr
+  have hpi : Real.pi ≠ 0 := Real.pi_ne_zero
+  have hw : (a : ℂ) ^ 2 / z ^ 2 = (a : ℂ) ^ 2 * (z⁻¹) ^ 2 := by
+    rw [div_eq_mul_inv, inv_pow]
+  have hv : (Γ : ℂ) / (2 * Real.pi * Complex.I * z) =
+      ((Γ / (2 * Real.pi) : ℝ) : ℂ) * (-Complex.I) * z⁻¹ := by
+    simp only [div_eq_mul_inv, mul_inv, Complex.inv_I]
+    push_cast
+    ring
+  unfold JoukowskiBranch.circleVelocity CylinderFlow.cylU CylinderFlow.cylV
+  simp only [Complex.ofReal_zero, neg_zero, zero_mul, Complex.exp_zero, mul_one]
+  rw [hw, hv]
+  apply Complex.ext
+  · simp only [Complex.add_re, Complex.sub_re, Complex.mul_re, Complex.mul_im, Complex.ofReal_re,
+      Complex.ofReal_im, Complex.one_re, Complex.inv_re, Complex.inv_im,
+      Complex.neg_re, Complex.neg_im, Complex.I_re, Complex.I_im, pow_two, Complex.normSq_apply]
+    field_simp
+    ring
+  · simp only [Complex.add_im, Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.ofReal_re,
+      Complex.ofReal_im, Complex.one_im, Complex.inv_re, Complex.inv_im,
+      Complex.neg_re, Complex.neg_im, Complex.I_re, Complex.I_im, pow_two, Complex.normSq_apply]
+    field_simp
+    ring
+
+/-- On the cylinder `z = a e^{iθ}` the squared speed `‖W‖ ^ 2` is
+`(2 * U * sin θ - Γ / (2 * π * a)) ^ 2`. -/
+lemma norm_sq_circleVelocity_zero_circleMap {a U Γ : ℝ} (ha : 0 < a) (θ : ℝ) :
+    ‖JoukowskiBranch.circleVelocity a U Γ 0 (circleMap 0 a θ)‖ ^ 2 =
+      (2 * U * Real.sin θ - Γ / (2 * Real.pi * a)) ^ 2 := by
+  have hz : circleMap 0 a θ ≠ 0 := circleMap_ne_center ha.ne'
+  rw [circleVelocity_zero_eq_cyl hz, Complex.sq_norm, Complex.normSq_apply]
+  have hre : (circleMap 0 a θ).re = a * Real.cos θ := by
+    simp [circleMap, Complex.mul_re, Complex.exp_ofReal_mul_I_re, Complex.exp_ofReal_mul_I_im]
+  have him : (circleMap 0 a θ).im = a * Real.sin θ := by
+    simp [circleMap, Complex.mul_im, Complex.exp_ofReal_mul_I_re, Complex.exp_ofReal_mul_I_im]
+  rw [hre, him]
+  have hr2 : (a * Real.cos θ) ^ 2 + (a * Real.sin θ) ^ 2 = a ^ 2 := by
+    have := Real.cos_sq_add_sin_sq θ
+    nlinarith [this]
+  unfold CylinderFlow.cylU CylinderFlow.cylV
+  rw [hr2]
+  have hpi : Real.pi ≠ 0 := Real.pi_ne_zero
+  have ha' : a ≠ 0 := ha.ne'
+  simp only [Complex.sub_re, Complex.sub_im, Complex.ofReal_re, Complex.ofReal_im,
+    Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im]
+  field_simp
+  have hc : Real.cos θ ^ 2 = 1 - Real.sin θ ^ 2 := by
+    have := Real.cos_sq_add_sin_sq θ; linarith
+  ring_nf
+  rw [show Real.cos θ ^ 4 = (Real.cos θ ^ 2) ^ 2 by ring]
+  rw [hc]
+  ring
+
+/-- Under the whole-domain pressure law, the pressure on the cylinder is
+`p (a e^{iθ}) = p∞ + ρ * (U ^ 2 - (2 * U * sin θ - Γ / (2 * π * a)) ^ 2) / 2`. -/
+lemma surfacePressure_circleMap {p : ℂ → ℝ} {pInf ρ a U Γ : ℝ} (ha : 0 < a)
+    (hp : ∀ z : ℂ, a ≤ ‖z‖ →
+      p z = pInf + ρ * (U ^ 2 - ‖JoukowskiBranch.circleVelocity a U Γ 0 z‖ ^ 2) / 2) (θ : ℝ) :
+    p (circleMap 0 a θ) =
+      pInf + ρ * (U ^ 2 - (2 * U * Real.sin θ - Γ / (2 * Real.pi * a)) ^ 2) / 2 := by
+  have hz : a ≤ ‖circleMap 0 a θ‖ := by
+    rw [norm_circleMap_zero, abs_of_pos ha]
+  rw [hp _ hz, norm_sq_circleVelocity_zero_circleMap ha θ]
+
+/-- A constant pressure exerts no net force on the closed circle: the normal
+`(cos θ, sin θ)` integrates to zero over `[0, 2π]`. This removes `p∞`. -/
+lemma surfaceForce_const (c a : ℝ) :
+    surfaceForceX (fun _ => c) a = 0 ∧ surfaceForceY (fun _ => c) a = 0 := by
+  constructor
+  · unfold surfaceForceX
+    rw [intervalIntegral.integral_const_mul, integral_cos, Real.sin_two_pi, Real.sin_zero]
+    ring
+  · unfold surfaceForceY
+    rw [intervalIntegral.integral_const_mul, integral_sin, Real.cos_two_pi, Real.cos_zero]
+    ring
+
+/-- Under the whole-domain pressure law, both surface-pressure integrands are interval
+integrable on `[0, 2π]`: the surface integral is a regular integral. -/
+lemma surfacePressure_intervalIntegrable {p : ℂ → ℝ} {pInf ρ a U Γ : ℝ} (ha : 0 < a)
+    (hp : ∀ z : ℂ, a ≤ ‖z‖ →
+      p z = pInf + ρ * (U ^ 2 - ‖JoukowskiBranch.circleVelocity a U Γ 0 z‖ ^ 2) / 2) :
+    IntervalIntegrable (fun θ => p (circleMap 0 a θ) * Real.cos θ) MeasureTheory.volume 0
+        (2 * Real.pi) ∧
+      IntervalIntegrable (fun θ => p (circleMap 0 a θ) * Real.sin θ) MeasureTheory.volume 0
+        (2 * Real.pi) := by
+  have hfun : (fun θ => p (circleMap 0 a θ)) = fun θ =>
+      pInf + ρ * (U ^ 2 - (2 * U * Real.sin θ - Γ / (2 * Real.pi * a)) ^ 2) / 2 := by
+    funext θ
+    exact surfacePressure_circleMap ha hp θ
+  have hc : Continuous (fun θ => p (circleMap 0 a θ)) := by
+    rw [hfun]
+    fun_prop
+  exact ⟨(hc.mul Real.continuous_cos).intervalIntegrable _ _,
+    (hc.mul Real.continuous_sin).intervalIntegrable _ _⟩
+
+/-- Under the whole-domain pressure law, the surface-pressure force on the cylinder is
+`(Fx, Fy) = (0, -ρ * U * Γ)`. -/
+lemma surfaceForce_eq {p : ℂ → ℝ} {pInf ρ a U Γ : ℝ} (ha : 0 < a)
+    (hp : ∀ z : ℂ, a ≤ ‖z‖ →
+      p z = pInf + ρ * (U ^ 2 - ‖JoukowskiBranch.circleVelocity a U Γ 0 z‖ ^ 2) / 2) :
+    surfaceForceX p a = 0 ∧ surfaceForceY p a = -ρ * U * Γ := by
+  set c := Γ / (2 * Real.pi * a) with hc
+  set A := pInf + ρ * (U ^ 2 - c ^ 2) / 2 with hA
+  set B := 2 * ρ * U * c with hB
+  set C := -2 * ρ * U ^ 2 with hC
+  have hfun : ∀ θ, p (circleMap 0 a θ) = A + B * Real.sin θ + C * Real.sin θ ^ 2 := by
+    intro θ
+    rw [surfacePressure_circleMap ha hp θ, hA, hB, hC]
+    ring
+  have hX : (∫ θ in (0 : ℝ)..2 * Real.pi, p (circleMap 0 a θ) * Real.cos θ) = 0 := by
+    have heq : (fun θ => p (circleMap 0 a θ) * Real.cos θ) = fun θ =>
+        A * Real.cos θ + B * (Real.sin θ * Real.cos θ) + C * (Real.sin θ ^ 2 * Real.cos θ) := by
+      funext θ
+      rw [hfun]
+      ring
+    rw [heq, intervalIntegral.integral_add, intervalIntegral.integral_add,
+      intervalIntegral.integral_const_mul, intervalIntegral.integral_const_mul,
+      intervalIntegral.integral_const_mul, integral_cos, integral_sin_mul_cos₁,
+      integral_sin_sq_mul_cos]
+    · simp [Real.sin_two_pi]
+    all_goals (apply Continuous.intervalIntegrable; fun_prop)
+  have hY : (∫ θ in (0 : ℝ)..2 * Real.pi, p (circleMap 0 a θ) * Real.sin θ) = B * Real.pi := by
+    have heq : (fun θ => p (circleMap 0 a θ) * Real.sin θ) = fun θ =>
+        A * Real.sin θ + B * Real.sin θ ^ 2 + C * Real.sin θ ^ (1 + 2) := by
+      funext θ
+      rw [hfun]
+      ring
+    rw [heq, intervalIntegral.integral_add, intervalIntegral.integral_add,
+      intervalIntegral.integral_const_mul, intervalIntegral.integral_const_mul,
+      intervalIntegral.integral_const_mul, integral_sin, integral_sin_sq, integral_sin_pow]
+    · simp only [pow_one, integral_sin, Real.sin_two_pi, Real.cos_two_pi, Real.sin_zero,
+        Real.cos_zero]
+      ring
+    all_goals (apply Continuous.intervalIntegrable; fun_prop)
+  refine ⟨?_, ?_⟩
+  · unfold surfaceForceX
+    rw [hX, mul_zero, neg_zero]
+  · unfold surfaceForceY
+    rw [hY, hB, hc]
+    have hpi : Real.pi ≠ 0 := Real.pi_ne_zero
+    field_simp
+
+/-- The Blasius contour force at zero incidence, on every circle `|z| = R` with `a ≤ R`, is
+`I * ρ * U * Γ`: `Fx = 0` and `Fy = -ρ * U * Γ`. -/
+lemma blasiusForce_circleVelocity_zero {ρ a U Γ R : ℝ} (hρ : 0 < ρ) (ha : 0 < a)
+    (hU : 0 < U) (hR : a ≤ R) :
+    BlasiusForce.blasiusForce ρ (JoukowskiBranch.circleVelocity a U Γ 0) R =
+      Complex.I * ρ * U * Γ := by
+  have hpi : ((Real.pi : ℝ) : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr Real.pi_ne_zero
+  have h2πI : (2 * Real.pi * Complex.I : ℂ) ≠ 0 :=
+    mul_ne_zero (mul_ne_zero two_ne_zero hpi) Complex.I_ne_zero
+  have hne : ∀ z : ℂ, a / 2 < ‖z‖ → z ≠ 0 := by
+    intro z hz h
+    rw [h, norm_zero] at hz
+    linarith
+  have hW : DifferentiableOn ℂ (JoukowskiBranch.circleVelocity a U Γ 0)
+      {z : ℂ | a / 2 < ‖z‖} := by
+    intro z hz
+    have hz0 : z ≠ 0 := hne z hz
+    have hpow2 : DifferentiableAt ℂ (fun ζ : ℂ => ζ ^ 2) z := differentiableAt_pow 2
+    have hsub : DifferentiableAt ℂ
+        (fun ζ : ℂ => Complex.exp (-((0 : ℝ) : ℂ) * Complex.I) -
+          (a : ℂ) ^ 2 * Complex.exp (((0 : ℝ) : ℂ) * Complex.I) / ζ ^ 2) z :=
+      ((differentiableAt_const ((a : ℂ) ^ 2 * Complex.exp (((0 : ℝ) : ℂ) * Complex.I))).fun_div
+        hpow2 (pow_ne_zero 2 hz0)).const_sub _
+    have hfirst := hsub.const_mul (U : ℂ)
+    have hlin : DifferentiableAt ℂ (fun ζ : ℂ => 2 * Real.pi * Complex.I * ζ) z :=
+      differentiableAt_id.const_mul _
+    have hsecond : DifferentiableAt ℂ
+        (fun ζ : ℂ => (Γ : ℂ) / (2 * Real.pi * Complex.I * ζ)) z :=
+      (differentiableAt_const (Γ : ℂ)).fun_div hlin (mul_ne_zero h2πI hz0)
+    exact (hfirst.fun_add hsecond).differentiableWithinAt
+  have h := BlasiusForce.blasiusForce_eq (ρ := ρ) (U := U) (Γ := Γ) (α := 0) (R0 := a / 2)
+    (R1 := a) (K := U * a ^ 2) (W := JoukowskiBranch.circleVelocity a U Γ 0)
+    (e := fun z => -((U : ℂ) * (a : ℂ) ^ 2 / z ^ 2)) hρ hU (by positivity) (by linarith) hW
+    ?_ ?_ ?_ (R := R) (by linarith)
+  · simpa using h
+  · intro z hz
+    have hz0 : z ≠ 0 := hne z (by linarith)
+    unfold JoukowskiBranch.circleVelocity
+    simp only [Complex.ofReal_zero, neg_zero, zero_mul, Complex.exp_zero, mul_one]
+    field_simp
+    ring
+  · intro z hz
+    have hz0 : z ≠ 0 := hne z (by linarith)
+    apply DifferentiableAt.neg
+    exact (differentiableAt_const ((U : ℂ) * (a : ℂ) ^ 2)).fun_div
+      (differentiableAt_pow (𝕜 := ℂ) 2) (pow_ne_zero 2 hz0)
+  · intro z hz
+    have hz0 : z ≠ 0 := hne z (by linarith)
+    rw [norm_neg, norm_div, norm_mul, norm_pow, norm_pow, Complex.norm_real, Complex.norm_real,
+      Real.norm_eq_abs, Real.norm_eq_abs, abs_of_pos hU, sq_abs]
+
+/-- The regular surface-pressure force agrees with the contour force: on every circle
+`|z| = R` with `a ≤ R`, the Blasius force is `Fx - I * Fy` for the surface-pressure force
+`(Fx, Fy)` of the whole-domain pressure law. -/
+lemma blasiusForce_eq_surfaceForce {p : ℂ → ℝ} {pInf ρ a U Γ R : ℝ} (hρ : 0 < ρ)
+    (ha : 0 < a) (hU : 0 < U)
+    (hp : ∀ z : ℂ, a ≤ ‖z‖ →
+      p z = pInf + ρ * (U ^ 2 - ‖JoukowskiBranch.circleVelocity a U Γ 0 z‖ ^ 2) / 2) (hR : a ≤ R) :
+    BlasiusForce.blasiusForce ρ (JoukowskiBranch.circleVelocity a U Γ 0) R =
+      (surfaceForceX p a : ℂ) - Complex.I * (surfaceForceY p a : ℂ) := by
+  rw [blasiusForce_circleVelocity_zero hρ ha hU hR]
+  obtain ⟨hx, hy⟩ := surfaceForce_eq ha hp
+  rw [hx, hy]
+  push_cast
+  ring
+
+end CylinderPressure
 
 end FluidDynamics.IdealAirfoilModels

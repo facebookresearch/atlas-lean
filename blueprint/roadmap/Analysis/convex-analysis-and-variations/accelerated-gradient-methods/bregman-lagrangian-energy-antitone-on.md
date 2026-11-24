@@ -19,7 +19,7 @@ The second ideal-scaling condition $\dot\gamma = e^\alpha$ (2.2b) is what reduce
 ## Background
 
 - [Euler–Lagrange equation](../euler-lagrange-equation/README.md): the variational principle that produces (2.5)–(2.7) from the Bregman Lagrangian.
-- LaSalle's invariance principle: Lyapunov functions for autonomous systems; here the Lyapunov function is time-dependent.
+- [LaSalle's invariance principle](../../../Dynamics/smooth-dynamics/lasalle-s-invariance-principle/README.md): Lyapunov functions for autonomous systems; here the Lyapunov function is time-dependent.
 
 ## Sources
 

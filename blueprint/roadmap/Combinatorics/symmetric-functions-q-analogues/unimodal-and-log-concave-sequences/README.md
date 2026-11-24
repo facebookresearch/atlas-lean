@@ -32,6 +32,6 @@ sequences in algebra, combinatorics, and geometry", Annals of the New York Acade
 - [Gaussian binomial coefficients](../gaussian-binomial-coefficients/README.md): the coefficients of
   $\binom{m+n}{m}_q$ are symmetric and unimodal (Richard P. Stanley, *Topics in Algebraic Combinatorics*, author's draft of 1 February 2013, Corollary 6.10, <https://math.mit.edu/~rstan/algcomb/algcomb.pdf>)
   but not log-concave in general: $\binom{4}{2}_q = 1 + q + 2q^2 + q^3 + q^4$.
-- Neggers–Stanley conjecture:
+- [Neggers–Stanley conjecture](../../partially-ordered-sets/neggers-stanley-conjecture/README.md):
   a real-rootedness conjecture for $W$-polynomials of posets, now refuted; real-rootedness would
   have implied that their coefficients are log-concave and unimodal.

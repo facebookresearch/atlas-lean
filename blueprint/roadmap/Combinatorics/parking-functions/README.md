@@ -18,6 +18,6 @@ Parking functions and their variants (partial, weakly increasing, k-Naples, mete
 
 ## Related topics
 
-- Analysis of linear probing:
+- [Analysis of linear probing](../../ComputerScience/data-structures/hashing/analysis-of-linear-probing/README.md):
   linear probing without overflow is parking, and Knuth's 1963 count of non-overflow hash
   sequences is Pollak's count.

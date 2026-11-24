@@ -34,5 +34,5 @@ Robbins' formula $\mathbb E[\theta \mid x] = (x + 1) f(x + 1)/f(x)$ is the Poiss
 
 - [Stein's lemma and James–Stein estimation](../../statistical-estimation/stein-s-lemma-and-james-stein-estimation/README.md): the frequentist side of shrinkage; the James–Stein estimator is the normal-prior Bayes rule with its shrinkage factor estimated from the data.
 - [Two-groups model and local false discovery rates](../../hypothesis-testing/two-groups-model-and-local-false-discovery-rates/README.md): Efron's other empirical Bayes model, for large-scale testing, where the local false discovery rate is a posterior probability computed from the marginal density.
-- Conjugate priors: the normal–normal posterior kernel, with a general prior mean.
-- Mixture models: the finite-support score identity used for Gaussian mixtures in machine learning.
+- [Conjugate priors](../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/conjugate-priors/README.md): the normal–normal posterior kernel, with a general prior mean.
+- [Mixture models](../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/mixture-models/README.md): the finite-support score identity used for Gaussian mixtures in machine learning.

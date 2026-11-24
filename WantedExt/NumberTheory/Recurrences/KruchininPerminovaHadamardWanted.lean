@@ -25,9 +25,9 @@ Proposition 1: the paper allows real parameters `a, b`
 (cf. `MetaMathlibExt.AbGeneralizedFibonacciSequence`),
 whereas `LucasSequenceParams` requires integer `P, Q`
 with `Q ≠ 0`, i.e. integer `a` and nonzero integer `b`.
-The identity below was verified
-numerically for `(P, Q)` among seven sample pairs and
-`m, n ≤ 12`.
+That identity is proved in
+`MathlibExt.NumberTheory.Recurrences.LucasSequenceAddition`,
+which this module re-exports.
 
 Theorem 2, Theorem 3 and Corollaries 4 and 5 use the same
 integer specialization (`a = P`, `b = -Q`). Theorem 3 is
@@ -39,6 +39,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.LucasSequence
+public import MathlibExt.NumberTheory.Recurrences.LucasSequenceAddition
 public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 public import Mathlib.NumberTheory.Harmonic.Defs
 public import Mathlib.RingTheory.PowerSeries.Basic
@@ -49,22 +50,6 @@ set_option autoImplicit false
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.Recurrences.KruchininPerminovaHadamardWanted
-
-/-- **Proposition 1** (integer specialization): for the
-generalized Fibonacci numbers `F_n` and Lucas numbers
-`L_n` with integer parameters `a` and nonzero integer
-`b` (the paper allows real `a, b`),
-`2 F_{m + n} = F_m L_n + L_m F_n`.
-
-Source: Vladimir V. Kruchinin and Maria Y. Perminova,
-"Identities and Hadamard Product of the Generalized
-Fibonacci, Lucas, Catalan, and Harmonic Numbers",
-Proposition 1. -/
-theorem_wanted two_mul_lucasU_add
-    (params : MetaMathlibExt.LucasSequenceParams) (m n : ℕ) :
-    2 * MetaMathlibExt.lucasU params (m + n) =
-      MetaMathlibExt.lucasU params m * MetaMathlibExt.lucasV params n +
-        MetaMathlibExt.lucasV params m * MetaMathlibExt.lucasU params n
 
 /-- **Theorem 2** (integer specialization): for a symmetric
 array `T` (`T_{i, j} = T_{j, i}`) and

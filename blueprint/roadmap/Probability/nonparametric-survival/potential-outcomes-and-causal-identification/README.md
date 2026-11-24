@@ -35,10 +35,37 @@
 
 - [Inverse probability weighting with a general covariate](integral-ipw-treated-cond-exp.md)
 
+## Potential outcomes and the local average treatment effect
+
+- [Compliance types of Angrist, Imbens and Rubin](compliance-type.md)
+- [Compliance type of a pair of potential treatments](compliance-type-2.md)
+- [Potential-outcomes model with binary instrument and treatment](potential-outcomes.md)
+- [Observed treatment in a potential-outcomes model](observed-treatment.md)
+- [Observed outcome in a potential-outcomes model](observed-outcome.md)
+- [Compliance type of a unit](type.md)
+- [Compliers in a potential-outcomes model](compliers.md)
+- [Independence assumption for an instrument](independence.md)
+- [Exclusion restriction for an instrument](exclusion.md)
+- [Monotonicity assumption (no defiers)](monotonicity.md)
+- [Mean of a variable within an instrument arm](arm-mean.md)
+- [Observed treatment as a 0-1 real variable](treated.md)
+- [Wald instrumental-variable estimand](wald-estimand.md)
+- [First stage: treatment-rate difference equals complier share](arm-mean-treated-sub.md)
+- [Reduced form: outcome difference is the complier-weighted effect](arm-mean-outcome-sub.md)
+- [Unrestricted algebraic identity behind the LATE theorem](wald-estimand-eq-late-totalized.md)
+- [Local average treatment effect theorem](wald-estimand-eq-late.md)
+
+## Truncated endpoints at a horizon
+
+- [Event time truncated at a horizon](truncated-endpoint.md)
+- [An event time at or before the horizon is its own truncated endpoint](truncated-endpoint-eq-of-le.md)
+- [An event time at or beyond the horizon truncates to the horizon](truncated-endpoint-eq-of-ge.md)
+- [Truncation changes event times beyond the horizon](truncation-changes-value.md)
+
 ## Related topics
 
-- Causal Bayesian networks:
+- [Causal Bayesian networks](../../../ComputerScience/machine-learning/probabilistic-graphical-models/causal-bayesian-networks/README.md):
   graphical identification; the back-door criterion is a graphical test for conditional
   ignorability.
-- Structural causal models and counterfactuals:
+- [Structural causal models and counterfactuals](../../../ComputerScience/machine-learning/probabilistic-graphical-models/structural-causal-models-and-counterfactuals/README.md):
   potential outcomes defined as solutions of submodels, with consistency as a theorem.

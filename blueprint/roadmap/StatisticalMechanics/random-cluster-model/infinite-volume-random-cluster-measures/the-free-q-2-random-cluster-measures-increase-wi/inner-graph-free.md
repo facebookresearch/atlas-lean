@@ -1,0 +1,3 @@
+# Inner open graph with the free induced wiring
+
+Let $d, n \in \mathbb{N}$, $\Lambda_m = \{-m, \dots, m\}^d$ (so $\Lambda_n \subseteq \Lambda_{n+1}$), and let $\psi$ be a configuration of $\Lambda_{n+1}$ (an assignment of open/closed states to the unordered pairs of vertices of $\Lambda_{n+1}$) and $\omega$ a configuration of $\Lambda_n$. The inner graph $I^0_{\omega,\psi}$ is the graph on $\Lambda_n$ whose edges are the edges of $\Lambda_n$ open in $\omega$ together with the edges of the [free induced wiring](induced-wiring-free.md) $W^0_\psi$ on $\Lambda_n$ (distinct $x, y \in \Lambda_n$ joined by a path in the outer open graph $O^0_\psi$).

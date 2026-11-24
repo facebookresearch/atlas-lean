@@ -30,4 +30,4 @@
 - [Wasserstein gradient flows and the JKO scheme](../../../MeasureTheory/optimal-transport/wasserstein-gradient-flows-and-the-jko-scheme/README.md):
   the Jordan–Kinderlehrer–Otto scheme that makes the gradient-flow statement precise, with its
   metric a priori estimates and its convergence to this equation.
-- Mean field games: the mean field game system couples a Fokker–Planck equation for the distribution of players with a Hamilton–Jacobi–Bellman equation for their value.
+- [Mean field games](../../../GameTheory/noncooperative-games/mean-field-games/README.md): the mean field game system couples a Fokker–Planck equation for the distribution of players with a Hamilton–Jacobi–Bellman equation for their value.

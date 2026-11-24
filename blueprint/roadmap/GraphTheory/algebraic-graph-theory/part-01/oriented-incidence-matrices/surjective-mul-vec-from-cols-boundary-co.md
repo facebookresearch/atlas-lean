@@ -1,0 +1,3 @@
+# Surjectivity with free boundary columns
+
+Let $V$ and $E$ be finite sets and let each $e \in E$ be an edge from $e^-$ to $e^+$ in $V$ (a finite multigraph; loops $e^- = e^+$ are allowed), with no loops. Let $F$ be a finite set, $b : F \to V$ and $\sigma : F \to \{1, -1\}$, and let $[\,B \mid C\,]$ be the real matrix obtained by adjoining the [boundary columns](boundary-columns.md) $C$, whose column $j$ is $\sigma_j \delta_{b(j)}$, to the [oriented incidence matrix](oriented-incidence.md) $B$. Then $[\,B \mid C\,] : \mathbb{R}^{E \sqcup F} \to \mathbb{R}^V$ is surjective if and only if every connected component of the [underlying graph](underlying-graph.md) contains the anchor $b(j)$ of some boundary column. The components are those of the edges $E$ alone.
