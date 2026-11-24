@@ -19,7 +19,6 @@
 
 ## Bravais lattices and their lattice vectors
 
-- [For det B ≠ 0, distinct integer vectors have distinct images](mul-vec-int-cast-injective.md)
 - [Bravais lattice given by a nonsingular basis matrix](bravais-lattice.md)
 - [Primitive vectors of a Bravais lattice](primitive-vector.md)
 - [The basis matrix of the primitive vectors is B](cartesian-matrix-primitive-vector.md)
@@ -28,12 +27,11 @@
 - [The primitive basis consists of the primitive vectors](coe-basis.md)
 - [Lattice vector of an integer cell index](lattice-vector.md)
 - [The lattice vector of n is B n](lattice-vector-apply.md)
-- [A lattice vector is an integer combination of the primitive vectors](lattice-vector-eq-sum.md)
+- [Lattice vectors and directions in terms of the primitive vectors](lattice-vector-eq-sum.md)
 - [The primitive coordinates of a lattice vector are its index](repr-lattice-vector.md)
-- [Distinct cell indices give distinct lattice vectors](lattice-vector-injective.md)
+- [For det B ≠ 0, distinct integer vectors n give distinct vectors B n](lattice-vector-injective.md)
 - [Lattice of a Bravais lattice](lattice.md)
 - [The lattice consists of the vectors B n with n integral](mem-lattice-iff.md)
-- [The lattice is the image of the lattice-vector map](coe-lattice.md)
 
 ## Crystals with a motif
 

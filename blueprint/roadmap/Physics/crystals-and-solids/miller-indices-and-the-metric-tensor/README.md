@@ -15,7 +15,6 @@
 ## Reciprocal vectors and interplanar spacing
 
 - [Crystallographic reciprocal basis without the factor 2π](cryst-reciprocal.md)
-- [Duality of the primitive and reciprocal bases](inner-primitive-vector-cryst-reciprocal.md)
 - [Duality of the reciprocal and primitive bases](inner-cryst-reciprocal-primitive-vector.md)
 - [The reciprocal basis has the inverse metric tensor as Gram matrix](inner-cryst-reciprocal.md)
 - [Reciprocal-lattice vector of Miller indices](reciprocal-vector.md)
@@ -30,9 +29,7 @@
 - [For nonzero indices, interplanar spacing from the inverse metric](inv-sq-interplanar-spacing.md)
 - [The physics reciprocal vector is 2π times the crystallographic one](reciprocal-vector-eq-phys-smul.md)
 - [Metric tensor of the simple cubic lattice](metric-tensor-simple-cubic.md)
-- [Entries of the metric tensor of the simple cubic lattice](metric-tensor-simple-cubic-apply.md)
 - [Inverse metric tensor of the simple cubic lattice](metric-tensor-inv-simple-cubic.md)
-- [Entries of the inverse metric tensor of the simple cubic lattice](metric-tensor-inv-simple-cubic-apply.md)
 - [Cubic interplanar spacing for nonzero Miller indices](spacing-simple-cubic.md)
 - [Planes of a family of lattice planes](lattice-plane.md)
 - [Membership in a lattice plane in primitive coordinates](mem-lattice-plane-iff.md)
@@ -48,7 +45,6 @@
 - [The index cross product is orthogonal to the second index triple](dot-product-zone-axis-right.md)
 - [Lattice direction of an integer index triple](lattice-direction.md)
 - [A lattice direction is the lattice vector of its indices](lattice-direction-eq-lattice-vector.md)
-- [A lattice direction is an integer combination of primitive vectors](lattice-direction-eq-sum.md)
 - [Pairing a direction with a primitive vector uses the metric tensor](inner-lattice-direction-primitive-vector.md)
 - [Pairing a reciprocal vector with a direction gives the index sum](inner-reciprocal-vector-lattice-directio.md)
 - [Weiss zone law](weiss-zone-law.md)

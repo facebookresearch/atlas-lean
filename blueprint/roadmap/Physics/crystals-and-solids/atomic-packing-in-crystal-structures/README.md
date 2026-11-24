@@ -39,6 +39,4 @@
 ## Radius ratios from centre distances
 
 - [Radius ratio 2/√3 − 1 from the centre distance 2R / √3](radius-ratio-eq-two-div-sqrt-three-sub-o.md)
-- [Radius ratio √(3/2) − 1 from the centre distance √3 a / 4](radius-ratio-eq-sqrt-three-halves-sub-on.md)
-- [Radius ratio √2 − 1 from the centre distance a / 2](radius-ratio-eq-sqrt-two-sub-one.md)
 - [Radius ratio √3 − 1 from the centre distance √3 a / 2](radius-ratio-eq-sqrt-three-sub-one.md)

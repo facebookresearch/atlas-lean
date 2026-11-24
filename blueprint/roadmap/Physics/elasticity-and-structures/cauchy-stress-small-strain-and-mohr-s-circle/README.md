@@ -11,12 +11,9 @@
 - [Physical traction of a compression-positive stress](compression-positive-traction.md)
 - [Changing the stress sign convention twice is the identity](compression-positive-stress-involutive.md)
 - [The compression-positive form of a symmetric stress is symmetric](compression-positive-stress-is-symmetric.md)
-- [The tension-positive traction map changes sign with the stress sign](traction-compression-positive-stress.md)
-- [Sign change and reversed normal leave the traction map unchanged](traction-compression-positive-stress-neg.md)
-- [The converted hydrostatic stress has traction map value p v](traction-compression-positive-stress-neg-2.md)
-- [Changing the sign convention preserves the physical traction](compression-positive-traction-compressio.md)
-- [The preserved physical traction flips sign on the opposite face](compression-positive-traction-compressio-2.md)
-- [Hydrostatic pressure p has physical traction -p v](compression-positive-traction-neg-smul-o.md)
+- [The stress-sign change negates σ v but keeps the physical traction](compression-positive-traction-compressio.md)
+- [Sign change with reversed normal keeps σ v and flips the traction](compression-positive-traction-compressio-2.md)
+- [Hydrostatic pressure p: traction map value p v, physical traction −p v](compression-positive-traction-neg-smul-o.md)
 
 ## Principal stresses, invariants and the deviatoric split
 
