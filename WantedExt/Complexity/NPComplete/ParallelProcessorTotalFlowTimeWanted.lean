@@ -19,7 +19,7 @@ doi:10.1016/S0167-5060(08)70743-X (the case `m = 1`, `1|rⱼ|∑ Cⱼ`, is stron
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity

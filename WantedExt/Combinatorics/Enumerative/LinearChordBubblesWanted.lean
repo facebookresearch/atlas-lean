@@ -9,10 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Data.Fintype.Pi
-public import Mathlib.Order.Interval.Finset.Nat
-public import Mathlib.Algebra.Order.Field.Rat
+public import MathlibExt.Combinatorics.Enumerative.LinearChordBubbles
 public import Mathlib.Data.Nat.Factorial.Basic
 public import Mathlib.RingTheory.MvPowerSeries.Inverse
 public import Mathlib.RingTheory.PowerSeries.Substitution
@@ -22,86 +19,6 @@ public import Mathlib.Analysis.SpecialFunctions.Exp
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Linear chord diagrams.** A linear chord diagram on the $2n$ vertices $0, \dots, 2n-1$, laid
-out on a line, is encoded by a map $\sigma$ from $\{0, \dots, 2n-1\}$ to itself that is a
-fixed-point-free involution: $\sigma(i) \ne i$ and $\sigma(\sigma(i)) = i$ for every vertex $i$.
-Vertex $i$ is joined by a chord to $\sigma(i)$.
-
-Source: Donovan Young, *Counting Bubbles in Linear Chord Diagrams*, Journal of Integer
-Sequences 27 (2024), Article 24.4.2, Section 1 (linear chord diagrams on `2n` vertices). -/
-def IsLinearChordDiagram (n : ℕ) (σ : Fin (2 * n) → Fin (2 * n)) : Prop :=
-  ∀ i, σ i ≠ i ∧ σ (σ i) = i
-
-instance (n : ℕ) : DecidablePred (IsLinearChordDiagram n) := fun σ => by
-  unfold IsLinearChordDiagram; infer_instance
-
-/-- **Endpoints of short chords.** Let $\sigma$ be a map from $\{0, \dots, 2n-1\}$ to itself (for a
-linear chord diagram, vertex $i$ is joined by a chord to $\sigma(i)$). A vertex $i$ is an
-endpoint of a short chord of $\sigma$ when $\sigma(i) = i - 1$ or $\sigma(i) = i + 1$, that is,
-when $i$ is joined to an adjacent vertex.
-
-Source: Donovan Young, *Counting Bubbles in Linear Chord Diagrams*, Journal of Integer
-Sequences 27 (2024), Article 24.4.2, Abstract and Section 1 (short chords). -/
-def IsShortChordVertex {n : ℕ} (σ : Fin (2 * n) → Fin (2 * n)) (i : Fin (2 * n)) : Prop :=
-  (σ i : ℕ) + 1 = i ∨ (i : ℕ) + 1 = σ i
-
-instance {n : ℕ} (σ : Fin (2 * n) → Fin (2 * n)) : DecidablePred (IsShortChordVertex σ) :=
-  fun i => by unfold IsShortChordVertex; infer_instance
-
-/-- **Bubbles.** Let $\sigma$ be a map from $\{0, \dots, 2n-1\}$ to itself (for a linear chord
-diagram, vertex $i$ is joined by a chord to $\sigma(i)$). For natural numbers $a$ and $p$, the
-vertices $a, a+1, \dots, a+p-1$ form a bubble of size $p$ in $\sigma$ when $p \ge 1$,
-$a + p \le 2n$, none of these vertices is an endpoint of a short chord of $\sigma$, the vertex
-$a - 1$ is an endpoint of a short chord unless $a = 0$, and the vertex $a + p$ is an endpoint
-of a short chord unless $a + p = 2n$.
-
-So a bubble is a maximal run of consecutive vertices containing no endpoint of a short chord.
-
-Source: Donovan Young, *Counting Bubbles in Linear Chord Diagrams*, Journal of Integer
-Sequences 27 (2024), Article 24.4.2, Section 1 (definition of bubbles and their size). -/
-def IsBubble {n : ℕ} (σ : Fin (2 * n) → Fin (2 * n)) (a p : ℕ) : Prop :=
-  0 < p ∧ a + p ≤ 2 * n ∧
-    (∀ i : Fin (2 * n), a ≤ (i : ℕ) → (i : ℕ) < a + p → ¬ IsShortChordVertex σ i) ∧
-    (∀ i : Fin (2 * n), (i : ℕ) + 1 = a → IsShortChordVertex σ i) ∧
-    (∀ i : Fin (2 * n), (i : ℕ) = a + p → IsShortChordVertex σ i)
-
-instance {n : ℕ} (σ : Fin (2 * n) → Fin (2 * n)) (p : ℕ) :
-    DecidablePred (fun a => IsBubble σ a p) := fun a => by
-  unfold IsBubble; infer_instance
-
-/-- **Bubble counts.** For natural numbers $n$ and $p$, $B_{n,p}$ is the total number of bubbles of
-size $p$ in all linear chord diagrams on $2n$ vertices: the sum, over all linear chord diagrams
-$\sigma$ on the vertices $0, \dots, 2n-1$, of the number of vertices $a$ such that the vertices
-$a, a+1, \dots, a+p-1$ form a bubble of size $p$ in $\sigma$. In particular $B_{n,0} = 0$.
-
-Source: Donovan Young, *Counting Bubbles in Linear Chord Diagrams*, Journal of Integer
-Sequences 27 (2024), Article 24.4.2, Section 1 (definition of `B_{n,p}`, Table 1). -/
-def bubbleCount (n p : ℕ) : ℕ :=
-  ∑ σ ∈ Finset.univ.filter (IsLinearChordDiagram n),
-    ((Finset.range (2 * n)).filter (fun a => IsBubble σ a p)).card
-
-/-- **No bubbles of size one on two vertices.** $B_{1,1} = 0$: the linear chord diagrams on $2$
-vertices have no bubble of size $1$. The only such diagram is a single short chord.
-
-Source: Donovan Young, *Counting Bubbles in Linear Chord Diagrams*, Journal of Integer
-Sequences 27 (2024), Article 24.4.2, Table 1 (row `n = 1`). -/
-theorem bubbleCount_one_one : bubbleCount 1 1 = 0 := by decide +kernel
-
-/-- **Bubbles of size one on four vertices.** $B_{2,1} = 2$: the linear chord diagrams on $4$
-vertices have $2$ bubbles of size $1$ in total.
-
-Source: Donovan Young, *Counting Bubbles in Linear Chord Diagrams*, Journal of Integer
-Sequences 27 (2024), Article 24.4.2, Table 1 (row `n = 2`). -/
-theorem bubbleCount_two_one : bubbleCount 2 1 = 2 := by decide +kernel
-
-/-- **Bubbles of size four on four vertices.** $B_{2,4} = 1$: the linear chord diagrams on $4$
-vertices have exactly one bubble of size $4$ in total. It consists of all four vertices of the
-crossing diagram (chords $\{0, 2\}$ and $\{1, 3\}$), which has no short chord.
-
-Source: Donovan Young, *Counting Bubbles in Linear Chord Diagrams*, Journal of Integer
-Sequences 27 (2024), Article 24.4.2, Table 1 (row `n = 2`). -/
-theorem bubbleCount_two_four : bubbleCount 2 4 = 1 := by decide +kernel
 
 /-- **Total number of bubbles in linear chord diagrams.** For every natural number $n \ge 2$,
 let $B_{n,p}$ be the total number of bubbles of size $p$ over all linear chord diagrams on $2n$
@@ -115,32 +32,6 @@ Sequences 27 (2024), Article 24.4.2, Lemma 3 (`jis-2024-24.4.2-lem-3`). -/
 public theorem_wanted sum_bubbleCount (n : ℕ) (hn : 2 ≤ n) :
     (∑ p ∈ Finset.Icc 1 (2 * n), (bubbleCount n p : ℚ)) =
       (2 * n - 2).factorial * (4 * n - 5 : ℚ) / (2 ^ (n - 1) * (n - 1).factorial)
-
-/-- **First moment of bubble sizes in linear chord diagrams.** For every natural number
-$n \ge 2$, let $B_{n,p}$ be the total number of bubbles of size $p$ over all linear chord diagrams
-on $2n$ vertices. Then
-$$\sum_{p=1}^{2n} p\,B_{n,p} = \frac{(2n-1)!}{2^{n-2}\,(n-2)!}.$$
-
-The hypothesis $n \ge 2$ is added because the right side involves $(n-2)!$.
-
-Source: Donovan Young, *Counting Bubbles in Linear Chord Diagrams*, Journal of Integer
-Sequences 27 (2024), Article 24.4.2, Lemma 4 (`jis-2024-24.4.2-lem-4`). -/
-public theorem_wanted sum_mul_bubbleCount (n : ℕ) (hn : 2 ≤ n) :
-    (∑ p ∈ Finset.Icc 1 (2 * n), (p : ℚ) * bubbleCount n p) =
-      (2 * n - 1).factorial / (2 ^ (n - 2) * (n - 2).factorial)
-
-/-- **Mean bubble size.** Let $B_{n,p}$ be the total number of bubbles of size $p$ in all linear
-chord diagrams on $2n$ vertices. For every integer $n \ge 2$, the mean bubble size satisfies
-$$\frac{\sum_{p=1}^{2n} p\,B_{n,p}}{\sum_{p=1}^{2n} B_{n,p}} = \frac{2(2n-1)(n-1)}{4n-5}.$$
-
-The hypothesis $n \ge 2$ is added: for $n = 1$ there are no bubbles.
-
-Source: Donovan Young, *Counting Bubbles in Linear Chord Diagrams*, Journal of Integer
-Sequences 27 (2024), Article 24.4.2, Theorem 5 (`jis-2024-24.4.2-thm-5`). -/
-public theorem_wanted mean_bubble_size (n : ℕ) (hn : 2 ≤ n) :
-    (∑ p ∈ Finset.Icc 1 (2 * n), (p : ℚ) * bubbleCount n p) /
-        (∑ p ∈ Finset.Icc 1 (2 * n), (bubbleCount n p : ℚ)) =
-      2 * (2 * n - 1) * (n - 1) / (4 * n - 5)
 
 /-- **Formal contour-integral formula for bubble counts.** Let $G(s, w, y)$ be the power series
 in $\mathbb{Q}[[s, w, y]]$ given by
@@ -200,7 +91,8 @@ public theorem_wanted bubbleCount_formal_laplace_closed_form :
     let D : MvPowerSeries (Fin 3) ℚ := 1 - w * (1 - w * y)
     let integrand : MvPowerSeries (Fin 3) ℚ :=
       (1 - w) ^ 2 * (1 - w * y) ^ 2 * ((1 + w ^ 2 * y) * D ^ 2)⁻¹ *
-          PowerSeries.subst ((2⁻¹ : ℚ) • (y * (t * w * (1 + w ^ 2 * y)⁻¹) ^ 2)) (PowerSeries.exp ℚ) +
+          PowerSeries.subst ((2⁻¹ : ℚ) • (y * (t * w * (1 + w ^ 2 * y)⁻¹) ^ 2))
+            (PowerSeries.exp ℚ) +
         ((2 - w * (y + 2) * (1 + y * (1 - w * (2 - w * y)))) * (D ^ 2)⁻¹ * (w * y) +
             (1 - w * y) * D⁻¹ * (t ^ 2 * w * y ^ 3)) *
           PowerSeries.subst ((2⁻¹ : ℚ) • (t ^ 2 * y)) (PowerSeries.exp ℚ)

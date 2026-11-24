@@ -15,6 +15,8 @@ public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import Mathlib.NumberTheory.Fermat
 public import Mathlib.Order.Bounds.Defs
 public import MathlibExt.NumberTheory.GeneralizedFermatGCD
+public import MathlibExt.NumberTheory.GeneralizedFermatPeriod
+public import MathlibExt.NumberTheory.GeneralizedFermatSquareFactors
 public import MathlibExt.NumberTheory.GeneralizedFermatWieferich
 public import MathlibExt.NumberTheory.WieferichPrime
 public import MathlibExt.NumberTheory.WieferichOrder
@@ -130,22 +132,6 @@ public theorem_wanted not_pow_pow_modEq_one_of_lt {a b m n t : ℕ} (ha : 2 ≤ 
     (hm : 2 ≤ m) (hn : 1 ≤ n) (h : ¬ a ^ b ^ n ≡ 1 [MOD m]) (ht : t < n) :
     ¬ a ^ b ^ t ≡ 1 [MOD m]
 
-/-- **Squared prime factors of generalized Fermat numbers.** For natural numbers $a$, $b$ and $n$
-write $F_n(a, b) = a^{b^n} + 1$. Let $a, b \ge 2$, let $n$ be a natural number, let $p$ be an odd
-prime coprime to $ab$, and write $\operatorname{ord}_p(a)$ for the multiplicative order of $a$
-modulo $p$. If $p^2$ divides $F_n(a, b)$, then $a^{p-1} \equiv 1 \pmod{p^2}$ (that is, $p$ is a
-Wieferich prime to base $a$) and $\operatorname{ord}_p(a)$ divides $2b^n$. Conversely, if
-$a^{p-1} \equiv 1 \pmod{p^2}$ and $\operatorname{ord}_p(a) = 2b^n$, then $p^2$ divides $F_n(a, b)$.
-
-Source: Klaška, *Several Notes on Jakóbczyk's Hypothesis on Fermat Numbers*,
-INTEGERS 26 (2026), Article A77, Theorem 4 (`integers-2026-A77-thm-4`). -/
-public theorem_wanted sq_dvd_pow_pow_add_one_wieferich {a b n p : ℕ} (ha : 2 ≤ a) (hb : 2 ≤ b)
-    (hp : p.Prime) (hp2 : p ≠ 2) (hcop : Nat.Coprime (a * b) p) :
-    (p ^ 2 ∣ a ^ b ^ n + 1 →
-        a ^ (p - 1) ≡ 1 [MOD p ^ 2] ∧ orderOf (a : ZMod p) ∣ 2 * b ^ n) ∧
-      (a ^ (p - 1) ≡ 1 [MOD p ^ 2] → orderOf (a : ZMod p) = 2 * b ^ n →
-        p ^ 2 ∣ a ^ b ^ n + 1)
-
 /-- **Divisibility of later generalized Fermat numbers.** For natural numbers $a$, $b$ and $m$
 write $F_m(a, b) = a^{b^m} + 1$. Let $a, b, D \ge 2$ and $n$ be natural numbers such that $D$
 divides $F_n(a, b)$. If $b$ is odd, then $D$ divides $F_{n+k}(a, b)$ for every $k \ge 1$. If $b$
@@ -161,27 +147,6 @@ public theorem_wanted dvd_pow_pow_add_one_shift {a b D n : ℕ} (ha : 2 ≤ a) (
     (hD : 2 ≤ D) (h : D ∣ a ^ b ^ n + 1) :
     (Odd b → ∀ k, 1 ≤ k → D ∣ a ^ b ^ (n + k) + 1) ∧
       (Even b → 3 ≤ D → ∀ k, 1 ≤ k → ¬ D ∣ a ^ b ^ (n + k) + 1)
-
-/-- **Start of the period of generalized Fermat numbers modulo the square of a prime.** For
-natural numbers $a$, $b$ and $k$ write $F_k(a, b) = a^{b^k} + 1$. Let $a, b \ge 2$, let $p$ be a
-prime, and let $n_0$ be the least natural number with $p^2 \mid F_{n_0}(a, b)$. Say that the
-sequence $(F_k(a, b))_k$ is periodic modulo $p^2$ from index $m$ if there is a $T > 0$ with
-$F_{m+k+T}(a, b) \equiv F_{m+k}(a, b) \pmod{p^2}$ for every $k \ge 0$. If $b$ is odd, then $n_0$
-is the least index from which the sequence is periodic modulo $p^2$; if $b$ is even, this least
-index is $n_0 + 1$.
-
-In the source's terms, $n_0$ is the index of the first term of the period when $b$ is odd, and
-the index of the last term of the pre-period when $b$ is even.
-
-Source: Klaška, *Several Notes on Jakóbczyk's Hypothesis on Fermat Numbers*,
-INTEGERS 26 (2026), Article A77, Corollary 2 (`integers-2026-A77-cor-2`). -/
-public theorem_wanted isLeast_periodic_start_pow_pow_add_one_mod_sq {a b p n₀ : ℕ} (ha : 2 ≤ a)
-    (hb : 2 ≤ b) (hp : p.Prime) (hn₀ : p ^ 2 ∣ a ^ b ^ n₀ + 1)
-    (hmin : ∀ n < n₀, ¬ p ^ 2 ∣ a ^ b ^ n + 1) :
-    (Odd b → IsLeast {m : ℕ | ∃ T, 0 < T ∧
-        Function.Periodic (fun k => (a ^ b ^ (m + k) + 1) % p ^ 2) T} n₀) ∧
-      (Even b → IsLeast {m : ℕ | ∃ T, 0 < T ∧
-        Function.Periodic (fun k => (a ^ b ^ (m + k) + 1) % p ^ 2) T} (n₀ + 1))
 
 end
 

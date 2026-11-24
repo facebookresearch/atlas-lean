@@ -12,7 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.Data.Int.ModEq
 public import MathlibExt.NumberTheory.LucasSequence
-public import MathlibExt.NumberTheory.SecondOrderGenValue
+public import MathlibExt.NumberTheory.SecondOrderGenValueNeighbors
 public import MathlibExt.NumberTheory.SecondOrderMValue
 
 /-!
@@ -189,21 +189,6 @@ public theorem_wanted secondOrderGenValue_trivial_families_integer (a b p : ℤ)
       ((secondOrderBiSeq p 0 1 n : ℚ) / secondOrderBiSeq p 0 1 (n + 1)) = z) ∧
     ∀ n : ℤ, secondOrderBiSeq p (-b) a (n + 1) ≠ 0 → ∃ z : ℤ, secondOrderGenValue a b p
       ((secondOrderBiSeq p (-b) a n : ℚ) / secondOrderBiSeq p (-b) a (n + 1)) = z
-
-/-- **Neighbours of an integer value.** Let $a, b, p$ be integers with $p \ne 0$ and let
-$A(x) = \frac{a(1 - px) + bx}{1 - px - x^2}$ for rational $x$. If $r, s$ are coprime integers
-with $r \ne 0$, $s \ne 0$ and $r + ps \ne 0$, and $A(r/s)$ is an integer, then $A(s/(r + ps))$
-and $A((s - pr)/r)$ are integers.
-
-Source: Luu Ba Thang and Nguyen Duy Nguyen, *Integer Values of Generating Functions for a Type of
-Second-Order Linear Recurrence Sequence*, Journal of Integer Sequences 28 (2025),
-Article 25.8.3, Lemma 6 (`jis-2025-25.8.3-lem-6`). -/
-public theorem_wanted secondOrderGenValue_neighbors_integer (a b p : ℤ) (hp : p ≠ 0) (r s : ℤ)
-    (hr : r ≠ 0)
-    (hs : s ≠ 0) (hrps : r + p * s ≠ 0) (hrs : Int.gcd r s = 1)
-    (hint : ∃ z : ℤ, secondOrderGenValue a b p ((r : ℚ) / s) = z) :
-    (∃ z : ℤ, secondOrderGenValue a b p ((s : ℚ) / (r + p * s)) = z) ∧
-      ∃ z : ℤ, secondOrderGenValue a b p (((s : ℚ) - p * r) / r) = z
 
 /-- **A small value of $M$ in the family of $r/s$ when $abp + a^2 - b^2 < 0$.** Let $a, b, p$ be
 integers with $p \ne 0$ and $abp + a^2 - b^2 < 0$. Let $A(x) = \frac{a(1 - px) + bx}{1 - px - x^2}$

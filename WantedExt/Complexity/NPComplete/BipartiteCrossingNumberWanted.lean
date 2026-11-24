@@ -21,7 +21,7 @@ Section 2.3.1, Lemma 2.1 (statement of the problem and a reproduction of the pro
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.OneSidedCrossingMinimizationWanted

@@ -5,6 +5,8 @@ In a repeated game with vector payoffs, a closed convex set is approachable when
 - [Running average of a sequence](average.md)
 - [Sum form of the running average](nat-cast-smul-average.md)
 - [Recursion for the running average](succ-smul-average.md)
+- [Norm bound for the running averages](norm-average-le.md)
+- [One step of Blackwell's recursion](sq-succ-mul-inf-dist-average-le.md)
 - [Blackwell's approachability recursion](sq-mul-inf-dist-average-le.md)
 - [The M/√t rate of approachability](inf-dist-average-le.md)
 
