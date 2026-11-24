@@ -104,8 +104,6 @@ class CommandCompletionTests(unittest.TestCase):
                         "print(json.dumps(info),flush=True)")
                     def observed_wait(child: subprocess.Popen[bytes], timeout: float | None = None) -> int:
                         code=real_wait(child,timeout=timeout)
-                        if child.args[0] == "ps":
-                            return code
                         info=json.loads((root/"command.stdout").read_text())
                         if code != 0 or info["parent_pid"] != child.pid:
                             raise RuntimeError("Actual direct parent did not finish with exit 0")
