@@ -493,10 +493,22 @@ public noncomputable def det (ρ : GaloisRepAdic A) :
     (AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) →* Aˣ :=
   (LinearMap.det.comp ρ.ρ).toHomUnits
 
+/-- The determinant is the unit attached to the linear determinant. -/
+theorem det_apply (ρ : GaloisRepAdic A)
+    (σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) :
+    (ρ.det σ : A) = LinearMap.det (ρ.ρ σ) :=
+  rfl
+
 /-- The trace of a Galois element in an adic Galois representation. -/
 public noncomputable def trace (ρ : GaloisRepAdic A)
     (σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) : A :=
   LinearMap.trace A ρ.V (ρ.ρ σ)
+
+/-- The trace is the linear trace of the representing endomorphism. -/
+theorem trace_def (ρ : GaloisRepAdic A)
+    (σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) :
+    ρ.trace σ = LinearMap.trace A ρ.V (ρ.ρ σ) :=
+  rfl
 
 /-- Base change of an adic Galois representation along a local ring
 homomorphism. -/
