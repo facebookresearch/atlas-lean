@@ -12487,6 +12487,7 @@
   "MathlibExt/NumberTheory/GeneralizedFermatGCD": {"to": "NumberTheory/primes-primality/special-primes", "title": "Square prime factors of Fermat numbers"},
   "MathlibExt/NumberTheory/GeneralizedFermatNumber": {"to": "NumberTheory/primes-primality/special-primes", "title": "Generalized Fermat numbers"},
   "MathlibExt/NumberTheory/GeneralizedFermatPeriod": {"to": "NumberTheory/primes-primality/special-primes", "title": "Square prime factors of Fermat numbers"},
+  "MathlibExt/NumberTheory/GeneralizedFermatShiftDivisibility": {"to": "NumberTheory/primes-primality/special-primes", "title": "Square prime factors of Fermat numbers"},
   "MathlibExt/NumberTheory/GeneralizedFermatSquareFactors": {"to": "NumberTheory/primes-primality/special-primes", "title": "Square prime factors of Fermat numbers"},
   "MathlibExt/NumberTheory/GeneralizedFermatWieferich": {"to": "NumberTheory/primes-primality/special-primes", "title": "Square prime factors of Fermat numbers"},
   "MathlibExt/NumberTheory/GeneralizedFibocatalanNumber": {"to": "NumberTheory/special-numbers/catalan-numbers", "title": "FiboCatalan numbers"},
