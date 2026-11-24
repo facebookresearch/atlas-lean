@@ -54,3 +54,19 @@
 - [Basic reproduction number of the SIS model from the derivatives](r0-deriv-eq.md)
 - [Linearized SIS threshold, stable side](is-hurwitz-iff.md)
 - [Linearized SIS threshold, unstable side](exists-re-pos-iff.md)
+
+## Global stability of the SIS endemic equilibrium via a Lyapunov function
+
+- [Goh–Volterra Lyapunov function of the SIS endemic equilibrium](lyapunov.md)
+- [For $R_0 > 1$ and $S, I > 0$, the SIS Lyapunov function is nonnegative](lyapunov-nonneg.md)
+- [For $R_0 > 1$ and $S, I > 0$, the Lyapunov function vanishes exactly at equilibrium](lyapunov-eq-zero-iff.md)
+- [The Lyapunov derivative is nonpositive](lyapunov-deriv-nonpos.md)
+- [For $\beta, S > 0$ on $S + I = N$, the Lyapunov derivative vanishes exactly at equilibrium](lyapunov-deriv-eq-zero-iff.md)
+- [Solutions from the open segment keep both compartments positive](pos-of-pos.md)
+- [Derivative of the Lyapunov function along solutions](has-deriv-at-lyapunov.md)
+- [Along solutions from the open segment, the Lyapunov function never exceeds its initial value](lyapunov-le-initial.md)
+- [For $R_0 > 1$, the infectives stay bounded away from zero](persistence.md)
+- [For $R_0 > 1$, exponential decay of the Lyapunov function along solutions from the open segment](exists-lyapunov-le-exp.md)
+- [For $R_0 > 1$, interior solutions converge to the endemic equilibrium](tendsto-endemic-of-lyapunov.md)
+- [Lyapunov stability of the endemic equilibrium](endemic-lyapunov-stable.md)
+- [For $R_0 > 1$, global asymptotic stability of the endemic equilibrium on the open segment](endemic-globally-asymptotically-stable.md)

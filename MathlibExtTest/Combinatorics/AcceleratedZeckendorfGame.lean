@@ -10,7 +10,7 @@ module
 
 import MathlibExt.Combinatorics.AcceleratedZeckendorfGame
 
-/-! # Tests for combining Fibonacci pairs in the Accelerated Zeckendorf Game -/
+/-! # Tests for the Accelerated Zeckendorf Game -/
 
 namespace MetaMathlibExt.accelZeckMove_fib_combine
 
@@ -32,3 +32,13 @@ example : AccelZeckMove (single 2 3 + single 1 2) (single 2 1 + single 3 2) := b
   simpa [← single_tsub] using h
 
 end MetaMathlibExt.accelZeckMove_fib_combine
+
+namespace MetaMathlibExt
+
+-- Apply the implication at the first starting size covered by Conjecture 1.6.
+example (h17 : ∀ n, AccelZeckLosing (Finsupp.single 1 n) → ∀ k, 3 * k ≤ n →
+    AccelZeckLosing (Finsupp.single 3 k + Finsupp.single 1 (n - 3 * k))) :
+    AccelZeckWinning (Finsupp.single 1 10) :=
+  accelZeck_conjecture17_implies_conjecture16 (h17 := h17) 10 (by decide)
+
+end MetaMathlibExt

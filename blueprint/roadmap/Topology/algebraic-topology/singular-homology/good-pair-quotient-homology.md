@@ -8,11 +8,12 @@ Let $V$ be a neighborhood of $A$ that deformation retracts onto $A$; then $A \su
 
 ## Expansion
 
-A good expansion of this node links each prerequisite of its statement and proof: the excision theorem; the homotopy invariance of singular homology; the long exact sequence of a triple; restrictions of quotient maps to open saturated subsets; products of quotient maps with locally compact Hausdorff spaces; the functoriality of the homomorphisms induced on relative homology; good pairs; the quotient topology; reduced singular homology; the long exact sequence of reduced homology of a pair; the homomorphisms induced on relative homology by maps of pairs.
+A good expansion of this node links each prerequisite of its statement and proof: the excision theorem; the homotopy invariance of singular homology; the long exact sequence of a triple; restrictions of quotient maps to open saturated subsets; products of quotient maps with locally compact Hausdorff spaces; the functoriality of the homomorphisms induced on relative homology; good pairs; reduced singular homology; the long exact sequence of reduced homology of a pair; the homomorphisms induced on relative homology by maps of pairs.
 
 ## Depends on
 
 - [Relative singular homology of a pair of spaces](relative-homology.md)
+- [Coinduced topology and the quotient topology](../../topological-spaces/lattice-of-topologies-and-induced-topologies/quotient-topology.md)
 
 ## Proof depends on
 

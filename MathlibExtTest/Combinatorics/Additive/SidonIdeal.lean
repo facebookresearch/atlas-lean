@@ -9,6 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.Combinatorics.Additive.SidonIdeal
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum
 
 open MetaMathlibExt
 
@@ -43,3 +45,29 @@ example : ¬ IsGapLacunarySet (Set.univ : Set ℕ) := by
   have hev := h.2.eventually (Filter.eventually_ge_atTop 2)
   obtain ⟨n, hn⟩ := hev.exists
   simp at hn
+
+-- This almost thin set starts at zero, which must not be placed in a doubling tail.
+example : Set.range (fun n : ℕ => 2 ^ n - 1) ∈ sidonIdeal := by
+  let f (n : ℕ) := 2 ^ n - 1
+  have hpow (n : ℕ) : 0 < (2 : ℕ) ^ n := pow_pos (by decide) n
+  have hsucc (n : ℕ) : f (n + 1) = 2 * f n + 1 := by
+    dsimp [f]
+    rw [pow_succ]
+    have hp := hpow n
+    omega
+  have hf : StrictMono f := strictMono_nat_of_lt_succ fun n => by
+    rw [hsucc]
+    omega
+  have hinf := Set.infinite_range_of_injective hf.injective
+  have hnth : Nat.nth (· ∈ Set.range f) = f :=
+    ((Nat.nth_strictMono hinf).range_inj_of_wellFoundedLT hf).mp (Nat.range_nth_of_infinite hinf)
+  apply almostThinIdeal_subset_sidonIdeal (mem_generatedIdeal (A := Set.range f) ?_)
+  refine ⟨hinf, 1 / 2, by norm_num, Filter.Eventually.of_forall fun n => ?_⟩
+  rw [hnth, hsucc]
+  push_cast
+  apply (div_le_iff₀ (by positivity)).2
+  linarith
+
+-- An empty system of almost-thin generators also gives a Sidon cover.
+example : (∅ : Set ℕ) ∈ sidonIdeal :=
+  almostThinIdeal_subset_sidonIdeal ⟨0, Fin.elim0, fun i => Fin.elim0 i, Set.empty_subset _⟩
