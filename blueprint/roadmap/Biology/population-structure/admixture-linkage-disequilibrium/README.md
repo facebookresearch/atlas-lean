@@ -40,6 +40,8 @@
 - [Weighted LD amplitude with the admixed population as reference](weighted-ld-admixed-ref.md)
 - [Weighted LD amplitude with one diverged reference](weighted-ld-one-ref.md)
 
+## Local-ancestry tracts
+
 - [Stationary Poisson-relabeling model of local ancestry](poisson-switch-markov-model-of-local-ancestry-al.md)
 - [Count-sampled and position-sampled ancestry tract lengths](tract-length-law-in-the-poisson-switch-model.md)
 - [Tract-count versus genomic-position weighting in an exponential mixture](migrant-tract-lengths-under-continuous-migration.md)

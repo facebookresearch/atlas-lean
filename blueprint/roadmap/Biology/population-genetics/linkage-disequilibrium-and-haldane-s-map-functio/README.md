@@ -26,6 +26,7 @@
 - [Distant loci are unlinked in the limit](tendsto-haldane-at-top.md)
 - [Inverse Haldane map function recovers map distance](neg-half-log-haldane.md)
 - [Every recombination fraction below one half is attained](haldane-neg-half-log.md)
+- [Kosambi's map function](kosambi-map-function.md)
 
 ## Multiallelic two-locus linkage disequilibrium
 
@@ -42,5 +43,3 @@
 - [Disequilibria sum to zero over the second-locus alleles](sum-linkage-diseq-snd.md)
 - [Multi-allelic linkage disequilibria after $t$ generations](linkage-diseq-iterate-2.md)
 - [Multi-allelic linkage disequilibria tend to zero](tendsto-linkage-diseq-iterate-2.md)
-
-- [Kosambi's map function](kosambi-map-function.md)
