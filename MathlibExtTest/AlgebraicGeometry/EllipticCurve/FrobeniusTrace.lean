@@ -19,7 +19,7 @@ universe r s v
 /-- Consumer with the source binders plus the rank-two basis: the
 trace of a Galois element in the representation on `n`-torsion is the
 basis-free trace. -/
-theorem exactSource {R : Type r} {S : Type s} {K : Type v} [CommRing R]
+private theorem exactSource {R : Type r} {S : Type s} {K : Type v} [CommRing R]
     [CommRing S] [Field K] [DecidableEq K] (W' : WeierstrassCurve.Affine R)
     [Algebra R S] [Algebra R K] [Algebra S K] [IsScalarTower R S K]
     (n : ℕ)
