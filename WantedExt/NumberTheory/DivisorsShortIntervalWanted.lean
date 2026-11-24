@@ -111,20 +111,6 @@ public theorem_wanted exists_shortIntervalDivisorCount_le_letendre :
           ((n.primeFactors.sup n.factorization : ℕ) * Real.log n.divisors.card /
             (θ * (1 - θ)))
 
-/-- **Arbitrarily large integers with a divisor in a short window.** Let $\theta$ and $\varepsilon$
-be real numbers with $0 < \theta < 1$ and $0 < \varepsilon < \theta$. Then for every natural
-number $N$ there is a natural number $n \ge N$ with at least one divisor $d$ satisfying
-$n^\theta \le d \le n^\theta + n^{\theta - \varepsilon}$.
-
-This is the nontrivial form of the statement that a constant bounding the number of such divisors
-for all $n \ge 1$ is at least $1$; that weaker statement already follows from $n = 1$.
-
-Source: Patrick Letendre, *Divisors of an Integer in a Short Interval*, INTEGERS 26 (2026),
-Article A115, Proposition 4 (`integers-2026-A115-prop-4`). -/
-public theorem_wanted exists_large_shortIntervalDivisorCount_pos {θ ε : ℝ} (hθ₀ : 0 < θ)
-    (hθ₁ : θ < 1) (hε₀ : 0 < ε) (hε : ε < θ) :
-    ∀ N : ℕ, ∃ n ≥ N, 1 ≤ shortIntervalDivisorCount n ((n : ℝ) ^ θ) ((n : ℝ) ^ (θ - ε))
-
 /-- **Lower bound for constants bounding divisors in short windows.** There is an absolute
 constant $c > 0$ with the following property. Let $\theta$, $\varepsilon$ and $k$ be real numbers
 with $0 < \theta < 1$ and $0 < \varepsilon < \theta$, and suppose that for every integer $n \ge 1$
