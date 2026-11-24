@@ -55,6 +55,12 @@
 - [Unrestricted algebraic identity behind the LATE theorem](wald-estimand-eq-late-totalized.md)
 - [Local average treatment effect theorem](wald-estimand-eq-late.md)
 
+## Failures of identifying assumptions and partial identification
+
+- [Violations of parallel trends and their dependence on the outcome scale](parallel-trends-violations-and-scale-dependence.md)
+- [A discontinuous untreated mean produces a jump with no treatment effect](discontinuous-untreated-mean-in-regression-discontinuity.md)
+- [Worst-case bounds for a mean with missing outcomes](worst-case-bounds-for-a-mean-with-missing-outcomes.md)
+
 ## Related topics
 
 - [Causal Bayesian networks](../../../ComputerScience/machine-learning/probabilistic-graphical-models/causal-bayesian-networks/README.md):

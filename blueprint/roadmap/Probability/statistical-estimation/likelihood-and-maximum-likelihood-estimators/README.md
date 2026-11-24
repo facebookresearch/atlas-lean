@@ -14,6 +14,7 @@
 - [Maximum likelihood estimator](is-maximum-likelihood-estimator.md)
 - [Characterization of maximum likelihood estimators](is-maximum-likelihood-estimator-iff.md)
 - [Induced likelihood](induced-likelihood.md)
+- [The sample mean maximizes the normal likelihood with known variance](sample-mean-is-the-normal-mean-mle.md)
 
 ## Likelihood of independent Poisson counts
 
