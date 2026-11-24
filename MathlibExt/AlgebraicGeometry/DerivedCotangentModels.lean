@@ -110,7 +110,9 @@ structure KernelModuleModel (N : ShuffleAlgebraFunctor k) {A : SAlg k}
         (coefficient A p (((N.model A).complexIso.hom.f (-(p : ℤ))) a))
         (kernelCoefficient E q ((valueIso.hom.f (-(q : ℤ))) m))
 
-/-- Actual DG Hom realization, including all higher homotopies. -/
+/-- The simplicial set of the raw DG Hom complex `Hom(L, V)` (Dold–Kan of its truncation). It is
+the derived mapping space when `L` is cofibrant, e.g. a module of `DGDerivedModules` (a
+K-injective `V` also suffices); in general it does not compute derived Hom. -/
 def moduleHomSpace {C : DGCat k} (L V : RightModule k C) : SSet.{u + 1} :=
   (liftSimplicial.{u}).obj ((cochainToSSet k).obj (dgHomComplex k L V))
 
@@ -153,7 +155,8 @@ structure KernelMorphism {N : ShuffleAlgebraFunctor k} {A : SAlg k}
   coefficient : moduleComponent module (op PUnit.unit) ≫ W.valueIso.hom =
     V.valueIso.hom ≫ kernelMap algebra projection
 
-/-- Actual postcomposition on derived module Hom, using the completed DG adapter. -/
+/-- Postcomposition with `f` on the raw DG Hom complex `Hom(L, -)`; it computes the map on derived
+Hom when `L` is cofibrant (see `moduleHomSpace`), not in general. -/
 def homPostcompose {C : DGCat k} (L : RightModule k C)
     {V W : RightModule k C} (f : V ⟶ W) : dgHomComplex k L V ⟶ dgHomComplex k L W :=
   let z := (DGFunctor.homEquivDGCycles k V W) f
