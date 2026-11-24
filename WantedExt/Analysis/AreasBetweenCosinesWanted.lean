@@ -13,6 +13,7 @@ public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Inverse
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.Data.Nat.Factorial.DoubleFactorial
 public import MathlibExt.Analysis.SpecialFunctions.Trigonometric.ArcsinQuotientDerivatives
+public import MathlibExt.Analysis.SpecialFunctions.Trigonometric.CotangentLimit
 public import MathlibExt.Analysis.SpecialFunctions.Trigonometric.HalfPeriodSineSumEven
 
 namespace MetaMathlibExt
@@ -123,21 +124,6 @@ public theorem_wanted tendsto_cosPowArea_doubleFactorial (n : ℕ) :
         ∑ j ∈ Finset.range ((n - 2) / 2 + 1),
           ((2 * j).doubleFactorial : ℝ) /
             ((2 * j + 1).doubleFactorial * (2 * j + 2)))))
-
-/-- **The cotangent limit $4/x$.** For every nonzero real number $x$, as $k \to \infty$ through the
-natural numbers,
-$$\left(\frac{1}{k} - 1\right)\cot\frac{x}{k-1} + \left(\frac{1}{k} + 1\right)\cot\frac{x}{k+1}
-\to \frac{4}{x}.$$
-
-The paper states this for every real number $x$; the hypothesis $x \neq 0$ is added because at
-$x = 0$ the cotangents and $4/x$ are undefined.
-
-Source: Muhammad Adam Dombrowski and Gregory Dresden, *Areas Between Cosines*,
-Journal of Integer Sequences 28 (2025), Article 25.2.3, Lemma 8
-(`jis-2025-25.2.3-lem-8`). -/
-public theorem_wanted tendsto_cot_div_pred_add_cot_div_succ {x : ℝ} (hx : x ≠ 0) :
-    Tendsto (fun k : ℕ => (1 / (k : ℝ) - 1) * cot (x / (k - 1)) +
-      (1 / (k : ℝ) + 1) * cot (x / (k + 1))) atTop (𝓝 (4 / x))
 
 /-- **Integral sums of $\cos qkx - \cos qx$ for odd $q$ and odd $k$.** Let $q$ be an odd natural
 number, and for each natural number $m$ put $k = 2m + 1$. Then, as $m \to \infty$,

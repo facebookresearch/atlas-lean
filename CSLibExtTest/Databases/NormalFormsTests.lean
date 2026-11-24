@@ -28,6 +28,7 @@ Attributes `A, B, C = 0, 1, 2`, values natural numbers.
   decomposition with the key scheme `AC` is lossless.
 * Satisfaction on a sub-schema is satisfaction of the projected dependencies: `{C → A}` imposes
   nothing on `AB`, whose decomposition into `A` and `B` is lossy.
+* No BCNF decomposition of `Fdep` preserves dependencies (Abiteboul–Hull–Vianu, Example 11.2.10).
 -/
 
 @[expose] public section
@@ -115,6 +116,68 @@ example : DependencyPreserving F (synthesize [⟨{0, 1}, {2}⟩, ⟨{2}, {0}⟩]
 
 example : joinProjections (synthesize [⟨{0, 1}, {2}⟩, ⟨{2}, {0}⟩] {1, 2}) s = s :=
   synthesize_lossless F_equiv (by decide) s_isOver s_satisfies
+
+/-- `Fdep = {AB → C, C → B}` (AHV Example 11.2.10). -/
+def Fdep : Finset (FD (Fin 3)) := {⟨{0, 1}, {2}⟩, ⟨{2}, {1}⟩}
+
+/-- All proper subschemas of `ABC`. -/
+private def properSchemas : Finset (Finset (Fin 3)) :=
+  Finset.univ.powerset.erase Finset.univ
+
+/-- Derivability is monotone in the dependency set. -/
+private theorem derives_of_subset {F G : Finset (FD (Fin 3))} {f : FD (Fin 3)}
+    (hFG : F ⊆ G) (h : Derives F f) : Derives G f := by
+  induction h with
+  | mem h => exact Derives.mem (hFG h)
+  | refl h => exact Derives.refl h
+  | augment Z _ ih => exact Derives.augment Z ih
+  | trans _ _ ih₁ ih₂ => exact Derives.trans ih₁ ih₂
+
+/-- Every dependency in a foldr-union of projected dependencies lies in one of the
+projections. -/
+private theorem exists_mem_projectFDs_of_mem_foldr {f : FD (Fin 3)}
+    {M : List (Finset (Fin 3))}
+    (h : f ∈ (M.map (projectFDs Fdep)).foldr (· ∪ ·) ∅) :
+    ∃ S ∈ M, f ∈ projectFDs Fdep S := by
+  induction M with
+  | nil =>
+    simp only [List.map_nil, List.foldr_nil, Finset.notMem_empty] at h
+  | cons S M ih =>
+    simp only [List.map_cons, List.foldr_cons, Finset.mem_union] at h
+    rcases h with h | h
+    · exact ⟨S, List.mem_cons_self, h⟩
+    · obtain ⟨T, hT, hf⟩ := ih h
+      exact ⟨T, List.mem_cons_of_mem _ hT, hf⟩
+
+/-- The full `ABC` schema is not in BCNF for `Fdep`. -/
+private theorem not_isBCNF_univ : ¬ IsBCNF Fdep Finset.univ := by decide
+
+/-- The union over all proper subschemas does not derive `AB → C`. -/
+private theorem not_derives_saturated :
+    ¬ Derives (properSchemas.biUnion (projectFDs Fdep)) ⟨{0, 1}, {2}⟩ := by
+  decide
+
+/-- **No BCNF decomposition preserves `Fdep`.** Every decomposition of `ABC` into BCNF
+schemes loses a dependency of `Fdep` (in fact `AB → C`), so no dependency-preserving
+BCNF decomposition of this schema exists. -/
+theorem not_dependencyPreserving_of_isBCNF (L : List (Finset (Fin 3)))
+    (hcover : schemaUnion L = Finset.univ) (hbcnf : ∀ S ∈ L, IsBCNF Fdep S) :
+    ¬ DependencyPreserving Fdep L := by
+  intro hpres
+  have _ := hcover
+  have hmem : ∀ S ∈ L, S ∈ properSchemas := by
+    intro S hS
+    simp only [properSchemas, Finset.mem_erase, Finset.mem_powerset]
+    refine ⟨?_, Finset.subset_univ S⟩
+    rintro rfl
+    exact not_isBCNF_univ (hbcnf _ hS)
+  have hsub : (L.map (projectFDs Fdep)).foldr (· ∪ ·) ∅ ⊆
+      properSchemas.biUnion (projectFDs Fdep) := by
+    intro f hf
+    obtain ⟨S, hS, hfS⟩ := exists_mem_projectFDs_of_mem_foldr hf
+    exact Finset.mem_biUnion.mpr ⟨S, hmem S hS, hfS⟩
+  have hAB : ⟨{0, 1}, {2}⟩ ∈ Fdep := by decide
+  exact not_derives_saturated (derives_of_subset hsub (hpres _ hAB))
 
 /-! ### The key scheme matters -/
 
