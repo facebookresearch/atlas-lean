@@ -30,6 +30,7 @@ varieties of log general type*, for existence of flips.
 namespace WantedExt.AlgebraicGeometry.MoriConeContractionWanted
 
 open CategoryTheory _root_.AlgebraicGeometry
+open MathlibExt.AlgebraicGeometry (ProjectiveSpace.IsProjective)
 open MathlibExt.AlgebraicGeometry.ProjectiveLineSystems
 open MathlibExt.AlgebraicGeometry.NumericalCurveCones
 open MathlibExt.AlgebraicGeometry.MoriContractionModels
@@ -44,7 +45,7 @@ universe u
 theorem_wanted numerical_finiteDimensional (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
     (X : Over (Spec (.of k))) [IsIntegral X.left] [IsProper X.hom]
     (n : ℕ) [SmoothOfRelativeDimension n X.hom]
-    (projective : IsProjectiveVariety X)
+    (projective : ProjectiveSpace.IsProjective X)
     : FiniteDimensional ℝ (N1 X)
 
 /-- The finite cone decomposition after a genuine positive ample perturbation. -/
@@ -52,7 +53,7 @@ theorem_wanted cone (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
     (X : Over (Spec (.of k))) [IsIntegral X.left] [IsProper X.hom]
     [IsNoetherian X.left]
     (n : ℕ) [SmoothOfRelativeDimension n X.hom]
-    (projective : IsProjectiveVariety X)
+    (projective : ProjectiveSpace.IsProjective X)
     (K H : LineBundle X.left)
     (hK : SerreDualizingLine X.hom K.val n) (hH : IsAmpleLine H)
     (ε : ℝ) (hε : 0 < ε) :
@@ -70,7 +71,7 @@ theorem_wanted rationality (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
     (X : Over (Spec (.of k))) [IsIntegral X.left] [IsProper X.hom]
     [IsNoetherian X.left]
     (n : ℕ) [SmoothOfRelativeDimension n X.hom]
-    (projective : IsProjectiveVariety X)
+    (projective : ProjectiveSpace.IsProjective X)
     (K H : LineBundle X.left)
     (hK : SerreDualizingLine X.hom K.val n) (hH : IsAmpleLine H)
     (negative : ∃ C : Curve X, curveDegrees C K < 0) :
@@ -82,7 +83,7 @@ theorem_wanted basepointFree (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
     (X : Over (Spec (.of k))) [IsIntegral X.left] [IsProper X.hom]
     [IsNoetherian X.left]
     (n : ℕ) [SmoothOfRelativeDimension n X.hom]
-    (projective : IsProjectiveVariety X)
+    (projective : ProjectiveSpace.IsProjective X)
     (K L : LineBundle X.left)
     (hK : SerreDualizingLine X.hom K.val n) (Kinv : InverseLine K)
     (nef : IsNefLine L) (a : ℕ) (ha : 0 < a)
@@ -90,13 +91,13 @@ theorem_wanted basepointFree (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
       (moduleTensor X.left (power L.val a) Kinv.inverse.val))
     (ample : IsAmpleLine
       ⟨moduleTensor X.left (power L.val a) Kinv.inverse.val, hLine⟩) :
-    IsSemiample L.val
+    IsSemiample L.val L.property
 
 /-- Contraction of an actual K-negative extremal ray. -/
 def_wanted contraction (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
     (X : Over (Spec (.of k))) [IsIntegral X.left] [IsProper X.hom]
     (n : ℕ) [SmoothOfRelativeDimension n X.hom]
-    (projective : IsProjectiveVariety X)
+    (projective : ProjectiveSpace.IsProjective X)
     (K : LineBundle X.left)
     (hK : SerreDualizingLine X.hom K.val n)
     (v : N1 X) (ray : IsExtremalRay v) (negative : v.val K < 0) :
@@ -107,7 +108,7 @@ def_wanted flip (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
     (X : Over (Spec (.of k))) [IsIntegral X.left] [IsProper X.hom]
     [IsNoetherian X.left]
     (n : ℕ) [SmoothOfRelativeDimension n X.hom]
-    (projective : IsProjectiveVariety X)
+    (projective : ProjectiveSpace.IsProjective X)
     (hn : 3 ≤ n) (K : LineBundle X.left)
     (hK : SerreDualizingLine X.hom K.val n)
     (v : N1 X) (ray : IsExtremalRay v) (negative : v.val K < 0)

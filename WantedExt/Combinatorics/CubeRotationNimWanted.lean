@@ -13,6 +13,8 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 public import Mathlib.Data.Fintype.Fin
 public import Mathlib.Order.Basic
 public import Mathlib.Data.Fin.VecNotation
+public import MathlibExt.Combinatorics.MisereCubeRotationNim
+public import MathlibExt.Combinatorics.SlowCubeEdgeNim
 public import MathlibExt.Combinatorics.SlowCubeFaceNim
 public import MathlibExt.Combinatorics.SlowCubeVertexNim
 
@@ -95,24 +97,6 @@ public theorem_wanted cubeVertexNim_misere_pPositions (P : Set (Fin 6 → ℕ))
     p ∈ P ↔ (p 0 = p 3 ∧ p 1 = p 4 ∧ p 2 = p 5 ∧ 2 ≤ p 5) ∨ p = ![0, 0, 0, 0, 0, 1] ∨
       p = ![0, 1, 1, 0, 1, 1] ∨ p = ![1, 1, 1, 1, 1, 1]
 
-/-- **Misère P-positions of rotation Nim on a cube.** Write positions of the game $C_R$ as tuples
-$p = (a, b, c, A, B, C)$ of numbers of tokens on the faces $f_a, f_b, f_c, f_A, f_B, f_C$, where
-$f_A$, $f_B$, $f_C$ are opposite $f_a$, $f_b$, $f_c$. Let $\mathcal P$ be any set of positions
-such that a position lies in $\mathcal P$ if and only if it has a rotation move and every
-rotation move from it leads to a position outside $\mathcal P$; this is the set of P-positions
-under misère play, where the player making the last move loses. Let $p$ be a position in which
-every entry is at most $C$, and $a \le A$, $b \le B$ and $a \le b$. Then $p \in \mathcal P$ if
-and only if either $C \ge 2$ and $a + A = b + B = c + C$, or $p = (0, 0, 0, 0, 0, 1)$, or
-$p = (1, 1, 1, 1, 1, 1)$.
-
-Source: Balaji R. Kadam and A. J. Shaiju, *Variations of the Nim Game Played on a Cube*,
-INTEGERS 25 (2025), Article G2, Theorem 8 (`integers-2025-G2-thm-8`). -/
-public theorem_wanted cubeRotationNim_misere_pPositions (P : Set (Fin 6 → ℕ))
-    (hP : ∀ p, p ∈ P ↔ (∃ q, CubeRotationMove p q) ∧ ∀ q, CubeRotationMove p q → q ∉ P)
-    (p : Fin 6 → ℕ) (hC : ∀ k, p k ≤ p 5) (ha : p 0 ≤ p 3) (hb : p 1 ≤ p 4) (hab : p 0 ≤ p 1) :
-    p ∈ P ↔ (2 ≤ p 5 ∧ p 0 + p 3 = p 1 + p 4 ∧ p 1 + p 4 = p 2 + p 5) ∨
-      p = ![0, 0, 0, 0, 0, 1] ∨ p = ![1, 1, 1, 1, 1, 1]
-
 /-- **Misère P-positions of face Nim on a cube.** Write positions of the game $C_F$ (Nim with six
 heaps) as tuples $p = (a, b, c, A, B, C)$ of numbers of tokens on the faces
 $f_a, f_b, f_c, f_A, f_B, f_C$, where $f_A$, $f_B$, $f_C$ are opposite $f_a$, $f_b$, $f_c$, and let
@@ -131,27 +115,6 @@ public theorem_wanted cubeFaceNim_misere_pPositions (P : Set (Fin 6 → ℕ))
     (p : Fin 6 → ℕ) (hC : ∀ k, p k ≤ p 5) (ha : p 0 ≤ p 3) (hb : p 1 ≤ p 4) (hab : p 0 ≤ p 1) :
     p ∈ P ↔ (2 ≤ p 5 ∧ p 0 ^^^ p 1 ^^^ p 2 ^^^ p 3 ^^^ p 4 ^^^ p 5 = 0) ∨
       (p 5 < 2 ∧ p 0 ^^^ p 1 ^^^ p 2 ^^^ p 3 ^^^ p 4 ^^^ p 5 = 1)
-
-/-- **P-positions of slow edge Nim on a cube.** Write a position of the cube game as
-$p = (a, b, c, A, B, C)$, the numbers of tokens on the six faces of a cube, where the faces
-carrying $A$, $B$, $C$ are opposite those carrying $a$, $b$, $c$. A slow edge move is an edge
-move (removing at least one token in total from two faces in different opposite pairs) in which
-each face loses at most one token. Let $P$ be the set of positions for which $a + A$, $b + B$
-and $c + C$ are all even or all odd. Then no slow edge move leads from a position in $P$ to a
-position in $P$, and from every position not in $P$ some slow edge move leads to a position in
-$P$.
-
-Since every play terminates, these two properties make $P$ the set of P-positions of the slow
-game under normal play.
-
-Source: Balaji R. Kadam and A. J. Shaiju, *Variations of the Nim Game Played on a Cube*,
-INTEGERS 25 (2025), Article G2, Theorem 11 (`integers-2025-G2-thm-11`). -/
-public theorem_wanted slowCubeEdgeNim_pPositions :
-    let M : (Fin 6 → ℕ) → (Fin 6 → ℕ) → Prop := fun p q =>
-      CubeEdgeMove p q ∧ ∀ k, p k ≤ q k + 1
-    let P : Set (Fin 6 → ℕ) :=
-      {p | (p 0 + p 3) % 2 = (p 1 + p 4) % 2 ∧ (p 1 + p 4) % 2 = (p 2 + p 5) % 2}
-    (∀ p q, p ∈ P → M p q → q ∉ P) ∧ ∀ p, p ∉ P → ∃ q, M p q ∧ q ∈ P
 
 /-- **P-positions of slow rotation Nim on a cube.** Write a position of the cube game as
 $p = (a, b, c, A, B, C)$, the numbers of tokens on the six faces of a cube, where the faces

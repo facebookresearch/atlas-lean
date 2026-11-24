@@ -67,7 +67,8 @@ theorem leonardoPK_of_le (p k n : ℕ) (hn : n ≤ p) : leonardoPK p k n = 1 := 
   | zero => rfl
   | succ n => simp [leonardoPK_succ, hn]
 
-/-- After the initial block, the next term adds the terms at lags one and `p + 1`, and `k`. -/
+/-- For natural numbers $p,k,i$, the generalized Leonardo numbers satisfy
+$\mathcal L_{p,k}(p+i+1)=\mathcal L_{p,k}(p+i)+\mathcal L_{p,k}(i)+k$. -/
 theorem leonardoPK_recurrence (p k i : ℕ) :
     leonardoPK p k (p + i + 1) = leonardoPK p k (p + i) + leonardoPK p k i + k := by
   rw [leonardoPK_succ, ite_eq_right (by omega), Nat.add_sub_cancel_left]

@@ -42,7 +42,6 @@ open CategoryTheory CategoryTheory.Limits
 open _root_.AlgebraicGeometry
 open PerverseSheaves ComplexAnalytification
 open CompactSupportBetti VerdierBetti ProperBettiFunctoriality
-open DeCataldoMiglioriniDecompositionWanted (IsProjectiveOverC)
 
 attribute [local instance] HasDerivedCategory.standard
 
@@ -86,20 +85,20 @@ structure CycleMap where
   and their traces are interpreted. -/
   purity : ∀ (X : ComplexScheme) [IsComplexVariety X] (d : ℕ)
     [SmoothOfRelativeDimension d X.hom] [IsProper X.hom],
-    IsProjectiveOverC X →
+    ProjectiveSpace.IsProjective X →
       ((D X).obj ≅
         (BettiRealization.rationalUnit (space X))⟦(2 * d : ℤ)⟧)
   /-- Rational cycle realization on the actual projective quotient by fibre
   relations. Proper projective resolutions normalize every such cycle. -/
   cycleClass : ∀ (X : ComplexScheme) [IsComplexVariety X] [IsProper X.hom]
-    (r : ℕ), IsProjectiveOverC X → GeometricChow.ChowGroup X r →ₗ[ℚ]
+    (r : ℕ), ProjectiveSpace.IsProjective X → GeometricChow.ChowGroup X r →ₗ[ℚ]
       BorelMoore (space X) (D X) (2 * r)
   /-- The whole smooth scheme realizes as the nonzero oriented fundamental
   morphism determined by its selected purity. -/
   fundamental_normalization : ∀ (X : ComplexScheme) [IsComplexVariety X]
     [IsNoetherian X.left] (d : ℕ)
     [SmoothOfRelativeDimension d X.hom] [IsProper X.hom]
-    (hX : IsProjectiveOverC X),
+    (hX : ProjectiveSpace.IsProjective X),
     cycleClass X d hX ((GeometricChow.rationalEquivalences X d).mkQ
         (GeometricChow.fundamentalCycleOfDimension X.left d)) =
       fundamentalClass (space X) (D X) d (purity X d hX)
@@ -109,8 +108,8 @@ structure CycleMap where
     [IsComplexVariety X] [IsComplexVariety Y]
     (f : X ⟶ Y) [IsProper f.left] [IsProper X.hom] [IsProper Y.hom]
     [IsNoetherian X.left] (r : ℕ)
-    [SmoothOfRelativeDimension r X.hom] (hX : IsProjectiveOverC X)
-    (hY : IsProjectiveOverC Y),
+    [SmoothOfRelativeDimension r X.hom] (hX : ProjectiveSpace.IsProjective X)
+    (hY : ProjectiveSpace.IsProjective Y),
     cycleClass Y r hY
         ((GeometricChow.rationalEquivalences Y r).mkQ
           (pushedFundamentalCycle f r)) =
@@ -125,7 +124,7 @@ variable {D P} (S : CycleMap D P)
 the same selected ambient purity. The degree is the actual codimension. -/
 def cohomologyClass (X : ComplexScheme) [IsComplexVariety X]
     (d r : ℕ) [SmoothOfRelativeDimension d X.hom] [IsProper X.hom]
-    (hX : IsProjectiveOverC X) :
+    (hX : ProjectiveSpace.IsProjective X) :
     GeometricChow.ChowGroup X r →ₗ[ℚ]
       BettiRealization.Cohomology (space X)
         (2 * (d : ℤ) - 2 * (r : ℤ)) where
@@ -165,7 +164,7 @@ structure CycleRealization where
   actual Yoneda cup product on the same ambient Betti complex. -/
   transverse_product : ∀ (X : ComplexScheme) [IsComplexVariety X]
     (d r s t : ℕ) [SmoothOfRelativeDimension d X.hom] [IsProper X.hom]
-    (hX : IsProjectiveOverC X) (Y Z : ComplexScheme)
+    (hX : ProjectiveSpace.IsProjective X) (Y Z : ComplexScheme)
     (i : Y ⟶ X) (j : Z ⟶ X)
     [IsClosedImmersion i.left] [IsClosedImmersion j.left]
     [IsNoetherian Y.left] [IsNoetherian Z.left]

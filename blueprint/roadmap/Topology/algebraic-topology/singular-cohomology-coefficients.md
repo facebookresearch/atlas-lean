@@ -13,12 +13,15 @@ Here $C^{-1}(X; G) = 0$, so $H^0(X; G)$ is the kernel of $\delta$ on $C^0(X; G)$
 
 ## Expansion
 
-A good expansion of this node links each notion it is built from: kernels of group homomorphisms; the group of homomorphisms between abelian groups; images of group homomorphisms; quotient groups; the vanishing of the composite of two singular boundary maps; singular chain groups and their boundary maps.
+A good expansion of this node links each notion it is built from: images of group homomorphisms; the vanishing of the composite of two singular boundary maps; singular chain groups and their boundary maps.
 
 ## Depends on
 
 - [Abelian group](../../GroupTheory/group-basics/abelian-group.md)
 - [Topological space](../topological-spaces/topological-space.md)
+- [Kernel of a homomorphism from a group](../../GroupTheory/group-basics/group-homomorphism-kernel.md)
+- [Abelian group of additive homomorphisms into an abelian group](../../GroupTheory/semigroups-and-monoids/hom-group-abelian.md)
+- [Quotient group by a normal subgroup](../../GroupTheory/group-basics/quotient-group.md)
 
 ## Sources
 

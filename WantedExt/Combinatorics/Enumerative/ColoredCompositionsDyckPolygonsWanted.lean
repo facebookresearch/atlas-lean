@@ -10,7 +10,9 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Data.Rat.Defs
+public import MathlibExt.Combinatorics.Enumerative.ColoredCompositionPartialBell
 public import MathlibExt.Combinatorics.Enumerative.ColoredCompositionsDyckPolygons
+public import MathlibExt.Combinatorics.Enumerative.ColoredDyckPathPartialBell
 public import MathlibExt.Combinatorics.Enumerative.PartialBellPolynomial
 
 /-!
@@ -35,43 +37,6 @@ Compositions, Dyck Paths, and Polygon Partitions*, Journal of Integer Sequences
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Hoggatt–Lind formula for colored compositions.** Let $\gamma = (\gamma_1, \gamma_2, \dots)$
-be a sequence of natural numbers and let $c_{n,k}(\gamma)$ be the number of compositions of $n$
-with $k$ parts in which each part $j$ carries one of $\gamma_j$ colors. For every natural number
-$n \ge 1$ and every natural number $k$, as rational numbers,
-$$c_{n,k}(\gamma) = \frac{k!}{n!} B_{n,k}(1! \, \gamma_1, 2! \, \gamma_2, \dots),$$
-where $B_{n,k}$ is the partial Bell polynomial.
-
-Source: Gil, Hoover, and Shearer, *Bijections Between Colored Compositions, Dyck
-Paths, and Polygon Partitions*, Journal of Integer Sequences 27 (2024), Article
-24.5.2, Proposition 1 (`jis-2024-24.5.2-prop-1`), citing Hoggatt and Lind. -/
-public theorem_wanted coloredCompositionCount_eq_partialBell (γ : ℕ → ℕ) {n : ℕ} (hn : 1 ≤ n)
-    (k : ℕ) :
-    (coloredCompositionCount γ n k : ℚ) =
-      (k.factorial : ℚ) / n.factorial *
-        partialBellPolynomial n k (fun j => (j.factorial : ℚ) * γ j)
-
-/-- **Mansour–Sun formula for colored Dyck paths.** Let $\gamma = (\gamma_1, \gamma_2, \dots)$ be
-a sequence of natural numbers and let $d_{n,k}(\gamma)$ be the number of Dyck paths of semilength
-$n$ with $k$ peaks in which each block $UD^j$, formed by a peak and the maximal run of $D$ steps
-starting at its $D$, carries one of $\gamma_j$ colors. For every natural number $n \ge 1$ and
-every natural number $k$, as rational numbers,
-$$d_{n,k}(\gamma) = \frac{1}{(n+1-k)!} B_{n,k}(1! \, \gamma_1, 2! \, \gamma_2, \dots),$$
-where $B_{n,k}$ is the partial Bell polynomial and $n + 1 - k$ is truncated subtraction, which is
-$0$ when $k > n + 1$.
-
-For $k \le n + 1$ the factor is $1/(n-k+1)!$; for every $k > n$ both sides vanish because
-$B_{n,k} = 0$.
-
-Source: Gil, Hoover, and Shearer, *Bijections Between Colored Compositions, Dyck
-Paths, and Polygon Partitions*, Journal of Integer Sequences 27 (2024), Article
-24.5.2, Proposition 2 (`jis-2024-24.5.2-prop-2`), citing Mansour and Sun. -/
-public theorem_wanted coloredDyckPathCount_eq_partialBell (γ : ℕ → ℕ) {n : ℕ} (hn : 1 ≤ n)
-    (k : ℕ) :
-    (coloredDyckPathCount γ n k : ℚ) =
-      1 / ((n + 1 - k).factorial : ℚ) *
-        partialBellPolynomial n k (fun j => (j.factorial : ℚ) * γ j)
 
 /-- **Birmajer–Gil–Weiner formula for colored polygon partitions.** Let
 $\gamma = (\gamma_1, \gamma_2, \dots)$ be a sequence of natural numbers and let $p_{n,k}(\gamma)$

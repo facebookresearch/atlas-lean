@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Field.ZMod
 public import MathlibExt.Combinatorics.Enumerative.AlternatingBinomialPowerSum
+public import MathlibExt.FieldTheory.Finite.MonomialPermutationPolynomial
 public import MathlibExt.FieldTheory.Finite.PermutationPolynomial
 
 /-!
@@ -18,9 +19,12 @@ public import MathlibExt.FieldTheory.Finite.PermutationPolynomial
 
 Statements from Chandan Kumar Vishwakarma and Rajesh P. Singh, *A Congruence Identity on
 Ordered Partitions Using Permutation Polynomials*, INTEGERS 24 (2024), Article A12: the
-monomial and power-sum criteria the paper quotes and its two
+power-sum criterion the paper quotes and its two
 new classes of permutation polynomials over `𝔽_p`. Permutation polynomials use MathlibExt's
 `Polynomial.IsPermutationPolynomial` (bijective evaluation map).
+
+Proved in `MathlibExt.FieldTheory.Finite.MonomialPermutationPolynomial`, which this module
+imports: the monomial criterion the paper quotes (`isPermutationPolynomial_X_pow_iff_coprime`).
 -/
 
 namespace MetaMathlibExt
@@ -28,20 +32,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open Polynomial
-
-/-- **Monomial permutation polynomials of a finite field.** Let $K$ be a finite field with $q$
-elements and let $d \ge 1$ be an integer. Then $X^d$ is a permutation polynomial of $K$ if and
-only if $\gcd(d, q - 1) = 1$.
-
-The hypothesis $d \ge 1$ is needed: for $d = 0$ and $q = 2$ the condition $\gcd(d, q - 1) = 1$
-holds, but $X^0 = 1$ is constant.
-
-Source: Chandan Kumar Vishwakarma and Rajesh P. Singh, *A Congruence Identity on Ordered
-Partitions Using Permutation Polynomials*, INTEGERS 24 (2024), Article A12, Lemma 2
-(`integers-2024-A12-lem-2`). -/
-public theorem_wanted isPermutationPolynomial_X_pow_iff_coprime {K : Type*} [Field K]
-    [Fintype K] {d : ℕ} (hd : 0 < d) :
-    (X ^ d : K[X]).IsPermutationPolynomial ↔ d.Coprime (Fintype.card K - 1)
 
 /-- **Power-sum criterion for distinct elements of a finite field.** Let $K$ be a finite field
 with $q$ elements and let $a_1, \dots, a_q \in K$. Then $a_1, \dots, a_q$ are pairwise distinct

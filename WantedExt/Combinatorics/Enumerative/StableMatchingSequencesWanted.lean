@@ -13,6 +13,7 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Data.Nat.Factorial.Basic
 public import Mathlib.Data.Rat.Defs
+public import MathlibExt.Combinatorics.Enumerative.GaleShapleyOneRound
 public import MathlibExt.Combinatorics.Enumerative.StableMatchingSequences
 
 set_option autoImplicit false
@@ -38,16 +39,6 @@ Sequences 27 (2024), Article 24.2.2, Proposition 1
 public theorem_wanted galeShapleyRounds_of_same_taste (P : PreferenceProfile n)
     (h : ∀ i i' : Fin n, P.1 i = P.1 i') :
     galeShapleyRounds P = n
-
-/-- **When the Gale–Shapley algorithm ends in one round.** Let $n \ge 1$ and let $P$ be a
-preference profile for $n$ men and $n$ women. The men-proposing Gale–Shapley algorithm on $P$ ends
-in exactly one round if and only if every woman is the first choice of exactly one man.
-
-Source: Borodin et al., *Sequences of the Stable Matching Problem*, Journal of
-Integer Sequences 27 (2024), Article 24.2.2, Proposition 2
-(`jis-2024-24.2.2-prop-2`). -/
-public theorem_wanted galeShapleyRounds_eq_one_iff (P : PreferenceProfile n) (hn : 0 < n) :
-    galeShapleyRounds P = 1 ↔ ∀ j : Fin n, ∃! i : Fin n, P.1 i ⟨0, hn⟩ = j
 
 /-- **Counting disjoint preference profiles.** Call a preference profile for $n$ men and $n$ women
 disjoint if for every pair of positions $(r, s)$ there is exactly one man–woman pair in which the
