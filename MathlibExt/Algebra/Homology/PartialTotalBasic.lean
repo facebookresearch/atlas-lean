@@ -78,7 +78,9 @@ theorem ιTotal_partialTotalι (p : ℕ) (i : Fin (p + 1))
       ((B.stupidTruncXIso
         (ComplexShape.embeddingDownNatInitialSegment p)
         (show (ComplexShape.embeddingDownNatInitialSegment p).f i = i.1
-          from initialSegmentEmbedding_f p i)).hom.f j) ≫
+          from by
+            dsimp only [ComplexShape.embeddingDownNatInitialSegment,
+              ComplexShape.Embedding.mk'])).hom.f j) ≫
         B.ιTotal (ComplexShape.down ℕ) i.1 j n h := by
   change
     HomologicalComplex₂.ιTotal
@@ -92,11 +94,12 @@ theorem ιTotal_partialTotalι (p : ℕ) (i : Fin (p + 1))
   have hComponent :
       B.ιStupidTruncf (ComplexShape.embeddingDownNatInitialSegment p) i.1 =
         (B.stupidTruncXIso (ComplexShape.embeddingDownNatInitialSegment p)
-          (initialSegmentEmbedding_f p i)).hom := by
+          (HomologicalComplex₂.initialSegmentEmbedding_f p i)).hom := by
     simpa only [HomologicalComplex.stupidTruncXIso, HomologicalComplex.restrictionXIso,
       Iso.trans_hom] using
       (HomologicalComplex.ιStupidTruncf'_eq B
-        (ComplexShape.embeddingDownNatInitialSegment p) (initialSegmentEmbedding_f p i))
+        (ComplexShape.embeddingDownNatInitialSegment p)
+          (HomologicalComplex₂.initialSegmentEmbedding_f p i))
   exact congrArg (fun φ => φ.f j ≫ B.ιTotal (ComplexShape.down ℕ) i.1 j n h) hComponent
 
 /-- Each degree of the partial-total inclusion is a monomorphism. -/

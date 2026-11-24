@@ -135,7 +135,6 @@ theorem partialTotalEIntFiltrationObjIso_inv_comp_toTop (p : ℕ) :
         B.partialTotalToTotal (p : ℤ) (by omega)]
     simp only [Iso.inv_hom_id_assoc, B.partialTotalToTotal_app]
   convert hraw using 1
-  all_goals subsingleton
 
 /-- The upper endpoint selected by the increasing page-one core is the
 `p`th partial total. -/
