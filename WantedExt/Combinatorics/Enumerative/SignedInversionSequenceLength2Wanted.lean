@@ -9,11 +9,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-import Mathlib.Tactic.DeriveFintype
-public import Mathlib.Data.Set.Card
 public import Mathlib.NumberTheory.Harmonic.Defs
 public import Mathlib.RingTheory.PowerSeries.Inverse
-public import Mathlib.SetTheory.Cardinal.Finite
+public import MathlibExt.Combinatorics.Enumerative.SignedInversionSequenceLength2
 
 /-!
 # Signed inversion sequences avoiding sets of length-2 signed patterns
@@ -37,134 +35,6 @@ namespace MetaMathlibExt
 open Nat PowerSeries
 
 @[expose] public section
-
-/-- **Length-2 signed pattern.** A length-2 signed pattern is a word $\tau_1\tau_2$ whose
-underlying word $|\tau_1||\tau_2|$ is $00$, $01$ or $10$ and each of whose letters may be barred,
-for example $\bar10$ or $0\bar1$. It is given by the comparison of $|\tau_1|$ with $|\tau_2|$
-(equal for $00$, less for $01$, greater for $10$) together with whether $\tau_1$ is barred and
-whether $\tau_2$ is barred.
-
-Source: Toufik Mansour and Amir Safadi, *Signed Inversion Sequences Avoiding a Set of Length-2
-Signed Patterns*, INTEGERS 26 (2026), Article A74, Introduction. -/
-structure SignedPattern2 where
-  /-- The comparison of `|τ₁|` with `|τ₂|`. -/
-  ord : Ordering
-  /-- Whether the first letter is barred. -/
-  bar₁ : Bool
-  /-- Whether the second letter is barred. -/
-  bar₂ : Bool
-deriving DecidableEq, Fintype
-
-/-- **Number of length-2 signed patterns.** There are exactly twelve length-2 signed patterns.
-
-Source: Toufik Mansour and Amir Safadi, *Signed Inversion Sequences Avoiding a Set of Length-2
-Signed Patterns*, INTEGERS 26 (2026), Article A74, Section 5 (`binom 12 k` sets of `k`
-patterns). -/
-theorem card_signedPattern2 : Fintype.card SignedPattern2 = 12 := by decide
-
-/-- **Containment of a length-2 signed pattern.** Let $e = e_1 \cdots e_n$ be a sequence whose
-entries are natural numbers $|e_i|$, each barred or not, and let $\tau_1\tau_2$ be a length-2
-signed pattern. Then $e$ contains $\tau_1\tau_2$ if there are positions $i < j$ such that $|e_i|$
-is equal to, smaller than or larger than $|e_j|$ exactly as $|\tau_1|$ is equal to, smaller than
-or larger than $|\tau_2|$, and $e_i$ and $e_j$ are barred exactly when $\tau_1$ and $\tau_2$ are.
-
-Source: Toufik Mansour and Amir Safadi, *Signed Inversion Sequences Avoiding a Set of Length-2
-Signed Patterns*, INTEGERS 26 (2026), Article A74, Introduction. -/
-def SignedInvSeqContains {n : ℕ} (e : Fin n → ℕ × Bool) (p : SignedPattern2) : Prop :=
-  ∃ i j : Fin n, i < j ∧ compare (e i).1 (e j).1 = p.ord ∧ (e i).2 = p.bar₁ ∧ (e j).2 = p.bar₂
-
-/-- **Number of signed inversion sequences avoiding a set of patterns.** A signed inversion
-sequence of length $n$ is a word $e_1 \cdots e_n$ in which each entry $e_i$ is a natural number
-$|e_i| \le i - 1$, either barred or not; that is, $e_i \in \lbrace 0, \bar 0, 1, \bar 1, \dots,
-i - 1, \overline{i - 1} \rbrace$. For a finite set $B$ of length-2 signed patterns and $n \ge 0$,
-$|\bar I_n(B)|$ is the number of signed inversion sequences of length $n$ that contain no pattern
-of $B$.
-
-Source: Toufik Mansour and Amir Safadi, *Signed Inversion Sequences Avoiding a Set of Length-2
-Signed Patterns*, INTEGERS 26 (2026), Article A74, Introduction. -/
-noncomputable def signedInvAvoidCount (B : Finset SignedPattern2) (n : ℕ) : ℕ :=
-  Nat.card {e : Fin n → ℕ × Bool // (∀ i, (e i).1 ≤ i) ∧ ∀ p ∈ B, ¬ SignedInvSeqContains e p}
-
-/-- **Signed inversion sequences of length zero.** The empty sequence is the only signed inversion
-sequence of length $0$, and it contains no pattern, so for every finite set $B$ of length-2 signed
-patterns the number $|\bar I_0(B)|$ of signed inversion sequences of length $0$ avoiding every
-pattern of $B$ is $1$.
-
-Source: Toufik Mansour and Amir Safadi, *Signed Inversion Sequences Avoiding a Set of Length-2
-Signed Patterns*, INTEGERS 26 (2026), Article A74, Introduction. -/
-theorem signedInvAvoidCount_zero (B : Finset SignedPattern2) : signedInvAvoidCount B 0 = 1 := by
-  rw [signedInvAvoidCount, Nat.card_eq_one_iff_unique]
-  refine ⟨⟨fun e e' => Subtype.ext (funext fun i => i.elim0)⟩, ⟨⟨fun i => i.elim0, ?_⟩⟩⟩
-  exact ⟨fun i => i.elim0, fun _ _ ⟨i, _⟩ => i.elim0⟩
-
-/-- **Signed inversion sequences of length one.** The signed inversion sequences of length $1$ are
-$0$ and $\bar 0$, and neither contains a length-2 signed pattern, so for every finite set $B$ of
-length-2 signed patterns the number $|\bar I_1(B)|$ of signed inversion sequences of length $1$
-avoiding every pattern of $B$ is $2$.
-
-Source: Toufik Mansour and Amir Safadi, *Signed Inversion Sequences Avoiding a Set of Length-2
-Signed Patterns*, INTEGERS 26 (2026), Article A74, Introduction. -/
-theorem signedInvAvoidCount_one (B : Finset SignedPattern2) : signedInvAvoidCount B 1 = 2 := by
-  have hpat : ∀ (e : Fin 1 → ℕ × Bool) (p : SignedPattern2), ¬ SignedInvSeqContains e p := by
-    rintro e p ⟨i, j, hij, -⟩
-    exact absurd hij (by rw [Subsingleton.elim i j]; exact lt_irrefl j)
-  let f : {e : Fin 1 → ℕ × Bool // (∀ i, (e i).1 ≤ i) ∧ ∀ p ∈ B, ¬ SignedInvSeqContains e p} ≃
-      Bool :=
-    { toFun := fun e => (e.1 0).2
-      invFun := fun b => ⟨fun _ => (0, b), fun i => Nat.zero_le _, fun p _ => hpat _ p⟩
-      left_inv := fun e => by
-        refine Subtype.ext (funext fun i => ?_)
-        have hi : i = 0 := Subsingleton.elim i 0
-        subst hi
-        have h0 : (e.1 0).1 = 0 := Nat.le_zero.mp (e.2.1 0)
-        exact Prod.ext h0.symm rfl
-      right_inv := fun b => rfl }
-  rw [signedInvAvoidCount, Nat.card_congr f, Nat.card_eq_fintype_card, Fintype.card_bool]
-
-/-- **Generating function of signed inversion sequences avoiding a set of patterns.** For a finite
-set $B$ of length-2 signed patterns, $F_B(x) = \sum_{n \ge 0} |\bar I_n(B)| x^n$ is the formal
-power series with rational coefficients whose coefficient of $x^n$ is the number $|\bar I_n(B)|$
-of signed inversion sequences of length $n$ avoiding every pattern of $B$.
-
-Source: Toufik Mansour and Amir Safadi, *Signed Inversion Sequences Avoiding a Set of Length-2
-Signed Patterns*, INTEGERS 26 (2026), Article A74, Section 2. -/
-noncomputable def signedInvAvoidGF (B : Finset SignedPattern2) : ℚ⟦X⟧ :=
-  PowerSeries.mk fun n => (signedInvAvoidCount B n : ℚ)
-
-/-- **Coefficients of the avoidance generating function.** For a finite set $B$ of length-2
-signed patterns and $m \ge 0$, let $|\bar I_m(B)|$ be the number of signed inversion sequences of
-length $m$ avoiding every pattern of $B$, and let $F_B(x) = \sum_{m \ge 0} |\bar I_m(B)| x^m$ be
-their generating function, a formal power series with rational coefficients. Then for every
-$n \ge 0$ the coefficient of $x^n$ in $F_B(x)$ is $|\bar I_n(B)|$, viewed as a rational number.
-
-Source: Toufik Mansour and Amir Safadi, *Signed Inversion Sequences Avoiding a Set of Length-2
-Signed Patterns*, INTEGERS 26 (2026), Article A74, Section 2. -/
-theorem coeff_signedInvAvoidGF (B : Finset SignedPattern2) (n : ℕ) :
-    coeff n (signedInvAvoidGF B) = (signedInvAvoidCount B n : ℚ) := by
-  simp [signedInvAvoidGF]
-
-/-- **Number of signed Wilf classes.** For $k \ge 0$, $\mathrm{sw}_k$ is the number of
-Wilf-equivalence classes among the sets of $k$ length-2 signed patterns, that is, the number of
-distinct counting functions $n \mapsto |\bar{I}_n(B)|$ (for $n \ge 0$) over all sets $B$ of exactly
-$k$ length-2 signed patterns, where $|\bar{I}_n(B)|$ is the number of signed inversion sequences of
-length $n$ avoiding every pattern of $B$.
-
-Source: Toufik Mansour and Amir Safadi, *Signed Inversion Sequences Avoiding a Set of Length-2
-Signed Patterns*, INTEGERS 26 (2026), Article A74, Theorem 1. -/
-noncomputable def signedWilfClassCount (k : ℕ) : ℕ :=
-  Set.ncard ((fun B => signedInvAvoidCount B) '' {B : Finset SignedPattern2 | B.card = k})
-
-/-- **The empty pattern set forms one signed Wilf class.** The number $\mathrm{sw}_0$ of
-Wilf-equivalence classes among the sets of $0$ length-2 signed patterns is $1$: the empty set is
-the only set of no patterns.
-
-Source: Toufik Mansour and Amir Safadi, *Signed Inversion Sequences Avoiding a Set of Length-2
-Signed Patterns*, INTEGERS 26 (2026), Article A74, Theorem 1 (definition of `sw_k`). -/
-theorem signedWilfClassCount_zero : signedWilfClassCount 0 = 1 := by
-  have : {B : Finset SignedPattern2 | B.card = 0} = {∅} := by
-    ext B
-    simp
-  rw [signedWilfClassCount, this, Set.image_singleton, Set.ncard_singleton]
 
 /-- **Mansour–Safadi Lemma 1 (signed patterns 0̄1̄, 0̄0, 01).** A signed inversion sequence of
 length $n$ is a word $e_1 \cdots e_n$ with $e_k \in \{0, \bar 0, 1, \bar 1, \dots, k - 1,
@@ -1008,21 +878,6 @@ public theorem_wanted signedInvSeq_wilf_b1b0_b0b1_b00_b01_0b0 :
         ⟨.eq, true, false⟩, ⟨.eq, false, false⟩} =
       signedInvAvoidCount {⟨.gt, true, true⟩, ⟨.gt, true, false⟩, ⟨.lt, true, true⟩,
           ⟨.eq, false, true⟩, ⟨.eq, false, false⟩}
-
-/-- **Mansour–Safadi Theorem 13: a Wilf-equivalence of five-pattern sets.** Length-2 signed
-patterns are written as in the paper, a bar marking a barred letter, and $B \sim C$ means that
-for every $n \ge 0$ the number $|\bar I_n(B)|$ of signed inversion sequences of length $n$
-avoiding every pattern of $B$ equals $|\bar I_n(C)|$. Then
-$\{\bar1\bar0, \bar0\bar1, \bar00, \bar01, 1\bar0\} \sim
-\{\bar1\bar0, \bar0\bar1, \bar0\bar0, \bar01, 1\bar0\}$.
-
-Source: Toufik Mansour and Amir Safadi, *Signed Inversion Sequences Avoiding a Set of Length-2
-Signed Patterns*, INTEGERS 26 (2026), Article A74, Theorem 13 (`integers-2026-A74-thm-13`). -/
-public theorem_wanted signedInvSeq_wilf_b1b0_b0b1_b00_b01_1b0 :
-    signedInvAvoidCount {⟨.gt, true, true⟩, ⟨.lt, true, true⟩, ⟨.eq, true, false⟩,
-        ⟨.lt, true, false⟩, ⟨.gt, false, true⟩} =
-      signedInvAvoidCount {⟨.gt, true, true⟩, ⟨.lt, true, true⟩, ⟨.eq, true, true⟩,
-          ⟨.lt, true, false⟩, ⟨.gt, false, true⟩}
 
 /-- **Mansour–Safadi Theorem 14.** Write $\bar{I}_n(B)$ for the set of signed inversion
 sequences of length $n$ that avoid every length-2 signed pattern in $B$, where a pattern is

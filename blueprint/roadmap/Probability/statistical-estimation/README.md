@@ -6,6 +6,7 @@ Point estimation theory: bias, risk and mean squared error, likelihood and maxim
 - [Bootstrap and the Mallows metric](bootstrap-and-the-mallows-metric/README.md)
 - [Contiguity and Le Cam's lemmas](contiguity-and-le-cam-s-lemmas/README.md)
 - [Exponential families](exponential-families/README.md)
+- [Finite-population survey sampling](finite-population-survey-sampling/README.md)
 - [Fisher information and the Cramér–Rao bound](fisher-information-and-the-cram-r-rao-bound/README.md)
 - [Asymptotic normality of maximum likelihood](asymptotic-normality-of-maximum-likelihood/README.md)
 - [Asymptotic efficiency and adaptive estimation](asymptotic-efficiency-and-adaptive-estimation/README.md)
