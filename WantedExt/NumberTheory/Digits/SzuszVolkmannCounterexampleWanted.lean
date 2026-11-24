@@ -17,6 +17,9 @@ many trailing zeros, and a differentiable increasing interpolation `f` with `⌊
 `η(f) = 2` and `η(f') = 1`, where `η(h) = lim_{x → ∞} log h(x) / log x`. Szüsz and Volkmann's
 Theorem 2 would make `0.h₂(1)h₂(2)…` normal; the paper shows it is not. Normality uses
 `MetaMathlibExt.NormalNumber.IsNormalInBase`.
+
+The definitions and the proved statements are in
+`MathlibExt.NumberTheory.Digits.SzuszVolkmannCounterexample`, which this module imports.
 -/
 module
 
@@ -55,15 +58,6 @@ Source: John M. Campbell, *A Counterexample to a Purported Construction of Norma
 Journal of Integer Sequences 29 (2026), Article 26.3.4, Lemma 4
 (`jis-2026-26.3.4-lem-4`). -/
 public theorem_wanted campbellF_differentiableOn : DifferentiableOn ℝ campbellF (Set.Ioi 0)
-
-/-- **Monotonicity of Campbell's interpolation.** Campbell's interpolation $f$ is monotone
-(non-decreasing) on $[0, \infty)$: for all real numbers $x$ and $y$ with $0 \le x \le y$,
-$f(x) \le f(y)$.
-
-Source: John M. Campbell, *A Counterexample to a Purported Construction of Normal Numbers*,
-Journal of Integer Sequences 29 (2026), Article 26.3.4, Lemma 5
-(`jis-2026-26.3.4-lem-5`). -/
-public theorem_wanted campbellF_monotoneOn : MonotoneOn campbellF (Set.Ici 0)
 
 /-- **Growth exponent of Campbell's interpolation.** For Campbell's interpolation $f$,
 $\log f(x) / \log x \to 2$ as $x \to \infty$ over the reals; that is, $\eta(f) = 2$, where
