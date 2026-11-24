@@ -24,7 +24,7 @@ import Mathlib.Tactic.Ring
 
 The recurrence for the sum $U$ follows by applying the Stirling recurrence to its defining sum
 and shifting the summation index. Pairing this recurrence with a row of Stirling numbers gives
-the formula for Bernoulli numbers in terms of forward differences at one.
+the formulas for Bernoulli numbers in terms of forward differences at one and at zero.
 -/
 
 @[expose] public section
@@ -200,5 +200,74 @@ theorem neg_one_pow_mul_bernoulli_eq_sum_one
   simp only [weighted_diff_eq, stirlingSum, Finset.sum_range_succ' _ (n - 1 - r + 1),
     Nat.stirlingSecond_succ_zero, Nat.cast_zero, mul_zero, add_zero,
     ← Finset.sum_div, Finset.sum_neg_distrib]
+
+-- One more difference at zero is the difference at one minus the difference at zero, and the
+-- Stirling recurrence matches this step.
+private theorem diffPowEval_zero (m k : ℕ) :
+    diffPowEval 0 k m = k.factorial * (Nat.stirlingSecond m k : ℚ) := by
+  induction k with
+  | zero => cases m <;> simp [diffPowEval]
+  | succ k ih =>
+    have hstep : diffPowEval 0 (k + 1) m = diffPowEval 1 k m - diffPowEval 0 k m := by
+      simp only [diffPowEval, Function.iterate_succ_apply', zero_add]
+    rw [hstep, diffPowEval_one, ih, Nat.stirlingSecond_succ_succ, Nat.factorial_succ]
+    push_cast
+    ring
+
+-- For k ≥ 1 the k-th weighted difference at zero is minus half the k-th term of a Stirling row.
+private theorem weighted_diff_zero_eq (r k m : ℕ) (hk : 1 ≤ k) :
+    (∑ j ∈ Finset.range (r + 1),
+        (-1 : ℚ) ^ (k + j + r + 1) * 2 ^ (r - j) * ((k + j - 1).factorial : ℚ) /
+          k.factorial * (Nat.stirlingSecond r j : ℚ)) *
+        (diffPowEval 0 k m / 2 ^ (k + r)) =
+      -(zerroU r k * Nat.stirlingSecond m k) / 2 := by
+  obtain ⟨k, rfl⟩ := Nat.exists_eq_add_of_le' hk
+  simp only [diffPowEval_zero, zerroU, Finset.sum_mul, ← Finset.sum_neg_distrib, Finset.sum_div]
+  apply Finset.sum_congr rfl
+  intro j hj
+  have hjr := Finset.mem_range.mp hj
+  simp only [Nat.add_right_comm k 1 j, Nat.add_sub_cancel, pow_succ]
+  rw [show k + 1 + r = (r - j) + (k + j) + 1 by omega, pow_succ, pow_add (2 : ℚ) (r - j)]
+  field_simp
+
+set_option linter.unusedVariables false in
+/-- **Bernoulli numbers via forward differences at $0$.** Let $n$ and $r$ be positive integers
+with $n \ge r + 1$, let $B_n$ be the $n$-th Bernoulli number, let $S(a, b)$ denote the Stirling
+numbers of the second kind and let $\Delta^k 0^m$ be the $k$-th forward difference of
+$y \mapsto y^m$ at $0$. For $k \ge 1$ write
+$d_k = \sum_{j=0}^{r} (-1)^{k+j+r+1} \, 2^{r-j} \, \frac{(k+j-1)!}{k!} \, S(r, j)$. Then
+$(-1)^n B_n = \frac{n}{2^n - 1} \sum_{k=1}^{n-r} d_k \, \frac{\Delta^k 0^{n-r}}{2^{k+r}}$.
+
+Source: Schehrazade Zerroukhat and Laala Khaldi, "A Note
+on Explicit Formulas for Bernoulli and Genocchi Numbers",
+Corollary 2. -/
+theorem neg_one_pow_mul_bernoulli_eq_sum_zero
+    (n r : ℕ) (hn : 1 ≤ n) (hr : 1 ≤ r) (hnr : r + 1 ≤ n) :
+    (-1 : ℚ) ^ n * bernoulli n =
+      (n : ℚ) / (2 ^ n - 1) *
+        ∑ k ∈ Finset.Icc 1 (n - r),
+          (∑ j ∈ Finset.range (r + 1),
+            (-1 : ℚ) ^ (k + j + r + 1) * 2 ^ (r - j) *
+              ((k + j - 1).factorial : ℚ) / k.factorial *
+              (Nat.stirlingSecond r j : ℚ)) *
+          (diffPowEval 0 k (n - r) / 2 ^ (k + r)) := by
+  have hrow := stirlingSum_eq_base r (n - r) (by omega)
+  rw [Nat.sub_add_cancel (by omega : r ≤ n)] at hrow
+  rw [signed_bernoulli_eq_base n hn, ← hrow]
+  congr 1
+  -- The row sum starts at k = 0, where the Stirling number S(n - r, 0) vanishes.
+  obtain ⟨m, hm⟩ : ∃ m, n - r = m + 1 := ⟨n - r - 1, by omega⟩
+  rw [Finset.sum_congr rfl fun k hk ↦
+      weighted_diff_zero_eq r k (n - r) (Finset.mem_Icc.mp hk).1,
+    Finset.sum_subset (s₂ := Finset.range (n - r + 1))]
+  · simp only [stirlingSum, ← Finset.sum_div, Finset.sum_neg_distrib]
+  · intro k hk
+    simp only [Finset.mem_Icc, Finset.mem_range] at hk ⊢
+    omega
+  · intro k hk hk'
+    have hk0 : k = 0 := by
+      simp only [Finset.mem_Icc, Finset.mem_range, not_and_or, not_le] at hk hk'
+      omega
+    simp [hk0, hm, Nat.stirlingSecond_succ_zero]
 
 end MathlibExt.NumberTheory.GenocchiExplicitWanted

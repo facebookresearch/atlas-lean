@@ -12,7 +12,9 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Combinatorics.Enumerative.Stirling
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import Mathlib.RingTheory.MvPowerSeries.Inverse
+public import MathlibExt.Combinatorics.Enumerative.WeaklyDecreasingWordPairs
 public import MathlibExt.Combinatorics.Enumerative.WordPairIntersections
+public import MathlibExt.Combinatorics.Enumerative.WordPairOverlap
 
 /-!
 # Intersections in pairs of words
@@ -84,20 +86,6 @@ public theorem_wanted wordPairs_overlap_sum_eq_coeff (k n r : ℕ) (hn : 1 ≤ n
           (1 - PowerSeries.C (q * j + (k - j : ℕ)) * X)⁻¹) *
         (j.factorial * Nat.stirlingSecond n j)
 
-/-- **Overlap statistic on pairs of words of equal length.** Fix natural numbers $k$ and $n \ge 1$
-and a rational number $q$. For words $u$ and $v$ over an alphabet of $k$ letters, the overlap of
-$(u, v)$ is the number of positions of $v$ whose letter occurs in $u$. Let $S(n, j)$ denote the
-Stirling numbers of the second kind. Then the sum of $q^{\text{overlap}}$ over all pairs $(u, v)$
-of words of length $n$ equals $\sum_{j=1}^{k} \binom{k}{j} \, j! \, S(n, j) \, (qj + k - j)^n$.
-
-Source: Aubrey Blecher and Arnold Knopfmacher, *Intersections in Pairs of Words*, INTEGERS 24 (2024),
-Article A107, Corollary 3 (`integers-2024-A107-cor-3`). -/
-public theorem_wanted wordPairs_sameLength_overlap_sum (k n : ℕ) (hn : 1 ≤ n) (q : ℚ) :
-    ∑ p ∈ (Finset.univ : Finset ((Fin n → Fin k) × (Fin n → Fin k))),
-        q ^ (Finset.univ.filter fun i => p.2 i ∈ Finset.univ.image p.1).card =
-      ∑ j ∈ Finset.Icc 1 k,
-        (k.choose j : ℚ) * j.factorial * Nat.stirlingSecond n j * (q * j + (k - j : ℕ)) ^ n
-
 /-- **Non-intersecting pairs of weakly decreasing words.** Fix natural numbers $k$, $n \ge 1$ and
 $r \ge 1$, and order an alphabet of $k$ letters. Write $[x^m] F$ for the coefficient of $x^m$ in a
 formal power series $F$ over $\mathbb{Q}$. The number of pairs $(u, v)$ of weakly decreasing words
@@ -132,18 +120,6 @@ public theorem_wanted weaklyDecreasingNonIntersectingPairs_generatingFunction (k
       if 1 ≤ n ∧ 1 ≤ r then (((Finset.univ : Finset ((Fin n → Fin k) × (Fin r →
           Fin k))).filter fun p => Antitone p.1 ∧ Antitone p.2 ∧
           Disjoint (Finset.univ.image p.1) (Finset.univ.image p.2)).card : ℚ) else 0
-
-/-- **Non-intersecting pairs of weakly decreasing words of equal length.** For natural numbers $k$
-and $n \ge 1$, the number of pairs $(u, v)$ of weakly decreasing words of length $n$ over an
-ordered alphabet of $k$ letters such that no letter occurs in both is
-$\sum_{j=1}^{k-1} \binom{k}{j} \binom{n-1}{j-1} \binom{n+k-j-1}{n}$.
-
-Source: Aubrey Blecher and Arnold Knopfmacher, *Intersections in Pairs of Words*, INTEGERS 24 (2024),
-Article A107, Corollary 5 (`integers-2024-A107-cor-5`). -/
-public theorem_wanted weaklyDecreasingNonIntersectingPairs_sameLength_card (k n : ℕ) (hn : 1 ≤ n) :
-    ((Finset.univ : Finset ((Fin n → Fin k) × (Fin n → Fin k))).filter fun p => Antitone p.1 ∧
-        Antitone p.2 ∧ Disjoint (Finset.univ.image p.1) (Finset.univ.image p.2)).card =
-      ∑ j ∈ Finset.Icc 1 (k - 1), k.choose j * (n - 1).choose (j - 1) * (n + k - j - 1).choose n
 
 /-- **Overlap statistic on pairs of weakly decreasing words.** Fix natural numbers $k$, $n \ge 1$,
 $r \ge 1$ and a rational number $q$, and order an alphabet of $k$ letters. For words $u$ and $v$
