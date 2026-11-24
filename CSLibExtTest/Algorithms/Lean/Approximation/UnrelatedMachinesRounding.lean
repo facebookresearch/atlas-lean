@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import MathlibExt.ComputerScience.UnrelatedMachinesRounding
+import CSLibExt.Algorithms.Lean.Approximation.UnrelatedMachinesRounding
 import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Tactic.NormNum
 
