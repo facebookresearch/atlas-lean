@@ -9,20 +9,51 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
+public import Mathlib.Algebra.Group.Pointwise.Finset.Basic
+public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.Data.ZMod.Defs
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+import Mathlib.Combinatorics.Additive.CauchyDavenport
 import Mathlib.Data.ZMod.Basic
 
 /-!
-# Sums of distinct residues in a cyclic group
+# Sumsets in cyclic groups
 
-Bajnok's lemma realizes every residue modulo `d` as a sum of `t` distinct residues
-for each `0 < t < d`.
+This file gives the Cauchy–Davenport bound for iterated sumsets modulo a prime.
+It also proves Bajnok's lemma, which realizes every residue modulo `d` as a sum
+of `t` distinct residues for each `0 < t < d`.
 -/
 
 namespace MetaMathlibExt
 
 open Finset
+open scoped Pointwise
+
+/-- **Cauchy–Davenport theorem for $h$-fold sumsets.** Let $p$ be a prime, $A$ a nonempty subset
+of $\mathbb{Z}/p\mathbb{Z}$ with $|A| = k$, and $h \ge 1$ a natural number. Then the $h$-fold
+sumset $hA = \{a_1 + \dots + a_h : a_1, \dots, a_h \in A\}$ satisfies
+$|hA| \ge \min(p,\ hk - h + 1)$.
+
+Source: Jagannath Bhanja, *Sumsets with a Minimum Number of Distinct Terms*, INTEGERS 25 (2025),
+Article A12, Theorem 1 (Cauchy–Davenport theorem) (`integers-2025-A12-thm-1`). -/
+public theorem cauchy_davenport_nsmul {p : ℕ} (hp : p.Prime) (A : Finset (ZMod p))
+    (hA : A.Nonempty) (h : ℕ) (hh : 1 ≤ h) :
+    min p (h * A.card - h + 1) ≤ (h • A).card := by
+  have hcard : 1 ≤ A.card := hA.card_pos
+  suffices min p (h * (A.card - 1) + 1) ≤ (h • A).card by
+    simpa only [Nat.mul_sub_left_distrib, Nat.mul_one] using this
+  induction h, hh using Nat.le_induction with
+  | base =>
+    simpa only [one_mul, Nat.sub_add_cancel hcard, one_nsmul] using min_le_right p A.card
+  | succ h _ ih =>
+    have hne : (h • A).Nonempty := hA.nsmul
+    rw [succ_nsmul]
+    refine (le_min (min_le_left _ _) ?_).trans (ZMod.cauchy_davenport hp hne hA)
+    rcases min_le_iff.mp ih with hsat | hgrowth
+    · -- A nonempty summand preserves saturation.
+      have hsat' : p ≤ (h • A).card + A.card - 1 := by omega
+      exact (min_le_left _ _).trans hsat'
+    · exact (min_le_right _ _).trans (by rw [Nat.succ_mul]; omega)
 
 /-- **Bajnok's lemma on subset sums in $\mathbb{Z}/d\mathbb{Z}$.** Let $d$ and $t$ be natural
 numbers with $1 \le t \le d - 1$. Then every $\ell \in \mathbb{Z}/d\mathbb{Z}$ is the sum of the

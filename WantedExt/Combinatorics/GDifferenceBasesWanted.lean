@@ -46,17 +46,6 @@ Source: Eric Schmutz and Michael Tait, *Cardinalities of g-Difference Sets*, INT
 public theorem_wanted diffBasisNumber_div_sqrt_le (g n : ℕ) :
     (diffBasisNumber g n : ℝ) / Real.sqrt n ≤ 2 * (1 + 1 / Real.sqrt n) * g
 
-/-- **Comparing $g$-difference bases with difference bases.** For natural numbers $g$ and $n$,
-let $\eta_g(n)$ be the least size of a finite set $A \subseteq \mathbb{Z}$ such that every
-$x \in \{1, \dots, n\}$ is the difference $a - a'$ of at least $g$ ordered pairs
-$(a, a') \in A \times A$. If $n > 1$ and $g \ge 1$, then
-$\eta_1(n) \le \eta_g(n) \le g\,\eta_1(n)$.
-
-Source: Eric Schmutz and Michael Tait, *Cardinalities of g-Difference Sets*, INTEGERS 25
-(2025), Article A77, Corollary 2 (`integers-2025-A77-cor-2`). -/
-public theorem_wanted diffBasisNumber_one_le_and_le_mul (g n : ℕ) (hn : 1 < n) (hg : 1 ≤ g) :
-    diffBasisNumber 1 n ≤ diffBasisNumber g n ∧ diffBasisNumber g n ≤ g * diffBasisNumber 1 n
-
 /-- **Kravitz's question: the normalized difference basis numbers converge.** For a finite set
 $A$ of integers and an integer $x$, write $r_{A-A}(x)$ for the number of ordered pairs
 $(a, a') \in A \times A$ with $a - a' = x$. For every integer $g \ge 1$, let $\eta_g(n)$ be the
@@ -92,20 +81,6 @@ public theorem_wanted singer_product_diffBasis (g q v : ℕ) (a : Fin (q + 1) �
     ∀ s ∈ Finset.Icc (1 : ℤ) ((q ^ 2 + q + 1) * v),
       g ≤ subRepCount
         ((Finset.univ ×ˢ B).image fun ib : Fin (q + 1) × ℤ => a ib.1 + (q ^ 2 + q + 1) * ib.2) s
-
-/-- **Products of difference bases.** Let $G_1, G_2$ be abelian groups, $g_1, g_2 \in \mathbb{N}$,
-and $A_1 \subseteq G_1$, $A_2 \subseteq G_2$ finite sets. If every element of $G_1$ equals $a - a'$
-for at least $g_1$ ordered pairs $(a, a') \in A_1 \times A_1$, and every element of $G_2$ equals
-$a - a'$ for at least $g_2$ ordered pairs $(a, a') \in A_2 \times A_2$, then every element of
-$G_1 \times G_2$ equals $z - z'$ for at least $g_1 g_2$ ordered pairs
-$(z, z') \in (A_1 \times A_2) \times (A_1 \times A_2)$.
-
-Source: Eric Schmutz and Michael Tait, *Cardinalities of g-Difference Sets*, INTEGERS 25
-(2025), Article A77, Lemma 5 (`integers-2025-A77-lem-5`). -/
-public theorem_wanted subRepCount_prod_ge {G₁ G₂ : Type*} [AddCommGroup G₁] [AddCommGroup G₂]
-    [DecidableEq G₁] [DecidableEq G₂] (g₁ g₂ : ℕ) (A₁ : Finset G₁) (A₂ : Finset G₂)
-    (h₁ : ∀ x, g₁ ≤ subRepCount A₁ x) (h₂ : ∀ x, g₂ ≤ subRepCount A₂ x) :
-    ∀ x : G₁ × G₂, g₁ * g₂ ≤ subRepCount (A₁ ×ˢ A₂) x
 
 /-- **Difference bases of the square of a finite field.** For an abelian group $G$ let
 $\eta_1(G)$ be the least size of a set $A \subseteq G$ such that every element of $G$ is a

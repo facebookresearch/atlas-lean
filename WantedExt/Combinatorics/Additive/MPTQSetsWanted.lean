@@ -65,19 +65,6 @@ INTEGERS 24 (2024), Article A96, Theorem 2 (`integers-2024-A96-thm-2`). -/
 public theorem_wanted five_le_card_of_isMPTQSet_of_neg {A : Finset ℝ} (hA : IsMPTQSet A)
     (hneg : ∃ a ∈ A, a < 0) : 5 ≤ A.card
 
-/-- **Adjoining an element that adds no more products than quotients.** Let $A$ be a finite set
-of real numbers that is not an MPTQ set, let $x$ be a real number, let $n \le m$ be natural
-numbers, and write $A' = A \cup \{x\}$. If $|A' \cdot A'| \le |A \cdot A| + n$ and
-$|A/A| + m \le |A'/A'|$, where $X \cdot X$ and $X/X$ denote the product set and quotient set of
-$X$, then $A'$ is not an MPTQ set.
-
-Source: Anupriya Shetty and B. R. Shankar, *On The Minimum Cardinality of MPTQ Sets*,
-INTEGERS 24 (2024), Article A96, Lemma 1 (`integers-2024-A96-lem-1`). -/
-public theorem_wanted not_isMPTQSet_insert_of_le {A : Finset ℝ} {x : ℝ} {n m : ℕ}
-    (hA : ¬ IsMPTQSet A) (hn : (insert x A * insert x A).card ≤ (A * A).card + n)
-    (hm : (A / A).card + m ≤ (insert x A / insert x A).card) (hnm : n ≤ m) :
-    ¬ IsMPTQSet (insert x A)
-
 /-- **At most one square is the product of the other two.** Let $a$, $b$, $c$ be pairwise
 distinct positive real numbers. Then at most one of the equations $a^2 = bc$, $b^2 = ac$ and
 $c^2 = ab$ holds; that is, no two of them hold simultaneously.
@@ -110,15 +97,6 @@ Source: Anupriya Shetty and B. R. Shankar, *On The Minimum Cardinality of MPTQ S
 INTEGERS 24 (2024), Article A96, Lemma 5 (`integers-2024-A96-lem-5`). -/
 public theorem_wanted not_isMPTQSet_of_card_five_two_neg {A : Finset ℝ} (hcard : A.card = 5)
     (hneg : (A.filter (· < 0)).card = 2) : ¬ IsMPTQSet A
-
-/-- **Adjoining negatives preserves the MPTQ property.** Let $A$ be a finite set of positive real
-numbers and $-A = \{-a : a \in A\}$. Then $A \cup (-A)$ is an MPTQ set if and only if $A$ is an
-MPTQ set.
-
-Source: Anupriya Shetty and B. R. Shankar, *On The Minimum Cardinality of MPTQ Sets*,
-INTEGERS 24 (2024), Article A96, Proposition 1 (`integers-2024-A96-prop-1`). -/
-public theorem_wanted isMPTQSet_union_neg_iff {A : Finset ℝ} (hpos : ∀ a ∈ A, 0 < a) :
-    IsMPTQSet (A ∪ -A) ↔ IsMPTQSet A
 
 /-- **No MPTQ set has five elements.** No set of five real numbers is an MPTQ set.
 

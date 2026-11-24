@@ -10,8 +10,8 @@ any lattice with an orthonormal basis, and let $\mathrm{Mass}(L)$ be the
 
 $$\frac{\mathrm{Mass}(I_M)}{\mathrm{Mass}(I_{M-1})} = \left( \frac{(M-1)!}{(2\pi)^M} \right)^{n} d_K^{\,M - 1/2} \, L_K(\chi^M, M), \qquad L_K(\chi^M, M) = \prod_{\mathfrak{p}} \bigl(1 - \chi(\mathfrak{p})^M N\mathfrak{p}^{-M}\bigr)^{-1},$$
 
-the product running over the prime ideals of $K$; so $L_K(\chi^M, M)$ is $\zeta_K(M)$ for even $M$ and the $L$-function of
-$\chi$ at $M$ for odd $M$.
+the product running over the prime ideals of $K$; for even $M$ every factor is $(1 - N\mathfrak{p}^{-M})^{-1}$, and for odd
+$M$ it is $(1 - \chi(\mathfrak{p}) N\mathfrak{p}^{-M})^{-1}$.
 
 Proof. Since $E/K$ is unramified at every prime ideal, no prime ideal divides the relative discriminant
 $\mathfrak{d}_{E/K}$, which is therefore the unit ideal. Every prime ideal $\mathfrak{p}$ of $K$ splits or is inert in $E$: the
@@ -32,6 +32,7 @@ Kirschmer states the mass formula.)
 ## Depends on
 
 - [Mass and local factors of definite Hermitian lattices](hermitian-lattice-mass-and-local-factors.md), for the mass of a genus
+- [Absolute norm of an ideal](../../RingTheory/dedekind-domains/ideal-absolute-norm.md), for $N\mathfrak{p}$ in $L_K(\chi^M, M)$
 
 ## Proof depends on
 

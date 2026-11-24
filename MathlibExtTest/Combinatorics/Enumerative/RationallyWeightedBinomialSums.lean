@@ -49,6 +49,43 @@ example (n : ℕ) :
   push_cast at h
   exact_mod_cast h
 
+-- The sum is empty at N = 0, and it is negative at N = 1.
+example :
+    ∑ k ∈ Finset.Icc 1 0,
+      (-1 : ℤ) ^ k * ((0 : ℕ).choose k : ℤ) * 2 ^ (0 - k) * (k : ℤ) ^ 2 = 0 :=
+  (sum_neg_one_pow_choose_two_pow_mul_sq 0).trans (by decide)
+
+example :
+    ∑ k ∈ Finset.Icc 1 1,
+      (-1 : ℤ) ^ k * ((1 : ℕ).choose k : ℤ) * 2 ^ (1 - k) * (k : ℤ) ^ 2 = -1 :=
+  (sum_neg_one_pow_choose_two_pow_mul_sq 1).trans (by decide)
+
+-- At N = 3 the three terms give -12 + 24 - 9 = 3.
+example :
+    ∑ k ∈ Finset.Icc 1 3,
+      (-1 : ℤ) ^ k * ((3 : ℕ).choose k : ℤ) * 2 ^ (3 - k) * (k : ℤ) ^ 2 = 3 :=
+  (sum_neg_one_pow_choose_two_pow_mul_sq 3).trans (by decide)
+
+-- Rows zero and one give the empty sum and a single term, respectively.
+example : ∑ k ∈ Finset.Icc 1 0, (-1 : ℚ) ^ (k - 1) * (0 : ℕ).choose k / k = 0 :=
+  (sum_neg_one_pow_choose_div_eq_harmonic 0).trans harmonic_zero
+
+example : ∑ k ∈ Finset.Icc 1 1, (-1 : ℚ) ^ (k - 1) * (1 : ℕ).choose k / k = 1 := by
+  rw [sum_neg_one_pow_choose_div_eq_harmonic]
+  norm_num [harmonic, Finset.sum_range_succ]
+
+-- Row four includes both signs and sums to 4 - 6/2 + 4/3 - 1/4 = 25/12.
+example :
+    ∑ k ∈ Finset.Icc 1 4, (-1 : ℚ) ^ (k - 1) * (4 : ℕ).choose k / k = 25 / 12 := by
+  rw [sum_neg_one_pow_choose_div_eq_harmonic]
+  norm_num [harmonic, Finset.sum_range_succ]
+
+-- Independently evaluate the alternating sum in row four.
+example :
+    ∑ k ∈ Finset.Icc 1 4, (-1 : ℚ) ^ (k - 1) * (4 : ℕ).choose k / k = 25 / 12 := by
+  rw [← Finset.Ico_add_one_right_eq_Icc, Finset.sum_Ico_eq_sum_range]
+  norm_num [Finset.sum_range_succ, Nat.choose]
+
 -- The inverse-square sum is empty at zero.
 example : ∑ k ∈ Finset.Icc 1 0, (-1 : ℚ) ^ (k - 1) * (0 : ℕ).choose k / (k : ℚ) ^ 2 = 0 := by
   rw [sum_neg_one_pow_choose_div_sq_eq_sum_harmonic]
@@ -79,5 +116,26 @@ example : ∑ k ∈ Finset.Icc 1 1, k ^ 4 * (1 : ℕ).choose k * Nat.fib k = 1 :
 -- Row four is the first where all four terms of the fourth-power formula contribute.
 example : ∑ k ∈ Finset.Icc 1 4, k ^ 4 * (4 : ℕ).choose k * Nat.fib k = 1516 :=
   (sum_pow_mul_choose_mul_fib_small 4).2.2.2.trans (by decide)
+
+-- At x = r = 0, the constant coefficient survives by the convention 0^0 = 1.
+example (a : ℕ → ℝ) :
+    ∑ k ∈ Finset.range (2 + 1), (k : ℝ) ^ (0 : ℕ) * a k * (0 : ℝ) ^ k = a 0 := by
+  rw [sum_pow_mul_coeff_eq_sum_stirlingSecond_derivative]
+  norm_num [Finset.sum_range_succ, Nat.stirlingSecond, Polynomial.eval_add, Polynomial.eval_mul]
+
+-- At x = 0 and positive weight exponent, even the constant coefficient contributes zero.
+example (a : ℕ → ℝ) :
+    ∑ k ∈ Finset.range (2 + 1), (k : ℝ) ^ (2 : ℕ) * a k * (0 : ℝ) ^ k = 0 := by
+  rw [sum_pow_mul_coeff_eq_sum_stirlingSecond_derivative]
+  norm_num [Finset.sum_range_succ, Nat.stirlingSecond]
+
+-- For 1 + X + X² at x = -2 and r = 3, the third derivative vanishes;
+-- the two lower positive-order terms give 6 + 24 = 30.
+example : ∑ k ∈ Finset.range (2 + 1), (k : ℝ) ^ (3 : ℕ) * 1 * (-2 : ℝ) ^ k = 30 := by
+  rw [sum_pow_mul_coeff_eq_sum_stirlingSecond_derivative (fun _ => 1) 2 3 (-2)]
+  simp only [Polynomial.iterate_derivative_sum, Polynomial.eval_finsetSum,
+    Polynomial.iterate_derivative_C_mul, Polynomial.iterate_derivative_X_pow_eq_C_mul,
+    Polynomial.eval_mul, Polynomial.eval_C, Polynomial.eval_pow, Polynomial.eval_X]
+  norm_num [Finset.sum_range_succ, Nat.stirlingSecond, Nat.descFactorial]
 
 end MathlibExtTest.RationallyWeightedBinomialSums

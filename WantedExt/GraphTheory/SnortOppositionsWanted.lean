@@ -38,11 +38,11 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Combinatorics.SimpleGraph.Acyclic
 public import Mathlib.Combinatorics.SimpleGraph.Hasse
-public import Mathlib.Combinatorics.SimpleGraph.Matching
 public import Mathlib.Combinatorics.SimpleGraph.Metric
 public import Mathlib.Combinatorics.SimpleGraph.Prod
 public import Mathlib.Data.Fintype.Pi
 public import MathlibExt.Combinatorics.SimpleGraph.RookGraph
+public import MathlibExt.Combinatorics.SimpleGraph.SnortOppositions
 
 namespace MetaMathlibExt
 
@@ -109,25 +109,6 @@ def IsSnortResponsePair [Fintype V] [DecidableEq V] (G : SimpleGraph V) [Decidab
     (u v : V) : Prop :=
   u ≠ v ∧ ¬ G.Adj u v ∧ snortMoverWins G (Fintype.card V - 2) {u} {v} = false
 
-/-- **Oppositions.** An opposition of a graph $G$ is an automorphism $f$ of $G$ such that for
-every vertex $v$, $f(f(v)) = v$, $f(v) \neq v$, and $f(v)$ is not adjacent to $v$; that is, an
-involutive automorphism moving every vertex outside its closed neighbourhood.
-
-Source: Ashmore, Austin, Davies, Dyer, Kellough, *On Graph Automorphisms
-Related to SNORT*, INTEGERS 26 (2026), Article G2, Section 1 (after
-Kakihara). -/
-def IsOpposition (G : SimpleGraph V) (f : G ≃g G) : Prop :=
-  ∀ v, f (f v) = v ∧ f v ≠ v ∧ ¬ G.Adj v (f v)
-
-/-- **Opposable graphs.** A graph $G$ is opposable if it has an opposition: an automorphism $f$
-of $G$ such that for every vertex $v$, $f(f(v)) = v$, $f(v) \neq v$, and $f(v)$ is not adjacent
-to $v$.
-
-Source: Ashmore, Austin, Davies, Dyer, Kellough, *On Graph Automorphisms
-Related to SNORT*, INTEGERS 26 (2026), Article G2, Section 1. -/
-def IsOpposable (G : SimpleGraph V) : Prop :=
-  ∃ f : G ≃g G, IsOpposition G f
-
 /-- **Almost opposable graph.** A graph $G$ is almost opposable if there are a vertex $u$ and a
 set $S$ of vertices with $u \in S \subseteq N[u]$, where $N[u]$ is the closed neighbourhood of $u$
 ($u$ together with its neighbours), such that the subgraph $G - S$ induced on the vertices
@@ -151,19 +132,6 @@ def IsCompatiblyAlmostOpposable (G : SimpleGraph V) : Prop :=
   ∃ u : V, ∃ S : Set V, u ∈ S ∧ S ⊆ insert u (G.neighborSet u) ∧
     ∃ α : G ≃g G, (∀ v, α (α v) = v) ∧
       ∃ f : G.induce Sᶜ ≃g G.induce Sᶜ, IsOpposition _ f ∧ ∀ x : ↥Sᶜ, α x = (f x : V)
-
-/-- **Opposition matchings.** Let $K$ be a graph. A subgraph $M$ of $K$ is an opposition matching
-of $K$ if it is a perfect matching of $K$ and for any two distinct edges $ab$ and $cd$ of $M$,
-$ac \in E(K) \iff bd \in E(K)$ and $ad \in E(K) \iff bc \in E(K)$.
-
-Since both matching edges are present, this says that $K$ induces on $\{a, b, c, d\}$ either
-$K_4$, a $4$-cycle, or just the two matching edges.
-
-Source: Ashmore, Austin, Davies, Dyer, Kellough, *On Graph Automorphisms
-Related to SNORT*, INTEGERS 26 (2026), Article G2, Section 2 (opposition matchings). -/
-def IsOppositionMatching (K : SimpleGraph V) (M : K.Subgraph) : Prop :=
-  M.IsPerfectMatching ∧ ∀ a b c d, M.Adj a b → M.Adj c d → s(a, b) ≠ s(c, d) →
-    (K.Adj a c ↔ K.Adj b d) ∧ (K.Adj a d ↔ K.Adj b c)
 
 /-- **Graph product given by a Boolean formula.** Let $G$ and $H$ be graphs with vertex sets $V$
 and $W$, and let $\varphi$ be a Boolean function of four Boolean arguments. The product
@@ -324,14 +292,6 @@ Related to SNORT*, INTEGERS 26 (2026), Article G2, Lemma 1 (Kakihara,
 Proposition 3.6). -/
 public theorem_wanted snortSecondPlayerWins_of_isOpposable [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (h : IsOpposable G) : SnortSecondPlayerWins G
-
-/-- **Oppositions and opposition matchings.** A graph $G$ is opposable if and only if its
-complement $\overline{G}$ has an opposition matching.
-
-Source: Ashmore, Austin, Davies, Dyer, Kellough, *On Graph Automorphisms
-Related to SNORT*, INTEGERS 26 (2026), Article G2, Theorem 1. -/
-public theorem_wanted isOpposable_iff_exists_oppositionMatching (G : SimpleGraph V) :
-    IsOpposable G ↔ ∃ M : Gᶜ.Subgraph, IsOppositionMatching Gᶜ M
 
 /-- **Gluing oppositions of blocks.** Let $G$ be a graph, let $p$ be a map from its vertices to
 an index set, with blocks $B_i = \{v : p(v) = i\}$, and let $f$ be a map from the vertices of $G$

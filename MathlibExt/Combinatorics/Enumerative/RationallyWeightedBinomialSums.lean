@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Algebra.Polynomial.Derivative
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Combinatorics.Enumerative.Stirling
 public import Mathlib.Data.Nat.Choose.Sum
 public import Mathlib.Data.Nat.Fib.Basic
@@ -17,6 +19,7 @@ import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Algebra.Order.Field.Rat
 import Mathlib.Order.Fin.Basic
+import Mathlib.RingTheory.Polynomial.Bernstein
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Positivity
 import MathlibExt.NumberTheory.BinomialFibonacciConvolution
@@ -28,9 +31,10 @@ import MathlibExt.NumberTheory.DilcherFiniteMultipleHarmonic
 For every natural number `n`, `∑_{k=0}^n binom(n, k) / (k + 1) = (2^{n+1} - 1) / (n + 1)` in `ℚ`
 (`MetaMathlibExt.sum_choose_div_succ`).
 
-The alternating binomial sum with inverse-square weights equals the sum of the harmonic
-numbers divided by their indices. This follows from Dilcher's identity at exponent two by
-grouping the weakly increasing pairs by their second entry.
+The alternating binomial sum with reciprocal weights equals the harmonic number
+(Finkel's identity). The inverse-square sum equals the sum of the harmonic
+numbers divided by their indices, by Dilcher's identity at exponent two and
+grouping by the second entry.
 
 Expanding a power in falling factorials gives a formula for the power-weighted binomial sum
 of Fibonacci numbers at every exponent. The first four powers give explicit closed forms.
@@ -75,6 +79,97 @@ public theorem sum_choose_div_succ (n : ℕ) :
   have hrow' : (∑ k ∈ Finset.range (n + 1), ((n + 1).choose (k + 1) : ℚ)) + 1 = 2 ^ (n + 1) := by
     exact_mod_cast hrow
   linarith
+
+/-- **Greenstreet's identity.** For every natural number $N$,
+
+$$\sum_{k=1}^{N} (-1)^k \binom{N}{k} 2^{N-k} k^2 = N^2 - 2N.$$
+
+Source: Andreea M. Stănică, Gabriela N. Stănică, and Pantelimon Stănică, *An Evaluation of
+Rationally Weighted Binomial Sums Via Some Differential and Integral Operators*, The Fibonacci
+Quarterly 62 (2024), Article 62-1/stanica09202023, Corollary 2.3. -/
+public theorem sum_neg_one_pow_choose_two_pow_mul_sq (N : ℕ) :
+    ∑ k ∈ Finset.Icc 1 N, (-1 : ℤ) ^ k * (N.choose k : ℤ) * 2 ^ (N - k) * (k : ℤ) ^ 2 =
+      (N : ℤ) ^ 2 - 2 * N := by
+  have sq (k : ℕ) : k * (k - 1) + k = k ^ 2 := by
+    cases k <;> simp [pow_two, Nat.mul_succ]
+  -- Combine the first two factorial moments of the Bernstein polynomials.
+  have moment :
+      (∑ k ∈ Finset.range (N + 1), (k ^ 2) • bernsteinPolynomial ℤ N k) =
+        (N * (N - 1)) • (Polynomial.X : Polynomial ℤ) ^ 2 + N • Polynomial.X := by
+    simp_rw [← sq, add_nsmul, Finset.sum_add_distrib, bernsteinPolynomial.sum_mul_smul,
+      bernsteinPolynomial.sum_smul]
+  -- At X = -1, the Bernstein weights have factors (-1)^k and 2^(N-k).
+  have h := congrArg (Polynomial.evalRingHom (-1 : ℤ)) moment
+  simp only [map_sum, map_add, map_nsmul, map_pow] at h
+  simp only [Polynomial.coe_evalRingHom, bernsteinPolynomial, Polynomial.eval_mul,
+    Polynomial.eval_natCast, Polynomial.eval_pow, Polynomial.eval_X, Polynomial.eval_sub,
+    Polynomial.eval_one, show (1 : ℤ) - (-1) = 2 by decide, nsmul_eq_mul, Nat.cast_pow] at h
+  -- The k = 0 term vanishes, including when N = 0.
+  rw [Finset.range_eq_Ico, Finset.sum_eq_sum_Ico_succ_bot (Nat.succ_pos N)] at h
+  simp only [Nat.cast_zero, zero_pow (by decide : (2 : ℕ) ≠ 0), zero_mul, zero_add,
+    Nat.succ_eq_add_one, Finset.Ico_add_one_right_eq_Icc] at h
+  have hN : ((N * (N - 1) : ℕ) : ℤ) + (N : ℤ) = (N : ℤ) ^ 2 := by
+    exact_mod_cast sq N
+  calc
+    _ = _ := (Finset.sum_congr rfl fun k _ => by ac_rfl).trans h
+    _ = ((N * (N - 1) : ℕ) : ℤ) - N := by ring
+    _ = _ := by rw [← hN]; ring
+
+-- The shifted row that Pascal's identity adds in the harmonic recurrence.
+private theorem sum_neg_one_pow_choose_div_succ (n : ℕ) :
+    ∑ j ∈ Finset.range (n + 1), (-1 : ℚ) ^ j * n.choose j / (j + 1) =
+      ((n : ℚ) + 1)⁻¹ := by
+  -- The full alternating row vanishes by the binomial theorem at -1 and 1.
+  have hrow :
+      ∑ j ∈ Finset.range (n + 2), (-1 : ℚ) ^ j * (n + 1).choose j = 0 := by
+    simpa [zero_pow (Nat.succ_ne_zero n)] using (add_pow (-1 : ℚ) 1 (n + 1)).symm
+  have htail :
+      ∑ j ∈ Finset.range (n + 1), (-1 : ℚ) ^ j * (n + 1).choose (j + 1) = 1 := by
+    rw [Finset.sum_range_succ'] at hrow
+    simp only [pow_zero, Nat.choose_zero_right, Nat.cast_one, one_mul, pow_succ,
+      mul_neg_one, neg_mul, Finset.sum_neg_distrib] at hrow
+    linarith
+  calc
+    _ = ∑ j ∈ Finset.range (n + 1),
+          (-1 : ℚ) ^ j * (n + 1).choose (j + 1) / (n + 1) := by
+      refine Finset.sum_congr rfl fun j _ => ?_
+      have hchoose :
+          (n.choose j : ℚ) / (j + 1) = ((n + 1).choose (j + 1) : ℚ) / (n + 1) := by
+        rw [div_eq_div_iff (by positivity) (by positivity)]
+        have h : ((n : ℚ) + 1) * n.choose j =
+            (n + 1).choose (j + 1) * ((j : ℚ) + 1) := by
+          exact_mod_cast Nat.add_one_mul_choose_eq n j
+        simpa only [mul_comm] using h
+      rw [mul_div_assoc, hchoose, ← mul_div_assoc]
+    _ = _ := by rw [← Finset.sum_div, htail, one_div]
+
+/-- **Finkel's identity.** For every natural number $n$, with $H_n = \sum_{j=1}^{n} 1/j$ the
+$n$-th harmonic number,
+
+$$\sum_{k=1}^{n} (-1)^{k-1} \frac{1}{k} \binom{n}{k} = H_n.$$
+
+Source: Andreea M. Stănică, Gabriela N. Stănică, and Pantelimon Stănică, *An Evaluation of
+Rationally Weighted Binomial Sums Via Some Differential and Integral Operators*, The Fibonacci
+Quarterly 62 (2024), Article 62-1/stanica09202023, Corollary 3.2. -/
+public theorem sum_neg_one_pow_choose_div_eq_harmonic (n : ℕ) :
+    ∑ k ∈ Finset.Icc 1 n, (-1 : ℚ) ^ (k - 1) * n.choose k / k = harmonic n := by
+  -- Reindex by `k = j + 1` so Pascal's identity applies to each coefficient.
+  simp only [← Finset.Ico_add_one_right_eq_Icc, Finset.sum_Ico_eq_sum_range,
+    Nat.add_sub_cancel, Nat.cast_add, Nat.cast_one, Nat.add_comm 1]
+  induction n with
+  | zero => simp
+  | succ n ih =>
+    rw [harmonic_succ, ← ih]
+    calc
+      _ = (∑ j ∈ Finset.range (n + 1),
+            (-1 : ℚ) ^ j * n.choose (j + 1) / (j + 1)) +
+          ∑ j ∈ Finset.range (n + 1), (-1 : ℚ) ^ j * n.choose j / (j + 1) := by
+        rw [← Finset.sum_add_distrib]
+        refine Finset.sum_congr rfl fun j _ => ?_
+        rw [Nat.choose_succ_succ', Nat.cast_add, mul_add, add_div, add_comm]
+      _ = _ := by
+        rw [Finset.sum_range_succ, sum_neg_one_pow_choose_div_succ]
+        simp [Nat.cast_add, Nat.cast_one]
 
 /-- **Alternating binomial sum with inverse-square weights.** For every natural number $n$, with
 $H_k = \sum_{j=1}^{k} 1/j$ the $k$-th harmonic number,
@@ -191,5 +286,38 @@ public theorem sum_pow_mul_choose_mul_fib_small (N : ℕ) :
     Finset.Ico_add_one_right_eq_Icc] at moment
   simpa [Finset.sum_range_succ, Nat.stirlingSecond, Nat.descFactorial, mul_assoc, mul_comm,
     mul_left_comm] using (show _ ∧ _ ∧ _ ∧ _ from ⟨moment 1, moment 2, moment 3, moment 4⟩)
+
+open Polynomial in
+/-- **Scherk's identity.** Write $S(r, i)$ for the Stirling numbers of the second kind. Let $N$ and
+$r$ be natural numbers, let $a_0, \dots, a_N$ be real numbers, and let $f$ be the polynomial
+$f(y) = \sum_{k=0}^{N} a_k y^k$, with $i$-th derivative $f^{(i)}$. Then for every real number $x$,
+with the convention $0^0 = 1$,
+$$\sum_{k=0}^{N} k^r a_k x^k = \sum_{i=0}^{r} S(r, i) \, x^i f^{(i)}(x).$$
+
+Source: Andreea M. Stănică, Gabriela N. Stănică, and Pantelimon Stănică, *An Evaluation of
+Rationally Weighted Binomial Sums Via Some Differential and Integral Operators*, The Fibonacci
+Quarterly 62 (2024), Article 62-1/stanica09202023, Theorem 2.1, equation (2.1). -/
+public theorem sum_pow_mul_coeff_eq_sum_stirlingSecond_derivative (a : ℕ → ℝ) (N r : ℕ)
+    (x : ℝ) :
+    ∑ k ∈ Finset.range (N + 1), (k : ℝ) ^ r * a k * x ^ k =
+      ∑ i ∈ Finset.range (r + 1), (Nat.stirlingSecond r i : ℝ) * x ^ i *
+        (derivative^[i] (∑ k ∈ Finset.range (N + 1), C (a k) * X ^ k)).eval x := by
+  have hpow (k : ℕ) : (k : ℝ) ^ r =
+      ∑ i ∈ Finset.range (r + 1), (Nat.stirlingSecond r i : ℝ) * k.descFactorial i := by
+    exact_mod_cast Nat.pow_eq_sum_stirlingSecond_mul_descFactorial k r
+  simp_rw [hpow, Finset.sum_mul]
+  rw [Finset.sum_comm]
+  refine Finset.sum_congr rfl fun i _ => ?_
+  rw [iterate_derivative_sum, eval_finsetSum, Finset.mul_sum]
+  refine Finset.sum_congr rfl fun k _ => ?_
+  simp only [iterate_derivative_C_mul, iterate_derivative_X_pow_eq_C_mul,
+    eval_mul, eval_C, eval_pow, eval_X]
+  by_cases hik : i ≤ k
+  · have hx : x ^ i * x ^ (k - i) = x ^ k := by
+      rw [← pow_add, Nat.add_comm i (k - i), Nat.sub_add_cancel hik]
+    rw [← hx]
+    ring
+  · simp only [Nat.descFactorial_eq_zero_iff_lt.mpr (Nat.lt_of_not_ge hik),
+      Nat.cast_zero, mul_zero, zero_mul]
 
 end MetaMathlibExt

@@ -1,0 +1,6 @@
+{
+  "rows": [
+    {"path": "MathlibExtTest/CategoryTheory/Monoidal/Tor/Additive.lean", "disposition": "identical", "published_sha256": "3df291cea91ad05f281df6a0006c4d6c71823d7855f523a40bd3e5f9b715a6cd", "upstream_sha256": "151d52559397f46f359e016ca5ef42b1a82725f60c58862d86f41603fadb4e84"},
+    {"path": "MathlibExtTest/CategoryTheory/Waldhausen/SConstruction/FiniteStageTests.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "c0f7af250cc68742275ec5b1cedb2f282756ac6259459c8d657c8ba28716ef49", "rationale": "ATLAS adds a concrete AddCommGrpCat stage with a nonzero off-diagonal to reject vacuous IsStage APIs. The client proves the actual pushout for the strict triple and both equal-index cases under WaldhausenCategoryWithoutGluing.", "upstream_commit": "11faf00241b371826000ec82975d096d2ab584d0", "upstream_sha256": "c1ca5d6eeda119180958eae46f9b726cf429f7646ac53ded9da44b6fee268467"}
+  ]
+}
