@@ -14,6 +14,7 @@ public import Mathlib.Combinatorics.Enumerative.DyckWord
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.RingTheory.PowerSeries.Basic
+public import MathlibExt.Combinatorics.Enumerative.KNaplesParkingInt
 public import MathlibExt.Combinatorics.FineNumber
 public import MathlibExt.Combinatorics.NoncrossingPartition.Basic
 public import Mathlib.Combinatorics.Enumerative.Catalan.Tree
@@ -214,35 +215,6 @@ Article A44, Proposition 1. -/
 public theorem_wanted IsNaplesParkingFunction.succ {k n : ℕ} {α : Fin n → ℕ}
     (h : IsNaplesParkingFunction k α) : IsNaplesParkingFunction (k + 1) α
 
-/-- **The $k$-Naples rule on $\mathbb{Z}$.** When the spots in a finite list $O$ of integers are
-occupied, a car preferring $a \in \mathbb{Z}$ parks in $a$ if $a$ is free; otherwise in the first
-free spot among $a - 1, \dots, a - k$, checked in decreasing order with no lower bound; otherwise
-in the first free spot among $a + 1, \dots, a + |O| + 1$, checked in increasing order (one of
-them is free, so this is the first free spot after $a$).
-
-Source: J. P. Carvalho, P. E. Harris, G. Rojas Kirby, N. Tripeny and A. R. Vindas Meléndez,
-*Enumerating k-Naples Parking Functions through Catalan Objects*, INTEGERS 24 (2024),
-Article A44, Section 2 (parking on `ℤ`). -/
-public def naplesSpotInt (k : ℕ) (occ : List ℤ) (a : ℤ) : ℤ :=
-  if a ∉ occ then a else
-    match ((List.range k).map fun j => a - ((j + 1 : ℕ) : ℤ)).find? (fun s => decide (s ∉ occ)) with
-    | some s => s
-    | none => (((List.range (occ.length + 1)).map fun j => a + ((j + 1 : ℕ) : ℤ)).find?
-        (fun s => decide (s ∉ occ))).getD a
-
-/-- **Naples parking on $\mathbb{Z}$.** Starting from a list of occupied spots in $\mathbb{Z}$,
-cars with integer preferences $a_1, \dots, a_m$ arrive in order, and each takes the spot given by
-the $k$-Naples rule on $\mathbb{Z}$ for the spots occupied when it arrives. The result is the
-final list of occupied spots: the spots of the cars, most recent first, followed by the initially
-occupied spots.
-
-Source: J. P. Carvalho, P. E. Harris, G. Rojas Kirby, N. Tripeny and A. R. Vindas Meléndez,
-*Enumerating k-Naples Parking Functions through Catalan Objects*, INTEGERS 24 (2024),
-Article A44, Section 2 (parking on `ℤ`). -/
-public def naplesParkInt (k : ℕ) : List ℤ → List ℤ → List ℤ
-  | occ, [] => occ
-  | occ, a :: as => naplesParkInt k (naplesSpotInt k occ a :: occ) as
-
 /-- **A $2$-Naples parking example on $\mathbb{Z}$.** Under the $2$-Naples rule on $\mathbb{Z}$,
 the cars with preferences $(4, 2, 2, 2)$, arriving in order with no spot occupied, park in the
 spots $4, 2, 1, 0$ respectively.
@@ -264,22 +236,6 @@ Article A44, Section 2, Remark 2. -/
 public theorem naplesParkInt_example_three :
     naplesParkInt 3 [] [1, 2, 2, 5, 7, 7, 7, 3] = [3, 4, 6, 7, 5, 0, 2, 1] := by
   decide
-
-/-- **One more backward step keeps the cars in $\{0, \dots, n\}$.** Let $(a_1, \dots, a_n)$ be
-integers with $1 \le a_j \le n$ for every $j$. If, under the $k$-Naples rule on $\mathbb{Z}$, the
-cars with these preferences, arriving in order with no spot occupied, occupy exactly the spots
-$1, \dots, n$, then under the $(k + 1)$-Naples rule on $\mathbb{Z}$ every car parks in a spot $s$
-with $0 \le s \le n$.
-
-Every $k \ge 0$ is admitted (the source's proof treats any $k \ge 0$).
-
-Source: J. P. Carvalho, P. E. Harris, G. Rojas Kirby, N. Tripeny and A. R. Vindas Meléndez,
-*Enumerating k-Naples Parking Functions through Catalan Objects*, INTEGERS 24 (2024),
-Article A44, Lemma 1. -/
-public theorem_wanted naplesParkInt_succ_mem_Icc {k n : ℕ} {α : List ℤ} (hlen : α.length = n)
-    (hα : ∀ a ∈ α, 1 ≤ a ∧ a ≤ n)
-    (hpark : ∀ s : ℤ, s ∈ naplesParkInt k [] α ↔ 1 ≤ s ∧ s ≤ n) :
-    ∀ s ∈ naplesParkInt (k + 1) [] α, 0 ≤ s ∧ s ≤ n
 
 /-- **Descending $k$-Naples parking functions and $k$-Dyck paths.** For all natural numbers
 $n \ge 1$ and $k \ge 1$, the number of weakly decreasing $k$-Naples parking functions of length

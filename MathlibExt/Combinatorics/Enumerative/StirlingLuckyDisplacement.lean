@@ -403,6 +403,36 @@ public theorem stirlingTotalDisplacement_eq (n : ℕ) (w : Fin (2 * n) → ℕ)
   rw [sq]
   omega
 
+/-- **Number of cars with zero displacement.** Let $n \ge 1$ and let $w$ be a Stirling
+permutation of order $n$, read as a parking function of length $2n$. The number of cars
+$i \in \{1, \dots, 2n\}$ with displacement $d(i) = 0$ is at least $1$ and at most $n$.
+
+Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
+Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
+Corollary 5.6 (`jis-2024-24.6.7-cor-41`). -/
+public theorem stirling_card_zero_displacement (n : ℕ) (hn : 1 ≤ n) (w : Fin (2 * n) → ℕ)
+    (hw : IsStirlingPermutation n w) :
+    1 ≤ (Finset.univ.filter fun i => stirlingDisplacement w i = 0).card ∧
+      (Finset.univ.filter fun i => stirlingDisplacement w i = 0).card ≤ n := by
+  constructor
+  · let first : Fin (2 * n) := ⟨0, by omega⟩
+    apply Finset.card_pos.mpr
+    refine ⟨first, Finset.mem_filter.mpr ⟨Finset.mem_univ _, ?_⟩⟩
+    rw [stirlingDisplacement, stirlingParkSpot, IsAdmissibleLuckySet.parkSpots_first _ first rfl,
+      IsAdmissibleLuckySet.pref_val_add_one hw, Nat.sub_self]
+  · -- Distinct cars with zero displacement occupy distinct spots in the first half of the lot.
+    have hinj := Finite.injective_iff_surjective.mpr
+      (stirlingTotalDisplacement_eq.spots_surjective hw)
+    calc
+      _ ≤ (Finset.range n).card := by
+        apply Finset.card_le_card_of_injOn (fun i => (parkSpots (stirlingPref w) i).val)
+        · intro i hi
+          have hle : stirlingParkSpot w i ≤ w i :=
+            Nat.sub_eq_zero_iff_le.mp (Finset.mem_filter.mp hi).2
+          exact Finset.mem_range.mpr (hle.trans (Finset.mem_Icc.mp (hw.1 i)).2)
+        · exact (Fin.val_injective.comp hinj).injOn
+      _ = n := Finset.card_range n
+
 end
 
 end MetaMathlibExt
