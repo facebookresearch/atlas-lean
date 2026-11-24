@@ -9840,6 +9840,7 @@
   "MathlibExt/Analysis/RisingSun": {"to": "Analysis/real-functions/continuity-and-functional-equations", "title": "Rising sun lemma"},
   "MathlibExt/Analysis/SchreierCesaroSubsequences": {"to": "Analysis/sequences-and-series/summability", "title": "Cesàro means of random subsequences"},
   "MathlibExt/Analysis/ScottishBook144": {"to": "Analysis/banach-spaces/geometry-of-banach-spaces", "title": "Injections of a unit sphere into the unit interval"},
+  "MathlibExt/Analysis/ScottishBook151": {"to": "Analysis/potential-theory", "title": "Harmonic functions vanishing on the edges of a cube"},
   "MathlibExt/Analysis/ScottishBook181": {"to": "Analysis/real-functions/continuity-and-functional-equations", "title": "Steinhaus periodization problem"},
   "MathlibExt/Analysis/ScottishBook74": {"to": "Analysis/inequalities", "title": "Coefficient bounds for homogeneous polynomials"},
   "MathlibExt/Analysis/Series/BaseAdicMultiples": {"to": "Analysis/sequences-and-series", "title": "Multisection of series by index factorization"},
