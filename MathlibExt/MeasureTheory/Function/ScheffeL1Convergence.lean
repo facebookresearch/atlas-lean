@@ -1,5 +1,14 @@
 /-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+/-
 # A.e. convergence plus convergence of L^1 norms gives L^1 convergence
+
+The following OpenBMB notice applies to the adapted statement and its documentation.
 
 Copyright (c) 2026 OpenBMB
 
