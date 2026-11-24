@@ -8,6 +8,7 @@ These are Jurdziński's progress measures with the order of priorities reversed:
 
 ## Depends on
 
+- [Parity game](parity-game.md)
 - [Winning region of a parity game](winning-region.md)
 
 ## Proof depends on
