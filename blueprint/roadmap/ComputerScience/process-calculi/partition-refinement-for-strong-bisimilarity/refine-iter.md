@@ -1,0 +1,3 @@
+# Iterates of naive partition refinement
+
+Let $L$ be a labelled transition system with states $S$ and labels $\Lambda$, given by its transition relation $s \xrightarrow{\mu} t$. The refinement iterates $\equiv_k$ ($k \in \mathbb{N}$) are the relations on $S$ obtained by starting from the total relation and applying one round of naive partition refinement $k$ times: $\equiv_0$ relates every pair of states, and $\equiv_{k+1}$ is the refinement of $\equiv_k$, so that $a \equiv_{k+1} b$ exactly when $a \equiv_k b$ and, for every label $\mu$, every transition $a \xrightarrow{\mu} a'$ is matched by some $b \xrightarrow{\mu} b'$ with $a' \equiv_k b'$, and every transition $b \xrightarrow{\mu} b'$ is matched by some $a \xrightarrow{\mu} a'$ with $a' \equiv_k b'$.

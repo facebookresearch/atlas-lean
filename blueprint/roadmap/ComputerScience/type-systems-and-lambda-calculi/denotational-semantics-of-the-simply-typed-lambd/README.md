@@ -37,6 +37,7 @@
 - [Plugging into a composite STLC context](plug-comp.md)
 - [Associativity of composition of STLC contexts](comp-assoc.md)
 - [Semantic equality is a congruence for typed contexts](sem-eq.md)
+- [Filling a generic context hole is plugging a typed STLC context](fill-eq-plug.md)
 - [Model equality of STLC terms](model-eq.md)
 - [Model equality is a congruence for STLC contexts](context.md)
 - [Model-independent beta equality](beta.md)

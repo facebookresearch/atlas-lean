@@ -1,0 +1,3 @@
+# Translating IMP Boolean expressions into the imperative language with arrays
+
+For a renaming $\rho$ from natural numbers to strings, IMP Boolean expressions are translated by recursion: the constant true goes to the constant true, the constant false goes to $\neg\,\mathrm{true}$, the equality $a_1 = a_2$ goes to $\tau_\rho(a_1) \le \tau_\rho(a_2) \wedge \tau_\rho(a_2) \le \tau_\rho(a_1)$, the comparison $a_1 \le a_2$ goes to $\tau_\rho(a_1) \le \tau_\rho(a_2)$, and negation and conjunction go to the negation and conjunction of the translations. Here $\tau_\rho$ is the translation of arithmetic expressions.

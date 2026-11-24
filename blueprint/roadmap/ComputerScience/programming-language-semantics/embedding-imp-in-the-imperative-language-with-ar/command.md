@@ -1,0 +1,3 @@
+# Translating IMP commands into the imperative language with arrays
+
+For a renaming $\rho$ from natural numbers to strings, the translation of IMP commands is defined by recursion: $\mathtt{skip}$ goes to $\mathtt{skip}$; the assignment $x_i := a$ goes to $\rho(i) := \tau_\rho(a)$; a sequence goes to the sequence of the translations; $\mathtt{if}\ b\ \mathtt{then}\ c_1\ \mathtt{else}\ c_2$ goes to the conditional on the translated guard with the translated branches; and $\mathtt{while}\ b\ \mathtt{do}\ c$ goes to the loop on the translated guard with the translated body, annotated with the invariant that holds in every state. Here $\tau_\rho$ translates arithmetic expressions and guards are translated as Boolean expressions. No read statement is produced.

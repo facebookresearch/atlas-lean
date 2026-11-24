@@ -1,0 +1,17 @@
+# Returning to the empty continuation is terminal
+
+The CEK machine runs untyped lambda terms in de Bruijn notation ($x_n$, $\lambda.\,t$, $t\,u$) by call-by-value. A *closure* $\langle t, e\rangle$ pairs the body $t$ of an abstraction with an environment $e$, a list of closures with index $0$ first. A *continuation* is $\mathsf{mt}$, $\mathsf{arg}(u, e, k)$ (evaluate the argument $u$ in $e$, then continue with $k$) or $\mathsf{fn}(v, k)$ (apply the function closure $v$, then continue with $k$). A *state* is either $\mathsf{eval}(t, e, k)$ or $\mathsf{ret}(v, k)$ for a closure $v$.
+
+The transitions are:
+
+- $\mathsf{eval}(t\,u, e, k) \to \mathsf{eval}(t, e, \mathsf{arg}(u, e, k))$;
+- $\mathsf{eval}(\lambda.\,t, e, k) \to \mathsf{ret}(\langle t, e\rangle, k)$;
+- $\mathsf{eval}(x_n, e, k) \to \mathsf{ret}(v, k)$ when $e$ has an entry $v$ at index $n$ (there is no transition when $n$ is at least the length of $e$);
+- $\mathsf{ret}(v, \mathsf{arg}(u, e, k)) \to \mathsf{eval}(u, e, \mathsf{fn}(v, k))$;
+- $\mathsf{ret}(v, \mathsf{fn}(\langle t, e\rangle, k)) \to \mathsf{eval}(t, v :: e, k)$.
+
+For every closure $v$, the state $\mathsf{ret}(v, \mathsf{mt})$ has no successor: there is no state $s$ with $\mathsf{ret}(v, \mathsf{mt}) \to s$. (It is not the only kind of state without a successor: $\mathsf{eval}(x_n, e, k)$ with $n$ at least the length of $e$ has none either.)
+
+## Sources
+
+- M. Felleisen and D. P. Friedman, *Control operators, the SECD-machine, and the λ-calculus*, 3rd Working Conference on the Formal Description of Programming Concepts, 1986. The machine here is a de Bruijn reformulation for the pure lambda calculus, without the control operators of that paper.

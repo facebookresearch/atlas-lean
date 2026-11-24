@@ -1,0 +1,3 @@
+# Filling a generic context hole is plugging a typed STLC context
+
+Typed one-hole contexts of the intrinsically typed simply typed lambda calculus, whose hole takes a term of type $A$ in context $\Gamma$ and which produce a term of type $B$ in context $\Delta$, form an instance of the generic heterogeneous one-hole-context structure (contexts with a fill operation), with filled terms of type $B$ in $\Delta$ and hole terms of type $A$ in $\Gamma$. For every such context $C$ and every term $t$ of type $A$ in $\Gamma$, filling $C$ with $t$ in that structure equals the plugged term $C[t]$, obtained by replacing the hole of $C$ by $t$ with no renaming (so a lambda above the hole may bind free variables of $t$). The equation holds by definition.

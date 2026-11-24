@@ -1,0 +1,15 @@
+# Iso-recursive types
+
+- [Types with iso-recursive types](ty.md)
+- [Terms of the lambda calculus with iso-recursive types](tm.md)
+- [Shifting type variables](shift.md)
+- [Substitution for a type variable at a given index](subst-at.md)
+- [Substitution for type variable zero](subst.md)
+- [Unfolding of a recursive type](unfold.md)
+- [Typing for the lambda calculus with iso-recursive types](has-type.md)
+- [Values of the lambda calculus with iso-recursive types](value.md)
+- [Shifting term variables](shift-2.md)
+- [Substitution for a term variable at a given index](subst-at-2.md)
+- [Substitution for term variable zero](subst-2.md)
+- [Call-by-value reduction with fold and unfold](step.md)
+- [Progress for iso-recursive types](progress.md)

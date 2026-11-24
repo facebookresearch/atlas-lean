@@ -1,0 +1,3 @@
+# The graph of the abstraction map is a simulation into the existential abstraction
+
+Let $L$ be a labelled transition system with states $S$ and labels $\Lambda$, given by its transition relation $s \xrightarrow{\mu} t$; its existential abstraction along a function $\alpha : S \to T$ is the system $L_\alpha$ on states $T$ with the same labels in which $a \xrightarrow{\mu} b$ holds exactly when $s \xrightarrow{\mu} t$ in $L$ for some $s, t \in S$ with $\alpha(s) = a$ and $\alpha(t) = b$. The relation that relates $s \in S$ to $a \in T$ exactly when $\alpha(s) = a$ is a simulation from $L$ to $L_\alpha$: whenever $\alpha(s) = a$ and $s \xrightarrow{\mu} s'$ in $L$, there is $a' \in T$ with $a \xrightarrow{\mu} a'$ in $L_\alpha$ and $\alpha(s') = a'$.
