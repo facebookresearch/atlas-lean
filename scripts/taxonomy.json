@@ -9224,6 +9224,7 @@
   "MathlibExt/AlgebraicGeometry/TangentSpace": {"to": "AlgebraicGeometry/varieties-and-projective-geometry", "title": "Tangent spaces of algebraic sets"},
   "MathlibExt/AlgebraicGeometry/VanishingIdeal": {"to": "AlgebraicGeometry/schemes-and-morphisms", "title": "Reduced induced closed subschemes"},
   "MathlibExt/AlgebraicGeometry/Variety": {"to": "AlgebraicGeometry/schemes-and-morphisms", "title": "Varieties over a field"},
+  "MathlibExt/AlgebraicTopology/Barcodes/Basic": {"to": "Topology/algebraic-topology", "title": "Persistence modules and barcodes"},
   "MathlibExt/Analysis/AbsoluteValue/FiniteField": {"to": "NumberTheory/p-adic-numbers", "title": "Absolute values on fields"},
   "MathlibExt/Analysis/AbsoluteValue/InducedTopology": {"to": "NumberTheory/p-adic-numbers", "title": "Absolute values on fields"},
   "MathlibExt/Analysis/AbsoluteValue/Nonarchimedean": {"to": "NumberTheory/p-adic-numbers", "title": "Absolute values on fields"},
