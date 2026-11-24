@@ -168,9 +168,11 @@ structure OperationModel {F G : VSheaf p} (f : F ⟶ G) where
       (rightComparison p f stable).app
         ((inverseImage p f stable).mapHomologicalComplex (ComplexShape.up ℤ) |>.obj K)
 
-/-- A geometric inclusion retains the actual complete algebraically
-closed field and full plus ring: the bundled Huber ring of `original` is itself a field (with its
-own ring operations), algebraically closed for that field structure. -/
+/-- A geometric inclusion `Spa(C, 𝒪_C) → Spa(C, C⁺)` of one complete algebraically closed field
+`C` with two plus rings (Mann, Def. 3.9.17): the bundled Huber ring of `original` is itself a field
+(with its own ring operations), algebraically closed for that field structure, whose plus ring `C⁺`
+is a valuation subring; the map is the identity of the topological field `C` (its ring map is a
+homeomorphism), and the plus ring of `maximal` is the full ring of power-bounded elements `𝒪_C`. -/
 structure IntegralGeometricInclusion where
   maximal : AffineUntilting p
   original : AffineUntilting p
@@ -178,8 +180,12 @@ structure IntegralGeometricInclusion where
   isField : IsField original.pair.ring
   /-- It is algebraically closed, for the field structure of its own ring operations. -/
   closed : letI := isField.toField; IsAlgClosed original.pair.ring
+  /-- The original plus ring is a valuation subring: every element or its inverse lies in it. -/
+  plus_valuation : ∀ a : original.pair.ring,
+    a ∈ original.pair.plus ∨ ∃ b ∈ original.pair.plus, a * b = 1
   map : maximal ⟶ original
-  same_field : Function.Bijective map.original.hom
+  /-- The map identifies the two topological fields: its ring map is a homeomorphism. -/
+  same_field : IsHomeomorph map.original.hom
   maximal_plus : maximal.pair.plus = maximal.pair.powerbounded
 
 /-- Overconvergence is the actual derived j-adjunction unit after actual i-inverse image. -/
