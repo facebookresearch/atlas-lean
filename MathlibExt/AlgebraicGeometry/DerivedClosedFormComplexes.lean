@@ -193,7 +193,40 @@ def ncPullbackLift {Q : AlgebraReplacementFunctor k} {D : AffineDRSystem Q}
     (fun j => ⟨GY.closed.mono ((reindex f).obj j), GY.closed.weak ((reindex f).obj j)⟩)
     GX.closed.map)
 
-/-- Native limit restriction and the fixed lifting square define global NC pullback. -/
+/-- `ℓ` extends the augmentation of `GX` along the reindexed augmentation of `GY`. Such lifts exist
+by injective fibrancy (`ncPullbackLift` chooses one) but are not unique. -/
+def IsNCPullbackLift {Q : AlgebraReplacementFunctor k} {D : AffineDRSystem Q}
+    {p : ℕ} {NC : NegativeCyclicDiagram D.functor (p : ℤ)}
+    {X Y : Prestack k} (f : X ⟶ Y)
+    (GY : GlobalNCModel D p NC Y) (GX : GlobalNCModel D p NC X)
+    (ℓ : reindex f ⋙ GY.closed.diagram ⟶ GX.closed.diagram) : Prop :=
+  Functor.whiskerLeft (reindex f) GY.closed.map ≫ ℓ = GX.closed.map
+
+theorem ncPullbackLift_spec {Q : AlgebraReplacementFunctor k} {D : AffineDRSystem Q}
+    {p : ℕ} {NC : NegativeCyclicDiagram D.functor (p : ℤ)}
+    {X Y : Prestack k} (f : X ⟶ Y)
+    (GY : GlobalNCModel D p NC Y) (GX : GlobalNCModel D p NC X) :
+    IsNCPullbackLift f GY GX (ncPullbackLift f GY GX) := by
+  unfold IsNCPullbackLift ncPullbackLift
+  exact Classical.choose_spec (GX.closed.fibrant _ _
+    (Functor.whiskerLeft (reindex f) GY.closed.map)
+    (fun j => ⟨GY.closed.mono ((reindex f).obj j), GY.closed.weak ((reindex f).obj j)⟩)
+    GX.closed.map)
+
+/-- The NC pullback defined by the lift `ℓ`. Different lifts give cochain-homotopic maps, and
+pullback is functorial up to homotopy; these are requested in
+`WantedExt.AlgebraicGeometry.DerivedPullbackFunctorialityWanted`. -/
+def ncPullbackOf {Q : AlgebraReplacementFunctor k} {D : AffineDRSystem Q}
+    {p : ℕ} {NC : NegativeCyclicDiagram D.functor (p : ℤ)}
+    {X Y : Prestack k} (f : X ⟶ Y)
+    (GY : GlobalNCModel D p NC Y) (GX : GlobalNCModel D p NC X)
+    (ℓ : reindex f ⋙ GY.closed.diagram ⟶ GX.closed.diagram) : ncComplex GY ⟶ ncComplex GX :=
+  limit.lift GX.closed.diagram
+    ⟨ncComplex GY, Functor.whiskerLeft (reindex f) (limit.cone GY.closed.diagram).π ≫ ℓ⟩
+
+/-- Native limit restriction and the chosen lift `ncPullbackLift` define global NC pullback
+(`ncPullbackOf` with that lift). The choice is not canonical: it is determined up to cochain
+homotopy, and so is functoriality (see `ncPullbackOf`). -/
 def ncPullback {Q : AlgebraReplacementFunctor k} {D : AffineDRSystem Q}
     {p : ℕ} {NC : NegativeCyclicDiagram D.functor (p : ℤ)}
     {X Y : Prestack k} (f : X ⟶ Y)
@@ -203,6 +236,12 @@ def ncPullback {Q : AlgebraReplacementFunctor k} {D : AffineDRSystem Q}
     ⟨ncComplex GY,
       Functor.whiskerLeft (reindex f) (limit.cone GY.closed.diagram).π ≫
         ncPullbackLift f GY GX⟩
+
+theorem ncPullback_eq_ncPullbackOf {Q : AlgebraReplacementFunctor k} {D : AffineDRSystem Q}
+    {p : ℕ} {NC : NegativeCyclicDiagram D.functor (p : ℤ)}
+    {X Y : Prestack k} (f : X ⟶ Y)
+    (GY : GlobalNCModel D p NC Y) (GX : GlobalNCModel D p NC X) :
+    ncPullback f GY GX = ncPullbackOf f GY GX (ncPullbackLift f GY GX) := rfl
 
 /-- Source-normalized pullback acts on all closing-data simplices by the actual cochain map. -/
 def closedPullback {Q : AlgebraReplacementFunctor k} {D : AffineDRSystem Q}
