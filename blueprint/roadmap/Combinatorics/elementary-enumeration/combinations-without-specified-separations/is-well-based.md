@@ -5,11 +5,14 @@ every natural number $a$ with $0 < a < x$, at least one of $a$ and $x - a$ lies 
 The Lean predicate `IsWellBased Q` states this condition alone: for example, $\{0\}$ satisfies
 it vacuously.
 
-For sets of positive integers, this is the well-based condition of Kitaev and Valyuzhenich.
-Lean's `IsPositiveWellBased Q` adds $0 \notin Q$, as in Allen's formulation. The empty set
-satisfies both conditions. A nonempty set satisfying the positive version has least element
-$1$: otherwise neither part of the split $x = 1 + (x - 1)$ of its least element $x$ could lie
-in $Q$.
+For a nonempty set of positive integers, the split condition is equivalent to the well-based
+sequence condition of Kitaev and Valyuzhenich for its increasing enumeration. Such a set has
+least element $1$ if it satisfies the split condition: otherwise neither part of the split
+$x = 1 + (x - 1)$ of its least element $x$ could lie in $Q$.
+
+Allen's formulation also counts the empty set as well based. Lean's `IsPositiveWellBased Q`
+encodes Allen's convention by requiring $0 \notin Q$ and the split condition, but not
+nonemptiness.
 
 ## Sources
 
