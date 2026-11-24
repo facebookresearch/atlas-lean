@@ -2,7 +2,8 @@
 
 Let `Vm`, `Im`, `θ` and `φ` be real with `Vm ≥ 0` and `Im ≥ 0`. Take the
 [balanced positive-sequence](balanced-phases.md) phase voltages built from `V = Vm e^{iθ}` and phase
-currents built from `I = Im e^{i(θ - φ)}`, so that the current lags the voltage by the angle `φ`.
+currents built from `I = Im e^{i(θ - φ)}`, so that, with phasors rotating as `e^{iωt}`, the current
+lags the voltage by the angle `φ`.
 The sum `S` of the three phase [complex powers](complex-power.md) satisfies
 
 - `Re S = 3 Vm Im cos φ`;

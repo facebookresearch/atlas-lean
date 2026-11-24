@@ -101,7 +101,7 @@ noncomputable def te10Profile (a : ℝ) : ℝ → ℝ :=
   fun x => Real.sin (cutoffWavenumber a * x)
 
 /-- The below-cutoff decay rate `κ = sqrt (kc^2 - ω^2 / c0^2)`; at or above cutoff the radicand is
-not positive and the value is `0` (`√x = 0` for `x < 0`). -/
+not positive and the value is `0` (`√x = 0` for `x < 0`), and `ω^2 / c0^2 = 0` when `c0 = 0`. -/
 noncomputable def decayRate (c0 a omega : ℝ) : ℝ :=
   Real.sqrt (cutoffWavenumber a ^ 2 - omega ^ 2 / c0 ^ 2)
 
@@ -634,7 +634,7 @@ lemma evanescentFields_eq_exp_smul (a E0 omega kappa : ℝ) (t x y z : ℝ) :
       simp only [mul_zero, Real.exp_zero]
       ring
 
-/-- **Exponential decay on the half-guide.** For a guide of positive width, `ω > 0` and a rate
+/-- **Exponential bound on the half-guide.** For a guide of positive width, `ω > 0` and a rate
 `κ ≥ 0`, on `z ≥ 0` every electric component is bounded by `|E0| exp (-κ z)` and every magnetic
 component by `((κ + kc) |E0| / ω) exp (-κ z)`. -/
 theorem evanescentFields_abs_le (a E0 omega kappa : ℝ) (ha : 0 < a) (homega : 0 < omega)
@@ -919,7 +919,8 @@ lemma not_bddAbove_evanescentElectricField_nonpos (a E0 omega kappa : ℝ) (ha :
 `0 < ω < c0 kc`, the decay rate `κ = sqrt (kc^2 - ω^2 / c0^2)` is positive with
 `κ^2 = kc^2 - ω^2 / c0^2`; the evanescent fields satisfy the source-free vacuum Maxwell
 equations and the PEC traces on all four side walls at every time; the electric field is not
-identically zero; and on the half-guide `z ≥ 0` every component decays like `exp (-κ z)`. -/
+identically zero; and on the half-guide `z ≥ 0` every component is bounded by a multiple of
+`exp (-κ z)`. -/
 theorem te10Evanescent_correct (c : SpeedOfLight) (a b E0 omega : ℝ) (ha : 0 < a)
     (hb : 0 < b) (hE0 : E0 ≠ 0) (homega : 0 < omega)
     (hbelow : omega < (c : ℝ) * cutoffWavenumber a) :

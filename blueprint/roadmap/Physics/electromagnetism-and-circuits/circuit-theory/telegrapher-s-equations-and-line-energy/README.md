@@ -28,5 +28,5 @@
 
 ## Swapped endpoint fluxes
 
-- [The ramp v = i = x − t solves the lossless line equations](ramp-wave-is-telegrapher-solution.md)
+- [The ramp v = i = x − t solves the lossless line with L = C = 1](ramp-wave-is-telegrapher-solution.md)
 - [With the endpoint fluxes swapped the energy balance fails](swapped-endpoint-flux-balance-fails.md)

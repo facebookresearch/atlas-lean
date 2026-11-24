@@ -107,7 +107,8 @@ noncomputable def impedancePerUnit (Vb Ib : ℝ) (Z : ℂ) : ℂ :=
 
 /-- Complex power in per-unit coordinates: physical power divided
 by the three-phase power base, read as a complex scalar (`0` when `Vb = 0` or `Ib = 0`, by
-`x / 0 = 0`). -/
+`x / 0 = 0`). It is the per-unit value of a total three-phase power; a per-phase power is divided
+by the per-phase base `Vb * Ib` instead. -/
 noncomputable def powerPerUnit (Vb Ib : ℝ) (S : ℂ) : ℂ :=
   S / (threePhasePowerBase Vb Ib : ℂ)
 

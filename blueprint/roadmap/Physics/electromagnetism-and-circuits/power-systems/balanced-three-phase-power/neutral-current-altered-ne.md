@@ -1,4 +1,4 @@
-# A nonzero perturbation of one phase gives a nonzero neutral current
+# Perturbing one phase of a balanced set gives a nonzero neutral current
 
 For all complex `I` and `δ` with `δ ≠ 0`, the [neutral current](neutral-current.md) of the
 [balanced set with phase c perturbed](altered-phases.md), `(I, α² I, α I + δ)` with

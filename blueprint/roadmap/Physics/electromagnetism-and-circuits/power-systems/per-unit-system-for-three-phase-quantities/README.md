@@ -27,6 +27,5 @@ page states.
 ## The line-voltage base and the impedance base
 
 - [For positive bases, Z_b is the squared line-voltage base over S_b](impedance-base-eq-line-voltage-base-sq-d.md)
-- [For V_b > 0, every balanced line voltage has magnitude √3 V_b](line-voltage-base-eq-norm-line-voltage.md)
-- [For positive bases, V_b² over S_b is one third of the impedance base](phase-voltage-base-sq-div-power-base.md)
+- [The balanced set at a positive phase base V has line magnitudes √3 V](line-voltage-base-eq-norm-line-voltage.md)
 - [For positive bases, Ohm's law, power and Z_b are consistent per unit](bases-correct.md)

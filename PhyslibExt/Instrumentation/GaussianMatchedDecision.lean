@@ -141,10 +141,12 @@ private lemma ofLp_sub_ne_zero {ι : Type} [Fintype ι] [DecidableEq ι]
   rw [WithLp.ofLp_eq_zero] at h
   exact hs (sub_eq_zero.mp h)
 
-/-- **Decide 1 iff the matched statistic exceeds the threshold.** For positive definite `R`,
-positive priors and costs with `C00 < C10`, `C11 < C01`, the finite-cost Bayes rule of the
+/-- **The Bayes rule for two Gaussian laws is the matched-filter test.** For positive definite
+`R`, positive priors and costs with `C00 < C10`, `C11 < C01`, the finite-cost Bayes rule of the
 adapter applied to the Gaussian densities of `N(s0, R)` and `N(s1, R)` is, at every observation
-and including the tie branch, the explicit matched-filter threshold rule. -/
+and including the tie branch, the explicit matched-filter threshold rule: it decides `true` when
+the matched statistic exceeds the threshold, `tie` when the two are equal, and `false`
+otherwise. -/
 theorem binaryCostRule_gaussian_eq_matchedFilterRule {ι : Type} [Fintype ι] [DecidableEq ι]
     (s1 s0 : EuclideanSpace ℝ ι) (R : Matrix ι ι ℝ) (hR : R.PosDef) (pi0 pi1 : ℝ)
     (hpi0 : 0 < pi0) (hpi1 : 0 < pi1) (C00 C01 C10 C11 : ℝ) (hC0 : C00 < C10) (hC1 : C11 < C01)
@@ -218,7 +220,7 @@ theorem binaryCostRule_gaussian_eq_matchedFilterRule {ι : Type} [Fintype ι] [D
 
 /-! ## C. Bayes optimality -/
 
-/-- **Finite-cost Gaussian matched-filter test is Bayes optimal (headline).** For laws
+/-- **Finite-cost Gaussian matched-filter test is Bayes optimal.** For laws
 `N(s0, R)` (truth `0`) and `N(s1, R)` (truth `1`) with common positive definite covariance `R`,
 positive priors summing to one and costs with `C00 < C10`, `C11 < C01`, the matched-filter
 threshold rule is measurable and its deterministic decision kernel has original-cost Bayes risk
@@ -327,7 +329,7 @@ lemma matchedWeight_eq_zero_iff {ι : Type} [Fintype ι] [DecidableEq ι]
     rw [h, sub_self, WithLp.ofLp_zero, Matrix.mulVec_zero]
 
 /-- **Equal means: a prior/cost-only decision.** With `s1 = s0`, positive priors and costs with
-`C00 < C10`, `C11 < C01`, the rule ignores the observation: it decides `true` iff
+`C00 < C10`, `C11 < C01`, the rule ignores the observation: it decides `true` if
 `pi0 (C10 - C00) < pi1 (C01 - C11)`, `tie` on equality, `false` otherwise. -/
 lemma matchedFilterRule_of_eq {ι : Type} [Fintype ι] [DecidableEq ι]
     (s : EuclideanSpace ℝ ι) (R : Matrix ι ι ℝ) (pi0 pi1 : ℝ) (hpi0 : 0 < pi0) (hpi1 : 0 < pi1)
@@ -520,9 +522,9 @@ lemma matchedFilterRule_fin_one_example (tie : Bool) :
     have hgt : (-2:ℝ) < Real.log (2 / 9) + 1 / 2 := by linarith [log_two_ninths_gt]
     rw [if_neg (not_lt.mpr hgt.le), if_neg (ne_of_lt hgt)]
 
-/-- **Flipped cost index changes the threshold.** Transposing `C01` and `C10` in the `n = 1`
-fixture (`C01 = 2`, `C10 = 4`, still `C00 < C10`, `C11 < C01`) moves the threshold from
-`log (2/9) + 1/2` to `log (4/3) + 1/2`. -/
+/-- **Flipped cost index changes the threshold.** Transposing `C01` and `C10` in the
+one-dimensional example (`C01 = 2`, `C10 = 4`, still `C00 < C10`, `C11 < C01`) moves the
+threshold from `log (2/9) + 1/2` to `log (4/3) + 1/2`. -/
 lemma matchedThreshold_fin_one_flipped_ne :
     matchedThreshold (toLp 2 ![(1 : ℝ)]) (toLp 2 ![0]) !![(1 : ℝ)] (1 / 4) (3 / 4) 0 2 4 1 ≠
       matchedThreshold (toLp 2 ![(1 : ℝ)]) (toLp 2 ![0]) !![(1 : ℝ)] (1 / 4) (3 / 4) 0 4 2 1 := by
@@ -530,8 +532,8 @@ lemma matchedThreshold_fin_one_flipped_ne :
   intro hcon
   linarith [log_two_ninths_lt, log_four_thirds_gt]
 
-/-- **Flipped cost index is rejected by the fixture.** At `y = 0` the transposed-cost rule
-decides `false`, while the correct rule (`matchedFilterRule_fin_one_example`) decides `true`. -/
+/-- **Flipped cost index changes the decision.** At `y = 0` the transposed-cost rule decides
+`false`, while the rule with the original costs decides `true`. -/
 lemma matchedFilterRule_fin_one_flipped_example (tie : Bool) :
     matchedFilterRule (toLp 2 ![(1 : ℝ)]) (toLp 2 ![0]) !![(1 : ℝ)] (1 / 4) (3 / 4) 0 2 4 1 tie
       (toLp 2 ![0]) = false := by
@@ -625,8 +627,9 @@ lemma matchedFilterRule_fin_two_example (tie : Bool) :
     rw [if_neg (by norm_num : ¬(1/3:ℝ) < 0), if_neg (by norm_num : ¬(0:ℝ) = 1/3)]
 
 /-- **`n = 2`, equal means.** `s0 = s1 = (1, 1)`, `R = [[2, 1], [1, 2]]`, `pi0 = 1/4`,
-`pi1 = 3/4`, `C00 = 0`, `C01 = 4`, `C10 = 2`, `C11 = 1`: `pi0 (C10 - C00) = 1/2 < 9/4 =
-pi1 (C01 - C11)`, so the rule decides `true` at every observation. -/
+`pi1 = 3/4`, `C00 = 0`, `C01 = 4`, `C10 = 2`, `C11 = 1`:
+`pi0 (C10 - C00) = 1/2 < 9/4 = pi1 (C01 - C11)`, so the rule decides `true` at every
+observation. -/
 lemma matchedFilterRule_fin_two_equal_means_example (tie : Bool)
     (y : EuclideanSpace ℝ (Fin 2)) :
     matchedFilterRule (toLp 2 ![(1 : ℝ), 1]) (toLp 2 ![1, 1]) !![(2 : ℝ), 1; 1, 2] (1 / 4) (3 / 4)

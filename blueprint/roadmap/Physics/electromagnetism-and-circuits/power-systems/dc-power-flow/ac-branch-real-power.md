@@ -6,7 +6,7 @@ branch susceptances `b_e` and real node phase angles `θ_v`. Take the
 [unit-magnitude voltages](unit-voltage.md) `V_v = exp(i θ_v)` and the
 [branch currents](branch-current.md) `I_e = y_e d_e` of the
 [lossless admittances](lossless-admittance.md) `y_e = -i b_e` through the
-[electrical incidence](../../circuit-theory/tellegen-s-theorem-and-branch-power-balance/electrical-incidence.md),
+[electrical incidence](../../../../GraphTheory/algebraic-graph-theory/part-01/oriented-incidence-matrices/oriented-incidence.md),
 so that `d_e = V_{t(e)} - V_{h(e)}`. The sending-end real power of branch `e` is
 
 `P_e = Re(V_{t(e)} conj(I_e))`,

@@ -10,7 +10,7 @@
 - [Sequence components as a function on the integers modulo 3](sequence-vector.md)
 - [α is a primitive cube root of unity](is-primitive-root-alpha.md)
 - [The cube roots of unity 1, α and α² sum to zero](one-add-alpha-add-alpha-sq.md)
-- [The DFT kernel modulo 3 at 1 is α](std-add-char-one-eq-alpha.md)
+- [The standard additive character modulo 3 takes the value α at 1](std-add-char-one-eq-alpha.md)
 
 ## Sequence components as discrete Fourier coordinates
 
@@ -28,12 +28,12 @@
 
 ## Power in sequence coordinates
 
-- [Complex power is three times its sequence-coordinate expression](sum-phase-mul-conj-eq-three-mul-sum-sequ.md)
+- [Three-phase complex power is three times the sum of sequence powers](sum-phase-mul-conj-eq-three-mul-sum-sequ.md)
 
-## Validation cases
+## Balanced, swapped and unbalanced phase sets
 
 - [A balanced positive-sequence set has only a positive sequence](balanced-positive-sequence-components.md)
 - [A balanced negative-sequence set has only a negative sequence](balanced-negative-sequence-components.md)
 - [Swapping phases b and c exchanges positive and negative sequences](positive-sequence-swap-bc.md)
 - [Positive sequence of the unbalanced phase set 0, 1, 0](positive-sequence-unbalanced.md)
-- [The positive sequence is not the normalized DFT at frequency 1](positive-sequence-ne-normalized-dft-one.md)
+- [The positive sequence need not equal the normalized DFT at frequency 1](positive-sequence-ne-normalized-dft-one.md)

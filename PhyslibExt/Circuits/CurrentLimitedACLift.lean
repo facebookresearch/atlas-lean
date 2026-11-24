@@ -392,7 +392,8 @@ lemma im_liftedInjection_eq_pairing (n : ℕ) (Y W : Matrix (Fin n) (Fin n) ℂ)
     sum_row_eq_conj_liftedInjection n Y W hW k, smul_eq_mul]
   exact (re_div_two_I_sub_conj _).symm
 
-/-- The voltage pairing reads the real diagonal entry of `W`. -/
+/-- The voltage pairing reads the real part `Re (W k k)` of the diagonal entry; for Hermitian `W`
+that entry is real. -/
 lemma pairing_voltageCoeff (n : ℕ) (W : Matrix (Fin n) (Fin n) ℂ) (k : Fin n) :
     pairing n (voltageCoeff n k) W = (W k k).re := by
   simp [pairing, Matrix.trace, Matrix.mul_apply, voltageCoeff, ite_and, ite_mul]

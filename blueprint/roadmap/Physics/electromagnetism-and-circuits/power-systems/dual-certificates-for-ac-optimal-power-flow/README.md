@@ -33,10 +33,10 @@
 
 - [A checked AC dual witness bounds the relaxation cost](certified-lower-bound-le-sdp-cost.md)
 - [A checked AC dual witness bounds the AC cost](certified-lower-bound-le-ac-cost.md)
-- [An AC-feasible voltage attaining the certified bound is optimal](ac-optimal-of-ac-cost-eq-certified-lower.md)
+- [An AC-feasible voltage attaining a checked witness's bound is optimal](ac-optimal-of-ac-cost-eq-certified-lower.md)
 - [Soundness of AC voltage dual certificates](ac-voltage-certificate-correct.md)
 
-## Two-bus validation
+## Two-bus example
 
 - [Two-bus current-limited power flow example](two-bus-cert-example.md)
 - [Exact dual witness for the two-bus example](two-bus-certificate.md)

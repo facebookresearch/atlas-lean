@@ -5,7 +5,7 @@ its tail `t(e)` to its head `h(e)` (loops `t(e) = h(e)` and parallel branches al
 `b_e > 0` for every branch `e`. For real node phase angles `θ_u`, let `S_v` be the
 [complex power supplied by node](../ac-power-injections-and-network-losses/node-complex-power.md)
 `v` for the
-[electrical incidence](../../circuit-theory/tellegen-s-theorem-and-branch-power-balance/electrical-incidence.md)
+[electrical incidence](../../../../GraphTheory/algebraic-graph-theory/part-01/oriented-incidence-matrices/oriented-incidence.md)
 `B`, the unit-magnitude voltages `exp(i θ_u)`, the lossless branch admittances `-i b_e` and no
 shunts. Then for all such angles and every node `v`, the [DC nodal injection](dc-injection.md) `p_v`
 satisfies

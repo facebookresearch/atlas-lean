@@ -85,8 +85,9 @@ lemma receivedPower_eq_zero_of_transmitPower_eq_zero {Gt Gr r lam S Ae Pr : ℝ}
   rw [hPr, hS]
   simp
 
-/-- Validation, `Pt = 0` excludes the ratio form: with unit gains and the declared premises,
-`Pr / Pt` is Lean's junk `0 / 0 = 0`, not the positive free-space factor `(λ / (4π r))²`. -/
+/-- At `Pt = 0` the ratio form fails: for `r, λ > 0`, with unit gains and the declared premises,
+`Pr / Pt` is `0 / 0 = 0` (convention `x / 0 = 0`), not the positive free-space factor
+`(λ / (4π r))²`. -/
 lemma div_ne_friis_at_zero_transmitPower {r lam S Ae Pr : ℝ} (hr : 0 < r) (hlam : 0 < lam)
     (hS : S = 0 * 1 / (4 * π * r ^ 2)) (hAe : Ae = 1 * lam ^ 2 / (4 * π)) (hPr : Pr = S * Ae) :
     Pr / 0 ≠ 1 * 1 * (lam / (4 * π * r)) ^ 2 := by
@@ -120,8 +121,9 @@ lemma receivedPower_eq_friis_iff_flux {Pt Gt Gr r lam S Ae Pr : ℝ} (hr : 0 < r
   · intro h
     rw [h]
 
-/-- Validation, mismatch violates the model: with a polarization/impedance loss factor `p`
-(`Pr = p S Ae`), `r, λ > 0` and `Pt, Gt, Gr > 0`, the Friis value holds exactly when `p = 1`. -/
+/-- Mismatch violates the model: for every real `p` (a polarization or impedance loss factor when
+`0 ≤ p ≤ 1`, with `Pr = p S Ae`), `r, λ > 0` and `Pt, Gt, Gr > 0`, the Friis value holds exactly
+when `p = 1`. -/
 lemma mismatchedPower_eq_friis_iff {Pt Gt Gr r lam S Ae p : ℝ} (hr : 0 < r) (hlam : 0 < lam)
     (hPt : 0 < Pt) (hGt : 0 < Gt) (hGr : 0 < Gr) (hS : S = Pt * Gt / (4 * π * r ^ 2))
     (hAe : Ae = Gr * lam ^ 2 / (4 * π)) :

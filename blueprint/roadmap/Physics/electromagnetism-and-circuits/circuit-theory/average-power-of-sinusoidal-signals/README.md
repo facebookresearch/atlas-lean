@@ -11,10 +11,7 @@
 
 ## Average power over a period
 
-- [Integral of a product of RMS waveforms over one period](integral-rms-waveform-mul-rms-waveform-o.md)
 - [Average power of two RMS waveforms over one period](average-rms-waveform-mul-rms-waveform.md)
 - [Mean square of an RMS waveform over one period](average-rms-waveform-mul-self.md)
-- [Mean square of an RMS waveform in coordinates](average-rms-waveform-mul-self-re-im.md)
-- [Waveforms of phasors in quadrature have zero average product](average-rms-waveform-mul-quadrature.md)
-- [Integral of a product of peak waveforms over one period](integral-peak-waveform-mul-peak-waveform.md)
+- [The RMS waveforms of V and i V have zero average product](average-rms-waveform-mul-quadrature.md)
 - [Average power of two peak waveforms carries the factor one half](average-peak-waveform-mul-peak-waveform.md)

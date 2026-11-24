@@ -191,9 +191,10 @@ theorem faceFlux_of_const_of_measure_ne_top (D : Fin 6 → Set (ℝ × ℝ))
   exact (integrableOn_const hfin).congr_fun (fun p hp => (hk p hp).symm) hD
 
 /-- Uniform through-flow: with two measurable end faces of equal finite area and constant normal
-densities `-c` on face `0` and `c` on face `1` (uniform flow in the positive axis direction), the
-end-face outward currents are opposite. Finite area makes both densities integrable and
-`volume.real` the face area, so both fluxes are genuine integrals. -/
+densities `-c` on face `0` and `c` on face `1` (uniform flow with axial component `c`, in the
+positive axis direction when `c > 0`), the end-face outward currents are opposite. Finite area
+makes both densities integrable and `volume.real` the face area, so both fluxes are genuine
+integrals. -/
 lemma uniformThroughFlow_endFlux_opposite (D : Fin 6 → Set (ℝ × ℝ))
     (density : Fin 6 → (ℝ × ℝ) → ℝ) (c : ℝ)
     (hD0 : MeasurableSet (D 0)) (hD1 : MeasurableSet (D 1))

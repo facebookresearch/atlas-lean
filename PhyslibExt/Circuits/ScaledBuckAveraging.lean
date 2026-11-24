@@ -42,8 +42,7 @@ positive scales `Iref` and `Vref` give the dimensionless state
 `b̃ = (Vin / (L Iref), 0)`. The affine PWM error bound applied to
 `(Ã, b̃)` and translated back gives, for every `t ∈ [0, T]`,
 `|i t - ī t| ≤ Iref * B` and `|v t - v̄ t| ≤ Vref * B` with
-`B = exp(κ T) * (max(|Δi₀| / Iref, |Δv₀| / Vref)
-  + |Vin| / (L Iref) * ε * (1 + Ld T / 2))`
+`B = exp(κ T) * (max(|Δi₀| / Iref, |Δv₀| / Vref) + |Vin| / (L Iref) * ε * (1 + Ld T / 2))`
 and `κ = max(Vref/(L Iref), Iref/(C Vref) + 1/(R C))`, the largest
 absolute row sum of `Ã`, which bounds its sup-norm operator norm.
 
@@ -110,11 +109,13 @@ noncomputable def buckInput (L Vin : ℝ) : Fin 2 → ℝ :=
 def stateScaling (Iref Vref : ℝ) : Matrix (Fin 2) (Fin 2) ℝ :=
   Matrix.diagonal ![Iref, Vref]
 
-/-- Scaled state matrix `Ã = S⁻¹ A S`, written out entrywise (with `a / 0 = 0`). -/
+/-- Scaled state matrix, written out entrywise (with `a / 0 = 0`); for nonzero `Iref` and `Vref` it
+is `Ã = S⁻¹ A S`. -/
 noncomputable def scaledBuckMatrix (L C R Iref Vref : ℝ) : Matrix (Fin 2) (Fin 2) ℝ :=
   !![0, -Vref / (L * Iref); Iref / (C * Vref), -1 / (R * C)]
 
-/-- Scaled input direction `b̃ = S⁻¹ b = (Vin / (L Iref), 0)` (with `a / 0 = 0`). -/
+/-- Scaled input direction `b̃ = (Vin / (L Iref), 0)` (with `a / 0 = 0`); for `Iref ≠ 0` it
+satisfies `S b̃ = b`, so `b̃ = S⁻¹ b` when also `Vref ≠ 0`. -/
 noncomputable def scaledBuckInput (L Vin Iref : ℝ) : Fin 2 → ℝ :=
   ![Vin / (L * Iref), 0]
 

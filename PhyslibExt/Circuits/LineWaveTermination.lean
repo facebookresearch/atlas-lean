@@ -113,15 +113,15 @@ lossless line the complex propagation constant is `i * beta`. The intended domai
 noncomputable def phaseConstant (L C ω : ℝ) : ℝ :=
   ω * Real.sqrt (L * C)
 
-/-- Voltage phasor at position `x`: a forward wave plus a backward
-wave. -/
+/-- Voltage phasor at position `x`: a forward wave plus a backward wave, under the
+`exp (+i * omega * t)` time convention. -/
 noncomputable def voltagePhasor (Aplus Aminus : ℂ) (β x : ℝ) : ℂ :=
   Aplus * Complex.exp (↑(-(β * x)) * Complex.I)
     + Aminus * Complex.exp (↑(β * x) * Complex.I)
 
-/-- Current phasor at position `x`: the forward wave minus the
-backward wave, divided by the characteristic impedance. The intended domain is `Z0 > 0`; with
-`x / 0 = 0` it is `0` when `Z0 = 0`. -/
+/-- Current phasor at position `x`: the forward wave minus the backward wave, divided by the
+characteristic impedance, under the `exp (+i * omega * t)` time convention. The intended domain is
+`Z0 > 0`; with `y / 0 = 0` it is `0` when `Z0 = 0`. -/
 noncomputable def currentPhasor (Aplus Aminus : ℂ) (Z0 β x : ℝ) : ℂ :=
   (Aplus * Complex.exp (↑(-(β * x)) * Complex.I)
     - Aminus * Complex.exp (↑(β * x) * Complex.I)) / (Z0 : ℂ)

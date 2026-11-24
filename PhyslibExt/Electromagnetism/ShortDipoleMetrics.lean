@@ -67,7 +67,7 @@ noncomputable def radiatedPower (U : ℝ → ℝ) : ℝ :=
 
 /-- Directivity `D(θ) = 4π U(θ) / P_rad`, for a pattern of positive radiated power. For zero
 radiated power the value is `0` (`x / 0 = 0`), which is not a directivity
-(`directivity_shortDipoleIntensity_zero_ne`); the results that use it assume `P_rad ≠ 0`. -/
+(`directivity_shortDipoleIntensity_zero_ne`). -/
 noncomputable def directivity (U : ℝ → ℝ) (θ : ℝ) : ℝ :=
   4 * π * U θ / radiatedPower U
 
@@ -245,8 +245,8 @@ lemma radiatedPower_shortDipoleIntensity_zero :
   rw [hfun]
   simp
 
-/-- Validation, `K = 0`: the ratio-defined directivity is not the short-dipole pattern
-(at `θ = π/2` it is not `3/2`), so `K > 0` is needed for the directivity claim. -/
+/-- At `K = 0` the ratio-defined directivity is not the short-dipole pattern (at `θ = π/2` it is
+not `3/2`), so the directivity claim fails at `K = 0`; it is proved for `K > 0`. -/
 lemma directivity_shortDipoleIntensity_zero_ne :
     directivity (shortDipoleIntensity 0) (π / 2) ≠ 3 / 2 := by
   have hP := radiatedPower_shortDipoleIntensity_zero

@@ -2,12 +2,11 @@
 
 ## Perfect-conductor conditions on the side walls
 
-- [Tangential electric field on an x-wall](tangential-electric-on-xwall.md)
-- [Tangential electric field on a y-wall](tangential-electric-on-ywall.md)
-- [Normal magnetic field on an x-wall](normal-magnetic-on-xwall.md)
-- [Normal magnetic field on a y-wall](normal-magnetic-on-ywall.md)
+- [Vanishing tangential electric field on an x-wall](tangential-electric-on-xwall.md)
+- [Vanishing tangential electric field on a y-wall](tangential-electric-on-ywall.md)
+- [Vanishing normal magnetic field on an x-wall](normal-magnetic-on-xwall.md)
+- [Vanishing normal magnetic field on a y-wall](normal-magnetic-on-ywall.md)
 - [PEC trace conditions on the four side walls of a rectangular guide](rectangular-guide-pectraces.md)
-- [PEC component conditions on the four side walls of a rectangular guide](rectangular-guide-peccomponent-condition.md)
 - [On the wall x = 0 the traces are three component equations](x-zero-wall-traces-iff-components.md)
 - [On the wall x = a the traces are three component equations](x-top-wall-traces-iff-components.md)
 - [On the wall y = 0 the traces are three component equations](y-zero-wall-traces-iff-components.md)
@@ -21,6 +20,8 @@
 - [The constant field E = (0, 1, 0) with B = 0 fails the traces](constant-tangential-field-not-rectangula.md)
 
 ## The propagating TE10 mode
+
+The [cutoff wavenumber](../evanescent-te10-field-below-cutoff/cutoff-wavenumber.md), the [transverse profile](../evanescent-te10-field-below-cutoff/te10-profile.md), its [profile equation](../evanescent-te10-field-below-cutoff/te10-profile-profile-equation.md) and [smoothness](../evanescent-te10-field-below-cutoff/cont-diff-te10-profile.md), and the [field frozen at a time](../evanescent-te10-field-below-cutoff/field-at-time.md) are shared with the [evanescent field](../evanescent-te10-field-below-cutoff/README.md).
 
 - [Longitudinal factor of the propagating TE10 mode](te10-mode.md)
 - [Electric field of the TE10 mode](te10-electric-field.md)
@@ -37,7 +38,7 @@
 - [At x = a/2 and t = z = 0, the y component of the TE10 field is E₀](te10-electric-field-center.md)
 - [For a > 0, E₀ ≠ 0 and ω > 0 the TE10 electric field is not zero](te10-electric-field-ne-zero.md)
 - [A nonnegative propagation constant exists exactly at or above cutoff](exists-nonneg-te10-dispersion-iff.md)
-- [At or above cutoff, the nonnegative β is the propagation constant](nonneg-te10-dispersion-iff-eq-propagatio.md)
+- [For ω ≥ c k_c, the dispersion root β ≥ 0 is the propagation constant](nonneg-te10-dispersion-iff-eq-propagatio.md)
 - [At cutoff the dispersion relation holds exactly for β = 0](te10-dispersion-at-cutoff-iff.md)
 - [Below cutoff the TE10 dispersion relation has no real solution](not-exists-te10-dispersion-below-cutoff.md)
 - [Properties of the propagating TE10 mode of a rectangular guide](te10-mode-correct.md)

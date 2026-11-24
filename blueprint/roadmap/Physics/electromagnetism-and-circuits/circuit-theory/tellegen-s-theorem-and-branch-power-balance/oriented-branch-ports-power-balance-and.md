@@ -2,7 +2,7 @@
 
 Let `V` be a finite set of nodes and `E` a finite set of branches, each branch `e` with a tail node
 `tail(e)` and a head node `head(e)`, and let `A` be the
-[electrical incidence matrix](electrical-incidence.md). Let `φ` and `j` be real node potentials and
+[electrical incidence matrix](../../../../GraphTheory/algebraic-graph-theory/part-01/oriented-incidence-matrices/oriented-incidence.md). Let `φ` and `j` be real node potentials and
 node injections, and `v` and `i` real branch voltages and currents, with current balance `A i = j`
 and potential-defined voltages `v = Aᵀ φ`. Then:
 

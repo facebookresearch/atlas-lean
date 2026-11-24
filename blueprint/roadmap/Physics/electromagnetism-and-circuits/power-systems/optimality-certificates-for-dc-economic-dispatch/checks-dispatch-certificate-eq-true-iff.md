@@ -1,4 +1,4 @@
-# The checker accepts exactly feasible witnesses within the gap
+# Accepted witnesses are exactly the feasible ones within the gap budget
 
 Consider a network with finitely many buses and branches (each branch with a tail and a head bus),
 finitely many generators placed at buses, a reference bus `r`, and rational data: susceptances `b`,

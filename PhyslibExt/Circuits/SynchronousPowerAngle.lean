@@ -74,7 +74,8 @@ noncomputable def synchronousCurrent (E V Xs delta : ℝ) : ℂ :=
     ((↑Xs : ℂ) * Complex.I))
 
 /-- Three-phase complex power at the terminals: three times the per-phase
-RMS complex power of the terminal voltage phasor and the current. -/
+RMS complex power of the terminal voltage phasor and the current. With the generator current
+directed out toward the bus, it is the power delivered to the bus. -/
 noncomputable def totalComplexPower (V : ℝ) (I : ℂ) : ℂ :=
   3 * PhyslibExt.Circuits.BalancedThreePhase.complexPower (↑V : ℂ) I
 

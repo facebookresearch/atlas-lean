@@ -1,4 +1,4 @@
-# An optimal LP point decodes to a cost below every feasible dispatch
+# A decoded optimal LP point costs no more than any feasible dispatch
 
 Consider a network with finitely many buses `v` and branches `e` (each with a tail and a head bus
 and a real susceptance `b_e`), finitely many generators `g` placed at buses, a demand `d`, a

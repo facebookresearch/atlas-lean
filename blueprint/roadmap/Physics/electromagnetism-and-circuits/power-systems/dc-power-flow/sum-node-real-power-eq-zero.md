@@ -5,7 +5,7 @@ its tail `t(e)` to its head `h(e)` (loops `t(e) = h(e)` and parallel branches al
 branch susceptances `b_e` and node phase angles `θ_v`, let `S_v` be the
 [complex power supplied by node](../ac-power-injections-and-network-losses/node-complex-power.md)
 `v` for the
-[electrical incidence](../../circuit-theory/tellegen-s-theorem-and-branch-power-balance/electrical-incidence.md),
+[electrical incidence](../../../../GraphTheory/algebraic-graph-theory/part-01/oriented-incidence-matrices/oriented-incidence.md),
 the unit-magnitude voltages `exp(i θ_u)`, the lossless branch admittances `-i b_e` and no shunts.
 Then
 

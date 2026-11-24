@@ -16,4 +16,4 @@
 - [Exact setup certificate for uniform timing and no constant gates](setup-met-uniform-iff-of-no-constant-gat.md)
 - [Exact setup certificate under uniform timing, constant-free signature](setup-met-uniform-iff.md)
 - [Exact ripple-carry setup certificate under uniform timing, $n \ge 1$](ripple-carry-adder-setup-met-uniform-iff.md)
-- [Exact Kogge–Stone setup certificate under uniform timing, $n \ge 2$](carry-lookahead-adder-setup-met-uniform.md)
+- [Uniform Kogge–Stone setup certificate is exact, $K \ge 1$, $n \ge 2$](carry-lookahead-adder-setup-met-uniform.md)

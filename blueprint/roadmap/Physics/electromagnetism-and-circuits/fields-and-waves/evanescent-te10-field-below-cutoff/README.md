@@ -46,7 +46,7 @@
 ## Decay toward positive z
 
 - [The evanescent fields are e^−κz times their values at z = 0](evanescent-fields-eq-exp-smul.md)
-- [On z ≥ 0 the evanescent fields decay at least like e^−κz](evanescent-fields-abs-le.md)
+- [On z ≥ 0 the evanescent fields are bounded by multiples of e^−κz](evanescent-fields-abs-le.md)
 - [For κ > 0 every evanescent field component tends to zero as z → ∞](tendsto-evanescent-fields-at-top.md)
 - [For κ > 0 the evanescent field is unbounded toward negative z](not-bdd-above-evanescent-electric-field.md)
 

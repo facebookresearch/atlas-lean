@@ -15,6 +15,7 @@ where `C` is the [objective matrix](objective-matrix.md), `μ` the multipliers o
 [reactive coefficient matrix](../current-limited-ac-optimal-power-flow-and-its-vo/reactive-coeff.md),
 [squared-voltage coefficient matrix](../current-limited-ac-optimal-power-flow-and-its-vo/voltage-coeff.md)
 and
-[squared-current coefficient matrix](../current-limited-ac-optimal-power-flow-and-its-vo/branch-current-coeff.md).
-It is `C + Σ_i λ_i A_i` over the enumerated constraints
+[squared-current coefficient matrix](../current-limited-ac-optimal-power-flow-and-its-vo/branch-current-coeff.md),
+the first two of the bus admittance matrix of `P` and the last from the incidence matrix and branch
+admittances of `P`. It is `C + Σ_i λ_i A_i` over the enumerated constraints
 ([enumerated form](dual-slack-eq-lifted.md)).

@@ -14,7 +14,7 @@
 - [Power–angle relation for the reactive power](reactive-power-eq.md)
 - [Real and imaginary parts of the generator complex power](total-complex-power-eq.md)
 
-## Validation cases
+## Load angle and current direction
 
 - [At zero load angle no real power is transferred](power-at-zero-angle.md)
 - [For load angles between 0 and π, the real power is positive](real-power-pos-of-angle-pos.md)

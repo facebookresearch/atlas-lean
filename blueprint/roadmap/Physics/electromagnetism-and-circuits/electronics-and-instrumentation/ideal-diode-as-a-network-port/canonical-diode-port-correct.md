@@ -2,7 +2,7 @@
 
 Let $I_s > 0$, $n > 0$, $k_B > 0$, $T > 0$ and $q \ne 0$. Let a network with finite sets of nodes
 and branches carry branch voltages $v$ obtained from node potentials $\phi$ through the transposed
-[electrical incidence](../../circuit-theory/tellegen-s-theorem-and-branch-power-balance/electrical-incidence.md), and
+[electrical incidence](../../../../GraphTheory/algebraic-graph-theory/part-01/oriented-incidence-matrices/oriented-incidence.md), and
 let a [diode occupy branch](diode-branch.md) $e$ with anode $a$ and cathode $c$, $a \ne c$. With
 the [thermal voltage](thermal-voltage.md) $V_T = k_B T / |q|$ and the
 [diode current](diode-current.md) $I_D$:

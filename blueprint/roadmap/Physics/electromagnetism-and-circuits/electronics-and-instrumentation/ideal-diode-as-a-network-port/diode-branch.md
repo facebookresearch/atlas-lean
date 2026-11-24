@@ -9,7 +9,7 @@ occupies branch $e$ when
   head $a$; and
 - $i_e = s\, I_D(s\, v_e)$, where $I_D$ is the [diode current](diode-current.md) and $s$ is the
   entry at node $a$ and branch $e$ of the
-  [electrical incidence](../../circuit-theory/tellegen-s-theorem-and-branch-power-balance/electrical-incidence.md),
+  [electrical incidence](../../../../GraphTheory/algebraic-graph-theory/part-01/oriented-incidence-matrices/oriented-incidence.md),
   $s = [\mathrm{tail}(e) = a] - [\mathrm{head}(e) = a]$ ($[\cdot]$ is $1$ when the
   condition holds and $0$ otherwise).
 

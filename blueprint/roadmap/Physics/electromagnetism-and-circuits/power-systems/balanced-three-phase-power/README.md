@@ -54,4 +54,4 @@ the power it absorbs; the identities hold for all complex phasors.
 - [Balanced resistive load: total complex power is real](sum-complex-power-resistive.md)
 - [Balanced purely reactive load: total complex power is purely imaginary](sum-complex-power-reactive.md)
 - [Perturbing phase c of a balanced set by δ gives neutral current δ](neutral-current-altered.md)
-- [A nonzero perturbation of one phase gives a nonzero neutral current](neutral-current-altered-ne.md)
+- [Perturbing one phase of a balanced set gives a nonzero neutral current](neutral-current-altered-ne.md)

@@ -4,7 +4,7 @@ Consider a network with nodes `0, …, n_N - 1` and branches `0, …, n_E - 1`, 
 its tail `t(e)` to its head `h(e)` (loops `t(e) = h(e)` and parallel branches allowed), with real
 branch susceptances `b_e`. Let `A = -B` be the head-positive incidence matrix,
 `A_{ve} = [h(e) = v] - [t(e) = v]`, where `B` is the
-[electrical incidence](../../circuit-theory/tellegen-s-theorem-and-branch-power-balance/electrical-incidence.md).
+[electrical incidence](../../../../GraphTheory/algebraic-graph-theory/part-01/oriented-incidence-matrices/oriented-incidence.md).
 Then the [susceptance-weighted Laplacian](weighted-laplacian.md) satisfies
 
 `L_b = B diag(b) Bᵀ = A diag(b) Aᵀ`,

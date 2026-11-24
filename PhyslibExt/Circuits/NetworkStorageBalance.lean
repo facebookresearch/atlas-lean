@@ -266,7 +266,8 @@ If the circuit laws (KVL, KCL, and the resistor, capacitor and
 inductor branch laws) hold at every `s ∈ [a, b]`, so that the
 storage-balance identity is derived from the network model there
 rather than assumed, with nonnegative resistances, positive inductances and capacitances, the
-capacitor voltages and inductor currents differentiable on `[a, b]`, the supplied power
+capacitor voltages and inductor currents differentiable at every point of `[a, b]` (two-sided at the
+endpoints), the supplied power
 `phi ⬝ᵥ j - sum_source v_e * i_e` continuous on `[a, b]` and the supplied power minus the
 resistive loss interval integrable, then
 `E(b) - E(a) <= ∫ s in a..b, (phi ⬝ᵥ j - sum_source v_e * i_e)`. -/

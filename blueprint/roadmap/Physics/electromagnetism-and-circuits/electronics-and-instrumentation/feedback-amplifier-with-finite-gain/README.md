@@ -5,7 +5,6 @@
 - [For $A, \beta > 0$ the loop denominator $1 + A\beta$ is positive](one-add-mul-pos.md)
 - [For $A, \beta > 0$ any amplifier-equation solution is the closed form](eq-closed-form-of-eq.md)
 - [Closed-loop gain $A/(1 + A\beta)$ of a finite-gain feedback amplifier](closed-loop-gain.md)
-- [For $A, \beta > 0$ the output is the closed-loop gain times the input](output-eq-closed-loop-gain-mul.md)
 - [For $A, \beta > 0$ the gain deficit is $1/(\beta(1 + A\beta))$](gain-deficit.md)
 - [For $A, \beta > 0$ the closed-loop gain lies in $(0, 1/\beta)$](closed-loop-gain-pos-and-lt.md)
 

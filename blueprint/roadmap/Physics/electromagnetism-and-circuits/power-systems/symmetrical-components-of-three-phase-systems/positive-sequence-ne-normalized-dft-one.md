@@ -1,4 +1,4 @@
-# The positive sequence is not the normalized DFT at frequency 1
+# The positive sequence need not equal the normalized DFT at frequency 1
 
 For `(V_a, V_b, V_c) = (0, 1, 0)`, the [positive-sequence component](positive-sequence.md) `α / 3`
 differs from the normalized DFT of the phase array at frequency `1`, which is `α² / 3`. So reading

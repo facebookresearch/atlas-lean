@@ -2,7 +2,7 @@
 
 ## Kron reduction
 
-- [Block nodal equations are equivalent to the reduced port equation](block-solution-iff-reduced.md)
+- [Block nodal equations iff the reduced port equation and reconstruction](block-solution-iff-reduced.md)
 - [A solution of the block nodal equations solves the reduced equation](reduced-injection-of-full-solution.md)
 - [Reconstruction from a reduced solution solves the block equations](full-solution-of-reduced.md)
 - [Dissipation does not depend on the labelling of the nodes](dissipation-reindex-invariant.md)

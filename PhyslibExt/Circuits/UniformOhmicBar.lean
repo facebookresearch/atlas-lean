@@ -76,8 +76,8 @@ noncomputable def conductance (σ A ℓ : ℝ) : ℝ :=
   σ * A / ℓ
 
 /-- Resistance `ℓ / (σ A)`, available only for `σ > 0` (and `0` when `A = 0`, by the convention
-`x / 0 = 0`). The formula is defined for all such inputs: it is a physical resistance (positive, and
-the reciprocal of `conductance`) only on the physical domain `σ > 0`, `A > 0`, `ℓ > 0`, as used by
+`x / 0 = 0`). The formula is defined for all such inputs; on the physical domain `σ > 0`, `A > 0`,
+`ℓ > 0` it is a physical resistance, positive and the reciprocal of `conductance`, as used by
 `conductance_mul_resistance` and `resistance_pos`. -/
 noncomputable def resistance (σ A ℓ : ℝ) (_hσ : 0 < σ) : ℝ :=
   ℓ / (σ * A)

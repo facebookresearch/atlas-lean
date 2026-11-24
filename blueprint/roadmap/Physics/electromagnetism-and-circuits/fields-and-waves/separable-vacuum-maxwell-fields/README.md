@@ -18,7 +18,7 @@
 - [Magnetic field of the sinusoidal guide potential](sinusoidal-magnetic-field.md)
 - [Values of the sinusoidal fields at two points](sinusoidal-fields-at-point.md)
 - [The sign-reversed formula for the x component of B fails](sinusoidal-reversed-curl-sign-fails.md)
-- [Without the time conversion the electric field gains a factor c](unconverted-potential-electric-field.md)
+- [Without the time conversion, E_y = −c a(x) ∂f/∂s(ct, z)](unconverted-potential-electric-field.md)
 
 ## Partial derivatives and the scalar equations
 
@@ -42,7 +42,7 @@
 - [The separable magnetic field is divergence-free](separable-divergence-magnetic.md)
 - [Faraday's law for the separable fields of a smooth mode](separable-faraday.md)
 - [Ampère's law for the separable fields under the scalar equations](separable-ampere.md)
-- [Separable fields satisfy the source-free vacuum Maxwell equations](separable-fields-source-free-vacuum-maxw.md)
+- [Separable fields with profile and mode equations solve vacuum Maxwell](separable-fields-source-free-vacuum-maxw.md)
 
 ## Fields on space and time
 
@@ -51,11 +51,11 @@
 - [The component form of vacuum Maxwell gives the field form](source-free-vacuum-maxwell-fields-of-com.md)
 - [Components of the electric field of the separable guide potential](separable-guide-potential-electric-field.md)
 - [Components of the magnetic field of the separable guide potential](separable-guide-potential-magnetic-field.md)
-- [Fields of the separable guide potential satisfy vacuum Maxwell](separable-guide-potential-source-free-va.md)
+- [Guide-potential fields with profile and mode equations solve Maxwell](separable-guide-potential-source-free-va.md)
 
 ## Extremum form with the free-space constants
 
-- [At the free-space speed of light the guide potential is an extremum](separable-fields-is-extrema-with-free-sp.md)
+- [Profile and free-space mode equations make guide potentials extremal](separable-fields-is-extrema-with-free-sp.md)
 
 ## Failure of the mode equation and concrete modes
 

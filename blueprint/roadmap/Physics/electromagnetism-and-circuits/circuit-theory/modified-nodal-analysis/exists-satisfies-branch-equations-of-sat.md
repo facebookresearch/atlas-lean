@@ -1,4 +1,4 @@
-# Stamped equations come from branch equations
+# Every solution of the stamped equations comes from a branch solution
 
 Assume the [stamping hypotheses](satisfies-stamping-hypotheses.md), node potentials `v` and inductor
 currents `i_L` differentiable on `ℝ`, and voltage-source currents `i_V`, such that the

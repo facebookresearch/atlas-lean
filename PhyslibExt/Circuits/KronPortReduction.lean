@@ -101,8 +101,8 @@ namespace PhyslibExt.Circuits.KronPortReduction
 open MathlibExt.LinearAlgebra.Matrix.SchurStrictPositivity
 open MathlibExt.LinearAlgebra.Matrix.SchurSourceEnergy
 
-/-- The full block system is equivalent to the reduced port equation
-together with interior reconstruction. -/
+/-- For invertible `D`, the full block system is equivalent to the reduced port equation together
+with interior reconstruction. -/
 theorem block_solution_iff_reduced {m p : Type*} [Fintype m] [Fintype p]
     [DecidableEq p] (A : Matrix m m ℝ) (B : Matrix m p ℝ)
     (D : Matrix p p ℝ) [Invertible D] (φP : m → ℝ) (φI : p → ℝ)
@@ -115,7 +115,7 @@ theorem block_solution_iff_reduced {m p : Type*} [Fintype m] [Fintype p]
     MathlibExt.LinearAlgebra.Matrix.BlockSolutionEquiv.elim_iff
       (A := A) (B := B) (C := Bᵀ) (D := D) (x := φP) (y := φI) (u := jP) (v := jI)
 
-/-- A full solution induces the reduced port injection equation. -/
+/-- For invertible `D`, a full solution induces the reduced port injection equation. -/
 lemma reduced_injection_of_full_solution {m p : Type*} [Fintype m]
     [Fintype p] [DecidableEq p] (A : Matrix m m ℝ)
     (B : Matrix m p ℝ) (D : Matrix p p ℝ) [Invertible D] (φP : m → ℝ)
@@ -124,7 +124,7 @@ lemma reduced_injection_of_full_solution {m p : Type*} [Fintype m]
     schurComplement A B D *ᵥ φP = jP - B *ᵥ (D⁻¹ *ᵥ jI) := by
   exact ((block_solution_iff_reduced A B D φP φI jP jI).mp ⟨hP, hI⟩).1
 
-/-- Reconstruction from a reduced solution solves the full system. -/
+/-- For invertible `D`, reconstruction from a reduced solution solves the full system. -/
 lemma full_solution_of_reduced {m p : Type*} [Fintype m] [Fintype p]
     [DecidableEq p] (A : Matrix m m ℝ) (B : Matrix m p ℝ)
     (D : Matrix p p ℝ) [Invertible D] (φP : m → ℝ) (jP : m → ℝ) (jI : p → ℝ)

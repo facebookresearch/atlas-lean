@@ -367,9 +367,9 @@ lemma physicalIncidence_mulVec_apply {nN nB : ℕ}
         Finset.sum_sub_distrib _ _
     _ = _ := by rw [htail, hhead]
 
-/-- **Column partition of nodal current balance.** Applied to a
-branch current vector, the full incidence matrix splits as the sum
-of its four class blocks applied to the restricted currents. -/
+/-- **Column partition of nodal current balance.** For a partition of the branches into the four
+classes, applied to a branch current vector, the full incidence matrix splits as the sum of its four
+class blocks applied to the restricted currents. -/
 lemma incidence_mulVec_eq_sum_restricted {nN nB : ℕ}
     (B : Matrix (Fin nN) (Fin nB) ℝ) (Rset Lset Cset Sset : Finset (Fin nB))
     (hpart : IsBranchPartition nB Rset Lset Cset Sset) (iB : Fin nB → ℝ) :
@@ -414,9 +414,9 @@ lemma incidence_mulVec_eq_sum_restricted {nN nB : ℕ}
 
 /-! ### D. Stamping equivalence and validation -/
 
-/-- Forward stamping: branch equations with differentiable node
-potentials give the stamped equations for the restricted inductor
-and voltage-source currents. -/
+/-- Forward stamping: under the stamping hypotheses, branch equations with node potentials and
+restricted inductor currents differentiable on `ℝ` give the stamped equations for the restricted
+inductor and voltage-source currents. -/
 theorem satisfiesStampedEquations_of_satisfiesBranchEquations
     {nN nB : ℕ} (B : Matrix (Fin nN) (Fin nB) ℝ)
     (Rset Lset Cset Sset : Finset (Fin nB)) (Rval Lval Cval sourceVal : Fin nB → ℝ)
@@ -527,9 +527,9 @@ theorem satisfiesStampedEquations_of_satisfiesBranchEquations
     rw [hb, hSe]
   exact ⟨hground, hnodal, hind, hsrc⟩
 
-/-- Backward assembly: stamped equations with differentiable node
-potentials come from branch voltages and branch currents satisfying
-the carrier equations, with the prescribed restricted currents. -/
+/-- Backward assembly: under the stamping hypotheses, stamped equations with node potentials and
+inductor currents differentiable on `ℝ` come from branch voltages and branch currents satisfying the
+carrier equations, with the prescribed restricted currents. -/
 theorem exists_satisfiesBranchEquations_of_satisfiesStampedEquations
     {nN nB : ℕ} (B : Matrix (Fin nN) (Fin nB) ℝ)
     (Rset Lset Cset Sset : Finset (Fin nB)) (Rval Lval Cval sourceVal : Fin nB → ℝ)
@@ -710,10 +710,9 @@ theorem exists_satisfiesBranchEquations_of_satisfiesStampedEquations
   refine ⟨vb, iB, ?_, hresL, hresS⟩
   exact ⟨hground, hvb_eq, hkcl', hBR, hBC, hBL, hBS⟩
 
-/-- **Stamping correctness.** Under the stamping hypotheses, with
-differentiable node potentials, the stamped equations hold for
-given inductor and voltage-source currents if and only if branch
-voltages and branch currents satisfying the carrier equations exist
+/-- **Stamping correctness.** Under the stamping hypotheses, with node potentials and inductor
+currents differentiable on `ℝ`, the stamped equations hold for given inductor and voltage-source
+currents if and only if branch voltages and branch currents satisfying the carrier equations exist
 with those restricted currents. -/
 theorem stampedEquations_iff_exists_satisfiesBranchEquations
     {nN nB : ℕ} (B : Matrix (Fin nN) (Fin nB) ℝ)

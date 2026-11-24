@@ -36,7 +36,7 @@
 
 ## The normalized field as a smooth periodic solution
 
-- [A periodic polarized vacuum field is a smooth periodic wave solution](polarized-vacuum-maxwell-is-smooth-perio.md)
+- [Periodic C³ polarized fields give a smooth periodic wave solution](polarized-vacuum-maxwell-is-smooth-perio.md)
 
 ## The error bound
 

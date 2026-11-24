@@ -372,7 +372,8 @@ lemma lineVoltage_balancedPhases (V : ℂ) :
         Complex.exp (((Real.pi / 6 : ℝ) : ℂ) * Complex.I) * V) := by
   exact funext (lineVoltage_balancedPhases_apply V)
 
-/-- **`√3` relation.** Every line-to-line magnitude is `√3` times the phase magnitude. -/
+/-- **`√3` relation.** For positive-sequence voltages `(V, α² V, α V)`, every line-to-line magnitude
+is `√3 ‖V‖`. -/
 lemma norm_lineVoltage_balancedPhases (V : ℂ) (p : ZMod 3) :
     ‖lineVoltage (balancedPhases V) p‖ = Real.sqrt 3 * ‖V‖ := by
   rw [lineVoltage_balancedPhases, norm_balancedPhases, norm_mul, norm_mul,
@@ -426,8 +427,8 @@ lemma lineVoltage_balancedPhases_ne_reversed (V : ℂ) (hV : V ≠ 0) :
   simp only [Complex.exp_ofReal_mul_I_im, Real.sin_neg, Real.sin_pi_div_six] at him
   norm_num at him
 
-/-- Star connection, line quantities: `|S| = √3 V_L I_L` with `V_L = ‖V_ab‖` and line current
-`I_L = ‖I_a‖` (the phase current). -/
+/-- Balanced star connection, line quantities: `|S| = √3 V_L I_L` with `V_L = ‖V_ab‖` and line
+current `I_L = ‖I_a‖` (the phase current). -/
 lemma norm_sum_complexPower_star (V I : ℂ) :
     ‖∑ p, complexPower (balancedPhases V p) (balancedPhases I p)‖ =
       Real.sqrt 3 * ‖lineVoltage (balancedPhases V) 0‖ * ‖balancedPhases I 0‖ := by
@@ -467,8 +468,8 @@ lemma sum_complexPower_delta (V J : ℂ) :
       3 * (lineVoltage (balancedPhases V) 0 * conj J) := by
   rw [lineVoltage_balancedPhases, sum_complexPower_balancedPhases, balancedPhases_zero]
 
-/-- Delta connection, line quantities: `|S| = √3 V_L I_L` with `V_L = ‖V_ab‖` and line current
-`I_L = ‖I_a‖`. -/
+/-- Balanced delta connection, line quantities: `|S| = √3 V_L I_L` with `V_L = ‖V_ab‖` and line
+current `I_L = ‖I_a‖`. -/
 lemma norm_sum_complexPower_delta (V J : ℂ) :
     ‖∑ p, complexPower (lineVoltage (balancedPhases V) p) (balancedPhases J p)‖ =
       Real.sqrt 3 * ‖lineVoltage (balancedPhases V) 0‖ *
@@ -482,10 +483,10 @@ lemma norm_sum_complexPower_delta (V J : ℂ) :
 /-! ### Power factor -/
 
 /-- With `V = Vm e^{iθ}`, `I = Im e^{i(θ - φ)}`, `Vm, Im ≥ 0`: real power `3 Vm Im cos φ`,
-reactive power `3 Vm Im sin φ`, and in line quantities `P = √3 V_L I_L cos φ`. The current lags
-the voltage by `φ`, and `cos φ` is the power factor. The conditions `Vm, Im ≥ 0` make `Vm = ‖V‖`
-and `Im = ‖I‖`; the first two identities hold without them. For `Vm = 0` or `Im = 0` all three
-quantities are `0` for every `φ`. -/
+reactive power `3 Vm Im sin φ`, and in line quantities `P = √3 V_L I_L cos φ`. With phasors
+rotating as `e^{iωt}`, the current lags the voltage by `φ`, and `cos φ` is the power factor. The
+conditions `Vm, Im ≥ 0` make `Vm = ‖V‖` and `Im = ‖I‖`; the first two identities hold without
+them. For `Vm = 0` or `Im = 0` all three quantities are `0` for every `φ`. -/
 lemma sum_complexPower_polar (Vm Im θ φ : ℝ) (hVm : 0 ≤ Vm) (hIm : 0 ≤ Im) :
     (∑ p, complexPower (balancedPhases ((Vm : ℂ) * Complex.exp ((θ : ℂ) * Complex.I)) p)
         (balancedPhases ((Im : ℂ) * Complex.exp (((θ - φ : ℝ) : ℂ) * Complex.I)) p)).re =
@@ -568,7 +569,7 @@ lemma neutralCurrent_altered (I δ : ℂ) :
   rw [sum_zmod3, alteredPhases_zero, alteredPhases_one, alteredPhases_two]
   linear_combination I * one_add_alpha
 
-/-- One altered phase with `δ ≠ 0` gives a nonzero neutral sum. -/
+/-- One altered phase of a balanced set, with `δ ≠ 0`, gives a nonzero neutral sum. -/
 lemma neutralCurrent_altered_ne (I δ : ℂ) (hδ : δ ≠ 0) :
     neutralCurrent (alteredPhases I δ) ≠ 0 := by
   rw [neutralCurrent_altered]

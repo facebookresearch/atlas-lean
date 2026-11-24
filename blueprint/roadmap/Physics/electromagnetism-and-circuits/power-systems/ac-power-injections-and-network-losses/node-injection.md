@@ -6,6 +6,7 @@ $y^s \in \mathbb{C}^{n_N}$ and a node $v$, the current injected at $v$ is
 
 $$I_v = \sum_{e} B_{ve}\, y_e d_e + y^s_v V_v,$$
 
-where $d_e$ is the [branch drop](branch-drop.md) and $y_e d_e$ the current of branch $e$. Since the
-same coefficients $B_{ve}$ form the drops and assemble this sum, $I_v$ is the current leaving node
-$v$ into its incident branches and its shunt.
+where $d_e$ is the [branch drop](branch-drop.md) and $y_e d_e$ the current of branch $e$. When $B$
+is the signed node–branch incidence matrix, the same coefficients $B_{ve}$ form the drops and
+assemble this sum, so $I_v$ is the current leaving node $v$ into its incident branches and its
+shunt.

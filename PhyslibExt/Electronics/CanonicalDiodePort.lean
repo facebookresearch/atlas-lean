@@ -24,8 +24,8 @@ An ideal p-n junction diode carries the Shockley current
 anode-to-cathode voltage `V`, with saturation current `Is`, emission
 coefficient `n` and thermal voltage `VT = kB * T / |q|`. The thermal
 voltage uses the carrier-charge magnitude, so it does not depend on
-the carrier sign, and it equals the Einstein ratio `D / mu` of
-`ElectrostaticsAndLinearWaves`. The exponential law itself is the
+the carrier sign, and for `mu ≠ 0` and `q ≠ 0` it equals the Einstein ratio
+`D / mu` of `ElectrostaticsAndLinearWaves`. The exponential law itself is the
 junction branch law `EbersMollTerminalBalance.forwardBranchCurrent`
 at the scale `n * VT`; this file declares no second junction or
 transport model.
@@ -48,8 +48,8 @@ voltage and current describes the same diode.
 
 ## ii. Key results
 
-- `einstein_ratio_eq_thermalVoltage`: the thermal voltage is the
-  Einstein ratio `D / mu`.
+- `einstein_ratio_eq_thermalVoltage`: for `mu ≠ 0` and `q ≠ 0` the thermal
+  voltage is the Einstein ratio `D / mu`.
 - `hasDerivAt_diodeCurrent`: the small-signal conductance
   `Is / (n * VT) * exp (V / (n * VT))`.
 - `tendsto_diodeCurrent_atBot`: the reverse saturation limit `-Is`.

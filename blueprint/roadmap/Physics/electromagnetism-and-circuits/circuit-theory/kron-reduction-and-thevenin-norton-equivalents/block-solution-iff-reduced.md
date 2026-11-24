@@ -1,4 +1,4 @@
-# Block nodal equations are equivalent to the reduced port equation
+# Block nodal equations iff the reduced port equation and reconstruction
 
 Let `m` (ports) and `p` (interior nodes) be finite index sets, `A`, `B` and `D` real matrices of
 sizes `m × m`, `m × p` and `p × p` with `D` invertible, and `K = A - B D⁻¹ Bᵀ` the Schur complement.

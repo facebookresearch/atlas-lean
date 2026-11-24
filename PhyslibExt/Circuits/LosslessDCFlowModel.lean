@@ -141,8 +141,8 @@ allows any real `b`. -/
 def losslessAdmittance (nE : ℕ) (b : Fin nE → ℝ) (e : Fin nE) : ℂ :=
   -Complex.I * (b e : ℂ)
 
-/-- Branch current `admittance * drop`, the summand of the canonical nodal
-injection. -/
+/-- Branch current `admittance * drop`: the branch factor `I e` of the summand `B v e * I e` of the
+canonical nodal injection. -/
 def branchCurrent (nN nE : ℕ) (B : Matrix (Fin nN) (Fin nE) ℝ)
     (V : Fin nN → ℂ) (y : Fin nE → ℂ) (e : Fin nE) : ℂ :=
   y e * branchDrop nN nE B V e
@@ -337,9 +337,9 @@ lemma receivingRealPower_eq_acBranchRealPower (nN nE : ℕ) (tail head : Fin nE 
   rw [Real.sin_sub]
   ring
 
-/-- AC nodal real power of the canonical nodal injection with lossless
-branches and no shunts is the signed sum of branch sine flows, the
-nonlinear counterpart of `p = B * f`. -/
+/-- AC nodal real power of the canonical nodal injection with unit-magnitude
+voltages, lossless branches and no shunts is the signed sum of branch sine
+flows, the nonlinear counterpart of `p = B * f`. -/
 lemma nodeRealPower_eq_sum_mul_sin (nN nE : ℕ) (tail head : Fin nE → Fin nN)
     (b : Fin nE → ℝ) (θ : Fin nN → ℝ) (v : Fin nN) :
     (nodeComplexPower nN nE (electricalIncidence tail head) (unitVoltage nN θ)
@@ -416,8 +416,8 @@ theorem abs_acBranchRealPower_sub_dcBranchFlow_le (nN nE : ℕ)
     _ = b e * |θ (tail e) - θ (head e)| ^ 3 / 6 := by ring
 
 /-- Nodal angle error: for positive susceptances (`0 < b e` on every
-branch), AC nodal real power and DC injection differ by at most the
-incidence-weighted sum of per-line bounds. -/
+branch), AC nodal real power with unit-magnitude voltages, lossless branches and no shunts differs
+from the DC injection by at most the sum over branches of `|B v e|` times the per-line bounds. -/
 theorem abs_nodeRealPower_sub_dcInjection_le (nN nE : ℕ)
     (tail head : Fin nE → Fin nN) (b : Fin nE → ℝ) (hb : ∀ e, 0 < b e)
     (θ : Fin nN → ℝ) (v : Fin nN) :

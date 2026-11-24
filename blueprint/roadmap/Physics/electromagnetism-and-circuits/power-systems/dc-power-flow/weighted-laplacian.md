@@ -7,7 +7,7 @@ branch susceptances `b_e`. The susceptance-weighted Laplacian is the real `n_N �
 `L_b = B diag(b) Bᵀ`,
 
 where `B` is the
-[electrical incidence](../../circuit-theory/tellegen-s-theorem-and-branch-power-balance/electrical-incidence.md),
+[electrical incidence](../../../../GraphTheory/algebraic-graph-theory/part-01/oriented-incidence-matrices/oriented-incidence.md),
 with no reference row or column deleted. Its diagonal entry at `v` is the sum of `b_e` over the
 branches incident to `v` that are not loops, and its entry at `(u, v)` with `u ≠ v` is minus the sum
 of `b_e` over the branches joining `u` and `v` in either orientation. It is the

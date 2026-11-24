@@ -9,6 +9,6 @@ point a linear map `ℝ³ → ℝ³` such that `J` has derivative `J'(x)` at eve
 
 `I_0 + ⋯ + I_5 = -∫_{[a, b]} ρ̇(x) dx`.
 
-When `ρ̇` is the time derivative of a charge density as in
-[the enclosed-charge derivative](has-deriv-at-enclosed-charge.md), the right side is minus the rate
-of change of the enclosed charge.
+When `ρ̇ = ρ̇(t, ·)` for a charge density `ρ`, with `ρ` and `ρ̇` jointly continuous in time and
+position and `∂ₛρ(s, x) = ρ̇(s, x)` for all `s` and `x`, the right side is minus the rate of change
+at time `t` of the enclosed charge ([enclosed-charge derivative](has-deriv-at-enclosed-charge.md)).

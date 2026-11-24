@@ -8,5 +8,4 @@
 - [An ideal transformer absorbs no net power](net-port-power-eq-zero-of-ideal-transfor.md)
 - [The port variables of an ideal transformer carry no net power](net-port-power-adapter-eq-zero.md)
 - [With the wrong sign of the secondary current the power is 2 n V₂ I₁](net-port-power-flipped-secondary-current.md)
-- [Reversing both secondary variables keeps zero net power](net-port-power-eq-zero-polarity-reversed.md)
-- [With the wrong sign of the secondary current the power is nonzero](net-port-power-flipped-secondary-current-2.md)
+- [For n, V₂, I₁ ≠ 0 the wrong secondary current sign gives nonzero power](net-port-power-flipped-secondary-current-2.md)

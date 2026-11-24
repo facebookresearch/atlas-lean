@@ -1,4 +1,4 @@
-# Exact Kogge–Stone setup certificate under uniform timing, $n \ge 2$
+# Uniform Kogge–Stone setup certificate is exact, $K \ge 1$, $n \ge 2$
 
 Let $n \ge 2$ and $K \ge 1$, give every gate of the $n$-bit
 [Kogge–Stone carry-lookahead adder with $K$ levels](../../../../TheoryOfComputation/circuit-complexity/kogge-stone-adder/carry-lookahead-adder.md)

@@ -13,6 +13,7 @@ lower squared-voltage limits), where `A^P_k` is the
 [reactive coefficient matrix](../current-limited-ac-optimal-power-flow-and-its-vo/reactive-coeff.md)
 and `E_k` the
 [squared-voltage coefficient matrix](../current-limited-ac-optimal-power-flow-and-its-vo/voltage-coeff.md)
-of bus `k`; each branch `e` contributes the
+of bus `k`, the first two of the bus admittance matrix of `P`; each branch `e` contributes the
 [squared-current coefficient matrix](../current-limited-ac-optimal-power-flow-and-its-vo/branch-current-coeff.md)
-of `e`. The right-hand sides are the [constraint bounds](constraint-bound.md).
+of `e`, built from the incidence matrix and branch admittances of `P`. The right-hand sides are the
+[constraint bounds](constraint-bound.md).

@@ -267,8 +267,8 @@ lemma cornerComponents_of_rectangularGuidePECTraces (a b : ℝ)
   obtain ⟨⟨ha, hb⟩, hx0, -, hy0, -⟩ := h
   exact corner_of_faces E B _ (hx0 0 z le_rfl hb.le) (hy0 0 z le_rfl ha.le)
 
-/-- The same corner conclusion at all four corner lines
-`(0, 0)`, `(a, 0)`, `(0, b)` and `(a, b)`. -/
+/-- At the four corner lines `(0, 0)`, `(a, 0)`, `(0, b)` and `(a, b)`, a field satisfying the
+traces has all electric components zero and its first two magnetic components zero. -/
 lemma allCornerComponents_of_rectangularGuidePECTraces (a b : ℝ)
     (E B : (Fin 3 → ℝ) → Fin 3 → ℝ)
     (h : rectangularGuidePECTraces a b E B) (z : ℝ) :

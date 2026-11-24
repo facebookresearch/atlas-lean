@@ -30,8 +30,8 @@
 
 ## Norms and the averaging error bound
 
-- [Growth rate of the scaled buck dynamics](scaled-buck-growth-rate.md)
-- [The scaled buck operator norm is at most the growth rate](norm-scaled-buck-operator-le.md)
+- [Growth-rate bound of the scaled buck dynamics](scaled-buck-growth-rate.md)
+- [The scaled buck operator norm is at most the growth-rate bound](norm-scaled-buck-operator-le.md)
 - [Maximum norm of the scaled buck input](norm-scaled-buck-input.md)
 - [Maximum norm of a difference of scaled states](norm-scaled-state-sub.md)
 - [Dimensionless error bound of buck averaging](scaled-buck-error-bound.md)

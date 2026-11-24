@@ -11,7 +11,6 @@ base currents counted into the device and the emitter current out of it.
 - [Collector current of the Ebers–Moll model](collector-current.md)
 - [Emitter current of the Ebers–Moll model](emitter-current.md)
 - [Base current of the Ebers–Moll model](base-current.md)
-- [The collector and base currents add up to the emitter current](terminal-current-balance.md)
 - [At zero junction voltages all three terminal currents vanish](terminal-currents-zero-bias.md)
 
 ## Small-signal derivatives at positive thermal voltage

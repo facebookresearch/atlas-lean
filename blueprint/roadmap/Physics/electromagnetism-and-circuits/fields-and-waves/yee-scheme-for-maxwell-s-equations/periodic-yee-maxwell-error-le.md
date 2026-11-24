@@ -13,7 +13,7 @@ at `c`; both are spatially periodic with period `L` (`E_y(t, x + L) = E_y(t, x)`
 all initial grid fields `E0, H0 ∈ ℝᴺ` and every step `n` with `n dt ≤ T`, the
 [normalized error](normalized-field-error.md) of the `n`-th
 [physical Yee iterate](physical-yee-iterate.md) is at most
-`√((1 + ρ) / (1 − ρ)) · (E₀ + T √L (Mt dt² + c Mx h²) / 6)`, where `Mt = max(√ε₀ MEt, √μ₀ MHt)` and
+`√((1 + ρ) / (1 − ρ)) · (δ₀ + T √L (Mt dt² + c Mx h²) / 6)`, where `Mt = max(√ε₀ MEt, √μ₀ MHt)` and
 `Mx = max(√ε₀ MEx, √μ₀ MHx)` are the [time](energy-time-bound.md) and [space](energy-space-bound.md)
-bounds in energy coordinates, and `E₀` is the
+bounds in energy coordinates, and `δ₀` is the
 [normalized initial mismatch](normalized-initial-mismatch.md).

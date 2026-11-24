@@ -2,7 +2,7 @@
 
 Let `V` be a finite set of nodes and `E` a finite set of branches, each branch `e` with a tail
 node `tail(e)` and a head node `head(e)`. For every node `n` and branch `e`, the entry of the
-[electrical incidence matrix](electrical-incidence.md) is
+[electrical incidence matrix](../../../../GraphTheory/algebraic-graph-theory/part-01/oriented-incidence-matrices/oriented-incidence.md) is
 
 `A(n, e) = [tail(e) = n] − [head(e) = n]`,
 

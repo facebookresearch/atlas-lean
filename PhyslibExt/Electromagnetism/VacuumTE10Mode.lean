@@ -117,7 +117,8 @@ def te10Dispersion (c0 a omega beta : ℝ) : Prop :=
   omega ^ 2 = c0 ^ 2 * (cutoffWavenumber a ^ 2 + beta ^ 2)
 
 /-- The propagation constant `sqrt (ω^2 / c0^2 - kc^2)`; meaningful at or above cutoff (below cutoff
-the radicand is negative and the value is `0`, by `√x = 0` for `x < 0`). -/
+the radicand is negative and the value is `0`, by `√x = 0` for `x < 0`; `ω^2 / c0^2 = 0` when
+`c0 = 0`). -/
 noncomputable def propagationConstant (c0 a omega : ℝ) : ℝ :=
   Real.sqrt (omega ^ 2 / c0 ^ 2 - cutoffWavenumber a ^ 2)
 

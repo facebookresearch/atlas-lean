@@ -6,5 +6,5 @@ time `t` is
 
 `Q(t) = ∫_{[a, b]} ρ(t, x) dx`,
 
-With respect to Lebesgue measure; the integral is `0` when the integrand is not integrable there; it
+with respect to Lebesgue measure; the integral is `0` when the integrand is not integrable there; it
 is `0` for an empty box.

@@ -1,4 +1,4 @@
-# The fixed point is the linear candidate iff it lies between the rails
+# For A, β > 0, the candidate is the fixed point iff it is in the rails
 
 Let $A > 0$, $\beta > 0$ and $v_i$ be real numbers and $v_{\min} < v_{\max}$ the rails, and let
 $v_o$ be a fixed point, $v_o = F(v_o)$, of the [rail-limited feedback map](rail-limited-map.md)

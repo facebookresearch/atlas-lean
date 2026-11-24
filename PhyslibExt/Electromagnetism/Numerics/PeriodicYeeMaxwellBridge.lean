@@ -38,11 +38,11 @@ squared pair norm of the energy coordinates is twice the discrete electromagneti
 `h ∑ (ε₀ E² + μ₀ H²) / 2`. The generic leapfrog error theorem then bounds the normalized
 electromagnetic error by
 
-`sqrt ((1 + ρ) / (1 - ρ)) * (E₀ + T * sqrt L * (Mt * dt² + c * Mx * h²) / 6)`
+`sqrt ((1 + ρ) / (1 - ρ)) * (δ₀ + T * sqrt L * (Mt * dt² + c * Mx * h²) / 6)`
 
 for `n * dt ≤ T`, under the Courant bound `c * dt / h ≤ ρ < 1`, where
 `Mt = max (sqrt ε₀ * MEt) (sqrt μ₀ * MHt)` and `Mx = max (sqrt ε₀ * MEx) (sqrt μ₀ * MHx)` are
-built from the physical third-derivative bounds, `L = N * h`, and `E₀` is the normalized
+built from the physical third-derivative bounds, `L = N * h`, and `δ₀` is the normalized
 initial mismatch (the `H` sample sits at the half time `-dt / 2`). The Maxwell hypothesis is
 taken either in component form or as Physlib's extremum condition `IsExtrema 𝓕 0` of a
 smooth electromagnetic potential whose fields have the polarized components.
@@ -386,7 +386,7 @@ theorem polarizedVacuumMaxwell_isSmoothPeriodicSolution (𝓕 : FreeSpace)
 source-free vacuum Maxwell equations that is spatially periodic with period `L`, separately `C³` in
 `t` and in `x`, with the third-derivative bounds `MEt`, `MHt`, `MEx`, `MHx`: for every step `n` with
 `n * dt ≤ T`, the normalized electromagnetic error of the physical Yee iterates is at most
-`sqrt ((1 + ρ) / (1 - ρ)) * (E₀ + T * sqrt L * (Mt * dt ^ 2 + c * Mx * h ^ 2) / 6)`, with `E₀` the
+`sqrt ((1 + ρ) / (1 - ρ)) * (δ₀ + T * sqrt L * (Mt * dt ^ 2 + c * Mx * h ^ 2) / 6)`, with `δ₀` the
 normalized initial mismatch and `Mt`, `Mx` the energy-coordinate bounds. -/
 theorem periodicYeeMaxwell_error_le {N : ℕ} (hN : 0 < N) (𝓕 : FreeSpace)
     (h dt L MEt MHt MEx MHx rho T : ℝ) (hh : 0 < h) (hdt : 0 < dt)

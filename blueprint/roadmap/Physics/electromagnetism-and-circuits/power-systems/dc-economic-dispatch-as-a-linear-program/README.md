@@ -41,12 +41,12 @@
 
 - [Feasible dispatches encode to feasible LP points](encode-feasible.md)
 - [Feasible LP points decode to feasible dispatches](decode-feasible.md)
-- [A dispatch is feasible iff it decodes a feasible LP point](dispatch-feasible-iff-exists-lp.md)
+- [A dispatch is feasible iff a feasible LP point decodes to it](dispatch-feasible-iff-exists-lp.md)
 - [The dispatch problem is feasible iff its linear program is](dispatch-nonempty-iff-lp-nonempty.md)
 
 ## Optimality transfer
 
-- [An optimal LP point decodes to a cost below every feasible dispatch](decode-optimal.md)
+- [A decoded optimal LP point costs no more than any feasible dispatch](decode-optimal.md)
 - [A minimum-cost dispatch encodes to an optimal LP point](encode-optimal.md)
 
 ## Correspondence of the two problems

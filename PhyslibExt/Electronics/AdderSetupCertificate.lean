@@ -35,8 +35,9 @@ depths of the existing adders, `2 n + 1` for the `n`-bit ripple-carry adder
 this gives `rippleCarryAdder_setupMet`, `carryLookaheadAdder_setupMet` and
 `carryLookaheadAdder_claLevels_setupMet`.
 
-Under uniform gate delays, with every input arriving exactly at `tq`, the
-certificate is exact for every circuit without constant gates
+Under uniform gate delays `D ≥ 0`, with every input arriving exactly at
+`tq ≥ 0`, the certificate is exact for every circuit with at least one output
+and without constant gates
 (`setupMet_uniform_iff_of_noConstantGates`, its signature-wide form
 `setupMet_uniform_iff`, and the two adder `_uniform_iff` forms): a violated
 certificate is a real setup violation of the model, whether or not the adder
@@ -58,8 +59,8 @@ of scope.
   `carryLookaheadAdder_claLevels_setupMet`: the certificates for the two
   adders at their width hypotheses.
 - `setupMet_uniform_iff_of_noConstantGates`: exactness under uniform delays
-  and every input arriving exactly at `tq`, for a circuit whose gates all read
-  at least one wire.
+  `D ≥ 0` and every input arriving exactly at `tq ≥ 0`, for a circuit with at
+  least one output whose gates all read at least one wire.
 - `setupMet_uniform_iff`, `rippleCarryAdder_setupMet_uniform_iff`,
   `carryLookaheadAdder_setupMet_uniform_iff`: the same for a signature
   without constants, and for the two adders.

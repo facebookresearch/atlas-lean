@@ -72,10 +72,10 @@ positivity assumptions are needed.
   depth is positive and reciprocal to the attenuation.
 - `neg_propagationConstant_not_forward`: the opposite root has
   nonpositive real part and negative imaginary part, so it is not the
-  forward attenuating root.
+  forward, non-growing root.
 - `abs_exp_neg_propagationConstant_mul`: the modulus of
-  `exp (-gamma * z)` at real depth `z` is the real decay
-  `exp (-alpha * z)`.
+  `exp (-gamma * z)` at real depth `z` is `exp (-alpha * z)`, a decay
+  when `alpha > 0`.
 - `planeWave_eq_re_forward_phasor_at_zero_sigma`: at zero
   conductivity the real cosine plane wave is the real part of the
   forward phasor `exp (+i * omega * t) * exp (-gamma * x)` of the
@@ -122,7 +122,8 @@ noncomputable def phaseConstant (epsilon mu omega sigma : ℝ) : ℝ :=
   omega * Real.sqrt (mu * epsilon / 2) *
     Real.sqrt (Real.sqrt (1 + (sigma / (omega * epsilon)) ^ 2) + 1)
 
-/-- Forward propagation constant `gamma = alpha + i * beta`. -/
+/-- Forward propagation constant `gamma = alpha + i * beta` (time dependence `exp (+i omega t)`,
+forward wave `exp (-gamma z)`). -/
 noncomputable def propagationConstant (epsilon mu omega sigma : ℝ) : ℂ :=
   (attenuationConstant epsilon mu omega sigma : ℂ) +
     Complex.I * (phaseConstant epsilon mu omega sigma : ℂ)
@@ -132,7 +133,8 @@ noncomputable def propagationConstant (epsilon mu omega sigma : ℝ) : ℂ :=
 noncomputable def skinDepth (epsilon mu omega sigma : ℝ) : ℝ :=
   1 / attenuationConstant epsilon mu omega sigma
 
-/-- The squared propagation equation in complex form. -/
+/-- The squared propagation equation in complex form, for the plane wave
+`exp (+i omega t) exp (-gamma z)`. -/
 def satisfiesDispersionEquation (epsilon mu omega sigma : ℝ) (gamma : ℂ) : Prop :=
   gamma ^ 2 = (-(omega ^ 2 * mu * epsilon) : ℂ) +
     Complex.I * (omega * mu * sigma : ℂ)
@@ -331,8 +333,8 @@ theorem propagationConstant_sq_eq (epsilon mu omega sigma : ℝ)
   unfold satisfiesDispersionEquation at h
   exact h
 
-/-- Headline bundle: for `epsilon, mu, omega > 0` and `sigma ≥ 0`, the squared equation holds and
-the chosen root is the forward attenuating one. -/
+/-- Bundle: for `epsilon, mu, omega > 0` and `sigma ≥ 0`, the squared equation holds and
+the chosen root is the forward, non-growing one (`alpha ≥ 0`, `beta > 0`). -/
 theorem dispersion_verification (epsilon mu omega sigma : ℝ)
     (hepsilon : 0 < epsilon) (hmu : 0 < mu) (homega : 0 < omega)
     (hsigma : 0 ≤ sigma) :
@@ -401,8 +403,8 @@ lemma skinDepth_pos_and_mul_eq_one (epsilon mu omega sigma : ℝ)
 
 /-! ## D. Root exclusion and sign convention -/
 
-/-- The opposite root has the same square but is not the forward attenuating root: its real part is
-nonpositive and its imaginary part is negative for `epsilon, mu, omega > 0` and `sigma ≥ 0`. -/
+/-- The opposite root has the same square but is not the forward, non-growing root: its real part
+is nonpositive and its imaginary part is negative for `epsilon, mu, omega > 0` and `sigma ≥ 0`. -/
 lemma neg_propagationConstant_not_forward (epsilon mu omega sigma : ℝ)
     (hepsilon : 0 < epsilon) (hmu : 0 < mu) (homega : 0 < omega)
     (hsigma : 0 ≤ sigma) :
@@ -434,9 +436,9 @@ lemma opposite_sign_equation_ne (epsilon mu omega sigma : ℝ)
 
 /-! ## E. Travelling-wave and real-field consequences -/
 
-/-- Attenuation of the travelling phasor: for real depth `z`, the
-modulus of `exp (-gamma * z)` is the real exponential decay given by
-the attenuation constant. -/
+/-- Modulus of the travelling phasor: for all real parameters and real depth `z`, the
+modulus of `exp (-gamma * z)` is `exp (-alpha * z)`, with `alpha` the attenuation constant. It
+decays in `z` when `alpha > 0` (for `epsilon, mu, omega > 0` and `sigma > 0`). -/
 lemma abs_exp_neg_propagationConstant_mul (epsilon mu omega sigma : ℝ)
     (z : ℝ) :
     ‖Complex.exp

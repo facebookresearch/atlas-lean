@@ -96,7 +96,8 @@ lemma coe_photonCountMean (η P h ν T : ℝ) (hη0 : 0 ≤ η) (hP : 0 ≤ P) (
   unfold photonArrivalRate
   positivity
 
-/-- `R P = |q| λ`: responsivity times power is the charge flux. -/
+/-- `R P = |q| λ`: responsivity times power is `|q|` times the photoelectron rate, for all real
+inputs; in the physical reading `0 ≤ η ≤ 1`, `P ≥ 0`, `h, ν > 0` it is the charge flux. -/
 lemma responsivity_mul_power_eq (η P q h ν : ℝ) :
     responsivity η q h ν * P = |q| * photonArrivalRate η P h ν := by
   unfold responsivity photonArrivalRate

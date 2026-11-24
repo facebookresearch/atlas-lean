@@ -1,4 +1,4 @@
-# An inductive load's reflection coefficient depends on frequency
+# An inductive load's reflection coefficient can depend on frequency
 
 For the inductive load `Z_L = iωL` with `L = 1` on a line with `Z₀ = 1`, the
 [reflection coefficients](reflection-coefficient.md) at `ω = 1` and `ω = 2` differ:

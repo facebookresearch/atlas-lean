@@ -31,7 +31,6 @@
 - [Along a network trajectory the storage changes at supply minus loss](plant-storage-deriv-eq-supply-sub-loss.md)
 - [Finite-horizon passivity when the network laws hold on an interval](plant-finite-horizon-passive-of-trajecto.md)
 - [Finite-horizon passivity of a network trajectory](plant-finite-horizon-passive.md)
-- [A network plant with passive elements is finite-horizon passive](network-plant-is-finite-horizon-passive.md)
 - [Passivity of a network plant with passive elements](network-plant-passivity.md)
 
 ## Boundary cases

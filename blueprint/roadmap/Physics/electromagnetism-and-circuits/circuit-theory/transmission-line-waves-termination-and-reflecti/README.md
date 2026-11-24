@@ -37,9 +37,9 @@
 
 - [Power-balance identity for the reflection coefficient](one-sub-norm-sq-reflection-coefficient.md)
 - [Passivity criterion for the reflection coefficient](norm-reflection-coefficient-le-one-iff.md)
-- [The reflection coefficient has modulus below one iff Re Z_L > 0](norm-reflection-coefficient-lt-one-iff.md)
+- [For Z_L ≠ −Z₀, the reflection modulus is below one iff Re Z_L > 0](norm-reflection-coefficient-lt-one-iff.md)
 - [The reflection coefficient has modulus one iff Re Z_L = 0](norm-reflection-coefficient-eq-one-iff.md)
-- [The reflection coefficient exceeds one in modulus iff Re Z_L < 0](one-lt-norm-reflection-coefficient-iff.md)
+- [For Z_L ≠ −Z₀, the reflection modulus exceeds one iff Re Z_L < 0](one-lt-norm-reflection-coefficient-iff.md)
 - [Load power from the incident and reflected amplitudes](load-power-eq-incident-sub-reflected.md)
 - [Load power from the load impedance and the current](load-power-eq-re-mul-norm-sq.md)
 - [Average load power of RMS phasors from the wave amplitudes](average-rms-waveform-load-power-eq-incid.md)
@@ -51,14 +51,14 @@
 
 ## Resistive and special loads
 
-- [Reflection coefficient of a resistive load or a refractive interface](resistive-reflection.md)
+- [Reflection coefficient of a resistive load](resistive-reflection.md)
 - [A real load has a real reflection coefficient](reflection-coefficient-of-real.md)
-- [The resistive reflection coefficient is at most one in size iff R ≥ 0](abs-resistive-reflection-le-one-iff.md)
+- [For R ≠ −Z₀, the resistive reflection is at most one in size iff R ≥ 0](abs-resistive-reflection-le-one-iff.md)
 - [Instantaneous reflection at a resistive load](instantaneous-resistive-reflection.md)
 - [A matched load has zero reflection coefficient](reflection-coefficient-matched.md)
 - [A short circuit has reflection coefficient −1](reflection-coefficient-short.md)
 - [A positive resistor reflects less than fully](abs-resistive-reflection-lt-one-of-pos.md)
 - [A pure reactance reflects fully](norm-reflection-coefficient-pure-reactan.md)
-- [A negative resistance reflects more than fully](one-lt-abs-resistive-reflection-of-neg.md)
+- [A negative resistance R ≠ −Z₀ reflects more than fully](one-lt-abs-resistive-reflection-of-neg.md)
 - [At Z_L = −Z₀ the passivity criterion fails](reflection-criterion-fails-at-excluded-l.md)
-- [An inductive load's reflection coefficient depends on frequency](reflection-coefficient-inductive-depends.md)
+- [An inductive load's reflection coefficient can depend on frequency](reflection-coefficient-inductive-depends.md)

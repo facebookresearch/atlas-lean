@@ -1,4 +1,4 @@
-# The reduced state equation has a unique global solution through x₀
+# Continuous forcing: unique global reduced-state solution through x₀
 
 Let `n` and `m` be finite index sets and `A`, `B`, `C`, `D` real matrices of sizes `n × n`, `n × m`,
 `m × n` and `m × m`, with `D` invertible. Let `f : ℝ → ℝⁿ` and `g : ℝ → ℝᵐ` be continuous forcing

@@ -38,7 +38,7 @@
 
 ## Acceptance and rejection
 
-- [The checker accepts exactly feasible witnesses within the gap](checks-dispatch-certificate-eq-true-iff.md)
+- [Accepted witnesses are exactly the feasible ones within the gap budget](checks-dispatch-certificate-eq-true-iff.md)
 - [The checker rejects an infeasible primal witness](checks-eq-false-of-not-dispatch-feasible.md)
 - [The checker rejects a dual witness that is not dual feasible](checks-eq-false-of-not-dual-feasible.md)
 - [The checker rejects a witness whose gap exceeds the budget](checks-eq-false-of-lt-gap.md)

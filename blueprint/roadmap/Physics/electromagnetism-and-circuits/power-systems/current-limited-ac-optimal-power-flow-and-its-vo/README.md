@@ -57,7 +57,7 @@
 - [Soundness of the semidefinite relaxation](current-limited-aclift-sound.md)
 - [Combined properties of the voltage lift and the relaxation](current-limited-aclift-spec.md)
 
-## Two-bus validation
+## Two-bus example
 
 - [Two-bus test instance with one unit-conductance branch](two-bus-example.md)
 - [Two-bus example: a feasible voltage whose lift has the same cost 1/4](two-bus-rank-one-witness.md)

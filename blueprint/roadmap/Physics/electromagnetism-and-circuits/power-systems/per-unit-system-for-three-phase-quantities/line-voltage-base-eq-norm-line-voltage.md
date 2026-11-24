@@ -1,4 +1,4 @@
-# For V_b > 0, every balanced line voltage has magnitude √3 V_b
+# The balanced set at a positive phase base V has line magnitudes √3 V
 
 For a real phase-voltage base $V_b > 0$, let $V_p$ be the
 [balanced phase set](../balanced-three-phase-power/balanced-phases.md)

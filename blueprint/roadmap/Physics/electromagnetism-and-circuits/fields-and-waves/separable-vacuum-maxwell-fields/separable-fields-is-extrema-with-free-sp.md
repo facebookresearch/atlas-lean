@@ -1,4 +1,4 @@
-# At the free-space speed of light the guide potential is an extremum
+# Profile and free-space mode equations make guide potentials extremal
 
 Let free space have permittivity `ε₀ > 0` and permeability `μ₀ > 0`, with speed of light
 `c = 1 / √(ε₀ μ₀)`. For a real `kc` and infinitely differentiable `a : ℝ → ℝ` and `f : ℝ² → ℝ`

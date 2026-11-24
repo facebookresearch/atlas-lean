@@ -7,6 +7,7 @@
 - [Directivity of an axisymmetric intensity pattern](directivity.md)
 - [Intensity coefficient of a Hertzian dipole](short-dipole-intensity-coeff.md)
 - [Radiation resistance in the peak-amplitude convention](radiation-resistance.md)
+- [A pattern of nonzero radiated power has directivity integrating to 4π](radiated-power-directivity.md)
 
 ## The Hertzian dipole
 
@@ -14,7 +15,6 @@
 - [For K > 0 the Hertzian dipole has directivity 3 sin²θ/2](directivity-short-dipole-intensity.md)
 - [For K > 0 the greatest Hertzian-dipole directivity is 3/2](is-greatest-directivity-short-dipole-int.md)
 - [Radiation resistance of a Hertzian dipole for positive η, k, I and l](radiation-resistance-short-dipole.md)
-- [A pattern of nonzero radiated power has directivity integrating to 4π](radiated-power-directivity.md)
 - [For K > 0 and 0 ≤ θ ≤ π, directivity 3/2 holds exactly at θ = π/2](directivity-short-dipole-intensity-eq-ma.md)
 - [The Hertzian-dipole intensity vanishes on the dipole axis](short-dipole-intensity-on-axis.md)
 - [For K > 0 the Hertzian-dipole directivity vanishes on the dipole axis](directivity-short-dipole-intensity-on-ax.md)

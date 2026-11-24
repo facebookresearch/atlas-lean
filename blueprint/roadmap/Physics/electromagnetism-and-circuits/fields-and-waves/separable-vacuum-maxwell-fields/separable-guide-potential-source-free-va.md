@@ -1,4 +1,4 @@
-# Fields of the separable guide potential satisfy vacuum Maxwell
+# Guide-potential fields with profile and mode equations solve Maxwell
 
 For a speed of light `c > 0`, a real `kc` and infinitely differentiable `a : ℝ → ℝ` and `f : ℝ² → ℝ`
 (jointly in `(t, z)`) satisfying the [profile equation](profile-equation.md) `a'' = −kc² a` and the

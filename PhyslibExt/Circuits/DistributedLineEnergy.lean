@@ -815,7 +815,7 @@ lemma lineEnergy_sub_le_integral_endpointFlux (R L G C ℓ t₀ t₁ : ℝ) (U :
         (fun x hx => dissipationDensity_nonneg R G v i x s hR hG))
   linarith [hbal, hnn]
 
-/-- Lossy example: with no current, a uniform voltage `V e^{-(G/C) t}` solves the
+/-- Lossy example: for `C > 0`, with no current, a uniform voltage `V e^{-(G/C) t}` solves the
 telegrapher equations (shunt-conductance discharge). -/
 lemma shuntDischarge_isTelegrapherSolution (R L G C V : ℝ) (hC : 0 < C) :
     IsTelegrapherSolution R L G C univ (fun _ t => V * Real.exp (-(G / C) * t))
@@ -849,8 +849,8 @@ lemma shuntDischarge_isTelegrapherSolution (R L G C V : ℝ) (hC : 0 < C) :
     field_simp [hC']
     ring
 
-/-- In the shunt discharge with `G > 0` and `V ≠ 0` the stored line energy strictly
-decreases. -/
+/-- In the shunt discharge with `C > 0`, `G > 0`, a line length `ℓ > 0` and `V ≠ 0` the stored line
+energy strictly decreases. -/
 lemma shuntDischarge_lineEnergy_strictAnti (L G C ℓ V : ℝ) (hC : 0 < C) (hG : 0 < G)
     (hℓ : 0 < ℓ) (hV : V ≠ 0) :
     StrictAnti (fun t => lineEnergy L C ℓ (fun _ s => V * Real.exp (-(G / C) * s))
@@ -902,8 +902,8 @@ with `√y = 0` for `y < 0` and `y / 0 = 0` it is `0` when `L / C ≤ 0`. -/
 noncomputable def travelingWaveCurrent (L C : ℝ) (f : ℝ → ℝ) (x t : ℝ) : ℝ :=
   f (x - t / Real.sqrt (L * C)) / Real.sqrt (L / C)
 
-/-- A C1 forward wave with speed `1/√(LC)` and impedance `√(L/C)` solves the lossless
-(`R = G = 0`) telegrapher equations everywhere. -/
+/-- For `L, C > 0`, a C1 forward wave with speed `1/√(LC)` and impedance `√(L/C)` solves the
+lossless (`R = G = 0`) telegrapher equations everywhere. -/
 lemma travelingWave_isTelegrapherSolution (L C : ℝ) (f : ℝ → ℝ) (hL : 0 < L) (hC : 0 < C)
     (hf : ContDiff ℝ 1 f) :
     IsTelegrapherSolution 0 L 0 C univ (travelingWaveVoltage L C f)
@@ -953,7 +953,7 @@ lemma travelingWave_isTelegrapherSolution (L C : ℝ) (f : ℝ → ℝ) (hL : 0 
     field_simp [hC', hZ', hCZ]
     ring
 
-/-- For the forward wave, power flux = propagation speed × energy density. -/
+/-- For `L, C > 0` and the forward wave, power flux = propagation speed × energy density. -/
 lemma travelingWave_powerFlux_eq_speed_mul_energyDensity (L C : ℝ) (f : ℝ → ℝ)
     (hL : 0 < L) (hC : 0 < C) (x t : ℝ) :
     powerFlux (travelingWaveVoltage L C f) (travelingWaveCurrent L C f) x t =
@@ -981,7 +981,7 @@ lemma travelingWave_powerFlux_eq_speed_mul_energyDensity (L C : ℝ) (f : ℝ �
   rw [hE, hsqrt]
   field_simp [hC', hZ', hCZ]
 
-/-- For the forward wave, electric and magnetic energy densities are equal. -/
+/-- For `L, C > 0` and the forward wave, electric and magnetic energy densities are equal. -/
 lemma travelingWave_electric_eq_magnetic (L C : ℝ) (f : ℝ → ℝ) (hL : 0 < L) (hC : 0 < C)
     (x t : ℝ) :
     C * travelingWaveVoltage L C f x t ^ 2 / 2 = L * travelingWaveCurrent L C f x t ^ 2 / 2 := by

@@ -18,7 +18,7 @@
 - [For positive σ, A and ℓ, conductance times resistance is 1](conductance-mul-resistance.md)
 - [For positive σ, A and ℓ the resistance is positive](resistance-pos.md)
 
-## Validation
+## Insulating bars, reversed terminals, power and a nonuniform field
 
 - [Zero conductivity gives zero conductance](conductance-zero-left.md)
 - [An insulating bar carries no terminal current](terminal-current-eq-zero-of-conductivity.md)

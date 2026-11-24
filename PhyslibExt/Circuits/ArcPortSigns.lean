@@ -71,8 +71,8 @@ open Matrix
 
 /-! ## A. Electrical incidence and its entries -/
 
-/-- The electrical incidence: the negation of the signed graph incidence, so
-the tail is positive and the head is negative. -/
+/-- The electrical incidence: the negation of the signed graph incidence, so the tail is positive
+and the head is negative; a loop branch (tail equal to head) has a zero column. -/
 def electricalIncidence {V : Type*} [Fintype V] [DecidableEq V] {E : Type*} [Fintype E]
     [DecidableEq E] (tail head : E → V) : Matrix V E ℝ :=
   -MathlibExt.Combinatorics.Graph.ArcNetwork.incidenceMatrix tail head
@@ -84,7 +84,8 @@ lemma electricalIncidence_eq_neg_incidence {V : Type*} [Fintype V] [DecidableEq 
       -MathlibExt.Combinatorics.Graph.ArcNetwork.incidenceMatrix tail head := by
   rfl
 
-/-- Entry of the electrical incidence: `+1` at the tail, `-1` at the head. -/
+/-- Entry of the electrical incidence: `+1` at the tail, `-1` at the head, and `0` throughout the
+column of a loop branch. -/
 lemma electricalIncidence_apply {V : Type*} [Fintype V] [DecidableEq V] {E : Type*}
     [Fintype E] [DecidableEq E] (tail head : E → V) (n : V) (e : E) :
     electricalIncidence tail head n e =
@@ -100,8 +101,8 @@ lemma electricalIncidence_loop_eq_zero {V : Type*} [Fintype V] [DecidableEq V]
     electricalIncidence tail head n e = 0 := by
   rw [electricalIncidence_apply, hloop, sub_self]
 
-/-- Two distinct branch identifiers with the same tail and head have the same
-incidence column; branch identity is retained by the identifier index. -/
+/-- Two branch identifiers, distinct or not, with the same tail and head have the same incidence
+column; branch identity is retained by the identifier index. -/
 lemma electricalIncidence_eq_of_same_endpoints {V : Type*} [Fintype V] [DecidableEq V]
     {E : Type*} [Fintype E] [DecidableEq E] (tail head : E → V) (e₁ e₂ : E)
     (htail : tail e₁ = tail e₂) (hhead : head e₁ = head e₂) (n : V) :

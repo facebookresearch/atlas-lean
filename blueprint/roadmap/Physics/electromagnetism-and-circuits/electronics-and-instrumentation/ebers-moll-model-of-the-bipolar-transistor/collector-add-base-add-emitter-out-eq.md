@@ -6,7 +6,8 @@ currents of the Ebers–Moll model satisfy
 
 $$I_C + I_B + I_E = 2 I_E .$$
 
-The emitter current is counted out of the emitter. Adding it as if it were an inflow, with the
-base current given by its own formula, therefore leaves $2 I_E$ instead of the $0$ of Kirchhoff's
-current law, which in these conventions reads $I_C + I_B - I_E = 0$
-([terminal current balance](terminal-current-balance.md)).
+Equivalently, $I_C + I_B - I_E = 0$: this is Kirchhoff's current law for the transistor with $I_C$
+and $I_B$ counted into the device and $I_E$ out of it, so the current that enters through the
+collector and the base leaves through the emitter. Adding the emitter current as if it were an
+inflow therefore leaves $2 I_E$ instead of $0$. Both identities hold for all real inputs, $V_T = 0$
+included.

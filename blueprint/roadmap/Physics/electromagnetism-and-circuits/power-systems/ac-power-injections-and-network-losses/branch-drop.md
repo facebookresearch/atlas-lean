@@ -7,5 +7,5 @@ $$d_e = \sum_{v} B_{ve} V_v,$$
 
 the $e$-th entry of $B^{\mathsf T} V$, each real entry of $B$ read as a complex number. In the model
 $B$ is the signed incidence matrix of the network, with entries $+1$ and $-1$ at the two ends of
-each branch and $0$ elsewhere, so $d_e$ is the difference of the end voltages; the definition allows
-any real matrix.
+each branch and $0$ elsewhere, so $d_e$ is the voltage at the end with entry $+1$ minus the voltage
+at the end with entry $-1$; the definition allows any real matrix.

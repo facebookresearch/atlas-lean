@@ -7,6 +7,6 @@ branch susceptances `b_e` and node phase angles `θ_v`, the [DC nodal injection]
 `p = B f = L_b θ`,
 
 where `f` is the [DC branch flow](dc-branch-flow.md), `B` the
-[electrical incidence](../../circuit-theory/tellegen-s-theorem-and-branch-power-balance/electrical-incidence.md)
+[electrical incidence](../../../../GraphTheory/algebraic-graph-theory/part-01/oriented-incidence-matrices/oriented-incidence.md)
 and `L_b = B diag(b) Bᵀ` the full [susceptance-weighted Laplacian](weighted-laplacian.md). In the
 physical reading the susceptances are positive; the identity holds for all real `b`.

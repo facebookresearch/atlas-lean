@@ -2,5 +2,7 @@
 
 For a rational generation `p` and angles `θ`, the rational encoded point is
 `(max(z, 0), max(-z, 0))`, the componentwise positive parts followed by the negative parts of
-`z = (p, θ)`. The rational objects copy the real ones entrywise, so that the checker is computable;
-the [casting lemmas](rat-lp-matrix-map.md) identify them with the real linear program.
+`z = (p, θ)`. Its entries are given by the same formula as for the real linear program, over the
+rationals, so that the checker is an exact finite test. The cast of the assembled rational program
+is the real one: [matrix](rat-lp-matrix-map.md), [right-hand side](cast-vec-rat-lp-rhs.md),
+[objective](cast-vec-rat-lp-objective.md) and [encoded point](cast-vec-rat-encode.md).

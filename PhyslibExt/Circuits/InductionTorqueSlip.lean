@@ -149,7 +149,7 @@ lemma rotorCurrent_normSq (Vth : ℂ) (Rth R2 Xeq s : ℝ) (hs : s ≠ 0) :
   rw [← Complex.normSq_eq_norm_sq (((↑(Rth + R2 / s) : ℂ) + (↑Xeq : ℂ) * Complex.I))]
   rw [Complex.normSq_add_mul_I]
 
-/-- Air-gap power in Thevenin quantities, before clearing the slip
+/-- At nonzero slip, the air-gap power in Thevenin quantities, before clearing the slip
 division. -/
 lemma airGapPower_eq (Vth : ℂ) (Rth R2 Xeq s : ℝ) (hs : s ≠ 0) :
     airGapPower (rotorCurrent Vth Rth R2 Xeq s) R2 s =

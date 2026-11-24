@@ -49,10 +49,10 @@ susceptance is positive, it differs from `f_e` by at most `b_e |θ_{t(e)} - θ_{
 - [Unit-magnitude voltages have modulus one](norm-unit-voltage.md)
 - [A zero phase angle gives the unit voltage 1](unit-voltage-eq-one-of-angle-eq-zero.md)
 - [Sine formula for the lossless sending-end real power](ac-branch-real-power-eq-mul-sin.md)
-- [Receiving-end real power equals sending-end real power](receiving-real-power-eq-ac-branch-real-p.md)
-- [Nodal AC real power is a signed sum of branch sine flows](node-real-power-eq-sum-mul-sin.md)
+- [On a lossless branch, receiving-end equals sending-end real power](receiving-real-power-eq-ac-branch-real-p.md)
+- [Lossless AC nodal real power is a signed sum of branch sine flows](node-real-power-eq-sum-mul-sin.md)
 - [Total AC real power of the lossless network is zero](sum-node-real-power-eq-zero.md)
-- [Reversing all branches negates the sending-end AC real power](ac-branch-real-power-reverse.md)
+- [Reversing all lossless branches negates their sending-end real power](ac-branch-real-power-reverse.md)
 
 ## Comparison of the AC and DC models
 

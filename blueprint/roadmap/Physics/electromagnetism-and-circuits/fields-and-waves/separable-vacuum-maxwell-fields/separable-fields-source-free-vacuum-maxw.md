@@ -1,4 +1,4 @@
-# Separable fields satisfy the source-free vacuum Maxwell equations
+# Separable fields with profile and mode equations solve vacuum Maxwell
 
 For a speed of light `c > 0`, a real `kc` and infinitely differentiable `a : ℝ → ℝ` and `f : ℝ² → ℝ`
 (jointly in `(t, z)`) satisfying the [profile equation](profile-equation.md) `a'' = −kc² a` and the

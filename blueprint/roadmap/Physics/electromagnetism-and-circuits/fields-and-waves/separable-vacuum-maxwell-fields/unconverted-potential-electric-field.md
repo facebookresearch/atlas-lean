@@ -1,4 +1,4 @@
-# Without the time conversion the electric field gains a factor c
+# Without the time conversion, E_y = −c a(x) ∂f/∂s(ct, z)
 
 Let `c > 0` be the speed of light, `a : ℝ → ℝ`, and `f : ℝ × ℝ → ℝ` infinitely differentiable. Let
 `A` be the four-potential whose `y` component at the spacetime point `(x⁰, x¹, x², x³)` is

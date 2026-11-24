@@ -64,15 +64,13 @@ namespace PhyslibExt.Electronics.RailLimitedFeedback
 `max vmin (min vmax x)`. For `vmin ≤ vmax`, values at or below `vmin` give `vmin`,
 values in the closed interval `[vmin, vmax]` are unchanged
 (endpoints included), values at or above `vmax` give `vmax`; for
-`vmin > vmax` every value gives `vmin`.
-Local to this leaf by design; see the header for why this is not a
-generic saturation definition. -/
+`vmin > vmax` every value gives `vmin`. -/
 noncomputable def railClamp (vmin vmax x : ℝ) : ℝ :=
   max vmin (min vmax x)
 
 /-- The rail-limited feedback map at input `vi`:
 `F(vo) = clamp(vmin, vmax, A * (vi - beta * vo))`. A fixed point
-`vo = F(vo)` is the leaf's operating point; no dynamics are modeled. -/
+`vo = F(vo)` is the amplifier's operating point; no dynamics are modeled. -/
 noncomputable def railLimitedMap (A beta vmin vmax vi vo : ℝ) : ℝ :=
   railClamp vmin vmax (A * (vi - beta * vo))
 
@@ -159,10 +157,9 @@ private lemma railClamp_mono (vmin vmax x y : ℝ) (h : x ≤ y) :
   unfold railClamp
   exact max_le_max le_rfl (min_le_min le_rfl h)
 
-/-- Existence: the rail-limited map has at least one fixed point in
-the rails. The proof is an explicit three-regime case analysis on
-the position of the linear candidate relative to the rails, not a
-contraction argument. -/
+/-- Existence: for `0 < A`, `0 < beta` and `vmin < vmax`, the rail-limited map has at least one
+fixed point, which lies in the rails. The proof is an explicit three-regime case analysis on
+the position of the linear candidate relative to the rails, not a contraction argument. -/
 lemma exists_fixedPoint (A beta vmin vmax vi : ℝ) (hA : 0 < A)
     (hbeta : 0 < beta) (hrail : vmin < vmax) :
     ∃ vo : ℝ, vo = railLimitedMap A beta vmin vmax vi vo := by
@@ -270,7 +267,7 @@ lemma linearCandidate_mem_of_eq (A beta vmin vmax vi vo : ℝ)
   rw [← heq]
   exact fixedPoint_mem_Icc A beta vmin vmax vi vo hrail hfix
 
-/-- The leaf's "equals the linear candidate iff" clause, packaged for
+/-- The "equals the linear candidate iff" clause, packaged for
 an arbitrary fixed point `vo`, for `0 < A`, `0 < beta` and `vmin < vmax`: `vo` is the linear
 candidate exactly when the candidate lies in the closed rail interval. -/
 lemma fixedPoint_eq_linearCandidate_iff (A beta vmin vmax vi vo : ℝ)

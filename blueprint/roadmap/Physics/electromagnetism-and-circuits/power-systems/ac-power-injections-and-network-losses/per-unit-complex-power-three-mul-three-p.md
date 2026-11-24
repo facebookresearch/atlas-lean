@@ -7,6 +7,7 @@ $3 V_b I_b$ equals the per-unit value of $S$ on the per-phase base $V_b I_b$:
 
 $$\frac{3 S}{3 V_b I_b} = \frac{S}{V_b I_b}.$$
 
-So a three-phase power measured on the three-phase base and the per-phase power measured on the
-per-phase base have the same per-unit value. No condition on the bases is needed; both sides are $0$
+So in balanced operation, where the three-phase power is $3 S$, a three-phase power measured on the
+three-phase base and the per-phase power measured on the per-phase base have the same per-unit
+value. No condition on the bases is needed; both sides are $0$
 when $V_b I_b = 0$.

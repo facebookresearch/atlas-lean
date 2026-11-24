@@ -5,3 +5,7 @@ of the [line-voltage base](line-voltage-base.md) divided by the
 [three-phase power base](three-phase-power-base.md):
 
 $$Z_b = \frac{V_b}{I_b} = \frac{V_{L,b}^2}{S_b} = \frac{(\sqrt{3}\, V_b)^2}{3 V_b I_b}.$$
+
+Equivalently, the squared phase-voltage base divided by the power base is one third of the impedance
+base, $V_b^2 / S_b = Z_b / 3$: dividing the squared phase base, rather than the squared line-voltage
+base, by $S_b$ understates the impedance base by a factor of three.

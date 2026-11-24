@@ -5,4 +5,5 @@ $[lo, hi] = \{y : lo_j \le y_j \le hi_j\}$, and let $i : \mathbb{R}^n \to \mathb
 continuously differentiable on $U$ with $\|D^2 i(y)\| \le M$ for every $y$ in the box (operator norm
 for the sup norm $\|v\| = \max_j |v_j|$). If $v_0$ and $v_0 + dv$ lie in the box, the
 [remainder](small-signal-remainder.md) $r = i(v_0 + dv) - i(v_0) - Di(v_0)[dv]$ satisfies
-$|r| \le M \|dv\|^2 / 2$.
+$|r| \le M \|dv\|^2 / 2$. This is the case of the index set $\{0, \dots, n - 1\}$ of the
+[first-order remainder bound for a C² measurement function](../../../../Physics/quantities-and-measurement/propagation-of-measurement-uncertainty/measurement-function-first-order-remaind-2.md).

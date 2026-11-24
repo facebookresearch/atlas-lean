@@ -9,7 +9,7 @@ is the [branch voltage drop](../ac-power-injections-and-network-losses/branch-dr
 is the term of branch `e` in the
 [current injected at node](../ac-power-injections-and-network-losses/node-injection.md) `v`. When
 `B` is the
-[electrical incidence](../../circuit-theory/tellegen-s-theorem-and-branch-power-balance/electrical-incidence.md)
+[electrical incidence](../../../../GraphTheory/algebraic-graph-theory/part-01/oriented-incidence-matrices/oriented-incidence.md)
 of a network whose branch `e` runs from `t(e)` to `h(e)`,
 [`d_e = V_{t(e)} - V_{h(e)}`](branch-drop-electrical-incidence.md) and `I_e` is the current flowing
 through `e` from its tail to its head.

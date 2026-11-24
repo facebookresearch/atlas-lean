@@ -11,7 +11,7 @@
 
 - [Tail-positive incidence matrix of a network](physical-incidence.md)
 - [The electrical incidence matrix is minus the graph incidence matrix](physical-incidence-eq-neg-incidence-matr.md)
-- [Applied to branch currents the incidence matrix gives net outflow](physical-incidence-mul-vec-apply.md)
+- [The tail-positive incidence matrix maps branch currents to net outflow](physical-incidence-mul-vec-apply.md)
 - [Resistor columns of an incidence matrix](resistor-incidence.md)
 - [Capacitor columns of an incidence matrix](capacitor-incidence.md)
 - [Inductor columns of an incidence matrix](inductor-incidence.md)
@@ -21,7 +21,7 @@
 - [Nodal capacitance matrix](nodal-capacitance.md)
 - [Nodal conductance matrix](nodal-conductance.md)
 - [Diagonal inductance matrix](inductance-diagonal.md)
-- [Nodal capacitance of a single capacitor](nodal-capacitance-single-capacitor.md)
+- [Nodal capacitance of a single capacitor of value 3 at one node](nodal-capacitance-single-capacitor.md)
 
 ## Branch equations and stamped equations
 
@@ -29,7 +29,7 @@
 - [Branch equations of a linear network](satisfies-branch-equations.md)
 - [Stamped modified nodal equations](satisfies-stamped-equations.md)
 - [Branch equations give the stamped equations](satisfies-stamped-equations-of-satisfies.md)
-- [Stamped equations come from branch equations](exists-satisfies-branch-equations-of-sat.md)
+- [Every solution of the stamped equations comes from a branch solution](exists-satisfies-branch-equations-of-sat.md)
 - [Correctness of modified nodal analysis stamping](stamped-equations-iff-exists-satisfies-b.md)
 
 ## Excluded networks
