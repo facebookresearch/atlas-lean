@@ -1180,6 +1180,7 @@ theorem etaAtPos_castSucc_muAtPos (n : ℕ) (i : Fin n) (X : C) :
           rw [← (monadPow T n).map_comp]
         _ = (monadPow T n).map (𝟙 _) := by
           rw [T.right_unit X]
+          simp only [Functor.id_obj]
         _ = 𝟙 _ := by
           rw [(monadPow T n).map_id]
     · have hpos : 0 < i.val := by omega
@@ -1247,6 +1248,7 @@ theorem etaAtPos_succ_muAtPos (n : ℕ) (i : Fin n) (X : C) :
           rw [← (monadPow T n).map_comp]
         _ = (monadPow T n).map (𝟙 _) := by
           rw [T.left_unit X]
+          simp only [Functor.id_obj]
         _ = 𝟙 _ := by
           rw [(monadPow T n).map_id]
     · have hpos : 0 < i.val := by omega
