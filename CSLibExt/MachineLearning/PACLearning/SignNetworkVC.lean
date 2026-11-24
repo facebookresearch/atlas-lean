@@ -123,7 +123,7 @@ private theorem f_strict_mono_on (E L2 x x' : ℝ) (hE1 : 1 ≤ E)
 /-- Inversion of the exponential-polynomial bound: if
 `2 ^ m ≤ (e * m) ^ E` with `1 ≤ E`, then
 `m ≤ 4 * E * log (2 * E) / log 2`. -/
-theorem le_of_two_pow_le_exp_mul_pow (E m : ℕ) (hE : 1 ≤ E)
+private theorem le_of_two_pow_le_exp_mul_pow (E m : ℕ) (hE : 1 ≤ E)
     (h : (2 : ℝ) ^ m ≤ (Real.exp 1 * (m : ℝ)) ^ E) :
     (m : ℝ) ≤ 4 * (E : ℝ) * Real.log (2 * (E : ℝ)) / Real.log 2 := by
   have hE1 : (1 : ℝ) ≤ (E : ℝ) := by exact_mod_cast hE
@@ -224,6 +224,57 @@ theorem le_of_two_pow_le_exp_mul_pow (E m : ℕ) (hE : 1 ≤ E)
     have hfinal : (Real.exp 1 * (m : ℝ)) ^ E < (2 : ℝ) ^ m :=
       (Real.log_lt_log_iff hBpos hApos).mp hloglt
     exact absurd h (not_le_of_gt hfinal)
+
+/-- Below threshold: at `E = 2`, `m = 8` the hypothesis holds, so the
+inversion gives `8 ≤ 16`. -/
+example : (8 : ℝ) ≤ 16 := by
+  have h2 : (2 : ℝ) ≤ Real.exp 1 := by linarith [Real.add_one_le_exp (1 : ℝ)]
+  have hbase : (2 : ℝ) * 8 ≤ Real.exp 1 * 8 :=
+    mul_le_mul_of_nonneg_right h2 (show (0 : ℝ) ≤ 8 by norm_num)
+  have hpow : ((2 : ℝ) * 8) ^ (2 : ℕ) ≤ (Real.exp 1 * 8) ^ (2 : ℕ) :=
+    pow_le_pow_left₀
+      (mul_nonneg (show (0 : ℝ) ≤ 2 by norm_num)
+        (show (0 : ℝ) ≤ 8 by norm_num))
+      hbase 2
+  have hhyp : (2 : ℝ) ^ (8 : ℕ) ≤ (Real.exp 1 * (8 : ℝ)) ^ (2 : ℕ) := by
+    calc (2 : ℝ) ^ (8 : ℕ) = 256 := by norm_num
+      _ ≤ ((2 : ℝ) * 8) ^ (2 : ℕ) := by norm_num
+      _ ≤ (Real.exp 1 * 8) ^ (2 : ℕ) := hpow
+  have hcon :=
+    le_of_two_pow_le_exp_mul_pow 2 8 (show 1 ≤ 2 by norm_num)
+      (by exact_mod_cast hhyp)
+  have hRHS : 4 * (2 : ℝ) * Real.log (2 * 2) / Real.log 2 = 16 := by
+    have hlog4 : Real.log (2 * 2) = 2 * Real.log 2 := by
+      rw [show (2 : ℝ) * 2 = 2 ^ 2 by norm_num, Real.log_pow]
+      norm_num
+    have hne : Real.log 2 ≠ 0 :=
+      (Real.log_pos (show (1 : ℝ) < 2 by norm_num)).ne'
+    rw [hlog4, div_eq_iff hne]
+    ring
+  have hcon' : (8 : ℝ) ≤ 4 * (2 : ℝ) * Real.log (2 * 2) / Real.log 2 := by
+    simpa using hcon
+  rw [hRHS] at hcon'
+  exact hcon'
+
+/-- Above threshold: at `E = 2`, `m = 20` the conclusion fails, so the
+hypothesis fails by contrapositive. -/
+example : ¬ (2 : ℝ) ^ (20 : ℕ) ≤ (Real.exp 1 * (20 : ℝ)) ^ (2 : ℕ) := by
+  have hRHS : 4 * (2 : ℝ) * Real.log (2 * 2) / Real.log 2 = 16 := by
+    have hlog4 : Real.log (2 * 2) = 2 * Real.log 2 := by
+      rw [show (2 : ℝ) * 2 = 2 ^ 2 by norm_num, Real.log_pow]
+      norm_num
+    have hne : Real.log 2 ≠ 0 :=
+      (Real.log_pos (show (1 : ℝ) < 2 by norm_num)).ne'
+    rw [hlog4, div_eq_iff hne]
+    ring
+  have hcon : ¬ ((20 : ℕ) : ℝ) ≤
+      4 * ((2 : ℕ) : ℝ) * Real.log (2 * ((2 : ℕ) : ℝ)) / Real.log 2 := by
+    have h20 : ¬ ((20 : ℕ) : ℝ) ≤ 16 := by norm_num
+    simpa [hRHS] using h20
+  intro hhyp
+  exact hcon
+    (le_of_two_pow_le_exp_mul_pow 2 20 (show 1 ≤ 2 by norm_num)
+      (by exact_mod_cast hhyp))
 
 /-- The parameter count is positive: the output summand alone contributes
 `fanIn + 1 ≥ 1`. -/
