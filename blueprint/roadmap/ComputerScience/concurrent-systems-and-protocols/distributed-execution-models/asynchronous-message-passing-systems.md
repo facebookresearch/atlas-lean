@@ -7,4 +7,4 @@ There is no bound on message delay or on the relative speed of processes. With *
 ## Sources
 
 - J. Aspnes, *Notes on Theory of Distributed Systems*, Yale University, 2020, <https://arxiv.org/abs/2001.04235>, the chapter "Model" of Part I (the basic message-passing model and asynchronous systems)
-- S. Gilbert and N. Lynch, "Brewer's conjecture and the feasibility of consistent, available, partition-tolerant web services", *ACM SIGACT News* 33(2):51–59, 2002, Sections 2.2 and 3.1 (messages that are sent may be lost)
+- S. Gilbert and N. Lynch, "Brewer's conjecture and the feasibility of consistent, available, partition-tolerant web services", *ACM SIGACT News* 33(2):51–59, 2002, Sections 2.3 and 3.1 (messages that are sent may be lost)

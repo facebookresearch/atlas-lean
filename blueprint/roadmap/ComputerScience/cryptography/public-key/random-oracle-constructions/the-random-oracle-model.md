@@ -6,7 +6,7 @@ Let $S$ be a cryptographic scheme that evaluates a hash function $H$ from a fini
 - In processing its standard queries the challenger evaluates $O$ in place of $H$.
 - In addition to its standard queries, the adversary may submit any number of random oracle queries $m \in M$, arbitrarily interleaved with standard queries, each answered by $O(m)$.
 
-The advantage of an adversary is defined by the same rule as in the original game, and $S$ is *secure in the random oracle model* if this advantage is negligible for all efficient adversaries. The function $O$, one uniformly random function shared by the challenger and the adversary, is the *random oracle*. Security in this model is a heuristic for the scheme with a concrete hash function: it rules out attacks that work for every function $H$ but proves nothing for a particular one.
+The advantage of an adversary is defined by the same rule as in the original game, and $S$ is *secure in the random oracle model* if this advantage is negligible for all efficient adversaries. The function $O$, one uniformly random function shared by the challenger and the adversary, is the *random oracle*. Security in this model is a heuristic for the scheme with a concrete hash function: it rules out generic attacks, those that would succeed if $H$ were a random oracle, but guarantees nothing for a particular hash function.
 
 For a single oracle computation, answering each fresh query with an independent uniform element of $T$ and recording it gives the same output distribution as querying a function drawn uniformly in advance.
 
