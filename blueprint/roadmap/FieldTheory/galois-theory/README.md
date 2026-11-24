@@ -14,3 +14,4 @@ Galois theory relates a field extension to its group of automorphisms, covering 
 - [Norm in a tensor product with a Galois extension](algebra-map-norm-eq-prod-map-alg-equiv.md)
 - [Normal basis theorem](normal-basis-theorem.md)
 - [The closure of a Galois subgroup is the fixing group of its fixed field](topological-closure-eq-fixing-subgroup-f.md)
+- [Four equivalent characterizations of finite Galois extensions](galois-extension-characterization.md)

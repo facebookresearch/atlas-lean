@@ -1,0 +1,17 @@
+# Coend Generator Equation Transport
+
+- [Source Coefficient](source-coefficient.md)
+- [Target Coefficient](target-coefficient.md)
+- [Source Generator](source-generator.md)
+- [Target Generator](target-generator.md)
+- [Source Generator](source-generator-2.md)
+- [Target Generator](target-generator-2.md)
+- [Hom Composite](hom-composite.md)
+- [Coefficient Condition](coefficient-condition.md)
+- [Condition](condition.md)
+- [Condition of characteristic](condition-of-characteristic.md)
+- [Condition eq](condition-eq.md)
+- [Restrict Source](restrict-source.md)
+- [Restrict Target](restrict-target.md)
+- [Restricted Hom Composite](restricted-hom-composite.md)
+- [Restricted condition function](restricted-condition-function.md)
