@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.Order.PosetMatrix.BlockLengths
 public import MathlibExt.Order.PosetMatrix.Connected
 public import MathlibExt.Order.QuasiFullRootedTree
 public import Mathlib.Data.Matrix.Block
@@ -98,41 +99,6 @@ public theorem_wanted directSum_ordinalSum_represents {P Q : Type*} [PartialOrde
       ∃ e : Fin (m + k) ≃ P ⊕ₗ Q, ∀ i j, e i ≤ e j ↔
         reindex finSumFinEquiv finSumFinEquiv
           (fromBlocks A (Matrix.of fun _ _ => true) (Matrix.of fun _ _ => false) B) i j = true)
-
-/-- **Direct sum criterion for relabeling inequivalence.** Let $n, t \ge 2$ and let
-$M$ and $M'$ be poset matrices of order $n$, Boolean matrices with rows and columns indexed by
-$0, \dots, n - 1$. Let $0 = l_0 < l_1 < \dots < l_t = n$ be such that the gaps $l_{k+1} - l_k$ are
-nondecreasing in $k$. Suppose that for every $k \le t$, $M_{ij}$ is false for all $i < l_k \le j$,
-and that for every $k < t$ there is $s \ge 1$ with $l_k + s < l_{k+1}$ such that $M_{ij}$ is true
-for all $i, j$ with $l_k \le i < l_k + s \le j < l_{k+1}$. Suppose the same of $M'$ with a sequence
-$0 = l'_0 < l'_1 < \dots < l'_t = n$ whose gaps are nondecreasing. If $l_k \ne l'_k$ for some $k$,
-then $M$ and $M'$ are not relabeling equivalent: there is no permutation $\sigma$ of
-$\{0, \dots, n - 1\}$ with $M'_{ij} = M_{\sigma(i) \sigma(j)}$ for all $i, j$.
-
-The source assumes in addition that $M$ and $M'$ represent quasi-full $t$-ary rooted forests; the
-statement holds without that assumption.
-
-Source: Salah Uddin Mohammad, Md. Shah Noor, and Md. Rashed Talukder, *Recognition and
-Enumeration of the Quasi-Full Rooted Trees*, Journal of Integer Sequences 28 (2025),
-Article 25.6.3, Theorem 11 (`jis-2025-25.6.3-thm-11`). -/
-public theorem_wanted not_relabel_equiv_of_blockLengths_ne (n t : ℕ) (hn : 2 ≤ n) (ht : 2 ≤ t)
-    (M M' : Matrix (Fin n) (Fin n) Bool) (hM : IsPosetMatrix n M) (hM' : IsPosetMatrix n M')
-    (l l' : Fin (t + 1) → ℕ)
-    (hl : l 0 = 0 ∧ l (Fin.last t) = n ∧ StrictMono l ∧
-      Monotone fun k : Fin t => l k.succ - l k.castSucc)
-    (hl' : l' 0 = 0 ∧ l' (Fin.last t) = n ∧ StrictMono l' ∧
-      Monotone fun k : Fin t => l' k.succ - l' k.castSucc)
-    (hzero : ∀ k : Fin (t + 1), ∀ i j : Fin n, (i : ℕ) < l k → l k ≤ (j : ℕ) → M i j = false)
-    (hzero' : ∀ k : Fin (t + 1), ∀ i j : Fin n, (i : ℕ) < l' k → l' k ≤ (j : ℕ) →
-      M' i j = false)
-    (hone : ∀ k : Fin t, ∃ s, 1 ≤ s ∧ l k.castSucc + s < l k.succ ∧
-      ∀ i j : Fin n, l k.castSucc ≤ (i : ℕ) → (i : ℕ) < l k.castSucc + s →
-        l k.castSucc + s ≤ (j : ℕ) → (j : ℕ) < l k.succ → M i j = true)
-    (hone' : ∀ k : Fin t, ∃ s, 1 ≤ s ∧ l' k.castSucc + s < l' k.succ ∧
-      ∀ i j : Fin n, l' k.castSucc ≤ (i : ℕ) → (i : ℕ) < l' k.castSucc + s →
-        l' k.castSucc + s ≤ (j : ℕ) → (j : ℕ) < l' k.succ → M' i j = true)
-    (hne : l ≠ l') :
-    ¬ ∃ σ : Equiv.Perm (Fin n), M' = M.submatrix σ σ
 
 end
 

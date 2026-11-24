@@ -32,6 +32,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.GroupTheory.Perm.Fin
 public import Mathlib.RingTheory.Polynomial.Pochhammer
+public import MathlibExt.Combinatorics.Enumerative.ReducedUnicellularHypermonopoles
 public import MathlibExt.Combinatorics.Enumerative.Stirling
 
 namespace MetaMathlibExt
@@ -39,49 +40,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open Polynomial
-
-/-- **Cyclic product numbers.** For natural numbers $n$ and $k$, write $c(m, j)$ for the unsigned
-Stirling numbers of the first kind. The cyclic product number $H(n, k)$ is the quotient
-$c(n + 1, k) / \binom{n + 1}{2}$, rounded down to a natural number, when $n + k$ is even
-(equivalently, $n - k$ is even), and $0$ when $n + k$ is odd. Division by zero gives $0$, so
-$H(0, k) = 0$ for every $k$.
-
-These are the numbers displayed in Theorem 5 of the source. The numbers $H(n + 1, k)$ are the
-Hultman numbers (OEIS A164652).
-
-Source: Robert Cori and Gábor Hetyei, *On Reduced Unicellular Hypermonopoles*, Journal of
-Integer Sequences 28 (2025), Article 25.3.3, Theorem 5. -/
-public def cyclicProductNumber (n k : ℕ) : ℕ :=
-  if Even (n + k) then Nat.stirlingFirst (n + 1) k / (n + 1).choose 2 else 0
-
-/-- **Vanishing of the cyclic product numbers for odd $n - k$.** For natural numbers $n$ and $k$
-such that $n + k$ is odd (equivalently, $n - k$ is odd), the cyclic product number $H(n, k)$ is
-$0$.
-
-Source: Robert Cori and Gábor Hetyei, *On Reduced Unicellular Hypermonopoles*, Journal of
-Integer Sequences 28 (2025), Article 25.3.3, Theorem 5. -/
-public theorem cyclicProductNumber_of_odd {n k : ℕ} (h : ¬ Even (n + k)) :
-    cyclicProductNumber n k = 0 := by
-  simp [cyclicProductNumber, h]
-
-/-- **Cyclic product numbers with second argument zero.** For every natural number $n$, the
-cyclic product number $H(n, 0)$ is $0$, since the unsigned Stirling number of the first kind
-$c(n + 1, 0)$ is $0$.
-
-Source: Robert Cori and Gábor Hetyei, *On Reduced Unicellular Hypermonopoles*, Journal of
-Integer Sequences 28 (2025), Article 25.3.3, Theorem 5. -/
-public theorem cyclicProductNumber_zero_right (n : ℕ) : cyclicProductNumber n 0 = 0 := by
-  simp [cyclicProductNumber, Nat.stirlingFirst_succ_zero]
-
-/-- **Small cyclic product numbers.** The cyclic product numbers satisfy $H(3, 1) = 1$,
-$H(4, 2) = 5$, $H(5, 1) = 8$ and $H(7, 1) = 180$.
-
-Source: Robert Cori and Gábor Hetyei, *On Reduced Unicellular Hypermonopoles*, Journal of
-Integer Sequences 28 (2025), Article 25.3.3, Table 1 (values of `H(n, k)`). -/
-public theorem cyclicProductNumber_small_values :
-    cyclicProductNumber 3 1 = 1 ∧ cyclicProductNumber 4 2 = 5 ∧
-      cyclicProductNumber 5 1 = 8 ∧ cyclicProductNumber 7 1 = 180 := by
-  decide
 
 /-- **Genus bounds for reduced unicellular hypermonopoles.** Let $\sigma$ and $\alpha$ be
 permutations of $\{0, 1, \dots, n - 1\}$, and write $z(\pi)$ for the number of cycles of a
@@ -130,21 +88,6 @@ public theorem_wanted card_unicellular_hypermonopoles_finRotate (n k : ℕ) :
     Fintype.card {α : Equiv.Perm (Fin n) //
       cycleQuotientCount (α⁻¹ * finRotate n) = 1 ∧ cycleQuotientCount α = k} =
       cyclicProductNumber n k
-
-/-- **Criterion for a hypermap with a cyclic vertex permutation to have no bud.** Let $\sigma$ be
-the cyclic permutation $i \mapsto i + 1$ (modulo $n$) of $\{0, 1, \dots, n - 1\}$. A permutation
-$\alpha$ of $\{0, 1, \dots, n - 1\}$ has no fixed point if and only if
-$\pi = \alpha^{-1} \circ \sigma$ satisfies $\pi(i) \ne i + 1$ (modulo $n$) for every $i$.
-
-In the terms of the source, a bud of the hypermap $(\sigma, \alpha)$ is a fixed point of $\alpha$.
-The source assumes the hypermap is a unicellular hypermonopole; the equivalence does not use that
-assumption, so it is stated for every $\alpha$.
-
-Source: Robert Cori and Gábor Hetyei, *On Reduced Unicellular Hypermonopoles*, Journal of
-Integer Sequences 28 (2025), Article 25.3.3, Lemma 10 (`jis-2025-25.3.3-lem-10`). -/
-public theorem_wanted reduced_iff_forall_face_ne_finRotate {n : ℕ}
-    (α : Equiv.Perm (Fin n)) :
-    (∀ i, α i ≠ i) ↔ ∀ i, (α⁻¹ * finRotate n) i ≠ finRotate n i
 
 /-- **Cycle count of a fixed-point-free permutation.** Let $n \ge 1$ and let $\alpha$ be a
 permutation of $\{0, 1, \dots, n - 1\}$ with no fixed point. Then the number $z(\alpha)$ of

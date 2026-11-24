@@ -17,6 +17,7 @@ limit is finitely forcible.'
 module
 
 public import Batteries.Util.ProofWanted
+public import MathlibExt.Combinatorics.FinitelyForcibleGraphons
 public import Mathlib.Combinatorics.SimpleGraph.Maps
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 public import Mathlib.MeasureTheory.Measure.Haar.OfBasis
@@ -41,14 +42,6 @@ completely characterized is open-ended and not formalized.
 -/
 
 open MeasureTheory
-
-/-- **Graphon.** A graphon is a function $W$ of two real variables that is jointly measurable
-(measurable as a function on $\mathbb{R}^2$), symmetric ($W(x, y) = W(y, x)$ for all real $x, y$)
-and takes values in $[0, 1]$ at every point of $\mathbb{R}^2$.
-
-Only the values of $W$ on $[0, 1]^2$ enter the densities. -/
-def IsGraphon (W : ℝ → ℝ → ℝ) : Prop :=
-  Measurable (Function.uncurry W) ∧ (∀ x y, W x y = W y x) ∧ ∀ x y, W x y ∈ Set.Icc (0 : ℝ) 1
 
 open Classical in
 /-- **Labelled density.** For a graph $G$ on the vertex set $\{0, \dots, k-1\}$ and a function $W$
