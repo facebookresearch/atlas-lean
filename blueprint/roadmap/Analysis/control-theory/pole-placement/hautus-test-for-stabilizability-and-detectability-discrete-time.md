@@ -17,6 +17,7 @@ The proof is the continuous-time one with the unit disc in place of the left hal
 ## Proof depends on
 
 - [Hautus test for controllability](../controllability-of-linear-systems/is-controllable-on-iff-hautus.md): the rank condition at every $\lambda \in \mathbb{C}$ characterizes controllability; here it is required only outside the open unit disc
+- [Reachable and unobservable subspaces and the reduced systems](../realization-theory/reachable-and-unobservable-reductions.md): the reachable subspace is invariant and contains the range of $B$, which gives the decomposition into reachable and unreachable parts
 - [Pole-shifting theorem](exists-charpoly-add-comp-eq.md): the reachable part can be assigned any characteristic polynomial
 - [Exponential stability of linear difference equations](../../ordinary-differential-equations/stability-of-linear-systems/asymptotic-stability-linear-difference-equations.md): convergent matrices are exactly those whose powers decay
 

@@ -23,6 +23,10 @@ Without canonicity only "every pole is an eigenvalue" holds. For $A = \operatorn
 
 - [Minimal realizations are exactly the canonical ones](minimal-realizations-are-canonical.md): canonical (controllable and observable) realizations, equivalently minimal ones
 
+## Proof depends on
+
+- [Jordan normal form](../../../LinearAlgebra/eigenvalues-and-canonical-forms/jordan-normal-form/exists-jordan-normal-form-of-splits.md): over $\mathbb{C}$ it gives the generalized-eigenspace decomposition, the spectral projections $P_\lambda$ and the displayed principal part of $(sI - A)^{-1}$
+
 ## Background
 
 - [The transfer matrix as a rational function, and its invariance under similarity](transfer-matrix-as-a-rational-function-and-its-similarity-invariance.md): the transfer matrix as a rational function with denominator $\det(XI - A)$

@@ -17,6 +17,7 @@ The proof in the source decomposes $(A, B)$ into its reachable and unreachable p
 ## Proof depends on
 
 - [Hautus test for controllability](../controllability-of-linear-systems/is-controllable-on-iff-hautus.md): the rank condition at every $\lambda \in \mathbb{C}$ characterizes controllability; here it is required only on the closed right half-plane
+- [Reachable and unobservable subspaces and the reduced systems](../realization-theory/reachable-and-unobservable-reductions.md): the reachable subspace is invariant and contains the range of $B$, which gives the decomposition into reachable and unreachable parts
 - [Pole-shifting theorem](exists-charpoly-add-comp-eq.md): the reachable part can be assigned any characteristic polynomial
 - [Exponential stability of linear differential equations](../../ordinary-differential-equations/stability-of-linear-systems/asymptotic-stability-linear-differential-equations.md): Hurwitz matrices are exactly those whose flow decays
 
