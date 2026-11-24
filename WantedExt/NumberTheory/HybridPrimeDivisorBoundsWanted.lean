@@ -16,6 +16,7 @@ public import Mathlib.RingTheory.Polynomial.Cyclotomic.Basic
 public import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
 public import MathlibExt.NumberTheory.Cyclotomic.CommonPrimeDivisorEvalPow
 public import MathlibExt.NumberTheory.Cyclotomic.PrimeDivisorCongruence
+public import MathlibExt.NumberTheory.Cyclotomic.PrimePowerDivisibility
 public import MathlibExt.NumberTheory.Cyclotomic.TwoPowRamifiedBound
 
 namespace MetaMathlibExt
@@ -23,29 +24,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open Polynomial
-
-/-- **Divisibility of $x^p - 1$ by $p$.** Let $p$ be a prime, let $x$ be a positive integer, and
-let $\Phi_p$ be the $p$-th cyclotomic polynomial with integer coefficients. Then
-$p \mid x^p - 1$ if and only if $p \mid x - 1$ and $p \mid \Phi_p(x)$.
-
-Source: Gustav Kjærbye Bagger, *Hybrid Bounds for Prime Divisors*, INTEGERS 26 (2026),
-Article A95, Lemma 2 (`integers-2026-A95-lem-2`). -/
-public theorem_wanted prime_dvd_pow_self_sub_one_iff {p : ℕ} (hp : p.Prime) {x : ℤ}
-    (hx : 0 < x) :
-    (p : ℤ) ∣ x ^ p - 1 ↔ (p : ℤ) ∣ x - 1 ∧ (p : ℤ) ∣ (cyclotomic p ℤ).eval x
-
-/-- **Divisibility of $x^{rp^a} - 1$ by $p$.** Let $p$ be a prime, let $r$ and $a$ be natural
-numbers with $r$ coprime to $p$, let $x$ be a positive integer, and let $\Phi_p$ be the $p$-th
-cyclotomic polynomial with integer coefficients. Then $p \mid x^{rp^a} - 1$ if and only if
-$p \mid x^r - 1$ and $p \mid \Phi_p(x^{rp^{i-1}})$ for every $i \in \{1, \dots, a\}$.
-
-Source: Gustav Kjærbye Bagger, *Hybrid Bounds for Prime Divisors*, INTEGERS 26 (2026),
-Article A95, Lemma 4 (`integers-2026-A95-lem-4`). -/
-public theorem_wanted prime_dvd_pow_sub_one_iff_cyclotomic {p r a : ℕ} (hp : p.Prime)
-    (hr : r.Coprime p) {x : ℤ} (hx : 0 < x) :
-    (p : ℤ) ∣ x ^ (r * p ^ a) - 1 ↔
-      (p : ℤ) ∣ x ^ r - 1 ∧
-        ∀ i ∈ Finset.Icc 1 a, (p : ℤ) ∣ (cyclotomic p ℤ).eval (x ^ (r * p ^ (i - 1)))
 
 /-- The hybrid bound. Let `n = ∏_{i=1}^m p_i^{a_i}` with distinct primes `p_i` (in any order),
 `x > 1`, and `ω_n = ω(x^n - 1)`. With `p_0 := 1`, let
@@ -95,23 +73,6 @@ public theorem_wanted prime_hybrid_bound {p : ℕ} (hp : p.Prime) {x : ℕ} (hx 
         1 + (∏ i ∈ Finset.range k, Nat.nth (fun ρ => ρ.Prime ∧ ¬ Nat.ModEq p ρ 1) i) *
             ∏ j ∈ Finset.range ((x ^ p - 1).primeFactors.card - k),
               Nat.nth (fun ρ => ρ.Prime ∧ Nat.ModEq p ρ 1) j ≤ x ^ p
-
-/-- **The ramified bound for $n = 2^a$.** Let $a \ge 1$, let $n = 2^a$, let $x > 1$ be a natural
-number, let $\omega_n$ be the number of distinct prime factors of $x^n - 1$, and let
-$s_1 = 2 < s_2 = 3 < s_3 = 5 < \cdots$ be the primes in increasing order. Then
-$$\min\Bigl(1 + 2n \prod_{i=1}^{\omega_n} s_i,\ 1 + \prod_{i=2}^{\omega_n + 1} s_i\Bigr) \le x^n.$$
-
-Equivalently, $x$ is at least the smaller of the $n$-th roots of these two numbers, which is the
-form of the source. The source admits every positive integer $x$; at $x = 1$ the number
-$x^n - 1 = 0$ has an empty prime factorization, so $\omega_n = 0$ and the bound would read
-$2 \le 1$.
-
-Source: Gustav Kjærbye Bagger, *Hybrid Bounds for Prime Divisors*, INTEGERS 26 (2026),
-Article A95, Theorem 3 (`integers-2026-A95-thm-3`). -/
-public theorem_wanted two_pow_ramified_bound {a x : ℕ} (ha : 0 < a) (hx : 1 < x) :
-    min (1 + 2 * 2 ^ a * ∏ i ∈ Finset.range (x ^ 2 ^ a - 1).primeFactors.card, Nat.nth Nat.Prime i)
-        (1 + ∏ i ∈ Finset.range (x ^ 2 ^ a - 1).primeFactors.card, Nat.nth Nat.Prime (i + 1)) ≤
-      x ^ 2 ^ a
 
 /-- **Primorials below powers of sixteen.** For every positive integer $w$, we have $w < 16$ if and
 only if the product $p_1 p_2 \cdots p_w$ of the first $w$ primes is less than $16^w$.

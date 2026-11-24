@@ -1,0 +1,16 @@
+# Quasicategorical Models
+
+- [Is Equivalence Edge](is-equivalence-edge.md)
+- [Map](map.md)
+- [Edge Inclusion](edge-inclusion.md)
+- [Edge Inclusion comp](edge-inclusion-comp.md)
+- [Is Core Simplex](is-core-simplex.md)
+- [Core Subcomplex](core-subcomplex.md)
+- [Core](core.md)
+- [Core Map](core-map.md)
+- [Precomposition](precomposition.md)
+- [Categorical Weak Equivalence](categorical-weak-equivalence.md)
+- [Is Categorically Fibrant](is-categorically-fibrant.md)
+- [Categorical Diagram Replacement](categorical-diagram-replacement.md)
+- [Homotopy Limit](homotopy-limit.md)
+- [Cone Comparison](cone-comparison.md)

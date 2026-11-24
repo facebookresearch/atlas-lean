@@ -18,6 +18,7 @@ public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import MathlibExt.NumberTheory.ChooseAddModEqPrime
 public import MathlibExt.NumberTheory.GeneralizedTau
+public import MathlibExt.NumberTheory.NineRegularPartitionIteration
 
 /-!
 # Regular partition functions and a generalized tau function
@@ -384,23 +385,6 @@ Article A39, Theorem 19 (`integers-2024-A39-thm-19`). -/
 public theorem_wanted card_nine_regular_four_mul_add_one_modEq (n : ℕ) (hn : 0 < n) :
     ((Nat.Partition.restricted (4 * n + 1) (¬ 9 ∣ ·)).card : ℤ)
     ≡ ((Nat.Partition.restricted (n) (¬ 9 ∣ ·)).card : ℤ) [ZMOD 3]
-
-/-- **Iterated congruences for 9-regular partitions modulo 3.** Let $R_9(m)$ denote the number of
-partitions of $m$ in which no part is divisible by $9$, and let $N_s = (4^s - 1)/3$. For all
-positive integers $r$ and $s$, $R_9((r - 1) 4^{s-1} + N_s) \equiv R_9(r) \pmod 3$,
-$R_9(N_s) \equiv 1 \pmod 3$, $R_9(4^{s-1} + N_s) \equiv 2 \pmod 3$ and
-$R_9(2 \cdot 4^{s-1} + N_s) \equiv 0 \pmod 3$.
-
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
-Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
-Article A39, Corollary 5 (`integers-2024-A39-cor-5`). -/
-public theorem_wanted card_nine_regular_iterate_modEq (r s : ℕ) (hr : 0 < r) (hs : 0 < s) :
-    ((Nat.Partition.restricted ((r - 1) * 4 ^ (s - 1) + (4 ^ s - 1) / 3) (¬ 9 ∣ ·)).card : ℤ)
-        ≡ ((Nat.Partition.restricted (r) (¬ 9 ∣ ·)).card : ℤ) [ZMOD 3] ∧
-      ((Nat.Partition.restricted ((4 ^ s - 1) / 3) (¬ 9 ∣ ·)).card : ℤ) ≡ 1 [ZMOD 3] ∧
-      ((Nat.Partition.restricted (4 ^ (s - 1) + (4 ^ s - 1) / 3) (¬ 9 ∣ ·)).card : ℤ) ≡ 2 [ZMOD 3] ∧
-      ((Nat.Partition.restricted (2 * 4 ^ (s - 1) + (4 ^ s - 1) / 3) (¬ 9 ∣ ·)).card : ℤ)
-          ≡ 0 [ZMOD 3]
 
 /-- **Prime-regular partitions and the generalized tau function.** Let $p$ be a prime and $n$ a
 natural number. Let $R_p(n)$ be the number of partitions of $n$ in which no part is divisible by

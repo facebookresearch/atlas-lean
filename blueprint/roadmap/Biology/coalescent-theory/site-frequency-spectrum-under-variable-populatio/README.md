@@ -20,6 +20,7 @@
 - [Achaz's estimator is unbiased under Kingman's coalescent](integral-theta-weighted-kingman.md)
 - [Cumulative coalescence intensity](cum-rate.md)
 - [Expected time to the first coalescence](first-coal-mean.md)
+- [Survival-integral form of the first-coalescence quantity $c_m$](first-coal-mean-eq-integral.md)
 - [Piecewise-constant population-size history](piecewise-history.md)
 - [Size function of a piecewise-constant history](size-fn.md)
 - [Monotonicity of piece start times](start-mono.md)
