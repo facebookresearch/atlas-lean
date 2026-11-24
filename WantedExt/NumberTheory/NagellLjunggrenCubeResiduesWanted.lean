@@ -9,35 +9,20 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.NumberTheory.NagellLjunggrenCubeNoSolution
 public import MathlibExt.NumberTheory.NagellLjunggrenCubeResidues
 
 /-!
 # The Nagell–Ljunggren equation `(xⁿ - 1)/(x - 1) = y^q` (statements)
 
-Statement-only targets from Tran Duc Son, *A Note on the Nagell–Ljunggren Equation
-`(xⁿ - 1)/(x - 1) = y³`*. Corollary 1 concerns `q = 3` with `x ≡ 2, 3, 5, 6 (mod 9)`.
-Theorem 1, quoted from Ljunggren, concerns the general exponent `q ≥ 2`. The equation is written
-without division as `xⁿ - 1 = (x - 1) y^q`, which is equivalent because `x ≠ 1`: in Corollary 1
-since `x ≢ 1 (mod 9)`, in Theorem 1 since `1 < x.natAbs`.
+Ljunggren’s classification under conditions on the exponents, as quoted in Tran Duc Son,
+*A Note on the Nagell–Ljunggren Equation `(xⁿ - 1)/(x - 1) = y³`*. The hypothesis
+`1 < x.natAbs` permits the equation to be written without division.
 -/
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **The Nagell–Ljunggren cube equation for $x \equiv 2, 3, 5, 6 \pmod 9$.** Let $n \ge 3$ be a
-natural number. Then there are no integers $x$ and $y$ with $x \equiv 2, 3, 5$ or $6 \pmod 9$
-such that $x^n - 1 = (x - 1) y^3$. Since such an $x$ is not $1$, this says that
-$(x^n - 1)/(x - 1) = y^3$ has no such integer solution.
-
-The bound $n \ge 3$ is the classical range $n > 2$ of the Nagell–Ljunggren equation; for $n = 1$
-every $x$ gives the solution $y = 1$.
-
-Source: Tran Duc Son, *A Note on the Nagell–Ljunggren Equation (xⁿ - 1)/(x - 1) = y³*,
-INTEGERS 26 (2026), Article A104, Corollary 1 (`integers-2026-A104-cor-1`). -/
-public theorem_wanted nagell_ljunggren_cube_no_solution (n : ℕ) (hn : 3 ≤ n) (x y : ℤ)
-    (hx : x % 9 = 2 ∨ x % 9 = 3 ∨ x % 9 = 5 ∨ x % 9 = 6) :
-    x ^ n - 1 ≠ (x - 1) * y ^ 3
 
 /-- **Ljunggren's theorem on the Nagell–Ljunggren equation.** Let $x$ and $y$ be integers and
 $n$ and $q$ natural numbers with $|x| > 1$, $y > 1$, $n > 2$ and $q \ge 2$, and suppose that
