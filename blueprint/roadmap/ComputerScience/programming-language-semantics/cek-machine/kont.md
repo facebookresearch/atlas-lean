@@ -4,7 +4,7 @@ For the CEK machine, where a closure $\langle t, e\rangle$ pairs an untyped de B
 
 - $\mathsf{mt}$: nothing remains, and the value being computed is the result;
 - $\mathsf{arg}(u, e, k)$ for a term $u$, an environment $e$ and a continuation $k$: evaluate the argument $u$ in $e$, then continue as $\mathsf{fn}(v, k)$ with the value $v$ just computed;
-- $\mathsf{fn}(v, k)$ for a closure $v$ and a continuation $k$: apply the function closure $v$ to the value just computed, then continue with $k$.
+- $\mathsf{fn}(v, k)$ for a closure $v$ and a continuation $k$: apply the closure $v$, whatever its term and environment, to the value just computed, then continue with $k$.
 
 ## Sources
 

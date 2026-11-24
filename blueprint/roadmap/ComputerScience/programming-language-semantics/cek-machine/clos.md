@@ -1,6 +1,6 @@
 # Closures of the CEK machine
 
-A *closure* of the CEK machine is a pair $\langle t, e\rangle$ of an untyped de Bruijn lambda term $t$, the body of an abstraction, and an environment $e$, the environment in which the abstraction was evaluated. Environments are finite lists of closures, index $0$ first, so closures form a nested inductive type with the single constructor $\langle t, e\rangle$.
+A *closure* of the CEK machine is a pair $\langle t, e\rangle$ of an arbitrary untyped de Bruijn lambda term $t$ and an arbitrary environment $e$. Environments are finite lists of closures, index $0$ first, so closures form a nested inductive type with the single constructor $\langle t, e\rangle$. The type records no invariant: evaluating an abstraction $\lambda.\,t$ in $e$ produces $\langle t, e\rangle$, but closures need not arise that way.
 
 ## Sources
 

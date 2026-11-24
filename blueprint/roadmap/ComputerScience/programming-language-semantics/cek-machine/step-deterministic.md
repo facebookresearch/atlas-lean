@@ -1,6 +1,6 @@
 # The CEK machine is deterministic
 
-The CEK machine runs untyped lambda terms in de Bruijn notation ($x_n$, $\lambda.\,t$, $t\,u$) by call-by-value. A *closure* $\langle t, e\rangle$ pairs the body $t$ of an abstraction with an environment $e$, a list of closures with index $0$ first. A *continuation* is $\mathsf{mt}$, $\mathsf{arg}(u, e, k)$ (evaluate the argument $u$ in $e$, then continue with $k$) or $\mathsf{fn}(v, k)$ (apply the function closure $v$, then continue with $k$). A *state* is either $\mathsf{eval}(t, e, k)$ or $\mathsf{ret}(v, k)$ for a closure $v$.
+The CEK machine runs untyped lambda terms in de Bruijn notation ($x_n$, $\lambda.\,t$, $t\,u$) by call-by-value. A *closure* $\langle t, e\rangle$ pairs an arbitrary term $t$ with an environment $e$, a list of closures with index $0$ first. A *continuation* is $\mathsf{mt}$, $\mathsf{arg}(u, e, k)$ (evaluate the argument $u$ in $e$, then continue with $k$) or $\mathsf{fn}(v, k)$ (apply the closure $v$, then continue with $k$). A *state* is either $\mathsf{eval}(t, e, k)$ or $\mathsf{ret}(v, k)$ for a closure $v$.
 
 The transitions are:
 
