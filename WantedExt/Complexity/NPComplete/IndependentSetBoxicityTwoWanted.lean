@@ -20,7 +20,7 @@ doi:10.1109/81.414831.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Computability.Complexity.Karp.Color
 public import WantedExt.Complexity.NPComplete.BoxicityTwoWanted
 public import Mathlib.Combinatorics.SimpleGraph.Clique
