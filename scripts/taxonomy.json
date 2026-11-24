@@ -12652,6 +12652,7 @@
   "MathlibExt/NumberTheory/RFibonacciPolynomial": {"to": "NumberTheory/linear-recurrences/fibonacci-polynomials", "title": "r-Fibonacci and r-Lucas polynomials"},
   "MathlibExt/NumberTheory/RLucasPolynomial": {"to": "NumberTheory/linear-recurrences/fibonacci-polynomials", "title": "r-Fibonacci and r-Lucas polynomials"},
   "MathlibExt/NumberTheory/QuarticToCubic": {"to": "NumberTheory/diophantine-equations/higher-degree-equations", "title": "Consecutive powerful numbers"},
+  "MathlibExt/NumberTheory/RadicalCoefficientGcdStep": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Greatest common divisors of radical-expansion coefficients"},
   "MathlibExt/NumberTheory/Ramanujan/Part1Ch1Entry1": {"to": "Combinatorics/designs-latin-squares", "title": "Magic squares"},
   "MathlibExt/NumberTheory/Ramanujan/Part1Ch2": {"to": "Analysis/sequences-and-series/trigonometric-and-harmonic-series", "title": "Arctangent sums and series"},
   "MathlibExt/NumberTheory/Ramanujan/Part1Ch2Entry1": {"to": "NumberTheory/special-numbers/harmonic-numbers", "title": "Ramanujan's harmonic sum identities"},
