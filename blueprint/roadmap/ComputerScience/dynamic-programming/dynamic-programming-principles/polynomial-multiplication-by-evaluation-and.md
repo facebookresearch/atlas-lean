@@ -1,6 +1,6 @@
 # Polynomial multiplication by evaluation and interpolation
 
-A polynomial of degree less than $d$ over a field is determined by its values at any $d$ distinct points. Hence if $f$ and $g$ have degree less than $n$, evaluating both at $2n - 1$ distinct points, multiplying the values pointwise and interpolating yields $fg$. Over a field containing a primitive $N$-th root of unity $\omega$ with $N \ge 2n - 1$ a power of two, evaluation at the powers of $\omega$ and interpolation are the discrete Fourier transform and its inverse, which the fast Fourier transform computes in $O(N \log N)$ field operations; so $fg$ is computed in $O(n \log n)$ field operations.
+A polynomial of degree less than $d$ over a field is determined by its values at any $d$ distinct points. Hence if $f$ and $g$ have degree less than $n$, evaluating both at $2n - 1$ distinct points, multiplying the values pointwise and interpolating yields $fg$. Over a field containing a primitive $N$-th root of unity $\omega$ where $N$ is the least power of two with $N \ge 2n - 1$, so that $N < 4n$, evaluation at the powers of $\omega$ and interpolation are the discrete Fourier transform and its inverse, which the fast Fourier transform computes in $O(N \log N)$ field operations; so $fg$ is computed in $O(n \log n)$ field operations.
 
 ## Proof depends on
 

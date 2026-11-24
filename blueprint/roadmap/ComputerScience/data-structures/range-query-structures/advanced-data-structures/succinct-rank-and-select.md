@@ -2,11 +2,9 @@
 
 A bit vector $B$ of length $n$ can be augmented with $o(n)$ additional bits so that, in the word-RAM model with words of $\Theta(\log n)$ bits, $\mathrm{rank}(i)$ (the number of ones among the first $i$ bits) and $\mathrm{select}(j)$ (the position of the $j$-th one) are answered in $O(1)$ time.
 
-## Expansion
+## Depends on
 
-This page becomes ready once:
-
-- Word-RAM model with words of Theta(log n) bits (statement prerequisite; not yet stated)
+- [The word-RAM model](../../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/the-word-ram-model.md)
 
 ## Sources
 

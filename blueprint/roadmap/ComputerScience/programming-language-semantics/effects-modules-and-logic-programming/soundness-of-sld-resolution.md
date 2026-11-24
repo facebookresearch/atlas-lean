@@ -5,16 +5,11 @@ If a definite program $P$ has an SLD refutation of the goal $\leftarrow Q$ with 
 ## Depends on
 
 - [SLD resolution](sld-resolution.md)
+- [Unification of ranked terms through the curried encoding](../../../Logic/first-order-logic/first-order-unification/unification-of-ranked-terms-through-the-curried-encoding.md)
 
 ## Proof depends on
 
 - [Least Herbrand model of a definite logic program](least-herbrand-model-of-a-definite-logic-program.md)
-
-## Expansion
-
-This page becomes ready once these prerequisites are stated:
-
-- N-ary ranked-signature adapter for curried unification (statement prerequisite; not yet stated)
 
 ## Sources
 

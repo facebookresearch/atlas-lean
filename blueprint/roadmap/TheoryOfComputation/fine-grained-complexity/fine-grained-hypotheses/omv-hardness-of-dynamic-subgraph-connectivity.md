@@ -3,7 +3,7 @@
 Consider fully dynamic subgraph connectivity on a graph with $n$ vertices and $m$ edges, as defined on [dynamic graph problems](dynamic-graph-problems.md): vertices are switched on and off, and queries ask whether two vertices are connected through switched-on vertices.
 
 **Theorem (Henzinger, Krinninger, Nanongkai, Saranurak).** Assume the [OMv conjecture](the-online-matrix-vector-multiplication.md), and let $0 \le \alpha \le 1$ and $\varepsilon > 0$ be constants.
-1. No algorithm for subgraph connectivity with polynomial preprocessing time has both amortized update time $O(m^{\alpha - \varepsilon})$ and amortized query time $O(m^{1 - \alpha - \varepsilon})$. This holds on graphs with $m \le \min\{n^{1/\alpha}, n^{1/(1-\alpha)}\}$, and for algorithms whose queries err with probability at most $1/3$.
+1. No algorithm for subgraph connectivity with polynomial preprocessing time has both amortized update time $O(m^{\alpha - \varepsilon})$ and amortized query time $O(m^{1 - \alpha - \varepsilon})$. For $0 < \alpha < 1$ this holds on graphs with $m \le \min\{n^{1/\alpha}, n^{1/(1-\alpha)}\}$; for $\alpha \in \{0, 1\}$ it holds on graphs with $m \le n$. It holds also for algorithms whose queries err with probability at most $1/3$.
 2. In terms of $n$, on graphs with $m = \Theta(n^2)$, no such algorithm has both update time $O(n^{1 - \varepsilon})$ and query time $O(n^{2 - \varepsilon})$.
 
 For $\alpha = 2/3$, part 1 matches the known algorithm with amortized update time $\tilde O(m^{2/3})$ and query time $\tilde O(m^{1/3})$. Part 2 matches the algorithm with $\tilde O(n)$ update time and $O(1)$ query time.

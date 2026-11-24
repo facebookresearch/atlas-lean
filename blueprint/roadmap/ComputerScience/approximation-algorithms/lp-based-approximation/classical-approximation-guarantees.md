@@ -7,12 +7,12 @@ A good expansion gives one page per result.
 ## Depends on
 
 - [Polynomial-time approximation schemes](../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/is-ptas.md)
+- [Approximation algorithms and approximation ratios](../approximation-algorithms-and-approximation-ratios.md)
 
 ## Expansion
 
 This page becomes ready once these prerequisites are stated:
 
-- Approximation ratio for optimization problems (statement prerequisite; not yet stated)
 - The statement must be checked against the cited sources, which have not been opened
 
 ## Sources
