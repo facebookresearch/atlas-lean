@@ -10740,6 +10740,7 @@
   "MathlibExt/Combinatorics/Enumerative/PartitionDiamondsEulerMahonian": {"to": "Combinatorics/integer-partitions/counting-partitions", "title": "Multifold partition diamonds"},
   "MathlibExt/Combinatorics/Enumerative/PartitionNumberArray": {"to": "Combinatorics/set-partitions", "title": "Partition number arrays"},
   "MathlibExt/Combinatorics/Enumerative/PartitionSumBinomialCoefficient": {"to": "Combinatorics/binomial-coefficients/binomial-sums", "title": "Partition-sum expansion of binomial coefficients"},
+  "MathlibExt/Combinatorics/Enumerative/PascalDiagonalExponential": {"to": "Combinatorics/stirling-bell-eulerian/generalized-stirling-numbers", "title": "α-Stirling matrices"},
   "MathlibExt/Combinatorics/Enumerative/PascalMatrix": {"to": "Combinatorics/riordan-arrays-transforms/riordan-arrays", "title": "Pascal matrix"},
   "MathlibExt/Combinatorics/Enumerative/PascalStirlingGeneralization": {"to": "Combinatorics/stirling-bell-eulerian/generalized-stirling-numbers", "title": "α-Stirling matrices"},
   "MathlibExt/Combinatorics/Enumerative/PatternContainment": {"to": "Combinatorics/permutations/permutation-patterns", "title": "Permutations counted by odd-indexed Fibonacci numbers"},
