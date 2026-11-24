@@ -256,7 +256,7 @@ theorem acceptProb_branchState {m t : ℕ} (hm : 1 ≤ m) (α : Fin (2 ^ t) → 
 
 /-- **Phase irrelevance:** replacing each branch amplitude by one of the
 same squared norm does not change the acceptance probability. -/
-theorem acceptProb_branchState_congr_normSq {m t : ℕ} (hm : 1 ≤ m) {α α' : Fin (2 ^ t) → ℂ}
+theorem acceptProb_branchState_congr_normSq {m t : ℕ} {α α' : Fin (2 ^ t) → ℂ}
     (hα : ∀ r, Complex.normSq (α' r) = Complex.normSq (α r))
     (ψ : Fin (2 ^ t) → (Fin (2 ^ m) → ℂ)) :
     acceptProb (branchState α' ψ) = acceptProb (branchState α ψ) := by
