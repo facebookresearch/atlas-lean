@@ -22,9 +22,15 @@ $\Delta$ is integral; its components are the components of $D$ with non-integral
 $\mathcal{L}^N(-\Delta) = \mathcal{O}_X(N(L - D))$ is nef, and its top self-intersection is positive
 because $L - D$ is big, by the
 [numerical criterion for nef line bundles](volume-of-a-line-bundle.md) applied to this bundle (not
-to $\mathcal{L}$); Serre duality turns the conclusion into the vanishing above. Over a field that is
-not algebraically closed, the criterion is applied after extension of scalars to an algebraic
-closure, and the vanishing descends by flat base change.
+to $\mathcal{L}$); Serre duality turns the conclusion into the vanishing above. Over a field $k$
+that is not algebraically closed, $X_{\bar k}$ need not be integral ($\mathbb{P}^1$ over
+$\mathbb{Q}(i)$, integral over $\mathbb{Q}$, becomes two copies of
+$\mathbb{P}^1_{\bar{\mathbb{Q}}}$), but it is the disjoint union of its connected components, which
+are integral, smooth and projective. On each of them the pull-back of $N(L - D)$ is nef, and big: a
+decomposition of a multiple of $N(L - D)$ as an ample plus an effective Cartier divisor (Kodaira's
+lemma, item 10 of the [standard results](standard-results-of-coherent-cohomology.md)) restricts to
+one there. The criterion applied on each component gives a positive top self-intersection, and these
+add up to that of $\mathcal{L}^N(-\Delta)$, which extension of scalars does not change.
 
 Esnault and Viehweg also state that $H^b(X, \mathcal{L}^{-1}) = 0$ for $b < \kappa(\mathcal{L})$
 when $\mathcal{L}^N(-\Delta)$ is nef (Corollary 5.12 d)). Under the extra hypothesis of c),

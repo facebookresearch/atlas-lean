@@ -54,7 +54,9 @@ Serre vanishing.
 - [Estimates for small sections along an effective divisor](estimates-for-small-sections-along-a-divisor.md),
   for the distortion and restriction estimates of Moriwaki's §1
 - [Standard results of coherent cohomology on projective varieties](../../birational-geometry/standard-results-of-coherent-cohomology.md),
-  for Serre vanishing, in the construction of the divisors of Moriwaki's Lemma 3.6
+  for Serre vanishing on $X$, projective over $\mathbb{Z}$ (item 2), which in Moriwaki's Lemma 3.6
+  makes $H^0(X, n A)$ surject onto the fibres of $nA$ at finitely many closed points of vertical
+  fibres, and for flat base change along $\mathbb{Z} \to \mathbb{Q}$ (item 2)
 
 ## Sources
 

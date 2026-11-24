@@ -94,7 +94,8 @@ A good expansion has pages for:
 - [Height of a cycle](height-of-a-cycle.md), for the projection formula for heights in the upper
   bound
 - [Logarithmic Mahler measure](../../NumberTheory/heights-mahler-measure/multivariable-mahler-measure/logarithmic-mahler-measure.md),
-  for the Mahler measure with which the heights $h_0$ and $h_{\mathrm{Herm}}$ are compared
+  for the logarithmic Mahler measure, with which the expansion compares the heights $h_0$ and
+  $h_{\mathrm{Herm}}$; the comparison itself is not a page yet
 
 The other steps of its proof are not pages yet: the existence and uniqueness of Chow forms (Chow and
 van der Waerden; Bost–Gillet–Soulé, Lemma 4.3.1), the heights of multihomogeneous forms with Bost,

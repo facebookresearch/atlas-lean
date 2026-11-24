@@ -54,7 +54,8 @@ A good expansion has pages for:
 ## Depends on
 
 - [Geometrically reduced variety over a field](../schemes-and-morphisms/varieties-over-a-field/is-variety.md),
-  for the smooth quasi-projective varieties of the moving lemma
+  for the variety convention in the moving-lemma case; smoothness and quasi-projectivity are
+  hypotheses of that lemma
 
 Its statement also uses the Grothendieck group of complexes of locally free sheaves acyclic off a
 closed subset, with its $\gamma$-filtration, and $K_1$-chains, which no page states yet.

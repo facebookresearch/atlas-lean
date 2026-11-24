@@ -87,7 +87,8 @@ the moduli application, which is the concern of 3 and of the pages it uses.
 ## Proof depends on
 
 - [Toroidal compactifications of unitary Shimura varieties](toroidal-compactifications-of-unitary-shimura-varieties.md),
-  for the toroidal compactifications in 3
+  for the toroidal compactifications in the unitary application of 3, not for the proportionality
+  factor or the push-forward along flag bundles
 
 The other steps of its proof are not pages yet: good forms and good metrics with Mumford's Theorem
 1.4, the Gysin formula for flag bundles and its conversion into the identity 2, the canonical

@@ -22,13 +22,14 @@ the members $E_i$ be smooth over $k$, which that condition does not imply: $V(x^
 component is singular; a subvariety $Z$ is then tested together with $E$ after the same base change.
 A subvariety $Z \subset X$ *has simple normal crossings with* $E$ if at every closed point $x \in Z$
 the coordinates can be chosen so that in addition $Z = (z_{j_1} = \dots = z_{j_s} = 0)$ near $x$ for
-some indices $j_1, \dots, j_s$. Some of the $E_i$ may contain such a $Z$; by item 1 of the same
-page, $Z$ is smooth, and $E|_Z$ is an snc divisor on $Z$ if $Z \not\subset E$. An effective divisor
-$\sum_i c_i E_i$ with integers $c_i \ge 1$ whose reduced divisor $\sum_i E_i$ is an snc divisor has
-*snc support*; Kollár also calls it a simple normal crossing divisor. Its ideal sheaf is generated
-near every closed point by $\prod_i z_{c(i)}^{c_i}$ in the coordinates above, so it is locally
-monomial in Kollár's sense (16); that every locally monomial ideal sheaf is of this form is also
-item 1 of the same page.
+some indices $j_1, \dots, j_s$. Some of the $E_i$ may contain such a $Z$; for the smoothness of $Z$,
+and for $E|_Z$ being an snc divisor on $Z$ when no irreducible component of $Z$ is contained in $E$,
+see item 1 of the same page. An effective divisor $\sum_i c_i E_i$ with integers $c_i \ge 1$ whose
+reduced divisor $\sum_i E_i$ is an snc divisor has *snc support*; Kollár also calls it a simple
+normal crossing divisor. Its ideal sheaf is generated near every closed point $x$, in the
+coordinates above, by $\prod_{i \colon x \in E_i} z_{c(i)}^{c_i}$ up to a unit, so it is locally
+monomial in Kollár's sense (16); for the converse, that every locally monomial ideal sheaf is of
+this form, see item 1 of the same page.
 
 **$\mathbb{Q}$-divisors.** A $\mathbb{Q}$-divisor on $X$ is a finite sum $D = \sum_i a_i D_i$ of
 distinct prime divisors $D_i$ with coefficients $a_i \in \mathbb{Q}$; it is effective if all $a_i
@@ -41,36 +42,40 @@ reduced divisor is one.
 
 **Blow-ups.** For a closed subscheme $Z$ of a scheme $X$, $\pi_{Z,X} \colon B_Z X \to X$ is the
 blow-up of $Z$ in $X$ and $F = \pi_{Z,X}^{-1}(Z)$ its exceptional divisor. It is a *smooth blow-up*
-if $X$ and $Z$ are smooth; $B_Z X$ and $F$ are then smooth (item 2 of
-[Blow-ups along smooth centres and total transforms](resolution-of-singularities/blow-ups-along-smooth-centres.md)).
+if $X$ and $Z$ are smooth; for the smoothness of $B_Z X$ and $F$ over $k$, the morphism $\pi_{Z,X}$
+itself not being smooth in general, see item 2 of
+[Blow-ups along smooth centres and total transforms](resolution-of-singularities/blow-ups-along-smooth-centres.md).
 It is *trivial* if $Z$ is a Cartier divisor, and *empty* if $Z = \emptyset$; a trivial blow-up is an
-isomorphism with $F = Z$ (item 3 of the same page). A *blow-up sequence* of length $r$ starting with
-$X$ is a chain of blow-ups
+isomorphism with $F = Z$ (see item 3 of the same page). A *blow-up sequence* of length $r$ starting
+with $X$ is a chain of blow-ups
 
 $$\Pi \colon X_r \xrightarrow{\ \pi_{r-1}\ } X_{r-1} \to \dots \to X_1 \xrightarrow{\ \pi_0\ } X_0 = X, \qquad \pi_i = \pi_{Z_i, X_i},$$
 
 with specified centres $Z_i \subset X_i$, trivial and empty blow-ups being allowed; it is a *smooth
 blow-up sequence* if every $\pi_i$ is a smooth blow-up. For a smooth morphism $h \colon Y \to X$,
 the pull-back $h^* \Pi$ is the sequence of the schemes $X_i \times_X Y$ with centres $Z_i \times_X
-Y$, a blow-up sequence because blowing up commutes with flat base change (item 4).
+Y$, again a blow-up sequence, blowing up commuting with flat base change (see item 4 of the same
+page).
 
 For a birational morphism $g \colon X' \to X$, the exceptional set $\mathrm{Ex}(g)$ is the set of
-points of $X'$ at which $g$ is not a local isomorphism, a divisor if $X$ is smooth (item 5 of
+points of $X'$ at which $g$ is not a local isomorphism; for a birational morphism of varieties with
+$X$ smooth it is empty or of pure codimension one (see item 5 of
 [Blow-ups along smooth centres and total transforms](resolution-of-singularities/blow-ups-along-smooth-centres.md)).
 For a smooth blow-up sequence $\Pi$ starting with a smooth variety $X$, the total exceptional set is
 
 $$\mathrm{Ex}_{\mathrm{tot}}(\Pi) = \bigcup_{i=0}^{r-1} (\pi_i \circ \dots \circ \pi_{r-1})^{-1}(Z_i),$$
 
-which equals $\mathrm{Ex}(\Pi)$ if no connected component of a centre is a divisor (item 5), for
-instance if every centre has codimension at least $2$ everywhere. It is not enough that no blow-up
-be trivial: in $\mathbb{A}^2$, blowing up the disjoint union of a line and a point off it is not
-trivial, $\mathrm{Ex}$ is the exceptional curve over the point, and $\mathrm{Ex}_{\mathrm{tot}}$
-also contains the inverse image of the line. If $E$ is an snc divisor on $X$, the centres of $\Pi$
-*have simple normal crossings with* $E$ if each $Z_i$ has simple normal crossings with $(\pi_0 \circ
-\dots \circ \pi_{i-1})^{-1}_*(E) + \mathrm{Ex}_{\mathrm{tot}}(\pi_0 \circ \dots \circ \pi_{i-1})$,
-where $(\,\cdot\,)^{-1}_*$ denotes the birational transform. The *total transform* of $E$ is
-$\Pi^{-1}_{\mathrm{tot}}(E) = \Pi^{-1}_*(E) + \mathrm{Ex}_{\mathrm{tot}}(\Pi)$, an snc divisor when
-the centres have simple normal crossings with $E$ (item 6).
+which equals $\mathrm{Ex}(\Pi)$ when every connected component of every centre has codimension at
+least $2$ (see item 5 of the same page). It is not enough that no blow-up be trivial: in
+$\mathbb{A}^2$, blowing up the disjoint union of a line and a point off it is not trivial,
+$\mathrm{Ex}$ is the exceptional curve over the point, and $\mathrm{Ex}_{\mathrm{tot}}$ also
+contains the inverse image of the line. If $E$ is an snc divisor on $X$, the centres of $\Pi$ *have
+simple normal crossings with* $E$ if each $Z_i$ has simple normal crossings with $(\pi_0 \circ \dots
+\circ \pi_{i-1})^{-1}_*(E) + \mathrm{Ex}_{\mathrm{tot}}(\pi_0 \circ \dots \circ \pi_{i-1})$, where
+$(\,\cdot\,)^{-1}_*$ denotes the birational transform. The *total transform* of $E$ is the reduced
+divisor $\Pi^{-1}_{\mathrm{tot}}(E) = \Pi^{-1}_*(E) + \mathrm{Ex}_{\mathrm{tot}}(\Pi)$, not the
+pull-back of $E$ with multiplicities; for its being an snc divisor when the centres have simple
+normal crossings with $E$, see item 6 of the same page.
 
 **Blow-up sequence functors.** For a morphism $h \colon Y \to X$ and an ideal sheaf $I \subset
 \mathcal{O}_X$, $h^* I = h^{-1} I \cdot \mathcal{O}_Y$ denotes the inverse image ideal sheaf. A
@@ -95,6 +100,9 @@ I, E)$.
 ## Proof depends on
 
 This node has no prerequisites.
+
+Its statements are definitions. The facts about blow-ups recalled beside them, with the references
+above, are the targets of the node on blow-ups along smooth centres, which depends on this page.
 
 ## Sources
 

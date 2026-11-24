@@ -29,6 +29,9 @@ duality of the kernels of isogenies gives $(A[p^\infty])^t = A^t[p^\infty]$.
 - [Isogenies of abelian schemes](../isogenies-of-abelian-schemes.md), for the finite flat kernels
   $A[p^i]$ and their ranks
 - [Dual abelian scheme](../dual-abelian-scheme.md), for $A^t$ and the duality of kernels of isogenies
+- [Finite locally free group schemes and Cartier duality](finite-locally-free-group-schemes-and-cartier-duality.md),
+  for finite locally free group schemes, exact sequences of fppf sheaves and the Cartier duals
+  $G_i^D$
 
 ## Proof depends on
 

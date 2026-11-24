@@ -34,14 +34,19 @@ identified, and this plan is not a proof of it.
 ## Proof depends on
 
 The steps of its proof are not pages yet: the extension of homomorphisms of semi-abelian schemes
-over discrete valuation rings and then over normal bases (Faltings–Chai, chapter I), and, for 2, the
-semipositivity of the Hodge bundle of a semi-abelian scheme over a curve in characteristic zero, for
-which no source in this generality has been identified.
+from a dense open subscheme of a normal locally noetherian base (Robert, Proposition 3.1.21, after
+Faltings, Lemma 2.1, through Néron models locally of finite type, the closure of the graph and
+Zariski's main theorem), and, for 2, the semipositivity of the Hodge bundle of a semi-abelian scheme
+over a curve in characteristic zero, for which no source in this generality has been identified.
 
 ## Sources
 
 - G. Faltings and C.-L. Chai, *Degeneration of Abelian Varieties*, Ergebnisse der Mathematik (3) 22,
   Springer, 1990: chapter I.
+- D. Robert, *Theory of abelian varieties and their moduli spaces*, draft book (version of 7 March
+  2023), <https://www.math.u-bordeaux.fr/~damienrobert/pro/publications/books/avtheory.pdf>:
+  Proposition 3.1.21 and its proof (extension of homomorphisms of semi-abelian schemes from a dense
+  open subscheme of a normal locally noetherian base).
 - D. Mumford, "An analytic construction of degenerating abelian varieties over complete rings",
   Compositio Math. 24 (1972), 239–272, <http://www.numdam.org/item?id=CM_1972__24_3_239_0>:
   introduction (semi-abelian group schemes).

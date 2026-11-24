@@ -21,6 +21,13 @@ exact as a sequence of fppf sheaves. The targets are:
    of those of $G$; the canonical map $G \to (G^D)^D$ is an isomorphism; and $G \mapsto G^D$ takes
    an exact sequence $0 \to G' \to G \to G'' \to 0$ to an exact sequence $0 \to G''^D \to G^D \to
    G'^D \to 0$.
+3. (Line bundles on quotients.) Let $G$ be a commutative finite locally free group scheme over $S$
+   acting freely on an $S$-scheme $X$ with structure morphism $\pi \colon X \to S$, such that the
+   fppf quotient $p \colon X \to Y = X / G$ is a scheme and $(\pi_T)_* \mathcal{O}_{X_T} =
+   \mathcal{O}_T$ for every $S$-scheme $T$. Then for every $S$-scheme $T$ there is a canonical
+   isomorphism, compatible with base change in $T$, from the group of isomorphism classes of line
+   bundles $L$ on $Y_T$ with $p_T^* L \cong \mathcal{O}_{X_T}$ to $G^D(T)$; it sends $L$ to the
+   character by which $G$ acts on a trivialization of $p_T^* L$.
 
 The page on [p-divisible groups](p-divisible-group.md) uses them as follows. For a $p$-divisible
 group $(G_i)$ of height $h$, multiplication by $p^s$ on $G_{j+s}$ has kernel $G_{j+s}[p^s] = G_s$
@@ -29,12 +36,17 @@ and image in $G_{j+s}[p^j] = G_j$, and $\operatorname{rk} G_{j+s} = \operatornam
 sequences $0 \to G_s \to G_{j+s} \to G_j \to 0$ (Chai–Oort, (1.18)); item 2 dualizes them into the
 exact sequences that define the Serre dual (Chai–Oort, (1.20)). These arguments hold for every
 $p$-divisible group, for instance $\mu_{p^\infty}$, of height $1$, which is not the $p$-divisible
-group of an abelian scheme.
+group of an abelian scheme. The pages on the [dual abelian variety](../dual-abelian-variety.md) and
+the [dual abelian scheme](../dual-abelian-scheme.md) use 3 with $X = A$, $G = \operatorname{Ker}(f)$
+and $Y = B$ for an isogeny $f \colon A \to B$, to identify the kernel of the dual isogeny with
+$\operatorname{Ker}(f)^D$ (van der Geer–Moonen, Theorem (7.5)).
 
 A good expansion has pages for: the representability of $G^D$ by the dual of the Hopf algebra of $G$
 and biduality (Oort, I.2); the existence of fppf quotients of finite locally free group schemes by
-finite locally free closed subgroups, with the multiplicativity of ranks; and the exactness of
-Cartier duality (Tate, §§1.2–1.3).
+finite locally free closed subgroups, with the multiplicativity of ranks; the exactness of Cartier
+duality (Tate, §§1.2–1.3); and, for 3, the existence of the quotient of a scheme by a free action of
+a finite locally free group scheme and descent along it (Stacks Project, Tag 07S7; van der
+Geer–Moonen, (7.2)–(7.4)).
 
 ## Depends on
 
@@ -43,9 +55,18 @@ $\underline{\operatorname{Hom}}(G, \mathbb{G}_m)$, which no page states yet.
 
 ## Proof depends on
 
-The steps of its proof are not pages yet: the representability of the Cartier dual and biduality,
-the existence of fppf quotients by finite locally free subgroups with the multiplicativity of
-ranks, and the exactness of Cartier duality (Oort, I.2; Tate, §§1.2–1.3).
+- [Closed immersions are the proper monomorphisms](../../schemes-and-morphisms/zariski-s-main-theorem/closed-immersion-iff-proper-and-mono.md),
+  for the converse in 1: the monomorphism $G / K \to G''$, a morphism of finite $S$-schemes, is
+  proper, hence a closed immersion
+- [Closed immersions preserving the rank over the base are isomorphisms](../../schemes-and-morphisms/closed-and-open-immersions/is-iso-of-is-closed-immersion-of-finrank.md),
+  for the converse in 1: a closed immersion $G / K \to G''$ between finite locally free $S$-schemes
+  of the same rank is an isomorphism
+
+The other steps of its proof are not pages yet: the representability of the Cartier dual and
+biduality, the existence of fppf quotients by finite locally free subgroups with the
+multiplicativity of ranks, the exactness of Cartier duality (Oort, I.2; Tate, §§1.2–1.3), and, for
+3, the quotient by a free action and the descent of line bundles along it (van der Geer–Moonen,
+(7.2)–(7.4)).
 
 ## Sources
 

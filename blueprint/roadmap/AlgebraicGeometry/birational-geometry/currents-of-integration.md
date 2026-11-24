@@ -30,12 +30,16 @@ complex manifolds, which no page states yet.
 
 ## Proof depends on
 
-The steps of its proof are not pages yet: currents on manifolds with their derivatives,
-push-forwards and pull-backs (Demailly, *Complex Analytic and Differential Geometry*, Chapter I,
-§2), positive forms and positive currents (Chapter III, §1), Lelong's theorem with the local
-finiteness of the volume of $A_{\mathrm{reg}}$ and the Skoda–El Mir extension theorem, the support
-theorems (Chapter III, (2.10)–(2.14)) and the fundamental solution $\frac{i}{\pi}
-\partial\bar\partial \log |z| = \delta_0$ on $\mathbb{C}$.
+The steps of its proof are not pages yet. Lelong's theorem (Demailly, *Complex Analytic and
+Differential Geometry*, Chapter III, (2.6)–(2.7)) rests on decomposable test forms and the finite
+ramified projections of $A$ onto coordinate subspaces (Chapter II, Proposition (4.8) and the local
+parametrization theorem (4.19), which the proof of (2.6) cites as II.3.8 and II.3.19), which give
+the local finiteness of the volume of $A_{\mathrm{reg}}$ near $A_{\mathrm{sing}}$, and on the
+Skoda–El Mir extension theorem across the pluripolar set $A_{\mathrm{sing}}$ (*Analytic Methods*,
+Theorem (1.18)), which gives the closedness of $[A]$; the support theorems (Chapter III,
+(2.10)–(2.14)) rest on the local structure of currents of order zero along a submanifold and their
+normal order. Both use currents with their derivatives, push-forwards and pull-backs (Chapter I, §2)
+and positive currents (Chapter III, §1).
 
 ## Sources
 

@@ -42,7 +42,9 @@ $p$-nilpotent case.
 
 - [Abelian scheme](../abelian-scheme.md)
 - [De Rham cohomology of abelian schemes](de-rham-cohomology-of-abelian-schemes.md), for the de Rham
-  homology $H_1$, its filtration $\operatorname{Fil} = \omega^\perp$ and its crystalline nature
+  homology $H_1$ and its filtration $\operatorname{Fil} = \omega^\perp$ (item 2)
+- [Crystalline nature of the de Rham cohomology of abelian schemes](crystalline-nature-of-the-de-rham-cohomology-of-abelian-schemes.md),
+  for the crystalline nature of $H_1$, by which 1 compares the de Rham homologies of two lifts
 - [Grothendieck–Messing deformation theorem](grothendieck-messing-theorem.md), for nilpotent divided
   power thickenings
 

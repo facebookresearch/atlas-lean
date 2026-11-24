@@ -65,8 +65,9 @@ Rham homology for abelian schemes, and the bijection and lifting criterion of (4
 
 ## Proof depends on
 
-- [De Rham cohomology of abelian schemes](de-rham-cohomology-of-abelian-schemes.md), for the de Rham
-  homology of an abelian scheme and its Hodge filtration, with which (3) compares the crystal
+- [De Rham cohomology of abelian schemes](de-rham-cohomology-of-abelian-schemes.md), for the
+  classical Hodge sequence of de Rham homology, through universal vector extensions (its items 1–2),
+  with which (3) compares the crystal
 
 The other steps of its proof are not pages yet: the universal extension of a $p$-divisible group by
 a vector group and its Lie algebra, the construction of the Dieudonné crystal and its values on

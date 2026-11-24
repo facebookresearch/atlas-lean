@@ -92,29 +92,36 @@ A good expansion has pages for:
 
 ## Proof depends on
 
-- [Arithmetic intersection product](arithmetic-intersection-product.md), for the products and cap
-  products of arithmetic classes in the constructions
-- [Chow groups with supports and their products](chow-groups-with-supports.md), for the Chern
-  character with supports
+- [Arithmetic intersection product](arithmetic-intersection-product.md), for the cup product of
+  arithmetic classes on a regular arithmetic variety (Gillet–Soulé, IHÉS 72, Theorem 4.2.3); the cap
+  product on a possibly singular $X$ is a separate step
+- [Chow groups with supports and their products](chow-groups-with-supports.md), for the algebraic
+  Chow groups and $K$-theory with supports and their products, on which the arithmetic Chern
+  character with supports is built
 
 The other steps of its proof are not pages yet: the secondary Bott–Chern classes and their
 properties (Bismut–Gillet–Soulé, I; Gillet–Soulé, Inventiones, 2.4.1), the splitting principle for
 hermitian vector bundles, the arithmetic Grothendieck group and its action on the arithmetic Chow
-groups graded by dimension (Inventiones, Theorem 4), and the comparisons of Inventiones, §2.6 and §3
-(Proposition 1, Lemmas 21 and 25, Theorems 5 and 6).
+groups graded by dimension (Inventiones, Theorem 4), the cap product $\widehat{CH}^p(P) \otimes
+\widehat{CH}_q(X) \to \widehat{CH}_{q-p}(X)_{\mathbb{Q}}$ for a map from $X$ to a regular $P$
+(Inventiones, §2.3.1, Theorem 3), the arithmetic Chern character with supports of a metrized
+complex, through the Grassmann graph construction and its singular-current correction (Inventiones,
+§3.1, Definition 6), and the comparisons of Inventiones, §2.6 and §3 (Proposition 1, Lemmas 21 and
+25, Theorems 5 and 6).
 
 ## Sources
 
 - H. Gillet and C. Soulé, "Characteristic classes for algebraic vector bundles with Hermitian
   metric. I, II", Ann. of Math. (2) 131 (1990), 163–203 and 205–238.
 - H. Gillet and C. Soulé, "Arithmetic intersection theory", Publ. Math. IHÉS 72 (1990), 93–174,
-  <http://www.numdam.org/item?id=PMIHES_1990__72__93_0>: §3.4.2, p. 131.
+  <http://www.numdam.org/item?id=PMIHES_1990__72__93_0>: §3.4.2, p. 131, and Theorem 4.2.3, pp.
+  138–139.
 - H. Gillet and C. Soulé, "An arithmetic Riemann–Roch theorem", Invent. Math. 110 (1992), 473–543,
-  <https://gdz.sub.uni-goettingen.de/id/PPN356556735_0110>: introduction (p. 473), 2.4.1 (secondary
-  Bott–Chern classes, pp. 493–495), 2.4.2 and Theorem 4 with its proof and the Remarks after it (pp.
-  495–499), 2.6.1 with Lemma 14 (pp. 500–503), 2.6.2 and Proposition 1 (pp. 503–504), §3.1,
-  Definition 6, Corollary 3 and Lemma 21 (pp. 509–512), §3.2, Definition 7, Lemma 25 and Theorems 5
-  and 6 (pp. 516–521).
+  <https://gdz.sub.uni-goettingen.de/id/PPN356556735_0110>: introduction (p. 473), 2.3.1 and Theorem
+  3 (the cap product, pp. 489–492), 2.4.1 (secondary Bott–Chern classes, pp. 493–495), 2.4.2 and
+  Theorem 4 with its proof and the Remarks after it (pp. 495–499), 2.6.1 with Lemma 14 (pp.
+  500–503), 2.6.2 and Proposition 1 (pp. 503–504), §3.1, Definition 6, Corollary 3 and Lemma 21 (pp.
+  509–512), §3.2, Definition 7, Lemma 25 and Theorems 5 and 6 (pp. 516–521).
 - J.-B. Bost, H. Gillet and C. Soulé, "Heights of projective varieties and positive Green forms", J.
   Amer. Math. Soc. 7 (1994), 903–1027, archived publisher scan
   <https://web.archive.org/web/20170815232351id_/https://www.ams.org/journals/jams/1994-07-04/S0894-0347-1994-1260106-X/S0894-0347-1994-1260106-X.pdf>:

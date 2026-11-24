@@ -52,7 +52,11 @@ statements use without proof. The setting is given in each item. The targets are
    \varepsilon \operatorname{mult}_x C$ for every integral curve $C$ and closed point $x \in C$; and
    its consequence that a line bundle $L$ on a projective manifold, nef in the sense of nonnegative
    degrees on curves, has $L^{\nu} \otimes A$ ample for every ample $A$ and every $\nu > 0$
-   (Esnault–Viehweg, Lemma 5.7).
+   (Esnault–Viehweg, Lemma 5.7). More generally, for a proper morphism $\pi \colon X \to S$ to a
+   noetherian scheme, a $\pi$-ample invertible sheaf $A$ and an invertible sheaf $N$ whose degree is
+   nonnegative on every integral curve that $\pi$ maps to a point, $A \otimes N^{\otimes \nu}$ is
+   $\pi$-ample for every $\nu \ge 0$ (Keeler, Propositions 2.13 and 2.14); over an affine $S$,
+   $\pi$-ample means ample.
 6. (Nakai–Moishezon.) A line bundle $L$ on a projective scheme over a field is ample if and only if
    $(L^{\dim Z} \cdot Z) > 0$ for every integral closed subscheme $Z$ of positive dimension (testing
    $X$ alone is not enough: $\mathcal{O}(-1)$ on $\mathbb{P}^2$ has positive square).
@@ -65,14 +69,15 @@ statements use without proof. The setting is given in each item. The targets are
    Proposition I.6.6 (d)); the given class need not descend (a real conic without real points has
    $\mathcal{O}(1)$ over $\mathbb{C}$ but no real line bundle of degree $1$).
 
-9. (Growth of sections.) For a line bundle $L$ on a projective variety over a field with $H^0(X,
-   L^\nu) \ne 0$ for some $\nu \ge 1$, of Iitaka dimension $\kappa$, the largest dimension of the
-   images of the rational maps given by the $|L^m|$, there are $a, b > 0$ with $a \mu^\kappa \le
-   \dim H^0(X, L^{\nu\mu}) \le b \mu^\kappa$ for $\mu \ge 1$ (Esnault–Viehweg, Properties 5.4 b),
-   which refer to Mori, §1).
+9. (Growth of sections.) For a line bundle $L$ on an integral projective variety over a field with
+   $H^0(X, L^\nu) \ne 0$ for some $\nu \ge 1$, of Iitaka dimension $\kappa$, the largest dimension
+   of the images of the rational maps given by the $|L^m|$, there are $a, b > 0$ with $a \mu^\kappa
+   \le \dim H^0(X, L^{\nu\mu}) \le b \mu^\kappa$ for $\mu \ge 1$ (Esnault–Viehweg, Properties 5.4
+   b), which refer to Mori, §1).
 10. (Kodaira's lemma.) $\kappa = \dim X$ if and only if $L^\nu(-C)$ is ample for some $\nu \ge 1$
     and some effective Cartier divisor $C$ (Esnault–Viehweg, Properties 5.4 d), through the
-    restriction sequence and the growth bound on an ample divisor).
+    restriction sequence and the growth bound on an ample divisor); integrality is needed, as
+    $\mathcal{O}(1) \sqcup \mathcal{O}$ on $\mathbb{P}^1 \sqcup \mathbb{P}^1$ shows.
 
 In 7 and 8 the variety is complete, not assumed projective, since 8 is an input of the projectivity
 of abelian varieties. Item 5 uses only the definition of nef by degrees on curves, so that the page
@@ -87,8 +92,8 @@ extensions); the Euler polynomial of a coherent sheaf (Tags 0BEM, 0BEN and 0BEP)
 Hirzebruch–Riemann–Roch on smooth projective varieties (Tag 02UO, a statement); Bertini's theorem
 (Kleiman, *Bertini and his two fundamental theorems*, Theorem 4.1 and its proof); Seshadri's and
 Nakai's criteria, with the definitions of ample and nef line bundles kept on a page of their own
-(Keeler, Propositions 2.10 and 2.13); and the embedding and descent criteria (Milne; Stacks Project,
-Tags 0E8S, 0BDC and 0BDG).
+(Keeler, Propositions 2.10, 2.13 and 2.14); and the embedding and descent criteria (Milne; Stacks
+Project, Tags 0E8S, 0BDC and 0BDG).
 
 ## Depends on
 
@@ -96,7 +101,23 @@ Tags 0E8S, 0BDC and 0BDG).
 
 ## Proof depends on
 
-The steps of its proof are not pages yet: the classical proofs of 1–10, which its sources give.
+- [Noether normalization for nonzero finite-type commutative algebras over a field](../../RingTheory/integral-extensions/noether-normalization.md),
+  for the residue fields of closed points of schemes of finite type over a field $k$, finite over
+  $k$ and equal to $k$ when $k$ is algebraically closed, in the proofs of 7 and 8 (Stacks Project,
+  Tags 0E8S and 0BDC): such a residue field is finite over a polynomial subalgebra, which is then
+  itself a field, so has no variables
+
+The other steps of its proof are not pages yet. Item 1 rests on the Leray spectral sequence (Tags
+01E8, 01F2 and 01F4); item 2 on Serre's proofs of vanishing and global generation, the dévissage of
+coherent sheaves and Chow's lemma in the proof of the finiteness theorem (EGA III, Théorème
+(3.2.1)), the Čech complex and the exactness of flat tensor products behind flat base change (Tag
+02KH), Serre's proof of GAGA and the duality theory of Tags 0FVV and 0FW0; item 3 on the Euler
+polynomial (Tags 0BEM, 0BEN and 0BEP), Hirzebruch–Riemann–Roch being cited as a statement (Tag
+02UO); item 4 on Kleiman's proof of Bertini's theorem; items 5 and 6 on Seshadri's and Nakai's
+criteria with Kleiman's nonnegativity of mixed intersections of nef sheaves (Keeler, Propositions
+2.10–2.14); items 7 and 8 on the embedding and descent arguments of Milne and of Tags 0E8S, 0BDC and
+0BDG; and items 9 and 10 on the growth estimates that Esnault and Viehweg take from Mori (Properties
+5.4).
 
 ## Sources
 
@@ -116,7 +137,7 @@ The steps of its proof are not pages yet: the classical proofs of 1–10, which 
 - S. L. Kleiman, "Bertini and his two fundamental theorems", arXiv:alg-geom/9704018 (version 1): §4,
   Theorem 4.1, p. 16, and its proof, pp. 18–19.
 - D. S. Keeler, "Ample filters of invertible sheaves", arXiv:math/0108068 (version 5): Propositions
-  2.10 and 2.13, pp. 5–6.
+  2.10, 2.13 and 2.14, pp. 5–6.
 - The Stacks Project, <https://stacks.math.columbia.edu>: Tags 01E8, 01F2, 01F4, 01Q3, 02KH, 02UO,
   0B5U, 0BDC, 0BDG, 0BEM, 0BEN, 0BEP, 0E8S, 0FVV and 0FW0.
 - J. S. Milne, *Abelian Varieties*, course notes, version 2.00 (2008),

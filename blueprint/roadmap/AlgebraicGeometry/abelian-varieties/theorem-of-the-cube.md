@@ -45,7 +45,8 @@ This node is still to be broken down. It covers the first results on line bundle
 
 A good expansion follows van der Geer and Moonen, Chapter II, and has pages for 1, 2, 3 and 4–5 in
 this order: the proof of the theorem of the cube (their (2.5)) shows that the maximal subscheme of 2
-over which $L$ is trivial is open, using the seesaw principle 1 and Krull's intersection theorem;
+over which $L$ is trivial is open, using the seesaw principle 1 and
+[Krull's intersection theorem](../../RingTheory/local-rings/krull-intersection-theorem.md);
 Milne's notes state the same results (Theorem I.5.1 and its corollaries, Theorems I.5.5 and I.5.16),
 but the version 2.00 of his notes leaves the last step of the proof of the theorem of the cube to a
 later version, referring to Mumford's *Abelian Varieties*, pp. 57–58.
@@ -56,8 +57,15 @@ later version, referring to Mumford's *Abelian Varieties*, pp. 57–58.
 
 ## Proof depends on
 
-The steps of its proof are not pages yet: the proofs of 1–5 in van der Geer and Moonen's Chapter II,
-the theorem of the cube through the seesaw principle and Krull's intersection theorem.
+- [Krull's intersection theorem for finitely generated modules over a Noetherian local ring](../../RingTheory/local-rings/krull-intersection-theorem.md),
+  for the theorem of the cube, whose proof shows with it that the locus over which $L$ is trivial is
+  open (van der Geer–Moonen, (2.5))
+
+The other steps of its proof are not pages yet: the seesaw principle, through cohomology and base
+change in degree zero for the evaluation map and Nakayama's lemma (van der Geer–Moonen, (2.1)); the
+Künneth identification $H^1(X \times Y, \mathcal{O}) \cong H^1(X, \mathcal{O}) \oplus H^1(Y,
+\mathcal{O})$, the decisive step of the theorem of the cube (2.5); and the deductions of 3–5 in van
+der Geer and Moonen's Chapter II.
 
 ## Sources
 

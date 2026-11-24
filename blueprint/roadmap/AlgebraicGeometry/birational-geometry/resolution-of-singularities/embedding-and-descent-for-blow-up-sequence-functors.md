@@ -37,7 +37,8 @@ $(x, y) \mapsto (x, y + j_2(x))$ and $(x, y) \mapsto (x - j_1(y), y)$. For 3, Ko
 with a general linear projection, which needs $k$ to be infinite; this is the only case he uses.
 
 A good expansion has one page for each of 1, 2 and 3, the first with the descent of centres along
-smooth surjections and the compatibility of blowing up with flat base change.
+smooth surjections; the compatibility of blowing up with flat base change, for arbitrary schemes, is
+item 4 of [Blow-ups along smooth centres and total transforms](blow-ups-along-smooth-centres.md).
 
 ## Depends on
 
@@ -46,9 +47,12 @@ smooth surjections and the compatibility of blowing up with flat base change.
 
 ## Proof depends on
 
-The steps of its proof are not pages yet: the descent of closed subschemes along smooth surjections,
-the compatibility of blowing up with flat base change, and, for 3, Kollár's local general linear
-projection over an infinite field.
+- [Blow-ups along smooth centres and total transforms](blow-ups-along-smooth-centres.md), for the
+  compatibility of blowing up with flat base change (item 4), which holds for arbitrary schemes,
+  applied in 1 along the smooth surjections $X' \to X$ and $V \to X'$
+
+The other steps of its proof are not pages yet: the descent of the centres along smooth surjections,
+stage by stage, and, for 3, Kollár's local general linear projection over an infinite field.
 
 ## Sources
 

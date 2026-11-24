@@ -51,12 +51,19 @@ linked below.
 - [Dual abelian variety](dual-abelian-variety.md), for $\operatorname{Pic}^0$ and the fibres of $\hat A$
 - [Isogenies of abelian schemes](isogenies-of-abelian-schemes.md), for isogenies and the finite flat
   kernels whose Cartier duals appear
+- [Finite locally free group schemes and Cartier duality](deformations-and-p-divisible-groups/finite-locally-free-group-schemes-and-cartier-duality.md),
+  for the Cartier dual $\operatorname{Ker}(f)^D$ of a finite flat kernel
 
 ## Proof depends on
 
 - [Representability of relative Picard functors](representability-of-picard-functors.md), for the
   theorems of Artin, Grothendieck and Raynaud used above
 - [Dual abelian variety](dual-abelian-variety.md), for biduality on the fibres
+- [Finite locally free group schemes and Cartier duality](deformations-and-p-divisible-groups/finite-locally-free-group-schemes-and-cartier-duality.md),
+  for its item 3, the description by characters of the line bundles with trivial pull-back along a
+  quotient by a finite locally free group scheme (van der Geer–Moonen, Proposition (7.4), which is
+  stated over a base), the core of the identification $\operatorname{Ker}(\hat f) \cong
+  \operatorname{Ker}(f)^D$
 
 ## Sources
 
