@@ -10444,6 +10444,7 @@
   "MathlibExt/Combinatorics/Enumerative/CompositionsTribonacci": {"to": "Combinatorics/integer-compositions", "title": "Compositions with parts 1, 2 and 3"},
   "MathlibExt/Combinatorics/Enumerative/ConnellSequence": {"to": "Combinatorics/combinatorics-on-words/self-describing-sequences", "title": "Connell sequence"},
   "MathlibExt/Combinatorics/Enumerative/CubicLatticeColoredMotzkin": {"to": "Combinatorics/catalan-numbers-lattice-paths/motzkin-numbers", "title": "Cubic lattice walks and colored Motzkin paths"},
+  "MathlibExt/Combinatorics/Enumerative/CyclicPatternAvoidingStacks": {"to": "Combinatorics/permutations/permutation-patterns", "title": "Cyclic-pattern-avoiding stack sorting"},
   "MathlibExt/Combinatorics/Enumerative/DegenerateHarmonicRiordan": {"to": "Combinatorics/riordan-arrays-transforms/riordan-arrays", "title": "Degenerate harmonic numbers and Riordan arrays"},
   "MathlibExt/Combinatorics/Enumerative/DelannoyConstructions": {"to": "Combinatorics/catalan-numbers-lattice-paths/dyck-paths-lattice-walks", "title": "Generalized Delannoy numbers"},
   "MathlibExt/Combinatorics/Enumerative/DiagonalSumsOfARiordanOrTriangularArray": {"to": "Combinatorics/riordan-arrays-transforms/riordan-arrays", "title": "Diagonal sums of number triangles"},
