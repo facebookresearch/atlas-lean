@@ -5308,6 +5308,20 @@ class ScopedRun(unittest.TestCase):
         self.assertEqual(self.run_sync("--check")[3]["wiki_changes"], "sync")
 
 
+    def test_a_file_staged_otherwise_but_left_as_it_was_is_not_written_by_the_changes(self) -> None:
+        # The index holds an edit of a folder page the sync writes, whose working tree copy is the base's: the changes
+        # leave the page as it was, and the index disagrees with them.
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        self.assertEqual(self.run_sync()[0], 0)
+        readme = self.root / "blueprint/roadmap/Algebra/groups/group-basics/README.md"
+        readme.write_text(readme.read_text() + "\nMore prose.\n")
+        self.git("add", "--", str(readme))
+        readme.write_text(self.PAGES["Algebra/groups/group-basics/README.md"])
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual(report["differences"], [
+            "blueprint/roadmap/Algebra/groups/group-basics/README.md: the sync writes it, and the changes leave it as "
+            "it was", "blueprint/roadmap/Algebra/groups/group-basics/README.md: " + INDEX_DIFFERS])
+
     def test_lean_staged_otherwise_than_the_working_tree_stops_the_run(self) -> None:
         # The index holds one declaration and the working tree another: the run reads the working tree's, which a
         # commit may not take, so it stops until the two agree.
@@ -5508,6 +5522,83 @@ class ScopedRun(unittest.TestCase):
                 f"blueprint/roadmap/Algebra/groups/group-basics/README.md: {other}",
                 "blueprint/roadmap/Algebra/groups/group-basics/fresh.md: the changes add it, and the sync does not",
                 f"scripts/wiki-sync.json: {other}"], line)
+        # The writer reads the ledger only when it has something to write and no row stops it first. With nothing to
+        # write, the ledger is only a file the sync never writes; a stale link on the base's wiki stops the run first.
+        self.git("checkout", "-q", "--", ".")
+        self.git("clean", "-qfd")
+        self.write("scripts/card-moves.jsonl", "[]\n")
+        self.groups(more="theorem helper : True := trivial\n\n")
+        self.assertEqual(self.run_sync("--check")[3]["differences"],
+                         ["scripts/card-moves.jsonl: the sync never writes it"])
+        self.groups(name="lagrange_divides")
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        links.write_text(links.read_text().replace('"Ext.lagrange"', '"Ext.lagrange_divides"'))
+        self.assertEqual(self.run_sync("--check")[3]["differences"], [
+            "scripts/card-moves.jsonl: the sync never writes it",
+            "the sync stops on the base's wiki: blueprint/links/Algebra.jsonl:4 (Algebra/groups/group-basics/"
+            "lagrange.md) links Ext.lagrange, which the Lean no longer has: relink the row to the declaration's "
+            "successor and keep its article id, or remove the link and keep the page as a planned page",
+            f"blueprint/links/Algebra.jsonl: {other}"])
+
+    def test_a_row_the_writer_refuses_first_keeps_the_ledger_unread(self) -> None:
+        # The base has an annotation file Autoform reads and the sync does not, which the changes remove: on the base's
+        # wiki the writer refuses it before it reads the card move ledger, so the replay fails there, writing nothing,
+        # and does not stop on the ledger the changes break.
+        self.write("blueprint/links/extra.json", "")
+        self.base = self.commit("an annotation file the sync does not read")
+        (self.root / "blueprint/links/extra.json").unlink()
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        self.assertEqual(self.run_sync()[0], 0)
+        self.write("scripts/card-moves.jsonl", "not JSON\n")
+        other = "the changes write it otherwise than the sync"
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["wiki_changes"]), (0, True, "other"))
+        # The writer's refusals of the file, which name the copy of the base's links folder the replay reads, and no
+        # stop on the ledger.
+        differences = report["differences"]
+        refusals = [row for row in differences if row.startswith("the sync fails on the base's wiki: Autoform")]
+        self.assertTrue(refusals, differences)
+        self.assertTrue(all("extra.json" in row and row.endswith("; fix it and run again (the run wrote nothing)")
+                            for row in refusals), refusals)
+        self.assertEqual(differences[2:2 + len(refusals)], refusals)
+        self.assertEqual([row for row in differences if row not in refusals], [
+            "blueprint/links/extra.json: the sync never writes it",
+            "scripts/card-moves.jsonl: the sync never writes it",
+            f"blueprint/links/Algebra.jsonl: {other}",
+            f"blueprint/roadmap/Algebra/groups/group-basics/README.md: {other}",
+            "blueprint/roadmap/Algebra/groups/group-basics/fresh.md: the changes add it, and the sync does not",
+            f"scripts/wiki-sync.json: {other}"])
+
+    def test_the_replay_writes_what_it_can_beside_its_plans_other_problems(self) -> None:
+        # The changes document a declaration whose page its folder page does not list, a problem the writer reports
+        # while it writes what it can, and add another. The problem is listed as a failure, and the files the writer
+        # would write are compared with what it writes, before the run as after it.
+        self.groups(more="theorem helper : True := trivial\n\n")
+        self.write("blueprint/roadmap/Algebra/groups/group-basics/helper.md", "# Helper\n\nA helper.\n")
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        links.write_text(links.read_text() + json.dumps(
+            {"subject": [{"type": "generic", "uri": "../roadmap/Algebra/groups/group-basics/helper.md"}],
+             "id": "af_" + "d" * 24, "object": [{"location": {"declaration": "Ext.helper"}}]}) + "\n")
+        self.base = self.commit("a page its folder page does not list")
+        self.groups(more="/-- A helper. -/\ntheorem helper : True := trivial\n\n/-- A new result. -/\ntheorem fresh : "
+                         "True := trivial\n\n")
+        taxonomy = json.loads(json.dumps(self.TAXONOMY))
+        taxonomy["subjects"]["Algebra"]["fields"][0]["description"] = "Groups and their subgroups."
+        self.write("scripts/taxonomy.json", json.dumps(taxonomy))
+        problem = ("the sync fails on the base's wiki: Algebra/groups/group-basics/helper.md, the page of Ext.helper, "
+                   "is listed on no folder page: list it on Algebra/groups/group-basics/README.md")
+        left = "the sync writes it, and the changes leave it as it was"
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["differences"]), (1, False, [
+            "scripts/taxonomy.json: the sync never writes it", problem, f"blueprint/links/Algebra.jsonl: {left}",
+            f"blueprint/roadmap/Algebra/groups/group-basics/README.md: {left}",
+            "blueprint/roadmap/Algebra/groups/group-basics/fresh.md: the sync writes it, and the changes do not",
+            f"scripts/wiki-sync.json: {left}"]))
+        # The writer writes what it can and fails; what it writes is the sync's.
+        self.assertEqual(self.run_sync()[0], 1)
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["differences"]), (1, False, [
+            "scripts/taxonomy.json: the sync never writes it", problem]))
 
 
     def test_a_refresh_inside_nested_parts_leaves_the_outer_copy_as_it_was(self) -> None:

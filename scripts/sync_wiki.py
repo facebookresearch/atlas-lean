@@ -3840,18 +3840,21 @@ def print_plan(plan: Plan, base: str) -> None:
     sys.stderr.flush()
 
 
-def sync_output(base: str, paths: list[str], plan_of, apply) -> tuple[str, list[str]]:
+def sync_output(base: str, paths: list[str], touched: frozenset[str], plan_of, apply) -> tuple[str, list[str]]:
     """How the wiki changes since *base*, the files of *paths* (see graph_file), compare with what a scoped run writes
     on the base's wiki, the Lean being the working tree's: "sync" when they are exactly that, file contents and
     executable bits, and else "other", with each file that differs and how: first each file the sync never writes (see
     written_by_sync), such as the taxonomy, then why the run stops or fails, if it does, and last each file it may
-    write that differs from what the run leaves there, compared whatever comes before. The run is made on a copy of the
-    base's wiki, its files taken from git, and gives each row it adds the article id of the working tree's row for that
-    page, when it is one and no other row has it, so that fresh ids compare equal, while a row the base has must keep
-    every byte. A run that would stop, on a line of a links file or of the card move ledger that holds no JSON object
-    or on an error of its plan, writes nothing, and one that would leave a page or a folder listed nowhere keeps what
-    it writes: either makes the changes not the sync's. *plan_of* gives the plan (see scoped_plan) of the wiki at hand,
-    and *apply* writes one (see apply_plan) with the ids given."""
+    write that differs from what the run leaves there, compared whatever comes before. *touched*, the files the working
+    tree changes (see changed_paths), tells a file the changes write from one they leave as it was. The run is made on
+    a copy of the base's wiki, its files taken from git, and gives each row it adds the article id of the working
+    tree's row for that page, when it is one and no other row has it, so that fresh ids compare equal, while a row the
+    base has must keep every byte. It stops where the writer would, writing nothing: on a line of a links file that
+    holds no JSON object, on an error that blocks its plan, or, when it has something to write and no row stops it
+    first, on a line of the card move ledger that holds no JSON object (see retired_addresses). It fails where the
+    writer would, keeping what it writes: on its plan's other problems and on what it leaves for an editor (see
+    unfinished). Either makes the changes not the sync's. *plan_of* gives the plan (see scoped_plan) of the wiki at
+    hand, and *apply* writes one (see apply_plan) with the ids given."""
     differences = [f"{path}: the sync never writes it" for path in paths if not written_by_sync(path)]
     ids = {page_key(row): row["id"] for _, _, row in numbered_rows()
            if isinstance(row.get("id"), str) and subject_path(row) is not None}
@@ -3862,21 +3865,28 @@ def sync_output(base: str, paths: list[str], plan_of, apply) -> tuple[str, list[
         modes = extract_tree(base, scratch, lambda path: written_by_sync(path) or path.startswith("blueprint/links/"))
         for made in (vault / "roadmap", vault / "links", state.parent):
             made.mkdir(parents=True, exist_ok=True)
-        done = None
+        done, problems = None, []
         with relocated(vault=vault, state=state):
-            # A line the writer cannot read stops it before it plans: in the base's links files, or in the working
-            # tree's card move ledger (see retired_addresses).
-            stops = malformed_rows() + malformed_moves()
+            stops = malformed_rows()
             if not stops:
                 on_base = {page_key(row) for _, _, row in numbered_rows()}
                 ids = {page: article_id for page, article_id in ids.items() if page not in on_base}
                 plan = plan_of()
-                stops = plan.blocking + plan.problems
+                # Only an error that blocks the plan stops the writer, which writes what it can despite the others.
+                stops, problems = plan.blocking, plan.problems
+                # The writer reads the card move ledger once it has something to write and no row stops it, and fails
+                # on a line of it that holds no JSON object: the run then stops there, as the writer would.
+                moves = malformed_moves() if not stops and plan.writes() else []
                 if not stops:
-                    done = apply(plan, ids)
+                    try:
+                        done = apply(plan, ids)
+                    except (ValueError, AttributeError):
+                        if not moves:
+                            raise
+                        stops = moves
         report, written = done or ({"unlisted": [], "parts": []}, set())
         differences += ([f"the sync stops on the base's wiki: {row}" for row in stops]
-                        + [f"the sync fails on the base's wiki: {row}" for row in unfinished(report)])
+                        + [f"the sync fails on the base's wiki: {row}" for row in problems + unfinished(report)])
         # The changes are the working tree's; anything but a file in the index, a submodule with no folder among
         # them, is not the sync's either. Where the index changes a file from HEAD, staged by hand, a commit may take
         # the index's instead, so the two must agree (see disagreeing).
@@ -3899,13 +3909,13 @@ def sync_output(base: str, paths: list[str], plan_of, apply) -> tuple[str, list[
                 differences.append(f"{path}: the sync writes no link or other kind of file")
                 continue
             if expected != actual:
-                differences.append(f"{path}: " + compared(expected, actual, mine in written, path in paths))
+                differences.append(f"{path}: " + compared(expected, actual, mine in written, path in touched))
     return ("other", differences) if differences else ("sync", [])
 
 
 def compared(expected: tuple | None, actual: tuple | None, written: bool, changed: bool) -> str:
     """How the changes' file, *actual*, differs from the sync's, *expected*: each a file's bytes and whether it is not
-    executable, or None for no file; *written* when the sync writes it, and *changed* when it is among the changes'."""
+    executable, or None for no file; *written* when the sync writes it, and *changed* when the changes do."""
     if expected is None:
         return "the changes add it, and the sync does not"
     if actual is None:
@@ -4053,7 +4063,8 @@ def run_scoped(argv: list[str]) -> int:
             changes, differences = "other", [f"{path}: {disagree.get(path, 'the sync writes nothing when no Lean changes')}"
                                              for path in graph]
         else:
-            changes, differences = sync_output(base, graph, lambda: scoped_plan(old, head, index, targets, lean), apply)
+            changes, differences = sync_output(base, graph, frozenset(paths),
+                                               lambda: scoped_plan(old, head, index, targets, lean), apply)
             differences += [f"{path}: {what}" for path, what in disagree.items()
                             if graph_file(path) and f"{path}: {what}" not in differences]
             changes = "other" if differences else changes
