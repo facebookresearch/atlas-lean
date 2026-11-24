@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Data.Set.Card
-public import Mathlib.NumberTheory.Real.GoldenRatio
+public import MathlibExt.Combinatorics.WythoffTerminalPositions
 import Mathlib.NumberTheory.Rayleigh
 
 /-!
@@ -20,69 +20,6 @@ Every position outside the set has at least two distinct moves into it.
 -/
 
 namespace MetaMathlibExt
-
-@[expose] public section
-
-/-- **Moves of Wythoff's game with terminal positions.** Let $\ell$ be a natural number. In the
-game $K^\ell$, whose positions are pairs $(x, y)$ of natural numbers (the sizes of two piles of
-tokens), there is a move from $(x, y)$ to $(x', y')$ when $x + y > \ell$ and either $y' = y$ and
-$x' < x$, or $x' = x$ and $y' < y$, or $x = x' + k$ and $y = y' + k$ for some $k > 0$. Thus the
-positions with $x + y \le \ell$ are terminal, and from any other position a move removes a
-positive number of tokens from one pile, or the same positive number from both piles.
-
-Source: Antoine Renard and Michel Rigo, *Variants of Wythoff Game With Terminal Positions
-or Blocking Maneuvers*, Journal of Integer Sequences 29 (2026), Article 26.1.6, the game
-`K^ℓ` of Theorem 17 (`jis-2026-26.1.6-thm-17`): Wythoff's moves with terminal positions
-`{(x, y) | x + y ≤ ℓ}`. -/
-def wythoffTerminalMove (ℓ : ℕ) (p q : ℕ × ℕ) : Prop :=
-  ℓ < p.1 + p.2 ∧
-    ((q.2 = p.2 ∧ q.1 < p.1) ∨ (q.1 = p.1 ∧ q.2 < p.2) ∨
-      (∃ k, 0 < k ∧ q.1 + k = p.1 ∧ q.2 + k = p.2))
-
-/-- **No moves from terminal positions.** Let $\ell$ be a natural number. In the game $K^\ell$
-(Wythoff's game in which the positions $(x, y)$ with $x + y \le \ell$ are terminal), there is no
-move from a position $(x, y)$ with $x + y \le \ell$ to any position.
-
-Source: Antoine Renard and Michel Rigo, Journal of Integer Sequences 29 (2026),
-Article 26.1.6, terminal positions of `K^ℓ` (Theorem 17). -/
-theorem not_wythoffTerminalMove_of_terminal {ℓ : ℕ} {p : ℕ × ℕ} (hp : p.1 + p.2 ≤ ℓ)
-    (q : ℕ × ℕ) : ¬wythoffTerminalMove ℓ p q := fun h => by
-  have := h.1
-  omega
-
-/-- **A move to the origin in $K^0$.** In the game $K^0$ (Wythoff's game in which only $(0, 0)$ is
-terminal), there is a move from the position $(1, 0)$ to the position $(0, 0)$.
-
-Source: Antoine Renard and Michel Rigo, Journal of Integer Sequences 29 (2026),
-Article 26.1.6, Wythoff's moves (Theorem 17). -/
-theorem wythoffTerminalMove_zero_one_zero : wythoffTerminalMove 0 (1, 0) (0, 0) :=
-  ⟨by decide, Or.inl ⟨rfl, by decide⟩⟩
-
-/-- **Larsson's set $R_2$.** Let $\varphi = (1 + \sqrt{5})/2$ be the golden ratio. The set
-$R_2 \subseteq \mathbb{N} \times \mathbb{N}$ consists of $(0, 0)$ together with, for every natural
-number $n$, the pairs $(n, 2n + 1)$ and $(2n + 1, n)$ and the pairs
-$(2\lfloor n\varphi \rfloor + 2, 2\lfloor n\varphi^2 \rfloor + 2)$ and
-$(2\lfloor n\varphi^2 \rfloor + 2, 2\lfloor n\varphi \rfloor + 2)$.
-
-Source: Antoine Renard and Michel Rigo, *Variants of Wythoff Game With Terminal Positions
-or Blocking Maneuvers*, Journal of Integer Sequences 29 (2026), Article 26.1.6,
-Theorem 26. -/
-def larssonSetTwo : Set (ℕ × ℕ) :=
-  {(0, 0)} ∪ {p | ∃ n : ℕ, p = (n, 2 * n + 1) ∨ p = (2 * n + 1, n)} ∪
-    {p | ∃ n : ℕ,
-      p = (2 * ⌊(n : ℝ) * Real.goldenRatio⌋₊ + 2, 2 * ⌊(n : ℝ) * Real.goldenRatio ^ 2⌋₊ + 2) ∨
-      p = (2 * ⌊(n : ℝ) * Real.goldenRatio ^ 2⌋₊ + 2, 2 * ⌊(n : ℝ) * Real.goldenRatio⌋₊ + 2)}
-
-/-- **Sample positions in Larsson's set $R_2$.** The positions $(0, 0)$, $(0, 1)$ and
-$(2, 2)$ belong to Larsson's set $R_2$.
-
-Source: Antoine Renard and Michel Rigo, Journal of Integer Sequences 29 (2026),
-Article 26.1.6, Theorem 26. -/
-theorem larssonSetTwo_examples :
-    (0, 0) ∈ larssonSetTwo ∧ (0, 1) ∈ larssonSetTwo ∧ (2, 2) ∈ larssonSetTwo :=
-  ⟨Or.inl (Or.inl rfl), Or.inl (Or.inr ⟨0, Or.inl rfl⟩), Or.inr ⟨0, Or.inl (by simp)⟩⟩
-
-end
 
 namespace blockingWythoff_two_pPositions
 
