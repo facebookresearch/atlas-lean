@@ -16,9 +16,10 @@ public import Mathlib.Data.Finset.Basic
 /-!
 # Dictionary specification records
 
-Specification records for finite ordered sets and approximate membership,
-with adapters for the existing binary search trees (insertion and deletion)
-and Bloom filters.
+Specification records for finite ordered sets, finite maps, and approximate
+membership, with adapters for the existing binary search trees (insertion and
+deletion) and Bloom filters; further adapters (AVL trees, red-black trees,
+hash tables) live next to their providers.
 
 The approximate-membership record is relational: it has no abstraction
 function to an exact set and no converse membership law, so a positive
