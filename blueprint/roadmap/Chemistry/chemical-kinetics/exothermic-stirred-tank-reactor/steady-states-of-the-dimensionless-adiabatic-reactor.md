@@ -12,7 +12,8 @@ dilution rate.
    $g_\beta(T) = 1 + \beta\,k(T)/(1 + k(T)) - T = 0$.
 2. Along every solution with $T > 0$, the quantity $Z = T + \beta c$ satisfies $Z' = 1 + \beta - Z$.
 3. If $c(0) \in [0, 1]$ and $T(0) > 0$, the solution exists for all $t \ge 0$, and for all $t \ge 0$
-   $$0 \le c(t) \le 1, \qquad \min(T(0), 1) \le T(t) \le \max\bigl(Z(0), 1 + \beta\bigr).$$
+
+    $$0 \le c(t) \le 1, \qquad \min(T(0), 1) \le T(t) \le \max\bigl(Z(0), 1 + \beta\bigr).$$
 
 Part 1 is the elimination of $c$ from the two steady-state equations. Part 2 adds $\beta$ times the first equation
 to the second. In part 3, $c' = 1 > 0$ at $c = 0$ and $c' = -k(T) < 0$ at $c = 1$, so $[0, 1]$ is invariant for $c$;
