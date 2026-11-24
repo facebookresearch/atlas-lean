@@ -30,7 +30,10 @@ public import Mathlib.Data.Nat.Factorial.Basic
 public import Mathlib.Order.Interval.Finset.Nat
 public import MathlibExt.Combinatorics.Enumerative.StirlingFirstHigherColumns
 public import MathlibExt.Combinatorics.Enumerative.StirlingFirstShiftedExpansion
+public import MathlibExt.Combinatorics.Enumerative.StirlingFirstSmallerRows
 public import MathlibExt.Combinatorics.Enumerative.StirlingSecondAlternatingRowSum
+public import MathlibExt.Combinatorics.Enumerative.StirlingSecondSignedBinomialTransform
+public import MathlibExt.Combinatorics.Enumerative.StirlingSecondSmallerRows
 
 set_option autoImplicit false
 
@@ -39,36 +42,6 @@ set_option autoImplicit false
 open scoped BigOperators
 
 namespace MathlibExt.Combinatorics.Enumerative.StirlingIdentitiesWanted
-
-/-- **Lee's alternating expansion of Stirling numbers of the second kind.** Write $S(n, k)$ for
-the Stirling number of the second kind, the number of partitions of an $n$-element set into $k$
-nonempty blocks. For natural numbers $m \le n$, the following identity of integers holds:
-$$S(n, m) = \sum_{k=m}^{n} (-1)^{k-m} \binom{n}{k}\, m^{n-k}\, S(k, m).$$
-
-Source: Kwankyu Lee, "Some New Identities for Stirling Numbers", Theorem 2
-(TeX label `thm:kscasc`). -/
-theorem_wanted stirlingSecond_eq_sum_choose_pow {m n : ℕ} (hmn : m ≤ n) :
-    (Nat.stirlingSecond n m : ℤ) =
-      ∑ k ∈ Finset.Icc m n,
-        (Nat.choose n k : ℤ) * (Nat.stirlingSecond k m : ℤ) *
-          (m : ℤ) ^ (n - k) * (-1 : ℤ) ^ (k - m)
-
-/-- **Lee's identity for Stirling numbers of the second kind from smaller rows.** Write $S(n, k)$
-for the Stirling number of the second kind, the number of partitions of an $n$-element set into
-$k$ nonempty blocks. For natural numbers $k$ and $n$ with $k \ge 1$ and $n \ge k + 1$, the
-following identity of integers holds:
-$$(n - k)\, S(n, k) = \sum_{j=2}^{n-k+1} (-1)^j \binom{n}{j}\, S(n-j+1, k).$$
-
-This is Lee's Theorem 4 with the denominator $n - k$ cleared.
-
-Source: Kwankyu Lee, "Some New Identities for Stirling Numbers", Theorem 4
-(TeX label `thm:mxcnd`). -/
-theorem_wanted stirlingSecond_mul_sub_eq_sum_choose_alternating
-    {k n : ℕ} (hk : 1 ≤ k) (hkn : k + 1 ≤ n) :
-    ((n : ℤ) - k) * (Nat.stirlingSecond n k : ℤ) =
-      ∑ j ∈ Finset.Icc 2 (n - k + 1),
-        (Nat.choose n j : ℤ) * (Nat.stirlingSecond (n - j + 1) k : ℤ) *
-          (-1 : ℤ) ^ j
 
 /-- **Lee's identity for Stirling numbers of the second kind from higher columns.** Write
 $S(n, k)$ for the Stirling number of the second kind, the number of partitions of an $n$-element
@@ -88,22 +61,5 @@ theorem_wanted stirlingSecond_mul_sub_eq_sum_factorial_negChoose
         (Nat.factorial (j - 2) : ℤ) *
           ((-1 : ℤ) ^ j * (Nat.choose (k + j - 1) j : ℤ)) *
           (Nat.stirlingSecond n (k + j - 1) : ℤ)
-
-/-- **Lee's identity for Stirling numbers of the first kind from smaller rows.** Write $c(n, k)$
-for the unsigned Stirling number of the first kind, the number of permutations of $n$ elements
-with exactly $k$ cycles. For natural numbers $k$ and $n$ with $k \ge 1$ and $n \ge k + 1$, the
-following identity of integers holds:
-$$(n - k)\, c(n, k) = \sum_{j=2}^{n-k+1} \binom{n}{j}\, (j-2)!\, c(n-j+1, k).$$
-
-This is Lee's Theorem 11 with the denominator $n - k$ cleared.
-
-Source: Kwankyu Lee, "Some New Identities for Stirling Numbers", Theorem 11
-(TeX label `thm:mdkda`). -/
-theorem_wanted stirlingFirst_mul_sub_eq_sum_choose_factorial
-    {k n : ℕ} (hk : 1 ≤ k) (hkn : k + 1 ≤ n) :
-    ((n : ℤ) - k) * (Nat.stirlingFirst n k : ℤ) =
-      ∑ j ∈ Finset.Icc 2 (n - k + 1),
-        (Nat.choose n j : ℤ) * (Nat.stirlingFirst (n - j + 1) k : ℤ) *
-          (Nat.factorial (j - 2) : ℤ)
 
 end MathlibExt.Combinatorics.Enumerative.StirlingIdentitiesWanted

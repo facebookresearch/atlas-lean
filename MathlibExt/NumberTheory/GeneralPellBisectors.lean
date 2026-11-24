@@ -11,8 +11,11 @@ module
 public import Mathlib.Algebra.Order.Ring.Abs
 public import Mathlib.Algebra.Squarefree.Basic
 public import Mathlib.Analysis.Real.Sqrt
+public import Mathlib.Data.Nat.Prime.Basic
+public import Mathlib.NumberTheory.Zsqrtd.Basic
 import Mathlib.Algebra.Group.Int.Even
 import Mathlib.Data.Int.ModEq
+import Mathlib.RingTheory.Coprime.Lemmas
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.LinearCombination
 import MathlibExt.NumberTheory.SquareModEight
@@ -33,6 +36,8 @@ Modulo `8`, squares are `0`, `1`, or `4`. If `x² ≡ 5 y² (mod 8)`, both squar
 Multiplying `x + y √d` by a solution `a + b √d` of `a² - d b² = -1` negates the value of
 `x² - d y²` and keeps the first coordinate coprime to `d` times the second, so strictly primitive
 solutions of `x² - d y² = z` give strictly primitive solutions of `x² - d y² = -z`.
+Products of strictly primitive solutions whose absolute norms are powers of distinct primes
+are strictly primitive as well.
 -/
 
 @[expose] public section
@@ -156,5 +161,60 @@ theorem strictlyPrimitive_neg (d : ℤ) (hd : 1 < d) (hsq : Squarefree d) (z : �
   refine ⟨x * a + d * y * b, x * b + y * a, ⟨-u * a + v * d * b, u * b - v * a, ?_⟩, ?_⟩
   · linear_combination (-(a ^ 2 - d * b ^ 2)) * huv - hab
   · linear_combination (x ^ 2 - d * y ^ 2) * hab
+
+-- Multiplying by the conjugate of `b` recovers the coordinates of `a` scaled by `b.norm`.
+-- The Bézout identity for `a` then expresses `b.norm` in terms of the product's coordinates.
+private theorem dvd_norm_of_dvd_mul_coords {d k : ℤ} {a b : ℤ√d}
+    (ha : IsCoprime a.re (d * a.im)) (hre : k ∣ (a * b).re) (him : k ∣ d * (a * b).im) :
+    k ∣ b.norm := by
+  obtain ⟨u, v, huv⟩ := ha
+  calc
+    k ∣ (u * b.re - v * d * b.im) * (a * b).re +
+        (v * b.re - u * b.im) * (d * (a * b).im) :=
+      dvd_add (dvd_mul_of_dvd_right hre _) (dvd_mul_of_dvd_right him _)
+    _ = b.norm := by
+      rw [Zsqrtd.re_mul, Zsqrtd.im_mul, Zsqrtd.norm_def]
+      linear_combination (b.re * b.re - d * b.im * b.im) * huv
+
+private theorem strictlyPrimitive_mul_of_coprime_norms {d : ℤ} {a b : ℤ√d}
+    (ha : IsCoprime a.re (d * a.im)) (hb : IsCoprime b.re (d * b.im))
+    (hn : IsCoprime a.norm b.norm) : IsCoprime (a * b).re (d * (a * b).im) := by
+  apply IsRelPrime.isCoprime
+  intro k hre him
+  apply hn.isUnit_of_dvd' _ (dvd_norm_of_dvd_mul_coords ha hre him)
+  rw [mul_comm a b] at hre him
+  exact dvd_norm_of_dvd_mul_coords hb hre him
+
+-- The coordinate argument works for all integers `d`.
+set_option linter.unusedVariables false in
+/-- **Products of strictly primitive solutions.** Let $d > 1$ be a square-free integer. Write
+elements of $\mathbb{Z}[\sqrt{d}]$ as $u + v\sqrt{d}$ with integers $u, v$, and let
+$N(u + v\sqrt{d}) = u^2 - d v^2$ be the norm. Let $p_1, \dots, p_r$ be distinct primes and
+$n_1, \dots, n_r$ natural numbers, and suppose that each $a_i = u_i + v_i\sqrt{d}$ satisfies
+$|N(a_i)| = p_i^{n_i}$ with $u_i$ and $d v_i$ coprime. Then $a = a_1 \cdots a_r = u + v\sqrt{d}$
+satisfies $|N(a)| = p_1^{n_1} \cdots p_r^{n_r}$ with $u$ and $d v$ coprime; that is, $a$ gives a
+strictly primitive solution of $|x^2 - d y^2| = p_1^{n_1} \cdots p_r^{n_r}$.
+
+The sign $\pm$ in the source's equation (13) is dropped; negation preserves both conclusions.
+
+Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
+Rational Slopes*, INTEGERS 24 (2024), Article A111, Proposition 3(a)
+(`integers-2024-A111-prop-3`). -/
+theorem strictlyPrimitive_prod (d : ℤ) (hd : 1 < d) (hsq : Squarefree d) {r : ℕ}
+    (p : Fin r → ℕ) (hp : ∀ i, (p i).Prime) (hinj : Function.Injective p) (n : Fin r → ℕ)
+    (a : Fin r → ℤ√d) (ha : ∀ i, IsCoprime (a i).re (d * (a i).im))
+    (hN : ∀ i, |(a i).norm| = (p i : ℤ) ^ n i) :
+    IsCoprime (∏ i, a i).re (d * (∏ i, a i).im) ∧ |(∏ i, a i).norm| = ∏ i, (p i : ℤ) ^ n i := by
+  suffices ∀ s : Finset (Fin r), IsCoprime (∏ i ∈ s, a i).re (d * (∏ i ∈ s, a i).im) ∧
+      |(∏ i ∈ s, a i).norm| = ∏ i ∈ s, (p i : ℤ) ^ n i from this Finset.univ
+  intro s
+  induction s using Finset.induction_on with
+  | empty => simp [isCoprime_one_left]
+  | insert i s hi ih =>
+    rw [Finset.prod_insert hi, Finset.prod_insert hi, Zsqrtd.norm_mul, abs_mul, hN, ih.2]
+    refine ⟨strictlyPrimitive_mul_of_coprime_norms (ha i) ih.1 ?_, rfl⟩
+    rw [← IsCoprime.abs_abs_iff, hN, ih.2]
+    refine IsCoprime.prod_right fun j hj ↦ IsCoprime.pow ?_
+    exact ((Nat.coprime_primes (hp i) (hp j)).mpr (hinj.ne fun h ↦ hi (h ▸ hj))).isCoprime
 
 end MetaMathlibExt

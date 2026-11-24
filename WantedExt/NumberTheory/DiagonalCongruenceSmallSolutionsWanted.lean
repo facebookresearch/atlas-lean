@@ -15,6 +15,7 @@ public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.Analysis.Asymptotics.Defs
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.NumberTheory.SmoothNumbers
+public import MathlibExt.NumberTheory.DiagonalCongruenceSolvability
 
 namespace MetaMathlibExt
 
@@ -43,20 +44,6 @@ bound, and a prime `q` satisfies `q ≤ B^η` iff `q < ⌊B^η⌋₊ + 1`). The 
 `s_0(k)` of Theorem 2 is `5` for `k = 2`, `8` for `k = 3`, and
 `k (log k + log log k + 2 + g k)` for `k ≥ 4`, where `g k = O(log log k / log k)`; the
 function `g` is existentially quantified in each statement. -/
-
-/-- **Diagonal congruences in $k$ variables are solvable.** Let $p$ be a prime and $k \ge 1$. For
-all integers $a_1, \dots, a_k$ not divisible by $p$ and every integer $c$, there are integers
-$x_1, \dots, x_k$ with $a_1 x_1^k + \dots + a_k x_k^k \equiv c \pmod p$.
-
-Equivalently, $\Gamma(k, p) \le k$, where $\Gamma(k, p)$ is the least $n$ such that every such
-congruence in $n$ variables is solvable; extra variables can be set to $0$.
-
-Source: Todd Cochrane, Misty Ostergaard, Craig Spencer, and Kathryn Wilson, *A Note on Small
-Solutions to Diagonal Congruences*, INTEGERS 26 (2026), Article A14, Lemma 2
-(`integers-2026-A14-lem-2`). -/
-public theorem_wanted diagonal_congruence_solvable_of_card_eq_exponent (p : ℕ) [Fact p.Prime]
-    {k : ℕ} (hk : 1 ≤ k) (a : Fin k → ℤ) (ha : ∀ i, ¬ (p : ℤ) ∣ a i) (c : ℤ) :
-    ∃ x : Fin k → ℤ, ∑ i, a i * x i ^ k ≡ c [ZMOD p]
 
 /-- **Smooth solutions of diagonal equations (Chow–Lindqvist–Prendiville).** For a natural number
 $N$ and real $\eta > 0$, let $A(N, N^\eta)$ be the set of integers $1 \le x \le N$ all of whose

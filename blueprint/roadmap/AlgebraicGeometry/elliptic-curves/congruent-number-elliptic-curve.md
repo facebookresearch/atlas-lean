@@ -8,11 +8,15 @@ Given positive rationals $a, b, c$ with $a^2 + b^2 = c^2$ and $ab = 2n$, set $x 
 
 ## Expansion
 
-A good expansion of this node links each prerequisite of its statement and proof: Irrationality of $\sqrt{2}$; Elliptic curve in Weierstrass form over a field of characteristic not 2 or 3.
+A good expansion of this node links each prerequisite of its statement: Elliptic curve in Weierstrass form over a field of characteristic not 2 or 3.
 
 ## Depends on
 
 - [Congruent number: a positive integer that is the area of a right triangle with rational sides](congruent-number.md)
+
+## Proof depends on
+
+- [The square root of 2 is irrational](../../NumberTheory/diophantine-approximation/transcendence-irrationality/sqrt-two-irrational.md)
 
 ## Sources
 

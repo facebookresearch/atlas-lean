@@ -145,34 +145,6 @@ public theorem_wanted iteratedDeriv_arcsin_div_one_sub_doubleFactorial (n : ℕ)
       n.factorial * ∑ j ∈ Finset.range ((n - 2) / 2 + 1),
         ((2 * j).doubleFactorial : ℝ) / ((2 * j + 1).doubleFactorial * (2 * j + 2)))
 
-/-- **Half-period sine sum for odd modulus.** Let $N$ be an odd natural number. For every
-natural number $q$, $\sum_{\ell=1}^{(N-1)/2} \sin(2\pi q \ell / N)$ equals
-$-\frac{1}{2} \tan\frac{q\pi}{2N}$ if $q$ is even and $\frac{1}{2} \cot\frac{q\pi}{2N}$ if $q$ is
-odd.
-
-The paper also assumes $q > 0$; for $q = 0$ both sides are $0$.
-
-Source: Muhammad Adam Dombrowski and Gregory Dresden, *Areas Between Cosines*,
-Journal of Integer Sequences 28 (2025), Article 25.2.3, Lemma 6
-(`jis-2025-25.2.3-lem-6`). -/
-public theorem_wanted sum_sin_two_pi_mul_div_of_odd {N : ℕ} (hN : Odd N) (q : ℕ) :
-    ∑ l ∈ Finset.Icc 1 ((N - 1) / 2), sin (q * l * 2 * π / N) =
-      if Even q then -(1 / 2) * tan (q * π / (2 * N)) else 1 / 2 * cot (q * π / (2 * N))
-
-/-- **Half-step sine sum for even modulus and even multiplier.** Let $N$ be a positive even
-natural number and $q$ an even natural number. Then $\sum_{\ell=1}^{N/2} \sin(q \ell \pi / N)$
-equals $0$ if $q \equiv 0 \pmod 4$ and $\cot(q\pi / (2N))$ if $q \equiv 2 \pmod 4$.
-
-The paper also assumes $q > 0$; that hypothesis is dropped here.
-
-Source: Muhammad Adam Dombrowski and Gregory Dresden, *Areas Between Cosines*,
-Journal of Integer Sequences 28 (2025), Article 25.2.3, Lemma 7
-(`jis-2025-25.2.3-lem-7`). -/
-public theorem_wanted sum_sin_pi_mul_div_of_even_of_even {N q : ℕ} (hN : 0 < N)
-    (hNe : Even N) (hq : Even q) :
-    ∑ l ∈ Finset.Icc 1 (N / 2), sin (q * l * π / N) =
-      if q % 4 = 0 then 0 else cot (q * π / (2 * N))
-
 /-- **The cotangent limit $4/x$.** For every nonzero real number $x$, as $k \to \infty$ through the
 natural numbers,
 $$\left(\frac{1}{k} - 1\right)\cot\frac{x}{k-1} + \left(\frac{1}{k} + 1\right)\cot\frac{x}{k+1}

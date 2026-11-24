@@ -30,7 +30,8 @@ open Matrix
 
 open SecondWelfareTheorem (consumptionSet)
 
-/-- Each coordinate of a budget-feasible bundle is bounded by `|w| / p l`. -/
+/-- With strictly positive prices, each coordinate of a budget-feasible bundle in `ℝ^L_+` is bounded
+by `|w| / p l`. -/
 theorem coord_le_of_mem_budgetSet_consumptionSet {L : Type*} [Fintype L] {p : L → ℝ}
     {w : ℝ} {x : L → ℝ} (hp : ∀ l, 0 < p l)
     (hx : x ∈ budgetSet (consumptionSet L) p w) (l : L) : x l ≤ |w| / p l := by

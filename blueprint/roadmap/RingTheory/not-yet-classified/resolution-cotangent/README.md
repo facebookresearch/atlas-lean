@@ -1,0 +1,16 @@
+# Resolution Cotangent
+
+- [Resolution Augmentation Hom](resolution-augmentation-hom.md)
+- [Resolution Augmentation Hom comp of over](resolution-augmentation-hom-comp-of-over.md)
+- [Resolution Augmentation Hom naturality](resolution-augmentation-hom-naturality.md)
+- [Resolution Cotangent Term](resolution-cotangent-term.md)
+- [Resolution Cotangent Term Differential](resolution-cotangent-term-differential.md)
+- [Resolution Cotangent Simplicial Module Data](resolution-cotangent-simplicial-module-d.md)
+- [Resolution Cotangent Push Adjoint](resolution-cotangent-push-adjoint.md)
+- [Resolution Cotangent Push](resolution-cotangent-push.md)
+- [Resolution Cotangent Push D](resolution-cotangent-push-d.md)
+- [Resolution Cotangent Map](resolution-cotangent-map.md)
+- [Resolution Cotangent Map D](resolution-cotangent-map-d.md)
+- [Resolution Cotangent Term hom ext](resolution-cotangent-term-hom-ext.md)
+- [Resolution Cotangent Simplicial Module](resolution-cotangent-simplicial-module.md)
+- [Resolution Cotangent Complex](resolution-cotangent-complex.md)

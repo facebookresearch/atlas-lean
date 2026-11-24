@@ -28,7 +28,7 @@ example (P : FreyPackage) :
 example (P : FreyPackage) : (1 : ℤ) ∣ P.freyCurveInt.c₄ := one_dvd _
 
 open FreyPackage in
-theorem exactSource (P : FreyPackage) {q : ℕ} [Fact q.Prime]
+private theorem exactSource (P : FreyPackage) {q : ℕ} [Fact q.Prime]
     (hq2 : q ≠ 2) : P.freyCurve.IsPeuRamifieeAt P.p q :=
   FreyCurve.isPeuRamifieeAt_odd_of_integralForm P hq2
 
