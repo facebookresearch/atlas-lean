@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.Ring.Parity
-public import Mathlib.Data.Fin.Tuple.NatAntidiagonal
+public import MathlibExt.Combinatorics.Enumerative.ArndtNegativeEven
 import Mathlib.Algebra.BigOperators.Group.Finset.Sigma
 import Mathlib.RingTheory.PowerSeries.Basic
 import Mathlib.Tactic.LinearCombination
@@ -18,10 +18,10 @@ import Mathlib.Tactic.Ring
 /-!
 # Compositions with parity-restricted large parts
 
-For each of the two part restrictions, splitting off the first part relates the generating
-series of compositions to the indicator series of allowed parts. Subtracting the indicator
-shifted by two leaves just the contributions at 1, 2 and the first forbidden part. This gives a
-generating-function proof of the recurrences, independent of the Arndt composition identities.
+Splitting off the first part relates the generating series of compositions into even or small
+odd parts to the indicator series of their allowed parts. For compositions into odd or small
+even parts, the recurrence follows from the negative-even-shift identity and the generalized
+Arndt count recurrence.
 -/
 
 namespace MetaMathlibExt
@@ -165,16 +165,6 @@ private lemma restrictedCount_congr {P Q : ℕ → Prop} [DecidablePred P] [Deci
 
 @[expose] public section
 
-/-- **Compositions into odd or small even parts.** For natural numbers $k$ and $n$, $c^{2k}_o(n)$
-is the number of compositions of $n$, with any number of parts, in which every part is odd or at
-most $2k$. For $k = 0$ these are De Morgan's compositions of $n$ into odd parts.
-
-Source: Brian Hopkins and Aram Tangboonduangjit, *Arndt and De Morgan Compositions*, INTEGERS 26
-(2026), Article A64, Definitions 2 and 5. -/
-def oddOrSmallEvenCompositionCount (k n : ℕ) : ℕ :=
-  ∑ m ∈ Finset.range (n + 1), ((Finset.Nat.antidiagonalTuple m n).filter fun c =>
-    ∀ i, 0 < c i ∧ (Odd (c i) ∨ c i ≤ 2 * k)).card
-
 /-- **Compositions into even or small odd parts.** For natural numbers $k$ and $n$,
 $c^{2k+1}_e(n)$ is the number of compositions of $n$ (sequences of positive integers of any
 length, including the empty one, that sum to $n$) in which every part is even or at most
@@ -185,14 +175,6 @@ Source: Brian Hopkins and Aram Tangboonduangjit, *Arndt and De Morgan Compositio
 def evenOrSmallOddCompositionCount (k n : ℕ) : ℕ :=
   ∑ m ∈ Finset.range (n + 1), ((Finset.Nat.antidiagonalTuple m n).filter fun c =>
     ∀ i, 0 < c i ∧ (Even (c i) ∨ c i ≤ 2 * k + 1)).card
-
-private lemma oddOrSmallEven_eq (k n : ℕ) :
-    oddOrSmallEvenCompositionCount k n = restrictedCount (allowed (2 * k + 2)) n := by
-  change restrictedCount (fun a ↦ 0 < a ∧ (Odd a ∨ a ≤ 2 * k)) n = _
-  apply restrictedCount_congr
-  intro a
-  rw [allowed, Nat.odd_iff]
-  omega
 
 private lemma evenOrSmallOdd_eq (k n : ℕ) :
     evenOrSmallOddCompositionCount k n = restrictedCount (allowed (2 * k + 3)) n := by
@@ -224,12 +206,12 @@ public theorem evenOrSmallOdd_oddOrSmallEven_recurrence (k n : ℕ) (hk : 1 ≤ 
       (oddOrSmallEvenCompositionCount k n : ℤ) =
         oddOrSmallEvenCompositionCount k (n - 1) + 2 * oddOrSmallEvenCompositionCount k (n - 2) -
           if 2 * k + 2 ≤ n then (oddOrSmallEvenCompositionCount k (n - 2 - 2 * k) : ℤ) else 0 := by
-  simp only [evenOrSmallOdd_eq, oddOrSmallEven_eq]
   constructor
-  · rw [show n - 3 - 2 * k = n - (2 * k + 3) by omega]
+  · simp only [evenOrSmallOdd_eq]
+    rw [show n - 3 - 2 * k = n - (2 * k + 3) by omega]
     exact restrictedCount_recurrence (2 * k + 3) n (by omega) hn
-  · rw [show n - 2 - 2 * k = n - (2 * k + 2) by omega]
-    exact restrictedCount_recurrence (2 * k + 2) n (by omega) hn
+  · have h (m : ℕ) := kArndtTotalCount_neg_even k m hk
+    simpa only [Nat.cast_mul, Nat.cast_ofNat, h] using kArndtTotalCount_recurrence.1 (2 * k) n hn
 
 end
 
