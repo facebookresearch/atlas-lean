@@ -14,4 +14,4 @@ bounded variances the strong law of large numbers still holds.
 
 ## Sources
 
-- S. Ulam, Problem 17 of the Scottish Book. Since only pairwise independence is assumed, the proof uses the strong law of large numbers for pairwise uncorrelated variables with bounded variances (Rajchman), not Kolmogorov's strong law for independent variables.
+- S. Ulam, Problem 17 of the Scottish Book. Rajchman's strong law for pairwise uncorrelated variables with uniformly bounded variances gives almost-sure convergence of the centered averages. Alternatively, convergence in measure from variance additivity and Chebyshev's inequality, followed by an almost-sure subsequence argument, suffices for the converse.

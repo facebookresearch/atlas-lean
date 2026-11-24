@@ -57,7 +57,8 @@ no claim about real landscapes is made.
 namespace EarthScience
 
 set_option linter.unusedVariables false in
-/-- Steady diffusive hillslope profile: `z(x) = U*(L^2 - x^2)/(2*D)`. -/
+/-- Steady diffusive hillslope profile: for `D > 0`, `L > 0`, `U ≥ 0`, the
+profile `z(x) = U*(L^2 - x^2)/(2*D)` vanishes at `x = L` and `x = -L`. -/
 theorem hillslope_profile_boundary {D L U : ℝ} (hD : 0 < D) (hL : 0 < L) (hU : 0 ≤ U) :
     (U * (L ^ 2 - L ^ 2) / (2 * D) = 0) ∧
     (U * (L ^ 2 - (-L) ^ 2) / (2 * D) = 0) := by
@@ -70,7 +71,8 @@ theorem hillslope_profile_boundary {D L U : ℝ} (hD : 0 < D) (hL : 0 < L) (hU :
     simp
 
 set_option linter.unusedVariables false in
-/-- The profile has derivative `-U*x/D` at every `x`. -/
+/-- For `D > 0`, `L > 0`, `U ≥ 0`, the profile `z(x) = U*(L^2 - x^2)/(2*D)`
+has derivative `-U*x/D` at every `x`. -/
 theorem hillslope_profile_hasDerivAt {D L U : ℝ} (hD : 0 < D) (hL : 0 < L) (hU : 0 ≤ U) (x : ℝ) :
     HasDerivAt (fun x => U * (L ^ 2 - x ^ 2) / (2 * D)) (-U * x / D) x := by
   have hD' : D ≠ 0 := ne_of_gt hD
@@ -90,8 +92,9 @@ theorem hillslope_profile_hasDerivAt {D L U : ℝ} (hD : 0 < D) (hL : 0 < L) (hU
   exact hdiv
 
 set_option linter.unusedVariables false in
-/-- The actual profile has second derivative `-U/D` at every `x`, so
-`U + D * z''(x) = 0`: the profile is steady for `z_t = U + D*z_xx`. -/
+/-- For `D > 0`, `L > 0`, `U ≥ 0`, the actual profile has second derivative
+`-U/D` at every `x`, so `U + D * z''(x) = 0`: the profile is steady for
+`z_t = U + D*z_xx`. -/
 theorem hillslope_profile_steady {D L U : ℝ} (hD : 0 < D) (hL : 0 < L) (hU : 0 ≤ U) (x : ℝ) :
     iteratedDeriv 2 (fun x => U * (L ^ 2 - x ^ 2) / (2 * D)) x = -U / D ∧
       U + D * iteratedDeriv 2 (fun x => U * (L ^ 2 - x ^ 2) / (2 * D)) x = 0 := by

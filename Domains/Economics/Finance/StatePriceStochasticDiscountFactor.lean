@@ -47,9 +47,9 @@ namespace MathlibExt.Probability.Finance.StatePriceStochasticDiscountFactor
 
 open MathlibExt.Probability.FiniteProbability
 
-/-- The stochastic discount factor induced by the state-price vector `ψ` and the physical
-weights `P`: `m ω = ψ ω / P ω`. Requires `P ω ≠ 0` to be meaningful; the theorems below
-assume `0 < P ω`. -/
+/-- The stochastic discount factor induced by the state-price vector `ψ` and the physical weights
+`P`: `m ω = ψ ω / P ω`. Requires `P ω ≠ 0` to be meaningful; the theorems below assume `0 < P ω`.
+With the convention `x / 0 = 0`, `m(ω) = 0` in a state with `P(ω) = 0`. -/
 noncomputable def stochasticDiscountFactor {Ω : Type*} (ψ P : Ω → ℝ) (ω : Ω) : ℝ :=
   ψ ω / P ω
 
