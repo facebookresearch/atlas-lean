@@ -18,6 +18,7 @@ public import MathlibExt.Combinatorics.Enumerative.AlternatingCentralBinomialSum
 public import MathlibExt.Combinatorics.Enumerative.CentralBinomialBernstein
 public import MathlibExt.Combinatorics.Enumerative.CosinePowerIntegral
 public import MathlibExt.Combinatorics.Enumerative.ParityWeightedBinomialSum
+public import MathlibExt.Combinatorics.KnuthEvenBinomialReciprocal
 
 /-!
 # Knuth's old sum, generalizations and related sums
@@ -965,14 +966,6 @@ Sums*, INTEGERS 26 (2026), Article A19, Proposition 4 (`integers-2026-A19-prop-4
 public theorem_wanted sum_choose_even_centralBinom_div_four_pow (n : ℕ) :
     ∑ k ∈ range (n / 2 + 1), (n.choose (2 * k) : ℚ) / 2 ^ (2 * k) * ((2 * k).choose k : ℚ) =
       ((2 * n).choose n : ℚ) / 2 ^ n
-
-/-- **Even-index binomial sum with odd reciprocal weights.** For every natural number $n$,
-$$\sum_{k=0}^{\lfloor n/2 \rfloor} \frac{1}{2k+1} \binom{n}{2k} = \frac{2^n}{n+1}.$$
-
-Source: Kunle Adegoke, *A Short Proof of Knuth's Old Sum, Generalizations and Related
-Sums*, INTEGERS 26 (2026), Article A19, Proposition 4 (`integers-2026-A19-prop-4`). -/
-public theorem_wanted sum_choose_even_div_two_mul_add_one (n : ℕ) :
-    ∑ k ∈ range (n / 2 + 1), (n.choose (2 * k) : ℚ) / (2 * k + 1) = 2 ^ n / (n + 1)
 
 /-- **Even-index binomial sum of weighted central binomial coefficients.** Write
 $C_m = \binom{2m}{m}/(m+1)$ for the $m$-th Catalan number. For every natural number $n$,

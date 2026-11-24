@@ -531,7 +531,8 @@ class SnapshotDependencyTests(unittest.TestCase):
             setup = root / "setup.json"
             setup.write_text("{}\n")
             output = root / "not-created-output"
-            with patch.object(optimizer.sys, "platform", "darwin"):
+            with recovery.isolated_ancestor_metadata(root), \
+                    patch.object(optimizer.sys, "platform", "darwin"):
                 with optimizer.guarded_inventory_components({setup}, mutable_roots={output}):
                     self.assertEqual(optimizer.read_json(setup), {})
             self.assertFalse(output.exists())
