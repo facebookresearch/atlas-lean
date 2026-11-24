@@ -46,6 +46,7 @@ even modulus with a shift whose representative `a.val` is odd.
   the `n × m` grid are fixed by the identity map of the cells.
 * `MetaMathlibExt.squareGrid_identity`: when `σ ^ 1 = 1`, all `|T| ^ (n ^ 2)` tilings of the
   `n × n` grid are fixed by the identity map of the cells.
+* `MetaMathlibExt.squareGrid_r2_even` counts tilings fixed by a half-turn of an even square grid.
 * `MetaMathlibExt.rectangularTorus_identity`: the double divisor sum for the identity tile action
   on the rectangular torus, grouped by the orders of the two shift coordinates.
 * `MetaMathlibExt.reflection_shift_solutions_odd`: for odd `n`, the solutions of
@@ -78,6 +79,16 @@ quotients `-(j + 1)` and `k - (j + 1)`, and both residues solve the equation bec
 -/
 
 namespace MetaMathlibExt
+
+/-- **Cell map of the half-turn r².** For natural numbers $n$ and $m$, the half-turn $r^2$ acts
+on the pairs $(x, y) \in \mathbb{Z}/n\mathbb{Z} \times \mathbb{Z}/m\mathbb{Z}$ (for $n, m \ge 1$,
+the cells of the $n \times m$ grid) by $(x, y) \mapsto (-1 - x, -1 - y)$, that is,
+$(x, y) \mapsto (n - 1 - x, m - 1 - y)$ with the coordinates taken modulo $n$ and $m$.
+
+Source: Peter Kagey, William Keehn, *Counting Tilings of the n × m Grid, Cylinder, and Torus*,
+        Journal of Integer Sequences 27 (2024), Article 24.6.1, Setting. -/
+@[expose] public def cellR2 (n m : ℕ) (c : ZMod n × ZMod m) : ZMod n × ZMod m :=
+  (-1 - c.1, -1 - c.2)
 
 /-- **Number of fixed tilings.** Let $\alpha$ (the cells) and $T$ (the tile designs) be finite sets,
 let $\varphi : \alpha \to \alpha$ be a map and let $\sigma$ be a permutation of $T$. The number of
@@ -147,6 +158,67 @@ public theorem squareGrid_identity {T : Type*} [Fintype T] [DecidableEq T]
       Fintype.card T ^ (n ^ 2) := by
   -- The square grid is the rectangular grid with `m = n`, which has `n * n = n ^ 2` cells.
   rw [rectangularGrid_identity n n σ hσ, sq]
+
+namespace squareGrid_r2_even
+
+/-- Restriction to one representative of each pair determines an equivariant tiling. -/
+private def restrictEquiv {α T : Type*} (φ : α → α) (hφ : Function.Involutive φ)
+    (p : α → Prop) [DecidablePred p] (hp : ∀ c, p (φ c) ↔ ¬p c)
+    (σ : Equiv.Perm T) (hσ : Function.Involutive σ) :
+    {F : α → T // ∀ c, F (φ c) = σ (F c)} ≃ (Subtype p → T) := by
+  let extend (f : Subtype p → T) (c : α) : T :=
+    if h : p c then f ⟨c, h⟩ else σ (f ⟨φ c, (hp c).2 h⟩)
+  refine
+    { toFun := fun F c => F.1 c
+      invFun := fun f => ⟨extend f, ?_⟩
+      left_inv := ?_
+      right_inv := ?_ }
+  · intro c
+    by_cases h : p c <;> simp [extend, hp, h, hφ c, hσ _]
+  · intro F
+    apply Subtype.ext
+    funext c
+    by_cases h : p c
+    · simp [extend, h]
+    · simpa [extend, h, hφ c] using (F.2 (φ c)).symm
+  · intro f
+    funext c
+    simp [extend, c.property]
+
+end squareGrid_r2_even
+
+/-- **Square-grid tilings fixed by the half-turn for even $n$.** Let $n$ be an even positive
+integer, let $T$ be a finite set and let $\sigma$ be a permutation of $T$ with $\sigma^2 = 1$.
+Let $r^2$ be the half-turn of the grid $(\mathbb{Z}/n\mathbb{Z})^2$ given by
+$r^2(x, y) = (-1 - x, -1 - y)$. Then the number of maps $F : (\mathbb{Z}/n\mathbb{Z})^2 \to T$
+with $F(r^2(c)) = \sigma(F(c))$ for every cell $c$ is $|T|^{n^2/2}$.
+
+Source: Peter Kagey, William Keehn, *Counting Tilings of the n × m Grid, Cylinder, and Torus*,
+        Journal of Integer Sequences 27 (2024), Article 24.6.1, Theorem 24. -/
+public theorem squareGrid_r2_even {T : Type*} [Fintype T] [DecidableEq T]
+    (n : ℕ) [NeZero n] (σ : Equiv.Perm T) (hσ : σ ^ 2 = 1) (heven : Even n) :
+    fixedTilingCount (cellR2 n n) σ = Fintype.card T ^ (n ^ 2 / 2) := by
+  let φ := cellR2 n n
+  have hφ : Function.Involutive φ := fun c => by simp [φ, cellR2]
+  -- Reduction modulo two distinguishes one cell in each half-turn pair.
+  let parity := ZMod.castHom (even_iff_two_dvd.mp heven) (ZMod 2)
+  let evenColumn (c : ZMod n × ZMod n) := parity c.1 = 0
+  have hflip (c) : evenColumn (φ c) ↔ ¬evenColumn c := by
+    change parity (-1 - c.1) = 0 ↔ parity c.1 ≠ 0
+    rw [map_sub, map_neg, map_one]
+    exact (by decide : ∀ x : ZMod 2, -1 - x = 0 ↔ x ≠ 0) _
+  -- The half-turn bijects the odd-column cells with the even-column cells.
+  let e : {c // ¬evenColumn c} ≃ Subtype evenColumn :=
+    (hφ.toPerm φ).subtypeEquiv fun c => (hflip c).symm
+  have hcard : n ^ 2 - Fintype.card (Subtype evenColumn) = Fintype.card (Subtype evenColumn) := by
+    simpa only [Fintype.card_subtype_compl, Fintype.card_prod, ZMod.card, sq] using
+      Fintype.card_congr e
+  have htiles : Function.Involutive σ := fun t => by
+    simpa [sq] using DFunLike.congr_fun hσ t
+  calc
+    fixedTilingCount (cellR2 n n) σ = Fintype.card (Subtype evenColumn → T) :=
+      Fintype.card_congr (squareGrid_r2_even.restrictEquiv φ hφ evenColumn hflip σ htiles)
+    _ = _ := by rw [Fintype.card_fun, show Fintype.card (Subtype evenColumn) = n ^ 2 / 2 by omega]
 
 namespace rectangularTorus_identity
 

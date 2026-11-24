@@ -40,16 +40,6 @@ Source: Peter Kagey, William Keehn, *Counting Tilings of the n × m Grid, Cylind
 public def cellF (n m : ℕ) (c : ZMod n × ZMod m) : ZMod n × ZMod m :=
   (-1 - c.1, c.2)
 
-/-- **Cell map of the half-turn r².** For natural numbers $n$ and $m$, the half-turn $r^2$ acts
-on the pairs $(x, y) \in \mathbb{Z}/n\mathbb{Z} \times \mathbb{Z}/m\mathbb{Z}$ (for $n, m \ge 1$,
-the cells of the $n \times m$ grid) by $(x, y) \mapsto (-1 - x, -1 - y)$, that is,
-$(x, y) \mapsto (n - 1 - x, m - 1 - y)$ with the coordinates taken modulo $n$ and $m$.
-
-Source: Peter Kagey, William Keehn, *Counting Tilings of the n × m Grid, Cylinder, and Torus*,
-        Journal of Integer Sequences 27 (2024), Article 24.6.1, Setting. -/
-public def cellR2 (n m : ℕ) (c : ZMod n × ZMod m) : ZMod n × ZMod m :=
-  (-1 - c.1, -1 - c.2)
-
 /-- **Cell map of the reflection r²f.** For natural numbers $n$ and $m$, the reflection $r^2 f$
 acts on the pairs $(x, y) \in \mathbb{Z}/n\mathbb{Z} \times \mathbb{Z}/m\mathbb{Z}$ (for
 $n, m \ge 1$, the cells of the $n \times m$ grid) by $(x, y) \mapsto (x, -1 - y)$, that is,
@@ -311,18 +301,6 @@ public theorem_wanted rectangularGrid_r2f_odd {T : Type*} [Fintype T] [Decidable
 
 -- The case of the identity, `squareGrid_identity`, is proved in
 -- `MathlibExt.Combinatorics.Enumerative.GridCylinderTorusTilings`, which this module imports.
-
-/-- **Square-grid tilings fixed by the half-turn for even $n$.** Let $n$ be an even positive
-integer, let $T$ be a finite set and let $\sigma$ be a permutation of $T$ with $\sigma^2 = 1$.
-Let $r^2$ be the half-turn of the grid $(\mathbb{Z}/n\mathbb{Z})^2$ given by
-$r^2(x, y) = (-1 - x, -1 - y)$. Then the number of maps $F : (\mathbb{Z}/n\mathbb{Z})^2 \to T$
-with $F(r^2(c)) = \sigma(F(c))$ for every cell $c$ is $|T|^{n^2/2}$.
-
-Source: Peter Kagey, William Keehn, *Counting Tilings of the n × m Grid, Cylinder, and Torus*,
-        Journal of Integer Sequences 27 (2024), Article 24.6.1, Theorem 24. -/
-public theorem_wanted squareGrid_r2_even {T : Type*} [Fintype T] [DecidableEq T]
-    (n : ℕ) [NeZero n] (σ : Equiv.Perm T) (hσ : σ ^ 2 = 1) (heven : Even n) :
-    fixedTilingCount (cellR2 n n) σ = Fintype.card T ^ (n ^ 2 / 2)
 
 /-- **Square-grid tilings fixed by the half-turn for odd $n$.** Let $n$ be an odd positive
 integer, let $T$ be a finite set, let $\sigma$ be a permutation of $T$ with $\sigma^2 = 1$, and
