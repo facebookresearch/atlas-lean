@@ -308,8 +308,8 @@ theorem earthmover_le_transportCost {V : Type*} [Fintype V] {d : V → V → ℝ
   unfold earthmover
   exact ciInf_le hbdd ⟨π, hπ⟩
 
-/-- The expectation gap of a 1-Lipschitz score is bounded by the
-transport cost of any coupling. -/
+/-- The expectation gap of a `1`-Lipschitz score (`∀ x y, |f x - f y| ≤ d x y`)
+is bounded by the transport cost of any coupling. -/
 theorem bias_le_transportCost {V : Type*} [Fintype V] {d : V → V → ℝ}
     {S T f : V → ℝ} {π : V → V → ℝ} (hπ : IsCoupling S T π)
     (hf : ∀ x y, |f x - f y| ≤ d x y) :
@@ -368,7 +368,8 @@ theorem bias_le_transportCost {V : Type*} [Fintype V] {d : V → V → ℝ}
         intro y _
         exact mul_le_mul_of_nonneg_left (hf x y) (hπ_nonneg x y)
 
-/-- The score-gap bound against the earthmover value: the expectation
+/-- The score-gap bound against the earthmover value: for a
+`1`-Lipschitz score (`∀ x y, |f x - f y| ≤ d x y`), the expectation
 gap is below every coupling cost, hence below their infimum. -/
 theorem bias_le_earthmover {V : Type*} [Fintype V]
     {d : V → V → ℝ} {S T : {p : V → ℝ // IsDist p}} {f : V → ℝ}

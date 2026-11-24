@@ -70,8 +70,9 @@ noncomputable section
 
 open MathlibExt.Probability.FiniteTransport
 
-/-- Individual fairness as a Lipschitz condition: the total variation
-distance between the outcome distributions of any two individuals is at most
+/-- Individual fairness as a Lipschitz condition: every classifier row
+is a probability distribution, and the total variation distance
+between the outcome distributions of any two individuals is at most
 their task-metric distance. -/
 def IsLipschitzFair {V O : Type*} [Fintype O] (d : V → V → ℝ)
     (M : V → O → ℝ) : Prop :=
@@ -171,9 +172,10 @@ theorem isLipschitzFair_convexCombo {V O : Type*} [Fintype O]
     _ ≤ a * d x y + (1 - a) * d x y := add_le_add hle1 hle2
     _ = d x y := hfin
 
-/-- Classifier-level transport bound: for every coupling, the total
-variation distance between the induced outcome distributions is at most
-that coupling's transport cost. -/
+/-- Classifier-level transport bound: for an individually fair
+classifier and every coupling, the total variation distance between
+the induced outcome distributions is at most that coupling's
+transport cost. -/
 theorem tvDist_inducedDist_le_transportCost {V O : Type*} [Fintype V]
     [Fintype O] {d : V → V → ℝ} {M : V → O → ℝ} {S T : V → ℝ}
     {π : V → V → ℝ} (hM : IsLipschitzFair d M) (hπ : IsCoupling S T π) :
@@ -234,8 +236,9 @@ theorem tvDist_inducedDist_le_transportCost {V O : Type*} [Fintype V]
         exact mul_le_mul_of_nonneg_left (hM.2 x y) (hπ_nonneg x y)
 
 /-- **Classifier-level earthmover bound.** For an individually fair
-classifier, the total variation distance between the induced outcome
-distributions on two populations is at most their earthmover value. -/
+classifier and probability distributions `S` and `T` on individuals,
+the total variation distance between the induced outcome
+distributions is at most their earthmover value. -/
 theorem tvDist_inducedDist_le_earthmover {V O : Type*} [Fintype V]
     [Fintype O] {d : V → V → ℝ} {M : V → O → ℝ} {S T : V → ℝ}
     (hM : IsLipschitzFair d M) (hS : IsDist S) (hT : IsDist T) :
