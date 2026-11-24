@@ -2,7 +2,6 @@
 
 ## Approach to an equilibrium (`R < Vmax`)
 
-- [A nonnegative equilibrium forces the infusion rate below Vmax](lt-of-mm-rate-eq.md)
 - [The region below the equilibrium is invariant](le-of-initial-le.md)
 - [The region above the equilibrium is invariant](le-of-le-initial.md)
 - [The equilibrium is invariant](eq-of-initial-eq.md)
