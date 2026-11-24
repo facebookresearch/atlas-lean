@@ -13,6 +13,8 @@ public import Mathlib.Combinatorics.Hindman
 /-!
 # Ultrafilters in Ramsey families
 
+The ultrafilters contained in a Ramsey family form a closed set, and every nonempty closed
+set of ultrafilters arises this way.
 A Ramsey family of sets is invariant under left translation exactly when its ultrafilters
 form a left ideal under the ultrafilter product.
 -/
@@ -61,6 +63,53 @@ Source: De and Debnath, *Abundance of Arithmetic Progressions in CR-Sets*, INTEG
 theorem betaFamily_nonempty_sets :
     betaFamily {A : Set S | A.Nonempty} = Set.univ :=
   Set.eq_univ_of_forall fun _ _ hA => Ultrafilter.nonempty_of_mem hA
+
+/-- **Ultrafilters inside a Ramsey family form a closed set.** Let $F$ be a family of subsets of a
+set $S$ with the Ramsey property. Then the set $\beta(F)$ of ultrafilters on $S$ all of whose
+members lie in $F$ is closed in the space $\beta S$ of all ultrafilters on $S$.
+
+Source: De and Debnath, *Abundance of Arithmetic Progressions in CR-Sets*, INTEGERS
+25 (2025), Article A4, Theorem 3 (`integers-2025-A4-thm-3`). -/
+theorem isClosed_betaFamily {F : Set (Set S)} (_hF : IsRamseyFamily F) :
+    IsClosed (betaFamily F) := by
+  rw [← isOpen_compl_iff, isOpen_iff_forall_mem_open]
+  intro p hp
+  simp only [Set.mem_compl_iff, mem_betaFamily, not_forall] at hp
+  obtain ⟨A, hAp, hAF⟩ := hp
+  exact ⟨{q | A ∈ q}, fun q hAq hq => hAF (hq A hAq), ultrafilter_isOpen_basic A, hAp⟩
+
+/-- **Nonempty closed sets of ultrafilters come from Ramsey families.** Let $S$ be a set, let
+$\beta S$ be the space of ultrafilters on $S$, and let $K$ be a nonempty closed subset of
+$\beta S$. Let $\mathcal F_K$ be the collection of the sets $E \subseteq S$ with $E \in p$ for
+some $p \in K$. Then $\mathcal F_K$ is a family with the Ramsey property, and
+$\beta(\mathcal F_K) = K$, where $\beta(\mathcal F_K)$ is the set of ultrafilters on $S$ all of
+whose members lie in $\mathcal F_K$.
+
+The paper omits $K \ne \emptyset$; for $K = \emptyset$ the collection $\mathcal F_K$ is empty,
+hence not a family.
+
+Source: De and Debnath, *Abundance of Arithmetic Progressions in CR-Sets*, INTEGERS
+25 (2025), Article A4, Theorem 3 (`integers-2025-A4-thm-3`). -/
+theorem isRamseyFamily_and_betaFamily_eq_of_isClosed {K : Set (Ultrafilter S)}
+    (hK : IsClosed K) (hne : K.Nonempty) :
+    IsRamseyFamily {E : Set S | ∃ p ∈ K, E ∈ p} ∧ betaFamily {E : Set S | ∃ p ∈ K, E ∈ p} = K := by
+  constructor
+  · obtain ⟨p, hp⟩ := hne
+    refine ⟨⟨Set.univ, p, hp, Filter.univ_mem⟩, ?_, ?_, ?_⟩
+    · rintro ⟨q, _, h⟩
+      exact q.empty_notMem h
+    · rintro A B ⟨q, hq, hA⟩ hAB
+      exact ⟨q, hq, Filter.mem_of_superset hA hAB⟩
+    · rintro A B ⟨q, hq, hAB⟩
+      exact (Ultrafilter.union_mem_iff.mp hAB).imp
+        (fun hA => ⟨q, hq, hA⟩) (fun hB => ⟨q, hq, hB⟩)
+  · apply Set.Subset.antisymm
+    · intro p hp
+      rw [← hK.closure_eq, ultrafilterBasis_is_basis.mem_closure_iff]
+      rintro _ ⟨A, rfl⟩ hA
+      obtain ⟨q, hq, hAq⟩ := hp A hA
+      exact ⟨q, hAq, hq⟩
+    · exact fun p hp A hA => ⟨p, hp, hA⟩
 
 namespace betaFamily_isLeftIdeal_iff
 

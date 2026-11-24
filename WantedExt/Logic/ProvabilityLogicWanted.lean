@@ -10,6 +10,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Logics.Modal.ProvabilityLogic.FixedPoint
+public import CSLibExt.Logics.Modal.ProvabilityLogic.FrameCorrespondence
 
 /-!
 # Provability logic GL: wanted results
@@ -18,7 +19,6 @@ Established results about GL over the Hilbert system `Derivable Axioms.GL` of
 `CSLibExt.Logics.Modal.ProvabilityLogic.Basic`, recorded without proof.
 
 * `derivable_GL_iff_finite`: Segerberg's completeness theorem for finite strict partial orders.
-* `frame_valid_axiomLob_iff`: frame correspondence for Löb's axiom.
 * `fixedPoint_GL`: the de Jongh–Sambin fixed point theorem (existence), in general.
 -/
 
@@ -41,18 +41,6 @@ theorem_wanted derivable_GL_iff_finite (phi : Formula Atom) :
     Derivable Axioms.GL phi ↔
       ∀ (W : Type u) [Finite W] (M : KripkeModel W Atom),
         (∀ {a b c}, M.rel a b → M.rel b c → M.rel a c) → (∀ w, ¬M.rel w w) → M.Valid phi
-
-/-- **Frame correspondence for Löb's axiom.** On a nonempty set of worlds `W`, with at least one
-atom, Löb's axiom `□(□φ → φ) → □φ` is valid for every formula `φ` and every valuation on the frame
-`(W, R)` iff `R` is transitive and conversely well-founded, i.e. has no infinite chain
-`w₀ R w₁ R w₂ R ⋯` (Verbrugge, "Provability logic", *Stanford Encyclopedia of Philosophy*,
-current edition, §3.1). The direction from right to left is the proved
-`KripkeModel.valid_axiomLob`. -/
-theorem_wanted frame_valid_axiomLob_iff {W : Type u} [Nonempty W] [Nonempty Atom]
-    (R : W → W → Prop) :
-    (∀ (V : W → Atom → Prop) (phi : Formula Atom),
-        (KripkeModel.mk inferInstance R V).Valid (Formula.axiomLob phi)) ↔
-      (∀ {a b c}, R a b → R b c → R a c) ∧ WellFounded (flip R)
 
 /-- **The de Jongh–Sambin fixed point theorem.** If every occurrence of the atom `p` in `A` lies
 under a box, there is a formula `H` in which `p` does not occur, all of whose atoms occur in `A`,

@@ -70,19 +70,6 @@ public theorem_wanted card_unate_boolFun_relations (n : ℕ) :
         ≤ 2 ^ n * Nat.card {f : (Fin n → Bool) → Bool //
             Monotone f ∧ 2 * boolFunWeight f = 2 ^ n}
 
-/-- **Monotone concatenations of Boolean functions (Bakoev).** Let $g$ and $h$ be Boolean
-functions on $n$ variables, and let $g \parallel h$ be their concatenation, the function on
-$n + 1$ variables that equals $g$ of the remaining variables when its first variable is $0$ and
-$h$ of them when it is $1$. Then $g \parallel h$ is monotone if and only if $g$ and $h$ are both
-monotone and $g(x) \le h(x)$ for every $x \in \{0,1\}^n$.
-
-Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
-under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
-Sequences 28 (2025), Article 25.3.4, Proposition 4 (`jis-2025-25.3.4-prop-4`),
-quoting Bakoev. -/
-public theorem_wanted monotone_boolFunConcat_iff {n : ℕ} (g h : (Fin n → Bool) → Bool) :
-    Monotone (boolFunConcat g h) ↔ Monotone g ∧ Monotone h ∧ g ≤ h
-
 /-- **Unateness of a concatenation.** Let $g$ and $h$ be $n$-variable Boolean functions and let
 $g \| h$ be their concatenation, the $(n+1)$-variable function equal to $g$ of the remaining
 variables when the first variable is $0$ and to $h$ of them when it is $1$. Then $g \| h$ is
@@ -100,19 +87,6 @@ public theorem_wanted isUnateBoolFun_boolFunConcat_iff {n : ℕ}
         (∀ i : Fin n, (IsBoolFunIncreasingIn g i ∧ IsBoolFunIncreasingIn h i) ∨
           (IsBoolFunDecreasingIn g i ∧ IsBoolFunDecreasingIn h i)) ∧
         (g ≤ h ∨ h ≤ g)
-
-/-- **Weight symmetry of unate Boolean functions.** For all $n \ge 0$ and all $w$ with
-$0 \le w \le 2^n$, the number of unate $n$-variable Boolean functions of weight $w$ equals the
-number of unate $n$-variable Boolean functions of weight $2^n - w$.
-
-The source assumes $n \ge 1$; the case $n = 0$ is included here.
-
-Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
-under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
-Sequences 28 (2025), Article 25.3.4, Proposition 9 (`jis-2025-25.3.4-prop-9`). -/
-public theorem_wanted card_unate_boolFun_weight_symm (n w : ℕ) (hw : w ≤ 2 ^ n) :
-    Nat.card {f : (Fin n → Bool) → Bool // IsUnateBoolFun f ∧ boolFunWeight f = w}
-      = Nat.card {f : (Fin n → Bool) → Bool // IsUnateBoolFun f ∧ boolFunWeight f = 2 ^ n - w}
 
 /-- **Permutation classes counted by non-degenerate ones.** Let $(P_n)_{n \ge 0}$ be a family of
 properties, $P_n$ a property of $n$-variable Boolean functions, that is invariant under renaming
