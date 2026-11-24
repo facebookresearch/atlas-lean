@@ -22,3 +22,5 @@
 - [Diffusion limit of the Moran fixation probability](tendsto-moran-fixation-diffusion.md)
 
 - [Neutral Moran genealogy as a relabeled Cannings model](moran-model-genealogy-per-step-c-2-n-2-and-time.md)
+
+- [Finite neutral Moran sampling duality on the pair-coalescence clock](finite-moran-forward-backward-sampling-duality.md)

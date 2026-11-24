@@ -28,3 +28,9 @@
 - [Pairwise mutation counts from an integrable coalescence time](expected-pairwise-differences-equal-theta-times.md)
 - [Size-weighted within-deme coalescence-time invariance](strobeck-nagylaki-invariance-size-weighted-mean.md)
 - [A two-lineage isolation-with-migration law across a population split](isolation-and-isolation-with-migration-two-linea.md)
+
+## Spatial Λ-Fleming–Viot lineages
+
+- [Lineages of the spatial Λ-Fleming–Viot model with bounded event radius](slfv-dual-lineages-bounded-radius-and-finite-eve.md)
+- [Spatial Λ-Fleming–Viot lineages exist when ∫ u r^d ζ is finite](slfv-dual-lineages-under-int-u-r-d-zeta-infinity.md)
+- [Two spatial Λ-Fleming–Viot lineages: displacement and separation](slfv-dual-lineage-process-under-the-integrabilit.md)
