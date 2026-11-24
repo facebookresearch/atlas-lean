@@ -9,10 +9,11 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.Complex.Basic
+public import Mathlib.Analysis.SpecialFunctions.Log.Base
 public import Mathlib.Data.Nat.Digits.Defs
 
 /-!
-# Dyadic values of the normalized `q`-weighted fluctuation
+# The `q`-weighted Trollope–Delange formula
 
 For an element `q` of a commutative ring, the `q`-weighted binary digit sum of a natural number
 `k = ∑ ωᵢ 2ⁱ` is `s_q(k) = ∑ ωᵢ q^(i+1)` (`qWeightedDigitSum`), and `S_q(n) = ∑_{k<n} s_q(k)` is
@@ -20,13 +21,16 @@ its partial sum (`qWeightedDigitPartialSum`). The Takagi–Landsberg function is
 `𝒯_a(x) = ∑ aⁿ τ(2ⁿ x)` (`takagiLandsberg`), where `τ(y)` is the distance from `y` to the
 nearest integer. This file proves that, for complex `q` with `|q| > 1/2` and `a = 1/(2q)`, the
 normalized fluctuation of `S_q` at the dyadic grid points `t = j / 2^(N-1)` of `[0, 1]` is
-`-q 𝒯_a(t)` (`qWeightedDigitPartialSum_dyadic_fluctuation`).
+`-q 𝒯_a(t)` (`qWeightedDigitPartialSum_dyadic_fluctuation`). It also proves the
+Trollope–Delange formula for real `q` (`qWeighted_trollopeDelange`).
 
 ## Main results
 
 * `MetaMathlibExt.qWeightedDigitPartialSum_dyadic_fluctuation`: for `0 < N` and
   `j ≤ 2^(N-1)`,
   `(S_q(2j) - (j / 2^(N-1)) S_q(2^N)) / (2q)^(N-1) = -q 𝒯_a(j / 2^(N-1))`.
+* `MetaMathlibExt.qWeighted_trollopeDelange`: the exact formula for the average `S_q(n) / n`
+  in terms of a geometric sum and the Takagi–Landsberg function.
 
 ## Proof outline
 
@@ -37,12 +41,13 @@ At a dyadic rational `n / 2^M` the Takagi–Landsberg series stops after `M` ter
 `n ≤ 2^(M+1)` according to `n ≤ 2^M` or `n = 2^M + r`, gives
 `S_q(n) = (n / 2^M) S_q(2^M) - (2q)^M 𝒯_a(n / 2^M) / 2` for every `n ≤ 2^M`. Taking `M = N` and
 `n = 2j` gives the theorem, since `2j / 2^N = j / 2^(N-1)`; the hypothesis `|q| > 1/2` is used
-only through `q ≠ 0`.
+only through `q ≠ 0`. For the Trollope–Delange formula, take `M = ⌊log₂ n⌋ + 1`, compute
+`S_q(2^M)` by the geometric sum, and express `n / 2^M` in terms of the fractional logarithm.
 
 ## Implementation notes
 
 `qWeightedDigitSum`, `qWeightedDigitPartialSum`, `takagiLandsberg`, their completed lemmas and
-the theorem keep the full names, statements, definition bodies and docstrings they had in
+both theorems keep the full names, statements, definition bodies and docstrings they had in
 `WantedExt.NumberTheory.QWeightedTrollopeDelangeWanted`, which imports this module and keeps its
 other wanted statements about these functions. The auxiliary lemmas of the proof are private.
 
@@ -244,9 +249,10 @@ private theorem takagiLandsberg_natCast_div_two_pow_succ {𝕜 : Type*} [RCLike 
 
 /-- For `n ≤ 2^M`, `S_q(n) = (n / 2^M) S_q(2^M) - (2q)^M 𝒯_a(n / 2^M) / 2` with
 `a = 1/(2q)`. -/
-private theorem qWeightedDigitPartialSum_eq_of_le_two_pow (q : ℂ) (hq : q ≠ 0) (M : ℕ) :
+private theorem qWeightedDigitPartialSum_eq_of_le_two_pow {𝕜 : Type*} [RCLike 𝕜]
+    (q : 𝕜) (hq : q ≠ 0) (M : ℕ) :
     ∀ n ≤ 2 ^ M, qWeightedDigitPartialSum q n =
-      (n : ℂ) / 2 ^ M * qWeightedDigitPartialSum q (2 ^ M) -
+      (n : 𝕜) / 2 ^ M * qWeightedDigitPartialSum q (2 ^ M) -
         (2 * q) ^ M * takagiLandsberg (1 / (2 * q)) ((n : ℝ) / 2 ^ M) / 2 := by
   induction M with
   | zero =>
@@ -268,8 +274,9 @@ private theorem qWeightedDigitPartialSum_eq_of_le_two_pow (q : ℂ) (hq : q ≠ 
         refine abs_sub_round_of_le_half (by positivity) ?_
         rw [div_le_iff₀ (by positivity), pow_succ]
         linarith
-      rw [hτ, ih n hle, RCLike.ofReal_eq_complex_ofReal]
-      push_cast
+      rw [hτ, ih n hle]
+      push_cast [RCLike.ofReal_div, RCLike.ofReal_pow, RCLike.ofReal_natCast,
+        RCLike.ofReal_ofNat]
       field_simp
       ring
     · -- `n = 2^M + r` with `r ≤ 2^M`, so `1/2 ≤ n / 2^(M+1) ≤ 1`
@@ -295,9 +302,9 @@ private theorem qWeightedDigitPartialSum_eq_of_le_two_pow (q : ℂ) (hq : q ≠ 
         push_cast
         rw [add_div, div_self (by positivity)]
         ring
-      rw [hτ, hT, qWeightedDigitPartialSum_two_pow_add q M r hr, ih r hr,
-        RCLike.ofReal_eq_complex_ofReal]
-      push_cast
+      rw [hτ, hT, qWeightedDigitPartialSum_two_pow_add q M r hr, ih r hr]
+      push_cast [RCLike.ofReal_sub, RCLike.ofReal_div, RCLike.ofReal_pow,
+        RCLike.ofReal_natCast, RCLike.ofReal_ofNat]
       field_simp
       ring
 
@@ -332,6 +339,60 @@ public theorem qWeightedDigitPartialSum_dyadic_fluctuation (q : ℂ) (hq : 1 / 2
   push_cast
   field_simp
   ring
+
+namespace qWeighted_trollopeDelange
+
+/-- The partial sum at a power of two is a scaled geometric sum. -/
+private theorem partialSum_two_pow (q : ℝ) (hq : q ≠ 1) (m : ℕ) :
+    qWeightedDigitPartialSum q (2 ^ m) = 2 ^ m * (q / 2 * ((1 - q ^ m) / (1 - q))) := by
+  induction m with
+  | zero => simp [qWeightedDigitPartialSum, qWeightedDigitSum_zero]
+  | succ m ih =>
+    rw [qWeightedDigitPartialSum_two_pow_succ, ih, pow_succ (2 : ℝ), pow_succ q]
+    field_simp [sub_ne_zero.mpr hq.symm]
+    ring
+
+end qWeighted_trollopeDelange
+
+/-- **The $q$-weighted Trollope–Delange formula.** Let $q$ be a real number with $|q| > 1/2$ and
+$q \ne 1$, and put $a = 1/(2q)$. For a positive integer $n$, let $k = \lfloor \log_2 n \rfloor$
+and let $u = \log_2 n - k$ be the fractional part of $\log_2 n$. Write
+$F(u) = 2^{1-u}\,\mathcal{T}_a(2^{u-1})$. Then
+$$\frac{S_q(n)}{n} = \frac{q}{2}\left(\frac{1 - q^{k+1}}{1 - q} - q^k F(u)\right),$$
+where $S_q$ is the partial sum of the $q$-weighted binary digit sum and $\mathcal{T}_a$ is the
+Takagi–Landsberg function.
+
+Source: Aleksei Minabutdinov, *A q-Weighted Analogue of the Trollope-Delange Formula*,
+INTEGERS 26 (2026), Article A61, Theorem 1 (`integers-2026-A61-thm-1`). -/
+public theorem qWeighted_trollopeDelange (q : ℝ) (hq : 1 / 2 < |q|) (hq1 : q ≠ 1)
+    (n : ℕ) (hn : 0 < n) :
+    qWeightedDigitPartialSum q n / n =
+      q / 2 * ((1 - q ^ (Nat.log 2 n + 1)) / (1 - q) -
+        q ^ Nat.log 2 n *
+          ((2 : ℝ) ^ (1 - Int.fract (Real.logb 2 n)) *
+            takagiLandsberg (1 / (2 * q)) ((2 : ℝ) ^ (-(1 - Int.fract (Real.logb 2 n)))))) := by
+  have hq0 : q ≠ 0 := by
+    rintro rfl
+    norm_num at hq
+  have hn' : (0 : ℝ) < n := by exact_mod_cast hn
+  set k := Nat.log 2 n
+  have hbound : n ≤ 2 ^ (k + 1) := (Nat.lt_pow_succ_log_self (by decide) n).le
+  have hfloor : (⌊Real.logb 2 n⌋ : ℝ) = (k : ℝ) := by
+    have hlog : 0 ≤ Real.logb 2 n :=
+      Real.logb_nonneg (by norm_num) (by exact_mod_cast Nat.one_le_of_lt hn)
+    rw [← Int.natCast_floor_eq_floor hlog, Int.cast_natCast]
+    exact congrArg (fun m : ℕ => (m : ℝ)) (Real.natFloor_logb_natCast 2 n)
+  have harg : (2 : ℝ) ^ (-(1 - Int.fract (Real.logb 2 n))) = (n : ℝ) / 2 ^ (k + 1) := by
+    rw [Int.fract, hfloor,
+      show -(1 - (Real.logb 2 n - k)) = Real.logb 2 n - (↑(k + 1 : ℕ) : ℝ) by
+        push_cast
+        ring,
+      Real.rpow_sub_natCast two_ne_zero, Real.rpow_logb (by norm_num) (by norm_num) hn']
+  have hscale : (2 : ℝ) ^ (1 - Int.fract (Real.logb 2 n)) = 2 ^ (k + 1) / (n : ℝ) := by
+    rw [← neg_neg (1 - Int.fract (Real.logb 2 n)), Real.rpow_neg (by norm_num), harg, inv_div]
+  rw [harg, hscale, qWeightedDigitPartialSum_eq_of_le_two_pow q hq0 (k + 1) n hbound,
+    qWeighted_trollopeDelange.partialSum_two_pow q hq1, mul_pow, pow_succ q k]
+  field_simp [hn'.ne', sub_ne_zero.mpr hq1.symm]
 
 end
 
