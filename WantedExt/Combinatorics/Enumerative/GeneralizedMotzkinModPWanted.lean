@@ -97,29 +97,6 @@ public theorem_wanted prime_dvd_motzkin_prime_minus_two_iff
     (p : ℕ) (hp : p.Prime) :
     generalizedMotzkin 1 1 (p - 2) ≡ 0 [ZMOD p] ↔ p ≡ 1 [MOD 3]
 
-/-- **Lucas property for constant terms of powers of linear Laurent polynomials.** Let $p$ be a
-prime, let $\alpha$, $\beta$, $\gamma$, $a$, $b$ be integers, and let $n$ be a natural number whose
-base-$p$ digits are $d_0, \dots, d_s$ (there are none when $n = 0$, and both products below are
-then $1$). Write $\operatorname{ct}(F)$ for the constant term of a Laurent polynomial $F$ and put
-$P = \alpha x^{-1} + \beta + \gamma x$. Then
-$$
-\operatorname{ct}(P^n) \equiv \prod_{i=0}^{s} \operatorname{ct}(P^{d_i}) \pmod p,
-$$
-and the generalized central trinomial coefficients $T_r = \operatorname{ct}((a x^{-1} + b + a x)^r)$
-satisfy $T_n \equiv \prod_{i=0}^{s} T_{d_i} \pmod p$.
-
-The source assumes that $P$ has degree one; here $\alpha$ and $\gamma$ are arbitrary, which
-includes that case.
-
-Source: Nadav Kohen, *Density and Symmetry in the Generalized Motzkin Numbers Modulo p*, INTEGERS 26
-(2026), Article A22, Proposition 4. -/
-public theorem_wanted constantTerm_linearLaurent_pow_digits (α β γ a b : ℤ) (p n : ℕ)
-    (hp : p.Prime) :
-    (linearLaurent α β γ ^ n).coeff 0 ≡
-        ((Nat.digits p n).map fun d => (linearLaurent α β γ ^ d).coeff 0).prod [ZMOD p] ∧
-      centralTrinomial a b n ≡
-        ((Nat.digits p n).map fun d => centralTrinomial a b d).prod [ZMOD p]
-
 /-- **Digit decomposition of shifted sums of constant terms modulo a prime.** Let $\alpha, \beta,
 \gamma$ be integers with $\alpha \ne 0$ or $\gamma \ne 0$, let $a_r$ be the constant term of
 $(\alpha x^{-1} + \beta + \gamma x)^r$, let $p$ be a prime, let $h < p$ be a natural number, let
