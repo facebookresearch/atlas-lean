@@ -44,17 +44,6 @@ namespace MetaMathlibExt
 
 open scoped ArithmeticFunction.Moebius
 
-/-- **Counting solutions of $x^b = 1$ in a cyclic group.** For natural numbers $a \ge 1$ and
-$b$, the cyclic group of order $a$ has exactly $\gcd(a, b)$ elements $x$ with $x^b = 1$.
-
-The paper takes $b$ positive; for $b = 0$ both sides equal $a$.
-
-Source: Darij Grinberg and Peter Mao, *Necklaces over a Group with Identity Product*,
-Journal of Integer Sequences 29 (2026), Article 26.4.6, Lemma 12
-(`jis-2026-26.4.6-lem-12`). -/
-public theorem_wanted card_pow_eq_one_zmod (a b : ℕ) [NeZero a] :
-    Fintype.card {x : Multiplicative (ZMod a) // x ^ b = 1} = Nat.gcd a b
-
 /-- **Splitting periodic identity-product tuples by smallest period.** Let $G$ be a finite
 group, $n$ a natural number and $k \ge 1$. Say that $x = (x_0, \dots, x_{n-1}) \in G^n$ has
 period $l$ if $x_{i+l} = x_i$ for all $i$, with indices taken mod $n$. Let $A_k$ be the set of
