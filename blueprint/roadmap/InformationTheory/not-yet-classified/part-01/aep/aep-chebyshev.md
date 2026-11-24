@@ -1,8 +1,3 @@
-# Aep chebyshev
+# Chebyshev form of the asymptotic equipartition property
 
-The asymptotic equipartition property, Chebyshev form: for the
-self-information of a single sample from a finite law `p`, the probability
-that its deviation from the entropy exceeds `ε` is at most the
-self-information variance divided by `ε²`. This is the one-shot estimate
-behind typical-set coding, using `selfInformationNatsZeroExtension`: values
-off support are ignored by the probability weights.
+For a law $p$ on a finite set and $\varepsilon > 0$, the probability that the self-information of a single sample deviates from the entropy by more than $\varepsilon$ is at most the variance of the self-information divided by $\varepsilon^2$. Self-information is extended by zero off the support of $p$, where the probability weights vanish.

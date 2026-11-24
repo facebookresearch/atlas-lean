@@ -1,3 +1,3 @@
 # Gaussian Entropy
 
-- [Gauss Entropy eq](gauss-entropy-eq.md)
+- [Differential entropy of a centred normal law](gauss-entropy-eq.md)

@@ -1,3 +1,3 @@
 # AEP
 
-- [Aep chebyshev](aep-chebyshev.md)
+- [Chebyshev form of the asymptotic equipartition property](aep-chebyshev.md)

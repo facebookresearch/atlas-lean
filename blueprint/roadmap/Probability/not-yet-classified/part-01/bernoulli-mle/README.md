@@ -1,6 +1,6 @@
 # Bernoulli MLE
 
-- [Bernoulli Likelihood](bernoulli-likelihood.md)
+- [Bernoulli likelihood](bernoulli-likelihood.md)
 - [Sample Proportion](sample-proportion.md)
 - [Bernoulli MLE (ST09.T01)](bernoulli-likelihood-le.md)
 - [Uniqueness of the Bernoulli MLE (ST09.T01)](bernoulli-likelihood-lt-of-ne.md)

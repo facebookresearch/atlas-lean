@@ -1,6 +1,6 @@
 # Cell Transmission
 
-- [Capacity](capacity.md)
+- [Capacity of the triangular fundamental diagram](capacity.md)
 - [Demand](demand.md)
 - [Supply](supply.md)
 - [Face Flux](face-flux.md)

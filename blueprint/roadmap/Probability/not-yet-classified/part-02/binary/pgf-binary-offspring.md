@@ -1,5 +1,3 @@
-# Pgf binary Offspring
+# Generating function of the binary offspring law
 
-The probability generating function of the binary law, for every real
-`s` (finite support, so no `[0, 1]` restriction is needed; on `[0, 1]` this
-is the `f` of `isLeast_extinctionProb`).
+For $0 \le p \le 1$, the probability generating function of the offspring law that has $2$ children with probability $p$ and none with probability $1 - p$ is $s \mapsto 1 - p + ps^2$ for every real $s$.

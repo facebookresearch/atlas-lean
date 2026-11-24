@@ -1,4 +1,3 @@
-# Gauss Entropy eq
+# Differential entropy of a centred normal law
 
-The differential entropy in nats of `N (0, v)` is
-`(1 / 2) log (2 π e v)`, with the natural logarithm.
+For a variance $v > 0$, the differential entropy in nats of the normal law $N(0, v)$ is $\tfrac12\log(2\pi e v)$.

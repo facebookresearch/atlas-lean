@@ -6,4 +6,4 @@
 
 ## B. Born probabilities
 
-- [Born Prob](born-prob.md)
+- [Born probability](born-prob.md)
