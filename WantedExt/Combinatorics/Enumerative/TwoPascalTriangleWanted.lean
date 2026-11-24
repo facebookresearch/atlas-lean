@@ -218,18 +218,6 @@ public theorem_wanted sum_trinomialCoefficient_even_sq (n : ℕ) :
         (trinomialCoefficient (2 * n) n : ℚ) / 2 +
           (if Even n then (trinomialCoefficient n (n / 2) : ℚ) else 0) / 2
 
-/-- **Absorption identity for trinomial coefficients.** Write $\binom{n}{k}_2$ for the
-trinomial coefficient, the coefficient of $x^k$ in $(1+x+x^2)^n$. For natural numbers $n \ge 1$
-and $k$, $\frac{k}{n} \binom{n}{k}_2 = \binom{n-1}{k-1}_2 + 2 \binom{n-1}{k-2}_2$, where a term
-whose lower index is negative is read as $0$.
-
-Source: Yassine Otmani, *The 2-Pascal Triangle and a Related Riordan Array*, Journal of
-Integer Sequences 28 (2025), Article 25.3.5, Lemma 31 (`jis-2025-25.3.5-lem-31`). -/
-public theorem_wanted trinomialCoefficient_absorption (n k : ℕ) (hn : 0 < n) :
-    (k : ℚ) / n * trinomialCoefficient n k =
-      (if 1 ≤ k then (trinomialCoefficient (n - 1) (k - 1) : ℚ) else 0) +
-        2 * (if 2 ≤ k then (trinomialCoefficient (n - 1) (k - 2) : ℚ) else 0)
-
 /-- **Weighted diagonal sums of trinomial coefficients by coefficient extraction.** Write
 $\binom{n}{k}_2$ for the trinomial coefficient, the coefficient of $t^k$ in $(1+t+t^2)^n$,
 $[t^m]\,g$ for the coefficient of $t^m$ in a power series $g$, and $f_k = [t^k]\,f$. For every

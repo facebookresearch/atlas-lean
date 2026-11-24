@@ -10,7 +10,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import MathlibExt.NumberTheory.Height.SchurSiegelSmyth
+public import MathlibExt.NumberTheory.Height.SchurSiegelSmyth.AbsoluteTrace
 
 @[expose] public section
 
@@ -26,9 +26,8 @@ algebraic integers.
 
 The provider proves the elementary framework (positivity of absolute
 traces, admissibility of `0`, downward closure, and that admissible
-bounds lie below the constant). The requests below are the catalogue's
-trivial AM--GM lower bound, the milestone and best known lower bounds
-from Smyth's auxiliary-function method and its refinements, and the
+bounds lie below the constant). The requests below are the milestone and best known
+lower bounds from Smyth's auxiliary-function method and its refinements, and the
 upper bounds: the classical bound `2` from the integers
 `4 cos^2 (π / n)`, Smith's bound disproving `C₈₆ = 2`, and the best known
 bound from explicit limiting measures. Intermediate historical lower
@@ -38,17 +37,6 @@ at the catalogue's displayed digits; no auxiliary-function certificate,
 limiting-measure construction, or cyclotomic trace computation is
 formalized here.
 -/
-
-/-- **Absolute trace of a totally positive algebraic integer is at least one.** For every
-complex number $\alpha$ that is a totally positive algebraic integer, the absolute trace of
-$\alpha$ is at least $1$.
-
-Source: catalogue trivial lower row, by AM--GM: the absolute trace
-is at least the geometric mean of the conjugates, whose product is a
-nonzero rational integer. -/
-theorem_wanted absoluteTrace_one_le_wanted (α : ℂ)
-    (hα : IsTotallyPositive α) :
-    1 ≤ absoluteTrace α
 
 /-- **Schur's lower bound for the Schur–Siegel–Smyth constant.** The Schur–Siegel–Smyth trace
 constant $C_{86}$, an extended real number, satisfies $\sqrt{e} \le C_{86}$.
