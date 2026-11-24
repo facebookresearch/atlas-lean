@@ -68,6 +68,44 @@ worktree for optimization runs if preserving a developer's warm cache matters.
 Compatible modules share snapshot
 processes; failed groups fall back to singleton verification.
 
+A later batch's Lake preparation may add artifacts to root-package namespaces
+an earlier batch pinned. Around each preparation (batched or per row):
+
+- Before it, every cached inventory is checked again; every root-package
+  artifact pinned so far in this process must keep the device, inode, ctime,
+  mtime, size, mode and bytes it had when first pinned; and the root artifact
+  root's top-level namespaces and module files must be those the last accepted
+  preparation left.
+- During it, on Linux, the root namespaces and the artifact root's ancestors
+  are watched for moves and attribute changes.
+- After it, each root namespace keeps its directory node and resolved path,
+  pinned artifacts are checked again, compiler and dependency inventories must
+  be unchanged, and Lake may remove nothing. It may only add artifacts of new
+  modules among the requested targets and their frozen local dependencies, in
+  existing or new namespaces or at the top level, and none for a module another
+  searched root already provides.
+
+The first rejection blocks that batch, and every later preparation is refused,
+in this invocation and in later `--resume` invocations of the same output
+directory; nothing taken during the rejected attempt is trusted. The rejection
+and the top-level listing after the last accepted preparation are recorded
+under `lake-custody/`, and accepted additions under `lake-growth/`, in the
+output directory. A resumed invocation starts from that listing. On resume, a
+saved row's inputs may differ from the current tree only by recorded additions
+with their recorded bytes, for modules none of its inputs provided. Custody and
+growth records are trusted run state: removing or changing them invalidates
+these record-based checks. Recover from a rejection with a new output directory.
+
+These checks compare identities and listings at the boundaries of each Lake
+window, plus the Linux watch during it. They do not see a new file name created
+and removed inside one window, unpinned sidecars such as `.hash` and `.trace`,
+changes by a privileged clock or on filesystems without stable inode or ctime,
+a namespace moved and restored inside a window on platforms without inotify,
+or identity changes between processes (a resume compares bytes). A preparation
+interrupted before its growth is recorded can cause resume to fail closed, as
+can another output directory's run on the same worktree. Use a new output
+directory after such a rejection.
+
 During validation, a phase retains compilation-input derivations and the
 filesystem facts used to derive them. The facts are reread at native-command
 boundaries and phase close; shared dependencies are checked once per window.
@@ -164,7 +202,10 @@ runs inventory generation and optimization, requires a populated verified result
 and a patch removing unused imports, checks that the source stays unchanged, and
 resumes the saved run. It then checks that a resume with other thread settings
 is refused, and repeats the optimization and resume with `--lean-threads 3
---lake-jobs 2`. It performs real compilation and declaration comparison;
+--lake-jobs 2`. A second project runs three batches whose preparations build
+into a namespace the first batch pinned, requires each to verify, resumes, and
+checks that a resume refuses an artifact no preparation recorded. It performs
+real compilation and declaration comparison;
 it does not download packages or rewrite any ATLAS library.
 
 To also exercise the legacy ImportGraph API, first build the pinned dependency

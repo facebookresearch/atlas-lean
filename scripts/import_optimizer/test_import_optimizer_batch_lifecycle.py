@@ -1,0 +1,777 @@
+#!/usr/bin/env python3
+# Copyright (c) Meta Platforms, Inc. and affiliates.
+# All rights reserved.
+#
+# This source code is licensed under the license found in the
+# LICENSE file in the root directory of this source tree.
+
+"""Root-package inventory custody across batches and resume; Lake and Lean are mocked."""
+
+from __future__ import annotations
+
+import contextlib
+import io
+import json
+import os
+import shutil
+import sys
+import tempfile
+import time
+import unittest
+from collections.abc import Callable, Iterator
+from pathlib import Path
+from unittest.mock import patch
+
+import optimize_imports as optimizer
+import test_import_optimizer_recovery as recovery
+
+NAMES = ("A", "B", "C")
+
+
+def lifecycle_inputs(root: Path) -> list[str]:
+    """Three independent targets whose local dependencies share one namespace.
+
+    Each target `X` imports `Lib.Base` and depends on `Lib.Sub.X`, which its
+    batch's Lake preparation builds into the inventoried `Lib` namespace.
+    """
+    arguments = recovery.main_inputs(root, NAMES) + ["--batch-size", "1"]
+    base = root / ".lake/build/lib/lean/Lib/Base.olean"
+    base.parent.mkdir(parents=True)
+    base.write_bytes(b"Lib.Base artifact fixture\n")
+    manifest = root / "manifest.jsonl"
+    rows = [json.loads(line) for line in manifest.read_text().splitlines()]
+    for row in rows:
+        row["direct_local_dependencies"] = ["Lib.Base", "Lib.Sub." + row["module"]]
+        setup = root / ".lake/build/ir" / (row["module"] + ".setup.json")
+        metadata = optimizer.read_json(setup)
+        metadata["importArts"] = {"Lib.Base": [[str(base)], []], "Init": [[], []]}
+        optimizer.write_json(setup, metadata)
+    manifest.write_text("".join(json.dumps(row) + "\n" for row in rows))
+    # The compiler standard library is LEAN_SYSROOT/lib/lean; the mocked Lake
+    # environment reports the project root as LEAN_SYSROOT.
+    library = root / "lib/lean/Init/Prelude.olean"
+    library.parent.mkdir(parents=True)
+    library.write_bytes(b"Init.Prelude artifact fixture\n")
+    return arguments
+
+
+@contextlib.contextmanager
+def mocked_lake(root: Path, during_build: Callable[[str], None] | None = None,
+                skip_growth: frozenset[str] = frozenset()) -> Iterator[list[list[str]]]:
+    builds: list[list[str]] = []
+    namespace = root / ".lake/build/lib/lean/Lib/Sub"
+
+    def external(argv: list[str], label: Path,
+                 environment: dict[str, str] | None = None) -> dict[str, object]:
+        if "build" not in argv or "--no-build" in argv:
+            raise AssertionError(f"Unexpected external command: {argv}")
+        targets = [word[1:] for word in argv if word.startswith("+")]
+        builds.append(targets)
+        # Lake builds each target's local dependency into the root build tree.
+        namespace.mkdir(exist_ok=True)
+        for target in targets:
+            if target not in skip_growth:
+                (namespace / (target + ".olean")).write_bytes(f"Lib.Sub.{target} artifact fixture\n".encode())
+            if during_build is not None:
+                during_build(target)
+        label.parent.mkdir(parents=True, exist_ok=True)
+        stdout, stderr = Path(str(label) + ".stdout"), Path(str(label) + ".stderr")
+        stdout.write_text("External Lake build fixture\n")
+        stderr.write_text("")
+        return {"argv": argv, "cwd": str(root), "exit_code": 0, "timed_out": False,
+                "remaining_group_killed": False, "stdout": str(stdout), "stderr": str(stderr)}
+
+    with patch.object(optimizer.signal, "signal"), \
+            patch.object(optimizer.subprocess, "check_output", side_effect=recovery.time_version_stub), \
+            patch.object(optimizer, "run_command", side_effect=recovery.environment_stub), \
+            patch.object(optimizer.Tools, "run", side_effect=external), \
+            patch.object(optimizer, "artifact_receipt", return_value=[{"external_artifact_mock": True}]), \
+            patch.object(optimizer, "analyze_batch", side_effect=recovery.mock_no_change_proposals), \
+            patch.object(optimizer, "compile_arm", side_effect=AssertionError("Unexpected Lean compile")), \
+            contextlib.redirect_stdout(io.StringIO()):
+        yield builds
+
+
+def replace_same_bytes(path: Path) -> None:
+    copy = path.with_name(path.name + ".copy")
+    copy.write_bytes(path.read_bytes())
+    os.replace(copy, path)
+
+
+def rewrite_and_restore(path: Path) -> None:
+    original = path.read_bytes()
+    with path.open("r+b") as stream:
+        stream.write(b"X" * len(original))
+    time.sleep(0.01)
+    with path.open("r+b") as stream:
+        stream.write(original)
+
+
+def chmod_and_restore(path: Path) -> None:
+    mode = path.stat().st_mode & 0o7777
+    path.chmod(0o600 if mode != 0o600 else 0o644)
+    time.sleep(0.01)
+    path.chmod(mode)
+
+
+def fresh(path: Path) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(b"not requested\n")
+
+
+def journal(root: Path) -> list[dict[str, object]]:
+    return [json.loads(line) for line in (root / "output/results.jsonl").read_text().splitlines()]
+
+
+def manifest_paths(row: dict[str, object]) -> list[str]:
+    proposal = optimizer.read_json(Path(row["proposal_receipt"]["path"]))
+    compiled = proposal["analysis"]["inputs"]["compiled_inputs"][row["path"]]
+    return [entry["path"] for entry in optimizer.read_json(Path(compiled["input_manifest"]["path"]))["files"]]
+
+
+def completed_run(root: Path) -> list[str]:
+    arguments = lifecycle_inputs(root)
+    with mocked_lake(root) as builds, patch.object(sys, "argv", arguments):
+        assert optimizer.main() == 0
+    assert builds == [["A"], ["B"], ["C"]], builds
+    return arguments
+
+
+class BatchLifecycleTests(unittest.TestCase):
+    def test_later_batches_accept_lake_growth_in_an_inventoried_namespace(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            completed_run(root)
+            rows = journal(root)
+            self.assertEqual([(row["path"], row["status"]) for row in rows],
+                             [("A.lean", "no_change"), ("B.lean", "no_change"), ("C.lean", "no_change")])
+            # Each batch pinned a fresh inventory that includes the growth.
+            namespace = root / ".lake/build/lib/lean/Lib"
+            for row, seen in zip(rows, (("A",), ("A", "B"), ("A", "B", "C"))):
+                paths = manifest_paths(row)
+                self.assertEqual([path for path in paths if path.startswith(str(namespace / "Sub"))],
+                                 [str(namespace / "Sub" / (name + ".olean")) for name in seen])
+                self.assertIn(str(namespace / "Base.olean"), paths)
+                self.assertIn(str(root / "lib/lean/Init/Prelude.olean"), paths)
+            # Each preparation recorded exactly its additions to the existing namespace.
+            growth = optimizer.read_lake_growth(root / "output")
+            self.assertEqual(sorted(growth), [str(namespace / "Sub" / (name + ".olean")) for name in NAMES])
+
+    def test_outside_change_between_batches_blocks_every_later_batch(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            arguments = lifecycle_inputs(root)
+            journal_path = root / "output/results.jsonl"
+            injected = root / ".lake/build/lib/lean/Lib/Sub/Injected.olean"
+            validate = optimizer.validate_inventory_sources
+
+            def inject_after_first_journal(*args: object, **kwargs: object) -> None:
+                if (not injected.exists() and journal_path.exists() and
+                        len(journal_path.read_text().splitlines()) == 1):
+                    injected.write_bytes(b"Not written by Lake\n")
+                return validate(*args, **kwargs)
+
+            with mocked_lake(root) as builds, patch.object(sys, "argv", arguments), \
+                    patch.object(optimizer, "validate_inventory_sources", side_effect=inject_after_first_journal):
+                self.assertEqual(optimizer.main(), 1)
+            self.assertTrue(injected.exists())
+            self.assertEqual(builds, [["A"]])
+            rows = journal(root)
+            self.assertEqual([row["status"] for row in rows], ["no_change", "blocked", "blocked"])
+            self.assertEqual(rows[1]["error"], "Compiler standard-library inventory changed: "
+                             f"{root / '.lake/build/lib/lean/Lib/Sub'}")
+            self.assertEqual(rows[2]["error"], "An earlier Lake preparation was rejected: " + rows[1]["error"])
+
+    def test_lake_preparation_may_only_add_new_requested_modules(self) -> None:
+        build = Path(".lake/build/lib/lean")
+        cases = {
+            "rewrite_pinned": (lambda root: (root / build / "Lib/Base.olean").write_bytes(b"rebuilt\n"),
+                               "Pinned root-package artifact changed (ctime, mtime, size): {}",
+                               build / "Lib/Base.olean"),
+            "remove_pinned": (lambda root: (root / build / "Lib/Sub/A.olean").unlink(),
+                              "Pinned root-package artifact was removed: {}", build / "Lib/Sub/A.olean"),
+            "same_bytes_replace": (lambda root: replace_same_bytes(root / build / "Lib/Base.olean"),
+                                   "Pinned root-package artifact changed (ino, ctime, mtime): {}",
+                                   build / "Lib/Base.olean"),
+            "in_place_restore": (lambda root: rewrite_and_restore(root / build / "Lib/Base.olean"),
+                                 "Pinned root-package artifact changed (ctime, mtime): {}",
+                                 build / "Lib/Base.olean"),
+            "chmod_restore": (lambda root: chmod_and_restore(root / build / "Lib/Base.olean"),
+                              "Pinned root-package artifact changed (ctime): {}", build / "Lib/Base.olean"),
+            "unrequested_module": (lambda root: (root / build / "Lib/Sub/Injected.olean").write_bytes(b"x\n"),
+                                   "Lake preparation added an artifact outside its requested modules: {}",
+                                   build / "Lib/Sub/Injected.olean"),
+            "new_part_of_existing_module": (
+                lambda root: (root / build / "Lib/Base.olean.server").write_bytes(b"x\n"),
+                "Lake preparation added an artifact for an existing module: {}", build / "Lib/Base.olean.server"),
+            "compiler_library": (lambda root: (root / "lib/lean/Init/Extra.olean").write_bytes(b"new\n"),
+                                 "Compiler standard-library inventory changed: {}", Path("lib/lean/Init")),
+            "fresh_namespace": (lambda root: fresh(root / build / "Fresh/Unrequested.olean"),
+                                "Lake preparation added an artifact outside its requested modules: {}",
+                                build / "Fresh/Unrequested.olean"),
+            "fresh_compiler_module": (lambda root: fresh(root / build / "Init/Prelude.olean"),
+                                      "Lake preparation added an artifact outside its requested modules: {}",
+                                      build / "Init/Prelude.olean"),
+            "top_level_module": (lambda root: fresh(root / build / "Top.olean"),
+                                 "Lake preparation added an artifact outside its requested modules: {}",
+                                 build / "Top.olean"),
+        }
+        for name, (mutate, message, path) in cases.items():
+            with self.subTest(mutation=name), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory).resolve()
+                arguments = lifecycle_inputs(root)
+
+                def during_build(target: str) -> None:
+                    if target == "B":
+                        mutate(root)
+
+                with mocked_lake(root, during_build) as builds, patch.object(sys, "argv", arguments):
+                    self.assertEqual(optimizer.main(), 1)
+                self.assertEqual(builds, [["A"], ["B"]])
+                rows = journal(root)
+                self.assertEqual([row["status"] for row in rows], ["no_change", "blocked", "blocked"])
+                self.assertEqual(rows[1]["error"], message.format(root / path))
+                # The rejection is sticky; batch 3 never runs Lake.
+                self.assertEqual(rows[2]["error"], "An earlier Lake preparation was rejected: " + rows[1]["error"])
+                # Batch 1's additions are recorded; rejected additions never are.
+                self.assertEqual(sorted(optimizer.read_lake_growth(root / "output")),
+                                 [str(root / build / "Lib/Sub/A.olean")])
+
+
+    def test_rejected_fresh_additions_stay_rejected(self) -> None:
+        build = Path(".lake/build/lib/lean")
+        for name, addition in (("namespace", build / "Fresh/Unrequested.olean"), ("top_level", build / "Top.olean"),
+                               ("compiler_module", build / "Init/Prelude.olean")):
+            with self.subTest(addition=name), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory).resolve()
+                arguments = lifecycle_inputs(root)
+
+                def during_build(target: str) -> None:
+                    if target == "B":
+                        fresh(root / addition)
+
+                # Batch 2 adds only the rejected artifact; no inventoried namespace grows.
+                with mocked_lake(root, during_build, frozenset({"B"})) as builds, \
+                        patch.object(sys, "argv", arguments):
+                    self.assertEqual(optimizer.main(), 1)
+                self.assertEqual(builds, [["A"], ["B"]])
+                rows = journal(root)
+                self.assertEqual([row["status"] for row in rows], ["no_change", "blocked", "blocked"])
+                self.assertEqual(rows[1]["error"], "Lake preparation added an artifact outside its requested "
+                                 f"modules: {root / addition}")
+                self.assertEqual(rows[2]["error"], "An earlier Lake preparation was rejected: " + rows[1]["error"])
+
+    def test_in_place_change_between_preparations_blocks_before_lake(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            arguments = lifecycle_inputs(root)
+            journal_path = root / "output/results.jsonl"
+            base = root / ".lake/build/lib/lean/Lib/Base.olean"
+            changed: list[bool] = []
+            validate = optimizer.validate_inventory_sources
+
+            def change_after_first_journal(*args: object, **kwargs: object) -> None:
+                if not changed and journal_path.exists() and len(journal_path.read_text().splitlines()) == 1:
+                    before = base.stat()
+                    base.write_bytes(b"X" * before.st_size)
+                    os.utime(base, ns=(before.st_atime_ns, before.st_mtime_ns))
+                    changed.append(True)
+                return validate(*args, **kwargs)
+
+            with mocked_lake(root) as builds, patch.object(sys, "argv", arguments), \
+                    patch.object(optimizer, "validate_inventory_sources", side_effect=change_after_first_journal):
+                self.assertEqual(optimizer.main(), 1)
+            self.assertEqual(builds, [["A"]])
+            rows = journal(root)
+            self.assertEqual([row["status"] for row in rows], ["no_change", "blocked", "blocked"])
+            self.assertEqual(rows[1]["error"], f"Pinned root-package artifact changed (ctime): {base}")
+            self.assertEqual(rows[2]["error"], "An earlier Lake preparation was rejected: " + rows[1]["error"])
+
+
+class ResumeLifecycleTests(unittest.TestCase):
+    def resume(self, root: Path, arguments: list[str]) -> tuple[int, list[list[str]]]:
+        with mocked_lake(root) as builds, patch.object(sys, "argv", [*arguments, "--resume"]):
+            return optimizer.main(), builds
+
+    def test_resume_accepts_recorded_growth_byte_identically(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            arguments = completed_run(root)
+            before = (root / "output/results.jsonl").read_bytes()
+            self.assertEqual(self.resume(root, arguments), (0, []))
+            self.assertEqual((root / "output/results.jsonl").read_bytes(), before)
+
+    def test_resume_takes_custody_of_saved_pins_before_later_preparations(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            arguments = lifecycle_inputs(root)
+            with mocked_lake(root) as builds, patch.object(sys, "argv", [*arguments, "--max-batches", "1"]):
+                self.assertEqual(optimizer.main(), 0)
+            self.assertEqual(builds, [["A"]])
+            first = (root / "output/results.jsonl").read_bytes()
+            base = root / ".lake/build/lib/lean/Lib/Base.olean"
+            verify = optimizer.verify_saved_no_change
+
+            def touch_after_validation(result: dict[str, object], tools: optimizer.Tools) -> None:
+                verify(result, tools)
+                # Same bytes and directory: only the custody taken at resume can see it.
+                chmod_and_restore(base)
+
+            with mocked_lake(root) as builds, patch.object(sys, "argv", [*arguments, "--resume"]), \
+                    patch.object(optimizer, "verify_saved_no_change", side_effect=touch_after_validation):
+                self.assertEqual(optimizer.main(), 1)
+            self.assertEqual(builds, [])
+            journal_bytes = (root / "output/results.jsonl").read_bytes()
+            self.assertTrue(journal_bytes.startswith(first))
+            rows = journal(root)
+            self.assertEqual([row["status"] for row in rows], ["no_change", "blocked", "blocked"])
+            self.assertEqual(rows[1]["error"], f"Pinned root-package artifact changed (ctime): {base}")
+
+    def test_bounded_invocations_keep_earlier_rows_byte_identical(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            arguments = lifecycle_inputs(root)
+            journal_path = root / "output/results.jsonl"
+            previous = b""
+            for invocation, expected in enumerate((["A"], ["B"], ["C"])):
+                extra = ["--max-batches", "1"] + (["--resume"] if invocation else [])
+                with mocked_lake(root) as builds, patch.object(sys, "argv", [*arguments, *extra]):
+                    self.assertEqual(optimizer.main(), 0)
+                self.assertEqual(builds, [expected])
+                current = journal_path.read_bytes()
+                self.assertTrue(current.startswith(previous))
+                self.assertEqual(len(current.splitlines()), invocation + 1)
+                previous = current
+            self.assertEqual([row["status"] for row in journal(root)], ["no_change"] * 3)
+            self.assertEqual(self.resume(root, arguments), (0, []))
+            self.assertEqual(journal_path.read_bytes(), previous)
+            custody = root / "output" / optimizer.LAKE_CUSTODY_DIRECTORY
+            self.assertFalse((custody / "rejected.json").exists())
+            self.assertEqual(optimizer.read_json(custody / "listing.json"), {"namespaces": ["Lib"], "files": []})
+
+    def test_bounded_resume_keeps_a_rejection_from_an_earlier_invocation(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            arguments = lifecycle_inputs(root)
+            rejected = root / ".lake/build/lib/lean/Fresh/Unrequested.olean"
+
+            def during_build(target: str) -> None:
+                if target == "B":
+                    fresh(rejected)
+
+            runs = []
+            for extra in (["--max-batches", "1"], ["--max-batches", "1", "--resume"], ["--resume"]):
+                with mocked_lake(root, during_build, frozenset({"B"})) as builds, \
+                        patch.object(sys, "argv", [*arguments, *extra]):
+                    runs.append((optimizer.main(), list(builds)))
+            self.assertEqual(runs, [(0, [["A"]]), (1, [["B"]]), (1, [])])
+            self.assertTrue(rejected.exists())
+            rows = journal(root)
+            self.assertEqual([row["status"] for row in rows], ["no_change", "blocked", "blocked"])
+            message = f"Lake preparation added an artifact outside its requested modules: {rejected}"
+            self.assertEqual(rows[1]["error"], message)
+            self.assertEqual(rows[2]["error"], "An earlier Lake preparation was rejected: " + message)
+            record = optimizer.read_json(root / "output" / optimizer.LAKE_CUSTODY_DIRECTORY / "rejected.json")
+            self.assertEqual(record["error"], message)
+
+    def test_bounded_resume_rejects_a_root_entry_created_between_invocations(self) -> None:
+        for entry in ("Init/Prelude.olean", "Extra.olean"):
+            with self.subTest(entry=entry), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory).resolve()
+                arguments = lifecycle_inputs(root)
+                with mocked_lake(root) as builds, patch.object(sys, "argv", [*arguments, "--max-batches", "1"]):
+                    self.assertEqual(optimizer.main(), 0)
+                self.assertEqual(builds, [["A"]])
+                build = root / ".lake/build/lib/lean"
+                fresh(build / entry)
+                with mocked_lake(root) as builds, patch.object(sys, "argv", [*arguments, "--resume"]):
+                    self.assertEqual(optimizer.main(), 1)
+                self.assertEqual(builds, [])
+                rows = journal(root)
+                self.assertEqual([row["status"] for row in rows], ["no_change", "blocked", "blocked"])
+                message = f"Root artifact root changed since the last Lake preparation: {build / entry.split('/')[0]}"
+                self.assertEqual(rows[1]["error"], message)
+                self.assertEqual(rows[2]["error"], "An earlier Lake preparation was rejected: " + message)
+
+    def test_resume_without_recorded_growth_rejects_earlier_rows(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            arguments = completed_run(root)
+            before = (root / "output/results.jsonl").read_bytes()
+            shutil.rmtree(root / "output" / optimizer.LAKE_GROWTH_DIRECTORY)
+            with self.assertRaisesRegex(ValueError, "Saved Shake proposal inputs changed|unrecorded artifact"):
+                self.resume(root, arguments)
+            self.assertEqual((root / "output/results.jsonl").read_bytes(), before)
+
+    def test_resume_rejects_outside_growth_and_changed_artifacts(self) -> None:
+        build = Path(".lake/build/lib/lean")
+        cases = {
+            "outside_growth": (lambda root: (root / build / "Lib/Sub/Injected.olean").write_bytes(b"x\n"),
+                               "unrecorded artifact"),
+            "outside_namespace": (lambda root: (root / build / "Lib/Other.olean").write_bytes(b"x\n"),
+                                  "unrecorded artifact"),
+            "old_artifact_bytes": (lambda root: (root / build / "Lib/Base.olean").write_bytes(b"corrupt\n"),
+                                   "Saved evidence file changed"),
+            "recorded_artifact_bytes": (lambda root: (root / build / "Lib/Sub/C.olean").write_bytes(b"corrupt\n"),
+                                        "unrecorded artifact|Saved evidence file changed"),
+            "compiler_library": (lambda root: (root / "lib/lean/Init/Extra.olean").write_bytes(b"new\n"),
+                                 "unrecorded artifact"),
+        }
+        for name, (mutate, message) in cases.items():
+            with self.subTest(mutation=name), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory).resolve()
+                arguments = completed_run(root)
+                before = (root / "output/results.jsonl").read_bytes()
+                mutate(root)
+                with self.assertRaisesRegex(ValueError, message):
+                    self.resume(root, arguments)
+                self.assertEqual((root / "output/results.jsonl").read_bytes(), before)
+
+    def test_resume_rejects_recorded_growth_that_provides_a_consumed_module(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            arguments = completed_run(root)
+            before = (root / "output/results.jsonl").read_bytes()
+            server = root / ".lake/build/lib/lean/Lib/Base.ir"
+            server.write_bytes(b"A second part for the consumed Lib.Base\n")
+            optimizer.write_json(root / "output" / optimizer.LAKE_GROWTH_DIRECTORY / "9.json",
+                                 {"preparation": "forged", "added": [optimizer.file_pin(server)]})
+            with self.assertRaisesRegex(ValueError, "provider for a consumed module"):
+                self.resume(root, arguments)
+            self.assertEqual((root / "output/results.jsonl").read_bytes(), before)
+
+
+class LakePreparationCustodyTests(unittest.TestCase):
+    def tools(self, root: Path) -> optimizer.Tools:
+        return optimizer.Tools(root, root / "output", root / "bin/lake", root / "bin/lean", root,
+                               {"LEAN_SYSROOT": str(root / "sysroot")}, 5, time_binary=root / "bin/time")
+
+    def test_only_inventories_wholly_inside_the_build_root_are_renewed(self) -> None:
+        for grown in ("root", "external", "compiler"):
+            with self.subTest(grown=grown), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory).resolve()
+                build = root / ".lake/build/lib/lean"
+                (build / "Lib").mkdir(parents=True)
+                (build / "Lib/Base.olean").write_bytes(b"root artifact\n")
+                external = root / "dependency/Ext"
+                external.mkdir(parents=True)
+                (external / "Dep.olean").write_bytes(b"dependency artifact\n")
+                (build / "Ext").symlink_to(external, target_is_directory=True)
+                library = root / "sysroot/lib/lean"
+                (library / "Init").mkdir(parents=True)
+                (library / "Init/Prelude.olean").write_bytes(b"compiler artifact\n")
+                tools = self.tools(root)
+                for path in (build / "Lib", build / "Ext", library):
+                    optimizer.standard_library_paths(path, tools)
+                target = {"root": build / "Lib/New.olean", "external": external / "New.olean",
+                          "compiler": library / "Init/New.olean"}[grown]
+                if grown == "root":
+                    self.prepare(tools, lambda: fresh(target), {"Lib.New"})
+                    # The root namespace was taken again with the addition; the others kept old custody.
+                    self.assertEqual(tools.library_inventories[build / "Lib"][0],
+                                     (str(build / "Lib/Base.olean"), str(target)))
+                    self.assertIn(build / "Ext", tools.library_inventories)
+                    self.assertEqual(list(optimizer.read_lake_growth(root / "output")), [str(target)])
+                else:
+                    with self.assertRaisesRegex(ValueError, "inventory changed"):
+                        self.prepare(tools, lambda: fresh(target), {"Lib.New"})
+                    self.assertEqual(optimizer.read_lake_growth(root / "output"), {})
+
+    def test_addition_providing_a_compiler_module_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            build = root / ".lake/build/lib/lean"
+            (build / "Init").mkdir(parents=True)
+            (build / "Init/Local.olean").write_bytes(b"root artifact\n")
+            library = root / "sysroot/lib/lean"
+            (library / "Init").mkdir(parents=True)
+            (library / "Init/Prelude.olean").write_bytes(b"compiler artifact\n")
+            tools = self.tools(root)
+            for path in (build / "Init", library):
+                optimizer.standard_library_paths(path, tools)
+
+            def shadow(argv: list[str], label: Path, environment: dict[str, str] | None = None
+                       ) -> dict[str, object]:
+                (build / "Init/Prelude.olean").write_bytes(b"shadows the compiler's module\n")
+                return {"exit_code": 0}
+
+            with patch.object(optimizer.Tools, "run", side_effect=shadow), \
+                    self.assertRaisesRegex(ValueError, "artifact for an existing module"):
+                optimizer.run_lake_preparation(tools, ["lake", "build"], root / "output/prepare",
+                                               frozenset({"Init.Prelude"}))
+            # The rejection is sticky, so the next preparation is refused too.
+            with patch.object(optimizer.Tools, "run", side_effect=AssertionError("Lake ran")), \
+                    self.assertRaisesRegex(ValueError, "An earlier Lake preparation was rejected: "):
+                optimizer.run_lake_preparation(tools, ["lake", "build"], root / "output/prepare",
+                                               frozenset({"Init.Prelude"}))
+
+    def prepare(self, tools: optimizer.Tools, change: Callable[[], None], modules: set[str]) -> None:
+        def run(argv: list[str], label: Path, environment: dict[str, str] | None = None
+                ) -> dict[str, object]:
+            change()
+            return {"exit_code": 0}
+
+        with patch.object(optimizer.Tools, "run", side_effect=run):
+            optimizer.run_lake_preparation(tools, ["lake", "build"], tools.output / "prepare",
+                                           frozenset(modules))
+
+    def build_tree(self, root: Path) -> tuple[optimizer.Tools, Path]:
+        build = root / ".lake/build/lib/lean"
+        (build / "Lib").mkdir(parents=True)
+        (build / "Lib/Base.olean").write_bytes(b"root artifact\n")
+        (build / "Other").mkdir()
+        (build / "Other/X.olean").write_bytes(b"uninventoried namespace\n")
+        (build / "Top.olean").write_bytes(b"top-level module\n")
+        library = root / "sysroot/lib/lean/Init"
+        library.mkdir(parents=True)
+        (library / "Prelude.olean").write_bytes(b"compiler artifact\n")
+        tools = self.tools(root)
+        optimizer.standard_library_paths(build / "Lib", tools)
+        optimizer.standard_library_paths(library.parent, tools)
+        return tools, build
+
+    def test_additions_outside_cached_namespaces_are_checked(self) -> None:
+        cases = {
+            "new_namespace_unrequested": (lambda build: fresh(build / "Fresh/Other.olean"), {"Fresh.Wanted"},
+                                          "outside its requested modules: {build}/Fresh/Other.olean"),
+            "new_namespace_compiler_module": (lambda build: fresh(build / "Init/Prelude.olean"), {"Init.Prelude"},
+                                              "artifact for an existing module: {build}/Init/Prelude.olean"),
+            "uncached_namespace_unrequested": (lambda build: fresh(build / "Other/Y.olean"), {"Other.Z"},
+                                               "outside its requested modules: {build}/Other/Y.olean"),
+            "uncached_namespace_existing_module": (lambda build: fresh(build / "Other/X.ir"), {"Other.X"},
+                                                   "artifact for an existing module: {build}/Other/X.ir"),
+            "new_top_level_unrequested": (lambda build: fresh(build / "Extra.olean"), {"Top"},
+                                          "outside its requested modules: {build}/Extra.olean"),
+            "existing_top_level_part": (lambda build: fresh(build / "Top.ir"), {"Top"},
+                                        "artifact for an existing module: {build}/Top.ir"),
+            "removed_top_level": (lambda build: (build / "Top.olean").unlink(), set(),
+                                  "removed a root-package artifact: {build}/Top.olean"),
+            "removed_uncached": (lambda build: (build / "Other/X.olean").unlink(), set(),
+                                 "removed a root-package artifact: {build}/Other/X.olean"),
+        }
+        for name, (change, modules, message) in cases.items():
+            with self.subTest(case=name), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory).resolve()
+                tools, build = self.build_tree(root)
+                with self.assertRaises(ValueError) as raised:
+                    self.prepare(tools, lambda: change(build), modules)
+                self.assertTrue(str(raised.exception).endswith(message.format(build=build)), raised.exception)
+                self.assertEqual(optimizer.read_lake_growth(tools.output), {})
+
+    def test_requested_new_namespace_and_top_level_module_are_recorded(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            tools, build = self.build_tree(root)
+
+            def build_requested() -> None:
+                fresh(build / "Fresh/Wanted.olean")
+                fresh(build / "Fresh/Wanted.ir")
+                fresh(build / "Next.olean")
+                fresh(build / "Other/Y.olean")
+
+            self.prepare(tools, build_requested, {"Fresh.Wanted", "Next", "Other.Y"})
+            self.assertEqual(sorted(optimizer.read_lake_growth(tools.output)), [
+                str(build / "Fresh/Wanted.ir"), str(build / "Fresh/Wanted.olean"),
+                str(build / "Next.olean"), str(build / "Other/Y.olean")])
+            # The new namespace is now under custody: a later outside change is rejected.
+            (build / "Fresh/Injected.olean").write_bytes(b"outside writer\n")
+            with self.assertRaisesRegex(ValueError, "inventory changed"):
+                self.prepare(tools, lambda: None, set())
+
+    def test_resume_sees_a_consumed_provider_through_its_symlinked_search_root(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            real = root / "pkg-real/lib"
+            (real / "Dep").mkdir(parents=True)
+            (real / "Dep/X.olean").write_bytes(b"dependency provider\n")
+            (root / ".lake/packages/dep").mkdir(parents=True)
+            (root / ".lake/packages/dep/lib").symlink_to(real, target_is_directory=True)
+            lexical = root / ".lake/packages/dep/lib/Dep/X.olean"
+            build = root / ".lake/build/lib/lean"
+            build.mkdir(parents=True)
+            tools = optimizer.Tools(root, root / "output", root / "bin/lake", root / "bin/lean", root,
+                                    {"LEAN_SYSROOT": str(root / "sysroot"),
+                                     "LEAN_PATH": str(root / ".lake/packages/dep/lib")},
+                                    5, time_binary=root / "bin/time")
+            # The saved row pins the provider under Lake's lexical spelling, as a real setup does.
+            metadata = {"name": "T", "isModule": True, "importArts": {"Dep.X": [[str(lexical)], []]}}
+            paths = optimizer.compilation_input_paths(metadata, root, None, tools)
+            # The actual saved row holds Lake's spelling and the resolved namespace inventory.
+            self.assertEqual([path for path in paths if path.endswith("X.olean")],
+                             [str(lexical), str(real / "Dep/X.olean")])
+            saved = optimizer.pin_input_paths(tools, paths)
+            addition = build / "Dep/X.ir"
+            fresh(addition)
+            grown = tuple(sorted((*paths, str(addition))))
+            token = optimizer._recorded_lake_growth.set({str(addition): optimizer.file_pin(addition)})
+            try:
+                with self.assertRaisesRegex(ValueError, "provider for a consumed module: " + str(addition)):
+                    optimizer.verify_input_manifest(saved, grown, tools.output, tools)
+                # Lake's spelling alone must still name the provider.
+                with self.assertRaisesRegex(ValueError, "provider for a consumed module: " + str(addition)):
+                    optimizer.verify_recorded_growth(tools, (str(lexical),), (str(lexical), str(addition)))
+            finally:
+                optimizer._recorded_lake_growth.reset(token)
+
+    def test_change_before_the_build_is_rejected_without_running_lake(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            namespace = root / ".lake/build/lib/lean/Lib"
+            namespace.mkdir(parents=True)
+            (namespace / "Base.olean").write_bytes(b"root artifact\n")
+            tools = self.tools(root)
+            optimizer.standard_library_paths(namespace, tools)
+            (namespace / "Injected.olean").write_bytes(b"outside writer\n")
+            run = AssertionError("Lake ran after a custody failure")
+            with patch.object(optimizer.Tools, "run", side_effect=run), \
+                    self.assertRaisesRegex(ValueError, "inventory changed"):
+                optimizer.run_lake_preparation(tools, ["lake", "build"], root / "output/prepare",
+                                               frozenset({"Lib.Injected"}))
+            self.assertIn(namespace, tools.library_inventories)
+
+    def test_grown_saved_manifest_is_never_reused_for_the_current_inputs(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            namespace = root / ".lake/build/lib/lean/Lib"
+            namespace.mkdir(parents=True)
+            (namespace / "Base.olean").write_bytes(b"root artifact\n")
+            tools = self.tools(root)
+            saved_paths = (str(namespace / "Base.olean"),)
+            saved = optimizer.pin_input_paths(tools, saved_paths)
+            added = namespace / "New.olean"
+            added.write_bytes(b"recorded addition\n")
+            grown = tuple(sorted((*saved_paths, str(added))))
+            token = optimizer._recorded_lake_growth.set({str(added): optimizer.file_pin(added)})
+            try:
+                files = optimizer.verify_input_manifest(saved, grown, tools.output, tools)
+            finally:
+                optimizer._recorded_lake_growth.reset(token)
+            self.assertEqual([row["path"] for row in files], list(saved_paths))
+            self.assertNotIn(grown, tools.input_manifests)
+            current = optimizer.pin_input_paths(tools, grown)
+            self.assertEqual([row["path"] for row in optimizer.read_json(Path(current["path"]))["files"]],
+                             list(grown))
+            # A saved input that left the current set is never growth, even with a record.
+            with self.assertRaisesRegex(ValueError, "different setup path set"):
+                token = optimizer._recorded_lake_growth.set({str(added): optimizer.file_pin(added)})
+                try:
+                    optimizer.verify_recorded_growth(tools, (*saved_paths, str(namespace / "Gone.olean")), grown)
+                finally:
+                    optimizer._recorded_lake_growth.reset(token)
+            # Outside resume validation the same difference is rejected.
+            with self.assertRaisesRegex(ValueError, "different setup path set"):
+                optimizer.verify_input_manifest(saved, grown, tools.output, tools)
+
+    def test_failed_attempt_trusts_nothing_it_took(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            tools, build = self.build_tree(root)
+            cached = dict(tools.library_inventories)
+            with self.assertRaisesRegex(ValueError, "outside its requested modules"):
+                self.prepare(tools, lambda: fresh(build / "Fresh/Other.olean"), {"Fresh.Wanted"})
+            self.assertEqual(tools.library_inventories, cached)
+            self.assertNotIn("after", tools.root_listing)
+            with patch.object(optimizer.Tools, "run", side_effect=AssertionError("Lake ran")), \
+                    self.assertRaisesRegex(ValueError, "An earlier Lake preparation was rejected: .*Fresh/Other"):
+                optimizer.run_lake_preparation(tools, ["lake", "build"], tools.output / "prepare", frozenset())
+
+    def test_new_top_level_entries_between_preparations_are_rejected(self) -> None:
+        for name, entry in (("namespace", "Init/Prelude.olean"), ("module", "Extra.olean")):
+            with self.subTest(entry=name), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory).resolve()
+                tools, build = self.build_tree(root)
+                self.prepare(tools, lambda: None, set())
+                fresh(build / entry)
+                with patch.object(optimizer.Tools, "run", side_effect=AssertionError("Lake ran")), \
+                        self.assertRaisesRegex(ValueError, "Root artifact root changed since the last Lake "
+                                               f"preparation: {build / entry.split('/')[0]}"):
+                    optimizer.run_lake_preparation(tools, ["lake", "build"], tools.output / "prepare", frozenset())
+
+    def test_namespace_moved_behind_a_symlink_is_rejected(self) -> None:
+        for platform in ("linux", "darwin"):
+            with self.subTest(platform=platform), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory).resolve()
+                tools, build = self.build_tree(root)
+                optimizer.pin_input_paths(tools, (str(build / "Lib/Base.olean"),))
+
+                def move_behind_symlink() -> None:
+                    os.rename(build / "Lib", root / "moved-Lib")
+                    (build / "Lib").symlink_to(root / "moved-Lib", target_is_directory=True)
+
+                if platform != sys.platform and platform == "linux":
+                    continue
+                expected = ("Compilation input path identity changed" if platform == "linux" else
+                            f"Lake preparation moved or replaced a root namespace: {build / 'Lib'}")
+                with patch.object(optimizer.sys, "platform", platform), \
+                        self.assertRaisesRegex(ValueError, expected):
+                    self.prepare(tools, move_behind_symlink, set())
+
+    @unittest.skipUnless(sys.platform == "linux", "inotify watches the Lake window")
+    def test_transient_namespace_changes_in_the_window_are_rejected(self) -> None:
+        def move_and_restore(build: Path, root: Path) -> None:
+            os.rename(build / "Lib", root / "moved-Lib")
+            os.rename(root / "moved-Lib", build / "Lib")
+
+        def symlink_and_restore(build: Path, root: Path) -> None:
+            os.rename(build / "Lib", root / "moved-Lib")
+            (build / "Lib").symlink_to(root / "moved-Lib", target_is_directory=True)
+            (build / "Lib").unlink()
+            os.rename(root / "moved-Lib", build / "Lib")
+
+        def chmod_directory_and_restore(build: Path, root: Path) -> None:
+            chmod_and_restore(build / "Lib")
+
+        for change in (move_and_restore, symlink_and_restore, chmod_directory_and_restore):
+            with self.subTest(change=change.__name__), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory).resolve()
+                tools, build = self.build_tree(root)
+                before = optimizer.namespace_topology([build / "Lib"])
+                with self.assertRaisesRegex(ValueError, "Compilation input path identity changed: "):
+                    self.prepare(tools, lambda: change(build, root), set())
+                # The endpoint alone would not show it: the namespace node and path are restored.
+                self.assertEqual(optimizer.namespace_topology([build / "Lib"]), before)
+
+    def test_per_row_fallback_preparation_uses_the_guard(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            recovery.main_inputs(root, ("A",))
+            tools = optimizer.Tools(root, root / "output", root / "bin/lake", root / "bin/lean", root, {}, 5,
+                                    root / "bin/time")
+            row = {"path": "A.lean", "module": "A", "source_sha256": recovery.digest(recovery.ORIGINAL)}
+            refused = ValueError("Pinned root-package artifact changed (ino): fixture")
+            with patch.object(optimizer, "run_lake_preparation", side_effect=refused) as guard, \
+                    patch.object(optimizer.Tools, "run", side_effect=AssertionError("unguarded Lake")):
+                result = optimizer.optimize_one(tools, row, recovery.native_header(root / "A.lean"),
+                                                optimizer.Proposal())
+            self.assertEqual((result["status"], result["error"]), ("blocked", str(refused)))
+            guard.assert_called_once()
+            self.assertEqual(guard.call_args.args[3], frozenset({"A"}))
+
+    def test_custody_keeps_the_first_pin_after_a_rehash(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            namespace = root / ".lake/build/lib/lean/Lib"
+            namespace.mkdir(parents=True)
+            base = namespace / "Base.olean"
+            base.write_bytes(b"root artifact\n")
+            tools = self.tools(root)
+            optimizer.pin_input_paths(tools, (str(base),))
+            first = tools.root_custody[str(base)]
+            base.write_bytes(b"changed bytes\n")
+            # A later pin re-hashes the file and updates the cache, but not the custody.
+            optimizer.record_root_custody(tools, [optimizer.file_pin(base, tools.file_cache)])
+            self.assertEqual(tools.root_custody[str(base)], first)
+            with patch.object(optimizer.Tools, "run", side_effect=AssertionError("Lake ran")), \
+                    self.assertRaisesRegex(ValueError, "Pinned root-package artifact changed .*: " + str(base)):
+                optimizer.run_lake_preparation(tools, ["lake", "build"], tools.output / "prepare", frozenset())
+
+    def test_dependency_closure_follows_frozen_local_edges(self) -> None:
+        inventory = [{"module": "A", "direct_local_dependencies": ["B"]},
+                     {"module": "B", "direct_local_dependencies": ["C"]},
+                     {"module": "C", "direct_local_dependencies": []},
+                     {"module": "D", "direct_local_dependencies": ["A"]}]
+        self.assertEqual(optimizer.local_dependency_closure(inventory, {"A"}), {"A", "B", "C"})
+
+
+if __name__ == "__main__":
+    unittest.main()
