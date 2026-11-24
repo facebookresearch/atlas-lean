@@ -12871,6 +12871,7 @@
   "MathlibExt/NumberTheory/WilsonQuotient": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Wilson quotients"},
   "MathlibExt/NumberTheory/WilsonQuotients": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Wilson quotients"},
   "MathlibExt/NumberTheory/Wolstenholme": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Wolstenholme's theorem"},
+  "MathlibExt/NumberTheory/WolstenholmeBinomialCongruence": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Wolstenholme's theorem"},
   "MathlibExt/NumberTheory/WolstenholmeBinomialExtension": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Wolstenholme's theorem"},
   "MathlibExt/NumberTheory/WolstenholmePowerSums": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Wolstenholme's theorem"},
   "MathlibExt/NumberTheory/X2Y2Count": {"to": "NumberTheory/quadratic-forms-sums-of-squares/sums-of-squares", "title": "Representations by x² + 2y²"},
