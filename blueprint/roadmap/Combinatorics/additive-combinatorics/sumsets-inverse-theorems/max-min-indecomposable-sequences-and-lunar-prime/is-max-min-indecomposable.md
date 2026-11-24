@@ -5,9 +5,12 @@ $g, h : \mathbb{N} \to \mathbb{N}$ with $g \otimes h = f$, where $\otimes$ is th
 $g$ or $h$ is a monomial, that is, a sequence with exactly one nonzero term. The paper's
 Definition 5 additionally excludes monomials; this predicate does not include that exclusion.
 
-Factors range over all sequences $\mathbb{N} \to \mathbb{N}$; for $b \ge 2$ and $f$ with all terms
-less than $b$, the coefficients can be restricted to $\{0, \dots, b - 1\}$ by applying the digit map
-$x \mapsto \min(x, b - 1)$.
+Factors here are arbitrary natural-valued sequences, and a monomial has exactly one nonzero
+coefficient. Definition 5 uses finite base-$b$ polynomials and writes monomials as $t x^n$,
+allowing $t = 0$. For a digit sequence with nonzero constant term, any factorization has
+nonzero, finitely supported factors: a nonzero coefficient of either factor survives by pairing
+with the other factor's nonzero constant term. For $b \ge 2$, clipping the factors at $b - 1$
+preserves their supports, the max-min product clipped at $b - 1$, and thus the monomial condition.
 
 ## Sources
 
