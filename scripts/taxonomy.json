@@ -11777,6 +11777,7 @@
   "MathlibExt/GroupTheory/SurjectiveRotaBaxterOperator": {"to": "Algebra/nonassociative-algebras", "title": "Rota–Baxter operators on groups"},
   "MathlibExt/GroupTheory/SvarcMilnor": {"to": "GroupTheory/geometric-group-theory", "title": "Word metrics and quasi-isometries"},
   "MathlibExt/GroupTheory/SzeleCyclicNumber": {"to": "GroupTheory/orders-and-spectra", "title": "Cyclic numbers"},
+  "MathlibExt/GroupTheory/TwistedUnitClassSubgroupKourovka18Problem14": {"to": "GroupTheory/automorphisms/fixed-points-of-automorphisms", "title": "Twisted conjugacy classes"},
   "MathlibExt/GroupTheory/TwoPowerRank": {"to": "GroupTheory/abelian-groups", "title": "Two-power ranks of finite abelian groups"},
   "MathlibExt/GroupTheory/WordMetricComparison": {"to": "GroupTheory/geometric-group-theory", "title": "Word metrics and quasi-isometries"},
   "MathlibExt/InformationTheory/ChannelCodingAchievability": {"to": "InformationTheory/channel-coding", "title": "Shannon's channel coding theorem"},
