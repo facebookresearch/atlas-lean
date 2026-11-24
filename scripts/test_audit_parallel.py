@@ -258,6 +258,25 @@ class ParallelAuditTests(unittest.TestCase):
                 run_audit(modules, fake, batch_size=8, workers=4)
         self.assertEqual(sorted(fake.order), ['L.Bad', 'L.M08', 'L.M16', 'L.M24'])
 
+    def test_no_batch_starts_while_a_failed_batch_is_classified(self):
+        # Group 0 fails while group 1 runs; group 1's worker is free while group 0's output is
+        # classified, and must not start group 2 before the failure is recorded.
+        classifying = threading.Event()
+        real_classify = audit.only_import_collision
+
+        def classify(output, real_classify=real_classify):
+            if 'L.Bad' in output:
+                classifying.set()
+                time.sleep(0.5)
+            return real_classify(output)
+
+        both = threading.Event()
+        fake = FakeLean(hold={'L.Bad': both, 'L.M08': classifying}, launched=lambda calls: calls == 2 and both.set())
+        with mock.patch.object(audit, 'only_import_collision', classify):
+            with self.assertRaisesRegex(audit.AuditFailure, 'L.Bad'):
+                run_audit(names(32, 2, bad=[(0, 'L.Bad')]), fake, batch_size=8, workers=2)
+        self.assertEqual(sorted(fake.order), ['L.Bad', 'L.M08'])
+
     def test_failure_cancels_groups_not_started(self):
         modules = names(32, 2, bad=[(0, 'L.Bad')])
         fake = FakeLean(delay=0.1)

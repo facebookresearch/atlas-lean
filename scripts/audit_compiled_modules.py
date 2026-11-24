@@ -378,8 +378,11 @@ class Admission:
         except OSError:
             pass
 
-    def finished(self, process: subprocess.Popen) -> None:
+    def finished(self, process: subprocess.Popen, failed: int | None = None) -> None:
+        """Unregister an ended batch; with `failed`, first record that its group failed."""
         with self.condition:
+            if failed is not None:
+                self.fail(failed)
             _, pidfd = self.running.pop(process, (None, None))
             if pidfd is not None:
                 os.close(pidfd)
@@ -452,14 +455,18 @@ def audit(root: Path, modules: list[str], checker: str, *, batch_size: int = BAT
                 process.wait()
                 if process.stdout:
                     process.stdout.close()
+                admission.finished(process, failed=index)
                 raise
-            finally:
-                admission.finished(process)
+            # Classify under the admission lock (a reentrant one), so that no batch
+            # starts between this batch's end and the record of its group's failure.
+            with admission.condition:
+                split = process.returncode != 0 and only_import_collision(output) and len(batch) > 1
+                admission.finished(process, failed=index if process.returncode != 0 and not split else None)
         if process.returncode == 0:
             tally['checked'].extend(batch)
             tally['groups'] += 1
             return
-        if only_import_collision(output) and len(batch) > 1:
+        if split:
             tally['splits'] += 1
             middle = len(batch) // 2
             check(index, batch[:middle], tally)
