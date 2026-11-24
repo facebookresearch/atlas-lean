@@ -239,7 +239,6 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/Physics/thermodynamics-and-heat-transfer/coupled-heat-and-moisture-transport/README.md"}], "id": "af_b63b6b2a8c9ee72f708afc37"}
 {"subject": [{"type": "generic", "uri": "../roadmap/Physics/elasticity-and-structures/viscoelasticity/energy-and-relaxation-of-a-maxwell-element.md"}], "id": "af_c707ca0da80a77b0ae1d3d4a", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Physics/elasticity-and-structures/viscoelasticity/README.md"}], "id": "af_99c21072d16c236878991bd2"}
-{"subject": [{"type": "generic", "uri": "../roadmap/Physics/elasticity-and-structures/beams-and-columns/polynomial-uniqueness-for-a-uniformly-loaded-simple-beam.md"}], "id": "af_e843e1f65a16fe784ccd2411", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Physics/elasticity-and-structures/beams-and-columns/README.md"}], "id": "af_a6dc73212ad3c6f8f166dea6"}
 {"subject": [{"type": "generic", "uri": "../roadmap/Physics/elasticity-and-structures/beams-and-columns/end-forces-and-energy-of-a-hermite-beam-element.md"}], "id": "af_7b3839d9961e308f99d60850", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Physics/elasticity-and-structures/beams-and-columns/infinite-beam-on-a-winkler-foundation-under-a-point-load.md"}], "id": "af_14249e1691e677119d8685d6", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
