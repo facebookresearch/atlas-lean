@@ -9,7 +9,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.MachineLearning.GraphicalModels.CComponentFactorization
-public import CSLibExt.MachineLearning.GraphicalModels.LatentConfounding
 public import CSLibExt.MachineLearning.GraphicalModels.Identifiability
 public import Mathlib.Data.Finset.Sort
 

@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.MachineLearning.GraphicalModels.CComponentCriterion
+public import CSLibExt.MachineLearning.GraphicalModels.LatentConfounding
 import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
@@ -555,8 +556,8 @@ private theorem crit_aux_c2_do : doProb crit_aux_c2 true true = 1 / 2 := by
 /-- Two networks on the latent-confounding triangle with the same strictly positive law of
 `(X, Y)` and different interventional probabilities `P(Y = 1 | do(X = 1))`, `5 / 8` and
 `1 / 2`. For example, `X` a fair coin with `P(Y = 1 | X = 1) = 5 / 8` and
-`P(Y = 1 | X = 0) = 3 / 8`, against `U` a fair coin with `X` and `Y` each equal to `U` with
-probability `3 / 4`: both laws are `(5, 3, 3, 5) / 16` on `(false, false)`, `(false, true)`,
+`P(Y = 1 | X = 0) = 3 / 8`, against a fair `U` with `Y` equal to `U` deterministically and
+`X` equal to `U` with probability `5 / 8`: both laws are `(5, 3, 3, 5) / 16` on `(false, false)`, `(false, true)`,
 `(true, false)`, `(true, true)`. The witnesses of `exists_same_observedLaw_ne_doProb` put no
 mass on `X ≠ Y`, so they do not have a strictly positive law. -/
 theorem exists_pos_same_observedLaw_ne_doProb :
