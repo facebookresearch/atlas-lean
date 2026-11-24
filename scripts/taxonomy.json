@@ -10795,6 +10795,7 @@
   "MathlibExt/Combinatorics/Enumerative/StirlingSecondExpDeriv": {"to": "Combinatorics/binomial-coefficients/central-binomial-harmonic-sums", "title": "Central binomial sums with harmonic numbers"},
   "MathlibExt/Combinatorics/Enumerative/StirlingSecondExplicit": {"to": "Combinatorics/stirling-bell-eulerian/stirling-lah-numbers", "title": "Stirling numbers of the second kind"},
   "MathlibExt/Combinatorics/Enumerative/StirlingSecondGy": {"to": "Combinatorics/stirling-bell-eulerian/stirling-lah-numbers", "title": "Triple products of Stirling numbers"},
+  "MathlibExt/Combinatorics/Enumerative/StirlingSecondSignedBinomialTransform": {"to": "Combinatorics/stirling-bell-eulerian/stirling-lah-numbers", "title": "Lee's identities for Stirling numbers"},
   "MathlibExt/Combinatorics/Enumerative/StirlingSecondSmallerRows": {"to": "Combinatorics/stirling-bell-eulerian/stirling-lah-numbers", "title": "Lee's identities for Stirling numbers"},
   "MathlibExt/Combinatorics/Enumerative/StirlingSecondKindMatrices": {"to": "Combinatorics/stirling-bell-eulerian/stirling-lah-numbers", "title": "Stirling matrices"},
   "MathlibExt/Combinatorics/Enumerative/StirlingTripleProduct": {"to": "Combinatorics/stirling-bell-eulerian/stirling-lah-numbers", "title": "Triple products of Stirling numbers"},
