@@ -11,3 +11,5 @@ Syntax, proof calculi and semantics of first-order predicate logic, including so
 - [Complete theory of a first-order structure](theory-of-structure.md)
 
 - [Kripke completeness of intuitionistic first-order logic](kripke-completeness-of-intuitionistic-first-order-logic.md)
+
+- [Herbrand's theorem](herbrand-s-theorem.md)

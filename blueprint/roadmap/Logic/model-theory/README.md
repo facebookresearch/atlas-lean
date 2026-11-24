@@ -13,3 +13,8 @@ Relations between formal theories and their structures: first-order languages of
 - [Vaught's conjecture](vaught-s-conjecture.md)
 
 - [Omitting types theorem](omitting-types-theorem.md)
+
+- [Beth's definability theorem](beth-definability-theorem.md)
+- [Downward Löwenheim–Skolem theorem](downward-lowenheim-skolem-theorem.md)
+- [Ehrenfeucht–Fraïssé theorem](ehrenfeucht-fraisse-theorem.md)
+- [Quantifier elimination for Presburger arithmetic](quantifier-elimination-for-presburger-arithmetic.md)

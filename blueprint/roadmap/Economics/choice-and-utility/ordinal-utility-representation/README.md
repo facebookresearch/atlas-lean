@@ -10,3 +10,5 @@
 ## Sources
 
 - J. Levin and P. Milgrom, *Introduction to Choice Theory*, Stanford Econ 202 notes (2004): §4 (Definition 5, Proposition 3).
+
+- [Natural-number utilities for finite preferences by lower-contour counts](natural-number-utilities-of-finite-preferences.md)

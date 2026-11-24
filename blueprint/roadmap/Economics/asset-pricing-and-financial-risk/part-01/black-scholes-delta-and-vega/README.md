@@ -6,3 +6,5 @@
 - [The spot derivative of the Black–Scholes call price is Φ(d₁)](has-deriv-at-black-scholes-call-s0.md)
 - [The volatility derivative of the Black–Scholes call is S0 φ(d₁) √T](has-deriv-at-black-scholes-call-sigma.md)
 - [Black–Scholes vega is positive](black-scholes-vega-pos.md)
+
+- [Delta hedging replicates the European call at maturity](delta-hedging-replicates-the-call.md)

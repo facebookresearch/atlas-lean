@@ -11,3 +11,6 @@ Structural study of formal proofs and provability: sequent calculi, linear logic
 - [Superpolynomial lower bounds for Frege proofs](superpolynomial-lower-bounds-for-frege-proofs.md)
 
 - [Substructural sequent calculi beyond classical linear logic](substructural-calculi-beyond-classical-linear-logic.md)
+
+- [Craig interpolation for first-order logic](craig-interpolation-for-first-order-logic.md)
+- [Cut elimination for the classical sequent calculus LK](cut-elimination-for-the-classical-sequent-calculus.md)
