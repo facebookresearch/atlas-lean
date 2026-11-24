@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.NumberTheory.Height.NumberField
 public import MathlibExt.NumberTheory.EllipticCurveNaiveHeightLowerBounds
+public import MathlibExt.NumberTheory.EllipticCurveNaiveHeightUnitCoeff
 
 /-!
 # Lower bounds for the naive height of rational points on elliptic curves
@@ -30,27 +31,6 @@ primitive integer representative; here it is Mathlib's `Height.mulHeight ![b₁,
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Height lower bounds on $y^2 = x^3 + ax + b$ when $a = \pm 1$ or $b = \pm 1$.** Let
-$a, b \in \mathbb{Z}$ with $4a^3 + 27b^2 \ne 0$, and for $u, v \in \mathbb{Q}$ let
-$H(u, v) = \max(|U|, |V|, |W|)$, where $U, V, W$ are coprime integers with
-$(U : V : W) = (u : v : 1)$. Consider the rational solutions $(u, v)$ of $v^2 = u^3 + au + b$.
-(a) If $a = \pm 1$ and $b \notin \{0, 1, -1\}$, every solution has $H(u, v) \ge (|b|/5)^{1/3}$.
-(b) If $a \notin \{0, 1, -1\}$ and $b = -1$, every solution has $H(u, v) \ge (|a|/5)^{1/3}$.
-(c) If $a \notin \{0, 1, -1\}$ and $b = 1$, every solution with $H(u, v) < (|a|/5)^{1/3}$ is
-$(0, 1)$ or $(0, -1)$.
-
-Source: Dimitrios Poulakis, *Lower Bounds for the Height of Rational Points of Elliptic
-Curves*, INTEGERS 25 (2025), Article A66, Theorem 2 (`integers-2025-A66-thm-2`). -/
-public theorem_wanted naiveHeight_lower_bound_of_unit_coeff (a b : ℤ)
-    (hE : 4 * a ^ 3 + 27 * b ^ 2 ≠ 0) :
-    ((a = 1 ∨ a = -1) → b ≠ 0 → b ≠ 1 → b ≠ -1 → ∀ u v : ℚ, v ^ 2 = u ^ 3 + a * u + b →
-        ¬ Height.mulHeight ![u, v, 1] < (|(b : ℝ)| / 5) ^ ((1 : ℝ) / 3)) ∧
-      (a ≠ 0 → a ≠ 1 → a ≠ -1 → b = -1 → ∀ u v : ℚ, v ^ 2 = u ^ 3 + a * u + b →
-        ¬ Height.mulHeight ![u, v, 1] < (|(a : ℝ)| / 5) ^ ((1 : ℝ) / 3)) ∧
-      (a ≠ 0 → a ≠ 1 → a ≠ -1 → b = 1 → ∀ u v : ℚ, v ^ 2 = u ^ 3 + a * u + b →
-        Height.mulHeight ![u, v, 1] < (|(a : ℝ)| / 5) ^ ((1 : ℝ) / 3) →
-          u = 0 ∧ (v = 1 ∨ v = -1))
 
 /-- **Height lower bounds on $y^2 = x^3 + ax + b$ when $b = \pm a$, $b = 0$ or $a = 0$.** Let
 $a, b \in \mathbb{Z}$ with $4a^3 + 27b^2 \ne 0$, and for $u, v \in \mathbb{Q}$ let

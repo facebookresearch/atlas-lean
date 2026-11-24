@@ -12,6 +12,8 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.Complex.Basic
 public import MathlibExt.Combinatorics.Enumerative.AlternatingBinomialPowerSumRecurrences
+public import MathlibExt.Combinatorics.Enumerative.AlternatingBinomialPowerSumStirling
+public import MathlibExt.Combinatorics.Enumerative.Hypersequence
 public import MathlibExt.Combinatorics.Enumerative.RingChooseSub
 public import MathlibExt.Combinatorics.Enumerative.SuccPowStirlingSecond
 public import MathlibExt.NumberTheory.LucasSequence
@@ -38,36 +40,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open Finset
-
-/-- **Hypersequence.** Let $(a_n)_{n \ge 0}$ be a sequence in an additive commutative monoid.
-Its hypersequence of generation $r$, written $a^{(r)}_n$, is defined by recursion on $r$:
-$a^{(0)}_n = a_n$ and $a^{(r+1)}_n = \sum_{k=0}^{n} a^{(r)}_k$ for all natural numbers $r$ and
-$n$. Thus each generation is the sequence of partial sums of the previous one.
-
-Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted Sums*,
-INTEGERS 24 (2024), Article A70, Section 1, Equation (1.1). -/
-public def hypersequence {R : Type*} [AddCommMonoid R] (a : ℕ → R) : ℕ → ℕ → R
-  | 0, n => a n
-  | r + 1, n => ∑ k ∈ range (n + 1), hypersequence a r k
-
-/-- **Each hypersequence generation sums the previous one.** Let $(a_n)$ be a sequence in an
-additive commutative monoid and let $a^{(r)}_n$ denote its hypersequence of generation $r$. For
-all natural numbers $r$ and $n$, $a^{(r+1)}_n = \sum_{k=0}^{n} a^{(r)}_k$.
-
-Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted Sums*,
-INTEGERS 24 (2024), Article A70, Section 1, Equation (1.1). -/
-public theorem hypersequence_succ {R : Type*} [AddCommMonoid R] (a : ℕ → R) (r n : ℕ) :
-    hypersequence a (r + 1) n = ∑ k ∈ range (n + 1), hypersequence a r k :=
-  rfl
-
-/-- **First hypersequence at index zero.** Let $(a_n)$ be a sequence in an additive commutative
-monoid and let $a^{(1)}_n$ denote its hypersequence of generation $1$. Then $a^{(1)}_0 = a_0$.
-
-Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted Sums*,
-INTEGERS 24 (2024), Article A70, Section 1, Equation (1.1). -/
-public theorem hypersequence_one_zero {R : Type*} [AddCommMonoid R] (a : ℕ → R) :
-    hypersequence a 1 0 = a 0 := by
-  simp [hypersequence]
 
 /-- **Hyperfibonacci numbers are the hypersequences of the Fibonacci numbers.** Let $F_k$ denote
 the $k$th Fibonacci number. For all natural numbers $r$ and $n$, the hyperfibonacci number
@@ -260,23 +232,6 @@ public theorem_wanted sum_pow_mul_eq (a : ℕ → ℂ) (ℓ n : ℕ) :
         ∑ j ∈ range (ℓ + 1), (ℓ.choose j : ℂ) *
           (∑ m ∈ range (j + 1), (-1) ^ m * (m.factorial : ℂ) * (Nat.stirlingSecond j m : ℂ) *
             hypersequence a (m + 1) n) * ((n : ℂ) + 1) ^ (ℓ - j)
-
-/-- **Boyadzhiev's and Katsuura's formulas for alternating binomial power sums.** Let
-$p_{\ell,m}(x, y) = \sum_{k=0}^{m} (-1)^k \binom{m}{k} (kx + y)^\ell$ and let $S(j, m)$ denote the
-Stirling numbers of the second kind. For all complex numbers $x, y$ and natural numbers
-$\ell, m$:
-(i) (Boyadzhiev) $p_{\ell,m}(x, y) = \sum_{j=m}^{\ell} \binom{\ell}{j} (-1)^m m!\, S(j, m)\,
-x^j y^{\ell-j}$, where the sum is empty (hence $0$) when $\ell < m$;
-(ii) (Katsuura) if $\ell < m$ then $p_{\ell,m}(x, y) = 0$, and $p_{m,m}(x, y) = (-1)^m x^m m!$.
-
-Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted Sums*,
-INTEGERS 24 (2024), Article A70, Proposition 1 (`integers-2024-A70-prop-1`). -/
-public theorem_wanted alternatingBinomialPowerSum_eq_sum_stirlingSecond (x y : ℂ) (ℓ m : ℕ) :
-    alternatingBinomialPowerSum ℓ m x y =
-        ∑ j ∈ Icc m ℓ, (ℓ.choose j : ℂ) * (-1) ^ m * (m.factorial : ℂ) *
-          (Nat.stirlingSecond j m : ℂ) * x ^ j * y ^ (ℓ - j) ∧
-      (ℓ < m → alternatingBinomialPowerSum ℓ m x y = 0) ∧
-      alternatingBinomialPowerSum m m x y = (-1) ^ m * x ^ m * (m.factorial : ℂ)
 
 /-- **Special values of alternating binomial power sums.** Let
 $p_{\ell,m}(x, y) = \sum_{k=0}^{m} (-1)^k \binom{m}{k} (kx + y)^\ell$, with $0^0 = 1$, and let
