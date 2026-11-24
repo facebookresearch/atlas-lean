@@ -24,9 +24,17 @@ A good expansion has pages for:
    over $\mathcal{O}_C$ and the full faithfulness, up to isogeny, of $G_0 \mapsto \mathcal{E}(G_0)$ with essential image the
    bundles with slopes in $[0, 1]$ (Scholze–Weinstein, Theorem 5.1.4 and Remark 5.1.5, resting on [FF12],
    Theorems 7.15, 7.24 and Proposition 7.17);
-4. Fargues's results used for the Hodge–Tate sequence: the exactness over $C$ ([FGL08], Chapter II, Appendix C, as
-   cited in the proof of Scholze–Weinstein, Proposition 5.1.6 (iii)) and the integral sequence with cohomology killed
-   by $p^{1/(p-1)+\varepsilon}$ ([FGL08], Théorème II.1.1, as cited in the proof of Proposition 4.3.6);
+4. the modification of vector bundles attached to a $p$-divisible group $G$ over $\mathcal{O}_C$ with Tate module $T$: the
+   exact sequence $0 \to \mathcal{O}_X \otimes_{\mathbb{Z}_p} T \to \mathcal{E}(G_0) \to i_{\infty *}(\operatorname{Lie} G \otimes C) \to 0$ of
+   coherent sheaves on $X$ (Scholze–Weinstein, Proposition 5.1.6 (i), proved through Proposition 5.1.1 and the case of
+   $\mu_{p^\infty}$), the description of the adjunction morphism at the point $\infty$ by the quasi-logarithm (Proposition
+   5.1.6 (ii)), and the identification of the composite $\mathcal{E}_{G^{\vee\vee}} \to \mathcal{E}_G$ with multiplication by
+   $t = \log([\epsilon]) \in H^0(X, \mathcal{O}_X(1))$ (proof of Proposition 5.1.6, p. 51, by reduction to
+   $T \otimes_{\mathbb{Z}_p} \mathbb{Q}_p/\mathbb{Z}_p$), from which Scholze–Weinstein reprove the exactness of the Hodge–Tate
+   sequence over $C$; and the results of [FGL08], Chapter II, from which Fargues proves its integral form ([FGL08],
+   Théorème II.1.1, the case $(C, \mathcal{O}_C)$ of Scholze–Weinstein, Proposition 4.3.6). The exact sequence over $C$ and
+   its integral form are items 1 and 2 of the [Hodge–Tate sequence of a p-divisible group](hodge-tate-sequence-of-p-divisible-groups.md)
+   and are not part of this node;
 5. the classification of $p$-divisible groups over $\mathcal{O}_C$ by pairs $(T, W)$ of a finite free $\mathbb{Z}_p$-module $T$ and
    a $C$-subspace $W$ of $T \otimes C(-1)$ (Scholze–Weinstein, Theorem 5.2.1). Its functor sends $G$ to its Tate module and
    $W = \operatorname{Lie} G \otimes C$ embedded by the Hodge–Tate map $\alpha_{G^\vee}^\vee$, so it comes after the Hodge–Tate
@@ -35,7 +43,7 @@ A good expansion has pages for:
 ## Depends on
 
 - [p-divisible group](../../../../AlgebraicGeometry/abelian-varieties/deformations-and-p-divisible-groups/p-divisible-group.md)
-- [Crystalline representations](crystalline-representations.md), for $A_{\mathrm{cris}}$ and $B_{\mathrm{cris}}^+$
+- [Crystalline representations](crystalline-representations.md), for $A_{\mathrm{cris}}$, $B_{\mathrm{cris}}^+$ and the element $t$ of item 4
 - [Weakly admissible filtered (φ, N)-modules](weakly-admissible-filtered-phi-n-modules.md), for weak admissibility in the case $N = 0$, in the clause of item 2 on the bundle attached to a weakly admissible filtered $\varphi$-module; it is a condition on that module, not a hypothesis on $p$-divisible groups
 
 ## Proof depends on

@@ -27,28 +27,37 @@ A good expansion has pages for:
 2. the relative prismatic site $(X/A)_\Delta$ of a smooth $p$-adic formal scheme $X$ over $A/I$, its structure
    sheaf and prismatic cohomology $R\Gamma_\Delta(X/A)$ with its $\varphi_A$-linear Frobenius (§4), and the
    crystalline cohomology of $X$ over a crystalline prism (§5);
-3. the proof of the crystalline comparison (Theorem 5.2) from Corollary 2.39; the Hodge–Tate comparison over a
-   crystalline prism, deduced from the crystalline comparison and the Cartier isomorphism (Corollary 5.5); and the
-   mixed characteristic Hodge–Tate comparison and the de Rham comparison of §6 (Theorems 6.3 and 6.4), whose proofs
-   use the crystalline case;
-4. the absolute prismatic site of a $p$-adic formal scheme with $\mathcal{O}_\Delta$, $I_\Delta$ and $\varphi$, the
-   quasi-syntomic site, the étale and crystalline realizations of prismatic $F$-crystals, and the proof of their
-   classification over $\mathcal{O}_K$ (Bhatt–Scholze 2021, §§2–6, Constructions 4.8 and 4.12, Theorem 5.6) by
-   quasi-syntomic descent along $\operatorname{Spf}(\mathcal{O}_C) \to \operatorname{Spf}(\mathcal{O}_K)$. Its inputs are the
-   construction of the $F$-crystal over $\mathcal{O}_C$ following Kisin, through Kedlaya's slope filtrations as
-   observed by Berger; the Beilinson fibre sequence of Antieau–Mathew–Morrow–Nikolaus, used to build the descent
-   isomorphism (Bhatt–Scholze 2021, §1.1); and, in the proof of essential surjectivity (§6.4), the weak admissibility
-   of the filtered $\varphi$-module of the given crystalline representation together with the vector bundles on the
-   Fargues–Fontaine curve ([FF19] Corollary 11.2.22, Proposition 10.5.6, Theorem 8.2.10 (1); [SW18] Theorem 14.2.1).
+3. the absolute prismatic site of a $p$-adic formal scheme with $\mathcal{O}_\Delta$, $I_\Delta$ and $\varphi$, the quasi-syntomic
+   and quasiregular semiperfectoid sites with their comparison with the prismatic site (Bhatt–Scholze 2021, §2,
+   Proposition 2.14), $\mathbb{Z}_p$-local systems on the generic fibre through Laurent $F$-crystals (§3, Corollaries 3.7
+   and 3.8), and prismatic $F$-crystals with their étale and crystalline realizations (§4, Constructions 4.8 and 4.12),
+   the latter through the identification $\Delta_R \simeq A_{\mathrm{cris}}(R)$ for quasiregular semiperfect
+   $\mathbb{F}_p$-algebras $R$ (Example 4.7; for $R = \mathcal{O}_C/p$, §5, from Bhatt–Scholze 2019, Corollary 2.39 and
+   Proposition 7.10); Fargues's description of the prismatic $F$-crystals over $\mathcal{O}_C$ by pairs of a finite free
+   $\mathbb{Z}_p$-module $T$ and a $B_{\mathrm{dR}}^+$-lattice in $T \otimes B_{\mathrm{dR}}$ (Theorem 5.2, whose full faithfulness
+   Bhatt–Scholze cite from Bhatt–Morrow–Scholze, Remark 4.29); and the descent machinery of §§6.1–6.3: the period
+   sheaves on the quasiregular semiperfectoid site (Constructions 6.2 and 6.4), the $F$-crystal attached to a filtered
+   $\varphi$-module over $K$ on the "open unit disc" version of $\Delta_\bullet$ (Construction 6.5, Remark 6.6, Lemma 6.7),
+   and the boundedness of descent data at the boundary of the open unit disc (Propositions 6.8 and 6.10). From this
+   machinery Bhatt–Scholze prove the classification of prismatic $F$-crystals over $\mathcal{O}_K$ (Theorem 5.6),
+   full faithfulness in §5 and essential surjectivity in §6.4, by descent along
+   $\operatorname{Spf}(\mathcal{O}_C) \to \operatorname{Spf}(\mathcal{O}_K)$; that classification is the result of
+   [prismatic F-crystals and lattices in crystalline representations](prismatic-f-crystals-and-crystalline-lattices.md)
+   and is not part of this node, nor is the crystalline comparison (Bhatt–Scholze 2019, Theorem 5.2), the result of
+   [crystalline comparison for prismatic cohomology](crystalline-comparison-for-prismatic-cohomology.md), whose proof
+   uses items 1 and 2; nor are the Hodge–Tate comparison over a crystalline prism (Bhatt–Scholze 2019, Corollary 5.5) and
+   the mixed characteristic Hodge–Tate and de Rham comparisons (Theorems 6.3 and 6.4), which Bhatt–Scholze deduce from
+   the crystalline comparison.
 
 ## Depends on
 
-- [Crystalline representations](crystalline-representations.md), for the lattices in crystalline representations of $G_K$ given by the étale realization of item 4
+- [Crystalline representations](crystalline-representations.md), for $A_{\mathrm{cris}}$ and $B_{\mathrm{cris}}$, whose prismatic forms are among the period sheaves of item 3 (Bhatt–Scholze 2021, §5 and Construction 6.2)
+- [de Rham representations](de-rham-representations.md), for $B_{\mathrm{dR}}^+$ and $B_{\mathrm{dR}}$ in Fargues's description and the de Rham period sheaves of item 3 (Construction 6.4)
+- [Weakly admissible filtered (φ, N)-modules](weakly-admissible-filtered-phi-n-modules.md), for the filtered $\varphi$-modules over $K$ (the case $N = 0$) of Construction 6.5 in item 3
 
 ## Proof depends on
 
-- [Weakly admissible implies admissible](colmez-fontaine-theorem.md), for Fontaine's theorem that $D_{\mathrm{cris}}$ of a crystalline representation is weakly admissible, used in item 4
-- [p-divisible groups over the ring of integers of C](p-divisible-groups-over-o-c.md), for the Fargues–Fontaine curve and its vector bundles, used in item 4
+Its proof uses the inputs listed under Expansion.
 
 ## Expansion
 
@@ -56,10 +65,8 @@ A good expansion also states and links:
 
 - derived completeness of modules (Bhatt–Scholze 2019, §1.2), for the derived $(p, I)$-completeness in the definition of a prism
 - smooth $p$-adic formal schemes over $A/I$ (Bhatt–Scholze 2019, Definition 4.1 and §4), for the relative prismatic site of item 2
-- $p$-adic formal schemes, for the absolute prismatic site and the étale realization of item 4, defined for any $p$-adic formal scheme (Bhatt–Scholze 2021, Definition 2.3 and Construction 4.8); the crystalline realization (Construction 4.12) is defined for quasi-syntomic ones
-- Bhatt–Scholze's construction of the $F$-crystal over $\mathcal{O}_C$, an $A_{\mathrm{inf}}$-variant of Kisin's argument (Bhatt–Scholze 2021, §1.1 and §6.4, n. 12), which rests on Kedlaya's slope filtration theorem through Berger's observation, for item 4
-- the Beilinson fibre sequence of Antieau–Mathew–Morrow–Nikolaus (Bhatt–Scholze 2021, §1.1, citing [AMMN20]), for the descent isomorphism of item 4
-- the Cartier isomorphism (as used in Bhatt–Scholze 2019, Corollary 5.5), for the Hodge–Tate comparison over a crystalline prism in item 3
+- $p$-adic formal schemes, for the absolute prismatic site and the étale realization of item 3, defined for any $p$-adic formal scheme (Bhatt–Scholze 2021, Definition 2.3 and Construction 4.8); the crystalline realization (Construction 4.12) is defined for quasi-syntomic ones
+- the Beilinson fibre sequence of Antieau–Mathew–Morrow–Nikolaus (Bhatt–Scholze 2021, §1.1, citing [AMMN20], and §6.3, citing its Theorem 6.17), for the analytic continuation of Proposition 6.8 and the boundedness of descent data of Proposition 6.10 in item 3
 
 ## Sources
 

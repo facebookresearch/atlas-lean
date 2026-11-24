@@ -38,14 +38,15 @@ $\alpha_G \colon T \otimes_{\mathbb{Z}_p} \mathcal{O}_C \to (\operatorname{Lie} 
 
 ## Proof depends on
 
-- [p-divisible groups over the ring of integers of C](p-divisible-groups-over-o-c.md), for the Dieudonné theory over $\mathcal{O}_C/p$ and the vector bundle $\mathcal{E}(G_0)$ (its items 1 and 3), Proposition 5.1.1 on modifications of vector bundles, used in the proof of Proposition 5.1.6 (i) (its item 2), and Fargues's results cited in the proofs of Propositions 5.1.6 (iii) and 4.3.6 (its item 4); its classification by pairs $(T, W)$ (item 5) is built from the Hodge–Tate map and is not used
+- [p-divisible groups over the ring of integers of C](p-divisible-groups-over-o-c.md), for the Dieudonné theory over $\mathcal{O}_C/p$, the vector bundle $\mathcal{E}(G_0)$ and Proposition 5.1.1 on modifications of vector bundles (its items 1–3), and for its item 4: the modification $0 \to \mathcal{O}_X \otimes T \to \mathcal{E}(G_0) \to i_{\infty *}(\operatorname{Lie} G \otimes C) \to 0$ of Proposition 5.1.6 (i), the quasi-logarithm of Proposition 5.1.6 (ii) and the identification of $\mathcal{E}_{G^{\vee\vee}} \to \mathcal{E}_G$ with multiplication by $t$, from which Scholze–Weinstein reprove item 1 (p. 51), and the results of [FGL08], Chapter II, from which Fargues proves item 2 (Théorème II.1.1); its classification by pairs $(T, W)$ (item 5) is built from the Hodge–Tate map and is not used
 
 ## Sources
 
 - P. Scholze and J. Weinstein, "Moduli of p-divisible groups", Cambridge J. Math. 1 (2013), 145–237,
   arXiv:1211.6357 (version 2): Proposition 5.1.6 (ii)–(iii) (the map $\alpha_G$, its description through Cartier
   duality, and the exact sequence over $C$, with the first map $\alpha_{G^\vee}^\vee(1)$) and its proof ("Part (iii) is
-  taken from [FGL08], Appendix C to Chapter 2"; part (i) through Proposition 5.1.1); Proposition 4.3.6 and Remark 4.3.7, applied to $(T, T^+) = (C, \mathcal{O}_C)$ in the setting of
+  taken from [FGL08], Appendix C to Chapter 2", and, p. 51, "One could also reprove it using the machinery employed
+  here", through part (i) and the identification of $f_G$ with multiplication by $t$; part (i) through Proposition 5.1.1); Proposition 4.3.6 and Remark 4.3.7, applied to $(T, T^+) = (C, \mathcal{O}_C)$ in the setting of
   §4.3 ("The cokernel of $T G(T^+) \otimes_{\mathbb{Z}_p} T^+ \to (\operatorname{Lie} G^\vee)^\vee$ is killed by $p^{1/(p-1)+\epsilon}$ for
   any $\epsilon > 0$. More precisely, there is a natural sequence [...] whose cohomology groups are killed by
   $p^{1/(p-1)+\epsilon}$", with first map $\alpha_{G^\vee}^\vee(1)$; the case $(C, \mathcal{O}_C)$ "is exactly [FGL08, Théorème II.1.1]", due to
