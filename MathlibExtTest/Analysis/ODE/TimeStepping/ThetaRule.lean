@@ -136,14 +136,31 @@ example : ¬ ∀ u : ℕ → ℝ, IsSolution 0 1 3 u → ∀ n, |u n| ≤ |u 0| 
   have := h _ hu 1
   norm_num [amplificationFactor] at this
 
--- Consistency with `EulerStability`: for `θ = 0`, the threshold `(1 - 2θ) a Δt < 2` is
--- `Δt < 2 / |-a|`.
+-- The Forward Euler case agrees with the existing scalar Euler stability theorem.
 example {a Δt : ℝ} (ha : 0 < a) (hΔt : 0 < Δt) :
     (∀ x0 : ℝ, Tendsto (fun n : ℕ ↦ (1 + Δt * -a) ^ n * x0) atTop (𝓝 0)) ↔
-      (1 - 2 * 0) * a * Δt < 2 := by
+      |amplificationFactor 0 a Δt| < 1 := by
   rw [MathlibExt.Analysis.ODE.TimeStepping.scalarEuler_real_tendsto_zero_iff (neg_lt_zero.mpr ha)
-    hΔt, abs_neg, abs_of_pos ha, lt_div_iff₀ ha]
+    hΔt, abs_amplificationFactor_lt_one_iff le_rfl ha hΔt, abs_neg, abs_of_pos ha, lt_div_iff₀ ha]
   constructor <;> intro h <;> linarith
+
+-- With `a = 0` the threshold is strict, but a nonzero constant solution does not decay.
+example : IsSolution 0 0 1 (fun _ ↦ 1) ∧ ¬ Tendsto (fun _ : ℕ ↦ (1 : ℝ)) atTop (𝓝 0) := by
+  refine ⟨fun n ↦ by norm_num, ?_⟩
+  rw [tendsto_const_nhds_iff]
+  norm_num
+
+-- Zero initial data do decay to zero, even outside the stability range.
+example : IsSolution 0 1 3 (fun _ ↦ 0) ∧ Tendsto (fun _ : ℕ ↦ (0 : ℝ)) atTop (𝓝 0) :=
+  ⟨fun n ↦ by norm_num, tendsto_const_nhds⟩
+
+-- The exact formula still applies outside `[0, 1]` when the denominator is nonzero.
+example : IsSolution (-1 / 2) 1 1 (fun n ↦ (-1 : ℝ) ^ n) :=
+  (isSolution_iff (by norm_num) (by norm_num)).mpr fun n ↦ by norm_num [amplificationFactor]
+
+example {a Δt : ℝ} (ha : 0 < a) (hΔt : 0 < Δt) : |amplificationFactor 2 a Δt| < 1 :=
+  (abs_amplificationFactor_lt_one_iff (by norm_num) ha hΔt).mpr
+    (by nlinarith [mul_pos ha hΔt])
 
 /-! ### Accuracy (Sections 2.3.2 and 2.3.4) -/
 
