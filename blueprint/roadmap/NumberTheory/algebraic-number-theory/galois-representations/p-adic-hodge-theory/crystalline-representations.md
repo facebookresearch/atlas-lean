@@ -13,8 +13,7 @@ nonzero $b \in B_{\mathrm{cris}}$ such that $G_K$ acts on the line $\mathbb{Q}_p
 A $p$-adic representation $V$ of $G_K$ is **crystalline** if it is $B_{\mathrm{cris}}$-admissible, that is,
 $\dim_{K_0} D_{\mathrm{cris}}(V) = \dim_{\mathbb{Q}_p} V$ for $D_{\mathrm{cris}}(V) = (B_{\mathrm{cris}} \otimes_{\mathbb{Q}_p} V)^{G_K}$.
 Then $D_{\mathrm{cris}}(V)$ is a filtered $\varphi$-module: $\varphi$ is a bijective Frobenius-semilinear
-endomorphism, and $K \otimes_{K_0} D_{\mathrm{cris}}(V) = D_{\mathrm{dR}}(V)$ carries the Hodge filtration. Every
-crystalline representation is semistable, hence de Rham.
+endomorphism, and $K \otimes_{K_0} D_{\mathrm{cris}}(V) = D_{\mathrm{dR}}(V)$ carries the Hodge filtration.
 
 ## Depends on
 

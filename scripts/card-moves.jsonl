@@ -872,6 +872,7 @@
 {"statement": "af_efd1199831a9c2dde0cd15b4", "page": "AlgebraicGeometry/birational-geometry/vanishing-theorems-and-resolution-in-characteristic-zero", "replaced_by": "af_4a32ab1ca030ed7b2bfdcf37"}
 {"statement": "af_bd9b070b17390b8737ad9d54", "page": "AlgebraicGeometry/arakelov-geometry/arithmetic-intersection-theory-heights-and-volumes", "replaced_by": "af_dcac7b1f5204b9f3fde15cbb"}
 {"page": "GameTheory/combinatorial-games/sylver-coinage/numerical-semigroup-two-generated-symmet", "to": "NumberTheory/numerical-semigroups/numerical-semigroup-two-generated-symmet", "article_id": "af_2690e0691fad16fe00707d7a"}
+{"page": "RingTheory/noetherian-and-artinian-rings/prime-filtration-existence", "to": "RingTheory/noetherian-and-artinian-rings/associated-primes-of-modules/prime-filtration-existence", "article_id": "af_6d3b2102ac5b8a48caaed912"}
 {"statement": "af_32a4c2f018ce54617d6da2a7", "page": "NumberTheory/algebraic-number-theory/galois-representations/galois-cohomology-and-p-adic-hodge-theory", "replaced_by": "af_dc60fef63810b81cd253665b"}
 {"statement": "af_b581e6c949425c730d38bc9a", "page": "NumberTheory/zeta-l-functions/dirichlet-l-functions/primitive-dirichlet-l-functions-zero-free-half-plane", "replaced_by": "af_d83c1a8d16a11b41c4f94f5b"}
 {"page": "NumberTheory/zeta-l-functions/dirichlet-l-functions/dirichlet-l-function-zero-free-region-fixed-modulus", "to": "NumberTheory/zeta-l-functions/dirichlet-l-functions/zeros-of-dirichlet-l-functions/dirichlet-l-function-zero-free-region-fixed-modulus", "article_id": "af_883202fefb11fa0d8363870f"}

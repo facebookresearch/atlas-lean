@@ -18,11 +18,14 @@ is the set of places above $p$.
   $G_F$, and composing with $G_F \to G_S$ gives restriction maps $H^i(G_S, A) \to H^i(F_v, A) = H^i(G_v, A)$,
   independent of the embedding since conjugation acts trivially on cohomology. For the dual, the local
   group is taken for the dual in the local sense:
-  $$H^i(F_v, A') = H^i\bigl(G_v, \operatorname{Hom}(A, \bar F_v^\times)\bigr),$$
-  and $H^i(G_S, A') \to H^i(F_v, A')$ is restriction followed by the map induced by the inclusion
-  $A' = \operatorname{Hom}(A, \mathcal{O}_S^\times) \hookrightarrow \operatorname{Hom}(A, \bar F_v^\times)$ of
-  $G_v$-modules. For finite $A$ both readings of $H^i(F_v, A')$ agree; in general they do not: for
-  $A = \mathbb{Z}$ and $v$ finite, $H^0(F_v, A') = F_v^\times$.
+
+    $$H^i(F_v, A') = H^i\bigl(G_v, \operatorname{Hom}(A, \bar F_v^\times)\bigr),$$
+
+    and $H^i(G_S, A') \to H^i(F_v, A')$ is restriction followed by the map induced by the inclusion
+    $A' = \operatorname{Hom}(A, \mathcal{O}_S^\times) \hookrightarrow \operatorname{Hom}(A, \bar F_v^\times)$ of
+    $G_v$-modules. For finite $A$ both readings of $H^i(F_v, A')$ agree; in general they do not: for
+    $A = \mathbb{Z}$ and $v$ finite, $H^0(F_v, A') = F_v^\times$.
+
 - **Unramified subgroups.** At a finite place $v$ at which $A$ is unramified,
   $H^i_{\mathrm{nr}}(F_v, A)$ is the image of $H^i(G_v/I_v, A^{I_v})$ in $H^i(F_v, A)$, where $I_v$ is the
   inertia group, and $H^i_{\mathrm{nr}}(F_v, A')$ is the image of $H^i(G_v/I_v, A^d)$ in $H^i(F_v, A')$, where

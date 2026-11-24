@@ -31,6 +31,11 @@ representations, compatible with restriction to open subgroups and with tensor o
 - [Semistable and potentially semistable representations](semistable-representations.md), for $B_{\mathrm{st}}$ with $\varphi$ and $N$
 - [p-adic monodromy theorem](p-adic-monodromy-theorem.md), for the existence of $L$
 
+## Proof depends on
+
+- [Admissible representations for a regular ring of periods](admissible-representations.md), for the dimension criterion and the exact tensor functor $D_{B_{\mathrm{st}}}$ on representations of $G_L$, which give the rank of $D$, the bijectivity of the injective semilinear map $\varphi_D$ on it, and the compatibility with tensor operations
+- [Weil group of a p-adic field](../weil-deligne-representations/weil-group-of-a-p-adic-field.md), for the geometric Frobenius and $\lvert \sigma \rvert = q^{-m}$ for $\sigma$ above its $m$-th power, which give the linearity of $r_D(\sigma)$ and, with $N_D \varphi_D = \ell \varphi_D N_D$, the relation $r(\sigma) N r(\sigma)^{-1} = \lvert \sigma \rvert N$
+
 ## Sources
 
 - R. Taylor and T. Yoshida, "Compatibility of local and global Langlands correspondences", J. Amer. Math.

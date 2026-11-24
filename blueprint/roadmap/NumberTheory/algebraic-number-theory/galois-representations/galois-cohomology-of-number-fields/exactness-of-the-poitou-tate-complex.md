@@ -37,6 +37,16 @@ A good expansion has pages for:
    $p$-extension through a composition series with factors $\mathbb{Z}/p\mathbb{Z}$ (NSW (1.6.13); Step 4), and to all
    finite $A$ by restriction and corestriction along the field fixed by a $p$-Sylow subgroup (Step 5).
 
+## Depends on
+
+- [Galois groups with restricted ramification and their modules](galois-groups-with-restricted-ramification.md), for $G_S$, $\mathbb{N}(S)$, $\operatorname{Mod}_S(G_S)$, the dual $A'$, the restricted products $P^i$ and the localization maps $\lambda^i$
+- [Tate–Shafarevich groups of Galois modules](tate-shafarevich-groups.md), for $\text{Ш}^1(G_S, A')$ in item 2
+- [Finiteness and cohomological dimension of Galois groups with restricted ramification](finiteness-and-cohomological-dimension-of-g-s.md), for the finiteness of the groups, which defines the Euler characteristic quotient $\varphi(G_S, A)$ of item 3
+- [Local Tate duality](../galois-cohomology-of-local-fields/local-tate-duality.md), for the isomorphisms $P^i(G_S, A) \cong P^{2-i}(G_S, A')^\vee$ at the non-archimedean places, through which the maps $P^i \to H^{2-i}(G_S, -)^\vee$ of items 2 and 3 are defined
+- [Tate duality for the real numbers](../galois-cohomology-of-local-fields/tate-duality-for-the-real-numbers.md), for those isomorphisms at the archimedean places
+- [Unramified classes under local duality](../galois-cohomology-of-local-fields/unramified-classes-under-local-duality.md), for the unramified subgroups as exact annihilators, which make the local dualities an isomorphism of restricted products
+- [Poitou–Tate duality](poitou-tate-duality.md), for the maps $H^{2-i}(G_S, A')^\vee \to H^{i+1}(G_S, A)$ of the Poitou–Tate complex in item 3
+
 ## Proof depends on
 
 - [Finiteness and cohomological dimension of Galois groups with restricted ramification](finiteness-and-cohomological-dimension-of-g-s.md), for the finiteness of the groups (items 3 and 4) and the isomorphisms $H^i(G_S, A) \cong \bigoplus_{v \text{ real}} H^i(F_v, A)$ for $i \ge 3$ (item 3)

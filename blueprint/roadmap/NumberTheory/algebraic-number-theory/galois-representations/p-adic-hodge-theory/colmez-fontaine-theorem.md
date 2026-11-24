@@ -25,7 +25,7 @@ filtration induced from $B_{\mathrm{dR}} \otimes_K D_K$, and $G_K$ acting on the
 
 - [Structure of the rings of periods](structure-of-the-period-rings.md), for the Dieudonné–Manin classification and the slope filtrations of $\varphi$-modules, the fundamental lemma, the principal ideal domain $B_e$ and the proofs of Chapter 9, §§9.1–9.5 (its items 4–6)
 - [Fundamental exact sequence of p-adic Hodge theory](fundamental-exact-sequence.md)
-- [Tate–Sen theorem on the Galois cohomology of C(i)](tate-sen-theorem.md)
+- [Tate–Sen theorem on the Galois cohomology of C(i)](tate-sen-theorem.md), for $C(\eta)^{G_K}$ (Fontaine–Ouyang, Corollary 4.45, used in §9.1) and $H^1(G_K, C(i)) = 0$ for $i \ne 0$ (Proposition 4.46, used in the proof of Lemma 9.50), both in the generality of every $p$-adic field
 
 ## Sources
 

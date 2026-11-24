@@ -27,6 +27,10 @@ when $F$ is totally imaginary.
 - [Galois groups with restricted ramification and their modules](galois-groups-with-restricted-ramification.md), for $G_S$, the localization maps and $P^i(G_S, A)$
 - [Cyclotomic character and Tate twists](../cyclotomic-character-and-tate-twists.md), for the twists $\mathbb{Q}_\ell/\mathbb{Z}_\ell(i)$ in the example
 
+## Proof depends on
+
+- [Galois groups with restricted ramification and their modules](galois-groups-with-restricted-ramification.md), for $A' = \operatorname{Hom}(A, \mu)$ for finite $A$ and the agreement, for finite $A$, of the two readings of $H^i(F_v, A')$, which give the last assertion of the first paragraph
+
 ## Sources
 
 - J. Neukirch, A. Schmidt, K. Wingberg, *Cohomology of Number Fields*, 2nd ed., electronic edition,

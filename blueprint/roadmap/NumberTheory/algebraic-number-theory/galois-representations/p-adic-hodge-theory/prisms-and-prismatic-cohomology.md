@@ -1,9 +1,11 @@
 # Prisms and prismatic cohomology
 
 This node is still to be broken down. It covers the definitions and the general machinery of Bhatt–Scholze's
-prismatic cohomology that the [crystalline comparison](crystalline-comparison-for-prismatic-cohomology.md) and
-the [classification of crystalline lattices by prismatic F-crystals](prismatic-f-crystals-and-crystalline-lattices.md)
-use. A **$\delta$-ring** is a commutative ring $A$ with a map of sets $\delta \colon A \to A$ such that
+prismatic cohomology from which they prove the
+[crystalline comparison](crystalline-comparison-for-prismatic-cohomology.md); the absolute prismatic theory,
+which comes after the crystalline comparison, is the node on the
+[absolute prismatic site and prismatic F-crystals](absolute-prismatic-site-and-prismatic-f-crystals.md). A
+**$\delta$-ring** is a commutative ring $A$ with a map of sets $\delta \colon A \to A$ such that
 $\delta(0) = \delta(1) = 0$ and, for all $x, y \in A$,
 
 $$\delta(xy) = x^p \delta(y) + y^p \delta(x) + p \, \delta(x) \delta(y), \qquad
@@ -26,25 +28,28 @@ A good expansion has pages for:
    between divided power envelopes and $\delta$-envelopes (Corollary 2.39);
 2. the relative prismatic site $(X/A)_\Delta$ of a smooth $p$-adic formal scheme $X$ over $A/I$, its structure
    sheaf and prismatic cohomology $R\Gamma_\Delta(X/A)$ with its $\varphi_A$-linear Frobenius (§4), and the
-   crystalline cohomology of $X$ over a crystalline prism (§5);
-3. the proof of the crystalline comparison (Theorem 5.2) from Corollary 2.39; the Hodge–Tate comparison over a
-   crystalline prism, deduced from the crystalline comparison and the Cartier isomorphism (Corollary 5.5); and the
-   mixed characteristic Hodge–Tate comparison and the de Rham comparison of §6 (Theorems 6.3 and 6.4), whose proofs
-   use the crystalline case;
-4. the absolute prismatic site of a $p$-adic formal scheme with $\mathcal{O}_\Delta$, $I_\Delta$ and $\varphi$, the
-   quasi-syntomic site, the étale and crystalline realizations of prismatic $F$-crystals, and the proof of their
-   classification over $\mathcal{O}_K$ (Bhatt–Scholze 2021, §§2–6, Constructions 4.8 and 4.12, Theorem 5.6) by
-   quasi-syntomic descent along $\operatorname{Spf}(\mathcal{O}_C) \to \operatorname{Spf}(\mathcal{O}_K)$. Its inputs are the
-   construction of the $F$-crystal over $\mathcal{O}_C$ following Kisin, through Kedlaya's slope filtrations as
-   observed by Berger; the Beilinson fibre sequence of Antieau–Mathew–Morrow–Nikolaus, used to build the descent
-   isomorphism (Bhatt–Scholze 2021, §1.1); and, in the proof of essential surjectivity (§6.4), the weak admissibility
-   of the filtered $\varphi$-module of the given crystalline representation together with the vector bundles on the
-   Fargues–Fontaine curve ([FF19] Corollary 11.2.22, Proposition 10.5.6, Theorem 8.2.10 (1); [SW18] Theorem 14.2.1).
+   crystalline cohomology of $X$ over a crystalline prism (§5).
+
+The crystalline comparison (Bhatt–Scholze 2019, Theorem 5.2), proved from items 1 and 2, is the result of
+[crystalline comparison for prismatic cohomology](crystalline-comparison-for-prismatic-cohomology.md) and is not part
+of this node. The results deduced from it (Corollary 5.5, Theorems 6.3 and 6.4), the prismatic cohomology of
+quasiregular semiperfectoid rings and the absolute prismatic theory belong to the node on the
+[absolute prismatic site and prismatic F-crystals](absolute-prismatic-site-and-prismatic-f-crystals.md).
+
+## Depends on
+
+Its statement uses the inputs listed under Expansion.
 
 ## Proof depends on
 
-- [Weakly admissible implies admissible](colmez-fontaine-theorem.md), for Fontaine's theorem that $D_{\mathrm{cris}}$ of a crystalline representation is weakly admissible, used in item 4
-- [p-divisible groups over the ring of integers of C](p-divisible-groups-over-o-c.md), for the Fargues–Fontaine curve and its vector bundles, used in item 4
+Its proof uses the inputs listed under Expansion.
+
+## Expansion
+
+A good expansion also states and links:
+
+- derived completeness of modules (Bhatt–Scholze 2019, §1.2), for the derived $(p, I)$-completeness in the definition of a prism
+- smooth $p$-adic formal schemes over $A/I$ (Bhatt–Scholze 2019, Definition 4.1 and §4), for the relative prismatic site of item 2
 
 ## Sources
 
@@ -55,7 +60,3 @@ A good expansion has pages for:
   Corollary 2.39, Theorem 1.8 with Theorems 5.2, 6.3 and 6.4, §5 (introduction: "the key tool is the relationship
   between divided power envelopes and $\delta$-structures (Corollary 2.39). Using the Cartier isomorphism, we deduce
   the Hodge–Tate comparison over crystalline prisms (Corollary 5.5)"), §§2–6.
-- B. Bhatt and P. Scholze, "Prismatic F-crystals and crystalline Galois representations", Cambridge J. Math.
-  11 (2023), 507–562, arXiv:2106.14735 (version 2): Definition 1.1 (= Definition 4.1), Constructions 4.8 and 4.12,
-  §1.1 (the outline of the proof of Theorem 5.6, with the Beilinson fibre sequence of [AMMN20]), §6.4 (proof of
-  essential surjectivity), §§2–6.

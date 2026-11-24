@@ -7,7 +7,8 @@ The **cyclotomic character** is the continuous homomorphism
 $$\chi_{\mathrm{cycl}} \colon G_k \to \prod_{\ell \ne \operatorname{char} k} \mathbb{Z}_\ell^\times$$
 
 determined by $\sigma(\zeta) = \zeta^{\chi_{\mathrm{cycl}}(\sigma)}$ for all $\zeta \in \mu$ and
-$\sigma \in G_k$, where for $\zeta^n = 1$ and $\alpha \in \prod_\ell \mathbb{Z}_\ell^\times$ one sets
+$\sigma \in G_k$, where for $\zeta^n = 1$ with $n$ prime to $\operatorname{char} k$ (for instance $n$ the order of $\zeta$, which is
+prime to $\operatorname{char} k$) and $\alpha \in \prod_{\ell \ne \operatorname{char} k} \mathbb{Z}_\ell^\times$ one sets
 $\zeta^\alpha = \zeta^a$ for any $a \in \mathbb{Z}$ with $a \equiv \alpha \bmod n$. Its component
 $\chi_\ell \colon G_k \to \mathbb{Z}_\ell^\times$ for a prime $\ell \ne \operatorname{char} k$ is the
 **$\ell$-adic cyclotomic character**; it describes the action of $G_k$ on the $\ell$-power roots of unity.
@@ -44,6 +45,10 @@ For a number field $F$ and a set $S$ of places of $F$ containing the archimedean
 above $\ell$, the maximal extension $F_S$ of $F$ unramified outside $S$ contains all $\ell$-power roots of
 unity, so $\chi_\ell$ factors through $\operatorname{Gal}(F_S/F)$ and the twists $\mathbb{Z}_\ell(i)$ and
 $\mathbb{Q}_\ell/\mathbb{Z}_\ell(i)$ are modules over that group.
+
+## Depends on
+
+- [The ring of p-adic integers](../../p-adic-numbers/p-adic-integers.md), for $\mathbb{Z}_\ell$ and its units, the values of the cyclotomic character
 
 ## Proof depends on
 

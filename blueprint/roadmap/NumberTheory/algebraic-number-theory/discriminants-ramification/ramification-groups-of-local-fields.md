@@ -18,11 +18,28 @@ A good expansion has pages for:
    (Proposition 1.64, (1.34));
 3. the consequences, which use that the residue characteristic $p$ is positive: $G_0/G_1$ is cyclic of order prime
    to $p$ and embeds in $\mu(k_L)$ through $\theta_0$, the quotients $G_i/G_{i+1}$ for $i \ge 1$ are elementary
-   abelian $p$-groups, $G_1$ is a $p$-group and $G_0$ is a semidirect product of a cyclic group of order prime to $p$
-   by $G_1$ (Proposition 1.64 (1)–(3), Remark 1.65); with the description of $\theta_0$ through Kummer theory and its
+   abelian $p$-groups, $G_1$ is a normal $p$-subgroup and $G_0 \cong G_1 \rtimes C$ for a cyclic subgroup $C$ of order
+   prime to $p$ (Proposition 1.64 (1)–(3), Remark 1.65); with the description of $\theta_0$ through Kummer theory and its
    compatibility (1.35) in towers of Galois extensions;
 4. the behaviour of the lower numbering under passage to subgroups, $H_i = G_i \cap H$ (Remark 1.61,
    Proposition 1.67).
+
+## Depends on
+
+This node has no prerequisites.
+
+## Proof depends on
+
+- [Eisenstein criterion for total ramification of discrete valuation rings](../../../RingTheory/ramification/totally-ramified-extensions-and-eisenstein-polyn/ramification-idx-eq-finrank-iff-eisenste.md), for $\mathcal{O}_L = \mathcal{O}_{L_0}[\pi_L]$ for the totally ramified extension $L/L_0$, where $L_0$ is the fixed field of $G_0$, through which Proposition 1.62 tests $G_i$ on a uniformizer (item 2)
+- [Hensel's lemma for complete discrete valuation rings](../../../RingTheory/valuation-rings/henselian-rings-and-hensel-s-lemma/exists-is-root-sub-mem-maximal-ideal-of.md), for the primitive $N$-th roots of unity, $N = (G_0 : G_1)$, in $L_0$, in the description of $\theta_0$ on the tame, totally ramified part $L_1/L_0$ of item 3 (Fontaine–Ouyang, Remark 1.65 (b))
+- [Kummer theory for abelian extensions of exponent dividing n](../../../FieldTheory/galois-theory/kummer-theory.md), for $L_1 = L_0(\alpha)$ with $\alpha^N$ a uniformizer of $L_0$, where $L_1$ is the fixed field of $G_1$, in that description
+
+## Expansion
+
+A good expansion also states and links:
+
+- the Teichmüller representatives of the residue field (Fontaine–Ouyang, Remark 1.65 (b)), for the formula $g \alpha = [\varepsilon] \alpha$ through which $\theta_0$ identifies $\operatorname{Gal}(L_1/L_0)$ with $\mu_N(k_L)$ in the description of $\theta_0$ of item 3
+- the existence of a complement to a normal subgroup whose order is prime to its index, the existence part of the Schur–Zassenhaus theorem as opposed to the conjugacy of complements, here to the $p$-group $G_1$ in $G_0$ (Fontaine–Ouyang, Proposition 1.64 (3)), for the semidirect product decomposition of item 3
 
 ## Sources
 
