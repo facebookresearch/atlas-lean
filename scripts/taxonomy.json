@@ -9731,6 +9731,7 @@
   "MathlibExt/Analysis/ODE/PlanarShooting/LogisticProfile": {"to": "Analysis/ordinary-differential-equations", "title": "Logistic traveling-wave profiles"},
   "MathlibExt/Analysis/ODE/PolynomialGlobal": {"to": "Analysis/ordinary-differential-equations", "title": "Global polynomial solutions in compact sublevels"},
   "MathlibExt/Analysis/ODE/PolynomialInvariant": {"to": "Analysis/ordinary-differential-equations", "title": "Polynomial regular-sublevel invariance"},
+  "MathlibExt/Analysis/ODE/PolynomialTrapping": {"to": "Analysis/ordinary-differential-equations", "title": "Polynomial trapping from sum-of-squares identities"},
   "MathlibExt/Analysis/ODE/RegularSublevel": {"to": "Analysis/ordinary-differential-equations", "title": "Regular sublevel invariance"},
   "MathlibExt/Analysis/ODE/RegularSublevelGlobal": {"to": "Analysis/ordinary-differential-equations", "title": "Global existence in regular sublevels"},
   "MathlibExt/Analysis/ODE/RungeKutta": {"to": "Analysis/numerical-analysis", "title": "Runge–Kutta methods"},

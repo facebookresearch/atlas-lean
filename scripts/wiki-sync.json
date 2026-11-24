@@ -75965,6 +75965,7 @@
 "MvPolynomial.eval_pos_of_bernsteinCoeff_box": "df37c4b020696f8d",
 "MvPolynomial.eval_univariateSpecialization": "e2ebea6c84173d62",
 "MvPolynomial.exists_forward_solution_of_compact_sublevel": "c28f3299cf293fa0",
+"MvPolynomial.exists_forward_solution_of_sos_boundary_identity": "076494b08575afe7",
 "MvPolynomial.exists_polynomial_rows": "1184d04161459c0f",
 "MvPolynomial.hasDerivWithinAt_eval": "80fc28f3e8cde72f",
 "MvPolynomial.hasDerivWithinAt_eval_mkDerivation": "f5bc7192c9e7a21a",

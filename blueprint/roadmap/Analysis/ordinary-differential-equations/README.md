@@ -5,6 +5,7 @@ Existence and uniqueness (Cauchy–Peano, Picard, maximal solutions), linear sys
 - [Compact invariant sets and global existence](compact-invariant-sets-and-global-existence/README.md)
 - [Global existence in regular sublevels](exists-forward-solution-of-compact-regul.md)
 - [Global polynomial solutions in compact sublevels](exists-forward-solution-of-compact-suble.md)
+- [Polynomial trapping from sum-of-squares identities](exists-forward-solution-of-sos-boundary.md)
 - [Green's operator of the Dirichlet Laplacian on \[0, 1\]](green-s-operator-of-the-dirichlet-laplacian-on-0/README.md)
 - [Hyperbolic motions in the N-body problem](hyperbolic-motions-in-the-n-body-problem/README.md)
 - [Lyapunov's indirect method](lyapunov-s-indirect-method/README.md)
