@@ -52,8 +52,20 @@ example (a : Fin 2 → R) :
         (exteriorPower.ιMulti R 2 (fun i => (Pi.single i 1 : Fin 2 → R))) =
       a 0 • exteriorPower.ιMulti R 1 (fun _ => (Pi.single (1 : Fin 2) 1 : Fin 2 → R)) -
         a 1 • exteriorPower.ιMulti R 1 (fun _ => (Pi.single (0 : Fin 2) 1 : Fin 2 → R)) := by
+  have hsucc : (fun q : Fin 1 => (Pi.single q.succ 1 : Fin 2 → R)) =
+      (fun _ : Fin 1 => (Pi.single (1 : Fin 2) 1 : Fin 2 → R)) := by
+    funext q
+    have hq : q = 0 := Subsingleton.elim _ _
+    subst q
+    rfl
+  have hdelete : (fun q : Fin 1 => (Pi.single (Fin.succAbove (1 : Fin 2) q) 1 : Fin 2 → R)) =
+      (fun _ : Fin 1 => (Pi.single (0 : Fin 2) 1 : Fin 2 → R)) := by
+    funext q
+    have hq : q = 0 := Subsingleton.elim _ _
+    subst q
+    rfl
   rw [KoszulComplex.familyDifferential_apply_basis]
-  simp [Fin.sum_univ_two, sub_eq_add_neg]
+  simp [Fin.sum_univ_two, sub_eq_add_neg, hsucc, hdelete, neg_smul]
 
 /-- The empty family generates the zero ideal. -/
 example (a : Fin 0 → R) :
