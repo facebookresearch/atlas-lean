@@ -119,8 +119,10 @@ def DirectImage.structureMap {X Y : Stack S} {f : StackHom X Y}
     (D : DirectImage f) : structureModule Y ⟶ D.functor.obj (structureModule X) :=
   D.adjunction.unit.app (structureModule Y) ≫ D.functor.map (pullbackStructure f).hom
 
-/-- Cohomological affineness and the actual O-unit condition. Finite-type,
-quasi-compactness and geometric target hypotheses belong to each theorem. -/
+/-- Cohomological affineness and the actual O-unit condition only: this is the part of Alper's
+good moduli space (arXiv:0804.2242v3, Defs. 3.1, 4.1, Rem. 4.4) checked here, without
+quasi-compactness or an algebraic-space target. Finite-type, quasi-compactness and geometric
+target hypotheses belong to each theorem. -/
 def IsGood {X Y : Stack S} {f : StackHom X Y} (D : DirectImage f) : Prop :=
   D.functor.PreservesEpimorphisms ∧ IsIso D.structureMap
 

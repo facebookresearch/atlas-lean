@@ -117,8 +117,8 @@ structure FamilyMap {C E : Point O P D R S a B} (f : Arrow C E) where
     f.hom.base.left ≫ C.family.rubber.curve.marking i
   target_cartesian : IsPullback (targetArrow f) E.family.rubber.target.projection
     C.family.rubber.target.projection f.hom.base
-  zero : zeroIdeal O P D R S E.family.rubber.target =
-    (zeroIdeal O P D R S C.family.rubber.target).comap (targetArrow f).left
+  zero : E.family.rubber.target.zero =
+    C.family.rubber.target.zero.comap (targetArrow f).left
   infinity : E.family.rubber.target.boundary.left.ker =
     C.family.rubber.target.boundary.left.ker.comap (targetArrow f).left
   map : sourceArrow f ≫ C.family.rubber.map =

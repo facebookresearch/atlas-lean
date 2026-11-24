@@ -36,6 +36,10 @@ open scoped BigOperators
 
 variable {n n' r g : ℕ} (G : RelativeType n r) (H : RelativeType n' r)
 
+/-- Admissible gluing of two relative types along their `r` roots, matched in order. This is the
+restricted case of Li's gluing (math/0009097v1, Def. 4.11): both sides are nonempty (a
+`RelativeType` has a vertex) and the glued markings put all left legs before all right legs,
+rather than an arbitrary order-preserving shuffle. -/
 structure AdmissibleGluing : Prop where
   order : ∀ i : Fin r, G.order i = H.order i
   genus : g + G.vertices + H.vertices =
@@ -96,6 +100,10 @@ structure SourceJoin where
 variable (X : TargetJoin P Q R R' S S' W T F.target F'.target)
   (C : SourceJoin (g := g) G H P Q R R' S S' T F F')
 
+/-- The raw map out of the pushout of the two sources into the joined target. It does not by
+itself enforce matching contact orders or stability (branch orders `1` and `2` can define a map
+of nodes without being predeformable), so it is not on its own a certificate of a stable glued
+map in Li's sense. -/
 structure JoinedMap where
   map : C.curve.X ⟶ X.scheme.left
   over : map ≫ X.projection.left = C.curve.π

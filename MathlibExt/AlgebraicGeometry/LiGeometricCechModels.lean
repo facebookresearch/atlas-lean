@@ -82,6 +82,9 @@ structure Geometry where
     Spec.algebraMap (chart n a).target (chart n a).source ≫ (target n a).hom ≫ WidePullback.π _ i =
       (source n a).hom ≫ WidePullback.π _ i ≫ Spec.algebraMap (L.charts (a i)).target (L.charts (a i)).source
   mode : ∀ n a, Mode g J t (chart n a)
+  /-- On every chart and every Čech intersection, a boundary chart meets only its selected
+  boundary divisor and a node chart meets none. -/
+  modeAvoids : ∀ n a, (mode n a).AvoidsUnselected
   restriction : ∀ {n z : SimplexCategory} (s : n ⟶ z) (a : Fin (z.len + 1) → Fin L.count),
     RingRestriction (chart n (a ∘ s.toOrderHom)) (chart z a)
   source_arrow : ∀ {n z : SimplexCategory} (s : n ⟶ z) (a : Fin (z.len + 1) → Fin L.count),

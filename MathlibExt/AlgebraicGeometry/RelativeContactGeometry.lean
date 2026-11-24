@@ -7,6 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+public import Mathlib.RingTheory.AdicCompletion.Functoriality
 public import MathlibExt.AlgebraicGeometry.ExpandedRelativeFamilies
 public import Mathlib.RingTheory.Localization.Basic
 
@@ -96,6 +97,16 @@ structure MappedNodeChart {C X T : Scheme.{0}} (p : C ⟶ T) (q : X ⟶ T)
   targetGenerator : ∀ i : Fin 2, targetChart (nodeVariable _ targetParameter i) = targetVariable i
   etale : Etale (Spec.map (CommRingCat.ofHom sourceChart))
   smooth : Smooth (Spec.map (CommRingCat.ofHom targetChart))
+  /-- The node locus of the source chart (inside the chart; `Scheme.zeroLocus` also contains the
+  points outside it) is connected (Li, math/0110113v1, Def. 1.2). -/
+  sourceNodeConnected : _root_.IsConnected
+    ((sourceOpen.val : Set C) ∩ C.zeroLocus (U := sourceOpen.val) (Set.range sourceVariable))
+  /-- The étale source chart induces an isomorphism of completions along the node (Li, Def. 1.2):
+  an étale chart containing two lifts of the node (whose completion is a product) is excluded. -/
+  sourceCompletion : letI := sourceChart.toAlgebra
+    Function.Bijective (AdicCompletion.map
+      (Ideal.span (Set.range (nodeVariable Γ(T, baseOpen.val) sourceParameter)))
+      (Algebra.linearMap (NodeRing Γ(T, baseOpen.val) sourceParameter) Γ(C, sourceOpen.val)))
 
 /-- General nodes are split only after these actual etale neighborhoods.
 The common affine/open node equations above are imposed on the lifts. -/

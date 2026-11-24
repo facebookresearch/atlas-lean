@@ -95,6 +95,17 @@ inductive Mode (a : Chart p q f) where
       (pure : PureAffineContact a o)
       (parameters : o.targetParameter = parameterValue t a) : Mode a
 
+/-- A boundary chart meets no boundary divisor other than its selected one, and a node chart
+meets none: every such boundary ideal pulls back to the unit ideal on the chart. (Ordinary charts
+avoid all boundaries by construction.) Without this, a boundary chart could contain another
+prescribed end, where no logarithmic condition is imposed, and allow directions moving it. -/
+def Mode.AvoidsUnselected {a : Chart p q f} : Mode g J t a → Prop
+  | .ordinary _ _ _ _ => True
+  | .boundary i _ _ _ _ _ => ∀ j : Fin b, j ≠ i →
+      ((J j).comap a.targetMap).comap (Spec.algebraMap a.target a.source) = ⊤
+  | .node _ _ _ _ => ∀ j : Fin b,
+      ((J j).comap a.targetMap).comap (Spec.algebraMap a.target a.source) = ⊤
+
 variable (I : Type) [AddCommGroup I] [Module A I]
 
 def value {a : Chart p q f} : Mode g J t a → ModuleCat.{0} A

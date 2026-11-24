@@ -14,7 +14,10 @@ public import MathlibExt.AlgebraicGeometry.GraphClutchingModels
 # Actual rubber moduli and marked-curve stabilization
 
 The fibre groupoid consists of the actual signed-contact rubber families
-and their combined finite geometric automorphisms. Every reindex is a
+and their combined finite geometric automorphisms. Their targets are rubber
+targets, framed only fppf-locally on the base, so the fibre groupoids are
+closed under descent: twisted targets such as the projective completion of a
+nontrivial line bundle on the base are included. Every reindex is a
 Cartesian target/domain map preserving both endpoint ideals and all marks.
 Native stack units/compositions are normalized to these exact maps.
 
@@ -50,7 +53,7 @@ structure FamilyBaseChange {T U : Over (Spec (.of k))} (h : T ⟶ U)
     (F : RubberFamily O P D R S T g n a) (H : RubberFamily O P D R S U g n a) where
   target : F.target.scheme ⟶ H.target.scheme
   target_cartesian : IsPullback target F.target.projection H.target.projection h
-  zero : zeroIdeal O P D R S F.target = (zeroIdeal O P D R S H.target).comap target.left
+  zero : F.target.zero = H.target.zero.comap target.left
   infinity : F.target.boundary.left.ker = H.target.boundary.left.ker.comap target.left
   source : F.curve.X ⟶ H.curve.X
   source_cartesian : IsPullback source F.curve.π H.curve.π h.left
