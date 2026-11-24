@@ -15,9 +15,9 @@ import Mathlib.Tactic.Ring
 /-!
 # Triangular recurrence arrays at negative indices
 
-This module defines Palapies' extensions of triangular arrays to negative rows and proves the
-product formula for the row generating series of the negative-positive numbers when both weights
-depend only on the row index.
+This module defines Palapies' extensions of triangular arrays to negative rows and proves Knuth-type
+duality for the negative-negative numbers. It also proves the product formula for the row
+generating series of the negative-positive numbers when both weights depend only on the row index.
 -/
 
 namespace MetaMathlibExt
@@ -241,6 +241,79 @@ public theorem negNeg_rec (P : TriangularRecurrence) (p q : ℕ) :
   rw [negNegAux, Int.negSucc_eq]
   push_cast
   ring_nf
+
+private theorem array_eq_zero_of_lt (P : TriangularRecurrence) (n k : ℕ) (h : n < k) :
+    P.array n k = 0 := by
+  induction n generalizing k with
+  | zero => simp [array, Nat.ne_of_gt h]
+  | succ n ih =>
+    obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : k ≠ 0)
+    rw [array, ih (k + 1) (by omega), ih k (by omega)]
+    simp
+
+-- Row p and offset q in the negative triangle correspond to row p + q and column p.
+private theorem negNegAux_eq_array (α β γ : ℤ) (p q : ℕ) :
+    negNegAux ⟨α, β, γ, 0, 0, 1⟩ p q = array ⟨β, α, -γ, 0, 0, 1⟩ (p + q) p := by
+  induction p generalizing q with
+  | zero =>
+    induction q with
+    | zero => simp [negNegAux, weight', array]
+    | succ q ih =>
+      rw [negNegAux, ih]
+      simp [array, weight, weight']
+      ring
+  | succ p ih =>
+    induction q with
+    | zero =>
+      rw [negNegAux, ih, Nat.add_zero, Nat.add_zero, array,
+        array_eq_zero_of_lt _ p (p + 1) (by omega)]
+      simp [weight']
+    | succ q hq =>
+      rw [negNegAux, ih, hq]
+      simp only [Nat.add_succ, Nat.succ_add]
+      conv_rhs => rw [array]
+      simp [weight, weight']
+      ring
+
+private theorem negNeg_negSucc_eq_array (α β γ : ℤ) (p r : ℕ) :
+    negNeg ⟨α, β, γ, 0, 0, 1⟩ (.negSucc p) (.negSucc r) =
+      array ⟨β, α, -γ, 0, 0, 1⟩ r p := by
+  rw [negNeg]
+  split_ifs with h
+  · obtain ⟨q, rfl⟩ := Nat.exists_eq_add_of_le (show p ≤ r by omega)
+    rw [show (Int.negSucc p - Int.negSucc (p + q)).toNat = q by omega]
+    exact negNegAux_eq_array α β γ p q
+  · exact (array_eq_zero_of_lt _ r p (by omega)).symm
+
+private theorem negNeg_ofNat_ofNat (P : TriangularRecurrence) (n k : ℕ) :
+    P.negNeg (.ofNat n) (.ofNat k) = P.array n k := by
+  cases n <;> simp [negNeg, array.eq_1]
+
+/-- **Knuth-type duality.** For integers $\alpha, \beta, \gamma$, let $a$ and $b$ be the arrays with
+parameters $(\alpha, \beta, \gamma; 0, 0, 1)$ and $(\beta, \alpha, -\gamma; 0, 0, 1)$. Then their
+negative-negative numbers satisfy $a^{NN}_{-n,-k} = b^{NN}_{k-1,n-1}$ for all $n, k \in \mathbb{Z}$.
+
+This generalizes the identity $[-n, -k] = \{k, n\}$ between the Stirling numbers $[n, k]$ of the
+first kind and $\{n, k\}$ of the second kind.
+
+Source: Lars Palapies, *On Extensions of Triangular Arrays to Negative Row Indices
+and Their Generating Functions*, INTEGERS 26 (2026), Article A83, Proposition 2. -/
+public theorem negNeg_duality (α β γ : ℤ) (n k : ℤ) :
+    TriangularRecurrence.negNeg ⟨α, β, γ, 0, 0, 1⟩ (-n) (-k) =
+      TriangularRecurrence.negNeg ⟨β, α, -γ, 0, 0, 1⟩ (k - 1) (n - 1) := by
+  obtain ⟨i, rfl⟩ := neg_surjective n
+  obtain ⟨j, rfl⟩ := neg_surjective k
+  simp only [neg_neg]
+  have hn (p : ℕ) : -Int.ofNat p - 1 = Int.negSucc p := by
+    rw [Int.ofNat_eq_natCast]
+    omega
+  have hp (p : ℕ) : -Int.negSucc p - 1 = Int.ofNat p := by
+    simp [Int.negSucc_eq]
+  have hz (P : TriangularRecurrence) (p q : ℕ) : P.negNeg (.ofNat p) (.negSucc q) = 0 := by
+    cases p <;> rfl
+  cases i <;> cases j <;>
+    simp only [hn, hp, negNeg_ofNat_ofNat, negNeg_negSucc_eq_array, hz, neg_neg]
+  simp (disch := omega) only [negNeg, Int.ofNat_eq_natCast, ite_eq_right]
 
 /-- **Reflected triangular recurrence.** The reflection of a triangular recurrence with
 parameters $(\alpha, \beta, \gamma; \alpha', \beta', \gamma')$ is the triangular recurrence with
