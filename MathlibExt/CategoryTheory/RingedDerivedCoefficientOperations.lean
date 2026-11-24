@@ -100,10 +100,6 @@ variable [EnoughInjectives (Modules S)] [EnoughInjectives (Modules R)]
 def derivedPushforward : Derived R ⥤ Derived S :=
   (pushforward G S R φ).rightDerivedFunctorPlus
 
-/-- The derived inverse image of the exact source operator. -/
-def derivedPullback : Derived S ⥤ Derived R :=
-  (pullback G S R φ).rightDerivedFunctorPlus
-
 /-- Exactness source qualification on the original cochain inverse images. -/
 class PullbackSourceUnit where
   unitIso : ∀ K : CochainComplex.Plus (Modules S),
@@ -112,6 +108,13 @@ class PullbackSourceUnit where
 attribute [instance] PullbackSourceUnit.unitIso
 
 variable [PullbackSourceUnit G S R φ]
+
+/-- The derived inverse image of the exact source operator. It is the right-derived functor of the
+pullback, which is the derived inverse image only because `PullbackSourceUnit` makes the pullback
+exact on bounded-below complexes; without it the right-derived functor is not the inverse image
+(for `ℤ → 𝔽_p` on a point it kills `ℤ/p`, whose derived tensor with `𝔽_p` is nonzero). -/
+def derivedPullback : Derived S ⥤ Derived R :=
+  (pullback G S R φ).rightDerivedFunctorPlus
 
 instance pullbackUnitIsIso (K : CochainComplex.Plus (Modules S)) :
     IsIso ((pullback G S R φ).rightDerivedFunctorPlusUnit.app K) :=

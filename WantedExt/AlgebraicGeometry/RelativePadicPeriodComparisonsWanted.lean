@@ -16,9 +16,11 @@ public import MathlibExt.AlgebraicGeometry.RelativePadicPeriodComparisons
 The proper smooth map is actual analytic geometry over the original
 complete discretely valued K/Q_p with perfect residue field. All original,
 period and cochain objects and all comparison arrows are native fixed
-constructions. These coherent-comparison requests are Lemma 8.6 and the
-coherent step in Theorem 8.8; they make no unrestricted rational lisse
-Theorem 8.8 assertion. Full Qhat objects remain available independently.
+constructions. The coherent period complex is requested here; the coherent comparison
+isomorphisms (Lemma 8.6 and the coherent step in Theorem 8.8) are not, because the period
+objects are the naive structural periods of `StructuralDeRhamPeriodSources` (Scholze's withdrawn
+Definition 6.8, erratum item (3)), for which the Taylor comparison behind them fails. They await
+the corrected finite-stage construction. Full Qhat objects remain available independently.
 
 Positive period cochains use original O_X tensor and the total relative
 connection; full cochains use local absolute theta-generator fractions.
@@ -107,9 +109,9 @@ variable [(modulePushforward (etaleInclusion p X.left) (regularEtale p X.left SX
   (FS : ProEtaleDeRhamSources.FormSource p K B X Y f PX SX Ω)
   (hp : PositivePreservation p K B X Y f PX PY SX SY E)
   (PM : NaturalPeriodMaps p K B X Y f PX PY SX SY E Q N hp)
-  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) SX.regular SX.structuralPositive
+  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) SX.regular SX.naiveStructuralPositive
     SX.scalars.originalToPositive).IsRightAdjoint]
-  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) SX.structuralPositive SX.structuralFull
+  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) SX.naiveStructuralPositive SX.naiveStructuralFull
     SX.scalars.positiveToFull).IsRightAdjoint]
   (PC : PositiveConnectionSource p K SX.regular SX.positive SX.untilting SX.scalars
     (ProEtaleDeRhamSources.forms p K B X Y f PX SX Ω) FS.differential)
@@ -122,58 +124,5 @@ variable [(modulePushforward (etaleInclusion p X.left) (regularEtale p X.left SX
 /-- Construct positive coefficient cochains and full local-generator-fraction cochains, with the ORIGINAL unit fixed in every degree. -/
 public def_wanted relativePeriodCoefficientComplex (h : RelativeScope p B X Y f) :
   PeriodComplexType p K B X Y f PX PY SX SY E Q N Ω M D DS FS hp PM PC FC
-
-variable (PD : PeriodComplexType p K B X Y f PX PY SX SY E Q N Ω M D DS FS hp PM PC FC)
-  [HasSheafify (proTopology p Y.left PY) AddCommGrpCat.{1}]
-  [(proTopology p Y.left PY).WEqualsLocallyBijective AddCommGrpCat.{1}]
-  [EnoughInjectives (Modules SY.regular)] [EnoughInjectives (Modules SY.structuralFull)]
-  [EnoughInjectives (Modules (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q))]
-  [EnoughInjectives (Modules (basePeriod p K B X Y f PX PY SY E Q))]
-  [(pushforward Q.functor SY.regular (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q)
-    (originalUnitY p K B X Y f PX PY SY E Q)).IsRightAdjoint]
-  [(pushforward Q.functor SY.structuralFull (basePeriod p K B X Y f PX PY SY E Q)
-    (periodUnitY p K B X Y f PX PY SY E Q)).IsRightAdjoint]
-  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p Y.left)) SY.regular SY.structuralFull
-    SY.scalars.originalToFull).IsRightAdjoint]
-  [PullbackSourceUnit Q.functor SY.regular (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q)
-    (originalUnitY p K B X Y f PX PY SY E Q)]
-  [PullbackSourceUnit Q.functor SY.structuralFull (basePeriod p K B X Y f PX PY SY E Q)
-    (periodUnitY p K B X Y f PX PY SY E Q)]
-  [PullbackSourceUnit (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left))
-    (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q)
-    (basePeriod p K B X Y f PX PY SY E Q) (baseScalar p K B X Y f PX PY SY E Q)]
-  (SC : SourceSquare Q.functor SY.regular SY.structuralFull
-    (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q) (basePeriod p K B X Y f PX PY SY E Q)
-    SY.scalars.originalToFull (baseScalar p K B X Y f PX PY SY E Q)
-    (originalUnitY p K B X Y f PX PY SY E Q) (periodUnitY p K B X Y f PX PY SY E Q))
-  (AO : DerivedAdjunctionSource Q.functor SY.regular (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q)
-    (originalUnitY p K B X Y f PX PY SY E Q))
-  (AP : DerivedAdjunctionSource Q.functor SY.structuralFull (basePeriod p K B X Y f PX PY SY E Q)
-    (periodUnitY p K B X Y f PX PY SY E Q))
-  (AS : DerivedAdjunctionSource (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left))
-    (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q) (basePeriod p K B X Y f PX PY SY E Q)
-    (baseScalar p K B X Y f PX PY SY E Q))
-  [PreservesFiniteLimits (scalarY SY.regular SY.structuralFull SY.scalars.originalToFull)]
-  [PreservesFiniteColimits (scalarY SY.regular SY.structuralFull SY.scalars.originalToFull)]
-
-/-- The actual native derived comparison; its IsIso is a CONCLUSION. Locally finite form bounds cover a non-quasi-compact base. -/
-public proof_wanted coherentDerivedPeriodComparison (h : RelativeScope p B X Y f)
-    (hForms : MathlibExt.CategoryTheory.NativeFilteredDeRhamOutputs.LocallyFiniteForms
-      (ProEtaleDeRhamSources.forms p K B X Y f PX SX Ω)) :
-  IsIso (MathlibExt.AlgebraicGeometry.RelativePadicPeriodComparisons.derivedComparison
-    (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY)
-    (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (Ω := Ω) (M := M) (D := D)
-    (DS := DS) (FS := FS) (hp := hp) (PM := PM) (PC := PC) (FC := FC) (PD := PD)
-    (SC := SC) (AO := AO) (AP := AP) (AS := AS))
-
-/-- The canonical native higher map to the constructed period-cohomology target. -/
-public proof_wanted coherentDegreePeriodComparison (h : RelativeScope p B X Y f)
-    (hForms : MathlibExt.CategoryTheory.NativeFilteredDeRhamOutputs.LocallyFiniteForms
-      (ProEtaleDeRhamSources.forms p K B X Y f PX SX Ω)) (i : ℤ) :
-  IsIso (MathlibExt.AlgebraicGeometry.RelativePadicPeriodComparisons.degreeComparison
-    (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY)
-    (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (Ω := Ω) (M := M) (D := D)
-    (DS := DS) (FS := FS) (hp := hp) (PM := PM) (PC := PC) (FC := FC) (PD := PD)
-    (SC := SC) (AO := AO) (AP := AP) (AS := AS) i)
 
 end WantedExt.AlgebraicGeometry.RelativePadicPeriodComparisons

@@ -58,24 +58,24 @@ variable {C : Type u₁} [Category.{v₁} C] {D : Type u₂} [Category.{v₂} D]
   (p : ℕ) [Fact p.Prime] (K : BaseField p)
   (O Rplus : Sheaf T CommRingCat.{1}) (A : UntiltingData p Rplus)
   (W : WittScalarSource p K O Rplus A)
-  (φP : YP ⟶ (G.sheafPushforwardContinuous CommRingCat.{1} J T).obj W.structuralPositive)
-  (φF : YF ⟶ (G.sheafPushforwardContinuous CommRingCat.{1} J T).obj W.structuralFull)
+  (φP : YP ⟶ (G.sheafPushforwardContinuous CommRingCat.{1} J T).obj W.naiveStructuralPositive)
+  (φF : YF ⟶ (G.sheafPushforwardContinuous CommRingCat.{1} J T).obj W.naiveStructuralFull)
   (M Ω : Modules O)
-  [(pushforward (𝟭 D) O W.structuralPositive W.originalToPositive).IsRightAdjoint]
-  [(pushforward (𝟭 D) W.structuralPositive W.structuralFull W.positiveToFull).IsRightAdjoint]
+  [(pushforward (𝟭 D) O W.naiveStructuralPositive W.originalToPositive).IsRightAdjoint]
+  [(pushforward (𝟭 D) W.naiveStructuralPositive W.naiveStructuralFull W.positiveToFull).IsRightAdjoint]
 
 def basePositive := inverseRing (J := J) (T := T) G YP
 def baseFull := inverseRing (J := J) (T := T) G YF
-def positiveBaseMap := inverseScalar (J := J) (T := T) G YP W.structuralPositive φP
-def fullBaseMap := inverseScalar (J := J) (T := T) G YF W.structuralFull φF
+def positiveBaseMap := inverseScalar (J := J) (T := T) G YP W.naiveStructuralPositive φP
+def fullBaseMap := inverseScalar (J := J) (T := T) G YF W.naiveStructuralFull φF
 
-def positiveTerm (n : ℕ) : Modules W.structuralPositive :=
-  tensor W.structuralPositive (positiveForms p K O Rplus A W M)
-    (exterior W.structuralPositive (positiveForms p K O Rplus A W Ω) n)
+def positiveTerm (n : ℕ) : Modules W.naiveStructuralPositive :=
+  tensor W.naiveStructuralPositive (positiveForms p K O Rplus A W M)
+    (exterior W.naiveStructuralPositive (positiveForms p K O Rplus A W Ω) n)
 
-def fullTerm (n : ℕ) : Modules W.structuralFull :=
-  tensor W.structuralFull (fullForms p K O Rplus A W M)
-    (exterior W.structuralFull (fullForms p K O Rplus A W Ω) n)
+def fullTerm (n : ℕ) : Modules W.naiveStructuralFull :=
+  tensor W.naiveStructuralFull (fullForms p K O Rplus A W M)
+    (exterior W.naiveStructuralFull (fullForms p K O Rplus A W Ω) n)
 
 variable (d : ∀ U : Dᵒᵖ, O.obj.obj U →+ Ω.val.obj U)
   (nabla : ∀ U : Dᵒᵖ, M.val.obj U →+ (tensor O M Ω).val.obj U)
@@ -96,89 +96,89 @@ structure Source where
   baseFullHorizontal : ∀ U a,
     F.connection U ((fullBaseMap (J := J) (T := T) G YF p K O Rplus A W φF).hom.app U a) = 0
   originalTensor : tensor O M Ω ⟶
-    (pushforward (𝟭 D) O W.structuralPositive W.originalToPositive).obj
-      (tensor W.structuralPositive (positiveForms p K O Rplus A W M) (positiveForms p K O Rplus A W Ω))
+    (pushforward (𝟭 D) O W.naiveStructuralPositive W.originalToPositive).obj
+      (tensor W.naiveStructuralPositive (positiveForms p K O Rplus A W M) (positiveForms p K O Rplus A W Ω))
   originalTensor_source : ∀ U m w,
     (originalTensor.val.app U).hom (generator O M Ω U m w) =
-      (show ((pushforward (𝟭 D) O W.structuralPositive W.originalToPositive).obj
-        (tensor W.structuralPositive (positiveForms p K O Rplus A W M) (positiveForms p K O Rplus A W Ω))).val.obj U from
-      generator W.structuralPositive (positiveForms p K O Rplus A W M) (positiveForms p K O Rplus A W Ω) U
+      (show ((pushforward (𝟭 D) O W.naiveStructuralPositive W.originalToPositive).obj
+        (tensor W.naiveStructuralPositive (positiveForms p K O Rplus A W M) (positiveForms p K O Rplus A W Ω))).val.obj U from
+      generator W.naiveStructuralPositive (positiveForms p K O Rplus A W M) (positiveForms p K O Rplus A W Ω) U
         (originalFormUnit p K O Rplus A W M U m) (originalFormUnit p K O Rplus A W Ω U w))
   coefficientConnection : ∀ U : Dᵒᵖ, (positiveForms p K O Rplus A W M).val.obj U →+
-    (tensor W.structuralPositive (positiveForms p K O Rplus A W M) (positiveForms p K O Rplus A W Ω)).val.obj U
+    (tensor W.naiveStructuralPositive (positiveForms p K O Rplus A W M) (positiveForms p K O Rplus A W Ω)).val.obj U
   coefficient_natural : ∀ {U V : Dᵒᵖ} (a : U ⟶ V) m,
     coefficientConnection V ((positiveForms p K O Rplus A W M).val.map a m) =
-      (tensor W.structuralPositive (positiveForms p K O Rplus A W M) (positiveForms p K O Rplus A W Ω)).val.map a
+      (tensor W.naiveStructuralPositive (positiveForms p K O Rplus A W M) (positiveForms p K O Rplus A W Ω)).val.map a
         (coefficientConnection U m)
-  coefficient_source : ∀ (U : Dᵒᵖ) (r : W.structuralPositive.obj.obj U) (m : M.val.obj U),
+  coefficient_source : ∀ (U : Dᵒᵖ) (r : W.naiveStructuralPositive.obj.obj U) (m : M.val.obj U),
     coefficientConnection U (r • originalFormUnit p K O Rplus A W M U m) =
-      r • (show (tensor W.structuralPositive (positiveForms p K O Rplus A W M)
+      r • (show (tensor W.naiveStructuralPositive (positiveForms p K O Rplus A W M)
         (positiveForms p K O Rplus A W Ω)).val.obj U from (originalTensor.val.app U).hom (nabla U m)) +
-        generator W.structuralPositive (positiveForms p K O Rplus A W M) (positiveForms p K O Rplus A W Ω) U
+        generator W.naiveStructuralPositive (positiveForms p K O Rplus A W M) (positiveForms p K O Rplus A W Ω) U
           (originalFormUnit p K O Rplus A W M U m) (P.connection U r)
   exactFormGeneration : sInf {N : (positiveForms p K O Rplus A W Ω).Submodule |
     ∀ U r, P.connection U r ∈ N.toSubmodule.obj U} = ⊤
   wedge : ∀ n : ℕ,
-    tensor W.structuralPositive
-      (tensor W.structuralPositive (positiveForms p K O Rplus A W M) (positiveForms p K O Rplus A W Ω))
-      (exterior W.structuralPositive (positiveForms p K O Rplus A W Ω) n) ⟶ positiveTerm p K O Rplus A W M Ω (n + 1)
+    tensor W.naiveStructuralPositive
+      (tensor W.naiveStructuralPositive (positiveForms p K O Rplus A W M) (positiveForms p K O Rplus A W Ω))
+      (exterior W.naiveStructuralPositive (positiveForms p K O Rplus A W Ω) n) ⟶ positiveTerm p K O Rplus A W M Ω (n + 1)
   wedge_source : ∀ (n : ℕ) (U : Dᵒᵖ) (m : (positiveForms p K O Rplus A W M).val.obj U)
     (w : (positiveForms p K O Rplus A W Ω).val.obj U)
-    (a : ⋀[W.structuralPositive.obj.obj U]^n ((positiveForms p K O Rplus A W Ω).val.obj U)),
+    (a : ⋀[W.naiveStructuralPositive.obj.obj U]^n ((positiveForms p K O Rplus A W Ω).val.obj U)),
     ((wedge n).val.app U).hom
-      (generator W.structuralPositive
-        (tensor W.structuralPositive (positiveForms p K O Rplus A W M) (positiveForms p K O Rplus A W Ω))
-        (exterior W.structuralPositive (positiveForms p K O Rplus A W Ω) n) U
-          (generator W.structuralPositive (positiveForms p K O Rplus A W M) (positiveForms p K O Rplus A W Ω) U m w)
-          (exteriorUnit W.structuralPositive (positiveForms p K O Rplus A W Ω) n U a)) =
-      generator W.structuralPositive (positiveForms p K O Rplus A W M)
-        (exterior W.structuralPositive (positiveForms p K O Rplus A W Ω) (n + 1)) U m
-          (exteriorUnit W.structuralPositive (positiveForms p K O Rplus A W Ω) (n + 1) U
+      (generator W.naiveStructuralPositive
+        (tensor W.naiveStructuralPositive (positiveForms p K O Rplus A W M) (positiveForms p K O Rplus A W Ω))
+        (exterior W.naiveStructuralPositive (positiveForms p K O Rplus A W Ω) n) U
+          (generator W.naiveStructuralPositive (positiveForms p K O Rplus A W M) (positiveForms p K O Rplus A W Ω) U m w)
+          (exteriorUnit W.naiveStructuralPositive (positiveForms p K O Rplus A W Ω) n U a)) =
+      generator W.naiveStructuralPositive (positiveForms p K O Rplus A W M)
+        (exterior W.naiveStructuralPositive (positiveForms p K O Rplus A W Ω) (n + 1)) U m
+          (exteriorUnit W.naiveStructuralPositive (positiveForms p K O Rplus A W Ω) (n + 1) U
             (MathlibExt.DeRhamSource.Crystalline.leftWedge n w a))
   positive : CochainComplex.Plus (Modules (basePositive (J := J) (T := T) G YP))
   positiveTerms : ∀ n : ℕ, positive.obj.X (n : ℤ) ≅
-    (restrict (basePositive (J := J) (T := T) G YP) W.structuralPositive (positiveBaseMap (J := J) (T := T) G YP p K O Rplus A W φP)).obj
+    (restrict (basePositive (J := J) (T := T) G YP) W.naiveStructuralPositive (positiveBaseMap (J := J) (T := T) G YP p K O Rplus A W φP)).obj
       (positiveTerm p K O Rplus A W M Ω n)
   positive_negative : ∀ i : ℤ, i < 0 → IsZero (positive.obj.X i)
   positive_source : ∀ (n : ℕ) (U : Dᵒᵖ) (m : (positiveForms p K O Rplus A W M).val.obj U)
-    (a : Fin n → W.structuralPositive.obj.obj U),
+    (a : Fin n → W.naiveStructuralPositive.obj.obj U),
     ((positiveTerms (n + 1)).hom.val.app U).hom
       (((positive.obj.d (n : ℤ) ((n + 1 : ℕ) : ℤ)).val.app U).hom
         (((positiveTerms n).inv.val.app U).hom
-          (show ((restrict (basePositive (J := J) (T := T) G YP) W.structuralPositive (positiveBaseMap (J := J) (T := T) G YP p K O Rplus A W φP)).obj
+          (show ((restrict (basePositive (J := J) (T := T) G YP) W.naiveStructuralPositive (positiveBaseMap (J := J) (T := T) G YP p K O Rplus A W φP)).obj
             (positiveTerm p K O Rplus A W M Ω n)).val.obj U from
-          generator W.structuralPositive (positiveForms p K O Rplus A W M)
-            (exterior W.structuralPositive (positiveForms p K O Rplus A W Ω) n) U m
-              (exteriorUnit W.structuralPositive (positiveForms p K O Rplus A W Ω) n U
-                (_root_.exteriorPower.ιMulti (W.structuralPositive.obj.obj U) n (fun i => P.connection U (a i))))))) =
-    (show ((restrict (basePositive (J := J) (T := T) G YP) W.structuralPositive (positiveBaseMap (J := J) (T := T) G YP p K O Rplus A W φP)).obj
+          generator W.naiveStructuralPositive (positiveForms p K O Rplus A W M)
+            (exterior W.naiveStructuralPositive (positiveForms p K O Rplus A W Ω) n) U m
+              (exteriorUnit W.naiveStructuralPositive (positiveForms p K O Rplus A W Ω) n U
+                (_root_.exteriorPower.ιMulti (W.naiveStructuralPositive.obj.obj U) n (fun i => P.connection U (a i))))))) =
+    (show ((restrict (basePositive (J := J) (T := T) G YP) W.naiveStructuralPositive (positiveBaseMap (J := J) (T := T) G YP p K O Rplus A W φP)).obj
       (positiveTerm p K O Rplus A W M Ω (n + 1))).val.obj U from
       ((wedge n).val.app U).hom
-        (generator W.structuralPositive
-          (tensor W.structuralPositive (positiveForms p K O Rplus A W M) (positiveForms p K O Rplus A W Ω))
-          (exterior W.structuralPositive (positiveForms p K O Rplus A W Ω) n) U
+        (generator W.naiveStructuralPositive
+          (tensor W.naiveStructuralPositive (positiveForms p K O Rplus A W M) (positiveForms p K O Rplus A W Ω))
+          (exterior W.naiveStructuralPositive (positiveForms p K O Rplus A W Ω) n) U
             (coefficientConnection U m)
-            (exteriorUnit W.structuralPositive (positiveForms p K O Rplus A W Ω) n U
-              (_root_.exteriorPower.ιMulti (W.structuralPositive.obj.obj U) n (fun i => P.connection U (a i))))))
+            (exteriorUnit W.naiveStructuralPositive (positiveForms p K O Rplus A W Ω) n U
+              (_root_.exteriorPower.ιMulti (W.naiveStructuralPositive.obj.obj U) n (fun i => P.connection U (a i))))))
   positiveTermUnit : ∀ n : ℕ, positiveTerm p K O Rplus A W M Ω n ⟶
-    (pushforward (𝟭 D) W.structuralPositive W.structuralFull W.positiveToFull).obj (fullTerm p K O Rplus A W M Ω n)
+    (pushforward (𝟭 D) W.naiveStructuralPositive W.naiveStructuralFull W.positiveToFull).obj (fullTerm p K O Rplus A W M Ω n)
   positiveTermUnit_source : ∀ (n : ℕ) (U : Dᵒᵖ) (m : (positiveForms p K O Rplus A W M).val.obj U)
-    (a : ⋀[W.structuralPositive.obj.obj U]^n ((positiveForms p K O Rplus A W Ω).val.obj U)),
+    (a : ⋀[W.naiveStructuralPositive.obj.obj U]^n ((positiveForms p K O Rplus A W Ω).val.obj U)),
     ((positiveTermUnit n).val.app U).hom
-      (generator W.structuralPositive (positiveForms p K O Rplus A W M)
-        (exterior W.structuralPositive (positiveForms p K O Rplus A W Ω) n) U m
-          (exteriorUnit W.structuralPositive (positiveForms p K O Rplus A W Ω) n U a)) =
-    (show ((pushforward (𝟭 D) W.structuralPositive W.structuralFull W.positiveToFull).obj
+      (generator W.naiveStructuralPositive (positiveForms p K O Rplus A W M)
+        (exterior W.naiveStructuralPositive (positiveForms p K O Rplus A W Ω) n) U m
+          (exteriorUnit W.naiveStructuralPositive (positiveForms p K O Rplus A W Ω) n U a)) =
+    (show ((pushforward (𝟭 D) W.naiveStructuralPositive W.naiveStructuralFull W.positiveToFull).obj
       (fullTerm p K O Rplus A W M Ω n)).val.obj U from
-      generator W.structuralFull (fullForms p K O Rplus A W M)
-        (exterior W.structuralFull (fullForms p K O Rplus A W Ω) n) U
+      generator W.naiveStructuralFull (fullForms p K O Rplus A W M)
+        (exterior W.naiveStructuralFull (fullForms p K O Rplus A W Ω) n) U
           (positiveFormUnit p K O Rplus A W M U m)
-          (exteriorUnit W.structuralFull (fullForms p K O Rplus A W Ω) n U
+          (exteriorUnit W.naiveStructuralFull (fullForms p K O Rplus A W Ω) n U
             (ExteriorAlgebra.powMapₛₗ n (W.positiveToFull.hom.app U).hom
               (formSemilinearUnit p K O Rplus A W Ω U) a)))
   full : CochainComplex.Plus (Modules (baseFull (J := J) (T := T) G YF))
   fullTerms : ∀ n : ℕ, full.obj.X (n : ℤ) ≅
-    (restrict (baseFull (J := J) (T := T) G YF) W.structuralFull (fullBaseMap (J := J) (T := T) G YF p K O Rplus A W φF)).obj
+    (restrict (baseFull (J := J) (T := T) G YF) W.naiveStructuralFull (fullBaseMap (J := J) (T := T) G YF p K O Rplus A W φF)).obj
       (fullTerm p K O Rplus A W M Ω n)
   full_negative : ∀ i : ℤ, i < 0 → IsZero (full.obj.X i)
   fraction_source : ∀ (n : ℕ) (U : Dᵒᵖ) (t : A.deRhamPositive.obj.obj U)
@@ -188,11 +188,11 @@ structure Source where
     ((fullTerms (n + 1)).hom.val.app U).hom
       (((full.obj.d (n : ℤ) ((n + 1 : ℕ) : ℤ)).val.app U).hom
         (((fullTerms n).inv.val.app U).hom
-          (show ((restrict (baseFull (J := J) (T := T) G YF) W.structuralFull (fullBaseMap (J := J) (T := T) G YF p K O Rplus A W φF)).obj
+          (show ((restrict (baseFull (J := J) (T := T) G YF) W.naiveStructuralFull (fullBaseMap (J := J) (T := T) G YF p K O Rplus A W φF)).obj
             (fullTerm p K O Rplus A W M Ω n)).val.obj U from
             localGeneratorPower p K O Rplus A W U t ht (-j) •
               (show (fullTerm p K O Rplus A W M Ω n).val.obj U from ((positiveTermUnit n).val.app U).hom m)))) =
-    (show ((restrict (baseFull (J := J) (T := T) G YF) W.structuralFull (fullBaseMap (J := J) (T := T) G YF p K O Rplus A W φF)).obj
+    (show ((restrict (baseFull (J := J) (T := T) G YF) W.naiveStructuralFull (fullBaseMap (J := J) (T := T) G YF p K O Rplus A W φF)).obj
       (fullTerm p K O Rplus A W M Ω (n + 1))).val.obj U from
       localGeneratorPower p K O Rplus A W U t ht (-j) •
         (show (fullTerm p K O Rplus A W M Ω (n + 1)).val.obj U from ((positiveTermUnit (n + 1)).val.app U).hom
@@ -200,7 +200,7 @@ structure Source where
             ((positiveTerms (n + 1)).hom.val.app U).hom
               (((positive.obj.d (n : ℤ) ((n + 1 : ℕ) : ℤ)).val.app U).hom
                 (((positiveTerms n).inv.val.app U).hom
-                  (show ((restrict (basePositive (J := J) (T := T) G YP) W.structuralPositive (positiveBaseMap (J := J) (T := T) G YP p K O Rplus A W φP)).obj
+                  (show ((restrict (basePositive (J := J) (T := T) G YP) W.naiveStructuralPositive (positiveBaseMap (J := J) (T := T) G YP p K O Rplus A W φP)).obj
                     (positiveTerm p K O Rplus A W M Ω n)).val.obj U from m))))))
   unit : original ⟶ (pushforward (𝟭 D) R (baseFull (J := J) (T := T) G YF) sx).mapCochainComplexPlus.obj full
   unit_source : ∀ (n : ℕ) (U : Dᵒᵖ) (m : M.val.obj U) (a : ⋀[O.obj.obj U]^n (Ω.val.obj U)),
@@ -209,12 +209,12 @@ structure Source where
         (((originalTerms n).inv.val.app U).hom
           (show ((restrict R O η).obj (tensor O M (exterior O Ω n))).val.obj U from
             generator O M (exterior O Ω n) U m (exteriorUnit O Ω n U a)))) =
-    (show ((restrict (baseFull (J := J) (T := T) G YF) W.structuralFull (fullBaseMap (J := J) (T := T) G YF p K O Rplus A W φF)).obj
+    (show ((restrict (baseFull (J := J) (T := T) G YF) W.naiveStructuralFull (fullBaseMap (J := J) (T := T) G YF p K O Rplus A W φF)).obj
       (fullTerm p K O Rplus A W M Ω n)).val.obj U from
-      generator W.structuralFull (fullForms p K O Rplus A W M)
-        (exterior W.structuralFull (fullForms p K O Rplus A W Ω) n) U
+      generator W.naiveStructuralFull (fullForms p K O Rplus A W M)
+        (exterior W.naiveStructuralFull (fullForms p K O Rplus A W Ω) n) U
           (originalFullFormSemilinearUnit p K O Rplus A W M U m)
-          (exteriorUnit W.structuralFull (fullForms p K O Rplus A W Ω) n U
+          (exteriorUnit W.naiveStructuralFull (fullForms p K O Rplus A W Ω) n U
             (ExteriorAlgebra.powMapₛₗ n (W.originalToFull.hom.app U).hom
               (originalFullFormSemilinearUnit p K O Rplus A W Ω U) a)))
 

@@ -19,7 +19,10 @@ Each request is a direct Batteries Wanted declaration for one original
 object, map or source theorem. All period rings and filtrations are the
 constructed native sheaves in MathlibExt. Provider proofs are deferred;
 there is no request for a replacement period ring or a final comparison
-oracle, and no global theta generator or integral rational-system lattice.
+oracle, and no global theta generator or integral rational-system lattice. The pro-object point
+realization and the continuity of the étale inclusion are requested by
+`AnalyticProObjectSitesWanted` (`actualProObjectPoints`, `etaleInclusionContinuous`), not again
+here.
 
 Sources: Scholze, arXiv:1205.3463v2, Definitions 3.9, 6.1, 6.8 and 8.1;
 Bhatt--Morrow--Scholze, arXiv:1602.03148v3, Section 5.1.
@@ -52,8 +55,6 @@ variable (X : AnalyticAdicSpace p) (hX : AnalyticProObjectSites.IsLocallyNoether
 
 include hX
 
-public def_wanted proPointRealization (hNoeth : AnalyticProObjectSites.IsLocallyNoetherian p X) : AnalyticProObjectSites.PointRealization p X
-
 public def_wanted integralStructure (hNoeth : AnalyticProObjectSites.IsLocallyNoetherian p X) : IntegralStructure p X
 
 public proof_wanted regularEtaleSheaf (hNoeth : AnalyticProObjectSites.IsLocallyNoetherian p X) :
@@ -63,10 +64,6 @@ public proof_wanted positiveEtaleSheaf (hNoeth : AnalyticProObjectSites.IsLocall
   Presheaf.IsSheaf (AnalyticDiamondEtaleSites.analyticEtaleTopology p X) (I.presheaf ⋙ liftRings)
 
 variable (P : AnalyticProObjectSites.PointRealization p X)
-
-public proof_wanted etaleInclusionContinuous (hNoeth : AnalyticProObjectSites.IsLocallyNoetherian p X) :
-  (etaleInclusion p X).IsContinuous
-    (AnalyticDiamondEtaleSites.analyticEtaleTopology p X) (proTopology p X P)
 
 section RingSources
 

@@ -151,15 +151,15 @@ variable [(modulePushforward (etaleInclusion p Y.left) (regularEtale p Y.left SY
   [IsIso (constantInverseMap
     (J := AnalyticDiamondEtaleSites.analyticEtaleTopology p Y.left) (T := proTopology p Y.left PY)
     (etaleInclusion p Y.left) (BaseField.carrier p K))]
-  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) SX.regular SX.structuralPositive
+  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) SX.regular SX.naiveStructuralPositive
     SX.scalars.originalToPositive).IsRightAdjoint]
-  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) SX.structuralPositive SX.structuralFull
+  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) SX.naiveStructuralPositive SX.naiveStructuralFull
     SX.scalars.positiveToFull).IsRightAdjoint]
-  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) SX.absolutePositive SX.structuralFull
+  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) SX.absolutePositive SX.naiveStructuralFull
     (SX.scalars.absoluteToPositive ≫ SX.scalars.positiveToFull)).IsRightAdjoint]
-  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p Y.left)) SY.regular SY.structuralPositive
+  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p Y.left)) SY.regular SY.naiveStructuralPositive
     SY.scalars.originalToPositive).IsRightAdjoint]
-  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p Y.left)) SY.structuralPositive SY.structuralFull
+  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p Y.left)) SY.naiveStructuralPositive SY.naiveStructuralFull
     SY.scalars.positiveToFull).IsRightAdjoint]
 
 local instance originalModulePullbackX :

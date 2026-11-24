@@ -47,43 +47,43 @@ variable {C : Type u} [Category.{v} C] {J : GrothendieckTopology C}
   (O Rplus Z : Sheaf J CommRingCat.{1}) (A : UntiltingData p Rplus)
   (W : WittScalarSource p K O Rplus A) (z : Z ⟶ A.deRhamPositive) (L : Modules Z)
   (M Ω : Modules O) (F : CoefficientFiltration O M)
-  [(pushforward (𝟭 C) O W.structuralPositive W.originalToPositive).IsRightAdjoint]
-  [(pushforward (𝟭 C) W.structuralPositive W.structuralFull W.positiveToFull).IsRightAdjoint]
+  [(pushforward (𝟭 C) O W.naiveStructuralPositive W.originalToPositive).IsRightAdjoint]
+  [(pushforward (𝟭 C) W.naiveStructuralPositive W.naiveStructuralFull W.positiveToFull).IsRightAdjoint]
   [(pushforward (𝟭 C) Z A.deRhamPositive z).IsRightAdjoint]
 
-def absoluteToStructuralFull : A.deRhamPositive ⟶ W.structuralFull :=
+def absoluteToStructuralFull : A.deRhamPositive ⟶ W.naiveStructuralFull :=
   W.absoluteToPositive ≫ W.positiveToFull
 
-variable [(pushforward (𝟭 C) A.deRhamPositive W.structuralFull
+variable [(pushforward (𝟭 C) A.deRhamPositive W.naiveStructuralFull
   (absoluteToStructuralFull p K O Rplus A W)).IsRightAdjoint]
 
 def localSystemPositive : Modules A.deRhamPositive := (pullback (𝟭 C) Z A.deRhamPositive z).obj L
-def localSystemFull : Modules W.structuralFull :=
-  (pullback (𝟭 C) A.deRhamPositive W.structuralFull (absoluteToStructuralFull p K O Rplus A W)).obj
+def localSystemFull : Modules W.naiveStructuralFull :=
+  (pullback (𝟭 C) A.deRhamPositive W.naiveStructuralFull (absoluteToStructuralFull p K O Rplus A W)).obj
     (localSystemPositive p Rplus Z A z L)
 
 def localSystemUnit (U : Cᵒᵖ) : (localSystemPositive p Rplus Z A z L).val.obj U →+
     (localSystemFull p K O Rplus Z A W z L).val.obj U :=
-  (((adjunction (𝟭 C) A.deRhamPositive W.structuralFull (absoluteToStructuralFull p K O Rplus A W)).unit.app
+  (((adjunction (𝟭 C) A.deRhamPositive W.naiveStructuralFull (absoluteToStructuralFull p K O Rplus A W)).unit.app
     (localSystemPositive p Rplus Z A z L)).val.app U).hom.toAddMonoidHom
 
 def vectorFull := fullForms p K O Rplus A W M
 
 def vectorFiltration (i : ℤ) :
-    ((restrict W.structuralPositive W.structuralFull W.positiveToFull).obj (vectorFull p K O Rplus A W M)).Submodule :=
+    ((restrict W.naiveStructuralPositive W.naiveStructuralFull W.positiveToFull).obj (vectorFull p K O Rplus A W M)).Submodule :=
   sInf {N | ∀ (U : Cᵒᵖ) (j : ℤ)
-    (m : (F.pieces j).toSheafOfModules.val.obj U) (r : W.structuralFull.obj.obj U),
+    (m : (F.pieces j).toSheafOfModules.val.obj U) (r : W.naiveStructuralFull.obj.obj U),
     r ∈ (WittScalarSource.structuralFiltration p K O Rplus A W (i - j)).sections U →
-      (show ((restrict W.structuralPositive W.structuralFull W.positiveToFull).obj
+      (show ((restrict W.naiveStructuralPositive W.naiveStructuralFull W.positiveToFull).obj
         (vectorFull p K O Rplus A W M)).val.obj U from
         r • originalFullFormSemilinearUnit p K O Rplus A W M U (((F.pieces j).ι.val.app U).hom m)) ∈ N.toSubmodule.obj U}
 
 def localSystemFiltration (i : ℤ) :
-    ((restrict W.structuralPositive W.structuralFull W.positiveToFull).obj
+    ((restrict W.naiveStructuralPositive W.naiveStructuralFull W.positiveToFull).obj
       (localSystemFull p K O Rplus Z A W z L)).Submodule :=
-  sInf {N | ∀ (U : Cᵒᵖ) (m : (localSystemPositive p Rplus Z A z L).val.obj U) (r : W.structuralFull.obj.obj U),
+  sInf {N | ∀ (U : Cᵒᵖ) (m : (localSystemPositive p Rplus Z A z L).val.obj U) (r : W.naiveStructuralFull.obj.obj U),
     r ∈ (WittScalarSource.structuralFiltration p K O Rplus A W i).sections U →
-      (show ((restrict W.structuralPositive W.structuralFull W.positiveToFull).obj
+      (show ((restrict W.naiveStructuralPositive W.naiveStructuralFull W.positiveToFull).obj
         (localSystemFull p K O Rplus Z A W z L)).val.obj U from r • localSystemUnit p K O Rplus Z A W z L U m) ∈
           N.toSubmodule.obj U}
 
@@ -95,27 +95,27 @@ variable (d : ∀ U : Cᵒᵖ, O.obj.obj U →+ Ω.val.obj U)
 /-- Total coefficient connection on the ACTUAL base vector bundle period extension. -/
 structure CoefficientConnectionSource where
   originalTensor : tensor O M Ω ⟶
-    (pushforward (𝟭 C) O W.structuralPositive W.originalToPositive).obj
-      ((pushforward (𝟭 C) W.structuralPositive W.structuralFull W.positiveToFull).obj
-        (tensor W.structuralFull (vectorFull p K O Rplus A W M) (fullForms p K O Rplus A W Ω)))
+    (pushforward (𝟭 C) O W.naiveStructuralPositive W.originalToPositive).obj
+      ((pushforward (𝟭 C) W.naiveStructuralPositive W.naiveStructuralFull W.positiveToFull).obj
+        (tensor W.naiveStructuralFull (vectorFull p K O Rplus A W M) (fullForms p K O Rplus A W Ω)))
   tensor_source : ∀ U m w,
     (originalTensor.val.app U).hom (generator O M Ω U m w) =
-    (show ((pushforward (𝟭 C) O W.structuralPositive W.originalToPositive).obj
-      ((pushforward (𝟭 C) W.structuralPositive W.structuralFull W.positiveToFull).obj
-        (tensor W.structuralFull (vectorFull p K O Rplus A W M) (fullForms p K O Rplus A W Ω)))).val.obj U from
-      generator W.structuralFull (vectorFull p K O Rplus A W M) (fullForms p K O Rplus A W Ω) U
+    (show ((pushforward (𝟭 C) O W.naiveStructuralPositive W.originalToPositive).obj
+      ((pushforward (𝟭 C) W.naiveStructuralPositive W.naiveStructuralFull W.positiveToFull).obj
+        (tensor W.naiveStructuralFull (vectorFull p K O Rplus A W M) (fullForms p K O Rplus A W Ω)))).val.obj U from
+      generator W.naiveStructuralFull (vectorFull p K O Rplus A W M) (fullForms p K O Rplus A W Ω) U
         (originalFullFormSemilinearUnit p K O Rplus A W M U m)
         (originalFullFormSemilinearUnit p K O Rplus A W Ω U w))
   connection : ∀ U : Cᵒᵖ, (vectorFull p K O Rplus A W M).val.obj U →+
-    (tensor W.structuralFull (vectorFull p K O Rplus A W M) (fullForms p K O Rplus A W Ω)).val.obj U
+    (tensor W.naiveStructuralFull (vectorFull p K O Rplus A W M) (fullForms p K O Rplus A W Ω)).val.obj U
   natural : ∀ {U V : Cᵒᵖ} (f : U ⟶ V) m,
     connection V ((vectorFull p K O Rplus A W M).val.map f m) =
-      (tensor W.structuralFull (vectorFull p K O Rplus A W M) (fullForms p K O Rplus A W Ω)).val.map f (connection U m)
-  original_source : ∀ (U : Cᵒᵖ) (r : W.structuralFull.obj.obj U) (m : M.val.obj U),
+      (tensor W.naiveStructuralFull (vectorFull p K O Rplus A W M) (fullForms p K O Rplus A W Ω)).val.map f (connection U m)
+  original_source : ∀ (U : Cᵒᵖ) (r : W.naiveStructuralFull.obj.obj U) (m : M.val.obj U),
     connection U (r • originalFullFormSemilinearUnit p K O Rplus A W M U m) =
-      r • (show (tensor W.structuralFull (vectorFull p K O Rplus A W M) (fullForms p K O Rplus A W Ω)).val.obj U from
+      r • (show (tensor W.naiveStructuralFull (vectorFull p K O Rplus A W M) (fullForms p K O Rplus A W Ω)).val.obj U from
         (originalTensor.val.app U).hom (nabla U m)) +
-      generator W.structuralFull (vectorFull p K O Rplus A W M) (fullForms p K O Rplus A W Ω) U
+      generator W.naiveStructuralFull (vectorFull p K O Rplus A W M) (fullForms p K O Rplus A W Ω) U
         (originalFullFormSemilinearUnit p K O Rplus A W M U m) (Q.connection U r)
 
 variable (conn : CoefficientConnectionSource p K O Rplus A W M Ω d nabla P Q)
@@ -124,10 +124,10 @@ variable (conn : CoefficientConnectionSource p K O Rplus A W M Ω d nabla P Q)
 structure Associated where
   comparison : localSystemFull p K O Rplus Z A W z L ≅ vectorFull p K O Rplus A W M
   filtered : ∀ (i : ℤ) (U : Cᵒᵖ) (m : (localSystemFull p K O Rplus Z A W z L).val.obj U),
-    (show ((restrict W.structuralPositive W.structuralFull W.positiveToFull).obj
+    (show ((restrict W.naiveStructuralPositive W.naiveStructuralFull W.positiveToFull).obj
       (localSystemFull p K O Rplus Z A W z L)).val.obj U from m) ∈
         (localSystemFiltration p K O Rplus Z A W z L i).toSubmodule.obj U ↔
-    (show ((restrict W.structuralPositive W.structuralFull W.positiveToFull).obj
+    (show ((restrict W.naiveStructuralPositive W.naiveStructuralFull W.positiveToFull).obj
       (vectorFull p K O Rplus A W M)).val.obj U from (comparison.hom.val.app U).hom m) ∈
         (vectorFiltration p K O Rplus A W M F i).toSubmodule.obj U
   horizontal : ∀ (U : Cᵒᵖ) (m : (localSystemPositive p Rplus Z A z L).val.obj U),
@@ -137,10 +137,10 @@ structure Associated where
 structure AssociatedMapProperties
     (comparison : localSystemFull p K O Rplus Z A W z L ⟶ vectorFull p K O Rplus A W M) : Prop where
   filtered : ∀ (i : ℤ) (U : Cᵒᵖ) (m : (localSystemFull p K O Rplus Z A W z L).val.obj U),
-    (show ((restrict W.structuralPositive W.structuralFull W.positiveToFull).obj
+    (show ((restrict W.naiveStructuralPositive W.naiveStructuralFull W.positiveToFull).obj
       (localSystemFull p K O Rplus Z A W z L)).val.obj U from m) ∈
         (localSystemFiltration p K O Rplus Z A W z L i).toSubmodule.obj U ↔
-    (show ((restrict W.structuralPositive W.structuralFull W.positiveToFull).obj
+    (show ((restrict W.naiveStructuralPositive W.naiveStructuralFull W.positiveToFull).obj
       (vectorFull p K O Rplus A W M)).val.obj U from (comparison.val.app U).hom m) ∈
         (vectorFiltration p K O Rplus A W M F i).toSubmodule.obj U
   horizontal : ∀ (U : Cᵒᵖ) (m : (localSystemPositive p Rplus Z A z L).val.obj U),

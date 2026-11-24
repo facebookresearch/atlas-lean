@@ -168,4 +168,3 @@ def comparison (i : ℤ) := degreeProjection Q.functor (Zhat p Y.left PY) SY.abs
   SC AZ AB (integralComplex p K B X PX T TQ L) i
 
 end MathlibExt.AlgebraicGeometry.RelativeIntegralPeriodComparison
-

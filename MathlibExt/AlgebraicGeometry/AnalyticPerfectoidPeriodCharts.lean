@@ -174,8 +174,7 @@ structure CoordinateSource where
   polydisc : TatePowerSeries p B.pair C.dimension
   neighborhood : RationalTateModel p polydisc.pair
   etale : TateRingMap p neighborhood.pair pair
-  finite_etale : letI := etale.hom.toAlgebra
-    Module.Finite neighborhood.pair.ring pair.ring ∧ Algebra.Etale neighborhood.pair.ring pair.ring
+  finite_etale : AnalyticDiamondEtaleSites.IsFiniteEtalePair p etale
   coordinateLift : Fin C.dimension → polydisc.pair.ring
   variable_source : ∀ i, (polydisc.coordinates (coordinateLift i)).val = MvPowerSeries.X i
   coefficient_source : ∀ a : B.pair.ring,
@@ -191,7 +190,7 @@ structure CoordinateSource where
         ((forgetValuations.mapIso whole).op)).symm.commRingCatIsoToRingEquiv)
           (model.globalRing (etale.hom (neighborhood.map.hom (coordinateLift i)))))
 
-def infCoordinate (i : Fin C.dimension) : S.scalars.structuralInf.obj.obj (op C.boundary.formal) :=
+def infCoordinate (i : Fin C.dimension) : S.scalars.naiveStructuralInf.obj.obj (op C.boundary.formal) :=
   (S.scalars.originalToInf.hom.app (op C.boundary.formal)).hom
     (stageCoordinate p K B X P S C.boundary C.stage (C.original i)) -
   (S.scalars.absoluteToInf.hom.app (op C.boundary.formal)).hom
@@ -199,7 +198,7 @@ def infCoordinate (i : Fin C.dimension) : S.scalars.structuralInf.obj.obj (op C.
       (((toSheafify (proTopology p X.left P) (wittPresheaf p (tilt p S.positive))).app
         (op C.boundary.formal)).hom (WittVector.teichmuller p (C.root i))))
 
-def structuralCoordinate (i : Fin C.dimension) : S.structuralPositive.obj.obj (op C.boundary.formal) :=
+def structuralCoordinate (i : Fin C.dimension) : S.naiveStructuralPositive.obj.obj (op C.boundary.formal) :=
   (S.scalars.infToPositive.hom.app (op C.boundary.formal)).hom
     (infCoordinate p K B X P S Ω d C i)
 
@@ -219,19 +218,19 @@ variable [∀ U : AnalyticProObjectSites.ProEtaleSite p X.left,
 /-- Source evaluation on the ACTUAL slice site, fixed by all native finite completion projections. -/
 structure TaylorSource (C : ToricChart p K B X P S Ω d) where
   map : powerSeriesSheaf (S.absolutePositive.over C.boundary.formal) C.dimension ⟶
-    S.structuralPositive.over C.boundary.formal
+    S.naiveStructuralPositive.over C.boundary.formal
   finite_source : ∀ (V : (Over C.boundary.formal)ᵒᵖ)
     (f : MvPowerSeries (Fin C.dimension) ((S.absolutePositive.over C.boundary.formal).obj.obj V)) (n : ℕ),
-    ((projection S.scalars.structuralInf (completedRegular p S.positive) S.scalars.structuralTheta n).hom.app
+    ((projection S.scalars.naiveStructuralInf (completedRegular p S.positive) S.scalars.structuralTheta n).hom.app
       (op V.unop.left)).hom
         ((map.hom.app V).hom
           (((toSheafify ((proTopology p X.left P).over C.boundary.formal)
             (rawPowerSeries (S.absolutePositive.over C.boundary.formal) C.dimension)).app V).hom f)) =
     MvPolynomial.eval₂Hom
-      (((projection S.scalars.structuralInf (completedRegular p S.positive) S.scalars.structuralTheta n).hom.app
+      (((projection S.scalars.naiveStructuralInf (completedRegular p S.positive) S.scalars.structuralTheta n).hom.app
         (op V.unop.left)).hom.comp (S.scalars.absoluteToPositive.hom.app (op V.unop.left)).hom)
-      (fun i => ((projection S.scalars.structuralInf (completedRegular p S.positive) S.scalars.structuralTheta n).hom.app
-        (op V.unop.left)).hom ((S.structuralPositive.obj.map V.unop.hom.op).hom
+      (fun i => ((projection S.scalars.naiveStructuralInf (completedRegular p S.positive) S.scalars.structuralTheta n).hom.app
+        (op V.unop.left)).hom ((S.naiveStructuralPositive.obj.map V.unop.hom.op).hom
           (ToricChart.structuralCoordinate p K B X P S Ω d C i)))
       (MvPowerSeries.truncTotal (n + 1) f)
 

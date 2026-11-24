@@ -78,11 +78,11 @@ variable (p : ℕ) [Fact p.Prime] (K : BaseField p) (B : BaseRealization p K)
     (J₂ := proTopology p Y.left PY) (T₂ := proTopology p X.left PX)
     E.functor Q.functor (etaleInclusion p Y.left) (etaleInclusion p X.left))
 
-def basePeriod := inverseRing (J := proTopology p Y.left PY) (T := proTopology p X.left PX) Q.functor SY.structuralFull
+def basePeriod := inverseRing (J := proTopology p Y.left PY) (T := proTopology p X.left PX) Q.functor SY.naiveStructuralFull
 def baseScalar : ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q ⟶ basePeriod p K B X Y f PX PY SY E Q :=
   (Q.functor.sheafPullback CommRingCat.{1} (proTopology p Y.left PY) (proTopology p X.left PX)).map SY.scalars.originalToFull
 def originalUnitY := inverseUnit (J := proTopology p Y.left PY) (T := proTopology p X.left PX) Q.functor SY.regular
-def periodUnitY := inverseUnit (J := proTopology p Y.left PY) (T := proTopology p X.left PX) Q.functor SY.structuralFull
+def periodUnitY := inverseUnit (J := proTopology p Y.left PY) (T := proTopology p X.left PX) Q.functor SY.naiveStructuralFull
 
 variable [(modulePushforward (etaleInclusion p X.left) (regularEtale p X.left SX.regularSheaf)
   SX.regular (ProEtaleDeRhamSources.originalUnit p K B X PX SX)).IsRightAdjoint]
@@ -109,9 +109,9 @@ variable [(modulePushforward (etaleInclusion p X.left) (regularEtale p X.left SX
   (FS : ProEtaleDeRhamSources.FormSource p K B X Y f PX SX Ω)
   (hp : PositivePreservation p K B X Y f PX PY SX SY E)
   (PM : NaturalPeriodMaps p K B X Y f PX PY SX SY E Q N hp)
-  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) SX.regular SX.structuralPositive
+  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) SX.regular SX.naiveStructuralPositive
     SX.scalars.originalToPositive).IsRightAdjoint]
-  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) SX.structuralPositive SX.structuralFull
+  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) SX.naiveStructuralPositive SX.naiveStructuralFull
     SX.scalars.positiveToFull).IsRightAdjoint]
   (PC : PositiveConnectionSource p K SX.regular SX.positive SX.untilting SX.scalars
     (ProEtaleDeRhamSources.forms p K B X Y f PX SX Ω) FS.differential)
@@ -123,8 +123,8 @@ variable [(modulePushforward (etaleInclusion p X.left) (regularEtale p X.left SX
 
 def PeriodComplexType : Type _ :=
   MathlibExt.CategoryTheory.PeriodCoefficientComplexSources.Source
-    Q.functor SY.structuralPositive SY.structuralFull p K SX.regular SX.positive SX.untilting SX.scalars
-    PM.structuralPositive (NaturalPeriodMaps.structuralFullMap p K B X Y f PX PY SX SY E Q N hp PM)
+    Q.functor SY.naiveStructuralPositive SY.naiveStructuralFull p K SX.regular SX.positive SX.untilting SX.scalars
+    PM.naiveStructuralPositive (NaturalPeriodMaps.structuralFullMap p K B X Y f PX PY SX SY E Q N hp PM)
     (ProEtaleDeRhamSources.coefficient p K B X Y f PX SX Ω M)
     (ProEtaleDeRhamSources.forms p K B X Y f PX SX Ω) FS.differential
     (ProEtaleDeRhamSources.Source.connection p K B X Y f PX PY SX SY E Q N Ω M D DS)
@@ -137,49 +137,48 @@ def PeriodComplexType : Type _ :=
 variable (PD : PeriodComplexType p K B X Y f PX PY SX SY E Q N Ω M D DS FS hp PM PC FC)
   [HasSheafify (proTopology p Y.left PY) AddCommGrpCat.{1}]
   [(proTopology p Y.left PY).WEqualsLocallyBijective AddCommGrpCat.{1}]
-  [EnoughInjectives (Modules SY.regular)] [EnoughInjectives (Modules SY.structuralFull)]
+  [EnoughInjectives (Modules SY.regular)] [EnoughInjectives (Modules SY.naiveStructuralFull)]
   [EnoughInjectives (Modules (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q))]
   [EnoughInjectives (Modules (basePeriod p K B X Y f PX PY SY E Q))]
   [(pushforward Q.functor SY.regular (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q)
     (originalUnitY p K B X Y f PX PY SY E Q)).IsRightAdjoint]
-  [(pushforward Q.functor SY.structuralFull (basePeriod p K B X Y f PX PY SY E Q)
+  [(pushforward Q.functor SY.naiveStructuralFull (basePeriod p K B X Y f PX PY SY E Q)
     (periodUnitY p K B X Y f PX PY SY E Q)).IsRightAdjoint]
-  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p Y.left)) SY.regular SY.structuralFull
+  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p Y.left)) SY.regular SY.naiveStructuralFull
     SY.scalars.originalToFull).IsRightAdjoint]
   [PullbackSourceUnit Q.functor SY.regular (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q)
     (originalUnitY p K B X Y f PX PY SY E Q)]
-  [PullbackSourceUnit Q.functor SY.structuralFull (basePeriod p K B X Y f PX PY SY E Q)
+  [PullbackSourceUnit Q.functor SY.naiveStructuralFull (basePeriod p K B X Y f PX PY SY E Q)
     (periodUnitY p K B X Y f PX PY SY E Q)]
   [PullbackSourceUnit (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left))
     (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q)
     (basePeriod p K B X Y f PX PY SY E Q) (baseScalar p K B X Y f PX PY SY E Q)]
-  (SC : SourceSquare Q.functor SY.regular SY.structuralFull
+  (SC : SourceSquare Q.functor SY.regular SY.naiveStructuralFull
     (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q) (basePeriod p K B X Y f PX PY SY E Q)
     SY.scalars.originalToFull (baseScalar p K B X Y f PX PY SY E Q)
     (originalUnitY p K B X Y f PX PY SY E Q) (periodUnitY p K B X Y f PX PY SY E Q))
   (AO : DerivedAdjunctionSource Q.functor SY.regular (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q)
     (originalUnitY p K B X Y f PX PY SY E Q))
-  (AP : DerivedAdjunctionSource Q.functor SY.structuralFull (basePeriod p K B X Y f PX PY SY E Q)
+  (AP : DerivedAdjunctionSource Q.functor SY.naiveStructuralFull (basePeriod p K B X Y f PX PY SY E Q)
     (periodUnitY p K B X Y f PX PY SY E Q))
   (AS : DerivedAdjunctionSource (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left))
     (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q) (basePeriod p K B X Y f PX PY SY E Q)
     (baseScalar p K B X Y f PX PY SY E Q))
-  [PreservesFiniteLimits (scalarY SY.regular SY.structuralFull SY.scalars.originalToFull)]
-  [PreservesFiniteColimits (scalarY SY.regular SY.structuralFull SY.scalars.originalToFull)]
+  [PreservesFiniteLimits (scalarY SY.regular SY.naiveStructuralFull SY.scalars.originalToFull)]
+  [PreservesFiniteColimits (scalarY SY.regular SY.naiveStructuralFull SY.scalars.originalToFull)]
 
 def derivedComparison := MathlibExt.CategoryTheory.NativeRelativePeriodComparisonMaps.derivedComparison
-  Q.functor SY.regular SY.structuralFull (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q)
+  Q.functor SY.regular SY.naiveStructuralFull (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q)
   (basePeriod p K B X Y f PX PY SY E Q) SY.scalars.originalToFull (baseScalar p K B X Y f PX PY SY E Q)
   (originalUnitY p K B X Y f PX PY SY E Q) (periodUnitY p K B X Y f PX PY SY E Q) SC AO AP AS
   (ProEtaleDeRhamSources.native (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY)
     (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (Ω := Ω) (M := M) (D := D)).total PD.full PD.unit
 
 def degreeComparison (i : ℤ) := MathlibExt.CategoryTheory.NativeRelativePeriodComparisonMaps.degreeComparison
-  Q.functor SY.regular SY.structuralFull (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q)
+  Q.functor SY.regular SY.naiveStructuralFull (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q)
   (basePeriod p K B X Y f PX PY SY E Q) SY.scalars.originalToFull (baseScalar p K B X Y f PX PY SY E Q)
   (originalUnitY p K B X Y f PX PY SY E Q) (periodUnitY p K B X Y f PX PY SY E Q) SC AO AP AS
   (ProEtaleDeRhamSources.native (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY)
     (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (Ω := Ω) (M := M) (D := D)).total PD.full PD.unit i
 
 end MathlibExt.AlgebraicGeometry.RelativePadicPeriodComparisons
-

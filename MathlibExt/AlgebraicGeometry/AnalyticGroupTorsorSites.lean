@@ -20,7 +20,11 @@ public import Mathlib.CategoryTheory.Sites.Over
 
 An E-space is a native costructured arrow: an actual analytic Tate-adic
 space and its scalar map E -> Gamma(X,O_X). Morphisms are precisely
-the original analytic maps which preserve those scalars. The test
+the original analytic maps which preserve those scalars. The scalar map is an abstract ring map:
+this is a site of algebraically decorated analytic spaces, not in general the site of analytic
+spaces over `Spa(E, E⁺)` (for a topological field base, continuity of the scalar map and
+integrality of the image of `E⁺` are additional conditions, imposed by applications that need
+that site). The test
 scheme is literally Spec of its native global section ring over E.
 The group presheaf evaluates the actual native group scheme on that
 test, with every original restriction map.

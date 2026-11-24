@@ -137,19 +137,17 @@ variable [∀ U : AnalyticProObjectSites.Etale p X.left,
     (coefficientScalar p K B X Y f PX PY E Q N PS)]
   [PullbackSourceUnit Q.functor SY.absolutePositive SX.absolutePositive PM.absolutePositive]
 
-def integralComplex : Derived (Zhat p X.left PX) :=
-  (DerivedCategory.Plus.singleFunctor (Modules (Zhat p X.left PX)) 0).obj L.module
+/-- The integral coefficient complex of `RelativeIntegralPeriodComparison`. -/
+abbrev integralComplex : Derived (Zhat p X.left PX) :=
+  RelativeIntegralPeriodComparison.integralComplex p K B X PX T TQ L
 
-def higherIntegral (i : ℤ) : Modules (Zhat p Y.left PY) :=
-  cohomology (Zhat p Y.left PY)
-    ((derivedPushforward Q.functor (Zhat p Y.left PY) (Zhat p X.left PX)
-      (coefficientScalar p K B X Y f PX PY E Q N PS)).obj
-        (integralComplex p K B X PX T TQ L)) i
+/-- The higher integral direct images of `RelativeIntegralPeriodComparison`. -/
+abbrev higherIntegral (i : ℤ) : Modules (Zhat p Y.left PY) :=
+  RelativeIntegralPeriodComparison.higherIntegral p K B X Y f PX PY E Q N PS T TQ L i
 
-/-- This is the actual source higher-lisse guard of integral relative 8.8. -/
-def HigherLisseAt (i : ℤ) : Prop :=
-  ProEtaleIntegralLisseModules.IsLisse p Y.left PY
-    (higherIntegral p K B X Y f PX PY E Q N PS T TQ L i)
+/-- The higher-lisse guard of integral relative 8.8, from `RelativeIntegralPeriodComparison`. -/
+abbrev HigherLisseAt (i : ℤ) : Prop :=
+  RelativeIntegralPeriodComparison.HigherLisseAt p K B X Y f PX PY E Q N PS T TQ L i
 
 variable [(modulePushforward (etaleInclusion p X.left) (regularEtale p X.left SX.regularSheaf)
   SX.regular (ProEtaleDeRhamSources.originalUnit p K B X PX SX)).IsRightAdjoint]
@@ -185,15 +183,15 @@ variable [(modulePushforward (etaleInclusion p Y.left) (regularEtale p Y.left SY
   [IsIso (constantInverseMap
     (J := AnalyticDiamondEtaleSites.analyticEtaleTopology p Y.left) (T := proTopology p Y.left PY)
     (etaleInclusion p Y.left) (BaseField.carrier p K))]
-  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) SX.regular SX.structuralPositive
+  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) SX.regular SX.naiveStructuralPositive
     SX.scalars.originalToPositive).IsRightAdjoint]
-  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) SX.structuralPositive SX.structuralFull
+  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) SX.naiveStructuralPositive SX.naiveStructuralFull
     SX.scalars.positiveToFull).IsRightAdjoint]
-  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) SX.absolutePositive SX.structuralFull
+  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) SX.absolutePositive SX.naiveStructuralFull
     (SX.scalars.absoluteToPositive ≫ SX.scalars.positiveToFull)).IsRightAdjoint]
-  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p Y.left)) SY.regular SY.structuralPositive
+  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p Y.left)) SY.regular SY.naiveStructuralPositive
     SY.scalars.originalToPositive).IsRightAdjoint]
-  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p Y.left)) SY.structuralPositive SY.structuralFull
+  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p Y.left)) SY.naiveStructuralPositive SY.naiveStructuralFull
     SY.scalars.positiveToFull).IsRightAdjoint]
 
 local instance originalModulePullbackX :

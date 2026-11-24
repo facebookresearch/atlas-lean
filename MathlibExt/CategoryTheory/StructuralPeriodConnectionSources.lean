@@ -50,58 +50,58 @@ variable {C : Type u} [Category.{v} C] {J : GrothendieckTopology C}
   (p : ℕ) [Fact p.Prime] (K : BaseField p)
   (O Rplus : Sheaf J CommRingCat.{1}) (A : UntiltingData p Rplus)
   (W : WittScalarSource p K O Rplus A) (Ω : Modules O)
-  [(pushforward (𝟭 C) O W.structuralPositive W.originalToPositive).IsRightAdjoint]
-  [(pushforward (𝟭 C) W.structuralPositive W.structuralFull W.positiveToFull).IsRightAdjoint]
+  [(pushforward (𝟭 C) O W.naiveStructuralPositive W.originalToPositive).IsRightAdjoint]
+  [(pushforward (𝟭 C) W.naiveStructuralPositive W.naiveStructuralFull W.positiveToFull).IsRightAdjoint]
 
-def positiveForms : Modules W.structuralPositive :=
-  (pullback (𝟭 C) O W.structuralPositive W.originalToPositive).obj Ω
+def positiveForms : Modules W.naiveStructuralPositive :=
+  (pullback (𝟭 C) O W.naiveStructuralPositive W.originalToPositive).obj Ω
 
 def originalFormUnit (U : Cᵒᵖ) : Ω.val.obj U →+
     (positiveForms p K O Rplus A W Ω).val.obj U :=
-  (((adjunction (𝟭 C) O W.structuralPositive W.originalToPositive).unit.app Ω).val.app U).hom.toAddMonoidHom
+  (((adjunction (𝟭 C) O W.naiveStructuralPositive W.originalToPositive).unit.app Ω).val.app U).hom.toAddMonoidHom
 
-def fullForms : Modules W.structuralFull :=
-  (pullback (𝟭 C) W.structuralPositive W.structuralFull W.positiveToFull).obj
+def fullForms : Modules W.naiveStructuralFull :=
+  (pullback (𝟭 C) W.naiveStructuralPositive W.naiveStructuralFull W.positiveToFull).obj
     (positiveForms p K O Rplus A W Ω)
 
 def positiveFormUnit (U : Cᵒᵖ) : (positiveForms p K O Rplus A W Ω).val.obj U →+
     (fullForms p K O Rplus A W Ω).val.obj U :=
-  (((adjunction (𝟭 C) W.structuralPositive W.structuralFull W.positiveToFull).unit.app
+  (((adjunction (𝟭 C) W.naiveStructuralPositive W.naiveStructuralFull W.positiveToFull).unit.app
     (positiveForms p K O Rplus A W Ω)).val.app U).hom.toAddMonoidHom
 
 /-- The actual ideal-sheaf/module product: minimal native sheaf submodule containing its products. -/
 def idealTimesForms (n : ℕ) : (positiveForms p K O Rplus A W Ω).Submodule :=
-  sInf {N | ∀ (U : Cᵒᵖ) (r : W.structuralPositive.obj.obj U)
+  sInf {N | ∀ (U : Cᵒᵖ) (r : W.naiveStructuralPositive.obj.obj U)
     (m : (positiveForms p K O Rplus A W Ω).val.obj U),
-    r ∈ WittScalarSource.structuralPositiveFiltration p K O Rplus A W n U →
+    r ∈ WittScalarSource.naiveStructuralPositiveFiltration p K O Rplus A W n U →
       r • m ∈ N.toSubmodule.obj U}
 
 variable (d : ∀ U : Cᵒᵖ, O.obj.obj U →+ Ω.val.obj U)
 
 structure PositiveConnectionSource where
-  connection : ∀ U : Cᵒᵖ, W.structuralPositive.obj.obj U →+
+  connection : ∀ U : Cᵒᵖ, W.naiveStructuralPositive.obj.obj U →+
     (positiveForms p K O Rplus A W Ω).val.obj U
-  natural : ∀ {U V : Cᵒᵖ} (f : U ⟶ V) (r : W.structuralPositive.obj.obj U),
-    connection V ((W.structuralPositive.obj.map f).hom r) =
+  natural : ∀ {U V : Cᵒᵖ} (f : U ⟶ V) (r : W.naiveStructuralPositive.obj.obj U),
+    connection V ((W.naiveStructuralPositive.obj.map f).hom r) =
       (positiveForms p K O Rplus A W Ω).val.map f (connection U r)
   leibniz : ∀ U r s, connection U (r * s) = r • connection U s + s • connection U r
   original_source : ∀ U a,
     connection U ((W.originalToPositive.hom.app U).hom a) = originalFormUnit p K O Rplus A W Ω U (d U a)
   absolute_source : ∀ U b, connection U ((W.absoluteToPositive.hom.app U).hom b) = 0
-  theta_continuity : ∀ (n : ℕ) (U : Cᵒᵖ) (r : W.structuralPositive.obj.obj U),
-    r ∈ WittScalarSource.structuralPositiveFiltration p K O Rplus A W (n + 1) U →
+  theta_continuity : ∀ (n : ℕ) (U : Cᵒᵖ) (r : W.naiveStructuralPositive.obj.obj U),
+    r ∈ WittScalarSource.naiveStructuralPositiveFiltration p K O Rplus A W (n + 1) U →
       connection U r ∈ (idealTimesForms p K O Rplus A W Ω n).toSubmodule.obj U
   oneFormDifferential : ∀ U : Cᵒᵖ, (positiveForms p K O Rplus A W Ω).val.obj U →+
-    (exterior W.structuralPositive (positiveForms p K O Rplus A W Ω) 2).val.obj U
+    (exterior W.naiveStructuralPositive (positiveForms p K O Rplus A W Ω) 2).val.obj U
   oneForm_natural : ∀ {U V : Cᵒᵖ} (f : U ⟶ V) m,
     oneFormDifferential V ((positiveForms p K O Rplus A W Ω).val.map f m) =
-      (exterior W.structuralPositive (positiveForms p K O Rplus A W Ω) 2).val.map f
+      (exterior W.naiveStructuralPositive (positiveForms p K O Rplus A W Ω) 2).val.map f
         (oneFormDifferential U m)
-  oneForm_leibniz : ∀ (U : Cᵒᵖ) (r : W.structuralPositive.obj.obj U)
+  oneForm_leibniz : ∀ (U : Cᵒᵖ) (r : W.naiveStructuralPositive.obj.obj U)
     (m : (positiveForms p K O Rplus A W Ω).val.obj U),
     oneFormDifferential U (r • m) = r • oneFormDifferential U m +
-      exteriorUnit W.structuralPositive (positiveForms p K O Rplus A W Ω) 2 U
-        (_root_.exteriorPower.ιMulti (W.structuralPositive.obj.obj U) 2
+      exteriorUnit W.naiveStructuralPositive (positiveForms p K O Rplus A W Ω) 2 U
+        (_root_.exteriorPower.ιMulti (W.naiveStructuralPositive.obj.obj U) 2
           (fun i : Fin 2 => if i = 0 then connection U r else m))
   oneForm_original : ∀ U a,
     oneFormDifferential U (originalFormUnit p K O Rplus A W Ω U (d U a)) = 0
@@ -109,8 +109,8 @@ structure PositiveConnectionSource where
 
 def localGeneratorPower (U : Cᵒᵖ) (t : A.deRhamPositive.obj.obj U)
     (ht : IsLocalGenerator A.deRhamPositive (completedRegular p Rplus) A.completedTheta U t)
-    (j : ℤ) : W.structuralFull.obj.obj U :=
-  Units.val (generatorUnit A.deRhamPositive (completedRegular p Rplus) W.structuralPositive
+    (j : ℤ) : W.naiveStructuralFull.obj.obj U :=
+  Units.val (generatorUnit A.deRhamPositive (completedRegular p Rplus) W.naiveStructuralPositive
     A.completedTheta W.absoluteToPositive U t ht ^ j)
 
 def formSemilinearUnit (U : Cᵒᵖ) :
@@ -119,7 +119,7 @@ def formSemilinearUnit (U : Cᵒᵖ) :
   toFun := positiveFormUnit p K O Rplus A W Ω U
   map_add' := map_add (positiveFormUnit p K O Rplus A W Ω U)
   map_smul' r m :=
-    (((adjunction (𝟭 C) W.structuralPositive W.structuralFull W.positiveToFull).unit.app
+    (((adjunction (𝟭 C) W.naiveStructuralPositive W.naiveStructuralFull W.positiveToFull).unit.app
       (positiveForms p K O Rplus A W Ω)).val.app U).hom.map_smul r m
 
 def originalFormSemilinearUnit (U : Cᵒᵖ) : Ω.val.obj U →ₛₗ[(W.originalToPositive.hom.app U).hom]
@@ -127,7 +127,7 @@ def originalFormSemilinearUnit (U : Cᵒᵖ) : Ω.val.obj U →ₛₗ[(W.origina
   toFun := originalFormUnit p K O Rplus A W Ω U
   map_add' := map_add (originalFormUnit p K O Rplus A W Ω U)
   map_smul' r m :=
-    (((adjunction (𝟭 C) O W.structuralPositive W.originalToPositive).unit.app Ω).val.app U).hom.map_smul r m
+    (((adjunction (𝟭 C) O W.naiveStructuralPositive W.originalToPositive).unit.app Ω).val.app U).hom.map_smul r m
 
 def originalFullFormSemilinearUnit (U : Cᵒᵖ) : Ω.val.obj U →ₛₗ[(W.originalToFull.hom.app U).hom]
     (fullForms p K O Rplus A W Ω).val.obj U := by
@@ -138,38 +138,38 @@ def originalFullFormSemilinearUnit (U : Cᵒᵖ) : Ω.val.obj U →ₛₗ[(W.ori
 
 /-- Full connection source: every local absolute-generator fraction is normalized. -/
 structure FullConnectionSource (P : PositiveConnectionSource p K O Rplus A W Ω d) where
-  connection : ∀ U : Cᵒᵖ, W.structuralFull.obj.obj U →+
+  connection : ∀ U : Cᵒᵖ, W.naiveStructuralFull.obj.obj U →+
     (fullForms p K O Rplus A W Ω).val.obj U
-  natural : ∀ {U V : Cᵒᵖ} (f : U ⟶ V) (r : W.structuralFull.obj.obj U),
-    connection V ((W.structuralFull.obj.map f).hom r) =
+  natural : ∀ {U V : Cᵒᵖ} (f : U ⟶ V) (r : W.naiveStructuralFull.obj.obj U),
+    connection V ((W.naiveStructuralFull.obj.map f).hom r) =
       (fullForms p K O Rplus A W Ω).val.map f (connection U r)
   leibniz : ∀ U r s, connection U (r * s) = r • connection U s + s • connection U r
   local_fraction_source : ∀ (U : Cᵒᵖ) (t : A.deRhamPositive.obj.obj U)
     (ht : IsLocalGenerator A.deRhamPositive (completedRegular p Rplus) A.completedTheta U t)
-    (j : ℤ) (r : W.structuralPositive.obj.obj U),
+    (j : ℤ) (r : W.naiveStructuralPositive.obj.obj U),
     connection U
       (localGeneratorPower p K O Rplus A W U t ht (-j) * (W.positiveToFull.hom.app U).hom r) =
       localGeneratorPower p K O Rplus A W U t ht (-j) •
         positiveFormUnit p K O Rplus A W Ω U (P.connection U r)
   positiveTwoMap : ∀ U : Cᵒᵖ,
-    (exterior W.structuralPositive (positiveForms p K O Rplus A W Ω) 2).val.obj U →+
-      (exterior W.structuralFull (fullForms p K O Rplus A W Ω) 2).val.obj U
+    (exterior W.naiveStructuralPositive (positiveForms p K O Rplus A W Ω) 2).val.obj U →+
+      (exterior W.naiveStructuralFull (fullForms p K O Rplus A W Ω) 2).val.obj U
   positiveTwo_source : ∀ (U : Cᵒᵖ)
-    (w : ⋀[W.structuralPositive.obj.obj U]^2 ((positiveForms p K O Rplus A W Ω).val.obj U)),
-    positiveTwoMap U (exteriorUnit W.structuralPositive (positiveForms p K O Rplus A W Ω) 2 U w) =
-      exteriorUnit W.structuralFull (fullForms p K O Rplus A W Ω) 2 U
+    (w : ⋀[W.naiveStructuralPositive.obj.obj U]^2 ((positiveForms p K O Rplus A W Ω).val.obj U)),
+    positiveTwoMap U (exteriorUnit W.naiveStructuralPositive (positiveForms p K O Rplus A W Ω) 2 U w) =
+      exteriorUnit W.naiveStructuralFull (fullForms p K O Rplus A W Ω) 2 U
         (ExteriorAlgebra.powMapₛₗ 2 (W.positiveToFull.hom.app U).hom
           (formSemilinearUnit p K O Rplus A W Ω U) w)
   oneFormDifferential : ∀ U : Cᵒᵖ, (fullForms p K O Rplus A W Ω).val.obj U →+
-    (exterior W.structuralFull (fullForms p K O Rplus A W Ω) 2).val.obj U
+    (exterior W.naiveStructuralFull (fullForms p K O Rplus A W Ω) 2).val.obj U
   oneForm_natural : ∀ {U V : Cᵒᵖ} (f : U ⟶ V) m,
     oneFormDifferential V ((fullForms p K O Rplus A W Ω).val.map f m) =
-      (exterior W.structuralFull (fullForms p K O Rplus A W Ω) 2).val.map f (oneFormDifferential U m)
-  oneForm_leibniz : ∀ (U : Cᵒᵖ) (r : W.structuralFull.obj.obj U)
+      (exterior W.naiveStructuralFull (fullForms p K O Rplus A W Ω) 2).val.map f (oneFormDifferential U m)
+  oneForm_leibniz : ∀ (U : Cᵒᵖ) (r : W.naiveStructuralFull.obj.obj U)
     (m : (fullForms p K O Rplus A W Ω).val.obj U),
     oneFormDifferential U (r • m) = r • oneFormDifferential U m +
-      exteriorUnit W.structuralFull (fullForms p K O Rplus A W Ω) 2 U
-        (_root_.exteriorPower.ιMulti (W.structuralFull.obj.obj U) 2
+      exteriorUnit W.naiveStructuralFull (fullForms p K O Rplus A W Ω) 2 U
+        (_root_.exteriorPower.ιMulti (W.naiveStructuralFull.obj.obj U) 2
           (fun i : Fin 2 => if i = 0 then connection U r else m))
   oneForm_fraction_source : ∀ (U : Cᵒᵖ) (t : A.deRhamPositive.obj.obj U)
     (ht : IsLocalGenerator A.deRhamPositive (completedRegular p Rplus) A.completedTheta U t)

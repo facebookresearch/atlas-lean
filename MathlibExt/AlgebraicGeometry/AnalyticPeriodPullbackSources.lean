@@ -251,23 +251,23 @@ structure NaturalPeriodMaps where
         (rationalInf p SX.positive) (completedRegular p SX.positive) SX.untilting.rationalTheta
         (binfMap p K B X Y f PX PY SX SY E Q tilt)
         (hatMap p K B X Y f PX PY SX SY E Q completedPositive) absoluteThetaSquare n
-  structuralInf : SY.scalars.structuralInf ⟶ (push p K B X Y f PX PY E Q).obj SX.scalars.structuralInf
-  structuralInf_original : SY.scalars.originalToInf ≫ structuralInf =
+  naiveStructuralInf : SY.scalars.naiveStructuralInf ⟶ (push p K B X Y f PX PY E Q).obj SX.scalars.naiveStructuralInf
+  structuralInf_original : SY.scalars.originalToInf ≫ naiveStructuralInf =
     originalMap p K B X Y f PX PY SX SY E Q N ≫ (push p K B X Y f PX PY E Q).map SX.scalars.originalToInf
-  structuralInf_absolute : SY.scalars.absoluteToInf ≫ structuralInf =
+  structuralInf_absolute : SY.scalars.absoluteToInf ≫ naiveStructuralInf =
     binfMap p K B X Y f PX PY SX SY E Q tilt ≫ (push p K B X Y f PX PY E Q).map SX.scalars.absoluteToInf
-  structuralThetaSquare : structuralInf ≫ (push p K B X Y f PX PY E Q).map SX.scalars.structuralTheta =
+  structuralThetaSquare : naiveStructuralInf ≫ (push p K B X Y f PX PY E Q).map SX.scalars.structuralTheta =
     SY.scalars.structuralTheta ≫ hatMap p K B X Y f PX PY SX SY E Q completedPositive
-  structuralPositive : SY.structuralPositive ⟶ (push p K B X Y f PX PY E Q).obj SX.structuralPositive
+  naiveStructuralPositive : SY.naiveStructuralPositive ⟶ (push p K B X Y f PX PY E Q).obj SX.naiveStructuralPositive
   structuralPositive_source : ∀ n : ℕ,
-    structuralPositive ≫ (push p K B X Y f PX PY E Q).map
-      (projection SX.scalars.structuralInf (completedRegular p SX.positive) SX.scalars.structuralTheta n) =
-    projection SY.scalars.structuralInf (completedRegular p SY.positive) SY.scalars.structuralTheta n ≫
+    naiveStructuralPositive ≫ (push p K B X Y f PX PY E Q).map
+      (projection SX.scalars.naiveStructuralInf (completedRegular p SX.positive) SX.scalars.structuralTheta n) =
+    projection SY.scalars.naiveStructuralInf (completedRegular p SY.positive) SY.scalars.structuralTheta n ≫
       MathlibExt.CategoryTheory.RingSheafMapOperations.quotientMap Q.functor
-        SY.scalars.structuralInf (completedRegular p SY.positive) SY.scalars.structuralTheta
-        SX.scalars.structuralInf (completedRegular p SX.positive) SX.scalars.structuralTheta
-        structuralInf (hatMap p K B X Y f PX PY SX SY E Q completedPositive) structuralThetaSquare n
-  absoluteScalar_source : SY.scalars.absoluteToPositive ≫ structuralPositive =
+        SY.scalars.naiveStructuralInf (completedRegular p SY.positive) SY.scalars.structuralTheta
+        SX.scalars.naiveStructuralInf (completedRegular p SX.positive) SX.scalars.structuralTheta
+        naiveStructuralInf (hatMap p K B X Y f PX PY SX SY E Q completedPositive) structuralThetaSquare n
+  absoluteScalar_source : SY.scalars.absoluteToPositive ≫ naiveStructuralPositive =
     absolutePositive ≫ (push p K B X Y f PX PY E Q).map SX.scalars.absoluteToPositive
   thetaGenerators : ∀ (U : (AnalyticProObjectSites.ProEtaleSite p Y.left)ᵒᵖ)
     (t : SY.absolutePositive.obj.obj U),
@@ -285,13 +285,13 @@ def absoluteFullMap : SY.absoluteFull ⟶ (push p K B X Y f PX PY E Q).obj SX.ab
     SX.absolutePositive (completedRegular p SX.positive) SX.absolutePositive SX.untilting.completedTheta (𝟙 _)
     M.absolutePositive M.absolutePositive (by simp) M.thetaGenerators
 
-def structuralFullMap : SY.structuralFull ⟶ (push p K B X Y f PX PY E Q).obj SX.structuralFull :=
+def structuralFullMap : SY.naiveStructuralFull ⟶ (push p K B X Y f PX PY E Q).obj SX.naiveStructuralFull :=
   MathlibExt.CategoryTheory.RingSheafMapOperations.localizationMap Q.functor
-    SY.absolutePositive (completedRegular p SY.positive) SY.structuralPositive
+    SY.absolutePositive (completedRegular p SY.positive) SY.naiveStructuralPositive
       SY.untilting.completedTheta SY.scalars.absoluteToPositive
-    SX.absolutePositive (completedRegular p SX.positive) SX.structuralPositive
+    SX.absolutePositive (completedRegular p SX.positive) SX.naiveStructuralPositive
       SX.untilting.completedTheta SX.scalars.absoluteToPositive
-    M.absolutePositive M.structuralPositive M.absoluteScalar_source M.thetaGenerators
+    M.absolutePositive M.naiveStructuralPositive M.absoluteScalar_source M.thetaGenerators
 
 end NaturalPeriodMaps
 

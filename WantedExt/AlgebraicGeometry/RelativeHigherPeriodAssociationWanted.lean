@@ -16,9 +16,11 @@ The local system and its higher-lisse guard are the actual native
 finite-image realization and native R^i f_* carrier. The original lisse
 augmentation is fixed by the GIVEN BASE association. Both canonical
 higher maps have the same constructed period-cohomology target.
-The final IsIso and filtered/horizontal properties concern their
-constructed composition. Higher filtration and Gauss--Manin are the
-native OUTPUT data. No unrestricted rational relative 8.8 is asserted.
+Higher filtration and Gauss--Manin are the native OUTPUT data. The period comparison
+isomorphisms and their filtered/horizontal properties are not requested here: the period objects
+are the naive structural periods of `StructuralDeRhamPeriodSources` (Scholze's withdrawn
+Definition 6.8, erratum item (3)), for which the Taylor comparison behind them fails; they await
+the corrected finite-stage construction. No unrestricted rational relative 8.8 is asserted.
 
 Source: Scholze, arXiv:1205.3463v2, Definition 8.3 and Theorem 8.8.
 -/
@@ -160,15 +162,15 @@ variable [(modulePushforward (etaleInclusion p Y.left) (regularEtale p Y.left SY
   [IsIso (constantInverseMap
     (J := AnalyticDiamondEtaleSites.analyticEtaleTopology p Y.left) (T := proTopology p Y.left PY)
     (etaleInclusion p Y.left) (BaseField.carrier p K))]
-  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) SX.regular SX.structuralPositive
+  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) SX.regular SX.naiveStructuralPositive
     SX.scalars.originalToPositive).IsRightAdjoint]
-  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) SX.structuralPositive SX.structuralFull
+  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) SX.naiveStructuralPositive SX.naiveStructuralFull
     SX.scalars.positiveToFull).IsRightAdjoint]
-  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) SX.absolutePositive SX.structuralFull
+  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) SX.absolutePositive SX.naiveStructuralFull
     (SX.scalars.absoluteToPositive ≫ SX.scalars.positiveToFull)).IsRightAdjoint]
-  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p Y.left)) SY.regular SY.structuralPositive
+  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p Y.left)) SY.regular SY.naiveStructuralPositive
     SY.scalars.originalToPositive).IsRightAdjoint]
-  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p Y.left)) SY.structuralPositive SY.structuralFull
+  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p Y.left)) SY.naiveStructuralPositive SY.naiveStructuralFull
     SY.scalars.positiveToFull).IsRightAdjoint]
 
 local instance originalModulePullbackX :
@@ -224,47 +226,47 @@ variable  (PC : PositiveConnectionSource p K SX.regular SX.positive SX.untilting
     (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q)
     (basePeriod p K B X Y f PX PY SY E Q) (baseScalar p K B X Y f PX PY SY E Q)).IsRightAdjoint]
 
-variable [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) (Zhat p X.left PX) SX.structuralFull
+variable [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) (Zhat p X.left PX) SX.naiveStructuralFull
     (zFullX (p := p) (K := K) (B := B) (X := X) (PX := PX) (SX := SX) (FX := FX) (IX := IX))).IsRightAdjoint]
-  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p Y.left)) (Zhat p Y.left PY) SY.structuralFull
+  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p Y.left)) (Zhat p Y.left PY) SY.naiveStructuralFull
     (zFullY (p := p) (K := K) (B := B) (Y := Y) (PY := PY) (SY := SY) (FY := FY) (IY := IY))).IsRightAdjoint]
-  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p Y.left)) SY.absolutePositive SY.structuralFull
+  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p Y.left)) SY.absolutePositive SY.naiveStructuralFull
     (absoluteToFullY (p := p) (K := K) (B := B) (Y := Y) (PY := PY) (SY := SY))).IsRightAdjoint]
-  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p Y.left)) SY.regular SY.structuralFull SY.scalars.originalToFull).IsRightAdjoint]
-  [EnoughInjectives (Modules SY.structuralFull)]
+  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p Y.left)) SY.regular SY.naiveStructuralFull SY.scalars.originalToFull).IsRightAdjoint]
+  [EnoughInjectives (Modules SY.naiveStructuralFull)]
   [EnoughInjectives (Modules (baseZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)))]
   [EnoughInjectives (Modules (basePeriod p K B X Y f PX PY SY E Q))]
   [(pushforward Q.functor (Zhat p Y.left PY)
     (baseZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q))
     (baseZUnit (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q))).IsRightAdjoint]
-  [(pushforward Q.functor SY.structuralFull (basePeriod p K B X Y f PX PY SY E Q)
+  [(pushforward Q.functor SY.naiveStructuralFull (basePeriod p K B X Y f PX PY SY E Q)
     (periodUnitY p K B X Y f PX PY SY E Q)).IsRightAdjoint]
   [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left))
     (baseZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q))
     (basePeriod p K B X Y f PX PY SY E Q)
     (basePeriodZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SY := SY) (E := E) (Q := Q) (FY := FY) (IY := IY))).IsRightAdjoint]
 
-variable (CLX : CompositionSource (Zhat p X.left PX) SX.absolutePositive SX.structuralFull
+variable (CLX : CompositionSource (Zhat p X.left PX) SX.absolutePositive SX.naiveStructuralFull
     (MathlibExt.AlgebraicGeometry.RelativeIntegralPeriodComparison.scalarX
       (p := p) (K := K) (B := B) (X := X) (PX := PX) (SX := SX) (FX := FX) (IX := IX))
     (absoluteToFullX (p := p) (K := K) (B := B) (X := X) (PX := PX) (SX := SX)))
-  (CLY : CompositionSource (Zhat p Y.left PY) SY.absolutePositive SY.structuralFull
+  (CLY : CompositionSource (Zhat p Y.left PY) SY.absolutePositive SY.naiveStructuralFull
     (MathlibExt.AlgebraicGeometry.RelativeIntegralPeriodComparison.scalarY
       (p := p) (K := K) (B := B) (Y := Y) (PY := PY) (SY := SY) (FY := FY) (IY := IY))
     (absoluteToFullY (p := p) (K := K) (B := B) (Y := Y) (PY := PY) (SY := SY)))
-  (CEY : CompositionSource SY.regular SY.structuralPositive SY.structuralFull
+  (CEY : CompositionSource SY.regular SY.naiveStructuralPositive SY.naiveStructuralFull
     SY.scalars.originalToPositive SY.scalars.positiveToFull)
 
 variable (PD : PeriodComplexType p K B X Y f PX PY SX SY E Q N Ω M D DS FS hp PM PC FC)
 
-variable [PullbackSourceUnit Q.functor SY.structuralFull (basePeriod p K B X Y f PX PY SY E Q) (periodUnitY p K B X Y f PX PY SY E Q)]
+variable [PullbackSourceUnit Q.functor SY.naiveStructuralFull (basePeriod p K B X Y f PX PY SY E Q) (periodUnitY p K B X Y f PX PY SY E Q)]
   [PullbackSourceUnit (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q) (basePeriod p K B X Y f PX PY SY E Q) (baseScalar p K B X Y f PX PY SY E Q)]
   [PullbackSourceUnit Q.functor (Zhat p Y.left PY) (baseZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)) (baseZUnit (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q))]
   [PullbackSourceUnit (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) (baseZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)) (basePeriod p K B X Y f PX PY SY E Q) (basePeriodZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SY := SY) (E := E) (Q := Q) (FY := FY) (IY := IY))]
-  [PreservesFiniteLimits (NativeScalarProjectionMaps.scalarY SY.regular SY.structuralFull SY.scalars.originalToFull)]
-  [PreservesFiniteColimits (NativeScalarProjectionMaps.scalarY SY.regular SY.structuralFull SY.scalars.originalToFull)]
-  [PreservesFiniteLimits (NativeScalarProjectionMaps.scalarY (Zhat p Y.left PY) SY.structuralFull (zFullY (p := p) (K := K) (B := B) (Y := Y) (PY := PY) (SY := SY) (FY := FY) (IY := IY)))]
-  [PreservesFiniteColimits (NativeScalarProjectionMaps.scalarY (Zhat p Y.left PY) SY.structuralFull (zFullY (p := p) (K := K) (B := B) (Y := Y) (PY := PY) (SY := SY) (FY := FY) (IY := IY)))]
+  [PreservesFiniteLimits (NativeScalarProjectionMaps.scalarY SY.regular SY.naiveStructuralFull SY.scalars.originalToFull)]
+  [PreservesFiniteColimits (NativeScalarProjectionMaps.scalarY SY.regular SY.naiveStructuralFull SY.scalars.originalToFull)]
+  [PreservesFiniteLimits (NativeScalarProjectionMaps.scalarY (Zhat p Y.left PY) SY.naiveStructuralFull (zFullY (p := p) (K := K) (B := B) (Y := Y) (PY := PY) (SY := SY) (FY := FY) (IY := IY)))]
+  [PreservesFiniteColimits (NativeScalarProjectionMaps.scalarY (Zhat p Y.left PY) SY.naiveStructuralFull (zFullY (p := p) (K := K) (B := B) (Y := Y) (PY := PY) (SY := SY) (FY := FY) (IY := IY)))]
 
 local instance coherentOriginalPullbackUnit :
     PullbackSourceUnit Q.functor SY.regular (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q)
@@ -282,7 +284,7 @@ local instance augmentationBaseInjectives : EnoughInjectives (Modules
 
 local instance augmentationPeriodInjectives : EnoughInjectives (Modules
     (AssociatedPeriodAugmentationSources.basePeriod (J := proTopology p Y.left PY) (T := proTopology p X.left PX)
-      Q.functor SY.structuralFull)) := by
+      Q.functor SY.naiveStructuralFull)) := by
   change EnoughInjectives (Modules (basePeriod p K B X Y f PX PY SY E Q))
   infer_instance
 
@@ -297,11 +299,11 @@ local instance augmentationBasePullbackUnit :
   infer_instance
 
 local instance augmentationPeriodPullbackUnit :
-    PullbackSourceUnit Q.functor SY.structuralFull
+    PullbackSourceUnit Q.functor SY.naiveStructuralFull
       (AssociatedPeriodAugmentationSources.basePeriod (J := proTopology p Y.left PY) (T := proTopology p X.left PX)
-        Q.functor SY.structuralFull)
-      (inverseUnit (J := proTopology p Y.left PY) (T := proTopology p X.left PX) Q.functor SY.structuralFull) := by
-  change PullbackSourceUnit Q.functor SY.structuralFull (basePeriod p K B X Y f PX PY SY E Q)
+        Q.functor SY.naiveStructuralFull)
+      (inverseUnit (J := proTopology p Y.left PY) (T := proTopology p X.left PX) Q.functor SY.naiveStructuralFull) := by
+  change PullbackSourceUnit Q.functor SY.naiveStructuralFull (basePeriod p K B X Y f PX PY SY E Q)
     (periodUnitY p K B X Y f PX PY SY E Q)
   infer_instance
 
@@ -310,9 +312,9 @@ local instance augmentationScalarPullbackUnit :
       (AssociatedPeriodAugmentationSources.baseAbsolute (J := proTopology p Y.left PY) (T := proTopology p X.left PX)
         Q.functor (Zhat p Y.left PY))
       (AssociatedPeriodAugmentationSources.basePeriod (J := proTopology p Y.left PY) (T := proTopology p X.left PX)
-        Q.functor SY.structuralFull)
+        Q.functor SY.naiveStructuralFull)
       (AssociatedPeriodAugmentationSources.scalar (J := proTopology p Y.left PY) (T := proTopology p X.left PX)
-        Q.functor (Zhat p Y.left PY) SY.structuralFull
+        Q.functor (Zhat p Y.left PY) SY.naiveStructuralFull
           (zFullY (p := p) (K := K) (B := B) (Y := Y) (PY := PY) (SY := SY) (FY := FY) (IY := IY))) := by
   change PullbackSourceUnit (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left))
     (baseZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q))
@@ -323,23 +325,23 @@ local instance augmentationScalarPullbackUnit :
 include H
 
 public def_wanted originalCoherentScalarSquare (h : RelativeScope p B X Y f) :
-  NativeScalarProjectionMaps.SourceSquare Q.functor SY.regular SY.structuralFull
+  NativeScalarProjectionMaps.SourceSquare Q.functor SY.regular SY.naiveStructuralFull
     (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q) (basePeriod p K B X Y f PX PY SY E Q) SY.scalars.originalToFull (baseScalar p K B X Y f PX PY SY E Q) (originalUnitY p K B X Y f PX PY SY E Q) (periodUnitY p K B X Y f PX PY SY E Q)
 
 public def_wanted originalLisseScalarSquare (h : RelativeScope p B X Y f) :
-  NativeScalarProjectionMaps.SourceSquare Q.functor (Zhat p Y.left PY) SY.structuralFull (baseZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)) (basePeriod p K B X Y f PX PY SY E Q) (zFullY (p := p) (K := K) (B := B) (Y := Y) (PY := PY) (SY := SY) (FY := FY) (IY := IY)) (basePeriodZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SY := SY) (E := E) (Q := Q) (FY := FY) (IY := IY)) (baseZUnit (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)) (periodUnitY p K B X Y f PX PY SY E Q)
+  NativeScalarProjectionMaps.SourceSquare Q.functor (Zhat p Y.left PY) SY.naiveStructuralFull (baseZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)) (basePeriod p K B X Y f PX PY SY E Q) (zFullY (p := p) (K := K) (B := B) (Y := Y) (PY := PY) (SY := SY) (FY := FY) (IY := IY)) (basePeriodZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SY := SY) (E := E) (Q := Q) (FY := FY) (IY := IY)) (baseZUnit (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)) (periodUnitY p K B X Y f PX PY SY E Q)
 
 public def_wanted originalAssociatedAugmentation (hBase : BaseData (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f)
   (PX := PX) (PY := PY) (SX := SX) (SY := SY)
   (FX := FX) (IX := IX) (T := T) (TQ := TQ) (L := L) (Ω := Ω) (M := M)) (h : RelativeScope p B X Y f) :
   AugmentationType (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (Ω := Ω) (M := M) (D := D) (DS := DS) (FS := FS) (hp := hp) (PM := PM) (PC := PC) (FC := FC) (PD := PD) (FX := FX) (FY := FY) (IX := IX) (IY := IY) (PS := PS) (T := T) (TQ := TQ) (L := L) (H := H) (CLX := CLX)
 
-variable (SO : NativeScalarProjectionMaps.SourceSquare Q.functor SY.regular SY.structuralFull
+variable (SO : NativeScalarProjectionMaps.SourceSquare Q.functor SY.regular SY.naiveStructuralFull
     (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q) (basePeriod p K B X Y f PX PY SY E Q) SY.scalars.originalToFull (baseScalar p K B X Y f PX PY SY E Q) (originalUnitY p K B X Y f PX PY SY E Q) (periodUnitY p K B X Y f PX PY SY E Q))
   (AZO : DerivedAdjunctionSource Q.functor SY.regular (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q) (originalUnitY p K B X Y f PX PY SY E Q))
-  (AZF : DerivedAdjunctionSource Q.functor SY.structuralFull (basePeriod p K B X Y f PX PY SY E Q) (periodUnitY p K B X Y f PX PY SY E Q))
+  (AZF : DerivedAdjunctionSource Q.functor SY.naiveStructuralFull (basePeriod p K B X Y f PX PY SY E Q) (periodUnitY p K B X Y f PX PY SY E Q))
   (ASO : DerivedAdjunctionSource (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q) (basePeriod p K B X Y f PX PY SY E Q) (baseScalar p K B X Y f PX PY SY E Q))
-  (SZ : NativeScalarProjectionMaps.SourceSquare Q.functor (Zhat p Y.left PY) SY.structuralFull (baseZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)) (basePeriod p K B X Y f PX PY SY E Q) (zFullY (p := p) (K := K) (B := B) (Y := Y) (PY := PY) (SY := SY) (FY := FY) (IY := IY)) (basePeriodZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SY := SY) (E := E) (Q := Q) (FY := FY) (IY := IY)) (baseZUnit (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)) (periodUnitY p K B X Y f PX PY SY E Q))
+  (SZ : NativeScalarProjectionMaps.SourceSquare Q.functor (Zhat p Y.left PY) SY.naiveStructuralFull (baseZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)) (basePeriod p K B X Y f PX PY SY E Q) (zFullY (p := p) (K := K) (B := B) (Y := Y) (PY := PY) (SY := SY) (FY := FY) (IY := IY)) (basePeriodZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SY := SY) (E := E) (Q := Q) (FY := FY) (IY := IY)) (baseZUnit (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)) (periodUnitY p K B X Y f PX PY SY E Q))
   (AZZ : DerivedAdjunctionSource Q.functor (Zhat p Y.left PY) (baseZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)) (baseZUnit (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)))
   (ASZ : DerivedAdjunctionSource (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) (baseZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)) (basePeriod p K B X Y f PX PY SY E Q) (basePeriodZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SY := SY) (E := E) (Q := Q) (FY := FY) (IY := IY)))
   (AL : AugmentationType (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (Ω := Ω) (M := M) (D := D) (DS := DS) (FS := FS) (hp := hp) (PM := PM) (PC := PC) (FC := FC) (PD := PD) (FX := FX) (FY := FY) (IX := IX) (IY := IY) (PS := PS) (T := T) (TQ := TQ) (L := L) (H := H) (CLX := CLX))
@@ -353,7 +355,6 @@ variable [PreservesFiniteLimits (NativeRestrictionCohomologyMaps.restrictY (Zhat
   [PreservesFiniteColimits (NativeRestrictionCohomologyMaps.restrictY (Zhat p Y.left PY) (Zhat p Y.left PY) (𝟙 (Zhat p Y.left PY)))]
   [ExactCochainUnit (NativeRestrictionCohomologyMaps.restrictX (baseZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)) (Zhat p X.left PX) (baseZScalar (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q) (N := N) (PS := PS)))]
 
-
 public def_wanted originalLisseRestrictionSquare (h : RelativeScope p B X Y f) :
   NativeRestrictionCohomologyMaps.SourceSquare Q.functor (Zhat p Y.left PY) (Zhat p Y.left PY) (baseZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)) (Zhat p X.left PX) (𝟙 (Zhat p Y.left PY)) (baseZScalar (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q) (N := N) (PS := PS)) (baseZUnit (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)) (coefficientScalar p K B X Y f PX PY E Q N PS)
 
@@ -361,14 +362,8 @@ variable  (RZ : NativeRestrictionCohomologyMaps.SourceSquare Q.functor (Zhat p Y
   (IDZ : IdentityRestrictionSource (Zhat p Y.left PY))
   (SSZ : SingleRestrictionSource (baseZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)) (Zhat p X.left PX) (baseZScalar (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q) (N := N) (PS := PS)))
 
-
 public proof_wanted nativeHigherLisseRestrictionIso (h : RelativeScope p B X Y f) (i : ℤ) (hHigher : HigherLisseAt (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q) (N := N) (PS := PS) (T := T) (TQ := TQ) (L := L) i) :
   IsIso (higherZRestriction (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q) (N := N) (PS := PS) (T := T) (TQ := TQ) (L := L) (RZ := RZ) (IDZ := IDZ) (SSZ := SSZ) i)
-
-public proof_wanted nativeLissePeriodComparisonIso (hBase : BaseData (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f)
-  (PX := PX) (PY := PY) (SX := SX) (SY := SY)
-  (FX := FX) (IX := IX) (T := T) (TQ := TQ) (L := L) (Ω := Ω) (M := M)) (h : RelativeScope p B X Y f) (i : ℤ) (hHigher : HigherLisseAt (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q) (N := N) (PS := PS) (T := T) (TQ := TQ) (L := L) i) (hForms : LocallyFiniteForms (ProEtaleDeRhamSources.forms (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (SX := SX) (Ω := Ω))) :
-  IsIso (lissePeriodComparison (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (Ω := Ω) (M := M) (D := D) (DS := DS) (FS := FS) (hp := hp) (PM := PM) (PC := PC) (FC := FC) (PD := PD) (FX := FX) (FY := FY) (IX := IX) (IY := IY) (PS := PS) (T := T) (TQ := TQ) (L := L) (H := H) (CLX := CLX) (AL := AL) (SZ := SZ) (AZZ := AZZ) (AZF := AZF) (ASZ := ASZ) i)
 
 variable (GM : RelativeGaussManinSources.GaussManinFactory (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (FX := FX) (IX := IX) (T := T) (TQ := TQ) (L := L) (Ω := Ω) (M := M) (D := D) (DS := DS) (FS := FS) (H := H))
 
@@ -376,22 +371,5 @@ public def_wanted higherPeriodCoefficientConnection (hBase : BaseData (p := p) (
   (PX := PX) (PY := PY) (SX := SX) (SY := SY)
   (FX := FX) (IX := IX) (T := T) (TQ := TQ) (L := L) (Ω := Ω) (M := M)) (h : RelativeScope p B X Y f) (i : ℤ) (hHigher : HigherLisseAt (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q) (N := N) (PS := PS) (T := T) (TQ := TQ) (L := L) i) :
   HigherCoefficientConnectionType (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (FX := FX) (IX := IX) (T := T) (TQ := TQ) (L := L) (Ω := Ω) (M := M) (D := D) (DS := DS) (FS := FS) (H := H) (GM := GM) i
-
-variable (i : ℤ) [IsIso (coherentPeriodComparison (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (Ω := Ω) (M := M) (D := D) (DS := DS) (FS := FS) (hp := hp) (PM := PM) (PC := PC) (FC := FC) (PD := PD) (SO := SO) (AZO := AZO) (AZF := AZF) (ASO := ASO) i)]
-  (HF : HigherFiltrationType (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (Ω := Ω) (M := M) (D := D) i)
-  (HC : HigherCoefficientConnectionType (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (FX := FX) (IX := IX) (T := T) (TQ := TQ) (L := L) (Ω := Ω) (M := M) (D := D) (DS := DS) (FS := FS) (H := H) (GM := GM) i)
-
-
-public proof_wanted canonicalHigherPeriodComparisonIso (hBase : BaseData (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f)
-  (PX := PX) (PY := PY) (SX := SX) (SY := SY)
-  (FX := FX) (IX := IX) (T := T) (TQ := TQ) (L := L) (Ω := Ω) (M := M)) (h : RelativeScope p B X Y f)
-    (hHigher : HigherLisseAt (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q) (N := N) (PS := PS) (T := T) (TQ := TQ) (L := L) i) (hForms : LocallyFiniteForms (ProEtaleDeRhamSources.forms (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (SX := SX) (Ω := Ω))) :
-  IsIso (higherComparison (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (Ω := Ω) (M := M) (D := D) (DS := DS) (FS := FS) (hp := hp) (PM := PM) (PC := PC) (FC := FC) (PD := PD) (FX := FX) (FY := FY) (IX := IX) (IY := IY) (PS := PS) (T := T) (TQ := TQ) (L := L) (H := H) (CLX := CLX) (CLY := CLY) (CEY := CEY) (AL := AL) (SO := SO) (AZO := AZO) (AZF := AZF) (ASO := ASO) (SZ := SZ) (AZZ := AZZ) (ASZ := ASZ) (RZ := RZ) (IDZ := IDZ) (SSZ := SSZ) i)
-
-public proof_wanted canonicalHigherFilteredHorizontal (hBase : BaseData (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f)
-  (PX := PX) (PY := PY) (SX := SX) (SY := SY)
-  (FX := FX) (IX := IX) (T := T) (TQ := TQ) (L := L) (Ω := Ω) (M := M)) (h : RelativeScope p B X Y f)
-    (hHigher : HigherLisseAt (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q) (N := N) (PS := PS) (T := T) (TQ := TQ) (L := L) i) (hForms : LocallyFiniteForms (ProEtaleDeRhamSources.forms (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (SX := SX) (Ω := Ω))) :
-  HigherAssociationPropertiesType (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (Ω := Ω) (M := M) (D := D) (DS := DS) (FS := FS) (hp := hp) (PM := PM) (PC := PC) (FC := FC) (PD := PD) (FX := FX) (FY := FY) (IX := IX) (IY := IY) (PS := PS) (T := T) (TQ := TQ) (L := L) (H := H) (CLX := CLX) (CLY := CLY) (CEY := CEY) (AL := AL) (SO := SO) (AZO := AZO) (AZF := AZF) (ASO := ASO) (SZ := SZ) (AZZ := AZZ) (ASZ := ASZ) (RZ := RZ) (IDZ := IDZ) (SSZ := SSZ) (GM := GM) (i := i) (HF := HF) (HC := HC)
 
 end WantedExt.AlgebraicGeometry.RelativeHigherPeriodAssociation

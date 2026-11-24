@@ -165,9 +165,9 @@ public def_wanted proDeRhamSource (h : RelativeScope p B X Y f) :
   ProEtaleDeRhamSources.Source p K B X Y f PX PY SX SY E Q N Ω M D
 
 variable (FS : ProEtaleDeRhamSources.FormSource p K B X Y f PX SX Ω)
-  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) SX.regular SX.structuralPositive
+  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) SX.regular SX.naiveStructuralPositive
     SX.scalars.originalToPositive).IsRightAdjoint]
-  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) SX.structuralPositive SX.structuralFull
+  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) SX.naiveStructuralPositive SX.naiveStructuralFull
     SX.scalars.positiveToFull).IsRightAdjoint]
 
 public def_wanted positiveRelativePeriodConnection (h : RelativeScope p B X Y f) :
@@ -181,4 +181,3 @@ public def_wanted fullRelativePeriodConnection (h : RelativeScope p B X Y f)
     (ProEtaleDeRhamSources.forms p K B X Y f PX SX Ω) FS.differential P
 
 end WantedExt.AlgebraicGeometry.RelativeDeRhamSources
-

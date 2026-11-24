@@ -95,8 +95,8 @@ def scalars : WittScalarSource p K S.regular S.positive S.untilting :=
 
 def absolutePositive := S.untilting.deRhamPositive
 def absoluteFull := WittScalarSource.absoluteFull p S.positive S.untilting
-def structuralPositive := S.scalars.structuralPositive
-def structuralFull := S.scalars.structuralFull
+def naiveStructuralPositive := S.scalars.naiveStructuralPositive
+def naiveStructuralFull := S.scalars.naiveStructuralFull
 
 end Source
 

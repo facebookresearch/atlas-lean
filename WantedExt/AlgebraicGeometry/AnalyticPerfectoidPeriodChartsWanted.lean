@@ -20,6 +20,11 @@ K scalars and a finite etale rational polydisc map. Taylor is fixed on
 every finite structural theta quotient. The full connection is the
 local ABSOLUTE-theta-generator fraction extension of the positive one.
 
+The structural period objects are the naive ones of `StructuralDeRhamPeriodSources` (Scholze's
+withdrawn Definition 6.8, erratum item (3)): the Taylor map is requested, but its invertibility
+(Proposition 6.10) is not, since it fails for them; it awaits the corrected finite-stage
+construction.
+
 Sources: Scholze, arXiv:1205.3463v2, Theorem 6.5, Definition 6.8 and
 Proposition 6.10; BMS arXiv:1602.03148v3, Section 5.1.
 -/
@@ -80,13 +85,9 @@ public def_wanted toricTaylorSource
     (hC : ToricChart.CoordinateSource p K B X P S (absoluteForms p K B X P S Ω) AΩ.differential C) :
   TaylorSource p K B X P S (absoluteForms p K B X P S Ω) AΩ.differential C
 
-public proof_wanted toricTaylorIso
-    (hC : ToricChart.CoordinateSource p K B X P S (absoluteForms p K B X P S Ω) AΩ.differential C)
-    (T : TaylorSource p K B X P S (absoluteForms p K B X P S Ω) AΩ.differential C) : IsIso T.map
-
-variable [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) S.regular S.structuralPositive
+variable [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) S.regular S.naiveStructuralPositive
     S.scalars.originalToPositive).IsRightAdjoint]
-  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) S.structuralPositive S.structuralFull
+  [(pushforward (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) S.naiveStructuralPositive S.naiveStructuralFull
     S.scalars.positiveToFull).IsRightAdjoint]
 
 public def_wanted positiveAbsolutePeriodConnection (hSmooth : IsSmooth p X.hom) :

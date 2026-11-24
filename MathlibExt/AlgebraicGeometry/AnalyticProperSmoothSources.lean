@@ -55,7 +55,9 @@ structure BaseRealization (K : BaseField p) where
   analytic : AnalyticAdicSpace p
   whole : model.valued ≅ analytic.obj
 
-/-- Restricted series have the coefficient-uniform topology of the original Tate ring. -/
+/-- Restricted series have the coefficient-uniform topology of the original Tate ring, and the
+standard plus ring of the polydisc: the series with coefficients in the plus ring. In zero variables
+this is the original pair itself. -/
 structure TatePowerSeries (P : TatePair p) (n : ℕ) where
   series : Subring (MvPowerSeries (Fin n) P.ring)
   restricted : ∀ f, f ∈ series ↔ Filter.Tendsto
@@ -70,6 +72,8 @@ structure TatePowerSeries (P : TatePair p) (n : ℕ) where
     N ∈ nhds (0 : pair.ring) ↔
       ∃ V : Set P.ring, V ∈ nhds (0 : P.ring) ∧
         {f | ∀ d, MvPowerSeries.coeff d (coordinates f).val ∈ V} ⊆ N
+  plus_coefficients : ∀ f : pair.ring,
+    f ∈ pair.plus ↔ ∀ d, MvPowerSeries.coeff d (coordinates f).val ∈ P.plus
 
 /-- Topological finite type is an actual continuous quotient of restricted series. -/
 def IsTopologicallyFiniteType {P Q : TatePair p} (f : TateRingMap p P Q) : Prop :=
@@ -89,7 +93,9 @@ structure FiniteTypeChart (f : X ⟶ Y) (x : X.obj.space) where
 def IsLocallyFiniteType (f : X ⟶ Y) : Prop :=
   ∀ x : X.obj.space, Nonempty (FiniteTypeChart p f x)
 
-/-- A smooth chart is finite etale over a rational open in an actual relative polydisc. -/
+/-- A smooth chart is finite etale over a rational open in an actual relative polydisc. Finite
+étaleness is that of the map of Tate pairs, including the integral closure of the plus rings, so a
+change of plus ring alone (which need not have open image) is not smooth. -/
 structure SmoothChart (f : X ⟶ Y) (x : X.obj.space) where
   source : Chart p X
   target : Chart p Y
@@ -100,9 +106,7 @@ structure SmoothChart (f : X ⟶ Y) (x : X.obj.space) where
   polydisc : TatePowerSeries p target.pair dimension
   neighborhood : RationalTateModel p polydisc.pair
   etale : TateRingMap p neighborhood.pair source.pair
-  finite_etale : letI := etale.hom.toAlgebra
-    Module.Finite neighborhood.pair.ring source.pair.ring ∧
-      Algebra.Etale neighborhood.pair.ring source.pair.ring
+  finite_etale : IsFiniteEtalePair p etale
   coefficients : etale.hom.comp (neighborhood.map.hom.comp polydisc.scalar.hom) = map.ring.hom
 
 def IsSmooth (f : X ⟶ Y) : Prop := ∀ x, Nonempty (SmoothChart p f x)

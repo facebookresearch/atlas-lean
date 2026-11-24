@@ -14,8 +14,9 @@ public import MathlibExt.AlgebraicGeometry.RelativeIntegralPeriodComparison
 # Integral relative Theorem 8.8 on native higher coefficients
 
 The coefficient is the native degree-zero realization of the actual
-finite inverse-image tower. The higher-lisse guard is the finite local
-freeness of ACTUAL native R^i f_* L. Scalar maps, the original derived
+finite inverse-image tower. The higher-lisse guard is that ACTUAL native R^i f_* L is lisse in the
+sense of `ProEtaleIntegralLisseModules.IsLisse`, locally a finite `ℤ_p`-module (torsion allowed,
+as in Scholze's Definition 8.1), not that it is finite locally free. Scalar maps, the original derived
 adjunction units/counits and the comparison arrow are fixed constructions.
 The final IsIso is an OUTPUT proof request.
 
