@@ -17,6 +17,7 @@ public import Mathlib.Combinatorics.Young.SemistandardTableau
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Multiset.Powerset
 public import Mathlib.Order.Interval.Finset.Nat
+public import MathlibExt.Combinatorics.Enumerative.AscentToDescentRearrangement
 public import MathlibExt.Combinatorics.Enumerative.ParkingFunctionStatistics
 public import MathlibExt.Combinatorics.FineNumber
 
@@ -34,9 +35,8 @@ means `a_i > a_{i+1}`, an ascent `a_i < a_{i+1}`, a tie `a_i = a_{i+1}`, a peak
 `a_{i-1} < a_i > a_{i+1}`, a valley `a_{i-1} > a_i < a_{i+1}`. A word over the multiset
 `M(β)` of entries of `β` is an `f` with the same multiset of values. The statistic
 encoding uses `Ordering`: `A = .lt`, `D = .gt`, `T = .eq`. These are written inline via
-local notation; the new definitions are the bijection `peaklessTielessOfNondecreasing`
-(the paper's `φ`) and the rearrangement `ascentToDescentRearrangement` (the paper's `ν`,
-computed by the fuelled recursion `ascentToDescentRearrangementAux`).
+local notation. The bijection `peaklessTielessOfNondecreasing` is the paper's `φ`, and
+the imported rearrangement `ascentToDescentRearrangement` is its `ν`.
 -/
 
 namespace MetaMathlibExt
@@ -141,22 +141,6 @@ public theorem_wanted parkingFunction_descent_genFun (n : ℕ) (hn : 1 ≤ n) :
         (fun w : Fin n → Fin n => Finset.univ.val.map w = Finset.univ.val.map β),
           (Polynomial.X : Polynomial ℕ) ^ (desSet w).card
 
-/-- **Descent sets versus reflected ascent sets of parking functions.** Write a parking function
-$f$ of length $n$ as the sequence $(a_1, \dots, a_n)$ with $a_j = f(j-1) + 1$. Its descent set is
-the set of $j \in \{1, \dots, n-1\}$ with $a_j > a_{j+1}$, and its ascent set the set of such $j$
-with $a_j < a_{j+1}$. For every $n$ and every $I \subseteq \{1, \dots, n-1\}$, let
-$J = \{n - i : i \in I\}$. Then the number of parking functions of length $n$ with descent set
-$I$ equals the number of parking functions of length $n$ with ascent set $J$.
-
-Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
-Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
-Functions*, Journal of Integer Sequences 27 (2024), Article 24.8.6, Proposition 6
-(`jis-2024-24.8.6-prop-6`). -/
-public theorem_wanted parkingFunction_descentSet_card_eq_ascentSet_reflect (n : ℕ)
-    (I : Finset ℕ) (hI : I ⊆ Finset.Ico 1 n) :
-    ((pfSet n).filter (fun f => desSet f = I)).card =
-      ((pfSet n).filter (fun f => ascSet f = I.image (fun i => n - i))).card
-
 /-- **Reflection symmetry of descent sets of parking functions.** Write a parking function $f$ of
 length $n$ as the sequence $(a_1, \dots, a_n)$ with $a_j = f(j-1) + 1$. Its descent set is the set
 of $j \in \{1, \dots, n-1\}$ with $a_j > a_{j+1}$. For every $n$ and every
@@ -256,24 +240,6 @@ Functions*, Journal of Integer Sequences 27 (2024), Article 24.8.6, Theorem 33
 public theorem_wanted card_valleyless_tieless_parkingFunction (n : ℕ) (hn : 1 ≤ n) :
     (((vtpfSet n).card : ℕ) : ℚ) = fineNumber (n + 1)
 
-/-- **Prepending $1$ to valleyless-tieless parking functions.** Identify a parking function $f$
-of length $m$ with the word $(f(0) + 1, \dots, f(m-1) + 1)$. A word $(a_1, \dots, a_m)$ has a
-tie if $a_k = a_{k+1}$ for some $k$, and a valley if $a_{k-1} > a_k < a_{k+1}$ for some $k$;
-write $\mathrm{VTPF}_m$ for the set of parking functions of length $m$ with no ties and no
-valleys. For $n \ge 1$, the map $(a_1, \dots, a_n) \mapsto (1, a_1 + 1, \dots, a_n + 1)$ is a
-bijection from $\mathrm{VTPF}_n$ onto the set of $(b_1, \dots, b_{n+1}) \in \mathrm{VTPF}_{n+1}$
-with $b_1 = 1$ and $b_{n+1} > 1$.
-
-Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
-Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
-Functions*, Journal of Integer Sequences 27 (2024), Article 24.8.6, Lemma 34
-(`jis-2024-24.8.6-lem-34`). -/
-public theorem_wanted valleyless_tieless_prepend_one_bijOn (n : ℕ) (hn : 1 ≤ n) :
-    Set.BijOn (fun f : Fin n → Fin n => (Fin.cons (0 : Fin (n + 1)) (fun i => (f i).succ) :
-        Fin (n + 1) → Fin (n + 1)))
-      (vtpfSet n : Set (Fin n → Fin n))
-      {g | g ∈ vtpfSet (n + 1) ∧ g 0 = 0 ∧ g (Fin.last n) ≠ 0}
-
 set_option quotPrecheck false in
 /-- Number of `α ∈ PTPF_m` whose first and last entries satisfy `r`. -/
 local notation "ptpfEnds" m:max r:max =>
@@ -310,20 +276,6 @@ Functions*, Journal of Integer Sequences 27 (2024), Article 24.8.6, Theorem 41
 (`jis-2024-24.8.6-thm-41`). -/
 public theorem_wanted card_peakless_tieless_first_lt_last (n : ℕ) :
     ((ptpfEnds (n + 1) (fun a b : Fin (n + 1) => a < b) : ℕ) : ℚ) = fineNumber (n + 1)
-
-/-- **Peakless parking functions with $n - 1$ ties.** For every $n \ge 1$, exactly one parking
-function $(a_1, \dots, a_n)$ of length $n$ has no peaks (no $i$ with $a_{i-1} < a_i$ and
-$a_i > a_{i+1}$) and exactly $n - 1$ ties (indices $i \in \{1, \dots, n - 1\}$ with
-$a_i = a_{i+1}$).
-
-Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
-Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
-Functions*, Journal of Integer Sequences 27 (2024), Article 24.8.6, Lemma 42
-(`jis-2024-24.8.6-lem-42`). -/
-public theorem_wanted card_peakless_parkingFunction_max_ties (n : ℕ) (hn : 1 ≤ n) :
-    ((pfSet n).filter (fun f => (NoPeaks f) ∧
-      (Finset.univ.filter (fun i : Fin n => ∃ j : Fin n, j.val = i.val + 1 ∧ f i = f j)).card =
-        n - 1)).card = 1
 
 /-- **Every statistic encoding comes from a parking function.** Write a parking function $f$ of
 length $n$ as the sequence $(a_1, \dots, a_n)$ with $a_j = f(j-1) + 1$. Its statistic encoding is
@@ -461,89 +413,6 @@ Functions*, Journal of Integer Sequences 27 (2024), Article 24.8.6, Theorem 30
 public theorem_wanted peaklessTielessOfNondecreasing_bijOn (n : ℕ) :
     Set.BijOn (peaklessTielessOfNondecreasing n) ↑(ndpfSet n) ↑(ptpfSet n)
 
-/-- **Fuel-bounded ascent-to-descent rearrangement.** For a fuel $N \in \mathbb{N}$ and a word
-$x = x_1 \cdots x_m$ over $\mathbb{N}$, the word $\nu_N(x)$ is defined by recursion on $N$:
-$\nu_0(x) = x$, and $\nu_{N+1}(x) = x$ when $m \le 1$. For $m \ge 2$, let $A$ be the set of
-positions of the least letter of $x$ and $B$ the set of positions of its greatest letter. If
-$b \le a$ for all $a \in A$ and $b \in B$ (Case 1), put $i = \max A$ and $j = \min B$; then
-$\nu_{N+1}(x) = \nu_N(x_1 \cdots x_{j-1})\, x_i\, \nu_N(x_{j+1} \cdots x_{i-1})\, x_j\,
-\nu_N(x_{i+1} \cdots x_m)$. Otherwise (Case 2), let $i$ be the greatest $a \in A$ such that
-$a < b$ for some $b \in B$, and $j$ the least $b \in B$ with $b > i$; then
-$\nu_{N+1}(x) = \nu_N(x_1 \cdots x_{i-1})\, x_j\, \nu_N(x_{i+1} \cdots x_{j-1})\, x_i\,
-\nu_N(x_{j+1} \cdots x_m)$.
-
-Every recursive call is on a strictly shorter word, so fuel $N = m$ never runs out.
-
-Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
-Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
-Functions*, Journal of Integer Sequences 27 (2024), Article 24.8.6,
-Definition `nu` (Section 2). -/
-public def ascentToDescentRearrangementAux : ℕ → List ℕ → List ℕ
-  | 0, l => l
-  | fuel + 1, l =>
-    if l.length ≤ 1 then l else
-      let mn := l.foldr min (l.headD 0)
-      let mx := l.foldr max (l.headD 0)
-      let amin := (List.range l.length).filter fun k => l.getD k 0 == mn
-      let amax := (List.range l.length).filter fun k => l.getD k 0 == mx
-      if amin.all fun a => amax.all fun b => b ≤ a then
-        let i := amin.foldr max 0
-        let j := amax.foldr min l.length
-        ascentToDescentRearrangementAux fuel (l.take j) ++ [l.getD i 0] ++
-          ascentToDescentRearrangementAux fuel ((l.drop (j + 1)).take (i - j - 1)) ++
-          [l.getD j 0] ++ ascentToDescentRearrangementAux fuel (l.drop (i + 1))
-      else
-        let i := (amin.filter fun a => amax.any fun b => a < b).foldr max 0
-        let j := (amax.filter fun b => i < b).foldr min l.length
-        ascentToDescentRearrangementAux fuel (l.take i) ++ [l.getD j 0] ++
-          ascentToDescentRearrangementAux fuel ((l.drop (i + 1)).take (j - i - 1)) ++
-          [l.getD i 0] ++ ascentToDescentRearrangementAux fuel (l.drop (j + 1))
-
-/-- **Ascent-to-descent rearrangement.** For a word $x = x_1 \cdots x_m$ over $\mathbb{N}$, the
-ascent-to-descent rearrangement of $x$ is $\nu(x) = \nu_m(x)$, the fuel-bounded
-ascent-to-descent rearrangement $\nu_N(x)$ with fuel $N = m$, the length of $x$.
-
-Every recursive call of $\nu_N$ is on a strictly shorter word, so the fuel $m$ never runs out.
-
-Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
-Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
-Functions*, Journal of Integer Sequences 27 (2024), Article 24.8.6,
-Definition `nu` (Section 2). -/
-public def ascentToDescentRearrangement (x : List ℕ) : List ℕ :=
-  ascentToDescentRearrangementAux x.length x
-
-/-- **Words of length at most one are fixed by the ascent-to-descent rearrangement.** Every word
-$x$ over $\mathbb{N}$ of length at most $1$ satisfies $\nu(x) = x$, where $\nu$ is the
-ascent-to-descent rearrangement.
-
-Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
-Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
-Functions*, Journal of Integer Sequences 27 (2024), Article 24.8.6,
-Definition `nu`, Case 0. -/
-public theorem ascentToDescentRearrangement_of_length_le_one {x : List ℕ} (hx : x.length ≤ 1) :
-    ascentToDescentRearrangement x = x := by
-  unfold ascentToDescentRearrangement
-  cases h : x.length with
-  | zero => rfl
-  | succ k => simp only [ascentToDescentRearrangementAux, hx, ↓reduceIte]
-
-/-- **Example of the ascent-to-descent rearrangement.** The ascent-to-descent rearrangement $\nu$
-satisfies $\nu(1\,4\,1\,3\,4\,3\,1\,2\,1) = 4\,1\,4\,3\,1\,1\,2\,1\,3$, $\nu(1\,4) = 4\,1$ and
-$\nu(3\,1\,2\,1) = 1\,2\,1\,3$.
-
-The last two are the sub-steps of the first: $\nu(1\,4)$ falls under Case 2 of the definition
-and $\nu(3\,1\,2\,1)$ under Case 1.
-
-Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
-Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
-Functions*, Journal of Integer Sequences 27 (2024), Article 24.8.6,
-Example following Definition `nu`. -/
-public theorem ascentToDescentRearrangement_example :
-    ascentToDescentRearrangement [1, 4, 1, 3, 4, 3, 1, 2, 1] = [4, 1, 4, 3, 1, 1, 2, 1, 3] ∧
-      ascentToDescentRearrangement [1, 4] = [4, 1] ∧
-      ascentToDescentRearrangement [3, 1, 2, 1] = [1, 2, 1, 3] := by
-  refine ⟨?_, ?_, ?_⟩ <;> rfl
-
 set_option quotPrecheck false in
 /-- Ascent set (1-based positions) of a word `x : List ℕ`. -/
 local notation "ascList" x:max =>
@@ -555,20 +424,6 @@ set_option quotPrecheck false in
 local notation "desList" x:max =>
   Finset.image (· + 1)
     ((Finset.range (List.length x - 1)).filter fun i => List.getD x (i + 1) 0 < List.getD x i 0)
-
-/-- **Ascents of a word are the descents of its rearrangement.** For a word
-$x = x_1 \cdots x_m$ over $\mathbb{N}$, let the ascent set $\mathrm{Asc}(x)$ be the set of
-$i \in \{1, \dots, m - 1\}$ with $x_i < x_{i+1}$, and the descent set $\mathrm{Des}(x)$ the set
-of $i \in \{1, \dots, m - 1\}$ with $x_i > x_{i+1}$. Then every word $x$ over $\mathbb{N}$
-satisfies $\mathrm{Asc}(x) = \mathrm{Des}(\nu(x))$, where $\nu$ is the ascent-to-descent
-rearrangement.
-
-Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
-Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
-Functions*, Journal of Integer Sequences 27 (2024), Article 24.8.6,
-Lemma 11 (`jis-2024-24.8.6-lem-11`). -/
-public theorem_wanted ascList_eq_desList_ascentToDescentRearrangement (x : List ℕ) :
-    ascList x = desList (ascentToDescentRearrangement x)
 
 /-- **The ascent-to-descent rearrangement is injective.** The ascent-to-descent rearrangement
 $\nu$ is injective on finite words over $\mathbb{N}$: if $\nu(x) = \nu(x')$, then $x = x'$.
