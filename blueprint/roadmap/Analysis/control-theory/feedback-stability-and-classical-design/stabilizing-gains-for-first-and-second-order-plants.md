@@ -1,6 +1,6 @@
 # Stabilizing proportional and PI gains for first- and second-order plants
 
-For a plant $P = n_P/d_P$ and controller $C = n_C/d_C$, with coprime polynomial numerators and denominators, the closed loop under unit negative feedback has characteristic polynomial $a_{cl} = d_P d_C + n_P n_C$, and it is stable when $a_{cl}$ is Hurwitz (all roots in the open left half-plane).
+For a strictly proper plant $P = n_P/d_P$ and a proper controller $C = n_C/d_C$ ($\deg n_P < \deg d_P$ and $\deg n_C \le \deg d_C$), with coprime polynomial numerators and denominators, the closed loop under unit negative feedback is well posed, its characteristic polynomial $a_{cl} = d_P d_C + n_P n_C$ has the same degree and leading coefficient as $d_P d_C$, so it is not zero, and the loop is stable when $a_{cl}$ is Hurwitz (all roots in the open left half-plane). Both plants below are strictly proper and both controllers proper. Without strict properness the loop can be singular: $P = 1$ and $C = -1$ give $a_{cl} = 0$.
 
 1. **PI control of a first-order plant.** Let $P(s) = b/(s + a)$ with $b > 0$, and $C(s) = k_p + k_i/s$ with $k_i \ne 0$. Then $a_{cl}(s) = s^2 + (a + b k_p) s + b k_i$, which is Hurwitz if and only if $a + b k_p > 0$ and $k_i > 0$.
 2. **Proportional control of an integrating plant.** Let $P(s) = b/(s(s + a))$ with $a, b > 0$, and $C = k$ with $k \ne 0$. Then $a_{cl}(s) = s^2 + a s + b k$, which is Hurwitz if and only if $k > 0$.
