@@ -1,0 +1,3 @@
+# Interior coefficient of the two-cell bar
+
+Consider a fixed-fixed bar of length $L$ and axial rigidity $EA$, discretized by the two-cell partition $\{0, \tfrac12, 1\}$ of $[0, 1]$ pulled back by $x/L$, with interior hat function $\varphi$ ($\varphi(0) = \varphi(1) = 0$, $\varphi(\tfrac12) = 1$, piecewise linear). Under a uniform load $q$, the interior coefficient is the value at $L/2$ of the physical P1 reconstruction $u_h(x) = \alpha\,(I_h\hat u)(x/L)$, with $\alpha = qL^2/(2EA)$, $\hat u(\xi) = \xi(1 - \xi)$ and $I_h$ the nodal interpolant. Division is total, with $a/0 = 0$, so $\alpha = 0$ when $EA = 0$ and the argument $x/L$ is $0$ when $L = 0$.
