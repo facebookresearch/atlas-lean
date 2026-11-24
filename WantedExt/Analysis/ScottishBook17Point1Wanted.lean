@@ -16,7 +16,8 @@ public import Mathlib.Analysis.Calculus.ContDiff.Defs
 
 namespace MathlibExt.Analysis.ScottishBook17Point1Wanted
 
-/-- A perfect set: closed, nonempty, with no isolated points. -/
+/-- **Perfect sets of real numbers.** A set $s \subseteq \mathbb{R}$ is perfect if it is closed,
+nonempty, and has no isolated points: every $x \in s$ lies in the closure of $s \setminus \{x\}$. -/
 def IsPerfectSet (s : Set ℝ) : Prop :=
   IsClosed s ∧ s.Nonempty ∧ ∀ x ∈ s, x ∈ closure (s \ {x})
 

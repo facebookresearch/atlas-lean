@@ -1,4 +1,4 @@
-# Subsets of a $G_\delta$ set with null difference are measurable
+# Subsets of a $G_\delta$ set with null difference are null-measurable
 
 Let $\mu$ be a measure on a topological space $X$ whose Borel sets are measurable. If
 $E \subseteq G$ for a $G_\delta$ set $G$ with $\mu(G \setminus E) = 0$, then $E$ is

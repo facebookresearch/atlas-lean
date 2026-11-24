@@ -33,29 +33,39 @@ is `z`; unbounded means that for every `n` some `z ∈ [G, G]` is not a product 
 Finitely presented is Mathlib's `Group.IsFinitelyPresented`.
 -/
 
-/-- `z` is a product of at most `n` commutators `x y x⁻¹ y⁻¹` of elements of `G`. -/
+/-- **Products of at most $n$ commutators.** An element $z$ of a group $G$ is a product of at most
+$n$ commutators when $z = [x_1, y_1] \cdots [x_k, y_k]$ for some $k \le n$ and some
+$x_1, y_1, \dots, x_k, y_k \in G$, where $[x, y] = x y x^{-1} y^{-1}$; for $k = 0$ the product is
+the identity. -/
 def IsProductOfCommutators {G : Type*} [Group G] (n : ℕ) (z : G) : Prop :=
   ∃ l : List (G × G), l.length ≤ n ∧ (l.map fun p => p.1 * p.2 * p.1⁻¹ * p.2⁻¹).prod = z
 
-/-- Commutator length is unbounded on the derived subgroup of `G`: for every `n` some element of
-`[G, G]` is not a product of `n` commutators. -/
+/-- **Unbounded commutator length.** A group $G$ has unbounded commutator length when for every
+natural number $n$ some element of the derived subgroup $[G, G]$ is not a product of at most $n$
+commutators $x y x^{-1} y^{-1}$ with $x, y \in G$. -/
 def CommutatorLengthUnbounded (G : Type*) [Group G] : Prop :=
   ∀ n : ℕ, ∃ z ∈ commutator G, ¬ IsProductOfCommutators n z
 
-/-- Kourovka 14.13(a) (V. G. Bardakov): there is a simple group on which commutator length is
-unbounded. -/
+/-- **Kourovka Problem 14.13(a) (Bardakov).** The statement that there is a simple group $G$ such
+that for every natural number $n$ some element of the derived subgroup $[G, G]$ is not a product of
+at most $n$ commutators $x y x^{-1} y^{-1}$ with $x, y \in G$. -/
 def simpleGroupUnboundedCommutatorLength : Prop :=
   ∃ (G : Type) (_ : Group G), IsSimpleGroup G ∧ CommutatorLengthUnbounded G
 
-/-- Kourovka 14.13(b) (V. G. Bardakov): there is a finitely presented simple group on which
-commutator length is unbounded. -/
+/-- **Kourovka Problem 14.13(b) (Bardakov).** The statement that there is a finitely presented
+simple group $G$ such that for every natural number $n$ some element of the derived subgroup
+$[G, G]$ is not a product of at most $n$ commutators $x y x^{-1} y^{-1}$ with $x, y \in G$. -/
 def finitelyPresentedSimpleGroupUnboundedCommutatorLength : Prop :=
   ∃ (G : Type) (_ : Group G), Group.IsFinitelyPresented G ∧ IsSimpleGroup G ∧
     CommutatorLengthUnbounded G
 
-/--
-Resolved true: the Kourovka Archive records simple groups with unbounded commutator length
-constructed by Barge and Ghys (finitely generated ones by Muranov). Source: E. I. Khukhro and V. D.
+/-- **A simple group with unbounded commutator length.** There is a simple group $G$ such that for
+every natural number $n$ some element of the derived subgroup $[G, G]$ is not a product of at most
+$n$ commutators $x y x^{-1} y^{-1}$ with $x, y \in G$. This answers Kourovka Problem 14.13(a) in
+the affirmative; the Kourovka Archive records examples constructed by Barge and Ghys, and finitely
+generated ones by Muranov.
+
+Source: E. I. Khukhro and V. D.
 Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue,
 arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 14.13 (V. G. Bardakov); resolution:
 (a) J. Barge and É. Ghys, Math. Ann. 294 (1992), 235-265, and A. Muranov, Int. J. Algebra Comput. 17
@@ -65,9 +75,13 @@ arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 14.13 (V. G. Bard
 public theorem_wanted simpleGroupUnboundedCommutatorLength_holds :
     simpleGroupUnboundedCommutatorLength
 
-/--
-Resolved true: the Kourovka Archive answers 14.13(b) "Yes, there does", citing Caprace and Fujiwara:
-some finitely presented simple group has unbounded commutator length. Source: E. I. Khukhro and V.
+/-- **A finitely presented simple group with unbounded commutator length.** There is a finitely
+presented simple group $G$ such that for every natural number $n$ some element of the derived
+subgroup $[G, G]$ is not a product of at most $n$ commutators $x y x^{-1} y^{-1}$ with
+$x, y \in G$. This answers Kourovka Problem 14.13(b) in the affirmative; the Kourovka Archive cites
+Caprace and Fujiwara.
+
+Source: E. I. Khukhro and V.
 D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue,
 arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 14.13 (V. G. Bardakov); resolution:
 (a) J. Barge and É. Ghys, Math. Ann. 294 (1992), 235-265, and A. Muranov, Int. J. Algebra Comput. 17

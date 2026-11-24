@@ -18,13 +18,19 @@ public import MathlibExt.Combinatorics.SimpleGraph.Square
 
 namespace SimpleGraph
 
-/-- A Hamiltonian cycle in the square whose two edges at `x` come from the original graph. -/
+/-- **Strong square cycle at a vertex.** Let $G$ be a graph on a finite vertex set $V$ and let
+$x \in V$. Then $G$ has a strong square cycle at $x$ if the square $G^2$ of $G$ has a Hamiltonian
+cycle that starts and ends at $x$ and whose two edges at $x$, its first and its last edge, are
+edges of $G$. -/
 public def HasStrongSquareCycle {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) (x : V) : Prop :=
   ∃ p : G.square.Walk x x, p.IsHamiltonianCycle ∧
     G.Adj x p.snd ∧ G.Adj p.penultimate x
 
-/-- A strong square cycle consists of a Hamiltonian cycle with original edges at the root. -/
+/-- **Characterization of strong square cycles.** Let $G$ be a graph on a finite vertex set $V$
+and let $x \in V$. Then $G$ has a strong square cycle at $x$ if and only if the square $G^2$ of
+$G$ has a Hamiltonian cycle $p$ that starts and ends at $x$ such that $x$ is adjacent in $G$ to
+the second vertex of $p$ and the second-to-last vertex of $p$ is adjacent in $G$ to $x$. -/
 public theorem hasStrongSquareCycle_iff {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) (x : V) :
     G.HasStrongSquareCycle x ↔

@@ -82,13 +82,16 @@ private theorem neto_coeff_subst_binomial (x : ℂ) (m : ℕ) :
   rw [finsum_eq_sum_of_support_subset _ hs]
   simp only [PowerSeries.binomialSeries_coeff, smul_eq_mul, mul_one]
 
-/-- Higher-order Bernoulli number `B_n^(α) = B_n^(α)(0)`.
+/-- **Higher-order Bernoulli numbers.** For a complex number $\alpha$ and a natural number $n$, the
+higher-order Bernoulli number $B_n^{(\alpha)}$ is $n!$ times the coefficient of $t^n$ in the
+formal power series $\left(t / (e^t - 1)\right)^{\alpha}$. Here $t / (e^t - 1)$ is the Bernoulli
+generating series $\sum_{k \ge 0} B_k t^k / k!$ (with $B_1 = -1/2$), and its $\alpha$-th power is
+the binomial series $(1 + u)^{\alpha} = \sum_{j \ge 0} \binom{\alpha}{j} u^j$ with
+$u = t / (e^t - 1) - 1$ substituted.
 
-The generalized polynomial `B_n^(α)(x)` is given by the source exponential
-generating function `∑ n = 0 to ∞ B_n^(α)(x) t^n / n! = (t / (e^t - 1))^α e^(t x)`.
-
-This is an explicit implementation obligation for the JIS source below, with `α : ℂ`
-and `n : ℕ`.
+Equivalently, $B_n^{(\alpha)} = B_n^{(\alpha)}(0)$, where the generalized Bernoulli polynomials
+$B_n^{(\alpha)}(x)$ are given by the exponential generating function
+$\sum_{n \ge 0} B_n^{(\alpha)}(x) t^n / n! = \left(t / (e^t - 1)\right)^{\alpha} e^{tx}$.
 
 Source: https://cs.uwaterloo.ca/journals/JIS/VOL23/Chellal/chellal7.tex
 Definition span: lines 99-112,
@@ -98,8 +101,10 @@ public noncomputable def higherOrderBernoulliNumber (α : ℂ) (n : ℕ) : ℂ :
   (n.factorial : ℂ) * PowerSeries.coeff n
     (PowerSeries.subst (bernoulliPowerSeries ℂ - 1) (PowerSeries.binomialSeries ℂ α))
 
-/-- At a natural order, higher-order Bernoulli numbers are the normalized coefficients of the
-corresponding natural power of the Bernoulli generating series. -/
+/-- **Higher-order Bernoulli numbers of natural order.** Let $B_k$ denote the Bernoulli numbers,
+with $B_1 = -1/2$. For natural numbers $d$ and $n$, the higher-order Bernoulli number
+$B_n^{(d)}$ equals $n!$ times the coefficient of $t^n$ in the $d$-th power of the Bernoulli
+generating series $\sum_{k \ge 0} B_k t^k / k!$. -/
 public theorem higherOrderBernoulliNumber_nat (d n : ℕ) :
     higherOrderBernoulliNumber (d : ℂ) n =
       (n.factorial : ℂ) * PowerSeries.coeff n (bernoulliPowerSeries ℂ ^ d) := by
@@ -112,7 +117,9 @@ public theorem higherOrderBernoulliNumber_nat (d n : ℕ) :
     PowerSeries.subst_X neto_hasSubst_bernoulli_sub_one, hone]
   ring
 
-/-- The order-one higher-order Bernoulli numbers are the ordinary Bernoulli numbers. -/
+/-- **Higher-order Bernoulli numbers of order one.** For every natural number $n$, the
+higher-order Bernoulli number $B_n^{(1)}$ equals the Bernoulli number $B_n$, with the
+convention $B_1 = -1/2$. -/
 public theorem higherOrderBernoulliNumber_one (n : ℕ) :
     higherOrderBernoulliNumber 1 n = (bernoulli n : ℂ) := by
   have h1 : (1 : ℂ) = ((1 : ℕ) : ℂ) := by norm_num
@@ -461,22 +468,22 @@ private theorem neto_identity_nat (d n l : ℕ) :
     neto_normalized_coeff_exp_mul_derivative] at hs
   simpa only [mul_assoc] using hs
 
-/-- Neto identity for higher-order Bernoulli numbers from the JIS source below.
+/-- **Neto's identity for higher-order Bernoulli numbers.** For every complex number $x$ and all
+natural numbers $n$ and $\ell$,
+$$\sum_{k=0}^{n} \binom{n}{k} x^{n-k} B_{\ell+k}^{(x)} =
+(-1)^{n+\ell} \sum_{k=0}^{\ell} \binom{\ell}{k} x^{\ell-k} B_{n+k}^{(x)},$$
+where $B_m^{(x)}$ is the higher-order Bernoulli number of order $x$.
 
-For `x : ℂ` simultaneously the order and scalar base, and `n ℓ : ℕ`, with
-inclusive upper bounds `Finset.range (n + 1)` and `Finset.range (ℓ + 1)`,
-natural exponents, and sign `(-1)^(n + ℓ)`.
+Proof: The substitution coefficient formula makes both sides polynomial in the order. For natural
+orders, the cited Bernoulli EGF gives the reflection identity, formal differentiation proves Neto's
+formula, and equality on all natural complex points finishes the polynomial argument.
+
+Proves `Wanted` entry `neto_higher_order_bernoulli_identity`.
 
 Source: https://cs.uwaterloo.ca/journals/JIS/VOL23/Chellal/chellal7.tex
 Identity span: lines 662-670,
 text_sha256 `06790ccab662e77ae848bda8ff92dac6a404d8b43042d433d80c6dd7b127c56f`.
 File sha256 `ce83119262833b8219cb7670521e7602617dae3f645a76e913bff79b7ba7dc9c`.
-
-Proves `Wanted` entry `neto_higher_order_bernoulli_identity`.
-
-Proof: The substitution coefficient formula makes both sides polynomial in the order. For natural
-orders, the cited Bernoulli EGF gives the reflection identity, formal differentiation proves Neto's
-formula, and equality on all natural complex points finishes the polynomial argument.
 -/
 public theorem neto_higher_order_bernoulli_identity (x : ℂ) (n ℓ : ℕ) :
     (∑ k ∈ Finset.range (n + 1),

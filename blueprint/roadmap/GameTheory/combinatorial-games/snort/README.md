@@ -11,6 +11,7 @@
 - [Opposition matchings](is-opposition-matching.md)
 - [Graph product given by a Boolean formula](formula-product.md)
 - [Strong product of graphs](strong-prod.md)
+- [Strong Prod adj](strong-prod-adj.md)
 - [Firework of a graph](firework.md)
 - [Strong grid](strong-grid.md)
 - [Cartesian grid](cartesian-grid.md)

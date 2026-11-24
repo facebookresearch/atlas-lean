@@ -34,20 +34,34 @@ for `|A| = k` (rotations about the centroid) and `|A| = 2k` (Tao). `A_k` is a mu
 records the k = 2 and k = 3, 4 cases of Selfridge and Straus; no code imported).
 -/
 
-/-- `A_k`: the multiset of the sums of `k` distinct elements of the finite set `A ⊆ ℂ`. -/
+/-- **Multiset of $k$-sums.** For a finite set $A \subseteq \mathbb{C}$ and a natural number $k$,
+$A_k$ is the multiset of the sums $\sum_{z \in S} z$ over the $k$-element subsets $S$ of $A$, that
+is, of the sums of $k$ distinct elements of $A$, each subset counted once. -/
 noncomputable def kSumMultiset (A : Finset ℂ) (k : ℕ) : Multiset ℂ :=
   (A.powersetCard k).val.map fun s => ∑ z ∈ s, z
 
-/-- Erdős Problem 494 (Selfridge and Straus), with `|A|` large: for every `k ≥ 3` there is `n₀`
-such that finite sets `A, B ⊆ ℂ` of the same size `≥ n₀` with `A_k = B_k` are equal. -/
+/-- **Erdős Problem 494 for large sets.** For a finite set $A \subseteq \mathbb{C}$ and a natural
+number $k$, let $A_k$ be the multiset of the sums of the $k$-element subsets of $A$. This is the
+statement that for every natural number $k \ge 3$ there is a natural number $n_0$ such that any
+two finite sets $A, B \subseteq \mathbb{C}$ with $|A| = |B| \ge n_0$ and $A_k = B_k$ are equal.
+
+This is the question of Selfridge and Straus with $|A|$ large in terms of $k$. -/
 def kSumMultisetDeterminesLargeSet : Prop :=
   ∀ k : ℕ, 3 ≤ k → ∃ n₀ : ℕ, ∀ A B : Finset ℂ, A.card = B.card → n₀ ≤ A.card →
     kSumMultiset A k = kSumMultiset B k → A = B
 
 /--
-Resolved true: Gordon, Fraenkel and Straus proved (Section 4) that for `s > 2` two `n`-element
-multisets in a torsion-free abelian group with the same multiset of `s`-sums are equal for all but
-finitely many `n`; `ℂ` is torsion-free and sets are multisets. Source: T. F. Bloom, Erdős Problems,
+**Large sets of complex numbers are determined by their $k$-sums.** For a finite set
+$A \subseteq \mathbb{C}$ and a natural number $k$, let $A_k$ be the multiset of the sums
+$\sum_{z \in S} z$ over the $k$-element subsets $S$ of $A$. For every natural number $k \ge 3$
+there is a natural number $n_0$ such that any two finite sets $A, B \subseteq \mathbb{C}$ with
+$|A| = |B| \ge n_0$ and $A_k = B_k$ are equal.
+
+Gordon, Fraenkel and Straus proved (Section 4) that for $s > 2$ two $n$-element multisets in a
+torsion-free abelian group with the same multiset of $s$-sums are equal for all but finitely many
+$n$; $\mathbb{C}$ is torsion-free and sets are multisets.
+
+Source: T. F. Bloom, Erdős Problems,
 Problem #494, https://www.erdosproblems.com/494 (status PROVED); resolution: B. Gordon, A. S.
 Fraenkel and E. G. Straus, On the determination of sets by the sets of sums of a certain order,
 Pacific J. Math. 12 (1962), 187-196, Section 4: for s > 2, F_s(n) = 1 for all but finitely many n,

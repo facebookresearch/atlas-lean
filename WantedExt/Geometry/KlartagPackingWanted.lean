@@ -65,7 +65,14 @@ namespace Geometry.KlartagPacking
 /- Klartag's theorem. In the statement, the ellipsoid E is realized as the image of a ball
 under a linear map, which we do not require to be of full rank, since if it is not of full
 rank, then the volume of E is zero and the conclusion is not satisfied. -/
-/-- Source: see manifest Via leanprover/lean-eval@38361be, problem `klartag_packing`. -/
+/-- **Klartag's lattice packing theorem.** There is a real constant $c > 0$ such that for every
+integer $n \ge 1$ there is a linear map $\varphi : \mathbb{R}^n \to \mathbb{R}^n$ for which the
+ellipsoid $E = \varphi(B)$, the image of the open Euclidean unit ball $B$ about the origin, has
+volume exactly $c n^2$ and the origin is the only point of $E$ whose coordinates are all integers.
+
+The map $\varphi$ is not required to be invertible; a degenerate $\varphi$ would give volume $0$.
+
+Source: see manifest Via leanprover/lean-eval@38361be, problem `klartag_packing`. -/
 public theorem_wanted klartag_packing : ∃ c : ℝ, 0 < c ∧ ∀ n : ℕ, 0 < n →
     let V := EuclideanSpace ℝ (Fin n)
     ∃ φ : V →ₗ[ℝ] V, let E := φ '' Metric.ball (0 : V) 1
