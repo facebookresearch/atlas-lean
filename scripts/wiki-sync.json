@@ -50519,6 +50519,7 @@
 "Matrix.rank_fromBlocks_of_isUnit_det": "3d63068d99ff048b",
 "Matrix.rank_fromBlocks_zero₁₂_zero₂₁": "947e3df57800375a",
 "Matrix.rank_le_rank_add_rank_sub": "3ded56888d5f450e",
+"Matrix.rank_mul_le_min_and_min_le_width": "1a3cac4ed19a9587",
 "Matrix.rank_neg": "5cc6c794d31f2548",
 "Matrix.rank_sub_le": "3dacaffd073980e1",
 "Matrix.rank_sum_le": "909204054d5a11b8",
