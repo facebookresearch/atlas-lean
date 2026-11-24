@@ -2,7 +2,7 @@
 
 Let $(\mathrm{Gen}, F, I)$ be a one-way trapdoor function scheme on a set $X$, $\mathcal{E}_s$ a semantically secure symmetric cipher with key space $K$, and $H : X \to K$ a hash function modelled as a random oracle. The public-key scheme that encrypts $m$ by choosing a uniform $x \in X$ and outputting $(F(pk, x), \mathcal{E}_s(H(x), m))$ is semantically secure: for every adversary $A$ there are an inverter $B_{\mathrm{ow}}$ and an adversary $B_s$ against $\mathcal{E}_s$ with
 
-$$\mathrm{Adv}^{\mathrm{SS}}[A] \le 2\cdot \mathrm{Adv}^{\mathrm{OW}}[B_{\mathrm{ow}}, T] + \mathrm{Adv}^{\mathrm{SS}}[B_s, \mathcal{E}_s].$$
+$$\mathrm{Adv}^{\mathrm{SS}}[A] \le 2\cdot \mathrm{Adv}^{\mathrm{OW}}[B_{\mathrm{ow}}, F] + \mathrm{Adv}^{\mathrm{SS}}[B_s, \mathcal{E}_s].$$
 
 
 Instantiated with RSA it is secure under the RSA assumption.
