@@ -1,0 +1,3 @@
+# Coverage of the Cox Wald interval under Andersen–Gill conditions
+
+Let $\ell_n$ be the scalar Cox log partial likelihood of the first $n$ subjects, with score $U_n$ and observed information $I_n$, and $\hat\beta_n$ a maximizer whenever one exists. Suppose $U_n(\beta_0)/\sqrt n \Rightarrow Z$, and $I_n(b)/n \to i(b)$ uniformly in probability near $\beta_0$, with $i$ continuous at $\beta_0$ and $i(\beta_0) = v \ne 0$. If $Z \sim N(0, v)$ and the estimator and its standard error $\sqrt{n/I_n(\hat\beta_n)}$ are measurable, then for every $c$, $\hat\beta_n \pm c/\sqrt{I_n(\hat\beta_n)}$ covers $\beta_0$ with probability tending to $N(0, 1)([-c, c])$.

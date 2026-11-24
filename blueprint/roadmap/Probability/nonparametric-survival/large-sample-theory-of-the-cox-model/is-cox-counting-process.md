@@ -1,0 +1,3 @@
+# Counting-process conditions for the Cox model on a grid
+
+In the discrete-time Cox counting-process model, for each $n$ there are $n$ subjects with observed grid times $t_i \in \mathbb{N}$, event indicators $\delta_i$ and covariates $|z_i| \le B$ known at time $0$, observed through a filtration $(\mathcal F_k)$; subject $i$ is at risk at step $k$ when $k + 1 \le t_i$ ($Y_i(k)$, predictable) and has an event there when $t_i = k + 1$ and $\delta_i$ ($\Delta N_i(k)$, adapted); the intensity is $\mathbb{E}[\Delta N_i(k) \mid \mathcal F_k] = Y_i(k)e^{\beta_0z_i}\Delta\alpha_k$ with $\Delta\alpha_k \ge 0$; and almost surely at most one event occurs per step.

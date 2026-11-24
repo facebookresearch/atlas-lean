@@ -1,0 +1,3 @@
+# Nelson–Aalen limit in the Skorokhod space, given the martingale limit
+
+For each $n$, let a counting process and an at-risk process be observed on the grid of $K_n$ steps of $[0, \tau]$, $\tau > 0$, with deterministic cumulative hazard $\alpha_n$ and measurable processes. Suppose the probability that the risk set is empty at some grid step tends to $0$, and that the normalized Nelson–Aalen martingale paths have almost everywhere measurable continuous companions with tight laws, uniformly close to them in probability, whose finite-dimensional laws converge to those of an almost everywhere measurable continuous process $Z$. Then the error paths $\sqrt n(\hat A_n - (\alpha_n - \alpha_n(0)))$ converge in distribution to $Z$ in $D([0, \tau])$ with the J1 topology.

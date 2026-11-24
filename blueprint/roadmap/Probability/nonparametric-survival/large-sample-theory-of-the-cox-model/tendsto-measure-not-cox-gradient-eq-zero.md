@@ -1,0 +1,3 @@
+# The vector Cox estimator is eventually a root near the truth
+
+For each $n$ let survival data with covariate vectors in $\mathbb{R}^p$ be random, with Cox score vector $U_n$, observed information matrix $I_n$, and $\hat\beta_n$ a maximizer of the log partial likelihood whenever one exists. Assume the vector Andersen–Gill conditions: $U_n(\beta_0)/\sqrt n \Rightarrow Z$; $I_n(b)/n \to \Sigma(b)$ entrywise, uniformly on a closed ball of radius $r > 0$ about $\beta_0$, in probability; $\Sigma$ continuous at $\beta_0$; and $\Sigma(\beta_0)$ positive definite. Then for every $\varepsilon > 0$, the probability that $\hat\beta_n$ is not a root of $U_n$ within $\varepsilon$ of $\beta_0$ tends to $0$.

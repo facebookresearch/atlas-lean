@@ -1,0 +1,3 @@
+# Marked compensator uniqueness for a single-jump history
+
+Let $Z$ be a measurable process with $Z_u = z_0$ exactly when $u < X$, frozen from $X$ on, with its natural history $(\mathcal F_t)$, for a random time $X$. A càdlàg compensator here is an $\mathcal F_{t-}$-measurable process with right-continuous paths, almost every path of locally finite variation and tending to $0$ at $-\infty$, whose difference from the compensated process is a martingale. On a countably generated mark space, two compensating random measures of the same marked process (finite measures whose values on each mark set are càdlàg compensators) agree almost surely at all times.

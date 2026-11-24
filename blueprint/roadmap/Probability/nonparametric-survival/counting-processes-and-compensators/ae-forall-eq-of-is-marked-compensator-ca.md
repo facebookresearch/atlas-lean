@@ -1,0 +1,3 @@
+# Uniqueness of marked compensators over countably many mark sets
+
+Let $(\mathcal F_t)_{t\in\mathbb{R}}$ be a filtration and $X$ a random time with $\{X > s\} \in \mathcal F_s$ such that every $\mathcal F_s$-event contains $\{X > s\}$ or misses it. Suppose also $B \cap \{X \le s\} \in \mathcal F_s$ for $B \in \mathcal F_t$, $s \le t$. A càdlàg compensator here is an $\mathcal F_{t-}$-measurable process with right-continuous paths, almost every path of locally finite variation and tending to $0$ at $-\infty$, whose difference from the compensated process is a martingale. If for each index $i$ of a countable family $A_i$ and $A'_i$ are càdlàg compensators of the same process $N_i$, then almost surely $A_i = A'_i$ for all $i$ and all times.

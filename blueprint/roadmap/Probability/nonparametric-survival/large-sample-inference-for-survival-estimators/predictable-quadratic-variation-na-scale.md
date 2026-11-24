@@ -1,0 +1,3 @@
+# Conditional square sum of the scaled Nelson–Aalen process
+
+Let $N$ be a counting process, $Y$ an at-risk process, $\alpha$ a deterministic cumulative hazard, $\hat A = Y^{-1}\bullet N$ the Nelson–Aalen process, $\Lambda^* = \mathbf 1\{Y \ne 0\}\bullet\alpha$ and $M = N - Y\bullet\alpha$. Let $Y$ be predictable with values in $\{0\} \cup [1, \infty)$ and suppose $\mathbb{E}[(\Delta M_{j+1})^2 \mid \mathcal F_j] = Y_{j+1}\Delta\alpha_{j+1}(1 - \Delta\alpha_{j+1})$ for $j < k$ (with the needed integrability). Then the conditional square sum of $\sqrt n(\hat A - \Lambda^*)$ up to $k$ equals $n\sum_{i<k}Y_{i+1}^{-1}\Delta\alpha_{i+1}(1 - \Delta\alpha_{i+1})$ almost surely.

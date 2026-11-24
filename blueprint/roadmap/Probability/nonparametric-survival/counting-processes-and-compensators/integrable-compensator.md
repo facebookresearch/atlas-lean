@@ -1,0 +1,3 @@
+# Integrability of the compensator
+
+In the random-censorship model, a subject has latent failure time $T$ and censoring time $C$ on a probability space, observed time $X = \min(T, C)$, counting process $N(t) = \mathbf 1\{T \le C, T \le t\}$, censoring process $N^c(t) = \mathbf 1\{C < T, C \le t\}$ and at-risk process $Y(t) = \mathbf 1\{t \le X\}$. Suppose $T$ and $C$ are measurable and independent, and let $\Lambda$ be the hazard measure of the law $F$ of $T$, $d\Lambda(s) = dF(s)/F[s, \infty)$, with compensator $A(t) = \int_{(-\infty, t]}Y\,d\Lambda$. Then $A(t)$ is integrable for every $t$.

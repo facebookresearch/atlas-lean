@@ -1,0 +1,3 @@
+# The Cox estimator is the chart root of the sample mean
+
+Fix distinct grid times $t_1, \dots, t_k$ and distinct covariate levels $c_1, \dots, c_q$, and encode an observation $(T, d, z)$ by the indicators of an observed event at $t_j$ with covariate $c_a$ and of being at risk at $t_j$ with covariate $c_a$. For a vector $\mu$ of such coordinates let $S^{(0)}(\mu, b, j) = \sum_ae^{bc_a}\mu(\text{at risk}, j, a)$, $S^{(1)}(\mu, b, j) = \sum_ac_ae^{bc_a}\mu(\text{at risk}, j, a)$ and $\Psi(\mu, b) = \sum_{j,a}\mu(\text{event}, j, a)(c_a - S^{(1)}/S^{(0)})$. For data on the grid with $n \ge 1$ observations whose encoded mean lies within the chart radius of $\theta$, the Cox estimator equals the chart root of the encoded mean.

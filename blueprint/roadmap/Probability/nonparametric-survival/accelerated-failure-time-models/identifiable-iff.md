@@ -1,0 +1,3 @@
+# Full column rank characterizes identifiability
+
+Let $\mu_0$ be a finite error law whose survival function $z \mapsto \mu_0(z, \infty)$ is strictly decreasing, let each subject $i$ have covariates $x_i \in \mathbb{R}^p$ and a nonzero finite log censoring law $\mu_{C,i}$, independent of the log failure time, and fix a common known scale $\sigma > 0$. In the model $\log T_i = \langle\beta, x_i\rangle + \sigma\varepsilon_i$, the regression coefficients are identified from the observed-data laws of $(\min(\log T_i, \log C_i), \mathbf 1\{T_i \le C_i\})$ for all subjects if and only if the design matrix $(x_i)$ has full column rank, i.e. $\beta \mapsto (\langle\beta, x_i\rangle)_i$ is injective.

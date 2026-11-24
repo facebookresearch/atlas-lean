@@ -32,3 +32,4 @@
 - [Forgetting the causes of competing-risks records](to-censored-data-of-subjects.md)
 - [Risk sets at grouped observation times](risk-set-comp-group.md)
 - [Cox and Kaplan–Meier numbers at risk agree](num-at-risk-comp-group.md)
+- [Observed time of a censored subject](obs-time.md)
