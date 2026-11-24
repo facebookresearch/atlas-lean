@@ -142,18 +142,20 @@ open AircraftPerformance
 /-! ## A. Exponential density and the profile -/
 
 /-- Exponential density `ρ(h) = ρ0 * exp (-h / H)` with reference density `ρ0` at `h = 0` and
-scale height `H`, height `h` measured upward. -/
+scale height `H`, height `h` measured upward. With the convention `x / 0 = 0`, at `H = 0` the
+density is the constant `ρ0`. -/
 noncomputable def exponentialDensity (ρ0 H h : ℝ) : ℝ :=
   ρ0 * Real.exp (-h / H)
 
 /-- Ballistic entry constant `K = ρ0 * H / (2 * β * sin γ)` for ballistic coefficient `β` and
-downward flight-path angle `γ`; it is dimensionless. -/
+downward flight-path angle `γ`; it is dimensionless. With the convention `x / 0 = 0`, `K = 0` when
+`β * sin γ = 0`. -/
 noncomputable def ballisticK (ρ0 H β γ : ℝ) : ℝ :=
   ρ0 * H / (2 * β * Real.sin γ)
 
 /-- Finite-entry ballistic velocity profile
 `v(h) = ve * exp (K * (exp (-he / H) - exp (-h / H)))` for entry altitude `he` and entry speed
-`ve`. -/
+`ve`. With the convention `x / 0 = 0`, it is the constant `ve` when `H = 0` or `β * sin γ = 0`. -/
 noncomputable def ballisticVelocity (ρ0 H β γ he ve h : ℝ) : ℝ :=
   ve * Real.exp (ballisticK ρ0 H β γ * (Real.exp (-he / H) - Real.exp (-h / H)))
 
@@ -170,7 +172,8 @@ lemma ballisticVelocity_entry (ρ0 H β γ he ve : ℝ) :
   rw [sub_self, mul_zero, Real.exp_zero, mul_one]
 
 /-- Column mass between two heights, for `H ≠ 0`: `∫ ρ = ρ0 * H * (exp (-he / H) - exp (-h / H))`
-over `[he, h]`, by the fundamental theorem of calculus. -/
+over `[he, h]`, by the fundamental theorem of calculus. The integral is oriented: for `h < he` it
+is minus the column mass between `h` and `he`. -/
 lemma integral_exponentialDensity {H : ℝ} (hH : H ≠ 0) (ρ0 he h : ℝ) :
     ∫ s in he..h, exponentialDensity ρ0 H s =
       ρ0 * H * (Real.exp (-he / H) - Real.exp (-h / H)) := by
@@ -196,8 +199,9 @@ lemma integral_exponentialDensity {H : ℝ} (hH : H ≠ 0) (ρ0 he h : ℝ) :
 
 /-- Integrated form of `dv/dh = ρ(h) * v / (2 * β * sin γ)`: the exponent of the profile is the
 column mass between `he` and `h` divided by `2 * β * sin γ`. The identity of the two formulas
-holds for `H ≠ 0`, all other parameters arbitrary; it is the integrated drag equation only for
-`β > 0` and `sin γ > 0`, where `2 * β * sin γ ≠ 0` (`hasDerivAt_ballisticVelocity`). -/
+holds for `H ≠ 0`, all other parameters arbitrary (with the convention `x / 0 = 0`, both sides are
+`ve` when `β * sin γ = 0`); it is the integrated drag equation only for `β > 0` and `sin γ > 0`,
+where `2 * β * sin γ ≠ 0` (`hasDerivAt_ballisticVelocity`). -/
 lemma ballisticVelocity_eq_exp_integral {H : ℝ} (hH : H ≠ 0) (ρ0 β γ he ve h : ℝ) :
     ballisticVelocity ρ0 H β γ he ve h =
       ve * Real.exp ((∫ s in he..h, exponentialDensity ρ0 H s) / (2 * β * Real.sin γ)) := by
@@ -614,7 +618,8 @@ lemma radiator_equilibrium_unique {ε σ qabs Tenv T₁ T₂ : ℝ} (hε : 0 < �
 
 /-- Drag deceleration along the finite-entry profile, `a(h) = ρ(h) * v(h) ^ 2 / (2 * β)`, for the
 exponential density and the profile `ballisticVelocity` with entry state `(he, ve)`; for
-`ρ0 ≥ 0` and `β > 0` it is the magnitude of `v' = -ρ(h) * v ^ 2 / (2 * β)` at altitude `h`. -/
+`ρ0 ≥ 0` and `β > 0` it is the magnitude of `v' = -ρ(h) * v ^ 2 / (2 * β)` at altitude `h`. With
+the convention `x / 0 = 0` it is `0` when `β = 0`. -/
 noncomputable def ballisticDeceleration (ρ0 H β γ he ve h : ℝ) : ℝ :=
   exponentialDensity ρ0 H h * ballisticVelocity ρ0 H β γ he ve h ^ 2 / (2 * β)
 
@@ -622,14 +627,15 @@ noncomputable def ballisticDeceleration (ρ0 H β γ he ve h : ℝ) : ℝ :=
 does not depend on the entry state. For `ρ0, H, β, ve > 0` and `sin γ > 0`, which give `K > 0`,
 it is the only stationary point and the strict global maximum of the deceleration
 (`deriv_ballisticDeceleration_eq_zero_iff`, `ballisticDeceleration_lt_peak`). For `H > 0` and
-`0 < 2 * K ≤ 1` it lies at or below `h = 0`. -/
+`0 < 2 * K ≤ 1` it lies at or below `h = 0`. With the conventions `log 0 = 0` and
+`log x = log |x|`, `hstar = 0` when `K = 0` and `hstar = H * log |2 * K|` when `K < 0`. -/
 noncomputable def peakDecelerationAltitude (ρ0 H β γ : ℝ) : ℝ :=
   H * Real.log (2 * ballisticK ρ0 H β γ)
 
 /-- The peak altitude selected on the band `[hmin, he]`: `hstar` clamped to the band, which for
 `hmin < he` is `hstar` when it lies in the band and otherwise the nearer endpoint (`hmin` below the
-band, `he` above it). For `ρ0, H, β, ve > 0`, `sin γ > 0` and `hmin < he` it maximizes the
-deceleration on the band (`isMaxOn_bandPeakAltitude`). -/
+band, `he` above it); for `hmin ≥ he` it is `hmin`. For `ρ0, H, β, ve > 0`, `sin γ > 0` and
+`hmin < he` it maximizes the deceleration on the band (`isMaxOn_bandPeakAltitude`). -/
 noncomputable def bandPeakAltitude (ρ0 H β γ hmin he : ℝ) : ℝ :=
   max hmin (min (peakDecelerationAltitude ρ0 H β γ) he)
 

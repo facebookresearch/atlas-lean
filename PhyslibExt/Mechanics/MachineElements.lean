@@ -322,8 +322,9 @@ lemma trainRatio_ne_zero {m : Fin n → Mesh} : trainRatio m ≠ 0 := by
     · exact_mod_cast (m k).driverTeeth.ne_zero
     · exact_mod_cast (m k).drivenTeeth.ne_zero
 
-/-- The last shaft turns in the sense of the first exactly when the
-number of external meshes is even. -/
+/-- The train ratio is positive exactly when the number of external meshes is even; so, on a
+no-slip motion with nonzero first-shaft speed, the last shaft turns in the sense of the first
+exactly when that number is even. -/
 lemma trainRatio_pos_iff {m : Fin n → Mesh} :
     0 < trainRatio m ↔ Even (externalCount m) := by
   rw [trainRatio_eq]
@@ -555,7 +556,8 @@ noncomputable def dependentJacobian (θ₃ θ₄ : ℝ) : Matrix (Fin 2) (Fin 2)
     L.coupler * Real.cos θ₃, -(L.rocker * Real.cos θ₄)]
 
 /-- Velocity ratios `(ω₃ / ω₂, ω₄ / ω₂) =
-(b sin (θ₄ - θ₂) / (c sin (θ₃ - θ₄)), b sin (θ₃ - θ₂) / (d sin (θ₃ - θ₄)))`. -/
+(b sin (θ₄ - θ₂) / (c sin (θ₃ - θ₄)), b sin (θ₃ - θ₂) / (d sin (θ₃ - θ₄)))`. With `a / 0 = 0` both
+are `0` at a dead center, `sin (θ₃ - θ₄) = 0`; the intended domain is the regular configurations. -/
 noncomputable def velocityRatio (θ₂ θ₃ θ₄ : ℝ) : ℝ × ℝ :=
   (L.crank * Real.sin (θ₄ - θ₂) / (L.coupler * Real.sin (θ₃ - θ₄)),
     L.crank * Real.sin (θ₃ - θ₂) / (L.rocker * Real.sin (θ₃ - θ₄)))

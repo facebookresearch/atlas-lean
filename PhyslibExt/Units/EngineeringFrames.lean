@@ -256,7 +256,8 @@ lemma bodyToInertialVec_dotProduct (R : Matrix.specialOrthogonalGroup (Fin 3) �
 /-! ## D. Mean pressure of a tension-positive stress -/
 
 /-- The mean pressure `p = -σₘ` of a stress tensor `σ` written with the tension-positive sign
-convention: the negative of the mean stress `Elasticity.meanStress σ = tr σ / 3`. -/
+convention: the negative of the mean stress `Elasticity.meanStress σ = tr σ / 3`. The definition
+applies to every real 3 × 3 matrix. -/
 noncomputable def meanPressure (σ : Matrix (Fin 3) (Fin 3) ℝ) : ℝ := -Elasticity.meanStress σ
 
 /-- The mean pressure of a tension-positive stress is `p = -tr σ / 3`. -/
@@ -388,7 +389,7 @@ lemma bodyToInertial_quarterTurnZ_si_mm :
 
 /-- Torque is not a scalar energy merely because the dimensions agree: under the quarter turn the
 moment `e₂ ⨯₃ e₃ = e₁` has inertial components `e₂`, so its components change with the frame,
-unlike the frame-independent dot products of `bodyToInertialVec_dotProduct`. -/
+unlike frame-independent dot products. -/
 lemma bodyToInertialVec_quarterTurnZ_moment_ne :
     bodyToInertialVec quarterTurnZ (![0, 1, 0] ⨯₃ ![0, 0, 1]) ≠ ![0, 1, 0] ⨯₃ ![0, 0, 1] := by
   have hq : (quarterTurnZ : Matrix (Fin 3) (Fin 3) ℝ) = !![0, -1, 0; 1, 0, 0; 0, 0, 1] :=

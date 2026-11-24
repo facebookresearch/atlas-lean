@@ -126,7 +126,8 @@ namespace PhyslibExt.Mechanics.HarmonicMechanics
 noncomputable def oscillatorEnergy (m k x v : ℝ) : ℝ :=
   (1 / 2) * m * v ^ 2 + (1 / 2) * k * x ^ 2
 
-/-- Energy derivative (MC): if at time `t` the position has derivative `v t` and the velocity
+/-- Energy derivative (MC): for `m ≠ 0`, if at time `t` the position has derivative `v t` and the
+velocity
 has derivative `-(k / m) * x t` (Newton's equation in divided form, MOD), then the oscillator
 energy has derivative `0` at `t`. `oscillatorEnergy_const` turns this into conservation. -/
 lemma hasDerivAt_oscillatorEnergy (m k : ℝ) (x v : ℝ → ℝ) (t : ℝ)
@@ -154,8 +155,8 @@ lemma hasDerivAt_oscillatorEnergy (m k : ℝ) (x v : ℝ → ℝ) (t : ℝ)
   rw [hfg, hder] at hsum
   exact hsum
 
-/-- Energy conservation (MC): along a solution of `x' = v`, `v' = -(k / m) * x` at all times
-(MOD), the oscillator energy takes the same value at any two times. -/
+/-- Energy conservation (MC): for `m ≠ 0`, along a solution of `x' = v`, `v' = -(k / m) * x` at
+all times (MOD), the oscillator energy takes the same value at any two times. -/
 lemma oscillatorEnergy_const (m k : ℝ) (x v : ℝ → ℝ) (hm : m ≠ 0)
     (hx : ∀ t, HasDerivAt x (v t) t)
     (hv : ∀ t, HasDerivAt v (-(k / m) * x t) t) (t₁ t₂ : ℝ) :
@@ -516,8 +517,9 @@ lemma stiffnessMatrix_apply_offdiag {ι : Type*} [Fintype ι] [DecidableEq ι]
   unfold stiffnessMatrix
   simp [h]
 
-/-- Energy-quadratic-form identity (MC): the spring energy equals `(1 / 2)`
-times the stiffness quadratic form. -/
+/-- Energy-quadratic-form identity (MC): for reciprocal weights without self-springs
+(`k i j = k j i`, `k i i = 0`), the spring energy equals `(1 / 2)` times the stiffness quadratic
+form. -/
 lemma springEnergy_eq_quadForm {ι : Type*} [Fintype ι] [DecidableEq ι]
     (k : ι → ι → ℝ) (w : ι → ℝ) (u : ι → ℝ)
     (hksymm : ∀ i j, k i j = k j i)
@@ -632,8 +634,8 @@ lemma stiffnessMatrix_transpose {ι : Type*} [Fintype ι] [DecidableEq ι]
   · rw [stiffnessMatrix_apply_offdiag (Ne.symm h),
       stiffnessMatrix_apply_offdiag h, hksymm j i]
 
-/-- Row-sum identity (MC): the stiffness matrix applied to the all-ones
-vector recovers the wall stiffnesses. -/
+/-- Row-sum identity (MC): without self-springs (`k i i = 0`), the stiffness matrix applied to
+the all-ones vector recovers the wall stiffnesses. -/
 lemma stiffnessMatrix_mulVec_one {ι : Type*} [Fintype ι] [DecidableEq ι]
     (k : ι → ι → ℝ) (w : ι → ℝ) (hkii : ∀ i, k i i = 0) :
     stiffnessMatrix k w *ᵥ (fun _ => (1 : ℝ)) = w := by
@@ -657,17 +659,17 @@ lemma stiffnessMatrix_mulVec_one {ι : Type*} [Fintype ι] [DecidableEq ι]
   rw [hcongr, Finset.sum_sub_distrib, hite]
   ring
 
-/-- Rigid-translation kernel identity (MC, free network only): with `w = 0` the
-stiffness matrix sends the all-ones vector to `0`. On an empty node type that
-vector is itself `0` and the identity is trivial; see
+/-- Rigid-translation kernel identity (MC, free network only): without self-springs
+(`k i i = 0`) and with `w = 0` the stiffness matrix sends the all-ones vector to `0`. On an
+empty node type that vector is itself `0` and the identity is trivial; see
 `stiffnessMatrix_free_not_posDef` for the nonempty case. -/
 lemma stiffnessMatrix_free_zeroMode {ι : Type*} [Fintype ι] [DecidableEq ι]
     (k : ι → ι → ℝ) (hkii : ∀ i, k i i = 0) :
     stiffnessMatrix k 0 *ᵥ (fun _ => (1 : ℝ)) = 0 := by
   rw [stiffnessMatrix_mulVec_one k 0 hkii]
 
-/-- The stiffness matrix of a free network is not positive definite (MC): on a
-nonempty node type the all-ones vector is nonzero and, by
+/-- The stiffness matrix of a free network without self-springs (`k i i = 0`) is not positive
+definite (MC): on a nonempty node type the all-ones vector is nonzero and, by
 `stiffnessMatrix_free_zeroMode`, in its kernel. `[Nonempty ι]` cannot be
 dropped: on an empty node type every matrix is positive definite, vacuously. -/
 lemma stiffnessMatrix_free_not_posDef {ι : Type*} [Fintype ι] [DecidableEq ι]
@@ -699,8 +701,9 @@ lemma springEnergy_free_const {ι : Type*} [Fintype ι]
   rw [hpair, hwall]
   simp
 
-/-- Fixed-end networks have no rigid-translation zero mode (MC): at any node
-with positive wall stiffness, the all-ones vector is not in the kernel. -/
+/-- Fixed-end networks have no rigid-translation zero mode (MC): without self-springs
+(`k i i = 0`), at any node with positive wall stiffness, the all-ones vector is not in the
+kernel. -/
 lemma stiffnessMatrix_fixedEnds_rowNonzero {ι : Type*} [Fintype ι]
     [DecidableEq ι] (k : ι → ι → ℝ) (w : ι → ℝ) (i : ι)
     (hkii : ∀ i, k i i = 0) (hw : 0 < w i) :
@@ -749,9 +752,9 @@ lemma innerProductM_eq_zero_of_ne {ι : Type*} [Fintype ι]
   exact (mul_eq_zero.mp hIP).resolve_left hne'
 
 /-- Rayleigh nonnegativity (MC, spring stiffness only): a generalized
-eigenvalue of a spring stiffness matrix with positive masses is nonnegative
-for nonzero modes. This is NOT claimed for an arbitrary symmetric `K`; it is
-false in general. -/
+eigenvalue of a spring stiffness matrix (reciprocal nonnegative weights without self-springs,
+nonnegative wall stiffnesses) with positive masses is nonnegative for nonzero modes. This is
+NOT claimed for an arbitrary symmetric `K`; it is false in general. -/
 lemma rayleigh_nonneg {ι : Type*} [Fintype ι] [DecidableEq ι]
     (k : ι → ι → ℝ) (w : ι → ℝ) (m v : ι → ℝ) (lam : ℝ)
     (hksymm : ∀ i j, k i j = k j i)

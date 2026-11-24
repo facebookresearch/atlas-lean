@@ -43,8 +43,8 @@ namespace PhyslibExt.Mechanics.LinearPressurePanel
 
 /-! ## A. Center of pressure -/
 
-/-- The center of pressure lies in the panel interval when the
-force is nonzero. -/
+/-- The center of pressure lies in the panel interval `[a, b]` for `c > 0`, `w > 0` and `0 ≤ a < b`,
+which make the force positive. -/
 theorem centerOfPressure_mem {c w a b : ℝ} (hc : 0 < c) (hw : 0 < w)
     (hab : a < b) (ha : 0 ≤ a) :
     linearPressureMoment c w a b / linearPressureForce c w a b

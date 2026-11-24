@@ -56,7 +56,8 @@ namespace EarthScience
 
 /-- Energy derivative for the damped oscillator `x'' + 2γ x' + ω₀² x = 0`:
 with `E(t) = (x'(t))²/2 + ω₀² (x(t))²/2`, `E'(t) = -2γ (x'(t))²`. The
-differentiability data and the oscillator equation are needed only at `t`. -/
+differentiability data and the oscillator equation are needed only at `t`; `x' = deriv x` is `0`
+where `x` is not differentiable. -/
 theorem damped_oscillator_energy_hasDerivAt {γ ω₀ : ℝ} {x : ℝ → ℝ} (t : ℝ)
     (hx1 : HasDerivAt x (deriv x t) t)
     (hx2 : HasDerivAt (deriv x) (deriv (deriv x) t) t)

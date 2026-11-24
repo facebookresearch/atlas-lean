@@ -285,8 +285,8 @@ theorem supported_posSemidef {J M F : Type*} [Fintype J]
   rw [← htr]
   exact hD.conjTranspose_mul_mul_same _
 
-/-- Unit-direction transpose collects axial endpoint forces
-at each joint coordinate. -/
+/-- Unit-direction transpose collects axial endpoint forces at each joint coordinate. A zero-length
+member exerts no force (`0⁻¹ = 0`). -/
 theorem axialCompatibilityUnit_transpose_mulVec_apply
     {J M : Type*} [Fintype J] [DecidableEq J] [Fintype M]
     (r : J → (Fin 2 → ℝ)) (a b : M → J) (N : M → ℝ) (j : J)
@@ -796,12 +796,11 @@ lemma inv_not_affine_on_pos :
 
 /-! ## I. Unit-load response -/
 
-/-- Influence vector for the fixed output functional `aout`: the
-supported response to the generalized unit load `aout` itself,
-`K⁻¹ *ᵥ aout` for the supported stiffness `K`. This definition is the
-one inverse application of the section; the theorems below that read
-it as the unit-load solution carry the positive-definiteness (or
-positive-weight and trivial-kernel) premise explicitly. -/
+/-- Influence vector for the fixed output functional `aout`: the supported response to the
+generalized unit load `aout` itself, `K⁻¹ *ᵥ aout` for the supported stiffness `K`. This definition
+is the one inverse application of the section; the theorems below that read it as the unit-load
+solution carry the positive-definiteness (or positive-weight and trivial-kernel) premise explicitly.
+At a singular `K` the totalized inverse is `0`, and so is the influence vector. -/
 noncomputable def influenceVector {J M F : Type*} [Fintype J]
     [DecidableEq J] [Fintype M] [DecidableEq M] [Fintype F]
     [DecidableEq F] (r : J → (Fin 2 → ℝ)) (a b : M → J)
@@ -810,11 +809,10 @@ noncomputable def influenceVector {J M F : Type*} [Fintype J]
   ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
     * (axialCompatibility r a b * S))⁻¹ *ᵥ aout
 
-/-- Unit-load response of the fixed output `aout` to the supported
-load `f`: the influence vector paired with the load,
-`eta ⬝ᵥ f`. As a function of `f` this is the retained linear response
-map; evaluating it needs no further inverse once the influence vector
-is formed. -/
+/-- Unit-load response of the fixed output `aout` to the supported load `f`: the influence vector
+paired with the load, `eta ⬝ᵥ f`. As a function of `f` this is the retained linear response map;
+evaluating it needs no further inverse once the influence vector is formed. At a singular supported
+stiffness the influence vector, and so every response, is `0`. -/
 noncomputable def unitLoadResponse {J M F : Type*} [Fintype J]
     [DecidableEq J] [Fintype M] [DecidableEq M] [Fintype F]
     [DecidableEq F] (r : J → (Fin 2 → ℝ)) (a b : M → J)
@@ -1062,13 +1060,13 @@ theorem supported_unitLoad_axialForce_identity {J M F : Type*}
 
 /-! ## J. Finite load hull -/
 
-/-- Finite superposition for the retained response map: with the
-output `aout` (hence the influence vector) fixed, the response to
-a finite combination of vertex loads is the same combination of
-the vertex responses, for arbitrary coefficients and an arbitrary
-scenario finset. This is linearity of the pairing in the load
-argument over a finite sum; no solve reading, sign condition, or
-normalization is used. -/
+/-- Finite superposition for the retained response map: with the output `aout` (hence the influence
+vector) fixed, the response to a finite combination of vertex loads is the same combination of the
+vertex responses, for arbitrary coefficients and an arbitrary scenario finset. This is linearity of
+the pairing in the load argument over a finite sum; no solve reading, sign condition, or
+normalization is used. No positivity of `k` or definiteness of the supported stiffness is assumed:
+its inverse is the totalized matrix inverse, zero for a singular stiffness, and then the influence
+vector and every response are `0`. -/
 lemma supported_unitLoadResponse_sum_smul {J M F ι : Type*}
     [Fintype J] [DecidableEq J] [Fintype M] [DecidableEq M]
     [Fintype F] [DecidableEq F] (r : J → (Fin 2 → ℝ)) (a b : M → J)
@@ -1080,12 +1078,12 @@ lemma supported_unitLoadResponse_sum_smul {J M F ι : Type*}
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_smul, smul_eq_mul]
 
-/-- Lower hull bound: for a nonempty scenario table with
-nonnegative coefficients summing to one, the minimum vertex
-response is at most the response of the combined load, all at the
-one fixed output and supported stiffness. The stiffness, supports
-and output do not change between scenarios; no solve reading is
-used. -/
+/-- Lower hull bound: for a nonempty scenario table with nonnegative coefficients summing to one,
+the minimum vertex response is at most the response of the combined load, all at the one fixed
+output and supported stiffness. The stiffness, supports and output do not change between scenarios;
+no solve reading is used. No positivity of `k` or definiteness of the supported stiffness is
+assumed: its inverse is the totalized matrix inverse, zero for a singular stiffness, and then the
+influence vector and every response are `0`. -/
 lemma supported_inf'_le_unitLoadResponse_sum_smul
     {J M F ι : Type*} [Fintype J] [DecidableEq J] [Fintype M]
     [DecidableEq M] [Fintype F] [DecidableEq F]
@@ -1105,12 +1103,12 @@ lemma supported_inf'_le_unitLoadResponse_sum_smul
         intro i hi
         exact mul_le_mul_of_nonneg_left (Finset.inf'_le _ hi) (hw₀ i hi)
 
-/-- Upper hull bound: for a nonempty scenario table with
-nonnegative coefficients summing to one, the response of the
-combined load is at most the maximum vertex response, all at the
-one fixed output and supported stiffness. The stiffness, supports
-and output do not change between scenarios; no solve reading is
-used. -/
+/-- Upper hull bound: for a nonempty scenario table with nonnegative coefficients summing to one,
+the response of the combined load is at most the maximum vertex response, all at the one fixed
+output and supported stiffness. The stiffness, supports and output do not change between scenarios;
+no solve reading is used. No positivity of `k` or definiteness of the supported stiffness is
+assumed: its inverse is the totalized matrix inverse, zero for a singular stiffness, and then the
+influence vector and every response are `0`. -/
 lemma supported_unitLoadResponse_sum_smul_le_sup'
     {J M F ι : Type*} [Fintype J] [DecidableEq J] [Fintype M]
     [DecidableEq M] [Fintype F] [DecidableEq F]
@@ -1131,14 +1129,13 @@ lemma supported_unitLoadResponse_sum_smul_le_sup'
     _ = s.sup' hs (fun i => unitLoadResponse r a b S k aout (f i)) := by
         rw [← Finset.sum_mul, hw₁, one_mul]
 
-/-- Finite load hull for the retained response: every convex
-combination of the vertex loads of a nonempty finite table
-(nonnegative coefficients summing to one) has its fixed-output
-response between the minimum and maximum vertex responses, at one
-fixed supported stiffness and output. The coefficients are supplied
-finite data; no design factor is introduced. Stiffness, supports
-and output are the same for every scenario and for the combined
-load. -/
+/-- Finite load hull for the retained response: every convex combination of the vertex loads of a
+nonempty finite table (nonnegative coefficients summing to one) has its fixed-output response
+between the minimum and maximum vertex responses, at one fixed supported stiffness and output. The
+coefficients are supplied finite data; no design factor is introduced. Stiffness, supports and
+output are the same for every scenario and for the combined load. No positivity of `k` or
+definiteness of the supported stiffness is assumed: its inverse is the totalized matrix inverse,
+zero for a singular stiffness, and then the influence vector and every response are `0`. -/
 theorem supported_unitLoadResponse_convexCombination_bounds
     {J M F ι : Type*} [Fintype J] [DecidableEq J] [Fintype M]
     [DecidableEq M] [Fintype F] [DecidableEq F]
@@ -1154,11 +1151,11 @@ theorem supported_unitLoadResponse_convexCombination_bounds
   exact ⟨supported_inf'_le_unitLoadResponse_sum_smul r a b S k aout s hs w f hw₀ hw₁,
     supported_unitLoadResponse_sum_smul_le_sup' r a b S k aout s hs w f hw₀ hw₁⟩
 
-/-- Singleton table: a convex combination over one scenario is
-that scenario. The normalization over the singleton forces its
-coefficient to be one, so the combined load has the vertex
-response; the hull collapses to that value. No solve reading is
-used. -/
+/-- Singleton table: a convex combination over one scenario is that scenario. The normalization over
+the singleton forces its coefficient to be one, so the combined load has the vertex response; the
+hull collapses to that value. No solve reading is used. No positivity of `k` or definiteness of the
+supported stiffness is assumed: its inverse is the totalized matrix inverse, zero for a singular
+stiffness, and then the influence vector and every response are `0`. -/
 lemma supported_unitLoadResponse_singleton {J M F ι : Type*}
     [Fintype J] [DecidableEq J] [Fintype M] [DecidableEq M]
     [Fintype F] [DecidableEq F] (r : J → (Fin 2 → ℝ)) (a b : M → J)
@@ -1214,15 +1211,15 @@ theorem supported_unitLoadResponse_convexCombination_output_bounds
   rw [h0eq, hinf, hsup] at hmain
   exact hmain
 
-/-- Absolute load hull for the retained response: for a nonempty
-scenario table with nonnegative coefficients summing to one, the
-absolute response of the combined load is at most the maximum
-absolute vertex response, at one fixed supported stiffness and
-output. Vertex responses may have either sign or be zero; the
-bound is the absolute consequence of the two signed hull bounds. The coefficients are supplied finite data;
-no design factor is introduced. Stiffness, supports and output are
-the same for every scenario and for the combined load, the response
-is the one fixed linear pairing, and no solve reading is used. -/
+/-- Absolute load hull for the retained response: for a nonempty scenario table with nonnegative
+coefficients summing to one, the absolute response of the combined load is at most the maximum
+absolute vertex response, at one fixed supported stiffness and output. Vertex responses may have
+either sign or be zero; the bound is the absolute consequence of the two signed hull bounds. The
+coefficients are supplied finite data; no design factor is introduced. Stiffness, supports and
+output are the same for every scenario and for the combined load, the response is the one fixed
+linear pairing, and no solve reading is used. No positivity of `k` or definiteness of the supported
+stiffness is assumed: its inverse is the totalized matrix inverse, zero for a singular stiffness,
+and then the influence vector and every response are `0`. -/
 theorem supported_abs_unitLoadResponse_sum_smul_le_sup'_abs
     {J M F ι : Type*} [Fintype J] [DecidableEq J] [Fintype M]
     [DecidableEq M] [Fintype F] [DecidableEq F]

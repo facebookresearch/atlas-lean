@@ -130,8 +130,10 @@ theorem effectivePowerTransmission_two_patch_eq {τ1 τ2 A I0 : ℝ}
   field_simp
   split_ifs <;> ring
 
-/-- The effective loss of the two-patch effective coefficient
-lies between the two patch losses. -/
+/-- For two patches of equal area `A > 0` under uniform incident
+intensity `I0 > 0`, with positive coefficients `τ1`, `τ2`, the effective
+loss of the two-patch effective coefficient lies between the two patch
+losses `-10 * log10 (max τ1 τ2)` and `-10 * log10 (min τ1 τ2)`. -/
 theorem effectivePowerTransmission_loss_between {τ1 τ2 A I0 : ℝ}
     (hI0 : 0 < I0) (hA : 0 < A) (h1 : 0 < τ1) (h2 : 0 < τ2) :
     -10 * Real.logb 10 (max τ1 τ2)
@@ -147,8 +149,10 @@ theorem effectivePowerTransmission_loss_between {τ1 τ2 A I0 : ℝ}
   rw [effectivePowerTransmission_two_patch_eq hI0 hA]
   exact effective_loss_between h1 h2
 
-/-- The effective loss of the two-patch effective coefficient is
-strictly below the decibel average for distinct coefficients. -/
+/-- For two patches of equal area `A > 0` under uniform incident
+intensity `I0 > 0`, with distinct positive coefficients `τ1 ≠ τ2`, the
+effective loss of the two-patch effective coefficient is strictly below
+the decibel average of the two patch losses. -/
 theorem effectivePowerTransmission_loss_lt_db_average
     {τ1 τ2 A I0 : ℝ} (hI0 : 0 < I0) (hA : 0 < A) (h1 : 0 < τ1)
     (h2 : 0 < τ2) (hne : τ1 ≠ τ2) :

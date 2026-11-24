@@ -299,7 +299,7 @@ open Set
 command limit `umax` and the momentum limit `hmax`: the horizon is a duration, `0 ≤ T`, and
 `|u t| ≤ umax` and `|h t| ≤ hmax` at every `t ∈ [0, T]`. In the reduced model `h` is the wheel's
 momentum relative to the body, so `hmax` is a wheel-speed limit, and `u = h'` is its commanded
-rate. -/
+rate. Since `0 ∈ [0, T]`, no command is admissible when `umax < 0` or `hmax < 0`. -/
 def WheelAdmissible (umax hmax T : ℝ) (u h : ℝ → ℝ) : Prop :=
   0 ≤ T ∧ ∀ t ∈ Icc 0 T, |u t| ≤ umax ∧ |h t| ≤ hmax
 
@@ -316,8 +316,8 @@ lemma hasDerivAt_wheel_totalMomentum {J : ℝ} {ω ω' h u τ : ℝ → ℝ} {t 
   rw [heq] at hsum
   exact hsum.congr_of_eventuallyEq (Filter.Eventually.of_forall fun x => rfl)
 
-/-- Without external torque on `[0, T]` the total momentum `J ω + h` is conserved, whatever the
-command `u`, and for `J > 0` the body rate changes by `-(h t - h 0) / J`: the momentum the wheel
+/-- For `J > 0`, without external torque on `[0, T]` the total momentum `J ω + h` is conserved,
+whatever the command `u`, and the body rate changes by `-(h t - h 0) / J`: the momentum the wheel
 gains relative to the body, the locked vehicle `J ω` loses. -/
 lemma wheel_momentum_exchange {J T : ℝ} (hJ : 0 < J) {ω ω' h u τ : ℝ → ℝ}
     (hω : ∀ t ∈ Icc 0 T, HasDerivAt ω (ω' t) t) (hh : ∀ t ∈ Icc 0 T, HasDerivAt h (u t) t)

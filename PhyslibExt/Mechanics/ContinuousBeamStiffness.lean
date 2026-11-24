@@ -99,10 +99,10 @@ def spanTwoGather : Matrix (Fin 4) (Fin 6) ℝ :=
     0, 0, 0, 0, 1, 0;
     0, 0, 0, 0, 0, 1]
 
-/-- Assembled two-span continuous-beam stiffness: the sum of
-the two element stiffnesses scattered by their gather matrices,
-so the middle-node displacement and slope are shared. Span `i`
-has flexural rigidity `EIi` and length `Li`. -/
+/-- Assembled two-span continuous-beam stiffness: the sum of the two element stiffnesses scattered
+by their gather matrices, so the middle-node displacement and slope are shared. Span `i` has
+flexural rigidity `EIi` and length `Li`. A span of length `0` contributes the zero matrix
+(`x / 0 = 0`). -/
 noncomputable def continuousBeamStiffness (EI1 L1 EI2 L2 : ℝ) :
     Matrix (Fin 6) (Fin 6) ℝ :=
   spanOneGatherᵀ * beamStiffness EI1 L1 * spanOneGather
@@ -495,8 +495,8 @@ private theorem continuousBeamStiffness_mulVec_rotation_of
 
 /-! ## C. Supported stiffness and rigid modes -/
 
-/-- The supported quadratic form in factored form: only
-rotational squares survive the support injection. -/
+/-- The supported quadratic form in factored form: only rotational squares survive the support
+injection. A span of length `0` contributes `0` (`x / 0 = 0`). -/
 theorem supportedStiffness_quad_form_factor (EI1 L1 EI2 L2 : ℝ)
     (w : Fin 3 → ℝ) :
     w ⬝ᵥ (supportedStiffness EI1 L1 EI2 L2 *ᵥ w)
@@ -541,9 +541,8 @@ theorem continuousBeamStiffness_mulVec_rotation
 
 /-! ## D. Two-span nodal exactness -/
 
-/-- Global nodal data `(v0, θ0, v1, θ1, v2, θ2)` read from
-the two span fields: span 1 at nodes 0 and 1, span 2 at
-node 2. -/
+/-- Global nodal data `(v0, θ0, v1, θ1, v2, θ2)` read from the two span fields: span 1 at nodes 0
+and 1, span 2 at node 2. Derivatives are `0` where the field is not differentiable. -/
 noncomputable def continuousBeamNodalData (L1 L2 : ℝ)
     (y1 y2 : ℝ → ℝ) : Fin 6 → ℝ :=
   ![y1 0, iteratedDeriv 1 y1 0, y1 L1, iteratedDeriv 1 y1 L1,

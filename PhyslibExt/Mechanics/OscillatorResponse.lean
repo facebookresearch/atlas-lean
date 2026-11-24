@@ -151,15 +151,17 @@ def massSpringDamper (m c k : ℝ) (hm : 0 < m) (hc : 0 ≤ c) (hk : 0 < k) :
   γ_nonneg := hc
 
 /-- Damping rate `c / (2 m)` of the forced-oscillator convention
-`x'' + 2 γ x' + ω₀ ^ 2 x = F cos (Ω t)`. -/
+`x'' + 2 γ x' + ω₀ ^ 2 x = F cos (Ω t)` (`0` at `m = 0`, by `u / 0 = 0`). -/
 noncomputable def atlasDamping (m c : ℝ) : ℝ :=
   c / (2 * m)
 
-/-- Natural angular frequency `√(k / m)` of that convention. -/
+/-- Natural angular frequency `√(k / m)` of that convention; with `u / 0 = 0` and `√u = 0` for
+`u < 0` it is `0` when `m = 0` or `k / m < 0`. -/
 noncomputable def atlasNaturalFrequency (m k : ℝ) : ℝ :=
   Real.sqrt (k / m)
 
-/-- Forcing amplitude of that convention: the force amplitude `F` per unit mass. -/
+/-- Forcing amplitude of that convention: the force amplitude `F` per unit mass (`0` at `m = 0`,
+by `u / 0 = 0`). -/
 noncomputable def atlasForcing (m F : ℝ) : ℝ :=
   F / m
 
@@ -192,8 +194,9 @@ lemma equationOfMotion_iff {m c k : ℝ} (hm : 0 < m) (hc : 0 ≤ c) (hk : 0 < k
       ∀ t : Time, m • ∂ₜ (∂ₜ x) t + c • ∂ₜ x t + k • x t = 0 := by
   exact Iff.rfl
 
-/-- The forced equation with physical force amplitude `F` is the forced-oscillator convention
-with damping `c / (2 m)`, natural frequency `√(k / m)` and forcing amplitude `F / m`. -/
+/-- For `m > 0` and `k ≥ 0`, the forced equation with physical force amplitude `F` is the
+forced-oscillator convention with damping `c / (2 m)`, natural frequency `√(k / m)` and forcing
+amplitude `F / m`. -/
 lemma forced_equation_iff {m c k : ℝ} (hm : 0 < m) (hk : 0 ≤ k) (F Ω : ℝ) (x : ℝ → ℝ) :
     (∀ t, m * deriv (deriv x) t + c * deriv x t + k * x t = F * Real.cos (Ω * t)) ↔
       ∀ t, deriv (deriv x) t + 2 * atlasDamping m c * deriv x t +
@@ -283,11 +286,13 @@ force `F cos (Ω t)`. -/
 def steadyStateDenominator (m c k Ω : ℝ) : ℝ :=
   (k - m * Ω ^ 2) ^ 2 + (c * Ω) ^ 2
 
-/-- The in-phase coefficient `A = F (k - m Ω ^ 2) / D` of the steady-state response. -/
+/-- The in-phase coefficient `A = F (k - m Ω ^ 2) / D` of the steady-state response (`0` when
+`D = 0`, by `u / 0 = 0`). -/
 noncomputable def steadyStateCos (m c k F Ω : ℝ) : ℝ :=
   F * (k - m * Ω ^ 2) / steadyStateDenominator m c k Ω
 
-/-- The quadrature coefficient `B = F c Ω / D` of the steady-state response. -/
+/-- The quadrature coefficient `B = F c Ω / D` of the steady-state response (`0` when `D = 0`,
+by `u / 0 = 0`). -/
 noncomputable def steadyStateSin (m c k F Ω : ℝ) : ℝ :=
   F * (c * Ω) / steadyStateDenominator m c k Ω
 
@@ -310,12 +315,14 @@ noncomputable def forcedResponse (m c k : ℝ) (hm : 0 < m) (hc : 0 ≤ c) (hk :
       (initialConditions (x₀ - particularResponse m c k F Ω 0)
         (v₀ - particularVelocity m c k F Ω 0)) ⟨t⟩ 0
 
-/-- The phase-space operator `(x, v) ↦ (v, -(k x + c v) / m)` of the mass-spring-damper. -/
+/-- The phase-space operator `(x, v) ↦ (v, -(k x + c v) / m)` of the mass-spring-damper; with
+`u / 0 = 0` it is `(x, v) ↦ (v, 0)` at `m = 0`. -/
 noncomputable def phaseOperator (m c k : ℝ) : ℝ × ℝ →L[ℝ] ℝ × ℝ :=
   (ContinuousLinearMap.snd ℝ ℝ ℝ).prod
     ((-(k / m)) • ContinuousLinearMap.fst ℝ ℝ ℝ + (-(c / m)) • ContinuousLinearMap.snd ℝ ℝ ℝ)
 
-/-- The phase-space forcing `t ↦ (0, F cos (Ω t) / m)`. -/
+/-- The phase-space forcing `t ↦ (0, F cos (Ω t) / m)`; with `u / 0 = 0` it is `(0, 0)` at
+`m = 0`. -/
 noncomputable def phaseForcing (m F Ω t : ℝ) : ℝ × ℝ :=
   (0, F * Real.cos (Ω * t) / m)
 
@@ -347,7 +354,8 @@ lemma steadyStateDenominator_ne_zero_iff {m c k : ℝ} (hk : 0 < k) (Ω : ℝ) :
     have hcΩ : c * Ω = 0 := pow_eq_zero_iff (n := 2) (by norm_num) |>.mp h2
     exact ⟨(mul_eq_zero.mp hcΩ).resolve_right hΩ, hkΩ⟩
 
-/-- The coefficients are those of the forced-oscillator convention
+/-- For `m > 0` and `k ≥ 0` (no condition on `D`), the coefficients are those of the
+forced-oscillator convention
 `x'' + 2 γ x' + ω₀ ^ 2 x = f cos (Ω t)` with `γ = c / (2 m)`, `ω₀ = √(k / m)`, `f = F / m`:
 `A = f (ω₀ ^ 2 - Ω ^ 2) / D'` and `B = f (2 γ Ω) / D'`, with
 `D' = (ω₀ ^ 2 - Ω ^ 2) ^ 2 + (2 γ Ω) ^ 2`. -/
@@ -416,8 +424,9 @@ lemma particularResponse_solves {m c k F Ω : ℝ} (hD : steadyStateDenominator 
 
 /-! ## H. The forced response -/
 
-/-- The forced response is twice continuously differentiable, solves the forced equation, and
-has initial position `x₀` and initial velocity `v₀`. -/
+/-- With a nonzero steady-state denominator, the forced response is twice continuously
+differentiable, solves the forced equation, and has initial position `x₀` and initial velocity
+`v₀`. -/
 lemma forcedResponse_spec {m c k : ℝ} (hm : 0 < m) (hc : 0 ≤ c) (hk : 0 < k) {F Ω : ℝ}
     (hD : steadyStateDenominator m c k Ω ≠ 0) (x₀ v₀ : ℝ) :
     ContDiff ℝ 2 (forcedResponse m c k hm hc hk F Ω x₀ v₀) ∧
@@ -498,7 +507,7 @@ lemma forcedResponse_spec {m c k : ℝ} (hm : 0 < m) (hc : 0 ≤ c) (hk : 0 < k)
 
 /-! ## I. Phase space and uniqueness -/
 
-/-- A `C²` displacement solving the forced equation gives the phase-space solution
+/-- For `m > 0`, a `C²` displacement solving the forced equation gives the phase-space solution
 `t ↦ (x t, x' t)` of `z' = A z + b (t)`. -/
 lemma phase_of_displacement {m c k : ℝ} (hm : 0 < m) (F Ω : ℝ) {x : ℝ → ℝ}
     (hx : ContDiff ℝ 2 x)
@@ -521,8 +530,8 @@ lemma phase_of_displacement {m c k : ℝ} (hm : 0 < m) (F Ω : ℝ) {x : ℝ →
     field_simp
     linarith
 
-/-- A phase-space solution of `z' = A z + b (t)` has a `C²` first component, whose derivative is
-the second component and which solves the forced equation. -/
+/-- For `m > 0`, a phase-space solution of `z' = A z + b (t)` has a `C²` first component, whose
+derivative is the second component and which solves the forced equation. -/
 lemma displacement_of_phase {m c k : ℝ} (hm : 0 < m) (F Ω : ℝ) {z : ℝ → ℝ × ℝ}
     (hz : ∀ t, HasDerivAt z (phaseOperator m c k (z t) + phaseForcing m F Ω t) t) :
     ContDiff ℝ 2 (fun t : ℝ => (z t).1) ∧ deriv (fun t : ℝ => (z t).1) = (fun t => (z t).2) ∧
@@ -556,8 +565,9 @@ lemma displacement_of_phase {m c k : ℝ} (hm : 0 < m) (F Ω : ℝ) {z : ℝ →
     field_simp
     ring
 
-/-- Uniqueness in the `C²` class: a twice continuously differentiable solution of the forced
-equation with initial position `x₀` and velocity `v₀` is the forced response. -/
+/-- Uniqueness in the `C²` class: with a nonzero steady-state denominator, a twice continuously
+differentiable solution of the forced equation with initial position `x₀` and velocity `v₀` is
+the forced response. -/
 lemma forcedResponse_unique {m c k : ℝ} (hm : 0 < m) (hc : 0 ≤ c) (hk : 0 < k) {F Ω : ℝ}
     (hD : steadyStateDenominator m c k Ω ≠ 0) {x₀ v₀ : ℝ} {x : ℝ → ℝ} (hx : ContDiff ℝ 2 x)
     (hEq : ∀ t, m * deriv (deriv x) t + c * deriv x t + k * x t = F * Real.cos (Ω * t))
@@ -584,7 +594,8 @@ lemma forcedResponse_unique {m c k : ℝ} (hm : 0 < m) (hc : 0 ≤ c) (hk : 0 < 
 open Filter
 
 /-- The undamped resonant response `F t sin (ω₀ t) / (2 m ω₀)` of a mass `m` to the force
-`F cos (ω₀ t)` at the natural angular frequency `ω₀`. -/
+`F cos (ω₀ t)` at the natural angular frequency `ω₀` (identically `0` when `m ω₀ = 0`, by
+`u / 0 = 0`). -/
 noncomputable def resonantResponse (m ω₀ F t : ℝ) : ℝ :=
   F * t * Real.sin (ω₀ * t) / (2 * m * ω₀)
 
@@ -594,8 +605,8 @@ noncomputable def resonantVelocity (m ω₀ F t : ℝ) : ℝ :=
 
 /-- The envelope-touch times `t_n = (2 π n + π / 2) / ω₀`, at which `sin (ω₀ t_n) = 1`. For
 `m, ω₀ > 0` the absolute value of the resonant response meets its envelope `|F| |t| / (2 m ω₀)`
-there (`abs_resonantResponse_resonanceEnvelopeTime`). For `F ≠ 0` they are not extrema of the
-response: its velocity there is `F / (2 m ω₀) ≠ 0`. -/
+there (`abs_resonantResponse_resonanceEnvelopeTime`). For `m, ω₀ > 0` and `F ≠ 0` they are not
+extrema of the response: its velocity there is `F / (2 m ω₀) ≠ 0`. `t_n = 0` at `ω₀ = 0`. -/
 noncomputable def resonanceEnvelopeTime (ω₀ : ℝ) (n : ℕ) : ℝ :=
   (2 * Real.pi * n + Real.pi / 2) / ω₀
 
@@ -615,7 +626,8 @@ lemma resonance_branch_params {m ω₀ k : ℝ} (hm : 0 < m) (hω₀ : 0 < ω₀
     exact zero_div _
 
 /-- The steady-state denominator `(k - m Ω ^ 2) ^ 2 + (c Ω) ^ 2` vanishes exactly on this
-branch: for `k = m ω₀ ^ 2` and a forcing frequency `Ω ≥ 0` it is zero iff `c = 0` and `Ω = ω₀`. -/
+branch: for `m, ω₀ > 0`, `k = m ω₀ ^ 2` and a forcing frequency `Ω ≥ 0` it is zero iff `c = 0`
+and `Ω = ω₀`. -/
 lemma steadyStateDenominator_eq_zero_iff {m ω₀ k : ℝ} (hm : 0 < m) (hω₀ : 0 < ω₀)
     (hk : k = m * ω₀ ^ 2) {c Ω : ℝ} (hΩ : 0 ≤ Ω) :
     (k - m * Ω ^ 2) ^ 2 + (c * Ω) ^ 2 = 0 ↔ c = 0 ∧ Ω = ω₀ := by
@@ -676,7 +688,8 @@ lemma hasDerivAt_resonantVelocity (m ω₀ F t : ℝ) :
   convert h4 using 1
   ring
 
-/-- The resonant response solves `m x'' + k x = F cos (ω₀ t)` for `k = m ω₀ ^ 2`. -/
+/-- The resonant response solves `m x'' + k x = F cos (ω₀ t)` for `m, ω₀ > 0` and
+`k = m ω₀ ^ 2`. -/
 lemma resonantResponse_solves {m ω₀ k : ℝ} (hm : 0 < m) (hω₀ : 0 < ω₀) (hk : k = m * ω₀ ^ 2)
     (F t : ℝ) :
     m * deriv (deriv (resonantResponse m ω₀ F)) t + k * resonantResponse m ω₀ F t =
@@ -703,7 +716,7 @@ lemma resonantResponse_initial (m ω₀ F : ℝ) :
 
 /-! ## M. Unbounded amplitude -/
 
-/-- The envelope of the resonant response is `|F| |t| / (2 m ω₀)`. -/
+/-- For `m, ω₀ > 0`, the envelope of the resonant response is `|F| |t| / (2 m ω₀)`. -/
 lemma abs_resonantResponse_le {m ω₀ : ℝ} (hm : 0 < m) (hω₀ : 0 < ω₀) (F t : ℝ) :
     |resonantResponse m ω₀ F t| ≤ |F| * |t| / (2 * m * ω₀) := by
   have hD : 0 < 2 * m * ω₀ := by positivity
@@ -714,7 +727,7 @@ lemma abs_resonantResponse_le {m ω₀ : ℝ} (hm : 0 < m) (hω₀ : 0 < ω₀) 
         mul_le_mul_of_nonneg_left h (by positivity)
     _ = |F| * |t| := mul_one _
 
-/-- At the envelope-touch times the resonant response takes the signed value
+/-- For `ω₀ > 0`, at the envelope-touch times the resonant response takes the signed value
 `F t_n / (2 m ω₀)`. -/
 lemma resonantResponse_resonanceEnvelopeTime {ω₀ : ℝ} (hω₀ : 0 < ω₀) (m F : ℝ) (n : ℕ) :
     resonantResponse m ω₀ F (resonanceEnvelopeTime ω₀ n) =
@@ -740,7 +753,7 @@ lemma abs_resonantResponse_resonanceEnvelopeTime {m ω₀ : ℝ} (hm : 0 < m) (h
   rw [resonantResponse_resonanceEnvelopeTime hω₀ m F n, abs_div, abs_mul,
     abs_of_pos (by positivity : (0 : ℝ) < 2 * m * ω₀)]
 
-/-- The envelope-touch times tend to infinity. -/
+/-- For `ω₀ > 0`, the envelope-touch times tend to infinity. -/
 lemma tendsto_resonanceEnvelopeTime {ω₀ : ℝ} (hω₀ : 0 < ω₀) :
     Tendsto (resonanceEnvelopeTime ω₀) atTop atTop := by
   have hω' : ω₀ ≠ 0 := ne_of_gt hω₀
@@ -757,8 +770,8 @@ lemma tendsto_resonanceEnvelopeTime {ω₀ : ℝ} (hω₀ : 0 < ω₀) :
   rw [heq]
   exact hbase
 
-/-- Unbounded amplitude: for `F ≠ 0` the amplitude at the envelope-touch times tends to
-infinity. -/
+/-- Unbounded amplitude: for `m, ω₀ > 0` and `F ≠ 0` the amplitude at the envelope-touch times
+tends to infinity. -/
 lemma tendsto_abs_resonantResponse_resonanceEnvelopeTime {m ω₀ F : ℝ} (hm : 0 < m) (hω₀ : 0 < ω₀)
     (hF : F ≠ 0) :
     Tendsto (fun n : ℕ => |resonantResponse m ω₀ F (resonanceEnvelopeTime ω₀ n)|) atTop atTop := by
@@ -778,8 +791,8 @@ lemma tendsto_abs_resonantResponse_resonanceEnvelopeTime {m ω₀ F : ℝ} (hm :
 
 /-! ## N. Damping leaves the branch -/
 
-/-- With nonzero damping `c` and nonzero force amplitude the resonant response does not solve
-`m x'' + c x' + k x = F cos (ω₀ t)`. -/
+/-- For `m, ω₀ > 0` and `k = m ω₀ ^ 2`, with nonzero damping `c` and nonzero force amplitude the
+resonant response does not solve `m x'' + c x' + k x = F cos (ω₀ t)` at every `t`. -/
 lemma resonantResponse_not_solves_damped {m ω₀ k : ℝ} (hm : 0 < m) (hω₀ : 0 < ω₀)
     (hk : k = m * ω₀ ^ 2) {c F : ℝ} (hc : c ≠ 0) (hF : F ≠ 0) :
     ¬ ∀ t, m * deriv (deriv (resonantResponse m ω₀ F)) t + c * deriv (resonantResponse m ω₀ F) t +

@@ -114,11 +114,11 @@ variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
 /-! ## A. Model: the constant-force trajectory -/
 
 /-- Position on the actual trajectory of a particle of mass `m` under the constant force `F`,
-started at `x₀` with velocity `v₀`. -/
+started at `x₀` with velocity `v₀`. With `u / 0 = 0` the force term vanishes at `m = 0`. -/
 noncomputable def constForcePosition (m : ℝ) (x₀ v₀ F : E) (t : ℝ) : E :=
   x₀ + t • v₀ + (t ^ 2 / (2 * m)) • F
 
-/-- Velocity on that trajectory. -/
+/-- Velocity on that trajectory (`v₀` at every time when `m = 0`, by `u / 0 = 0`). -/
 noncomputable def constForceVelocity (m : ℝ) (v₀ F : E) (t : ℝ) : E :=
   v₀ + (t / m) • F
 
@@ -152,7 +152,8 @@ lemma constForcePosition_hasDerivAt (m : ℝ) (x₀ v₀ F : E) (t : ℝ) :
   rw [hfun]
   simpa using h
 
-/-- The velocity has derivative the acceleration `m⁻¹ • F`. -/
+/-- The velocity has derivative the acceleration `m⁻¹ • F` (both `0` at `m = 0`, by
+`0⁻¹ = 0`). -/
 lemma constForceVelocity_hasDerivAt (m : ℝ) (v₀ F : E) (t : ℝ) :
     HasDerivAt (constForceVelocity m v₀ F) (m⁻¹ • F) t := by
   unfold constForceVelocity
@@ -209,8 +210,9 @@ lemma constForce_power_port {m : ℝ} (hm : 0 < m) (v₀ F : E) (t : ℝ) :
     rw [← smul_assoc, smul_eq_mul, mul_inv_cancel₀ hm0, one_smul]
   rwa [heq] at h
 
-/-- Work identity with both endpoint terms: the work of `F` over `[t₀, t₁]` is the change of
-kinetic energy, and it is also `⟪F, x t₁ - x t₀⟫`. -/
+/-- Work identity with both endpoint terms: for `m > 0`, the work of `F` from `t₀` to `t₁`
+(oriented integral, either order) is the change of kinetic energy, and it is also
+`⟪F, x t₁ - x t₀⟫`. -/
 lemma constForce_work {m : ℝ} (hm : 0 < m) (x₀ v₀ F : E) (t₀ t₁ : ℝ) :
     ∫ t in t₀..t₁, inner ℝ F (constForceVelocity m v₀ F t) =
         m * ‖constForceVelocity m v₀ F t₁‖ ^ 2 / 2 - m * ‖constForceVelocity m v₀ F t₀‖ ^ 2 / 2 ∧
@@ -242,7 +244,8 @@ lemma constForce_work {m : ℝ} (hm : 0 < m) (x₀ v₀ F : E) (t₀ t₁ : ℝ)
   rw [hsub] at hsecond_ftc
   exact ⟨hfirst, hsecond_ftc⟩
 
-/-- Impulse identity: the impulse of `F` over `[t₀, t₁]` is the change of momentum. -/
+/-- Impulse identity: in a complete space and for `m > 0`, the impulse of `F` from `t₀` to `t₁`
+(oriented integral, either order) is the change of momentum. -/
 lemma constForce_impulse [CompleteSpace E] {m : ℝ} (hm : 0 < m) (v₀ F : E) (t₀ t₁ : ℝ) :
     ∫ _ in t₀..t₁, F = m • constForceVelocity m v₀ F t₁ - m • constForceVelocity m v₀ F t₀ := by
   have hm0 : m ≠ 0 := ne_of_gt hm
@@ -276,8 +279,8 @@ lemma spring_power_port {m k A ω : ℝ} (hm : 0 < m) (hk : 0 < k) (hω : ω = R
     field_simp
   rwa [heq] at h
 
-/-- Spring work over `[t₀, t₁]`: the change of kinetic energy, and the decrease of the potential
-`k x ^ 2 / 2 + C`, whatever the constant `C`. -/
+/-- Spring work from `t₀` to `t₁` (oriented integral, either order): the change of kinetic
+energy, and the decrease of the potential `k x ^ 2 / 2 + C`, whatever the constant `C`. -/
 lemma spring_work {m k A ω : ℝ} (hm : 0 < m) (hk : 0 < k) (hω : ω = Real.sqrt (k / m))
     (t₀ t₁ C : ℝ) :
     ∫ t in t₀..t₁, inner ℝ (-k * (A * Real.cos (ω * t))) (-A * ω * Real.sin (ω * t)) =
@@ -321,8 +324,8 @@ lemma spring_work {m k A ω : ℝ} (hm : 0 < m) (hk : 0 < k) (hω : ω = Real.sq
 /-! ## E. Inverse-square work needs collision exclusion -/
 
 /-- Work of the inverse-square force `-OrbitalPerturbations.inverseSquareField μ y`
-(`= -(μ / ‖y‖ ^ 3) • y`) along a path that never meets the centre on `[a, b]` equals the
-decrease of the potential `-μ / ‖y‖`. -/
+(`= -(μ / ‖y‖ ^ 3) • y`) along a path that never meets the centre on the interval between `a`
+and `b` (either order) equals the decrease of the potential `-μ / ‖y‖`. -/
 lemma inverseSquare_work {μ a b : ℝ} {γ γ' : ℝ → E}
     (hγ : ∀ t ∈ Set.uIcc a b, HasDerivAt γ (γ' t) t) (hcoll : ∀ t ∈ Set.uIcc a b, γ t ≠ 0)
     (hint : IntervalIntegrable
@@ -376,8 +379,9 @@ lemma hasGradientAt_inverseSquarePotential [CompleteSpace E] {μ : ℝ} {x : E} 
   have h := EarthScience.hasGradientAt_pointMass_potential (G := μ) (M := 1) hx
   simpa [OrbitalPerturbations.inverseSquareField] using h
 
-/-- At the collision point the inverse-square potential (whose value there is the division-by-zero
-convention `-μ / 0 = 0`) is not continuous, so no gradient of it exists there. -/
+/-- For `μ ≠ 0` in a nontrivial space, at the collision point the inverse-square potential (whose
+value there is the division-by-zero convention `-μ / 0 = 0`) is not continuous, so no gradient of
+it exists there. -/
 lemma inverseSquarePotential_not_continuousAt_zero [Nontrivial E] {μ : ℝ} (hμ : μ ≠ 0) :
     ¬ ContinuousAt (fun y : E => -μ / ‖y‖) 0 := by
   intro hcont

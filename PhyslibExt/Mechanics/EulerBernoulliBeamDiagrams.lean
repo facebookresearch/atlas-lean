@@ -60,8 +60,8 @@ namespace Mechanics.EulerBernoulli
 
 /-! ## A. Moment and shear formulas -/
 
-/-- Bending moment from the canonical uniform-load deflection,
-`M = -EI * y''` (sagging sign convention). -/
+/-- Bending moment from the canonical uniform-load deflection, `M = -EI * y''` (sagging sign
+convention). With the convention `x / 0 = 0` it is identically `0` when `EI = 0`. -/
 noncomputable def uniformBeamMoment (w EI L x : ℝ) : ℝ :=
   -EI * deriv (deriv (uniformLoadDeflection w EI L)) x
 
@@ -80,7 +80,8 @@ lemma uniformBeamMoment_eq_iteratedDeriv (w EI L x : ℝ) :
   unfold uniformBeamMoment
   rw [h2]
 
-/-- Shear as the derivative of bending moment, `V = M'`. -/
+/-- Shear as the derivative of bending moment, `V = M'`. With the convention `x / 0 = 0` it is
+identically `0` when `EI = 0`. -/
 noncomputable def uniformBeamShear (w EI L x : ℝ) : ℝ :=
   deriv (uniformBeamMoment w EI L) x
 
@@ -144,7 +145,8 @@ private lemma deriv2_uniformLoadDeflection_aux {w EI L : ℝ} :
   have h := HasDerivAt.const_mul (w / (24 * EI)) hpoly
   exact h.deriv
 
-/-- The explicit moment diagram for the uniform-load quartic. -/
+/-- The explicit moment diagram for the uniform-load quartic, for `EI ≠ 0` (at `EI = 0` the moment
+is `0`). -/
 theorem uniformBeamMoment_eq {w EI L x : ℝ} (hEI : EI ≠ 0) :
     uniformBeamMoment w EI L x = (w / 2) * (L * x - x ^ 2) := by
   have h2 := congrFun (@deriv2_uniformLoadDeflection_aux w EI L) x
@@ -158,7 +160,8 @@ private lemma uniformBeamMoment_fun_aux {w EI L : ℝ} (hEI : EI ≠ 0) :
   funext x
   exact uniformBeamMoment_eq hEI
 
-/-- The explicit shear diagram for the uniform-load quartic. -/
+/-- The explicit shear diagram for the uniform-load quartic, for `EI ≠ 0` (at `EI = 0` the shear is
+`0`). -/
 theorem uniformBeamShear_eq {w EI L x : ℝ} (hEI : EI ≠ 0) :
     uniformBeamShear w EI L x = (w / 2) * (L - 2 * x) := by
   have hfun := @uniformBeamMoment_fun_aux w EI L hEI

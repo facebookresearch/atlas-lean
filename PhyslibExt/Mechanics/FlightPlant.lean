@@ -268,7 +268,8 @@ open Units.EngineeringFrames Mechanics.RigidMotionPorts
 
 /-- The body velocity `v_B = Rᵀ X'` of the motion `M`: the body components of the velocity `X'`
 of its centre of mass, with `X` the inertial coordinates of the centre-of-mass trajectory and `R`
-the orientation. -/
+the orientation. The time derivative is total: at a time where `X` is not differentiable, `X'` is
+taken to be `0`. -/
 noncomputable def bodyVelocity (M : RigidBodyMotion 3) (t : Time) : Fin 3 → ℝ :=
   inertialToBodyVec (M.orientation t) (∂ₜ (fun s j => M.comTrajectory s j) t)
 
@@ -360,7 +361,10 @@ lemma newton_iff_deriv_bodyVelocity (M : RigidBodyMotion 3) {U : Set Time} (hU :
 /-- The six-degree-of-freedom body equations of the motion `M` at time `t`, with its mass
 `m = M.mass`, uniform gravity `g` (inertial components), body force `F_B` and body moment `M_B`
 about the centre of mass: the translational equation `v_B' = F_B / m + Rᵀ g - ω_B × v_B` and
-Euler's equations `I_B ω_B' + ω_B × (I_B ω_B) = M_B` of the rotating-frame module. -/
+Euler's equations `I_B ω_B' + ω_B × (I_B ω_B) = M_B` of the rotating-frame module. Time
+derivatives are total (`0` where a curve is not differentiable), and with the convention
+`0⁻¹ = 0` the force drops out of the translational equation when `m = 0`; the intended domain is
+positive mass and `C²` data, as in `SixDofPlant`. -/
 def SixDofBodyEquations (M : RigidBodyMotion 3) (g FB MB : Fin 3 → ℝ) (t : Time) : Prop :=
   ∂ₜ (bodyVelocity M) t = M.mass⁻¹ • FB + inertialToBodyVec (M.orientation t) g -
       M.bodyAngularVelocity t ⨯₃ bodyVelocity M t ∧
@@ -499,7 +503,8 @@ noncomputable def planarMotion (B : RigidBody 3) (X₁ X₂ θ : Time → ℝ) :
   orientation := fun s => pitchOrientation (θ s)
 
 /-- The longitudinal state of the planar motion at time `t`: `x = X₁' - 1`, `z = X₂'`, the pitch
-angle `θ` and the pitch rate `q = θ'`. -/
+angle `θ` and the pitch rate `q = θ'`. Time derivatives are total, taken as `0` at a time where the
+function is not differentiable. -/
 noncomputable def planarState (X₁ X₂ θ : Time → ℝ) (t : Time) : Fin 4 → ℝ :=
   ![∂ₜ X₁ t - 1, ∂ₜ X₂ t, θ t, ∂ₜ θ t]
 
@@ -1525,10 +1530,10 @@ lemma fderiv_longitudinalLyapunov_nonlinearReducedField_neg_iff
     have h1 := (fderiv_longitudinalLyapunov_nonlinearReducedField_le he).1
     nlinarith
 
-/-- **The invariant sublevel set.** The sublevel set `{V ≤ r² / 8} = {V ≤ 1/80000}` is compact,
-contains the closed ball of radius `r / 4 = 1/400` about the trim (where `V ≤ 2 ‖e‖²`), and lies
-in the ball `‖e‖² ≤ r² / 2 = 1/20000` (where `V ≥ ‖e‖² / 4`), hence in the actuator box: every
-coordinate is at most the Euclidean norm. -/
+/-- **A compact sublevel set between two balls.** The sublevel set `{V ≤ r² / 8} = {V ≤ 1/80000}`
+is compact, contains the closed ball of radius `r / 4 = 1/400` about the trim (where
+`V ≤ 2 ‖e‖²`), and lies in the ball `‖e‖² ≤ r² / 2 = 1/20000` (where `V ≥ ‖e‖² / 4`), hence in the
+actuator box: every coordinate is at most the Euclidean norm. -/
 lemma longitudinalLyapunov_sublevel_spec :
     IsCompact {e : EuclideanSpace ℝ (Fin 4) | longitudinalLyapunov e ≤ 1 / 80000} ∧
       (∀ e : EuclideanSpace ℝ (Fin 4), ‖e‖ ≤ 1 / 400 → longitudinalLyapunov e ≤ 1 / 80000) ∧

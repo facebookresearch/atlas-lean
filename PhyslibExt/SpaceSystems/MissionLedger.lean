@@ -225,7 +225,9 @@ def AdmissibleStageMasses (m₀ m₁ : ℕ → ℝ) (n : ℕ) : Prop :=
   (∀ k < n, 0 < m₁ k ∧ m₁ k ≤ m₀ k) ∧ ∀ k, k + 1 < n → m₀ (k + 1) ≤ m₁ k
 
 /-- The ideal velocity increment `ve log (m₀ k / m₁ k)` of burn `k`, from its start mass `m₀ k` to
-its end mass `m₁ k` at the exhaust speed `ve`. Read for admissible (positive) stage masses. -/
+its end mass `m₁ k` at the exhaust speed `ve`. Read for admissible (positive) stage masses; with the
+conventions `x / 0 = 0`, `log 0 = 0` and `log x = log |x|` it is `0` when `m₀ k = 0` or `m₁ k = 0`,
+and `ve log |m₀ k / m₁ k|` for masses of opposite signs. -/
 noncomputable def stageIncrement (ve : ℝ) (m₀ m₁ : ℕ → ℝ) (k : ℕ) : ℝ :=
   ve * Real.log (m₀ k / m₁ k)
 

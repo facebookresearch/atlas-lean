@@ -1121,12 +1121,14 @@ lemma fixedAxisMotion_neg_torque {B : RigidBody 3} (hc : B.centerOfMass = 0) {Ix
 /-! ## G. Torque-free axisymmetric precession -/
 
 /-- The precession rate `ν = (I₃ - I_⊥) ω₃ / I_⊥` of torque-free axisymmetric motion with
-transverse principal inertia `I_⊥`, axial principal inertia `I₃` and axial spin `ω₃`. -/
+transverse principal inertia `I_⊥`, axial principal inertia `I₃` and axial spin `ω₃`. With
+`a / 0 = 0` it is `0` when `I_⊥ = 0`; the intended domain is `I_⊥ > 0`. -/
 noncomputable def axisymmetricPrecessionRate (Iperp I₃ ω₃ : ℝ) : ℝ := (I₃ - Iperp) * ω₃ / Iperp
 
 /-- The body angular velocity `ω_B(t) = (A cos (ν t), A sin (ν t), ω₃)` of torque-free
 axisymmetric motion, with transverse amplitude `A`, axial spin `ω₃` and precession rate
-`ν = axisymmetricPrecessionRate I_⊥ I₃ ω₃`. -/
+`ν = axisymmetricPrecessionRate I_⊥ I₃ ω₃`. It solves the torque-free Euler equations for
+`I_⊥ > 0`; no attitude with this angular velocity is constructed. -/
 noncomputable def axisymmetricPrecession (Iperp I₃ A ω₃ : ℝ) (t : Time) : Fin 3 → ℝ :=
   ![A * Real.cos (axisymmetricPrecessionRate Iperp I₃ ω₃ * t.val),
     A * Real.sin (axisymmetricPrecessionRate Iperp I₃ ω₃ * t.val), ω₃]

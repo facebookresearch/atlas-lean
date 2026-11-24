@@ -54,7 +54,10 @@ namespace EarthScience
 
 open PhyslibExt.Electromagnetism.ElectrostaticsAndLinearWaves (planeWave)
 
-/-- First time derivative of the travelling wave `planeWave A k (c * k)`. -/
+/-- First time derivative of the travelling wave `planeWave A k (c * k)`.
+The wave travels towards increasing `x` at speed `c` for `c > 0` and
+`k ≠ 0`; physically `c > 0` is the wave speed, and the identity holds
+for all real inputs. -/
 theorem wave_first_deriv_time (A k c x t : ℝ) :
     deriv (fun t' => planeWave A k (c * k) x t') t =
       A * (-Real.sin (k * x - c * k * t)) * (-(c * k)) := by
@@ -70,7 +73,10 @@ theorem wave_first_deriv_time (A k c x t : ℝ) :
       A * (-Real.sin (k * x - c * k * t) * (-(c * k))) := hmul.deriv
   linear_combination h
 
-/-- First space derivative of the travelling wave `planeWave A k (c * k)`. -/
+/-- First space derivative of the travelling wave `planeWave A k (c * k)`.
+The wave travels towards increasing `x` at speed `c` for `c > 0` and
+`k ≠ 0`; physically `c > 0` is the wave speed, and the identity holds
+for all real inputs. -/
 theorem wave_first_deriv_space (A k c x t : ℝ) :
     deriv (fun x' => planeWave A k (c * k) x' t) x =
       A * (-Real.sin (k * x - c * k * t)) * k := by
@@ -87,7 +93,10 @@ theorem wave_first_deriv_space (A k c x t : ℝ) :
   linear_combination h
 
 /-- Second time derivative of the travelling wave
-`u(t, x) = planeWave A k (c * k) x t = A cos (k x - c k t)` at fixed `x`. -/
+`u(t, x) = planeWave A k (c * k) x t = A cos (k x - c k t)` at fixed `x`.
+The wave travels towards increasing `x` at speed `c` for `c > 0` and
+`k ≠ 0`; physically `c > 0` is the wave speed, and the identity holds
+for all real inputs. -/
 theorem wave_second_deriv_time (A k c x t : ℝ) :
     deriv (fun t => deriv (fun t' => planeWave A k (c * k) x t') t) t =
       -(c * k) ^ 2 * planeWave A k (c * k) x t := by
@@ -113,7 +122,10 @@ theorem wave_second_deriv_time (A k c x t : ℝ) :
   linear_combination h
 
 /-- Second space derivative of the travelling wave
-`u(t, x) = planeWave A k (c * k) x t = A cos (k x - c k t)` at fixed `t`. -/
+`u(t, x) = planeWave A k (c * k) x t = A cos (k x - c k t)` at fixed `t`.
+The wave travels towards increasing `x` at speed `c` for `c > 0` and
+`k ≠ 0`; physically `c > 0` is the wave speed, and the identity holds
+for all real inputs. -/
 theorem wave_second_deriv_space (A k c x t : ℝ) :
     deriv (fun x => deriv (fun x' => planeWave A k (c * k) x' t) x) x =
       -(k ^ 2) * planeWave A k (c * k) x t := by
@@ -139,7 +151,9 @@ theorem wave_second_deriv_space (A k c x t : ℝ) :
 
 /-- The travelling wave `u(t, x) = planeWave A k (c * k) x t = A cos (k x - c k t)`
 solves the wave equation `u_tt = c² u_xx`: the second time derivative equals
-`c²` times the second space derivative. -/
+`c²` times the second space derivative. The wave travels towards
+increasing `x` at speed `c` for `c > 0` and `k ≠ 0`; physically `c > 0`
+is the wave speed, and the identity holds for all real inputs. -/
 theorem wave_travelling_solves (A k c x t : ℝ) :
     deriv (fun t => deriv (fun t' => planeWave A k (c * k) x t') t) t =
       c ^ 2 * deriv (fun x => deriv (fun x' => planeWave A k (c * k) x' t) x) x := by

@@ -159,16 +159,18 @@ open PhyslibExt.Mechanics.PowerPorts
 /-! ## A. The two-body event map -/
 
 /-- Velocity of body 1 just after the event, from the velocities `v₁, v₂` just before it:
-`(m₁ v₁ + m₂ v₂ - m₂ e (v₁ - v₂)) / (m₁ + m₂)`. -/
+`(m₁ v₁ + m₂ v₂ - m₂ e (v₁ - v₂)) / (m₁ + m₂)`. With the convention `x / 0 = 0` it is `0` when
+`m₁ + m₂ = 0`; the model has `m₁, m₂ > 0`. -/
 noncomputable def impactVelocity₁ (m₁ m₂ e v₁ v₂ : ℝ) : ℝ :=
   (m₁ * v₁ + m₂ * v₂ - m₂ * e * (v₁ - v₂)) / (m₁ + m₂)
 
-/-- Velocity of body 2 just after the event: `(m₁ v₁ + m₂ v₂ + m₁ e (v₁ - v₂)) / (m₁ + m₂)`. -/
+/-- Velocity of body 2 just after the event: `(m₁ v₁ + m₂ v₂ + m₁ e (v₁ - v₂)) / (m₁ + m₂)`.
+With the convention `x / 0 = 0` it is `0` when `m₁ + m₂ = 0`; the model has `m₁, m₂ > 0`. -/
 noncomputable def impactVelocity₂ (m₁ m₂ e v₁ v₂ : ℝ) : ℝ :=
   (m₁ * v₁ + m₂ * v₂ + m₁ * e * (v₁ - v₂)) / (m₁ + m₂)
 
-/-- The post-impact velocities `u₁, u₂` satisfy momentum conservation and Newton's restitution
-law exactly when they are the event map. -/
+/-- For positive masses, the post-impact velocities `u₁, u₂` satisfy momentum conservation and
+Newton's restitution law exactly when they are the event map. -/
 lemma impact_solve_iff {m₁ m₂ : ℝ} (hm₁ : 0 < m₁) (hm₂ : 0 < m₂) (e v₁ v₂ u₁ u₂ : ℝ) :
     (m₁ * u₁ + m₂ * u₂ = m₁ * v₁ + m₂ * v₂ ∧ u₂ - u₁ = -e * (v₂ - v₁)) ↔
       (u₁ = impactVelocity₁ m₁ m₂ e v₁ v₂ ∧ u₂ = impactVelocity₂ m₁ m₂ e v₁ v₂) := by
@@ -193,7 +195,8 @@ lemma impact_solve_iff {m₁ m₂ : ℝ} (hm₁ : 0 < m₁) (hm₂ : 0 < m₂) (
 noncomputable def pairKineticEnergy (m₁ m₂ v₁ v₂ : ℝ) : ℝ :=
   m₁ * v₁ ^ 2 / 2 + m₂ * v₂ ^ 2 / 2
 
-/-- Energy loss of the event: `(1 - e²) m₁ m₂ / (2 (m₁ + m₂)) (v₁ - v₂)²`. -/
+/-- Energy loss of the event, for positive masses and every real `e`:
+`(1 - e²) m₁ m₂ / (2 (m₁ + m₂)) (v₁ - v₂)²`. -/
 lemma impact_energy_loss {m₁ m₂ : ℝ} (hm₁ : 0 < m₁) (hm₂ : 0 < m₂) (e v₁ v₂ : ℝ) :
     pairKineticEnergy m₁ m₂ v₁ v₂ -
         pairKineticEnergy m₁ m₂ (impactVelocity₁ m₁ m₂ e v₁ v₂) (impactVelocity₂ m₁ m₂ e v₁ v₂) =
@@ -203,7 +206,7 @@ lemma impact_energy_loss {m₁ m₂ : ℝ} (hm₁ : 0 < m₁) (hm₂ : 0 < m₂)
   field_simp
   ring
 
-/-- For `e ∈ [0, 1]` the event does not increase the kinetic energy. -/
+/-- For positive masses and `e ∈ [0, 1]` the event does not increase the kinetic energy. -/
 lemma impact_energy_le {m₁ m₂ e : ℝ} (hm₁ : 0 < m₁) (hm₂ : 0 < m₂) (he₀ : 0 ≤ e) (he₁ : e ≤ 1)
     (v₁ v₂ : ℝ) :
     pairKineticEnergy m₁ m₂ (impactVelocity₁ m₁ m₂ e v₁ v₂) (impactVelocity₂ m₁ m₂ e v₁ v₂) ≤
@@ -222,7 +225,7 @@ lemma impact_energy_le {m₁ m₂ e : ℝ} (hm₁ : 0 < m₁) (hm₂ : 0 < m₂)
     mul_nonneg hfrac hsq
   linarith
 
-/-- An elastic event, `e = 1`, conserves the kinetic energy. -/
+/-- For positive masses, an elastic event, `e = 1`, conserves the kinetic energy. -/
 lemma impact_energy_eq_of_elastic {m₁ m₂ : ℝ} (hm₁ : 0 < m₁) (hm₂ : 0 < m₂) (v₁ v₂ : ℝ) :
     pairKineticEnergy m₁ m₂ (impactVelocity₁ m₁ m₂ 1 v₁ v₂) (impactVelocity₂ m₁ m₂ 1 v₁ v₂) =
       pairKineticEnergy m₁ m₂ v₁ v₂ := by
@@ -230,8 +233,8 @@ lemma impact_energy_eq_of_elastic {m₁ m₂ : ℝ} (hm₁ : 0 < m₁) (hm₂ : 
   norm_num at h
   linarith
 
-/-- A coefficient `e > 1` would inject kinetic energy whenever the relative velocity is
-nonzero. -/
+/-- For positive masses, a coefficient `e > 1` would inject kinetic energy whenever the relative
+velocity is nonzero. -/
 lemma impact_energy_lt_of_one_lt {m₁ m₂ e v₁ v₂ : ℝ} (hm₁ : 0 < m₁) (hm₂ : 0 < m₂) (he : 1 < e)
     (hv : v₁ ≠ v₂) :
     pairKineticEnergy m₁ m₂ v₁ v₂ <
@@ -251,8 +254,8 @@ lemma impact_energy_lt_of_one_lt {m₁ m₂ e v₁ v₂ : ℝ} (hm₁ : 0 < m₁
 
 /-! ## C. Event ports and the continuous phase -/
 
-/-- Impulse port of the event: the momentum jump of body 1 is
-`J = -(1 + e) m₁ m₂ / (m₁ + m₂) (v₁ - v₂)` and that of body 2 is `-J`. -/
+/-- Impulse port of the event, for positive masses and every real `e`: the momentum jump of
+body 1 is `J = -(1 + e) m₁ m₂ / (m₁ + m₂) (v₁ - v₂)` and that of body 2 is `-J`. -/
 lemma impact_impulse {m₁ m₂ : ℝ} (hm₁ : 0 < m₁) (hm₂ : 0 < m₂) (e v₁ v₂ : ℝ) :
     m₁ * impactVelocity₁ m₁ m₂ e v₁ v₂ - m₁ * v₁ =
         -(1 + e) * (m₁ * m₂ / (m₁ + m₂)) * (v₁ - v₂) ∧
@@ -262,10 +265,10 @@ lemma impact_impulse {m₁ m₂ : ℝ} (hm₁ : 0 < m₁) (hm₂ : 0 < m₂) (e 
   simp only [impactVelocity₁, impactVelocity₂]
   constructor <;> field_simp <;> ring
 
-/-- Momentum across the event and the following continuous phase: after the event body `i`
-follows the actual constant-force trajectory with initial velocity its post-impact velocity and
-external force `Fᵢ`; at time `t` after the event the total momentum is the pre-impact total plus
-the external impulse `t (F₁ + F₂)`. -/
+/-- Momentum across the event and the following continuous phase, for positive masses: after the
+event body `i` follows the actual constant-force trajectory with initial velocity its post-impact
+velocity and external force `Fᵢ`; at time `t` after the event the total momentum is the pre-impact
+total plus the external impulse `t (F₁ + F₂)`. -/
 lemma impact_then_flight_momentum {m₁ m₂ : ℝ} (hm₁ : 0 < m₁) (hm₂ : 0 < m₂)
     (e v₁ v₂ F₁ F₂ t : ℝ) :
     m₁ * constForceVelocity m₁ (impactVelocity₁ m₁ m₂ e v₁ v₂) F₁ t +
@@ -287,8 +290,9 @@ lemma impact_then_flight_momentum {m₁ m₂ : ℝ} (hm₁ : 0 < m₁) (hm₂ : 
   rw [mul_add, mul_add, e1, e2]
   linear_combination hmom
 
-/-- Energy across the event and a free flight: with no external force, the kinetic energy at
-every time `t` after the event is the pre-impact kinetic energy minus the event loss. -/
+/-- Energy across the event and a free flight, for positive masses: with no external force, the
+kinetic energy at every time `t` after the event is the pre-impact kinetic energy minus the event
+loss. -/
 lemma impact_then_free_flight_energy {m₁ m₂ : ℝ} (hm₁ : 0 < m₁) (hm₂ : 0 < m₂)
     (e v₁ v₂ t : ℝ) :
     pairKineticEnergy m₁ m₂ (constForceVelocity m₁ (impactVelocity₁ m₁ m₂ e v₁ v₂) 0 t)
@@ -337,7 +341,7 @@ lemma wallImpulse_eq (m e v : ℝ) : wallImpulse m e v = -((1 + e) * m * v) := b
   unfold wallImpulse wallReboundVelocity
   ring
 
-/-- For `e ≥ 0` and an incoming body the wall impulse points out of the wall. -/
+/-- For `m > 0`, `e ≥ 0` and an incoming body the wall impulse points out of the wall. -/
 lemma wallImpulse_pos {m e v : ℝ} (hm : 0 < m) (he : 0 ≤ e) (hv : v < 0) :
     0 < wallImpulse m e v := by
   rw [wallImpulse_eq]
@@ -345,7 +349,8 @@ lemma wallImpulse_pos {m e v : ℝ} (hm : 0 < m) (he : 0 ≤ e) (hv : v < 0) :
   have h2 : (1 + e) * m * v < 0 := mul_neg_of_pos_of_neg h1 hv
   linarith
 
-/-- The body alone does not conserve momentum: for `e ≥ 0` and `v⁻ ≠ 0` its momentum changes. -/
+/-- The body alone does not conserve momentum: for `m > 0`, `e ≥ 0` and `v⁻ ≠ 0` its momentum
+changes. -/
 lemma body_momentum_ne {m e v : ℝ} (hm : 0 < m) (he : 0 ≤ e) (hv : v ≠ 0) :
     m * wallReboundVelocity e v ≠ m * v := by
   unfold wallReboundVelocity
@@ -372,8 +377,8 @@ lemma wall_energy_change (m e v : ℝ) :
   unfold bodyKineticEnergy wallReboundVelocity
   ring
 
-/-- Restitution sign cases for `e ≥ 0` and `v⁻ ≠ 0`: strict loss exactly when `e < 1`, no loss
-exactly when `e = 1`, and a gain exactly when `e > 1`. -/
+/-- Restitution sign cases for `m > 0`, `e ≥ 0` and `v⁻ ≠ 0`: strict loss exactly when `e < 1`,
+no loss exactly when `e = 1`, and a gain exactly when `e > 1`. -/
 lemma wall_energy_cases {m e v : ℝ} (hm : 0 < m) (he : 0 ≤ e) (hv : v ≠ 0) :
     (bodyKineticEnergy m (wallReboundVelocity e v) < bodyKineticEnergy m v ↔ e < 1) ∧
       (bodyKineticEnergy m (wallReboundVelocity e v) = bodyKineticEnergy m v ↔ e = 1) ∧
@@ -447,9 +452,9 @@ lemma wall_energy_cases {m e v : ℝ} (hm : 0 < m) (he : 0 ≤ e) (hv : v ≠ 0)
 
 /-! ## F. The wall impulse and the continuous phase -/
 
-/-- After the event the body follows the actual constant-force trajectory started at `v⁺` under
-the external force `F`; at time `t` after the event its momentum is the incoming momentum plus the
-wall impulse plus the impulse `t F` of the force. -/
+/-- For `m > 0`: after the event the body follows the actual constant-force trajectory started at
+`v⁺` under the external force `F`; at time `t` after the event its momentum is the incoming
+momentum plus the wall impulse plus the impulse `t F` of the force. -/
 lemma rebound_then_flight_momentum {m : ℝ} (hm : 0 < m) (e v F t : ℝ) :
     m * constForceVelocity m (wallReboundVelocity e v) F t = m * v + wallImpulse m e v + t * F := by
   have hm' : m ≠ 0 := ne_of_gt hm
@@ -470,15 +475,17 @@ noncomputable def bounceSpeed (e u₀ : ℝ) : ℕ → ℝ
   | 0 => u₀
   | n + 1 => wallReboundVelocity e (-bounceSpeed e u₀ n)
 
-/-- Flight duration `T_n = 2 u_n / g` of arc `n`. -/
+/-- Flight duration `T_n = 2 u_n / g` of arc `n`. With the convention `x / 0 = 0` it is `0` when
+`g = 0`; the model has `g > 0`. -/
 noncomputable def flightDuration (g e u₀ : ℝ) (n : ℕ) : ℝ :=
   2 * bounceSpeed e u₀ n / g
 
-/-- Accumulation time `t_∞ = 2 u₀ / (g (1 - e))`. -/
+/-- Accumulation time `t_∞ = 2 u₀ / (g (1 - e))`. With the convention `x / 0 = 0` it is `0` when
+`g = 0` or `e = 1`. -/
 noncomputable def zenoTime (g e u₀ : ℝ) : ℝ :=
   2 * u₀ / (g * (1 - e))
 
-/-- Take-off speeds of the bounce sequence: `u_n = e ^ n u₀`. -/
+/-- Take-off speeds of the bounce sequence: `u_n = e ^ n u₀` (with `0 ^ 0 = 1`). -/
 lemma bounceSpeed_eq (e u₀ : ℝ) (n : ℕ) : bounceSpeed e u₀ n = e ^ n * u₀ := by
   induction n with
   | zero => simp [bounceSpeed]
@@ -543,7 +550,8 @@ lemma bounce_arc {m g e u₀ : ℝ} {n : ℕ} (hm : 0 < m) (hg : 0 < g) (hact : 
     exact mul_pos ht.1 h3
   · rw [hvel, hu_def, bounceSpeed]
 
-/-- Flight durations proportional to `e ^ n`: `T_n = (2 u₀ / g) e ^ n`. -/
+/-- Flight durations proportional to `e ^ n`: `T_n = (2 u₀ / g) e ^ n`. With the convention
+`x / 0 = 0` both sides are `0` when `g = 0`. -/
 lemma flightDuration_eq (g e u₀ : ℝ) (n : ℕ) : flightDuration g e u₀ n = 2 * u₀ / g * e ^ n := by
   simp [flightDuration, bounceSpeed_eq]
   ring
@@ -551,7 +559,8 @@ lemma flightDuration_eq (g e u₀ : ℝ) (n : ℕ) : flightDuration g e u₀ n =
 /-! ## H. The finite sum and Zeno accumulation -/
 
 /-- **Finite sum.** For `0 < e < 1` the flight durations sum to `t_∞ = 2 u₀ / (g (1 - e))`. The
-identity holds for every `g` and `u₀` (at `g = 0` both sides are `0` by Lean's division); it is the
+identity holds for every `g` and `u₀` (at `g = 0` both sides are `0`, by the convention
+`x / 0 = 0`); it is the
 accumulation time of the bounces for `g > 0` and `u₀ > 0` (`zeno_accumulation`). -/
 lemma hasSum_flightDuration {g e u₀ : ℝ} (he0 : 0 < e) (he1 : e < 1) :
     HasSum (flightDuration g e u₀) (zenoTime g e u₀) := by

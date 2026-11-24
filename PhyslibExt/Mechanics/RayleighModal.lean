@@ -359,7 +359,8 @@ lemma sum_participation_sq_lt_of_not_mem {M Φ : Matrix n n ℝ}
 /-! ## C. Finite-horizon peak bound -/
 
 /-- Spectral displacement of a response `u` on the horizon `[0, T]`: the supremum of
-`|u t|` over `t ∈ [0, T]`, a maximum for continuous `u` and `0 ≤ T`. -/
+`|u t|` over `t ∈ [0, T]`, a maximum for continuous `u` and `0 ≤ T`. By the real `sSup`
+convention it is `0` for `T < 0` and when `|u|` is unbounded on `[0, T]`. -/
 noncomputable def spectralDisplacement (T : ℝ) (u : ℝ → ℝ) : ℝ :=
   sSup ((fun t => |u t|) '' Set.Icc 0 T)
 

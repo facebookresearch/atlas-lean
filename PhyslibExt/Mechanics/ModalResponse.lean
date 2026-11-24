@@ -110,7 +110,7 @@ noncomputable def modalCoordinate (μ q₀ v₀ t : ℝ) : ℝ :=
   else q₀ + v₀ * t
 
 /-- The modal response in physical coordinates, `x (t) = C q (t)`, where the modal coordinates
-start from `q (0) = C⁻¹ x₀` and `q' (0) = C⁻¹ v₀`. -/
+start from `q (0) = C⁻¹ x₀` and `q' (0) = C⁻¹ v₀` (`C⁻¹ = 0` when `C` is not invertible). -/
 noncomputable def modalResponse (C : Matrix n n ℝ) (μ : n → ℝ) (x₀ v₀ : n → ℝ) (t : ℝ) :
     n → ℝ :=
   C *ᵥ fun i => modalCoordinate (μ i) ((C⁻¹ *ᵥ x₀) i) ((C⁻¹ *ᵥ v₀) i) t
@@ -138,8 +138,9 @@ lemma inv_eq_transpose_mul {M C : Matrix n n ℝ} (hMC : Cᵀ * M * C = 1) :
 
 /-! ## C. Decoupling -/
 
-/-- In the modal coordinates `q = C⁻¹ x` the equation `M x'' + K x = 0` decouples into
-`q_i'' + μ i q_i = 0`, for every twice continuously differentiable `x`. -/
+/-- For `Cᵀ M C = 1` and `Cᵀ K C = diagonal μ`, in the modal coordinates `q = C⁻¹ x` the
+equation `M x'' + K x = 0` at `t` decouples into `q_i'' + μ i q_i = 0` at `t`, for every twice
+continuously differentiable `x`. -/
 lemma modal_decoupling {M K C : Matrix n n ℝ} {μ : n → ℝ} (hMC : Cᵀ * M * C = 1)
     (hKC : Cᵀ * K * C = diagonal μ) {x : ℝ → n → ℝ} (hx : ContDiff ℝ 2 x) (t : ℝ) :
     M *ᵥ deriv (deriv x) t + K *ᵥ x t = 0 ↔
@@ -288,8 +289,9 @@ lemma modalCoordinate_unique {μ : ℝ} (hμ : 0 ≤ μ) {q : ℝ → ℝ} (hq :
 
 /-! ## E. The physical response -/
 
-/-- The modal response `x = C q` is twice continuously differentiable, solves
-`M x'' + K x = 0`, and matches both initial-data vectors: `x (0) = x₀`, `x' (0) = v₀`. -/
+/-- For `Cᵀ M C = 1`, `Cᵀ K C = diagonal μ` and `μ ≥ 0`, the modal response `x = C q` is twice
+continuously differentiable, solves `M x'' + K x = 0`, and matches both initial-data vectors:
+`x (0) = x₀`, `x' (0) = v₀`. -/
 lemma modalResponse_solves {M K C : Matrix n n ℝ} {μ : n → ℝ} (hMC : Cᵀ * M * C = 1)
     (hKC : Cᵀ * K * C = diagonal μ) (hμ : ∀ i, 0 ≤ μ i) (x₀ v₀ : n → ℝ) :
     ContDiff ℝ 2 (modalResponse C μ x₀ v₀) ∧
@@ -349,8 +351,9 @@ lemma modalResponse_solves {M K C : Matrix n n ℝ} {μ : n → ℝ} (hMC : Cᵀ
       exact (hsol i).2.2.2
     rw [hdx, hQ'0, hb, Matrix.mulVec_mulVec, hCCi, Matrix.one_mulVec]
 
-/-- Every twice continuously differentiable solution of `M x'' + K x = 0` is the modal response
-with its own initial position and velocity. -/
+/-- For `Cᵀ M C = 1`, `Cᵀ K C = diagonal μ` and `μ ≥ 0`, every twice continuously
+differentiable solution of `M x'' + K x = 0` is the modal response with its own initial position
+and velocity. -/
 lemma modalResponse_unique {M K C : Matrix n n ℝ} {μ : n → ℝ} (hMC : Cᵀ * M * C = 1)
     (hKC : Cᵀ * K * C = diagonal μ) (hμ : ∀ i, 0 ≤ μ i) {x : ℝ → n → ℝ} (hx : ContDiff ℝ 2 x)
     (hEq : ∀ t, M *ᵥ deriv (deriv x) t + K *ᵥ x t = 0) :
@@ -405,13 +408,15 @@ self-spring. -/
 def twoMassWeights (k : ℝ) : Fin 2 → Fin 2 → ℝ :=
   ![![0, k], ![k, 0]]
 
-/-- The squared angular frequency `ω² = k (m₁ + m₂) / (m₁ m₂)` of the positive mode. -/
+/-- The squared angular frequency `ω² = k (m₁ + m₂) / (m₁ m₂)` of the positive mode (`0` when
+`m₁ m₂ = 0`, by `u / 0 = 0`). -/
 noncomputable def twoMassFrequencySq (m₁ m₂ k : ℝ) : ℝ :=
   k * (m₁ + m₂) / (m₁ * m₂)
 
 /-- The mass-orthonormal modal matrix: its columns are the rigid translation `(1, 1)` and the mode
 `(m₂, -m₁)`, each divided by the square root of its modal mass, `m₁ + m₂` and
-`m₁ m₂ (m₁ + m₂)`. -/
+`m₁ m₂ (m₁ + m₂)`. Meant for `m₁, m₂ > 0`; otherwise `√u = 0` for `u < 0` and `u / 0 = 0`
+apply. -/
 noncomputable def twoMassModalMatrix (m₁ m₂ : ℝ) : Matrix (Fin 2) (Fin 2) ℝ :=
   !![1 / Real.sqrt (m₁ + m₂), m₂ / Real.sqrt (m₁ * m₂ * (m₁ + m₂));
     1 / Real.sqrt (m₁ + m₂), -m₁ / Real.sqrt (m₁ * m₂ * (m₁ + m₂))]
@@ -475,8 +480,8 @@ lemma twoMass_rigidMode (k : ℝ) :
   · ext i; fin_cases i <;> simp [Matrix.mulVec, dotProduct, Fin.sum_univ_two]
   · simp [springEnergy, twoMassWeights, Fin.sum_univ_two]
 
-/-- The positive mode: `φ = (m₂, -m₁)` is mass-orthogonal to the rigid translation and satisfies
-`K φ = ω² M φ` with `ω² = k (m₁ + m₂) / (m₁ m₂) > 0`. -/
+/-- The positive mode: for `m₁, m₂, k > 0`, `φ = (m₂, -m₁)` is mass-orthogonal to the rigid
+translation and satisfies `K φ = ω² M φ` with `ω² = k (m₁ + m₂) / (m₁ m₂) > 0`. -/
 lemma twoMass_positiveMode {m₁ m₂ k : ℝ} (hm₁ : 0 < m₁) (hm₂ : 0 < m₂) (hk : 0 < k) :
     0 < twoMassFrequencySq m₁ m₂ k ∧
       stiffnessMatrix (twoMassWeights k) 0 *ᵥ ![m₂, -m₁] =
@@ -490,7 +495,8 @@ lemma twoMass_positiveMode {m₁ m₂ k : ℝ} (hm₁ : 0 < m₁) (hm₂ : 0 < m
       field_simp <;> ring
   · simp [Matrix.mulVec, dotProduct, Fin.sum_univ_two]; ring
 
-/-- The explicit mass-orthonormal modal basis: `Cᵀ M C = 1` and `Cᵀ K C = diag(0, ω²)`. -/
+/-- The explicit mass-orthonormal modal basis: for `m₁, m₂ > 0`, `Cᵀ M C = 1` and
+`Cᵀ K C = diag(0, ω²)`. -/
 lemma twoMass_modalBasis {m₁ m₂ : ℝ} (hm₁ : 0 < m₁) (hm₂ : 0 < m₂) (k : ℝ) :
     (twoMassModalMatrix m₁ m₂)ᵀ * Matrix.diagonal ![m₁, m₂] * twoMassModalMatrix m₁ m₂ = 1 ∧
       (twoMassModalMatrix m₁ m₂)ᵀ * stiffnessMatrix (twoMassWeights k) 0 *
@@ -520,8 +526,8 @@ lemma twoMass_modalBasis {m₁ m₂ : ℝ} (hm₁ : 0 < m₁) (hm₂ : 0 < m₂)
     · ring
     · linear_combination (-(k * (m₁ + m₂))) * hb
 
-/-- The modal response of the explicit basis, with initial position `x₀` and velocity `v₀`, is the
-centre-of-mass drift plus the relative oscillation. -/
+/-- For `m₁, m₂ > 0`, the modal response of the explicit basis, with initial position `x₀` and
+velocity `v₀`, is the centre-of-mass drift plus the relative oscillation. -/
 lemma modalResponse_twoMass {m₁ m₂ : ℝ} (hm₁ : 0 < m₁) (hm₂ : 0 < m₂) (k : ℝ)
     (x₀ v₀ : Fin 2 → ℝ) :
     modalResponse (twoMassModalMatrix m₁ m₂) ![0, twoMassFrequencySq m₁ m₂ k] x₀ v₀ =
@@ -572,8 +578,8 @@ lemma modalResponse_twoMass {m₁ m₂ : ℝ} (hm₁ : 0 < m₁) (hm₂ : 0 < m�
   · simp [Matrix.mulVec, dotProduct, Fin.sum_univ_two]
     field_simp; ring_nf; simp only [hb]; ring
 
-/-- For `k ≥ 0` the two-mass response is twice continuously differentiable, solves
-`M x'' + K x = 0`, and matches both initial-data vectors. -/
+/-- For `m₁, m₂ > 0` and `k ≥ 0` the two-mass response is twice continuously differentiable,
+solves `M x'' + K x = 0`, and matches both initial-data vectors. -/
 lemma twoMassResponse_solves {m₁ m₂ k : ℝ} (hm₁ : 0 < m₁) (hm₂ : 0 < m₂) (hk : 0 ≤ k)
     (x₀ v₀ : Fin 2 → ℝ) :
     ContDiff ℝ 2 (twoMassResponse m₁ m₂ k x₀ v₀) ∧
@@ -590,8 +596,8 @@ lemma twoMassResponse_solves {m₁ m₂ k : ℝ} (hm₁ : 0 < m₁) (hm₂ : 0 <
   rw [modalResponse_twoMass hm₁ hm₂ k x₀ v₀] at h
   exact h
 
-/-- For `k ≥ 0` every twice continuously differentiable solution of `M x'' + K x = 0` is the
-two-mass response with its own initial position and velocity. -/
+/-- For `m₁, m₂ > 0` and `k ≥ 0` every twice continuously differentiable solution of
+`M x'' + K x = 0` is the two-mass response with its own initial position and velocity. -/
 lemma twoMassResponse_unique {m₁ m₂ k : ℝ} (hm₁ : 0 < m₁) (hm₂ : 0 < m₂) (hk : 0 ≤ k)
     {x : ℝ → Fin 2 → ℝ} (hx : ContDiff ℝ 2 x)
     (hEq : ∀ t, Matrix.diagonal ![m₁, m₂] *ᵥ deriv (deriv x) t +
