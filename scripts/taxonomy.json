@@ -9162,6 +9162,7 @@
   "MathlibExt/Algebra/BigOperators/HomogeneousGeomSum": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Weighted sums of Dirichlet convolutions"},
   "MathlibExt/Algebra/BigOperators/PrefixSumReordering": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Reordering so that prefix sums compare"},
   "MathlibExt/Algebra/BigOperators/ProdCompPow": {"to": "Algebra/algebraic-identities", "title": "Finite products regrouped by value"},
+  "MathlibExt/Algebra/Category/FGProjectiveCat/Basic": {"to": "Algebra/not-yet-classified", "title": "FGProjective Cat: Basic"},
   "MathlibExt/Algebra/Central/SkolemNoether": {"to": "Algebra/associative-algebras", "title": "Skolem–Noether theorem"},
   "MathlibExt/Algebra/CommutativeAlgebra/EakinNagata": {"to": "RingTheory/modules", "title": "Eakin–Nagata theorem"},
   "MathlibExt/Algebra/ContinuedFractions/Computation/Approximations": {"to": "NumberTheory/continued-fractions-expansions", "title": "Convergents of regular continued fractions"},
