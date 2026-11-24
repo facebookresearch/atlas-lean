@@ -412,7 +412,7 @@ theorem separableFields_sourceFreeVacuumMaxwell (a : ℝ → ℝ) (f : ℝ → �
 
 /-- Source-free vacuum Maxwell equations at a speed of light `c`
 for fields on Physlib's `Time` and `Space`, stated with Physlib's
-`Space.div`, `Space.curl` and `Time.deriv`. -/
+`Space.div`, `Space.curl` and `Time.deriv` (each derivative is `0` where it does not exist). -/
 def sourceFreeVacuumMaxwellFields (c : SpeedOfLight)
     (E B : Time → Space → EuclideanSpace ℝ (Fin 3)) : Prop :=
   ∀ (t : Time) (x : Space), Space.div (E t) x = 0 ∧ Space.div (B t) x = 0 ∧
