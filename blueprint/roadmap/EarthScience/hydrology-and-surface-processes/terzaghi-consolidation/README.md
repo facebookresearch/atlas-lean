@@ -14,4 +14,6 @@ produces.
 - [Settlement of the consolidation mode in closed form](consolidation-mode-settlement-eq.md)
 - [The settlement of the consolidation mode is nonnegative](consolidation-mode-settlement-nonneg.md)
 
+## General initial data
+
 - [Consolidation with square-integrable initial data](consolidation-with-square-integrable-initial-data.md)

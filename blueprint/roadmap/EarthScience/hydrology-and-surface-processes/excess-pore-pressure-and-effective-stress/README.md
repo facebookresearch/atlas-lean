@@ -10,5 +10,4 @@ vanishes.
 - [The vertical effective stress is total stress minus pore pressure](vertical-effective-stress-eq.md)
 - [Vertical effective stress in terms of the excess pore-pressure ratio](vertical-effective-stress-eq-mul-one-sub.md)
 - [The excess pore-pressure ratio is one exactly when the effective stress vanishes](excess-pore-pressure-ratio-eq-one-iff.md)
-
 - [Cyclic soil response and liquefaction](cyclic-soil-response-and-liquefaction.md)
