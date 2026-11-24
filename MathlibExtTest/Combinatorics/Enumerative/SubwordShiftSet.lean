@@ -14,13 +14,25 @@ import MathlibExt.Combinatorics.Enumerative.SubwordShiftSet
 
 namespace MetaMathlibExt
 
--- Positivity rules out the vacuous singleton even though there is no positive split of zero.
-example : ¬ IsWellBased ({0} : Finset ℕ) := by
-  intro h
-  exact h.1 (by simp)
+-- `IsWellBased` can be constructed from the split condition alone, even for `{0}`.
+example : IsWellBased ({0} : Finset ℕ) := by
+  intro x hx a ha hax
+  have hx0 := Finset.mem_singleton.mp hx
+  omega
 
-example : IsWellBased (∅ : Finset ℕ) := by
-  simp [IsWellBased]
+example (ω l : ℕ) (hω : ω < 2 ^ l) (x : ℕ) (hx : x ∈ subwordShiftSet ω l)
+    (a : ℕ) (ha : 0 < a) (hax : a < x) :
+    a ∈ subwordShiftSet ω l ∨ x - a ∈ subwordShiftSet ω l :=
+  isWellBased_subwordShiftSet ω l hω x hx a ha hax
+
+example : ¬ IsPositiveWellBased ({0} : Finset ℕ) :=
+  fun h => h.1 (by simp)
+
+example : IsPositiveWellBased ∅ := by
+  simp [IsPositiveWellBased, IsWellBased]
+
+example (ω l : ℕ) : 0 ∉ subwordShiftSet ω l :=
+  zero_notMem_subwordShiftSet ω l
 
 example (ω l : ℕ) (hl : l ≤ 1) : subwordShiftSet ω l = ∅ := by
   ext j
@@ -28,15 +40,15 @@ example (ω l : ℕ) (hl : l ≤ 1) : subwordShiftSet ω l = ∅ := by
     iff_false]
   omega
 
-example : IsWellBased (subwordShiftSet 0 0) :=
-  isWellBased_subwordShiftSet 0 0 (by decide)
+example : IsPositiveWellBased (subwordShiftSet 0 0) :=
+  isPositiveWellBased_subwordShiftSet 0 0 (by decide)
 
-example : IsWellBased (subwordShiftSet 1 1) :=
-  isWellBased_subwordShiftSet 1 1 (by decide)
+example : IsPositiveWellBased (subwordShiftSet 1 1) :=
+  isPositiveWellBased_subwordShiftSet 1 1 (by decide)
 
-example : IsWellBased ({1, 3} : Finset ℕ) := by
+example : IsPositiveWellBased ({1, 3} : Finset ℕ) := by
   rw [← subwordShiftSet_1010]
-  exact isWellBased_subwordShiftSet 0b1010 4 (by decide)
+  exact isPositiveWellBased_subwordShiftSet 0b1010 4 (by decide)
 
 -- The stronger clause fails: the omitted shifts 5 and 7 have difference 2 in Q.
 example : subwordShiftSet 0b010100101 9 = {1, 2, 3, 4, 6, 8} := by decide
