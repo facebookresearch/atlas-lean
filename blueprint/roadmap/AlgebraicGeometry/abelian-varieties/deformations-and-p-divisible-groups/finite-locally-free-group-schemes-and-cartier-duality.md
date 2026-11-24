@@ -44,7 +44,13 @@ isogeny with $\operatorname{Ker}(f)^D$ (van der Geer–Moonen, Theorem (7.5)).
 
 ## Depends on
 
-Its statement uses the notions listed under Expansion.
+- [The fppf topology on schemes](../../grothendieck-topologies/fppf-topology-on-schemes.md), for the
+  fppf sheaves of the statement
+- [The topology induced on an over category](../../../CategoryTheory/sites-and-sheaves/topology-on-an-over-category.md),
+  for the fppf site of schemes over $S$
+- [The sheaf of morphisms between two sheaves](../../../CategoryTheory/sites-and-sheaves/sheaf-of-morphisms-of-sheaves.md),
+  for the sheaf $\underline{\operatorname{Hom}}(G, \mathbb{G}_m)$, taken between sheaves of groups
+  so that its sections are homomorphisms
 
 ## Proof depends on
 
@@ -54,10 +60,16 @@ Its statement uses the notions listed under Expansion.
 - [Closed immersions preserving the rank over the base are isomorphisms](../../schemes-and-morphisms/closed-and-open-immersions/is-iso-of-is-closed-immersion-of-finrank.md),
   for the converse in 1: a closed immersion $G / K \to G''$ between finite locally free $S$-schemes
   of the same rank is an isomorphism
+- [Spectra of commutative Hopf algebras](../../schemes-and-morphisms/affine-group-schemes-and-hopf-algebras/spec-of-commutative-hopf-algebras.md),
+  for the group scheme $\operatorname{Spec}$ of the dual Hopf algebra over an affine open subscheme
+  on which $G$ is finite free, in the construction of $G^D$ (Oort, I.2); gluing and biduality are
+  further steps
 
 ## Expansion
 
 A good expansion has pages for: the representability of $G^D$ by the dual of the Hopf algebra of $G$
+(stated in the project as `CartierDual`, MathlibExt/RingTheory/HopfAlgebra/CartierDual.lean:54–56,
+with its Hopf algebra structure for finite free algebras, `CartierDual.instHopfAlgebra`, :1114–1118)
 and biduality (Oort, I.2); the existence of fppf quotients of finite locally free group schemes by
 finite locally free closed subgroups, with the multiplicativity of ranks (Stacks Project, Tag 07S7,
 which applies to the action of $H$ on the affine $S$-scheme $G$); the exactness of Cartier duality
@@ -66,8 +78,7 @@ bundles along the $G$-torsor $X \to Y$ (van der Geer–Moonen, (7.2)–(7.4)).
 
 A good expansion also states and links:
 
-- fppf sheaves of groups (Stacks Project, Section 34.7, Tag 021L), their quotients and the sheaf
-  $\underline{\operatorname{Hom}}(G, \mathbb{G}_m)$, for the statement
+- quotients of fppf sheaves of abelian groups, for the statement
 
 ## Sources
 

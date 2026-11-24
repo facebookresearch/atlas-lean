@@ -48,6 +48,10 @@ over a field to a scheme, through its dense schematic open subspace.
 ## Depends on
 
 - [Abelian scheme](abelian-scheme.md), for the abelian schemes of 4 and the abelian varieties of 5
+- [The fppf topology on schemes](../grothendieck-topologies/fppf-topology-on-schemes.md), for the
+  fppf sheaves in which the statement places the relative Picard functors
+- [The topology induced on an over category](../../CategoryTheory/sites-and-sheaves/topology-on-an-over-category.md),
+  for the fppf site of schemes over $T$
 
 ## Proof depends on
 
@@ -60,8 +64,12 @@ over a field to a scheme, through its dense schematic open subspace.
 
 A good expansion also states and links:
 
-- fppf sheaves (Stacks Project, Section 34.7, Tag 021L) and algebraic spaces, in which the statement
-  places the relative Picard functors defined above, for the statement
+- algebraic spaces over $T$, presented as quotients of étale equivalence relations (stated in the
+  project as `AlgebraicGeometry.GeneralStackGeometry.AlgebraicSpaceOver`,
+  MathlibExt/AlgebraicGeometry/GeneralStackGeometry.lean:181–185, and
+  `AlgebraicGeometry.EtaleSpacePresentations.EtaleEquivalencePresentation`,
+  MathlibExt/AlgebraicGeometry/EtaleSpacePresentations.lean:65–76), in which the statement places
+  the relative Picard functors defined above, for the statement
 - the Künneth formula for the cohomology of the structure sheaf, which gives the coproduct, and the
   vanishing of coherent cohomology above the dimension (van der Geer–Moonen, (6.14)–(6.15)), for 5
 - the Borel–Hopf structure theorem for graded bialgebras over a perfect field (van der Geer–Moonen,

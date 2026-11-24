@@ -30,7 +30,12 @@ $A_s$ has dimension $0$, and 2 passes from the fibres to $S$.
 
 ## Depends on
 
-Its statement uses the notions listed under Expansion.
+- [Flat morphisms of schemes](../schemes-and-morphisms/flat-morphism-of-schemes.md), for the flat
+  morphisms of the statement
+- [Smooth morphisms of schemes](../schemes-and-morphisms/smooth-morphisms/smooth-morphism-of-schemes.md),
+  for its smooth morphisms
+- [Étale morphisms of schemes](../schemes-and-morphisms/etale-morphism-of-schemes.md), for its étale
+  morphisms
 
 ## Proof depends on
 
@@ -47,8 +52,8 @@ every point by translations.
 
 A good expansion also states and links:
 
-- flat, smooth and étale morphisms (Stacks Project, Sections 29.26, 29.35 and 29.37) and group
-  schemes over a base (Section 39.4), with their Lie algebras, for the statement
+- group schemes over a base (Stacks Project, Section 39.4), with their Lie algebras, for the
+  statement
 
 ## Sources
 

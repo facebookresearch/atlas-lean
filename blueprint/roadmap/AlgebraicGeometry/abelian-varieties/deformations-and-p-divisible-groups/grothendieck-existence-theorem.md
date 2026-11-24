@@ -37,7 +37,9 @@ identities between them, and does not by itself give smoothness.
 
 ## Depends on
 
-Its statement uses the notions listed under Expansion.
+- [Adically complete modules](../../../RingTheory/local-rings/adic-completion/adically-complete-module.md),
+  for the noetherian adic ring $A$ of the statement, which is $I$-adically complete for an ideal of
+  definition $I$
 
 ## Proof depends on
 
@@ -56,8 +58,10 @@ by lifted sections of a power of $\mathcal{L}$ and algebraizing the coherent ide
 
 A good expansion also states and links:
 
-- noetherian adic rings, formal schemes, formal completions and coherent sheaves on them (EGA I,
-  chapter 0, §7, and chapter I, §10), for the statement
+- formal schemes, formal completions and coherent sheaves on them (EGA I, chapter 0, §7, and chapter
+  I, §10), and the adic thickenings $X \times_S \operatorname{Spec}(A / I^{n+1})$ (stated in the
+  project as `AlgebraicGeometry.adicThickening`,
+  MathlibExt/AlgebraicGeometry/AdicThickening.lean:61–63), for the statement
 
 ## Sources
 

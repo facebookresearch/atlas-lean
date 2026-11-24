@@ -79,6 +79,9 @@ A good expansion has pages for:
 - [Schwarz–Pick lemma](../../Analysis/complex-analysis/geometric-function-theory/schwarz-pick-lemma/schwarz-pick.md),
   for the Schwarz bound $|f(z)| \le |z|$ on the unit disc, its case $w = 0$ when $f(0) = 0$, to
   which the Schwarz lemma on polydiscs behind the Serre–Siegel lemma (6.13) reduces
+- [Hahn–Banach extension with the same norm](../../Analysis/banach-spaces/duality-and-weak-topologies/hahn-banach-theorem/hahn-banach-norm-preserving-extension.md),
+  for the extension of the bounded functional $D''^* v \mapsto \langle v, g \rangle$ from the range
+  of $D''^*$ to the whole $L^2$ space with the same norm, in the proof of (5.1)
 
 ## Expansion
 
@@ -86,8 +89,9 @@ A good expansion also states and links:
 
 - Kähler manifolds with complete metrics and hermitian vector bundles with their curvature operators
   on $L^2$ forms (Demailly, §§4–5), for the statement
-- the cut-off functions that the completeness of the metric provides and the Hahn–Banach theorem in
-  $L^2$ (Demailly, proof of (5.1)), for the passage from the a priori inequality (4.7) to (5.1)
+- the cut-off functions that the completeness of the metric provides and the Fréchet–Riesz
+  representation of the extended functional by a vector of the Hilbert space (Demailly, proof of
+  (5.1)), for the passage from the a priori inequality (4.7) to (5.1)
 
 ## Sources
 

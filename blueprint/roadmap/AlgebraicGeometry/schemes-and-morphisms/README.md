@@ -9,3 +9,6 @@ The scheme-theoretic foundations of algebraic geometry: points, immersions, smoo
 - [Smooth morphisms](smooth-morphisms/README.md)
 - [Varieties over a field](varieties-over-a-field/README.md)
 - [Zariski's main theorem](zariski-s-main-theorem/README.md)
+- [Flat morphisms of schemes](flat-morphism-of-schemes.md)
+- [Étale morphisms of schemes](etale-morphism-of-schemes.md)
+- [Affine group schemes and Hopf algebras](affine-group-schemes-and-hopf-algebras/README.md)

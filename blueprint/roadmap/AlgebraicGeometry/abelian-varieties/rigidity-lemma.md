@@ -25,7 +25,11 @@ has no morphism to $V'$. The lemma shows that
 
 ## Proof depends on
 
-Its proof uses the inputs listed under Expansion.
+- [Morphisms into the spectrum of an algebra](../schemes-and-morphisms/affine-group-schemes-and-hopf-algebras/morphisms-to-the-spectrum-of-an-algebra.md),
+  for the case of an affine target over an affine open subscheme $\operatorname{Spec} R$ of $S$,
+  where morphisms into $\operatorname{Spec} B$ over $\operatorname{Spec} R$ are the $R$-algebra maps
+  from $B$ to global sections; these glue over $S$ to the correspondence of Robert, Remark 2.3.9,
+  and the cohomological flatness of $\pi$ is a further input
 
 ## Expansion
 

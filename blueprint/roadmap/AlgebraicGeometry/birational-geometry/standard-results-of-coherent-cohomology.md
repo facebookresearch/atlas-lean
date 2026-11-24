@@ -109,6 +109,12 @@ Project, Tags 0E8S, 0BDC and 0BDG).
 - [Finite morphisms are the proper locally quasi-finite morphisms](../schemes-and-morphisms/zariski-s-main-theorem/finite-iff-proper-and-locally-quasi-finite.md),
   for the finiteness of a proper morphism with finite fibres, in the proof of the embedding
   criterion 7 (Stacks Project, Tag 0E8S)
+- [Tensoring with a flat module preserves exactness](../../RingTheory/modules/tensor-with-a-flat-module-preserves-exactness.md),
+  for the exactness of the Čech complex of a quasi-coherent sheaf after tensoring with a flat
+  algebra, in flat base change in 2 (Stacks Project, Lemma 30.5.2, Tag 02KH)
+- [The Čech complex of a presheaf](../../CategoryTheory/sites-and-sheaves/cech-complex-of-a-presheaf.md),
+  for the Čech complex of a finite affine open covering, which computes the cohomology of a
+  quasi-coherent sheaf in the proof of flat base change in 2
 
 ## Expansion
 
@@ -116,8 +122,10 @@ A good expansion also states and links:
 
 - the dévissage of coherent sheaves and Chow's lemma (EGA III, proof of Théorème (3.2.1)), for the
   finiteness theorem in 2
-- the Čech complex and the exactness of flat tensor products (Stacks Project, Tag 02KH), for flat
-  base change in 2
+- the comparison of the Čech complex of a finite affine open covering with the cohomology of a
+  quasi-coherent sheaf on a separated scheme, the base change of that complex and the reduction from
+  quasi-separated schemes (Stacks Project, proof of Lemma 30.5.2, Tag 02KH, with Lemmas 30.2.6 and
+  30.5.1), for flat base change in 2
 - Kleiman's criterion for nef line bundles (Keeler, Proposition 2.11) and the nonnegativity of the
   products $L^i \cdot N^{d-i} \cdot V$ of two nef classes on a $d$-dimensional integral $V$
   contracted by $\pi$ (Keeler, Lemma 2.12), as a page of its own, for 5 and 6; the page on

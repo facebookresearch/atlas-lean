@@ -46,14 +46,18 @@ This node has no prerequisites.
 
 ## Proof depends on
 
-Its proof uses the inputs listed under Expansion.
+- [Minkowski's convex body theorem](../../NumberTheory/diophantine-approximation/uniform-distribution-metric/minkowski-convex-body-theorem.md),
+  for Minkowski's first theorem, a nonzero element of $M$ in a symmetric convex body of volume more
+  than $2^m \operatorname{covol}(M)$; the lower bound for the number of points of $M$ in the open
+  unit ball is a further step
 
 ## Expansion
 
 A good expansion has pages for:
 
-- Minkowski's first theorem on lattice points in convex symmetric bodies and its counting form
-  behind the last inequality (Yuan, Remark 2 after Definition 2.1 and Proposition 2.6 (1));
+- the counting form of Minkowski's first theorem behind the last inequality, a lower bound for the
+  number of lattice points in the open unit ball (Yuan, Remark 2 after Definition 2.1 and
+  Proposition 2.6 (1));
 - Minkowski's second theorem on successive minima, which Zhang uses to compare the covolumes of
   lattices of different ranks (Zhang, (1.7));
 - Mahler's inequality $V(K) V(K^*) \ge 4^n / (n!)^2$ for a convex symmetric body $K \subset

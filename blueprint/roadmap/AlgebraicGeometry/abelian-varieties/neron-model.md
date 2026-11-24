@@ -49,12 +49,16 @@ A good expansion follows Bosch, Lütkebohmert and Raynaud and has pages for:
 
 - [Abelian varieties are projective](abelian-varieties-are-projective.md), for the projective
   embedding of $A$ by which Conrad presents it as a quotient of a Jacobian (Proposition 4.3)
+- [Representing objects are unique up to isomorphism](../../CategoryTheory/categories-and-functors/uniqueness-of-representing-objects.md),
+  for the uniqueness of the Néron model up to isomorphism, as an object representing the functor of
+  the statement on smooth $R$-schemes; its existence is the content of this node
 
 ## Expansion
 
 A good expansion also states and links:
 
-- the Yoneda lemma, for the uniqueness of the Néron model up to unique isomorphism
+- the full faithfulness of the Yoneda embedding, for the uniqueness of the isomorphism between two
+  Néron models compatible with their identifications with the functor
 - Bertini slicing, for a smooth proper geometrically connected curve $X$ over $K$ with a surjection
   $J_X \to A$ from its Jacobian (Conrad, proof of Proposition 4.3)
 - Poincaré's reducibility theorem, for an abelian variety $B$ over $K$ with $A \times B$ isogenous
