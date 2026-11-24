@@ -2,7 +2,7 @@
 
 In Wadler's calculus of Classical Processes, if $P \vdash \Gamma$ then there is $Q$ with $P \Longrightarrow^* Q$ such that $Q$ is not a top-level cut: every well-typed process can reduce until it is ready to communicate on a free channel. This is the process reading of cut elimination for classical linear logic.
 
-## Proof depends on
+## Depends on
 
 - [Classical Processes and preservation](classical-processes-and-preservation.md)
 
