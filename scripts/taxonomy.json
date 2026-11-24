@@ -9305,6 +9305,7 @@
   "MathlibExt/Analysis/CStarAlgebra/OperatorConvexSq": {"to": "Analysis/operator-algebras", "title": "Operator monotone and operator convex functions"},
   "MathlibExt/Analysis/CStarAlgebra/RussoDye": {"to": "Analysis/operator-algebras", "title": "Russo–Dye theorem"},
   "MathlibExt/Analysis/CStarAlgebra/Stinespring": {"to": "Analysis/operator-algebras", "title": "Stinespring dilation theorem"},
+  "MathlibExt/Analysis/Calculus/MvPolynomial": {"to": "Analysis/real-functions/multivariable-calculus", "title": "Analytic derivatives of multivariate polynomials"},
   "MathlibExt/Analysis/Calculus/ArcsinDivSinIntegral": {"to": "Analysis/real-functions/integration", "title": "Bhandari's arcsine-over-sine integral"},
   "MathlibExt/Analysis/Calculus/Bisection": {"to": "Analysis/numerical-analysis", "title": "Bisection method"},
   "MathlibExt/Analysis/Calculus/Borel": {"to": "Analysis/real-functions/differential-calculus", "title": "Borel's lemma"},
