@@ -13,6 +13,7 @@ public import Mathlib.NumberTheory.Real.GoldenRatio
 public import Mathlib.Order.Filter.AtTopBot.Basic
 public import Mathlib.Topology.Instances.Real.Lemmas
 public import Mathlib.Data.Set.Card
+public import MathlibExt.Combinatorics.BlockingWythoff
 public import MathlibExt.Combinatorics.InfiniteWord.PureMorphicWord
 public import WantedExt.NumberTheory.GeneralizedHofstadterOrderWanted
 
@@ -31,41 +32,6 @@ and absorbing set of the (well-founded) move relation, `MetaMathlibExt.pPosition
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Moves of Wythoff's game with terminal positions.** Let $\ell$ be a natural number. In the
-game $K^\ell$, whose positions are pairs $(x, y)$ of natural numbers (the sizes of two piles of
-tokens), there is a move from $(x, y)$ to $(x', y')$ when $x + y > \ell$ and either $y' = y$ and
-$x' < x$, or $x' = x$ and $y' < y$, or $x = x' + k$ and $y = y' + k$ for some $k > 0$. Thus the
-positions with $x + y \le \ell$ are terminal, and from any other position a move removes a
-positive number of tokens from one pile, or the same positive number from both piles.
-
-Source: Antoine Renard and Michel Rigo, *Variants of Wythoff Game With Terminal Positions
-or Blocking Maneuvers*, Journal of Integer Sequences 29 (2026), Article 26.1.6, the game
-`K^ℓ` of Theorem 17 (`jis-2026-26.1.6-thm-17`): Wythoff's moves with terminal positions
-`{(x, y) | x + y ≤ ℓ}`. -/
-def wythoffTerminalMove (ℓ : ℕ) (p q : ℕ × ℕ) : Prop :=
-  ℓ < p.1 + p.2 ∧
-    ((q.2 = p.2 ∧ q.1 < p.1) ∨ (q.1 = p.1 ∧ q.2 < p.2) ∨
-      (∃ k, 0 < k ∧ q.1 + k = p.1 ∧ q.2 + k = p.2))
-
-/-- **No moves from terminal positions.** Let $\ell$ be a natural number. In the game $K^\ell$
-(Wythoff's game in which the positions $(x, y)$ with $x + y \le \ell$ are terminal), there is no
-move from a position $(x, y)$ with $x + y \le \ell$ to any position.
-
-Source: Antoine Renard and Michel Rigo, Journal of Integer Sequences 29 (2026),
-Article 26.1.6, terminal positions of `K^ℓ` (Theorem 17). -/
-theorem not_wythoffTerminalMove_of_terminal {ℓ : ℕ} {p : ℕ × ℕ} (hp : p.1 + p.2 ≤ ℓ)
-    (q : ℕ × ℕ) : ¬wythoffTerminalMove ℓ p q := fun h => by
-  have := h.1
-  omega
-
-/-- **A move to the origin in $K^0$.** In the game $K^0$ (Wythoff's game in which only $(0, 0)$ is
-terminal), there is a move from the position $(1, 0)$ to the position $(0, 0)$.
-
-Source: Antoine Renard and Michel Rigo, Journal of Integer Sequences 29 (2026),
-Article 26.1.6, Wythoff's moves (Theorem 17). -/
-theorem wythoffTerminalMove_zero_one_zero : wythoffTerminalMove 0 (1, 0) (0, 0) :=
-  ⟨by decide, Or.inl ⟨rfl, by decide⟩⟩
 
 /-- **The mex sequence of Wythoff's game with terminal positions.** Fix a natural number $\ell$.
 The sequence $(a_n)_{n \ge 0}$ is defined recursively: $a_n$ is the least natural number greater
@@ -297,30 +263,6 @@ theorem morphIterate_wythoffTerminal_one_example :
     (morphIterate (![[0, 1], [2], [3, 4], [3, 1], [2]] : Fin 5 → List (Fin 5)) 4 [0]).take 6 =
       [0, 1, 2, 3, 4, 3] := by
   decide
-
-/-- **Larsson's set $R_2$.** Let $\varphi = (1 + \sqrt{5})/2$ be the golden ratio. The set
-$R_2 \subseteq \mathbb{N} \times \mathbb{N}$ consists of $(0, 0)$ together with, for every natural
-number $n$, the pairs $(n, 2n + 1)$ and $(2n + 1, n)$ and the pairs
-$(2\lfloor n\varphi \rfloor + 2, 2\lfloor n\varphi^2 \rfloor + 2)$ and
-$(2\lfloor n\varphi^2 \rfloor + 2, 2\lfloor n\varphi \rfloor + 2)$.
-
-Source: Antoine Renard and Michel Rigo, *Variants of Wythoff Game With Terminal Positions
-or Blocking Maneuvers*, Journal of Integer Sequences 29 (2026), Article 26.1.6,
-Theorem 26. -/
-def larssonSetTwo : Set (ℕ × ℕ) :=
-  {(0, 0)} ∪ {p | ∃ n : ℕ, p = (n, 2 * n + 1) ∨ p = (2 * n + 1, n)} ∪
-    {p | ∃ n : ℕ,
-      p = (2 * ⌊(n : ℝ) * Real.goldenRatio⌋₊ + 2, 2 * ⌊(n : ℝ) * Real.goldenRatio ^ 2⌋₊ + 2) ∨
-      p = (2 * ⌊(n : ℝ) * Real.goldenRatio ^ 2⌋₊ + 2, 2 * ⌊(n : ℝ) * Real.goldenRatio⌋₊ + 2)}
-
-/-- **Sample positions in Larsson's set $R_2$.** The positions $(0, 0)$, $(0, 1)$ and
-$(2, 2)$ belong to Larsson's set $R_2$.
-
-Source: Antoine Renard and Michel Rigo, Journal of Integer Sequences 29 (2026),
-Article 26.1.6, Theorem 26. -/
-theorem larssonSetTwo_examples :
-    (0, 0) ∈ larssonSetTwo ∧ (0, 1) ∈ larssonSetTwo ∧ (2, 2) ∈ larssonSetTwo :=
-  ⟨Or.inl (Or.inl rfl), Or.inl (Or.inr ⟨0, Or.inl rfl⟩), Or.inr ⟨0, Or.inl (by simp)⟩⟩
 
 /-- **Larsson's set $R_3$.** Larsson's set $R_3 \subseteq \mathbb{N} \times \mathbb{N}$
 consists of $(0, 0)$ together with the pairs $(n, 2n + 1)$, $(2n + 1, n)$, $(n, 2n + 2)$ and
@@ -653,24 +595,6 @@ public theorem_wanted wythoffTerminal_three_morphic (n : ℕ) :
     (∃ w : ℕ → Fin 22, IsOmegaLimit f₃ 0 w) ∧
       ∀ w : ℕ → Fin 22, IsOmegaLimit f₃ 0 w →
         g₃ (w (wythoffMexA 3 n - 4)) = true ∧ g₃ (w (wythoffMexB 3 n - 4)) = false
-
-/-- **Larsson's P-positions of Blocking Wythoff Nim with one blocked option.** Let $\varphi$ be
-the golden ratio, and let $R_2$ consist of $(0, 0)$ and, for every $n \ge 0$, the positions
-$(n, 2n + 1)$, $(2n + 1, n)$, $(2\lfloor n\varphi \rfloor + 2, 2\lfloor n\varphi^2 \rfloor + 2)$
-and $(2\lfloor n\varphi^2 \rfloor + 2, 2\lfloor n\varphi \rfloor + 2)$. A Wythoff move from a
-position of two piles removes a positive number of tokens from one pile, or the same positive
-number from both. Then every position in $R_2$ has at most one Wythoff move to a position in
-$R_2$, and every position outside $R_2$ has at least two Wythoff moves to positions in $R_2$.
-
-Hence $R_2$ is the set of P-positions of $W^2$, Wythoff's game in which the previous player may
-forbid one option.
-
-Source: Antoine Renard and Michel Rigo, *Variants of Wythoff Game With Terminal Positions
-or Blocking Maneuvers*, Journal of Integer Sequences 29 (2026), Article 26.1.6,
-Theorem 26 (`jis-2026-26.1.6-thm-26`). -/
-public theorem_wanted blockingWythoff_two_pPositions :
-    (∀ x ∈ larssonSetTwo, {y | wythoffTerminalMove 0 x y ∧ y ∈ larssonSetTwo}.ncard ≤ 1) ∧
-      ∀ x ∉ larssonSetTwo, 2 ≤ {y | wythoffTerminalMove 0 x y ∧ y ∈ larssonSetTwo}.ncard
 
 /-- **Larsson's P-positions of Blocking Wythoff Nim with two blocked options.** Let $R_3$
 consist of $(0, 0)$ and, for every $n \ge 0$, the positions $(n, 2n + 1)$, $(2n + 1, n)$,

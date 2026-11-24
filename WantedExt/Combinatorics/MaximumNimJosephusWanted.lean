@@ -347,16 +347,6 @@ public theorem_wanted maximumNimGrundy_eq_F_of_not_dvd (k x : ℕ) (hk : 2 ≤ k
      (hkx : ¬k ∣ x) :
     maximumNimGrundy (· / k) x = maximumNimGrundy (· / k) ((k - 1) * x / k)
 
-/-- **Floor-rule Maximum Nim: positions below k have Grundy number zero.** For every natural
-number $k \ge 2$ and every natural number $j$ with $1 \le j \le k$, a pile of $k - j$ stones has
-Grundy number $0$ in Maximum Nim with rule function $f(y) = \lfloor y/k \rfloor$.
-
-Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
-        INTEGERS 24 (2024), Article G5, Lemma 3(iii) (`integers-2024-G5-lem-3`). -/
-public theorem_wanted maximumNimGrundy_sub_eq_zero (k j : ℕ) (hk : 2 ≤ k)
-    (hj : 1 ≤ j) (hjk : j ≤ k) :
-    maximumNimGrundy (· / k) (k - j) = 0
-
 /-- **A Maximum Nim non-divisibility lemma for $s < t$.** Let $k, n, t, h, s, i$ be natural
 numbers with $h \ge 1$, $k = nt + h$, $h \le n$ and $s < t$. If $1 \le i \le n$, then $k$ does
 not divide $n(k - s) - i$.

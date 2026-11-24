@@ -54,6 +54,13 @@ example : maximumNimGrundy (· / 3) 2 = 0 := by
   rw [maximumNimGrundy_eq, maximumNimMex_eq_iff]
   simp
 
+-- The endpoints below the first legal move are the empty pile and the pile of size `k - 1`.
+example (k : ℕ) (hk : 2 ≤ k) : maximumNimGrundy (· / k) 0 = 0 := by
+  simpa using maximumNimGrundy_sub_eq_zero k k hk (by omega) le_rfl
+
+example (k : ℕ) (hk : 2 ≤ k) : maximumNimGrundy (· / k) (k - 1) = 0 :=
+  maximumNimGrundy_sub_eq_zero k 1 hk le_rfl (by omega)
+
 -- Test section: Grundy numbers at multiples of the divisor. For `k = 3`, the piles `3`, `6` and
 -- `9` have Grundy numbers `1`, `2` and `3`.
 example : maximumNimGrundy (· / 3) 3 = 1 :=

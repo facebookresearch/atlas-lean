@@ -28,6 +28,7 @@ index `k` of the largest term of the Zeckendorf decomposition of `n` is
 Losing states are defined inductively (a state is losing when every move leads to a state
 with a move to a losing state). The repository's `SpragueGrundy.ImpartialGame` is not used
 because building one requires a proved termination rank, which is part of Theorem 1.3.
+We prove that every winning initial state has a unique losing successor.
 -/
 
 namespace MetaMathlibExt
@@ -194,6 +195,71 @@ public theorem accelZeckWinning_single_one_two :
   · simp at h; omega
   · simp only [Finsupp.single_apply] at h
     split_ifs at h <;> omega
+
+namespace accelZeck_unique_winning_first_move
+
+open Finsupp
+
+private theorem not_winning_of_losing {s : ℕ →₀ ℕ} (h : AccelZeckLosing s) :
+    ¬ AccelZeckWinning s := by
+  apply AccelZeckLosing.rec (motive_1 := fun t _ => ¬ AccelZeckWinning t)
+    (motive_2 := fun t _ => ¬ AccelZeckLosing t) _ _ h
+  · intro s _ ih ⟨_, t, hm, hl⟩
+    exact ih t hm hl
+  · intro s t hm _ ih ⟨_, hall⟩
+    exact ih (hall t hm)
+
+private noncomputable def openingState (n k : ℕ) : ℕ →₀ ℕ :=
+  single 1 (n - 2 * k) + single 2 k
+
+private theorem opening_move {n : ℕ} {t : ℕ →₀ ℕ} (h : AccelZeckMove (single 1 n) t) :
+    ∃ k, 2 * k ≤ n ∧ t = openingState n k := by
+  obtain ⟨k, hk, ⟨i, hi, _, hik, _⟩ | ⟨hn, rfl⟩ | ⟨hk₂, _⟩ | ⟨i, hi, hik, _⟩⟩ := h
+  · simp [single_eq_of_ne (show i ≠ 1 by omega)] at hik
+    omega
+  · exact ⟨k, by simpa using hn, by rw [openingState, single_tsub]⟩
+  · simp at hk₂
+    omega
+  · simp [single_eq_of_ne (show i ≠ 1 by omega)] at hik
+    omega
+
+-- After combining a pairs, combining b - a more pairs reaches the b-pair opening.
+private theorem combine_more {n a b : ℕ} (hab : a < b) (hn : 2 * b ≤ n) :
+    AccelZeckMove (openingState n a) (openingState n b) := by
+  refine ⟨b - a, by omega, Or.inr (Or.inl ⟨?_, ?_⟩)⟩
+  · simp [openingState]
+    omega
+  · ext i
+    rcases eq_or_ne i 1 with rfl | h₁
+    · simp [openingState]
+      omega
+    rcases eq_or_ne i 2 with rfl | h₂
+    · simp [openingState]
+      omega
+    simp [openingState, single_eq_of_ne h₁, single_eq_of_ne h₂]
+
+end accelZeck_unique_winning_first_move
+
+open accelZeck_unique_winning_first_move in
+/-- **Unique winning first move.** For every $n$, if the state consisting of $n$ copies of $F_1$
+is winning, then exactly one state reachable from it in one move is losing: when the first
+player has a winning strategy in the game on $n$, exactly one first move preserves it.
+
+Source: Diego Garcia-Fernandezsesma, Steven J. Miller, Thomas Rascon, Risa Vandegrift, and
+Ajmain Yamin, *The Accelerated Zeckendorf Game*, The Fibonacci Quarterly 62 (2024), no. 1,
+Article milleretal04072023, Proposition 1.5. -/
+public theorem accelZeck_unique_winning_first_move (n : ℕ)
+    (h : AccelZeckWinning (Finsupp.single 1 n)) :
+    ∃! t, AccelZeckMove (Finsupp.single 1 n) t ∧ AccelZeckLosing t := by
+  obtain ⟨t, ht, htl⟩ := (accelZeckWinning_iff _).mp h
+  refine ⟨t, ⟨ht, htl⟩, ?_⟩
+  rintro u ⟨hu, hul⟩
+  obtain ⟨a, ha, rfl⟩ := opening_move ht
+  obtain ⟨b, hb, rfl⟩ := opening_move hu
+  rcases lt_trichotomy a b with hab | rfl | hba
+  · exact (not_winning_of_losing htl (.intro _ _ (combine_more hab hb) hul)).elim
+  · rfl
+  · exact (not_winning_of_losing hul (.intro _ _ (combine_more hba ha) htl)).elim
 
 /-- **Zeckendorf decomposition as a game state.** Index the Fibonacci numbers as $F_1 = 1$,
 $F_2 = 2$ and $F_{i+1} = F_i + F_{i-1}$, and record a game state as a finitely supported

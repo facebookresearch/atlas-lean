@@ -229,22 +229,6 @@ public theorem_wanted pebbling_completeThree_isN_of_ge_fourKAddOne (k : ℕ) (hk
 
 /-! ### `(2:1)`-pebbling on `C_4` -/
 
-/-- **Closure of the mod-$3$ pattern classes under moves on $C_4$.** Let $a$ and $b$ be
-distributions of pebbles on the vertices of the $4$-cycle $C_4$ such that $b$ is obtained from $a$
-by one $(2:1)$-pebbling move, that is, by removing two pebbles from a vertex holding at least two
-pebbles and adding one pebble to an adjacent vertex. If $a \in \hat X_{aabb} \cup X_{abac}$, then
-$b \in \hat X_{aabb} \cup X_{abac}$; and if $a \in X_{aaab} \cup X_{abab} \cup X_{aabc}$, then
-$b \in X_{aaab} \cup X_{abab} \cup X_{aabc}$.
-
-Source: Barker, DeStefano, Fiorini, Gohn, Miller, Roeder, and Wong, *Generalized Impartial
-Two-player Pebbling Games on `K_3` and `C_4`*, Journal of Integer Sequences 27 (2024),
-Article 24.5.8, Lemma 15. -/
-public theorem_wanted c4Pattern_closed_under_moves (a b : Fin 4 → ℕ)
-    (hb : b ∈ pebblingMoves (SimpleGraph.cycleGraph 4) 1 a) :
-    ((C4PatternAABBHat a ∨ C4PatternABAC a) → (C4PatternAABBHat b ∨ C4PatternABAC b)) ∧
-      ((C4PatternAAAB a ∨ C4PatternABAB a ∨ C4PatternAABC a) →
-        (C4PatternAAAB b ∨ C4PatternABAB b ∨ C4PatternAABC b))
-
 /-- **Parity decides $(2:1)$-pebbling on $C_4$ in $\hat X_{aabb} \cup X_{abac}$.** Consider the
 $(2:1)$-pebbling game on the cycle $C_4$ with vertices $v_0, v_1, v_2, v_3$, where $v_i$ is
 adjacent to $v_{i \pm 1}$ (indices mod $4$), and let $a = (a_0, a_1, a_2, a_3)$ be a position
