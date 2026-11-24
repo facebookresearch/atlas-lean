@@ -16,6 +16,7 @@ public import Mathlib.Algebra.Polynomial.Roots
 public import MathlibExt.NumberTheory.GeneralizedPadovanPerrinCompanion
 public import MathlibExt.NumberTheory.GeneralizedPadovanPerrinExpansion
 public import MathlibExt.NumberTheory.GeneralizedPadovanPerrinModel
+public import MathlibExt.NumberTheory.PadovanPerrinFundamentalProduct
 
 namespace MetaMathlibExt
 
@@ -292,24 +293,6 @@ public theorem_wanted padovanPerrinFundamental_eq_shift [CommRing R] (k₁ k₂ 
       ∀ n, j ≤ n → padovanPerrinFundamental k₁ k₂ p s j n =
         k₁ * padovanPerrinFundamental k₁ k₂ p s (s + p) (n - j + p) +
           k₂ * padovanPerrinFundamental k₁ k₂ p s (s + p) (n - j)
-
-/-- **Product identity for the generalized Padovan–Perrin fundamental system.** Let $R$ be a
-commutative ring, $k_1, k_2 \in R$, and $p, s \ge 1$. Write $r = s + p$ and $v^{(\ell)}$ for the
-$\ell$-th sequence of the Fibonacci fundamental system of the $([k]; p; s)$-Padovan–Perrin
-recurrence. Then for all $m, n \ge 0$ and all $1 \le i, j \le r$,
-
-$$v^{(r-j+1)}_{n+m+r-i} = \sum_{k=1}^{r} v^{(r-k+1)}_{m+r-i} \, v^{(r-j+1)}_{n+r-k}.$$
-
-Source: Elen Viviani Pereira Spreafico, Mustapha Rachidi, and Paula Maria Machado Cruz Catarino,
-*On a Model of (k;p;s)-Generalized Padovan-Perrin and Fibonacci Fundamental System*, INTEGERS 24
-(2024), Article A49, Proposition 3, equation (10) (`integers-2024-A49-prop-3`). -/
-public theorem_wanted padovanPerrinFundamental_mul_sum [CommRing R] (k₁ k₂ : R) (p s : ℕ)
-    (hp : 0 < p) (hs : 0 < s) (m n i j : ℕ) (hi : 1 ≤ i) (hi' : i ≤ s + p) (hj : 1 ≤ j)
-    (hj' : j ≤ s + p) :
-    padovanPerrinFundamental k₁ k₂ p s (s + p - j + 1) (n + m + (s + p) - i) =
-      ∑ k ∈ Finset.Icc 1 (s + p),
-        padovanPerrinFundamental k₁ k₂ p s (s + p - k + 1) (m + (s + p) - i) *
-          padovanPerrinFundamental k₁ k₂ p s (s + p - j + 1) (n + (s + p) - k)
 
 /-- **Combinatorial expression of the Padovan–Perrin sequences.** Let $R$ be a commutative ring,
 let $k_1, k_2 \in R$, let $p, s$ be positive integers, and let $v \colon \mathbb{N} \to R$ satisfy

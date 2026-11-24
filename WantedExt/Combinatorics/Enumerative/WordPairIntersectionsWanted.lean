@@ -56,36 +56,6 @@ public theorem_wanted nonIntersectingWordPairs_sameLength_generatingFunction (k 
       PowerSeries.mk fun n => ∑ j ∈ Finset.Icc 1 (k - 1),
         (k.choose j : ℚ) * j.factorial * Nat.stirlingSecond n j * ((k - j : ℕ) : ℚ) ^ n
 
-/-- **Non-intersecting pairs of words of equal length.** Let $S(n, j)$ denote the Stirling numbers
-of the second kind. For natural numbers $k$ and $n \ge 1$, the number of pairs $(u, v)$ of words
-of length $n$ over an alphabet of $k$ letters such that no letter occurs in both $u$ and $v$ is
-$\sum_{j=1}^{k-1} \binom{k}{j} \, j! \, S(n, j) \, (k-j)^n$.
-
-Source: Aubrey Blecher and Arnold Knopfmacher, *Intersections in Pairs of Words*, INTEGERS 24 (2024),
-Article A107, Corollary 2 (`integers-2024-A107-cor-2`). -/
-public theorem_wanted nonIntersectingWordPairs_sameLength_card (k n : ℕ) (hn : 1 ≤ n) :
-    ((Finset.univ : Finset ((Fin n → Fin k) × (Fin n →
-        Fin k))).filter fun p => Disjoint (Finset.univ.image p.1) (Finset.univ.image p.2)).card =
-      ∑ j ∈ Finset.Icc 1 (k - 1), k.choose j * j.factorial * Nat.stirlingSecond n j * (k - j) ^ n
-
-/-- **Overlap statistic on pairs of words.** Fix natural numbers $k$, $n \ge 1$, $r \ge 1$ and a
-rational number $q$. For words $u$ and $v$ over an alphabet of $k$ letters, the overlap of
-$(u, v)$ is the number of positions of $v$ whose letter occurs in $u$. Write $[x^m] F$ for the
-coefficient of $x^m$ in a formal power series $F$ over $\mathbb{Q}$, $S(m, j)$ for the Stirling
-numbers of the second kind, and $c_j = qj + k - j$. Then the sum of $q^{\text{overlap}}$ over all
-pairs $(u, v)$ with $u$ of length $n$ and $v$ of length $r$ equals
-$\sum_{j=1}^{k} \binom{k}{j} \, [x^r]\bigl(c_j x \, (1 - c_j x)^{-1}\bigr) \, j! \, S(n, j)$.
-
-Source: Aubrey Blecher and Arnold Knopfmacher, *Intersections in Pairs of Words*, INTEGERS 24 (2024),
-Article A107, Theorem 2 (`integers-2024-A107-thm-2`). -/
-public theorem_wanted wordPairs_overlap_sum_eq_coeff (k n r : ℕ) (hn : 1 ≤ n) (hr : 1 ≤ r) (q : ℚ) :
-    ∑ p ∈ (Finset.univ : Finset ((Fin n → Fin k) × (Fin r → Fin k))),
-        q ^ (Finset.univ.filter fun i => p.2 i ∈ Finset.univ.image p.1).card =
-      ∑ j ∈ Finset.Icc 1 k, (k.choose j : ℚ) *
-        coeff r (PowerSeries.C (q * j + (k - j : ℕ)) * X *
-          (1 - PowerSeries.C (q * j + (k - j : ℕ)) * X)⁻¹) *
-        (j.factorial * Nat.stirlingSecond n j)
-
 /-- **Non-intersecting pairs of weakly decreasing words.** Fix natural numbers $k$, $n \ge 1$ and
 $r \ge 1$, and order an alphabet of $k$ letters. Write $[x^m] F$ for the coefficient of $x^m$ in a
 formal power series $F$ over $\mathbb{Q}$. The number of pairs $(u, v)$ of weakly decreasing words

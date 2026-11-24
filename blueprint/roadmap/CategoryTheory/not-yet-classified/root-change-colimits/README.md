@@ -1,0 +1,16 @@
+# Root Change Colimits
+
+- [Mapped Cocone](mapped-cocone.md)
+- [Mapped Colimit](mapped-colimit.md)
+- [Mapped Cocone is Colimit iff](mapped-cocone-is-colimit-iff.md)
+- [Desc](desc.md)
+- [Desc root](desc-root.md)
+- [Desc leg right](desc-leg-right.md)
+- [Desc right unique](desc-right-unique.md)
+- [Mapped Presentation](mapped-presentation.md)
+- [Mapped Presentation object right function](mapped-presentation-object-right-functio.md)
+- [Mapped Presentation object root function](mapped-presentation-object-root-function.md)
+- [Mapped Presentation map right function](mapped-presentation-map-right-function.md)
+- [Mapped Presentation leg right](mapped-presentation-leg-right.md)
+- [Mapped Presentation leg right function](mapped-presentation-leg-right-function.md)
+- [Composition root function](composition-root-function.md)
