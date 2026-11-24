@@ -11181,6 +11181,7 @@
   "MathlibExt/Combinatorics/Words/AntitoneRelativePosition": {"to": "Combinatorics/combinatorics-on-words/morphic-sturmian-words", "title": "Relative position in binary words"},
   "MathlibExt/Combinatorics/WeightedProjectiveSimplexReflexive": {"to": "Combinatorics/polytopes-simplicial-complexes", "title": "Weighted projective space simplices"},
   "MathlibExt/Combinatorics/Words/Automatic": {"to": "Combinatorics/combinatorics-on-words/automatic-sequences", "title": "Automatic sequences"},
+  "MathlibExt/Combinatorics/Words/AvoidZZ1Z": {"to": "Combinatorics/combinatorics-on-words/finite-words", "title": "Consecutive patterns in words"},
   "MathlibExt/Combinatorics/Words/BalancedDyadicNestedEventuallyPeriodic": {"to": "Combinatorics/combinatorics-on-words/automatic-sequences", "title": "Meta-automatic sequences"},
   "MathlibExt/Combinatorics/Words/BalancedNestedXor": {"to": "Combinatorics/combinatorics-on-words/automatic-sequences", "title": "Meta-automatic sequences"},
   "MathlibExt/Combinatorics/Words/CobhamUniformMorphism": {"to": "Combinatorics/combinatorics-on-words/automatic-sequences", "title": "Automatic sequences"},
