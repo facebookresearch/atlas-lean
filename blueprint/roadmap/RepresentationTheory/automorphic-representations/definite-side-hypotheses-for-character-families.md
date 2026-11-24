@@ -34,6 +34,16 @@ suffice), the theorems of Siegel–Klingen and Deligne–Ribet, the functional e
 fields (which the page on Hecke $L$-functions does not state), Weber's ray class fields, and the good
 reduction of CM elliptic curves outside a prime.
 
+## Depends on
+
+The notions of the statement are specific to this proof and are not yet pages, so this section names
+them instead of linking them: the class of families of auxiliary number fields attached to scales,
+which are the families of the window bounds for weighted Chebyshev sums (that node uses this one and
+is not linked from here); the selections for the members of a family, with their Hermitian lattices
+over CM fields, their theta realisations on indefinite and definite unitary groups, and the rows,
+twists and levels of these realisations; the constants; and the conditions listed above, among them
+the class number formulas and genus–mass volumes of the lattices and the definite-side condition.
+
 ## Proof depends on
 
 - [Theta integral identities and local matching for unitary dual pairs](theta-integral-identities-for-unitary-dual-pairs.md)

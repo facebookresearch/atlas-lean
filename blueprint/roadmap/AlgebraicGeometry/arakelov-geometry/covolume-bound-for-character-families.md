@@ -25,6 +25,15 @@ $p$-divisible groups; and pages, still to be added, for the Hodge filtration of 
 modules and for Green's generic irreducible characters of $\mathrm{GL}_N(\mathbb{F}_p)$ attached to
 squarefree polynomials with nonzero constant term, which extend the cuspidal case.
 
+## Depends on
+
+The notions of the statement are specific to this proof and are not yet pages, so this section names
+them instead of linking them: the class of families of auxiliary number fields attached to scales,
+which are the families of the window bounds for weighted Chebyshev sums (that node uses this one
+through the definite-side hypotheses and is not linked from here); the points of a family, with their
+point conditions and the tie condition; and the lattice that the argument attaches to each point,
+whose covolume the statement bounds.
+
 ## Proof depends on
 
 - [Principalization of ideal sheaves in characteristic zero](../birational-geometry/resolution-of-singularities/principalization-of-ideal-sheaves.md), for an empty boundary
