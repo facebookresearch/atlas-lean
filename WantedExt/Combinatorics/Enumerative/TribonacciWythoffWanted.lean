@@ -14,8 +14,11 @@ public import Mathlib.Data.Nat.Digits.Defs
 public import Mathlib.Data.Nat.Nth
 public import Mathlib.Data.Set.Card
 public import MathlibExt.Combinatorics.Enumerative.ExtraTribLeftExtension
+public import MathlibExt.Combinatorics.Enumerative.ExtraTribReversal
 public import MathlibExt.Combinatorics.Enumerative.FibternarySums
+public import MathlibExt.Combinatorics.Enumerative.TrithoffPrecolumns
 public import MathlibExt.Combinatorics.Enumerative.TrithoffRowDifference
+public import MathlibExt.Combinatorics.Enumerative.TrithoffRowNumber
 public import MathlibExt.Combinatorics.InfiniteWord.Tribonacci
 public import MathlibExt.NumberTheory.TribonacciSequenceWithInitialValues001
 
@@ -260,28 +263,6 @@ public theorem_wanted tribonacciSucc_record_eventually_contains (α : ℝ)
         (tribonacciValue (0 :: R n) : ℝ) - α * n < tribonacciValue (0 :: R m) - α * m) N)).getD
       (Nat.nth (fun i => (tribonacci (i + 1) : ℝ) - α * tribonacci i < 0) (t - 1) - 3) 0 = 1
 
-/-- **Row numbers of the Trithoff array.** Let $T_0 = T_1 = 0$, $T_2 = 1$ and
-$T_{k+3} = T_{k+2} + T_{k+1} + T_k$ be the Tribonacci numbers, and let $U_i = T_i + T_{i+1}$,
-so that $U_0, U_1, U_2, \dots = 0, 1, 2, 3, 6, 11, \dots$. Let $n$ have Tribonacci
-representation $a1$, where $a$ is a digit word written most significant digit first, and let
-$[a]_T$ be the Tribonacci value of $a$. Then $n$ is the $(n - [a]_T)$-th smallest positive
-integer whose Tribonacci representation ends in $1$ (OEIS A003265, the first column of the
-Trithoff array), and $n - [a]_T = 1 + [a1]_U$, where $[a1]_U$ is the sum of the digits of $a1$
-weighted by $U_0, U_1, U_2, \dots$ starting from the least significant digit.
-
-The paper writes $U_i = T_{2,i-2}$; its alternative formula $T_{i+1} - T_i$ is shifted, and the
-displayed values $0, 1, 2, 3, 6, 11, \dots$ are used.
-
-Source: E. Chen et al., *Generalizing the Wythoff Array and Other Fibonacci Facts to
-Tribonacci Numbers*, Journal of Integer Sequences 28 (2025), Article 25.5.4,
-Lemma 7 (`jis-2025-25.5.4-lem-7`). -/
-public theorem_wanted trithoff_row_number_eq (a : List ℕ) (n : ℕ)
-    (h : IsTribonacciRepr (1 :: a) n) :
-    Nat.nth (fun m => 0 < m ∧ ∃ w,
-        IsTribonacciRepr w m ∧ w.getD 0 0 = 1) (n - tribonacciValue a - 1) = n ∧
-      n - tribonacciValue a = 1 + ∑ i ∈ Finset.range (a.length + 1),
-        (1 :: a).getD i 0 * (tribonacci i + tribonacci (i + 1))
-
 /-- **Appending a zero to a non-canonical Tribonacci representation.** Let $T_0 = T_1 = 0$,
 $T_2 = 1$ and $T_{k+3} = T_{k+2} + T_{k+1} + T_k$ be the Tribonacci numbers, and for a digit
 word $u$, written most significant digit first, let $[u]_T$ be its Tribonacci value, in which
@@ -297,26 +278,6 @@ Lemma 12 (`jis-2025-25.5.4-lem-12`). -/
 public theorem_wanted tribonacciValue_cons_zero_of_noncanonical (w v : List ℕ) (n : ℕ)
     (hw : ∀ d ∈ w, d ≤ 1) (hwn : tribonacciValue w = n) (hv : IsTribonacciRepr v n) :
     tribonacciValue (0 :: w) = tribonacciValue (0 :: v)
-
-/-- **Precolumns of the Trithoff array.** Write $[u]_T$ for the Tribonacci value of a digit
-word $u$, written most significant digit first. Let $n$ have Tribonacci representation $abc1$,
-where $a$ is a digit word and $b$, $c$ are digits. Let $\mathrm{out}(n) = [abc10]_T$ and
-$\mathrm{out}^2(n) = [abc100]_T$ be the next two entries of the Trithoff row of $n$, and extend
-the row to the left by the Tribonacci rule: in the integers, the wall is
-$W = \mathrm{out}^2(n) - \mathrm{out}(n) - n$ and the seed is $S = \mathrm{out}(n) - n - W$.
-Then $W = [abc]_T + 1$, $S = [ab]_T + c$, and the pre-seed $n - W - S$ equals $[a]_T + b$.
-
-Source: E. Chen et al., *Generalizing the Wythoff Array and Other Fibonacci Facts to
-Tribonacci Numbers*, Journal of Integer Sequences 28 (2025), Article 25.5.4,
-Lemma 13 (`jis-2025-25.5.4-lem-13`). -/
-public theorem_wanted trithoff_precolumns (a : List ℕ) (b c n : ℕ)
-    (h : IsTribonacciRepr (1 :: c :: b :: a) n) :
-    let g₂ : ℤ := tribonacciValue (0 :: 1 :: c :: b :: a)
-    let g₃ : ℤ := tribonacciValue (0 :: 0 :: 1 :: c :: b :: a)
-    let wall := g₃ - g₂ - n
-    let seed := g₂ - n - wall
-    wall = tribonacciValue (c :: b :: a) + 1 ∧ seed = tribonacciValue (b :: a) + c ∧
-      (n : ℤ) - wall - seed = tribonacciValue a + b
 
 /-- **Wall, seed and pre-seed of the Trithoff array via the Tribonacci word.** Let
 $f_1 < f_2 < \cdots$ be the positive integers whose Tribonacci representation ends in $1$ (the
@@ -433,15 +394,6 @@ public theorem_wanted extraTrib_row_number_modEq_one (S : ℤ → ℤ) (hS : IsE
         ∧ ∃ w, IsTribonacciRepr w m ∧ w.getD 0 0 = 1) r))
     (k₀ : ℤ) (hrow : ∀ j : ℕ, S (k₀ + j) = tribonacciValue (List.replicate j 0 ++ w)) :
     r + 1 ≡ 1 [MOD n]
-
-/-- **The reversal of an extraTrib is not an extraTrib.** If $S : \mathbb{Z} \to \mathbb{Z}$
-is an extraTrib, then the sequence $n \mapsto |S(-n)|$ is not an extraTrib.
-
-Source: E. Chen et al., *Generalizing the Wythoff Array and Other Fibonacci Facts to
-Tribonacci Numbers*, Journal of Integer Sequences 28 (2025), Article 25.5.4,
-Theorem 20 (`jis-2025-25.5.4-thm-20`). -/
-public theorem_wanted not_isExtraTrib_reversal (S : ℤ → ℤ) (hS : IsExtraTrib S) :
-    ¬ IsExtraTrib (fun n => |S (-n)|)
 
 /-! ## Canonization of improper representations
 

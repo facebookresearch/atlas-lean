@@ -41,6 +41,27 @@ example : IsLeastAbsInverse 1 1 2 ∧ ¬ IsLeastAbsInverse (-1) 1 2 := by
   unfold IsLeastAbsInverse
   decide
 
+-- The final inverse 1 attains the upper endpoint modulo 2 and propagates to -1 modulo 3.
+example : IsLeastAbsInverse (-1) 2 3 := by
+  let r : ℕ → ℕ := fun i => 3 - i
+  let s : ℕ → ℤ := fun i => if i = 1 then -1 else 1
+  have hseq : IsEuclidSwitchSeq r s 1 := by
+    refine ⟨by decide, ?_, ?_, rfl, ?_, rfl, ?_⟩
+    · intro i hi
+      interval_cases i <;> decide
+    · intro i hi
+      interval_cases i <;> decide
+    · intro i hi hj
+      interval_cases i
+      exact ⟨1, by decide, rfl⟩
+    · intro i hi hj
+      interval_cases i
+      decide
+  have h : IsLeastAbsInverse (s 2) (r 2 : ℤ) (r 1) := by
+    unfold IsLeastAbsInverse
+    decide
+  exact isLeastAbsInverse_succ_imp r s 1 hseq 1 le_rfl le_rfl h
+
 -- A switching sequence requires at least one Euclidean division.
 example (r : ℕ → ℕ) (s : ℕ → ℤ) : ¬ IsEuclidSwitchSeq r s 0 :=
   fun h => (Nat.lt_irrefl 0) h.1

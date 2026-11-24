@@ -3,8 +3,48 @@
 We want to make contributing to this project as easy and transparent as
 possible.
 
-## Our Development Process
-... (in particular how this is synced with internal changes to the project)
+## Ways to help
+
+People and agents work on ATLAS side by side, and writing Lean is only one way
+to help:
+
+- **Formalize a result.** Take a statement to write in Lean or to prove
+  ([Picking a task](#picking-a-task)) and open a pull request.
+- **Check a page.** Compare it with its source and, when it links a Lean
+  declaration, with that declaration too: Lean checks proofs, not whether a
+  statement means what was intended, so this takes readers. A page with no
+  Lean link is checked against its source alone; its declaration may not exist
+  yet, or may be held back until a known problem is fixed
+  ([Writing pages](docs/BLUEPRINT.md#writing-pages)). Search the open issues,
+  then
+  [report a page problem](https://github.com/facebookresearch/atlas-lean/issues/new?template=page-problem.yml);
+  [Mathematical faithfulness](REVIEWING.md#mathematical-faithfulness) lists
+  what to compare. The pull request that fixes it says `Closes #…`.
+- **Review an area against a source.** Each open
+  [`source-review`](https://github.com/facebookresearch/atlas-lean/labels/source-review)
+  issue names a source and the folders to start from: add the source's central
+  definitions and results that the graph lacks, check the existing pages
+  against it, and propose the changes as pull requests. Where the issue and the
+  [graph rules](docs/BLUEPRINT.md#graph-rules) differ, follow the rules and say
+  so in the pull request.
+- **Propose a target.** To ask for results the site lacks,
+  [propose a target](https://github.com/facebookresearch/atlas-lean/issues/new?template=target.yml):
+  give a source for each result and say what has to be on the site for the
+  issue to close. For whole areas, see the roadmaps labelled
+  [`community-roadmap`](https://github.com/facebookresearch/atlas-lean/labels/community-roadmap)
+  (contributed by collaborators) and
+  [`tauceti-roadmap`](https://github.com/facebookresearch/atlas-lean/labels/tauceti-roadmap)
+  (to bring in from Tau Ceti).
+- **Improve the tools and the agent skills.** Pull requests to `scripts/`, the
+  workflows, [`AGENTS.md`](AGENTS.md) and the skills in `.agents/skills/`
+  follow the steps below. A maintainer approves a change to `.github/`,
+  `REVIEWING.md`, `AGENTS.md`, `.agents/` or `.claude/` before it is queued:
+  these files steer CI, the automated reviews and the agents that work here.
+- **Build on the data.** The site publishes
+  [`tasks.json`](https://facebookresearch.github.io/atlas-lean/tasks.json) and
+  [`dependencies/index.json`](https://facebookresearch.github.io/atlas-lean/dependencies/index.json):
+  the ready tasks, and every node of the dependency explorer with its status
+  and its relations. Both are public; their formats can still change.
 
 ## Picking a task
 
@@ -19,8 +59,9 @@ commit it was computed from. You don't need to build the repository to pick
 one, and people and agents follow the same steps:
 
 1. Take a task from `tasks.json`. `python3 scripts/next_task.py` prints the
-   next ones; `--json` prints them for agents. It prints the statements to
-   write first, then the tasks by [priority](#which-areas-come-first).
+   next ones, with a GitHub token in `GH_TOKEN`; `--json` prints them for
+   agents. It prints the statements to write first, then the tasks by
+   [priority](#which-areas-come-first).
 2. Skip a task that an open pull request names, by its article id (`af_…`) or
    its Lean declaration, in its title, body or branch. `next_task.py` skips
    those, including those an older pull request names, in its title, branch or
@@ -374,7 +415,7 @@ request is pending; `GET .../merge-async/{uuid}` gives a request's result. A
 queue request is not a merge: read the PR's state afterwards to learn whether
 it was queued, merged, or removed from the queue.
 
-The queue builds up to 30 merge groups at once, and consecutive PRs that pass
+The queue builds up to 100 merge groups at once, and consecutive PRs that pass
 land together, up to 30 at a time; GitHub may exceed that by up to half to keep
 a stack together. The queue removes a PR whose required checks fail on its merge
 group, or do not conclude within 6 hours; the PR's timeline says why, and the
@@ -383,6 +424,16 @@ in the stack leave the queue too. Fix the PR and queue it again. To take a PR
 out of the queue, use **Remove from queue** on the PR or on the queue's page, or
 the GraphQL mutation `dequeuePullRequest` (for example through `gh api
 graphql`); there is no `gh pr` command for it.
+
+The Merge queue retry workflow (`.github/workflows/merge-queue-retry.yml`)
+re-runs a merge group's failed jobs once when every failed required check of
+that merge group failed for an infrastructure reason (a lost runner, or a
+truncated answer or server error from GitHub's API) while the PR is still
+queued with it, so that a flaky check does not remove the PR and
+restart the builds behind it. It never removes a PR from the queue; for other
+failures its run summary only records whether it would have removed the PR
+early. It records what it would do, and re-runs nothing, unless the repository
+variable `MERGE_QUEUE_RETRY` is `active`.
 
 Queue a Lean or Mathlib bump like any other PR, preferably at a quiet time. With
 new pins, CI can fetch Mathlib's cache but must rebuild ATLAS when there is no
@@ -420,8 +471,17 @@ under [Public references](#public-references) is in place. `graph sync` is
 configured to run on every PR and merge group, without filters, and reports
 whether the PR's wiki is in step with its Lean
 ([Maintaining articles](docs/BLUEPRINT.md#maintaining-articles)).
-Blueprint Pages, Check workflows and Binary64 conformance are path-filtered on
-PRs, and Blueprint Pages also builds `main` once a day.
+Check workflows and Binary64 conformance are path-filtered on PRs. Blueprint
+Pages builds `main` once a day. On a PR, its first job reads the whole diff and
+lets the build run only when the PR changes the wiki (`blueprint/`), the import
+map, the card move ledger, the tooling that builds and checks the site, the
+toolchain pins, a path where the build writes or fetches its outputs, Git
+attributes, or a file named like an Autoform output marker; PRs that change
+only Lean library files, `scripts/taxonomy.json` or `scripts/wiki-sync.json`
+run only its unit tests, in a few minutes
+([GitHub Actions and publication](docs/BLUEPRINT.md#github-actions-and-publication)).
+With write access, `gh workflow run blueprint-pages.yml --ref <branch>` builds
+and checks a branch on demand; only `main` publishes.
 
 ## Lean and Mathlib bumps
 
@@ -441,17 +501,23 @@ to do this once to work on any of Meta's open source projects.
 Complete your CLA here: <https://code.facebook.com/cla>
 
 ## Issues
-We use GitHub issues to track public bugs. Please ensure your description is
-clear and has sufficient instructions to be able to reproduce the issue.
+We use GitHub issues to track public bugs and the work listed under
+[Ways to help](#ways-to-help). For a page problem or a target, use its issue
+form. For a bug, please ensure your description is clear and has sufficient
+instructions to be able to reproduce it.
 
 Meta has a [bounty program](https://bugbounty.meta.com/) for the safe
 disclosure of security bugs. In those cases, please go through the process
 outlined on that page and do not file a public issue.
 
 ## Coding Style
-* 2 spaces for indentation rather than tabs
-* 80 character line length
-* ...
+Lean code follows the
+[Mathlib style guide](https://leanprover-community.github.io/contribute/style.html).
+`lakefile.toml` turns on Mathlib's standard linter set
+(`linter.mathlibStandardSet`) for the five production libraries, minus the
+linters it turns off by name, and turns the set off for the four test
+libraries. `PhyslibExt` also follows Physlib's conventions
+([Library roles](REVIEWING.md#library-roles)).
 
 ## Copyright headers
 Every Lean file starts with the Meta header:
