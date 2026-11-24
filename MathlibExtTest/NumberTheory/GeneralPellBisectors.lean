@@ -9,7 +9,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.NumberTheory.GeneralPellBisectors
+import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Data.Nat.Prime.Int
+import Mathlib.RingTheory.Coprime.Lemmas
 import Mathlib.Tactic.NormNum.RealSqrt
 
 namespace MetaMathlibExt
@@ -78,5 +80,22 @@ example : IsCoprime (1 : ℤ) (3 * 1) ∧ (1 : ℤ) ^ 2 - 3 * 1 ^ 2 = -2 ∧
     rcases (by omega : x % 3 = 0 ∨ x % 3 = 1 ∨ x % 3 = 2) with ht | ht | ht <;>
       simp [pow_two, Int.mul_emod, ht]
   omega
+
+-- The factors `1 + √3` and `4 + √3` have norms `-2` and `13`. Their product is `7 + 5√3`.
+example : IsCoprime (7 : ℤ) (3 * 5) ∧ |(⟨7, 5⟩ : ℤ√3).norm| = 26 := by
+  let a : Fin 2 → ℤ√3 := ![⟨1, 1⟩, ⟨4, 1⟩]
+  have h := strictlyPrimitive_prod 3 (by decide)
+    (Int.prime_ofNat_iff.mpr Nat.prime_three).squarefree ![2, 13] (by decide) (by decide)
+    (fun _ ↦ 1) a (by decide) (by decide)
+  rw [Fin.prod_univ_two, Fin.prod_univ_two] at h
+  exact h
+
+-- The empty family gives the strictly primitive unit of norm one.
+example (d : ℤ) (hd : 1 < d) (hsq : Squarefree d) (a : Fin 0 → ℤ√d) :
+    IsCoprime (∏ i, a i).re (d * (∏ i, a i).im) ∧ |(∏ i, a i).norm| = 1 := by
+  simpa using strictlyPrimitive_prod d hd hsq Fin.elim0 (fun i ↦ i.elim0) (fun i ↦ i.elim0)
+    Fin.elim0 a (fun i ↦ i.elim0) (fun i ↦ i.elim0)
+
+#print axioms strictlyPrimitive_prod
 
 end MetaMathlibExt

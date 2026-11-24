@@ -25,3 +25,11 @@ example : (∑ p ∈ Finset.Icc 1 (6 : ℕ), (p : ℚ) * bubbleCount 3 p) /
     (∑ p ∈ Finset.Icc 1 (6 : ℕ), (bubbleCount 3 p : ℚ)) = 20 / 7 := by
   convert mean_bubble_size 3 (by decide) using 1
   norm_num
+
+-- The first admissible case includes the four-vertex bubble in the crossing diagram.
+example : (∑ p ∈ Finset.Icc 1 (4 : ℕ), (p : ℚ) * bubbleCount 2 p) = 6 := by decide +kernel
+
+-- With four chords both factors in the denominator contribute.
+example : (∑ p ∈ Finset.Icc 1 (8 : ℕ), (p : ℚ) * bubbleCount 4 p) = 630 := by
+  convert sum_mul_bubbleCount 4 (by decide) using 1
+  norm_num [Nat.factorial]

@@ -260,9 +260,9 @@ attribute [instance] LogFanoFibre.proper
 given by a divisor `R.prime` on a birational model with scale `R.scale`, the normalized expected
 vanishing order `S` is at most the log discrepancy `R.scale · A(R.prime)`. Divisorial valuations
 suffice for valuative semistability (Fujita; Li; as used by Blum--Xu). The log discrepancy is
-the intrinsic one of the divisor, so no chart or monomialization hypothesis is involved, and the
-condition is not vacuous (prime divisors on the fibre itself are divisorial valuations). No
-stability score or nonarchimedean functional is supplied. -/
+the intrinsic one of the divisor, so no chart or monomialization hypothesis is involved and no
+divisor is excluded for lack of charts. No stability score or nonarchimedean functional is
+supplied. -/
 def LogFanoFibre.IsValuativelySemistable
     {X : Over (Spec (.of R))} {L : X.left.Modules} {I : X.left.IdealSheafData}
     {n e : ℕ} (F : LogFanoFibre X L I n e) : Prop :=
