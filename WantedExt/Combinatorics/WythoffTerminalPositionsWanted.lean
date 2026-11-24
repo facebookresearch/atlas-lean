@@ -13,6 +13,7 @@ public import Mathlib.NumberTheory.Real.GoldenRatio
 public import Mathlib.Order.Filter.AtTopBot.Basic
 public import Mathlib.Topology.Instances.Real.Lemmas
 public import Mathlib.Data.Set.Card
+public import MathlibExt.Combinatorics.BlockingWythoff
 public import MathlibExt.Combinatorics.WythoffTerminalPositions
 public import WantedExt.NumberTheory.GeneralizedHofstadterOrderWanted
 
@@ -318,24 +319,6 @@ public theorem_wanted wythoffTerminal_three_morphic (n : ℕ) :
     (∃ w : ℕ → Fin 22, IsOmegaLimit f₃ 0 w) ∧
       ∀ w : ℕ → Fin 22, IsOmegaLimit f₃ 0 w →
         g₃ (w (wythoffMexA 3 n - 4)) = true ∧ g₃ (w (wythoffMexB 3 n - 4)) = false
-
-/-- **Larsson's P-positions of Blocking Wythoff Nim with one blocked option.** Let $\varphi$ be
-the golden ratio, and let $R_2$ consist of $(0, 0)$ and, for every $n \ge 0$, the positions
-$(n, 2n + 1)$, $(2n + 1, n)$, $(2\lfloor n\varphi \rfloor + 2, 2\lfloor n\varphi^2 \rfloor + 2)$
-and $(2\lfloor n\varphi^2 \rfloor + 2, 2\lfloor n\varphi \rfloor + 2)$. A Wythoff move from a
-position of two piles removes a positive number of tokens from one pile, or the same positive
-number from both. Then every position in $R_2$ has at most one Wythoff move to a position in
-$R_2$, and every position outside $R_2$ has at least two Wythoff moves to positions in $R_2$.
-
-Hence $R_2$ is the set of P-positions of $W^2$, Wythoff's game in which the previous player may
-forbid one option.
-
-Source: Antoine Renard and Michel Rigo, *Variants of Wythoff Game With Terminal Positions
-or Blocking Maneuvers*, Journal of Integer Sequences 29 (2026), Article 26.1.6,
-Theorem 26 (`jis-2026-26.1.6-thm-26`). -/
-public theorem_wanted blockingWythoff_two_pPositions :
-    (∀ x ∈ larssonSetTwo, {y | wythoffTerminalMove 0 x y ∧ y ∈ larssonSetTwo}.ncard ≤ 1) ∧
-      ∀ x ∉ larssonSetTwo, 2 ≤ {y | wythoffTerminalMove 0 x y ∧ y ∈ larssonSetTwo}.ncard
 
 /-- **Larsson's P-positions of Blocking Wythoff Nim with two blocked options.** Let $R_3$
 consist of $(0, 0)$ and, for every $n \ge 0$, the positions $(n, 2n + 1)$, $(2n + 1, n)$,
