@@ -20,6 +20,8 @@ import MathlibExt.NumberTheory.Recurrences.HoradamGeneralizedCatalanIdentity
 
 The generalized Catalan identity gives the recurrence for the product of consecutive
 (a, b)-Fibonacci numbers, which yields the weighted even-index sum by induction.
+For the even and odd sums weighted by powers of `-b`, multiplying by the discriminant
+turns each summand into a difference of weighted Lucas numbers.
 For the sum weighted by powers of `c`, adjoining the last term gives a first-order recurrence.
 -/
 
@@ -173,6 +175,68 @@ theorem sum_neg_b_pow_fibAB_even_prod (a b : ℂ) (n : ℕ) :
         rw [ih, two_mul]
         simpa [Nat.one_add, mul_assoc, mul_comm, mul_left_comm] using
           (sub_eq_iff_eq_add.mp h).symm
+
+private theorem fibAB_succ_mul_discriminant (a b : ℂ) (k : ℕ) :
+    fibAB a b (k + 1) * (a ^ 2 + 4 * b) = lucasAB a b (k + 2) + b * lucasAB a b k := by
+  induction k using Nat.twoStepInduction with
+  | zero => simp [lucasAB, pow_two]; ring
+  | one => simp [fibAB, lucasAB]; ring
+  | more k ih₀ ih₁ =>
+    calc
+      _ = a * (fibAB a b (k + 2) * (a ^ 2 + 4 * b)) +
+          b * (fibAB a b (k + 1) * (a ^ 2 + 4 * b)) := by
+        rw [fibAB_add_two a b (k + 1)]
+        ring
+      _ = _ := by
+        rw [ih₁, ih₀, lucasAB_add_two a b (k + 2)]
+        rw [lucasAB_add_two a b k]
+        ring
+
+-- The terms telescope along indices of either parity, starting at k + 1.
+private theorem sum_fibAB_stride_two (a b : ℂ) (k n : ℕ) :
+    (∑ i ∈ Finset.range n, (-b) ^ (n - (i + 1)) * fibAB a b (2 * i + k + 1)) *
+      (a ^ 2 + 4 * b) = lucasAB a b (2 * n + k) - (-b) ^ n * lucasAB a b k := by
+  induction n generalizing k with
+  | zero => simp
+  | succ n ih =>
+    have shift (i : ℕ) : 2 * (i + 1) + k = 2 * i + (k + 2) := by omega
+    rw [Finset.sum_range_succ']
+    simp only [Nat.succ_sub_succ_eq_sub, shift, Nat.mul_zero, Nat.zero_add, Nat.sub_zero]
+    rw [add_mul, ih, mul_assoc, fibAB_succ_mul_discriminant, pow_succ]
+    ring
+
+/-- **Sums of (a, b)-Fibonacci numbers weighted by powers of -b, via Lucas numbers.** Let $a, b$
+be complex numbers with $\Delta = a^2 + 4b \ne 0$, and let $(F_n)$ and $(L_n)$ be the
+$(a, b)$-Fibonacci and $(a, b)$-Lucas numbers. Then for every integer $n \ge 0$,
+$$\sum_{i=0}^{n} (-b)^{n-i} F_{2i} = \frac{L_{2n+1} + (-1)^{n+1} a b^n}{\Delta}$$
+and
+$$\sum_{i=0}^{n} (-b)^{n-i} F_{2i+1} = \frac{L_{2n+2} + 2 (-1)^n b^{n+1}}{\Delta}.$$
+
+Source: Emil Daniel Schwab, "Fibonacci Numbers
+via Dirichlet Convolution and Lucas Numbers via
+Unitary Convolution", Theorem 10(a). -/
+theorem sum_neg_b_pow_fibAB_disc (a b : ℂ)
+    (hΔ : a ^ 2 + 4 * b ≠ 0) (n : ℕ) :
+    (∑ i ∈ Finset.range (n + 1), (-b) ^ (n - i) * fibAB a b (2 * i) =
+      (lucasAB a b (2 * n + 1) + (-1) ^ (n + 1) * a * b ^ n) /
+        (a ^ 2 + 4 * b)) ∧
+    (∑ i ∈ Finset.range (n + 1),
+        (-b) ^ (n - i) * fibAB a b (2 * i + 1) =
+      (lucasAB a b (2 * n + 2) + (-1) ^ n * 2 * b ^ (n + 1)) /
+        (a ^ 2 + 4 * b)) := by
+  constructor <;> apply (eq_div_iff hΔ).2
+  · rw [Finset.sum_range_succ']
+    simp only [fibAB_zero, mul_zero, add_zero, Nat.mul_succ]
+    rw [sum_fibAB_stride_two a b 1 n, lucasAB_one]
+    rw [neg_pow, pow_succ]
+    ring
+  · calc
+      _ = lucasAB a b (2 * n + 2) - (-b) ^ (n + 1) * lucasAB a b 0 := by
+        simpa only [Nat.succ_sub_succ_eq_sub, Nat.add_zero, Nat.mul_succ] using
+          sum_fibAB_stride_two a b 0 (n + 1)
+      _ = _ := by
+        rw [lucasAB_zero, neg_pow, pow_succ (-1 : ℂ)]
+        ring
 
 -- The stated identity assumes c ≠ 0, although the induction also works at zero.
 set_option linter.unusedVariables false in

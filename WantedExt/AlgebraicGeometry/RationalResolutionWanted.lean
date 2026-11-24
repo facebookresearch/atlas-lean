@@ -51,9 +51,10 @@ theorem_wanted resolution_independence (k : Type u) [Field k] [IsAlgClosed k] [C
     (R T : ResolutionModel X) (hR : IsRationalResolution R) :
     IsRationalResolution T
 
-/-- Rational singularities are Cohen–Macaulay. (Local Noetherianity follows from local finite
-type over a field; it is stated because stalkwise Cohen–Macaulayness is defined for locally
-Noetherian schemes.) -/
+/-- Rational singularities are Cohen–Macaulay: a normal variety over an algebraically closed
+field of characteristic zero that has a rational resolution has Cohen–Macaulay local rings.
+(Local Noetherianity follows from local finite type over a field; it is stated because stalkwise
+Cohen–Macaulayness is defined for locally Noetherian schemes.) -/
 theorem_wanted rational_isCohenMacaulay (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
     (X : Over (Spec (.of k))) [IsIntegral X.left] [IsSeparated X.hom]
     [LocallyOfFiniteType X.hom] [QuasiCompact X.hom] [IsLocallyNoetherian X.left]

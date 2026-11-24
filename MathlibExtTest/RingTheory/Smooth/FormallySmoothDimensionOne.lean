@@ -16,7 +16,7 @@ universe u v
 
 open IsLocalRing in
 /-- Source-shaped consumer with the original binders. -/
-theorem exactSource {k : Type*} [Field k] {R : Type*} [CommRing R] [IsDomain R]
+private theorem exactSource {k : Type*} [Field k] {R : Type*} [CommRing R] [IsDomain R]
     [Algebra k R] [Algebra.FormallySmooth k R] [Algebra.FinitePresentation k R]
     (hdim : Ring.KrullDimLE 1 R) (𝔫 : Ideal R) [𝔫.IsMaximal] (hne : 𝔫 ≠ ⊥)
     (hrat : Function.Surjective ((Ideal.Quotient.mk 𝔫).comp (algebraMap k R))) :

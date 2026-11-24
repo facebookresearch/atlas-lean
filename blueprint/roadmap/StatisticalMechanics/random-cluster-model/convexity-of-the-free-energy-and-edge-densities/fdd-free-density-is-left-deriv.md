@@ -1,16 +1,13 @@
-# Free edge densities on a box as left derivatives
+# Why the free-density condition concerns only genuine edges
 
-For $d, N \in \mathbb{N}$ and $g : \mathbb{R} \to \mathbb{R}$, the condition holds when, for every edge $e$ of the box $\Lambda_N = \{-N, \dots, N\}^d \subseteq \mathbb{Z}^d$ (a pair of nearest neighbours in $\Lambda_N$), viewed as a pair of sites of $\mathbb{Z}^d$, and every $t \in \mathbb{R}$,
+The [free-density condition for a box](../per-box-agreement-of-free-and-wired-random-clust/fpe2-genuine-free-is-left-deriv.md)
+compares a single pressure function with the free densities of nearest-neighbour pairs. It cannot
+make the same comparison for all unordered pairs in the box. Set $p = \sigma(t) \in (0,1)$ for
+$t \in \mathbb{R}$. A non-edge coordinate does not enter the random-cluster weight, so its open
+probability is $1/2$. A genuine edge has open probability at most $p$ at $q = 2$. For
+$0 < p < 1/2$, a box with an edge therefore has two coordinates with different free densities,
+which cannot both equal the same left derivative.
 
-$$\theta^0_e(\sigma(t)) = g'_-(t),$$
-
-where $\sigma(t) = e^t/(1 + e^t)$ is the [logistic function](fsc-logistic.md), $\theta^0_e(p)$ is the [free edge density](../per-box-agreement-of-free-and-wired-random-clust/free-edge-density.md) at $q = 2$, that is, the probability that $e$ is open under the [free infinite-volume random-cluster measure](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/free-infinite-volume.md) $\phi^0_{p,2}$ on $\mathbb{Z}^d$ (a chosen subsequential weak limit of the free box measures), and $g'_-(t)$ is the [left derivative](pressure-left-deriv.md) of $g$ at $t$ (read as $0$ when it does not exist).
-
-## Depends on
-
-- [Logistic function $e^t/(1+e^t)$](fsc-logistic.md)
-- [Left derivative of the pressure](pressure-left-deriv.md)
-- [Vertices of the box $\{-n, \dots, n\}^d$](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/box-verts.md)
-- [Inclusion of box edges into $\mathbb{Z}^d$](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/edge-incl.md)
-- [Free infinite-volume random-cluster measure](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/free-infinite-volume.md)
-- [Free infinite-volume edge density](../per-box-agreement-of-free-and-wired-random-clust/free-edge-density.md)
+The [per-coordinate free energy](../per-box-agreement-of-free-and-wired-random-clust/fpe2-per-edge-g.md)
+uses the common pressure function on genuine edges and the linear function $s \mapsto s/2$ on
+non-edges.

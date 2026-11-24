@@ -9,62 +9,13 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Data.Nat.Fib.Basic
+public import MathlibExt.Combinatorics.Enumerative.FibonacciAlternatingSums
 public import MathlibExt.Combinatorics.Enumerative.MotzkinAlternatingSums
-public import MathlibExt.Combinatorics.Enumerative.RiordanNumber
+public import MathlibExt.Combinatorics.Enumerative.RiordanNumberEvenLogConvex
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Log-convexity of the even-indexed Riordan numbers.** Let $r_n$ denote the $n$-th Riordan
-number. The even-indexed Riordan numbers $r_0, r_2, r_4, \dots$ form a log-convex sequence: for
-every natural number $n$,
-$$r_{2n+2}^2 \le r_{2n} \, r_{2n+4}.$$
-
-The Riordan numbers begin $1, 0, 1, 1, 3, 6, 15, \dots$.
-
-Source: Feng-Zhen Zhao, *The Log-Balancedness of the Sequence for the Alternating Sums
-of Motzkin Numbers*, INTEGERS 26 (2026), Article A55, Corollary 1
-(`integers-2026-A55-cor-1`). -/
-public theorem_wanted riordanNumber_even_logConvex (n : ℕ) :
-    riordanNumber (2 * (n + 1)) ^ 2 ≤
-      riordanNumber (2 * n) * riordanNumber (2 * (n + 2))
-
-/-- **Alternating sums of Fibonacci numbers.** Let $F_k$ denote the $k$-th Fibonacci number,
-with $F_0 = 0$ and $F_1 = 1$. For a natural number $n$, the $n$-th alternating Fibonacci sum is
-the integer
-$$W_n = \sum_{k=0}^{n} (-1)^{n-k} F_k.$$
-The sequence begins $0, 1, 0, 2, 1, 4, 4, 9, \dots$
-
-Source: Feng-Zhen Zhao, *The Log-Balancedness of the Sequence for the Alternating Sums
-of Motzkin Numbers*, INTEGERS 26 (2026), Article A55, Equation (9). -/
-public def fibonacciAlternatingSum (n : ℕ) : ℤ :=
-  ∑ k ∈ Finset.range (n + 1), (-1) ^ (n - k) * (Nat.fib k : ℤ)
-
-/-- **The alternating Fibonacci sum at 0.** Let $F_k$ denote the $k$-th Fibonacci number, with
-$F_0 = 0$ and $F_1 = 1$, and let $W_n = \sum_{k=0}^{n} (-1)^{n-k} F_k$. Then $W_0 = 0$.
-
-Source: Feng-Zhen Zhao, *The Log-Balancedness of the Sequence for the Alternating Sums
-of Motzkin Numbers*, INTEGERS 26 (2026), Article A55, Table 3. -/
-public theorem fibonacciAlternatingSum_zero : fibonacciAlternatingSum 0 = 0 := by
-  simp [fibonacciAlternatingSum]
-
-/-- **Recurrence for alternating Fibonacci sums.** Let $F_k$ denote the $k$-th Fibonacci
-number, with $F_0 = 0$ and $F_1 = 1$, and let $W_n = \sum_{k=0}^{n} (-1)^{n-k} F_k$. For every
-natural number $n$, $W_{n+1} = F_{n+1} - W_n$.
-
-Source: Feng-Zhen Zhao, *The Log-Balancedness of the Sequence for the Alternating Sums
-of Motzkin Numbers*, INTEGERS 26 (2026), Article A55, Equation (9). -/
-public theorem fibonacciAlternatingSum_succ (n : ℕ) :
-    fibonacciAlternatingSum (n + 1) = Nat.fib (n + 1) - fibonacciAlternatingSum n := by
-  rw [fibonacciAlternatingSum, Finset.sum_range_succ, Nat.sub_self, pow_zero, one_mul,
-    fibonacciAlternatingSum, sub_eq_add_neg, add_comm, ← Finset.sum_neg_distrib]
-  congr 1
-  refine Finset.sum_congr rfl fun k hk => ?_
-  rw [Finset.mem_range] at hk
-  rw [show n + 1 - k = (n - k) + 1 by omega, pow_succ]
-  ring
 
 /-- **Products of consecutive alternating Motzkin sums are eventually log-convex and
 log-balanced.** Let $M_k$ denote the $k$-th Motzkin number, let
@@ -110,23 +61,6 @@ public theorem_wanted motzkinNumber_add_motzkinAlternatingSum_logBalanced (n : �
       n * (((motzkinNumber (n - 1) : ℤ) + motzkinAlternatingSum (n - 1)) *
           ((motzkinNumber (n + 1) : ℤ) + motzkinAlternatingSum (n + 1))) ≤
         (n + 1) * ((motzkinNumber n : ℤ) + motzkinAlternatingSum n) ^ 2
-
-/-- **The alternating Fibonacci sums are eventually tempered.** Let $F_k$ denote the $k$-th
-Fibonacci number, with $F_0 = 0$ and $F_1 = 1$, and let $W_n = \sum_{k=0}^{n} (-1)^{n-k} F_k$.
-For every natural number $n \ge 12$,
-$$n W_n^2 \le (n+1) W_{n-1} W_{n+1} \quad\text{and}\quad n W_{n-1} W_{n+1} \le (n+1) W_n^2.$$
-
-These are the conditions $\frac{n}{n+1} x_{n-1} \le x_n \le \frac{n+1}{n} x_{n-1}$ on the
-quotients $x_n = W_{n+1}/W_n$, cleared of denominators (all terms are positive here), so the
-sequence $(W_n)_{n \ge 11}$ is tempered, with the conditions imposed at every index $n \ge 12$.
-
-Source: Feng-Zhen Zhao, *The Log-Balancedness of the Sequence for the Alternating Sums
-of Motzkin Numbers*, INTEGERS 26 (2026), Article A55, Theorem 4. -/
-public theorem_wanted fibonacciAlternatingSum_tempered (n : ℕ) (hn : 12 ≤ n) :
-    n * fibonacciAlternatingSum n ^ 2 ≤
-        (n + 1) * (fibonacciAlternatingSum (n - 1) * fibonacciAlternatingSum (n + 1)) ∧
-      n * (fibonacciAlternatingSum (n - 1) * fibonacciAlternatingSum (n + 1)) ≤
-        (n + 1) * fibonacciAlternatingSum n ^ 2
 
 end
 

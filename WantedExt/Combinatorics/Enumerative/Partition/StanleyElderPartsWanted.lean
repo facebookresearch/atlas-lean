@@ -47,15 +47,6 @@ public theorem_wanted sum_count_eq_sum_card_parts_count_ge (n k : ℕ) (hk : 1 �
     ∑ p : Nat.Partition n, p.parts.count k =
       ∑ p : Nat.Partition n, (p.parts.toFinset.filter fun i => k ≤ p.parts.count i).card
 
-/-- **Stanley's theorem.** For every natural number $n$, the total number of parts equal to $1$,
-counted with multiplicity, over all partitions of $n$ equals the sum, over all partitions
-$\lambda$ of $n$, of the number of distinct parts of $\lambda$.
-
-Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
-INTEGERS 25 (2025), Article A94, Theorem 1 (Stanley's theorem). -/
-public theorem_wanted sum_count_one_eq_sum_card_toFinset (n : ℕ) :
-    ∑ p : Nat.Partition n, p.parts.count 1 = ∑ p : Nat.Partition n, p.parts.toFinset.card
-
 /-- **Total number of parts of $n$-color partitions via the divisor sum.** For $r \ge 0$ let
 $C(r)$ be the number of $n$-color partitions of $r$, and let $T_o(r)$ (resp. $T_e(r)$) be the
 total number of parts, counted with multiplicity, over the $n$-color partitions of $r$ having an
@@ -250,20 +241,6 @@ public theorem_wanted nColor_oddParts_generatingFunction :
       (∏' m : ℕ, (1 - X ^ (m + 1)) ^ (m + 1) : ℚ⟦X⟧) *
         PowerSeries.mk fun n =>
           ((∑ s ∈ nColorPartitions n, (s.filter fun p => Odd p.1).card : ℕ) : ℚ)
-
-/-- **Generating function for colored parts of multiplicity at least $t$.** Let $t \ge 1$. For
-$m \ge 0$ let $N^t(m)$ be the sum, over all $n$-color partitions of $m$, of the number of
-distinct colored parts that occur at least $t$ times. Then, as formal power series in $q$ with
-rational coefficients,
-$$\sum_{m \ge 1} m q^{mt} = \prod_{m \ge 1} (1 - q^m)^m \sum_{m \ge 0} N^t(m) q^m.$$
-
-Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
-INTEGERS 25 (2025), Article A94, Theorem 6 (`integers-2025-A94-thm-6`). -/
-public theorem_wanted nColor_partsMultiplicityGe_generatingFunction (t : ℕ) (ht : 1 ≤ t) :
-    ∑' m : ℕ, ((m + 1 : ℕ) : ℚ⟦X⟧) * X ^ ((m + 1) * t) =
-      (∏' m : ℕ, (1 - X ^ (m + 1)) ^ (m + 1) : ℚ⟦X⟧) *
-        PowerSeries.mk fun n =>
-          ((∑ s ∈ nColorPartitions n, (s.toFinset.filter fun p => t ≤ s.count p).card : ℕ) : ℚ)
 
 /-- **Generating function for parts in a residue class over n-color partitions.** Let $r$ and
 $k$ be natural numbers with $0 < k < r$, and for $i \ge 0$ let $C(k \bmod r, i)$ be the total
