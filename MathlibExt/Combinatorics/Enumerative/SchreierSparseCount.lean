@@ -18,6 +18,11 @@ public import Mathlib.Order.Interval.Finset.Nat
 The number of Schreier sparse sets with maximum `n ≥ 1` is the partition number of `n - 1`.
 The bijection of Beanland and Chu increments each consecutive gap and adds one part of size
 one for each unit by which the minimum exceeds the cardinality.
+
+For `k ≥ 2`, the sparse `ℓ`-strong Schreier sets with maximum `n + 1` and `k + 1` elements whose
+two largest gaps are equal are as many as the partitions of `n` into exactly `k` parts, all at
+least `ℓ + 1`. The bijection of Beanland and Chu adds `ℓ` to every gap, then adds the excess of
+the minimum over `ℓ k + 1` to one of the two largest parts.
 -/
 
 set_option autoImplicit false
@@ -329,5 +334,394 @@ theorem schreierSparseCount_eq (n : ℕ) (hn : 1 ≤ n) :
   rw [← Fintype.card_coe]
   exact Fintype.card_congr ((Equiv.ofBijective _ (GapData.toSet_bijective u)).symm.trans
     (Equiv.ofBijective _ (GapData.toPartition_bijective u)))
+
+/-! ### Refined Schreier sets with a given number of elements -/
+
+/-- **Strong Schreier sets.** For a natural number $\ell$, a finite set $A$ of natural numbers is
+*$\ell$-strong Schreier* if $\ell |A| + 1 \le a + \ell$ for every $a \in A$; equivalently, $A$ is
+empty or $\min A \ge \ell |A| - \ell + 1$. -/
+def IsStrongSchreier (l : ℕ) (A : Finset ℕ) : Prop :=
+  ∀ a ∈ A, l * A.card + 1 ≤ a + l
+
+instance (l : ℕ) (A : Finset ℕ) : Decidable (IsStrongSchreier l A) := by
+  unfold IsStrongSchreier; infer_instance
+
+/-- **Partitions with a given number of parts, all at least a given size.** For natural numbers
+$n$, $\ell$ and $k$, $|E_{n,\ell,k}|$ is the number of partitions of $n$ into exactly $k$ parts,
+all of which are at least $\ell$. -/
+def partitionMinPartExactCount (n l k : ℕ) : ℕ :=
+  ((Nat.Partition.restricted n (fun x => l ≤ x)).filter
+    (fun P => P.parts.card = k)).card
+
+/-- **The refined Schreier family $F_{n,\ell}$.** For natural numbers $n$ and $\ell$, a finite
+set $A$ of natural numbers belongs to $F_{n,\ell}$ if $n + 1$ is the largest element of $A$,
+$A$ has at least three elements, $A$ is sparse and $\ell$-strong Schreier, and the two largest
+elements $a < b$ of $A$ below $n + 1$ satisfy $n + 1 + a = 2b$. -/
+def IsRefinedSchreier (n l : ℕ) (A : Finset ℕ) : Prop :=
+  n + 1 ∈ A ∧ (∀ x ∈ A, x ≤ n + 1) ∧ 3 ≤ A.card ∧ IsSparse A ∧
+    IsStrongSchreier l A ∧
+      ∃ a ∈ A, ∃ b ∈ A, a < b ∧ b < n + 1 ∧
+        (∀ x ∈ A, x ≤ b ∨ x = n + 1) ∧
+          (∀ x ∈ A, x ≤ a ∨ x = b ∨ x = n + 1) ∧
+            n + 1 + a = 2 * b
+
+instance (n l : ℕ) (A : Finset ℕ) :
+    Decidable (IsRefinedSchreier n l A) := by
+  unfold IsRefinedSchreier; infer_instance
+
+/-- **Refined Schreier sets with a given number of elements.** For natural numbers $n$ and
+$\ell$, let $F_{n,\ell}$ be the family of finite sets $A$ of natural numbers such that $A$ has
+largest element $n + 1$ and at least three elements, $A$ is sparse (the differences of
+consecutive elements, in increasing order, are non-decreasing) and $\ell$-strong Schreier
+($\ell|A| + 1 \le a + \ell$ for every $a \in A$), and the second and third largest elements
+$b > a$ of $A$ satisfy $n + 1 + a = 2b$. For a natural number $k$, $|F_{n,\ell,k}|$ is the
+number of sets in $F_{n,\ell}$ with exactly $k$ elements. -/
+def refinedSchreierCardCount (n l k : ℕ) : ℕ :=
+  ((Finset.Icc 0 (n + 1)).powerset.filter
+    (fun A => IsRefinedSchreier n l A ∧ A.card = k)).card
+
+private theorem foldl_add_eq (a : ℕ) (ds : List ℕ) : ds.foldl (· + ·) a = a + ds.sum := by
+  induction ds generalizing a with
+  | nil => simp
+  | cons d ds ih => simp [ih, Nat.add_assoc]
+
+-- Two final gaps add two final points.
+private theorem mem_points_append_pair {a d e x : ℕ} {ds : List ℕ} :
+    x ∈ points a (ds ++ [d, e]) ↔
+      x ∈ points a ds ∨ x = a + ds.sum + d ∨ x = a + ds.sum + d + e := by
+  simp [points, List.scanl_append, foldl_add_eq]
+
+private theorem sum_map_add (l : ℕ) (ds : List ℕ) :
+    (ds.map (· + l)).sum = ds.sum + l * ds.length := by
+  induction ds with
+  | nil => simp
+  | cons d ds ih =>
+    simp only [List.map_cons, List.sum_cons, ih, List.length_cons, Nat.mul_succ]
+    omega
+
+-- A list with at least two entries ends with two entries.
+private theorem exists_append_pair (xs : List ℕ) (h : 2 ≤ xs.length) :
+    ∃ ys u v, xs = ys ++ [u, v] := by
+  rcases hr : xs.reverse with _ | ⟨v, _ | ⟨u, rest⟩⟩
+  · have := congrArg List.length hr
+    rw [List.length_reverse] at this
+    simp only [List.length_nil] at this
+    omega
+  · have := congrArg List.length hr
+    rw [List.length_reverse] at this
+    simp only [List.length_cons, List.length_nil] at this
+    omega
+  · refine ⟨rest.reverse, u, v, ?_⟩
+    rw [← List.reverse_reverse xs, hr]
+    simp
+
+-- A refined set with `k + 1` elements starts at `l * k + 1 + extra`, and its gaps are `low`
+-- followed by two equal largest gaps `top`; the partition has parts `low + l`, `top + l` and
+-- `top + extra + l`.
+private structure RefinedData (n l k : ℕ) where
+  extra : ℕ
+  top : ℕ
+  low : List ℕ
+  top_pos : 0 < top
+  positive : ∀ d ∈ low, 0 < d
+  ordered : low.Pairwise (· ≤ ·)
+  le_top : ∀ d ∈ low, d ≤ top
+  length : low.length + 2 = k
+  total : l * k + extra + low.sum + 2 * top = n
+
+private abbrev RefinedData.start {n l k : ℕ} (c : RefinedData n l k) := l * k + 1 + c.extra
+
+private abbrev RefinedData.gaps {n l k : ℕ} (c : RefinedData n l k) := c.low ++ [c.top, c.top]
+
+private theorem RefinedData.gaps_positive {n l k : ℕ} (c : RefinedData n l k) :
+    ∀ d ∈ c.gaps, 0 < d := by
+  intro d hd
+  rcases List.mem_append.mp hd with hd | hd
+  · exact c.positive d hd
+  · have : d = c.top := by simpa using hd
+    exact this ▸ c.top_pos
+
+private abbrev refinedFamily (n l k : ℕ) :=
+  (Finset.Icc 0 (n + 1)).powerset.filter (fun A => IsRefinedSchreier n l A ∧ A.card = k)
+
+private def RefinedData.toSet {n l k : ℕ} (c : RefinedData n l k) :
+    refinedFamily n l (k + 1) := by
+  let A := (points c.start c.gaps).toFinset
+  have hstart : c.start = l * k + 1 + c.extra := rfl
+  have hlen := c.length
+  have hlast : c.start + c.low.sum + c.top + c.top = n + 1 := by
+    have := c.total
+    omega
+  have hcard : A.card = k + 1 := by
+    rw [List.toFinset_card_of_nodup (points_sorted c.start c.gaps_positive).sortedLT.nodup]
+    simp [points, ← c.length]
+  have hmem (x : ℕ) : x ∈ A ↔ x ∈ points c.start c.low ∨ x = c.start + c.low.sum + c.top ∨
+      x = c.start + c.low.sum + c.top + c.top := by
+    simp only [A, List.mem_toFinset]
+    exact mem_points_append_pair
+  have hs : c.start + c.low.sum ∈ points c.start c.low := (endpoints_mem _ _).2
+  have htop := c.top_pos
+  -- every point is at least the start, and the last three points are the largest
+  have hbound (x : ℕ) (hx : x ∈ A) : c.start ≤ x ∧ (x ≤ c.start + c.low.sum ∨
+      x = c.start + c.low.sum + c.top ∨ x = c.start + c.low.sum + c.top + c.top) := by
+    rcases (hmem x).mp hx with hx | rfl | rfl
+    · exact ⟨(mem_bounds hx).1, Or.inl (mem_bounds hx).2⟩
+    · exact ⟨by omega, Or.inr (Or.inl rfl)⟩
+    · exact ⟨by omega, Or.inr (Or.inr rfl)⟩
+  refine ⟨A, Finset.mem_filter.mpr ⟨Finset.mem_powerset.mpr ?_, ⟨?_, ?_, ?_, ?_, ?_, ?_⟩, hcard⟩⟩
+  · intro x hx
+    have := hbound x hx
+    rw [Finset.mem_Icc]
+    omega
+  · exact (hmem _).mpr (Or.inr (Or.inr hlast.symm))
+  · intro x hx
+    have := hbound x hx
+    omega
+  · omega
+  · refine (points_sparse_iff _ c.gaps_positive).mpr (List.pairwise_append.mpr
+      ⟨c.ordered, by simp, fun a ha b hb => ?_⟩)
+    have : b = c.top := by simpa using hb
+    exact this ▸ c.le_top a ha
+  · intro x hx
+    have := (hbound x hx).1
+    rw [hcard, Nat.mul_succ]
+    omega
+  · refine ⟨c.start + c.low.sum, (hmem _).mpr (Or.inl hs), c.start + c.low.sum + c.top,
+      (hmem _).mpr (Or.inr (Or.inl rfl)), by omega, by omega, fun x hx => ?_, fun x hx => ?_,
+      by omega⟩
+    · have := hbound x hx
+      omega
+    · have := hbound x hx
+      omega
+
+private theorem RefinedData.toSet_bijective (n l k : ℕ) (hk : 2 ≤ k) :
+    Function.Bijective (RefinedData.toSet (n := n) (l := l) (k := k)) := by
+  constructor
+  · intro c d h
+    have sort_points (v : RefinedData n l k) : v.toSet.val.sort = points v.start v.gaps := by
+      have hs := (points_sorted v.start v.gaps_positive).sortedLT
+      exact (List.toFinset_sort _ hs.nodup).mpr hs.sortedLE.pairwise
+    have he := congrArg (fun v : refinedFamily n l (k + 1) => v.val.sort) h
+    simp only [sort_points] at he
+    obtain ⟨hstart, hgaps⟩ := points_inj he
+    obtain ⟨hlow, htop⟩ := List.append_inj' hgaps rfl
+    have htop' : c.top = d.top := by simpa using htop
+    have hextra : c.extra = d.extra := by
+      simp only [RefinedData.start] at hstart
+      omega
+    cases c
+    cases d
+    simp_all
+  · rintro ⟨A, hA⟩
+    obtain ⟨-, ⟨hmax, hle, -, hsp, hstrong, a', ha', b, hb, hab, hbn, hb_top, ha_top, hrel⟩,
+      hcard⟩ := Finset.mem_filter.mp hA
+    have hs := A.sortedLT_sort.pairwise
+    cases he : A.sort with
+    | nil =>
+      have hm : n + 1 ∈ A.sort := (Finset.mem_sort _).mpr hmax
+      simp [he] at hm
+    | cons a t =>
+      rw [he] at hs
+      obtain ⟨ds, hp, hds⟩ := exists_points a t hs
+      have hlist := hds.trans he.symm
+      have mem_iff (x : ℕ) : x ∈ points a ds ↔ x ∈ A := by simp [hlist]
+      have hlen : ds.length + 1 = A.card := by
+        simpa [points] using congrArg List.length hlist
+      obtain ⟨low, d, e, rfl⟩ := exists_append_pair ds (by omega)
+      have hd : 0 < d := hp d (by simp)
+      have he' : 0 < e := hp e (by simp)
+      have hord := (points_sparse_iff a hp).mp (by
+        have heq : (points a (low ++ [d, e])).toFinset = A := by simp [hlist]
+        exact heq ▸ hsp)
+      obtain ⟨hlow_ord, hde, hcross⟩ := List.pairwise_append.mp hord
+      have hmem (x : ℕ) : x ∈ A ↔ x ∈ points a low ∨ x = a + low.sum + d ∨
+          x = a + low.sum + d + e := by
+        rw [← mem_iff]
+        exact mem_points_append_pair
+      have hbound (x : ℕ) (hx : x ∈ A) : a ≤ x ∧ (x ≤ a + low.sum ∨
+          x = a + low.sum + d ∨ x = a + low.sum + d + e) := by
+        rcases (hmem x).mp hx with hx | rfl | rfl
+        · exact ⟨(mem_bounds hx).1, Or.inl (mem_bounds hx).2⟩
+        · exact ⟨by omega, Or.inr (Or.inl rfl)⟩
+        · exact ⟨by omega, Or.inr (Or.inr rfl)⟩
+      have hs_mem : a + low.sum ∈ A := (hmem _).mpr (Or.inl (endpoints_mem _ _).2)
+      have hsd_mem : a + low.sum + d ∈ A := (hmem _).mpr (Or.inr (Or.inl rfl))
+      have hsde_mem : a + low.sum + d + e ∈ A := (hmem _).mpr (Or.inr (Or.inr rfl))
+      have h1 := hle _ hsde_mem
+      have h2 := hbound _ hmax
+      have h3 := hbound _ hb
+      have h4 := hbound _ ha'
+      have h5 := hb_top _ hsd_mem
+      have h6 := ha_top _ hs_mem
+      have ha_mem : a ∈ A := (mem_iff a).mp (endpoints_mem a _).1
+      have h7 := hstrong a ha_mem
+      rw [hcard, Nat.mul_succ] at h7
+      have hlen' : low.length + 2 = k := by
+        simp only [List.length_append, List.length_cons, List.length_nil] at hlen
+        omega
+      -- the last two gaps are equal
+      have hed : e = d := by omega
+      subst hed
+      let c : RefinedData n l k := {
+        extra := a - (l * k + 1)
+        top := e
+        low := low
+        top_pos := hd
+        positive := fun x hx => hp x (by simp [hx])
+        ordered := hlow_ord
+        le_top := fun x hx => hcross x hx e (by simp)
+        length := hlen'
+        total := by omega }
+      have hstart : c.start = a := by
+        simp only [c, RefinedData.start]
+        omega
+      refine ⟨c, Subtype.ext ?_⟩
+      change (points c.start (low ++ [e, e])).toFinset = A
+      rw [hstart]
+      simp [hlist]
+
+private abbrev partFamily (n l k : ℕ) :=
+  (Nat.Partition.restricted n (fun x => l + 1 ≤ x)).filter (fun P => P.parts.card = k)
+
+private abbrev RefinedData.partsList {n l k : ℕ} (c : RefinedData n l k) : List ℕ :=
+  c.low.map (· + l) ++ [c.top + l, c.top + c.extra + l]
+
+private theorem RefinedData.partsList_sorted {n l k : ℕ} (c : RefinedData n l k) :
+    c.partsList.Pairwise (· ≤ ·) := by
+  refine List.pairwise_append.mpr ⟨List.pairwise_map.mpr (c.ordered.imp (by omega)),
+    by simp, fun x hx y hy => ?_⟩
+  obtain ⟨z, hz, rfl⟩ := List.mem_map.mp hx
+  have := c.le_top z hz
+  simp at hy
+  omega
+
+private def RefinedData.toPartition {n l k : ℕ} (c : RefinedData n l k) : partFamily n l k := by
+  have hall : ∀ x ∈ c.partsList, l + 1 ≤ x := by
+    intro x hx
+    rcases List.mem_append.mp hx with hx | hx
+    · obtain ⟨z, hz, rfl⟩ := List.mem_map.mp hx
+      have := c.positive z hz
+      omega
+    · have := c.top_pos
+      simp at hx
+      omega
+  have hsum : c.partsList.sum = n := by
+    have := c.total
+    have hmul : l * (c.low.length + 2) = l * k := congrArg (l * ·) c.length
+    rw [Nat.mul_add] at hmul
+    simp only [RefinedData.partsList, List.sum_append, sum_map_add, List.sum_cons, List.sum_nil]
+    omega
+  refine ⟨⟨c.partsList, fun hx => ?_, ?_⟩, ?_⟩
+  · have := hall _ (Multiset.mem_coe.mp hx)
+    omega
+  · rw [Multiset.sum_coe]
+    exact hsum
+  · simp only [partFamily, Nat.Partition.restricted, Finset.mem_filter, Finset.mem_univ, true_and,
+      Multiset.mem_coe, Multiset.coe_card]
+    refine ⟨hall, ?_⟩
+    simpa using c.length
+
+private theorem RefinedData.toPartition_bijective (n l k : ℕ) (hk : 2 ≤ k) :
+    Function.Bijective (RefinedData.toPartition (n := n) (l := l) (k := k)) := by
+  constructor
+  · intro c d h
+    have he : (c.partsList : Multiset ℕ) = d.partsList :=
+      congrArg (fun v : partFamily n l k => v.val.parts) h
+    have hl := (Multiset.coe_eq_coe.mp he).eq_of_pairwise' c.partsList_sorted d.partsList_sorted
+    obtain ⟨hlow, htail⟩ := List.append_inj' hl rfl
+    have hlow' : c.low = d.low := List.map_injective_iff.mpr (add_left_injective l) hlow
+    simp only [List.cons.injEq, and_true] at htail
+    have htop : c.top = d.top := by omega
+    have hextra : c.extra = d.extra := by omega
+    cases c
+    cases d
+    simp_all
+  · rintro ⟨P, hP⟩
+    simp only [partFamily, Nat.Partition.restricted, Finset.mem_filter, Finset.mem_univ,
+      true_and] at hP
+    obtain ⟨hge, hcard⟩ := hP
+    have hsorted : (P.parts.sort).Pairwise (· ≤ ·) := Multiset.pairwise_sort _ _
+    have hxsP : ((P.parts.sort : List ℕ) : Multiset ℕ) = P.parts := Multiset.sort_eq _ _
+    have hlen : (P.parts.sort).length = k := by
+      rw [Multiset.length_sort]
+      exact hcard
+    obtain ⟨ys, u, v, hdec⟩ := exists_append_pair P.parts.sort (by omega)
+    have hmem (x : ℕ) (hx : x ∈ ys ++ [u, v]) : l + 1 ≤ x :=
+      hge x ((Multiset.mem_sort _).mp (hdec ▸ hx))
+    have hsum : ys.sum + u + v = n := by
+      have := congrArg Multiset.sum hxsP
+      rw [Multiset.sum_coe, P.parts_sum, hdec] at this
+      simpa [Nat.add_assoc] using this
+    rw [hdec] at hsorted hlen
+    obtain ⟨hys, huv, hcross⟩ := List.pairwise_append.mp hsorted
+    have huv' : u ≤ v := by simpa using huv
+    have hyu (y : ℕ) (hy : y ∈ ys) : y ≤ u := hcross y hy u (by simp)
+    have hyl (y : ℕ) (hy : y ∈ ys) : l + 1 ≤ y := hmem y (by simp [hy])
+    have hul : l + 1 ≤ u := hmem u (by simp)
+    have hback : (ys.map (· - l)).map (· + l) = ys := by
+      rw [List.map_map]
+      conv_rhs => rw [← List.map_id ys]
+      refine List.map_congr_left (fun y hy => ?_)
+      have := hyl y hy
+      simp only [Function.comp_apply, id_eq]
+      omega
+    have hsum' : (ys.map (· - l)).sum + l * ys.length = ys.sum := by
+      have := sum_map_add l (ys.map (· - l))
+      rw [hback, List.length_map] at this
+      omega
+    have hlen' : ys.length + 2 = k := by
+      simpa using hlen
+    refine ⟨{
+      extra := v - u
+      top := u - l
+      low := ys.map (· - l)
+      top_pos := by omega
+      positive := ?_
+      ordered := ?_
+      le_top := ?_
+      length := by simpa using hlen'
+      total := ?_ }, ?_⟩
+    · intro d hd
+      obtain ⟨y, hy, rfl⟩ := List.mem_map.mp hd
+      have := hyl y hy
+      omega
+    · exact List.pairwise_map.mpr (hys.imp (fun h => Nat.sub_le_sub_right h l))
+    · intro d hd
+      obtain ⟨y, hy, rfl⟩ := List.mem_map.mp hd
+      exact Nat.sub_le_sub_right (hyu y hy) l
+    · rw [← hlen', Nat.mul_add]
+      omega
+    · apply Subtype.ext
+      apply Nat.Partition.ext
+      change ((List.map (· + l) (List.map (· - l) ys) ++
+        [u - l + l, u - l + (v - u) + l] : List ℕ) : Multiset ℕ) = P.parts
+      rw [hback, ← hxsP, hdec]
+      have h1 : u - l + l = u := by omega
+      have h2 : u - l + (v - u) + l = v := by omega
+      rw [h1, h2]
+
+-- The source states the identity for `n ≥ ℓ + 1`; the bijection does not need this bound.
+set_option linter.unusedVariables false in
+/-- **Partitions with a fixed number of large parts and refined Schreier sets.** Let $n$,
+$\ell$ and $k$ be natural numbers with $n \ge \ell + 1$ and $k \ge 2$. Let $F_{n,\ell}$ be the
+family of finite sets $A$ of natural numbers such that $A$ has largest element $n + 1$ and at
+least three elements, $A$ is sparse (the differences of consecutive elements, in increasing
+order, are non-decreasing) and $\ell$-strong Schreier ($\ell|A| + 1 \le a + \ell$ for every
+$a \in A$), and the second and third largest elements $b > a$ of $A$ satisfy
+$n + 1 + a = 2b$. Then the number $|E_{n,\ell+1,k}|$ of partitions of $n$ into exactly $k$
+parts, all at least $\ell + 1$, equals the number $|F_{n,\ell,k+1}|$ of sets in $F_{n,\ell}$
+with exactly $k + 1$ elements.
+
+Source: Kevin Beanland and Hùng Việt Chu, "On Schreier-Type
+Sets, Partitions, and Compositions", Corollary 12. -/
+theorem partitionMinPartExactCount_eq_refined (n l k : ℕ)
+    (hn : l + 1 ≤ n) (hk : 2 ≤ k) :
+    partitionMinPartExactCount n (l + 1) k =
+      refinedSchreierCardCount n l (k + 1) := by
+  change (partFamily n l k).card = (refinedFamily n l (k + 1)).card
+  rw [← Fintype.card_coe, ← Fintype.card_coe (refinedFamily n l (k + 1))]
+  exact Fintype.card_congr
+    ((Equiv.ofBijective _ (RefinedData.toPartition_bijective n l k hk)).symm.trans
+      (Equiv.ofBijective _ (RefinedData.toSet_bijective n l k hk)))
 
 end MathlibExt.Combinatorics.Enumerative.SchreierTypeSetsWanted
