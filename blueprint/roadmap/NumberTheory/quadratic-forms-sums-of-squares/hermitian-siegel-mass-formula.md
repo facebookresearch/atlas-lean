@@ -20,8 +20,7 @@ $\lambda(L_{\mathfrak{p}}) = 1$ for all but finitely many $\mathfrak{p}$, and
 
 $$\mathrm{Mass}(L) = 2 \gamma_m^{-n} \, d_K^{\,m^2/2} \, N_{K/\mathbb{Q}}(\mathfrak{d}_{E/K})^{m(m - (-1)^m)/4} \prod_{i=1}^{m} L_K(\chi^i, i) \prod_{\mathfrak{p}} \lambda(L_{\mathfrak{p}}), \qquad \gamma_m = \prod_{i=1}^{m} \frac{(2\pi)^i}{(i - 1)!},$$
 
-the last product running over the prime ideals of $\mathfrak{o}$. Scaling $\Phi$ by a positive integer changes neither the
-mass nor the local factors and makes any given lattice integral, so the formula extends to every $\mathcal{O}$-lattice.
+the last product running over the prime ideals of $\mathfrak{o}$.
 
 The identity $L_K(\chi, s) = \zeta_E(s) / \zeta_K(s)$ holds factor by factor in the Euler products of the two Dedekind
 zeta functions: for a prime ideal $\mathfrak{p}$ of $\mathfrak{o}$ of norm $q$, the sum of $e f$ over the prime ideals of
@@ -54,8 +53,7 @@ Kirschmer credits Theorem 4.2.3 to Siegel for quadratic forms and to Gan and Yu 
 This node is still to be broken down. A good expansion has a page for Siegel's mass formula in local-density form
 (Kirschmer, Theorem 4.2.3, with the Tamagawa number $2$ of the unitary group and the product of the local densities
 read as above); pages for the finiteness of the number of classes in a genus (Theorem 2.4.5) and of the automorphism
-groups (Remark 2.4.4(1)), and for the invariance of the mass and of the local factors under scaling (after
-Definition 4.2.1, and Proposition 4.2.10(3)); and a page for the passage to the form above (Proposition 4.2.7(3)).
+groups (Remark 2.4.4(1)); and a page for the passage to the form above (Proposition 4.2.7(3)).
 Writing each $\beta(L_{\mathfrak{p}})^{-1}$ through $\lambda(L_{\mathfrak{p}})$, the powers $q^{-t_{\mathfrak{p}} m/2}$ cancel
 $[L^\# : L]_{\mathbb{Z}}^{m/2}$; at a prime $\mathfrak{p}$ unramified in $E$ the factor $c_{\mathfrak{p}}^{-1}$ is the Euler factor of
 $\prod_{i=1}^m L_K(\chi^i, i)$ at $\mathfrak{p}$; and at the ramified primes the factors
@@ -83,10 +81,10 @@ $q^{-a_{\mathfrak{p}}}$ change the exponent of $N_{K/\mathbb{Q}}(\mathfrak{d}_{E
   RWTH Aachen University (2016), <http://www.math.rwth-aachen.de/~Markus.Kirschmer/papers/herm.pdf>:
   Remark 2.4.4(1) and Theorem 2.4.5 (finite automorphism groups, finitely many classes); Chapter 4: Theorems
   4.1.2 (Euler product of $\zeta_F$) and 4.1.4, the definition of $L_K(\chi, s)$ and equation (4.1.1) before
-  Corollary 4.1.5, Table 4.1, Definition 4.2.1 (mass) and the remark after it, Theorem 4.2.3 (Siegel's mass formula,
+  Corollary 4.1.5, Table 4.1, Definition 4.2.1 (mass), Theorem 4.2.3 (Siegel's mass formula,
   credited to C. L. Siegel, Ann. of Math. 36 (1935) and 38 (1937), for quadratic forms and to W. T. Gan and
   J.-K. Yu, *Group schemes and local densities*, Duke Math. J. 105 (2000), 497–524, Section 10, in general),
-  Theorem 4.2.4, Lemma 4.2.5, Definition 4.2.6, Proposition 4.2.7(3) and Proposition 4.2.10(2) and (3).
+  Theorem 4.2.4, Lemma 4.2.5, Definition 4.2.6, Proposition 4.2.7(3) and Proposition 4.2.10(2).
 - W. T. Gan and J.-K. Yu, *Group schemes and local densities*, Duke Math. J. 105 (2000), 497–524,
   <https://bpb-us-w2.wpmucdn.com/blog.nus.edu.sg/dist/3/12891/files/2020/08/duke-local-density.pdf>, Section 10:
   §§10.7–10.8 (the mass in terms of the local densities, whose product converges only conditionally when the group is
