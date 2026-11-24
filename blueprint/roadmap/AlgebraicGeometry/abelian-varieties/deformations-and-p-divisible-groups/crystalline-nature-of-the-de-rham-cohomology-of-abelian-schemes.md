@@ -45,6 +45,8 @@ library with that comparison, including its compatibility with the group law.
 - [Abelian scheme](../abelian-scheme.md)
 - [De Rham cohomology of abelian schemes](de-rham-cohomology-of-abelian-schemes.md), for
   $H^1_{\mathrm{dR}}(A/R)$
+- [Grothendieck–Messing deformation theorem](grothendieck-messing-theorem.md), for the definition of a
+  nilpotent divided power thickening
 
 ## Proof depends on
 

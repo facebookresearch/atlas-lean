@@ -36,7 +36,6 @@ polarization, a bridge for which no source has yet been identified.
 
 ## Depends on
 
-- [Zarhin's trick](zarhin-trick.md)
 - [Dual abelian scheme](dual-abelian-scheme.md)
 - [Polarization](polarization.md), for polarizations of abelian schemes
 - [Theorem of the cube, theorem of the square and the seesaw principle](theorem-of-the-cube.md), for
