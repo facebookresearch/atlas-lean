@@ -10347,6 +10347,8 @@
   "MathlibExt/Combinatorics/AP/Basic": {"to": "Combinatorics/additive-combinatorics/progressions-dense-sets", "title": "Arithmetic progressions and progression-free sets"},
   "MathlibExt/Combinatorics/AcceleratedZeckendorfGame": {"to": "GameTheory/combinatorial-games", "title": "Accelerated Zeckendorf game"},
   "MathlibExt/Combinatorics/AccessibleSets": {"to": "Combinatorics/ramsey-theory/van-der-waerden-theorems", "title": "Accessible sets and diffsequences"},
+  "MathlibExt/Combinatorics/AccessibleSetsGrowth": {"to": "Combinatorics/ramsey-theory/van-der-waerden-theorems", "title": "Accessible sets and diffsequences"},
+  "MathlibExt/Combinatorics/AccessibleSetsRecurrence": {"to": "Combinatorics/ramsey-theory/van-der-waerden-theorems", "title": "Accessible sets and diffsequences"},
   "MathlibExt/Combinatorics/Additive/AlonFurediCover": {"to": "Combinatorics/additive-combinatorics", "title": "Combinatorial Nullstellensatz"},
   "MathlibExt/Combinatorics/Additive/AtLeastDistinctSumset": {"to": "Combinatorics/additive-combinatorics/sumsets-inverse-theorems", "title": "Sumsets with at least r distinct terms"},
   "MathlibExt/Combinatorics/Additive/Basis": {"to": "Combinatorics/additive-combinatorics/additive-bases", "title": "Asymptotic additive bases"},
