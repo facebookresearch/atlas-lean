@@ -50,6 +50,7 @@ It also writes out these steps of its own proof:
 - [The logarithm series ln(1 + T)](../zeta-l-functions/multiple-zeta-values/q-analogues-of-multiple-zeta-values/part-05/log-one-add-series.md), for the formal logarithm over $\mathbb{Q}$
 - [Nonarchimedean criterion for absolute values](absolute-values-on-fields/is-nonarchimedean-iff-nat-cast-le-one.md), for non-archimedean absolute values and the ultrametric inequality
 - [Complete uniform space](../../Topology/uniform-spaces/complete-space.md), for the completeness of the field, for all the items
+- [Ultrametric distance](../../Topology/metric-spaces/is-ultrametric-dist.md), for the non-archimedean absolute value as an ultrametric distance, for all the items
 
 ## Proof depends on
 
