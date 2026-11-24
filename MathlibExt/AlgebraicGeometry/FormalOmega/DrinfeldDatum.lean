@@ -29,7 +29,7 @@ module
 
 public import Mathlib.RingTheory.Spectrum.Prime.Topology
 public import Mathlib.RingTheory.Localization.AtPrime.Basic
-public import MathlibExt.AlgebraicGeometry.FormalOmega.DeligneDatum
+public import MathlibExt.AlgebraicGeometry.FormalOmega.DeligneFunctor
 
 @[expose] public section
 
@@ -196,6 +196,28 @@ structure Iso (Q Q' : DrinfeldDatum (K := K) π B) : Type where
         hv⟩ : ↥(Q.N₁ x))))
 
 def IsIsomorphic (Q Q' : DrinfeldDatum (K := K) π B) : Prop := Nonempty (Iso Q Q')
+
+/-- A Drinfeld datum `Q` is a quadruple of the Deligne datum `d` if at every point `x` the edge
+`Q.L₀ x ⊆ Q.L₁ x` is nondegenerate for `d` at `x`, and the kernels of the stalk maps `Q.u₀ x` and
+`Q.u₁ x` are the lines of the base change of `d` to the local ring at `x`. -/
+def IsQuadrupleOf (Q : DrinfeldDatum (K := K) π B) (d : DeligneDatum (K := K) π B) : Prop :=
+  ∀ x : PrimeSpectrum B,
+    d.EdgeNondegAt π x.asIdeal (Q.L₀ x) (Q.L₁ x) ∧
+    LinearMap.ker (Q.u₀ x) = (d.map π (toLocRing B x)).line (Q.L₀ x) ∧
+    LinearMap.ker (Q.u₁ x) = (d.map π (toLocRing B x)).line (Q.L₁ x)
+
+theorem IsQuadrupleOf.edge_iff (Q : DrinfeldDatum (K := K) π B) (d : DeligneDatum (K := K) π B)
+    (x : PrimeSpectrum B) :
+    d.EdgeNondegAt π x.asIdeal (Q.L₀ x) (Q.L₁ x) ↔
+    (Q.N₀ x ≤ Q.N₁ x ∧ (∀ v : ↥(Q.N₁ x), algebraMap 𝒪 K π • (v : Fin 2 → K) ∈ Q.N₀ x) ∧
+      (∀ v : ↥(Q.N₁ x), (v : Fin 2 → K) ∉ Q.N₀ x →
+        (1 : B) ⊗ₜ[𝒪] v ∉ d.line (Q.L₁ x) ⊔
+          (x.asIdeal • ⊤ : Submodule B (latticeBaseChange 𝒪 K B (Q.L₁ x)))) ∧
+      (∀ v' : ↥(Q.N₀ x),
+        (¬ ∃ w : ↥(Q.N₁ x), (v' : Fin 2 → K) = algebraMap 𝒪 K π • (w : Fin 2 → K)) →
+        (1 : B) ⊗ₜ[𝒪] v' ∉ d.line (Q.L₀ x) ⊔
+          (x.asIdeal • ⊤ : Submodule B (latticeBaseChange 𝒪 K B (Q.L₀ x))))) :=
+  Iff.rfl
 
 
 end DrinfeldDatum
