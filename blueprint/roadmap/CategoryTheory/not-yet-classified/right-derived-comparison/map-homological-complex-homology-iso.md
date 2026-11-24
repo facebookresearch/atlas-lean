@@ -1,8 +1,8 @@
 # Map Homological Complex Homology Iso
 
-A functor preserving homology commutes with the homology functors on homological
-complexes: `E.mapHomologicalComplex c ⋙ homologyFunctor B' c i ≅ homologyFunctor B c i ⋙ E`.
+A functor preserving zero morphisms and homology between categories with
+homology commutes with the homology functor on complexes:
+`E.mapHomologicalComplex c ⋙ homologyFunctor B' c i ≅ homologyFunctor B c i ⋙ E`.
 
-Both sides are, definitionally, `HomologicalComplex.shortComplexFunctor` followed by a
-comparison of short-complex homology, so this is `ShortComplex.homologyFunctorIso E`
-whiskered on the left.
+At each degree, its component is the homology comparison for the associated
+short complex. Naturality follows from the short-complex comparison.
