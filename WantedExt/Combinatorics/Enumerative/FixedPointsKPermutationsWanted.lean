@@ -30,6 +30,7 @@ public import Mathlib.Combinatorics.Enumerative.Stirling
 public import Mathlib.GroupTheory.Perm.Cycle.Type
 public import Mathlib.Probability.CDF
 public import Mathlib.Probability.Distributions.Gaussian.Real
+public import MathlibExt.Combinatorics.Enumerative.FixedPointsKPermutations
 public import MathlibExt.Combinatorics.Enumerative.Stirling
 public import MathlibExt.Combinatorics.Sequences.NewtonInequalities
 
@@ -38,16 +39,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open Filter Polynomial Topology
-
-/-- **Permutations counted by cycles and fixed points.** For natural numbers $n$, $k$ and $j$,
-$a(n, k, j)$ is the number of permutations of $\{0, 1, \dots, n - 1\}$ with exactly $k$ cycles
-(fixed points counted as cycles of length one) and exactly $j$ fixed points.
-
-Source: Moussa Benoumhani, *The Distribution of the Number of Fixed Points in k-Permutations*,
-INTEGERS 24 (2024), Article A54, Proposition 3 (definition of `a(n, k, j)`). -/
-public noncomputable def kPermFixedPointCount (n k j : ℕ) : ℕ :=
-  Fintype.card {σ : Equiv.Perm (Fin n) //
-    cycleQuotientCount σ = k ∧ Fintype.card (Function.fixedPoints σ) = j}
 
 /-- **A permutation has at most as many fixed points as cycles.** Write $a(n, k, j)$ for the number
 of permutations of an $n$-element set with exactly $k$ cycles (fixed points counted as cycles of
@@ -74,19 +65,6 @@ public theorem kPermFixedPointCount_zero_zero_zero : kPermFixedPointCount 0 0 0 
   rw [Fintype.card_eq_one_iff]
   refine ⟨⟨1, by rw [cycleQuotientCount_eq]; simp, by simp⟩,
     fun x => Subtype.ext (Subsingleton.elim _ _)⟩
-
-/-- **Fixed points split off a derangement.** Write $a(n, k, j)$ for the number of permutations of
-an $n$-element set with exactly $k$ cycles (fixed points counted as cycles of length one) and
-exactly $j$ fixed points, and $d(m, i) = a(m, i, 0)$ for the number of derangements of an
-$m$-element set with $i$ cycles. For all natural numbers $n$, $k$ and $j$ with $j \le k$,
-$a(n, k, j) = \binom{n}{j} \, d(n - j, k - j)$, where $n - j$ is read as $0$ when $j > n$.
-
-The paper assumes $n \ge k \ge 1$; the identity holds for all $n$ and all $k \ge j$.
-
-Source: Moussa Benoumhani, *The Distribution of the Number of Fixed Points in k-Permutations*,
-INTEGERS 24 (2024), Article A54, Proposition 3 (i) (`integers-2024-A54-prop-3`). -/
-public theorem_wanted kPermFixedPointCount_eq_choose_mul_derangement {n k j : ℕ} (hjk : j ≤ k) :
-    kPermFixedPointCount n k j = n.choose j * kPermFixedPointCount (n - j) (k - j) 0
 
 /-- **Recurrence for permutations counted by cycles and fixed points.** Write $a(n, k, j)$ for the
 number of permutations of an $n$-element set with exactly $k$ cycles (fixed points counted as

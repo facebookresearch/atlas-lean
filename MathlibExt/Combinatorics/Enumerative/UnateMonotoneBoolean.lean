@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.SetTheory.Cardinal.Finite
+import Mathlib.Logic.Equiv.Bool
 import MathlibExt.Combinatorics.Enumerative.SelfDualMonotoneBoolean
 
 namespace MetaMathlibExt
@@ -308,6 +309,28 @@ public theorem card_monotone_boolFun_weight_symm (n w : ℕ) (hw : w ≤ 2 ^ n) 
   simp only [Function.Involutive.coe_toPerm, monotone_booleanFunctionDual_iff, weight,
     card_true_booleanFunctionDual]
   exact and_congr_right fun _ => (tsub_right_inj (card_true_le_two_pow n f) hw).symm
+
+/-- **Weight symmetry of unate Boolean functions.** For all $n \ge 0$ and all $w$ with
+$0 \le w \le 2^n$, the number of unate $n$-variable Boolean functions of weight $w$ equals the
+number of unate $n$-variable Boolean functions of weight $2^n - w$.
+
+The source assumes $n \ge 1$; the case $n = 0$ is included here.
+
+Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
+under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
+Sequences 28 (2025), Article 25.3.4, Proposition 9 (`jis-2025-25.3.4-prop-9`). -/
+public theorem card_unate_boolFun_weight_symm (n w : ℕ) (hw : w ≤ 2 ^ n) :
+    Nat.card {f : (Fin n → Bool) → Bool // IsUnateBoolFun f ∧ boolFunWeight f = w}
+      = Nat.card {f : (Fin n → Bool) → Bool // IsUnateBoolFun f ∧ boolFunWeight f = 2 ^ n - w} := by
+  refine Nat.card_congr ((Equiv.piCongrRight fun _ => Equiv.boolNot).subtypeEquiv fun f => ?_)
+  apply and_congr
+  · change IsUnateBoolFun f ↔ IsUnateBoolFun (fun x => !f x)
+    exact ⟨isUnateBoolFun_not, fun h => by simpa using isUnateBoolFun_not h⟩
+  · change boolFunWeight f = w ↔ boolFunWeight (fun x => !f x) = 2 ^ n - w
+    have hsum : boolFunWeight f + boolFunWeight (fun x => !f x) = 2 ^ n := by
+      simpa [boolFunWeight] using
+        (Finset.card_filter_add_card_filter_not (s := Finset.univ) (fun x => f x = true))
+    omega
 
 end
 
