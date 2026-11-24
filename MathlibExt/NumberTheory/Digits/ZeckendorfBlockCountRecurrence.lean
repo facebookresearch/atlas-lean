@@ -19,6 +19,13 @@ import Mathlib.Data.Fintype.BigOperators
 
 A sum supported in the first `n` indices is determined by its first proper block and the
 translated remainder. A gap at the start can be filled by the zero singleton block.
+
+This proves the recurrence printed in Chang's Proposition 4 (arXiv:2308.12872v1,
+Proposition 4.8) for the zero-inclusive count of bounded block sums. For `n > 0`, the
+paper's prose restricts $S_n$ to the nonzero collection $E^*$. A bounded decomposition
+that ends before the paper's one-based index `n` can be extended to that endpoint by
+appending a zero singleton block at `n`, since $e_1 > 0$. Thus the bounded collection
+counted here is exactly $S_n \cup \{0\}$ for `n > 0`.
 -/
 
 namespace MetaMathlibExt
