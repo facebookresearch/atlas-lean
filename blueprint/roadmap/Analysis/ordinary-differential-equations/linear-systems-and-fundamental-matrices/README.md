@@ -29,7 +29,6 @@
 ## Trace–determinant stability of planar linearizations
 
 - [Characteristic roots of a planar linear system](is-char-root.md)
-- [Characteristic roots have negative real part when τ < 0 < Δ](re-neg.md)
 - [Characteristic roots have positive real part when τ > 0 and Δ > 0](re-pos.md)
 - [Characteristic roots are purely imaginary when τ = 0 < Δ](re-eq-zero.md)
 - [Characteristic roots are real when 4Δ ≤ τ²](im-eq-zero.md)
