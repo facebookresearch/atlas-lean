@@ -25,6 +25,8 @@ open CategoryTheory CategoryTheory.Limits
 namespace CategoryTheory.ProjectiveResolution
 variable {C : Type u} [Category.{v} C] [Abelian C]
 
+local instance : ChainComplex.kernelTailEmbedding.IsRelIff :=
+  ComplexShape.instIsRelIffEmbeddingDown'Add 1 1
 
 set_option backward.isDefEq.respectTransparency false in
 /-- The kernel-augmented restricted tail is a projective resolution. -/
