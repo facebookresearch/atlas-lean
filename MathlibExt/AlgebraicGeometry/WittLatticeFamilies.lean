@@ -117,7 +117,7 @@ def testMap {R S : PerfectAlgebra p} (f : R ⟶ S) :
 /-- The actual perfect bounded scheme and its separate projective deperfection. -/
 structure Representation where
   ordinaryModel : Over (Spec (.of (ZMod p)))
-  projective : ProjectiveLineSystems.IsProjectiveVariety ordinaryModel
+  projective : ProjectiveSpace.IsProjective ordinaryModel
   [finitePresentation : LocallyOfFinitePresentation ordinaryModel.hom]
   perfection : PerfectSchemeModels.PerfectionModel p ordinaryModel
   points : ∀ R : PerfectAlgebra p,
