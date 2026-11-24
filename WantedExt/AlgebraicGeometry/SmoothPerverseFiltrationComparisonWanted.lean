@@ -40,8 +40,7 @@ https://arxiv.org/abs/math/0306030.
 namespace WantedExt.AlgebraicGeometry.SmoothPerverseFiltrationComparisonWanted
 
 open _root_.AlgebraicGeometry _root_.CategoryTheory
-open _root_.MathlibExt.AlgebraicGeometry.PerverseSheaves
-open _root_.MathlibExt.AlgebraicGeometry.DeCataldoMiglioriniDecompositionWanted
+open _root_.MathlibExt.AlgebraicGeometry _root_.MathlibExt.AlgebraicGeometry.PerverseSheaves
 
 attribute [local instance] HasDerivedCategory.standard
 
@@ -53,7 +52,7 @@ public def_wanted smoothPerverseTruncationComparison
     [PerverseSheafTheory Y] (f : X ⟶ Y) (d m : ℕ)
     [IsProper f.left] [SmoothOfRelativeDimension d f.left]
     [SmoothOfRelativeDimension m Y.hom] (k : ℤ) :
-    let K := normalizedDirectImage X Y f (m + d)
+    let K := ConstructibleComplexes.normalizedDirectImage ℚ X Y f (m + d)
     Σ' hK : boundedConstructible Y K,
       let KC : (boundedConstructible Y).FullSubcategory := ⟨K, hK⟩
       let t := perverseTStructure Y

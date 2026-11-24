@@ -10,7 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Convex.Hull
-public import MathlibExt.NumberTheory.GobelNonIntegrality
+public import MathlibExt.NumberTheory.GobelBSequence
 public import MathlibExt.NumberTheory.OddMultiplePrimeHalfSets
 public import WantedExt.NumberTheory.GobelSequenceWanted
 
@@ -220,20 +220,6 @@ Article 26.3.8, Proposition 17. -/
 public theorem_wanted existsUnique_gobelASequence
     (p l : ℕ) (hp : p.Prime) (hmod : p % 4 = 1) (hleven : Even l) (hl : l ≤ p - 3) :
     ∃! a : ℕ → ℤ, IsGobelASequence p l a
-
-/-- **Existence and uniqueness of the sequence $b_{l,s}$.** Let $l$ be an even natural number and
-$s$ a natural number with $s \le l$ such that $2s + 1$ and $l + 1$ are coprime. Then exactly one
-function $b : \mathbb{Z} \to \mathbb{Z}$ satisfies the defining conditions of $b_{l,s}$:
-$b(n) = \pm 1$ for every integer $n$, $b(n + l + 1) = b(n)$ for every $n$, $b(1) = 1$,
-$b(n) = -b(l + 1 - n)$ for every $n$ not divisible by $l + 1$, and $b(s - n) = b(s + 1 + n)$ for
-every $n$.
-
-Source: Yuh Kobayashi and Shin-ichiro Seki, *A Note on
-Non-Integrality of the (k, l)-Göbel Sequences*, Journal of Integer Sequences 29 (2026), Article
-26.3.8, Proposition 20. -/
-public theorem_wanted existsUnique_gobelBSequence
-    (l s : ℕ) (hleven : Even l) (hs : s ≤ l) (hcoprime : Nat.Coprime (2 * s + 1) (l + 1)) :
-    ∃! b : ℤ → ℤ, IsGobelBSequence l s b
 
 /-- **Complementary sequences $b_{l,s}$ and $b_{l,l-s}$.** Let $l \ge 2$ be an even natural
 number and $s \le l$ a natural number such that $2s + 1$ and $l + 1$ are coprime. Let

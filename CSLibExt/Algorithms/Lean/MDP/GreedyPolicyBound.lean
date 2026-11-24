@@ -40,7 +40,7 @@ variable {S A : Type*} [Fintype S] [Fintype A] [Nonempty A] {M : MDP S A ℝ} {�
 include hM hγ0 hγ1
 
 /-- **Singh and Yee's bound** (Singh and Yee 1994; cf. AJKS Lemma 1.11, the action-value form): if
-`|V s - V* s| ≤ d` for every state `s`, then the policy greedy with respect to `V` loses at most
+`|V s - V* s| ≤ d` for every state `s`, then the policy selected by `greedy M γ V` loses at most
 `2 γ d / (1 - γ)` against the optimal value in every state. -/
 theorem optimalValue_sub_policyValue_greedy_le {V : S → ℝ} {d : ℝ}
     (hV : ∀ s, |V s - optimalValue M γ hM hγ0 hγ1 s| ≤ d) (s : S) :
@@ -75,7 +75,7 @@ theorem optimalValue_sub_policyValue_greedy_le {V : S → ℝ} {d : ℝ}
   linarith
 
 /-- **Greedy policies of value iteration** (compare AJKS Theorem 1.12): after `n` steps of value
-iteration from `V`, the greedy policy loses at most
+iteration from `V`, the policy selected by `greedy M γ (valueIteration M γ n V)` loses at most
 `2 γ / (1 - γ) * (dist V (T V) * γ ^ n / (1 - γ))` against the optimal value in every state. -/
 theorem optimalValue_sub_policyValue_greedy_valueIteration_le (V : S → ℝ) (n : ℕ) (s : S) :
     optimalValue M γ hM hγ0 hγ1 s -
