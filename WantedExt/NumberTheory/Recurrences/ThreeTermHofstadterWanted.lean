@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Data.List.GetD
 public import MathlibExt.NumberTheory.Recurrences.ThreeTermHofstadterSevenCycle
+public import MathlibExt.NumberTheory.Recurrences.ThreeTermHofstadterSixteenCycleTwo
 public import MathlibExt.NumberTheory.Recurrences.ThreeTermHofstadterTwoCycle
 
 namespace MetaMathlibExt
@@ -83,34 +84,6 @@ public theorem_wanted threeTermHofstadter_fiveCycle {K : ℕ} (hK : 3 ≤ K) {mu
     threeTermHofstadterTerm true ([1, 2, 3] ++ a ++ [K + mu, 3, K + 3, K + mu + 1, 5])
         (K + 5 * k + r) =
       some ([5, K + 3 * k + mu, 3, K + 5 * k + 3, K + 3 * k + mu + 1].getD r 0 : ℤ)
-
-/-- **Second sixteen-cycle lemma for the three-term Hofstadter-like recurrence.** Let $K \ge 1$
-be a natural number and let $\lambda$, $\mu_1$, $\mu_2$, $\gamma_1$, $\gamma_2$, $\gamma_3$ be
-integers with $\lambda > 31 + K$ and $\mu_1, \mu_2, \gamma_1, \gamma_2, \gamma_3 > \lambda$. Let
-$a_1, \dots, a_K$ be arbitrary integers and let $B$ be the padded three-term Hofstadter-like
-sequence with initial conditions $a_1, \dots, a_K, 16, \mu_2, 7, \gamma_2, \lambda, 16, \lambda,
-16, \mu_1, 10, \gamma_3, \mu_2, 7, \lambda, 16, \gamma_1$. Then for all natural numbers $k$ and
-$r \le 15$ with $K + 1 \le K + 16k + r \le \lambda$, the term $B(K + 16k + r)$ is defined, and
-these terms are $B(K + 16k) = \mu_1 2^k + \gamma_1 - 2\mu_1$, $B(K + 16k + 1) = 16$,
-$B(K + 16k + 2) = \mu_2 2^k$, $B(K + 16k + 3) = 7$, $B(K + 16k + 4) = 7k + \gamma_2$,
-$B(K + 16k + 5) = \lambda$, $B(K + 16k + 6) = 16$, $B(K + 16k + 7) = \lambda$,
-$B(K + 16k + 8) = 16$, $B(K + 16k + 9) = \mu_1 2^k$, $B(K + 16k + 10) = 10$,
-$B(K + 16k + 11) = 16k + \gamma_3$, $B(K + 16k + 12) = \mu_2 2^k$, $B(K + 16k + 13) = 7$,
-$B(K + 16k + 14) = \lambda$ and $B(K + 16k + 15) = 16$.
-
-Source: Nathan Fox, *The Behavior of a Three-Term Hofstadter-Like Recurrence with Linear
-Initial Conditions*, Journal of Integer Sequences 27 (2024), Article 24.7.4, Lemma 7,
-citing the author's thesis, Proposition 9.16 (`jis-2024-24.7.4-lem-7`). -/
-public theorem_wanted threeTermHofstadter_sixteenCycle_two {K : ℕ} (hK : 1 ≤ K)
-    {lam mu₁ mu₂ ga₁ ga₂ ga₃ : ℤ} (hlam : 31 + (K : ℤ) < lam) (hmu₁ : lam < mu₁)
-    (hmu₂ : lam < mu₂) (hga₁ : lam < ga₁) (hga₂ : lam < ga₂) (hga₃ : lam < ga₃)
-    (a : List ℤ) (ha : a.length = K) (k r : ℕ) (hr : r < 16) (hlo : K + 1 ≤ K + 16 * k + r)
-    (hhi : ((K + 16 * k + r : ℕ) : ℤ) ≤ lam) :
-    threeTermHofstadterTerm true
-        (a ++ [16, mu₂, 7, ga₂, lam, 16, lam, 16, mu₁, 10, ga₃, mu₂, 7, lam, 16, ga₁])
-        (K + 16 * k + r) =
-      some ([mu₁ * 2 ^ k + ga₁ - 2 * mu₁, 16, mu₂ * 2 ^ k, 7, 7 * k + ga₂, lam, 16, lam, 16,
-        mu₁ * 2 ^ k, 10, 16 * k + ga₃, mu₂ * 2 ^ k, 7, lam, 16].getD r 0)
 
 /-- **First sixteen-cycle lemma for the three-term Hofstadter-like recurrence.** Let $K \ge 1$ be
 a natural number and let $\lambda$, $\mu_1$, $\mu_2$, $\gamma$ be integers with $\lambda > 31 + K$
