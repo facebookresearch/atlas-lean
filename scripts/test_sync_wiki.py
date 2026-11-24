@@ -3897,11 +3897,22 @@ class ScopedRun(unittest.TestCase):
         self.assertEqual((status, report["missing"], report["written"]), (0, [], ["scripts/wiki-sync.json"]))
         status, out, err, report = self.run_sync("--check")
         self.assertEqual((status, report["in_step"], report["wiki_changes"]), (0, True, "other"))
-        # The sync never relinks a row: on the base's wiki it stops at the stale link instead.
-        self.assertEqual(report["differences"], [
-            "the sync stops on the base's wiki: blueprint/links/Algebra.jsonl:4 (Algebra/groups/group-basics/lagrange.md) "
-            "links Ext.lagrange, which the Lean no longer has: relink the row to the declaration's successor and keep its "
-            "article id, or remove the link and keep the page as a planned page"])
+        # The sync never relinks a row: on the base's wiki it stops at the stale link instead, and writes nothing, so
+        # the relinked row and the digests are not its either.
+        stop = ("the sync stops on the base's wiki: blueprint/links/Algebra.jsonl:4 (Algebra/groups/group-basics/"
+                "lagrange.md) links Ext.lagrange, which the Lean no longer has: relink the row to the declaration's "
+                "successor and keep its article id, or remove the link and keep the page as a planned page")
+        other = "the changes write it otherwise than the sync"
+        self.assertEqual(report["differences"], [stop, f"blueprint/links/Algebra.jsonl: {other}",
+                                                 f"scripts/wiki-sync.json: {other}"])
+        # A file the sync never writes is listed ahead of where it stops, and a page edited by hand with the rest.
+        taxonomy = json.loads(json.dumps(self.TAXONOMY))
+        taxonomy["subjects"]["Algebra"]["fields"][0]["description"] = "Groups and their subgroups."
+        self.write("scripts/taxonomy.json", json.dumps(taxonomy))
+        self.write("blueprint/roadmap/Algebra/README.md", self.PAGES["Algebra/README.md"] + "\nMore prose.\n")
+        self.assertEqual(self.run_sync("--check")[3]["differences"], [
+            "scripts/taxonomy.json: the sync never writes it", stop, f"blueprint/links/Algebra.jsonl: {other}",
+            f"blueprint/roadmap/Algebra/README.md: {other}", f"scripts/wiki-sync.json: {other}"])
 
     def test_a_held_marker_the_changes_leave_unusable_stops_the_run(self) -> None:
         links = self.root / "blueprint/links/Algebra.jsonl"
@@ -4222,13 +4233,85 @@ class ScopedRun(unittest.TestCase):
                 f"{path}: the sync writes nothing when no Lean changes"]), path)
             self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
             status, out, err, report = self.run_sync("--check")
+            # The files the sync may write are compared all the same: those it writes otherwise are listed too.
+            left = "the sync writes it, and the changes leave it as it was"
             self.assertEqual((report["wiki_changes"], report["differences"]), ("other", [
-                f"{path}: the sync never writes it"]), path)
+                f"{path}: the sync never writes it", f"blueprint/links/Algebra.jsonl: {left}",
+                f"blueprint/roadmap/Algebra/groups/group-basics/README.md: {left}",
+                "blueprint/roadmap/Algebra/groups/group-basics/fresh.md: the sync writes it, and the changes do not",
+                f"scripts/wiki-sync.json: {left}"]), path)
             self.groups()
             if kept is None:
                 target.unlink()
             else:
                 target.write_text(kept)
+
+    def test_a_page_edited_by_hand_beside_the_taxonomy_is_listed_too(self) -> None:
+        # A Lean change that needs no page, a taxonomy edit and a page corrected by hand: the taxonomy, which the sync
+        # never writes, does not keep the page from being compared, and both are listed.
+        self.groups(more="theorem helper : True := trivial\n\n")
+        taxonomy = json.loads(json.dumps(self.TAXONOMY))
+        taxonomy["subjects"]["Algebra"]["fields"][0]["description"] = "Groups and their subgroups."
+        self.write("scripts/taxonomy.json", json.dumps(taxonomy))
+        self.write("blueprint/roadmap/Algebra/groups/group-basics/lagrange.md",
+                   "# Lagrange\n\nThe order of a subgroup divides the order of a finite group.\n")
+        listed = ["scripts/taxonomy.json: the sync never writes it",
+                  "blueprint/roadmap/Algebra/groups/group-basics/lagrange.md: the changes write it otherwise than "
+                  "the sync"]
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["wiki_changes"], report["differences"]),
+                         (0, True, "other", listed), out + err)
+        self.assertIn("".join(f"  {row}\n" for row in listed), out)
+        # The pages the sync writes for a new declaration are not listed; the two files still are.
+        self.groups(more="theorem helper : True := trivial\n\n/-- A new result. -/\ntheorem fresh : True := "
+                         "trivial\n\n")
+        self.assertEqual(self.run_sync()[0], 0)
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["wiki_changes"], report["differences"]),
+                         (0, True, "other", listed), out + err)
+
+    def test_a_taxonomy_change_alone_is_listed_alone(self) -> None:
+        # When the rest is what the sync writes, the taxonomy is the only file listed: beside a Lean change that needs
+        # nothing, and beside a new module the changed taxonomy places, whose pages the sync lays out where it says.
+        taxonomy = json.loads(json.dumps(self.TAXONOMY))
+        taxonomy["subjects"]["Algebra"]["fields"][0]["description"] = "Groups and their subgroups."
+        self.write("scripts/taxonomy.json", json.dumps(taxonomy))
+        self.groups(more="theorem helper : True := trivial\n\n")
+        listed = ["scripts/taxonomy.json: the sync never writes it"]
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["wiki_changes"], report["differences"]),
+                         (0, True, "other", listed), out + err)
+        taxonomy["placements"]["MathlibExt/Algebra/Rings"] = {"to": "Algebra/groups", "title": "Ring basics"}
+        self.write("scripts/taxonomy.json", json.dumps(taxonomy))
+        self.write("MathlibExt/Algebra/Rings.lean", self.RINGS)
+        status, out, err, report = self.run_sync()
+        self.assertEqual(status, 0, err)
+        self.assertIn("blueprint/roadmap/Algebra/groups/ring-basics/units.md", report["written"])
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["wiki_changes"], report["differences"]),
+                         (0, True, "other", listed), out + err)
+
+    def test_wiki_changes_equal_to_what_the_sync_writes_are_its(self) -> None:
+        # Files written by hand, byte for byte what the sync writes, are the sync's, and stay unlisted beside a
+        # taxonomy edit.
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        before = self.tree()
+        self.assertEqual(self.run_sync()[0], 0)
+        written = {path: data for path, data in self.tree().items() if before.get(path) != data}
+        self.git("checkout", "-q", "--", "blueprint", "scripts")
+        self.git("clean", "-fdq", "--", "blueprint")
+        self.assertEqual(self.tree(), before)
+        for path, data in written.items():
+            (self.root / path).write_bytes(data)
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["wiki_changes"], report["differences"]),
+                         (0, True, "sync", []), out + err)
+        taxonomy = json.loads(json.dumps(self.TAXONOMY))
+        taxonomy["subjects"]["Algebra"]["fields"][0]["description"] = "Groups and their subgroups."
+        self.write("scripts/taxonomy.json", json.dumps(taxonomy))
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["wiki_changes"], report["differences"]),
+                         (0, True, "other", ["scripts/taxonomy.json: the sync never writes it"]), out + err)
 
     def commit(self, message: str) -> str:
         self.git("add", "-A")
@@ -4505,6 +4588,15 @@ class ScopedRun(unittest.TestCase):
         field.write_text(field.read_text().replace(cosets, cosets + "- [Rings](part-01/rings/README.md)\n"))
         status, out, err, report = self.run_sync("--check")
         self.assertEqual((status, report["in_step"], report["parts"], report["wiki_changes"]), (0, True, [], "other"))
+        # Beside the failure, each file that is not what the failed write leaves: the copy made by hand, and a page
+        # edited by hand.
+        self.write("blueprint/roadmap/Algebra/groups/part-01/cosets/README.md", "# Cosets\n\nLeft cosets.\n")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual(report["differences"], [
+            "the sync fails on the base's wiki: the copy of Algebra/groups/part-01's list on its parent's page could "
+            "not be refreshed: copy the entries the run added there by hand",
+            "blueprint/roadmap/Algebra/groups/README.md: the changes write it otherwise than the sync",
+            "blueprint/roadmap/Algebra/groups/part-01/cosets/README.md: the changes write it otherwise than the sync"])
 
     def test_a_page_written_again_is_listed_once(self) -> None:
         # The repair a missing page's error advises: remove its row, and the sync writes the page again, keeping the
@@ -5387,8 +5479,35 @@ class ScopedRun(unittest.TestCase):
             self.assertEqual((status, report["in_step"], report["wiki_changes"]), (0, True, "other"), line)
             self.assertTrue(report["differences"][0].startswith("the sync stops on the base's wiki: "
                                                                  "blueprint/links/Algebra.jsonl:"), report["differences"])
+            # The files are compared all the same, with the base's, as the replay writes nothing.
+            self.write("blueprint/roadmap/Algebra/README.md", self.PAGES["Algebra/README.md"] + "\nMore prose.\n")
+            other = "the changes write it otherwise than the sync"
+            self.assertEqual(self.run_sync("--check")[3]["differences"][1:], [
+                f"blueprint/links/Algebra.jsonl: {other}", f"blueprint/roadmap/Algebra/README.md: {other}",
+                f"blueprint/roadmap/Algebra/groups/group-basics/README.md: {other}",
+                "blueprint/roadmap/Algebra/groups/group-basics/fresh.md: the changes add it, and the sync does not",
+                f"scripts/wiki-sync.json: {other}"], line)
             self.git("checkout", "-q", "--", ".")
             self.git("clean", "-qfd")
+
+    def test_a_ledger_line_the_writer_cannot_read_stops_the_replay_not_the_check(self) -> None:
+        # The writer reads the card move ledger, which the changes break: the replay on the base's wiki stops before it
+        # writes, while the check still reports, its verdict the working tree's, and lists every file.
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        self.assertEqual(self.run_sync()[0], 0)
+        other = "the changes write it otherwise than the sync"
+        for line in ("not JSON", "[]"):
+            self.write("scripts/card-moves.jsonl", json.dumps({"page": "Algebra/old.md"}) + "\n" + line + "\n")
+            status, out, err, report = self.run_sync("--check")
+            self.assertEqual((status, report["in_step"], report["wiki_changes"]), (0, True, "other"), line)
+            self.assertEqual(report["differences"], [
+                "scripts/card-moves.jsonl: the sync never writes it",
+                "the sync stops on the base's wiki: scripts/card-moves.jsonl:2 is a line that is no JSON object: "
+                + line,
+                f"blueprint/links/Algebra.jsonl: {other}",
+                f"blueprint/roadmap/Algebra/groups/group-basics/README.md: {other}",
+                "blueprint/roadmap/Algebra/groups/group-basics/fresh.md: the changes add it, and the sync does not",
+                f"scripts/wiki-sync.json: {other}"], line)
 
 
     def test_a_refresh_inside_nested_parts_leaves_the_outer_copy_as_it_was(self) -> None:
