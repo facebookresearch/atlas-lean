@@ -27,7 +27,10 @@ namespace MathlibExt.Probability.ThinShell
 open MeasureTheory
 open scoped ENNReal
 
-/-- A positive constant density on a measurable convex set is log-concave.
+/-- **Constant densities on convex sets are log-concave.** Let $K \subseteq \mathbb{R}^n$ be a
+measurable convex set and let $c > 0$. Then the function equal to $c$ on $K$ and to $0$ outside
+$K$ is a log-concave density.
+
 Source: the uniform convex-body example in `constants/20b.md`. -/
 theorem isLogConcaveDensity_indicator_const {n : ℕ}
     {K : Set (EuclideanSpace ℝ (Fin n))} (hK : Convex ℝ K)
@@ -51,7 +54,12 @@ theorem isLogConcaveDensity_indicator_const {n : ℕ}
     simp only [Set.indicator_of_notMem hx, Real.zero_rpow h, zero_mul]
     exact hn _
 
-/-- Conditioning on a finite-volume set gives its actual normalized density.
+/-- **Conditioning on a set is the normalized indicator density.** Let $\mu$ be a measure on a
+measurable space $\alpha$ and let $K \subseteq \alpha$ be a measurable set with $\mu(K) \neq 0$.
+Then the conditional measure $\mu(\cdot \mid K)$, that is $\mu(K)^{-1}$ times the restriction of
+$\mu$ to $K$, equals the measure with density $x \mapsto \mu(K)^{-1} \mathbf{1}_K(x)$ with respect
+to $\mu$. Here $\mu(K)^{-1}$ is taken in $[0, \infty]$, so it is $0$ when $\mu(K) = \infty$.
+
 Source: `constants/20b.md`, normalized Lebesgue law on a convex body. -/
 theorem cond_eq_withDensity_indicator {α : Type*} [MeasurableSpace α]
     (μ : Measure α) {K : Set α} (hm : MeasurableSet K) (hK : μ K ≠ 0) :

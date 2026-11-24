@@ -30,6 +30,7 @@ around the Dirichlet process, and [nonparametric and survival methods](nonparame
 Kaplan–Meier estimator and the Cox proportional hazards model.
 
 - [Foundations of probability](foundations/README.md)
+- [Expectation, variance and moments](moments/README.md)
 - [Probability distributions](distributions/README.md)
 - [Characteristic functions and generating functions](characteristic-functions/README.md)
 - [Infinitely divisible laws and regular variation](infinite-divisibility-regular-variation/README.md)

@@ -31,7 +31,11 @@ namespace Cslib.Algorithms.Lean.TimeM
 
 universe u
 
-/-- Stable least-significant-digit radix sort for fixed-width most-significant-first digits. -/
+/-- **Radix sort.** Let $b \ge 2$ and let every record carry a key that is a vector of $d$ digits
+in $\{0, \dots, b-1\}$, most significant digit first, at positions $0, \dots, d-1$. Radix sort
+runs $d$ passes of stable counting sort on the array, the pass for position $i$ sorting by the
+digit of the key at position $i$, for $i = d-1, d-2, \dots, 0$, that is, from the least to the most
+significant digit. Its cost is the total cost of the $d$ counting-sort passes. -/
 def radixSort {α : Type u} {b d : Nat} (digits : α → Vector (Fin b) d)
     (input : Array α) (_hb : 2 ≤ b) : TimeM Nat (Array α) :=
   let rec loop : (remaining : Nat) → remaining ≤ d → Array α → TimeM Nat (Array α)
@@ -275,7 +279,12 @@ private theorem digitVectorValue_le {b d : Nat} (hb : 2 ≤ b)
   apply digitListValue_le_of_lex hb xs.toList ys.toList (by simp)
   exact Vector.le_toList.mpr hxy
 
-/-- Radix sort returns a lexicographically and numerically sorted stable permutation. -/
+/-- **Correctness of radix sort.** Let $b \ge 2$ and let every record carry a key that is a vector
+$(k_0, \dots, k_{d-1})$ of $d$ digits in $\{0, \dots, b-1\}$, most significant digit first. For
+every input array, the output of radix sort is a permutation of the input, is in nondecreasing
+lexicographic order of keys, and is in nondecreasing order of the numbers
+$\sum_{i < d} k_i b^{d-1-i}$ whose base-$b$ digits are the keys. Moreover it is stable: for every
+key vector $v$, the records with key $v$ appear in the output in the same order as in the input. -/
 theorem radixSort_correct {α : Type u} {b d : Nat} (digits : α → Vector (Fin b) d)
     (input : Array α) (hb : 2 ≤ b) :
     List.Pairwise (fun x y => digits x ≤ digits y) (radixSort digits input hb).ret.toList ∧
@@ -327,7 +336,10 @@ private theorem radixSort_loop_time {α : Type u} {b d : Nat}
       rw [← heq]
       exact hsum
 
-/-- Radix sort uses at most `d * (7 * n + 3 * b)` charged operations. -/
+/-- **Cost bound for radix sort.** Let $b \ge 2$ and let every record carry a key that is a vector
+of $d$ digits in $\{0, \dots, b-1\}$. On an array of $n$ records, radix sort uses at most
+$d(7n + 3b)$ charged operations, where each counting-sort pass charges one unit for every counter
+initialization, key evaluation, counter read, counter write and output write. -/
 theorem radixSort_time {α : Type u} {b d : Nat} (digits : α → Vector (Fin b) d)
     (input : Array α) (hb : 2 ≤ b) :
     (radixSort digits input hb).time ≤ d * (7 * input.size + 3 * b) := by

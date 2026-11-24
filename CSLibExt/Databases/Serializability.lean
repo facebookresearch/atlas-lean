@@ -60,7 +60,8 @@ namespace Cslib.Databases
 open Cslib.Algorithms.Lean
 open scoped List
 
-/-- Whether an operation reads or writes its item. -/
+/-- **Read or write access.** The kind of access an operation makes to its data item is one of
+two values: a read or a write. -/
 inductive Access
   /-- A read. -/
   | read
@@ -68,8 +69,11 @@ inductive Access
   | write
 deriving DecidableEq
 
-/-- An operation of a schedule: transaction `txn` reads or writes item `item`; `step` identifies the
-occurrence among the operations of the transaction. -/
+/-- **Operation of a schedule.** For $n$ transactions, numbered $0, \dots, n - 1$, and data items
+of type $X$, an operation consists of a transaction $t \in \{0, \dots, n - 1\}$, an occurrence
+identifier $k \in \mathbb{N}$, an access, which is a read or a write, and a data item $x \in X$:
+transaction $t$ reads or writes $x$, and $k$ makes repeated accesses of $t$ to an item distinct
+operations. -/
 structure Op (n : ℕ) (X : Type*) where
   /-- The transaction performing the operation. -/
   txn : Fin n
@@ -86,8 +90,8 @@ variable {n : ℕ} {X : Type*}
 
 namespace Op
 
-/-- Two operations conflict: different transactions access the same item, and at least one of the
-accesses is a write. -/
+/-- **Conflicting operations.** Two operations of a schedule conflict when they belong to different
+transactions, access the same data item, and at least one of the two accesses is a write. -/
 def Conflicts (a b : Op n X) : Prop :=
   a.txn ≠ b.txn ∧ a.item = b.item ∧ (a.access = .write ∨ b.access = .write)
 
@@ -98,8 +102,9 @@ instance [DecidableEq X] (a b : Op n X) : Decidable (a.Conflicts b) := by
 theorem Conflicts.symm {a b : Op n X} (h : a.Conflicts b) : b.Conflicts a :=
   ⟨fun h' => h.1 h'.symm, h.2.1.symm, h.2.2.symm⟩
 
-/-- The pairs whose relative order a conflict-equivalent schedule must keep: operations of the
-same transaction, and conflicting operations. -/
+/-- **Operations whose relative order matters.** Two operations $a$ and $b$ are order-relevant when
+they belong to the same transaction or they conflict. These are the pairs whose relative order a
+conflict-equivalent schedule must keep. -/
 def OrderMatters (a b : Op n X) : Prop := a.txn = b.txn ∨ a.Conflicts b
 
 theorem OrderMatters.symm {a b : Op n X} (h : a.OrderMatters b) : b.OrderMatters a :=
@@ -109,17 +114,22 @@ end Op
 
 variable [DecidableEq X]
 
-/-- `s'` is conflict-equivalent to `s`: a permutation of `s` that keeps the relative order of
-every pair of conflicting operations and of every pair of operations of one transaction. -/
+/-- **Conflict equivalence.** A schedule $s'$ is conflict-equivalent to a schedule $s$ when $s'$
+is a permutation of $s$ and, for any two operations $a$ and $b$ that belong to the same
+transaction or conflict, an occurrence of $a$ comes before an occurrence of $b$ in $s$ if and
+only if the same holds in $s'$. -/
 def ConflictEquiv (s s' : List (Op n X)) : Prop :=
   s.Perm s' ∧ ∀ a b, a.OrderMatters b → ([a, b] <+ s ↔ [a, b] <+ s')
 
-/-- Every operation of transaction `i` precedes every operation of transaction `j` in `s`. -/
+/-- **One transaction before another in a schedule.** For a schedule $s$ and transactions $i$ and
+$j$, transaction $i$ precedes transaction $j$ in $s$ when every operation of $i$ in $s$ occurs in
+$s$ before every operation of $j$ in $s$. -/
 def TxnBefore (s : List (Op n X)) (i j : Fin n) : Prop :=
   ∀ a ∈ s, ∀ b ∈ s, a.txn = i → b.txn = j → [a, b] <+ s
 
-/-- A serial schedule: for any two transactions, all operations of one precede all operations of
-the other. -/
+/-- **Serial schedule.** A schedule $s$ is serial when, for any two distinct transactions $i$ and
+$j$, either every operation of $i$ in $s$ occurs before every operation of $j$ in $s$, or every
+operation of $j$ in $s$ occurs before every operation of $i$ in $s$. -/
 def IsSerial (s : List (Op n X)) : Prop := ∀ i j, i ≠ j → TxnBefore s i j ∨ TxnBefore s j i
 
 instance (s : List (Op n X)) (i j : Fin n) : Decidable (TxnBefore s i j) := by
@@ -130,11 +140,13 @@ instance (s : List (Op n X)) : Decidable (IsSerial s) := by
   unfold IsSerial
   infer_instance
 
-/-- A conflict-serializable schedule: conflict-equivalent to a serial schedule. -/
+/-- **Conflict-serializable schedule.** A schedule $s$ is conflict-serializable when some serial
+schedule is conflict-equivalent to $s$. -/
 def ConflictSerializable (s : List (Op n X)) : Prop := ∃ s', IsSerial s' ∧ ConflictEquiv s s'
 
-/-- An edge `i → j` of the precedence graph: an operation of `i` precedes a conflicting operation
-of `j`. -/
+/-- **Edge of the precedence graph.** For a schedule $s$ and transactions $i$ and $j$, there is a
+precedence edge from $i$ to $j$ in $s$ when some operation of $i$ occurs in $s$ before some
+operation of $j$ in $s$ that conflicts with it. -/
 def PrecedenceEdge (s : List (Op n X)) (i j : Fin n) : Prop :=
   ∃ a ∈ s, ∃ b ∈ s, a.txn = i ∧ b.txn = j ∧ a.Conflicts b ∧ [a, b] <+ s
 
@@ -142,7 +154,11 @@ instance (s : List (Op n X)) (i j : Fin n) : Decidable (PrecedenceEdge s i j) :=
   unfold PrecedenceEdge
   infer_instance
 
-/-- The precedence (serialization) graph of a schedule, on the transactions `Fin n`. -/
+/-- **Precedence graph.** The precedence (serialization) graph of a schedule $s$ of $n$
+transactions is the directed adjacency graph whose vertices are the transactions
+$0, \dots, n - 1$, listed in increasing order, and whose adjacency list at a transaction $i$ lists,
+in increasing order, the transactions $j$ such that there is a precedence edge from $i$ to $j$
+in $s$. -/
 def precedenceGraph (s : List (Op n X)) : DirectedAdjacency (Fin n) where
   vertices := List.finRange n
   vertices_nodup := List.nodup_finRange n
@@ -153,8 +169,11 @@ theorem edge_precedenceGraph {s : List (Op n X)} {i j : Fin n} :
     (precedenceGraph s).Edge i j ↔ PrecedenceEdge s i j := by
   simp [precedenceGraph, DirectedAdjacency.Edge, List.mem_filter, List.mem_finRange]
 
-/-- The serial schedule for the transaction order `order`: the operations of `s`, stably sorted by
-the position of their transaction in `order`. -/
+/-- **Serialization of a schedule along a transaction order.** For a list $\sigma$ of transactions
+and a schedule $s$, the serialization of $s$ along $\sigma$ sorts the operations of $s$ by the
+position of the first occurrence of their transaction in $\sigma$, where a transaction that does
+not occur in $\sigma$ gets the length of $\sigma$ as its position. The sort is stable: operations
+with the same position keep their relative order in $s$. -/
 def serialize (order : List (Fin n)) (s : List (Op n X)) : List (Op n X) :=
   s.insertionSort fun a b => order.idxOf a.txn ≤ order.idxOf b.txn
 
@@ -222,8 +241,12 @@ private theorem isAcyclic_of_rank {V : Type*} (g : DirectedAdjacency V) (rank : 
 
 /-! ### The serializability theorem -/
 
-/-- A conflict-serializable schedule has an acyclic precedence graph: the position of the first
-operation of each transaction in the serial schedule increases along every edge. -/
+/-- **A conflict-serializable schedule has an acyclic precedence graph.** If a schedule $s$ in
+which no operation occurs twice is conflict-serializable, then the precedence graph of $s$ is
+acyclic.
+
+In a conflict-equivalent serial schedule, the position of the first operation of each
+transaction increases along every edge of the precedence graph. -/
 theorem ConflictSerializable.isAcyclic {s : List (Op n X)} (hs : s.Nodup)
     (h : ConflictSerializable s) : TopologicalSort.IsAcyclic (precedenceGraph s) := by
   obtain ⟨s', hser, hperm, hord⟩ := h
@@ -255,7 +278,9 @@ theorem ConflictSerializable.isAcyclic {s : List (Op n X)} (hs : s.Nodup)
   omega
 
 omit [DecidableEq X] in
-/-- The schedule `serialize order s` is serial when `order` lists every transaction. -/
+/-- **Serializing along a complete transaction order gives a serial schedule.** Let $s$ be a
+schedule and $L$ a list in which every transaction occurs. Then the schedule obtained from $s$
+by stably sorting its operations by the first position of their transaction in $L$ is serial. -/
 theorem isSerial_serialize (s : List (Op n X)) {order : List (Fin n)}
     (hocomp : ∀ i, i ∈ order) : IsSerial (serialize order s) := by
   have : Std.Total fun a b : Op n X => order.idxOf a.txn ≤ order.idxOf b.txn :=
@@ -280,8 +305,10 @@ theorem isSerial_serialize (s : List (Op n X)) {order : List (Fin n)}
   rcases lt_or_gt_of_ne hne with h | h
   exacts [Or.inl (hpos i j h), Or.inr (hpos j i h)]
 
-/-- The schedule `serialize order s` is conflict-equivalent to `s` when `order` is a topological
-order of the precedence graph of `s`. -/
+/-- **Serializing along a topological order preserves conflict equivalence.** Let $s$ be a
+schedule in which no operation occurs twice, and let $L$ be a topological order of the
+precedence graph of $s$. Then the schedule obtained from $s$ by stably sorting its operations
+by the first position of their transaction in $L$ is conflict-equivalent to $s$. -/
 theorem conflictEquiv_serialize {s : List (Op n X)} (hs : s.Nodup) {order : List (Fin n)}
     (horder : TopologicalSort.IsTopologicalOrder (precedenceGraph s) order) :
     ConflictEquiv s (serialize order s) := by
@@ -315,8 +342,10 @@ theorem conflictSerializable_iff_isAcyclic {s : List (Op n X)} (hs : s.Nodup) :
     conflictEquiv_serialize hs htopo⟩
 
 omit [DecidableEq X] in
-/-- A schedule whose precedence graph increases a numeric rank of the transactions is
-conflict-serializable. -/
+/-- **A rank increasing along precedence edges gives conflict serializability.** Let $s$ be a
+schedule in which no operation occurs twice. If $r$ is a function from the transactions to the
+natural numbers with $r(i) < r(j)$ whenever the precedence graph of $s$ has an edge from $i$ to
+$j$, then $s$ is conflict-serializable. -/
 theorem conflictSerializable_of_rank {s : List (Op n X)} (hs : s.Nodup) (rank : Fin n → ℕ)
     (h : ∀ i j, PrecedenceEdge s i j → rank i < rank j) : ConflictSerializable s := by
   classical

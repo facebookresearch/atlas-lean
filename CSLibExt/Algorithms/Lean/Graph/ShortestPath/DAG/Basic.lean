@@ -40,7 +40,12 @@ namespace Cslib.Algorithms.Lean.DAGShortestPaths
 
 open BellmanFord
 
-/-- Actual events in the one-pass relaxation, excluding preparation and topology. -/
+/-- **Cost of the DAG shortest-path pass.** The cost of the one-pass relaxation in topological
+order consists of three natural-number counters: the number of vertices taken from the order, the
+number of edge occurrences checked for relaxation, and the number of distance installations
+(strict improvements or first finite distances).
+
+Preparation and topological sorting are not counted. -/
 public structure Cost where
   /-- Vertices taken from the certified order. -/
   vertexVisits : Nat
@@ -195,15 +200,34 @@ private theorem bucketize_mem {n : Nat} (edges : List (Edge n)) (vertex : Fin n)
   distance := Vector.ofFn fun vertex => if vertex = source then some 0 else none
   predecessor := Vector.replicate n none
 
-/-- Execute one outgoing-edge relaxation pass in a certified topological order.
-The original edge occurrences are retained, so every parallel occurrence is checked. -/
+/-- **One-pass DAG shortest-path relaxation.** Let $E$ be a list of integer-weighted directed
+edge occurrences on the vertices $\{0, \dots, n-1\}$, let $s$ be a source vertex, and let
+$\sigma$ be a topological order of the directed graph obtained from $E$ by forgetting weights.
+The relaxation starts from distance estimate $0$ at $s$, infinite estimates at every other
+vertex and no predecessor edges. It then takes the vertices $u$ of $\sigma$ in turn and relaxes
+each occurrence $e$ in $E$ from $u$ to some $v$ with weight $c$, in the order of $E$: if the
+estimate $d$ at $u$ is finite and the estimate at $v$ is infinite or greater than $d + c$, it
+sets the estimate at $v$ to $d + c$ and the predecessor of $v$ to $e$. The result records $s$ as
+its source together with the final estimates and predecessors. Its cost counts one vertex visit
+per vertex of $\sigma$, one edge relaxation per occurrence relaxed, and one distance update per
+estimate set.
+
+The original edge occurrences are retained, so every parallel occurrence is checked. The proof
+that $\sigma$ is a topological order is not used by the computation. -/
 public def run {n : Nat} (edges : List (Edge n)) (source : Fin n) (order : List (Fin n))
     (_horder : TopologicalSort.IsTopologicalOrder (toDirectedAdjacency edges) order) :
     TimeM Cost (Distances n) :=
   let buckets := bucketize edges
   pass (fun vertex => buckets.get vertex) order (initialState source)
 
-/-- Validate topology with Kahn, then run the one-pass integer solver.
+/-- **Shortest paths in a DAG with a topology check.** Given a list $E$ of integer-weighted edges
+on the vertices $0, \dots, n-1$ and a source $s$, run Kahn's topological sort on the directed graph
+obtained from $E$ by forgetting weights. If it succeeds with order $\sigma$, start from distance
+$0$ at $s$ and $\infty$ elsewhere, relax the outgoing edge occurrences of each vertex in the order
+$\sigma$, and return the resulting distances and predecessor edges. If it fails after processing
+the list $P$ of vertices and leaving the list $R$, return the error $(P, R)$. Only the relaxation
+pass is charged in the recorded cost.
+
 Failure preserves the sorter's processed and remaining lists; it does not return a cycle list. -/
 public def dagShortestPaths {n : Nat} (edges : List (Edge n)) (source : Fin n) :
     TimeM Cost (Except (List (Fin n) × List (Fin n)) (Distances n)) :=
@@ -276,7 +300,11 @@ private theorem pass_cost {n : Nat} (buckets : Fin n → List (Edge n)) (order :
       change _ ∧ _ = outgoing.length + _ ∧ _
       omega
 
-/-- The actual outer pass takes each certified vertex once. -/
+/-- **The DAG shortest-path pass is charged one vertex visit per vertex.** Let $E$ be a list of
+integer-weighted directed edge occurrences on the vertices $\{0, \dots, n-1\}$, let $s$ be a
+source vertex, and let $\sigma$ be a topological order of the directed graph obtained from $E$
+by forgetting weights. The one-pass DAG shortest-path relaxation of $E$ from $s$ in the order
+$\sigma$ is charged exactly $n$ vertex visits. -/
 public theorem run_vertexVisits {n : Nat} (edges : List (Edge n)) (source : Fin n)
     (order : List (Fin n))
     (horder : TopologicalSort.IsTopologicalOrder (toDirectedAdjacency edges) order) :
@@ -320,7 +348,11 @@ private theorem outgoing_count {n : Nat} (edges : List (Edge n)) (order : List (
           by_cases he : edge.source = vertex <;> simp [he, Nat.add_comm]
         _ = (edge :: rest).length := by rw [hone, ih]; simp [Nat.add_comm]
 
-/-- The executed pass checks every original edge occurrence once, including identical duplicates. -/
+/-- **Edge relaxation count of the DAG pass.** Let $E$ be a list of integer-weighted edges on $n$
+vertices, $s$ a source, and $\sigma$ a topological order of the directed graph obtained from $E$ by
+forgetting weights. In the cost of the one-pass relaxation from $s$ in the order $\sigma$, the
+number of edge relaxations equals the length of $E$, with identical duplicate edges counted
+separately. -/
 public theorem run_edgeRelaxations {n : Nat} (edges : List (Edge n)) (source : Fin n)
     (order : List (Fin n))
     (horder : TopologicalSort.IsTopologicalOrder (toDirectedAdjacency edges) order) :
@@ -336,7 +368,12 @@ public theorem run_edgeRelaxations {n : Nat} (edges : List (Edge n)) (source : F
   exact outgoing_count edges order horder.1
     (fun vertex => (horder.2.1 vertex).mpr (List.mem_finRange vertex))
 
-/-- Only actual strict improvements or first finite estimates install a predecessor. -/
+/-- **Distance updates are bounded by edge relaxations.** Let $E$ be a list of integer-weighted
+edges on $n$ vertices, $s$ a source, and $\sigma$ a topological order of the directed graph
+obtained from $E$ by forgetting weights. In the cost of the one-pass relaxation from $s$ in the
+order $\sigma$, the number of distance installations is at most the number of edge relaxations.
+
+Only actual strict improvements or first finite estimates install a predecessor. -/
 public theorem run_distanceUpdates_le {n : Nat} (edges : List (Edge n)) (source : Fin n)
     (order : List (Fin n))
     (horder : TopologicalSort.IsTopologicalOrder (toDirectedAdjacency edges) order) :
@@ -430,7 +467,11 @@ private theorem pass_realizes {n : Nat} {edges : List (Edge n)} {source : Fin n}
       simpa only [pass, TimeM.ret_bind] using
         ih (relaxOutgoing_realizes hstate (fun edge he => hbuck vertex he))
 
-/-- Each finite estimate returned by the executed one-pass solver is realized by an input path. -/
+/-- **Finite DAG distances are path weights.** Let $E$ be a list of integer-weighted edges on $n$
+vertices, $s$ a source, and $\sigma$ a topological order of the directed graph obtained from $E$ by
+forgetting weights. If the one-pass relaxation from $s$ in the order $\sigma$ gives a vertex $t$
+the finite distance $d$, then there is a path from $s$ to $t$ made of edge occurrences of $E$
+whose edge weights sum to $d$. -/
 public theorem run_distance_realized {n : Nat} (edges : List (Edge n)) (source : Fin n)
     (order : List (Fin n))
     (horder : TopologicalSort.IsTopologicalOrder (toDirectedAdjacency edges) order)
@@ -567,21 +608,35 @@ private theorem run_basic {n : Nat} (edges : List (Edge n)) (source : Fin n)
   pass_basic horder (initial_basic edges source)
     (fun vertex => (bucketize edges).get vertex) (bucketize_subset edges) order
 
-/-- The executed result retains the selected source. -/
+/-- **The DAG shortest-path pass keeps its source.** Let $E$ be a list of integer-weighted
+directed edge occurrences on the vertices $\{0, \dots, n-1\}$, let $s$ be a source vertex, and
+let $\sigma$ be a topological order of the directed graph obtained from $E$ by forgetting
+weights. The result of the one-pass DAG shortest-path relaxation of $E$ from $s$ in the order
+$\sigma$ records $s$ as its source. -/
 public theorem run_source {n : Nat} (edges : List (Edge n)) (source : Fin n)
     (order : List (Fin n))
     (horder : TopologicalSort.IsTopologicalOrder (toDirectedAdjacency edges) order) :
     (run edges source order horder).ret.source = source :=
   (run_basic edges source order horder).source_field
 
-/-- In a DAG the empty source path stays at zero, even with incoming negative edges. -/
+/-- **The DAG shortest-path pass gives the source distance zero.** Let $E$ be a list of
+integer-weighted directed edge occurrences on the vertices $\{0, \dots, n-1\}$, let $s$ be a
+source vertex, and let $\sigma$ be a topological order of the directed graph obtained from $E$
+by forgetting weights. The one-pass DAG shortest-path relaxation of $E$ from $s$ in the order
+$\sigma$ ends with distance estimate $0$ at $s$.
+
+This holds even when edges of negative weight enter $s$. -/
 public theorem run_source_distance {n : Nat} (edges : List (Edge n)) (source : Fin n)
     (order : List (Fin n))
     (horder : TopologicalSort.IsTopologicalOrder (toDirectedAdjacency edges) order) :
     (run edges source order horder).ret.distance.get source = some 0 :=
   (run_basic edges source order horder).source_zero
 
-/-- The source is the root of the resulting predecessor structure. -/
+/-- **The source has no DAG shortest-path predecessor.** Let $E$ be a list of integer-weighted
+directed edge occurrences on the vertices $\{0, \dots, n-1\}$, let $s$ be a source vertex, and
+let $\sigma$ be a topological order of the directed graph obtained from $E$ by forgetting
+weights. The one-pass DAG shortest-path relaxation of $E$ from $s$ in the order $\sigma$ records
+no predecessor edge for $s$. -/
 public theorem run_source_predecessor {n : Nat} (edges : List (Edge n)) (source : Fin n)
     (order : List (Fin n))
     (horder : TopologicalSort.IsTopologicalOrder (toDirectedAdjacency edges) order) :
@@ -898,7 +953,11 @@ private theorem run_path_bound {n : Nat} (edges : List (Edge n)) (source : Fin n
   simpa using path_bound (run_edges_bounded edges source order horder) hp
     (run_source_distance edges source order horder)
 
-/-- The computed estimate is no greater than the weight of any concrete input path. -/
+/-- **Finite DAG distances are at most every path weight.** Let $E$ be a list of integer-weighted
+edges on $n$ vertices, $s$ a source, and $\sigma$ a topological order of the directed graph
+obtained from $E$ by forgetting weights. If the one-pass relaxation from $s$ in the order $\sigma$
+gives a vertex $t$ the finite distance $d$, then $d \le w(p)$ for every path $p$ from $s$ to $t$
+made of edge occurrences of $E$, where $w(p)$ is the sum of the weights of the edges of $p$. -/
 public theorem run_distance_minimal {n : Nat} (edges : List (Edge n)) (source : Fin n)
     (order : List (Fin n))
     (horder : TopologicalSort.IsTopologicalOrder (toDirectedAdjacency edges) order)
@@ -910,7 +969,11 @@ public theorem run_distance_minimal {n : Nat} (edges : List (Edge n)) (source : 
   have equality : estimate = value := Option.some.inj (he.symm.trans hd)
   simpa [equality] using hbound
 
-/-- Infinity is exactly absence of a path in the canonical weight-forgetting graph. -/
+/-- **Infinite DAG distances are exactly unreachable vertices.** Let $E$ be a list of
+integer-weighted edges on $n$ vertices, $s$ a source, and $\sigma$ a topological order of the
+directed graph $G$ obtained from $E$ by forgetting weights. For every vertex $t$, the one-pass
+relaxation from $s$ in the order $\sigma$ leaves the distance of $t$ infinite if and only if $t$ is
+not reachable from $s$ in $G$. -/
 public theorem run_distance_eq_none_iff {n : Nat} (edges : List (Edge n)) (source : Fin n)
     (order : List (Fin n))
     (horder : TopologicalSort.IsTopologicalOrder (toDirectedAdjacency edges) order)
@@ -930,7 +993,14 @@ public theorem run_distance_eq_none_iff {n : Nat} (edges : List (Edge n)) (sourc
         obtain ⟨path, hp, _⟩ := run_distance_realized edges source order horder target value hd
         exact False.elim (unreachable (reachable_iff_exists_isWeightedPath.mpr ⟨path, hp⟩))
 
-/-- Every final predecessor is an input edge with a settled source and its exact weight equation. -/
+/-- **Predecessor edges of the DAG shortest-path pass.** Let $E$ be a list of integer-weighted
+directed edge occurrences on the vertices $\{0, \dots, n-1\}$, let $s$ be a source vertex, and
+let $\sigma$ be a topological order of the directed graph obtained from $E$ by forgetting
+weights. Suppose the one-pass DAG shortest-path relaxation of $E$ from $s$ in the order $\sigma$
+records an edge occurrence $e$ from $u$ to $w$ with weight $c$ as the predecessor of a vertex
+$v$. Then $e$ occurs in $E$, $w = v$, and there is an integer $d$ such that the final distance
+estimate at $u$ is $d$, the final distance estimate at $v$ is $d + c$, and the position of $u$
+in $\sigma$ is less than the position of $v$ in $\sigma$. -/
 public theorem run_predecessor_spec {n : Nat} (edges : List (Edge n)) (source : Fin n)
     (order : List (Fin n))
     (horder : TopologicalSort.IsTopologicalOrder (toDirectedAdjacency edges) order)
@@ -944,7 +1014,12 @@ public theorem run_predecessor_spec {n : Nat} (edges : List (Edge n)) (source : 
     (run_loop edges source order horder).predecessors target edge hp
   exact ⟨he, ht, value, hs, hd, by simpa [ht] using edge_forward horder he⟩
 
-/-- An infinite estimate has no installed predecessor. -/
+/-- **Unreached vertices have no DAG shortest-path predecessor.** Let $E$ be a list of
+integer-weighted directed edge occurrences on the vertices $\{0, \dots, n-1\}$, let $s$ be a
+source vertex, and let $\sigma$ be a topological order of the directed graph obtained from $E$
+by forgetting weights. If the one-pass DAG shortest-path relaxation of $E$ from $s$ in the
+order $\sigma$ ends with an infinite distance estimate at a vertex $v$, then it records no
+predecessor edge for $v$. -/
 public theorem run_infinite_predecessor {n : Nat} (edges : List (Edge n)) (source : Fin n)
     (order : List (Fin n))
     (horder : TopologicalSort.IsTopologicalOrder (toDirectedAdjacency edges) order)
@@ -952,7 +1027,10 @@ public theorem run_infinite_predecessor {n : Nat} (edges : List (Edge n)) (sourc
     (run edges source order horder).ret.predecessor.get target = none :=
   (run_basic edges source order horder).infinite_pred_none target hd
 
-/-- Each finite non-source vertex has an installed predecessor edge. -/
+/-- **Finite non-source vertices have predecessors.** Let $E$ be a list of integer-weighted edges on
+$n$ vertices, $s$ a source, and $\sigma$ a topological order of the directed graph obtained from $E$
+by forgetting weights. If the one-pass relaxation from $s$ in the order $\sigma$ gives a vertex
+$t \ne s$ a finite distance, then it records a predecessor edge for $t$. -/
 public theorem run_finite_predecessor {n : Nat} (edges : List (Edge n)) (source : Fin n)
     (order : List (Fin n))
     (horder : TopologicalSort.IsTopologicalOrder (toDirectedAdjacency edges) order)
@@ -961,7 +1039,11 @@ public theorem run_finite_predecessor {n : Nat} (edges : List (Edge n)) (source 
     (hne : target ≠ source) : ∃ edge, (run edges source order horder).ret.predecessor.get target =
       some edge := (run_basic edges source order horder).finite_pred target value hd hne
 
-/-- A successful validated-wrapper output is exactly the actual pass in its certified order. -/
+/-- **Successful output of DAG shortest paths.** For a list $E$ of integer-weighted edges on $n$
+vertices, a source $s$, and a distance record $D$, the DAG shortest-path algorithm on $E$ from $s$
+returns $D$ if and only if there is a topological order $\sigma$ of the directed graph obtained
+from $E$ by forgetting weights such that Kahn's topological sort of that graph succeeds with
+$\sigma$ and $D$ is the result of the one-pass relaxation from $s$ in the order $\sigma$. -/
 public theorem dagShortestPaths_eq_ok_iff {n : Nat} (edges : List (Edge n)) (source : Fin n)
     (result : Distances n) :
     (dagShortestPaths edges source).ret = .ok result ↔
@@ -989,7 +1071,10 @@ public theorem dagShortestPaths_eq_ok_iff {n : Nat} (edges : List (Edge n)) (sou
       have impossible := hs.symm.trans ho
       cases impossible
 
-/-- The wrapper relays exactly the sorter's processed/remainder failure data. -/
+/-- **Failure output of DAG shortest paths.** For a list $E$ of integer-weighted edges on $n$
+vertices, a source $s$, and lists $P$ and $R$ of vertices, the DAG shortest-path algorithm on $E$
+from $s$ returns the error $(P, R)$ if and only if Kahn's topological sort of the directed graph
+obtained from $E$ by forgetting weights fails after processing $P$ and leaving $R$. -/
 public theorem dagShortestPaths_eq_error_iff {n : Nat} (edges : List (Edge n)) (source : Fin n)
     (processed remaining : List (Fin n)) :
     (dagShortestPaths edges source).ret = .error (processed, remaining) ↔

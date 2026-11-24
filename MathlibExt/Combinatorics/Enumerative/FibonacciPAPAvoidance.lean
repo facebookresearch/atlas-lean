@@ -495,17 +495,21 @@ private theorem card_isGood_eq_fib : ∀ n, 1 ≤ n →
       have h : Nat.fib (m+3) = Nat.fib (m+1) + Nat.fib (m+2) := Nat.fib_add_two (n := m+1)
       omega
 
-/-- Parity-alternating permutations of `[n]` starting with an odd entry, equivalently
-index-parity-preserving permutations, that avoid both classical patterns `312` and `231`
-are counted by the Fibonacci numbers: with zero-based `Fin n`, parity preservation is
-`(π i).val % 2 = i.val % 2`, a `312` occurrence at `i < j < k` has
-`π j < π k < π i`, a `231` occurrence at `i < j < k` has `π k < π i < π j`,
-and for positive `n` the cardinality of this finite set equals `Nat.fib n`.
+/-- **Fibonacci count of parity-preserving permutations avoiding $312$ and $231$.** For every
+integer $n \ge 1$, the number of permutations $\pi$ of $\{0, 1, \dots, n-1\}$ such that
+$\pi(i) \equiv i \pmod 2$ for every $i$ and that avoid the patterns $312$ and $231$ equals the
+Fibonacci number $F_n$, where $F_1 = F_2 = 1$. Here $\pi$ contains $312$ if there are
+$i < j < k$ with $\pi(j) < \pi(k) < \pi(i)$, and contains $231$ if there are $i < j < k$ with
+$\pi(k) < \pi(i) < \pi(j)$.
+
+Equivalently, these are the parity-alternating permutations of $\{1, \dots, n\}$ that start with
+an odd entry and avoid $312$ and $231$.
+
+Proves `Wanted` entry `fibonacci_card_parity_alternating_avoiding_312_231`.
+
 Source: Per Alexandersson, Samuel Asefa Fufa, and Frether Getachew Kebede, "Pattern-Avoidance and
 Fuss–Catalan Numbers", Journal of Integer Sequences 26 (2023), Article 23.4.2, Proposition lines
 1757-1759, <https://cs.uwaterloo.ca/journals/JIS/VOL26/Getachew/get3.tex>.
-
-Proves `Wanted` entry `fibonacci_card_parity_alternating_avoiding_312_231`.
 -/
 theorem fibonacci_card_parity_alternating_avoiding_312_231 (n : ℕ) (hn : 0 < n) :
     Fintype.card { π : Equiv.Perm (Fin n) //

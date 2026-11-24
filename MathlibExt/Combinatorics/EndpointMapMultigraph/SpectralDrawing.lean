@@ -100,11 +100,6 @@ private theorem sum_antitone_tail_le_sum_mul {n m : ℕ} (hm : m ≤ n) (μ : Fi
 variable {V E : Type*} [DecidableEq V] [DecidableEq E] [Fintype V] [Fintype E]
   (end₁ end₂ : E → V)
 
-omit [DecidableEq E] [Fintype E] in
-private theorem rayleighForm_toLp' (M : Matrix V V ℝ) (v : V → ℝ) :
-    rayleighForm (toEuclideanLin M) (WithLp.toLp 2 v) = v ⬝ᵥ (M *ᵥ v) := by
-  simp [rayleighForm, Matrix.toLpLin_toLp, EuclideanSpace.inner_toLp_toLp]
-
 /-- **Hall's spectral drawing is optimal.** Let `L` be the Laplacian of a weighted multigraph with
 nonnegative weights and `0 = λ₁ ≤ λ₂ ≤ ⋯ ≤ λₙ` its eigenvalues. For orthonormal vectors
 `x₁, …, x_k`, all orthogonal to the constant vector, `∑ᵢ xᵢᵀ L xᵢ ≥ λ₂ + ⋯ + λ_{k+1}`; here
@@ -179,11 +174,11 @@ theorem sum_eigenvalues_le_sum_quadratic_form {w : E → ℝ} (hw : 0 ≤ w) {k 
     simp only [c, Finset.mul_sum]
     exact Finset.sum_comm
   have hRu : rayleighForm (toEuclideanLin L) u = 0 := by
-    rw [rayleighForm_toLp', Matrix.mulVec_smul, laplacian_mulVec_one, smul_zero, dotProduct_zero]
+    rw [rayleighForm_toLp, Matrix.mulVec_smul, laplacian_mulVec_one, smul_zero, dotProduct_zero]
   have hsplit : ∑ o, rayleighForm (toEuclideanLin L) (y o) =
       ∑ i, x i ⬝ᵥ (L *ᵥ x i) := by
     rw [Fintype.sum_option]
-    simp only [y, Option.elim, hRu, zero_add, rayleighForm_toLp']
+    simp only [y, Option.elim, hRu, zero_add, rayleighForm_toLp]
   have key := sum_antitone_tail_le_sum_mul hk μ (hT.eigenvalues_antitone _) c hc0 hc1
     (by rw [hcsum])
   rw [← hexp, hsplit, Fin.sum_univ_succ] at key
@@ -193,7 +188,7 @@ theorem sum_eigenvalues_le_sum_quadratic_form {w : E → ℝ} (hw : 0 ≤ w) {k 
       (finrank_euclideanSpace (𝕜 := ℝ) (ι := V)) (k := n - 1 - ((0 : Fin (k + 1)) : ℕ))
       (by omega)
     refine le_of_le_of_eq ?_ hz
-    rw [show z = WithLp.toLp 2 (WithLp.ofLp z) from rfl, rayleighForm_toLp',
+    rw [show z = WithLp.toLp 2 (WithLp.ofLp z) from rfl, rayleighForm_toLp,
       dotProduct_mulVec_laplacian]
     exact Finset.sum_nonneg fun e _ => mul_nonneg (hw e) (sq_nonneg _)
   have hidx : ∑ t : Fin k, μ ⟨n - 1 - ((Fin.succ t : Fin (k + 1)) : ℕ), by omega⟩ =

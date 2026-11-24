@@ -53,10 +53,6 @@ private theorem Gtop_aux (u v k : ℕ) :
   rw [Nat.stirlingFirst_eq_zero_of_lt hlt]
   simp
 
-private theorem asc_succ_aux (u v : ℕ) : u.ascFactorial (v + 1) = (u + v) * u.ascFactorial v := by
-  have := Nat.ascFactorial_succ (n := u) (k := v)
-  simpa [Nat.add_comm] using this
-
 private theorem VQ_aux (u v j1 : ℕ) :
     (∑ i ∈ Finset.range (v + 1), v.choose i * (v - i) * u.ascFactorial i *
         Nat.stirlingFirst (v - i) j1)
@@ -329,7 +325,7 @@ private theorem step_aux (u v k : ℕ) :
   have hF0 : F 0 = (u + v) * G 0 := by
     have hF0' := inner_zero_all u (v + 1) (k + 1)
     have hG0' := inner_zero_all u v (k + 1)
-    have hasc := asc_succ_aux u v
+    have hasc := Nat.ascFactorial_succ (n := u) (k := v)
     simp only [Nat.zero_le, ↓reduceIte, Nat.sub_zero] at hF0' hG0'
     simp only [hF, hG, Nat.zero_le, ↓reduceIte, Nat.sub_zero]
     rw [hF0', hG0', hasc]
@@ -354,18 +350,16 @@ private theorem step_aux (u v k : ℕ) :
 -/
 
 /--
-Addition formula for the unsigned Stirling numbers of the first kind.
+**Addition formula for Stirling numbers of the first kind.** Write $c(n,k)$ for the unsigned
+Stirling numbers of the first kind and $u^{\overline{i}} = u(u+1)\cdots(u+i-1)$ for the rising
+factorial. For all natural numbers $u$, $v$ and $k$,
+$$c(u+v,k) = \sum_{j=0}^{v} \sum_{i=0}^{v} \binom{v}{i}\, u^{\overline{i}}\, c(v-i,j)\, c(u,k-j),$$
+where a term with $j > k$ is read as $0$.
 
 Source: Grzegorz Rządkowski, "Two Formulas for Successive Derivatives
 and Their Applications," Journal of Integer Sequences 12 (2009),
 Article 09.8.2, Theorem, equation (ex44), lines 257–263,
 https://cs.uwaterloo.ca/journals/JIS/VOL12/Rzadkowski/rzadkowski3.tex
-
-The source sums `j, i = 0, …, v`; the `if j ≤ k` guard encodes the
-vanishing of the factor `[u; k-j]` for `j > k`, and `u.ascFactorial i`
-is the source's rising factorial `u^{(i)}`.
-
-Proves `Wanted` entry `stirlingFirst_addition`.
 -/
 theorem stirlingFirst_addition (u v k : ℕ) :
     Nat.stirlingFirst (u + v) k =

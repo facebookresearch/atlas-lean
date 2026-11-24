@@ -183,7 +183,14 @@ private theorem shift_time (xs : List Nat) (x : Nat) :
     rw [ih]
     simp [Nat.add_comm]
 
-/-- The sole saved-list exact-subset-sum traversal, returning all distinct feasible sums. -/
+/-- **Attainable sums in exact subset sum.** Given a list $x = (x_1, \dots, x_n)$ of natural
+numbers and a target $t \in \mathbb{N}$, this timed procedure starts from the list $L_0 = (0)$
+and, for $i = 1, \dots, n$ in order, forms $L_i$ from $L_{i-1}$ in four steps: add $x_i$ to
+every entry of $L_{i-1}$; merge $L_{i-1}$ with this shifted list (the standard merge of two
+lists, comparing entries with $\le$); delete adjacent repeated values; and keep only the values
+at most $t$. It returns $L_n$. The counted events are the initial assignment and, in each
+phase, one event per addition, one per merge comparison, one per comparison of adjacent
+values, one per comparison with $t$, and one for the phase assignment. -/
 public def exactSubsetSumSums (xs : List Nat) (target : Nat) :
     TimeM Nat (List Nat) := do
   TimeM.tick 1
@@ -255,7 +262,10 @@ private theorem sums_append_mem (xs : List Nat) (x target z : Nat) :
         ∃ y ∈ (exactSubsetSumSums xs target).ret, y + x = z) := by
   simp [sums_append_ret, mem_destutter, List.mem_merge, and_comm]
 
-/-- Every returned value is exactly a feasible sum of an input sublist. -/
+/-- **Characterization of the exact subset sum list.** Let $x$ be a list of natural numbers,
+$t$ a natural number, and $L$ the final list of sums computed by the exact subset sum traversal
+on $x$ with target $t$. A natural number $z$ belongs to $L$ if and only if $z \le t$ and $z$ is
+the sum of some sublist of $x$ (a subsequence, not necessarily contiguous). -/
 public theorem exactSubsetSumSums_mem (xs : List Nat) (target z : Nat) :
     z ∈ (exactSubsetSumSums xs target).ret ↔
       z ≤ target ∧ ∃ ys : List Nat, ys.Sublist xs ∧ ys.sum = z := by
@@ -274,13 +284,17 @@ public theorem exactSubsetSumSums_mem (xs : List Nat) (target z : Nat) :
       · exact ⟨hz, Or.inl ⟨hz, h⟩⟩
       · exact ⟨hz, Or.inr ⟨ys.sum, ⟨by omega, ys, hys, rfl⟩, hsum⟩⟩
 
-/-- The empty sublist's zero sum survives every actual phase. -/
+/-- **Zero is always a computed sum.** For every list $x$ of natural numbers and every natural
+number $t$, the final list of sums computed by the exact subset sum traversal on $x$ with target
+$t$ contains $0$. -/
 public theorem exactSubsetSumSums_zero_mem (xs : List Nat) (target : Nat) :
     0 ∈ (exactSubsetSumSums xs target).ret := by
   rw [exactSubsetSumSums_mem]
   exact ⟨Nat.zero_le _, [], List.nil_sublist _, rfl⟩
 
-/-- The saved-list traversal returns strictly increasing values, with no duplicates. -/
+/-- **The exact subset sum list is strictly increasing.** For every list $x$ of natural numbers
+and every natural number $t$, the final list of sums computed by the exact subset sum traversal
+on $x$ with target $t$ is strictly increasing; in particular it has no repeated entries. -/
 public theorem exactSubsetSumSums_sorted (xs : List Nat) (target : Nat) :
     (exactSubsetSumSums xs target).ret.Pairwise (· < ·) := by
   induction xs using List.reverseRecOn with
@@ -299,7 +313,9 @@ public theorem exactSubsetSumSums_sorted (xs : List Nat) (target : Nat) :
           (· ≠ ·) := List.nodup_dedup _
     exact ((hw.and hn).imp fun hab => lt_of_le_of_ne hab.1 hab.2).filter _
 
-/-- The distinct computed sums are bounded by the number of positional sublists. -/
+/-- **The number of computed sums is at most two to the power of the input length.** For every
+list $x$ of natural numbers, of length $n$, and every natural number $t$, the final list of sums
+computed by the exact subset sum traversal on $x$ with target $t$ has length at most $2^n$. -/
 public theorem exactSubsetSumSums_length_le_pow (xs : List Nat) (target : Nat) :
     (exactSubsetSumSums xs target).ret.length ≤ 2 ^ xs.length := by
   have hs : (exactSubsetSumSums xs target).ret ⊆ xs.sublists.map List.sum := by
@@ -308,7 +324,9 @@ public theorem exactSubsetSumSums_length_le_pow (xs : List Nat) (target : Nat) :
     exact List.mem_map.mpr ⟨ys, List.mem_sublists.mpr hys, hsum⟩
   simpa using (exactSubsetSumSums_sorted xs target).nodup.length_le_of_subset hs
 
-/-- Pruning and distinctness bound the actual saved list by the target's numeric value. -/
+/-- **The number of computed sums is at most the target plus one.** For every list $x$ of
+natural numbers and every natural number $t$, the final list of sums computed by the exact subset
+sum traversal on $x$ with target $t$ has length at most $t + 1$. -/
 public theorem exactSubsetSumSums_length_le_target (xs : List Nat) (target : Nat) :
     (exactSubsetSumSums xs target).ret.length ≤ target + 1 := by
   have hs : (exactSubsetSumSums xs target).ret ⊆ List.range (target + 1) := by
@@ -317,7 +335,9 @@ public theorem exactSubsetSumSums_length_le_target (xs : List Nat) (target : Nat
     exact List.mem_range.mpr (by omega)
   simpa using (exactSubsetSumSums_sorted xs target).nodup.length_le_of_subset hs
 
-/-- Nonnegative positional inputs bound all computed sums by the total input value. -/
+/-- **The number of computed sums is at most the input total plus one.** For every list $x$ of
+natural numbers with sum $S$ and every natural number $t$, the final list of sums computed by the
+exact subset sum traversal on $x$ with target $t$ has length at most $S + 1$. -/
 public theorem exactSubsetSumSums_length_le_sum (xs : List Nat) (target : Nat) :
     (exactSubsetSumSums xs target).ret.length ≤ xs.sum + 1 := by
   have hs : (exactSubsetSumSums xs target).ret ⊆ List.range (xs.sum + 1) := by
@@ -364,7 +384,10 @@ private theorem sums_time_le_numeric (xs : List Nat) (target : Nat) :
     dsimp only at hc ⊢
     omega
 
-/-- Every actual source-order prefix of the powers-of-two family fills its entire sum range. -/
+/-- **Prefixes of the powers of two attain every sum.** Let $i \le n$ be natural numbers. On the
+list $1, 2, 4, \dots, 2^{i-1}$ (the first $i$ entries of $1, 2, \dots, 2^{n-1}$) with target
+$2^n - 1$, the final list of sums computed by the exact subset sum traversal is exactly
+$0, 1, 2, \dots, 2^i - 1$ in increasing order. -/
 public theorem exactSubsetSumSums_powers_of_two (n i : Nat) (hi : i ≤ n) :
     (exactSubsetSumSums (((List.range n).map (fun j => 2 ^ j)).take i)
       (2 ^ n - 1)).ret = List.range (2 ^ i) := by
@@ -375,7 +398,11 @@ public theorem exactSubsetSumSums_powers_of_two (n i : Nat) (hi : i ≤ n) :
   have hp := Nat.pow_le_pow_right (by decide : 0 < 2) hi
   omega
 
-/-- Compute the largest feasible sum by scanning the sole traversal's actual result. -/
+/-- **Exact subset sum procedure.** Given a list $x$ of natural numbers and a target
+$t \in \mathbb{N}$, the procedure first computes the list $L = (\ell_1, \dots, \ell_m)$ of
+attainable sums of $x$ with target $t$, then scans it from left to right, keeping a running
+maximum that starts at $0$, and returns $\max(0, \ell_1, \dots, \ell_m)$. Its counted events
+are those of computing $L$ plus one per entry of $L$. -/
 public def exactSubsetSum (xs : List Nat) (target : Nat) : TimeM Nat Nat := do
   let sums ← exactSubsetSumSums xs target
   sums.foldlM (fun best z => do
@@ -393,7 +420,10 @@ private theorem maximumFold_time (xs : List Nat) (best : Nat) :
     rw [ih]
     simp [Nat.add_comm]
 
-/-- The returned maximum scans exactly the actual saved-list traversal's result. -/
+/-- **Exact subset sum returns the maximum of the computed sums.** For every list $x$ of natural
+numbers and every natural number $t$, the value returned by the exact subset sum algorithm on $x$
+with target $t$ equals $\max(\cdots\max(\max(0, s_1), s_2)\cdots, s_k)$, where $s_1, \dots, s_k$
+is the final list of sums computed by the exact subset sum traversal on $x$ with target $t$. -/
 public theorem exactSubsetSum_ret (xs : List Nat) (target : Nat) :
     (exactSubsetSum xs target).ret =
       (exactSubsetSumSums xs target).ret.foldl max 0 := by
@@ -402,7 +432,16 @@ public theorem exactSubsetSum_ret (xs : List Nat) (target : Nat) :
       (fun best z => do TimeM.tick 1; pure (max best z)) 0
       (exactSubsetSumSums xs target).ret)
 
-/-- Exact selected-event cost, with every phase reading the actual public prefix result. -/
+/-- **Event count of exact subset sum.** Let $x = (x_1, \dots, x_n)$ be a list of natural
+numbers and $t \in \mathbb{N}$ a target. For $0 \le i \le n$ let $L_i$ be the list of attainable
+sums of the prefix $(x_1, \dots, x_i)$ with target $t$. For $i < n$ let $M_i$ be the merge of
+$L_i$ with the list obtained by adding $x_{i+1}$ to every entry of $L_i$, let $c_i$ be the
+number of comparisons this merge makes, and let $D_i$ be $M_i$ with adjacent repeated values
+deleted. Then the number of counted events of the exact subset-sum procedure on $x$ and $t$ is
+
+$$1 + n + \sum_{i=0}^{n-1} \bigl(|L_i| + c_i + (|M_i| - 1) + |D_i|\bigr) + |L_n|,$$
+
+where $|\cdot|$ denotes length and $|M_i| - 1$ is truncated subtraction of natural numbers. -/
 public theorem exactSubsetSum_time (xs : List Nat) (target : Nat) :
     (exactSubsetSum xs target).time = 1 + xs.length +
       ((List.range xs.length).map fun i =>
@@ -416,7 +455,9 @@ public theorem exactSubsetSum_time (xs : List Nat) (target : Nat) :
   simpa only [exactSubsetSum, TimeM.time_bind, maximumFold_time] using
     congrArg (fun time => time + (exactSubsetSumSums xs target).ret.length) hs
 
-/-- The actual shifted additions alone establish exponential growth on powers-of-two inputs. -/
+/-- **Exponential lower bound for exact subset sum on powers of two.** For every
+$n \in \mathbb{N}$, the exact subset-sum procedure on the list $(2^0, 2^1, \dots, 2^{n-1})$
+(empty when $n = 0$) with target $2^n - 1$ makes at least $2^n - 1$ counted events. -/
 public theorem exactSubsetSum_time_ge_powers_of_two (n : Nat) :
     2 ^ n - 1 ≤
       (exactSubsetSum ((List.range n).map (fun j => 2 ^ j)) (2 ^ n - 1)).time := by
@@ -442,7 +483,9 @@ public theorem exactSubsetSum_time_ge_powers_of_two (n : Nat) :
   simp only [List.length_map, List.length_range]
   omega
 
-/-- Exponential upper bound on the actual selected-event count, including the final scan. -/
+/-- **Exponential upper bound for exact subset sum.** For every list $x$ of $n$ natural numbers
+and every target $t \in \mathbb{N}$, the exact subset-sum procedure on $x$ and $t$ makes at most
+$1 + n + 7(2^n - 1) + 2^n$ counted events. -/
 public theorem exactSubsetSum_time_le_exponential (xs : List Nat) (target : Nat) :
     (exactSubsetSum xs target).time ≤
       1 + xs.length + 7 * (2 ^ xs.length - 1) + 2 ^ xs.length := by
@@ -451,7 +494,9 @@ public theorem exactSubsetSum_time_le_exponential (xs : List Nat) (target : Nat)
   simp only [exactSubsetSum, TimeM.time_bind, maximumFold_time]
   omega
 
-/-- Numeric upper bound on the same run, using both target and total-value cardinalities. -/
+/-- **Pseudo-polynomial bound for exact subset sum.** For every list $x$ of $n$ natural numbers
+with sum $s$ and every target $t \in \mathbb{N}$, the exact subset-sum procedure on $x$ and $t$
+makes at most $1 + n + (7n + 1)\min(t + 1, s + 1)$ counted events. -/
 public theorem exactSubsetSum_time_le_numeric (xs : List Nat) (target : Nat) :
     (exactSubsetSum xs target).time ≤ 1 + xs.length +
       (7 * xs.length + 1) * min (target + 1) (xs.sum + 1) := by
@@ -462,7 +507,9 @@ public theorem exactSubsetSum_time_le_numeric (xs : List Nat) (target : Nat) :
     Nat.add_mul, Nat.one_mul]
   omega
 
-/-- A numeric polynomial target gives the source's selected-event polynomial bound. -/
+/-- **Polynomial event bound for exact subset sum with a polynomially bounded target.** Let $x$
+be a list of $n$ natural numbers and let $t, d \in \mathbb{N}$ with $t \le n^d$. Then the exact
+subset-sum procedure on $x$ and $t$ makes at most $1 + n + (7n + 1)(n^d + 1)$ counted events. -/
 public theorem exactSubsetSum_time_le_of_target_le_pow (xs : List Nat) (target d : Nat)
     (ht : target ≤ xs.length ^ d) :
     (exactSubsetSum xs target).time ≤ 1 + xs.length +
@@ -471,7 +518,10 @@ public theorem exactSubsetSum_time_le_of_target_le_pow (xs : List Nat) (target d
   exact le_trans (exactSubsetSum_time_le_numeric xs target)
     (Nat.add_le_add_left (Nat.mul_le_mul_left (7 * xs.length + 1) hm) (1 + xs.length))
 
-/-- Bounded numeric input values give the source's selected-event polynomial bound. -/
+/-- **Polynomial event bound for exact subset sum with polynomially bounded inputs.** Let $x$ be
+a list of $n$ natural numbers and let $d \in \mathbb{N}$ be such that every entry of $x$ is at
+most $n^d$. Then for every target $t \in \mathbb{N}$ the exact subset-sum procedure on $x$ and
+$t$ makes at most $1 + n + (7n + 1)(n \cdot n^d + 1)$ counted events. -/
 public theorem exactSubsetSum_time_le_of_values_le_pow (xs : List Nat) (target d : Nat)
     (hx : ∀ x ∈ xs, x ≤ xs.length ^ d) :
     (exactSubsetSum xs target).time ≤ 1 + xs.length +
@@ -482,7 +532,12 @@ public theorem exactSubsetSum_time_le_of_values_le_pow (xs : List Nat) (target d
   exact le_trans (exactSubsetSum_time_le_numeric xs target)
     (Nat.add_le_add_left (Nat.mul_le_mul_left (7 * xs.length + 1) hm) (1 + xs.length))
 
-/-- The returned value is optimal for positional Nat inputs, including zero and repeated values. -/
+/-- **Optimality of exact subset sum.** Let $x$ be a list of natural numbers, $t$ a natural
+number, and $r$ the value returned by the exact subset sum algorithm on $x$ with target $t$.
+Then $r$ is the sum of some sublist of $x$ (a subsequence, not necessarily contiguous),
+$r \le t$, and every sublist of $x$ whose sum is at most $t$ has sum at most $r$.
+
+The entries of $x$ may be zero or repeated. -/
 public theorem exactSubsetSum_optimal (xs : List Nat) (target : Nat) :
     (∃ ys : List Nat, ys.Sublist xs ∧ ys.sum = (exactSubsetSum xs target).ret) ∧
       (exactSubsetSum xs target).ret ≤ target ∧
@@ -501,8 +556,13 @@ public theorem exactSubsetSum_optimal (xs : List Nat) (target : Nat) :
   rw [heq]
   exact List.le_max_of_mem hym
 
-/-- CLRS's optimum corollary, retaining its distinct positive-set and positive-target premises.
-The positional Nat generalization is `exactSubsetSum_optimal`. -/
+/-- **Optimality of exact subset sum for distinct positive inputs.** Let $x$ be a list of
+distinct positive natural numbers, $t$ a positive natural number, and $r$ the value returned by
+the exact subset sum algorithm on $x$ with target $t$. Then $r$ is the sum of some sublist of
+$x$ (a subsequence, not necessarily contiguous), $r \le t$, and every sublist of $x$ whose sum
+is at most $t$ has sum at most $r$.
+
+These are the hypotheses of CLRS, Section 35.5; the proof does not use them. -/
 public theorem exactSubsetSum_optimal_of_positive (xs : List Nat) (target : Nat)
     (_hd : xs.Nodup) (_hp : ∀ x ∈ xs, 0 < x) (_ht : 0 < target) :
     (∃ ys : List Nat, ys.Sublist xs ∧ ys.sum = (exactSubsetSum xs target).ret) ∧
