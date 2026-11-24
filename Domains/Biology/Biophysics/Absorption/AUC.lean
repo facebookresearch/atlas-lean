@@ -26,12 +26,9 @@ absorption/elimination rates, with integral `F * D / k` (concentration AUC `F * 
 
 namespace MathlibExt.Biology.Biophysics.Absorption.AUC
 
-/-- **Absorption AUC, distinct rates.** For `ka ≠ k`, `ka, k > 0`,
-the central amount component
-`F * D * ka * (exp (-k t) - exp (-ka t)) / (ka - k)` is integrable
-on `Set.Ici 0` with integral `F * D / k` (hence concentration AUC
-`F * D / (k * V)` after dividing by `V`). FK: the set integral
-statement below is exactly that claim for the amount. -/
+/-- **Absorption AUC, distinct rates.** For `ka ≠ k`, `ka, k > 0`, the central amount component
+`F * D * ka * (exp (-k t) - exp (-ka t)) / (ka - k)` is integrable on `Set.Ici 0` with integral
+`F * D / k` (hence concentration AUC `F * D / (k * V)` after dividing by `V`). -/
 lemma auc_distinct_amount {F D ka k : ℝ} (hka : 0 < ka)
     (hk : 0 < k) (hne : ka ≠ k) :
     MeasureTheory.IntegrableOn (fun t => F * D * ka * (Real.exp (-k * t) - Real.exp (-ka * t)) / (ka - k))

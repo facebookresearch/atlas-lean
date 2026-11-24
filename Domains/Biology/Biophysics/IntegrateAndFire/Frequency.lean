@@ -37,8 +37,9 @@ namespace MathlibExt.Biology.Biophysics.IntegrateAndFire.Frequency
 `uinf > theta > ur`, the first-hit period of the scalar trajectory
 `u(t) = uinf - (uinf - ur) * exp (-t / tau)` from reset `ur` to
 threshold `theta` is `T = tau * log ((uinf - ur) / (uinf - theta))`,
-which is positive. This is a definition-level restatement included
-so the frequency theorem has an exact period to consume. -/
+which is positive. Outside that domain the formula follows the
+conventions `x / 0 = 0`, `log 0 = 0` and `log x = log |x|`; for
+example it is `0` when `uinf = theta`. -/
 noncomputable def lifPeriod (tau ur theta uinf : ℝ) : ℝ :=
   tau * Real.log ((uinf - ur) / (uinf - theta))
 

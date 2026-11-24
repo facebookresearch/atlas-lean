@@ -48,9 +48,12 @@ open Real Filter Topology
 
 namespace MathlibExt.Biology.Biophysics.Pharmacodynamics
 
-/-- The baseline-plus-increment pharmacodynamic response: baseline
-`E0` plus maximal increment `Emax` times the normalized Hill fraction
-with half-saturation `K` and Hill coefficient `h`. -/
+/-- The baseline-plus-increment pharmacodynamic response: baseline `E0` plus maximal increment
+`Emax` times the normalized Hill fraction with half-saturation `K` and Hill coefficient `h`. With
+real powers and the conventions `x / 0 = 0`, `x ^ 0 = 1`, `0 ^ t = 0` for `t ≠ 0` and
+`x ^ t = |x| ^ t * cos (π t)` for `x < 0`, it is defined for all real inputs: at `C = 0` the
+fraction is `0` when `h ≠ 0`, at `h = 0` it is `1 / 2`, and it is `0` where `K ^ h + C ^ h = 0`. The
+intended domain is `K > 0`, `h > 0`, `C ≥ 0`. -/
 noncomputable def response (E0 Emax K h C : ℝ) : ℝ :=
   E0 + Emax * MathlibExt.Biology.Dynamics.GoldbeterKoshland.hill h K C
 
@@ -268,7 +271,10 @@ private theorem pd_response_scale {Emax K h C s : ℝ}
   rw [hfac, mul_div_mul_left _ _ hsh]
 
 /-- The concentration attaining an interior response value `E`:
-`K * ((E - E0) / (E0 + Emax - E))^(1/h)`. -/
+`K * ((E - E0) / (E0 + Emax - E))^(1/h)`. It is defined for all real inputs (real power, with
+`x / 0 = 0`): it is `K` when `h = 0`, and `0` when `h ≠ 0` and `E = E0` or `E = E0 + Emax`; a
+negative base `x` gives `|x| ^ (1 / h) * cos (π / h)`. The intended domain is `K > 0`, `h > 0`,
+`Emax > 0` and `E0 < E < E0 + Emax`. -/
 noncomputable def inverseConcentration (E0 Emax K h E : ℝ) : ℝ :=
   K * ((E - E0) / (E0 + Emax - E)) ^ (1 / h)
 

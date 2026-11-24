@@ -71,11 +71,13 @@ open Real Set Filter Topology MeasureTheory intervalIntegral
 
 namespace MathlibExt.Biology.Biophysics.CompartmentKinetics
 
-/-- Elimination rate constant `k = CL / V` (per time) for clearance `CL` and volume `V`. -/
+/-- Elimination rate constant `k = CL / V` (per time) for clearance `CL` and volume `V`. With the
+convention `x / 0 = 0` it is `0` when `V = 0`; in the model `V > 0` and `CL ≥ 0`. -/
 noncomputable def elimRate (CL V : ℝ) : ℝ := CL / V
 
-/-- Concentration `C(t) = A(t) / V` for clearance `CL`, volume `V`, infusion rate `R` and
-initial amount `A₀`, with elimination rate `k = CL / V`. -/
+/-- Concentration `C(t) = A(t) / V` for clearance `CL`, volume `V`, infusion rate `R` and initial
+amount `A₀`, with elimination rate `k = CL / V`. With the convention `x / 0 = 0` it is `0` when
+`V = 0`; in the model `V > 0` and `CL ≥ 0`. -/
 noncomputable def concentration (CL V R A₀ t : ℝ) : ℝ := amount (elimRate CL V) R A₀ t / V
 
 variable {k R A₀ t : ℝ}
@@ -111,7 +113,8 @@ theorem amount_add_eliminated (ht : 0 ≤ t) :
 
 /-! ### Bolus: washout, area under the curve and half-life -/
 
-/-- Bolus concentration `C(t) = (D / V) e^{-k t}`, `k = CL / V`. -/
+/-- Bolus concentration `C(t) = (D / V) e^{-k t}`, `k = CL / V`, for all real inputs; with the
+convention `x / 0 = 0` both sides are `0` when `V = 0`. -/
 theorem concentration_bolus (CL V D t : ℝ) :
     concentration CL V 0 D t = D / V * exp (-elimRate CL V * t) := by
   rw [concentration, amount_bolus]
@@ -155,7 +158,8 @@ theorem tendsto_integral_concentration_bolus {CL V : ℝ} (hCL : 0 < CL) (hV : 0
   simp_rw [integral_concentration_bolus hCL hV]
   simpa using (he.const_sub 1).const_mul (D / CL)
 
-/-- The half-life in terms of clearance and volume: `t½ = log 2 · V / CL`. -/
+/-- The half-life in terms of clearance and volume: `t½ = log 2 · V / CL`, for all real `CL` and
+`V`; with the convention `x / 0 = 0` both sides are `0` when `CL = 0` or `V = 0`. -/
 theorem halfLife_elimRate (CL V : ℝ) : halfLife (elimRate CL V) = log 2 * V / CL := by
   simp only [halfLife, elimRate]
   rw [div_div_eq_mul_div]
@@ -173,7 +177,8 @@ theorem tendsto_concentration {CL V : ℝ} (hCL : 0 < CL) (hV : 0 < V) (R A₀ :
   rw [he] at h
   exact h
 
-/-- Starting below the steady state (`A₀ ≤ R / k`, `k > 0`), the amount increases. -/
+/-- Starting at or below the steady state (`A₀ ≤ R / k`, `k > 0`), the amount is nondecreasing in
+`t` (constant when `A₀ = R / k`). -/
 theorem amount_monotone (hk : 0 < k) (h : A₀ ≤ steadyAmount k R) : Monotone (amount k R A₀) := by
   intro a b hab
   rw [amount_eq_of_ne_zero hk.ne', amount_eq_of_ne_zero hk.ne']

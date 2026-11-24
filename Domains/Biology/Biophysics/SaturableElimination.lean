@@ -93,18 +93,21 @@ open MathlibExt.Biology.Dynamics.MichaelisMenten (mmRate mmRate_lt)
 open MathlibExt.Biology.Biophysics.CompartmentKinetics (amount concentration amount_bolus
   integral_Ici_concentration_bolus tendsto_amount_bolus)
 
-/-- `C` solves the saturable-elimination equation `C' = R - Vmax C / (Km + C)` at every time
-`t ≥ 0` (two-sided derivative), with elimination rate `mmRate Vmax Km C` and constant infusion
-rate `R`. -/
+/-- `C` solves the saturable-elimination equation `C' = R - Vmax C / (Km + C)` at every time `t ≥ 0`
+(two-sided derivative), with elimination rate `mmRate Vmax Km C` and constant infusion rate `R`.
+With the convention `x / 0 = 0` the rate is `0` where `C t = -Km`; in the model `Vmax, Km > 0` and
+`R ≥ 0`. -/
 def IsSolution (Vmax Km R : ℝ) (C : ℝ → ℝ) : Prop :=
   ∀ t, 0 ≤ t → HasDerivAt C (R - mmRate Vmax Km (C t)) t
 
-/-- Steady-state concentration `C∞ = R Km / (Vmax - R)` under constant infusion `R`. Meaningful
-for `0 ≤ R < Vmax`, where it is the unique nonnegative root of `mmRate Vmax Km C = R`. -/
+/-- Steady-state concentration `C∞ = R Km / (Vmax - R)` under constant infusion `R`. With the
+convention `x / 0 = 0` it is `0` at `R = Vmax`. Meaningful for `Vmax, Km > 0` and `0 ≤ R < Vmax`,
+where it is the unique nonnegative root of `mmRate Vmax Km C = R`. -/
 noncomputable def steadyConc (Vmax Km R : ℝ) : ℝ := R * Km / (Vmax - R)
 
 /-- Area under the concentration curve after a bolus giving initial concentration `C₀`:
-`AUC = C₀ (Km + C₀ / 2) / Vmax`. -/
+`AUC = C₀ (Km + C₀ / 2) / Vmax`. With the convention `x / 0 = 0` it is `0` when `Vmax = 0`; the
+intended domain is `Vmax, Km > 0` and `C₀ ≥ 0`. -/
 noncomputable def bolusAUC (Vmax Km C₀ : ℝ) : ℝ := C₀ * (Km + C₀ / 2) / Vmax
 
 variable {Vmax Km R t : ℝ} {C : ℝ → ℝ}
@@ -343,7 +346,8 @@ theorem IsSolution.add_integral_eq (h : IsSolution Vmax Km R C) (hV : 0 ≤ Vmax
 
 /-! ### Bolus: washout -/
 
-/-- After a bolus (`R = 0`) the concentration decreases. -/
+/-- After a bolus (`R = 0`), for `Vmax ≥ 0`, `Km > 0` and `C(0) ≥ 0`, the concentration is
+nonincreasing on `[0, ∞)`. -/
 theorem IsSolution.antitoneOn_bolus (h : IsSolution Vmax Km 0 C) (hV : 0 ≤ Vmax) (hK : 0 < Km)
     (h0 : 0 ≤ C 0) : AntitoneOn C (Ici 0) := by
   intro s hs r _ hsr
@@ -447,8 +451,9 @@ theorem two_mul_bolusAUC_lt (hV : 0 < Vmax) {C₀ : ℝ} (hC₀ : 0 < C₀) :
   have : 0 < C₀ ^ 2 / Vmax := by positivity
   linarith
 
-/-- The initial-concentration-normalized AUC `AUC / C₀` is `(Km + C₀ / 2) / Vmax`. Since
-`C₀ = D / V`, this is `V · AUC / D`, not the dose-normalized `AUC / D`. -/
+/-- For `C₀ ≠ 0`, the initial-concentration-normalized AUC `AUC / C₀` is `(Km + C₀ / 2) / Vmax`;
+with the convention `x / 0 = 0` both sides are `0` when `Vmax = 0`. Since `C₀ = D / V`, this is
+`V · AUC / D`, not the dose-normalized `AUC / D`. -/
 theorem bolusAUC_div {C₀ : ℝ} (hC₀ : C₀ ≠ 0) :
     bolusAUC Vmax Km C₀ / C₀ = (Km + C₀ / 2) / Vmax := by
   unfold bolusAUC
@@ -473,9 +478,10 @@ theorem not_exists_bolusAUC_eq_mul (hV : 0 < Vmax) :
   field_simp at h1 h2
   nlinarith
 
-/-- **Low-dose limit.** As `C₀ → 0` the initial-concentration-normalized AUC `AUC / C₀` tends
-to `Km / Vmax`, the value `1 / k` of the linear model with `k = Vmax / Km`. Since `C₀ = D / V`,
-this ratio is `V · AUC / D`, not the dose-normalized `AUC / D`. -/
+/-- **Low-dose limit.** As `C₀ → 0` the initial-concentration-normalized AUC `AUC / C₀` tends to
+`Km / Vmax`, the value `1 / k` of the linear model with `k = Vmax / Km`. With the convention
+`x / 0 = 0` the ratio and the limit are `0` when `Vmax = 0`. Since `C₀ = D / V`, this ratio is
+`V · AUC / D`, not the dose-normalized `AUC / D`. -/
 theorem tendsto_bolusAUC_div (Vmax Km : ℝ) :
     Tendsto (fun C₀ ↦ bolusAUC Vmax Km C₀ / C₀) (𝓝[>] 0) (𝓝 (Km / Vmax)) := by
   have hc : Tendsto (fun C₀ : ℝ ↦ (Km + C₀ / 2) / Vmax) (𝓝[>] 0) (𝓝 ((Km + 0 / 2) / Vmax)) :=
@@ -488,7 +494,9 @@ theorem tendsto_bolusAUC_div (Vmax Km : ℝ) :
 
 /-! ### Constant infusion: steady state -/
 
-/-- A constant `c` is a solution iff elimination balances infusion, `mmRate Vmax Km c = R`. -/
+/-- A constant `c` is a solution iff elimination balances infusion, `mmRate Vmax Km c = R`. At
+`c = -Km` the rate is `0` by the convention `x / 0 = 0`, so that constant is a solution exactly when
+`R = 0`. -/
 theorem isSolution_const_iff {c : ℝ} :
     IsSolution Vmax Km R (fun _ ↦ c) ↔ mmRate Vmax Km c = R := by
   constructor
@@ -515,7 +523,7 @@ theorem mmRate_steadyConc (hV : 0 < Vmax) (hK : 0 < Km) (hRV : R < Vmax) :
   rw [h2]
   field_simp
 
-/-- **Steady state.** For `0 ≤ R < Vmax` the constant `C∞` is a solution. -/
+/-- **Steady state.** For `Vmax > 0`, `Km > 0` and `R < Vmax` the constant `C∞` is a solution. -/
 theorem isSolution_steadyConc (hV : 0 < Vmax) (hK : 0 < Km) (hRV : R < Vmax) :
     IsSolution Vmax Km R (fun _ ↦ steadyConc Vmax Km R) :=
   isSolution_const_iff.2 (mmRate_steadyConc hV hK hRV)

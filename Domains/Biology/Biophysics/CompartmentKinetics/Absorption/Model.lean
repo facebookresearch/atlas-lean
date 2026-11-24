@@ -38,7 +38,8 @@ namespace MathlibExt.Biology.Biophysics.CompartmentKinetics.Absorption.Model
 /-- The administered depot amount `D * exp (-ka * t)`. -/
 noncomputable def depotAmount (D ka t : ℝ) : ℝ := D * Real.exp (-ka * t)
 
-/-- The central amount for distinct rates. -/
+/-- The central amount for distinct rates. With the convention `x / 0 = 0` it is `0` when `ka = k`,
+where the equal-rate formula `centralAmountEqual` applies. -/
 noncomputable def centralAmount (F D ka k t : ℝ) : ℝ :=
   F * D * ka * (Real.exp (-k * t) - Real.exp (-ka * t)) / (ka - k)
 
@@ -140,8 +141,8 @@ theorem central_deriv_equal {F D ka t : ℝ} :
       F * ka * depotAmount D ka t - ka * centralAmountEqual F D ka t :=
   central_hasDerivAt_equal.deriv
 
-/-- **Distinct-rate nonnegativity.** For admissible parameters
-and `t ≥ 0`, the central amount is nonnegative. -/
+/-- **Distinct-rate nonnegativity.** For `F ≥ 0`, `D ≥ 0`, `ka > 0`, `k ≥ 0` with `ka ≠ k`, and
+`t ≥ 0`, the central amount is nonnegative. -/
 theorem central_nonneg {F D ka k t : ℝ} (hF : 0 ≤ F) (hD : 0 ≤ D)
     (hka : 0 < ka) (hk : 0 ≤ k) (ht : 0 ≤ t) (h : ka ≠ k) :
     0 ≤ centralAmount F D ka k t := by
@@ -150,8 +151,8 @@ theorem central_nonneg {F D ka k t : ℝ} (hF : 0 ≤ F) (hD : 0 ≤ D)
   exact MathlibExt.Biology.Biophysics.CompartmentKinetics.DecayExpansion.decay_expansion_nonneg
     hC hka.le hk ht h
 
-/-- **Equal-rate nonnegativity.** For admissible parameters and
-`t ≥ 0`, the equal-rate central amount is nonnegative. -/
+/-- **Equal-rate nonnegativity.** For `F ≥ 0`, `D ≥ 0`, `ka ≥ 0` and `t ≥ 0`, the equal-rate central
+amount is nonnegative. -/
 theorem centralEqual_nonneg {F D ka t : ℝ} (hF : 0 ≤ F) (hD : 0 ≤ D)
     (hka : 0 ≤ ka) (ht : 0 ≤ t) :
     0 ≤ centralAmountEqual F D ka t := by
