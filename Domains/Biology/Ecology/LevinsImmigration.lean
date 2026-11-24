@@ -27,14 +27,14 @@ with colonization rate `c ≥ 0`, extinction rate `e ≥ 0` and immigration rate
 `IsSolution c e m p` says that `p` solves the equation on `[0, ∞)`. At `m = 0` this is the Levins
 model (`balance_zero_right`, `isSolution_zero_right_iff`).
 
-**Main point.** Without immigration and with `c ≤ e`, `e > 0`, every population goes extinct
-(`LevinsMetapopulation.extinction_isGloballyStable`). With any `m > 0`, extinction is not even an
-equilibrium (`balance c e m 0 = m`), and there is a unique equilibrium `p̂ ∈ (0, 1]` in `[0, ∞)`,
-for every `c ≥ 0` and `e ≥ 0`, which attracts every solution with `p(0) ≥ 0` at exponential rate
-`m / p̂`. Even a trickle of immigrants keeps the metapopulation from going extinct
-(`propagule_rain_persistence`). The immigration term `m (1 - p)` is propagule rain, mainland
-colonization of empty patches: it leaves the local extinction term `e p` unchanged, so this is
-not the rescue effect, in which immigration lowers local extinction (Gotelli 1991 distinguishes
+**Main point.** Without immigration and with `0 ≤ c ≤ e`, `e > 0`, every solution starting in
+`[0, 1]` tends to `0` (`LevinsMetapopulation.extinction_isGloballyStable`). With any `m > 0`,
+extinction is not even an equilibrium (`balance c e m 0 = m`), and there is a unique equilibrium
+`p̂ ∈ (0, 1]` in `[0, ∞)`, for every `c ≥ 0` and `e ≥ 0`, which attracts every solution with
+`p(0) ≥ 0` at exponential rate `m / p̂`. Even a trickle of immigrants keeps the metapopulation from
+going extinct (`propagule_rain_persistence`). The immigration term `m (1 - p)` is propagule rain,
+mainland colonization of empty patches: it leaves the local extinction term `e p` unchanged, so this
+is not the rescue effect, in which immigration lowers local extinction (Gotelli 1991 distinguishes
 the two).
 
 The balance is the concave quadratic `-c p² + b p + m` with `b = c - e - m`, so for `c > 0` its
@@ -89,7 +89,8 @@ fraction `1 - p` at rate `c`, local populations go extinct at rate `e`, and the 
 empty patches at rate `m`, `c p (1 - p) - e p + m (1 - p)`. -/
 def balance (c e m p : ℝ) : ℝ := c * p * (1 - p) - e * p + m * (1 - p)
 
-/-- `p` solves `p' = c p (1 - p) - e p + m (1 - p)` for all `t ≥ 0`. -/
+/-- `p` solves `p' = c p (1 - p) - e p + m (1 - p)` for all `t ≥ 0`. The derivative at `t = 0` is
+two-sided, and no initial value is fixed. -/
 structure IsSolution (c e m : ℝ) (p : ℝ → ℝ) : Prop where
   /-- The occupied fraction changes by colonization minus extinction plus immigration. -/
   hasDerivAt : ∀ t, 0 ≤ t → HasDerivAt p (balance c e m (p t)) t
@@ -97,14 +98,18 @@ structure IsSolution (c e m : ℝ) (p : ℝ → ℝ) : Prop where
 /-- The discriminant `(c - e - m)² + 4 c m` of the quadratic `c p² - (c - e - m) p - m`. -/
 noncomputable def disc (c e m : ℝ) : ℝ := (c - e - m) ^ 2 + 4 * c * m
 
-/-- The **immigration equilibrium** `p̂ = 2 m / (e + m - c + √((c - e - m)² + 4 c m))`, the positive
-root of the balance in rationalized form; for `c > 0` it equals the quadratic-formula root
-(`immigrationEq_eq_quadratic`), and for `c = 0` it is `m / (e + m)`. This holds for `c ≥ 0`,
-`e ≥ 0` and `m > 0`, the range of every result below, where the denominator is positive
-(`denom_pos`); outside it the formula need not be a root of the balance (at `m = 0` it is `0`). -/
+/-- The **immigration equilibrium** `p̂ = 2 m / (e + m - c + √((c - e - m)² + 4 c m))`. For
+`c ≥ 0`, `e ≥ 0` and `m > 0` the denominator is positive (`denom_pos`) and `p̂ ∈ (0, 1]` is the
+positive root of the balance: for `c > 0` the quadratic-formula root in rationalized form
+(`immigrationEq_eq_quadratic`), and `m / (e + m)` for `c = 0`. The formula is total, with
+`√x = 0` for `x < 0` (a negative discriminant needs `c m < 0`) and `x / 0 = 0`, so a zero
+denominator gives `0`. Outside that range it need not be a root of the balance; at `m = 0` it is
+`0` even when `c > e`. -/
 noncomputable def immigrationEq (c e m : ℝ) : ℝ := 2 * m / (e + m - c + √(disc c e m))
 
-/-- The **return rate** `c p̂ + m / p̂ = -f'(p̂)` at the immigration equilibrium. -/
+/-- The **return rate** `c p̂ + m / p̂` at the immigration equilibrium; for `c ≥ 0`, `e ≥ 0` and
+`m > 0` it is positive and equals `-f'(p̂)`. With `x / 0 = 0` it is `0` where `p̂ = 0` (e.g. at
+`m = 0`). -/
 noncomputable def rate (c e m : ℝ) : ℝ := c * immigrationEq c e m + m / immigrationEq c e m
 
 variable {c e m : ℝ}
@@ -122,7 +127,8 @@ theorem isSolution_zero_right_iff {p : ℝ → ℝ} :
   ⟨fun h => ⟨fun t ht => by rw [← balance_zero_right]; exact h.hasDerivAt t ht⟩,
     fun h => ⟨fun t ht => by rw [balance_zero_right]; exact h.hasDerivAt t ht⟩⟩
 
-/-- **Extinction is not an equilibrium**: an empty landscape receives immigrants at rate `m`. -/
+/-- `f(0) = m`: an empty landscape receives immigrants at rate `m`, so for `m ≠ 0`
+**extinction is not an equilibrium**. -/
 theorem balance_zero (c e m : ℝ) : balance c e m 0 = m := by simp [balance]
 
 /-- A fully occupied landscape loses patches at rate `e`. -/
@@ -236,7 +242,8 @@ theorem immigrationEq_eq_one_iff (hc : 0 ≤ c) (he : 0 ≤ e) (hm : 0 < m) :
     · linarith
 
 /-- **Persistence with immigration**: `p̂ ∈ (0, 1]` for every `c ≥ 0`, `e ≥ 0`, `m > 0`, including
-`c ≤ e` with `e > 0`, where the Levins model without immigration goes extinct. -/
+`c ≤ e` with `e > 0`, where without immigration every Levins solution starting in `[0, 1]` tends
+to `0`. -/
 theorem immigrationEq_mem_Ioc (hc : 0 ≤ c) (he : 0 ≤ e) (hm : 0 < m) :
     immigrationEq c e m ∈ Ioc 0 1 :=
   ⟨immigrationEq_pos (c := c) he hm, immigrationEq_le_one hc he hm⟩
@@ -255,7 +262,8 @@ theorem balance_eq_zero_iff (hc : 0 ≤ c) (he : 0 ≤ e) (hm : 0 < m) {p : ℝ}
   · rintro rfl
     ring
 
-/-- **Existence and uniqueness of the positive equilibrium.** -/
+/-- **Existence and uniqueness of the nonnegative equilibrium**: for `c, e ≥ 0` and `m > 0` there
+is exactly one `p ≥ 0` with `f(p) = 0` (it is `p̂ > 0`). -/
 theorem existsUnique_equilibrium (hc : 0 ≤ c) (he : 0 ≤ e) (hm : 0 < m) :
     ∃! p, 0 ≤ p ∧ balance c e m p = 0 :=
   ⟨immigrationEq c e m, ⟨(immigrationEq_pos (c := c) he hm).le, balance_immigrationEq hc he hm⟩,
@@ -270,9 +278,9 @@ theorem immigrationEq_eq_quadratic (hc : 0 < c) (he : 0 ≤ e) (hm : 0 < m) :
   rw [immigrationEq, div_eq_div_iff hd.ne' (mul_pos two_pos hc).ne']
   linear_combination -hs
 
-/-- **Vanishing immigration recovers the Levins attractor.** For `c > 0`, as `m ↓ 0` the
-immigration equilibrium tends to `max (1 - e / c) 0`: the persistence equilibrium when `c > e` and
-extinction when `c ≤ e`. -/
+/-- **Vanishing immigration recovers the Levins attractor.** For `c > 0`, as `m ↓ 0` the immigration
+equilibrium tends to `max (1 - e / c) 0`: the persistence equilibrium when `c > e` and extinction
+when `c ≤ e`. This is a limit only: at `m = 0` the formula gives `0` even when `c > e`. -/
 theorem tendsto_immigrationEq_zero (hc : 0 < c) (he : 0 ≤ e) :
     Tendsto (fun m => immigrationEq c e m) (𝓝[>] 0)
       (𝓝 (max (LevinsMetapopulation.persistenceEq c e) 0)) := by
@@ -326,12 +334,16 @@ theorem hasDerivAt_balance_immigrationEq (hc : 0 ≤ c) (he : 0 ≤ e) (hm : 0 <
 
 /-! ### An explicit solution -/
 
-/-- The trajectory `q + L (p₀ - q) / ((L + c (p₀ - q)) e^{L t} - c (p₀ - q))` of `q' = -L q - c q²`
-shifted by `q`. -/
+/-- The function `q + L (p₀ - q) / ((L + c (p₀ - q)) e^{L t} - c (p₀ - q))`. For `L ≠ 0` it is
+`p₀` at `t = 0`, and minus `q` it solves `u' = -L u - c u²` on any interval containing `0` where
+the denominator does not vanish. With `x / 0 = 0` it is `q` where the denominator vanishes, and
+`q` for every `t` when `L = 0`. -/
 noncomputable def riccatiTraj (c q L p₀ t : ℝ) : ℝ :=
   q + L * (p₀ - q) / ((L + c * (p₀ - q)) * exp (L * t) - c * (p₀ - q))
 
-/-- The **explicit solution** with `p(0) = p₀`. -/
+/-- The **explicit solution**: `riccatiTraj` with `q = p̂` and `L = rate c e m`. For `c ≥ 0`,
+`e ≥ 0` and `m > 0` it satisfies `p(0) = p₀`; at `m = 0`, `p̂ = L = 0` and it is `0` for every
+`t`. -/
 noncomputable def solution (c e m p₀ : ℝ) : ℝ → ℝ :=
   riccatiTraj c (immigrationEq c e m) (rate c e m) p₀
 
@@ -377,7 +389,7 @@ theorem isSolution_solution (hc : 0 ≤ c) (he : 0 ≤ e) (hm : 0 < m) {p₀ : �
   field_simp
   ring
 
-/-- **Global existence** from every `p₀ ≥ 0`. -/
+/-- **Global existence** on `[0, ∞)` from every `p₀ ≥ 0` (existence only, not uniqueness). -/
 theorem exists_isSolution (hc : 0 ≤ c) (he : 0 ≤ e) (hm : 0 < m) {p₀ : ℝ} (hp₀ : 0 ≤ p₀) :
     ∃ p : ℝ → ℝ, IsSolution c e m p ∧ p 0 = p₀ :=
   ⟨solution c e m p₀, isSolution_solution hc he hm hp₀, solution_zero hc he hm p₀⟩
@@ -433,8 +445,8 @@ theorem pos (hp : IsSolution c e m p) (hm : 0 < m) (h0 : 0 ≤ p 0) {t : ℝ} (h
   rw [← hpt, balance_zero] at this
   exact hm.ne' this
 
-/-- The deviation from a positive equilibrium `q`, weighted by `e^{L t}` with
-`L = c q + m / q`, is nonincreasing. -/
+/-- For `c ≥ 0`, a positive equilibrium `q` and `L = c q + m / q`, every solution satisfies
+`p(t) - q ≤ (p(0) - q) e^{-L t}`, that is `(p(t) - q) e^{L t} ≤ p(0) - q`, for `t ≥ 0`. -/
 theorem sub_le_mul_exp_of_eq (hp : IsSolution c e m p) (hc : 0 ≤ c) {q : ℝ} (hq : 0 < q)
     (h0 : balance c e m q = 0) {t : ℝ} (ht : 0 ≤ t) :
     p t - q ≤ (p 0 - q) * exp (-((c * q + m / q) * t)) := by
