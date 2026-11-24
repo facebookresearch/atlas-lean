@@ -7213,6 +7213,7 @@
 "Cslib.Algorithms.Lean.MarkovDecision.detPolicy": "6806dc5e786a1fa2",
 "Cslib.Algorithms.Lean.MarkovDecision.dist_nStageValue_le": "423696c9b65863bd",
 "Cslib.Algorithms.Lean.MarkovDecision.dist_optimalValue_le": "229398a499e039c8",
+"Cslib.Algorithms.Lean.MarkovDecision.dist_optimalValue_policyValue_le_of_greedy": "f86a99c4acbb68ef",
 "Cslib.Algorithms.Lean.MarkovDecision.dist_valueIteration_le": "12b1c348571e16d6",
 "Cslib.Algorithms.Lean.MarkovDecision.dpPolicy": "f95ccb0f16defdda",
 "Cslib.Algorithms.Lean.MarkovDecision.eq_optimalValue_of_bellman_eq": "78a75b9b5d71f536",
