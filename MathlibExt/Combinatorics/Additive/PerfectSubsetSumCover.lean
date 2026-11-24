@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.Algebra.BigOperators.Group.Finset.Powerset
 public import Mathlib.Algebra.BigOperators.Pi
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Data.ZMod.Basic
@@ -161,6 +162,41 @@ theorem oddCombinations_empty : oddCombinations (∅ : Finset G) = {0} := by
 end PerfectSubsetSumCover
 
 open PerfectSubsetSumCover
+
+/-- **Adjoining an element doubles the multiplicity of a perfect cover.** Let $G$ be an abelian
+group and let $s = (s_1, \dots, s_k)$ be a perfect $m$-cover of $G$. For every $g \in G$, the
+family $(g, s_1, \dots, s_k)$ is a perfect $2m$-cover of $G$.
+
+Source: John Greene and Clayton Higgins, *Maximal Subset Sums in a Group of Order a Power
+of 2*, Journal of Integer Sequences 28 (2025), Article 25.7.8, Lemma 5
+(`jis-2025-25.7.8-lem-5`). -/
+theorem isPerfectMCover_cons {G : Type*} [AddCommGroup G] [DecidableEq G]
+    {k m : ℕ} {s : Fin k → G} (hs : IsPerfectMCover m s) (g : G) :
+    IsPerfectMCover (2 * m) (Fin.cons g s : Fin (k + 1) → G) := by
+  intro x
+  let e := Fin.succEmb k
+  have hzero (I : Finset (Fin k)) : (0 : Fin (k + 1)) ∉ I.map e := by
+    simp [e]
+  have huniv : (Finset.univ : Finset (Fin (k + 1))) = insert 0 (Finset.univ.map e) := by
+    rw [Fin.univ_succ, Finset.cons_eq_insert]
+    rfl
+  have hmap : (Finset.univ.map e).powerset = Finset.univ.image (Finset.map e) := by
+    simp only [funext (Finset.map_eq_image e), Finset.powerset_image, Finset.powerset_univ]
+  let hit (I : Finset (Fin (k + 1))) : ℕ :=
+    if (∑ i ∈ I, Fin.cons g s i) = x then 1 else 0
+  -- Split the sum over index sets according to whether they contain index zero.
+  have hsplit : (∑ I, hit I) =
+      (∑ I : Finset (Fin k), hit (I.map e)) +
+        ∑ I : Finset (Fin k), hit (insert 0 (I.map e)) := by
+    conv_lhs => rw [← Finset.powerset_univ, huniv, Finset.sum_powerset_insert (hzero _), hmap]
+    rw [Finset.sum_image (Finset.map_injective e).injOn,
+      Finset.sum_image (Finset.map_injective e).injOn]
+  have htail (I : Finset (Fin k)) : (∑ i ∈ I.map e, Fin.cons g s i) = ∑ i ∈ I, s i := by
+    simp [Finset.sum_map, e]
+  have hcount : coverCount (Fin.cons g s) x = coverCount s x + coverCount s (x - g) := by
+    simpa only [coverCount, Finset.card_eq_sum_ones, Finset.sum_filter, hit, htail,
+      Finset.sum_insert (hzero _), Fin.cons_zero, add_comm g, ← eq_sub_iff_add_eq] using hsplit
+  rw [hcount, hs x, hs (x - g), two_mul]
 
 /-- **Projections of a perfect cover of a direct sum.** Let $H$ and $K$ be finite abelian groups
 with $|H| = 2^m$ and $|K| = 2^n$, and let $s = (s_i)_{i \in \iota}$, indexed by a finite set
