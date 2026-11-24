@@ -40,3 +40,5 @@
 - [Transition probabilities of the constructed chain](ctmc-input-measure-real-ctmc-path-eq.md)
 - [Restart law at a fixed time](ctmc-input-measure-real-ctmc-path-add.md)
 - [Finite-dimensional distributions](ctmc-input-measure-real-ctmc-path-fdd.md)
+
+- [Dynkin martingale of a finite continuous-time Markov chain](dynkin-martingale-for-finite-ctmcs.md)

@@ -23,3 +23,5 @@
 
 - [Independent Poisson increments of the counting process](has-law-count-increments.md)
 - [Exponential interarrivals give a Poisson process](is-poisson-process-count.md)
+
+- [Compensated and exponential martingales of a Poisson process](poisson-process-martingales.md)
