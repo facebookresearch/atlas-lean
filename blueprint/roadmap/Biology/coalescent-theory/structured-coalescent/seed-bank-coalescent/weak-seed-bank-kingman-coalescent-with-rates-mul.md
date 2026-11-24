@@ -19,7 +19,7 @@ generations, so a pair coalesces at rate $1/2$ instead of $\beta^2 = 1/4$.
 
 ## Proof depends on
 
-- [Mohle's separation-of-timescales lemma for finite Markov chains](../../../Probability/markov-chains/finite-markov-chains/mohle-s-separation-of-timescales-lemma-for-finit.md)
+- [Mohle's separation-of-timescales lemma for finite Markov chains](../../../../Probability/markov-chains/finite-markov-chains/mohle-s-separation-of-timescales-lemma-for-finit.md)
 - [Stationary averaging of the pair landing probability in the weak seed-bank model](stationary-averaging-of-the-pair-landing-probabi.md)
 
 ## Expansion

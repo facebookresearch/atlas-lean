@@ -23,13 +23,13 @@ of states: give the lines already in each generation distinct slot labels among 
 independent uniform slot labels for the relocating lines, and merge lines with equal labels; the law of
 the resulting partition and residual ages does not depend on which distinct labels the existing lines
 were given, so absolute positions need not be kept. For $B = 1$ the number of lines is the
-[Wright–Fisher lineage-count chain](../ancestral-lineage-counting-and-tavar-s-formula/wf-lineage-matrix.md). Two distinct
+[Wright–Fisher lineage-count chain](../../ancestral-lineage-counting-and-tavar-s-formula/wf-lineage-matrix.md). Two distinct
 lines in the same generation are relocated to a common generation with probability $\sum_j b_j^2$ and
 merge there with probability $\sum_j b_j^2 / N$.
 
 ## Depends on
 
-- [Markov chain](../../../Probability/markov-chains/chapman-kolmogorov-equations/is-markov-chain.md)
+- [Markov chain](../../../../Probability/markov-chains/chapman-kolmogorov-equations/is-markov-chain.md)
 
 ## Sources
 

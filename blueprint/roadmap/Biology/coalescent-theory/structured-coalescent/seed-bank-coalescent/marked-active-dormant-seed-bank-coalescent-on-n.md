@@ -16,15 +16,15 @@ expected time $((1 + K)/K)^2 > 1$ to their common ancestor.
 
 ## Proof depends on
 
-- [Finite-dimensional distributions of the path process](../../../Probability/markov-chains/finite-continuous-time-markov-chains/finite-continuous-time-markov-chains-as-path-pro/ctmc-input-measure-real-ctmc-path-fdd.md)
-- [Kolmogorov extension theorem](../../../Probability/foundations/kolmogorov-extension-theorem/kolmogorov-extension.md)
+- [Finite-dimensional distributions of the path process](../../../../Probability/markov-chains/finite-continuous-time-markov-chains/finite-continuous-time-markov-chains-as-path-pro/ctmc-input-measure-real-ctmc-path-fdd.md)
+- [Kolmogorov extension theorem](../../../../Probability/foundations/kolmogorov-extension-theorem/kolmogorov-extension.md)
 
 ## Expansion
 
 A sound expansion checks the intertwining of the marked rate matrices with the restriction map:
 transitions of blocks that meet $\{1, \dots, k\}$ act on the restriction in the same way and at the same
 rates, while mergers and flag changes involving the singleton $\{k + 1\}$ alone are invisible in it. Path consistency then
-follows as for [the Λ-coalescent](../coalescents/path-laws-of-the-coalescent-on-a-finite-sample-a.md), and the Kolmogorov extension theorem over pairs of a sample
+follows as for [the Λ-coalescent](../../coalescents/path-laws-of-the-coalescent-on-a-finite-sample-a.md), and the Kolmogorov extension theorem over pairs of a sample
 size and a rational time gives the process on $\mathbb N$. Since marks switch in both directions, the
 paths are not monotone; right limits exist because each restriction has bounded rates and therefore
 finitely many jumps on bounded intervals almost surely.

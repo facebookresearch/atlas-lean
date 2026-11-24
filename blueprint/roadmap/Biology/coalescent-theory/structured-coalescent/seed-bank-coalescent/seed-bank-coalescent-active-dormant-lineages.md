@@ -3,7 +3,7 @@
 Let $c, K \in (0, \infty)$ and $k \ge 1$. A marked partition of $\{1, \dots, k\}$ is a partition together
 with a flag $p$ (active) or $s$ (dormant) on each block. The seed-bank $k$-coalescent with seed-bank
 intensity $c$ and relative seed-bank size $1/K$, started from a given marked partition, is the
-[continuous-time Markov chain path process](../../../Probability/markov-chains/finite-continuous-time-markov-chains/finite-continuous-time-markov-chains-as-path-pro/ctmc-path.md) on marked partitions of $\{1, \dots, k\}$ whose
+[continuous-time Markov chain path process](../../../../Probability/markov-chains/finite-continuous-time-markov-chains/finite-continuous-time-markov-chains-as-path-pro/ctmc-path.md) on marked partitions of $\{1, \dots, k\}$ whose
 generator has the following off-diagonal rates, with diagonal entries minus the row sums:
 
 - $\pi \mapsto \pi'$ at rate $1$ if $\pi'$ is obtained by merging two active blocks of $\pi$ into one
@@ -25,7 +25,7 @@ $m_{aa} = 1 + \frac{2K + 1}{K^2}$.
 
 ## Depends on
 
-- [Path process of a finite continuous-time Markov chain](../../../Probability/markov-chains/finite-continuous-time-markov-chains/finite-continuous-time-markov-chains-as-path-pro/ctmc-path.md)
+- [Path process of a finite continuous-time Markov chain](../../../../Probability/markov-chains/finite-continuous-time-markov-chains/finite-continuous-time-markov-chains-as-path-pro/ctmc-path.md)
 
 ## Expansion
 

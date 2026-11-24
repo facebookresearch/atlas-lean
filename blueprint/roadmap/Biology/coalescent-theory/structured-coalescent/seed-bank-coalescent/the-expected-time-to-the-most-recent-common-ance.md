@@ -6,7 +6,7 @@ relative seed-bank size $1/K$ satisfies $\mathbb E\, T_{\mathrm{MRCA}}[n] \asymp
 
 $$0 < \liminf_{n \to \infty} \frac{\mathbb E\, T_{\mathrm{MRCA}}[n]}{\log \log n} \le \limsup_{n \to \infty} \frac{\mathbb E\, T_{\mathrm{MRCA}}[n]}{\log \log n} < \infty .$$
 
-For comparison, in [Kingman's coalescent](../kingman-s-coalescent-and-watterson-s-estimator/integral-tmrca.md) the expectation is
+For comparison, in [Kingman's coalescent](../../kingman-s-coalescent-and-watterson-s-estimator/integral-tmrca.md) the expectation is
 $2(1 - 1/n)$, bounded in $n$; the seed-bank coalescent also [does not come down from infinity](the-seed-bank-coalescent-does-not-come-down-from.md).
 
 ## Depends on
