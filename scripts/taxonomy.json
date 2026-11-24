@@ -10771,6 +10771,7 @@
   "MathlibExt/Combinatorics/Enumerative/TouchardCatalanIdentity": {"to": "Combinatorics/catalan-numbers-lattice-paths/catalan-numbers", "title": "Touchard's Catalan identity"},
   "MathlibExt/Combinatorics/Enumerative/TriangularStripTilings": {"to": "Combinatorics/tilings-board-placements", "title": "Tilings of triangular strips"},
   "MathlibExt/Combinatorics/Enumerative/TrinomialAlternatingColumn": {"to": "Combinatorics/binomial-coefficients/generalized-binomial-coefficients", "title": "Trinomial coefficients and the 2-Pascal triangle"},
+  "MathlibExt/Combinatorics/Enumerative/TrinomialBinomialTransform": {"to": "Combinatorics/binomial-coefficients/generalized-binomial-coefficients", "title": "Trinomial coefficients and the 2-Pascal triangle"},
   "MathlibExt/Combinatorics/Enumerative/TrinomialConvolution": {"to": "Combinatorics/binomial-coefficients/generalized-binomial-coefficients", "title": "Trinomial coefficients and the 2-Pascal triangle"},
   "MathlibExt/Combinatorics/Enumerative/TrinomialUpperHalf": {"to": "Combinatorics/binomial-coefficients/generalized-binomial-coefficients", "title": "Trinomial coefficients and the 2-Pascal triangle"},
   "MathlibExt/Combinatorics/Enumerative/TripleFactorization": {"to": "Combinatorics/riordan-arrays-transforms/riordan-arrays", "title": "Triple factorization of Riordan arrays"},
