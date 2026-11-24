@@ -9,3 +9,5 @@
 - [Limit $\theta/(1+\theta)$ of the equilibrium heterozygosity](tendsto-one-sub-eq-homozygosity.md)
 
 - [Identity in state under the stepwise mutation model](stepwise-mutation-model-homozygosity.md)
+
+- [Stationary identity by descent in the circular stepping-stone model](circular-stepping-stone-model-exact-stationary-i.md)

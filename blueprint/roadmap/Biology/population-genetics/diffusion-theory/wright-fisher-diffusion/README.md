@@ -40,3 +40,8 @@
 - [Heterozygosity decay in one Wright–Fisher generation](integral-binomial-heterozygosity.md)
 
 - [The mean-time-to-monomorphism equation for neutral K-allele drift](neutral-k-allele-fixation-probabilities-and-mean.md)
+
+- [Convergence and PDEs of the neutral Gegenbauer series](kimura-1955-eigen-series-convergence-and-pde-for.md)
+- [Spatial and time integrals of the neutral spectral series](distribution-of-absorption-time-from-the-spectra.md)
+
+- [Robertson's limit of artificial selection](robertson-s-limit-of-artificial-selection.md)
