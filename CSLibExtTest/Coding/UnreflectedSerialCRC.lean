@@ -18,29 +18,65 @@ open CSLibExt.Coding.UnreflectedSerialCRC
 
 namespace CSLibExtTest.Coding.UnreflectedSerialCRC
 
-/-- The CRC-3 fixtures as executable bit words: payload `101`
-leaves register `0b100`, `110` leaves `0b001`, and its reverse
-`011` leaves `0b101`. -/
-example : finalRegister 3 crc3Taps [true, false, true] = 0b100#3 :=
-  final_register_crc3_payload_101_bits
+/-- The CRC-3 generator `X^3 + X + 1`. -/
+noncomputable def crc3Generator : Polynomial (ZMod 2) :=
+  Polynomial.X ^ 3 + Polynomial.X + 1
 
-example : finalRegister 3 crc3Taps [true, true, false] = 0b001#3 :=
-  final_register_crc3_payload_110_bits
+/-- The CRC-3 taps word: the lower coefficients `X + 1` of `X^3 + X + 1`. -/
+def crc3Taps : BitVec 3 :=
+  0b011#3
 
-example : finalRegister 3 crc3Taps [false, true, true] = 0b101#3 :=
-  final_register_crc3_payload_011_bits
+/-- The CRC-3 taps word is the canonical modulus `X^3 + X + 1`. -/
+theorem monicModulus_crc3Taps : crc3Taps.monicModulus = crc3Generator := by
+  have h : crc3Taps.toBoolListLE = [true, true, false] := by decide
+  simp only [BitVec.monicModulus, BitVec.toPolynomial, crc3Generator, h]
+  simp [Polynomial.ofCoeffList_cons, Polynomial.ofCoeffList_nil]
+  ring
 
-/-- The same fixtures read as polynomials: `101` gives `X^2`. The
-payload `011` is the reverse of `110`; the two reversed payloads
-give different remainders (`X^2 + 1` versus `1`), as the
-unreflected convention requires. -/
-example : (finalRegister 3 crc3Taps [true, false, true]).toPolynomial
-    = Polynomial.X ^ 2 :=
-  final_register_crc3_payload_101
+/-- CRC-3, payload `101`: executable final register `0b100`. -/
+theorem final_register_crc3_payload_101_bits :
+    finalRegister 3 crc3Taps [true, false, true] = 0b100#3 := by
+  decide
 
-example : (finalRegister 3 crc3Taps [true, true, false]).toPolynomial = 1 :=
-  final_register_crc3_payload_110
+/-- CRC-3, payload `101`: the final register represents `X ^ 2`. -/
+theorem final_register_crc3_payload_101 :
+    (finalRegister 3 crc3Taps [true, false, true]).toPolynomial = Polynomial.X ^ 2 := by
+  rw [final_register_crc3_payload_101_bits]
+  have h : (0b100#3).toBoolListLE = [false, false, true] := by decide
+  simp only [BitVec.toPolynomial, h]
+  simp [Polynomial.ofCoeffList_cons, Polynomial.ofCoeffList_nil]
+  ring
 
+/-- CRC-3, payload `110`: executable final register `0b001`. -/
+theorem final_register_crc3_payload_110_bits :
+    finalRegister 3 crc3Taps [true, true, false] = 0b001#3 := by
+  decide
+
+/-- CRC-3, payload `110`: the final register represents `1`. -/
+theorem final_register_crc3_payload_110 :
+    (finalRegister 3 crc3Taps [true, true, false]).toPolynomial = 1 := by
+  rw [final_register_crc3_payload_110_bits]
+  have h : (0b001#3).toBoolListLE = [true, false, false] := by decide
+  simp only [BitVec.toPolynomial, h]
+  simp [Polynomial.ofCoeffList_cons, Polynomial.ofCoeffList_nil]
+
+/-- CRC-3, reversed payload `011`: executable final register `0b101`. -/
+theorem final_register_crc3_payload_011_bits :
+    finalRegister 3 crc3Taps [false, true, true] = 0b101#3 := by
+  decide
+
+/-- CRC-3, reversed payload `011`: the final register represents `X ^ 2 + 1`, unlike `110`. -/
+theorem final_register_crc3_payload_011 :
+    (finalRegister 3 crc3Taps [false, true, true]).toPolynomial = Polynomial.X ^ 2 + 1 := by
+  rw [final_register_crc3_payload_011_bits]
+  have h : (0b101#3).toBoolListLE = [true, false, true] := by decide
+  simp only [BitVec.toPolynomial, h]
+  simp [Polynomial.ofCoeffList_cons, Polynomial.ofCoeffList_nil]
+  ring
+
+/-- The payload `011` is the reverse of `110`; the two reversed payloads
+give different remainders (`X^2 + 1` versus `1`), as the unreflected
+convention requires. -/
 example : (finalRegister 3 crc3Taps [false, true, true]).toPolynomial
     ≠ (finalRegister 3 crc3Taps [true, true, false]).toPolynomial := by
   rw [final_register_crc3_payload_011, final_register_crc3_payload_110]
@@ -98,9 +134,5 @@ example (bits : List Bool) :
         + (finalRegister 0 ((1 : Polynomial (ZMod 2)).toBitVec 0) bits).toPolynomial :=
   encode_eq_messagePoly_shift_add_finalRegister 1 0 Polynomial.monic_one
     Polynomial.natDegree_one bits
-
-/-- The CRC-3 taps word is the modulus `X^3 + X + 1`. -/
-example : crc3Taps.monicModulus = Polynomial.X ^ 3 + Polynomial.X + 1 :=
-  monicModulus_crc3Taps
 
 end CSLibExtTest.Coding.UnreflectedSerialCRC

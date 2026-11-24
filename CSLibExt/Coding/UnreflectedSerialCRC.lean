@@ -31,10 +31,8 @@ through the canonical `BitVec.toPolynomial`, after the payload
 plus `r` zero bits equals the shifted message polynomial
 remainder `(m * X^r) %ₘ taps.monicModulus`, and for any monic
 generator `g` of degree `r` the same statement holds with taps
-`g.toBitVec r`. The CRC-3 generator `X^3 + X + 1` fixtures are
-proved both as bit words (`0b100`, `0b001`, `0b101`) and as
-polynomials, and reversing the payload changes the result, as
-the unreflected convention requires.
+`g.toBitVec r`. Concrete CRC-3 fixtures live in the test
+module `CSLibExtTest.Coding.UnreflectedSerialCRC`.
 -/
 
 @[expose] public section
@@ -44,7 +42,6 @@ namespace CSLibExt.Coding.UnreflectedSerialCRC
 /-- The field structure on `ZMod 2` used by `Cslib.CodingTheory.CRC.encode`,
 registered only while this module is elaborated. -/
 local instance : Fact (Nat.Prime 2) := ⟨by decide⟩
-
 
 /-- A payload bit as a polynomial over `ZMod 2`. -/
 noncomputable def bitPoly (b : Bool) : Polynomial (ZMod 2) :=
@@ -79,14 +76,6 @@ def runRegister (r : ℕ) (taps : BitVec r) (bits : List Bool) : BitVec r :=
 /-- The final register: the payload followed by exactly `r` zero bits. -/
 def finalRegister (r : ℕ) (taps : BitVec r) (bits : List Bool) : BitVec r :=
   runRegister r taps (bits ++ List.replicate r false)
-
-/-- The CRC-3 generator `X^3 + X + 1` of the Atlas CRC tests. -/
-noncomputable def crc3Generator : Polynomial (ZMod 2) :=
-  Polynomial.X ^ 3 + Polynomial.X + 1
-
-/-- The CRC-3 taps word: the lower coefficients `X + 1` of `X^3 + X + 1`. -/
-def crc3Taps : BitVec 3 :=
-  0b011#3
 
 /-! ### Private helpers -/
 
@@ -155,24 +144,8 @@ private theorem toPolynomial_mulXMod (r : ℕ) (taps w : BitVec r) :
 private theorem toPolynomial_inputBit (r : ℕ) (hr : 0 < r) (b : Bool) :
     (inputBit r b).toPolynomial = bitPoly b := by
   cases b with
-  | false =>
-    have h0 : inputBit r false = 0#r := rfl
-    have hb0 : bitPoly false = 0 := rfl
-    rw [h0, hb0]
-    ext i
-    simp [BitVec.coeff_toPolynomial]
-  | true =>
-    have h1 : inputBit r true = 1#r := rfl
-    have hb : bitPoly true = 1 := rfl
-    rw [h1, hb]
-    ext i
-    simp only [BitVec.coeff_toPolynomial, BitVec.getLsbD_one, Polynomial.coeff_one]
-    by_cases h : i = 0 <;> simp [h, hr]
-
-/-- The zero register represents the zero polynomial. -/
-theorem toPolynomial_zero_register (r : ℕ) : (0#r).toPolynomial = 0 := by
-  ext i
-  simp [BitVec.coeff_toPolynomial]
+  | false => exact BitVec.toPolynomial_zero r
+  | true => exact BitVec.toPolynomial_one hr
 
 /-- Bridge: one executable step is one long-division step,
 `s ↦ (s * X + b) %ₘ (X ^ r + taps)`. -/
@@ -267,7 +240,7 @@ theorem toPolynomial_runRegister (r : ℕ) (taps : BitVec r) (bits : List Bool) 
     (runRegister r taps bits).toPolynomial = messagePoly bits %ₘ taps.monicModulus := by
   have hstart : (serialLFSR r taps).start = 0#r := rfl
   unfold runRegister
-  rw [toPolynomial_runState_from, hstart, toPolynomial_zero_register]
+  rw [toPolynomial_runState_from, hstart, BitVec.toPolynomial_zero]
   simp
 
 /-- Appending `r` zero bits multiplies the message polynomial by `X ^ r`. -/
@@ -279,29 +252,6 @@ theorem messagePoly_append_zeros (bits : List Bool) (r : ℕ) :
 theorem messagePoly_cons_false (bits : List Bool) :
     messagePoly (false :: bits) = messagePoly bits := by
   rw [messagePoly_cons]; simp [bitPoly]
-
-/-- A leading zero lengthens the declared length by one (`l` is not recomputed). -/
-theorem messagePoly_cons_false_length (bits : List Bool) :
-    (false :: bits).length = bits.length + 1 := by
-  exact List.length_cons
-
-private theorem getLsbD_toBitVec (g : Polynomial (ZMod 2)) (r i : ℕ) :
-    (g.toBitVec r).getLsbD i = (if i < r then decide (g.coeff i = 1) else false) := by
-  unfold Polynomial.toBitVec
-  rw [BitVec.getLsbD_cast, BitVec.getLsbD_ofBoolListLE]
-  by_cases hi : i < r
-  · simp only [hi, ite_true]
-    rw [List.getD_eq_getElem _ _ (by rw [List.length_ofFn]; exact hi)]
-    rw [List.getElem_ofFn (by rw [List.length_ofFn]; exact hi)]
-  · simp only [hi, ite_false]
-    rw [List.getD_eq_default _ _ (by rw [List.length_ofFn]; exact Nat.le_of_not_gt hi)]
-
-/-- The CRC-3 taps word is the canonical modulus `X^3 + X + 1`. -/
-theorem monicModulus_crc3Taps : crc3Taps.monicModulus = crc3Generator := by
-  have h : crc3Taps.toBoolListLE = [true, true, false] := by decide
-  simp only [BitVec.monicModulus, BitVec.toPolynomial, crc3Generator, h]
-  simp [Polynomial.ofCoeffList_cons, Polynomial.ofCoeffList_nil]
-  ring
 
 /-- A leading zero gives the same final register polynomial, after one extra step. -/
 theorem final_register_cons_false (r : ℕ) (taps : BitVec r) (bits : List Bool) :
@@ -354,48 +304,5 @@ theorem encode_eq_messagePoly_shift_add_finalRegister (g : Polynomial (ZMod 2)) 
         (finalRegister r (g.toBitVec r) bits).toPolynomial := by
   rw [final_register_represents_shifted_message_remainder_of_monic g r hg hr bits,
     Polynomial.modByMonic_eq_mod _ hg, Cslib.CodingTheory.CRC.encode_eq_add, hr]
-
-
-
-/-- CRC-3, payload `101`: executable final register `0b100`. -/
-theorem final_register_crc3_payload_101_bits :
-    finalRegister 3 crc3Taps [true, false, true] = 0b100#3 := by
-  decide
-
-/-- CRC-3, payload `101`: the final register represents `X ^ 2`. -/
-theorem final_register_crc3_payload_101 :
-    (finalRegister 3 crc3Taps [true, false, true]).toPolynomial = Polynomial.X ^ 2 := by
-  rw [final_register_crc3_payload_101_bits]
-  have h : (0b100#3).toBoolListLE = [false, false, true] := by decide
-  simp only [BitVec.toPolynomial, h]
-  simp [Polynomial.ofCoeffList_cons, Polynomial.ofCoeffList_nil]
-  ring
-
-/-- CRC-3, payload `110`: executable final register `0b001`. -/
-theorem final_register_crc3_payload_110_bits :
-    finalRegister 3 crc3Taps [true, true, false] = 0b001#3 := by
-  decide
-
-/-- CRC-3, payload `110`: the final register represents `1`. -/
-theorem final_register_crc3_payload_110 :
-    (finalRegister 3 crc3Taps [true, true, false]).toPolynomial = 1 := by
-  rw [final_register_crc3_payload_110_bits]
-  have h : (0b001#3).toBoolListLE = [true, false, false] := by decide
-  simp only [BitVec.toPolynomial, h]
-  simp [Polynomial.ofCoeffList_cons, Polynomial.ofCoeffList_nil]
-
-/-- CRC-3, reversed payload `011`: executable final register `0b101`. -/
-theorem final_register_crc3_payload_011_bits :
-    finalRegister 3 crc3Taps [false, true, true] = 0b101#3 := by
-  decide
-
-/-- CRC-3, reversed payload `011`: the final register represents `X ^ 2 + 1`, unlike `110`. -/
-theorem final_register_crc3_payload_011 :
-    (finalRegister 3 crc3Taps [false, true, true]).toPolynomial = Polynomial.X ^ 2 + 1 := by
-  rw [final_register_crc3_payload_011_bits]
-  have h : (0b101#3).toBoolListLE = [true, false, true] := by decide
-  simp only [BitVec.toPolynomial, h]
-  simp [Polynomial.ofCoeffList_cons, Polynomial.ofCoeffList_nil]
-  ring
 
 end CSLibExt.Coding.UnreflectedSerialCRC
