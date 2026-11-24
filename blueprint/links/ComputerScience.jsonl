@@ -9284,3 +9284,4 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/data-structures/search-trees/dynamic-optimality/dynamic-optimality.md"}], "id": "af_38d4b87478227caa8ab3dccc"}
 {"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/concurrent-systems-and-protocols/shared-memory-objects/fifo-queues-have-consensus-number-two.md"}], "id": "af_6092d62bdf745356b80178b8", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/concurrent-systems-and-protocols/shared-memory-objects/registers-have-consensus-number-one.md"}], "id": "af_d5ed463d5b2e3ca9dd30315c", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/concurrent-systems-and-protocols/distributed-execution-models/weak-and-strong-fairness.md"}], "id": "af_e3bc77651d1d24a34d0c19b1", "extensions": {"org.atlas-wiki": {"kind": "def"}}}
