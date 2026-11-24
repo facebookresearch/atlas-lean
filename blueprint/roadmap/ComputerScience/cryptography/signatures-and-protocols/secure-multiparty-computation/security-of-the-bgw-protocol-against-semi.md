@@ -21,5 +21,3 @@ against up to $t$ semi-honest corrupted parties whenever $2t < n$.
 ## Sources
 
 - D. Evans, V. Kolesnikov and M. Rosulek, *A Pragmatic Introduction to Secure Multi-Party Computation*, Foundations and Trends in Privacy and Security 2(2–3), 2018, <https://securecomputation.org/docs/pragmaticmpc.pdf>: Definition 2.1 (secret sharing), Definition 2.2 (semi-honest security) and Section 3.3 (the BGW protocol and its honest-majority condition).
-- M. Ben-Or, S. Goldwasser and A. Wigderson, "Completeness theorems for non-cryptographic fault-tolerant distributed computation", *Proceedings of the 20th ACM STOC*, 1988 (not opened).
-- G. Asharov and Y. Lindell, "A full proof of the BGW protocol for perfectly secure multiparty computation", *Journal of Cryptology* 30(1):58–151, 2017 (not opened; the perfect-security statement is not claimed here).

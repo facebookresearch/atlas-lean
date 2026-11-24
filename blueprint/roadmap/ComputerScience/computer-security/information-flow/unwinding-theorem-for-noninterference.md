@@ -19,4 +19,3 @@ theorem.
 ## Sources
 
 - J. Rushby, *Noninterference, transitivity, and channel-control security policies*, Technical Report CSL-92-02, SRI International, 1992, <http://www.csl.sri.com/papers/csl-92-2/csl-92-2.pdf>: Section 2 (Definitions 1–4, Lemma 1 and Theorem 1 with its proof) and Section 4 (Theorem 7, the unwinding theorem for intransitive policies).
-- J. A. Goguen and J. Meseguer, "Unwinding and inference control", *IEEE Symposium on Security and Privacy*, 1984 (not opened; Rushby's Theorem 1 is described as a version of their theorem).

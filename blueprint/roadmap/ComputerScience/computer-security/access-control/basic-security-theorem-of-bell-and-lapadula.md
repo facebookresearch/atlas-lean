@@ -26,4 +26,3 @@ is secure, the system is secure.
 ## Sources
 
 - D. E. Bell and L. J. LaPadula, *Secure Computer Systems: Unified Exposition and Multics Interpretation*, MITRE Technical Report MTR-2997, 1976, <https://csrc.nist.gov/files/pubs/conference/1998/10/08/proceedings-of-the-21st-nissc-1998/final/docs/early-cs-papers/bell76.pdf>: Section on security properties (ss-property, $*$-property, ds-property), the summary of the basic security theorem, and the Appendix (Theorems A1–A4, Corollary A1).
-- D. E. Bell and L. J. LaPadula, *Secure Computer Systems: Mathematical Foundations*, MITRE Technical Report 2547, vol. I, 1973 (not opened).

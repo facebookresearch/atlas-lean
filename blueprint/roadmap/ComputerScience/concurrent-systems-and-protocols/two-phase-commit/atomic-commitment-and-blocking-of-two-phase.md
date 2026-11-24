@@ -37,4 +37,3 @@ On timeouts:
 ## Sources
 
 - L. Alvisi, *Atomic Commit*, lecture notes, CS 371D Distributed Computing, University of Texas at Austin, Fall 2008, <https://www.cs.utexas.edu/~lorenzo/corsi/cs371d/08F/notes/week3.pdf>: the model (coordinator, participants, votes, decisions, transaction log), the specification AC-1 to AC-5, uncertainty and independent recovery, Proposition 1 (with communication or total failures, every atomic commitment protocol may block) and Proposition 2 (no protocol guarantees independent recovery), the 2PC protocol (steps I–IV), the notes that 2PC satisfies AC-1 to AC-4 but not AC-5 as is, the timeout actions and termination protocols, and the remark that 2PC can block even with non-total failures and no communication failures among operating processes.
-- P. A. Bernstein, V. Hadzilacos and N. Goodman, *Concurrency Control and Recovery in Database Systems*, Addison-Wesley, 1987, Chapter 7 (not opened).

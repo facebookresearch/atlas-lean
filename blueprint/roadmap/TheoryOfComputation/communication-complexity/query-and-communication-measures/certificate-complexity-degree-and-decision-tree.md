@@ -21,4 +21,3 @@ shortens every remaining $1$-certificate by one unfixed bit, so there are at mos
 ## Sources
 
 - S. Arora and B. Barak, *Computational Complexity: A Modern Approach*, web draft of 2007-01-08, Chapter 11: Definitions 11.7–11.8, Theorem 11.11 and its proof (which bounds the number of rounds by the length of the $1$-certificates and the queries per round by the length of a $0$-certificate), Definition 11.19, Lemma 11.20, Theorem 11.21 (Nisan), Definition 11.22 and Theorem 11.24. Items 2 and the refinement $C_0(f) C_1(f)$ in 3 are derived on this page.
-- H. Buhrman and R. de Wolf, "Complexity measures and decision tree complexity: a survey", *Theoretical Computer Science* 288(1):21–43, 2002 (not opened).

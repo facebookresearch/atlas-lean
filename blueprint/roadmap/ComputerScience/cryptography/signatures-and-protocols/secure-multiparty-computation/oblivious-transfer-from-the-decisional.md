@@ -25,4 +25,3 @@ logarithm, and ElGamal is CPA-secure when DDH is hard.
 ## Sources
 
 - D. Evans, V. Kolesnikov and M. Rosulek, *A Pragmatic Introduction to Secure Multi-Party Computation*, Foundations and Trends in Privacy and Security 2(2–3), 2018, <https://securecomputation.org/docs/pragmaticmpc.pdf>: Definition 2.5 (oblivious transfer), Section 3.7.1 and Figure 3.6 (public-key based semi-honest OT and its simulators). The ElGamal instantiation is derived on this page.
-- S. Even, O. Goldreich and A. Lempel, "A randomized protocol for signing contracts", *Communications of the ACM* 28(6):637–647, 1985 (not opened).

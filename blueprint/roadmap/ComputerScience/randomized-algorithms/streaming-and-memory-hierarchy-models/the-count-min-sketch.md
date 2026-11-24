@@ -26,4 +26,3 @@ The *Count-Min sketch* keeps a $t \times k$ array $C$ of counters, with $k = \lc
 ## Sources
 
 - A. Chakrabarti, *Data Stream Algorithms*, lecture notes, Dartmouth College (update of 1 July 2025), <https://www.cs.dartmouth.edu/~ac/Teach/data-streams-lecnotes.pdf>, Section 5.4: Algorithm 9 (the Count-Min sketch with $k = 2/\varepsilon$ columns, $t = \lceil \log(1/\delta) \rceil$ rows, and independent 2-universal hash functions), and Section 5.4.1 (the overestimate in the cash-register model, $\mathbb{E} X_i = \|f_{-a}\|_1/k$, Markov's inequality, independence of the rows, and the space bound).
-- G. Cormode and S. Muthukrishnan, "An improved data stream summary: the count-min sketch and its applications", *Journal of Algorithms* 55(1):58–75, 2005 (not opened). It uses width $\lceil e/\varepsilon \rceil$ and depth $\lceil \ln(1/\delta) \rceil$.

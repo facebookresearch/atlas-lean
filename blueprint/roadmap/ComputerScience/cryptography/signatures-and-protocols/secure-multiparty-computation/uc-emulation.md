@@ -13,4 +13,3 @@ dummy adversary, which only forwards messages between the environment and the ba
 ## Sources
 
 - R. Canetti, *Universally Composable Security: A Tutorial*, UC/EasyUC summer school, Boston University, 2025, <https://www.bu.edu/riscs/files/2025/08/Canetti.pdf>: the definitions of UC emulation (qualitative and quantitative) and ideal functionalities, and the dummy-adversary claim.
-- R. Canetti, "Universally composable security: a new paradigm for cryptographic protocols", *Proceedings of the 42nd IEEE FOCS*, 2001; full version ePrint 2000/067 (not opened; the general framework adds further technical conditions).

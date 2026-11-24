@@ -16,4 +16,3 @@ With $C_0 = 1$, this gives $\mathbb{E}[C_n] = n + 1$ and $\mathbb{E}[C_n^2] = 1 
 ## Sources
 
 - A. Chakrabarti, *Data Stream Algorithms*, lecture notes, Dartmouth College (update of 1 July 2025), <https://www.cs.dartmouth.edu/~ac/Teach/data-streams-lecnotes.pdf>, Unit 4: Algorithm 5 (the Morris counter), Algorithm 6 (the equivalent doubling formulation), Lemma 4.3.1 ($\mathbb{E} C_n = n + 1$ and $\operatorname{Var} C_n = n(n - 1)/2$, with proof), Lemma 4.4.1 (median of means), and Theorem 4.4.2 (an $(\varepsilon, \delta)$-approximation in $O(\varepsilon^{-2}\log\delta^{-1}\log\log m)$ bits).
-- R. Morris, "Counting large numbers of events in small registers", *Communications of the ACM* 21(10):840–842, 1978 (not opened).

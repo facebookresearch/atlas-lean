@@ -11,4 +11,3 @@ $\mathrm{PHP}^{n+1}_n$ contains at least $2^{c n}$ clauses.
 ## Sources
 
 - J. Nordström, *Computability and Complexity 2022/23*, Lecture 20 scribe notes (scribe S. F. de Rezende), <https://jakobnordstrom.se/teaching/CoCo23/lecturenotes/ScribeNotesLec20.pdf>: the definition of the pigeonhole formulas (2.1a)–(2.1b), Theorem 2.1 with its proof, and the restatement that every refutation requires $2^{\delta n}$ steps for large $n$ (refutation length counted in clauses).
-- A. Haken, "The intractability of resolution", *Theoretical Computer Science* 39:297–308, 1985 (not opened; checked against Nordström's notes).

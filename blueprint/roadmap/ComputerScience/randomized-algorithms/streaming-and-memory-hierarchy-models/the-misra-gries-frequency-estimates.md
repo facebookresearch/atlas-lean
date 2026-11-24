@@ -22,4 +22,3 @@ In particular, every token with $f_a > m/k$ retains a counter, so a second pass 
 ## Sources
 
 - A. Chakrabarti, *Data Stream Algorithms*, lecture notes, Dartmouth College (update of 1 July 2025), <https://www.cs.dartmouth.edu/~ac/Teach/data-streams-lecnotes.pdf>, Unit 1: Algorithm 1 (Misra–Gries with at most $k - 1$ counters), Algorithm 2 (the thought experiment used in the analysis), Theorem 1.3.1 (one pass, $O(k(\log m + \log n))$ bits, $f_j - m/k \le \hat f_j \le f_j$), and Section 1.4 (finding the frequent items with a second pass).
-- J. Misra and D. Gries, "Finding repeated elements", *Science of Computer Programming* 2(2):143–152, 1982 (not opened).

@@ -15,4 +15,3 @@ verifier yields NP-hardness of a gap $q$CSP problem, which reduces to gap 3SAT w
 ## Sources
 
 - S. Arora and B. Barak, *Computational Complexity: A Modern Approach*, web draft of 2007-01-08, Section 18.2: Definitions 18.9–18.11, Theorem 18.8 (restated as Lemma 18.15), Theorem 18.13 with the proofs of both directions, Remark 18.14 and Lemma 18.16.
-- S. Arora, C. Lund, R. Motwani, M. Sudan and M. Szegedy, "Proof verification and the hardness of approximation problems", *Journal of the ACM* 45(3):501–555, 1998 (not opened).

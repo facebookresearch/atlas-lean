@@ -24,4 +24,3 @@ Store a static set $S$ of $n$ keys in a [two-level perfect hash table](../perfec
 ## Sources
 
 - J. Erickson, *Algorithms*, lecture notes, Lecture 5 "Hash Tables" (Spring 2017), University of Illinois, <https://jeffe.cs.illinois.edu/teaching/algorithms/notes/05-hashing.pdf>: Section 5.6 (with near-universal hashing, the expected number of collisions among $n$ items in $m$ slots is at most $n(n-1)/m$, so $m = 2n^2$ gives fewer than $1/2$), and Section 5.7 (the two-level table with secondary tables of size $2n_j^2$, Lemma 7: $\mathbb{E}[\sum_i n_i^2] < 3n$, linear expected size, and constant worst-case search time).
-- M. L. Fredman, J. Komlós and E. Szemerédi, "Storing a sparse table with $O(1)$ worst case access time", *Journal of the ACM* 31(3):538–544, 1984 (not opened).

@@ -12,7 +12,12 @@ This is the qualitative statement in Canetti's simplified presentation; in the g
 
 - [UC emulation](uc-emulation.md)
 
+## Expansion
+
+This page becomes ready once:
+
+- The compliance and subroutine-respecting conditions of the general framework, under which the theorem holds for arbitrary protocols (statement prerequisite; not yet stated)
+
 ## Sources
 
 - R. Canetti, *Universally Composable Security: A Tutorial*, UC/EasyUC summer school, Boston University, 2025, <https://www.bu.edu/riscs/files/2025/08/Canetti.pdf>: the universal composition theorem and its quantitative version.
-- R. Canetti, "Universally composable security: a new paradigm for cryptographic protocols", *Proceedings of the 42nd IEEE FOCS*, 2001; full version ePrint 2000/067 (not opened; its compliance and subroutine-exposure conditions are not stated here).

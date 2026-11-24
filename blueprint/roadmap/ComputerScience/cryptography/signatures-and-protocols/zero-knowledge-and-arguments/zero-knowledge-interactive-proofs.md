@@ -19,4 +19,3 @@ probabilistic polynomial-time simulator. Zero knowledge is preserved under seque
 ## Sources
 
 - R. Pass and A. shelat, *A Course in Cryptography*, lecture notes, Cornell University, 2010, <https://www.cs.cornell.edu/courses/cs4830/2010fa/lecnotes.pdf>: Definitions 116.1, 119.5, 121.1 and 121.2, the remarks on soundness error and perfect zero knowledge, and Theorem 175.1 (sequential composition).
-- O. Goldreich, S. Micali and A. Wigderson, "Proofs that yield nothing but their validity or all languages in NP have zero-knowledge proof systems", *Journal of the ACM* 38(3):690–728, 1991 (not opened; definitions as in Pass and shelat).

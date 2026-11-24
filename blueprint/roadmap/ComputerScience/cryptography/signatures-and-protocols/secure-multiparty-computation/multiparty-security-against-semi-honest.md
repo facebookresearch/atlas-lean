@@ -22,4 +22,3 @@ security-parameter conventions) is a separate statement.
 ## Sources
 
 - D. Evans, V. Kolesnikov and M. Rosulek, *A Pragmatic Introduction to Secure Multi-Party Computation*, Foundations and Trends in Privacy and Security 2(2–3), 2018, <https://securecomputation.org/docs/pragmaticmpc.pdf>: Section 2.3.2 (views, the Real and Ideal distributions, Definition 2.2 and the remark on including outputs) and Section 3.3 (security against $t$ corrupted parties).
-- G. Asharov and Y. Lindell, "A full proof of the BGW protocol for perfectly secure multiparty computation", *Journal of Cryptology* 30(1):58–151, 2017 (not opened; perfect and statistical variants are not stated here).

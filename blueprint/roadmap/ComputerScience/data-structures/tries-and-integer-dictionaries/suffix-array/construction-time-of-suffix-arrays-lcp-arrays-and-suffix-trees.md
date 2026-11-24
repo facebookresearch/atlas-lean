@@ -29,5 +29,3 @@ Let $T$ be a string of length $n$ over an alphabet of integers in $\{0, \dots, n
     - Section 4: the LCP array in $O(|T|)$ time (Kasai et al.);
     - Section 4.2.2: the suffix tree obtained from the suffix array and LCP array through a Cartesian tree in linear time;
     - Section 5: the DC3 algorithm in $O(|T| + \mathrm{sort}(\Sigma))$ time.
-- U. Manber and G. Myers, "Suffix arrays: a new method for on-line string searches", *SIAM Journal on Computing* 22(5):935–948, 1993 (not opened).
-- T. Kasai, G. Lee, H. Arimura, S. Arikawa and K. Park, "Linear-time longest-common-prefix computation in suffix arrays and its applications", *CPM 2001*, LNCS 2089, 181–192 (not opened).

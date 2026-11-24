@@ -22,4 +22,3 @@ $\Sigma(n) > f(n)$ for all sufficiently large $n$, so $\Sigma$ is not computable
 ## Sources
 
 - S. Aaronson, "The Busy Beaver frontier", *ACM SIGACT News* 51(3):32–54, 2020, <https://www.scottaaronson.com/papers/bb.pdf>: Section 1 (the machine model, Figure 1, the definition of $BB(n)$, which is Radó's $S(n)$, and of $\Sigma(n) \le S(n)$) and Proposition 2 with its proof. The statement for $\Sigma$ is derived on this page by the same construction.
-- T. Radó, "On non-computable functions", *Bell System Technical Journal* 41(3):877–884, 1962 (not opened; definitions as reported by Aaronson, Section 1).

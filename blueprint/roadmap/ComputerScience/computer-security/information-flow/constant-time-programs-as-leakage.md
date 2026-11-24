@@ -20,4 +20,3 @@ all executions whose public inputs and outputs agree.
 ## Sources
 
 - J. B. Almeida, M. Barbosa, G. Barthe, F. Dupressoir and M. Emmi, "Verifying constant-time implementations", *USENIX Security 2016*, <https://www.usenix.org/system/files/conference/usenixsecurity16/sec16_paper_almeida.pdf>: Section 3 (Figures 5–6, leakage models, Example 1 and the operand-leakage example, $X$-equivalence, Definition 1 and the comparison with noninterference).
-- G. Barthe, G. Betarte, J. Campo, C. Luna and D. Pichardie, "System-level non-interference for constant-time cryptography", *ACM CCS 2014* (not opened).

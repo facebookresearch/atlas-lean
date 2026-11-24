@@ -29,4 +29,3 @@ A [Fibonacci heap](fibonacci-heap.md) is a collection of heap-ordered trees. Som
 ## Sources
 
 - K. Wayne, *Fibonacci Heaps*, lecture slides for J. Kleinberg and É. Tardos, *Algorithm Design*, Princeton University, <https://www.cs.princeton.edu/~wayne/kleinberg-tardos/pdf/FibonacciHeaps.pdf>: the Fredman–Tarjan theorem ($m$ operations including $n$ insertions take $O(m + n\log n)$ time), the potential $\Phi(H) = \mathrm{trees}(H) + 2 \cdot \mathrm{marks}(H)$, the amortized analyses of insert, extract-min and decrease-key with cascading cuts, Lemma 1 ($\mathrm{rank}(y_i) \ge i - 2$), Lemma 2 ($s_k \ge F_{k+2}$), the Fibonacci lemma ($\mathrm{rank}(H) \le \log_\varphi n$), and the Fibonacci facts.
-- M. L. Fredman and R. E. Tarjan, "Fibonacci heaps and their uses in improved network optimization algorithms", *Journal of the ACM* 34(3):596–615, 1987 (not opened).

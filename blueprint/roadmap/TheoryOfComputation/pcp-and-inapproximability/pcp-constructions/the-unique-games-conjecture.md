@@ -18,4 +18,3 @@ and undirected.
 ## Sources
 
 - S. Khot, "On the Unique Games Conjecture", *Proceedings of the 25th IEEE Conference on Computational Complexity*, 2010, <https://cs.nyu.edu/~khot/papers/UGCSurvey.pdf>: Section 2.4 (Definition 2.4, the conjecture and the remarks following it).
-- S. Khot, "On the power of unique 2-prover 1-round games", *Proceedings of the 34th ACM STOC*, 2002 (not opened; formulation as in the 2010 survey).

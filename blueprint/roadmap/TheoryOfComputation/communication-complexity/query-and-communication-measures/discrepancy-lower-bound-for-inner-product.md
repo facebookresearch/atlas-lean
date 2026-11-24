@@ -21,4 +21,3 @@ $\frac n2 - \log_2 3$ bits, so the randomized communication complexity of $\math
 
 - A. Rao and A. Yehudayoff, *Communication Complexity and Applications*, Cambridge University Press, 2020, draft <https://yehudayoff.net.technion.ac.il/files/2016/03/book.pdf>: Chapter 5 (definition of discrepancy, Fact 5.1, Theorem 5.2 and Lemma 5.5).
 - S. Arora and B. Barak, *Computational Complexity: A Modern Approach*, web draft of 2007-01-08, Section 12.2.4 (discrepancy of the inner product via eigenvalues).
-- E. Kushilevitz and N. Nisan, *Communication Complexity*, Cambridge University Press, 1997 (not opened).

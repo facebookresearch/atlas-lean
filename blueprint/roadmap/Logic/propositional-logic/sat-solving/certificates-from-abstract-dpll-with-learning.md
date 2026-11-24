@@ -26,4 +26,3 @@ This page becomes ready once these are stated:
 ## Sources
 
 - R. Nieuwenhuis, A. Oliveras and C. Tinelli, "Solving SAT and SAT modulo theories: from an abstract Davis–Putnam–Logemann–Loveland procedure to DPLL(T)", *Journal of the ACM* 53(6):937–977, 2006, <https://www.cs.upc.edu/~roberto/papers/JACM2006.pdf>, Section 2: Definition 2.5 (Learn and Forget with side condition $F \models C$), Definition 2.4 (Backjump with $F, C \models C' \vee l'$), and Theorem 2.12 (models from final states, FailState if and only if unsatisfiable), together with Example 2.6 (finding backjump clauses from the conflict graph of propagation reasons).
-- L. Cruz-Filipe, M. J. H. Heule, W. A. Hunt Jr., M. Kaufmann and P. Schneider-Kamp, "Efficient certified RAT verification", *CADE 2017* (not opened; cited for resolution proofs produced by solvers).

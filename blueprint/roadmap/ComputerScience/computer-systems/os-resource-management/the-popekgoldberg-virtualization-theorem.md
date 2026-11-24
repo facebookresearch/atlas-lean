@@ -20,4 +20,3 @@ This page becomes ready once:
 ## Sources
 
 - M. Kasick, G. Willen and M. Cui, *Virtualization*, lecture slides, 15-410 Operating System Design and Implementation, Carnegie Mellon University, 16 April 2007, <https://www.cs.cmu.edu/~410-s07/lectures/L38_Virtualization.pdf>: the quoted theorem ("a virtual machine monitor may be constructed if the set of sensitive instructions for that computer is a subset of the set of privileged instructions"), the list of sensitive but unprivileged x86 instructions, and examples of architectures that meet the requirement. This is a secondary source.
-- G. J. Popek and R. P. Goldberg, "Formal requirements for virtualizable third generation architectures", *Communications of the ACM* 17(7):412–421, 1974 (not opened).

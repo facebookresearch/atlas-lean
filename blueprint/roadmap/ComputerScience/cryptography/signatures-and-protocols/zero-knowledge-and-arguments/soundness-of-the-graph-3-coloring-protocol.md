@@ -20,4 +20,3 @@ with probability at most $(1 - 1/|E|)^{n|E|} \le e^{-n}$.
 ## Sources
 
 - R. Pass and A. shelat, *A Course in Cryptography*, lecture notes, Cornell University, 2010, <https://www.cs.cornell.edu/courses/cs4830/2010fa/lecnotes.pdf>: Definition 126.3 (commitment), Protocol 127.5 and the soundness part of the proof of Proposition 127.6.
-- O. Goldreich, S. Micali and A. Wigderson, "Proofs that yield nothing but their validity or all languages in NP have zero-knowledge proof systems", *Journal of the ACM* 38(3):690–728, 1991 (not opened; checked against Pass and shelat).

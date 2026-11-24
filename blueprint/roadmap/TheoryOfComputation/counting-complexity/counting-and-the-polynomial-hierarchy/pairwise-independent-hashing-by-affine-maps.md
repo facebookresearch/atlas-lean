@@ -12,4 +12,3 @@ uniform and independent of $A$. The pair $(Ax + b,\, A(x - x'))$ is therefore un
 ## Sources
 
 - S. Arora and B. Barak, *Computational Complexity: A Modern Approach*, web draft of 2007-01-08: Definition 8.10 (pairwise independence, with exponent $-2k$ for output length $k$; the draft prints $-2n$) and Exercise 8.4 (the family $h_{A,b}(x) = Ax + b$). The proof is derived on this page.
-- S. Vadhan, *Pseudorandomness*, Foundations and Trends in Theoretical Computer Science 7(1–3), 2012 (not opened).

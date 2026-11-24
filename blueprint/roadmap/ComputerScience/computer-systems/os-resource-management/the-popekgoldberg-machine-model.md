@@ -24,4 +24,3 @@ This page becomes ready once:
 ## Sources
 
 - M. Kasick, G. Willen and M. Cui, *Virtualization*, lecture slides, 15-410 Operating System Design and Implementation, Carnegie Mellon University, 16 April 2007, <https://www.cs.cmu.edu/~410-s07/lectures/L38_Virtualization.pdf>: the three monitor properties (equivalence, efficiency, resource control), the classification of privileged instructions (trap in user mode, not in supervisor mode) and sensitive instructions (change, or behave differently depending on, the system configuration), and the x86 instructions that are sensitive but unprivileged. This is a secondary source.
-- G. J. Popek and R. P. Goldberg, "Formal requirements for virtualizable third generation architectures", *Communications of the ACM* 17(7):412–421, 1974 (not opened).

@@ -7,7 +7,7 @@ Use the while-language [IMP](../../programming-language-semantics/operational-se
 Pair states by $\langle s_0, s_1\rangle(2i) = s_0(i)$ and $\langle s_0, s_1\rangle(2i + 1) = s_1(i)$. Every state is a pair of exactly one pair of states.
 
 **Theorem.**
-1. **Renaming.** For injective $\rho$ and states $u, u'$: $\langle c[\rho], u \rangle \Downarrow u'$ if and only if $\langle c, u \circ \rho \rangle \Downarrow u' \circ \rho$, and $u'$ agrees with $u$ outside the range of $\rho$.
+1. **Renaming.** For injective $\rho$ and states $u, u'$: $\langle c[\rho], u \rangle \Downarrow u'$ if and only if both $\langle c, u \circ \rho \rangle \Downarrow u' \circ \rho$ and $u'$ agrees with $u$ outside the range of $\rho$.
 2. **Two-run product.** For all states $s_0, s_1, t_0, t_1$: $\langle c, s_0 \rangle \Downarrow t_0$ and $\langle c, s_1 \rangle \Downarrow t_1$ hold if and only if $\langle c^{(0)} ; c^{(1)}, \langle s_0, s_1\rangle \rangle \Downarrow \langle t_0, t_1 \rangle$. Every terminating run of $c^{(0)} ; c^{(1)}$ from $\langle s_0, s_1\rangle$ ends in a state of this form.
 
 The correspondence concerns pairs of terminating runs and their initial and final states only. It says nothing about divergence, timing or intermediate states.

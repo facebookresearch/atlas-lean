@@ -19,4 +19,3 @@ gate, so apart from the output decoding the labels reveal nothing about the wire
 ## Sources
 
 - D. Evans, V. Kolesnikov and M. Rosulek, *A Pragmatic Introduction to Secure Multi-Party Computation*, Foundations and Trends in Privacy and Security 2(2–3), 2018, <https://securecomputation.org/docs/pragmaticmpc.pdf>: Section 3.1 (Figures 3.1–3.2, point-and-permute, the instantiation by a random oracle or a pseudorandom function, and the security argument for both corruptions).
-- Y. Lindell and B. Pinkas, "A proof of security of Yao's protocol for two-party computation", *Journal of Cryptology* 22(2):161–188, 2009 (not opened; the full simulation proof is not reproduced here).

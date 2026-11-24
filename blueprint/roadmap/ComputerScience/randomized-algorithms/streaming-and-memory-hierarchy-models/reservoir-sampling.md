@@ -17,4 +17,3 @@ All random choices are independent.
 ## Sources
 
 - A. Chakrabarti, *Data Stream Algorithms*, lecture notes, Dartmouth College (update of 1 July 2025), <https://www.cs.dartmouth.edu/~ac/Teach/data-streams-lecnotes.pdf>, Section 6.2, Algorithm 10: choosing a uniformly random stream position in one pass by replacing the kept position with the $m$-th one with probability $1/m$, called reservoir sampling there. The case of $k > 1$ is proved here.
-- J. S. Vitter, "Random sampling with a reservoir", *ACM Transactions on Mathematical Software* 11(1):37–57, 1985 (not opened).

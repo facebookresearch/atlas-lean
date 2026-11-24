@@ -21,4 +21,3 @@ $D_\mathcal{E}(\Gamma)$ is the set of these circuits. $\mathcal{E}$ is *bootstra
 ## Sources
 
 - C. Gentry, *A fully homomorphic encryption scheme*, PhD thesis, Stanford University, 2009, <https://crypto.stanford.edu/craig/craig-thesis.pdf>: Section 4.1 (Definitions 4.1.2 and 4.1.3), Section 4.2 (the construction of $\mathcal{E}^{(d)}$, Theorems 4.2.1–4.2.3) and Section 4.3 (Theorem 4.3.2).
-- C. Gentry, "Fully homomorphic encryption using ideal lattices", *Proceedings of the 41st ACM STOC*, 2009 (not opened).

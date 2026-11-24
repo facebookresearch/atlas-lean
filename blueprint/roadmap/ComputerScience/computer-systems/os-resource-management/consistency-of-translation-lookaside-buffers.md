@@ -27,4 +27,3 @@ Both disciplines are needed. Without shootdown, a core may keep using a translat
 ## Sources
 
 - R. H. Arpaci-Dusseau and A. C. Arpaci-Dusseau, *Operating Systems: Three Easy Pieces*, version 1.10, Arpaci-Dusseau Books, chapter 19 "Paging: Faster Translations (TLBs)", <https://pages.cs.wisc.edu/~remzi/OSTEP/vm-tlbs.pdf>: the TLB as a cache of virtual-to-physical translations with valid and protection bits, TLB miss handling by walking the page table, and Section 19.5 (context switches: flushing the TLB when the page-table base register changes, or address space identifiers, with the example of virtual page 10 mapped to frames 100 and 170). The invariant and its proof are written out here.
-- D. L. Black, R. F. Rashid, D. B. Golub, C. R. Hill and R. V. Baron, "Translation lookaside buffer consistency: a software approach", *Proceedings of ASPLOS III*, 1989 (not opened).

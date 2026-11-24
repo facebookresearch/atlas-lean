@@ -21,4 +21,3 @@ So the exponent $n^{1/(d-1)}$ is optimal up to the constant, and in particular p
 ## Sources
 
 - R. Williams, *CS294-152 Lower Bounds*, lecture notes "AC0 switching lemma", MIT, 2018, <https://people.csail.mit.edu/rrw/cs294-2018/ac0-switching-lemma.txt>: the theorem of Håstad, the depth-2 theorem with its proof, and the depth-$d$ upper bound with its construction.
-- J. Håstad, "Almost optimal lower bounds for small depth circuits", *Proceedings of the 18th ACM STOC*, 1986 (not opened; checked against Williams's notes).

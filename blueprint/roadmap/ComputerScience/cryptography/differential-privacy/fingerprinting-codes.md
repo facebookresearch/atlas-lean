@@ -20,4 +20,3 @@ differential privacy.
 ## Sources
 
 - M. Bun, J. Ullman and S. Vadhan, "Fingerprinting codes and the price of approximate differential privacy", *SIAM Journal on Computing* 47(5):1888–1938, 2018, <https://arxiv.org/abs/1311.3158>: Section 3 (feasible codewords, Definition 3.1 and Theorem 3.2).
-- G. Tardos, "Optimal probabilistic fingerprint codes", *Journal of the ACM* 55(2), Article 10, 2008 (not opened; the bound is as stated by Bun, Ullman and Vadhan, Theorem 3.2).

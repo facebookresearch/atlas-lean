@@ -14,4 +14,3 @@ $2^{\Omega(n^{1/(2d)})}$ gates.
 ## Sources
 
 - S. Arora and B. Barak, *Computational Complexity: A Modern Approach*, web draft of 2007-01-08, Section 13.2: Theorem 13.5 and its proof for parity versus $\mathsf{ACC}^0(3)$ (Steps 1 and 2).
-- R. Smolensky, "Algebraic methods in the theory of lower bounds for Boolean circuit complexity", *Proceedings of the 19th ACM STOC*, 1987 (not opened; the general quantitative bound for all pairs of distinct primes is not claimed here).

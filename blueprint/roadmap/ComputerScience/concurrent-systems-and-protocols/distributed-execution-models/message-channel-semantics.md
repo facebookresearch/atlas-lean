@@ -27,6 +27,12 @@ The safety properties, such as no creation, no duplication and FIFO order, const
 
 - [Asynchronous message-passing systems](asynchronous-message-passing-systems.md)
 
+## Expansion
+
+This page becomes ready once:
+
+- The statement must be checked against the cited sources
+
 ## Sources
 
-- *CS-451 Distributed Algorithms*, course notes on the EPFL course of that name, <https://www.kjaer.io/distributed-algorithms/>: fair-loss links (properties FLL1–FLL3), stubborn links (SL1–SL2) with their implementation by retransmitting forever over a fair-loss link, perfect links (PL1–PL3), and FIFO order. The notes follow C. Cachin, R. Guerraoui and L. Rodrigues, *Introduction to Reliable and Secure Distributed Programming*, 2nd ed., Springer, 2011 (not opened).
+- *CS-451 Distributed Algorithms*, course notes on the EPFL course of that name, <https://www.kjaer.io/distributed-algorithms/>: fair-loss links (properties FLL1–FLL3), stubborn links (SL1–SL2) with their implementation by retransmitting forever over a fair-loss link, perfect links (PL1–PL3), and FIFO order. The notes follow C. Cachin, R. Guerraoui and L. Rodrigues, *Introduction to Reliable and Secure Distributed Programming*, 2nd ed., Springer, 2011.

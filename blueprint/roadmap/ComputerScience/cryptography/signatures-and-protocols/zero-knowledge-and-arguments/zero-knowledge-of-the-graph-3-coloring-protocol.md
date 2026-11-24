@@ -23,4 +23,3 @@ sequential composition.
 ## Sources
 
 - R. Pass and A. shelat, *A Course in Cryptography*, lecture notes, Cornell University, 2010, <https://www.cs.cornell.edu/courses/cs4830/2010fa/lecnotes.pdf>: Protocol 127.5, Proposition 127.6 with its proof and Simulator 128.7, and Theorem 175.1 (sequential composition).
-- O. Goldreich, S. Micali and A. Wigderson, "Proofs that yield nothing but their validity or all languages in NP have zero-knowledge proof systems", *Journal of the ACM* 38(3):690–728, 1991 (not opened; checked against Pass and shelat).

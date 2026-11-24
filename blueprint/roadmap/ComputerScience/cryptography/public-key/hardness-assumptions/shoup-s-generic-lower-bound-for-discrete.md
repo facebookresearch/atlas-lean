@@ -18,4 +18,3 @@ Consequently a generic algorithm needs $\Omega(\sqrt p)$ group operations to com
 ## Sources
 
 - A. V. Sutherland, *18.783 Elliptic Curves*, Lecture 11: generic algorithms for the discrete logarithm problem, MIT, 2013, <https://math.mit.edu/classes/18.783/2013/LectureNotes11.pdf>: the generic group model with a random identification map, Theorem 11.1 with its proof, and the corollary on expected running time.
-- V. Shoup, "Lower bounds for discrete logarithms and related problems", *EUROCRYPT 1997*, LNCS 1233, Springer, 1997 (not opened; Sutherland's version gives a slightly sharper bound).

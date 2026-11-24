@@ -9,4 +9,3 @@ combined from several variables. Only the partial order is needed to define low 
 
 - D. Volpano, C. Irvine and G. Smith, "A sound type system for secure flow analysis", *Journal of Computer Security* 4(2–3):167–187, 1996, copy at <https://people.cs.ksu.edu/~tamtoft/890/10Fall/Vol+Smi+Irv:JCS-1996.pdf>: Section 2, "The lattice model of information flow" (security classes, permitted flows, least upper bounds).
 - A. Sabelfeld and A. C. Myers, "Language-based information-flow security", *IEEE Journal on Selected Areas in Communications* 21(1):5–19, 2003, <https://www.cs.cornell.edu/andru/papers/jsac/sm-jsac03.pdf>: Section II-G, "Noninterference" (low and high variables and the low-equivalence relation $=_L$ on states).
-- D. E. Denning, "A lattice model of secure information flow", *Communications of the ACM* 19(5):236–243, 1976 (not opened; checked against Volpano, Irvine and Smith).

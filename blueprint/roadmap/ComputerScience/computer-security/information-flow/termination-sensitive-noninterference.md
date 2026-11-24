@@ -16,4 +16,3 @@ loop restrictions, $\mathbf{while}\ h = 1\ \mathbf{do}\ \mathbf{skip}$ leaks $h$
 ## Sources
 
 - A. Sabelfeld and A. C. Myers, "Language-based information-flow security", *IEEE Journal on Selected Areas in Communications* 21(1):5–19, 2003, <https://www.cs.cornell.edu/andru/papers/jsac/sm-jsac03.pdf>: Section II (the semantic noninterference condition with low-view relations) and Section IV, "Termination channels" (the termination-sensitive low view and the loop restrictions of the Volpano–Smith type system).
-- D. Volpano and G. Smith, "Eliminating covert flows with minimum typings", *Proceedings of the 10th IEEE Computer Security Foundations Workshop*, 1997 (not opened; checked against Sabelfeld and Myers, Section IV).

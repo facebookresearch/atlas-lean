@@ -23,4 +23,3 @@ A [link-cut tree](access.md) represents a forest of rooted trees on $n$ vertices
     - Section 3: preferred children and paths, auxiliary splay trees keyed by depth, and access;
     - Section 4.1: the heavy-light decomposition (heavy when $\mathrm{size}(v) > \tfrac12\mathrm{size}(\mathrm{parent}(v))$, light depth at most $\lg n$) and $O(\lg n)$ amortized preferred-child changes;
     - Section 4.2: the potential $\sum_v \lg s(v)$, the access theorem, the telescoping sum, and the potential change under link and cut.
-- D. D. Sleator and R. E. Tarjan, "A data structure for dynamic trees", *Journal of Computer and System Sciences* 26(3):362–391, 1983 (not opened).
