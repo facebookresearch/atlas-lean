@@ -6,7 +6,7 @@ A probabilistic algorithm $\mathcal{O}$ is a *(circuit) obfuscator* for a collec
 - *Polynomial slowdown*: there is a polynomial $p$ such that $|\mathcal{O}(C)| \le p(|C|)$ for every $C \in \mathcal{F}$.
 - *Virtual black-box property*: for every probabilistic polynomial-time algorithm $A$ there are a probabilistic polynomial-time oracle algorithm $S$ and a negligible function $\alpha$ such that for every $C \in \mathcal{F}$,
 
-  $$\bigl|\Pr[A(\mathcal{O}(C)) = 1] - \Pr[S^{C}(1^{|C|}) = 1]\bigr| \le \alpha(|C|).$$
+    $$\bigl|\Pr[A(\mathcal{O}(C)) = 1] - \Pr[S^{C}(1^{|C|}) = 1]\bigr| \le \alpha(|C|).$$
 
 
 The obfuscator is *efficient* if it runs in polynomial time, and when $\mathcal{F}$ is not specified it is the collection of all circuits. An *indistinguishability obfuscator* is defined in the same way, except that the virtual black-box property is replaced by

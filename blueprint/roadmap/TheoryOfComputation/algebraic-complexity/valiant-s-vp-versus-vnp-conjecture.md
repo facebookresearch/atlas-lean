@@ -5,7 +5,7 @@ Fix a field $F$. In an arithmetic circuit over $F$ whose gates are additions and
 - $\mathsf{VP}_F$ is the set of sequences $(f_n)$ of multivariate polynomials over $F$ computed by multiplicatively disjoint circuits of size polynomial in $n$; requiring the circuits to be weakly skew gives $\mathsf{VBP}_F$. Multiplicative disjointness bounds the degree of $f_n$ by the circuit size plus one.
 - A sequence $(f_n)$ is in $\mathsf{VNP}_F$ (*p-definable*) if there is $(g_n) \in \mathsf{VP}_F$ with $g_n \in F[x_1, \dots, x_{u(n)}]$ such that for all $n$
 
-  $$f_n(x_1, \dots, x_{v(n)}) = \sum_{e \in \{0,1\}^{u(n) - v(n)}} g_n(x_1, \dots, x_{v(n)}, e_{v(n)+1}, \dots, e_{u(n)}).$$
+    $$f_n(x_1, \dots, x_{v(n)}) = \sum_{e \in \{0,1\}^{u(n) - v(n)}} g_n(x_1, \dots, x_{v(n)}, e_{v(n)+1}, \dots, e_{u(n)}).$$
 
 - A polynomial $f(x_1, \dots, x_n)$ is a *projection* of $g(y_1, \dots, y_m)$ if $f = g(a_1, \dots, a_m)$ for some $a_i \in F \cup \{x_1, \dots, x_n\}$, and $(f_n)$ is a *p-projection* of $(g_m)$ if $f_n$ is a projection of $g_{t(n)}$ for a polynomially bounded $t$. A sequence in a class $\mathcal{C}$ is *$\mathcal{C}$-complete* if every sequence in $\mathcal{C}$ is a p-projection of it.
 
