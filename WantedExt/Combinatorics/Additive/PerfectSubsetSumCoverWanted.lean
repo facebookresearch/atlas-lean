@@ -268,18 +268,6 @@ public theorem_wanted oddCombinations_inter_of_isPerfectCover {G : Type*} [AddCo
       oddCombinations A ∩ oddCombinations B = {0}) ∧
     ∀ A : Finset G, A ⊆ S → ∀ s ∈ S, s ∉ A → s ∉ oddCombinations A
 
-/-- **Odd combinations are closed under odd multiples.** Let $A$ be a finite subset of an abelian
-group $G$. If $g$ lies in the set $\mathcal{T}(A)$ of odd combinations of $A$, then
-$(2j+1)g \in \mathcal{T}(A)$ for every integer $j$.
-
-Source: John Greene and Clayton Higgins, *Maximal Subset Sums in a Group of Order a Power
-of 2*, Journal of Integer Sequences 28 (2025), Article 25.7.8, Theorem 15 (c)
-(`jis-2025-25.7.8-thm-15`). "Union of equivalence classes" is stated as closure under odd
-multiples (`0 ∈ 𝒯(A)` is `zero_mem_oddCombinations`). -/
-public theorem_wanted zsmul_mem_oddCombinations {G : Type*} [AddCommGroup G] [DecidableEq G]
-    (A : Finset G) {g : G} (hg : g ∈ oddCombinations A) (j : ℤ) :
-    (2 * j + 1) • g ∈ oddCombinations A
-
 /-- **Distinct subset sums from the odd-combination condition.** Let $G$ be an abelian group,
 and for a finite set $A \subseteq G$ write $\mathcal{T}(A)$ for the set of odd combinations of
 $A$. Let $x = (x_1, \dots, x_m)$ be a family in $G$ such that

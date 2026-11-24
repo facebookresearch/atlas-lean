@@ -49,4 +49,13 @@ example : (2 : ℤ) ∉ oddCombinations {1} := by
   simp at heq
   rcases h with hz | ⟨k, hk⟩ <;> omega
 
+-- An odd multiple may be negative, and an unused generator keeps coefficient zero.
+example : (-3 : ℤ) ∈ oddCombinations {1, 2} := by
+  have h : (1 : ℤ) ∈ oddCombinations {1, 2} := mem_oddCombinations_of_mem (by simp)
+  simpa using zsmul_mem_oddCombinations {1, 2} h (-2)
+
+-- Closure includes the zero combination on the empty set.
+example (j : ℤ) : (2 * j + 1) • (0 : ℤ) ∈ oddCombinations ∅ :=
+  zsmul_mem_oddCombinations ∅ (zero_mem_oddCombinations ∅) j
+
 end MetaMathlibExt
