@@ -22,6 +22,9 @@ In the [PAC-Bayes bounds](pac-bayes-bounds/README.md), Catoni's bound for bounde
 - [Stability of regularized loss minimization](stability-of-regularized-loss-minimization.md)
 - [Shattering lower bound for PAC learning](shattering-lower-bound-for-pac-learning.md)
 - [Learning a discrete distribution in total variation](remaining-clauses-of-learning-a-discrete-distribution-in-tot.md)
+- [Weak learnability implies PAC learnability via boosting](weak-learnability-implies-pac-learnability-via-boosting.md)
+- [VC and Natarajan classes: uniform convergence and the fundamental theorems](vc-and-natarajan-classes/README.md)
+- [Limits of uniform convergence for explaining deep-learning generalization](limits-of-uniform-convergence-for-explaining-deep-learning-g.md)
 
 ## Related topics
 

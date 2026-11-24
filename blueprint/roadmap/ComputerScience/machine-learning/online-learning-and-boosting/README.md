@@ -10,6 +10,11 @@ Mistake and regret bounds for sequential prediction: perceptron, weighted majori
 
 - [Agnostic online learning with Littlestone dimension](agnostic-online-learning-with-littlestone-dimension.md)
 - [The Littlestone dimension is the optimal mistake bound](the-littlestone-dimension-is-the-optimal-mistake-bound.md)
+- [Agnostic online learnability is characterized by the Littlestone dimension](agnostic-online-learnability-is-characterized-by-the-littlestone-dimension.md)
+- [Regularized Follow-the-Leader / Online Mirror Descent regret](regularized-follow-the-leader-online-mirror-descent-regret.md)
+- [Online classification protocol, mistakes and regret](online-classification-protocol-mistakes-and-regret.md)
+- [Online-to-batch conversion](online-to-batch-conversion.md)
+- [Online Newton Step for exp-concave losses](online-newton-step-for-exp-concave-losses.md)
 
 ## Related topics
 

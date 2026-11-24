@@ -15,6 +15,10 @@ Search and decision procedures from artificial intelligence: A* search, game-tre
 - [STRIPS planning complexity](strips-planning-complexity/README.md)
 - [Sampling-based motion planning](sampling-based-motion-planning/README.md)
 - [Combinatorial motion planning](motion-planning/README.md)
+- [Simulated annealing](simulated-annealing/README.md)
+- [Constraint satisfaction: consistency and width](constraint-satisfaction-consistency-and-width/README.md)
+- [Search problems and uninformed search](search-problems-and-uninformed-search/README.md)
+- [Monte Carlo tree search](monte-carlo-tree-search/README.md)
 
 ## Related topics
 

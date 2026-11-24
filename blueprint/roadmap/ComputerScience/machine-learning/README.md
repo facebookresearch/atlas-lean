@@ -16,3 +16,4 @@ Mathematical theory of learning from data, including the probabilistic modelling
 
 - [Algorithmic fairness](algorithmic-fairness/README.md)
 - [Distribution shift and robustness](distribution-shift-and-robustness/README.md)
+- [Transformers and language models](transformers-and-language-models/README.md)
