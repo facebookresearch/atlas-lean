@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Privacy.AdaptivePrivacyLoss
+public import CSLibExt.Privacy.ApproximateDifferentialPrivacy
 public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
@@ -17,6 +18,7 @@ public import Mathlib.Algebra.BigOperators.Ring.Finset
 public import Mathlib.Algebra.GroupWithZero.Defs
 public import Mathlib.Algebra.GroupWithZero.Units.Basic
 public import Mathlib.Analysis.Complex.ExponentialBounds
+public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.Analysis.SpecialFunctions.Exp
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Basic.ENNReal.Basic
@@ -924,5 +926,63 @@ such test would be vacuous. The exact MGF value above carries nonvacuity. -/
 #print axioms transcript_centered_mgf_le
 #print axioms transcript_tail_le
 #print axioms transcript_tail_outer_le
+
+/- Part C tests: pure-stage advanced composition.
+
+The corollary is instantiated on the randomized-response fixture
+(`ε = log 3`) at `δ' = 1 / 2`: two stages, one stage, and zero stages,
+plus a positive-length zero-budget case with a database-independent
+kernel. -/
+
+/-- Database-independent test kernel (constant coin). -/
+noncomputable def testK0 : (n : ℕ) → Hist Bool Bool n → Bool → PMF Bool :=
+  fun _ _ _ => testCoin
+
+theorem testK0_isDP (n : ℕ) (h : Hist Bool Bool n) :
+    IsDP (fun d => testK0 n h d) testAdj 0 :=
+  isDP_const testCoin testAdj
+
+/-- Advanced composition on the two-stage fixture. -/
+theorem test_advcomp_two_stage :
+    IsApproxDP (fun d => transcript testCoin testK 2 d) testAdj
+      (Real.log 3 * Real.sqrt (2 * ((2 : ℕ) : ℝ) * Real.log (1 / (1 / 2 : ℝ))) +
+        ((2 : ℕ) : ℝ) * (Real.log 3 * (Real.exp (Real.log 3) - 1)))
+      (1 / 2 : ℝ) :=
+  transcript_isApproxDP_advanced_composition_pure testCoin testK testAdj
+    (Real.log 3) 2 (1 / 2) testK_isDP (Real.log_nonneg (by norm_num))
+    (fun d d' _ => trivial) (by norm_num) (by norm_num)
+
+/-- Advanced composition with a single stage. -/
+theorem test_advcomp_one_stage :
+    IsApproxDP (fun d => transcript testCoin testK 1 d) testAdj
+      (Real.log 3 * Real.sqrt (2 * ((1 : ℕ) : ℝ) * Real.log (1 / (1 / 2 : ℝ))) +
+        ((1 : ℕ) : ℝ) * (Real.log 3 * (Real.exp (Real.log 3) - 1)))
+      (1 / 2 : ℝ) :=
+  transcript_isApproxDP_advanced_composition_pure testCoin testK testAdj
+    (Real.log 3) 1 (1 / 2) testK_isDP (Real.log_nonneg (by norm_num))
+    (fun d d' _ => trivial) (by norm_num) (by norm_num)
+
+/-- Advanced composition with zero stages. -/
+theorem test_advcomp_zero_stage :
+    IsApproxDP (fun d => transcript testCoin testK 0 d) testAdj
+      (Real.log 3 * Real.sqrt (2 * ((0 : ℕ) : ℝ) * Real.log (1 / (1 / 2 : ℝ))) +
+        ((0 : ℕ) : ℝ) * (Real.log 3 * (Real.exp (Real.log 3) - 1)))
+      (1 / 2 : ℝ) :=
+  transcript_isApproxDP_advanced_composition_pure testCoin testK testAdj
+    (Real.log 3) 0 (1 / 2) testK_isDP (Real.log_nonneg (by norm_num))
+    (fun d d' _ => trivial) (by norm_num) (by norm_num)
+
+/-- Advanced composition at zero budget with a database-independent kernel. -/
+theorem test_advcomp_zero_budget :
+    IsApproxDP (fun d => transcript testCoin testK0 2 d) testAdj
+      (0 * Real.sqrt (2 * ((2 : ℕ) : ℝ) * Real.log (1 / (1 / 2 : ℝ))) +
+        ((2 : ℕ) : ℝ) * (0 * (Real.exp 0 - 1)))
+      (1 / 2 : ℝ) :=
+  transcript_isApproxDP_advanced_composition_pure testCoin testK0 testAdj
+    0 2 (1 / 2) testK0_isDP le_rfl
+    (fun d d' _ => trivial) (by norm_num) (by norm_num)
+
+#print axioms transcript_isApproxDP_of_tail
+#print axioms transcript_isApproxDP_advanced_composition_pure
 
 end CSLibExt.Privacy.DifferentialPrivacy
