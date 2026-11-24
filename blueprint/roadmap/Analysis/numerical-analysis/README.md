@@ -22,6 +22,8 @@ Algorithms with error analysis: bisection and Newton's method, Euler and Rungeâ€
 - [Fundamental theorem of interval arithmetic and the dependency effect](fundamental-theorem-of-interval-arithmetic-and-the-dependenc.md)
 - [CFL condition: numerical domain of dependence must contain the true one](cfl-condition-numerical-domain-of-dependence-must-contain-th.md)
 - [Monotone explicit schemes as convex combinations (discrete maximum principle)](remaining-clauses-of-monotone-explicit-schemes-as-convex-com.md)
+- [delta-weakening is monotone](delta-weakening-is-monotone.md)
+- [Nonconvergence of schemes violating the CFL condition](nonconvergence-of-schemes-violating-the-cfl-condition.md)
 
 ## Related topics
 

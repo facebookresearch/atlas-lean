@@ -47,6 +47,7 @@
 - [Total IEEE-style operation semantics with special values and exceptions](total-ieee-style-operation-semantics-with-special-values-and.md)
 - [Double rounding through an extended precision](double-rounding-through-an-extended-precision.md)
 - [Semantics preservation of floating-point compilation](semantics-preservation-of-floating-point-compilation.md)
+- [IEEE operations agree with rounding in the normal range](ieee-operations-agree-with-rounding-in-the-normal-range.md)
 
 ## Related topics
 

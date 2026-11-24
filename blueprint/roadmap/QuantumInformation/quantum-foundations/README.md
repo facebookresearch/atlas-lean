@@ -16,3 +16,4 @@ Quantum foundations studies what quantum mechanics rules out and allows at the l
 - [Two-player nonlocal games: classical and entangled values](two-player-nonlocal-games-classical-and-entangled-values.md)
 - [Purification and unitary equivalence of purifications](purification-and-unitary-equivalence-of-purifications.md)
 - [Superdense coding](superdense-coding.md)
+- [Classical and entangled values of the CHSH game](classical-and-entangled-values-of-the-chsh-game.md)

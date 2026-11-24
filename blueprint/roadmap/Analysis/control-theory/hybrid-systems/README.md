@@ -10,3 +10,5 @@
 - [Time-triggered controllers as hybrid automata](time-triggered-controllers-as-hybrid-automata.md)
 - [Undecidability of reachability for timed automata with one stopwatch](undecidability-of-reachability-for-timed-automata-with-one-s.md)
 - [Zeno executions and finite-jump hypotheses](remaining-clauses-of-zeno-executions-and-finite-jump-hypothe.md)
+- [Box and diamond are dual in differential dynamic logic](box-and-diamond-are-dual-in-differential-dynamic-logic.md)
+- [Initialization of rectangular automata is decidable](initialization-of-rectangular-automata-is-decidable.md)

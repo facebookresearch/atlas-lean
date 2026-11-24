@@ -14,6 +14,8 @@
 - [Reversible simulation of classical circuits](reversible-simulation-of-classical-circuits.md)
 - [Stabilizer measurement rule](stabilizer-measurement-rule.md)
 - [Bridge between circuit state vectors and density-operator state models](bridge-between-circuit-state-vectors-and-density-operators.md)
+- [Polynomial-time languages are in BQP with error zero](polynomial-time-languages-are-in-bqp-with-error-zero.md)
+- [Gaussian-rational gates of the exact Toffoli decomposition](gaussian-rational-gates-of-the-exact-toffoli-decomposition.md)
 
 ## Related topics
 

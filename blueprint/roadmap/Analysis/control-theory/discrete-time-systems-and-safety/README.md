@@ -10,3 +10,5 @@
 - [Discrete dynamics as labelled transition systems](discrete-dynamics-as-labelled-transition-systems.md)
 - [Sampling a continuous-time flow into discrete dynamics](sampling-a-continuous-time-flow-into-discrete-dynamics.md)
 - [Discrete-time dynamical system (input-driven state-update map)](discrete-time-dynamical-system.md)
+- [Composition of approximate simulations](composition-of-approximate-simulations.md)
+- [Sampled maps compose to the flow](sampled-maps-compose-to-the-flow.md)
