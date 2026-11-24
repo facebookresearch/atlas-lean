@@ -10737,6 +10737,7 @@
   "MathlibExt/Combinatorics/InfiniteWord/Factor": {"to": "Combinatorics/combinatorics-on-words/morphic-sturmian-words", "title": "Factor complexity of infinite words"},
   "MathlibExt/Combinatorics/InfiniteWord/FibonacciWord": {"to": "Combinatorics/combinatorics-on-words/morphic-sturmian-words", "title": "Fibonacci word"},
   "MathlibExt/Combinatorics/InfiniteWord/GeneralizedThueMorseSequence": {"to": "Combinatorics/combinatorics-on-words/morphic-sturmian-words", "title": "Thue–Morse sequence and its generalizations"},
+  "MathlibExt/Combinatorics/InfiniteWord/Gutkovskiy": {"to": "Combinatorics/combinatorics-on-words/automatic-sequences", "title": "Irvine's conjecture on Kimberling's word"},
   "MathlibExt/Combinatorics/InfiniteWord/KAbelianSquareFreeWord": {"to": "Combinatorics/combinatorics-on-words/repetitions-in-words", "title": "Abelian and k-abelian repetitions"},
   "MathlibExt/Combinatorics/InfiniteWord/KimberlingBlock": {"to": "Combinatorics/combinatorics-on-words/automatic-sequences", "title": "Irvine's conjecture on Kimberling's word"},
   "MathlibExt/Combinatorics/InfiniteWord/KimberlingFibonacciWord": {"to": "Combinatorics/combinatorics-on-words/morphic-sturmian-words", "title": "Fibonacci word"},
