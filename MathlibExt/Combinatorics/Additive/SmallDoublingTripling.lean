@@ -18,6 +18,11 @@ import Mathlib.Logic.Equiv.Sum
 /-!
 # Small doubling does not force small tripling in groups (AIM Problem 3.5)
 
+Source: AIM workshop Recent trends in additive combinatorics (2004), problem list collected by E.
+Croot and V. F. Lev, https://aimath.org/WWN/additivecomb/additivecomb.pdf, Problem 3.5 (T. Tao) and
+Tao's comment. UnsolvedMath record UM-20001117 (`AIM-COMBINATORICS-0242`), dataset
+ulamai/UnsolvedMath v1.8.0.
+
 We use the subgroup-plus-one-point construction from Sections 1 and 3 of
 [T. Tao, *Product set estimates for non-commutative groups*](https://arxiv.org/abs/math/0601431).
 The subgroup translates only the first copy of `ZMod m`, and the extra
