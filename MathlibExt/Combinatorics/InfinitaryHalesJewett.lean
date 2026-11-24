@@ -10,15 +10,19 @@ module
 
 public import Mathlib.Algebra.Free
 public import MathlibExt.Combinatorics.SemigroupLargeness
+import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Data.Fintype.Pi
 import Mathlib.Data.List.OfFn
+import Mathlib.Data.Nat.Pairing
 
 /-!
-# Hales–Jewett configurations in J-sets
+# Hales–Jewett configurations in J-sets and C-sets
 
 Every J-set of nonempty words contains all substitutions of a variable word over any
 given finite level of an increasing alphabet. A sequence of such words can also realize
-ordered finite products of prescribed variable patterns.
+ordered finite products of prescribed variable patterns or finite sums of prescribed counts.
+In a C-set one can choose the words so that all ordered products of their substitutions belong
+to the set.
 -/
 
 namespace MetaMathlibExt
@@ -123,10 +127,10 @@ private theorem pattern_mul (u v : FreeSemigroup (α ⊕ Fin n)) :
   simp only [pattern, letters_mul, List.filterMap_append]
 
 -- Lift a prescribed pattern to the first k variables and append the missing high variables.
-private theorem exists_word (hk : 1 ≤ k) (hkn : k < n)
+private theorem exists_word (hk : 1 ≤ k) (hkn : k ≤ n)
     (p : List (Fin k)) (hp : ∀ i, i ∈ p) :
     ∃ w : FreeSemigroup (α ⊕ Fin n), (∀ i, Sum.inr i ∈ letters w) ∧ pattern k w = p := by
-  let low (i : Fin k) : α ⊕ Fin n := Sum.inr (i.castLE hkn.le)
+  let low (i : Fin k) : α ⊕ Fin n := Sum.inr (i.castLE hkn)
   let high := (List.finRange n).filter fun i : Fin n => k ≤ i.val
   let xs := p.map low ++ high.map (Sum.inr : Fin n → α ⊕ Fin n)
   have hvars (i : Fin n) : Sum.inr i ∈ xs := by
@@ -171,7 +175,7 @@ private theorem pattern_interleave {r : ℕ} (b : Fin (r + 2) → FreeSemigroup 
 
 -- Realize one level using only indices in the tail starting at s.
 private theorem exists_stage (A : ℕ → Finset α) (hA : Monotone A)
-    (hcover : ∀ x, ∃ i, x ∈ A i) (hk : 1 ≤ k) (hkn : k < n)
+    (hcover : ∀ x, ∃ i, x ∈ A i) (hk : 1 ≤ k) (hkn : k ≤ n)
     (y : ℕ → List (Fin k)) (hy : ∀ t i, i ∈ y t) {D : Set (FreeSemigroup α)}
     (hD : IsMulJSet D) (m s : ℕ) :
     ∃ (w : FreeSemigroup (α ⊕ Fin n)) (r : ℕ) (t : Fin (r + 1) → ℕ),
@@ -226,7 +230,7 @@ public theorem exists_variableWords_subst_mem_prod_pattern_mem_finiteProducts_of
                 if h : (i : ℕ) < k then some ⟨i, h⟩ else none)).flatten =
             (List.ofFn fun j => y (t j)).flatten := by
   classical
-  choose word r t ht hstart hvars hmem hpat using exists_stage A hA hcover hk hkn y hy hD
+  choose word r t ht hstart hvars hmem hpat using exists_stage A hA hcover hk hkn.le y hy hD
   -- Start each search strictly after the last index used by the preceding stage.
   let start : ℕ → ℕ := Nat.rec 0 fun m s => t m s (Fin.last (r m s)) + 1
   let indices (m : ℕ) := List.ofFn (t m (start m))
@@ -260,5 +264,129 @@ public theorem exists_variableWords_subst_mem_prod_pattern_mem_finiteProducts_of
   rw [← List.map_ofFn, List.ofFn_get, ← he]
   simp only [chunks, indices, List.map_flatten, List.flatten_flatten, List.map_ofFn,
     Function.comp_def, hpat]
+
+/-- **Variable-count sums of variable words in J-sets.** Let $A_0 \subseteq A_1 \subseteq \cdots$
+be finite sets with union $A$, and let $S_0$ be the semigroup of nonempty finite words over $A$
+under concatenation. A variable word over $A$ is a nonempty finite word over $A \cup \{v\}$, for a
+variable $v \notin A$, in which $v$ occurs; for $a \in A$, the word $w(a) \in S_0$ is obtained from
+$w$ by replacing each occurrence of $v$ by $a$, and $|w|_v$ is the number of occurrences of $v$ in
+$w$. If $D \subseteq S_0$ is a $J$-set and $x_0, x_1, \dots$ are positive integers, then there is
+a sequence $w_0, w_1, \dots$ of variable words over $A$ such that $w_k(a) \in D$ for all
+$k \in \mathbb{N}$ and $a \in A_k$, and such that for every nonempty finite $G \subseteq \mathbb{N}$
+there is a nonempty finite $H \subseteq \mathbb{N}$ with
+$\sum_{k \in G} |w_k|_v = \sum_{j \in H} x_j$.
+
+Source: Aninda Chakraborty and Sayan Goswami, *An Analogue to the Infinitary Hales–Jewett
+Theorem*, INTEGERS 24 (2024), Article A74, Theorem 3.7. -/
+public theorem exists_variableWords_subst_mem_sum_count_mem_finiteSums_of_isMulJSet
+    {α : Type*} (A : ℕ → Finset α) (hA : Monotone A) (hcover : ∀ x, ∃ i, x ∈ A i)
+    {D : Set (FreeSemigroup α)} (hD : IsMulJSet D) (x : ℕ → ℕ) (hx : ∀ j, 0 < x j) :
+    ∃ w : ℕ → FreeSemigroup (α ⊕ Fin 1), (∀ k, Sum.inr 0 ∈ (w k).head :: (w k).tail) ∧
+      (∀ k a, a ∈ A k → FreeSemigroup.map (Sum.elim id fun _ => a) (w k) ∈ D) ∧
+      ∀ G : Finset ℕ, G.Nonempty → ∃ H : Finset ℕ, H.Nonempty ∧
+        ∑ k ∈ G, ((w k).head :: (w k).tail).countP Sum.isRight = ∑ j ∈ H, x j := by
+  classical
+  -- Allocate disjoint input indices to the levels. At level m, the j-th pattern consists
+  -- of x (Nat.pair m j) copies of the sole variable.
+  let runs (m j : ℕ) := List.replicate (x (Nat.pair m j)) (0 : Fin 1)
+  have hruns (m j : ℕ) (i : Fin 1) : i ∈ runs m j :=
+    List.mem_replicate.mpr ⟨(hx _).ne', Subsingleton.elim _ _⟩
+  choose w r t ht _ hvar hmem hpat using fun m =>
+    exists_stage A hA hcover (k := 1) (n := 1) le_rfl le_rfl (runs m) (hruns m) hD m 0
+  let index (m : ℕ) (j : Fin (r m + 1)) := Nat.pair m (t m j)
+  let block (m : ℕ) := Finset.univ.image (index m)
+  have hright : (fun a : α ⊕ Fin 1 => (project 1 a).isSome) = Sum.isRight := by
+    funext a
+    cases a <;> simp [project]
+  have hcount (m : ℕ) : (letters (w m)).countP Sum.isRight = ∑ j ∈ block m, x j := by
+    have hinj : Function.Injective (index m) :=
+      fun _ _ h => (ht m).injective (Nat.pair_eq_pair.mp h).2
+    rw [Finset.sum_image hinj.injOn]
+    simpa only [pattern, List.length_filterMap_eq_countP, hright, List.length_flatten,
+      List.map_ofFn, Function.comp_def, runs, List.length_replicate, List.sum_ofFn, index] using
+      congrArg List.length (hpat m)
+  refine ⟨w, fun m => hvar m 0, fun m a ha => hmem m (fun _ => a) (fun _ => ha), ?_⟩
+  intro G hG
+  refine ⟨G.biUnion block, Finset.biUnion_nonempty.mpr
+    ⟨hG.choose, hG.choose_spec, Finset.univ_nonempty.image _⟩, ?_⟩
+  have hdisjoint : (G : Set ℕ).PairwiseDisjoint block := by
+    intro a _ b _ hab
+    apply Finset.disjoint_left.mpr
+    intro j hj hj'
+    obtain ⟨i, _, rfl⟩ := Finset.mem_image.mp hj
+    obtain ⟨i', _, he⟩ := Finset.mem_image.mp hj'
+    exact hab (Nat.pair_eq_pair.mp he.symm).1
+  rw [Finset.sum_biUnion hdisjoint]
+  exact Finset.sum_congr rfl fun m _ => hcount m
+
+-- If each factor sends the next set into the current one by left multiplication,
+-- then a product along any increasing subsequence belongs to its first set.
+private theorem foldl_mem_of_left_mul {S : Type*} [Semigroup S] {B : ℕ → Set S}
+    (hB : Antitone B) {l : ℕ} (m : Fin (l + 1) → ℕ) (x : Fin (l + 1) → S)
+    (hm : StrictMono m) (hx : ∀ j, x j ∈ B (m j) ∧ ∀ y ∈ B (m j + 1), x j * y ∈ B (m j)) :
+    (List.ofFn fun j : Fin l => x j.succ).foldl (· * ·) (x 0) ∈ B (m 0) := by
+  induction l with
+  | zero => simpa using (hx 0).1
+  | succ l ih =>
+    rw [List.ofFn_succ, List.foldl_cons, List.foldl_assoc]
+    apply (hx 0).2
+    have hlt : m 0 < m (0 : Fin (l + 1)).succ := hm (Nat.zero_lt_succ _)
+    exact hB hlt
+      (ih (m ∘ Fin.succ) (x ∘ Fin.succ) (hm.comp Fin.strictMono_succ) fun j => hx j.succ)
+
+/-- **Infinitary Hales–Jewett configurations in C-sets.** Let
+$A_0 \subseteq A_1 \subseteq \cdots$ be finite sets with union $A$, and let $S_0$ be the semigroup
+of nonempty finite words over $A$ under concatenation. For $n \in \mathbb{N}$, an $n$-variable
+word over $A$ is a nonempty finite word over $A \cup \{v_0, \dots, v_{n-1}\}$, for distinct
+variables $v_i \notin A$, in which every $v_i$ occurs; for $\vec a = (a_0, \dots, a_{n-1})$ in
+$A^n$, the word $w(\vec a) \in S_0$ is obtained from $w$ by replacing each $v_i$ by $a_i$. If
+$D \subseteq S_0$ is a $C$-set, then for every $n \in \mathbb{N}$ there is a sequence
+$w_0, w_1, \dots$ of $n$-variable words over $A$ such that
+$w_{m_0}(\vec a_0) w_{m_1}(\vec a_1) \cdots w_{m_l}(\vec a_l) \in D$ for all $l \in \mathbb{N}$,
+all $m_0 < m_1 < \cdots < m_l$ in $\mathbb{N}$ and all $\vec a_j \in A_{m_j}^n$,
+$j = 0, \dots, l$.
+
+Source: Aninda Chakraborty and Sayan Goswami, *An Analogue to the Infinitary Hales–Jewett
+Theorem*, INTEGERS 24 (2024), Article A74, Corollary 3.6. -/
+public theorem exists_variableWords_prod_mem_of_isCSet {α : Type*}
+    (A : ℕ → Finset α) (hA : Monotone A) (hcover : ∀ x, ∃ i, x ∈ A i) (n : ℕ)
+    {D : Set (FreeSemigroup α)} (hD : IsCSet D) :
+    ∃ w : ℕ → FreeSemigroup (α ⊕ Fin n), (∀ k i, Sum.inr i ∈ (w k).head :: (w k).tail) ∧
+      ∀ (l : ℕ) (m : Fin (l + 1) → ℕ) (a : Fin (l + 1) → Fin n → α), StrictMono m →
+        (∀ j i, a j i ∈ A (m j)) →
+        (List.ofFn fun j : Fin l => FreeSemigroup.map (Sum.elim id (a j.succ)) (w (m j.succ))).foldl
+          (· * ·) (FreeSemigroup.map (Sum.elim id (a 0)) (w (m 0))) ∈ D := by
+  classical
+  let := Ultrafilter.semigroup (M := FreeSemigroup α)
+  obtain ⟨p, hid, hJ, hD⟩ := hD
+  have : Nonempty α := ⟨(Ultrafilter.nonempty_of_mem hD).some.head⟩
+  let eval (w : FreeSemigroup (α ⊕ Fin n)) (a : Fin n → α) :=
+    FreeSemigroup.map (Sum.elim id a) w
+  -- Choose the word inside a large set and reserve a large set for every possible tail.
+  have step (k : ℕ) (s : {B : Set (FreeSemigroup α) // B ∈ p}) :
+      ∃ (w : FreeSemigroup (α ⊕ Fin n)) (t : {B : Set (FreeSemigroup α) // B ∈ p}),
+        t.val ⊆ s.val ∧ (∀ i, Sum.inr i ∈ w.head :: w.tail) ∧
+        ∀ a : Fin n → α, (∀ i, a i ∈ A k) →
+          eval w a ∈ s.val ∧ ∀ y ∈ t.val, eval w a * y ∈ s.val := by
+    let good := s.val ∩ {x | {y | x * y ∈ s.val} ∈ p}
+    have hgood : good ∈ p :=
+      Filter.inter_mem s.property (show s.val ∈ p * p by simpa only [hid] using s.property)
+    obtain ⟨w, hvar, hw⟩ := exists_variableWord_subst_mem_of_isMulJSet A hA hcover k n
+      (hJ good hgood)
+    let tuples := Fintype.piFinset fun _ : Fin n => A k
+    let tails := {y | ∀ a ∈ tuples, eval w a * y ∈ s.val}
+    have ht : tails ∈ p :=
+      (Filter.eventually_all_finset tuples).2 fun a ha => (hw a (Fintype.mem_piFinset.mp ha)).2
+    refine ⟨w, ⟨s.val ∩ tails, Filter.inter_mem s.property ht⟩, Set.inter_subset_left,
+      hvar, fun a ha => ⟨(hw a ha).1, fun y hy => ?_⟩⟩
+    exact hy.2 a (Fintype.mem_piFinset.mpr ha)
+  choose word next hsub hvars hmem using step
+  let sets : ℕ → {B : Set (FreeSemigroup α) // B ∈ p} := Nat.rec ⟨D, hD⟩ next
+  have hanti : Antitone (fun k => (sets k).val) :=
+    antitone_nat_of_succ_le fun k => hsub k (sets k)
+  refine ⟨fun k => word k (sets k), fun k => hvars k _, fun l m a hm ha => ?_⟩
+  apply hanti (Nat.zero_le (m 0))
+  exact foldl_mem_of_left_mul hanti m (fun j => eval (word (m j) (sets (m j))) (a j)) hm
+    fun j => hmem (m j) (sets (m j)) (a j) (ha j)
 
 end MetaMathlibExt
