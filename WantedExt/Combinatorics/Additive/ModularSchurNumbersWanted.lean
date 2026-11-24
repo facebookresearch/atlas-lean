@@ -90,21 +90,6 @@ public theorem_wanted isSumFreeMod_singleton_prime_pow (p a i l : ℕ) (hp : p.P
     (hl : 0 < l) (ha : ¬ p ^ i ∣ a) (hlp : ¬ l ≡ 1 [MOD p]) :
     IsSumFreeMod (p ^ i) l {(a : ℤ)}
 
-/-- **Elements of a sum-free pair are congruent modulo $p$.** Let $p$ be a prime, let $i$ be a
-positive integer, and let $l$ be a natural number with $l \ge p^i - 1$ and
-$l \not\equiv 1 \pmod{p}$. If $a$ and $b$ are natural numbers such that $\{a, b\}$ is
-$l$-sum-free modulo $p^i$, then $a \equiv b \pmod{p}$.
-
-Since subsets of $l$-sum-free sets are $l$-sum-free, the hypothesis says exactly that $a$ and
-$b$ lie in a common $l$-sum-free set modulo $p^i$.
-
-Source: Jourdan D'orville, Kai An Sim, Kok Bin Wong, and Chee Kit Ho, *Modular
-Generalizations of Schur Numbers*, INTEGERS 25 (2025), Article A62, Lemma 2, part 1
-(`integers-2025-A62-lem-2`). -/
-public theorem_wanted modEq_of_isSumFreeMod_pair (p a b i l : ℕ) (hp : p.Prime) (hi : 0 < i)
-    (hl : p ^ i - 1 ≤ l) (hlp : ¬ l ≡ 1 [MOD p])
-    (hab : IsSumFreeMod (p ^ i) l {(a : ℤ), (b : ℤ)}) : a ≡ b [MOD p]
-
 /-- **Modular Schur numbers modulo $2$.** For all positive integers $k$ and $l$, the modular
 Schur number $S_2(k, l)$ equals $0$ when $l$ is odd and equals $1$ when $l$ is even.
 

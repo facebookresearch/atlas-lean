@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.Algebra.BigOperators.ModEq
 import MathlibExt.Combinatorics.Additive.ModularSchurNumbers
 
 /-! # Tests for modular Schur numbers -/
@@ -24,6 +25,22 @@ example : IsSumFreeMod 5 5 {2} := by
 example : ¬ IsSumFreeMod 6 4 {4} := by
   have criterion := (not_isSumFreeMod_singleton_iff 4 4 6 (by decide) (by decide) (by decide)).2
   exact (criterion (by decide)).mpr (by decide)
+
+-- At the arity threshold for 3², elements with distinct residues modulo 3 cannot form a class.
+example : ¬ IsSumFreeMod 9 8 {8, 4} := by
+  intro h
+  exact (by decide : ¬ 8 ≡ 4 [MOD 3])
+    (modEq_of_isSumFreeMod_pair 3 8 4 2 8 (by decide) (by decide) (by decide) (by decide) h)
+
+-- A sum-free pair at the same threshold can have distinct residues modulo 9.
+example : IsSumFreeMod 9 8 {1, 4} := by
+  intro x hx y hy hsum
+  have hres {z : ℤ} (hz : z ∈ ({1, 4} : Set ℤ)) : z ≡ 1 [ZMOD 3] := by
+    rcases Set.mem_insert_iff.mp hz with rfl | rfl <;> decide
+  have hxsum : ∑ j, x j ≡ 8 [ZMOD 3] := by
+    simpa using Int.ModEq.sum (s := Finset.univ) (fun j _ => hres (hx j))
+  exact (by decide : ¬ (8 : ℤ) ≡ 1 [ZMOD 3])
+    (hxsum.symm.trans ((hsum.of_dvd (by decide : (3 : ℤ) ∣ 9)).trans (hres hy)))
 
 -- At the color threshold, the range includes a nonunit residue (2 modulo 4).
 example : modularSchurNumber 4 3 2 = 3 :=
