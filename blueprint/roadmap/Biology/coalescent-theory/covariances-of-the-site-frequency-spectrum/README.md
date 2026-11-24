@@ -25,3 +25,4 @@
 - [Variance of a weighted SFS estimator](variance-theta-weighted-kingman.md)
 - [Variance of Tajima's θ_π from the SFS](variance-theta-pi-kingman.md)
 - [Variance of Tajima's D numerator from the SFS](variance-tajima-numerator-kingman.md)
+- [Conditional moments of site-frequency counts under Poisson mutation](conditional-moments-of-site-frequency-counts.md)

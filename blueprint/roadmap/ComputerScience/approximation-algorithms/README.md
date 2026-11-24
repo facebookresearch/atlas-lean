@@ -14,3 +14,4 @@ Polynomial-time algorithms with proved approximation ratios for NP-hard optimiza
 - [Weighted vertex cover by the pricing method](weighted-vertex-cover-by-the-pricing-method/README.md)
 
 - [Approximation ratio of the greedy superstring algorithm](approximation-ratio-of-the-greedy-superstring-algorithm.md)
+- [Shortest common superstring](shortest-common-superstring/README.md)

@@ -20,3 +20,4 @@ Dynamics of biochemical reaction networks and gene regulatory circuits: mass-act
 - [Chemical reaction network theory](chemical-reaction-network-theory/README.md)
 
 - [Minimal experiments for identifiable compartmental models](minimal-experiments-for-identifiable-compartmental-models.md)
+- [Multisite phosphorylation](multisite-phosphorylation/README.md)

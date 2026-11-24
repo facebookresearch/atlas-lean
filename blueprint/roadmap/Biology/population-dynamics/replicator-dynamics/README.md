@@ -16,3 +16,4 @@
 - [Invariance of the simplex (Hofbauer–Sigmund 1998, §7.1)](mem-simplex.md)
 
 - [Lyapunov characterization of evolutionarily stable states for the replicator equation](ess-lyapunov-function-for-the-replicator-equation.md)
+- [Lyapunov characterization of evolutionarily stable states: further results](ess-lyapunov-function-for-the-replicator-equation-further-results.md)
