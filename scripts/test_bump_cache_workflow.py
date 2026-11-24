@@ -61,6 +61,13 @@ def step(text: str, marker: str) -> str:
     return text[start:end if end != -1 else len(text)]
 
 
+def job(text: str, name: str) -> str:
+    """The text of the job `name`, up to the next job."""
+    start = text.index(f"\n  {name}:\n") + 1
+    following = re.search(r"(?m)^  [A-Za-z0-9_-]+:$", text[start + 1:])
+    return text[start:start + 1 + following.start()] if following else text[start:]
+
+
 def block_lines(text: str, key: str) -> list[str]:
     """The stripped lines of the block scalar `key: |` in `text`."""
     head, body = text.split(f"{key}: |\n", 1)
@@ -115,12 +122,14 @@ class BumpCacheWorkflowTest(unittest.TestCase):
         for script in run_blocks(self.warm_lines):
             self.assertNotIn("${{", script, f"interpolated expression in a run script:\n{script}")
 
-    def test_same_heavy_modules_as_ci(self) -> None:
-        ci_lists, warm_lists = heavy_modules(self.ci), heavy_modules(self.warm)
-        self.assertEqual(len(ci_lists), 1, "ci.yml's memory-heavy module list moved; update this test")
-        self.assertEqual(len(warm_lists), 1, "bump-cache.yml's memory-heavy module list moved; update this test")
-        self.assertEqual(warm_lists[0], ci_lists[0],
-                         "build the same memory-heavy modules one at a time as ci.yml")
+    def test_large_runner_builds_the_heavy_modules_with_the_rest(self) -> None:
+        # ci.yml builds its memory-heavy modules one at a time on the 16 GB standard
+        # runner; the warm-up's 64-core runner has the memory to build them with the rest.
+        self.assertEqual(len(heavy_modules(self.ci)), 1, "ci.yml's memory-heavy module list moved; update this test")
+        self.assertIn("    runs-on: ubuntu-24.04\n", job(self.ci, "build"), "ci.yml's build job left the standard runner")
+        self.assertEqual(re.findall(r"(?m)^    runs-on: (\S+)$", self.warm), ["64-core-ubuntu"])
+        self.assertEqual(heavy_modules(self.warm), [], "a serial heavy step leaves the 64-core runner idle")
+        self.assertNotIn("swapon", self.warm)
 
     def test_ci_restores_what_the_warm_up_saves(self) -> None:
         restore = step(self.ci, "name: Restore local build")
@@ -222,20 +231,16 @@ class BuildStepTest(unittest.TestCase):
         calls = [line.split(" ", 4)[4] for line in self.log.read_text().splitlines() if line.startswith("timeout ")]
         return status[0], calls
 
-    def test_success_runs_heavy_modules_then_check(self) -> None:
+    def test_success_runs_the_check(self) -> None:
         status, calls = self.run_step()
-        heavy = heavy_modules(WARM.read_text(encoding="utf-8"))[0]
         self.assertEqual(status, "ok")
-        self.assertEqual(calls, [f"lake build {m}" for m in heavy] + ["scripts/check.sh build"])
+        self.assertEqual(calls, ["scripts/check.sh build"])
         self.assertTrue(all("--kill-after=5m" in line for line in self.log.read_text().splitlines()
                             if line.startswith("timeout ")))
 
     def test_failures_are_reported_not_fatal(self) -> None:
-        heavy = heavy_modules(WARM.read_text(encoding="utf-8"))[0]
-        status, calls = self.run_step(LAKE_FAILS=heavy[0])
-        self.assertEqual((status, calls), ("failed", [f"lake build {heavy[0]}"]))
         status, calls = self.run_step(CHECK_RC="1")
-        self.assertEqual((status, calls[-1]), ("failed", "scripts/check.sh build"))
+        self.assertEqual((status, calls), ("failed", ["scripts/check.sh build"]))
 
     def test_timeouts(self) -> None:
         status, calls = self.run_step(FAKE_RC="124", FAKE_ON="check.sh")
@@ -243,8 +248,16 @@ class BuildStepTest(unittest.TestCase):
         # 137 well before the limit is a kill from elsewhere (memory), not the deadline.
         status, _ = self.run_step(FAKE_RC="137", FAKE_ON="check.sh")
         self.assertEqual(status, "failed")
-        status, calls = self.run_step(started_ago=330 * 60)
+        status, calls = self.run_step(started_ago=105 * 60)
         self.assertEqual((status, calls), ("timeout", []))
+
+    def test_the_deadline_leaves_time_to_save(self) -> None:
+        job = re.search(r"(?m)^    timeout-minutes: (\d+)$", WARM.read_text(encoding="utf-8"))
+        deadline = re.search(r"deadline=\$\(\( START \+ (\d+) \* 60 \)\)", self.script)
+        self.assertIsNotNone(job)
+        self.assertIsNotNone(deadline)
+        self.assertGreaterEqual(int(job.group(1)) - int(deadline.group(1)), 15,
+                                "leave at least 15 minutes to save the build")
 
 
 
