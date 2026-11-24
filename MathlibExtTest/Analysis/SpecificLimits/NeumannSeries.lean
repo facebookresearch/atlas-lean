@@ -105,4 +105,23 @@ example : ‖neumannSeries scaleOp 1
 example : (1 / 2 : ℝ) ^ (0 + 1) * ‖(1 : ℝ)‖ / (1 - 1 / 2) = 1 := by
   norm_num [Real.norm_eq_abs]
 
+/-- The diagonal operator acts coordinatewise on arbitrary vectors, not just
+singletons. -/
+example (x : ↥(lp (fun _ : ℕ => ℝ) ⊤)) (n : ℕ) :
+    (↑(lpDiag x) : (m : ℕ) → ℝ) n
+      = (1 - 1 / (n + 1 : ℝ)) * (↑x : (m : ℕ) → ℝ) n :=
+  lpDiag_apply_apply x n
+
+/-- The strengthened existential acts coordinatewise on a non-singleton vector. -/
+example (n : ℕ) :
+    ∃ T : ↥(lp (fun _ : ℕ => ℝ) ⊤) →L[ℝ] ↥(lp (fun _ : ℕ => ℝ) ⊤),
+      (↑(T (lp.single (E := fun _ : ℕ => ℝ) ⊤ 0 1
+          + lp.single (E := fun _ : ℕ => ℝ) ⊤ 1 1)) : (m : ℕ) → ℝ) n
+        = (1 - 1 / (n + 1 : ℝ))
+          * (↑(lp.single (E := fun _ : ℕ => ℝ) ⊤ 0 1
+            + lp.single (E := fun _ : ℕ => ℝ) ⊤ 1 1) : (m : ℕ) → ℝ) n
+        ∧ ‖T‖ = 1 := by
+  obtain ⟨T, hcoord, hnorm⟩ := exists_lp_diagonal_norm_eq_one
+  exact ⟨T, hcoord _ n, hnorm⟩
+
 end ContinuousLinearMap

@@ -258,6 +258,13 @@ noncomputable def lpDiag :
 private theorem lpDiag_apply (x : ↥(lp (fun _ : ℕ => ℝ) ⊤)) : lpDiag x = lpDiagLin x :=
   LinearMap.mkContinuous_apply _ _ _ _
 
+/-- Coordinatewise action of the diagonal operator on arbitrary vectors. -/
+theorem lpDiag_apply_apply (x : ↥(lp (fun _ : ℕ => ℝ) ⊤)) (n : ℕ) :
+    (↑(lpDiag x) : (m : ℕ) → ℝ) n
+      = (1 - 1 / (n + 1 : ℝ)) * (↑x : (m : ℕ) → ℝ) n := by
+  rw [lpDiag_apply]
+  exact lpDiagFun_coe x n
+
 /-- The diagonal operator scales each standard unit vector by its diagonal entry. -/
 theorem lpDiag_single (n : ℕ) :
     lpDiag (lp.single ⊤ n 1) = (1 - 1 / (n + 1 : ℝ)) • lp.single ⊤ n 1 := by
@@ -296,12 +303,15 @@ theorem lpDiag_norm : ‖lpDiag‖ = 1 := by
     have hentry : 1 - 1 / (n + 1 : ℝ) ≤ ‖lpDiag‖ := by simpa using hle
     linarith
 
-/-- There is a diagonal operator on `ℓ^∞` with every entry `< 1` but norm `1`:
-entrywise strict contraction does not give a uniform bound `c < 1`. -/
+/-- There is a diagonal operator on `ℓ^∞`, diagonal in the coordinatewise sense,
+with every entry `< 1` but norm `1`: entrywise strict contraction does not give
+a uniform bound `c < 1`. -/
 theorem exists_lp_diagonal_norm_eq_one :
     ∃ T : ↥(lp (fun _ : ℕ => ℝ) ⊤) →L[ℝ] ↥(lp (fun _ : ℕ => ℝ) ⊤),
-      (∀ n, T (lp.single ⊤ n 1) = (1 - 1 / (n + 1 : ℝ)) • lp.single ⊤ n 1)
+      (∀ (x : ↥(lp (fun _ : ℕ => ℝ) ⊤)) (n : ℕ),
+        (↑(T x) : (m : ℕ) → ℝ) n
+          = (1 - 1 / (n + 1 : ℝ)) * (↑x : (m : ℕ) → ℝ) n)
         ∧ ‖T‖ = 1 :=
-  ⟨lpDiag, fun n => lpDiag_single n, lpDiag_norm⟩
+  ⟨lpDiag, lpDiag_apply_apply, lpDiag_norm⟩
 
 end ContinuousLinearMap
