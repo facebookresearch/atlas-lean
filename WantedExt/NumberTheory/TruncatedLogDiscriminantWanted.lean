@@ -11,7 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.NumberTheory.Harmonic.Defs
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
-public import Mathlib.RingTheory.Polynomial.Resultant.Basic
+public import MathlibExt.NumberTheory.TruncatedLogDiscriminant
 
 /-!
 # Discriminants of truncated logarithmic polynomials
@@ -32,76 +32,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open Polynomial
-
-/-- **Truncated logarithmic polynomial.** For a natural number $n$, the truncated logarithmic
-polynomial is $F_n(x) = 1 + x + \frac{x^2}{2} + \dots + \frac{x^n}{n} \in \mathbb{Q}[x]$.
-
-Source: Cullinan and Gajek-Leonard, *On the Discriminants of Truncated
-Logarithmic Polynomials*, INTEGERS 25 (2025), Article A39, Section 1. -/
-public noncomputable def truncatedLogPolynomial (n : ℕ) : ℚ[X] :=
-  1 + ∑ j ∈ Finset.Icc 1 n, C ((j : ℚ)⁻¹) * X ^ j
-
-/-- **Least common multiple of $1, \dots, n$.** For a natural number $n$, $L_n$ is the least common
-multiple $\operatorname{lcm}(1, 2, \dots, n)$ of the integers from $1$ to $n$; in particular
-$L_0 = 1$.
-
-Source: Cullinan and Gajek-Leonard, *On the Discriminants of Truncated
-Logarithmic Polynomials*, INTEGERS 25 (2025), Article A39, Section 1. -/
-public def truncatedLogLcm (n : ℕ) : ℕ :=
-  (Finset.Icc 1 n).lcm id
-
-/-- **Least common multiple of $1, 2, 3, 4$.** The least common multiple of the integers from $1$
-to $4$ is $L_4 = \operatorname{lcm}(1, 2, 3, 4) = 12$.
-
-Source: Cullinan and Gajek-Leonard, *On the Discriminants of Truncated
-Logarithmic Polynomials*, INTEGERS 25 (2025), Article A39, Section 1. -/
-public theorem truncatedLogLcm_four : truncatedLogLcm 4 = 12 := by
-  decide
-
-/-- **Scaled truncated logarithmic polynomial.** For a natural number $n$, let
-$L_n = \operatorname{lcm}(1, 2, \dots, n)$. The scaled truncated logarithmic polynomial is the
-integer polynomial $\tilde F_n(x) = L_n + \sum_{j=1}^{n} (L_n / j)\, x^j$, where each quotient
-$L_n / j$ is an integer.
-
-Source: Cullinan and Gajek-Leonard, *On the Discriminants of Truncated
-Logarithmic Polynomials*, INTEGERS 25 (2025), Article A39, Section 1. -/
-public noncomputable def scaledTruncatedLogPolynomial (n : ℕ) : ℤ[X] :=
-  C (truncatedLogLcm n : ℤ) + ∑ j ∈ Finset.Icc 1 n, C ((truncatedLogLcm n / j : ℕ) : ℤ) * X ^ j
-
-/-- **The scaled truncated logarithmic polynomial is $L_n F_n$.** For a natural number $n$, let
-$L_n = \operatorname{lcm}(1, 2, \dots, n)$, let $F_n(x) = 1 + x + x^2/2 + \cdots + x^n/n$ be the
-truncated logarithmic polynomial and let $\tilde F_n \in \mathbb{Z}[x]$ be the scaled truncated
-logarithmic polynomial. Mapping the coefficients of $\tilde F_n$ from $\mathbb{Z}$ to
-$\mathbb{Q}$ gives the polynomial $L_n F_n$ in $\mathbb{Q}[x]$.
-
-Source: Cullinan and Gajek-Leonard, *On the Discriminants of Truncated
-Logarithmic Polynomials*, INTEGERS 25 (2025), Article A39, Section 1. -/
-public theorem map_scaledTruncatedLogPolynomial (n : ℕ) :
-    (scaledTruncatedLogPolynomial n).map (Int.castRingHom ℚ) =
-      C (truncatedLogLcm n : ℚ) * truncatedLogPolynomial n := by
-  simp only [scaledTruncatedLogPolynomial, truncatedLogPolynomial, Polynomial.map_add,
-    Polynomial.map_sum, Polynomial.map_mul, Polynomial.map_pow, map_C, map_X, mul_add, mul_one,
-    Finset.mul_sum]
-  refine congrArg₂ (· + ·) (by simp) (Finset.sum_congr rfl fun j hj => ?_)
-  have hj1 : 1 ≤ j := (Finset.mem_Icc.mp hj).1
-  have hj0 : (j : ℚ) ≠ 0 := by positivity
-  have hdvd : j ∣ truncatedLogLcm n := Finset.dvd_lcm (s := Finset.Icc 1 n) (f := id) hj
-  rw [← mul_assoc, ← C_mul]
-  congr 2
-  simp only [eq_intCast, Int.cast_natCast]
-  rw [Nat.cast_div hdvd hj0, div_eq_mul_inv]
-
-/-- **Resultant product for truncated logarithmic polynomials.** For a natural number $n$, let
-$F_n(x) = 1 + x + \frac{x^2}{2} + \dots + \frac{x^n}{n}$, let
-$L_n = \operatorname{lcm}(1, \dots, n)$, and let $\tilde F_n = L_n F_n \in \mathbb{Z}[x]$. The
-integer $\mathcal{P}_n$ is the resultant $\operatorname{Res}(1 + x + \dots + x^{n-1}, \tilde F_n)$.
-For $n \ge 1$ the polynomial $1 + x + \dots + x^{n-1} = F_n'$ is monic, so
-$\mathcal{P}_n = \prod_{\theta} \tilde F_n(\theta)$, the product over the roots $\theta$ of $F_n'$.
-
-Source: Cullinan and Gajek-Leonard, *On the Discriminants of Truncated
-Logarithmic Polynomials*, INTEGERS 25 (2025), Article A39, Equation (5). -/
-public noncomputable def truncatedLogResultantProduct (n : ℕ) : ℤ :=
-  resultant (∑ k ∈ Finset.range n, (X : ℤ[X]) ^ k) (scaledTruncatedLogPolynomial n)
 
 /-- **Auxiliary product for truncated logarithmic discriminants.** For a natural number $m$, let
 $f_m(x) = \sum_{k=0}^{m-1} x^k$ and $g_m(x) = c_m + \sum_{j=1}^{m-1} \frac{x^j}{j}$ in
@@ -242,18 +172,6 @@ Logarithmic Polynomials*, INTEGERS 25 (2025), Article A39, Theorem 5
 public theorem_wanted not_isSquare_discr_truncatedLog_mul_prime {m q : ℕ} (hq : q.Prime)
     (hE : q ∉ truncatedLogExceptionalPrimes m) (hmq : m < q) (h4 : m * q % 4 = 1) :
     ¬ IsSquare (truncatedLogPolynomial (m * q)).discr
-
-/-- **Nonsquare discriminants of $F_{3q}$, $F_{5q}$ and $F_{7q}$.** Let
-$F_n(x) = 1 + x + x^2/2 + \cdots + x^n/n$ be the truncated logarithmic polynomial. For every
-prime $q$, if $n = 3q$, $n = 5q$ or $n = 7q$, then the discriminant of $F_n$ is not a square in
-$\mathbb{Q}$.
-
-Source: Cullinan and Gajek-Leonard, *On the Discriminants of Truncated
-Logarithmic Polynomials*, INTEGERS 25 (2025), Article A39, Proposition 2
-(`integers-2025-A39-prop-2`). -/
-public theorem_wanted not_isSquare_discr_truncatedLog_three_five_seven_mul {q n : ℕ}
-    (hq : q.Prime) (hn : n = 3 * q ∨ n = 5 * q ∨ n = 7 * q) :
-    ¬ IsSquare (truncatedLogPolynomial n).discr
 
 end
 
