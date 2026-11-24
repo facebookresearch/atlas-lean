@@ -74,6 +74,23 @@ public def HasWeightedZeroSumSubseq {n k : ℕ} (A : Set (ZMod n))
   ∃ J : Finset (Fin k), J.Nonempty ∧
     ∃ a : Fin k → ZMod n, (∀ i ∈ J, a i ∈ A) ∧ ∑ i ∈ J, a i * S i = 0
 
+/-- **Squares of units modulo n.** For a natural number $n$, $U(n)^2$ is the set of elements of
+$\mathbb{Z}/n\mathbb{Z}$ of the form $u^2$ with $u$ a unit of $\mathbb{Z}/n\mathbb{Z}$.
+
+Source: Krishnendu Paul and Shameek Paul, *Square-Weighted Zero-Sum Constants*, Journal of Integer
+Sequences 27 (2024), Article 24.6.6, Introduction. -/
+public def unitSquareSet (n : ℕ) : Set (ZMod n) := {x | ∃ u, IsUnit u ∧ x = u ^ 2}
+
+/-- **Weighted zero-sum sequences.** Let $A \subseteq \mathbb{Z}/n\mathbb{Z}$ and let
+$S = (x_1, \dots, x_k)$ be a sequence in $\mathbb{Z}/n\mathbb{Z}$. Then $S$ is an $A$-weighted
+zero-sum sequence if there are weights $a_1, \dots, a_k \in A$ with
+$a_1 x_1 + a_2 x_2 + \dots + a_k x_k = 0$.
+
+Source: Krishnendu Paul and Shameek Paul, *Square-Weighted Zero-Sum Constants*, Journal of Integer
+Sequences 27 (2024), Article 24.6.6, Introduction. -/
+public def HasWeightedZeroSum {n k : ℕ} (A : Set (ZMod n)) (S : Fin k → ZMod n) : Prop :=
+  ∃ a : Fin k → ZMod n, (∀ i, a i ∈ A) ∧ ∑ i, a i * S i = 0
+
 end
 
 /-- Modulo an odd prime $p$, some natural number $c$ has $-c$ not a square. -/
@@ -161,5 +178,66 @@ public theorem exists_pair_units_avoiding_prime_squareWeights (n : ℕ)
       · simp [ZMod.cast_natCast hpn, hkp p hpmem]
     rw [hS]
     exact not_hasWeightedZeroSumSubseq_one_pair (hc p hpmem)
+
+/-- **Lifting weighted zero sums from p² to an even power of p.** Let $p \ge 2$, $r \ne 0$
+and $k$ be natural numbers with $r$ even, and let $t_1, \dots, t_k$ be elements of
+$\mathbb{Z}/p^r\mathbb{Z}$, with reductions $\bar t_1, \dots, \bar t_k$ modulo $p^2$. Write
+$U(p^2)^2$ for the set of squares of units of $\mathbb{Z}/p^2\mathbb{Z}$ and $S(p^r)$ for the
+set of nonzero squares of $\mathbb{Z}/p^r\mathbb{Z}$. If there are
+$a_1, \dots, a_k \in U(p^2)^2$ with $a_1 \bar t_1 + \dots + a_k \bar t_k = 0$ in
+$\mathbb{Z}/p^2\mathbb{Z}$, then there are $b_1, \dots, b_k \in S(p^r)$ with
+$b_1 t_1 + \dots + b_k t_k = 0$ in $\mathbb{Z}/p^r\mathbb{Z}$.
+
+The paper states the lemma for $p > 0$; the stronger hypothesis $p \ge 2$ is deliberate.
+
+Source: Krishnendu Paul and Shameek Paul, *Square-Weighted Zero-Sum Constants*, Journal of Integer
+Sequences 27 (2024), Article 24.6.6, Lemma 13. -/
+public theorem squareWeightedZeroSum_of_reduction_square (p r k : ℕ)
+    (hp : 2 ≤ p) (hr0 : r ≠ 0) (hrEven : Even r)
+    (T : Fin k → ZMod (p ^ r))
+    (hT : HasWeightedZeroSum (unitSquareSet (p ^ 2))
+      (fun i => (ZMod.cast (T i) : ZMod (p ^ 2)))) :
+    HasWeightedZeroSum (squareSet (p ^ r)) T := by
+  obtain ⟨j, hj⟩ : ∃ j : ℕ, r = 2 * j + 2 := by
+    obtain ⟨t, ht⟩ := hrEven
+    exact ⟨t - 1, by omega⟩
+  subst r
+  have hp0 : 0 < p := by omega
+  have hm : 1 < p ^ 2 := one_lt_pow₀ (by omega : 1 < p) (by decide)
+  have : Fact (1 < p ^ 2) := ⟨hm⟩
+  have : NeZero (p ^ 2) := ⟨by omega⟩
+  have : NeZero (p ^ (2 * j + 2)) := ⟨(pow_pos hp0 _).ne'⟩
+  let d := p ^ (2 * j)
+  have hd : 0 < d := pow_pos hp0 _
+  have hmod : p ^ (2 * j + 2) = d * p ^ 2 := pow_add p _ _
+  obtain ⟨a, ha, hsum⟩ := hT
+  choose u hu heq using ha
+  let z := ∑ i : Fin k, (u i).val ^ 2 * (T i).val
+  have hz : (z : ZMod (p ^ 2)) = 0 := by
+    rw [← hsum]
+    simp only [z, Nat.cast_sum, Nat.cast_mul, Nat.cast_pow, ZMod.natCast_zmod_val,
+      ZMod.cast_eq_val, heq]
+  -- Scaling by d transports the divisibility of the sum to modulus d * p².
+  have hdz : ((d * z : ℕ) : ZMod (p ^ (2 * j + 2))) = 0 := by
+    apply (ZMod.natCast_eq_zero_iff _ _).mpr
+    rw [hmod]
+    exact Nat.mul_dvd_mul_left d ((ZMod.natCast_eq_zero_iff z _).mp hz)
+  refine ⟨fun i => (d : ZMod (p ^ (2 * j + 2))) * ((u i).val : ZMod _) ^ 2, ?_, ?_⟩
+  · intro i
+    refine ⟨?_, ⟨(p : ZMod (p ^ (2 * j + 2))) ^ j * ((u i).val : ZMod _), ?_⟩⟩
+    · intro he
+      have he' : ((d * (u i).val ^ 2 : ℕ) : ZMod (p ^ (2 * j + 2))) = 0 := by
+        push_cast
+        exact he
+      have hbig := (ZMod.natCast_eq_zero_iff _ (p ^ (2 * j + 2))).mp he'
+      rw [hmod] at hbig
+      have hsmall := (ZMod.natCast_eq_zero_iff ((u i).val ^ 2) (p ^ 2)).mpr
+        (Nat.dvd_of_mul_dvd_mul_left hd hbig)
+      exact ((hu i).pow 2).ne_zero
+        (by simpa only [Nat.cast_pow, ZMod.natCast_zmod_val] using hsmall)
+    · rw [mul_pow, ← pow_mul]
+      simp [d, Nat.mul_comm]
+  · simpa only [z, Nat.cast_mul, Nat.cast_sum, Nat.cast_pow, ZMod.natCast_zmod_val,
+      Finset.mul_sum, ← mul_assoc] using hdz
 
 end MetaMathlibExt
