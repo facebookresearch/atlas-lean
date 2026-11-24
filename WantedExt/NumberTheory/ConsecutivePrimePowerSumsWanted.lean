@@ -10,8 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Asymptotics.AsymptoticEquivalent
-public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import Mathlib.NumberTheory.PrimeCounting
+public import MathlibExt.NumberTheory.ConsecutivePrimePowerSums
 
 /-!
 # Sums of powers of consecutive primes (statements)
@@ -34,19 +33,6 @@ namespace MetaMathlibExt
 open Asymptotics Filter Finset
 
 @[expose] public section
-
-/-- **Counting sums of a fixed number of consecutive prime powers.** Let $p_1 < p_2 < \cdots$
-be the primes. For natural numbers $k > 1$, $m > 0$ and $x$, the number of integers $n \le x$ of
-the form $n = p_{\ell+1}^k + p_{\ell+2}^k + \cdots + p_{\ell+m}^k$ for some $\ell \ge 0$ is at
-most $\pi(\lfloor (x/m)^{1/k} \rfloor)$, the number of primes up to $(x/m)^{1/k}$.
-
-Source: Cathal O'Sullivan, Jonathan P. Sorenson, and Aryn Stahl, *Algorithms and Bounds on the
-Sums of Powers of Consecutive Primes*, INTEGERS 24 (2024), Article A4, Lemma 1 (quoted from
-[6]) (`integers-2024-A4-lem-1`). -/
-public theorem_wanted card_consecutivePrimePowerSums_length_le (k m x : ℕ) (hk : 1 < k)
-    (hm : 0 < m) :
-    {n : ℕ | n ≤ x ∧ ∃ l, n = ∑ i ∈ range m, Nat.nth Nat.Prime (l + i) ^ k}.ncard ≤
-      Nat.primeCounting ⌊((x : ℝ) / m) ^ ((1 : ℝ) / k)⌋₊
 
 /-- **Length of the longest sum of consecutive prime powers.** Let $p_1 < p_2 < \cdots$ be the
 primes, let $k > 1$ be a natural number, and for a natural number $x$ let $M(x, k)$ be the

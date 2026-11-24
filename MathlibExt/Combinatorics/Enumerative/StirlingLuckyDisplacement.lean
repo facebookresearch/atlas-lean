@@ -8,7 +8,10 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.Algebra.BigOperators.Intervals
 public import Mathlib.Data.Fin.VecNotation
+import Mathlib.Data.List.Forall2
+import Mathlib.Data.List.GetD
 import Mathlib.Data.List.OfFn
 import Mathlib.Order.Interval.Finset.Fin
 public import MathlibExt.Combinatorics.Enumerative.LuckyCars
@@ -280,6 +283,155 @@ public theorem stirling_odd_of_lt_all_before (n : ℕ) (w : Fin (2 * n) → ℕ)
   have hcard := (Finset.card_eq_sum_card_image w (Finset.Iio j)).trans (Finset.sum_const_nat pairs)
   rw [Fin.card_Iio, Nat.mul_comm _ 2] at hcard
   exact ⟨_, congrArg (· + 1) hcard⟩
+
+namespace stirlingTotalDisplacement_eq
+
+open MathlibExt.Combinatorics.Enumerative.LuckyCarsWanted
+
+/-- Each greedy outcome is at least the corresponding preference. -/
+private theorem prefs_le_spots {m : ℕ} (l : List (Fin m)) (occ : Finset (Fin m)) :
+    List.Forall₂ (· ≤ ·) l (parkSpotsFrom l occ) := by
+  induction l generalizing occ with
+  | nil => exact .nil
+  | cons a l ih =>
+    refine .cons ?_ (ih _)
+    unfold nextFreeSpot
+    split
+    · rename_i hfree
+      exact (Finset.mem_filter.mp (Finset.min'_mem _ hfree)).2.1
+    · exact le_rfl
+
+/-- A missing spot was never requested. If every car could have used it, each car
+occupies a fresh spot, so fewer than a full lot of spots have been taken. -/
+private theorem missing_spot {m : ℕ} (q : Fin m) (l : List (Fin m)) (occ : Finset (Fin m))
+    (hq : q ∉ occ) (hmiss : q ∉ parkSpotsFrom l occ) :
+    q ∉ l ∧ ((∀ a ∈ l, a ≤ q) → occ.card + l.length < m) := by
+  induction l generalizing occ with
+  | nil => simpa using Finset.card_lt_univ_of_notMem hq
+  | cons a l ih =>
+    simp only [parkSpotsFrom, List.mem_cons, not_or] at hmiss
+    obtain ⟨hhead, htail⟩ := hmiss
+    obtain ⟨hn, hcard⟩ := ih (insert (nextFreeSpot occ a) occ) (by simp [hhead, hq]) htail
+    constructor
+    · simp only [List.mem_cons, not_or]
+      refine ⟨?_, hn⟩
+      rintro rfl
+      exact hhead (IsAdmissibleLuckySet.nextFreeSpot_of_notMem hq).symm
+    · intro hle
+      have ha : a ≤ q := hle a List.mem_cons_self
+      have hfree : (Finset.univ.filter (fun s : Fin m => a ≤ s ∧ s ∉ occ)).Nonempty :=
+        ⟨q, by simp [ha, hq]⟩
+      have hfresh : nextFreeSpot occ a ∉ occ := by
+        rw [nextFreeSpot, dite_eq_left hfree]
+        exact (Finset.mem_filter.mp (Finset.min'_mem _ hfree)).2.2
+      specialize hcard (fun b hb => hle b (List.mem_cons_of_mem _ hb))
+      rw [Finset.card_insert_of_notMem hfresh] at hcard
+      simp only [List.length_cons]
+      omega
+
+/-- Every low spot is requested, and every higher spot is reachable by every car. -/
+private theorem spots_surjective {n : ℕ} {w : Fin (2 * n) → ℕ} (hw : IsStirlingPermutation n w) :
+    Function.Surjective (parkSpots (stirlingPref w)) := by
+  let prefs := List.ofFn (stirlingPref w)
+  have hlen : (parkSpotsFrom prefs ∅).length = 2 * n := by
+    rw [← (prefs_le_spots prefs ∅).length_eq, List.length_ofFn]
+  intro q
+  have hmem : q ∈ parkSpotsFrom prefs ∅ := by
+    by_contra hmiss
+    obtain ⟨hn, hcard⟩ := missing_spot q prefs ∅ (by simp) hmiss
+    by_cases hlow : q.val < n
+    · have hq : q.val + 1 ∈ Finset.Icc 1 n := Finset.mem_Icc.mpr ⟨by omega, by omega⟩
+      obtain ⟨i, hi⟩ := Finset.card_pos.mp (by rw [hw.2.1 _ hq]; decide)
+      apply hn (List.mem_ofFn.mpr ⟨i, Fin.ext (Nat.succ.inj ?_)⟩)
+      exact (IsAdmissibleLuckySet.pref_val_add_one hw i).trans (Finset.mem_filter.mp hi).2
+    · apply Nat.lt_irrefl (2 * n)
+      simpa [prefs] using hcard (List.forall_mem_ofFn_iff.mpr (fun i => by
+        have := IsAdmissibleLuckySet.pref_val_add_one hw i
+        have := (Finset.mem_Icc.mp (hw.1 i)).2
+        change (stirlingPref w i).val ≤ q.val
+        omega))
+  obtain ⟨i, hi, heq⟩ := List.getElem_of_mem hmem
+  refine ⟨⟨i, hlen ▸ hi⟩, ?_⟩
+  exact (List.getD_eq_getElem _ _ hi).trans heq
+
+end stirlingTotalDisplacement_eq
+
+/-- **Total displacement of a Stirling permutation.** Let $w = w_1 \cdots w_{2n}$ be a Stirling
+permutation of order $n$, read as a parking function of length $2n$. Then the total displacement
+of $w$, the sum $d(1) + \dots + d(2n)$ of the displacements of its cars, is $n^2$.
+
+Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
+Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
+Corollary 5.3 (`jis-2024-24.6.7-cor-38`). -/
+public theorem stirlingTotalDisplacement_eq (n : ℕ) (w : Fin (2 * n) → ℕ)
+    (hw : IsStirlingPermutation n w) : stirlingTotalDisplacement w = n ^ 2 := by
+  have hpair := stirlingTotalDisplacement_eq.prefs_le_spots (List.ofFn (stirlingPref w)) ∅
+  have hle (i : Fin (2 * n)) : w i ≤ stirlingParkSpot w i := by
+    have hi : i.val < (List.ofFn (stirlingPref w)).length := by simp
+    have hj := hpair.length_eq ▸ hi
+    have h := hpair.get hi hj
+    simp only [List.get_eq_getElem, List.getElem_ofFn, Fin.eta] at h
+    rw [← IsAdmissibleLuckySet.pref_val_add_one hw i, stirlingParkSpot, parkSpots,
+      List.getD_eq_getElem _ _ hj]
+    exact Nat.succ_le_succ h
+  have balance : stirlingTotalDisplacement w + ∑ i, w i = ∑ i, stirlingParkSpot w i := by
+    unfold stirlingTotalDisplacement stirlingDisplacement
+    rw [← Finset.sum_add_distrib]
+    exact Finset.sum_congr rfl fun i _ => Nat.sub_add_cancel (hle i)
+  -- Group the preferences by letter, each of which occurs twice.
+  have hpref : ∑ i, w i = 2 * ∑ j ∈ Finset.range n, (1 + j) := calc
+    ∑ i, w i = ∑ v ∈ Finset.Icc 1 n, ∑ i : Fin (2 * n) with w i = v, v :=
+      (Finset.sum_fiberwise_of_maps_to' (fun i _ => hw.1 i) id).symm
+    _ = 2 * ∑ v ∈ Finset.Icc 1 n, v := by
+      rw [Finset.mul_sum]
+      exact Finset.sum_congr rfl fun v hv => by simp [hw.2.1 v hv]
+    _ = _ := by
+      rw [← Finset.Ico_add_one_right_eq_Icc, Finset.sum_Ico_eq_sum_range (fun v => v)]
+      simp
+  -- Split the occupied spots into two blocks of length n. Corresponding spots differ by n.
+  let e := Equiv.ofBijective _ (Finite.surjective_iff_bijective.mp
+    (stirlingTotalDisplacement_eq.spots_surjective hw))
+  have hspots := e.sum_comp (fun i : Fin (2 * n) => 1 + i.val)
+  change (∑ i, (1 + (parkSpots (stirlingPref w) i).val)) = _ at hspots
+  simp_rw [stirlingParkSpot, Nat.add_comm _ 1] at balance
+  have hsplit := Finset.sum_range_add (fun j => 1 + j) n n
+  rw [← two_mul] at hsplit
+  rw [hspots, Fin.sum_univ_eq_sum_range, hsplit, hpref] at balance
+  simp_rw [← Nat.add_left_comm n 1] at balance
+  simp only [Finset.sum_add_distrib, Finset.sum_const, Finset.card_range, nsmul_eq_mul,
+    Nat.cast_id] at balance
+  rw [sq]
+  omega
+
+/-- **Number of cars with zero displacement.** Let $n \ge 1$ and let $w$ be a Stirling
+permutation of order $n$, read as a parking function of length $2n$. The number of cars
+$i \in \{1, \dots, 2n\}$ with displacement $d(i) = 0$ is at least $1$ and at most $n$.
+
+Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
+Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
+Corollary 5.6 (`jis-2024-24.6.7-cor-41`). -/
+public theorem stirling_card_zero_displacement (n : ℕ) (hn : 1 ≤ n) (w : Fin (2 * n) → ℕ)
+    (hw : IsStirlingPermutation n w) :
+    1 ≤ (Finset.univ.filter fun i => stirlingDisplacement w i = 0).card ∧
+      (Finset.univ.filter fun i => stirlingDisplacement w i = 0).card ≤ n := by
+  constructor
+  · let first : Fin (2 * n) := ⟨0, by omega⟩
+    apply Finset.card_pos.mpr
+    refine ⟨first, Finset.mem_filter.mpr ⟨Finset.mem_univ _, ?_⟩⟩
+    rw [stirlingDisplacement, stirlingParkSpot, IsAdmissibleLuckySet.parkSpots_first _ first rfl,
+      IsAdmissibleLuckySet.pref_val_add_one hw, Nat.sub_self]
+  · -- Distinct cars with zero displacement occupy distinct spots in the first half of the lot.
+    have hinj := Finite.injective_iff_surjective.mpr
+      (stirlingTotalDisplacement_eq.spots_surjective hw)
+    calc
+      _ ≤ (Finset.range n).card := by
+        apply Finset.card_le_card_of_injOn (fun i => (parkSpots (stirlingPref w) i).val)
+        · intro i hi
+          have hle : stirlingParkSpot w i ≤ w i :=
+            Nat.sub_eq_zero_iff_le.mp (Finset.mem_filter.mp hi).2
+          exact Finset.mem_range.mpr (hle.trans (Finset.mem_Icc.mp (hw.1 i)).2)
+        · exact (Fin.val_injective.comp hinj).injOn
+      _ = n := Finset.card_range n
 
 end
 

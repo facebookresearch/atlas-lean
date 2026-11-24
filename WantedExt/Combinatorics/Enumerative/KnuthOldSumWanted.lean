@@ -15,6 +15,7 @@ public import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 public import MathlibExt.Combinatorics.Enumerative.AlternatingCentralBinomialSum
 public import MathlibExt.Combinatorics.Enumerative.CentralBinomialBernstein
+public import MathlibExt.Combinatorics.Enumerative.ParityWeightedBinomialSum
 
 /-!
 # Knuth's old sum, generalizations and related sums
@@ -962,17 +963,6 @@ public theorem_wanted sum_neg_one_pow_choose_two_pow_centralBinom (n : ℕ) :
         ((2 * k).choose k : ℚ) =
       ∑ k ∈ range (n / 2 + 1), (n.choose (2 * k) : ℚ) / 2 ^ (2 * k) * ((2 * k).choose k : ℚ)
 
-/-- **Even-index against odd-index reciprocal binomial sums.** For every natural number
-$n \ge 1$,
-$$\sum_{k=0}^{\lfloor n/2 \rfloor} \frac{1}{2k+1} \binom{n}{2k} =
-\frac{2^{n-1}}{2^n - 1} \sum_{k=1}^{\lceil n/2 \rceil} \frac{1}{k} \binom{n}{2k-1}.$$
-
-Source: Kunle Adegoke, *A Short Proof of Knuth's Old Sum, Generalizations and Related
-Sums*, INTEGERS 26 (2026), Article A19, Proposition 3 (`integers-2026-A19-prop-3`). -/
-public theorem_wanted sum_choose_even_div_eq_sum_choose_odd_div (n : ℕ) (hn : n ≠ 0) :
-    ∑ k ∈ range (n / 2 + 1), (n.choose (2 * k) : ℚ) / (2 * k + 1) =
-      2 ^ (n - 1) / (2 ^ n - 1) * ∑ k ∈ Icc 1 ((n + 1) / 2), (n.choose (2 * k - 1) : ℚ) / k
-
 /-- **Alternating binomial sum of Catalan numbers.** For every natural number $n$, in the
 rational numbers
 
@@ -1030,18 +1020,6 @@ Sums*, INTEGERS 26 (2026), Article A19, Proposition 5 (`integers-2026-A19-prop-5
 public theorem_wanted sum_choose_centralBinom_div_two_pow (n : ℕ) :
     ∑ k ∈ range (n + 1), (n.choose k : ℚ) / 2 ^ k * ((2 * k).choose k : ℚ) =
       ∑ k ∈ range (n / 2 + 1), (n.choose (2 * k) : ℚ) * 2 ^ n / 2 ^ (4 * k) * ((2 * k).choose k : ℚ)
-
-/-- **Even-index and odd-index binomial sums weighted by powers of $2$.** For every natural
-number $n$,
-$$\sum_{k=0}^{\lfloor n/2 \rfloor} \binom{n}{2k} \frac{2^{n-2k+1} - 2^{2k+1}}{2k+1} =
-\sum_{k=1}^{\lceil n/2 \rceil} \binom{n}{2k-1} \frac{2^{2k-1}}{k}.$$
-
-Source: Kunle Adegoke, *A Short Proof of Knuth's Old Sum, Generalizations and Related
-Sums*, INTEGERS 26 (2026), Article A19, Proposition 5 (`integers-2026-A19-prop-5`). -/
-public theorem_wanted sum_choose_even_two_pow_sub_div (n : ℕ) :
-    ∑ k ∈ range (n / 2 + 1),
-        (n.choose (2 * k) : ℚ) * (2 ^ (n + 1) / 2 ^ (2 * k) - 2 ^ (2 * k + 1)) / (2 * k + 1) =
-      ∑ k ∈ Icc 1 ((n + 1) / 2), (n.choose (2 * k - 1) : ℚ) * 2 ^ (2 * k - 1) / k
 
 /-- **Binomial transform of weighted Catalan numbers.** Write $C_m = \binom{2m}{m}/(m+1)$ for the
 $m$-th Catalan number. For every natural number $n$,

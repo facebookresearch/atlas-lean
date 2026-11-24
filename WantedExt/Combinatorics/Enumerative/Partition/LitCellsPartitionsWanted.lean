@@ -14,6 +14,7 @@ public import Mathlib.Data.Multiset.Sort
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import Mathlib.RingTheory.PowerSeries.PiTopology
 public import MathlibExt.Combinatorics.Enumerative.GaussianBinomial
+public import MathlibExt.Combinatorics.Enumerative.Partition.LitCellsIncreasing
 
 /-!
 # Lit cells in integer partitions — wishlist
@@ -56,16 +57,6 @@ Partitions*, INTEGERS 24 (2024), Article A56, Section 1 (weakly decreasing bargr
 public def decreasingParts {n : ℕ} (p : Nat.Partition n) : List ℕ :=
   p.parts.sort (· ≥ ·)
 
-/-- **Lit cells of a weakly increasing bargraph.** For a partition $p$ of $n$, the number of lit
-cells of $p$, drawn as a weakly increasing bargraph, is defined as the largest part of $p$ plus the
-number of parts of $p$ minus the number of distinct parts of $p$ (the largest part of the empty
-partition is $0$).
-
-Source: Aubrey Blecher, Arnold Knopfmacher, and Michael Mays, *Casting Light on Integer
-Partitions*, INTEGERS 24 (2024), Article A56, Section 3, proof of Proposition 1. -/
-public def litCellsIncreasing {n : ℕ} (p : Nat.Partition n) : ℕ :=
-  p.parts.sup + p.parts.card - p.parts.dedup.card
-
 /-- **Lit nodes of a partition.** The number of lit nodes of a partition $p$, drawn as a weakly
 increasing Ferrers diagram of nodes, is defined as the largest part of $p$ plus the number of
 parts of $p$ minus one; for the empty partition it is $0$.
@@ -107,15 +98,6 @@ Source: Aubrey Blecher, Arnold Knopfmacher, and Michael Mays, *Casting Light on 
 Partitions*, INTEGERS 24 (2024), Article A56, Definition 1. -/
 public noncomputable def trianglePartitionSeries (r : ℕ) : ℤ⟦X⟧ :=
   ∑ s ∈ Finset.range (r + 1), triangularQBinomial r s
-
-/-- **Lit cells of a one-part increasing bargraph.** For every natural number $n \ge 1$, the
-partition $(n)$ of $n$ with a single part has $n$ lit cells as a weakly increasing bargraph.
-
-Source: Aubrey Blecher, Arnold Knopfmacher, and Michael Mays, *Casting Light on Integer
-Partitions*, INTEGERS 24 (2024), Article A56, Section 3 (definition of lit cells). -/
-public theorem litCellsIncreasing_indiscrete {n : ℕ} (hn : n ≠ 0) :
-    litCellsIncreasing (Nat.Partition.indiscrete n) = n := by
-  simp [litCellsIncreasing, hn]
 
 /-- **Lit nodes of a one-part partition.** For every natural number $n \ge 1$, the one-part
 partition $(n)$ of $n$ has exactly $n$ lit nodes.
@@ -164,26 +146,6 @@ Source: Aubrey Blecher, Arnold Knopfmacher, and Michael Mays, *Casting Light on 
 Partitions*, INTEGERS 24 (2024), Article A56, Definition 1. -/
 public theorem trianglePartitionSeries_zero : trianglePartitionSeries 0 = 1 := by
   simp [trianglePartitionSeries, triangularQBinomial_zero_right]
-
-/-- **Generating function for lit cells of weakly increasing bargraphs.** Let
-$P(q) = \sum_{n \ge 0} p(n) q^n$ be the partition generating function, and let
-$L(q) \in \mathbb{Z}[[q]]$ be the power series whose coefficient of $q^n$ is the total number of
-lit cells over all partitions of $n$ drawn as weakly increasing bargraphs. Then
-$$L(q) = 2P(q) \sum_{i \ge 1} \frac{q^i}{1 - q^i} - P(q) \frac{q}{1 - q}$$
-and
-$$L(q) = P(q) \sum_{i \ge 1} \frac{q^i (1 + q^i)}{1 - q^i},$$
-where the sums converge coefficientwise.
-
-Source: Aubrey Blecher, Arnold Knopfmacher, and Michael Mays, *Casting Light on Integer
-Partitions*, INTEGERS 24 (2024), Article A56, Proposition 1, eq. (5)
-(`integers-2024-A56-prop-1`). -/
-public theorem_wanted litCellsIncreasing_generatingFunction :
-    let P : ℤ⟦X⟧ := mk fun n => (Fintype.card (Nat.Partition n) : ℤ)
-    mk (fun n => ∑ p : Nat.Partition n, (litCellsIncreasing p : ℤ)) =
-        2 * P * ∑' i : ℕ, X ^ (i + 1) * invOfUnit (1 - X ^ (i + 1)) 1 -
-          P * X * invOfUnit (1 - X) 1 ∧
-      mk (fun n => ∑ p : Nat.Partition n, (litCellsIncreasing p : ℤ)) =
-        P * ∑' i : ℕ, X ^ (i + 1) * (1 + X ^ (i + 1)) * invOfUnit (1 - X ^ (i + 1)) 1
 
 /-- **Generating function for lit nodes of weakly increasing diagrams.** Let
 $P(q) = \sum_{n \ge 0} p(n) q^n$ be the partition generating function, and let

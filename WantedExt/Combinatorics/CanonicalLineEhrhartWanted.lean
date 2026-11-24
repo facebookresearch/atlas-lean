@@ -15,6 +15,7 @@ public import Mathlib.LinearAlgebra.AffineSpace.AffineSubspace.Basic
 public import Mathlib.Analysis.Asymptotics.Defs
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.Analysis.Complex.Basic
+public import MathlibExt.Combinatorics.CanonicalLineEhrhart
 public import MathlibExt.Combinatorics.Enumerative.OrdinaryEhrhartCount
 public import WantedExt.Combinatorics.WeightedProjectiveSimplexIDPWanted
 import Mathlib
@@ -27,14 +28,6 @@ open Filter Polynomial Set
 @[expose] public noncomputable section
 
 /-! # Ehrhart polynomials with roots on the canonical line -/
-
-/-- **Canonical line.** The canonical line $\mathrm{CL}$ is the vertical line of complex numbers
-with real part $-1/2$, that is, $\mathrm{CL} = \{z \in \mathbb{C} : \operatorname{Re} z = -1/2\}$.
-
-Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Canonical Line*,
-INTEGERS 25 (2025), Article A68, Definition of `CL`.
--/
-public def canonicalLine : Set ℂ := {z | z.re = -(1 / 2 : ℝ)}
 
 /-- **The h-star coefficients of a polynomial.** Let $f$ be a complex polynomial of degree $d$,
 with $d = 0$ for the zero polynomial. For a natural number $i$, the $i$-th $h^*$-coefficient of
@@ -62,46 +55,6 @@ INTEGERS 25 (2025), Article A68, definition of SNN-polynomial.
 -/
 public def IsSNN (f : Polynomial ℂ) : Prop :=
   f ≠ 0 ∧ ∀ i ≤ f.natDegree, 0 ≤ (hStarCoeff f i).re ∧ (hStarCoeff f i).im = 0
-
-/-- **Product of quadratic canonical-line factors.** For a finite list $c_1, \dots, c_m$ of real
-numbers, this is the monic complex polynomial $\prod_{k=1}^{m} (X^2 + X + c_k)$; the empty list
-gives the constant polynomial $1$.
-
-Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Canonical Line*,
-INTEGERS 25 (2025), Article A68, factored definition of CL-polynomials.
--/
-public def clQuadraticProduct (cs : List ℝ) : Polynomial ℂ :=
-  (cs.map fun c => X ^ 2 + X + C (c : ℂ)).prod
-
-/-- **CL-polynomials with given parameters.** Let $f$ be a complex polynomial of degree $d$, let
-$a$ be a real number, and let $c_1, \dots, c_m$ be a list of real numbers. Then $f$ is a
-CL-polynomial with scale $a$ and parameters $c_1, \dots, c_m$ when $a \ne 0$, every $c_i \ge 1/4$,
-$m = \lfloor d/2 \rfloor$, and $f = a \prod_{i=1}^{m} (X^2 + X + c_i)$ if $d$ is even and
-$f = a (2X + 1) \prod_{i=1}^{m} (X^2 + X + c_i)$ if $d$ is odd.
-
-The parameters form a list so that later statements can refer to individual parameters.
-
-Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Canonical Line*,
-INTEGERS 25 (2025), Article A68, definition of CL-polynomial.
--/
-public def IsCLWithParameters (f : Polynomial ℂ) (a : ℝ) (cs : List ℝ) : Prop :=
-  a ≠ 0 ∧
-    (∀ c ∈ cs, (1 / 4 : ℝ) ≤ c) ∧
-    if Even f.natDegree then
-      f = C (a : ℂ) * clQuadraticProduct cs ∧ cs.length = f.natDegree / 2
-    else
-      f = C (a : ℂ) * (2 * X + 1) * clQuadraticProduct cs ∧
-        cs.length = f.natDegree / 2
-
-/-- **CL-polynomials.** A complex polynomial $f$ of degree $d$ is a CL-polynomial when there are
-a real number $a \ne 0$ and real numbers $c_1, \dots, c_m \ge 1/4$ with $m = \lfloor d/2 \rfloor$
-such that $f = a \prod_{i=1}^{m} (X^2 + X + c_i)$ if $d$ is even and
-$f = a (2X + 1) \prod_{i=1}^{m} (X^2 + X + c_i)$ if $d$ is odd.
-
-Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Canonical Line*,
-INTEGERS 25 (2025), Article A68, definition of CL-polynomial.
--/
-public def IsCL (f : Polynomial ℂ) : Prop := ∃ a cs, IsCLWithParameters f a cs
 
 /-- **The basis polynomials $b^d_j$.** For natural numbers $d$ and $j$, $b^d_j$ is the complex
 polynomial $b^d_j = \prod_{i=0}^{d-1} (X + d - j - i)$.
@@ -299,16 +252,6 @@ public def EhrhartCounts {d : ℕ} (vertices : Finset (Fin d → ℤ)) (E : Poly
     (ordinaryEhrhartCount d
       {x : Fin d → ℚ | (fun i => (x i : ℝ)) ∈ latticePolytope vertices} k : ℂ)
 
-/-- **Binomial polynomial.** For an integer $n$ and a natural number $d$, the binomial polynomial
-$\binom{X+n}{d}$ is the real polynomial $\frac{1}{d!} \prod_{i=0}^{d-1} (X + n - i)$.
-
-Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Canonical Line*,
-INTEGERS 25 (2025), Article A68, Lemma 7.
--/
-public def binomialPolynomial (n : ℤ) (d : ℕ) : Polynomial ℝ :=
-  ((d.factorial : ℝ)⁻¹) •
-    ∏ i ∈ Finset.range d, (X + C ((n - (i : ℤ) : ℤ) : ℝ))
-
 /-- **Complex binomial polynomial.** For an integer $n$ and a natural number $d$, the complex
 binomial polynomial $\binom{X+n}{d} \in \mathbb{C}[X]$ is
 $$\binom{X+n}{d} = \frac{1}{d!} \prod_{i=0}^{d-1} (X + n - i).$$
@@ -372,17 +315,6 @@ public theorem_wanted functionalEquation_iff_hStar_palindromic (f : Polynomial �
     f.comp (X - 1) = C ((-1 : ℂ) ^ f.natDegree) * f.comp (-X) ↔
       ∀ i ≤ f.natDegree, hStarCoeff f i = hStarCoeff f (f.natDegree - i)
 
-/-- **Values of CL-polynomials on the canonical line.** If $f$ is a CL-polynomial of degree $d$,
-then for every $z$ on the canonical line there is a real number $r$ with $f(z) = r\, i^d$; that
-is, $f$ maps the canonical line into $\mathbb{R}\, i^d$.
-
-Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Canonical Line*,
-INTEGERS 25 (2025), Article A68, Lemma 2.
--/
-public theorem_wanted cl_value_on_canonicalLine (f : Polynomial ℂ) (hf : IsCL f)
-    (z : ℂ) (hz : z ∈ canonicalLine) :
-    ∃ r : ℝ, f.eval z = (r : ℂ) * Complex.I ^ f.natDegree
-
 /-- **$p^d_0$ CL-interlaces $p^{d+1}_0$.** For every natural number $d \ge 1$, the symmetric
 basis polynomial $p^d_0$ CL-interlaces $p^{d+1}_0$.
 
@@ -415,33 +347,6 @@ INTEGERS 25 (2025), Article A68, Lemma 6.
 -/
 public theorem_wanted two_mul_X_add_one_preserves_snn (f : Polynomial ℂ) (hf : IsSNN f) :
     IsSNN ((2 * X + 1) * f)
-
-/-- **Multiplying a binomial polynomial by a quadratic.** For an integer $n$ and a natural number
-$k$, write $\binom{X+n}{k} = \frac{1}{k!} \prod_{i=0}^{k-1} (X + n - i)$ for the real binomial
-polynomial. Let $d$ and $j$ be natural numbers with $0 < d$ and $j \le d$, and let $c$ be a real
-number. Then
-$$
-(X^2 + X + c) \binom{X+d-j}{d} = \alpha \binom{X+d-j+2}{d+2} + \beta \binom{X+d-j+1}{d+2} +
-\gamma \binom{X+d-j}{d+2},
-$$
-where $\alpha = j^2 + j + c$, $\beta = 2(dj - j^2 + d + 1 - c)$ and
-$\gamma = d^2 - 2dj - j + j^2 + d + c$.
-
-The paper assumes $c \ge 1/4$; the identity holds for every real $c$.
-
-Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Canonical Line*,
-INTEGERS 25 (2025), Article A68, Lemma 7.
--/
-public theorem_wanted quadratic_mul_binomialPolynomial (d j : ℕ) (hd : 0 < d) (hj : j ≤ d)
-    (c : ℝ) :
-    (X ^ 2 + X + C c) * binomialPolynomial ((d : ℤ) - (j : ℤ)) d =
-      C ((j : ℝ) ^ 2 + (j : ℝ) + c) *
-          binomialPolynomial ((d : ℤ) - (j : ℤ) + 2) (d + 2) +
-        C (2 * ((d : ℝ) * (j : ℝ) - (j : ℝ) ^ 2 + (d : ℝ) + 1 - c)) *
-          binomialPolynomial ((d : ℤ) - (j : ℤ) + 1) (d + 2) +
-        C ((d : ℝ) ^ 2 - 2 * (d : ℝ) * (j : ℝ) - (j : ℝ) +
-            (j : ℝ) ^ 2 + (d : ℝ) + c) *
-          binomialPolynomial ((d : ℤ) - (j : ℤ)) (d + 2)
 
 /-- **Fisk's Leibniz rule for interlacing.** Let $f, f_1, g, g_1$ be real polynomials with
 positive leading coefficients, each having only real roots, such that $f$ and $g$ have no common

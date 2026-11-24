@@ -117,14 +117,6 @@ Numbers*, INTEGERS 24 (2024), Article A95, Proposition 3. -/
 public theorem_wanted twelve_le_card_divisors_of_isSZumkeller (n : ℕ) (h : IsSZumkeller n)
     (he : Even n) : 12 ≤ n.divisors.card
 
-/-- **Even s-Zumkeller numbers are divisible by 3.** If $n$ is an even s-Zumkeller number, then
-$3$ divides $n$.
-
-Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
-Numbers*, INTEGERS 24 (2024), Article A95, Proposition 4. -/
-public theorem_wanted three_dvd_of_isSZumkeller (n : ℕ) (h : IsSZumkeller n) (he : Even n) :
-    3 ∣ n
-
 /-- **Even s-Zumkeller numbers are divisible by 6.** Every even s-Zumkeller number is divisible
 by $6$.
 
