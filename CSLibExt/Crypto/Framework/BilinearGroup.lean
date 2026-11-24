@@ -102,6 +102,11 @@ theorem one_ne_zero (B : BilinearGroupData) : (1 : ZMod B.q) ≠ 0 := by
   have hlt := B.hq
   omega
 
+/-- The nonzero residues of `ZMod B.q` are nonempty. -/
+instance nonzeroResidues_nonempty (B : BilinearGroupData) :
+    Nonempty {x : ZMod B.q // x ≠ 0} :=
+  ⟨⟨1, B.one_ne_zero⟩⟩
+
 /-- The target generator is nontrivial. -/
 theorem gT_ne_one (B : BilinearGroupData) : B.gT ≠ 1 := by
   intro h
@@ -365,9 +370,10 @@ and test whether its output `(c, h)` satisfies the pairing check
 
 SDH is standardly a prime-order assumption; this game is stated for the file's
 general cyclic interface, with the inverse-exponent characterization of the win
-check under `[Fact B.q.Prime]` (`sdhCheck_iff`). The win predicate uses the
-pairing-check form rather than `(x + c)⁻¹`: at composite order the reciprocal
-equation is satisfiable where no inverse exists. -/
+check under `IsUnit (x + c)` (`sdhCheck_iff`). The win predicate uses the
+pairing-check form rather than `(x + c)⁻¹`: writing `h = exp1 a`, compat and
+injectivity reduce the pairing check to `a * (x + c) = 1`, so the check rejects
+nonunit `x + c` at every order. -/
 noncomputable def sdhWin (B : BilinearGroupData) (t : ℕ)
     (A : (Fin (t + 1) → B.G1) → B.G2 → B.G2 → PMF (ZMod B.q × B.G1))
     (x : ZMod B.q) : PMF Bool :=
@@ -376,24 +382,24 @@ noncomputable def sdhWin (B : BilinearGroupData) (t : ℕ)
     if B.e h (B.exp2 (Multiplicative.ofAdd (x + c))) = B.e B.g1 B.g2 then true
     else false
 
-/-- The q-SDH game: sample `x` uniformly over all residues of `ZMod q`
-(matching the BDH and DDH games) and run the win experiment, sampling the
+/-- The q-SDH game: sample the secret `x` uniformly from the nonzero residues
+of `ZMod q` (the standard experiment) and run the win experiment, sampling the
 adversary's coins via `PMF.bind`. -/
 noncomputable def sdhGame (B : BilinearGroupData) (t : ℕ)
     (A : (Fin (t + 1) → B.G1) → B.G2 → B.G2 → PMF (ZMod B.q × B.G1)) :
     PMF Bool :=
-  (Cslib.Probability.PMF.uniformOfFintype (ZMod B.q)).bind fun x =>
-    B.sdhWin t A x
+  (Cslib.Probability.PMF.uniformOfFintype {x : ZMod B.q // x ≠ 0}).bind fun x =>
+    B.sdhWin t A x.val
 
 /-- The q-SDH advantage: the winning probability of the q-SDH game. -/
 noncomputable def sdhAdvantage (B : BilinearGroupData) (t : ℕ)
     (A : (Fin (t + 1) → B.G1) → B.G2 → B.G2 → PMF (ZMod B.q × B.G1)) : ℝ :=
   winProb (B.sdhGame t A)
 
-/-- At prime order, away from `c = -x`, the pairing check holds iff `h` is the
+/-- When `x + c` is a unit, the pairing check holds iff `h` is the
 inverse-exponent group element `exp1 ((x + c)⁻¹)`. -/
-theorem sdhCheck_iff (B : BilinearGroupData) [Fact B.q.Prime] (x c : ZMod B.q)
-    (hc : c ≠ -x) (h : B.G1) :
+theorem sdhCheck_iff (B : BilinearGroupData) (x c : ZMod B.q)
+    (hu : IsUnit (x + c)) (h : B.G1) :
     B.e h (B.exp2 (Multiplicative.ofAdd (x + c))) = B.e B.g1 B.g2 ↔
       h = B.exp1 (Multiplicative.ofAdd ((x + c)⁻¹)) := by
   obtain ⟨a, rfl⟩ := B.exp1.surjective h
@@ -417,13 +423,27 @@ theorem sdhCheck_iff (B : BilinearGroupData) [Fact B.q.Prime] (x c : ZMod B.q)
     · intro heq
       rw [heq]
   rw [hT, h1]
-  have hxc : x + c ≠ 0 := fun h0 => hc (eq_neg_of_add_eq_zero_right h0)
+  have hsinv : (x + c)⁻¹ * (x + c) = 1 := ZMod.inv_mul_of_unit _ hu
   constructor
   · intro hmul
-    exact eq_inv_of_mul_eq_one_left hmul
+    calc a.toAdd
+        = a.toAdd * 1 := (mul_one _).symm
+      _ = a.toAdd * ((x + c)⁻¹ * (x + c)) := by rw [hsinv]
+      _ = (x + c)⁻¹ * (a.toAdd * (x + c)) := by ring
+      _ = (x + c)⁻¹ * 1 := by rw [hmul]
+      _ = (x + c)⁻¹ := mul_one _
   · intro ha
     rw [ha]
-    exact inv_mul_cancel₀ hxc
+    exact hsinv
+
+/-- At prime order, away from `c = -x`, the pairing check holds iff `h` is the
+inverse-exponent group element `exp1 ((x + c)⁻¹)`. -/
+theorem sdhCheck_iff_prime (B : BilinearGroupData) [Fact B.q.Prime] (x c : ZMod B.q)
+    (hc : c ≠ -x) (h : B.G1) :
+    B.e h (B.exp2 (Multiplicative.ofAdd (x + c))) = B.e B.g1 B.g2 ↔
+      h = B.exp1 (Multiplicative.ofAdd ((x + c)⁻¹)) :=
+  sdhCheck_iff B x c
+    (isUnit_iff_ne_zero.mpr fun h0 => hc (eq_neg_of_add_eq_zero_right h0)) h
 
 /-- An adversary that always wins induces the constantly-`true` game. -/
 theorem sdhGame_eq_pure_true (B : BilinearGroupData) (t : ℕ)

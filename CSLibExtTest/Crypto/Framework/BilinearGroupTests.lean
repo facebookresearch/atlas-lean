@@ -289,6 +289,56 @@ theorem sdhAdvantage_losing (t : ℕ) :
   rw [sdhGame_losing]
   simp [winProb_pure]
 
+/-- A constant q-SDH adversary outputting `(1, g1)`: it wins exactly the `x = 0`
+branch of the all-residues game, so it always loses the nonzero-secret game. -/
+noncomputable def sdhConstOne (t : ℕ) :
+    (Fin (t + 1) → toy7.G1) → toy7.G2 → toy7.G2 → PMF (ZMod toy7.q × toy7.G1) :=
+  fun _ _ _ => PMF.pure (1, toy7.g1)
+
+/-- The constant `(1, g1)` adversary loses at every nonzero secret exponent: its
+check needs `x + 1 = 1`. -/
+theorem sdhWin_constOne (t : ℕ) (x : ZMod toy7.q) (hx : x ≠ 0) :
+    toy7.sdhWin t (sdhConstOne t) x = PMF.pure false := by
+  classical
+  have hcond : (sdhConstOne t)
+      (fun i => toy7.exp1 (Multiplicative.ofAdd (x ^ (i : ℕ)))) toy7.g2
+      (toy7.exp2 (Multiplicative.ofAdd x)) = PMF.pure (1, toy7.g1) := rfl
+  unfold BilinearGroupData.sdhWin
+  rw [hcond, PMF.pure_map]
+  dsimp only
+  have hne : toy7.e toy7.g1 (toy7.exp2 (Multiplicative.ofAdd (x + 1))) ≠
+      toy7.e toy7.g1 toy7.g2 := by
+    intro hcon
+    have hL : toy7.e toy7.g1 (toy7.exp2 (Multiplicative.ofAdd (x + 1))) =
+        toy7.expT (Multiplicative.ofAdd (x + 1)) := by
+      show toy7.e (toy7.exp1 (Multiplicative.ofAdd (1 : ZMod toy7.q))) _ = _
+      rw [toy7.compat, one_mul]
+    rw [hL, toy7.e_g1_g2] at hcon
+    have hgT : toy7.gT = toy7.expT (Multiplicative.ofAdd (1 : ZMod toy7.q)) := rfl
+    rw [hgT] at hcon
+    have hinj := toy7.expT.injective hcon
+    have hexp : x + 1 = 1 := by simpa using congrArg Multiplicative.toAdd hinj
+    have hx0 : x = 0 := by simpa using congrArg (fun y : ZMod toy7.q => y - 1) hexp
+    exact hx hx0
+  rw [ite_eq_right hne]
+
+/-- The q-SDH game against the constant `(1, g1)` adversary is constantly
+`false`: every sampled secret is nonzero. -/
+theorem sdhGame_constOne (t : ℕ) :
+    toy7.sdhGame t (sdhConstOne t) = PMF.pure false := by
+  unfold BilinearGroupData.sdhGame
+  have h : ∀ x : {x : ZMod toy7.q // x ≠ 0},
+      toy7.sdhWin t (sdhConstOne t) x.val = PMF.pure false :=
+    fun x => sdhWin_constOne t x.val x.property
+  simp only [h, PMF.bind_const]
+
+/-- The constant `(1, g1)` adversary has q-SDH advantage zero. -/
+theorem sdhAdvantage_constOne (t : ℕ) :
+    toy7.sdhAdvantage t (sdhConstOne t) = 0 := by
+  unfold BilinearGroupData.sdhAdvantage
+  rw [sdhGame_constOne]
+  simp [winProb_pure]
+
 /-- The toy model at `q = 5`. -/
 def toy5 : BilinearGroupData := BilinearGroupData.toyModel 5 (by decide)
 
@@ -306,7 +356,7 @@ theorem sdhInvExponent_toy5 : (2 : ZMod toy5.q) = (2 + 1)⁻¹ := by
 theorem sdhWinner_toy5 : toy5.e (toy5.exp1 (Multiplicative.ofAdd (2 : ZMod toy5.q)))
     (toy5.exp2 (Multiplicative.ofAdd ((2 : ZMod toy5.q) + 1))) =
     toy5.e toy5.g1 toy5.g2 :=
-  (BilinearGroupData.sdhCheck_iff toy5 2 1
+  (BilinearGroupData.sdhCheck_iff_prime toy5 2 1
     (by show (1 : ZMod 5) ≠ -(2 : ZMod 5); decide) _).mpr
     (congrArg (fun a : ZMod toy5.q => toy5.exp1 (Multiplicative.ofAdd a))
       sdhInvExponent_toy5)
@@ -316,7 +366,7 @@ theorem sdhNonWinner_toy5 : toy5.e (toy5.exp1 (Multiplicative.ofAdd (3 : ZMod to
     (toy5.exp2 (Multiplicative.ofAdd ((2 : ZMod toy5.q) + 1))) ≠
     toy5.e toy5.g1 toy5.g2 := by
   intro hcon
-  have h := (BilinearGroupData.sdhCheck_iff toy5 2 1
+  have h := (BilinearGroupData.sdhCheck_iff_prime toy5 2 1
     (by show (1 : ZMod 5) ≠ -(2 : ZMod 5); decide) _).mp hcon
   have hinj := toy5.exp1.injective h
   have h3 : (3 : ZMod toy5.q) = (2 + 1)⁻¹ := by
@@ -326,6 +376,38 @@ theorem sdhNonWinner_toy5 : toy5.e (toy5.exp1 (Multiplicative.ofAdd (3 : ZMod to
     show (3 : ZMod 5) ≠ 2
     decide
   exact hne h3
+
+/-- The toy model at `q = 4`. -/
+def toy4 : BilinearGroupData := BilinearGroupData.toyModel 4 (by decide)
+
+/-- Decidable equality on the toy target group (definitionally `ZMod 4`-based). -/
+instance toy4GTDecEq : DecidableEq toy4.GT :=
+  inferInstanceAs (DecidableEq (Multiplicative (ZMod 4)))
+
+/-- At `q = 4`, `x = 0`, `c = 2` (a nonunit of `ZMod 4`): no `h` passes the
+pairing check, since the check reduces to `a * 2 = 1` in `ZMod 4`. -/
+theorem sdhNoWinner_toy4 (h : toy4.G1) :
+    (if toy4.e h (toy4.exp2 (Multiplicative.ofAdd ((0 : ZMod toy4.q) + 2))) =
+      toy4.e toy4.g1 toy4.g2 then true else false) = false := by
+  have hne : toy4.e h (toy4.exp2 (Multiplicative.ofAdd ((0 : ZMod toy4.q) + 2))) ≠
+      toy4.e toy4.g1 toy4.g2 := by
+    obtain ⟨a, rfl⟩ := toy4.exp1.surjective h
+    rw [← ofAdd_toAdd a, toy4.compat, BilinearGroupData.e_g1_g2]
+    intro hcon
+    have hgT : toy4.gT = toy4.expT (Multiplicative.ofAdd (1 : ZMod toy4.q)) := rfl
+    rw [hgT] at hcon
+    have hinj := toy4.expT.injective hcon
+    have hexp : a.toAdd * (0 + 2) = 1 := by
+      simpa using congrArg Multiplicative.toAdd hinj
+    have h02 : ((0 : ZMod toy4.q) + 2) = 2 := by
+      show (0 : ZMod 4) + 2 = 2
+      decide
+    rw [h02] at hexp
+    have hno : ∀ b : ZMod toy4.q, b * 2 ≠ 1 := by
+      show ∀ b : ZMod 4, b * 2 ≠ 1
+      decide
+    exact hno _ hexp
+  rw [ite_eq_right hne]
 
 #print axioms BilinearGroupData.sdhAdvantage_decoding_eq_one
 
