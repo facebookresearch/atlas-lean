@@ -60,3 +60,11 @@ example : ∃ u v : ZMod 15, IsUnit u ∧ IsUnit v ∧
       ¬HasWeightedZeroSumSubseq (squareSet p)
         (fun i : Fin 2 => (ZMod.cast (![u, v] i) : ZMod p)) :=
   exists_pair_units_avoiding_prime_squareWeights 15 (by decide) (by decide)
+
+-- The base need not be prime. The nonzero term 16 reduces to zero modulo 4².
+example : HasWeightedZeroSum (squareSet (4 ^ 4)) (fun _ : Fin 1 => (16 : ZMod (4 ^ 4))) := by
+  refine squareWeightedZeroSum_of_reduction_square 4 4 1 (by decide) (by decide)
+    (by decide) _ ?_
+  refine ⟨fun _ => 1, fun _ => ⟨1, isUnit_one, by simp⟩, ?_⟩
+  have hcast : (ZMod.cast (16 : ZMod (4 ^ 4)) : ZMod (4 ^ 2)) = 0 := by decide
+  simp [hcast]
