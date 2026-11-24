@@ -19,12 +19,12 @@ hash lemma with $m$ sources applies to each conditional law.
 
 ## Depends on
 
-- [Conditional guessing probability and min-entropy](../../randomness-extraction/conditional-guessing-probability-and-min-entropy.md)
-- [Bounded universal hash functions](../../hash-functions/bounded-universal-hash-functions.md)
+- [Conditional guessing probability and min-entropy](conditional-guessing-probability-and-min-entropy.md)
+- [Bounded universal hash functions](../hash-functions/bounded-universal-hash-functions.md)
 
 ## Proof depends on
 
-- [Leftover hash lemma](../../randomness-extraction/leftover-hash-lemma.md)
+- [Leftover hash lemma](leftover-hash-lemma.md)
 
 ## Sources
 
