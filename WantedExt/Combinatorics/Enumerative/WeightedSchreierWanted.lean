@@ -57,16 +57,6 @@ public theorem_wanted weightedSchreierCount_add {k : ℕ} (hk : 2 ≤ k) (l : �
       2 * ∑ i ∈ Finset.range (k - 1), l.choose i * Nat.fib (k - i) + 2 * l.choose (k - 1) +
         ∑ j ∈ Finset.Icc 1 l, j.choose (l - j + k)
 
-/-- **Weighted Schreier counts for $0 < m < k$.** For natural numbers $k \ge 2$ and $m$ with
-$0 < m < k$, the weighted Schreier count satisfies $a_{k,m} = F_{m+1}$, where $F_j$ is the
-$j$-th Fibonacci number ($F_0 = 0$, $F_1 = 1$).
-
-Source: Hùng Việt Chu and Zachary Louis Vasseur, *Weighted Schreier-type Sets and the
-Fibonacci Sequence*, The Fibonacci Quarterly 62 (2024), no. 4, Theorem 1.2, case `k ≥ 2`,
-`-k < ℓ < 0` (`fq-2024-chu08302024rev-thm-1.2`). -/
-public theorem_wanted weightedSchreierCount_of_pos_of_lt {k m : ℕ} (hk : 2 ≤ k) (hm : 0 < m)
-    (hmk : m < k) : weightedSchreierCount k m = Nat.fib (m + 1)
-
 /-- **Weighted Schreier counts equal twice a Fibonacci number for small offsets.** Let
 $a_{k,n}$ be the weighted Schreier count and let $F_n$ denote the Fibonacci numbers, with
 $F_0 = 0$ and $F_1 = 1$. For all $k, \ell \ge 0$ with $k \ge \ell + 2$, we have
@@ -132,18 +122,6 @@ Fibonacci Sequence*, The Fibonacci Quarterly 62 (2024), no. 4, Lemma 3.4
 public theorem_wanted iteratedPartialSum_fib_add_two (k l : ℕ) :
     iteratedPartialSum k (fun n => Nat.fib (n + 2)) l =
       iteratedPartialSum k Nat.fib l + iteratedPartialSum k Nat.fib (l + 1)
-
-/-- **Weighted Schreier counts for $n < k$.** For all natural numbers $n < k$, the weighted
-Schreier count satisfies $a_{k,n} = F_{n+1}$, where $F_j$ is the $j$-th Fibonacci number
-($F_0 = 0$, $F_1 = 1$).
-
-This includes $n = 0$, where $a_{k,0} = 1 = F_1$; the source takes $n$ positive.
-
-Source: Hùng Việt Chu and Zachary Louis Vasseur, *Weighted Schreier-type Sets and the
-Fibonacci Sequence*, The Fibonacci Quarterly 62 (2024), no. 4, Proposition 3.5
-(`fq-2024-chu08302024rev-prop-3.5`). -/
-public theorem_wanted weightedSchreierCount_of_lt {k n : ℕ} (hnk : n < k) :
-    weightedSchreierCount k n = Nat.fib (n + 1)
 
 end
 
