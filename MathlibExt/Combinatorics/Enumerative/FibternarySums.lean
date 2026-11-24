@@ -64,7 +64,7 @@ private theorem decompositions (n : ℕ) :
       n = a + b + c + d) ∧
     (∃ a b c, Bounded 2 0 a ∧ Bounded 2 1 b ∧ Bounded 2 2 c ∧ n = a + b + c) := by
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     rcases Nat.eq_zero_or_pos n with rfl | hn
     · exact ⟨⟨0, 0, 0, 0, bounded_zero .., bounded_zero .., bounded_zero .., bounded_zero .., rfl⟩,
         ⟨0, 0, 0, bounded_zero .., bounded_zero .., bounded_zero .., rfl⟩⟩

@@ -229,7 +229,7 @@ theorem IsKillingVectorField.add {X Y : (x : M) → TangentSpace I x}
   have hYx : MDiffAt (T% Y) x := hY.contMDiff.mdifferentiableAt (by simp)
   have hAddCov : leviCivitaConnection I M (X + Y) x =
       (leviCivitaConnection I M X x) + (leviCivitaConnection I M Y x) :=
-    (isCovariantDerivativeOn (leviCivitaConnection I M)).add hXx hYx
+    (isCovariantDerivativeOn (leviCivitaConnection I M) (s := Set.univ)).add hXx hYx
   have hU : leviCivitaConnection I M (X + Y) x u =
       (leviCivitaConnection I M X x u) + (leviCivitaConnection I M Y x u) := by
     simp [hAddCov]
@@ -254,7 +254,7 @@ theorem IsKillingVectorField.const_smul {X : (x : M) → TangentSpace I x}
   have hXx : MDiffAt (T% X) x := hX.contMDiff.mdifferentiableAt (by simp)
   have hSmulCov : leviCivitaConnection I M (c • X) x =
       c • (leviCivitaConnection I M X x) :=
-    (isCovariantDerivativeOn (leviCivitaConnection I M)).smul_const c hXx
+    (isCovariantDerivativeOn (leviCivitaConnection I M) (s := Set.univ)).smul_const c hXx
   have hU : leviCivitaConnection I M (c • X) x u =
       c • (leviCivitaConnection I M X x u) := by simp [hSmulCov]
   have hV : leviCivitaConnection I M (c • X) x v =

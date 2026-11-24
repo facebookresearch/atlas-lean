@@ -212,14 +212,14 @@ theorem freeGroupToCoprime_ker_le_commutator :
     MonoidHom.ker m.freeGroupToCoprime ≤
       commutator (FreeGroup m.CoprimePrimes) := by
   set φ : (IsDedekindDomain.HeightOneSpectrum (𝓞 K) →₀ ℤ) →+
-      Additive (Abelianization (FreeGroup m.CoprimePrimes)) :=
+      Additive (Group.Abelianization (FreeGroup m.CoprimePrimes)) :=
     (FreeAbelianGroup.lift (fun a : m.CoprimePrimes =>
-      Additive.ofMul (Abelianization.of (FreeGroup.of a)))).comp
+      Additive.ofMul (Group.Abelianization.of (FreeGroup.of a)))).comp
       (Finsupp.toFreeAbelianGroup.comp (Finsupp.comapDomain.addMonoidHom
         (Subtype.val_injective :
           Function.Injective (Subtype.val : m.CoprimePrimes →
             IsDedekindDomain.HeightOneSpectrum (𝓞 K))))) with hφ
-  let r : m.coprimeFractionalIdeals →* Abelianization (FreeGroup m.CoprimePrimes) :=
+  let r : m.coprimeFractionalIdeals →* Group.Abelianization (FreeGroup m.CoprimePrimes) :=
     { toFun := fun I => Additive.toMul (φ (Multiplicative.toAdd
         (FractionalIdeal.factorizationMulEquiv K
           (I : (FractionalIdeal (𝓞 K)⁰ K)ˣ))))
@@ -233,7 +233,7 @@ theorem freeGroupToCoprime_ker_le_commutator :
             (a : (FractionalIdeal (𝓞 K)⁰ K)ˣ) * (b : (FractionalIdeal (𝓞 K)⁰ K)ˣ)
           from rfl,
           map_mul, toAdd_mul, map_add, toMul_add] }
-  have hretract : r.comp m.freeGroupToCoprime = Abelianization.of := by
+  have hretract : r.comp m.freeGroupToCoprime = Group.Abelianization.of := by
     apply FreeGroup.ext_hom
     intro p
     simp only [MonoidHom.comp_apply, m.freeGroupToCoprime_of]
@@ -245,9 +245,9 @@ theorem freeGroupToCoprime_ker_le_commutator :
       Finsupp.comapDomain_single, Finsupp.toFreeAbelianGroup_single, one_smul,
       FreeAbelianGroup.lift_apply_of, toMul_ofMul]
   intro x hx
-  rw [← Abelianization.ker_of, MonoidHom.mem_ker]
+  rw [← Group.Abelianization.ker_of, MonoidHom.mem_ker]
   rw [MonoidHom.mem_ker] at hx
-  have hx2 : (r.comp m.freeGroupToCoprime) x = Abelianization.of x := by rw [hretract]
+  have hx2 : (r.comp m.freeGroupToCoprime) x = Group.Abelianization.of x := by rw [hretract]
   simp only [MonoidHom.comp_apply] at hx2
   rw [hx, map_one] at hx2
   exact hx2.symm
@@ -266,7 +266,7 @@ theorem freeGroupToCoprime_ker :
     MonoidHom.ker m.freeGroupToCoprime =
       commutator (FreeGroup m.CoprimePrimes) :=
   le_antisymm m.freeGroupToCoprime_ker_le_commutator
-    (Abelianization.commutator_subset_ker m.freeGroupToCoprime)
+    (Group.Abelianization.commutator_le_ker m.freeGroupToCoprime)
 
 end Modulus
 

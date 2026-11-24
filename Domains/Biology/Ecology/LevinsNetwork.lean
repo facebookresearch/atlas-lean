@@ -120,19 +120,22 @@ open MathlibExt.Biology.Epidemiology
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-/-- The vector field of the network Levins model: patch `i` is colonized from the occupied
-patches `j` at rates `C i j` when empty (probability `1 - p i`), and goes extinct at rate `e i`,
-`p_i' = (1 - p_i) (C p)_i - e_i p_i`. -/
+/-- The vector field of the network Levins model: patch `i` is colonized from the occupied patches
+`j` at rates `C i j` when empty (probability `1 - p i`), and goes extinct at rate `e i`,
+`p_i' = (1 - p_i) (C p)_i - e_i p_i`. The formula is defined for all real `p`; the probability
+reading is for `p ∈ [0, 1]^ι`. -/
 def field (C : Matrix ι ι ℝ) (e p : ι → ℝ) : ι → ℝ :=
   fun i => (1 - p i) * (C *ᵥ p) i - e i * p i
 
-/-- `p` solves the network Levins system `p' = field C e p` for all `t ≥ 0`. -/
+/-- `p` solves the network Levins system `p' = field C e p` for all `t ≥ 0` (a two-sided derivative,
+also at `t = 0`). -/
 structure IsSolution (C : Matrix ι ι ℝ) (e : ι → ℝ) (p : ℝ → ι → ℝ) : Prop where
   /-- Each patch changes by colonization of its empty fraction minus local extinction. -/
   hasDerivAt : ∀ t, 0 ≤ t → HasDerivAt p (field C e (p t)) t
 
 /-- The **persistence number** `R₀ = ρ(C diag(e)⁻¹)` of the network: the spectral radius of the
-next-generation matrix with new colonizations `F = C` and losses `V = diag(e)`. -/
+next-generation matrix with new colonizations `F = C` and losses `V = diag(e)`. When some `e i = 0`,
+`diag(e)` is singular, its inverse is the zero matrix and `R₀ = 0`; with no patches, `R₀ = 0`. -/
 noncomputable def persistenceNumber (C : Matrix ι ι ℝ) (e : ι → ℝ) : ℝ :=
   NextGenerationMatrix.R0 C (diagonal e)
 
@@ -226,7 +229,8 @@ theorem mem_Icc (hp : IsSolution C e p) (hC : ∀ i j, 0 ≤ C i j) (he : ∀ i,
   exact ⟨hinv (Sum.inl i), sub_nonneg.1 (show 0 ≤ 1 - p t i from hinv (Sum.inr i))⟩
 
 omit [DecidableEq ι] in
-/-- A weighted total `∑_j w_j p_j` has derivative `∑_j w_j field_j` along a solution. -/
+/-- A weighted total `∑_j w_j p_j` has derivative `∑_j w_j field_j` along a solution, at every
+`t ≥ 0`. -/
 theorem hasDerivAt_sum (hp : IsSolution C e p) (w : ι → ℝ) {t : ℝ} (ht : 0 ≤ t) :
     HasDerivAt (fun s => ∑ j, w j * p s j) (∑ j, w j * field C e (p t) j) t :=
   HasDerivAt.fun_sum fun j _ => (hasDerivAt_pi.1 (hp.hasDerivAt t ht) j).const_mul (w j)
@@ -426,8 +430,8 @@ private theorem isIrreducible_of_pos_iff {A B : Matrix ι ι ℝ} (hA : A.IsIrre
     simp only [toQuiver, h]
   exact ⟨hB, hq ▸ hA.connected⟩
 
-/-- The Perron–Frobenius left vector of the network: for irreducible `C` and `e > 0` there are
-`r ≥ R₀` and `w > 0` with `∑_j w_j C_ji = r e_i w_i` for every patch `i`. -/
+/-- The Perron–Frobenius left vector of the network: for at least one patch, irreducible `C` and
+`e > 0` there are `r ≥ R₀` and `w > 0` with `∑_j w_j C_ji = r e_i w_i` for every patch `i`. -/
 theorem exists_perron_left [Nonempty ι] (hC : C.IsIrreducible) (he : ∀ i, 0 < e i) :
     ∃ r : ℝ, ∃ w : ι → ℝ, persistenceNumber C e ≤ r ∧ (∀ i, 0 < w i) ∧
       ∀ i, ∑ j, w j * C j i = r * e i * w i := by
@@ -456,10 +460,11 @@ theorem exists_perron_left [Nonempty ι] (hC : C.IsIrreducible) (he : ∀ i, 0 <
     rw [h1]
     ring
 
-/-- **Uniform weak persistence above the threshold.** Let `C` be irreducible (the colonization
-graph is strongly connected), `e > 0` and `R₀ > 1`. Every solution starting in `[0, 1]^ι` with
-some patch occupied comes arbitrarily close to occupancy `1 - 1/R₀` at arbitrarily late times:
-`limsup_t max_i p_i(t) ≥ 1 - 1/R₀`. -/
+/-- **Uniform weak persistence above the threshold.** Let there be at least one patch, `C`
+irreducible (nonnegative, and for all patches `i`, `j`, `i = j` included, a chain
+`i = k₀, …, k_m = j` with `m ≥ 1` and every `C_{k_l k_{l+1}} > 0`), `e > 0` and `R₀ > 1`. Every
+solution starting in `[0, 1]^ι` with some patch occupied has, for every `δ > 0`, a patch with
+occupancy above `1 - 1/R₀ - δ` at arbitrarily late times: `limsup_t max_i p_i(t) ≥ 1 - 1/R₀`. -/
 theorem exists_lt_of_one_lt [Nonempty ι] (hC : C.IsIrreducible) (he : ∀ i, 0 < e i)
     (hR : 1 < persistenceNumber C e) {p : ℝ → ι → ℝ} (hp : IsSolution C e p)
     (h0 : ∀ i, p 0 i ∈ Icc 0 1) (hpos : ∃ i, 0 < p 0 i) :
@@ -571,8 +576,9 @@ theorem exists_lt_of_one_lt [Nonempty ι] (hC : C.IsIrreducible) (he : ∀ i, 0 
   have h4 : L T' * (V / L T' + 1) = V + L T' := by field_simp
   linarith [hLV t (hT'0.trans htT)]
 
-/-- **Persistence above the threshold.** For irreducible `C`, `e > 0` and `R₀ > 1`, no solution
-starting in `[0, 1]^ι` with some patch occupied goes extinct. -/
+/-- **No extinction above the threshold.** For at least one patch, irreducible `C`, `e > 0` and
+`R₀ > 1`, no solution starting in `[0, 1]^ι` with some patch occupied tends to the empty landscape
+`p = 0`. -/
 theorem not_tendsto_zero_of_one_lt [Nonempty ι] (hC : C.IsIrreducible) (he : ∀ i, 0 < e i)
     (hR : 1 < persistenceNumber C e) {p : ℝ → ι → ℝ} (hp : IsSolution C e p)
     (h0 : ∀ i, p 0 i ∈ Icc 0 1) (hpos : ∃ i, 0 < p 0 i) : ¬ Tendsto p atTop (𝓝 0) := by
@@ -602,9 +608,9 @@ theorem isSolution_uniform {c ε q₀ : ℝ} (hrow : ∀ i, ∑ j, C i j = c) (h
   simp only [field, LevinsMetapopulation.balance, mulVec, dotProduct, ← Finset.sum_mul, hrow]
   ring
 
-/-- **The well-mixed persistence number.** If `C ≥ 0` has every row summing to `c` and every
-patch has extinction rate `ε > 0`, then `R₀ = c / ε`; so `R₀ > 1` is the well-mixed threshold
-`c > ε`. -/
+/-- **The well-mixed persistence number.** If there is at least one patch, `C ≥ 0` has every row
+summing to `c` and every patch has extinction rate `ε > 0`, then `R₀ = c / ε`; so `R₀ > 1` is the
+well-mixed threshold `c > ε`. -/
 theorem persistenceNumber_of_rowSum [Nonempty ι] {c ε : ℝ} (hC : ∀ i j, 0 ≤ C i j)
     (hrow : ∀ i, ∑ j, C i j = c) (hε : 0 < ε) :
     persistenceNumber C (fun _ => ε) = c / ε := by

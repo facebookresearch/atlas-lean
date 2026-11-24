@@ -45,7 +45,7 @@ theorem myerson_payment_dsic {x : ℝ → ℝ}
   unfold myersonPayment
   have hint (a b : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) :
       IntervalIntegrable x MeasureTheory.volume a b :=
-    (hmono.mono (fun _ ht => (le_min ha hb).trans ht.1)).intervalIntegrable
+    (hmono.mono (fun _ (ht : _ ∈ Set.uIcc a b) => (le_min ha hb).trans ht.1)).intervalIntegrable
   rcases le_total b v with h | h
   · have h_add := intervalIntegral.integral_add_adjacent_intervals
       (hint 0 b le_rfl hb) (hint b v hb hv)
