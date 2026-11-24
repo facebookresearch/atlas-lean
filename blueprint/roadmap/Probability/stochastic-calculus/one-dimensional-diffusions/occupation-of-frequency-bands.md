@@ -8,7 +8,7 @@ with $G(p, \xi) = 2\frac{(S(p) - S(a))(S(b) - S(\xi))}{S(b) - S(a)}m(\xi)$ for $
 
 1. The occupation time $A = \int_0^{T^*}\mathbf 1\{c \le X_s \le d\}\,ds$ of a band $[c, d] \subset (a, b)$ has mean $\int_c^dG(p, \xi)\,d\xi$.
 2. Since $G(p, \cdot)$ is continuous on $(a, b)$, $E_p[A]/(d - c) \to G(p, c)$ as $d \downarrow c$.
-3. A single interior frequency $y$ has zero expected occupation, $E_p\int_0^{T^*}\mathbf 1\{X_s = y\}\,ds = 0$. A count of generations at one frequency in a population of $M$ gene copies therefore corresponds to the occupation density times the width $1/M$ of a frequency class: in time units of $M$ generations, the expected number of generations spent at frequency $i/M$ is approximately $M \cdot G(p, i/M)\cdot\frac1M = G(p, i/M)$.
+3. A single interior frequency $y$ has zero expected occupation, $E_p\int_0^{T^*}\mathbf 1\{X_s = y\}\,ds = 0$. A count of generations at one frequency in a population of $M$ gene copies therefore corresponds to the occupation density times the width $1/M$ of a frequency class: in time units of $M$ generations, the expected time spent in a band of width $1/M$ at $y$, divided by $1/M$, tends to $G(p, y)$ as $M \to \infty$ by item 2, which is the sense in which the expected number of generations spent at frequency $i/M = y$ is $G(p, y)$.
 4. The moment recursion for additive path functionals with $g = \mathbf 1_{[c,d]}$ and $n = 2$ gives $E_p[A^2] = 2\int_c^dG(p, \xi)\,u(\xi)\,d\xi$ with $u(\xi) = \int_c^dG(\xi, \eta)\,d\eta$, and hence the variance of the band occupation.
 
 ## Depends on

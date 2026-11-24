@@ -1,14 +1,14 @@
 # Mantel–Haenszel summary odds ratio and test
 
-For subclassifications $i = 1, \dots, K$ with $2 \times 2$ tables $(A_i, B_i; C_i, D_i)$ (diseased with and without the factor; disease-free with and without the factor), row totals $N_{1i}, N_{2i}$, column totals $M_{1i}, M_{2i}$ and total $T_i$, Mantel and Haenszel (1959) compare $A_i$ with its expectation under a relative risk of unity given the margins, $E(A_i) = N_{1i} M_{1i}/T_i$, with variance subject to the fixed margins $V(A_i) = N_{1i} N_{2i} M_{1i} M_{2i}/(T_i^2 (T_i - 1))$; these are the hypergeometric [mean](../../distributions/discrete/hypergeometric-distribution/sum-mul-hypergeometric-real.md) $nK/N$ and [variance](../../distributions/discrete/hypergeometric-distribution/sum-sq-sub-mean-mul-hypergeometric-real.md) $nK(N - K)(N - n)/(N^2(N - 1))$ with $N = T_i$, $K = M_{1i}$ and $n = N_{1i}$, since $A_i$ given the margins is the number of factor-positive individuals among the $N_{1i}$ diseased drawn without replacement from the $T_i$. The overall test statistic, with power against an association in the same direction across subclassifications, is the corrected chi square with one degree of freedom
+For subclassifications $i = 1, \dots, K$ with $2 \times 2$ tables $(A_i, B_i; C_i, D_i)$ (diseased with and without the factor; disease-free with and without the factor), row totals $N_{1i}, N_{2i}$, column totals $M_{1i}, M_{2i}$ and total $T_i$, Mantel and Haenszel (1959) compare $A_i$ with its expectation, given the margins, under the null hypothesis of no association between factor and disease in any subclassification (odds ratio $1$ in every table), $E(A_i) = N_{1i} M_{1i}/T_i$, with variance subject to the fixed margins $V(A_i) = N_{1i} N_{2i} M_{1i} M_{2i}/(T_i^2 (T_i - 1))$; these are the hypergeometric [mean](../../distributions/discrete/hypergeometric-distribution/sum-mul-hypergeometric-real.md) $nK/N$ and [variance](../../distributions/discrete/hypergeometric-distribution/sum-sq-sub-mean-mul-hypergeometric-real.md) $nK(N - K)(N - n)/(N^2(N - 1))$ with $N = T_i$, $K = M_{1i}$ and $n = N_{1i}$, since $A_i$ given the margins is the number of factor-positive individuals among the $N_{1i}$ diseased drawn without replacement from the $T_i$. The overall test statistic, with power against an association in the same direction across subclassifications, is the corrected chi square with one degree of freedom
 
 $$\frac{\bigl(\lvert \sum_i A_i - \sum_i E(A_i) \rvert - \tfrac12\bigr)^2}{\sum_i V(A_i)},$$
 
-and the summary relative risk is
+and the summary odds ratio is
 
 $$R = \frac{\sum_i A_i D_i / T_i}{\sum_i B_i C_i / T_i}.$$
 
-Since $A_i - E(A_i) = (A_i D_i - B_i C_i)/T_i$, $R = 1$ exactly when $\sum_i A_i = \sum_i E(A_i)$, so the chi-square test is a test of the departure of $R$ from unity; and if every subclassification has the same cross-product ratio, $R$ equals it.
+Since $A_i - E(A_i) = (A_i D_i - B_i C_i)/T_i$, $R = 1$ exactly when $\sum_i A_i = \sum_i E(A_i)$, so the chi-square test is a test of the departure of $R$ from $1$; and if every subclassification has the same cross-product ratio, $R$ equals it. Mantel and Haenszel use $R$ to estimate the relative risk of a rare disease from a retrospective study.
 
 ## Depends on
 
@@ -26,4 +26,4 @@ Since $A_i - E(A_i) = (A_i D_i - B_i C_i)/T_i$, $R = 1$ exactly when $\sum_i A_i
 
 ## Sources
 
-- N. Mantel and W. Haenszel, Statistical aspects of the analysis of data from retrospective studies of disease, J. Natl. Cancer Inst. 22 (1959), 719–748, sections on the analysis of subclassified data and on summary relative risk. <https://doi.org/10.1093/jnci/22.4.719>
+- N. Mantel and W. Haenszel, Statistical aspects of the analysis of data from retrospective studies of disease, J. Natl. Cancer Inst. 22 (1959), 719–748, sections on the analysis of subclassified data and on the summary estimate. <https://doi.org/10.1093/jnci/22.4.719>
