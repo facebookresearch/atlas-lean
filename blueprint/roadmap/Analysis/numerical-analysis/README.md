@@ -7,6 +7,7 @@ Algorithms with error analysis: bisection and Newton's method, Euler and Rungeâ€
 - [Barzilaiâ€“Borwein step size](barzilai-borwein-step-size/README.md)
 - [Bisection method](bisection-method/README.md)
 - [CÃ©a's lemma](c-a-s-lemma/README.md)
+- [Error budgets for discretized bar and heat-bath models](error-budgets-for-discretized-bar-and-heat-bath/README.md)
 - [Euler method](euler-method/README.md)
 - [Finite element method in one dimension](finite-element-method-in-one-dimension/README.md)
 - [Line search methods](line-search-methods/README.md)
@@ -16,6 +17,7 @@ Algorithms with error analysis: bisection and Newton's method, Euler and Rungeâ€
 - [Quasi-Newton methods](quasi-newton-methods/README.md)
 - [Rungeâ€“Kutta methods](runge-kutta-methods/README.md)
 - [Strang's lemma](strang-s-lemma/README.md)
+- [Symplectic Euler method](symplectic-euler-method/README.md)
 - [Trust-region methods](trust-region-methods/README.md)
 - [Upwind scheme](upwind-scheme/README.md)
 
