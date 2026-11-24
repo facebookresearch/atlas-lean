@@ -197,22 +197,18 @@ private theorem exists_parity_correction {a b : ℤ} (ha : 0 ≤ a) (hb : 0 ≤ 
     simp [hx0, hy0, ha0, xStep, yStep, Prod.add_def] <;> omega
 
 /--
-**Uniform bound for knight distance on a box.** There is an absolute constant $M \in \mathbb{R}$
-such that for all natural numbers $a$ and $b$ with $1 \le a < b$, $\gcd(a, b) = 1$ and $a + b$
-odd, every lattice point $(x, y) \in \mathbb{Z}^2$ with $\max(|x|, |y|) \le a + b$ has piece
-distance at most $Mb$ for the $(a,b)$-knight's move set
-$N_{a,b} = \{(\pm a, \pm b), (\pm b, \pm a)\}$.
+**Bounded reachability for generalized knights.** Let $a$ and $b$ be natural numbers with
+$1 \le a < b$, $\gcd(a,b)=1$, and $a+b$ odd. Every integer point $(x,y)$ with
+$\max(|x|,|y|) \le a+b$ is a sum of at most $13b$ moves from the $(a,b)$-knight's move set.
+A sum of zero moves is the origin.
 
 Source: Christian Táfula, *Knights Are 24/13 Times Faster than the King*, The Fibonacci Quarterly
 62(3) (2024), Lemma 2.1.
 -/
-public theorem knight_distance_uniform_on_box :
-    ∃ M : ℝ, ∀ a b : ℕ,
-      1 ≤ a → a < b → Nat.Coprime a b → Odd (a + b) →
-      ∀ p : ℤ × ℤ,
-        max |p.1| |p.2| ≤ ((a + b : ℕ) : ℤ) →
-        (pieceDistance (knightMoves (a : ℤ) (b : ℤ)) p : ℝ) ≤ M * b := by
-  refine ⟨13, fun a b ha hab hc ho p hp => ?_⟩
+public theorem exists_knight_path_on_box {a b : ℕ} (ha : 1 ≤ a) (hab : a < b)
+    (hc : Nat.Coprime a b) (ho : Odd (a + b)) {p : ℤ × ℤ}
+    (hp : max |p.1| |p.2| ≤ ((a + b : ℕ) : ℤ)) :
+    ∃ n : ℕ, n ≤ 13 * b ∧ p ∈ n • knightMoves (a : ℤ) (b : ℤ) := by
   have hpar : ((a : ℤ) + b) % 2 = 1 := by
     obtain ⟨k, hk⟩ := ho
     omega
@@ -254,8 +250,29 @@ public theorem knight_distance_uniform_on_box :
       have h : q.2 + 2 * y = p.2 := by dsimp [y]; omega
       linear_combination h + 2 * hys
   rw [heq] at hmem
-  have hdist := distance_le_of_mem hmem
-  have hbnd : pieceDistance (knightMoves (a : ℤ) b) p ≤ 13 * b := by omega
+  refine ⟨_, ?_, hmem⟩
+  omega
+
+/--
+**Uniform bound for knight distance on a box.** There is an absolute constant $M \in \mathbb{R}$
+such that for all natural numbers $a$ and $b$ with $1 \le a < b$, $\gcd(a, b) = 1$ and $a + b$
+odd, every lattice point $(x, y) \in \mathbb{Z}^2$ with $\max(|x|, |y|) \le a + b$ has piece
+distance at most $Mb$ for the $(a,b)$-knight's move set
+$N_{a,b} = \{(\pm a, \pm b), (\pm b, \pm a)\}$.
+
+Source: Christian Táfula, *Knights Are 24/13 Times Faster than the King*, The Fibonacci Quarterly
+62(3) (2024), Lemma 2.1.
+-/
+public theorem knight_distance_uniform_on_box :
+    ∃ M : ℝ, ∀ a b : ℕ,
+      1 ≤ a → a < b → Nat.Coprime a b → Odd (a + b) →
+      ∀ p : ℤ × ℤ,
+        max |p.1| |p.2| ≤ ((a + b : ℕ) : ℤ) →
+        (pieceDistance (knightMoves (a : ℤ) (b : ℤ)) p : ℝ) ≤ M * b := by
+  refine ⟨13, fun a b ha hab hc ho p hp => ?_⟩
+  obtain ⟨n, hn, hmem⟩ := exists_knight_path_on_box ha hab hc ho hp
+  have hbnd : pieceDistance (knightMoves (a : ℤ) b) p ≤ 13 * b :=
+    (distance_le_of_mem hmem).trans hn
   exact_mod_cast hbnd
 
 end
