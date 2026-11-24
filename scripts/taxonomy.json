@@ -15709,7 +15709,7 @@
   "Domains/Biology/Biophysics/PharmacokineticObservation/Coverage": {"to": "Probability/statistical-estimation", "title": "Coverage of confidence sets"},
   "Domains/Biology/Biophysics/PharmacokineticObservation/FixedLaw": {"to": "Biology/pharmacokinetics", "title": "Pharmacokinetic observation models"},
   "Domains/Biology/Biophysics/PharmacokineticObservation/OralCurve": {"to": "Biology/pharmacokinetics", "title": "Pharmacokinetic observation models"},
-  "Domains/Biology/Biophysics/PharmacokineticObservation/Population": {"to": "Probability/linear-models-multivariate", "title": "Random-intercept models and the design effect"},
+  "Domains/Biology/Biophysics/PharmacokineticObservation/Population": {"to": "Biology/pharmacokinetics", "title": "Pharmacokinetic observation models"},
   "Domains/Biology/Biophysics/SaturableElimination": {"to": "Biology/pharmacokinetics", "title": "Saturable Michaelis–Menten elimination"},
   "Domains/Biology/Biophysics/SaturableEliminationBoundary": {"to": "Biology/pharmacokinetics", "title": "Critical infusion rate in saturable elimination"},
   "Domains/Biology/Demography/Leslie": {"to": "Biology/population-dynamics", "title": "Leslie matrix model"},
