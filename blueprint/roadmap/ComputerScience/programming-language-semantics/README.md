@@ -15,3 +15,4 @@ Operational and denotational semantics of programming languages and correctness 
 
 - [Lexing and parsing](lexing-and-parsing/README.md)
 - [Static analysis](static-analysis/README.md)
+- [Compiler correctness](compiler-correctness/README.md)
