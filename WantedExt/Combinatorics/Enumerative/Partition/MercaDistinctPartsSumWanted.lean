@@ -28,20 +28,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Merca's identity for different parts in a residue class.** Let $m$, $r$ and $n$ be natural
-numbers with $r < m$, let $a_{r,m}(n)$ be the sum, over all partitions of $n$, of the different
-parts congruent to $r$ modulo $m$, each counted once per partition whatever its multiplicity, and
-let $p(k)$ be the number of partitions of $k$. Then
-$$a_{r,m}(n) = \sum_{j \ge 0,\ mj + r \le n} (mj + r)\, p(n - mj - r).$$
-
-Source: Cristina Ballantine, *Combinatorial Proofs of Merca's Identities Involving the Sum of
-Different Parts Congruent to r Modulo m in All Partitions of n*, INTEGERS 24 (2024),
-Article A15, Theorem 1 (i) (`integers-2024-A15-thm-1`). -/
-public theorem_wanted sumDistinctPartsModEq_eq_sum_partition (m r n : ℕ) (hrm : r < m) :
-    sumDistinctPartsModEq m r n =
-      ∑ j ∈ (Finset.range (n + 1)).filter (fun j => m * j + r ≤ n),
-        (m * j + r) * Fintype.card (Nat.Partition (n - (m * j + r)))
-
 /-- **Different parts in a residue class and even-minus-odd partition counts.** Let $m$, $r$ and
 $n$ be natural numbers with $r < m$, and for $k \ge 0$ let $a_{r,m}(k)$ be the sum, over all
 partitions of $k$, of the different parts congruent to $r$ modulo $m$, each counted once per

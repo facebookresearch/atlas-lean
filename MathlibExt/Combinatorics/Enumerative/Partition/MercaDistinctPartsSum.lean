@@ -12,11 +12,12 @@ public import Mathlib.Combinatorics.Enumerative.Partition.Basic
 import MathlibExt.Combinatorics.Enumerative.Partition.Counting
 
 /-!
-# Merca's identities for sums of different parts
+# Merca's sums of different parts
 
-Merca's identity for `sumDistinctPartsMultAtLeast` counts partitions by removing copies
-of a fixed part. This module also gives the small values of the distinct-part sums,
-Dyson's rank and the partition crank.
+Merca's identities express two sums over the partitions of `n` in terms of partition numbers.
+The first sums distinct parts in a residue class, and the second sums distinct parts occurring
+at least `m` times. The module also gives the values of these sums, Dyson's rank and the
+partition crank on small partitions.
 -/
 
 namespace MetaMathlibExt
@@ -116,6 +117,52 @@ public theorem partitionCrank_small_values (μ : Nat.Partition 0) (ν : Nat.Part
     partitionCrank μ = 0 ∧ partitionCrank ν = -1 := by
   refine ⟨?_, ?_⟩ <;>
     simp [partitionCrank, Nat.Partition.partition_zero_parts, Nat.Partition.partition_one_parts]
+
+/-- **Merca's identity for different parts in a residue class.** Let $m$, $r$ and $n$ be natural
+numbers with $r < m$, let $a_{r,m}(n)$ be the sum, over all partitions of $n$, of the different
+parts congruent to $r$ modulo $m$, each counted once per partition whatever its multiplicity, and
+let $p(k)$ be the number of partitions of $k$. Then
+$$a_{r,m}(n) = \sum_{j \ge 0,\ mj + r \le n} (mj + r)\, p(n - mj - r).$$
+
+Source: Cristina Ballantine, *Combinatorial Proofs of Merca's Identities Involving the Sum of
+Different Parts Congruent to r Modulo m in All Partitions of n*, INTEGERS 24 (2024),
+Article A15, Theorem 1 (i) (`integers-2024-A15-thm-1`). -/
+public theorem sumDistinctPartsModEq_eq_sum_partition (m r n : ℕ) (hrm : r < m) :
+    sumDistinctPartsModEq m r n =
+      ∑ j ∈ (Finset.range (n + 1)).filter (fun j => m * j + r ≤ n),
+        (m * j + r) * Fintype.card (Nat.Partition (n - (m * j + r))) := by
+  let partSizes := (Finset.range (n + 1)).filter (fun x => x % m = r)
+  calc
+    sumDistinctPartsModEq m r n =
+        ∑ x ∈ partSizes, ∑ _μ ∈ Finset.univ.filter (fun μ : n.Partition => x ∈ μ.parts), x := by
+      apply Finset.sum_comm' (f := fun _ x => x)
+      intro μ x
+      simp only [partSizes, Finset.mem_univ, true_and, Finset.mem_filter, Multiset.mem_toFinset,
+        Finset.mem_range, Nat.lt_succ_iff]
+      exact ⟨fun ⟨hx, hr⟩ => ⟨hx, μ.le_of_mem_parts hx, hr⟩, fun ⟨hx, _, hr⟩ => ⟨hx, hr⟩⟩
+    _ = ∑ x ∈ partSizes, x * Fintype.card (Nat.Partition (n - x)) := by
+      refine Finset.sum_congr rfl fun x hx => ?_
+      obtain rfl | hxpos := Nat.eq_zero_or_pos x
+      · simp
+      have hxn := Finset.mem_range_succ_iff.mp (Finset.mem_filter.mp hx).1
+      rw [Finset.sum_const, smul_eq_mul, Nat.mul_comm, ← Fintype.card_subtype,
+        Fintype.card_congr (Nat.Partition.partitionWithPartEquiv hxpos hxn)]
+    _ = _ := by
+      symm
+      apply Finset.sum_bij (fun j _ => m * j + r)
+      · intro j hj
+        exact Finset.mem_filter.mpr ⟨Finset.mem_range_succ_iff.mpr (Finset.mem_filter.mp hj).2,
+          (Nat.mul_add_mod ..).trans (Nat.mod_eq_of_lt hrm)⟩
+      · intro i _ j _ hij
+        exact Nat.eq_of_mul_eq_mul_left (by omega : 0 < m) (Nat.add_right_cancel hij)
+      · intro x hx
+        obtain ⟨hxn, hxr⟩ := Finset.mem_filter.mp hx
+        have hrepr : m * (x / m) + r = x := hxr ▸ Nat.div_add_mod x m
+        refine ⟨x / m, Finset.mem_filter.mpr ⟨?_, ?_⟩, hrepr⟩
+        · exact Finset.mem_range.mpr ((Nat.div_le_self ..).trans_lt (Finset.mem_range.mp hxn))
+        · exact hrepr.le.trans (Finset.mem_range_succ_iff.mp hxn)
+      · intros
+        rfl
 
 open Finset
 
