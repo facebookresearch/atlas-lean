@@ -6,9 +6,10 @@ circle $|w - c| = R$ is the continuous $n$-linear map $p_n \colon \mathbb{C}^n \
 
 $$p_n(v_1, \dots, v_n) = v_1 \cdots v_n \cdot \frac{1}{2 \pi i} \oint_{|w - c| = R} \frac{f(w)}{(w - c)^{n+1}} \, dw,$$
 
-the circle being run through once counterclockwise. If $f$ is complex differentiable at every point of
-the closed disc $|z - c| \le R$, then the power series $\sum_n p_n$ has radius of convergence at least
-$R$, and for every $z$ with $|z - c| < R$
+the circle being run through once counterclockwise. Let $D$ be the closed disc $|z - c| \le R$. If $f$
+is complex differentiable within $D$ at each point of $D$, limits at the boundary points being taken
+through $D$, then the power series $\sum_n p_n$ has radius of convergence at least $R$, and for every $z$
+with $|z - c| < R$
 
 $$f(z) = \sum_{n \ge 0} p_n(z - c, \dots, z - c) = \sum_{n \ge 0} (z - c)^n \, \frac{1}{2 \pi i} \oint_{|w - c| = R} \frac{f(w)}{(w - c)^{n+1}} \, dw,$$
 
