@@ -87,6 +87,15 @@ example :
     fixedTilingCount (id : ZMod 2 × ZMod 2 → ZMod 2 × ZMod 2) (Equiv.swap (0 : Fin 2) 1) = 0 := by
   decide +kernel
 
+-- On the smallest even square, swapping the two designs allows one choice per opposite pair.
+example : fixedTilingCount (cellR2 2 2) (Equiv.swap (0 : Fin 2) 1) = 4 := by
+  decide +kernel
+
+-- An even square has no fixed tilings when there are no designs.
+example : fixedTilingCount (cellR2 4 4) (1 : Equiv.Perm Empty) = 0 := by
+  rw [squareGrid_r2_even 4 1 (one_pow 2) (by decide), Fintype.card_empty]
+  decide
+
 -- On the 2 × 2 torus the zero shift fixes 16 binary tilings and each other shift fixes four.
 example : torusShiftSum 2 2 id (1 : Equiv.Perm (Fin 2)) = 28 := by
   decide +kernel
