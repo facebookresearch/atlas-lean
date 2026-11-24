@@ -10,3 +10,4 @@
 - [Hurwitz criterion for block lower-triangular matrices](is-hurwitz-from-blocks-zero-iff.md)
 - [Threshold theorem, stability half, conditional decay form](global-solution-decay-of-r0-lt-one.md)
 - [Threshold theorem, instability half, spectral form](exists-re-pos-jacobian-of-one-lt-r0.md)
+- [Next-generation operator and the basic reproduction ratio](next-generation-operator-characterization-of-r0-diekmann-heesterbeek-m.md)

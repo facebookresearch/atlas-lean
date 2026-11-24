@@ -10,6 +10,7 @@ These articles concern inference of evolutionary trees, networks and recorded ce
 - [Short quartet methods reconstruct trees from polylogarithmically many sites](short-quartet-methods-reconstruct-trees-from-polynomially-many-sites.md)
 - [The LCA reconciliation is optimal for duplication, loss and deep coalescence costs](lca-reconciliation-minimizes-duplication-and-loss-costs-over-all-recon.md)
 - [Maximum likelihood equals maximum parsimony under no common mechanism](maximum-likelihood-equals-maximum-parsimony-under-no-common-mechanism.md)
+- [Steel's conjecture: logarithmic sequence length below the Kesten–Stigum threshold](steels-conjecture-o-log-n-sequence-length-suffices-below-the-kesten-st.md)
 
 ## Networks and recorded lineages
 
@@ -23,3 +24,4 @@ These articles concern inference of evolutionary trees, networks and recorded ce
 - [Rooted SPR distance equals the maximum agreement forest number](rooted-spr-distance-equals-maximum-agreement-forest.md)
 - [TBR distance equals the maximum agreement forest number](tbr-distance-equals-maximum-agreement-forest.md)
 - [Maximum agreement subtree of two trees in polynomial time](maximum-agreement-subtree-of-two-leaf-labelled-trees-in-polynomial-tim.md)
+- [Polynomial-time geodesics in tree space (Owen–Provan)](polynomial-time-geodesics-in-bhv-tree-space-owen-provan-gtp-algorithm.md)

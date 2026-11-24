@@ -27,3 +27,5 @@
 - [Triangle inequality for edit distance](edit-distance-triangle.md)
 - [Edit distance between distinct lists is positive](edit-distance-pos-iff.md)
 - [Four-Russians edit distance in subquadratic time](four-russians-edit-distance-in-subquadratic-time.md)
+- [Edit distance has no strongly subquadratic algorithm unless SETH fails](edit-distance-has-no-strongly-subquadratic-algorithm-unless-seth-fails.md)
+- [Myers' bit-vector algorithm for approximate string matching](myers-bit-vector-algorithm-for-approximate-string-matching.md)

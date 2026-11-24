@@ -54,3 +54,7 @@
 - [Basic reproduction number of the SIS model from the derivatives](r0-deriv-eq.md)
 - [Linearized SIS threshold, stable side](is-hurwitz-iff.md)
 - [Linearized SIS threshold, unstable side](exists-re-pos-iff.md)
+
+## The stochastic SIS epidemic
+
+- [Gumbel limit for extinction times in the subcritical SIS logistic epidemic](brightwell-house-luczak-gumbel-limit-for-extinction-times-in-the-subcr.md)

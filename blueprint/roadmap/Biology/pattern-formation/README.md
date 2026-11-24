@@ -10,3 +10,4 @@ Reaction–diffusion models of biological spread and spatial patterning, includi
 - [Reduced dynamics of meandering spiral waves](reduced-dynamics-of-meandering-spiral-waves.md)
 
 - [Threshold for pulse initiation in excitable media](threshold-for-pulse-initiation-in-excitable-media.md)
+- [Travelling pulses in nerve models](travelling-pulses-in-nerve-models/README.md)

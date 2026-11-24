@@ -10,3 +10,5 @@ Compartmental, renewal and branching-process models of infectious disease transm
 - [Superspreading and negative-binomial offspring](superspreading-and-negative-binomial-offspring/README.md)
 
 - [Epidemics on networks](epidemics-on-networks/README.md)
+- [Global stability of compartmental models](global-stability-of-compartmental-models/README.md)
+- [Stochastic epidemic thresholds](stochastic-epidemic-thresholds/README.md)

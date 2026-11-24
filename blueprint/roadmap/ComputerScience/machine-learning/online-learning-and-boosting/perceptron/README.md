@@ -21,3 +21,7 @@
 - [Trained weights classify every example](train-classifies.md)
 - [Every failed training pass adds a mistake](le-run-of-train-eq-none.md)
 - [The perceptron converges](train-converges.md)
+
+## Capacity of linear threshold functions
+
+- [Cover's function-counting theorem](covers-function-counting-theorem.md)

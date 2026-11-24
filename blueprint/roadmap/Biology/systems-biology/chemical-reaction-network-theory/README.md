@@ -10,3 +10,8 @@
 - [Absolute concentration robustness (Shinar–Feinberg)](absolute-concentration-robustness-shinar-feinberg.md)
 - [Toric dynamical systems: the moduli of complex-balancing rate constants](toric-dynamical-systems-moduli-of-complex-balancing-rate-constants.md)
 - [Detailed balance and complex balance under formal balancing](detailed-balance-iff-complex-balance-under-formal-balancing-feinberg-c.md)
+- [Deficiency one theorem](feinberg-deficiency-one-theorem.md)
+- [Species–reaction graph criterion for unique equilibria (Craciun–Feinberg)](species-reaction-graph-theorem-craciun-feinberg-ii.md)
+- [Criterion for toric steady states](toric-steady-states-criterion-perez-millan-dickenstein-shiu-conradi.md)
+- [A degree-theory criterion for unique versus multiple equilibria](degree-theory-criterion-for-unique-vs-multiple-equilibria-conradi-feli.md)
+- [Minimal siphons via primary decomposition](minimal-siphons-via-primary-decomposition-shiu-sturmfels.md)

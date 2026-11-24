@@ -19,3 +19,4 @@ See [single-input single-output linear systems](../../../Analysis/control-theory
 ## Robustness
 
 - [Integral feedback gives robust perfect adaptation](output-eq-zero-of-integral-feedback.md)
+- [Antithetic integral feedback and stochastic set-point tracking](antithetic-integral-feedback-ensures-stochastic-set-point-tracking.md)

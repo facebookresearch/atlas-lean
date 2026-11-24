@@ -21,3 +21,4 @@ Dynamics of biochemical reaction networks and gene regulatory circuits: mass-act
 
 - [Minimal experiments for identifiable compartmental models](minimal-experiments-for-identifiable-compartmental-models.md)
 - [Multisite phosphorylation](multisite-phosphorylation/README.md)
+- [Kinetic proofreading](kinetic-proofreading/README.md)

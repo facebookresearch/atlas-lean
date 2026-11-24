@@ -14,3 +14,4 @@ The general principles come first: an LDP transfers along continuous maps (the [
 - [Sanov's theorem](sanov-s-theorem/README.md)
 - [Gärtner–Ellis theorem (differentiable case)](satisfies-ldp-of-tendsto-scaled-cgf.md)
 - [Ben Arous–Guionnet large deviations](ben-arous-guionnet-large-deviations/README.md)
+- [Eyring–Kramers formula](eyring-kramers-formula/README.md)
