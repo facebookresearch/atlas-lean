@@ -10709,6 +10709,7 @@
   "MathlibExt/Combinatorics/Enumerative/StirlingFirstAddition": {"to": "Combinatorics/stirling-bell-eulerian/stirling-lah-numbers", "title": "Stirling numbers of the first kind"},
   "MathlibExt/Combinatorics/Enumerative/StirlingFirstHigherColumns": {"to": "Combinatorics/stirling-bell-eulerian/stirling-lah-numbers", "title": "Lee's identities for Stirling numbers"},
   "MathlibExt/Combinatorics/Enumerative/StirlingFirstShiftedExpansion": {"to": "Combinatorics/stirling-bell-eulerian/stirling-lah-numbers", "title": "Lee's identities for Stirling numbers"},
+  "MathlibExt/Combinatorics/Enumerative/StirlingFirstSmallerRows": {"to": "Combinatorics/stirling-bell-eulerian/stirling-lah-numbers", "title": "Lee's identities for Stirling numbers"},
   "MathlibExt/Combinatorics/Enumerative/StirlingLuckyDisplacement": {"to": "Combinatorics/parking-functions", "title": "Lucky and displacement statistics of Stirling permutations"},
   "MathlibExt/Combinatorics/Enumerative/StirlingMatrices": {"to": "Combinatorics/stirling-bell-eulerian/stirling-lah-numbers", "title": "Stirling matrices"},
   "MathlibExt/Combinatorics/Enumerative/StirlingMatrix": {"to": "Combinatorics/stirling-bell-eulerian/generalized-stirling-numbers", "title": "α-Stirling matrices"},
