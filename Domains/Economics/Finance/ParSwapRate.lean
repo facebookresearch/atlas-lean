@@ -77,8 +77,8 @@ theorem swapFloatingLeg_eq (D : ℕ → ℝ) (T : ℕ) (hD0 : D 0 = 1) :
   simp_rw [hsimp]
   rw [Finset.sum_range_sub' D T, hD0]
 
-/-- The fixed leg at the par rate equals the floating leg, when the annuity
-denominator is nonzero (Atlas roadmap FI03.T04). -/
+/-- The fixed leg at the par rate equals the floating leg, when `D 0 = 1` and the
+annuity denominator is nonzero (Atlas roadmap FI03.T04). -/
 theorem parSwapRate_eq_fixed_eq_floating (D : ℕ → ℝ) (T : ℕ) (hD0 : D 0 = 1)
     (hden : (∑ t ∈ Finset.Icc 1 T, D t) ≠ 0) :
     swapFixedLeg (parSwapRate D T) D T = swapFloatingLeg D T := by

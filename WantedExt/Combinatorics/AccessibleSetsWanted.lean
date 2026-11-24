@@ -81,15 +81,6 @@ public theorem_wanted rLarge_sdiff_finite (r : ℕ) (D F : Set ℕ)
     (hD : IsRLarge r D) (hF : F.Finite) :
     IsRLarge r (D \ F)
 
-/-- **Largeness is partition regular.** If $D_1, D_2 \subseteq \mathbb{N}$ and their union
-$D = D_1 \cup D_2$ is large, then $D_1$ is large or $D_2$ is large.
-
-Source: Oscar Quester, *On Some Properties of Accessible Sets*, INTEGERS 25 (2025), Article A64,
-        Theorem 4. -/
-public theorem_wanted large_union_partition (D D₁ D₂ : Set ℕ)
-    (hD : D = D₁ ∪ D₂) (hlarge : IsLarge D) :
-    IsLarge D₁ ∨ IsLarge D₂
-
 /-- **Sets growing by a factor of three are not 2-large.** Let $d_0 < d_1 < d_2 < \cdots$ be a
 strictly increasing sequence of natural numbers with $d_0 > 0$ and $d_{n+1} \ge 3 d_n$ for every
 $n \in \mathbb{N}$, and let $D = \{d_n : n \in \mathbb{N}\}$. Then $D$ is not $2$-large.
@@ -166,19 +157,6 @@ public theorem_wanted accessible_of_colored_subset_diffsequences (c r : ℕ)
             (fun i => (((x i : {n : ℕ+ // (n : ℕ) ∈ D}) : ℕ+) : ℕ))) :
     IsRAccessible r {e : ℕ | ∃ d ∈ D, e = d + c}
 
-/-- **Sets containing their own long diffsequences are 2-accessible.** Let $D$ be a set of
-positive integers. If for every $k \ge 1$ there are positive integers $x_1, \dots, x_k$, all in
-$D$, that form a $D$-diffsequence, then $D$ is $2$-accessible.
-
-Source: Oscar Quester, *On Some Properties of Accessible Sets*, INTEGERS 25 (2025), Article A64,
-        Corollary 2. -/
-public theorem_wanted two_accessible_of_internal_diffsequences (D : Set ℕ)
-    (hD : D ⊆ Set.Ioi 0)
-    (hseq : ∀ k : ℕ, 1 ≤ k → ∃ x : Fin k → ℕ+,
-      (∀ i, (x i : ℕ) ∈ D) ∧
-        IsDDiffSequence D (fun i => ((x i : ℕ) : ℤ))) :
-    IsRAccessible 2 D
-
 /-- **Integral quotients of an accessible set.** Let $d \ge 1$ and $r$ be natural numbers and let
 $A$ be a set of natural numbers. If $A$ is $rd$-accessible, then the set $\{n \ge 1 : nd \in A\}$,
 that is, the positive integers of the form $a/d$ with $a \in A$, is $r$-accessible.
@@ -188,27 +166,6 @@ Source: Oscar Quester, *On Some Properties of Accessible Sets*, INTEGERS 25 (202
 public theorem_wanted accessible_integral_quotients (A : Set ℕ) (d r : ℕ)
     (hd : 0 < d) (hA : IsRAccessible (r * d) A) :
     IsRAccessible r {n : ℕ | 0 < n ∧ ∃ a ∈ A, a = n * d}
-
-/-- **Colorings avoiding long diffsequences under fractional-part bounds.** Let $r \ge 1$, let
-$d_0 < d_1 < \cdots$ be a strictly increasing sequence of natural numbers with $d_0 > 0$, and let
-$D = \{d_n : n \ge 0\}$. Suppose there are real numbers $\alpha$ and $\varepsilon > 0$ such that
-for every $n$ the fractional part of $\alpha d_n$ lies in the closed interval
-$[\varepsilon, (r-1)/r]$. Then there is a coloring of the positive integers with $r$ colors that
-has no monochromatic $D$-diffsequence of positive integers of length
-$\lceil 1/(r\varepsilon) \rceil + 1$.
-
-Source: Oscar Quester, *On Some Properties of Accessible Sets*, INTEGERS 25 (2025), Article A64,
-        Theorem 12. -/
-public theorem_wanted coloring_avoids_diffsequence_of_fractional_bounds
-    (r : ℕ) (hr : 1 ≤ r) (D : Set ℕ) (d : ℕ → ℕ)
-    (hmono : StrictMono d) (hD : D = Set.range d) (hd0 : 0 < d 0)
-    (α ε : ℝ) (hε : 0 < ε)
-    (hfrac : ∀ n : ℕ, Int.fract (α * (d n : ℝ)) ∈
-      Set.Icc ε (((r - 1 : ℕ) : ℝ) / (r : ℝ))) :
-    ∃ c : ℕ+ → Fin r,
-      ¬ ∃ x : Fin (Nat.ceil (((r : ℝ) * ε)⁻¹) + 1) → ℕ+,
-        IsMonochromatic c x ∧
-          IsDDiffSequence D (fun i => ((x i : ℕ) : ℤ))
 
 /-- **A 2-coloring with no monochromatic 6-term progression with positive Fibonacci gap.** There
 is a coloring of the positive integers with two colors such that no 6-term arithmetic progression

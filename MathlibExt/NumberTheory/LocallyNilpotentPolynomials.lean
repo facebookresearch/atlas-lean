@@ -28,6 +28,12 @@ The classification at `-1` follows the orbit argument of Sayak Sengupta,
 A return to a previous orbit value modulo a prime traps all later values in the same
 finite list of residues. This constrains the first place the orbit can depart from
 the translation `x ↦ x - 1`.
+
+The corollary at `±1` (Corollary 4.3 there) is derived from this classification. Every
+polynomial in it except `x - 1` reaches zero within three steps. The reflection
+`u(x) ↦ -u(-x)` of the paper's Fact 3.1 negates every orbit value, so it carries the result
+at `-1` to `x + 1` at `1`. The paper argues in the opposite direction, from its
+classification at `1`.
 -/
 
 namespace MetaMathlibExt
@@ -329,5 +335,82 @@ public theorem locallyNilpotentAt_neg_one_classification :
       refine ⟨p - 1, by have := hp.two_le; omega, ?_⟩
       rw [iter, show -1 - ((p - 1 : ℕ) : ℤ) = -(p : ℤ) by have := hp.one_le; omega]
       simp
+
+namespace locallyNilpotent_not_nilpotentAt_one_neg_one
+
+/-- The reflection of `u`, the polynomial `-u.comp (-X)`, takes the value `-u(-x)` at `x`. -/
+private theorem eval_neg_comp_neg_X (u : ℤ[X]) (x : ℤ) :
+    (-u.comp (-X)).eval x = -u.eval (-x) := by
+  simp [eval_comp]
+
+/-- The reflection `v(x) = -u(-x)` negates orbits: `v^{(n)}(-r) = -u^{(n)}(r)` (Fact 3.1). -/
+private theorem iterate_neg_comp_neg_X (u : ℤ[X]) (r : ℤ) (n : ℕ) :
+    (fun x => (-u.comp (-X)).eval x)^[n] (-r) = -(fun x => u.eval x)^[n] r := by
+  induction n with
+  | zero => rfl
+  | succ n ih =>
+    rw [Function.iterate_succ_apply', Function.iterate_succ_apply', ih, eval_neg_comp_neg_X,
+      neg_neg]
+
+/-- The reflection `u(x) ↦ -u(-x)` is an involution. -/
+private theorem neg_comp_neg_X_involutive (u : ℤ[X]) : -(-u.comp (-X)).comp (-X) = u := by
+  rw [neg_comp, neg_neg, comp_assoc, neg_comp, X_comp, neg_neg, comp_X]
+
+/-- The reflection `-u(-x)` has positive degree and is locally nilpotent but not nilpotent at
+`-r` if and only if `u` has these properties at `r`. -/
+private theorem neg_comp_neg_X_mem_iff {u : ℤ[X]} {r : ℤ} :
+    (0 < (-u.comp (-X)).natDegree ∧ IsWeaklyLocallyNilpotentAt (-u.comp (-X)) (-r) ∅ ∧
+        ¬ IsNilpotentAt (-u.comp (-X)) (-r)) ↔
+      (0 < u.natDegree ∧ IsWeaklyLocallyNilpotentAt u r ∅ ∧ ¬ IsNilpotentAt u r) := by
+  simp only [natDegree_neg, natDegree_comp, natDegree_X, mul_one, IsWeaklyLocallyNilpotentAt,
+    IsNilpotentAt, iterate_neg_comp_neg_X, dvd_neg, neg_eq_zero]
+
+/-- Apart from `x - 1`, every polynomial of the classification at `-1` reaches zero within
+three steps. -/
+private theorem eq_X_sub_one_of_not_isNilpotentAt {u : ℤ[X]} (hdeg : 0 < u.natDegree)
+    (hu : IsWeaklyLocallyNilpotentAt u (-1) ∅) (hnil : ¬ IsNilpotentAt u (-1)) : u = X - 1 := by
+  have hmem : u ∈ {u : ℤ[X] | 0 < u.natDegree ∧ IsWeaklyLocallyNilpotentAt u (-1) ∅} :=
+    ⟨hdeg, hu⟩
+  rw [locallyNilpotentAt_neg_one_classification] at hmem
+  simp only [Set.mem_union, Set.mem_ofPred_eq, Set.mem_singleton_iff] at hmem
+  rcases hmem with (((⟨q, -, rfl⟩ | ⟨q, rfl⟩) | ⟨q, rfl⟩) | h)
+  · exact (hnil ⟨1, one_pos, by simp⟩).elim
+  · exact (hnil ⟨2, two_pos, by norm_num [Function.iterate_succ_apply']⟩).elim
+  · exact (hnil ⟨3, three_pos, by norm_num [Function.iterate_succ_apply']⟩).elim
+  · exact h
+
+end locallyNilpotent_not_nilpotentAt_one_neg_one
+
+open locallyNilpotent_not_nilpotentAt_one_neg_one
+
+/-- **Locally nilpotent but not nilpotent polynomials at $\pm 1$.** The only polynomial
+$u \in \mathbb{Z}[x]$ of positive degree that is locally nilpotent at $1$ but not nilpotent at $1$
+is $x + 1$, and the only polynomial of positive degree that is locally nilpotent at $-1$ but not
+nilpotent at $-1$ is $x - 1$.
+
+Source: Sayak Sengupta, *Locally Nilpotent Polynomials over Z*, INTEGERS 24 (2024),
+Article A13, Corollary 4.3. -/
+public theorem locallyNilpotent_not_nilpotentAt_one_neg_one :
+    {u : ℤ[X] | 0 < u.natDegree ∧ IsWeaklyLocallyNilpotentAt u 1 ∅ ∧ ¬ IsNilpotentAt u 1} =
+        {X + 1} ∧
+      {u : ℤ[X] | 0 < u.natDegree ∧ IsWeaklyLocallyNilpotentAt u (-1) ∅ ∧
+        ¬ IsNilpotentAt u (-1)} = {X - 1} := by
+  have hplus : 0 < (X + 1 : ℤ[X]).natDegree ∧ IsWeaklyLocallyNilpotentAt (X + 1) 1 ∅ ∧
+      ¬ IsNilpotentAt (X + 1) 1 :=
+    ⟨by change 0 < (X + C (1 : ℤ)).natDegree; rw [natDegree_X_add_C]; exact one_pos,
+      isWeaklyLocallyNilpotentAt_X_add_one, not_isNilpotentAt_X_add_one⟩
+  have hminus : -(X + 1 : ℤ[X]).comp (-X) = X - 1 := by
+    rw [add_comp, X_comp, one_comp]
+    ring
+  refine ⟨Set.ext fun u => ⟨fun h => ?_, ?_⟩, Set.ext fun u => ⟨fun h => ?_, ?_⟩⟩
+  · obtain ⟨hdeg, hu, hnil⟩ := neg_comp_neg_X_mem_iff.mpr h
+    rw [Set.mem_singleton_iff, ← neg_comp_neg_X_involutive u,
+      eq_X_sub_one_of_not_isNilpotentAt hdeg hu hnil, ← hminus, neg_comp_neg_X_involutive]
+  · rintro rfl
+    exact hplus
+  · exact eq_X_sub_one_of_not_isNilpotentAt h.1 h.2.1 h.2.2
+  · rintro rfl
+    rw [← hminus]
+    exact neg_comp_neg_X_mem_iff.mpr hplus
 
 end MetaMathlibExt

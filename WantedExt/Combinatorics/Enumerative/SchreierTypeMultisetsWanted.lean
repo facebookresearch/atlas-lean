@@ -30,6 +30,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Fib.Basic
+public import MathlibExt.Combinatorics.Enumerative.FloorNonMultiples
 public import WantedExt.Combinatorics.Enumerative.SchreierTypeSetsWanted
 
 namespace MetaMathlibExt
@@ -313,16 +314,6 @@ Article A53, Lemma 1 (`integers-2026-A53-lem-1`). -/
 public theorem_wanted coloredSchreierMultisetCount_eq_schreierParentB {s p n : ℕ} (hs : 1 ≤ s)
     (hp : 1 ≤ p) (hn : 1 ≤ n) :
     coloredSchreierMultisetCount s p n = schreierParentB s p (n * s - s + 1)
-
-/-- **The non-multiples of an integer as values of a floor function.** For every integer $u \ge 2$,
-the set $\{\lfloor (un - 1)/(u - 1) \rfloor : n \ge 1\}$, with $n$ ranging over the positive
-integers, is the set of positive integers not divisible by $u$.
-
-Source: Hùng Việt Chu, Yubo Geng, Julian King, Steven J. Miller, Garrett Tresch and Zachary Louis
-Vasseur, *Linear Recurrences from Counting Schreier-Type Multisets*, INTEGERS 26 (2026),
-Article A53, Lemma 2 (`integers-2026-A53-lem-2`). -/
-public theorem_wanted image_floor_eq_nonMultiples {u : ℕ} (hu : 2 ≤ u) :
-    (fun n => (u * n - 1) / (u - 1)) '' {n | 1 ≤ n} = {m | 1 ≤ m ∧ ¬ u ∣ m}
 
 /-- **Binomial sum formula for the parent sequence.** For all natural numbers $u \ge 2$ and
 $n \ge 1$, the parent sequence $d_{u,n}$ satisfies

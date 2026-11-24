@@ -10,6 +10,7 @@ module
 
 public import Mathlib.RingTheory.Polynomial.Cyclotomic.Roots
 import Mathlib.FieldTheory.Finite.Basic
+import Mathlib.RingTheory.Polynomial.Cyclotomic.Eval
 
 /-!
 # Congruences for prime divisors of cyclotomic values
@@ -42,5 +43,32 @@ public theorem prime_modEq_one_of_dvd_cyclotomic_eval {ρ p : ℕ} (hρ : ρ.Pri
   refine ((Nat.modEq_iff_dvd' hρ.one_le).mpr ?_).symm
   rw [hprim.eq_orderOf]
   exact ZMod.orderOf_dvd_card_sub_one (hprim.ne_zero hp.ne_zero)
+
+set_option linter.unusedVariables false in
+/-- **Divisibility of $x^p - 1$ by $p$.** Let $p$ be a prime, let $x$ be a positive integer, and
+let $\Phi_p$ be the $p$-th cyclotomic polynomial with integer coefficients. Then
+$p \mid x^p - 1$ if and only if $p \mid x - 1$ and $p \mid \Phi_p(x)$.
+
+Source: Gustav Kjærbye Bagger, *Hybrid Bounds for Prime Divisors*, INTEGERS 26 (2026),
+Article A95, Lemma 2 (`integers-2026-A95-lem-2`). -/
+public theorem prime_dvd_pow_self_sub_one_iff {p : ℕ} (hp : p.Prime) {x : ℤ}
+    (hx : 0 < x) :
+    (p : ℤ) ∣ x ^ p - 1 ↔ (p : ℤ) ∣ x - 1 ∧ (p : ℤ) ∣ (cyclotomic p ℤ).eval x := by
+  have : Fact p.Prime := ⟨hp⟩
+  have hpow : (p : ℤ) ∣ x ^ p - 1 ↔ (p : ℤ) ∣ x - 1 := by
+    rw [← ZMod.intCast_zmod_eq_zero_iff_dvd (x ^ p - 1) p,
+      ← ZMod.intCast_zmod_eq_zero_iff_dvd (x - 1) p]
+    simp only [Int.cast_sub, Int.cast_pow, Int.cast_one, ZMod.pow_card]
+  rw [hpow]
+  refine ⟨fun h => ⟨h, ?_⟩, And.left⟩
+  have hx' : (x : ZMod p) = 1 := by
+    simpa only [Int.cast_sub, Int.cast_one, sub_eq_zero] using
+      (ZMod.intCast_zmod_eq_zero_iff_dvd (x - 1) p).mpr h
+  apply (ZMod.intCast_zmod_eq_zero_iff_dvd _ p).mp
+  calc
+    (↑((cyclotomic p ℤ).eval x) : ZMod p) = (cyclotomic p (ZMod p)).eval (x : ZMod p) :=
+      (cyclotomic.eval_apply x p (Int.castRingHom (ZMod p))).symm
+    _ = 0 := by
+      simpa only [hx', eval_one_cyclotomic_prime] using ZMod.natCast_self p
 
 end MetaMathlibExt

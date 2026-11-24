@@ -73,8 +73,8 @@ lemma reportingLaw_injective {n : ℕ} :
     Function.Injective (reportingLaw (n := n)) :=
   ProbabilityTheory.piPoissonKernel_injective
 
-/-- **Nonidentification at zero reporting.** Compose the
-reporting law with the intensity map at `rho = 0`. The resulting
+/-- **Nonidentification at zero reporting.** With at least one interval
+(`n ≠ 0`), compose the reporting law with the intensity map at `rho = 0`. The resulting
 law family is constant in the epidemic incidence vector (every
 incidence has the same background-only intensity, by
 `intensityAt_zero`), while the estimand `incidence 0` varies: the
