@@ -11415,6 +11415,7 @@
   "MathlibExt/GroupTheory/FiniteAbelian/Torsion": {"to": "GroupTheory/abelian-groups", "title": "Structure of finitely generated abelian groups"},
   "MathlibExt/GroupTheory/FiniteAbelianDual": {"to": "GroupTheory/abelian-groups", "title": "Dual groups of finite abelian groups"},
   "MathlibExt/GroupTheory/FiniteGroupConvolution": {"to": "GroupTheory/characters-of-finite-groups", "title": "Convolution on finite groups"},
+  "MathlibExt/GroupTheory/FreeGroupHyperbolic": {"to": "GroupTheory/geometric-group-theory", "title": "Hyperbolic groups"},
   "MathlibExt/GroupTheory/FullyInvariantSubgroupsCyclicKourovka16Problem61": {"to": "GroupTheory/subgroup-embedding", "title": "Fully invariant subgroups"},
   "MathlibExt/GroupTheory/GHarmonic": {"to": "GroupTheory/combinatorics-in-groups", "title": "Disjoint coset systems"},
   "MathlibExt/GroupTheory/GeneralLinearGroupExponent": {"to": "GroupTheory/linear-groups", "title": "Exponent of general linear groups over prime fields"},
