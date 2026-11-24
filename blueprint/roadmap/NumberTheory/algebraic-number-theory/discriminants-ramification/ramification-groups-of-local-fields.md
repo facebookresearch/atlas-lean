@@ -24,6 +24,16 @@ A good expansion has pages for:
 4. the behaviour of the lower numbering under passage to subgroups, $H_i = G_i \cap H$ (Remark 1.61,
    Proposition 1.67).
 
+## Depends on
+
+This node has no prerequisites.
+
+## Proof depends on
+
+- [Hensel's lemma for complete discrete valuation rings](../../../RingTheory/valuation-rings/henselian-rings-and-hensel-s-lemma/exists-is-root-sub-mem-maximal-ideal-of.md), for the primitive $N$-th roots of unity, $N = (G_0 : G_1)$, in the fixed field $L_0$ of $G_0$, in the description of $\theta_0$ of item 3 (Fontaine–Ouyang, Remark 1.65 (b))
+- [Kummer theory for abelian extensions of exponent dividing n](../../../FieldTheory/galois-theory/kummer-theory.md), for $L_1 = L_0(\alpha)$ with $\alpha^N$ a uniformizer of $L_0$, where $L_1$ is the fixed field of $G_1$, in that description
+- Not yet a page: the Teichmüller representatives of the residue field, for the formula $g \alpha = [\varepsilon] \alpha$ through which $\theta_0$ identifies $\operatorname{Gal}(L_1/L_0)$ with $\mu_N(k_L)$ in that description
+
 ## Sources
 
 - J.-M. Fontaine and Y. Ouyang, *Theory of p-adic Galois Representations*, book draft (PDF of 2022-05-26),

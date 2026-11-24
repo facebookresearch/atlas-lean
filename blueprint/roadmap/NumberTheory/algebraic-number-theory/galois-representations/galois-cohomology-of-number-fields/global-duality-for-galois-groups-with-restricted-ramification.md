@@ -50,6 +50,17 @@ A good expansion has pages for:
    $\xi^i = \Xi^i \circ \lambda^i$ (8.6.5); and the compatibility diagrams (8.6.6); Milne, Lemmas I.4.8–4.9;
 6. the Galois module structure of the $S$-units used by the global Euler characteristic formula (NSW (8.7.1)–(8.7.3)).
 
+## Depends on
+
+- [Galois groups with restricted ramification and their modules](galois-groups-with-restricted-ramification.md), for $F_S$, $G_S$, $\mathbb{N}(S)$, the $S$-units $\mathcal{O}_S^\times$, the duals, the local groups, $P^i$ and $\lambda^i$
+- [Tate–Shafarevich groups of Galois modules](tate-shafarevich-groups.md), for the groups $\text{Ш}^1(G_S, -)$ of item 5
+- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for Tate cohomology, class formations and level-compact formation modules in items 2 and 3
+- [Topological idele class group](../../adeles-class-field-theory/adeles-and-ideles/topological-idele-class-group.md), for the idèle class groups $C_K$, of which the $S$-idèle class groups $C_S(K)$ are quotients (items 2 and 3)
+- [Adelic norm](../../adeles-class-field-theory/adeles-and-ideles/adelic-norm.md), for the norm of idèle classes, whose kernel defines $C_S^0$ (item 3)
+- [Hilbert class field of a number field](../../adeles-class-field-theory/hilbert-class-field/is-hilbert-class-field.md), for the Hilbert class field of $K$, whose maximal subfield completely split at the places of $S$ principalises the ideals of $\mathcal{O}_{K,S}$ (item 2)
+- [Local Tate duality](../galois-cohomology-of-local-fields/local-tate-duality.md), for the local pairings defining $\Xi^i$ in item 4
+- [Tate duality for the real numbers](../galois-cohomology-of-local-fields/tate-duality-for-the-real-numbers.md), for those pairings at the archimedean places
+
 ## Proof depends on
 
 - [Fundamental class of a finite Galois extension of number fields](../../adeles-class-field-theory/reciprocity-law/fundamental-class.md), for the class formation of the idèle classes and their invariant maps, from which item 2 builds that of the $S$-idèle classes
@@ -58,6 +69,9 @@ A good expansion has pages for:
 - [Unramified classes under local duality](../galois-cohomology-of-local-fields/unramified-classes-under-local-duality.md), for the exact annihilators behind (8.5.2) in item 4
 - [Tate duality for the real numbers](../galois-cohomology-of-local-fields/tate-duality-for-the-real-numbers.md), for the archimedean places in items 3 and 4
 - [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for the Tate–Nakayama theorem and the duality theorem (3.1.11)(i) for a level-compact formation module with divisible universal norm groups, which give the duality of item 3 in the degrees $i \le 0$ for every finitely generated $A$, and in all degrees if $A$ is $\mathbb{Z}$-free
+- Not yet a page: the principal ideal theorem, for the principalisation $\varinjlim_K \mathrm{Cl}_S(K) = 0$ of item 2 and the finiteness of $\text{Ш}^1(G_S, A')$ in (8.6.4) (item 5)
+- [Hilbert's Theorem 90 for the multiplicative group](../../../../FieldTheory/galois-theory/multiplicative-hilbert-s-theorem-90.md), for (8.6.3) in item 5
+- [Global reciprocity law](../../adeles-class-field-theory/reciprocity-law/global-reciprocity-law.md), for the class field theory of (8.6.3) and (8.6.4) in item 5
 
 ## Sources
 

@@ -30,6 +30,19 @@ A good expansion has pages for:
 6. the proofs of Fontaine's and Colmez–Fontaine's theorems (Chapter 9: §9.1, §9.2 with the reduction of Theorem B,
    §9.3, and §§9.4–9.5, the reduction to $t_H = 0$ and the end of the proof).
 
+## Depends on
+
+- [Cyclotomic character and Tate twists](../cyclotomic-character-and-tate-twists.md), for the twists $\mathbb{Q}_p(r)$ of item 3
+- [Weakly admissible filtered (φ, N)-modules](weakly-admissible-filtered-phi-n-modules.md), for $\varphi$-modules over $K_0$ and their Newton numbers in item 5
+- Not yet a page: Witt vectors and Teichmüller representatives, for $\theta \colon W(R) \to \mathcal{O}_C$ and $A_{\mathrm{cris}}$ in item 2
+
+## Proof depends on
+
+- [Ramification groups of local fields](../../discriminants-ramification/ramification-groups-of-local-fields.md), for the lower numbering, on which the ramification estimates behind item 1 are built (Fontaine–Ouyang, §§1.3–1.4)
+- Not yet a page: the functions $\Phi$ and $\Psi$, Herbrand's theorem and the upper numbering, also for infinite Galois extensions, and the different (Fontaine–Ouyang, §§1.3.3–1.3.5), and Sen's filtration theorem (§1.4.1), for the ramification estimates in totally ramified $\mathbb{Z}_p$-extensions behind Tate's normalized traces (item 1)
+- Not yet a page: Lubin–Tate formal groups (Fontaine–Ouyang, §7.3.2), for the Lubin–Tate elements of item 4
+- Not yet a page: étale $\varphi$-modules in characteristic $p$ and Fontaine's equivalence for them (Fontaine–Ouyang, Proposition 3.32, Theorem 3.35), used in the proofs of item 6
+
 ## Sources
 
 - J.-M. Fontaine and Y. Ouyang, *Theory of p-adic Galois Representations*, book draft (PDF of 2022-05-26),

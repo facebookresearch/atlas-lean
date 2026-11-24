@@ -47,7 +47,7 @@ $\mathbb{Q}_\ell/\mathbb{Z}_\ell(i)$ are modules over that group.
 
 ## Depends on
 
-This node has no prerequisites.
+- [The ring of p-adic integers](../../p-adic-numbers/p-adic-integers.md), for $\mathbb{Z}_\ell$ and its units, the values of the cyclotomic character
 
 ## Proof depends on
 

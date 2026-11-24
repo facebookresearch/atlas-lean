@@ -36,6 +36,14 @@ A good expansion has pages for:
 
 - [p-divisible group](../../../../AlgebraicGeometry/abelian-varieties/deformations-and-p-divisible-groups/p-divisible-group.md)
 - [Crystalline representations](crystalline-representations.md), for $A_{\mathrm{cris}}$ and $B_{\mathrm{cris}}^+$
+- [Weakly admissible filtered (φ, N)-modules](weakly-admissible-filtered-phi-n-modules.md), for the weakly admissible filtered $\varphi$-modules of item 2
+- [(φ, Γ)-modules and p-adic differential equations](phi-gamma-modules-and-p-adic-differential-equations.md), for the Robba ring of item 2
+
+## Proof depends on
+
+- [Structure of the rings of periods](structure-of-the-period-rings.md), for the Dieudonné–Manin classification of $\varphi$-modules by their slopes (its item 5), through which item 2 classifies the vector bundles by isocrystals over $\bar{\mathbb{F}}_p$ and item 3 states its slope condition
+- Not yet a page: the crystalline Dieudonné module of a $p$-divisible group, a crystal on the crystalline site (Messing; Berthelot–Breen–Messing), for the Dieudonné modules of items 1 and 3
+- Not yet a page: perfectoid spaces and tilting, for the perfectoid affinoid algebras of Scholze–Weinstein, §4.3, and the curve attached to $C$ in item 2
 
 ## Sources
 

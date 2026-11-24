@@ -19,6 +19,11 @@ A good expansion has pages for:
 ## Depends on
 
 - [de Rham representations](de-rham-representations.md)
+- [Semistable and potentially semistable representations](semistable-representations.md), for the potential semistability of item 3
+
+## Proof depends on
+
+- [Structure of the rings of periods](structure-of-the-period-rings.md), for the ring $R$, the field $B_{\mathrm{dR}}$ with its subrings and Sen's theory (its items 1 and 2), from which Berger builds his rings and the modules $D_{\mathrm{Sen}}(V)$ and $D_{\mathrm{dif}}(V)$ (Berger 2002, §§1–2 and 5.3)
 
 ## Sources
 

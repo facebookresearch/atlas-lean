@@ -49,10 +49,15 @@ A good expansion has pages for:
    by $\ell^\infty$ (NSW I §9, (1.9.13), (1.9.15)); and the composition series with factors $\mathbb{Z}/p\mathbb{Z}$ of a
    **finite** module killed by $p$ over a finite $p$-group (NSW (1.6.13)).
 
+## Depends on
+
+- [The ring of p-adic integers](../../NumberTheory/p-adic-numbers/p-adic-integers.md), for the finitely generated $\mathbb{Z}_\ell$-modules of item 5
+
 ## Proof depends on
 
 - [Restriction, corestriction, inflation and Tate's theorem in group cohomology](restriction-corestriction-inflation-and-tate-s-theorem.md), for the finite-group results from which items 3 and 7 pass to the limit
 - [Periodicity of Tate cohomology for finite cyclic groups](tate-cohomology-and-the-herbrand-quotient/nonempty-periodicity-iso.md), for item 4 at finite levels
+- [Hilbert's Theorem 90 for the multiplicative group](../../FieldTheory/galois-theory/multiplicative-hilbert-s-theorem-90.md), for Hilbert's Theorem 90 for absolute Galois groups in item 6, its limit over finite Galois extensions
 
 ## Sources
 

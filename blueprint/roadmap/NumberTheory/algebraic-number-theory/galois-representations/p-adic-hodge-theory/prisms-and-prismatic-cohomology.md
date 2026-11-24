@@ -41,10 +41,19 @@ A good expansion has pages for:
    of the filtered $\varphi$-module of the given crystalline representation together with the vector bundles on the
    Fargues–Fontaine curve ([FF19] Corollary 11.2.22, Proposition 10.5.6, Theorem 8.2.10 (1); [SW18] Theorem 14.2.1).
 
+## Depends on
+
+- [Crystalline representations](crystalline-representations.md), for the lattices in crystalline representations of $G_K$ given by the étale realization of item 4
+- Not yet a page: derived completeness of modules, for the derived $(p, I)$-completeness in the definition of a prism
+- Not yet a page: smooth $p$-adic formal schemes, for the prismatic sites of items 2 and 4
+
 ## Proof depends on
 
 - [Weakly admissible implies admissible](colmez-fontaine-theorem.md), for Fontaine's theorem that $D_{\mathrm{cris}}$ of a crystalline representation is weakly admissible, used in item 4
 - [p-divisible groups over the ring of integers of C](p-divisible-groups-over-o-c.md), for the Fargues–Fontaine curve and its vector bundles, used in item 4
+- Not yet a page: Kisin's construction of the $F$-crystal over $\mathcal{O}_C$, through Kedlaya's slope filtrations as observed by Berger, for item 4
+- Not yet a page: the Beilinson fibre sequence of Antieau–Mathew–Morrow–Nikolaus, for the descent isomorphism of item 4
+- Not yet a page: the Cartier isomorphism, for the Hodge–Tate comparison over a crystalline prism in item 3
 
 ## Sources
 
