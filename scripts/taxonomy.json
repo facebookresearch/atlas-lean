@@ -9446,6 +9446,7 @@
   "MathlibExt/Analysis/Control/Hautus": {"to": "Analysis/control-theory", "title": "Controllability of linear systems"},
   "MathlibExt/Analysis/Control/LinearControllability": {"to": "Analysis/control-theory", "title": "Controllability of linear systems"},
   "MathlibExt/Analysis/Control/LinearStabilization": {"to": "Analysis/control-theory", "title": "Pole placement"},
+  "MathlibExt/Analysis/Control/NearestNeighborEstimate": {"to": "Analysis/control-theory", "title": "Capability and limits of feedback"},
   "MathlibExt/Analysis/Control/NonlinearControl": {"to": "Analysis/control-theory", "title": "Nonlinear controllability and stabilisation"},
   "MathlibExt/Analysis/Control/PolePlacement": {"to": "Analysis/control-theory", "title": "Pole placement"},
   "MathlibExt/Analysis/Control/RecursiveLeastSquares": {"to": "Analysis/control-theory", "title": "Recursive least squares"},

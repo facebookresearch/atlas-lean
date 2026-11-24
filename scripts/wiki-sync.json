@@ -28040,6 +28040,7 @@
 "MathlibExt.Analysis.Control.kalmanSubspace_eq_top_iff": "198b82a3181241fd",
 "MathlibExt.Analysis.Control.kalman_matrix_iff_hautus": "3ac71d22ae5c824d",
 "MathlibExt.Analysis.Control.lieBracket_nonholonomicFields": "4dd93b658f8c04d5",
+"MathlibExt.Analysis.Control.nearestNeighborEstimate": "6370a7b7f4b60505",
 "MathlibExt.Analysis.Control.nonholonomicFields": "fe18e471230976ca",
 "MathlibExt.Analysis.Control.nonholonomicIntegrator": "b219a124e2a58bf3",
 "MathlibExt.Analysis.Control.nonholonomicIntegrator_eq_sum": "18a85468d14e162c",
