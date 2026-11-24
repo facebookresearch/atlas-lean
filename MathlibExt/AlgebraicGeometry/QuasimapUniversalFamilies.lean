@@ -153,5 +153,16 @@ structure UniversalAssociatedFamily (M : FamilyStack G W n g) where
     {x y : M.stack.Fibre T} (a : x ⟶ y),
     arrow V ((M.stack.toPseudofunctor.map f.op.toLoc).toFunctor.map a) ≫ map f y =
       map f x ≫ arrow T a
+  /-- Base change along an identity is the fibre arrow of the stack's unit cell. -/
+  map_identity : ∀ (T : Over S) (x : M.stack.Fibre T),
+    map (𝟙 T) x =
+      arrow T ((Cat.Hom.toNatIso (M.stack.toPseudofunctor.mapId (.mk (op T)))).hom.app x)
+  /-- Base change along a composite is the composite of base changes, through the
+  fibre arrow of the stack's composition cell. -/
+  map_composition : ∀ {T V U : Over S} (f : V ⟶ T) (g : U ⟶ V) (x : M.stack.Fibre T),
+    map (g ≫ f) x =
+      arrow U ((Cat.Hom.toNatIso
+        (M.stack.toPseudofunctor.mapComp f.op.toLoc g.op.toLoc)).hom.app x) ≫
+      map g ((M.stack.toPseudofunctor.map f.op.toLoc).toFunctor.obj x) ≫ map f x
 
 end MathlibExt.AlgebraicGeometry.QuasimapUniversalFamilies
