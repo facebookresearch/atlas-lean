@@ -14014,7 +14014,6 @@
   "WantedExt/Analysis/Convex/NesterovSmoothingWanted": {"to": "Analysis/convex-analysis-and-variations", "title": "Nesterov smoothing"},
   "WantedExt/Analysis/Convex/SelfConcordantWanted": {"to": "Analysis/convex-analysis-and-variations", "title": "Self-concordant functions and barriers"},
   "WantedExt/Analysis/DirichletSpacePolynomialDensityWanted": {"to": "Analysis/complex-analysis/analytic-function-spaces", "title": "Dirichlet space"},
-  "WantedExt/Analysis/Distribution/Dirichlet1DWanted": {"to": "Analysis/ordinary-differential-equations", "title": "Sturm–Liouville Dirichlet problem"},
   "WantedExt/Analysis/Distribution/DistributionFderivWanted": {"to": "Analysis/distributions", "title": "Distributional derivatives"},
   "WantedExt/Analysis/Distribution/NewtonPotentialWanted": {"to": "Analysis/potential-theory", "title": "Fundamental solutions of the Laplacian"},
   "WantedExt/Analysis/Distribution/PlemeljLimitTemperedDistributionWanted": {"to": "Analysis/distributions", "title": "Sokhotski–Plemelj formula"},
