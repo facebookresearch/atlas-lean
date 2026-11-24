@@ -50988,7 +50988,7 @@
 "MathlibExt.NumberTheory.RamanujanHarmonicIdentityWanted.hasSum_ringChoose_mul_sin": "20cc112bb30f1b5c",
 "MathlibExt.NumberTheory.RamanujanHarmonicIdentityWanted.sum_choose_sub_choose_mul_harmonic_eq_add": "72a657bb08cd47bc",
 "MathlibExt.NumberTheory.RamanujanHarmonicIdentityWanted.sum_choose_sub_choose_mul_harmonic_succ_eq": "2686f8e5eb8f41aa",
-"MathlibExt.NumberTheory.RamanujanHarmonicIdentityWanted.sum_neg_one_pow_div_mul_choose_eq": "8714bdcbdab8faef",
+"MathlibExt.NumberTheory.RamanujanHarmonicIdentityWanted.sum_neg_one_pow_div_mul_choose_eq": "3be8faeaf13a618e",
 "MathlibExt.NumberTheory.RamanujanHarmonicIdentityWanted.sum_two_pow_choose_sub_mul_cos_pow_sin": "c350600dede76d5a",
 "MathlibExt.NumberTheory.RamanujanTauWanted.NumberTheory.RamanujanTauProblem.ramanujan_petersson": "f2fa8acd232488cf",
 "MathlibExt.NumberTheory.RamanujanTauWanted.NumberTheory.RamanujanTauProblem.τ": "96de0d05e5cdc8d0",
