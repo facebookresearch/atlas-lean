@@ -14,20 +14,29 @@ public import CSLibExt.Computability.Complexity.QuantumGates.ExactGates
 /-!
 # BQP class audit
 
-The Atlas definition of `BQP` in `CSLibExt.Computability.Complexity.Classes`
-is Arora–Barak Definition 10.1 (Bernstein–Vazirani): polynomials `a, s` and a
-polynomial-time gate-list generator such that every input's gates are
-well-formed on `|x| + a(|x|)` qubits, at most `s(|x|)` of them, and the
-acceptance probability on `bqpInitState` is at least `2/3` on yes-instances
-and at most `1/3` on no-instances. This module records that characterization
-as an iff, shows every witness acceptance probability is a genuine
-probability in `[0, 1]` (by circuit-semantics norm preservation), and computes
-the acceptance probability after flipping the output qubit with an `X` gate,
-the semantic step behind complementation.
+`BQP` here is Atlas's internal encoding of bounded-error quantum polynomial
+time, as defined in `CSLibExt.Computability.Complexity.Classes`: an
+input-dependent list of exact 2-local Gaussian-rational gates with separate
+ancilla and size polynomials `a, s` and a polynomial-time gate-list generator
+such that every input's gates are well-formed on `|x| + a(|x|)` qubits, at most
+`s(|x|)` of them, and the acceptance probability on `bqpInitState` is at least
+`2/3` on yes-instances and at most `1/3` on no-instances. This module records
+that internal encoding as an iff, shows every witness acceptance probability is
+a genuine probability in `[0, 1]` (by circuit-semantics norm preservation), and
+computes the acceptance probability after flipping the output qubit with an `X`
+gate, the semantic step behind complementation.
 
-Source: S. Arora and B. Barak, Computational Complexity: A Modern Approach,
-2009, Definition 10.1; E. Bernstein and U. Vazirani, "Quantum complexity
-theory", SIAM Journal on Computing 26 (1997), 1411–1473.
+Background and motivation only: uniform quantum polynomial-time computation
+(Arora–Barak Definition 10.1; Bernstein–Vazirani) as in S. Arora and B. Barak,
+Computational Complexity: A Modern Approach, 2009, Definition 10.1, and
+E. Bernstein and U. Vazirani, "Quantum complexity theory", SIAM Journal on
+Computing 26 (1997), 1411–1473, where the circuit sequence is generated from
+unary size/time inputs and elementary operations act on up to three qubits. No
+equivalence between the Atlas encoding and those models is proved here.
+
+Background sources: S. Arora and B. Barak, Computational Complexity: A Modern
+Approach, 2009, Definition 10.1; E. Bernstein and U. Vazirani, "Quantum
+complexity theory", SIAM Journal on Computing 26 (1997), 1411–1473.
 -/
 
 @[expose] public section
@@ -38,7 +47,7 @@ set_option autoImplicit false
 
 open QuantumGates
 
-/-- Membership in `BQP`, unfolded: the Arora–Barak characterization with
+/-- Membership in `BQP`, unfolded: Atlas's internal `BQP` encoding (well-formedness, `2/3`–`1/3` thresholds) with
 ancilla and size polynomials, a polynomial-time gate generator,
 well-formedness of every generated gate, and the `2/3`–`1/3` acceptance
 thresholds on the initial state. -/
