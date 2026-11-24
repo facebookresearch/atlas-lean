@@ -3,6 +3,7 @@
 Approximation and interpolation of functions: Chebyshev equioscillation, best approximation, the minimax property of Chebyshev polynomials, Chebyshev series and interpolation, Lagrange interpolation, Bernstein polynomials and Voronovskaya, Korovkin, Müntz–Szász, Runge, Kolmogorov superposition, universal approximation, sparse approximation: best $M$-term approximation in an orthonormal basis and greedy pursuits (matching pursuit and orthogonal matching pursuit), and sparse and low-rank recovery by convex relaxation under restricted isometry.
 
 - [Bernstein coefficient bounds on boxes](bernstein-coefficient-bounds-on-boxes/README.md)
+- [Bernstein bounds for polynomial matrices](bernstein-bounds-for-polynomial-matrices/README.md)
 - [Bernstein degree elevation](bernstein-degree-elevation/README.md)
 - [Bernstein polynomials](bernstein-polynomials/README.md)
 - [Bernstein subdivision](bernstein-subdivision/README.md)
