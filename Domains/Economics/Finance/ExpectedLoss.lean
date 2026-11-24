@@ -32,25 +32,29 @@ namespace MathlibExt.Probability.Finance.ExpectedLoss
 
 open MeasureTheory ProbabilityTheory
 
-/-- Expected loss on a probability space: the expected value of the loss
-`EAD ω * LGD ω` on the default event `D`, and `0` outside `D`. That is,
-`E[L]` for `L = 1_D * EAD * LGD`. -/
+/-- Expected loss on a probability space: the expected value of the loss `EAD ω * LGD ω` on the
+default event `D`, and `0` outside `D`. That is, `E[L]` for `L = 1_D * EAD * LGD`. It is `0` when
+`1_D · EAD · LGD` is not integrable, by the convention for the integral of a non-integrable
+function. -/
 noncomputable def expectedLoss {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
     (D : Set Ω) (EAD LGD : Ω → ℝ) : ℝ :=
   ∫ ω, Set.indicator D (fun ω => EAD ω * LGD ω) ω ∂μ
 
-/-- Probability of the default event `D`. -/
+/-- Probability of the default event `D`. If `μ(D) = ∞`, the real value is `0` by convention. -/
 noncomputable def defaultProbability {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
     (D : Set Ω) : ℝ :=
   μ.real D
 
-/-- Expected exposure-times-loss-given-default conditional on default: the
-integral of `EAD * LGD` against the conditional measure `μ[|D]`. -/
+/-- Expected exposure-times-loss-given-default conditional on default: the integral of `EAD * LGD`
+against the conditional measure `μ[|D]`. If `μ(D) = 0` (or `μ(D) = ∞`), the conditional measure is
+the zero measure and the conditional expected loss is `0`; it is also `0` when `EAD · LGD` is not
+integrable for `μ[·|D]`. -/
 noncomputable def conditionalExpectedLoss {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
     (D : Set Ω) (EAD LGD : Ω → ℝ) : ℝ :=
   ∫ ω, EAD ω * LGD ω ∂(ProbabilityTheory.cond μ D)
 
-/-- Expected-loss decomposition (FI16.T03): expected loss equals the
+/-- Expected-loss decomposition (FI16.T03): on a probability space, for a measurable
+default event `D` with `μ D ≠ 0` and `EAD * LGD` integrable on `D`, expected loss equals the
 probability of default times the expected exposure-times-loss-given-default
 conditional on default. `ProbabilityTheory.cond μ D` is always defined as the
 `(μ D)⁻¹`-scaled restriction, even if `μ D = 0`. The nonzero hypothesis is

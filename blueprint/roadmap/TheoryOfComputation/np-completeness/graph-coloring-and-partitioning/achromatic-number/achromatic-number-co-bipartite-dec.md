@@ -1,0 +1,3 @@
+# ACHROMATIC NUMBER on complements of bipartite graphs as a decision problem
+
+The decision problem ACHROMATIC NUMBER on complements of bipartite graphs accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of instances $(n, E, K)$ of ACHROMATIC NUMBER, to an instance that is well-formed for ACHROMATIC NUMBER on complements of bipartite graphs and feasible for ACHROMATIC NUMBER: there are a natural number $q \ge K$ and a coloring of the vertices with the colors $0, \dots, q-1$ that is proper, uses every color, and in which every two distinct colors appear at the two ends of some edge. It rejects every bitstring that does not decode to an instance.

@@ -125,6 +125,37 @@ public theorem weightedSchreierCount_one (l : ℕ) :
   rw [hfamily, card_insert_of_notMem, card_nonmaximalSets, Nat.add_comm 1 l]
   simp [nonmaximalSets]
 
+open Finset weightedSchreierCount_one in
+/-- **Weighted Schreier counts for $n < k$.** For all natural numbers $n < k$, the weighted
+Schreier count satisfies $a_{k,n} = F_{n+1}$, where $F_j$ is the $j$-th Fibonacci number
+($F_0 = 0$, $F_1 = 1$).
+
+This includes $n = 0$, where $a_{k,0} = 1 = F_1$; the source takes $n$ positive.
+
+Source: Hùng Việt Chu and Zachary Louis Vasseur, *Weighted Schreier-type Sets and the
+Fibonacci Sequence*, The Fibonacci Quarterly 62 (2024), no. 4, Proposition 3.5
+(`fq-2024-chu08302024rev-prop-3.5`). -/
+public theorem weightedSchreierCount_of_lt {k n : ℕ} (hnk : n < k) :
+    weightedSchreierCount k n = Nat.fib (n + 1) := by
+  rw [weightedSchreierCount, ← card_nonmaximalSets n, nonmaximalSets]
+  apply congrArg Finset.card
+  apply filter_congr
+  intro E hE
+  have hk : k ∉ E := fun h => hnk.not_ge (mem_Icc.mp (mem_powerset.mp hE h)).2
+  simp [filter_ne', hk]
+
+set_option linter.unusedVariables false in
+/-- **Weighted Schreier counts for $0 < m < k$.** For natural numbers $k \ge 2$ and $m$ with
+$0 < m < k$, the weighted Schreier count satisfies $a_{k,m} = F_{m+1}$, where $F_j$ is the
+$j$-th Fibonacci number ($F_0 = 0$, $F_1 = 1$).
+
+Source: Hùng Việt Chu and Zachary Louis Vasseur, *Weighted Schreier-type Sets and the
+Fibonacci Sequence*, The Fibonacci Quarterly 62 (2024), no. 4, Theorem 1.2, case `k ≥ 2`,
+`-k < ℓ < 0` (`fq-2024-chu08302024rev-thm-1.2`). -/
+public theorem weightedSchreierCount_of_pos_of_lt {k m : ℕ} (hk : 2 ≤ k) (hm : 0 < m)
+    (hmk : m < k) : weightedSchreierCount k m = Nat.fib (m + 1) :=
+  weightedSchreierCount_of_lt hmk
+
 /-- **Seeded partial sums.** Let $M$ be an additive commutative monoid, and let
 $s = (s_n)_{n \ge 0}$ (the seed sequence) and $a = (a_n)_{n \ge 0}$ be sequences in $M$. The
 seeded partial sums $t^s_{k,n}$, for $k, n \ge 0$, are defined by recursion on $k$:

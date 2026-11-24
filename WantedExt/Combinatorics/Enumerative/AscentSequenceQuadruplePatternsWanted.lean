@@ -14,7 +14,7 @@ public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.Data.Set.Card
 public import Mathlib.RingTheory.PowerSeries.Basic
 public import MathlibExt.Combinatorics.Enumerative.MotzkinNumber
-public import WantedExt.Combinatorics.Enumerative.RascalNumbersWanted
+public import MathlibExt.Combinatorics.Enumerative.RascalWords
 
 namespace MetaMathlibExt
 
