@@ -55,19 +55,6 @@ Journal of Integer Sequences 29 (2026), Article 26.4.6, Lemma 12
 public theorem_wanted card_pow_eq_one_zmod (a b : ℕ) [NeZero a] :
     Fintype.card {x : Multiplicative (ZMod a) // x ^ b = 1} = Nat.gcd a b
 
-/-- **Counting identity-product tuples with a given period.** Let $G$ be a finite group,
-$n \ge 1$ and $k$ a divisor of $n$. The number of tuples $x = (x_0, \dots, x_{n-1}) \in G^n$
-with $x_0 x_1 \cdots x_{n-1} = 1$ and $x_{i+k} = x_i$ for all $i$ (indices taken mod $n$) is
-$r_{n/k}(G) \, |G|^{k-1}$, where $r_m(G)$ is the number of $g \in G$ with $g^m = 1$.
-
-Source: Darij Grinberg and Peter Mao, *Necklaces over a Group with Identity Product*,
-Journal of Integer Sequences 29 (2026), Article 26.4.6, Lemma 13, with `A_k` as defined in
-Section 5 of the arXiv text (`jis-2026-26.4.6-lem-13`). -/
-public theorem_wanted card_identityProduct_period (G : Type*) [Group G] [Fintype G]
-    [DecidableEq G] (n k : ℕ) (hn : 0 < n) (hk : k ∣ n) :
-    Set.ncard {x : Fin n → G | (List.ofFn x).prod = 1 ∧ x ∘ ⇑((finRotate n) ^ k) = x} =
-      Fintype.card {g : G // g ^ (n / k) = 1} * Fintype.card G ^ (k - 1)
-
 /-- **Splitting periodic identity-product tuples by smallest period.** Let $G$ be a finite
 group, $n$ a natural number and $k \ge 1$. Say that $x = (x_0, \dots, x_{n-1}) \in G^n$ has
 period $l$ if $x_{i+l} = x_i$ for all $i$, with indices taken mod $n$. Let $A_k$ be the set of
