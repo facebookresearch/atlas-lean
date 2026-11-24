@@ -251,7 +251,9 @@ open MatrixDiscrepancy
 that the uniform discrepancy bound for vectors in the unit ball holds if and only if the Komlós
 constant is finite.
 
-Source: optimization catalogue C24a, line 26, and AIM Problem 1.05. -/
+Source: optimization catalogue C24a, line 26, and AIM Problem 1.05. For rectangular instances,
+zero-padding to a square matrix preserves the column bounds, and restricting its signing to the
+original columns preserves every original row sum. -/
 def constantFormulationEquivalence : Prop :=
   UniformRectangularBound ↔ komlosConstant < ⊤
 
