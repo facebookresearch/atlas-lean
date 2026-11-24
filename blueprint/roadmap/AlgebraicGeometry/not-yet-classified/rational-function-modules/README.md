@@ -1,0 +1,17 @@
+# Rational Function Modules
+
+- [From Spec Function Field](from-spec-function-field.md)
+- [Generic Point mem](generic-point-mem.md)
+- [Germ smul function Field](germ-smul-function-field.md)
+- [Rational Functions Ring](rational-functions-ring.md)
+- [To Rational Functions Ring](to-rational-functions-ring.md)
+- [Rational Functions](rational-functions.md)
+- [Rational Functions Sections Equiv](rational-functions-sections-equiv.md)
+- [Rational Functions Sections Equiv map](rational-functions-sections-equiv-map.md)
+- [From Spec Function Field app](from-spec-function-field-app.md)
+- [From Spec Function Field preimage](from-spec-function-field-preimage.md)
+- [Rational Functions Ring Equiv](rational-functions-ring-equiv.md)
+- [Rational Functions Ring Equiv map](rational-functions-ring-equiv-map.md)
+- [Rational Functions Equiv](rational-functions-equiv.md)
+- [Rational Functions Equiv apply](rational-functions-equiv-apply.md)
+- [Rational Functions Equiv map](rational-functions-equiv-map.md)

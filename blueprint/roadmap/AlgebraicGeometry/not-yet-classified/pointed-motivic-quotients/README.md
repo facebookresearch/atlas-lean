@@ -1,0 +1,17 @@
+# Pointed Motivic Quotients
+
+- [Represented Sets Map](represented-sets-map.md)
+- [Represented Map](represented-map.md)
+- [Zero Map](zero-map.md)
+- [Cofiber](cofiber.md)
+- [Cofiber Quotient](cofiber-quotient.md)
+- [Cofiber Quotient comp zero](cofiber-quotient-comp-zero.md)
+- [Cofiber Desc](cofiber-desc.md)
+- [Wedge](wedge.md)
+- [Wedge To Product](wedge-to-product.md)
+- [Wedge Map](wedge-map.md)
+- [Wedge Map to Product](wedge-map-to-product.md)
+- [Smash](smash.md)
+- [Smash Quotient](smash-quotient.md)
+- [Smash Map](smash-map.md)
+- [Smash Diagonal](smash-diagonal.md)

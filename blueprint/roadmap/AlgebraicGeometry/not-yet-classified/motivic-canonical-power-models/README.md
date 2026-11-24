@@ -1,0 +1,16 @@
+# Motivic Canonical Power Models
+
+- [Smash Right Functor](smash-right-functor.md)
+- [Smash Localization Source](smash-localization-source.md)
+- [Localized Smash Right](localized-smash-right.md)
+- [Power Realization Morphism](power-realization-morphism.md)
+- [Tate Power Morphism](tate-power-morphism.md)
+- [Total Power](total-power.md)
+- [Finite Power Thom Test](finite-power-thom-test.md)
+- [Expected](expected.md)
+- [Is Finite Power Normalization](is-finite-power-normalization.md)
+- [Geometric Stage Power](geometric-stage-power.md)
+- [Affine Free Replacement](affine-free-replacement.md)
+- [Base Change Power](base-change-power.md)
+- [Is Affine Cover Power Normalization](is-affine-cover-power-normalization.md)
+- [Is Geometric Power Normalization](is-geometric-power-normalization.md)
