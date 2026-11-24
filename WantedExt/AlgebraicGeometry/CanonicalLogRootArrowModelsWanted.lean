@@ -11,12 +11,16 @@ public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.CanonicalLogRootArrowModels
 
 /-!
-# Source-normalized canonical finite and infinite log-root arrows
+# Root preservation of canonical infinite log-root arrows
 
 All characteristic, frame, root-line, section, coefficient, family and
 global finite-projection maps are fixed by the original log arrow.
 Preserving every whole-fibre infinite root is a theorem conclusion,
 not a field assumed by the canonical arrow construction.
+Constructing the canonical finite and infinite arrows is left to a separate
+development: it needs root realizations whose evaluated root comparisons are
+coherent over the whole tower (identities, composites, base change and the
+mixed base/exponent squares), which the realizations here do not record.
 Source: Talpo--Vistoli1410.1164v2, Sections3--5 and Theorem5.24.
 -/
 
@@ -30,21 +34,6 @@ open MathlibExt.AlgebraicGeometry
 open EtaleLogSchemes EtaleLogDiagrams DenominatorRootStacks FiniteRootTowers
 open KatoChartCoefficientModels LogRootSourceModels CanonicalLogRootArrowModels
 open InfiniteRootPreservationModels InfiniteRootSectionModels
-
-public def_wanted nativeFiniteLogRootArrow [InverseImageTheory.{0}]
-    (I : NativeDFImages.{0}) (D : RegularSectionComparisons)
-    (X Y : LogScheme.{0}) (hX : X.IsFineSaturated) (hY : Y.IsFineSaturated)
-    (f : EtaleLogSchemes.Hom X Y) (RX : RootRealization X D I) (RY : RootRealization Y D I) :
-    {F : FiniteArrow I D f RX RY // TowerLineNormalization I D f RX RY F ∧ FamilyLineNormalization I D f RX RY F}
-
-public def_wanted nativeInfiniteLogRootArrow [InverseImageTheory.{0}]
-    (I : NativeDFImages.{0}) (D : RegularSectionComparisons)
-    (X Y : LogScheme.{0}) (hX : X.IsFineSaturated) (hY : Y.IsFineSaturated)
-    (f : EtaleLogSchemes.Hom X Y) (RX : RootRealization X D I) (RY : RootRealization Y D I)
-    [HasBaseChanges RY.infinite.stack] [∀ n : Exponent, HasBaseChanges (RY.finite n).stack]
-    (F : FiniteArrow I D f RX RY) (HT : TowerLineNormalization I D f RX RY F)
-    (HF : FamilyLineNormalization I D f RX RY F) (HA : FamilyAssembles I D f RX RY F) :
-    InfiniteArrow I D f RX RY F
 
 public theorem_wanted nativeLogRootPreservation [InverseImageTheory.{0}]
     (I : NativeDFImages.{0}) (D : RegularSectionComparisons)

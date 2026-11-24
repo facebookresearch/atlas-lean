@@ -253,16 +253,6 @@ structure FamilyLineNormalization (F : FiniteArrow I D f RX RY) : Prop where
 
 variable [HasBaseChanges RY.infinite.stack] [∀ n : Exponent, HasBaseChanges (RY.finite n).stack]
 
-/-- The finite family cells assemble, at every level, into a morphism of the finite root
-stacks with the given components: they are its naturality cells, so they satisfy its identity
-and composition coherence. `FamilyLineNormalization` does not force this: a central sign on
-the root comparison and on the family cell of an identity arrow cancel in its line squares. -/
-def FamilyAssembles (F : FiniteArrow I D f RX RY) : Prop :=
-  ∀ n : Exponent, ∃ G : StackHom (RX.finite n).stack (baseChanged (RY.finite n).stack f.map),
-    (∀ T : Over X.scheme, StackCycleGeometry.component G T = F.functor T n) ∧
-    ∀ {T U : Over X.scheme} (a : T ⟶ U) (r : (RX.finite n).stack.Fibre U),
-      HEq ((F.family a n).hom.app r) ((Cat.Hom.toNatIso (G.naturality a.op.toLoc)).hom.app r)
-
 /-- The native infinite arrow is fixed by all original finite family functors. -/
 structure InfiniteArrow (F : FiniteArrow I D f RX RY) where
   towerLineNormalization : TowerLineNormalization I D f RX RY F
