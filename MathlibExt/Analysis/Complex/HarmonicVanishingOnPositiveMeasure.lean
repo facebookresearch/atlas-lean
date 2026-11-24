@@ -54,7 +54,7 @@ import Mathlib.MeasureTheory.Measure.Prod
 import Mathlib.MeasureTheory.MeasurableSpace.Embedding
 import Mathlib.Topology.Bases
 import Mathlib.Topology.DiscreteSubset
-import Mathlib.Tactic.Linarith
+import Mathlib.Topology.Instances.Real.Lemmas
 
 /-! # Harmonic unique continuation from positive measure
 
@@ -132,18 +132,13 @@ private def ratRect (q : ℚ × ℚ × ℚ × ℚ) : Set (ℝ × ℝ) :=
 
 private theorem open_contains_ratRect {D : Set (ℝ × ℝ)} (hD : IsOpen D)
     {p : ℝ × ℝ} (hp : p ∈ D) : ∃ q, p ∈ ratRect q ∧ ratRect q ⊆ D := by
-  obtain ⟨ε, hε, hball⟩ := Metric.isOpen_iff.mp hD p hp
-  obtain ⟨a, hla, hap⟩ := exists_rat_btwn (show p.1 - ε < p.1 by linarith)
-  obtain ⟨b, hpb, hbu⟩ := exists_rat_btwn (show p.1 < p.1 + ε by linarith)
-  obtain ⟨c, hlc, hcp⟩ := exists_rat_btwn (show p.2 - ε < p.2 by linarith)
-  obtain ⟨d, hpd, hdu⟩ := exists_rat_btwn (show p.2 < p.2 + ε by linarith)
-  refine ⟨(a, b, c, d), ⟨⟨hap, hpb⟩, ⟨hcp, hpd⟩⟩, ?_⟩
-  intro x hx
-  apply hball
-  rw [Metric.mem_ball, Prod.dist_eq, max_lt_iff, Real.dist_eq, Real.dist_eq, abs_lt, abs_lt]
-  change (a < x.1 ∧ x.1 < b) ∧ (c < x.2 ∧ x.2 < d) at hx
-  exact ⟨⟨by linarith [hx.1.1], by linarith [hx.1.2]⟩,
-    ⟨by linarith [hx.2.1], by linarith [hx.2.2]⟩⟩
+  have hb := Real.isTopologicalBasis_Ioo_rat.prod Real.isTopologicalBasis_Ioo_rat
+  obtain ⟨s, hs, hps, hsD⟩ := hb.exists_subset_of_mem_open hp hD
+  rcases hs with ⟨U, hU, V, hV, rfl⟩
+  simp only [mem_iUnion, mem_singleton_iff] at hU hV
+  rcases hU with ⟨a, b, _, rfl⟩
+  rcases hV with ⟨c, d, _, rfl⟩
+  exact ⟨(a, b, c, d), hps, hsD⟩
 
 private theorem analytic_zero_measure_prod {F : ℝ × ℝ → ℝ} {D : Set (ℝ × ℝ)}
     (hD : IsOpen D) (hDc : IsPreconnected D) (hF : AnalyticOnNhd ℝ F D)
