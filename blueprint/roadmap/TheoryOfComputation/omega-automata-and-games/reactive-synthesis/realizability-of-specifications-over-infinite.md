@@ -2,10 +2,6 @@
 
 Let $I$ and $O$ be finite sets of input and output propositions and $\Phi \subseteq (2^I \times 2^O)^\omega$ a specification. A *strategy* is a function $f : (2^I)^+ \to 2^O$; its outcome on an input word $x_0 x_1 \cdots$ is $(x_0, f(x_0))(x_1, f(x_0 x_1)) \cdots$. $\Phi$ is *realizable* if some strategy has all its outcomes in $\Phi$, and *finite-state realizable* if some strategy computed by a finite-state Mealy transducer does. In a common variant the output at each step may depend only on the earlier inputs, so that a strategy is a function $(2^I)^* \to 2^O$.
 
-## Depends on
-
-- [Satisfaction of LTL formulas on ω-words](../../../Logic/temporal-logic/linear-temporal-logic/satisfies.md)
-
 ## Sources
 
 - A. Pnueli and R. Rosner, "On the synthesis of a reactive module", *Proceedings of the 16th ACM POPL*, 1989

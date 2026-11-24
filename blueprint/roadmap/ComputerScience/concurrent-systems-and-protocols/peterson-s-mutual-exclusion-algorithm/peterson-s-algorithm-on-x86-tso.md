@@ -4,7 +4,7 @@ Peterson's two-thread mutual-exclusion algorithm, correct under sequential consi
 
 ## Depends on
 
-- [Mutual exclusion under atomic acquisition](../dining-philosophers-problem/atomic-mutex.md)
+- [Mutual exclusion in Peterson's algorithm](mutual-exclusion.md)
 
 ## Expansion
 
