@@ -17,6 +17,10 @@ public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.LinearAlgebra.Matrix.Notation
 public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 public import MathlibExt.Combinatorics.CleanLatticeParallelogram.ConvergentVectors
+public import MathlibExt.Combinatorics.CleanLatticeParallelogram.Determinant
+public import MathlibExt.Combinatorics.CleanLatticeParallelogram.Lame
+public import MathlibExt.Combinatorics.CleanLatticeParallelogram.PairedColumns
+public import MathlibExt.Combinatorics.CleanLatticeParallelogram.Reflection
 
 /-!
 # Clean lattice parallelograms
@@ -41,23 +45,6 @@ open MeasureTheory
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Point reflection between the two triangles of a parallelogram.** Let $u$ and $v$ be
-linearly independent vectors in $\mathbb{R}^2$ and let $P$ be the parallelogram they span. The map
-$p \mapsto u + v - p$ is a bijection from the set of points of the triangle
-$\operatorname{conv}\{0, u, v\}$ that lie in the interior of $P$ onto the set of points of the
-triangle $\operatorname{conv}\{u, v, u + v\}$ that lie in the interior of $P$.
-
-The map sends $s u + t v$ to $(1 - s) u + (1 - t) v$.
-
-Source: Gabriel Khan, Mizan R. Khan, Riaz R. Khan, and Peng Zhao, *A Geometric Relationship
-between Continued Fractions and Clean Lattice Parallelograms*, INTEGERS 26 (2026), Article A10,
-Lemma 1 (`integers-2026-A10-lem-1`). -/
-public theorem_wanted antidiagonal_triangle_bijOn {u v : ℝ × ℝ}
-    (huv : LinearIndependent ℝ ![u, v]) :
-    Set.BijOn (fun p => u + v - p)
-      (convexHull ℝ {0, u, v} ∩ interior (latticeParallelogram u v))
-      (convexHull ℝ {u, v, u + v} ∩ interior (latticeParallelogram u v))
 
 /-- **Unimodular equivalences between the parallelograms $P_{b,n}$.** For natural numbers $b$
 and $n$ let $P_{b,n}$ be the parallelogram spanned by $(1, 0)$ and $(b, n)$, with vertices
@@ -121,41 +108,6 @@ public theorem_wanted stdCleanParallelogram_symmetry {a n : ℕ} (ha : 1 ≤ a) 
     (fun p : ℝ × ℝ => ((a + 1 : ℝ) - p.1, (n : ℝ) - p.2)) '' stdCleanParallelogram a n =
         stdCleanParallelogram a n ∧
       Isometry fun p : ℝ × ℝ => ((a + 1 : ℝ) - p.1, (n : ℝ) - p.2)
-
-/-- **Lowest and highest interior lattice points of $P_{a,n}$ on paired vertical lines.** Let $a$
-and $n$ be natural numbers with $1 \le a < n$ and $\gcd(a, n) = 1$, let $P_{a,n}$ be the
-parallelogram with vertices $(0, 0)$, $(1, 0)$, $(a, n)$, $(a + 1, n)$, and for an integer $k$
-let $S_k$ be the set of integers $y$ such that $(k, y)$ lies in the interior of $P_{a,n}$. Let
-$k, l \ge 1$ be natural numbers with $k + l = a + 1$, and suppose that $y_L$ is the least element
-of $S_k$ and $y_H$ is the greatest element of $S_l$. Then $y_L + y_H = n$, and $(l, y_H)$ lies on
-the boundary of the convex hull of the points of $\mathbb{Z}^2$ in the interior of $P_{a,n}$ if
-and only if $(k, y_L)$ does.
-
-Source: Gabriel Khan, Mizan R. Khan, Riaz R. Khan, and Peng Zhao, *A Geometric Relationship
-between Continued Fractions and Clean Lattice Parallelograms*, INTEGERS 26 (2026), Article A10,
-Lemma 6 (`integers-2026-A10-lem-6`). -/
-public theorem_wanted stdColumn_low_add_high {a n : ℕ} (ha : 1 ≤ a) (han : a < n)
-    (hcop : Nat.Coprime a n) {k l : ℕ} (hk : 1 ≤ k) (hl : 1 ≤ l) (hkl : k + l = a + 1)
-    {yL yH : ℤ} (hL : IsLeast (stdColumn a n k) yL) (hH : IsGreatest (stdColumn a n l) yH) :
-    yL + yH = n ∧
-      ((((l : ℝ), (yH : ℝ)) ∈
-          frontier (convexHull ℝ (interior (stdCleanParallelogram a n) ∩ latticePoints))) ↔
-        (((k : ℝ), (yL : ℝ)) ∈
-          frontier (convexHull ℝ (interior (stdCleanParallelogram a n) ∩ latticePoints))))
-
-/-- **Lamé's theorem (1844).** Let $F_0 = 0$, $F_1 = 1$, $F_{k+2} = F_{k+1} + F_k$ be the
-Fibonacci numbers, and let $N \ge 1$. Let $u > v > 0$ be natural numbers on which Euclid's
-algorithm takes exactly $N$ division steps, and suppose that $u \le u'$ whenever $u' > v' > 0$
-are natural numbers on which it takes exactly $N$ division steps. Then $u = F_{N+2}$ and
-$v = F_{N+1}$.
-
-Source: Gabriel Khan, Mizan R. Khan, Riaz R. Khan, and Peng Zhao, *A Geometric Relationship
-between Continued Fractions and Clean Lattice Parallelograms*, INTEGERS 26 (2026), Article A10,
-Theorem 7 (`integers-2026-A10-thm-7`). -/
-public theorem_wanted lame_euclidSteps_minimal {N u v : ℕ} (hN : 1 ≤ N) (huv : v < u) (hv : 0 < v)
-    (hsteps : euclidSteps u v = N)
-    (hmin : ∀ u' v', v' < u' → 0 < v' → euclidSteps u' v' = N → u ≤ u') :
-    u = Nat.fib (N + 2) ∧ v = Nat.fib (N + 1)
 
 /-- **The last partial quotient of $n/a$ is at least $2$.** Let $a$ and $n$ be natural numbers
 with $1 \le a < n$, and let $n/a = [q_0; q_1, \dots, q_m]$ be the regular continued fraction of
@@ -243,26 +195,6 @@ public theorem_wanted convergentVec_triangle_latticePoints {a n m : ℕ} (ha : 1
     ((segment ℝ v' v ∩ latticePoints).ncard : ℚ) = partialQuotient ((n : ℚ) / a) i + 1 ∧
       interior (convexHull ℝ {0, v', v}) ∩ latticePoints = ∅ ∧
       (convexHull ℝ {0, v', v} ∩ latticePoints) \ {0, v', v} ⊆ segment ℝ v' v
-
-/-- **A determinant of three convergent vectors.** Let $1 \le a < n$ be integers, let
-$n / a = [q_0; q_1, \dots, q_m]$ be the regular continued fraction of $n / a$, where $m$ is the
-least index at which it terminates, and let $v_j = (B_j, A_j)$ be its convergent vectors. Then
-for every natural number $i$ with $i + 2 \le m$, the determinant of the $3 \times 3$ matrix with
-rows $(1, B_{i-2}, A_{i-2})$, $(1, B_i, A_i)$ and $(1, B_{i+2}, A_{i+2})$ equals
-$(-1)^{i+1} q_i q_{i+1} q_{i+2}$.
-
-Source: Gabriel Khan, Mizan R. Khan, Riaz R. Khan, and Peng Zhao, *A Geometric Relationship
-between Continued Fractions and Clean Lattice Parallelograms*, INTEGERS 26 (2026), Article A10,
-Lemma 10 (`integers-2026-A10-lem-10`). -/
-public theorem_wanted convergentVec_det_three {a n m : ℕ} (ha : 1 ≤ a) (han : a < n)
-    (hm : IsLeast {k | (GenContFract.of ((n : ℚ) / a)).TerminatedAt k} m) {i : ℕ}
-    (him : i + 2 ≤ m) :
-    let v := convergentVec ((n : ℚ) / a)
-    let q := partialQuotient ((n : ℚ) / a)
-    Matrix.det !![1, (v ((i : ℤ) - 2)).1, (v ((i : ℤ) - 2)).2;
-        1, (v i).1, (v i).2;
-        1, (v ((i : ℤ) + 2)).1, (v ((i : ℤ) + 2)).2] =
-      (-1) ^ (i + 1) * ((q i * q (i + 1) * q (i + 2) : ℚ) : ℝ)
 
 /-- **Vertices of the interior hull of a standard clean parallelogram.** Let $1 \le a < n$ with
 $\gcd(a, n) = 1$, let $P_{a,n} = \{s (1, 0) + t (a, n) : 0 \le s \le 1,\ 0 \le t \le 1\}$, and let

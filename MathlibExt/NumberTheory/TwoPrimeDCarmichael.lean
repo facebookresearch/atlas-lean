@@ -89,52 +89,49 @@ private lemma two_ne_zero {r : ℕ} [Fact r.Prime] {K : Type*} [Field K] [CharP 
     (hr : r ≠ 2) : (2 : K) ≠ 0 :=
   Ring.two_ne_zero (by rwa [ringChar.eq K r])
 
-/-- Lift a trace at the larger prime, forcing trace zero at the smaller prime. -/
-private lemma lift_trace {p q : ℕ} [Fact p.Prime] [Fact q.Prime]
-    (hp : p ≠ 2) (hq : q ≠ 2) (hpq : p.Coprime q) {D : ℤ}
+/-- Lift a trace at the prime, forcing trace zero modulo its complementary factor. -/
+private lemma lift_trace {p q : ℕ} [Fact q.Prime]
+    (hp : Odd p) (hq : q ≠ 2) (hpq : p.Coprime q) {D : ℤ}
     (hD : D % 4 = 0 ∨ D % 4 = 1) (hDp : IsCoprime D p) (hDq : IsCoprime D q)
     (x : ℤ) (hx : (x : ZMod q) ^ 2 ≠ (D : ZMod q)) :
     ∃ s : LucasSequenceParams, s.IsCoprime ∧ s.p ^ 2 - 4 * s.q = D ∧
       IsCoprime s.q (↑(p * q) : ℤ) ∧ (s.p : ZMod q) = (x : ZMod q) := by
   obtain ⟨B, hB⟩ := trace_progression hD
-  let A := 4 * D
-  have hA (r : ℕ) [Fact r.Prime] (hr : r ≠ 2) (hc : IsCoprime D r) : (A : ZMod r) ≠ 0 := by
-    have h2 : (2 : ZMod r) ≠ 0 := two_ne_zero hr
-    have h4 : (4 : ZMod r) ≠ 0 := by
-      convert mul_ne_zero h2 h2 using 1
-      norm_num
-    exact_mod_cast (show (4 : ZMod r) * D ≠ 0 from
-      mul_ne_zero h4 ((cast_ne_zero_iff_coprime D).mpr hc))
-  let e := ZMod.chineseRemainder hpq
-  obtain ⟨t, ht⟩ := ZMod.intCast_surjective
-    (e.symm (-(B : ZMod p) / A, ((x : ZMod q) - B) / A))
-  have he := congrArg e ht
-  rw [RingEquiv.apply_symm_apply, map_intCast] at he
-  have hp' : (t : ZMod p) = -B / A := congrArg Prod.fst he
-  have hq' : (t : ZMod q) = (x - B) / A := congrArg Prod.snd he
-  let P := B + A * t
-  have hPp : (P : ZMod p) = 0 := by
-    simp only [P, Int.cast_add, Int.cast_mul, hp']
-    field_simp [hA p hp hDp]
-    ring
+  have four {m : ℕ} (hm : Odd m) : IsCoprime (4 : ℤ) m := by
+    have h : IsCoprime (2 : ℤ) m := Int.isCoprime_two_left.mpr (by exact_mod_cast hm)
+    simpa using h.mul_left h
+  obtain ⟨u, v, huv⟩ := (four hp).mul_left hDp
+  obtain ⟨w, z, hwz⟩ :=
+    ((four ((Fact.out : q.Prime).odd_of_ne_two hq)).mul_left hDq).mul_left hpq.isCoprime
+  -- The first correction makes the trace divisible by p. The second, a multiple
+  -- of p, prescribes its residue x modulo q.
+  let t₀ := -u * B
+  let P₀ := B + 4 * D * t₀
+  have hP₀ : P₀ = p * (v * B) := by dsimp [P₀, t₀]; linear_combination -B * huv
+  let t := t₀ + p * w * (x - P₀)
+  let P := B + 4 * D * t
+  have hPp : (p : ℤ) ∣ P := by
+    refine ⟨v * B + 4 * D * w * (x - P₀), ?_⟩
+    dsimp [P, t]
+    linear_combination hP₀
   have hPq : (P : ZMod q) = x := by
-    simp only [P, Int.cast_add, Int.cast_mul, hq']
-    field_simp [hA q hq hDq]
-    ring
+    apply (ZMod.intCast_eq_intCast_iff_dvd_sub ..).mpr
+    refine ⟨z * (x - P₀), ?_⟩
+    dsimp [P, t, P₀]
+    linear_combination -(x - (B + 4 * D * t₀)) * hwz
   obtain ⟨Q, hdisc : P ^ 2 - 4 * Q = D, hc⟩ := hB t
-  have hQp : (Q : ZMod p) ≠ 0 := by
-    intro hz
-    have h := congrArg (fun z : ℤ => (z : ZMod p)) hdisc
-    push_cast at h
-    simp [hz, hPp] at h
-    exact (cast_ne_zero_iff_coprime D).mpr hDp h.symm
+  have hQp : IsCoprime Q p := by
+    obtain ⟨k, hk⟩ := hPp
+    have h : IsCoprime (-(4 * Q) + (p : ℤ) * (k * P)) p := by
+      convert hDp using 1
+      linear_combination hdisc - P * hk
+    exact h.of_add_mul_left_left.of_isCoprime_of_dvd_left (dvd_neg.mpr (dvd_mul_left Q 4))
   have hQq : (Q : ZMod q) ≠ 0 := by
     intro hz
     apply hx
-    simpa [hPq, hz] using congrArg (fun z : ℤ => (z : ZMod q)) hdisc
-  refine ⟨⟨P, Q, fun h => hQp (by simp [h])⟩, hc, hdisc, ?_, hPq⟩
-  simpa only [Nat.cast_mul] using
-    ((cast_ne_zero_iff_coprime Q).mp hQp).mul_right ((cast_ne_zero_iff_coprime Q).mp hQq)
+    simpa [hPq, hz] using congrArg (fun y : ℤ => (y : ZMod q)) hdisc
+  refine ⟨⟨P, Q, fun h => hQq (by simp [h])⟩, hc, hdisc, ?_, hPq⟩
+  simpa only [Nat.cast_mul] using hQp.mul_right ((cast_ne_zero_iff_coprime Q).mp hQq)
 
 section Local
 
@@ -210,9 +207,9 @@ private lemma prime_dvd_lucas (K : Type*) [Field K] [CharP K r] [IsAlgClosed K]
 end Local
 
 /-- Realize a primitive root of order $q-(D\mid q)$ as the quotient of characteristic roots. -/
-private lemma local_order_dvd {p q : ℕ} [Fact p.Prime] [Fact q.Prime]
+private lemma local_order_dvd {p q : ℕ} [Fact q.Prime]
     (K : Type*) [Field K] [CharP K q] [IsAlgClosed K]
-    (hp : p ≠ 2) (hq : q ≠ 2) (hpq : p.Coprime q) {D : ℤ}
+    (hp : Odd p) (hq : q ≠ 2) (hpq : p.Coprime q) {D : ℤ}
     (hD : D % 4 = 0 ∨ D % 4 = 1) (hDp : IsCoprime D p) (hDq : IsCoprime D q)
     {k n : ℕ} (hk : (k : ℤ) = q - jacobiSym D q)
     (hn : ∀ s : LucasSequenceParams, s.IsCoprime → s.p ^ 2 - 4 * s.q = D →
@@ -285,6 +282,60 @@ end isDCarmichael_mul_iff
 
 open isDCarmichael_mul_iff
 
+namespace threeQR_isDCarmichael_iff
+
+/-- Let $D$ be an integer and let $m$ and $p$ be natural numbers. If $p$ is prime, $m$ is
+coprime to $p$, and $mp$ is a $D$-Carmichael number, then
+$p - \left(\frac{D}{p}\right)$ divides $m - \left(\frac{D}{m}\right)$ in the integers,
+where $\left(\frac{D}{k}\right)$ denotes the Jacobi symbol. -/
+lemma cofactor_dvd {m p : ℕ} (hp : p.Prime) (hmp : m.Coprime p) {D : ℤ}
+    (h : IsDCarmichael D (m * p)) :
+    (p : ℤ) - jacobiSym D p ∣ (m : ℤ) - jacobiSym D m := by
+  have : Fact p.Prime := ⟨hp⟩
+  obtain ⟨hD, hodd, hgt, _, hc, hall⟩ := h
+  obtain ⟨hm, ho⟩ := Nat.odd_mul.mp hodd
+  have hp₂ : p ≠ 2 := by rintro rfl; exact (by decide : ¬ Odd 2) ho
+  rw [Nat.cast_mul, IsCoprime.mul_right_iff] at hc
+  have hsp := jacobiSym.eq_one_or_neg_one (Int.isCoprime_iff_gcd_eq_one.mp hc.2)
+  have hsm := jacobiSym.eq_one_or_neg_one (Int.isCoprime_iff_gcd_eq_one.mp hc.1)
+  have hm0 : m ≠ 0 := by rintro rfl; simp at hgt
+  have hj := jacobiSym.mul_right' D hm0 hp.ne_zero
+  let k := ((p : ℤ) - jacobiSym D p).toNat
+  let n := ((↑(m * p) : ℤ) - jacobiSym D (m * p)).toNat
+  have hk : (k : ℤ) = p - jacobiSym D p := Int.toNat_of_nonneg (by have := hp.two_le; omega)
+  have hn : (n : ℤ) = ↑(m * p) - jacobiSym D (m * p) := by
+    apply Int.toNat_of_nonneg
+    rcases hsm with hs | hs <;> rcases hsp with ht | ht <;> simp [hj, hs, ht] <;> omega
+  have hd : k ∣ n := by
+    apply local_order_dvd (AlgebraicClosure (ZMod p)) hm hp₂ hmp hD hc.1 hc.2 hk
+    intro s hs he hQ
+    exact dvd_trans (by exact_mod_cast dvd_mul_left p m) (hall s hs he hQ)
+  have hd' : (k : ℤ) ∣ (n : ℤ) := by exact_mod_cast hd
+  rw [hk, hn, hj, Nat.cast_mul] at hd'
+  have he : (p : ℤ) - jacobiSym D p ∣ ((m : ℤ) - jacobiSym D m) * jacobiSym D p := by
+    convert dvd_sub hd' (dvd_mul_left ((p : ℤ) - jacobiSym D p) (m : ℤ)) using 1
+    ring
+  rcases hsp with hs | hs
+  · simpa only [hs, mul_one] using he
+  · simpa only [hs, mul_neg_one, dvd_neg] using he
+
+/-- Let $p$ be an odd prime and $D$ an integer coprime to $p$. Let $(P,Q)$ be integer Lucas
+parameters with $Q \ne 0$, $P^2 - 4Q = D$, and $Q$ coprime to $p$. For every natural number $n$,
+if $p - \left(\frac{D}{p}\right)$ divides $n$, then $p$ divides the Lucas term $U_n(P,Q)$,
+where $\left(\frac{D}{p}\right)$ denotes the Jacobi symbol. -/
+lemma dvd_lucas_of_local_order_dvd {p n : ℕ} (hp : p.Prime) (hp₂ : p ≠ 2)
+    {D : ℤ} (hDp : IsCoprime D p) (s : LucasSequenceParams) (hd : s.p ^ 2 - 4 * s.q = D)
+    (hQ : IsCoprime s.q p) (hn : ((p : ℤ) - jacobiSym D p).toNat ∣ n) :
+    (p : ℤ) ∣ lucasU s n := by
+  have : Fact p.Prime := ⟨hp⟩
+  apply prime_dvd_lucas (AlgebraicClosure (ZMod p)) hp₂ hDp s hd hQ _ hn
+  have hs := jacobiSym.eq_one_or_neg_one (Int.isCoprime_iff_gcd_eq_one.mp hDp)
+  exact Int.toNat_of_nonneg (by have := hp.two_le; omega)
+
+end threeQR_isDCarmichael_iff
+
+open threeQR_isDCarmichael_iff
+
 /-- **Williams' characterization of two-prime $D$-Carmichael numbers.** Let $D$ be an integer
 with $D \equiv 0$ or $1 \pmod 4$ and let $p_1 < p_2$ be primes. Then $p_1 p_2$ is a
 $D$-Carmichael number if and only if $p_2 = p_1 + 2$, $\left(\frac{D}{p_1}\right) = -1$ and
@@ -302,34 +353,13 @@ public theorem isDCarmichael_mul_iff {D : ℤ} (hD : D % 4 = 0 ∨ D % 4 = 1) {p
   have hq := h₂.two_le
   have hprod := jacobiSym.mul_right' D h₁.ne_zero h₂.ne_zero
   constructor
-  · rintro ⟨-, hodd, hlt, -, hDc, hall⟩
+  · intro h
+    have hDc := h.2.2.2.2.1
     rw [Nat.cast_mul, IsCoprime.mul_right_iff] at hDc
-    obtain ⟨ho₁, ho₂⟩ := Nat.odd_mul.mp hodd
-    have hp₂ : p₁ ≠ 2 := by obtain ⟨t, ht⟩ := ho₁; omega
-    have hq₂ : p₂ ≠ 2 := by omega
+    obtain ⟨ho₁, ho₂⟩ := Nat.odd_mul.mp h.2.1
     have hj₁ := jacobiSym.eq_one_or_neg_one (Int.isCoprime_iff_gcd_eq_one.mp hDc.1)
     have hj₂ := jacobiSym.eq_one_or_neg_one (Int.isCoprime_iff_gcd_eq_one.mp hDc.2)
-    let k := ((p₂ : ℤ) - jacobiSym D p₂).toNat
-    let n := (↑(p₁ * p₂) - jacobiSym D (p₁ * p₂)).toNat
-    have hk : (k : ℤ) = p₂ - jacobiSym D p₂ := Int.toNat_of_nonneg (by omega)
-    have hn : (n : ℤ) = ↑(p₁ * p₂) - jacobiSym D (p₁ * p₂) := by
-      apply Int.toNat_of_nonneg
-      rcases hj₁ with hj | hj <;> rcases hj₂ with hj' | hj' <;>
-        simp [hprod, hj, hj'] <;> omega
-    have hkn : k ∣ n := by
-      apply local_order_dvd (AlgebraicClosure (ZMod p₂)) hp₂ hq₂ hcop hD hDc.1 hDc.2 hk
-      intro s hc hd hQ
-      exact dvd_trans (by exact_mod_cast dvd_mul_left p₂ p₁) (hall s hc hd hQ)
-    have hd : (k : ℤ) ∣ (n : ℤ) := by exact_mod_cast hkn
-    rw [hk, hn, hprod, Nat.cast_mul] at hd
-    -- Subtract the multiple with coefficient p₁ to compare the two local orders.
-    have hdiv : (p₂ : ℤ) - jacobiSym D p₂ ∣ ((p₁ : ℤ) - jacobiSym D p₁) * jacobiSym D p₂ := by
-      convert dvd_sub hd (dvd_mul_left ((p₂ : ℤ) - jacobiSym D p₂) (p₁ : ℤ)) using 1
-      ring
-    have hdiv' : (p₂ : ℤ) - jacobiSym D p₂ ∣ (p₁ : ℤ) - jacobiSym D p₁ := by
-      rcases hj₂ with h | h
-      · simpa only [h, mul_one] using hdiv
-      · simpa only [h, mul_neg_one, dvd_neg] using hdiv
+    have hdiv' := cofactor_dvd h₂ hcop h
     have hle := Int.le_of_dvd (by omega : 0 < (p₁ : ℤ) - jacobiSym D p₁) hdiv'
     obtain ⟨u, hu⟩ := ho₁
     obtain ⟨v, hv⟩ := ho₂

@@ -41,8 +41,8 @@ lemma post_dose_tendsto {D q x0 : ℝ} (hq0 : 0 ≤ q) (hq1 : q < 1) :
     (x := fun n : ℕ => q ^ n * x0 + D * ∑ j ∈ Finset.range n, q ^ j) hx habs
   exact h
 
-/-- **Steady-state trough.** The pre-dose (trough) amounts
-`q * x n` tend to `q * D / (1 - q)`. -/
+/-- **Steady-state trough.** For `0 ≤ q < 1`, the pre-dose (trough) amounts `q * x n` tend to
+`q * D / (1 - q)`. -/
 lemma trough_tendsto {D q x0 : ℝ} (hq0 : 0 ≤ q) (hq1 : q < 1) :
     Tendsto (fun n : ℕ => q * (q ^ n * x0 + D * ∑ j ∈ Finset.range n, q ^ j))
       atTop (𝓝 (q * D / (1 - q))) := by

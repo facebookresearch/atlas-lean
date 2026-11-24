@@ -18,7 +18,7 @@ the `L₁` rectilinear metric or the `L∞` metric [Garey and Johnson, ——]" 
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.GeometricConnectedDominatingSetWanted
