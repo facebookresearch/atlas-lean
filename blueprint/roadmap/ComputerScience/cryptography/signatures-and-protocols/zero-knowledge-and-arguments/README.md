@@ -7,3 +7,7 @@
 - [Security of the Fiat–Shamir transform](security-of-the-fiatshamir-transform.md)
 - [The rewinding lemma](the-rewinding-lemma.md)
 - [Schnorr identification is secure against direct attacks](schnorr-identification-is-secure-against-direct.md)
+- [Security of KZG polynomial commitments](security-of-kzg-polynomial-commitments.md)
+- [Polynomial commitment schemes](polynomial-commitment-schemes.md)
+- [Security of Schnorr signatures in the random oracle model](security-of-schnorr-signatures-in-the-random.md)
+- [Soundness of the graph 3-coloring protocol](soundness-of-the-graph-3-coloring-protocol.md)
