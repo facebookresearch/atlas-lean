@@ -14,6 +14,7 @@ public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Nat.Factorization.Defs
 public import Mathlib.NumberTheory.Divisors
 public import MathlibExt.NumberTheory.ArithmeticFunction.HBCCalibrating
+public import MathlibExt.NumberTheory.ArithmeticFunction.OddPerfectMinFac
 
 namespace MetaMathlibExt
 
@@ -49,15 +50,6 @@ public theorem_wanted hbcAdmissible_half_first_le (k : ℕ) (hk : 0 < k) (y : Fi
     y ⟨0, hk⟩ ≤ k + 1 ∧
       ((∀ i, Odd (y i)) → (y ⟨0, hk⟩ : ℚ) < 2 * (k + 3) / 3) ∧
       ((∀ i, (y i).Prime) → (y ⟨0, hk⟩ : ℚ) < 3 * k / 7 + 3)
-
-/-- **A linear bound on the smallest prime divisor of an odd perfect number.** If $N$ is an odd
-perfect number with $m$ distinct prime divisors, then the smallest prime divisor $p_1$ of $N$
-satisfies $p_1 < 3m/7 + 3$.
-
-Source: Andrew Stone, *Improved Upper Bounds for Odd Perfect Numbers -- Part I*, INTEGERS 24
-(2024), Article A114, Lemma 6 (`integers-2024-A114-lem-6`). -/
-public theorem_wanted oddPerfect_minFac_lt (N : ℕ) (hodd : Odd N) (hperf : N.Perfect) :
-    (N.minFac : ℚ) < 3 * N.primeFactors.card / 7 + 3
 
 /-- **Sylvester's bound on the number of prime divisors of an odd perfect number.** Every odd
 perfect number has at least five distinct prime divisors.
