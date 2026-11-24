@@ -16,3 +16,5 @@ Local rings and their residue fields, Krull dimension, adic completion, regular 
 - [Krull's principal ideal theorem for commutative Noetherian rings](krull-principal-ideal-theorem.md)
 - [Krull's height theorem for commutative Noetherian rings](krull-height-theorem.md)
 - [The height of a prime ideal of a commutative ring equals the Krull dimension of the localization at it](height-equals-dimension-localization.md)
+- [Nakayama's lemma for finitely generated submodules](nakayama-lemma.md)
+- [The Krull dimension of a Noetherian local ring is at most the number of generators of its maximal ideal](noetherian-local-dimension-bound.md)
