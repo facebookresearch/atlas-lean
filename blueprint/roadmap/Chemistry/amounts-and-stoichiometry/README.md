@@ -4,4 +4,7 @@ Amounts of substance, molar masses and composition, flows of process streams, an
 
 - [Amount of substance and molar mass](amount-of-substance-and-molar-mass/README.md)
 - [Balanced reactions and stoichiometric conservation](balanced-reactions-and-stoichiometric-conservati/README.md)
+- [Composition of process streams](composition-of-process-streams/README.md)
+- [Moisture content on wet and dry bases](moisture-content-on-wet-and-dry-bases/README.md)
 - [Reaction extent, limiting reagents and yield](reaction-extent-limiting-reagents-and-yield/README.md)
+- [Species balances over process flowsheets](species-balances-over-process-flowsheets/README.md)

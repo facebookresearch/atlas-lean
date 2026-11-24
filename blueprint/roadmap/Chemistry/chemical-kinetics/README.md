@@ -8,4 +8,5 @@ Rates of chemical reactions and well-mixed reactors: integrated rate laws and ha
 - [Exothermic stirred-tank reactor](exothermic-stirred-tank-reactor/README.md)
 - [First-order decay kinetics](first-order-decay-kinetics/README.md)
 - [Rate laws](rate-laws/README.md)
+- [Species balances of variable-volume reactors](species-balances-of-variable-volume-reactors/README.md)
 - [Thermal runaway and combustion acoustics](thermal-runaway-and-combustion-acoustics/README.md)

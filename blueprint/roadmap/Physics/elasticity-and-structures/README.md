@@ -3,6 +3,9 @@
 Linear elasticity and the mechanics of structures: Cauchy stress, small strain and Mohr's circle, isotropic elastic energy, Euler–Bernoulli beams and their vibration modes, rigid footings on elastic foundations, and fracture under linear elastic fracture mechanics.
 
 - [Boussinesq point load on an elastic half-space](boussinesq-point-load-on-an-elastic-half-space/README.md)
+- [Compliance sensitivity of an end-loaded bar](compliance-sensitivity-of-an-end-loaded-bar/README.md)
+- [Damage accumulation and failure probability](damage-accumulation-and-failure-probability/README.md)
+- [Fracture, fatigue crack growth and failure margins](fracture-fatigue-crack-growth-and-failure-margin/README.md)
 - [Isotropic elastic energy](isotropic-elastic-energy/README.md)
 - [Pin-jointed trusses](pin-jointed-trusses/README.md)
 - [Rigid footing on a Winkler foundation](rigid-footing-on-a-winkler-foundation/README.md)

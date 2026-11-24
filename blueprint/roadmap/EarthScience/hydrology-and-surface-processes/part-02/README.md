@@ -5,6 +5,7 @@
 - [Radial flow to wells, well sources and fractional flow](radial-flow-to-wells-well-sources-and-fractional/README.md)
 - [Effective hydraulic conductivity of layered media](effective-hydraulic-conductivity-of-layered-medi/README.md)
 - [Van Genuchten water retention curve](van-genuchten-water-retention-curve/README.md)
+- [Exponential and hyperbolic production decline](exponential-and-hyperbolic-production-decline/README.md)
 - [Solute transport with linear sorption](solute-transport-with-linear-sorption/README.md)
 - [Retardation of sorbing solutes](retardation-of-sorbing-solutes/README.md)
 - [Exponential and hyperbolic production decline](exponential-production-decline/README.md)
