@@ -12869,6 +12869,7 @@
   "MathlibExt/NumberTheory/Stormer": {"to": "NumberTheory/diophantine-equations/exponential-diophantine", "title": "Størmer's theorem"},
   "MathlibExt/NumberTheory/StrongPseudoprime": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Strong pseudoprimes"},
   "MathlibExt/NumberTheory/StrongPseudoprimeZPowNeg": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Strong pseudoprimes"},
+  "MathlibExt/NumberTheory/SumProductPrimeCover": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Small solutions of diagonal congruences"},
   "MathlibExt/NumberTheory/SumSquares/RepresentationCount": {"to": "NumberTheory/quadratic-forms-sums-of-squares/sums-of-squares", "title": "Representation numbers of sums of squares"},
   "MathlibExt/NumberTheory/SumSquaredDivisorsProduct": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Zumkeller numbers"},
   "MathlibExt/NumberTheory/SuperFibocatalan": {"to": "NumberTheory/special-numbers/catalan-numbers", "title": "FiboCatalan numbers"},
