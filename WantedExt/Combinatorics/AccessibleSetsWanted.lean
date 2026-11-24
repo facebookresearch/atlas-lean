@@ -81,15 +81,6 @@ public theorem_wanted rLarge_sdiff_finite (r : ℕ) (D F : Set ℕ)
     (hD : IsRLarge r D) (hF : F.Finite) :
     IsRLarge r (D \ F)
 
-/-- **Largeness is partition regular.** If $D_1, D_2 \subseteq \mathbb{N}$ and their union
-$D = D_1 \cup D_2$ is large, then $D_1$ is large or $D_2$ is large.
-
-Source: Oscar Quester, *On Some Properties of Accessible Sets*, INTEGERS 25 (2025), Article A64,
-        Theorem 4. -/
-public theorem_wanted large_union_partition (D D₁ D₂ : Set ℕ)
-    (hD : D = D₁ ∪ D₂) (hlarge : IsLarge D) :
-    IsLarge D₁ ∨ IsLarge D₂
-
 /-- **Sets growing by a factor of three are not 2-large.** Let $d_0 < d_1 < d_2 < \cdots$ be a
 strictly increasing sequence of natural numbers with $d_0 > 0$ and $d_{n+1} \ge 3 d_n$ for every
 $n \in \mathbb{N}$, and let $D = \{d_n : n \in \mathbb{N}\}$. Then $D$ is not $2$-large.

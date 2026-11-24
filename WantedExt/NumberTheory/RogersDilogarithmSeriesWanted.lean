@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import MathlibExt.NumberTheory.LucasSequence
 public import MathlibExt.NumberTheory.SanfordCoupledRecurrence
+public import MathlibExt.NumberTheory.SanfordSymmetricSeries
 
 /-!
 # Rogers dilogarithm series of Hoorfar--Qi, Bridgeman, and Sanford
@@ -114,23 +115,6 @@ public theorem_wanted rogersDilog_sanford_principal_series {a b : ℝ} (ha₀ : 
     ∑' n : ℕ, L (a * b * (a - b) ^ 2 * (1 - a) ^ n * (1 - b) ^ n /
         (a * (1 - b) ^ (n + 1) - b * (1 - a) ^ (n + 1)) ^ 2) =
       L a + L b - L (|a - b| / (1 - min a b))
-
-/-- **Sanford's symmetric dilogarithm series.** Write $L(x) = \sum_{m \ge 1} x^m/m^2 +
-\frac{1}{2} \log x \log(1 - x)$ for the Rogers dilogarithm on $[0, 1]$ (with $\log 0 = 0$). For
-every real number $a \in (0, 1)$,
-$$
-\sum_{n \ge 1} L\left(\frac{a^2 \left(\frac{1 - a}{2}\right)^n \left(\frac{1 + a}{2}\right)^n}
-{\left(\left(\frac{1 + a}{2}\right)^{n+1} - \left(\frac{1 - a}{2}\right)^{n+1}\right)^2}\right) =
-L\left(\frac{1 - a}{1 + a}\right).
-$$
-
-Source: Chance Sanford, *A Dilogarithm Series and a Generalization of a Theorem of Bridgeman*,
-INTEGERS 25 (2025), Article A52, Corollary 1 (`integers-2025-A52-cor-1`). -/
-public theorem_wanted rogersDilog_sanford_symmetric_series {a : ℝ} (ha₀ : 0 < a) (ha₁ : a < 1) :
-    let L : ℝ → ℝ := fun x => (∑' n : ℕ, x ^ (n + 1) / ((n : ℝ) + 1) ^ 2) + log x * log (1 - x) / 2
-    ∑' n : ℕ, L (a ^ 2 * (1 / 2 - a / 2) ^ (n + 1) * (1 / 2 + a / 2) ^ (n + 1) /
-        ((1 / 2 + a / 2) ^ (n + 2) - (1 / 2 - a / 2) ^ (n + 2)) ^ 2) =
-      L ((1 - a) / (1 + a))
 
 /-- **Sanford's Lucas-sequence dilogarithm series for $Q > 0$.** Write
 $L(x) = \sum_{m \ge 1} x^m/m^2 + \frac{1}{2} \log x \log(1 - x)$ for the Rogers dilogarithm on
