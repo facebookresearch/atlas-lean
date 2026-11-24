@@ -15,6 +15,7 @@ public import Mathlib.Data.Set.Card
 public import Mathlib.RingTheory.Ideal.Span
 public import MathlibExt.Algebra.Polynomial.FactorialEvalBound
 public import MathlibExt.Algebra.Polynomial.LocallyIntegerPolynomial
+public import MathlibExt.Algebra.Polynomial.LowDegreeInterpolant
 public import MathlibExt.Data.Nat.ProgressionIntersection
 
 /-!
@@ -51,17 +52,6 @@ Source: Alexander Borisov, *Locally Integer Polynomial Functions*, INTEGERS 25 (
 Article A41, Lemma 1 (`integers-2025-A41-lem-1`). -/
 public theorem_wanted polynomialToLIP_injective {U : Set ℤ} (hU : U.Infinite) :
     Function.Injective (polynomialToLIP U)
-
-/-- **Integrality of low-degree interpolants.** Let $X \subseteq \mathbb{Z}$ be finite, let
-$q \in \mathbb{Q}[x]$ have degree less than $|X|$, and let $p \in \mathbb{Z}[x]$ satisfy
-$q(x) = p(x)$ for all $x \in X$. Then $q$ has integer coefficients, that is, $q$ is the image in
-$\mathbb{Q}[x]$ of a polynomial in $\mathbb{Z}[x]$.
-
-Source: Alexander Borisov, *Locally Integer Polynomial Functions*, INTEGERS 25 (2025),
-Article A41, Lemma 2 (`integers-2025-A41-lem-2`). -/
-public theorem_wanted mem_lifts_of_degree_lt_of_eval_eq (X : Finset ℤ) (q : ℚ[X])
-    (hq : q.degree < X.card) (p : ℤ[X]) (h : ∀ x ∈ X, q.eval (x : ℚ) = ((p.eval x : ℤ) : ℚ)) :
-    q ∈ Polynomial.lifts (Int.castRingHom ℚ)
 
 /-- **Locally integer polynomial functions agreeing on an infinite subset are equal.** Let
 $U \subseteq V \subseteq \mathbb{Z}$ with $U$ infinite, and let $f, g : V \to \mathbb{Z}$ lie in

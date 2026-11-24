@@ -23,6 +23,7 @@ public import MathlibExt.NumberTheory.Recurrences.GibonacciFibonacciLucasIdentit
 public import MathlibExt.NumberTheory.Recurrences.GibonacciIndexDoubling
 public import MathlibExt.NumberTheory.Recurrences.GibonacciLucasLikeSum
 public import MathlibExt.NumberTheory.Recurrences.GibonacciLucasMultiplier
+public import MathlibExt.NumberTheory.Recurrences.GibonacciProductSum
 public import MathlibExt.NumberTheory.Recurrences.LucasFibonacciTelescoping
 
 /-!
@@ -387,26 +388,6 @@ public theorem_wanted gibonacci_seed_lucas_like_identity
     (hH : ∀ j : ℤ, H (j + 2) = H (j + 1) + H j) (k r : ℤ) :
     G 0 * (H (r + k) + H (r + k - 2)) + G 1 * (H (r + k + 1) + H (r + k - 1)) =
       G r * (H k + H (k - 2)) + G (r + 1) * (H (k + 1) + H (k - 1))
-
-/-- **Sum of products of two gibonacci sequences.** Let $G, H \colon \mathbb{Z} \to \mathbb{R}$
-satisfy $G_{j+2} = G_{j+1} + G_j$ and $H_{j+2} = H_{j+1} + H_j$ for every integer $j$. For every
-natural number $n$ and all integers $k$ and $s$,
-$$2 \sum_{j=1}^{n} G_{j+k} H_{j+s} = G_{n+k} H_{n+s+1} + G_{n+k+1} H_{n+s} -
-G_{k+1} H_s - G_k H_{s+1}.$$
-
-The printed statement lacks the factor $2$: it fails for the Fibonacci sequence $G = H = F$
-with $k = s = 0$ and $n = 1$, where the left side is $1$ and the right side $2$. The paper's own
-derivation (its display before the proposition) carries the factor $2$.
-
-Source: Kunle Adegoke, *Fibonacci Identities via Fibonacci Functions*, Journal of
-Integer Sequences 27 (2024), Article 24.6.2, Proposition 30
-(`jis-2024-24.6.2-prop-30`). -/
-public theorem_wanted two_mul_sum_gibonacci_mul_gibonacci
-    (G H : ℤ → ℝ) (hG : ∀ j : ℤ, G (j + 2) = G (j + 1) + G j)
-    (hH : ∀ j : ℤ, H (j + 2) = H (j + 1) + H j) (n : ℕ) (k s : ℤ) :
-    2 * ∑ j ∈ Finset.Icc 1 n, G (j + k) * H (j + s) =
-      G (n + k) * H (n + s + 1) + G (n + k + 1) * H (n + s) - G (k + 1) * H s -
-        G k * H (s + 1)
 
 /-- **Hoggatt–Bicknell-type binomial sum with Fibonacci cubes.** Let $F_m$ denote the Fibonacci
 numbers, extended to all integers $m$ by $F_{-m} = (-1)^{m+1} F_m$. If
