@@ -27,15 +27,15 @@ computes the acceptance probability after flipping the output qubit with an `X`
 gate, the semantic step behind complementation.
 
 Background and motivation only: uniform quantum polynomial-time computation
-(Arora–Barak Definition 10.1; Bernstein–Vazirani) as in S. Arora and B. Barak,
-Computational Complexity: A Modern Approach, 2009, Definition 10.1, and
+(Arora–Barak Definition 10.9; Bernstein–Vazirani) as in S. Arora and B. Barak,
+Computational Complexity: A Modern Approach, 2009, Definition 10.9, and
 E. Bernstein and U. Vazirani, "Quantum complexity theory", SIAM Journal on
 Computing 26 (1997), 1411–1473, where the circuit sequence is generated from
 unary size/time inputs and elementary operations act on up to three qubits. No
 equivalence between the Atlas encoding and those models is proved here.
 
 Background sources: S. Arora and B. Barak, Computational Complexity: A Modern
-Approach, 2009, Definition 10.1; E. Bernstein and U. Vazirani, "Quantum
+Approach, 2009, Definition 10.9; E. Bernstein and U. Vazirani, "Quantum
 complexity theory", SIAM Journal on Computing 26 (1997), 1411–1473.
 -/
 
