@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Basic.Real.Basic
+public import Mathlib.Data.Nat.Factorial.Basic
 import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
@@ -43,6 +44,7 @@ whose first factor is nonnegative by `x n ≤ φ n` and whose second factor is p
 ## Main results
 
 * `MetaMathlibExt.a005773Recurrence_ratio_bounds`: both bounds, for every `n`.
+* `MetaMathlibExt.a005773Recurrence_thirdDiff_logConvex_logBalanced`: log-behavior of Δ³A.
 * `MetaMathlibExt.a005773Recurrence_weighted_logConcave`: log-concavity of four weighted sequences.
 * `MetaMathlibExt.a005773Recurrence_pow_logConvex`: log-convexity of `(n * A n) ^ n`.
 
@@ -68,6 +70,16 @@ private lemma a005773Recurrence_succ
   rw [Nat.add_sub_cancel] at h
   push_cast at h
   linear_combination h
+
+/-- The recurrence solved for its last term. -/
+private lemma a005773Recurrence_next
+    (hrec : ∀ n : ℕ, 1 ≤ n →
+      ((n : ℝ) + 1) * A (n + 1) = 2 * ((n : ℝ) + 1) * A n + 3 * ((n : ℝ) - 1) * A (n - 1))
+    (j : ℕ) : A (j + 2) =
+      (2 * ((j : ℝ) + 2) * A (j + 1) + 3 * j * A j) / (j + 2) := by
+  apply eq_div_of_mul_eq (by positivity)
+  rw [mul_comm]
+  exact a005773Recurrence_succ hrec j
 
 /-- Two consecutive terms of the sequence are positive. -/
 private lemma a005773Recurrence_pos (h0 : A 0 = 1) (h1 : A 1 = 1)
@@ -106,6 +118,19 @@ private lemma a005773Recurrence_ratio_mem (h0 : A 0 = 1) (h1 : A 1 = 1)
     constructor
     · nlinarith [mul_le_mul_of_nonneg_left hhi' hn]
     · linarith
+
+/-- Coordinates for two neighboring terms in the cone given by the ratio bounds. -/
+private lemma a005773Recurrence_coordinates (h0 : A 0 = 1) (h1 : A 1 = 1)
+    (hrec : ∀ n : ℕ, 1 ≤ n →
+      ((n : ℝ) + 1) * A (n + 1) = 2 * ((n : ℝ) + 1) * A n + 3 * ((n : ℝ) - 1) * A (n - 1))
+    (m : ℕ) : ∃ l u : ℝ, 0 ≤ l ∧ 0 ≤ u ∧
+      A m = 2 * ((m : ℝ) + 1) * l + (2 * m + 1) * u ∧
+      A (m + 1) = 3 * (2 * (m : ℝ) + 1) * l + 6 * m * u := by
+  obtain ⟨hlo, hhi⟩ := a005773Recurrence_ratio_mem h0 h1 hrec m
+  refine ⟨((2 * m + 1) * A (m + 1) - 6 * m * A m) / 3,
+    (3 * (2 * m + 1) * A m - 2 * (m + 1) * A (m + 1)) / 3,
+    div_nonneg (sub_nonneg.mpr hlo) (by norm_num),
+    div_nonneg (sub_nonneg.mpr hhi) (by norm_num), ?_, ?_⟩ <;> ring
 
 /-- **Ratio bounds for the A005773 recurrence.**
 Let $(A_n)_{n \ge 0}$ be a sequence of real numbers with $A_0 = A_1 = 1$ and
@@ -149,6 +174,57 @@ public theorem a005773Recurrence_ratio_bounds (A : ℕ → ℝ) (h0 : A 0 = 1) (
     rw [hφ, div_div_div_eq, div_le_div_iff₀ (by positivity) (by positivity)]
     linarith
 
+/-- **The third differences of A005773 are log-convex and log-balanced.**
+Let $(A_n)_{n \ge 0}$ be a sequence of real numbers with $A_0 = A_1 = 1$ and
+$(n+1) A_{n+1} = 2(n+1) A_n + 3(n-1) A_{n-1}$ for every $n \ge 1$, and write
+$z_n = \Delta^3 A_n = A_{n+3} - 3A_{n+2} + 3A_{n+1} - A_n$. Then $z_n^2 \le z_{n-1} z_{n+1}$
+for every $n \ge 3$, and
+$$\frac{z_{n-1}}{(n-1)!} \cdot \frac{z_{n+1}}{(n+1)!} \le \left(\frac{z_n}{n!}\right)^2$$
+for every $n \ge 4$. That is, $(\Delta^3 A_n)_{n \ge 2}$ is log-convex and
+$(z_n / n!)_{n \ge 3}$ is log-concave, so $(\Delta^3 A_n)_{n \ge 3}$ is log-balanced.
+
+Source: Feng-Zhen Zhao, *The Log-Behavior of Some Sequences Related to a Linear Recurrence
+Sequence*, INTEGERS 25 (2025), Article A100, Theorem 2. -/
+public theorem a005773Recurrence_thirdDiff_logConvex_logBalanced (A : ℕ → ℝ)
+    (h0 : A 0 = 1) (h1 : A 1 = 1)
+    (hrec : ∀ n : ℕ, 1 ≤ n →
+      ((n : ℝ) + 1) * A (n + 1) = 2 * ((n : ℝ) + 1) * A n + 3 * ((n : ℝ) - 1) * A (n - 1)) :
+    let D₃ : ℕ → ℝ := fun m => A (m + 3) - 3 * A (m + 2) + 3 * A (m + 1) - A m
+    (∀ n, 3 ≤ n → D₃ n ^ 2 ≤ D₃ (n - 1) * D₃ (n + 1)) ∧
+      ∀ n, 4 ≤ n →
+        D₃ (n - 1) / (n - 1).factorial * (D₃ (n + 1) / (n + 1).factorial) ≤
+          (D₃ n / n.factorial) ^ 2 := by
+  intro z
+  have step := a005773Recurrence_next hrec
+  -- For n = k + 4 use the ratio bounds two indices before the center.
+  have bounds (k : ℕ) :
+      z (k + 4) ^ 2 ≤ z (k + 3) * z (k + 5) ∧
+      ((k : ℝ) + 4) * (z (k + 3) * z (k + 5)) ≤ (k + 5) * z (k + 4) ^ 2 := by
+    obtain ⟨l, u, hl, hu, ha, hb⟩ := a005773Recurrence_coordinates h0 h1 hrec (k + 2)
+    dsimp only [z]
+    rw [step (k + 6), step (k + 5), step (k + 4), step (k + 3), step (k + 2), ha, hb]
+    push_cast
+    -- Both product differences now have nonnegative coefficients in k, l, and u.
+    constructor <;> apply sub_nonneg.mp <;> field_simp <;> ring_nf <;> positivity
+  constructor
+  · intro n hn
+    rcases (show n = 3 ∨ 4 ≤ n by omega) with rfl | hn'
+    · -- At the first index the inequality is 25² ≤ 9 · 71.
+      dsimp only [z]
+      rw [step 5, step 4, step 3, step 2, step 1, step 0, h0, h1]
+      norm_num
+    · obtain ⟨k, rfl⟩ : ∃ k, n = k + 4 := ⟨n - 4, by omega⟩
+      exact (bounds k).1
+  · intro n hn
+    obtain ⟨k, rfl⟩ : ∃ k, n = k + 4 := ⟨n - 4, by omega⟩
+    change z (k + 3) / (k + 3).factorial * (z (k + 5) / (k + 5).factorial) ≤
+      (z (k + 4) / (k + 4).factorial) ^ 2
+    have hf : (0 : ℝ) < (k + 3).factorial := by exact_mod_cast Nat.factorial_pos _
+    rw [Nat.factorial_succ (k + 4), Nat.factorial_succ (k + 3)]
+    push_cast
+    field_simp
+    linarith only [(bounds k).2]
+
 /-- **Log-concave weighted sequences built from A005773.**
 Let $(A_n)_{n \ge 0}$ be a sequence of real numbers with $A_0 = A_1 = 1$ and
 $(n+1) A_{n+1} = 2(n+1) A_n + 3(n-1) A_{n-1}$ for every $n \ge 1$, and write
@@ -171,25 +247,8 @@ public theorem a005773Recurrence_weighted_logConcave (A : ℕ → ℝ) (h0 : A 0
     W (n - 1) * W (n + 1) ≤ W n ^ 2 ∧ V (n - 1) * V (n + 1) ≤ V n ^ 2 ∧
       U (n - 1) * U (n + 1) ≤ U n ^ 2 ∧ T (n - 1) * T (n + 1) ≤ T n ^ 2 := by
   obtain ⟨k, rfl⟩ : ∃ k, n = k + 2 := ⟨n - 2, by omega⟩
-  -- The slacks in the ratio bounds at k + 1 give nonnegative coordinates for
-  -- the pair of consecutive terms. Solve the two slack equations to recover both terms.
-  obtain ⟨hlo, hhi⟩ := a005773Recurrence_ratio_mem h0 h1 hrec (k + 1)
-  push_cast at hlo hhi
-  let lo := ((2 * ((k : ℝ) + 1) + 1) * A (k + 2) - 6 * (k + 1) * A (k + 1)) / 3
-  let hi := (3 * (2 * ((k : ℝ) + 1) + 1) * A (k + 1) - 2 * (k + 1 + 1) * A (k + 2)) / 3
-  have hl : 0 ≤ lo := div_nonneg (sub_nonneg.mpr hlo) (by norm_num)
-  have hu : 0 ≤ hi := div_nonneg (sub_nonneg.mpr hhi) (by norm_num)
-  have ha : A (k + 1) = 2 * ((k : ℝ) + 2) * lo + (2 * k + 3) * hi := by
-    dsimp [lo, hi]
-    ring
-  have hb : A (k + 2) = 3 * (2 * (k : ℝ) + 3) * lo + 6 * (k + 1) * hi := by
-    dsimp [lo, hi]
-    ring
-  have step (j : ℕ) : A (j + 2) =
-      (2 * ((j : ℝ) + 2) * A (j + 1) + 3 * j * A j) / (j + 2) := by
-    apply eq_div_of_mul_eq (by positivity)
-    rw [mul_comm]
-    exact a005773Recurrence_succ hrec j
+  obtain ⟨lo, hi, hl, hu, ha, hb⟩ := a005773Recurrence_coordinates h0 h1 hrec (k + 1)
+  have step := a005773Recurrence_next hrec
   -- Eliminate the next three terms. After clearing positive denominators, each difference
   -- of products has nonnegative coefficients in k, lo, and hi.
   dsimp only
