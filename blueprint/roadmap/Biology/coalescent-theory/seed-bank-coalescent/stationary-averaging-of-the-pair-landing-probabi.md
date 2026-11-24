@@ -16,12 +16,13 @@ generations back to a uniform position and merges with any line it lands on.
    otherwise.
 4. Averaged over $\pi \otimes \pi$, this pair collision probability is
 
-   $$\frac{1}{N}\Bigl(\pi(0)^2 \sum_j b_j^2 + 2\,\pi(0) \sum_{r \ge 1} \pi(r)\, b_r\Bigr) = \frac{\pi(0)^2}{N} = \frac{\beta^2}{N}, \qquad \beta = \frac{1}{\mathbb E B},$$
+    $$\frac{1}{N}\Bigl(\pi(0)^2 \sum_j b_j^2 + 2\,\pi(0) \sum_{r \ge 1} \pi(r)\, b_r\Bigr) = \frac{\pi(0)^2}{N} = \frac{\beta^2}{N}, \qquad \beta = \frac{1}{\mathbb E B},$$
 
-   because $\sum_j b_j^2 + 2 \sum_r b_r \mathbb P(B > r) = \mathbb P(B = B') + \mathbb P(B \ne B') = 1$ for an
-   independent copy $B'$ of $B$. For $\ell$ lines in the stationary configuration law, the probability of a
-   merger in one step is $\beta^2 \binom{\ell}{2} / N + O(N^{-2})$, the $O(N^{-2})$ term coming from
-   several collisions in one step.
+    because $\sum_j b_j^2 + 2 \sum_r b_r \mathbb P(B > r) = \mathbb P(B = B') + \mathbb P(B \ne B') = 1$ for an
+    independent copy $B'$ of $B$. For $\ell$ lines in the stationary configuration law, the probability of a
+    merger in one step is $\beta^2 \binom{\ell}{2} / N + O(N^{-2})$, the $O(N^{-2})$ term coming from
+    several collisions in one step.
+
 5. The averaged value differs in general from the probability $\sum_j b_j^2 / N$ for two lines that are
    both relocated in the same step. For $B$ uniform on $\{1, 2\}$ the values are $4/(9N)$ and $1/(2N)$; for
    $B = 1$ both are $1/N$.
