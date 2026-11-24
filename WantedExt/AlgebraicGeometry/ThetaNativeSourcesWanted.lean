@@ -10,6 +10,7 @@ module
 public import MathlibExt.AlgebraicGeometry.ThetaQuotientOpenSources
 public import MathlibExt.AlgebraicGeometry.ThetaSchemeParameters
 public import Batteries.Util.ProofWanted
+public import WantedExt.AlgebraicGeometry.ThetaQuotientSourcesWanted
 
 /-!
 # Native filtration and elementary-modification integration requests
@@ -25,8 +26,8 @@ as a source constructor. Those lifting predicates remain independent.
 
 The standard contracting action on `𝔸¹` and the weight `(1, -1)` action on
 `st = π` that these charts take as instances are themselves requested, over
-every base ring, as `contractingAction` and `oppositeWeightAction` in
-`WantedExt.AlgebraicGeometry.ThetaQuotientSourcesWanted`, next to their classes.
+every base ring, as `contractingAction` and `oppositeWeightAction` in the
+imported `WantedExt.AlgebraicGeometry.ThetaQuotientSourcesWanted`.
 
 The open source of an arbitrary open `V` is the full substack of points whose
 whole orbit lands in `V`; it is an open substack when `V` is `G`-invariant, as

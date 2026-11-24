@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.AlgebraicGeometry.LineBundleTaskContracts
+public import MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
 public import MathlibExt.AlgebraicGeometry.FppfStacks
 public import MathlibExt.AlgebraicGeometry.GeneralStackGeometry
 public import Mathlib.CategoryTheory.Sites.Over
@@ -208,6 +209,8 @@ abbrev OverPseudofunctor (X : Scheme.{u}) :=
 /-- Root-stack fibre and reindexing data, before the unit/composition
 normalization of the transported forgetful functors is imposed. -/
 structure RootStackData {X : Scheme.{u}} (L : X.Modules) (s : Section L) (n : ℕ) where
+  /-- The rooted module is a line bundle, as for Cadman's root stacks. -/
+  line : MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries.IsLineBundle L
   /-- The exponent is positive, as for Cadman's root stacks. -/
   positive : 0 < n
   /-- The actual pseudofunctor. -/
