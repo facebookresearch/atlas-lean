@@ -10714,6 +10714,7 @@
   "MathlibExt/Combinatorics/Words/BalancedDyadicNestedEventuallyPeriodic": {"to": "Combinatorics/combinatorics-on-words/automatic-sequences", "title": "Meta-automatic sequences"},
   "MathlibExt/Combinatorics/Words/BalancedNestedXor": {"to": "Combinatorics/combinatorics-on-words/automatic-sequences", "title": "Meta-automatic sequences"},
   "MathlibExt/Combinatorics/Words/CobhamUniformMorphism": {"to": "Combinatorics/combinatorics-on-words/automatic-sequences", "title": "Automatic sequences"},
+  "MathlibExt/Combinatorics/Words/DumontThomasNumeration": {"to": "Combinatorics/combinatorics-on-words/automatic-sequences", "title": "Dumont–Thomas numeration"},
   "MathlibExt/Combinatorics/Words/EquilibriousWord": {"to": "Combinatorics/combinatorics-on-words/finite-words", "title": "Equilibrious words"},
   "MathlibExt/Combinatorics/Words/FibonacciFactorization": {"to": "Combinatorics/combinatorics-on-words/morphic-sturmian-words", "title": "Fibonacci word"},
   "MathlibExt/Combinatorics/Words/FibonacciIccanobiF": {"to": "Combinatorics/combinatorics-on-words/morphic-sturmian-words", "title": "Relative position in binary words"},
