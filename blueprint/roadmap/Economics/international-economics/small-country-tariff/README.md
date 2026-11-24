@@ -1,0 +1,15 @@
+# Small-country tariff
+
+- [Domestic market with linear demand and supply](linear-market.md)
+- [Linear domestic demand](demand.md)
+- [Linear domestic supply](supply.md)
+- [Imports as truncated excess demand](imports.md)
+- [Consumer surplus change from a tariff](consumer-surplus-change.md)
+- [Producer surplus change from a tariff](producer-surplus-change.md)
+- [Tariff revenue on imports](tariff-revenue.md)
+- [A tariff raises domestic output by d t](supply-tariff-sub.md)
+- [A tariff lowers domestic consumption by b t](demand-sub-tariff.md)
+- [Fall in imports under a non-prohibitive tariff](imports-sub-tariff.md)
+- [Integral of linear demand over a price interval](integral-demand.md)
+- [Integral of linear supply over a price interval](integral-supply.md)
+- [A non-prohibitive tariff lowers total surplus by two triangles](welfare-change-tariff.md)
