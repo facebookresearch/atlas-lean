@@ -85,10 +85,10 @@ ceiling through the bounded projections at
 The storage frame consumed on each directional path is anchored to the exact
 machine state returned by that call's named `merge_getmem`: the lo and hi
 `allocationPost`/`postGetmemStorageFrame` fields are stated at
-`Assembly/MergeLoSafety.lean:3453` and
-`Assembly/MergeLoSafety.lean:3457`, and
-`Assembly/MergeHiSafety.lean:3980` and
-`Assembly/MergeHiSafety.lean:3984`. The downstream
+`Assembly/MergeLoSafety.lean:3472` and
+`Assembly/MergeLoSafety.lean:3476`, and
+`Assembly/MergeHiSafety.lean:3999` and
+`Assembly/MergeHiSafety.lean:4003`. The downstream
 semantic machine invariants refer to those same `mergeLoAllocated` and
 `mergeHiAllocated` states definitionally at
 `Correctness/MergeLoInvariant.lean:158` and
