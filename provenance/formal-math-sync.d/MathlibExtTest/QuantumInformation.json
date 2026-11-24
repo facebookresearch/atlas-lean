@@ -1,6 +1,7 @@
 {
   "rows": [
     {"path": "MathlibExtTest/QuantumInformation/Finite/NoCloning.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "d14ae44bd728334b5419ed683d9ca72ebedd2b43799dd0e42b76160e698f42cf", "rationale": "ATLAS-side edit not in formal-math: lemmas or proof changes, and docstring fixes, from the Lean behind the ATLAS wiki (#4302)", "upstream_sha256": "6a95abac038b3cac8a603aae79b6691f816b7d3809b33f2af5ca6201e6745f81"},
-    {"path": "MathlibExtTest/QuantumInformation/Finite/TsirelsonTight.lean", "disposition": "identical", "published_sha256": "2bf6c4961744e721db2583e591f530887097b0453113078053c233e951b9cff4", "upstream_sha256": "ebb02448e394f3d827bdb671f06975d688481f87972e57c9579528cc6499ec11"}
+    {"path": "MathlibExtTest/QuantumInformation/Finite/TsirelsonTight.lean", "disposition": "identical", "published_sha256": "2bf6c4961744e721db2583e591f530887097b0453113078053c233e951b9cff4", "upstream_sha256": "ebb02448e394f3d827bdb671f06975d688481f87972e57c9579528cc6499ec11"},
+    {"path": "MathlibExtTest/QuantumInformation/Nonlocality/NoSignaling.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "865c6b234e977421f84c14ab51af0a1e0e2583611360ae44928d4a35eb20467c", "rationale": "Meta header added; body identical to upstream at the pin."}
   ]
 }

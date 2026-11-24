@@ -11,7 +11,12 @@ module
 public import Mathlib.Algebra.Polynomial.Degree.Defs
 public import Mathlib.Algebra.Polynomial.Eval.Defs
 public import Mathlib.Basic.Complex.Basic
+import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+import Mathlib.Algebra.Polynomial.Coeff
 import Mathlib.Algebra.Ring.Parity
+import Mathlib.Data.Nat.Factorial.Basic
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
 
 /-!
@@ -123,6 +128,73 @@ public theorem cl_value_on_canonicalLine (f : Polynomial ℂ) (hf : IsCL f)
     simp only [eval_mul, eval_C, eval_add, eval_ofNat, eval_X, eval_one, hlinear, hr,
       Complex.ofReal_mul, pow_succ]
     ring
+
+/-- **Binomial polynomial.** For an integer $n$ and a natural number $d$, the binomial polynomial
+$\binom{X+n}{d}$ is the real polynomial $\frac{1}{d!} \prod_{i=0}^{d-1} (X + n - i)$.
+
+Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Canonical Line*,
+INTEGERS 25 (2025), Article A68, Lemma 7.
+-/
+public def binomialPolynomial (n : ℤ) (d : ℕ) : Polynomial ℝ :=
+  ((d.factorial : ℝ)⁻¹) •
+    ∏ i ∈ Finset.range d, (X + C ((n - (i : ℤ) : ℤ) : ℝ))
+
+-- Keep the original index bounds in the API; the factorization does not need them.
+set_option linter.unusedVariables false in
+/-- **Multiplying a binomial polynomial by a quadratic.** For an integer $n$ and a natural number
+$k$, write $\binom{X+n}{k} = \frac{1}{k!} \prod_{i=0}^{k-1} (X + n - i)$ for the real binomial
+polynomial. Let $d$ and $j$ be natural numbers with $0 < d$ and $j \le d$, and let $c$ be a real
+number. Then
+$$
+(X^2 + X + c) \binom{X+d-j}{d} = \alpha \binom{X+d-j+2}{d+2} + \beta \binom{X+d-j+1}{d+2} +
+\gamma \binom{X+d-j}{d+2},
+$$
+where $\alpha = j^2 + j + c$, $\beta = 2(dj - j^2 + d + 1 - c)$ and
+$\gamma = d^2 - 2dj - j + j^2 + d + c$.
+
+The paper assumes $c \ge 1/4$; the identity holds for every real $c$.
+
+Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Canonical Line*,
+INTEGERS 25 (2025), Article A68, Lemma 7.
+-/
+public theorem quadratic_mul_binomialPolynomial (d j : ℕ) (hd : 0 < d) (hj : j ≤ d)
+    (c : ℝ) :
+    (X ^ 2 + X + C c) * binomialPolynomial ((d : ℤ) - (j : ℤ)) d =
+      C ((j : ℝ) ^ 2 + (j : ℝ) + c) *
+          binomialPolynomial ((d : ℤ) - (j : ℤ) + 2) (d + 2) +
+        C (2 * ((d : ℝ) * (j : ℝ) - (j : ℝ) ^ 2 + (d : ℝ) + 1 - c)) *
+          binomialPolynomial ((d : ℤ) - (j : ℤ) + 1) (d + 2) +
+        C ((d : ℝ) ^ 2 - 2 * (d : ℝ) * (j : ℝ) - (j : ℝ) +
+            (j : ℝ) ^ 2 + (d : ℝ) + c) *
+          binomialPolynomial ((d : ℤ) - (j : ℤ)) (d + 2) := by
+  let P (a : ℝ) (k : ℕ) : Polynomial ℝ :=
+    ∏ i ∈ Finset.range k, (X + C (a - (i : ℝ)))
+  have hbinom (n : ℤ) (k : ℕ) :
+      binomialPolynomial n k = C ((k.factorial : ℝ)⁻¹) * P n k := by
+    simp only [binomialPolynomial, P, smul_eq_C_mul, Int.cast_sub, Int.cast_natCast]
+  have hfront (a : ℝ) (k : ℕ) :
+      P (a + 1) (k + 1) = P a k * (X + C (a + 1)) := by
+    dsimp only [P]
+    rw [Finset.prod_range_succ']
+    simp only [Nat.cast_succ, add_sub_add_right_eq_sub, Nat.cast_zero, sub_zero]
+  have hback (a : ℝ) (k : ℕ) :
+      P a (k + 1) = P a k * (X + C (a - (k : ℝ))) :=
+    Finset.prod_range_succ _ _
+  have hfactorial : (d.factorial : ℝ)⁻¹ =
+      ((d : ℝ) + 2) * ((d : ℝ) + 1) * (((d + 2).factorial : ℝ)⁻¹) := by
+    rw [show d + 2 = (d + 1) + 1 from rfl, Nat.factorial_succ, Nat.factorial_succ]
+    push_cast
+    field_simp (disch := positivity)
+    ring
+  -- Each degree-(d+2) product contains P (d - j) d, with two extra factors.
+  simp only [hbinom, Int.cast_add, Int.cast_sub, Int.cast_natCast, Int.cast_ofNat,
+    Int.cast_one]
+  set a : ℝ := (d : ℝ) - (j : ℝ)
+  rw [show a + 2 = (a + 1) + 1 by ring, hfront (a + 1) (d + 1), hfront a d,
+    hfront a (d + 1), hback a (d + 1), hback a d, hfactorial]
+  dsimp only [a]
+  simp only [Nat.cast_succ, map_add, map_sub, map_mul, map_pow, map_one, map_ofNat]
+  ring
 
 end
 
