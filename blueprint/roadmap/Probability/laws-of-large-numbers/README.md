@@ -14,3 +14,7 @@ Almost-sure behaviour of sums of independent variables: strong and weak laws of 
 
 - [Limit theorems under sublinear expectations](../central-limit-theorems/limit-theorems-under-sublinear-expectations/README.md):
   Peng's law of large numbers under model uncertainty, whose limit is an interval of means.
+
+- [Variance sample mean](variance-sample-mean.md)
+
+- [Variance sample mean of pairwise](variance-sample-mean-of-pairwise.md)

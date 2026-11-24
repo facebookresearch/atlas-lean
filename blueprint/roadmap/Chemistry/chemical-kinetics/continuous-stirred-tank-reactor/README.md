@@ -16,3 +16,4 @@ explicit solution relaxes exponentially to the steady concentration $Q c_{\mathr
 - [The reactor concentration solves the reactor equation](solution-has-deriv-at.md)
 - [A reactor without flow is a batch decay](solution-zero-flow.md)
 - [A reactor without flow or reaction keeps its concentration](solution-zero-flow-zero-rate.md)
+- [CSTR IVP uniqueness](eq-solution-of-has-deriv-at.md)

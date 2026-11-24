@@ -7,3 +7,4 @@ that relates them.
 ## Virtual work
 
 - [The principle of virtual work for a supported plane truss](supported-virtual-work-iff.md)
+- [Supported pos Def iff ker eq bot](supported-pos-def-iff-ker-eq-bot.md)
