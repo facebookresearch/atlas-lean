@@ -33,8 +33,8 @@ example : BuyerDSIC (postedPrice (1 / 2 : ℝ)) ∧ SellerDSIC (postedPrice (1 /
     ExPostIR (postedPrice (1 / 2 : ℝ)) ∧ WeaklyBudgetBalanced (postedPrice (1 / 2 : ℝ)) ∧
     ¬ Efficient (postedPrice (1 / 2 : ℝ)) := by
   have hp : (1 / 2 : ℝ) ∈ Set.Icc (0 : ℝ) 1 := Set.mem_Icc.mpr ⟨by norm_num, by norm_num⟩
-  exact ⟨postedPrice_buyerDSIC hp, postedPrice_sellerDSIC hp, postedPrice_exPostIR hp,
-    postedPrice_weaklyBudgetBalanced hp, postedPrice_not_efficient hp⟩
+  exact ⟨postedPrice_buyerDSIC, postedPrice_sellerDSIC, postedPrice_exPostIR,
+    postedPrice_weaklyBudgetBalanced, postedPrice_not_efficient hp⟩
 
 -- Posted-price allocation at `1/2`: trade at `(0, 1)`, no trade at `(3/4, 1)`
 -- although `3/4 < 1`, and no trade at `(0, 1/4)` although `0 < 1/4`.

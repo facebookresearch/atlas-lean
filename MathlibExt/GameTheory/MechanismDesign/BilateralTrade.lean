@@ -221,7 +221,7 @@ noncomputable def postedPrice (p : ℝ) : BilateralMechanism where
     by_cases h : s ≤ p ∧ p ≤ b <;> simp [h]
 
 /-- The posted-price mechanism is DSIC for the buyer. -/
-theorem postedPrice_buyerDSIC {p : ℝ} (hp : p ∈ Set.Icc (0 : ℝ) 1) :
+theorem postedPrice_buyerDSIC {p : ℝ} :
     BuyerDSIC (postedPrice p) := by
   intro s hs v hv r hr
   simp only [buyerUtil, postedPrice]
@@ -239,7 +239,7 @@ theorem postedPrice_buyerDSIC {p : ℝ} (hp : p ∈ Set.Icc (0 : ℝ) 1) :
   · simp [hsp]
 
 /-- The posted-price mechanism is DSIC for the seller. -/
-theorem postedPrice_sellerDSIC {p : ℝ} (hp : p ∈ Set.Icc (0 : ℝ) 1) :
+theorem postedPrice_sellerDSIC {p : ℝ} :
     SellerDSIC (postedPrice p) := by
   intro b hb c hc r hr
   simp only [sellerUtil, postedPrice]
@@ -257,7 +257,7 @@ theorem postedPrice_sellerDSIC {p : ℝ} (hp : p ∈ Set.Icc (0 : ℝ) 1) :
   · simp [hpb]
 
 /-- The posted-price mechanism is ex-post individually rational. -/
-theorem postedPrice_exPostIR {p : ℝ} (hp : p ∈ Set.Icc (0 : ℝ) 1) :
+theorem postedPrice_exPostIR {p : ℝ} :
     ExPostIR (postedPrice p) := by
   intro s hs b hb
   simp only [buyerUtil, sellerUtil, postedPrice]
@@ -267,7 +267,7 @@ theorem postedPrice_exPostIR {p : ℝ} (hp : p ∈ Set.Icc (0 : ℝ) 1) :
   · simp [h]
 
 /-- The posted-price mechanism is weakly budget-balanced (both sides use `p`). -/
-theorem postedPrice_weaklyBudgetBalanced {p : ℝ} (hp : p ∈ Set.Icc (0 : ℝ) 1) :
+theorem postedPrice_weaklyBudgetBalanced {p : ℝ} :
     WeaklyBudgetBalanced (postedPrice p) := by
   intro s hs b hb hall
   simp only [postedPrice]
