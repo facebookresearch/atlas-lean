@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Factorization.Defs
 public import Mathlib.Data.Rat.Defs
 public import MathlibExt.NumberTheory.PrimitivePrimeDivisorPowAddOne
+public import MathlibExt.NumberTheory.PrimitivePrimeDivisorPowSubOne
 public import MathlibExt.NumberTheory.ArithmeticFunction.BiunitaryFortyOne
 
 /-!
@@ -93,23 +94,6 @@ public theorem_wanted sigmaBiunitary_prime_pow_div_ge_of_two_mul_sub_one_le (p m
         (sigmaBiunitary (p ^ e) : ℚ) / (p : ℚ) ^ e) ∧
       (e ≠ 2 * m → ∑ i ∈ Finset.range (m + 1), 1 / (p : ℚ) ^ i ≤
         (sigmaBiunitary (p ^ e) : ℚ) / (p : ℚ) ^ e)
-
-/-- **Primitive prime divisors of $a^n - 1$ are $1$ modulo $n$.** Let $a \ge 2$ and $n \ge 2$ be
-natural numbers, and let $p$ be a primitive prime divisor of the integer sequence $m \mapsto
-a^m - 1$ at index $n$, that is, a prime that divides $a^n - 1$ and divides no $a^m - 1$ with
-$1 \le m < n$. Then $p \equiv 1 \pmod n$.
-
-This is the congruence half of Bang's theorem. Its existence half (such a $p$ exists unless
-$(a, n) = (2, 6)$, or $n = 2$ and $a + 1$ is a power of $2$) is the case $b = 1$ of the
-Bang–Zsigmondy theorem.
-
-Source: Tomohiro Yamada, *Determining all Biunitary Triperfect Numbers of a Certain Form*,
-Journal of Integer Sequences 28 (2025), Article 25.4.5, Lemma 4 (`jis-2025-25.4.5-lem-4`),
-quoting Bang. -/
-public theorem_wanted primitivePrimeDivisor_pow_sub_one_mod_eq_one (a n p : ℕ) (ha : 2 ≤ a)
-    (hn : 2 ≤ n)
-    (hp : IntegerSequence.IsPrimitivePrimeDivisor (fun m => (a : ℤ) ^ m - 1) n p) :
-    p % n = 1
 
 /-- **Prime factors of the biunitary divisor sum of a power of $3$.** Let $f$, $t$ and $\eta$ be
 natural numbers with $\eta \in \{0, 1\}$ and $f = 2t - 1 - \eta$, suppose $f \ge 5$, and write

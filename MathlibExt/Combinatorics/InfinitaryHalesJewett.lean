@@ -10,15 +10,17 @@ module
 
 public import Mathlib.Algebra.Free
 public import MathlibExt.Combinatorics.SemigroupLargeness
+import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Data.Fintype.Pi
 import Mathlib.Data.List.OfFn
+import Mathlib.Data.Nat.Pairing
 
 /-!
 # Hales–Jewett configurations in J-sets
 
 Every J-set of nonempty words contains all substitutions of a variable word over any
 given finite level of an increasing alphabet. A sequence of such words can also realize
-ordered finite products of prescribed variable patterns.
+ordered finite products of prescribed variable patterns or finite sums of prescribed counts.
 -/
 
 namespace MetaMathlibExt
@@ -123,10 +125,10 @@ private theorem pattern_mul (u v : FreeSemigroup (α ⊕ Fin n)) :
   simp only [pattern, letters_mul, List.filterMap_append]
 
 -- Lift a prescribed pattern to the first k variables and append the missing high variables.
-private theorem exists_word (hk : 1 ≤ k) (hkn : k < n)
+private theorem exists_word (hk : 1 ≤ k) (hkn : k ≤ n)
     (p : List (Fin k)) (hp : ∀ i, i ∈ p) :
     ∃ w : FreeSemigroup (α ⊕ Fin n), (∀ i, Sum.inr i ∈ letters w) ∧ pattern k w = p := by
-  let low (i : Fin k) : α ⊕ Fin n := Sum.inr (i.castLE hkn.le)
+  let low (i : Fin k) : α ⊕ Fin n := Sum.inr (i.castLE hkn)
   let high := (List.finRange n).filter fun i : Fin n => k ≤ i.val
   let xs := p.map low ++ high.map (Sum.inr : Fin n → α ⊕ Fin n)
   have hvars (i : Fin n) : Sum.inr i ∈ xs := by
@@ -171,7 +173,7 @@ private theorem pattern_interleave {r : ℕ} (b : Fin (r + 2) → FreeSemigroup 
 
 -- Realize one level using only indices in the tail starting at s.
 private theorem exists_stage (A : ℕ → Finset α) (hA : Monotone A)
-    (hcover : ∀ x, ∃ i, x ∈ A i) (hk : 1 ≤ k) (hkn : k < n)
+    (hcover : ∀ x, ∃ i, x ∈ A i) (hk : 1 ≤ k) (hkn : k ≤ n)
     (y : ℕ → List (Fin k)) (hy : ∀ t i, i ∈ y t) {D : Set (FreeSemigroup α)}
     (hD : IsMulJSet D) (m s : ℕ) :
     ∃ (w : FreeSemigroup (α ⊕ Fin n)) (r : ℕ) (t : Fin (r + 1) → ℕ),
@@ -226,7 +228,7 @@ public theorem exists_variableWords_subst_mem_prod_pattern_mem_finiteProducts_of
                 if h : (i : ℕ) < k then some ⟨i, h⟩ else none)).flatten =
             (List.ofFn fun j => y (t j)).flatten := by
   classical
-  choose word r t ht hstart hvars hmem hpat using exists_stage A hA hcover hk hkn y hy hD
+  choose word r t ht hstart hvars hmem hpat using exists_stage A hA hcover hk hkn.le y hy hD
   -- Start each search strictly after the last index used by the preceding stage.
   let start : ℕ → ℕ := Nat.rec 0 fun m s => t m s (Fin.last (r m s)) + 1
   let indices (m : ℕ) := List.ofFn (t m (start m))
@@ -260,5 +262,59 @@ public theorem exists_variableWords_subst_mem_prod_pattern_mem_finiteProducts_of
   rw [← List.map_ofFn, List.ofFn_get, ← he]
   simp only [chunks, indices, List.map_flatten, List.flatten_flatten, List.map_ofFn,
     Function.comp_def, hpat]
+
+/-- **Variable-count sums of variable words in J-sets.** Let $A_0 \subseteq A_1 \subseteq \cdots$
+be finite sets with union $A$, and let $S_0$ be the semigroup of nonempty finite words over $A$
+under concatenation. A variable word over $A$ is a nonempty finite word over $A \cup \{v\}$, for a
+variable $v \notin A$, in which $v$ occurs; for $a \in A$, the word $w(a) \in S_0$ is obtained from
+$w$ by replacing each occurrence of $v$ by $a$, and $|w|_v$ is the number of occurrences of $v$ in
+$w$. If $D \subseteq S_0$ is a $J$-set and $x_0, x_1, \dots$ are positive integers, then there is
+a sequence $w_0, w_1, \dots$ of variable words over $A$ such that $w_k(a) \in D$ for all
+$k \in \mathbb{N}$ and $a \in A_k$, and such that for every nonempty finite $G \subseteq \mathbb{N}$
+there is a nonempty finite $H \subseteq \mathbb{N}$ with
+$\sum_{k \in G} |w_k|_v = \sum_{j \in H} x_j$.
+
+Source: Aninda Chakraborty and Sayan Goswami, *An Analogue to the Infinitary Hales–Jewett
+Theorem*, INTEGERS 24 (2024), Article A74, Theorem 3.7. -/
+public theorem exists_variableWords_subst_mem_sum_count_mem_finiteSums_of_isMulJSet
+    {α : Type*} (A : ℕ → Finset α) (hA : Monotone A) (hcover : ∀ x, ∃ i, x ∈ A i)
+    {D : Set (FreeSemigroup α)} (hD : IsMulJSet D) (x : ℕ → ℕ) (hx : ∀ j, 0 < x j) :
+    ∃ w : ℕ → FreeSemigroup (α ⊕ Fin 1), (∀ k, Sum.inr 0 ∈ (w k).head :: (w k).tail) ∧
+      (∀ k a, a ∈ A k → FreeSemigroup.map (Sum.elim id fun _ => a) (w k) ∈ D) ∧
+      ∀ G : Finset ℕ, G.Nonempty → ∃ H : Finset ℕ, H.Nonempty ∧
+        ∑ k ∈ G, ((w k).head :: (w k).tail).countP Sum.isRight = ∑ j ∈ H, x j := by
+  classical
+  -- Allocate disjoint input indices to the levels. At level m, the j-th pattern consists
+  -- of x (Nat.pair m j) copies of the sole variable.
+  let runs (m j : ℕ) := List.replicate (x (Nat.pair m j)) (0 : Fin 1)
+  have hruns (m j : ℕ) (i : Fin 1) : i ∈ runs m j :=
+    List.mem_replicate.mpr ⟨(hx _).ne', Subsingleton.elim _ _⟩
+  choose w r t ht _ hvar hmem hpat using fun m =>
+    exists_stage A hA hcover (k := 1) (n := 1) le_rfl le_rfl (runs m) (hruns m) hD m 0
+  let index (m : ℕ) (j : Fin (r m + 1)) := Nat.pair m (t m j)
+  let block (m : ℕ) := Finset.univ.image (index m)
+  have hright : (fun a : α ⊕ Fin 1 => (project 1 a).isSome) = Sum.isRight := by
+    funext a
+    cases a <;> simp [project]
+  have hcount (m : ℕ) : (letters (w m)).countP Sum.isRight = ∑ j ∈ block m, x j := by
+    have hinj : Function.Injective (index m) :=
+      fun _ _ h => (ht m).injective (Nat.pair_eq_pair.mp h).2
+    rw [Finset.sum_image hinj.injOn]
+    simpa only [pattern, List.length_filterMap_eq_countP, hright, List.length_flatten,
+      List.map_ofFn, Function.comp_def, runs, List.length_replicate, List.sum_ofFn, index] using
+      congrArg List.length (hpat m)
+  refine ⟨w, fun m => hvar m 0, fun m a ha => hmem m (fun _ => a) (fun _ => ha), ?_⟩
+  intro G hG
+  refine ⟨G.biUnion block, Finset.biUnion_nonempty.mpr
+    ⟨hG.choose, hG.choose_spec, Finset.univ_nonempty.image _⟩, ?_⟩
+  have hdisjoint : (G : Set ℕ).PairwiseDisjoint block := by
+    intro a _ b _ hab
+    apply Finset.disjoint_left.mpr
+    intro j hj hj'
+    obtain ⟨i, _, rfl⟩ := Finset.mem_image.mp hj
+    obtain ⟨i', _, he⟩ := Finset.mem_image.mp hj'
+    exact hab (Nat.pair_eq_pair.mp he.symm).1
+  rw [Finset.sum_biUnion hdisjoint]
+  exact Finset.sum_congr rfl fun m _ => hcount m
 
 end MetaMathlibExt

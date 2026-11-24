@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Combinatorics.Enumerative.Bell
 public import Mathlib.Data.Set.Card
 public import MathlibExt.Combinatorics.Enumerative.Partition.ColoredPartitionsDifferentColors
+public import MathlibExt.Combinatorics.Enumerative.Partition.ColoredPartitionsFullyDifferent
 public import MathlibExt.Combinatorics.Enumerative.Partition.DistinctConstantBlockPartitions
 
 /-!
@@ -32,25 +33,6 @@ multisets whose sum (`Multiset.join`) is the multiset; a block is constant when 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Formula for colored partitions into fully different parts.** A colored part is a pair
-$(m, j)$ of integers with $1 \le j \le m$, read as the part $m$ in color $j$. For $n \ge 0$, let
-$\mathrm{pf}_c(n)$ be the number of finite sets of colored parts whose sizes $m$ sum to $n$ and
-in which no two colored parts have the same size and no two have the same color. Then
-$\mathrm{pf}_c(n)$ is the sum, over all partitions of $n$ into distinct parts
-$p_1 > p_2 > \cdots > p_k$, of the product $p_k (p_{k-1} - 1) \cdots (p_1 - (k - 1))$.
-
-The identity is stated for all $n \ge 0$; at $n = 0$ both sides equal $1$, while the paper states
-it for $n \ge 1$.
-
-Source: Beimar J. Naranjo and José L. Ramírez, *On Colored Partitions and Euler-Type
-Identities*, INTEGERS 26 (2026), Article A20, Theorem 2 (`integers-2026-A20-thm-2`). -/
-public theorem_wanted card_coloredPartitions_fullyDifferent (n : ℕ) :
-    (((Finset.Icc 1 n ×ˢ Finset.Icc 1 n).filter (fun x : ℕ × ℕ => x.2 ≤ x.1)).powerset.filter
-      (fun T => ∑ x ∈ T, x.1 = n ∧ (T.image Prod.fst).card = T.card ∧
-        (T.image Prod.snd).card = T.card)).card =
-      ∑ μ ∈ Nat.Partition.distincts n,
-        ((μ.parts.sort (· ≤ ·)).mapIdx fun i q => q - i).prod
 
 /-- **Colored partitions into fully different parts with bounded size.** A colored part is a pair
 $(m, j)$ of integers with $1 \le j \le m$, read as the part $m$ in color $j$. For every $n \ge 0$,
