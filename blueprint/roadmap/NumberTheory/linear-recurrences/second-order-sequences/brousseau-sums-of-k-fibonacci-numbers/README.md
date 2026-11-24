@@ -8,6 +8,7 @@
 - [The polynomial $C_k^{(0)}$ is constant $1$](brousseau-coeff-zero.md)
 - [The polynomial $C_k^{(1)}(n) = n - 2/k$](brousseau-coeff-one.md)
 - [$k$-Fibonacci numbers as a power-weighted convolution](k-fibonacci-eq-pow-add-convolution.md)
+- [Sum eq endpoints](sum-eq-endpoints.md)
 - [Power-weighted convolution of k-Fibonacci numbers](k-fibonacci-power-convolution.md)
 - [Brousseau sums of $k$-Fibonacci numbers](k-fibonacci-brousseau-sum.md)
 - [Brousseau sums of Fibonacci numbers along an odd step](fibonacci-brousseau-sum-mul-odd.md)

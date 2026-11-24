@@ -15,6 +15,7 @@ public import Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
 public import MathlibExt.NumberTheory.LucasSequence
 public import MathlibExt.NumberTheory.PrimitiveDivisor
 public import MathlibExt.NumberTheory.Recurrences.LucasParityDivisibility
+public import MathlibExt.NumberTheory.Recurrences.LucasRecurrenceShift
 public import MathlibExt.NumberTheory.Recurrences.LucasSequenceFirstKind
 public import MathlibExt.NumberTheory.Recurrences.NondegenerateLucasPair
 public import Mathlib.Basic.Complex.Basic
@@ -73,19 +74,6 @@ public theorem_wanted lucasU_lucasV_neg_p
     (L : LucasSequenceParams) (n : ℕ) :
     lucasU ⟨-L.p, L.q, L.q_ne_zero⟩ n = (-1) ^ (n + 1) * lucasU L n ∧
       lucasV ⟨-L.p, L.q, L.q_ne_zero⟩ n = (-1) ^ n * lucasV L n
-
-/-- **Shift congruence for the Lucas recurrence.** Let $U = U(P, Q)$ be the Lucas sequence with
-integer parameters $P$ and $Q \ne 0$, and let $(W_n)_{n \ge 0}$ be a sequence of integers with
-$W_{n+2} = P W_{n+1} - Q W_n$ for every $n \ge 0$. If $t \ge 0$ and $m$ are integers with
-$m \mid U_t$ and $\gcd(m, Q) = 1$, then $W_{n+t} \equiv U_{t+1} W_n \pmod{m}$ for every $n \ge 0$.
-
-Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
-INTEGERS 25 (2025), Article A107, Lemma 2.5 (`integers-2025-A107-lem-2-5`). -/
-public theorem_wanted lucas_recurrence_add_modEq_of_dvd_lucasU
-    (L : LucasSequenceParams) (W : ℕ → ℤ)
-    (hW : ∀ n, W (n + 2) = L.p * W (n + 1) - L.q * W n)
-    (t : ℕ) (m : ℤ) (ht : m ∣ lucasU L t) (hm : Int.gcd m L.q = 1) (n : ℕ) :
-    W (n + t) ≡ lucasU L (t + 1) * W n [ZMOD m]
 
 /-- **When $p^{i+1}$ divides $U_{2n}$, for a prime power $p^i$ exactly dividing $P$.** Let $P$ and
 $Q$ be coprime integers with $Q \ne 0$, and let $U_n$ be the Lucas sequence $U(P, Q)$. Let $p$ be

@@ -30,26 +30,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Recurrences for the hyper-Leonardo numbers of orders zero, one and two.** The
-hyper-Leonardo numbers $Le^{(r)}_n$ satisfy $Le^{(0)}_0 = Le^{(0)}_1 = 1$, $Le^{(1)}_0 = 1$,
-$Le^{(1)}_1 = 2$, $Le^{(2)}_0 = 1$ and $Le^{(2)}_1 = 3$, and for every natural number $n \ge 2$,
-$$Le^{(0)}_n = Le^{(0)}_{n-1} + Le^{(0)}_{n-2} + 1,$$
-$$Le^{(1)}_n = Le^{(1)}_{n-1} + Le^{(1)}_{n-2} + \binom{n-1}{1} + 1,$$
-$$Le^{(2)}_n = Le^{(2)}_{n-1} + Le^{(2)}_{n-2} + \binom{n}{2} + \binom{n-1}{1} + 2.$$
-
-Source: Elen Viviani Pereira Spreafico and Paula Maria Machado Cruz Catarino, *A Note on
-Hyper-Leonardo Numbers*, INTEGERS 26 (2026), Article A48, Proposition 1
-(`integers-2026-A48-prop-1`). -/
-public theorem_wanted hyperLeonardo_recurrence_small_order :
-    (∀ n, hyperLeonardo 0 (n + 2) = hyperLeonardo 0 (n + 1) + hyperLeonardo 0 n + 1) ∧
-    hyperLeonardo 0 0 = 1 ∧ hyperLeonardo 0 1 = 1 ∧
-    (∀ n, hyperLeonardo 1 (n + 2) =
-      hyperLeonardo 1 (n + 1) + hyperLeonardo 1 n + ((n + 1).choose 1 : ℕ) + 1) ∧
-    hyperLeonardo 1 0 = 1 ∧ hyperLeonardo 1 1 = 2 ∧
-    (∀ n, hyperLeonardo 2 (n + 2) = hyperLeonardo 2 (n + 1) + hyperLeonardo 2 n +
-      ((n + 2).choose 2 : ℕ) + ((n + 1).choose 1 : ℕ) + 2) ∧
-    hyperLeonardo 2 0 = 1 ∧ hyperLeonardo 2 1 = 3
-
 /-- **Recurrence for the hyper-Leonardo numbers.** For every natural number $r$, the
 hyper-Leonardo numbers $Le^{(r)}_n$ of order $r$ satisfy $Le^{(r)}_0 = 1$, $Le^{(r)}_1 = r + 1$
 and, for every natural number $n \ge 2$,

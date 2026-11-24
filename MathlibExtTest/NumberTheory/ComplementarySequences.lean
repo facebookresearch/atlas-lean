@@ -75,3 +75,24 @@ example :
   have result := nthNonValue_eq_one_step f (by decide) hgap
   exact ⟨(result 1 (by decide)).trans (by decide), (result 3 (by decide)).trans (by decide),
     (result 4 (by decide)).trans (by decide)⟩
+
+-- For the squares, n + sqrt n is just below the next square at n = 2 and hits it at n = 3.
+example : nthNonValue (fun m => m ^ 2) 2 = 3 ∧ nthNonValue (fun m => m ^ 2) 3 = 5 := by
+  let f (m : ℕ) := m ^ 2
+  let α (m : ℕ) : ℝ := f m
+  have hgap (m : ℕ) (_ : 1 ≤ m) : f m + m ≤ f (m + 1) := by
+    dsimp [f]
+    nlinarith
+  have hα (m : ℕ) (_ : 2 ≤ m) : (f (m - 1) : ℝ) ≤ α m ∧ α m ≤ f m := by
+    refine ⟨?_, le_rfl⟩
+    dsimp only [α, f]
+    exact_mod_cast Nat.pow_le_pow_left (Nat.sub_le m 1) 2
+  have hh (n : ℕ) (hn : 1 ≤ n) :
+      1 ≤ n.sqrt ∧ α n.sqrt ≤ n ∧ (n : ℝ) < α (n.sqrt + 1) := by
+    dsimp only [α, f]
+    exact ⟨Nat.le_sqrt'.mpr (by simpa using hn), by exact_mod_cast Nat.sqrt_le' n,
+      by exact_mod_cast Nat.lt_succ_sqrt' n⟩
+  have hclose (m : ℕ) (hm : 1 ≤ m) : (f m : ℝ) - α m < m := by
+    simpa [α] using (show 0 < m from hm)
+  have result := nthNonValue_eq_interleave_of_sub_lt f (by decide) hgap α hα Nat.sqrt hh hclose
+  refine ⟨(result 2 (by decide)).trans ?_, (result 3 (by decide)).trans ?_⟩ <;> norm_num [f]

@@ -59,6 +59,7 @@ public import MathlibExt.NumberTheory.BernoulliFibonacciExpansion
 public import MathlibExt.NumberTheory.BernoulliFibonacciMultinomial
 public import MathlibExt.NumberTheory.BernoulliFibonacciVanishing
 public import MathlibExt.NumberTheory.ForwardDiffPow
+public import MathlibExt.NumberTheory.GenocchiLucasVanishing
 public import MathlibExt.NumberTheory.GenocchiNumber
 public import MathlibExt.NumberTheory.LucasSequence
 
@@ -80,24 +81,6 @@ noncomputable def eulerSecNumber (n : ℕ) : ℚ :=
   if n % 2 = 1 then 0
   else ((MathlibExt.Analysis.Ramanujan.Part1Ch5.Entry10bEuleriansymmetry.chapter5EulerEven
     (n / 2) : ℤ) : ℚ)
-
-/-- **Genocchi–Lucas coefficients.** For a natural number $n$, the Genocchi–Lucas coefficient is
-the real number
-$$
-c_n = \sum_{k=0}^{n} \sqrt{5}^{\,k} \binom{n}{k} G_k \frac{L_{n-k+1}}{n-k+1} +
-2 \sqrt{5}^{\,n+1} \frac{G_{n+1}}{n+1},
-$$
-where $G_k$ are the Genocchi numbers and $L_k$ the Lucas numbers.
-
-These are the inner coefficients of the corrected Theorem 11 of Bensaci, Boumahdi and Khaldi,
-"Finite Sums Involving Fibonacci and Lucas Numbers"; the paper's printed coefficient omits the
-last term. -/
-noncomputable def genLucasCoeff (n : ℕ) : ℝ :=
-  (∑ k ∈ Finset.range (n + 1), (Real.sqrt 5) ^ k *
-      (Nat.choose n k : ℝ) * (genocchiNumber k : ℝ) *
-      ((lucasNumber (n - k + 1) : ℝ) / (n - k + 1 : ℕ))) +
-    2 * (Real.sqrt 5) ^ (n + 1) *
-      ((genocchiNumber (n + 1) : ℝ) / (n + 1 : ℕ))
 
 /-- **Bernoulli–Fibonacci expansion of $(x + \beta)^m$.** Let $\beta = (1 - \sqrt{5})/2$, let
 $B_k$ be the Bernoulli numbers, normalized so that $B_1 = -1/2$, and let $F_k$ be the Fibonacci
@@ -256,25 +239,6 @@ theorem_wanted add_fibBeta_pow_eq_sum_genLucasCoeff (m : ℕ)
     (x + fibBeta) ^ m =
       (1 / (2 * Real.sqrt 5)) * ∑ n ∈ Finset.range (m + 1),
         (Nat.choose m n : ℝ) * genLucasCoeff n * x ^ (m - n)
-
-/-- **A vanishing sum of the corrected Genocchi–Lucas coefficients.** Let
-$\beta = (1 - \sqrt{5})/2$, let $G_k$ be the Genocchi numbers and $L_n$ the Lucas numbers, and for
-each natural number $n$ let
-$$c_n = \sum_{k=0}^{n} \sqrt{5}^{\,k} \binom{n}{k} G_k \frac{L_{n-k+1}}{n-k+1} +
-2\sqrt{5}^{\,n+1} \frac{G_{n+1}}{n+1}.$$
-For every natural number $m \ge 1$, $\sum_{n=0}^{m} \binom{m}{n} c_n (-\beta)^{m-n} = 0$.
-
-This is the case $x = -\beta$ of the corrected Theorem 11. As printed, with $\beta^{m-n}$ in place
-of $(-\beta)^{m-n}$ and without the last term of $c_n$, the sum at $m = 2$ is $-10 + 4\sqrt{5}$.
-
-Source: Fatima Zohra Bensaci, Rachid Boumahdi, and Laala
-Khaldi, "Finite Sums Involving Fibonacci and Lucas Numbers",
-Corollary 12. -/
-theorem_wanted sum_genLucasCoeff_neg_fibBeta (m : ℕ)
-    (hm : 1 ≤ m) :
-    ∑ n ∈ Finset.range (m + 1),
-        (Nat.choose m n : ℝ) * genLucasCoeff n *
-          (-fibBeta) ^ (m - n) = 0
 
 /-- **A weighted sum of the corrected Genocchi–Lucas coefficients.** Let $G_k$ be the Genocchi
 numbers and $L_n$ the Lucas numbers, and for each natural number $n$ let

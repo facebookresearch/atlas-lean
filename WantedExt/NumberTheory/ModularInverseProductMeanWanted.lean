@@ -231,19 +231,6 @@ public theorem_wanted coprime_sum_mul_additive_character {n k : ℕ} (hn : 2 ≤
         n / 2 * ∑ d ∈ n.divisors with d < n ∧ (n / d) ∣ k,
           (ArithmeticFunction.moebius d : ℂ) * ((n / d : ℕ) - 1)
 
-/-- **Splitting a sum by greatest common divisor.** For every function
-$f : \mathbb{N} \to \mathbb{C}$ and every natural number $n$,
-$$\sum_{k=1}^{n} f(k) = \sum_{d \mid n} \sum_{1 \le h \le n/d,\ \gcd(n/d, h) = 1} f(hd).$$
-
-Here $d$ runs over the positive divisors of $n$, and $0$ is taken to have none, so for $n = 0$
-both sides are empty sums.
-
-Source: O. Bordellès and L. Tóth, *Mean Values of the Product of an Integer and Its Modular
-Inverse*, INTEGERS 24 (2024), Article A33, Lemma 5. -/
-public theorem_wanted sum_Icc_eq_sum_divisors_coprime (f : ℕ → ℂ) (n : ℕ) :
-    ∑ k ∈ Icc 1 n, f k =
-      ∑ d ∈ n.divisors, ∑ h ∈ Icc 1 (n / d) with Nat.Coprime (n / d) h, f (h * d)
-
 /-- **Sum of reciprocal distances from roots of unity to 1.** Let $q \ge 2$ and $\ell \ge 1$ be
 integers, let $s \in \{1, -1\}$, and write $e_q(x) = e^{2\pi i x / q}$. Then
 $$\sum_{0 \le a < q,\ q \nmid a\ell} \frac{1}{|1 - e_q(s a \ell)|} \le

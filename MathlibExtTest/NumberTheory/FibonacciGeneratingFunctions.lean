@@ -30,6 +30,18 @@ example : IsGibonacciGood 2 (-2) (-(3 / 2)) := by
   norm_num [gibonacciNumber] at h ⊢
   exact h
 
+-- The initial shifted ratio may be negative and its terms need not be coprime.
+example : IsGibonacciGood 4 6 (-(3 / 2)) := by
+  have h := isGibonacciGood_shifted_ratio 4 6 0 (by decide)
+  norm_num [gibonacciNumber] at h ⊢
+  exact h
+
+-- The pair (4, 8) occurs after the zero in -4, 4, 0, 4, 4, 8.
+example : IsGibonacciGood 4 4 (1 / 2) := by
+  have h := isGibonacciGood_shifted_ratio 4 4 4 (by decide)
+  norm_num [gibonacciNumber] at h ⊢
+  exact h
+
 -- Both steps from 1/3 must preserve integrality with quadratic denominator 5.
 example : IsGibonacciGood 1 3 (3 / 4) ∧ IsGibonacciGood 1 3 2 := by
   have h : IsGibonacciGood 1 3 (1 / 3) :=

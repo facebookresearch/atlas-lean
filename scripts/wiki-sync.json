@@ -73746,6 +73746,7 @@
 "MetaMathlibExt.kFibonacci_repdigit_index_lt": "4610e73c469d1b81",
 "MetaMathlibExt.kFibonacci_root_pow_eq_binomial_series": "8ad0f57132718418",
 "MetaMathlibExt.kFibonacci_shifted_brousseau_sum": "6f0d6c35036fdd47",
+"MetaMathlibExt.kFibonacci_shifted_brousseau_sum.sum_eq_endpoints": "cd7700ace44ecd80",
 "MetaMathlibExt.kFree_divisor_sum_asymptotic": "d8d5e9ec47a92677",
 "MetaMathlibExt.kGeneralizedFibonacci_discr_eq_bounds": "97059399192b95fc",
 "MetaMathlibExt.kGeneralizedFibonacci_discr_eq_index_bounds": "c43bf8b0eca66740",

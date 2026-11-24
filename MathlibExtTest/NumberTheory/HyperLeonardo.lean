@@ -20,6 +20,13 @@ example (r : ℕ) : hyperLeonardo r 0 = 1 := by
   | zero => rfl
   | succ r ih => simpa [hyperLeonardo_succ] using ih
 
+-- The first recurrence step gives the index-two values from the six initial values.
+example : hyperLeonardo 0 2 = 3 ∧ hyperLeonardo 1 2 = 5 ∧ hyperLeonardo 2 2 = 8 := by
+  obtain ⟨rec₀, h₀₀, h₀₁, rec₁, h₁₀, h₁₁, rec₂, h₂₀, h₂₁⟩ :=
+    hyperLeonardo_recurrence_small_order
+  rw [rec₀ 0, rec₁ 0, rec₂ 0, h₀₀, h₀₁, h₁₀, h₁₁, h₂₀, h₂₁]
+  decide
+
 -- At degree three the first two iterated sums already have distinct coefficients.
 example : coeff 3 (PowerSeries.mk (hyperLeonardo 1)) = 10 ∧
     coeff 3 (PowerSeries.mk (hyperLeonardo 2)) = 18 := by
