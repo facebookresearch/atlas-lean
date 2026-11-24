@@ -35,25 +35,6 @@ namespace MetaMathlibExt
 open DominationState
 
 open scoped Classical in
-/-- **Cylinder domination polynomial as a sum of almost dominating polynomials.** For all
-natural numbers $m$ and $n$, let $C_m$ be the cycle graph on the vertices $0, \dots, m - 1$, in
-which distinct $i$ and $j$ are adjacent when $i - j \equiv \pm 1 \pmod m$, and let $P_{n+1}$ be
-the path on the vertices $0, \dots, n$. Then the domination polynomial of the cylinder
-$C_m \mathbin{\square} P_{n+1}$ equals $\sum_\sigma G^\sigma(z)$, the sum running over the
-signatures $\sigma$ of the row graph $C_m$ with no uncovered vertex, where $G^\sigma(z)$ is the
-almost dominating polynomial of $C_m$ with $n + 1$ rows and last-row state $\sigma$.
-
-Source: Stephan Mertens, *Domination Polynomials of the Grid, the Cylinder, the Torus, and the
-King Graph*, Journal of Integer Sequences 27 (2024), Article 24.7.6, Lemma 4
-(`jis-2024-24.7.6-lem-4`). -/
-public theorem_wanted dominationPolynomial_cylinder_eq_sum_almostDominatingPolynomial
-    (m n : ℕ) :
-    dominationPolynomial (cycleGraph m □ pathGraph (n + 1)) =
-      ∑ σ ∈ (Finset.univ : Finset (DominationSignature (cycleGraph m))).filter
-          (fun σ => ∀ i, σ.1 i ≠ uncovered),
-        almostDominatingPolynomial (cycleGraph m) n σ.1
-
-open scoped Classical in
 /-- **Transfer-matrix formula for the domination polynomial of the grid.** For all natural
 numbers $m$ and $n$, let $P_k$ denote the path on the vertices $0, \dots, k - 1$, let $A$ be the
 domination transfer matrix of the row graph $P_m$, indexed by the signatures of $P_m$, and let
