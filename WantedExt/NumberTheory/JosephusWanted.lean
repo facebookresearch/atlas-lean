@@ -52,24 +52,13 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Basic
 public import Mathlib.Data.Set.Finite.Basic
 public import MathlibExt.NumberTheory.JosephusFixedSuccCases
+public import MathlibExt.NumberTheory.JosephusHighExtremal
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.JosephusWanted
-
-/-- **Low extremal point of the Josephus function.** For natural numbers $k$ and $m$, the point
-$m$ is a low extremal point of the Josephus function $J_k$ if $1 \le J_k(m) \le k - 1$, where
-$k - 1$ is truncated at $0$. -/
-def IsLowExtremal (k m : ℕ) : Prop :=
-  1 ≤ MetaMathlibExt.josephus k m ∧
-    MetaMathlibExt.josephus k m ≤ k - 1
-
-/-- **High extremal point of the Josephus function.** For natural numbers $k$ and $m$, the point
-$m$ is a high extremal point of the Josephus function $J_k$ if $m + 1$ is a low extremal point
-of $J_k$, that is, if $1 \le J_k(m + 1) \le k - 1$. -/
-def IsHighExtremal (k m : ℕ) : Prop := IsLowExtremal k (m + 1)
 
 /-- **Josephus recurrence by number of wrap-arounds.** Let $k \ge 2$ and $n \ge 1$ be natural
 numbers, let $J_k$ be the Josephus function and write $p = J_k(n)$. If $\ell$ is a natural
@@ -165,22 +154,6 @@ theorem_wanted shift_le_iff_le_div (k n : ℕ) (hk : 2 ≤ k)
       m ≤ (n - (MetaMathlibExt.josephus k (n + 1) - 1)) / (k - 1)) ∧
     (k - 2 + MetaMathlibExt.josephus k (n + 1) ≤ n →
       1 ≤ (n - (MetaMathlibExt.josephus k (n + 1) - 1)) / (k - 1))
-
-/-- **Linear growth of the Josephus function after a high extremal point.** Let $k \ge 2$ and
-$n_e \ge 2k - 3$ be natural numbers such that $n_e$ is a high extremal point of the Josephus
-function $J_k$, that is, $1 \le J_k(n_e + 1) \le k - 1$, and write $j = J_k(n_e + 1)$. Then
-$J_k(n_e + 1 + m) = j + km$ for every natural number
-$m \le \lfloor (n_e - (j - 1)) / (k - 1) \rfloor$.
-
-Source: Yunier Bello-Cruz and Roy Quintero-Contreras,
-"Analytical Study and Efficient Evaluation of the
-Josephus Function", Theorem 9. -/
-theorem_wanted josephus_add_eq_of_high (k ne m : ℕ)
-    (hk : 2 ≤ k) (hne : 2 * k - 3 ≤ ne)
-    (hhigh : IsHighExtremal k ne)
-    (hm : m ≤ (ne - (MetaMathlibExt.josephus k (ne + 1) - 1)) / (k - 1)) :
-    MetaMathlibExt.josephus k (ne + 1 + m) =
-      MetaMathlibExt.josephus k (ne + 1) + k * m
 
 /-- **The Josephus function has infinitely many fixed points.** For every natural number
 $k \ge 2$, the set of natural numbers $n$ with $J_k(n) = n$ is infinite, where $J_k$ is the

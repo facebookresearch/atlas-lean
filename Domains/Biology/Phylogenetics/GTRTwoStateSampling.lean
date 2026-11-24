@@ -99,8 +99,9 @@ theorem divergenceWeight_nonneg (hπ : ∀ i, 0 ≤ π i) (hs : ∀ i j, i ≠ j
     (ht : 0 ≤ t) (a : ι × ι) : 0 ≤ divergenceWeight π s t a :=
   mul_nonneg (hπ _) ((isRateMatrix_gtrRate hπ hs).ctmcTransition_nonneg ht _ _)
 
-/-- **Full support**: for `t > 0`, positive base frequencies and positive off-diagonal
-exchangeabilities, every site pair has positive GTR divergence weight. -/
+/-- **Positive weights**: for `t > 0`, positive base frequencies and positive off-diagonal
+exchangeabilities, every site pair has positive GTR divergence weight. The base frequencies need not
+sum to `1`, so the weights need not form a probability law. -/
 theorem divergenceWeight_pos (hπ : ∀ i, 0 < π i) (hs : ∀ i j, i ≠ j → 0 < s i j) (ht : 0 < t)
     (a : ι × ι) : 0 < divergenceWeight π s t a := by
   refine mul_pos (hπ _) ((isRateMatrix_gtrRate (fun i => (hπ i).le) fun i j h =>
@@ -115,8 +116,12 @@ theorem sum_divergenceWeight (hπ : ∀ i, 0 ≤ π i) (hπ1 : ∑ i, π i = 1)
 
 variable [MeasurableSpace ι] [MeasurableSingletonClass ι]
 
-/-- The **GTR divergence law** on site pairs: the point mass `divergenceWeight π s t a` at each
-`a : ι × ι`. -/
+/-- The **GTR divergence law** on site pairs: the sum over `a : ι × ι` of the Dirac measures at `a`
+with coefficients `max (divergenceWeight π s t a) 0` (`ENNReal.ofReal`), a measure for the product
+σ-algebra. With measurable singletons the mass of `{a}` is that coefficient
+(`divergenceLaw_singleton`); otherwise a singleton with coefficient `0` can still have positive
+outer measure. It is a probability measure if `π ≥ 0`, `∑ π = 1`, `s ≥ 0` off the diagonal and
+`t ≥ 0`. -/
 noncomputable def divergenceLaw (π : ι → ℝ) (s : Matrix ι ι ℝ) (t : ℝ) : Measure (ι × ι) :=
   ∑ a, ENNReal.ofReal (divergenceWeight π s t a) • Measure.dirac a
 
@@ -149,7 +154,8 @@ section Sampling
 
 variable {π : ι → ℝ} {s : Matrix ι ι ℝ} {t : ℝ} [MeasurableSpace ι]
 
-/-- The law of an i.i.d. sequence of aligned site pairs with the GTR divergence law. -/
+/-- The law of an i.i.d. sequence of aligned site pairs with the GTR divergence law. It is the
+zero measure unless `divergenceLaw π s t` is a probability measure (`Measure.infinitePi`). -/
 noncomputable def sampleLaw (π : ι → ℝ) (s : Matrix ι ι ℝ) (t : ℝ) : Measure (ℕ → ι × ι) :=
   Measure.infinitePi fun _ : ℕ => divergenceLaw π s t
 
@@ -159,8 +165,8 @@ def site (n : ℕ) (ω : ℕ → ι × ι) : ι × ι := ω n
 omit [Fintype ι] [DecidableEq ι] in
 theorem measurable_site (n : ℕ) : Measurable (site (ι := ι) n) := measurable_pi_apply n
 
-/-- The standing hypotheses on the GTR parameters that make `divergenceLaw π s t` a probability
-measure. -/
+/-- Standing hypotheses on the GTR parameters that ensure `divergenceLaw π s t` is a probability
+measure; they are sufficient, not necessary. -/
 structure IsSamplingParams (π : ι → ℝ) (s : Matrix ι ι ℝ) (t : ℝ) : Prop where
   nonneg_freq : ∀ i, 0 ≤ π i
   sum_freq : ∑ i, π i = 1
@@ -177,25 +183,29 @@ theorem isProbabilityMeasure_sampleLaw (h : IsSamplingParams π s t) :
   rw [sampleLaw]
   infer_instance
 
-/-- Every site pair has law `divergenceLaw π s t` under `sampleLaw π s t`. -/
+/-- For sampling parameters `(π, s, t)` (`IsSamplingParams`), every site pair has law
+`divergenceLaw π s t` under `sampleLaw π s t`. -/
 theorem map_site (h : IsSamplingParams π s t) (n : ℕ) :
     (sampleLaw π s t).map (site n) = divergenceLaw π s t := by
   have := h.isProbabilityMeasure
   exact Measure.infinitePi_map_eval (fun _ : ℕ => divergenceLaw π s t) n
 
-/-- The site pairs are mutually independent under `sampleLaw π s t`. -/
+/-- For sampling parameters `(π, s, t)` (`IsSamplingParams`), the site pairs are mutually
+independent under `sampleLaw π s t`. -/
 theorem iIndepFun_site (h : IsSamplingParams π s t) :
     iIndepFun (site (ι := ι)) (sampleLaw π s t) := by
   have := h.isProbabilityMeasure
   exact iIndepFun_infinitePi (P := fun _ : ℕ => divergenceLaw π s t)
     (X := fun _ (x : ι × ι) => x) fun _ => measurable_id
 
-/-- **Sampling hypothesis 1 of T158**: the site pairs are pairwise independent. -/
+/-- **Pairwise independence of the site pairs**: for sampling parameters, any two distinct site
+pairs are independent under `sampleLaw π s t`. -/
 theorem pairwise_indepFun_site (h : IsSamplingParams π s t) :
     Pairwise fun m n => IndepFun (site m) (site n) (sampleLaw π s t) :=
   fun _ _ hij => (iIndepFun_site h).indepFun hij
 
-/-- **Sampling hypothesis 2 of T158**: the site pairs are identically distributed. -/
+/-- **The site pairs are identically distributed**: for sampling parameters, every site pair and the
+first one are almost everywhere measurable and have the same law under `sampleLaw π s t`. -/
 theorem identDistrib_site (h : IsSamplingParams π s t) (n : ℕ) :
     IdentDistrib (site n) (site 0) (sampleLaw π s t) (sampleLaw π s t) where
   aemeasurable_fst := (measurable_site n).aemeasurable
@@ -208,7 +218,9 @@ theorem sampleLaw_site_preimage (h : IsSamplingParams π s t) (n : ℕ) {S : Set
 
 variable [MeasurableSingletonClass ι]
 
-/-- **Sampling hypothesis 3 of T158**: the common law is the GTR divergence law. -/
+/-- **Site-pair probabilities are the divergence weights**: for sampling parameters and measurable
+singletons, `(sampleLaw π s t).real (site n ⁻¹' {a}) = divergenceWeight π s t a` for every `n` and
+every site pair `a`. -/
 theorem measureReal_site_preimage_singleton (h : IsSamplingParams π s t) (n : ℕ)
     (a : ι × ι) : (sampleLaw π s t).real (site n ⁻¹' {a}) = divergenceWeight π s t a := by
   rw [measureReal_def, sampleLaw_site_preimage h n (measurableSet_singleton a),
@@ -255,10 +267,11 @@ theorem tendstoInMeasure_rateEstimate_sampleLaw [Nontrivial ι] (hπ : ∀ i, 0 
 
 /-! ## The constant sample is not an instance -/
 
-/-- **The degenerate-constant-sample trick fails under full support.** For `t > 0`, positive
-parameters and at least two states, `site 0` is not independent of itself under
-`sampleLaw π s t`, so the constant sequence `X n = site 0` (identically distributed with the GTR
-divergence law) violates the pairwise-independence hypothesis of T158. -/
+/-- **Full support on multiple states precludes site self-independence.** For `t > 0`, positive
+parameters with base frequencies summing to `1`, at least two states and measurable singletons,
+`site 0` is not independent of itself under `sampleLaw π s t`, so the constant sequence
+`X n = site 0` (identically distributed with the GTR divergence law) violates the
+pairwise-independence hypothesis of `GTRLogDetRecovery.ae_tendsto_rateEstimate_empirical`. -/
 theorem not_indepFun_site_self [Nontrivial ι] (hπ : ∀ i, 0 < π i) (hπ1 : ∑ i, π i = 1)
     (hs : ∀ i j, i ≠ j → 0 < s i j) (ht : 0 < t) :
     ¬ IndepFun (site (ι := ι) 0) (site 0) (sampleLaw π s t) := by
@@ -306,8 +319,8 @@ theorem gtrRate_two_eq_equalInputRate (hπ1 : ∑ i, π i = 1) (hsymm : ∀ i j,
     simp [gtrRate, equalInputRate, Finset.sum_erase_eq_sub, Fin.sum_univ_two, h10] <;>
     linear_combination (-s 0 1) * hπ1
 
-/-- **Closed-form two-state transition function**: `P(t) i j = e * δ i j + (1 - e) * π j` with
-`e = exp (-(s 0 1 * t))`. -/
+/-- **Closed-form two-state transition function**: for `π 0 + π 1 = 1`, symmetric `s` and every
+real `t`, `P(t) i j = e * δ i j + (1 - e) * π j` with `e = exp (-(s 0 1 * t))`. -/
 theorem ctmcTransition_gtrRate_two (hπ1 : ∑ i, π i = 1) (hsymm : ∀ i j, s i j = s j i)
     (t : ℝ) (i j : Fin 2) :
     ctmcTransition (gtrRate π s) t i j =
@@ -316,7 +329,9 @@ theorem ctmcTransition_gtrRate_two (hπ1 : ∑ i, π i = 1) (hsymm : ∀ i j, s 
   rw [gtrRate_two_eq_equalInputRate hπ1 hsymm, ctmcTransition_equalInputRate hπ1,
     stickyKernel_apply]
 
-/-- **Explicit two-state divergence law.** -/
+/-- **Explicit two-state divergence weights.** For `π 0 + π 1 = 1`, symmetric `s` and every real
+`t`, `divergenceWeight π s t (i, j) = π i * (e * δ i j + (1 - e) * π j)` with
+`e = exp (-(s 0 1 * t))`. -/
 theorem divergenceWeight_two (hπ1 : ∑ i, π i = 1) (hsymm : ∀ i j, s i j = s j i) (t : ℝ)
     (a : Fin 2 × Fin 2) :
     divergenceWeight π s t a =
@@ -326,7 +341,8 @@ theorem divergenceWeight_two (hπ1 : ∑ i, π i = 1) (hsymm : ∀ i j, s i j = 
 
 /-- **The two-state instance of log-det recovery consistency**: with base frequencies
 `π 0, π 1 > 0` summing to `1`, exchangeability `s 0 1 = s 1 0 > 0` and `t > 0`, the log-det rate
-estimate of i.i.d. two-state site pairs converges almost surely to `Q / (-tr Q)`. -/
+estimate of i.i.d. two-state site pairs converges almost surely to `Q / (-tr Q)`, and on the
+same paths their log-det distance converges to `-t * tr Q`. -/
 theorem ae_tendsto_rateEstimate_sampleLaw_two (hπ : ∀ i, 0 < π i) (hπ1 : ∑ i, π i = 1)
     (hsymm : ∀ i j, s i j = s j i) (hs : 0 < s 0 1) {t : ℝ} (ht : 0 < t) :
     ∀ᵐ ω ∂sampleLaw π s t,

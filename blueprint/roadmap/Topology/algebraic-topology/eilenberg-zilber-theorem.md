@@ -8,7 +8,11 @@ Use acyclic models on the category of pairs of spaces. The functor $(X, Y) \maps
 
 ## Expansion
 
-A good expansion of this node links each prerequisite of its statement and proof: Acyclic models theorem; Algebraic Künneth formula; A contractible space has trivial reduced singular homology; chain homotopy equivalences; the product topology; Singular chain groups and boundary homomorphisms of a topological space $X$; Tensor product $C \otimes C'$ of chain complexes of abelian groups.
+A good expansion of this node links each prerequisite of its statement and proof: Acyclic models theorem; Algebraic Künneth formula; chain homotopy equivalences; the product topology; Singular chain groups and boundary homomorphisms of a topological space $X$; Tensor product $C \otimes C'$ of chain complexes of abelian groups.
+
+## Proof depends on
+
+- [A contractible space has trivial reduced singular homology](singular-homology/contractible-reduced-homology-vanishes.md)
 
 ## Sources
 

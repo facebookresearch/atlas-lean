@@ -125,23 +125,6 @@ public theorem_wanted boundedSubsetSums_eq_generalizedHFoldSumset_of_zero_not_me
       generalizedHFoldSumset (Fin.cons 0 b : Fin (k + 1) → G)
         (Fin.cons (k - α - β) fun _ => 1 : Fin (k + 1) → ℕ) (k - β)
 
-/-- **Reordering invariance of the generalized $h$-fold sumset.** Let $G$ be an additive
-commutative monoid, $a_0, \dots, a_{k-1} \in G$, $r_0, \dots, r_{k-1}$ and $h$ natural numbers,
-and write $h^{(\bar r)}A = \{\sum_j s_j a_j : 0 \le s_j \le r_j, \sum_j s_j = h\}$ for the
-generalized $h$-fold sumset of $A = (a_0, \dots, a_{k-1})$ with $\bar r = (r_0, \dots, r_{k-1})$.
-For every permutation $\pi$ of $\{0, \dots, k-1\}$, the generalized $h$-fold sumset of
-$(a_{\pi(0)}, \dots, a_{\pi(k-1)})$ with $(r_{\pi(0)}, \dots, r_{\pi(k-1)})$ equals
-$h^{(\bar r)}A$.
-
-The paper assumes $h \ge 2$, all $r_j$ positive and the $a_j$ distinct; none of this is assumed
-here.
-
-Source: Raj Kumar Mistri, *Subset and Subsequence Sums with Bounded Numbers of Terms*, INTEGERS 24
-(2024), Article A116, Lemma 3 (`integers-2024-A116-lem-3`). -/
-public theorem_wanted generalizedHFoldSumset_comp_perm {G : Type*} [AddCommMonoid G]
-    [DecidableEq G] {k : ℕ} (a : Fin k → G) (r : Fin k → ℕ) (h : ℕ) (π : Equiv.Perm (Fin k)) :
-    generalizedHFoldSumset (a ∘ π) (r ∘ π) h = generalizedHFoldSumset a r h
-
 /-- **Bounded subsequence sums as a generalized h-fold sumset when zero is not a term.** Let $G$
 be an abelian group and let $a_1, \dots, a_k$ be distinct nonzero elements of $G$. Let
 $t_1, \dots, t_k$ be positive integers, let $\mathcal{A}$ be the sequence in which each $a_i$

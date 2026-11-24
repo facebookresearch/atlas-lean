@@ -460,7 +460,9 @@ private theorem covariance_meanPairDiff_segSites_aux {Ω : Type*} {mΩ : Measura
   field_simp
   ring
 
-/-- The mean number of pairwise differences is square integrable when each `D s` is. -/
+/-- The mean number of pairwise differences is square integrable when each `D s` is. For
+`n ≤ 1` there is no pair and `C(n, 2)⁻¹ = 0⁻¹ = 0`, so the mean is identically `0`; the
+averaging case is `n ≥ 2`. -/
 theorem memLp_meanPairDiff {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω}
     {n : ℕ} {D : Finset (Fin n) → Ω → ℝ} (hD2 : ∀ s ∈ samplePairs n, MemLp (D s) 2 μ) :
     MemLp (meanPairDiff n D) 2 μ :=

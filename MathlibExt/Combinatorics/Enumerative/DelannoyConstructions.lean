@@ -105,6 +105,32 @@ public theorem genDelannoyUpper_add_succ_right (k m n : ℕ) :
   congr 2
   omega
 
+/-- **Horizontal difference identity for the upper generalized Delannoy numbers.**
+For natural numbers $k$, $m$ and $n$, write
+$D^k(m, n) = \sum_{j=0}^{n} \binom{m + n + k - j}{n + k} \binom{n}{j}$ for the upper
+generalized Delannoy numbers. For all natural numbers $k$, $m$ and $n$ with $m \ge 1$,
+$D^k(m, n + 1) - D^k(m, n) = 2 D^{k+1}(m - 1, n)$.
+
+Source: Steven Edwards and William Griffiths, *Delannoy Constructions*, Journal
+of Integer Sequences 27 (2024), Article 24.1.8, Corollary 5
+(`jis-2024-24.1.8-cor-5`). -/
+public theorem genDelannoyUpper_succ_right_sub (k m n : ℕ) (hm : 1 ≤ m) :
+    (genDelannoyUpper k m (n + 1) : ℤ) - genDelannoyUpper k m n =
+      2 * genDelannoyUpper (k + 1) (m - 1) n := by
+  obtain ⟨m, rfl⟩ := Nat.exists_eq_add_of_le' hm
+  have hpascal : genDelannoyUpper (k + 1) (m + 1) n =
+      genDelannoyUpper k (m + 1) n + genDelannoyUpper (k + 1) m n := by
+    unfold genDelannoyUpper
+    rw [← sum_add_distrib]
+    refine sum_congr rfl fun j hj ↦ ?_
+    have hj' := mem_range.mp hj
+    have htop : m + n + (k + 1) - j = m + 1 + n + k - j := by omega
+    have hsucc : m + 1 + n + (k + 1) - j = m + 1 + n + k - j + 1 := by omega
+    rw [hsucc, htop, ← Nat.add_assoc n k 1, ← Nat.add_mul, Nat.choose_succ_succ']
+  have hsum := genDelannoyUpper_add_succ_right k (m + 1) n
+  simp only [Nat.add_sub_cancel]
+  omega
+
 /-- **Parity of a sum of adjacent binomial coefficients.** For all natural numbers $n$ and $k$
 with $k \ge 1$, $\binom{n}{k} + \binom{n+1}{k} \equiv \binom{n}{k-1} \pmod 2$.
 

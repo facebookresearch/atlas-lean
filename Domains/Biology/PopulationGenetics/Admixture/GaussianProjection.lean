@@ -73,11 +73,15 @@ namespace MathlibExt.Biology.PopulationGenetics.Admixture
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 /-- The whitening matrix of `V`: the inverse of the CFC square root `√V`.
-Totalized as `(CFC.sqrt V)⁻¹` for arbitrary matrices. -/
+Totalized as `(CFC.sqrt V)⁻¹` for arbitrary matrices: the square root of a matrix that is not
+positive semidefinite is `0` and the inverse of a singular matrix is `0`, so the whitening matrix
+is `0` unless `V` is positive definite, the intended domain. -/
 noncomputable def whitening (V : Matrix ι ι ℝ) : Matrix ι ι ℝ :=
   (CFC.sqrt V)⁻¹
 
-/-- The Gaussian projection (residual) statistic in whitened form. -/
+/-- The Gaussian projection (residual) statistic in whitened form: with `A = whitening V`, the
+squared norm of the orthogonal projection of `A z` onto `(A '' T)ᗮ`. When `V` is not positive
+definite, `A = 0` and the statistic is `0`; the intended domain is positive definite `V`. -/
 noncomputable def gaussProjStat (V : Matrix ι ι ℝ)
     (T : Submodule ℝ (EuclideanSpace ℝ ι)) (z : EuclideanSpace ℝ ι) : ℝ :=
   ‖(LinearMap.range ((Matrix.toEuclideanLin (whitening V)).comp
@@ -200,8 +204,8 @@ private lemma whitened_min (V : Matrix ι ι ℝ) (T : Submodule ℝ (EuclideanS
 
 /-! ### The statistic as a minimum -/
 
-/-- The whitened projection statistic is the minimum of the residual quadratic
-form, and the minimum is attained. -/
+/-- For positive definite `V`, the whitened projection statistic is the minimum of the residual
+quadratic form, and the minimum is attained. -/
 theorem gaussProjStat_eq_iInf {V : Matrix ι ι ℝ} (hV : V.PosDef)
     (T : Submodule ℝ (EuclideanSpace ℝ ι)) (z : EuclideanSpace ℝ ι) :
     gaussProjStat V T z = ⨅ u : T, quadForm V⁻¹ (fun i => (z - (u : EuclideanSpace ℝ ι)) i) ∧
@@ -244,8 +248,9 @@ theorem map_gaussProjStat_multivariateGaussian {V : Matrix ι ι ℝ} (hV : V.Po
 
 /-! ### Endpoints -/
 
-/-- Endpoint `T = ⊤` (codimension `0`): the statistic is identically `0` and its
-law is the Dirac mass at `0` (not `chiSquareMeasure 0`, the zero measure). -/
+/-- Endpoint `T = ⊤` (codimension `0`), for positive definite `V`: the statistic is identically
+`0`, so its law under a probability measure is the Dirac mass at `0` (not `chiSquareMeasure 0`,
+the zero measure). -/
 theorem gaussProjStat_top {V : Matrix ι ι ℝ} (hV : V.PosDef)
     (z : EuclideanSpace ℝ ι) :
     gaussProjStat V ⊤ z = 0 := by
@@ -264,7 +269,8 @@ theorem map_gaussProjStat_top {V : Matrix ι ι ℝ} (hV : V.PosDef) :
   have hfun : gaussProjStat V ⊤ = fun _ => 0 := funext (gaussProjStat_top hV)
   rw [hfun, Measure.map_const, measure_univ, one_smul]
 
-/-- Endpoint `T = ⊥`: the statistic is the full quadratic form `zᵀ V⁻¹ z`. -/
+/-- Endpoint `T = ⊥`, for positive definite `V`: the statistic is the full quadratic form
+`zᵀ V⁻¹ z`. -/
 theorem gaussProjStat_bot {V : Matrix ι ι ℝ} (hV : V.PosDef)
     (z : EuclideanSpace ℝ ι) :
     gaussProjStat V ⊥ z = quadForm V⁻¹ (fun i => z i) := by
@@ -272,8 +278,8 @@ theorem gaussProjStat_bot {V : Matrix ι ι ℝ} (hV : V.PosDef)
   rw [Submodule.mem_bot] at hu
   rw [h, hu, sub_zero]
 
-/-- Endpoint `T = ⊥` (Hotelling form): `Zᵀ V⁻¹ Z` has the chi-square law with
-`card ι` degrees of freedom. -/
+/-- Endpoint `T = ⊥` (Hotelling form): for positive definite `V`, nonempty `ι` and
+`Z ~ N(0, V)`, `Zᵀ V⁻¹ Z` has the chi-square law with `card ι` degrees of freedom. -/
 theorem map_quadForm_multivariateGaussian {V : Matrix ι ι ℝ} (hV : V.PosDef)
     (hm : 0 < Fintype.card ι) :
     (multivariateGaussian 0 V).map (fun w => quadForm V⁻¹ (fun i => w i)) =

@@ -39,6 +39,7 @@
 - [Nondegenerate pure admixture gives negative f3](f3-neg-of-admixture.md)
 - [f4 of an admixed population scales with the mixture proportion](f4-admixture-right.md)
 - [f4-ratio estimation of the admixture proportion](f4-ratio.md)
+- [Root-relative second moment in the drift model](root-second-moment.md)
 
 ## The Wahlund effect
 
