@@ -129,8 +129,9 @@ omit [Q.ContainsZero] [Q.IsClosedUnderIsomorphisms] in
 private theorem biprod_mem {X Y : H} (hX : Q X) (hY : Q Y) : Q (X ⊞ Y) :=
   (extensionClosed_iff Q).mp hExtension _ (ExactCategory.isAdmissibleExact_split X Y) hX hY
 
+omit [Q.ContainsZero] in
 /-- Actual binary-product closure derived from the original extension input. -/
-def binaryProducts : Q.IsClosedUnderBinaryProducts := by
+theorem binaryProducts : Q.IsClosedUnderBinaryProducts := by
   apply ObjectProperty.IsClosedUnderLimitsOfShape.mk'
   rintro _ ⟨F, hF⟩
   let X := F.obj ⟨WalkingPair.left⟩
@@ -140,9 +141,10 @@ def binaryProducts : Q.IsClosedUnderBinaryProducts := by
   exact Q.prop_of_iso e.symm (biprod_mem Q hExtension
     (hF ⟨WalkingPair.left⟩) (hF ⟨WalkingPair.right⟩))
 
+omit [Q.ContainsZero] in
 /-- Actual binary biproducts derived with the internally produced product closure. -/
-def binaryBiproducts : HasBinaryBiproducts Q.FullSubcategory := by
-  letI : Q.IsClosedUnderBinaryProducts := binaryProducts Q hExtension
+theorem binaryBiproducts : HasBinaryBiproducts Q.FullSubcategory := by
+  let : Q.IsClosedUnderBinaryProducts := binaryProducts Q hExtension
   exact HasBinaryBiproducts.of_hasBinaryProducts
 
 omit [Q.ContainsZero] [Q.IsClosedUnderIsomorphisms] in
