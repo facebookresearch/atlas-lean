@@ -4,27 +4,27 @@
 
 - [Elimination rate constant](elim-rate.md)
 - [Concentration in the one-compartment model](concentration.md)
-- [Mass balance](add-integral-eq.md)
+- [Mass balance of the linear one-compartment model](add-integral-eq.md)
 - [Mass balance of the explicit amount](amount-add-eliminated.md)
 
 ## Bolus: concentration and area under the curve
 
 - [Concentration after a bolus](concentration-bolus.md)
 - [Finite-horizon AUC](integral-concentration-bolus.md)
-- [The bolus concentration is integrable on the half-line](integrable-on-concentration-bolus.md)
+- [For CL > 0 the bolus concentration is integrable on the half-line](integrable-on-concentration-bolus.md)
 - [Total AUC after a bolus is the dose over the clearance](integral-ici-concentration-bolus.md)
 - [The finite-horizon AUC tends to the total AUC](tendsto-integral-concentration-bolus.md)
 - [Half-life in terms of clearance and volume](half-life-elim-rate.md)
 
 ## Constant infusion and boundary cases
 
-- [Under constant infusion the concentration tends to R / CL](tendsto-concentration.md)
+- [For CL > 0, under constant infusion the concentration tends to R / CL](tendsto-concentration.md)
 - [Starting at or below the steady state the amount is nondecreasing](amount-monotone.md)
 - [With no elimination and no input the amount is constant](amount-rate-zero-input-zero.md)
 - [Without elimination a positive input makes the amount unbounded](tendsto-amount-rate-zero-at-top.md)
 - [Without elimination a positive input gives no finite limit](not-tendsto-amount-rate-zero.md)
 - [Without elimination a nonzero input has no constant solution](not-is-solution-const-rate-zero.md)
-- [After a bolus the amount washes out to zero](tendsto-amount-bolus.md)
+- [For k > 0 the amount after a bolus washes out to zero](tendsto-amount-bolus.md)
 
 ## Identifying the parameters from bolus observations
 

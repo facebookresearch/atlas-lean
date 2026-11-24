@@ -38,7 +38,8 @@ namespace MathlibExt.Biology.Biophysics.Pharmacodynamics.EffectCompartment
 /-- The effect-compartment concentration with lag rate `ke0`, plasma input `Cp`, and initial effect
 `Ce0`, as the canonical relaxation solution
 `Ce0 * exp (-ke0 * t) + ∫ s in 0..t, exp (-ke0 * (t - s)) * (ke0 * Cp s)`. The integral is oriented
-for `t < 0` and is `0` when the integrand is not integrable on the interval. -/
+for `t < 0` and is `0` when the integrand is not integrable on the interval. The intended domain is
+`ke0 > 0`, `Ce0 ≥ 0`, `Cp ≥ 0` and `t ≥ 0`. -/
 noncomputable def effectConc (ke0 Ce0 : ℝ) (Cp : ℝ → ℝ) (t : ℝ) : ℝ :=
   MathlibExt.Biology.Dynamics.FeedForwardLoop.relaxation ke0 (fun s => ke0 * Cp s) Ce0 t
 

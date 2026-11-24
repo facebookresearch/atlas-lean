@@ -1,4 +1,4 @@
-# For vr² ≤ 4, a nonconstant periodic orbit enters the window
+# For b, ε > 0 and vr² ≤ 4, nonconstant periodic orbits enter the window
 
 Let `a`, `I` be real, `b > 0`, `ε > 0`, `(vr, wr)` an [equilibrium](is-equilibrium.md) with
 `vr² ≤ 4`, `T > 0`, and `(v, w)` a [solution](is-solution.md) with `v(t + T) = v(t)` and

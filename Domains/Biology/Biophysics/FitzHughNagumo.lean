@@ -52,8 +52,9 @@ the equilibrium needs `0 < b ≤ 1`.
 ## Main results
 
 * **Invariant region (trapping).** With `energy ε v w = v² + w² / ε`, the derivative of the
-  energy along the field is `energyFlux a b ε I v w = ⟪∇energy, field⟫ =
-  2 (v² - v⁴/3 + I v + a w - b w²)` (`hasDerivAt_energy`). `energyFlux_neg_of_energy_eq`: for
+  energy along the field is
+  `energyFlux a b ε I v w = ⟪∇energy, field⟫ = 2 (v² - v⁴/3 + I v + a w - b w²)`
+  (`hasDerivAt_energy`). `energyFlux_neg_of_energy_eq`: for
   `b, ε > 0` and every level `R > trapRadius a b ε I`, the field points strictly inward on the
   ellipse `energy = R`. `IsSolution.energy_le`: the sublevel set `energy ≤ R` is therefore
   forward invariant, and `IsSolution.energy_le_max` bounds every solution.
@@ -205,7 +206,8 @@ theorem energyFlux_eq (hε : ε ≠ 0) (v w : ℝ) :
 `b > 0`, where `C > 0`; with the convention `x / 0 = 0` it is `5 + I²/2` at `b = 0`. -/
 def absorbConst (a b I : ℝ) : ℝ := 5 + I ^ 2 / 2 + a ^ 2 / (2 * b)
 
-/-- The decay rate `κ = min 1 (b ε / 2)` in the dissipation inequality. -/
+/-- The decay rate `κ = min 1 (b ε / 2)` in the dissipation inequality: positive for `b, ε > 0`, and
+`κ = b ε / 2 ≤ 0` when `b ε ≤ 0`. -/
 def decayRate (b ε : ℝ) : ℝ := min 1 (b * ε / 2)
 
 /-- The trapping radius `C / κ`. For `b, ε > 0` every ellipse `energy = R` with
@@ -575,8 +577,11 @@ theorem isCharRoot_iff_det (b ε v : ℝ) (z : ℂ) :
 
 /-! ### Classification of the FitzHugh–Nagumo equilibria -/
 
-/-- The linearization type of the FitzHugh–Nagumo equilibrium with voltage `v`, a function of the
-parameters `b`, `ε` and of `v` (which itself depends on `a`, `b`, `I` through `eqCubic`). -/
+/-- The linearization type of the FitzHugh–Nagumo equilibrium with voltage `v`: the
+trace–determinant type of the Jacobian at `v`, a function of the parameters `b`, `ε` and of `v`,
+defined for every real `v`. For `b ≠ 0` and `ε ≠ 0` an equilibrium's voltage is a root of `eqCubic`
+(`isEquilibrium_iff`), so the type at an equilibrium also depends on `a`, `b` and `I`; at `ε = 0`
+every point of the voltage nullcline is an equilibrium. -/
 def equilibriumType (b ε v : ℝ) : LinearType := linearType (jacTrace b ε v) (jacDet b ε v)
 
 /-- For `ε > 0`, saddles occur exactly when `b (1 - v²) > 1` (impossible for `0 < b ≤ 1`). -/
@@ -710,7 +715,8 @@ theorem pulseRootLow_lt_pulseRootHigh {v : ℝ} (hv : v ^ 2 < 4) :
   have := Real.sqrt_pos.2 (by linarith : (0 : ℝ) < 12 - 3 * v ^ 2)
   linarith
 
-/-- **Rising window.** At rest with `v² ≤ 4`, the voltage rises after a positive pulse `δ` iff
+/-- **Rising window.** On the voltage nullcline (`vField I v w = 0`, for instance at rest) with
+`v² ≤ 4`, the voltage rises after a positive pulse `δ` iff
 `pulseRootLow v < δ < pulseRootHigh v`. -/
 theorem isRisingAfterPulse_iff {v w δ : ℝ} (h : vField I v w = 0) (hv : v ^ 2 ≤ 4) (hδ : 0 < δ) :
     IsRisingAfterPulse I v w δ ↔ pulseRootLow v < δ ∧ δ < pulseRootHigh v := by
@@ -729,8 +735,8 @@ theorem isRisingAfterPulse_iff {v w δ : ℝ} (h : vField I v w = 0) (hv : v ^ 2
       mul_neg_of_pos_of_neg (by linarith) (by linarith)
     nlinarith
 
-/-- At rest with `v² ≤ 4`, the voltage falls after a positive pulse `δ` iff `δ < pulseRootLow v`
-or `δ > pulseRootHigh v`. -/
+/-- On the voltage nullcline (`vField I v w = 0`, for instance at rest) with `v² ≤ 4`, the voltage
+falls after a positive pulse `δ` iff `δ < pulseRootLow v` or `δ > pulseRootHigh v`. -/
 theorem isFallingAfterPulse_iff {v w δ : ℝ} (h : vField I v w = 0) (hv : v ^ 2 ≤ 4) (hδ : 0 < δ) :
     IsFallingAfterPulse I v w δ ↔ δ < pulseRootLow v ∨ pulseRootHigh v < δ := by
   rw [IsFallingAfterPulse, vField_pulse h, pulse_factor hv]
@@ -751,8 +757,9 @@ theorem isFallingAfterPulse_iff {v w δ : ℝ} (h : vField I v w = 0) (hv : v ^ 
         mul_pos (by linarith) (by linarith)
       nlinarith
 
-/-- For a rest voltage `v < -1` (left branch of the cubic nullcline) the lower root
-`pulseRootLow v` is positive. -/
+/-- For `v < -1` (at a rest state, the left branch of the cubic nullcline) the lower root
+`pulseRootLow v` is positive. For `v < -2` the square root is `0` by the convention `√x = 0` for
+`x < 0`, and the value `-3v/2` is not a root. -/
 theorem pulseRootLow_pos {v : ℝ} (hv1 : v < -1) : 0 < pulseRootLow v := by
   unfold pulseRootLow
   have hs : √(12 - 3 * v ^ 2) < -3 * v := by
@@ -975,7 +982,8 @@ theorem pulseRootLow_nonneg {v : ℝ} (hv1 : v ≤ -1) : 0 ≤ pulseRootLow v :=
   have hs : √(12 - 3 * v ^ 2) ≤ -3 * v := Real.sqrt_le_iff.2 ⟨by linarith, by nlinarith⟩
   linarith
 
-/-- For `v > -1` the lower root `pulseRootLow v` is negative. -/
+/-- For `v > -1` the lower root `pulseRootLow v` is negative. For `v > 2` the square root is `0` by
+the convention `√x = 0` for `x < 0`, and the value `-3v/2` is not a root. -/
 theorem pulseRootLow_neg {v : ℝ} (hv1 : -1 < v) : pulseRootLow v < 0 := by
   unfold pulseRootLow
   have hs : -3 * v < √(12 - 3 * v ^ 2) := by

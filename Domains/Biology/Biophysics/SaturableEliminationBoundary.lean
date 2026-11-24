@@ -23,14 +23,14 @@ One-compartment saturable (Michaelis–Menten) elimination under constant infusi
 with `Vmax, Km > 0`, is restated here minimally as the hypothesis
 `hC : ∀ t, 0 ≤ t → HasDerivAt C (R - mmRate Vmax Km (C t)) t`, using the canonical rate law
 `MathlibExt.Biology.Dynamics.MichaelisMenten.mmRate`. This hypothesis is definitionally the
-predicate `SaturableElimination.IsSolution Vmax Km R C` of the sibling file (open as #1577),
+predicate `SaturableElimination.IsSolution Vmax Km R C` of the sibling file,
 which proves existence, uniqueness, nonnegativity, and exponential convergence to the steady
 state. Equilibria are taken as an explicit `c ≥ 0` with `mmRate Vmax Km c = R`; for
 `0 ≤ R < Vmax` this is `c = R Km / (Vmax - R)` (the sibling's `steadyConc`).
 
 Convergence `C → c` is **not** proved in this file. It is the sibling's
 `IsSolution.tendsto_steadyConc` (with the exponential upper bound
-`IsSolution.abs_sub_steadyConc_le`), open as #1577. This file proves the shape of the approach:
+`IsSolution.abs_sub_steadyConc_le`). This file proves the shape of the approach:
 monotone, never crossing or reaching `c`, and no faster than an explicit exponential.
 
 ## Main results
@@ -59,8 +59,8 @@ The critical rate `R = Vmax`, where `(Km + C) C' = Vmax Km`:
   `√(2 Vmax Km t) - Km ≤ C(t) ≤ C(0) + √(2 Vmax Km t)`.
 * `tendsto_div_sqrt_critical`, `tendsto_div_critical`: `C(t)/√t → √(2 Vmax Km)` and
   `C(t)/t → 0`. Accumulation at the critical rate is square-root, slower than the linear growth
-  `C(t) ≥ C(0) + (R - Vmax) t` for `R > Vmax` (the sibling's `IsSolution.add_mul_le`, #1577; not
-  proved here).
+  `C(t) ≥ C(0) + (R - Vmax) t` for `R > Vmax`, `C(0) ≥ 0` and `t ≥ 0`
+  (`SaturableElimination.IsSolution.add_mul_le`).
 
 ## Source receipt
 
@@ -480,7 +480,7 @@ theorem tendsto_div_sqrt_critical
 
 /-- **Sublinear growth at the critical rate.** For `C(0) ≥ 0`, `C(t) / t → 0`: the critical
 accumulation is slower than every linear rate. (For `R > Vmax` growth is at least linear,
-`C(t) ≥ C(0) + (R - Vmax) t`, by `SaturableElimination.IsSolution.add_mul_le`.) -/
+`C(t) ≥ C(0) + (R - Vmax) t` for `t ≥ 0`, by `SaturableElimination.IsSolution.add_mul_le`.) -/
 theorem tendsto_div_critical (hC : ∀ t, 0 ≤ t → HasDerivAt C (Vmax - mmRate Vmax Km (C t)) t)
     (hV : 0 < Vmax) (hK : 0 < Km) (h00 : 0 ≤ C 0) :
     Tendsto (fun t ↦ C t / t) atTop (𝓝 0) := by

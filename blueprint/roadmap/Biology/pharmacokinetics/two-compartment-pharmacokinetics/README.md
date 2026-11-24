@@ -7,4 +7,4 @@
 - [Two-compartment generator augmented with an elimination sink](pk2-augmented-generator.md)
 - [Columns of the augmented two-compartment generator sum to zero](pk2-augmented-budget.md)
 - [Two-compartment mass budget](two-compartment-budget.md)
-- [Nonnegative rates and dose give a nonnegative peripheral amount](peripheral-amount-nonneg.md)
+- [Without return flow the peripheral amount after a bolus is nonnegative](peripheral-amount-nonneg.md)

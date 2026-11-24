@@ -57,9 +57,9 @@ axial resistance `ri` (per unit length), membrane voltage `V` measured from rest
     `V x = V 0 cosh ((L - x)/λ) / cosh (L/λ)`, input relation `V 0 = r∞ coth (L/λ) I 0`
     (`IsSteadyState.sealedEnd_input`), end attenuation `V L = V 0 / cosh (L/λ)`.
 
-Only the steady state is treated: the time-dependent cable equation
-`λ² V_xx = τ V_t + V` is not formalized here. The Goldman–Hodgkin–Katz equation for several
-species and active (Hodgkin–Huxley) membranes are also out of scope.
+Only the steady state is treated: the time-dependent cable equation `λ² V_xx = τ V_t + V`, the
+Goldman–Hodgkin–Katz equation for several species and active (Hodgkin–Huxley) membranes are out
+of scope of this file.
 
 ## References
 

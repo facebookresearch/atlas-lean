@@ -77,15 +77,16 @@ solution at the times of `T`.
   (`isCableSolution_cableSeries_of_bounded`), has sealed ends
   (`sealedEnds_cableSeries_of_bounded`), coefficients `a n e^{-k_n t}`
   (`integral_cableSeries_mul_cosMode_of_bounded`) and decays (`tendsto_cableSeries_of_bounded`).
-* Green's function of the sealed cable (`sealedGreen τ ℓ L x₀`): for `0 < L` and `x₀ ∈ [0, L]`,
-  the response to a unit charge injected at `x₀` at time `0`, an instantaneous spatially localized
-  synaptic input, with coefficients `greenCoeff L x₀ n` (`1 / L`, then
-  `(2 / L) cos (n π x₀ / L)`). The series is defined, and the results below hold, for every real
-  `x₀` and every `L ≠ 0`; outside the physical range it is the even, `2L`-periodic extension in
-  `x₀` (`sealedGreen_neg_source`, `sealedGreen_add_two_mul_source`), so a source outside `[0, L]`
-  is its image inside, and `L < 0` negates the kernel (`sealedGreen_neg_length`). For `t > 0` it
-  solves
-  the equation with sealed ends (`isCableSolution_sealedGreen`, `sealedEnds_sealedGreen`), its
+* Green's function of the sealed cable (`sealedGreen τ ℓ L x₀`): for `τ > 0`, `ℓ ≠ 0`, `0 < L`
+  and `x₀ ∈ [0, L]`, the response at times `t > 0` to a unit charge injected at `x₀` at time `0`,
+  an instantaneous spatially localized synaptic input, with coefficients `greenCoeff L x₀ n`
+  (`1 / L`, then `(2 / L) cos (n π x₀ / L)`). The series is defined for all real inputs (it is `0`
+  when `L = 0`). The results below assume `τ > 0` and `ℓ, L ≠ 0` and accept every real `x₀`,
+  except the symmetries, which hold for all real inputs; outside the physical range it is the
+  even, `2L`-periodic extension in `x₀` (`sealedGreen_neg_source`,
+  `sealedGreen_add_two_mul_source`), so a source outside `[0, L]` is its image inside, and `L < 0`
+  negates the kernel (`sealedGreen_neg_length`). For `t > 0` it solves the equation with sealed
+  ends (`isCableSolution_sealedGreen`, `sealedEnds_sealedGreen`), its
   `n`-th cosine coefficient is `e^{-k_n t} cos (n π x₀ / L)`, the pairing of `δ_{x₀}` with the
   mode decayed at rate `k_n` (`integral_sealedGreen_mul_cosMode`), its total potential is
   `e^{-t/τ}` (`integral_sealedGreen`), it is reciprocal, `G(t, x; x₀) = G(t, x₀; x)`
@@ -313,7 +314,8 @@ structure IsCableSolution (τ ℓ L : ℝ) (T : Set ℝ) (V : ℝ → ℝ → �
 
 /-- Sealed ends at `0` and `L` at the times in `T`: zero axial current, i.e. `∂ₓV = 0`.
 `deriv` is `0` at points of non-differentiability, so this is meant together with
-`IsCableSolution`, which makes `V t` differentiable at both ends. -/
+`IsCableSolution` on `[0, L]` with `L ≥ 0`, which then makes `V t` differentiable at both
+ends. -/
 def SealedEnds (L : ℝ) (T : Set ℝ) (V : ℝ → ℝ → ℝ) : Prop :=
   ∀ t ∈ T, deriv (V t) 0 = 0 ∧ deriv (V t) L = 0
 
@@ -1260,15 +1262,18 @@ theorem abs_greenCoeff_le (L x₀ : ℝ) (n : ℕ) : |greenCoeff L x₀ n| ≤ 2
     _ = 2 / |L| := mul_one _
 
 /-- **Green's function of the sealed cable.** The cosine series
-`G(t, x; x₀) = e^{-t/τ} / L + (2 / L) ∑_{n ≥ 1} e^{-k_n t} cos (n π x₀ / L) cos (n π x / L)`.
-For `0 < L` and `x₀ ∈ [0, L]` it is the potential at position `x` and time `t` after a unit
-charge is injected at `x₀` at time `0` (an instantaneous, spatially localized synaptic input).
-The definition and the theorems about it accept every real `x₀` and (where needed) every
-`L ≠ 0`; for other values it is an algebraic extension, not a point charge at `x₀`: it is even
-and `2L`-periodic in `x₀` (`sealedGreen_neg_source`, `sealedGreen_add_two_mul_source`), so a
-source outside `[0, L]` is its reflected image inside, and replacing `L` by `-L` negates it
-(`sealedGreen_neg_length`). The series is taken with the convention that a non-summable series has
-sum `0`; for `τ > 0` and `ℓ, L ≠ 0` it converges absolutely at every `t > 0`. -/
+`G(t, x; x₀) = e^{-t/τ} / L + (2 / L) ∑_{n ≥ 1} e^{-k_n t} cos (n π x₀ / L) cos (n π x / L)`,
+taken with the convention that a non-summable series has sum `0`. With `u / 0 = 0` every
+coefficient is `0` when `L = 0`, so `G ≡ 0` there. For `τ > 0` and `ℓ, L ≠ 0` the series
+converges absolutely at every `t > 0`. The solution, sealed-end, continuity, coefficient,
+total-charge, superposition, semigroup and decay theorems assume these three conditions and
+accept every real `x₀`; the symmetries (`sealedGreen_comm`, `sealedGreen_neg_source`,
+`sealedGreen_add_two_mul_source`, `sealedGreen_neg_length`) hold for all real inputs.
+For `τ > 0`, `ℓ ≠ 0`, `0 < L` and `x₀ ∈ [0, L]` it is the potential at position `x ∈ [0, L]` and
+time `t > 0` after a unit charge is injected at `x₀` at time `0` (an instantaneous, spatially
+localized synaptic input). Outside that range it is an algebraic extension, not the response to a
+point charge at `x₀`: it is even and `2L`-periodic in `x₀`, so a source outside `[0, L]` gives the
+kernel of its reflected image inside, and replacing `L` by `-L` negates it. -/
 noncomputable def sealedGreen (τ ℓ L x₀ : ℝ) : ℝ → ℝ → ℝ :=
   cableSeries τ ℓ L (greenCoeff L x₀)
 
@@ -1364,10 +1369,10 @@ theorem tendsto_sealedGreen {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (
   tendsto_cableSeries_of_bounded hτ hℓ hL (abs_greenCoeff_le L x₀) x
 
 /-- **Superposition of localized inputs.** Let `τ > 0` and `ℓ, L ≠ 0`. For an initial profile
-given by an absolutely
-convergent cosine series `f y = ∑ a n cos (n π y / L)`, superposing the responses to the charges
-`f y dy` placed at every `y ∈ [0, L]` gives the expansion at time `t > 0`:
-`∫₀ᴸ G(t, x; y) f y dy = ∑ a n e^{-k_n t} cos (n π x / L)`. -/
+given by an absolutely convergent cosine series `f y = ∑ a n cos (n π y / L)` and a time `t > 0`,
+`∫₀ᴸ G(t, x; y) f y dy = ∑ a n e^{-k_n t} cos (n π x / L)`, the expansion at time `t`. For
+`L > 0` this superposes the responses to the charges `f y dy` placed at every `y ∈ [0, L]`; for
+`L < 0` the integral is oriented. -/
 theorem integral_sealedGreen_mul_cosSeries {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (hL : L ≠ 0)
     {a : ℕ → ℝ} (ha : Summable fun n => |a n|) {t : ℝ} (ht : 0 < t) (x : ℝ) :
     ∫ y in (0 : ℝ)..L, sealedGreen τ ℓ L y t x * ∑' n, a n * cosMode L n y =
@@ -1386,10 +1391,10 @@ theorem integral_sealedGreen_mul_cosSeries {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ
   rw [hf, ← h.tsum_eq]
   rfl
 
-/-- **Semigroup (Chapman–Kolmogorov) law.** For `τ > 0`, `ℓ, L ≠ 0` and `s, t > 0`, propagating
-the response to a unit charge at `z` for time `t` and then for time `s` gives the response at
-time `t + s`:
-`∫₀ᴸ G(s, x; y) G(t, y; z) dy = G(t + s, x; z)`. -/
+/-- **Semigroup (Chapman–Kolmogorov) law.** For `τ > 0`, `ℓ, L ≠ 0` and `s, t > 0`,
+`∫₀ᴸ G(s, x; y) G(t, y; z) dy = G(t + s, x; z)`. For `L > 0` and `z ∈ [0, L]`, propagating the
+response to a unit charge at `z` for time `t` and then for time `s` gives the response at time
+`t + s`; for `L < 0` the integral is oriented. -/
 theorem integral_sealedGreen_mul_sealedGreen {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (hL : L ≠ 0)
     {s t : ℝ} (hs : 0 < s) (ht : 0 < t) (x z : ℝ) :
     ∫ y in (0 : ℝ)..L, sealedGreen τ ℓ L y s x * sealedGreen τ ℓ L z t y =
@@ -1568,9 +1573,10 @@ theorem infiniteGreen_le {τ ℓ : ℝ} (hτ : 0 < τ) (x₀ : ℝ) {t : ℝ} (h
   exact neg_nonpos.mpr this
 
 /-- **Localization.** For `τ > 0` and `ℓ ≠ 0`, away from the input site the infinite-cable
-response vanishes as `t → 0⁺`:
-together with `integral_infiniteGreen` (total charge `e^{-t/τ} → 1`) this says that the input is
-the unit charge concentrated at `x₀`. -/
+response vanishes as `t → 0⁺`, pointwise in `x ≠ x₀`. Together with `integral_infiniteGreen`
+(total charge `e^{-t/τ} → 1`) this is the pointwise form of the localization of the input at
+`x₀`; it does not by itself give convergence to a unit point charge at `x₀` against test
+functions. -/
 theorem tendsto_infiniteGreen_of_ne {τ ℓ : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) {x₀ x : ℝ}
     (hx : x ≠ x₀) : Tendsto (fun t => infiniteGreen τ ℓ x₀ t x) (𝓝[>] 0) (𝓝 0) := by
   have hb : 0 < (x - x₀) ^ 2 / (4 * (ℓ ^ 2 / τ)) := by

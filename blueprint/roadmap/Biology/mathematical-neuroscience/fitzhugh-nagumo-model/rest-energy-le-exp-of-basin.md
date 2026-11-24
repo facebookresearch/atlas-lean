@@ -1,4 +1,4 @@
-# For b, ε > 0, exponential decay to rest from a small ball
+# For b, ε > 0 and vr² > 1, exponential decay to rest from a small ball
 
 Let `a`, `I` be real, `b > 0`, `ε > 0`, `(vr, wr)` an [equilibrium](is-equilibrium.md), `(v, w)` a
 [solution](is-solution.md), and `ρ > 0` with `|vr| ρ < vr² - 1` (so `vr² > 1`). If `E(0) ≤ ρ²`,

@@ -16,8 +16,8 @@ import Mathlib.Topology.Order.IntermediateValue
 # Hodgkin–Huxley with a constant applied current: the equilibrium branch and its linear stability
 
 `HodgkinHuxley.lean` proves global existence, boundedness and the stability of the squid resting
-state for `I = 0` (T199), and that the squid steady-state current `steadyCurrent squid` is
-strictly increasing on `[-12, 115]` mV (T256). This file adds the applied current `I` as a
+state for `I = 0`, and that the squid steady-state current `steadyCurrent squid` is
+strictly increasing on `[-12, 115]` mV. This file adds the applied current `I` as a
 parameter (`squidI I`, the squid parameters with current `I`) and follows the equilibrium branch.
 
 ## The branch
@@ -25,7 +25,7 @@ parameter (`squidI I`, the squid parameters with current `I`) and follows the eq
 Every equilibrium of `squidI I` is `eqPoint V = (V, m∞(V), h∞(V), n∞(V))` for a voltage `V` with
 `I∞(V) = I`, where `I∞ = Iss` abbreviates the steady-state current–voltage relation
 `steadyCurrent squid` (`field_squidI_eq_zero_iff`). So `V ↦ (I∞(V), eqPoint V)` parametrizes all
-equilibria of all currents; `V = 0` is T199's resting state (`steadyCurrent_squid_zero`,
+equilibria of all currents; `V = 0` is the squid resting state (`steadyCurrent_squid_zero`,
 `eqPoint_zero`), and every current has at least one equilibrium (`exists_equilibrium`). The
 current does not enter the Jacobian, which along the branch is the arrowhead matrix
 `(arrowAt V).mat` (`jac_eqPoint`).
@@ -58,7 +58,7 @@ current does not enter the Jacobian, which along the branch is the arrowhead mat
   below `V*`.
 * `exists_spectral_hopf_candidate_of_deriv_Iss_pos`: if `I∞' > 0` on `[0, 15]`, the
   zero-eigenvalue case is excluded and the candidate sits at a current `I* ∈ (0, I∞(15))`.
-* `exists_spectral_hopf_candidate`: **main theorem.** T256's `steadyCurrentDeriv_squid_pos`
+* `exists_spectral_hopf_candidate`: **main theorem.** `steadyCurrentDeriv_squid_pos`
   gives `I∞' > 0` on `[0, 15]`, so there is `V* ∈ (0, 15)` mV with Hurwitz Jacobians along the
   branch for `V ∈ [0, V*)` and the spectral Hopf conditions at `V*`, at a current
   `I* ∈ (0, I∞(15))`: the branch first stops being Hurwitz at a spectral Hopf candidate, where
@@ -69,7 +69,7 @@ current does not enter the Jacobian, which along the branch is the arrowhead mat
 
 ## Scope: what is weakened or deferred
 
-The task asks for the Hopf bifurcation in `I` (rest → periodic firing). Proved here are the
+The goal is the Hopf bifurcation in `I` (rest → periodic firing). Proved here are the
 equilibrium branch, Hurwitz Jacobians along it up to `V*`, and the spectral Hopf conditions at
 `V*` (`exists_spectral_hopf_candidate`): a Hopf candidate, not a Hopf bifurcation. Deferred,
 exactly:
@@ -80,7 +80,7 @@ exactly:
 2. **Transversality is not proved.** The sign of `d Re λ / d I` at `I*` is not controlled, since
    `V*` is only characterized as the first voltage where the branch Jacobian stops being Hurwitz;
    without it `V*` is only a spectral Hopf candidate.
-3. **No periodic orbits.** Mathlib has no Hopf bifurcation theorem. Rinzel and Miller (1980)
+3. **No periodic orbits.** No Hopf bifurcation theorem is proved or used. Rinzel and Miller (1980)
    compute that the squid Hopf bifurcation at this current is subcritical, so the orbits born
    there are unstable; repetitive firing (the stable large-amplitude limit cycle) is not
    addressed. The second Hopf bifurcation they report (`I ≈ 154` µA/cm²) is not treated.
@@ -88,13 +88,13 @@ exactly:
    `eqPoint_globalSolution_decay` adds decay of global solutions near such a point but not their
    existence, and uniqueness of the equilibrium for those currents is not shown.
 
-## Source receipt (reuse search, 2026-11-14)
+## Reused results
 
-Reused from ATLAS: `HodgkinHuxley` (T199: rates, `field`, `field_eq_zero_iff`, `jac`,
-`hasFDerivAt_field`, rate values at `V = 0`; T256: `mInf`, `hInf`, `nInf`, `steadyCurrent`,
-`hasDerivAt_steady`, `hasDerivAt_steadyCurrent`, `steadyCurrentDeriv_squid_pos`),
-`Matrix.IsHurwitz` and `LinearizedStability.globalSolution_decay_of_hasFDerivAt`. ATLAS has only
-the planar Routh–Hurwitz criterion (`PlanarStability`); Mathlib has none. Reused from Mathlib:
+From `HodgkinHuxley`: the rates, `field`, `field_eq_zero_iff`, `jac`, `hasFDerivAt_field`, the
+rate values at `V = 0`, `mInf`, `hInf`, `nInf`, `steadyCurrent`, `hasDerivAt_steady`,
+`hasDerivAt_steadyCurrent` and `steadyCurrentDeriv_squid_pos`; also `Matrix.IsHurwitz` and
+`LinearizedStability.globalSolution_decay_of_hasFDerivAt`. The quartic Routh–Hurwitz criterion is
+proved in this file (`PlanarStability` treats the planar case). From Mathlib:
 `Matrix.det_succ_row_zero`, `Matrix.det_fin_three`, `Matrix.isUnit_iff_isUnit_det`,
 `Real.exp_bound`, `intermediate_value_Icc'`, `IsClosed.csInf_mem`, `strictMonoOn_of_deriv_pos`.
 
@@ -279,8 +279,9 @@ theorem hurwitz3_eq_zero_of_quartic_I_mul {a₁ a₂ a₃ a₄ ω : ℝ} (hω : 
 
 /-! ## B. Arrowhead matrices -/
 
-/-- The entries of an arrowhead matrix `[[a, b₁, b₂, b₃], [c₁, -k₁, 0, 0], [c₂, 0, -k₂, 0],
-[c₃, 0, 0, -k₃]]`, the shape of the Hodgkin–Huxley Jacobian. -/
+/-- The entries of an arrowhead matrix
+`[[a, b₁, b₂, b₃], [c₁, -k₁, 0, 0], [c₂, 0, -k₂, 0], [c₃, 0, 0, -k₃]]`, the shape of the
+Hodgkin–Huxley Jacobian. -/
 structure Arrow where
   a : ℝ
   b₁ : ℝ

@@ -24,7 +24,7 @@
 - [Linear lower barrier](amount-le.md)
 - [The concentration never exceeds the elimination-free accumulation](le-add-mul.md)
 - [Zero-order lower bound](add-mul-le.md)
-- [Mass balance](add-integral-eq.md)
+- [Mass balance under saturable elimination](add-integral-eq.md)
 
 ## Bolus: washout
 

@@ -35,19 +35,23 @@ open Real
 
 namespace MathlibExt.Biology.Biophysics.CompartmentKinetics.Absorption.Model
 
-/-- The administered depot amount `D * exp (-ka * t)`. -/
+/-- The administered depot amount `D * exp (-ka * t)`, defined for all real inputs; the intended
+domain is `D ≥ 0`, `ka > 0` and `t ≥ 0`. -/
 noncomputable def depotAmount (D ka t : ℝ) : ℝ := D * Real.exp (-ka * t)
 
 /-- The central amount for distinct rates. With the convention `x / 0 = 0` it is `0` when `ka = k`,
-where the equal-rate formula `centralAmountEqual` applies. -/
+where the equal-rate formula `centralAmountEqual` applies. The intended domain is `ka ≠ k` with
+`0 ≤ F ≤ 1`, `D ≥ 0`, `ka > 0`, `k ≥ 0` and `t ≥ 0`. -/
 noncomputable def centralAmount (F D ka k t : ℝ) : ℝ :=
   F * D * ka * (Real.exp (-k * t) - Real.exp (-ka * t)) / (ka - k)
 
-/-- The central amount for equal rates. -/
+/-- The central amount for equal rates, defined for all real inputs; the intended domain is
+`0 ≤ F ≤ 1`, `D ≥ 0`, `ka > 0` and `t ≥ 0`. -/
 noncomputable def centralAmountEqual (F D ka t : ℝ) : ℝ :=
   F * D * ka * t * Real.exp (-ka * t)
 
-/-- **Depot derivative.** The depot decays at rate `ka`. -/
+/-- **Depot derivative.** For all real `D`, `ka` and `t`, the depot amount has derivative
+`-ka * depotAmount D ka t` at `t`; for `ka > 0` the depot decays at rate `ka`. -/
 theorem depot_hasDerivAt (D ka t : ℝ) :
     HasDerivAt (depotAmount D ka) (-ka * depotAmount D ka t) t := by
   have hlin : HasDerivAt (fun t => -ka * t) (-ka * 1) t :=
@@ -168,9 +172,9 @@ lemma depotAmount_eq_amount (D ka t : ℝ) :
   rw [MathlibExt.Biology.Biophysics.CompartmentKinetics.amount_bolus]
   rfl
 
-/-- The canonical central amount: the relaxation solution with
-elimination rate `k` and input `F * ka * Ag`, for all rates
-without a distinct-rate side condition. -/
+/-- The canonical central amount: the relaxation solution with elimination rate `k` and input
+`F * ka * Ag`, for all rates without a distinct-rate side condition (an oriented integral for
+`t < 0`). The intended domain is `0 ≤ F ≤ 1`, `D ≥ 0`, `ka > 0`, `k ≥ 0` and `t ≥ 0`. -/
 noncomputable def centralAmountCanonical (F D ka k t : ℝ) : ℝ :=
   MathlibExt.Biology.Dynamics.FeedForwardLoop.relaxation k
     (fun s => F * ka * depotAmount D ka s) 0 t

@@ -84,9 +84,9 @@ Real.exp (-ka * t)))
   have hkk : ka - k ≠ 0 := sub_ne_zero.mpr hne
   field_simp
 
-/-- Equal-rate AUC: at `ka = k` the component
-`F * D * ka * t * exp (-ka * t)` is integrable on `Set.Ici 0` with
-the same integral `F * D / ka`. -/
+/-- Equal-rate AUC: for `ka > 0` and all real `F`, `D`, at `ka = k` the component
+`F * D * ka * t * exp (-ka * t)` is integrable on `Set.Ici 0` with the same integral
+`F * D / ka`. -/
 lemma auc_equal_amount {F D ka : ℝ} (hka : 0 < ka) :
     MeasureTheory.IntegrableOn (fun t => F * D * ka * t * Real.exp (-ka * t))
       (Set.Ici 0) ∧

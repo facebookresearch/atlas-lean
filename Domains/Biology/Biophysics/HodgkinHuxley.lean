@@ -55,16 +55,18 @@ with depolarization negative (`V_HH = -V`); the modern absolute potential is `V 
 
 ## Main results
 
-* `exists_isSolution`: **global existence**. From every initial state with `m, h, n ∈ [0, 1]`
-  (and any `V`) there is a solution on `[0, ∞)`, and it stays in a bounded box.
+* `exists_isSolution`: **global existence**. For valid parameters (`p.Valid`: `C > 0`,
+  `gNa, gK ≥ 0`, `gL > 0`), from every initial state with `m, h, n ∈ [0, 1]` (and any `V`) there
+  is a solution on `[0, ∞)`, and it stays in a bounded box.
 * `gate_mem_Icc`: for *any* voltage trace, gating variables starting in `[0, 1]` stay there
   (the voltage-clamp statement). `IsSolution.mem_box`, `IsSolution.bounded`: **boundedness**.
-  Every solution starting in a trapping box `[Vlo, Vhi] × [0, 1]³` (`IsTrapping`:
-  `Vlo ≤ min ENa EK`, `gL (Vlo - EL) < I`, `max ENa EK ≤ Vhi`, `I < gL (Vhi - EL)`) stays in
-  it; every `V₀` lies in such a box (`exists_isTrapping`).
-* `IsSolution.eq_of_eq`: forward uniqueness from initial data in the gating cube.
-* `field_eq_zero_iff`: **equilibrium classification**. The equilibria are the points
-  `(V, m∞(V), h∞(V), n∞(V))` with `ionic p V m∞(V) h∞(V) n∞(V) = I`.
+  For valid parameters, every solution starting in a trapping box `[Vlo, Vhi] × [0, 1]³`
+  (`IsTrapping`: `Vlo ≤ min ENa EK`, `gL (Vlo - EL) < I`, `max ENa EK ≤ Vhi`,
+  `I < gL (Vhi - EL)`) stays in it, and every `V₀` lies in such a box (`exists_isTrapping`).
+* `IsSolution.eq_of_eq`: for valid parameters, forward uniqueness from initial data in the gating
+  cube.
+* `field_eq_zero_iff`: **equilibrium classification**. For valid parameters, the equilibria are
+  the points `(V, m∞(V), h∞(V), n∞(V))` with `ionic p V m∞(V) h∞(V) n∞(V) = I`.
 * `field_squid_rest`: `rest = (0, m∞(0), h∞(0), n∞(0))` is an equilibrium of `squid`.
 * `hasFDerivAt_field`: the Jacobian `jac p x` at every point.
 * `isHurwitz_arrowhead`: an arrowhead matrix `[[a, b], [c, -diag k]]` with `k > 0`,

@@ -38,7 +38,8 @@ formula. Its explicit form is
   `A(0) = A₀`; `IsSolution.eq_amount`: it is the only solution on `[0, ∞)`.
 * `amount_nonneg`: nonnegative parameters and inputs give a nonnegative amount for `t ≥ 0`.
 * `IsSolution.add_integral_eq`, `amount_add_eliminated`: mass balance
-  `A(t) + ∫₀ᵗ k A = A₀ + R t` (amount present plus amount eliminated equals amount supplied).
+  `A(t) + ∫₀ᵗ k A = A₀ + R t` (for `k, R ≥ 0`, amount present plus amount eliminated equals
+  amount supplied).
 * `integral_concentration_bolus`, `integral_Ici_concentration_bolus`: the bolus area under the
   concentration curve is `(D / CL)(1 - e^{-k T})` on `[0, T]` and `D / CL` on `[0, ∞)`.
 * `tendsto_amount`, `tendsto_concentration`: under constant infusion `A → R / k` and
@@ -89,9 +90,9 @@ theorem isSolution_amount (k R A₀ : ℝ) : IsSolution k R (amount k R A₀) :=
 
 /-! ### Mass balance -/
 
-/-- **Mass balance.** For any solution, the amount present plus the amount eliminated,
-`∫₀ᵗ k A(s) ds`, equals the initial amount plus the amount infused: `A(t) + ∫₀ᵗ k A = A₀ + R t`
-for `t ≥ 0`. -/
+/-- **Mass balance.** For all real `k`, `R` and any solution, `A(t) + ∫₀ᵗ k A = A(0) + R t` for
+`t ≥ 0`. In the model, with `k ≥ 0`, `R ≥ 0` and `A(0) ≥ 0`, the amount present plus the amount
+eliminated, `∫₀ᵗ k A(s) ds`, equals the initial amount plus the amount infused. -/
 theorem IsSolution.add_integral_eq {A : ℝ → ℝ} (h : IsSolution k R A) (ht : 0 ≤ t) :
     A t + ∫ s in (0)..t, k * A s = A 0 + R * t := by
   have hd : ∀ s ∈ uIcc 0 t, HasDerivAt A (R - k * A s) s := fun s hs ↦
@@ -121,7 +122,7 @@ theorem concentration_bolus (CL V D t : ℝ) :
   ring
 
 /-- **Finite-horizon AUC.** After a bolus dose `D`, `∫₀ᵀ C = (D / CL)(1 - e^{-k T})` with
-`k = CL / V`, for `CL > 0` and `V > 0` (the frozen model domain). -/
+`k = CL / V`, for `CL > 0` and `V > 0` (the model domain). -/
 theorem integral_concentration_bolus {CL V : ℝ} (hCL : 0 < CL) (hV : 0 < V) (D T : ℝ) :
     ∫ t in (0)..T, concentration CL V 0 D t = D / CL * (1 - exp (-elimRate CL V * T)) := by
   have hk : elimRate CL V ≠ 0 := div_ne_zero hCL.ne' hV.ne'
@@ -220,15 +221,12 @@ theorem tendsto_amount_bolus (hk : 0 < k) (A₀ : ℝ) :
 /-! ### Absolute identification from exact bolus observations -/
 
 set_option linter.unusedVariables false in
-/-- **Absolute bolus reconstruction.** Exact noiseless bolus observations
-`C₀ = D / V` at time `0` and `Ct = (D / V) * exp (-(CL / V) * t)` at time
-`t > 0`, with known dose `D > 0`, volume `V > 0` and clearance `CL ≥ 0`,
-recover the volume, the elimination rate and the clearance. The two
-formulas are `concentration_bolus` at times `0` and `t`. This is a
-statement about the model only; it is no finite-sample estimator
-guarantee and no fit to an individual. The `CL ≥ 0` hypotheses state the
-physical domain; the algebra itself needs less, hence the local linter
-suppression on the statements. -/
+/-- **Absolute bolus reconstruction.** Exact noiseless bolus observations `C₀ = D / V` at time `0`
+and `Ct = (D / V) * exp (-(CL / V) * t)` at time `t > 0`, with known dose `D > 0`, volume `V > 0`
+and clearance `CL ≥ 0`, recover the volume, the elimination rate and the clearance. The two formulas
+are `concentration_bolus` at times `0` and `t`. This is a statement about the model only; it is no
+finite-sample estimator guarantee and no fit to an individual. The `CL ≥ 0` hypothesis states the
+physical domain; the algebra itself needs less. -/
 theorem bolus_absolute_reconstruction {D V CL t C0 Ct : ℝ}
     (hD : 0 < D) (hV : 0 < V) (hCL : 0 ≤ CL) (ht : 0 < t)
     (hC0 : C0 = D / V) (hCt : Ct = D / V * exp (-(CL / V) * t)) :

@@ -27,4 +27,4 @@
 - [A bounded semi-infinite steady state falls by e per length constant](voltage-add-length-constant.md)
 - [Input relation V(0) = r∞ coth(L/λ) I(0) of a sealed finite cable](sealed-end-input.md)
 - [Voltage at the sealed end of a finite cable](sealed-end-voltage-end.md)
-- [A nonzero exponential profile is a steady state iff its rate is 1/λ](exists-is-steady-state-exp-iff.md)
+- [A nonzero decaying exponential is a steady state iff its rate is 1/λ](exists-is-steady-state-exp-iff.md)

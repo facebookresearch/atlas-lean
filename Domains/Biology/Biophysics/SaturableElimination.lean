@@ -114,33 +114,37 @@ variable {Vmax Km R t : ℝ} {C : ℝ → ℝ}
 
 /-! ### The elimination rate -/
 
-/-- Elimination is nonnegative at nonnegative concentrations. -/
+/-- For `Vmax ≥ 0` and `Km > 0`, elimination is nonnegative at nonnegative concentrations:
+`0 ≤ mmRate Vmax Km c` for `c ≥ 0`. -/
 theorem mmRate_nonneg (hV : 0 ≤ Vmax) (hK : 0 < Km) {c : ℝ} (hc : 0 ≤ c) :
     0 ≤ mmRate Vmax Km c := by
   unfold mmRate; positivity
 
-/-- Zero-order bound: elimination never exceeds `Vmax`. -/
+/-- **Zero-order bound.** For `Vmax ≥ 0`, `Km > 0` and `c ≥ 0`, elimination never exceeds `Vmax`. -/
 theorem mmRate_le (hV : 0 ≤ Vmax) (hK : 0 < Km) {c : ℝ} (hc : 0 ≤ c) :
     mmRate Vmax Km c ≤ Vmax := by
   unfold mmRate
   rw [div_le_iff₀ (by linarith)]
   nlinarith
 
-/-- First-order bound: elimination is at most the linear rate `(Vmax / Km) c`. -/
+/-- **First-order bound.** For `Vmax ≥ 0`, `Km > 0` and `c ≥ 0`, elimination is at most the linear
+rate `(Vmax / Km) c`. -/
 theorem mmRate_le_mul (hV : 0 ≤ Vmax) (hK : 0 < Km) {c : ℝ} (hc : 0 ≤ c) :
     mmRate Vmax Km c ≤ Vmax / Km * c := by
   unfold mmRate
   rw [div_mul_eq_mul_div]
   exact div_le_div_of_nonneg_left (by positivity) hK (by linarith)
 
-/-- On `0 ≤ c ≤ M` elimination is at least the linear rate `(Vmax / (Km + M)) c`. -/
+/-- For `Vmax ≥ 0`, `Km > 0` and `0 ≤ c ≤ M`, elimination is at least the linear rate
+`(Vmax / (Km + M)) c`. -/
 theorem mul_le_mmRate (hV : 0 ≤ Vmax) (hK : 0 < Km) {c M : ℝ} (hc : 0 ≤ c) (hcM : c ≤ M) :
     Vmax / (Km + M) * c ≤ mmRate Vmax Km c := by
   unfold mmRate
   rw [div_mul_eq_mul_div]
   exact div_le_div_of_nonneg_left (by positivity) (by linarith) (by linarith)
 
-/-- The field in deviation form: `R - mmRate Vmax Km c = -(Vmax - R) (c - C∞) / (Km + c)`. -/
+/-- For `Km + c ≠ 0` and `Vmax - R ≠ 0`, the field in deviation form:
+`R - mmRate Vmax Km c = -(Vmax - R) (c - C∞) / (Km + c)`. -/
 theorem sub_mmRate_eq {c : ℝ} (hc : Km + c ≠ 0) (hRV : Vmax - R ≠ 0) :
     R - mmRate Vmax Km c = -(Vmax - R) * (c - steadyConc Vmax Km R) / (Km + c) := by
   unfold mmRate steadyConc
@@ -296,8 +300,8 @@ theorem IsSolution.pos (h : IsSolution Vmax Km R C) (hV : 0 ≤ Vmax) (hK : 0 < 
   rw [amount_bolus] at this
   exact lt_of_lt_of_le (by positivity) this
 
-/-- **Input bound.** A nonnegative solution never exceeds the elimination-free accumulation:
-`C(t) ≤ C₀ + R t`. -/
+/-- **Input bound.** For `Vmax ≥ 0`, `Km > 0`, `R ≥ 0` and a solution with `C(0) ≥ 0`, the
+concentration never exceeds the elimination-free accumulation: `C(t) ≤ C(0) + R t` for `t ≥ 0`. -/
 theorem IsSolution.le_add_mul (h : IsSolution Vmax Km R C) (hV : 0 ≤ Vmax) (hK : 0 < Km)
     (hR : 0 ≤ R) (h0 : 0 ≤ C 0) (ht : 0 ≤ t) : C t ≤ C 0 + R * t := by
   have := le_of_hasDerivAt_nonneg (g := fun s ↦ C 0 + R * s - C s)
@@ -308,7 +312,8 @@ theorem IsSolution.le_add_mul (h : IsSolution Vmax Km R C) (hV : 0 ≤ Vmax) (hK
   simp only [mul_zero, add_zero, sub_self] at this
   linarith
 
-/-- **Zero-order bound.** Elimination is at most `Vmax`, so `C₀ + (R - Vmax) t ≤ C(t)`. -/
+/-- **Zero-order bound.** For `Vmax ≥ 0`, `Km > 0`, `R ≥ 0` and a solution with `C(0) ≥ 0`,
+elimination is at most `Vmax`, so `C(0) + (R - Vmax) t ≤ C(t)` for `t ≥ 0`. -/
 theorem IsSolution.add_mul_le (h : IsSolution Vmax Km R C) (hV : 0 ≤ Vmax) (hK : 0 < Km)
     (hR : 0 ≤ R) (h0 : 0 ≤ C 0) (ht : 0 ≤ t) : C 0 + (R - Vmax) * t ≤ C t := by
   have := le_of_hasDerivAt_nonneg (g := fun s ↦ C s - (R - Vmax) * s)
@@ -328,8 +333,9 @@ private theorem IsSolution.continuousOn_mmRate (h : IsSolution Vmax Km R C) (hV 
   have := h.nonneg hV hK hR h0 (t := s) (by rw [uIcc_of_le ht] at hs; exact hs.1)
   exact ne_of_gt (by linarith)
 
-/-- **Mass balance.** The concentration present plus the concentration eliminated equals the
-initial concentration plus the concentration infused: `C(t) + ∫₀ᵗ mmRate(C) = C₀ + R t`. -/
+/-- **Mass balance.** For `Vmax ≥ 0`, `Km > 0`, `R ≥ 0` and a solution with `C(0) ≥ 0`, the
+concentration present plus the concentration eliminated equals the initial concentration plus the
+concentration infused: `C(t) + ∫₀ᵗ mmRate(C) = C(0) + R t` for `t ≥ 0`. -/
 theorem IsSolution.add_integral_eq (h : IsSolution Vmax Km R C) (hV : 0 ≤ Vmax) (hK : 0 < Km)
     (hR : 0 ≤ R) (h0 : 0 ≤ C 0) (ht : 0 ≤ t) :
     C t + ∫ s in (0)..t, mmRate Vmax Km (C s) = C 0 + R * t := by
@@ -356,8 +362,9 @@ theorem IsSolution.antitoneOn_bolus (h : IsSolution Vmax Km 0 C) (hV : 0 ≤ Vma
     (fun r hr ↦ mmRate_nonneg hV hK (h.nonneg hV hK le_rfl h0 hr)) hs hsr
   linarith
 
-/-- **Upper barrier after a bolus.** Since `C ≤ C₀`, elimination is at least first order with
-the slowest rate `Vmax / (Km + C₀)`: `C(t) ≤ C₀ e^{-(Vmax / (Km + C₀)) t}`. Together with
+/-- **Upper barrier after a bolus.** For `Vmax ≥ 0`, `Km > 0` and a solution without infusion
+(`R = 0`) with `C₀ = C(0) ≥ 0`: since `C ≤ C₀`, elimination is at least first order with the slowest
+rate `Vmax / (Km + C₀)`, so `C(t) ≤ C₀ e^{-(Vmax / (Km + C₀)) t}` for `t ≥ 0`. Together with
 `IsSolution.amount_le` this brackets the bolus curve between two linear washouts. -/
 theorem IsSolution.le_amount_bolus (h : IsSolution Vmax Km 0 C) (hV : 0 ≤ Vmax) (hK : 0 < Km)
     (h0 : 0 ≤ C 0) (ht : 0 ≤ t) : C t ≤ amount (Vmax / (Km + C 0)) 0 (C 0) t := by
@@ -373,7 +380,8 @@ theorem IsSolution.le_amount_bolus (h : IsSolution Vmax Km 0 C) (hV : 0 ≤ Vmax
   calc C t = C t * exp (μ * t) * exp (-μ * t) := by rw [mul_assoc, ← exp_add]; simp
     _ ≤ C 0 * exp (-μ * t) := mul_le_mul_of_nonneg_right (by linarith) (exp_pos _).le
 
-/-- After a bolus with `Vmax > 0` the concentration washes out to `0`. -/
+/-- After a bolus (no infusion, `R = 0`), for `Vmax > 0`, `Km > 0` and `C(0) ≥ 0`, the concentration
+washes out to `0`. -/
 theorem IsSolution.tendsto_bolus (h : IsSolution Vmax Km 0 C) (hV : 0 < Vmax) (hK : 0 < Km)
     (h0 : 0 ≤ C 0) : Tendsto C atTop (𝓝 0) := by
   have hμ : 0 < Vmax / (Km + C 0) := div_pos hV (by linarith)
@@ -396,7 +404,8 @@ private theorem aucPotential_hasDerivAt (h : IsSolution Vmax Km 0 C) (hV : 0 < V
   field_simp
   ring
 
-/-- **Integrated balance after a bolus.** On `[0, T]`,
+/-- **Integrated balance after a bolus.** For `Vmax > 0`, `Km > 0` and a solution without infusion
+(`R = 0`) with `C₀ = C(0) ≥ 0`, on `[0, T]` with `T ≥ 0`,
 `∫₀ᵀ C = (Km (C₀ - C(T)) + (C₀² - C(T)²) / 2) / Vmax`. -/
 theorem IsSolution.integral_bolus (h : IsSolution Vmax Km 0 C) (hV : 0 < Vmax) (hK : 0 < Km)
     (h0 : 0 ≤ C 0) {T : ℝ} (hT : 0 ≤ T) :
@@ -434,16 +443,20 @@ theorem IsSolution.integral_Ioi_bolus (h : IsSolution Vmax Km 0 C) (hV : 0 < Vma
 
 /-! ### Dose–AUC nonlinearity -/
 
-/-- **AUC splits into a linear and a saturation part.** For a bolus of dose `V C₀` into volume
-`V > 0`, the saturable AUC is the AUC of the linear model with clearance `CL = V Vmax / Km`
-(`CompartmentKinetics`, value `D / CL = C₀ Km / Vmax`) plus `C₀² / (2 Vmax)`. -/
+/-- **AUC splits into a linear and a saturation part.** For `Vmax > 0`, `Km > 0`, a volume `V > 0`
+and every real `C₀`, the saturable AUC is the AUC of the linear model with clearance
+`CL = V Vmax / Km` after a bolus of dose `V C₀` (`CompartmentKinetics`, value
+`D / CL = C₀ Km / Vmax`) plus `C₀² / (2 Vmax)`. The reading as a dose and as areas under
+concentration curves applies for `C₀ ≥ 0`. -/
 theorem bolusAUC_eq_integral_linear_add (hV : 0 < Vmax) (hK : 0 < Km) {V : ℝ} (hVol : 0 < V)
     (C₀ : ℝ) : bolusAUC Vmax Km C₀ =
       (∫ t in Ici 0, concentration (V * Vmax / Km) V 0 (V * C₀) t) + C₀ ^ 2 / (2 * Vmax) := by
   rw [integral_Ici_concentration_bolus (by positivity) hVol, bolusAUC]
   field_simp
 
-/-- **Superproportionality.** Doubling a positive dose more than doubles the AUC. -/
+/-- **Superproportionality.** For `Vmax > 0`, every real `Km` and `C₀ > 0`, `2 AUC(C₀) < AUC(2 C₀)`:
+for `Km > 0`, where the AUC is the area under the bolus concentration curve, doubling a positive
+dose more than doubles the AUC. -/
 theorem two_mul_bolusAUC_lt (hV : 0 < Vmax) {C₀ : ℝ} (hC₀ : 0 < C₀) :
     2 * bolusAUC Vmax Km C₀ < bolusAUC Vmax Km (2 * C₀) := by
   have : bolusAUC Vmax Km (2 * C₀) - 2 * bolusAUC Vmax Km C₀ = C₀ ^ 2 / Vmax := by
@@ -459,15 +472,17 @@ theorem bolusAUC_div {C₀ : ℝ} (hC₀ : C₀ ≠ 0) :
   unfold bolusAUC
   field_simp
 
-/-- The initial-concentration-normalized AUC `AUC / C₀` is strictly increasing in `C₀`. -/
+/-- For `Vmax > 0` and every real `Km`, the initial-concentration-normalized AUC
+`AUC / C₀ = (Km + C₀ / 2) / Vmax` is strictly increasing in `C₀` on `(0, ∞)`. -/
 theorem strictMonoOn_bolusAUC_div (hV : 0 < Vmax) :
     StrictMonoOn (fun C₀ ↦ bolusAUC Vmax Km C₀ / C₀) (Ioi 0) := by
   intro a ha b hb hab
   simp only [bolusAUC_div (ne_of_gt ha), bolusAUC_div (ne_of_gt hb)]
   exact div_lt_div_of_pos_right (by linarith) hV
 
-/-- **AUC is not proportional to dose** for `Vmax > 0`: there is no constant `a` with
-`AUC(C₀) = a C₀` for all `C₀ ≥ 0`. (For linear elimination `AUC = D / CL` is proportional,
+/-- **AUC is not proportional to dose** for `Vmax > 0` and every real `Km`: there is no constant `a`
+with `AUC(C₀) = a C₀` for all `C₀ ≥ 0`. For `Km > 0` the AUC is the area under the bolus
+concentration curve. (For linear elimination `AUC = D / CL` is proportional,
 `CompartmentKinetics.integral_Ici_concentration_bolus`.) -/
 theorem not_exists_bolusAUC_eq_mul (hV : 0 < Vmax) :
     ¬ ∃ a, ∀ C₀, 0 ≤ C₀ → bolusAUC Vmax Km C₀ = a * C₀ := by
@@ -512,7 +527,8 @@ theorem steadyConc_nonneg (hK : 0 ≤ Km) (hR : 0 ≤ R) (hRV : R < Vmax) :
     0 ≤ steadyConc Vmax Km R :=
   div_nonneg (mul_nonneg hR hK) (sub_pos.2 hRV).le
 
-/-- For `R < Vmax` elimination at `C∞ = R Km / (Vmax - R)` balances the infusion. -/
+/-- For `Vmax > 0`, `Km > 0` and `R < Vmax`, elimination at `C∞ = R Km / (Vmax - R)` balances the
+infusion. -/
 theorem mmRate_steadyConc (hV : 0 < Vmax) (hK : 0 < Km) (hRV : R < Vmax) :
     mmRate Vmax Km (steadyConc Vmax Km R) = R := by
   have h1 : Vmax - R ≠ 0 := (sub_pos.2 hRV).ne'
@@ -528,8 +544,8 @@ theorem isSolution_steadyConc (hV : 0 < Vmax) (hK : 0 < Km) (hRV : R < Vmax) :
     IsSolution Vmax Km R (fun _ ↦ steadyConc Vmax Km R) :=
   isSolution_const_iff.2 (mmRate_steadyConc hV hK hRV)
 
-/-- **Uniqueness of the steady state.** For `R < Vmax` the only nonnegative balance point is
-`C∞`. -/
+/-- **Uniqueness of the steady state.** For `Km > 0` and `R < Vmax` the only nonnegative balance
+point is `C∞`. -/
 theorem eq_steadyConc_of_mmRate_eq (hK : 0 < Km) (hRV : R < Vmax) {c : ℝ} (hc : 0 ≤ c)
     (h : mmRate Vmax Km c = R) : c = steadyConc Vmax Km R := by
   unfold mmRate at h
@@ -538,15 +554,15 @@ theorem eq_steadyConc_of_mmRate_eq (hK : 0 < Km) (hRV : R < Vmax) {c : ℝ} (hc 
   rw [eq_div_iff (sub_pos.2 hRV).ne']
   linear_combination h
 
-/-- **No steady state when infusion reaches capacity.** For `0 < Vmax ≤ R` no nonnegative
-constant is a solution. -/
+/-- **No steady state when infusion reaches capacity.** For `Km > 0` and `0 < Vmax ≤ R` no
+nonnegative constant is a solution. -/
 theorem not_isSolution_const_of_le (hV : 0 < Vmax) (hK : 0 < Km) (hVR : Vmax ≤ R) {c : ℝ}
     (hc : 0 ≤ c) : ¬ IsSolution Vmax Km R (fun _ ↦ c) := by
   rw [isSolution_const_iff]
   exact ((mmRate_lt hV hK hc).trans_le hVR).ne
 
-/-- **Unbounded accumulation.** For `R > Vmax ≥ 0` every solution with `C(0) ≥ 0` tends to
-`∞`. -/
+/-- **Unbounded accumulation.** For `Km > 0` and `R > Vmax ≥ 0` every solution with `C(0) ≥ 0` tends
+to `∞`. -/
 theorem IsSolution.tendsto_atTop (h : IsSolution Vmax Km R C) (hV : 0 ≤ Vmax) (hK : 0 < Km)
     (hVR : Vmax < R) (h0 : 0 ≤ C 0) : Tendsto C atTop atTop := by
   refine tendsto_atTop_mono' _ ?_
