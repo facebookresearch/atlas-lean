@@ -71,15 +71,10 @@ varieties they involve.
 
 ## Proof depends on
 
-The inputs of the proof are not yet isolated as pages, so this section names them instead of linking
-them: a geometric realization in weight one, which attaches $\ell$-adic Galois representations to the
-automorphic representations of definite unitary groups of odd rank over CM fields that satisfy the
-proof's congruence and sphericity conditions, compatible with the Satake parameters at the spherical
-places away from $\ell$ and crystalline, with prescribed Hodge–Tate jumps, at the places above $\ell$;
-the existence of theta lifts of automorphic representations from the unitary group of a definite
-Hermitian space to those of definite skew-Hermitian spaces of every large dimension, under a bound on
-the weights; a congruence between weights; and the argument for local–global compatibility that
-combines them.
+- Not yet a page: a geometric realization in weight one, which attaches $\ell$-adic Galois representations to the automorphic representations of definite unitary groups of odd rank over CM fields that satisfy the proof's congruence and sphericity conditions, compatible with the Satake parameters at the spherical places away from $\ell$ and crystalline, with prescribed Hodge–Tate jumps, at the places above $\ell$, for the Galois representations of the statement
+- Not yet a page: the existence of theta lifts of automorphic representations from the unitary group of a definite Hermitian space to those of definite skew-Hermitian spaces of every large dimension, under a bound on the weights, for moving to the representations that the geometric realization covers
+- Not yet a page: a congruence between weights, for reaching the weights that the geometric realization covers
+- Not yet a page: the argument for local–global compatibility that combines these inputs, for the clauses of the statement
 
 ## Sources
 

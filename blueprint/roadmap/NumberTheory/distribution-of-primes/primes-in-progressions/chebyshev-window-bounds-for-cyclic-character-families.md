@@ -79,6 +79,8 @@ consumer on that route projects another of its components.
 - [Definite-side hypotheses for families of characters](../../../RepresentationTheory/automorphic-representations/definite-side-hypotheses-for-character-families.md), in the first intermediate statement
 - [Window bound for Tate–Shafarevich groups of Tate twists over subfields of cyclotomic fields](../../algebraic-number-theory/galois-representations/tate-shafarevich-window-bound-over-cyclotomic-subfields.md), in the second intermediate statement
 - [Behrend's lemma: some sphere contains many lattice points of a cube](../../../Combinatorics/additive-combinatorics/progressions-dense-sets/bounds-for-roth-numbers/behrend-large-sphere.md), in the host supply of the second intermediate statement only, for the construction of large sets of integers without the linear relations above
+- Not yet a page: the supply of good prime pairs $(q, d)$ described above, for the second intermediate statement, beside the window bound for Tate–Shafarevich groups
+- Not yet a page: the construction of Behrend's type described above, of large sets of integers without the relations $j(s_2 - s_1) = i(s_3 - s_1)$, built from Behrend's lemma, for the host supply of the second intermediate statement
 
 ## Sources
 

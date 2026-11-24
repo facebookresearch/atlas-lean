@@ -36,13 +36,9 @@ reduction of CM elliptic curves outside a prime.
 
 ## Depends on
 
-The notions of the statement are specific to this proof and are not yet pages, so this section names
-them instead of linking them: the class of families of auxiliary number fields attached to scales,
-which are the families of the window bounds for weighted Chebyshev sums (that node uses this one and
-is not linked from here); the selections for the members of a family, with their Hermitian lattices
-over CM fields, their theta realisations on indefinite and definite unitary groups, and the rows,
-twists and levels of these realisations; the constants; and the conditions listed above, among them
-the class number formulas and genus–mass volumes of the lattices and the definite-side condition.
+- Not yet a page: the class of families of auxiliary number fields attached to scales, which are the families of the window bounds for weighted Chebyshev sums (that node uses this one, so it is not linked from here), for the families that the statement quantifies over
+- Not yet a page: the selections for the members of a family, with their Hermitian lattices over CM fields, their theta realisations on indefinite and definite unitary groups, and the rows, twists and levels of these realisations, for the data that the statement selects
+- Not yet a page: the constants and the conditions listed above, among them the class number formulas and genus–mass volumes of the lattices and the definite-side condition, for what the statement asserts of the selections
 
 ## Proof depends on
 

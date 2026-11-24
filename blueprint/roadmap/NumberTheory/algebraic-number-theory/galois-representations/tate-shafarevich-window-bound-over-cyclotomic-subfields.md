@@ -62,6 +62,8 @@ $[Y, Y^2] \subset [X^{1/J}, X]$, for every large $X$. It is the input from Galoi
 - [Galois groups with restricted ramification and their modules](galois-cohomology-of-number-fields/galois-groups-with-restricted-ramification.md), for the Galois groups $G_{E,S}$ of the maximal extensions unramified outside $S$, their discrete modules and their cohomology
 - [Tate–Shafarevich groups of Galois modules](galois-cohomology-of-number-fields/tate-shafarevich-groups.md), for Tate–Shafarevich groups; the groups $\text{Ш}^1_\ell(E, n)$ above impose local conditions at the places above $\ell$ only, and are those groups for the totally imaginary fields of the statement
 - [Cyclotomic character and Tate twists](cyclotomic-character-and-tate-twists.md), for the twists $\mathbb{Q}_\ell/\mathbb{Z}_\ell(n)$
+- [Primitive characters at divisor levels](../../zeta-l-functions/dirichlet-l-functions/conductors-and-primitive-dirichlet-characters/primitive-inducer.md), for the primitive character $\psi$ and its conductor $N_\psi$, its level (the case $d = m$ of a primitive inducer)
+- Not yet a page: the isomorphism $(\mathbb{Z}/N\mathbb{Z})^\times \cong \operatorname{Gal}(\mathbb{Q}(\zeta_N)/\mathbb{Q})$, $a \mapsto (\zeta_N \mapsto \zeta_N^a)$, for the definition of the fields $K(\psi, m, q, d)$
 
 ## Proof depends on
 

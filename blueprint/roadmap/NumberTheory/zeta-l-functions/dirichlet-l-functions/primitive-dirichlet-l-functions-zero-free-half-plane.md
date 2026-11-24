@@ -22,6 +22,8 @@ $\theta > 1/2$, and in particular for $\chi = \psi$.
 
 - [Dirichlet character of a given modulus](conductors-and-primitive-dirichlet-characters/is-dirichlet-character-modulus.md), for Dirichlet characters, of a positive modulus
 - [Primitive characters at divisor levels](conductors-and-primitive-dirichlet-characters/primitive-inducer.md), for primitive characters, those whose conductor is their level: the case $d = m$ of a primitive inducer
+- [Meromorphic continuation of Hecke L-functions](hecke-l-function-meromorphic-continuation.md), for the continued $L$-functions of the primitive characters other than the trivial character modulo $1$, on $\operatorname{Re} s > 1/2$
+- [Meromorphy of the Riemann zeta function](../riemann-zeta/meromorphic-on-riemann-zeta.md), for $\zeta$, the $L$-function of the trivial character modulo $1$, and its pole at $s = 1$
 
 ## Proof depends on
 

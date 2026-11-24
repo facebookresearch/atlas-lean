@@ -74,6 +74,9 @@ $\operatorname{Re} s \ge 1$.
 ## Depends on
 
 - [Dirichlet character of a given modulus](../conductors-and-primitive-dirichlet-characters/is-dirichlet-character-modulus.md), for Dirichlet characters, of a positive modulus
+- [Meromorphic continuation of Hecke L-functions](../hecke-l-function-meromorphic-continuation.md), for the continued $L$-functions of the nonprincipal characters, whose values $L(1, \chi)$ and $L'(1, \chi)$ and whose zeros the statement involves
+- [Meromorphy of the Riemann zeta function](../../riemann-zeta/meromorphic-on-riemann-zeta.md), for $\zeta$ on $\mathbb{C}$, the $L$-function of the trivial character modulo $1$, and its pole at $s = 1$
+- [Stieltjes constants exist, and the zeroth is Euler's constant](../../riemann-zeta/stieltjes-constants/ramanujan-part1-ch7-entry13-bernoullipol.md), for Euler's constant $\gamma$, the limit of $\sum_{j \le m} 1/j - \log m$ (the case $k = 0$)
 - [Von Mangoldt function](../../../arithmetic-functions/multiplicative-functions/von-mangoldt-function.md), for the function $\Lambda$ in the weighted Chebyshev functions $\psi^\sharp$
 
 ## Proof depends on
@@ -84,6 +87,8 @@ $\operatorname{Re} s \ge 1$.
 - [Nonvanishing of the Riemann zeta function times $s - 1$ on $\operatorname{Re} s \ge 1$](../../../distribution-of-primes/prime-number-theorem/prime-number-theorem/riemann-zeta-ne-zero-of-one-le-re.md), for the trivial character modulo $1$, which the page on Hecke $L$-functions excludes as the norm power $|\cdot|^0$
 - [Laurent expansion of $\zeta$ at $s = 1$](../../riemann-zeta/stieltjes-constants/ramanujan-part1-ch7-entry13-bernoullirec.md), for its constant term: $\zeta(s) - 1/(s - 1)$ tends to the zeroth Stieltjes constant $c_0$ as $s \to 1$
 - [Stieltjes constants exist, and the zeroth is Euler's constant](../../riemann-zeta/stieltjes-constants/ramanujan-part1-ch7-entry13-bernoullipol.md), for $c_0 = \gamma$, so that the constant term of $\zeta$ at $s = 1$ is Euler's constant
+- Not yet a page: Cauchy's integral formula and Cauchy's estimate for the Taylor coefficients of a function holomorphic on a closed disc, for the expansions of $\Phi$ about the centres $\sigma$ and $\sigma + i\gamma$ and the bound $O(e^{-k})$ on the coefficients of their parts without the pole
+- Not yet a page: the holomorphy of $\zeta$ on $\mathbb{C} \setminus \{1\}$, for the meromorphic continuation of $\Phi$ for the trivial character, whose only poles on $\operatorname{Re} s > 0$ are then at $s = 1$, where the correction terms remove it, and at the zeros of $\zeta$
 
 ## Sources
 

@@ -27,12 +27,9 @@ squarefree polynomials with nonzero constant term, which extend the cuspidal cas
 
 ## Depends on
 
-The notions of the statement are specific to this proof and are not yet pages, so this section names
-them instead of linking them: the class of families of auxiliary number fields attached to scales,
-which are the families of the window bounds for weighted Chebyshev sums (that node uses this one
-through the definite-side hypotheses and is not linked from here); the points of a family, with their
-point conditions and the tie condition; and the lattice that the argument attaches to each point,
-whose covolume the statement bounds.
+- Not yet a page: the class of families of auxiliary number fields attached to scales, which are the families of the window bounds for weighted Chebyshev sums (that node uses this one through the definite-side hypotheses, so it is not linked from here), for the families that the bound quantifies over
+- Not yet a page: the points of a family, with their point conditions and the tie condition, for the points at which the bound holds
+- Not yet a page: the lattice that the argument attaches to each point, for the covolume that the statement bounds
 
 ## Proof depends on
 
