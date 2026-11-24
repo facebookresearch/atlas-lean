@@ -1,6 +1,6 @@
 # Relabelling distributes over choice up to strong bisimilarity
 
-For every finite relabelling $f$ and all static CCS processes $P$ and $Q$, the process $(P + Q)[f]$ is strongly bisimilar in the labelled transition system of static CCS to $P[f] + Q[f]$.
+Let the channel names form a type with decidable equality. For every finite relabelling $f$ and all static CCS processes $P$ and $Q$, the process $(P + Q)[f]$ is strongly bisimilar in the labelled transition system of static CCS to $P[f] + Q[f]$.
 
 ## Sources
 

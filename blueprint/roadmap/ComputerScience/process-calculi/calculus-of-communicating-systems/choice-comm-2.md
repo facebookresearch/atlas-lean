@@ -1,6 +1,6 @@
 # Choice is commutative up to strong bisimilarity in static CCS
 
-For all static CCS processes (finite CCS processes built from $0$ by action prefix, choice, parallel composition, restriction by a finite list of channel names and relabelling by a finite relabelling table) $P$ and $Q$, the choices $P + Q$ and $Q + P$ are strongly bisimilar in the labelled transition system of static CCS.
+Let the channel names form a type with decidable equality. For all static CCS processes (finite CCS processes built from $0$ by action prefix, choice, parallel composition, restriction by a finite list of channel names and relabelling by a finite relabelling table) $P$ and $Q$, the choices $P + Q$ and $Q + P$ are strongly bisimilar in the labelled transition system of static CCS.
 
 ## Sources
 

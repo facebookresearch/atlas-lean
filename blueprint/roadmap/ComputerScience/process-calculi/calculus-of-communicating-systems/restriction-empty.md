@@ -1,6 +1,6 @@
 # Restriction by the empty list is the identity up to strong bisimilarity
 
-For every static CCS process $P$, the restriction of $P$ by the empty list of channel names is strongly bisimilar in the labelled transition system of static CCS to $P$.
+Let the channel names form a type with decidable equality. For every static CCS process $P$, the restriction of $P$ by the empty list of channel names is strongly bisimilar in the labelled transition system of static CCS to $P$.
 
 ## Sources
 

@@ -1,6 +1,6 @@
 # Head summands of a static CCS process
 
-For a static CCS process $P$, its head summands $h(P)$ form a list of pairs of a CCS action and a static CCS process, defined by recursion on $P$, where $\Sigma s$ denotes the right-associated finite choice $\alpha_1.P_1 + (\cdots + (\alpha_n.P_n + 0))$ of a list $s$ of summands:
+Let the channel names form a type with decidable equality. For a static CCS process $P$, its head summands $h(P)$ form a list of pairs of a CCS action and a static CCS process, defined by recursion on $P$, where $\Sigma s$ denotes the right-associated finite choice $\alpha_1.P_1 + (\cdots + (\alpha_n.P_n + 0))$ of a list $s$ of summands:
 
 - $h(0) = [\,]$;
 - $h(\alpha.P) = [(\alpha, \Sigma h(P))]$;
