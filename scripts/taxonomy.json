@@ -12929,6 +12929,7 @@
   "MathlibExt/Probability/Statistics/MultipleTesting/PermutationPValue": {"to": "Probability/hypothesis-testing", "title": "Permutation tests"},
   "MathlibExt/Probability/Statistics/MultivariateCLT": {"to": "Probability/central-limit-theorems", "title": "Multivariate central limit theorem"},
   "MathlibExt/Probability/Statistics/NeymanPearson": {"to": "Probability/hypothesis-testing", "title": "Neyman–Pearson lemma"},
+  "MathlibExt/Probability/Statistics/Nonparametric/RankFreeness": {"to": "Probability/nonparametric-survival", "title": "Distribution-freeness of ranks"},
   "MathlibExt/Probability/Statistics/PCA": {"to": "Probability/linear-models-multivariate", "title": "Principal component analysis"},
   "MathlibExt/Probability/Statistics/PoissonLikelihood": {"to": "Probability/statistical-estimation", "title": "Likelihood and maximum likelihood estimators"},
   "MathlibExt/Probability/Statistics/RobbinsFormula": {"to": "Probability/bayesian-statistics", "title": "Empirical Bayes and Tweedie's formula"},
