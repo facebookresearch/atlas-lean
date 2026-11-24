@@ -56353,6 +56353,7 @@
 "Matrix.norm_trace_le_two_of_mem_specialUnitaryGroup_fin_two": "35621faa0216e6f3",
 "Matrix.one_le_det_of_posSemidef_sub_one": "d81f2fadcbaae23e",
 "Matrix.pathWeight": "0f59f7d7a1b21c1b",
+"Matrix.polarFactor": "aa15e6dbad3fe47a",
 "Matrix.posDef_iff_leadingPrincipalMinors_pos": "df76165adab96177",
 "Matrix.rank_add_le": "ff77f11cb3b34698",
 "Matrix.rank_eq_zero_iff": "5d290bfa349a68c9",

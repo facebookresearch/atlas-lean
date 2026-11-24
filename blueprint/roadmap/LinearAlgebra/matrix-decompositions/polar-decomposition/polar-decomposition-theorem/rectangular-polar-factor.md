@@ -1,20 +1,16 @@
 # Canonical polar factor of a rectangular matrix
 
-Let $G$ be a real $m \times n$ matrix, let $k = \min(m, n)$ and let $r = \operatorname{rank} G$.
-A real singular value decomposition $G = U \Sigma V^{\mathsf{T}}$, with $U$ and $V$ orthogonal,
-columns $u_i$ and $v_i$, and singular values $\sigma_1 \ge \dots \ge \sigma_k \ge 0$ (after reordering the columns if
-needed), is a *full* decomposition. Its first $k$ columns give a *thin* decomposition
-$G = \sum_{i \le k} \sigma_i u_i v_i^{\mathsf{T}}$, and its first $r$ columns, those with
-$\sigma_i > 0$, give the *compact* decomposition $G = U_r \Sigma_r V_r^{\mathsf{T}}$. The canonical
-polar factor of $G$ is
+Let $G$ be a real $m \times n$ matrix. Choose a full singular value decomposition
+$G = U \Sigma V^{\mathsf T}$, with $U$ and $V$ orthogonal and $\Sigma$ rectangular diagonal with
+nonnegative entries. Form $D$ by replacing each positive diagonal entry of $\Sigma$ by $1$ and
+keeping all other entries zero. The canonical polar factor is $P(G) = U D V^{\mathsf T}$.
 
-$$P(G) = U_r V_r^{\mathsf{T}} = \sum_{i \le r} u_i v_i^{\mathsf{T}},$$
+If $r = \operatorname{rank} G$, the $r$ columns of $U$ and $V$ paired with positive singular values
+form the compact factors $U_r$ and $V_r$. After ordering those columns first, the formula reads
 
-taken from the compact decomposition; $P(0) = 0$.
+$$P(G) = U_r V_r^{\mathsf T} = \sum_{i=1}^r u_i v_i^{\mathsf T}.$$
 
-## Depends on
-
-- [Real singular value decomposition](../../singular-value-decomposition/singular-value-decomposition-theorem/real-singular-value-decomposition.md)
+In particular, $P(0) = 0$.
 
 ## Sources
 
