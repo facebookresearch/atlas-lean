@@ -6711,7 +6711,7 @@
 "Cslib.Algorithms.Lean.MarkovDecision.bellman_contracting": "d1874b9b92475b84",
 "Cslib.Algorithms.Lean.MarkovDecision.bellman_mono": "216a2b7d935ddf95",
 "Cslib.Algorithms.Lean.MarkovDecision.bellman_optimalValue": "f2096a20927bdeb0",
-"Cslib.Algorithms.Lean.MarkovDecision.bellman_ssp": "363ac5a44843cf9a",
+"Cslib.Algorithms.Lean.MarkovDecision.bellman_ssp": "2925b3c996edb12e",
 "Cslib.Algorithms.Lean.MarkovDecision.chain": "da217dca45087a17",
 "Cslib.Algorithms.Lean.MarkovDecision.chainOccupancy": "92c3ccbb318fc3e0",
 "Cslib.Algorithms.Lean.MarkovDecision.chainValue": "57d7d29807b2d2ef",

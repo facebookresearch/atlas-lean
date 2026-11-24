@@ -14648,7 +14648,6 @@
   "WantedExt/ComputerScience/MachineLearning/TwoLayerAPrioriWanted": {"to": "ComputerScience/machine-learning/supervised-learning", "title": "Two-layer neural networks and Barron space"},
   "WantedExt/ComputerScience/PACFundamentalTheoremWanted": {"to": "ComputerScience/machine-learning/pac-learning", "title": "Fundamental theorem of PAC learning"},
   "WantedExt/ComputerScience/SoftmaxPolicyGradientWanted": {"to": "ComputerScience/machine-learning/reinforcement-learning", "title": "Policy gradients for softmax policies"},
-  "WantedExt/ComputerScience/StochasticShortestPathWanted": {"to": "ComputerScience/heuristic-search-and-planning", "title": "Stochastic shortest path problems"},
   "WantedExt/ComputerScience/UnionFindInverseAckermannWanted": {"to": "ComputerScience/data-structures/disjoint-sets-and-dynamic-trees", "title": "Disjoint-set data structure"},
   "WantedExt/ComputerScience/WeakLearnabilityWanted": {"to": "ComputerScience/machine-learning/pac-learning", "title": "Weak learnability"},
   "WantedExt/Dynamics/AMR43Problem1Wanted": {"to": "Dynamics/topological-symbolic-dynamics", "title": "Conjugacy of aperiodic parts of shifts"},
