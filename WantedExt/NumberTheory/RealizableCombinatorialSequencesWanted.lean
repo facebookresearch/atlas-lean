@@ -14,7 +14,7 @@ public import Mathlib.Combinatorics.Enumerative.Schroder
 public import MathlibExt.Combinatorics.Enumerative.MotzkinNumber
 public import MathlibExt.Combinatorics.Enumerative.ZagierNumber
 public import MathlibExt.NumberTheory.ArithmeticFunction.BinomialPowerRealizability
-public import Mathlib.Basic.Real.Basic
+public import MathlibExt.NumberTheory.ArithmeticFunction.MoebiusGeometricGrowth
 public import Mathlib.NumberTheory.ArithmeticFunction.Moebius
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 
@@ -133,20 +133,6 @@ public theorem_wanted choose_mul_prime_modEq_choose_div (n p l : ℕ) (hp : p.Pr
     (hn : 0 < n) (hl : l * p ≠ n) :
     (n.choose (l * p) : ℤ) ≡ ((n / p).choose l : ℤ)
       [ZMOD (p : ℤ) ^ max (padicValNat p n) (padicValInt p ((n : ℤ) - l * p))]
-
-/-- **Möbius transforms of sequences growing by a factor of at least $1.221$ are nonnegative.**
-Let $b$ be a sequence of real numbers and $C \ge 1.221$ a real number such that $b(n) \ge 0$ and
-$b(n+1) \ge C\, b(n)$ for every $n \ge 1$. Then for every $n \ge 1$, with $\mu$ the Möbius
-function,
-$$\sum_{d \mid n} \mu(n/d)\, b(d) \ge 0,$$
-that is, the Dirichlet convolution $\mu * b$ is nonnegative at $n$.
-
-Source: Geng-Rui Zhang, *Realizability of Some Combinatorial Sequences*, Journal of Integer
-Sequences 27 (2024), Article 24.3.3, Lemma 28 (`jis-2024-24.3.3-lem-28`). -/
-public theorem_wanted moebius_conv_nonneg_of_geometric_growth (b : ℕ → ℝ)
-    (hb : ∀ n, 1 ≤ n → 0 ≤ b n) (C : ℝ) (hC : (1221 / 1000 : ℝ) ≤ C)
-    (hgrowth : ∀ n, 1 ≤ n → C * b n ≤ b (n + 1)) (n : ℕ) (hn : 1 ≤ n) :
-    0 ≤ ∑ d ∈ n.divisors, (ArithmeticFunction.moebius (n / d) : ℝ) * b d
 
 /-- **Dold congruences via prime-power congruences.** Let $(V(n))_{n \ge 1}$ be a sequence of
 integers and let $\mu$ denote the Möbius function. Then

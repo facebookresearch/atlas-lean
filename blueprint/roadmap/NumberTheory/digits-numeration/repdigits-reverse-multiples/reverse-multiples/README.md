@@ -30,5 +30,6 @@
 - [In base $B$, divisors of $B^2 - 1$ divide reversals of their multiples](dvd-reverse-digits-of-dvd.md)
 - [Infinitely many multiples with divisible reversal](infinite-dvd-reverse-digits-mul.md)
 - [Sufficient conditions for a multiple with divisible reversal](exists-dvd-reverse-digits-mul.md)
+- [Young carry edge](is-young-carry-edge.md)
 - [Complete Young graphs](is-complete-young-graph.md)
 - [Characterization of complete Young graphs](sloane-complete-young-graph-characteriza.md)

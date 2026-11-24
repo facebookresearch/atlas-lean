@@ -23,7 +23,7 @@ instance : MeasurableSpace (Πʳ _ : ℕ, [ℝ, Set.Icc 0 1]) := borel _
 instance : BorelSpace (Πʳ _ : ℕ, [ℝ, Set.Icc 0 1]) := ⟨rfl⟩
 
 /-- `exactSource` consumer with the original binders. -/
-theorem exactSource {ι : Type*} [Countable ι] {R : ι → Type*}
+private theorem exactSource {ι : Type*} [Countable ι] {R : ι → Type*}
     [∀ i, TopologicalSpace (R i)] [∀ i, SecondCountableTopology (R i)]
     [∀ i, MeasurableSpace (R i)] [∀ i, BorelSpace (R i)]
     {A : (i : ι) → Set (R i)} (hA : ∀ i, MeasurableSet (A i))
