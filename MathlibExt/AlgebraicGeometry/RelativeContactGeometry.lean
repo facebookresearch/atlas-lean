@@ -97,8 +97,10 @@ structure MappedNodeChart {C X T : Scheme.{0}} (p : C ⟶ T) (q : X ⟶ T)
   targetGenerator : ∀ i : Fin 2, targetChart (nodeVariable _ targetParameter i) = targetVariable i
   etale : Etale (Spec.map (CommRingCat.ofHom sourceChart))
   smooth : Smooth (Spec.map (CommRingCat.ofHom targetChart))
-  /-- The node locus of the source chart is connected (Li, math/0110113v1, Def. 1.2). -/
-  sourceNodeConnected : _root_.IsConnected (C.zeroLocus (U := sourceOpen.val) (Set.range sourceVariable))
+  /-- The node locus of the source chart (inside the chart; `Scheme.zeroLocus` also contains the
+  points outside it) is connected (Li, math/0110113v1, Def. 1.2). -/
+  sourceNodeConnected : _root_.IsConnected
+    ((sourceOpen.val : Set C) ∩ C.zeroLocus (U := sourceOpen.val) (Set.range sourceVariable))
   /-- The étale source chart induces an isomorphism of completions along the node (Li, Def. 1.2):
   an étale chart containing two lifts of the node (whose completion is a product) is excluded. -/
   sourceCompletion : letI := sourceChart.toAlgebra
