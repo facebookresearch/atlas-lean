@@ -198,7 +198,8 @@ public theorem_wanted zero_cycle_evaluation_killed
     (n : BrauerArithmeticCompletion.Modulus) (_ha : n.val • a = 0) :
     ∀ z : ChowGroup X 0, n.val • (❰zero_cycle_descent❱ k X a).val z = 0
 
-/-- Completed evaluation is explicitly the quotient map on the `n`th inverse-limit coordinate. -/
+/-- Completed evaluation: projection of the completed Chow group to its `n`th inverse-limit
+coordinate, followed by the evaluation that the Brauer class induces on that quotient. -/
 public def_wanted completed_zero_cycle_evaluation
     (k : Type) [Field k] [PerfectField k] (X : FieldScheme k)
     [Smooth X.scheme.hom] [IsProper X.scheme.hom] (a : Brauer X.scheme.left)

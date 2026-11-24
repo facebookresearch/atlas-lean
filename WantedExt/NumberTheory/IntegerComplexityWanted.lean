@@ -44,28 +44,13 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Log.Base
-public import MathlibExt.NumberTheory.IntegerComplexityBounds
+public import MathlibExt.NumberTheory.IntegerComplexityRecurrence
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.IntegerComplexityWanted
-
-/-- **Integer complexity as a minimum over factorizations and sums.** Write
-$\lVert m \rVert$ for the integer complexity of a positive integer $m$, the least number of ones
-needed to write $m$ using $1$, $+$, $\times$ and parentheses. For every integer $n \ge 2$,
-$\lVert n \rVert$ is the least element of the set consisting of the numbers
-$\lVert d \rVert + \lVert n/d \rVert$ for the divisors $d \ge 2$ of $n$ and the numbers
-$\lVert j \rVert + \lVert n - j \rVert$ for the integers $j$ with $1 \le j \le n/2$.
-
-Source: Juan Arias de Reyna, "Complexity of Natural
-Numbers", Proposition 1. -/
-theorem_wanted complexity_eq_min (n : ℕ) (hn : 2 ≤ n) :
-    IsLeast {k | (∃ d : ℕ, 2 ≤ d ∧ d ∣ n ∧
-        k = cx d + cx (n / d)) ∨
-      (∃ j : ℕ, 1 ≤ j ∧ j ≤ n / 2 ∧ k = cx j + cx (n - j))}
-      (cx n)
 
 /-- **A criterion for lower bounds on integer complexity.** Write $\lVert n \rVert$ for the
 integer complexity of a positive integer $n$, the least number of ones needed to write $n$ using

@@ -11,6 +11,7 @@ module
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.Basic.Real.Basic
 import Mathlib.Algebra.Order.Interval.Finset.Basic
+import Mathlib.Algebra.Order.Ring.Int
 import Mathlib.Data.Nat.Cast.Order.Field
 import Mathlib.Data.Nat.Totient
 import Mathlib.Order.Filter.AtTopBot.Basic
@@ -312,5 +313,21 @@ theorem isCycleVertex_powMap_iff_orderOf_dvd (p k : ℕ) [Fact p.Prime]
     exact hl ▸ Nat.dvd_lcm_left _ _
   · intro hdvd
     exact exists_pow_modEq_one hn (Nat.Coprime.coprime_dvd_left hdvd htk).symm
+
+/-- **Large multiples of the gcd are nonnegative combinations.** Let $i$ and $j$ be positive
+integers. There is an $n_0$ such that every integer $m > n_0$ divisible by $\gcd(i, j)$ can be
+written as $m = ui + vj$ with nonnegative integers $u$ and $v$.
+
+Source: Katie Ansaldi, Gabriel Cowley, Eric Green, Kihyun Kim and JT Rapp, *Rainbow-Free
+Colorings and Rainbow Numbers for x-y=z^k*, INTEGERS 24 (2024), Article A105, Theorem 2
+(`integers-2024-A105-thm-2`). -/
+theorem exists_forall_gcd_dvd_eq_add_mul (i j : ℕ) (hi : 0 < i) (hj : 0 < j) :
+    ∃ n₀ : ℕ, ∀ m : ℕ, n₀ < m → Nat.gcd i j ∣ m → ∃ u v : ℕ, m = u * i + v * j := by
+  obtain ⟨a, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hi.ne'
+  obtain ⟨b, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hj.ne'
+  refine ⟨(a * b).pred, fun m hm hdvd ↦ ?_⟩
+  obtain ⟨u, v, huv⟩ :=
+    Nat.exists_add_mul_eq_of_gcd_dvd_of_mul_pred_le a.succ b.succ m hdvd (Nat.le_of_pred_lt hm)
+  exact ⟨u, v, huv.symm⟩
 
 end MetaMathlibExt
