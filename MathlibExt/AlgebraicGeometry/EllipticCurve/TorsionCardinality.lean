@@ -687,37 +687,6 @@ lemma normEDS_six_eq_mul : normEDS b c d 6 = (normEDS b c d 5 - d ^ 2) * b * c :
   rw [preNormEDS_one, preNormEDS_two, preNormEDS_four, if_neg (by decide)]
   ring
 
-namespace EllSequence
-
-variable (W₁ compl₂ : ℤ → R) (m : ℤ)
-
-def compl' : ℕ → R
-  | 0 => 0
-  | 1 => 1
-  | (n + 2) => letI k := n / 2 + 1
-    have : k < n + 2 := by omega
-    if hn : Even n
-      then compl₂ ((k : ℤ) * m) * compl' k
-      else
-        have : k + 1 < n + 2 := by
-          obtain ⟨j, hj⟩ := Nat.not_even_iff_odd.mp hn; omega
-        W₁ (((k : ℤ) + 1) * m + 1) * W₁ (((k : ℤ) + 1) * m - 1) * compl' k ^ 2
-      - W₁ ((k : ℤ) * m + 1) * W₁ ((k : ℤ) * m - 1) * compl' (k + 1) ^ 2
-
-def compl (n : ℤ) : R := (n.sign : ℤ) * compl' W₁ compl₂ m n.natAbs
-
-lemma compl_ofNat (n : ℕ) : compl W₁ compl₂ m n = compl' W₁ compl₂ m n := by
-  by_cases hn : n = 0
-  · simp [hn, compl, compl']
-  · simp [compl, Int.sign_natCast_of_ne_zero hn]
-
-lemma compl_neg (n : ℤ) : compl W₁ compl₂ m (-n) = -compl W₁ compl₂ m n := by
-  simp [compl]
-
-def complEDS := compl (normEDS b c d) (compl₂EDS b c d) m
-
-end EllSequence
-
 end Complement
 
 section Map
@@ -727,30 +696,8 @@ variable {b c d}
 lemma map_compl₂EDS (n : ℤ) : f (compl₂EDS b c d n) = compl₂EDS (f b) (f c) (f d) n :=
   map_complEDS₂ f b c d n
 
-lemma EllSequence.map_compl' (W₁ compl₂ : ℤ → R) (m : ℤ) (n : ℕ) :
-    f (compl' W₁ compl₂ m n) = compl' (f ∘ W₁) (f ∘ compl₂) m n := by
-  refine n.strong_induction_on fun n ih ↦ ?_
-  obtain _|_|n := n
-  iterate 2 simp [compl']
-  rw [compl']; conv_rhs => rw [compl']
-  split_ifs with hn
-  · rw [map_mul, ih _ (by omega)]; rfl
-  simp_rw [map_sub, map_mul, map_pow]
-  rw [ih _ (by omega), ih]; · rfl
-  have := (Nat.not_even_iff_odd.mp hn).pos
-  omega
-
-lemma EllSequence.map_compl (W₁ compl₂ : ℤ → R) (m n : ℤ) :
-    f (compl W₁ compl₂ m n) = compl (f ∘ W₁) (f ∘ compl₂) m n := by
-  simp [compl, map_compl']
-
 private lemma map_normEDS_fl (n : ℤ) : f (normEDS b c d n) = normEDS (f b) (f c) (f d) n :=
   map_normEDS f b c d n
-
-lemma EllSequence.map_complEDS (m n : ℤ) :
-    f (EllSequence.complEDS b c d m n) = EllSequence.complEDS (f b) (f c) (f d) m n := by
-  simp_rw [EllSequence.complEDS, EllSequence.map_compl, Function.comp_def, map_normEDS_fl,
-    map_compl₂EDS]
 
 lemma map_addMulSub (m n : ℤ) : f (addMulSub W m n) = addMulSub (f ∘ W) m n := by
   simp_rw [addMulSub, map_mul, Function.comp]
@@ -780,11 +727,6 @@ lemma compl₂EDS_eq_aeval :
     compl₂EDS b c d =
       (aeval (Param.rec b c d) <| compl₂EDS (X (R := ℤ) B) (X C) (X D) ·) := by
   simp_rw [map_compl₂EDS, aeval_X]
-
-lemma complEDS_eq_aeval :
-    EllSequence.complEDS b c d =
-      (aeval (Param.rec b c d) <| EllSequence.complEDS (X (R := ℤ) B) (X C) (X D) · ·) := by
-  simp_rw [EllSequence.map_complEDS, aeval_X]
 
 end Map
 
@@ -823,28 +765,12 @@ protected lemma IsEllSequence'.ext (one : W 1 ∈ R⁰) (two : W 2 ∈ R⁰)
       convert congr($h₄ * $h₂ ^ 3 - $h₁ * $h₃ ^ 3) <;> omega
   | neg ih n => rw [ellW.neg one two, ellU.neg (h1 ▸ one) (h2 ▸ two), ih]
 
-lemma normEDS_two_three_two : normEDS 2 3 2 = id := by
-  apply IsEllSequence'.normEDS.ext isEllSequence'_id <;>
-    simp only [normEDS_one, normEDS_two, normEDS_three, normEDS_four]
-  exacts [mem_nonZeroDivisors_of_ne_zero one_ne_zero,
-    mem_nonZeroDivisors_of_ne_zero two_ne_zero, rfl, rfl, rfl, rfl]
-
 lemma compl₂EDS_two_three_two (n : ℤ) : compl₂EDS (2 : ℤ) 3 2 n = 2 := by
   obtain rfl | hn := eq_or_ne n 0
   · exact compl₂EDS_zero ..
   · have := normEDS_mul_compl₂EDS (2 : ℤ) 3 2 n
-    rwa [normEDS_two_three_two, id_eq, id_eq, mul_comm,
+    rwa [normEDS_two_three_two, normEDS_two_three_two, mul_comm,
       mul_cancel_right_mem_nonZeroDivisors (mem_nonZeroDivisors_of_ne_zero hn)] at this
-
-lemma universalNormEDS_ne_zero {n : ℤ} (hn : n ≠ 0) : universalNormEDS n ≠ 0 := by
-  intro h
-  refine hn ?_
-  apply_fun aeval (Param.rec (2 : ℤ) 3 2) at h
-  simpa [universalNormEDS, map_normEDS_fl, normEDS_two_three_two] using h
-
-lemma universalNormEDS_mem_nonZeroDivisors {n : ℤ} (hn : n ≠ 0) :
-    universalNormEDS n ∈ (MvPolynomial Param ℤ)⁰ :=
-  mem_nonZeroDivisors_of_ne_zero (universalNormEDS_ne_zero hn)
 
 section Divisibility
 
@@ -871,49 +797,10 @@ theorem IsEllDivSequence'.eq_normEDS (h : IsEllDivSequence' W) :
 
 section Complement
 
-variable (W₁ compl₂ : ℤ → R)
-  (h₁ : ∀ m, W 1 * W₁ m = W m) (h₂ : ∀ m, W m * compl₂ m = W (2 * m)) (m n : ℤ)
-
-include ellW one two h₁ h₂ in
-
-lemma IsEllSequence'.mul_compl_eq_apply_mul_of_mem_nonZeroDivisors (mem : W m ∈ R⁰) :
-    W m * compl W₁ compl₂ m n = W (n * m) := by
-  induction n using Int.negInduction with
-  | nat n =>
-    refine n.strong_induction_on fun n ih ↦ ?_
-    obtain _ | n := n
-    · simp [EllSequence.compl, ellW.zero 1 two]
-    obtain _ | n := n
-    · simp [EllSequence.compl, compl']
-    rw [EllSequence.compl, Int.sign_eq_one_of_pos (by omega),
-      Int.natAbs_natCast, compl', Int.cast_one, one_mul]
-    obtain ⟨k, rfl|rfl⟩ := n.even_or_odd'
-    · rw [dif_pos (even_two_mul _), k.mul_div_cancel_left zero_lt_two, mul_comm (compl₂ _),
-        ← mul_assoc, ← compl_ofNat, ih _ (by omega), h₂, ← mul_assoc, add_assoc, ← two_mul,
-        ← left_distrib, Nat.cast_mul]; rfl
-    simp_rw [dif_neg (Nat.not_even_two_mul_add_one _), show (2 * k + 1) / 2 = k by omega]
-    rw [← mul_cancel_right_mem_nonZeroDivisors (mul_mem mem <| pow_mem one 2)]
-    have := (ellW ((k + 1 + 1) * m) ((k + 1) * m) 1).symm
-    simp_rw [← right_distrib, ← mul_sub_right_distrib, add_sub_cancel_left,
-      ← h₁ (_ + 1), ← h₁ (_ - 1), ← Nat.cast_one (R := ℤ), ← Nat.cast_add] at this
-    rw [← ih _ (by omega), ← ih _ (by omega)] at this
-    simp_rw [compl_ofNat, Nat.cast_add] at this ⊢
-    convert this using 1
-    · ring_nf
-    rw [Nat.cast_mul]; ring_nf
-  | neg hn n => rw [neg_mul, ellW.neg one two, compl_neg, mul_neg, hn]
-
-lemma normEDS_mul_complEDS (m n : ℤ) :
-    normEDS b c d m * EllSequence.complEDS b c d m n = normEDS b c d (n * m) := by
-  obtain rfl|hm := eq_or_ne m 0
-  · simp
-  rw [normEDS_eq_aeval, universalNormEDS, complEDS_eq_aeval, ← map_mul]; congr 1
-  have := @universalNormEDS_mem_nonZeroDivisors
-  exact IsEllSequence'.normEDS.mul_compl_eq_apply_mul_of_mem_nonZeroDivisors (this one_ne_zero)
-    (this two_ne_zero) _ _ (fun _ ↦ by simp) (fun _ ↦ normEDS_mul_compl₂EDS _ _ _ _) _ _ (this hm)
+variable (m n : ℤ)
 
 lemma normEDS_mul_complEDS_div (hm : m ≠ 0) (n : ℤ) (dvd : m ∣ n) :
-    normEDS b c d m * EllSequence.complEDS b c d m (n / m) = normEDS b c d n := by
+    normEDS b c d m * complEDS b c d m (n / m) = normEDS b c d n := by
   obtain ⟨n, rfl⟩ := dvd
   rw [Int.mul_ediv_cancel_left _ hm, normEDS_mul_complEDS, mul_comm]
 
@@ -975,13 +862,13 @@ lemma invarDenom_eq_redInvarDenom_mul :
   all_goals rw [normEDS_three, normEDS_two]; ring
 
 @[simp] lemma redInvarDenom_zero : redInvarDenom b c d 0 = 0 := by
-  simp [redInvarDenom, complEDS, compl', compl]
+  simp [redInvarDenom]
 
 @[simp] lemma redInvarDenom_one : redInvarDenom b c d 1 = 0 := by
-  simp [redInvarDenom, complEDS, compl', compl]
+  simp [redInvarDenom]
 
 @[simp] lemma redInvarDenom_two : redInvarDenom b c d 2 = 1 := by
-  simp [redInvarDenom, complEDS, compl', compl]
+  simp [redInvarDenom]
 
 lemma map_compl₂EDSAux : f (compl₂EDSAux b c d m) = compl₂EDSAux (f b) (f c) (f d) m := by
   have mp : ∀ n : ℤ, f (preNormEDS (b ^ 4) c d n) = preNormEDS (f b ^ 4) (f c) (f d) n :=
@@ -1121,8 +1008,6 @@ protected abbrev Ring : Type := curve.CoordinateRing
 
 protected abbrev Field : Type := FractionRing Univ.Ring
 
-instance : CommRing Poly := Polynomial.commRing
-
 lemma Poly.two_ne_zero : (2 : Poly) ≠ 0 :=
   Polynomial.C_ne_zero.mpr <| Polynomial.C_ne_zero.mpr fun h ↦ two_ne_zero' (α := ℤ) <|
     MvPolynomial.C_injective _ _ <| by rwa [← MvPolynomial.C_0] at h
@@ -1156,11 +1041,21 @@ instance : pointedCurve.IsElliptic where
     simpa only [pointedCurve, baseChange, map_Δ, map_ne_zero_iff _ algebraMap_field_injective]
       using Δ_curve_ne_zero
 
+open Polynomial (CC)
+
+@[simp] lemma pointedCurve_a₁ : pointedCurve.a₁ = polyToField (CC curve.a₁) := rfl
+@[simp] lemma pointedCurve_a₂ : pointedCurve.a₂ = polyToField (CC curve.a₂) := rfl
+@[simp] lemma pointedCurve_a₃ : pointedCurve.a₃ = polyToField (CC curve.a₃) := rfl
+@[simp] lemma pointedCurve_a₄ : pointedCurve.a₄ = polyToField (CC curve.a₄) := rfl
+@[simp] lemma pointedCurve_a₆ : pointedCurve.a₆ = polyToField (CC curve.a₆) := rfl
+
 open Polynomial in
 lemma equation_point : pointedCurve.toAffine.Equation (polyToField (C X)) (polyToField Y) := by
-  simp_rw [Affine.Equation, pointedCurve, baseChange, algebraMap_field_eq_comp, ← map_map,
-    Affine.map_polynomial, map_mapRingHom_evalEval, evalEval, eval_map,
-    eval_C_X_eval₂_map_C_X, polyToField_polynomial]
+  have h := polyToField_polynomial
+  simp only [Affine.polynomial, map_add, map_sub, map_mul, map_pow] at h
+  rw [Affine.equation_iff', pointedCurve_a₁, pointedCurve_a₂, pointedCurve_a₃, pointedCurve_a₄,
+    pointedCurve_a₆]
+  linear_combination h
 
 open Polynomial Affine in
 
@@ -1172,14 +1067,6 @@ def Affine.point : curve⟮Univ.Field⟯ :=
 
 def Jacobian.point : Jacobian.Point (WeierstrassCurve.baseChange curve Univ.Field) :=
   Jacobian.Point.fromAffine Affine.point
-
-open Polynomial (CC)
-
-@[simp] lemma pointedCurve_a₁ : pointedCurve.a₁ = polyToField (CC curve.a₁) := rfl
-@[simp] lemma pointedCurve_a₂ : pointedCurve.a₂ = polyToField (CC curve.a₂) := rfl
-@[simp] lemma pointedCurve_a₃ : pointedCurve.a₃ = polyToField (CC curve.a₃) := rfl
-@[simp] lemma pointedCurve_a₄ : pointedCurve.a₄ = polyToField (CC curve.a₄) := rfl
-@[simp] lemma pointedCurve_a₆ : pointedCurve.a₆ = polyToField (CC curve.a₆) := rfl
 
 abbrev curvePoly : WeierstrassCurve Poly := WeierstrassCurve.baseChange curve Poly
 
@@ -1238,7 +1125,7 @@ lemma ringEval_comp_mk : (ringEval eqn).comp (AdjoinRoot.mk _) = polyEval W x y 
   RingHom.ext (ringEval_mk eqn)
 
 lemma polyEval_comp_eq_specialize : (polyEval W x y).comp (algebraMap _ _) = W.specialize := by
-  ext <;> simp [polyEval]
+  ext <;> simp [polyEval, -AddMonoidAlgebra.coe_algebraMap]
 
 lemma ringEval_comp_eq_specialize : (ringEval eqn).comp (algebraMap _ _) = W.specialize := by
   rw [algebraMap_ring_eq_comp, ← RingHom.comp_assoc, ringEval_comp_mk, polyEval_comp_eq_specialize]
@@ -1470,7 +1357,7 @@ lemma smulX_sub_sub_smulX_add (add_ne : n + m ≠ 0) (sub_ne : n - m ≠ 0) :
     smulX (n - m) - smulX (n + m) = (ψᵤ (2 * n) * ψᵤ (2 * m)) / (ψᵤ (n + m) * ψᵤ (n - m)) ^ 2 := by
   rw [smulX_sub_smulX sub_ne add_ne]; ring_nf
 
-lemma smulX_neg : smulX (-n) = smulX n := by simp_rw [smulX, φ_neg, ψᵤ, ψ_neg, ← map_pow, neg_sq]
+lemma smulX_neg : smulX (-n) = smulX n := by simp_rw [smulX, φ_neg, ψᵤ, ψ_neg, map_neg, neg_sq]
 
 lemma smulX_ne_zero (h0 : n ≠ 0) : smulX n ≠ 0 :=
   div_ne_zero polyToField_φ_ne_zero (pow_ne_zero _ <| ψᵤ_ne_zero h0)
@@ -1515,7 +1402,8 @@ def slopeOne : Univ.Field :=
 lemma slopeOne_eq_neg_div : slopeOne = -polyToField curve.polynomialX / ψᵤ 2 := by
   rw [slopeOne, Affine.slope_of_Y_ne rfl smulY_one_ne_negY, smulY_one_sub_negY, Affine.polynomialX]
   congr
-  simp [algebraMap_field_eq_comp, Polynomial.algebraMap_apply, map_ofNat]
+  simp [algebraMap_field_eq_comp, Polynomial.algebraMap_apply, map_ofNat,
+    -AddMonoidAlgebra.coe_algebraMap]
 
 private lemma addX_smul_one_smul_one_aux {G} [_root_.Field G] {a₁ a₂ x dx dy : G} (h0 : dy ≠ 0) :
     (-dx / dy) ^ 2 + a₁ * (-dx / dy) - a₂ - x - x - x =
@@ -1721,8 +1609,8 @@ lemma dblXYZ_smulField : dblXYZ curveField (smulField n) = smulField (2 * n) := 
     rw [two_zsmul, Point.add_point, zsmul_point_eq_smulField, addMap_eq, add_self]
   refine (equiv_iff_eq_of_Z_eq ?_ (ψᵤ_ne_zero <| mul_ne_zero two_ne_zero hn)).mp
     (Quotient.exact ?_)
-  · simp only [smulField, smulPoly, fin3_def_ext, Function.comp, ← dblZ_smulPoly, ← map_dblZ]
-    rfl
+  · simp only [smulField, smulPoly, fin3_def_ext, Function.comp, ← dblZ_smulPoly]
+    exact map_dblZ (W' := curvePoly) polyToField _
   rw [← h2, ← mul_zsmul]
   exact zsmul_point_eq_smulField
 
@@ -1743,13 +1631,20 @@ lemma ωe_neg_eq_neg_negY : curve.ωe (-n) = -negY curvePoly (smulPoly n) := by
   ring
 
 lemma smulPoly_neg : smulPoly (-n) = (-1 : Poly) • neg curvePoly (smulPoly n) := by
-  simp [smulPoly, ωe_neg_eq_neg_negY, neg, smul_fin3, (show Odd 3 by decide).neg_pow]
+  simp only [smulPoly, φ_neg, ωe_neg_eq_neg_negY, ψ_neg, neg, Fin.isValue, Matrix.cons_val_zero,
+    Matrix.cons_val, smul_fin3, Nat.succ_eq_add_one, Nat.reduceAdd, Matrix.cons_val_one,
+    Matrix.vecCons_inj, and_true]
+  refine ⟨?_, ?_, ?_⟩ <;> ring
 
 lemma smulRing_neg : smulRing (-n) = (-1 : Univ.Ring) • neg curveRing (smulRing n) := by
   simp_rw [smulRing, smulPoly_neg, Jacobian.comp_smul, ← Jacobian.map_neg, map_neg, map_one]; rfl
 
 lemma smulField_neg : smulField (-n) = (-1 : Univ.Field) • neg curveField (smulField n) := by
-  simp_rw [smulField, smulPoly_neg, Jacobian.comp_smul, ← Jacobian.map_neg, map_neg, map_one]; rfl
+  rw [smulField, smulPoly_neg]
+  refine (Jacobian.comp_smul (R := Poly) (S := Univ.Field) polyToField _ _).trans ?_
+  rw [map_neg, map_one]
+  exact congrArg _
+    (Jacobian.map_neg (R := Poly) (S := Univ.Field) (W' := curvePoly) polyToField _).symm
 
 lemma smulPoly_zero : smulPoly 0 = ![1, 1, 0] := by simp [smulPoly]
 lemma smulField_zero : smulField 0 = ![1, 1, 0] := by simp [smulField, smulPoly_zero, comp_fin3]
@@ -1764,8 +1659,9 @@ lemma addXYZ_smulField :
   obtain rfl | ne_neg := eq_or_ne n (-m)
   · rw [← one_smul (M := Univ.Field) (smulField m), smulField_neg, neg_add_cancel,
       addXYZ_smul, one_mul, neg_one_sq (R := Univ.Field), addXYZ_neg nonsingular_smulField.1,
-      one_smul, ← neg_add', ← two_mul, ψ_neg, map_neg, ← dblZ_smulPoly, ← map_dblZ, smulField_zero]
-    rfl
+      one_smul, ← neg_add', ← two_mul, ψ_neg, map_neg, ← dblZ_smulPoly, smulField_zero]
+    congr 2
+    exact map_dblZ (W' := curvePoly) polyToField _
   have hne : ¬ smulField m ≈ smulField n := fun heq ↦ zsmul_point_ne h <| by
     rw [Point.ext_iff, zsmul_point_eq_smulField, zsmul_point_eq_smulField]
     exact Quotient.sound heq
@@ -1778,7 +1674,8 @@ lemma addXYZ_smulField :
       rw [smul_eq _ (ψᵤ_ne_zero <| sub_ne_zero_of_ne h.symm).isUnit,
         ← zsmul_point_eq_smulField, add_comm, add_zsmul, key])
   · conv_rhs => rw [smulField, comp_fin3, smul_fin3, (fin3_def_ext _ _ _).2.2, mul_comm]
-    simp_rw [addXYZ, fin3_def_ext, ← map_mul, ← addZ_smulPoly, ← map_addZ]
+    simp_rw [addXYZ, fin3_def_ext, ← map_mul, ← addZ_smulPoly]
+    exact map_addZ polyToField (smulPoly m) (smulPoly n)
   · rw [(smul_fin3_ext _ _).2.2]
     apply mul_ne_zero <;> apply ψᵤ_ne_zero <;> omega
 
@@ -2773,7 +2670,7 @@ private theorem exists_double_fiber_card [W.IsElliptic] {n : ℕ} (hodd : Odd n)
       ↑R2fin := ⟨hmaps, hinj, hsurj⟩
   calc Nat.card {P : W.toAffine⟮K⟯ // n • P = Q ∨ n • P = -Q}
       = Set.ncard {P : W.toAffine⟮K⟯ | n • P = Q ∨ n • P = -Q} :=
-        Nat.card_coe_set_eq _
+        Nat.card_coe_set_eq {P : W.toAffine⟮K⟯ | n • P = Q ∨ n • P = -Q}
     _ = (coords W '' {P : W.toAffine⟮K⟯ | n • P = Q ∨ n • P = -Q}).ncard :=
         (hbij.injOn.ncard_image).symm
     _ = (↑R2fin : Set (K × K)).ncard := by rw [hbij.image_eq]
