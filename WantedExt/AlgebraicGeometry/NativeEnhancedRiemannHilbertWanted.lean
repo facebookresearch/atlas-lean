@@ -319,19 +319,22 @@ variable [LocallyCompactSpace X] [SecondCountableTopology X]
 
 /-- For a bounded holonomic M, the ringed-mate reconstruction map built from the computed O^E is an
 isomorphism (the ringed form of DK Theorem 9.5.3). The map is formed with the left adjoint of the
-quotient and the internal Hom supplied by the requests above; `hBetaPull` is the statement of the
-request `ordinary_beta_pull_right_adjoint`. -/
+quotient and the internal Hom supplied by the requests above, and with the right adjoint of the
+β-pullback. The existence of that right adjoint (the statement of
+`ordinary_beta_pull_right_adjoint`) is the first conjunct, so nothing is assumed: the second
+conjunct holds for it (by proof irrelevance, for any proof of it). -/
 theorem_wanted actual_holonomic_reconstruction_isIso
-    (hHolonomic : HolonomicCharacteristicSupportModels.IsBoundedHolonomic n X M)
-    (hBetaPull :
-      (originalOrdinaryBetaPull n X Real IX Graph Geometry Ordinary Normalize BetaExact).IsLeftAdjoint) :
-  IsIso (actualReconstructionMap n X IX IP NX NP PX PP Structure Operators MX MP V Ot HE Exp Plus
-    Real Graph Proper Adj Image Derivation Geometry BoundedO Ordinary Normalize BetaExact
-      Representatives CoefficientExact CoefficientBounded Boundary Projection M BoundedSolution
-      (quotientLeftAdjoint := ❰coefficient_enhanced_quotient_left_adjoint❱ X CoefficientExact
-        CoefficientBounded Boundary Projection)
-      (tensorClosed := ❰bounded_coefficient_tensor_closed❱ n X IX Real Graph)
-      (betaPullRightAdjoint := hBetaPull))
+    (hHolonomic : HolonomicCharacteristicSupportModels.IsBoundedHolonomic n X M) :
+  (originalOrdinaryBetaPull n X Real IX Graph Geometry Ordinary Normalize BetaExact).IsLeftAdjoint ∧
+    ∀ hBetaPull : (originalOrdinaryBetaPull n X Real IX Graph Geometry Ordinary Normalize
+      BetaExact).IsLeftAdjoint,
+    IsIso (actualReconstructionMap n X IX IP NX NP PX PP Structure Operators MX MP V Ot HE Exp Plus
+      Real Graph Proper Adj Image Derivation Geometry BoundedO Ordinary Normalize BetaExact
+        Representatives CoefficientExact CoefficientBounded Boundary Projection M BoundedSolution
+        (quotientLeftAdjoint := ❰coefficient_enhanced_quotient_left_adjoint❱ X CoefficientExact
+          CoefficientBounded Boundary Projection)
+        (tensorClosed := ❰bounded_coefficient_tensor_closed❱ n X IX Real Graph)
+        (betaPullRightAdjoint := hBetaPull))
 
 
 end WantedExt.AlgebraicGeometry.NativeEnhancedRiemannHilbertWanted
