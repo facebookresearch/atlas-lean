@@ -542,9 +542,19 @@ def read_input_fact(kind: str, path: Path) -> object:
         return path.is_file()
     if kind == "is_dir":
         return path.is_dir()
+    if kind == "inventory_resolve" and sys.platform == "linux" and \
+            path in _guarded_inventory_canonical_paths.get():
+        # An active Linux inventory guard proved every component of this
+        # path canonical (no symlink, no `..`) and watches it for moves.
+        return str(path)
     if kind in ("resolve", "inventory_resolve"):
         try:
             return str(path.resolve() if kind == "resolve" else resolve_inventory_path(path))
+        except OSError as error:
+            return ("OSError", error.errno)
+    if kind == "children":
+        try:
+            return ("entries", tuple(sorted(os.listdir(path))))
         except OSError as error:
             return ("OSError", error.errno)
     raise ValueError(f"Unknown compilation input fact: {kind}")
@@ -584,15 +594,19 @@ def fact_inventory_resolve(path: Path) -> Path:
     return _resolved_fact(path, input_fact("inventory_resolve", path))
 
 
+def fact_children(path: Path) -> list[Path]:
+    """Sorted directory entries, as `sorted(path.iterdir())` returns them."""
+    kind, value = cast(tuple[str, object], input_fact("children", path))
+    if kind != "entries":
+        raise OSError(value, "Could not list compilation input directory", str(path))
+    return [path / name for name in cast(tuple[str, ...], value)]
+
+
 def inventory_path_outside_output(path: Path, output_parts: tuple[str, ...]) -> bool:
-    # A recorded derivation may be reused outside the guard that made a
-    # path canonical, so it records the real resolution instead.
-    if (sys.platform == "linux" and path in _guarded_inventory_canonical_paths.get() and
-            _recorded_input_facts.get() is None):
-        resolved = path
-    else:
-        resolved = fact_inventory_resolve(path)
-    return resolved.parts[:len(output_parts)] != output_parts
+    # Inside a Linux inventory guard the fact read returns the guarded
+    # canonical path itself; a recorded fact is re-read, with or without
+    # a guard, before its derivation is reused.
+    return fact_inventory_resolve(path).parts[:len(output_parts)] != output_parts
 
 
 @dataclass(frozen=True)
@@ -775,6 +789,13 @@ def using_prepared_inputs(tools: Tools) -> Iterator[None]:
         yield
     finally:
         _active_prepared_inputs.reset(token)
+
+
+def new_prepared_window(tools: Tools) -> None:
+    """Re-read every fact before the next reuse, as at a native boundary."""
+    prepared = tools.prepared_inputs.get("phase")
+    if prepared is not None:
+        prepared.new_window()
 
 
 def active_prepared_inputs(tools: Tools | None) -> PreparedInputs | None:
@@ -1070,7 +1091,7 @@ def selected_root_artifact_paths(metadata: dict[str, object], root: Path,
     the optimizer's mutable output tree is recursively inventoried.
     """
     paths: set[str] = set()
-    output = resolve_inventory_path(tools.output) if tools is not None else None
+    output = fact_inventory_resolve(tools.output) if tools is not None else None
     output_parts = output.parts if output is not None else ()
     search_roots = private_search_roots(tools) if tools is not None else ()
     for selected in selected_artifact_roots(metadata, root, strict=True,
@@ -1079,29 +1100,29 @@ def selected_root_artifact_paths(metadata: dict[str, object], root: Path,
         if output is not None and root_path.parts[:len(output_parts)] == output_parts:
             continue
         try:
-            children = sorted(root_path.iterdir())
+            children = fact_children(root_path)
         except OSError:
             continue
         root_paths: set[str] = set()
         for child in children:
-            if child.is_dir():
+            if fact_is_dir(child):
                 namespace = child
-            elif (child.is_file() and child.name.endswith(".olean") and
+            elif (fact_is_file(child) and child.name.endswith(".olean") and
                     not child.name.endswith((".olean.server", ".olean.private"))):
                 namespace = Path(str(child).removesuffix(".olean"))
             else:
                 continue
             if output is not None:
-                resolved = resolve_inventory_path(namespace)
+                resolved = fact_inventory_resolve(namespace)
                 if resolved.parts[:len(output_parts)] == output_parts:
                     continue
             root_paths.update(namespace_artifact_paths(namespace, tools))
-        if tools is not None and not root_paths and root_path.is_dir():
+        if tools is not None and not root_paths and fact_is_dir(root_path):
             # A fileless selected root would otherwise cache no
             # directory at all, even though the forced compile still
             # searches it. Cache the root itself for custody without
             # changing nonempty roots' namespace-only custody.
-            root_paths.update(standard_library_paths(resolve_inventory_path(root_path), tools))
+            root_paths.update(standard_library_paths(fact_inventory_resolve(root_path), tools))
         paths.update(root_paths)
     return tuple(sorted(paths))
 
@@ -1125,13 +1146,13 @@ def canonical_namespace_artifact_paths(root: Path, library: Path | None,
         # project's own build root belongs to the selected corpus.
         artifact_roots = []
         project_root = root / ".lake/build/lib/lean"
-        if project_root.is_dir():
-            artifact_roots.append(project_root.resolve())
+        if fact_is_dir(project_root):
+            artifact_roots.append(fact_resolve(project_root))
     paths: set[str] = set()
-    output = resolve_inventory_path(tools.output) if tools is not None else None
+    output = fact_inventory_resolve(tools.output) if tools is not None else None
     output_parts = output.parts if output is not None else ()
     for artifact_root in artifact_roots:
-        if library is not None and artifact_root == resolve_inventory_path(library):
+        if library is not None and artifact_root == fact_inventory_resolve(library):
             continue
         if output is not None and artifact_root.parts[:len(output_parts)] == output_parts:
             # The optimizer's mutable output tree must never become
@@ -1140,13 +1161,13 @@ def canonical_namespace_artifact_paths(root: Path, library: Path | None,
             # roots still scan normally below, skipping output children.
             continue
         try:
-            children = sorted(artifact_root.iterdir())
+            children = fact_children(artifact_root)
         except OSError:
             continue
         root_paths: set[str] = set()
         for child in children:
-            if child.is_dir():
-                resolved_child = resolve_inventory_path(child)
+            if fact_is_dir(child):
+                resolved_child = fact_inventory_resolve(child)
                 if output is not None and resolved_child == output:
                     continue
                 # If this namespace contains the output directory,
@@ -1156,7 +1177,7 @@ def canonical_namespace_artifact_paths(root: Path, library: Path | None,
                 # compilation/discovery flows separately reject this
                 # placement before trusting the inventory.
                 namespace = child
-            elif (child.is_file() and child.name.endswith(".olean") and
+            elif (fact_is_file(child) and child.name.endswith(".olean") and
                     not child.name.endswith((".olean.server", ".olean.private"))):
                 namespace = Path(str(child).removesuffix(".olean"))
             else:
@@ -1165,7 +1186,7 @@ def canonical_namespace_artifact_paths(root: Path, library: Path | None,
         if output is not None:
             root_paths = {path for path in root_paths
                           if inventory_path_outside_output(Path(path), output_parts)}
-        if tools is not None and not root_paths and artifact_root.is_dir():
+        if tools is not None and not root_paths and fact_is_dir(artifact_root):
             # Namespace scans alone never name a completely fileless
             # canonical root, yet LEAN_PATH still searches it during
             # compilation. Cache that root itself for custody;
@@ -1202,23 +1223,29 @@ def computation_paths_without_output(tools: Tools) -> Tools:
         prepared_inputs=tools.prepared_inputs, lake_manifest_bytes=tools.lake_manifest_bytes)
 
 
-def compilation_input_paths(metadata: dict[str, object], root: Path,
-                             library: Path | None, tools: Tools | None = None) -> tuple[str, ...]:
+def prepared_derivation(kind: str, metadata: dict[str, object], root: Path, library: Path | None,
+                        tools: Tools | None, derivation: Callable[[], tuple[str, ...]]) -> tuple[str, ...]:
     prepared = active_prepared_inputs(tools)
     if prepared is None or tools is None:
-        return derive_compilation_input_paths(metadata, root, library, tools)
+        return derivation()
     # The key holds every in-memory input of the derivation (capture the
     # pinned manifest bytes first); everything else it reads is a recorded
     # filesystem fact.
     pinned_lake_manifest_bytes(tools)
     try:
-        key = (json.dumps(metadata, sort_keys=True, ensure_ascii=False), str(root),
+        key = (kind, json.dumps(metadata, sort_keys=True, ensure_ascii=False), str(root),
                None if library is None else str(library), str(tools.root), str(tools.output),
                str(tools.lean), tuple(sorted(tools.environment.items())),
                tuple(sorted((str(path), raw) for path, raw in tools.lake_manifest_bytes.items())))
     except (TypeError, ValueError):
-        return derive_compilation_input_paths(metadata, root, library, tools)
-    return prepared.derive(key, lambda: derive_compilation_input_paths(metadata, root, library, tools))
+        return derivation()
+    return prepared.derive(key, derivation)
+
+
+def compilation_input_paths(metadata: dict[str, object], root: Path,
+                            library: Path | None, tools: Tools | None = None) -> tuple[str, ...]:
+    return prepared_derivation("compilation_inputs", metadata, root, library, tools,
+                               lambda: derive_compilation_input_paths(metadata, root, library, tools))
 
 
 def derive_compilation_input_paths(metadata: dict[str, object], root: Path,
@@ -1312,6 +1339,11 @@ def pin_setup_inputs(tools: Tools, metadata: dict[str, object]) -> dict[str, obj
 
 
 def private_fallback_artifact_paths(tools: Tools, metadata: dict[str, object]) -> tuple[str, ...]:
+    return prepared_derivation("private_fallback", metadata, tools.root, None, tools,
+                               lambda: derive_private_fallback_artifact_paths(tools, metadata))
+
+
+def derive_private_fallback_artifact_paths(tools: Tools, metadata: dict[str, object]) -> tuple[str, ...]:
     """Exact pre-compilation fallback inventory for private resolution.
 
     Unions the canonical LEAN_PATH-selected namespace inventories with
@@ -1892,7 +1924,7 @@ def private_inventory_roots(tools: Tools, metadata: dict[str, object]) -> list[P
 
     def add(path: Path) -> None:
         try:
-            resolved = path.resolve()
+            resolved = fact_resolve(path)
         except OSError:
             return
         if resolved not in roots:
@@ -2423,7 +2455,7 @@ def snapshot_setup_value(tools: Tools, artifact_root: Path,
             if not files:
                 raise ValueError("Snapshot compilation input manifest is empty")
             for module, parts in full_import_artifacts(metadata, tools.root).items():
-                canonical = [[str(resolve_inventory_path(Path(path))) for path in group] for group in parts]
+                canonical = [[str(fact_inventory_resolve(Path(path))) for path in group] for group in parts]
                 if module in arts and arts[module] != canonical:
                     raise ValueError("Snapshot compilation inputs disagree on a dependency")
                 arts[module] = canonical
@@ -3033,7 +3065,10 @@ def guarded_inventory_components(paths: set[Path], mutable_roots: Iterable[Path]
                     not stat.S_ISLNK(identities[path][5]) and
                     (path.parent == path or path.parent in canonical)):
                 canonical.add(path)
-        token = _guarded_inventory_canonical_paths.set(frozenset(canonical))
+        # Enclosing guards stay armed until this one exits, so their
+        # canonical paths remain proven here as well.
+        token = _guarded_inventory_canonical_paths.set(
+            frozenset(canonical) | _guarded_inventory_canonical_paths.get())
         try:
             yield
             for path, expected in identities.items():
@@ -3113,7 +3148,11 @@ def guarded_snapshot_metadata(tools: Tools, setup: Path,
 
 def verify_snapshot_dependencies(tools: Tools, artifact_root: Path, setup: Path,
                                  identities: dict[Path, SourceIdentity]) -> None:
-    with guarded_snapshot_metadata(tools, setup, identities) as value:
+    # A post-command check: inside a phase it reuses recorded derivations
+    # only after re-reading their facts in a new window; the identity sweep
+    # below stays whole.
+    new_prepared_window(tools)
+    with using_prepared_inputs(tools), guarded_snapshot_metadata(tools, setup, identities) as value:
         inventory_roots = snapshot_private_inventory_roots(tools, value)
         with guarded_inventory_components(set(identities), mutable_roots={tools.output}, inventory_roots=inventory_roots):
             output = resolve_inventory_path(tools.output)
@@ -3439,12 +3478,17 @@ def snapshot_batch(tools: Tools, rows: list[dict[str, object]], artifact_root: P
         inventory_roots = snapshot_private_inventory_roots(tools, value)
 
     def verify_inputs() -> None:
-        for name in names:
-            verify_snapshot_inputs(snapshot_inputs[name], roots[name], tools.output, tools, input_identities[name])
-        verify_snapshot_dependencies(tools, roots[names[0]], setup, dependency_identities)
-        if group is not None:
-            for member in read_json(verify_file_pin(group, tools.output, tools.file_cache))["members"]:
-                verify_snapshot_group_member(tools, member)
+        with using_prepared_inputs(tools):
+            for name in names:
+                verify_snapshot_inputs(snapshot_inputs[name], roots[name], tools.output, tools,
+                                       input_identities[name])
+            verify_snapshot_dependencies(tools, roots[names[0]], setup, dependency_identities)
+            if group is not None:
+                for member in read_json(verify_file_pin(group, tools.output, tools.file_cache))["members"]:
+                    # Each member check re-reads facts, so a change after
+                    # an earlier check is seen exactly where it was before.
+                    new_prepared_window(tools)
+                    verify_snapshot_group_member(tools, member)
 
     dependencies_evidence = []
     for name, scratch, label in probes:
