@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.GobelSequence
+public import MathlibExt.NumberTheory.GobelSequenceRoots
 public import MathlibExt.NumberTheory.GobelSequenceSomosBound
 public import Mathlib.Analysis.Asymptotics.Defs
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
@@ -139,19 +140,6 @@ public theorem_wanted gobelSequence_seven_iff_padic_claims :
         0 ≤ padicValRat 5 (gobelSequence k l 7)) ∧
       (∀ k ∈ Finset.Icc 1 6, ∀ l ∈ Finset.Icc 1 7,
         (padicValRat 7 (gobelSequence k l 7) < 0 ↔ k = 2 ∧ l = 3)))
-
-/-- **Strict decrease of the normalized Göbel roots.** Let $k, l \ge 2$ be natural numbers, let
-$g_{k,l}$ be the $(k, l)$-Göbel sequence, and let $C_{k,l}(n) = g_{k,l}(n)^{1/k^n}$, a real
-number. Then $C_{k,l}(n) > C_{k,l}(n + 1) > 1$ for every natural number $n \ge 1$.
-
-Source: Gima, Matsusaka, Miyazaki, and Yara, *On Integrality and Asymptotic
-Behavior of the (k, l)-Göbel Sequences*, Journal of Integer Sequences 27 (2024),
-Article 24.8.1, Lemma 7 (`jis-2024-24.8.1-lem-7`). -/
-public theorem_wanted gobelSequence_root_strictAnti (k l n : ℕ) (hk : 2 ≤ k) (hl : 2 ≤ l)
-    (hn : 1 ≤ n) :
-    (gobelSequence k l (n + 1) : ℝ) ^ ((1 : ℝ) / (k : ℝ) ^ (n + 1))
-        < (gobelSequence k l n : ℝ) ^ ((1 : ℝ) / (k : ℝ) ^ n) ∧
-      1 < (gobelSequence k l (n + 1) : ℝ) ^ ((1 : ℝ) / (k : ℝ) ^ (n + 1))
 
 /-- **Root asymptotics of Somos-type sequences.** Let $k \ge 2$ be a natural number, let
 $\sigma_k = \exp\bigl(\sum_{m \ge 1} \log m / k^m\bigr)$ be the $k$-Somos constant, and let
