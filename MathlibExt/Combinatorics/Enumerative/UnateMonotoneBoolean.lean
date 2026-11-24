@@ -92,6 +92,19 @@ public theorem isUnateBoolFun_of_monotone {n : ℕ} {f : (Fin n → Bool) → Bo
   · simp
   · simp [Function.update_of_ne h]
 
+/-- **The negation of a unate function is unate.** If an $n$-variable Boolean function $f$ is
+unate, then so is its negation $x \mapsto \lnot f(x)$.
+
+Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
+under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
+Sequences 28 (2025), Article 25.3.4, Proposition 7 (`jis-2025-25.3.4-prop-7`). -/
+public theorem isUnateBoolFun_not {n : ℕ} {f : (Fin n → Bool) → Bool}
+    (hf : IsUnateBoolFun f) : IsUnateBoolFun fun x => !f x := by
+  intro i
+  rcases hf i with hinc | hdec
+  · exact Or.inr fun x hx => compl_le_compl (hinc x hx)
+  · exact Or.inl fun x hx => compl_le_compl (hdec x hx)
+
 /-- **Non-degeneracy in a variable.** An $n$-variable Boolean function $f$ is non-degenerate
 on the variable $x_i$ when flipping $x_i$ changes the value of $f$ at some input: there is
 $x \in \{0,1\}^n$ with $f(x) \ne f(x')$, where $x'$ is $x$ with its $i$-th coordinate negated.
@@ -149,6 +162,37 @@ Sequences 28 (2025), Article 25.3.4, Section 2, equation (1). -/
 public theorem boolFunConcat_cons {n : ℕ} (g h : (Fin n → Bool) → Bool) (b : Bool)
     (x : Fin n → Bool) : boolFunConcat g h (Fin.cons b x) = cond b (h x) (g x) := by
   simp [boolFunConcat]
+
+/-- **Monotone concatenations of Boolean functions (Bakoev).** Let $g$ and $h$ be Boolean
+functions on $n$ variables, and let $g \parallel h$ be their concatenation, the function on
+$n + 1$ variables that equals $g$ of the remaining variables when its first variable is $0$ and
+$h$ of them when it is $1$. Then $g \parallel h$ is monotone if and only if $g$ and $h$ are both
+monotone and $g(x) \le h(x)$ for every $x \in \{0,1\}^n$.
+
+Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
+under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
+Sequences 28 (2025), Article 25.3.4, Proposition 4 (`jis-2025-25.3.4-prop-4`),
+quoting Bakoev. -/
+public theorem monotone_boolFunConcat_iff {n : ℕ} (g h : (Fin n → Bool) → Bool) :
+    Monotone (boolFunConcat g h) ↔ Monotone g ∧ Monotone h ∧ g ≤ h := by
+  constructor
+  · intro hmono
+    have compare {a b : Bool} {x y : Fin n → Bool} (hab : a ≤ b) (hxy : x ≤ y) :
+        cond a (h x) (g x) ≤ cond b (h y) (g y) := by
+      simpa only [boolFunConcat_cons] using
+        hmono ((Fin.cons_le_cons (α := fun _ => Bool)).2 ⟨hab, hxy⟩)
+    exact ⟨fun _ _ hxy => compare (le_refl false) hxy,
+      fun _ _ hxy => compare (le_refl true) hxy,
+      fun x => compare (Bool.false_le true) (le_refl x)⟩
+  · rintro ⟨hg, hh, hgh⟩ x y hxy
+    have htail : Fin.tail x ≤ Fin.tail y := fun i => hxy i.succ
+    have hhead := hxy 0
+    unfold boolFunConcat
+    cases hx : x 0 <;> cases hy : y 0
+    · exact hg htail
+    · exact (hgh _).trans (hh htail)
+    · simp [hx, hy, Bool.le_iff_imp] at hhead
+    · exact hh htail
 
 /-- **Permutation equivalence of Boolean functions.** An $n$-variable Boolean function $f$ is
 permutation-equivalent to $g$ when $g$ is obtained from $f$ by permuting the variables: there

@@ -16,6 +16,7 @@ public import Mathlib.Data.Nat.Prime.Defs
 public import MathlibExt.NumberTheory.Digits.BinomialFormTwoPowBase
 public import MathlibExt.NumberTheory.Digits.DigitsPowAndPowAddOne
 public import MathlibExt.NumberTheory.Digits.MinBasePalindrome
+public import MathlibExt.NumberTheory.Digits.OneCOneTwoPow
 public import MathlibExt.NumberTheory.Digits.ThreeDigitBinomialForm
 
 /-!
@@ -140,21 +141,6 @@ public theorem_wanted three_digit_palindrome_two_pow_iff (n b : ℕ) (hb : 2 ≤
       b ^ 2 + 1 ≤ 2 ^ n ∧ 2 ^ n ≤ b ^ 3 - 1 ∧ 2 ^ n % b ≠ 0 ∧
         ((2 ^ n / b : ℕ) : ℚ) / b - ((b : ℚ) - 1) / b ≤ ((2 ^ n % b : ℕ) : ℚ) ∧
         ((2 ^ n % b : ℕ) : ℚ) ≤ ((2 ^ n / b : ℕ) : ℚ) / b
-
-/-- **Three-digit representations of powers of two with outer digits one.** Let $n$ be a natural
-number and $b \ge 2$ a base. There is a digit $c \ne 2$ such that the base-$b$ representation of
-$2^n$ is $(1, c, 1)_b$, that is, $2^n = 1 + cb + b^2$ with $0 \le c < b$, if and only if
-(i) $2^n - 1 = kb$ for some natural number $k$ with $b \le k \le 2b - 1$, and (ii) it is not the
-case that $n$ is even and $b = 2^{n/2} - 1$.
-
-The excluded digit $c = 2$ gives the binomial form $(1, 2, 1)_b = (b + 1)^2$.
-
-Source: D. L. Kreher and D. R. Stinson, *On Minimum-Base Palindromic
-Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Theorem 4
-(`integers-2024-A69-thm-4`). -/
-public theorem_wanted one_c_one_two_pow_iff (n b : ℕ) (hb : 2 ≤ b) :
-    (∃ c, c ≠ 2 ∧ Nat.digits b (2 ^ n) = [1, c, 1]) ↔
-      (∃ k, 2 ^ n - 1 = k * b ∧ b ≤ k ∧ k ≤ 2 * b - 1) ∧ ¬ (Even n ∧ b = 2 ^ (n / 2) - 1)
 
 /-- **Palindromic powers of two in a base one less than a power of two.** Let $x \ge 2$ and
 $n \ge 1$ be natural numbers, let $b = 2^x - 1$, and suppose that the base-$b$ representation

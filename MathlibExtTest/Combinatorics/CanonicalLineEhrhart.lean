@@ -10,6 +10,7 @@ module
 
 import MathlibExt.Combinatorics.CanonicalLineEhrhart
 import Mathlib.Tactic.ComputeDegree
+import Mathlib.Tactic.NormNum
 
 open Polynomial MetaMathlibExt
 
@@ -30,3 +31,28 @@ example (t : ℝ) : ((2 * X + 1 : Polynomial ℂ).eval ⟨-(1 / 2), t⟩).re = 0
   obtain ⟨r, hr⟩ := cl_value_on_canonicalLine _ hf ⟨-(1 / 2), t⟩ rfl
   rw [hr, hd, pow_one]
   simp
+
+-- At j = 0 and c = 0, the coefficient of the highest shift vanishes.
+example : (X ^ 2 + X) * binomialPolynomial 1 1 =
+    C 4 * binomialPolynomial 2 3 + C 2 * binomialPolynomial 1 3 := by
+  have h := quadratic_mul_binomialPolynomial 1 0 (by decide) (by decide) 0
+  norm_num at h
+  exact h
+
+-- At j = d the base shift is zero, and with c = 0 the last term vanishes.
+example : (X ^ 2 + X) * binomialPolynomial 0 1 =
+    C 2 * binomialPolynomial 2 3 + C 4 * binomialPolynomial 1 3 := by
+  have h := quadratic_mul_binomialPolynomial 1 1 (by decide) (by decide) 0
+  norm_num at h
+  exact h
+
+-- All three terms survive in this interior case, even with c below 1/4.
+example : (X ^ 2 + X + C (-1)) * binomialPolynomial 2 3 =
+    binomialPolynomial 4 5 + C 14 * binomialPolynomial 3 5 +
+      C 5 * binomialPolynomial 2 5 := by
+  have h := quadratic_mul_binomialPolynomial 3 1 (by decide) (by decide) (-1)
+  norm_num at h ⊢
+  exact h
+
+#print axioms MetaMathlibExt.binomialPolynomial
+#print axioms MetaMathlibExt.quadratic_mul_binomialPolynomial

@@ -34,4 +34,5 @@ example : sumProductMaxCard {0, 1} = 3 := by
   rw [hs, hp]
   norm_num [A, Finset.card_insert_of_notMem]
 
-example : sumProductExponent ≤ 2 := erdosSzemerediHistoricalUpperBound_holds
+example : sumProductExponent ∈ Set.Icc (1 : ℝ) 2 :=
+  ⟨trivialLowerBound_holds, erdosSzemerediHistoricalUpperBound_holds⟩
