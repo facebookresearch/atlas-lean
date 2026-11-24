@@ -11,7 +11,7 @@ module
 public import CSLibExt.Computability.Complexity.QuantumGates.PathSum
 
 /-!
-# Tests: path-sum expansion and integer gap
+# Tests: path-sum expansion and scaled integrality
 -/
 
 @[expose] public section
@@ -23,7 +23,7 @@ set_option autoImplicit false
 open Cslib.Complexity.Classes
 
 #print axioms applyCircuit_eq_ampSum
-#print axioms acceptProb_gap
+#print axioms acceptProb_scaled_nat
 
 /-- The identity gate on qubits `0, 1`: entry list is the `4 × 4` identity
 in row-major order, real parts on the diagonal. -/
@@ -65,7 +65,7 @@ private theorem gateMatrix_idGate01 : gateMatrix 2 idGate01 = 1 := by
 
 /-- Nonvacuity, two-gate check: the empty path sum is the Kronecker delta,
 a single identity gate has diagonal amplitude `1`, and the two-gate
-identity circuit on input `[true]` has gap numerator `1` at scale `1`. -/
+identity circuit on input `[true]` has scaled acceptance `1` at scale `1`. -/
 theorem pathSum_two_gate_check :
     (∀ s t : Fin (2 ^ 2), ampSum 2 [] s t = if s = t then 1 else 0) ∧
       (∀ s : Fin (2 ^ 2), ampSum 2 [idGate01] s s = 1) ∧

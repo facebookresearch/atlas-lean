@@ -21,7 +21,7 @@ import Mathlib.Basic.Complex.Basic
 import Mathlib.Basic.Complex.BigOperators
 
 /-!
-# Path-sum expansion and the integer gap representation
+# Path-sum expansion and denominator-scaled integrality
 
 For a circuit `g₁, …, gₖ` of 2-local gates, the amplitude
 `⟨s| Uₖ ⋯ U₁ |t⟩` is a sum over intermediate basis sequences ("paths") of
@@ -29,15 +29,14 @@ products of gate entries. This file states the expansion recursively
 (`ampSum`), proves it computes `applyCircuit` on well-formed gates, and
 clears denominators: gate entries are Gaussian rationals read off the
 encoded entry lists, so scaling an amplitude by the product of the gate
-denominators gives a Gaussian integer, and acceptance probabilities of
-basis initial states are integer gaps over that squared scale. This is the
-counting form behind the usual path-integral view of quantum circuits and
-the gap-function view of quantum acceptance.
+denominators gives a Gaussian integer, and the acceptance probability of a
+basis initial state times that squared scale is a natural number. This is the
+counting form behind the usual path-integral view of quantum circuits.
 
 Source: M. A. Nielsen and I. L. Chuang, Quantum Computation and Quantum
 Information, Cambridge University Press, 2000, Chapter 4; A. Y. Kitaev,
 A. H. Shen, and M. N. Vyalyi, Classical and Quantum Computation, American
-Mathematical Society, 2002, Section 14.4 (rational gate entries).
+Mathematical Society, 2002.
 -/
 
 @[expose] public section
@@ -285,10 +284,10 @@ private theorem bqpInitState_eq_ite_aux (x : List Bool) (a : ℕ) (s : Fin (2 ^ 
       · simp [hmod, hdiv]
     · simp [hmod]
 
-/-- **Integer gap representation of acceptance:** for a well-formed circuit
+/-- **Denominator-scaled integrality of acceptance:** for a well-formed circuit
 run on a basis initial state, the acceptance probability scaled by the
 squared denominator product is a natural number. -/
-theorem acceptProb_gap {gs : List QGate} (x : List Bool) (a : ℕ)
+theorem acceptProb_scaled_nat {gs : List QGate} (x : List Bool) (a : ℕ)
     (hgs : ∀ g ∈ gs, QGateWellFormed (x.length + a) g) :
     ∃ n : ℕ, ((gs.map gateDenom).prod : ℝ) ^ 2 *
       acceptProb (applyCircuit (x.length + a) gs (bqpInitState x a)) =
