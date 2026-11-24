@@ -10,3 +10,7 @@
 - [Detailed balance implies invariance for the generator](vec-mul-eq-zero.md)
 - [Detailed balance propagates to the transition function](ctmc-transition.md)
 - [Detailed balance implies invariance for the transition semigroup](vec-mul-ctmc-transition.md)
+
+## Stationary processes
+
+- [A stationary initial law makes the chain a stationary process](stationary-initial-law-gives-a-stationary-process.md)

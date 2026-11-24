@@ -9295,3 +9295,5 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/graph-algorithms/spanning-trees-flows-matchings/dual-certificate-for-the-assignment-problem.md"}], "id": "af_7e09e44d143fabda4bad3993", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/randomized-algorithms/monte-carlo-estimation/README.md"}], "id": "af_6eadb49b6e0989864baa7e22"}
 {"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/dynamic-programming/weighted-interval-scheduling/README.md"}], "id": "af_fbd6e365a3478c9b1c22b411"}
+{"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/randomized-algorithms/monte-carlo-estimation/optimal-control-variate-coefficient.md"}], "id": "af_2d5c04721d6633694f77d118", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/graph-algorithms/spanning-trees-flows-matchings/exact-hungarian-method-on-rational-costs.md"}], "id": "af_57afe75947a47a78de731466", "extensions": {"org.atlas-wiki": {"kind": "theorem"}, "org.autoform": {"not_ready": true}}}

@@ -4,3 +4,5 @@
 - [Little's law](littles-law/README.md)
 - [Markovian queue balance distributions](markovian-queues/README.md)
 - [Product-form queueing networks](product-form-networks/README.md)
+
+- [Poisson arrivals see time averages](poisson-arrivals-see-time-averages.md)
