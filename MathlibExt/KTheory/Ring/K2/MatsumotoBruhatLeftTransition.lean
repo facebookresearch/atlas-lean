@@ -6334,7 +6334,7 @@ private theorem G10Trans4_P4Fin3_matrix
       Matrix.add_apply, Matrix.single_apply,
       Matrix.one_apply, Matrix.mul_apply,
       Fin.sum_univ_three, Fin.isValue]
-  all_goals ring
+  ring
 
 private theorem G10Trans4_weyl12_neg_one_matrix
     (F : Type*) [Field F] :
@@ -6405,7 +6405,7 @@ private theorem G10Trans4_C0Fin3_matrix
         ext i j
         fin_cases i <;> fin_cases j <;> simp [Matrix.mul_apply,
           Fin.sum_univ_three, Fin.isValue]
-        all_goals ring
+        ring
 
 private theorem G10Trans4_weyl01_one_matrix
     (F : Type*) [Field F] :
@@ -6738,7 +6738,7 @@ private theorem G10Trans4_L0_M_R_matrix
         fin_cases i <;> fin_cases j <;>
           simp [Matrix.mul_apply, Fin.sum_univ_three, Fin.isValue,
             haInvMul]
-        all_goals ring
+        ring
 
 private theorem G10Trans4_gen_S0_factorization_aux
     (F : Type*) [Field F] (a : F) (ha0 : a ≠ 0)
