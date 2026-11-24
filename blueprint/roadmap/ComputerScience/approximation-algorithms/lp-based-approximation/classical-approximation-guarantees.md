@@ -2,7 +2,7 @@
 
 This node collects classical approximation results, each of which belongs on its own page: the fully polynomial-time approximation scheme for 0/1 knapsack by profit scaling; the random assignment satisfying half of the clauses of a CNF formula and $7/8$ of the clauses of an exact-3 CNF formula in expectation, derandomized by conditional expectations; the random cut and local search achieving half of the maximum cut; the farthest-first $2$-approximation for metric $k$-center; Next Fit and First Fit using at most $2\,\mathrm{OPT}$ bins; and Christofides's $3/2$-approximation for metric TSP.
 
-Some of these already exist as code without pages (profit scaling for knapsack, the MAX-SAT averaging bounds, MAX-CUT, Next Fit). A good expansion gives one page per result, reusing those declarations where they state the result.
+A good expansion gives one page per result.
 
 ## Depends on
 
