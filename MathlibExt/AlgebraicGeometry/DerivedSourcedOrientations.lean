@@ -70,7 +70,8 @@ structure SourcedScalarFamily (M : AffineModuleFibration N S) (U : RegularUnitSy
 def IsSourcedOCompact {R : RawModuleRealization M}
     (B : SourcedFamilyModel M U R Q L V X) : Prop := IsOCompact B.model
 
-/-- The source orientation test uses the same actual all-A duality, trace and RΓ models. -/
+/-- The source orientation test uses the same actual all-A duality, trace and RΓ models, including
+the scalar base-change condition of `IsOOrientation`. -/
 def IsSourcedOOrientation {R : RawModuleRealization M}
     (B : SourcedScalarFamily M U R Q L V X) {d : ℤ}
     (T : TraceSystem B.family.model B.absolute B.scalar d)

@@ -231,13 +231,17 @@ def adjointToShift {d : ℤ} {T : TraceSystem B G D d} {C : OrientationContext B
         (derivedDual (coefficientLarge L N A) (coefficientObject L N A) (C.opposite A) S))⟦-d⟧ :=
   moduleToShift (coefficientObject L N A) J.map J.closed
 
-/-- PTVV orientation tests nondegeneracy for every A and every actual perfect E. -/
+/-- PTVV orientation (Definition 2.4): `X` is O-compact, the scalar extension comparisons are
+quasi-isomorphisms (`IsScalarBaseChange`), so that each `A`-linear trace is determined up to
+homotopy by the absolute trace through `TraceSystem.scalar_normalized`, and the adjoint of the
+trace pairing is a quasi-isomorphism for every `A` and every perfect `E`. -/
 def IsOOrientation {d : ℤ} (T : TraceSystem B G D d) (C : OrientationContext B G) : Prop :=
-  IsOCompact B ∧ ∀ (A : SAlg k) (E : (B.model A).category), IsPerfect (B.model A) E →
-    ∃ (P : PerfectDual (C.family A).monoidal E)
-      (R : ModuleReplacement (gamma B A E)) (S : ModuleReplacement (gamma B A P.object))
-      (K : CoefficientPairingModel B G D C A P R S)
-      (J : OrientationAdjointModel B G D T C A P R S K),
-      QuasiIso (adjointToShift B G D J)
+  IsOCompact B ∧ IsScalarBaseChange B G D ∧
+    ∀ (A : SAlg k) (E : (B.model A).category), IsPerfect (B.model A) E →
+      ∃ (P : PerfectDual (C.family A).monoidal E)
+        (R : ModuleReplacement (gamma B A E)) (S : ModuleReplacement (gamma B A P.object))
+        (K : CoefficientPairingModel B G D C A P R S)
+        (J : OrientationAdjointModel B G D T C A P R S K),
+        QuasiIso (adjointToShift B G D J)
 
 end MathlibExt.AlgebraicGeometry.DerivedOrientationModels
