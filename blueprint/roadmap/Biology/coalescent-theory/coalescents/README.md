@@ -23,3 +23,6 @@
 
 - [The Λ-coalescent rate matrix on partitions of a finite sample](the-coalescent-rate-matrix-on-partitions-of-a-fi.md)
 - [Path laws of the Λ-coalescent on a finite sample are consistent under restriction](path-laws-of-the-coalescent-on-a-finite-sample-a.md)
+
+- [Merger rates of a coalescent with simultaneous multiple collisions](xi-coalescents-simultaneous-multiple-collisions.md)
+- [The Ξ-coalescent rate matrix on partitions of a finite sample](xi-coalescent-partition-valued-ctmc-and-restrict.md)
