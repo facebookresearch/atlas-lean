@@ -103,4 +103,91 @@ instance pairComparison_isIso (X : Scheme.{u}) (P Q : ModulePresheaves X) :
     (MorphismProperty.IsMonoidal.whiskerRight _ (unit_localIso X P) Q)
     (MorphismProperty.IsMonoidal.whiskerLeft _ _ (unit_localIso X Q))
 
+section Sections
+
+open scoped TensorProduct
+
+variable (X : Scheme.{u})
+
+/-- Naturality of the sheafification unit, on sections. -/
+theorem unit_naturality_apply {P Q : ModulePresheaves X} (f : P ⟶ Q) (U : X.Opensᵒᵖ)
+    (x : P.obj U) :
+    ((forgetModules X).map ((sheafifyModules X).map f)).app' U
+      (((moduleAdjunction X).unit.app P).app' U x) =
+      ((moduleAdjunction X).unit.app Q).app' U (f.app' U x) :=
+  congrArg (fun g : P ⟶ (forgetModules X).obj ((sheafifyModules X).obj Q) ↦ g.app' U x)
+    ((moduleAdjunction X).unit_naturality f)
+
+/-- The pair comparison sends the class of a pure tensor `p ⊗ q` to the class of `[p] ⊗ [q]`. -/
+theorem pairComparison_apply_tmul (P Q : ModulePresheaves X) (U : X.Opensᵒᵖ)
+    (p : P.obj U) (q : Q.obj U) :
+    ((forgetModules X).map (pairComparison X P Q)).app' U
+      (((moduleAdjunction X).unit.app (P ⊗ Q)).app' U (p ⊗ₜ q)) =
+      ((moduleAdjunction X).unit.app
+        ((forgetModules X).obj ((sheafifyModules X).obj P) ⊗
+          (forgetModules X).obj ((sheafifyModules X).obj Q))).app' U
+        (((moduleAdjunction X).unit.app P).app' U p ⊗ₜ
+          ((moduleAdjunction X).unit.app Q).app' U q) :=
+  unit_naturality_apply X
+    ((moduleAdjunction X).unit.app P ⊗ₘ (moduleAdjunction X).unit.app Q) U (p ⊗ₜ q)
+
+/-- The associator composed with the left comparison is the right comparison. -/
+theorem tripleLeft_comp_tensorAssociator_hom (L M N : X.Modules) :
+    tripleLeft X L M N ≫ (tensorAssociator X L M N).hom = tripleRight X L M N := by
+  simp [tensorAssociator]
+
+/-- The associator sends the class of `[a ⊗ b] ⊗ c` to the class of `a ⊗ [b ⊗ c]`. -/
+theorem tensorAssociator_hom_apply_tmul (L M N : X.Modules) (U : X.Opensᵒᵖ)
+    (a : ((forgetModules X).obj L).obj U) (b : ((forgetModules X).obj M).obj U)
+    (c : ((forgetModules X).obj N).obj U) :
+    ((forgetModules X).map (tensorAssociator X L M N).hom).app' U
+      (((moduleAdjunction X).unit.app
+        ((forgetModules X).obj (moduleTensor X L M) ⊗ (forgetModules X).obj N)).app' U
+        (((moduleAdjunction X).unit.app
+          ((forgetModules X).obj L ⊗ (forgetModules X).obj M)).app' U (a ⊗ₜ b) ⊗ₜ c)) =
+      ((moduleAdjunction X).unit.app
+        ((forgetModules X).obj L ⊗ (forgetModules X).obj (moduleTensor X M N))).app' U
+        (a ⊗ₜ ((moduleAdjunction X).unit.app
+          ((forgetModules X).obj M ⊗ (forgetModules X).obj N)).app' U (b ⊗ₜ c)) := by
+  have h1 := unit_naturality_apply X
+    (((moduleAdjunction X).unit.app
+      (((forgetModules X).obj L) ⊗ ((forgetModules X).obj M))) ▷ ((forgetModules X).obj N))
+    U ((a ⊗ₜ b) ⊗ₜ c)
+  have h2 := unit_naturality_apply X
+    ((α_ ((forgetModules X).obj L) ((forgetModules X).obj M) ((forgetModules X).obj N)).hom ≫
+      (((forgetModules X).obj L) ◁ (moduleAdjunction X).unit.app
+        (((forgetModules X).obj M) ⊗ ((forgetModules X).obj N))))
+    U ((a ⊗ₜ b) ⊗ₜ c)
+  have k := congrArg (fun g ↦ ((forgetModules X).map g).app' U
+      (((moduleAdjunction X).unit.app
+        (((forgetModules X).obj L ⊗ (forgetModules X).obj M) ⊗ (forgetModules X).obj N)).app' U
+          ((a ⊗ₜ b) ⊗ₜ c))) (tripleLeft_comp_tensorAssociator_hom X L M N)
+  exact (congrArg (fun y ↦ ((forgetModules X).map (tensorAssociator X L M N).hom).app' U y)
+    h1).symm.trans (k.trans h2)
+
+/-- The inverse associator sends the class of `a ⊗ [b ⊗ c]` to the class of `[a ⊗ b] ⊗ c`. -/
+theorem tensorAssociator_inv_apply_tmul (L M N : X.Modules) (U : X.Opensᵒᵖ)
+    (a : ((forgetModules X).obj L).obj U) (b : ((forgetModules X).obj M).obj U)
+    (c : ((forgetModules X).obj N).obj U) :
+    ((forgetModules X).map (tensorAssociator X L M N).inv).app' U
+      (((moduleAdjunction X).unit.app
+        ((forgetModules X).obj L ⊗ (forgetModules X).obj (moduleTensor X M N))).app' U
+        (a ⊗ₜ ((moduleAdjunction X).unit.app
+          ((forgetModules X).obj M ⊗ (forgetModules X).obj N)).app' U (b ⊗ₜ c))) =
+      ((moduleAdjunction X).unit.app
+        ((forgetModules X).obj (moduleTensor X L M) ⊗ (forgetModules X).obj N)).app' U
+        (((moduleAdjunction X).unit.app
+          ((forgetModules X).obj L ⊗ (forgetModules X).obj M)).app' U (a ⊗ₜ b) ⊗ₜ c) := by
+  have h := tensorAssociator_hom_apply_tmul X L M N U a b c
+  have k := congrArg (fun g ↦ ((forgetModules X).map g).app' U
+      (((moduleAdjunction X).unit.app
+        ((forgetModules X).obj (moduleTensor X L M) ⊗ (forgetModules X).obj N)).app' U
+        (((moduleAdjunction X).unit.app
+          ((forgetModules X).obj L ⊗ (forgetModules X).obj M)).app' U (a ⊗ₜ b) ⊗ₜ c)))
+    (tensorAssociator X L M N).hom_inv_id
+  exact (congrArg (fun y ↦ ((forgetModules X).map (tensorAssociator X L M N).inv).app' U y)
+    h).symm.trans k
+
+end Sections
+
 end MathlibExt.AlgebraicGeometry.NativeTensorComparisons
