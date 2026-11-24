@@ -47,15 +47,6 @@ public theorem_wanted sum_count_eq_sum_card_parts_count_ge (n k : ℕ) (hk : 1 �
     ∑ p : Nat.Partition n, p.parts.count k =
       ∑ p : Nat.Partition n, (p.parts.toFinset.filter fun i => k ≤ p.parts.count i).card
 
-/-- **Stanley's theorem.** For every natural number $n$, the total number of parts equal to $1$,
-counted with multiplicity, over all partitions of $n$ equals the sum, over all partitions
-$\lambda$ of $n$, of the number of distinct parts of $\lambda$.
-
-Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
-INTEGERS 25 (2025), Article A94, Theorem 1 (Stanley's theorem). -/
-public theorem_wanted sum_count_one_eq_sum_card_toFinset (n : ℕ) :
-    ∑ p : Nat.Partition n, p.parts.count 1 = ∑ p : Nat.Partition n, p.parts.toFinset.card
-
 /-- **Total number of parts of $n$-color partitions via the divisor sum.** For $r \ge 0$ let
 $C(r)$ be the number of $n$-color partitions of $r$, and let $T_o(r)$ (resp. $T_e(r)$) be the
 total number of parts, counted with multiplicity, over the $n$-color partitions of $r$ having an
