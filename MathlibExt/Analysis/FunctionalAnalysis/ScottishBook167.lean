@@ -11,14 +11,13 @@ module
 public import Mathlib.Analysis.InnerProductSpace.Basic
 public import Mathlib.RingTheory.Finiteness.Basic
 public import Mathlib.Topology.MetricSpace.Pseudo.Defs
-import Mathlib.Analysis.InnerProductSpace.l2Space
-import Mathlib.Analysis.Normed.Operator.LinearIsometry
 import Mathlib.LinearAlgebra.Dimension.Finite
-import Mathlib.Topology.Algebra.InfiniteSum.NatInt
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
+import MathlibExt.Analysis.InnerProductSpace.LpDiagonalOperator
+import MathlibExt.Analysis.InnerProductSpace.LpShiftOperator
 
 /-! # Scottish Book Problem 167 via the unilateral shift
 
@@ -32,6 +31,9 @@ This gives a direct counterexample with one observable, without using Klee's hom
 open scoped ENNReal
 
 namespace MathlibExt.Analysis.FunctionalAnalysis.ScottishBook167Wanted
+
+open MathlibExt.Analysis.InnerProductSpace.LpDiagonalOperator
+  MathlibExt.Analysis.InnerProductSpace.LpShiftOperator
 
 /-- **Scottish Book Problem 167.** Ulam's claim that for every infinite-dimensional real Hilbert
 space $H$ with unit sphere $S = \{p \in H : \|p\| = 1\}$, every $n \in \mathbb{N}$, all
@@ -47,78 +49,25 @@ def ScottishBookProblem167Claim : Prop :=
 
 private abbrev H := ↥(lp (fun _ : ℕ => ℝ) 2)
 
-private theorem summable_sq (x : H) : Summable (fun n : ℕ => ‖x n‖ ^ (2 : ℕ)) := by
-  simpa only [ENNReal.toReal_ofNat, Real.rpow_two] using
-    (lp.memℓp x).summable (by norm_num : 0 < (2 : ℝ≥0∞).toReal)
+private theorem weights_bounded : ∃ C : ℝ, ∀ n : ℕ, ‖(1 / 2 : ℝ) ^ n‖ ≤ C := by
+  refine ⟨1, fun n => ?_⟩
+  rw [Real.norm_of_nonneg (by positivity)]
+  exact pow_le_one₀ (by norm_num) (by norm_num)
 
-private theorem norm_sq (x : H) : ‖x‖ ^ (2 : ℕ) = ∑' n : ℕ, ‖x n‖ ^ (2 : ℕ) := by
-  simpa only [ENNReal.toReal_ofNat, Real.rpow_two] using
-    lp.norm_rpow_eq_tsum (by norm_num : 0 < (2 : ℝ≥0∞).toReal) x
+private noncomputable def weighted : H →L[ℝ] H :=
+  diagonalCLM (fun n => (1 / 2 : ℝ) ^ n) weights_bounded
 
-private def shiftSeq (x : H) : ℕ → ℝ
-  | 0 => 0
-  | n + 1 => x n
-
-private theorem shiftMem (x : H) : Memℓp (shiftSeq x) 2 := by
-  apply memℓp_gen
-  simp only [ENNReal.toReal_ofNat, Real.rpow_two]
-  apply (summable_nat_add_iff 1).1
-  simpa only [shiftSeq] using summable_sq x
-
-private def shift (x : H) : H := ⟨shiftSeq x, shiftMem x⟩
-
-private theorem shift_norm (x : H) : ‖shift x‖ = ‖x‖ := by
-  have hs := (summable_sq (shift x)).tsum_eq_zero_add
-  rw [← norm_sq (shift x)] at hs
-  change ‖shift x‖ ^ (2 : ℕ) = ‖(0 : ℝ)‖ ^ (2 : ℕ) + (∑' n : ℕ, ‖x n‖ ^ (2 : ℕ)) at hs
-  rw [← norm_sq x, norm_zero, zero_pow (by decide : (2 : ℕ) ≠ 0), zero_add] at hs
-  simpa only [Real.sqrt_sq (norm_nonneg (shift x)), Real.sqrt_sq (norm_nonneg x)] using
-    congrArg Real.sqrt hs
-
-private noncomputable def shiftIso : H →ₗᵢ[ℝ] H where
-  toFun := shift
-  map_add' x y := by
-    apply lp.ext
-    funext n
-    rw [lp.coeFn_add, Pi.add_apply]
-    cases n with
-    | zero => change (0 : ℝ) = 0 + 0; rw [zero_add]
-    | succ n => rfl
-  map_smul' c x := by
-    apply lp.ext
-    funext n
-    cases n with
-    | zero => change (0 : ℝ) = c • 0; rw [smul_zero]
-    | succ n => rfl
-  norm_map' := shift_norm
-
-private noncomputable def weighted (x : H) : H :=
-  ⟨fun n => (1 / 2 : ℝ) ^ n * x n, (lp.memℓp x).mono' (fun n => by
-    rw [norm_mul, Real.norm_of_nonneg (by positivity)]
-    exact mul_le_of_le_one_left (norm_nonneg _) (pow_le_one₀ (by norm_num) (by norm_num)))⟩
-
-private theorem weighted_continuous : Continuous weighted := by
-  apply (LipschitzWith.of_dist_le_mul (K := 1) ?_).continuous
-  intro x y
-  rw [NNReal.coe_one, one_mul, dist_eq_norm, dist_eq_norm]
-  apply lp.norm_mono (by norm_num : (2 : ℝ≥0∞) ≠ 0)
-  intro n
-  simp only [lp.coeFn_sub, Pi.sub_apply]
-  change ‖(1 / 2 : ℝ) ^ n * x n - (1 / 2 : ℝ) ^ n * y n‖ ≤ ‖x n - y n‖
-  rw [← mul_sub, norm_mul, Real.norm_of_nonneg (by positivity)]
-  exact mul_le_of_le_one_left (norm_nonneg _) (pow_le_one₀ (by norm_num) (by norm_num))
-
-private theorem weighted_shift (x : H) : weighted (shift x) = (1 / 2 : ℝ) • shift (weighted x) := by
+private theorem weighted_shift (x : H) :
+    weighted (shiftCLM x) = (1 / 2 : ℝ) • shiftCLM (weighted x) := by
   apply lp.ext
   funext n
-  rw [lp.coeFn_smul, Pi.smul_apply]
+  rw [lp_smul_apply]
   cases n with
   | zero =>
-    change (1 / 2 : ℝ) ^ (0 : ℕ) * 0 = (1 / 2 : ℝ) • 0
-    simp
+    simp only [weighted, diagonalCLM_apply, shiftCLM_apply, shiftFun_zero, mul_zero]
   | succ n =>
-    change (1 / 2 : ℝ) ^ (n + 1) * x n = (1 / 2 : ℝ) * ((1 / 2 : ℝ) ^ n * x n)
-    rw [pow_succ]; ring
+    simp only [weighted, diagonalCLM_apply, shiftCLM_apply, shiftFun_succ, pow_succ]
+    ring
 
 private theorem weighted_ne_zero {x : H} (hx : x ≠ 0) : weighted x ≠ 0 := by
   intro h
@@ -126,7 +75,8 @@ private theorem weighted_ne_zero {x : H} (hx : x ≠ 0) : weighted x ≠ 0 := by
   apply lp.ext
   funext n
   have hn : (1 / 2 : ℝ) ^ n * x n = 0 := by
-    exact congrArg (fun z : H => z n) h
+    have hcoord := congrArg (fun z : H => z n) h
+    simpa only [weighted, diagonalCLM_apply, lp.coeFn_zero, Pi.zero_apply] using hcoord
   exact (mul_eq_zero.mp hn).resolve_left (pow_ne_zero _ (by norm_num))
 
 private theorem H_infinite : ¬ Module.Finite ℝ H := by
@@ -147,15 +97,10 @@ private theorem H_infinite : ¬ Module.Finite ℝ H := by
   exact not_finite ℕ
 
 -- The first coordinate unit vector has weighted norm one and shifts to weighted norm one half.
-example : ‖weighted (shift (lp.single 2 0 1 : H))‖ = 1 / 2 := by
+example : ‖weighted (shiftCLM (lp.single 2 0 1 : H))‖ = 1 / 2 := by
   have hw : weighted (lp.single 2 0 1 : H) = lp.single 2 0 1 := by
-    apply lp.ext
-    funext n
-    change (1 / 2 : ℝ) ^ n * (lp.single 2 0 1 : H) n = (lp.single 2 0 1 : H) n
-    cases n with
-    | zero => simp only [pow_zero, one_mul]
-    | succ n => rw [lp.single_apply_ne 2 0 _ (Nat.succ_ne_zero n), mul_zero]
-  rw [weighted_shift, norm_smul, shift_norm, hw,
+    rw [weighted, diagonalCLM_single, pow_zero, one_smul]
+  rw [weighted_shift, norm_smul, norm_shiftCLM_apply, hw,
     lp.norm_single (by norm_num : 0 < (2 : ℝ≥0∞)), norm_one,
     Real.norm_of_nonneg (by norm_num : 0 ≤ (1 / 2 : ℝ)), mul_one]
 
@@ -176,14 +121,14 @@ R. D. Mauldin (ed.), The Scottish Book, 2nd ed. (Birkhäuser, 2015).
 theorem ulam167_refuted : ¬ ScottishBookProblem167Claim := by
   intro C
   let S := ↥(Metric.sphere (0 : H) 1)
-  have hT (x : S) : shiftIso (x : H) ∈ Metric.sphere (0 : H) 1 := by
-    simpa only [Metric.mem_sphere, dist_zero_right, shiftIso.norm_map] using x.property
-  let T (x : S) : S := ⟨shiftIso (x : H), hT x⟩
+  have hT (x : S) : shiftCLM (x : H) ∈ Metric.sphere (0 : H) 1 := by
+    simpa only [Metric.mem_sphere, dist_zero_right, norm_shiftCLM_apply] using x.property
+  let T (x : S) : S := ⟨shiftCLM (x : H), hT x⟩
   let f (_ : Fin 1) (x : S) : ℝ := ‖weighted (x : H)‖
   have hf (i : Fin 1) : Continuous (f i) :=
-    (weighted_continuous.comp continuous_subtype_val).norm
+    (weighted.continuous.comp continuous_subtype_val).norm
   have hc : Continuous T :=
-    (shiftIso.continuous.comp continuous_subtype_val).subtype_mk hT
+    ((shiftCLM (𝕜 := ℝ)).continuous.comp continuous_subtype_val).subtype_mk hT
   obtain ⟨x, heq⟩ := C H H_infinite 1 f T hc hf
   have hxnorm : ‖(x : H)‖ = 1 := by simpa only [Metric.mem_sphere, dist_zero_right] using x.property
   have hx0 : (x : H) ≠ 0 := by
@@ -192,9 +137,9 @@ theorem ulam167_refuted : ¬ ScottishBookProblem167Claim := by
     exact zero_ne_one hxnorm
   have hxpos : 0 < ‖weighted (x : H)‖ := norm_pos_iff.mpr (weighted_ne_zero hx0)
   have h := heq 0
-  change ‖weighted (shift (x : H))‖ = ‖weighted (x : H)‖ at h
+  change ‖weighted (shiftCLM (x : H))‖ = ‖weighted (x : H)‖ at h
   have hhalf : 0 ≤ (1 / 2 : ℝ) := by norm_num
-  rw [weighted_shift, norm_smul, shift_norm, Real.norm_of_nonneg hhalf] at h
+  rw [weighted_shift, norm_smul, norm_shiftCLM_apply, Real.norm_of_nonneg hhalf] at h
   linarith
 
 end MathlibExt.Analysis.FunctionalAnalysis.ScottishBook167Wanted
