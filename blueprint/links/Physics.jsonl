@@ -244,3 +244,7 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/Physics/classical-mechanics/robot-kinematics/the-space-jacobian-of-the-product-of-exponentials-formula.md"}], "id": "af_da699b930268876cae5f85bc", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Physics/classical-mechanics/robot-dynamics-and-control/the-forward-dynamics-of-a-robot-as-a-control-affine-state-space-system.md"}], "id": "af_a5f6a3c3226fe2e83cb39f6c", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Physics/classical-mechanics/robot-kinematics/homogeneous-transformation-matrices-represent-rigid-motions.md"}], "id": "af_815bdb7cff68411925e5f20c", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Physics/classical-mechanics/README.md"}], "id": "af_2cf2e4d10b27bfd933bf4bce"}
+{"subject": [{"type": "generic", "uri": "../roadmap/Physics/classical-mechanics/grasping-and-contact/README.md"}], "id": "af_2b260cf4aebe8d5af7dcd394"}
+{"subject": [{"type": "generic", "uri": "../roadmap/Physics/classical-mechanics/robot-dynamics-and-control/README.md"}], "id": "af_5be80a9d492e12b4c8335889"}
+{"subject": [{"type": "generic", "uri": "../roadmap/Physics/classical-mechanics/robot-kinematics/README.md"}], "id": "af_6e3c6e1feca23510e8320f93"}
