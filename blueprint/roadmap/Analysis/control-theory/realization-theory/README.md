@@ -8,3 +8,4 @@ the uniqueness of a canonical realization up to similarity.
 - [Hankel factorization of Markov parameters](hankel-factorization-of-markov-parameters.md)
 - [Minimal realizations are exactly the canonical ones](minimal-realizations-are-canonical.md)
 - [Minimal realizations are unique up to a unique similarity](minimal-realizations-are-similar.md)
+- [Exponential polynomials that do not decay are not integrable](exponential-polynomials-that-do-not-decay-are-not-integrable.md)

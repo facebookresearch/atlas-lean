@@ -11,6 +11,8 @@ Mathematical control theory of finite-dimensional systems: controllability of li
 - [Observability of linear systems](observability-of-linear-systems/README.md)
 - [Realization theory](realization-theory/README.md)
 - [Sampled-data systems](sampled-data-systems/README.md)
+- [Model predictive control](model-predictive-control/README.md)
+- [Robust and H-infinity control](robust-and-h-infinity-control/README.md)
 
 ## Single-input single-output linear systems
 

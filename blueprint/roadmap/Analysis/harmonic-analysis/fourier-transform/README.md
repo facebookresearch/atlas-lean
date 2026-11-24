@@ -18,3 +18,4 @@ The Fourier transform on R^n and Schwartz functions: convolution, Bochner, Hausd
 - [Fourier inversion formula](fourier-inv-fourier-eq.md)
 - [Fourier transform on the Schwartz space](fourier-transform-clm.md)
 - [Paley–Wiener theorem on a real vector space](paley-wiener-theorem-on-a-real-vector-space.md)
+- [Convolution of an integrable kernel with a bounded signal](convolution-of-an-integrable-kernel-with-a-bounded-signal.md)
