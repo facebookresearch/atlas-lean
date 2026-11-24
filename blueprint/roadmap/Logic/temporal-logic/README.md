@@ -11,3 +11,4 @@ Linear and branching-time temporal logics interpreted over infinite words and tr
 - [Model checking for linear temporal logic](model-checking-for-linear-temporal-logic/README.md)
 
 - [Temporal specifications](temporal-specification/README.md)
+- [Model checking algorithms](model-checking-algorithms/README.md)

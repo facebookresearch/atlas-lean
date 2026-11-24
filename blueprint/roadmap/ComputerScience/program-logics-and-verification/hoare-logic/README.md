@@ -41,3 +41,5 @@
 - [Total-correctness label for Hoare triples](total-correctness.md)
 - [Derivability of a Hoare triple is partial-correctness validity](derivable-iff-valid-2.md)
 - [Total-correctness Hoare logic as a labelled proof system](derivable-in-total-correctness-iff-tvali.md)
+- [Self-composition reduces 2-safety to safety](self-composition-reduces-2-safety-to-safety.md)
+- [Two-run product of IMP commands](two-run-product-of-imp-commands.md)

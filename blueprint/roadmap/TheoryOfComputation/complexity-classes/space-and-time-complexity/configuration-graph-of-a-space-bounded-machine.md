@@ -2,8 +2,7 @@
 
 Let $M$ be a deterministic or nondeterministic Turing machine with a read-only input tape and work tapes, all of whose computation branches halt, and let
 $S(n) \ge \log n$ be a space bound for $M$. A *configuration* of $M$ consists of its state, its head positions and the contents of its non-blank work-tape
-cells. For an input $x$, the *configuration graph* $G_{M,x}$ is the directed graph whose vertices are the configurations that $M$ can reach from the start
-configuration $C^x_{\mathrm{start}}$, with an edge from $C$ to $C'$ when $C'$ is reached from $C$ in one step of the transition function; it has out-degree one if $M$ is
+cells. For an input $x$, the *configuration graph* $G_{M,x}$ is the directed graph whose vertices are all configurations of $M$ on inputs of length $|x|$ that use at most $S(|x|)$ work-tape cells, with an edge from $C$ to $C'$ when $C'$ is reached from $C$ in one step of the transition function; it has out-degree one if $M$ is
 deterministic and at most two if $M$ is nondeterministic.
 
 - After modifying $M$ to erase its work tapes before accepting, there is a single accepting configuration $C_{\mathrm{accept}}$, and $M$ accepts $x$ if and only if

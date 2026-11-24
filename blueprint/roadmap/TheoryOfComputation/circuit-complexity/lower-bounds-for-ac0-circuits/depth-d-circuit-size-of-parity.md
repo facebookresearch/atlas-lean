@@ -5,8 +5,8 @@ negations.
 
 - (*Depth two.*) The depth-2 circuit complexity of $\mathrm{PARITY}_n$ and of its negation is exactly $2^{n-1}$: every DNF or CNF for $\mathrm{PARITY}_n$ has size at least
   $2^{n-1}$, and there are a DNF and a CNF of size $2^{n-1}$.
-- (*Upper bound.*) For every $d$, $\mathrm{PARITY}_n$ and its negation have depth-$d$ circuits of size $2^{O(n^{1/(d-1)})}$.
-- (*Lower bound, Håstad.*) For every $d$ there is $\varepsilon > 0$ such that $\mathrm{PARITY}_n$ has no depth-$d$ circuits of size $2^{\varepsilon n^{1/(d-1)}}$.
+- (*Upper bound.*) For every $d \ge 2$, $\mathrm{PARITY}_n$ and its negation have depth-$d$ circuits of size $2^{O(n^{1/(d-1)})}$.
+- (*Lower bound, Håstad.*) For every $d \ge 2$ there is $\varepsilon > 0$ such that $\mathrm{PARITY}_n$ has no depth-$d$ circuits of size $2^{\varepsilon n^{1/(d-1)}}$.
 
 So the exponent $n^{1/(d-1)}$ is optimal up to the constant, and in particular parity is not in $\mathsf{AC}^0$.
 

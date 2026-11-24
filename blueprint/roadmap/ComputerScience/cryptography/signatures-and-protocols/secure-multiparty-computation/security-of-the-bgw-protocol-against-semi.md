@@ -16,7 +16,7 @@ against up to $t$ semi-honest corrupted parties whenever $2t < n$.
 
 ## Depends on
 
-- [Two-party security against semi-honest adversaries](two-party-security-against-semi-honest.md)
+- [Multiparty security against semi-honest adversaries](multiparty-security-against-semi-honest.md)
 
 ## Sources
 

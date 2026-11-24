@@ -8,3 +8,4 @@
 - [Asynchronous message-passing systems](asynchronous-message-passing-systems.md)
 - [Consistent cuts and their lattice](consistent-cuts-and-their-lattice.md)
 - [Correctness of the Chandy–Lamport snapshot algorithm](correctness-of-the-chandylamport-snapshot.md)
+- [Message channel semantics](message-channel-semantics.md)
