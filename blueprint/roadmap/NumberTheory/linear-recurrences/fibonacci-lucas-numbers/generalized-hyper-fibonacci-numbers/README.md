@@ -14,5 +14,3 @@ The generalized Fibonacci sequence includes the Fibonacci numbers ($p = 1$, $a =
 - [$p$-Lucas numbers as a companion Lucas sequence](generalized-pfibonacci-two-p.md): the $p$-Lucas numbers as a companion Lucas sequence
 - [Initial values of generalized hyper-Fibonacci numbers](generalized-hyper-fibonacci-zero-one.md): initial values
 - [Recurrence for generalized hyper-Fibonacci numbers](generalized-hyper-fibonacci-succ-succ.md): the recurrence
-- [A binomial-sum formula for generalized hyper-Fibonacci numbers](generalized-hyper-fibonacci-sub-eq-sub.md): a binomial-sum formula
-- [Hankel determinants of generalized hyper-Fibonacci numbers](generalized-hyper-fibonacci-hankel-det.md): their Hankel determinants
