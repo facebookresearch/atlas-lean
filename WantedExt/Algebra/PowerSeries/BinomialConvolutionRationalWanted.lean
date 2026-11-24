@@ -51,21 +51,6 @@ public theorem_wanted exists_polynomial_quotient_of_extension {F G : Type*} [Fie
     (h : PowerSeries.map (algebraMap F G) A * (q : PowerSeries G) = p) :
     ∃ P Q : Polynomial F, Q ≠ 0 ∧ A * (Q : PowerSeries F) = P
 
-/-- **Binomial product with a geometric series.** For every field $K$ of characteristic $0$, every
-power series $A(x)$ over $K$ and every $\beta \in K$,
-
-$$A(x) \odot \frac{1}{1 - \beta x} = \frac{1}{1 - \beta x} A\left(\frac{x}{1 - \beta x}\right),$$
-
-where $\odot$ is the binomial product and $A(x/(1 - \beta x))$ is the substitution of the series
-$x/(1 - \beta x)$, which has zero constant term, into $A$.
-
-Source: Ira M. Gessel and Ishan Kar, *Binomial Convolutions for Rational Power Series*,
-Journal of Integer Sequences 27 (2024), Article 24.1.3, Corollary 5 (`jis-2024-24.1.3-cor-5`). -/
-public theorem_wanted binomialProduct_inv_one_sub {K : Type*} [Field K] [CharZero K]
-    (A : PowerSeries K) (β : K) :
-    binomialProduct A (1 - C β * X)⁻¹ =
-      (1 - C β * X)⁻¹ * PowerSeries.subst (X * (1 - C β * X)⁻¹) A
-
 /-- **Binomial products of proper rational series.** Let $K$ be a field of characteristic $0$, let
 $\alpha_1, \dots, \alpha_m, \beta_1, \dots, \beta_n \in K$, not necessarily distinct or nonzero,
 and let $R$, $S$ be polynomials over $K$ with $\deg R < m$ and $\deg S < n$. If $A$, $B$ are power

@@ -13,6 +13,7 @@ Groups of matrices over fields and rings: SL2, PGL2 and SU(2) and their conjugac
 - [Exponent of the general linear group over a prime field](general-linear-group-exponent-eq-lcm-eq.md)
 - [Jordan's theorem on finite linear groups](jordan-linear-groups.md)
 - [Malcev's theorem on linear groups](malcev-residually-finite.md)
+- [Order of the general linear group over a finite field](card-general-linear-group-finite-field.md)
 - [Selberg's lemma](selberg-finite-index-torsion-free.md)
 - [Stable sets of linear automorphisms](has-stable-series.md)
 - [Generation of the special linear group by elementary transvections](generation-of-special-linear-groups-by-transvections.md)
