@@ -12804,6 +12804,7 @@
   "MathlibExt/NumberTheory/TwistedCompleteExponentialSum": {"to": "NumberTheory/exponential-sums", "title": "Incomplete exponential sums"},
   "MathlibExt/NumberTheory/TwoComplexity": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Integer complexity"},
   "MathlibExt/NumberTheory/TwoComplexityMax": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Integer complexity"},
+  "MathlibExt/NumberTheory/TwoNearPerfectOddDivisor": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Near-perfect and deficient-perfect numbers"},
   "MathlibExt/NumberTheory/TwoNearPerfectOmittedDivisors": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Near-perfect and deficient-perfect numbers"},
   "MathlibExt/NumberTheory/TwoComplexitySum": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Integer complexity"},
   "MathlibExt/NumberTheory/TwoNearPerfectPowerOfTwoDivisors": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Near-perfect and deficient-perfect numbers"},
