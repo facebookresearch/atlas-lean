@@ -58,11 +58,12 @@ measure and as the objective cost, and a connection radius `radius`.
 * RRT: a fold over the sample list. For each sample `s`, let `u` be the
   nearest current tree vertex (the first cost minimizer in list order,
   computed by `nearest`) and `x := O.steer u s` the steered configuration;
-  `x` is inserted with edge `(u, x)` when `x` is free, the local planner
-  links `u` to `x`, and `x` is fresh. There is no check on the raw sample
-  `s` itself: a non-free sample can still extend the tree through its
-  steered point, and there is no explicit skip for samples already in the
-  tree. The output keeps both edge
+  `x` is inserted with edge `(u, x)` when the raw sample `s` is free, `x`
+  is free, the local planner links `u` to `x`, and `x` is fresh. A sample
+  that is not collision free is skipped without steering influence,
+  matching the source algorithms, which draw every sample from the
+  collision-free space; a sample whose steered point already lies in the
+  tree inserts nothing. The output keeps both edge
   endpoints in the vertex list, vertices and edge targets duplicate free,
   no edge into the start, one more vertex than edges, every vertex
   reachable from the start, and parent chains with vertices in the RRT vertex list duplicate free
@@ -73,9 +74,12 @@ measure and as the objective cost, and a connection radius `radius`.
   collision-free samples, duplicates removed, and the edge list carries
   both directed arcs of each qualifying unordered pair.
 * RRT*: a fold over the sample list threading vertices, parent edges, and a
-  cost-to-come table. Every sample `s` is steered from its nearest vertex
-  `u` (`x := O.steer u s`) and the extension is skipped only when `x`
-  fails the free/link/fresh/has-parent gate. The parent search is seeded
+  cost-to-come table. Every collision-free sample `s` is steered from its
+  nearest vertex `u` (`x := O.steer u s`) and the extension is skipped when
+  `s` is not collision free or when `x` fails the free/link/fresh/has-parent
+  gate; a sample that is not collision free is skipped without steering
+  influence, matching the source algorithms, which draw every sample from
+  the collision-free space. The parent search is seeded
   with the nearest vertex `u` when it is a candidate (otherwise the first
   candidate) and replaces the incumbent only on a strictly smaller
   cost-to-come plus edge cost among vertices that link to `x` and are
@@ -395,16 +399,18 @@ theorem nearest_mem {C : Type} (O : Oracles C) {verts : List C}
         exact List.mem_cons_of_mem v hw
 
 /-- RRT growth folded over the samples by structural recursion. For each sample
-`s`, steer from the nearest current vertex toward `s` and link to the steered
-configuration when it is collision free and the local planner succeeds.
-Steered configurations already in the tree are skipped. -/
+`s`, samples that are not collision free are skipped (the source algorithms
+sample only collision-free configurations); otherwise steer from the nearest
+current vertex toward `s` and link to the steered configuration when it is
+collision free and the local planner succeeds. Steered configurations already
+in the tree are skipped. -/
 def rrtAux {C : Type} [DecidableEq C] (O : Oracles C) (start : C) :
     List C → List C → List (C × C) → List C × List (C × C)
   | [], verts, edges => (verts, edges)
   | s :: ss, verts, edges =>
       let u := nearest O verts start s
       let x := O.steer u s
-      if O.free x = true ∧ O.link u x = true ∧ x ∉ verts then
+      if O.free s = true ∧ O.free x = true ∧ O.link u x = true ∧ x ∉ verts then
         rrtAux O start ss (x :: verts) ((u, x) :: edges)
       else
         rrtAux O start ss verts edges
@@ -416,7 +422,7 @@ theorem rrtAux_nil {C : Type} [DecidableEq C] (O : Oracles C) (start : C)
 theorem rrtAux_cons {C : Type} [DecidableEq C] (O : Oracles C) (start : C)
     (s : C) (ss : List C) (verts : List C) (edges : List (C × C)) :
     rrtAux O start (s :: ss) verts edges =
-      (if O.free (O.steer (nearest O verts start s) s) = true ∧
+      (if O.free s = true ∧ O.free (O.steer (nearest O verts start s) s) = true ∧
           O.link (nearest O verts start s) (O.steer (nearest O verts start s) s) = true ∧
           O.steer (nearest O verts start s) s ∉ verts then
         rrtAux O start ss (O.steer (nearest O verts start s) s :: verts)
@@ -456,11 +462,11 @@ theorem rrtAux_invar {C : Type} [DecidableEq C] (O : Oracles C) (start : C)
       intro verts edges hstart hnd hend htgtnd hnoself hnotgt hlen
       rw [rrtAux_cons]
       by_cases hcond :
-        O.free (O.steer (nearest O verts start s) s) = true ∧
+        O.free s = true ∧ O.free (O.steer (nearest O verts start s) s) = true ∧
           O.link (nearest O verts start s) (O.steer (nearest O verts start s) s) = true ∧
           O.steer (nearest O verts start s) s ∉ verts
       · rw [ite_eq_left hcond]
-        obtain ⟨-, -, hnotmem⟩ := hcond
+        obtain ⟨-, -, -, hnotmem⟩ := hcond
         have hne : verts ≠ [] := List.ne_nil_of_mem hstart
         have hu : nearest O verts start s ∈ verts := nearest_mem O hne start s
         have hstart' : start ∈ O.steer (nearest O verts start s) s :: verts :=
@@ -541,7 +547,7 @@ theorem rrtAux_subset {C : Type} [DecidableEq C] (O : Oracles C) (start : C)
       intro verts edges h v hv
       rw [rrtAux_cons] at hv
       by_cases hcond :
-        O.free (O.steer (nearest O verts start s) s) = true ∧
+        O.free s = true ∧ O.free (O.steer (nearest O verts start s) s) = true ∧
           O.link (nearest O verts start s) (O.steer (nearest O verts start s) s) = true ∧
           O.steer (nearest O verts start s) s ∉ verts
       · rw [ite_eq_left hcond] at hv
@@ -585,7 +591,7 @@ theorem rrtAux_length {C : Type} [DecidableEq C] (O : Oracles C) (start : C)
       intro verts edges
       rw [rrtAux_cons]
       by_cases hcond :
-        O.free (O.steer (nearest O verts start s) s) = true ∧
+        O.free s = true ∧ O.free (O.steer (nearest O verts start s) s) = true ∧
           O.link (nearest O verts start s) (O.steer (nearest O verts start s) s) = true ∧
           O.steer (nearest O verts start s) s ∉ verts
       · rw [ite_eq_left hcond]
@@ -615,7 +621,7 @@ theorem rrtAux_edge_of_mem {C : Type} [DecidableEq C] (O : Oracles C) (start : C
       intro verts edges h v hv
       rw [rrtAux_cons] at hv ⊢
       by_cases hcond :
-        O.free (O.steer (nearest O verts start s) s) = true ∧
+        O.free s = true ∧ O.free (O.steer (nearest O verts start s) s) = true ∧
           O.link (nearest O verts start s) (O.steer (nearest O verts start s) s) = true ∧
           O.steer (nearest O verts start s) s ∉ verts
       · rw [ite_eq_left hcond] at hv ⊢
@@ -4716,20 +4722,22 @@ theorem shiftCostsPair_pairVal_eq_recomputeCosts {S : Type} [DecidableEq S] (O :
     exact hRat
 
 /-- Extend the tree by one steered sample: steer `s` from its nearest vertex
-    `u` to `x`, and if `x` is free, the nearest edge links, `x` is fresh, and
-    `x` has a parent `p` (parent search falls back to `u`), add `x` and
-    `(p, x)`, rewire over the old vertices
+    `u` to `x`, and if `s` is free, `x` is free, the nearest edge links, `x`
+    is fresh, and `x` has a parent `p` (parent search falls back to `u`),
+    add `x` and `(p, x)`, rewire over the old vertices
     at the pre-insertion count `verts.length` while refusing `p`'s ancestor
     chain, judging flips by the post-insertion recomputed guard table
     (maintained by subtree shifts after each flip inside `rewireAux`,
     agreeing in rational value with per-flip recomputation); the final costs
-    are the recomputation over the new edges. -/
+    are the recomputation over the new edges. A sample that is not collision
+    free is skipped unchanged; the source algorithms sample only
+    collision-free configurations. -/
 def extendStar {S : Type} [DecidableEq S] (O : Oracles S) (verts : List S)
     (edges : List (S × S)) (costs : List (S × (Int × Nat))) (radiusOf : ℕ → ℚ)
     (start s : S) : List S × List (S × S) × List (S × (Int × Nat)) :=
   let u := nearest O verts start s
   let x := O.steer u s
-  if O.free x = true ∧ O.link u x = true ∧ x ∉ verts then
+  if O.free s = true ∧ O.free x = true ∧ O.link u x = true ∧ x ∉ verts then
     match chooseParent O verts costs radiusOf u x with
     | none => (verts, edges, costs)
     | some p =>
@@ -4754,7 +4762,7 @@ theorem extendStar_invar {S : Type} [DecidableEq S] (O : Oracles S)
   dsimp only
   set u := nearest O verts start s with hu
   set x := O.steer u s with hx
-  by_cases hgate : O.free x = true ∧ O.link u x = true ∧ x ∉ verts
+  by_cases hgate : O.free s = true ∧ O.free x = true ∧ O.link u x = true ∧ x ∉ verts
   · rw [ite_eq_left hgate]
     cases hcp : chooseParent O verts costs radiusOf u x with
     | none =>
@@ -4764,7 +4772,7 @@ theorem extendStar_invar {S : Type} [DecidableEq S] (O : Oracles S)
           chooseParent_mem O verts costs radiusOf u x p hcp
         have hmem := (mem_candidates O verts radiusOf u x p).mp hpmem
         obtain ⟨hp_verts, _, _⟩ := hmem
-        have hx_fresh : x ∉ verts := hgate.2.2
+        have hx_fresh : x ∉ verts := hgate.2.2.2
         have hx_ne : x ≠ start := fun heq => hx_fresh (heq.symm ▸ h.start_mem)
         have hp_ne_x : p ≠ x := fun heq => hx_fresh (heq ▸ hp_verts)
         have hx_new : x ∈ x :: verts := List.mem_cons_self
@@ -4920,7 +4928,7 @@ theorem extendStar_cost_start {S : Type} [DecidableEq S] (O : Oracles S)
   dsimp only
   set u := nearest O verts start s with hu
   set x := O.steer u s with hx
-  by_cases hgate : O.free x = true ∧ O.link u x = true ∧ x ∉ verts
+  by_cases hgate : O.free s = true ∧ O.free x = true ∧ O.link u x = true ∧ x ∉ verts
   · rw [ite_eq_left hgate]
     cases hcp : chooseParent O verts costs radiusOf u x with
     | none =>
@@ -5006,7 +5014,8 @@ theorem rrtStarAux_subset {S : Type} [DecidableEq S] (O : Oracles S)
       | inl hv =>
           unfold extendStar at hv
           dsimp only at hv
-          by_cases hcond : (O.free (O.steer (nearest O verts start s) s) = true ∧
+          by_cases hcond : (O.free s = true ∧
+            O.free (O.steer (nearest O verts start s) s) = true ∧
             O.link (nearest O verts start s)
               (O.steer (nearest O verts start s) s) = true ∧
             O.steer (nearest O verts start s) s ∉ verts)
@@ -5259,7 +5268,7 @@ theorem rrtAux_reachable {C : Type} [DecidableEq C] (O : Oracles C)
       intro verts edges hreach v hv
       rw [rrtAux_cons] at hv ⊢
       by_cases hcond :
-        O.free (O.steer (nearest O verts start s) s) = true ∧
+        O.free s = true ∧ O.free (O.steer (nearest O verts start s) s) = true ∧
           O.link (nearest O verts start s) (O.steer (nearest O verts start s) s) = true ∧
           O.steer (nearest O verts start s) s ∉ verts
       · rw [ite_eq_left hcond] at hv ⊢

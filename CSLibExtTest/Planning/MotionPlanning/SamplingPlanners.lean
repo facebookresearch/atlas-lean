@@ -26,7 +26,7 @@ rewiring with recomputed tree costs, descendant cost freshness, the
 nearest-vertex candidate fallback, ancestor rejection on rewire, `rewireAux`
 forbid-guard isolation with a synthetic cost table, an RRT* size-dependent
 radius schedule, steering-oracle midpoint insertion for RRT and RRT*, the
-nearest-edge gate regression, the gate-fallback regression, a 201-vertex chain cost-table scale check, and axiom probes
+nearest-edge gate regression, the gate-fallback regression, a 201-vertex chain cost-table scale check, the blocked-sample skip, and axiom probes
 on the main lemmas.
 -/
 
@@ -165,6 +165,18 @@ def testOraclesSteer : Oracles (Int × Int) :=
 
 /-- Sanity check on the cost proxy: 3-4-5 triangle. -/
 theorem testSqDist_val : sqDist (0, 0) (3, 4) = 25 := by decide
+
+/-- Fixture where the blocked raw sample `(10, 0)` would steer to the free
+    point `(1, 0)`: only points with `x < 5` are free. -/
+def testOraclesBlockedSteer : Oracles (Int × Int) :=
+  { free := fun p => decide (p.1 < 5)
+    link := fun _ _ => true
+    steer := fun _ s => if s == (10, 0) then (1, 0) else s
+    cost := sqDist
+    radius := 100
+    cost_nonneg := sqDist_nonneg
+    cost_self := sqDist_self
+    cost_pos := sqDist_pos }
 
 /-- sPRM vertices on four free samples. -/
 theorem testSprmVertices_allFree :
@@ -674,3 +686,18 @@ theorem testRecomputeCosts_chainScale :
   decide
 
 #print axioms testRecomputeCosts_chainScale
+
+/-- The blocked raw sample is skipped even though its steered point is free,
+    so the tree stays at the start. -/
+theorem testRrt_blockedSampleSkipped :
+    rrt testOraclesBlockedSteer (0, 0) [(10, 0)] = ([(0, 0)], []) := by
+  decide
+
+/-- The blocked raw sample is skipped even though its steered point is free,
+    so the vertex list stays at the start. -/
+theorem testRrtStar_blockedSampleSkipped :
+    (rrtStar testOraclesBlockedSteer (fun _ => 100) (0, 0) [(10, 0)]).1 = [(0, 0)] := by
+  decide
+
+#print axioms testRrt_blockedSampleSkipped
+#print axioms testRrtStar_blockedSampleSkipped
