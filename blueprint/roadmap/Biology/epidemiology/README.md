@@ -12,3 +12,5 @@ Compartmental, renewal and branching-process models of infectious disease transm
 - [Epidemics on networks](epidemics-on-networks/README.md)
 - [Global stability of compartmental models](global-stability-of-compartmental-models/README.md)
 - [Stochastic epidemic thresholds](stochastic-epidemic-thresholds/README.md)
+- [Case-control studies](case-control-studies/README.md)
+- [Population attributable fraction: the Levin and Miettinen formulas](population-attributable-fraction-levin-and-miettinen-identities.md)

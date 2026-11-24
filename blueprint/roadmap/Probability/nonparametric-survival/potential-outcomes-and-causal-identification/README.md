@@ -55,6 +55,11 @@
 - [Unrestricted algebraic identity behind the LATE theorem](wald-estimand-eq-late-totalized.md)
 - [Local average treatment effect theorem](wald-estimand-eq-late.md)
 
+## Effect measures and mediation
+
+- [Collapsibility of effect measures without confounding](collapsibility-odds-ratio-non-collapsibility-without-confounding.md)
+- [Natural direct and indirect effects: the mediation formula](natural-direct-and-indirect-effects-mediation-formula.md)
+
 ## Related topics
 
 - [Causal Bayesian networks](../../../ComputerScience/machine-learning/probabilistic-graphical-models/causal-bayesian-networks/README.md):

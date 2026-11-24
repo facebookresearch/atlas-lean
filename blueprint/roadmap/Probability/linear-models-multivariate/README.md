@@ -17,3 +17,4 @@ Multivariate normal theory and linear models: Gaussian maximum likelihood, Cochr
 - [Gaussian maximum likelihood](gaussian-maximum-likelihood/README.md)
 - [Kernel principal component analysis](kernel-principal-component-analysis/README.md)
 - [Gauss–Markov covariance minimality](gauss-markov-covariance-minimality.md)
+- [Wright's path-coefficient rules](wrights-method-of-path-coefficients.md)

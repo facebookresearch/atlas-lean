@@ -34,3 +34,7 @@
 - [Single-locus model as Cockerham components](to-components.md)
 - [Single-locus covariance between relatives in Cockerham form](rel-cov-eq-cov.md)
 - [One-locus phantom heritability](falconer-eq-of-locus.md)
+
+## Recurrence risks of relatives
+
+- [Risch's recurrence-risk ratios for relatives](risch-recurrence-risk-ratios-lambda-r-1-halves-per-degree-of-relations.md)

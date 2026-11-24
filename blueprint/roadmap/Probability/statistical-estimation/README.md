@@ -17,3 +17,7 @@ Point estimation theory: bias, risk and mean squared error, likelihood and maxim
 - [Sufficient statistics and the factorization theorem](sufficient-statistics-and-the-factorization-theo/README.md)
 - [Rao–Blackwell theorem](rao-blackwell-theorem/README.md)
 - [Hidden Markov and latent structure models](hidden-markov-and-latent-structure-models/README.md)
+- [Capture–recapture and species richness](capture-recapture-and-species-richness/README.md)
+- [Fieller's confidence sets for a ratio of means](fiellers-theorem-for-ratio-confidence-sets.md)
+- [Spearman–Kärber estimator of the mean tolerance](spearman-karber-estimator-of-the-mean-tolerance.md)
+- [Cohen's kappa and its maximum for fixed margins](cohens-kappa-and-its-marginal-constrained-maximum.md)

@@ -14,3 +14,4 @@
 - [Hardy–Weinberg frequency $2pq$ of the heterozygote](offspring-heterozygote.md)
 - [Deviation from Hardy–Weinberg proportions](hw-deviation.md)
 - [Hardy–Weinberg proportions after one generation of random mating](hw-deviation-offspring.md)
+- [Snyder's ratios for a recessive trait](snyders-ratios-for-a-recessive-trait.md)

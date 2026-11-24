@@ -7,3 +7,4 @@
 - [Poisson conditioning with equal rates](has-law-cond-binomial-fair-coin.md)
 - [Validity of the one-sided McNemar test](is-valid-pvalue-mcnemar-pvalue.md)
 - [Upper tail of the fair-coin binomial law](upper-tail-binomial-fair-coin.md)
+- [Sib transmission/disequilibrium test](sib-transmission-disequilibrium-test-s-tdt.md)
