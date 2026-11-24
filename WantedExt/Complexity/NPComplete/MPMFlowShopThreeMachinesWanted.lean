@@ -22,7 +22,7 @@ machines: `FMPM3||C_max`, minimal NP-hard in the strong sense, Garey et al. (197
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Data.Finset.Dedup

@@ -5,6 +5,7 @@ Positive definite and semidefinite matrices, criteria for definiteness, and ineq
 - [Hadamard's inequality and determinant bounds for positive semidefinite matrices](hadamard-s-inequality-and-determinant-bounds-for/README.md)
 - [Lidskii's inequality](lidskii-s-eigenvalue-inequality/README.md)
 - [Lieb's concavity theorem](lieb-s-concavity-theorem/README.md)
+- [Matrix relative entropy](matrix-relative-entropy/README.md)
 - [Minkowski's determinant inequality](minkowski-s-determinant-inequality/README.md)
 - [Fischer's determinant inequality](fischer-s-determinant-inequality/README.md)
 - [Sylvester's criterion](sylvester-s-criterion/README.md)

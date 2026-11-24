@@ -30,8 +30,8 @@ J. A. Tropp, *An Introduction to Matrix Concentration Inequalities*, Found. Tren
 8 (2015), arXiv:1501.01571, is:
 
 * Lieb's concavity theorem (Theorem 3.4.1; E. H. Lieb, *Convex trace functions and the
-  Wigner–Yanase–Dyson conjecture*, Adv. Math. 11 (1973), Theorem 6), recorded as a
-  matrix-analysis result in `MathlibExt.LinearAlgebra.Matrix.LiebConcavityWanted`;
+  Wigner–Yanase–Dyson conjecture*, Adv. Math. 11 (1973), Theorem 6), a matrix-analysis result
+  in `MathlibExt.LinearAlgebra.Matrix.LiebConcavity`;
 * subadditivity of matrix cgfs (Lemma 3.5.1);
 * matrix Gaussian series (Theorem 4.6.1);
 * the matrix Chernoff inequality (Theorem 5.1.1);
