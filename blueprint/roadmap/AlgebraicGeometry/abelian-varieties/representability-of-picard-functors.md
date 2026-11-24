@@ -51,7 +51,8 @@ over a field to a scheme, through its dense schematic open subspace.
 - [The fppf topology on schemes](../grothendieck-topologies/fppf-topology-on-schemes.md), for the
   fppf sheaves in which the statement places the relative Picard functors
 - [The topology induced on an over category](../../CategoryTheory/sites-and-sheaves/topology-on-an-over-category.md),
-  for the fppf site of schemes over $T$
+  for the fppf site of schemes over $S$, on which the relative Picard functors are sheaves,
+  evaluated at $S$-schemes $T \to S$
 
 ## Proof depends on
 
@@ -64,8 +65,9 @@ over a field to a scheme, through its dense schematic open subspace.
 
 A good expansion also states and links:
 
-- algebraic spaces over $T$, presented as quotients of étale equivalence relations (stated in the
-  project as `AlgebraicGeometry.GeneralStackGeometry.AlgebraicSpaceOver`,
+- algebraic spaces over $S$, or over $T$ after base change along $T \to S$, presented as quotients
+  of étale equivalence relations (stated in the project as
+  `AlgebraicGeometry.GeneralStackGeometry.AlgebraicSpaceOver`,
   MathlibExt/AlgebraicGeometry/GeneralStackGeometry.lean:181–185, and
   `AlgebraicGeometry.EtaleSpacePresentations.EtaleEquivalencePresentation`,
   MathlibExt/AlgebraicGeometry/EtaleSpacePresentations.lean:65–76), in which the statement places

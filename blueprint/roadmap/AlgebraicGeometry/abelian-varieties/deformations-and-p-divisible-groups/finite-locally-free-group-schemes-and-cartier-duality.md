@@ -62,14 +62,17 @@ isogeny with $\operatorname{Ker}(f)^D$ (van der Geer–Moonen, Theorem (7.5)).
   of the same rank is an isomorphism
 - [Spectra of commutative Hopf algebras](../../schemes-and-morphisms/affine-group-schemes-and-hopf-algebras/spec-of-commutative-hopf-algebras.md),
   for the group scheme $\operatorname{Spec}$ of the dual Hopf algebra over an affine open subscheme
-  on which $G$ is finite free, in the construction of $G^D$ (Oort, I.2); gluing and biduality are
-  further steps
+  on which $G$ is finite free, the candidate for $G^D$ there (Oort, I.2); its identification with
+  the character sheaf, the gluing and biduality are further steps
 
 ## Expansion
 
-A good expansion has pages for: the representability of $G^D$ by the dual of the Hopf algebra of $G$
-(stated in the project as `CartierDual`, MathlibExt/RingTheory/HopfAlgebra/CartierDual.lean:54–56,
-with its Hopf algebra structure for finite free algebras, `CartierDual.instHopfAlgebra`, :1114–1118)
+A good expansion has pages for: the affine model of $G^D$, the dual Hopf algebra of the coordinate
+algebra $H$ of $G$ over an affine open $\operatorname{Spec} R$ of $S$ on which $H$ is finite free
+(stated in the project as `CartierDual R H`, defined as `Module.Dual`,
+MathlibExt/RingTheory/HopfAlgebra/CartierDual.lean:54–56, with its Hopf algebra structure
+`CartierDual.instHopfAlgebra`, MathlibExt/RingTheory/HopfAlgebra/CartierDual.lean:1114–1118); the
+identification of its spectrum with the character sheaf, the gluing of these local identifications
 and biduality (Oort, I.2); the existence of fppf quotients of finite locally free group schemes by
 finite locally free closed subgroups, with the multiplicativity of ranks (Stacks Project, Tag 07S7,
 which applies to the action of $H$ on the affine $S$-scheme $G$); the exactness of Cartier duality

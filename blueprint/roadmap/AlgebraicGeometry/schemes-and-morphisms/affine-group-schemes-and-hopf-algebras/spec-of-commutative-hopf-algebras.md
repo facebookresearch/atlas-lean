@@ -11,4 +11,4 @@ algebras $B \to A$.
 ## Sources
 
 - W. C. Waterhouse, *Introduction to Affine Group Schemes*, Graduate Texts in Mathematics 66,
-  Springer, 1979: §1.4.
+  Springer, 1979: §1.4 and §2.1.
