@@ -1,0 +1,18 @@
+# Greedy Reversal
+
+- [Is Perm](is-perm.md)
+- [Identity](identity.md)
+- [Framed](framed.md)
+- [Consecutive](consecutive.md)
+- [Breakpoints](breakpoints.md)
+- [Apply Reversal Core](apply-reversal-core.md)
+- [Unframe](unframe.md)
+- [Run Result](run-result.md)
+- [Removed](removed.md)
+- [Strip Breaks](strip-breaks.md)
+- [Is Strip](is-strip.md)
+- [Is Decreasing](is-decreasing.md)
+- [Greedy Run](greedy-run.md)
+- [Opt Count](opt-count.md)
+- [Greedy breakpoint algorithm sorts within φ(π)](greedy-sorts.md)
+- [Greedy is a 2-approximation](greedy-two-approx.md)
