@@ -9933,6 +9933,7 @@
   "MathlibExt/Analysis/SpecialFunctions/RpowRationalLowerBound": {"to": "Algebra/polynomials", "title": "A rational lower bound for a positive real root"},
   "MathlibExt/Analysis/SpecialFunctions/SigmoidLogOdds": {"to": "Analysis/special-functions/elementary-transcendental-functions", "title": "Logistic function"},
   "MathlibExt/Analysis/SpecialFunctions/TakagiFunction": {"to": "Analysis/real-functions/continuity-and-functional-equations", "title": "Takagi function"},
+  "MathlibExt/Analysis/SpecialFunctions/Trigonometric/ArcsinQuotientDerivatives": {"to": "Analysis/real-functions/integration", "title": "Areas between cosine powers"},
   "MathlibExt/Analysis/SpecialFunctions/Trigonometric/HalfPeriodSineSumEven": {"to": "Analysis/real-functions/integration", "title": "Areas between cosine powers"},
   "MathlibExt/Analysis/SpecialFunctions/WeierstrassFunction": {"to": "Analysis/real-functions/continuity-and-functional-equations", "title": "Weierstrass function"},
   "MathlibExt/Analysis/SpecialFunctions/WeierstrassNowhereDifferentiable": {"to": "Analysis/real-functions/continuity-and-functional-equations", "title": "Weierstrass function"},
