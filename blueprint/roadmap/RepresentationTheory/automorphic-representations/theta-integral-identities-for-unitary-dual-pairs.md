@@ -26,7 +26,7 @@ Weil representations $\omega$ and $\omega'$ of the two dual pairs that share the
   of $\nu$ at the places of a finite set, and a value of the partial Hecke $L$-function of $\nu$ at a
   point determined by the dimensions.
 
-These statements are not yet stated as pages because the geometries, models, matchings and
+These statements are held in this node because the geometries, models, matchings and
 constants are defined by explicit lattice and character data specific to this proof, with many
 side conditions (on the signatures, on the ramification of $E/F$ and of the characters, on the
 additive character); a reviewable statement needs those definitions stated and checked first.

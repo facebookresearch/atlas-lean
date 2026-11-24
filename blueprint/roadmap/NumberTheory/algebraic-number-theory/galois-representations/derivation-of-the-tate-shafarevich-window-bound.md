@@ -8,7 +8,7 @@ holds, given base change from definite unitary groups to $\mathrm{GL}_n$ and the
 below. The window
 bound itself takes both the Galois representations and this derivation as its proof inputs. The
 argument is long, and its intermediate statements are formulated with notions specific to this proof;
-they are not yet stated as pages because each needs those notions stated and checked first.
+they are held in this node because each needs those notions stated and checked first.
 
 The published results that the argument consumes are:
 
@@ -50,7 +50,7 @@ The published results that the argument consumes are:
 - Chevalley's theorem on congruence units.
 
 A good expansion has pages for the intermediate statements of the argument, in order, each with the
-inputs above that it uses; pages for the inputs not yet in the vault, among them the theorem of
+inputs above that it uses; pages for further inputs, among them the theorem of
 Ferrero and Washington, the $\ell$-adic Galois characters attached to algebraic Hecke characters and
 Chevalley's theorem on congruence units. The results
 on Galois cohomology above are linked below to the pages of their own expansion, and the definitions

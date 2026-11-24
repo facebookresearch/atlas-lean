@@ -14,23 +14,30 @@ theorems, the Poincaré–Lelong formula, arithmetic Hilbert–Samuel theorems a
 heights of cycles, toroidal compactifications of Siegel moduli spaces and further inputs from the
 geometry of abelian schemes and $p$-divisible groups.
 
-It is not yet stated as a page because the families, the points, their conditions and the lattices
+It is held as a node because the families, the points, their conditions and the lattices
 attached to them are specific to this proof and defined through many auxiliary notions; a reviewable
 statement needs those notions stated and checked first.
 
 A good expansion has definition pages for the points of the families, their conditions and their
 lattices, a page for the bound, and pages for the steps of its proof, linking the inputs it uses:
 those of the pages below, some of them in exact variants that are still unsourced, among them
-Fargues's integral Hodge–Tate sequence for $p$-divisible groups; and pages, still to be added, for
+Fargues's integral Hodge–Tate sequence for $p$-divisible groups; and pages for
 the Hodge filtration of prismatic Dieudonné modules and for Green's generic irreducible characters of
 $\mathrm{GL}_N(\mathbb{F}_p)$ attached to squarefree polynomials with nonzero constant term, which
 extend the cuspidal case.
 
+## Expansion
+
+A good expansion also states and links the following, each as Alpöge's library states it at the
+locators under Sources:
+
+- the class of families of auxiliary number fields attached to scales, which are the families of the window bounds for weighted Chebyshev sums (that node uses this one through the definite-side hypotheses, so it is not linked from here), for the families that the bound quantifies over
+- the points of a family, with their point conditions and the tie condition, for the points at which the bound holds
+- the lattice that the argument attaches to each point, for the covolume that the statement bounds
+
 ## Depends on
 
-- Not yet a page: the class of families of auxiliary number fields attached to scales, which are the families of the window bounds for weighted Chebyshev sums (that node uses this one through the definite-side hypotheses, so it is not linked from here), for the families that the bound quantifies over
-- Not yet a page: the points of a family, with their point conditions and the tie condition, for the points at which the bound holds
-- Not yet a page: the lattice that the argument attaches to each point, for the covolume that the statement bounds
+Its statement uses the notions listed under Expansion.
 
 ## Proof depends on
 
@@ -61,7 +68,7 @@ extend the cuspidal case.
 - [De Rham cohomology of abelian schemes](../abelian-varieties/deformations-and-p-divisible-groups/de-rham-cohomology-of-abelian-schemes.md), with the annihilator filtration, unsourced over arbitrary rings
 - [Grothendieck's existence theorem](../abelian-varieties/deformations-and-p-divisible-groups/grothendieck-existence-theorem.md), for the algebraization of morphisms and of proper formal schemes with a line bundle ample on the closed fibre
 - [Hodge–Tate sequence of a p-divisible group](../../NumberTheory/algebraic-number-theory/galois-representations/p-adic-hodge-theory/hodge-tate-sequence-of-p-divisible-groups.md), for Fargues's integral identification of the kernel of the Hodge–Tate map with the annihilator of the kernel of the dual map; the cokernel bound comes from a separate estimate
-- [Green's parametrization of the cuspidal characters of $\mathrm{GL}_n(\mathbb{F}_q)$](../../GroupTheory/characters-of-finite-groups/green-cuspidal-characters-of-gl-n.md), for the case of a prime field, the cuspidal characters; the extension to the generic characters attached to squarefree polynomials with nonzero constant term, which the proof also uses, is a separate statement, one of the pages still to be added named above
+- [Green's parametrization of the cuspidal characters of $\mathrm{GL}_n(\mathbb{F}_q)$](../../GroupTheory/characters-of-finite-groups/green-cuspidal-characters-of-gl-n.md), for the case of a prime field, the cuspidal characters; the extension to the generic characters attached to squarefree polynomials with nonzero constant term, which the proof also uses, is a separate statement, for which the plan above names a page
 - [Existence theorem of global class field theory](../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/existence-theorem/existence-of-class-fields.md), for the ray class fields
 
 ## Sources

@@ -68,6 +68,14 @@ that some sphere centred at the origin contains many of the lattice points of a 
 through Green's description the same construction is only present in a bundle of conditions, whose
 consumer on that route projects another of its components.
 
+## Expansion
+
+A good expansion also states and links the following, each as Alpöge's library states it at the
+locators under Sources:
+
+- the supply of good prime pairs $(q, d)$ described above, for the second intermediate statement, beside the window bound for Tate–Shafarevich groups
+- the construction of Behrend's type described above, of large sets of integers without the relations $j(s_2 - s_1) = i(s_3 - s_1)$, built from Behrend's lemma, for the host supply of the second intermediate statement
+
 ## Depends on
 
 - [Zero-free half-planes from one-sided bounds for weighted Chebyshev sums on windows](../../zeta-l-functions/dirichlet-l-functions/zeros-of-dirichlet-l-functions/zero-free-half-planes-from-chebyshev-bounds-on-windows.md), for the weighted Chebyshev functions $G_\chi$
@@ -79,8 +87,6 @@ consumer on that route projects another of its components.
 - [Definite-side hypotheses for families of characters](../../../RepresentationTheory/automorphic-representations/definite-side-hypotheses-for-character-families.md), in the first intermediate statement
 - [Window bound for Tate–Shafarevich groups of Tate twists over subfields of cyclotomic fields](../../algebraic-number-theory/galois-representations/tate-shafarevich-window-bound-over-cyclotomic-subfields.md), in the second intermediate statement
 - [Behrend's lemma: some sphere contains many lattice points of a cube](../../../Combinatorics/additive-combinatorics/progressions-dense-sets/bounds-for-roth-numbers/behrend-large-sphere.md), in the host supply of the second intermediate statement only, for the construction of large sets of integers without the linear relations above
-- Not yet a page: the supply of good prime pairs $(q, d)$ described above, for the second intermediate statement, beside the window bound for Tate–Shafarevich groups
-- Not yet a page: the construction of Behrend's type described above, of large sets of integers without the relations $j(s_2 - s_1) = i(s_3 - s_1)$, built from Behrend's lemma, for the host supply of the second intermediate statement
 
 ## Sources
 

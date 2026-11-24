@@ -35,8 +35,8 @@ Weil–Deligne representations of $W_{E_v}$, with the following laws:
   that extension.
 
 The local Langlands correspondence for $\mathrm{GL}_n$ satisfies laws of this kind for all
-representations; the form covered here asks less, except for the explicit type law. It is not yet
-stated as a page because the laws are formulated with encodings specific to this proof of
+representations; the form covered here asks less, except for the explicit type law. It is held as a
+node because the laws are formulated with encodings specific to this proof of
 Weil–Deligne representations (dimension, twists, tensor products with characters and with
 $\mathrm{Sp}(m)$, duals, characteristic polynomials of inertia, monodromy) and of local Artin maps;
 a reviewable statement needs each encoding stated and checked first.

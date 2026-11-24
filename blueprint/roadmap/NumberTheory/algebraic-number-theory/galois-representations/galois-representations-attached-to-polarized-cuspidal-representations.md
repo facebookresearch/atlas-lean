@@ -43,7 +43,7 @@ $v \mid \ell$ the same isomorphism, with semistability, under the separate hypot
 vector fixed by an Iwahori subgroup. The form covered here is not that theorem in other notation: it
 quantifies over every map with the laws of a partial correspondence, keeps only the clauses listed,
 and above $\ell$ asserts a comparison of Weil–Deligne representations only in the zero-monodromy
-cases listed. It is not yet stated as a page because these clauses are formulated with encodings
+cases listed. It is held as a node because these clauses are formulated with encodings
 specific to this proof of Weil–Deligne representations, of the $p$-adic Hodge-theoretic conditions at
 the places above $\ell$ (crystalline, de Rham and potentially semistable representations, Hodge–Tate
 jumps for a chosen embedding) and of the normalization of local components; a reviewable statement
@@ -54,6 +54,16 @@ A good expansion has a page for the precise statement, once the
 has one; a page for the published theorem of Barnet-Lamb, Gee, Geraghty and Taylor; and nodes for
 the construction that the proof below follows, through theta lifts and the geometry of the
 varieties they involve.
+
+## Expansion
+
+A good expansion also states and links the following, each as Alpöge's library states it at the
+locators under Sources:
+
+- a geometric realization in weight one, which attaches $\ell$-adic Galois representations to the automorphic representations of definite unitary groups of odd rank over CM fields that satisfy the proof's congruence and sphericity conditions, compatible with the Satake parameters at the spherical places away from $\ell$ and crystalline, with prescribed Hodge–Tate jumps, at the places above $\ell$, for the Galois representations of the statement
+- the existence of theta lifts of automorphic representations from the unitary group of a definite Hermitian space to those of definite skew-Hermitian spaces of every large dimension, under a bound on the weights, for moving to the representations that the geometric realization covers
+- a congruence between weights, for reaching the weights that the geometric realization covers
+- the argument for local–global compatibility that combines these inputs, for the clauses of the statement
 
 ## Depends on
 
@@ -71,10 +81,7 @@ varieties they involve.
 
 ## Proof depends on
 
-- Not yet a page: a geometric realization in weight one, which attaches $\ell$-adic Galois representations to the automorphic representations of definite unitary groups of odd rank over CM fields that satisfy the proof's congruence and sphericity conditions, compatible with the Satake parameters at the spherical places away from $\ell$ and crystalline, with prescribed Hodge–Tate jumps, at the places above $\ell$, for the Galois representations of the statement
-- Not yet a page: the existence of theta lifts of automorphic representations from the unitary group of a definite Hermitian space to those of definite skew-Hermitian spaces of every large dimension, under a bound on the weights, for moving to the representations that the geometric realization covers
-- Not yet a page: a congruence between weights, for reaching the weights that the geometric realization covers
-- Not yet a page: the argument for local–global compatibility that combines these inputs, for the clauses of the statement
+Its proof uses the inputs listed under Expansion.
 
 ## Sources
 

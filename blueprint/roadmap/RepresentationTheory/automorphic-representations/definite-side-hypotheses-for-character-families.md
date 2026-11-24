@@ -20,11 +20,11 @@ the [partial local Langlands correspondence for GLₙ](../reductive-groups-over-
 the [Galois representations attached to polarized cuspidal representations](../../NumberTheory/algebraic-number-theory/galois-representations/galois-representations-attached-to-polarized-cuspidal-representations.md)
 and published results in representation theory, automorphic forms and number theory, listed below.
 The data and the conditions are specific to this proof and are defined through many auxiliary
-notions; they are not yet stated as pages because each needs those notions stated and checked first.
+notions; they are held in this node because each needs those notions stated and checked first.
 
 A good expansion has definition pages for the families, the selections and the rows; a page for
 each condition, or for each group of conditions that one argument establishes; pages for the steps
-that establish them from the inputs below; and pages for the inputs not yet in the vault, among them
+that establish them from the inputs below; and pages for further inputs, among them
 Harish-Chandra's analyticity of the orbit maps of $K$-finite vectors, the Sobolev form of the decay of
 cusp forms, the $\ell$-adic Galois characters attached to algebraic Hecke characters, the non-vanishing of the
 Dedekind zeta function $\zeta_K$ of a number field on the line $\operatorname{Re} s = 1$ away from its
@@ -34,11 +34,18 @@ suffice), the theorems of Siegel–Klingen and Deligne–Ribet, the functional e
 fields (which the page on Hecke $L$-functions does not state), Weber's ray class fields, and the good
 reduction of CM elliptic curves outside a prime.
 
+## Expansion
+
+A good expansion also states and links the following, each as Alpöge's library states it at the
+locators under Sources:
+
+- the class of families of auxiliary number fields attached to scales, which are the families of the window bounds for weighted Chebyshev sums (that node uses this one, so it is not linked from here), for the families that the statement quantifies over
+- the selections for the members of a family, with their Hermitian lattices over CM fields, their theta realisations on indefinite and definite unitary groups, and the rows, twists and levels of these realisations, for the data that the statement selects
+- the constants and the conditions listed above, among them the class number formulas and genus–mass volumes of the lattices and the definite-side condition, for what the statement asserts of the selections
+
 ## Depends on
 
-- Not yet a page: the class of families of auxiliary number fields attached to scales, which are the families of the window bounds for weighted Chebyshev sums (that node uses this one, so it is not linked from here), for the families that the statement quantifies over
-- Not yet a page: the selections for the members of a family, with their Hermitian lattices over CM fields, their theta realisations on indefinite and definite unitary groups, and the rows, twists and levels of these realisations, for the data that the statement selects
-- Not yet a page: the constants and the conditions listed above, among them the class number formulas and genus–mass volumes of the lattices and the definite-side condition, for what the statement asserts of the selections
+Its statement uses the notions listed under Expansion.
 
 ## Proof depends on
 
@@ -60,7 +67,7 @@ reduction of CM elliptic curves outside a prime.
 - [Siegel–Weil formula for unitary groups in Weil's convergent range](theta-correspondence/siegel-weil-formula-convergent-range.md), for the Siegel–Weil formula in its convergent ranges
 - [Doubling method and standard L-functions of unitary groups](theta-correspondence/doubling-method.md), for the doubling method, unramified Euler factors included
 - [Siegel sets and reduction theory for adelic groups](../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/reduction-theory-for-adelic-groups.md), for Siegel sets of unitary groups of CM extensions, used in the convergence of theta integrals
-- [Rapid decay of cusp forms](automorphic-forms-on-reductive-groups/rapid-decay-of-cusp-forms.md), for the rapid decay and the boundedness of cusp forms on unitary groups of CM extensions; the Sobolev form of the decay, also used, is still to be stated on its own page
+- [Rapid decay of cusp forms](automorphic-forms-on-reductive-groups/rapid-decay-of-cusp-forms.md), for the rapid decay and the boundedness of cusp forms on unitary groups of CM extensions; the Sobolev form of the decay, also used, is a separate statement, named in the plan above
 - [Discreteness of the cuspidal spectrum](automorphic-forms-on-reductive-groups/discreteness-of-the-cuspidal-spectrum.md), for the trace-class property of cuspidal convolution operators
 - [Harish-Chandra's finiteness theorem for automorphic forms](automorphic-forms-on-reductive-groups/harish-chandra-finiteness-theorem.md)
 - [Tensor product theorem for automorphic representations](automorphic-forms-on-reductive-groups/tensor-product-theorem.md)
