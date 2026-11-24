@@ -15,8 +15,8 @@ public import MathlibExt.RingTheory.MultigradedHilbertSeries
 
 Grade `k[x₀, …, xₙ₋₁]` positively by `ℕ^r`: every variable has a nonzero multidegree, so each
 multidegree contains finitely many monomials and the quotient pieces are finite-dimensional
-(`MathlibExt.RingTheory.MultigradedHilbertSeries.finite_quotientPiece`). The Hilbert–Serre
-theorem says that for a homogeneous ideal `I` the Hilbert series of `k[x] ⧸ I` times
+(`MathlibExt.RingTheory.MultigradedHilbertSeries.finite_quotientPiece`). By the
+Hilbert–Serre theorem, for a homogeneous ideal `I` the Hilbert series of `k[x] ⧸ I` times
 `∏ᵢ (1 - t ^ w i)` is a polynomial with integer coefficients. It is an identity of
 multivariate formal power series over `ℤ`.
 
