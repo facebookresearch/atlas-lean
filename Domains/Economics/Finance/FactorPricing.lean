@@ -39,8 +39,8 @@ vector `ψ` that prices every asset
 (`p a = ∑ ω, ψ ω * X a ω`), every asset price is the loading-weighted sum of
 factor prices: there are `π k` with `p a = ∑ k, b a k * π k` for every asset
 `a`, where `π k = ∑ ω, ψ ω * F k ω` is the `ψ`-value of the factor payoff.
-FI08.T02 supplies such a `ψ` (strictly positive) under no arbitrage on funded
-gains. -/
+For finitely many assets, at least one state and a gross risk-free return `R > 0`,
+FI08.T02 supplies such a `ψ` (strictly positive) under no arbitrage on funded gains. -/
 theorem factor_price_relation
     {Ω : Type*} [Fintype Ω]
     {A : Type*}
@@ -71,8 +71,9 @@ theorem factor_price_relation
         ring
 
 /-- **Linear factor-price relation under no arbitrage (FI07.T04, unconditional
-claim).** In a finite exact factor-spanning model with no arbitrage on funded
-gains, the state-price vector `ψ` supplied by FI08.T02 is returned with its
+claim).** In a finite exact factor-spanning model (at least one state) with no
+arbitrage on funded gains at a gross risk-free return `R > 0`, the state-price
+vector `ψ` supplied by FI08.T02 is returned with its
 positivity and normalization (`ψ ω > 0`, `∑ ω, ψ ω = 1 / R`), and every asset
 price is the loading-weighted sum of factor prices, with factor prices
 `π k = ∑ ω, ψ ω * F k ω` the `ψ`-value of the factor payoff. -/

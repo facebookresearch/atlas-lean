@@ -16,6 +16,8 @@ meta import MathlibExt.Combinatorics.EuclideanChainLength
 
 The two values of `euclideanChainLength_one_left_and_one_right` at small arguments, checked
 against the defining recursion and the compiled function, with the edge cases $y = 0$ and $x = 0$.
+The tests for `euclideanChainLength_add_mul` exercise zero arguments and addition of a
+positive multiple in each position.
 -/
 
 open MetaMathlibExt
@@ -46,5 +48,24 @@ example : euclideanChainLength 0 1 = 2 := by
 #guard (List.range 50).all fun y => euclideanChainLength 1 y == y + 1
 #guard (List.range 50).all fun x => euclideanChainLength x 1 == 2
 #guard euclideanChainLength 13 60 = 8
+
+-- When `y = 0`, the second identity counts `k + 1` terms in `F(x, k * x)`.
+example (x k : ℕ) (hx : 0 < x) : euclideanChainLength x (k * x) = 1 + k := by
+  simpa only [Nat.add_zero, euclideanChainLength_zero] using
+    (euclideanChainLength_add_mul hx 0 k).2
+
+-- A zero multiple leaves both lengths unchanged.
+example (x y : ℕ) (hx : 0 < x) :
+    euclideanChainLength (x + 0 * y) y = euclideanChainLength x y ∧
+      euclideanChainLength x (0 * x + y) = euclideanChainLength x y := by
+  simpa only [Nat.zero_mul, Nat.zero_add, Nat.add_zero] using
+    euclideanChainLength_add_mul hx y 0
+
+-- With `k = 2`, the chain at `(13, 60)` keeps its length or gains two terms.
+example : euclideanChainLength 133 60 = 8 ∧ euclideanChainLength 13 86 = 10 := by
+  simpa only [euclideanChainLength_thirteen_sixty] using
+    euclideanChainLength_add_mul (x := 13) (by decide) 60 2
+
+#guard euclideanChainLength 133 60 == 8 && euclideanChainLength 13 86 == 10
 
 end MathlibExtTest.Combinatorics.EuclideanChainLength
