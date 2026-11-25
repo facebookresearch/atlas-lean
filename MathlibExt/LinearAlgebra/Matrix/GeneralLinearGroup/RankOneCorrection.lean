@@ -118,10 +118,10 @@ private lemma rankOneCorrection_eq_reindex (n : ℕ) (R : Type*) [Ring R]
     coe_blockDiagonalOne, coe_diagUnit, coe_reindexMulEquiv]
   -- expose target reindex
   change
-    (fromBlocks (reindex (finOneSumFinEquiv n) (finOneSumFinEquiv n)
+    (fromBlocks (Matrix.reindex (finOneSumFinEquiv n) (finOneSumFinEquiv n)
           (fromBlocks (↑(p⁻¹) : Matrix (Fin 1) (Fin 1) R) 0 0 1) : Matrix (Fin (n+1)) (Fin (n+1)) R)
         0 0 (↑p : Matrix (Fin 1) (Fin 1) R)) x y =
-    (reindex (targetEquiv n) (targetEquiv n)
+    (Matrix.reindex (targetEquiv n) (targetEquiv n)
         (fromBlocks (fromBlocks (↑(p⁻¹) : Matrix (Fin 1) (Fin 1) R) 0 0
             (↑p : Matrix (Fin 1) (Fin 1) R)) 0 0 1) :
           Matrix (Fin (n + 1) ⊕ Fin 1) (Fin (n + 1) ⊕ Fin 1) R) x y

@@ -509,7 +509,7 @@ theorem rowSingle_mul_entry (r : ι) (v : RowIdx ι r → Multiplicative R)
         (v i).toAdd * M r q := by
       calc (Matrix.single i.val r (v i).toAdd * M) i.val q
           = ∑ x, (Matrix.single i.val r (v i).toAdd) i.val x * M x q := by
-            rw [mul_apply]
+            rw [Matrix.mul_apply]
         _ = ∑ x, (if r = x then (v i).toAdd else 0) * M x q := by
             apply Finset.sum_congr rfl
             intro x _
@@ -527,7 +527,7 @@ theorem rowSingle_mul_entry (r : ι) (v : RowIdx ι r → Multiplicative R)
   · have h_zero : (Matrix.single i.val r (v i).toAdd * M) p q = 0 := by
       calc (Matrix.single i.val r (v i).toAdd * M) p q
           = ∑ x, (Matrix.single i.val r (v i).toAdd) p x * M x q := by
-            rw [mul_apply]
+            rw [Matrix.mul_apply]
         _ = 0 := by
             apply Finset.sum_eq_zero
             intro x _
@@ -761,7 +761,7 @@ theorem colSingle_mul_entry_col (c : ι) (v : ColIdx ι c → Multiplicative R)
         M p c * (v j).toAdd := by
       calc (M * Matrix.single c j.val (v j).toAdd) p j.val
           = ∑ x, M p x * (Matrix.single c j.val (v j).toAdd) x j.val := by
-            rw [mul_apply]
+            rw [Matrix.mul_apply]
         _ = ∑ x, M p x * (if c = x then (v j).toAdd else 0) := by
             apply Finset.sum_congr rfl
             intro x _
@@ -779,7 +779,7 @@ theorem colSingle_mul_entry_col (c : ι) (v : ColIdx ι c → Multiplicative R)
   · have h_zero : (M * Matrix.single c j.val (v j).toAdd) p q = 0 := by
       calc (M * Matrix.single c j.val (v j).toAdd) p q
           = ∑ x, M p x * (Matrix.single c j.val (v j).toAdd) x q := by
-            rw [mul_apply]
+            rw [Matrix.mul_apply]
         _ = 0 := by
             apply Finset.sum_eq_zero
             intro x _
