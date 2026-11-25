@@ -107,7 +107,12 @@ private noncomputable def spectralMulFunctional
       (spectralMulOfRealL (spectrum ℂ T) f.toContinuousMap) v) v) :=
   rfl
 
-/-- A self-adjoint operator and a vector determine a finite regular scalar spectral measure.
+/-- **Scalar spectral measure of a vector.** Let $E$ be a complex Hilbert space, $T$ a bounded
+self-adjoint operator on $E$ and $v \in E$. There is a finite regular measure $\mu$ on the
+spectrum $\sigma(T) \subseteq \mathbb{C}$ of $T$ such that for every continuous function
+$f : \sigma(T) \to \mathbb{R}$,
+$\int_{\sigma(T)} f \, d\mu = \operatorname{Re} \langle f(T) v, v \rangle$, where $f(T)$ is the
+continuous functional calculus of $T$ applied to $f$ viewed as a complex-valued function.
 
 The measure lives on the complex spectrum. Its support is real because the spectrum of a
 self-adjoint operator is real. -/
@@ -915,17 +920,21 @@ private theorem spectralMulEquiv_intertwines
 namespace MathlibExt.Analysis.InnerProductSpace.BoundedSelfAdjointSpectralWanted
 
 /--
-Spectral theorem for bounded self-adjoint operators, multiplication-operator form: a
-self-adjoint `T : E →L[ℂ] E` is unitarily equivalent to multiplication by a real-valued
-measurable function on some `L²`. Sources: Mathlib
-`Mathlib/Analysis/InnerProductSpace/Spectrum.lean` TODO (spectral theory for bounded
-self-adjoint operators); W. Rudin, Functional Analysis, 2nd ed., Ch. 12.
+**Spectral theorem for bounded self-adjoint operators, multiplication form.** Let $E$ be a
+complex Hilbert space and $T$ a bounded self-adjoint operator on $E$. Then there are a measure
+space $(X, \mu)$, a measurable function $\varphi : X \to \mathbb{R}$ and a linear isometric
+isomorphism $U$ of $E$ onto $L^2(X, \mu; \mathbb{C})$ such that for every $x \in E$,
+$U(Tx)(a) = \varphi(a)\,(Ux)(a)$ for $\mu$-almost every $a \in X$.
+
+Proof: Scalar measures from the continuous functional calculus identify each cyclic subspace with an
+$L^2$ space. A maximal orthogonal family of cyclic subspaces is then assembled over a disjoint-union
+measure, where the spectral coordinate acts by multiplication.
 
 Proves `Wanted` entry `boundedSelfAdjoint_spectral_multiplication`.
 
-Proof: Scalar measures from the continuous functional calculus identify each cyclic subspace with an
-`L²` space. A maximal orthogonal family of cyclic subspaces is then assembled over a disjoint-union
-measure, where the spectral coordinate acts by multiplication.
+Sources: Mathlib
+`Mathlib/Analysis/InnerProductSpace/Spectrum.lean` TODO (spectral theory for bounded
+self-adjoint operators); W. Rudin, Functional Analysis, 2nd ed., Ch. 12.
 -/
 theorem boundedSelfAdjoint_spectral_multiplication
     {E : Type u} [NormedAddCommGroup E] [InnerProductSpace ℂ E] [CompleteSpace E]

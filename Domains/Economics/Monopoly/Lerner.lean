@@ -42,17 +42,17 @@ namespace MathlibExt.Economics.Monopoly
 
 /-- Price elasticity of demand at output `q` in reciprocal-slope form, from the inverse demand `P`
 and a slope `P'`: `ε = P(q) / (q P')`. The definition imposes no relation between `P'` and `P`;
-`lerner_of_isLocalMax` requires `HasDerivAt P P' q`. It equals the usual `(dq/dp) (p/q)` only
-when demand has a local inverse `p ↦ q(p)` near `q` differentiable with derivative `1 / P'` (for
-example, by the inverse function theorem when `P` is continuously differentiable near `q` with
-`P' ≠ 0`); no such assumption is made here. -/
+`lerner_of_isLocalMax` requires `HasDerivAt P P' q`. It equals the usual `(dq/dp) (p/q)` only when
+demand has a local inverse `p ↦ q(p)` near `q` differentiable with derivative `1 / P'` (for example,
+by the inverse function theorem when `P` is continuously differentiable near `q` with `P' ≠ 0`); no
+such assumption is made here. It is read as `0` when `q P' = 0`. -/
 noncomputable def priceElasticity (P : ℝ → ℝ) (P' q : ℝ) : ℝ :=
   P q / (q * P')
 
 /-- **Lerner rule.** If output `q > 0` locally maximizes the monopoly profit `x P(x) - C(x)`, the
 inverse demand `P` and cost `C` are differentiable at `q` with `P'(q) < 0`, and the price
 `P(q) > 0`, then the markup over marginal cost `C'(q)` satisfies
-`(P(q) - C'(q)) / P(q) = 1 / |ε|`. -/
+`(P(q) - C'(q)) / P(q) = 1 / |ε|`, where `ε = P(q) / (q P'(q))`. -/
 theorem lerner_of_isLocalMax {P C : ℝ → ℝ} {P' C' q : ℝ} (hP : HasDerivAt P P' q)
     (hC : HasDerivAt C C' q) (hmax : IsLocalMax (fun x => x * P x - C x) q) (hq : 0 < q)
     (hp : 0 < P q) (hP' : P' < 0) :

@@ -31,15 +31,18 @@ Erdős-problem statements: the number of ordered pairs `(a, b) ∈ A × A` with
 
 namespace AdditiveCombinatorics
 
-/-- Ordered additive representation count: the number of ordered pairs
-`(a, b) ∈ A × A` with `a + b = n`. Pairs are not quotiented by swapping. -/
+/-- **Ordered representation count.** For a set $A$ of natural numbers and a natural number $n$,
+the ordered representation count of $n$ by $A$ is the number of ordered pairs
+$(a, b) \in A \times A$ with $a + b = n$. Pairs are not identified under swapping: when $a \ne b$,
+the pairs $(a, b)$ and $(b, a)$ are counted separately. -/
 public noncomputable def orderedRepresentationCount (A : Set ℕ) (n : ℕ) : ℕ := by
   classical
   exact ((Finset.antidiagonal n).filter
     (fun ab => ab.1 ∈ A ∧ ab.2 ∈ A)).card
 
-/-- Positivity of the ordered representation count holds iff there is an
-ordered representation `a + b = n` with `a ∈ A` and `b ∈ A`. -/
+/-- **Positivity of the ordered representation count.** For a set $A$ of natural numbers and a
+natural number $n$, the number of ordered pairs $(a, b) \in A \times A$ with $a + b = n$ is
+positive if and only if $n = a + b$ for some $a \in A$ and $b \in A$. -/
 public theorem orderedRepresentationCount_pos_iff {A : Set ℕ} {n : ℕ} :
     0 < orderedRepresentationCount A n ↔
       ∃ a ∈ A, ∃ b ∈ A, a + b = n := by

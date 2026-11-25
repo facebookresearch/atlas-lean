@@ -75,16 +75,17 @@ domestic gross return: `domesticGross`. -/
 noncomputable def domesticDepositPayoff (M : CoveredInterestMarket) : ℝ :=
   M.domesticGross
 
-/-- Terminal domestic payoff of the covered foreign strategy: convert one unit of
-domestic currency to `1 / spot` units of foreign currency, invest at the foreign
-gross return, and convert the proceeds back at the locked-in forward rate:
-`forward * foreignGross / spot`. For nonzero `spot` and `foreignGross` it equals
-the domestic deposit payoff only when covered interest parity holds
-(`coveredInterestParity_iff`). -/
+/-- Terminal domestic payoff of the covered foreign strategy: convert one unit of domestic currency
+to `1 / spot` units of foreign currency, invest at the foreign gross return, and convert the
+proceeds back at the locked-in forward rate: `forward * foreignGross / spot`. For nonzero `spot` and
+`foreignGross` it equals the domestic deposit payoff only when covered interest parity holds
+(`coveredInterestParity_iff`). Its terminal domestic payoff `F R_f / S` is `0` when `S = 0`, by the
+convention `x / 0 = 0`. -/
 noncomputable def convertedForeignPayoff (M : CoveredInterestMarket) : ℝ :=
   M.forward * M.foreignGross / M.spot
 
-/-- Payoff form and rate form of covered interest parity agree: the covered
+/-- Payoff form and rate form of covered interest parity agree: for nonzero `spot`
+and `foreignGross`, the covered
 foreign strategy has the same terminal domestic payoff as the domestic deposit
 iff the forward rate is `spot * domesticGross / foreignGross`. This is algebra
 about the four rates; `coveredInterestParity_of_noFundedArbitrage` derives the
@@ -114,7 +115,8 @@ noncomputable def assetPrice (M : CoveredInterestMarket) : Fin 3 → ℝ :=
 
 /-- **Covered interest parity from no arbitrage.** If the market trading the
 domestic deposit, the foreign deposit and the forward (`assetPayoff`,
-`assetPrice`) admits no arbitrage on funded gains at some gross funding rate
+`assetPrice`) over finitely many states, at least one, admits no arbitrage on
+funded gains at some gross funding rate
 `R > 0`, then `forward * foreignGross = spot * domesticGross`, whatever the
 terminal spot rate `ST`. The covered foreign strategy (one unit of foreign
 currency, deposited, with `foreignGross` sold forward) pays
@@ -147,8 +149,9 @@ theorem forward_mul_foreignGross_eq_of_noFundedArbitrage {Ω : Type*} [Fintype �
   linear_combination (-(M.forward * M.foreignGross)) * hdom + M.domesticGross * hcov
 
 /-- **Covered interest parity from no arbitrage**, payoff form: for a nonzero
-spot rate, no arbitrage makes the covered foreign strategy pay exactly the
-domestic deposit payoff. -/
+spot rate, no arbitrage on funded gains at some gross funding rate `R > 0` in the
+market of the three assets (finitely many states, at least one) makes the covered
+foreign strategy pay exactly the domestic deposit payoff. -/
 theorem coveredInterestParity_of_noFundedArbitrage {Ω : Type*} [Fintype Ω] [Nonempty Ω]
     (M : CoveredInterestMarket) (ST : Ω → ℝ) (R : ℝ) (hR : 0 < R) (hS : M.spot ≠ 0)
     (hNA : NoFundedArbitrage (assetPayoff M ST) (assetPrice M) R) :
@@ -157,7 +160,8 @@ theorem coveredInterestParity_of_noFundedArbitrage {Ω : Type*} [Fintype Ω] [No
   rw [div_eq_iff hS, forward_mul_foreignGross_eq_of_noFundedArbitrage M ST R hR hNA, mul_comm]
 
 /-- **Covered interest parity from no arbitrage**, rate form: for a nonzero
-foreign gross return, no arbitrage forces
+foreign gross return, no arbitrage on funded gains at some gross funding rate
+`R > 0` in the market of the three assets (finitely many states, at least one) forces
 `forward = spot * domesticGross / foreignGross`. -/
 theorem forward_eq_of_noFundedArbitrage {Ω : Type*} [Fintype Ω] [Nonempty Ω]
     (M : CoveredInterestMarket) (ST : Ω → ℝ) (R : ℝ) (hR : 0 < R) (hRf : M.foreignGross ≠ 0)

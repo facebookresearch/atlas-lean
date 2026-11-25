@@ -43,9 +43,11 @@ open Set MeasureTheory
 
 /-- Interior-normalized scale function: the integral of the scale density from
 `c` to `p`. Unlike `scaleFunction` (normalized by `S 0 = 0`), the base point
-`c` is arbitrary. The definition imposes no hypotheses; under `IsRegularDiffusion`
-(or suitable integrability of `scaleDensity b a` on the relevant intervals), the
-two differ by the constant `scaleFunction b a c`; see `scaleFunctionFrom_eq_sub`. -/
+`c` is arbitrary. The integral is oriented (`∫ y in c..p = -∫ y in p..c`) and is `0` when the
+scale density is not integrable between `c` and `p`. The definition imposes no hypotheses; under
+`IsRegularDiffusion` and for `c, p ∈ [0, 1]` (or suitable integrability of `scaleDensity b a` on
+the relevant intervals), the two differ by the constant `scaleFunction b a c`; see
+`scaleFunctionFrom_eq_sub`. -/
 public noncomputable def scaleFunctionFrom (b a : ℝ → ℝ) (c p : ℝ) : ℝ :=
   ∫ y in c..p, scaleDensity b a y
 
@@ -66,8 +68,9 @@ public theorem scaleFunctionFrom_eq_sub (b a : ℝ → ℝ) (h : IsRegularDiffus
   exact hsub.symm
 
 /-- The Dirichlet ratio `fixationProb` rewritten with differences of the
-interior-normalized scale function: the additive normalization constant cancels.
-An analytic identity only; not a hitting-probability claim. -/
+interior-normalized scale function, for a regular diffusion and `c, p ∈ [0, 1]`: the additive
+normalization constant cancels, and `S(1) > 0`. An analytic identity only; not a
+hitting-probability claim. -/
 public theorem fixationProb_eq_ratio_scaleFunctionFrom (b a : ℝ → ℝ)
     (h : IsRegularDiffusion b a) (c p : ℝ) (hc : c ∈ Icc (0 : ℝ) 1)
     (hp : p ∈ Icc (0 : ℝ) 1) :
@@ -83,7 +86,9 @@ public theorem fixationProb_eq_ratio_scaleFunctionFrom (b a : ℝ → ℝ)
   congr 1 <;> ring
 
 /-- The Green kernel rewritten with differences of the interior-normalized
-scale function: shifting the scale normalization leaves the kernel unchanged.
+scale function, for a regular diffusion and `c, p, x ∈ [0, 1]`: shifting the scale normalization
+leaves the kernel unchanged.
+As in `greenFunction`, division by `0` gives `0` (the denominator vanishes where `a x = 0`).
 An analytic identity only; not an occupation-density claim. -/
 public theorem greenFunction_eq_scaleFunctionFrom (b a : ℝ → ℝ)
     (h : IsRegularDiffusion b a) (c p x : ℝ) (hc : c ∈ Icc (0 : ℝ) 1)

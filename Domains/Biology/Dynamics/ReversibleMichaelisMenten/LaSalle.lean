@@ -16,9 +16,10 @@ import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 /-!
 # Convergence of reversible Michaelis–Menten kinetics
 
-Every solution of the reversible Michaelis–Menten system `E + S ⇌ C ⇌ E + P`
-(`Domains.Biology.Dynamics.ReversibleMichaelisMenten`) with nonnegative data and positive
-totals converges to the unique (positive) equilibrium of its compatibility class. The proof
+For positive rate constants, every solution of the reversible Michaelis–Menten system
+`E + S ⇌ C ⇌ E + P` (`Domains.Biology.Dynamics.ReversibleMichaelisMenten`) with nonnegative data
+and positive totals converges to the unique nonnegative equilibrium of its compatibility class,
+which is positive. The proof
 applies LaSalle's invariance principle for ODEs (`MathlibExt.Analysis.ODE.LaSalle`) with the
 pseudo-Helmholtz function of `Domains.Biology.Dynamics.ComplexBalanced` as the Lyapunov
 function.
@@ -33,8 +34,9 @@ function.
   `IsSolution.antitoneOn_pseudoHelmholtz` is monotonicity along solutions;
 * `IsSolution.pos`: solutions with nonnegative data and positive totals are strictly positive
   for `t > 0`;
-* `IsSolution.tendsto_equilibrium`: **every solution with nonnegative data and positive totals
-  converges to the unique (positive) equilibrium of its compatibility class.**
+* `IsSolution.tendsto_equilibrium`: **for positive rate constants, every solution with
+  nonnegative data and positive totals converges to the unique nonnegative equilibrium of its
+  compatibility class**, which is positive.
 
 ## Scope
 
@@ -287,7 +289,8 @@ theorem helmholtzRate_mmNetwork_nonpos (hk₁ : 0 < k₁) (hkb : 0 < kb) (hk₂ 
   rw [mmNetwork.helmholtzRate_eq_zero_iff hk hcstar (isComplexBalanced_mmNetwork hf) hx,
     massActionField_mmNetwork]
 
-/-- The pseudo-Helmholtz function is continuous on the whole space (with `0 log 0 = 0`). -/
+/-- The pseudo-Helmholtz function is continuous on the whole space (with `log 0 = 0` and
+`log x = log |x|` for `x < 0`, so `0 log 0 = 0`). -/
 theorem continuous_pseudoHelmholtz (cstar : Fin 4 → ℝ) : Continuous (pseudoHelmholtz cstar) := by
   unfold pseudoHelmholtz
   refine continuous_finsetSum _ fun i _ => ?_
@@ -324,7 +327,7 @@ theorem IsSolution.antitoneOn_pseudoHelmholtz (h : IsSolution k₁ kb k₂ kb₂
 
 /-- **Global convergence for reversible Michaelis–Menten kinetics, via LaSalle.** For positive
 rate constants, every solution with nonnegative initial data and positive totals
-`E_T = e₀ + c₀`, `S_T = s₀ + c₀ + p₀` converges to the unique equilibrium `x*` of its
+`E_T = e₀ + c₀`, `S_T = s₀ + c₀ + p₀` converges to the unique nonnegative equilibrium `x*` of its
 compatibility class (`existsUnique_equilibrium`), which is positive.
 
 Proof: `lasalle_of_antitoneOn` on the compact, convex, forward-invariant class
@@ -351,7 +354,9 @@ theorem IsSolution.tendsto_equilibrium (h : IsSolution k₁ kb k₂ kb₂ s c e 
     with hKdef
   -- the compatibility class is compact and convex
   have hKclosed : IsClosed K := by
-    refine IsClosed.inter ?_ (IsClosed.inter ?_ ?_)
+    refine IsClosed.inter (s₁ := {x : Fin 4 → ℝ | ∀ i, 0 ≤ x i}) ?_
+      (IsClosed.inter (s₁ := {x : Fin 4 → ℝ | x 2 + x 1 = ET})
+        (s₂ := {x : Fin 4 → ℝ | x 0 + x 1 + x 3 = ST}) ?_ ?_)
     · have : {x : Fin 4 → ℝ | ∀ i, 0 ≤ x i} = Ici 0 := by ext x; simp [Pi.le_def]
       have hc0 : IsClosed {x : Fin 4 → ℝ | ∀ i, 0 ≤ x i} := by rw [this]; exact isClosed_Ici
       exact hc0

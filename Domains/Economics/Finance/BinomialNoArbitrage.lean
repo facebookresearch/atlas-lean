@@ -141,7 +141,7 @@ theorem noOneStepArbitrage_iff {S₀ u d R : ℝ} (hS₀ : 0 < S₀) (hd0 : 0 < 
     rw [hweighted] at hgt
     linarith
 
-/-- The risk-neutral up probability lies in `(0, 1)` exactly when `d < R < u`. -/
+/-- For `d < u`, the risk-neutral up probability lies in `(0, 1)` exactly when `d < R < u`. -/
 theorem rnProb_mem_Ioo_iff {u d R : ℝ} (hdu : d < u) :
     0 < rnProb u d R ∧ rnProb u d R < 1 ↔ d < R ∧ R < u := by
   have hud : 0 < u - d := sub_pos.mpr hdu
@@ -149,8 +149,9 @@ theorem rnProb_mem_Ioo_iff {u d R : ℝ} (hdu : d < u) :
   rw [div_pos_iff_of_pos_right hud, div_lt_one hud]
   constructor <;> rintro ⟨h1, h2⟩ <;> constructor <;> linarith
 
-/-- **No arbitrage iff the risk-neutral probability is a probability.** The bridge to the
-landed one-step binomial model: no-arbitrage holds iff `rnProb u d R ∈ (0, 1)`. -/
+/-- **No arbitrage iff the risk-neutral probability lies in `(0, 1)`.** The bridge to the
+landed one-step binomial model: for `S₀ > 0` and `0 < d < u`, no-arbitrage holds iff
+`rnProb u d R ∈ (0, 1)`. -/
 theorem noOneStepArbitrage_iff_rnProb {S₀ u d R : ℝ} (hS₀ : 0 < S₀) (hd0 : 0 < d)
     (hdu : d < u) :
     NoOneStepArbitrage S₀ u d R ↔ 0 < rnProb u d R ∧ rnProb u d R < 1 := by

@@ -94,14 +94,14 @@ Check that each added or changed module is in the correct top-level library.
 ## Wiki and graph PRs
 
 A graph PR changes the ATLAS wiki: `blueprint/roadmap/`, `blueprint/links/`,
-`blueprint/atlas.json`, `blueprint/coverage/`, `scripts/taxonomy.json`, or
-`scripts/wiki-sync.json`. Hold it against the
+`blueprint/atlas.json`, `blueprint/coverage/`, `scripts/taxonomy.json`,
+`scripts/wiki-sync.json`, `scripts/card-moves.jsonl`, or
+`scripts/mathgraph-map.jsonl`. Hold it against the
 [graph rules](docs/BLUEPRINT.md#graph-rules) and the
-[graph PR requirements](CONTRIBUTING.md#graph-prs). Once Blueprint Pages'
-`build the wiki` job has passed on the head commit, don't re-report what its
-`autoform check blueprint` fails on
-([What the tools own](docs/BLUEPRINT.md#what-the-tools-own)); if it failed or
-hasn't run, report those too. Check what only a reader can:
+[graph PR requirements](CONTRIBUTING.md#graph-prs). Don't re-report what CI's
+required `check the graph` job fails on
+([What the tools own](docs/BLUEPRINT.md#what-the-tools-own)). Check what only a
+reader can:
 
 | Aspect | Question | What to check |
 | --- | --- | --- |
@@ -110,6 +110,7 @@ hasn't run, report those too. Check what only a reader can:
 | **Expansions** | Do the new pages cover the node at a sensible granularity? | Each wanted statement is faithful to its source, and each step of [Expanding a node](docs/BLUEPRINT.md#expanding-a-node) was followed: the order among new planned pages is right, no link still points at the node (one left under `## Informally uses` only warns), and no page became a wanted statement too early. |
 | **Duplicates** | Is this result already a page or a declaration? | Search the vault and pinned Mathlib before accepting a new page; `autoform audit`'s `duplicate-lean-target` finds two pages for one declaration. |
 | **Prose and citations** | Will the page stay true, and are its sources real? | No prose about the library's state ("the Lean proof", "not formalized"). Each citation is checked against the cited edition, including theorem numbers. |
+| **Cards** | Is each card one idea a reader would look for? | Its main statement is that idea stated exactly, its opening states it faithfully, its `## Idea` helps a learner, and its importance and level are right. A stronger, weaker or special form of the main statement belongs in the card only with a reason in its `## Statements` item. Links to other cards are teaching links under `## Background` ([Cards](docs/BLUEPRINT.md#cards)); a card never carries dependency sections. |
 | **Held pages** | Is the hold still justified? | Don't ask to relink a page whose annotation records a `held` declaration; check that the reason holds and, unless the declaration is private by design, that its issue is linked. |
 
 A code owner's approval is a person's, not a finding: don't request changes

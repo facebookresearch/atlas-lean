@@ -8,6 +8,9 @@ Statistical tests of neutrality and genome scans for selection based on polymorp
 - [Extended haplotype homozygosity](extended-haplotype-homozygosity/README.md)
 - [Hudson–Kreitman–Aguadé test](hudson-kreitman-aguad-test/README.md)
 - [McDonald–Kreitman test](mcdonald-kreitman-test/README.md)
+- [Mean and asymptotic normality of Tajima's D](mean-and-asymptotic-normality-of-tajima-s-d/README.md)
 - [Selective sweeps](selective-sweeps/README.md)
 - [Cross-population haplotype homozygosity](cross-population-haplotype-homozygosity/README.md)
 - [Tajima's D](tajima-s-d/README.md)
+
+- [Selection from allele-frequency time series](selection-from-allele-frequency-time-series/README.md)

@@ -57,16 +57,12 @@ namespace CuspFormIntegralLattice
 
 variable {N : ℕ} {k : ℤ}
 
-private theorem hΓ (N : ℕ) :
-    (1 : ℝ) ∈ (Subgroup.map (Matrix.SpecialLinearGroup.mapGL ℝ)
-      (CongruenceSubgroup.Gamma0 N)).strictPeriods :=
-  CongruenceSubgroup.one_mem_strictPeriods_Gamma0 N
-
 private theorem coeff_add (f g : CuspForm (CongruenceSubgroup.Gamma0 N) k) (n : ℕ) :
     (qExpansion 1 ((f + g : CuspForm (CongruenceSubgroup.Gamma0 N) k) : ℍ → ℂ)).coeff n
       = (qExpansion 1 (f : ℍ → ℂ)).coeff n + (qExpansion 1 (g : ℍ → ℂ)).coeff n := by
   simp only [FunLike.coe_add]
-  rw [ModularForm.qExpansion_add one_pos (hΓ N) f g, map_add]
+  rw [ModularForm.qExpansion_add one_pos
+    (CongruenceSubgroup.one_mem_strictPeriods_Gamma0 N) f g, map_add]
 
 private theorem coeff_zero (n : ℕ) :
     (qExpansion 1 ((0 : CuspForm (CongruenceSubgroup.Gamma0 N) k) : ℍ → ℂ)).coeff n
@@ -82,7 +78,8 @@ private theorem coeff_zsmul (c : ℤ) (f : CuspForm (CongruenceSubgroup.Gamma0 N
       = (c : ℂ) • (f : ℍ → ℂ) := by
     ext z
     simp
-  rw [h1, ModularForm.qExpansion_smul one_pos (hΓ N) (c : ℂ) f]
+  rw [h1, ModularForm.qExpansion_smul one_pos
+    (CongruenceSubgroup.one_mem_strictPeriods_Gamma0 N) (c : ℂ) f]
   simp
 
 private def intSubmodule (N : ℕ) (k : ℤ) :
@@ -177,3 +174,25 @@ public theorem CuspForm.intLattice_fg (N : ℕ) [NeZero N] (k : ℤ) :
       Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
   exact Submodule.fg_of_fg_map_injective (CuspFormIntegralLattice.trunc N k)
     (CuspFormIntegralLattice.trunc_injective N k) (hMfg.of_le hle)
+
+namespace CuspForm
+
+/-- The cusp forms on `Γ₀(N)` of weight `k` have an integral structure
+when the complex span of the integral lattice is the whole space of
+cusp forms. -/
+public def HasIntegralStructure (N : ℕ) (k : ℤ) : Prop :=
+  Submodule.span ℂ
+    ((CuspForm.intLattice N k : Submodule ℤ (CuspForm (CongruenceSubgroup.Gamma0 N) k)) :
+      Set (CuspForm (CongruenceSubgroup.Gamma0 N) k)) = ⊤
+
+/-- An integral structure is exactly the statement that the complex span
+of the integral lattice is everything. -/
+public theorem hasIntegralStructure_iff (N : ℕ) (k : ℤ) :
+    CuspForm.HasIntegralStructure N k ↔
+      Submodule.span ℂ
+        ((CuspForm.intLattice N k :
+          Submodule ℤ (CuspForm (CongruenceSubgroup.Gamma0 N) k)) :
+          Set (CuspForm (CongruenceSubgroup.Gamma0 N) k)) = ⊤ :=
+  Iff.rfl
+
+end CuspForm

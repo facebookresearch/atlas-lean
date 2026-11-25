@@ -732,10 +732,16 @@ private theorem rcatF_eq_rpow (n a : ℝ) (ha : |a| ≤ 1 / 4) :
   rw [rcatF_one a ha] at h
   exact h
 
-/-- Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, Entry 14, Corollary 1, printed p.
-    71; scan PDF p. 81.
+/-- **Ramanujan's series for powers of the Catalan generating function.** Let $n$ and $a$ be real
+numbers with $|a| \le 1/4$. For a natural number $k$ put $t_k = 0$ if $k < 2$, and
+$$t_k = \frac{a^k}{k!} \prod_{j=k+1}^{2k-1} (n + j)$$
+if $k \ge 2$. Then the series $\sum_k t_k$ is summable and
+$$\left(\frac{2}{1 + \sqrt{1 - 4a}}\right)^{n} = 1 + n a + n \sum_{k=0}^{\infty} t_k.$$
 
 Proves `Wanted` entry `ramanujan_part1_ch3_entry14_cor1_catalanpowerseries`.
+
+Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, Entry 14, Corollary 1, printed p.
+    71; scan PDF p. 81.
 -/
 theorem ramanujan_part1_ch3_entry14_cor1_catalanpowerseries
     (n a : ℝ) (ha : |a| ≤ 1 / 4) :
