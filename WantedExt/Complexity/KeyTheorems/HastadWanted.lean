@@ -18,7 +18,7 @@ module
 public import Batteries.Util.ProofWanted
 public import MathlibExt.Computability.Complexity
 public import MathlibExt.Computability.BinaryNatEncoding
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Computability.Complexity.Classes
 public import CSLibExt.Logics.Propositional.CNF.Semantics
 
@@ -71,7 +71,8 @@ The bitstring $u$ gives the number of variables in unary. Since degenerate and m
 instances get value $0$, the $7/8$ random-assignment bound holds on every instance with nonzero
 value. -/
 def hastadVal (x : List Bool) (a : List Bool) : ℚ :=
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := List Bool × Cslib.Logic.PL.CNF) x with
+  match MetaMathlibExt.BitstringEncoding.bitDecode
+      (α := List Bool × Cslib.Logic.LegacyPL.CNF) x with
   | some (u, φ) =>
     if (∀ clause ∈ φ, ∀ l ∈ clause, l.1 < u.length) ∧
         ∀ clause ∈ φ, hastadNondegenerate clause then

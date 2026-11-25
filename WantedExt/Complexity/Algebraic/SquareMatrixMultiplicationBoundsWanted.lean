@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Complexity.Algebraic.RectangularCircuitExponent
+public import CSLibExt.Complexity.Algebraic.StrassenCircuit
 public import Mathlib.Algebra.CharP.Basic
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
@@ -57,16 +57,6 @@ construction is not supplied upstream, so this remains a proof request. -/
 theorem_wanted naiveUpperThree :
     ∀ (F : Type u) [Field F],
       squareMatrixMultiplicationCircuitExponent F ≤ ENNReal.ofReal 3
-
-/-- **Strassen's 1969 bound on the matrix multiplication exponent.** For every field $F$, the
-square matrix multiplication exponent $\omega(F)$ of the arithmetic-circuit model satisfies
-$\omega(F) \le \log_2 7$.
-
-Source: C15a [S1969], Strassen's `log₂ 7` bound. -/
-theorem_wanted strassen1969Upper :
-    ∀ (F : Type u) [Field F],
-      squareMatrixMultiplicationCircuitExponent F ≤
-        ENNReal.ofReal (Real.log 7 / Real.log 2)
 
 /-- **Pan's 1978 bound on the square exponent.** For every field $F$, the square matrix
 multiplication exponent $\omega(F)$ of the arithmetic-circuit model satisfies

@@ -92,7 +92,8 @@ First n Positive Integers*, INTEGERS 26 (2026), Article A7, Section 1 (definitio
 `f(n, m)`). -/
 theorem hasDistinctMultiplesInInterval_distinctMultiplesIntervalLength (n m : ℕ) :
     HasDistinctMultiplesInInterval n m (distinctMultiplesIntervalLength n m) :=
-  Nat.sInf_mem (exists_hasDistinctMultiplesInInterval n m)
+  Nat.sInf_mem (s := {L | HasDistinctMultiplesInInterval n m L})
+    (exists_hasDistinctMultiplesInInterval n m)
 
 /-- **Characterization of the least interval length.** For natural numbers $n$ and $m$, let
 $f(n, m)$ be the least natural number $K$ such that the interval $(m, m + K]$ contains distinct

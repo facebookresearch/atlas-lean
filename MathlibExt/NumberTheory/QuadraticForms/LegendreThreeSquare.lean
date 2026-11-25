@@ -151,7 +151,7 @@ private theorem even_padicValInt_sq_add_mul_sq_of_not_isSquare {p : ℕ} [Fact p
       Even (padicValInt p (X ^ 2 + d * T ^ 2)) := by
     intro N
     induction N using Nat.strong_induction_on with
-    | h N ih =>
+    | ind N ih =>
       intro X T hNT
       by_cases h0 : X ^ 2 + d * T ^ 2 = 0
       · rw [h0, padicValInt.zero]
@@ -390,7 +390,7 @@ private theorem ankeny_exists_two_sq_of_rep {m k : ℕ} (hm : Squarefree m)
         exact e6.symm
       exact (ZMod.exists_sq_eq_neg_one_iff.mp ⟨_, hsq1⟩) hq4
     have hmul : padicValInt q ((k : ℤ) * (N : ℤ))
-        = padicValNat q k + padicValNat q N := by
+        = multiplicity q k + multiplicity q N := by
       have hk0 : (k : ℤ) ≠ 0 := by
         have := hk
         omega
@@ -399,7 +399,8 @@ private theorem ankeny_exists_two_sq_of_rep {m k : ℕ} (hm : Squarefree m)
         omega
       rw [padicValInt.mul hk0 hN0', padicValInt.of_nat, padicValInt.of_nat]
     have heven := even_padicValInt_sq_add_mul_sq_of_not_isSquare (p := q) hnsqB X T
-    rw [← hrep, hmul, padicValNat.eq_zero_of_not_dvd hqk, zero_add] at heven
+    rw [← hrep, hmul, multiplicity_eq_zero_of_not_dvd hqk, zero_add] at heven
+    rw [Nat.padicValNat_def]
     exact heven
 
 /-- Jacobi step, case `m ≡ 1 (mod 4)`: `-m` is a nonzero square in `ZMod q`. -/

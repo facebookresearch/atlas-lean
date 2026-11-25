@@ -493,7 +493,7 @@ private theorem condExp_antitone_ae_tendsto {g : Ω → ℝ} (m : ℕ → Measur
       exact hω
     · exact ae_of_all μ fun _ hlt => absurd hlt hab
   have hlim : ∀ᵐ ω ∂μ, liminf (fun n => ‖f n ω‖ₑ) atTop < ⊤ :=
-    ae_bdd_liminf_atTop_of_eLpNorm_bdd one_ne_zero hbdd
+    ae_bdd_liminf_atTop_of_eLpNorm_bdd one_ne_zero ((iSup_le hbdd).trans_lt ENNReal.coe_lt_top)
   have hconv : ∀ᵐ ω ∂μ, ∃ c, Tendsto (fun n => f n ω) atTop (𝓝 c) := by
     filter_upwards [hlim, hfreq] with ω hlim hfreq
     have hlim' : liminf (fun n => (Real.nnabs (f n ω) : ℝ≥0∞)) atTop ≠ ⊤ := by

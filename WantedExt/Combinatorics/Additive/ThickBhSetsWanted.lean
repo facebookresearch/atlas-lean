@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.FieldTheory.Minpoly.Basic
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
 public import MathlibExt.Combinatorics.Additive.BhSet
+public import MathlibExt.Combinatorics.Additive.SingerSet
 
 /-!
 # Constructing thick `B_h`-sets
@@ -62,58 +63,6 @@ public theorem mem_boseSet {F K : Type*} [Field F] [Fintype F] [Field K] [Algebr
     (h : ℕ) (θ : K) (b : ℕ) (a : ZMod (Fintype.card F ^ h - 1)) :
     a ∈ boseSet F h θ b ↔ ∃ v : F, θ ^ a.val = θ ^ b + algebraMap F K v :=
   Iff.rfl
-
-/-- **Generalized Singer set.** Let $F$ be a finite field with $q$ elements, let $K$ be a field
-extension of $F$, let $\theta \in K$, let $h$ and $b$ be natural numbers, and put
-$M = (q^{h+1} - 1)/(q - 1)$. The generalized Singer set $\mathrm{Singer}_h(q, b)$ is the set of
-residues $a \in \mathbb{Z}/M\mathbb{Z}$ such that $\theta^a = u\theta^b + v$ for some
-$u, v \in F$, where $\theta^a$ means $\theta$ raised to the least nonnegative representative
-of $a$.
-
-The construction is intended for $[K : F] = h + 1$ and $\theta$ a generator of $K^\times$; the
-definition itself does not assume either.
-
-Source: Kevin O'Bryant, *Constructing Thick `B_h`-Sets*, Journal of Integer Sequences 27
-(2024), Article 24.1.2, Definition 2. -/
-public def singerSet (F : Type*) {K : Type*} [Field F] [Fintype F] [Field K] [Algebra F K]
-    (h : ℕ) (θ : K) (b : ℕ) :
-    Set (ZMod ((Fintype.card F ^ (h + 1) - 1) / (Fintype.card F - 1))) :=
-  {a | ∃ u v : F, θ ^ a.val = algebraMap F K u * θ ^ b + algebraMap F K v}
-
-/-- **Membership in a Singer set.** Let $F$ be a finite field with $q$ elements, let $K$ be a
-field extension of $F$, let $\theta \in K$, let $h$ and $b$ be natural numbers, and put
-$M = (q^{h+1} - 1)/(q - 1)$. A residue $a \in \mathbb{Z}/M\mathbb{Z}$ lies in the Singer set
-$\mathrm{Singer}_h(q, b)$ built from $F$, $K$ and $\theta$ if and only if
-$\theta^a = u\theta^b + v$ for some $u, v \in F$, where $\theta^a$ means $\theta$ raised to the
-least nonnegative representative of $a$.
-
-Source: Kevin O'Bryant, *Constructing Thick `B_h`-Sets*, Journal of Integer Sequences 27
-(2024), Article 24.1.2, Definition 2. -/
-public theorem mem_singerSet {F K : Type*} [Field F] [Fintype F] [Field K] [Algebra F K]
-    (h : ℕ) (θ : K) (b : ℕ)
-    (a : ZMod ((Fintype.card F ^ (h + 1) - 1) / (Fintype.card F - 1))) :
-    a ∈ singerSet F h θ b ↔
-      ∃ u v : F, θ ^ a.val = algebraMap F K u * θ ^ b + algebraMap F K v :=
-  Iff.rfl
-
-/-- **Affine equivalence of sets of residues.** For a natural number $M$, sets
-$A_1, A_2 \subseteq \mathbb{Z}/M\mathbb{Z}$ are affinely equivalent, written $A_1 \sim A_2$, if
-there are a unit $d$ of $\mathbb{Z}/M\mathbb{Z}$ and an element $s \in \mathbb{Z}/M\mathbb{Z}$
-such that $A_2 = \{d a + s : a \in A_1\}$.
-
-Source: Kevin O'Bryant, *Constructing Thick `B_h`-Sets*, Journal of Integer Sequences 27
-(2024), Article 24.1.2, the definition before Theorem 4. -/
-public def ZModAffinelyEquivalent {M : ℕ} (A₁ A₂ : Set (ZMod M)) : Prop :=
-  ∃ d s : ZMod M, IsUnit d ∧ A₂ = (fun a => d * a + s) '' A₁
-
-/-- **Affine equivalence is reflexive.** For every natural number $M$, every subset $A$ of
-$\mathbb{Z}/M\mathbb{Z}$ is affinely equivalent to itself (take $d = 1$ and $s = 0$).
-
-Source: Kevin O'Bryant, *Constructing Thick `B_h`-Sets*, Journal of Integer Sequences 27
-(2024), Article 24.1.2, the definition before Theorem 4. -/
-public theorem zModAffinelyEquivalent_refl {M : ℕ} (A : Set (ZMod M)) :
-    ZModAffinelyEquivalent A A :=
-  ⟨1, 0, isUnit_one, by simp⟩
 
 /-- **Maximum size of a $B_h$-set in $\{1, \dots, n\}$.** For natural numbers $h$ and $n$, $R_h(n)$
 is the largest number of elements of a $B_h$-set of natural numbers contained in
@@ -232,32 +181,6 @@ public theorem_wanted zModAffinelyEquivalent_boseSet {F K : Type*} [Field F] [Fi
       θ ^ b - θ ^ e ∈ Set.range (algebraMap F K) ∨
       ∃ i : ℕ, b ≡ ringChar F ^ i * e [MOD Fintype.card F ^ h - 1]) :
     ZModAffinelyEquivalent (boseSet F h θ b) (boseSet F h θ e)
-
-/-- **Affine equivalences between Singer sets.** Let $F$ be a finite field with $q$ elements and
-characteristic $p$, let $h \ge 2$, let $K$ be a field extension of $F$ of degree $h + 1$, and
-let $\theta \in K$ have order $|K| - 1$, that is, generate $K^\times$. Put
-$M = (q^{h+1} - 1)/(q - 1)$. Let $b$ and $e$ be natural numbers such that the minimal
-polynomials of $\theta^b$ and $\theta^e$ over $F$ both have degree $h + 1$. Suppose that
-(iv) $b \equiv e \pmod{M}$, or (v) $b \equiv p^i e \pmod{q^{h+1} - 1}$ for some natural number
-$i$, or (vi) $\theta^b - \theta^e \in F$, or (vii) $r\theta^b + t\theta^{e+b} + w\theta^e \in F$
-for some $r, t, w \in F$ with $r$ and $t$ not both $0$. Then the Singer sets
-$\mathrm{Singer}_h(q, b)$ and $\mathrm{Singer}_h(q, e)$ built from $F$, $K$ and $\theta$ are
-affinely equivalent.
-
-Source: Kevin O'Bryant, *Constructing Thick `B_h`-Sets*, Journal of Integer Sequences 27
-(2024), Article 24.1.2, Theorem 4 (items (iv)–(vii)) (`jis-2024-24.1.2-thm-4`). -/
-public theorem_wanted zModAffinelyEquivalent_singerSet {F K : Type*} [Field F] [Fintype F]
-    [Field K] [Fintype K] [Algebra F K] {h : ℕ} (hh : 2 ≤ h)
-    (hK : Module.finrank F K = h + 1) {θ : K} (hθ : orderOf θ = Fintype.card K - 1) {b e : ℕ}
-    (hb : (minpoly F (θ ^ b)).natDegree = h + 1)
-    (he : (minpoly F (θ ^ e)).natDegree = h + 1)
-    (hbe : b ≡ e [MOD (Fintype.card F ^ (h + 1) - 1) / (Fintype.card F - 1)] ∨
-      (∃ i : ℕ, b ≡ ringChar F ^ i * e [MOD Fintype.card F ^ (h + 1) - 1]) ∨
-      θ ^ b - θ ^ e ∈ Set.range (algebraMap F K) ∨
-      ∃ r t w : F, (r ≠ 0 ∨ t ≠ 0) ∧
-        algebraMap F K r * θ ^ b + algebraMap F K t * θ ^ (e + b) +
-          algebraMap F K w * θ ^ e ∈ Set.range (algebraMap F K)) :
-    ZModAffinelyEquivalent (singerSet F h θ b) (singerSet F h θ e)
 
 /-- **Unconditional bounds for $R_h(n)$ and $R_h^{-1}(k)$.** Let $h \ge 2$. Write $R_h(n)$ for the
 largest size of a $B_h$-set contained in $\{1, \dots, n\}$, with $R_h(0) = 0$, and $R_h^{-1}(k)$

@@ -109,27 +109,33 @@ namespace MathlibExt.Biology.Dynamics.MichaelisMenten
 
 /-! ### Nondimensional parameters and time scales -/
 
-/-- The Segel–Slemrod small parameter `ε = e₀ / (s₀ + K_M)` (dimensionless). -/
+/-- The Segel–Slemrod small parameter `ε = e₀ / (s₀ + K_M)` (dimensionless), with quotients by zero
+read as zero (`0` when `s₀ + K_M = 0`); positive for `k₁, k₂ > 0`, `kb ≥ 0` and `s₀, e₀ > 0`. -/
 noncomputable def qssaEpsilon (k₁ kb k₂ s₀ e₀ : ℝ) : ℝ :=
   e₀ / (s₀ + michaelisConstant k₁ kb k₂)
 
-/-- The dimensionless Michaelis constant `κ = K_M / s₀`, fixed in the limit `e₀ → 0`. -/
+/-- The dimensionless Michaelis constant `κ = K_M / s₀`, fixed in the limit `e₀ → 0`; it is `0` at
+`s₀ = 0` (the convention `x / 0 = 0`). -/
 noncomputable def qssaKappa (k₁ kb k₂ s₀ : ℝ) : ℝ :=
   michaelisConstant k₁ kb k₂ / s₀
 
-/-- The slow (substrate depletion) time scale `t_S = (s₀ + K_M) / (k₂ e₀)`. -/
+/-- The slow (substrate depletion) time scale `t_S = (s₀ + K_M) / (k₂ e₀)`; it is `0` when
+`k₂ e₀ = 0` (the convention `x / 0 = 0`). -/
 noncomputable def slowTimeScale (k₁ kb k₂ s₀ e₀ : ℝ) : ℝ :=
   (s₀ + michaelisConstant k₁ kb k₂) / (k₂ * e₀)
 
-/-- The fast (complex formation) time scale `t_C = 1 / (k₁ (s₀ + K_M))`. -/
+/-- The fast (complex formation) time scale `t_C = 1 / (k₁ (s₀ + K_M))`; it is `0` when
+`k₁ (s₀ + K_M) = 0` (the convention `x / 0 = 0`). -/
 noncomputable def fastTimeScale (k₁ kb k₂ s₀ : ℝ) : ℝ :=
   1 / (k₁ * (s₀ + michaelisConstant k₁ kb k₂))
 
-/-- The reduced vector field in slow time for `u = s / s₀`: `du/dθ = -(1 + κ) u / (κ + u)`. -/
+/-- The reduced vector field in slow time for `u = s / s₀`: `du/dθ = -(1 + κ) u / (κ + u)`, read as
+`0` when `κ + u = 0`. -/
 noncomputable def reducedField (k₁ kb k₂ s₀ u : ℝ) : ℝ :=
   -mmRate (1 + qssaKappa k₁ kb k₂ s₀) (qssaKappa k₁ kb k₂ s₀) u
 
-/-- The slow manifold for `v = c / e₀`: `v = u / (κ + u)`. -/
+/-- The slow manifold for `v = c / e₀`: `v = u / (κ + u)`, read as `0` when `κ + u = 0`;
+meaningful for `κ > 0` and `u ≥ 0`, where `κ + u > 0`. -/
 noncomputable def slowManifold (k₁ kb k₂ s₀ u : ℝ) : ℝ :=
   u / (qssaKappa k₁ kb k₂ s₀ + u)
 
@@ -146,14 +152,16 @@ lemma qssaKappa_pos {k₁ kb k₂ s₀ : ℝ} (hk₁ : 0 < k₁) (hkb : 0 ≤ kb
     (hs₀ : 0 < s₀) : 0 < qssaKappa k₁ kb k₂ s₀ :=
   div_pos (michaelisConstant_pos hk₁ hkb hk₂) hs₀
 
-/-- The Segel–Slemrod parameter is below the Heineken–Tsuchiya–Aris parameter `e₀ / s₀`. -/
+/-- For `k₁, k₂ > 0`, `kb ≥ 0` and `s₀, e₀ > 0`, the Segel–Slemrod parameter is below the
+Heineken–Tsuchiya–Aris parameter `e₀ / s₀`. -/
 theorem qssaEpsilon_lt_div {k₁ kb k₂ s₀ e₀ : ℝ} (hk₁ : 0 < k₁) (hkb : 0 ≤ kb) (hk₂ : 0 < k₂)
     (hs₀ : 0 < s₀) (he₀ : 0 < e₀) : qssaEpsilon k₁ kb k₂ s₀ e₀ < e₀ / s₀ := by
   have := michaelisConstant_pos hk₁ hkb hk₂
   unfold qssaEpsilon
   exact div_lt_div_of_pos_left he₀ hs₀ (by linarith)
 
-/-- **Time-scale separation.** `t_C / t_S = ε · k₂ / (k₁ s₀ + kb + k₂)`. -/
+/-- **Time-scale separation.** For `k₁, k₂ > 0`, `kb ≥ 0` and `s₀, e₀ > 0`,
+`t_C / t_S = ε · k₂ / (k₁ s₀ + kb + k₂)`. -/
 theorem fastTimeScale_div_slowTimeScale {k₁ kb k₂ s₀ e₀ : ℝ} (hk₁ : 0 < k₁) (hkb : 0 ≤ kb)
     (hk₂ : 0 < k₂) (hs₀ : 0 < s₀) (he₀ : 0 < e₀) :
     fastTimeScale k₁ kb k₂ s₀ / slowTimeScale k₁ kb k₂ s₀ e₀ =
@@ -165,7 +173,8 @@ theorem fastTimeScale_div_slowTimeScale {k₁ kb k₂ s₀ e₀ : ℝ} (hk₁ : 
   rw [← hsum]
   field_simp
 
-/-- The fast-to-slow time-scale ratio is below `ε`, so a small `ε` separates the scales. -/
+/-- For `k₁, k₂ > 0`, `kb ≥ 0` and `s₀, e₀ > 0`, the fast-to-slow time-scale ratio is below `ε`, so
+a small `ε` separates the scales. -/
 theorem fastTimeScale_div_slowTimeScale_lt {k₁ kb k₂ s₀ e₀ : ℝ} (hk₁ : 0 < k₁) (hkb : 0 ≤ kb)
     (hk₂ : 0 < k₂) (hs₀ : 0 < s₀) (he₀ : 0 < e₀) :
     fastTimeScale k₁ kb k₂ s₀ / slowTimeScale k₁ kb k₂ s₀ e₀ < qssaEpsilon k₁ kb k₂ s₀ e₀ := by
@@ -178,7 +187,8 @@ theorem fastTimeScale_div_slowTimeScale_lt {k₁ kb k₂ s₀ e₀ : ℝ} (hk₁
 /-! ### The algebraic QSSA relation (elimination, not a limit theorem) -/
 
 /-- **Algebraic QSSA, slow manifold.** In the scaled variables the quasi-steady-state complex
-`c = e₀ s / (K_M + s)` at `s = s₀ u` is `v = c / e₀ = u / (κ + u)`. Pure algebra. -/
+`c = e₀ s / (K_M + s)` at `s = s₀ u` is `v = c / e₀ = u / (κ + u)`. This holds for `s₀, e₀ ≠ 0`, all
+real rates and every `u` (both sides `0` when `K_M + s₀ u = 0`). Pure algebra. -/
 theorem qssComplex_div_eq_slowManifold {k₁ kb k₂ s₀ e₀ : ℝ} (hs₀ : s₀ ≠ 0) (he₀ : e₀ ≠ 0)
     (u : ℝ) : qssComplex k₁ kb k₂ e₀ (s₀ * u) / e₀ = slowManifold k₁ kb k₂ s₀ u := by
   unfold qssComplex slowManifold qssaKappa
@@ -190,10 +200,10 @@ theorem qssComplex_div_eq_slowManifold {k₁ kb k₂ s₀ e₀ : ℝ} (hs₀ : s
       intro h'; apply h; field_simp at h'; linarith
     field_simp
 
-/-- **Algebraic QSSA, reduced field.** Substituting the slow manifold into `s'` and rescaling to
-`u = s / s₀`, `θ = t / t_S` gives `reducedField`: `(t_S / s₀) s' = -(1 + κ) u / (κ + u)`. This
-eliminates `c` by setting `c' = 0`. It is not a statement about solutions; that statement is
-`QSSAContract`. -/
+/-- **Algebraic QSSA, reduced field.** For `k₁ > 0`, `k₂, s₀, e₀ ≠ 0` and `K_M + s₀ u ≠ 0`,
+substituting the slow manifold into `s'` and rescaling to `u = s / s₀`, `θ = t / t_S` gives
+`reducedField`: `(t_S / s₀) s' = -(1 + κ) u / (κ + u)`. This eliminates `c` by setting `c' = 0`. It
+is not a statement about solutions; that statement is `QSSAContract`. -/
 theorem slowTimeScale_mul_substrateRate_qss {k₁ kb k₂ s₀ e₀ u : ℝ} (hk₁ : 0 < k₁)
     (hk₂ : k₂ ≠ 0) (hs₀ : s₀ ≠ 0) (he₀ : e₀ ≠ 0)
     (hu : michaelisConstant k₁ kb k₂ + s₀ * u ≠ 0) :
@@ -207,8 +217,9 @@ theorem slowTimeScale_mul_substrateRate_qss {k₁ kb k₂ s₀ e₀ u : ℝ} (hk
   unfold reducedField slowTimeScale mmRate qssaKappa
   field_simp
 
-/-- The full solution starts off the slow manifold: with `c(0) = 0`, `e(0) = e₀`, `s(0) = s₀`,
-the complex rate is `k₁ e₀ s₀ > 0`. So `c' = 0` is not an identity along solutions. -/
+/-- For `k₁, s₀, e₀ > 0`, the full solution starts off the slow manifold: with `c(0) = 0`,
+`e(0) = e₀`, `s(0) = s₀`, the complex rate is `k₁ e₀ s₀ > 0`. So `c' = 0` is not an identity along
+solutions. -/
 theorem complexRate_initial_pos {k₁ kb k₂ s₀ e₀ : ℝ} (hk₁ : 0 < k₁) (hs₀ : 0 < s₀)
     (he₀ : 0 < e₀) : 0 < complexRate k₁ kb k₂ s₀ 0 (e₀ - 0) := by
   simp only [complexRate, sub_zero, mul_zero]; positivity
@@ -267,8 +278,9 @@ def QSSAContract (k₁ kb k₂ s₀ T : ℝ) : Prop :=
 
 /-! ### Why the initial layer is excluded -/
 
-/-- **Initial-layer gap.** At `θ = 0` the complex starts at `v = 0` while the slow manifold
-gives `v = 1 / (1 + κ)`. The outer complex error at `θ = 0` is `1 / (1 + κ)` for every `e₀`. -/
+/-- **Initial-layer gap.** For `κ > 0`, `c(0) = 0` and `u(0) = 1`: at `θ = 0` the complex starts at
+`v = 0` while the slow manifold gives `v = 1 / (1 + κ)`. The outer complex error at `θ = 0` is
+`1 / (1 + κ)` for every `e₀`. -/
 theorem initialLayer_gap {k₁ kb k₂ s₀ e₀ : ℝ} {c u : ℝ → ℝ} (hc : c 0 = 0) (hu : u 0 = 1)
     (hκ : 0 < qssaKappa k₁ kb k₂ s₀) :
     |c (slowTimeScale k₁ kb k₂ s₀ e₀ * 0) / e₀ - slowManifold k₁ kb k₂ s₀ (u 0)| =
@@ -276,9 +288,9 @@ theorem initialLayer_gap {k₁ kb k₂ s₀ e₀ : ℝ} {c u : ℝ → ℝ} (hc 
   rw [mul_zero, hc, hu, zero_div, zero_sub, abs_neg, slowManifold, add_comm,
     abs_of_pos (by positivity)]
 
-/-- No `O(ε)` bound on the complex can include `θ = 0`: whenever `C ε < 1 / (1 + κ)`, the
-outer complex estimate fails at `θ = 0`. This is why `QSSAContract` claims the complex estimate
-only on `[δ, T]` with `δ > 0`. -/
+/-- No `O(ε)` bound on the complex can include `θ = 0`: for `κ > 0`, `c(0) = 0` and `u(0) = 1`,
+whenever `C ε < 1 / (1 + κ)`, the outer complex estimate fails at `θ = 0`. This is why
+`QSSAContract` claims the complex estimate only on `[δ, T]` with `δ > 0`. -/
 theorem not_complex_le_at_zero {k₁ kb k₂ s₀ e₀ C : ℝ} {c u : ℝ → ℝ} (hc : c 0 = 0)
     (hu : u 0 = 1) (hκ : 0 < qssaKappa k₁ kb k₂ s₀)
     (hsmall : C * qssaEpsilon k₁ kb k₂ s₀ e₀ < 1 / (1 + qssaKappa k₁ kb k₂ s₀)) :

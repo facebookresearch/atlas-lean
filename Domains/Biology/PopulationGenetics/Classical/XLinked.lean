@@ -47,7 +47,9 @@ namespace MathlibExt.Biology.PopulationGenetics.Classical.XLinked
 receive their X from the mother. `x.1 = p_f`, `x.2 = p_m`. -/
 noncomputable def step (x : ℝ × ℝ) : ℝ × ℝ := ((x.1 + x.2) / 2, x.1)
 
-/-- The weighted mean `p̄ = (2 p_f + p_m) / 3` (each X chromosome counted once). -/
+/-- The weighted mean `p̄ = (2 p_f + p_m) / 3`. With equal positive numbers of females and males it
+is the allele frequency among all X chromosomes, each counted once; with `F` females and `M`
+males, when `2F + M > 0`, that frequency is `(2F p_f + M p_m) / (2F + M)` instead. -/
 noncomputable def pbar (x : ℝ × ℝ) : ℝ := (2 * x.1 + x.2) / 3
 
 @[simp] theorem step_fst (x : ℝ × ℝ) : (step x).1 = (x.1 + x.2) / 2 := rfl

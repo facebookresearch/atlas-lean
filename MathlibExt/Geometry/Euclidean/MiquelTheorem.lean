@@ -345,11 +345,11 @@ theorem miquel_theorem (A B C D E F : EuclideanSpace ℝ (Fin 2))
       have T1 : (2 : ℤ) • EuclideanGeometry.oangle Q F A =
           (2 : ℤ) • EuclideanGeometry.oangle F E A :=
         EuclideanGeometry.Sphere.two_zsmul_oangle_tangent_eq hF1 hA1 hE1 htan1 hQF
-          hEF hEA hFA.symm
+          hEF hEA
       have T2 : (2 : ℤ) • EuclideanGeometry.oangle Q F B =
           (2 : ℤ) • EuclideanGeometry.oangle F D B :=
         EuclideanGeometry.Sphere.two_zsmul_oangle_tangent_eq hF2 hB2 hD2 htan2 hQF
-          hDF hDB hFB.symm
+          hDF hDB
       have hFAFB : affineSpan ℝ ({A, F} : Set (EuclideanSpace ℝ (Fin 2))) =
           affineSpan ℝ ({B, F} : Set (EuclideanSpace ℝ (Fin 2))) :=
         (miquel_aux_span_symm A F).trans

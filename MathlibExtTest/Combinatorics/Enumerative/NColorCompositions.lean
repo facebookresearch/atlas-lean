@@ -58,4 +58,52 @@ example : trib 32 + trib 30 =
     2 + 2 * ∑ i ∈ Finset.range 10, trib (3 * ((10 : ℕ) : ℤ) + 2 - 3 * (i : ℤ) - 1) := by
   simpa using trib_add_two_sub_three_mul_add_two 10 (by decide)
 
+-- At `k = 0` the sole summand uses the two negative indices.
+example : trib 0 = 1 + (trib (-1) + trib (-2)) := by
+  simpa [Finset.sum_range_one] using trib_three_mul (k := 0)
+
+-- At `k = 2` the sum has two nonnegative index pairs and one negative pair.
+example :
+    trib 6 = 1 + ((trib 5 + trib 4) + (trib 2 + trib 1) + (trib (-1) + trib (-2))) ∧
+      trib 6 = 11 := by
+  refine ⟨?_, by decide⟩
+  simpa [Finset.sum_range_succ] using trib_three_mul (k := 2)
+
+-- At `k = 0`, the `-1` cancels `t(0)` and the last index `-1` contributes zero.
+example : trib 1 = -1 + (trib 0 + trib (-1)) ∧ trib 1 = 0 := by
+  refine ⟨?_, by decide⟩
+  simpa [Finset.sum_range_one] using trib_three_mul_add_one (k := 0)
+
+-- At `k = 2`, the two additional pairs give `t(7) = 20`.
+example :
+    trib 7 = -1 + ((trib 6 + trib 5) + (trib 3 + trib 2) + (trib 0 + trib (-1))) ∧
+      trib 7 = 20 := by
+  refine ⟨?_, by decide⟩
+  simpa [Finset.sum_range_succ] using trib_three_mul_add_one (k := 2)
+
+-- The first admissible values `n = 3, 4`, each with one summand.
+example :
+    (trib 3 + trib 1 = 2 * trib 2 ∧ trib 4 + trib 2 = 2 * trib 3) ∧
+      (trib 3 + trib 1 = 2 ∧ trib 4 + trib 2 = 4) := by
+  refine ⟨?_, by decide⟩
+  simpa [Finset.sum_range_one] using trib_add_two_sub_three_mul (k := 1) (hk := le_rfl)
+
+-- At `n = 6, 7` each progression adds a second summand, three indices apart.
+example :
+    (trib 6 + trib 4 = 2 * (trib 5 + trib 2) ∧
+      trib 7 + trib 5 = 2 * (trib 6 + trib 3)) ∧
+      (trib 6 + trib 4 = 14 ∧ trib 7 + trib 5 = 26) := by
+  refine ⟨?_, by decide⟩
+  simpa [Finset.sum_range_succ] using trib_add_two_sub_three_mul (k := 2) (hk := by decide)
+
+-- The residue-two identity includes k = 0, with one summand.
+example : trib (3 * ((0 : ℕ) : ℤ) + 2) = 1 := by
+  rw [trib_three_mul_add_two (k := 0)]
+  decide
+
+-- Three pairs contribute to t(8): (t(7)+t(6)), (t(4)+t(3)), (t(1)+t(0)).
+example : trib (3 * ((2 : ℕ) : ℤ) + 2) = 37 := by
+  rw [trib_three_mul_add_two (k := 2)]
+  decide
+
 end MathlibExtTest.NColorCompositions
