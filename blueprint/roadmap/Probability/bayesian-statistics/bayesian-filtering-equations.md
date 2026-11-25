@@ -16,7 +16,7 @@ The *filtering distribution* at step $k$ is the conditional law of $x_k$ given t
 $$
 p(x_k \mid y_{1:k-1}) = \int p(x_k \mid x_{k-1})\,p(x_{k-1} \mid y_{1:k-1})\,dx_{k-1}.
 $$
-- *Update* (Bayes' rule): whenever $Z_k = \int p(y_k \mid x_k)\,p(x_k \mid y_{1:k-1})\,dx_k > 0$,
+- *Update* (Bayes' rule): for every measurement $y_k$ whose normalizer $Z_k = \int p(y_k \mid x_k)\,p(x_k \mid y_{1:k-1})\,dx_k$ satisfies $0 < Z_k < \infty$,
 $$
 p(x_k \mid y_{1:k}) = \frac{1}{Z_k}\,p(y_k \mid x_k)\,p(x_k \mid y_{1:k-1}).
 $$

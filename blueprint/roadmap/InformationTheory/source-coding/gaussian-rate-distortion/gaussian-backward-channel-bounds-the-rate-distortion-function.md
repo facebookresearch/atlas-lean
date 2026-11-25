@@ -1,4 +1,4 @@
-# The Gaussian backward channel attains the rate-distortion bound
+# The Gaussian backward channel bounds the Gaussian rate-distortion function from above
 
 Let $\sigma^2 > 0$ and $0 < D < \sigma^2$. Take independent real random variables $\hat X$ with law $N(0, \sigma^2 - D)$ and $Z$
 with law $N(0, D)$, and put $X = \hat X + Z$. Then $X$ has law $N(0, \sigma^2)$, the squared-error distortion is
