@@ -1,0 +1,120 @@
+/-
+Author: @toskua, Avocado
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.Category.Basic
+public import MathlibExt.Analysis.CStarAlgebra.Extension.Basic
+public import Mathlib.CategoryTheory.NatTrans
+
+/-!
+# The category of normalized C-star extensions
+
+Objects use the existing closed-ideal/quotient normalization. Its inclusion,
+quotient and exactness are derived, not additional stored conclusions.
+Morphisms are the existing extension diagrams with both endpoint maps.
+-/
+
+@[expose] public section
+
+noncomputable section
+
+universe u
+
+open CategoryTheory
+
+/-- An actual normalized extension, with its actual ideal and quotient algebras. -/
+structure CStarExtensionCat : Type (u + 1) where
+  /-- The quotient algebra of the normalized extension. -/
+  quotient : NonUnitalCStarAlgCat.{u}
+  /-- The ideal algebra of the normalized extension. -/
+  ideal : NonUnitalCStarAlgCat.{u}
+  /-- The actual normalized extension with these quotient and ideal endpoints. -/
+  extension : CStarExtension.{u, u, u} quotient ideal
+
+namespace CStarExtensionCat
+
+instance category : Category.{u} CStarExtensionCat.{u} where
+  Hom X Y := CStarExtension.Hom X.extension Y.extension
+  id X := CStarExtension.Hom.id X.extension
+  comp f g := CStarExtension.Hom.comp g f
+  id_comp := by
+    intro X Y f
+    exact CStarExtension.Hom.comp_id f
+  comp_id := by
+    intro X Y f
+    exact CStarExtension.Hom.id_comp f
+  assoc := by
+    intro X Y Z W f g h
+    exact CStarExtension.Hom.comp_assoc h g f
+
+/-- Bundle existing normalized extension data, without reselecting its middle. -/
+def ofExtension {A B : Type u} [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
+    (E : CStarExtension.{u, u, u} A B) : CStarExtensionCat.{u} where
+  quotient := NonUnitalCStarAlgCat.of A
+  ideal := NonUnitalCStarAlgCat.of B
+  extension := E
+
+/-- The literal middle algebra of a normalized extension. -/
+def middle (E : CStarExtensionCat.{u}) : NonUnitalCStarAlgCat.{u} :=
+  NonUnitalCStarAlgCat.of E.extension.Middle
+
+/-- The ideal endpoint, including its actual induced maps. -/
+def idealFunctor : CStarExtensionCat.{u} ⥤ NonUnitalCStarAlgCat.{u} where
+  obj E := E.ideal
+  map f := f.idealMap
+  map_id _E := rfl
+  map_comp _f _g := rfl
+
+/-- The middle endpoint, including its actual induced maps. -/
+def middleFunctor : CStarExtensionCat.{u} ⥤ NonUnitalCStarAlgCat.{u} where
+  obj E := middle E
+  map f := f.middleMap
+  map_id _E := rfl
+  map_comp _f _g := rfl
+
+/-- The quotient endpoint, including its actual induced maps. -/
+def quotientFunctor : CStarExtensionCat.{u} ⥤ NonUnitalCStarAlgCat.{u} where
+  obj E := E.quotient
+  map f := f.quotientMap
+  map_id _E := rfl
+  map_comp _f _g := rfl
+
+/-- The inclusions form a real natural transformation of endpoint functors. -/
+def inclusionNat : NatTrans idealFunctor.{u} middleFunctor.{u} where
+  app E := E.extension.inclusion
+  naturality {X Y} f :=
+    (show CStarExtension.Hom X.extension Y.extension from f).inclusion_commutes.symm
+
+/-- The quotient maps form a real natural transformation of endpoint functors. -/
+def quotientNat : NatTrans middleFunctor.{u} quotientFunctor.{u} where
+  app E := E.extension.quotient
+  naturality {X Y} f :=
+    (show CStarExtension.Hom X.extension Y.extension from f).quotient_commutes
+
+@[simp]
+theorem inclusionNat_apply (E : CStarExtensionCat.{u}) (b : E.ideal) :
+    inclusionNat.app E b = E.extension.inclusion b := by
+  rfl
+
+@[simp]
+theorem quotientNat_apply (E : CStarExtensionCat.{u}) (a : middle E) :
+    quotientNat.app E a = E.extension.quotient a := by
+  rfl
+
+/-- Every object carries its derived injective inclusion. -/
+theorem inclusion_injective (E : CStarExtensionCat.{u}) :
+    Function.Injective (inclusionNat.app E) :=
+  E.extension.inclusion_injective
+
+/-- Every object carries its derived surjective quotient. -/
+theorem quotient_surjective (E : CStarExtensionCat.{u}) :
+    Function.Surjective (quotientNat.app E) :=
+  E.extension.quotient_surjective
+
+/-- Exactness is the actual normalized inclusion/quotient exactness. -/
+theorem exact (E : CStarExtensionCat.{u}) :
+    Function.Exact (inclusionNat.app E) (quotientNat.app E) :=
+  E.extension.exact
+
+end CStarExtensionCat
