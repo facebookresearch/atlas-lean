@@ -9,6 +9,8 @@ Cryptographic schemes and their correctness and security reductions: the game-ba
 - [Signatures, identification and zero knowledge](signatures-and-protocols/README.md)
 - [Differential privacy](differential-privacy/README.md)
 - [Laplace and exponential mechanisms](laplace-and-exponential-mechanisms/README.md)
+- [BB84 intercept-resend error rate](bb84-intercept-resend-error-rate/README.md)
+- [Hybrid argument for sequences of distributions](hybrid-argument-for-sequences-of-distributions/README.md)
 
 ## Related topics
 
