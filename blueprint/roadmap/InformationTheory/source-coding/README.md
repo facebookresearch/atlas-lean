@@ -17,3 +17,5 @@ Lossless compression of information sources by variable-length codes, including 
 - [Joint typicality (finite iid)](joint-typicality.md)
 - [LZ78 incremental parsing and phrase-count bound](lz78-incremental-parsing-and-phrase-count-bound.md)
 - [AEP and typical sets (finite iid)](remaining-clauses-of-aep-and-typical-sets.md)
+
+- [Gaussian rate-distortion function](gaussian-rate-distortion/README.md)

@@ -19,6 +19,7 @@ public import MathlibExt.NumberTheory.GibonacciCompositionSum
 public import MathlibExt.NumberTheory.GibonacciNumber
 public import MathlibExt.NumberTheory.LucasSequence
 public import MathlibExt.NumberTheory.PellNumberSequence
+public import MathlibExt.NumberTheory.PellPellLucasCompositionSumsSqrtTwo
 
 namespace MetaMathlibExt
 
@@ -163,30 +164,6 @@ public theorem_wanted fib_mul_add_eq_toeplitzHessenberg_det_iff (ℓ m : ℕ) (h
               else (b * (((i : ℕ) + 1 - (j : ℕ) : ℕ) : ℂ) + c) * d ^ ((i : ℕ) + 1 - (j : ℕ)))
           else 0)) ↔
       (ℓ = 1 ∧ m = 3) ∨ (ℓ = 2 ∧ m = 0)
-
-/-- **Pell and Pell–Lucas numbers as composition sums with $\sqrt 2$ weights.** Let $P_n$ be the
-Pell numbers and $Q_n$ the Pell–Lucas numbers ($Q_0 = Q_1 = 2$, $Q_{k+2} = 2Q_{k+1} + Q_k$). For
-every $n \ge 1$, with $c$ running over the compositions of $n$ (ordered tuples of positive
-integers with sum $n$) and the products running over the parts $j$ of $c$, the real number
-$$\sum_c \prod_{j \in c} (j - 1) (\sqrt 2)^{j-2}$$
-equals $\sqrt 2\, P_{n-1}$ for odd $n$ and $Q_{n-1}/2$ for even $n$ (identity (10)), and
-$$\sum_c \prod_{j \in c} \frac{j + 1}{(\sqrt 2)^j}$$
-equals $P_{n+1}/\sqrt 2$ for odd $n$ and $Q_{n+1}/4$ for even $n$ (identity (11)).
-
-In the source both are multinomial sums; the weight of the first vanishes on parts $1$, so its
-sum runs over the compositions of $n$ without parts $1$.
-
-Source: Taras Goy and Mark Shattuck, *Determinantal Representations of Some Classical
-Recurrent Sequences*, INTEGERS 25 (2025), Article A97, Corollary 2 (`integers-2025-A97-cor-2`). -/
-public theorem_wanted pell_pellLucas_composition_sums_sqrt_two (n : ℕ) (hn : 1 ≤ n) :
-    ∑ c : Composition n, ∏ i : Fin c.length,
-        ((c.blocksFun i : ℝ) - 1) * Real.sqrt 2 ^ (c.blocksFun i - 2) =
-      (if Odd n then Real.sqrt 2 * (pellNumber (n - 1) : ℝ)
-        else (pellLucas (n - 1) : ℝ) / 2) ∧
-    ∑ c : Composition n, ∏ i : Fin c.length,
-        ((c.blocksFun i : ℝ) + 1) / Real.sqrt 2 ^ c.blocksFun i =
-      (if Odd n then (pellNumber (n + 1) : ℝ) / Real.sqrt 2
-        else (pellLucas (n + 1) : ℝ) / 4)
 
 /-- **Toeplitz–Hessenberg determinants with Oresme entries.** For numbers $a_0, a_1, \dots, a_n$,
 let $\det(a_0; a_1, \dots, a_n)$ be the determinant of the $n \times n$ matrix whose $(i, j)$

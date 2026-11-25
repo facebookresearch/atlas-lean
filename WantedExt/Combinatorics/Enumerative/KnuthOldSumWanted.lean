@@ -947,17 +947,6 @@ public theorem_wanted sum_neg_one_pow_choose_two_pow_catalan (n : ℕ) :
         2 ^ (n + 1) / 2 ^ (2 * k) * catalan k =
       ∑ k ∈ range (n / 2 + 1), (n.choose (2 * k) : ℚ) / 2 ^ (2 * k) * catalan k
 
-/-- **Even-index binomial sum equal to a scaled central binomial coefficient.** For every
-natural number $n$,
-$$\sum_{k=0}^{\lfloor n/2 \rfloor} \binom{n}{2k} \frac{1}{2^{2k}} \binom{2k}{k} =
-\frac{1}{2^n} \binom{2n}{n}.$$
-
-Source: Kunle Adegoke, *A Short Proof of Knuth's Old Sum, Generalizations and Related
-Sums*, INTEGERS 26 (2026), Article A19, Proposition 4 (`integers-2026-A19-prop-4`). -/
-public theorem_wanted sum_choose_even_centralBinom_div_four_pow (n : ℕ) :
-    ∑ k ∈ range (n / 2 + 1), (n.choose (2 * k) : ℚ) / 2 ^ (2 * k) * ((2 * k).choose k : ℚ) =
-      ((2 * n).choose n : ℚ) / 2 ^ n
-
 /-- **Even-index binomial sum of weighted central binomial coefficients.** Write
 $C_m = \binom{2m}{m}/(m+1)$ for the $m$-th Catalan number. For every natural number $n$,
 $$\sum_{k=0}^{\lfloor n/2 \rfloor} \binom{n}{2k} \frac{1}{(k+1) 2^{2k}} \binom{2k}{k} =
@@ -969,16 +958,6 @@ public theorem_wanted sum_choose_even_centralBinom_div_succ (n : ℕ) :
     ∑ k ∈ range (n / 2 + 1),
         (n.choose (2 * k) : ℚ) / (k + 1) / 2 ^ (2 * k) * ((2 * k).choose k : ℚ) =
       2 / 2 ^ n / (n + 2) * (2 * n + 1) * catalan n
-
-/-- **Even-index expansion of a weighted central binomial sum.** For every natural number $n$,
-$$\sum_{k=0}^{n} \binom{n}{k} 2^{-k} \binom{2k}{k} =
-\sum_{k=0}^{\lfloor n/2 \rfloor} \binom{n}{2k} 2^{n-4k} \binom{2k}{k}.$$
-
-Source: Kunle Adegoke, *A Short Proof of Knuth's Old Sum, Generalizations and Related
-Sums*, INTEGERS 26 (2026), Article A19, Proposition 5 (`integers-2026-A19-prop-5`). -/
-public theorem_wanted sum_choose_centralBinom_div_two_pow (n : ℕ) :
-    ∑ k ∈ range (n + 1), (n.choose k : ℚ) / 2 ^ k * ((2 * k).choose k : ℚ) =
-      ∑ k ∈ range (n / 2 + 1), (n.choose (2 * k) : ℚ) * 2 ^ n / 2 ^ (4 * k) * ((2 * k).choose k : ℚ)
 
 /-- **Binomial transform of weighted Catalan numbers.** Write $C_m = \binom{2m}{m}/(m+1)$ for the
 $m$-th Catalan number. For every natural number $n$,

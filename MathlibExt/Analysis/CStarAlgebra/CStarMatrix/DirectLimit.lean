@@ -1,0 +1,55 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.CStarMatrix.Padding
+
+/-!
+# The positive-size C-star matrix directed system
+
+The existing nonunital star-algebra padding maps form a directed system on
+the actual stages indexed by `Fin (n + 1)`. This explicit proof introduces
+no global instance, new transition map, norm or completion. The index zero
+is a size-one stage, and zero coefficient algebras are allowed.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+namespace CStarMatrix
+
+universe u
+
+/-- Let `A` be a possibly nonunital ring. `A` has a complex module structure. `A` has an additive star
+involution. The positive-size C-star matrix padding system, as an explicit proof. No global instance
+or new transition map is introduced.
+-/
+theorem positive_stage_directed_system
+    (A : Type u) [NonUnitalRing A] [Module ℂ A] [StarAddMonoid A] :
+    DirectedSystem (fun n : ℕ => CStarMatrix (Fin (n + 1)) (Fin (n + 1)) A)
+      (fun _ _ h => CStarMatrix.zeroExtendStarAlgHom (A := A) (Nat.succ_le_succ h)) where
+  map_self := fun {n} X => by
+    apply (CStarMatrix.ofMatrix (m := Fin (n + 1)) (n := Fin (n + 1)) (A := A)).symm.injective
+    change Matrix.zeroExtend le_rfl (CStarMatrix.ofMatrix.symm X) =
+      CStarMatrix.ofMatrix.symm X
+    exact Matrix.zeroExtend_self _
+  map_map := fun {k j i} hij hjk X => by
+    apply (CStarMatrix.ofMatrix (m := Fin (k + 1)) (n := Fin (k + 1)) (A := A)).symm.injective
+    change
+      Matrix.zeroExtend (Nat.succ_le_succ hjk)
+        (Matrix.zeroExtend (Nat.succ_le_succ hij) (CStarMatrix.ofMatrix.symm X)) =
+      Matrix.zeroExtend (Nat.succ_le_succ (hij.trans hjk)) (CStarMatrix.ofMatrix.symm X)
+    exact Matrix.zeroExtend_comp (Nat.succ_le_succ hij) (Nat.succ_le_succ hjk) _
+
+end CStarMatrix
