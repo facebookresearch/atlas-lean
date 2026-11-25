@@ -10,6 +10,7 @@ module
 
 import MathlibExt.RepresentationTheory.PGroupFixedVector
 
+import Mathlib.Data.ZMod.Basic
 import Mathlib.Tactic.Common
 
 namespace MathlibExtTest.RepresentationTheory.PGroupFixedVector

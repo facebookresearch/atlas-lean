@@ -30,7 +30,6 @@ removed and the names restated in Mathlib style.
 module
 
 public import Mathlib.Algebra.CharP.Defs
-public import Mathlib.Data.ZMod.Basic
 public import Mathlib.GroupTheory.PGroup
 public import Mathlib.RepresentationTheory.Basic
 
@@ -61,7 +60,7 @@ public theorem exists_ne_zero_forall_apply_eq_of_isPGroup
     {v : V} (hv : v ≠ 0) :
     ∃ w : V, w ≠ 0 ∧ ∀ g : G, ρ g w = w := by
   classical
-  letI modp : Module (ZMod p) V := Module.compHom V (ZMod.castHom (dvd_refl p) k)
+  let modp : Module (ZMod p) V := Module.compHom V (ZMod.castHom (dvd_refl p) k)
   have hsmul : ∀ (c : ZMod p) (x : V),
       c • x = ((ZMod.castHom (dvd_refl p) k c : k)) • x := fun _ _ => rfl
   set S : Set V := Set.range fun g : G => ρ g v with hS
@@ -72,18 +71,18 @@ public theorem exists_ne_zero_forall_apply_eq_of_isPGroup
     | mem y hy =>
       obtain ⟨h, rfl⟩ := hy
       refine Submodule.subset_span ⟨g * h, ?_⟩
-      simp only [map_mul, Module.End.mul_apply]
+      simp only [map_mul, mul_apply_eq_comp]
     | zero => rw [map_zero]; exact W.zero_mem
     | add y z _ _ hy hz => rw [map_add]; exact W.add_mem hy hz
     | smul c y _ hy => rw [hsmul, map_smul, ← hsmul]; exact W.smul_mem c hy
-  haveI : Module.Finite (ZMod p) W :=
+  have : Module.Finite (ZMod p) W :=
     Module.Finite.span_of_finite (ZMod p) (Set.finite_range _)
-  haveI : Finite W := Module.finite_of_finite (ZMod p)
-  letI act : MulAction G W :=
+  have : Finite W := Module.finite_of_finite (ZMod p)
+  let act : MulAction G W :=
     { smul := fun g w => ⟨ρ g w, hWstab g w.2⟩
-      one_smul := fun w => Subtype.ext (by show ρ 1 (w : V) = w; rw [map_one]; rfl)
+      one_smul := fun w => Subtype.ext (by change ρ 1 (w : V) = w; rw [map_one]; rfl)
       mul_smul := fun g h w => Subtype.ext (by
-        show ρ (g * h) (w : V) = ρ g (ρ h w); rw [map_mul]; rfl) }
+        change ρ (g * h) (w : V) = ρ g (ρ h w); rw [map_mul]; rfl) }
   have hact : ∀ (g : G) (w : W), ((g • w : W) : V) = ρ g w := fun _ _ => rfl
   have hmod := hG.card_modEq_card_fixedPoints W
   have hvW : (⟨v, Submodule.subset_span ⟨1, by simp⟩⟩ : W) ≠ 0 :=
@@ -99,7 +98,7 @@ public theorem exists_ne_zero_forall_apply_eq_of_isPGroup
     omega
   have h0 : (0 : W) ∈ MulAction.fixedPoints G W :=
     fun g => Subtype.ext (by rw [hact]; exact map_zero _)
-  haveI : Finite (MulAction.fixedPoints G W) := inferInstance
+  have : Finite (MulAction.fixedPoints G W) := inferInstance
   have hcard : 1 < Nat.card (MulAction.fixedPoints G W) := by
     have hpos : 0 < Nat.card (MulAction.fixedPoints G W) :=
       Nat.card_pos_iff.mpr ⟨⟨⟨0, h0⟩⟩, inferInstance⟩
