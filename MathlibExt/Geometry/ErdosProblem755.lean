@@ -59,8 +59,7 @@ The equilateral-triangle counting API is inlined from FC
 `IsAnySizeEquilateralTriangle`, `unitEquilateralTriangleCount`,
 `anySizeEquilateralTriangleCount`, `TUnit`, `TAnySize`; absent from
 pinned Mathlib). `test` lemmas are not ported. The upstream
-`answer(True)` is dropped. Status: resolved true by [CDL25b]. An external Lean proof is linked in
-the registry.
+`answer(True)` is dropped. Status: resolved true by [CDL25b].
 
 The upper bound uses the forbidden configuration from Clemen, Dumitrescu, and Liu.
 Finite sampling reduces the counting estimate to Turán's theorem for simple graphs.
@@ -1288,8 +1287,7 @@ Source: Felix
 Christian Clemen, Adrian Dumitrescu, and Dingyuan Liu, The number of regular simplices in higher
 dimensions, arXiv:2507.19841 (2025), https://arxiv.org/abs/2507.19841. Moved from
 `OpenConjectures/Geometry/ErdosProblem755`. Resolved true: Resolved externally by Clemen,
-Dumitrescu, and Liu. This repository records the statement, not an internal proof; a separate
-pinned Lean proof is cited in the registry.
+Dumitrescu, and Liu.
 -/
 public theorem conjecture_holds : conjecture := by
   let o (n : ℕ) : ℝ := (TAnySize 6 n : ℝ) / (n : ℝ) ^ 3 - 1 / 27
