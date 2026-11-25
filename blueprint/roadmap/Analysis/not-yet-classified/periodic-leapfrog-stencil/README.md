@@ -1,6 +1,6 @@
 # Periodic Leapfrog Stencil
 
-- [Weighted grid inner product](weighted-inner.md)
+- [Weighted grid pairing](weighted-inner.md)
 
 ## Private helpers
 

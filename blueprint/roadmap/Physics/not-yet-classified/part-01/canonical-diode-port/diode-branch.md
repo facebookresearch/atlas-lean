@@ -5,4 +5,4 @@ Consider a network with finitely many nodes and branches, tail and head maps on 
 - either $\mathrm{tail}(e) = a$ and $\mathrm{head}(e) = c$, or $\mathrm{tail}(e) = c$ and $\mathrm{head}(e) = a$; and
 - $i_e = s\, I_D(s\, v_e)$, where $s = A_{a e}$ and $I_D(V) = I_s\left(e^{V/(n V_T)} - 1\right)$ with $V_T = k_B T/|q|$.
 
-When $a \neq c$, $s = +1$ if the anode is the branch tail and $s = -1$ if it is the head.
+When $a \neq c$, $s = +1$ if the anode is the branch tail and $s = -1$ if it is the head. The parameters are unrestricted: if $n V_T = 0$ (for instance $n = 0$, $T = 0$ or $q = 0$, where $V_T = 0$ by the convention $x/0 = 0$), the same convention makes $I_D$ identically $0$.

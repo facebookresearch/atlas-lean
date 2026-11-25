@@ -1,8 +1,10 @@
-# Part 7 of 8
+# Part 7 of 10
 
-- [Thermal Trace Certificate](thermal-trace-certificate/README.md)
-- [Thevenin Norton Port](thevenin-norton-port/README.md)
-- [Uniform Ohmic Bar](uniform-ohmic-bar/README.md)
-- [Vacuum TE10 Evanescent](vacuum-te10-evanescent/README.md)
-- [Vacuum TE10 Mode](vacuum-te10-mode/README.md)
-- [Weak And Virtual Work](weak-and-virtual-work/README.md)
+- [Pipe Friction Ports](pipe-friction-ports/README.md)
+- [Pipe Network](pipe-network/README.md)
+- [Prismatic Members](prismatic-members/README.md)
+- [RMSAverage Power](rmsaverage-power/README.md)
+- [Rail Limited Feedback](rail-limited-feedback/README.md)
+- [Reactive Balance](reactive-balance/README.md)
+- [Rectangular PECTraces](rectangular-pectraces/README.md)
+- [Reservoir Balance](reservoir-balance/README.md)
