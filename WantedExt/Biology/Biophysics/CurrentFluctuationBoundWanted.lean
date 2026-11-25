@@ -26,12 +26,16 @@ function `I(j) = inf_p I(p, j)`. Their results: the per-edge quadratic bound (Eq
 (Eq. (3)); for a generalized current `j_d = ∑_{y<z} d(y, z) j(y, z)`,
 `I(j_d) ≤ (j_d - j_d^π)² Σ^π / (4 (j_d^π)²)` (Eq. (4)), whose case `d = F` is Eq. (5); and the
 thermodynamic uncertainty relation `Var(j_d) Σ^π / (j_d^π)² ≥ 2` for the asymptotic variance
-`Var(j_d) = 1 / I''(j_d^π)` (Eq. (8)).
+`Var(j_d) = 1 / I''(j_d^π)` (Eq. (8)). Here Eq. (8) is stated as the reciprocal-curvature bound
+`I''(j_d^π) ≤ Σ^π / (2 (j_d^π)²)` on the rate function; reading `1 / I''` as the variance is the
+second-order expansion of the rate function and is not stated.
 
 Here `I(p, j)` is the formula (9)–(10), and the contraction is taken over positive densities.
 That this contraction is the rate function of the empirical currents is the level-2.5 large
 deviation principle, which the source cites and which is not stated here. Edges with zero
-stationary current are excluded by hypothesis.
+stationary current are excluded by hypothesis. The rate functions are real infima: they take the
+junk value `0` on an empty feasible set, where the true rate function is `+∞`, and the theorems
+only concern feasible values.
 
 Sources: T. R. Gingrich, J. M. Horowitz, N. Perunov and J. L. England, "Dissipation bounds all
 steady-state current fluctuations", Phys. Rev. Lett. 116 (2016) 120601, Eqs. (3)–(5), (8)–(12)
@@ -98,7 +102,12 @@ noncomputable def generalizedCurrent (r : Fin N → Fin N → ℝ) (d j : Fin N 
   ∑ e ∈ edges r, d e.1 e.2 * j e.1 e.2
 
 /-- The rate function of a generalized current, `I(j_d) = inf {I(j) | j conservative with
-∑_{y<z} d(y, z) j(y, z) = j_d}`. -/
+∑_{y<z} d(y, z) j(y, z) = j_d}`, as a real infimum. It is meaningful only for feasible values
+`x = j_d`, those attained by some conservative current: on an empty feasible set (for example
+`d = 0` and `x ≠ 0`) the real infimum is the junk value `0`, whereas the rate function is `+∞`.
+When `j_d^π ≠ 0` every real `x` is feasible (scale the stationary current `j^π`, which is
+conservative), so the theorems below, which assume `j_d^π ≠ 0`, only concern feasible values;
+`generalizedRate_le` also takes feasibility as an explicit hypothesis. -/
 noncomputable def generalizedRate (r : Fin N → Fin N → ℝ) (d : Fin N → Fin N → ℝ) (x : ℝ) : ℝ :=
   sInf (currentRate r '' {j | Conservative r j ∧ generalizedCurrent r d j = x})
 
@@ -146,19 +155,27 @@ theorem_wanted currentRate_le (r : Fin N → Fin N → ℝ) (π : Fin N → ℝ)
 
 /-- **Dissipation bounds every generalized current** (Gingrich et al. 2016, Eqs. (4)–(5)). In
 the setting `Setting`, for every weight `d` with `j_d^π = ∑_{y<z} d(y, z) j^π(y, z) ≠ 0` and
-every real `x`, `I(j_d = x) ≤ (x - j_d^π)² Σ^π / (4 (j_d^π)²)`. Eq. (5) is the case `d = F`.
+every real `x` that is feasible (some conservative current `j` has `j_d = x`; under
+`j_d^π ≠ 0` this holds for every `x`), `I(j_d = x) ≤ (x - j_d^π)² Σ^π / (4 (j_d^π)²)`. Eq. (5)
+is the case `d = F`.
 
 Source: Gingrich, Horowitz, Perunov and England (2016), Eqs. (4)–(5). -/
 theorem_wanted generalizedRate_le (r : Fin N → Fin N → ℝ) (π : Fin N → ℝ) (h : Setting r π)
-    (d : Fin N → Fin N → ℝ) (hd : generalizedCurrent r d (meanCurrent r π) ≠ 0) (x : ℝ) :
+    (d : Fin N → Fin N → ℝ) (hd : generalizedCurrent r d (meanCurrent r π) ≠ 0) (x : ℝ)
+    (hx : ∃ j, Conservative r j ∧ generalizedCurrent r d j = x) :
     generalizedRate r d x ≤ (x - generalizedCurrent r d (meanCurrent r π)) ^ 2 *
       entropyRate r π / (4 * generalizedCurrent r d (meanCurrent r π) ^ 2)
 
-/-- **Thermodynamic uncertainty relation** (Gingrich et al. 2016, Eq. (8)). In the setting
-`Setting`, let `d` be a weight with `j_d^π ≠ 0`, and suppose the rate function
-`x ↦ I(j_d = x)` is differentiable near `j_d^π` and its derivative has derivative `c > 0` at
-`j_d^π`. Then the asymptotic variance `Var(j_d) = 1 / c` satisfies
-`Var(j_d) Σ^π / (j_d^π)² ≥ 2`.
+/-- **Thermodynamic uncertainty relation, curvature form** (Gingrich et al. 2016, Eq. (8)). In
+the setting `Setting`, let `d` be a weight with `j_d^π ≠ 0` (so every `x` is feasible), and
+suppose the rate function `x ↦ I(j_d = x)` is differentiable near `j_d^π` and its derivative has
+derivative `c = I''(j_d^π) > 0` at `j_d^π`. Then the reciprocal curvature satisfies
+`(1 / I''(j_d^π)) Σ^π / (j_d^π)² ≥ 2`, i.e. `I''(j_d^π) ≤ Σ^π / (2 (j_d^π)²)`. This is a
+statement about the large-deviation rate function. The source reads `1 / I''(j_d^π)` as the
+asymptotic variance `Var(j_d)` of the time-averaged current (the second-order expansion of the
+rate function at its minimum), which gives the stochastic uncertainty relation
+`Var(j_d) Σ^π / (j_d^π)² ≥ 2`; that identification, a consequence of the large deviation
+principle, is not stated here.
 
 Source: Gingrich, Horowitz, Perunov and England (2016), Eq. (8). -/
 theorem_wanted uncertainty_relation (r : Fin N → Fin N → ℝ) (π : Fin N → ℝ) (h : Setting r π)

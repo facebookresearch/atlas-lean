@@ -16,4 +16,4 @@
 - [Edge entropy production](mean-current-mul-force.md)
 - [Linear-response bound on current fluctuations](current-rate-le.md)
 - [Dissipation bounds every generalized current](generalized-rate-le.md)
-- [Thermodynamic uncertainty relation](uncertainty-relation.md)
+- [Thermodynamic uncertainty relation, curvature form](uncertainty-relation.md)
