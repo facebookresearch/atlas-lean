@@ -108404,6 +108404,8 @@
 "ValuationBijection.valuation_extends_of_liesOver": "2a96602edc698dc4",
 "ValuationBijection.valuation_surjective_of_extends": "65d2583fc18908fd",
 "ValuationSubring.algebra_isAlgebraic_zmod_residueField_of_isAlgebraic_rat": "6302a858aeda6a27",
+"ValuationSubring.exists_isFrobeniusAt_of_liesOverPrime": "3aa91186c445a263",
+"ValuationSubring.exists_isFrobeniusAt_rat": "ac96444b3ba0257c",
 "ValuationSubring.exists_root_mem_of_monic": "0253115273faefa2",
 "ValuationSubring.henselianLocalRing_of_isAlgClosed": "7745a191504a91f4",
 "ValuationSubring.isAlgClosed_residueField": "b38ecacf3bf400cd",
