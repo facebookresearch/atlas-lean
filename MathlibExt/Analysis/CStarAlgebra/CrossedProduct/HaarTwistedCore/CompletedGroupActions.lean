@@ -149,7 +149,8 @@ theorem star_groupLeftCompletion (g : G) (x : p.NonUnitalCompletion) :
     (groupLeftCompletion μ α p g).continuous.star
     ((groupRightCompletion μ α p g⁻¹).continuous.comp continuous_star) ?_) x
   funext f
-  simp only [Function.comp_apply, groupLeftCompletion_apply, ← map_star, groupRightCompletion_apply]
+  simp only [Function.comp_apply, Pi.star_apply,
+    groupLeftCompletion_apply, ← map_star, groupRightCompletion_apply]
   exact congrArg p.toNonUnitalCompletion (crossedStar_groupLeft μ α g f)
 
 /-- The completed star exchanges modular right translation with inverse left translation. -/
@@ -159,7 +160,8 @@ theorem star_groupRightCompletion (g : G) (x : p.NonUnitalCompletion) :
     (groupRightCompletion μ α p g).continuous.star
     ((groupLeftCompletion μ α p g⁻¹).continuous.comp continuous_star) ?_) x
   funext f
-  simp only [Function.comp_apply, groupRightCompletion_apply, ← map_star, groupLeftCompletion_apply]
+  simp only [Function.comp_apply, Pi.star_apply,
+    groupRightCompletion_apply, ← map_star, groupLeftCompletion_apply]
   exact congrArg p.toNonUnitalCompletion (crossedStar_groupRight μ α g f)
 
 /-- The computed completed translations form the actual original group centralizer pair. -/

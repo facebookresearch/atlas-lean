@@ -47,7 +47,7 @@ variable (K : Set X)
 
 /-- The original bounded continuous functions that vanish outside the given set. -/
 def supportedSubmodule : Submodule 𝕜 (X →ᵇ E) where
-  carrier f := ∀ x : X, x ∉ K → f x = 0
+  carrier := {f : X →ᵇ E | ∀ x : X, x ∉ K → f x = 0}
   zero_mem' := by intro x hx; rfl
   add_mem' := by
     intro f g hf hg x hx

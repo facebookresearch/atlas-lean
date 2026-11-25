@@ -17,6 +17,7 @@ Dirichlet and unitary convolution, completely multiplicative and additive functi
 - [Vaughan's identity](vaughan-s-identity/README.md)
 - [Weighted sums of Dirichlet convolutions](weighted-sums-of-dirichlet-convolutions/README.md)
 - [Wintner's mean-value theorem](wintner-s-mean-value-theorem/README.md)
+- [Möbius inversion for arithmetic functions](m-bius-inversion-for-arithmetic-functions/README.md)
 - [Explicit bounds for the summatory function of $\mu(n)/n$](summatory-moebius-div-bound.md)
 - [Prime powers fixed by a uniform power sum of their prime factors](prime-power-factorization-sum-eq-iff.md)
 - [Von Mangoldt function](von-mangoldt-function.md)

@@ -1,7 +1,7 @@
 # Basic
 
 - [Is Finite Dimensional Subalgebra](is-finite-dimensional-subalgebra.md)
-- [Is AF](is-af.md)
+- [Approximately finite-dimensional C*-algebras](is-af.md)
 - [Is Finite Dimensional Subalgebra range](is-finite-dimensional-subalgebra-range.md)
 - [Is AF of monotone dense range](is-af-of-monotone-dense-range.md)
 - [Is AF of finite Dimensional](is-af-of-finite-dimensional.md)
@@ -26,7 +26,7 @@
 - [Full Inclusion](full-inclusion.md)
 - [Id](id.md)
 - [Comp](comp.md)
-- [Sum](sum.md)
+- [Finite sums of completely positive maps](sum.md)
 - [CStar Extension](cstar-extension.md)
 - [Inclusion](inclusion.md)
 - [Quotient](quotient.md)

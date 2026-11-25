@@ -7,14 +7,15 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-The coherent-cohomology and linear-series interface follows
-`StacksFrontier/AlgebraicGeometry/Curves/LinearSeries.lean` in
-AxiomMath/Stacks at c496df0d9beea9deaeabcea8492605f9a0a2313b,
-licensed under Apache 2.0. That source has no individual author or
-copyright notice. Modification notice: use Mathlib's right-derived
-global-section functor directly, define degree by the actual Euler
-characteristic difference, state rank one by local trivializations, and
-define genus, degree and linear series only on proper curves.
+Portions of this file are adapted from:
+
+`StacksFrontier/AlgebraicGeometry/Curves/LinearSeries.lean` (AxiomMath/Stacks at
+commit c496df0d9beea9deaeabcea8492605f9a0a2313b, https://github.com/AxiomMath/Stacks):
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Modification notice: use Mathlib's right-derived global-section functor
+directly, define degree by the actual Euler characteristic difference, state
+rank one by local trivializations, and define genus, degree and linear series
+only on proper curves.
 -/
 
 module
@@ -52,7 +53,8 @@ and `h⁰ - h¹` is the actual Euler characteristic.
 * `degree f L hL` is `χ(L) - χ(𝒪_X)` for an invertible sheaf `L`
   (Stacks, Tag 0AYR).
 * `LinearSeries f d r` is a linear series `g^r_d`: an invertible sheaf of
-  degree `d` with an `(r + 1)`-dimensional space of global sections.
+  degree `d ≥ 0` with an `(r + 1)`-dimensional space of global sections
+  (Stacks, Tag 0CCN).
 
 References: Arbarello--Cornalba--Griffiths--Harris, *Geometry of Algebraic
 Curves I*, Chapters II and V; Stacks Project, Sections 33.44 (Tag 0AYQ) and 53.8
@@ -176,15 +178,21 @@ theorem degree_structureModule {k : Type u} [Field k] {X : Scheme.{u}}
   simp [degree]
 
 /-- A linear series `g^r_d` on a proper curve: an invertible sheaf `L` of
-degree `d` with an `(r + 1)`-dimensional space `V` of global sections. -/
+degree `d` with an `(r + 1)`-dimensional space `V` of global sections. As in the Stacks
+Project's definition for proper schemes of dimension at most one (Tag 0CCN, Definition
+53.3.1), the degree `d` is a natural number. On an integral curve this excludes nothing,
+since a line bundle with a nonzero section has nonnegative degree. On a reducible or
+disconnected curve a line bundle of negative total degree can have nonzero sections, for
+example `𝒪(1) ⊔ 𝒪(-2)` on `ℙ¹ ⊔ ℙ¹`; it is not a linear series in this sense, and its
+signed degree is still `degree`. -/
 structure LinearSeries {k : Type u} [Field k] {X : Scheme.{u}}
-    (f : X ⟶ Spec (.of k)) [IsProperCurve f] (d : ℤ) (r : ℕ) where
+    (f : X ⟶ Spec (.of k)) [IsProperCurve f] (d r : ℕ) where
   /-- The invertible sheaf. -/
   L : X.Modules
   /-- `L` is invertible. -/
   isLineBundle : IsLineBundle L
   /-- `L` has degree `d`. -/
-  degree_eq : degree f L isLineBundle = d
+  degree_eq : degree f L isLineBundle = (d : ℤ)
   /-- The selected space of global sections. -/
   V : Submodule k (cohomology f L 0)
   /-- The selected space has projective dimension `r`. -/

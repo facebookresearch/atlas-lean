@@ -44,13 +44,13 @@ noncomputable def insert {n : ℕ} (i : Fin (n + 1)) (c : B) :
       (by
         intro a j x y
         simp only [Fin.insertNth_update]
-        exact (show MultilinearMap k (fun _ : Fin (n + 1) => B)
+        exact (show MultilinearMap (RingHom.id k) (fun _ : Fin (n + 1) => B)
           (TensorPower k (n + 1) B) from PiTensorProduct.tprod k).map_update_add
             (Fin.insertNth (α := fun _ : Fin (n + 1) => B) i c a) (i.succAbove j) x y)
       (by
         intro a j r x
         simp only [Fin.insertNth_update]
-        exact (show MultilinearMap k (fun _ : Fin (n + 1) => B)
+        exact (show MultilinearMap (RingHom.id k) (fun _ : Fin (n + 1) => B)
           (TensorPower k (n + 1) B) from PiTensorProduct.tprod k).map_update_smul
             (Fin.insertNth (α := fun _ : Fin (n + 1) => B) i c a) (i.succAbove j) r x))
 

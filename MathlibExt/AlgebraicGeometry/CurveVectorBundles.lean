@@ -49,6 +49,48 @@ def IsVectorBundle {X : Scheme.{u}} (E : X.Modules) (r : ℕ) : Prop :=
   ∀ x : X, ∃ U : X.Opens, x ∈ U ∧
     Nonempty ((Scheme.Modules.pullback U.ι).obj E ≅ trivialBundle U r)
 
+/-- The trivial bundle of rank zero is the zero module. -/
+theorem isZero_trivialBundle_zero (X : Scheme.{u}) : IsZero (trivialBundle X 0) := by
+  rw [IsZero.iff_id_eq_zero]
+  exact Sigma.hom_ext _ _ (fun i ↦ Fin.elim0 i)
+
+/-- Every section of a module over an open contained in an open where its restriction vanishes
+is zero. -/
+theorem section_eq_zero_of_isZero_pullback {X : Scheme.{u}} {E : X.Modules} {V : X.Opens}
+    (hV : IsZero ((Scheme.Modules.pullback V.ι).obj E)) {W : X.Opens} (hW : W ≤ V)
+    (t : Γ(E, W)) : t = 0 := by
+  have hR : IsZero (E.restrict V.ι) :=
+    hV.of_iso ((Scheme.Modules.restrictFunctorIsoPullback V.ι).app E)
+  have himg : V.ι ''ᵁ (V.ι ⁻¹ᵁ W) = W := by
+    rw [Scheme.Hom.image_preimage_eq_opensRange_inf, Scheme.Opens.opensRange_ι]
+    exact inf_eq_right.mpr hW
+  revert t
+  rw [← himg]
+  intro t
+  have h0 : ∀ s : Γ(E.restrict V.ι, V.ι ⁻¹ᵁ W), s = 0 := fun s ↦ by
+    have := congrArg (fun φ ↦ Scheme.Modules.Hom.app φ (V.ι ⁻¹ᵁ W) s) (hR.eq_of_src (𝟙 _) 0)
+    simpa using this
+  have h1 := h0 ((Scheme.Modules.restrictAppIso V.ι E (V.ι ⁻¹ᵁ W)).inv t)
+  calc t = (Scheme.Modules.restrictAppIso V.ι E (V.ι ⁻¹ᵁ W)).hom
+        ((Scheme.Modules.restrictAppIso V.ι E (V.ι ⁻¹ᵁ W)).inv t) := by simp
+    _ = 0 := by rw [h1, map_zero]
+
+/-- A vector bundle of rank zero is the zero module. -/
+theorem isZero_of_isVectorBundle_zero {X : Scheme.{u}} {E : X.Modules}
+    (h : IsVectorBundle E 0) : IsZero E := by
+  rw [IsZero.iff_id_eq_zero]
+  ext U s
+  suffices hs : s = 0 by simpa using hs
+  refine TopCat.Presheaf.section_ext ⟨E.presheaf, E.isSheaf⟩ U s 0 (fun x hx ↦ ?_)
+  obtain ⟨V, hxV, ⟨e⟩⟩ := h x
+  have hV : IsZero ((Scheme.Modules.pullback V.ι).obj E) :=
+    (isZero_trivialBundle_zero V).of_iso e
+  have hres := section_eq_zero_of_isZero_pullback hV (inf_le_right : U ⊓ V ≤ V)
+    (E.presheaf.map (homOfLE (inf_le_left : U ⊓ V ≤ U)).op s)
+  change E.presheaf.germ U x hx s = E.presheaf.germ U x hx 0
+  rw [← TopCat.Presheaf.germ_res_apply E.presheaf (homOfLE (inf_le_left : U ⊓ V ≤ U)) x
+    (TopologicalSpace.Opens.mem_inf.mpr ⟨hx, hxV⟩), hres, map_zero, map_zero]
+
 /-- The trivial bundle of rank one is the structure sheaf. -/
 def trivialBundleOneIso (X : Scheme.{u}) : trivialBundle X 1 ≅ structureModule X :=
   coproductUniqueIso _

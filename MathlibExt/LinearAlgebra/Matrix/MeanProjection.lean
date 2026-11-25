@@ -51,7 +51,7 @@ theorem meanProjection_mulVec (x : V → ℝ) :
 @[simp]
 theorem transpose_meanProjection : (meanProjection : Matrix V V ℝ)ᵀ = meanProjection := by
   ext i j
-  simp [meanProjection, transpose_apply, one_apply, eq_comm]
+  simp [meanProjection, transpose_apply, Matrix.one_apply, eq_comm]
 
 theorem isHermitian_meanProjection : (meanProjection : Matrix V V ℝ).IsHermitian := by
   rw [IsHermitian, conjTranspose_eq_transpose_of_trivial, transpose_meanProjection]

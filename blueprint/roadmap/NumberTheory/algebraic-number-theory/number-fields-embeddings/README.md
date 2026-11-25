@@ -5,3 +5,4 @@ Number fields, their rings of integers, embeddings and signatures, CM fields, Mi
 - [Minkowski's bound: every ideal class of a number field contains an integral ideal of small norm](minkowski-bound.md)
 - [Integral closure of ℤ in a field and the ring of integers of a number field](ring-of-integers.md)
 - [The class group of a number field is finite](class-group-finite.md)
+- [The ring of integers of a number field is a Dedekind domain](ring-of-integers-dedekind.md)

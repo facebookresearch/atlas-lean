@@ -41,11 +41,11 @@ def iterateCupMultilinear (V : Type a) [AddCommGroup V] [Module R V]
     (A : TopModuleCat.{b} R) (C : ℕ → TopModuleCat.{b} R)
     (kappa : V →ₗ[R] A) (unit : C 0)
     (step : (n : ℕ) → A →ₗ[R] C n →ₗ[R] C (n + 1)) :
-    (n : ℕ) → MultilinearMap R (fun _ : Fin n => V) (C n)
-  | 0 => MultilinearMap.constOfIsEmpty R _ unit
+    (n : ℕ) → MultilinearMap (RingHom.id R) (fun _ : Fin n => V) (C n)
+  | 0 => MultilinearMap.constOfIsEmpty (RingHom.id R) _ unit
   | n + 1 =>
     let B := iterateCupMultilinear V A C kappa unit step n
-    let f : V →ₗ[R] MultilinearMap R (fun _ : Fin n => V) (C (n + 1)) :=
+    let f : V →ₗ[R] MultilinearMap (RingHom.id R) (fun _ : Fin n => V) (C (n + 1)) :=
       { toFun := fun x => ((step n) (kappa x)).compMultilinearMap B
         map_add' := fun x y => by
           apply MultilinearMap.ext

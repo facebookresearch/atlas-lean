@@ -94,7 +94,7 @@ variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
 
 private theorem rightQuasi (g : G) :
     QuasiMeasurePreserving (fun x : G => x * g) μ μ := by
-  refine ⟨measurable_id.mul_const g, ?_⟩
+  refine ⟨(measurable_id.mul_const g).aemeasurable, ?_⟩
   rw [Measure.map_right_mul_modular μ g]
   exact Measure.AbsolutelyContinuous.smul_left Measure.AbsolutelyContinuous.rfl _
 

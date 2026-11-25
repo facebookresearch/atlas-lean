@@ -158,7 +158,7 @@ private theorem filtration_mono_of_succ
     {i j : ℕ} (hij : i ≤ j) (hj : j ≤ n) : F i ≤ F j := by
   revert hj
   refine Nat.le_induction (m := i)
-    (P := fun j _ => j ≤ n → F i ≤ F j) ?_ ?_ j hij
+    (motive := fun j _ => j ≤ n → F i ≤ F j) ?_ ?_ j hij
   · intro _
     exact le_rfl
   · intro k hik ih hk1n
