@@ -321,6 +321,104 @@ public theorem not_silent_of_even (x z : ℤ → ℤ) (σ : ℕ) (hσ : Even σ)
   norm_num [extendedContinuant_neg_one, extendedContinuant_zero] at east hdet
   linarith
 
+namespace threeSilent_terms
+
+-- Keep both coordinates so a vanishing numerator or denominator is harmless.
+private def convergent (x : ℤ → ℤ) (i : ℤ) : ℤ × ℤ :=
+  (extendedContinuant x i 0, extendedContinuant x (i - 1) 1)
+
+private theorem recurrence (x : ℤ → ℤ) (i : ℤ) :
+    convergent x i = x i • convergent x (i - 1) + convergent x (i - 2) := by
+  apply Prod.ext
+  · simpa [convergent, zsmul_eq_mul] using extendedContinuant_recurrence x i 0
+  · have h := extendedContinuant_recurrence x (i - 1) 1
+    change extendedContinuant x (i - 1) 1 =
+      x i * extendedContinuant x (i - 1 - 1) 1 + extendedContinuant x (i - 2 - 1) 1
+    convert h using 1
+    ring_nf
+
+private theorem cancel_coeff (x : ℤ → ℤ) (i : ℤ) {a b : ℤ}
+    (h : a • convergent x i = b • convergent x i) : a = b := by
+  by_cases hp : extendedContinuant x i 0 = 0
+  · have hq : extendedContinuant x (i - 1) 1 ≠ 0 := by
+      intro hq
+      have hd := extendedContinuant_det x i
+      exact (i + 1).negOnePow.ne_zero (by simpa [hp, hq] using hd.symm)
+    apply mul_right_cancel₀ hq
+    simpa [convergent, zsmul_eq_mul] using congrArg Prod.snd h
+  · apply mul_right_cancel₀ hp
+    simpa [convergent, zsmul_eq_mul] using congrArg Prod.fst h
+
+end threeSilent_terms
+
+open threeSilent_terms in
+/-- **Terms of 3-silent sequences.** Let $x, y, z : \mathbb{Z} \to \mathbb{Z}$ be bi-infinite
+integer sequences, and write $K_a(x)_b$ for the extended continuant of $x$ of order $a$ with start
+index $b$. Suppose that for every natural number $i$ we have $K_i(x)_0 = K_i(y)_0$,
+$K_{i-1}(x)_1 = K_{i-1}(y)_1$, $K_{-i-4}(x)_0 = K_i(z)_0$ and
+$K_{-i-5}(x)_1 = K_{i-1}(z)_1$, and that $x_{-1} = 0$. Then $x_n = y_n$ for every $n \ge 0$, and
+$x_{-n} = -z_{n-2}$ for every $n \ge 2$.
+
+In the paper's terms, the hypotheses say that the raw convergents
+$k_n = K_n(x)_0 / K_{n-1}(x)_1$ of $x$ satisfy $k_i \doteq c_i$ and $k_{-i-4} \doteq d_i$ for all
+$i \ge 0$, where $c_i$ and $d_i$ are the corresponding raw convergents of $y$ and $z$ and $\doteq$
+is equality of numerators and of denominators; the periodicity and limit conditions of a
+bi-infinite periodic continued fraction are not assumed.
+
+Source: Dixon J. Jones, *Extended Continuants and Bi-infinite Periodic Continued Fractions*,
+INTEGERS 26 (2026), Article A73, Theorem 6 and its proof (option 2, `x_{-1} = 0`). -/
+public theorem threeSilent_terms (x y z : ℤ → ℤ)
+    (heast : ∀ i : ℕ, extendedContinuant x i 0 = extendedContinuant y i 0 ∧
+      extendedContinuant x ((i : ℤ) - 1) 1 = extendedContinuant y ((i : ℤ) - 1) 1)
+    (hwest : ∀ i : ℕ, extendedContinuant x (-(i : ℤ) - 4) 0 = extendedContinuant z i 0 ∧
+      extendedContinuant x (-(i : ℤ) - 5) 1 = extendedContinuant z ((i : ℤ) - 1) 1)
+    (hx : x (-1) = 0) :
+    (∀ n : ℕ, x n = y n) ∧ ∀ n : ℕ, 2 ≤ n → x (-(n : ℤ)) = -z ((n : ℤ) - 2) := by
+  -- Extend both matches to the two initial pairs at indices -2 and -1.
+  have initial (w : ℤ → ℤ) :
+      convergent w (-2) = (0, 1) ∧ convergent w (-1) = (1, 0) := by
+    norm_num [convergent, extendedContinuant_neg_two, extendedContinuant_neg_one,
+      (extendedContinuant_neg_three_to_six w 1).1]
+  have east (i : ℤ) (hi : -2 ≤ i) : convergent x i = convergent y i := by
+    obtain h | h := le_or_gt 0 i
+    · obtain ⟨n, rfl⟩ := Int.eq_ofNat_of_zero_le h
+      exact Prod.ext (heast n).1 (heast n).2
+    · obtain rfl | rfl : i = -2 ∨ i = -1 := by omega
+      · exact (initial x).1.trans (initial y).1.symm
+      · exact (initial x).2.trans (initial y).2.symm
+  have west (i : ℤ) (hi : -2 ≤ i) : convergent x (-i - 4) = convergent z i := by
+    obtain h | h := le_or_gt 0 i
+    · obtain ⟨n, rfl⟩ := Int.eq_ofNat_of_zero_le h
+      apply Prod.ext (hwest n).1
+      change extendedContinuant x (-↑n - 4 - 1) 1 = extendedContinuant z (↑n - 1) 1
+      rw [show -(n : ℤ) - 4 - 1 = -n - 5 by ring]
+      exact (hwest n).2
+    · obtain rfl | rfl : i = -2 ∨ i = -1 := by omega
+      · exact (initial x).1.trans (initial z).1.symm
+      · rw [(initial z).2]
+        change (extendedContinuant x (-3) 0, extendedContinuant x (-4) 1) = (1, 0)
+        norm_num [(extendedContinuant_neg_three_to_six x 0).1,
+          (extendedContinuant_neg_three_to_six x 1).2.1, hx]
+  constructor
+  · intro n
+    have r := recurrence x n
+    rw [east _ (by omega), east _ (by omega), east _ (by omega), recurrence y n,
+      add_left_inj] at r
+    exact cancel_coeff y _ r.symm
+  · intro n hn
+    let i := (n : ℤ) - 2
+    have hi : 0 ≤ i := by dsimp [i]; omega
+    -- Reading the recurrence backwards negates the coefficient of the preceding pair.
+    have r : convergent x (-(i - 2) - 4) =
+        x (-↑n) • convergent x (-(i - 1) - 4) + convergent x (-i - 4) := by
+      dsimp only [i]
+      convert recurrence x (-↑n) using 1 <;> ring_nf
+    rw [west _ (by omega), west _ (by omega), west _ (by omega), recurrence z i,
+      ← add_assoc, eq_comm, add_eq_right] at r
+    apply cancel_coeff z (i - 1)
+    rw [neg_smul]
+    exact eq_neg_of_add_eq_zero_left r
+
 -- Reflect the order to turn the right-end recurrence into a left-end recurrence.
 private theorem silentTerms_table_five_mod_six.leftRecurrence (x : ℤ → ℤ) (a b : ℤ) :
     extendedContinuant x a b =
