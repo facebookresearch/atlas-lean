@@ -529,32 +529,41 @@ class ParallelAuditTests(unittest.TestCase):
             _, lines = run_audit(names(16), fake, batch_size=8, workers=2)
         self.assertNotIn('hunter2', '\n'.join(lines) + out.getvalue())
 
-    def gated_run(self, memory, workers=3, settle=0.3, hold=0.6, **kwargs):
-        fake = FakeLean(delay=hold)
+    def gated_run(self, memory, fake, *, settle=0.3):
         out = io.StringIO()
         with mock.patch.object(audit.subprocess, 'run', fake), \
                 mock.patch.object(audit, 'launch_lean', fake.launch), \
                 mock.patch.object(audit, 'available_memory', side_effect=memory), \
                 mock.patch.object(audit, 'SETTLE_SECONDS', settle), contextlib.redirect_stdout(out):
-            result = audit.audit(Path('.'), names(24), '-- checker\n', batch_size=8, workers=workers,
-                                 memory_gate=True, **kwargs)
+            result = audit.audit(Path('.'), names(24), '-- checker\n', batch_size=8, workers=3,
+                                 memory_gate=True)
         self.assertEqual(result['checkedModules'], names(24))
-        return fake
 
     def test_the_gate_admits_at_once_with_room_for_every_running_batch(self):
-        fake = self.gated_run(lambda: 10 * audit.BATCH_MEMORY)
+        all_started = threading.Event()
+        fake = FakeLean(hold={'L.M000': all_started, 'L.M008': all_started},
+                        launched=lambda calls: calls == 3 and all_started.set())
+
+        def unexpected_retry(_sample):
+            all_started.set()
+            self.fail('the gate waited for memory despite having room for every batch')
+
+        # The ample-memory path must work even if no running batch has settled.
+        with mock.patch.object(audit.Admission, 'retry_after', side_effect=unexpected_retry):
+            self.gated_run(lambda: 10 * audit.BATCH_MEMORY, fake, settle=float('inf'))
         self.assertEqual(fake.peak, 3)
-        self.assertLess(max(fake.started) - min(fake.started), 0.3)
 
     def test_the_gate_waits_for_the_latest_batch_to_settle_when_memory_is_tight(self):
-        fake = self.gated_run(lambda: int(1.5 * audit.BATCH_MEMORY))
+        fake = FakeLean(delay=0.6)
+        self.gated_run(lambda: int(1.5 * audit.BATCH_MEMORY), fake)
         gaps = [later - earlier for earlier, later in zip(fake.started, fake.started[1:])]
         self.assertTrue(all(gap >= 0.3 for gap in gaps), gaps)
         self.assertGreater(fake.peak, 1)
 
     def test_the_gate_adds_no_batch_without_memory_or_a_reading(self):
         for reading in (lambda: audit.BATCH_MEMORY - 1, lambda: None):
-            fake = self.gated_run(reading, hold=0.1)
+            fake = FakeLean(delay=0.1)
+            self.gated_run(reading, fake)
             self.assertEqual(fake.peak, 1)
 
     def test_the_gate_is_off_for_an_explicit_count(self):
