@@ -40,3 +40,27 @@ example : ValidWitness (-12) 287 0 3 := by decide
 example : ∃ w c : ℤ, ValidWitness (-12) 287 w c :=
   exists_negBaseSqDigitSum_congr (b := -12) (hb := by decide) (heven := ⟨-6, by decide⟩)
     (v := 287) (hv0 := by decide) (hv := by decide)
+
+example (T : Finset ℤ) (hT : ∀ t ∈ T, 0 < t) (hgood : IsNegBaseGood (-3) T) :
+    IsNegBaseGood (-3) T :=
+  isNegBaseGood_of_image_comp (b := -3) (hb := by decide) (T := T) (hT := hT) (ops := [])
+    (hgood := by simpa using hgood)
+
+private abbrev sampleSet : Finset ℤ := {1, 9}
+
+private theorem sampleSet_pos : ∀ t ∈ sampleSet, 0 < t := by
+  intro t ht
+  simp [sampleSet] at ht
+  rcases ht with rfl | rfl <;> decide
+
+-- Both inputs have digit-square sum `1`; the outer successor sends it to `2`.
+example (hgood : IsNegBaseGood (-3) {2}) : IsNegBaseGood (-3) sampleSet := by
+  apply isNegBaseGood_of_image_comp (-3) (by decide) sampleSet sampleSet_pos [false, true]
+  change IsNegBaseGood (-3) (sampleSet.image fun t => negBaseSqDigitSum (-3) t + 1)
+  rwa [show (sampleSet.image fun t => negBaseSqDigitSum (-3) t + 1) = {2} by decide]
+
+-- Reversing the operations instead gives digit-square sums of `2` and `4`.
+example (hgood : IsNegBaseGood (-3) {2, 4}) : IsNegBaseGood (-3) sampleSet := by
+  apply isNegBaseGood_of_image_comp (-3) (by decide) sampleSet sampleSet_pos [true, false]
+  change IsNegBaseGood (-3) (sampleSet.image fun t => negBaseSqDigitSum (-3) (t + 1))
+  rwa [show (sampleSet.image fun t => negBaseSqDigitSum (-3) (t + 1)) = {2, 4} by decide]
