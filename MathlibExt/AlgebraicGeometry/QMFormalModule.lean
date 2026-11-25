@@ -37,15 +37,18 @@ public import MathlibExt.AlgebraicGeometry.QMFakeEllipticCurve
 public import MathlibExt.RingTheory.MvFormalGroup
 
 /-!
-# Special formal modules and formal completion of QM moduli
+# Formal `O_D`-modules and formal completion of QM moduli
 
-A special formal `O_D`-module is a two-dimensional formal group with an
-action of the ring of integers of the quaternion division algebra over
-`ℚ_p`, together with a distinguished endomorphism `ϖ` squaring to the
-action of `p` and twisted by Frobenius. The formal group of a fake
-elliptic curve at a ramified prime is such a module; this file defines
-the module, its kernel-degree invariant, and the formal-completion and
-formal-module predicates for fake elliptic curves.
+A formal `O_D`-module here is a two-dimensional commutative formal group
+with an action of the ring of integers of the quaternion division
+algebra over `ℚ_p`, together with a distinguished endomorphism `ϖ`
+squaring to the action of `p` and twisted by Frobenius. As in the
+source, this is only the carrier of the `O_D`-action: the specialness
+condition on the Lie algebra and the height condition of a special
+formal `O_D`-module are not imposed. The formal group of a fake elliptic
+curve at a ramified prime carries such a module; this file defines the
+module, its homomorphisms and kernel-degree invariant, and the
+formal-completion and formal-module predicates for fake elliptic curves.
 -/
 
 @[expose] public noncomputable section
@@ -215,10 +218,12 @@ end SpecialFormal
 
 open SpecialFormal
 
-/-- A special formal `O_D`-module: a two-dimensional formal group with
-an action of `Zp2 p` by law homomorphisms and a distinguished
+/-- A formal `O_D`-module: a two-dimensional commutative formal group
+with an action of `Zp2 p` by law homomorphisms and a distinguished
 endomorphism `varpi` with `varpi² = act p` and Frobenius-twisted
-commutation with the action. -/
+commutation with the action. This is only the `O_D`-action carrier: it
+imposes neither the specialness condition on the Lie algebra nor a
+height condition. -/
 structure FormalODModule (p : ℕ) [Fact p.Prime] (B : Type u) [CommRing B] where
   /-- The underlying formal group. -/
   F : MvFormalGroup 2 B
@@ -253,6 +258,12 @@ theorem ext' {X Y : FormalODModule p B} (hF : X.F = Y.F) (ha : X.act = Y.act)
     (hv : X.varpi = Y.varpi) : X = Y := by
   cases X; cases Y; cases hF; cases ha; cases hv; rfl
 
+/-- A series is a homomorphism of formal `O_D`-modules if it is a law
+homomorphism commuting with the action and with `varpi`. -/
+def IsODHom (X Y : FormalODModule p B) (φ : Series B) : Prop :=
+  IsLawHom X.F Y.F φ ∧ (∀ a, φ.comp (X.act a) = (Y.act a).comp φ) ∧
+    φ.comp X.varpi = Y.varpi.comp φ
+
 /-- The kernel algebra of a series. -/
 abbrev KerAlgebra (φ : Series B) : Type u :=
   MvPowerSeries (Fin 2) B ⧸ Ideal.span (Set.range φ)
@@ -264,10 +275,11 @@ def HasKernelOfDegree (φ : Series B) (d : ℕ) : Prop :=
     ∀ (κ : Type u) [Field κ] (f : B →+* κ),
       Module.finrank κ (KerAlgebra (φ.map f)) = d
 
-/-- A series is an isogeny of height `h` between formal modules. -/
+/-- A series is an isogeny of height `h` between formal modules: a
+homomorphism of formal `O_D`-modules whose kernel has degree `p ^ h`. -/
 def IsIsogenyOfHeight (X Y : FormalODModule p B) (φ : Series B) (h : ℕ) :
     Prop :=
-  IsLawHom X.F Y.F φ ∧ HasKernelOfDegree φ (p ^ h)
+  IsODHom X Y φ ∧ HasKernelOfDegree φ (p ^ h)
 
 /-- The height of a formal module is measured by the action of `p`. -/
 def HasHeight (X : FormalODModule p B) (h : ℕ) : Prop :=
@@ -283,15 +295,15 @@ namespace CerednikDrinfeld.QM
 additive, unital, multiplicative with Frobenius-twisted second
 component, injective, dense modulo powers of `q`, and compatible with
 the quaternion trace. -/
-structure IsOrderCoord {a b : ℚ} (Λ : Submodule ℤ ℍ[ℚ, a, b]) (q : ℕ)
+structure IsOrderCoord {a b : ℚ} (Λ : Subring ℍ[ℚ, a, b]) (q : ℕ)
     [Fact q.Prime] (coord : ↥Λ → Zp2 q × Zp2 q) : Prop where
   /-- The coordinate is additive. -/
   map_add : ∀ m m' : ↥Λ, coord (m + m') = coord m + coord m'
   /-- The coordinate sends `1` to `(1, 0)`. -/
-  map_one : ∀ h : (1 : ℍ[ℚ, a, b]) ∈ Λ, coord ⟨1, h⟩ = (1, 0)
+  map_one : coord 1 = (1, 0)
   /-- The coordinate is multiplicative with Frobenius twist. -/
-  map_mul : ∀ (m m' : ↥Λ) (h : (m : ℍ[ℚ, a, b]) * (m' : ℍ[ℚ, a, b]) ∈ Λ),
-    coord ⟨(m : ℍ[ℚ, a, b]) * (m' : ℍ[ℚ, a, b]), h⟩ =
+  map_mul : ∀ m m' : ↥Λ,
+    coord (m * m') =
       ((coord m).1 * (coord m').1 +
         (q : Zp2 q) * ((coord m).2 * WittVector.frobenius (coord m').2),
         (coord m).1 * (coord m').2 +
@@ -325,7 +337,7 @@ def IsFormalCompletionAlong {B : Type} [CommRing B] {A A' : Scheme.{0}}
 
 namespace FakeEllipticCurve
 
-variable {a b : ℚ} {Λ : Submodule ℤ ℍ[ℚ, a, b]} {N : ℕ} {q : ℕ} [Fact q.Prime]
+variable {a b : ℚ} {Λ : Subring ℍ[ℚ, a, b]} {N : ℕ} {q : ℕ} [Fact q.Prime]
   {B : Type} [CommRing B]
 
 /-- A fake elliptic curve is a formal module over `X` via coordinates

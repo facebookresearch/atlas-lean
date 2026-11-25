@@ -52,6 +52,10 @@ closed immersion whose points are the `N`-torsion points of rank `N²`.
 Points over a test scheme, pushforward of points, multiples of points
 and tangent vectors over dual numbers are defined first, in terms of
 morphisms in the over category.
+
+Unlike the source, `Λ` is a subring, so the order acts unitally and
+multiplicatively without membership side conditions, and Hecke
+neighbours are taken at a prime `ℓ`.
 -/
 
 @[expose] public noncomputable section
@@ -189,7 +193,7 @@ object with quaternion multiplication by the order `Λ` and level-`N`
 structure. The fields are the data and axioms of the notion; the
 characterization lemmas below restate isomorphisms, pullbacks and
 neighbours in terms of an explicit mediating isomorphism or morphism. -/
-structure FakeEllipticCurve (Λ : Submodule ℤ ℍ[ℚ, a, b]) (N : ℕ)
+structure FakeEllipticCurve (Λ : Subring ℍ[ℚ, a, b]) (N : ℕ)
     (S : Type u) [CommRing S] : Type (u + 1) where
   /-- The underlying scheme. -/
   A : Scheme.{u}
@@ -216,10 +220,9 @@ structure FakeEllipticCurve (Λ : Submodule ℤ ℍ[ℚ, a, b]) (N : ℕ)
     pushPt (act x) (act_over x) (L.mul t P Q) =
       L.mul t (pushPt (act x) (act_over x) P) (pushPt (act x) (act_over x) Q)
   /-- The element `1` of the order acts as the identity. -/
-  act_one : ∀ h : (1 : ℍ[ℚ, a, b]) ∈ Λ, act ⟨1, h⟩ = 𝟙 A
+  act_one : act 1 = 𝟙 A
   /-- The action is multiplicative in the order. -/
-  act_mul : ∀ (x y : ↥Λ) (h : (x : ℍ[ℚ, a, b]) * (y : ℍ[ℚ, a, b]) ∈ Λ),
-    act ⟨(x : ℍ[ℚ, a, b]) * (y : ℍ[ℚ, a, b]), h⟩ = act y ≫ act x
+  act_mul : ∀ x y : ↥Λ, act (x * y) = act y ≫ act x
   /-- The action is additive on points. -/
   act_add : ∀ (x y : ↥Λ) {T : Scheme.{u}}
     (t : T ⟶ Spec (CommRingCat.of S)) (P : SchemeHomOver t f),
@@ -279,7 +282,7 @@ structure FakeEllipticCurve (Λ : Submodule ℤ ℍ[ℚ, a, b]) (N : ℕ)
 
 namespace FakeEllipticCurve
 
-variable {Λ : Submodule ℤ ℍ[ℚ, a, b]} {N : ℕ}
+variable {Λ : Subring ℍ[ℚ, a, b]} {N : ℕ}
 
 /-- The pushforward of a point along the action of `x`. -/
 theorem act_hom_apply {S : Type u} [CommRing S]
@@ -395,11 +398,12 @@ theorem isPullback_iff_exists_via {S S' : Type u} [CommRing S]
     IsPullback φ E E' ↔ ∃ g : E'.A ⟶ E.A, IsPullbackVia φ E E' g :=
   Iff.rfl
 
-/-- Hecke neighbours: an isogeny-like pair with both level structures
-preserved and composite given by the prime element, neither map an
-isomorphism. -/
+/-- Hecke neighbours at a prime `ℓ`: an isogeny-like pair with both level
+structures preserved and both composites given by the action of `ℓ`,
+neither map an isomorphism. -/
 def HeckeNeighbour {S : Type u} [CommRing S] (ℓ : ℕ)
     (E E' : FakeEllipticCurve Λ N S) : Prop :=
+  ℓ.Prime ∧
   ∃ (φ : E.A ⟶ E'.A) (hφ : φ ≫ E'.f = E.f) (ψ : E'.A ⟶ E.A)
     (hψ : ψ ≫ E.f = E'.f),
     (∀ {T : Scheme.{u}} (t : T ⟶ Spec (CommRingCat.of S))
@@ -416,17 +420,14 @@ def HeckeNeighbour {S : Type u} [CommRing S] (ℓ : ℕ)
     (∀ {T : Scheme.{u}} (t : T ⟶ Spec (CommRingCat.of S))
       (P : SchemeHomOver t E'.f), FactorsThrough E'.lev P →
       FactorsThrough E.lev (mapPt ψ hψ P)) ∧
-    (∀ hℓ : ((ℓ : ℚ) : ℍ[ℚ, a, b]) ∈ Λ,
-      φ ≫ ψ = E.act ⟨((ℓ : ℚ) : ℍ[ℚ, a, b]), hℓ⟩ ∧
-        ψ ≫ φ = E'.act ⟨((ℓ : ℚ) : ℍ[ℚ, a, b]), hℓ⟩) ∧
+    (φ ≫ ψ = E.act (ℓ : ↥Λ) ∧ ψ ≫ φ = E'.act (ℓ : ↥Λ)) ∧
     ¬ IsIso φ ∧ ¬ IsIso ψ
 
 theorem heckeNeighbour_symm {S : Type u} [CommRing S] {ℓ : ℕ}
     {E E' : FakeEllipticCurve Λ N S} (h : HeckeNeighbour ℓ E E') :
     HeckeNeighbour ℓ E' E := by
-  obtain ⟨φ, hφ, ψ, hψ, hm, hm', ha, ha', hl, hl', hc, hni, hnj⟩ := h
-  exact ⟨ψ, hψ, φ, hφ, hm', hm, ha', ha, hl', hl,
-    fun hℓ => (hc hℓ).symm, hnj, hni⟩
+  obtain ⟨hℓ, φ, hφ, ψ, hψ, hm, hm', ha, ha', hl, hl', hc, hni, hnj⟩ := h
+  exact ⟨hℓ, ψ, hψ, φ, hφ, hm', hm, ha', ha, hl', hl, hc.symm, hnj, hni⟩
 
 end FakeEllipticCurve
 
