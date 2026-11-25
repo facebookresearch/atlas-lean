@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.Polynomial.Derivative
+public import Mathlib.Basic.Complex.Basic
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Combinatorics.Enumerative.Stirling
 public import Mathlib.Data.Nat.Choose.Sum
@@ -490,5 +491,152 @@ public theorem sum_pow_mul_coeff_eq_sum_stirlingSecond_derivative (a : ℕ → �
     ring
   · simp only [Nat.descFactorial_eq_zero_iff_lt.mpr (Nat.lt_of_not_ge hik),
       Nat.cast_zero, mul_zero, zero_mul]
+
+-- The two geometric sequences solve the recurrence, and the initial values fix their coefficients.
+private theorem secondOrder_eq_binet (a b : ℝ) (U : ℕ → ℝ)
+    (hU : ∀ n, U (n + 2) = a * U (n + 1) + b * U n) (α β : ℂ) (hαβ : α ≠ β)
+    (hsum : α + β = a) (hprod : α * β = -b) (n : ℕ) :
+    (U n : ℂ) = ((U 1 - U 0 * β) / (α - β)) * α ^ n +
+      (-((U 1 - U 0 * α) / (α - β))) * β ^ n := by
+  have hd : α - β ≠ 0 := sub_ne_zero.mpr hαβ
+  have ha : α ^ 2 = a * α + b := by linear_combination α * hsum - hprod
+  have hb : β ^ 2 = a * β + b := by linear_combination β * hsum - hprod
+  have hpow (z : ℂ) (hz : z ^ 2 = a * z + b) (k : ℕ) :
+      z ^ (k + 2) = a * z ^ (k + 1) + b * z ^ k := by
+    rw [pow_add z k 2, hz, pow_succ]
+    ring
+  induction n using Nat.twoStepInduction with
+  | zero =>
+    simp only [pow_zero, mul_one]
+    rw [← neg_div, ← add_div, eq_div_iff hd]
+    ring
+  | one =>
+    simp only [pow_one]
+    rw [← neg_div, div_mul_eq_mul_div, div_mul_eq_mul_div, ← add_div, eq_div_iff hd]
+    ring
+  | more k ih₀ ih₁ =>
+    rw [hU k, Complex.ofReal_add, Complex.ofReal_mul, Complex.ofReal_mul,
+      ih₀, ih₁, hpow α ha, hpow β hb]
+    ring
+
+-- Drop the terms below i, absorb the factorial into the binomial coefficient, and shift the row.
+private theorem sum_descFactorial_mul_choose_mul_pow (N i : ℕ) (z : ℂ) :
+    ∑ k ∈ Finset.range (N + 1), (k.descFactorial i : ℂ) * N.choose k * z ^ k =
+      (N.descFactorial i : ℂ) * z ^ i * (1 + z) ^ (N - i) := by
+  by_cases h : i ≤ N
+  · have hsubset : Finset.Ico i (N + 1) ⊆ Finset.range (N + 1) := by
+      intro k hk
+      exact Finset.mem_range.mpr (Finset.mem_Ico.mp hk).2
+    have hzero (k : ℕ) (hk : k ∈ Finset.range (N + 1)) (hki : k ∉ Finset.Ico i (N + 1)) :
+        (k.descFactorial i : ℂ) * N.choose k * z ^ k = 0 := by
+      simp only [Finset.mem_range] at hk
+      simp only [Finset.mem_Ico] at hki
+      simp [Nat.descFactorial_of_lt (show k < i by omega)]
+    rw [← Finset.sum_subset hsubset hzero, Finset.sum_Ico_eq_sum_range,
+      show N + 1 - i = N - i + 1 by omega]
+    calc
+      _ = ((N.descFactorial i : ℂ) * z ^ i) *
+          ∑ k ∈ Finset.range (N - i + 1), z ^ k * (N - i).choose k := by
+        rw [Finset.mul_sum]
+        refine Finset.sum_congr rfl fun k _ => ?_
+        have hk : i ≤ k + i := by omega
+        have hchoose : ((k + i).descFactorial i : ℂ) * N.choose (k + i) =
+            (N.descFactorial i : ℂ) * (N - i).choose k := by
+          norm_cast
+          rw [Nat.descFactorial_eq_factorial_mul_choose,
+            Nat.descFactorial_eq_factorial_mul_choose N, Nat.mul_assoc,
+            Nat.mul_comm ((k + i).choose i), Nat.choose_mul hk, Nat.add_sub_cancel_right,
+            Nat.mul_assoc]
+        rw [Nat.add_comm i k, hchoose, pow_add]
+        ring
+      _ = _ := by rw [add_comm 1 z, add_pow]; simp only [one_pow, mul_one]
+  · -- When i > N, both sides vanish without using any rule for shifting exponents.
+    rw [Nat.descFactorial_of_lt (Nat.lt_of_not_ge h), Nat.cast_zero, zero_mul, zero_mul]
+    refine Finset.sum_eq_zero fun k hk => ?_
+    simp only [Finset.mem_range] at hk
+    simp [Nat.descFactorial_of_lt (show k < i by omega)]
+
+/-- **Polynomially weighted binomial sums of powers of a second-order sequence.** Let $a$, $b$ be
+real numbers and $(U_n)_{n \ge 0}$ a real sequence with $U_{n+2} = a U_{n+1} + b U_n$ for all $n$.
+Let $\alpha \ne \beta$ be complex numbers with $\alpha + \beta = a$ and $\alpha\beta = -b$ (the
+roots of $y^2 = ay + b$), and put $A = (U_1 - U_0\beta)/(\alpha - \beta)$ and
+$B = (U_1 - U_0\alpha)/(\alpha - \beta)$. Let $S(j, i)$ denote the Stirling numbers of the second
+kind and $(N)_i = N(N-1)\cdots(N-i+1)$ the falling factorial. Let $c_0, c_1, c_2, \dots$ be
+complex numbers, $t$, $N$, $r$ natural numbers and $h(y) = \sum_{j=0}^{t} c_j y^j$. Then for every
+complex number $x$,
+
+$$\sum_{k=0}^{N} h(k) \binom{N}{k} U_k^r x^k =
+\sum_{j=0}^{t} c_j \sum_{i=0}^{j} S(j, i)\, x^i \sum_{\ell=0}^{r} \binom{r}{\ell} A^\ell
+(-B)^{r-\ell} (N)_i\, (\alpha^\ell \beta^{r-\ell})^i (1 + \alpha^\ell \beta^{r-\ell} x)^{N-i}.$$
+
+The source prints $A^j$, with the outer index $j$, where its proof gives $A^\ell$; the printed
+form fails for the Fibonacci numbers $U_k = F_k$, $h = 1$, $r = N = 1$, $x = 0$ (left side $0$,
+printed right side $1 - 1/\sqrt{5}$). The source's coefficients $A_j$ of $h$ are renamed $c_j$,
+and positivity of $r$, $N$, $t$ is dropped.
+
+Source: Andreea M. Stănică, Gabriela N. Stănică, and Pantelimon Stănică, *An Evaluation of
+Rationally Weighted Binomial Sums Via Some Differential and Integral Operators*, The Fibonacci
+Quarterly 62 (2024), Article 62-1/stanica09202023, Corollary 2.8. -/
+public theorem sum_poly_mul_choose_mul_secondOrder_pow (a b : ℝ) (U : ℕ → ℝ)
+    (hU : ∀ n, U (n + 2) = a * U (n + 1) + b * U n) (α β : ℂ) (hαβ : α ≠ β)
+    (hsum : α + β = a) (hprod : α * β = -b) (c : ℕ → ℂ) (t N r : ℕ) (x : ℂ) :
+    ∑ k ∈ Finset.range (N + 1),
+        (∑ j ∈ Finset.range (t + 1), c j * (k : ℂ) ^ j) * N.choose k * (U k : ℂ) ^ r * x ^ k =
+      ∑ j ∈ Finset.range (t + 1), c j * ∑ i ∈ Finset.range (j + 1),
+        (Nat.stirlingSecond j i : ℂ) * x ^ i * ∑ l ∈ Finset.range (r + 1),
+          (r.choose l : ℂ) * ((U 1 - U 0 * β) / (α - β)) ^ l *
+            (-((U 1 - U 0 * α) / (α - β))) ^ (r - l) * N.descFactorial i *
+            (α ^ l * β ^ (r - l)) ^ i * (1 + α ^ l * β ^ (r - l) * x) ^ (N - i) := by
+  let A : ℂ := (U 1 - U 0 * β) / (α - β)
+  let B : ℂ := (U 1 - U 0 * α) / (α - β)
+  let z (l : ℕ) := α ^ l * β ^ (r - l)
+  let w (l : ℕ) := (r.choose l : ℂ) * A ^ l * (-B) ^ (r - l)
+  -- Expand the power of the Binet expression as a sum of geometric sequences.
+  have hpow (k : ℕ) : (U k : ℂ) ^ r = ∑ l ∈ Finset.range (r + 1), w l * (z l) ^ k := by
+    rw [secondOrder_eq_binet a b U hU α β hαβ hsum hprod, add_pow]
+    refine Finset.sum_congr rfl fun l _ => ?_
+    change (A * α ^ k) ^ l * ((-B) * β ^ k) ^ (r - l) * r.choose l = _
+    simp only [w, z, mul_pow, ← pow_mul]
+    rw [Nat.mul_comm k l, Nat.mul_comm k (r - l)]
+    ring
+  have hmoment (i : ℕ) :
+      ∑ k ∈ Finset.range (N + 1), (k.descFactorial i : ℂ) * N.choose k * (U k : ℂ) ^ r * x ^ k =
+        x ^ i * ∑ l ∈ Finset.range (r + 1),
+          w l * N.descFactorial i * (z l) ^ i * (1 + z l * x) ^ (N - i) := by
+    calc
+      _ = ∑ k ∈ Finset.range (N + 1), ∑ l ∈ Finset.range (r + 1),
+          w l * ((k.descFactorial i : ℂ) * N.choose k * (z l * x) ^ k) := by
+        simp_rw [hpow, Finset.mul_sum, Finset.sum_mul]
+        refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun l _ => ?_
+        rw [mul_pow]
+        ring
+      _ = _ := by
+        rw [Finset.sum_comm]
+        simp_rw [← Finset.mul_sum, sum_descFactorial_mul_choose_mul_pow]
+        rw [Finset.mul_sum]
+        refine Finset.sum_congr rfl fun l _ => ?_
+        rw [mul_pow]
+        ring
+  have hstirling (k j : ℕ) : (k : ℂ) ^ j =
+      ∑ i ∈ Finset.range (j + 1), (Nat.stirlingSecond j i : ℂ) * k.descFactorial i := by
+    exact_mod_cast Nat.pow_eq_sum_stirlingSecond_mul_descFactorial k j
+  change _ = ∑ j ∈ Finset.range (t + 1), c j * ∑ i ∈ Finset.range (j + 1),
+    (Nat.stirlingSecond j i : ℂ) * x ^ i * ∑ l ∈ Finset.range (r + 1),
+      w l * N.descFactorial i * (z l) ^ i * (1 + z l * x) ^ (N - i)
+  calc
+    _ = ∑ k ∈ Finset.range (N + 1), ∑ j ∈ Finset.range (t + 1), ∑ i ∈ Finset.range (j + 1),
+        (c j * Nat.stirlingSecond j i) * ((k.descFactorial i : ℂ) * N.choose k * (U k : ℂ) ^ r *
+          x ^ k) := by
+      simp_rw [hstirling, Finset.mul_sum, Finset.sum_mul]
+      refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun j _ =>
+        Finset.sum_congr rfl fun i _ => ?_
+      ring
+    _ = _ := by
+      rw [Finset.sum_comm]
+      refine Finset.sum_congr rfl fun j _ => ?_
+      rw [Finset.sum_comm, Finset.mul_sum]
+      refine Finset.sum_congr rfl fun i _ => ?_
+      rw [← Finset.mul_sum, hmoment]
+      ring
 
 end MetaMathlibExt
