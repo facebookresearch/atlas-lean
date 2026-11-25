@@ -1,6 +1,6 @@
 # Strict concavity of the long-run growth rate
 
-**Strict concavity of the long-run growth rate** (Cohen 1966; Ellner, chapter 2): under the
+**Strict concavity of the long-run growth rate** (Cohen 1966): under the
 hypotheses of the criterion (`μ` a probability measure, `0 < s < 1`, `Y` measurable with `Y > 0`
 and `log Y`, `1 / Y` integrable), if moreover `Y` is not almost surely equal to the dormant
 survival `s` (it is not the case that `Y = s` almost everywhere), then
@@ -9,4 +9,4 @@ survival `s` (it is not the case that `Y = s` almost everywhere), then
 
 ## Sources
 
-- Cohen (1966); Ellner, chapter 2.
+- Cohen (1966).

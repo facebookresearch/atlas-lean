@@ -13,7 +13,8 @@ In Maynard Smith's war of attrition (1974, §3) each contestant chooses the cost
 prepared to pay, linear in display time. If `m₁ > m₂` the first gets `v - m₂` and the second
 `-m₂`; equal choices split the resource, giving `v / 2 - m` each. Maynard Smith showed:
 (i) no pure strategy is an ESS, since against a population playing `m` the mutant `m + ε` does
-better; (ii) the mixed strategy `I` with density `(1/v) e^{-x/v}` on `[0, ∞)` is an equilibrium:
+better; (ii) the mixed strategy `I` with density `(1/v) e^{-x/v}` on `[0, ∞)` (Mathlib's
+`ProbabilityTheory.expMeasure` with rate `v⁻¹`) is an equilibrium:
 every pure `m` earns `0` against it; (iii) `I` is stable against every pure mutant `J = m > 0`:
 `I` earns more against `J` than `J` earns against itself.
 
@@ -28,10 +29,8 @@ doi:10.1016/0022-5193(78)90304-1.
 module
 
 public import Batteries.Util.ProofWanted
-public import Mathlib.Analysis.SpecialFunctions.Exp
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
-public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
-public import Mathlib.MeasureTheory.Measure.WithDensity
+public import Mathlib.Probability.Distributions.Exponential
 
 @[expose] public section
 
@@ -44,10 +43,11 @@ resource of value `v`: `v - m'` if `m > m'`, `-m` if `m < m'`, and `v / 2 - m` i
 noncomputable def payoff (v m m' : ℝ) : ℝ :=
   if m' < m then v - m' else if m < m' then -m else v / 2 - m
 
-/-- The persistence strategy `I`: the exponential law on `[0, ∞)` with mean `v`, i.e. the measure
-with density `(1/v) e^{-x/v}` for `x ≥ 0` and `0` for `x < 0` with respect to Lebesgue measure. -/
+/-- The persistence strategy `I`: Mathlib's exponential law `ProbabilityTheory.expMeasure` with
+rate `v⁻¹`, whose density is `(1/v) e^{-x/v}` for `x ≥ 0` and `0` for `x < 0`. For `v > 0` it is
+a probability law (`ProbabilityTheory.isProbabilityMeasure_expMeasure`) with mean `v`. -/
 noncomputable def exponentialStrategy (v : ℝ) : Measure ℝ :=
-  volume.withDensity fun x => ENNReal.ofReal (if 0 ≤ x then v⁻¹ * Real.exp (-x / v) else 0)
+  ProbabilityTheory.expMeasure v⁻¹
 
 /-- The expected payoff of the pure strategy `m` against the mixed strategy `I`. -/
 noncomputable def payoffAgainst (v m : ℝ) (μ : Measure ℝ) : ℝ := ∫ x, payoff v m x ∂μ
@@ -63,14 +63,13 @@ Source: Maynard Smith (1974), §3. -/
 public theorem_wanted no_pure_ess (v : ℝ) (hv : 0 < v) (m : ℝ) (hm : 0 ≤ m) :
     ∃ m' : ℝ, 0 ≤ m' ∧ m' ≠ m ∧ payoff v m m < payoff v m' m
 
-/-- **The exponential strategy equalizes payoffs** (Maynard Smith 1974, §3): let `v > 0`. The
-exponential law `I` with mean `v` is a probability measure, and every pure strategy `m ≥ 0`
-earns exactly `0` against it: `E(m, I) = 0`.
+/-- **The exponential strategy equalizes payoffs** (Maynard Smith 1974, §3): let `v > 0`, so that
+the exponential law `I` with rate `v⁻¹` (mean `v`) is a probability measure. Every pure strategy
+`m ≥ 0` earns exactly `0` against it: `E(m, I) = 0`.
 
 Source: Maynard Smith (1974), §3. -/
 public theorem_wanted payoffAgainst_exponential (v : ℝ) (hv : 0 < v) :
-    IsProbabilityMeasure (exponentialStrategy v) ∧
-      ∀ m : ℝ, 0 ≤ m → payoffAgainst v m (exponentialStrategy v) = 0
+    ∀ m : ℝ, 0 ≤ m → payoffAgainst v m (exponentialStrategy v) = 0
 
 /-- **Stability against pure mutants** (Maynard Smith 1974, §3): let `v > 0`. For every pure
 mutant `m > 0`, the exponential strategy `I` earns more against `m` than `m` earns against

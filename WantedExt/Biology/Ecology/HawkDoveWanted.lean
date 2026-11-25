@@ -19,8 +19,9 @@ ESS plays Hawk with probability `V / C`; if `V ≥ C`, pure Hawk is the unique E
 meets the first condition with equality and the second strictly).
 
 Recorded here: the complete ESS characterization for all `V, C > 0`. The book was not read; the
-statement follows lecture notes and the Encyclopedia of Mathematics entry on evolutionarily stable
-strategies; Maynard Smith and Price (1973) introduce the game but do not contain this result.
+statement follows the Encyclopedia of Mathematics entry on evolutionarily stable strategies and
+the direct computation `E(q, p) - E(p, p) = (q - p)(V - p C) / 2`; Maynard Smith and Price (1973)
+introduce the game but do not contain this result.
 
 Sources: J. Maynard Smith, *Evolution and the Theory of Games*, Cambridge Univ. Press (1982),
 Ch. 2; J. Maynard Smith and G. R. Price, "The logic of animal conflict", Nature 246 (1973)
