@@ -41,17 +41,6 @@ namespace DelannoyConstructions
 
 open Finset
 
-/-- **Delannoy numbers as a sum of powers of two.** For all natural numbers $m$ and $n$, the
-Delannoy number $D(m, n)$, that is, the Delannoy triangle entry $T(m + n, m; 1)$, satisfies
-$D(m, n) = \sum_{j=0}^{\min(m, n)} \binom{m}{j} \binom{n}{j} 2^j$.
-
-Source: Steven Edwards and William Griffiths, *Delannoy Constructions*, Journal
-of Integer Sequences 27 (2024), Article 24.1.8, Theorem 8
-(`jis-2024-24.1.8-thm-8`). -/
-public theorem_wanted delannoy_eq_sum_choose_mul_choose_two_pow (m n : ℕ) :
-    ordinaryRiordanPascalLikeMatrix (m + n) m 1 =
-      ∑ j ∈ range (min m n + 1), (m.choose j : ℤ) * (n.choose j : ℤ) * 2 ^ j
-
 /-- **Vertical difference identity for the upper generalized Delannoy numbers.**
 For natural numbers $k$, $m$ and $n$, write
 $D^k(m, n) = \sum_{j=0}^{n} \binom{m + n + k - j}{n + k} \binom{n}{j}$ for the upper
