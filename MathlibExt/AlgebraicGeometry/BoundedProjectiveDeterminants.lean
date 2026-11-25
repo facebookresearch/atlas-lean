@@ -125,7 +125,10 @@ def determinantIso (D : Complex R) (e : C.cochain ≅ D.cochain) :
   tensorTermsIso R C D e (degrees R C) ≪≫
     eqToIso (congrArg (tensorTerms R D) (degrees_eq_of_iso R C D e))
 
-/-- The completed-source projective determinant invertibility input, on actual modules. -/
+/-- Determinant modules of finite projective modules are invertible: an instance of this class
+asserts that, for every finite projective $R$-module $M$, the determinant module of $M$
+(`determinantModule`, the submodule of the exterior algebra of $M$ annihilated by left
+multiplication by every element of $M$) is an invertible $R$-module. -/
 class ProjectiveSources : Prop where
   invertible : ∀ M : ModuleCat.{0} R, Module.Finite R M → Module.Projective R M →
     Module.Invertible R (determinantModule R M)
