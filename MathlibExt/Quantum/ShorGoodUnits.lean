@@ -403,7 +403,7 @@ private theorem units_pow_eq_one_card_le {p : ℕ} [Fact p.Prime] {e : ℕ} (he 
   have hP0 : P ≠ 0 := by
     have hmonic : P.Monic := Polynomial.monic_X_pow_sub_C 1 (by omega : e ≠ 0)
     exact hmonic.ne_zero
-  have hdeg : P.natDegree = e := Polynomial.natDegree_X_pow_sub_C
+  have hdeg : P.natDegree = e := Polynomial.natDegree_X_pow_sub_C 1
   have hsub : ((Finset.univ.filter (fun x : (ZMod p)ˣ => x ^ e = 1)).image
       (fun x : (ZMod p)ˣ => (x : ZMod p))) ⊆ P.roots.toFinset := by
     intro z hz

@@ -52,7 +52,10 @@ noncomputable instance : Invertible (Nat.card G : ℂ) :=
   invertibleOfNonzero (NeZero.ne _)
 
 omit [Fintype G] in
-/-- Bridge (forward): an irreducible complex representation gives a simple `FDRep`. -/
+/-- **Irreducible representations are simple.** Let $G$ be a finite group and $\sigma$ an
+irreducible representation of $G$ on a finite-dimensional complex vector space $V$. Then $V$ with
+the action $\sigma$ is a simple object of the category of finite-dimensional complex
+representations of $G$. -/
 theorem simple_fdrep_of_irreducible {V : Type} [AddCommGroup V] [Module ℂ V]
     [Module.Finite ℂ V] [Finite G] (σ : Representation ℂ G V) [σ.IsIrreducible] :
     Simple (FDRep.of σ) := by
@@ -64,7 +67,10 @@ theorem simple_fdrep_of_irreducible {V : Type} [AddCommGroup V] [Module ℂ V]
   exact Representation.IsIrreducible.finrank_intertwiningMap_self σ
 
 omit [Fintype G] in
-/-- Bridge (reverse), auxiliary form with the representation named. -/
+/-- **Simple finite-dimensional representations are irreducible (auxiliary form).** Let $G$ be a
+finite group and $V$ a simple object of the category of finite-dimensional complex representations
+of $G$. If $\sigma$ is a representation of $G$ on the underlying vector space of $V$ that equals the
+action of $G$ on $V$, then $\sigma$ is irreducible. -/
 theorem irreducible_of_simple_fdrep_aux (V : FDRep ℂ G) [Simple V] [Finite G]
     (σ : Representation ℂ G V)
     (hσ : (V.ρ : Representation ℂ G V) = σ) :
@@ -179,21 +185,31 @@ theorem irreducible_of_simple_fdrep_aux (V : FDRep ℂ G) [Simple V] [Finite G]
   · exact absurd h hNne
 
 omit [Fintype G] in
-/-- Bridge (reverse): the underlying representation of a simple `FDRep` is irreducible. -/
+/-- **Simple finite-dimensional complex representations of a finite group are irreducible.** Let
+$G$ be a finite group. If $V$ is a simple object of the category of finite-dimensional complex
+representations of $G$, then the representation of $G$ on the underlying vector space of $V$ is
+irreducible. -/
 theorem irreducible_of_simple_fdrep (V : FDRep ℂ G) [Simple V] [Finite G] :
     Representation.IsIrreducible (V.ρ : Representation ℂ G V) :=
   irreducible_of_simple_fdrep_aux G V (V.ρ : Representation ℂ G V) rfl
 
-/-- Isomorphism classes of simple `FDRep`s: two simples are related when isomorphic. -/
+/-- **Isomorphism of simple representations.** For a finite group $G$, two simple
+finite-dimensional complex representations of $G$ are related when they are isomorphic; this is an
+equivalence relation on the simple finite-dimensional complex representations of $G$. -/
 def Simple.isoSetoid : Setoid {V : FDRep ℂ G // Simple V} where
   r S T := Nonempty (S.1 ≅ T.1)
   iseqv := ⟨fun _ => ⟨Iso.refl _⟩, fun h => h.elim fun i => ⟨i.symm⟩,
     fun h1 h2 => h1.elim fun i => h2.elim fun j => ⟨i.trans j⟩⟩
 
-/-- Iso-classes of simple finite-dimensional complex representations. -/
+/-- **Isomorphism classes of simple representations.** For a finite group $G$, $\mathrm{Irr}(G)$ is
+the set of isomorphism classes of simple finite-dimensional complex representations of $G$. -/
 def Irr : Type 1 := Quotient (Simple.isoSetoid G)
 
-/-- Character of a class, well-defined by `FDRep.char_iso`. -/
+/-- **Character of an isomorphism class.** Let $G$ be a group. For an isomorphism class $c$ of
+simple finite-dimensional complex representations of $G$, the character of $c$ is the function
+$\chi_c \colon G \to \mathbb{C}$ given by $\chi_c(g) = \operatorname{tr} \rho(g)$ for any
+representative $(V, \rho)$ of $c$. It does not depend on the representative, since isomorphic
+representations have the same character. -/
 noncomputable def Irr.charFun (c : Irr G) : G → ℂ :=
   Quotient.lift (fun S => S.1.character) (fun S T h => by
     obtain ⟨i⟩ := h
@@ -203,7 +219,9 @@ omit [Fintype G] in
 theorem Irr.charFun_mk (S : {V : FDRep ℂ G // Simple V}) :
     Irr.charFun G (Quotient.mk _ S) = S.1.character := rfl
 
-/-- Chosen representative bundle of a class. -/
+/-- **Chosen representative of an isomorphism class.** For a finite group $G$ and an isomorphism
+class $c$ of simple finite-dimensional complex representations of $G$, this is a simple
+finite-dimensional complex representation of $G$ in the class $c$, fixed by the axiom of choice. -/
 noncomputable def Irr.repBundle (c : Irr G) : {V : FDRep ℂ G // Simple V} :=
   Quotient.out c
 
@@ -219,7 +237,9 @@ theorem Irr.charFun_repBundle (c : Irr G) :
   exact h.symm
 
 omit [Fintype G] in
-/-- Characters separate iso-classes (via `FDRep.char_orthonormal`). -/
+/-- **Characters determine irreducible representations.** Let $G$ be a finite group. Two
+isomorphism classes of simple finite-dimensional complex representations of $G$ that have the
+same character are equal. -/
 theorem Irr.charFun_inj [Finite G] : Function.Injective (Irr.charFun G) := by
   let _ : Fintype G := Fintype.ofFinite G
   intro a b hab
@@ -263,13 +283,18 @@ instance trivial_isIrreducible : (Representation.trivial ℂ G ℂ).IsIrreducibl
           rw [h]; rfl
         exact Subrepresentation.toSubmodule_injective hU'
 
-/-- The iso-class of the trivial representation. -/
+/-- **The trivial irreducible class.** Let $G$ be a finite group. The trivial representation of
+$G$ on $\mathbb{C}$, where every element of $G$ acts as the identity, is simple, and this is its
+class among the isomorphism classes of simple finite-dimensional complex representations of
+$G$. -/
 noncomputable def Irr.triv : Irr G :=
   Quotient.mk _
     ⟨FDRep.of (Representation.trivial ℂ G ℂ),
       simple_fdrep_of_irreducible G (Representation.trivial ℂ G ℂ)⟩
 
-/-- The character of the trivial class is `1`. -/
+/-- **Character of the trivial representation.** Let $G$ be a finite group. The character of the
+isomorphism class of the trivial representation of $G$ on $\mathbb{C}$ takes the value $1$ at
+every $g \in G$. -/
 theorem Irr.charFun_triv (g : G) : Irr.charFun G (Irr.triv G) g = 1 := by
   change (FDRep.of (Representation.trivial ℂ G ℂ)).character g = 1
   have hg : (FDRep.of (Representation.trivial ℂ G ℂ)).ρ g = LinearMap.id := rfl
@@ -278,14 +303,19 @@ theorem Irr.charFun_triv (g : G) : Irr.charFun G (Irr.triv G) g = 1 := by
   rw [hg, LinearMap.trace_id, Module.finrank_self, Nat.cast_one]
 
 omit [Fintype G] in
-/-- The character at `1` is the degree. -/
+/-- **Character value at the identity.** Let $G$ be a group and let $c$ be an isomorphism class of
+simple finite-dimensional complex representations of $G$. The character of $c$ at the identity
+$1 \in G$ equals the dimension over $\mathbb{C}$ of the chosen representative of $c$. -/
 theorem Irr.charFun_one (c : Irr G) :
     Irr.charFun G c 1 = ((Module.finrank ℂ ↥(Irr.repBundle G c).1 : ℕ) : ℂ) := by
   have h := FDRep.char_one (Irr.repBundle G c).1
   rwa [Irr.charFun_repBundle] at h
 
 omit [Fintype G] in
-/-- Character of a class agrees with its bundled representation. -/
+/-- **Character of a class via its chosen representative.** Let $G$ be a group and let $c$ be an
+isomorphism class of simple finite-dimensional complex representations of $G$, with chosen
+representative $(V, \rho)$. For every $x \in G$, the character of $c$ at $x$ equals the character
+of the representation $\rho$ at $x$, namely $\operatorname{tr} \rho(x)$. -/
 theorem Irr.charFun_eq_repBundle_char (c : Irr G) (x : G) :
     Irr.charFun G c x = Representation.character
       ((Irr.repBundle G c).1.ρ : Representation ℂ G ↥(Irr.repBundle G c).1) x := by
@@ -293,7 +323,12 @@ theorem Irr.charFun_eq_repBundle_char (c : Irr G) (x : G) :
   rfl
 
 open Classical in
-/-- Row orthogonality over iso-classes. -/
+/-- **Orthogonality of irreducible characters.** Let $G$ be a finite group and let $\chi_i$ and
+$\chi_j$ be the characters of isomorphism classes $i$ and $j$ of simple finite-dimensional
+complex representations of $G$. Then
+$$\frac{1}{|G|} \sum_{g \in G} \chi_i(g)\, \chi_j(g^{-1}) =
+\begin{cases} 1 & \text{if } i = j, \\ 0 & \text{otherwise.} \end{cases}$$
+-/
 theorem charInner_orth (i j : Irr G) :
     (Nat.card G : ℂ)⁻¹ * ∑ g : G, Irr.charFun G i g * Irr.charFun G j g⁻¹ =
       if i = j then 1 else 0 := by
@@ -318,10 +353,14 @@ theorem charInner_orth (i j : Irr G) :
     rw [Irr.mk_repBundle, Irr.mk_repBundle] at hq
     exact hq
 
-/-- Class functions: constant on conjugacy classes. -/
+/-- **Class function.** A function $f \colon G \to \mathbb{C}$ on a finite group $G$ is a class
+function when $f(hgh^{-1}) = f(g)$ for all $g, h \in G$, that is, when $f$ is constant on
+conjugacy classes. -/
 def IsClassFun (f : G → ℂ) : Prop := ∀ g h : G, f (h * g * h⁻¹) = f g
 
-/-- Every finite set of iso-classes has cardinality at most `|G|`. -/
+/-- **Bound on the number of irreducible representations.** Let $G$ be a finite group. Every
+finite set of isomorphism classes of simple finite-dimensional complex representations of $G$
+has at most $|G|$ elements. -/
 theorem cardBound (s : Finset (Irr G)) : s.card ≤ Fintype.card G := by
   classical
   have hli : LinearIndependent ℂ (fun i : ↥s => Irr.charFun G (i : Irr G)) := by
@@ -381,13 +420,21 @@ noncomputable instance [Finite G] : Finite (Irr G) := by
 
 noncomputable instance : Fintype (Irr G) := Fintype.ofFinite _
 
-/-- Zimmerman's averaging operator for a function `f`. -/
+/-- **Zimmerman's averaging operator.** Let $G$ be a finite group, let $M$ be a module over the
+group algebra $\mathbb{C}[G]$ with a compatible $\mathbb{C}$-module structure, and write
+$\rho(g)$ for the action of $g \in G$ on $M$. For a function $f : G \to \mathbb{C}$, the averaging
+operator of $f$ is the $\mathbb{C}$-linear endomorphism $T_f = \sum_{g \in G} f(g)\,\rho(g^{-1})$
+of $M$. -/
 noncomputable def zimmOp (M : Type*) [AddCommGroup M] [Module (MonoidAlgebra ℂ G) M]
     [Module ℂ M] [IsScalarTower ℂ (MonoidAlgebra ℂ G) M] (f : G → ℂ) :
     Module.End ℂ M :=
   ∑ g : G, f g • (Representation.ofModule' (k := ℂ) M) g⁻¹
 
-/-- The averaging operator commutes with the `G`-action for class functions. -/
+/-- **The averaging operator of a class function is $G$-equivariant.** Let $G$ be a finite group,
+let $M$ be a module over the group algebra $\mathbb{C}[G]$ with a compatible $\mathbb{C}$-module
+structure, and write $\rho(h)$ for the action of $h \in G$ on $M$. If $f : G \to \mathbb{C}$ is a
+class function, then its averaging operator $T_f = \sum_{g \in G} f(g)\,\rho(g^{-1})$ satisfies
+$\rho(h)(T_f x) = T_f(\rho(h) x)$ for all $h \in G$ and $x \in M$. -/
 theorem zimmOp_comm (M : Type*) [AddCommGroup M] [Module (MonoidAlgebra ℂ G) M]
     [Module ℂ M] [IsScalarTower ℂ (MonoidAlgebra ℂ G) M]
     (f : G → ℂ) (hf : IsClassFun G f) (h : G) (x : M) :
@@ -683,7 +730,14 @@ theorem zimmTopVanish {f : G → ℂ} (hf : IsClassFun G f)
       (Submodule.mem_bot (MonoidAlgebra ℂ G)).mp b.2
     exact hab (Subtype.ext (by rw [ha0, hb0]))
 
-/-- Zimmerman Thm 5 core: a class function orthogonal to every irrep character is zero. -/
+/-- **Class functions orthogonal to all irreducible characters vanish.** Let $G$ be a finite
+group and let $f \colon G \to \mathbb{C}$ be a class function, that is, $f(hgh^{-1}) = f(g)$ for
+all $g, h \in G$. Suppose that for every isomorphism class $c$ of simple finite-dimensional
+complex representations of $G$, with character $\chi_c$,
+$$\frac{1}{|G|} \sum_{g \in G} f(g)\, \chi_c(g^{-1}) = 0.$$
+Then $f = 0$.
+
+Source: Zimmerman, Theorem 5 (core step). -/
 theorem classfun_eq_zero_of_orth {f : G → ℂ} (hf : IsClassFun G f)
     (horth : ∀ c : Irr G,
       (Nat.card G : ℂ)⁻¹ * ∑ g : G, f g * Irr.charFun G c g⁻¹ = 0) :
@@ -746,7 +800,14 @@ theorem Irr.charFun_classfun (c : Irr G) (g h : G) :
   obtain ⟨S, rfl⟩ := Quotient.exists_rep c
   exact FDRep.char_conj S.1 g h
 
-/-- Expansion of a class function in the irrep-character basis (Zimmerman Prop 4 setup). -/
+/-- **Expansion of class functions in irreducible characters.** Let $G$ be a finite group, let
+$f \colon G \to \mathbb{C}$ be a class function, and for each of the finitely many isomorphism
+classes $c$ of simple finite-dimensional complex representations of $G$ let $\chi_c$ be its
+character. Then
+$$f = \sum_{c} \Big(\frac{1}{|G|} \sum_{g \in G} f(g)\, \chi_c(g^{-1})\Big)\, \chi_c,$$
+where $c$ runs over all these isomorphism classes.
+
+Source: Zimmerman, Proposition 4 (setup). -/
 theorem classfun_expand {f : G → ℂ} (hf : IsClassFun G f) :
     f = ∑ c : Irr G, ((Nat.card G : ℂ)⁻¹ * ∑ g : G, f g * Irr.charFun G c g⁻¹) •
       Irr.charFun G c := by
@@ -838,7 +899,8 @@ theorem classfun_expand {f : G → ℂ} (hf : IsClassFun G f) :
   exact sub_eq_zero.mp hzero
 
 open Classical in
-/-- The delta class function at the identity. -/
+/-- **Delta function at the identity.** For a finite group $G$, $\delta_1 \colon G \to \mathbb{C}$
+is the function with $\delta_1(1) = 1$ and $\delta_1(g) = 0$ for every $g \ne 1$. -/
 noncomputable def deltaOne : G → ℂ := fun g => if g = 1 then 1 else 0
 
 omit [Fintype G] in
@@ -859,7 +921,12 @@ theorem deltaOne_classfun : IsClassFun G (deltaOne G) := by
       simpa using hxx
     rw [ite_eq_right hne]
 
-/-- Inner product of the delta function with a character picks out `χ 1 / |G|`. -/
+/-- **Pairing of the identity indicator with a character.** Let $G$ be a finite group, let
+$\delta \colon G \to \mathbb{C}$ be the indicator function of the identity, so $\delta(1) = 1$ and
+$\delta(g) = 0$ for $g \neq 1$, and let $\chi_c$ be the character of an isomorphism class $c$ of
+simple finite-dimensional complex representations of $G$. Then
+$$\frac{1}{|G|} \sum_{g \in G} \delta(g)\, \chi_c(g^{-1}) = \frac{\chi_c(1)}{|G|}.$$
+-/
 theorem deltaOne_inner (c : Irr G) :
     (Nat.card G : ℂ)⁻¹ * ∑ g : G, deltaOne G g * Irr.charFun G c g⁻¹ =
       (Nat.card G : ℂ)⁻¹ * Irr.charFun G c 1 := by
@@ -876,7 +943,12 @@ theorem deltaOne_inner (c : Irr G) :
       _ = Irr.charFun G c 1 := by rw [inv_one]
   rw [hsum]
 
-/-- The regular character vanishes off the identity (column orthogonality). -/
+/-- **Column orthogonality at the identity.** Let $G$ be a finite group and, for each isomorphism
+class $c$ of simple finite-dimensional complex representations of $G$, let $\chi_c$ be its
+character. For every $g \in G$ with $g \ne 1$, $\sum_c \chi_c(1)\,\chi_c(g) = 0$, where the sum runs
+over all such classes $c$.
+
+Equivalently, the character of the regular representation vanishes away from the identity. -/
 theorem regular_character_vanishes (g : G) (hg : g ≠ 1) :
     ∑ c : Irr G, Irr.charFun G c 1 * Irr.charFun G c g = 0 := by
   classical
@@ -894,7 +966,9 @@ theorem regular_character_vanishes (g : G) (hg : g ≠ 1) :
   have hcard : (Nat.card G : ℂ)⁻¹ ≠ 0 := inv_ne_zero (NeZero.ne _)
   exact (mul_eq_zero.mp hpt.symm).resolve_left hcard
 
-/-- The sum of squared degrees equals the group order. -/
+/-- **Sum of squared degrees.** Let $G$ be a finite group and, for each isomorphism class $c$ of
+simple finite-dimensional complex representations of $G$, let $\chi_c$ be its character. Then
+$\sum_c \chi_c(1)^2 = |G|$, where the sum runs over all such classes $c$. -/
 theorem sum_deg_sq : ∑ c : Irr G, (Irr.charFun G c 1) ^ 2 = (Fintype.card G : ℂ) := by
   classical
   have hexp := classfun_expand G (deltaOne_classfun G)

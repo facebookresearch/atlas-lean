@@ -462,7 +462,7 @@ theorem tendstoInMeasure_sup_abs_sum_sq_sub_condExp {m : MeasurableSpace Ω} {μ
     _ ≤ _ := hrow
     _ ≤ ENNReal.ofReal (η / 4) + ENNReal.ofReal (η / 4) + 2 * ENNReal.ofReal (η / 8) := by
         gcongr
-        exact (measure_mono fun ω (hω : C < _) => (show C₀ < _ from
+        exact (measure_mono (s := {ω | C < _}) fun ω (hω : C < _) => (show C₀ < _ from
           lt_of_le_of_lt (le_max_left _ _) hω)).trans hn
     _ = ENNReal.ofReal (3 * η / 4) := by
         rw [← ENNReal.ofReal_ofNat 2, ← ENNReal.ofReal_mul (by norm_num),
@@ -480,7 +480,7 @@ lemma exists_eventually_measure_lt_le {m : MeasurableSpace Ω} {μ : Measure Ω}
   refine ⟨t + 1, ?_⟩
   filter_upwards [ENNReal.tendsto_nhds_zero.1 (tendstoInMeasure_iff_norm.1 h 1 one_pos)
     (ENNReal.ofReal η) (ENNReal.ofReal_pos.2 hη)] with n hn
-  refine (measure_mono fun ω (hω : t + 1 < f n ω) => ?_).trans hn
+  refine (measure_mono (s := {ω | t + 1 < f n ω}) fun ω (hω : t + 1 < f n ω) => ?_).trans hn
   change 1 ≤ ‖f n ω - t‖
   rw [Real.norm_eq_abs]
   exact le_trans (by linarith) (le_abs_self _)

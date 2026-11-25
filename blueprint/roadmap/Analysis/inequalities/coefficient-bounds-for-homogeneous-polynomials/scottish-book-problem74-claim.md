@@ -9,4 +9,5 @@ $t \in \mathbb{R}^n$ with $|t_1| + \cdots + |t_n| \le 1$, then
 $|a_k| \le n^n / (k_1! \cdots k_n!)$ for every $k \in \mathbb{N}^n$ with
 $k_1 + \cdots + k_n = n$.
 
-This is only the upper-bound part of Problem 74; the best constant is an open question.
+This is the coefficient upper bound asked for in Problem 74, not a claim that the
+bound is optimal.

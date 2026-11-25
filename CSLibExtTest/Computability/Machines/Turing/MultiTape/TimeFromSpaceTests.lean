@@ -117,7 +117,7 @@ private theorem loop_no_time (w : List Bool) (t : Nat) : ¬loop.RunsInTime w t :
   contradiction
 
 private theorem countdown_output_prefix_core (w pre : List Bool) :
-    (countdown.step ((countdown.initCfg w).withOutput pre)).core =
+    (countdown.step { countdown.initCfg w with output := pre }).core =
       (countdown.step (countdown.initCfg w)).core :=
   core_step_eq_of_core_eq rfl
 
@@ -238,10 +238,21 @@ private theorem scratch_exact_space (w : List Bool) :
 
 private theorem scratch_prefix_space (w : List Bool) (t : ℕ) :
     scratch.spaceUsed (scratch.initCfg w) t ≤ 2 := by
-  rcases le_total t 4 with ht | ht
-  · exact (MultiTapeTM.spaceUsed_mono scratch _ ht).trans_eq (scratch_exact_space w)
-  · rw [MultiTapeTM.spaceUsed_eq_of_halt _ ht (scratch_halts w).halted,
-      scratch_exact_space]
+  have hpos (n : ℕ) (hn : n ≤ 4) : (scratch.runFrom (scratch.initCfg w) n).workTapePos 0 ∈
+      scratch.visitedByTapeHead (scratch.initCfg w) 4 0 :=
+    Finset.mem_image.mpr ⟨⟨n, by omega⟩, Finset.mem_univ _, rfl⟩
+  have hsub : scratch.visitedByTapeHead (scratch.initCfg w) t 0 ⊆ {-1, 0} := by
+    rw [← scratch_visited_at_halt w, MultiTapeTM.visitedByTapeHead, Finset.image_subset_iff]
+    intro n _
+    rcases le_total (n : ℕ) 4 with hn | hn
+    · exact hpos n hn
+    · rw [(scratch_halts w).runFrom_eq hn]
+      exact hpos 4 le_rfl
+  calc scratch.spaceUsed (scratch.initCfg w) t
+      = (scratch.visitedByTapeHead (scratch.initCfg w) t 0).card := by
+        simp [MultiTapeTM.spaceUsed, MultiTapeTM.spaceUsedByTape]
+    _ ≤ ({-1, 0} : Finset ℤ).card := Finset.card_le_card hsub
+    _ = 2 := by decide
 
 private theorem scratch_space (w : List Bool) : scratch.RunsInSpace w 2 := by
   intro p

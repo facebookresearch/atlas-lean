@@ -36,8 +36,12 @@ private lemma exists_large_prime_dvd_choose_of_prod_erdos_layers_lt_lower_bound 
   exact exists_large_prime_dvd_choose_of_upper_lt_lower
     (fun hsmall => choose_le_prod_erdos_layers_of_no_large hN hrN hsmall) hbound
 
-/-- Natural-number version of
-`exists_large_prime_dvd_choose_of_prod_erdos_layers_lt_lower_bound`. -/
+/-- **Large-prime criterion from the Erdős layer bound.** Let $N$ and $r$ be natural numbers
+with $0 < N$ and $r \le N$, write $m\#$ for the product of the primes at most $m$, and let
+$L = \lfloor \log_2 N \rfloor$. Put $P_1 = r\#$ and $P_k = \lfloor N^{1/k} \rfloor\#$ for
+$k \ge 2$. If
+$$r! \cdot \prod_{k=1}^{L} P_k < (N + 1 - r)^r,$$
+then $\binom{N}{r}$ has a prime divisor $p$ with $p > r$. -/
 theorem exists_large_prime_dvd_choose_of_factorial_mul_prod_erdos_layers_lt_lower_pow
     {N r : ℕ} (hN : 0 < N) (hrN : r ≤ N)
     (hbound :
@@ -59,8 +63,11 @@ private lemma exists_large_prime_dvd_choose_of_prod_primorial_nthRoot_lt_lower_b
   exact exists_large_prime_dvd_choose_of_upper_lt_lower
     (fun hsmall => choose_le_prod_primorial_nthRoot_of_no_large hN hrN hsmall) hbound
 
-/-- Natural-number version of
-`exists_large_prime_dvd_choose_of_prod_primorial_nthRoot_lt_lower_bound`. -/
+/-- **Large-prime criterion from the prime-power layer bound.** Let $N$ and $r$ be natural
+numbers with $0 < N$ and $r \le N$, write $m\#$ for the product of the primes at most $m$, and
+let $L = \lfloor \log_2 N \rfloor$. If
+$$r! \cdot \prod_{k=1}^{L} \lfloor N^{1/k} \rfloor\# < (N + 1 - r)^r,$$
+then $\binom{N}{r}$ has a prime divisor $p$ with $p > r$. -/
 theorem exists_large_prime_dvd_choose_of_factorial_mul_prod_primorial_nthRoot_lt_lower_pow
     {N r : ℕ} (hN : 0 < N) (hrN : r ≤ N)
     (hbound :
@@ -171,8 +178,10 @@ private lemma exists_large_prime_dvd_choose_of_top_pow_sqrt_mul_primorial_lt_cho
   exact (not_lt_of_ge
     (choose_le_top_pow_sqrt_mul_primorial_of_no_large hN hrN hsmall)) hbound
 
-/-- Near the central range, the central-binomial lower bound turns the split factorization bound
-into a large-prime criterion. -/
+/-- **Central-range large-prime criterion from the square-root split bound.** Let $N$ and $r$ be
+natural numbers with $4 \le r$ and $2r \le N$, and write $r\#$ for the product of the primes at
+most $r$. If $r \cdot N^{\lfloor \sqrt{N} \rfloor + 1} \cdot r\# < 4^r$, then $\binom{N}{r}$ has
+a prime divisor $p$ with $p > r$. -/
 theorem exists_large_prime_dvd_choose_of_mul_top_pow_sqrt_mul_primorial_lt_four_pow
     {N r : ℕ} (hr : 4 ≤ r) (hN : 2 * r ≤ N)
     (hbound : r * (N ^ (Nat.sqrt N + 1) * primorial r) < 4 ^ r) :
@@ -202,8 +211,10 @@ private lemma exists_large_prime_dvd_choose_of_top_pow_sqrt_mul_primorial_lt_low
   exact exists_large_prime_dvd_choose_of_upper_lt_lower
     (fun hsmall => choose_le_top_pow_sqrt_mul_primorial_of_no_large hN hrN hsmall) hbound
 
-/-- Natural-number version of
-`exists_large_prime_dvd_choose_of_top_pow_sqrt_mul_primorial_lt_lower_bound`. -/
+/-- **Large-prime criterion from the square-root split bound.** Let $N$ and $r$ be natural
+numbers with $0 < N$ and $r \le N$, and write $r\#$ for the product of the primes at most $r$. If
+$r! \cdot N^{\lfloor \sqrt{N} \rfloor + 1} \cdot r\# < (N + 1 - r)^r$, then $\binom{N}{r}$ has a
+prime divisor $p$ with $p > r$. -/
 theorem exists_large_prime_dvd_choose_of_factorial_mul_top_pow_sqrt_mul_primorial_lt_lower_pow
     {N r : ℕ} (hN : 0 < N) (hrN : r ≤ N)
     (hbound : r ! * (N ^ (Nat.sqrt N + 1) * primorial r) < (N + 1 - r) ^ r) :
@@ -223,8 +234,9 @@ private lemma exists_large_prime_dvd_choose_of_top_pow_primeCounting_lt_lower_bo
   exact exists_large_prime_dvd_choose_of_upper_lt_lower
     (fun hsmall => choose_le_top_pow_primeCounting_of_no_large hN hrN hsmall) hbound
 
-/-- Natural-number version of
-`exists_large_prime_dvd_choose_of_top_pow_primeCounting_lt_lower_bound`. -/
+/-- **Large-prime criterion from the prime-counting bound.** Let $N$ and $r$ be natural numbers
+with $0 < N$ and $r \le N$, and let $\pi(r)$ be the number of primes at most $r$. If
+$r! \cdot N^{\pi(r)} < (N + 1 - r)^r$, then $\binom{N}{r}$ has a prime divisor $p$ with $p > r$. -/
 theorem exists_large_prime_dvd_choose_of_factorial_mul_top_pow_primeCounting_lt_lower_pow
     {N r : ℕ} (hN : 0 < N) (hrN : r ≤ N)
     (hbound : r ! * N ^ Nat.primeCounting r < (N + 1 - r) ^ r) :
@@ -241,8 +253,9 @@ private lemma exists_large_prime_dvd_choose_of_top_pow_half_add_one_lt_lower_bou
   exact exists_large_prime_dvd_choose_of_upper_lt_lower
     (fun hsmall => choose_le_top_pow_half_add_one_of_no_large hN hrN hsmall) hbound
 
-/-- Natural-number version of
-`exists_large_prime_dvd_choose_of_top_pow_half_add_one_lt_lower_bound`. -/
+/-- **Large-prime criterion from the half-plus-one exponent bound.** Let $N$ and $r$ be natural
+numbers with $0 < N$ and $r \le N$. If $r! \cdot N^{\lfloor r/2 \rfloor + 1} < (N + 1 - r)^r$,
+then $\binom{N}{r}$ has a prime divisor $p$ with $p > r$. -/
 theorem exists_large_prime_dvd_choose_of_factorial_mul_top_pow_half_add_one_lt_lower_pow
     {N r : ℕ} (hN : 0 < N) (hrN : r ≤ N)
     (hbound : r ! * N ^ (r / 2 + 1) < (N + 1 - r) ^ r) :
@@ -261,8 +274,9 @@ private lemma exists_large_prime_dvd_choose_of_top_pow_three_mul_div_eight_lt_lo
     (fun hsmall => choose_le_top_pow_three_mul_div_eight_of_no_large hN hr hrN hsmall)
     hbound
 
-/-- Natural-number version of
-`exists_large_prime_dvd_choose_of_top_pow_three_mul_div_eight_lt_lower_bound`. -/
+/-- **Large-prime criterion from the 3r/8 exponent bound.** Let $N$ and $r$ be natural numbers
+with $0 < N$, $38 \le r$ and $r \le N$. If $r! \cdot N^{\lfloor 3r/8 \rfloor} < (N + 1 - r)^r$,
+then $\binom{N}{r}$ has a prime divisor $p$ with $p > r$. -/
 theorem exists_large_prime_dvd_choose_of_factorial_mul_top_pow_three_mul_div_eight_lt_lower_pow
     {N r : ℕ} (hN : 0 < N) (hr : 38 ≤ r) (hrN : r ≤ N)
     (hbound : r ! * N ^ (3 * r / 8) < (N + 1 - r) ^ r) :
@@ -271,7 +285,12 @@ theorem exists_large_prime_dvd_choose_of_factorial_mul_top_pow_three_mul_div_eig
   rw [lt_div_iff₀' (by exact_mod_cast Nat.factorial_pos r)]
   norm_cast
 
-/-- A power-only variant of the `3r/8` criterion, using `r! ≤ r ^ r`. -/
+/-- **Power-only large-prime criterion from the 3r/8 exponent bound.** Let $N$ and $r$ be natural
+numbers with $0 < N$, $38 \le r$ and $r \le N$. If
+$r^r \cdot N^{\lfloor 3r/8 \rfloor} < (N + 1 - r)^r$, then $\binom{N}{r}$ has a prime divisor
+$p$ with $p > r$.
+
+This follows from the criterion with $r!$ in place of $r^r$, since $r! \le r^r$. -/
 theorem exists_large_prime_dvd_choose_of_self_pow_mul_top_pow_three_mul_div_eight_lt_lower_pow
     {N r : ℕ} (hN : 0 < N) (hr : 38 ≤ r) (hrN : r ≤ N)
     (hbound : r ^ r * N ^ (3 * r / 8) < (N + 1 - r) ^ r) :
@@ -289,8 +308,9 @@ private lemma exists_large_prime_dvd_choose_of_top_pow_sub_one_lt_lower_bound {N
   exact exists_large_prime_dvd_choose_of_upper_lt_lower
     (fun hsmall => choose_le_top_pow_sub_one_of_no_large hN hr hrN hsmall) hbound
 
-/-- Natural-number version of
-`exists_large_prime_dvd_choose_of_top_pow_sub_one_lt_lower_bound`. -/
+/-- **Large-prime criterion from the r − 1 exponent bound.** Let $N$ and $r$ be natural numbers
+with $0 < N$, $2 \le r$ and $r \le N$. If $r! \cdot N^{r-1} < (N + 1 - r)^r$, then
+$\binom{N}{r}$ has a prime divisor $p$ with $p > r$. -/
 theorem exists_large_prime_dvd_choose_of_factorial_mul_top_pow_sub_one_lt_lower_pow
     {N r : ℕ} (hN : 0 < N) (hr : 2 ≤ r) (hrN : r ≤ N)
     (hbound : r ! * N ^ (r - 1) < (N + 1 - r) ^ r) :

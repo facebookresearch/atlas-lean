@@ -1,0 +1,15 @@
+# Structure Map
+
+- [Smash Pow Structure Map](smash-pow-structure-map.md)
+- [Smash Pow Structure Map def](smash-pow-structure-map-def.md)
+- [Day Structure Map mk one](day-structure-map-mk-one.md)
+- [Smash Pow Structure Map naturality](smash-pow-structure-map-naturality.md)
+- [Smash Pow Structure Map hom](smash-pow-structure-map-hom.md)
+- [Smash Pow Adjoint Structure Map](smash-pow-adjoint-structure-map.md)
+- [Smash Pow Adjoint Structure Map def](smash-pow-adjoint-structure-map-def.md)
+- [Uncurry smash Pow Adjoint Structure Map](uncurry-smash-pow-adjoint-structure-map.md)
+- [Smash Pow Adjoint Structure Map naturality](smash-pow-adjoint-structure-map-naturali.md)
+- [Smash Pow Adjoint Structure Map hom](smash-pow-adjoint-structure-map-hom.md)
+- [Is Mod Hom iff smash Pow Structure Map](is-mod-hom-iff-smash-pow-structure-map.md)
+- [Smash Pow Hom Mk](smash-pow-hom-mk.md)
+- [Smash Pow Hom Mk hom nat Trans app](smash-pow-hom-mk-hom-nat-trans-app.md)
