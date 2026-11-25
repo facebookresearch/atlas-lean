@@ -7,6 +7,7 @@ Continuous-time processes with continuous paths or independent increments: the c
 - [Fokker–Planck equation](fokker-planck-equation/README.md)
 - [Kolmogorov continuity theorem](kolmogorov-continuity-theorem/README.md)
 - [Markov property of processes with independent increments](markov-property-of-processes-with-independent-in/README.md)
+- [Multidimensional Ornstein-Uhlenbeck process](multidimensional-ornstein-uhlenbeck-process/README.md)
 - [Strong Markov property and reflection principle](strong-markov-property-and-reflection-principle/README.md)
 - [Quadratic variation of Brownian motion](quadratic-variation-of-brownian-motion/README.md)
 - [Itô integral](it-integral/README.md)
