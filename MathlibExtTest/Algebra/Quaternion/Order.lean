@@ -140,12 +140,60 @@ the least value the conductor can take. -/
 example :
     EmbeddingDatum.HasConductor (Λ := lipschitzOrder) (t := 0) (n := 1)
       ⟨⟨0, 1, 0, 0⟩, Submodule.subset_span (by simp), by
-        rw [isQuadraticDatum_iff]; ext <;> simp⟩ 1 := by
+        rw [isQuadraticDatum_iff]; ext <;> simp,
+        LinearIndependent.pair_iff.mpr fun s t h =>
+          ⟨by simpa using congrArg QuaternionAlgebra.re h,
+            by simpa using congrArg QuaternionAlgebra.imI h⟩⟩ 1 := by
   refine ⟨one_pos, fun x hx ⟨c, e, hce⟩ => ?_, fun g hg hg1 => absurd hg1 (by omega)⟩
   obtain ⟨m, n, p, r, rfl⟩ := exists_eq_mk_of_mem_lipschitzOrder hx
   have hp : p = 0 := by simpa using congrArg QuaternionAlgebra.imJ hce
   have hr : r = 0 := by simpa using congrArg QuaternionAlgebra.imK hce
   subst hp hr
   exact ⟨m, n, by ext <;> simp⟩
+
+/-- No embedding datum is a scalar: for a scalar root `r`, `X ↦ r` kills `X - r`. -/
+example (Λ : Submodule ℤ ℍ[ℚ, a, b]) (t n : ℤ) (d : EmbeddingDatum Λ t n) (r : ℚ) :
+    d.1 ≠ algebraMap ℚ ℍ[ℚ, a, b] r := by
+  intro h
+  have := LinearIndependent.pair_iff.mp d.2.2.2 r (-1) (by
+    rw [h, Algebra.algebraMap_eq_smul_one, neg_one_smul, add_neg_cancel])
+  exact one_ne_zero (neg_eq_zero.mp this.2)
+
+/-- The scalar root `0` of `X²` has conductor `1` in the Lipschitz order, but
+`X ↦ 0` kills `X`, so it is not an embedding datum and no class is counted. -/
+example : HasEmbeddingConductor lipschitzOrder 0 1 ∧
+    condEmbeddingCount lipschitzOrder 0 0 1 = 0 := by
+  refine ⟨⟨one_pos, fun x hx ⟨c, e, hce⟩ => ?_, fun g hg hg1 => absurd hg1 (by omega)⟩, ?_⟩
+  · obtain ⟨m, n, p, r, rfl⟩ := exists_eq_mk_of_mem_lipschitzOrder hx
+    have hn : n = 0 := by simpa using congrArg QuaternionAlgebra.imI hce
+    have hp : p = 0 := by simpa using congrArg QuaternionAlgebra.imJ hce
+    have hr : r = 0 := by simpa using congrArg QuaternionAlgebra.imK hce
+    subst hn hp hr
+    exact ⟨m, 0, by ext <;> simp⟩
+  · refine Nat.card_eq_zero.mpr (Or.inl ⟨fun ⟨_, d, _, _⟩ => ?_⟩)
+    obtain ⟨α, -, hq, hli⟩ := d
+    have h0 : α * α = 0 := by simpa [isQuadraticDatum_iff] using hq
+    have hre : (α * α).re = 0 := congrArg QuaternionAlgebra.re h0
+    have hi : (α * α).imI = 0 := congrArg QuaternionAlgebra.imI h0
+    have hj : (α * α).imJ = 0 := congrArg QuaternionAlgebra.imJ h0
+    have hk : (α * α).imK = 0 := congrArg QuaternionAlgebra.imK h0
+    rw [QuaternionAlgebra.re_mul] at hre
+    rw [QuaternionAlgebra.imI_mul] at hi
+    rw [QuaternionAlgebra.imJ_mul] at hj
+    rw [QuaternionAlgebra.imK_mul] at hk
+    have hw : α.re = 0 := by
+      refine mul_self_eq_zero.mp (mul_self_eq_zero.mp ?_)
+      linear_combination (α.re * α.re) * hre + (α.re * α.imI / 2) * hi +
+        (α.re * α.imJ / 2) * hj + (α.re * α.imK / 2) * hk
+    have hsq : α.imI * α.imI + α.imJ * α.imJ + α.imK * α.imK = 0 := by
+      linear_combination (-1 : ℚ) * hre + α.re * hw
+    have hx : α.imI = 0 := mul_self_eq_zero.mp (by
+      nlinarith [mul_self_nonneg α.imI, mul_self_nonneg α.imJ, mul_self_nonneg α.imK])
+    have hy : α.imJ = 0 := mul_self_eq_zero.mp (by
+      nlinarith [mul_self_nonneg α.imI, mul_self_nonneg α.imJ, mul_self_nonneg α.imK])
+    have hz : α.imK = 0 := mul_self_eq_zero.mp (by
+      nlinarith [mul_self_nonneg α.imI, mul_self_nonneg α.imJ, mul_self_nonneg α.imK])
+    have hα : α = 0 := QuaternionAlgebra.ext hw hx hy hz
+    exact hli.ne_zero 1 (by simp [hα])
 
 end QuaternionAlgebra

@@ -32,7 +32,7 @@ module
 
 public import Mathlib.Algebra.QuaternionBasis
 public import Mathlib.LinearAlgebra.TensorProduct.Basic
-public import Mathlib.RingTheory.TensorProduct.Basic
+public import Mathlib.RingTheory.TensorProduct.Maps
 
 @[expose] public section
 
@@ -155,24 +155,15 @@ theorem baseChange_symm_apply (q : ℍ[S, d₁, d₂, d₃]) :
 
 /-- Right-handed base change. -/
 def baseChangeRight : ℍ[R, c₁, c₂, c₃] ⊗[R] S ≃ₐ[R] ℍ[S, d₁, d₂, d₃] :=
-  (AlgEquiv.ofLinearEquiv (TensorProduct.comm R ℍ[R, c₁, c₂, c₃] S)
-    (by rw [Algebra.TensorProduct.one_def, TensorProduct.comm_tmul,
-      ← Algebra.TensorProduct.one_def]) (by
-      intro x y
-      induction x using TensorProduct.inductionOn with
-      | tmul a s =>
-        induction y using TensorProduct.inductionOn with
-        | tmul a' s' => simp
-        | add y₁ y₂ h₁' h₂' => simp [mul_add, h₁', h₂']
-      | add x₁ x₂ h₁' h₂' => simp [add_mul, h₁', h₂'])).trans
+  (Algebra.TensorProduct.comm R ℍ[R, c₁, c₂, c₃] S).trans
     ((baseChange h₁ h₂ h₃).restrictScalars R)
 
 @[simp] theorem baseChangeRight_tmul (x : ℍ[R, c₁, c₂, c₃]) (s : S) :
     baseChangeRight h₁ h₂ h₃ (x ⊗ₜ[R] s) =
       ⟨s * algebraMap R S x.re, s * algebraMap R S x.imI,
         s * algebraMap R S x.imJ, s * algebraMap R S x.imK⟩ := by
-  rw [baseChangeRight, AlgEquiv.trans_apply, AlgEquiv.ofLinearEquiv_apply,
-    TensorProduct.comm_tmul, AlgEquiv.restrictScalars_apply, baseChange_tmul]
+  rw [baseChangeRight, AlgEquiv.trans_apply, Algebra.TensorProduct.comm_tmul,
+    AlgEquiv.restrictScalars_apply, baseChange_tmul]
 
 theorem baseChangeRight_one_tmul (s : S) :
     baseChangeRight h₁ h₂ h₃ ((1 : ℍ[R, c₁, c₂, c₃]) ⊗ₜ[R] s) =

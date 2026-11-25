@@ -30,6 +30,7 @@ removed and the names restated in Mathlib style.
 
 module
 
+public import Mathlib.Algebra.Module.Lattice.Full
 public import Mathlib.Algebra.Quaternion
 public import Mathlib.GroupTheory.Index
 public import Mathlib.LinearAlgebra.FiniteDimensional.Defs
@@ -61,9 +62,13 @@ def IsUnitOf (Λ : Submodule ℤ ℍ[ℚ, a, b]) (u : ℍ[ℚ, a, b]) : Prop :=
 def IsQuadraticDatum (t n : ℤ) (α : ℍ[ℚ, a, b]) : Prop :=
   α * α - (t : ℚ) • α + (n : ℚ) • (1 : ℍ[ℚ, a, b]) = 0
 
-/-- An embedding datum: an element of `Λ` satisfying a quadratic datum. -/
+/-- An embedding datum: an element `α` of `Λ` satisfying a quadratic datum, with
+`1` and `α` linearly independent, so that `X ↦ α` is injective on
+`ℤ[X]/(X² - tX + n)`. Unlike the adapted source, this excludes scalar roots,
+such as `α = 0` for `t = n = 0`. -/
 def EmbeddingDatum (Λ : Submodule ℤ ℍ[ℚ, a, b]) (t n : ℤ) : Type :=
-  {α : ℍ[ℚ, a, b] // α ∈ Λ ∧ IsQuadraticDatum t n α}
+  {α : ℍ[ℚ, a, b] // α ∈ Λ ∧ IsQuadraticDatum t n α ∧
+    LinearIndependent ℚ ![(1 : ℍ[ℚ, a, b]), α]}
 
 /-- Optimality of `α` in `Λ` at the level of rational `1, α` planes. -/
 def IsOptimalDatum (Λ : Submodule ℤ ℍ[ℚ, a, b]) (α : ℍ[ℚ, a, b]) : Prop :=
@@ -136,28 +141,15 @@ theorem exists_natCast_smul_mem_of_mem_span {Λ : Submodule ℤ ℍ[ℚ, a, b]}
 
 /-- The intersection of two orders is an order. -/
 theorem IsOrder.inf {Λ₁ Λ₂ : Submodule ℤ ℍ[ℚ, a, b]} (h₁ : IsOrder Λ₁)
-    (h₂ : IsOrder Λ₂) : IsOrder (Λ₁ ⊓ Λ₂) where
-  one_mem := ⟨h₁.one_mem, h₂.one_mem⟩
-  mul_mem := fun _ _ hx hy => ⟨h₁.mul_mem hx.1 hy.1, h₂.mul_mem hx.2 hy.2⟩
-  spanTop := by
-    refine top_unique ?_
-    rw [← h₂.spanTop]
-    refine Submodule.span_le.mpr fun y hy => ?_
-    have hy' : y ∈ Submodule.span ℚ (Λ₁ : Set ℍ[ℚ, a, b]) := by
-      rw [h₁.spanTop]; trivial
-    obtain ⟨n, hn, hny⟩ := exists_natCast_smul_mem_of_mem_span hy'
-    have hmem : ((n : ℕ) : ℤ) • y ∈ Λ₁ ⊓ Λ₂ := ⟨hny, Submodule.smul_mem _ _ hy⟩
-    have hy_eq : y = ((n : ℚ)⁻¹) • ((((n : ℕ) : ℤ) • y : ℍ[ℚ, a, b])) := by
-      rw [← Int.cast_smul_eq_zsmul ℚ, smul_smul, Int.cast_natCast,
-        inv_mul_cancel₀ (Nat.cast_ne_zero.mpr hn), one_smul]
-    rw [hy_eq]
-    exact Submodule.smul_mem _ _ (Submodule.subset_span hmem)
-  fg := by
-    have : Module.Finite ℤ Λ₁ := Module.Finite.iff_fg.mpr h₁.fg
-    have : Module.Finite ℤ ↥(Λ₁ ⊓ Λ₂) :=
-      Module.Finite.of_injective (Submodule.inclusion inf_le_left)
-        (Submodule.inclusion_injective _)
-    exact Module.Finite.iff_fg.mp inferInstance
+    (h₂ : IsOrder Λ₂) : IsOrder (Λ₁ ⊓ Λ₂) :=
+  have : Submodule.IsFullLattice ℚ Λ₁ :=
+    { toIsLattice := .of_fg ℚ h₁.fg, span_eq_top := h₁.spanTop }
+  have : Submodule.IsFullLattice ℚ Λ₂ :=
+    { toIsLattice := .of_fg ℚ h₂.fg, span_eq_top := h₂.spanTop }
+  { one_mem := ⟨h₁.one_mem, h₂.one_mem⟩
+    mul_mem := fun _ _ hx hy => ⟨h₁.mul_mem hx.1 hy.1, h₂.mul_mem hx.2 hy.2⟩
+    spanTop := Submodule.IsFullLattice.span_eq_top
+    fg := Submodule.IsLattice.fg ℚ (Λ₁ ⊓ Λ₂) }
 
 /-- A maximal order: an order contained in no strictly larger order. -/
 def IsMaximalOrder (Λ : Submodule ℤ ℍ[ℚ, a, b]) : Prop :=

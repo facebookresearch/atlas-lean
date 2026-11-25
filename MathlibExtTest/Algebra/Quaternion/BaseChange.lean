@@ -37,4 +37,14 @@ example (q : ℍ[ℚ, -1, 0, -1]) :
         q.imK ⊗ₜ[ℤ] (⟨0, 0, 0, 1⟩ : ℍ[ℤ, -1, 0, -1]) :=
   QuaternionAlgebra.baseChange_symm_apply _ _ _ q
 
+/-- Right-handed base change, through Mathlib's tensor flip, sends `i ⊗ 2` to
+`2i`. -/
+example :
+    (QuaternionAlgebra.baseChangeRight (R := ℤ) (S := ℚ) (c₁ := -1) (c₂ := 0)
+      (c₃ := -1) (d₁ := -1) (d₂ := 0) (d₃ := -1) (by simp) (by simp) (by simp))
+        ((⟨0, 1, 0, 0⟩ : ℍ[ℤ, -1, 0, -1]) ⊗ₜ[ℤ] (2 : ℚ)) =
+      (⟨0, 2, 0, 0⟩ : ℍ[ℚ, -1, 0, -1]) := by
+  rw [QuaternionAlgebra.baseChangeRight_tmul]
+  ext <;> simp
+
 end QuaternionAlgebra
