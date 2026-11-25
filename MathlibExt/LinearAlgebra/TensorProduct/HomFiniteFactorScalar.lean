@@ -55,7 +55,8 @@ private def homTensorAlgebraMapEquiv :
     { toFun := f
       map_add' := f.map_add
       map_smul' := fun r p => by
-        simpa only [IsScalarTower.algebraMap_smul] using f.map_smulₛₗ r p }
+        simpa only [RingHom.id_apply, IsScalarTower.algebraMap_smul]
+          using f.map_smulₛₗ r p }
   map_add' f g := by
     apply LinearMap.ext
     intro p
@@ -93,6 +94,28 @@ private def homTensorFiniteFactorScalarOutputEquiv
   exact (homTensorAlgebraMapEquiv (R := R) (S := S) (P := P) (N := N ⊗[S] U)).symm ≪≫ₗ
     (LinearEquiv.refl R P).arrowCongr eTensor
 
+/-- The native `R`-linear Hom–tensor comparison is bijective when its tensor
+factor is finite projective over `S` and the algebra map is surjective. -/
+theorem homTensorFiniteFactor_bijective_of_surjective_scalars
+    [Module.Finite S U] [Module.Projective S U]
+    (h : Function.Surjective (algebraMap R S)) :
+    Function.Bijective (rTensorHomToHomRTensor (.id R) P N U) := by
+  let e : (P →ₗ[R] N) ⊗[R] U ≃ₗ[R] P →ₗ[R] N ⊗[R] U :=
+    homTensorFiniteFactorScalarInputEquiv h ≪≫ₗ
+      (LinearEquiv.ofBijective
+        (rTensorHomToHomRTensor (algebraMap R S) P N U)
+        (rTensorHomToHomRTensor_bijective_of_finite_projective
+          (algebraMap R S) P N U)).restrictScalars R ≪≫ₗ
+      homTensorFiniteFactorScalarOutputEquiv h
+  have he : e.toLinearMap = rTensorHomToHomRTensor (.id R) P N U := by
+    apply TensorProduct.ext'
+    intro f u
+    apply LinearMap.ext
+    intro p
+    rfl
+  rw [← he]
+  exact e.bijective
+
 /-- A finite projective `S`-module tensor factor gives the `R`-linear
 comparison equivalence along a surjective algebra map. The source `P` needs
 only its original `R`-module structure. -/
@@ -100,23 +123,16 @@ def homTensorFiniteFactorEquivOfSurjectiveScalars
     [Module.Finite S U] [Module.Projective S U]
     (h : Function.Surjective (algebraMap R S)) :
     (P →ₗ[R] N) ⊗[R] U ≃ₗ[R] P →ₗ[R] N ⊗[R] U :=
-  homTensorFiniteFactorScalarInputEquiv h ≪≫ₗ
-    (LinearEquiv.ofBijective
-      (rTensorHomToHomRTensor (algebraMap R S) P N U)
-      (rTensorHomToHomRTensor_bijective_of_finite_projective
-        (algebraMap R S) P N U)).restrictScalars R ≪≫ₗ
-    homTensorFiniteFactorScalarOutputEquiv h
+  LinearEquiv.ofBijective (rTensorHomToHomRTensor (.id R) P N U)
+    (homTensorFiniteFactor_bijective_of_surjective_scalars (P := P) (N := N) (U := U) h)
 
 /-- Every original pure tensor retains its actual coefficient evaluation. -/
 theorem homTensorFiniteFactorEquivOfSurjectiveScalars_tmul
     [Module.Finite S U] [Module.Projective S U]
     (h : Function.Surjective (algebraMap R S)) (f : P →ₗ[R] N) (u : U) (p : P) :
     homTensorFiniteFactorEquivOfSurjectiveScalars (P := P) (N := N) (U := U) h
-        (f ⊗ₜ[R] u) p = f p ⊗ₜ[R] u := by
-  simp [homTensorFiniteFactorEquivOfSurjectiveScalars, homTensorAlgebraMapEquiv,
-    homTensorFiniteFactorScalarInputEquiv, homTensorFiniteFactorScalarOutputEquiv,
-    TensorProduct.congr_tmul, TensorProduct.rTensorHomToHomRTensor_apply,
-    TensorProduct.equivOfCompatibleSMul, LinearEquiv.arrowCongr]
+        (f ⊗ₜ[R] u) p = f p ⊗ₜ[R] u :=
+  rTensorHomToHomRTensor_apply f u p
 
 /-- The source map is exactly the original R coefficient comparison, with the
 scalar quotient and its actual inverse completely internal to the construction. -/
@@ -124,14 +140,6 @@ theorem homTensorFiniteFactorEquivOfSurjectiveScalars_toLinearMap
     [Module.Finite S U] [Module.Projective S U]
     (h : Function.Surjective (algebraMap R S)) :
     (homTensorFiniteFactorEquivOfSurjectiveScalars (P := P) (N := N) (U := U) h).toLinearMap =
-      rTensorHomToHomRTensor (.id R) P N U := by
-  apply TensorProduct.ext'
-  intro f u
-  apply LinearMap.ext
-  intro p
-  change homTensorFiniteFactorEquivOfSurjectiveScalars (P := P) (N := N) (U := U) h
-      (f ⊗ₜ[R] u) p = rTensorHomToHomRTensor (.id R) P N U (f ⊗ₜ[R] u) p
-  rw [homTensorFiniteFactorEquivOfSurjectiveScalars_tmul,
-    TensorProduct.rTensorHomToHomRTensor_apply]
+      rTensorHomToHomRTensor (.id R) P N U := rfl
 
 end TensorProduct
