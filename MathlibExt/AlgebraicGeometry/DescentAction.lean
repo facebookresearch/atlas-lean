@@ -33,6 +33,8 @@ module
 
 public import Mathlib.AlgebraicGeometry.Pullbacks
 public import Mathlib.AlgebraicGeometry.AffineScheme
+public import Mathlib.AlgebraicGeometry.Morphisms.Finite
+public import Mathlib.AlgebraicGeometry.Morphisms.FinitePresentation
 public import Mathlib.AlgebraicGeometry.Morphisms.Flat
 public import Mathlib.AlgebraicGeometry.Morphisms.QuasiCompact
 public import Mathlib.AlgebraicGeometry.Morphisms.UnderlyingMap
@@ -40,8 +42,6 @@ public import Mathlib.RingTheory.Etale.Basic
 public import Mathlib.RingTheory.Flat.FaithfullyFlat.Basic
 import Mathlib.AlgebraicGeometry.Morphisms.FlatDescent
 import Mathlib.AlgebraicGeometry.PullbackCarrier
-import Mathlib.AlgebraicGeometry.Morphisms.Finite
-import Mathlib.AlgebraicGeometry.Morphisms.FinitePresentation
 import Mathlib.AlgebraicGeometry.Morphisms.QuasiFinite
 import Mathlib.RingTheory.Etale.Finite
 import MathlibExt.AlgebraicGeometry.FiniteLocallyFreeQuotient
@@ -59,9 +59,11 @@ descent action is effective when it is isomorphic to a canonical one.
 * `AlgebraicGeometry.DescentAction.effective_of_isPullback_of_flat_surjective`: an action
   whose graph is the kernel pair of a flat, surjective, quasi-compact map `p : X' ⟶ Y` over
   `S` descends to `Y`.
-* `AlgebraicGeometry.DescentAction.effective_of_finiteEtale`: along a finite étale
-  faithfully flat ring map, a descent action on a scheme in which every finite set of points
-  lies in an affine open is effective.
+* `AlgebraicGeometry.DescentAction.effective_of_finiteLocallyFree`: along a finite, flat,
+  finitely presented morphism, a descent action on a scheme in which every finite set of
+  points lies in an affine open is effective.
+* `AlgebraicGeometry.DescentAction.effective_of_finiteEtale`: the case of a finite étale
+  faithfully flat ring map.
 -/
 
 @[expose] public section
@@ -366,11 +368,11 @@ public theorem effective_of_isPullback_of_flat_surjective
   exact compat _ (pullback.lift_fst _ _ _) ((pullback.lift_snd _ _ _).trans (Category.comp_id _))
 
 /-- A descent action along a finite, flat, finitely presented `φ` on a scheme in which
-every finite set of points lies in an affine open is effective. -/
-private theorem effective_of_isFinite_of_flat
+every finite set of points lies in an affine open is effective; `φ` need not be surjective. -/
+public theorem effective_of_finiteLocallyFree
     {S S' : Scheme.{u}} (φ : S' ⟶ S) [IsFinite φ] [Flat φ] [LocallyOfFinitePresentation φ]
     {X' : Scheme.{u}} {x' : X' ⟶ S'} (A : DescentAction φ x')
-    (haff : ∀ S : Finset X', ∃ U : X'.Opens, IsAffineOpen U ∧ ∀ x ∈ S, x ∈ U) :
+    (haff : ∀ F : Finset X', ∃ U : X'.Opens, IsAffineOpen U ∧ ∀ x ∈ F, x ∈ U) :
     A.Effective := by
   have : IsFinite A.act := by rw [act_eq_invol_fst]; infer_instance
   have : Flat A.act := by rw [act_eq_invol_fst]; infer_instance
@@ -396,9 +398,12 @@ private theorem effective_of_isFinite_of_flat
   obtain ⟨e, he, -, hc⟩ := effective_of_isPullback_of_flat_surjective φ A p w hR f hpf
   exact ⟨Y, f, e, he, hc⟩
 
+-- The proof uses only that `R'` is finite, flat and finitely presented
+-- (`effective_of_finiteLocallyFree`); faithful flatness is kept from the source statement.
 /-- Along `Spec R' ⟶ Spec R` for a finite étale faithfully flat `R`-algebra `R'`, every
 descent action on a scheme `X'` in which each finite set of points lies in an affine open
 is effective. -/
+@[nolint unusedArguments]
 public theorem effective_of_finiteEtale
     (R : Type u) [CommRing R] (R' : Type u) [CommRing R'] [Algebra R R'] [Module.Finite R R']
     [Algebra.Etale R R'] [Module.FaithfullyFlat R R']
@@ -418,7 +423,7 @@ public theorem effective_of_finiteEtale
     (HasRingHomProperty.Spec_iff (P := @LocallyOfFinitePresentation)).2 (by
       change (algebraMap R R').FinitePresentation
       exact RingHom.finitePresentation_algebraMap.mpr inferInstance)
-  exact effective_of_isFinite_of_flat _ A haff
+  exact effective_of_finiteLocallyFree _ A haff
 
 end DescentAction
 

@@ -80,11 +80,6 @@ private theorem aff_finite_projective_appTop {X R : Scheme.{u}} [IsAffine X] [Is
     Module.FinitePresentation.of_finite_of_finitePresentation _ _
   exact Module.Flat.projective_of_finitePresentation
 
-private theorem aff_isoSpec_inv_comp {X R : Scheme.{u}} [IsAffine X] [IsAffine R] (f : R ⟶ X) :
-    R.isoSpec.inv ≫ f = Spec.map f.appTop ≫ X.isoSpec.inv := by
-  rw [Iso.inv_comp_eq, ← Category.assoc, Iso.eq_comp_inv]
-  exact (Scheme.isoSpec_hom_naturality f).symm
-
 private theorem aff_range_sup_range_eq_top {X R : Scheme.{u}} [IsAffine X] [IsAffine R]
     (s t : R ⟶ X) [IsFinite s]
     (hmono : ∀ {T : Scheme.{u}} (a b : T ⟶ R), a ≫ s = b ≫ s → a ≫ t = b ≫ t → a = b) :
@@ -103,9 +98,9 @@ private theorem aff_range_sup_range_eq_top {X R : Scheme.{u}} [IsAffine X] [IsAf
     intro T φ ψ h
     have key : Spec.map φ ≫ R.isoSpec.inv = Spec.map ψ ≫ R.isoSpec.inv := by
       apply hmono
-      · simp only [Category.assoc, aff_isoSpec_inv_comp, ← Spec.map_comp_assoc]
+      · simp only [Category.assoc, ← Scheme.isoSpec_inv_naturality, ← Spec.map_comp_assoc]
         rw [hfacs, Category.assoc, Category.assoc, h]
-      · simp only [Category.assoc, aff_isoSpec_inv_comp, ← Spec.map_comp_assoc]
+      · simp only [Category.assoc, ← Scheme.isoSpec_inv_naturality, ← Spec.map_comp_assoc]
         rw [hfact, Category.assoc, Category.assoc, h]
     have : Spec.map φ = Spec.map ψ := by
       simpa using congrArg (· ≫ R.isoSpec.hom) key
@@ -135,7 +130,7 @@ private theorem aff_equivalence_ringPoints {X R : Scheme.{u}} [IsAffine X] [IsAf
     Spec.map (CommRingCat.ofHom φ) ≫ R.isoSpec.inv
   have hΦ : ∀ (f : R ⟶ X) (φ : Γ(R, ⊤) →+* T), ΦR φ ≫ f = Φ (φ.comp f.appTop.hom) :=
     fun f φ => by
-      simp only [ΦR, Φ, Category.assoc, aff_isoSpec_inv_comp, ← Spec.map_comp_assoc,
+      simp only [ΦR, Φ, Category.assoc, ← Scheme.isoSpec_inv_naturality, ← Spec.map_comp_assoc,
         CommRingCat.ofHom_comp, CommRingCat.ofHom_hom]
   have hsurjR : ∀ ψ : Spec (.of T) ⟶ R, ∃ φ, ΦR φ = ψ := fun ψ => by
     obtain ⟨g, hg⟩ := Spec.map_surjective (ψ ≫ R.isoSpec.hom)

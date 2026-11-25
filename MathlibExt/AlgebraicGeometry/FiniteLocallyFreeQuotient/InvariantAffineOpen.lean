@@ -413,8 +413,7 @@ private theorem exists_basicOpen_forall {U : X.Opens} (f : Γ(X, U))
 
 end core
 
-private theorem main [IsFinite s] [Flat s] [LocallyOfFinitePresentation s]
-    [IsFinite t] [Flat t] [LocallyOfFinitePresentation t]
+private theorem main [IsFinite s] [Flat s] [LocallyOfFinitePresentation s] [IsFinite t]
     (hequiv : ∀ T : Scheme.{u},
       _root_.Equivalence fun x y : T ⟶ X => ∃ φ : T ⟶ R, φ ≫ s = x ∧ φ ≫ t = y)
     {x : X} {U : X.Opens} (hU : IsAffineOpen U) (hx : ∀ r : R, s r = x → t r ∈ U) :
@@ -459,9 +458,12 @@ private theorem main [IsFinite s] [Flat s] [LocallyOfFinitePresentation s]
 end InvariantAffineOpenAux
 
 
+-- Of `t` only finiteness is used; its flatness and finite presentation are kept from the
+-- source statement.
 /-- For a finite, flat, finitely presented equivalence relation `s t : R ⟶ X`, if the
 equivalence class of `x` lies in the affine open `U`, then `x` has an affine open
 neighborhood `W ≤ U` whose preimages under `s` and `t` agree. -/
+@[nolint unusedArguments]
 public theorem exists_invariant_isAffineOpen_of_finiteLocallyFree_equivalenceRelation
     {X R : Scheme.{u}} (s t : R ⟶ X)
     [IsFinite s] [Flat s] [LocallyOfFinitePresentation s]
