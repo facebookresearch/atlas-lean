@@ -13,6 +13,7 @@ Topics added since this subject's fields were last revised.
 - [General Markov Identifiability](general-markov-identifiability/README.md)
 - [Good Turing](good-turing/README.md)
 - [Monotone Feedback Multistability](monotone-feedback-multistability/README.md)
+- [Nicholson Bailey](nicholson-bailey/README.md)
 - [No Common Mechanism Parsimony](no-common-mechanism-parsimony/README.md)
 - [Phylogenetic Tree Space](phylogenetic-tree-space/README.md)
 - [Rooted SPRAgreement Forest](rooted-spragreement-forest/README.md)
