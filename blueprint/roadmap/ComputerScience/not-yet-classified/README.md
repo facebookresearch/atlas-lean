@@ -62,6 +62,7 @@ Topics added since this subject's fields were last revised.
 - [Query Oracle](query-oracle/README.md)
 - [Randomized Smoothing](randomized-smoothing/README.md)
 - [Recall At](recall-at/README.md)
+- [Score Diffusion](score-diffusion/README.md)
 - [Simulated Annealing](simulated-annealing/README.md)
 - [Soundness](soundness/README.md)
 - [Summation](summation/README.md)
@@ -69,3 +70,4 @@ Topics added since this subject's fields were last revised.
 - [Tree CSP](tree-csp/README.md)
 - [Verma Pearl Forward](verma-pearl-forward/README.md)
 - [Vertical Cells Connectivity](vertical-cells-connectivity/README.md)
+- [Sampling guarantee for score-based diffusion (DDPM)](tv-dist-ddpm-output-le.md)
