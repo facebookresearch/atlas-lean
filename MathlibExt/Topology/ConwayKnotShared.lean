@@ -50,6 +50,10 @@ public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 
 This module defines the Conway knot as the closure of a four-strand braid, the periodic
 parametrization of a closed polyline, and the shared notions of ambient isotopy and sliceness.
+
+The knot and isotopy types here preserve the lean-eval benchmark statements. New work on
+parametrized smooth knots and links should use `MathlibExt.Topology.Knot.EuclideanLink`.
+`MathlibExt.Topology.ConwayKnotEuclideanBridge` transfers isotopy results between the two APIs.
 -/
 
 @[expose] public section
