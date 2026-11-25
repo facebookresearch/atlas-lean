@@ -25,4 +25,3 @@ example {K : Type 1} [Field K] [IsAlgClosed K] {V : Type 1} [AddCommGroup V] [Mo
     (hcomm : ∀ i j, Commute (T i) (T j)) :
     ∃ (χ : ι → K) (v : V), v ≠ 0 ∧ ∀ i, T i v = χ i • v :=
   Module.End.exists_common_eigenvector_of_commute T hcomm
-
