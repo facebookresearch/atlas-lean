@@ -30,14 +30,16 @@ module
 public import Mathlib.AlgebraicGeometry.ProjectiveSpectrum.Proper
 public import Mathlib.AlgebraicGeometry.Morphisms.ClosedImmersion
 public import Mathlib.RingTheory.MvPolynomial.Homogeneous
+public import MathlibExt.AlgebraicGeometry.ProjSpace
 import Mathlib.RingTheory.MvPolynomial.Ideal
 
 /-!
-# Projective space over a ring and finite products of projective spaces
+# Charts of projective space over a ring and finite products of projective spaces
 
 Projective `n`-space over a commutative ring `R` is `Proj` of
-`MvPolynomial (Fin (n + 1)) R` with its standard grading. This file records
-its structure morphism to `Spec R` (which is proper), the standard affine
+`MvPolynomial (Fin (n + 1)) R` with its standard grading; its proper structure
+morphism `ProjSpace.π R n` to `Spec R` is defined in
+`MathlibExt.AlgebraicGeometry.ProjSpace`. This file records the standard affine
 charts `D₊(X i)` and their generating ratios `X k / X i`, and the fibre product
 `prodOver R e` over `Spec R` of finitely many projective spaces.
 -/
@@ -53,67 +55,6 @@ namespace AlgebraicGeometry
 attribute [local instance] MvPolynomial.gradedAlgebra
 
 namespace ProjSpace
-
-section PnSetup
-
-variable (R : Type u) [CommRing R] (n : ℕ)
-
-local notation "𝒜" => MvPolynomial.homogeneousSubmodule (Fin (n + 1)) R
-
-/-- The degree-zero part of the standard grading on
-`MvPolynomial (Fin (n + 1)) R` is identified with `R`. -/
-def grad0Equiv : R ≃+* (𝒜 0) where
-  toFun r := ⟨C r, (mem_homogeneousSubmodule 0 _).mpr (isHomogeneous_C _ r)⟩
-  invFun p := MvPolynomial.constantCoeff p.1
-  left_inv r := by simp
-  right_inv p := by
-    ext : 1
-    have hp : p.1.IsHomogeneous 0 := (mem_homogeneousSubmodule 0 _).mp p.2
-    ext d
-    rcases eq_or_ne d 0 with rfl | hd
-    · simp [MvPolynomial.constantCoeff]
-    · rw [MvPolynomial.coeff_C, ite_eq_right_of_eq_false _ _ (eq_false (Ne.symm hd))]
-      by_contra h
-      refine hd (Finsupp.ext fun i => ?_)
-      have hdeg : (Finsupp.weight (1 : Fin (n + 1) → ℕ)) d = 0 := hp (fun h0 => h h0.symm)
-      simp only [Finsupp.weight_apply, Pi.one_apply, smul_eq_mul, mul_one,
-        Finsupp.sum] at hdeg
-      by_cases hi : i ∈ d.support
-      · exact (Finset.sum_eq_zero_iff_of_nonneg (fun _ _ => Nat.zero_le _)).mp hdeg i hi
-      · exact Finsupp.notMem_support_iff.mp hi
-  map_mul' a b := by ext : 1; simp
-  map_add' a b := by ext : 1; simp
-
-/-- The structure morphism from projective `n`-space
-`Proj R[X₀, …, Xₙ]` to `Spec R`. -/
-def π : Proj 𝒜 ⟶ Spec (.of R) :=
-  Proj.toSpecZero 𝒜 ≫ Spec.map (CommRingCat.ofHom (grad0Equiv R n).toRingHom)
-
-/-- The polynomial ring is of finite type over its degree-zero part. -/
-scoped instance finiteType_mvPolynomial :
-    Algebra.FiniteType (𝒜 0) (MvPolynomial (Fin (n + 1)) R) := by
-  classical
-  refine ⟨⟨Finset.univ.image MvPolynomial.X, eq_top_iff.mpr fun p _ => ?_⟩⟩
-  induction p using MvPolynomial.induction_on with
-  | C r =>
-    exact Subalgebra.algebraMap_mem _ (⟨C r, (mem_homogeneousSubmodule 0 _).mpr
-      (isHomogeneous_C _ r)⟩ : 𝒜 0)
-  | add p q hp hq => exact Subalgebra.add_mem _ (hp trivial) (hq trivial)
-  | mul_X p j hp =>
-    exact Subalgebra.mul_mem _ (hp trivial)
-      (Algebra.subset_adjoin (Finset.mem_coe.mpr (Finset.mem_image_of_mem _ (Finset.mem_univ j))))
-
-/-- Projective space over `R` is proper over `Spec R`. -/
-instance isProper_π : IsProper (π R n) := by
-  unfold π
-  have : IsProper (Proj.toSpecZero 𝒜) := inferInstance
-  have : IsIso (CommRingCat.ofHom (grad0Equiv R n).toRingHom) :=
-    (ConcreteCategory.isIso_iff_bijective _).mpr (grad0Equiv R n).bijective
-  have : IsIso (Spec.map (CommRingCat.ofHom (grad0Equiv R n).toRingHom)) :=
-    inferInstance
-  infer_instance
-
-end PnSetup
 
 section StdCover
 
@@ -309,4 +250,3 @@ end ProdOver
 end ProjSpace
 
 end AlgebraicGeometry
-

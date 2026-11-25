@@ -18,7 +18,7 @@ attribute [local instance] MvPolynomial.gradedAlgebra
 
 universe u
 
-theorem exactSource {R : Type u} [CommRing R] {V : Scheme.{u}}
+private theorem exactSource {R : Type u} [CommRing R] {V : Scheme.{u}}
     (π : V ⟶ Spec (.of R)) :
     Nonempty (ChowDatum π) → Nonempty (ChowDatumProj π) :=
   ChowDatumProj.nonempty_of π
