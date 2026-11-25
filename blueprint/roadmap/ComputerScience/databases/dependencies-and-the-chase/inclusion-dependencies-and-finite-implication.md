@@ -5,10 +5,6 @@ projection of $R$ on $A_1, \dots, A_k$ is contained in the projection of $S$ on 
 A set $\Sigma$ of dependencies finitely implies $\sigma$ if every finite instance satisfying $\Sigma$
 satisfies $\sigma$, and implies $\sigma$ (unrestricted implication) if every instance does.
 
-Finite and unrestricted implication coincide for functional dependencies alone and for inclusion
-dependencies alone, but differ for sets of functional and inclusion dependencies taken together; and the
-implication problem for functional and inclusion dependencies together is undecidable.
-
 ## Depends on
 
 - [Functional dependency](../functional-dependencies/fd.md)

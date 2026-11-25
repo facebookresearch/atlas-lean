@@ -34,7 +34,8 @@ Eliminating `v = b / (1 + u ^ γ)` from `u (1 + v) = a`, the equilibria are in b
 (`isEquilibrium_one_iff`, `ncard_equilibria_one`); every equilibrium has `u > 0`. For odd `γ` the
 polynomial can have negative roots, which are not equilibria. For `γ ≥ 1` it is monic of degree
 `γ + 1` (`monic_equilibriumPolyOne`, `natDegree_equilibriumPolyOne`), and for `γ = 2` it is
-T195's `cubic a b` (`eval_equilibriumPolyOne_two`). Hence:
+the cubic `cubic a b` of `Domains.Biology.Dynamics.ToggleSwitch` (`eval_equilibriumPolyOne_two`).
+Hence:
 
 * `one_le_ncard_equilibria_one`: there is at least one equilibrium (every `γ`);
 * `ncard_equilibria_one_le_degree`: at most `γ + 1` equilibria (`γ ≥ 1`), the degree bound;
@@ -198,8 +199,8 @@ theorem signVariations_equilibriumPolyOne_le (ha : 0 < a) (b : ℝ) (γ : ℕ) :
   have := card_support_equilibriumPolyOne_le a b γ
   omega
 
-/-- Equilibria of the `β = 1` toggle switch are the points `(u, b / (1 + u ^ γ))` with `u` a
-positive root of `equilibriumPolyOne a b γ`. -/
+/-- For `a, b > 0`, the equilibria of the `β = 1` toggle switch are the points
+`(u, b / (1 + u ^ γ))` with `u` a positive root of `equilibriumPolyOne a b γ`. -/
 theorem isEquilibrium_one_iff (ha : 0 < a) (hb : 0 < b) {u v : ℝ} :
     IsEquilibrium a b 1 γ u v ↔
       0 < u ∧ (equilibriumPolyOne a b γ).IsRoot u ∧ v = b / (1 + u ^ γ) := by
@@ -234,20 +235,23 @@ theorem equilibria_one_eq_image (ha : 0 < a) (hb : 0 < b) :
   · rintro ⟨w, ⟨hw, hr⟩, rfl, rfl⟩
     exact ⟨hw, hr, rfl⟩
 
-/-- The number of equilibria of the `β = 1` toggle switch is the number of positive roots of
-`equilibriumPolyOne a b γ`. -/
+/-- For `a, b > 0`, the number of equilibria of the `β = 1` toggle switch is the number of
+positive roots of `equilibriumPolyOne a b γ`. -/
 theorem ncard_equilibria_one (ha : 0 < a) (hb : 0 < b) :
     (equilibria a b 1 γ).ncard = {u | 0 < u ∧ (equilibriumPolyOne a b γ).IsRoot u}.ncard := by
   rw [equilibria_one_eq_image ha hb]
   exact ncard_image_of_injective _ fun x y h ↦ (Prod.mk.inj h).1
 
-/-- **At most `γ + 1` equilibria** (the degree bound). -/
+/-- **At most `γ + 1` equilibria** (the degree bound), as `Set.ncard`, which is `0` for an infinite
+set; the set is finite by `one_le_ncard_equilibria_one`. -/
 theorem ncard_equilibria_one_le_degree (ha : 0 < a) (hb : 0 < b) (hγ : 0 < γ) :
     (equilibria a b 1 γ).ncard ≤ γ + 1 := by
   rw [ncard_equilibria_one ha hb, ← natDegree_equilibriumPolyOne a b hγ]
   exact ncard_setOf_pos_isRoot_le_natDegree (equilibriumPolyOne_ne_zero ha b γ)
 
-/-- **At most three equilibria** for `β = 1` and every `γ` (Descartes' rule of signs). -/
+/-- **At most three equilibria** for `β = 1` and every `γ` (Descartes' rule of signs), as
+`Set.ncard`, which is `0` for an infinite set; the set is finite by
+`one_le_ncard_equilibria_one`. -/
 theorem ncard_equilibria_one_le_three (ha : 0 < a) (hb : 0 < b) :
     (equilibria a b 1 γ).ncard ≤ 3 := by
   rw [ncard_equilibria_one ha hb]
@@ -271,14 +275,16 @@ theorem exists_pos_isRoot_equilibriumPolyOne (ha : 0 < a) (hb : 0 < b) :
   rw [eval_equilibriumPolyOne, zero_pow (Nat.succ_ne_zero γ)] at hu
   nlinarith [mul_nonneg ha.le (pow_nonneg (le_refl (0 : ℝ)) γ)]
 
-/-- **At least one equilibrium** for `β = 1` and every `γ`. -/
+/-- **At least one equilibrium** for `a, b > 0`, `β = 1` and every `γ`: as `Set.ncard` is `0` for
+an infinite set, the set of equilibria is finite and nonempty. -/
 theorem one_le_ncard_equilibria_one (ha : 0 < a) (hb : 0 < b) :
     1 ≤ (equilibria a b 1 γ).ncard := by
   rw [ncard_equilibria_one ha hb, Nat.one_le_iff_ne_zero, ← Nat.pos_iff_ne_zero,
     ncard_pos (finite_setOf_pos_isRoot (equilibriumPolyOne_ne_zero ha b γ))]
   exact exists_pos_isRoot_equilibriumPolyOne ha hb
 
-/-- **Uniqueness for `γ = 1`.** The `β = γ = 1` toggle switch has exactly one equilibrium. -/
+/-- **Uniqueness for `γ = 1`.** For `a, b > 0`, the `β = γ = 1` toggle switch has exactly one
+equilibrium. -/
 theorem ncard_equilibria_one_one (ha : 0 < a) (hb : 0 < b) :
     (equilibria a b 1 1).ncard = 1 := by
   rw [ncard_equilibria_one ha hb]
@@ -329,7 +335,7 @@ theorem monic_equilibriumPolyTwo (a b : ℝ) : (equilibriumPolyTwo a b).Monic :=
 theorem equilibriumPolyTwo_ne_zero (a b : ℝ) : equilibriumPolyTwo a b ≠ 0 :=
   (monic_equilibriumPolyTwo a b).ne_zero
 
-/-- Every real root of the quintic is positive. -/
+/-- For `a > 0`, every real root of the quintic is positive. -/
 theorem pos_of_isRoot_equilibriumPolyTwo (ha : 0 < a) {u : ℝ}
     (h : (equilibriumPolyTwo a b).IsRoot u) : 0 < u := by
   rw [IsRoot.def, eval_equilibriumPolyTwo] at h
@@ -341,8 +347,8 @@ theorem pos_of_isRoot_equilibriumPolyTwo (ha : 0 < a) {u : ℝ}
   have h5 : u ^ 5 ≤ 0 := by nlinarith
   nlinarith [sq_nonneg b, mul_nonneg ha.le h4, mul_nonneg ha.le h2]
 
-/-- Equilibria of the `β = γ = 2` toggle switch are the points `(u, b / (1 + u²))` with `u` a
-root of `equilibriumPolyTwo a b` (necessarily positive). -/
+/-- For `a, b > 0`, the equilibria of the `β = γ = 2` toggle switch are the points
+`(u, b / (1 + u²))` with `u` a root of `equilibriumPolyTwo a b` (necessarily positive). -/
 theorem isEquilibrium_two_iff (ha : 0 < a) (hb : 0 < b) {u v : ℝ} :
     IsEquilibrium a b 2 2 u v ↔ (equilibriumPolyTwo a b).IsRoot u ∧ v = b / (1 + u ^ 2) := by
   constructor
@@ -377,8 +383,8 @@ theorem equilibria_two_eq_image (ha : 0 < a) (hb : 0 < b) :
   · rintro ⟨w, hr, rfl, rfl⟩
     exact ⟨hr, rfl⟩
 
-/-- The number of equilibria of the `β = γ = 2` toggle switch is the number of positive roots of
-`equilibriumPolyTwo a b` (all of its real roots are positive). -/
+/-- For `a, b > 0`, the number of equilibria of the `β = γ = 2` toggle switch is the number of
+positive roots of `equilibriumPolyTwo a b` (all of its real roots are positive). -/
 theorem ncard_equilibria_two (ha : 0 < a) (hb : 0 < b) :
     (equilibria a b 2 2).ncard = {u | 0 < u ∧ (equilibriumPolyTwo a b).IsRoot u}.ncard := by
   rw [equilibria_two_eq_image ha hb,
@@ -387,13 +393,15 @@ theorem ncard_equilibria_two (ha : 0 < a) (hb : 0 < b) :
   ext u
   exact ⟨fun h ↦ ⟨pos_of_isRoot_equilibriumPolyTwo ha h, h⟩, fun h ↦ h.2⟩
 
-/-- **At most five equilibria** for `β = γ = 2` (the degree bound). -/
+/-- **At most five equilibria** for `β = γ = 2` (the degree bound), as `Set.ncard`, which is `0` for
+an infinite set; the set is finite by `one_le_ncard_equilibria_two`. -/
 theorem ncard_equilibria_two_le_five (ha : 0 < a) (hb : 0 < b) :
     (equilibria a b 2 2).ncard ≤ 5 := by
   rw [ncard_equilibria_two ha hb, ← natDegree_equilibriumPolyTwo a b]
   exact ncard_setOf_pos_isRoot_le_natDegree (equilibriumPolyTwo_ne_zero a b)
 
-/-- **At least one equilibrium** for `β = γ = 2`. -/
+/-- **At least one equilibrium** for `a, b > 0` and `β = γ = 2`: as `Set.ncard` is `0` for an
+infinite set, the set of equilibria is finite and nonempty. -/
 theorem one_le_ncard_equilibria_two (ha : 0 < a) (hb : 0 < b) :
     1 ≤ (equilibria a b 2 2).ncard := by
   rw [ncard_equilibria_two ha hb, Nat.one_le_iff_ne_zero, ← Nat.pos_iff_ne_zero,

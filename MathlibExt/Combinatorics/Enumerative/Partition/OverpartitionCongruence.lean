@@ -8,15 +8,16 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Combinatorics.Enumerative.Partition.GenFun
 public import Mathlib.Data.Finset.Basic
 public import Mathlib.Data.Int.ModEq
 public import Mathlib.Data.Multiset.Basic
 public import Mathlib.SetTheory.Cardinal.Finite
 public import MathlibExt.Combinatorics.Enumerative.Partition.Overpartition
 public import MathlibExt.NumberTheory.QuadraticForms.ThreeSquares
+public import MathlibExt.NumberTheory.SquareRepresentationCongruences
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Combinatorics.Enumerative.Partition.Basic
-import Mathlib.Combinatorics.Enumerative.Partition.GenFun
 import Mathlib.Combinatorics.Enumerative.Pentagonal.PowerSeries
 import Mathlib.Data.Finset.Powerset
 import Mathlib.Data.Int.Cast.Lemmas
@@ -1895,6 +1896,27 @@ end
 @[expose] public section
 
 namespace MetaMathlibExt
+
+open PowerSeries in
+/-- The square theta series is reciprocal to the overpartition generating function at `-X`. -/
+public theorem overpartitionOdd_square_recurrence.theta_mul_rescale_genFun :
+    squareThetaSeries * rescale (-1 : ℤ) (Nat.Partition.genFun (fun _ _ ↦ (2 : ℤ))) = 1 := by
+  suffices h : squareThetaSeries = opcTheta by rw [h, opc_theta_mul_rescale_genFun]
+  ext n
+  rw [opc_theta_coeff_eq_card, squareThetaSeries, coeff_mk, ← Nat.card_eq_finsetCard]
+  apply congrArg (Nat.cast : ℕ → ℤ)
+  apply Nat.card_congr
+  apply Equiv.subtypeEquivRight
+  intro x
+  simp only [Finset.mem_filter, Finset.mem_Icc]
+  have hs : x.natAbs ^ 2 = n ↔ x ^ 2 = (n : ℤ) := by
+    rw [← Nat.cast_inj (R := ℤ), Nat.cast_pow, Int.natAbs_sq]
+  rw [hs]
+  refine ⟨And.right, fun h => ⟨⟨?_, ?_⟩, h⟩⟩
+  · have := Int.le_self_sq (-x)
+    rw [neg_sq, h] at this
+    omega
+  · simpa [h] using Int.le_self_sq x
 
 /--
 **Overpartitions of $5n$ modulo $5$, explicit form.** For every integer $n \ge 1$, the number of

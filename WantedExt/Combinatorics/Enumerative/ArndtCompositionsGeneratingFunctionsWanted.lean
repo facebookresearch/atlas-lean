@@ -27,7 +27,8 @@ public import Mathlib.NumberTheory.Real.GoldenRatio
 public import Mathlib.RingTheory.Binomial
 public import MathlibExt.Combinatorics.Enumerative.ArndtCompositions
 public import MathlibExt.Combinatorics.Enumerative.ArndtLastPartBounds
-public import MathlibExt.Combinatorics.Enumerative.KArndtRecurrence
+public import MathlibExt.Combinatorics.Enumerative.KArndtTotalGFNeg
+public import MathlibExt.Combinatorics.Enumerative.KArndtTotalGFNonneg
 public import WantedExt.Combinatorics.Enumerative.ArndtCompositionsWanted
 
 namespace MetaMathlibExt
@@ -345,36 +346,6 @@ public theorem_wanted bivariateCountGF_kArndt_neg (k' : ℕ) (hk' : 0 < k') :
           PowerSeries.C (1 - Polynomial.X ^ 2) * PowerSeries.X ^ 3 +
             PowerSeries.C (Polynomial.X ^ 2) * PowerSeries.X ^ (2 + k')) =
       (1 - PowerSeries.X ^ 2) * (1 - PowerSeries.X + PowerSeries.C Polynomial.X * PowerSeries.X)
-
-/-- **Counting $k$-Arndt compositions for nonnegative $k$.** Let $k \ge 0$ be an integer and let
-$a_k(n) = \sum_{m = 0}^{n} a_k(n, m)$ be the number of $k$-Arndt compositions of $n$. Then, in
-$\mathbb{Z}[[x]]$,
-$$\Bigl(\sum_{n \ge 0} a_k(n)\, x^n\Bigr)(1 - x - x^2 + x^3 - x^{k+3}) = 1 - x^2,$$
-that is, $\sum_{n \ge 0} a_k(n)\, x^n = (1 - x^2)/(1 - x - x^2 + x^3 - x^{k+3})$.
-
-Source: Daniel F. Checa and José L. Ramírez, *Arndt Compositions: A Generating Functions
-Approach*, INTEGERS 24 (2024), Article A35, Corollary 6, case `k ≥ 0`
-(`integers-2024-A35-cor-6`). -/
-public theorem_wanted kArndtComposition_total_gf_nonneg (k : ℕ) :
-    (PowerSeries.mk fun n =>
-        ((∑ m ∈ Finset.range (n + 1), kArndtCompositionCount k n m : ℕ) : ℤ)) *
-        (1 - PowerSeries.X - PowerSeries.X ^ 2 + PowerSeries.X ^ 3 - PowerSeries.X ^ (k + 3)) =
-      1 - PowerSeries.X ^ 2
-
-/-- **Counting $k$-Arndt compositions for negative $k$.** Let $k = -k'$ with $k' \ge 1$ an integer,
-and let $a_k(n) = \sum_{m = 0}^{n} a_k(n, m)$ be the number of $k$-Arndt compositions of $n$. Then,
-in $\mathbb{Z}[[x]]$,
-$$\Bigl(\sum_{n \ge 0} a_k(n)\, x^n\Bigr)(1 - x - 2x^2 + x^{2-k}) = 1 - x^2,$$
-that is, $\sum_{n \ge 0} a_k(n)\, x^n = (1 - x^2)/(1 - x - 2x^2 + x^{2-k})$.
-
-Source: Daniel F. Checa and José L. Ramírez, *Arndt Compositions: A Generating Functions
-Approach*, INTEGERS 24 (2024), Article A35, Corollary 6, case `k < 0`
-(`integers-2024-A35-cor-6`). -/
-public theorem_wanted kArndtComposition_total_gf_neg (k' : ℕ) (hk' : 0 < k') :
-    (PowerSeries.mk fun n =>
-        ((∑ m ∈ Finset.range (n + 1), kArndtCompositionCount (-(k' : ℤ)) n m : ℕ) : ℤ)) *
-        (1 - PowerSeries.X - 2 * PowerSeries.X ^ 2 + PowerSeries.X ^ (2 + k')) =
-      1 - PowerSeries.X ^ 2
 
 /-- **Generating function of block Arndt compositions.** Let $k \ge 1$, let $a^{(k)}(n, m)$ be
 the number of $k$-block Arndt compositions of $n$ with $m$ parts, and let
