@@ -2,7 +2,7 @@
 
 For a scenario $\omega$ with rate $r(\omega) > 0$ and initial damage below the threshold,
 $d_0(\omega) < D(\omega)$, the
-[lifetime](../fracture-fatigue-crack-growth-and-failure-margin/damage-lifetime.md) of the
+[lifetime](../../../Physics/elasticity-and-structures/fracture-fatigue-damage-and-failure-margins/damage-lifetime.md) of the
 [linear damage path](linear-damage.md) $d_0(\omega) + r(\omega)\, t$ against the threshold
 $D(\omega)$, the first time $t \ge 0$ at which $d_0(\omega) + r(\omega)\, t \ge D(\omega)$, is
 

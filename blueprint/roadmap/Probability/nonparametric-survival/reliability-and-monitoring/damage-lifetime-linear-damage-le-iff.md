@@ -2,7 +2,7 @@
 
 For a scenario $\omega$ with rate $r(\omega) \ge 0$, any initial damage $d_0(\omega)$, any threshold
 $D(\omega)$ and every time $t \ge 0$, the
-[lifetime](../fracture-fatigue-crack-growth-and-failure-margin/damage-lifetime.md) $\tau(\omega)$ of
+[lifetime](../../../Physics/elasticity-and-structures/fracture-fatigue-damage-and-failure-margins/damage-lifetime.md) $\tau(\omega)$ of
 the [linear damage path](linear-damage.md) $d_0(\omega) + r(\omega)\, s$ against $D(\omega)$
 satisfies
 

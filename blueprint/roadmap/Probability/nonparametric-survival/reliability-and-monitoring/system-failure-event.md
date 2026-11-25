@@ -3,7 +3,7 @@
 Let the scenario type $\Omega$ and the component type $E$ be finite. For each component $i$ and
 scenario $\omega$ let $d_0(i, \omega)$, $r(i, \omega)$ and $D(i, \omega)$ be an initial damage, a
 rate and a threshold, all real, and let $\tau_i(\omega)$ be the
-[lifetime](../fracture-fatigue-crack-growth-and-failure-margin/damage-lifetime.md) of the
+[lifetime](../../../Physics/elasticity-and-structures/fracture-fatigue-damage-and-failure-margins/damage-lifetime.md) of the
 [linear damage path](linear-damage.md) $d_0(i, \omega) + r(i, \omega)\, s$ against $D(i, \omega)$.
 Let $S$ be a set of
 [configurations](../../../Probability/random-fields/spin-and-bond-configuration-spaces/config-space.md)

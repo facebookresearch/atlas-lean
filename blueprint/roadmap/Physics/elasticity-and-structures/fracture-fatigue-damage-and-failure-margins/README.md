@@ -1,4 +1,4 @@
-# Fracture, fatigue crack growth and failure margins
+# Fracture, fatigue damage and failure margins
 
 ## Mode-I stress intensity and the critical crack length
 
@@ -30,6 +30,19 @@
 - [For $K > 0$, $0 < a_0 < a_c$, the logarithmic Paris life is positive](paris-life-exp-pos.md)
 - [For $K, a_0, a_c > 0$: the logarithmic crack reaches $a_c$ at its life](paris-crack-exp-at-life.md)
 - [For $K > 0$, $0 < a_0 < a_c$: $a_0 e^{KN} < a_c$ iff $N < N_f$](paris-crack-exp-lt-iff.md)
+
+## The Palmgren–Miner damage sum
+
+The Palmgren–Miner damage sum $\sum_i n_i / N_i$ over finitely many cycle classes with positive
+lives is an empirical index: no failure is asserted at any value of it.
+
+- [Palmgren–Miner damage sum over finitely many cycle classes](miner-damage.md)
+- [Class counts aggregated from cycle records](cycle-class-counts.md)
+- [Aggregating cycle records by class preserves total count and damage](miner-damage-cycle-class-counts.md)
+- [A common change of cycle unit leaves the Miner damage sum unchanged](miner-damage-unit-change.md)
+- [Nonnegative counts: Miner sum ≥ 0, equal to 0 exactly at zero counts](miner-damage-nonneg-and-eq-zero-iff.md)
+- [Monotonicity of the Miner sum for nonnegative counts](miner-damage-mono.md)
+- [With a zero life, the bare cycle-ratio sum ignores that class's count](bare-sum-at-zero-life-misreports.md)
 
 ## Demand, allowable and margin of safety
 
