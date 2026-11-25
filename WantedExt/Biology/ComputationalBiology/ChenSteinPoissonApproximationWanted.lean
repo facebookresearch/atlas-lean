@@ -32,7 +32,9 @@ Here `I` is nonempty and countable (`W` is a countable sum of indicators, a rand
 `W.toNat`, where `ENat.toNat` sends `⊤` to `0`, a null event here, and likewise for the block sums
 `W_j`).
 The coefficients `b₁, b₂, b₃, b₃'` are taken in `[0, ∞]`, so infinite sums are allowed, and the
-total-variation norms are twice the largest difference over measurable sets. The strict
+total-variation norm `‖μ - ν‖` is Mathlib's `MeasureTheory.tvDist`, which for probability
+measures is twice the largest difference over measurable sets
+(`MathlibExt.InformationTheory.MeasurePinsker.tvDist_eq_two_mul_totalVariationDist`). The strict
 inequality of Theorem 1 holds as printed because `b₁ ≥ ∑ p_α² > 0`. Not recorded here: the
 Section 3 examples (Example 5 applies the theorems to the Erdős–Rényi law for sequence matching).
 
@@ -45,6 +47,7 @@ Probability 15 (1983) 585–600 (appendix, proof of Lemma 1).
 module
 
 public import Batteries.Util.ProofWanted
+public import Mathlib.MeasureTheory.Measure.TotalVariation.Defs
 public import Mathlib.Probability.Distributions.Poisson.Basic
 public import Mathlib.Probability.ProductMeasure
 public import Mathlib.MeasureTheory.Function.ConditionalExpectation.Basic
@@ -92,22 +95,16 @@ end Analytic
 
 section Norms
 
-/-- Twice the supremum of absolute differences `2 sup_A |μ(A) - ν(A)|` over measurable sets `A`.
-For probability measures (and more generally finite measures of equal total mass) this equals the
-usual total-variation norm `‖μ - ν‖`; on unequal-mass measures it differs from the signed-measure
-variation norm (for instance, it returns `2` for a point mass against the zero measure). -/
-noncomputable def tvNorm {β : Type*} [MeasurableSpace β] (μ ν : Measure β) : ℝ :=
-  2 * ⨆ A : {A : Set β // MeasurableSet A}, |μ.real A - ν.real A|
-
 /-- **The two forms of the total-variation norm agree** (Arratia, Goldstein and Gordon 1989,
 p.11): for probability measures `μ`, `ν` on `ℕ`, the supremum of `|∫ h dμ - ∫ h dν|` over
-`h : ℕ → ℝ` with `|h(w)| ≤ 1` for every `w` equals `2 sup_A |μ(A) - ν(A)|`.
+`h : ℕ → ℝ` with `|h(w)| ≤ 1` for every `w` equals `tvDist μ ν`, which for probability measures
+is `2 sup_A |μ(A) - ν(A)|` (`MeasurePinsker.tvDist_eq_two_mul_totalVariationDist`).
 
 Source: Arratia, Goldstein and Gordon (1989), p.11. -/
-public theorem_wanted sSup_integral_eq_tvNorm (μ ν : Measure ℕ) [IsProbabilityMeasure μ]
+public theorem_wanted sSup_integral_eq_tvDist (μ ν : Measure ℕ) [IsProbabilityMeasure μ]
     [IsProbabilityMeasure ν] :
     sSup ((fun h : ℕ → ℝ => |∫ w, h w ∂μ - ∫ w, h w ∂ν|) '' {h | ∀ w, |h w| ≤ 1}) =
-      tvNorm μ ν
+      tvDist μ ν
 
 end Norms
 
@@ -189,9 +186,9 @@ the law of `W`, as `W < ⊤` almost surely),
 `‖L(W) - L(Z)‖ ≤ 2[(b₁ + b₂)(1 - e^{-λ})/λ + b₃'(1 ∧ 1.4 λ^{-1/2})] ≤ 2(b₁ + b₂ + b₃)`.
 
 Source: Arratia, Goldstein and Gordon (1989), Theorem 1. -/
-public theorem_wanted tvNorm_lawWToNat_poisson_le (P : Measure Ω) [IsProbabilityMeasure P]
+public theorem_wanted tvDist_lawWToNat_poisson_le (P : Measure Ω) [IsProbabilityMeasure P]
     (X : I → Ω → ℕ) (B : I → Set I) (hX : BernoulliSetting P X B) :
-    ENNReal.ofReal (tvNorm (lawWToNat P X) (poissonMeasure (lam P X).toNNReal)) ≤
+    ENNReal.ofReal (tvDist (lawWToNat P X) (poissonMeasure (lam P X).toNNReal)) ≤
         2 * ((b₁ P X B + b₂ P X B) *
             ENNReal.ofReal ((1 - Real.exp (-lam P X)) / lam P X) +
           b₃' P X B * ENNReal.ofReal (min 1 (1.4 / Real.sqrt (lam P X)))) ∧
@@ -227,10 +224,10 @@ variables of means `λ_1, …, λ_d` satisfy
 `‖L(W_1, …, W_d) - L(Z_1, …, Z_d)‖ ≤ 2(1 ∧ 1.4 (min_j λ_j)^{-1/2})(2b₁ + 2b₂ + b₃)`.
 
 Source: Arratia, Goldstein and Gordon (1989), equation (2). -/
-public theorem_wanted tvNorm_blockSums_le (P : Measure Ω) [IsProbabilityMeasure P]
+public theorem_wanted tvDist_blockSums_le (P : Measure Ω) [IsProbabilityMeasure P]
     (X : I → Ω → ℕ) (B : I → Set I) (hX : BernoulliSetting P X B) (d : ℕ) (hd : 0 < d)
     (part : I → Fin d) (hpart : Function.Surjective part) :
-    ENNReal.ofReal (tvNorm
+    ENNReal.ofReal (tvDist
         (P.map fun ω j => (∑' a : {a // part a = j}, (X a ω : ℕ∞)).toNat)
         (Measure.pi fun j : Fin d =>
           poissonMeasure (∑' a : {a // part a = j}, pr P X a).toNNReal)) ≤
@@ -245,9 +242,9 @@ dependent Bernoulli setting under a probability measure (nonempty countable `I`,
 `‖L(X) - L(Y)‖ ≤ 2(2b₁ + 2b₂ + b₃)`.
 
 Source: Arratia, Goldstein and Gordon (1989), Theorem 2. -/
-public theorem_wanted tvNorm_process_le (P : Measure Ω) [IsProbabilityMeasure P]
+public theorem_wanted tvDist_process_le (P : Measure Ω) [IsProbabilityMeasure P]
     (X : I → Ω → ℕ) (B : I → Set I) (hX : BernoulliSetting P X B) :
-    ENNReal.ofReal (tvNorm (P.map fun ω a => X a ω)
+    ENNReal.ofReal (tvDist (P.map fun ω a => X a ω)
         (Measure.infinitePi fun a => poissonMeasure (pr P X a).toNNReal)) ≤
       2 * (2 * b₁ P X B + 2 * b₂ P X B + b₃ P X B)
 

@@ -20,16 +20,18 @@ continuity and compactness.
 The model here: hidden states `Fin r`, symbols `Fin K`, a parameter set `Θ` that is a nonempty
 compact subset of `ℝ^p`, and maps `θ ↦ (P_θ, e_θ, π_θ)` continuous on `Θ`, where `P_θ` is a
 transition matrix and `e_θ` an emission matrix with all entries positive on `Θ`, and `π_θ` is a
-stationary distribution of `P_θ`. The observations `Y_0, Y_1, …` form the stationary observation
-process of `θ*`: their law `Q` on `ℕ → Fin K` has the cylinder probabilities
+stationary distribution of `P_θ`. Each `θ` gives the hidden Markov model
+`Cslib.MachineLearning.Sequence.HiddenMarkov.HMM` with initial weights `π_θ`, transitions `P_θ`
+and emissions `e_θ`, and its `likelihood` of the observations `y_0, …, y_n` is
 
   `p̄_θ(y_0, …, y_n) = ∑_{x_0, …, x_n} π_θ(x_0) e_θ(x_0, y_0)
-    ∏_{i=1}^n P_θ(x_{i-1}, x_i) e_θ(x_i, y_i)`
+    ∏_{i=1}^n P_θ(x_{i-1}, x_i) e_θ(x_i, y_i)`.
 
-at `θ = θ*`. The log-likelihood of the first `n + 1` observations is
-`𝓛_n(θ) = log p̄_θ(Y_0, …, Y_n)` (the full stationary joint likelihood), and an estimator is any
-sequence of measurable maps choosing a maximizer of `𝓛_n` over `Θ`. Two parameters are
-equivalent when they give the same observation law.
+The observations `Y_0, Y_1, …` form the stationary observation process of `θ*`: their law `Q` on
+`ℕ → Fin K` has these cylinder probabilities at `θ = θ*`. The log-likelihood of the first
+`n + 1` observations is `𝓛_n(θ) = log p̄_θ(Y_0, …, Y_n)` (the full stationary joint likelihood),
+and an estimator is any sequence of measurable maps choosing a maximizer of `𝓛_n` over `Θ`. Two
+parameters are equivalent when they give the same observation law.
 
 Not recorded here: asymptotic normality (Douc, Moulines and Rydén 2004, Theorem 4), whose
 statement for the full parameter set needs a characterization of the equivalence classes beyond
@@ -44,6 +46,7 @@ maximum likelihood estimator in autoregressive models with Markov regime", Annal
 module
 
 public import Batteries.Util.ProofWanted
+public import CSLibExt.MachineLearning.Sequence.HiddenMarkov
 public import Mathlib.Analysis.InnerProductSpace.PiL2
 public import Mathlib.Analysis.Normed.Lp.MeasurableSpace
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
@@ -55,6 +58,7 @@ public import Mathlib.Topology.MetricSpace.HausdorffDistance
 namespace WantedExt.Biology.ComputationalBiology.HiddenMarkovMLEConsistencyWanted
 
 open MeasureTheory Filter Topology
+open Cslib.MachineLearning.Sequence.HiddenMarkov (HMM likelihood)
 
 /-- A **finite hidden Markov model family** on `r` hidden states and `K` symbols over a
 parameter set `Θ ⊆ ℝ^p`: transition matrices `P θ`, emission matrices `e θ` and initial laws
@@ -99,27 +103,34 @@ structure HMMFamily.Regular {p r K : ℕ} (M : HMMFamily p r K) : Prop where
   /-- `π_θ` is stationary for `P_θ`. -/
   π_stationary : ∀ θ ∈ M.Θ, ∀ x', ∑ x, M.π θ x * M.P θ x x' = M.π θ x'
 
-/-- The **stationary observation probability** `p̄_θ(y_0, …, y_n)`. -/
-noncomputable def HMMFamily.obsProb {p r K : ℕ} (M : HMMFamily p r K)
-    (θ : EuclideanSpace ℝ (Fin p)) {n : ℕ} (y : Fin (n + 1) → Fin K) : ℝ :=
-  ∑ x : Fin (n + 1) → Fin r, M.π θ (x 0) * M.e θ (x 0) (y 0) *
-    ∏ i : Fin n, M.P θ (x i.castSucc) (x i.succ) * M.e θ (x i.succ) (y i.succ)
+/-- The hidden Markov model of the parameter `θ`, with initial weights `π_θ`, transition weights
+`P_θ` and emission weights `e_θ`. Its `likelihood` of the observations `y_0, …, y_n` is the
+stationary observation probability `p̄_θ(y_0, …, y_n)` when `π_θ` is stationary. -/
+def HMMFamily.toHMM {p r K : ℕ} (M : HMMFamily p r K) (θ : EuclideanSpace ℝ (Fin p)) :
+    HMM (Fin r) (Fin K) ℝ where
+  init := M.π θ
+  trans := M.P θ
+  emit := M.e θ
 
-/-- `Q` is the **stationary observation law** of `θ`: for every `n` and every word
-`y_0, …, y_n`, `Q{ω | ω_i = y_i for i ≤ n} = p̄_θ(y_0, …, y_n)`. -/
+/-- `Q` is the **stationary observation law** of `θ`: for every `n` and every observation
+sequence `y`, the cylinder `{ω | ω_i = y_i for i ≤ n}` has `Q`-probability
+`likelihood (M.toHMM θ) y n = p̄_θ(y_0, …, y_n)`. -/
 def HMMFamily.IsObsLaw {p r K : ℕ} (M : HMMFamily p r K) (θ : EuclideanSpace ℝ (Fin p))
     (Q : Measure (ℕ → Fin K)) : Prop :=
-  ∀ (n : ℕ) (y : Fin (n + 1) → Fin K), Q.real {ω | ∀ i : Fin (n + 1), ω i = y i} = M.obsProb θ y
+  ∀ (n : ℕ) (y : ℕ → Fin K),
+    Q.real {ω | ∀ i : Fin (n + 1), ω i = y i} = likelihood (M.toHMM θ) y n
 
-/-- `θ` and `θ'` are **equivalent**: they give the same observation law. -/
+/-- `θ` and `θ'` are **equivalent**: they give the same observation law, that is, the same
+likelihood `likelihood (M.toHMM θ) y n` for every `n` and every observation sequence `y`. -/
 def HMMFamily.Equiv {p r K : ℕ} (M : HMMFamily p r K) (θ θ' : EuclideanSpace ℝ (Fin p)) :
     Prop :=
-  ∀ (n : ℕ) (y : Fin (n + 1) → Fin K), M.obsProb θ y = M.obsProb θ' y
+  ∀ (n : ℕ) (y : ℕ → Fin K), likelihood (M.toHMM θ) y n = likelihood (M.toHMM θ') y n
 
-/-- The **log-likelihood** `𝓛_n(θ) = log p̄_θ(Y_0, …, Y_n)` of the first `n + 1` observations. -/
+/-- The **log-likelihood** `𝓛_n(θ) = log p̄_θ(Y_0, …, Y_n)` of the first `n + 1` observations,
+the logarithm of `likelihood (M.toHMM θ) ω n`. -/
 noncomputable def HMMFamily.logLik {p r K : ℕ} (M : HMMFamily p r K)
     (θ : EuclideanSpace ℝ (Fin p)) (n : ℕ) (ω : ℕ → Fin K) : ℝ :=
-  Real.log (M.obsProb θ fun i : Fin (n + 1) => ω i)
+  Real.log (likelihood (M.toHMM θ) ω n)
 
 /-- `θhat` is a **maximum likelihood estimator**: each `θhat n` is measurable, takes values in
 `Θ`, and maximizes `𝓛_n` over `Θ`. -/

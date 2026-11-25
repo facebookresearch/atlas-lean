@@ -2,7 +2,7 @@
 
 - [HMMFamily](hmmfamily.md)
 - [Regular](regular.md)
-- [Obs Prob](obs-prob.md)
+- [To HMM](to-hmm.md)
 - [Is Obs Law](is-obs-law.md)
 - [Equiv](equiv.md)
 - [Log Lik](log-lik.md)
