@@ -1622,7 +1622,7 @@ private def mkLin (f : E → G) (hadd : ∀ a a', f (a + a') = f a + f a')
     E →L[ℝ] G :=
   LinearMap.toContinuousLinearMap { toFun := f, map_add' := hadd, map_smul' := hsmul }
 
-@[scoped simp] private theorem mkLin_apply (f : E → G) (hadd : ∀ a a', f (a + a') = f a + f a')
+@[local simp] private theorem mkLin_apply (f : E → G) (hadd : ∀ a a', f (a + a') = f a + f a')
     (hsmul : ∀ (r : ℝ) (a : E), f (r • a) = r • f a) (a : E) : mkLin f hadd hsmul a = f a := by
   simp [mkLin]
 
@@ -1635,7 +1635,7 @@ private def mkBilin (b : E → F → G) (h₁ : ∀ a a' c, b (a + a') c = b a c
       map_add' := fun a a' => by ext c : 1; simp
       map_smul' := fun r a => by ext c : 1; simp }
 
-@[scoped simp] private theorem mkBilin_apply (b : E → F → G)
+@[local simp] private theorem mkBilin_apply (b : E → F → G)
     (h₁ : ∀ a a' c, b (a + a') c = b a c + b a' c)
     (h₂ : ∀ (r : ℝ) (a : E) (c : F), b (r • a) c = r • b a c)
         (h₃ : ∀ a c c', b a (c + c') = b a c + b a c')
@@ -1702,7 +1702,7 @@ private def mulCoords : (Fin 2 → Fin 2 → 𝕜) →L[ℝ] (Fin 2 → Fin 2 �
       map_add' := fun a a' => by ext b : 1; simp
       map_smul' := fun r a => by ext b : 1; simp }
 
-@[scoped simp] private theorem mulCoords_apply (a b : Fin 2 → Fin 2 → 𝕜) :
+@[local simp] private theorem mulCoords_apply (a b : Fin 2 → Fin 2 → 𝕜) :
     mulCoords 𝕜 a b = Matrix.of.symm (Matrix.of a * Matrix.of b) := by
   simp [mulCoords, mulCoordsₗ]
 
@@ -1757,9 +1757,9 @@ private def invQuad :=
     (fun a c c' => by ext w i j; simp [Matrix.mul_apply]; abel)
     (fun r a c => by ext w i j; simp [Matrix.mul_apply])
 
-@[scoped simp] private theorem invQuad_apply (a c w : Fin 2 → Fin 2 → 𝕜) :
+@[local simp] private theorem invQuad_apply (a c w : Fin 2 → Fin 2 → 𝕜) :
     invQuad 𝕜 a c w = -(mulCoords 𝕜 (mulCoords 𝕜 a w) c) := by
-  simp [invQuad]
+  simp [invQuad, mkBilin_apply]
 
 private theorem fderivWithin_invCoords {p : Fin 2 → Fin 2 → 𝕜} (hp : p ∈ invertibleCoords 𝕜) :
     fderivWithin ℝ (invCoords (𝕜 := 𝕜)) (invertibleCoords 𝕜) p = invQuad 𝕜 (invCoords p)
@@ -1863,11 +1863,11 @@ private def wordDeriv {ι : Type} (E : ι → Matrix (Fin 2) (Fin 2) 𝕜) :
   | 0, _, G => G
   | j + 1, I, G => wordDeriv E (fun i : Fin j => I i.succ) (rightDeriv (E (I 0)) G)
 
-@[scoped simp] private theorem wordDeriv_zero {ι : Type} (E : ι → Matrix (Fin 2) (Fin 2) 𝕜)
+@[local simp] private theorem wordDeriv_zero {ι : Type} (E : ι → Matrix (Fin 2) (Fin 2) 𝕜)
     (I : Fin 0 → ι)
     (G : (Fin 2 → Fin 2 → 𝕜) → ℂ) : wordDeriv E I G = G := rfl
 
-@[scoped simp] private theorem wordDeriv_cons {ι : Type} (E : ι → Matrix (Fin 2) (Fin 2) 𝕜) {j : ℕ}
+@[local simp] private theorem wordDeriv_cons {ι : Type} (E : ι → Matrix (Fin 2) (Fin 2) 𝕜) {j : ℕ}
     (i : ι) (I : Fin j → ι)
     (G : (Fin 2 → Fin 2 → 𝕜) → ℂ) : wordDeriv E (Fin.cons i I) G = wordDeriv E I
         (rightDeriv (E i) G) := by
@@ -1926,10 +1926,10 @@ private def coeffCLM (c : (Fin 2 → Fin 2 → 𝕜) →L[ℝ] ℝ) :=
       ext v
       simp only [ContinuousLinearMap.comp_apply, smul_apply, map_smul])
 
-@[scoped simp] private theorem coeffCLM_apply (c : (Fin 2 → Fin 2 → 𝕜) →L[ℝ] ℝ)
+@[local simp] private theorem coeffCLM_apply (c : (Fin 2 → Fin 2 → 𝕜) →L[ℝ] ℝ)
     (m v : Fin 2 → Fin 2 → 𝕜) :
     coeffCLM c m v = c (mulCoords 𝕜 m v) := by
-  simp [coeffCLM]
+  simp [coeffCLM, mkLin_apply]
 
 variable (𝕜) in
 private def pairing :=
@@ -1940,7 +1940,7 @@ private def pairing :=
     (fun l z z' => by ext v; simp [smul_add])
     (fun r l z => by ext v; simp [mul_left_comm])
 
-@[scoped simp] private theorem pairing_apply (l : (Fin 2 → Fin 2 → 𝕜) →L[ℝ] ℝ) (z : ℂ)
+@[local simp] private theorem pairing_apply (l : (Fin 2 → Fin 2 → 𝕜) →L[ℝ] ℝ) (z : ℂ)
     (v : Fin 2 → Fin 2 → 𝕜) :
     pairing 𝕜 l z v = l v • z :=
   rfl
@@ -2883,10 +2883,10 @@ private def leftMul (n : Matrix (Fin 2) (Fin 2) ℝ) : (Fin 2 → Fin 2 → ℝ)
     (Fin 2 → Fin 2 → ℝ) :=
   mulCoords ℝ (Matrix.of.symm n)
 
-@[scoped simp] private theorem leftMul_apply (n : Matrix (Fin 2) (Fin 2) ℝ)
+@[local simp] private theorem leftMul_apply (n : Matrix (Fin 2) (Fin 2) ℝ)
     (q : Fin 2 → Fin 2 → ℝ) :
     leftMul n q = Matrix.of.symm (n * Matrix.of q) := by
-  simp [leftMul, -Matrix.symm_of]
+  simp [leftMul, mulCoords_apply, -Matrix.symm_of]
 
 private theorem leftMul_of_symm (n g : Matrix (Fin 2) (Fin 2) ℝ) : leftMul n
     (Matrix.of.symm g) = Matrix.of.symm (n * g) := by
@@ -5986,7 +5986,7 @@ private def derivDatum (d : ArchDatumR P) (X : Matrix (Fin 2) (Fin 2) ℝ) : Arc
   decay_top := fun j N => decay_top_derivW d.smooth d.decay_top X j N
   decay_zero := fun j => decay_zero_derivW d.smooth d.decay_zero X j
 
-@[scoped simp] private theorem derivDatum_W (d : ArchDatumR P) (X : Matrix (Fin 2) (Fin 2) ℝ) :
+@[local simp] private theorem derivDatum_W (d : ArchDatumR P) (X : Matrix (Fin 2) (Fin 2) ℝ) :
     (derivDatum d X).W = derivW X d.W := rfl
 
 private theorem derivDatum_W_apply (d : ArchDatumR P) (X : Matrix (Fin 2) (Fin 2) ℝ)
