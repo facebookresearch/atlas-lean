@@ -47,7 +47,8 @@ Atlas roadmap target EC06.T03.
 namespace MathlibExt.Economics.Producer
 
 /-- The cost function `c(w) = inf_{x ∈ V} w ⬝ᵥ x` for the input requirement set `V`, as a real
-`sInf`. It is the economically meaningful value on `costDomain V`. -/
+`sInf`. It is the economically meaningful value on `costDomain V`. Elsewhere (empty `V`, or costs
+unbounded below) the real infimum is `0` by convention. -/
 noncomputable def costFn {ι : Type*} [Fintype ι] (V : Set (ι → ℝ)) (w : ι → ℝ) : ℝ :=
   sInf ((fun x => w ⬝ᵥ x) '' V)
 

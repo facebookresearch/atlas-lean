@@ -259,7 +259,7 @@ theorem info_hyp_balanced : ∀ η > 0, Tendsto (fun n : ℕ => Measure.dirac ()
   refine tendsto_const_nhds.congr' ?_
   filter_upwards [eventually_gt_atTop 0, eventually_gt_atTop ⌈1 / η⌉₊] with n hn hnη
   symm
-  convert measure_empty (μ := Measure.dirac ())
+  convert measure_empty (μ := Measure.dirac ()) using 2
   rw [Set.eq_empty_iff_forall_notMem]
   rintro ω ⟨b, -, hb⟩
   have hn' : (0 : ℝ) < n := by exact_mod_cast hn

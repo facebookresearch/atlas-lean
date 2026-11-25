@@ -52,23 +52,30 @@ namespace MathlibExt.Biology.PopulationGenetics.Diffusion
 
 variable {b a : ℝ → ℝ}
 
-/-- Speed density `m(x) = 2 / (a(x) ψ(x))` for scale density `ψ = scaleDensity b a`. -/
+/-- Speed density `m(x) = 2 / (a(x) ψ(x))` for scale density `ψ = scaleDensity b a`. With
+`x / 0 = 0`, `m(x) = 0` where `a(x) = 0` (`ψ` is positive everywhere). The intended domain is
+`x ∈ (0, 1)` for a regular diffusion, where `a > 0`. -/
 noncomputable def speedDensity (b a : ℝ → ℝ) (x : ℝ) : ℝ :=
   2 / (a x * scaleDensity b a x)
 
-/-- Speed measure on the state space `(0, 1)`: Lebesgue measure restricted
-to `(0, 1)` with density `speedDensity b a`. Coefficient values outside
-`(0, 1)` do not affect it. -/
+/-- Speed measure on the state space `(0, 1)`: Lebesgue measure restricted to `(0, 1)` with density
+`speedDensity b a`, negative values of the density counting as `0` (the density is `max (m x) 0`): a
+measurable set `A` gets the mass `∫⁻_{A ∩ (0, 1)} max (m x) 0 dx`, a lower integral. It is an
+ordinary density measure when `m` is measurable, as for a regular diffusion; `b` and `a` are
+otherwise unrestricted. Coefficient values outside `(0, 1)` do not affect it. It need not be
+finite. -/
 noncomputable def speedMeasure (b a : ℝ → ℝ) : Measure ℝ :=
   (volume.restrict (Ioo 0 1)).withDensity (fun x => ENNReal.ofReal (speedDensity b a x))
 
-/-- For a regular diffusion the speed density is positive on `(0, 1)`. -/
+/-- For a regular diffusion the speed density is positive on `(0, 1)`: there `a x > 0` and
+`scaleDensity b a x > 0`. -/
 theorem speedDensity_pos_of_isRegular (h : IsRegularDiffusion b a) {x : ℝ}
     (hx : x ∈ Ioo (0 : ℝ) 1) : 0 < speedDensity b a x :=
   div_pos two_pos (mul_pos (h.pos x hx) (scaleDensity_pos b a x))
 
-/-- Canonical form step: for any positive `ψ` with `ψ' = -(2b/a) ψ` at `x`,
-`L f (x) = (a(x) ψ(x) / 2) (f' / ψ)' (x)`. -/
+/-- Canonical form step: for any `ψ` with `ψ x ≠ 0` and `ψ' = -(2b/a) ψ` at `x`, where `a x ≠ 0`,
+and any `f` whose total derivative `f' = deriv f` (the derivative where it exists, `0` elsewhere) is
+differentiable at `x`, `L f (x) = (a(x) ψ(x) / 2) (f' / ψ)' (x)`. -/
 theorem diffusionGenerator_eq_of_hasDerivAt {ψ f : ℝ → ℝ} {x : ℝ}
     (ha : a x ≠ 0) (hψ0 : ψ x ≠ 0)
     (hψ : HasDerivAt ψ (-(2 * b x / a x) * ψ x) x)
@@ -82,7 +89,9 @@ theorem diffusionGenerator_eq_of_hasDerivAt {ψ f : ℝ → ℝ} {x : ℝ}
   field_simp
   ring
 
-/-- Canonical form of a regular one-dimensional diffusion generator: `L f = (1/m) (f'/ψ)'`, the `d/dm ∘ d/dS` form, on `(0, 1)`. -/
+/-- Canonical form of a regular one-dimensional diffusion generator: for a regular diffusion and `f`
+whose total derivative `deriv f` is differentiable on `(0, 1)`, `L f = (1/m) (f'/ψ)'`, the
+`d/dm ∘ d/dS` form, on `(0, 1)`. -/
 theorem diffusionGenerator_eq_one_div_speedDensity (h : IsRegularDiffusion b a)
     {f : ℝ → ℝ} (hf' : DifferentiableOn ℝ (deriv f) (Ioo 0 1)) {x : ℝ}
     (hx : x ∈ Ioo (0 : ℝ) 1) :
@@ -97,8 +106,8 @@ theorem diffusionGenerator_eq_one_div_speedDensity (h : IsRegularDiffusion b a)
   field_simp [(h.pos x hx).ne', (scaleDensity_pos b a x).ne']
 
 /-- Neutral Wright–Fisher speed density: the scale density is `1`, so
-`m(x) = 2 / (x (1 - x))` (as a real identity for every `x`, by the usual junk
-values at `x = 0, 1`). -/
+`m(x) = 2 / (x (1 - x))` (as a real identity for every `x`; at `x = 0` and `x = 1` both sides
+are `0` by division by `0`). -/
 theorem speedDensity_neutral (x : ℝ) :
     speedDensity (fun _ => 0) (fun x => x * (1 - x)) x = 2 / (x * (1 - x)) := by
   have hψ : scaleDensity (fun _ => 0) (fun x => x * (1 - x)) x = 1 := by
@@ -106,19 +115,27 @@ theorem speedDensity_neutral (x : ℝ) :
   rw [speedDensity, hψ, mul_one]
 
 /-- Mutation scale density with the normalization `ψ(x) = x^{-θ₁} (1-x)^{-θ₂}`
-(real powers), finite and positive on `(0, 1)` for every real `θ₁, θ₂`. -/
+(real powers), finite and positive on `(0, 1)` for every real `θ₁, θ₂`.
+With real powers, `0 ^ 0 = 1`, `0 ^ t = 0` for `t ≠ 0` and `s ^ t = |s| ^ t cos (π t)`
+for `s < 0`; the intended domain is `0 < x < 1`. -/
 noncomputable def mutationScaleDensity (θ₁ θ₂ x : ℝ) : ℝ :=
   x ^ (-θ₁) * (1 - x) ^ (-θ₂)
 
-/-- Mutation speed density `2 x^{θ₁-1} (1-x)^{θ₂-1}` (real powers). -/
+/-- Mutation speed density `2 x^{θ₁-1} (1-x)^{θ₂-1}` (real powers).
+With real powers, `0 ^ 0 = 1`, `0 ^ t = 0` for `t ≠ 0` and `s ^ t = |s| ^ t cos (π t)`
+for `s < 0`; the intended domain is `0 < x < 1`. -/
 noncomputable def mutationSpeedDensity (θ₁ θ₂ x : ℝ) : ℝ :=
   2 * x ^ (θ₁ - 1) * (1 - x) ^ (θ₂ - 1)
 
-/-- Selection–mutation scale density `e^{-2αx} x^{-θ₁} (1-x)^{-θ₂}`. -/
+/-- Selection–mutation scale density `e^{-2αx} x^{-θ₁} (1-x)^{-θ₂}`.
+With real powers, `0 ^ 0 = 1`, `0 ^ t = 0` for `t ≠ 0` and `s ^ t = |s| ^ t cos (π t)`
+for `s < 0`; the intended domain is `0 < x < 1`. -/
 noncomputable def selectionMutationScaleDensity (α θ₁ θ₂ x : ℝ) : ℝ :=
   Real.exp (-2 * α * x) * mutationScaleDensity θ₁ θ₂ x
 
-/-- Selection–mutation speed density `e^{2αx} · 2 x^{θ₁-1} (1-x)^{θ₂-1}`. -/
+/-- Selection–mutation speed density `e^{2αx} · 2 x^{θ₁-1} (1-x)^{θ₂-1}`.
+With real powers, `0 ^ 0 = 1`, `0 ^ t = 0` for `t ≠ 0` and `s ^ t = |s| ^ t cos (π t)`
+for `s < 0`; the intended domain is `0 < x < 1`. -/
 noncomputable def selectionMutationSpeedDensity (α θ₁ θ₂ x : ℝ) : ℝ :=
   Real.exp (2 * α * x) * mutationSpeedDensity θ₁ θ₂ x
 
@@ -184,7 +201,9 @@ theorem hasDerivAt_selectionMutationScaleDensity {α θ₁ θ₂ x : ℝ}
   exact Filter.EventuallyEq.of_eq (funext fun y => by
     simp [selectionMutationScaleDensity, mutationScaleDensity, Pi.mul_apply])
 
-/-- Canonical form of the selection–mutation generator in terms of its speed and scale densities, on `(0, 1)`, including non-integrable endpoint regimes. -/
+/-- Canonical form of the selection–mutation generator in terms of its speed and scale densities, on
+`(0, 1)`, for `f` whose total derivative `deriv f` is differentiable on `(0, 1)`, including
+non-integrable endpoint regimes. -/
 theorem selectionMutationGenerator_eq_one_div_speedDensity {α θ₁ θ₂ : ℝ} {f : ℝ → ℝ}
     (hf' : DifferentiableOn ℝ (deriv f) (Ioo 0 1)) {x : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) :
     selectionMutationGenerator α θ₁ θ₂ f x =

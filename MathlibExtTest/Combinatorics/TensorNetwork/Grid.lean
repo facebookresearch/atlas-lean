@@ -98,9 +98,8 @@ example :
   decide
 
 set_option maxRecDepth 100000 in
-set_option maxHeartbeats 1000000 in
 example : gridValue {0, 1} {0} orientedTensor (fun _ => orientedKernel) = 1050 := by
-  decide
+  decide +kernel
 
 def crossingLabeling : Matrix (Fin 2 × Fin 2) (Fin 2 × Fin 2) Nat := fun w w' =>
   if w = w' then 7

@@ -42,22 +42,31 @@ open scoped ENNReal
 
 variable {α : Type*}
 
-/-- A coin that lands `true` with probability `r ≤ 1`. -/
+/-- **Biased coin.** For $r \in [0, \infty]$ with $r \le 1$, the biased coin with parameter $r$ is
+the probability mass function on $\{\mathrm{true}, \mathrm{false}\}$ that gives $\mathrm{true}$
+probability $r$ and $\mathrm{false}$ probability $1 - r$. -/
 noncomputable def coin (r : ℝ≥0∞) (hr : r ≤ 1) : PMF Bool :=
   PMF.ofFintype (fun b ↦ cond b r (1 - r)) (by
     rw [Fintype.sum_bool, Bool.cond_true, Bool.cond_false]
     exact add_tsub_cancel_of_le hr)
 
-/-- The acceptance probability `p x / (M q x)` of a proposal `x`. -/
+/-- **Acceptance probability.** Given probability mass functions $p$ and $q$ on a type $\alpha$, a
+constant $M \in [0, \infty]$ and a point $x \in \alpha$, the acceptance probability of the proposal
+$x$ is $p(x) / (M\,q(x))$, computed in $[0, \infty]$, where $a / 0 = \infty$ for $a \ne 0$ and
+$0 / 0 = 0$. -/
 noncomputable def acceptProb (p q : PMF α) (M : ℝ≥0∞) (x : α) : ℝ≥0∞ := p x / (M * q x)
 
 theorem acceptProb_le_one {p q : PMF α} {M : ℝ≥0∞} (hM : ∀ x, p x ≤ M * q x) (x : α) :
     acceptProb p q M x ≤ 1 :=
   ENNReal.div_le_of_le_mul (by rw [one_mul]; exact hM x)
 
-/-- One round of **rejection sampling** for the target `p` with proposal `q` and envelope
-constant `M` (`p ≤ M q`): draw `x ~ q`, then accept it with probability `p x / (M q x)`. The
-result is the pair (proposal, accepted?). -/
+/-- **One round of rejection sampling.** Let $p$ and $q$ be probability mass functions on a type
+$\alpha$ (the target and the proposal) and let $M \in [0, \infty]$ be an envelope constant with
+$p(x) \le M\,q(x)$ for all $x \in \alpha$. One round of rejection sampling for target $p$, proposal
+$q$ and envelope $M$ is the probability mass function on pairs
+$(x, b) \in \alpha \times \{\mathrm{true}, \mathrm{false}\}$ obtained by drawing $x$ from $q$ and
+then flipping a coin that lands $b = \mathrm{true}$ ("accepted") with probability
+$p(x) / (M\,q(x))$. -/
 noncomputable def trial (p q : PMF α) (M : ℝ≥0∞) (hM : ∀ x, p x ≤ M * q x) : PMF (α × Bool) :=
   q.bind fun x ↦ (coin (acceptProb p q M x) (acceptProb_le_one hM x)).map (Prod.mk x)
 
@@ -73,7 +82,11 @@ theorem trial_apply {p q : PMF α} {M : ℝ≥0∞} (hM : ∀ x, p x ≤ M * q x
     rw [PMF.map_apply]
     simp [Ne.symm hy]
 
-/-- A proposal `x` is drawn and accepted with probability `p x / M`. -/
+/-- **Probability that a round proposes and accepts a given point.** Let $p$ and $q$ be probability
+mass functions on $\alpha$ and $M \in [0, \infty]$ with $p(y) \le M\,q(y)$ for all $y \in \alpha$.
+For every $x \in \alpha$, one round of rejection sampling for target $p$, proposal $q$ and envelope
+$M$ yields the pair $(x, \mathrm{true})$, that is, proposes $x$ and accepts it, with probability
+$p(x) / M$. -/
 theorem trial_apply_true {p q : PMF α} {M : ℝ≥0∞} (hM : ∀ x, p x ≤ M * q x) (x : α) :
     trial p q M hM (x, true) = p x / M := by
   rw [trial_apply, coin, PMF.ofFintype_apply, Bool.cond_true, acceptProb]
@@ -84,13 +97,21 @@ theorem trial_apply_true {p q : PMF α} {M : ℝ≥0∞} (hM : ∀ x, p x ≤ M 
     calc q x * (p x * (M⁻¹ * (q x)⁻¹)) = p x * M⁻¹ * (q x * (q x)⁻¹) := by ring
       _ = p x * M⁻¹ := by rw [ENNReal.mul_inv_cancel hq (PMF.apply_ne_top q x), mul_one]
 
-/-- A round accepts with probability `1 / M`. -/
+/-- **Probability that a round accepts.** Let $p$ and $q$ be probability mass functions on $\alpha$
+and $M \in [0, \infty]$ with $p(x) \le M\,q(x)$ for all $x \in \alpha$. The sum over $x \in \alpha$
+of the probabilities that one round of rejection sampling for target $p$, proposal $q$ and
+envelope $M$ yields $(x, \mathrm{true})$ equals $M^{-1}$; that is, a round accepts with
+probability $1 / M$. -/
 theorem tsum_trial_true {p q : PMF α} {M : ℝ≥0∞} (hM : ∀ x, p x ≤ M * q x) :
     ∑' x, trial p q M hM (x, true) = M⁻¹ := by
   simp_rw [trial_apply_true, div_eq_mul_inv]
   rw [ENNReal.tsum_mul_right, PMF.tsum_coe, one_mul]
 
-/-- A round rejects with probability `1 - 1 / M`. -/
+/-- **Probability that a round rejects.** Let $p$ and $q$ be probability mass functions on $\alpha$
+and $M \in [0, \infty]$ with $p(x) \le M\,q(x)$ for all $x \in \alpha$. Let $r$ be the sum over
+$x \in \alpha$ of the probabilities that one round of rejection sampling for target $p$, proposal
+$q$ and envelope $M$ yields $(x, \mathrm{false})$, that is, the probability that the round rejects.
+Then $r + M^{-1} = 1$. -/
 theorem tsum_trial_false_add {p q : PMF α} {M : ℝ≥0∞} (hM : ∀ x, p x ≤ M * q x) :
     ∑' x, trial p q M hM (x, false) + M⁻¹ = 1 := by
   have hprod := ENNReal.tsum_prod (f := fun (a : α) (b : Bool) ↦ trial p q M hM (a, b))
@@ -98,17 +119,29 @@ theorem tsum_trial_false_add {p q : PMF α} {M : ℝ≥0∞} (hM : ∀ x, p x �
   refine Eq.trans ?_ hprod.symm
   exact tsum_congr fun x ↦ (tsum_bool (f := fun b ↦ trial p q M hM (x, b))).symm
 
-/-- **Conditional on acceptance, the proposal has the target law**: `P(x, accepted) / P(accepted)
-= p x`. -/
+/-- **Conditional on acceptance, the proposal has the target law.** Let $p$ and $q$ be probability
+mass functions on $\alpha$ and $M \in [0, \infty]$ with $M \ne 0$, $M \ne \infty$ and
+$p(y) \le M\,q(y)$ for all $y \in \alpha$. For one round of rejection sampling for target $p$,
+proposal $q$ and envelope $M$, write $P(x, \mathrm{accepted})$ for the probability that the round
+proposes $x$ and accepts it, and
+$P(\mathrm{accepted}) = \sum_{y \in \alpha} P(y, \mathrm{accepted})$. Then
+$P(x, \mathrm{accepted}) / P(\mathrm{accepted}) = p(x)$ for every $x \in \alpha$. -/
 theorem trial_true_div_tsum {p q : PMF α} {M : ℝ≥0∞} (hM : ∀ x, p x ≤ M * q x) (hM0 : M ≠ 0)
     (hMt : M ≠ ∞) (x : α) :
     trial p q M hM (x, true) / ∑' y, trial p q M hM (y, true) = p x := by
   rw [trial_apply_true, tsum_trial_true, div_eq_mul_inv, div_eq_mul_inv, inv_inv, mul_assoc,
     ENNReal.inv_mul_cancel hM0 hMt, mul_one]
 
-/-- **Rejection sampling outputs the target law.** Repeating independent rounds until one accepts,
-the output is `x` after exactly `k` rejections with probability `r ^ k * P(x, accepted)`, where
-`r` is the rejection probability. Summing over `k` gives `p x`. -/
+/-- **Rejection sampling outputs the target law.** Let $p$ and $q$ be probability mass functions on
+$\alpha$ and $M \in [0, \infty]$ with $M \ne 0$, $M \ne \infty$ and $p(y) \le M\,q(y)$ for all
+$y \in \alpha$. For one round of rejection sampling for target $p$, proposal $q$ and envelope $M$,
+write $P(x, \mathrm{accepted})$ for the probability that the round proposes $x$ and accepts it, and
+$r$ for the sum over $y \in \alpha$ of the probabilities that it proposes $y$ and rejects it. Then
+for every $x \in \alpha$,
+$$\sum_{k=0}^{\infty} r^k \, P(x, \mathrm{accepted}) = p(x).$$
+
+Here $r^k \, P(x, \mathrm{accepted})$ is the probability that repeating independent rounds until
+one accepts outputs $x$ after exactly $k$ rejections, so the output of that loop has law $p$. -/
 theorem tsum_rejections_mul_trial {p q : PMF α} {M : ℝ≥0∞} (hM : ∀ x, p x ≤ M * q x)
     (hM0 : M ≠ 0) (hMt : M ≠ ∞) (x : α) :
     ∑' k : ℕ, (∑' y, trial p q M hM (y, false)) ^ k * trial p q M hM (x, true) = p x := by
@@ -120,8 +153,17 @@ theorem tsum_rejections_mul_trial {p q : PMF α} {M : ℝ≥0∞} (hM : ∀ x, p
   rw [ENNReal.tsum_mul_right, ENNReal.tsum_geometric, hr, inv_inv, trial_apply_true,
     ENNReal.mul_div_cancel hM0 hMt]
 
-/-- The same conclusion from the first-step equation: the output law `out` of the loop satisfies
-`out x = P(x, accepted) + P(reject) * out x`, and `p` is its only finite solution. -/
+/-- **Uniqueness for the first-step equation of rejection sampling.** Let $p$ and $q$ be
+probability mass functions on $\alpha$ and $M \in [0, \infty]$ with $M \ne 0$, $M \ne \infty$ and
+$p(y) \le M\,q(y)$ for all $y \in \alpha$. For one round of rejection sampling for target $p$,
+proposal $q$ and envelope $M$, write $P(x, \mathrm{accepted})$ for the probability that the round
+proposes $x$ and accepts it, and $r$ for the sum over $y \in \alpha$ of the probabilities that it
+proposes $y$ and rejects it. If $f \colon \alpha \to [0, \infty]$ takes only finite values and
+satisfies $f(x) = P(x, \mathrm{accepted}) + r \, f(x)$ for every $x \in \alpha$, then $f(x) = p(x)$
+for every $x \in \alpha$.
+
+The law of the output of the loop that repeats independent rounds until one accepts satisfies this
+first-step equation, so this result identifies that law as $p$. -/
 theorem eq_of_firstStep {p q : PMF α} {M : ℝ≥0∞} (hM : ∀ x, p x ≤ M * q x) (hM0 : M ≠ 0)
     (hMt : M ≠ ∞) {out : α → ℝ≥0∞} (hfin : ∀ x, out x ≠ ∞)
     (hout : ∀ x, out x = trial p q M hM (x, true) + (∑' y, trial p q M hM (y, false)) * out x)

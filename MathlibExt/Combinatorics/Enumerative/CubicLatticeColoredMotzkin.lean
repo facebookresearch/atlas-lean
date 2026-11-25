@@ -220,9 +220,14 @@ private theorem colored_motzkin_card_eq_uldMotzkinNumber (n k : ℕ) :
   card_eq_uldMotzkinNumber n k _ (motzkinStepEquiv n) (stepHeight_motzkinStepEquiv n)
 
 /--
-Lattice paths in the cubic lattice of dimension `n + 1` of length `k`, with the last
-coordinate constrained to a Dyck bridge, are counted by the `(u,l,d)`-Motzkin number of
-rank `1` with one up color, `2 * n` level colors, and one down color.
+**Cubic lattice walks counted by a colored Motzkin number.** Let $n$ and $k$ be natural numbers,
+and let $e_0, \dots, e_n$ be the standard basis vectors of $\mathbb{Z}^{n+1}$. The number of walks
+of $k$ steps in the cubic lattice $\mathbb{Z}^{n+1}$ that start at the origin, each step being
+$+e_i$ or $-e_i$ for some $i \in \{0, \dots, n\}$, such that, counting only the steps in the last
+coordinate $i = n$, every initial segment has at least as many $+e_n$ steps as $-e_n$ steps and
+the whole walk has equally many, equals the $(u,l,d)$-Motzkin number of rank $1$ with
+$u = d = 1$ and $l = 2n$ at length $k$, that is, the number of Motzkin paths of length $k$ with
+one color of up step, $2n$ colors of level step and one color of down step.
 
 Source: Rigoberto Flórez, Leandro Junes, and José L. Ramírez, "Further
 Results on Paths in an n-Dimensional Cubic Lattice," Journal of Integer
@@ -251,21 +256,27 @@ theorem cube_lattice_paths_card_eq_uldMotzkinNumber (n k : ℕ) :
   exact h
 
 /--
-Lattice paths in the cubic lattice and colored Motzkin paths.
+**Cubic lattice walks and colored Motzkin paths.** Let $n$ and $k$ be natural numbers, and let
+$e_0, \dots, e_n$ be the standard basis vectors of $\mathbb{Z}^{n+1}$. Count the walks of $k$
+steps in the cubic lattice $\mathbb{Z}^{n+1}$ that start at the origin, in which each step is
+$+e_i$ or $-e_i$ for some $i \in \{0, \dots, n\}$ and, counting only the steps in the last
+coordinate $i = n$, every initial segment has at least as many $+e_n$ steps as $-e_n$ steps and
+the whole walk has equally many. Their number equals the number of words of length $k$ in the
+letters $U$, $D$ and $L_1, \dots, L_{2n}$ in which every initial segment has at least as many
+letters $U$ as letters $D$ and the whole word has equally many, that is, the number of Motzkin
+paths of length $k$ with one color of up step, one color of down step and $2n$ colors of level
+step.
+
+In the source's notation this is the theorem in dimension $n + 1$: only the last coordinate is
+constrained, and the $2n$ steps $\pm e_i$ with $i < n$ correspond to the $2n$ level-step colors.
+
+Proves `Wanted` entry `cube_lattice_paths_card_eq_colored_motzkin_card`.
 
 Source: Rigoberto Flórez, Leandro Junes, and José L. Ramírez, "Further
 Results on Paths in an n-Dimensional Cubic Lattice," Journal of Integer
 Sequences 21 (2018), Article 18.1.2, Theorem (label bijection:Motzkin),
 lines 924–926,
 https://cs.uwaterloo.ca/journals/JIS/VOL21/Florez/florez4.tex
-
-The formalization is the paper's theorem at dimension `n + 1`: both sides
-use `2 * n` flat-step colors, and only the distinguished coordinate is
-constrained to a Dyck bridge. Both sides equal
-`ULDMotzkin.uldMotzkinNumber 1 (fun _ => 1) (2 * n) (fun _ => 1) le_rfl k`; see
-`cube_lattice_paths_card_eq_uldMotzkinNumber`.
-
-Proves `Wanted` entry `cube_lattice_paths_card_eq_colored_motzkin_card`.
 -/
 theorem cube_lattice_paths_card_eq_colored_motzkin_card (n k : ℕ) :
     Fintype.card { p : Fin k → Fin (n + 1) × Bool //

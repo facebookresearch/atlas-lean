@@ -82,7 +82,10 @@ namespace MathlibExt.Biology.PopulationGenetics.Coalescent
 
 /-- **Tavaré's formula** for the law of the number of segregating sites in a sample of `n ≥ 2`
 genes under the infinite-sites model with scaled mutation rate `θ`:
-`P(S_n = m) = (n - 1) ∑_{j=0}^{n-2} (-1)^j C(n-2, j) θ^m / (θ + j + 1)^{m+1}`. -/
+`P(S_n = m) = (n - 1) ∑_{j=0}^{n-2} (-1)^j C(n-2, j) θ^m / (θ + j + 1)^{m+1}`. It is defined
+for all inputs: for `n ≤ 1` the value is `0`, `θ ^ 0 = 1` also at `θ = 0`, and a term whose
+denominator vanishes (`θ = -(j + 1)`) is `0` by the convention `x / 0 = 0`. Its reading as a
+probability needs `θ ≥ 0` and `n ≥ 2`. -/
 def segSitesProb (θ : ℝ) (n m : ℕ) : ℝ :=
   (n - 1 : ℝ) * ∑ j ∈ range (n - 1),
     (-1) ^ j * ((n - 2).choose j : ℝ) * θ ^ m / (θ + j + 1) ^ (m + 1)
@@ -153,7 +156,8 @@ private lemma succ_mul_altSum (N : ℕ) {x : ℝ} (hx : 0 ≤ x) :
   · exact prod_congr rfl fun k _ => by ring
 
 /-- **Generating function of Tavaré's formula**: for `θ ≥ 0`, `|s| ≤ 1` and `n ≥ 2`,
-`∑_m P(S_n = m) s^m = ∏_{k=1}^{n-1} k / (k + θ (1 - s))`. -/
+`∑_m P(S_n = m) s^m = ∏_{k=1}^{n-1} k / (k + θ (1 - s))`, with natural powers and `0 ^ 0 = 1`
+(at `s = 0` the sum is `segSitesProb θ n 0`). -/
 theorem hasSum_segSitesProb_mul_pow {θ s : ℝ} (hθ : 0 ≤ θ) (hs : |s| ≤ 1) {n : ℕ} (hn : 2 ≤ n) :
     HasSum (fun m => segSitesProb θ n m * s ^ m)
       (∏ k ∈ range (n - 1), ((k : ℝ) + 1) / (k + 1 + θ * (1 - s))) := by
@@ -192,8 +196,8 @@ theorem hasSum_segSitesProb_mul_pow {θ s : ℝ} (hθ : 0 ≤ θ) (hs : |s| ≤ 
     ring
   · rw [e1, ← succ_mul_altSum N hx, altSum]
 
-/-- At `s = 0` the generating function gives the probability of no segregating sites:
-`segSitesProb θ n 0 = ∏_{k=1}^{n-1} k / (k + θ)`. -/
+/-- At `s = 0` the generating function gives the probability of no segregating sites: for
+`θ ≥ 0` and `n ≥ 2`, `segSitesProb θ n 0 = ∏_{k=1}^{n-1} k / (k + θ)`. -/
 theorem segSitesProb_zero {θ : ℝ} (hθ : 0 ≤ θ) {n : ℕ} (hn : 2 ≤ n) :
     segSitesProb θ n 0 = ∏ k ∈ range (n - 1), ((k : ℝ) + 1) / (k + 1 + θ) := by
   have h := hasSum_segSitesProb_mul_pow (s := 0) hθ (by simp) hn
@@ -203,7 +207,9 @@ theorem segSitesProb_zero {θ : ℝ} (hθ : 0 ≤ θ) {n : ℕ} (hn : 2 ≤ n) :
   rw [h0.unique h]
   simp only [sub_zero, mul_one]
 
-/-- For a sample of two genes, `S_2` is geometric: `P(S_2 = m) = θ^m / (θ + 1)^{m+1}`. -/
+/-- For a sample of two genes, `S_2` is geometric: `P(S_2 = m) = θ^m / (θ + 1)^{m+1}`. The
+identity holds for every real `θ` (at `θ = -1` both sides are `0` by `x / 0 = 0`; at `θ = 0`,
+`θ ^ 0 = 1` gives `1` for `m = 0`); it is a geometric law for `θ ≥ 0`. -/
 theorem segSitesProb_two (θ : ℝ) (m : ℕ) : segSitesProb θ 2 m = θ ^ m / (θ + 1) ^ (m + 1) := by
   simp [segSitesProb]
   norm_num
@@ -280,8 +286,11 @@ section CondPoisson
 variable {Ω 𝓧 : Type*} {mΩ : MeasurableSpace Ω} {m𝓧 : MeasurableSpace 𝓧} {μ : Measure Ω}
   [IsProbabilityMeasure μ] {X : Ω → 𝓧} {N : Ω → ℕ} {ρ : 𝓧 → ℝ≥0} {hρ : Measurable ρ}
 
-/-- **Generating function of a conditionally Poisson count**: if `N ~ Po(ρ(X))` given `X`, then
-`E[s^N] = E[exp(-ρ(X) (1 - s))]` for `|s| ≤ 1`. -/
+/-- **Generating function of a conditionally Poisson count**: under a probability measure, if
+`N ~ Po(ρ(X))` given `X`, then `E[s^N] = E[exp(-ρ(X) (1 - s))]` for `|s| ≤ 1` (natural powers,
+`0 ^ 0 = 1`: at `s = 0` this is `P(N = 0)`). Here `N ~ Po(ρ(X))` given `X` means
+`HasCondDistrib` for a measurable rate `ρ : 𝓧 → ℝ≥0`: the pair `(X, N)` is a.e. measurable with
+image measure `μ.map X ⊗ₘ (poissonMeasureKernel.comap ρ)`. -/
 theorem pgf_of_hasCondDistrib_poisson
     (h : HasCondDistrib N X (poissonMeasureKernel.comap ρ hρ) μ) {s : ℝ} (hs : |s| ≤ 1) :
     pgf N μ s = ∫ ω, Real.exp (-((ρ (X ω) : ℝ) * (1 - s))) ∂μ := by
@@ -318,8 +327,9 @@ private lemma integral_exp_neg_mul_expMeasure {b c : ℝ} (hb : 0 < b) (hc : 0 �
     Polynomial.eval_one] at h
   exact h
 
-/-- **Laplace transform of the total branch length**: for `u ≥ 0`,
-`E[exp(-u L_n)] = ∏_{k=2}^{n} C(k,2) / (C(k,2) + k u) = ∏_{k=1}^{n-1} k / (k + 2u)`. -/
+/-- **Laplace transform of the total branch length**: under a probability measure, for `u ≥ 0`,
+`E[exp(-u L_n)] = ∏_{k=2}^{n} C(k,2) / (C(k,2) + k u) = ∏_{k=1}^{n-1} k / (k + 2u)`; for
+`n ≤ 1` the products are empty and both sides are `1`. -/
 theorem integral_exp_neg_mul_totalLength [IsProbabilityMeasure μ] {u : ℝ} (hu : 0 ≤ u) :
     ∫ ω, Real.exp (-(u * K.totalLength ω)) ∂μ =
       ∏ k ∈ range (n - 1), ((k : ℝ) + 1) / (k + 1 + 2 * u) := by
@@ -356,9 +366,10 @@ theorem integral_exp_neg_mul_totalLength [IsProbabilityMeasure μ] {u : ℝ} (hu
 
 variable {θ : ℝ≥0} {N : Ω → KingmanBranch n → ℕ}
 
-/-- **Probability generating function of the number of segregating sites**: under
-infinite-sites mutation at rate `θ / 2` per lineage on a Kingman genealogy,
-`E[s^{S_n}] = ∏_{k=1}^{n-1} k / (k + θ (1 - s))` for `|s| ≤ 1`. -/
+/-- **Probability generating function of the number of segregating sites**: under a probability
+measure, with infinite-sites mutation at rate `θ / 2` per lineage on a Kingman genealogy (branch
+counts with conditional law `kingmanMutationKernel n θ` given the epochs),
+`E[s^{S_n}] = ∏_{k=1}^{n-1} k / (k + θ (1 - s))` for `|s| ≤ 1` (natural powers, `0 ^ 0 = 1`). -/
 theorem pgf_segSites_of_mutation [IsProbabilityMeasure μ]
     (hN : HasCondDistrib N K.epochs (kingmanMutationKernel n θ) μ) {s : ℝ} (hs : |s| ≤ 1) :
     pgf (fun ω => ∑ b, N ω b) μ s =
@@ -373,10 +384,12 @@ theorem pgf_segSites_of_mutation [IsProbabilityMeasure μ]
   rw [NNReal.coe_mul, h, NNReal.coe_div, NNReal.coe_two]
   ring_nf
 
-/-- **The infinite-sites sampling formula** (Watterson 1975, Tavaré 1984): under infinite-sites
-mutation at rate `θ / 2` per lineage on the Kingman genealogy of `n ≥ 2` genes, the number of
+/-- **The infinite-sites sampling formula** (Watterson 1975, Tavaré 1984): under a probability
+measure, with infinite-sites mutation at rate `θ / 2` per lineage on the Kingman genealogy of
+`n ≥ 2` genes (branch counts with conditional law `kingmanMutationKernel n θ`), the number of
 segregating sites has law
-`P(S_n = m) = (n - 1) ∑_{j=0}^{n-2} (-1)^j C(n-2, j) θ^m / (θ + j + 1)^{m+1}`. -/
+`P(S_n = m) = (n - 1) ∑_{j=0}^{n-2} (-1)^j C(n-2, j) θ^m / (θ + j + 1)^{m+1}` (natural powers,
+`θ ^ 0 = 1` also at `θ = 0`). -/
 theorem measureReal_segSites_eq_of_mutation [IsProbabilityMeasure μ]
     (hN : HasCondDistrib N K.epochs (kingmanMutationKernel n θ) μ) (hn : 2 ≤ n) (m : ℕ) :
     μ.real {ω | ∑ b, N ω b = m} = segSitesProb θ n m := by
@@ -411,7 +424,9 @@ theorem measureReal_segSites_eq_of_mutation [IsProbabilityMeasure μ]
       (hasSum_segSitesProb_mul_pow hθ hs.le hn).tsum_eq]
   exact congrFun heq m
 
-/-- **No segregating sites**: `P(S_n = 0) = ∏_{k=1}^{n-1} k / (k + θ)`. -/
+/-- **No segregating sites**: under a probability measure, for Kingman holding times `K` of a sample
+of `n ≥ 2` genes and branch counts with conditional law `kingmanMutationKernel n θ` given the epochs
+(Poisson marking at rate `θ / 2`, `θ ≥ 0`), `P(S_n = 0) = ∏_{k=1}^{n-1} k / (k + θ)`. -/
 theorem measureReal_segSites_eq_zero_of_mutation [IsProbabilityMeasure μ]
     (hN : HasCondDistrib N K.epochs (kingmanMutationKernel n θ) μ) (hn : 2 ≤ n) :
     μ.real {ω | ∑ b, N ω b = 0} = ∏ k ∈ range (n - 1), ((k : ℝ) + 1) / (k + 1 + θ) := by
@@ -422,21 +437,23 @@ end KingmanTimes
 /-! ### The concrete marked Kingman model -/
 
 /-- **The infinite-sites sampling formula in the marked Kingman model**, with no remaining
-hypotheses: `P(S_n = m) = segSitesProb θ n m` for `n ≥ 2`. -/
+hypotheses: `P(S_n = m) = segSitesProb θ n m` for `n ≥ 2` (natural powers, `θ ^ 0 = 1`). -/
 theorem measureReal_segSites_kingmanMutationMeasure (θ : ℝ≥0) {n : ℕ} (hn : 2 ≤ n) (m : ℕ) :
     (kingmanMutationMeasure n θ).real {p | ∑ b, p.2 b = m} = segSitesProb θ n m :=
   (KingmanTimes.ofMutationModel n θ).measureReal_segSites_eq_of_mutation
     (hasCondDistrib_kingmanMutationMeasure n θ) hn m
 
 /-- **Generating function in the marked Kingman model**:
-`E[s^{S_n}] = ∏_{k=1}^{n-1} k / (k + θ (1 - s))` for `|s| ≤ 1`. -/
+`E[s^{S_n}] = ∏_{k=1}^{n-1} k / (k + θ (1 - s))` for `|s| ≤ 1` (natural powers, `0 ^ 0 = 1`);
+for `n ≤ 1` both sides are `1`. -/
 theorem pgf_segSites_kingmanMutationMeasure (θ : ℝ≥0) (n : ℕ) {s : ℝ} (hs : |s| ≤ 1) :
     pgf (fun p => ∑ b, p.2 b) (kingmanMutationMeasure n θ) s =
       ∏ k ∈ range (n - 1), ((k : ℝ) + 1) / (k + 1 + θ * (1 - s)) :=
   (KingmanTimes.ofMutationModel n θ).pgf_segSites_of_mutation
     (hasCondDistrib_kingmanMutationMeasure n θ) hs
 
-/-- Tavaré's formula is nonnegative for `θ ≥ 0`: it is a probability in the marked model. -/
+/-- Tavaré's formula is nonnegative for `θ ≥ 0` and `n ≥ 2`: it is a probability in the marked
+model. -/
 theorem segSitesProb_nonneg (θ : ℝ≥0) {n : ℕ} (hn : 2 ≤ n) (m : ℕ) :
     0 ≤ segSitesProb θ n m := by
   rw [← measureReal_segSites_kingmanMutationMeasure θ hn m]

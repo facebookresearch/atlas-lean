@@ -30,9 +30,8 @@ The hypothesis excluding right turns and reversals is essential to this statemen
 discrete Umlaufsatz, in which right turns are allowed (reversals are still excluded) and the signed
 number of quarter turns is `±4`, is `StatMech.Onsager.GeneralUmlaufsatz.turnSum_eq_four_or_neg_four`
 in `MathlibExt.Combinatorics.SimpleGraph.Lattice.TurningNumber.LatticeUmlaufsatz`. The smooth
-Umlaufsatz is recorded as the wanted theorem `hopf_umlaufsatz` in
-`WantedExt.Geometry.HopfUmlaufsatzWanted`; it concerns smooth unit-speed curves and total curvature
-`2π`, a different statement.
+Umlaufsatz is the theorem `hopf_umlaufsatz` in `MathlibExt.Geometry.HopfUmlaufsatz`; it concerns
+smooth unit-speed curves and total curvature `2π`, a different statement.
 
 ## Main results
 

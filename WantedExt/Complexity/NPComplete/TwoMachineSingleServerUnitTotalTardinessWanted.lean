@@ -22,7 +22,7 @@ Operations Research 15 (1990), 483-495, doi:10.1287/moor.15.3.483 (the single-ma
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.TwoMachineSingleServerUnitWeightedTardinessWanted

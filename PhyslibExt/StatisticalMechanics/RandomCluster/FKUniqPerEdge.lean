@@ -33,6 +33,8 @@ every increasing box event for all but countably many `t`.
 - `fpe2_free_density_nonEdge`, `fpe2_wired_density_nonEdge` : non-edges have infinite-volume
   density `1/2`.
 - `fpe2_fk_uniqueness_of_genuine` : countable-exception uniqueness from per-edge derivative data.
+- `fpd_fk_uniqueness` : countable-exception uniqueness from `fpd_IVDensityIsOneSidedDeriv`, for
+  every box.
 
 ## iii. Table of contents
 
@@ -365,6 +367,36 @@ lemma fpe2_fk_uniqueness_of_genuine (hd : 0 < d) (N : ℕ) (eb : Sym2 (boxVerts 
     (fpe2_perEdgeG d N G) (fpe2_perEdgeG_convex d N hG)
     (fpe2_ha_eq d N hfree) (fpe2_hb_eq d N hwired)
     (fpe2_hlink hd N eb heb)
+
+lemma fpd_fk_uniqueness (d N : ℕ) (eb : Sym2 (boxVerts d N)) {g : ℝ → ℝ}
+    (hg : ConvexOn ℝ univ g) (hres : fpd_IVDensityIsOneSidedDeriv d N g) :
+    {t : ℝ | ∃ A : Set (ConfigSpace (Sym2 (boxVerts d N))), IsIncreasing A ∧
+        eventMassProb (fuc_freeMass d N t) A
+          ≠ eventMassProb (fuc_wiredMass d N t) A}.Countable := by
+  by_cases hE : (boxGraph d N).edgeFinset.Nonempty
+  · obtain ⟨e, he⟩ := hE
+    have hd : 0 < d := by
+      refine Nat.pos_of_ne_zero fun hd0 => ?_
+      subst hd0
+      induction e with
+      | h u v =>
+        rw [SimpleGraph.mem_edgeFinset, SimpleGraph.mem_edgeSet] at he
+        exact he.ne (Subtype.ext (funext fun i => i.elim0))
+    exact fpe2_fk_uniqueness_of_genuine hd N e he hg hres.2 hres.1
+  · -- Without edges every coordinate has constant density `1/2`.
+    choose P hP using fuc_hcoup d N
+    refine fud_countable_phi_ne_of_convexPerEdge
+      (fun t => fuc_freeMass d N t) (fun t => fuc_wiredMass d N t) eb P hP
+      (fuc_hmono d N eb)
+      (fpe2_perEdgeG d N g) (fpe2_perEdgeG_convex d N hg)
+      (fpe2_ha_eq d N hres.2) (fpe2_hb_eq d N hres.1) fun t _ e' => ?_
+    have he' : e' ∉ (boxGraph d N).edgeFinset := fun he' => hE ⟨e', he'⟩
+    have hconst : (fun t => edgeMargProb (fuc_wiredMass d N t) e') = fun _ => (1 / 2 : ℝ) := by
+      funext t
+      rw [fuc_edgeMargProb_wired]
+      exact fpe2_wired_density_nonEdge N e' he' (fsc_logistic_pos t) (fsc_logistic_lt_one t)
+    rw [hconst]
+    exact continuousAt_const
 
 /-! ## E. Uniqueness from free-energy limits and density collapse -/
 
