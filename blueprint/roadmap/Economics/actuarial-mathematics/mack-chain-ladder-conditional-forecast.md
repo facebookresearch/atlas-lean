@@ -13,13 +13,13 @@ with the empty product equal to $1$ for $i = 0$. The chain-ladder completion rep
 
 ## Depends on
 
-- [Conditional expectation given a σ-field](../../../Probability/foundations/conditional-expectation/conditional-expectation-given-a-sigma-field/conditional-expectation.md)
-- [Independence of σ-fields, random variables and events](../../../Probability/foundations/independent-events-and-random-variables/independence/independence-sigma-fields.md)
+- [Conditional expectation given a σ-field](../../Probability/foundations/conditional-expectation/conditional-expectation-given-a-sigma-field/conditional-expectation.md)
+- [Independence of σ-fields, random variables and events](../../Probability/foundations/independent-events-and-random-variables/independence/independence-sigma-fields.md)
 
 ## Proof depends on
 
-- [Tower property of conditional expectation](../../../Probability/foundations/conditional-expectation/tower-property/tower-property.md)
-- [Independence of σ-fields, random variables and events](../../../Probability/foundations/independent-events-and-random-variables/independence/independence-sigma-fields.md)
+- [Tower property of conditional expectation](../../Probability/foundations/conditional-expectation/tower-property/tower-property.md)
+- [Independence of σ-fields, random variables and events](../../Probability/foundations/independent-events-and-random-variables/independence/independence-sigma-fields.md)
 
 ## Expansion
 

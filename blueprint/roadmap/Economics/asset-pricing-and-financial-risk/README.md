@@ -41,5 +41,3 @@ Asset pricing by absence of arbitrage and the measurement of financial risk: sta
 - [Value at risk](part-02/value-at-risk/README.md)
 - [As σ → 0⁺ the Black–Scholes call price tends to max(S0 − K e⁻ʳᵀ, 0)](part-02/tendsto-black-scholes-call-zero-vol.md)
 - [Hansen–Jagannathan bound on the Sharpe ratio](part-02/hansen-jagannathan-bound.md)
-
-- [Insurance and actuarial models](insurance-and-actuarial-models/README.md)

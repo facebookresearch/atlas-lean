@@ -15,5 +15,4 @@
 - [As σ → 0⁺ the Black–Scholes call price tends to max(S0 − K e⁻ʳᵀ, 0)](tendsto-black-scholes-call-zero-vol.md)
 - [Hansen–Jagannathan bound on the Sharpe ratio](hansen-jagannathan-bound.md)
 
-- [Dalang–Morton–Willinger theorem](dalang-morton-willinger-theorem/README.md)
 - [Glosten–Milgrom model](glosten-milgrom-model/README.md)
