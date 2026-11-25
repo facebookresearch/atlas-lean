@@ -1,7 +1,9 @@
 # Pure type systems and the calculus of constructions
 
 Pure type systems, also called generalized type systems, share one set of pseudoterms
+
 $$T ::= x \mid c \mid T\,T \mid \lambda x{:}T.\, T \mid \Pi x{:}T.\, T,$$
+
 where $x$ ranges over variables and $c$ over a set $C$ of constants.
 
 - **Specifications.** A specification is a triple $(\mathcal{S}, \mathcal{A}, \mathcal{R})$. The sorts are a subset $\mathcal{S} \subseteq C$, the axioms $\mathcal{A}$ are statements $c : s$ with $c \in C$ and $s \in \mathcal{S}$, and the rules $\mathcal{R}$ are triples $(s_1, s_2, s_3)$ of sorts. A rule $(s_1, s_2)$ abbreviates $(s_1, s_2, s_2)$.

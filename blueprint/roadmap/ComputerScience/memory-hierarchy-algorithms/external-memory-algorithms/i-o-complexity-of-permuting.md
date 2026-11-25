@@ -1,6 +1,6 @@
 # I/O complexity of permuting
 
-In the single-disk [external-memory model](the-external-memory-model.md), with $N$ indivisible records, internal memory of $M$ records and blocks of $B$ records, the average-case and worst-case number of I/Os required to permute $N$ records is
+In the single-disk [external-memory model](the-external-memory-model.md), with $N$ indivisible records, internal memory of $M$ records and blocks of $B$ records, the number of I/Os required to permute $N$ records, in the worst case over the $N!$ target permutations and on average over a uniformly random target permutation, for deterministic algorithms and for randomized algorithms averaged over their coins and the uniform target, is
 
 $$\Theta\Bigl(\min\Bigl\{N,\ \frac{N}{B} \cdot \frac{\log(1 + N/B)}{\log(1 + M/B)}\Bigr\}\Bigr).$$
 

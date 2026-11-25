@@ -1,7 +1,9 @@
 # Launchbury's natural semantics for lazy evaluation
 
 **Normalized terms.** The language is the untyped lambda calculus with recursive let,
+
 $$e ::= \lambda x.\, e \mid e\,x \mid x \mid \mathrm{let}\ x_1 = e_1, \dots, x_n = e_n\ \mathrm{in}\ e,$$
+
 in normalized form: every application has a variable as its argument, and all bound variables are distinct. An arbitrary term is normalized by renaming all bound variables to fresh ones and by replacing each application $e_1 e_2$ whose argument is not a variable with $\mathrm{let}\ y = e_2\ \mathrm{in}\ e_1\,y$, with $y$ fresh.
 
 **Heaps and values.** A heap $\Gamma$ is a partial function from variables to terms, a set of bindings $x \mapsto e$ with distinct variables. A value is a term in weak head normal form, that is, a lambda abstraction.
