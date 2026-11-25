@@ -1,6 +1,6 @@
 # The positive embedding of nonnegative chain indices
 
-- [Positive Nat Embedding](positive-nat-embedding.md)
-- [Positive Nat Embedding f](positive-nat-embedding-f.md)
-- [Positive Nat Embedding f zero](positive-nat-embedding-f-zero.md)
-- [Positive Nat Embedding f one](positive-nat-embedding-f-one.md)
+- [Embedding of positive natural chain degrees](positive-nat-embedding.md)
+- [Index formula for the positive embedding](positive-nat-embedding-f.md)
+- [First degree selected by the positive embedding](positive-nat-embedding-f-zero.md)
+- [Second degree selected by the positive embedding](positive-nat-embedding-f-one.md)

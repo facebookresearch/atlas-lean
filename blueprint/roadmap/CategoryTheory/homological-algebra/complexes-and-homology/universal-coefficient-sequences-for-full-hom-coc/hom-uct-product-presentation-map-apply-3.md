@@ -1,3 +1,7 @@
-# Hom Uct Product Presentation Map τ₃ apply
+# Ext-one components of a full presentation map
 
-The right product map is the simultaneous native Ext action in the original two variables.
+Let C be an abelian category with object universe u and morphism universe v. Assume Ext_C is
+available in an independent universe w. Let f : P′ → P be an integer chain map, Y,Y′ : ℤ → C
+coefficient families, and bₚ : Yₚ → Y′ₚ. Write Bₚ,Zₚ,Hₚ for the boundary, cycles and homology
+objects of P, and similarly for P′. A family eₚ ∈ Ext¹_C(Hₚ,Yₚ) is sent to (bₚ)_*(Hₚ(f))^* eₚ in
+Ext¹_C(H′ₚ,Y′ₚ), with no additional sign.

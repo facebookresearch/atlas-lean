@@ -1,3 +1,5 @@
-# Left Derived Delta Functor evaluation
+# Evaluation recovers the canonical derived isomorphism
 
-Degree evaluation recovers the canonical derived natural isomorphism.
+Let `C`, `D` be abelian, with projective resolutions in `C`,
+`F,G : C → D` additive, and `e : F ≅ G`. Evaluation in degree `n`
+recovers precisely the natural isomorphism `L_ne`.

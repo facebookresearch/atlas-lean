@@ -1,8 +1,8 @@
 # Tensor descent from cycles to homology
 
-- [Homology Cofork](homology-cofork.md)
-- [Homology Cofork Is Colimit](homology-cofork-is-colimit.md)
-- [Tensor homologyπ hom ext](tensor-homology-hom-ext.md)
-- [Tensor Homology Desc](tensor-homology-desc.md)
-- [Tensor homologyπ comp tensor Homology Desc](tensor-homology-comp-tensor-homology-des.md)
-- [Tensor Homology Desc naturality](tensor-homology-desc-naturality.md)
+- [Homology projection as a boundary cokernel cofork](homology-cofork.md)
+- [Universal cokernel property of the homology projection](homology-cofork-is-colimit.md)
+- [Maps from tensor homology are determined on cycle classes](tensor-homology-hom-ext.md)
+- [Descent of a map on cycles to the tensor of homology](tensor-homology-desc.md)
+- [Cycle-class formula for tensor homology descent](tensor-homology-comp-tensor-homology-des.md)
+- [Naturality of tensor homology descent in complexes and target](tensor-homology-desc-naturality.md)

@@ -16,13 +16,15 @@ public import MathlibExt.Algebra.Homology.BicomplexTotalAugmentation
 public import MathlibExt.Algebra.Homology.TotalComplexSymmetryDownNat
 
 /-!
-# The total augmentation of a Cartan--Eilenberg resolution
+# The total augmentation of a Cartan–Eilenberg resolution
 
-The term-resolution augmentations form a rowwise quasi-isomorphism after
-flipping the Cartan--Eilenberg bicomplex.  Totalizing this map and composing
-with the canonical flip and single-zero total isomorphisms gives a canonical
-quasi-isomorphism from the Cartan--Eilenberg total complex to the original
-chain complex.
+Let C be abelian and P a Cartan–Eilenberg resolution of a nonnegative complex L. The
+term-resolution augmentations form a rowwise quasi-isomorphism from the flipped bicomplex to the
+bicomplex concentrated in resolution degree zero.
+
+Totalization gives an augmentation Tot(P.bicomplex) → L. On a summand of resolution degree zero
+it is the stored term augmentation; on every positive resolution-degree summand it is zero. The
+total augmentation is a quasi-isomorphism and is natural for comparisons.
 -/
 
 @[expose] public section
@@ -43,8 +45,10 @@ variable {L : ChainComplex C ℕ} (P : CartanEilenbergResolution L)
 
 namespace CartanEilenbergResolution
 
-/-- The same rowwise augmentation with the source written literally as the
-flip of the public Cartan--Eilenberg bicomplex. -/
+/-- Let C be abelian, L a nonnegative chain complex and P a Cartan–Eilenberg resolution. Its
+bicomplex is indexed by resolution degree a and original degree j, with total degree a+j. The
+term-resolution augmentations give a bicomplex map from P.bicomplex.flip to the bicomplex whose
+original-degree-j row is concentrated on Lⱼ in resolution degree zero. -/
 noncomputable def flippedAugmentation :
     P.bicomplex.flip ⟶
       HomologicalComplex₂.singleMapBicomplexFunctorDownNat.obj L := by
@@ -65,8 +69,10 @@ theorem flippedAugmentation_f (j : ℕ) :
     (flippedAugmentation P).f j = (P.termResolution j).π :=
   rfl
 
-/-- The canonical augmentation from the total complex of a
-Cartan--Eilenberg resolution to the resolved chain complex. -/
+/-- Let C be abelian, L a nonnegative chain complex and P a Cartan–Eilenberg resolution. Its
+bicomplex is indexed by resolution degree a and original degree j, with total degree a+j.
+Totalizing the rowwise augmentations gives a canonical chain map ε : Tot(P.bicomplex) → L, using
+the total flip and concentrated-complex identifications. -/
 noncomputable def totalAugmentation :
     P.bicomplex.total (ComplexShape.down ℕ) ⟶ L :=
   (P.bicomplex.totalFlipIso (ComplexShape.down ℕ)).inv ≫
@@ -78,8 +84,9 @@ theorem flippedAugmentation_f_zero (j : ℕ) :
       P.termColumnZeroAugmentation.f j := by
   rw [flippedAugmentation_f, P.termColumnZeroAugmentation_f]
 
-/-- On the resolution-degree-zero summand, the total augmentation is the
-stored term-resolution augmentation. -/
+/-- Let C be abelian, L a nonnegative chain complex and P a Cartan–Eilenberg resolution. Its
+bicomplex is indexed by resolution degree a and original degree j, with total degree a+j. For j
+∈ ℕ, the total summand in bidegree (0,j) maps to Lⱼ by the stored augmentation PTⱼ,₀ → Lⱼ. -/
 @[reassoc]
 theorem ιTotal_comp_totalAugmentation_zero (j : ℕ) :
     P.bicomplex.ιTotal (ComplexShape.down ℕ) 0 j j
@@ -112,8 +119,10 @@ theorem ιTotal_comp_totalAugmentation_zero (j : ℕ) :
     exact Category.comp_id _
   exact h'.trans (hid.trans (flippedAugmentation_f_zero P j))
 
-/-- Every positive resolution-degree summand is killed by the total
-augmentation. -/
+/-- Let C be abelian, L a nonnegative chain complex and P a Cartan–Eilenberg resolution. Its
+bicomplex is indexed by resolution degree a and original degree j, with total degree a+j. For
+all a,j ∈ ℕ, the total augmentation kills the summand in bidegree (a+1,j), whose total degree is
+a+1+j. -/
 @[reassoc]
 theorem ιTotal_comp_totalAugmentation_succ (a j : ℕ) :
     P.bicomplex.ιTotal (ComplexShape.down ℕ) (a + 1) j
@@ -165,8 +174,10 @@ theorem ιTotal_comp_totalAugmentation_succ (a j : ℕ) :
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Total augmentation is natural for a supplied comparison of
-Cartan--Eilenberg resolutions. -/
+/-- Let C be abelian, L a nonnegative chain complex and P a Cartan–Eilenberg resolution. Its
+bicomplex is indexed by resolution degree a and original degree j, with total degree a+j. For g
+: L → L′, a resolution Q of L′ and a comparison F : P → Q over g, the total map satisfies ε_Q ∘
+Tot(F.bicomplexHom)=g ∘ ε_P. -/
 theorem Hom.totalAugmentation_naturality
     {L' : ChainComplex C ℕ}
     {Q : CartanEilenbergResolution L'}
@@ -254,8 +265,10 @@ theorem Hom.totalAugmentation_naturality
                   g.f (a + 1 + j)) :=
               Category.assoc _ _ _
 
-/-- The total augmentation of a Cartan--Eilenberg resolution is a
-quasi-isomorphism. -/
+/-- Let C be abelian, L a nonnegative chain complex and P a Cartan–Eilenberg resolution. Its
+bicomplex is indexed by resolution degree a and original degree j, with total degree a+j. The
+canonical augmentation Tot(P.bicomplex) → L induces an isomorphism on every nonnegative homology
+object, hence is a quasi-isomorphism. -/
 theorem totalAugmentation_quasiIso : QuasiIso P.totalAugmentation := by
   have hrow : ∀ j : ℕ, QuasiIso ((flippedAugmentation P).f j) := by
     intro j

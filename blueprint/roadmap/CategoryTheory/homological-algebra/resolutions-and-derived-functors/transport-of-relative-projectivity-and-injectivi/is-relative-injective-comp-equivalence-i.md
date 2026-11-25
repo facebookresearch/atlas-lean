@@ -1,3 +1,5 @@
-# Is Relative Injective comp equivalence iff
+# Target equivalence preserves relative injectivity
 
-An equivalence of target categories also preserves the full relative extension property.
+For categories `D,C,B`, functor `U : D → C`, equivalence
+`e : C ≌ B`, and `P : D`, relative injectivity for `U ⋙ e` is
+equivalent to relative injectivity for `U`.

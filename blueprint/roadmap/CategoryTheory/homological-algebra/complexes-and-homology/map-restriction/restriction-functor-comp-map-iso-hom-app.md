@@ -1,3 +1,5 @@
-# Restriction Functor Comp Map Iso hom app f
+# Identity components of the restriction comparison
 
-The restriction comparison keeps the original coefficient maps in every degree.
+Let C,D have zero morphisms, let e:c₁→c₂ be a shape embedding preserving and reflecting
+relations, and let F:C⥤D preserve zero morphisms. For a c₂-complex K and i in the source
+shape, the degree-i forward component of the restriction comparison is 1_{F(K_{e(i)})}.

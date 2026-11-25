@@ -15,9 +15,12 @@ public import MathlibExt.CategoryTheory.Monoidal.TensorCokernel
 /-!
 # Tensor descent from cycles to homology
 
-This file specializes tensor descent through chosen cokernel presentations to the presentation of
-homology as cycles modulo boundaries. It is independent of the shapes and degree arithmetic of the
-two complexes.
+In a preadditive category, H_j(K) is the cokernel of the incoming boundary map K_i → Z_j(K), for
+the predecessor i of j. In a preadditive monoidal category with bilinear tensor product, a map
+Z_j₁(K₁) ⊗ Z_j₂(K₂) → Z that kills boundaries in either factor descends to H_j₁(K₁) ⊗ H_j₂(K₂) →
+Z under the specified cokernel-preservation and coproduct hypotheses. The descended map is
+unique and natural in both complexes and the target, with no relation required between their
+index types or complex shapes.
 -/
 
 @[expose] public section
@@ -36,10 +39,9 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
   {ι₁ : Type w₁} {ι₂ : Type w₂}
   {c₁ : ComplexShape ι₁} {c₂ : ComplexShape ι₂}
 
-/--
-The homology projection, packaged as the cokernel cofork of the boundary-to-cycles map at a chosen
-predecessor.
--/
+/-- Let C be preadditive, K a complex with shape c on an arbitrary index type, j a degree with
+homology, and i = c.prev(j). The homology projection π_j : Z_j(K) → H_j(K), which kills the
+incoming boundary map β : K_i → Z_j(K), defines a cokernel cofork of β. -/
 noncomputable def homologyCofork (K : HomologicalComplex C c₁)
     (i j : ι₁) (_h : c₁.prev j = i) [K.HasHomology j] :
     CokernelCofork (K.toCycles i j) :=
@@ -57,7 +59,9 @@ lemma homologyCofork_π (K : HomologicalComplex C c₁)
     (homologyCofork K i j hij).π = K.homologyπ j :=
   rfl
 
-/-- The homology cofork is a colimit cokernel cofork. -/
+/-- Let C be preadditive, K a complex of arbitrary shape c, j a degree with homology, and i =
+c.prev(j). The cofork K_i → Z_j(K) → H_j(K), formed from the incoming boundary map and the
+homology projection, is a colimit cofork. Thus H_j(K) is the cokernel of that boundary map. -/
 noncomputable def homologyCoforkIsColimit (K : HomologicalComplex C c₁)
     (i j : ι₁) (h : c₁.prev j = i) [K.HasHomology j] :
     IsColimit (homologyCofork K i j h) :=
@@ -75,8 +79,13 @@ variable (K₁ : HomologicalComplex C c₁) (i₁ j₁ : ι₁)
     (tensorRight (K₂.cycles j₂))]
 
 include i₁ h₁ i₂ h₂ in
-/-- Morphisms out of a tensor product of homology objects are determined by
-their composites with the tensor of the homology projections. -/
+/-- Let C be a preadditive monoidal category with bilinear tensor product. Let K₁ and K₂ have
+arbitrary, independently indexed complex shapes c₁,c₂, with homology at j₁,j₂ and predecessor
+indices i₁ = c₁.prev(j₁), i₂ = c₂.prev(j₂). Write Z₁,Z₂ and H₁,H₂ for their cycles and homology,
+and β₁ : K₁,i₁ → Z₁, β₂ : K₂,i₂ → Z₂ for the incoming boundary maps. Assume right tensoring by
+Z₂ preserves the cokernel coequalizer of β₁ and left tensoring by H₁ preserves that of β₂. For
+maps f,g : H₁ ⊗ H₂ → Z, equality (π₁ ⊗ π₂) ≫ f = (π₁ ⊗ π₂) ≫ g implies f = g. Only these two
+cokernel-preservation hypotheses are needed for this uniqueness statement. -/
 lemma tensor_homologyπ_hom_ext {Z : C}
     {f g : K₁.homology j₁ ⊗ K₂.homology j₂ ⟶ Z}
     (w : (K₁.homologyπ j₁ ⊗ₘ K₂.homologyπ j₂) ≫ f =
@@ -97,8 +106,15 @@ variable [HasBinaryCoproduct (K₁.X i₁ ⊗ K₂.cycles j₂)
     (tensorRight (K₂.X i₂))]
 
 include h₁ h₂ in
-/-- Descend a morphism on two cycle objects through the tensor product of the
-corresponding homology objects. -/
+/-- Let C be a preadditive monoidal category with bilinear tensor product. Let K₁ and K₂ have
+arbitrary, independently indexed complex shapes c₁,c₂, with homology at j₁,j₂ and predecessor
+indices i₁ = c₁.prev(j₁), i₂ = c₂.prev(j₂). Write Z₁,Z₂ and H₁,H₂ for their cycles and homology,
+and β₁ : K₁,i₁ → Z₁, β₂ : K₂,i₂ → Z₂ for the incoming boundary maps. Assume right tensoring by
+Z₂ preserves the cokernel coequalizer of β₁ and left tensoring by H₁ preserves that of β₂.
+Assume also that the coproduct of K₁,i₁ ⊗ Z₂ and Z₁ ⊗ K₂,i₂ exists and right tensoring by K₂,i₂
+preserves the cokernel coequalizer of β₁. If k : Z₁ ⊗ Z₂ → Z kills the map from the coproduct
+whose components are β₁ ⊗ id_Z₂ and id_Z₁ ⊗ β₂, then tensorHomologyDesc k is the unique map H₁ ⊗
+H₂ → Z satisfying (π₁ ⊗ π₂) ≫ tensorHomologyDesc k = k. -/
 noncomputable def tensorHomologyDesc {Z : C}
     (k : K₁.cycles j₁ ⊗ K₂.cycles j₂ ⟶ Z)
     (hk : coprod.desc (K₁.toCycles i₁ j₁ ▷ K₂.cycles j₂)
@@ -115,8 +131,14 @@ noncomputable def tensorHomologyDesc {Z : C}
     (homologyCoforkIsColimit K₂ i₂ j₂ h₂) k hk
 
 include h₁ h₂ in
-/-- The tensor of the homology projections followed by
-`tensorHomologyDesc` is the original map on cycles. -/
+/-- Let C be a preadditive monoidal category with bilinear tensor product. Let K₁ and K₂ have
+arbitrary, independently indexed complex shapes c₁,c₂, with homology at j₁,j₂ and predecessor
+indices i₁ = c₁.prev(j₁), i₂ = c₂.prev(j₂). Write Z₁,Z₂ and H₁,H₂ for their cycles and homology,
+and β₁ : K₁,i₁ → Z₁, β₂ : K₂,i₂ → Z₂ for the incoming boundary maps. Assume right tensoring by
+Z₂ preserves the cokernel coequalizer of β₁ and left tensoring by H₁ preserves that of β₂.
+Assume also that the coproduct of K₁,i₁ ⊗ Z₂ and Z₁ ⊗ K₂,i₂ exists and right tensoring by K₂,i₂
+preserves the cokernel coequalizer of β₁. For k : Z₁ ⊗ Z₂ → Z vanishing on both tensor boundary
+components, the descended map satisfies (π₁ ⊗ π₂) ≫ tensorHomologyDesc k = k. -/
 @[reassoc (attr := simp)]
 lemma tensor_homologyπ_comp_tensorHomologyDesc {Z : C}
     (k : K₁.cycles j₁ ⊗ K₂.cycles j₂ ⟶ Z)
@@ -135,8 +157,17 @@ lemma tensor_homologyπ_comp_tensorHomologyDesc {Z : C}
     (homologyCoforkIsColimit K₂ i₂ j₂ h₂) k hk
 
 include h₁ h₂ in
-/-- Naturality of tensor homology descent under maps of both complexes and a
-map of targets. -/
+/-- Let C be a preadditive monoidal category with bilinear tensor product. Let K₁ and K₂ have
+arbitrary, independently indexed complex shapes c₁,c₂, with homology at j₁,j₂ and predecessor
+indices i₁ = c₁.prev(j₁), i₂ = c₂.prev(j₂). Write Z₁,Z₂ and H₁,H₂ for their cycles and homology,
+and β₁ : K₁,i₁ → Z₁, β₂ : K₂,i₂ → Z₂ for the incoming boundary maps. Assume right tensoring by
+Z₂ preserves the cokernel coequalizer of β₁ and left tensoring by H₁ preserves that of β₂.
+Assume also that the coproduct of K₁,i₁ ⊗ Z₂ and Z₁ ⊗ K₂,i₂ exists and right tensoring by K₂,i₂
+preserves the cokernel coequalizer of β₁. Let f₁ : K₁ → L₁ and f₂ : K₂ → L₂ preserve the
+respective shapes, with homology for L₁,L₂ in j₁,j₂ and the same coproduct and three
+cokernel-preservation hypotheses for their incoming boundary maps. Let k and k′ be maps on the
+respective cycle tensors that kill both boundary components, and z : Z → Z′. If (Z_j₁(f₁) ⊗
+Z_j₂(f₂)) ≫ k′ = k ≫ z, then (H_j₁(f₁) ⊗ H_j₂(f₂)) ≫ desc(k′) = desc(k) ≫ z. -/
 lemma tensorHomologyDesc_naturality
     {L₁ : HomologicalComplex C c₁} {L₂ : HomologicalComplex C c₂}
     [L₁.HasHomology j₁] [L₂.HasHomology j₂]

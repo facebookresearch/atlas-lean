@@ -1,5 +1,5 @@
 # Exactness transport and cokernel comparisons
 
-- [Exists exact of iso](exists-exact-of-iso.md)
-- [Is Iso cokernel desc](is-iso-cokernel-desc.md)
-- [Cokernel Desc Iso Of Exact Of Epi](cokernel-desc-iso-of-exact-of-epi.md)
+- [Transporting exactness and the zero-composite witness](exists-exact-of-iso.md)
+- [The universal cokernel map of an exact sequence with epi quotient](is-iso-cokernel-desc.md)
+- [Cokernel identification for an exact short complex with epi second arrow](cokernel-desc-iso-of-exact-of-epi.md)

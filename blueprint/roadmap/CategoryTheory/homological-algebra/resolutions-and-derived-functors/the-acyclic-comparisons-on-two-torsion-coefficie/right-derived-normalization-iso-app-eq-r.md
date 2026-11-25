@@ -1,3 +1,5 @@
-# Right Derived normalization Iso app eq refl
+# Right-derived normalization on a two-torsion object
 
-Every original right-derived normalization component is the identity in all degrees.
+Let `C`, `D` be abelian, with injective resolutions in `C`, and
+let `F : C → D` be additive. If `2 • 𝟙 X=0`, the normalization
+automorphism on `R^nF(X)` is the identity for every `n`.

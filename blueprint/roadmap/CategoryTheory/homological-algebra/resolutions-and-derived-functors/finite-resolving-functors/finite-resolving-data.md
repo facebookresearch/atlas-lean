@@ -1,5 +1,5 @@
-# Finite Resolving Data
+# Finite resolving additive functors
 
-Epi-kernel closure together with a finite resolution of every target object.
-
-The resolution and kernel choices remain explicit, proposition-valued input.
+For additive `i : P → A` from a preadditive category to an abelian
+category, finite-resolving data combine kernel lifts for mapped
+epimorphisms with a finite resolution of every target object by objects in the image of `i`.

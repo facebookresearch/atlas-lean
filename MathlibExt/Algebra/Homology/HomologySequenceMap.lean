@@ -144,8 +144,11 @@ theorem mapHomologyFunctorIso_hom_δ
   exact hn.symm
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The inverse homology comparison intertwines the connecting morphism of a
-short exact sequence with the image of its connecting morphism. -/
+/-- Let `C,D` be abelian and `F : C → D` preserve zero morphisms,
+finite limits and finite colimits. For a short exact sequence `S`
+of complexes of shape `c`, with its mapped sequence also short exact,
+and `c.Rel i j`, the inverse homology comparisons satisfy
+`e_i⁻¹ ≫ δ_(F(S)) = F(δ_S) ≫ e_j⁻¹` at the third and first objects. -/
 theorem mapHomologyFunctorIso_inv_δ
     {C D : Type*} [Category* C] [Category* D] [Abelian C] [Abelian D]
     {ι : Type*} {c : ComplexShape ι}
@@ -179,8 +182,12 @@ theorem mapHomologyFunctorIso_inv_δ
       rw [Category.assoc]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Combining change of category with a comparison of short exact complexes
-gives the corresponding transported connecting-morphism square. -/
+/-- Let `C,D` be abelian and `F : C → D` preserve zero morphisms,
+finite limits and finite colimits. Let `S` be short exact in complexes
+of shape `c`, its mapped sequence short exact, and `φ : F(S) → T`
+a map to another short exact sequence. For `c.Rel i j`, the inverse
+homology comparisons followed by `H_i(φ₃)` and `H_j(φ₁)` give a
+commuting square with `F(δ_S)` and `δ_T`. -/
 theorem mapHomologyFunctorIso_inv_comp_δ_naturality
     {C D : Type*} [Category* C] [Category* D] [Abelian C] [Abelian D]
     {ι : Type*} {c : ComplexShape ι}
@@ -206,8 +213,9 @@ theorem mapHomologyFunctorIso_inv_comp_δ_naturality
   rw [← hNat, ← Category.assoc, hMap]
   simp only [Category.assoc]
 
-/-- A short-complex isomorphism conjugates the connecting morphisms by the
-induced maps on the third and first homology objects. -/
+/-- In an abelian category `C`, let `e : S ≅ T` be an isomorphism
+of short exact sequences of complexes of shape `c`. For `c.Rel i j`,
+the boundaries satisfy `δ_S = H_i(e₃) ≫ δ_T ≫ H_j(e₁⁻¹)`. -/
 theorem δ_eq_comp_of_iso
     {C : Type*} [Category* C] [Abelian C]
     {ι : Type*} {c : ComplexShape ι}
@@ -225,7 +233,10 @@ theorem δ_eq_comp_of_iso
     congrArg (fun f : S ⟶ S => f.τ₁) e.hom_inv_id
   rw [he, HomologicalComplex.homologyMap_id, Category.comp_id]
 
-/-- The inverse form of `δ_eq_comp_of_iso`. -/
+/-- In an abelian category `C`, let `e : S ≅ T` be an isomorphism
+of short exact sequences of complexes of shape `c`. For `c.Rel i j`,
+the inverse conjugation formula is
+`δ_T = H_i(e₃⁻¹) ≫ δ_S ≫ H_j(e₁)`. -/
 theorem δ_eq_comp_of_iso_inv
     {C : Type*} [Category* C] [Abelian C]
     {ι : Type*} {c : ComplexShape ι}

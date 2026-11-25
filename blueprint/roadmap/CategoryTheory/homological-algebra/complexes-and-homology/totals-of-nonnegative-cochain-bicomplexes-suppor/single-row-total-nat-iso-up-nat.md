@@ -1,4 +1,5 @@
-# Single Row Total Nat Iso Up Nat
+# Natural isomorphism from row-zero totalization to the identity
 
-Functor-level row-zero total comparison for nonnegative cochain
-complexes.
+Let C be preadditive with a zero object and finite coproducts. The composite functor placing a
+nonnegative cochain complex in outer degree zero and then totalizing is naturally isomorphic to
+the identity. Its component at A is singleRowUpNatTotalIso A.

@@ -14,19 +14,13 @@ public import MathlibExt.Algebra.Homology.FiniteResolutionComparison
 public import MathlibExt.CategoryTheory.Abelian.Projective.ComplexLift
 
 /-!
-# Lifting projective complexes to finite resolutions
+# Lifting projective complexes into finite resolutions
 
-An augmented complex of projective objects maps to the mapped complex of a
-finite resolution whenever the resolving objects map to projectives. This is
-a target-side wrapper around
-`CategoryTheory.ProjectiveResolution.liftFromComplex`; the source need not be
-exact or bounded.
-
-## Main declarations
-
-* `CategoryTheory.Abelian.FiniteResolution.liftFromProjectiveComplex`
-* `CategoryTheory.Abelian.FiniteResolution.liftFromProjectiveComplex_f_zero_comp`
-* `CategoryTheory.Abelian.FiniteResolution.liftFromProjectiveComplex_commutes`
+Let P be a preadditive category, A an abelian category, and i : P → A an additive functor whose
+object images are projective. Let R be a finite resolution of Z relative to i. For a
+natural-number-indexed chain complex K of projective objects of A, an augmentation ε : K → Y[0],
+and a map f : Y → Z, there is a chain map g : K → i(R) with g ≫ ε_R = ε ≫ f[0]. Neither
+exactness nor boundedness of K is required.
 -/
 
 @[expose] public section
@@ -46,8 +40,11 @@ variable {A : Type uA} [Category.{vA} A] [Abelian A]
 variable {i : P ⥤ A} [i.Additive]
 variable {Y Z : A}
 
-/-- Lift an augmented complex of projective objects into a finite resolution
-whose resolving objects map to projectives. -/
+/-- Let P be preadditive, A abelian, and i : P → A additive, with every i(P₀) projective. Let K be a
+natural-number-indexed chain complex of projective objects, ε : K → Y[0] an augmentation, R a
+finite resolution of Z relative to i, and f : Y → Z. Then liftFromProjectiveComplex gives a
+chain map g : K → R.mappedComplex lifting f along the resolution augmentation. The source K may
+be unbounded and need not resolve Y. -/
 @[no_expose]
 def liftFromProjectiveComplex
     (K : ChainComplex A ℕ)
@@ -60,8 +57,10 @@ def liftFromProjectiveComplex
   ProjectiveResolution.liftFromComplex f K ε
     (R.toProjectiveResolution hproj) hK
 
-/-- The degree-zero component of `liftFromProjectiveComplex` has the expected
-augmentation factorization. -/
+/-- Let P be preadditive, A abelian, and i : P → A additive with projective object images. Given a
+complex K with projective terms, an augmentation ε : K → Y[0], a finite resolution R of Z, and f
+: Y → Z, the lift g : K → R.mappedComplex satisfies g₀ ≫ ε_R,₀ = ε₀ ≫ f. Here ε_R is the
+augmentation of R. -/
 @[reassoc (attr := simp)]
 theorem liftFromProjectiveComplex_f_zero_comp
     (K : ChainComplex A ℕ)
@@ -76,8 +75,10 @@ theorem liftFromProjectiveComplex_f_zero_comp
   exact ProjectiveResolution.liftFromComplex_f_zero_comp f K ε
     (R.toProjectiveResolution hproj) hK
 
-/-- The lifted chain map commutes with the source and finite-resolution
-augmentations. -/
+/-- Let P be preadditive, A abelian, and i : P → A additive with projective object images. For an
+augmented natural-number-indexed complex ε : K → Y[0] of projective objects, a finite resolution
+R of Z relative to i, and f : Y → Z, the lifted chain map g satisfies g ≫ ε_R = ε ≫ f[0] as maps
+K → Z[0]. -/
 @[reassoc (attr := simp)]
 theorem liftFromProjectiveComplex_commutes
     (K : ChainComplex A ℕ)

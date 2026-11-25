@@ -1,3 +1,6 @@
-# Left Derived Bifunctor Zero Iso Self hom app
+# Forward degree-zero bifunctor comparison
 
-The bifunctor comparison has the degree-zero component.
+For the bifunctor `F : C₁ → C₂ → D` with additive right-exact
+partials `F(-,Y)`, `C₁`, `D` abelian and `C₁` admitting
+projective resolutions, the degree-zero comparison at `(X,Y)`
+is the forward comparison `L₀(F(-,Y))(X) → F(X,Y)`.

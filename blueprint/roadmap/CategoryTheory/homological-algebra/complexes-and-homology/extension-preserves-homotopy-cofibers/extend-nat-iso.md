@@ -1,4 +1,6 @@
-# Extend Nat Iso
+# Natural isomorphism for homotopy cofibers and zero extension
 
-Homotopy cofibers commute naturally with extension along an incoming-closed
-embedding of complex shapes.
+Let C be preadditive with zero object and binary biproducts. Let e:c→c' be incoming-closed and
+relation-reflecting, with decidable relations and a predecessor at every degree of each shape.
+On the arrow categories of complexes, extension followed by homotopy cofiber is naturally
+isomorphic to homotopy cofiber followed by extension.

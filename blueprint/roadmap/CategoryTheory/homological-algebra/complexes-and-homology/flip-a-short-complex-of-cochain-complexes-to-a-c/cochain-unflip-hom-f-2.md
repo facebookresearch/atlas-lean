@@ -1,3 +1,5 @@
-# Cochain Unflip Hom τ₂ f
+# Middle degree component of a recovered short-complex map
 
-The middle coefficient map is the original component of the strict flipped map.
+In an abelian category `C`, for `a : S.flip → T.flip`, the
+middle cochain component of the recovered short-complex map in
+degree `n` is the middle component of the row map `aⁿ`.

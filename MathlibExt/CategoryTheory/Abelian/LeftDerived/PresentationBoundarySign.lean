@@ -13,7 +13,14 @@ public import MathlibExt.CategoryTheory.Abelian.Projective.PresentationHorseshoe
 public import MathlibExt.CategoryTheory.Abelian.LeftDerived.HorseshoeBoundaryChoice
 
 /-!
-## Degree-one boundary on the two-term projective presentation
+# Degree-one sign of a projective presentation boundary
+
+Let `A → B → X` be short exact in an abelian category with projective
+resolutions, with `A,B` projective. For an additive functor `F`, a
+map into `F(A)` killed by `F(A → B)` represents a degree-one class
+of the quotient presentation. Its left-derived boundary followed
+by `L₀F(A) → F(A)` is the negative original map, because the
+middle presentation differential has left coordinate `-id`.
 -/
 @[expose] public section
 noncomputable section
@@ -28,10 +35,11 @@ variable (S : ShortComplex C) (hS : S.ShortExact) [Projective S.X₁] [Projectiv
 variable (F : C ⥤ D) [F.Additive]
 
 set_option backward.isDefEq.respectTransparency false in
-/--
-The horseshoe sends a presentation cycle to its negative in its original projective kernel, using
-the literal middle differential.
--/
+/-- Let `C,D` be abelian, with projective resolutions in `C`,
+`S : A → B → X` short exact with `A,B` projective, and `F : C → D`
+additive. For `x : Z → F(A)` with `x ≫ F(S.f)=0`, its class in
+`H₁(F(A → B))`, compared to `L₁F(X)`, then mapped by the boundary
+to `L₀F(A)` and the canonical augmentation to `F(A)`, is `-x`. -/
 theorem presentationBoundary_cycle_sign {A : D} (x : A ⟶ F.obj S.X₁)
     (hx : x ≫ F.map S.f = 0) :
     let R := (F.mapHomologicalComplex (ComplexShape.down ℕ)).obj (ofPresentation S hS).complex

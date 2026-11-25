@@ -1,3 +1,3 @@
-# Acyclic Resolution Normalization Sign zero
+# Degree-zero normalization sign
 
-The original normalization sign is one in degree zero.
+The triangular normalization scalar in degree zero is `σ₀=1`.

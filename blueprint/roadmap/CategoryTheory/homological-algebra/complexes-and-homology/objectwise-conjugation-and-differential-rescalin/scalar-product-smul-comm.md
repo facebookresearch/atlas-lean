@@ -1,3 +1,5 @@
-# Scalar Product smul comm
+# The two scalar-product orders act equally on morphisms
 
-Bilinearity of composition makes the two scalar-product orders act equally on each morphism.
+Let `R` be a semiring and `C` an `R`-linear preadditive
+category. Bilinearity of composition implies
+`(r s) • f = (s r) • f` for every `r,s : R` and morphism `f`.

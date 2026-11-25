@@ -1,6 +1,6 @@
 # The kernel-tail horseshoe normalizes degree one with sign -1
 
-- [Normalization Kernel Tail mapped Boundary zero sign](normalization-kernel-tail-mapped-boundar.md)
-- [Normalization Kernel Tail native Boundary zero sign](normalization-kernel-tail-native-boundar.md)
-- [Normalization Acyclic Projective one kernel](normalization-acyclic-projective-one-ker.md)
-- [Normalization Acyclic Projective one](normalization-acyclic-projective-one.md)
+- [Sign of the mapped kernel-tail boundary](normalization-kernel-tail-mapped-boundar.md)
+- [Sign of the left-derived kernel-tail boundary](normalization-kernel-tail-native-boundar.md)
+- [Degree-one kernel comparison has the opposite sign](normalization-acyclic-projective-one-ker.md)
+- [Degree-one acyclic comparison is the negative canonical comparison](normalization-acyclic-projective-one.md)

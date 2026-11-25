@@ -15,7 +15,13 @@ public import MathlibExt.CategoryTheory.Abelian.DeltaFunctor.Precomposition
 public import MathlibExt.CategoryTheory.Abelian.RightDerived.DeltaComparison
 
 /-!
-# Identity, composition and naturality of exact cohomological precomposition
+# Coherence of exact cohomological precomposition
+
+For additive functors between preadditive categories that preserve short exact
+sequences, precomposition of cohomological δ-functors respects natural
+transformations, composition and identity. Its degree components are the
+whiskered degree functors and its connecting maps are evaluated on the
+mapped short exact sequences.
 -/
 
 @[expose] public section
@@ -38,7 +44,10 @@ variable {A : Type uA} [Category.{vA} A] [Preadditive A]
 variable {B : Type uB} [Category.{vB} B] [Preadditive B]
 variable {D : Type uD} [Category.{vD} D] [Preadditive D]
 
-/-- Change the exact input functor by its natural transformation. -/
+/-- For additive `R,R′ : A → B` preserving short exact sequences
+between preadditive categories, a natural transformation `τ : R → R′`
+induces a morphism `R* T → R′* T` of precomposed cohomological
+δ-functors for every `T : B → D`. -/
 def precomposeChangeHom (R R' : A ⥤ B) [R.Additive] [R'.Additive]
     (hR : ∀ S : ShortComplex A, S.ShortExact → (S.map R).ShortExact)
     (hR' : ∀ S : ShortComplex A, S.ShortExact → (S.map R').ShortExact)
@@ -74,7 +83,10 @@ variable {D : Type uD} [Category.{vD} D] [Preadditive D]
 universe uC vC
 variable {C : Type uC} [Category.{vC} C] [Preadditive C]
 
-/-- Exactness of a composite uses the two exactness providers. -/
+/-- For additive `R : A → B`, `R′ : B → C` preserving short exact
+sequences between preadditive categories, the composite `R ⋙ R′`
+also preserves short exact sequences: `R′(R(S))` is short exact
+whenever `S` is. -/
 theorem precomposeCompShortExact (R : A ⥤ B) (R' : B ⥤ C) [R.Additive] [R'.Additive]
     (hR : ∀ S : ShortComplex A, S.ShortExact → (S.map R).ShortExact)
     (hR' : ∀ S : ShortComplex B, S.ShortExact → (S.map R').ShortExact)
@@ -83,7 +95,10 @@ theorem precomposeCompShortExact (R : A ⥤ B) (R' : B ⥤ C) [R.Additive] [R'.A
 
 set_option backward.isDefEq.respectTransparency false in
 -- V3 recorded implicit projection mismatches in the same short-complex object aliases.
-/-- Associativity of the same exact precomposition, preserving all original connectors. -/
+/-- For additive short-exact-sequence-preserving `R : A → B` and
+`R′ : B → C` between preadditive categories, iterated precomposition
+of a cohomological δ-functor `T : C → D` is isomorphic to
+precomposition along `R ⋙ R′`, compatibly with its connecting maps. -/
 def precomposeCompIso (R : A ⥤ B) (R' : B ⥤ C) [R.Additive] [R'.Additive]
     (hR : ∀ S : ShortComplex A, S.ShortExact → (S.map R).ShortExact)
     (hR' : ∀ S : ShortComplex B, S.ShortExact → (S.map R').ShortExact)
@@ -119,13 +134,22 @@ namespace CategoryTheory.CohomologicalDeltaFunctor
 variable {A : Type uA} [Category.{vA} A] [Preadditive A]
 variable {D : Type uD} [Category.{vD} D] [Preadditive D]
 
-/-- The identity input preserves the same literal short exact sequence. -/
+/- Proof implementation note.
+The identity input preserves the same literal short exact sequence.
+-/
+
+/-- In a preadditive category `A`, applying the identity functor to a
+short exact short complex `S` gives the same short exact sequence.
+This supplies exactness of identity precomposition. -/
 theorem precomposeIdentityShortExact (S : ShortComplex A) (hS : S.ShortExact) :
     (S.map (𝟭 A)).ShortExact := by
   change S.ShortExact
   exact hS
 
-/-- Exact identity precomposition has the left-unitor components. -/
+/-- For a cohomological δ-functor `T : A → D` between preadditive
+categories, precomposition by the identity of `A` is canonically
+isomorphic to `T`, with the functor left-unit comparisons in
+each degree and compatibility with connecting maps. -/
 def precomposeIdentityIso (T : CohomologicalDeltaFunctor A D) :
     precompose (𝟭 A) precomposeIdentityShortExact T ≅ T :=
   isoOfComponents (precompose (𝟭 A) precomposeIdentityShortExact T) T
@@ -152,7 +176,10 @@ open CategoryTheory CategoryTheory.Limits
 
 namespace CategoryTheory
 namespace CohomologicalDeltaFunctor
-/-- Evaluate the existing exact-input precomposition functor on its map. -/
+/-- For additive short-exact-sequence-preserving `R : A → B` between
+preadditive categories and a morphism `f : S → T` of cohomological
+δ-functors `B → D`, the degree-`q` component after precomposition
+is the whiskered natural transformation `R ⋙ f_q`. -/
 theorem delta_precompose_map_app {A B D : Type*} [Category A] [Preadditive A]
     [Category B] [Preadditive B] [Category D] [Preadditive D]
     (R : A ⥤ B) [R.Additive]
@@ -174,13 +201,27 @@ namespace CategoryTheory.CohomologicalDeltaFunctor
 variable {A B D : Type*} [Category A] [Preadditive A] [Category B] [Preadditive B]
 variable [Category D] [Preadditive D]
 
-/-- Generic equality elimination compares connecting components without rebuilding degree types. -/
+/- Proof implementation note.
+Generic equality elimination compares connecting components without rebuilding degree types.
+-/
+
+/-- For equal cohomological δ-functors `S=T : A → D` between
+preadditive categories, their degree-`q` connecting components
+on a fixed short exact sequence `Z` agree after identifying
+the degree functors and their endpoint objects. -/
 theorem equal_system_connecting {S T : CohomologicalDeltaFunctor A D} (h : S = T)
     (q : ℕ) (Z : ShortComplex.ShortExactSequences A) :
     HEq ((S.connecting q).app Z) ((T.connecting q).app Z) := by
   cases h
   rfl
-/-- Literal evaluation of original exact-input precomposition. -/
+/- Proof implementation note.
+Literal evaluation of original exact-input precomposition.
+-/
+
+/-- For additive `R : A → B` preserving short exact sequences
+between preadditive categories and a cohomological δ-functor
+`T : B → D`, the connecting map of `R* T` on a short exact
+sequence `S` is the connecting map of `T` on the mapped sequence `R(S)`. -/
 theorem original_precompose_connector (R : A ⥤ B) [R.Additive]
     (hR : ∀ S : ShortComplex A, S.ShortExact → (S.map R).ShortExact)
     (T : CohomologicalDeltaFunctor B D) (q : ℕ) (S : ShortComplex.ShortExactSequences A) :

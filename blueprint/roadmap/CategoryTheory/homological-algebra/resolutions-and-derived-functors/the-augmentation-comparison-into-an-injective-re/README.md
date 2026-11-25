@@ -2,10 +2,10 @@
 
 ## Category Theory
 
-- [Augmented Resolution Comparison](augmented-resolution-comparison.md)
+- [Comparing an exact coaugmented complex with an injective resolution](augmented-resolution-comparison.md)
 
 ## Functor
 
-- [Augmented Resolution To Right Derived Hom](augmented-resolution-to-right-derived-ho.md)
-- [Augmented Resolution To Right Derived Hom eq](augmented-resolution-to-right-derived-ho-2.md)
-- [Augmented Resolution To Right Derived Hom injective Resolution](augmented-resolution-to-right-derived-ho-3.md)
+- [Cohomology-to-derived map of an exact coaugmented complex](augmented-resolution-to-right-derived-ho.md)
+- [Any coaugmentation-preserving comparison computes the derived map](augmented-resolution-to-right-derived-ho-2.md)
+- [Augmented comparison on an injective resolution is the canonical inverse](augmented-resolution-to-right-derived-ho-3.md)

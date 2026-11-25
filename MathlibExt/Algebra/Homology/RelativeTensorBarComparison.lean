@@ -14,11 +14,13 @@ public import Mathlib.CategoryTheory.Monoidal.Internal.Module
 public import Mathlib.Algebra.Category.ModuleCat.ChangeOfRings
 
 /-!
-# Tensor descriptions of relative Bar complexes
+# Tensor descriptions of relative bar complexes
 
-This file compares the categorical Bar construction with its tensor description. The algebra
-object, coefficient actions, augmentation, and tensor maps are identified through the specified
-structural isomorphisms.
+Let k be a commutative ring, R a possibly noncommutative k-algebra, M a right R-module and N a
+left R-module, in a common module-category universe. Restriction of scalars makes R, M and N
+into k-modules. The multiplication of R is an internal monoid, and the coefficient actions give
+its internal modules. The resulting relative bar simplicial k-module has degree-d term M ⊗_k
+R^{⊗d} ⊗_k N, with the M-action at the first face and the N-action at the last face.
 -/
 
 @[expose] public section
@@ -34,23 +36,33 @@ namespace ModuleCat.RelativeTensorBar
 
 variable (k R : Type u) [CommRing k] [Ring R] [Algebra k R]
 
-/-- Restriction of the original right coefficient action to the ground ring. -/
+/-- Let k be a commutative ring and R a k-algebra whose underlying ring may be noncommutative. For a
+right R-module M, represented as a left Rᵐᵒᵖ-module, rightUnderlying is M restricted to k along
+k → Rᵐᵒᵖ. The ground action is c·m = (op(algebraMap(c)))·m. -/
 abbrev rightUnderlying (M : ModuleCat.{u} Rᵐᵒᵖ) : ModuleCat.{u} k :=
   (ModuleCat.restrictScalars (algebraMap k Rᵐᵒᵖ)).obj M
 
-/-- Restriction of the original left coefficient action to the ground ring. -/
+/-- Let k be a commutative ring and R a k-algebra whose underlying ring may be noncommutative. For a
+left R-module N, leftUnderlying is the k-module obtained by restriction of scalars along
+algebraMap : k → R. Its scalar action is c·n = algebraMap(c)·n. -/
 abbrev leftUnderlying (N : ModuleCat.{u} R) : ModuleCat.{u} k :=
   (ModuleCat.restrictScalars (algebraMap k R)).obj N
 
-/-- The original algebra carrier with its original ground action. -/
+/-- Let k be a commutative ring and R a k-algebra whose underlying ring may be noncommutative. The
+object ringUnderlying in ModuleCat k is the additive group of R with its given k-module
+structure. -/
 abbrev ringUnderlying : ModuleCat.{u} k := ModuleCat.of k R
 
-/-- The internal monoid of the original algebra, without reconstructing its ring. -/
+/-- Let k be a commutative ring and R a k-algebra whose underlying ring may be noncommutative. The
+k-module R is an internal monoid in ModuleCat k, with multiplication R ⊗_k R → R sending r⊗s to
+rs and unit k → R equal to the algebra map. This is the monoid structure ringMonObj. -/
 @[instance_reducible]
 def ringMonObj : MonObj (ringUnderlying k R) :=
   ModuleCat.MonModuleEquivalenceAlgebra.inverseObj (AlgCat.of k R)
 
-/-- The right coefficient action on the outer tensor factor. -/
+/-- Let k be a commutative ring and R a k-algebra whose underlying ring may be noncommutative. For a
+right R-module M, rightAction is the k-linear map M ⊗_k R → M sending m⊗r to m·r, where m·r
+denotes the Rᵐᵒᵖ action (op r)·m. -/
 def rightAction (M : ModuleCat.{u} Rᵐᵒᵖ) :
     rightUnderlying k R M ⊗ ringUnderlying k R ⟶ rightUnderlying k R M :=
   ModuleCat.MonoidalCategory.tensorLift
@@ -77,7 +89,8 @@ def rightAction (M : ModuleCat.{u} Rᵐᵒᵖ) :
 theorem rightAction_tmul (M : ModuleCat.{u} Rᵐᵒᵖ) (m : M) (r : R) :
     (rightAction k R M).hom (m ⊗ₜ[k] r) = (op r : Rᵐᵒᵖ) • m := rfl
 
-/-- The left coefficient action on the last tensor factor. -/
+/-- Let k be a commutative ring and R a k-algebra whose underlying ring may be noncommutative. For a
+left R-module N, leftAction is the k-linear map R ⊗_k N → N sending r⊗n to r·n. -/
 def leftAction (N : ModuleCat.{u} R) :
     ringUnderlying k R ⊗ leftUnderlying k R N ⟶ leftUnderlying k R N :=
   ModuleCat.MonoidalCategory.tensorLift (fun r n => r • n)
@@ -97,7 +110,9 @@ def leftAction (N : ModuleCat.{u} R) :
 theorem leftAction_tmul (N : ModuleCat.{u} R) (r : R) (n : N) :
     (leftAction k R N).hom (r ⊗ₜ[k] n) = r • n := rfl
 
-/-- The internal left module of the original coefficient module. -/
+/-- Let k be a commutative ring and R a k-algebra whose underlying ring may be noncommutative. A
+left R-module N becomes an internal left module over ringMonObj in ModuleCat k, with action R
+⊗_k N → N, r⊗n ↦ r·n. Its unit and associativity laws are 1·n=n and (rs)·n=r·(s·n). -/
 @[instance_reducible]
 def leftModObj (N : ModuleCat.{u} R) :
     letI : MonObj (ringUnderlying k R) := ringMonObj k R
@@ -116,7 +131,10 @@ def leftModObj (N : ModuleCat.{u} R) :
         change (r * s) • n = r • (s • n)
         exact mul_smul r s n }
 
-/-- Right-action unit law, constructed from the original scalar restriction. -/
+/-- Let k be a commutative ring and R a k-algebra whose underlying ring may be noncommutative. Let M
+be a right R-module and μ_M : M ⊗_k R → M its action. The map M ⊗_k k → M obtained by tensoring
+the unit k → R and then applying μ_M equals the right unitor of the k-module M; on elements this
+is m·1=m. -/
 theorem rightAction_one (M : ModuleCat.{u} Rᵐᵒᵖ) :
     letI : MonObj (ringUnderlying k R) := ringMonObj k R
     (rightUnderlying k R M ◁ MonObj.one) ≫ rightAction k R M =
@@ -128,7 +146,10 @@ theorem rightAction_one (M : ModuleCat.{u} Rᵐᵒᵖ) :
     (op (algebraMap k R c) : Rᵐᵒᵖ) • m
   rfl
 
-/-- Right-action associativity, preserving noncommutative order. -/
+/-- Let k be a commutative ring and R a k-algebra whose underlying ring may be noncommutative. Let M
+be a right R-module. After identifying (M ⊗_k R) ⊗_k R with M ⊗_k (R ⊗_k R), the composite
+applying multiplication in R and then the right action equals the composite applying the right
+action twice. The element identity is m·(rs) = (m·r)·s, preserving the order r,s. -/
 theorem rightAction_assoc (M : ModuleCat.{u} Rᵐᵒᵖ) :
     letI : MonObj (ringUnderlying k R) := ringMonObj k R
     (α_ (rightUnderlying k R M) (ringUnderlying k R) (ringUnderlying k R)).hom ≫
@@ -140,7 +161,10 @@ theorem rightAction_assoc (M : ModuleCat.{u} Rᵐᵒᵖ) :
   change (op (r * s) : Rᵐᵒᵖ) • m = (op s : Rᵐᵒᵖ) • ((op r : Rᵐᵒᵖ) • m)
   rw [op_mul, mul_smul]
 
-/-- The right monadic module used by the literal coefficient Bar. -/
+/-- Let k be a commutative ring and R a k-algebra whose underlying ring may be noncommutative. For a
+right R-module M, the functor M ⊗_k − is a right module over the tensor monad T = R ⊗_k −. Its
+action M ⊗_k (R ⊗_k X) → M ⊗_k X is induced by the right action of R on M and satisfies the
+monadic unit and multiplication laws. -/
 def rightModule (M : ModuleCat.{u} Rᵐᵒᵖ) :
     letI : MonObj (ringUnderlying k R) := ringMonObj k R
     Monad.RightModule (Monad.tensorMonad (ringUnderlying k R)) (ModuleCat.{u} k) := by
@@ -148,7 +172,10 @@ def rightModule (M : ModuleCat.{u} Rᵐᵒᵖ) :
   exact Monad.rightModuleOfRightAction (rightUnderlying k R M) (ringUnderlying k R)
     (rightAction k R M) (rightAction_one k R M) (rightAction_assoc k R M)
 
-/-- The coefficient Bar, with the M action at d₀ and the N action at the last face. -/
+/-- Let k be a commutative ring and R a k-algebra whose underlying ring may be noncommutative. For a
+right R-module M and a left R-module N, literalBar is the simplicial k-module obtained from the
+right tensor-monad module of M and the left action on N. Its degree-d term is M ⊗_k T^d(N), for
+T=R ⊗_k −; the first face uses the M-action and the last face the N-action. -/
 abbrev literalBar (M : ModuleCat.{u} Rᵐᵒᵖ) (N : ModuleCat.{u} R) :
     SimplicialObject (ModuleCat.{u} k) :=
   letI : MonObj (ringUnderlying k R) := ringMonObj k R

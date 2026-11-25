@@ -12,10 +12,12 @@ module
 public import MathlibExt.CategoryTheory.Abelian.LeftDerived.ResolutionComparison
 
 /-!
-# Functor-variable naturality of exact postcomposition
+# Naturality of exact postcomposition in the functor variable
 
-The left-derived postcomposition comparison commutes with natural transformations of additive
-functors. The comparison maps are those computed from projective resolutions.
+Let `C`, `D`, `E` be abelian, with projective resolutions in `C`,
+`F,G : C → D` additive, and `U : D → E` additive and preserving
+homology. The comparison between `L_nF ⋙ U` and `L_n(F ⋙ U)`
+is natural in a transformation `F → G`.
 -/
 
 @[expose] public section
@@ -34,10 +36,15 @@ variable {C : Type u₁} [Category.{v₁} C] [Abelian C] [HasProjectiveResolutio
   {F G : C ⥤ D} [F.Additive] [G.Additive]
   (α : F ⟶ G) (U : D ⥤ E) [U.Additive] [U.PreservesHomology]
 
-/--
+/- Proof implementation note.
 The exact-forgetting derived comparison is natural in the original coefficient transformation,
 with its projective-resolution maps.
 -/
+
+/-- For abelian `C`, `D`, `E`, with projective resolutions in `C`,
+additive `F,G : C → D`, homology-preserving additive
+`U : D → E`, and `α : F → G`, the postcomposition comparisons
+satisfy `(L_nα ⋙ U) ≫ e_G = e_F ≫ L_n(α ⋙ U)`. -/
 theorem leftDerivedCompIsoOfPreservesHomology_hom_naturality_functor (n : ℕ) :
     Functor.whiskerRight (NatTrans.leftDerived α n) U ≫
         (G.leftDerivedCompIsoOfPreservesHomology U n).hom =

@@ -14,14 +14,13 @@ public import Mathlib.Algebra.Homology.Embedding.Splitting
 public import Mathlib.Algebra.Homology.HomotopyCategory.DegreewiseSplit
 
 /-!
-# Contractible quotients in degreewise split sequences
+# Homotopy equivalences from degreewise split sequences
 
-For a degreewise split sequence of nonnegative chain complexes, a
-contractible quotient gives the corresponding homotopy-equivalence
-criterion for its first map. Extension through `n ↦ -n` transports the
-splittings to integer cochains, where the comparison uses evaluation
-isomorphisms and zero objects. No abelian category or square-zero condition
-on the contracting homotopy is required.
+Let C be preadditive with a zero object and binary biproducts, and let S : X₁ → X₂ → X₃ be a
+short complex of nonnegative chain complexes split in every degree. If X₃ is contractible, its
+first map S.f : X₁ → X₂ is a homotopy equivalence. The chosen equivalence has forward map
+exactly S.f; no abelian-category assumption or square-zero condition on the contracting homotopy
+is required.
 -/
 
 @[expose] public section
@@ -41,7 +40,10 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
 
 include σ h
 
-/-- A contractible quotient makes the actual first map a homotopy equivalence. -/
+/-- Let C be preadditive with a zero object and binary biproducts. Let S : X₁ → X₂ → X₃ be a short
+complex of natural-number-indexed chain complexes, choose a splitting of S in every degree, and
+let h be a contracting homotopy of X₃, so id_X₃ is homotopic to zero. Then the first chain map
+S.f : X₁ → X₂ is a homotopy equivalence. -/
 theorem homotopyEquivalences_f_of_degreewiseSplit :
     homotopyEquivalences C (ComplexShape.down ℕ) S.f := by
   let e := ComplexShape.embeddingDownNat
@@ -53,11 +55,17 @@ theorem homotopyEquivalences_f_of_degreewiseSplit :
     (e.splittingExtend σ)).2 ⟨h'⟩
   exact (homotopyEquivalences_extendMap_iff S.f e).1 hf
 
-/-- A native homotopy-equivalence witness whose forward map is the original first map. -/
+/-- Let C be preadditive with a zero object and binary biproducts. Let S : X₁ → X₂ → X₃ be a short
+complex of natural-number-indexed chain complexes, choose a splitting of S in every degree, and
+let h be a contracting homotopy of X₃, so id_X₃ is homotopic to zero. The resulting homotopy
+equivalence X₁ ≃ₕ X₂ has forward chain map S.f. -/
 def homotopyEquivOfDegreewiseSplit : HomotopyEquiv S.X₁ S.X₂ :=
   Classical.choose (homotopyEquivalences_f_of_degreewiseSplit S σ h)
 
-/-- Extracting the witness preserves the actual original map. -/
+/-- Let C be preadditive with a zero object and binary biproducts. Let S : X₁ → X₂ → X₃ be a short
+complex of natural-number-indexed chain complexes, choose a splitting of S in every degree, and
+let h be a contracting homotopy of X₃, so id_X₃ is homotopic to zero. The forward map of
+homotopyEquivOfDegreewiseSplit S is exactly the first map S.f. -/
 @[simp]
 theorem homotopyEquivOfDegreewiseSplit_hom :
     (homotopyEquivOfDegreewiseSplit S σ h).hom = S.f :=

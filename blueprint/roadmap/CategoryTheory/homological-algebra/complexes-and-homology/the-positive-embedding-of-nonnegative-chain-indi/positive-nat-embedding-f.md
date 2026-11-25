@@ -1,3 +1,3 @@
-# Positive Nat Embedding f
+# Index formula for the positive embedding
 
-The positive embedding shifts each index by one.
+For every i∈ℕ, the positive chain-degree embedding e has index formula e(i)=i+1.

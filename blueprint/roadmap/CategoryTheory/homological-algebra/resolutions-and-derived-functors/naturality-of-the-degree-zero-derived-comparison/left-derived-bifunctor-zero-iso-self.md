@@ -1,4 +1,6 @@
-# Left Derived Bifunctor Zero Iso Self
+# Degree-zero derivation recovers a right-exact bifunctor
 
-A right-exact bifunctor is recovered in derived degree zero, naturally
-in both original variables. The parameter category need not be additive.
+Let `C₁`, `D` be abelian, with projective resolutions in `C₁`,
+and `C₂` a category. If each partial functor `F(-,Y) : C₁ → D`
+is additive and preserves finite colimits, derivation in the
+first variable gives a natural bifunctor isomorphism `L₀F ≅ F`.

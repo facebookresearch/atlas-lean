@@ -14,10 +14,12 @@ public import MathlibExt.CategoryTheory.Abelian.RightDerived.ExactPrecomposition
 /-!
 # Composition of directional right-derived source comparisons
 
-The comparison of a composite exact source change is the composite of its two directional
-comparisons, with associators included. Both image coaugmentations are constructed from the
-original augmentation. The proof uses comparison maps, not a supplied derived square or a new
-resolution.
+For abelian `C,D,E,A`, injective resolutions in `C,D,E`, additive
+homology-preserving `U : C → D`, `V : D → E`, and additive `L : E → A`,
+the comparison for `U ⋙ V` is the composite of the comparisons for `U`
+and `V`, with the functor associators. Identity source change gives the
+identity comparison. Mapped coaugmentations satisfy the corresponding
+composition law.
 -/
 
 @[expose] public section
@@ -36,7 +38,10 @@ variable {C : Type uC} [Category.{vC} C] [Abelian C]
   {E : Type uE} [Category.{vE} E] [Abelian E]
   {A : Type uA} [Category.{vA} A] [Abelian A]
 
-/-- The complex-composition map preserves the two mapped coaugmentations. -/
+/-- Let `C,D,E` be abelian and `U : C → D`, `V : D → E` additive.
+For a coaugmentation `ι : X[0] → K`, mapping by `U ⋙ V` and then
+identifying the mapped complex with `V(U(K))` gives the same
+coaugmentation as mapping first by `U` and then by `V`. -/
 theorem mapCochainCoaugmentation_comp
     (U : C ⥤ D) [U.Additive] (V : D ⥤ E) [V.Additive]
     {X : C} {K : CochainComplex C ℕ}
@@ -59,8 +64,12 @@ variable [HasInjectiveResolutions C] [HasInjectiveResolutions D]
   (V : D ⥤ E) [V.Additive] [V.PreservesHomology]
   (L : E ⥤ A) [L.Additive]
 
-/-- Two exact source changes compose on the same original derived objects.
-No preservation of injectives by either source change is required. -/
+/-- Let `C,D,E,A` be abelian, with injective resolutions in `C,D,E`,
+`U : C → D`, `V : D → E` additive and preserving homology, and
+`L : E → A` additive. After the functor associators, the comparison
+`R^n((U ⋙ V) ⋙ L) → (U ⋙ V) ⋙ R^nL` is the comparison for `U`
+followed by the comparison for `V`. Neither `U` nor `V` needs to
+preserve injective objects. -/
 theorem rightDerivedPrecompHomOfPreservesHomology_comp (n : ℕ) :
     NatTrans.rightDerived (Functor.associator U V L).hom n ≫
         rightDerivedPrecompHomOfPreservesHomology U (V ⋙ L) n ≫
@@ -145,7 +154,9 @@ section Identity
 
 variable [HasInjectiveResolutions C]
 
-/-- Identity source change gives the identity transformation, with no output exactness. -/
+/-- Let `C,A` be abelian, with injective resolutions in `C`, and
+`L : C → A` additive. The directional right-derived comparison for
+the identity functor of `C` is `𝟙 (R^nL)` in every degree `n`. -/
 theorem rightDerivedPrecompHomOfPreservesHomology_id (L : C ⥤ A) [L.Additive] (n : ℕ) :
     rightDerivedPrecompHomOfPreservesHomology (𝟭 C) L n = 𝟙 (L.rightDerived n) := by
   let γ := rightDerivedPrecompHomOfPreservesHomology (𝟭 C) L n

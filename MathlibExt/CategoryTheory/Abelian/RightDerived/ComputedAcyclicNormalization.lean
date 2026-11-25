@@ -14,7 +14,14 @@ public import MathlibExt.CategoryTheory.Abelian.RightDerived.SignedAugmentedAcyc
 public import MathlibExt.CategoryTheory.Abelian.RightDerived.AugmentedResolutionComparison
 
 /-!
-## # The SAME computed augmented-resolution map and the retained triangular normalization
+# Augmented comparisons and triangular normalization
+
+For an additive left-exact functor between abelian categories and a
+termwise acyclic coaugmentation quasi-isomorphism `X[0] → I`, the
+acyclic comparison followed by the augmented map to derived cohomology
+is `σ_n • 𝟙`, where `σ_n=(-1)^(n(n+1)/2)`. The augmented map is the
+inverse of the sign-corrected acyclic comparison and hence is an
+isomorphism.
 -/
 
 @[expose] public section
@@ -27,10 +34,12 @@ variable {C : Type u} [Category.{v} C] [Abelian C] [HasInjectiveResolutions C]
 variable {D : Type u'} [Category.{v'} D] [Abelian D]
 
 set_option backward.isDefEq.respectTransparency false in
-/--
-The chosen augmented comparison composed with the SAME retained acyclic iso has exactly the proved
-triangular scalar in every degree.
--/
+/-- Let `C,D` be abelian, with injective resolutions in `C`, and
+`F : C → D` additive and preserving finite limits. Let
+`ι : X[0] → I` be a quasi-isomorphism of nonnegative cochain complexes
+with `R^(j+1)F(I^q)=0` for every `q,j`. The acyclic comparison `R^nF(X) → Hⁿ(F(I))` followed by the
+augmented comparison back to `R^nF(X)` is `σ_n • 𝟙`, where
+`σ_n=(-1)^(n(n+1)/2)`. -/
 theorem augmentedResolutionToRightDerivedHom_retained_composition (F : C ⥤ D)
     [F.Additive] [PreservesFiniteLimits F] {X : C}
     (I : CochainComplex C ℕ) (ι : (CochainComplex.single₀ C).obj X ⟶ I) [QuasiIso ι]
@@ -58,10 +67,11 @@ theorem augmentedResolutionToRightDerivedHom_retained_composition (F : C ⥤ D)
   rw [← Category.assoc, hm, zsmul_comp, p.hom_inv_id]
 
 set_option backward.isDefEq.respectTransparency false in
-/--
-The SAME computed map from resolution homology to derivation is the proved triangular scalar times
-the inverse of the SAME retained acyclic comparison.
--/
+/-- Let `C,D` be abelian, with injective resolutions in `C`, and
+`F : C → D` additive and preserving finite limits. Let
+`ι : X[0] → I` be a quasi-isomorphism of nonnegative cochain complexes
+with `R^(j+1)F(I^q)=0` for every `q,j`. The augmented comparison `Hⁿ(F(I)) → R^nF(X)` is
+`σ_n=(-1)^(n(n+1)/2)` times the inverse acyclic-resolution comparison. -/
 theorem augmentedResolutionToRightDerivedHom_eq_signed_retained_inv (F : C ⥤ D)
     [F.Additive] [PreservesFiniteLimits F] {X : C}
     (I : CochainComplex C ℕ) (ι : (CochainComplex.single₀ C).obj X ⟶ I) [QuasiIso ι]
@@ -78,8 +88,12 @@ theorem augmentedResolutionToRightDerivedHom_eq_signed_retained_inv (F : C ⥤ D
   simpa only [Iso.inv_hom_id_assoc, comp_zsmul, Category.comp_id] using he
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The complete corrected retained iso has exactly the SAME computed original
-augmented-resolution-to-derived morphism as its inverse. -/
+/-- Let `C,D` be abelian, with injective resolutions in `C`, and
+`F : C → D` additive and preserving finite limits. Let
+`ι : X[0] → I` be a quasi-isomorphism of nonnegative cochain complexes
+with `R^(j+1)F(I^q)=0` for every `q,j`. The augmented comparison `Hⁿ(F(I)) → R^nF(X)` is the inverse
+of the normalized acyclic comparison obtained by triangular sign
+correction. -/
 theorem augmentedResolutionToRightDerivedHom_eq_normalized_inv (F : C ⥤ D)
     [F.Additive] [PreservesFiniteLimits F] {X : C}
     (I : CochainComplex C ℕ) (ι : (CochainComplex.single₀ C).obj X ⟶ I) [QuasiIso ι]
@@ -95,10 +109,11 @@ theorem augmentedResolutionToRightDerivedHom_eq_normalized_inv (F : C ⥤ D)
   rw [comp_zsmul, Category.comp_id]
 
 set_option backward.isDefEq.respectTransparency false in
-/--
-The computed augmented-resolution comparison is an isomorphism for the termwise acyclic
-resolution, with no injectivity assumption on its own terms.
--/
+/-- Let `C,D` be abelian, with injective resolutions in `C`, and
+`F : C → D` additive and preserving finite limits. Let
+`ι : X[0] → I` be a quasi-isomorphism of nonnegative cochain complexes
+with `R^(j+1)F(I^q)=0` for every `q,j`. The augmented cohomology-to-derived map
+`Hⁿ(F(I)) → R^nF(X)` is an isomorphism in every degree `n`. -/
 theorem isIso_augmentedResolutionToRightDerivedHom_of_acyclic (F : C ⥤ D)
     [F.Additive] [PreservesFiniteLimits F] {X : C}
     (I : CochainComplex C ℕ) (ι : (CochainComplex.single₀ C).obj X ⟶ I) [QuasiIso ι]

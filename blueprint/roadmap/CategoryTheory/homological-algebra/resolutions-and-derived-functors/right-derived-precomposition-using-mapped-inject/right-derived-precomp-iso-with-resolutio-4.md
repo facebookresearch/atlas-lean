@@ -1,3 +1,7 @@
-# Right Derived Precomp Iso With Resolution to Right Derived Zero
+# Resolution-based precomposition preserves the zeroth derived map
 
-The precomposition comparison intertwines the canonical zero-derived maps.
+Let `C,D,A` be abelian, with injective resolutions in `C,D`,
+`F : C → D` additive and preserving injective objects and homology,
+and `B : D → A` additive. For an injective resolution `I` of `X`, the canonical map
+`B(F(X)) → R⁰(F ⋙ B)(X)` followed by the resolution-based comparison
+equals the canonical map `B(F(X)) → R⁰B(F(X))`.

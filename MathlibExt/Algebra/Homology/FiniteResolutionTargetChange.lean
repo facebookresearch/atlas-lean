@@ -13,22 +13,13 @@ module
 public import MathlibExt.Algebra.Homology.FiniteResolution
 
 /-!
-# Changing the target of a finite resolution
+# Changing the abelian target of a finite resolution
 
-An additive functor preserving homology sends the augmentation of a finite
-resolution to a quasi-isomorphism. If the resolving functor after target
-change is isomorphic to the original resolving functor followed by the target
-functor, this gives a finite resolution in the new target category without
-changing the resolving complex or its support bound.
-
-Unlike `Functor.mapProjectiveResolution`, this construction does not require
-the target functor to preserve every projective object. Projectivity of the
-particular resolving terms can be supplied later when the resulting finite
-resolution is converted to a projective resolution.
-
-## Main declaration
-
-* `CategoryTheory.Abelian.FiniteResolution.mapTarget`
+Let P be preadditive, A and B abelian, i : P → A and j : P → B additive, and F : A → B additive
+and homology preserving. A natural isomorphism Fi ≅ j sends a finite i-resolution Q of X to a
+finite j-resolution of F(X). The resolving complex in P and its support bound remain unchanged;
+the augmentation is obtained by applying F to ε_Q and transporting its source and target through
+the comparison isomorphisms.
 -/
 
 @[expose] public section
@@ -52,9 +43,11 @@ variable {i : P ⥤ A} [i.Additive]
 variable {j : P ⥤ B} [j.Additive]
 variable {X : A}
 
-/-- Change the target category of a finite resolution along an additive
-homology-preserving functor. The resolving complex and its bound are
-unchanged. -/
+/-- Let P be preadditive, A and B abelian, i : P → A and j : P → B additive, F : A → B additive and
+homology preserving, and e : Fi ≅ j a natural isomorphism. For a finite resolution Q of X
+relative to i, mapTarget Q F e is a finite resolution of F(X) relative to j. It retains
+Q.complex and Q.bound, with augmentation obtained from F(ε_Q) using e⁻¹ on the source and
+F(X[0]) ≅ F(X)[0] on the target. -/
 noncomputable def mapTarget
     (Q : FiniteResolution i X)
     (F : A ⥤ B) [F.Additive] [F.PreservesHomology]
@@ -71,7 +64,10 @@ noncomputable def mapTarget
   bound := Q.bound
   isZero_above := Q.isZero_above
 
-/-- Target change leaves the resolving complex unchanged. -/
+/-- Let P be preadditive, A and B abelian, i : P → A and j : P → B additive, F : A → B additive and
+homology preserving, and e : Fi ≅ j a natural isomorphism. For a finite resolution Q of X
+relative to i, the complex underlying mapTarget Q F e is exactly Q.complex, still indexed by the
+natural numbers in P. -/
 @[simp]
 theorem mapTarget_complex
     (Q : FiniteResolution i X)
@@ -80,8 +76,10 @@ theorem mapTarget_complex
     (mapTarget Q F e).complex = Q.complex :=
   rfl
 
-/-- Terms of the target-changed mapped complex are obtained by applying the
-new resolving functor to the original resolving terms. -/
+/-- Let P be preadditive, A and B abelian, i : P → A and j : P → B additive, F : A → B additive and
+homology preserving, and e : Fi ≅ j a natural isomorphism. For a finite resolution Q of X
+relative to i, the degree-n term of the mapped complex of mapTarget Q F e is j(Qₙ), for every
+natural number n. -/
 @[simp]
 theorem mapTarget_mappedComplex_X
     (Q : FiniteResolution i X)
@@ -90,8 +88,10 @@ theorem mapTarget_mappedComplex_X
     (mapTarget Q F e).mappedComplex.X n = j.obj (Q.complex.X n) :=
   rfl
 
-/-- Differentials of the target-changed mapped complex are obtained by
-applying the new resolving functor. -/
+/-- Let P be preadditive, A and B abelian, i : P → A and j : P → B additive, F : A → B additive and
+homology preserving, and e : Fi ≅ j a natural isomorphism. For a finite resolution Q of X
+relative to i, the degree-n-to-m differential in the mapped complex of mapTarget Q F e is
+j(d_Q,n,m), for every pair of natural numbers n and m. -/
 @[simp]
 theorem mapTarget_mappedComplex_d
     (Q : FiniteResolution i X)
@@ -101,8 +101,11 @@ theorem mapTarget_mappedComplex_d
       j.map (Q.complex.d n m) :=
   rfl
 
-/-- The target-changed augmentation is the mapped old augmentation, with the
-canonical comparisons at its source and target. -/
+/-- Let P be preadditive, A and B abelian, i : P → A and j : P → B additive, F : A → B additive and
+homology preserving, and e : Fi ≅ j a natural isomorphism. For a finite resolution Q of X
+relative to i, the augmentation of mapTarget Q F e is j(Q) → Fi(Q) → F(X[0]) → F(X)[0]. These
+three arrows are the inverse comparison induced by e, the image F(ε_Q), and the canonical
+isomorphism for a complex concentrated in degree zero. -/
 @[simp]
 theorem mapTarget_augmentation
     (Q : FiniteResolution i X)
@@ -116,7 +119,9 @@ theorem mapTarget_augmentation
             (ComplexShape.down ℕ) 0).hom.app X :=
   rfl
 
-/-- Target change preserves the inclusive support bound definitionally. -/
+/-- Let P be preadditive, A and B abelian, i : P → A and j : P → B additive, F : A → B additive and
+homology preserving, and e : Fi ≅ j a natural isomorphism. For a finite resolution Q of X
+relative to i, the inclusive support bound of mapTarget Q F e equals Q.bound. -/
 @[simp]
 theorem mapTarget_bound
     (Q : FiniteResolution i X)
@@ -125,7 +130,10 @@ theorem mapTarget_bound
     (mapTarget Q F e).bound = Q.bound :=
   rfl
 
-/-- The unchanged resolving complex is zero above the unchanged bound. -/
+/-- Let P be preadditive, A and B abelian, i : P → A and j : P → B additive, F : A → B additive and
+homology preserving, and e : Fi ≅ j a natural isomorphism. For a finite resolution Q of X
+relative to i, if Q.bound < n for a natural number n, the degree-n resolving term of mapTarget Q
+F e is a zero object of P. -/
 theorem mapTarget_isZero_above
     (Q : FiniteResolution i X)
     (F : A ⥤ B) [F.Additive] [F.PreservesHomology]

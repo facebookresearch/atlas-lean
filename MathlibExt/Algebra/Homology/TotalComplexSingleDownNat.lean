@@ -13,12 +13,12 @@ public import Mathlib.Algebra.Homology.Additive
 public import MathlibExt.Algebra.Homology.PartialTotalBasic
 
 /-!
-# Total complexes of componentwise single complexes
+# Totals of componentwise degree-zero chain complexes
 
-Applying the degree-zero single-chain-complex functor componentwise to a
-nonnegative chain complex gives a bicomplex supported in inner degree zero.
-Its direct-sum total complex is canonically isomorphic to the original chain
-complex.
+Let C be preadditive with a zero object and finite coproducts. For a nonnegative chain complex
+L, place each term L_p in inner degree zero to form a bicomplex B. The diagonal direct-sum total
+of B is canonically isomorphic to L. In degree n the comparison selects the sole possibly
+nonzero summand B_{n,0}, and its inverse is that summand's inclusion.
 -/
 
 @[expose] public section
@@ -37,9 +37,11 @@ namespace HomologicalComplex₂
 variable {C : Type u} [Category.{v} C] [Preadditive C]
   [HasZeroObject C] [HasFiniteCoproducts C]
 
-/-- The total complex of the bicomplex obtained by applying `single₀`
-componentwise is canonically isomorphic to the original nonnegative chain
-complex. -/
+/-- Let C be preadditive with a zero object and finite coproducts. For a natural-number-indexed
+chain complex L, let B be the bicomplex obtained by putting each L_p in inner degree zero. There
+is a canonical chain-complex isomorphism Tot(B) ≅ L. Its forward map selects B_{n,0} in total
+degree n, and its inverse is the inclusion of this summand through the degree-zero
+identification. -/
 noncomputable def single₀MapTotalIso (L : ChainComplex C ℕ) :
     HomologicalComplex₂.total
       (((ChainComplex.single₀ C).mapHomologicalComplex
@@ -140,8 +142,9 @@ noncomputable def single₀MapTotalIso (L : ChainComplex C ℕ) :
           (ComplexShape.down ℕ) 0 (L.X j) (a + 1)
             (Nat.succ_ne_zero a)).eq_of_src _ _)
 
-/-- The canonical inner-degree-zero summand inclusion followed by the total
-comparison is the identity. -/
+/-- Let C be preadditive with a zero object and finite coproducts. For a nonnegative chain complex L
+and j ∈ ℕ, let B be its componentwise degree-zero bicomplex and e : Tot(B) ≅ L the canonical
+isomorphism. Then the summand inclusion ι_{j,0} followed by e.hom_j is the identity of L_j. -/
 @[reassoc]
 theorem ιTotal_comp_single₀MapTotalIso_hom
     (L : ChainComplex C ℕ) (j : ℕ) :

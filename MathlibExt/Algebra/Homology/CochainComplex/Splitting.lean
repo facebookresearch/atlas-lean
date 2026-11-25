@@ -13,12 +13,11 @@ public import MathlibExt.Algebra.Homology.HomologicalComplex.SplittingOpposite
 public import MathlibExt.Algebra.Homology.HomologicalComplex.SplittingShift
 
 /-!
-# Literal integer-cochain inverse families
+# Generalized inverses for integer cochain differentials
 
-The source family sends degree n+1 to degree n and satisfies d = d s d. Its bundled splitting is
-obtained from the existing integer-chain constructor on the opposite complex, followed by the
-existing unop operation. The raw construction uses only zero morphisms. Signed transport
-separately uses the preadditive integer shift.
+A splitting of an integer cochain complex is equivalently a family
+s_n : K^{n+1} → K^n with d_n s_n d_n = d_n at every integer degree.
+These adjacent inverse maps determine the full reverse-shape splitting.
 -/
 
 @[expose] public section
@@ -31,7 +30,16 @@ universe u v
 
 variable {C : Type u} [Category.{v} C] [HasZeroMorphisms C]
 
-/-- A literal degree-minus-one family supplies the existing generic splitting through op/unop. -/
+/-
+The construction applies the chain splitting to the opposite complex and then takes unop.
+-/
+
+/--
+Let K be an integer-indexed cochain complex in a category C with zero morphisms, with dₙ : Kⁿ
+→ Kⁿ⁺¹. A family sₙ : Kⁿ⁺¹ → Kⁿ with dₙ = dₙ ≫ sₙ ≫ dₙ for every n ∈ ℤ defines a splitting of
+K. Its adjacent component from Kⁿ⁺¹ to Kⁿ is sₙ, and components outside the reversed cochain
+shape are zero.
+-/
 def splittingOfDegreeMinusOneHom (K : CochainComplex C ℤ)
     (s : ∀ n : ℤ, K.X (n + 1) ⟶ K.X n)
     (hs : ∀ n : ℤ, K.d n (n + 1) = K.d n (n + 1) ≫ s n ≫ K.d n (n + 1)) :
@@ -41,7 +49,11 @@ def splittingOfDegreeMinusOneHom (K : CochainComplex C ℤ)
     simpa only [HomologicalComplex.op_d, unop_comp, Quiver.Hom.unop_op,
       Category.assoc] using hs n)).unop
 
-/-- The adjacent bundled cochain inverse is exactly the original source family. -/
+/--
+Let K be an integer-indexed cochain complex in a category C with zero morphisms, with dₙ : Kⁿ
+→ Kⁿ⁺¹. For a family sₙ : Kⁿ⁺¹ → Kⁿ satisfying dₙ ≫ sₙ ≫ dₙ = dₙ at every degree, the
+constructed splitting has component (splittingOfDegreeMinusOneHom K s hs).hom (n+1) n = sₙ.
+-/
 lemma splittingOfDegreeMinusOneHom_hom_succ (K : CochainComplex C ℤ)
     (s : ∀ n : ℤ, K.X (n + 1) ⟶ K.X n)
     (hs : ∀ n : ℤ, K.d n (n + 1) = K.d n (n + 1) ≫ s n ≫ K.d n (n + 1))
@@ -56,7 +68,11 @@ lemma splittingOfDegreeMinusOneHom_hom_succ (K : CochainComplex C ℤ)
   change ((ChainComplex.splittingOfDegreeOneHom K' (fun n => (s n).op) hs').hom n (n + 1)).unop = s n
   exact congrArg Quiver.Hom.unop (ChainComplex.splittingOfDegreeOneHom_hom_succ K' (fun n => (s n).op) hs' n)
 
-/-- Integer cochain splitness is the literal degree-minus-one generalized-inverse condition. -/
+/--
+Let K be an integer-indexed cochain complex in a category C with zero morphisms, with dₙ : Kⁿ
+→ Kⁿ⁺¹. The complex is split if and only if there exists a family sₙ : Kⁿ⁺¹ → Kⁿ such that dₙ
+= dₙ ≫ sₙ ≫ dₙ for all n ∈ ℤ.
+-/
 lemma isSplit_iff_exists_degreeMinusOneHom (K : CochainComplex C ℤ) :
     IsSplit K ↔
       ∃ s : ∀ n : ℤ, K.X (n + 1) ⟶ K.X n,
@@ -67,7 +83,11 @@ lemma isSplit_iff_exists_degreeMinusOneHom (K : CochainComplex C ℤ) :
   · rintro ⟨s, hs⟩
     exact ⟨splittingOfDegreeMinusOneHom K s hs⟩
 
-/-- Extracting adjacent cochain components and rebuilding restores the full splitting. -/
+/--
+Let K be an integer-indexed cochain complex in a category C with zero morphisms, with dₙ : Kⁿ
+→ Kⁿ⁺¹. If s is a splitting of K, its maps s.hom (n+1) n determine it completely. Constructing
+the splitting from those adjacent maps and their generalized-inverse identities returns s.
+-/
 lemma splittingOfDegreeMinusOneHom_ofSplitting (K : CochainComplex C ℤ) (s : Splitting K) :
     splittingOfDegreeMinusOneHom K (fun n => s.hom (n + 1) n)
       (fun n => (s.d_h_d n (n + 1)).symm) = s := by

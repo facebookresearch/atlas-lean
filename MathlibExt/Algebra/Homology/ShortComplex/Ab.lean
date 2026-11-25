@@ -14,7 +14,14 @@ public import Mathlib.Algebra.Homology.ShortComplex.Ab
 public import Mathlib.Algebra.Homology.ShortComplex.PreservesHomology
 public import MathlibExt.Algebra.Homology.Functor
 
-/-! # Transport of actual cycle values and classes in abelian groups -/
+/-!
+# Cycle values and homology classes in abelian-group short complexes
+
+A morphism of short complexes sends cycles according to its middle component. After a canonical
+common-universe lift, an equation on this middle component therefore specifies both the
+transported cycle and its homology class. An isomorphism of short complexes transports a kernel
+cycle backwards by its inverse middle component and preserves the corresponding homology class.
+-/
 
 @[expose] public section
 noncomputable section
@@ -25,8 +32,11 @@ universe s t
 
 namespace CategoryTheory.ShortComplex
 
-/-- A middle-coordinate equation determines the transported categorical cycle
-under the canonical universe-lift comparison. -/
+/-- Let S be a short complex of abelian groups in universe s, and T a short complex in the common
+universe max(s,t). Let h_T specify its cycle object K with inclusion i : K → T₂, and let φ : T →
+lift(S) be a morphism of short complexes. For c ∈ K and z ∈ ker(S₂ → S₃), assume
+φ₂(i(c))=lift(z). Then the cycle map of φ sends the cycle represented by c to lift(z), under the
+canonical identification of cycles with the lifted cycle group of S. -/
 theorem ulift_cyclesMap_eq_of_middle_eq
     (S : ShortComplex AddCommGrpCat.{s})
     (T : ShortComplex AddCommGrpCat.{max t s}) (hT : T.LeftHomologyData)
@@ -52,8 +62,9 @@ end CategoryTheory.ShortComplex
 
 namespace CategoryTheory.ShortComplex
 
-/-- Transport a kernel cycle backwards along a short-complex isomorphism,
-preserving its underlying value and its homology class. -/
+/-- Let S and T be short complexes of abelian groups. For an isomorphism e : S ≅ T and z ∈ ker(T₂ →
+T₃), there is z₀ ∈ ker(S₂ → S₃) with underlying value e₂⁻¹(z). Its class satisfies
+[z₀]=H(e)⁻¹([z]), under the canonical kernel-to-cycle identifications. -/
 theorem ab_cycle_transport_inv
     {S T : ShortComplex AddCommGrpCat.{s}} (e : S ≅ T) (z : T.g.hom.ker) :
     ∃ z₀ : S.g.hom.ker,
@@ -80,8 +91,11 @@ end CategoryTheory.ShortComplex
 
 namespace CategoryTheory.ShortComplex
 
-/-- A middle-coordinate equation determines the transported native homology class,
-using the same cycle and quotient as the original short complexes. -/
+/-- Let S be a short complex of abelian groups in universe s, and T a short complex in the common
+universe max(s,t). Let h_T specify its cycle object K with inclusion i : K → T₂, and let φ : T →
+lift(S) be a morphism of short complexes. If c ∈ K and z ∈ ker(S₂ → S₃) satisfy
+φ₂(i(c))=lift(z), then H(φ) sends the class represented by c to the lifted class [z] in H(S),
+using the canonical lift–homology comparison. -/
 theorem ulift_homologyMap_eq_of_middle_eq
     (S : ShortComplex AddCommGrpCat.{s})
     (T : ShortComplex AddCommGrpCat.{max t s}) (hT : T.LeftHomologyData)

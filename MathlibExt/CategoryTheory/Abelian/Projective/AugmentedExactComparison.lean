@@ -15,11 +15,12 @@ public import Mathlib.Algebra.Homology.Opposite
 public import Mathlib.CategoryTheory.EpiMono
 
 /-!
-# Projective sources mapping to exact augmented targets
+# Projective chain sources and exact augmented targets
 
-The target need not have projective terms. Existence and homotopy uniqueness are obtained from the
-existing augmented exact comparison into injectives, using complex opposites. The original
-augmentation and every original degree are retained. No second comparison induction is introduced.
+In an abelian category `C`, a chain complex with projective terms maps
+to any augmented complex whose augmentation is a quasi-isomorphism.
+Such maps extending the same resolved-object map are homotopic. The
+target terms need not be projective.
 -/
 
 @[expose] public section
@@ -35,7 +36,10 @@ namespace ChainComplex
 variable {C : Type u} [Category.{v} C] [Abelian C]
   {X : C} {K : ChainComplex C ℕ}
 
-/-- The opposite degree-zero augmentation, built by the single-object lift. -/
+/-- In an abelian category `C`, an augmentation `ε : K → X[0]`
+of a natural-index chain complex gives the opposite coaugmentation
+`op X[0] → K.op` in `Cᵒᵖ`, with the same degree-zero map
+after taking its opposite. -/
 def opCoaugmentation (ε : K ⟶ (single₀ C).obj X) :
     (CochainComplex.single₀ Cᵒᵖ).obj (Opposite.op X) ⟶ K.op :=
   (CochainComplex.fromSingle₀Equiv K.op (Opposite.op X)).symm
@@ -46,18 +50,24 @@ def opCoaugmentation (ε : K ⟶ (single₀ C).obj X) :
         rw [← ε.comm 1 0, HomologicalComplex.single_obj_d, comp_zero]
       rw [hε, op_zero]⟩
 
-/-- Opposite augmentation keeps exactly the original degree-zero map. -/
+/-- For a chain augmentation `ε : K → X[0]` in an abelian category
+`C`, its opposite coaugmentation into `K.op` has degree-zero
+component `(ε₀).op`. -/
 theorem opCoaugmentation_f_zero (ε : K ⟶ (single₀ C).obj X) :
     (opCoaugmentation ε).f 0 = (ε.f 0).op :=
   CochainComplex.fromSingle₀Equiv_symm_apply_f_zero _ _
 
-/-- Its other components vanish because their original source is the single complex. -/
+/-- For a chain augmentation `ε : K → X[0]` in an abelian category
+`C`, the opposite coaugmentation has zero component in every
+positive degree `n+1`, since the single-object source vanishes there. -/
 theorem opCoaugmentation_f_succ (ε : K ⟶ (single₀ C).obj X) (n : ℕ) :
     (opCoaugmentation ε).f (n + 1) = 0 :=
   (HomologicalComplex.isZero_single_obj_X (ComplexShape.up ℕ) 0
     (Opposite.op X) (n + 1) (by omega)).eq_of_src _ _
 
-/-- An augmented quasi-isomorphism gives the exact positive rows. -/
+/-- In an abelian category `C`, if `ε : K → X[0]` is a
+quasi-isomorphism of natural-index chain complexes, each positive
+row `K^(n+2) → K^(n+1) → K^n` is exact. -/
 theorem exact_succ_of_augmentedQuasiIso
     (ε : K ⟶ (single₀ C).obj X) [QuasiIso ε] (n : ℕ) :
     (ShortComplex.mk (K.d (n + 2) (n + 1)) (K.d (n + 1) n)
@@ -67,7 +77,9 @@ theorem exact_succ_of_augmentedQuasiIso
   exact (HomologicalComplex.exactAt_iff' K (n + 2) (n + 1) n
     (by simp) (by simp)).mp hK
 
-/-- Exactness of the opposite augmentation is dual to its original augmentation row. -/
+/-- In an abelian category `C`, a quasi-isomorphism `ε : K → X[0]`
+gives an exact opposite augmentation row
+`op X → (K.op)⁰ → (K.op)¹` in `Cᵒᵖ`. -/
 theorem opCoaugmentation_exact_zero
     (ε : K ⟶ (single₀ C).obj X) [QuasiIso ε] :
     (ShortComplex.mk ((opCoaugmentation ε).f 0) (K.op.d 0 1)
@@ -91,7 +103,9 @@ theorem opCoaugmentation_exact_zero
       exact (Category.id_comp _).trans (Category.comp_id _).symm)
   exact (ShortComplex.exact_iff_of_iso e).mpr (exact_augmentation ε).op
 
-/-- Positive exactness passes to the original opposite complex in the same degrees. -/
+/-- In an abelian category `C`, a quasi-isomorphism `ε : K → X[0]`
+gives exact cochain rows `(K.op)^n → (K.op)^(n+1) →
+(K.op)^(n+2)` in every nonnegative degree. -/
 theorem opCoaugmentation_exact_succ
     (ε : K ⟶ (single₀ C).obj X) [QuasiIso ε] (n : ℕ) :
     (ShortComplex.mk (K.op.d n (n + 1)) (K.op.d (n + 1) (n + 2))
@@ -105,10 +119,10 @@ namespace CategoryTheory
 variable {C : Type u} [Category.{v} C] [Abelian C]
   {X Y : C} {P Q : ChainComplex C ℕ}
 
-/--
-A projective source complex maps to an exact augmented target, even if its target terms are
-nonprojective. This is the opposite of the existing injective comparison.
--/
+/-- In an abelian category `C`, let `P → X[0]` have projective
+terms and let `ρ : Q → Y[0]` be a quasi-isomorphism. Every
+`f : X → Y` extends to a chain map `a : P → Q` with
+`a ≫ ρ = ε ≫ single₀(f)`. -/
 theorem exists_projectiveAugmentedExactComparison
     (ε : P ⟶ (ChainComplex.single₀ C).obj X)
     (ρ : Q ⟶ (ChainComplex.single₀ C).obj Y) [QuasiIso ρ]
@@ -171,10 +185,9 @@ theorem exists_projectiveAugmentedExactComparison
     exact (HomologicalComplex.isZero_single_obj_X (ComplexShape.down ℕ) 0 Y
       (n + 1) (by omega)).eq_of_tgt _ _
 
-/--
-Agreement after the exact target augmentation earns a homotopy. Only the source terms are
-projective.
--/
+/-- In an abelian category `C`, let `P` have projective terms and
+`ρ : Q → Y[0]` be a quasi-isomorphism. Maps `a,b : P → Q`
+with `a ≫ ρ = b ≫ ρ` are chain-homotopic. -/
 def projectiveAugmentedExactComparisonHomotopy
     (ρ : Q ⟶ (ChainComplex.single₀ C).obj Y) [QuasiIso ρ]
     (hP : ∀ n : ℕ, Projective (P.X n)) (a b : P ⟶ Q)
@@ -218,7 +231,11 @@ def projectiveAugmentedExactComparisonHomotopy
     (ChainComplex.opCoaugmentation_exact_succ ρ) hI A B hAB
   exact h.unop
 
-/-- Any additive functor sends these comparison choices to the same homology map. -/
+/-- For abelian `C`, `D` and additive `F : C → D`, let `P`
+have projective terms and let `ρ : Q → Y[0]` be a
+quasi-isomorphism. If `a,b : P → Q` agree after `ρ`, then
+`F(a)` and `F(b)` induce equal maps on homology in every
+natural-number degree. -/
 theorem projectiveAugmentedExactComparison_homologyMap_eq
     {D : Type u'} [Category.{v'} D] [Abelian D] (F : C ⥤ D) [F.Additive]
     (ρ : Q ⟶ (ChainComplex.single₀ C).obj Y) [QuasiIso ρ]

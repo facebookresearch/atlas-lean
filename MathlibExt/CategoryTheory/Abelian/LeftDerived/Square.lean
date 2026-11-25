@@ -16,12 +16,16 @@ public import MathlibExt.CategoryTheory.Abelian.LeftDerived.ZeroNaturality
 public import MathlibExt.Algebra.Homology.ShortComplex.PreservesHomology
 
 /-!
-# left-derived maps from exact restriction squares
+# Left-derived maps of homology-preserving comparison squares
 
-An underived square `U ⋙ F ⟶ G ⋙ V`, with additive homology-preserving source and output
-restrictions U and V, induces the canonical derived square. U need not preserve projectives. Every
-component is computed by a projective source resolution mapping into the exact image of a target
-resolution. The original derivation and exact-postcomposition comparisons are used.
+Let `C,D,E,E′` be abelian, with projective resolutions in `C,D`.
+For additive homology-preserving `U : D → C`, `V : E′ → E`, additive
+`F : C → E`, `G : D → E′`, and a transformation
+`α : U ⋙ F → G ⋙ V`, there is a canonical derived square
+`U ⋙ L_nF → L_nG ⋙ V`. It is computed from a projective resolution
+in `D` and a comparison into its exact image in `C`; `U` need not
+preserve projectives. Its degree-zero augmentation and coefficient
+naturality squares retain the underlying maps.
 -/
 
 @[expose] public section
@@ -38,10 +42,10 @@ namespace HomologicalComplex
 variable {C : Type uC} [Category.{vC} C] [Abelian C]
   {ι : Type uD} {c : ComplexShape ι}
 
-/--
-The canonical homology comparison for the identity functor is the identity. This follows from the
-existing composite comparison: an invertible idempotent is identity.
--/
+/-- In an abelian category `C`, for any complex shape `c`, complex
+`K : HomologicalComplex C c`, and index `i`, the homology-preservation
+comparison for the identity functor has identity forward component
+on `H_i(K)`. -/
 theorem mapHomologyFunctorIso_id_hom (K : HomologicalComplex C c) (i : ι) :
     letI : (𝟭 C).PreservesHomology := Functor.preservesHomologyOfExact (𝟭 C)
     (mapHomologyFunctorIso (c := c) i (𝟭 C)).hom.app K = 𝟙 _ := by
@@ -64,7 +68,11 @@ variable {C : Type uC} [Category.{vC} C] [Abelian C]
   (F : C ⥤ E) [F.Additive] (G : D ⥤ E') [G.Additive]
   (α : U ⋙ F ⟶ G ⋙ V)
 
-/-- The square on complexes includes the two composition dictionaries. -/
+/-- Let `C,D,E,E′` be abelian, `U : D → C`, `V : E′ → E`,
+`F : C → E`, `G : D → E′` additive, and `α : U ⋙ F → G ⋙ V`.
+Applying the natural transformation degreewise gives a comparison
+`F(U(Q)) → V(G(Q))` for every nonnegative chain complex `Q` in `D`,
+using the natural composition identifications. -/
 def mapSquareHomologicalComplex :
     U.mapHomologicalComplex (ComplexShape.down ℕ) ⋙
         F.mapHomologicalComplex (ComplexShape.down ℕ) ⟶
@@ -76,7 +84,10 @@ def mapSquareHomologicalComplex :
     (Functor.mapHomologicalComplexCompIso (F := G) (G := V)
       (Iso.refl (G ⋙ V)) (ComplexShape.down ℕ)).inv
 
-/-- Every degree carries precisely the original square component. -/
+/-- Let `C,D,E,E′` be abelian, `U : D → C`, `V : E′ → E`,
+`F : C → E`, `G : D → E′` additive, and `α : U ⋙ F → G ⋙ V`.
+For a chain complex `Q` in `D`, the degree-`i` component of its
+induced complex comparison is `α_(Q_i)`. -/
 theorem mapSquareHomologicalComplex_f (Q : ChainComplex D ℕ) (i : ℕ) :
     ((mapSquareHomologicalComplex U V F G α).app Q).f i = α.app (Q.X i) := by
   change (𝟙 _) ≫ α.app (Q.X i) ≫ (𝟙 _) = α.app (Q.X i)
@@ -87,16 +98,21 @@ section Derived
 variable [HasProjectiveResolutions C] [HasProjectiveResolutions D]
   [U.PreservesHomology] [V.PreservesHomology]
 
-/--
-The canonical derived square uses directional exact source precomposition, ordinary derivation of
-α, and inverse exact output postcomposition.
--/
+/-- Let `C,D,E,E′` be abelian, with projective resolutions in `C,D`,
+`U : D → C`, `V : E′ → E` additive and preserving homology,
+`F : C → E`, `G : D → E′` additive, and `α : U ⋙ F → G ⋙ V`. Directional source comparison, derivation of `α`, and
+inverse target postcomposition give the natural map
+`U ⋙ L_nF → L_nG ⋙ V`. -/
 def leftDerivedSquareHom (n : ℕ) :
     U ⋙ F.leftDerived n ⟶ G.leftDerived n ⋙ V :=
   leftDerivedPrecompHomOfPreservesHomology U F n ≫ NatTrans.leftDerived α n ≫
     (G.leftDerivedCompIsoOfPreservesHomology V n).inv
 
-/-- Compute a square component using any target-ring projective resolution. -/
+/-- Let `C,D,E,E′` be abelian, with projective resolutions in `C,D`,
+`U : D → C`, `V : E′ → E` additive and preserving homology,
+`F : C → E`, `G : D → E′` additive, and `α : U ⋙ F → G ⋙ V`. A supplied projective resolution `Q` of `X : D` computes
+its component `L_nF(U(X)) → V(L_nG(X))` through a projective
+resolution of `U(X)` mapping into `U(Q)`. -/
 def leftDerivedSquareHomWithResolution (n : ℕ) {X : D} (Q : ProjectiveResolution X) :
     (F.leftDerived n).obj (U.obj X) ⟶ V.obj ((G.leftDerived n).obj X) := by
   let ρ := mapChainAugmentation U Q.π
@@ -110,7 +126,10 @@ def leftDerivedSquareHomWithResolution (n : ℕ) {X : D} (Q : ProjectiveResoluti
     (HomologicalComplex.mapHomologyFunctorIso (c := ComplexShape.down ℕ) n V).hom.app K ≫
     V.map (Q.isoLeftDerivedObj G n).inv
 
-/-- The resolution maps and homology comparisons earn input naturality. -/
+/-- Let `C,D,E,E′` be abelian, with projective resolutions in `C,D`,
+`U : D → C`, `V : E′ → E` additive and preserving homology,
+`F : C → E`, `G : D → E′` additive, and `α : U ⋙ F → G ⋙ V`. For `f : X → Y` and projective resolutions of `X,Y`, the
+computed components commute with `L_nF(U(f))` and `V(L_nG(f))`. -/
 theorem leftDerivedSquareHomWithResolution_naturality (n : ℕ)
     {X Y : D} (f : X ⟶ Y) (P : ProjectiveResolution X) (Q : ProjectiveResolution Y) :
     (F.leftDerived n).map (U.map f) ≫ leftDerivedSquareHomWithResolution U V F G α n Q =
@@ -182,7 +201,10 @@ theorem leftDerivedSquareHomWithResolution_naturality (n : ℕ)
           V.map (P.isoLeftDerivedObj G n).inv) ≫ V.map ((G.leftDerived n).map f)
   exact (s₁.horiz_comp (s₂.horiz_comp (s₃.horiz_comp s₄))).w.symm
 
-/-- The target-ring projective resolution choice leaves the square unchanged. -/
+/-- Let `C,D,E,E′` be abelian, with projective resolutions in `C,D`,
+`U : D → C`, `V : E′ → E` additive and preserving homology,
+`F : C → E`, `G : D → E′` additive, and `α : U ⋙ F → G ⋙ V`. Any two projective resolutions of `X : D` compute the
+same component `L_nF(U(X)) → V(L_nG(X))`. -/
 theorem leftDerivedSquareHomWithResolution_independent (n : ℕ) {X : D}
     (P Q : ProjectiveResolution X) :
     leftDerivedSquareHomWithResolution U V F G α n P =
@@ -200,7 +222,10 @@ private theorem exactPostcomp_inv_canonical (n : ℕ) (X : D) :
     Iso.app, Iso.trans_inv, Iso.symm_inv, Functor.mapIso_inv]
   simp only [Category.assoc]
 
-/-- The factorization computes the same resolution square. -/
+/-- Let `C,D,E,E′` be abelian, with projective resolutions in `C,D`,
+`U : D → C`, `V : E′ → E` additive and preserving homology,
+`F : C → E`, `G : D → E′` additive, and `α : U ⋙ F → G ⋙ V`. At `X : D`, the canonical square component is the component
+computed using the chosen projective resolution of `X`. -/
 theorem leftDerivedSquareHom_app_canonical (n : ℕ) (X : D) :
     (leftDerivedSquareHom U V F G α n).app X =
       leftDerivedSquareHomWithResolution U V F G α n (projectiveResolution X) := by
@@ -226,17 +251,23 @@ theorem leftDerivedSquareHom_app_canonical (n : ℕ) (X : D) :
   simp only [NatTrans.comp_app, Functor.map_comp, hχ,
     Category.assoc, Iso.inv_hom_id_assoc, Category.comp_id]
 
-/-- Every target-ring resolution computes the canonical derived square. -/
+/-- Let `C,D,E,E′` be abelian, with projective resolutions in `C,D`,
+`U : D → C`, `V : E′ → E` additive and preserving homology,
+`F : C → E`, `G : D → E′` additive, and `α : U ⋙ F → G ⋙ V`. At `X : D`, every supplied projective resolution `Q` of `X`
+computes the same canonical square component. -/
 theorem leftDerivedSquareHom_app (n : ℕ) {X : D} (Q : ProjectiveResolution X) :
     (leftDerivedSquareHom U V F G α n).app X =
       leftDerivedSquareHomWithResolution U V F G α n Q :=
   (leftDerivedSquareHom_app_canonical U V F G α n X).trans
     (leftDerivedSquareHomWithResolution_independent U V F G α n (projectiveResolution X) Q)
 
-/--
-An projective source resolution and any lift into the exact restricted target resolution give the
-same canonical square component.
--/
+/-- Let `C,D,E,E′` be abelian, with projective resolutions in `C,D`,
+`U : D → C`, `V : E′ → E` additive and preserving homology,
+`F : C → E`, `G : D → E′` additive, and `α : U ⋙ F → G ⋙ V`. For a resolution `Q` of `X : D`, a resolution `P` of `U(X)`,
+and any augmentation-preserving map `P → U(Q)`, the square component
+is the comparison to `H_n(F(P))`, its mapped complex-square map,
+homology preservation by `V`, and the inverse resolution comparison
+for `G(Q)`, in that order. -/
 theorem leftDerivedSquareHom_eq_with_lift (n : ℕ) {X : D}
     (Q : ProjectiveResolution X) (P : ProjectiveResolution (U.obj X))
     (a : P.complex ⟶ (U.mapHomologicalComplex (ComplexShape.down ℕ)).obj Q.complex)
@@ -272,10 +303,13 @@ theorem leftDerivedSquareHom_eq_with_lift (n : ℕ) {X : D}
       V.map (Q.isoLeftDerivedObj G n).inv
   simp only [Functor.map_comp, Category.assoc]
 
-/--
-The original source object may differ from the restricted target. Its input map and any comparison
-into the exact restricted target resolution compute the same map.
--/
+/-- Let `C,D,E,E′` be abelian, with projective resolutions in `C,D`,
+`U : D → C`, `V : E′ → E` additive and preserving homology,
+`F : C → E`, `G : D → E′` additive, and `α : U ⋙ F → G ⋙ V`. For `f : X → U(Y)`, resolutions `P` of `X : C`, `Q` of
+`Y : D`, and a map `P → U(Q)` over `f`, the map `L_nF(f)` followed
+by the square component at `Y` is computed by that lift, the mapped
+coefficient square, target homology preservation, and resolution
+comparisons. -/
 theorem leftDerivedSquareHom_eq_with_source_lift (n : ℕ) {X : C} {Y : D}
     (f : X ⟶ U.obj Y) (P : ProjectiveResolution X) (Q : ProjectiveResolution Y)
     (a : P.complex ⟶ (U.mapHomologicalComplex (ComplexShape.down ℕ)).obj Q.complex)
@@ -313,7 +347,10 @@ theorem leftDerivedSquareHom_eq_with_source_lift (n : ℕ) {X : C} {Y : D}
       V.map (Q.isoLeftDerivedObj G n).inv
   simp only [Functor.map_comp, Category.assoc]
 
-/-- The derived square carries the original augmentation square. -/
+/-- Let `C,D,E,E′` be abelian, with projective resolutions in `C,D`,
+`U : D → C`, `V : E′ → E` additive and preserving homology,
+`F : C → E`, `G : D → E′` additive, and `α : U ⋙ F → G ⋙ V`. The degree-zero square followed by `L₀G ⋙ V → G ⋙ V`
+equals `U ⋙ L₀F → U ⋙ F` followed by `α`. -/
 theorem leftDerivedSquareHom_zero_augmentation :
     leftDerivedSquareHom U V F G α 0 ≫ whiskerRight G.fromLeftDerivedZero V =
       whiskerLeft U F.fromLeftDerivedZero ≫ α := by
@@ -323,7 +360,10 @@ theorem leftDerivedSquareHom_zero_augmentation :
     NatTrans.fromLeftDerivedZero_naturality_functor α,
     ← Category.assoc, leftDerivedPrecompHomOfPreservesHomology_zero_augmentation U F]
 
-/-- Projective preservation recovers the existing inverse source comparison. -/
+/-- Let `C,D,E,E′` be abelian, with projective resolutions in `C,D`,
+`U : D → C`, `V : E′ → E` additive and preserving homology,
+`F : C → E`, `G : D → E′` additive, and `α : U ⋙ F → G ⋙ V`. If `U` preserves projectives, the square is inverse source
+precomposition followed by `L_nα` and inverse target postcomposition. -/
 theorem leftDerivedSquareHom_of_preservesProjectives [U.PreservesProjectiveObjects] (n : ℕ) :
     leftDerivedSquareHom U V F G α n =
       (leftDerivedPrecompIso U F n).inv ≫ NatTrans.leftDerived α n ≫
@@ -331,7 +371,11 @@ theorem leftDerivedSquareHom_of_preservesProjectives [U.PreservesProjectiveObjec
   unfold leftDerivedSquareHom
   rw [leftDerivedPrecompHomOfPreservesHomology_eq_inv U F n]
 
-/-- Precomposition of an underived coefficient map has the canonical derived square. -/
+/-- Let `C,D,E,E′` be abelian, with projective resolutions in `C,D`,
+`U : D → C`, `V : E′ → E` additive and preserving homology,
+`F : C → E`, `G : D → E′` additive, and `α : U ⋙ F → G ⋙ V`. For additive `F′ : C → E` and `δ : F′ → F`, precomposing
+the derived square with `U ⋙ L_nδ` gives the square associated to
+`(U ⋙ δ) ≫ α`. -/
 theorem leftDerivedSquareHom_naturality_source_functor
     {F' : C ⥤ E} [F'.Additive] (δ : F' ⟶ F) (n : ℕ) :
     whiskerLeft U (NatTrans.leftDerived δ n) ≫ leftDerivedSquareHom U V F G α n =
@@ -343,7 +387,11 @@ theorem leftDerivedSquareHom_naturality_source_functor
   rw [← Category.assoc (NatTrans.leftDerived (whiskerLeft U δ) n),
     ← NatTrans.leftDerived_comp]
 
-/-- Postcomposition of an target coefficient map retains the same comparison. -/
+/-- Let `C,D,E,E′` be abelian, with projective resolutions in `C,D`,
+`U : D → C`, `V : E′ → E` additive and preserving homology,
+`F : C → E`, `G : D → E′` additive, and `α : U ⋙ F → G ⋙ V`. For additive `G′ : D → E′` and `γ : G → G′`, following
+the derived square by `L_nγ ⋙ V` gives the square associated to
+`α ≫ (γ ⋙ V)`. -/
 theorem leftDerivedSquareHom_naturality_target_functor
     {G' : D ⥤ E'} [G'.Additive] (γ : G ⟶ G') (n : ℕ) :
     leftDerivedSquareHom U V F G α n ≫ whiskerRight (NatTrans.leftDerived γ n) V =
@@ -370,10 +418,12 @@ variable {A : Type uC} [Category.{vC} A] [Abelian A]
   {B : Type uD} [Category.{vD} B] [Abelian B]
   {C : Type uE} [Category.{vE} C] [Abelian C]
 
-/--
-Mapped homology comparisons compose across two exact output functors. The middle resolution
-comparison cancels, and the output is the composite comparison.
--/
+/-- Let `A,B,C` be abelian, `V : B → A`, `V′ : C → B`,
+`W : C → A` additive and preserving homology, and `e : V′ ⋙ V ≅ W`.
+For chain maps `d : P → V(Q)`, `d′ : Q → V′(T)` and presentations
+`X ≅ H_n(P)`, `Y ≅ H_n(Q)`, `Z ≅ H_n(T)`, composing their presented
+homology comparisons and `e_Z` equals the presented comparison of
+`P → V(Q) → V(V′(T)) → W(T)`. -/
 theorem comparisonHom_comp
     (V : B ⥤ A) [V.Additive] [V.PreservesHomology]
     (V' : C ⥤ B) [V'.Additive] [V'.PreservesHomology]

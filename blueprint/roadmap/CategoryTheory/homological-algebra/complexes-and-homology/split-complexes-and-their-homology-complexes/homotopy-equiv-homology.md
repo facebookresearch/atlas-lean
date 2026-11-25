@@ -1,3 +1,8 @@
-# Homotopy Equiv Homology
+# A split complex is homotopy equivalent to its homology
 
-These earned complex maps and homotopies form a native homotopy equivalence.
+Let K be a complex of shape c in a preadditive category C, let s be a splitting of K, and
+assume K has homology at every degree. Let H(K) be the complex of its homology objects with
+zero differentials. Write Π : K → H(K) for the projection with components rᵢ ≫ πᵢ, where rᵢ :
+Kᵢ → Zᵢ is the normalized cycles retraction, and ℓ : H(K) → K for the normalized homology
+inclusion. These morphisms give a homotopy equivalence K ≃ H(K). The composite ℓ ≫ Π is
+exactly the identity of H(K), and Π ≫ ℓ is homotopic to 1_K through the normalized splitting.

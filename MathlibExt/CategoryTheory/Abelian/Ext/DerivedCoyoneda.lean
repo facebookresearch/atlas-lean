@@ -23,14 +23,16 @@ public import Mathlib.CategoryTheory.Preadditive.Yoneda.Basic
 public import MathlibExt.CategoryTheory.Abelian.Injective.ResolutionComparison
 
 /-!
-# Right-derived Coyoneda functors and Ext
+# Right-derived Coyoneda and resolution Ext classes
 
-In an abelian category with injective resolutions, the right-derived functors of
-`preadditiveCoyoneda.obj (Opposite.op X)` identify with the groups `Abelian.Ext X Y n`.
-The comparison uses an injective resolution of `Y` and is natural in `Y` under postcomposition
-with `Ext.mk₀`. The Ext universe is the morphism universe of the category, matching the
-additive-group target of Coyoneda. The resulting natural isomorphism has target
-`Abelian.extFunctorObj`.
+Let `C` be abelian with injective resolutions and Ext in its hom-set
+universe `v`. For `X,Y : C`, applying `Hom_C(X,-)` to an injective
+resolution of `Y` gives the cocycles `f : X → I^n` with
+`f ≫ d_I=0`. Their quotient by incoming boundaries is `Ext^n(X,Y)`.
+This gives an additive equivalence and a natural functor isomorphism
+`R^nHom_C(X,-) ≅ Ext^n(X,-)`, with coefficient maps given by
+postcomposition with degree-zero Ext classes. The object universe of
+`C` is independent of `v`.
 -/
 
 /-
@@ -49,19 +51,20 @@ namespace CategoryTheory.DerivedCoyoneda
 
 variable (X : C) {Y : C} (R : InjectiveResolution Y) (n : ℕ)
 
-/-- The complex computing the right-derived functors: `preadditiveCoyoneda`
-applied to an injective resolution. Its degree-`n` term is the group of
-morphisms `X ⟶ R.cocomplex.X n`, with postcomposition differentials.
+/- This abbreviation is reducible so index rewrites do not require semireducible unfolding in mapped-complex motives. -/
 
-This is an `abbrev` (reducible) rather than a `def` so that rewrites of index
-equalities never see a semireducible unfolding in their motive: all dependent
-motive checks below run at `implicit` transparency. -/
+/-- Let `C` be abelian with hom-set universe `v`, `X : C`, and
+`I` an injective resolution of `Y`. Applying additive Coyoneda gives the nonnegative cochain
+complex with degree-`n` group `Hom_C(X,I^n)` in `Ab_v` and
+differentials given by postcomposition with those of `I`. -/
 noncomputable abbrev mappedCocomplex : CochainComplex AddCommGrpCat.{v} ℕ :=
   ((preadditiveCoyoneda.obj (Opposite.op X)).mapHomologicalComplex _).obj
     R.cocomplex
 
-/-- Cocycles for the comparison: morphisms `X ⟶ R.cocomplex.X n` killed by the
-next differential of the resolution. -/
+/-- Let `C` be abelian with hom-set universe `v`, `X : C`, and
+`I` an injective resolution of `Y`. The degree-`n` cocycle subgroup consists of maps
+`f : X → I^n` satisfying `f ≫ d_I^n=0`, with its inherited
+additive group structure. -/
 def cocycleSubgroup : AddSubgroup (X ⟶ R.cocomplex.X n) where
   carrier := {f | f ≫ R.cocomplex.d n (n + 1) = 0}
   add_mem' := fun {a b} ha hb => by
@@ -77,13 +80,18 @@ def cocycleSubgroup : AddSubgroup (X ⟶ R.cocomplex.X n) where
     change (-a) ≫ R.cocomplex.d n (n + 1) = 0
     rw [_root_.CategoryTheory.Preadditive.neg_comp, ha', neg_zero]
 
-/-- The group of cocycles as an object of `AddCommGrpCat`. -/
+/-- Let `C` be abelian with hom-set universe `v`, `X : C`, and
+`I` an injective resolution of `Y`. The degree-`n` cocycle subgroup of `Hom_C(X,I^n)` defines
+an additive-group object of `Ab_v`. -/
 def cocyclesObj : AddCommGrpCat.{v} :=
   AddCommGrpCat.of (cocycleSubgroup X R n)
 
-/-- The differential out of degree `n` acts by postcomposition. The right-hand
-side is stated with plain type ascriptions (which are transparent to
-rewriting) rather than `show ... from ...` (which is not). -/
+/- The type ascriptions are kept transparent for index rewriting. -/
+
+/-- Let `C` be abelian with hom-set universe `v`, `X : C`, and
+`I` an injective resolution of `Y`. The outgoing differential in degree `n` of the mapped
+Coyoneda short complex takes `f : X → I^n` to
+`f ≫ d_I(n,next(n))`. -/
 lemma sc_g_apply (y : ↥(((mappedCocomplex X R).sc n).X₂)) :
     ((mappedCocomplex X R).sc n).g y =
       (((y : X ⟶ R.cocomplex.X n) ≫
@@ -91,7 +99,11 @@ lemma sc_g_apply (y : ↥(((mappedCocomplex X R).sc n).X₂)) :
         X ⟶ R.cocomplex.X ((ComplexShape.up ℕ).next n)) :
         ↥(((mappedCocomplex X R).sc n).X₃)) := rfl
 
-/-- The differential into degree `n` acts by postcomposition. -/
+/-- Let `C` be abelian with hom-set universe `v`, `X : C`, and
+`I` an injective resolution of `Y`. The incoming differential of the mapped degree-`n` short
+complex is postcomposition with `d_I(prev(n),n)`. In degree zero,
+this map is zero because the nonnegative cochain shape has no
+incoming differential. -/
 lemma sc_f_apply (t : ↥(((mappedCocomplex X R).sc n).X₁)) :
     ((mappedCocomplex X R).sc n).f t =
       (((t : X ⟶ R.cocomplex.X ((ComplexShape.up ℕ).prev n)) ≫
@@ -99,7 +111,9 @@ lemma sc_f_apply (t : ↥(((mappedCocomplex X R).sc n).X₁)) :
         X ⟶ R.cocomplex.X n) :
         ↥(((mappedCocomplex X R).sc n).X₂)) := rfl
 
-/-- The inclusion of cocycles into the degree-`n` term. -/
+/-- Let `C` be abelian with hom-set universe `v`, `X : C`, and
+`I` an injective resolution of `Y`. The cocycle inclusion sends the degree-`n` subgroup into
+`Hom_C(X,I^n)` by its underlying morphism. -/
 def cocycleInclusion :
     cocyclesObj X R n ⟶ ((mappedCocomplex X R).sc n).X₂ :=
   AddCommGrpCat.ofHom
@@ -108,8 +122,11 @@ def cocycleInclusion :
       map_zero' := rfl
       map_add' := fun _ _ => rfl }
 
-/-- The inclusion lands in cycles. The index equality is rewritten in the
-pure-`C` hypothesis (never in the goal, whose `X₃` type depends on it). -/
+/- The proof rewrites the index equality in C before using the mapped short-complex type. -/
+
+/-- Let `C` be abelian with hom-set universe `v`, `X : C`, and
+`I` an injective resolution of `Y`. The cocycle inclusion followed by the outgoing Hom-complex
+differential is zero. -/
 lemma cocycle_wi :
     cocycleInclusion X R n ≫ ((mappedCocomplex X R).sc n).g = 0 := by
   apply AddCommGrpCat.ext
@@ -124,9 +141,11 @@ lemma cocycle_wi :
   rw [← hnext] at hx
   exact hx
 
-/-- The cocycles are the kernel of the outgoing differential. As above, the
-index equality is rewritten in a pure-`C` intermediary, not in a hypothesis
-whose type mentions the mapped complex. -/
+/- The kernel proof uses a C-valued intermediary for the index equality. -/
+
+/-- Let `C` be abelian with hom-set universe `v`, `X : C`, and
+`I` an injective resolution of `Y`. The degree-`n` cocycle inclusion is a kernel of the outgoing
+postcomposition differential `Hom_C(X,I^n) → Hom_C(X,I^(n+1))`. -/
 noncomputable def cocycleIsKernel :
     IsLimit (KernelFork.ofι (cocycleInclusion X R n) (cocycle_wi X R n)) :=
   Fork.IsLimit.mk _ (fun s ↦ AddCommGrpCat.ofHom
@@ -155,15 +174,19 @@ noncomputable def cocycleIsKernel :
 
 variable [HasInjectiveResolutions C] [HasExt.{v} C]
 
-/-- Postcomposition with `Abelian.Ext.mk₀ g` as an additive map on `Ext` groups.
-This is the covariant functoriality in the second argument used in the
-naturality statement below. Alias of
-`(_root_.CategoryTheory.Abelian.Ext.mk₀ g).postcomp X (add_zero n)`. -/
+/-- Let `C` be abelian with hom-set universe `v`, injective
+resolutions, and Ext in universe `v`. Let `X : C` and `I` be an
+injective resolution of `Y`. For `g : Y → Y′`, Ext postcomposition by its degree-zero
+class is the additive map `Ext^n(X,Y) → Ext^n(X,Y′)`. -/
 noncomputable abbrev extPostcompMk₀ {Y Y' : C} (g : Y ⟶ Y') (n : ℕ) :
     _root_.CategoryTheory.Abelian.Ext X Y n →+ _root_.CategoryTheory.Abelian.Ext X Y' n :=
   (_root_.CategoryTheory.Abelian.Ext.mk₀ g).postcomp X (add_zero n)
 
-/-- The projection from cocycles to `Ext`, via the `extMk` cocycle calculus. -/
+/-- Let `C` be abelian with hom-set universe `v`, injective
+resolutions, and Ext in universe `v`. Let `X : C` and `I` be an
+injective resolution of `Y`. The projection from degree-`n` cocycles to `Ext^n(X,Y)`
+sends `f : X → I^n` to the canonical Ext class represented by that
+resolution cocycle. -/
 noncomputable def cocycleToExt :
     cocyclesObj X R n ⟶ AddCommGrpCat.of (_root_.CategoryTheory.Abelian.Ext X Y n) :=
   AddCommGrpCat.ofHom
@@ -172,14 +195,21 @@ noncomputable def cocycleToExt :
       map_add' := fun a b ↦
         (R.add_extMk a.val b.val (n + 1) rfl a.property b.property).symm }
 
-/-- The map induced on cocycles by the chosen lift of `S.f` to cycles. -/
+/-- Let `C` be abelian with hom-set universe `v`, injective
+resolutions, and Ext in universe `v`. Let `X : C` and `I` be an
+injective resolution of `Y`. The incoming Hom-complex differential factors through the
+cocycle subgroup, giving the boundary map from its preceding term
+to the degree-`n` cocycles. -/
 noncomputable def cyclesLiftMap :
     ((mappedCocomplex X R).sc n).X₁ ⟶ cocyclesObj X R n :=
   (cocycleIsKernel X R n).lift
     (KernelFork.ofι _ (((mappedCocomplex X R).sc n).zero))
 
 omit [HasInjectiveResolutions C] [HasExt C] in
-/-- The lift computes `S.f` on underlying morphisms. -/
+/-- Let `C` be abelian with hom-set universe `v`, injective
+resolutions, and Ext in universe `v`. Let `X : C` and `I` be an
+injective resolution of `Y`. The incoming boundary map followed by the cocycle inclusion
+is the incoming differential of the degree-`n` Hom short complex. -/
 lemma cyclesLiftMap_spec (t : ↥(((mappedCocomplex X R).sc n).X₁)) :
     (((cyclesLiftMap X R n ≫ cocycleInclusion X R n) t :
       X ⟶ R.cocomplex.X n)) =
@@ -192,7 +222,10 @@ lemma cyclesLiftMap_spec (t : ↥(((mappedCocomplex X R).sc n).X₁)) :
   exact _root_.CategoryTheory.ConcreteCategory.congr_hom hfac t
 
 omit [HasInjectiveResolutions C] in
-/-- In degree zero, an `extMk` class vanishes only for the zero cocycle. -/
+/-- Let `C` be abelian with hom-set universe `v`, injective
+resolutions, and Ext in universe `v`. Let `X : C` and `I` be an
+injective resolution of `Y`. If a degree-zero cocycle `f : X → I⁰` represents the zero
+class in `Ext⁰(X,Y)`, then `f=0`. -/
 lemma extMk_zero_eq_zero {f : X ⟶ R.cocomplex.X 0}
     (hf : f ≫ R.cocomplex.d 0 1 = 0) (h0 : R.extMk f 1 rfl hf = 0) : f = 0 := by
   have h1 : R.extEquivCohomologyClass (R.extMk f 1 rfl hf) = 0 := by
@@ -216,9 +249,12 @@ lemma extMk_zero_eq_zero {f : X ⟶ R.cocomplex.X 0}
   exact h2
 
 omit [HasInjectiveResolutions C] in
-/-- Boundaries map to zero in `Ext`: the cokernel condition for `π`.
-Both cases go through explicitly typed pure-`C` intermediaries, so no rewrite
-ever mentions a `prev`/`next` index inside a mapped-complex type. -/
+/- The proof handles predecessor and successor indices in explicitly typed C-valued intermediaries. -/
+
+/-- Let `C` be abelian with hom-set universe `v`, injective
+resolutions, and Ext in universe `v`. Let `X : C` and `I` be an
+injective resolution of `Y`. Every incoming boundary maps to zero under the cocycle
+projection to `Ext^n(X,Y)`. -/
 lemma cocycle_wπ :
     cyclesLiftMap X R n ≫ cocycleToExt X R n = 0 := by
   apply AddCommGrpCat.ext
@@ -267,8 +303,11 @@ lemma cocycle_wπ :
     exact hvan
 
 omit [HasInjectiveResolutions C] in
-/-- Two cocycles represent the same `Ext` class only if every cofork-coherent
-map identifies them. -/
+/-- Let `C` be abelian with hom-set universe `v`, injective
+resolutions, and Ext in universe `v`. Let `X : C` and `I` be an
+injective resolution of `Y`. If two degree-`n` cocycles represent the same Ext class,
+any additive-group map from cocycles annihilating incoming boundaries
+takes them to the same value. -/
 lemma cocycle_indep (s : CokernelCofork (cyclesLiftMap X R n))
     (c₁ c₂ : ↥(cocyclesObj X R n))
     (h : R.extMk c₁.val (n + 1) rfl c₁.property =
@@ -324,8 +363,10 @@ lemma cocycle_indep (s : CokernelCofork (cyclesLiftMap X R n))
       exact hfin
     exact sub_eq_zero.mp hsub2
 
-/-- `Ext` with the `extMk` projection is the cokernel of the incoming map:
-the universal property, proved by choosing cocycle representatives. -/
+/-- Let `C` be abelian with hom-set universe `v`, injective
+resolutions, and Ext in universe `v`. Let `X : C` and `I` be an
+injective resolution of `Y`. The cocycle projection to `Ext^n(X,Y)` exhibits that group
+as the cokernel of the incoming boundary map into the cocycles. -/
 noncomputable def cocycleCokernelIsColimit :
     IsColimit (CokernelCofork.ofπ (cocycleToExt X R n) (cocycle_wπ X R n)) := by
   have rep : ∀ e : _root_.CategoryTheory.Abelian.Ext X Y n, ∃ c : ↥(cocyclesObj X R n),
@@ -410,9 +451,13 @@ noncomputable def cocycleCokernelIsColimit :
     rw [happ, ← he] at hm2
     exact hm2
 
-/-- Left homology data exhibiting `Ext` as the homology of the mapped complex
-at degree `n`. An `abbrev` so that projections such as `.K` unfold reducibly
-and rewrite motives over short-complex morphisms stay type-correct. -/
+/- The abbreviation keeps its projections reducible for short-complex rewrite motives. -/
+
+/-- Let `C` be abelian with hom-set universe `v`, injective
+resolutions, and Ext in universe `v`. Let `X : C` and `I` be an
+injective resolution of `Y`. The cocycle kernel and its quotient to `Ext^n(X,Y)` give
+left-homology data for the degree-`n` short complex of `Hom_C(X,I)`:
+its homology object is the Ext group. -/
 noncomputable abbrev homologyDataExt :
     ((mappedCocomplex X R).sc n).LeftHomologyData where
   K := cocyclesObj X R n
@@ -424,14 +469,18 @@ noncomputable abbrev homologyDataExt :
   wπ := cocycle_wπ X R n
   hπ := cocycleCokernelIsColimit X R n
 
-/-- An isomorphism in `AddCommGrpCat` induces an additive equivalence of the
-underlying groups. Alias of `_root_.CategoryTheory.Iso.addCommGroupIsoToAddEquiv`. -/
+/-- An isomorphism `M ≅ N` of additive-group objects in `Ab_v`
+gives an additive equivalence of the underlying groups, with forward
+and inverse maps those of the isomorphism. -/
 noncomputable abbrev isoToAddEquiv {M N : AddCommGrpCat.{v}} (e : M ≅ N) :
     ↥M ≃+ ↥N :=
   e.addCommGroupIsoToAddEquiv
 
-/-- The right-derived functors of `preadditiveCoyoneda.obj (op X)` compute
-`Abelian.Ext X _`, as an additive equivalence on underlying groups. -/
+/-- Let `C` be abelian with hom-set universe `v`, injective
+resolutions, and Ext in universe `v`. Let `X : C` and `I` be an
+injective resolution of `Y`. The chosen resolution comparisons and its Ext homology
+presentation give an additive equivalence
+`R^nHom_C(X,-)(Y) ≃+ Ext^n(X,Y)`. -/
 noncomputable def rightDerivedCoyonedaObjAddEquiv :
     ↥(((preadditiveCoyoneda.obj (Opposite.op X)).rightDerived n).obj Y) ≃+
       _root_.CategoryTheory.Abelian.Ext X Y n :=
@@ -439,10 +488,13 @@ noncomputable def rightDerivedCoyonedaObjAddEquiv :
     (preadditiveCoyoneda.obj (Opposite.op X)) n).trans
     (homologyDataExt X R n).homologyIso)
 
-/-- The induced map on cocycles for naturality: postcomposition with a lift
-between injective resolutions. The goal is first exposed as a pure-`C`
-equation via `show`, so the commutation rewrite never touches subgroup
-membership. -/
+/- The cochain compatibility equation is exposed in C before rewriting subgroup membership. -/
+
+/-- Let `C` be abelian with hom-set universe `v`, injective
+resolutions, and Ext in universe `v`. Let `X : C` and `I` be an
+injective resolution of `Y`. For an injective resolution `I′` of `Y′` and a lift
+`φ : I → I′` of `g : Y → Y′`, the map on degree-`n` cocycles
+is postcomposition `f ↦ f ≫ φ^n`. -/
 noncomputable def gammaCyclesMap {Y' : C} (R' : InjectiveResolution Y')
     {g : Y ⟶ Y'} (φ : _root_.CategoryTheory.InjectiveResolution.Hom R R' g) :
     cocyclesObj X R n ⟶ cocyclesObj X R' n :=
@@ -469,7 +521,11 @@ noncomputable def gammaCyclesMap {Y' : C} (R' : InjectiveResolution Y')
         simp [Preadditive.add_comp] }
 
 omit [HasInjectiveResolutions C] [HasExt C] in
-/-- The induced map on cocycles commutes with the inclusions. -/
+/-- Let `C` be abelian with hom-set universe `v`, injective
+resolutions, and Ext in universe `v`. Let `X : C` and `I` be an
+injective resolution of `Y`. For a resolution lift `φ : I → I′` over `g : Y → Y′`,
+postcomposition on cocycles commutes with their inclusions into
+`Hom_C(X,I^n)` and `Hom_C(X,I′^n)`. -/
 lemma gammaCyclesMap_commi {Y' : C} (R' : InjectiveResolution Y')
     {g : Y ⟶ Y'} (φ : _root_.CategoryTheory.InjectiveResolution.Hom R R' g) :
     gammaCyclesMap X R n R' φ ≫ cocycleInclusion X R' n =
@@ -482,7 +538,11 @@ lemma gammaCyclesMap_commi {Y' : C} (R' : InjectiveResolution Y')
   intro c
   rfl
 
-/-- The map data witnessing naturality on cycles and on `Ext`. -/
+/-- Let `C` be abelian with hom-set universe `v`, injective
+resolutions, and Ext in universe `v`. Let `X : C` and `I` be an
+injective resolution of `Y`. A resolution lift `φ : I → I′` over `g : Y → Y′` gives
+left-homology map data: its cycle map is postcomposition by `φ^n`,
+and its Ext map is postcomposition by the degree-zero class of `g`. -/
 noncomputable def gammaMapData {Y' : C} (R' : InjectiveResolution Y')
     {g : Y ⟶ Y'} (φ : _root_.CategoryTheory.InjectiveResolution.Hom R R' g) :
     _root_.CategoryTheory.ShortComplex.LeftHomologyMapData
@@ -533,8 +593,11 @@ noncomputable def gammaMapData {Y' : C} (R' : InjectiveResolution Y')
     intro c
     exact R.extMk_comp_mk₀ c.val (n + 1) rfl c.property φ
 
-/-- The comparison is natural in `Y`: pushing a class forward along
-`g : Y ⟶ Y'` corresponds to postcomposition with `Ext.mk₀ g`. -/
+/-- Let `C` be abelian with hom-set universe `v`, injective
+resolutions, and Ext in universe `v`. Let `X : C` and `I` be an
+injective resolution of `Y`. For a resolution lift over `g : Y → Y′`, the additive
+comparisons intertwine the derived coefficient map with
+`a ↦ a.comp(Ext.mk₀(g))` on `Ext^n(X,Y)`. -/
 theorem rightDerivedCoyonedaObjAddEquiv_naturality {Y' : C}
     (R' : InjectiveResolution Y') {g : Y ⟶ Y'}
     (φ : _root_.CategoryTheory.InjectiveResolution.Hom R R' g)
@@ -601,9 +664,10 @@ namespace CategoryTheory.Abelian
 
 variable [HasInjectiveResolutions C] [HasExt.{v} C]
 
-/-- The right-derived functors of `preadditiveCoyoneda.obj (Opposite.op X)`
-are naturally isomorphic to the canonical covariant Ext functors
-`extFunctorObj X n`. -/
+/-- Let `C` be abelian with hom-set universe `v`, injective
+resolutions, and Ext in universe `v`. For fixed `X : C`, the
+resolution comparisons give a natural isomorphism of additive-group
+functors `R^nHom_C(X,-) ≅ Ext^n(X,-)`. -/
 noncomputable def rightDerivedCoyonedaIsoExtFunctorObj (X : C) (n : ℕ) :
     (preadditiveCoyoneda.obj (Opposite.op X)).rightDerived n ≅
       extFunctorObj X n :=
@@ -637,8 +701,12 @@ universe v₀ u₀
 variable {C : Type u₀} [Category.{v₀} C] [Abelian C]
   [HasInjectiveResolutions C] [HasExt.{v₀} C]
 
-/-- The inverse functor-level Coyoneda comparison sends every injective-resolution
-representative to its canonical homology class. -/
+/-- Let `C` be abelian with hom-set universe `v`, injective
+resolutions, and Ext in universe `v`. For the chosen injective
+resolution `I` of `Y`, a cocycle `f : Z → I^q` gives an Ext class.
+The inverse canonical Coyoneda-to-Ext comparison sends it to its
+Hom-complex cohomology class, transported to `R^qHom_C(Z,-)(Y)`
+by the inverse resolution comparison. -/
 theorem rightDerivedCoyonedaIsoExtFunctorObj_inv_extMk (Z Y : C) (q : ℕ)
     (f : Z ⟶ (injectiveResolution Y).cocomplex.X q)
     (hf : f ≫ (injectiveResolution Y).cocomplex.d q (q + 1) = 0) :

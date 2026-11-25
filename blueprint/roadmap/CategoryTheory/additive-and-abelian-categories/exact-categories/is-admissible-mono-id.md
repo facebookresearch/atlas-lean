@@ -1,3 +1,5 @@
-# Is Admissible Mono id
+# Identity maps are admissible monomorphisms
 
-Identities are admissible monos via `X ⟶ X ⊞ 0` and `isAdmissibleExact_of_iso`.
+In an additive category `C` with a chosen Quillen exact structure, the
+identity of any object `X` is an admissible monomorphism, as
+the first map of a split admissible sequence.

@@ -15,7 +15,15 @@ public import MathlibExt.Algebra.Homology.ProjectiveResolutionAugment
 public import Mathlib.Algebra.Homology.HomologicalComplexAbelian
 
 /-!
-# The signed kernel-tail horseshoe and its augmentation
+# Augmented alternating-cross kernel-tail horseshoe
+
+Let `P` resolve `X` in an abelian category, `K=ker(P₀ → X)`,
+`T` its kernel-tail resolution, and `M_n=T_n ⊞ P_n` the alternating-
+cross middle complex. Its augmentation to `P₀` is
+`[T₀ → K → P₀, id]`. The kernel inclusion and original augmentation
+extend the degreewise split complex row to an augmented short exact
+sequence. Its middle augmented complex is acyclic, so `M` resolves
+`P₀` and gives a horseshoe for `K → P₀ → X`.
 -/
 
 @[expose] public section
@@ -28,14 +36,20 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The kernel sequence of the original projective augmentation is short exact. -/
+/-- In an abelian category `C`, let `P` be a projective resolution
+of `X`, `π₀ : P₀ → X` its augmentation, `K=ker(π₀)`, and `T` its
+kernel-tail resolution with `T_n ≅ P_(n+1)`. The sequence `K → P₀ → X` is short exact, since the
+projective-resolution augmentation `π₀` is epi. -/
 theorem normalizationKernelSequence_shortExact {X : C} (P : ProjectiveResolution X) :
     (ShortComplex.kernelSequence (P.π.f 0)).ShortExact := by
   let _ : Epi (P.π.f 0) := epi_of_isColimit_cofork P.isColimitCokernelCofork
   exact { exact := ShortComplex.kernelSequence_exact (P.π.f 0)
           epi_g := by change Epi (P.π.f 0); infer_instance }
 
-/-- The left inclusion into the alternating-cross middle complex. -/
+/-- In an abelian category `C`, let `P` be a projective resolution
+of `X`, `π₀ : P₀ → X` its augmentation, `K=ker(π₀)`, and `T` its
+kernel-tail resolution with `T_n ≅ P_(n+1)`. The left biproduct inclusions in every degree give a chain
+map `T → M` into the alternating-cross middle complex. -/
 def normalizationMiddleInclusion {X : C} (P : ProjectiveResolution X) :
     (normalizationKernelTail P).complex ⟶ normalizationMiddleComplex P :=
   ChainComplex.ofHom (fun _ => biprod.inl) (fun n => by
@@ -44,7 +58,10 @@ def normalizationMiddleInclusion {X : C} (P : ProjectiveResolution X) :
     rw [Biprod.inl_ofComponents]
     simp)
 
-/-- The right projection from the alternating-cross middle complex. -/
+/-- In an abelian category `C`, let `P` be a projective resolution
+of `X`, `π₀ : P₀ → X` its augmentation, `K=ker(π₀)`, and `T` its
+kernel-tail resolution with `T_n ≅ P_(n+1)`. The right biproduct projections in every degree give a
+chain map `M → P` from the alternating-cross middle complex. -/
 def normalizationMiddleProjection {X : C} (P : ProjectiveResolution X) :
     normalizationMiddleComplex P ⟶ P.complex :=
   ChainComplex.ofHom (fun _ => biprod.snd) (fun n => by
@@ -53,13 +70,20 @@ def normalizationMiddleProjection {X : C} (P : ProjectiveResolution X) :
     rw [Biprod.ofComponents_snd]
     simp)
 
-/-- The two complex maps form a complex. -/
+/-- In an abelian category `C`, let `P` be a projective resolution
+of `X`, `π₀ : P₀ → X` its augmentation, `K=ker(π₀)`, and `T` its
+kernel-tail resolution with `T_n ≅ P_(n+1)`. The chain inclusion `T → M` followed by the projection
+`M → P` is zero, because left inclusion and right projection have
+zero composite in each degree. -/
 theorem normalizationMiddleInclusion_comp_projection {X : C} (P : ProjectiveResolution X) :
     normalizationMiddleInclusion P ≫ normalizationMiddleProjection P = 0 := by
   ext n
   exact biprod.inl_snd
 
-/-- The resolution complexes form a degreewise split short exact sequence. -/
+/-- In an abelian category `C`, let `P` be a projective resolution
+of `X`, `π₀ : P₀ → X` its augmentation, `K=ker(π₀)`, and `T` its
+kernel-tail resolution with `T_n ≅ P_(n+1)`. The chain row `T → M → P` is short exact: each degree
+is the split row `T_n → T_n ⊞ P_n → P_n`. -/
 theorem normalizationMiddleComplex_shortExact {X : C} (P : ProjectiveResolution X) :
     (ShortComplex.mk (normalizationMiddleInclusion P)
       (normalizationMiddleProjection P)
@@ -69,14 +93,21 @@ theorem normalizationMiddleComplex_shortExact {X : C} (P : ProjectiveResolution 
   exact (ShortComplex.Splitting.ofHasBinaryBiproduct
     ((normalizationKernelTail P).complex.X n) (P.complex.X n)).shortExact
 
-/-- The original degree-zero augmentation of the middle complex. -/
+/-- In an abelian category `C`, let `P` be a projective resolution
+of `X`, `π₀ : P₀ → X` its augmentation, `K=ker(π₀)`, and `T` its
+kernel-tail resolution with `T_n ≅ P_(n+1)`. The middle degree-zero augmentation `a₀ : M₀ → P₀`
+is `[π_T ≫ (K → P₀), 𝟙 P₀]` on `M₀=T₀ ⊞ P₀`. -/
 def normalizationMiddleAugmentationZero {X : C} (P : ProjectiveResolution X) :
     (normalizationMiddleComplex P).X 0 ⟶ P.complex.X 0 :=
   biprod.desc ((normalizationKernelTail P).π.f 0 ≫ kernel.ι (P.π.f 0))
     (𝟙 (P.complex.X 0))
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The original augmentation satisfies the chain condition with cross coefficient -1. -/
+/-- In an abelian category `C`, let `P` be a projective resolution
+of `X`, `π₀ : P₀ → X` its augmentation, `K=ker(π₀)`, and `T` its
+kernel-tail resolution with `T_n ≅ P_(n+1)`. For the augmentation `a₀ : M₀ → P₀`, the differential
+`M₁ → M₀` followed by `a₀` is zero; the degree-zero cross
+coefficient is `-1`. -/
 theorem normalizationMiddleAugmentationZero_condition {X : C} (P : ProjectiveResolution X) :
     (normalizationMiddleComplex P).d 1 0 ≫ normalizationMiddleAugmentationZero P = 0 := by
   rw [normalizationMiddleComplex_d, normalizationMiddleDifferential]
@@ -89,26 +120,40 @@ theorem normalizationMiddleAugmentationZero_condition {X : C} (P : ProjectiveRes
       h₀, normalizationKernelTail_π_f_zero, Category.assoc]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The original augmentation commutes with the original right augmentation. -/
+/-- In an abelian category `C`, let `P` be a projective resolution
+of `X`, `π₀ : P₀ → X` its augmentation, `K=ker(π₀)`, and `T` its
+kernel-tail resolution with `T_n ≅ P_(n+1)`. The middle augmentation satisfies
+`a₀ ≫ π₀ = biprod.snd ≫ π₀`, because the left component factors
+through `ker(π₀)`. -/
 theorem normalizationMiddleAugmentationZero_comp_π {X : C} (P : ProjectiveResolution X) :
     normalizationMiddleAugmentationZero P ≫ P.π.f 0 = biprod.snd ≫ P.π.f 0 := by
   apply biprod.hom_ext'
   · simp [normalizationMiddleAugmentationZero, Category.assoc]
   · simp [normalizationMiddleAugmentationZero]
 
-/-- The original middle augmentation to a single complex. -/
+/-- In an abelian category `C`, let `P` be a projective resolution
+of `X`, `π₀ : P₀ → X` its augmentation, `K=ker(π₀)`, and `T` its
+kernel-tail resolution with `T_n ≅ P_(n+1)`. The middle augmentation `a₀ : M₀ → P₀` defines a chain
+map `M → P₀[0]` to the complex concentrated in degree zero. -/
 def normalizationMiddleπ {X : C} (P : ProjectiveResolution X) :
     normalizationMiddleComplex P ⟶ (ChainComplex.single₀ C).obj (P.complex.X 0) :=
   (ChainComplex.toSingle₀Equiv _ _).symm
     ⟨normalizationMiddleAugmentationZero P, normalizationMiddleAugmentationZero_condition P⟩
 
-/-- The augmentation retains its literal degree-zero arrow. -/
+/-- In an abelian category `C`, let `P` be a projective resolution
+of `X`, `π₀ : P₀ → X` its augmentation, `K=ker(π₀)`, and `T` its
+kernel-tail resolution with `T_n ≅ P_(n+1)`. The degree-zero component of the chain augmentation
+`M → P₀[0]` is the map `[π_T ≫ (K → P₀), 𝟙 P₀]`. -/
 theorem normalizationMiddleπ_f_zero {X : C} (P : ProjectiveResolution X) :
     (normalizationMiddleπ P).f 0 = normalizationMiddleAugmentationZero P :=
   ChainComplex.toSingle₀Equiv_symm_apply_f_zero _ _
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The left inclusion preserves the original augmentation. -/
+/-- In an abelian category `C`, let `P` be a projective resolution
+of `X`, `π₀ : P₀ → X` its augmentation, `K=ker(π₀)`, and `T` its
+kernel-tail resolution with `T_n ≅ P_(n+1)`. The chain inclusion `T → M`, followed by `M → P₀[0]`,
+equals the augmentation `T → K[0]` followed by the kernel
+inclusion concentrated in degree zero. -/
 theorem normalizationMiddleInclusion_comp_π {X : C} (P : ProjectiveResolution X) :
     normalizationMiddleInclusion P ≫ normalizationMiddleπ P =
       (normalizationKernelTail P).π ≫ (ChainComplex.single₀ C).map (kernel.ι (P.π.f 0)) := by
@@ -118,7 +163,11 @@ theorem normalizationMiddleInclusion_comp_π {X : C} (P : ProjectiveResolution X
   exact biprod.inl_desc _ _
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The right projection preserves the original augmentation. -/
+/-- In an abelian category `C`, let `P` be a projective resolution
+of `X`, `π₀ : P₀ → X` its augmentation, `K=ker(π₀)`, and `T` its
+kernel-tail resolution with `T_n ≅ P_(n+1)`. The projection `M → P`, followed by `P → X[0]`, equals
+the augmentation `M → P₀[0]` followed by `π₀` concentrated in
+degree zero. -/
 theorem normalizationMiddleProjection_comp_π {X : C} (P : ProjectiveResolution X) :
     normalizationMiddleProjection P ≫ P.π =
       normalizationMiddleπ P ≫ (ChainComplex.single₀ C).map (P.π.f 0) := by
@@ -127,13 +176,21 @@ theorem normalizationMiddleProjection_comp_π {X : C} (P : ProjectiveResolution 
     ChainComplex.single₀_map_f_zero]
   exact (normalizationMiddleAugmentationZero_comp_π P).symm
 
-/-- The middle complex augmented by the original middle object. -/
+/-- In an abelian category `C`, let `P` be a projective resolution
+of `X`, `π₀ : P₀ → X` its augmentation, `K=ker(π₀)`, and `T` its
+kernel-tail resolution with `T_n ≅ P_(n+1)`. Adjoining `P₀` in degree zero to `M` gives the augmented
+middle complex, with degree-`n+1` term `M_n` and first
+differential `a₀ : M₀ → P₀`. -/
 def normalizationMiddleAugmented {X : C} (P : ProjectiveResolution X) : ChainComplex C ℕ :=
   (normalizationMiddleComplex P).augment (normalizationMiddleAugmentationZero P)
     (normalizationMiddleAugmentationZero_condition P)
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The inclusion on augmented complexes uses the original kernel inclusion in degree zero. -/
+/-- In an abelian category `C`, let `P` be a projective resolution
+of `X`, `π₀ : P₀ → X` its augmentation, `K=ker(π₀)`, and `T` its
+kernel-tail resolution with `T_n ≅ P_(n+1)`. The augmented chain inclusion has the kernel inclusion
+`K → P₀` in degree zero and the biproduct inclusion `T_n → M_n`
+in degree `n+1`. -/
 def normalizationAugmentedInclusion {X : C} (P : ProjectiveResolution X) :
     (normalizationKernelTail P).augmented ⟶ normalizationMiddleAugmented P :=
   ChainComplex.ofHom
@@ -149,7 +206,11 @@ def normalizationAugmentedInclusion {X : C} (P : ProjectiveResolution X) :
             ChainComplex.augment_d_succ_succ] using (normalizationMiddleInclusion P).comm (n + 1) n)
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The projection on augmented complexes uses the original augmentation in degree zero. -/
+/-- In an abelian category `C`, let `P` be a projective resolution
+of `X`, `π₀ : P₀ → X` its augmentation, `K=ker(π₀)`, and `T` its
+kernel-tail resolution with `T_n ≅ P_(n+1)`. The augmented chain projection has `π₀ : P₀ → X` in
+degree zero and the right biproduct projection `M_n → P_n`
+in degree `n+1`. -/
 def normalizationAugmentedProjection {X : C} (P : ProjectiveResolution X) :
     normalizationMiddleAugmented P ⟶ P.augmented :=
   ChainComplex.ofHom
@@ -165,7 +226,11 @@ def normalizationAugmentedProjection {X : C} (P : ProjectiveResolution X) :
             ChainComplex.augment_d_succ_succ] using
                 (normalizationMiddleProjection P).comm (n + 1) n)
 
-/-- The augmented maps retain the literal kernel-sequence zero relation. -/
+/-- In an abelian category `C`, let `P` be a projective resolution
+of `X`, `π₀ : P₀ → X` its augmentation, `K=ker(π₀)`, and `T` its
+kernel-tail resolution with `T_n ≅ P_(n+1)`. The augmented inclusion followed by the augmented projection
+is zero: in degree zero this is `(K → P₀) ≫ π₀=0`, and in positive
+degrees it is left inclusion followed by right projection. -/
 theorem normalizationAugmentedInclusion_comp_projection {X : C} (P : ProjectiveResolution X) :
     normalizationAugmentedInclusion P ≫ normalizationAugmentedProjection P = 0 := by
   ext (_ | n)
@@ -173,7 +238,11 @@ theorem normalizationAugmentedInclusion_comp_projection {X : C} (P : ProjectiveR
   · exact biprod.inl_snd
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The original augmented kernel sequence and positive split degrees are short exact. -/
+/-- In an abelian category `C`, let `P` be a projective resolution
+of `X`, `π₀ : P₀ → X` its augmentation, `K=ker(π₀)`, and `T` its
+kernel-tail resolution with `T_n ≅ P_(n+1)`. The augmented row `T_aug → M_aug → P_aug` is short exact:
+its degree-zero row is `K → P₀ → X`, and its positive-degree rows
+are the split biproduct rows. -/
 theorem normalizationAugmented_shortExact {X : C} (P : ProjectiveResolution X) :
     (ShortComplex.mk (normalizationAugmentedInclusion P) (normalizationAugmentedProjection P)
       (normalizationAugmentedInclusion_comp_projection P)).ShortExact := by
@@ -192,13 +261,20 @@ theorem normalizationAugmented_shortExact {X : C} (P : ProjectiveResolution X) :
       exact (ShortComplex.Splitting.ofHasBinaryBiproduct
         ((normalizationKernelTail P).complex.X n) (P.complex.X n)).shortExact
 
-/-- The augmented middle complex is acyclic by the two endpoint resolutions. -/
+/-- In an abelian category `C`, let `P` be a projective resolution
+of `X`, `π₀ : P₀ → X` its augmentation, `K=ker(π₀)`, and `T` its
+kernel-tail resolution with `T_n ≅ P_(n+1)`. The augmented middle complex is acyclic, since it lies in
+a short exact sequence with the acyclic augmented resolutions of
+`K` and `X`. -/
 theorem normalizationMiddleAugmented_acyclic {X : C} (P : ProjectiveResolution X) :
     (normalizationMiddleAugmented P).Acyclic :=
   (normalizationAugmented_shortExact P).acyclic_X₂
     (normalizationKernelTail P).augmented_acyclic P.augmented_acyclic
 
-/-- The middle augmentation is a quasi-isomorphism. -/
+/-- In an abelian category `C`, let `P` be a projective resolution
+of `X`, `π₀ : P₀ → X` its augmentation, `K=ker(π₀)`, and `T` its
+kernel-tail resolution with `T_n ≅ P_(n+1)`. The middle augmentation `M → P₀[0]` is a quasi-isomorphism,
+since its augmented complex is acyclic. -/
 theorem normalizationMiddleπ_quasiIso {X : C} (P : ProjectiveResolution X) :
     QuasiIso (normalizationMiddleπ P) :=
   ChainComplex.quasiIso_toSingle₀_of_augment_acyclic
@@ -206,7 +282,10 @@ theorem normalizationMiddleπ_quasiIso {X : C} (P : ProjectiveResolution X) :
     (normalizationMiddleAugmentationZero P) (normalizationMiddleAugmentationZero_condition P)
     (normalizationMiddleAugmented_acyclic P)
 
-/-- The alternating-cross horseshoe resolves the original projective degree-zero object. -/
+/-- In an abelian category `C`, let `P` be a projective resolution
+of `X`, `π₀ : P₀ → X` its augmentation, `K=ker(π₀)`, and `T` its
+kernel-tail resolution with `T_n ≅ P_(n+1)`. The alternating-cross middle complex `M`, augmented by
+`[π_T ≫ (K → P₀), 𝟙 P₀]`, is a projective resolution of `P₀`. -/
 def normalizationMiddleResolution {X : C} (P : ProjectiveResolution X) :
     ProjectiveResolution (P.complex.X 0) where
   complex := normalizationMiddleComplex P
@@ -216,7 +295,11 @@ def normalizationMiddleResolution {X : C} (P : ProjectiveResolution X) :
   π := normalizationMiddleπ P
   quasiIso := normalizationMiddleπ_quasiIso P
 
-/-- The signed kernel-tail horseshoe, retaining both original augmented endpoint maps. -/
+/-- In an abelian category `C`, let `P` be a projective resolution
+of `X`, `π₀ : P₀ → X` its augmentation, `K=ker(π₀)`, and `T` its
+kernel-tail resolution with `T_n ≅ P_(n+1)`. The resolutions `T,M,P` and their compatible augmented
+inclusion and projection form horseshoe data for the kernel
+sequence `K → P₀ → X`. -/
 def normalizationKernelTailHorseshoe {X : C} (P : ProjectiveResolution X) :
     HorseshoeData (normalizationKernelSequence_shortExact P) (normalizationKernelTail P) P where
   middle := normalizationMiddleResolution P
@@ -228,7 +311,11 @@ def normalizationKernelTailHorseshoe {X : C} (P : ProjectiveResolution X) :
   p_augmentation := normalizationMiddleProjection_comp_π P
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The signed horseshoe has the stock biproduct coordinate specification. -/
+/-- In an abelian category `C`, let `P` be a projective resolution
+of `X`, `π₀ : P₀ → X` its augmentation, `K=ker(π₀)`, and `T` its
+kernel-tail resolution with `T_n ≅ P_(n+1)`. The signed horseshoe has biproduct coordinates `M_n=T_n ⊞ P_n`,
+left inclusion, right projection, diagonal differentials `d_T,d_P`,
+and the alternating kernel-tail cross maps. -/
 def normalizationKernelTailHorseshoeSpec {X : C} (P : ProjectiveResolution X) :
     (normalizationKernelTailHorseshoe P).Spec where
   middleXIso _ := Iso.refl _

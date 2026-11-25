@@ -14,10 +14,15 @@ public import Mathlib.Algebra.Homology.Embedding.Boundary
 public import MathlibExt.Algebra.Homology.Embedding.RestrictionHomology
 
 /-!
-# Homology of the chain-to-cochain reindexing
+# Homology under integer chain-to-cochain reindexing
 
-This file provides infrastructure for comparing homology before and after the
-standard integer chain-to-cochain reindexing.
+For a category with zero morphisms, reindexing an integer chain
+complex by `i ↦ -i` gives an integer cochain complex. The cycles,
+opcycles and homology in cochain degree `i` are canonically identified
+with those in chain degree `-i` whenever the displayed homologies
+exist. The homology comparison is natural. With chosen homology
+throughout the category it gives a functor isomorphism and the
+chain-to-cochain equivalence preserves and reflects quasi-isomorphisms.
 -/
 
 @[expose] public section
@@ -36,7 +41,11 @@ local instance : ComplexShape.embeddingUpIntDownInt.IsTruncLE where
 local instance : ComplexShape.embeddingUpIntDownInt.IsTruncGE where
   mem_next {_ k'} _ := ⟨-k', by simp [ComplexShape.embeddingUpIntDownInt]⟩
 
-/-- Homology commutes with the standard integer chain-to-cochain reindexing. -/
+/-- Let `C` be a category with zero morphisms and `K` an integer
+chain complex. Reindex by the shape embedding `i ↦ -i` to obtain
+an integer cochain complex `K^∨`. Suppose the homologies of `K`
+in degree `-i` and `K^∨` in degree `i` exist. Reindexing gives the canonical comparison
+`H^i(K^∨) ≅ H_(-i)(K)`. -/
 noncomputable def chainToCochainHomologyIso
     {C : Type u} [Category.{v} C] [HasZeroMorphisms C]
     (K : ChainComplex C ℤ) (i : ℤ)
@@ -48,7 +57,11 @@ noncomputable def chainToCochainHomologyIso
     (ComplexShape.embeddingUpIntDownInt.prev_f rfl)
     (ComplexShape.embeddingUpIntDownInt.next_f rfl)
 
-/-- Opcycles commute with the standard integer chain-to-cochain reindexing. -/
+/-- Let `C` be a category with zero morphisms and `K` an integer
+chain complex. Reindex by the shape embedding `i ↦ -i` to obtain
+an integer cochain complex `K^∨`. Suppose the homologies of `K`
+in degree `-i` and `K^∨` in degree `i` exist. Reindexing gives the canonical opcycles comparison
+`opcycles^i(K^∨) ≅ opcycles_(-i)(K)`. -/
 noncomputable def chainToCochainOpcyclesIso
     {C : Type u} [Category.{v} C] [HasZeroMorphisms C]
     (K : ChainComplex C ℤ) (i : ℤ)
@@ -59,7 +72,11 @@ noncomputable def chainToCochainOpcyclesIso
   K.restrictionOpcyclesIsoAt ComplexShape.embeddingUpIntDownInt i
     (ComplexShape.embeddingUpIntDownInt.prev_f rfl)
 
-/-- Cycles commute with the standard integer chain-to-cochain reindexing. -/
+/-- Let `C` be a category with zero morphisms and `K` an integer
+chain complex. Reindex by the shape embedding `i ↦ -i` to obtain
+an integer cochain complex `K^∨`. Suppose the homologies of `K`
+in degree `-i` and `K^∨` in degree `i` exist. Reindexing gives the canonical cycles comparison
+`cycles^i(K^∨) ≅ cycles_(-i)(K)`. -/
 noncomputable def chainToCochainCyclesIso
     {C : Type u} [Category.{v} C] [HasZeroMorphisms C]
     (K : ChainComplex C ℤ) (i : ℤ)
@@ -70,8 +87,10 @@ noncomputable def chainToCochainCyclesIso
   K.restrictionCyclesIsoAt ComplexShape.embeddingUpIntDownInt i
     (ComplexShape.embeddingUpIntDownInt.next_f rfl)
 
-/-- Functor-level homology comparison for integer chain-to-cochain
-reindexing. -/
+/-- Let `C` be a category with zero morphisms and chosen homology
+objects in all degrees. Reindexing integer chains by `i ↦ -i`
+followed by cochain homology in degree `i` is naturally isomorphic
+to chain homology in degree `-i`. -/
 noncomputable def chainToCochainHomologyFunctorIso
     (C : Type u) [Category.{v} C] [HasZeroMorphisms C]
     [CategoryWithHomology C] (i : ℤ) :
@@ -101,7 +120,10 @@ theorem chainToCochainOpcyclesIso_naturality
       (ComplexShape.embeddingUpIntDownInt.prev_f rfl)
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Naturality of the homology isomorphism for integer chain-to-cochain reindexing. -/
+/-- Let `C` be a category with zero morphisms, `f : K → L` a map
+of integer chain complexes, and suppose the homologies of `K,L`
+in degree `-i` and their reindexings in degree `i` exist. The
+chain-to-cochain homology comparisons commute with both homology maps. -/
 @[reassoc]
 lemma chainToCochainHomologyIso_naturality
     {C : Type u} [Category.{v} C] [HasZeroMorphisms C]
@@ -129,7 +151,9 @@ private lemma quasiIsoAt_restrictionMap_embeddingUpIntDownInt_iff
     (ComplexShape.embeddingUpIntDownInt.prev_f rfl)
     (ComplexShape.embeddingUpIntDownInt.next_f rfl)
 
-/-- The cochain complex equivalence preserves quasi-isomorphisms. -/
+/-- Let `C` be a category with zero morphisms and chosen homology.
+A map of integer chain complexes is a quasi-isomorphism if and only
+if its image under the chain-to-cochain equivalence is one. -/
 @[simp]
 lemma quasiIso_cochainComplexEquivalence_map_iff
     {C : Type u} [Category.{v} C] [HasZeroMorphisms C] [CategoryWithHomology C]

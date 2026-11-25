@@ -1,4 +1,6 @@
-# Original Target Coefficient Augmentation
+# Tensor augmentation expressed on the original target carrier
 
-The augmentation of the original arbitrary coefficient and original target, using a resolution of
-the explicitly lifted target.
+Let `R` be commutative in universe `u`, `M₀,X₀` modules with
+carriers in `v,w`, and `P₀` a projective resolution of `ULift_u(X₀)`.
+The coefficient tensor augmentation, followed by the target-lift
+isomorphism, is a chain map to `ULift_u(M₀ ⊗[R] X₀)[0]`.

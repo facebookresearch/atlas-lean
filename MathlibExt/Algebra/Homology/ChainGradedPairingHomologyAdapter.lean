@@ -170,8 +170,11 @@ lemma right_factor_of_chainMap
     rw [Preadditive.zsmul_comp, smul_smul, hs, one_smul]
     simp [pair]
 
-/-- Every chain map from the tensor product complex supplies the differential
-data needed for the generic homology descent. -/
+/-- Let C be a preadditive monoidal category whose tensor product is additive in each variable. For
+any pairing P : K₁ ⊗ K₂ → K₃ of nonnegative chain complexes with tensor complex defined, the
+chain-map law supplies HomologyDescentData P. Thus pairs of cycles map to cycles, while a
+boundary paired with a cycle in either variable maps to a boundary in K₃. The right-variable
+factor uses the Leibniz sign (−1)^p. -/
 theorem homologyDescentData (P : ChainGradedPairing K₁ K₂ K₃) :
     HomologyDescentData P where
   cycles_d := cycles_d_of_chainMap P

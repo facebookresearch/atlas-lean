@@ -1,10 +1,5 @@
-# Is Admissible Exact of is Admissible Mono is Colimit
+# Recognizing exact pairs from an admissible kernel map
 
-An admissible-mono first leg plus a cokernel colimit second leg imply admissible exactness.
-
-For `S : ShortComplex C`, `hf : IsAdmissibleMono S.f` and
-`hc : IsColimit (CokernelCofork.ofπ S.g S.zero)` suffice for `IsAdmissibleExact S`.
-Unpacks `hf` to `W, p, w, hS'`, reuses the canonical cokernel comparison
-`hc'.coconePointUniqueUpToIso hc`, derives the second-leg equation with
-`IsColimit.comp_coconePointUniqueUpToIso_hom`, then transports with
-`ShortComplex.isoMk` and `isAdmissibleExact_of_iso`.
+In an additive category `C` with a chosen Quillen exact structure, let
+`S : X → Y → Z` be a short complex. If `S.f` is admissible
+monic and `S.g` is a cokernel of `S.f`, then `S` is admissible exact.

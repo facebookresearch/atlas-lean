@@ -15,11 +15,14 @@ public import MathlibExt.Algebra.Homology.HomologyMapSquare
 public import MathlibExt.CategoryTheory.Abelian.Injective.ResolutionComparison
 
 /-!
-# Comparison calculus for right-derived functors
+# Comparisons between right-derived cohomology calculations
 
-Canonical isomorphisms compare cohomology computed from any two injective resolutions. They
-satisfy identity, symmetry and composition laws and are natural in the resolved object and the
-additive functor.
+Let `C`, `D` be abelian categories, with injective resolutions in `C`,
+and let `F : C → D` be additive. Two injective resolutions of an object
+compute canonically isomorphic cohomology through `R^nF`.
+The comparisons commute with lifts of maps of resolved objects and
+with natural transformations of additive functors. An additive
+homology-preserving target functor also commutes with right derivation.
 -/
 
 /-
@@ -46,8 +49,10 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 variable {D : Type u'} [Category.{v'} D] [Abelian D]
 variable [HasInjectiveResolutions C]
 
-/-- Canonical comparison between cohomology objects computed from two
-injective resolutions of the same object. -/
+/-- Let `C`, `D` be abelian, with injective resolutions in `C`,
+`F : C → D` additive and `I,J` injective resolutions of `X`.
+The canonical comparison `Hⁿ(F(I)) ≅ Hⁿ(F(J))` is obtained by
+passing through `R^nF(X)`. -/
 noncomputable def cohomologyComparisonIso {X : C}
     (I J : InjectiveResolution X) (F : C ⥤ D) [F.Additive] (n : ℕ) :
     (HomologicalComplex.homologyFunctor D (ComplexShape.up ℕ) n).obj
@@ -80,8 +85,11 @@ theorem cohomologyComparisonIso_trans {X : C}
     Category.assoc, Iso.hom_inv_id_assoc]
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Resolution-choice comparison is natural for two explicitly bundled
-maps of injective resolutions over the same morphism. -/
+/-- Let `C`, `D` be abelian, with injective resolutions in `C`,
+and `F : C → D` additive. Given pairs `I_X,J_X` and `I_Y,J_Y`
+of injective resolutions and lifts of the same map `f : X → Y`,
+the degree-`n` cohomology maps commute with the canonical comparisons
+between resolution choices. -/
 theorem cohomologyComparisonIso_naturality
     {X Y : C} {IX JX : InjectiveResolution X}
     {IY JY : InjectiveResolution Y} {f : X ⟶ Y}
@@ -116,7 +124,10 @@ theorem cohomologyComparisonIso_naturality
   rw [← hJ, ← Category.assoc, hI, Category.assoc]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The inverse resolution comparison is natural in the additive functor. -/
+/-- Let `C`, `D` be abelian, with injective resolutions in `C`,
+`F,G : C → D` additive and `α : F → G`. For an injective resolution
+`I` of `X`, the map `Hⁿ(F(I)) → Hⁿ(G(I))` commutes with the inverse
+comparisons to `R^nF(X)` and `R^nG(X)`. -/
 @[reassoc]
 lemma isoRightDerivedObj_inv_naturality_functor
     {F G : C ⥤ D} [F.Additive] [G.Additive] {X : C}
@@ -130,7 +141,10 @@ lemma isoRightDerivedObj_inv_naturality_functor
   simp only [Iso.inv_hom_id_assoc]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The forward resolution comparison is natural in the additive functor. -/
+/-- Let `C`, `D` be abelian, with injective resolutions in `C`,
+`F,G : C → D` additive and `α : F → G`. For an injective resolution
+`I` of `X`, the forward comparisons from `R^nF(X)` and `R^nG(X)`
+to resolution cohomology commute with `R^nα` and `Hⁿ(α_I)`. -/
 @[reassoc]
 lemma isoRightDerivedObj_hom_naturality_functor
     {F G : C ⥤ D} [F.Additive] [G.Additive] {X : C}
@@ -151,8 +165,9 @@ variable {D : Type u'} [Category.{v'} D] [Abelian D]
 variable {E : Type u''} [Category.{v''} E] [Abelian E]
 variable [HasInjectiveResolutions C]
 
-/-- A homology-preserving additive functor commutes with right-derived
-functors under postcomposition. -/
+/-- Let `C`, `D`, `E` be abelian, with injective resolutions in `C`.
+For additive `F : C → D` and additive homology-preserving `U : D → E`,
+there is a natural isomorphism `R^nF ⋙ U ≅ R^n(F ⋙ U)`. -/
 noncomputable def rightDerivedCompIsoOfPreservesHomology
     (F : C ⥤ D) [F.Additive] (U : D ⥤ E) [U.Additive]
     [U.PreservesHomology] (n : ℕ) :
@@ -209,8 +224,12 @@ variable {C : Type c} {D : Type d} {E : Type e}
   [Category.{vc} C] [Category.{vd} D] [Category.{ve} E]
   [Abelian C] [Abelian D] [Abelian E] [HasInjectiveResolutions C]
 
-/-- The inverse right-derived postcomposition comparison commutes with a natural
-transformation, using the canonical injective resolution of its argument. -/
+/-- Let `C`, `D`, `E` be abelian, with injective resolutions in `C`,
+`F : C → D` and `P : C → E` additive, and `U : D → E` additive
+and preserving homology. For `α : P → F ⋙ U` and the chosen resolution
+`I` of `Y`, transporting `R^qα_Y` by the inverse postcomposition
+comparison equals `H^q(α_I)` followed by the homology-preservation map
+and the inverse comparison to `U(R^qF(Y))`. -/
 theorem rightDerivedCompIsoOfPreservesHomology_inv_naturality_functor
     (F : C ⥤ D) [F.Additive] (U : D ⥤ E) [U.Additive] [U.PreservesHomology]
     (P : C ⥤ E) [P.Additive] (α : P ⟶ F ⋙ U) (Y : C) (q : ℕ) :

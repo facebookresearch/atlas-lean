@@ -13,16 +13,16 @@ module
 public import MathlibExt.Algebra.Homology.FiniteResolutionHomotopyFunctor
 
 /-!
-# Additivity of original augmented comparison maps and resolution functors
+# Additive finite-resolution comparison maps
 
-Zero and addition of comparison maps use the original zero and sum chain
-maps. Additivity of the resolving and single-complex functors proves their
-augmentation squares. Source and target change preserve these operations.
+Let P be preadditive, A abelian and i : P → A additive. Zero and addition of augmented
+comparisons use the zero and sum resolving chain maps, over the corresponding zero and sum base
+maps. Source and target transport preserve these operations.
 
-Constructive comparison uniqueness gives zero and addition homotopies for
-the existing chosen lifts. Their stock quotient images are therefore zero
-and additive, which earns the public additive instance for the existing
-given-family finite-resolution homotopy functor.
+If i is full faithful and every resolving image is projective, the chosen comparisons of zero
+and sums are homotopic to zero and sums of comparisons. Their homotopy classes are therefore
+additive, and every chosen family of finite resolutions gives an additive homotopy-category
+functor.
 -/
 
 @[expose] public section
@@ -44,37 +44,47 @@ variable {f g : X₁ ⟶ X₂}
 
 namespace Hom
 
-/-- The original zero chain map is an augmented comparison over the zero
-base morphism. -/
+/-- Let P be preadditive, A abelian and i : P → A additive. Let R₁,R₂ be finite resolutions of
+X₁,X₂, and let φ,ψ be augmented comparisons over f,g : X₁ → X₂. The zero chain map R₁.complex →
+R₂.complex is an augmented comparison over the zero morphism X₁ → X₂. -/
 def zero (R₁ : FiniteResolution i X₁) (R₂ : FiniteResolution i X₂) :
     Hom R₁ R₂ (0 : X₁ ⟶ X₂) where
   map := 0
   augmentation_comm := by simp
 
-/-- Add two original augmented comparison maps by their original sum chain
-map and the sum of their base morphisms. -/
+/-- Let P be preadditive, A abelian and i : P → A additive. Let R₁,R₂ be finite resolutions of
+X₁,X₂, and let φ,ψ be augmented comparisons over f,g : X₁ → X₂. Adding the chain maps φ+ψ gives
+an augmented comparison over f+g, since i is additive and both augmentation squares commute. -/
 def add (φ : Hom R₁ R₂ f) (ψ : Hom R₁ R₂ g) : Hom R₁ R₂ (f + g) where
   map := φ.map + ψ.map
   augmentation_comm := by
     simp only [CategoryTheory.Functor.map_add, Preadditive.add_comp,
       Preadditive.comp_add, φ.augmentation_comm, ψ.augmentation_comm]
 
-/-- The entire zero comparison chain map is the original zero morphism. -/
+/-- Let P be preadditive, A abelian and i : P → A additive. Let R₁,R₂ be finite resolutions of
+X₁,X₂, and let φ,ψ be augmented comparisons over f,g : X₁ → X₂. The resolving chain map of the
+zero augmented comparison is exactly zero. -/
 theorem zero_map (R₁ : FiniteResolution i X₁) (R₂ : FiniteResolution i X₂) :
     (Hom.zero R₁ R₂).map = (0 : R₁.complex ⟶ R₂.complex) :=
   rfl
 
-/-- Every zero comparison component is the original zero component. -/
+/-- Let P be preadditive, A abelian and i : P → A additive. Let R₁,R₂ be finite resolutions of
+X₁,X₂, and let φ,ψ be augmented comparisons over f,g : X₁ → X₂. In every resolution degree n ∈
+ℕ, the component of the zero augmented comparison is the zero morphism R₁,ₙ → R₂,ₙ. -/
 theorem zero_map_f (R₁ : FiniteResolution i X₁) (R₂ : FiniteResolution i X₂) (n : ℕ) :
     (Hom.zero R₁ R₂).map.f n = 0 :=
   rfl
 
-/-- Addition retains the entire original sum chain map. -/
+/-- Let P be preadditive, A abelian and i : P → A additive. Let R₁,R₂ be finite resolutions of
+X₁,X₂, and let φ,ψ be augmented comparisons over f,g : X₁ → X₂. The resolving chain map of the
+sum comparison is the sum φ.map+ψ.map. -/
 theorem add_map (φ : Hom R₁ R₂ f) (ψ : Hom R₁ R₂ g) :
     (φ.add ψ).map = φ.map + ψ.map :=
   rfl
 
-/-- Addition retains each original sum comparison component. -/
+/-- Let P be preadditive, A abelian and i : P → A additive. Let R₁,R₂ be finite resolutions of
+X₁,X₂, and let φ,ψ be augmented comparisons over f,g : X₁ → X₂. For every n ∈ ℕ, the degree-n
+component of the sum comparison is φₙ+ψₙ. -/
 theorem add_map_f (φ : Hom R₁ R₂ f) (ψ : Hom R₁ R₂ g) (n : ℕ) :
     (φ.add ψ).map.f n = φ.map.f n + ψ.map.f n :=
   rfl
@@ -85,7 +95,10 @@ variable {Q : Type uQ} [Category.{vQ} Q] [Preadditive Q]
 variable {j : Q ⥤ A} [j.Additive]
 variable (F : P ⥤ Q) [F.Additive] (e : F ⋙ j ≅ i)
 
-/-- Source change preserves the full zero augmented comparison. -/
+/-- Let P be preadditive, A abelian and i : P → A additive. Let R₁,R₂ be finite resolutions of
+X₁,X₂, and let φ,ψ be augmented comparisons over f,g : X₁ → X₂. Let Q be preadditive, j : Q → A
+additive, and F : P → Q additive with compatibility e : j ∘ F ≅ i. Source transport sends the
+zero augmented comparison to the zero comparison of the F-image resolutions. -/
 theorem mapSource_zero (R₁ : FiniteResolution i X₁) (R₂ : FiniteResolution i X₂) :
     (Hom.zero R₁ R₂).mapSource F e = Hom.zero (R₁.mapSource F e) (R₂.mapSource F e) := by
   apply Hom.ext
@@ -93,7 +106,10 @@ theorem mapSource_zero (R₁ : FiniteResolution i X₁) (R₂ : FiniteResolution
       (0 : R₁.complex ⟶ R₂.complex) = 0
   simp only [CategoryTheory.Functor.map_zero]
 
-/-- Source change preserves the full sum augmented comparison. -/
+/-- Let P be preadditive, A abelian and i : P → A additive. Let R₁,R₂ be finite resolutions of
+X₁,X₂, and let φ,ψ be augmented comparisons over f,g : X₁ → X₂. Let Q be preadditive, j : Q → A
+additive, and F : P → Q additive with compatibility e : j ∘ F ≅ i. Source transport sends φ+ψ to
+the sum of the source-transported augmented comparisons. -/
 theorem mapSource_add (φ : Hom R₁ R₂ f) (ψ : Hom R₁ R₂ g) :
     (φ.add ψ).mapSource F e = (φ.mapSource F e).add (ψ.mapSource F e) := by
   apply Hom.ext
@@ -110,19 +126,21 @@ variable {B : Type uB} [Category.{vB} B] [Abelian B]
 variable {j : P ⥤ B} [j.Additive]
 variable (H : A ⥤ B) [H.Additive] [H.PreservesHomology] (e : i ⋙ H ≅ j)
 
-/--
-Target change preserves the zero comparison, with its base map identified by the original functor
-zero-map equation.
--/
+/-- Let P be preadditive, A abelian and i : P → A additive. Let R₁,R₂ be finite resolutions of
+X₁,X₂, and let φ,ψ be augmented comparisons over f,g : X₁ → X₂. Let B be abelian, j : P → B
+additive, and H : A → B additive and homology-preserving, with compatibility e : H ∘ i ≅ j.
+Target transport sends the zero augmented comparison to the zero comparison of the
+target-changed resolutions, after identifying H(0)=0. -/
 theorem mapTarget_zero (R₁ : FiniteResolution i X₁) (R₂ : FiniteResolution i X₂) :
     HEq ((Hom.zero R₁ R₂).mapTarget H e)
       (Hom.zero (R₁.mapTarget H e) (R₂.mapTarget H e)) :=
   Hom.hext _ _ rfl rfl (by simp only [CategoryTheory.Functor.map_zero]) HEq.rfl
 
-/--
-Target change preserves the sum comparison, with its base map identified by the original functor
-additivity equation.
--/
+/-- Let P be preadditive, A abelian and i : P → A additive. Let R₁,R₂ be finite resolutions of
+X₁,X₂, and let φ,ψ be augmented comparisons over f,g : X₁ → X₂. Let B be abelian, j : P → B
+additive, and H : A → B additive and homology-preserving, with compatibility e : H ∘ i ≅ j.
+Target transport sends φ+ψ to the sum of their target-changed comparisons, after identifying
+H(f+g)=H(f)+H(g). -/
 theorem mapTarget_add (φ : Hom R₁ R₂ f) (ψ : Hom R₁ R₂ g) :
     HEq ((φ.add ψ).mapTarget H e) ((φ.mapTarget H e).add (ψ.mapTarget H e)) :=
   Hom.hext _ _ rfl rfl (CategoryTheory.Functor.map_add H (f := f) (g := g)) HEq.rfl
@@ -135,17 +153,21 @@ section ChosenComparisons
 
 variable [i.Full] [i.Faithful]
 
-/-- The same original chosen lift of zero is homotopic to the zero comparison chain map. -/
+/-- Let P be preadditive, A abelian and i : P → A additive full faithful. Let R₁,R₂ be finite
+resolutions of X₁,X₂ and f : X₁ → X₂. A comparison is a chain map of resolving complexes whose
+image commutes with augmentation. Assume i(P₀) is projective for every object P₀ of P. The
+chosen augmented comparison over the zero base morphism is homotopic to the zero chain map. -/
 def comparisonHomotopyZero (R₁ : FiniteResolution i X₁) (R₂ : FiniteResolution i X₂)
     (hproj : ∀ P₀ : P, Projective (i.obj P₀)) :
     Homotopy (comparisonHom R₁ R₂ (0 : X₁ ⟶ X₂) hproj).map
       (0 : R₁.complex ⟶ R₂.complex) :=
   comparisonHomotopy (comparisonHom R₁ R₂ (0 : X₁ ⟶ X₂) hproj) (Hom.zero R₁ R₂) hproj
 
-/--
-The same original chosen lift of a sum is homotopic to the sum of the original chosen comparison
-chain maps.
--/
+/-- Let P be preadditive, A abelian and i : P → A additive full faithful. Let R₁,R₂ be finite
+resolutions of X₁,X₂ and f : X₁ → X₂. A comparison is a chain map of resolving complexes whose
+image commutes with augmentation. Assume i(P₀) is projective for every object P₀ of P. For f,g :
+X₁ → X₂, the chosen comparison over f+g is homotopic to the sum of the chosen comparison chain
+maps over f and g. -/
 def comparisonHomotopyAdd (R₁ : FiniteResolution i X₁) (R₂ : FiniteResolution i X₂)
     (f g : X₁ ⟶ X₂) (hproj : ∀ P₀ : P, Projective (i.obj P₀)) :
     Homotopy (comparisonHom R₁ R₂ (f + g) hproj).map
@@ -153,7 +175,11 @@ def comparisonHomotopyAdd (R₁ : FiniteResolution i X₁) (R₂ : FiniteResolut
   comparisonHomotopy (comparisonHom R₁ R₂ (f + g) hproj)
     ((comparisonHom R₁ R₂ f hproj).add (comparisonHom R₁ R₂ g hproj)) hproj
 
-/-- The original chosen zero lift maps to zero in the stock quotient. -/
+/-- Let P be preadditive, A abelian and i : P → A additive full faithful. Let R₁,R₂ be finite
+resolutions of X₁,X₂ and f : X₁ → X₂. A comparison is a chain map of resolving complexes whose
+image commutes with augmentation. Assume i(P₀) is projective for every object P₀ of P. The
+homotopy class of the chosen comparison over zero is the zero morphism between the two
+resolution complexes. -/
 theorem comparisonHom_quotient_zero
     (R₁ : FiniteResolution i X₁) (R₂ : FiniteResolution i X₂)
     (hproj : ∀ P₀ : P, Projective (i.obj P₀)) :
@@ -162,8 +188,11 @@ theorem comparisonHom_quotient_zero
   simpa only [CategoryTheory.Functor.map_zero] using
     HomotopyCategory.eq_of_homotopy _ _ (comparisonHomotopyZero R₁ R₂ hproj)
 
-/-- The original chosen sum lift maps to the sum of the original chosen
-quotient maps. -/
+/-- Let P be preadditive, A abelian and i : P → A additive full faithful. Let R₁,R₂ be finite
+resolutions of X₁,X₂ and f : X₁ → X₂. A comparison is a chain map of resolving complexes whose
+image commutes with augmentation. Assume i(P₀) is projective for every object P₀ of P. The
+homotopy class of the chosen comparison over f+g equals the sum of the classes of the chosen
+comparisons over f and g. -/
 theorem comparisonHom_quotient_add
     (R₁ : FiniteResolution i X₁) (R₂ : FiniteResolution i X₂)
     (f g : X₁ ⟶ X₂) (hproj : ∀ P₀ : P, Projective (i.obj P₀)) :
@@ -176,8 +205,9 @@ theorem comparisonHom_quotient_add
   simpa only [CategoryTheory.Functor.map_add] using
     HomotopyCategory.eq_of_homotopy _ _ (comparisonHomotopyAdd R₁ R₂ f g hproj)
 
-/-- The existing given-family resolution functor is additive by the
-constructed comparison addition homotopy and the stock additive quotient. -/
+/-- Let P be preadditive, A abelian and i : P → A additive full faithful, with i(P₀) projective for
+every resolving object P₀. For a family of finite resolutions R(X) of all X∈A, the functor X ↦
+[R(X).complex] to the homotopy category is additive on base morphisms. -/
 instance finiteResolutionHomotopyFunctorAdditive
     (R : ∀ X : A, FiniteResolution i X) (hproj : ∀ P₀ : P, Projective (i.obj P₀)) :
     (finiteResolutionHomotopyFunctor R hproj).Additive where

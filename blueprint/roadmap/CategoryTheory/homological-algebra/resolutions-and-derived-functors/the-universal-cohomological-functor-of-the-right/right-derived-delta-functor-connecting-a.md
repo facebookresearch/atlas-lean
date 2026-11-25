@@ -1,3 +1,6 @@
-# Right Derived Delta Functor connecting app
+# Derived delta-functor connecting maps are horseshoe boundaries
 
-The bundle uses the existing `RDdelta` without an intervening boundary choice.
+Let `C,D` be abelian, with injective resolutions in `C`, and
+`F : C → D` additive. On a short exact sequence `S`, the connecting
+map of the derived delta-functor is the horseshoe boundary computed
+from the chosen injective resolutions of `S.X₁` and `S.X₃`.

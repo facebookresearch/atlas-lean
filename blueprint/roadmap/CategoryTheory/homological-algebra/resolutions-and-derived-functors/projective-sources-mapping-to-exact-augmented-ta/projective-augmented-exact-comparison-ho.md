@@ -1,4 +1,5 @@
-# Projective Augmented Exact Comparison Homotopy
+# Homotopy uniqueness with projective source terms
 
-Agreement after the exact target augmentation earns a homotopy. Only the source terms are
-projective.
+In an abelian category `C`, let `P` have projective terms and
+`ρ : Q → Y[0]` be a quasi-isomorphism. Maps `a,b : P → Q`
+with `a ≫ ρ = b ≫ ρ` are chain-homotopic.

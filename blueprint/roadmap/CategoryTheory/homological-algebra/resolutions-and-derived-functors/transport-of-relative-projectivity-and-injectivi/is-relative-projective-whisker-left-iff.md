@@ -1,3 +1,5 @@
-# Is Relative Projective whisker Left iff
+# Source-whiskered natural isomorphism preserves relative projectivity
 
-Restriction of a comparison to an arbitrary source functor keeps the same original lifts.
+For categories `E,D,C`, functor `K : E → D`, naturally
+isomorphic `U,U′ : D → C`, and `P : E`, relative projectivity for
+`K ⋙ U` is equivalent to that for `K ⋙ U′`.

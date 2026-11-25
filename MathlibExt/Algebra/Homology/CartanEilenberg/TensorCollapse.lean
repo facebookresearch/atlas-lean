@@ -18,11 +18,15 @@ import Mathlib.Algebra.Homology.BifunctorHomotopy
 import Mathlib.RingTheory.Flat.CategoryTheory
 
 /-!
-# Collapse of the Cartan--Eilenberg tensor comparison
+# The Cartan–Eilenberg vertical-homology tensor comparison
 
-The canonical comparison from the finite actual-row Tor-resolution complex
-to vertical homology is an isomorphism.  The public isomorphism is oriented in
-the opposite direction, so its inverse is the canonical comparison.
+Let R be commutative, K,L nonnegative R-module complexes and P a Cartan–Eilenberg resolution of
+L. For each inner total degree q, the canonical homogeneous tensor pairing from the finite
+Tor-resolution complex to vertical homology of the tensor convolution is an isomorphism.
+
+The displayed isomorphism is oriented from vertical homology to the Tor-resolution complex, so
+its inverse is this canonical pairing. No degreewise flatness hypothesis on K is required for
+this comparison.
 -/
 
 @[expose] public section
@@ -47,7 +51,9 @@ local instance : HasFiniteBiproducts (ModuleCat.{u} R) :=
 local instance : HasFiniteBiproducts (ChainComplex (ModuleCat.{u} R) ℕ) :=
   CategoryTheory.Abelian.hasFiniteBiproducts
 
-/-- The homology objects of one Cartan--Eilenberg row, with zero differential. -/
+/-- Let R be commutative, L a nonnegative R-module complex, P a Cartan–Eilenberg resolution and a ∈
+ℕ. The row homology complex has term H_j(P.bicomplex.Xₐ) in each original degree j and zero
+differential. -/
 private noncomputable abbrev rowHomologyComplex
     (P : CartanEilenbergResolution L) (a : ℕ) :
     ChainComplex (ModuleCat.{u} R) ℕ where
@@ -2303,7 +2309,11 @@ private theorem isIso_kunnethCEVerticalHomologyPairing_component
   rw [heq]
   exact eActual.isIso_inv
 
-/-- The canonical finite actual-row comparison is an isomorphism. -/
+/-- Let R be a commutative ring, K,L nonnegative chain complexes of R-modules, and P a
+Cartan–Eilenberg resolution of L. The bicomplex has resolution index a and inner tensor degree
+q. For each inner degree q, the canonical map from the finite antidiagonal Tor-resolution
+complex to vertical homology of the tensor-convolution bicomplex is an isomorphism of
+resolution-degree chain complexes. No flatness of K is assumed. -/
 public theorem isIso_kunnethCEVerticalHomologyPairing
     (K : ChainComplex (ModuleCat.{u} R) ℕ)
     (P : CartanEilenbergResolution L) (q : ℕ) :
@@ -2312,8 +2322,11 @@ public theorem isIso_kunnethCEVerticalHomologyPairing
     isIso_kunnethCEVerticalHomologyPairing_component K P a q
   exact HomologicalComplex.Hom.isIso_of_components _
 
-/-- Vertical homology of the Cartan--Eilenberg tensor convolution is the
-finite actual-row Tor-resolution complex. -/
+/-- Let R be a commutative ring, K,L nonnegative chain complexes of R-modules, and P a
+Cartan–Eilenberg resolution of L. The bicomplex has resolution index a and inner tensor degree
+q. For each q ∈ ℕ, vertical homology of the tensor-convolution bicomplex is isomorphic to the
+finite degree-q Tor-resolution complex. The inverse of this isomorphism is exactly the canonical
+homogeneous tensor pairing. -/
 public noncomputable def kunnethCEVerticalHomologyComplexIso
     (K : ChainComplex (ModuleCat.{u} R) ℕ)
     (P : CartanEilenbergResolution L) (q : ℕ) :

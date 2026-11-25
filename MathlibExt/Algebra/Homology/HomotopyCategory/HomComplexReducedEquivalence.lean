@@ -14,12 +14,14 @@ public import Mathlib.Algebra.Group.Subgroup.Defs
 public import Mathlib.Algebra.Group.Equiv.Defs
 
 /-!
-# An additive normal form for raw cochains
+# A quotient and kernel description of homogeneous cochains
 
-The two outer zero-composite conditions define an additive subgroup, without any kernel or
-cokernel hypothesis. With kernels and cokernels, literal projection–cochain–inclusion
-reconstruction is an additive equivalence onto this subgroup. The inverse is the unique raw
-factor, not a cocycle or a Maurer–Cartan construction.
+Let D be preadditive, η : U → C and ε : A → V maps of integer cochain complexes. The degree-n
+cochains θ : C → A with θ ∘ η=0 and ε ∘ θ=0 form the two-sided annihilator additive subgroup.
+
+If D has kernels and cokernels, every such cochain factors uniquely as C → coker(η) → ker(ε) →
+A. Reconstruction through the cokernel quotient and kernel inclusion is an additive equivalence.
+No cocycle condition or splitting is required.
 -/
 
 @[expose] public section
@@ -36,8 +38,10 @@ universe u v
 variable {D : Type u} [Category.{v} D] [Preadditive D]
 variable {U C A V : CochainComplex D ℤ}
 
-/-- Raw cochains annihilated by the two specified outer complex maps.
-This subgroup requires no categorical kernels or cokernels. -/
+/-- Let D be preadditive and let U,C,A,V be integer cochain complexes, with complex maps η : U → C
+and ε : A → V. For n ∈ ℤ, Annⁿ(η,ε) consists of homogeneous cochains θ : C → A of degree n
+satisfying θ ∘ η=0 and ε ∘ θ=0. These cochains form an additive subgroup of Homⁿ(C,A), without a
+kernel or cokernel assumption on D. -/
 def annihilator (η : U ⟶ C) (ε : A ⟶ V) (d : ℤ) : AddSubgroup (Cochain C A d) where
   carrier := {τ | (ofHom η).comp τ (zero_add d) = 0 ∧
     τ.comp (ofHom ε) (add_zero d) = 0}
@@ -54,7 +58,10 @@ def annihilator (η : U ⟶ C) (ε : A ⟶ V) (d : ℤ) : AddSubgroup (Cochain C
     · simp only [Cochain.comp_neg, hτ.1, neg_zero]
     · simp only [Cochain.neg_comp, hτ.2, neg_zero]
 
-/-- Membership is precisely the two literal outer zero composites. -/
+/-- Let D be preadditive and let U,C,A,V be integer cochain complexes, with complex maps η : U → C
+and ε : A → V. For n ∈ ℤ, Annⁿ(η,ε) consists of homogeneous cochains θ : C → A of degree n
+satisfying θ ∘ η=0 and ε ∘ θ=0. Membership θ ∈ Annⁿ(η,ε) is equivalent to the conjunction θ ∘
+η=0 and ε ∘ θ=0, as equalities of homogeneous degree-n cochains. -/
 @[simp]
 theorem mem_annihilator (η : U ⟶ C) (ε : A ⟶ V) (d : ℤ) (τ : Cochain C A d) :
     τ ∈ annihilator η ε d ↔
@@ -63,11 +70,12 @@ theorem mem_annihilator (η : U ⟶ C) (ε : A ⟶ V) (d : ℤ) (τ : Cochain C 
 
 variable [HasKernels D] [HasCokernels D]
 
-/--
-Literal quotient/kernel reconstruction is an additive equivalence onto the two-sided annihilator.
-Its inverse is the unique homogeneous factor. Only kernels/cokernels in the base category are
-used; no splitting, ring, tensor, differential compatibility or Maurer–Cartan premise is added.
--/
+/-- Let D be preadditive and let U,C,A,V be integer cochain complexes, with complex maps η : U → C
+and ε : A → V. For n ∈ ℤ, Annⁿ(η,ε) consists of homogeneous cochains θ : C → A of degree n
+satisfying θ ∘ η=0 and ε ∘ θ=0. Assume D has kernels and cokernels, so the complexes coker(η)
+and ker(ε) are computed degreewise. Reconstruction θ′ ↦ i_ε ∘ θ′ ∘ π_η gives an additive
+equivalence Homⁿ(coker η,ker ε) ≅ Annⁿ(η,ε). Its inverse is the unique homogeneous factor, with
+no cocycle hypothesis. -/
 noncomputable def cokernelKernelAddEquiv (η : U ⟶ C) (ε : A ⟶ V) (d : ℤ) :
     let _ : HasCokernel η := HomologicalComplex.hasCokernel_of_hasCokernel_f η
     let _ : HasKernel ε := HomologicalComplex.hasKernel_of_hasKernel_f ε
@@ -105,7 +113,12 @@ noncomputable def cokernelKernelAddEquiv (η : U ⟶ C) (ε : A ⟶ V) (d : ℤ)
       τ.val τ.property.1 τ.property.2
     exact ⟨θ, Subtype.ext hθ⟩
 
-/-- The forward map is the projection–cochain–inclusion composite. -/
+/-- Let D be preadditive and let U,C,A,V be integer cochain complexes, with complex maps η : U → C
+and ε : A → V. For n ∈ ℤ, Annⁿ(η,ε) consists of homogeneous cochains θ : C → A of degree n
+satisfying θ ∘ η=0 and ε ∘ θ=0. Assume D has kernels and cokernels, so the complexes coker(η)
+and ker(ε) are computed degreewise. For θ′ of degree n from coker η to ker ε, the corresponding
+annihilator cochain is i_ε ∘ θ′ ∘ π_η, where π_η and i_ε are the complex cokernel quotient and
+kernel inclusion. -/
 theorem cokernelKernelAddEquiv_apply (η : U ⟶ C) (ε : A ⟶ V) (d : ℤ) :
     let _ : HasCokernel η := HomologicalComplex.hasCokernel_of_hasCokernel_f η
     let _ : HasKernel ε := HomologicalComplex.hasKernel_of_hasKernel_f ε
@@ -119,10 +132,11 @@ theorem cokernelKernelAddEquiv_apply (η : U ⟶ C) (ε : A ⟶ V) (d : ℤ) :
   intro θ
   rfl
 
-/--
-The inverse returns the raw factor that reconstructs the original annihilator element. Both
-inverse identities and addition/zero preservation are also available through the `AddEquiv` API.
--/
+/-- Let D be preadditive and let U,C,A,V be integer cochain complexes, with complex maps η : U → C
+and ε : A → V. For n ∈ ℤ, Annⁿ(η,ε) consists of homogeneous cochains θ : C → A of degree n
+satisfying θ ∘ η=0 and ε ∘ θ=0. Assume D has kernels and cokernels, so the complexes coker(η)
+and ker(ε) are computed degreewise. For θ ∈ Annⁿ(η,ε), the inverse equivalence gives θ′ : coker
+η → ker ε of degree n satisfying i_ε ∘ θ′ ∘ π_η=θ. -/
 theorem cokernelKernelAddEquiv_symm_reconstruct (η : U ⟶ C) (ε : A ⟶ V) (d : ℤ) :
     let _ : HasCokernel η := HomologicalComplex.hasCokernel_of_hasCokernel_f η
     let _ : HasKernel ε := HomologicalComplex.hasKernel_of_hasKernel_f ε

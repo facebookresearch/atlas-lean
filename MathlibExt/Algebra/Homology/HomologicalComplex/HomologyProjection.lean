@@ -13,18 +13,15 @@ public import MathlibExt.Algebra.Homology.HomologicalComplex.CyclesComplex
 public import Mathlib.Algebra.Homology.QuasiIso
 
 /-!
-# Projection onto the zero-differential homology complex
+# Zero-differential homology complexes and projective-image projections
 
-The fixed end complex retains the original native homology objects and maps
-under only pointwise homology of that complex. The global homology-zero-complex
-functor retains CategoryWithHomology. Target homology is earned from native
-zero-differential data, with no replacement of the chosen cycles or quotients.
-Across arbitrary complex shapes, projectivity of the actual outgoing images splits the first
-cycles/term/image sequence degreewise. Its retractions followed by the native
-homology quotients form a genuine complex map, and its induced homology map
-is the canonical identity. The choices are generally not natural in the
-original complex. No reverse complex map or splitting of the
-boundaries/cycles/homology sequence is asserted.
+The degreewise homology objects of a complex form a complex H(P) with
+zero differentials. Its maps are induced homology maps, and H_i(H(P)) is
+canonically H_i(P).
+
+In an abelian category, projectivity of every outgoing differential image
+splits the cycle–term–image sequence. The resulting cycle retractions give
+a morphism P→H(P) inducing isomorphisms in every homology degree.
 -/
 
 @[expose] public section
@@ -44,40 +41,69 @@ section NativeHomologyComplex
 
 variable [HasZeroMorphisms C]
 
-/-- Keep all original homology objects and maps, with zero differentials. -/
+/--
+Let C have zero morphisms and homology for all short complexes, and fix an arbitrary complex
+shape c. Sending a complex P to H(P), whose terms are Hᵢ(P) and whose differentials vanish,
+defines an endofunctor on c-complexes. Its degree-i map on f is the induced map Hᵢ(f).
+-/
 def homologyZeroComplexFunctor [CategoryWithHomology C] :
     HomologicalComplex C c ⥤ HomologicalComplex C c :=
   (Functor.pi' (fun i : ι => homologyFunctor C c i)) ⋙
     zeroDifferentialFunctor (C := C) c
 
-/-- The zero-differential complex of the original homology objects. -/
+/--
+Let C be a category with zero morphisms and let P be a complex of arbitrary shape c with
+homology at every degree. Write H(P) for the complex with term Hᵢ(P) and zero differentials.
+The construction retains every original homology object as H(P)ᵢ=Hᵢ(P); all maps H(P).d i j
+are zero.
+-/
 def homologyZeroComplex (P : HomologicalComplex C c) [∀ i, P.HasHomology i] :
     HomologicalComplex C c :=
   (zeroDifferentialFunctor (C := C) c).obj (fun i => P.homology i)
 
-/-- The target has native homology because both of its differentials are zero. -/
+/--
+Let C be a category with zero morphisms and let P be a complex of arbitrary shape c with
+homology at every degree. Write H(P) for the complex with term Hᵢ(P) and zero differentials.
+The complex H(P) itself has homology at every degree i, since its incoming and outgoing
+differentials are zero.
+-/
 instance homologyZeroComplex_hasHomology (P : HomologicalComplex C c)
     [∀ i, P.HasHomology i] (i : ι) : (homologyZeroComplex P).HasHomology i :=
   ShortComplex.HasHomology.mk'
     (ShortComplex.HomologyData.ofZeros ((homologyZeroComplex P).sc i) rfl rfl)
 
-/-- In a globally homological category this is the original global functor object. -/
+/--
+Let C have zero morphisms and homology for all short complexes, and fix an arbitrary complex
+shape c. At each c-complex P, the object of the homology-zero-complex functor equals H(P), the
+complex of its degreewise homology objects with zero differential.
+-/
 lemma homologyZeroComplexFunctor_obj [CategoryWithHomology C]
     (P : HomologicalComplex C c) :
     (homologyZeroComplexFunctor (C := C) (c := c)).obj P = homologyZeroComplex P := rfl
 
-/-- Native homology maps give the zero-complex map for just these two endpoints. -/
+/--
+Let C have zero morphisms and let f:P→Q be a map of c-complexes, both with homology at every
+degree. The induced maps Hᵢ(f):Hᵢ(P)→Hᵢ(Q) assemble into a morphism H(P)→H(Q) of
+zero-differential complexes.
+-/
 def homologyZeroComplexMap {P Q : HomologicalComplex C c}
     [∀ i, P.HasHomology i] [∀ i, Q.HasHomology i] (f : P ⟶ Q) :
     homologyZeroComplex P ⟶ homologyZeroComplex Q :=
   (zeroDifferentialFunctor (C := C) c).map (fun i => homologyMap f i)
 
-/-- Its component is the original native map on homology. -/
+/--
+Let C have zero morphisms and let f:P→Q be a map of c-complexes, both with homology at every
+degree. In every degree i, the component of H(P)→H(Q) is precisely Hᵢ(f).
+-/
 lemma homologyZeroComplexMap_f {P Q : HomologicalComplex C c}
     [∀ i, P.HasHomology i] [∀ i, Q.HasHomology i] (f : P ⟶ Q) (i : ι) :
     (homologyZeroComplexMap f).f i = homologyMap f i := rfl
 
-/-- The fixed-endpoint construction preserves the actual identity. -/
+/--
+Let C be a category with zero morphisms and let P be a complex of arbitrary shape c with
+homology at every degree. Write H(P) for the complex with term Hᵢ(P) and zero differentials.
+The identity morphism of P induces the identity of H(P): homologyZeroComplexMap(1_P)=1_{H(P)}.
+-/
 lemma homologyZeroComplexMap_id (P : HomologicalComplex C c)
     [∀ i, P.HasHomology i] :
     homologyZeroComplexMap (𝟙 P) = 𝟙 (homologyZeroComplex P) := by
@@ -85,7 +111,10 @@ lemma homologyZeroComplexMap_id (P : HomologicalComplex C c)
   funext i
   exact homologyMap_id P i
 
-/-- The fixed-endpoint construction preserves the original composition order. -/
+/--
+Let C have zero morphisms and P,Q,R be c-complexes with homology at every degree. For f:P→Q
+and g:Q→R, the induced maps of zero-differential homology complexes satisfy H(f≫g)=H(f)≫H(g).
+-/
 lemma homologyZeroComplexMap_comp {P Q R : HomologicalComplex C c}
     [∀ i, P.HasHomology i] [∀ i, Q.HasHomology i] [∀ i, R.HasHomology i]
     (f : P ⟶ Q) (g : Q ⟶ R) :
@@ -94,7 +123,11 @@ lemma homologyZeroComplexMap_comp {P Q R : HomologicalComplex C c}
   funext i
   exact homologyMap_comp f g i
 
-/-- The original global functor uses the same native fixed-endpoint map. -/
+/--
+Let C have zero morphisms and homology for all short complexes, and fix an arbitrary complex
+shape c. For f:P→Q, the endofunctor's map is exactly the complex morphism H(P)→H(Q) assembled
+from the maps Hᵢ(f).
+-/
 lemma homologyZeroComplexFunctor_map_eq [CategoryWithHomology C]
     {P Q : HomologicalComplex C c} (f : P ⟶ Q) :
     (homologyZeroComplexFunctor (C := C) (c := c)).map f = homologyZeroComplexMap f := by
@@ -102,24 +135,42 @@ lemma homologyZeroComplexFunctor_map_eq [CategoryWithHomology C]
   funext i
   rfl
 
-/-- Every term is the literal original homology object. -/
+/--
+Let C be a category with zero morphisms and let P be a complex of arbitrary shape c with
+homology at every degree. Write H(P) for the complex with term Hᵢ(P) and zero differentials.
+At every i, (homologyZeroComplex P).X i = P.homology i; no reindexing or replacement of the
+original homology object occurs.
+-/
 lemma homologyZeroComplex_X (P : HomologicalComplex C c) [∀ j, P.HasHomology j]
     (i : ι) :
     (homologyZeroComplex P).X i = P.homology i := rfl
 
-/-- The differential vanishes at every pair, without a bound on the shape. -/
+/--
+Let C be a category with zero morphisms and let P be a complex of arbitrary shape c with
+homology at every degree. Write H(P) for the complex with term Hᵢ(P) and zero differentials.
+At all pairs of indices i,j, the differential of H(P) is zero: H(P).d i j = 0.
+-/
 lemma homologyZeroComplex_d (P : HomologicalComplex C c) [∀ k, P.HasHomology k]
     (i j : ι) :
     (homologyZeroComplex P).d i j = 0 := rfl
 
-/-- The induced complex map retains the actual native homology map. -/
+/--
+Let C have zero morphisms and homology for all short complexes, and fix an arbitrary complex
+shape c. For a morphism f:P→Q of c-complexes, the degree-i component of its image under the
+homology-zero-complex functor is Hᵢ(f).
+-/
 lemma homologyZeroComplexFunctor_map_f [CategoryWithHomology C]
     {P Q : HomologicalComplex C c}
     (f : P ⟶ Q) (i : ι) :
     ((homologyZeroComplexFunctor (C := C) (c := c)).map f).f i =
       homologyMap f i := rfl
 
-/-- The native zero-differential cycle and quotient isos compute its homology. -/
+/--
+Let C be a category with zero morphisms and let P be a complex of arbitrary shape c with
+homology at every degree. Write H(P) for the complex with term Hᵢ(P) and zero differentials.
+The zero differentials give a canonical isomorphism ηᵢ:Hᵢ(H(P))≅Hᵢ(P), identifying its cycles
+and their homology quotient with the original term Hᵢ(P).
+-/
 def homologyZeroComplexHomologyIso (P : HomologicalComplex C c)
     [∀ j, P.HasHomology j] (i : ι) :
     (homologyZeroComplex P).homology i ≅ P.homology i :=
@@ -127,7 +178,12 @@ def homologyZeroComplexHomologyIso (P : HomologicalComplex C c)
   (K.isoHomologyπ (c.prev i) i rfl (by rfl)).symm ≪≫
     K.iCyclesIso i (c.next i) rfl (by rfl)
 
-/-- The canonical zero-differential comparison preserves the original cycle inclusion. -/
+/--
+Let C be a category with zero morphisms and let P be a complex of arbitrary shape c with
+homology at every degree. Write H(P) for the complex with term Hᵢ(P) and zero differentials.
+For ηᵢ:Hᵢ(H(P))≅Hᵢ(P), the homology quotient of H(P) followed by ηᵢ.hom equals its cycle
+inclusion into H(P)ᵢ=Hᵢ(P).
+-/
 @[reassoc]
 lemma homologyZeroComplexHomologyIso_π (P : HomologicalComplex C c)
     [∀ j, P.HasHomology j] (i : ι) :
@@ -145,7 +201,11 @@ lemma homologyZeroComplexHomologyIso_π (P : HomologicalComplex C c)
     ((congrArg (fun t : K.cycles i ⟶ K.cycles i => t ≫ b.hom) ha).trans
       (Category.id_comp b.hom))
 
-/-- The canonical comparison is natural under only endpoint-local homology. -/
+/--
+Let C have zero morphisms and let f:P→Q be a map of c-complexes, both with homology at every
+degree. For the canonical identifications η_P,η_Q in degree i, Hᵢ(H(f))≫η_Q.hom =
+η_P.hom≫Hᵢ(f). Only the two complexes' degreewise homology existence is required.
+-/
 lemma homologyZeroComplexHomologyIso_map_naturality {P Q : HomologicalComplex C c}
     [∀ j, P.HasHomology j] [∀ j, Q.HasHomology j]
     (f : P ⟶ Q) (i : ι) :
@@ -187,7 +247,12 @@ lemma homologyZeroComplexHomologyIso_map_naturality {P Q : HomologicalComplex C 
     (hCycle.trans (hNative.trans (hSource.trans hLast)))))
 
 
-/-- The original global-functor naturality statement specializes the local law. -/
+/--
+Let C have zero morphisms and homology for all short complexes, and fix an arbitrary complex
+shape c. For f:P→Q and degree i, the canonical identifications η_P:Hᵢ(H(P))≅Hᵢ(P) and
+η_Q:Hᵢ(H(Q))≅Hᵢ(Q) satisfy Hᵢ(H(f))≫η_Q.hom=η_P.hom≫Hᵢ(f), for H the homology-zero-complex
+functor.
+-/
 lemma homologyZeroComplexHomologyIso_naturality [CategoryWithHomology C]
     {P Q : HomologicalComplex C c} (f : P ⟶ Q) (i : ι) :
     homologyMap ((homologyZeroComplexFunctor (C := C) (c := c)).map f) i ≫
@@ -201,7 +266,12 @@ section AbelianProjection
 
 variable [Abelian C]
 
-/-- Actual image projectivity chooses a degree retraction and earns a genuine complex map. -/
+/--
+Let P be a complex of shape c in an abelian category C. Assume the image of P.d i (c.next i)
+is projective for every i. For each degree choose the cycle retraction rᵢ:Pᵢ→Zᵢ(P) furnished
+by splitting 0→Zᵢ(P)→Pᵢ→im(dᵢ,next(i))→0. The maps rᵢ followed by the homology quotient
+πᵢ:Zᵢ(P)→Hᵢ(P) assemble into a morphism Π:P→H(P), where H(P) has zero differentials.
+-/
 def homologyProjection (P : HomologicalComplex C c)
     (hI : ∀ i : ι, Projective (Abelian.image (P.d i (c.next i)))) :
     P ⟶ homologyZeroComplex P := by
@@ -233,14 +303,24 @@ def homologyProjection (P : HomologicalComplex C c)
     P.d i j ≫ (r j ≫ π)
   exact CategoryTheory.Limits.comp_zero.trans h.symm
 
-/-- The chosen projection is the actual degree retraction followed by the native quotient. -/
+/--
+Let P be a complex of shape c in an abelian category C. Assume the image of P.d i (c.next i)
+is projective for every i. For each degree choose the cycle retraction rᵢ:Pᵢ→Zᵢ(P) furnished
+by splitting 0→Zᵢ(P)→Pᵢ→im(dᵢ,next(i))→0. The constructed projection Π:P→H(P) has degree-i
+component Π.f i=rᵢ≫πᵢ. The retraction is the one chosen by the outgoing-image short-exact
+splitting.
+-/
 lemma homologyProjection_f (P : HomologicalComplex C c)
     (hI : ∀ i : ι, Projective (Abelian.image (P.d i (c.next i)))) (i : ι) :
     (homologyProjection P hI).f i =
       (letI : Projective (Abelian.image (P.d i (c.next i))) := hI i
        (cyclesImageSequenceSplitting P i (c.next i) rfl).r) ≫ P.homologyπ i := rfl
 
-/-- Its restriction to actual cycles is precisely the original homology quotient. -/
+/--
+Let P be a complex of shape c in an abelian category C. Assume the image of P.d i (c.next i)
+is projective for every i. For the constructed Π:P→H(P), restricting Π.f i to the cycles gives
+their original quotient: P.iCycles i≫Π.f i=P.homologyπ i.
+-/
 @[reassoc]
 lemma iCycles_homologyProjection_f (P : HomologicalComplex C c)
     (hI : ∀ i : ι, Projective (Abelian.image (P.d i (c.next i)))) (i : ι) :
@@ -256,7 +336,11 @@ lemma iCycles_homologyProjection_f (P : HomologicalComplex C c)
     ((congrArg (fun t : P.cycles i ⟶ P.cycles i => t ≫ π) hr).trans
       (Category.id_comp π))
 
-/-- The true original differential gives zero after the projection in every shape. -/
+/--
+Let P be a complex of shape c in an abelian category C. Assume the image of P.d i (c.next i)
+is projective for every i. The constructed Π:P→H(P) kills every incoming differential: P.d i
+j≫Π.f j=0 for all i,j.
+-/
 @[reassoc]
 lemma d_homologyProjection_f (P : HomologicalComplex C c)
     (hI : ∀ i : ι, Projective (Abelian.image (P.d i (c.next i)))) (i j : ι) :
@@ -266,7 +350,11 @@ lemma d_homologyProjection_f (P : HomologicalComplex C c)
     q.comm i j
   exact h.symm.trans CategoryTheory.Limits.comp_zero
 
-/-- The actual induced homology map is identity after the native zero-complex comparison. -/
+/--
+Let P be a complex of shape c in an abelian category C. Assume the image of P.d i (c.next i)
+is projective for every i. For Π:P→H(P) and the canonical ηᵢ:Hᵢ(H(P))≅Hᵢ(P), the induced map
+satisfies Hᵢ(Π)≫ηᵢ.hom=1_{Hᵢ(P)}.
+-/
 @[reassoc]
 lemma homologyProjection_homologyMap_hom (P : HomologicalComplex C c)
     (hI : ∀ i : ι, Projective (Abelian.image (P.d i (c.next i)))) (i : ι) :
@@ -299,7 +387,11 @@ lemma homologyProjection_homologyMap_hom (P : HomologicalComplex C c)
   exact hFirst.trans (hMap.trans (hAssoc.trans
     (hCycle.trans (hNative.trans (hq.trans hLast)))))
 
-/-- The induced map is the inverse of the earned native zero-differential comparison. -/
+/--
+Let P be a complex of shape c in an abelian category C. Assume the image of P.d i (c.next i)
+is projective for every i. The map induced by Π:P→H(P) in degree i is ηᵢ.inv, where
+ηᵢ:Hᵢ(H(P))≅Hᵢ(P) is the canonical zero-differential identification.
+-/
 lemma homologyProjection_homologyMap (P : HomologicalComplex C c)
     (hI : ∀ i : ι, Projective (Abelian.image (P.d i (c.next i)))) (i : ι) :
     homologyMap (homologyProjection P hI) i = (homologyZeroComplexHomologyIso P i).inv := by
@@ -308,7 +400,12 @@ lemma homologyProjection_homologyMap (P : HomologicalComplex C c)
   apply (cancel_mono e.hom).1
   exact (homologyProjection_homologyMap_hom P hI i).trans e.inv_hom_id.symm
 
-/-- Image projectivity alone makes the constructed projection a quasi-isomorphism. -/
+/--
+Let P be a complex of shape c in an abelian category C. Assume the image of P.d i (c.next i)
+is projective for every i. The constructed projection Π:P→H(P) is a quasi-isomorphism, since
+it induces the inverse of the canonical isomorphism Hᵢ(H(P))≅Hᵢ(P) at every i. Projectivity of
+the terms themselves is not required.
+-/
 lemma quasiIso_homologyProjection (P : HomologicalComplex C c)
     (hI : ∀ i : ι, Projective (Abelian.image (P.d i (c.next i)))) :
     _root_.QuasiIso (homologyProjection P hI) := by

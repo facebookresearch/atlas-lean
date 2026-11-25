@@ -12,12 +12,12 @@ module
 public import MathlibExt.Algebra.Homology.HomologicalComplex.Splitting
 
 /-!
-# Splitting transport along homotopy retracts
+# Splittings transferred through homotopy retracts
 
-A one-sided homotopy retract of a split complex is split. The transported
-inverse family includes the actual homotopy correction; no homology data,
-abelian-category structure, zero object or second retract homotopy is needed.
-The native homotopy convention fixes the sign of this correction.
+A split complex passes its generalized inverses to any homotopy retract.
+For a homotopy from the identity to the retract composite the correction
+has a positive sign. Transport through a homotopy equivalence uses the
+negative of its composite-to-identity homotopy.
 -/
 
 @[expose] public section
@@ -32,8 +32,12 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
   {ι : Type w} {c : ComplexShape ι}
   {K L : HomologicalComplex C c}
 
-/-- A one-sided homotopy retract inherits actual generalized inverse data.
-The correction is positive for a homotopy from identity to the retract map. -/
+/--
+Let K,L be complexes of the same arbitrary shape c in a preadditive category C, and let s be a
+generalized-inverse splitting of K. Let g:L→K, f:K→L and H:1_L∼g≫f be a homotopy retract. Then
+L has a splitting with component H.hom i j + g.f i ≫ s.hom i j ≫ f.f j. The homotopy
+correction is positive for the stated orientation 1_L→g≫f.
+-/
 def Splitting.ofHomotopyRetract (s : Splitting K) (g : L ⟶ K) (f : K ⟶ L)
     (h : Homotopy (𝟙 L) (g ≫ f)) : Splitting L where
   hom i j := h.hom i j + g.f i ≫ s.hom i j ≫ f.f j
@@ -72,30 +76,50 @@ def Splitting.ofHomotopyRetract (s : Splitting K) (g : L ⟶ K) (f : K ⟶ L)
         _ = L.d i j := by simpa only [Category.assoc] using he.symm
     · simp only [L.shape i j hij, comp_zero]
 
-/-- The inherited family uses exactly the supplied homotopy and transported inverse. -/
+/--
+Let K,L be complexes of the same arbitrary shape c in a preadditive category C, and let s be a
+generalized-inverse splitting of K. Let g:L→K, f:K→L and H:1_L∼g≫f be a homotopy retract. The
+transferred generalized inverse from Lᵢ to Lⱼ is exactly H.hom i j + g.f i ≫ s.hom i j ≫ f.f
+j.
+-/
 @[simp]
 theorem Splitting.ofHomotopyRetract_hom (s : Splitting K) (g : L ⟶ K) (f : K ⟶ L)
     (h : Homotopy (𝟙 L) (g ≫ f)) (i j : ι) :
     (s.ofHomotopyRetract g f h).hom i j =
       h.hom i j + g.f i ≫ s.hom i j ≫ f.f j := rfl
 
-/-- Splitting transport along a native homotopy equivalence uses its target-side homotopy. -/
+/--
+Let K,L be complexes of the same arbitrary shape c in a preadditive category C, and let s be a
+generalized-inverse splitting of K. For a homotopy equivalence e:K≃L, transport s to L using
+g=e.inv, f=e.hom and the homotopy 1_L∼e.inv≫e.hom. The result is a splitting of L.
+-/
 def Splitting.ofHomotopyEquiv (s : Splitting K) (e : HomotopyEquiv K L) : Splitting L :=
   s.ofHomotopyRetract e.inv e.hom e.homotopyInvHomId.symm
 
-/-- The native composition-to-identity homotopy contributes its negative components. -/
+/--
+Let K,L be complexes of the same arbitrary shape c in a preadditive category C, and let s be a
+generalized-inverse splitting of K. For e:K≃L, let H be its homotopy from e.inv≫e.hom to 1_L.
+The transferred component is −H.hom i j + e.inv.f i ≫ s.hom i j ≫ e.hom.f j.
+-/
 @[simp]
 theorem Splitting.ofHomotopyEquiv_hom (s : Splitting K) (e : HomotopyEquiv K L) (i j : ι) :
     (s.ofHomotopyEquiv e).hom i j =
       -e.homotopyInvHomId.hom i j + e.inv.f i ≫ s.hom i j ≫ e.hom.f j := rfl
 
-/-- Literal splitting descends along a one-sided homotopy retract. -/
+/--
+Let K,L be c-complexes in a preadditive category C. If K admits a splitting and g:L→K, f:K→L
+satisfy 1_L∼g≫f, then L also admits a splitting.
+-/
 theorem isSplit_of_homotopyRetract (hs : IsSplit K) (g : L ⟶ K) (f : K ⟶ L)
     (h : Homotopy (𝟙 L) (g ≫ f)) : IsSplit L := by
   rcases hs with ⟨s⟩
   exact ⟨s.ofHomotopyRetract g f h⟩
 
-/-- Literal splitting is invariant under any native homotopy equivalence. -/
+/--
+Let K,L be complexes of shape c in a preadditive category C. Any homotopy equivalence K≃L
+gives IsSplit K↔IsSplit L, by transporting generalized-inverse splitting data in both
+directions.
+-/
 theorem isSplit_iff_of_homotopyEquiv (e : HomotopyEquiv K L) : IsSplit K ↔ IsSplit L := by
   constructor
   · rintro ⟨s⟩
@@ -103,7 +127,11 @@ theorem isSplit_iff_of_homotopyEquiv (e : HomotopyEquiv K L) : IsSplit K ↔ IsS
   · rintro ⟨s⟩
     exact ⟨s.ofHomotopyEquiv e.symm⟩
 
-/-- A zero-differential source leaves precisely the native target homotopy correction. -/
+/--
+Let K,L be c-complexes in a preadditive category C, assume every differential of K is zero,
+and let e:K≃L. Transporting the zero splitting of K gives component −e.homotopyInvHomId.hom i
+j on L, with no additional transported inverse term.
+-/
 theorem Splitting.ofHomotopyEquiv_ofZero_hom (hK : ∀ i j, K.d i j = 0)
     (e : HomotopyEquiv K L) (i j : ι) :
     ((Splitting.ofZero hK).ofHomotopyEquiv e).hom i j =

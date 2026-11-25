@@ -1,8 +1,5 @@
-# To Module Cat ULift Int
+# Abelian groups as modules over the lifted integers
 
-The functor sending an abelian group to the corresponding module over `ULift.{u} ℤ`,
-which is an equivalence of categories.
-
-This is the reverse of
-`ModuleCat.uliftIntAddCommGrpEquivalence` (same composition of the
-integer-module equivalence and restriction of scalars, opposite direction).
+An abelian group in universe `u` has its unique module structure
+over the copy of `ℤ` in universe `u`. This gives an equivalence
+`Ab ≌ ModuleCat (ULift.{u} ℤ)` with the inverse forgetting that integer action.

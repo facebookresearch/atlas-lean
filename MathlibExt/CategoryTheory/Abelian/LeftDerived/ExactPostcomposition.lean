@@ -17,15 +17,14 @@ public import MathlibExt.CategoryTheory.Abelian.LeftDerived.LongExact
 public import Mathlib.CategoryTheory.Preadditive.LeftExact
 
 /-!
-# Exact postcomposition of the original augmentations and derived boundaries
+# Homology-preserving postcomposition of left-derived maps
 
-The existing postcomposition isomorphism carries the original augmentation map in derived degree
-zero. The input functor need only be additive; its finite-colimit or exactness preservation is not
-assumed.
-
-The same comparison is natural in transformations of the postcomposing homology-preserving
-functor. All comparisons use their chosen projective-resolution maps, not additional comparison
-certificates.
+Let `C,D,E` be abelian, with projective resolutions in `C`,
+`F : C → D` additive and `U : D → E` additive and preserving homology.
+The comparison `L_nF ⋙ U ≅ L_n(F ⋙ U)` preserves canonical
+augmentations in degree zero and connecting maps on short exact
+sequences. It is natural in transformations of homology-preserving
+target functors. No right-exactness assumption on `F` is needed.
 -/
 
 @[expose] public section
@@ -44,10 +43,11 @@ variable {C : Type u₁} [Category.{v₁} C] [Abelian C]
   {D : Type u₂} [Category.{v₂} D] [Abelian D]
   {E : Type u₃} [Category.{v₃} E] [Abelian E]
 
-/--
-Postcomposition sends the resolution augmentation through the canonical opcycles comparison. The
-original functor need not be right exact.
--/
+/-- Let `C,D,E` be abelian, `P` a projective resolution of `X`,
+`F : C → D` additive, and `U : D → E` additive and preserving right
+homology of the degree-zero short complex of `F(P)`. Its opcycles
+comparison followed by `U` of the augmentation to `F(X)` equals the
+augmentation to `U(F(X))` for `(F ⋙ U)(P)`. -/
 @[reassoc]
 theorem ProjectiveResolution.mapOpcyclesIso_hom_comp_fromLeftDerivedZero'
     {X : C} (P : ProjectiveResolution X) (F : C ⥤ D) [F.Additive]
@@ -115,10 +115,10 @@ private lemma canonicalHomologyIncl_inv (K : ChainComplex D ℕ)
   have h := ShortComplex.mapHomologyIso_inv_comp_homologyι (K.sc n) U
   exact h
 
-/--
-The postcomposition isomorphism in degree zero carries the canonical augmentation, without any
-right-exactness hypothesis on F.
--/
+/-- Let `C,D,E` be abelian, with projective resolutions in `C`,
+`F : C → D` additive and `U : D → E` additive and preserving homology. The forward degree-zero postcomposition comparison followed
+by the augmentation of `F ⋙ U` equals `U` applied to the canonical
+augmentation `L₀F → F`. -/
 @[reassoc]
 theorem leftDerivedCompIsoOfPreservesHomology_hom_fromLeftDerivedZero
     (U : D ⥤ E) [U.Additive] [U.PreservesHomology] :
@@ -175,7 +175,9 @@ theorem leftDerivedCompIsoOfPreservesHomology_hom_fromLeftDerivedZero
       _ = U.map (F.fromLeftDerivedZero.app X) := congrArg U.map hF.symm
   exact hAll
 
-/-- The inverse comparison retains the same augmentation in degree zero. -/
+/-- Let `C,D,E` be abelian, with projective resolutions in `C`,
+`F : C → D` additive and `U : D → E` additive and preserving homology. The inverse degree-zero comparison followed by `U` of the
+augmentation `L₀F → F` equals the augmentation of `F ⋙ U`. -/
 @[reassoc]
 theorem leftDerivedCompIsoOfPreservesHomology_inv_fromLeftDerivedZero
     (U : D ⥤ E) [U.Additive] [U.PreservesHomology] :
@@ -185,10 +187,10 @@ theorem leftDerivedCompIsoOfPreservesHomology_inv_fromLeftDerivedZero
   rw [← leftDerivedCompIsoOfPreservesHomology_hom_fromLeftDerivedZero F U]
   exact (F.leftDerivedCompIsoOfPreservesHomology U 0).inv_hom_id_assoc _
 
-/--
-The postcomposition comparison commutes with a transformation of the postcomposing
-homology-preserving functor.
--/
+/-- Let `C,D,E` be abelian, with projective resolutions in `C`,
+`F : C → D` additive, and `U,V : D → E` additive and preserving
+homology. For `τ : U → V`, the forward comparisons satisfy
+`τ_(L_nF) ≫ e_V = e_U ≫ L_n(F ⋙ τ)`. -/
 @[reassoc]
 theorem leftDerivedCompIsoOfPreservesHomology_hom_naturality_postcomposition
     {U V : D ⥤ E} [U.Additive] [V.Additive]
@@ -240,7 +242,10 @@ theorem leftDerivedCompIsoOfPreservesHomology_hom_naturality_postcomposition
     (U.map I.hom ≫ eU.inv ≫ JU.inv) ≫ r
   exact (sa.horiz_comp (sb.horiz_comp sc)).w.symm
 
-/-- The inverse postcomposition comparison satisfies the corresponding map square. -/
+/-- Let `C,D,E` be abelian, with projective resolutions in `C`,
+`F : C → D` additive, and `U,V : D → E` additive and preserving
+homology. For `τ : U → V`, the inverse comparisons satisfy
+`L_n(F ⋙ τ) ≫ e_V⁻¹ = e_U⁻¹ ≫ τ_(L_nF)`. -/
 @[reassoc]
 theorem leftDerivedCompIsoOfPreservesHomology_inv_naturality_postcomposition
     {U V : D ⥤ E} [U.Additive] [V.Additive]
@@ -254,10 +259,10 @@ theorem leftDerivedCompIsoOfPreservesHomology_inv_naturality_postcomposition
     ← leftDerivedCompIsoOfPreservesHomology_hom_naturality_postcomposition F τ n]
   simp only [Category.assoc, Iso.hom_inv_id, Category.comp_id, Iso.hom_inv_id_assoc]
 
-/--
-An isomorphism of postcomposing functors earns both target additivity and homology preservation
-before applying the comparison square.
--/
+/-- Let `C,D,E` be abelian, with projective resolutions in `C`,
+`F : C → D` additive and `U : D → E` additive and preserving homology. For any `V : D → E` naturally isomorphic to `U`, additivity
+and homology preservation transfer to `V`; the forward postcomposition
+comparisons commute with the given target-functor isomorphism. -/
 @[reassoc]
 theorem leftDerivedCompIsoOfPreservesHomology_hom_naturality_postcomposition_iso
     {U V : D ⥤ E} [U.Additive] [U.PreservesHomology] (e : U ≅ V) (n : ℕ) :
@@ -272,10 +277,10 @@ theorem leftDerivedCompIsoOfPreservesHomology_hom_naturality_postcomposition_iso
   exact leftDerivedCompIsoOfPreservesHomology_hom_naturality_postcomposition F e.hom n
 
 
-/--
-The canonical left-derived connecting map commutes with homology-preserving postcomposition. The
-horseshoe is split degreewise, so F need not be right exact.
--/
+/-- Let `C,D,E` be abelian, with projective resolutions in `C`,
+`F : C → D` additive and `U : D → E` additive and preserving homology. For short exact `S : X₁ → X₂ → X₃`, the forward comparisons
+in degrees `n+1,n` satisfy
+`e_(n+1),X₃ ≫ δ_(F⋙U),n = U(δ_F,n) ≫ e_n,X₁`. -/
 @[reassoc]
 theorem leftDerivedCompIsoOfPreservesHomology_hom_LDdelta
     (U : D ⥤ E) [U.Additive] [U.PreservesHomology]
@@ -339,7 +344,9 @@ theorem leftDerivedCompIsoOfPreservesHomology_hom_LDdelta
   exact (congrArg (fun q => q ≫ dFU) hσ₃).trans
     (hCore.trans (congrArg (fun q => U.map dF ≫ q) hσ₁.symm))
 
-/-- The inverse comparison retains the same canonical connecting map. -/
+/-- Let `C,D,E` be abelian, with projective resolutions in `C`,
+`F : C → D` additive and `U : D → E` additive and preserving homology. For short exact `S : X₁ → X₂ → X₃`, the inverse comparisons
+satisfy `e_(n+1),X₃⁻¹ ≫ U(δ_F,n) = δ_(F⋙U),n ≫ e_n,X₁⁻¹`. -/
 @[reassoc]
 theorem leftDerivedCompIsoOfPreservesHomology_inv_LDdelta
     (U : D ⥤ E) [U.Additive] [U.PreservesHomology]

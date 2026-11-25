@@ -1,4 +1,7 @@
-# Mapping-cone composition and short-complex quotients
+# Cone-composition boundary followed by a shifted descendant
 
-The mapping-cone composition connecting morphism, followed by the
-canonical cone-to-quotient map of a short complex.
+In an abelian category `C`, let `S : K → L → M` be a short
+complex of integer cochains and `g : L → X`. The third map of
+`mappingConeCompTriangle(S.f,g)`, followed by the descendant
+`Cone(S.f) → M` shifted by one, equals the third map of the cone
+triangle of `g` followed by `S.g[1]`.

@@ -14,7 +14,13 @@ public import MathlibExt.CategoryTheory.Abelian.LeftDerived.AcyclicResolutionZer
 public import MathlibExt.CategoryTheory.Abelian.LeftDerived.AcyclicResolutionOneNormalization
 
 /-!
-# All-degree normalization of the retained projective acyclic comparison
+# Triangular normalization of a projective acyclic comparison
+
+The kernel-tail cross coefficients `ε_n=(-1)^(n+1)` define
+`σ₀=1`, `σ_(n+1)=ε_n σ_n`, hence `σ_n=(-1)^(n(n+1)/2)`.
+For an additive right-exact functor between abelian categories, the
+acyclic comparison on a projective resolution is `σ_n` times its
+canonical projective-resolution comparison.
 -/
 
 @[expose] public section
@@ -26,26 +32,35 @@ namespace CategoryTheory.ProjectiveResolution
 variable {C : Type u} [Category.{v} C] [Abelian C] [HasProjectiveResolutions C]
 variable {D : Type u'} [Category.{v'} D] [Abelian D]
 
-/-- The sign forced by the original kernel-tail boundary at each retained dimension-shift step. -/
+/-- The integer normalization signs satisfy `σ₀=1` and
+`σ_(n+1)=(-1)^(n+1) σ_n`, the recurrence imposed by the kernel-tail
+boundary coefficients. -/
 def acyclicResolutionNormalizationSign : ℕ → ℤ
   | 0 => 1
   | n + 1 => normalizationCrossSign n * acyclicResolutionNormalizationSign n
 
-/-- The original normalization sign is one in degree zero. -/
+/-- The triangular normalization scalar in degree zero is `σ₀=1`. -/
 theorem acyclicResolutionNormalizationSign_zero : acyclicResolutionNormalizationSign 0 = 1 := rfl
 
-/-- The original normalization sign is minus one in degree one. -/
+/-- The triangular normalization scalar in degree one is `σ₁=-1`. -/
 theorem acyclicResolutionNormalizationSign_one : acyclicResolutionNormalizationSign 1 = -1 := by
   simp only [acyclicResolutionNormalizationSign, normalizationCrossSign, zero_add, pow_one, mul_one]
 
-/-- Every projective resolution term has the required original positive-derived vanishing. -/
+/-- Let `C,D` be abelian, with projective resolutions in `C`, and
+`F : C → D` additive. Every term of a projective resolution `P`
+is `F`-acyclic: `L_(n+1)F(P_q)=0` for all `q,n`. -/
 theorem normalizationProjectiveTerms_acyclic {X : C} (P : ProjectiveResolution X)
     (F : C ⥤ D) [F.Additive] :
     ∀ q n : ℕ, IsZero ((F.leftDerived (n + 1)).obj (P.complex.X q)) :=
   fun q n => F.isZero_leftDerived_obj_projective_succ n (P.complex.X q)
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The retained higher comparison uses the boundary and kernel-tail homology iso. -/
+/-- Let `C,D` be abelian, with projective resolutions in `C`,
+`F : C → D` additive and preserving finite colimits, and `P` a
+projective resolution of `X` with `L_(i+1)F(P_q)=0` for every `q,i`. In degree `n+2`, the acyclic comparison is the boundary for
+`ker(P₀ → X) → P₀ → X`, followed by the degree-`n+1` acyclic
+comparison for the kernel-tail resolution and its homology
+identification with `H_(n+2)(F(P))`. -/
 theorem normalizationAcyclicProjective_succ_succ {X : C} (P : ProjectiveResolution X)
     (F : C ⥤ D) [F.Additive] [PreservesFiniteColimits F]
     (hP : ∀ q i : ℕ, IsZero ((F.leftDerived (i + 1)).obj (P.complex.X q))) (n : ℕ) :
@@ -61,10 +76,11 @@ theorem normalizationAcyclicProjective_succ_succ {X : C} (P : ProjectiveResoluti
   rfl
 
 set_option backward.isDefEq.respectTransparency false in
-/--
-In every degree the retained acyclic comparison is the SAME projective comparison multiplied by
-the recursively forced original kernel-tail sign.
--/
+/-- Let `C,D` be abelian, with projective resolutions in `C`,
+`F : C → D` additive and preserving finite colimits, and `P` a
+projective resolution of `X` with `L_(i+1)F(P_q)=0` for every `q,i`. In degree `n`, the forward acyclic comparison on `P` equals
+`σ_n=(-1)^(n(n+1)/2)` times its forward canonical
+projective-resolution comparison. -/
 theorem normalizationAcyclicProjective_hom {X : C} (P : ProjectiveResolution X)
     (F : C ⥤ D) [F.Additive] [PreservesFiniteColimits F]
     (hP : ∀ q i : ℕ, IsZero ((F.leftDerived (i + 1)).obj (P.complex.X q))) (n : ℕ) :
@@ -92,7 +108,11 @@ theorem normalizationAcyclicProjective_hom {X : C} (P : ProjectiveResolution X)
       rw [Int.mul_comm]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The all-degree original normalization can be read directly after the SAME comparison inverse. -/
+/-- Let `C,D` be abelian, with projective resolutions in `C`,
+`F : C → D` additive and preserving finite colimits, and `P` a
+projective resolution of `X` with `L_(i+1)F(P_q)=0` for every `q,i`. The inverse canonical projective comparison followed by the
+forward acyclic comparison is `σ_n • 𝟙` on `H_n(F(P))`, where
+`σ_n=(-1)^(n(n+1)/2)`. -/
 theorem normalizationAcyclicProjective_inv_comp_hom {X : C} (P : ProjectiveResolution X)
     (F : C ⥤ D) [F.Additive] [PreservesFiniteColimits F]
     (hP : ∀ q i : ℕ, IsZero ((F.leftDerived (i + 1)).obj (P.complex.X q))) (n : ℕ) :

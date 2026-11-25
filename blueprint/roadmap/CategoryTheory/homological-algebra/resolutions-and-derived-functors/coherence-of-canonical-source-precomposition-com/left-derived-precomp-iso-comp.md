@@ -1,3 +1,7 @@
-# Left Derived Precomp Iso Comp
+# Composite left-derived precomposition isomorphism
 
-The two canonical comparisons, with the original source and output associators.
+Let `C,D,E,A` be abelian, with projective resolutions in `C,D,E`,
+`U : C → D`, `V : D → E` additive and preserving projectives and
+homology, and `L : E → A` additive. The precomposition comparisons for `U,V`, with source and
+target associators, give
+`L_n((U ⋙ V) ⋙ L) ≅ (U ⋙ V) ⋙ L_nL`.

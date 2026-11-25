@@ -1,3 +1,7 @@
-# Normalization Kernel Tail native Boundary zero sign
+# Sign of the left-derived kernel-tail boundary
 
-The SAME derived boundary retains the degree-one minus sign.
+Let `C`, `D` be abelian, with projective resolutions in `C`,
+`P` a projective resolution of `X`, and `F : C → D` additive
+and preserving finite colimits. The native left-derived boundary
+for `kernel(P.π₀) → P⁰ → X`, followed by the degree-zero
+comparison, is the negative preserved-kernel-tail map from `L₁F(X)`.

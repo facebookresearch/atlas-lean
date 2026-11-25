@@ -13,11 +13,12 @@ public import MathlibExt.CategoryTheory.ExactCategory.Basic
 public import Mathlib.CategoryTheory.MorphismProperty.Limits
 
 /-!
-# Admissible morphism properties in exact categories
+# Admissible morphisms in exact categories
 
-The classes of admissible monomorphisms and epimorphisms satisfy identity, isomorphism,
-composition and base-change laws. Their cross-base-change compatibility supplies composition of
-admissible spans.
+In an additive category `C` with a chosen Quillen exact structure,
+admissible monomorphisms and epimorphisms contain identities, are closed
+under composition and under isomorphism of arrows, and satisfy the
+exact-structure pushout and pullback base-change properties.
 -/
 
 @[expose] public section
@@ -48,11 +49,15 @@ private lemma isAdmissibleExact_id_epi (X : C) :
       ((isZero_zero C).eq_of_src _ _) (by dsimp [S_split]; simp)
   exact isAdmissibleExact_of_iso h_iso.symm h_split
 
-/-- Identities are admissible epis via `0 ⊞ X` and `isAdmissibleExact_of_iso`. -/
+/-- In an additive exact category `C`, the identity of every object `X`
+is an admissible epimorphism. It is the quotient map of a split
+admissible exact sequence. -/
 lemma isAdmissibleEpi_id (X : C) : IsAdmissibleEpi (𝟙 X) :=
   ⟨(0 : C), (0 : (0 : C) ⟶ X), by simp, isAdmissibleExact_id_epi X⟩
 
-/-- Isomorphisms are admissible epis; transports identity case along `f ≫ 𝟙`. -/
+/-- In an additive exact category `C`, every isomorphism `f : X → Y`
+is an admissible epimorphism, since admissible quotient maps are
+stable under isomorphism of arrows. -/
 lemma isAdmissibleEpi_of_isIso {X Y : C} (f : X ⟶ Y) [IsIso f] :
     IsAdmissibleEpi f := by
   have h_id : IsAdmissibleExact (ShortComplex.mk (0 : (0 : C) ⟶ X) (𝟙 X) (by simp)) :=
@@ -65,13 +70,17 @@ lemma isAdmissibleEpi_of_isIso {X Y : C} (f : X ⟶ Y) [IsIso f] :
   have h_f : IsAdmissibleExact S_f := isAdmissibleExact_of_iso h_iso h_id
   exact ⟨(0 : C), (0 : (0 : C) ⟶ X), by simp, h_f⟩
 
-/-- Admissible epis are multiplicative: identities are admissible and they compose. -/
+/-- In an additive exact category `C`, the admissible-epimorphism class
+is multiplicative: it contains every identity and the composite of
+any two composable admissible epimorphisms. -/
 instance instIsMultiplicativeAdmissibleEpis :
     (admissibleEpisOf C IsAdmissibleExact).IsMultiplicative where
   id_mem X := isAdmissibleEpi_id X
   comp_mem f g hf hg := admissibleEpi_comp.comp_mem f g hf hg
 
-/-- Admissible epis respect isomorphisms, via `respectsIso_of_isStableUnderComposition`. -/
+/-- In an additive exact category `C`, the class of admissible epimorphisms
+is invariant under isomorphisms of arrows. Thus replacing either
+endpoint through an isomorphism preserves admissibility. -/
 instance instRespectsIsoAdmissibleEpis :
     (admissibleEpisOf C IsAdmissibleExact).RespectsIso := by
   have h : (admissibleEpisOf C IsAdmissibleExact).IsStableUnderComposition :=
@@ -81,14 +90,28 @@ instance instRespectsIsoAdmissibleEpis :
 
 namespace IsAdmissibleEpi
 
-/-- Identity is an admissible epi (ergonomic alias). -/
+/- Proof implementation note.
+Identity is an admissible epi (ergonomic alias).
+-/
+
+/-- In an additive exact category `C`, the identity `𝟙 X` of each object
+`X` is an admissible epimorphism: it occurs as the second map of a
+split admissible kernel–cokernel pair. -/
 lemma id (X : C) : IsAdmissibleEpi (𝟙 X) := isAdmissibleEpi_id X
 
-/-- Isomorphism is an admissible epi (ergonomic alias). -/
+/- Proof implementation note.
+Isomorphism is an admissible epi (ergonomic alias).
+-/
+
+/-- In an additive exact category `C`, an isomorphism `f : X → Y` is an
+admissible epimorphism. This is the identity quotient map transported
+through the endpoint isomorphism. -/
 lemma of_isIso {X Y : C} (f : X ⟶ Y) [IsIso f] : IsAdmissibleEpi f :=
   isAdmissibleEpi_of_isIso f
 
-/-- Every map `X ⟶ 0` is an admissible epi, via `X ⊞ 0` and the zero biproduct iso. -/
+/-- In an additive exact category `C`, every morphism `X → 0` to a
+zero object is an admissible epimorphism, arising from the split
+sequence `X → X → 0`. -/
 lemma toZero {X : C} (f : X ⟶ (0 : C)) : IsAdmissibleEpi f := by
   have h_snd : IsAdmissibleEpi (biprod.snd : X ⊞ (0 : C) ⟶ (0 : C)) :=
     ⟨X, biprod.inl, by simp, isAdmissibleExact_split X (0 : C)⟩

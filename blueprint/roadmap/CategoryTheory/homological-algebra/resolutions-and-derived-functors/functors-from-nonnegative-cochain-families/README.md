@@ -1,6 +1,6 @@
 # Δ-functors from nonnegative cochain families
 
-- [Of Nonnegative Cochains](of-nonnegative-cochains.md)
-- [Of Nonnegative Cochains Homology Iso](of-nonnegative-cochains-homology-iso.md)
-- [Of Nonnegative Cochains Homology Iso hom app](of-nonnegative-cochains-homology-iso-hom.md)
-- [Of Nonnegative Cochains connecting app](of-nonnegative-cochains-connecting-app.md)
+- [Delta functor of a nonnegative cochain family](of-nonnegative-cochains.md)
+- [Degree comparison with nonnegative cochain homology](of-nonnegative-cochains-homology-iso.md)
+- [Object component of the nonnegative homology comparison](of-nonnegative-cochains-homology-iso-hom.md)
+- [Connecting maps under the nonnegative homology comparison](of-nonnegative-cochains-connecting-app.md)

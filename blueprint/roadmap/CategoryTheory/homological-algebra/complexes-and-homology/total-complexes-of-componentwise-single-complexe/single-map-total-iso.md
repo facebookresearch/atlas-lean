@@ -1,5 +1,7 @@
-# Single₀Map Total Iso
+# Total isomorphism for componentwise degree-zero chain complexes
 
-The total complex of the bicomplex obtained by applying `single₀`
-componentwise is canonically isomorphic to the original nonnegative chain
-complex.
+Let C be preadditive with a zero object and finite coproducts. For a natural-number-indexed
+chain complex L, let B be the bicomplex obtained by putting each L_p in inner degree zero. There
+is a canonical chain-complex isomorphism Tot(B) ≅ L. Its forward map selects B_{n,0} in total
+degree n, and its inverse is the inclusion of this summand through the degree-zero
+identification.

@@ -2,9 +2,9 @@
 
 ## Projective Resolution
 
-- [Acyclic Resolution Normalization Sign adjacent product](acyclic-resolution-normalization-sign-ad.md)
+- [Adjacent triangular signs give the connecting cross sign](acyclic-resolution-normalization-sign-ad.md)
 
 ## Functor
 
-- [Right Derived Connecting normalization conjugate](right-derived-connecting-normalization-c.md)
-- [Right Derived Connecting normalization conjugate closed](right-derived-connecting-normalization-c-2.md)
+- [Normalization conjugates a connecting map by its adjacent sign](right-derived-connecting-normalization-c.md)
+- [Closed sign formula for a normalized right-derived boundary](right-derived-connecting-normalization-c-2.md)

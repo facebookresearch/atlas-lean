@@ -13,16 +13,17 @@ public import MathlibExt.CategoryTheory.Abelian.RightDerived.HorseshoeData
 public import MathlibExt.CategoryTheory.Abelian.RightDerived.ResolutionComparison
 public import Mathlib.CategoryTheory.CommSq
 
+/- ShortComplex.mapNatTrans gives the mapped diagram square; CommSq.horiz_comp pastes its boundary square with resolution-comparison squares. -/
+
 /-!
-# pasting for right-derived functor-parameter boundary naturality
+# Coefficient naturality of a horseshoe connecting map
 
-The maps in both derived degrees are the `NatTrans.rightDerived` components.
-`ShortComplex.mapNatTrans` maps the existing horseshoe diagram, and `CommSq.horiz_comp` pastes its
-boundary square with the existing resolution-comparison squares. No specialized
-mapped-transformation or endpoint normalization wrappers are added.
-
-Both functors need only be additive. The generic result does not import the canonical `RDdelta`
-facade or either δ-functor factory.
+Let `C,D` be abelian, with injective resolutions in `C`, and let
+`F,G : C → D` be additive. For compatible injective horseshoe data
+over a short exact sequence and any transformation `α : F → G`,
+the connecting maps in adjacent degrees commute with `R^nα`.
+The result applies to every compatible middle-resolution and splitting
+choice.
 -/
 
 @[expose] public section
@@ -44,10 +45,11 @@ namespace Functor.RightDerived
 
 variable {S : ShortComplex C} {hS : S.ShortExact}
 
-/--
-The existing horseshoe boundary commutes with the right-derived components of a natural
-transformation between additive functors.
--/
+/-- Let `C,D` be abelian, with injective resolutions in `C`, and
+`H` compatible injective horseshoe data for short exact
+`S : X₁ → X₂ → X₃`. For additive `F,G : C → D`, `α : F → G`,
+and `n₁=n₀+1`, the boundary square is
+`δ_H,F ≫ R^n₁α_(X₁) = R^n₀α_(X₃) ≫ δ_H,G`. -/
 theorem HorseshoeData.delta_naturality_functor (H : HorseshoeData S hS)
     {F G : C ⥤ D} [F.Additive] [G.Additive] (α : F ⟶ G)
     (n₀ n₁ : ℕ) (h : n₀ + 1 = n₁) :

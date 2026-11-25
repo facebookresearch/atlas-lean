@@ -2,12 +2,12 @@
 
 ## Homological Delta Functor
 
-- [Of Homology](of-homology.md)
-- [Of Homology T](of-homology-t.md)
-- [Of Homology connecting app](of-homology-connecting-app.md)
+- [Homological delta functor from a decreasing homology path](of-homology.md)
+- [Degree functors along the decreasing homology path](of-homology-t.md)
+- [Boundary components of the homological delta functor](of-homology-connecting-app.md)
 
 ## Cohomological Delta Functor
 
-- [Of Homology](of-homology-2.md)
-- [Of Homology T](of-homology-t-2.md)
-- [Of Homology connecting app](of-homology-connecting-app-2.md)
+- [Cohomological delta functor from an increasing homology path](of-homology-2.md)
+- [Degree functors along the increasing homology path](of-homology-t-2.md)
+- [Boundary components of the cohomological delta functor](of-homology-connecting-app-2.md)

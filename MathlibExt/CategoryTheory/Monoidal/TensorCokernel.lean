@@ -35,9 +35,12 @@ variable {X₁ Y₁ X₂ Y₂ : C} {f₁ : X₁ ⟶ Y₁} {f₂ : X₂ ⟶ Y₂}
   [PreservesColimit (parallelPair f₁ 0) (tensorRight Y₂)]
 
 include hc₁ hc₂ in
-/-- Morphisms out of the tensor product of two chosen cokernel presentations
-are determined after precomposition by the tensor of their projections.
-This requires only preservation of the two cokernels being projected. -/
+/-- Let `C` be preadditive monoidal with tensor product additive in both
+variables. For cokernel presentations `π₁ : Y₁ → C₁` of `f₁`,
+`π₂ : Y₂ → C₂` of `f₂`, assume `C₁ ⊗ -` preserves this
+cokernel of `f₂` and `- ⊗ Y₂` preserves this cokernel of `f₁`. Two maps
+`C₁ ⊗ C₂ → Z` are equal if their composites with `π₁ ⊗ π₂`
+are equal. -/
 lemma tensor_hom_ext {Z : C} {g h : c₁.pt ⊗ c₂.pt ⟶ Z}
     (w : (c₁.π ⊗ₘ c₂.π) ≫ g = (c₁.π ⊗ₘ c₂.π) ≫ h) : g = h := by
   apply CokernelCofork.isColimitMapBifunctor.hom_ext hc₁ hc₂ (curriedTensor C)
@@ -46,8 +49,11 @@ lemma tensor_hom_ext {Z : C} {g h : c₁.pt ⊗ c₂.pt ⟶ Z}
   simpa only [tensorHom_def, Category.assoc] using w
 
 include hc₁ hc₂ in
-/-- The tensor product of the projections in two chosen cokernel
-presentations is an epimorphism. No coproduct presentation is needed. -/
+/-- Let `C` be preadditive monoidal with tensor product additive in both
+variables. For cokernel presentations `π₁ : Y₁ → C₁` of `f₁`,
+`π₂ : Y₂ → C₂` of `f₂`, assume `C₁ ⊗ -` preserves this
+cokernel of `f₂` and `- ⊗ Y₂` preserves this cokernel of `f₁`. The tensor
+projection `π₁ ⊗ π₂ : Y₁ ⊗ Y₂ → C₁ ⊗ C₂` is an epimorphism. -/
 lemma epi_tensor_π : Epi (c₁.π ⊗ₘ c₂.π) := by
   constructor
   intro Z g h w
@@ -56,17 +62,28 @@ lemma epi_tensor_π : Epi (c₁.π ⊗ₘ c₂.π) := by
 variable [HasBinaryCoproduct (X₁ ⊗ Y₂) (Y₁ ⊗ X₂)]
   [PreservesColimit (parallelPair f₁ 0) (tensorRight X₂)]
 
-/-- Descend a morphism through the tensor product of two chosen cokernel
-presentations. Unlike `tensorCokernelDesc`, the quotient objects and
-projections need not be the category's selected cokernels. -/
+/-- Let `C` be preadditive monoidal with tensor product additive in both
+variables. For cokernel presentations `π₁ : Y₁ → C₁` of `f₁`,
+`π₂ : Y₂ → C₂` of `f₂`, assume `C₁ ⊗ -` preserves this
+cokernel of `f₂` and `- ⊗ Y₂` preserves this cokernel of `f₁`. Also assume the relation coproduct
+`(X₁ ⊗ Y₂) ⨿ (Y₁ ⊗ X₂)` exists and `- ⊗ X₂` preserves
+the cokernel of `f₁`. A map `k : Y₁ ⊗ Y₂ → Z`
+killing the two tensor relations descends to a unique map
+`C₁ ⊗ C₂ → Z`. -/
 noncomputable def tensorDesc {Z : C} (k : Y₁ ⊗ Y₂ ⟶ Z)
     (hk : coprod.desc (f₁ ▷ Y₂) (Y₁ ◁ f₂) ≫ k = 0) :
     c₁.pt ⊗ c₂.pt ⟶ Z :=
   (CokernelCofork.isColimitTensor hc₁ hc₂).desc
     (CokernelCofork.ofπ k hk)
 
-/-- The tensor of the two quotient projections followed by `tensorDesc` is
-the morphism before descent. -/
+/-- Let `C` be preadditive monoidal with tensor product additive in both
+variables. For cokernel presentations `π₁ : Y₁ → C₁` of `f₁`,
+`π₂ : Y₂ → C₂` of `f₂`, assume `C₁ ⊗ -` preserves this
+cokernel of `f₂` and `- ⊗ Y₂` preserves this cokernel of `f₁`. Also assume the relation coproduct
+`(X₁ ⊗ Y₂) ⨿ (Y₁ ⊗ X₂)` exists and `- ⊗ X₂` preserves
+the cokernel of `f₁`. For a map `k` killing
+the two tensor relations, its descended map satisfies
+`(π₁ ⊗ π₂) ≫ tensorDesc(k) = k`. -/
 @[reassoc (attr := simp)]
 lemma tensor_π_desc {Z : C} (k : Y₁ ⊗ Y₂ ⟶ Z)
     (hk : coprod.desc (f₁ ▷ Y₂) (Y₁ ◁ f₂) ≫ k = 0) :
@@ -74,8 +91,14 @@ lemma tensor_π_desc {Z : C} (k : Y₁ ⊗ Y₂ ⟶ Z)
   (CokernelCofork.isColimitTensor hc₁ hc₂).fac
     (CokernelCofork.ofπ k hk) WalkingParallelPair.one
 
-/-- A morphism with a prescribed composite with the tensor quotient
-projection is the corresponding `tensorDesc`. -/
+/-- Let `C` be preadditive monoidal with tensor product additive in both
+variables. For cokernel presentations `π₁ : Y₁ → C₁` of `f₁`,
+`π₂ : Y₂ → C₂` of `f₂`, assume `C₁ ⊗ -` preserves this
+cokernel of `f₂` and `- ⊗ Y₂` preserves this cokernel of `f₁`. Also assume the relation coproduct
+`(X₁ ⊗ Y₂) ⨿ (Y₁ ⊗ X₂)` exists and `- ⊗ X₂` preserves
+the cokernel of `f₁`. If `d : C₁ ⊗ C₂ → Z`
+has composite `k` with `π₁ ⊗ π₂` and `k` kills the tensor
+relations, `d` is the canonical tensor descent of `k`. -/
 lemma tensorDesc_unique {Z : C} (k : Y₁ ⊗ Y₂ ⟶ Z)
     (hk : coprod.desc (f₁ ▷ Y₂) (Y₁ ◁ f₂) ≫ k = 0)
     (d : c₁.pt ⊗ c₂.pt ⟶ Z)
@@ -84,7 +107,14 @@ lemma tensorDesc_unique {Z : C} (k : Y₁ ⊗ Y₂ ⟶ Z)
   apply tensor_hom_ext c₁ hc₁ c₂ hc₂
   rw [hd, tensor_π_desc]
 
-/-- Tensor descent commutes with postcomposition. -/
+/-- Let `C` be preadditive monoidal with tensor product additive in both
+variables. For cokernel presentations `π₁ : Y₁ → C₁` of `f₁`,
+`π₂ : Y₂ → C₂` of `f₂`, assume `C₁ ⊗ -` preserves this
+cokernel of `f₂` and `- ⊗ Y₂` preserves this cokernel of `f₁`. Also assume the relation coproduct
+`(X₁ ⊗ Y₂) ⨿ (Y₁ ⊗ X₂)` exists and `- ⊗ X₂` preserves
+the cokernel of `f₁`. For `k : Y₁ ⊗ Y₂ → Z`
+killing the relations and any `z : Z → Z′`, descent commutes
+with postcomposition: `tensorDesc(k) ≫ z = tensorDesc(k ≫ z)`. -/
 @[reassoc]
 lemma tensorDesc_comp {Z Z' : C} (k : Y₁ ⊗ Y₂ ⟶ Z)
     (hk : coprod.desc (f₁ ▷ Y₂) (Y₁ ◁ f₂) ≫ k = 0)
@@ -95,8 +125,16 @@ lemma tensorDesc_comp {Z Z' : C} (k : Y₁ ⊗ Y₂ ⟶ Z)
   apply tensor_hom_ext c₁ hc₁ c₂ hc₂
   rw [← Category.assoc, tensor_π_desc, tensor_π_desc]
 
-/-- Naturality of tensor descent with respect to maps of both quotient
-presentations and a map of targets. -/
+/-- Let `C` be preadditive monoidal with tensor product additive in both
+variables. For cokernel presentations `π₁ : Y₁ → C₁` of `f₁`,
+`π₂ : Y₂ → C₂` of `f₂`, assume `C₁ ⊗ -` preserves this
+cokernel of `f₂` and `- ⊗ Y₂` preserves this cokernel of `f₁`. Also assume the relation coproduct
+`(X₁ ⊗ Y₂) ⨿ (Y₁ ⊗ X₂)` exists and `- ⊗ X₂` preserves
+the cokernel of `f₁`. Take a second pair of
+cokernel presentations satisfying the same preservation conditions.
+If `aᵢ : Yᵢ → Yᵢ′`, `qᵢ : Cᵢ → Cᵢ′` commute with the
+quotient maps and `(a₁ ⊗ a₂) ≫ k′ = k ≫ z`, then
+`(q₁ ⊗ q₂) ≫ tensorDesc(k′) = tensorDesc(k) ≫ z`. -/
 lemma tensorDesc_naturality
     {X₁' Y₁' X₂' Y₂' Z Z' : C}
     {f₁' : X₁' ⟶ Y₁'} {f₂' : X₂' ⟶ Y₂'}
@@ -136,17 +174,28 @@ lemma tensorDesc_naturality
         (tensorDesc c₁ hc₁ c₂ hc₂ k hk ≫ z) := by
       rw [← Category.assoc, tensor_π_desc]
 
-/-- The tensor product of two chosen cokernel presentations is canonically
-isomorphic to any chosen cokernel presentation of the combined tensor
-relation. -/
+/-- Let `C` be preadditive monoidal with tensor product additive in both
+variables. For cokernel presentations `π₁ : Y₁ → C₁` of `f₁`,
+`π₂ : Y₂ → C₂` of `f₂`, assume `C₁ ⊗ -` preserves this
+cokernel of `f₂` and `- ⊗ Y₂` preserves this cokernel of `f₁`. Also assume the relation coproduct
+`(X₁ ⊗ Y₂) ⨿ (Y₁ ⊗ X₂)` exists and `- ⊗ X₂` preserves
+the cokernel of `f₁`. For any cokernel
+presentation `c` of the sum of the tensor relations, there is
+a canonical isomorphism `C₁ ⊗ C₂ ≅ c.pt`. -/
 noncomputable def tensorIso
     (c : CokernelCofork (coprod.desc (f₁ ▷ Y₂) (Y₁ ◁ f₂)))
     (hc : IsColimit c) : c₁.pt ⊗ c₂.pt ≅ c.pt :=
   IsColimit.coconePointUniqueUpToIso
     (CokernelCofork.isColimitTensor hc₁ hc₂) hc
 
-/-- The hom of `tensorIso` carries the tensor quotient projection to the
-target cokernel projection. -/
+/-- Let `C` be preadditive monoidal with tensor product additive in both
+variables. For cokernel presentations `π₁ : Y₁ → C₁` of `f₁`,
+`π₂ : Y₂ → C₂` of `f₂`, assume `C₁ ⊗ -` preserves this
+cokernel of `f₂` and `- ⊗ Y₂` preserves this cokernel of `f₁`. Also assume the relation coproduct
+`(X₁ ⊗ Y₂) ⨿ (Y₁ ⊗ X₂)` exists and `- ⊗ X₂` preserves
+the cokernel of `f₁`. For a cokernel
+presentation `c` of the tensor relations and its comparison `e`,
+`(π₁ ⊗ π₂) ≫ e.hom = c.π`. -/
 @[reassoc (attr := simp)]
 lemma tensor_π_comp_tensorIso_hom
     (c : CokernelCofork (coprod.desc (f₁ ▷ Y₂) (Y₁ ◁ f₂)))
@@ -155,8 +204,14 @@ lemma tensor_π_comp_tensorIso_hom
   IsColimit.comp_coconePointUniqueUpToIso_hom
     (CokernelCofork.isColimitTensor hc₁ hc₂) hc WalkingParallelPair.one
 
-/-- The inverse of `tensorIso` carries the target cokernel projection back to
-the tensor quotient projection. -/
+/-- Let `C` be preadditive monoidal with tensor product additive in both
+variables. For cokernel presentations `π₁ : Y₁ → C₁` of `f₁`,
+`π₂ : Y₂ → C₂` of `f₂`, assume `C₁ ⊗ -` preserves this
+cokernel of `f₂` and `- ⊗ Y₂` preserves this cokernel of `f₁`. Also assume the relation coproduct
+`(X₁ ⊗ Y₂) ⨿ (Y₁ ⊗ X₂)` exists and `- ⊗ X₂` preserves
+the cokernel of `f₁`. For a cokernel
+presentation `c` of the tensor relations and its comparison `e`,
+`c.π ≫ e.inv = π₁ ⊗ π₂`. -/
 @[reassoc (attr := simp)]
 lemma π_comp_tensorIso_inv
     (c : CokernelCofork (coprod.desc (f₁ ▷ Y₂) (Y₁ ◁ f₂)))
@@ -175,8 +230,13 @@ variable
   [PreservesColimit (parallelPair f₁ 0) (tensorRight Y₂)]
   [PreservesColimit (parallelPair f₁ 0) (tensorRight X₂)]
 
-/-- Descend a morphism from `Y₁ ⊗ Y₂` through the tensor product of the cokernels
-of `f₁` and `f₂`. -/
+/-- Let `C` be preadditive monoidal with tensor additive in both variables,
+and let `f₁ : X₁ → Y₁`, `f₂ : X₂ → Y₂` have cokernels.
+Assume `(X₁ ⊗ Y₂) ⨿ (Y₁ ⊗ X₂)` exists,
+`cokernel(f₁) ⊗ -` preserves the cokernel of `f₂`, and
+`- ⊗ Y₂`, `- ⊗ X₂` preserve the cokernel of `f₁`. Every map
+`k : Y₁ ⊗ Y₂ → Z` that kills the sum of the two tensor relations
+descends to `cokernel f₁ ⊗ cokernel f₂ → Z`. -/
 noncomputable def tensorCokernelDesc {Z : C} (k : Y₁ ⊗ Y₂ ⟶ Z)
     (hk : coprod.desc (f₁ ▷ Y₂) (Y₁ ◁ f₂) ≫ k = 0) :
     cokernel f₁ ⊗ cokernel f₂ ⟶ Z := by
@@ -206,8 +266,12 @@ lemma tensor_cokernel_π_comp_tensorCokernelDesc {Z : C} (k : Y₁ ⊗ Y₂ ⟶ 
 
 omit [HasBinaryCoproduct (X₁ ⊗ Y₂) (Y₁ ⊗ X₂)]
   [PreservesColimit (parallelPair f₁ 0) (tensorRight X₂)] in
-/-- The tensor product of the two selected cokernel projections is an
-epimorphism. -/
+/-- Let `C` be preadditive monoidal with tensor additive in both variables,
+and let `f₁ : X₁ → Y₁`, `f₂ : X₂ → Y₂` have cokernels.
+Assume `(X₁ ⊗ Y₂) ⨿ (Y₁ ⊗ X₂)` exists,
+`cokernel(f₁) ⊗ -` preserves the cokernel of `f₂`, and
+`- ⊗ Y₂`, `- ⊗ X₂` preserve the cokernel of `f₁`. The tensor
+`cokernel.π f₁ ⊗ cokernel.π f₂` of the quotient maps is an epimorphism. -/
 lemma epi_tensor_cokernel_π : Epi (cokernel.π f₁ ⊗ₘ cokernel.π f₂) := by
   let c₁ : CokernelCofork f₁ :=
     CokernelCofork.ofπ (cokernel.π f₁) (cokernel.condition f₁)
@@ -219,8 +283,13 @@ lemma epi_tensor_cokernel_π : Epi (cokernel.π f₁ ⊗ₘ cokernel.π f₂) :=
   exact CokernelCofork.epi_tensor_π c₁ (cokernelIsCokernel f₁)
     c₂ (cokernelIsCokernel f₂)
 
-/-- A morphism out of the tensor product of two cokernels is determined by its composite
-with the tensor product of the cokernel projections. -/
+/-- Let `C` be preadditive monoidal with tensor additive in both variables,
+and let `f₁ : X₁ → Y₁`, `f₂ : X₂ → Y₂` have cokernels.
+Assume `(X₁ ⊗ Y₂) ⨿ (Y₁ ⊗ X₂)` exists,
+`cokernel(f₁) ⊗ -` preserves the cokernel of `f₂`, and
+`- ⊗ Y₂`, `- ⊗ X₂` preserve the cokernel of `f₁`. A map from
+`cokernel f₁ ⊗ cokernel f₂` with prescribed composite `k` under
+the two quotient maps is the canonical descent of `k`. -/
 lemma tensorCokernelDesc_unique {Z : C} (k : Y₁ ⊗ Y₂ ⟶ Z)
     (hk : coprod.desc (f₁ ▷ Y₂) (Y₁ ◁ f₂) ≫ k = 0)
     (d : cokernel f₁ ⊗ cokernel f₂ ⟶ Z)
@@ -236,9 +305,14 @@ lemma tensorCokernelDesc_unique {Z : C} (k : Y₁ ⊗ Y₂ ⟶ Z)
   exact CokernelCofork.tensorDesc_unique c₁ (cokernelIsCokernel f₁)
     c₂ (cokernelIsCokernel f₂) k hk d hd
 
-/-- Naturality of descent through the tensor product of the selected
-cokernels. The quotient maps are characterized only by their composites with
-the cokernel projections. -/
+/-- Let `C` be preadditive monoidal with tensor additive in both variables,
+and let `f₁ : X₁ → Y₁`, `f₂ : X₂ → Y₂` have cokernels.
+Assume `(X₁ ⊗ Y₂) ⨿ (Y₁ ⊗ X₂)` exists,
+`cokernel(f₁) ⊗ -` preserves the cokernel of `f₂`, and
+`- ⊗ Y₂`, `- ⊗ X₂` preserve the cokernel of `f₁`. For a second pair
+of cokernels satisfying the same conditions, maps commuting with
+the two quotient projections and the maps `k`, `k′` induce the
+naturality square of their tensor descents. -/
 lemma tensorCokernelDesc_naturality
     {X₁' Y₁' X₂' Y₂' Z Z' : C}
     {f₁' : X₁' ⟶ Y₁'} {f₂' : X₂' ⟶ Y₂'}
@@ -280,8 +354,13 @@ lemma tensorCokernelDesc_naturality
 
 variable [HasCokernel (coprod.desc (f₁ ▷ Y₂) (Y₁ ◁ f₂))]
 
-/-- The tensor product of two cokernels is canonically the cokernel of the sum of
-the two tensor relations. -/
+/-- Let `C` be preadditive monoidal with tensor additive in both variables,
+and let `f₁ : X₁ → Y₁`, `f₂ : X₂ → Y₂` have cokernels.
+Assume `(X₁ ⊗ Y₂) ⨿ (Y₁ ⊗ X₂)` exists,
+`cokernel(f₁) ⊗ -` preserves the cokernel of `f₂`, and
+`- ⊗ Y₂`, `- ⊗ X₂` preserve the cokernel of `f₁`. If the sum
+of the two tensor relations has a cokernel, there is a canonical
+isomorphism from `cokernel f₁ ⊗ cokernel f₂` to that cokernel. -/
 noncomputable def tensorCokernelIso :
     cokernel f₁ ⊗ cokernel f₂ ≅
       cokernel (coprod.desc (f₁ ▷ Y₂) (Y₁ ◁ f₂)) := by

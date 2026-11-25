@@ -1,21 +1,21 @@
 # Split exact complexes and contracting homotopies
 
-- [Exact of middle contraction](exact-of-middle-contraction.md)
+- [Exactness from a contraction of the middle identity](exact-of-middle-contraction.md)
 
 ## Preadditive
 
-- [Of Homotopy Id Zero](of-homotopy-id-zero.md)
-- [Of Homotopy Id Zero hom](of-homotopy-id-zero-hom.md)
+- [Splitting from a contracting homotopy](of-homotopy-id-zero.md)
+- [Components of a contraction-induced splitting](of-homotopy-id-zero-hom.md)
 
 ## Zero Morphisms
 
-- [Is Split Exact](is-split-exact.md)
+- [Definition of a split exact complex](is-split-exact.md)
 
 ## Preadditive Exactness
 
-- [Normalize sum id](normalize-sum-id.md)
-- [Contracting Homotopy](contracting-homotopy.md)
-- [Contracting Homotopy hom](contracting-homotopy-hom.md)
-- [Exact At of homotopy id zero](exact-at-of-homotopy-id-zero.md)
-- [Acyclic of homotopy id zero](acyclic-of-homotopy-id-zero.md)
-- [Is Split Exact iff id null Homotopic](is-split-exact-iff-id-null-homotopic.md)
+- [Normalized boundary terms sum to the identity](normalize-sum-id.md)
+- [Contracting homotopy of a split acyclic complex](contracting-homotopy.md)
+- [Normalized components of the contracting homotopy](contracting-homotopy-hom.md)
+- [A contraction implies exactness at a homology degree](exact-at-of-homotopy-id-zero.md)
+- [A contracting homotopy implies acyclicity](acyclic-of-homotopy-id-zero.md)
+- [Split exactness is equivalent to a contracting homotopy](is-split-exact-iff-id-null-homotopic.md)

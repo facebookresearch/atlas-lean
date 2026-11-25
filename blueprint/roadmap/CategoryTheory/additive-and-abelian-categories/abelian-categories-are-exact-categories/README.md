@@ -1,4 +1,4 @@
 # Abelian categories are exact categories
 
-- [Admissible Mono of mono](admissible-mono-of-mono.md)
-- [Admissible Epi of epi](admissible-epi-of-epi.md)
+- [Every abelian monomorphism is admissible](admissible-mono-of-mono.md)
+- [Every abelian epimorphism is admissible](admissible-epi-of-epi.md)

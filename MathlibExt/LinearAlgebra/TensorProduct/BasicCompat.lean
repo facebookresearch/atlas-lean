@@ -22,17 +22,23 @@ module
 public import Mathlib.LinearAlgebra.TensorProduct.Basic
 
 /-!
-# Tensor–Hom equivalences for additive maps
+# Additive tensor–Hom equivalences
 
-Additive bilinear maps over the natural numbers and integers correspond to additive maps from the
-tensor product. Pure-tensor extensionality characterizes the maps and their inverses.
+For commutative additive monoids, a map additive separately in two variables is equivalent to an
+additive map from their tensor product over ℕ. For commutative additive groups, the analogous
+equivalence uses the tensor product over ℤ. In both cases the forward map evaluates on a pure
+tensor x⊗y as the original two-variable map at (x,y), and pure-tensor extensionality determines
+the resulting map uniquely.
 -/
 
 @[expose] public section
 
 namespace TensorProduct
 
-/-- Additive maps on a tensor product are equal when they agree on pure tensors. -/
+/-- Let R be a commutative semiring, M and N commutative additive monoids with R-module structures,
+and P a commutative additive monoid. If g,h : M ⊗_R N → P are additive maps, in any common
+function type carrying an additive-map structure, and g(x⊗y) = h(x⊗y) for all x ∈ M and y ∈ N,
+then g = h. No R-module structure on P is required. -/
 private theorem extAdd {R : Type*} [CommSemiring R] {M N P₂ : Type*}
     [AddCommMonoid M] [AddCommMonoid N] [AddCommMonoid P₂] [Module R M] [Module R N]
     {F : Type*} [FunLike F (M ⊗[R] N) P₂] [AddMonoidHomClass F (M ⊗[R] N) P₂]
@@ -40,8 +46,10 @@ private theorem extAdd {R : Type*} [CommSemiring R] {M N P₂ : Type*}
   apply DFunLike.ext _ _ fun t ↦ t.inductionOn H fun x y ha hb ↦ by
     simp only [map_add, ha, hb]
 
-/-- The adjunction between tensor product over ℕ and internal hom in the category of
-`AddCommMonoid`s. -/
+/-- For commutative additive monoids M,N,P, there is an additive equivalence between maps M →
+Hom_add(N,P) additive in the first variable and additive maps M ⊗_ℕ N → P. The forward map sends
+a separately additive f to the unique additive map with value f(x)(y) on x⊗y; the inverse sends
+g to (x,y) ↦ g(x⊗y). -/
 def liftAddEquivNat {M N P : Type*} [AddCommMonoid M] [AddCommMonoid N]
     [AddCommMonoid P] : (M →+ N →+ P) ≃+ (M ⊗[ℕ] N →+ P) := .symm
   { toFun := (LinearMap.toAddMonoidHom'.comp (TensorProduct.mk ℕ M N).toAddMonoidHom).compr₂
@@ -52,8 +60,9 @@ def liftAddEquivNat {M N P : Type*} [AddCommMonoid M] [AddCommMonoid N]
       intro _ _
       rfl }
 
-/-- The adjunction between tensor product over ℤ and internal hom in the category of
-`AddCommGroup`s. -/
+/-- For commutative additive groups M,N,P, there is an additive equivalence (M → Hom_add(N,P)) ≅
+Hom_add(M ⊗_ℤ N,P), with the left-hand maps additive in M. It sends f to the additive map x⊗y ↦
+f(x)(y), and its inverse sends g to (x,y) ↦ g(x⊗y). -/
 def liftAddEquivInt {M N P : Type*} [AddCommGroup M] [AddCommGroup N]
     [AddCommGroup P] :
     (M →+ N →+ P) ≃+ (M ⊗[ℤ] N →+ P) := .symm

@@ -1,4 +1,6 @@
-# Cocycle Cokernel Is Colimit
+# Ext is the cokernel of the incoming cocycle-boundary map
 
-`Ext` with the `extMk` projection is the cokernel of the incoming map:
-the universal property, proved by choosing cocycle representatives.
+Let `C` be abelian with hom-set universe `v`, injective
+resolutions, and Ext in universe `v`. Let `X : C` and `I` be an
+injective resolution of `Y`. The cocycle projection to `Ext^n(X,Y)` exhibits that group
+as the cokernel of the incoming boundary map into the cocycles.

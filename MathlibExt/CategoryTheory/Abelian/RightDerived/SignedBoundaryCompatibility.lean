@@ -14,7 +14,13 @@ public import MathlibExt.CategoryTheory.Abelian.RightDerived.SignedAugmentedAcyc
 public import MathlibExt.CategoryTheory.Abelian.RightDerived.DeltaFunctor
 
 /-!
-# right-derived coefficient boundaries under the proved scalar normalization
+# Adjacent triangular signs in right-derived connecting maps
+
+The triangular signs `σ_n=(-1)^(n(n+1)/2)` satisfy
+`σ_n σ_(n+1)=(-1)^(n+1)`. In an additive right-derived family,
+conjugating a connecting map by the degree-`n` source normalization
+and degree-`n+1` inverse target normalization multiplies it by
+that adjacent-degree sign.
 -/
 
 @[expose] public section
@@ -24,7 +30,9 @@ universe u v u' v'
 open CategoryTheory CategoryTheory.Limits CategoryTheory.Preadditive
 
 namespace CategoryTheory.ProjectiveResolution
-/-- Adjacent normalization scalars multiply to the original kernel-tail cross sign. -/
+/-- For `n ∈ ℕ`, the normalization signs satisfy
+`σ_n σ_(n+1)=normalizationCrossSign(n)=(-1)^(n+1)`, where
+`σ_n=(-1)^(n(n+1)/2)`. -/
 theorem acyclicResolutionNormalizationSign_adjacent_product (n : ℕ) :
     acyclicResolutionNormalizationSign n * acyclicResolutionNormalizationSign (n + 1) =
       normalizationCrossSign n := by
@@ -39,10 +47,11 @@ variable {C : Type u} [Category.{v} C] [Abelian C] [HasInjectiveResolutions C]
 variable {D : Type u'} [Category.{v'} D] [Abelian D]
 
 set_option backward.isDefEq.respectTransparency false in
-/--
-Conjugating the SAME canonical coefficient boundary by the source and target normalization isos
-gives its proved adjacent-degree cross sign.
--/
+/-- Let `C,D` be abelian, with injective resolutions in `C`, and
+`F : C → D` additive. For short exact `S : X₁ → X₂ → X₃`,
+conjugating `δ_n : R^nF(X₃) → R^(n+1)F(X₁)` by the degree-`n`
+source normalization and inverse degree-`n+1` target normalization gives
+`normalizationCrossSign(n) • δ_n`. -/
 theorem rightDerivedConnecting_normalization_conjugate (F : C ⥤ D) [F.Additive]
     (S : ShortComplex.ShortExactSequences C) (n : ℕ) :
     ((F.rightDerived n).acyclicResolutionNormalizationIso n).hom.app S.obj.X₃ ≫
@@ -60,7 +69,10 @@ theorem rightDerivedConnecting_normalization_conjugate (F : C ⥤ D) [F.Additive
     ProjectiveResolution.acyclicResolutionNormalizationSign_adjacent_product]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The coefficient boundary formula has its literal exponent (-1)^(n+1). -/
+/-- Let `C,D` be abelian, with injective resolutions in `C`, and
+`F : C → D` additive. For short exact `S : X₁ → X₂ → X₃`,
+the normalized conjugate of its boundary
+`δ_n : R^nF(X₃) → R^(n+1)F(X₁)` is `(-1)^(n+1) • δ_n`. -/
 theorem rightDerivedConnecting_normalization_conjugate_closed (F : C ⥤ D) [F.Additive]
     (S : ShortComplex.ShortExactSequences C) (n : ℕ) :
     ((F.rightDerived n).acyclicResolutionNormalizationIso n).hom.app S.obj.X₃ ≫

@@ -1,4 +1,6 @@
-# Exists projective Augmented Exact Comparison
+# Existence of projective-source augmented comparisons
 
-A projective source complex maps to an exact augmented target, even if its target terms are
-nonprojective. This is the opposite of the existing injective comparison.
+In an abelian category `C`, let `P → X[0]` have projective
+terms and let `ρ : Q → Y[0]` be a quasi-isomorphism. Every
+`f : X → Y` extends to a chain map `a : P → Q` with
+`a ≫ ρ = ε ≫ single₀(f)`.

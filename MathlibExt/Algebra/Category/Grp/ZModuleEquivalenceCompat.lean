@@ -22,10 +22,11 @@ module
 public import Mathlib.Algebra.Category.Grp.ZModuleEquivalence
 
 /-!
-# Integer modules and abelian groups
+# Equivalence of integer modules and abelian groups
 
-The forgetful functor from `ℤ`-modules to abelian groups is an equivalence. Its inverse assigns
-the canonical integer module structure to an abelian group.
+For a fixed universe, forgetting the integer action gives an equivalence
+from `ModuleCat ℤ` to `Ab`. The inverse equips every abelian group with
+its unique integer module action; the underlying additive maps are unchanged.
 -/
 
 public section
@@ -36,7 +37,10 @@ universe u
 
 namespace ModuleCat
 
-/-- The forgetful functor from `ℤ` modules to `Ab` admits an inverse. -/
+/-- The forgetful functor from integer modules in universe `u` to
+abelian groups in that universe is an equivalence
+`ModuleCat.{u} ℤ ≌ Ab.{u}`. Its inverse supplies the unique integer
+module structure on each abelian group. -/
 @[implicit_reducible, expose, simps functor inverse]
 def intEquivalence : ModuleCat.{u} ℤ ≌ Ab.{u} where
   functor := forget₂ ..

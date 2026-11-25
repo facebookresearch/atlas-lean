@@ -1,3 +1,5 @@
-# Of Nat Iso symm
+# Inverse law for transporting sections
 
-Transport by the inverse natural isomorphism recovers every original section.
+Let `D,C` be categories, `U,U′ : D → C`, and `e : U ≅ U′`.
+For `g : Y → Z` in `D` and a section `s : U(Z) → U(Y)` of `U(g)`, transport first by `e` and then by `e⁻¹` recovers the
+original section of `U(g)`.

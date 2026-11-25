@@ -15,15 +15,12 @@ public import Mathlib.CategoryTheory.Abelian.Projective.Ext
 public import Mathlib.CategoryTheory.Abelian.Projective.Dimension
 
 /-!
-# Original projective-dimension bounds from finite resolutions
+# Projective-dimension bounds from finite resolutions
 
-If the resolving objects map to projective objects, the existing finite resolution is an
-projective resolution in the original abelian target. Every Ext class in degree above its
-inclusive bound has a representative whose source is an zero term, so that class vanishes.
-
-This proves the original `HasProjectiveDimensionLE` bound by the existing Ext criterion, retaining
-the original resolving complex, augmentation, support bound, and projective-resolution conversion.
-Neither a dimension outcome nor a new resolution or dimension model is introduced.
+Let P be preadditive, A abelian, and i : P → A additive with projective object images. A finite
+resolution Q of X relative to i, supported through its inclusive natural-number bound b, gives
+Extⁿ_A(X,Y) = 0 for every object Y and n > b. Consequently X has projective dimension at most b,
+and every larger natural number is also a projective-dimension bound.
 -/
 
 @[expose] public section
@@ -40,10 +37,10 @@ variable {P : Type uP} [Category.{vP} P] [Preadditive P]
 variable {A : Type uA} [Category.{vA} A] [Abelian A]
 variable {i : P ⥤ A} [i.Additive] {X : A}
 
-/--
-Every original Ext class strictly above the finite support bound vanishes because its
-projective-resolution source term is zero.
--/
+/-- Let P be preadditive, A abelian, and i : P → A additive with every object image projective. If Q
+is a finite resolution of X relative to i and n is a natural number with Q.bound < n, then every
+class α ∈ Extⁿ_A(X,Y) is zero, for every object Y of A. The Ext groups are the standard Ext
+groups of the abelian category A. -/
 theorem ext_eq_zero_above (Q : FiniteResolution i X)
     (hproj : ∀ P₀ : P, Projective (i.obj P₀)) (n : ℕ) (hn : Q.bound < n) :
     letI := HasExt.standard A
@@ -59,10 +56,9 @@ theorem ext_eq_zero_above (Q : FiniteResolution i X)
   subst f
   exact R.extMk_zero (n + 1) rfl
 
-/--
-An finite resolution by projectives yields the existing projective-dimension bound at its original
-inclusive support bound.
--/
+/-- Let P be preadditive, A abelian, and i : P → A additive with projective object images. A finite
+resolution Q of X relative to i implies that X has projective dimension at most Q.bound, the
+inclusive bound on the nonzero terms of its resolving complex. -/
 theorem hasProjectiveDimensionLE (Q : FiniteResolution i X)
     (hproj : ∀ P₀ : P, Projective (i.obj P₀)) :
     HasProjectiveDimensionLE X Q.bound := by
@@ -71,10 +67,9 @@ theorem hasProjectiveDimensionLE (Q : FiniteResolution i X)
   intro n hn Y α
   exact ext_eq_zero_above Q hproj n (Nat.lt_of_succ_le hn) Y α
 
-/--
-Any larger supplied bound is an bound for the original projective dimension, derived from the same
-finite resolution.
--/
+/-- Let P be preadditive, A abelian, and i : P → A additive with projective object images. If Q is a
+finite resolution of X and n is a natural number satisfying Q.bound ≤ n, then X has projective
+dimension at most n. -/
 theorem hasProjectiveDimensionLE_of_bound_le (Q : FiniteResolution i X)
     (hproj : ∀ P₀ : P, Projective (i.obj P₀)) (n : ℕ) (hn : Q.bound ≤ n) :
     HasProjectiveDimensionLE X n := by
@@ -82,10 +77,10 @@ theorem hasProjectiveDimensionLE_of_bound_le (Q : FiniteResolution i X)
   exact hasProjectiveDimensionLT_of_ge X (Q.bound + 1) (n + 1)
     (Nat.add_le_add_right hn 1)
 
-/--
-The original numeric projective dimension is bounded by the finite support recorded in the
-unchanged resolution.
--/
+/-- Let P be preadditive, A abelian, and i : P → A additive with every i(P₀) projective. For a
+finite resolution Q of X relative to i, the numerical projective dimension satisfies
+projectiveDimension(X) ≤ Q.bound, with the natural-number bound viewed in the ordered dimension
+range. -/
 theorem projectiveDimension_le_bound (Q : FiniteResolution i X)
     (hproj : ∀ P₀ : P, Projective (i.obj P₀)) :
     projectiveDimension X ≤ Q.bound :=

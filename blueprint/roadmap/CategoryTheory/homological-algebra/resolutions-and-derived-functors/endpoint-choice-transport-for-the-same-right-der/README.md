@@ -1,5 +1,5 @@
 # Endpoint-choice transport for the same right-derived connector
 
-- [Endpoint Comparison](endpoint-comparison.md)
-- [Endpoint Delta naturality](endpoint-delta-naturality.md)
-- [Right Derived Connecting eq endpoints](right-derived-connecting-eq-endpoints.md)
+- [Comparison between horseshoes with prescribed endpoint resolutions](endpoint-comparison.md)
+- [Right-derived endpoint boundaries are natural for every resolution choice](endpoint-delta-naturality.md)
+- [Every endpoint-resolution choice computes the canonical connecting map](right-derived-connecting-eq-endpoints.md)

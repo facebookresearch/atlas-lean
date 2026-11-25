@@ -1,6 +1,6 @@
 # The degree-zero Cartan–Eilenberg row short exact sequence
 
-- [Cartan Eilenberg Vertical Homology Zeroι](cartan-eilenberg-vertical-homology-zero.md)
-- [Cartan Eilenberg Vertical Homology Zeroπ](cartan-eilenberg-vertical-homology-zero-2.md)
-- [Cartan Eilenberg Vertical Homology Zero Short Complex](cartan-eilenberg-vertical-homology-zero-3.md)
-- [Cartan Eilenberg Vertical Homology Zero Short Exact](cartan-eilenberg-vertical-homology-zero-4.md)
+- [The stored homology resolution includes in zero-degree vertical homology](cartan-eilenberg-vertical-homology-zero.md)
+- [Zero-degree vertical homology projects to the stored boundary resolution](cartan-eilenberg-vertical-homology-zero-2.md)
+- [The zero-degree vertical-homology short complex](cartan-eilenberg-vertical-homology-zero-3.md)
+- [Short exactness of the zero-degree vertical-homology sequence](cartan-eilenberg-vertical-homology-zero-4.md)

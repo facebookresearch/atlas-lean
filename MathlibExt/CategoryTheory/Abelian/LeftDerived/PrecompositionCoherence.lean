@@ -13,20 +13,17 @@ public import MathlibExt.CategoryTheory.Abelian.LeftDerived.SquareCoherence
 public import MathlibExt.CategoryTheory.Abelian.LeftDerived.Isomorphism
 
 /-!
-# Coherence of canonical source-precomposition comparisons
+# Coherence of left-derived source-precomposition comparisons
 
-Successive source changes use the original canonical precomposition maps. Their composite agrees
-with the comparison for the composite source functor, including the associator, augmentation and
-connecting morphisms.
-
-The directional composition law needs homology preservation, but not preservation of projective
-objects. Projective preservation is used only to recover the isomorphisms. The functor being
-derived is merely additive. Source, intermediate and output categories have independent object and
-morphism universes; the output category is not required to have projective resolutions.
-
-The proofs reuse the canonical comparison and square-composition APIs of `ResolutionComparison`,
-`ExactPrecomposition`, `Square` and `SquareCoherence`. No new resolution, connecting morphism or
-homology comparison is constructed.
+Successive additive homology-preserving source changes give directional
+left-derived comparisons compatible with functor associators. If the
+source changes also preserve projectives, their precomposition
+isomorphisms compose to the canonical isomorphism for the composite
+functor. They respect coefficient transformations, degree-zero
+augmentations and connecting maps, and satisfy identity and associativity
+laws. All category object and morphism universes are independent;
+only the categories in which resolutions are taken need projective
+resolutions.
 -/
 
 @[expose] public section
@@ -52,7 +49,10 @@ section Unit
 
 variable [HasProjectiveResolutions C]
 
-/-- Exact postcomposition by the identity has the literal identity inverse. -/
+/-- Let `C,A` be abelian, with projective resolutions in `C`, and
+`L : C → A` additive. The inverse left-derived postcomposition
+comparison for the identity target functor is `𝟙 (L_nL)` in every
+degree `n`. -/
 theorem leftDerivedCompIsoOfPreservesHomology_id_inv (L : C ⥤ A) [L.Additive]
     (n : ℕ) :
     (L.leftDerivedCompIsoOfPreservesHomology (𝟭 A) n).inv = 𝟙 (L.leftDerived n) := by
@@ -93,10 +93,11 @@ private theorem identityOutputSquare (U : C ⥤ D) [U.Additive] [U.PreservesHomo
 
 variable [HasProjectiveResolutions E]
 
-/--
-Exact source changes compose in every degree. The associator is derived as an natural
-transformation; preservation of projectives is unnecessary.
--/
+/-- Let `C,D,E,A` be abelian, with projective resolutions in `C,D,E`,
+`U : C → D`, `V : D → E` additive and preserving homology, and
+`L : E → A` additive. The directional comparison for `V` at `U(X)`
+followed by that for `U` at `X` equals the comparison for `U ⋙ V`
+followed by the derived source associator. -/
 theorem leftDerivedPrecompHomOfPreservesHomology_comp
     (U : C ⥤ D) [U.Additive] [U.PreservesHomology]
     (V : D ⥤ E) [V.Additive] [V.PreservesHomology]
@@ -149,7 +150,11 @@ variable [HasProjectiveResolutions C] [HasProjectiveResolutions D]
   (V : D ⥤ E) [V.Additive] [V.PreservesHomology] [V.PreservesProjectiveObjects]
   (L : E ⥤ A) [L.Additive]
 
-/-- The two canonical comparisons, with the original source and output associators. -/
+/-- Let `C,D,E,A` be abelian, with projective resolutions in `C,D,E`,
+`U : C → D`, `V : D → E` additive and preserving projectives and
+homology, and `L : E → A` additive. The precomposition comparisons for `U,V`, with source and
+target associators, give
+`L_n((U ⋙ V) ⋙ L) ≅ (U ⋙ V) ⋙ L_nL`. -/
 def leftDerivedPrecompIsoComp (n : ℕ) :
     ((U ⋙ V) ⋙ L).leftDerived n ≅ (U ⋙ V) ⋙ L.leftDerived n :=
   NatIso.leftDerived (Functor.associator U V L) n ≪≫
@@ -157,7 +162,11 @@ def leftDerivedPrecompIsoComp (n : ℕ) :
       isoWhiskerLeft U (leftDerivedPrecompIso V L n) ≪≫
         (Functor.associator U V (L.leftDerived n)).symm
 
-/-- Forward components use the derived source associator and the two original comparisons. -/
+/-- Let `C,D,E,A` be abelian, with projective resolutions in `C,D,E`,
+`U : C → D`, `V : D → E` additive and preserving projectives and
+homology, and `L : E → A` additive. At `X`, the forward composite is the derived associator,
+followed by precomposition for `U` with `V ⋙ L`, then precomposition
+for `V` at `U(X)`. -/
 theorem leftDerivedPrecompIsoComp_hom_app (n : ℕ) (X : C) :
     (leftDerivedPrecompIsoComp U V L n).hom.app X =
       (NatTrans.leftDerived (Functor.associator U V L).hom n).app X ≫
@@ -167,7 +176,11 @@ theorem leftDerivedPrecompIsoComp_hom_app (n : ℕ) (X : C) :
     Iso.symm_hom, isoWhiskerLeft_hom, NatTrans.comp_app, whiskerLeft_app,
     Functor.associator_inv_app, Category.comp_id]
 
-/-- Inverse components reverse the two original comparisons and the source associator. -/
+/-- Let `C,D,E,A` be abelian, with projective resolutions in `C,D,E`,
+`U : C → D`, `V : D → E` additive and preserving projectives and
+homology, and `L : E → A` additive. At `X`, the inverse composite is inverse precomposition for
+`V` at `U(X)`, then inverse precomposition for `U`, then the inverse
+derived source associator. -/
 theorem leftDerivedPrecompIsoComp_inv_app (n : ℕ) (X : C) :
     (leftDerivedPrecompIsoComp U V L n).inv.app X =
       (leftDerivedPrecompIso V L n).inv.app (U.obj X) ≫
@@ -177,7 +190,11 @@ theorem leftDerivedPrecompIsoComp_inv_app (n : ℕ) (X : C) :
     Iso.symm_inv, isoWhiskerLeft_inv, NatTrans.comp_app, whiskerLeft_app,
     Functor.associator_hom_app, Category.id_comp, Category.assoc]
 
-/-- The successive inverse comparisons are the direct inverse followed by the associator. -/
+/-- Let `C,D,E,A` be abelian, with projective resolutions in `C,D,E`,
+`U : C → D`, `V : D → E` additive and preserving projectives and
+homology, and `L : E → A` additive. At `X`, the two successive inverse comparisons equal the
+inverse comparison for `U ⋙ V` followed by the forward derived
+source associator. -/
 theorem leftDerivedPrecompIso_inv_comp (n : ℕ) (X : C) :
     (leftDerivedPrecompIso V L n).inv.app (U.obj X) ≫
         (leftDerivedPrecompIso U (V ⋙ L) n).inv.app X =
@@ -186,7 +203,10 @@ theorem leftDerivedPrecompIso_inv_comp (n : ℕ) (X : C) :
   simpa only [leftDerivedPrecompHomOfPreservesHomology_eq_inv] using
     leftDerivedPrecompHomOfPreservesHomology_comp U V L n X
 
-/-- Two successive comparisons equal the existing comparison for the composite functor. -/
+/-- Let `C,D,E,A` be abelian, with projective resolutions in `C,D,E`,
+`U : C → D`, `V : D → E` additive and preserving projectives and
+homology, and `L : E → A` additive. The composite precomposition isomorphism equals the canonical
+precomposition isomorphism for `U ⋙ V` in every degree `n`. -/
 theorem leftDerivedPrecompIsoComp_eq (n : ℕ) :
     leftDerivedPrecompIsoComp U V L n = leftDerivedPrecompIso (U ⋙ V) L n := by
   have hInv : (leftDerivedPrecompIsoComp U V L n).inv =
@@ -215,7 +235,10 @@ theorem leftDerivedPrecompIsoComp_eq (n : ℕ) :
   apply (cancel_mono (leftDerivedPrecompIso (U ⋙ V) L n).inv).1
   exact h.trans (leftDerivedPrecompIso (U ⋙ V) L n).hom_inv_id.symm
 
-/-- Object maps commute with the composite canonical comparison. -/
+/-- Let `C,D,E,A` be abelian, with projective resolutions in `C,D,E`,
+`U : C → D`, `V : D → E` additive and preserving projectives and
+homology, and `L : E → A` additive. For `f : X → Y`, the forward composite comparison commutes
+with `L_n((U ⋙ V) ⋙ L)(f)` and `L_nL(V(U(f)))`. -/
 @[reassoc]
 theorem leftDerivedPrecompIsoComp_hom_naturality (n : ℕ) {X Y : C} (f : X ⟶ Y) :
     (((U ⋙ V) ⋙ L).leftDerived n).map f ≫
@@ -224,7 +247,11 @@ theorem leftDerivedPrecompIsoComp_hom_naturality (n : ℕ) {X Y : C} (f : X ⟶ 
         (L.leftDerived n).map (V.map (U.map f)) :=
   (leftDerivedPrecompIsoComp U V L n).hom.naturality f
 
-/-- An arbitrary, possibly noninvertible, coefficient-functor map preserves the comparison. -/
+/-- Let `C,D,E,A` be abelian, with projective resolutions in `C,D,E`,
+`U : C → D`, `V : D → E` additive and preserving projectives and
+homology, and `L : E → A` additive. For additive `M : E → A` and `α : L → M`, the forward
+composite comparisons commute with `L_n((U ⋙ V) ⋙ α)` and
+`(U ⋙ V) ⋙ L_nα`. -/
 @[reassoc]
 theorem leftDerivedPrecompIsoComp_hom_naturality_functor
     {M : E ⥤ A} [M.Additive] (α : L ⟶ M) (n : ℕ) :
@@ -235,7 +262,11 @@ theorem leftDerivedPrecompIsoComp_hom_naturality_functor
   rw [leftDerivedPrecompIsoComp_eq, leftDerivedPrecompIsoComp_eq]
   exact leftDerivedPrecompIso_hom_naturality_functor (U ⋙ V) α n
 
-/-- The corresponding inverse square uses the same original transformation. -/
+/-- Let `C,D,E,A` be abelian, with projective resolutions in `C,D,E`,
+`U : C → D`, `V : D → E` additive and preserving projectives and
+homology, and `L : E → A` additive. For additive `M : E → A` and `α : L → M`, the inverse
+composite comparisons commute with `(U ⋙ V) ⋙ L_nα` and
+`L_n((U ⋙ V) ⋙ α)`. -/
 @[reassoc]
 theorem leftDerivedPrecompIsoComp_inv_naturality_functor
     {M : E ⥤ A} [M.Additive] (α : L ⟶ M) (n : ℕ) :
@@ -246,7 +277,11 @@ theorem leftDerivedPrecompIsoComp_inv_naturality_functor
   rw [leftDerivedPrecompIsoComp_eq, leftDerivedPrecompIsoComp_eq]
   exact leftDerivedPrecompIso_inv_naturality_functor (U ⋙ V) α n
 
-/-- Degree zero recovers the original augmentation through both source changes. -/
+/-- Let `C,D,E,A` be abelian, with projective resolutions in `C,D,E`,
+`U : C → D`, `V : D → E` additive and preserving projectives and
+homology, and `L : E → A` additive. The forward degree-zero composite followed by the
+augmentation `(U ⋙ V) ⋙ L₀L → (U ⋙ V) ⋙ L` is the canonical
+augmentation of `L₀((U ⋙ V) ⋙ L)`. -/
 @[reassoc]
 theorem leftDerivedPrecompIsoComp_hom_fromLeftDerivedZero :
     (leftDerivedPrecompIsoComp U V L 0).hom ≫
@@ -255,7 +290,11 @@ theorem leftDerivedPrecompIsoComp_hom_fromLeftDerivedZero :
   rw [leftDerivedPrecompIsoComp_eq]
   exact leftDerivedPrecompIso_hom_fromLeftDerivedZero (U ⋙ V) L
 
-/-- The inverse composite comparison has the same original degree-zero augmentation. -/
+/-- Let `C,D,E,A` be abelian, with projective resolutions in `C,D,E`,
+`U : C → D`, `V : D → E` additive and preserving projectives and
+homology, and `L : E → A` additive. The inverse degree-zero composite followed by the
+augmentation of `L₀((U ⋙ V) ⋙ L)` equals the augmentation
+`(U ⋙ V) ⋙ L₀L → (U ⋙ V) ⋙ L`. -/
 @[reassoc]
 theorem leftDerivedPrecompIsoComp_inv_fromLeftDerivedZero :
     (leftDerivedPrecompIsoComp U V L 0).inv ≫
@@ -264,7 +303,11 @@ theorem leftDerivedPrecompIsoComp_inv_fromLeftDerivedZero :
   rw [leftDerivedPrecompIsoComp_eq]
   exact leftDerivedPrecompIso_inv_fromLeftDerivedZero (U ⋙ V) L
 
-/-- The two-stage comparison retains the original connecting morphism in every degree. -/
+/-- Let `C,D,E,A` be abelian, with projective resolutions in `C,D,E`,
+`U : C → D`, `V : D → E` additive and preserving projectives and
+homology, and `L : E → A` additive. For short exact `S`, the forward composite comparisons in
+degrees `n+1,n` commute with the connecting maps of `((U ⋙ V) ⋙ L)`
+on `S` and of `L` on `(U ⋙ V)(S)`. -/
 @[reassoc]
 theorem leftDerivedPrecompIsoComp_hom_LDdelta
     (n : ℕ) (S : ShortComplex C) (hS : S.ShortExact) :
@@ -280,7 +323,11 @@ theorem leftDerivedPrecompIsoComp_hom_LDdelta
   rw [leftDerivedPrecompIsoComp_eq, leftDerivedPrecompIsoComp_eq]
   exact leftDerivedPrecompIso_hom_LDdelta (U ⋙ V) L n S hS
 
-/-- The inverse comparison retains the same original connecting morphism. -/
+/-- Let `C,D,E,A` be abelian, with projective resolutions in `C,D,E`,
+`U : C → D`, `V : D → E` additive and preserving projectives and
+homology, and `L : E → A` additive. For short exact `S`, the inverse composite comparisons in
+degrees `n+1,n` commute with the connecting maps of `L` on
+`(U ⋙ V)(S)` and of `((U ⋙ V) ⋙ L)` on `S`. -/
 @[reassoc]
 theorem leftDerivedPrecompIsoComp_inv_LDdelta
     (n : ℕ) (S : ShortComplex C) (hS : S.ShortExact) :
@@ -302,7 +349,9 @@ section Identity
 
 variable [HasProjectiveResolutions C]
 
-/-- The canonical comparison for identity source change is identity in every degree. -/
+/-- Let `C,A` be abelian, with projective resolutions in `C`, and
+`L : C → A` additive. The canonical precomposition comparison for
+the identity source functor is the identity isomorphism of `L_nL`. -/
 theorem leftDerivedPrecompIso_id (L : C ⥤ A) [L.Additive] (n : ℕ) :
     leftDerivedPrecompIso (𝟭 C) L n = Iso.refl (L.leftDerived n) := by
   apply Iso.ext
@@ -342,10 +391,11 @@ variable {B : Type uB} [Category.{vB} B] [Abelian B]
   (W : E ⥤ B) [W.Additive] [W.PreservesHomology] [W.PreservesProjectiveObjects]
   (L : B ⥤ A) [L.Additive]
 
-/--
-Regrouping three source changes preserves the canonical comparison. The two associator transports
-are explicitly included.
--/
+/-- Let `C,D,E,B,A` be abelian, with projective resolutions in
+`C,D,E,B`, and `U : C → D`, `V : D → E`, `W : E → B` additive
+and preserving projectives and homology. For additive `L : B → A`,
+the comparisons for `U ⋙ (V ⋙ W)` and `(U ⋙ V) ⋙ W` agree under
+the derived source associator and the target associator. -/
 theorem leftDerivedPrecompIsoComp_assoc (n : ℕ) :
     NatIso.leftDerived (isoWhiskerRight (Functor.associator U V W) L) n ≪≫
         leftDerivedPrecompIsoComp U (V ⋙ W) L n ≪≫
@@ -381,12 +431,18 @@ variable [HasProjectiveResolutions C] [HasProjectiveResolutions D]
   (U : C ⥤ D) [U.Additive] [U.PreservesHomology] [U.PreservesProjectiveObjects]
   (L : D ⥤ A) [L.Additive]
 
-/-- Inserting identity before the source change preserves the original comparison. -/
+/-- Let `C,D,A` be abelian, with projective resolutions in `C,D`,
+`U : C → D` additive and preserving projectives and homology,
+and `L : D → A` additive. Inserting the identity of `C` before `U` leaves the composite
+precomposition isomorphism equal to the canonical comparison for `U`. -/
 theorem leftDerivedPrecompIsoComp_id_left (n : ℕ) :
     leftDerivedPrecompIsoComp (𝟭 C) U L n = leftDerivedPrecompIso U L n :=
   leftDerivedPrecompIsoComp_eq (𝟭 C) U L n
 
-/-- Inserting identity after the source change preserves the original comparison. -/
+/-- Let `C,D,A` be abelian, with projective resolutions in `C,D`,
+`U : C → D` additive and preserving projectives and homology,
+and `L : D → A` additive. Inserting the identity of `D` after `U` leaves the composite
+precomposition isomorphism equal to the canonical comparison for `U`. -/
 theorem leftDerivedPrecompIsoComp_id_right (n : ℕ) :
     leftDerivedPrecompIsoComp U (𝟭 D) L n = leftDerivedPrecompIso U L n :=
   leftDerivedPrecompIsoComp_eq U (𝟭 D) L n

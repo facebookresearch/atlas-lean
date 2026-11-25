@@ -1,3 +1,5 @@
-# Hom Fixed Coefficient Map f apply
+# Components of the fixed-coefficient Hom map
 
-Every map component is the original source precomposition and coefficient postcomposition.
+Let C be a preadditive category, P an integer-indexed chain complex in C, and M an object of C.
+For f : P′ → P, b : M → M′, n ∈ ℤ and k : Pₙ → M, the degree-n induced Hom map sends k to b ∘ k
+∘ fₙ.
