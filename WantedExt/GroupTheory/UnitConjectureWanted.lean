@@ -53,63 +53,94 @@ noncomputable section
 
 namespace UnitConjecture
 
-/-- The two generators of the group `P` defined in Theorem A of the paper. -/
+/-- **Generators of Gardam's presentation.** This is the two-element set consisting of the
+distinct formal symbols $a$ and $b$, which serve as the generators of the group presentation in
+Theorem A of Gardam's counterexample to the unit conjecture. -/
 inductive generators where
   | a
   | b
 
-/-- The first generator of the group `P` defined in Theorem A of the paper. -/
+/-- **First free generator of Gardam's presentation.** $a$ is the generator $a$, viewed as an
+element of the free group on the two generators $a$ and $b$. -/
 def a : FreeGroup generators := .of generators.a
 
-/-- The second generator of the group `P` defined in Theorem A of the paper. -/
+/-- **Second free generator of Gardam's presentation.** $b$ is the generator $b$, viewed as an
+element of the free group on the two generators $a$ and $b$. -/
 def b : FreeGroup generators := .of generators.b
 
-/-- The relations defining the group `P` defined in Theorem A of the paper. -/
+/-- **Relators of Gardam's group.** In the free group on the generators $a$ and $b$, the relators
+are the two elements $b^{-1}a^2ba^2$ and $a^{-1}b^2ab^2$.
+
+Imposing them gives the relations $b^{-1}a^2b = a^{-2}$ and $a^{-1}b^2a = b^{-2}$ of Theorem A of
+Gardam's counterexample to the unit conjecture. -/
 def relations : Set (FreeGroup generators) :=
   {b⁻¹ * a ^ 2 * b * a ^ 2, a⁻¹ * b ^ 2 * a * b ^ 2}
 
-/-- The group `P` defined in Theorem A of the paper. -/
+/-- **Gardam's group.** $P$ is the group with generators $a$ and $b$ and relators
+$b^{-1}a^2ba^2$ and $a^{-1}b^2ab^2$, that is,
+$P = \langle a, b \mid b^{-1}a^2b = a^{-2}, a^{-1}b^2a = b^{-2} \rangle$.
+
+This is the group of Theorem A of Gardam's counterexample to the unit conjecture. -/
 def P := PresentedGroup relations
 deriving Coe (FreeGroup generators), Group
 
-/-- The element `x` defined in Theorem A of the paper. -/
+/-- **The element x of Gardam's group.** In the group $P$ with presentation
+$\langle a, b \mid b^{-1}a^2b = a^{-2},\ a^{-1}b^2a = b^{-2} \rangle$, $x = a^2$. -/
 def x : P := a ^ 2
 
-/-- The element `y` defined in Theorem A of the paper. -/
+/-- **The element y of Gardam's group.** In the group $P$ with presentation
+$\langle a, b \mid b^{-1}a^2b = a^{-2},\ a^{-1}b^2a = b^{-2} \rangle$, $y = b^2$. -/
 def y : P := b ^ 2
 
-/-- The element `z` defined in Theorem A of the paper. -/
+/-- **The element z of Gardam's group.** In the group $P$ with presentation
+$\langle a, b \mid b^{-1}a^2b = a^{-2},\ a^{-1}b^2a = b^{-2} \rangle$, $z = (ab)^2$. -/
 def z : P := (a * b) ^ 2
 
-/-- The group ring `𝔽₂[P]` defined in Theorem A of the paper. -/
+/-- **Group ring of Gardam's group over the field with two elements.** $\mathbb{F}_2[P]$ is the
+group ring of Gardam's group $P$ over the field $\mathbb{F}_2 = \mathbb{Z}/2\mathbb{Z}$. -/
 abbrev R := MonoidAlgebra (ZMod 2) P
 
 instance : Coe P R where
   coe := MonoidAlgebra.of (ZMod 2) P
 
-/-- The element `p` defined in Theorem A of the paper. -/
+/-- **Gardam's element p.** In the group ring $\mathbb{F}_2[P]$ of Gardam's group $P$ with
+generators $a$ and $b$, let $x = a^2$, $y = b^2$ and $z = (ab)^2$ in $P$, viewed as elements of
+$\mathbb{F}_2[P]$. Then $p$ is the element $(1 + x)(1 + y)(1 + z^{-1})$ of $\mathbb{F}_2[P]$. -/
 def p : R := (1 + x) * (1 + y) * (1 + z⁻¹)
 
-/-- The element `q` defined in Theorem A of the paper. -/
+/-- **Gardam's element q.** In the group ring $\mathbb{F}_2[P]$ of Gardam's group $P$ with
+generators $a$ and $b$, let $x = a^2$, $y = b^2$ and $z = (ab)^2$ in $P$, viewed as elements of
+$\mathbb{F}_2[P]$. Then $q$ is the element $x^{-1}y^{-1} + x + y^{-1}z + z$ of $\mathbb{F}_2[P]$. -/
 def q : R := x⁻¹ * y⁻¹ + x + y⁻¹ * z + z
 
-/-- The element `r` defined in Theorem A of the paper. -/
+/-- **Gardam's element r.** In the group ring $\mathbb{F}_2[P]$ of Gardam's group $P$ with
+generators $a$ and $b$, let $x = a^2$, $y = b^2$ and $z = (ab)^2$ in $P$, viewed as elements of
+$\mathbb{F}_2[P]$. Then $r$ is the element $1 + x + y^{-1}z + xyz$ of $\mathbb{F}_2[P]$. -/
 def r : R := 1 + x + y⁻¹ * z + x * y * z
 
-/-- The element `s` defined in Theorem A of the paper. -/
+/-- **Gardam's element s.** In the group ring $\mathbb{F}_2[P]$ of Gardam's group $P$ with
+generators $a$ and $b$, let $x = a^2$, $y = b^2$ and $z = (ab)^2$ in $P$, viewed as elements of
+$\mathbb{F}_2[P]$. Then $s$ is the element $1 + (x + x^{-1} + y + y^{-1})z^{-1}$ of
+$\mathbb{F}_2[P]$. -/
 def s : R := 1 + (x + x⁻¹ + y + y⁻¹) * z⁻¹
 
-/-- The nontrivial unit defined in Theorem A of the paper. -/
+/-- **Gardam's unit.** Let $P$ be the group with presentation
+$\langle a, b \mid b^{-1}a^2b = a^{-2},\ a^{-1}b^2a = b^{-2} \rangle$ and set $x = a^2$,
+$y = b^2$, $z = (ab)^2$. In the group ring $\mathbb{F}_2[P]$, $u = p + qa + rb + sab$, where
+$p = (1 + x)(1 + y)(1 + z^{-1})$, $q = x^{-1}y^{-1} + x + y^{-1}z + z$,
+$r = 1 + x + y^{-1}z + xyz$ and $s = 1 + (x + x^{-1} + y + y^{-1})z^{-1}$. -/
 def u : R := p + q * a + r * b + s * (a * b)
 
 /--
-Statement of Theorem A:
+**Gardam's counterexample to the unit conjecture.** Let $P$ be the group with presentation
+$\langle a, b \mid b^{-1}a^2b = a^{-2},\ a^{-1}b^2a = b^{-2} \rangle$, and set $x = a^2$,
+$y = b^2$ and $z = (ab)^2$. In the group ring $\mathbb{F}_2[P]$ set
+$p = (1 + x)(1 + y)(1 + z^{-1})$, $q = x^{-1}y^{-1} + x + y^{-1}z + z$,
+$r = 1 + x + y^{-1}z + xyz$ and $s = 1 + (x + x^{-1} + y + y^{-1})z^{-1}$, and let
+$u = p + qa + rb + sab$. Then $P$ is torsion-free (if $g \in P$ and $g^n = 1$ for some
+natural number $n \neq 0$, then $g = 1$), $u$ is a unit of $\mathbb{F}_2[P]$, and $u$ is not
+equal to any element $g$ of $P$ viewed in $\mathbb{F}_2[P]$; that is, $u$ is a non-trivial unit.
 
-Let P be the torsion-free group defined by the presentation
-`⟨a,b | b⁻¹a²b = a⁻², a⁻¹b²a = b⁻²⟩`, and set `x = a²`, `y = b²`, `z = (ab)²`. Set
-`p = (1 + x)(1 + y)(1 + z⁻¹)`, `q = x⁻¹y⁻¹ + x + y⁻¹z + z`,
-`r = 1 + x + y⁻¹z + xyz`, `s = 1 + (x + x⁻¹ + y + y⁻¹)z⁻¹`.
-Then `p + qa + rb + sab` is a non-trivial unit in the group ring `𝔽₂[P]`.
 Source: G. Gardam, `A counterexample to the unit conjecture for group rings`, Annals of Math, 194 (3) 2021. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2021-194-3-UnitConjecture.lean Via leanprover/lean-eval@38361be, problem `annals_unit_conjecture`.
 -/
 public theorem_wanted theorem_A : (∀ g : P, ∀ n ≠ 0, g ^ n = 1 → g = 1) ∧ IsUnit u ∧ ¬ ∃ g : P, u = g

@@ -1,0 +1,4 @@
+# New splitters are halves of the split block
+
+Let $\Sigma$ be an alphabet listed in a fixed order and $Q$ a set. For $C \subseteq Q$ and $a \in \Sigma$, $\mathrm{pre}(C, a) = \{q \in Q : \delta(q, a) \in C\}$; a set $X$ splits a block $D$ if $D \cap X$ and $D \setminus X$ are both nonempty; and $\mathrm{sm}(A, B)$ is $A$ if $|A| \le |B|$ and $B$ otherwise. For a waiting list $W$ (a finite list of splitters $(C, b)$ with $C \subseteq Q$, $b \in \Sigma$), a set $X$ and a block $D$, the new splitters are, for each letter $b$ in order, the two entries $(D \cap X, b), (D \setminus X, b)$ if $(D, b)$ occurs in $W$, and the single entry $(\mathrm{sm}(D \cap X, D \setminus X), b)$ otherwise. If $(Y, b)$ is one of the new splitters for
+$W$, $X$ and $D$, then $Y \subseteq D$ and $Y$ is $D \cap X$, $D \setminus X$, or $\mathrm{sm}(D \cap X, D \setminus X)$.

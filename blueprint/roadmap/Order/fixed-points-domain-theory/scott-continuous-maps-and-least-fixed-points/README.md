@@ -27,4 +27,4 @@ The denotational semantics of PCF uses the ω-chain variant: ω-complete partial
 
 - [Continuous lattices](../continuous-lattices/README.md): Scott's class of domains, defined by the way-below relation.
 - [Scott's graph model](../scott-s-graph-model/README.md): a concrete universal domain, $P(\omega)$, where these notions become finitary.
-- PCF and computational adequacy: the denotational semantics built on the ω-chain variant.
+- [PCF and computational adequacy](../../../ComputerScience/programming-language-semantics/pcf-and-computational-adequacy/README.md): the denotational semantics built on the ω-chain variant.

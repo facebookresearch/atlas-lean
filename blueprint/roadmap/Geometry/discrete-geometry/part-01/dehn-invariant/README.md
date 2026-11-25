@@ -1,0 +1,17 @@
+# Dehn invariant
+
+- [Dehn group](dehn-group.md)
+- [Edge of a polyhedron](edge.md)
+- [Dehn invariant](dehn-invariant.md)
+- [Dihedral angle of the regular tetrahedron](tetrahedral-angle.md)
+- [Edge list of a cube](cube-edges.md)
+- [Edge list of the regular tetrahedron](tetrahedron-edges.md)
+- [Dehn invariant of the empty edge list](dehn-invariant-nil.md)
+- [The Dehn invariant splits off the first edge](dehn-invariant-cons.md)
+- [Additivity of the Dehn invariant under concatenation](dehn-invariant-append.md)
+- [Dehn invariant of a repeated edge](dehn-invariant-replicate.md)
+- [A $\mathbb{Q}$-linear functional separating $\alpha$ from $\pi$](exists-linear-map-of-irrational.md)
+- [Nonvanishing of an edge term in the Dehn group](tmul-ne-zero-of-irrational.md)
+- [The Dehn invariant of the cube is zero](dehn-invariant-cube-edges.md)
+- [Nonzero Dehn invariant of the regular tetrahedron, conditional on irrationality](dehn-invariant-tetrahedron-edges-ne-zero.md)
+- [Conditionally, the cube and the regular tetrahedron have different Dehn invariants](dehn-invariant-cube-ne-dehn-invariant-te.md)

@@ -8,5 +8,5 @@
 
 ## Related topics
 
-- Kadison–Singer problem: the Marcus–Spielman–Srivastava application to mixed characteristic polynomials.
-- Expander graphs: the application to bipartite Ramanujan graphs through signed adjacency matrices.
+- [Kadison–Singer problem](../../../Analysis/operator-algebras/kadison-singer-problem/README.md): the Marcus–Spielman–Srivastava application to mixed characteristic polynomials.
+- [Expander graphs](../../../GraphTheory/graph-families-and-operations/expander-graphs/README.md): the application to bipartite Ramanujan graphs through signed adjacency matrices.

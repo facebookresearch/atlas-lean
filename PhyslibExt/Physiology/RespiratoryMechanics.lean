@@ -10,7 +10,7 @@ module
 
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
-public import MathlibExt.Biology.Biophysics.CompartmentKinetics
+public import MathlibExt.Analysis.ODE.ConstantInputRelaxation
 
 /-!
 # Respiratory mechanics agreement

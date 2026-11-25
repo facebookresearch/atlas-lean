@@ -34,19 +34,27 @@ The bound is stated without division or truncated subtraction as `2 |F| + C(2n, 
 imported).
 -/
 
-/-- Erdős Problem 83 (Erdős, Ko and Rado): a family of `2n`-element subsets of a `4n`-element set in
-which any two members share at least two elements has at most
-`(C(4n, 2n) - C(2n, n)²) / 2` members. -/
+/-- **Erdős Problem 83.** The assertion that, for every natural number $n$, every family $F$ of
+$2n$-element subsets of $\{0, \dots, 4n-1\}$ such that $|A \cap B| \ge 2$ for all $A, B \in F$
+(including $A = B$) satisfies $2|F| + \binom{2n}{n}^2 \le \binom{4n}{2n}$, that is,
+$|F| \le \frac{1}{2}\left(\binom{4n}{2n} - \binom{2n}{n}^2\right)$. -/
 def twoIntersectingHalfSetsBound : Prop :=
   ∀ (n : ℕ) (F : Finset (Finset (Fin (4 * n)))), (∀ A ∈ F, A.card = 2 * n) →
     (∀ A ∈ F, ∀ B ∈ F, 2 ≤ (A ∩ B).card) →
       2 * F.card + (2 * n).choose n ^ 2 ≤ (4 * n).choose (2 * n)
 
 /--
-Resolved true: Ahlswede and Khachatrian proved the conjecture as a case of their complete
-intersection theorem, which determines the largest `t`-intersecting families of `k`-subsets of
-`[m]`; the bound is attained by the `2n`-sets with at least `n + 1` elements of `[2n]`.
-erdosproblems.com/83 lists the problem as proved (Lean). Source: T. F. Bloom, Erdős Problems,
+**Bound for 2-intersecting families of half-size sets (Erdős Problem 83).** For every natural
+number $n$, every family $F$ of $2n$-element subsets of $\{0, \dots, 4n-1\}$ such that
+$|A \cap B| \ge 2$ for all $A, B \in F$ (including $A = B$) satisfies
+$2|F| + \binom{2n}{n}^2 \le \binom{4n}{2n}$, that is,
+$|F| \le \frac{1}{2}\left(\binom{4n}{2n} - \binom{2n}{n}^2\right)$.
+
+Ahlswede and Khachatrian proved this as a case of their complete intersection theorem, which
+determines the largest $t$-intersecting families of $k$-element subsets of an $m$-element set. The
+bound is attained by the $2n$-element sets with at least $n + 1$ elements in $\{0, \dots, 2n-1\}$.
+
+Source: T. F. Bloom, Erdős Problems,
 Problem #83, https://www.erdosproblems.com/83 (status PROVED (LEAN)); resolution: R. Ahlswede and L.
 H. Khachatrian, The complete intersection theorem for systems of finite sets, European J. Combin. 18
 (1997), 125-136, erdosproblems.com/83: for 2 ≤ t ≤ k ≤ m and r with 1/(r + 1) ≤ (m - 2k + 2t -

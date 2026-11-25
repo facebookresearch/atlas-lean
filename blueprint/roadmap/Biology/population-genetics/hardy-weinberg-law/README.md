@@ -1,0 +1,16 @@
+# Hardy–Weinberg law
+
+- [Mendel's law of segregation](transmit.md)
+- [Law of a random gamete](gamete.md)
+- [Offspring genotype law under random union of gametes](offspring.md)
+- [Allele transmission law of a parental genotype](transmit-apply.md)
+- [Gamete law equals the allele frequency](gamete-apply.md)
+- [Hardy–Weinberg proportions](offspring-apply.md)
+- [Allele frequencies are conserved](gamete-offspring.md)
+- [Hardy–Weinberg equilibrium](offspring-offspring.md)
+- [The two allele frequencies sum to one](freq-true-add-freq-false.md)
+- [Hardy–Weinberg frequency $p^2$ of the AA homozygote](offspring-true-true.md)
+- [Hardy–Weinberg frequency $q^2$ of the aa homozygote](offspring-false-false.md)
+- [Hardy–Weinberg frequency $2pq$ of the heterozygote](offspring-heterozygote.md)
+- [Deviation from Hardy–Weinberg proportions](hw-deviation.md)
+- [Hardy–Weinberg proportions after one generation of random mating](hw-deviation-offspring.md)

@@ -1,0 +1,3 @@
+# Injectivity of the cluster map
+
+Let $G_{\mathrm{in}}$ and $G_{\mathrm{out}}$ be simple graphs on finite sets $V_{\mathrm{in}}$ and $V_{\mathrm{out}}$, and $\iota : V_{\mathrm{in}} \to V_{\mathrm{out}}$ an injective map that [matches adjacency](ocd-adj-match.md) ($x \sim y$ in $G_{\mathrm{in}}$ if and only if $\iota x \sim \iota y$ in $G_{\mathrm{out}}$), and let $\partial_{\mathrm{out}} \subseteq V_{\mathrm{out}}$ be a set of boundary vertices. For all configurations $\omega$ on $V_{\mathrm{in}}$ and $\psi$ on $V_{\mathrm{out}}$, the [cluster map](ocd-full-component-map.md) from the components of the inner cluster graph $I_{\omega,\psi}$ and the outside-only components of $O_\psi$ to the components of the full cluster graph $F_{\omega,\psi}$ is injective.

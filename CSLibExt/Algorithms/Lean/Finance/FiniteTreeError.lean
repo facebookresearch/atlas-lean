@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.ODE.DiscreteGronwall
-public import MathlibExt.Economics.Finance.BinomialOptimalStopping
+public import MathlibExt.Probability.OptimalStopping.FiniteBinomialTree
 
 /-!
 # Backward-induction error bound on a finite binomial tree

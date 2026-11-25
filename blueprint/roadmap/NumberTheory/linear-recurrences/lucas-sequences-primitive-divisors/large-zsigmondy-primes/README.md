@@ -1,0 +1,17 @@
+# Large Zsigmondy primes
+
+- [Large Zsigmondy prime](is-large-zsigmondy-prime.md)
+- [$7$ is a large Zsigmondy prime for $(2, 1, 3)$](is-large-zsigmondy-prime-two-one-three-s.md)
+- [Square-root lower bound for Euler's totient](sqrt-div-two-le-totient.md)
+- [Homogenized cyclotomic values at $p^\beta k$](homogenized-cyclotomic-prime-pow-mul.md)
+- [Factorization of $a^n - b^n$ into homogenized cyclotomic values](prod-divisors-homogenized-cyclotomic.md)
+- [Bounds for homogenized cyclotomic values](homogenized-cyclotomic-mem-icc.md)
+- [Homogenized cyclotomic values at $pn$](homogenized-cyclotomic-prime-mul.md)
+- [$p$-adic valuation of homogenized cyclotomic values at an odd prime](padic-val-int-homogenized-cyclotomic-odd.md)
+- [$2$-adic valuation of homogenized cyclotomic values](padic-val-int-two-homogenized-cyclotomic.md)
+- [Prime divisors of homogenized cyclotomic values](prime-dvd-homogenized-cyclotomic-cases.md)
+- [Zsigmondy primes divide the homogenized cyclotomic value](dvd-homogenized-cyclotomic-of-is-primiti.md)
+- [A Zsigmondy prime $q$ that is not large satisfies $n = q - 1$](eq-sub-one-of-not-is-large-zsigmondy-pri.md)
+- [A size criterion for a large Zsigmondy prime](exists-is-large-zsigmondy-prime-of-lt.md)
+- [Large Zsigmondy primes for exponents $n > 1$ outside six values](exists-is-large-zsigmondy-prime-of-not-m.md)
+- [Avcı's classification of large Zsigmondy primes](exists-is-large-zsigmondy-prime-iff.md)

@@ -20,7 +20,7 @@ synchronized product, and its emptiness is decided by the lasso test.
 - [LTL model checking is language inclusion](models-iff-language-le.md): the inclusion form,
   from which Vardi derives this emptiness form.
 
-- Büchi automata are closed under complementation:
+- [Büchi automata are closed under complementation](../../../TheoryOfComputation/omega-automata-and-games/boolean-closure-of-b-chi-automata/exists-buchi-compl.md):
   the general complementation that the negated formula avoids.
 
 ## Sources

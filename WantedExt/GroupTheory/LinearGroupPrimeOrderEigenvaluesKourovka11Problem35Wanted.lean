@@ -36,10 +36,11 @@ Zalesskiĭ). UnsolvedMath record UM-00700728 (`KOU-11.35`), dataset ulamai/Unsol
 polynomial, and "at least `(p - 1) / 2`" is `p - 1 ≤ 2 · #eigenvalues`, exact for `p = 2` as well.
 -/
 
-/-- Kourovka 11.35 (A. E. Zalesskiĭ): if `H` is a finite subgroup of `GL_n(ℂ)` and `h ∈ H` has
-prime order `p` and lies in no abelian normal subgroup of `H`, then `h` has at least `(p - 1) / 2`
-distinct eigenvalues (stated as `p - 1 ≤ 2 · #eigenvalues`; the eigenvalues are the distinct
-roots of the characteristic polynomial). -/
+/-- **Zalesskiĭ's problem on eigenvalues of elements of prime order (Kourovka 11.35).** The
+statement that for every $n$, every finite subgroup $H$ of $\mathrm{GL}_n(\mathbb{C})$ and every
+$h \in H$ of prime order $p$ that lies in no abelian normal subgroup of $H$, the element $h$ has at
+least $(p - 1)/2$ distinct eigenvalues, that is, $p - 1 \le 2k$ where $k$ is the number of distinct
+roots of the characteristic polynomial of $h$. -/
 def primeOrderElementManyEigenvalues : Prop :=
   ∀ (n : ℕ) (H : Subgroup (Matrix.GeneralLinearGroup (Fin n) ℂ)),
     (H : Set (Matrix.GeneralLinearGroup (Fin n) ℂ)).Finite → ∀ h ∈ H, (orderOf h).Prime →
@@ -48,9 +49,13 @@ def primeOrderElementManyEigenvalues : Prop :=
     orderOf h - 1 ≤ 2 * (h : Matrix (Fin n) (Fin n) ℂ).charpoly.roots.toFinset.card
 
 /--
-Resolved true: the Kourovka Archive answers 11.35 "Yes, it is" (Robinson): an element of prime order
-`p` of a finite subgroup of `GL_n(ℂ)` that lies in no abelian normal subgroup has at least `(p - 1)
-/ 2` distinct eigenvalues. Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in
+**Robinson's theorem on eigenvalues of elements of prime order.** For every $n$, if $H$ is a finite
+subgroup of $\mathrm{GL}_n(\mathbb{C})$ and $h \in H$ has prime order $p$ and lies in no abelian
+normal subgroup of $H$, then $h$ has at least $(p - 1)/2$ distinct eigenvalues, that is,
+$p - 1 \le 2k$ where $k$ is the number of distinct roots of the characteristic polynomial of $h$.
+This answers Kourovka Notebook Problem 11.35 (A. E. Zalesskiĭ) in the affirmative.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in
 Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved
 Problems, Problem 11.35 (A. E. Zalesskiĭ); resolution: G. R. Robinson, J. Algebra 178, no. 2 (1995),
 635-642, Kourovka Archive, Problem 11.35: "Yes, it is", https://arxiv.org/abs/1401.0300v49.

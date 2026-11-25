@@ -1,0 +1,3 @@
+# Translation invariance of the free $q = 2$ infinite-volume measure
+
+For $d \in \mathbb{N}$ and $0 < p < 1$, the free infinite-volume measure $\phi^0_{p,2}$ is translation invariant: every shift $\tau_g$, $g \in \mathbb{Z}^d$, preserves it, where $\mathbb{Z}^d$ acts on configurations by $(\tau_g\omega)(e) = \omega(e - g)$, where $e - g$ is the pair $e$ translated by $-g$, and $\phi^0_{p,2}$ is the [free infinite-volume random-cluster measure](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/free-infinite-volume.md) on $\mathbb{Z}^d$ (a chosen subsequential weak limit of the free box measures).

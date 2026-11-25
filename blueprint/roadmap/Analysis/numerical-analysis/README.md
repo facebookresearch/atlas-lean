@@ -1,0 +1,30 @@
+# Numerical analysis
+
+Algorithms with error analysis: bisection and Newton's method, Euler and Runge–Kutta methods, Galerkin and finite element estimates (Céa, Aubin–Nitsche, Strang, Banach–Nečas–Babuška), and methods for smooth unconstrained optimization (line searches and the Zoutendijk condition, nonlinear conjugate gradient, trust-region, quasi-Newton and Barzilai–Borwein methods).
+
+- [Aubin–Nitsche lemma](aubin-nitsche-lemma/README.md)
+- [Banach–Nečas–Babuška theorem](banach-ne-as-babu-ka-theorem/README.md)
+- [Barzilai–Borwein step size](barzilai-borwein-step-size/README.md)
+- [Bisection method](bisection-method/README.md)
+- [Céa's lemma](c-a-s-lemma/README.md)
+- [Euler method](euler-method/README.md)
+- [Finite element method in one dimension](finite-element-method-in-one-dimension/README.md)
+- [Line search methods](line-search-methods/README.md)
+- [Method of manufactured solutions](method-of-manufactured-solutions/README.md)
+- [Newton's method](newton-s-method/README.md)
+- [Nonlinear conjugate gradient methods](nonlinear-conjugate-gradient-methods/README.md)
+- [Quasi-Newton methods](quasi-newton-methods/README.md)
+- [Runge–Kutta methods](runge-kutta-methods/README.md)
+- [Strang's lemma](strang-s-lemma/README.md)
+- [Trust-region methods](trust-region-methods/README.md)
+- [Upwind scheme](upwind-scheme/README.md)
+- [Finite-volume schemes for transport](finite-volume-schemes-for-transport/README.md)
+- [Operator splitting](operator-splitting/README.md)
+
+## Related topics
+
+- [Matrix decompositions and linear systems](../../LinearAlgebra/matrix-decompositions/README.md)
+- [Chebyshev series and interpolation](../approximation-theory/chebyshev-series-and-interpolation/README.md)
+- [Minimax property of the Chebyshev polynomials](../approximation-theory/minimax-property-of-the-chebyshev-polynomials/README.md)
+- [Perturbation theory for linear systems](../../LinearAlgebra/matrix-decompositions/perturbation-theory-for-linear-systems/README.md)
+- [Rounding error analysis](../../ComputerScience/algebraic-and-numerical-algorithms/rounding-error-analysis/README.md)

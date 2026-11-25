@@ -37,7 +37,10 @@ open scoped ENNReal
 
 variable {X E : Type*} [SeminormedAddCommGroup E]
 
-/-- Supremum norm of `g` on `S`, valued in `ℝ≥0∞`. -/
+/-- **Extended supremum norm on a set.** Let $X$ be a type and $E$ a seminormed additive
+commutative group. For a function $g : X \to E$ and a set $S \subseteq X$, the supremum norm of
+$g$ on $S$ is $\sup_{x \in S} \|g(x)\|$, taken in the extended nonnegative reals $[0, \infty]$;
+in particular it is $0$ when $S$ is empty and $\infty$ when $\|g\|$ is unbounded on $S$. -/
 noncomputable def supNormOn (g : X → E) (S : Set X) : ℝ≥0∞ :=
   ⨆ x : S, ENNReal.ofReal ‖g x‖
 
@@ -46,19 +49,24 @@ is finite in `ℝ≥0∞`. -/
 def ConvergesNormallyOn (f : ℕ → X → E) (S : Set X) : Prop :=
   ∑' n, supNormOn (f n) S ≠ ∞
 
-/-- The sup norm over the empty set vanishes. -/
+/-- **Supremum norm over the empty set.** For every function $g \colon X \to E$ into a seminormed
+additive commutative group $E$, the supremum norm of $g$ on the empty set, valued in
+$[0, \infty]$, is $0$. -/
 @[simp]
 theorem supNormOn_empty (g : X → E) : supNormOn g ∅ = 0 := by
   unfold supNormOn
   rw [iSup_of_empty]
   rfl
 
-/-- The sup norm of the zero function vanishes. -/
+/-- **Supremum norm of the zero function.** For every set $S \subseteq X$, the supremum norm on
+$S$ of the zero function from $X$ to a seminormed additive commutative group $E$ is $0$. -/
 @[simp]
 theorem supNormOn_zero (S : Set X) : supNormOn (0 : X → E) S = 0 := by
   simp [supNormOn]
 
-/-- The sup norm shrinks when the domain shrinks. -/
+/-- **Monotonicity of the supremum norm in the domain.** If $T \subseteq S \subseteq X$, then for
+every function $g \colon X \to E$ into a seminormed additive commutative group $E$, the supremum
+norm of $g$ on $T$ is at most the supremum norm of $g$ on $S$. -/
 theorem supNormOn_mono {S T : Set X} (h : T ⊆ S) (g : X → E) :
     supNormOn g T ≤ supNormOn g S := by
   unfold supNormOn
@@ -66,18 +74,24 @@ theorem supNormOn_mono {S T : Set X} (h : T ⊆ S) (g : X → E) :
   intro x
   exact ⟨⟨x.1, h x.2⟩, le_rfl⟩
 
-/-- Every function series converges normally on the empty set. -/
+/-- **Normal convergence on the empty set.** Every series of functions $f_n \colon X \to E$
+($n \in \mathbb{N}$) with values in a seminormed additive commutative group $E$ converges
+normally on the empty set. -/
 @[simp]
 theorem convergesNormallyOn_empty (f : ℕ → X → E) : ConvergesNormallyOn f ∅ := by
   simp [ConvergesNormallyOn, supNormOn_empty]
 
-/-- The zero series converges normally on every set. -/
+/-- **Normal convergence of the zero series.** For every set $S \subseteq X$ and every seminormed
+additive commutative group $E$, the series of functions $X \to E$ whose terms are all zero
+converges normally on $S$. -/
 @[simp]
 theorem convergesNormallyOn_zero (S : Set X) :
     ConvergesNormallyOn (0 : ℕ → X → E) S := by
   simp [ConvergesNormallyOn, supNormOn_zero]
 
-/-- Normal convergence persists when the domain shrinks. -/
+/-- **Normal convergence passes to subsets.** Let $f_n \colon X \to E$ ($n \in \mathbb{N}$) be
+functions into a seminormed additive commutative group $E$ and let $T \subseteq S \subseteq X$.
+If the series $\sum_n f_n$ converges normally on $S$, then it converges normally on $T$. -/
 theorem ConvergesNormallyOn.mono {f : ℕ → X → E} {S T : Set X}
     (h : ConvergesNormallyOn f S) (hTS : T ⊆ S) : ConvergesNormallyOn f T := by
   unfold ConvergesNormallyOn at h ⊢
@@ -90,27 +104,37 @@ has a neighbourhood whose intersection with `S` carries normal convergence. -/
 def ConvergesLocallyNormallyOn (f : ℕ → X → E) (S : Set X) : Prop :=
   ∀ x ∈ S, ∃ U ∈ 𝓝 x, ConvergesNormallyOn f (U ∩ S)
 
-/-- Projection from local normal convergence at a point: at any `x ∈ S`,
-some neighbourhood intersected with `S` carries normal convergence. -/
+/-- **Local normal convergence gives a neighbourhood of each point of the set.** Let $X$ be a
+topological space, $E$ a seminormed additive commutative group, $f_n \colon X \to E$
+($n \in \mathbb{N}$) functions and $S \subseteq X$. If the series $\sum_n f_n$ converges locally
+normally on $S$, then every $x \in S$ has a neighbourhood $U$ such that the series converges
+normally on $U \cap S$. -/
 theorem ConvergesLocallyNormallyOn.exists_nhds_inter {f : ℕ → X → E} {S : Set X}
     {x : X} (h : ConvergesLocallyNormallyOn f S) (hx : x ∈ S) :
     ∃ U ∈ 𝓝 x, ConvergesNormallyOn f (U ∩ S) :=
   h x hx
 
-/-- Every function series converges locally normally on the empty set. -/
+/-- **Local normal convergence on the empty set.** Let $X$ be a topological space. Every series
+of functions $f_n \colon X \to E$ ($n \in \mathbb{N}$) with values in a seminormed additive
+commutative group $E$ converges locally normally on the empty set. -/
 @[simp]
 theorem convergesLocallyNormallyOn_empty (f : ℕ → X → E) :
     ConvergesLocallyNormallyOn f ∅ :=
   fun x hx => absurd hx (Set.notMem_empty x)
 
-/-- The zero series converges locally normally on every set. -/
+/-- **Local normal convergence of the zero series.** Let $X$ be a topological space and $E$ a
+seminormed additive commutative group. For every set $S \subseteq X$, the series of functions
+$X \to E$ whose terms are all zero converges locally normally on $S$. -/
 @[simp]
 theorem convergesLocallyNormallyOn_zero (S : Set X) :
     ConvergesLocallyNormallyOn (0 : ℕ → X → E) S := by
   intro x _
   exact ⟨Set.univ, Filter.univ_mem, by simp⟩
 
-/-- Local normal convergence persists when the domain shrinks. -/
+/-- **Local normal convergence passes to subsets.** Let $X$ be a topological space, let
+$f_n \colon X \to E$ ($n \in \mathbb{N}$) be functions into a seminormed additive commutative
+group $E$ and let $T \subseteq S \subseteq X$. If the series $\sum_n f_n$ converges locally
+normally on $S$, then it converges locally normally on $T$. -/
 theorem ConvergesLocallyNormallyOn.mono {f : ℕ → X → E} {S T : Set X}
     (h : ConvergesLocallyNormallyOn f S) (hTS : T ⊆ S) :
     ConvergesLocallyNormallyOn f T := by

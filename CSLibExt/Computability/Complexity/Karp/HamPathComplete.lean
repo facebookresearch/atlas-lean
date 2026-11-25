@@ -27,7 +27,7 @@ NP-complete (`hamPathDec_npComplete`).
 
 namespace Cslib.Complexity.Karp
 
-open Cslib.CookLevin Cslib.Logic.PL MetaMathlibExt.ComplexityTheory
+open Cslib.CookLevin Cslib.Logic.LegacyPL MetaMathlibExt.ComplexityTheory
 
 /-- **The HAMPATH verifier as a host component.** The component machine whose program and labels
 are those of the HAMPATH verifier machine, whose stacks are the twelve stacks of that machine (the

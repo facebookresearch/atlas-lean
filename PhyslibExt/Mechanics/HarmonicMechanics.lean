@@ -55,8 +55,9 @@ solution carries the energy `(1 / 2) * k * A ^ 2`. Only first-order derivative h
 (`ClassicalMechanics.HarmonicOscillator.energy_conservation_of_equationOfMotion'`), and for unit
 mass with velocity `deriv x` in `EarthScience.oscillator_energy_const`.
 
-Section B covers resultant forces, action-reaction cancellation, 2D scalar moments, and discrete
-work. Section C covers finite spring networks: energy, stiffness matrix, zero modes,
+Section B covers resultant forces, action-reaction cancellation, 2D scalar moments, finite
+axial-member endpoint tables, and discrete work. Section C covers finite spring networks:
+energy, stiffness matrix, zero modes,
 mass-orthogonal normal modes, and nonnegative generalized eigenvalues.
 
 Newton's equation, the balance conditions, and the linear spring law are model assumptions,
@@ -74,6 +75,12 @@ carried as explicit hypotheses or definitions. Continuum stress and strain are i
   real-valued pair forces.
 * `moment2D_add`, `central_pair_moment_eq_zero`: 2D moment linearity and the
   single central-pair zero moment (no-body-couple model).
+* `moment2D_shift`, `moment2D_shift_eq_of_isEquilibrated`: shifting the moment
+  point changes the total moment by minus the moment of the resultant force, so
+  equilibrated families have origin-independent moment.
+* `memberEndpoint_resultantForce_eq_zero`, `memberEndpoint_moment2D_eq_zero`,
+  `axialEndpointForce_eq_memberEndpointForce`: a finite axial-member table has
+  zero resultant planar wrench, in coefficient and axial-force forms.
 * `totalWork_add`: discrete work distributes over force families.
 * `springEnergy_eq_quadForm`: for reciprocal weights without self-springs, the
   spring energy equals `(1 / 2)` times the stiffness quadratic form;
@@ -119,8 +126,8 @@ namespace PhyslibExt.Mechanics.HarmonicMechanics
 noncomputable def oscillatorEnergy (m k x v : ℝ) : ℝ :=
   (1 / 2) * m * v ^ 2 + (1 / 2) * k * x ^ 2
 
-/-- Energy derivative (MC): if at time `t` the position has derivative `v t` and the velocity
-has derivative `-(k / m) * x t` (Newton's equation in divided form, MOD), then the oscillator
+/-- Energy derivative: for `m ≠ 0`, if at time `t` the position has derivative `v t` and the
+velocity has derivative `-(k / m) * x t` (Newton's equation in divided form), then the oscillator
 energy has derivative `0` at `t`. `oscillatorEnergy_const` turns this into conservation. -/
 lemma hasDerivAt_oscillatorEnergy (m k : ℝ) (x v : ℝ → ℝ) (t : ℝ)
     (hm : m ≠ 0)
@@ -147,8 +154,8 @@ lemma hasDerivAt_oscillatorEnergy (m k : ℝ) (x v : ℝ → ℝ) (t : ℝ)
   rw [hfg, hder] at hsum
   exact hsum
 
-/-- Energy conservation (MC): along a solution of `x' = v`, `v' = -(k / m) * x` at all times
-(MOD), the oscillator energy takes the same value at any two times. -/
+/-- Energy conservation: for `m ≠ 0`, along a solution of `x' = v`, `v' = -(k / m) * x` at
+all times, the oscillator energy takes the same value at any two times. -/
 lemma oscillatorEnergy_const (m k : ℝ) (x v : ℝ → ℝ) (hm : m ≠ 0)
     (hx : ∀ t, HasDerivAt x (v t) t)
     (hv : ∀ t, HasDerivAt v (-(k / m) * x t) t) (t₁ t₂ : ℝ) :
@@ -158,7 +165,7 @@ lemma oscillatorEnergy_const (m k : ℝ) (x v : ℝ → ℝ) (hm : m ≠ 0)
   exact is_const_of_deriv_eq_zero (fun t => (hE t).differentiableAt) (fun t => (hE t).deriv)
     t₁ t₂
 
-/-- Explicit solution (MC): for positive mass and stiffness, with
+/-- Explicit solution: for positive mass and stiffness, with
 `ω = Real.sqrt (k / m)`, the cosine/sine pair satisfies Newton's divided
 equation and carries the constant energy `(1 / 2) * k * A ^ 2`. -/
 lemma oscillator_explicit_solution (m k A ω t : ℝ) (hm : 0 < m) (hk : 0 < k)
@@ -221,7 +228,7 @@ lemma isEquilibrated_iff {ρ ι : Type*} [Fintype ρ] (F : ρ → (ι → ℝ)) 
     IsEquilibrated F ↔ ∑ r, F r = 0 := by
   simp only [IsEquilibrated, resultantForce]
 
-/-- Action-reaction cancellation (MC): pair forces on a finite type,
+/-- Action-reaction cancellation: pair forces on a finite type,
 antisymmetric under pair swap with `F (j, i) = -F (i, j)`, sum to zero.
 Stated for real-valued pair forces: over a general additive group the claim
 is false (diagonal terms are only 2-torsion), so the vector case follows by
@@ -247,7 +254,7 @@ noncomputable def moment2D {ρ : Type*} [Fintype ρ] (r F : ρ → (Fin 2 → �
     ℝ :=
   ∑ i, (r i 0 * F i 1 - r i 1 * F i 0)
 
-/-- Linearity (MC): the moment of a sum of force families is the sum of the
+/-- Linearity: the moment of a sum of force families is the sum of the
 moments. -/
 lemma moment2D_add {ρ : Type*} [Fintype ρ] (r F G : ρ → (Fin 2 → ℝ)) :
     moment2D r (fun i => F i + G i) = moment2D r F + moment2D r G := by
@@ -258,17 +265,153 @@ lemma moment2D_add {ρ : Type*} [Fintype ρ] (r F G : ρ → (Fin 2 → ℝ)) :
   simp only [Pi.add_apply]
   ring
 
-/-- Single central-pair zero moment (MC, no-body-couple model): one pair of
+/-- Single central-pair zero moment (no-body-couple model): one pair of
 forces, equal, opposite, and each a scalar multiple of the separation vector
 `q - p` (centrality hypothesis), has zero total 2D moment about any point
 `o`. Together with `moment2D_add` this is the single-pair case; the summed
-pairwise-central statement over many pairs is not claimed. -/
+axial-member table form is `memberEndpoint_moment2D_eq_zero` below. -/
 lemma central_pair_moment_eq_zero (p q o : Fin 2 → ℝ) (c : ℝ) :
     ((p 0 - o 0) * (c • (q - p)) 1 - (p 1 - o 1) * (c • (q - p)) 0) +
       ((q 0 - o 0) * (-(c • (q - p))) 1 - (q 1 - o 1) * (-(c • (q - p))) 0) =
       0 := by
   simp only [Pi.smul_apply, Pi.sub_apply, Pi.neg_apply, smul_eq_mul]
   ring
+
+/-- Position of one endpoint of a finite axial-member table.
+The endpoint index is `(member, isSecondEndpoint)`: `false`
+selects `a e` and `true` selects `b e`. Keeping the pair index
+retains parallel members as distinct table entries. -/
+noncomputable def memberEndpointPosition {J M : Type*}
+    (r : J → (Fin 2 → ℝ)) (a b : M → J) (p : M × Bool) :
+    Fin 2 → ℝ :=
+  if p.2 then r (b p.1) else r (a p.1)
+
+/-- Internal endpoint force of one axial member table entry,
+read as the force the member exerts on the joint. For member
+`e`, `c e` is the signed coefficient along the separation
+vector `r (b e) - r (a e)`: the force at `a e` is
+`c e • (r (b e) - r (a e))` and the force at `b e` is its
+negative, so positive `c e` is tension. This separation-vector
+form is the totalized model; for a genuine two-force member the
+endpoints are distinct and `c e` is the axial force divided by
+the member length. Joint-only loading is the physical reason a
+pin-jointed member carries only such an endpoint axial pair;
+external loads are outside this internal-force sum. -/
+noncomputable def memberEndpointForce {J M : Type*}
+    (r : J → (Fin 2 → ℝ)) (a b : M → J) (c : M → ℝ)
+    (p : M × Bool) : Fin 2 → ℝ :=
+  if p.2 then -(c p.1 • (r (b p.1) - r (a p.1)))
+  else c p.1 • (r (b p.1) - r (a p.1))
+
+/-- Internal axial-member forces have zero resultant: each
+member contributes an equal and opposite endpoint pair. -/
+theorem memberEndpoint_resultantForce_eq_zero {J M : Type*}
+    [Fintype M] (r : J → (Fin 2 → ℝ)) (a b : M → J)
+    (c : M → ℝ) :
+    resultantForce (memberEndpointForce r a b c) = 0 := by
+  simp only [resultantForce, memberEndpointForce, Fintype.sum_prod_type,
+    Fintype.sum_bool]
+  simp
+
+/-- Internal axial-member forces have zero planar moment
+about every point `o`: each member is a central equal-and-
+opposite pair along its separation vector. Together with the
+zero resultant, this says the internal member forces contribute
+zero resultant planar wrench. -/
+theorem memberEndpoint_moment2D_eq_zero {J M : Type*}
+    [Fintype M] (r : J → (Fin 2 → ℝ)) (a b : M → J)
+    (c : M → ℝ) (o : Fin 2 → ℝ) :
+    moment2D (fun p => memberEndpointPosition r a b p - o)
+      (memberEndpointForce r a b c) = 0 := by
+  simp only [moment2D, memberEndpointPosition, memberEndpointForce,
+    Fintype.sum_prod_type]
+  refine Finset.sum_eq_zero fun e _ => ?_
+  simp only [Fintype.sum_bool, Pi.sub_apply, Pi.neg_apply, Pi.smul_apply,
+    smul_eq_mul, Bool.false_eq_true, ite_true, ite_false]
+  ring
+
+/-- Euclidean length of one axial member: the square root of the
+sum of the squared separation coordinates. -/
+noncomputable def memberLength {J M : Type*}
+    (r : J → (Fin 2 → ℝ)) (a b : M → J) (e : M) : ℝ :=
+  Real.sqrt (((r (b e) - r (a e)) 0) ^ 2 + ((r (b e) - r (a e)) 1) ^ 2)
+
+/-- A member with noncoincident endpoints has positive length. -/
+lemma memberLength_pos_of_ne {J M : Type*}
+    (r : J → (Fin 2 → ℝ)) (a b : M → J) {e : M}
+    (hne : r (a e) ≠ r (b e)) :
+    0 < memberLength r a b e := by
+  have hsep : r (b e) - r (a e) ≠ 0 := by
+    intro h
+    exact hne (sub_eq_zero.mp h).symm
+  have hsum_ne : ((r (b e) - r (a e)) 0) ^ 2
+      + ((r (b e) - r (a e)) 1) ^ 2 ≠ 0 := by
+    intro hsum
+    have hboth := (add_eq_zero_iff_of_nonneg (sq_nonneg _) (sq_nonneg _)).mp hsum
+    have hz0 : (r (b e) - r (a e)) 0 = 0 :=
+      (pow_eq_zero_iff (by norm_num : (2 : ℕ) ≠ 0)).mp hboth.1
+    have hz1 : (r (b e) - r (a e)) 1 = 0 :=
+      (pow_eq_zero_iff (by norm_num : (2 : ℕ) ≠ 0)).mp hboth.2
+    apply hsep
+    ext i
+    fin_cases i <;> simp [hz0, hz1]
+  have hsum_pos : 0 < ((r (b e) - r (a e)) 0) ^ 2
+      + ((r (b e) - r (a e)) 1) ^ 2 :=
+    lt_of_le_of_ne (add_nonneg (sq_nonneg _) (sq_nonneg _)) (Ne.symm hsum_ne)
+  exact Real.sqrt_pos.2 hsum_pos
+
+/-- Endpoint force family in axial-force form: at `a e` the
+force on the joint is `N e` times the unit separation vector
+`(r (b e) - r (a e)) / memberLength r a b e`, and at `b e` it is
+the negative. Positive `N e` is tension. On a zero-length entry
+the separation vector is zero, so the displayed family is zero;
+the physical two-force-member reading is the noncoincident
+case of `memberLength_pos_of_ne`. -/
+noncomputable def axialEndpointForce {J M : Type*}
+    (r : J → (Fin 2 → ℝ)) (a b : M → J) (N : M → ℝ)
+    (p : M × Bool) : Fin 2 → ℝ :=
+  if p.2 then
+    -(N p.1 • ((memberLength r a b p.1)⁻¹ • (r (b p.1) - r (a p.1))))
+  else N p.1 • ((memberLength r a b p.1)⁻¹ • (r (b p.1) - r (a p.1)))
+
+/-- Physical-to-canonical bridge: the axial-force endpoint
+family is the coefficient endpoint family with coefficient
+`c e = N e / memberLength r a b e`; with the convention `u / 0 = 0` a member with coincident
+endpoints has `c e = 0`. -/
+lemma axialEndpointForce_eq_memberEndpointForce {J M : Type*}
+    (r : J → (Fin 2 → ℝ)) (a b : M → J) (N : M → ℝ) :
+    axialEndpointForce r a b N
+      = memberEndpointForce r a b
+        (fun e => N e / memberLength r a b e) := by
+  funext p
+  by_cases hp : p.2 <;>
+    simp [axialEndpointForce, memberEndpointForce, hp, div_eq_mul_inv,
+      smul_smul]
+
+/-- Main-result form, resultant clause: for a finite
+pin-jointed axial-member table with noncoincident endpoints,
+the internal axial endpoint forces have zero resultant. The
+noncoincidence premise is the physical two-force-member domain;
+the coefficient cancellation core above is stronger. -/
+lemma axialEndpoint_resultantForce_eq_zero_of_ne {J M : Type*}
+    [Fintype M] (r : J → (Fin 2 → ℝ)) (a b : M → J) (N : M → ℝ)
+    (_hne : ∀ e, r (a e) ≠ r (b e)) :
+    resultantForce (axialEndpointForce r a b N) = 0 := by
+  rw [axialEndpointForce_eq_memberEndpointForce]
+  exact memberEndpoint_resultantForce_eq_zero r a b _
+
+/-- Main-result form, moment clause: for a finite pin-jointed
+axial-member table with noncoincident endpoints, the internal
+axial endpoint forces have zero planar moment about every
+point. Together with `axialEndpoint_resultantForce_eq_zero_of_ne`
+this is zero resultant planar wrench. -/
+lemma axialEndpoint_moment2D_eq_zero_of_ne {J M : Type*}
+    [Fintype M] (r : J → (Fin 2 → ℝ)) (a b : M → J) (N : M → ℝ)
+    (_hne : ∀ e, r (a e) ≠ r (b e)) (o : Fin 2 → ℝ) :
+    moment2D (fun p => memberEndpointPosition r a b p - o)
+      (axialEndpointForce r a b N) = 0 := by
+  rw [axialEndpointForce_eq_memberEndpointForce]
+  exact memberEndpoint_moment2D_eq_zero r a b _ o
 
 /-- Discrete work of a force family under a common constant displacement.
 This is the discrete constant-displacement work, not a path-dependent
@@ -277,7 +420,7 @@ noncomputable def totalWork {ρ ι : Type*} [Fintype ρ] [Fintype ι]
     (F : ρ → (ι → ℝ)) (d : ι → ℝ) : ℝ :=
   ∑ r, ∑ i, F r i * d i
 
-/-- Work distribution (MC): the work of a sum of force families is the sum
+/-- Work distribution: the work of a sum of force families is the sum
 of the works. -/
 lemma totalWork_add {ρ ι : Type*} [Fintype ρ] [Fintype ι]
     (F G : ρ → (ι → ℝ)) (d : ι → ℝ) :
@@ -291,6 +434,50 @@ lemma totalWork_add {ρ ι : Type*} [Fintype ρ] [Fintype ι]
   intro i _
   simp only [Pi.add_apply]
   ring
+
+/-- Shifting the moment point to `o` changes the total moment
+by minus the moment of the resultant force. -/
+theorem moment2D_shift {ρ : Type*} [Fintype ρ]
+    (r F : ρ → (Fin 2 → ℝ)) (o : Fin 2 → ℝ) :
+    moment2D (fun i => r i - o) F
+      = moment2D r F
+        - (o 0 * resultantForce F 1
+          - o 1 * resultantForce F 0) := by
+  unfold moment2D resultantForce
+  simp only [Pi.sub_apply, Finset.sum_apply]
+  rw [Finset.mul_sum, Finset.mul_sum, ← Finset.sum_sub_distrib,
+    ← Finset.sum_sub_distrib]
+  refine Finset.sum_congr rfl fun i _ => ?_
+  ring
+
+/-- Conversely, moment agreement about the two unit shifts
+forces the resultant force to vanish. -/
+theorem resultantForce_eq_zero_of_moment2D_shift_eq
+    {ρ : Type*} [Fintype ρ] (r F : ρ → (Fin 2 → ℝ))
+    (h0 : moment2D (fun i => r i - ![1, 0]) F = moment2D r F)
+    (h1 : moment2D (fun i => r i - ![0, 1]) F = moment2D r F) :
+    resultantForce F = 0 := by
+  have hshift0 := moment2D_shift r F ![1, 0]
+  have hshift1 := moment2D_shift r F ![0, 1]
+  rw [h0] at hshift0
+  rw [h1] at hshift1
+  simp only [Matrix.cons_val_zero, Matrix.cons_val_one,
+    one_mul, zero_mul, sub_zero] at hshift0 hshift1
+  have hR1 : resultantForce F 1 = 0 := by linarith
+  have hR0 : resultantForce F 0 = 0 := by linarith
+  refine funext fun j => ?_
+  fin_cases j
+  · simpa using hR0
+  · simpa using hR1
+
+/-- Under `IsEquilibrated`, the total moment is independent
+of the moment point. -/
+theorem moment2D_shift_eq_of_isEquilibrated
+    {ρ : Type*} [Fintype ρ] (r F : ρ → (Fin 2 → ℝ))
+    (o : Fin 2 → ℝ) (hF : IsEquilibrated F) :
+    moment2D (fun i => r i - o) F = moment2D r F := by
+  rw [moment2D_shift, hF]
+  simp
 
 /-! ## C. Finite spring networks, stiffness matrices, and normal modes. -/
 
@@ -330,8 +517,9 @@ lemma stiffnessMatrix_apply_offdiag {ι : Type*} [Fintype ι] [DecidableEq ι]
   unfold stiffnessMatrix
   simp [h]
 
-/-- Energy-quadratic-form identity (MC): the spring energy equals `(1 / 2)`
-times the stiffness quadratic form. -/
+/-- Energy-quadratic-form identity: for reciprocal weights without self-springs
+(`k i j = k j i`, `k i i = 0`), the spring energy equals `(1 / 2)` times the stiffness quadratic
+form. -/
 lemma springEnergy_eq_quadForm {ι : Type*} [Fintype ι] [DecidableEq ι]
     (k : ι → ι → ℝ) (w : ι → ℝ) (u : ι → ℝ)
     (hksymm : ∀ i j, k i j = k j i)
@@ -411,7 +599,7 @@ lemma springEnergy_eq_quadForm {ι : Type*} [Fintype ι] [DecidableEq ι]
   intro i _
   ring
 
-/-- Energy nonnegativity (MC): the spring energy is nonnegative for
+/-- Energy nonnegativity: the spring energy is nonnegative for
 nonnegative stiffnesses. -/
 lemma springEnergy_nonneg {ι : Type*} [Fintype ι]
     (k : ι → ι → ℝ) (w : ι → ℝ) (u : ι → ℝ)
@@ -432,7 +620,7 @@ lemma springEnergy_nonneg {ι : Type*} [Fintype ι]
     apply mul_nonneg (hw i)
     exact sq_nonneg _
 
-/-- Symmetry (MC): the stiffness matrix is symmetric for symmetric pair
+/-- Symmetry: the stiffness matrix is symmetric for symmetric pair
 stiffness, stated as transpose equality. -/
 lemma stiffnessMatrix_transpose {ι : Type*} [Fintype ι] [DecidableEq ι]
     (k : ι → ι → ℝ) (w : ι → ℝ)
@@ -446,8 +634,8 @@ lemma stiffnessMatrix_transpose {ι : Type*} [Fintype ι] [DecidableEq ι]
   · rw [stiffnessMatrix_apply_offdiag (Ne.symm h),
       stiffnessMatrix_apply_offdiag h, hksymm j i]
 
-/-- Row-sum identity (MC): the stiffness matrix applied to the all-ones
-vector recovers the wall stiffnesses. -/
+/-- Row-sum identity: without self-springs (`k i i = 0`), the stiffness matrix applied to
+the all-ones vector recovers the wall stiffnesses. -/
 lemma stiffnessMatrix_mulVec_one {ι : Type*} [Fintype ι] [DecidableEq ι]
     (k : ι → ι → ℝ) (w : ι → ℝ) (hkii : ∀ i, k i i = 0) :
     stiffnessMatrix k w *ᵥ (fun _ => (1 : ℝ)) = w := by
@@ -471,17 +659,17 @@ lemma stiffnessMatrix_mulVec_one {ι : Type*} [Fintype ι] [DecidableEq ι]
   rw [hcongr, Finset.sum_sub_distrib, hite]
   ring
 
-/-- Rigid-translation kernel identity (MC, free network only): with `w = 0` the
-stiffness matrix sends the all-ones vector to `0`. On an empty node type that
-vector is itself `0` and the identity is trivial; see
+/-- Rigid-translation kernel identity (free network only): without self-springs
+(`k i i = 0`) and with `w = 0` the stiffness matrix sends the all-ones vector to `0`. On an
+empty node type that vector is itself `0` and the identity is trivial; see
 `stiffnessMatrix_free_not_posDef` for the nonempty case. -/
 lemma stiffnessMatrix_free_zeroMode {ι : Type*} [Fintype ι] [DecidableEq ι]
     (k : ι → ι → ℝ) (hkii : ∀ i, k i i = 0) :
     stiffnessMatrix k 0 *ᵥ (fun _ => (1 : ℝ)) = 0 := by
   rw [stiffnessMatrix_mulVec_one k 0 hkii]
 
-/-- The stiffness matrix of a free network is not positive definite (MC): on a
-nonempty node type the all-ones vector is nonzero and, by
+/-- The stiffness matrix of a free network without self-springs (`k i i = 0`) is not positive
+definite: on a nonempty node type the all-ones vector is nonzero and, by
 `stiffnessMatrix_free_zeroMode`, in its kernel. `[Nonempty ι]` cannot be
 dropped: on an empty node type every matrix is positive definite, vacuously. -/
 lemma stiffnessMatrix_free_not_posDef {ι : Type*} [Fintype ι] [DecidableEq ι]
@@ -513,8 +701,9 @@ lemma springEnergy_free_const {ι : Type*} [Fintype ι]
   rw [hpair, hwall]
   simp
 
-/-- Fixed-end networks have no rigid-translation zero mode (MC): at any node
-with positive wall stiffness, the all-ones vector is not in the kernel. -/
+/-- Fixed-end networks have no rigid-translation zero mode: without self-springs
+(`k i i = 0`), at any node with positive wall stiffness, the all-ones vector is not in the
+kernel. -/
 lemma stiffnessMatrix_fixedEnds_rowNonzero {ι : Type*} [Fintype ι]
     [DecidableEq ι] (k : ι → ι → ℝ) (w : ι → ℝ) (i : ι)
     (hkii : ∀ i, k i i = 0) (hw : 0 < w i) :
@@ -529,7 +718,7 @@ noncomputable def innerProductM {ι : Type*} [Fintype ι] (m : ι → ℝ)
     (v w : ι → ℝ) : ℝ :=
   ∑ i, m i * v i * w i
 
-/-- Distinct normal modes are mass-orthogonal (MC): generalized eigenvectors
+/-- Modes with distinct eigenvalues are mass-orthogonal: generalized eigenvectors
 of a symmetric stiffness for distinct eigenvalues are orthogonal in
 `innerProductM`. -/
 lemma innerProductM_eq_zero_of_ne {ι : Type*} [Fintype ι]
@@ -562,10 +751,10 @@ lemma innerProductM_eq_zero_of_ne {ι : Type*} [Fintype ι]
   have hne' : ω2 - μ2 ≠ 0 := sub_ne_zero.mpr hne
   exact (mul_eq_zero.mp hIP).resolve_left hne'
 
-/-- Rayleigh nonnegativity (MC, spring stiffness only): a generalized
-eigenvalue of a spring stiffness matrix with positive masses is nonnegative
-for nonzero modes. This is NOT claimed for an arbitrary symmetric `K`; it is
-false in general. -/
+/-- Rayleigh nonnegativity (spring stiffness only): a generalized
+eigenvalue of a spring stiffness matrix (reciprocal nonnegative weights without self-springs,
+nonnegative wall stiffnesses) with positive masses is nonnegative for nonzero modes. This is
+NOT claimed for an arbitrary symmetric `K`; it is false in general. -/
 lemma rayleigh_nonneg {ι : Type*} [Fintype ι] [DecidableEq ι]
     (k : ι → ι → ℝ) (w : ι → ℝ) (m v : ι → ℝ) (lam : ℝ)
     (hksymm : ∀ i j, k i j = k j i)

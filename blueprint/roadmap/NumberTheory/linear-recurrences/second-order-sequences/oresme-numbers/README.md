@@ -1,0 +1,15 @@
+# Oresme numbers
+
+- [Self-convolution of the Oresme numbers](oresme-convolution-self.md)
+- [Fibonacci–Oresme convolution](fib-oresme-convolution.md)
+- [Oresme–Fibonacci congruence modulo 5](two-pow-pred-mul-fib-mod-eq-five.md)
+- [Lucas–Oresme convolution](lucas-number-oresme-convolution.md)
+- [Powers of two times Lucas numbers modulo 5](two-pow-mul-lucas-number-succ-mod-eq-fiv.md)
+- [Pell–Oresme convolution](pell-number-oresme-convolution.md)
+- [Oresme–Pell congruence modulo 49](two-pow-mul-pell-number-combination-mod.md)
+- [Pell–Lucas–Oresme convolution](pell-lucas-sequence-oresme-convolution.md)
+- [Oresme–Pell–Lucas congruence modulo 49](two-pow-succ-mul-pell-lucas-sequence-com.md)
+- [Jacobsthal–Oresme convolution](jacobsthal-oresme-convolution.md)
+- [Powers of two times Jacobsthal numbers modulo 9](two-pow-mul-jacobsthal-succ-mod-eq-nine.md)
+- [Jacobsthal–Lucas–Oresme convolution](jacobsthal-lucas-number-oresme-convoluti.md)
+- [Powers of two times Jacobsthal–Lucas numbers modulo 9](two-pow-mul-jacobsthal-lucas-number-succ.md)

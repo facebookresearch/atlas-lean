@@ -46,4 +46,25 @@ example : Measure.dirac (⟨1 / 2, by norm_num⟩ : I) ≠ (volume : Measure I) 
   rw [integral_sq_dirac_half, integral_sq_volume] at h2
   norm_num at h2
 
+section CompactSupport
+
+open Set
+
+/-- Non-vacuity of the support bound: the Dirac mass at `1` has even moments `1 = 1 · 1²ᵏ`, so it
+gives no mass to `{x | 1 < |x|}`. -/
+example : Measure.dirac (1 : ℝ) {x | 1 < |x|} = 0 :=
+  measure_lt_abs_eq_zero_of_integral_pow_le (C := 1) one_pos
+    (fun _ => integrable_dirac (by simp)) (fun k => by simp)
+
+/-- Two Dirac masses in `[0, 1]` with the same moments are equal; the first moment already
+distinguishes distinct points. -/
+example {a b : ℝ} (ha : a ∈ Icc (0 : ℝ) 1) (hb : b ∈ Icc (0 : ℝ) 1)
+    (h : ∀ k : ℕ, a ^ k = b ^ k) : Measure.dirac a = Measure.dirac b := by
+  refine ext_of_forall_integral_pow_eq_of_compl_Icc (a := 0) (b := 1) ?_ ?_ fun k => ?_
+  · rw [Measure.dirac_apply' _ measurableSet_Icc.compl]; simp [ha]
+  · rw [Measure.dirac_apply' _ measurableSet_Icc.compl]; simp [hb]
+  · simp [h k]
+
+end CompactSupport
+
 end MathlibExtTest.MeasureTheory.Measure.MomentDeterminacy

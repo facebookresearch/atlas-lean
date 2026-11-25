@@ -1,0 +1,17 @@
+# Degeneracy and greedy coloring
+
+- [Degeneracy on a vertex set](is-degenerate-on.md)
+- [Degenerate graph](is-degenerate.md)
+- [Degeneracy on a vertex set is monotone in the degree bound](mono.md)
+- [Degeneracy on a vertex set passes to subsets](of-subset.md)
+- [A degenerate graph is degenerate on every vertex set](is-degenerate-on-2.md)
+- [A degenerate vertex set has a vertex of small degree](exists-small-vertex.md)
+- [The edgeless graph is degenerate](is-degenerate-bot.md)
+- [Degeneracy is monotone in the bound](mono-2.md)
+- [Bounded maximum degree implies degeneracy](of-forall-degree-le.md)
+- [Degeneracy ordering](is-degeneracy-ordering.md)
+- [Degeneracy orderings of a vertex set](exists-inj-on-ordering.md)
+- [Degenerate graphs have degeneracy orderings](exists-degeneracy-ordering.md)
+- [Coloring a $k$-degenerate vertex set with $k + 1$ colors](exists-coloring-fun.md)
+- [$k$-degenerate graphs are $(k + 1)$-colorable](colorable.md)
+- [Chromatic number of a degenerate graph](chromatic-number-le.md)

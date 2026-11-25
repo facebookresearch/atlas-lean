@@ -1,0 +1,12 @@
+# The positivity claim for the nonconvex worm cover constant
+
+Call a nonempty set
+$\Omega \subseteq \mathbb{C}$ a universal cover if every continuous curve
+$\gamma : [0, 1] \to \mathbb{C}$ of length exactly $1$ can be moved into $\Omega$ by some rotation
+followed by a translation, and let the nonconvex worm cover constant be the infimum of the areas
+(Lebesgue outer measures) of all universal covers, which is a finite real number. This is the
+proposition that the nonconvex worm cover constant is strictly positive.
+
+## Sources
+
+- Moser's worm problem, constant 13a of the optimization constants repository, https://github.com/teorth/optimizationproblems/blob/2c1968cd520b60f1cf3cf50749f7285e800e4e15/constants/13a.md.

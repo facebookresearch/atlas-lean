@@ -1,0 +1,3 @@
+# Free integral shift decay along a box sequence
+
+For $d \in \mathbb{N}$, $0 < p < 1$, $q > 0$, $g \in \mathbb{Z}^d$ and $\varphi : \mathbb{N} \to \mathbb{N}$, free integral shift decay holds when $D_n(f) \to 0$ for every bounded continuous function $f$ on configurations of $\mathbb{Z}^d$ (assignments of open/closed states to all unordered pairs of sites), where $D_n(f) = \int f\, d\phi^0_{\varphi(n)} - \int f \circ \tau_g\, d\phi^0_{\varphi(n)}$, $\phi^0_n$ is the [free box measure](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/free-finite-measure.md) on $\Lambda_n = \{-n, \dots, n\}^d$ at $(p, q)$, and $\mathbb{Z}^d$ acts on configurations by $(\tau_g\omega)(e) = \omega(e - g)$, where $e - g$ is the pair $e$ translated by $-g$.

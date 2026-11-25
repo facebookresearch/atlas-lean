@@ -24,7 +24,10 @@ namespace CurveDivisor
 
 variable {C G : Type*} [CommGroup G]
 
-/-- The multiplicative homomorphism underlying evaluation of divisors against `f`. -/
+/-- **Evaluation of divisors as a group homomorphism.** For a commutative group $G$ and a
+function $f : C \to G$, this is the monoid homomorphism from the group of divisors on $C$,
+written multiplicatively, to $G$ that sends a divisor $D$ to the finite product
+$\prod_{P \in \operatorname{supp} D} f(P)^{D(P)}$. -/
 noncomputable def evalMonoidHom (f : C → G) : Multiplicative (CurveDivisor C) →* G where
   toFun D := D.toAdd.prod fun P n ↦ f P ^ n
   map_one' := by simp
@@ -32,28 +35,39 @@ noncomputable def evalMonoidHom (f : C → G) : Multiplicative (CurveDivisor C) 
     Finsupp.prod_add_index' (fun P ↦ zpow_zero (f P))
       (fun P n₁ n₂ ↦ zpow_add (f P) n₁ n₂)
 
-/-- Evaluate a divisor by multiplying the corresponding integer powers of `f`. -/
+/-- **Evaluation of a divisor against a function.** For a commutative group $G$, a function
+$f : C \to G$ and a divisor $D$ on $C$, the evaluation of $D$ against $f$ is the element
+$f(D) = \prod_{P \in \operatorname{supp} D} f(P)^{D(P)}$ of $G$. -/
 noncomputable def eval (f : C → G) (D : CurveDivisor C) : G :=
   evalMonoidHom f (Multiplicative.ofAdd D)
 
-/-- Evaluation is the finite product over the support of the divisor. -/
+/-- **Evaluation is a product over the support.** For a commutative group $G$, every function
+$f : C \to G$ and every divisor $D$ on $C$, the evaluation of $D$ against $f$ equals
+$\prod_{P \in \operatorname{supp} D} f(P)^{D(P)}$, the product over the points in the support
+of $D$. -/
 theorem eval_eq_prod (f : C → G) (D : CurveDivisor C) :
     eval f D = D.prod (fun P n ↦ f P ^ n) :=
   rfl
 
-/-- The zero divisor evaluates to one. -/
+/-- **The zero divisor evaluates to one.** For a commutative group $G$ and every function
+$f : C \to G$, the evaluation of the zero divisor on $C$ against $f$ is the identity element
+$1$ of $G$. -/
 @[simp]
 theorem eval_zero (f : C → G) : eval f (0 : CurveDivisor C) = 1 := by
   simp [eval]
 
-/-- A divisor supported at one point evaluates to the corresponding power. -/
+/-- **Evaluation of a one-point divisor.** For a commutative group $G$, every function
+$f : C \to G$, every point $P \in C$ and every integer $n$, the divisor $n \cdot P$, with
+coefficient $n$ at $P$ and $0$ elsewhere, evaluates against $f$ to $f(P)^n$. -/
 @[simp]
 theorem eval_single (f : C → G) (P : C) (n : ℤ) :
     eval f (Finsupp.single P n) = f P ^ n := by
   rw [eval_eq_prod]
   exact Finsupp.prod_single_index (zpow_zero (f P))
 
-/-- Evaluation sends addition of divisors to multiplication. -/
+/-- **Evaluation is multiplicative.** For a commutative group $G$, every function
+$f : C \to G$ and all divisors $D_1, D_2$ on $C$, writing $f(D)$ for the evaluation of a
+divisor $D$ against $f$, we have $f(D_1 + D_2) = f(D_1) \, f(D_2)$. -/
 @[simp]
 theorem eval_add (f : C → G) (D₁ D₂ : CurveDivisor C) :
     eval f (D₁ + D₂) = eval f D₁ * eval f D₂ := by
@@ -61,7 +75,9 @@ theorem eval_add (f : C → G) (D₁ D₂ : CurveDivisor C) :
     evalMonoidHom f (Multiplicative.ofAdd D₁) * evalMonoidHom f (Multiplicative.ofAdd D₂)
   exact map_mul _ _ _
 
-/-- Evaluation sends integer scaling of a divisor to the corresponding power. -/
+/-- **Evaluation of an integer multiple.** For a commutative group $G$, every function
+$f : C \to G$, every integer $n$ and every divisor $D$ on $C$, writing $f(D)$ for the
+evaluation of $D$ against $f$, we have $f(nD) = f(D)^n$. -/
 @[simp]
 theorem eval_zsmul (f : C → G) (n : ℤ) (D : CurveDivisor C) :
     eval f (n • D) = eval f D ^ n := by

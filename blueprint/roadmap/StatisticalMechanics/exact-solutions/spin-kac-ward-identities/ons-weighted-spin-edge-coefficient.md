@@ -1,0 +1,3 @@
+# Weighted character sum over even subgraphs containing an edge
+
+For $L > 2$, a weight $w$ on unordered pairs of sites, $a, b \in \{0, 1\}$ and a pair $f$, the coefficient is $C_w(f) = \sum_{F \ni f} \chi_{a,b}([F]) \prod_{g \in F} w(g)$, the sum over the even subgraphs $F$ of $T_L$ that contain $f$, where $[F]$ is the [mod 2 homology class](../homology-and-turning-of-loops-on-the-square-latt/ons-even-homology.md) of a torus edge set $F$ and $\chi_{a,b}(h) = (-1)^{(1+a)h_1 + (1+b)h_2 + h_1 h_2}$ is the [spin character](../homology-and-turning-of-loops-on-the-square-latt/ons-spin-character.md).

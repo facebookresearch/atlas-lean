@@ -1,0 +1,17 @@
+# Smallest parts in overpartitions
+
+- [Smallest-even-part contribution of an overpartition](overpartition-spt2-contribution.md)
+- [Number of smallest even parts in overpartitions](overpartition-spt2.md)
+- [$\overline{\mathrm{spt2}}$ vanishes at zero](overpartition-spt2-zero.md)
+- [Overpartitions with odd smallest part contribute nothing](overpartition-spt2-contribution-eq-zero.md)
+- [Three congruences modulo 4 for $\overline{\mathrm{spt2}}$](overpartition-spt2-basic-congruences.md)
+- [Congruences modulo 4 for $\overline{\mathrm{spt2}}$ along powers of 2](overpartition-spt2-dyadic-congruences.md)
+- [Congruences modulo 4 for $\overline{\mathrm{spt2}}$ at primes $p \equiv 5, 7 \pmod 8$](overpartition-spt2-prime-congruence.md)
+- [2-dissection of the square of Euler's product](q-pochhammer-two-dissection-square.md)
+- [2-dissection of the reciprocal square of Euler's product](q-pochhammer-two-dissection-inverse-squa.md)
+- [The 3-dissection of $f_1^3$ for complex $q$](q-pochhammer-three-dissection-cube.md)
+- [The 3-dissection of $f_4/f_1$ for complex $q$](q-pochhammer-three-dissection-ratio-four.md)
+- [The 3-dissection of $f_1 f_2$ for complex $q$](q-pochhammer-three-dissection-product-on.md)
+- [3-dissection of the product form of Ramanujan's psi function](ramanujan-psi-three-dissection.md)
+- [3-dissection of the product form of Ramanujan's psi function at negated argument](ramanujan-psi-neg-dissection.md)
+- [3-dissection of the product form of Ramanujan's phi function at negated argument](ramanujan-phi-neg-dissection.md)

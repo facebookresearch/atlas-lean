@@ -1,0 +1,3 @@
+# Outer open graph lies in the glued open graph
+
+Let $d, n \in \mathbb{N}$, $\Lambda_m = \{-m, \dots, m\}^d$ (so $\Lambda_n \subseteq \Lambda_{n+1}$), and let $\psi$ be a configuration of $\Lambda_{n+1}$ (an assignment of open/closed states to the unordered pairs of vertices of $\Lambda_{n+1}$) and $\omega$ a configuration of $\Lambda_n$. Then the [outer open graph](../boundary-conditions-induced-on-a-box-by-the-oute/outside-open-graph.md) $O^0_\psi$ on $\Lambda_{n+1}$ (the edges of $\Lambda_{n+1}$ open in $\psi$ that do not have both endpoints in $\Lambda_n$) is a subgraph of the [glued open graph](full-graph-free.md) $F^0_{\omega,\psi}$.
