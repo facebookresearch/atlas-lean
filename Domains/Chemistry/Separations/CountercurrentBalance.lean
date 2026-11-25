@@ -27,8 +27,10 @@ component balances imply equality of the sum of the two entering component flows
 the sum of the two leaving ones. Stage `k + 1` is indexed by `k < N`. Neither the sign
 of the carrier flows nor any equilibrium law is needed for the cancellation.
 
-Source for the stage balance: Lamm and Jarboe, *Chemical Engineering Separations:
-A Handbook for Students*, LibreTexts, §1.4, Equation 9.1. -/
+Lamm and Jarboe, *Chemical Engineering Separations: A Handbook for Students*, LibreTexts,
+§1.4, Equation 9.1 gives the absorber operating line for constant solute-free carrier rates.
+Subtracting the line at adjacent cuts gives the constant-carrier special case of the stage
+balance assumed here. -/
 public theorem external_component_balance (N : ℕ) (_hN : 0 < N)
     (L V x y : ℕ → ℝ) (_hL : ∀ k ≤ N, 0 < L k) (_hV : ∀ k ≤ N, 0 < V (k + 1))
     (hstage : ∀ k < N, L k * x k + V (k + 2) * y (k + 2) =
