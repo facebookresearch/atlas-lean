@@ -120,27 +120,6 @@ public theorem_wanted litNodesIncreasing_generatingFunction :
       1 + (mk fun n => (Fintype.card (Nat.Partition n) : ℤ)) *
         (∑' i : ℕ, 2 * X ^ (i + 1) * invOfUnit (1 - X ^ (i + 1)) 1 - 1)
 
-/-- **Triangular $q$-binomial coefficients via Gaussian binomials.** For natural numbers $r$ and
-$s$ with $1 \le r$ and $s \le r$, the triangular $q$-binomial coefficient $t[r, s]$ satisfies
-$$
-t[r, s] = q^s \binom{r + s - 1}{s}_q - q^{s+1} \sum_{i=2}^{s} t[i - 1, i - 1] \,
-q^{i(r - i)} \binom{r + 1 + s - 2i}{s - i}_q
-$$
-in $\mathbb{Z}[[q]]$, where $\binom{M}{k}_q$ denotes the Gaussian binomial coefficient.
-
-In the range $s \le r$ every exponent and binomial index above is a natural number; for $s > r$
-one has $t[r, s] = 0$.
-
-Source: Aubrey Blecher, Arnold Knopfmacher, and Michael Mays, *Casting Light on Integer
-Partitions*, INTEGERS 24 (2024), Article A56, Proposition 4, eq. (12)
-(`integers-2024-A56-prop-4`). -/
-public theorem_wanted triangularQBinomial_eq_gaussBinom_sub {r s : ℕ} (hr : 1 ≤ r)
-    (hs : s ≤ r) :
-    triangularQBinomial r s =
-      X ^ s * MathlibExt.gaussBinom X (r + s - 1) s -
-        X ^ (s + 1) * ∑ i ∈ Finset.Icc 2 s, triangularQBinomial (i - 1) (i - 1) *
-          X ^ (i * (r - i)) * MathlibExt.gaussBinom X (r + 1 + s - 2 * i) (s - i)
-
 /-- **Lit cells of weakly decreasing partitions with few parts.** Let $k$ and $s$ be natural
 numbers with $s \le k$. Write $\binom{M}{m}_q$ for the Gaussian binomial coefficient, and $t[s, i]$
 for the triangular $q$-binomial coefficient: the generating function of partitions with exactly
