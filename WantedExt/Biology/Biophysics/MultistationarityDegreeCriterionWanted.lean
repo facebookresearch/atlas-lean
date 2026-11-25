@@ -11,8 +11,9 @@ LICENSE file in the root directory of this source tree.
 
 Conradi, Feliu, Mincheva and Wiuf (2017, Theorem `theo:main`): consider a reaction network with
 `n` species and `ℓ` reactions `∑_i α_{ij} X_i → ∑_i β_{ij} X_i`, stoichiometric matrix
-`N = β - α` of rank `s`, and `C¹` rate functions `v` with `v_j(x) = 0` whenever `x_i = 0` for some
-`i` with `α_{ij} > 0` (assumption (`eq:assumption`); mass action satisfies it). The ODE is
+`N = β - α` of rank `s`, and `C¹` rate functions `v`, nonnegative on `ℝ^n_{≥0}`, with
+`v_j(x) = 0` whenever `x_i = 0` for some `i` with `α_{ij} > 0` (assumption (`eq:assumption`);
+mass action satisfies both). The ODE is
 `ẋ = f(x) = N v(x)` on `ℝ^n_{≥0}`. Let `W ∈ ℝ^{d × n}`, `d = n - s`, be a row-reduced matrix
 whose rows form a basis of `im(N)^⊥`, with pivot columns `i_1 < … < i_d`, and
 `P_c = {x ≥ 0 : W x = c}`, `P_c^+` its positive part. Let `φ_c(x)_i = f_i(x)` for `i` not a pivot
@@ -74,10 +75,11 @@ def ReactionSystem.N (G : ReactionSystem n ℓ) : Matrix (Fin n) (Fin ℓ) ℝ :
 noncomputable def ReactionSystem.f (G : ReactionSystem n ℓ) (x : Fin n → ℝ) : Fin n → ℝ :=
   G.N.mulVec (G.v x)
 
-/-- The rate functions are `C¹` and satisfy assumption (`eq:assumption`): `v_j(x) = 0` whenever
-`x_i = 0` for some `i` with `α_{ij} > 0`. -/
+/-- The rate functions are `C¹`, nonnegative on the nonnegative orthant, and satisfy assumption
+(`eq:assumption`): `v_j(x) = 0` whenever `x_i = 0` for some `i` with `α_{ij} > 0`. -/
 def ReactionSystem.Admissible (G : ReactionSystem n ℓ) : Prop :=
-  ContDiff ℝ 1 G.v ∧ ∀ x j i, x i = 0 → 0 < G.α i j → G.v x j = 0
+  ContDiff ℝ 1 G.v ∧ (∀ x, (∀ i, 0 ≤ x i) → ∀ j, 0 ≤ G.v x j) ∧
+    ∀ x j i, x i = 0 → 0 < G.α i j → G.v x j = 0
 
 /-- `W` is a **row-reduced conservation matrix** with pivots `piv`: its rows form a basis of
 `im(N)^⊥` (they are linearly independent, annihilate every column of `N`, and every vector
@@ -125,12 +127,12 @@ Jacobian of `f` at `x`. -/
 def ReactionSystem.Nondegenerate (G : ReactionSystem n ℓ) (x : Fin n → ℝ) : Prop :=
   ∀ u : Fin ℓ → ℝ, fderiv ℝ G.f x (G.N.mulVec u) = 0 → G.N.mulVec u = 0
 
-/-- **Uniqueness criterion** (Conradi, Feliu, Mincheva and Wiuf 2017, Theorem `theo:main` (A′)):
-for an admissible reaction system (`C¹` rates satisfying (`eq:assumption`)) with stoichiometric
-matrix of rank `s`, a row-reduced conservation matrix `W` with pivots `piv`, and `c` with
-`P_c^+ ≠ ∅`, if the semiflow is dissipative, there are no boundary equilibria in `P_c`, and
-`sign det M(x) = (-1)^s` at every positive equilibrium `x ∈ P_c^+`, then there is exactly one
-positive equilibrium in `P_c`, and it is nondegenerate.
+/-- **Uniqueness criterion** (Conradi, Feliu, Mincheva and Wiuf 2017, Theorem `theo:main` (A′)): for
+an admissible reaction system (`C¹` rates, nonnegative on the nonnegative orthant, satisfying
+(`eq:assumption`)) with stoichiometric matrix of rank `s`, a row-reduced conservation matrix `W`
+with pivots `piv`, and `c` with `P_c^+ ≠ ∅`, if the semiflow is dissipative, there are no boundary
+equilibria in `P_c`, and `sign det M(x) = (-1)^s` at every positive equilibrium `x ∈ P_c^+`, then
+there is exactly one positive equilibrium in `P_c`, and it is nondegenerate.
 
 Source: Conradi, Feliu, Mincheva and Wiuf (2017), Theorem `theo:main` (A′). -/
 public theorem_wanted existsUnique_equilibrium (G : ReactionSystem n ℓ) (hG : G.Admissible)
@@ -144,13 +146,13 @@ public theorem_wanted existsUnique_equilibrium (G : ReactionSystem n ℓ) (hG : 
       ∀ x ∈ posClassSet W c, G.f x = 0 → G.Nondegenerate x
 
 /-- **Multistationarity criterion** (Conradi, Feliu, Mincheva and Wiuf 2017, Theorem `theo:main`
-(B′)): for an admissible reaction system (`C¹` rates satisfying (`eq:assumption`)) with
-stoichiometric matrix of rank `s`, a row-reduced conservation matrix `W` with pivots `piv`, and
-`c` with `P_c^+ ≠ ∅`, if the semiflow is dissipative, there are no boundary equilibria in `P_c`,
-and `sign det M(x₁) = (-1)^{s+1}` at some positive equilibrium `x₁ ∈ P_c^+`, then there are two
-distinct positive equilibria in `P_c`, at least one positive equilibrium in `P_c` is
-nondegenerate, and if every positive equilibrium in `P_c` is nondegenerate then the set of
-positive equilibria in `P_c` is finite with an odd number `≥ 3` of elements.
+(B′)): for an admissible reaction system (`C¹` rates, nonnegative on the nonnegative orthant,
+satisfying (`eq:assumption`)) with stoichiometric matrix of rank `s`, a row-reduced conservation
+matrix `W` with pivots `piv`, and `c` with `P_c^+ ≠ ∅`, if the semiflow is dissipative, there are no
+boundary equilibria in `P_c`, and `sign det M(x₁) = (-1)^{s+1}` at some positive equilibrium
+`x₁ ∈ P_c^+`, then there are two distinct positive equilibria in `P_c`, at least one positive
+equilibrium in `P_c` is nondegenerate, and if every positive equilibrium in `P_c` is nondegenerate
+then the set of positive equilibria in `P_c` is finite with an odd number `≥ 3` of elements.
 
 Source: Conradi, Feliu, Mincheva and Wiuf (2017), Theorem `theo:main` (B′). -/
 public theorem_wanted multiple_equilibria (G : ReactionSystem n ℓ) (hG : G.Admissible)

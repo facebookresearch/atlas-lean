@@ -22,15 +22,16 @@ Theorem 3.1 states: the minimal siphons of `G` are the inclusion-minimal sets
 `{i : c_i ∈ P}` as `P` runs over the minimal primes of `I_G`; if each connected component of `G` is
 strongly connected, `I_G` can be replaced by `J_G`; and if `G` is strongly connected, by `M_G`.
 
-The ideals are read in `R = ℚ[c_1, …, c_s] / ⟨c_1 ⋯ c_s⟩`, as the source does in its Example 1.3
-(it decomposes `I_G + ⟨E F P S₀ X Y⟩`): the minimal primes taken are those of
-`I_G + ⟨c_1 ⋯ c_s⟩` in `ℚ[c_1, …, c_s]`. (In `ℚ[c_1, …, c_s]` itself a minimal prime containing no
-variable would give the empty set.) The network, its complexes, the reaction relation and weak
-reversibility are the shared ones of `MathlibExt.Dynamics.PolynomialNetworks.Deficiency`; each
-connected component being strongly connected is weak reversibility. Self-loops `src r = prod r`
-contribute `0` to `I_G` and `J_G`. Not recorded here: Theorem 3.2 (relevant siphons through the
-nine saturation ideals of the facets and vertex supports of the invariant polyhedra) and
-Proposition 2.1.
+The ideals are read in `R = ℚ[c_1, …, c_s] / ⟨c_1 ⋯ c_s⟩`, as the source does in its Example 1.3 (it
+decomposes `I_G + ⟨E F P S₀ X Y⟩`): the minimal primes taken are those of `I_G + ⟨c_1 ⋯ c_s⟩` in
+`ℚ[c_1, …, c_s]`. (In `ℚ[c_1, …, c_s]` itself a minimal prime containing no variable would give the
+empty set.) The network, its complexes, the reaction relation and weak reversibility are the shared
+ones of `MathlibExt.Dynamics.PolynomialNetworks.Deficiency`, and every species is assumed to occur
+in some complex, as in the source (an unused species `z` would be a siphon `{z}` invisible to
+`M_G`); each connected component being strongly connected is weak reversibility. Self-loops
+`src r = prod r` contribute `0` to `I_G` and `J_G`. Not recorded here: Theorem 3.2 (relevant
+siphons through the nine saturation ideals of the facets and vertex supports of the invariant
+polyhedra) and Proposition 2.1.
 
 Sources: A. Shiu and B. Sturmfels, "Siphons in chemical reaction networks", Bulletin of
 Mathematical Biology 72 (2010) 1448–1463, arXiv:0904.4529, Theorem 3.1.
@@ -91,38 +92,44 @@ def IsMinimalVarSet (I : Ideal (MvPolynomial S ℚ)) (Z : Finset S) : Prop :=
   (∃ P ∈ (I ⊔ prodIdeal).minimalPrimes, varSet P = Z) ∧
     ∀ P ∈ (I ⊔ prodIdeal).minimalPrimes, varSet P ⊆ Z → varSet P = Z
 
+/-- Every species **occurs** in the network: it has a positive coefficient in the reactant or
+product complex of some reaction (the source's species are those of its complexes). -/
+def AllSpeciesOccur (N : ReactionNetwork S ρ) : Prop :=
+  ∀ s, ∃ r, 0 < N.src r s ∨ 0 < N.prod r s
+
 /-- The network is **strongly connected**: every complex reaches every complex by a directed
 path of reactions. -/
 def IsStronglyConnected (N : ReactionNetwork S ρ) : Prop :=
   ∀ y ∈ N.complexes, ∀ y' ∈ N.complexes, Relation.ReflTransGen N.Reacts y y'
 
 /-- **Minimal siphons from the binomial ideal `I_G`** (Shiu and Sturmfels 2010, Theorem 3.1, first
-clause): for a network on finitely many species, a finite set `Z` of species is a minimal siphon
-iff it is inclusion-minimal among the sets `{i : c_i ∈ P}` for `P` a minimal prime of
-`I_G + ⟨c_1 ⋯ c_s⟩`.
+clause): for a network on finitely many species, each of which occurs in some complex, a finite set
+`Z` of species is a minimal siphon iff it is inclusion-minimal among the sets `{i : c_i ∈ P}` for
+`P` a minimal prime of `I_G + ⟨c_1 ⋯ c_s⟩`.
 
 Source: Shiu and Sturmfels (2010), Theorem 3.1. -/
-public theorem_wanted isMinimalSiphon_iff_idealI (N : ReactionNetwork S ρ) (Z : Finset S) :
+public theorem_wanted isMinimalSiphon_iff_idealI (N : ReactionNetwork S ρ)
+    (hocc : AllSpeciesOccur N) (Z : Finset S) :
     IsMinimalSiphon N Z ↔ IsMinimalVarSet (idealI N) Z
 
 /-- **Minimal siphons from `J_G`** (Shiu and Sturmfels 2010, Theorem 3.1, second clause): for a
 weakly reversible network (each connected component strongly connected) on finitely many species,
-a finite set `Z` of species is a minimal siphon iff it is inclusion-minimal among the sets
-`{i : c_i ∈ P}` for `P` a minimal prime of `J_G + ⟨c_1 ⋯ c_s⟩`.
+each of which occurs in some complex, a finite set `Z` of species is a minimal siphon iff it is
+inclusion-minimal among the sets `{i : c_i ∈ P}` for `P` a minimal prime of `J_G + ⟨c_1 ⋯ c_s⟩`.
 
 Source: Shiu and Sturmfels (2010), Theorem 3.1. -/
 public theorem_wanted isMinimalSiphon_iff_idealJ (N : ReactionNetwork S ρ)
-    (hwr : N.IsWeaklyReversible) (Z : Finset S) :
+    (hocc : AllSpeciesOccur N) (hwr : N.IsWeaklyReversible) (Z : Finset S) :
     IsMinimalSiphon N Z ↔ IsMinimalVarSet (idealJ N) Z
 
 /-- **Minimal siphons from the monomial ideal `M_G`** (Shiu and Sturmfels 2010, Theorem 3.1, third
-clause): for a strongly connected network on finitely many species, a finite set `Z` of species is
-a minimal siphon iff it is inclusion-minimal among the sets `{i : c_i ∈ P}` for `P` a minimal prime
-of `M_G + ⟨c_1 ⋯ c_s⟩`.
+clause): for a strongly connected network on finitely many species, each of which occurs in some
+complex, a finite set `Z` of species is a minimal siphon iff it is inclusion-minimal among the sets
+`{i : c_i ∈ P}` for `P` a minimal prime of `M_G + ⟨c_1 ⋯ c_s⟩`.
 
 Source: Shiu and Sturmfels (2010), Theorem 3.1. -/
 public theorem_wanted isMinimalSiphon_iff_idealM (N : ReactionNetwork S ρ)
-    (hsc : IsStronglyConnected N) (Z : Finset S) :
+    (hocc : AllSpeciesOccur N) (hsc : IsStronglyConnected N) (Z : Finset S) :
     IsMinimalSiphon N Z ↔ IsMinimalVarSet (idealM N) Z
 
 end WantedExt.Biology.Biophysics.SiphonPrimeDecompositionWanted

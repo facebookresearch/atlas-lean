@@ -1,11 +1,11 @@
 # Uniqueness criterion
 
-**Uniqueness criterion** (Conradi, Feliu, Mincheva and Wiuf 2017, Theorem `theo:main` (A′)):
-for an admissible reaction system (`C¹` rates satisfying (`eq:assumption`)) with stoichiometric
-matrix of rank `s`, a row-reduced conservation matrix `W` with pivots `piv`, and `c` with
-`P_c^+ ≠ ∅`, if the semiflow is dissipative, there are no boundary equilibria in `P_c`, and
-`sign det M(x) = (-1)^s` at every positive equilibrium `x ∈ P_c^+`, then there is exactly one
-positive equilibrium in `P_c`, and it is nondegenerate.
+**Uniqueness criterion** (Conradi, Feliu, Mincheva and Wiuf 2017, Theorem `theo:main` (A′)): for
+an admissible reaction system (`C¹` rates, nonnegative on the nonnegative orthant, satisfying
+(`eq:assumption`)) with stoichiometric matrix of rank `s`, a row-reduced conservation matrix `W`
+with pivots `piv`, and `c` with `P_c^+ ≠ ∅`, if the semiflow is dissipative, there are no boundary
+equilibria in `P_c`, and `sign det M(x) = (-1)^s` at every positive equilibrium `x ∈ P_c^+`, then
+there is exactly one positive equilibrium in `P_c`, and it is nondegenerate.
 
 ## Sources
 
