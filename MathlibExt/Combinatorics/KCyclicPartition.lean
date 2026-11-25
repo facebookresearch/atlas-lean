@@ -16,21 +16,21 @@ namespace MetaMathlibExt
 
 variable {V : Type*} [Fintype V] [LinearOrder V]
 
-/-- Truncated-cycle successor for a permutation `σ` at label `i`.
-
-It characterizes the exact evaluation `σ^(i)(i) = j` as the first positive
-forward iterate `(σ ^ m) i` whose label is `≤ i`: there exists `m > 0` with
-`(σ ^ m) i = j`, `j ≤ i`, and every earlier positive iterate has label `> i`. -/
+/-- **Truncated-cycle successor.** Let $\sigma$ be a permutation of a finite linearly ordered
+set $V$ and let $i, j \in V$. Then $j$ is the truncated-cycle successor $\sigma^{(i)}(i)$ of $i$
+when $j$ is the first of the iterates $\sigma(i), \sigma^2(i), \dots$ that is at most $i$: there
+is an $m > 0$ with $\sigma^m(i) = j$ and $j \le i$, and $\sigma^{m'}(i) > i$ for every $m'$ with
+$0 < m' < m$. -/
 def TruncatedSucc (σ : Equiv.Perm V) (i j : V) : Prop :=
   ∃ m : ℕ, 0 < m ∧ j ≤ i ∧ (σ ^ m) i = j ∧
     ∀ m' : ℕ, 0 < m' → m' < m → i < (σ ^ m') i
 
-/-- `k`-cyclic partition of a labeled graph.
-
-`σ` is a permutation of `V` whose total number of cycles, counting fixed points
-via `σ.cycleType.card + (Fintype.card V - σ.support.card)`, equals `k`, and for
-every vertex `i`, the exact truncated-cycle successor `σ^(i)(i) = j` implies
-there is no directed edge from `i` to `j`.
+/-- **$k$-cyclic partition.** Let $V$ be a finite linearly ordered set, $\sigma$ a
+permutation of $V$, $E$ a relation on $V$ (the directed edges of a labeled graph) and $k$ a
+natural number. Then $\sigma$ is a $k$-cyclic partition for $E$ when $\sigma$ has exactly $k$
+cycles, fixed points counted as cycles of length one, and for all $i, j \in V$, if $j$ is the
+truncated-cycle successor of $i$ under $\sigma$ (the first of $\sigma(i), \sigma^2(i), \dots$
+that is at most $i$), then $E(i, j)$ does not hold.
 
 Source: JIS statement `jis_758fa72fca5bb19057a27c73` in Gonzales,
 <https://cs.uwaterloo.ca/journals/JIS/VOL25/Gonzales/gonzales2.tex>, lines 345–346,

@@ -1,6 +1,6 @@
 # Stochastic mass-action propensity
 
-Let $N$ be a [chemical reaction network](../complex-balancing-and-the-deficiency-zero-theore/reaction-network.md) with finite species set $S$ and finite reaction set $\rho$, and let $k \in \mathbb{R}^\rho$ be rate constants. The stochastic mass-action propensity of
+Let $N$ be a [chemical reaction network](../../../Dynamics/smooth-dynamics/reaction-network.md) with finite species set $S$ and finite reaction set $\rho$, and let $k \in \mathbb{R}^\rho$ be rate constants. The stochastic mass-action propensity of
 reaction $r$ in a state $x \in \mathbb{N}^S$ (molecule counts) is
 
 $$\lambda_r(x) = k_r \prod_{s \in S} x_s (x_s - 1) \cdots (x_s - \mathrm{src}(r)_s + 1),$$

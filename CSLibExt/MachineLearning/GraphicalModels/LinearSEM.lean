@@ -43,7 +43,7 @@ the finite-state causal Bayesian networks of
 
 The population least-squares slope identity for the bivariate equation `Y = α + β X + U`,
 `Cov(X, Y) / Var(X) = β + Cov(X, U) / Var(X)`, is `LinearMomentModel.covariance_div_variance` in
-`MathlibExt/Biology/StatisticalGenetics/MendelianRandomization.lean`.
+`Domains/Biology/StatisticalGenetics/MendelianRandomization.lean`.
 
 ## References
 

@@ -29,49 +29,63 @@ namespace MathlibExt.Analysis.ContinuumLimsupConstantWanted
 /-! Source record `AMR-022-2035`. -/
 open Filter
 
-/-- An entire function: complex-differentiable everywhere.
-Interpretation gap: the record gives `f` entire only as ambient
-context from Hayman; we take it as an explicit hypothesis. -/
+/-- **Entire functions.** A function $f : \mathbb{C} \to \mathbb{C}$ is entire when it is complex
+differentiable at every point of $\mathbb{C}$.
+
+Source: the problem record gives $f$ entire only as ambient context from Hayman; it is taken here
+as an explicit hypothesis. -/
 def Entire (f : ℂ → ℂ) : Prop :=
   DifferentiableOn ℂ f Set.univ
 
 /- Maximum modulus `M(r)` is MathlibExt's `Complex.wimanMaximumModulus`,
 the supremum of `‖f‖` on the sphere of radius `|r|`. -/
-/-- A continuum receding to infinity: closed, connected, and unbounded.
-Continuum is read as closed connected; receding to infinity is read as
-unbounded. Compactness at finite scales is not required, since an
-unbounded set is never compact. -/
+/-- **Continua receding to infinity.** A set $\Gamma \subseteq \mathbb{C}$ is a continuum receding
+to infinity when it is closed, connected and unbounded.
+
+Here a continuum is read as a closed connected set and receding to infinity as unbounded;
+compactness is not required, since an unbounded set is never compact. -/
 def RecedesToInf (Γ : Set ℂ) : Prop :=
   IsClosed Γ ∧ IsConnected Γ ∧ ¬Bornology.IsBounded Γ
 
-/-- The ratio `log |f z| / log M(|z|)` in `EReal`, with zeros of `f`
-mapped to `⊥` (the genuine logarithm of a zero modulus is `-∞`).
-This avoids the conditionally complete `Filter.limsup` on `ℝ` collapsing
-the `-∞` case to `0`. Division by `log M(|z|) = 0` retains the real
-division-by-zero junk value `0`; that convention is recorded in the
-metadata gaps. -/
+/-- **Ratio of $\log |f|$ to the logarithm of the maximum modulus.** For a function
+$f : \mathbb{C} \to \mathbb{C}$ and a point $z \in \mathbb{C}$, this is the extended real number
+equal to $-\infty$ if $f(z) = 0$, and otherwise to the real number
+$\log |f(z)| / \log M(f, |z|)$, where $M(f, r)$ is the Wiman maximum modulus of $f$, $\log 0$ is
+taken to be $0$, and division by $0$ gives $0$. -/
 noncomputable def Ratio (f : ℂ → ℂ) (z : ℂ) : EReal :=
   if f z = 0 then (⊥ : EReal)
   else ((Real.log ‖f z‖ / Real.log (Complex.wimanMaximumModulus f ‖z‖) : ℝ) : EReal)
 
-/-- [AMR-022-2035] Along every continuum receding to infinity, the
-limsup at infinity of `log |f z| / log M(|z|)` is at least `-1`,
-i.e. the absolute constant is `A = 1`. The limit is taken along the
-filter `cocompact ⊓ 𝓟 Γ` (at infinity on `Γ`), in `EReal` so that a
-ratio tending to `-∞` is not collapsed to `0`. The function is required
-to be transcendental (`Complex.IsTranscendental`, the standing Hayman
-hypothesis): the identically zero function is an immediate
-counterexample, since its ratio is constantly `⊥`. -/
+/-- **Lower bound $-1$ for the log-modulus ratio along continua.** Write $M(f, r)$ for the Wiman
+maximum modulus of a function $f : \mathbb{C} \to \mathbb{C}$ at radius $r$. This is the statement
+that for every entire, transcendental function $f$ and every continuum $\Gamma$ receding to
+infinity (a closed, connected, unbounded subset of $\mathbb{C}$), the limit superior, as
+$|z| \to \infty$ with $z \in \Gamma$, of the extended real ratio $\log |f(z)| / \log M(f, |z|)$
+is at least $-1$. Here the ratio is taken to be $-\infty$ where $f(z) = 0$, and $0$ where
+$f(z) \ne 0$ and $\log M(f, |z|) = 0$.
+
+Transcendence is the standing hypothesis of Hayman's problem; without it the zero function would
+be a counterexample, its ratio being constantly $-\infty$.
+
+Source: problem record AMR-022-2035. -/
 noncomputable def conjecture : Prop :=
   ∀ f : ℂ → ℂ, Entire f → Complex.IsTranscendental f →
     ∀ Γ : Set ℂ, RecedesToInf Γ →
     (-1 : EReal) ≤ Filter.limsup (Ratio f) (Filter.cocompact ℂ ⊓ 𝓟 Γ)
 
 /--
-Resolved true: Hayman and Kjellberg (Studies in Pure Mathematics, Birkhauser 1983) proved that
-for entire f and every K > 1 all components of {ln|f| + K ln M(|z|,f) < 0} are bounded, so A =
-1: the limsup along any unbounded continuum is >= -1 (Hayman-Lingham Update 2.35;
-arXiv:0801.0692). Source: A. Eremenko and J. K. Langley, Meromorphic functions of one complex
+**Hayman–Kjellberg theorem on continua receding to infinity.** Write $M(f, r)$ for the Wiman
+maximum modulus of a function $f : \mathbb{C} \to \mathbb{C}$ at radius $r$. For every entire,
+transcendental function $f$ and every closed, connected, unbounded set
+$\Gamma \subseteq \mathbb{C}$, the limit superior, as $|z| \to \infty$ with $z \in \Gamma$, of the
+extended real ratio $\log |f(z)| / \log M(f, |z|)$ is at least $-1$. Here the ratio is taken to
+be $-\infty$ where $f(z) = 0$, and $0$ where $f(z) \ne 0$ and $\log M(f, |z|) = 0$.
+
+Hayman and Kjellberg (Studies in Pure Mathematics, Birkhauser 1983) proved that for entire $f$ and
+every $K > 1$ all components of $\{z : \log |f(z)| + K \log M(f, |z|) < 0\}$ are bounded, so the
+absolute constant in Hayman–Lingham Problem 2.35 is $A = 1$.
+
+Source: A. Eremenko and J. K. Langley, Meromorphic functions of one complex
 variable. A survey, arXiv:0801.0692 (2008), https://arxiv.org/abs/0801.0692; Walter K. Hayman
 and Eleanor F. Lingham, Research Problems in Function Theory (New Edition), arXiv:1809.07200v2
 (2018), https://arxiv.org/abs/1809.07200. Moved from

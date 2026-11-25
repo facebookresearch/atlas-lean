@@ -25,7 +25,7 @@ degree `1`) and [SS10] RESOURCE CONSTRAINED SCHEDULING (the model with precedenc
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.ResourceConstrainedSchedulingPrecedenceZeroOrBoundWanted

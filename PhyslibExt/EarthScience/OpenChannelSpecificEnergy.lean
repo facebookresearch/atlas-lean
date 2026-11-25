@@ -26,10 +26,15 @@ minimization.
 
 ## ii. Key results
 
+- `EarthScience.rectangularCriticalDepth`: the critical depth
+  `(q^2 / g) ^ (1/3)`, with `EarthScience.rectangularCriticalDepth_cube`
+  and `EarthScience.rectangularCriticalDepth_nonneg`.
 - `EarthScience.specific_energy_unique_minimum`: `E` has a unique minimum
   on `h > 0`, attained at `hc = (q^2 / g) ^ (1/3)`, with
   `hc ^ 3 = q ^ 2 / g` and `E(hc) = 3 * hc / 2` (the last equality follows
-  from the cube relation and is checked numerically in the test module).
+  from the cube relation and is checked numerically in the test module);
+  `EarthScience.specific_energy_unique_minimum_at_rectangularCriticalDepth`
+  is the same minimum named by the critical depth.
 
 ## iii. Table of contents
 
@@ -52,9 +57,34 @@ namespace EarthScience
 depth `h`, with discharge per unit width `q` and gravity `g`:
 depth plus velocity head, `h + q^2 / (2 * g * h^2)`. Physically
 meaningful for `0 < g` and `0 < h`; outside that range the formula
-uses Lean's totalized division. -/
+uses Lean's totalized division: with `x / 0 = 0` it is `h` when
+`g = 0` or `h = 0`. -/
 noncomputable def rectangularSpecificEnergy (q g h : ℝ) : ℝ :=
   h + q ^ 2 / (2 * g * h ^ 2)
+
+/-- Critical depth for discharge per unit width `q` and gravity `g`:
+`(q ^ 2 / g) ^ (1 / 3)`, the specific-energy minimizer of
+`EarthScience.specific_energy_unique_minimum`. Physical for `0 < q`,
+`0 < g`. With `x / 0 = 0`, `0 ^ y = 0` for `y ≠ 0` and
+`x ^ y = |x| ^ y * cos (π y)` for `x < 0`, it is `0` when `q = 0` or
+`g = 0`, and `|q ^ 2 / g| ^ (1 / 3) / 2` when `g < 0` and `q ≠ 0`. -/
+noncomputable def rectangularCriticalDepth (q g : ℝ) : ℝ :=
+  (q ^ 2 / g) ^ (1 / 3 : ℝ)
+
+/-- For positive gravity `g`, the critical depth cubes to `q ^ 2 / g`. -/
+lemma rectangularCriticalDepth_cube {q g : ℝ} (hg : 0 < g) :
+    (rectangularCriticalDepth q g) ^ 3 = q ^ 2 / g := by
+  unfold rectangularCriticalDepth
+  have hx : 0 ≤ q ^ 2 / g := div_nonneg (sq_nonneg q) (le_of_lt hg)
+  rw [← Real.rpow_natCast, ← Real.rpow_mul hx,
+    show (1 / 3 : ℝ) * ((3 : ℕ) : ℝ) = 1 by norm_num, Real.rpow_one]
+
+/-- The critical depth is nonnegative for positive gravity. -/
+lemma rectangularCriticalDepth_nonneg {q g : ℝ} (hg : 0 < g) :
+    0 ≤ rectangularCriticalDepth q g := by
+  unfold rectangularCriticalDepth
+  apply Real.rpow_nonneg
+  exact div_nonneg (sq_nonneg q) (le_of_lt hg)
 
 /-- Rectangular-channel specific energy
 (`rectangularSpecificEnergy`) for discharge per unit width
@@ -109,5 +139,19 @@ theorem specific_energy_unique_minimum {q g : ℝ} (hq : 0 < q) (hg : 0 < g) :
       exact sub_eq_zero.mp hsub
     · intro hheq
       rw [hheq]
+
+/-- Named minimizer form: the specific energy is minimized at the
+critical depth `rectangularCriticalDepth q g`, uniquely on `h > 0`. -/
+lemma specific_energy_unique_minimum_at_rectangularCriticalDepth
+    {q g : ℝ} (hq : 0 < q) (hg : 0 < g) :
+    0 < rectangularCriticalDepth q g ∧
+      ∀ h : ℝ, 0 < h →
+        rectangularSpecificEnergy q g h ≥
+          rectangularSpecificEnergy q g (rectangularCriticalDepth q g) ∧
+        (rectangularSpecificEnergy q g h =
+          rectangularSpecificEnergy q g (rectangularCriticalDepth q g)
+          ↔ h = rectangularCriticalDepth q g) := by
+  obtain ⟨hc, rfl, hpos, -, hmin⟩ := specific_energy_unique_minimum hq hg
+  exact ⟨hpos, hmin⟩
 
 end EarthScience

@@ -18,6 +18,8 @@ public import MathlibExt.Probability.MonteCarloRate
 
 * `variance_mcEstimate`: for mutually independent draws with common law `ν` and a measurable
   `f ∈ L²(ν)`, the Monte Carlo average of `m > 0` draws has variance `Var_ν(f) / m`.
+  `variance_mcEstimate_of_memLp` is the same statement for `f ∈ L²(ν)` without a measurability
+  assumption.
 * `mcEstimate_bayesPosterior_mean_variance`: for exact independent draws from the Bayes posterior
   `bayesPosterior κ π x` (positive evidence), the Monte Carlo average is unbiased for the posterior
   mean (statistical target) and has variance `Var_posterior(g) / m` (Monte Carlo error).
@@ -60,6 +62,23 @@ theorem variance_mcEstimate {Ω α : Type*} [MeasurableSpace Ω] [MeasurableSpac
     rw [mcEstimate, div_eq_inv_mul]
   rw [hshape, MathlibExt.Probability.variance_sample_mean_of_iid (fun i ω ↦ f (X i ω))
     (hind.comp (fun _ ↦ f) fun _ ↦ hf) hident hmem m hm, hvar]
+
+/-- **Monte Carlo variance for a square-integrable integrand.** Measurability of `f` is not
+assumed; an a.e.-equal measurable modification has the same Monte Carlo estimator almost surely
+and the same variance.
+
+Source: C. P. Robert and G. Casella, *Monte Carlo Statistical Methods*, 2nd ed., §3.2. -/
+theorem variance_mcEstimate_of_memLp {Ω α : Type*} [MeasurableSpace Ω] [MeasurableSpace α]
+    {μ : Measure Ω} {ν : Measure α} {f : α → ℝ} (hf2 : MemLp f 2 ν) {X : ℕ → Ω → α}
+    (hX : ∀ i, Measurable (X i)) (hlaw : ∀ i, μ.map (X i) = ν) (hind : iIndepFun X μ) {m : ℕ}
+    (hm : m ≠ 0) : variance (mcEstimate f X m) μ = variance f ν / m := by
+  have hg : Measurable (hf2.aestronglyMeasurable.mk f) :=
+    hf2.aestronglyMeasurable.stronglyMeasurable_mk.measurable
+  have hfg := hf2.aestronglyMeasurable.ae_eq_mk
+  have he : mcEstimate f X m =ᵐ[μ] mcEstimate (hf2.aestronglyMeasurable.mk f) X m :=
+    (mcEstimate_ae_eq hfg hX hlaw).mono fun ω h ↦ h m
+  rw [variance_congr he, variance_mcEstimate hg (hf2.ae_eq hfg) hX hlaw hind hm,
+    variance_congr hfg]
 
 /-- **Posterior Monte Carlo: statistical target and sampling error.** Draw `θs 0, θs 1, …`
 independently from the Bayes posterior `bayesPosterior κ π x` (positive evidence at `x`). For a

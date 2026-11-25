@@ -1297,11 +1297,15 @@ private theorem brun_cast_Bj (j : ℕ) :
     rw [Nat.cast_pow]
   rw [h1, hB, ← pow_mul]
 
-/-- The sum of reciprocals over twin-prime pairs, indexed by the smaller prime
-`p` of each pair `(p, p + 2)`, converges over `ℝ`; a shared prime such as `5`
-is intentionally counted once in each of `(3, 5)` and `(5, 7)`, and a finite
-collection of twin-prime pairs is already covered because a finitely supported
-function is summable.
+/-- **Brun's theorem on twin primes.** The series
+$\sum_{p} \left(\frac{1}{p} + \frac{1}{p + 2}\right)$, taken over all primes $p$ such that
+$p + 2$ is also prime, converges in $\mathbb{R}$.
+
+Each twin-prime pair $(p, p + 2)$ is indexed by its smaller member, so a prime lying in two
+pairs, such as $5$ in $(3, 5)$ and $(5, 7)$, is counted once for each pair. The statement holds
+trivially if there are only finitely many twin-prime pairs.
+
+Proves `Wanted` entry `brun_twin_prime_reciprocal_series_summable`.
 
 Source: Alexei Kourbatov and Marek Wolf, "On the First Occurrences of Gaps
 Between Primes in a Residue Class," Journal of Integer Sequences 23 (2020),
@@ -1319,8 +1323,6 @@ cited span SHA-256
 `b28ebf74254fb808313c73f910a0f7978dbae8e6987027c94e6924a6d81cc47f`.
 The sources attribute the theorem to V. Brun's 1919 paper on convergence or
 finiteness of the reciprocal twin-prime series.
-
-Proves `Wanted` entry `brun_twin_prime_reciprocal_series_summable`.
 -/
 theorem brun_twin_prime_reciprocal_series_summable :
     Summable (fun p : ℕ =>

@@ -18,7 +18,7 @@ Bioinformatics 15 (1999), 909-917, doi:10.1093/bioinformatics/15.11.909) and The
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 
