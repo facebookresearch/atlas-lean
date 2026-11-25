@@ -16,6 +16,13 @@ every λ-definable function is register-machine computable, hence partial recurs
 ## Depends on
 
 - [Turing computable equals recursive](../equivalence-of-turing-machines-and-recursive-fun/computable-iff-nonempty-tm2-computable.md)
+- [Named, de Bruijn and locally nameless lambda terms](../../../ComputerScience/type-systems-and-lambda-calculi/syntax-with-binders/named-de-bruijn-and-locally-nameless-lambda-terms.md)
+
+## Expansion
+
+This page becomes ready once:
+
+- Standardization: normal-order $\beta$-reduction reaches the $\beta$-normal form of a term whenever one exists (proof prerequisite; not yet stated)
 
 ## Sources
 

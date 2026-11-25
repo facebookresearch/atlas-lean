@@ -12,7 +12,7 @@ Let $X_1 = \{x \notin I : I + x \in \mathcal I_1\}$ and $X_2 = \{x \notin I : I 
 
 **Theorem.**
 1. Each augmentation yields a common independent set of size $|I| + 1$.
-2. At termination, $|I| = r_1(U) + r_2(S \setminus U)$. So $I$ is a maximum common independent set, and [Edmonds' min-max formula](../../Combinatorics/matroid-theory/matroid-intersection-theorem/edmonds-matroid-intersection.md) $\max_{I \in \mathcal I_1 \cap \mathcal I_2} |I| = \min_{U \subseteq S} \bigl(r_1(U) + r_2(S \setminus U)\bigr)$ follows.
+2. At termination, $|I| = r_1(U) + r_2(S \setminus U)$. Since every common independent set $J$ has $|J| \le r_1(U) + r_2(S \setminus U)$, as in [Edmonds' min-max formula](../../Combinatorics/matroid-theory/matroid-intersection-theorem/edmonds-matroid-intersection.md), $I$ is a maximum common independent set.
 3. With $r = \max(r_1(S), r_2(S))$ and $n = |S|$, the algorithm uses $O(r^2 n)$ oracle calls. Always choosing shortest augmenting paths reduces this to $O(r^{1.5} n)$ (Cunningham).
 
 **Proof.**
@@ -20,7 +20,7 @@ Let $X_1 = \{x \notin I : I + x \in \mathcal I_1\}$ and $X_2 = \{x \notin I : I 
 2. At termination, $X_2 \subseteq U$ and $X_1 \cap U = \emptyset$. If $|I \cap U| < r_1(U)$, some $x \in U \setminus I$ has $(I \cap U) + x \in \mathcal I_1$. Then some $y \in I \setminus U$ has $I - y + x \in \mathcal I_1$, and the arc $y \to x$ puts $y$ in $U$, a contradiction. Symmetrically, $|I \setminus U| = r_2(S \setminus U)$.
 3. There are at most $r$ augmentations. Each builds $D(I)$ with $O(rn)$ oracle calls and searches it in $O(rn)$ time.
 
-## Depends on
+## Proof depends on
 
 - [Edmonds' matroid intersection theorem](../../Combinatorics/matroid-theory/matroid-intersection-theorem/edmonds-matroid-intersection.md)
 

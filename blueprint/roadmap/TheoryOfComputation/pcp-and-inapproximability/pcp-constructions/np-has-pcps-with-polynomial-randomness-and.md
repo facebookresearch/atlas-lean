@@ -16,12 +16,7 @@ equations.
 ## Proof depends on
 
 - [Blum–Luby–Rubinfeld linearity test](../blum-luby-rubinfeld-linearity-test/blr-test.md)
-
-## Expansion
-
-This page becomes ready once:
-
-- NP-completeness of QUADEQ (statement prerequisite; not yet stated)
+- [QUADRATIC EQUATIONS OVER GF[2] is NP-complete](../../np-completeness/satisfiability/polynomial-equations-over-gf-2/quadratic-equations-over-gf2-np-complete.md)
 
 ## Sources
 
