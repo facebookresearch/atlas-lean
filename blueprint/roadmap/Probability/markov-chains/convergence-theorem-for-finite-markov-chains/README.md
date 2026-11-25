@@ -28,3 +28,5 @@
 - [Stationary distribution of a primitive chain has full support](stationary-pos.md)
 
 - [Strong law for finite irreducible Markov chains, including periodic chains](strong-law-for-additive-functionals-of-finite-ir.md)
+
+- [Bridge between finite-chain encodings](bridge-between-finite-chain-encodings.md)

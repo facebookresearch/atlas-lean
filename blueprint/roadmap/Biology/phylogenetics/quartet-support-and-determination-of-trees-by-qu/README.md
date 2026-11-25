@@ -25,3 +25,5 @@
 - [Under strict plurality other topologies have smaller support](quartet-score-lt-of-not-iso.md)
 
 - [Empirical quartet frequencies eventually recover the species quartets](positive-quartet-margin-and-eventual-strict-plur.md)
+
+- [Consistency of exact quartet-support maximization for the unrooted species tree](consistency-of-exact-quartet-support-maximizatio.md)
