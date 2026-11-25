@@ -1,0 +1,208 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.CStarMatrix.ParityCompression
+public import MathlibExt.Analysis.CStarAlgebra.CStarMatrix.ReindexIsometry
+import Mathlib.Tactic.SplitIfs
+
+/-!
+# Operator-metric bounds for finite parity row maps
+
+The permutation sends the first block of rows to the chosen parity and the
+second block to the other parity. Actual row insertion is this row-only
+permutation after the existing zero-padding map. No algebra equivalence,
+coefficient unit, nonzero hypothesis or replacement norm is used.
+Compression is contractive by the finite adjoint identity, the C-star
+norm square law and positive-factor cancellation.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+namespace CStarMatrix
+
+universe u
+
+/-- For natural numbers `N` and `ε : Fin 2`. The block-to-parity row permutation, including the empty
+index.
+-/
+def parityRowPerm (N : ℕ) (ε : Fin 2) : Fin (2 * N) ≃ Fin (2 * N) where
+  toFun i :=
+    if h : i.val < N then
+      ⟨2 * i.val + ε.val, by
+        have hε := ε.is_lt
+        omega⟩
+    else
+      ⟨2 * (i.val - N) + (1 - ε.val), by
+        have hi := i.is_lt
+        have hε := ε.is_lt
+        omega⟩
+  invFun i :=
+    if i.val % 2 = ε.val then
+      ⟨i.val / 2, by
+        have hi := i.is_lt
+        omega⟩
+    else
+      ⟨N + i.val / 2, by
+        have hi := i.is_lt
+        omega⟩
+  left_inv i := by
+    apply Fin.ext
+    have hi := i.is_lt
+    have hε := ε.is_lt
+    simp only [apply_dite, apply_ite]
+    split_ifs <;> omega
+  right_inv i := by
+    apply Fin.ext
+    have hi := i.is_lt
+    have hε := ε.is_lt
+    simp only [apply_dite, apply_ite]
+    split_ifs <;> omega
+
+/-- For natural numbers `N`, `ε : Fin 2` and `i : Fin N`. The retained first block goes to the exact
+parity embedding.
+-/
+@[simp]
+theorem parityRowPerm_apply_castLE (N : ℕ) (ε : Fin 2) (i : Fin N) :
+    parityRowPerm N ε (i.castLE (by omega : N ≤ 2 * N)) =
+      parityRowEmbedding N ε i := by
+  apply Fin.ext
+  simp only [parityRowPerm, Equiv.coe_fn_mk, Fin.val_castLE,
+    dite_eq_left i.is_lt, Fin.val_mk, parityRowEmbedding_val]
+
+/-- Let `A` be a possibly nonunital ring. `A` has a complex module structure. `A` has an additive star
+involution. For natural numbers `N`, `ε : Fin 2` and `X : CStarMatrix (Fin N) (Fin N) A`. Actual
+parity row insertion is row-only reindexing of the zero padding.
+-/
+theorem parityRowInsertLinear_eq_reindex
+    {A : Type u} [NonUnitalRing A] [Module ℂ A] [StarAddMonoid A]
+    (N : ℕ) (ε : Fin 2) (X : CStarMatrix (Fin N) (Fin N) A) :
+    parityRowInsertLinear N ε X =
+      reindexₗ ℂ A (parityRowPerm N ε) (Equiv.refl (Fin (2 * N)))
+        (zeroExtendStarAlgHom (by omega : N ≤ 2 * N) X) := by
+  apply CStarMatrix.ext
+  intro i j
+  have hi := i.is_lt
+  have hsmall : i.val / 2 < N := by omega
+  have hrow : ((parityRowPerm N ε).symm i).val =
+      if i.val % 2 = ε.val then i.val / 2 else N + i.val / 2 := by
+    simp only [parityRowPerm, Equiv.symm, Equiv.coe_fn_mk, apply_ite]
+    split_ifs <;> rfl
+  rw [parityRowInsertLinear_apply, reindexₗ_apply_entry,
+    zeroExtendStarAlgHom_apply_entry, hrow]
+  change
+    (if h : i.val / 2 < N ∧ j.val < N ∧ i.val % 2 = ε.val then
+      ofMatrix.symm X ⟨i.val / 2, h.1⟩ ⟨j.val, h.2.1⟩ else (0 : A)) =
+    (if h : (if i.val % 2 = ε.val then i.val / 2 else N + i.val / 2) < N then
+      if hj : j.val < N then
+        ofMatrix.symm X
+          ⟨(if i.val % 2 = ε.val then i.val / 2 else N + i.val / 2), h⟩
+          ⟨j.val, hj⟩
+      else 0
+    else 0)
+  split_ifs <;> first | rfl | (exfalso; omega)
+
+/-- Let `A` be a possibly nonunital complex C*-algebra. For natural numbers `N` and `ε : Fin 2`. Use the
+spectral order on `A`. Finite parity row insertion is an isometry for the computed spectral order.
+-/
+theorem isometry_parityRowInsertLinear
+    {A : Type u} [NonUnitalCStarAlgebra A] (N : ℕ) (ε : Fin 2) :
+    letI : PartialOrder A := CStarAlgebra.spectralOrder A;
+    letI : StarOrderedRing A := CStarAlgebra.spectralOrderedRing A;
+    Isometry (parityRowInsertLinear (A := A) N ε :
+      CStarMatrix (Fin N) (Fin N) A →
+        CStarMatrix (Fin (2 * N)) (Fin (2 * N)) A) := by
+  let : PartialOrder A := CStarAlgebra.spectralOrder A
+  let : StarOrderedRing A := CStarAlgebra.spectralOrderedRing A
+  have hrow := isometry_reindexₗ_rows (A := A) (parityRowPerm N ε)
+  have hpad := zeroExtendStarAlgHom_isometry (A := A) (by omega : N ≤ 2 * N)
+  have hcomp : Isometry (fun X : CStarMatrix (Fin N) (Fin N) A =>
+      reindexₗ ℂ A (parityRowPerm N ε) (Equiv.refl (Fin (2 * N)))
+        (zeroExtendStarAlgHom (by omega : N ≤ 2 * N) X)) :=
+    hrow.comp hpad
+  have hfun :
+      (fun X : CStarMatrix (Fin N) (Fin N) A =>
+        reindexₗ ℂ A (parityRowPerm N ε) (Equiv.refl (Fin (2 * N)))
+          (zeroExtendStarAlgHom (by omega : N ≤ 2 * N) X)) =
+        (parityRowInsertLinear (A := A) N ε :
+          CStarMatrix (Fin N) (Fin N) A →
+            CStarMatrix (Fin (2 * N)) (Fin (2 * N)) A) := by
+    funext X
+    exact (parityRowInsertLinear_eq_reindex N ε X).symm
+  rw [hfun] at hcomp
+  exact hcomp
+
+/-- Let `A` be a possibly nonunital complex C*-algebra. For natural numbers `N` and `ε : Fin 2`. Use the
+spectral order on `A`. Parity row insertion preserves the same operator norm, with no nonzero
+premise.
+-/
+theorem norm_parityRowInsertLinear
+    {A : Type u} [NonUnitalCStarAlgebra A] (N : ℕ) (ε : Fin 2) :
+    letI : PartialOrder A := CStarAlgebra.spectralOrder A;
+    letI : StarOrderedRing A := CStarAlgebra.spectralOrderedRing A;
+    ∀ X : CStarMatrix (Fin N) (Fin N) A, ‖parityRowInsertLinear N ε X‖ = ‖X‖ := by
+  let : PartialOrder A := CStarAlgebra.spectralOrder A
+  let : StarOrderedRing A := CStarAlgebra.spectralOrderedRing A
+  change ∀ X : CStarMatrix (Fin N) (Fin N) A,
+    ‖parityRowInsertLinear N ε X‖ = ‖X‖
+  intro X
+  have hdist := (isometry_parityRowInsertLinear (A := A) N ε).dist_eq X 0
+  simpa only [map_zero, dist_zero_right] using hdist
+
+/-- Let `A` be a possibly nonunital complex C*-algebra. For natural numbers `N` and `ε : Fin 2`. Use the
+spectral order on `A`. Sampling the finite parity rows does not increase the operator norm.
+-/
+theorem norm_parityRowCompressLinear
+    {A : Type u} [NonUnitalCStarAlgebra A] (N : ℕ) (ε : Fin 2) :
+    letI : PartialOrder A := CStarAlgebra.spectralOrder A;
+    letI : StarOrderedRing A := CStarAlgebra.spectralOrderedRing A;
+    ∀ X : CStarMatrix (Fin N) (Fin N) A, ‖parityRowCompressLinear N ε X‖ ≤ ‖X‖ := by
+  let : PartialOrder A := CStarAlgebra.spectralOrder A
+  let : StarOrderedRing A := CStarAlgebra.spectralOrderedRing A
+  change ∀ X : CStarMatrix (Fin N) (Fin N) A,
+    ‖parityRowCompressLinear N ε X‖ ≤ ‖X‖
+  intro X
+  let Z : CStarMatrix (Fin N) (Fin N) A := parityRowCompressLinear N ε X
+  change ‖Z‖ ≤ ‖X‖
+  have hpad : ∀ T : CStarMatrix (Fin N) (Fin N) A,
+      ‖zeroExtendStarAlgHom (by omega : N ≤ 2 * N) T‖ = ‖T‖ := by
+    intro T
+    have hdist :=
+      (zeroExtendStarAlgHom_isometry (A := A) (by omega : N ≤ 2 * N)).dist_eq T 0
+    simpa only [map_zero, dist_zero_right] using hdist
+  have hadj :
+      star (parityRowInsertLinear N ε Z) *
+          zeroExtendStarAlgHom (by omega : N ≤ 2 * N) X =
+        zeroExtendStarAlgHom (by omega : N ≤ 2 * N) (star Z * Z) :=
+    parityRowInsertLinear_adjoint N ε Z X
+  have hsquare : ‖Z‖ * ‖Z‖ ≤ ‖Z‖ * ‖X‖ := by
+    calc
+      ‖Z‖ * ‖Z‖ = ‖star Z * Z‖ := (CStarRing.norm_star_mul_self (x := Z)).symm
+      _ = ‖zeroExtendStarAlgHom (by omega : N ≤ 2 * N) (star Z * Z)‖ :=
+        (hpad (star Z * Z)).symm
+      _ = ‖star (parityRowInsertLinear N ε Z) *
+          zeroExtendStarAlgHom (by omega : N ≤ 2 * N) X‖ :=
+        congrArg norm hadj.symm
+      _ ≤ ‖star (parityRowInsertLinear N ε Z)‖ *
+          ‖zeroExtendStarAlgHom (by omega : N ≤ 2 * N) X‖ :=
+        norm_mul_le _ _
+      _ = ‖Z‖ * ‖X‖ := by
+        rw [norm_star, norm_parityRowInsertLinear N ε Z, hpad X]
+  obtain hzero | hpos := eq_zero_or_norm_pos Z
+  · rw [hzero, norm_zero]
+    exact norm_nonneg X
+  · exact le_of_mul_le_mul_left hsquare hpos
+
+end CStarMatrix
