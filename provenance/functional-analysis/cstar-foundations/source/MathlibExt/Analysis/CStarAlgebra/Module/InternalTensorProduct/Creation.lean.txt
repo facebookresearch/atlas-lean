@@ -1,0 +1,324 @@
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.Module.InternalTensorProduct.Completion
+
+import MathlibExt.Analysis.CStarAlgebra.Module.InternalTensorProduct.Bounds
+import MathlibExt.Analysis.CStarAlgebra.Module.InternalTensorProduct.ModelComparison.Algebraic
+import Mathlib.Analysis.Normed.Operator.Extend
+
+/-!
+# Creation operators on internal-tensor models
+
+For a supplied full internal-tensor model, fixing a first-factor vector gives
+a genuine bounded adjointable creation operator.  Its adjoint is constructed,
+not supplied: first on the ordinary complex algebraic tensor, then extended
+along the dense algebraic-model map using a relative norm bound.
+
+The same construction specializes to the literal completed balanced tensor.
+No second tensor carrier, module Riesz principle, self-duality assumption,
+countability, grading, fullness, faithfulness, nondegeneracy or unitality is
+used.
+
+This is the source-neutral analytic API behind the creation maps displayed in
+Blackadar, *K-Theory for Operator Algebras*, second edition, Section 18.3.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+noncomputable section
+
+open Set
+open scoped TensorProduct
+
+namespace CStarModule.InternalTensorProduct
+
+universe uB₁ uB₂ uE₁ uE₂ uX
+
+variable {B₁ : Type uB₁} [NonUnitalCStarAlgebra B₁]
+  [PartialOrder B₁ᵐᵒᵖ]
+variable {B₂ : Type uB₂} [NonUnitalCStarAlgebra B₂]
+  [PartialOrder B₂ᵐᵒᵖ] [StarOrderedRing B₂ᵐᵒᵖ]
+variable {E₁ : Type uE₁} [NormedAddCommGroup E₁] [NormedSpace ℂ E₁]
+  [SMul B₁ᵐᵒᵖ E₁] [CStarModule B₁ᵐᵒᵖ E₁] [CompleteSpace E₁]
+variable {E₂ : Type uE₂} [NormedAddCommGroup E₂] [NormedSpace ℂ E₂]
+  [SMul B₂ᵐᵒᵖ E₂] [CStarModule B₂ᵐᵒᵖ E₂] [CompleteSpace E₂]
+variable {X : Type uX} [NormedAddCommGroup X] [NormedSpace ℂ X]
+  [SMul B₂ᵐᵒᵖ X] [CStarModule B₂ᵐᵒᵖ X] [CompleteSpace X]
+
+private def modelPureRightCLM
+    (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
+    (pure : E₁ → E₂ → X) (hX : IsModel φ pure) (x : E₁) :
+    E₂ →L[ℂ] X := by
+  let L : E₂ →ₗ[ℂ] X :=
+    { toFun := pure x
+      map_add' := hX.2.1 x
+      map_smul' := fun c y => hX.2.2.2.1 c x y }
+  exact L.mkContinuous ‖x‖ fun y => by
+    change ‖pure x y‖ ≤ ‖x‖ * ‖y‖
+    exact IsModel.norm_pure_le hX x y
+
+private theorem modelPureRightCLM_apply
+    (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
+    (pure : E₁ → E₂ → X) (hX : IsModel φ pure) (x : E₁) (y : E₂) :
+    modelPureRightCLM φ pure hX x y = pure x y := by
+  rfl
+
+/-- The source formula for the creation adjoint, before dense extension. -/
+private def rawCreationAdjoint
+    (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂) (x : E₁) :
+    AlgebraicTensor E₁ E₂ →ₗ[ℂ] E₂ :=
+  TensorProduct.lift
+    { toFun := fun z =>
+        { toFun := fun y => φ (rightInner (B := B₁) x z) y
+          map_add' := by
+            intro y w
+            simp only [map_add]
+          map_smul' := by
+            intro c y
+            simp only [map_smul, RingHom.id_apply] }
+      map_add' := by
+        intro z w
+        apply LinearMap.ext
+        intro y
+        simp only [LinearMap.coe_mk, AddHom.coe_mk, rightInner_add_right,
+          map_add, AdjointableOperator.add_apply, LinearMap.add_apply]
+      map_smul' := by
+        intro c z
+        apply LinearMap.ext
+        intro y
+        simp only [LinearMap.coe_mk, AddHom.coe_mk, rightInner_smul_right,
+          map_smul, AdjointableOperator.smul_apply, LinearMap.smul_apply,
+          RingHom.id_apply] }
+
+omit [StarOrderedRing B₂ᵐᵒᵖ] [CompleteSpace E₁] [CompleteSpace E₂] in
+private theorem rawCreationAdjoint_tmul
+    (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
+    (x z : E₁) (y : E₂) :
+    rawCreationAdjoint φ x (z ⊗ₜ[ℂ] y) =
+      φ (rightInner (B := B₁) x z) y := by
+  simp only [rawCreationAdjoint, TensorProduct.lift.tmul,
+    LinearMap.coe_mk, AddHom.coe_mk]
+
+omit [StarOrderedRing B₂ᵐᵒᵖ] in
+private theorem rawCreationPairing
+    (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
+    (pure : E₁ → E₂ → X) (hX : IsModel φ pure)
+    (x : E₁) (y : E₂) (q : AlgebraicTensor E₁ E₂) :
+    rightInner (B := B₂) (pure x y) (rawModelMap φ pure hX q) =
+      rightInner (B := B₂) y (rawCreationAdjoint φ x q) := by
+  induction q using TensorProduct.inductionOn with
+  | tmul z w =>
+      simpa only [rawModelMap_tmul, rawCreationAdjoint_tmul] using
+        hX.2.2.2.2.2.2.1 x z y w
+  | add q r hq hr =>
+      simp only [map_add, rightInner_add_right, hq, hr]
+
+omit [StarOrderedRing B₂ᵐᵒᵖ] in
+private theorem denseRange_rawModelMap
+    (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
+    (pure : E₁ → E₂ → X) (hX : IsModel φ pure) :
+    DenseRange (rawModelMap φ pure hX) := by
+  let S : Submodule ℂ X :=
+    Submodule.span ℂ (Set.range fun p : E₁ × E₂ => pure p.1 p.2)
+  have hS : S ≤ LinearMap.range (rawModelMap φ pure hX) := by
+    apply Submodule.span_le.2
+    rintro _ ⟨⟨x, y⟩, rfl⟩
+    exact ⟨x ⊗ₜ[ℂ] y, rawModelMap_tmul φ pure hX x y⟩
+  have hsub : (S : Set X) ⊆ Set.range (rawModelMap φ pure hX) := by
+    intro z hz
+    exact hS hz
+  exact Dense.mono hsub hX.2.2.2.2.2.2.2
+
+private theorem rawCreationAdjoint_norm_le
+    (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
+    (pure : E₁ → E₂ → X) (hX : IsModel φ pure)
+    (x : E₁) (q : AlgebraicTensor E₁ E₂) :
+    ‖rawCreationAdjoint φ x q‖ ≤ ‖x‖ * ‖rawModelMap φ pure hX q‖ := by
+  let s : E₂ := rawCreationAdjoint φ x q
+  by_cases hs : s = 0
+  · change rawCreationAdjoint φ x q = 0 at hs
+    rw [hs, norm_zero]
+    exact mul_nonneg (norm_nonneg x) (norm_nonneg _)
+  · have hspos : 0 < ‖s‖ := norm_pos_iff.mpr hs
+    have hmul : ‖s‖ * ‖s‖ ≤ ‖s‖ * (‖x‖ * ‖rawModelMap φ pure hX q‖) := by
+      calc
+        ‖s‖ * ‖s‖ = ‖s‖ ^ 2 := by rw [pow_two]
+        _ = ‖rightInner (B := B₂) s s‖ :=
+          (CStarModule.norm_rightInner_self (B := B₂) s).symm
+        _ = ‖rightInner (B := B₂) (pure x s) (rawModelMap φ pure hX q)‖ := by
+          congr 1
+          simpa only [s] using (rawCreationPairing φ pure hX x s q).symm
+        _ ≤ ‖pure x s‖ * ‖rawModelMap φ pure hX q‖ := by
+          simpa only [CStarModule.rightInner, MulOpposite.norm_unop] using
+            (CStarModule.norm_inner_le X (A := B₂ᵐᵒᵖ)
+              (x := pure x s) (y := rawModelMap φ pure hX q))
+        _ ≤ (‖x‖ * ‖s‖) * ‖rawModelMap φ pure hX q‖ :=
+          mul_le_mul_of_nonneg_right (IsModel.norm_pure_le hX x s)
+            (norm_nonneg _)
+        _ = ‖s‖ * (‖x‖ * ‖rawModelMap φ pure hX q‖) := by
+          ac_rfl
+    exact le_of_mul_le_mul_left hmul hspos
+
+private noncomputable def modelCreationAdjointCLM
+    (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
+    (pure : E₁ → E₂ → X) (hX : IsModel φ pure) (x : E₁) :
+    X →L[ℂ] E₂ :=
+  (rawCreationAdjoint φ x).extendOfNorm (rawModelMap φ pure hX)
+
+private theorem modelCreationAdjointCLM_raw
+    (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
+    (pure : E₁ → E₂ → X) (hX : IsModel φ pure)
+    (x : E₁) (q : AlgebraicTensor E₁ E₂) :
+    modelCreationAdjointCLM φ pure hX x (rawModelMap φ pure hX q) =
+      rawCreationAdjoint φ x q := by
+  change (rawCreationAdjoint φ x).extendOfNorm (rawModelMap φ pure hX)
+    (rawModelMap φ pure hX q) = rawCreationAdjoint φ x q
+  exact LinearMap.extendOfNorm_eq (denseRange_rawModelMap φ pure hX)
+    ⟨‖x‖, rawCreationAdjoint_norm_le φ pure hX x⟩ q
+
+private theorem modelCreationPairing
+    (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
+    (pure : E₁ → E₂ → X) (hX : IsModel φ pure)
+    (x : E₁) (y : E₂) (z : X) :
+    rightInner (B := B₂) (modelPureRightCLM φ pure hX x y) z =
+      rightInner (B := B₂) y (modelCreationAdjointCLM φ pure hX x z) := by
+  have hEq :
+      (fun w : X => rightInner (B := B₂) (modelPureRightCLM φ pure hX x y) w) =
+        fun w : X => rightInner (B := B₂) y (modelCreationAdjointCLM φ pure hX x w) := by
+    apply Continuous.ext_on (denseRange_rawModelMap φ pure hX)
+    · exact CStarModule.continuous_rightInner_right
+        (B := B₂) (modelPureRightCLM φ pure hX x y)
+    · exact (CStarModule.continuous_rightInner_right (B := B₂) y).comp
+        (modelCreationAdjointCLM φ pure hX x).continuous
+    · rintro _ ⟨q, rfl⟩
+      change rightInner (B := B₂) (modelPureRightCLM φ pure hX x y)
+          (rawModelMap φ pure hX q) =
+        rightInner (B := B₂) y
+          (modelCreationAdjointCLM φ pure hX x (rawModelMap φ pure hX q))
+      rw [modelCreationAdjointCLM_raw]
+      simpa only [modelPureRightCLM_apply] using
+        rawCreationPairing φ pure hX x y q
+  exact congrFun hEq z
+
+/-- The genuine creation operator on any supplied full internal-tensor model.
+Its adjoint is the dense extension of the algebraic source formula. -/
+@[no_expose]
+noncomputable def creationOnModel
+    (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
+    (pure : E₁ → E₂ → X) (hX : IsModel φ pure) (x : E₁) :
+    AdjointableOperator B₂ E₂ X :=
+  { toContinuousLinearMap := modelPureRightCLM φ pure hX x
+    adjoint := modelCreationAdjointCLM φ pure hX x
+    isAdjointPair' :=
+      (AdjointableOperator.isAdjointPair_iff_adjoint_inner _ _).2
+        (modelCreationPairing φ pure hX x) }
+
+/-- A supplied-model creation operator has the prescribed pure value. -/
+@[simp]
+theorem creationOnModel_apply
+    (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
+    (pure : E₁ → E₂ → X) (hX : IsModel φ pure)
+    (x : E₁) (y : E₂) :
+    creationOnModel φ pure hX x y = pure x y := by
+  change modelPureRightCLM φ pure hX x y = pure x y
+  exact modelPureRightCLM_apply φ pure hX x y
+
+/-- The actual bundled adjoint has Blackadar's formula on supplied pure
+vectors, with the fixed vector in the first inner-product slot. -/
+@[simp]
+theorem creationOnModel_adjoint_pure
+    (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
+    (pure : E₁ → E₂ → X) (hX : IsModel φ pure)
+    (x z : E₁) (y : E₂) :
+    (creationOnModel φ pure hX x).adjoint (pure z y) =
+      φ (rightInner (B := B₁) x z) y := by
+  change modelCreationAdjointCLM φ pure hX x (pure z y) = _
+  rw [← rawModelMap_tmul φ pure hX z y, modelCreationAdjointCLM_raw,
+    rawCreationAdjoint_tmul]
+
+section Completed
+
+variable [StarOrderedRing B₁ᵐᵒᵖ]
+
+/-- The canonical creation operator on the literal completed balanced tensor.
+It is the supplied-model construction applied to the already proved canonical
+model laws. -/
+@[no_expose]
+noncomputable def completedCreation
+    (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂) (x : E₁) :
+    letI : NormedAddCommGroup (RadicalTensor (E₁ := E₁) φ) :=
+      radicalTensorNormedAddCommGroup φ;
+    letI : NormedSpace ℂ (RadicalTensor (E₁ := E₁) φ) :=
+      radicalTensorNormedSpace φ;
+    letI : SMul B₂ᵐᵒᵖ (RadicalTensor (E₁ := E₁) φ) := radicalRightAction φ;
+    letI : CStarModule B₂ᵐᵒᵖ (CompletedTensor (E₁ := E₁) φ) :=
+      completedCStarModule φ;
+    AdjointableOperator B₂ E₂ (CompletedTensor (E₁ := E₁) φ) := by
+  letI : NormedAddCommGroup (RadicalTensor (E₁ := E₁) φ) :=
+    radicalTensorNormedAddCommGroup φ
+  letI : NormedSpace ℂ (RadicalTensor (E₁ := E₁) φ) :=
+    radicalTensorNormedSpace φ
+  letI : SMul B₂ᵐᵒᵖ (RadicalTensor (E₁ := E₁) φ) := radicalRightAction φ
+  letI : CStarModule B₂ᵐᵒᵖ (CompletedTensor (E₁ := E₁) φ) :=
+    completedCStarModule φ
+  exact creationOnModel φ (completedPure (E₁ := E₁) φ)
+    (completed_isModel φ) x
+
+/-- The canonical creation operator sends a vector to the literal completed
+pure tensor. -/
+@[simp]
+theorem completedCreation_apply
+    (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
+    (x : E₁) (y : E₂) :
+    letI : NormedAddCommGroup (RadicalTensor (E₁ := E₁) φ) :=
+      radicalTensorNormedAddCommGroup φ;
+    letI : NormedSpace ℂ (RadicalTensor (E₁ := E₁) φ) :=
+      radicalTensorNormedSpace φ;
+    letI : SMul B₂ᵐᵒᵖ (RadicalTensor (E₁ := E₁) φ) := radicalRightAction φ;
+    letI : CStarModule B₂ᵐᵒᵖ (CompletedTensor (E₁ := E₁) φ) :=
+      completedCStarModule φ;
+    completedCreation φ x y = completedPure φ x y := by
+  let _ : NormedAddCommGroup (RadicalTensor (E₁ := E₁) φ) :=
+    radicalTensorNormedAddCommGroup φ
+  let _ : NormedSpace ℂ (RadicalTensor (E₁ := E₁) φ) :=
+    radicalTensorNormedSpace φ
+  let _ : SMul B₂ᵐᵒᵖ (RadicalTensor (E₁ := E₁) φ) := radicalRightAction φ
+  let _ : CStarModule B₂ᵐᵒᵖ (CompletedTensor (E₁ := E₁) φ) :=
+    completedCStarModule φ
+  exact creationOnModel_apply φ (completedPure (E₁ := E₁) φ)
+    (completed_isModel φ) x y
+
+/-- The canonical creation operator's bundled adjoint has the source formula
+on literal completed pure tensors. -/
+@[simp]
+theorem completedCreation_adjoint_pure
+    (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
+    (x z : E₁) (y : E₂) :
+    letI : NormedAddCommGroup (RadicalTensor (E₁ := E₁) φ) :=
+      radicalTensorNormedAddCommGroup φ;
+    letI : NormedSpace ℂ (RadicalTensor (E₁ := E₁) φ) :=
+      radicalTensorNormedSpace φ;
+    letI : SMul B₂ᵐᵒᵖ (RadicalTensor (E₁ := E₁) φ) := radicalRightAction φ;
+    letI : CStarModule B₂ᵐᵒᵖ (CompletedTensor (E₁ := E₁) φ) :=
+      completedCStarModule φ;
+    (completedCreation φ x).adjoint (completedPure φ z y) =
+      φ (rightInner (B := B₁) x z) y := by
+  let _ : NormedAddCommGroup (RadicalTensor (E₁ := E₁) φ) :=
+    radicalTensorNormedAddCommGroup φ
+  let _ : NormedSpace ℂ (RadicalTensor (E₁ := E₁) φ) :=
+    radicalTensorNormedSpace φ
+  let _ : SMul B₂ᵐᵒᵖ (RadicalTensor (E₁ := E₁) φ) := radicalRightAction φ
+  let _ : CStarModule B₂ᵐᵒᵖ (CompletedTensor (E₁ := E₁) φ) :=
+    completedCStarModule φ
+  exact creationOnModel_adjoint_pure φ (completedPure (E₁ := E₁) φ)
+    (completed_isModel φ) x z y
+
+end Completed
+
+end CStarModule.InternalTensorProduct

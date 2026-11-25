@@ -8,3 +8,8 @@
 - [Consistency of OLS with i.i.d. rows (Atlas ST05.T01)](consistency-of-ols-with-i-i-d-rows-atlas-st05-t0/README.md)
 - [Restricted (residual) maximum likelihood: error contrasts and basis invariance](restricted-residual-maximum-likelihood-error-con/README.md)
 - [Sampling properties of the ordinary least-squares estimator](sampling-properties-of-the-ordinary-least-square/README.md)
+
+- [Least-squares fitted values are the orthogonal projection onto the column space](fitted-values-are-the-orthogonal-projection.md)
+- [Decomposition of the total sum of squares](total-sum-of-squares-decomposition.md)
+- [A saturated cell-indicator regression reproduces cell means](saturated-cell-regression-reproduces-cell-means.md)
+- [Factorial effects from ±1 coding in a balanced two-level design](factorial-effects-from-plus-minus-coding.md)
