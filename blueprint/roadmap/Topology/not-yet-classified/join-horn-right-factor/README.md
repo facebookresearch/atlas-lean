@@ -1,0 +1,16 @@
+# Join Horn Right Factor
+
+- [Right Join Horn Index](right-join-horn-index.md)
+- [Left Join Horn Index](left-join-horn-index.md)
+- [Join Boundary Horn Right Face Map](join-boundary-horn-right-face-map.md)
+- [Join Boundary Horn Right Factor Map](join-boundary-horn-right-factor-map.md)
+- [Join Horn Boundary Mapped Cocone](join-horn-boundary-mapped-cocone.md)
+- [Join Horn Boundary Mapped Is Colimit](join-horn-boundary-mapped-is-colimit.md)
+- [Right Join Front Face Index](right-join-front-face-index.md)
+- [Join Boundary Horn Right Boundary Face Map](join-boundary-horn-right-boundary-face-m.md)
+- [Join Boundary Horn Right Boundary Factor Data](join-boundary-horn-right-boundary-factor.md)
+- [Join Boundary Horn Right Boundary Factor Data](join-boundary-horn-right-boundary-factor-2.md)
+- [Join Boundary Horn Right Boundary Factor Map Succ](join-boundary-horn-right-boundary-factor-3.md)
+- [Join Horn Boundary Zero Iso](join-horn-boundary-zero-iso.md)
+- [Join Boundary Horn Right Boundary Factor Map Zero](join-boundary-horn-right-boundary-factor-4.md)
+- [Join Boundary Horn Right Boundary Factor Map](join-boundary-horn-right-boundary-factor-5.md)

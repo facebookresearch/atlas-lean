@@ -95,3 +95,6 @@
 - [Map Fundamental Groupoid Id](map-fundamental-groupoid-id.md)
 - [Map Fundamental Groupoid Comp](map-fundamental-groupoid-comp.md)
 - [Congr Map Fundamental Groupoid Of Eq](congr-map-fundamental-groupoid-of-eq.md)
+- [Comparison](comparison.md)
+- [Is Pullback Square](is-pullback-square.md)
+- [Is Pullback Square iff](is-pullback-square-iff.md)

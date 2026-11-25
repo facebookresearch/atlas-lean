@@ -1,0 +1,16 @@
+# Iterated Join Slice
+
+- [Hom Equiv precomp val](hom-equiv-precomp-val.md)
+- [Hom Equiv yoneda val](hom-equiv-yoneda-val.md)
+- [Cone Point](cone-point.md)
+- [Cone Point whole Map](cone-point-whole-map.md)
+- [Cone Point restrict](cone-point-restrict.md)
+- [Nested Simplex](nested-simplex.md)
+- [Nested Simplex whole Map](nested-simplex-whole-map.md)
+- [Unnested Simplex](unnested-simplex.md)
+- [Unnested Simplex val](unnested-simplex-val.md)
+- [Nest](nest.md)
+- [Unnest](unnest.md)
+- [Cone Over Slice Iso](cone-over-slice-iso.md)
+- [Cone Over Slice Iso hom proj](cone-over-slice-iso-hom-proj.md)
+- [Cone Restriction Arrow Iso](cone-restriction-arrow-iso.md)
