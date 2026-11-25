@@ -339,20 +339,6 @@ public theorem_wanted card_restrictedSignedSumset_four_five_ge
     (((restrictedSignedSumset 4 A).card : ℤ) = 25 ↔
       ∃ m ∈ A, (∀ a ∈ A, m ≤ a) ∧ A = scaleFinset m (oddProgression 5))
 
-/-- **Restricted signed 4-fold sumsets when exactly one gap differs from twice the minimum.**
-Let $a_1 < a_2 < a_3 < a_4 < a_5$ be integers with $a_1 > 0$, let $A = \{a_1, \dots, a_5\}$,
-and write $4^{\wedge}_{\pm} A$ for the restricted signed 4-fold sumset of $A$. If exactly one
-of the four gaps $a_{i+1} - a_i$ with $i \in \{1, 2, 3, 4\}$ differs from $2a_1$, then
-$|4^{\wedge}_{\pm} A| \ge 26$.
-
-Source: Mohan, Raj Kumar Mistri, Ram Krishna Pandey, *Some Direct and Inverse Problems for the
-Restricted Signed Sumset in the Set of Integers*, INTEGERS 24 (2024), Article A81, Lemma 3. -/
-public theorem_wanted card_restrictedSignedSumset_four_ge_of_one_exceptional_gap
-    (a : Fin 5 → ℤ) (ha : StrictMono a) (hpos : 0 < a 0)
-    (hgaps : (Finset.univ.filter fun i : Fin 4 =>
-      a i.succ - a i.castSucc ≠ 2 * a 0).card = 1) :
-    ((restrictedSignedSumset 4 (orderedFinset a)).card : ℤ) ≥ 26
-
 /-- **Restricted signed fourfold sumsets when exactly two gaps differ from twice the least
 element.** Let $a_1 < a_2 < a_3 < a_4 < a_5$ be integers with $a_1 > 0$, let
 $A = \{a_1, \ldots, a_5\}$ and let $4^{\wedge}_{\pm} A$ be the restricted signed sumset of $A$. If
