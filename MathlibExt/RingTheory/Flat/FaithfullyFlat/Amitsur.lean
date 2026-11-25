@@ -50,15 +50,11 @@ private theorem amitsurDelta_apply (b : B) :
     amitsurDelta (A := A) (B := B) b = b ⊗ₜ[A] (1 : B) - (1 : B) ⊗ₜ[A] b :=
   rfl
 
-private theorem tmul_algebraMap (a : A) :
-    algebraMap A B a ⊗ₜ[A] (1 : B) = (1 : B) ⊗ₜ[A] algebraMap A B a := by
-  rw [Algebra.algebraMap_eq_smul_one, ← TensorProduct.smul_tmul]
-
 private theorem amitsurDelta_comp_linearMap :
     amitsurDelta (A := A) (B := B) ∘ₗ Algebra.linearMap A B = 0 := by
-  ext a
-  simp only [LinearMap.comp_apply, Algebra.linearMap_apply,
-    LinearMap.zero_apply, amitsurDelta_apply, tmul_algebraMap, sub_self]
+  ext
+  simp only [LinearMap.comp_apply, Algebra.linearMap_apply, LinearMap.zero_apply,
+    amitsurDelta_apply, Algebra.TensorProduct.tmul_one_eq_one_tmul, sub_self]
 
 private noncomputable def amitsurContraction :
     B ⊗[A] (B ⊗[A] B) →ₗ[A] B ⊗[A] B :=
@@ -69,11 +65,10 @@ private theorem amitsurContraction_lTensor_amitsurDelta (x : B ⊗[A] B) :
     amitsurContraction (A := A) (B := B)
         ((amitsurDelta (A := A) (B := B)).lTensor B x) =
       (LinearMap.mul' A B x) ⊗ₜ[A] (1 : B) - x := by
-  induction x using TensorProduct.induction_on with
-  | zero => simp [amitsurContraction]
+  induction x using TensorProduct.inductionOn with
   | tmul b c =>
       simp [amitsurContraction, amitsurDelta_apply, LinearMap.lTensor_tmul,
-        TensorProduct.tmul_sub, TensorProduct.sub_tmul,
+        TensorProduct.tmul_sub,
         TensorProduct.assoc_symm_tmul, LinearMap.rTensor_tmul,
         LinearMap.mul'_apply]
   | add x y hx hy =>
