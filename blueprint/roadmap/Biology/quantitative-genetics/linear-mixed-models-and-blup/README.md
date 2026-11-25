@@ -2,16 +2,20 @@
 
 ## Mixed-model equations
 
-- [Phenotypic covariance of a linear mixed model](phen-cov.md)
-- [Solution of Henderson's mixed-model equations](is-mmesolution.md)
-- [Positive definiteness of the phenotypic covariance](pos-def-phen-cov.md)
-- [Henderson's mixed-model equations](is-mmesolution-iff.md)
-- [The MME solution is the GLS estimate and the BLUP](is-mmesolution-iff-gls.md)
+See [Henderson's mixed-model equations](../../../Probability/linear-models-multivariate/generalized-least-squares/README.md#hendersons-mixed-model-equations) in Probability.
 
 ## The Gaussian mixed model
 
 - [BLUP as a conditional law](cond-distrib-mixed-model.md)
 - [BLUP is the conditional expectation](cond-exp-mixed-model.md)
+- [Marginal law of the mixed-model response](map-mixed-model-response.md)
+- [The phenotypic covariance is positive semidefinite](pos-semidef-phen-cov-of-pos-semidef.md)
+- [Marginal mean of the mixed-model response](integral-mixed-model-response.md)
+- [Marginal covariance of the mixed-model response](covariance-mixed-model-response.md)
+- [Conditional law of the response given the random effects](cond-distrib-mixed-model-response.md)
+- [Conditional mean of the response given the random effects](integral-cond-distrib-mixed-model-respon.md)
+- [Conditional covariance of the response given the random effects](covariance-cond-distrib-mixed-model-resp.md)
+- [Variance of a linear combination of the response](variance-contrast-mixed-model-response.md)
 
 ## LDpred-inf
 
@@ -22,3 +26,7 @@
 - [Marginal association estimate of a marker](marginal-effect.md)
 - [The mean of the marginal estimates](integral-marginal-effect.md)
 - [The raw residual-product second moment of the marginal estimates](integral-marginal-effect-sub-mul.md)
+
+## Related topics
+
+- [Random-intercept models and the design effect](../../../Probability/linear-models-multivariate/random-intercept-models-and-the-design-effect/README.md): random-intercept and crossed random-intercept designs of a linear mixed model, the intraclass correlation and the design effect.

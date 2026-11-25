@@ -40,17 +40,15 @@ Adapted from `SpectralTheorem.normal_complex_unitarily_diagonalizable` in
 namespace Matrix
 
 set_option maxHeartbeats 1600000 in
-/-- **Spectral theorem for normal matrices.** A normal complex matrix is unitarily
-diagonalizable: there is a unitary `P` and a diagonal `d` with
-`star P * M * P = diagonal d`.
+/-- **Spectral theorem for normal matrices.** Let $M$ be a complex square matrix whose rows and
+columns are indexed by a finite set $n$, and write $M^*$ for its conjugate transpose. If $M$ is
+normal, that is, $M^* M = M M^*$, then there exist a unitary matrix $P$ indexed by $n$ (so
+$P^* P = P P^* = I$) and a family of complex numbers $(d_i)_{i \in n}$ such that $P^* M P$ is
+the diagonal matrix with diagonal entries $d_i$.
 
 Source: AlgebraNotes, Section: The Spectral Theorem, Subsection: The Spectral
 Theorem, Theorem (Spectral Theorem) (normal-matrix case; the Hermitian cases are
-Mathlib's `Matrix.IsHermitian.spectral_theorem`).
-
-Adapted from `SpectralTheorem.normal_complex_unitarily_diagonalizable` in
-`v1/Atlas/AlgebraNotes/code/SpectralTheorem.lean`, frozen at Git blob
-`393e4c75ddc778f12a3b02e3fb1ef19f653cd76a`. -/
+Mathlib's `Matrix.IsHermitian.spectral_theorem`). -/
 public theorem exists_unitary_diagonal_of_isStarNormal
     {n : Type*} [Fintype n] [DecidableEq n]
     {M : Matrix n n ℂ} (hM : IsStarNormal M) :

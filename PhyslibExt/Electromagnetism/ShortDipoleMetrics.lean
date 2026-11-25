@@ -64,7 +64,9 @@ against the solid-angle measure `sin θ dθ dφ` over `θ ∈ [0, π]`, `φ ∈ 
 noncomputable def radiatedPower (U : ℝ → ℝ) : ℝ :=
   ∫ _φ in (0 : ℝ)..(2 * π), ∫ θ in (0 : ℝ)..π, U θ * Real.sin θ
 
-/-- Directivity `D(θ) = 4π U(θ) / P_rad`. -/
+/-- Directivity `D(θ) = 4π U(θ) / P_rad`, for a pattern of positive radiated power. For zero
+radiated power the value is `0` (`x / 0 = 0`), which is not a directivity
+(`directivity_shortDipoleIntensity_zero_ne`); the results that use it assume `P_rad ≠ 0`. -/
 noncomputable def directivity (U : ℝ → ℝ) (θ : ℝ) : ℝ :=
   4 * π * U θ / radiatedPower U
 

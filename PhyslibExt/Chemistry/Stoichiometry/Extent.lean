@@ -34,6 +34,13 @@ backward, the feasible reverse extents `ξ ≤ 0` form the closed interval from
 every nonpositive extent when nothing is produced. The forward and reverse bounds are separate
 definitions and separate results.
 
+Reversing the stoichiometric vector turns one into the other. No negative extent is
+forward-feasible, so a reaction run backward enters the forward statement as the reversed vector
+`-ν` with a nonnegative extent: `ξ` is forward-feasible for `-ν` exactly when `-ξ` is
+reverse-feasible for `ν`. From nonnegative amounts, when `ν` produces some species, these extents
+form the closed interval from `0` to `-minExtent ν n₀ h`, bounded by the inventory of the species
+`ν` produces, which `-ν` consumes.
+
 For a product species `P`, the increment `ν P * ξ` over feasible extents is greatest at
 `maxExtent ν n₀ h`, which gives the theoretical yield. When the actual increment of `P` comes
 from this reaction alone, the percent yield `100 * actual / theoretical` is at most `100`. If the
@@ -94,6 +101,11 @@ strictly positive conserved weight exists, which is a hypothesis.
 - `le_sum_mul_div_inf'_of_mem_reachableSlice` : a strictly positive conserved weight bounds the
   nonnegative part of the slice explicitly.
 - `isBounded_reachableSlice_inter_nonneg` : the nonnegative part of the slice is bounded.
+- `notMem_forwardFeasibleExtents_of_neg` : no negative extent is forward-feasible.
+- `mem_forwardFeasibleExtents_neg_iff` : `ξ` is forward-feasible for `-ν` exactly when `-ξ` is
+  reverse-feasible for `ν`.
+- `forwardFeasibleExtents_neg_eq_Icc` : with nonnegative initial amounts and a produced species,
+  the feasible forward extents of `-ν` are `Set.Icc 0 (-minExtent ν n₀ h)`.
 
 ## iii. Table of contents
 
@@ -104,6 +116,7 @@ strictly positive conserved weight exists, which is a hypothesis.
 - E. Product increment and percent yield
 - F. Species independence of the extent
 - G. The reachable slice
+- H. The reversed stoichiometric vector
 
 ## iv. References
 
@@ -254,8 +267,8 @@ lemma forwardFeasibleExtents_eq_Ici {ι : Type*} (ν n₀ : ι → ℝ) (hn₀ :
   exact and_iff_left_of_imp fun hξ i => add_nonneg (hn₀ i) (mul_nonneg (h i) hξ)
 
 /-- **Feasible reverse extents.** If every initial amount is nonnegative and some species is
-produced, the feasible reverse extents form the closed interval from `minExtent ν n₀ h`, minus
-the smallest ratio `n₀ i / ν i` over the produced species, to `0`. -/
+produced, the feasible reverse extents form the closed interval from `minExtent ν n₀ h`, which
+is minus the smallest ratio `n₀ i / ν i` over the produced species, to `0`. -/
 lemma reverseFeasibleExtents_eq_Icc {ι : Type*} [Fintype ι] (ν n₀ : ι → ℝ)
     (hn₀ : ∀ i, 0 ≤ n₀ i) (h : ∃ i, 0 < ν i) :
     reverseFeasibleExtents ν n₀ = Set.Icc (minExtent ν n₀ h) 0 := by
@@ -314,8 +327,8 @@ lemma isLimitingReagent_iff {ι : Type*} [Fintype ι] {ν n₀ : ι → ℝ} (h 
   · rintro ⟨hi, heq⟩
     exact ⟨hn₀, hi, fun _ hj => heq.trans_le (maxExtent_le n₀ h hj)⟩
 
-/-- **A limiting reagent exists.** A reaction that consumes some species, from nonnegative
-initial amounts, has a limiting reagent. -/
+/-- **A limiting reagent exists.** A reaction with finitely many species that consumes some
+species, from nonnegative initial amounts, has a limiting reagent. -/
 lemma exists_isLimitingReagent {ι : Type*} [Finite ι] (ν n₀ : ι → ℝ)
     (hn₀ : ∀ i, 0 ≤ n₀ i) (h : ∃ i, ν i < 0) :
     ∃ i, IsLimitingReagent ν n₀ i := by
@@ -360,7 +373,8 @@ lemma isGreatest_mul_maxExtent {ι : Type*} [Fintype ι] {ν n₀ : ι → ℝ} 
   exact mul_le_mul_maxExtent h hP ξ hξ
 
 /-- The percent yield `100 * actual / theoretical` of a product, from its actual and its
-theoretical amount. -/
+theoretical amount. It is defined for every real `theoretical`: for `theoretical = 0` the
+convention `x / 0 = 0` makes it `0`, and the intended domain is `theoretical > 0`. -/
 noncomputable def percentYield (actual theoretical : ℝ) : ℝ :=
   100 * actual / theoretical
 
@@ -483,5 +497,37 @@ lemma isBounded_reachableSlice_inter_nonneg {ι κ : Type*} [Fintype ι] [Fintyp
     (hpos : ∀ i, 0 < w i) : Bornology.IsBounded (reachableSlice n₀ N ∩ {n | ∀ i, 0 ≤ n i}) :=
   (Metric.isBounded_Icc 0 fun i => (∑ j, w j * n₀ j) / w i).subset fun n hn =>
     ⟨hn.2, le_sum_mul_div_of_mem_reachableSlice hw hpos n hn⟩
+
+/-!
+
+## H. The reversed stoichiometric vector
+
+-/
+
+/-- A forward-only feasibility statement rejects a negative extent: no `ξ < 0` is a
+forward-feasible extent, for any reaction and any initial amounts. -/
+lemma notMem_forwardFeasibleExtents_of_neg {ι : Type*} {ν n₀ : ι → ℝ} {ξ : ℝ} (hξ : ξ < 0) :
+    ξ ∉ forwardFeasibleExtents ν n₀ := by
+  intro h
+  exact (not_le_of_gt hξ) h.1
+
+/-- Reversing the stoichiometric vector: `ξ` is a forward-feasible extent of `-ν` exactly when
+`-ξ` is a reverse-feasible extent of `ν`; both leave the amounts `n₀ i + ν i * (-ξ)`. -/
+lemma mem_forwardFeasibleExtents_neg_iff {ι : Type*} {ν n₀ : ι → ℝ} {ξ : ℝ} :
+    ξ ∈ forwardFeasibleExtents (-ν) n₀ ↔ -ξ ∈ reverseFeasibleExtents ν n₀ := by
+  simp only [forwardFeasibleExtents, reverseFeasibleExtents, Set.mem_ofPred_eq, Pi.neg_apply,
+    neg_nonpos, neg_mul, mul_neg]
+
+/-- Inventory of the reversed reaction: if every initial amount is nonnegative and `ν` produces
+some species, the forward-feasible extents of `-ν` form the closed interval from `0` to
+`-minExtent ν n₀ h`, the smallest ratio `n₀ i / ν i` over the species `ν` produces, which are the
+species `-ν` consumes. -/
+lemma forwardFeasibleExtents_neg_eq_Icc {ι : Type*} [Fintype ι] {ν n₀ : ι → ℝ}
+    (hn₀ : ∀ i, 0 ≤ n₀ i) (h : ∃ i, 0 < ν i) :
+    forwardFeasibleExtents (-ν) n₀ = Set.Icc 0 (-minExtent ν n₀ h) := by
+  ext ξ
+  rw [mem_forwardFeasibleExtents_neg_iff, reverseFeasibleExtents_eq_Icc ν n₀ hn₀ h]
+  simp only [Set.mem_Icc]
+  constructor <;> rintro ⟨h1, h2⟩ <;> exact ⟨by linarith, by linarith⟩
 
 end Chemistry.Stoichiometry

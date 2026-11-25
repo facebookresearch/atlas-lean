@@ -8,4 +8,4 @@ only if $\int_a^b g(x)\,dx$ converges to a real limit as $b \to \infty$.
 
 ## Sources
 
-- T. Apostol, *Mathematical Analysis*, 2nd ed., §10.23 (limit comparison test).
+- G. Hartman et al., *APEX Calculus*, §6.8, "Limit Comparison Test for Improper Integrals".

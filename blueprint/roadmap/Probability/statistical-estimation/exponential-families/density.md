@@ -10,6 +10,10 @@ $$
 
 - [Log-partition function](log-partition.md): the normalizing constant $A(\theta) = \log Z(\theta)$.
 
+## Related topics
+
+- [Density of an exponential family with base weights](density-2.md): the form with base weights $h$ and a statistic in $\mathbb{R}^\iota$, instead of the counting base measure and a statistic in an inner product space.
+
 ## Sources
 
 - M. J. Wainwright and M. I. Jordan, *Graphical models, exponential families, and variational inference*, Found. Trends Mach. Learn. 1(1–2) (2008) 1–305, Section 3.2.

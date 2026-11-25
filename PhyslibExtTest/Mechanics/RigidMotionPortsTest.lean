@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.Mechanics.RigidMotionPorts
+import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 import Mathlib.Tactic.Convert
 import Mathlib.Tactic.FinCases
@@ -18,8 +19,8 @@ import Mathlib.Tactic.Ring
 /-!
 # Tests for `PhyslibExt.Mechanics.RigidMotionPorts`
 
-Consumers of the rotating and translating-frame acceleration and of the angular momentum about
-the centre of mass, with a spin-up fixture and a four-point body.
+Consumers of the rotating and translating-frame acceleration, of the angular momentum about the
+centre of mass and of Euler's equations, with a spin-up fixture and a four-point body.
 
 ## i. Overview
 
@@ -37,6 +38,24 @@ about the mass point `(1, 0, 0)` the parallel-axis lemma adds the orbital term `
 gliding without rotation it has no angular momentum about its centre of mass but the orbital term
 `(0, 0, 4)` about the fixed point `(0, 1, 0)`.
 
+Spun up about its third principal axis, the four-point body satisfies Euler's equations with the
+body torque `(0, 0, 10)`, so the balance law gives `dL_COM/dt = (0, 0, 10)`; conversely, from the
+angular momentum `(0, 0, 10 t)` the positive-definite inertia `diag(8, 2, 10)` determines the
+angular acceleration `e₃`, and `L_COM · L_COM = 100 t²`. The inertia `diag(8, 2, 10)` has the
+gyroscopic term `(0, 0, -6)` at `ω_B = (1, 1, 0)`; the singular inertia `diag(1, 1, 0)` and the
+inertia `diag(-8, -2, -10)` of a negative mass functional are not positive definite. Gliding
+without rotation, the four-point body is torque free.
+
+Driven about its third principal axis from the rate `1` with the angular acceleration `2`, the
+four-point body has `ω_B = (0, 0, 1 + 2 t)` and needs the torque `(0, 0, 20)`, which delivers the
+shaft power `20 (1 + 2 t)`; the sign-flipped torque fails, and with zero initial rate and unit
+angular acceleration the construction has the body angular velocity of the spin-up.
+
+Without torque, the axisymmetric inertia `diag(1, 1, 2)` with `A = ω₃ = 1` gives the precession
+`ω_B(t) = (cos t, sin t, 1)` with the gyroscopic term `(0, -1, 0)` at `t = 0`, and the Euler port
+recovers its angular acceleration `(0, 1, 0)` there; a prolate body precesses against its spin,
+and equal inertias give no precession.
+
 The file activates no matrix norm: every regularity fact is stated and proved as a client would,
 with Mathlib's default instances on matrices or entry by entry.
 
@@ -44,6 +63,7 @@ with Mathlib's default instances on matrices or entry by entry.
 
 - `spinUp`, `spinUp_bodyAngularVelocity`, `spinUp_euler_fixture` : the spin-up fixture.
 - `fourPointBody` : a four-point body with unequal principal inertias.
+- `negFourPointBody` : a negative mass functional, whose inertia tensor is not positive definite.
 
 ## iii. Table of contents
 
@@ -51,6 +71,10 @@ with Mathlib's default instances on matrices or entry by entry.
 - B. Consumers of the public lemmas
 - C. Angular momentum: a four-point body
 - D. Consumers of the angular-momentum lemmas
+- E. Euler's equations
+- F. Consumers of the Euler lemmas
+- G. A constructed torque-driven rotation
+- H. Torque-free axisymmetric precession
 
 ## iv. References
 
@@ -403,5 +427,360 @@ example (t : Time) :
   rw [fourPointBody_mass]
   ext i
   fin_cases i <;> simp [glide, cross_apply]
+
+/-! ## E. Euler's equations -/
+
+-- A positive diagonal inertia with a nonzero gyroscopic term: `I_B = diag(8, 2, 10)` is positive
+-- definite; at `ω_B = (1, 1, 0)` the gyroscopic term is `ω_B × (I_B ω_B) = (0, 0, -6)`, and without
+-- torque Euler's equations have the unique solution `ω_B' = (0, 0, 3 / 5)`.
+example :
+    (Matrix.diagonal ![8, 2, 10] : Matrix (Fin 3) (Fin 3) ℝ).PosDef ∧
+      ![1, 1, 0] ⨯₃ (Matrix.diagonal ![8, 2, 10] *ᵥ ![1, 1, 0]) = ![0, 0, -6] ∧
+      ∀ a : Fin 3 → ℝ,
+        Matrix.diagonal ![8, 2, 10] *ᵥ a + ![1, 1, 0] ⨯₃ (Matrix.diagonal ![8, 2, 10] *ᵥ ![1, 1, 0]) =
+            0 ↔ a = ![0, 0, 3 / 5] := by
+  refine ⟨Matrix.PosDef.diagonal (fun i => by fin_cases i <;> norm_num), ?_, fun a => ?_⟩
+  · ext i
+    fin_cases i <;> norm_num [Matrix.mulVec_diagonal, cross_apply]
+  · constructor
+    · intro h
+      have h0 := congrFun h 0
+      have h1 := congrFun h 1
+      have h2 := congrFun h 2
+      simp [Matrix.mulVec_diagonal, cross_apply] at h0 h1 h2
+      ext i
+      fin_cases i <;> simp <;> linarith
+    · rintro rfl
+      ext i
+      fin_cases i <;> norm_num [Matrix.mulVec_diagonal, cross_apply]
+
+-- Singular inertia is rejected: `diag(1, 1, 0)` is not positive definite, and at `ω_B = (1, 0, 0)`
+-- Euler's equations have every `(0, 0, c)` as a solution without torque and no solution for the
+-- body torque `(0, 0, 1)`.
+example :
+    ¬ (Matrix.diagonal ![1, 1, 0] : Matrix (Fin 3) (Fin 3) ℝ).PosDef ∧
+      (∀ c : ℝ, Matrix.diagonal ![1, 1, 0] *ᵥ ![0, 0, c] +
+          ![1, 0, 0] ⨯₃ (Matrix.diagonal ![1, 1, 0] *ᵥ ![1, 0, 0]) = 0) ∧
+      ¬ ∃ a : Fin 3 → ℝ, Matrix.diagonal ![1, 1, 0] *ᵥ a +
+          ![1, 0, 0] ⨯₃ (Matrix.diagonal ![1, 1, 0] *ᵥ ![1, 0, 0]) = ![0, 0, 1] := by
+  refine ⟨?_, fun c => ?_, ?_⟩
+  · intro h
+    have hx : (![0, 0, 1] : Fin 3 → ℝ) ≠ 0 := by
+      intro h0
+      have := congrFun h0 2
+      simp at this
+    have := h.dotProduct_mulVec_pos hx
+    simp [Matrix.mulVec_diagonal, dotProduct, Fin.sum_univ_three] at this
+  · ext i
+    fin_cases i <;> simp [Matrix.mulVec_diagonal, cross_apply]
+  · rintro ⟨a, ha⟩
+    have := congrFun ha 2
+    simp [Matrix.mulVec_diagonal, cross_apply] at this
+
+/-- A negative mass functional: minus four unit point masses at `(±1, 0, 0)` and `(0, ±2, 0)`.
+Physlib's rigid body admits any linear functional on smooth functions. -/
+noncomputable def negFourPointBody : RigidBody 3 where
+  ρ :=
+    { toFun := fun f => -(f ⟨![1, 0, 0]⟩ + f ⟨![-1, 0, 0]⟩ + f ⟨![0, 2, 0]⟩ + f ⟨![0, -2, 0]⟩)
+      map_add' := fun f g => by
+        simp only [ContMDiffMap.coe_add, Pi.add_apply]
+        ring
+      map_smul' := fun r f => by
+        simp only [ContMDiffMap.coe_smul, Pi.smul_apply, smul_eq_mul, RingHom.id_apply]
+        ring }
+
+-- Negative mass functionals do not give positive-definite inertia: the negative four-point body has
+-- mass `-4`, centre of mass `0` and inertia tensor `diag(-8, -2, -10)` about it, which is not
+-- positive definite.
+example :
+    negFourPointBody.mass = -4 ∧ negFourPointBody.centerOfMass = 0 ∧
+      negFourPointBody.inertiaTensorAbout negFourPointBody.centerOfMass =
+        Matrix.diagonal ![-8, -2, -10] ∧
+      ¬ (negFourPointBody.inertiaTensorAbout negFourPointBody.centerOfMass).PosDef := by
+  have hmass : negFourPointBody.mass = -4 := by
+    norm_num [RigidBody.mass, negFourPointBody]
+  have hcom : negFourPointBody.centerOfMass = 0 := by
+    ext i
+    fin_cases i <;> simp [RigidBody.centerOfMass, negFourPointBody]
+  have hinertia : negFourPointBody.inertiaTensorAbout negFourPointBody.centerOfMass =
+      Matrix.diagonal ![-8, -2, -10] := by
+    rw [hcom, RigidBody.inertiaTensorAbout_zero]
+    ext i j
+    fin_cases i <;> fin_cases j <;>
+      simp [RigidBody.inertiaTensor, negFourPointBody, Fin.sum_univ_three] <;> norm_num
+  refine ⟨hmass, hcom, hinertia, ?_⟩
+  rw [hinertia, Matrix.posDef_diagonal_iff]
+  intro h
+  have := h 0
+  norm_num at this
+
+/-! ## F. Consumers of the Euler lemmas -/
+
+/-- The inertia `diag(8, 2, 10)` of the four-point body is positive definite. -/
+private lemma posDef_diag : (Matrix.diagonal ![8, 2, 10] : Matrix (Fin 3) (Fin 3) ℝ).PosDef :=
+  Matrix.PosDef.diagonal fun i => by fin_cases i <;> norm_num
+
+/-- The inverse of `diag(8, 2, 10)` is `diag(1 / 8, 1 / 2, 1 / 10)`. -/
+private lemma inv_diag : (Matrix.diagonal ![8, 2, 10] : Matrix (Fin 3) (Fin 3) ℝ)⁻¹ =
+    Matrix.diagonal ![1 / 8, 1 / 2, 1 / 10] := by
+  apply Matrix.inv_eq_left_inv
+  rw [Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]
+  congr 1
+  funext i
+  fin_cases i <;> norm_num
+
+/-- The four-point body spun up about its third principal axis has the angular momentum
+`(0, 0, 10 t)` about its centre of mass. -/
+private lemma comAngularMomentum_spinUp_fourPointBody :
+    comAngularMomentum (spinUp fourPointBody) = fun s => s.val • ![(0 : ℝ), 0, 10] := by
+  funext s
+  have hI : (spinUp fourPointBody).inertiaTensorAbout (spinUp fourPointBody).centerOfMass =
+      Matrix.diagonal ![8, 2, 10] := fourPointBody_inertia
+  have hR : (((spinUp fourPointBody).orientation s : Matrix (Fin 3) (Fin 3) ℝ)) =
+      rotZ (s.val ^ 2 / 2) := rfl
+  rw [(comAngularMomentum_eq (spinUp fourPointBody) s
+    (differentiableAt_spinUp_orientation _ s) fourPointBody_centerOfMass).2, hI, hR,
+    spinUp_bodyAngularVelocity]
+  ext i
+  fin_cases i <;> simp [rotZ, Matrix.mulVec, dotProduct, Fin.sum_univ_three]
+  ring
+
+-- Solving Euler's equations with the explicit inverse: for `I_B = diag(8, 2, 10)` and
+-- `ω_B = (1, 1, 0)` without torque, `ω_B' = I_B⁻¹ (0 - ω_B × (I_B ω_B)) = (0, 0, 3 / 5)`.
+example (a : Fin 3 → ℝ) :
+    Matrix.diagonal ![8, 2, 10] *ᵥ a + ![1, 1, 0] ⨯₃ (Matrix.diagonal ![8, 2, 10] *ᵥ ![1, 1, 0]) =
+      0 ↔ a = ![0, 0, 3 / 5] := by
+  have hval : Matrix.diagonal ![1 / 8, 1 / 2, 1 / 10] *ᵥ
+      ((0 : Fin 3 → ℝ) - ![1, 1, 0] ⨯₃ (Matrix.diagonal ![8, 2, 10] *ᵥ ![1, 1, 0])) =
+        ![0, 0, 3 / 5] := by
+    ext i
+    fin_cases i <;> norm_num [Matrix.mulVec_diagonal, cross_apply]
+  rw [euler_solve_iff posDef_diag, inv_diag, hval]
+
+-- The transport lemma on an actual motion: the four-point body spun up about its third principal
+-- axis satisfies Euler's equations with the body torque `(0, 0, 10)`, so the balance law gives
+-- `dL_COM/dt = (0, 0, 10)`, the rate computed from the angular momentum in section D.
+example (t : Time) : ∂ₜ (comAngularMomentum (spinUp fourPointBody)) t = ![0, 0, 10] := by
+  have hI : (spinUp fourPointBody).inertiaTensorAbout (spinUp fourPointBody).centerOfMass =
+      Matrix.diagonal ![8, 2, 10] := fourPointBody_inertia
+  have hω : (spinUp fourPointBody).bodyAngularVelocity = fun s => s.val • ![(0 : ℝ), 0, 1] := by
+    funext s
+    rw [spinUp_bodyAngularVelocity]
+    ext i
+    fin_cases i <;> simp
+  have hval : DifferentiableAt ℝ (fun s : Time => s.val) t := Time.toRealCLM.differentiableAt
+  have hdω : ∂ₜ (spinUp fourPointBody).bodyAngularVelocity t = ![0, 0, 1] := by
+    rw [hω, deriv_smul_const_vec hval,
+      Time.deriv_eq_of_hasDerivAt (f := fun s : Time => s.val) (hasDerivAt_id _), one_smul]
+  have hR : (((spinUp fourPointBody).orientation t : Matrix (Fin 3) (Fin 3) ℝ)) =
+      rotZ (t.val ^ 2 / 2) := rfl
+  rw [deriv_comAngularMomentum_eq_iff_euler (spinUp fourPointBody) isOpen_univ
+    (fun i j => (contDiff_spinUp_orientation_apply fourPointBody i j).contDiffOn)
+    fourPointBody_centerOfMass (Set.mem_univ t), hdω, hI, spinUp_bodyAngularVelocity]
+  simp only [inertialToBodyVec, hR]
+  ext i
+  fin_cases i <;> simp [rotZ, Matrix.mulVec, dotProduct, Fin.sum_univ_three, cross_apply]
+
+-- Solving for the angular acceleration along the spin-up: the angular momentum `(0, 0, 10 t)`
+-- changes at the rate `(0, 0, 10)`, and with the positive-definite inertia `diag(8, 2, 10)` the
+-- balance law determines `ω_B' = I_B⁻¹ (Rᵀ (0, 0, 10) - ω_B × (I_B ω_B)) = e₃`.
+example (t : Time) : ∂ₜ (spinUp fourPointBody).bodyAngularVelocity t = ![0, 0, 1] := by
+  have hI : (spinUp fourPointBody).inertiaTensorAbout (spinUp fourPointBody).centerOfMass =
+      Matrix.diagonal ![8, 2, 10] := fourPointBody_inertia
+  have hval : DifferentiableAt ℝ (fun s : Time => s.val) t := Time.toRealCLM.differentiableAt
+  have hlaw : ∂ₜ (comAngularMomentum (spinUp fourPointBody)) t = ![0, 0, 10] := by
+    rw [comAngularMomentum_spinUp_fourPointBody, deriv_smul_const_vec hval,
+      Time.deriv_eq_of_hasDerivAt (f := fun s : Time => s.val) (hasDerivAt_id _), one_smul]
+  have hpos : ((spinUp fourPointBody).inertiaTensorAbout
+      (spinUp fourPointBody).centerOfMass).PosDef := by
+    rw [hI]
+    exact posDef_diag
+  have hR : (((spinUp fourPointBody).orientation t : Matrix (Fin 3) (Fin 3) ℝ)) =
+      rotZ (t.val ^ 2 / 2) := rfl
+  rw [(deriv_comAngularMomentum_eq_iff_deriv_bodyAngularVelocity (spinUp fourPointBody)
+    isOpen_univ (fun i j => (contDiff_spinUp_orientation_apply fourPointBody i j).contDiffOn)
+    fourPointBody_centerOfMass hpos (Set.mem_univ t) _).mp hlaw, hI, inv_diag,
+    spinUp_bodyAngularVelocity]
+  simp only [inertialToBodyVec, hR]
+  ext i
+  fin_cases i <;> simp [rotZ, Matrix.mulVec, dotProduct, Fin.sum_univ_three, cross_apply]
+
+-- The angular-momentum norm along the spin-up: `L_COM · L_COM = (I_B ω_B) · (I_B ω_B) = 100 t²`.
+example (t : Time) :
+    comAngularMomentum (spinUp fourPointBody) t ⬝ᵥ comAngularMomentum (spinUp fourPointBody) t =
+      100 * t.val ^ 2 := by
+  have hI : (spinUp fourPointBody).inertiaTensorAbout (spinUp fourPointBody).centerOfMass =
+      Matrix.diagonal ![8, 2, 10] := fourPointBody_inertia
+  rw [comAngularMomentum_dotProduct_self (spinUp fourPointBody) t
+    (differentiableAt_spinUp_orientation _ t) fourPointBody_centerOfMass, hI,
+    spinUp_bodyAngularVelocity]
+  simp [Matrix.mulVec_diagonal, dotProduct, Fin.sum_univ_three]
+  ring
+
+-- Torque-free motion of an actual body: gliding without rotation, the four-point body has no
+-- angular momentum about its centre of mass, so it is torque free at every time and keeps its
+-- rotational kinetic energy and angular-momentum norm (both zero here).
+example (s t : Time) :
+    glide.toRigidBody.rotationalKineticEnergy (glide.bodyAngularVelocity s) =
+        glide.toRigidBody.rotationalKineticEnergy (glide.bodyAngularVelocity t) ∧
+      (glide.inertiaTensorAbout glide.centerOfMass *ᵥ glide.bodyAngularVelocity s) ⬝ᵥ
+          (glide.inertiaTensorAbout glide.centerOfMass *ᵥ glide.bodyAngularVelocity s) =
+        (glide.inertiaTensorAbout glide.centerOfMass *ᵥ glide.bodyAngularVelocity t) ⬝ᵥ
+          (glide.inertiaTensorAbout glide.centerOfMass *ᵥ glide.bodyAngularVelocity t) := by
+  have hR : ∀ i j, ContDiffOn ℝ 2 (fun s => (glide.orientation s).1 i j) Set.univ :=
+    fun i j => contDiffOn_const
+  have hL : comAngularMomentum glide = fun _ => 0 := by
+    funext τ
+    have hRd : DifferentiableAt ℝ (fun s => (glide.orientation s).1) τ := differentiableAt_const _
+    rw [(comAngularMomentum_eq glide τ hRd fourPointBody_centerOfMass).2,
+      RigidBodyMotion.bodyAngularVelocity_of_orientation_const glide 1 rfl]
+    simp
+  exact torqueFree_conserved glide isOpen_univ isPreconnected_univ hR fourPointBody_centerOfMass
+    (fun τ _ => by rw [hL]; exact Time.deriv_const 0) (Set.mem_univ s) (Set.mem_univ t)
+
+
+/-! ## G. A constructed torque-driven rotation -/
+
+-- The four-point body (centre of mass `0`, inertia `diag(8, 2, 10)` about it) driven from the rate
+-- `ω₀ = 1` with the angular acceleration `α = 2`: `ω_B(t) = (0, 0, 1 + 2 t)`, `ω_B' = (0, 0, 2)`,
+-- and the balance law needs `dL_COM/dt = (0, 0, 20)`.
+example (t : Time) :
+    (fixedAxisMotion fourPointBody 1 2).bodyAngularVelocity t = ![0, 0, 1 + 2 * t.val] ∧
+      ∂ₜ (fixedAxisMotion fourPointBody 1 2).bodyAngularVelocity t = ![0, 0, 2] ∧
+      ∂ₜ (comAngularMomentum (fixedAxisMotion fourPointBody 1 2)) t = ![0, 0, 20] := by
+  obtain ⟨h1, h2⟩ := deriv_comAngularMomentum_fixedAxisMotion fourPointBody_centerOfMass
+    fourPointBody_inertia 1 2 t
+  refine ⟨?_, deriv_fixedAxisMotion_bodyAngularVelocity _ 1 2 t, ?_⟩
+  · rw [fixedAxisMotion_bodyAngularVelocity, (deriv_fixedAxisAngle 1 2 t).1]
+  · rw [h1, h2]
+    ext i
+    fin_cases i <;> norm_num [fixedAxisTorque]
+
+-- The constructed orientation is `C²` entry by entry on all times, the regularity the transport and
+-- Euler lemmas take.
+example (B : RigidBody 3) (ω₀ α : ℝ) (i j : Fin 3) :
+    ContDiffOn ℝ 2 (fun s => ((fixedAxisMotion B ω₀ α).orientation s).1 i j) Set.univ :=
+  (contDiff_infty.1 (contDiff_fixedAxisMotion_orientation_apply B ω₀ α i j) 2).contDiffOn
+
+-- At `t = 0` the drive with the initial rate `1` has the angle `0` and the rate `1`, so `Ṙ(0)` is
+-- the generator of rotations about `e₃`.
+example (B : RigidBody 3) :
+    ∂ₜ (fun s => ((fixedAxisMotion B 1 2).orientation s).1) 0 =
+      !![0, -1, 0; 1, 0, 0; 0, 0, 0] := by
+  have h0 : fixedAxisAngle 1 2 0 = 0 := by simp [fixedAxisAngle, Time.zero_val]
+  rw [deriv_fixedAxisMotion_orientation, (deriv_fixedAxisAngle 1 2 0).1, h0]
+  ext i j
+  fin_cases i <;> fin_cases j <;> simp [Time.zero_val]
+
+-- With zero initial rate and unit angular acceleration the construction has the body angular
+-- velocity `(0, 0, t)` of the spin-up of section A.
+example (B : RigidBody 3) (t : Time) :
+    (fixedAxisMotion B 0 1).bodyAngularVelocity t = (spinUp B).bodyAngularVelocity t := by
+  rw [fixedAxisMotion_bodyAngularVelocity, (deriv_fixedAxisAngle 0 1 t).1,
+    spinUp_bodyAngularVelocity]
+  simp
+
+-- Euler's equations on the driven four-point body: the inertia `diag(8, 2, 10)` and the angular
+-- acceleration `2` need the body torque `(0, 0, 20)`.
+example (t : Time) :
+    (fixedAxisMotion fourPointBody 1 2).inertiaTensorAbout
+          (fixedAxisMotion fourPointBody 1 2).centerOfMass *ᵥ
+        ∂ₜ (fixedAxisMotion fourPointBody 1 2).bodyAngularVelocity t +
+      (fixedAxisMotion fourPointBody 1 2).bodyAngularVelocity t ⨯₃
+        ((fixedAxisMotion fourPointBody 1 2).inertiaTensorAbout
+            (fixedAxisMotion fourPointBody 1 2).centerOfMass *ᵥ
+          (fixedAxisMotion fourPointBody 1 2).bodyAngularVelocity t) = ![0, 0, 20] := by
+  rw [fixedAxisMotion_euler fourPointBody_inertia 1 2 t]
+  ext i
+  fin_cases i <;> norm_num [fixedAxisTorque]
+
+-- The torque port of the driven four-point body: the rotational kinetic energy `5 (1 + 2 t)²`
+-- changes at the shaft power `20 (1 + 2 t)` of the torque `20` at the angular velocity `1 + 2 t`.
+example (t : Time) :
+    ∂ₜ (fun s => fourPointBody.rotationalKineticEnergy
+        ((fixedAxisMotion fourPointBody 1 2).bodyAngularVelocity s)) t = 20 * (1 + 2 * t.val) := by
+  obtain ⟨-, h, hP⟩ := fixedAxisMotion_power_port fourPointBody_centerOfMass
+    fourPointBody_inertia 1 2 t
+  rw [h, hP, _root_.Units.EngineeringQuantities.shaftPower_val, (deriv_fixedAxisAngle 1 2 t).1]
+  norm_num
+
+-- A nonzero angular acceleration needs a nonzero torque: for the four-point body (`I_zz = 10`)
+-- and `α = 2` the port torque is nonzero, and the balance law fails for the sign-flipped torque.
+example (t : Time) :
+    fixedAxisTorque 10 2 ≠ 0 ∧
+      ∂ₜ (comAngularMomentum (fixedAxisMotion fourPointBody 1 2)) t ≠ -fixedAxisTorque 10 2 :=
+  ⟨(fixedAxisMotion_torque_ne_zero (ω₀ := 1) fourPointBody_centerOfMass fourPointBody_inertia
+      (by norm_num) (by norm_num) t).1,
+    (fixedAxisMotion_neg_torque (ω₀ := 1) fourPointBody_centerOfMass fourPointBody_inertia
+      (by norm_num) (by norm_num) t).2⟩
+
+
+/-! ## H. Torque-free axisymmetric precession -/
+
+-- A nonzero gyroscopic term: `I_⊥ = 1`, `I₃ = 2`, `A = ω₃ = 1` give `ν = 1` and `ω_B(t) = (cos t,
+-- sin t, 1)`, which solves Euler's equations without torque and has the gyroscopic term `(0, -1,
+-- 0)` at `t = 0`.
+example :
+    axisymmetricPrecessionRate 1 2 1 = 1 ∧
+      (∀ t : Time, axisymmetricPrecession 1 2 1 1 t = ![Real.cos t.val, Real.sin t.val, 1]) ∧
+      (∀ t : Time, Matrix.diagonal ![1, 1, 2] *ᵥ ∂ₜ (axisymmetricPrecession 1 2 1 1) t +
+          axisymmetricPrecession 1 2 1 1 t ⨯₃
+            (Matrix.diagonal ![1, 1, 2] *ᵥ axisymmetricPrecession 1 2 1 1 t) = 0) ∧
+      axisymmetricPrecession 1 2 1 1 0 ⨯₃
+          (Matrix.diagonal ![1, 1, 2] *ᵥ axisymmetricPrecession 1 2 1 1 0) = ![0, -1, 0] := by
+  have hν : axisymmetricPrecessionRate 1 2 1 = 1 := by
+    norm_num [axisymmetricPrecessionRate]
+  refine ⟨hν, fun t => ?_, fun t => axisymmetricPrecession_euler one_pos 2 1 1 t, ?_⟩
+  · simp [axisymmetricPrecession, hν]
+  · rw [axisymmetricPrecession_gyroscopic_zero]
+    norm_num
+
+-- Equal inertias degenerate: `I_⊥ = I₃ = I` gives zero precession `ν = 0`, the constant body
+-- angular velocity `(A, 0, ω₃)` and no gyroscopic term, so this case alone cannot exercise the
+-- gyroscopic term.
+example (I A ω₃ : ℝ) (t : Time) :
+    axisymmetricPrecessionRate I I ω₃ = 0 ∧ axisymmetricPrecession I I A ω₃ t = ![A, 0, ω₃] ∧
+      axisymmetricPrecession I I A ω₃ t ⨯₃
+          (Matrix.diagonal ![I, I, I] *ᵥ axisymmetricPrecession I I A ω₃ t) = 0 := by
+  have hν : axisymmetricPrecessionRate I I ω₃ = 0 := by
+    simp [axisymmetricPrecessionRate]
+  have hω : axisymmetricPrecession I I A ω₃ t = ![A, 0, ω₃] := by
+    simp [axisymmetricPrecession, hν]
+  refine ⟨hν, hω, ?_⟩
+  rw [hω]
+  ext i
+  fin_cases i <;> simp [Matrix.mulVec_diagonal, cross_apply]
+  ring
+
+-- The precession of the inertia `diag(1, 1, 2)` with `A = ω₃ = 1` has at `t = 0` the angular
+-- acceleration `(0, 1, 0)`, which the Euler port recovers from zero torque: `diag(1, 1, 2)` is
+-- positive definite and `I⁻¹ (0 - ω_B × (I ω_B)) = (0, 1, 0)`.
+example :
+    ∂ₜ (axisymmetricPrecession 1 2 1 1) 0 = ![0, 1, 0] ∧
+      (Matrix.diagonal ![(1 : ℝ), 1, 2]).PosDef ∧
+      (Matrix.diagonal ![(1 : ℝ), 1, 2])⁻¹ *ᵥ (0 - axisymmetricPrecession 1 2 1 1 0 ⨯₃
+        (Matrix.diagonal ![1, 1, 2] *ᵥ axisymmetricPrecession 1 2 1 1 0)) = ![0, 1, 0] := by
+  have hν : axisymmetricPrecessionRate 1 2 1 = 1 := by norm_num [axisymmetricPrecessionRate]
+  have hd : ∂ₜ (axisymmetricPrecession 1 2 1 1) 0 = ![0, 1, 0] := by
+    rw [(deriv_axisymmetricPrecession 1 2 1 1 0).2, hν]
+    ext i
+    fin_cases i <;> simp [Time.zero_val]
+  obtain ⟨hpos, hsolve⟩ := axisymmetricPrecession_euler_solve one_pos two_pos 1 1 0
+  exact ⟨hd, hpos, hsolve.symm.trans hd⟩
+
+-- The gyroscopic term of this precession is nonzero at `t = 0`: `I_⊥ = 1 ≠ 2 = I₃` and
+-- `A ω₃ = 1 ≠ 0`.
+example : axisymmetricPrecession 1 2 1 1 0 ⨯₃
+    (Matrix.diagonal ![1, 1, 2] *ᵥ axisymmetricPrecession 1 2 1 1 0) ≠ 0 :=
+  axisymmetricPrecession_gyroscopic_ne_zero (by norm_num) (by norm_num)
+
+-- A prolate body precesses against its spin: `I_⊥ = 2 > 1 = I₃` with `ω₃ = 2` gives the rate
+-- `ν = -1`, and the precession still solves Euler's equations without torque.
+example (A : ℝ) (t : Time) :
+    axisymmetricPrecessionRate 2 1 2 = -1 ∧
+      Matrix.diagonal ![2, 2, 1] *ᵥ ∂ₜ (axisymmetricPrecession 2 1 A 2) t +
+          axisymmetricPrecession 2 1 A 2 t ⨯₃
+            (Matrix.diagonal ![2, 2, 1] *ᵥ axisymmetricPrecession 2 1 A 2 t) = 0 :=
+  ⟨by norm_num [axisymmetricPrecessionRate], axisymmetricPrecession_euler two_pos 1 A 2 t⟩
 
 end PhyslibExtTest.Mechanics.RigidMotionPorts

@@ -12,6 +12,10 @@ An exponential family with sufficient statistic $\phi$ is the family of densitie
 - [Gibbs variational principle, upper bound](sum-mul-inner-sub-log-le.md)
 - [Gibbs variational principle, attainment](sum-density-mul-inner-sub-log.md)
 - [The log-partition function is convex](convex-on-log-partition.md)
+- [Log-partition function of an exponential family with base weights](log-partition-2.md)
+- [Density of an exponential family with base weights](density-2.md)
+- [The log-partition function with base weights is convex](convex-on-log-partition-2.md)
+- [The gradient of the log-partition function with base weights is the mean](has-gradient-at-log-partition-2.md)
 
 ## Related topics
 

@@ -10,6 +10,10 @@ This is (3.40) of Wainwright and Jordan with the counting measure as base measur
 family of probability distributions with domain $\Omega = E$. When $X$ is empty the sum is $0$ and the convention
 $\log 0 = 0$ gives $A = 0$, which defines no probability family; the results below assume $X$ nonempty.
 
+## Related topics
+
+- [Log-partition function of an exponential family with base weights](log-partition-2.md): the form with base weights $h$ and a statistic in $\mathbb{R}^\iota$, instead of the counting base measure and a statistic in an inner product space.
+
 ## Sources
 
 - M. J. Wainwright and M. I. Jordan, *Graphical models, exponential families, and variational inference*, Found. Trends Mach. Learn. 1(1–2) (2008) 1–305, equation (3.40).

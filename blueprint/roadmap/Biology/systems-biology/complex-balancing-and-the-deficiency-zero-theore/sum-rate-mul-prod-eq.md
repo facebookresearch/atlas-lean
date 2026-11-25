@@ -1,6 +1,6 @@
 # Complex balance exchanges source and product sums
 
-Let $N$ be a [chemical reaction network](reaction-network.md) with finite species set $S$ and finite reaction set $\rho$. Let $k \in \mathbb{R}^\rho$ and $c \in \mathbb{R}^S$, with $c$
+Let $N$ be a [chemical reaction network](../../../Dynamics/smooth-dynamics/reaction-network.md) with finite species set $S$ and finite reaction set $\rho$. Let $k \in \mathbb{R}^\rho$ and $c \in \mathbb{R}^S$, with $c$
 [complex balanced](is-complex-balanced.md) for $k$. Then for every function
 $g \colon \mathbb{N}^S \to \mathbb{R}$,
 

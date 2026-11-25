@@ -274,7 +274,7 @@ private theorem indicator_eq_sum_Icc {Ω : Type*} (X : Ω → ℝ) (K : Ω → �
     · simp only [Set.indicator_apply, Set.mem_ofPred_eq, and_true]
       simp [Nat.one_le_iff_ne_zero.mpr hpos.ne']
     · intro k _ hk
-      exact Set.indicator_of_notMem (fun h => hk h.2.symm) _
+      exact Set.indicator_of_notMem (s := {ω | X ω ≤ c * k ∧ K ω = k}) (fun h => hk h.2.symm) _
     · intro h
       exact absurd (Finset.mem_Icc.mpr ⟨hpos, hK⟩) h
 

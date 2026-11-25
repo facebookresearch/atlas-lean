@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.EarthScience.CatchmentWaterBalance
-public import MathlibExt.Biology.Biophysics.CompartmentKinetics
+public import MathlibExt.Analysis.ODE.ConstantInputRelaxation
 import Mathlib.Order.Monotone.Basic
 
 /-!
@@ -18,7 +18,7 @@ import Mathlib.Order.Monotone.Basic
 
 The linear reservoir in `PhyslibExt.EarthScience.CatchmentWaterBalance` has
 the same explicit profile as the one-compartment amount in
-`MathlibExt.Biology.Biophysics.CompartmentKinetics`, with recession
+`MathlibExt.Analysis.ODE.ConstantInputRelaxation`, with recession
 coefficient `k`, constant inflow `I`, initial storage `S0`, and steady
 storage `I / k`. This companion module records that bridge and transports
 the compartment envelope facts to storage: nonnegativity in the decay
@@ -47,7 +47,7 @@ profile, empirical validation, or control law is introduced.
 
 - `PhyslibExt.EarthScience.CatchmentWaterBalance` for the reservoir
   profile and its water budget.
-- `MathlibExt.Biology.Biophysics.CompartmentKinetics` for the compartment
+- `MathlibExt.Analysis.ODE.ConstantInputRelaxation` for the compartment
   amount, steady amount, and envelope facts.
 -/
 
@@ -57,10 +57,10 @@ namespace EarthScience
 
 /-! ## A. Compartment-amount bridge -/
 
-/-- The linear-reservoir storage profile is the one-compartment
-amount with elimination rate `k`, constant input `I`, and initial
-amount `S0`, whenever `k ≠ 0`. The compartment argument order is
-`amount k I S0 t`. -/
+/-- The linear-reservoir storage profile is the one-compartment amount with elimination rate `k`,
+constant input `I`, and initial amount `S0`, whenever `k ≠ 0`. The compartment argument order is
+`amount k I S0 t`. For `k = 0` the two differ when `I * t ≠ 0`: the storage is `S0`, by the
+convention `x / 0 = 0`, while the amount is `S0 + I * t`. -/
 theorem linearReservoirStorage_eq_amount {I k : ℝ} (hk : k ≠ 0)
     (S0 t : ℝ) :
     linearReservoirStorage I k S0 t
@@ -172,7 +172,7 @@ theorem linearReservoirStorage_nonneg {I k S0 t : ℝ}
     MathlibExt.Biology.Biophysics.CompartmentKinetics.amount_nonneg
     hk hI hS0 ht
 
-/-- Starting at or below the steady storage `I / k`, the
+/-- For `k > 0`, starting at or below the steady storage `I / k`, the
 profile never exceeds that steady storage. -/
 theorem linearReservoirStorage_le_steady {I k S0 t : ℝ}
     (hk : 0 < k) (h : S0 ≤ I / k) :
@@ -186,7 +186,7 @@ theorem linearReservoirStorage_le_steady {I k S0 t : ℝ}
       MathlibExt.Biology.Biophysics.CompartmentKinetics.amount_le_steadyAmount hk h _)
     hk h
 
-/-- Starting at or above the steady storage `I / k`, the
+/-- For `k > 0`, starting at or above the steady storage `I / k`, the
 profile never falls below that steady storage. -/
 theorem steady_le_linearReservoirStorage {I k S0 t : ℝ}
     (hk : 0 < k) (h : I / k ≤ S0) :
@@ -200,7 +200,7 @@ theorem steady_le_linearReservoirStorage {I k S0 t : ℝ}
       MathlibExt.Biology.Biophysics.CompartmentKinetics.steadyAmount_le_amount hk h _)
     hk h
 
-/-- Operating-envelope capacity form: at nonnegative times, if
+/-- Operating-envelope capacity form: for `k > 0` and at nonnegative times, if
 both the initial storage and the steady storage are at most
 `Smax`, then the storage remains at most `Smax`. The bound
 `Smax` is a supplied envelope, not a controller. -/
