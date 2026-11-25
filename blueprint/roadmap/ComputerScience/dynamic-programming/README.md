@@ -10,7 +10,10 @@ Optimization problems solved by tabulated recurrences: knapsack variants, subset
 - [Optimal binary search tree](optimal-binary-search-tree/README.md)
 - [Rod cutting](rod-cutting/README.md)
 - [Subset sum](subset-sum/README.md)
+- [Weighted interval scheduling](weighted-interval-scheduling/README.md)
 - [Zero-one knapsack problem](zero-one-knapsack-problem/README.md)
+
+- [Backward induction for deterministic finite-horizon control](deterministic-finite-horizon-dynamic-programming.md)
 
 ## Related topics
 
@@ -18,3 +21,4 @@ Optimization problems solved by tabulated recurrences: knapsack variants, subset
 - [Policy iteration](../heuristic-search-and-planning/policy-iteration/README.md): the other classical method for Bellman's equation, alternating policy evaluation and greedy improvement.
 - [Stochastic shortest path problems](../heuristic-search-and-planning/stochastic-shortest-path-problems/README.md): undiscounted dynamic programming with a termination state, which contains deterministic shortest paths.
 - [Optimality of stationary policies](../heuristic-search-and-planning/optimality-of-stationary-policies/README.md): the finite-horizon DP algorithm for Markov decision processes, whose backward recursion gives the best $N$-stage value of a Markov policy.
+- [Dynamic programming principles](dynamic-programming-principles/README.md)
