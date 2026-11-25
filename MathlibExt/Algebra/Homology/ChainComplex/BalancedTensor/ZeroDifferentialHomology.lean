@@ -454,7 +454,7 @@ def zeroDifferentialTensorComplexAt
 comparison with independent input worlds and arbitrary common lift height. -/
 def zeroDifferentialTensorHomologyIsoAt
     (A : ℤ → ModuleCat.{v} Rᵐᵒᵖ) (Q : ChainComplex (ModuleCat.{w} R) ℤ)
-    [∀ p : ℤ, (((ModuleCat.BalancedTensor.groupBifunctor R :
+    [∀ p : ℤ, ((ModuleCat.BalancedTensor.groupBifunctor R :
         ModuleCat.{max u v w t} Rᵐᵒᵖ ⥤ ModuleCat.{max u v w t} R ⥤
           AddCommGrpCat.{max u v w t}).obj
         ((ModuleCat.uliftFunctor.{max u v w t, v} Rᵐᵒᵖ).obj (A p))).PreservesHomology]
