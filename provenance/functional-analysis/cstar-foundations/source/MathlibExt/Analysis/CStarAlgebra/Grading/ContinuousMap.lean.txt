@@ -1,0 +1,111 @@
+/-
+Author: @toskua, Avocado
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.Grading.Module
+public import MathlibExt.Analysis.CStarAlgebra.Module.ContinuousMap
+public import MathlibExt.Analysis.CStarAlgebra.PointNormAction.ContinuousMap
+
+/-!
+# Pointwise gradings of continuous-function modules
+
+The input module grading is lifted on the computed function module. Its
+generator and coefficient grading act on values, without changing the
+parameter. This is standard-function-module data, not a construction of
+general interval tensor fibres or countable generation.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+noncomputable section
+
+open scoped CStarAlgebra RightActions
+
+namespace CStarModuleGrading
+
+universe uX uB uE
+
+variable {B : Type uB} [NonUnitalCStarAlgebra B]
+variable [PartialOrder Bᵐᵒᵖ] [StarOrderedRing Bᵐᵒᵖ]
+variable {E : Type uE} [NormedAddCommGroup E] [NormedSpace ℂ E]
+variable [SMul Bᵐᵒᵖ E] [CStarModule Bᵐᵒᵖ E] [CompleteSpace E]
+variable {γ : CStarGrading B}
+
+/-- Compute the pointwise module grading from the same input generator. -/
+def continuousMap (X : Type uX) [TopologicalSpace X] [CompactSpace X]
+    [PartialOrder (C(X, B))ᵐᵒᵖ] [StarOrderedRing (C(X, B))ᵐᵒᵖ]
+    (δ : CStarModuleGrading γ E) :
+    (letI : SMul (C(X, B))ᵐᵒᵖ C(X, E) :=
+       CStarModule.ContinuousMap.rightAction (B := B) (E := E) X
+     letI : CStarModule (C(X, B))ᵐᵒᵖ C(X, E) :=
+       CStarModule.ContinuousMap.cstarModule (B := B) (E := E) X
+     CStarModuleGrading (PointNormCStarAction.continuousMap X γ) C(X, E)) := by
+  letI : SMul (C(X, B))ᵐᵒᵖ C(X, E) :=
+    CStarModule.ContinuousMap.rightAction (B := B) (E := E) X
+  letI : CStarModule (C(X, B))ᵐᵒᵖ C(X, E) :=
+    CStarModule.ContinuousMap.cstarModule (B := B) (E := E) X
+  let L : C(X, E) →L[ℂ] C(X, E) :=
+    δ.generatorCLM.compLeftContinuous ℂ X
+  have hL (f : C(X, E)) (t : X) : L f t = δ.generator (f t) := by
+    rfl
+  have hLeft : Function.LeftInverse L L := by
+    intro f
+    apply _root_.ContinuousMap.ext
+    intro t
+    rw [hL, hL]
+    exact δ.generator_involutive (f t)
+  have hRight : Function.RightInverse L L := by
+    intro f
+    exact hLeft f
+  let U : C(X, E) ≃L[ℂ] C(X, E) :=
+    ContinuousLinearEquiv.equivOfInverse L L hLeft hRight
+  have hU (f : C(X, E)) (t : X) : U f t = δ.generator (f t) := by
+    dsimp only [U]
+    exact (congrArg (fun g : C(X, E) => g t)
+      (ContinuousLinearEquiv.equivOfInverse_apply L L hLeft hRight f)).trans (hL f t)
+  have hγ (b : C(X, B)) (t : X) :
+      (CStarGrading.generatorAut (PointNormCStarAction.continuousMap X γ) b) t =
+        γ.generatorAut (b t) := by
+    simp only [CStarGrading.generatorAut_apply,
+      PointNormCStarAction.continuousMap_apply]
+  exact
+    { generator := U
+      generator_involutive := by
+        intro f
+        apply _root_.ContinuousMap.ext
+        intro t
+        rw [hU, hU]
+        exact δ.generator_involutive (f t)
+      generator_right_smul := by
+        intro f b
+        apply _root_.ContinuousMap.ext
+        intro t
+        simpa only [hU, CStarModule.ContinuousMap.right_smul_apply, hγ] using
+          δ.generator_right_smul (f t) (b t)
+      generator_rightInner := by
+        intro f g
+        apply _root_.ContinuousMap.ext
+        intro t
+        simpa only [CStarModule.ContinuousMap.rightInner_apply, hU, hγ] using
+          δ.generator_rightInner (f t) (g t) }
+
+/-- The lifted generator evaluates to the original generator at each point. -/
+@[simp]
+theorem continuousMap_generator_apply
+    (X : Type uX) [TopologicalSpace X] [CompactSpace X]
+    [PartialOrder (C(X, B))ᵐᵒᵖ] [StarOrderedRing (C(X, B))ᵐᵒᵖ]
+    (δ : CStarModuleGrading γ E) (f : C(X, E)) (t : X) :
+    (letI : SMul (C(X, B))ᵐᵒᵖ C(X, E) :=
+       CStarModule.ContinuousMap.rightAction (B := B) (E := E) X
+     letI : CStarModule (C(X, B))ᵐᵒᵖ C(X, E) :=
+       CStarModule.ContinuousMap.cstarModule (B := B) (E := E) X
+     ((continuousMap X δ).generator f) t = δ.generator (f t)) := by
+  dsimp only [continuousMap]
+  simp only [ContinuousLinearEquiv.equivOfInverse_apply]
+  rfl
+
+end CStarModuleGrading
