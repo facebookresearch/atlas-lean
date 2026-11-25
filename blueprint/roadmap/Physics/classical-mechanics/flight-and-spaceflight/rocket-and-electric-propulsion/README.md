@@ -78,3 +78,5 @@
 - [A zero-relative-velocity jettison leaves the velocity unchanged](jettison-velocity-eq.md)
 - [Velocity gained over staged burns with jettisons](staged-velocity-increment.md)
 - [Counting jettisoned dry mass as propellant overstates the gain](jettison-as-propellant-overstates.md)
+
+- [Hall thruster thrust equals the Hall-current force](hall-thruster-thrust-equals-the-hall-current-force.md)
