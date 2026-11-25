@@ -1,0 +1,16 @@
+# Conductor Normalization Branches
+
+- [Component Generics](component-generics.md)
+- [Generic Source](generic-source.md)
+- [Generic Map](generic-map.md)
+- [Normalization](normalization.md)
+- [Completed Node](completed-node.md)
+- [Is S2](is-s2.md)
+- [Is Nodal In Codimension One](is-nodal-in-codimension-one.md)
+- [Reduced Conductor](reduced-conductor.md)
+- [Conductor Inclusion](conductor-inclusion.md)
+- [Branch Involution](branch-involution.md)
+- [Conductor Residue Branch](conductor-residue-branch.md)
+- [Branch Different](branch-different.md)
+- [Different Transport](different-transport.md)
+- [Preserves Different](preserves-different.md)

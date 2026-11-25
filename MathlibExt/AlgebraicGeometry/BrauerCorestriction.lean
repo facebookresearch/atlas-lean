@@ -79,8 +79,11 @@ variable (K L : Type) [Field K] [Field L] [Algebra K L]
 def fixingSubgroup : Subgroup (Field.absoluteGaloisGroup K) :=
   ((separableClosure K (AlgebraicClosure K)).val.comp σ).fieldRange.fixingSubgroup
 
-/-- The finite-field source dictionary. Its maps are actual separable-closure
-and Galois equivalences, fixed on the given field embedding and unit action. -/
+/-- Galois data of a field extension $L/K$ with a $K$-embedding $\sigma : L \to K^{\mathrm{sep}}$:
+a ring isomorphism $L^{\mathrm{sep}} \cong K^{\mathrm{sep}}$ of separable closures extending
+$\sigma$; an isomorphism of topological groups from the absolute Galois group of $L$ to the
+subgroup of the absolute Galois group of $K$ fixing $\sigma(L)$ (`fixingSubgroup`), for which the
+ring isomorphism is equivariant; and the facts that this subgroup has finite index and is open. -/
 structure FiniteFieldPair where
   closure : SeparableClosure L ≃+* SeparableClosure K
   closure_base : ∀ a : L, closure (algebraMap L (SeparableClosure L) a) = σ a
@@ -111,9 +114,14 @@ def transferValue (P : FiniteFieldPair K L σ)
       (P.galois.symm ⟨transversalWord (fixingSubgroup K L σ) t (g⁻¹ • u) h,
         transversalWord_mem _ _ ht (g⁻¹ • u) h⟩)))
 
-/-- A native corestriction provider is fixed on all actual cocycle classes by
-the exact source transfer. This is a construction target, never an instance
-or a hypothesis asserting a downstream arithmetic theorem. -/
+/-- Corestriction maps $\mathrm{Br}(L) \to \mathrm{Br}(K)$ for the extension $L/K$ with the
+embedding $\sigma : L \to K^{\mathrm{sep}}$ and the Galois data `P`, where
+$\mathrm{Br}(K) = H^2(G_K, (K^{\mathrm{sep}})^\times)$ for the absolute Galois group $G_K$, given
+on cocycles by the transfer formula: additive maps $\mathrm{cor}$ such that, for every left
+transversal $t$ of the subgroup of $G_K$ fixing $\sigma(L)$ and every continuous two-cocycle $c$
+of $G_L$ with values in $(L^{\mathrm{sep}})^\times$, there is a two-cocycle $d$ of $G_K$ whose
+inhomogeneous values are those of the transfer of $c$ along $t$ (`transferValue`) and
+$\mathrm{cor}$ sends the class of $c$ to the class of $d$. -/
 abbrev NormalizedCorestriction (P : FiniteFieldPair K L σ) :=
   {cor : Br L →+ Br K //
     ∀ (t : (Field.absoluteGaloisGroup K) ⧸ fixingSubgroup K L σ →
