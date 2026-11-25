@@ -10509,6 +10509,7 @@
   "MathlibExt/Combinatorics/Additive/GowersNorm": {"to": "Combinatorics/additive-combinatorics/progressions-dense-sets", "title": "Gowers uniformity norms"},
   "MathlibExt/Combinatorics/Additive/HalfIntegerProgressions": {"to": "Combinatorics/additive-combinatorics/more-sums-than-differences", "title": "Unions of two progressions are not sum-dominant"},
   "MathlibExt/Combinatorics/Additive/MPTQSets": {"to": "Combinatorics/additive-combinatorics/more-sums-than-differences", "title": "Sets with more products than quotients"},
+  "MathlibExt/Combinatorics/Additive/IntegerStartProgressions": {"to": "Combinatorics/additive-combinatorics/more-sums-than-differences", "title": "Unions of two progressions are not sum-dominant"},
   "MathlibExt/Combinatorics/Additive/IntervalEraseAddSub": {"to": "Combinatorics/additive-combinatorics/more-sums-than-differences", "title": "Alternating sum- and difference-dominated sets"},
   "MathlibExt/Combinatorics/Additive/IrrationalStartProgressions": {"to": "Combinatorics/additive-combinatorics/more-sums-than-differences", "title": "Unions of two progressions are not sum-dominant"},
   "MathlibExt/Combinatorics/Additive/IrrationalStepProgressions": {"to": "Combinatorics/additive-combinatorics/more-sums-than-differences", "title": "Unions of two progressions are not sum-dominant"},
