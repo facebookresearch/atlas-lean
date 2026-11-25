@@ -16,19 +16,15 @@ import Mathlib.Tactic
 /-!
 # Stability of stopped occupation under uniform limits
 
-Intended module path:
-`Domains/Biology/PopulationGenetics/Diffusion/OccupationStability.lean`.
-
 For the neutral Wright-Fisher diffusion, potentials arising from Green kernels solve
 `L₀ u = -g` on `(0, 1)` with zero boundary values, but are typically not twice
 continuously differentiable on all of `ℝ`, so the general stopped-occupation identity
 (`integral_absorptionTime_of_generator_eq_neg`) does not apply to them directly. This
-module states that the identity persists under uniform approximation on `[0, 1]`: if
+module proves that the identity persists under uniform approximation on `[0, 1]`: if
 smooth potentials `uₙ` with integrands `gₙ` satisfy the general hypotheses for each `n`,
 and `uₙ → u` and `gₙ → g` uniformly on the closed unit interval, then the stopped
 occupation of the limit integrand `g` is integrable with expectation `u x`. The limit
-step is dominated convergence with dominator a constant times the absorption time;
-this module states the result only.
+step is dominated convergence with dominator a constant times the absorption time.
 
 ## Conventions
 

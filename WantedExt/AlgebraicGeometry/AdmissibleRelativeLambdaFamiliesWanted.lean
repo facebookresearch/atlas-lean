@@ -58,7 +58,7 @@ def_wanted unit_fibre_comparison (X : ComplexScheme) (x : scalarBase ⟶ X) (n :
 
 def_wanted fibre_tests (X : ComplexScheme) [IsComplexVariety X]
     (d : ℕ) [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsNoetherian X.left]
-    (_projective : DeCataldoMiglioriniDecompositionWanted.IsProjectiveOverC X)
+    (_projective : ProjectiveSpace.IsProjective X)
     (x : scalarBase ⟶ X) (n : ℕ) (_rank : 0 < n)
     (H : LineBundle X.left) (_ample : IsAmpleLine H)
     (P : PullbackSystem X x n) (V : UnitFibreComparison X x n P) : FibreTests X x n P V d H
@@ -66,7 +66,7 @@ def_wanted fibre_tests (X : ComplexScheme) [IsComplexVariety X]
 theorem_wanted zero_semistability (X : ComplexScheme) [IsComplexVariety X]
     (d : ℕ) [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsNoetherian X.left]
       [IsIntegral X.left]
-    (_projective : DeCataldoMiglioriniDecompositionWanted.IsProjectiveOverC X)
+    (_projective : ProjectiveSpace.IsProjective X)
     (_dimension : 0 < d) (H : LineBundle X.left) (_ample : IsAmpleLine H)
     (N : HilbertNumerics X H d)
     (D : Differential X.hom) (C : AbsoluteFormsComparison X)
@@ -77,7 +77,7 @@ theorem_wanted zero_semistability (X : ComplexScheme) [IsComplexVariety X]
 theorem_wanted nonzero_semistability (X : ComplexScheme) [IsComplexVariety X]
     (d : ℕ) [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsNoetherian X.left]
       [IsIntegral X.left]
-    (_projective : DeCataldoMiglioriniDecompositionWanted.IsProjectiveOverC X)
+    (_projective : ProjectiveSpace.IsProjective X)
     (H : LineBundle X.left) (_ample : IsAmpleLine H)
     (N : HilbertNumerics X H d) (D : Differential X.hom)
     (lambda : Γ(Spec (CommRingCat.of ℂ), ⊤)) (_nonzero : lambda ≠ 0)
@@ -91,7 +91,7 @@ theorem_wanted nonzero_rational_chern_zero
       (f : Y ⟶ Z) [IsProper f.left], ProperPullback (spaceMap f))
     (T : CharacteristicClassTheory D Q) (X : ComplexScheme) [IsComplexVariety X]
     (d : ℕ) [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsIntegral X.left]
-    (_projective : DeCataldoMiglioriniDecompositionWanted.IsProjectiveOverC X)
+    (_projective : ProjectiveSpace.IsProjective X)
     (A : Differential X.hom) (lambda : Γ(Spec (CommRingCat.of ℂ), ⊤)) (_nonzero : lambda ≠ 0)
     (E : LambdaConnectionStability.CoherentConnection X.hom lambda A)
     (G : ChernGeometry X d E.connection.rank E.connection.object) :
@@ -100,7 +100,7 @@ theorem_wanted nonzero_rational_chern_zero
 theorem_wanted finite_type_admissibility
     (X : ComplexScheme) [IsComplexVariety X] (d : ℕ) [SmoothOfRelativeDimension d X.hom]
     [IsProper X.hom] [IsNoetherian X.left] [IsIntegral X.left]
-    (_projective : DeCataldoMiglioriniDecompositionWanted.IsProjectiveOverC X)
+    (_projective : ProjectiveSpace.IsProjective X)
     (x : scalarBase ⟶ X) (n : ℕ) (_rank : 0 < n)
     (H : LineBundle X.left) (_ample : IsAmpleLine H)
     (P : PullbackSystem X x n) (PC : PullbackCoherence X x n P)
@@ -118,7 +118,7 @@ theorem_wanted finite_type_admissibility
 theorem_wanted admissible_reindexing
     (X : ComplexScheme) [IsComplexVariety X] (d : ℕ) [SmoothOfRelativeDimension d X.hom]
     [IsProper X.hom] [IsNoetherian X.left] [IsIntegral X.left]
-    (_projective : DeCataldoMiglioriniDecompositionWanted.IsProjectiveOverC X)
+    (_projective : ProjectiveSpace.IsProjective X)
     (x : scalarBase ⟶ X) (n : ℕ) (_rank : 0 < n)
     (H : LineBundle X.left) (_ample : IsAmpleLine H)
     (P : PullbackSystem X x n) (PC : PullbackCoherence X x n P)
@@ -134,7 +134,7 @@ theorem_wanted admissible_reindexing
 theorem_wanted affine_limit_descent
     (X : ComplexScheme) [IsComplexVariety X] (d : ℕ) [SmoothOfRelativeDimension d X.hom]
     [IsProper X.hom] [IsNoetherian X.left] [IsIntegral X.left]
-    (_projective : DeCataldoMiglioriniDecompositionWanted.IsProjectiveOverC X)
+    (_projective : ProjectiveSpace.IsProjective X)
     (x : scalarBase ⟶ X) (n : ℕ) (_rank : 0 < n)
     (H : LineBundle X.left) (_ample : IsAmpleLine H)
     (P : PullbackSystem X x n) (PC : PullbackCoherence X x n P)
@@ -156,7 +156,7 @@ def_wanted scalingParameterTheory [FrameTheory 1] : ScalingParameterTheory
 theorem_wanted actionAdmissibility
     (X : ComplexScheme) [IsComplexVariety X] (d : ℕ)
     [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsNoetherian X.left] [IsIntegral X.left]
-    (_projective : DeCataldoMiglioriniDecompositionWanted.IsProjectiveOverC X)
+    (_projective : ProjectiveSpace.IsProjective X)
     (x : scalarBase ⟶ X) (n : ℕ) (_rank : 0 < n)
     (H : LineBundle X.left) (_ample : IsAmpleLine H)
     (P : PullbackSystem X x n) (PC : PullbackCoherence X x n P)
@@ -173,7 +173,7 @@ theorem_wanted actionAdmissibility
 theorem_wanted admissibleRankHilbertPolynomial
     (X : ComplexScheme) [IsComplexVariety X] (d : ℕ)
     [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsNoetherian X.left] [IsIntegral X.left]
-    (_projective : DeCataldoMiglioriniDecompositionWanted.IsProjectiveOverC X)
+    (_projective : ProjectiveSpace.IsProjective X)
     (x : scalarBase ⟶ X) (n : ℕ) (_rank : 0 < n)
     (H : LineBundle X.left) (_ample : IsAmpleLine H)
     (P : PullbackSystem X x n) (PC : PullbackCoherence X x n P)
@@ -196,7 +196,7 @@ theorem_wanted admissibleRankHilbertPolynomial
 def_wanted hodgeRepresentation
     (X : ComplexScheme) [IsComplexVariety X] (d : ℕ)
     [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsNoetherian X.left] [IsIntegral X.left]
-    (_projective : DeCataldoMiglioriniDecompositionWanted.IsProjectiveOverC X)
+    (_projective : ProjectiveSpace.IsProjective X)
     (x : scalarBase ⟶ X) (n : ℕ) (_rank : 0 < n)
     (H : LineBundle X.left) (_ample : IsAmpleLine H)
     (P : PullbackSystem X x n) (PC : PullbackCoherence X x n P)
@@ -216,7 +216,7 @@ def_wanted hodgeRepresentation
 def_wanted hodgeQuotient
     (X : ComplexScheme) [IsComplexVariety X] (d : ℕ)
     [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsNoetherian X.left] [IsIntegral X.left]
-    (_projective : DeCataldoMiglioriniDecompositionWanted.IsProjectiveOverC X)
+    (_projective : ProjectiveSpace.IsProjective X)
     (x : scalarBase ⟶ X) (n : ℕ) (_rank : 0 < n)
     (H : LineBundle X.left) (_ample : IsAmpleLine H)
     (P : PullbackSystem X x n) (PC : PullbackCoherence X x n P)
@@ -237,7 +237,7 @@ def_wanted hodgeQuotient
 def_wanted fixedRepresentation
     (X : ComplexScheme) [IsComplexVariety X] (d : ℕ)
     [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsNoetherian X.left] [IsIntegral X.left]
-    (_projective : DeCataldoMiglioriniDecompositionWanted.IsProjectiveOverC X)
+    (_projective : ProjectiveSpace.IsProjective X)
     (x : scalarBase ⟶ X) (n : ℕ) (_rank : 0 < n)
     (H : LineBundle X.left) (_ample : IsAmpleLine H)
     (P : PullbackSystem X x n) (PC : PullbackCoherence X x n P)
@@ -258,7 +258,7 @@ def_wanted fixedRepresentation
 def_wanted fixedQuotient
     (X : ComplexScheme) [IsComplexVariety X] (d : ℕ)
     [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsNoetherian X.left] [IsIntegral X.left]
-    (_projective : DeCataldoMiglioriniDecompositionWanted.IsProjectiveOverC X)
+    (_projective : ProjectiveSpace.IsProjective X)
     (x : scalarBase ⟶ X) (n : ℕ) (_rank : 0 < n)
     (H : LineBundle X.left) (_ample : IsAmpleLine H)
     (P : PullbackSystem X x n) (PC : PullbackCoherence X x n P)
@@ -280,7 +280,7 @@ def_wanted fixedQuotient
 def_wanted zeroHiggsRealization
     (X : ComplexScheme) [IsComplexVariety X] (d : ℕ)
     [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsNoetherian X.left] [IsIntegral X.left]
-    (_projective : DeCataldoMiglioriniDecompositionWanted.IsProjectiveOverC X)
+    (_projective : ProjectiveSpace.IsProjective X)
     (x : scalarBase ⟶ X) (n : ℕ) (_rank : 0 < n)
     (H : LineBundle X.left) (_ample : IsAmpleLine H)
     (P : PullbackSystem X x n) (PC : PullbackCoherence X x n P)
@@ -298,7 +298,7 @@ def_wanted zeroHiggsRealization
 def_wanted oneFlatRealization
     (X : ComplexScheme) [IsComplexVariety X] (d : ℕ)
     [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsNoetherian X.left] [IsIntegral X.left]
-    (_projective : DeCataldoMiglioriniDecompositionWanted.IsProjectiveOverC X)
+    (_projective : ProjectiveSpace.IsProjective X)
     (x : scalarBase ⟶ X) (n : ℕ) (_rank : 0 < n)
     (H : LineBundle X.left) (_ample : IsAmpleLine H)
     (P : PullbackSystem X x n) (PC : PullbackCoherence X x n P)
@@ -316,7 +316,7 @@ def_wanted oneFlatRealization
 def_wanted hodgeFibreIdentification
     (X : ComplexScheme) [IsComplexVariety X] (d : ℕ)
     [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsNoetherian X.left] [IsIntegral X.left]
-    (_projective : DeCataldoMiglioriniDecompositionWanted.IsProjectiveOverC X)
+    (_projective : ProjectiveSpace.IsProjective X)
     (x : scalarBase ⟶ X) (n : ℕ) (_rank : 0 < n)
     (H : LineBundle X.left) (_ample : IsAmpleLine H)
     (P : PullbackSystem X x n) (PC : PullbackCoherence X x n P)
@@ -340,7 +340,7 @@ def_wanted hodgeFibreIdentification
 def_wanted coarseScalingDescent
     (X : ComplexScheme) [IsComplexVariety X] (d : ℕ)
     [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsNoetherian X.left] [IsIntegral X.left]
-    (_projective : DeCataldoMiglioriniDecompositionWanted.IsProjectiveOverC X)
+    (_projective : ProjectiveSpace.IsProjective X)
     (x : scalarBase ⟶ X) (n : ℕ) (_rank : 0 < n)
     (H : LineBundle X.left) (_ample : IsAmpleLine H)
     (P : PullbackSystem X x n) (PC : PullbackCoherence X x n P)
@@ -362,7 +362,7 @@ def_wanted coarseScalingDescent
 def_wanted nonzeroFibreScaling
     (X : ComplexScheme) [IsComplexVariety X] (d : ℕ)
     [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsNoetherian X.left] [IsIntegral X.left]
-    (_projective : DeCataldoMiglioriniDecompositionWanted.IsProjectiveOverC X)
+    (_projective : ProjectiveSpace.IsProjective X)
     (x : scalarBase ⟶ X) (n : ℕ) (_rank : 0 < n)
     (H : LineBundle X.left) (_ample : IsAmpleLine H)
     (P : PullbackSystem X x n) (PC : PullbackCoherence X x n P)
@@ -386,7 +386,7 @@ def_wanted nonzeroFibreScaling
 def_wanted framedEtaleLocalProduct
     (X : ComplexScheme) [IsComplexVariety X] (d : ℕ)
     [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsNoetherian X.left] [IsIntegral X.left]
-    (_projective : DeCataldoMiglioriniDecompositionWanted.IsProjectiveOverC X)
+    (_projective : ProjectiveSpace.IsProjective X)
     (x : scalarBase ⟶ X) (n : ℕ) (_rank : 0 < n)
     (H : LineBundle X.left) (_ample : IsAmpleLine H)
     (P : PullbackSystem X x n) (PC : PullbackCoherence X x n P)
@@ -408,7 +408,7 @@ def_wanted framedEtaleLocalProduct
 def_wanted coarseEtaleLocalProduct
     (X : ComplexScheme) [IsComplexVariety X] (d : ℕ)
     [SmoothOfRelativeDimension d X.hom] [IsProper X.hom] [IsNoetherian X.left] [IsIntegral X.left]
-    (_projective : DeCataldoMiglioriniDecompositionWanted.IsProjectiveOverC X)
+    (_projective : ProjectiveSpace.IsProjective X)
     (x : scalarBase ⟶ X) (n : ℕ) (_rank : 0 < n)
     (H : LineBundle X.left) (_ample : IsAmpleLine H)
     (P : PullbackSystem X x n) (PC : PullbackCoherence X x n P)

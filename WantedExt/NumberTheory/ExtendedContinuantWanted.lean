@@ -90,18 +90,6 @@ public theorem_wanted extendedContinuant_euler (x : ℤ → ℤ) (h k ℓ m : �
       (k.negOnePow : ℤ) * extendedContinuant x (m - k - 2) (k + ℓ + h + 2) *
         extendedContinuant x (ℓ - 1) h
 
-/-- **Determinant identity for extended continuants.** Let $x : \mathbb{Z} \to \mathbb{Z}$ be an
-integer sequence and write $K_a(x)_b$ for its extended continuant of order $a$ with start index
-$b$. For every integer $n$,
-$$K_n(x)_0 K_{n-2}(x)_1 - K_{n-1}(x)_1 K_{n-1}(x)_0 = (-1)^{n+1}.$$
-
-Source: Dixon J. Jones, *Extended Continuants and Bi-infinite Periodic Continued Fractions*,
-INTEGERS 26 (2026), Article A73, Corollary 2. -/
-public theorem_wanted extendedContinuant_det (x : ℤ → ℤ) (n : ℤ) :
-    extendedContinuant x n 0 * extendedContinuant x (n - 2) 1 -
-        extendedContinuant x (n - 1) 1 * extendedContinuant x (n - 1) 0 =
-      ((n + 1).negOnePow : ℤ)
-
 /-- **Terms of a $1$-silent sequence.** Let $x, y, z : \mathbb{Z} \to \mathbb{Z}$ be bi-infinite
 integer sequences and write $K_a(x)_b$ for the extended continuant of order $a$ with start index
 $b$. Suppose that for every natural number $i$, $K_i(x)_0 = K_i(y)_0$,
@@ -197,31 +185,6 @@ public theorem_wanted silentTerms_table_one_mod_six (x : ℤ → ℤ) (σ : ℤ)
       -1 + extendedContinuant x (σ - 6) (-σ + 4) +
           (x 0 + c₂) * extendedContinuant x (σ - 5) (-σ + 4) =
         1 * (-extendedContinuant x (σ - 5) (-σ + 3) -
-          (x 0 + c₂) * extendedContinuant x (σ - 4) (-σ + 3))
-
-/-- **Silent-term formulas on table (33), case $\sigma \equiv 5 \pmod 6$.** Let $\sigma \ge 7$ be
-an integer with $\sigma \equiv 5 \pmod 6$, let $c_1 \ne c_2$ be integers, and let
-$x : \mathbb{Z} \to \mathbb{Z}$ be a bi-infinite integer sequence with $x_{-3} = x_0 + c_1$,
-$x_{-2} = 1$, $x_{-1} = -1$ and, for all integers $4 \le m \le \sigma - 3$, $x_{-m} = -1$ if
-$m \equiv 2 \pmod 3$ and $x_{-m} = 1$ otherwise. Write $K_a(x)_b$ for the extended continuant of
-order $a$ with start index $b$, and put $z_0 = x_0 + c_2$ and
-$w = -K_{\sigma-5}(x)_{-\sigma+3} - z_0 K_{\sigma-4}(x)_{-\sigma+3}$. Then $w \ne 0$ and
-$-1 + K_{\sigma-6}(x)_{-\sigma+4} + z_0 K_{\sigma-5}(x)_{-\sigma+4} = (1 + c_2 - c_1) w$.
-
-So formula (29) of Theorem 7, with $z_0 = x_0 + c_2$, gives $x_{-\sigma+1} = w \ne 0$ and
-$x_{-\sigma+2} = 1 + c_2 - c_1$.
-
-Source: Dixon J. Jones, *Extended Continuants and Bi-infinite Periodic Continued Fractions*,
-INTEGERS 26 (2026), Article A73, Proposition 3 (case `σ ≡ 5 mod 6`). -/
-public theorem_wanted silentTerms_table_five_mod_six (x : ℤ → ℤ) (σ : ℤ) (hσ : σ % 6 = 5)
-    (h7 : 7 ≤ σ) (c₁ c₂ : ℤ) (hc : c₁ ≠ c₂) (h3 : x (-3) = x 0 + c₁) (h2 : x (-2) = 1)
-    (h1 : x (-1) = -1)
-    (htab : ∀ m : ℤ, 4 ≤ m → m ≤ σ - 3 → x (-m) = if m % 3 = 2 then -1 else 1) :
-    -extendedContinuant x (σ - 5) (-σ + 3) - (x 0 + c₂) * extendedContinuant x (σ - 4) (-σ + 3)
-        ≠ 0 ∧
-      -1 + extendedContinuant x (σ - 6) (-σ + 4) +
-          (x 0 + c₂) * extendedContinuant x (σ - 5) (-σ + 4) =
-        (1 + c₂ - c₁) * (-extendedContinuant x (σ - 5) (-σ + 3) -
           (x 0 + c₂) * extendedContinuant x (σ - 4) (-σ + 3))
 
 /-- **The conjugate continued fraction is not purely periodic.** Let $P$, $Q$ and $D$ be integers
