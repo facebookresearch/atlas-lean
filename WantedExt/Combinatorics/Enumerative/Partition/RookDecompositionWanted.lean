@@ -28,6 +28,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Asymptotics.AsymptoticEquivalent
 public import MathlibExt.Combinatorics.Enumerative.Partition.RookParityFive
+public import MathlibExt.Combinatorics.Enumerative.Partition.RookParityThree
 public import MathlibExt.Combinatorics.Enumerative.Partition.RookPeriodicity
 public import MathlibExt.Analysis.SpecialFunctions.QPochhammer
 
@@ -163,15 +164,6 @@ Journal of Integer Sequences 29 (2026), Article 26.2.6, Corollary 9
 public theorem_wanted maxRookPartitionCount_four_isEquivalent :
     Asymptotics.IsEquivalent Filter.atTop (fun n : ℕ => (maxRookPartitionCount 4 n : ℝ))
       (fun n => (n : ℝ) ^ 3 / 9)
-
-/-- **Parity of $R_3(n)$.** Let $R_3(n)$ be the number of partitions of $n$ with max-rook number
-$3$. For every natural number $n > 9$, $R_3(n)$ is even if $n$ is odd and odd if $n$ is even.
-
-Source: N. Guru Sharan, *Rook Decomposition of the Partition Function*,
-Journal of Integer Sequences 29 (2026), Article 26.2.6, Theorem 10
-(`jis-2026-26.2.6-thm-10`). -/
-public theorem_wanted maxRookPartitionCount_three_mod_two (n : ℕ) (hn : 9 < n) :
-    maxRookPartitionCount 3 n % 2 = if n % 2 = 1 then 0 else 1
 
 /-- **Parity of the number of partitions with max-rook number 4.** Let $R_4(n)$ be the number of
 partitions of $n$ with max-rook number $4$. For every natural number $n > 16$, $R_4(n)$ is even if
