@@ -117,6 +117,18 @@ reader can:
 | **Cards** | Is each card one idea a reader would look for? | Its main statement is that idea stated exactly, its opening states it faithfully, its `## Idea` helps a learner, and its importance and level are right. A stronger, weaker or special form of the main statement belongs in the card only with a reason in its `## Statements` item. Links to other cards are teaching links under `## Background` ([Cards](docs/BLUEPRINT.md#cards)); a card never carries dependency sections. |
 | **Held pages** | Is the hold still justified? | Don't ask to relink a page whose annotation records a `held` declaration; check that the reason holds and, unless the declaration is private by design, that its issue is linked. |
 
+A Lean pull request leaves pages, placements and docstring digests to the next
+graph-sync batch: don't ask it for them
+([Lean pull requests and graph pull requests](CONTRIBUTING.md#lean-pull-requests-and-graph-pull-requests)).
+Check instead that its only wiki changes repoint the links to declarations it
+renames, moves or removes, keeping their article ids, and that each `Place:`
+line names a field that fits the module. Review a graph-sync batch by running
+`python3 scripts/graph_batch.py verify` on its exact head, from an up-to-date
+checkout of `main`, then reading its placements and the notes it leaves for an
+editor ([Graph-sync batches](docs/BLUEPRINT.md#graph-sync-batches)). Its pages
+are the sync's, made from docstrings reviewed with their Lean: a docstring
+that misstates its declaration is a finding on the Lean, for an issue.
+
 A code owner's approval is a person's, not a finding: don't request changes
 because it is missing.
 

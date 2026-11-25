@@ -1167,13 +1167,18 @@ class GraphSyncWorkflowTests(unittest.TestCase):
             if "uses" in step:
                 self.assertRegex(step["uses"], r"@[0-9a-f]{40}\Z")
 
-    def run_check(self, status: int, report: str | None = None, extra: str = "", fix_fetch: str = "refs/heads/main"):
+    def run_check(self, status: int, report: str | None = None, extra: str = "", fix_fetch: str = "refs/heads/main",
+                  changed: str | None = None, event: str = "pull_request"):
         """Run the check's step with a uv that prints a verdict, writes *report* as the check's JSON report, if any,
-        and exits with *status*; returns the result, the job summary and the arguments uv got."""
+        and exits with *status*, and a git that names *changed* as the graph files the change touches, or fails when
+        it is None; returns the result, the job summary and the arguments uv got."""
         directory = tempfile.TemporaryDirectory()
         self.addCleanup(directory.cleanup)
         root = Path(directory.name)
         (root / "bin").mkdir()
+        (root / "bin" / "git").write_text('#!/bin/sh\nprintf "%s" "$GIT_CHANGED"\n' if changed is not None
+                                         else "#!/bin/sh\nexit 128\n")
+        (root / "bin" / "git").chmod(0o755)
         if report is not None:
             (root / "report.json").write_text(report)
         (root / "bin" / "uv").write_text(f'#!/bin/sh\necho "$@" > uv-arguments\necho "In step: no"\necho "error: a link" >&2\n'
@@ -1185,7 +1190,8 @@ class GraphSyncWorkflowTests(unittest.TestCase):
             ["bash", "-c", self.steps["Check that the graph is in step with the Lean"]["run"]], cwd=root, text=True,
             capture_output=True, env={**os.environ, "PATH": f"{root / 'bin'}:{os.environ['PATH']}", "BASE": "b" * 40,
                                       "AUTOFORM_SOURCE": "https://example.invalid/autoform.git", "AUTOFORM_REF": "a" * 40,
-                                      "GITHUB_STEP_SUMMARY": str(summary), "UV_EXTRA": extra, "FIX_FETCH": fix_fetch})
+                                      "GITHUB_STEP_SUMMARY": str(summary), "UV_EXTRA": extra, "FIX_FETCH": fix_fetch,
+                                      "EVENT": event, "GIT_CHANGED": changed or ""})
         return result, summary.read_text(), (root / "uv-arguments").read_text().split()
 
     def test_the_check_output_can_neither_issue_a_command_nor_end_the_summary_block(self):
@@ -1235,6 +1241,37 @@ class GraphSyncWorkflowTests(unittest.TestCase):
             self.assertIn("::warning title=Graph sync::The check could not run", result.stdout)
             self.assertIn(f"The check could not run (exit {status})", summary)
             self.assertNotIn("merge-base", summary)
+
+    def test_a_lean_change_or_a_merge_group_is_held_only_to_the_errors(self):
+        # A Lean pull request changes no graph file but links files, which it changes only to repoint links, and a
+        # merge group holds others' changes: their missing pages are the next graph-sync batch's (docs/BLUEPRINT.md,
+        # Maintaining articles), so the check passes and asks for no sync.
+        if shutil.which("jq") is None:
+            self.skipTest("jq is not installed")
+        pages = '{"in_step": false, "errors": [], "missing": ["Ext.fresh"]}'
+        for changed, event in (("", "pull_request"), ("blueprint/links/Algebra.jsonl\n", "pull_request"),
+                               ("blueprint/roadmap/Algebra/fresh.md\n", "merge_group")):
+            with self.subTest(changed=changed, event=event):
+                result, summary, _ = self.run_check(1, pages, changed=changed, event=event)
+                self.assertEqual(result.returncode, 0)
+                self.assertNotIn("::warning", result.stdout)
+                self.assertIn("the next graph-sync\nbatch writes its new declarations' pages", summary)
+                self.assertNotIn("merge-base", summary)
+        # What the errors name is the change's to fix, by hand: still no sync.
+        errors = '{"in_step": false, "errors": ["blueprint/links/Algebra.jsonl:3 links Ext.gone"]}'
+        result, summary, _ = self.run_check(1, errors, changed="")
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("::warning title=Graph sync::This change's Lean leaves links or markers behind", result.stdout)
+        self.assertIn("    In step: no\n", summary)
+        self.assertIn("A Lean pull request runs no sync", summary)
+        self.assertNotIn("merge-base", summary)
+        # A graph pull request, which changes other graph files, or a change git cannot read, is held to the sync.
+        for changed in ("blueprint/links/Algebra.jsonl\nscripts/taxonomy.json\n", None):
+            with self.subTest(changed=changed):
+                result, summary, _ = self.run_check(1, pages, changed=changed)
+                self.assertEqual(result.returncode, 1)
+                self.assertIn("::warning title=Graph sync::The graph is not in step", result.stdout)
+                self.assertIn('--base "$(git merge-base FETCH_HEAD HEAD)"', summary)
 
     def find_base(self, event: str, env=lambda main, merge: {}):
         """Run the step that finds the base in a repository whose HEAD merges a branch into main, as a pull request's

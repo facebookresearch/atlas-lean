@@ -1,10 +1,11 @@
 name: Graph sync
 
 # Every pull request and merge group, Lean-only ones included, against the
-# graph: the documented declarations its Lean adds get their pages, a
-# docstring it edits gets its digest, and a declaration it renames or removes
-# leaves no link or held marker behind (docs/BLUEPRINT.md, Maintaining
-# articles). The check reads the Lean sources only, with no Lean build, and
+# graph: a declaration its Lean renames or removes leaves no link or held
+# marker behind, and, in a graph pull request, the documented declarations its
+# Lean adds get their pages and a docstring it edits gets its digest; a Lean
+# pull request leaves those to the next graph-sync batch (docs/BLUEPRINT.md,
+# Maintaining articles). The check reads the Lean sources only, with no Lean build, and
 # writes nothing. It only reports for now (#4273, step 4): its step cannot
 # fail the job, and it is not a required check.
 on:
@@ -82,10 +83,14 @@ jobs:
       # The verdicts come first: whether the pull request is in step, with the
       # command that fixes it, and whether its wiki changes are only what that
       # command writes. They go to the job summary and the graph-sync artifact.
+      # A Lean pull request, which changes no graph file but links files, and a
+      # merge group are held only to the check's errors: their missing pages are
+      # the next graph-sync batch's (docs/BLUEPRINT.md, Maintaining articles).
       - name: Check that the graph is in step with the Lean
         continue-on-error: true
         env:
           PYTHONUNBUFFERED: "1"
+          EVENT: ${{ github.event_name }}
         run: |
           set -euo pipefail
           mkdir -p build
@@ -105,21 +110,50 @@ jobs:
           echo "::stop-commands::$token"
           cat build/graph-sync.txt
           printf '\n::%s::\n' "$token"
-          # Not in step only when the report says so: any other failure means the check could not run.
-          verdict="$(jq -r 'if .in_step == false then "out" else "other" end' build/graph-sync.json 2>/dev/null || true)"
-          if [[ "$status" -ne 0 && "$verdict" != out ]]; then
+          # Not in step only when the report says so: any other failure means the check could not run. Out of
+          # step with errors (links or markers the Lean leaves behind, rows Autoform cannot read), or with pages,
+          # digests or part lists only.
+          verdict="$(jq -r 'if .in_step == false then (if (.errors // []) == [] then "pages" else "out" end)
+                            else "other" end' build/graph-sync.json 2>/dev/null || true)"
+          if [[ "$status" -ne 0 && "$verdict" != out && "$verdict" != pages ]]; then
             failed=yes
           else
             failed=no
           fi
+          # A graph pull request changes graph files other than links files; when git cannot say, the change is
+          # held to the sync, as one.
+          graph=yes
+          if [[ "${EVENT:-}" == merge_group ]]; then
+            graph=no
+          elif changed="$(git diff --name-only --no-renames "$BASE" HEAD -- blueprint scripts/taxonomy.json \
+                            scripts/wiki-sync.json scripts/card-moves.jsonl scripts/mathgraph-map.jsonl)"; then
+            if [[ -z "$changed" ]] || ! grep -qvE '^blueprint/links/[^/]+[.]jsonl$' <<< "$changed"; then
+              graph=no
+            fi
+          fi
+          deferred=no
+          if [[ "$failed" == no && "$graph" == no && "$verdict" == pages ]]; then
+            deferred=yes
+            status=0
+          fi
           {
             echo "### Graph sync"
             echo
-            head -c 60000 build/graph-sync.txt | sed -e 's/\r$//' -e 's/\r/\n/g' | sed 's/^/    /'
-            echo
+            if [[ "$deferred" == yes ]]; then
+              echo "Nothing to do here: this change's Lean leaves no link or marker behind, and the next graph-sync"
+              echo "batch writes its new declarations' pages (docs/BLUEPRINT.md, Graph-sync batches). A Lean pull"
+              echo "request runs no sync. The log has the check's full report."
+            else
+              head -c 60000 build/graph-sync.txt | sed -e 's/\r$//' -e 's/\r/\n/g' | sed 's/^/    /'
+              echo
+            fi
             if [[ "$failed" == yes ]]; then
               echo
               echo "The check could not run (exit $status): the log above says why."
+            elif [[ "$status" -ne 0 && "$graph" == no ]]; then
+              echo
+              echo "A Lean pull request runs no sync: fix in it only what the errors above name (CONTRIBUTING.md,"
+              echo "Say how a pull request touches the graph). The next graph-sync batch writes its pages."
             elif [[ "$status" -ne 0 ]]; then
               # From where the branch starts on the one the change targets, or, with none, the commit the check
               # compared with.
@@ -138,6 +172,8 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
           if [[ "$failed" == yes ]]; then
             echo "::warning title=Graph sync::The check could not run; the job summary says why."
+          elif [[ "$status" -ne 0 && "$graph" == no ]]; then
+            echo "::warning title=Graph sync::This change's Lean leaves links or markers behind; the job summary names them."
           elif [[ "$status" -ne 0 ]]; then
             echo "::warning title=Graph sync::The graph is not in step with this change's Lean; the job summary says how to fix it."
           fi
