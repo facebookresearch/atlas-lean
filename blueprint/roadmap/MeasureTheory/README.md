@@ -13,21 +13,28 @@ similarities of ratio $\lambda$ under the open set condition has Hausdorff dimen
 set and the [Banach–Tarski paradox](measures/banach-tarski-paradox/README.md), and integration, Lebesgue spaces, Haar
 measure and optimal transport make up most of the rest.
 
-The pages below extend the textbook core of the subject, which in the order of Tao's *An
-Introduction to Measure Theory* is: Lebesgue outer measure and Carathéodory's construction (Tao's
+In the order of Tao's *An Introduction to Measure Theory*, the textbook core of the subject is:
+Lebesgue outer measure and Carathéodory's construction (Tao's
 definition of Lebesgue measurability is compared with null-measurability in [Lebesgue
-measurability](lebesgue-measure/lebesgue-measurability/README.md)); the monotone convergence
-theorem, Fatou's lemma and the dominated convergence theorem; Egorov's theorem and the
+measurability](lebesgue-measure/lebesgue-measurability/README.md)); the [monotone convergence
+theorem](integration/monotone-convergence-theorem/README.md), [Fatou's
+lemma](integration/nonnegative-lebesgue-integral/fatou-s-lemma/README.md) and the dominated convergence theorem; Egorov's theorem and the
 Borel–Cantelli lemma; Tonelli's and Fubini's theorems (their $\sigma$-finiteness hypothesis is shown
-necessary in [Fubini–Tonelli theorem](integration/fubini-tonelli-theorem/README.md)); Hölder's and
-Minkowski's inequalities and the completeness of $L^p$; the Lebesgue differentiation theorem and
+necessary in [Fubini–Tonelli theorem](integration/fubini-tonelli-theorem/README.md)); [Hölder's](lp-spaces/h-lder-and-minkowski-inequalities-for-integrals/h-lder-s-inequality/README.md) and
+[Minkowski's](lp-spaces/triangle-inequality-for-lp-seminorms/README.md) inequalities and the [completeness of
+$L^p$](lp-spaces/completeness-of-lp-spaces/README.md); the [Lebesgue differentiation
+theorem](differentiation-of-measures/differentiation-of-measures/lebesgue-differentiation-theorem/README.md) and
 the almost everywhere differentiability of monotone functions.
 
+- [Measurable spaces and measurable functions](measurable-spaces/README.md)
 - [Measures and measurable sets](measures/README.md)
+- [Signed and vector measures](signed-vector-measures/README.md)
 - [Lebesgue measure](lebesgue-measure/README.md)
+- [Covering theorems and differentiation of measures](differentiation-of-measures/README.md)
 - [Haar measure and fundamental domains](haar-measure/README.md)
 - [Integration and convergence](integration/README.md)
 - [Lebesgue spaces](lp-spaces/README.md)
 - [Differentiation of real functions](real-functions/README.md)
 - [Optimal transport](optimal-transport/README.md)
 - [Geometric measure theory](geometric-measure-theory/README.md)
+- [Not yet classified](not-yet-classified/README.md)

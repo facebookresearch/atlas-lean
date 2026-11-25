@@ -1,0 +1,3 @@
+# SINGLE-MACHINE PRECEDENCE SCHEDULING WITH UNIT WEIGHTS, TOTAL COMPLETION TIME as a decision problem
+
+The decision problem SINGLE-MACHINE PRECEDENCE SCHEDULING WITH UNIT WEIGHTS, TOTAL COMPLETION TIME accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of triples $(J, P, K)$ (a list of pairs, a list of pairs and a natural number), to an instance that is well-formed for SINGLE-MACHINE PRECEDENCE SCHEDULING WITH UNIT WEIGHTS, TOTAL COMPLETION TIME and feasible for precedence-constrained weighted completion (a precedence-respecting ordering with weighted completion sum at most $K$). It rejects every bitstring that does not decode to such an instance.

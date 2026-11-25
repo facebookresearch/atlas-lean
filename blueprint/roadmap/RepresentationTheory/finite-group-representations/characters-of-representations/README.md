@@ -9,3 +9,4 @@
 - [Characteristic roots of $\rho(g)$ are $|G|$-th roots of unity](char-charpoly-roots-pow-eq-one.md)
 - [Parseval / sum-of-squares for characters](character-self-pairing-eq-sum-sq.md)
 - [Sum of squares of the Wedderburn block sizes](wedderburn-sum-sq-eq-card.md)
+- [Character of a representation](representation-character.md)

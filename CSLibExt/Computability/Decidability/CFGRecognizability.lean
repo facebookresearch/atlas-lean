@@ -78,7 +78,10 @@ theorem computablePred_mem_language :
     ComputablePred fun p : EncodedCFG T × List T ↦ p.2 ∈ p.1.language :=
   tm2Decidable_iff_computablePred.mp EncodedCFG.tm2Decidable_mem_language
 
-/-- Membership in the first or second grammar of a pair. -/
+/-- **Membership in the first grammar of a pair is computable.** Let $T$ be an alphabet with a
+primcodable encoding and decidable equality. The predicate that holds of a pair
+$((g_1, g_2), w)$, where $g_1, g_2$ are encoded context-free grammars over $T$ and $w$ is a word
+over $T$, exactly when $w$ lies in the language of $g_1$, is a computable predicate. -/
 theorem computablePred_mem_fst :
     ComputablePred fun p : (EncodedCFG T × EncodedCFG T) × List T ↦ p.2 ∈ p.1.1.language :=
   ComputablePred.computable_of_manyOneReducible
@@ -91,7 +94,15 @@ theorem computablePred_mem_snd :
     ⟨_, Computable.pair (Computable.snd.comp Computable.fst) Computable.snd, fun _ ↦ Iff.rfl⟩
     computablePred_mem_language
 
-/-- **`OVERLAP_CFG` is recognizable**: search for a common word. -/
+/-- **The overlap problem for context-free grammars is recognizable.** Let $T$ be an alphabet
+with a primitive recursive coding into the natural numbers and decidable equality. For an
+encoded context-free grammar $G$ over $T$, write $L(G)$ for the language it generates. The
+problem $\mathrm{OVERLAP}_{\mathrm{CFG}}$, the set of pairs $(G, H)$ of encoded context-free
+grammars over $T$ such that some word $w$ over $T$ lies in both $L(G)$ and $L(H)$, is
+recognizable by a multi-stack machine.
+
+The proof searches for a common word, using that membership in a context-free language is
+decidable. -/
 theorem tm2Recognizable_overlap :
     TM2Recognizable fun g : EncodedCFG T × EncodedCFG T ↦
       ∃ w, w ∈ g.1.language ∧ w ∈ g.2.language :=
@@ -100,7 +111,11 @@ theorem tm2Recognizable_overlap :
       w ∈ g.1.language ∧ w ∈ g.2.language)
     (MetaMathlibExt.ComputablePred.and computablePred_mem_fst computablePred_mem_snd).to_re
 
-/-- **`ALL_CFG` is co-recognizable**: search for a word outside the language. -/
+/-- **Universality of context-free grammars is co-recognizable.** For every alphabet $T$ with a
+primcodable encoding and decidable equality, the set of encoded context-free grammars over $T$
+whose language contains every word over $T$ is co-recognizable by a multi-stack Turing machine.
+
+A recognizer for the complement searches for a word outside the language. -/
 theorem tm2CoRecognizable_univ :
     TM2CoRecognizable fun g : EncodedCFG T ↦ ∀ w, w ∈ g.language :=
   tm2CoRecognizable_iff_rePred_not.mpr <| (MetaMathlibExt.REPred.exists
@@ -108,7 +123,12 @@ theorem tm2CoRecognizable_univ :
     computablePred_mem_language.not.to_re).of_eq
     fun _ ↦ not_forall.symm
 
-/-- **`EQ_CFG` is co-recognizable**: search for a word in exactly one language. -/
+/-- **Equivalence of context-free grammars is co-recognizable.** For every alphabet $T$ with a
+primcodable encoding and decidable equality, the set of pairs $(g_1, g_2)$ of encoded
+context-free grammars over $T$ whose languages are equal is co-recognizable by a multi-stack
+Turing machine.
+
+A recognizer for the complement searches for a word in exactly one of the two languages. -/
 theorem tm2CoRecognizable_language_eq :
     TM2CoRecognizable fun g : EncodedCFG T × EncodedCFG T ↦ g.1.language = g.2.language := by
   refine tm2CoRecognizable_iff_rePred_not.mpr <| (MetaMathlibExt.REPred.exists
@@ -127,7 +147,10 @@ theorem tm2CoRecognizable_language_eq :
     push Not at hall
     exact hne (Set.ext fun w ↦ by have := hall w; tauto)
 
-/-- **Inclusion of context-free languages is co-recognizable.** -/
+/-- **Inclusion of context-free languages is co-recognizable.** For every alphabet $T$ with a
+primcodable encoding and decidable equality, the set of pairs $(g_1, g_2)$ of encoded
+context-free grammars over $T$ for which the language of $g_1$ is contained in the language of
+$g_2$ is co-recognizable by a multi-stack Turing machine. -/
 theorem tm2CoRecognizable_language_le :
     TM2CoRecognizable fun g : EncodedCFG T × EncodedCFG T ↦ g.1.language ≤ g.2.language := by
   refine tm2CoRecognizable_iff_rePred_not.mpr <| (MetaMathlibExt.REPred.exists
@@ -147,7 +170,10 @@ end Membership
 
 /-! ### Unrecognizable problems -/
 
-/-- **Disjointness of context-free languages is not recognizable.** -/
+/-- **Disjointness of context-free languages is not recognizable.** There is an alphabet $T$,
+with a primcodable encoding and decidable equality, such that the set of pairs $(g_1, g_2)$ of
+encoded context-free grammars over $T$ whose languages are disjoint (no word lies in both) is not
+recognizable by a multi-stack Turing machine. -/
 theorem exists_not_tm2Recognizable_disjoint :
     ∃ (T : Type) (_ : Primcodable T) (_ : DecidableEq T),
       ¬TM2Recognizable fun g : EncodedCFG T × EncodedCFG T ↦
@@ -156,8 +182,12 @@ theorem exists_not_tm2Recognizable_disjoint :
   refine ⟨T, inferInstance, inferInstance, ?_⟩
   simpa only [not_exists] using not_tm2Recognizable_not_of tm2Recognizable_overlap h
 
-/-- **`ALL_CFG` is not recognizable**, over a finite alphabet: the complement of PCP reduces
-to it. -/
+/-- **Universality of context-free grammars is not recognizable.** There is a finite alphabet
+$T$, with a primcodable encoding and decidable equality, such that the set of encoded
+context-free grammars over $T$ whose language contains every word over $T$ is not recognizable by
+a multi-stack Turing machine.
+
+The complement of the Post correspondence problem reduces to this problem. -/
 theorem exists_not_tm2Recognizable_univ :
     ∃ (T : Type) (_ : Fintype T) (_ : Primcodable T) (_ : DecidableEq T),
       ¬TM2Recognizable fun g : EncodedCFG T ↦ ∀ w, w ∈ g.language := by
@@ -166,7 +196,10 @@ theorem exists_not_tm2Recognizable_univ :
   exact ⟨α ⊕ Bool, inferInstance, inferInstance, inferInstance, fun hr ↦
     h (tm2Recognizable_of_manyOneReducible manyOneReducible_not_pcp_univ hr)⟩
 
-/-- **`EQ_CFG` is not recognizable**, over a finite alphabet. -/
+/-- **Equivalence of context-free grammars is not recognizable.** There is a finite alphabet
+$T$, with a primcodable encoding and decidable equality, such that the set of pairs $(g_1, g_2)$
+of encoded context-free grammars over $T$ whose languages are equal is not recognizable by a
+multi-stack Turing machine. -/
 theorem exists_not_tm2Recognizable_language_eq :
     ∃ (T : Type) (_ : Fintype T) (_ : Primcodable T) (_ : DecidableEq T),
       ¬TM2Recognizable fun g : EncodedCFG T × EncodedCFG T ↦ g.1.language = g.2.language := by
@@ -177,7 +210,10 @@ theorem exists_not_tm2Recognizable_language_eq :
   · exact Set.ext fun w ↦ ⟨fun _ ↦ mem_language_allWordsCFG w, fun _ ↦ hg w⟩
   · exact (congrArg (w ∈ ·) hg).mpr (mem_language_allWordsCFG w)
 
-/-- **Inclusion of context-free languages is not recognizable**, over a finite alphabet. -/
+/-- **Inclusion of context-free languages is not recognizable.** There is a finite alphabet $T$,
+with a primcodable encoding and decidable equality, such that the set of pairs $(g_1, g_2)$ of
+encoded context-free grammars over $T$ for which the language of $g_1$ is contained in the
+language of $g_2$ is not recognizable by a multi-stack Turing machine. -/
 theorem exists_not_tm2Recognizable_language_le :
     ∃ (T : Type) (_ : Fintype T) (_ : Primcodable T) (_ : DecidableEq T),
       ¬TM2Recognizable fun g : EncodedCFG T × EncodedCFG T ↦ g.1.language ≤ g.2.language := by

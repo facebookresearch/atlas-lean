@@ -52,10 +52,15 @@ noncomputable section
 
 namespace Manifold
 
-/-- The normalized `n`-dimensional Hausdorff measure `(ω_n / 2 ^ n) • μH[n]` of an emetric space
-`X`, where `ω_n` is the volume of the unit ball of `EuclideanSpace ℝ (Fin n)`. With this
-normalization it agrees with Lebesgue measure on `ℝⁿ` (classically, by the isodiametric
-inequality); `riemannianVolume_real` checks it for `n = 1`. -/
+/-- **Normalized Hausdorff measure.** Let $n$ be a natural number and let $X$ be an extended
+metric space with its Borel $\sigma$-algebra. The normalized $n$-dimensional Hausdorff measure of
+$X$ is the measure $\frac{\omega_n}{2^n} \mathcal{H}^n$, where $\omega_n$ is the Lebesgue volume of
+the open unit ball of the Euclidean space $\mathbb{R}^n$ and $\mathcal{H}^n$ is the unnormalized
+$n$-dimensional Hausdorff measure, in which a set of diameter $r$ has content $r^n$.
+
+With this normalization it agrees with Lebesgue measure on $\mathbb{R}^n$ (classically, by the
+isodiametric inequality); the case $n = 1$ is checked by the computation of the Riemannian volume
+of the real line. -/
 def normalizedHausdorffMeasure (n : ℕ) (X : Type*) [EMetricSpace X] [MeasurableSpace X]
     [BorelSpace X] : Measure X :=
   (volume (ball (0 : EuclideanSpace ℝ (Fin n)) 1) / 2 ^ n) • μH[n]
@@ -63,13 +68,16 @@ def normalizedHausdorffMeasure (n : ℕ) (X : Type*) [EMetricSpace X] [Measurabl
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
   {H : Type*} [TopologicalSpace H]
 
-/-- The Riemannian volume measure of a `C^∞` Riemannian manifold `M` modeled on
-`I : ModelWithCorners ℝ E H` with `E` finite-dimensional (so `M` has dimension
-`n = finrank ℝ E`), with a `C^∞` metric (`[IsContMDiffRiemannianBundle I ∞ E _]`) and whose distance
-is the Riemannian distance (`[IsRiemannianManifold I M]`): the normalized `n`-dimensional Hausdorff
-measure of `M` (see the module docstring). The manifold and Riemannian instance arguments are not
-used in the formula; they tie the dimension to the model of `M` and restrict the definition to the
-setting in which it is the Riemannian volume. -/
+/-- **Riemannian volume.** Let $E$ be a finite-dimensional real normed space, let $I$ be a model
+with corners on $E$, and let $M$ be a $C^\infty$ manifold modeled on $I$, so that $M$ has dimension
+$n = \dim_{\mathbb{R}} E$. Suppose that $M$ carries a $C^\infty$ Riemannian metric and an extended
+metric equal to the Riemannian distance (the infimum of the lengths of $C^1$ paths), and is given
+its Borel $\sigma$-algebra. The Riemannian volume of $M$ is the normalized $n$-dimensional
+Hausdorff measure of $M$.
+
+The manifold and Riemannian hypotheses are not used in the formula; they tie the dimension to the
+model of $M$ and restrict the definition to the setting in which, classically, this measure is the
+Riemannian volume, given in charts by the density $\sqrt{\det(g_{ij})}$ against Lebesgue measure. -/
 @[nolint unusedArguments]
 def riemannianVolume [FiniteDimensional ℝ E] (I : ModelWithCorners ℝ E H) (M : Type*)
     [EMetricSpace M] [ChartedSpace H M] [IsManifold I ∞ M]
@@ -78,8 +86,11 @@ def riemannianVolume [FiniteDimensional ℝ E] (I : ModelWithCorners ℝ E H) (M
     [IsRiemannianManifold I M] [MeasurableSpace M] [BorelSpace M] : Measure M :=
   normalizedHausdorffMeasure (finrank ℝ E) M
 
-/-- Normalization check: the Riemannian volume of the real line, whose Riemannian distance is the
-usual distance, is Lebesgue measure. -/
+/-- **The Riemannian volume of the real line is Lebesgue measure.** The Riemannian volume of the
+real line $\mathbb{R}$, with its standard Riemannian metric (the usual inner product on each tangent
+space) and with its usual distance, which is the Riemannian distance, is Lebesgue measure.
+
+This is a normalization check of the Riemannian volume in dimension one. -/
 theorem riemannianVolume_real : riemannianVolume 𝓘(ℝ, ℝ) ℝ = volume := by
   have hball : volume (ball (0 : EuclideanSpace ℝ (Fin (finrank ℝ ℝ))) 1) = 2 := by
     rw [InnerProductSpace.volume_ball_of_dim_odd (k := 0) (by simp)]

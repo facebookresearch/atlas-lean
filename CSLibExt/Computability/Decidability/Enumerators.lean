@@ -43,10 +43,16 @@ open Nat.Partrec (Code)
 
 variable {α : Type*} [Primcodable α]
 
-/-- The enumerator `e` prints exactly the elements satisfying `p`. -/
+/-- **Enumerating a predicate.** For a type $\alpha$ with a primitive recursive encoding, a
+function $e$ assigning to each natural number $n$ either an element $e(n)$ of $\alpha$ or nothing
+enumerates a predicate $p$ on $\alpha$ when, for every $a \in \alpha$, $p(a)$ holds if and only if
+$e(n) = a$ for some natural number $n$. -/
 def Enumerates (e : ℕ → Option α) (p : α → Prop) : Prop := ∀ a, p a ↔ ∃ n, e n = some a
 
-/-- **Recognizable languages are enumerable.** -/
+/-- **Recognizable languages are enumerable.** For every type $\alpha$ with a primitive recursive
+encoding and every predicate $p$ on $\alpha$ that is recognizable by a multi-stack machine, there
+is a computable function $e$, assigning to each natural number either an element of $\alpha$ or
+nothing, that enumerates $p$. -/
 theorem TM2Recognizable.exists_enumerator {p : α → Prop} (h : TM2Recognizable p) :
     ∃ e : ℕ → Option α, Computable e ∧ Enumerates e p := by
   have hre : REPred p := tm2Recognizable_iff_rePred.mp h
@@ -79,7 +85,10 @@ theorem TM2Recognizable.exists_enumerator {p : α → Prop} (h : TM2Recognizable
       rw [hn]
       exact Code.evaln_sound hw
 
-/-- **Enumerable languages are recognizable.** -/
+/-- **Enumerable languages are recognizable.** For every type $\alpha$ with a primitive recursive
+encoding, every predicate $p$ on $\alpha$ and every computable function $e$, assigning to each
+natural number either an element of $\alpha$ or nothing, that enumerates $p$, the predicate $p$ is
+recognizable by a multi-stack machine. -/
 theorem tm2Recognizable_of_enumerates {p : α → Prop} {e : ℕ → Option α} (he : Computable e)
     (hep : Enumerates e p) : TM2Recognizable p := by
   classical
@@ -94,7 +103,11 @@ theorem tm2Recognizable_of_enumerates {p : α → Prop} {e : ℕ → Option α} 
   exact ⟨fun ⟨n, hn⟩ ↦ ⟨n, of_decide_eq_true hn.symm⟩,
     fun ⟨n, hn⟩ ↦ ⟨n, (decide_eq_true hn).symm⟩⟩
 
-/-- **Sipser, Theorem 3.21**: a language is recognizable iff some enumerator enumerates it. -/
+/-- **Recognizable languages are exactly the enumerable ones.** For every type $\alpha$ with a
+primitive recursive encoding, a predicate $p$ on $\alpha$ is recognizable by a multi-stack machine
+if and only if some computable function $e$, assigning to each natural number either an element
+of $\alpha$ or nothing, enumerates $p$. This is Sipser, Theorem 3.21: a language is
+Turing-recognizable if and only if some enumerator enumerates it. -/
 theorem tm2Recognizable_iff_exists_enumerator {p : α → Prop} :
     TM2Recognizable p ↔ ∃ e : ℕ → Option α, Computable e ∧ Enumerates e p :=
   ⟨TM2Recognizable.exists_enumerator, fun ⟨_, he, hep⟩ ↦ tm2Recognizable_of_enumerates he hep⟩

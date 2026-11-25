@@ -50,7 +50,7 @@ noncomputable def w102 : StdSimplex ℝ (Fin 3) :=
 example : (prod w34 w13).weights (0, 1) = 1 / 2 := by
   have h0 : w34.weights 0 = 3 / 4 := by simp [w34]
   have h1 : w13.weights 1 = 2 / 3 := by simp [w13]
-  rw [prod_apply, h0, h1]
+  rw [StdSimplex.prod_apply, h0, h1]
   norm_num
 
 example : (sigma w34 (fun _ : Fin 2 => w13)).weights ⟨1, 0⟩ = 1 / 12 := by

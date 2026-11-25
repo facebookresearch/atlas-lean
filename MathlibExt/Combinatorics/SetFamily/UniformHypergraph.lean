@@ -25,35 +25,50 @@ The API is adapted from
 
 namespace SetFamily
 
-/-- A finite hypergraph is `r`-uniform when every edge has cardinality `r`. -/
+/-- **Uniform hypergraphs.** Let $H$ be a finite family of finite subsets of a type $V$, viewed as
+a hypergraph with edge set $H$, and let $r \in \mathbb{N}$. Then $H$ is $r$-uniform when every
+edge $e \in H$ has exactly $r$ elements. -/
 public def IsUniform {V : Type*} (H : Finset (Finset V)) (r : ℕ) : Prop :=
   ∀ e ∈ H, e.card = r
 
-/-- Some `m` vertices contain at least `k` edges of `H`. -/
+/-- **Subhypergraph containment.** Let $H$ be a finite family of finite subsets of a type $V$,
+viewed as a hypergraph with edge set $H$, and let $m, k \in \mathbb{N}$. Then $H$ contains a
+subgraph with $m$ vertices and at least $k$ edges when there is a set $S$ of exactly $m$ elements
+of $V$ such that at least $k$ edges of $H$ are subsets of $S$. -/
 public def ContainsSubgraph {V : Type*} [DecidableEq V]
     (H : Finset (Finset V)) (m k : ℕ) : Prop :=
   ∃ S : Finset V, S.card = m ∧
     k ≤ (H.filter fun e => e ⊆ S).card
 
-/-- Unfolding characterization of uniformity. -/
+/-- **Characterization of uniform hypergraphs.** Let $H$ be a finite family of finite subsets of
+a type $V$ and let $r \in \mathbb{N}$. Then $H$ is $r$-uniform if and only if every member
+$e \in H$ has exactly $r$ elements. -/
 public theorem isUniform_iff {V : Type*} (H : Finset (Finset V)) (r : ℕ) :
     IsUniform H r ↔ ∀ e ∈ H, e.card = r :=
   Iff.rfl
 
-/-- Unfolding characterization of finite subhypergraph containment. -/
+/-- **Characterization of subhypergraph containment.** Let $H$ be a finite family of finite
+subsets of a type $V$ and let $m, k \in \mathbb{N}$. Then $H$ contains a subgraph with $m$
+vertices and at least $k$ edges if and only if there is a set $S$ of exactly $m$ elements of $V$
+such that at least $k$ members of $H$ are subsets of $S$. -/
 public theorem containsSubgraph_iff {V : Type*} [DecidableEq V]
     (H : Finset (Finset V)) (m k : ℕ) :
     ContainsSubgraph H m k ↔
       ∃ S : Finset V, S.card = m ∧ k ≤ (H.filter fun e => e ⊆ S).card :=
   Iff.rfl
 
-/-- A finite family is intersecting when every two *distinct* members meet.
-The distinctness is load-bearing: the singleton family `{∅}` is intersecting. -/
+/-- **Intersecting families.** Let $F$ be a finite family of finite subsets of a type $\alpha$.
+Then $F$ is intersecting when every two distinct members meet: for all $A, B \in F$ with
+$A \neq B$, the intersection $A \cap B$ is nonempty.
+
+The distinctness is load-bearing: the singleton family $\{\emptyset\}$ is intersecting. -/
 public def IsIntersecting {α : Type*} [DecidableEq α] (F : Finset (Finset α)) :
     Prop :=
   ∀ A ∈ F, ∀ B ∈ F, A ≠ B → (A ∩ B).Nonempty
 
-/-- Unfolding characterization of intersecting families. -/
+/-- **Characterization of intersecting families.** Let $F$ be a finite family of finite subsets
+of a type $\alpha$. Then $F$ is intersecting if and only if for all $A, B \in F$ with $A \neq B$,
+the intersection $A \cap B$ is nonempty. -/
 public theorem isIntersecting_iff {α : Type*} [DecidableEq α]
     (F : Finset (Finset α)) :
     IsIntersecting F ↔ ∀ A ∈ F, ∀ B ∈ F, A ≠ B → (A ∩ B).Nonempty :=
