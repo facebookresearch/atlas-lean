@@ -51,12 +51,12 @@ the tangent-space step behind first-order deformations of a point. A point given
 
 namespace Derivation
 
-variable {A B Ω : Type*} [CommRing A] [CommRing B] [Field Ω]
+variable {A B Ω : Type*} [CommRing A] [CommRing B] [CommRing Ω]
   [Algebra A B] [Algebra A Ω] [Algebra B Ω] [IsScalarTower A B Ω]
 
-/-- A nonzero `A`-derivation `D` of `B` into a field `Ω`, where `Ω` is a `B`-algebra, lifts the
-point `algebraMap B Ω` to the dual numbers: some `A`-algebra map `B →ₐ[A] DualNumber Ω` has first
-component `algebraMap B Ω` and a second component that is nonzero somewhere. The lift is
+/-- A nonzero `A`-derivation `D` of `B` into a commutative ring `Ω`, where `Ω` is a `B`-algebra,
+lifts the point `algebraMap B Ω` to the dual numbers: some `A`-algebra map `B →ₐ[A] DualNumber Ω`
+has first component `algebraMap B Ω` and a second component that is nonzero somewhere. The lift is
 `b ↦ (algebraMap B Ω b, D b)`, which `liftOfDerivationToSquareZero` builds from `D` as a derivation
 into the square-zero ideal `TrivSqZeroExt.kerIdeal Ω Ω`. -/
 theorem exists_algHom_dualNumber_fst_eq_snd_ne_zero (D : Derivation A B Ω)

@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.RingTheory.Derivation.DualNumber
+public import Mathlib.Algebra.Polynomial.Derivation
 
 @[expose] public section
 
@@ -47,3 +48,15 @@ example :
       change (x * y).snd = x.fst * y.snd + y.fst * x.snd
       rw [DualNumber.snd_mul, mul_comm x.snd]
   exact D.exists_algHom_dualNumber_fst_eq_snd_ne_zero ⟨DualNumber.eps, by simp [D]⟩
+
+open Polynomial in
+/-- A consumer over a ring that is not a field: `ℤ` is a `ℤ[X]`-algebra through evaluation at
+zero, and the formal derivative evaluated at zero, `p ↦ p'(0)`, is a derivation, nonzero at `X`. -/
+example :
+    ∃ φ : ℤ[X] →ₐ[ℤ] DualNumber ℤ,
+      (∀ p : ℤ[X], (φ p).fst = p.eval 0) ∧ ∃ p : ℤ[X], (φ p).snd ≠ 0 := by
+  let : Algebra ℤ[X] ℤ := (evalRingHom 0).toAlgebra
+  let D : Derivation ℤ ℤ[X] ℤ := mkDerivation ℤ (1 : ℤ)
+  have hD (p : ℤ[X]) : D p = (derivative p).eval 0 := by
+    simp [D, mkDerivation_apply, Algebra.smul_def, RingHom.algebraMap_toAlgebra]
+  exact D.exists_algHom_dualNumber_fst_eq_snd_ne_zero ⟨X, by simp [hD]⟩
