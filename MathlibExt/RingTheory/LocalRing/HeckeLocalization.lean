@@ -55,7 +55,8 @@ universe u v w
 
 /-- Hecke data on an `𝒪`-module `V`: a family of pairwise commuting
 endomorphisms indexed by `Gen`, together with a prescribed eigenvalue in
-the residue field `k` for each generator. -/
+the field `k` for each generator. Only an `𝒪`-algebra structure on `k` is
+assumed, so `k` need not be a residue field of `𝒪`. -/
 structure HeckeData (𝒪 : Type u) [CommRing 𝒪] (V : Type v) [AddCommGroup V]
     [Module 𝒪 V] (k : Type w) [Field k] [Algebra 𝒪 k] where
   /-- The index type of the Hecke operators. -/
@@ -79,7 +80,9 @@ noncomputable abbrev FreeAlg : Type u := MvPolynomial D.Gen 𝒪
 prescribed eigenvalue. -/
 noncomputable def thetaTilde : D.FreeAlg →ₐ[𝒪] k := MvPolynomial.aeval D.θbar
 
-/-- The maximal ideal of `FreeAlg` cut out by the eigenvalue character. -/
+/-- The kernel of the eigenvalue character, a prime ideal of `FreeAlg`. It is
+maximal when `thetaTilde` is surjective, for instance when `algebraMap 𝒪 k` is,
+but not in general. -/
 noncomputable def mTheta : Ideal D.FreeAlg := RingHom.ker D.thetaTilde.toRingHom
 
 instance mTheta_isPrime : D.mTheta.IsPrime := RingHom.ker_isPrime _
@@ -114,7 +117,9 @@ noncomputable def moduleFreeAlg : Module D.FreeAlg V :=
 
 attribute [local instance] moduleFreeAlg
 
-/-- The localized module: `V` localized at the eigenvalue maximal ideal. -/
+/-- The localized module: `V` localized at the prime ideal `mTheta`. It is a
+localization at a maximal ideal only when `mTheta` is maximal, as under the
+surjectivity hypothesis of `finite_and_free_localizedModule`. -/
 noncomputable abbrev ML : Type (max u v) := LocalizedModule D.mTheta.primeCompl V
 
 /-- The localization map from `V` to the localized module. -/
@@ -422,8 +427,10 @@ private theorem thetaTilde_surjective {𝒪 : Type*} [CommRing 𝒪] {V : Type*}
   obtain ⟨r, hr⟩ := hk c
   exact ⟨algebraMap 𝒪 D.FreeAlg r, by rw [AlgHom.commutes]; exact hr⟩
 
-/-- The localized module of Hecke data over a complete Noetherian local ring
-is finite over the base, and it is free when the ambient module is free. -/
+/-- Let `V` be a finite module over a complete Noetherian local ring `𝒪`, and
+let `algebraMap 𝒪 k` be surjective (`hk`), so that `k` is the residue field of
+`𝒪` and `mTheta` is a maximal ideal. Then the localization `ML` of `V` at
+`mTheta` is finite over `𝒪`, and it is free over `𝒪` when `V` is. -/
 theorem finite_and_free_localizedModule {𝒪 : Type*} [CommRing 𝒪] [IsLocalRing 𝒪]
     [IsNoetherianRing 𝒪] [IsAdicComplete (IsLocalRing.maximalIdeal 𝒪) 𝒪]
     {V : Type*} [AddCommGroup V] [Module 𝒪 V] [Module.Finite 𝒪 V]

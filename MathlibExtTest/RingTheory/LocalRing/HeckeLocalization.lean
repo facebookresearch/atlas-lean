@@ -32,4 +32,3 @@ example {𝒪 : Type 1} [CommRing 𝒪] [IsLocalRing 𝒪] [IsNoetherianRing �
     (D : HeckeData 𝒪 V k) :
     Module.Finite 𝒪 D.ML ∧ (Module.Free 𝒪 V → Module.Free 𝒪 D.ML) :=
   HeckeData.finite_and_free_localizedModule hk D
-
