@@ -25,7 +25,8 @@ public import Mathlib.Algebra.Order.BigOperators.Ring.Finset
   is not covered by the adjustment for predecessors of the treatment.
 * Front-door: the network `U → X → M → Y`, `U → Y` (nodes `0, 1, 2, 3`), with the confounder
   `U` of `X` and `Y`: the set `{M}` meets the three front-door conditions.
-* The truncated factorization for an intervention on a set of nodes.
+* The truncated factorization for an intervention on a set of nodes, and the relation between
+  two nested interventions.
 -/
 
 @[expose] public section
@@ -146,6 +147,14 @@ example :
 example : (bdNet.mutilateSet {1, 2} fun _ => true).joint ![true, true, false, true] = 0 := by
   rw [BayesNet.joint_mutilateSet]
   exact prod_eq_zero (mem_univ 2) (by simp)
+
+/-- Two nested interventions, `∅ ⊆ {X, W}`: on an assignment with `X = W = true`, the joint is
+the joint after `do(X = true, W = true)` times the tables of `X` and `W`. -/
+example (x : Fin 4 → Bool) (hx : ∀ j ∈ ({1, 2} : Finset (Fin 4)), x j = true) :
+    bdNet.joint x = (bdNet.mutilateSet {1, 2} fun _ => true).joint x *
+      ∏ j ∈ ({1, 2} : Finset (Fin 4)), (bdNet.cpt j (bdNet.paVal j x)).weights (x j) := by
+  rw [← bdNet.joint_mutilateSet_empty fun _ => true,
+    bdNet.joint_mutilateSet_eq_mul_prod_sdiff (empty_subset _) hx, sdiff_empty]
 
 /-! ### Front-door -/
 

@@ -62,7 +62,7 @@ def orbit (n k : ℕ) (z : ℂ) : Set ℂ :=
 
 /-- The period annulus of the center `0`: the points other than `0` in the connected component of
 `0` in the set made of `0` and the points on periodic orbits. -/
-def periodAnnulus (n k : ℕ) : Set ℂ :=
+noncomputable def periodAnnulus (n k : ℕ) : Set ℂ :=
   connectedComponentIn {z | z = 0 ∨ ∃ T, HasPeriod n k z T} 0 \ {0}
 
 /-- Gasull's question, with a positive answer: for all positive integers `n, k` the period function

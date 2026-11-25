@@ -31,7 +31,9 @@ universe u
 
 variable {G : Type u} [Group G] [Fintype G]
 
-/-- A divisor of `p^a * q^b` has the same shape. -/
+/-- **Divisors of $p^a q^b$.** Let $p$ and $q$ be primes and let $a$ and $b$ be natural numbers.
+Every natural number $d$ dividing $p^a q^b$ has the form $d = p^{a'} q^{b'}$ for some natural
+numbers $a'$ and $b'$. -/
 theorem eq_prime_pow_mul_of_dvd {p q a b d : ℕ} (hp : p.Prime)
     (hq : q.Prime) (hdvd : d ∣ p ^ a * q ^ b) :
     ∃ a' b', d = p ^ a' * q ^ b' := by
@@ -71,7 +73,8 @@ theorem eq_prime_pow_mul_of_dvd {p q a b d : ℕ} (hp : p.Prime)
     · rw [Finset.prod_pair hpq]
       exact ⟨_, _, rfl⟩
 
-/-- A group of prime order is solvable. -/
+/-- **Groups of prime order are solvable.** Every finite group whose order is a prime number is
+solvable. -/
 theorem isSolvable_of_prime_card (r : ℕ) (hr : r.Prime)
     (hcard : Fintype.card G = r) : Group.IsSolvable G := by
   have : Fact r.Prime := ⟨hr⟩
@@ -81,9 +84,12 @@ theorem isSolvable_of_prime_card (r : ℕ) (hr : r.Prime)
   let := IsCyclic.commGroup (α := G)
   infer_instance
 
-/-- Bielefeld Theorem 7, from the simple-prime-power corollary:
-if every simple group with a prime-power conjugacy class has prime order,
-then every `p^a q^b`-group is solvable. -/
+/-- **Burnside's $p^a q^b$ theorem from the prime-power class corollary.** Suppose that every
+finite simple group $H$ having an element $h \ne 1$ whose conjugacy class has size $r^k$ for some
+prime $r$ and some $k \ge 1$ has prime order. Then for all primes $p$ and $q$ and all natural
+numbers $a$ and $b$, every finite group $G$ of order $p^a q^b$ is solvable.
+
+Source: Bielefeld Theorem 7. -/
 theorem burnside_paqb_of_simple_prime
     (C6 : ∀ {H : Type u} [Group H] [Fintype H], IsSimpleGroup H →
       (∃ g : H, g ≠ 1 ∧ IsPrimePow (conjClass g).card) →

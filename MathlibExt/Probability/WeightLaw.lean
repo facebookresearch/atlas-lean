@@ -16,7 +16,8 @@ public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 `weightLaw g` is the measure `∑ x, ENNReal.ofReal (g x) • δ_x` on a finite measurable space. For
 `g ≥ 0` with `∑ x, g x = 1` it is a probability measure (`isProbabilityMeasure_weightLaw`), and
 for `g ≥ 0` integration against it is the weighted sum `∑ x, g x * φ x` (`integral_weightLaw`)
-and the mass of `{x}` is `g x` (`measureReal_weightLaw_singleton`). It is always a finite measure
+and the mass of `{x}` is `g x` (`measureReal_weightLaw_singleton`), so nonnegative masses are
+recovered from their law (`weightLaw_injOn_nonneg`). It is always a finite measure
 (`isFiniteMeasure_weightLaw`).
 
 It is the finite categorical law shared by the observation laws of
@@ -65,6 +66,16 @@ theorem measureReal_weightLaw_singleton {𝓧 : Type*} [Fintype 𝓧] [Measurabl
     Measure.smul_apply, Measure.dirac_apply, Set.indicator, Set.mem_singleton_iff, Pi.one_apply,
     smul_eq_mul, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   exact ENNReal.toReal_ofReal (hg a)
+
+/-- `weightLaw` is injective on nonnegative weights: the law determines its point masses. -/
+theorem weightLaw_injOn_nonneg {𝓧 : Type*} [Fintype 𝓧] [MeasurableSpace 𝓧]
+    [MeasurableSingletonClass 𝓧] :
+    Set.InjOn (weightLaw (𝓧 := 𝓧)) {g | ∀ x, 0 ≤ g x} := by
+  intro g hg g' hg' hgg
+  funext x
+  have h : (weightLaw g).real {x} = (weightLaw g').real {x} := by rw [hgg]
+  rw [measureReal_weightLaw_singleton hg x, measureReal_weightLaw_singleton hg' x] at h
+  exact h
 
 /-- With nonnegative point masses, integration against `weightLaw g` is the weighted sum
 `∑ x, g x * φ x`. -/

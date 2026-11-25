@@ -234,9 +234,14 @@ private theorem reduction {K : Type*} [CommRing K] (alpha beta : ℕ → K) (F :
     · exact absurd (Fin.val_eq_zero_iff.mp h) hj
     · ring
 
-/-- Heilermann's formula: the Hankel transform of a sequence with Jacobi
-continued fraction data `(alpha, beta, mu0)` is
-`h_n = mu0 ^ (n + 1) * beta_1 ^ n * beta_2 ^ (n - 1) * ... * beta_n ^ 1`.
+/-- **Heilermann's formula.** Let $K$ be a commutative ring, let $a$, $\alpha$, $\beta$ be
+sequences in $K$ and let $\mu_0 \in K$. Suppose that $a$ has Jacobi fraction data
+$(\alpha, \beta, \mu_0)$: there are power series $F_0, F_1, \dots$ over $K$ with
+$\sum_{n \ge 0} a_n x^n = \mu_0 F_0$ and $(1 - \alpha_i x - \beta_{i+1} x^2 F_{i+1}) F_i = 1$ for
+every $i \ge 0$. Then for every $n \ge 0$ the Hankel transform of $a$ at $n$, the determinant of
+the $(n+1) \times (n+1)$ matrix $(a_{i+j})_{0 \le i, j \le n}$, equals
+$$\mu_0^{n+1} \prod_{j=0}^{n-1} \beta_{j+1}^{\,n-j},$$
+that is, $\mu_0^{n+1} \beta_1^n \beta_2^{n-1} \cdots \beta_n$, which is $\mu_0$ for $n = 0$.
 
 Source: Paul Barry, "From Fibonacci to Robbins: Series Reversion and Hankel
 Transforms," Journal of Integer Sequences 24 (2021), Article 21.10.2,
@@ -291,8 +296,15 @@ theorem hankelTransform_eq_prod_of_hasJacobiFraction
     intro i _
     rw [Nat.succ_sub_succ]
 
-/-- Heilermann alpha-independence: two sequences with Jacobi continued fractions sharing `mu0`
-and `beta` have the same Hankel transform, whatever their `alpha` coefficients.
+/-- **Hankel transforms of Jacobi fractions do not depend on the linear coefficients.** Let $K$
+be a commutative ring. Say that a sequence $a$ in $K$ has Jacobi fraction data
+$(\alpha, \beta, \mu_0)$, where $\alpha$, $\beta$ are sequences in $K$ and $\mu_0 \in K$, when there
+are power series $F_0, F_1, \dots$ over $K$ with $\sum_{n \ge 0} a_n x^n = \mu_0 F_0$ and
+$(1 - \alpha_i x - \beta_{i+1} x^2 F_{i+1}) F_i = 1$ for every $i \ge 0$. If $a$ has Jacobi fraction
+data $(\alpha, \beta, \mu_0)$ and $a'$ has Jacobi fraction data $(\alpha', \beta, \mu_0)$, with the
+same $\beta$ and $\mu_0$ but arbitrary $\alpha$ and $\alpha'$, then $a$ and $a'$ have the same
+Hankel transform: for every $n \ge 0$ the determinants of the $(n+1) \times (n+1)$ matrices
+$(a_{i+j})_{0 \le i, j \le n}$ and $(a'_{i+j})_{0 \le i, j \le n}$ are equal.
 
 Source: Paul Barry, "From Fibonacci to Robbins: Series Reversion and Hankel
 Transforms," Journal of Integer Sequences 24 (2021), Article 21.10.2,

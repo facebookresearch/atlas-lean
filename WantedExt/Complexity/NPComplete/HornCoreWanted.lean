@@ -22,7 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Algorithms.SAT.Horn.Basic
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 
@@ -30,7 +30,7 @@ public import MathlibExt.Computability.Complexity
 
 namespace MetaMathlibExt.Complexity.NPComplete.HornCore
 
-open Cslib.Logic.PL Cslib.Algorithms.SAT.Horn
+open Cslib.Logic.LegacyPL Cslib.Algorithms.SAT.Horn
 
 /-!
 # HORN CORE is NP-complete
@@ -41,7 +41,7 @@ the set of truth assignments satisfying a Horn Boolean formula, with `|M'| ≥ K
 
 A truth assignment on `n` variables is a list of `n` Booleans (entry `x` is the value of
 variable `x`), and `M` is a duplicate-free list of such lists. A Horn formula is a CNF formula
-(`Cslib.Logic.PL.CNF`) in which every clause has at most one positive literal
+(`Cslib.Logic.LegacyPL.CNF`) in which every clause has at most one positive literal
 (`Cslib.Algorithms.SAT.Horn.IsHorn`); a formula on the `n` variables uses only the variables
 `0, …, n - 1`, and its set of satisfying truth assignments on the `n` variables must be exactly
 `M'`. The subset `M'` is a sublist of `M`, so it has no duplicates and its length is `|M'|`.

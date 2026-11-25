@@ -78,8 +78,15 @@ private lemma paddedDigits_value {k : ℕ} (hk : 2 ≤ k) (r n : ℕ) :
   rw [paddedDigits, baseWordValue_append, baseWordValue_replicate_zero hk,
     zero_mul, zero_add, baseWordValue_baseDigits]
 
-/-- Cobham's gap theorem without a separate base hypothesis: `IsBaseRecognizable k _`
-already includes `2 ≤ k`. -/
+/-- **Cobham's gap theorem without a separate base hypothesis.** Let $k$ be a natural number and
+let $x_0 < x_1 < x_2 < \cdots$ be a strictly increasing sequence of natural numbers whose set of
+values is recognizable in base $k$. Then either the limit superior, as $i \to \infty$, of the
+ratios $x_{i+1} / x_i$ computed in the extended nonnegative reals $[0, \infty]$ (where a ratio
+with denominator $0$ is $\infty$) is greater than $1$, or there is a natural number $C$ with
+$x_{i+1} - x_i \le C$ for every $i$.
+
+Recognizability in base $k$ already requires $k \ge 2$, so no separate hypothesis on $k$ is
+needed. -/
 theorem cobham_gap_theorem_general {k : ℕ} {x : ℕ → ℕ}
     (hx : StrictMono x)
     (hX : IsBaseRecognizable k (Set.range x)) :
@@ -268,15 +275,17 @@ theorem cobham_gap_theorem_general {k : ℕ} {x : ℕ → ℕ}
     (Filter.le_limsup_of_frequently_le hfrequent)
 
 set_option linter.unusedVariables false in
-/-- Cobham's gap theorem: for a strictly monotone enumeration `x` of a
-`k`-recognizable set of naturals, either the limsup of the consecutive ratios
-`x (i+1) / x i` (in `ENNReal`, so an unbounded limsup is `⊤`) exceeds `1`,
-or the consecutive gaps `x (i+1) - x i` are uniformly bounded.
+/-- **Cobham's gap theorem.** Let $k \ge 2$ be a natural number and let $x_0 < x_1 < x_2 < \cdots$
+be a strictly increasing sequence of natural numbers whose set of values is recognizable in base
+$k$. Then either the limit superior, as $i \to \infty$, of the ratios $x_{i+1} / x_i$ computed in
+the extended nonnegative reals $[0, \infty]$ (so an unbounded limit superior is $\infty$, and a
+ratio with denominator $0$ is $\infty$) is greater than $1$, or there is a natural number $C$ with
+$x_{i+1} - x_i \le C$ for every $i$.
+
+Proves `Wanted` entry `cobham_gap_theorem`.
 
 Source: Kärki–Lacroix–Rigo gap theorem, lines 979–995 of
 <https://cs.uwaterloo.ca/journals/JIS/VOL13/Rigo/rigo6.tex>.
-
-Proves `Wanted` entry `cobham_gap_theorem`.
 -/
 theorem cobham_gap_theorem {k : ℕ} {x : ℕ → ℕ}
     (hx : StrictMono x)

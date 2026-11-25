@@ -17,11 +17,9 @@ public import Mathlib.Combinatorics.SimpleGraph.Maps
 
 namespace MetaMathlibExt
 
-/-- Bundled finite simple graph: a vertex type together with its finiteness
-witness and a simple graph on it. The witness is an instance-implicit field,
-so it is synthesized by typeclass search at construction; downstream code
-still accesses it explicitly as `G.fin`, since instances cannot depend on a
-locally bound graph.
+/-- **Finite simple graph.** A finite graph consists of a finite vertex set $V$ together with a
+simple graph on $V$, that is, a symmetric and irreflexive adjacency relation on $V$.
+
 Stable source: https://en.wikipedia.org/wiki/Robertson%E2%80%93Seymour_theorem. -/
 structure FinGraph where
   V : Type*
@@ -30,26 +28,36 @@ structure FinGraph where
 
 /-! ## Complete graphs as `FinGraph`s -/
 
-/-- The complete graph on `n` vertices, `Kₙ`, as a bundled finite graph. -/
+/-- **Complete graph as a finite graph.** For a natural number $n$, $K_n$ is the finite graph whose
+vertices are the natural numbers less than $n$, in which any two distinct vertices are adjacent. -/
 abbrev cliqueFinGraph (n : ℕ) : FinGraph where
   V := Fin n
   G := SimpleGraph.completeGraph (Fin n)
 
-/-- Adjacency in `Kₙ` is inequality of vertices. -/
+/-- **Adjacency in the complete graph.** For every natural number $n$ and all vertices $x$ and $y$
+of the complete graph $K_n$, whose vertices are the natural numbers less than $n$, $x$ and $y$ are
+adjacent if and only if $x \ne y$. -/
 theorem cliqueFinGraph_adj {n : ℕ} {x y : Fin n} :
     (cliqueFinGraph n).G.Adj x y ↔ x ≠ y := by
   show (SimpleGraph.completeGraph (Fin n)).Adj x y ↔ x ≠ y
   rw [SimpleGraph.completeGraph_eq_top]
   exact SimpleGraph.top_adj _ _
 
-/-- Single-step minor operation: `iso` is relabelling up to graph isomorphism;
-`deleteVertex` is deletion of exactly one vertex (induced subgraph missing the
-image of one vertex); `deleteEdge` is deletion of exactly one edge (vertices
-identified up to an equivalence, edge sets agree except for one distinguished
-edge); `contractEdge` collapses exactly one adjacent pair (a surjective map
-identifying a single adjacent pair `a, b` and injective otherwise, with
-adjacency in `H` given by images of adjacent pairs in `G` at distinct vertices,
-so no loop is forced at the identified vertex).
+/-- **One-step graph minor.** For finite graphs $H$ and $G$, $H$ arises from $G$ by one minor step
+when one of the following holds. Isomorphism: $H$ is isomorphic to $G$. Vertex deletion: for some
+vertex $a$ of $G$ there is an injective map $f$ from the vertices of $H$ to the vertices of $G$
+whose image consists of all vertices other than $a$, such that vertices $u, v$ of $H$ are adjacent
+exactly when $f(u), f(v)$ are adjacent in $G$. Edge deletion: for some edge $xy$ of $G$ there is a
+bijection $e$ from the vertices of $H$ to the vertices of $G$ such that, for all vertices $u, v$ of
+$H$, the vertices $e(u), e(v)$ are adjacent in $G$ whenever $u, v$ are adjacent in $H$, and if
+$e(u), e(v)$ are adjacent in $G$, then either $u, v$ are adjacent in $H$ or the pair $(e(u), e(v))$
+is $(x, y)$ or $(y, x)$; moreover, $e^{-1}(x), e^{-1}(y)$ are not adjacent in $H$. Edge
+contraction: for some edge $ab$ of $G$ there is a surjective map $f$ from the vertices of $G$ to
+the vertices of $H$ with $f(a) = f(b)$ such that, for all vertices $x, y$ of $G$, $f(x) = f(y)$
+implies $x = y$ or $(x, y)$ is $(a, b)$ or $(b, a)$, and vertices $u, v$ of $H$ are adjacent
+exactly when $u \ne v$ and there are adjacent vertices $u', v'$ of $G$ with $f(u') = u$ and
+$f(v') = v$.
+
 Stable source: https://en.wikipedia.org/wiki/Robertson%E2%80%93Seymour_theorem. -/
 inductive MinorStep : FinGraph → FinGraph → Prop where
   | iso (H G : FinGraph) (e : H.G ≃g G.G) : MinorStep H G
@@ -73,27 +81,32 @@ inductive MinorStep : FinGraph → FinGraph → Prop where
         u ≠ v ∧ ∃ u' v', f u' = u ∧ f v' = v ∧ G.G.Adj u' v') :
       MinorStep H G
 
-/-- Graph-minor relation: `H` is a minor of `G` if `H` is obtainable from `G`
-by a sequence of isomorphisms, single-vertex deletions, single-edge deletions,
-and single-edge contractions.
+/-- **Graph minor relation.** For finite graphs $H$ and $G$, $H$ is a minor of $G$ when there is a
+finite sequence $H = G_0, G_1, \dots, G_k = G$ of finite graphs, with $k \ge 0$, such that for
+each $i < k$, $G_i$ arises from $G_{i+1}$ by one minor step: an isomorphism, the deletion of one
+vertex, the deletion of one edge, or the contraction of one edge.
+
 Stable source: https://en.wikipedia.org/wiki/Robertson%E2%80%93Seymour_theorem. -/
 def IsMinor (H G : FinGraph) : Prop :=
   Relation.ReflTransGen MinorStep H G
 
-/-- The minor relation is reflexive. -/
+/-- **Reflexivity of the graph minor relation.** Every finite graph $G$ is a minor of itself. -/
 theorem IsMinor.refl (G : FinGraph) : IsMinor G G :=
   Relation.ReflTransGen.refl
 
-/-- The minor relation is transitive. -/
+/-- **Transitivity of the graph minor relation.** For finite graphs $H$, $K$ and $G$, if $H$ is a
+minor of $K$ and $K$ is a minor of $G$, then $H$ is a minor of $G$. -/
 theorem IsMinor.trans {H K G : FinGraph} :
     IsMinor H K → IsMinor K G → IsMinor H G :=
   Relation.ReflTransGen.trans
 
-/-- A single minor step yields a minor. -/
+/-- **A single minor step gives a minor.** For finite graphs $H$ and $G$, if $H$ arises from $G$ by
+one minor step, then $H$ is a minor of $G$. -/
 theorem IsMinor.of_step {H G : FinGraph} (h : MinorStep H G) : IsMinor H G :=
   Relation.ReflTransGen.single h
 
-/-- Isomorphic graphs are mutual minors in one step. -/
+/-- **An isomorphic copy is a minor.** For finite graphs $H$ and $G$, if $H$ is isomorphic to $G$,
+then $H$ is a minor of $G$. -/
 theorem IsMinor.of_iso {H G : FinGraph} (e : H.G ≃g G.G) : IsMinor H G :=
   IsMinor.of_step (MinorStep.iso H G e)
 
