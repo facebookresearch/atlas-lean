@@ -45,10 +45,18 @@ private abbrev R := ZMod 6
 
 private abbrev A := Polynomial R
 
-private def substitution : A →ₙₐ[R] A :=
-  (Polynomial.aeval (Polynomial.X + 1 : A)).toNonUnitalAlgHom
+private abbrev substitution : A →ₙₐ[R] A :=
+  AlgHom.toNonUnitalAlgHom (Polynomial.aeval (Polynomial.X + 1 : A))
 
-private def coefficientSubstitution : A →ₗ[R] A := (substitution : A →ₗ[R] A)
+private abbrev coefficientSubstitution : A →ₗ[R] A := (substitution : A →ₗ[R] A)
+
+private lemma substitution_X : substitution Polynomial.X = (Polynomial.X + 1 : A) := by
+  change Polynomial.aeval (Polynomial.X + 1 : A) Polynomial.X = Polynomial.X + 1
+  exact Polynomial.aeval_X _
+
+private lemma substitution_one : substitution (1 : A) = 1 := by
+  change Polynomial.aeval (Polynomial.X + 1 : A) (1 : A) = 1
+  exact Polynomial.aeval_one _
 
 private lemma substitution_left (a m : A) :
     coefficientSubstitution (a • m) = substitution a • coefficientSubstitution m := by
@@ -61,11 +69,15 @@ private lemma substitution_right (a m : A) :
   change substitution (m * a) = substitution m * substitution a
   exact substitution.map_mul m a
 
-private def twiceCoefficient : A →ₗ[A] A := (2 : A) • LinearMap.id
+private abbrev twiceCoefficient : A →ₗ[A] A := (2 : A) • LinearMap.id
 
-private def emptyWord : Fin 0 → A := Fin.elim0
+private lemma twiceCoefficient_one : twiceCoefficient (1 : A) = 2 := by
+  change (2 : A) * 1 = 2
+  exact mul_one _
 
-private def crossing : Shuffle 1 1 where
+private abbrev emptyWord : Fin 0 → A := Fin.elim0
+
+private abbrev crossing : Shuffle 1 1 where
   perm := Equiv.swap (0 : Fin 2) 1
   isShuffle := by
     constructor <;> intro i j hij
@@ -78,14 +90,15 @@ example : (2 : R) ≠ 0 ∧ (3 : R) ≠ 0 ∧ (2 : R) * 3 = 0 := by decide
 
 example : substitution Polynomial.X = (Polynomial.X + 1 : A) ∧
     substitution Polynomial.X ≠ (Polynomial.X : A) := by
-  simp [substitution]
+  rw [substitution_X]
+  simp
 
 example :
     ((liftedMap substitution coefficientSubstitution substitution_left substitution_right).f 1).hom
       (ULift.up (Polynomial.X : A) ⊗ₜ[R] PiTensorProduct.tprod R (fun _ : Fin 1 => (1 : A))) =
         ULift.up (Polynomial.X + 1 : A) ⊗ₜ[R]
           PiTensorProduct.tprod R (fun _ : Fin 1 => (1 : A)) := by
-  simpa [substitution, coefficientSubstitution] using
+  simpa only [coefficientSubstitution, substitution_X, substitution_one] using
     liftedMap_f_tprod substitution coefficientSubstitution substitution_left substitution_right
       1 (Polynomial.X : A) (fun _ : Fin 1 => (1 : A))
 
@@ -106,8 +119,12 @@ example :
     ((algebraRawCoefficientMap R A twiceCoefficient).f 1).hom
       ((1 : A) ⊗ₜ[R] PiTensorProduct.tprod R (fun _ : Fin 1 => (Polynomial.X : A))) =
       (2 : A) ⊗ₜ[R] PiTensorProduct.tprod R (fun _ : Fin 1 => (Polynomial.X : A)) := by
-  rw [algebraRawCoefficientMap_f, algebraCoefficientLevelMap_tmul]
-  simp [twiceCoefficient]
+  let t : TensorPower R 1 A := PiTensorProduct.tprod R (fun _ : Fin 1 => (Polynomial.X : A))
+  have hMap := DFunLike.congr_fun (algebraRawCoefficientMap_f R A twiceCoefficient 1)
+    ((1 : A) ⊗ₜ[R] t)
+  have hLevel := algebraCoefficientLevelMap_tmul R A twiceCoefficient 1 (1 : A) t
+  exact hMap.trans (hLevel.trans
+    (congrArg (fun m : A => m ⊗ₜ[R] t) twiceCoefficient_one))
 
 example :
     algebraRawCoefficientMap R A twiceCoefficient ≫ algebraNormalizationProjection R A A =
@@ -121,7 +138,7 @@ example :
         ((Polynomial.X : A) ⊗ₜ[R] PiTensorProduct.tprod R emptyWord)) =
       (Polynomial.X : A) ⊗ₜ[R] PiTensorProduct.tprod R emptyWord := by
   rw [signedRawShuffle_zero_zero, diagonalRaw_tprod]
-  simp only [ULift.down_up, one_smul]
+  simp only [one_smul]
   exact congrArg (fun word : Fin 0 → A =>
     (Polynomial.X : A) ⊗ₜ[R] PiTensorProduct.tprod R word) (Subsingleton.elim _ _)
 
@@ -149,10 +166,16 @@ example :
       (1 : A) ⊗ₜ[R] PiTensorProduct.tprod R
         (fun i : Fin 2 => if i = 0 then (1 : A) else Polynomial.X) := by
   rw [rawShuffleTerm_tprod]
-  simp only [ULift.down_up, one_smul]
+  simp only [one_smul]
   apply congrArg (fun word : Fin 2 → A => (1 : A) ⊗ₜ[R] PiTensorProduct.tprod R word)
   funext i
-  fin_cases i <;> simp [crossing, Fin.append]
+  fin_cases i
+  · change Fin.append (fun _ : Fin 1 => (Polynomial.X : A))
+      (fun _ : Fin 1 => (1 : A)) (Fin.natAdd 1 (0 : Fin 1)) = 1
+    exact Fin.append_right _ _ _
+  · change Fin.append (fun _ : Fin 1 => (Polynomial.X : A))
+      (fun _ : Fin 1 => (1 : A)) (Fin.castAdd 1 (0 : Fin 1)) = Polynomial.X
+    exact Fin.append_left _ _ _
 
 example : algebraPositiveRelations R A A 1 = ⊥ :=
   algebraPositiveRelations_low R A A 1 (by decide)
@@ -163,7 +186,12 @@ example :
         ((1 : A) ⊗ₜ[R] PiTensorProduct.tprod R (fun _ : Fin 1 => (Polynomial.X : A)))) =
       (algebraPositiveRelations R A A 1).mkQ
         ((2 : A) ⊗ₜ[R] PiTensorProduct.tprod R (fun _ : Fin 1 => (Polynomial.X : A))) := by
-  rw [algebraPositiveCoefficientMap_f_mkQ, algebraCoefficientLevelMap_tmul]
-  simp [twiceCoefficient]
+  let t : TensorPower R 1 A := PiTensorProduct.tprod R (fun _ : Fin 1 => (Polynomial.X : A))
+  have hMap := algebraPositiveCoefficientMap_f_mkQ R A twiceCoefficient 1 ((1 : A) ⊗ₜ[R] t)
+  have hLevel := algebraCoefficientLevelMap_tmul R A twiceCoefficient 1 (1 : A) t
+  have hWord : algebraCoefficientLevelMap R A twiceCoefficient 1 ((1 : A) ⊗ₜ[R] t) =
+      (2 : A) ⊗ₜ[R] t :=
+    hLevel.trans (congrArg (fun m : A => m ⊗ₜ[R] t) twiceCoefficient_one)
+  exact hMap.trans (congrArg (algebraPositiveRelations R A A 1).mkQ hWord)
 
 end MathlibExtTest.Algebra.Homology.HochschildExport
