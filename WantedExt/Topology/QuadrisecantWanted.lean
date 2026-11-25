@@ -40,7 +40,7 @@ Kuperberg, *Quadrisecants of knots and links*, J. Knot Theory Ramif. 3 (1994). K
 module
 
 public import Batteries.Util.ProofWanted
-public import WantedExt.Topology.ConwayKnotShared
+public import MathlibExt.Topology.ConwayKnotShared
 public import Mathlib
 
 @[expose] public section

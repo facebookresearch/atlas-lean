@@ -18,7 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.AlgebraicTopology.FundamentalGroupoid.FundamentalGroup
-public import WantedExt.Topology.ConwayKnotShared
+public import MathlibExt.Topology.ConwayKnotShared
 
 @[expose] public section
 
@@ -29,7 +29,7 @@ Source: A. W. Reid (with M. Boileau, S. Boyer and S. Wang), in Topologie, Oberwo
 (2008), no. 43, p. 2427, Conjecture 1.1, DOI 10.4171/OWR/2008/43. UnsolvedMath record UM-30001045
 (`OWR-2089-001`), dataset ulamai/UnsolvedMath v1.8.0.
 
-Knots are the smooth knots `Knot` of `WantedExt.Topology.ConwayKnotShared` (smooth `2π`-periodic
+Knots are the smooth knots `Knot` of `MathlibExt.Topology.ConwayKnotShared` (smooth `2π`-periodic
 immersions `ℝ → ℝ³` injective on a period); smooth knots are tame, and every tame knot type has one.
 The knot group is `π₁(ℝ³ \ K)`, isomorphic to `π₁(S³ \ K)`; basepoints are arbitrary (the complement
 is path-connected). 'Finitely many distinct knot groups' is up to isomorphism. The statement is made

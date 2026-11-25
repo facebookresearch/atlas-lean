@@ -35,7 +35,7 @@ statements are unchanged. Source: John Pardon, 'On the distortion of knots on em
 module
 
 public import Batteries.Util.ProofWanted
-public import WantedExt.Topology.ConwayKnotShared
+public import MathlibExt.Topology.ConwayKnotShared
 public import Mathlib.Analysis.Calculus.ContDiff.Basic
 public import Mathlib.Analysis.InnerProductSpace.PiL2
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
@@ -74,7 +74,7 @@ open MathlibExt.Topology.ConwayKnotShared.KnotTheory
 
 /-! The knot-theory model (`R3`, `Knot`, `TwoLink`, `AmbientIsotopy`,
 `CircleReparam`, isotopy, `reflectZ`, chirality) is shared with the other
-knot entries via `WantedExt.Topology.ConwayKnotShared` and is not copied
+knot entries via `MathlibExt.Topology.ConwayKnotShared` and is not copied
 here, so all knot entries speak about the same `Knot` type. -/
 
 /-- **Speed of a knot.** For a knot $K$ with parametrization $\gamma$ and a real number $t$,

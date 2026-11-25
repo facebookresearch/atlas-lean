@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.NumberTheory.PrimeCounting
 public import MathlibExt.NumberTheory.IteratedRemainderSet
+public import MathlibExt.NumberTheory.PrimeSquareTail
 public import MathlibExt.NumberTheory.RemainderSet
 
 /-!
@@ -26,9 +27,10 @@ structural lemmas, its `O(log log n)` drop bound, and its iterated-set bounds ar
 `WantedExt` and `MathlibExt` may not import `FormalizedPapers`, so the set is restated in
 `MathlibExt.NumberTheory.RemainderSet`, which also proves the unbounded drops. This file states
 the remaining results that `FormalizedPapers` does not prove: the asymptotic
-`s(n) = cn + O(n/(log n log log n))`, the theorem on consecutive differences, and the three
-auxiliary analytic lemmas. The iterated remainder sets `S_j(n)` are defined, and Lemma 19
-(`S_j(n)` versus the Pierce length `P(n)`, in corrected form) is proved, in
+`s(n) = cn + O(n/(log n log log n))`, the theorem on consecutive differences, and two
+auxiliary analytic lemmas. The inverse-prime-square tail bound is proved in
+`MathlibExt.NumberTheory.PrimeSquareTail`. The iterated remainder sets `S_j(n)` are defined, and
+Lemma 19 (`S_j(n)` versus the Pierce length `P(n)`, in corrected form) is proved, in
 `MathlibExt.NumberTheory.IteratedRemainderSet`.
 -/
 
@@ -121,16 +123,6 @@ Source: Omkar Baraskar and Ingrid Vukusic, *Bounds for Sets of Remainders*, Jour
 Integer Sequences 29 (2026), Article 26.1.4, Lemma 7 (`lem:primecounting_ub`). -/
 public theorem_wanted primeCounting_le_thirteen_tenths {n : ℕ} (hn : 2 ≤ n) :
     (Nat.primeCounting n : ℝ) ≤ 13 / 10 * n / Real.log n
-
-/-- **Tail of the sum of inverse prime squares.** As the natural number $n$ tends to infinity,
-the sum $\sum_{p > n,\ p \text{ prime}} 1/p^2$ of the inverse squares of the primes greater
-than $n$ is $O(1/(n \log n))$.
-
-Source: Omkar Baraskar and Ingrid Vukusic, *Bounds for Sets of Remainders*, Journal of
-Integer Sequences 29 (2026), Article 26.1.4, Lemma 8 (`lem:psquared_sum_est`). -/
-public theorem_wanted tsum_inv_sq_primes_gt_isBigO :
-    (fun n : ℕ => ∑' p : {p : ℕ // p.Prime ∧ n < p}, (1 : ℝ) / ((p : ℕ) : ℝ) ^ 2)
-      =O[Filter.atTop] (fun n : ℕ => 1 / ((n : ℝ) * Real.log n))
 
 /-- **The first iterated remainder set is the remainder set.** For every natural number $n$, the
 iterated remainder set $S_1(n)$ equals the remainder set

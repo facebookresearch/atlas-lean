@@ -13,6 +13,7 @@ public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Data.Rat.Defs
 public import MathlibExt.Combinatorics.Enumerative.JosephusFunction
+import MathlibExt.NumberTheory.JosephusFixedPointRecurrence
 import MathlibExt.NumberTheory.JosephusHighExtremal
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
@@ -23,6 +24,7 @@ import Mathlib.Tactic.Ring
 
 This module defines base-3/2 digits and proves that their length increases by one plus the number
 of intervening pure high extremal points between consecutive step-three Josephus fixed points.
+With one intervening pure high extremal point, the new digits are 2 and 0, least significant first.
 -/
 
 namespace MetaMathlibExt
@@ -425,6 +427,54 @@ public theorem josephusThreeFixedPoint_digits_length (ℓ : ℕ) :
   rw [digits_length_eq_add_card (m - n) n m ⟨hn.1, Or.inl hn.2⟩
     ⟨hm.1, Or.inl hm.2⟩ hnm.le rfl, hsplit, Finset.card_insert_of_notMem hnot]
   exact (Nat.add_assoc _ _ _).symm
+
+namespace josephusThreeFixedPoint_digits_of_gap_one
+
+private theorem digits_step {n m d : ℕ} (hm : 0 < m) (hd : d < 3)
+    (h : 2 * m = 3 * n + d) : baseThreeHalvesDigits m = d :: baseThreeHalvesDigits n := by
+  obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hm.ne'
+  have hrem : 2 * (k + 1) % 3 = d := by omega
+  have hquot : (2 * (k + 1) - d) / 3 = n := by omega
+  rw [baseThreeHalvesDigits.eq_2, hrem, hquot]
+
+end josephusThreeFixedPoint_digits_of_gap_one
+
+open josephusThreeFixedPoint_digits_length josephusThreeFixedPoint_digits_of_gap_one in
+/-- **Base-3/2 digits of the next Josephus fixed point, gap one.** Let $J_3$ be the Josephus
+function with elimination step $3$, let $n_\ell$ be the $\ell$-th positive fixed point of $J_3$
+in increasing order (counting from $\ell = 0$), and let $m_\ell$ be the number of integers $n$
+with $n_\ell < n < n_{\ell+1}$ and $J_3(n) + 1 = n$ (the pure high extremal points between
+them). For every $\ell$, if $m_\ell = 1$, then the base-$3/2$ digit list of $n_{\ell+1}$, least
+significant digit first, is the digits $2, 0$ followed by the digit list of $n_\ell$.
+
+This is part (ii) of the cited Theorem 1.
+
+Source: Yunier Bello-Cruz and Roy Quintero-Contreras, *Fixed Points of the Josephus Function via
+Fractional Base Expansions*, INTEGERS 26 (2026), Article A54, Theorem 1. -/
+public theorem josephusThreeFixedPoint_digits_of_gap_one (ℓ : ℕ) :
+    let D := baseThreeHalvesDigits (josephusThreeFixedPoint ℓ)
+    let E := baseThreeHalvesDigits (josephusThreeFixedPoint (ℓ + 1))
+    let m := josephusThreeGap ℓ
+    m = 1 → E = [2, 0] ++ D := by
+  dsimp only
+  let a := josephusThreeFixedPoint ℓ
+  let b := josephusThreeFixedPoint (ℓ + 1)
+  change josephusThreeGap ℓ = 1 →
+    baseThreeHalvesDigits b = [2, 0] ++ baseThreeHalvesDigits a
+  intro hgap
+  obtain ⟨hcount, hrec⟩ := josephusThree_fixedPoint_recurrence ℓ
+  change josephusThreeGap ℓ = padicValNat 2 (3 * a + 2) at hcount
+  change 2 ^ (padicValNat 2 (3 * a + 2) + 1) * b + 2 ^ padicValNat 2 (3 * a + 2) =
+    3 ^ padicValNat 2 (3 * a + 2) * (3 * a + 2) at hrec
+  rw [← hcount, hgap] at hrec
+  norm_num at hrec
+  -- The first digit is 2, and twice the resulting quotient is 3 times the old fixed point.
+  let q := 2 * b / 3
+  have hb : 2 * b = 3 * q + 2 := by dsimp [q]; omega
+  have hq : 2 * q = 3 * a + 0 := by omega
+  have ha : 1 ≤ a := (Nat.nth_mem_of_infinite fixed_infinite ℓ).1
+  rw [digits_step (by omega) (by decide) hb, digits_step (by omega) (by decide) hq]
+  rfl
 
 end
 

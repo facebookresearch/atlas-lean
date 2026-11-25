@@ -7,7 +7,16 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# Shared Conway knot stack
+Portions of this file are adapted from:
+
+`LeanEval/KnotTheory/ConwayKnot.lean`, `LeanEval/KnotTheory/Piccirillo.lean`, and
+`LeanEval/Topology/ConwayTopologicallySlice.lean` (leanprover/lean-eval at commit
+38361be884302c7edce1908c4aef8296eb2cb27e).
+Copyright 2026 Lean FRO, LLC.
+Authors: Kim Morrison (benchmark submitter) and lean-eval contributors.
+
+The adapted portions are the shared knot, isotopy, sliceness and braid closure definitions,
+including the Conway polyline. Their names and definitions are preserved in this move.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -35,6 +44,13 @@ module
 public import Mathlib.Analysis.InnerProductSpace.PiL2
 public import Mathlib.Analysis.Calculus.ContDiff.Basic
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+
+/-!
+# The Conway knot and its piecewise-linear parametrization
+
+This module defines the Conway knot as the closure of a four-strand braid, the periodic
+parametrization of a closed polyline, and the shared notions of ambient isotopy and sliceness.
+-/
 
 @[expose] public section
 
@@ -474,11 +490,8 @@ crossing. Over-strands lift to `y = 1`, under-strands stay at `y = 0`,
 designed so that the two strands of any crossing are `y`-separated.
 Closure arcs swing through `y = 100`, well outside the braid box.
 
-The layout *intends* to produce a simple polyline, but simplicity is not
-proved here; it is a separate obligation, expressed by `PLKnot.IsSimple`
-and discharged where needed (e.g. the `conwayKnot_isSimple` benchmark
-hole). The function is silent on invalid input — `|w| = 0` or `|w| ≥ n`
-— and produces garbage in those cases.
+Simplicity is a separate condition, expressed by `PLKnot.IsSimple`.
+The function still returns a list for invalid generators with `|w| = 0` or `|w| ≥ n`.
 -/
 
 namespace BraidClosure
@@ -630,15 +643,8 @@ namespace KnotTheory
 The Conway knot has braid index 4 and a standard 4-braid representation in
 KnotInfo. We package the resulting polyline as a `PLKnot`.
 
-`conwayKnot` is now a trusted, `sorry`-free term: its only proof field,
-`three_le`, is discharged by kernel computation of the (78-vertex) list
-length. Simplicity of the polyline — an embedded simple closed curve —
-is a `PLKnot.IsSimple` fact rather than a structure field, and is posed
-as the separate benchmark hole `conwayKnot_isSimple` in `Piccirillo`
-rather than carried here as an unchecked proof field. The topological
-problem `conway_knot_topologically_slice` reuses this same trusted
-`conwayKnot`; a solver there must likewise establish simplicity in order
-to exhibit a smooth representative.
+Kernel computation gives 78 vertices, which supplies the `three_le` field.
+The simplicity of this polyline is proved in `MathlibExt.Topology.ConwayKnotSimple`.
 -/
 
 /-- **Braid word for the Conway knot.** The braid word

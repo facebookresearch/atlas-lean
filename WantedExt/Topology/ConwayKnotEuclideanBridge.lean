@@ -9,15 +9,11 @@ LICENSE file in the root directory of this source tree.
 /-
 # Bridge between the trusted Conway knot stack and the Euclidean link API
 
-`WantedExt.Topology.ConwayKnotShared` is a trusted, verbatim copy of
-lean-eval knot-theory helpers (Apache License, Version 2.0), kept
-unchanged apart from its namespace so that the wanted statements
-depending on it retain their original meaning. The canonical working
-API for parametrized smooth knots and links in this repository is
-`MathlibExt.Topology.Knot.EuclideanLink`; MathlibExt cannot import
-WantedExt (the layering runs the other way), so the two APIs
-deliberately duplicate three structures field-for-field
-(`Knot`/`ParametrizedKnot`, `AmbientIsotopy`, and `CircleReparam`).
+`MathlibExt.Topology.ConwayKnotShared` preserves the lean-eval knot-theory
+definitions (Apache License, Version 2.0) used by the benchmark statements.
+The canonical API for parametrized smooth knots and links is
+`MathlibExt.Topology.Knot.EuclideanLink`. The two APIs share the same fields in
+three structures (`Knot`/`ParametrizedKnot`, `AmbientIsotopy`, and `CircleReparam`).
 
 This module is the interoperation point. It does not modify either
 definition: it provides the fieldwise identity conversions in both
@@ -30,7 +26,7 @@ module
 
 public import Mathlib.Data.Fin.VecNotation
 public import MathlibExt.Topology.Knot.EuclideanLink
-public import WantedExt.Topology.ConwayKnotShared
+public import MathlibExt.Topology.ConwayKnotShared
 
 import Mathlib.Tactic.FinCases
 

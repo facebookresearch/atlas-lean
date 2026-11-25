@@ -46,12 +46,9 @@ representatives.
 
 `ParametrizedKnot`, `AmbientIsotopy`, and `CircleReparam` deliberately
 match, field for field, the `Knot`, `AmbientIsotopy`, and
-`CircleReparam` of `WantedExt.Topology.ConwayKnotShared`. That file is
-a trusted verbatim copy of lean-eval helpers and MathlibExt cannot
-import WantedExt, so this file is the canonical working copy instead;
-`WantedExt.Topology.ConwayKnotEuclideanBridge` proves the two APIs
-interoperate (fieldwise equivalences and isotopy transfer) without
-modifying either definition.
+`CircleReparam` of `MathlibExt.Topology.ConwayKnotShared`, which preserves
+the lean-eval definitions. `WantedExt.Topology.ConwayKnotEuclideanBridge`
+proves the two APIs interoperate via fieldwise equivalences and isotopy transfer.
 -/
 
 /-- **Parametrized knot.** An oriented parametrized smooth knot in Euclidean 3-space is a
