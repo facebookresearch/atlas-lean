@@ -14,10 +14,13 @@ public import Mathlib.RingTheory.PowerSeries.Binomial
 public import Mathlib.RingTheory.PowerSeries.Derivative
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import Mathlib.RingTheory.PowerSeries.Substitution
+public import MathlibExt.Combinatorics.Enumerative.ExtendedTrinomialAlternating
+public import MathlibExt.Combinatorics.Enumerative.GouldTrinomialIdentities
 public import MathlibExt.Combinatorics.Enumerative.RiordanArraySum
 public import MathlibExt.Combinatorics.Enumerative.TrinomialAlternatingColumn
 public import MathlibExt.Combinatorics.Enumerative.TrinomialBinomialTransform
 public import MathlibExt.Combinatorics.Enumerative.TrinomialConvolution
+public import MathlibExt.Combinatorics.Enumerative.TrinomialEvenAlternating
 public import MathlibExt.Combinatorics.Enumerative.TrinomialUpperHalf
 public import MathlibExt.NumberTheory.LucasSequence
 public import MathlibExt.NumberTheory.TribonacciSequenceWithInitialValues001
@@ -152,16 +155,6 @@ public theorem_wanted sum_trinomialCoefficient_odd (n : ℕ) (z s : ℂ) (hs : s
     (hs0 : s ≠ 0) :
     ∑ k ∈ Finset.range (n + 1), (trinomialCoefficient n (2 * k + 1) : ℂ) * z ^ k =
       ((1 + s + z) ^ n - (1 - s + z) ^ n) / (2 * s)
-
-/-- **Alternating binomial sum of trinomial coefficients over even rows.** Write
-$\binom{n}{k}_2$ for the trinomial coefficient, the coefficient of $x^k$ in $(1+x+x^2)^n$. For
-every natural number $n$, $\sum_{k=0}^{n} (-1)^k \binom{n}{k} \binom{2n-2k}{n}_2 = 2^n$.
-
-Source: Yassine Otmani, *The 2-Pascal Triangle and a Related Riordan Array*, Journal of
-Integer Sequences 28 (2025), Article 25.3.5, Theorem 19 (`jis-2025-25.3.5-thm-19`). -/
-public theorem_wanted sum_trinomialCoefficient_two_mul_sub (n : ℕ) :
-    ∑ k ∈ Finset.range (n + 1),
-        (trinomialCoefficient (2 * n - 2 * k) n : ℤ) * n.choose k * (-1) ^ k = 2 ^ n
 
 /-- **Alternating sum of squared trinomial coefficients.** Write $\binom{n}{k}_2$ for the
 trinomial coefficient, the coefficient of $x^k$ in $(1+x+x^2)^n$. For every natural number $n$,
@@ -348,52 +341,6 @@ public theorem_wanted sum_trinomialCoefficient_mul_coeff_eq_coeff_subst (n x a b
             (1 - C z * X + C z ^ 2 * X ^ 2) ^ a * ((1 - C z * X) ^ b)⁻¹)) ∧
       ∑ k ∈ Finset.range (m / c + 1), E (y + a' * k) (m - c * k) * z ^ (m - c * k) * coeff k f =
         coeff m (P y * f.subst (X ^ c * P a'))
-
-/-- **Gould-type identities for binomial and extended trinomial coefficients.** For complex $u$
-and $j \in \mathbb{N}$ write $\binom{u}{j}$ for the generalized binomial coefficient and
-$\binom{u}{j}_2$ for the coefficient of $t^j$ in
-$(1 + t + t^2)^u = \sum_{i \ge 0} \binom{u}{i}(t + t^2)^i$ (Comtet's extension). Then for all
-complex $x$, $y$ and every $n \in \mathbb{N}$,
-
-$$\sum_{k=0}^{\lfloor n/3 \rfloor} \binom{x}{k}\binom{y - 3x}{n - 3k} =
-\sum_{k=0}^{n} \binom{x}{k}\binom{y - 2k}{n - k}(-3)^k$$
-
-and
-
-$$\sum_{k=0}^{\lfloor n/3 \rfloor} \binom{-x}{n - 3k}_2 \binom{x}{k}(-1)^k = (-1)^n \binom{x}{n}.$$
-
-The paper's Eq. (25) also equates the first two sums with
-$\sum_k \binom{2x}{n-k}_2 \binom{y-2x}{k}(-1)^{n-k}$; that expression is left out because it is
-false as printed: at $x = 2$, $y = 1/3$, $n = 1$ it equals $-23/3$, while both sides of the
-first identity equal $-17/3$.
-
-Source: Yassine Otmani, *The 2-Pascal Triangle and a Related Riordan Array*, Journal of
-Integer Sequences 28 (2025), Article 25.3.5, Theorem 21 (`jis-2025-25.3.5-thm-21`). -/
-public theorem_wanted sum_choose_gould_and_extended_trinomial (x y : ℂ) (n : ℕ) :
-    let E : ℂ → ℕ → ℂ := fun u j =>
-      coeff j ((PowerSeries.binomialSeries ℂ u).subst (X + X ^ 2 : PowerSeries ℂ))
-    ∑ k ∈ Finset.range (n / 3 + 1), Ring.choose x k * Ring.choose (y - 3 * x) (n - 3 * k) =
-        ∑ k ∈ Finset.range (n + 1),
-          Ring.choose x k * Ring.choose (y - 2 * k) (n - k) * (-3) ^ k ∧
-      ∑ k ∈ Finset.range (n / 3 + 1), E (-x) (n - 3 * k) * Ring.choose x k * (-1) ^ k =
-        (-1) ^ n * Ring.choose x n
-
-/-- **An alternating convolution of extended trinomial coefficients.** For complex $u$ and
-$j \in \mathbb{N}$ write $\binom{u}{j}_2$ for the coefficient of $t^j$ in
-$(1 + t + t^2)^u = \sum_{i \ge 0} \binom{u}{i}(t + t^2)^i$ (Comtet's extension), where
-$\binom{u}{i}$ is the generalized binomial coefficient. Then for every complex $x$ and every
-$n \in \mathbb{N}$,
-
-$$\sum_{k=0}^{n} \binom{2n - x}{n - k}_2 \binom{x}{k}_2 (-1)^k =
-\sum_{k=0}^{\lfloor n/2 \rfloor} \binom{2n - 2x}{n - 2k}_2 \binom{x}{k}_2.$$
-
-Source: Yassine Otmani, *The 2-Pascal Triangle and a Related Riordan Array*, Journal of
-Integer Sequences 28 (2025), Article 25.3.5, Theorem 23 (`jis-2025-25.3.5-thm-23`). -/
-public theorem_wanted sum_extended_trinomial_alternating_eq (x : ℂ) (n : ℕ) :
-    let E : ℂ → ℕ → ℂ := fun u j =>
-      coeff j ((PowerSeries.binomialSeries ℂ u).subst (X + X ^ 2 : PowerSeries ℂ))
-    ∑ k ∈ Finset.range (n + 1), E (2 * n - x) (n - k) * E x k * (-1) ^ k =
-      ∑ k ∈ Finset.range (n / 2 + 1), E (2 * n - 2 * x) (n - 2 * k) * E x k
 
 /-- **Tribonacci numbers from every third term of A077943.** Let $T_n$ be the Tribonacci
 numbers, $T_0 = T_1 = 0$, $T_2 = 1$ and $T_{n+3} = T_{n+2} + T_{n+1} + T_n$. Let

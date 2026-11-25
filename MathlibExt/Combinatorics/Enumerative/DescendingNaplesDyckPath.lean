@@ -28,23 +28,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **$k$-Naples parking function.** A preference $\alpha = (a_1, \dots, a_n)$ of length $n$
-is a $k$-Naples parking function if $1 \le a_i \le n$ for every $i$ and all $n$ cars park on
-the spots $1, \dots, n$ when they arrive in order and follow the $k$-Naples rule: car $i$ takes
-spot $a_i$ if it is free; otherwise the first free spot among $a_i - 1, \dots, a_i - k$, checked
-in decreasing order and only among spots at least $1$; otherwise the first free spot after
-$a_i$, if there is one. For $k = 0$ these are the ordinary parking functions.
-
-Source: J. P. Carvalho, P. E. Harris, G. Rojas Kirby, N. Tripeny and A. R. Vindas Meléndez,
-*Enumerating k-Naples Parking Functions through Catalan Objects*, INTEGERS 24 (2024),
-Article A44, Section 1. -/
-public def IsNaplesParkingFunction (k : ℕ) {n : ℕ} (α : Fin n → ℕ) : Prop :=
-  (∀ i, 1 ≤ α i ∧ α i ≤ n) ∧ (naplesPark n k [] (List.ofFn α)).isSome
-
-public instance (k n : ℕ) : DecidablePred (IsNaplesParkingFunction k (n := n)) := fun α => by
-  unfold IsNaplesParkingFunction
-  infer_instance
-
 /-- **Number of descending $k$-Naples parking functions.** For natural numbers $n$ and $k$, this
 is the number of $k$-Naples parking functions $\alpha = (a_1, \dots, a_n)$ of length $n$ (so
 $a_i \in \{1, \dots, n\}$ for all $i$) that are descending, that is, weakly decreasing:

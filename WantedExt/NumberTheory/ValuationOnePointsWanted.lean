@@ -50,26 +50,6 @@ public theorem_wanted card_padicVal_gt_one_le_natDegree (g : Polynomial ℤ) (hg
     ∃ P : ℕ, ∀ p : ℕ, p.Prime → P ≤ p →
       ((Finset.range (p ^ 2)).filter fun x : ℕ => (p : ℤ) ^ 2 ∣ g.eval (x : ℤ)).card ≤ g.natDegree
 
-/-- **Lifts of a nonsingular point with valuation one.** Let $p$ be a prime, let
-$f \in \mathbb{Z}[x, y]$ have partial derivatives $f_x$ and $f_y$, and let $r, s$ be integers in
-$\{0, \dots, p - 1\}$ with $p \mid f(r, s)$ such that $f_x(r, s)$ and $f_y(r, s)$ are not both
-divisible by $p$. Then exactly $p(p - 1)$ of the pairs $(k, l)$ with $0 \le k, l < p$ satisfy
-$p \mid f(r + kp, s + lp)$ and $p^2 \nmid f(r + kp, s + lp)$, that is,
-$\nu_p(f(r + kp, s + lp)) = 1$.
-
-Source: Krishnan Rajkumar and Shubham, *On the Distribution of Points of Valuation 1 for a
-Polynomial in Two Variables*, INTEGERS 26 (2026), Article A82, Proposition 2
-(`integers-2026-A82-prop-2`). -/
-public theorem_wanted card_lift_padicVal_eq_one {p : ℕ} (hp : p.Prime)
-    (f : MvPolynomial (Fin 2) ℤ) {r s : ℕ} (hr : r < p) (hs : s < p)
-    (hcurve : (p : ℤ) ∣ MvPolynomial.eval ![(r : ℤ), s] f)
-    (hgrad : ¬ ((p : ℤ) ∣ MvPolynomial.eval ![(r : ℤ), s] (MvPolynomial.pderiv 0 f) ∧
-      (p : ℤ) ∣ MvPolynomial.eval ![(r : ℤ), s] (MvPolynomial.pderiv 1 f))) :
-    ((Finset.range p ×ˢ Finset.range p).filter fun kl : ℕ × ℕ =>
-        (p : ℤ) ∣ MvPolynomial.eval ![(r : ℤ) + kl.1 * p, (s : ℤ) + kl.2 * p] f ∧
-          ¬ (p : ℤ) ^ 2 ∣ MvPolynomial.eval ![(r : ℤ) + kl.1 * p, (s : ℤ) + kl.2 * p] f).card =
-      p * (p - 1)
-
 /-- **Common lifts of two points with independent gradients.** Let $p$ be a prime, let
 $f \in \mathbb{Z}[x, y]$ have partial derivatives $f_x$ and $f_y$, and let $(r_1, s_1)$ and
 $(r_2, s_2)$ be pairs of integers in $\{0, \dots, p - 1\}$ with $p \mid f(r_i, s_i)$ for

@@ -37,8 +37,10 @@ recurrence is written without subtraction:
 The definitions `onesDiagDet`, `residueHitCount` and
 `availableCount`, together with the proved count of available
 integers for two distinct primes, are in
-`MathlibExt.NumberTheory.CountingAppearancesProgressions`, which
-this module imports.
+`MathlibExt.NumberTheory.CountingAppearancesProgressions`.
+The bordered matrix and its determinant, `freeCount`, and the proved
+count of free integers for two distinct primes are in
+`MathlibExt.NumberTheory.CountingAppearancesProgressionsFreeCount`, which this module imports.
 -/
 module
 
@@ -48,48 +50,14 @@ public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Nat.Nth
 public import Mathlib.Data.Nat.Prime.Basic
 public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
-public import MathlibExt.NumberTheory.CountingAppearancesProgressions
+public import MathlibExt.NumberTheory.CountingAppearancesProgressionsAvailableRecurrence
+public import MathlibExt.NumberTheory.CountingAppearancesProgressionsFreeCount
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.CountingAppearancesProgressionsWanted
-
-/-- **Bordered ones-diagonal matrix.** For natural numbers $p_1, \dots, p_k$, the
-$(k+1) \times (k+1)$ integer matrix whose first row consists of ones and whose row $i + 1$, for
-$1 \le i \le k$, has $p_i$ in column $i$ and $1$ in every other column. Equivalently, it is the
-$k \times k$ matrix with diagonal entries $p_1, \dots, p_k$ and all other entries $1$, with a
-column of ones appended on the right and then a row of ones placed on top. -/
-def borderedOnesDiag {k : ℕ} (p : Fin k → ℕ) :
-    Matrix (Fin (k + 1)) (Fin (k + 1)) ℤ :=
-  fun i j => if i = 0 then 1
-    else if h : j.val + 1 = i.val then
-      (p ⟨j.val, by have hi := i.isLt; omega⟩ : ℤ)
-    else 1
-
-/-- **Bordered ones-diagonal determinant.** For natural numbers $p_1, \dots, p_k$, the integer
-$F_k(p_1, \dots, p_k)$ is $(-1)^k$ times the determinant of the bordered ones-diagonal matrix of
-$p_1, \dots, p_k$: the $(k+1) \times (k+1)$ integer matrix whose first row consists of ones and
-whose row $i + 1$, for $1 \le i \le k$, has $p_i$ in column $i$ and $1$ in every other column. -/
-def borderedOnesDiagDet {k : ℕ} (p : Fin k → ℕ) : ℤ :=
-  (-1 : ℤ) ^ k * (borderedOnesDiag p).det
-
-/-- **The first primes.** For a natural number $k$, the $k$-tuple whose entry with index $i$, for
-$0 \le i < k$, is the $(i+1)$-st prime; that is, the first $k$ primes $2, 3, 5, \dots$ in
-increasing order. -/
-noncomputable def firstPrimes (k : ℕ) : Fin k → ℕ :=
-  fun i => Nat.nth Nat.Prime i.val
-
-/-- **Free count.** For natural numbers $p_1, \dots, p_k$ and $r_1, \dots, r_k$, let $\gamma(n)$
-be the number of indices $i$ with $n \equiv r_i \pmod{p_i}$. The free count is the number of
-integers $n$ with $1 \le n \le p_1 \cdots p_k$ and $\gamma(n) = 0$.
-
-When $p_1, \dots, p_k$ are the first $k$ primes, this is the count $\mathrm{free}(k)$ of
-Pausinger's paper. -/
-def freeCount {k : ℕ} (p r : Fin k → ℕ) : ℕ :=
-  ((Finset.Icc 1 (∏ i, p i)).filter
-    (fun n => residueHitCount p r n = 0)).card
 
 /-- **Occupied count.** For natural numbers $p_1, \dots, p_k$ and $r_1, \dots, r_k$, let
 $\gamma(n)$ be the number of indices $i$ with $n \equiv r_i \pmod{p_i}$. The occupied count is
@@ -166,23 +134,6 @@ theorem_wanted freeCount_firstPrimes_succ (k : ℕ) (hk : 1 ≤ k)
       (Nat.nth Nat.Prime k - 1) *
         freeCount (firstPrimes k) (r ∘ Fin.castSucc)
 
-/-- **Recurrence for the number of available integers.** Let $k \ge 1$, let $p_1, \dots, p_{k+1}$
-be the first $k + 1$ primes, and let $r_1, \dots, r_{k+1}$ be any natural numbers. For $m = k$ and
-$m = k + 1$, call an integer $n$ free if $n \not\equiv r_i \pmod{p_i}$ for every $i \le m$, and
-available if $n \equiv r_i \pmod{p_i}$ for at most one $i \le m$; let $\mathrm{av}(m)$ and
-$\mathrm{free}(m)$ be the numbers of available and of free integers $n$ with
-$1 \le n \le p_1 \cdots p_m$. Then
-$\mathrm{av}(k+1) = (p_{k+1} - 1) \cdot \mathrm{av}(k) + \mathrm{free}(k)$.
-
-Source: Florian Pausinger, "Counting Appearances of Integers in
-Sets of Arithmetic Progressions", Lemma 4. -/
-theorem_wanted availableCount_firstPrimes_succ (k : ℕ) (hk : 1 ≤ k)
-    (r : Fin (k + 1) → ℕ) :
-    availableCount (firstPrimes (k + 1)) r =
-      (Nat.nth Nat.Prime k - 1) *
-          availableCount (firstPrimes k) (r ∘ Fin.castSucc) +
-        freeCount (firstPrimes k) (r ∘ Fin.castSucc)
-
 /-- **Available integers for the first primes.** Let $k$ be a natural number, let
 $p_1, \dots, p_k$ be the first $k$ primes, and let $r_1, \dots, r_k$ be any natural numbers. Call an
 integer $n$ available if $n \equiv r_i \pmod{p_i}$ holds for at most one index $i$. Then the number
@@ -209,17 +160,6 @@ Sets of Arithmetic Progressions", Theorem 1. -/
 theorem_wanted freeCount_firstPrimes (k : ℕ) (r : Fin k → ℕ) :
     (freeCount (firstPrimes k) r : ℤ) =
       borderedOnesDiagDet (firstPrimes k)
-
-/-- **Lemma 5, free count.** Let $p$ and $q$ be distinct primes and let $r_1, r_2$ be natural
-numbers. Then the number of integers $n$ with $1 \le n \le pq$ such that
-$n \not\equiv r_1 \pmod p$ and $n \not\equiv r_2 \pmod q$ equals $F_2(p, q)$, where
-$$F_2(p, q) = \det \begin{pmatrix} 1 & 1 & 1 \\ p & 1 & 1 \\ 1 & q & 1 \end{pmatrix}.$$
-
-Source: Florian Pausinger, "Counting Appearances of Integers in
-Sets of Arithmetic Progressions", Lemma 5. -/
-theorem_wanted freeCount_two_primes (p q : ℕ) (hp : p.Prime)
-    (hq : q.Prime) (hpq : p ≠ q) (r : Fin 2 → ℕ) :
-    (freeCount ![p, q] r : ℤ) = borderedOnesDiagDet ![p, q]
 
 /-- **Available integers for three distinct primes.** Let $p$, $q$, $s$ be pairwise distinct
 primes and let $r_1, r_2, r_3$ be any natural numbers. Call an integer $n$ available if it satisfies

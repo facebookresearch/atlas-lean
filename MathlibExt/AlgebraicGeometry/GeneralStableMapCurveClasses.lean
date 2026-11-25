@@ -70,8 +70,12 @@ def HasCurveClass [LocallyOfFiniteType X.hom] [IsNoetherian X.left]
         (MathlibExt.AlgebraicGeometry.GeometricChowOperators.flatCyclePullback
           (MathlibExt.AlgebraicGeometry.RelativeCurveClasses.fieldProjection X Ω) 1 0 c)
 
-/-- General map-stable, class-controlled families. This is a public contract
-on actual objects; no moduli-stack/properness provider is assumed by its type. -/
+/-- A stable map of class `β` parametrized by `T`, for schemes `X` and `T` over a field `k` with
+`X` noetherian and locally of finite type over `k`: a family over `T` of `n`-marked nodal curves
+of genus `g` with a map to `X` over `k` (`toFamily`), such that on every geometric fibre the
+automorphisms of the marked curve commuting with the map form a finite set (`stable`), and the map
+from the curve to the base change of `X` is proper and pushes the fundamental class of the curve
+forward to the pullback of `β` (`curveClass`). -/
 structure StableFamily [LocallyOfFiniteType X.hom] [IsNoetherian X.left]
     (β : MathlibExt.AlgebraicGeometry.RelativeCurveClasses.CurveClass X) where
   toFamily : Family X.hom n g T.left T.hom

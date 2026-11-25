@@ -1,4 +1,4 @@
 # Closed Pull Image
 
-The pointwise image is separately required to be the actual closed cone;
-the finite-image lemma and its constructor remain source obligations.
+Closed conical subsets of the cotangent bundle $T^*U$ whose support is the image of
+$C \times_X U$ under the differential $dh : T^*X \times_X U \to T^*U$ of $h : U \to X$.

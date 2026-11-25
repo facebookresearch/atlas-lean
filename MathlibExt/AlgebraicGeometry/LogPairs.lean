@@ -85,10 +85,9 @@ attribute [instance] NormalVariety.integral NormalVariety.noetherian
 
 variable {k : Type u} [Field k] {n : ℕ}
 
-/-- Codimension-one points: in Mathlib's specialization order on a scheme
-(`x ≤ y` when `x` lies in the closure of `y`, so the generic point is the top),
-`Order.coheight x` is the codimension of `x`. This is the convention of
-`AlgebraicGeometry.AlgebraicCycle.IsWeilDivisor` and of `Scheme.ord`. -/
+/-- The codimension-one points of $V$: the points $x$ with $\operatorname{coheight}(x) = 1$ in the
+specialization order ($x \le y$ when $x$ lies in the closure of $y$, so the generic point is the
+top), in which the coheight of a point is its codimension. -/
 abbrev PrimePoint (V : NormalVariety k n) := {x : V.X.left // coheight x = 1}
 abbrev IntegerWeil (V : NormalVariety k n) := PrimePoint V →₀ ℤ
 abbrev RealWeil (V : NormalVariety k n) := PrimePoint V →₀ ℝ

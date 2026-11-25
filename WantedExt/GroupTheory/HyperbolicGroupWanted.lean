@@ -12,7 +12,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.GroupTheory.FinitelyPresentedGroup
 public import MathlibExt.GroupTheory.FreeGroupHyperbolic
 public import MathlibExt.GroupTheory.HyperbolicGroup
-public import WantedExt.GroupTheory.WordProblemSolvableShared
+public import MathlibExt.GroupTheory.WordProblemSolvableShared
 
 /-!
 # Basic theorems on word-hyperbolic groups
