@@ -7,7 +7,7 @@ May's model of parasitoids that aggregate in a patchy environment is $H_{t+1} = 
 1. The model, with the negative-binomial escape probability $(1 + aP/k)^{-k}$ and the interpretation $k = (1/\mathrm{CV}_p)^2$ of the clumping parameter (eq. (2)), and its equilibrium.
 2. The Jacobian at the equilibrium and the stability conditions for a $2 \times 2$ map, as in the source's Appendix 2.
 3. The equivalence of these conditions with $k < 1$ for all $F > 1$, $a > 0$, and the boundary case $k = 1$, which the source does not single out.
-4. The limit $k \to \infty$ and the comparison with the [Nicholson–Bailey model](../../../Biology/population-dynamics/discrete-population-models/nicholson-bailey-host-parasitoid-equilibrium-is-always-unstable.md).
+4. The limit $k \to \infty$ and the comparison with the [Nicholson–Bailey model](../../not-yet-classified/nicholson-bailey/positive-equilibrium-lyapunov-unstable.md).
 
 ## Sources
 
