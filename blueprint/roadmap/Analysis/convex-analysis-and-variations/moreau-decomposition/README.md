@@ -11,3 +11,4 @@
 - [Moreau decomposition, polar form](convex-projection-polar-cone.md)
 - [Moreau decomposition](moreau-decomposition.md)
 - [Bipolar theorem for closed convex cones](polar-cone-polar-cone.md)
+- [The proximal map of a lower semicontinuous convex function](proximal-map-of-a-convex-function.md)

@@ -10,3 +10,7 @@
 
 - [Support of the face-boundary graph of a finite set](phb-boundary-support.md)
 - [Face-boundary graph of a finite set as a planar subgraph](phb-planar-boundary.md)
+
+## Hole-free sets have a single contour cycle
+
+- [Contour of a hole-free set as a single simple cycle](exists-is-cycle-face-boundary-graph-of-c.md)

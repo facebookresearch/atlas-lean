@@ -40,6 +40,7 @@ A commander sends an order to the other generals, some of whom, possibly includi
 - [Oral messages, run as a protocol, solve the Byzantine generals problem](solves-to-protocol.md)
 - [The oral messages algorithm as an oral-message protocol](to-protocol.md)
 - [Solvability of the Byzantine generals problem with oral messages](exists-solves-iff-three-mul-lt-card.md)
+- [Byzantine agreement with signed messages](byzantine-agreement-with-signed-messages.md)
 
 ## Related topics
 

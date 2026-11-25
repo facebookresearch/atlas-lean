@@ -225,6 +225,24 @@ example : ¬ (AHeapCmd.frame emp emp .skip).vc (fun _ _ => False) := by
   rw [emp_star]
   rfl
 
+-- The same rejected annotation has an inhabited generated entry predicate.
+example : (AHeapCmd.frame (fun s h => h = ∅ ∧ s 0 = 0) emp
+    (.assign 0 (.const 1))).pre (fun _ _ => True) zero ∅ := by
+  change (emp ⋆ (fun s h => h = ∅ ∧ s 0 = 0)) zero ∅
+  rw [emp_star]
+  exact ⟨rfl, rfl⟩
+
+-- Its erased program is safe from that entry despite the false frame VC.
+-- Verification conditions are sufficient, not necessary, for this triple.
+example : SepValid
+    ((AHeapCmd.frame (fun s h => h = ∅ ∧ s 0 = 0) emp
+      (.assign 0 (.const 1))).pre (fun _ _ => True))
+    (AHeapCmd.frame (fun s h => h = ∅ ∧ s 0 = 0) emp
+      (.assign 0 (.const 1))).strip (fun _ _ => True) := by
+  apply safePre.valid_iff.mpr
+  intro s h _
+  exact safePre.assign_iff.mpr trivial
+
 -- Assignment invalidates this store-dependent frame, so its VC is rejected.
 example : ¬ (AHeapCmd.frame (fun s h => h = ∅ ∧ s 0 = 0) emp
     (.assign 0 (.const 1))).vc (fun _ _ => True) := by
