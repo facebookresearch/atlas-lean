@@ -153,6 +153,22 @@ private theorem continuous_clamped_integrand {f : ℝ → ℝ → ℝ} {T : ℝ}
     (continuous_const.mul ((continuous_fst.comp continuous_fst).sub continuous_snd))).prodMk
       (continuous_snd.comp continuous_fst))
 
+/-- The heat evolution of a continuous, uniformly exponentially bounded family is
+jointly continuous in its family parameter, heat time, and spatial position. Heat
+time may be nonpositive, using the stationary extension. -/
+theorem heatSolution_family_continuousOn {f : ℝ → ℝ → ℝ} {T : ℝ} (hT : 0 ≤ T)
+    (hf : ContinuousOn (Function.uncurry f) (Icc 0 T ×ˢ univ))
+    (hg : HeatWholeLine.HasExpGrowthOnStrip f T) :
+    ContinuousOn (fun p : (ℝ × ℝ) × ℝ => heatSolution (f p.1.1) p.1.2 p.2)
+      ((Icc 0 T ×ˢ univ) ×ˢ univ) := by
+  obtain ⟨M, c, hM, hc, hb⟩ := hg
+  have h := continuous_heat_family (continuous_clampForcing hT hf) hM hc
+    (fun s x => hb _ (clamp_mem hT s) x)
+  apply h.continuousOn.congr
+  intro p hp
+  dsimp only
+  rw [clampForcing_eq hp.1.1]
+
 /-- Continuous forcing with uniform exponential growth has an integrable time integrand
 at each point of a closed nonnegative strip. -/
 theorem intervalIntegrable_heatDuhamel {f : ℝ → ℝ → ℝ} {T : ℝ}
@@ -279,7 +295,9 @@ private theorem growth_slice {f : ℝ → ℝ → ℝ} {T s : ℝ}
   obtain ⟨M, c, hM, hc, hb⟩ := hg
   exact ⟨M, c, hM, hc, hb s hs⟩
 
-private theorem heat_add {f g : ℝ → ℝ} (hf : Continuous f) (hg : Continuous g)
+/-- Heat evolution preserves addition for continuous data of exponential growth,
+including its stationary extension at nonpositive heat times. -/
+theorem heatSolution_add_of_exp_growth {f g : ℝ → ℝ} (hf : Continuous f) (hg : Continuous g)
     (hbf : HasExpGrowth f) (hbg : HasExpGrowth g) (t x : ℝ) :
     heatSolution (fun y => f y + g y) t x = heatSolution f t x + heatSolution g t x := by
   by_cases ht : 0 < t
@@ -305,7 +323,7 @@ theorem heatDuhamel_add {f g : ℝ → ℝ → ℝ} {T : ℝ}
   intro s hs
   have hs₁ : s ∈ Icc 0 t := by simpa [uIcc_of_le ht.1] using hs
   have hsT : s ∈ Icc 0 T := ⟨hs₁.1, hs₁.2.trans ht.2⟩
-  exact heat_add (continuous_slice hf hsT) (continuous_slice hg hsT)
+  exact heatSolution_add_of_exp_growth (continuous_slice hf hsT) (continuous_slice hg hsT)
     (growth_slice hbf hsT) (growth_slice hbg hsT) _ x
 
 /-- Order between continuous exponentially growing forcing terms is preserved on the
