@@ -17,6 +17,7 @@ public import MathlibExt.NumberTheory.Recurrences.CRecursiveIteratedRemainders
 public import MathlibExt.NumberTheory.Recurrences.CRecursiveModModRepresentation
 public import MathlibExt.NumberTheory.Recurrences.CRecursiveModularRepresentations
 public import MathlibExt.NumberTheory.Recurrences.CRecursiveRemainderIncrement
+public import MathlibExt.NumberTheory.Recurrences.SmallProductRemainder
 
 namespace MetaMathlibExt
 
@@ -75,17 +76,6 @@ public theorem_wanted generating_function_term_representation_mono_base
     (n : ℕ) (hmn : m ≤ n) :
     t n = Nat.floor ((r : ℝ) ^ (n ^ 2) *
       (∑' k : ℕ, (t k : ℝ) * (((r : ℝ) ^ n)⁻¹) ^ k)) % r ^ n
-
-/--
-**Pulling a factor out of a remainder.** Let $a$, $y$ and $C$ be natural numbers with $ay < C$.
-Then $(ay) \bmod C = a \cdot (y \bmod C)$.
-
-Source: M. Prunescu and J. M. Shunia, *On Modular Representations of C-Recursive Integer Sequences*,
-Journal of Integer Sequences 28 (2025), Article 25.5.3, Lemma 5.
--/
-public theorem_wanted mul_mod_eq_mul_mod_of_mul_lt
-    (a y C : ℕ) (hbound : a * y < C) :
-    (a * y) % C = a * (y % C)
 
 /--
 **Remainder of a remainder, negative residue case.** Let $a$, $A$, $B$ and $C$ be integers with
