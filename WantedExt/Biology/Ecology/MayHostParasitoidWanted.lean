@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# May's negative-binomial host–parasitoid model: local stability if and only if `k < 1`
+# May's negative-binomial host–parasitoid model: stable for `k < 1`, unstable for `k > 1`
 
 May (1978) replaced the Poisson encounter law of the Nicholson–Bailey model by a negative
 binomial with clumping parameter `k > 0`:
@@ -53,22 +53,26 @@ noncomputable def hostEq (F a k : ℝ) : ℝ := F / (F - 1) * parasitoidEq F a k
 /-- The equilibrium point `(H*, P*)`. -/
 noncomputable def equilibrium (F a k : ℝ) : ℝ × ℝ := (hostEq F a k, parasitoidEq F a k)
 
-/-- A fixed point `z*` of a map `T` of `ℝ × ℝ` is **locally asymptotically stable on the open
-positive quadrant**: for every `ε > 0` there is `δ > 0` such that every `z` with both coordinates
-positive and `dist z z* < δ` has `dist (Tⁿ z) z* < ε` for every `n`, and there is `δ₀ > 0` such
-that every such `z` with `dist z z* < δ₀` has `Tⁿ z → z*`. -/
+/-- A point `z*` of `ℝ × ℝ` is a **locally asymptotically stable fixed point of `T` on the open
+positive quadrant**: `z*` has both coordinates positive and `T z* = z*`; for every `ε > 0` there
+is `δ > 0` such that every `z` with both coordinates positive and `dist z z* < δ` has
+`dist (Tⁿ z) z* < ε` for every `n`; and there is `δ₀ > 0` such that every such `z` with
+`dist z z* < δ₀` has `Tⁿ z → z*`. -/
 def IsLocallyAsymptoticallyStable (T : ℝ × ℝ → ℝ × ℝ) (zs : ℝ × ℝ) : Prop :=
-  (∀ ε : ℝ, 0 < ε → ∃ δ : ℝ, 0 < δ ∧ ∀ z : ℝ × ℝ, 0 < z.1 → 0 < z.2 → dist z zs < δ →
+  (0 < zs.1 ∧ 0 < zs.2) ∧ T zs = zs ∧
+    (∀ ε : ℝ, 0 < ε → ∃ δ : ℝ, 0 < δ ∧ ∀ z : ℝ × ℝ, 0 < z.1 → 0 < z.2 → dist z zs < δ →
       ∀ n : ℕ, dist (T^[n] z) zs < ε) ∧
     ∃ δ₀ : ℝ, 0 < δ₀ ∧ ∀ z : ℝ × ℝ, 0 < z.1 → 0 < z.2 → dist z zs < δ₀ →
       Tendsto (fun n : ℕ => T^[n] z) atTop (𝓝 zs)
 
-/-- A fixed point `z*` of `T` is **Lyapunov unstable on the open positive quadrant**: there is
-`ε > 0` such that for every `δ > 0` some `z` with both coordinates positive and `dist z z* < δ`
-has `dist (Tⁿ z) z* ≥ ε` for some `n`. -/
+/-- A point `z*` of `ℝ × ℝ` is a **Lyapunov unstable fixed point of `T` on the open positive
+quadrant**: `z*` has both coordinates positive and `T z* = z*`, and there is `ε > 0` such that for
+every `δ > 0` some `z` with both coordinates positive and `dist z z* < δ` has `dist (Tⁿ z) z* ≥ ε`
+for some `n`. -/
 def IsUnstable (T : ℝ × ℝ → ℝ × ℝ) (zs : ℝ × ℝ) : Prop :=
-  ∃ ε : ℝ, 0 < ε ∧ ∀ δ : ℝ, 0 < δ → ∃ z : ℝ × ℝ, 0 < z.1 ∧ 0 < z.2 ∧ dist z zs < δ ∧
-    ∃ n : ℕ, ε ≤ dist (T^[n] z) zs
+  (0 < zs.1 ∧ 0 < zs.2) ∧ T zs = zs ∧
+    ∃ ε : ℝ, 0 < ε ∧ ∀ δ : ℝ, 0 < δ → ∃ z : ℝ × ℝ, 0 < z.1 ∧ 0 < z.2 ∧ dist z zs < δ ∧
+      ∃ n : ℕ, ε ≤ dist (T^[n] z) zs
 
 /-- **The positive equilibrium and its Nicholson–Bailey limit** (May 1978, eqs. 5–6): let
 `F > 1`, `a > 0` and `k > 0`. Then `(H*, P*)`, with `P* = k (F^{1/k} - 1) / a` and
@@ -83,8 +87,9 @@ public theorem_wanted equilibrium_spec (F a k : ℝ) (hF : 1 < F) (ha : 0 < a) (
       Tendsto (fun κ : ℝ => a * parasitoidEq F a κ) atTop (𝓝 (Real.log F))
 
 /-- **May's stability criterion, stable side** (May 1978, eq. 7 and Appendix 2): let `F > 1`,
-`a > 0` and `0 < k < 1`. Then the positive equilibrium `(H*, P*)` is locally asymptotically
-stable for May's map on the open positive quadrant.
+`a > 0` and `0 < k < 1`. Then the equilibrium `(H*, P*)` has both coordinates positive, is a
+fixed point of May's map, and is locally asymptotically stable on the open positive quadrant.
+(The borderline case `k = 1` is not claimed.)
 
 Source: May (1978), p. 839 and Appendix 2. -/
 public theorem_wanted stable_of_lt_one (F a k : ℝ) (hF : 1 < F) (ha : 0 < a) (hk₀ : 0 < k)
@@ -92,9 +97,10 @@ public theorem_wanted stable_of_lt_one (F a k : ℝ) (hF : 1 < F) (ha : 0 < a) (
     IsLocallyAsymptoticallyStable (step F a k) (equilibrium F a k)
 
 /-- **May's stability criterion, unstable side** (May 1978, eq. 7 and Appendix 2): let `F > 1`,
-`a > 0` and `k > 1`. Then the positive equilibrium `(H*, P*)` is Lyapunov unstable for May's map
-on the open positive quadrant (arbitrarily small positive disturbances move a fixed distance
-away).
+`a > 0` and `k > 1`. Then the equilibrium `(H*, P*)` has both coordinates positive, is a fixed
+point of May's map, and is Lyapunov unstable on the open positive quadrant (arbitrarily small
+positive disturbances move a fixed distance away). (The borderline case `k = 1` is not
+claimed.)
 
 Source: May (1978), p. 839 and Appendix 2. -/
 public theorem_wanted unstable_of_one_lt (F a k : ℝ) (hF : 1 < F) (ha : 0 < a) (hk : 1 < k) :

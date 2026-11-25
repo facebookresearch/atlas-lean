@@ -20,8 +20,8 @@ Theorem 4.5) show that an interior equilibrium needs `m` in the range of the mat
 
 Recorded here: for every `B` with `k < n`, almost every `m ∈ ℝⁿ` admits no resource level `R`
 with all growth rates zero, so no interior equilibrium exists, whatever the resource dynamics.
-This specialization of the cited argument is derived. The second clause of the unit, that two
-consumers can persist on one biotic resource along a periodic orbit, is not formalized: McGehee
+This specialization of the cited argument is derived. The claim that two consumers can persist
+on one biotic resource along a periodic orbit is not formalized: McGehee
 and Armstrong (1977, §7) prove persistence in an attractor block and state that the existence of
 an attracting periodic orbit is unknown.
 

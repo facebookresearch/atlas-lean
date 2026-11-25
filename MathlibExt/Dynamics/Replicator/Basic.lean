@@ -68,8 +68,8 @@ def IsNash (A : Matrix ι ι ℝ) (p : ι → ℝ) : Prop :=
 
 open Matrix in
 /-- `p` is an **evolutionarily stable state** of the matrix game `A` (Maynard Smith and Price
-1973; Hofbauer–Sigmund 1998, (6.3)–(6.4)): for every mixed strategy `q ≠ p`, either
-`q · A p < p · A p`, or `q · A p = p · A p` and `q · A q < p · A q`. -/
+1973; Hofbauer–Sigmund 1998, (6.3)–(6.4)): `p` is a mixed strategy and for every mixed strategy
+`q ≠ p`, either `q · A p < p · A p`, or `q · A p = p · A p` and `q · A q < p · A q`. -/
 def IsESS (A : Matrix ι ι ℝ) (p : ι → ℝ) : Prop :=
   ((∀ i, 0 ≤ p i) ∧ ∑ i, p i = 1) ∧ ∀ q : ι → ℝ, (∀ i, 0 ≤ q i) ∧ ∑ i, q i = 1 → q ≠ p →
     q ⬝ᵥ A *ᵥ p < p ⬝ᵥ A *ᵥ p ∨ (q ⬝ᵥ A *ᵥ p = p ⬝ᵥ A *ᵥ p ∧ q ⬝ᵥ A *ᵥ q < p ⬝ᵥ A *ᵥ q)

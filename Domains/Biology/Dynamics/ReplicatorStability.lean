@@ -33,10 +33,10 @@ close to `p` stay close to `p` and converge to `p`.
 * `IsNash A p`: `p` is a symmetric Nash equilibrium, `q · A p ≤ p · A p` for all mixed `q`.
 * `IsESS A p`: `p` is evolutionarily stable in the sense of Maynard Smith and Price: for every
   mixed `q ≠ p`, either `q · A p < p · A p`, or `q · A p = p · A p` and `q · A q < p · A q`.
-
-  (`IsNash` and `IsESS` are defined in `MathlibExt.Dynamics.Replicator.Basic`.)
 * `relEntropy p y = ∑ i, p i * (log (p i) - log (y i))`, the Lyapunov function. It equals
   `log P(p) - log P(y)` for the Hofbauer–Sigmund function `P(y) = ∏ i, y i ^ p i`.
+
+`IsNash` and `IsESS` are defined in `MathlibExt.Dynamics.Replicator.Basic`.
 
 ## Main results
 

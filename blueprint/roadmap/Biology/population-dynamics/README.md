@@ -2,7 +2,11 @@
 
 Differential-equation and matrix models of population growth, structure, species interaction and evolutionary change, such as logistic growth, predator–prey systems, metapopulations, replicator dynamics, quasispecies and Leslie matrices, and the life tables and direct standardization of demography.
 
+- [Competitive exclusion in the chemostat](competitive-exclusion-in-the-chemostat/README.md)
+- [Competitive exclusion on fewer resources than species](competitive-exclusion-on-fewer-resources-than-sp/README.md)
 - [Eigen's quasispecies error threshold](eigen-s-quasispecies-error-threshold/README.md)
+- [Global stability of the Ricker map](global-stability-of-the-ricker-map/README.md)
+- [Goh's diagonal stability theorem for Lotka–Volterra systems](goh-s-diagonal-stability-theorem-for-lotka-volte/README.md)
 - [Hopf bifurcation of the delayed logistic equation](hopf-bifurcation-of-the-delayed-logistic-equatio/README.md)
 - [Hutchinson delayed logistic equation](hutchinson-delayed-logistic-equation/README.md)
 - [Leslie matrix model](leslie-matrix-model/README.md)
@@ -10,7 +14,10 @@ Differential-equation and matrix models of population growth, structure, species
 - [Levins metapopulation on a patch network](levins-metapopulation-on-a-patch-network/README.md)
 - [Life tables and direct standardization](life-tables-and-direct-standardization/README.md)
 - [Logistic growth equation](logistic-growth-equation/README.md)
+- [Lotka–Volterra and replicator systems without an interior equilibrium](lotka-volterra-and-replicator-systems-without-an/README.md)
 - [Lotka–Volterra predator–prey model](lotka-volterra-predator-prey-model/README.md)
+- [May's negative-binomial host–parasitoid model](may-s-negative-binomial-host-parasitoid-model/README.md)
+- [Permanence of replicator systems](permanence-of-replicator-systems/README.md)
 - [Replicator and Lotka–Volterra equivalence](replicator-and-lotka-volterra-equivalence/README.md)
 - [Replicator dynamics](replicator-dynamics/README.md)
 
@@ -18,4 +25,7 @@ Differential-equation and matrix models of population growth, structure, species
 
 - [Matrix population models](matrix-population-models/README.md)
 - [Stability of evolutionarily stable states](stability-of-evolutionarily-stable-states/README.md)
+- [Time averages of interior replicator orbits](time-averages-of-interior-replicator-orbits/README.md)
+- [Two-species Lotka–Volterra competition outcomes](two-species-lotka-volterra-competition-outcomes/README.md)
+- [Washout in the single-species chemostat](washout-in-the-single-species-chemostat/README.md)
 - [Life tables](life-tables/README.md)

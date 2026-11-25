@@ -30,6 +30,7 @@ notes, §3.3.6.
 module
 
 public import Batteries.Util.ProofWanted
+public import Domains.Biology.Dynamics.ReplicatorLotkaVolterra
 public import Mathlib.Analysis.Calculus.Deriv.Pi
 public import Mathlib.LinearAlgebra.Matrix.PosDef
 public import Mathlib.Topology.Algebra.Module.FiniteDimension
@@ -39,11 +40,13 @@ public import Mathlib.Topology.Algebra.Module.FiniteDimension
 namespace WantedExt.Biology.Ecology.GohDiagonalStabilityWanted
 
 open Filter Topology Matrix
+open MathlibExt.Biology.Dynamics.ReplicatorLotkaVolterra (lvField)
 
-/-- `x` solves the **generalized Lotka–Volterra system** `xᵢ' = xᵢ (bᵢ + (A x)ᵢ)` on `[0, ∞)`. -/
+/-- `x` solves the **generalized Lotka–Volterra system** `xᵢ' = xᵢ (bᵢ + ∑ⱼ aᵢⱼ xⱼ)` on
+`[0, ∞)`, with the library's field `lvField b A`. -/
 def IsSolution {n : ℕ} (b : Fin n → ℝ) (A : Matrix (Fin n) (Fin n) ℝ) (x : ℝ → Fin n → ℝ) :
     Prop :=
-  ∀ t : ℝ, 0 ≤ t → HasDerivAt x (fun i => x t i * (b i + (A *ᵥ x t) i)) t
+  ∀ t : ℝ, 0 ≤ t → HasDerivAt x (lvField b A (x t)) t
 
 /-- `A` is **diagonally stable with weights `d`**: every `dᵢ > 0` and the symmetric matrix
 `D A + Aᵀ D`, with `D = diag(d)`, is negative definite: `vᵀ (D A + Aᵀ D) v < 0` for every
