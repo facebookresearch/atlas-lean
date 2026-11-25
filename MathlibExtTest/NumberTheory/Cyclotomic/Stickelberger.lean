@@ -148,8 +148,8 @@ example : unitsEnd 2 (ℤ × ℤ) RingEquiv.prodComm
   obtain ⟨y, hy⟩ := (ModN.mkQ_eq_mkQ_iff 2).mp h
   have h1 := congrArg (fun z : Additive (ℤ × ℤ)ˣ => ((Additive.toMul z : (ℤ × ℤ)ˣ) : ℤ × ℤ).1)
     (eq_sub_iff_add_eq.mp hy)
-  simp [negOneOne] at h1 <;>
-    nlinarith [sq_nonneg ((Additive.toMul y : (ℤ × ℤ)ˣ) : ℤ × ℤ).1]
+  simp [negOneOne] at h1
+  nlinarith [sq_nonneg ((Additive.toMul y : (ℤ × ℤ)ˣ) : ℤ × ℤ).1]
 
 /-! ### The omega projector -/
 

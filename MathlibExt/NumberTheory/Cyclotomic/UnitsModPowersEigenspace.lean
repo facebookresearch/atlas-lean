@@ -125,10 +125,8 @@ noncomputable def galRestrictRingAut : (L ≃ₐ[K] L) →* (B ≃+* B) :=
   (MulSemiringAction.toRingAut (B ≃ₐ[A] B) B).comp (galRestrict A K L B).toMonoidHom
 
 @[simp] lemma galRestrictRingAut_apply (g : L ≃ₐ[K] L) (x : B) :
-    galRestrictRingAut A K L B g x = galRestrict A K L B g x := by
-  first
-  | rfl
-  | simp [galRestrictRingAut, AlgEquiv.smul_def]
+    galRestrictRingAut A K L B g x = galRestrict A K L B g x :=
+  rfl
 
 end GalRestrict
 
@@ -148,6 +146,7 @@ variable (R : Type*) [CommRing R]
 
 variable {R} in
 variable [IsDedekindDomain R] in
+omit [NeZero p] in
 theorem clEnd_clProj_mk0 (g : R ≃+* R) (P : (Ideal R)⁰) :
     clEnd p g (clProj p R (Additive.ofMul (ClassGroup.mk0 P))) =
       clProj p R (Additive.ofMul (ClassGroup.mk0 (Ideal.mapNonZero g P))) := by

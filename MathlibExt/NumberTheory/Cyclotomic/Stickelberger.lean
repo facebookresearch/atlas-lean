@@ -185,7 +185,7 @@ noncomputable def modNEnd (f : M →+ M) : Module.End (ZMod p) (ModN M p) :=
       intro x hx
       obtain ⟨y, rfl⟩ := LinearMap.mem_range.mp hx
       rw [Submodule.mem_comap]
-      exact LinearMap.mem_range.mpr ⟨f y, by simp [map_zsmul]⟩)).toAddMonoidHom.toZModLinearMap p
+      exact LinearMap.mem_range.mpr ⟨f y, by simp⟩)).toAddMonoidHom.toZModLinearMap p
 
 @[simp] lemma modNEnd_mkQ (f : M →+ M) (x : M) :
     modNEnd p f (ModN.mkQ p x) = ModN.mkQ p (f x) := rfl
