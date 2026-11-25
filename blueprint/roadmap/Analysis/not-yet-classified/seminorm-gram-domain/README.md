@@ -1,8 +1,8 @@
 # Seminorm Gram Domain
 
-- [Raw Hilbert Gram Domain](raw-hilbert-gram-domain.md)
-- [Raw Hilbert Gram Generator](raw-hilbert-gram-generator.md)
-- [Raw Hilbert Gram Generator apply coe](raw-hilbert-gram-generator-apply-coe.md)
-- [Raw Hilbert Gram Generator inner](raw-hilbert-gram-generator-inner.md)
-- [Dense raw Hilbert Gram Domain](dense-raw-hilbert-gram-domain.md)
-- [Dense Range raw Hilbert Gram Domain subtype](dense-range-raw-hilbert-gram-domain-subt.md)
+- [Hilbert Gram domain from the source algebra](raw-hilbert-gram-domain.md)
+- [Generator of the Hilbert Gram domain](raw-hilbert-gram-generator.md)
+- [Ambient vector of a Gram generator](raw-hilbert-gram-generator-apply-coe.md)
+- [Inner product of Gram generators](raw-hilbert-gram-generator-inner.md)
+- [Density of the source Gram domain](dense-raw-hilbert-gram-domain.md)
+- [Dense range of the Gram-domain inclusion](dense-range-raw-hilbert-gram-domain-subt.md)

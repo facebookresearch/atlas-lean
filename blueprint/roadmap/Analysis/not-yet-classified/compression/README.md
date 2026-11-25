@@ -2,14 +2,14 @@
 
 ## Closed Star Ideal
 
-- [Compression Pair](compression-pair.md)
+- [Projection compression modulo an ideal](compression-pair.md)
 
 ## Compression Pair
 
-- [Quotient is Star Projection](quotient-is-star-projection.md)
-- [Quotient commute](quotient-commute.md)
-- [Quotient Hom](quotient-hom.md)
-- [Quotient Hom apply](quotient-hom-apply.md)
-- [Of Projection](of-projection.md)
-- [Of Projection representation](of-projection-representation.md)
-- [Of Projection projection](of-projection-projection.md)
+- [Compressed projection class](quotient-is-star-projection.md)
+- [Compression commutes modulo the ideal](quotient-commute.md)
+- [Compressed quotient homomorphism](quotient-hom.md)
+- [Evaluation of the compressed quotient map](quotient-hom-apply.md)
+- [Compression pair from an exact projection](of-projection.md)
+- [Representation of an exact-projection compression pair](of-projection-representation.md)
+- [Projection of an exact-projection compression pair](of-projection-projection.md)

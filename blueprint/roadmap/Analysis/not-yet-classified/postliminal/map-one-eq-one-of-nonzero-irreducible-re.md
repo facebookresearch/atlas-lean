@@ -1,3 +1,6 @@
-# Map one eq one of nonzero irreducible representation
+# Irreducible nonzero representations preserve the unit
 
-A nonzero irreducible representation of a unital algebra preserves its unit.
+Let `A` be a unital complex C*-algebra
+and `H` a complete complex Hilbert space. If a nonzero nonunital complex star homomorphism `π : A →
+B(H)` has no proper nonzero closed invariant complex-linear subspace, then `π(1)` is the identity
+operator on `H`.

@@ -1,3 +1,4 @@
-# Forgetful Functor
+# Forgetful functor for commutative C*-algebras
 
-The commutative dictionary is extra object data; morphisms are the same canonical nonunital star maps.
+**Forgetful functor for commutative C*-algebras.** Sending commutative nonunital complex C*-algebras
+to nonunital complex C*-algebras and retaining their nonunital star homomorphisms defines a functor.

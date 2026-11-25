@@ -1,4 +1,5 @@
-# Is Essential iff right annihilator zero
+# Left and right annihilator characterizations of essentiality
 
-For a closed star ideal, having zero left annihilator is equivalent to
-having zero right annihilator.
+Let `A` be a nonunital complex
+C*-algebra and let `I ⊆ A` be a closed two-sided star ideal. The ideal is essential exactly when `x
+a = 0` for every `x ∈ I` implies `a = 0`, so its right annihilator is also zero.

@@ -1,4 +1,4 @@
 # Is Unitary Between iff mem unitary Group
 
-Square specialization: for `U : Matrix n n R`, `IsUnitaryBetween U` is
-equivalent to membership in the ordinary unitary group `Matrix.unitaryGroup n R`.
+Let `R` be a commutative star ring and `n` a finite index type with decidable equality. A square
+matrix is unitary between `n` and itself exactly when it belongs to `Matrix.unitaryGroup n R`.

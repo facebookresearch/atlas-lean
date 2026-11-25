@@ -1,4 +1,6 @@
-# Non Unital Cstar Star Module
+# Complex scalar compatibility of the separated involution
 
-Scalar conjugation descends with the same canonical quotient scalar
-operations.
+Let `A` be a nonunital seminormed ring
+and complex seminormed vector space with a seminorm-preserving ring involution satisfying `(c a)* =
+conjugate(c) a*`. The induced involution on the separation quotient satisfies the same complex
+scalar compatibility.

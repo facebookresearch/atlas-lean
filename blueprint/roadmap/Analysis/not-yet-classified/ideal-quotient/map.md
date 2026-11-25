@@ -1,4 +1,6 @@
-# Map
+# Star homomorphism induced on quotients
 
-The map on quotients induced by a nonunital star algebra homomorphism
-which sends the source ideal into the target ideal.
+Let `A,C` be nonunital normed complex star algebras, let
+`S ⊆ A` and `T ⊆ C` be two-sided nonunital star subalgebras, and let `f : A → C` be a nonunital
+complex star homomorphism satisfying `f(S) ⊆ T`. It induces the nonunital complex star homomorphism
+`A/S → C/T` given by `[a] ↦ [f(a)]`.

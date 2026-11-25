@@ -1,4 +1,5 @@
-# Canonical
+# Completely positive maps in spectral order
 
-Completely positive maps under the canonical spectral orders of their
-C-star source and target. The dictionaries remain local values.
+For nonunital complex C*-algebras `A` and `B`, these
+are complex-linear maps `A → B` whose every finite matrix amplification is positive when both
+algebras carry their canonical spectral orders.

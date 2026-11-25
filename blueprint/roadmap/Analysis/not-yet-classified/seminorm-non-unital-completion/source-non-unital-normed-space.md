@@ -1,3 +1,5 @@
-# Source Non Unital Normed Space
+# Complex seminormed space induced by a C*-seminorm
 
-The original complex module with its norm computed from the same actual seminorm.
+**Complex seminormed space induced by a C*-seminorm.** Let `B` be a nonunital complex star algebra
+with scalar-compatible involution and let `p` be a C*-seminorm on `B`. The seminorm `p` defines a
+compatible complex seminormed vector-space structure on the given module.

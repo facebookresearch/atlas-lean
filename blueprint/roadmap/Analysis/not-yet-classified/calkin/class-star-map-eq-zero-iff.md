@@ -1,4 +1,5 @@
-# Class Star Map eq zero iff
+# Zero class characterizes compactness
 
-An operator has zero class under the star class map exactly when it is
-compact.
+Let `H` be a complete complex Hilbert space. Its Calkin
+algebra is the quotient `B(H)/K(H)` of bounded operators by compact operators, with the quotient
+C*-norm. A bounded operator has zero Calkin class exactly when it is compact.

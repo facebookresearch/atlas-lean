@@ -1,7 +1,5 @@
-# Closed Star Ideal
+# Closed two-sided star ideal
 
-A closed two-sided star ideal in a complex nonunital C-star algebra.
-
-The ideal stores its closedness and two-sidedness proofs without installing
-either proof globally.  Quotient constructions below activate them only in a
-local `letI` scope and delegate to `NonUnitalStarSubalgebra.Quotient`.
+For a nonunital complex C*-algebra `A`, this is a nonunital complex
+star subalgebra `I ⊆ A` that is norm-closed and absorbs multiplication by every element of `A` on
+both sides.

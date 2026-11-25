@@ -1,4 +1,5 @@
-# Non Unital Completion Is Scalar Tower
+# Scalar associativity in a nonunital completion
 
-The source scalar-tower law extends to the completed multiplication.  This
-is an explicit local factory, not a second scalar action.
+Let a type `𝕜` act on a nonunital seminormed
+ring `A`, with every fixed-scalar map uniformly continuous. If `(c • a) b = c • (a b)` in `A`, the
+induced scalar action and multiplication on its uniform completion satisfy the same identity.

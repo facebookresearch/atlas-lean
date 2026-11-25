@@ -1,3 +1,5 @@
 # Vanishing Ideal carrier
 
-The set carrier is the literal image of C0, not an abstract ideal model.
+Let `X` be a topological space. Let `B` be a possibly nonunital complex C*-algebra.
+
+The set carrier is the image of C0, not an abstract ideal model.

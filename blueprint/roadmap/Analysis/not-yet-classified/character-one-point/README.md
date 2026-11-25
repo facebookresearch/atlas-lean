@@ -1,25 +1,25 @@
 # Character One Point
 
-- [Character Space With Zero](character-space-with-zero.md)
-- [Zero Character](zero-character.md)
-- [Character With Zero Embedding](character-with-zero-embedding.md)
-- [Character With Zero Embedding is Embedding](character-with-zero-embedding-is-embeddi.md)
-- [Character With Zero Embedding range](character-with-zero-embedding-range.md)
+- [Character space with zero](character-space-with-zero.md)
+- [Zero character point](zero-character.md)
+- [Inclusion of nonzero characters](character-with-zero-embedding.md)
+- [Topological embedding of the character space](character-with-zero-embedding-is-embeddi.md)
+- [Range of the nonzero-character inclusion](character-with-zero-embedding-range.md)
 
 ## Compactification
 
-- [One Point Character Space Homeomorph](one-point-character-space-homeomorph.md)
-- [One Point Character Space Homeomorph infty](one-point-character-space-homeomorph-inf.md)
-- [One Point Character Space Homeomorph coe](one-point-character-space-homeomorph-coe.md)
-- [One Point Character Space Homeomorph symm zero](one-point-character-space-homeomorph-sym.md)
+- [One-point compactification of the character space](one-point-character-space-homeomorph.md)
+- [Infinity corresponds to the zero character](one-point-character-space-homeomorph-inf.md)
+- [Finite points in the character compactification](one-point-character-space-homeomorph-coe.md)
+- [Zero corresponds to infinity](one-point-character-space-homeomorph-sym.md)
 
 ## Precomposition
 
-- [Character With Zero Precomposition](character-with-zero-precomposition.md)
-- [Character With Zero Precomposition zero](character-with-zero-precomposition-zero.md)
-- [Character With Zero Precomposition apply](character-with-zero-precomposition-apply.md)
+- [Continuous precomposition of characters with zero](character-with-zero-precomposition.md)
+- [Precomposition preserves the zero character](character-with-zero-precomposition-zero.md)
+- [Evaluation of character precomposition](character-with-zero-precomposition-apply.md)
 
 ## One Point Precomposition
 
-- [One Point Character Precomposition](one-point-character-precomposition.md)
-- [One Point Character Precomposition infty](one-point-character-precomposition-infty.md)
+- [Precomposition on one-point character compactifications](one-point-character-precomposition.md)
+- [Character precomposition fixes infinity](one-point-character-precomposition-infty.md)

@@ -1,5 +1,5 @@
-# Quotient Map Of LE
+# Quotient map from an ideal inclusion
 
-The canonical map `A / I → A / J` induced by an inclusion `I ≤ J` of
-bundled closed star ideals.  The stored two-sidedness proofs are activated only
-inside this construction.
+Let `A` be a nonunital complex C*-algebra and `I ⊆ J`
+closed two-sided star ideals of `A`. The inclusion defines a nonunital complex star homomorphism
+`A/I → A/J` sending `[a]ᵢ` to `[a]ⱼ`.

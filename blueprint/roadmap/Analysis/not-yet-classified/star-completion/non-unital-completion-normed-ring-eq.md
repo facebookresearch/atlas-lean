@@ -1,3 +1,6 @@
 # Non Unital Completion Normed Ring eq
 
-The existing nonunital completion factory is exactly the stock unital completion's nonunital parent.
+Let `A` be a seminormed ring. The completion uses its additive uniformity and the canonical
+extended multiplication.
+
+The existing nonunital completion factory is exactly the unital completion's nonunital parent.

@@ -1,3 +1,4 @@
-# Of
+# Commutative unital C*-algebra as an object
 
-Bundle the existing commutative unital algebra without changing its norm or unit.
+**Commutative unital C*-algebra as an object.** A commutative unital complex C*-algebra `A`
+determines a categorical object with its given carrier, norm, unit, and involution.

@@ -1,15 +1,10 @@
-# Exists unitary Group of kraus eq
+# Unitary equivalence of same-size Kraus families
 
-Same-index arbitrary Kraus equivalence: if two families indexed by the same
-type `r` define the same CP map, they are related by a unitary coefficient
-matrix `U ∈ unitaryGroup r` with `L = mixKraus U K`.
+For finite decidable matrix index types `n,m`
+and family index type `r`, two families `K,L : r → Matrix m n ℂ` defining the same completely
+positive map are related by a unitary complex matrix `U` indexed by `r`: `Lⱼ = ∑ i, U(j,i) Kᵢ`. The
+families need not be linearly independent; the empty family and zero map are included.
 
-This is Watrous Corollary 2.23 (same-index form). Rows of `U` index the target
-family `L` and columns index the source family `K`, with no star on the
-coefficient. The proof factors through a minimal rank-sized linearly independent
-family `M` obtained from `exists_kraus_choiRank_linearIndependent`, uses
-`exists_isometry_of_kraus_eq` to obtain isometries `VK, VL` with
-`K = mixKraus VK M`, `L = mixKraus VL M`, extends the isometries to a unitary
-`U` with `U * VK = VL` via `exists_unitary_mul_eq_of_isometry`, and concludes
-by `mixKraus_comp`. Zero rank (`Fin 0`) and empty `r` cases are handled
-explicitly with identity.
+## Sources
+
+- John Watrous, *The Theory of Quantum Information*, Corollary 2.23, with the coefficient convention of (2.99).

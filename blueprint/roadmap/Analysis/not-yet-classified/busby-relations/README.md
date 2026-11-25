@@ -1,9 +1,9 @@
 # Busby Relations
 
-- [Strongly Unitary Equivalent](strongly-unitary-equivalent.md)
-- [Weakly Unitary Equivalent](weakly-unitary-equivalent.md)
-- [Is Trivial](is-trivial.md)
-- [Strongly unitary equivalent refl](strongly-unitary-equivalent-refl.md)
-- [Strongly unitary equivalent symm](strongly-unitary-equivalent-symm.md)
-- [Strongly unitary equivalent trans](strongly-unitary-equivalent-trans.md)
-- [Zero is trivial](zero-is-trivial.md)
+- [Strong unitary equivalence of Busby maps](strongly-unitary-equivalent.md)
+- [Weak unitary equivalence of Busby maps](weakly-unitary-equivalent.md)
+- [Trivial Busby homomorphism](is-trivial.md)
+- [Reflexivity of strong Busby equivalence](strongly-unitary-equivalent-refl.md)
+- [Symmetry of strong Busby equivalence](strongly-unitary-equivalent-symm.md)
+- [Transitivity of strong Busby equivalence](strongly-unitary-equivalent-trans.md)
+- [Zero Busby homomorphism is trivial](zero-is-trivial.md)

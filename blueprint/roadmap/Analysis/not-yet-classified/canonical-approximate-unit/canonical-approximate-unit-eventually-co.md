@@ -1,3 +1,5 @@
-# Canonical Approximate Unit eventually compact mul sub lt
+# Uniform approximate-unit convergence on compact sets
 
-Canonical coefficient multiplication approaches the identity uniformly on every compact range.
+Let `A` be a nonunital complex C*-algebra.
+For every norm-compact `K ⊆ A` and `ε > 0`, eventually `‖a x - x‖ < ε` for all `x ∈ K` as `a`
+follows the canonical positive contractive approximate-unit filter.

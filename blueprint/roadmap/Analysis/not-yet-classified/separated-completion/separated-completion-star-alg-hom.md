@@ -1,4 +1,6 @@
-# Separated Completion Star Alg Hom
+# Canonical homomorphism to a separated C*-completion
 
-The canonical quotient and dense-completion map, preserving the original
-ring, complex scalar and involution operations.
+**Canonical homomorphism to a separated C*-completion.** Let `A` be a unital seminormed complex
+algebra with scalar-compatible isometric ring involution, and assume `‖a‖² ≤ ‖a* a‖` for every `a ∈
+A`. The separation projection followed by completion inclusion is a unital complex star homomorphism
+from `A` to its separated completion.

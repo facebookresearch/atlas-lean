@@ -1,4 +1,4 @@
-# Coe Equiv Of Unital
+# Multiplier algebra of a unital C*-algebra
 
-For a unital coefficient algebra, the coefficient embedding is a
-star-algebra equivalence onto the whole multiplier algebra.
+**Multiplier algebra of a unital C*-algebra.** For a unital complex C*-algebra `U`, the coefficient
+embedding `U → M(U)` is a complex star-algebra equivalence onto the entire multiplier algebra.

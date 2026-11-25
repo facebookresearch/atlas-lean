@@ -1,4 +1,4 @@
 # ULift
 
-- [Ulift](ulift.md)
-- [Ulift Star Alg Equiv](ulift-star-alg-equiv.md)
+- [Universe lift of a nonunital C*-algebra](ulift.md)
+- [Star equivalence of a universe lift](ulift-star-alg-equiv.md)

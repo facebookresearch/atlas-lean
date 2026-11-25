@@ -1,6 +1,5 @@
-# Unital Quotient CStar Algebra
+# Unital C*-structure on a closed ideal quotient
 
-The quotient by a closed star ideal in a unital C-star algebra, with its
-unital C-star structure kept as an explicit value.  The underlying additive,
-multiplicative, star, norm, and scalar structures are the existing nonunital
-quotient structures.
+**Unital C*-structure on a closed ideal quotient.** Let `U` be a unital complex C*-algebra and `I ⊆
+U` a closed two-sided star ideal. The quotient `U/I` is a unital complex C*-algebra with the
+quotient norm and unit `[1]`. This also allows `I = U`, giving the zero quotient.

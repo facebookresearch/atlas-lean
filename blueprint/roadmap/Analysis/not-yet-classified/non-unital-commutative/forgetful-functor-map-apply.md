@@ -1,3 +1,5 @@
-# Forgetful Functor map apply
+# Values of the forgetful functor on morphisms
 
-The faithful comparison keeps the original actual nonunital star-map value.
+For commutative nonunital complex C*-algebras
+`A,B`, a nonunital star homomorphism `f : A → B`, and `a ∈ A`, the forgotten morphism evaluates to
+`f(a)`.

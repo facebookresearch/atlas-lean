@@ -1,3 +1,4 @@
-# Left Square
+# Positive adjoint square
 
-The original positive left square x*x, for any x in the nonunital algebra.
+Let `A` be a nonunital complex C*-algebra with its canonical spectral
+order. For every `x ∈ A`, the product `x* x` is an element of its positive cone.

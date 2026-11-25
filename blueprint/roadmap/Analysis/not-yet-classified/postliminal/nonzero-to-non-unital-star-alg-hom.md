@@ -1,3 +1,5 @@
-# Nonzero to Non Unital Star Alg Hom
+# Unital representations on a nonzero space are nonzero
 
-A unital representation on a nonzero Hilbert space is nonzero as a nonunital map.
+For a unital complex C*-algebra `A` and a
+nontrivial complete complex Hilbert space `H`, a unital complex star representation `π : A → B(H)`
+is nonzero when regarded as a nonunital star homomorphism.

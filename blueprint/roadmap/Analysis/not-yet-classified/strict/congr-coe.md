@@ -1,4 +1,5 @@
-# Congr coe
+# Coefficient embedding under multiplier transport
 
-Transport of an embedded coefficient in the actual coefficient-coercion normal form.
-The named `congr_coeHom` equation retains its explicit homomorphism interface.
+Let `A,B` be nonunital complex C*-algebras and
+`e : A ≃ B` a complex star-algebra equivalence. Transport sends the multiplier coefficient `ι_A(a)`
+to `ι_B(e(a))` for every `a ∈ A`.

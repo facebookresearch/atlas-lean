@@ -1,3 +1,5 @@
-# Unital Quotient Map is Star Projection
+# Projection modulo a closed ideal
 
-The class of an essential projection is an actual star projection.
+Let `D` be a unital complex C*-algebra and `I ⊆ D` a closed
+two-sided star ideal. If `p ∈ D` satisfies `p²-p ∈ I` and `p*-p ∈ I`, its class in `D/I` is a
+self-adjoint idempotent.

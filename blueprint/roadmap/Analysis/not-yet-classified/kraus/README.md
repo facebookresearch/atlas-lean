@@ -1,17 +1,17 @@
 # Kraus
 
-- [Single Kraus Linear Map](single-kraus-linear-map.md)
-- [Single Kraus](single-kraus.md)
-- [Kraus Linear Map](kraus-linear-map.md)
-- [Kraus](kraus.md)
+- [Single-Kraus linear map](single-kraus-linear-map.md)
+- [Single-Kraus completely positive map](single-kraus.md)
+- [Finite-family Kraus linear map](kraus-linear-map.md)
+- [Finite-family completely positive map](kraus.md)
 
 ## Composition
 
-- [Kraus Comp Family](kraus-comp-family.md)
+- [Kraus family for composition](kraus-comp-family.md)
 
 ## Choi Formulas
 
-- [Choi Matrix single Kraus Linear Map](choi-matrix-single-kraus-linear-map.md)
-- [Choi Matrix kraus Linear Map](choi-matrix-kraus-linear-map.md)
-- [Choi Matrix single Kraus](choi-matrix-single-kraus.md)
-- [Choi Matrix kraus](choi-matrix-kraus.md)
+- [Choi matrix of a single-Kraus linear map](choi-matrix-single-kraus-linear-map.md)
+- [Choi matrix of a finite Kraus linear map](choi-matrix-kraus-linear-map.md)
+- [Choi matrix of a single-Kraus CP map](choi-matrix-single-kraus.md)
+- [Choi matrix of a finite Kraus CP map](choi-matrix-kraus.md)

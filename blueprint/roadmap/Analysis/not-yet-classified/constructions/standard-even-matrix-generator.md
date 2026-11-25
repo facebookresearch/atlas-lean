@@ -1,4 +1,5 @@
-# Standard Even Matrix Generator
+# Generator of the standard even matrix grading
 
-The involutive star-algebra automorphism defining the standard-even
-grading on two-by-two matrices.
+Let `A` be a nonunital complex C*-algebra. The
+two-by-two C*-matrix algebra over `A` has an involutive star automorphism fixing diagonal entries
+and negating off-diagonal entries.

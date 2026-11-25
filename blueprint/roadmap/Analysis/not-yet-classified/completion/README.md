@@ -1,7 +1,7 @@
 # Completion
 
-- [Completion CStar Algebra](completion-cstar-algebra.md)
-- [Completion CStar Algebra star coe](completion-cstar-algebra-star-coe.md)
+- [C*-algebra structure on a uniform completion](completion-cstar-algebra.md)
+- [Involution on the completion extends the original involution](completion-cstar-algebra-star-coe.md)
 - [Completion Inner SL](completion-inner-sl.md)
 - [Completion Inner SL apply coe coe](completion-inner-sl-apply-coe-coe.md)
 - [Continuous completion Inner SL](continuous-completion-inner-sl.md)

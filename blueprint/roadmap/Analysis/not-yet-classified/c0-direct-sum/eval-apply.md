@@ -1,3 +1,5 @@
-# Eval apply
+# Evaluation formula on a c₀ sum
 
-The evaluation homomorphism has its literal action.
+For an arbitrary family `(Aᵢ)ᵢ∈I` of nonunital complex
+C*-algebras, its c₀ direct sum consists of norm-vanishing sections with coordinatewise operations
+and the supremum norm. The coordinate-evaluation homomorphism at `i` sends a section `f` to `fᵢ`.

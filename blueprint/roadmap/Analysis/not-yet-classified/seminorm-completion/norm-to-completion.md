@@ -1,3 +1,5 @@
-# Norm to Completion
+# Completion norm equals the source seminorm
 
-The actual completed norm equals the original seminorm on every source element.
+Let `B` be a unital complex star algebra with
+scalar-compatible involution, and let `p` be a C*-seminorm on `B`. For every `x ∈ B`, its canonical
+image in the separated completion has norm `p(x)`.

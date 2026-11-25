@@ -1,4 +1,5 @@
-# Star Map snd
+# Algebra coordinate under unitization
 
-Unitization of a nonunital star homomorphism applies the original map to
-the non-scalar coordinate.
+Let `A,B` be nonunital complex C*-algebras and `φ : A → B`
+a nonunital complex star homomorphism. For an element `(λ,a)` of the source unitization, its image
+under the unitized map has algebra coordinate `φ(a)`.

@@ -1,3 +1,6 @@
 # Finite Part Homeomorph
 
-The actual finite part, with the original inclusion, has the same topology as X.
+Let `X` be a topological space. The finite part of the one-point extension is the complement of
+infinity.
+
+The finite part, with the inclusion, has the same topology as X.

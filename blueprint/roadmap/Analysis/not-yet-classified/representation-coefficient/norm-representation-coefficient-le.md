@@ -1,3 +1,5 @@
-# Norm representation Coefficient le
+# Norm of a representation coefficient
 
-The norm of a representation coefficient is bounded by the product of the vector norms.
+Let `A` be a unital complex C*-algebra, `H` a complete
+complex Hilbert space, and `ρ : A → B(H)` a unital complex star representation. For `g,h ∈ H`, the
+continuous functional `a ↦ ⟨h,ρ(a)g⟩` has operator norm at most `‖g‖ ‖h‖`.

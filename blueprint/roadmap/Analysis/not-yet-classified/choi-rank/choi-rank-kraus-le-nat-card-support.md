@@ -1,4 +1,5 @@
-# Choi Rank kraus le nat Card support
+# Choi-rank bound by nonzero Kraus operators
 
-The Choi rank of a finite Kraus map is at most the number of nonzero
-Kraus operators.
+For finite decidable matrix index types `n,m` and a
+finite family `K : r → Matrix m n ℂ`, the Choi rank of `kraus K` is at most the number of indices
+`i` with `Kᵢ ≠ 0`.

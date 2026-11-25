@@ -1,3 +1,5 @@
-# Busby Map
+# Busby map of C*-algebras
 
-A Busby map from `A` to the outer multiplier algebra of `B`.
+**Busby map of C*-algebras.** For nonunital complex C*-algebras `A,B`, this is a nonunital complex
+star homomorphism from `A` to the outer multiplier algebra `M(B)/B`, equipped with its quotient
+C*-norm.

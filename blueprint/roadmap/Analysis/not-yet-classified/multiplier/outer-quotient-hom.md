@@ -1,3 +1,6 @@
-# Outer Quotient Hom
+# Graded outer multiplier projection
 
-The canonical quotient as an actual graded nonunital star homomorphism.
+Let `B` be a nonunital complex C*-algebra with grading `γ`,
+let `M(B)` be its multiplier algebra, and let `M(B)/B` be the outer multiplier algebra. The
+canonical quotient projection `M(B) → M(B)/B` is an equivariant nonunital complex star homomorphism
+for the induced gradings.

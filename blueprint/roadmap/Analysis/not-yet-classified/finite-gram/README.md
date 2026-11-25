@@ -2,9 +2,9 @@
 
 ## CStar Matrix
 
-- [Quadratic Form nonneg](quadratic-form-nonneg.md)
-- [Gram nonneg](gram-nonneg.md)
+- [Positive matrix quadratic form](quadratic-form-nonneg.md)
+- [Positivity of a finite Gram matrix](gram-nonneg.md)
 
 ## Completely Positive Map
 
-- [Finite gram nonneg](finite-gram-nonneg.md)
+- [Finite Gram inequality for CP maps](finite-gram-nonneg.md)

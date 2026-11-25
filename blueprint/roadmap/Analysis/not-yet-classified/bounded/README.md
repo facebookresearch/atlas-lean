@@ -1,10 +1,10 @@
 # Bounded
 
-- [To Continuous Linear Map](to-continuous-linear-map.md)
-- [To Continuous Linear Map apply](to-continuous-linear-map-apply.md)
-- [To Continuous Linear Map to Linear Map](to-continuous-linear-map-to-linear-map.md)
-- [Norm to Continuous Linear Map le](norm-to-continuous-linear-map-le.md)
-- [Norm to Continuous Linear Map le one](norm-to-continuous-linear-map-le-one.md)
+- [Bounded linear map associated with a CP map](to-continuous-linear-map.md)
+- [Evaluation of the bounded CP map](to-continuous-linear-map-apply.md)
+- [Underlying linear map of a bounded CP map](to-continuous-linear-map-to-linear-map.md)
+- [Operator-norm bound for a CP map](norm-to-continuous-linear-map-le.md)
+- [Norm of a completely positive contraction](norm-to-continuous-linear-map-le-one.md)
 - [Radical Left Map norm le](radical-left-map-norm-le.md)
 - [Radical Left CLM](radical-left-clm.md)
 - [Radical Left CLM apply](radical-left-clm-apply.md)

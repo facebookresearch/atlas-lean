@@ -1,4 +1,6 @@
-# Non Unital Cstar Ring
+# C*-identity on a separation quotient
 
-A proved C-star norm inequality on the original seminorm descends to
-the normed separation quotient. The source itself need not be normed.
+**C*-identity on a separation quotient.** Let `A` be a nonunital seminormed ring with a ring
+involution preserving the seminorm. Its separation quotient identifies elements at seminorm distance
+zero and carries the induced normed ring structure. If additionally `‖a‖² ≤ ‖a* a‖` for every `a ∈
+A`, the separation quotient satisfies the C*-identity.

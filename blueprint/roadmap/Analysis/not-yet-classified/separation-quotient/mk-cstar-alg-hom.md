@@ -1,5 +1,5 @@
-# Mk CStar Alg Hom
+# Star homomorphism onto a separation quotient
 
-The original algebra map into its actual separation quotient,
-with the descended involution. Its norm is exactly the original seminorm
-by `SeparationQuotient.norm_mk`.
+For a unital seminormed complex algebra `A` with
+isometric ring involution, the separation projection is a unital complex star homomorphism to the
+induced star-algebra quotient.

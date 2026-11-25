@@ -1,3 +1,5 @@
-# Norm non Unital Gelfand Transform le
+# Contractivity of the nonunital Gelfand transform
 
-The actual C0-valued nonunital Gelfand transform is bounded by the original algebra norm.
+Let `A` be a nonunital complex Banach algebra,
+and let `Δ(A)` be the space of its nonzero continuous complex characters with pointwise topology.
+The supremum norm of the Gelfand transform of `a ∈ A` is at most `‖a‖`.

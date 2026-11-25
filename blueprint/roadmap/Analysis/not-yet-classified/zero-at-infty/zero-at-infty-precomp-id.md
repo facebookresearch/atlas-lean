@@ -1,3 +1,5 @@
-# Zero At Infty Precomp id
+# Identity cocompact precomposition
 
-Cocompact precomposition preserves the graded identity.
+For any topological space `X` and graded nonunital complex
+C*-algebra `A`, precomposition with the identity map of `X` gives the identity graded star
+homomorphism of `C₀(X,A)`.

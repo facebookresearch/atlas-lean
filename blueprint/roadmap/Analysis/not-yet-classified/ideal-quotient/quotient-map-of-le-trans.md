@@ -1,4 +1,5 @@
-# Quotient Map Of LE trans
+# Composition of inclusion-induced quotient maps
 
-Quotient maps induced by inclusions compose according to transitivity of
-ideal inclusion.
+For a nonunital complex C*-algebra `A` and
+closed two-sided star ideals `I ⊆ J ⊆ K`, the composite `A/I → A/J → A/K` equals the quotient
+homomorphism induced by `I ⊆ K`.

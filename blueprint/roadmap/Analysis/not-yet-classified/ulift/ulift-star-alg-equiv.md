@@ -1,3 +1,4 @@
-# Ulift Star Alg Equiv
+# Star equivalence of a universe lift
 
-The literal up/down equivalence, with the computed lifted dictionary.
+For a nonunital complex C*-algebra `A`, the up/down
+bijection gives a complex star-algebra equivalence between its universe-lifted C*-algebra and `A`.

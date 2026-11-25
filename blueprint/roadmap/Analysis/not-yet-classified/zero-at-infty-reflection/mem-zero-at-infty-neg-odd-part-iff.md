@@ -1,3 +1,6 @@
-# Mem zero At Infty Neg odd Part iff
+# Odd functions for reflection grading
 
-The odd part is precisely the reflection-anti-invariant functions.
+Let `X` be a topological space with a continuous
+involutive negation `x ↦ -x`, and let `A` be a nonunital complex C*-algebra. The algebra `C₀(X,A)`
+carries the supremum norm. A function `f ∈ C₀(X,A)` belongs to the odd part exactly when `f(-x) =
+-f(x)` for every `x`.

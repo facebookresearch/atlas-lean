@@ -1,5 +1,10 @@
 # Canonical Base Change Map
 
-The canonical contractive complex-linear map into coefficient change.
-It is constructed without a target coefficient unit and without a supplied
-factorization, essentiality or endpoint-map premise.
+Let A and B be possibly nonunital complex C*-algebras, with star-compatible partial orders on
+their opposite algebras. Let E and F be complete normed right inner-product modules over A and
+B, respectively, with compatible complex normed-space structures. Let g : A → B be a nonunital
+complex star homomorphism. Suppose pure : E × B → F satisfies the internal-tensor
+complex-linearity, balancing, right-action and inner-product laws for the left multiplication
+representation induced by g, and has dense complex-linear span in F.
+
+Coefficient change along g defines a canonical contractive complex-linear map from E to F.

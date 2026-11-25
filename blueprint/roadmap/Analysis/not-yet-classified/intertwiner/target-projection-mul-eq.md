@@ -1,3 +1,4 @@
-# Target projection mul eq
+# Target support of a partial isometry
 
-A partial-isometry witness is supported on its actual target projection.
+Let `A` be a nonunital complex C*-algebra. If `q` is a
+self-adjoint idempotent and `v ∈ A` satisfies `v v* = q`, then `q v = v`.

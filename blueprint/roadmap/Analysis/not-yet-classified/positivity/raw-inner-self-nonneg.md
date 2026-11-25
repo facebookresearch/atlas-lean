@@ -1,4 +1,5 @@
 # Raw Inner self nonneg
 
-Every actual raw complex tensor has a nonnegative self-inner in the
-same caller B₂op order, by a genuine finite pure-tensor presentation.
+Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. Every algebraic tensor has nonnegative self-inner product in the positive order of B₂ᵐᵒᵖ.

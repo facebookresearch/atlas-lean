@@ -1,4 +1,5 @@
-# Exists coe eq congr iff
+# Coefficient range under multiplier transport
 
-Coefficient-image membership is invariant under transport, in existential coercion
-normal form. The named membership iff keeps its original rewrite interface.
+Let `A,B` be nonunital complex C*-algebras and `e
+: A ≃ B` a complex star-algebra equivalence. For `T ∈ M(A)`, its transported multiplier belongs to
+the coefficient image of `B` exactly when `T` belongs to the coefficient image of `A`.

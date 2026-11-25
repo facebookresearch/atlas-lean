@@ -1,3 +1,5 @@
 # Finite Equiv right Inner
 
-The finite comparison preserves the source-order right inner product.
+Let B be a possibly nonunital complex C-star algebra and I a finite index type, possibly
+empty. The standard right Hilbert B-module is the completion of the finite-support coefficient
+families. The finite comparison preserves the right-action right inner product.

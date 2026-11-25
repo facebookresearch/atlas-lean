@@ -1,8 +1,8 @@
 # Separation Quotient
 
-- [Cstar Star Ring](cstar-star-ring.md)
-- [Mk cstar Star](mk-cstar-star.md)
-- [Cstar Star Module](cstar-star-module.md)
-- [Cstar Ring](cstar-ring.md)
-- [Mk CStar Alg Hom](mk-cstar-alg-hom.md)
-- [Mk CStar Alg Hom apply](mk-cstar-alg-hom-apply.md)
+- [Involution on a unital separation quotient](cstar-star-ring.md)
+- [Classes of the separated involution](mk-cstar-star.md)
+- [Complex scalars and the separated involution](cstar-star-module.md)
+- [C*-identity on a unital separation quotient](cstar-ring.md)
+- [Star homomorphism onto a separation quotient](mk-cstar-alg-hom.md)
+- [Value of the separation star homomorphism](mk-cstar-alg-hom-apply.md)

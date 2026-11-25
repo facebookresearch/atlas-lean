@@ -1,4 +1,7 @@
-# Prod End Hom
+# Graded block-diagonal endomorphism homomorphism
 
-The block-diagonal map from the product of two endomorphism algebras to
-the endomorphism algebra of the module product, with its induced grading.
+Let `B` be a graded nonunital complex
+C*-algebra with a star-compatible order on its opposite algebra, and let `E,F` be compatibly graded
+complete right Hilbert `B`-modules. The block-diagonal map from `End*(E) × End*(F)` into `End*(E ⊕
+F)` is a star homomorphism equivariant for their induced gradings, where `End*` denotes adjointable
+endomorphisms.

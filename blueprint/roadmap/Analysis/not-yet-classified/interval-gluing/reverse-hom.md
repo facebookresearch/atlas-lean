@@ -1,3 +1,6 @@
 # Reverse Hom
 
-Precomposition by the actual interval reversal.
+Let `B` be a possibly nonunital complex C*-algebra. The functions are continuous `B`-valued
+paths on the closed real interval `[0,1]`.
+
+Precomposition by the interval reversal.

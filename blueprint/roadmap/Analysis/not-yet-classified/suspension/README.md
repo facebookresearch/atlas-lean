@@ -1,5 +1,5 @@
 # Suspension
 
-- [Suspension Functor](suspension-functor.md)
-- [Scalar Suspension](scalar-suspension.md)
-- [Scalar Suspension Equiv](scalar-suspension-equiv.md)
+- [Suspension functor for C*-algebras](suspension-functor.md)
+- [Scalar suspension](scalar-suspension.md)
+- [Scalar suspension equivalence](scalar-suspension-equiv.md)

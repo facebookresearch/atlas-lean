@@ -1,10 +1,6 @@
-# Kraus mix Kraus eq iff isometry
+# Characterization of isometric Kraus mixing
 
-For a linearly independent Kraus family `K`, the mixed family `mixKraus U K`
-defines the same CP map as `K` exactly when `U` is an isometry.
-
-Rows of `U : Matrix s r ℂ` index the target family `mixKraus U K` and columns
-index the source family `K`: `(mixKraus U K) j = ∑ i, U j i • K i` with no
-conjugation on `U j i`. The isometry condition is `Uᴴ * U = 1`. Empty
-`r = Fin 0` is supported: the empty-column matrix is isometric and forces the
-target to be zero.
+Let `n,m,r,s` be finite index types with decidable
+equality, let `K : r → Matrix m n ℂ`, and let `U : Matrix s r ℂ`. If `vec(Kᵢ)` are complex-linearly
+independent, `kraus (mixKraus U K) = kraus K` exactly when `Uᴴ U = 1`. The convention is `Lⱼ = ∑ i,
+U(j,i) Kᵢ`, without conjugation on coefficients, and empty family indices are included.

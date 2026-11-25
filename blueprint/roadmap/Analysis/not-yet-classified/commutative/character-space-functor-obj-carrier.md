@@ -1,3 +1,5 @@
-# Character Space Functor obj carrier
+# Carrier of the character-space functor
 
-The functor has the same original weak character carrier.
+For a commutative unital complex C*-algebra `A`, the
+underlying set of its character-space functor image is precisely the space of nonzero complex
+characters of `A`.

@@ -1,3 +1,5 @@
-# Locally Compact Space Non Unital
+# Local compactness of the character space
 
-The existing weak character space is locally compact, including the nonunital case.
+Let `A` be a nonunital complex Banach algebra, and let
+`Δ(A)` be the space of its nonzero continuous complex characters with pointwise topology. The
+character space `Δ(A)` is locally compact.

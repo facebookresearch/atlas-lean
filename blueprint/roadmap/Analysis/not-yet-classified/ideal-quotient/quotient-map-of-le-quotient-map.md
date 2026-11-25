@@ -1,4 +1,5 @@
-# Quotient Map Of LE quotient Map
+# Evaluation of an inclusion-induced quotient map
 
-The quotient map induced by `I ≤ J` sends the class of an ambient
-element to its class modulo `J`.
+Let `A` be a nonunital complex C*-algebra and
+`I ⊆ J` closed two-sided star ideals of `A`. For every `a ∈ A`, the induced map sends the class of
+`a` modulo `I` to its class modulo `J`.

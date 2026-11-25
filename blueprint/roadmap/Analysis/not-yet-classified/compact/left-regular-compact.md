@@ -1,4 +1,7 @@
 # Left Regular Compact
 
-The left regular representation, with codomain restricted to the compact
-endomorphisms of the coefficient self module.
+Let B be a possibly nonunital complex C*-algebra whose opposite algebra has a star-compatible
+partial order.
+
+Left multiplication gives a nonunital complex star homomorphism from B to the compact
+endomorphisms of its right coefficient self-module.

@@ -1,5 +1,6 @@
-# Scalar
+# Scalar compatibility of the completed involution
 
-The canonical completed star respects the stock completion action.
-Activate this law locally after the same completed ring and star ring;
-it does not construct another scalar action.
+Let `A` be a nonunital seminormed ring with
+continuous ring involution, and let a type `R` with a star operation act on `A`. If every
+fixed-scalar map is uniformly continuous and `(r • a)* = r* • a*`, the extended action and
+involution on the uniform completion satisfy the same identity.

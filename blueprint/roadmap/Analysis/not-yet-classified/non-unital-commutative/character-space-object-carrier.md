@@ -1,3 +1,5 @@
-# Character Space Object carrier
+# Carrier of the nonunital character-space object
 
-The character object has exactly the original weak character carrier, without a replacement model.
+For a commutative nonunital complex C*-algebra
+`A`, the underlying set of its locally compact character-space object is exactly its space of
+nonzero complex characters.
