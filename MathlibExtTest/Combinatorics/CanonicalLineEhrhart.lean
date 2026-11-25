@@ -54,5 +54,56 @@ example : (X ^ 2 + X + C (-1)) * binomialPolynomial 2 3 =
   norm_num at h ⊢
   exact h
 
+-- The degree-zero case uses only the constant h-star coefficient of the input.
+example : IsSNN ((2 * X + 1) * (1 : Polynomial ℂ)) := by
+  apply two_mul_X_add_one_preserves_snn
+  refine ⟨one_ne_zero, ?_⟩
+  intro i hi
+  have : i = 0 := Nat.eq_zero_of_le_zero (by simpa using hi)
+  subst i
+  simp [hStarCoeff]
+
+-- X has h-star coefficients 0 and 1, so the highest output coefficient need not vanish.
+example : IsSNN ((2 * X + 1) * (X : Polynomial ℂ)) := by
+  apply two_mul_X_add_one_preserves_snn
+  refine ⟨X_ne_zero, ?_⟩
+  intro i hi
+  have hi' : i ≤ 1 := by simpa using hi
+  rcases i with _ | (_ | i)
+  · simp [hStarCoeff]
+  · norm_num [hStarCoeff, Finset.sum_range_succ, Nat.choose]
+  · omega
+
+example : hStarCoeff ((2 * X + 1) * (X : Polynomial ℂ))
+    (((2 * X + 1) * (X : Polynomial ℂ)).natDegree) = 1 := by
+  have hd : ((2 * X + 1) * (X : Polynomial ℂ)).natDegree = 2 := by compute_degree!
+  rw [hd]
+  norm_num [hStarCoeff, hd, Finset.sum_range_succ, Nat.choose]
+
 #print axioms MetaMathlibExt.binomialPolynomial
 #print axioms MetaMathlibExt.quadratic_mul_binomialPolynomial
+#print axioms MetaMathlibExt.two_mul_X_add_one_preserves_snn
+
+-- In degree zero the coefficient list consists of the original complex constant.
+example (c : ℂ) : hStarCoeff (C c) 0 = c := by
+  simp [hStarCoeff]
+
+-- The odd reflection sign gives equal endpoint coefficients for 2X + 1.
+example : hStarCoeff (2 * X + 1) 0 = hStarCoeff (2 * X + 1) 1 := by
+  have hd : (2 * X + 1 : Polynomial ℂ).natDegree = 1 := by compute_degree!
+  have hf : (2 * X + 1 : Polynomial ℂ) ≠ 0 := by
+    intro h
+    simp [h] at hd
+  have h := (functionalEquation_iff_hStar_palindromic _ hf).mp (by
+    simp [hd, add_comp, mul_comp]
+    ring) 0 (Nat.zero_le _)
+  simpa [hd] using h
+
+-- The h-star coefficients of X are 0 and 1, so its reflection equation fails.
+example : ¬ (X : Polynomial ℂ).comp (X - 1) =
+    C ((-1 : ℂ) ^ (X : Polynomial ℂ).natDegree) * X.comp (-X) := by
+  intro h
+  have hends := (functionalEquation_iff_hStar_palindromic _ X_ne_zero).mp h 0 (Nat.zero_le _)
+  norm_num [hStarCoeff, Finset.sum_range_succ] at hends
+
+#print axioms MetaMathlibExt.functionalEquation_iff_hStar_palindromic

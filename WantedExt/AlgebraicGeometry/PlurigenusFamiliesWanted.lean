@@ -37,11 +37,13 @@ open CategoryTheory CategoryTheory.MonoidalCategory
 open _root_.AlgebraicGeometry
 open _root_.MathlibExt.AlgebraicGeometry.PlurigenusFamilies
 
-/-- Every positive plurigenus is constant in the actual smooth projective
-general-type family: it takes the same value at any two geometric points of the
-base, valued in algebraically closed fields (so on every geometric fibre, over
-closed and nonclosed points alike). The dimension restriction selects the
-higher-dimensional-variety packet. -/
+/-- **Deformation invariance of plurigenera over a smooth complex curve.** Let $n \ge 2$ and let
+$P$ be a smooth projective family $f : X \to B$ of $n$-dimensional varieties of general type over a
+smooth, geometrically irreducible, quasi-compact curve $B$ over $\mathbb{C}$
+(`SmoothGeneralTypeFamilyOverCurve`), with a line bundle on $X$ restricting to the canonical line
+of every geometric fibre. Then for every $m > 0$, the $m$-th plurigenus
+$h^0(X_x, K_{X_x}^{\otimes m})$ of the fibre takes the same value at any two geometric points $x$,
+$y$ of $B$, valued in algebraically closed fields (so over closed and nonclosed points alike). -/
 public theorem_wanted deformationInvarianceOfPlurigenera
     (n : ℕ) (hn : 2 ≤ n) (P : SmoothGeneralTypeFamilyOverCurve (k := ℂ) n)
     (m : ℕ) (hm : 0 < m)

@@ -22,7 +22,8 @@ import Mathlib.NumberTheory.Bertrand
 # Continuous Turán numbers in finite dimensions
 
 Translating a planar pattern preserves its continuous Turán number, and enlarging the square
-can only increase it.
+can only increase it. For a single point, both the saturation function and the continuous Turán
+number vanish.
 The volume gained by enlarging the ambient cube bounds the increase in the supremum of volumes
 of open sets avoiding a fixed pattern.
 
@@ -135,6 +136,75 @@ public theorem opx_mono_left (P : Set (ℝ × ℝ)) {m n : ℝ} (hmn : m ≤ n) 
   refine ⟨volume.real (Icc 0 n ×ˢ Icc 0 n), ?_⟩
   rintro _ ⟨T, ⟨_, hTn, _⟩, rfl⟩
   exact measureReal_mono hTn (isCompact_Icc.prod isCompact_Icc).measure_ne_top
+
+/-- **Saturating sets for a point pattern.** Let $n$ be a real number and let $P$ and $S$ be
+subsets of $\mathbb{R}^2$. Then $S$ is saturating for $P$ in $[0, n]^2$ when $S$ is an open
+subset of $[0, n]^2$ that does not contain $P$, while every open set $S'$ with
+$S \subsetneq S' \subseteq [0, n]^2$ contains $P$. Here a set $T$ contains $P$ when there are
+maps $f_X, f_Y : \mathbb{R} \to \mathbb{R}$ such that $f_X(x) - f_X(x') \ge x - x'$ whenever
+$x > x'$ are $x$-coordinates of points of $P$, likewise $f_Y(y) - f_Y(y') \ge y - y'$ whenever
+$y > y'$ are $y$-coordinates of points of $P$, and $(f_X(x), f_Y(y)) \in T$ for every
+$(x, y) \in P$.
+
+Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Section 6
+(definition of saturating sets). -/
+public def IsOpxSaturating (n : ℝ) (P S : Set (ℝ × ℝ)) : Prop :=
+  IsOpen S ∧ S ⊆ Set.Icc 0 n ×ˢ Set.Icc 0 n ∧ ¬ PointSetContainsPattern S P ∧
+    ∀ S' : Set (ℝ × ℝ), IsOpen S' → S' ⊆ Set.Icc 0 n ×ˢ Set.Icc 0 n → S ⊂ S' →
+      PointSetContainsPattern S' P
+
+/-- **Saturation function for continuous patterns.** For a real number $n$ and a set
+$P \subseteq \mathbb{R}^2$, call an open set $S \subseteq [0, n]^2$ saturating for $P$ if $S$
+does not contain $P$ but every open set $S' \subseteq [0, n]^2$ properly containing $S$ contains
+$P$ (containment in the sense of point-set pattern containment). The saturation function
+$\operatorname{osat}(n, P)$ is the infimum of the Lebesgue measures $\mu_2(S)$ over all sets $S$
+saturating for $P$, and is $0$ when no saturating set exists.
+
+The paper leaves $\operatorname{osat}(n, P)$ undefined when no saturating set exists.
+
+Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Section 6
+(definition of `osat(n, P)`). -/
+public noncomputable def osat (n : ℝ) (P : Set (ℝ × ℝ)) : ℝ :=
+  sInf ((fun S => (MeasureTheory.volume S).toReal) '' {S | IsOpxSaturating n P S})
+
+/-- **The saturation function is nonnegative.** For every real number $n$ and every set
+$P \subseteq \mathbb{R}^2$, $\operatorname{osat}(n, P) \ge 0$.
+
+Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Section 6
+(definition of `osat(n, P)`). -/
+public theorem osat_nonneg (n : ℝ) (P : Set (ℝ × ℝ)) : 0 ≤ osat n P := by
+  apply Real.sInf_nonneg
+  rintro _ ⟨S, -, rfl⟩
+  exact ENNReal.toReal_nonneg
+
+open Set in
+/-- **Saturation function and continuous Turán number of a single point.** For every real number
+$n$ and every point $p \in \mathbb{R}^2$, $\operatorname{osat}(n, \{p\}) = 0$ and
+$\operatorname{opx}(n, \{p\}) = 0$.
+
+Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Lemma 6.5
+(`integers-2024-A1-lem-6-5`). -/
+public theorem osat_singleton_and_opx_singleton (n : ℝ) (p : ℝ × ℝ) :
+    osat n {p} = 0 ∧ opx n {p} = 0 := by
+  have contains (S : Set (ℝ × ℝ)) : PointSetContainsPattern S {p} ↔ S.Nonempty := by
+    constructor
+    · rintro ⟨f, g, _, _, h⟩
+      exact ⟨_, h p (mem_singleton p)⟩
+    · rintro ⟨q, hq⟩
+      exact ⟨fun _ => q.1, fun _ => q.2, by simp, by simp, by simpa using hq⟩
+  have free (S : Set (ℝ × ℝ)) :
+      (IsOpen S ∧ S ⊆ Icc 0 n ×ˢ Icc 0 n ∧ ¬ PointSetContainsPattern S {p}) ↔ S = ∅ := by
+    rw [contains, not_nonempty_iff_eq_empty]
+    exact ⟨fun h => h.2.2, by rintro rfl; simp⟩
+  have saturating (S : Set (ℝ × ℝ)) : IsOpxSaturating n {p} S ↔ S = ∅ := by
+    constructor
+    · exact fun h => (free S).1 ⟨h.1, h.2.1, h.2.2.1⟩
+    · rintro rfl
+      refine ⟨isOpen_empty, empty_subset _, ?_, fun T _ _ hT => (contains T).2 ?_⟩
+      · simp [contains]
+      · exact empty_ssubset.mp hT
+  simp only [osat, opx, saturating, free]
+  simp
 
 /-- **Containment of point sets in $\mathbb{R}^d$.** Let $d$ be a natural number and let
 $S, P \subseteq \mathbb{R}^d$. Then $S$ contains $P$ when there are maps

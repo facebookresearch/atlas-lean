@@ -6,6 +6,7 @@ Laws with densities, with their moments and tails: beta, gamma, exponential, chi
 - [Chi-square distribution](chi-square-distribution/README.md)
 - [Closure of Gaussian laws under $L^2$ limits](closure-of-gaussian-laws-under-l-limits/README.md)
 - [Dirichlet distribution](dirichlet-distribution/README.md)
+- [Distance between Student t and normal laws](distance-between-student-t-and-normal-laws/README.md)
 - [Moments of the exponential distribution](exponential-distribution/README.md)
 - [Gamma distribution](gamma-distribution/README.md)
 - [Conditioning of Gaussian vectors](gaussian-conditioning/README.md)

@@ -1,0 +1,3 @@
+# Martingale CLT for finite-dimensional laws under the Lindeberg condition
+
+On a probability space, let $X_{n,k}$ be a triangular array whose row partial sums form a martingale for a filtration $\mathcal F_n$, with $X_{n,k}^2$ integrable for $k < n$, satisfying the Lindeberg condition. Let $N_n(s) \le n$ be nondecreasing in $s$ (over a linearly ordered index set), and suppose $\sum_{k < N_n(s)} X_{n,k}^2 \to A(s)$ in probability for every $s$. Let $Z$ be a process of measurable variables such that every linear combination $\sum_s c_s Z_s$ over a finite set of times is centered Gaussian with variance $\sum_{s,u} c_s c_u A(\min(s,u))$. Then for every finite set $I$ of times, $\big(\sum_{k < N_n(s)} X_{n,k}\big)_{s \in I}$ converges in distribution to $(Z_s)_{s \in I}$.
