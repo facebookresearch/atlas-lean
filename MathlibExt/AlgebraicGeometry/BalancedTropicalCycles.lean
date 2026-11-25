@@ -150,8 +150,11 @@ def subdivisionRefinement (S : Subdivision A) : Refinement (subdivide S) A where
 
 abbrev WeightedFacet (A : WeightedComplex n) := {i : Fin A.complex.count // A.weight i ≠ 0}
 
-/-- Refinement of the actual nonzero weighted facets. Extra zero cells carry
-no support and impose no covering obligation. -/
+/-- Data exhibiting the weighted complex $A$ as a refinement of $B$ on their cells of nonzero
+weight: $A$ and $B$ have the same dimension, each cell of $A$ of nonzero weight is assigned a cell
+of $B$ of nonzero weight that contains it and has the same weight, and each cell of $B$ of nonzero
+weight is the union of the cells of $A$ assigned to it. Cells of weight zero, in $A$ or in $B$, are
+not constrained. -/
 structure WeightedRefinement (A B : WeightedComplex n) where
   dimension : A.dimension = B.dimension
   index : WeightedFacet A → WeightedFacet B
