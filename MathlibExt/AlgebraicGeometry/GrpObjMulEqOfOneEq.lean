@@ -135,4 +135,3 @@ theorem AlgebraicGeometry.GrpObj.mul_eq_of_one_eq {K : Type u} [Field K] [IsAlgC
   have hcancel := (GrpObj.lift_inv_right_eq G₁.mul G₂.mul (toUnit _ ≫ G₂.one)).mp hθ
   rw [hcancel]
   exact MonObj.lift_comp_one_left _ _
-

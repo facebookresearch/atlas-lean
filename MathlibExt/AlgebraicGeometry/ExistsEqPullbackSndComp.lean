@@ -43,21 +43,21 @@ universe u
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry
 
-namespace N4aSolP3
+section
 
 variable {K : Type u} [Field K] [IsAlgClosed K] {X Y Z : Scheme.{u}}
   (x : X ⟶ Spec (CommRingCat.of K)) (y : Y ⟶ Spec (CommRingCat.of K))
   (z : Z ⟶ Spec (CommRingCat.of K))
 
-noncomputable abbrev sectionThrough (x₀ : Spec (CommRingCat.of K) ⟶ X)
+private noncomputable abbrev sectionThrough (x₀ : Spec (CommRingCat.of K) ⟶ X)
     (hx₀ : x₀ ≫ x = 𝟙 _) : Y ⟶ pullback x y :=
   pullback.lift (y ≫ x₀) (𝟙 Y) (by rw [Category.assoc, hx₀, Category.comp_id, Category.id_comp])
 
-noncomputable abbrev sliceThrough (y₀ : Spec (CommRingCat.of K) ⟶ Y)
+private noncomputable abbrev sliceThrough (y₀ : Spec (CommRingCat.of K) ⟶ Y)
     (hy₀ : y₀ ≫ y = 𝟙 _) : X ⟶ pullback x y :=
   pullback.lift (𝟙 X) (x ≫ y₀) (by rw [Category.id_comp, Category.assoc, hy₀, Category.comp_id])
 
-end N4aSolP3
+end
 
 set_option maxHeartbeats 1600000 in
 
@@ -89,7 +89,7 @@ theorem AlgebraicGeometry.exists_eq_pullback_snd_comp_of_isProper
   let x₀ : Spec (CommRingCat.of K) ⟶ X := pointOfClosedPoint x p₀ hp₀
   have hx₀ : x₀ ≫ x = 𝟙 _ := pointOfClosedPoint_comp x p₀ hp₀
 
-  let σ : Y ⟶ pullback x y := N4aSolP3.sectionThrough x y x₀ hx₀
+  let σ : Y ⟶ pullback x y := sectionThrough x y x₀ hx₀
   have hσ_snd : σ ≫ pullback.snd x y = 𝟙 Y := pullback.lift_snd _ _ _
   have hσ_fst : σ ≫ pullback.fst x y = y ≫ x₀ := pullback.lift_fst _ _ _
   refine ⟨σ ≫ f, ?_⟩
@@ -110,7 +110,7 @@ theorem AlgebraicGeometry.exists_eq_pullback_snd_comp_of_isProper
     have hφ_snd : φ ≫ pullback.snd z y = pullback.snd x y := pullback.lift_snd _ _ _
     haveI := LocallyOfFiniteType.jacobsonSpace (pullback.snd x y ≫ y)
 
-    let σX : X ⟶ pullback x y := N4aSolP3.sliceThrough x y y₀ hy₀
+    let σX : X ⟶ pullback x y := sliceThrough x y y₀ hy₀
     have hσX_fst : σX ≫ pullback.fst x y = 𝟙 X := pullback.lift_fst _ _ _
     have hσX_snd : σX ≫ pullback.snd x y = x ≫ y₀ := pullback.lift_snd _ _ _
     have hσX_f : σX ≫ f = x ≫ z₀ := h
@@ -134,7 +134,7 @@ theorem AlgebraicGeometry.exists_eq_pullback_snd_comp_of_isProper
     have hH : (φ.base '' ((φ ≫ pullback.snd z y).base ⁻¹'
         {y₀ (IsLocalRing.closedPoint K)})).Finite := by
       refine Set.Finite.subset (Set.finite_singleton (d (IsLocalRing.closedPoint K))) ?_
-      rw [Set.image_subset_iff, ← Set.diff_eq_empty, ← Set.not_nonempty_iff_eq_empty]
+      rw [Set.image_subset_iff, ← Set.sdiff_eq_empty, ← Set.not_nonempty_iff_eq_empty]
       intro H
       have hpt : IsClosed ({IsLocalRing.closedPoint K} : Set (Spec (CommRingCat.of K))) :=
         isClosed_discrete _
@@ -241,7 +241,7 @@ theorem AlgebraicGeometry.exists_eq_pullback_snd_comp_of_isProper
     have hvpt : vpt ≫ y = 𝟙 _ := pointOfClosedPoint_comp y _ hvC
     have hvpt_apply : vpt (IsLocalRing.closedPoint K) = (pullback.snd x y) w :=
       pointOfClosedPoint_apply y _ hvC _
-    let σv : X ⟶ pullback x y := N4aSolP3.sliceThrough x y vpt hvpt
+    let σv : X ⟶ pullback x y := sliceThrough x y vpt hvpt
     have hσv_fst : σv ≫ pullback.fst x y = 𝟙 X := pullback.lift_fst _ _ _
     have hσv_snd : σv ≫ pullback.snd x y = x ≫ vpt := pullback.lift_snd _ _ _
 
@@ -339,4 +339,3 @@ theorem AlgebraicGeometry.exists_eq_pullback_snd_comp_of_isProper
     infer_instance
   exact ext_of_apply_eq z ((pullback.snd x y).base ⁻¹' (V : Set Y))
     (V.isOpen.preimage (pullback.snd x y).base.hom.2).isLocallyClosed hSdense2 hagree hover
-
