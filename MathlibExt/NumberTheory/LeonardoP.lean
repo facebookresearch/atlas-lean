@@ -39,6 +39,17 @@ $\mathcal{L}_{p,k}(n) = 1$ for $0 \le n \le p$ and
 $\mathcal{L}_{p,k}(n) = \mathcal{L}_{p,k}(n-1) + \mathcal{L}_{p,k}(n-p-1) + k$ for $n > p$. -/
 def leonardoPK (p k n : ℕ) : ℤ := (leonardoPKSeq p k n).getD n 0
 
+/-- **Generalized Leonardo $p$-numbers at integer arguments.** For natural numbers $p$ and $k$
+and an integer $z$, the value is the generalized Leonardo $p$-number $\mathcal{L}_{p,k}(z)$ if
+$z \ge 0$, and $-k$ if $z < 0$.
+
+For $-p \le z \le -1$ these are the values $\mathcal{L}_{p,k}(z) = -k$ obtained by running the
+recurrence $\mathcal{L}_{p,k}(n) = \mathcal{L}_{p,k}(n-1) + \mathcal{L}_{p,k}(n-p-1) + k$
+backwards; below $-p$ they need not be, but Theorem 13 of the source only uses arguments
+$z \ge -p$. -/
+def leonardoPKZ (p k : ℕ) (z : ℤ) : ℤ :=
+  if 0 ≤ z then leonardoPK p k z.toNat else -(k : ℤ)
+
 private theorem length_leonardoPKSeq (p k n : ℕ) : (leonardoPKSeq p k n).length = n + 1 := by
   induction n with
   | zero => rfl
@@ -67,7 +78,8 @@ theorem leonardoPK_of_le (p k n : ℕ) (hn : n ≤ p) : leonardoPK p k n = 1 := 
   | zero => rfl
   | succ n => simp [leonardoPK_succ, hn]
 
-/-- After the initial block, the next term adds the terms at lags one and `p + 1`, and `k`. -/
+/-- For natural numbers $p,k,i$, the generalized Leonardo numbers satisfy
+$\mathcal L_{p,k}(p+i+1)=\mathcal L_{p,k}(p+i)+\mathcal L_{p,k}(i)+k$. -/
 theorem leonardoPK_recurrence (p k i : ℕ) :
     leonardoPK p k (p + i + 1) = leonardoPK p k (p + i) + leonardoPK p k i + k := by
   rw [leonardoPK_succ, ite_eq_right (by omega), Nat.add_sub_cancel_left]

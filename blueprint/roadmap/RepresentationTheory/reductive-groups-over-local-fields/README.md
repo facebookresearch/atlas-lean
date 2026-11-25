@@ -4,6 +4,7 @@ Reductive groups over archimedean and non-archimedean local fields and their rep
 
 - [Smooth representations of p-adic reductive groups](representations-of-p-adic-reductive-groups/README.md)
 - [Representations of p-adic GLₙ and the local Langlands correspondence](representations-of-p-adic-gl-n/README.md)
+- [Partial local Langlands correspondence for GLₙ over completions of number fields](partial-local-langlands-correspondence-for-gl-n.md)
 - [Representations of real reductive groups](representations-of-real-reductive-groups/README.md)
 - [Linear algebraic groups over local fields and their groups of rational points](linear-algebraic-groups-over-local-fields.md)
 - [Finiteness of the connected components of real algebraic varieties and groups](connected-components-of-real-algebraic-groups.md)

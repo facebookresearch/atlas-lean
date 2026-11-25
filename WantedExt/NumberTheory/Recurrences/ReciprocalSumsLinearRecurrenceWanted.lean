@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Polynomial.Roots
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import MathlibExt.Analysis.Complex.EnestromKakeya
+public import MathlibExt.NumberTheory.Recurrences.PerturbedTailProduct
 
 /-! # Root lemmas for reciprocal sums of `m`th-order linear recursive sequences
 
@@ -21,7 +22,7 @@ and products of `m`th-order linear recursive sequences. The Eneström–Kakeya b
 `MathlibExt.Analysis.Complex.EnestromKakeya`.
 -/
 
-open Polynomial Filter Asymptotics
+open Polynomial
 
 namespace MetaMathlibExt
 
@@ -43,23 +44,6 @@ public theorem_wanted exists_dominant_root_of_pos_coeff_charPoly
     ∃ ρ : ℝ, 1 < ρ ∧ (∀ x : ℝ, 0 < x → aeval x φ = 0 → x = ρ) ∧
       ∃ s : Multiset ℂ, (φ.map (Int.castRingHom ℂ)).roots = (ρ : ℂ) ::ₘ s ∧
         ∀ z ∈ s, ‖z‖ < ρ
-
-/-- **Asymptotic expansion of a perturbed tail product.** Let $\mu$ and $\lambda$ be real numbers
-with $1 < \mu < \lambda$, let $c \ne 0$ be a real number, and let $(e_k)_{k \ge 0}$ be a real
-sequence with $e_k = O\bigl((\mu/\lambda^3)^{k/2}\bigr)$ as $k \to \infty$. Then, as
-$n \to \infty$,
-$\prod_{k \ge n} \bigl(1 - 1/(c\lambda^k) + e_k\bigr) = 1 - \sum_{k \ge n} 1/(c\lambda^k) +
-O\bigl((\mu/\lambda^3)^{n/2}\bigr)$.
-
-Source: Tingting Du, *On the Reciprocal Sums and Products of m th-order Linear Recursive
-Sequences*, Journal of Integer Sequences 27 (2024), Article 24.2.3, Lemma 7
-(`jis-2024-24.2.3-lem-7`). -/
-public theorem_wanted tprod_one_sub_inv_add_eq_one_sub_tsum_add_isBigO
-    (c α μ : ℝ) (hc : c ≠ 0) (hμ : 1 < μ) (hμα : μ < α) (e : ℕ → ℝ)
-    (he : e =O[atTop] fun k : ℕ => (μ / α ^ 3) ^ ((k : ℝ) / 2)) :
-    (fun n : ℕ => (∏' k : ℕ, (1 - 1 / (c * α ^ (n + k)) + e (n + k))) -
-        (1 - ∑' k : ℕ, 1 / (c * α ^ (n + k)))) =O[atTop]
-      fun n : ℕ => (μ / α ^ 3) ^ ((n : ℝ) / 2)
 
 end
 

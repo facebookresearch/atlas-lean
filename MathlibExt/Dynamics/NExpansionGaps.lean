@@ -22,9 +22,9 @@ studies the N-expansion map `T_α(x) = N/x - d_α(x)` on the interval `[α, α +
 `d_α(x) = ⌊N/x - α⌋` is lowered by one at `x = α` when `N/α - α` is an integer. This file holds
 the map and its digit with three basic properties, the fact that orbits with the same digits
 alternate in order, and the ideal period words `d_n` of Definition 7: finite lists of blocks of
-partial quotients, each block being `a = 2, 1, 1` or `b = 2, 2`, with two computed values and
-Lemma 8, which counts the blocks of each kind. The paper's other statements are in
-`WantedExt.Dynamics.NExpansionGapsWanted`.
+partial quotients, each block being `a = 2, 1, 1` or `b = 2, 2`. It gives the first values, the
+length of each digit string, and the counts of both kinds of blocks. The paper's other statements
+are in `WantedExt.Dynamics.NExpansionGapsWanted`.
 
 ## Main declarations
 
@@ -35,6 +35,8 @@ Lemma 8, which counts the blocks of each kind. The paper's other statements are 
   of index `m` are in reverse order exactly when `m` is odd; likewise for the orbits of `α + 1`
   and `α' + 1`.
 * `MetaMathlibExt.idealPeriodWord`: the ideal period word `d_n`, a list of blocks.
+* `MetaMathlibExt.idealPeriodWord_flatten_length` gives the digit length `2^(n+1) - (-1)^n`
+  for `n ≥ 1`.
 * `MetaMathlibExt.idealPeriodWord_count_blocks` (Lemma 8): for `n ≥ 1`, `d_n` has `2^(n-1)`
   blocks `2, 2`, and its number `c_n` of blocks `2, 1, 1` satisfies `3 c_n = 2^n - (-1)^n`.
 
@@ -298,6 +300,36 @@ private theorem idealPeriodWord_add_four_shape (k : ℕ) :
       exact ⟨idealPeriodWord (k + 4) ++ j, idealPeriodWord_add_five_of_abab hj⟩
     · obtain ⟨j, hj⟩ := ih.1 (Nat.not_odd_iff_even.mp (Nat.odd_add_one.mp hk))
       exact ⟨idealPeriodWord (k + 4) ++ j, idealPeriodWord_add_five_of_abb hj⟩
+
+/-- **Length of the ideal period words.** For every $n \ge 1$, the digit string of the ideal
+period word $d_n$ (the concatenation of its blocks of partial quotients) has length
+$|d_n| = 2^{n+1} - (-1)^n$.
+
+The source derives this from the recursion $|d_n| = 2|d_{n-1}| - 3(-1)^n$.
+
+Source: Jaap de Jonge, *Intervals of N-Expansions with Many Gaps*, INTEGERS 26 (2026), Article
+A75, Lemma 7 (`integers-2026-A75-lem-7`). -/
+public theorem idealPeriodWord_flatten_length {n : ℕ} (hn : 1 ≤ n) :
+    ((idealPeriodWord n).flatten.length : ℤ) = 2 ^ (n + 1) - (-1) ^ n := by
+  induction n, hn using Nat.le_induction with
+  | base => decide
+  | succ n hn ih =>
+    suffices ((idealPeriodWord (n + 1)).flatten.length : ℤ) =
+        2 * (idealPeriodWord n).flatten.length + 3 * (-1) ^ n by
+      rw [this, ih]
+      ring
+    match n, hn with
+    | 1, _ | 2, _ | 3, _ => decide
+    | k + 4, _ =>
+      rcases Nat.even_or_odd k with hk | hk
+      · obtain ⟨j, hj⟩ := (idealPeriodWord_add_four_shape k).1 hk
+        rw [idealPeriodWord_add_five_of_abb hj, hj, pow_add, hk.neg_one_pow]
+        simp [List.flatten_append]
+        omega
+      · obtain ⟨j, hj⟩ := (idealPeriodWord_add_four_shape k).2 hk
+        rw [idealPeriodWord_add_five_of_abab hj, hj, pow_add, hk.neg_one_pow]
+        simp [List.flatten_append]
+        omega
 
 /-- From $d_4$ to $d_5$ and onwards, the number of blocks $2, 2$ doubles, and the number $c$ of
 blocks $2, 1, 1$ of $d_{k+4}$ becomes $2c + (-1)^k$ in $d_{k+5}$. -/

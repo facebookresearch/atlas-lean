@@ -25,3 +25,4 @@ Arithmetic varieties over the integers or over rings of integers, with hermitian
 - [Ampleness of nef plus ample hermitian line bundles](ampleness-of-nef-plus-ample-hermitian-line-bundles.md)
 
 - [Arithmetic volumes](arithmetic-volumes/README.md)
+- [Covolume bound for the families of characters](covolume-bound-for-character-families.md)
