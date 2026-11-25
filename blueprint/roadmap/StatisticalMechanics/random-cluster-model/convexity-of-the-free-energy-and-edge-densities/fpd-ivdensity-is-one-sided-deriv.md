@@ -1,6 +1,6 @@
 # Infinite-volume edge densities as one-sided derivatives
 
-For $d, N \in \mathbb{N}$ and $g : \mathbb{R} \to \mathbb{R}$, the condition holds when, for every edge $e$ of the box $\Lambda_N = \{-N, \dots, N\}^d \subseteq \mathbb{Z}^d$, viewed as a pair of sites of $\mathbb{Z}^d$, and every $t \in \mathbb{R}$,
+For $d, N \in \mathbb{N}$ and $g : \mathbb{R} \to \mathbb{R}$, the condition holds when, for every edge $e$ of the box $\Lambda_N = \{-N, \dots, N\}^d \subseteq \mathbb{Z}^d$ (a pair of nearest neighbours in $\Lambda_N$), viewed as a pair of sites of $\mathbb{Z}^d$, and every $t \in \mathbb{R}$,
 
 $$\theta^1_e(\sigma(t)) = g'_+(t) \quad\text{and}\quad \theta^0_e(\sigma(t)) = g'_-(t),$$
 

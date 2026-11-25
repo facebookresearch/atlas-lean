@@ -39,8 +39,8 @@ below has no memo table and no cost bound is claimed.
   two (variables from `0`).
 - `BDD.mk v lo hi` : the node constructor that removes a redundant test.
 - `BDD.apply op t₁ t₂` : Bryant's apply for a binary Boolean operation `op`.
-- `BDD.ofProposition A` : the ROBDD of an upstream CSLib proposition over
-  `Nat` atoms, built by `apply`.
+- `BDD.ofProposition A` : the ROBDD of a proposition of CSLib v4.35 (restored in
+  `Cslib.Logic.LegacyPL`) over `Nat` atoms, built by `apply`.
 
 ## Main results
 
@@ -64,7 +64,7 @@ below has no memo table and no cost bound is claimed.
 
 set_option autoImplicit false
 
-namespace Cslib.Logic.PL
+namespace Cslib.Logic.LegacyPL
 
 /-- **Binary decision diagram.** A binary decision diagram, in tree form, is either a leaf
 carrying a Boolean value, or a node consisting of a variable $v \in \mathbb{N}$ and two
@@ -386,4 +386,4 @@ theorem ofProposition_ne_leaf_false_iff {A : Proposition Nat} :
 
 end BDD
 
-end Cslib.Logic.PL
+end Cslib.Logic.LegacyPL

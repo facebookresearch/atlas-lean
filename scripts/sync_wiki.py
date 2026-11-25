@@ -16,7 +16,8 @@ article id and origin. The Lean owns what lean-facts adds on the build's checkou
 an article's `## Depends on` and `## Proof depends on`, from the dependency dump,
 and its annotation's kind and status, from the Lean sources. A planned page, one
 whose annotation has no Lean link, keeps the prerequisites it records by hand,
-and gets no kind or status.
+and gets no status; one that states a result not yet in Lean gets a kind (see
+unlinked_kind), so that no topic reads fully proved while it remains.
 
 Every command reads a row as Autoform's loader reads it (read_subject and
 page_owner, with Autoform's own helpers): merged over the folder defaults of
@@ -66,8 +67,11 @@ places it, and its topmost new folder joins its parent's list. A deprecated
 declaration gets no page: upstream is retiring it, and the wiki may have dropped
 its page. Nor does a held declaration (see held_name): its page stays unlinked
 until the Lean is fixed, and the run lists it as held; a marker it cannot use
-is an error, and the run then writes nothing. It lists pages whose
-declaration is gone and docstrings that changed since the last run
+is an error, and the run then writes nothing. Nor does a declaration a page's
+row lists as stating its result again (see duplicate_names), which the run lists
+as a duplicate; a list it cannot use is an error too, while an entry the Lean
+has left stale is listed for an editor (see stale_duplicates). It lists pages
+whose declaration is gone and docstrings that changed since the last run
 (scripts/wiki-sync.json keeps their digests), and changes no article that
 exists. Its first run records the digests only. The source-derived
 area catalog and coverage summary are refreshed with the same source snapshot.
@@ -108,7 +112,8 @@ declarations with no page, or one reached through a link, and a page of one, or 
 that its folder page does not list, or whose folder page or row is missing. A second run writes nothing. With --check it
 writes nothing at all, exits 1 unless the working tree is in step, naming the command that brings it in step, and says
 whether the wiki changes since REV are exactly what the run would write on REV's wiki, fresh ids aside (see
-sync_output).
+sync_output). A duplicates list the changes leave unusable, or an entry they add or change whose duplicate or row's
+declaration the Lean lacks, stops the run as a held marker does.
 
 ids gives each annotation that has no id a fresh one, as declarations gives one
 to each annotation it adds: a row written by hand, say. The id goes right after
@@ -162,6 +167,9 @@ LINKS = wiki.VAULT / "links"
 NAMESPACE = "org.autoform"
 # Where an article with no Lean name in the index keeps its module and name, for lean-facts.
 OWN = "org.atlas-wiki"
+# The kinds a page with no Lean link may record as its own (see unlinked_kind): Lean declaration commands that
+# Autoform captions.
+KINDS = frozenset({"theorem", "lemma", "def", "abbrev", "instance", "structure", "class", "inductive", "opaque"})
 DEFAULTS = {"object": {"type": "lean", "uri": "../.."}}
 # The repository an annotation's Lean link names when the page credits a Mathlib declaration (Autoform's links format).
 MATHLIB = "https://github.com/leanprover-community/mathlib4"
@@ -282,15 +290,24 @@ def reader():
 @functools.lru_cache(maxsize=16)
 def folder_template(path: str, signature: tuple[int, ...]) -> dict | None:
     """The template Autoform's reader merges each row of a links file over when the defaults file of its folder is
-    *path* (*signature*, the file's stat, keys the cache), made as autoform_cli.annotations._annotations makes it with
+    *path* (*signature*, the file's stat, keys the cache): template_of its bytes, or None when it cannot be read."""
+    try:
+        with open(path, "rb") as handle:
+            data = handle.read()
+    except OSError:
+        return None
+    return template_of(data)
+
+
+def template_of(data: bytes) -> dict | None:
+    """The template a defaults file holding *data* gives, made as autoform_cli.annotations._annotations makes it with
     literature-links' companion: the file's JSON object, its references rebased to the file, merged with
-    `defaults=True`; None when the file is not UTF-8 JSON holding one object."""
+    `defaults=True`; None when *data* is not UTF-8 JSON holding one object."""
     from literature_links import companion
 
     try:
-        with open(path, "rb") as handle:
-            value = companion.loads(handle.read().decode("utf-8"))
-    except (OSError, UnicodeError, companion.LoadError):
+        value = companion.loads(data.decode("utf-8"))
+    except (UnicodeError, companion.LoadError):
         return None
     if not isinstance(value, dict):
         return None
@@ -322,7 +339,12 @@ def effective(annotation: dict) -> dict | None:
     Autoform cannot use the template, as it then leaves the row unread. An end with no `uri` takes the template's
     type and uri; an end with one keeps only what it says, so it is no Lean end of this project by default. Only
     read: the files keep their rows as committed."""
-    template = links_template()
+    return merged(annotation, links_template())
+
+
+def merged(annotation: dict, template: dict | None) -> dict | None:
+    """effective, with the folder's *template* given (links_template's: {} for none, None for one Autoform cannot
+    use)."""
     if template is None or not isinstance(annotation, dict):
         return None
     if not template:
@@ -498,8 +520,8 @@ def flag_of(annotation: dict, read: dict | None) -> bool:
     return flag is True
 
 
-# The registry format this checkout reads (extract_v2_lean_dependencies.DUMP_FORMAT["format"]).
-REGISTRY_FORMAT = 5
+# The registry format this checkout reads, the one extract_v2_lean_dependencies.py writes, apart from the dump's.
+REGISTRY_FORMAT = extract.REGISTRY_FORMAT
 
 
 class CreditError(ValueError):
@@ -523,6 +545,30 @@ def owner_of(annotation: dict, read: dict | None) -> tuple[str, str | None, str 
         return "mathlib", mathlib[0], mathlib[1]
     name = atlas_credit(ends)
     return ("atlas", name, None) if name is not None else ("none", None, None)
+
+
+def own_lean_credit(annotation: dict) -> str | None:
+    """The declaration of this project a row credits (page_owner) when the row's own `object`, as written, names it
+    at an end the credit comes from: an end with role `states` when such an end gives the credit (atlas_credit), else
+    one of the ends with no role, which give it together. That end gives `location.declaration` itself, a Lean link of
+    the row's own. The links folder's defaults may fill in its type and uri, which is how a row names this project,
+    but a declaration they fill in, into an end such as `{}` or `{"role": "states"}`, is no link of the row's own,
+    and nor is an end that only refers to the declaration, with role `uses` say, or with no role beside an end with
+    role `states`. None otherwise."""
+    owner, credited, _module = page_owner(annotation)
+    written = annotation.get("object")
+    if owner != "atlas" or not isinstance(written, list):
+        return None
+    own = lean_ends(annotation).own
+    # The ends atlas_credit takes the credit from: those with role `states`, all naming it, or else every end, none
+    # with a role.
+    crediting = [place for _name, role, place in own if role == "states"] or [place for _name, _role, place in own]
+    for place in crediting:
+        end = written[place] if place < len(written) else None
+        location = end.get("location") if isinstance(end, dict) else None
+        if isinstance(location, dict) and location.get("declaration") == credited:
+            return credited
+    return None
 
 
 def mathlib_credit(annotation: dict) -> tuple[str, str | None] | None:
@@ -829,9 +875,11 @@ def registry_edge_problems(registry: dict, owners: set[str]) -> list[str]:
 
 def registry_problems(registry: object, files: dict[Path, list[dict]], owners: set[str] | None = None) -> list[str]:
     """Why a registry cannot speak for the checkout's Mathlib credit, before anything is written: its shape and
-    format, the list of credited names it was made from (by digest), found and missing names that do not split exactly
-    that list, edges no consumer may act on (registry_edge_problems, from the declarations pages credit: *owners*,
-    or those their Lean links name), a module a row names that is not the declaration's, or an ambiguous credit."""
+    format, the list of credited names and the duplicates lists it was made from (by digest: a `duplicates` edit can
+    change the bridges and leave the extraction beside it as it was), found and missing names that do not split
+    exactly that list, edges no consumer may act on (registry_edge_problems, from the declarations pages credit:
+    *owners*, or those their Lean links name), a module a row names that is not the declaration's, or an ambiguous
+    credit."""
     credited, problems = credited_mathlib(files)
     if problems:
         return problems
@@ -842,6 +890,15 @@ def registry_problems(registry: object, files: dict[Path, list[dict]], owners: s
     if inputs.get("names_sha256") != names_digest(credited):
         return ["the registry was made for another list of credited Mathlib names than the checkout's; make the "
                 "dump and the registry from `sync_wiki.py mathlib-names` of this checkout"]
+    aliases, problems = listed_duplicates(files)
+    if problems:
+        return problems
+    if not isinstance(inputs.get("aliases_sha256"), str):
+        return ["the registry does not record the duplicates lists it was made for (`inputs.aliases_sha256`); make it "
+                "again with extract_v2_lean_dependencies.py"]
+    if inputs["aliases_sha256"] != extract.aliases_digest(aliases):
+        return ["the registry was made for other duplicates lists than the checkout's (its `inputs.aliases_sha256` "
+                "differs), so its bridges may not be the checkout's: make the extraction and the registry again"]
     if not (isinstance(inputs.get("dump_sha256"), str) and re.fullmatch(r"[0-9a-f]{64}", inputs["dump_sha256"])):
         return ["the registry does not name the dump it was made from (`inputs.dump_sha256`)"]
     if inputs.get("mathlib_rev") != mathlib_revision():
@@ -1173,6 +1230,83 @@ def legacy_lean_name(own: dict | None, index) -> str | None:
     return names[0] if len(names) == 1 else None
 
 
+def usable_holds(files: dict[Path, list[dict]], index) -> set[int]:
+    """The rows whose held marker gives their page its declaration's kind: those `declarations` accepts, read as it
+    reads them (apply_declarations), over every row, folder rows included: a marker held_problem passes, a Mathlib
+    credit counting as a link, whose declaration no row credits and no earlier row holds back. A row whose credit
+    page_owner refuses holds nothing (lean-facts refuses it first), and nor does one whose extensions are no object."""
+    keyed = []
+    for rows in files.values():
+        for annotation in rows:
+            if not isinstance(annotation.get("extensions", {}), dict):
+                continue
+            try:
+                owner, credited, _module = page_owner(annotation)
+                keyed.append((annotation_key(annotation, index), credited if owner == "mathlib" else None, annotation))
+            except CreditError:
+                continue
+    pages = {key for key, _, _ in keyed if key}
+    holders: dict[str, list[dict]] = defaultdict(list)
+    for key, mathlib, annotation in keyed:
+        if (name := held_name(annotation)) and not held_problem(annotation, key or mathlib, index):
+            holders[name].append(annotation)
+    return {id(rows[0]) for name, rows in holders.items() if name not in pages}
+
+
+def kind_problems(files: dict[Path, list[dict]], index=None) -> list[str]:
+    """The kinds statement pages record under OWN that lean-facts would not take (see unlinked_kind), which it refuses
+    before writing rather than leave a page uncounted or counted as another kind: a value that is not one of KINDS
+    (a typo, say), and, with the Lean index, a kind on a held row whose held declaration the index resolves other than
+    `theorem` or `lemma` over a definition command, the one kind a held page records. Folder rows, which lean-facts
+    never reads, are left out."""
+    roadmap = os.path.join(os.path.dirname(os.fspath(LINKS)), "roadmap")
+    problems = []
+    for rows in files.values():
+        for annotation in rows:
+            page = subject_path(annotation)
+            extensions = annotation.get("extensions")
+            own = extensions.get(OWN) if isinstance(extensions, dict) else None
+            if page is None or page.name == "README.md" or not isinstance(own, dict) or "kind" not in own:
+                continue
+            where, kind = os.path.relpath(page, roadmap), own["kind"]
+            if not (isinstance(kind, str) and kind in KINDS):
+                problems.append(f"{where}: it records the kind {kind!r}, which is none of {', '.join(sorted(KINDS))}")
+                continue
+            name = held_name(annotation) if "held" in own else None
+            declaration = index.declarations.get(name) if index is not None and name else None
+            if declaration is not None:
+                keyword = wiki.WANTED.get(declaration.keyword, declaration.keyword)
+                if not (kind in ("theorem", "lemma") and keyword in wiki.DEFINITION_DECLARATIONS):
+                    problems.append(f"{where}: it holds {name} back, a {keyword}, and records the kind {kind}; a held "
+                                    "page takes its declaration's kind, and records `theorem` or `lemma` only when it "
+                                    "states a result held back as a definition")
+    return problems
+
+
+def unlinked_kind(annotation: dict, index, usable: set[int]) -> str | None:
+    """The kind of a page that builds with no Lean link. It is a statement not yet in Lean, which Autoform counts,
+    as ready to state, planned or not ready, only with a kind. A held page takes that of the declaration it holds
+    back, as a linked page would get it, when its marker is usable (see usable_holds), and none otherwise, whatever it
+    records, so that no declaration counts twice; but a page that states a result held back as a definition (a `def`
+    of a proposition, say) records `theorem` or `lemma`, which it takes instead. Any other page takes the one of KINDS
+    its annotation records under OWN as "kind"; else None, as no kind is guessed. A page whose row still names a
+    declaration of this project in a Lean link, as a reference, gets none either: Autoform lists every declaration of
+    this project a row names as its page's Lean target, so its task would name that declaration."""
+    if lean_ends(annotation).own:
+        return None
+    extensions = annotation.get("extensions")
+    own = extensions.get(OWN) if isinstance(extensions, dict) else None
+    recorded = own.get("kind") if isinstance(own, dict) else None
+    recorded = recorded if isinstance(recorded, str) and recorded in KINDS else None
+    if isinstance(own, dict) and "held" in own:
+        if id(annotation) not in usable:
+            return None
+        keyword = index.declarations[held_name(annotation)].keyword
+        keyword = wiki.WANTED.get(keyword, keyword)
+        return recorded if recorded in ("theorem", "lemma") and keyword in wiki.DEFINITION_DECLARATIONS else keyword
+    return recorded
+
+
 def apply_lean_facts(index, dependencies: dict, registry: dict | None = None) -> tuple[dict[str, int], list[str]]:
     """Write the Lean's facts into the checkout's pages and annotations, and name each page whose declaration the
     Lean no longer has. Such a page loses its link here (unlink), so it builds unlinked: a Lean change that renames
@@ -1194,6 +1328,7 @@ def apply_lean_facts(index, dependencies: dict, registry: dict | None = None) ->
 
     articles: dict[Path, dict] = {}
     names: dict[Path, str | None] = {}
+    without_link: list[dict] = []
     for rows in files.values():
         for annotation in rows:
             path = subject_path(annotation)
@@ -1217,6 +1352,7 @@ def apply_lean_facts(index, dependencies: dict, registry: dict | None = None) ->
                             if module else "not in the modules the build imported; its row names no module")
                            if credited in registry.get("unplaced", []) else "missing from Mathlib")
                     unlinked.append(f"{credited} ({path.relative_to(wiki.ROADMAP)}, credited to Mathlib, {why})")
+                    without_link.append(annotation)
                     stale.append(path)
                     continue
                 annotation["kind"] = found["kind"]
@@ -1235,15 +1371,13 @@ def apply_lean_facts(index, dependencies: dict, registry: dict | None = None) ->
                 name = legacy_lean_name(own, index)
                 if name is None:
                     counts["unresolved"] += 1
-                    annotation.pop("kind", None)
-                    annotation.pop("status", None)
+                    without_link.append(annotation)
                     stale.append(path)
                     continue
                 annotation["object"] = [{"location": {"declaration": name}, "role": "states"}]
             if not name:
-                # A planned page: its prerequisites are its own, and with no declaration it has no kind or status.
-                annotation.pop("kind", None)
-                annotation.pop("status", None)
+                # A planned page: its prerequisites are its own, and with no declaration it has no status.
+                without_link.append(annotation)
                 continue
             kind, status = lean_facts_for(name, None, index, sorry)
             if kind is None:
@@ -1252,8 +1386,7 @@ def apply_lean_facts(index, dependencies: dict, registry: dict | None = None) ->
                     unlink(annotation, name)
                     unlinked.append(f"{name} ({path.relative_to(wiki.ROADMAP)})")
                 # A fact an earlier pass derived no longer holds.
-                annotation.pop("kind", None)
-                annotation.pop("status", None)
+                without_link.append(annotation)
                 stale.append(path)
                 continue
             annotation["kind"] = kind
@@ -1263,6 +1396,15 @@ def apply_lean_facts(index, dependencies: dict, registry: dict | None = None) ->
                 annotation.pop("status", None)
             articles[path], names[path] = annotation, name
             counts["articles"] += 1
+    # A page that builds with no Lean link has no status, and the kind unlinked_kind gives it, if any. Held markers are
+    # read once every link the Lean no longer has is gone, so that a second pass reads them as this one does.
+    usable = usable_holds(files, index)
+    for annotation in without_link:
+        annotation.pop("status", None)
+        if kind := unlinked_kind(annotation, index, usable):
+            annotation["kind"] = kind
+        else:
+            annotation.pop("kind", None)
     by_name = {name: path for path, name in names.items() if name}
     # declarations marks a page it wrote with {"from": "docstring"} under OWN; only a page whose declaration the
     # index can't see also keeps its module and name there.
@@ -1423,9 +1565,10 @@ def run_lean_facts(dependency_file: Path, registry_file: Path | None = None) -> 
               file=sys.stderr)
         return 1
     index = index_project(wiki.ROOT, exclude_roots=("v1", "Atlas"))
-    # With the index, a row an earlier sync wrote with a module and a name stands for a declaration too; and no credit
-    # overrides a held marker.
-    problems = owner_problems(read_annotations(), index) + held_conflicts(read_annotations(), index)
+    # With the index, a row an earlier sync wrote with a module and a name stands for a declaration too; no credit
+    # overrides a held marker; and every kind a page records is one lean-facts takes.
+    problems = (owner_problems(read_annotations(), index) + held_conflicts(read_annotations(), index)
+                + kind_problems(read_annotations(), index))
     if problems:
         for problem in problems:
             print(f"error: {problem}", file=sys.stderr)
@@ -1480,6 +1623,10 @@ def run_lean_facts(dependency_file: Path, registry_file: Path | None = None) -> 
         print(f"warning: {page} names declarations of this project but credits none of them: none has role "
               "`states`, and they are not a single one with no role, or a link elsewhere states the page; Autoform "
               "reads it the same way", file=sys.stderr)
+    for entry in stale_duplicates([(annotation_key(a, index), a) for rows in read_annotations().values() for a in rows],
+                                  index):
+        print(f"warning: the duplicates entry {entry}; sync_wiki.py declarations lists it for an editor",
+              file=sys.stderr)
     try:
         counts, unlinked = apply_lean_facts(index, dependencies, registry)
     except UnlinkError as error:
@@ -1494,7 +1641,7 @@ def run_lean_facts(dependency_file: Path, registry_file: Path | None = None) -> 
                   "sync_wiki.py declarations lists it for an editor", file=sys.stderr)
     if counts["unresolved"] > len(unlinked):
         print(f"warning: {counts['unresolved'] - len(unlinked)} articles name no declaration the Lean sources hold, "
-              "so they get no kind or status", file=sys.stderr)
+              "so they get no status, and only the kind their annotation records", file=sys.stderr)
     print(f"{counts['articles']} articles, {counts['mathlib']} Mathlib-credited pages, "
           f"{counts['edges']} dependency links")
     return 0
@@ -1531,6 +1678,23 @@ def held_problem(annotation: dict, key: str | None, index) -> str | None:
     if index is not None and not declared(name, index):
         return f"it holds {name} back, which the Lean index does not resolve"
     return None
+
+
+def duplicate_names(annotation: dict) -> list[str]:
+    """The declarations of this project an annotation lists under `"duplicates"` in OWN, each once: those that state
+    exactly the result of the declaration its row credits, which Lean states more than once. The page states it once:
+    a listed declaration gets no page of its own, and the extraction counts a use of it as a use of the row's
+    declaration (see docs/BLUEPRINT.md). The list is no Lean link, so it credits nothing and names no second
+    declaration on the row; an entry that is no name is left out (see duplicate_markers): one that is no string, an
+    empty one, and one holding a control character, a tab or a line feed say, or a lone surrogate, which no Lean name
+    holds. A name may hold a space, quoted in «»."""
+    extensions = annotation.get("extensions")
+    own = extensions.get(OWN) if isinstance(extensions, dict) else None
+    listed = own.get("duplicates") if isinstance(own, dict) else None
+    if not isinstance(listed, list):
+        return []
+    return list(dict.fromkeys(name for name in listed if isinstance(name, str) and name
+                              and all(unicodedata.category(character) not in ("Cc", "Cs") for character in name)))
 
 
 def annotation_key(annotation: dict, index=None) -> str | None:
@@ -2171,8 +2335,8 @@ def kept_layout(folder: Path, created: dict[Path, str], flat: bool = False) -> t
 
 def retired_addresses() -> set[str]:
     """Every address the card move ledger (scripts/card-moves.jsonl, docs/cards.md) records as left: a moved page's
-    or folder's old path and a retired card's folder. Each leads to its article through the ledger, so no new page
-    takes it."""
+    or folder's old path, a retired card's folder and a retired statement's page. Each leads to its article, or to
+    what replaced it, through the ledger, so no new page takes it."""
     path = wiki.ROOT / "scripts" / "card-moves.jsonl"
     if not path.is_file():
         return set()
@@ -2403,6 +2567,119 @@ def held_markers(files: dict[Path, list[dict]], index) -> tuple[list, dict[str, 
     return keyed, pages, held, held_problems
 
 
+def duplicate_markers(keyed: list) -> tuple[dict[str, Path], list[tuple[tuple, str]]]:
+    """The declarations the annotations of *keyed* (see held_markers) list as duplicates (see duplicate_names), each
+    with the page of the first row that lists it, and the problems of the lists, each as a key and a text: a value that
+    is not a list of nonempty names, each given once; a list on a row whose own `object` credits no declaration of this
+    project (an unlinked, planned or held row, or one only the links folder's defaults link), or that credits a
+    Mathlib declaration; and a listed name that is the row's own declaration, or that another row names in a Lean
+    link, whatever its role, stands for (its key in *keyed*, which held_markers resolves for a row an earlier sync
+    wrote with a module and a name), holds back or lists too, one problem for each other row. A key names the problem's
+    kind, the name and its rows, each by its article id, else its page, so that a comparison of two sides (link_view)
+    finds a problem the base had whatever the rows' pages and order; a text names the pages, for a reader. Whether the
+    Lean has a name is no problem of the list (see stale_duplicates). A listed name gets no page whatever its list's
+    problems, so that every run that reads the lists (apply_declarations, scoped_plan and link_view) leaves out the same
+    declarations."""
+    def listing(annotation: dict) -> dict | None:
+        extensions = annotation.get("extensions")
+        own = extensions.get(OWN) if isinstance(extensions, dict) else None
+        return own if isinstance(own, dict) and "duplicates" in own else None
+
+    if not any(listing(a) for _, a in keyed):
+        return {}, []
+
+    def at(annotation: dict) -> str:
+        return subject_path(annotation).relative_to(wiki.ROADMAP).as_posix()
+
+    def identity(annotation: dict) -> str:
+        return annotation["id"] if isinstance(annotation.get("id"), str) else page_key(annotation)
+
+    def ordered(rows: list[dict]) -> list[dict]:
+        return sorted(rows, key=lambda annotation: (at(annotation), identity(annotation)))
+
+    # Each row by the declarations it names or stands for, and by those it holds back.
+    named: dict[str, list[dict]] = defaultdict(list)
+    holders: dict[str, list[dict]] = defaultdict(list)
+    for key, a in keyed:
+        for name in dict.fromkeys([*(name for name, _role, _place in lean_ends(a).own), *([key] if key else [])]):
+            named[name].append(a)
+        if name := held_name(a):
+            holders[name].append(a)
+    listed: dict[str, Path] = {}
+    claimants: dict[str, list[dict]] = defaultdict(list)
+    problems: list[tuple[tuple, str]] = []
+    for key, a in keyed:
+        if (own := listing(a)) is None:
+            continue
+        where, row = at(a), identity(a)
+        names = duplicate_names(a)
+        if names != own["duplicates"]:
+            problems.append((("malformed", row),
+                             f"{where}: its duplicates list is not a list of declaration names, each given once"))
+        owner, credited, _module = page_owner(a)
+        if owner == "mathlib":
+            problems.append((("mathlib", row), f"{where}: it lists duplicates but credits the Mathlib declaration "
+                                               f"{credited}; a Mathlib-credited page lists none"))
+        elif own_lean_credit(a) is None:
+            problems.append((("unlinked", row), f"{where}: it lists duplicates but credits no declaration of this "
+                                                "project by a Lean link of its own"))
+        for name in names:
+            if name == key:
+                problems.append((("own", row, name), f"{where}: it lists its own declaration {name} as a duplicate"))
+                continue
+            for table, verb in ((named, "links"), (holders, "holds back")):
+                problems += [((verb, row, name, identity(other)),
+                              f"{where}: it lists {name} as a duplicate, which {at(other)} {verb}")
+                             for other in ordered([other for other in table.get(name, []) if other is not a])]
+            claimants[name].append(a)
+            listed.setdefault(name, subject_path(a))
+    for name, rows in claimants.items():
+        rows = ordered(rows)
+        problems += [(("lists", name, tuple(sorted((identity(earlier), identity(later))))),
+                      f"{at(later)}: it lists {name} as a duplicate, as {at(earlier)} does")
+                     for place, later in enumerate(rows) for earlier in rows[:place]]
+    return listed, sorted(problems, key=lambda problem: problem[1])
+
+
+def listed_duplicates(files: dict[Path, list[dict]]) -> tuple[dict[str, str], list[str]]:
+    """The declarations the rows of *files* list as duplicates (duplicate_names), each with the declaration its row
+    credits, read without the Lean index; else none, and the problems of the lists (duplicate_markers). The extraction
+    counts them so (extract_v2_lean_dependencies.article_aliases), and a registry records their digest
+    (registry_problems): a row an earlier sync wrote with only a module and a name has no `object`, so a list on it is
+    refused, as one on a row whose declaration only the links folder's defaults give, and each list's article is the
+    declaration its row's own Lean link credits (own_lean_credit)."""
+    keyed = [(annotation_key(row), row) for rows in files.values() for row in rows]
+    problems = [text for _key, text in duplicate_markers(keyed)[1]]
+    if problems:
+        return {}, problems
+    aliases: dict[str, str] = {}
+    for _key, row in keyed:
+        if names := duplicate_names(row):
+            article = own_lean_credit(row)
+            assert article, "duplicate_markers refuses a list on a row with no Lean link of its own"
+            aliases.update(dict.fromkeys(names, article))
+    return aliases, []
+
+
+def stale_duplicates(keyed: list, index) -> list[str]:
+    """The duplicates entries of the annotations of *keyed* (see held_markers) that the Lean has left stale, for an
+    editor, as a run lists the pages whose declaration is gone: one naming a declaration the Lean index does not
+    resolve (deleted, renamed, or declared in two modules), which counts for nothing, and one of a row whose own
+    declaration it does not resolve, which counts for no page until the row is relinked. Neither stops a run: the Lean
+    changed, not the wiki (see docs/BLUEPRINT.md)."""
+    found = []
+    for key, a in keyed:
+        for name in duplicate_names(a):
+            where = subject_path(a).relative_to(wiki.ROADMAP).as_posix()
+            if not declared(name, index):
+                found.append(f"{name} ({where}): the Lean index does not resolve it; drop the entry from `duplicates`, "
+                             "keeping the row's article id and its credit")
+            elif key and not declared(key, index):
+                found.append(f"{name} ({where}): the Lean index does not resolve the page's declaration {key}, so a "
+                             f"use of {name} counts for no page; relink the page or drop the entry")
+    return sorted(found)
+
+
 def crediting(lean: str) -> list[dict] | None:
     """The object of a new row that credits the project's declaration *lean*, as Autoform reads the row (lean_name):
     the shorthand the links folder's defaults complete (see DEFAULTS), else a Lean end of this project; None when
@@ -2491,9 +2768,12 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
     unreadable = credit_problems(files) + owner_problems(files, index) + synced_rows()
     if unreadable:
         return {**dict.fromkeys(("added", "folders", "gone", "changed", "unindexed", "parts", "replaced", "appended",
-                                 "unlisted", "unassigned", "held", "held_problems"), []), "credit_problems": unreadable}
+                                 "unlisted", "unassigned", "held", "held_problems", "duplicates", "duplicate_problems",
+                                 "stale_duplicates"), []), "credit_problems": unreadable}
     taken = {a["id"] for rows in files.values() for a in rows if "id" in a}
     keyed, pages, held, held_problems = held_markers(files, index)
+    twins, listing_problems = duplicate_markers(keyed)
+    duplicate_problems = [text for _key, text in listing_problems]
     current = {declaration_key(target): target for target in targets if declaration_key(target)}
     # A card holds only the statements its editors placed in it (docs/cards.md), and an address the move ledger
     # records stays its article's for good.
@@ -2512,13 +2792,19 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
     report: dict[str, list[str]] = {"added": [], "folders": [], "gone": [], "changed": [], "unindexed": [], "parts": [],
                                   "replaced": [], "appended": [], "unlisted": [], "unassigned": [],
                                   "held": sorted(f"{name} ({path.relative_to(wiki.ROADMAP)})" for name, path in held.items()),
-                                  "held_problems": held_problems, "credit_problems": []}
+                                  "held_problems": held_problems,
+                                  "duplicates": sorted(f"{name} ({path.relative_to(wiki.ROADMAP)})"
+                                                       for name, path in twins.items()),
+                                  "duplicate_problems": duplicate_problems,
+                                  "stale_duplicates": stale_duplicates(keyed, index), "credit_problems": []}
     if scope is not None:
-        # The caller reads the markers on both sides of the pull request (see scoped_plan): one the changes leave
-        # unusable stops the run before it gets here, and one that was already so on the base is reported there.
-        report["held"], report["held_problems"] = [], []
-    elif held_problems:
-        # A marker the run cannot use could let its declaration through as a second page: write nothing.
+        # The caller reads the markers and the duplicates lists on both sides of the pull request (see scoped_plan):
+        # one the changes leave unusable stops the run before it gets here, and one that was already so on the base is
+        # reported there.
+        for kind in ("held", "held_problems", "duplicates", "duplicate_problems", "stale_duplicates"):
+            report[kind] = []
+    elif held_problems or duplicate_problems:
+        # A marker or a list the run cannot use could let its declaration through as a second page: write nothing.
         return report
     # A declaration the index lacks, and a page an earlier sync wrote for one, wait for an editor: no page is ever
     # keyed by a name rebuilt from the source.
@@ -2560,7 +2846,8 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
         # Every row the run may add is checked before it writes anything (see settled): a page's, and, when it adds
         # one, a folder page's, which its place does not change.
         wanted = [key for key, target in sorted(current.items())
-                  if key in scope.keys and key not in pages and key not in held and not deprecated(target)]
+                  if key in scope.keys and key not in pages and key not in held and key not in twins
+                  and not deprecated(target)]
         unsettled = [f"no row the sync can write credits {key} to this project" for key in wanted
                      if not settled(page_row(current[key], wiki.ROADMAP / "page.md"), current[key].lean)]
         if wanted and not settled(folder_row(wiki.ROADMAP / "README.md", ""), None):
@@ -2569,7 +2856,8 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
             report["credit_problems"] = unsettled
             return report
     for key, target in sorted(current.items()):
-        if (scope is not None and key not in scope.keys) or key in pages or key in held or deprecated(target):
+        if ((scope is not None and key not in scope.keys) or key in pages or key in held or key in twins
+                or deprecated(target)):
             continue
         # Beside the module's pages: in the folder that holds most of them, or, when that folder is split into parts,
         # as a module of many pages is, in the last of its parts that holds one, so that a module whose pages share a
@@ -2803,6 +3091,8 @@ REPORT = (("added", "New pages, taken from docstrings"),
           ("unlisted", "New pages and folders listed nowhere, as their page may hold raw HTML or code, the site would "
            "show it as typed, or their item would not show where placed"),
           ("held", "Declarations held back, whose pages stay unlinked until the Lean is fixed"),
+          ("duplicates", "Declarations a page's row lists as stating its result again, which get no page of their own"),
+          ("stale_duplicates", "Duplicates entries the Lean left stale, to drop or relink"),
           ("unassigned", "New pages placed beside the card that holds their module's other pages, for an editor to "
            "place in a card"))
 
@@ -2837,6 +3127,12 @@ def run_declarations() -> int:
         print(f"Held markers to fix: {len(report['held_problems'])}; the run wrote nothing")
         for row in report["held_problems"]:
             print(f"error: {row}; fix the marker and run again (the run wrote nothing)", file=sys.stderr)
+        return 1
+    if report["duplicate_problems"]:
+        # Likewise for the duplicates lists to fix.
+        print(f"Duplicates lists to fix: {len(report['duplicate_problems'])}; the run wrote nothing")
+        for row in report["duplicate_problems"]:
+            print(f"error: {row}; fix the list and run again (the run wrote nothing)", file=sys.stderr)
         return 1
     refresh_catalog(generated)
     print_report(report)
@@ -3083,13 +3379,19 @@ def readable_rows(files: dict[Path, list[dict]]) -> dict[Path, list[dict]]:
 
 def link_view(index) -> dict:
     """What a scoped run compares of one side's links (see scoped_plan): each link to a declaration *index* lacks, as
-    (row, declaration), the row by its article id or else its page, with where each such row is; the problems of the
-    held markers (see held_markers); and the rows Autoform cannot read one way only (credit_problems and
-    owner_problems), for which a run writes nothing."""
+    (row, declaration), the row by its article id or else its page, with where each such row is, and apart each
+    association of a row's declaration with a duplicate it lists where *index* lacks either, by the row, the duplicate,
+    the declaration and the end that is gone, once for each such end; the problems of the held markers (see
+    held_markers) and of the duplicates lists (see duplicate_markers), by their keys, with their texts; and the rows
+    Autoform cannot read one way only (credit_problems and owner_problems), for which a run writes nothing."""
     rows = numbered_rows()
     stale: dict[tuple[str, str], list[str]] = defaultdict(list)
     # Which of them name a declaration the row does not credit: the repair differs, not the link.
     references: set[tuple[str, str]] = set()
+    # Apart, each association of a row's declaration with a duplicate it lists (see duplicate_names) that the Lean left
+    # stale, by the row, the duplicate, the declaration and the end the Lean lacks: a stale duplicate's entry goes, the
+    # row keeping its credit, and a stale declaration's row is relinked.
+    stale_duplicates: dict[tuple[str, str, str | None, str], list[str]] = defaultdict(list)
     files: dict[Path, list[dict]] = defaultdict(list)
     for path, number, row in rows:
         files[path].append(row)
@@ -3098,6 +3400,13 @@ def link_view(index) -> dict:
         gone = [name for name in dict.fromkeys(name for name, _role, _place in lean_ends(row).own)
                 if not declared(name, index)]
         references.update((row.get("id") or page_name(row), name) for name in gone if name != credited)
+        for name in duplicate_names(row):
+            # Each end the Lean lacks on its own, so that restoring one leaves the other as stale as it was.
+            for end, gone_end in (("duplicate", not declared(name, index)),
+                                  ("declaration", bool(credited) and not declared(credited, index))):
+                if gone_end:
+                    stale_duplicates[(row.get("id") or page_name(row), name, credited, end)].append(
+                        f"{location(wiki.ROOT / path.relative_to(LINKS.parent.parent), number)} ({page_name(row)})")
         # And, for a row that credits nothing else, the declaration the module and name an earlier sync wrote resolve
         # to, as annotation_key reads it: one that resolves to none, or to several, links none the Lean has.
         try:
@@ -3159,8 +3468,12 @@ def link_view(index) -> dict:
     others = Counter(stable(problem) for problem in credit_problems(files) + owner_problems(files, index)
                      if not any(kind.fullmatch(problem) for kind in (ROWS_OF_A_PAGE, PAGES_CREDITING,
                                                                      PAGES_STANDING_FOR))) - own_words
-    return {"stale": dict(stale), "references": references,
-            "held_problems": Counter(held_markers(readable_rows(files), index)[3]), "unreadable": broken + +excess + others}
+    keyed, _pages, _held, held_problems = held_markers(readable_rows(files), index)
+    # A listed declaration the Lean lacks is a stale entry above, keyed by its row, not a problem of its list here.
+    listing_problems = duplicate_markers(keyed)[1]
+    return {"stale": dict(stale), "references": references, "stale_duplicates": dict(stale_duplicates),
+            "held_problems": Counter(held_problems), "duplicate_problems": Counter(key for key, _ in listing_problems),
+            "duplicate_texts": dict(listing_problems), "unreadable": broken + +excess + others}
 
 
 # The problems credit_problems and owner_problems give a page with several rows, and a declaration with several pages,
@@ -3269,6 +3582,8 @@ class Plan:
     # The documented declarations the changes add that the Lean index lacks.
     unindexed: list[str]
     counts: dict[str, int]
+    # Those of the own declarations with no page that a page's row lists as duplicates, which get none either.
+    duplicates: list[str] = field(default_factory=list)
 
     def in_step(self) -> bool:
         return not (self.missing or self.digests or self.parts or self.blocking or self.problems)
@@ -3293,13 +3608,16 @@ def scoped_plan(base: dict, head: dict, index, targets: list, changed: frozenset
     or from the Lean, loses its entry, but for a page whose declaration lost its docstring, which keeps the entry the
     base's baseline had; the baseline at hand only says which of them are still to write. A page whose declaration's
     docstring the changes edit or remove is named for a reader whatever the baseline says. A link that names a
-    declaration the Lean no longer has, or a held marker's problem, is the changes' when the base did not have it. An
+    declaration the Lean no longer has, or a held marker's problem or a duplicates list's, is the changes' when the base
+    did not have it; a declaration a row lists as a duplicate gets no page, as one held back gets none. An
     own declaration's page must be a file, listed on its folder page, as must each folder on its way that the base did
     not have."""
     keyed = {key: target for target in targets if (key := declaration_key(target))}
     old, now = base["digests"], head["digests"]
     links = link_view(index)
     rows, named, held, _ = held_markers(readable_rows(read_annotations()), index)
+    # The declarations rows list as duplicates, which, as those held back, get no page.
+    twins = duplicate_markers(rows)[0]
     # Each page a row names, as Autoform reads it, else as written; neither follows a link.
     written_at = {key: page for key, row in rows if key and (page := subject_path(row) or written_page(row))}
     own = {key: module_file(keyed[key]) for key in sorted(now.keys() - old.keys() | (now.keys() & base["deprecated"]))
@@ -3326,8 +3644,21 @@ def scoped_plan(base: dict, head: dict, index, targets: list, changed: frozenset
                  "and keep its article id, or remove the link and keep the page as a planned page")
                 for (row, name), places in sorted(links["stale"].items()) if (row, name) not in base["stale"]
                 for where in places]
+    # An association of a declaration with a duplicate that the Lean left stale is the changes' when they add it or
+    # change either end, as when they list a duplicate on a row whose declaration the Lean no longer has.
+    for key, places in sorted(links["stale_duplicates"].items(), key=lambda item: item[0][:2]):
+        if key in base["stale_duplicates"]:
+            continue
+        _row, name, credited, end = key
+        blocking += [f"{where} lists {name} as a duplicate, which the Lean no longer has: drop the entry from "
+                     "`duplicates`, keeping the row's article id and its credit" if end == "duplicate" else
+                     f"{where} lists {name} as a duplicate of {credited}, which the Lean no longer has: relink the row "
+                     "to the declaration's successor, keeping its article id, or drop the entry from `duplicates`"
+                     for where in places]
     blocking += [f"{problem}: fix the held marker"
                  for problem in sorted((links["held_problems"] - base["held_problems"]).elements())]
+    blocking += sorted(f"{links['duplicate_texts'][key]}: fix the duplicates list"
+                       for key in (links["duplicate_problems"] - base["duplicate_problems"]).elements())
     # A row Autoform cannot read one way only stops the run as it stops the whole run, and so do the rows of a checkout
     # lean-facts synced; one the base already had is reported by a run that has something to write (see unfinished).
     blocking += [f"{problem}; fix it" for problem in sorted((links["unreadable"] - base["unreadable"]).elements())]
@@ -3335,15 +3666,17 @@ def scoped_plan(base: dict, head: dict, index, targets: list, changed: frozenset
     folder_rows = {page for _, row in rows if (page := subject_path(row)) is not None and page.name == "README.md"}
     problems, parts = set(), set()
     for key in own:
-        # Its page, linked or holding it back.
-        page = written_at.get(key) or held.get(key)
+        # Its page, linked or holding it back, or the page whose row lists it as a duplicate.
+        page = written_at.get(key) or held.get(key) or twins.get(key)
         if page is not None:
-            found, stale = page_problems(key, page, base["folders"], folder_rows, held=key not in written_at)
+            found, stale = page_problems(key, page, base["folders"], folder_rows,
+                                         held=key not in written_at and key in held,
+                                         twin=key not in written_at and key not in held)
             problems.update(found)
             parts.update(stale)
     blocking += [f"{path} is a link: the sync writes through none; put what it links to in its place"
                  for path in links_in_wiki()]
-    return Plan(new=own, missing=[key for key in own if key not in named and key not in held],
+    return Plan(new=own, missing=[key for key in own if key not in named and key not in held and key not in twins],
                 held=[key for key in own if key not in named and key in held],
                 digests={key: value for key, value in sorted(entries.items())
                          if (key in state if value is None else state.get(key) != value)},
@@ -3351,11 +3684,12 @@ def scoped_plan(base: dict, head: dict, index, targets: list, changed: frozenset
                 unindexed=sorted(row for name, row in head["unindexed"].items() if name not in base["unindexed"]),
                 counts={"lean files": len(changed), "added": len(now.keys() - old.keys()),
                         "changed": sum(old[key] != now[key] for key in now.keys() & old.keys()),
-                        "removed": len(old.keys() - now.keys())})
+                        "removed": len(old.keys() - now.keys())},
+                duplicates=[key for key in own if key not in named and key not in held and key in twins])
 
 
 def page_problems(key: str, page: Path, folders: set[str], folder_rows: set[Path],
-                  held: bool = False) -> tuple[list[str], list[str]]:
+                  held: bool = False, twin: bool = False) -> tuple[list[str], list[str]]:
     """What keeps an own declaration's *page*, which its row names as written, from being in step: the problems for an
     editor, and the part pages whose copy the sync refreshes. The page must be a file under the roadmap, reached
     through no link, and listed on its folder page. So must each folder on its way that the base did not have
@@ -3363,11 +3697,16 @@ def page_problems(key: str, page: Path, folders: set[str], folder_rows: set[Path
     included; and each such folder needs its folder page, with an annotation row (*folder_rows*, the folder pages that
     rows name). Where a part lists one of them, its copy on its parent's page must list it too (see
     with_part_lists). A *held* page, a row holding the declaration back, is restored where the row names it, keeping
-    the row: taking the hold away is an editor's call of its own."""
+    the row: taking the hold away is an editor's call of its own. A *twin* page is that of the row listing the
+    declaration as a duplicate (see duplicate_markers), which states its result: it is restored, or the entry goes."""
     if (not page.is_relative_to(wiki.ROADMAP) or os.path.realpath(page) != str(page) or not page.is_file()):
         if held:
             return [f"{os.path.relpath(page, wiki.ROOT)}, which the row holding {key} back names, is not a page: restore "
                     "it there, keeping the row, its article id and its held marker"], []
+        if twin:
+            return [f"{os.path.relpath(page, wiki.ROOT)}, which the row listing {key} as a duplicate names, is not a "
+                    "page: restore it there, keeping the row and its article id, or drop the entry from the row's "
+                    "`duplicates`"], []
         return [f"{os.path.relpath(page, wiki.ROOT)}, which the row of {key} names, is not a page: restore it, or remove "
                 "the row and run the sync again"], []
     folder, stale = page, []
@@ -3382,7 +3721,8 @@ def page_problems(key: str, page: Path, folders: set[str], folder_rows: set[Path
                     "restore its row"], stale
         entry = folder.name if folder == page else f"{folder.name}/README.md"
         if entry not in (listed_links(readme) if readme.is_file() else []):
-            what = f"the page of {key}" if folder == page else "a folder the changes add"
+            what = (f"the page listing {key} as a duplicate" if twin else f"the page of {key}") if folder == page \
+                else "a folder the changes add"
             return [f"{folder.relative_to(wiki.ROADMAP)}, {what}, is listed on no folder page: list it on "
                     f"{readme.relative_to(wiki.ROADMAP)}"], stale
         holder = folder.parent
@@ -3459,7 +3799,8 @@ def apply_plan(plan: Plan, targets: list, index, generated: dict[Path, str], uni
     scope = Scope(keys=set(plan.missing), digests=plan.digests, ids=ids or {},
                   parts={wiki.ROADMAP / part for part in plan.parts})
     report = apply_declarations(targets, index, generated, unindexed, scope)
-    report.update({"changed": plan.changed, "unindexed": plan.unindexed, "held": plan.held, "gone": []})
+    report.update({"changed": plan.changed, "unindexed": plan.unindexed, "held": plan.held,
+                   "duplicates": plan.duplicates, "gone": []})
     return report, scope.written
 
 
@@ -3471,6 +3812,7 @@ def print_plan(plan: Plan, base: str) -> None:
                                                                               for key, path in plan.new.items()]),
                         ("Of them, those with no page yet", plan.missing),
                         ("Of them, those held back, so with no page", plan.held),
+                        ("Of them, those a page's row lists as duplicates, so with no page", plan.duplicates),
                         ("Docstring baseline entries to write", [f"{key}: {'drop' if value is None else value}"
                                                                  for key, value in plan.digests.items()]),
                         ("Part lists whose copy lacks an entry of the changes, to refresh", plan.parts),
@@ -3636,7 +3978,8 @@ def run_scoped(argv: list[str]) -> int:
             options.report.write_text(json.dumps({
                 "schema": "atlas-graph-sync/v1", "base": base, "check": options.check, "fix": fix,
                 "lean_files": sorted(lean), "counts": {**NOTHING, "lean files": len(lean)}, "new": {}, "missing": [],
-                "held": [], "digests": {}, "parts": [], "changed": [], "errors": errors, "unindexed": [],
+                "held": [], "duplicates": [], "digests": {}, "parts": [], "changed": [], "errors": errors,
+                "unindexed": [],
                 "in_step": False, "wiki_changes": "other" if graph or staged_graph else "none", "written": [],
                 "differences": [f"{path}: the sync writes no link or other kind of file" for path in linked
                                 if path.replace(os.sep, "/") in graph]},
@@ -3674,8 +4017,8 @@ def run_scoped(argv: list[str]) -> int:
         return 2
     report: dict = {"schema": "atlas-graph-sync/v1", "base": base, "check": options.check, "fix": fix,
                     "lean_files": sorted(lean), "counts": plan.counts, "new": plan.new, "missing": plan.missing,
-                    "held": plan.held, "digests": plan.digests, "parts": plan.parts, "changed": plan.changed,
-                    "errors": plan.blocking + plan.problems, "unindexed": plan.unindexed}
+                    "held": plan.held, "duplicates": plan.duplicates, "digests": plan.digests, "parts": plan.parts,
+                    "changed": plan.changed, "errors": plan.blocking + plan.problems, "unindexed": plan.unindexed}
     if options.check:
         real = wiki.VAULT
 

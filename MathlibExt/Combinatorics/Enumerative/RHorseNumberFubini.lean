@@ -418,7 +418,7 @@ private theorem rHorse_binomial_injective (a b : ℕ → ℚ)
     ∀ k, a k = b k := by
   intro k
   induction k using Nat.strong_induction_on with
-  | h k ih =>
+  | ind k ih =>
       have hk := h k
       rw [Finset.sum_range_succ, Finset.sum_range_succ] at hk
       have hlow : (∑ i ∈ Finset.range k, (k.choose i : ℚ) * a i) =

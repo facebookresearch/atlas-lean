@@ -50,7 +50,7 @@ cost theorem is claimed.
 
 @[expose] public section
 
-namespace Cslib.Logic.PL
+namespace Cslib.Logic.LegacyPL
 
 namespace CNF
 
@@ -277,4 +277,4 @@ theorem davisPutnam_eq_true_iff (φ : CNF) : davisPutnam φ = true ↔ CNFSat φ
 
 end CNF
 
-end Cslib.Logic.PL
+end Cslib.Logic.LegacyPL

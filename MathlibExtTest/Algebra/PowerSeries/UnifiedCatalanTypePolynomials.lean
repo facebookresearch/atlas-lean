@@ -32,3 +32,38 @@ example (N : ℕ) (hN : 2 ≤ N) :
   intro n hn
   have hpos : n - 1 ≠ 0 := by omega
   simp [Finset.sum_range_succ, coeff_one, hpos]
+
+-- For j = 0 the series F keeps only its coefficient at k, and the sum has the single term n = 0.
+example (k m r : ℕ) (lam x y : ℝ) (hkr : k ≤ r) :
+    let E : PowerSeries ℝ := (exp ℝ).subst (C (2 * y) * X - X ^ 2 : PowerSeries ℝ)
+    let F : PowerSeries ℝ := PowerSeries.mk fun n ↦ if n = k then coeff n E else 0
+    coeff r (F * trinomialNegPowSeries lam 1 m x m) =
+      coeff k E * coeff (r - k) (trinomialNegPowSeries lam 1 m x m) := by
+  intro E F
+  have hF : F = PowerSeries.mk fun n ↦ if k ≤ n ∧ 0 ∣ n - k then coeff n E else 0 := by
+    ext n
+    have hiff : n = k ↔ k ≤ n ∧ 0 ∣ n - k := by
+      rw [zero_dvd_iff]
+      omega
+    simp only [F, coeff_mk, hiff]
+  rw [hF, (coeff_nietoHermiteSeries_mul_trinomialNegPowSeries 0 k m r lam x y hkr).1]
+  simp [E]
+
+-- With j = 2, k = 1 and r = 4 the sum runs over the indices 1 and 3 of the progression.
+example (m : ℕ) (lam x y : ℝ) :
+    let E : PowerSeries ℝ := (exp ℝ).subst (C (2 * y) * X - X ^ 2 : PowerSeries ℝ)
+    let F : PowerSeries ℝ := PowerSeries.mk fun n ↦ if 1 ≤ n ∧ 2 ∣ n - 1 then coeff n E else 0
+    let T : PowerSeries ℝ := trinomialNegPowSeries lam 1 m x m
+    coeff 4 (F * T) = coeff 1 E * coeff 3 T + coeff 3 E * coeff 1 T := by
+  intro E F T
+  rw [(coeff_nietoHermiteSeries_mul_trinomialNegPowSeries 2 1 m 4 lam x y (by norm_num)).1]
+  simp [E, T, Finset.sum_range_succ]
+
+-- At r = k only the lowest term of F meets the constant term 1 of the trinomial series.
+example (j k m : ℕ) (hm : m ≠ 0) (lam x y : ℝ) :
+    let E : PowerSeries ℝ := (exp ℝ).subst (C (2 * y) * X - X ^ 2 : PowerSeries ℝ)
+    let F : PowerSeries ℝ := PowerSeries.mk fun n ↦ if k ≤ n ∧ j ∣ n - k then coeff n E else 0
+    coeff k (F * trinomialNegPowSeries lam 1 (m * x) 1 m) = coeff k E := by
+  intro E F
+  rw [(coeff_nietoHermiteSeries_mul_trinomialNegPowSeries j k m k lam x y le_rfl).2]
+  simp [E, constantCoeff_trinomialNegPowSeries _ _ _ _ hm]

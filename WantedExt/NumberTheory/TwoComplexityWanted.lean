@@ -34,6 +34,7 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Order.Interval.Finset.Nat
+public import MathlibExt.NumberTheory.TwoComplexityMax
 public import MathlibExt.NumberTheory.TwoComplexitySum
 
 set_option autoImplicit false
@@ -41,18 +42,6 @@ set_option autoImplicit false
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.TwoComplexityWanted
-
-/-- **The largest number built from $m$ copies of $l$.** Let $l > 1$ and $m \ge 1$ be natural
-numbers. Then $l^m$ can be built from exactly $m$ copies of $l$ using addition and
-multiplication, and every natural number that can be built from $m$ copies of $l$ in this way
-is at most $l^m$.
-
-Source: Pengcheng Zhang, "The 2-Complexity of Even Positive
-Integers", Lemma 1. -/
-theorem_wanted canBuild_max (l m : ℕ) (hl : 1 < l)
-    (hm : 1 ≤ m) :
-    CanBuild l m (l ^ m) ∧
-      ∀ n : ℕ, CanBuild l m n → n ≤ l ^ m
 
 /-- **Logarithmic bounds for the $l$-complexity.** Write $\|n\|_l$ for the $l$-complexity of
 $n$. Let $l > 1$ be a natural number and let $n$ be a positive multiple of $l$. Then

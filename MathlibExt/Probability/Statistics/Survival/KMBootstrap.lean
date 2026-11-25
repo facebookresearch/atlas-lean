@@ -141,7 +141,7 @@ theorem hasStrictFDerivAt_kmMap {θ : Coord k} (hpos : ∀ j, θ (Sum.inr j) ≠
     rfl
   have h : ContDiffAt ℝ 1 kmMap θ := contDiffAt_pi.2 fun j => contDiffAt_prod fun l _ =>
     contDiffAt_const.sub (((hc _).contDiffAt).div (hc _).contDiffAt (hpos l))
-  exact h.hasStrictFDerivAt one_ne_zero
+  exact h.hasStrictFDerivAt_fderiv one_ne_zero
 
 section Bridge
 
