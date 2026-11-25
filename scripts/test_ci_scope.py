@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Tests for scripts/ci_scope.py and the `changes` job of .github/workflows/ci.yml that runs it.
+"""Tests for scripts/ci_scope.py, the steps of .github/workflows/ci.yml that run it, and the tool tests
+that scripts/test_scripts.sh skips on its word.
 
     python3 -m unittest discover -s scripts -p test_ci_scope.py -v
 
@@ -10,6 +11,7 @@ scripts/queue/preflight.py relies on (NAMES_ONLY).
 from __future__ import annotations
 
 import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -62,6 +64,37 @@ BUILT = [
 ]
 
 
+# Lean sources of the libraries and provenance: the build reads them, the tool tests do not.
+LEAN = [
+    "MathlibExt/Algebra/Group.lean",
+    "WantedExt/Foo.lean",
+    "DomainsTest/Biology/X.lean",
+    "provenance/formal-math-sync.json",
+    "provenance/formal-math-sync.d/MathlibExt/Algebra.json",
+]
+# The suites of scripts/test_scripts.sh that ATLAS_TOOL_TESTS=skip leaves out, and those that always run.
+TOOL_TESTS = [
+    "scripts/import_optimizer test_*.py",
+    "scripts test_quality_eval.py",
+    "scripts test_audit_parallel.py",
+    "scripts test_formal_math_sync.py",
+    "scripts test_public_references.py",
+    "scripts test_public_reference_workflow.py",
+    "scripts test_bump_cache_workflow.py",
+    "scripts/bump/test_pinned_bump.py",
+    "scripts/bump/test_bump_branch.py",
+]
+ALWAYS = [
+    "scripts test_merge_queue_checks.py",
+    "scripts test_ci_scope.py",
+    "scripts test_ci_build_trims.py",
+    "scripts test_next_task.py",
+    "scripts/queue test_*.py",
+]
+TOOL_TESTS_ENV = ("${{ (github.event_name == 'pull_request' && steps.scope.outputs.tool_tests == 'false') "
+                  "&& 'skip' || 'run' }}")
+
+
 class NeedsBuildTests(unittest.TestCase):
     def test_graph_data_and_documentation_need_no_build(self):
         for path in SKIPPED:
@@ -77,6 +110,22 @@ class NeedsBuildTests(unittest.TestCase):
 
     def test_no_path_needs_the_build(self):
         self.assertTrue(ci_scope.needs_build([]))
+        self.assertTrue(ci_scope.needs_tool_tests([]))
+
+    def test_the_tool_tests_skip_lean_graph_data_and_documentation(self):
+        for path in SKIPPED + LEAN:
+            with self.subTest(path=path):
+                self.assertFalse(ci_scope.needs_tool_tests([path]))
+        self.assertFalse(ci_scope.needs_tool_tests(SKIPPED + LEAN))
+        self.assertTrue(ci_scope.needs_build(LEAN[:1]))
+        for path in [p for p in BUILT if p not in LEAN]:
+            with self.subTest(path=path):
+                self.assertTrue(ci_scope.needs_tool_tests(SKIPPED + LEAN + [path]))
+        # Lean files outside the libraries: the lessons, v1, the scripts' own Lean.
+        for path in ("docs/teaching/examples/BoundedCodec.lean", "v1/Atlas.lean", "scripts/check_axioms.lean",
+                     "Atlas/CDISProbability/A.lean", "MathlibExt.lean"):
+            with self.subTest(path=path):
+                self.assertTrue(ci_scope.needs_tool_tests([path]))
 
     def test_paths_are_read_whole_between_nul_bytes(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -88,21 +137,28 @@ class NeedsBuildTests(unittest.TestCase):
                                         capture_output=True, text=True, check=True)
                 return result.stdout
 
-            self.assertEqual(decide(b"docs/a\nMathlibExt/B.lean.md", b"blueprint/\xff.md"), "build=false\n")
-            self.assertEqual(decide(b"docs/a.md", b"MathlibExt/B.lean"), "build=true\n")
-            self.assertEqual(decide(), "build=true\n")
+            self.assertEqual(decide(b"docs/a\nMathlibExt/B.lean.md", b"blueprint/\xff.md"),
+                             "build=false\ntool_tests=false\n")
+            self.assertEqual(decide(b"docs/a.md", b"MathlibExt/B.lean"), "build=true\ntool_tests=false\n")
+            self.assertEqual(decide(b"docs/a.md", b"scripts/x.py"), "build=true\ntool_tests=true\n")
+            self.assertEqual(decide(), "build=true\ntool_tests=true\n")
             result = subprocess.run([sys.executable, "-I", str(ROOT / "scripts/ci_scope.py")],
                                     capture_output=True, text=True)
             self.assertEqual((result.returncode, result.stdout), (2, ""))
 
 
-def decide_step() -> str:
-    """The shell of the Decide step of the `changes` job in ci.yml."""
+def job_lines(name: str) -> list[str]:
+    """The lines of job `name` in ci.yml."""
     lines = (ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8").splitlines()
-    start = lines.index("  changes:")
+    start = lines.index(f"  {name}:")
     end = next(i for i in range(start + 1, len(lines)) if lines[i].startswith("  ") and lines[i][2] not in " #")
-    job = lines[start:end]
-    step = job.index("      - name: Decide")
+    return lines[start:end]
+
+
+def decide_step(name: str = "changes", step_name: str = "Decide") -> str:
+    """The shell of the step that runs scripts/ci_scope.py in job `name` of ci.yml."""
+    job = job_lines(name)
+    step = job.index(f"      - name: {step_name}")
     run = next(i for i in range(step, len(job)) if job[i] == "        run: |")
     body = []
     for line in job[run + 1:]:
@@ -119,6 +175,36 @@ class WorkflowTests(unittest.TestCase):
         self.assertIn("      build: ${{ steps.decide.outputs.build }}\n", job)
         self.assertIn("          fetch-depth: 2\n          sparse-checkout: /scripts/ci_scope.py\n", job)
         self.assertEqual(job.count("        if: github.event_name == 'pull_request'\n"), 2)
+
+    def test_repository_integrity_skips_the_tool_tests_on_pull_requests_only(self):
+        job = "\n".join(job_lines("preflight")) + "\n"
+        self.assertIn("          fetch-depth: ${{ github.event_name == 'pull_request' && 2 || 1 }}\n", job)
+        self.assertIn("      - name: Decide whether to run the tool tests\n        id: scope\n"
+                      "        if: github.event_name == 'pull_request'\n        continue-on-error: true\n", job)
+        self.assertIn("      - name: Run deterministic repository checks\n        env:\n"
+                      f"          ATLAS_TOOL_TESTS: {TOOL_TESTS_ENV}\n        run: scripts/check.sh preflight\n", job)
+        self.assertEqual(job.count("ATLAS_TOOL_TESTS"), 1)
+        self.assertEqual(decide_step("preflight", "Decide whether to run the tool tests"), decide_step())
+
+    def test_the_tool_tests_are_exactly_these_suites(self):
+        text = (ROOT / "scripts/test_scripts.sh").read_text(encoding="utf-8")
+        gated = text.split('\nif [[ "$tool_tests" == run ]]; then\n', 1)[1].split("\nelse\n", 1)[0]
+        rest = text.replace(gated, "")
+
+        def suites(block: str) -> list[str]:
+            joined = block.replace("\\\n", " ")
+            found = re.findall(r'^\s*(?:PYTHONPATH=\S+\s+)?python3 (?:-m unittest discover\s+-s "\$REPO_ROOT/([\w/]+)" '
+                               r'-p \'?([\w*.]+)\'?|"\$REPO_ROOT/([\w/.]+)")', joined, re.M)
+            return [f"{s} {p}" if s else script for s, p, script in found]
+        self.assertEqual(suites(gated), TOOL_TESTS)
+        self.assertEqual(suites(rest), ALWAYS)
+        self.assertIn('tool_tests="${ATLAS_TOOL_TESTS-run}"\ncase "$tool_tests" in\n  run|skip) ;;\n', text)
+        for value in ("", "yes", "Skip"):
+            with self.subTest(value=value):
+                result = subprocess.run(["bash", str(ROOT / "scripts/test_scripts.sh")], capture_output=True, text=True,
+                                        env=dict(os.environ, ATLAS_TOOL_TESTS=value))
+                self.assertEqual(result.returncode, 2)
+                self.assertIn("ATLAS_TOOL_TESTS must be run or skip", result.stderr)
 
     def test_the_decide_step_on_a_merge_commit(self):
         script = decide_step()
@@ -164,10 +250,11 @@ class WorkflowTests(unittest.TestCase):
                 return output.read_text(encoding="utf-8")
 
             self.assertEqual(decide({"blueprint/roadmap/A.md": "b\n", "HEAD": "x\n", "docs/B.md": "c\n"}),
-                             "build=true\n")  # a file named HEAD is a path like any other
-            self.assertEqual(decide({"blueprint/roadmap/A.md": "c\n", "docs/C.md": "d\n"}), "build=false\n")
+                             "build=true\ntool_tests=true\n")  # a file named HEAD is a path like any other
+            self.assertEqual(decide({"blueprint/roadmap/A.md": "c\n", "docs/C.md": "d\n"}),
+                             "build=false\ntool_tests=false\n")
             self.assertEqual(decide({"blueprint/roadmap/A.md": "d\n", "MathlibExt/A.lean": "def a : Nat := 2\n"}),
-                             "build=true\n")
+                             "build=true\ntool_tests=false\n")
 
 
 if __name__ == "__main__":
