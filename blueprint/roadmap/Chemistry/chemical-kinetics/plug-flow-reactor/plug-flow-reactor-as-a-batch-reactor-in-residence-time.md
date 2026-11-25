@@ -18,11 +18,10 @@ the plug-flow balance has at most one solution whenever this batch initial-value
 one. For $V_R = 0$ there is no reactor volume and the effluent is the feed, $c(0) = c_f$.
 
 The proof is the chain rule for the linear change of variables $V = Q\tau$, which maps
-$[0, V_R/Q]$ onto $[0, V_R]$.
-
-## Depends on
-
-## Proof depends on
+$[0, V_R/Q]$ onto $[0, V_R]$. The same argument works in any real normed vector space.
+In that formulation the plug-flow derivative is $Q^{-1}R(c(V))$, and uniqueness means that
+solutions agree on the physical interval. At zero volume the within-singleton derivative
+imposes no restriction, so the feed condition is the entire balance.
 
 ## Sources
 
