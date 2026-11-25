@@ -192,7 +192,9 @@ public theorem boundedDiffSetNumber_one (g : ℕ) : boundedDiffSetNumber g 1 = 1
       simp [subRepCount, Finset.filter_singleton, Ne.symm hx]
     omega
 
-/-- The minimum defining the interval difference basis number is attained. -/
+/-- For any natural numbers $g,n$, there is a finite set $A \subseteq \mathbb Z$ of size
+$\eta_g(n)$, the interval difference basis number, such that each integer $1 \le x \le n$
+has at least $g$ representations $x=a-a'$ by ordered pairs $(a,a') \in A \times A$. -/
 public theorem diffBasisNumber_le_succ_mul.exists_min_basis (g n : ℕ) :
     ∃ A : Finset ℤ, A.card = diffBasisNumber g n ∧
       ∀ x ∈ Finset.Icc (1 : ℤ) n, g ≤ subRepCount A x := by
@@ -325,5 +327,113 @@ public theorem sqrt_two_mul_le_diffBasisNumber_div_sqrt (g n : ℕ) (hn : 1 < n)
   exact ⟨by positivity, by exact_mod_cast hsq⟩
 
 end
+
+/-- **Rédei–Rényi difference basis.** Let $n \ge 1$ and $k = \lceil \sqrt{n} \rceil$. The set
+of integers $B_n = \{1, \dots, k - 1\} \cup \{k, 2k, \dots, k^2, (k + 1)k\}$ has $2k$ elements,
+and every $x \in \{1, \dots, n\}$ is a difference $b - b'$ of two elements of $B_n$.
+
+Source: Eric Schmutz and Michael Tait, *Cardinalities of g-Difference Sets*, INTEGERS 25
+(2025), Article A77, Lemma 2 (`integers-2025-A77-lem-2`). -/
+public theorem redeiRenyi_diffBasis (n : ℕ) (hn : 0 < n) :
+    let k : ℕ := ⌈Real.sqrt n⌉₊
+    let B : Finset ℤ :=
+      Finset.Icc 1 ((k : ℤ) - 1) ∪ (Finset.Icc (1 : ℤ) (k + 1)).image (· * (k : ℤ))
+    B.card = 2 * k ∧ ∀ x ∈ Finset.Icc (1 : ℤ) n, 1 ≤ subRepCount B x := by
+  let k : ℕ := ⌈Real.sqrt n⌉₊
+  let L := Finset.Icc (1 : ℤ) ((k : ℤ) - 1)
+  let M := Finset.Icc (1 : ℤ) ((k : ℤ) + 1)
+  let R := M.image (· * (k : ℤ))
+  change (L ∪ R).card = 2 * k ∧ ∀ x ∈ Finset.Icc (1 : ℤ) n, 1 ≤ subRepCount (L ∪ R) x
+  have hceil : Real.sqrt (n : ℝ) ≤ (k : ℝ) := Nat.le_ceil _
+  have hnreal : (0 : ℝ) < n := by exact_mod_cast hn
+  have hkreal : (0 : ℝ) < k := (Real.sqrt_pos.2 hnreal).trans_le hceil
+  have hk : (0 : ℤ) < k := by exact_mod_cast hkreal
+  have hsq : (n : ℤ) ≤ (k : ℤ) * (k : ℤ) := by
+    exact_mod_cast (show (n : ℝ) ≤ (k : ℝ) * (k : ℝ) from calc
+      (n : ℝ) = Real.sqrt n * Real.sqrt n := (Real.mul_self_sqrt hnreal.le).symm
+      _ ≤ (k : ℝ) * (k : ℝ) := mul_le_mul hceil hceil (Real.sqrt_nonneg _) hkreal.le)
+  constructor
+  · have hdis : Disjoint L R := Finset.disjoint_left.2 fun a ha hb => by
+      have ha' := (Finset.mem_Icc.1 ha).2
+      obtain ⟨j, hj, rfl⟩ := Finset.mem_image.1 hb
+      have hlow := mul_le_mul_of_nonneg_right (Finset.mem_Icc.1 hj).1 hk.le
+      rw [one_mul] at hlow
+      omega
+    have hinj : Function.Injective fun j : ℤ => j * (k : ℤ) :=
+      fun _ _ heq => mul_right_cancel₀ hk.ne' heq
+    rw [Finset.card_union_of_disjoint hdis, show R.card = M.card from
+      Finset.card_image_of_injective M hinj]
+    dsimp [L, M]
+    rw [Int.card_Icc, Int.card_Icc]
+    omega
+  · intro x hx
+    obtain ⟨hx₁, hx₂⟩ := Finset.mem_Icc.1 hx
+    let q := x / (k : ℤ)
+    let r := x % (k : ℤ)
+    have hr₀ : 0 ≤ r := Int.emod_nonneg _ hk.ne'
+    have hrk : r < (k : ℤ) := Int.emod_lt_of_pos _ hk
+    have hdiv : q * (k : ℤ) + r = x := by
+      simpa [q, r, add_comm] using Int.emod_add_ediv_mul x (k : ℤ)
+    have hq₀ : 0 ≤ q := Int.ediv_nonneg (by omega) hk.le
+    have hqk : q ≤ (k : ℤ) := le_of_mul_le_mul_right
+      ((show q * (k : ℤ) ≤ x by omega).trans (hx₂.trans hsq)) hk
+    have hmultiple (j : ℤ) (hj₁ : 1 ≤ j) (hj₂ : j ≤ (k : ℤ) + 1) :
+        j * (k : ℤ) ∈ L ∪ R :=
+      Finset.mem_union_right L (Finset.mem_image.2 ⟨j, Finset.mem_Icc.2 ⟨hj₁, hj₂⟩, rfl⟩)
+    -- The complement of the remainder is in the short interval unless it equals k.
+    have hright : (k : ℤ) - r ∈ L ∪ R := by
+      by_cases hzero : r = 0
+      · simpa [hzero] using hmultiple 1 le_rfl (by omega)
+      · exact Finset.mem_union_left R (Finset.mem_Icc.2 ⟨by omega, by omega⟩)
+    have hleft := hmultiple (q + 1) (by omega) (by omega)
+    change 1 ≤ (((L ∪ R) ×ˢ (L ∪ R)).filter (fun p : ℤ × ℤ => p.1 - p.2 = x)).card
+    apply Nat.succ_le_of_lt
+    refine Finset.card_pos.2 ⟨((q + 1) * (k : ℤ), (k : ℤ) - r), ?_⟩
+    refine Finset.mem_filter.2 ⟨Finset.mem_product.2 ⟨hleft, hright⟩, ?_⟩
+    change (q + 1) * (k : ℤ) - ((k : ℤ) - r) = x
+    rw [add_mul, one_mul]
+    omega
+
+/-- **Upper bound for the $g$-difference basis number.** For natural numbers $g$ and $n$, let
+$\eta_g(n)$ be the least size of a finite set $A \subseteq \mathbb{Z}$ such that every
+$x \in \{1, \dots, n\}$ is the difference $a - a'$ of at least $g$ ordered pairs
+$(a, a') \in A \times A$. Then for all natural numbers $g$ and $n$,
+
+$$\frac{\eta_g(n)}{\sqrt{n}} \le 2\left(1 + \frac{1}{\sqrt{n}}\right) g,$$
+
+where for $n = 0$ both quotients are read with the convention that division by $0$ gives $0$.
+
+Source: Eric Schmutz and Michael Tait, *Cardinalities of g-Difference Sets*, INTEGERS 25
+(2025), Article A77, Corollary 1 (`integers-2025-A77-cor-1`). -/
+public theorem diffBasisNumber_div_sqrt_le (g n : ℕ) :
+    (diffBasisNumber g n : ℝ) / Real.sqrt n ≤ 2 * (1 + 1 / Real.sqrt n) * g := by
+  by_cases hn : n = 0
+  · subst n
+    simp
+  have hnpos := Nat.pos_of_ne_zero hn
+  let k : ℕ := ⌈Real.sqrt (n : ℝ)⌉₊
+  let A : Finset ℤ :=
+    Finset.Icc 1 ((k : ℤ) - 1) ∪ (Finset.Icc (1 : ℤ) (k + 1)).image (· * (k : ℤ))
+  have hA : A.card = 2 * k ∧ ∀ x ∈ Finset.Icc (1 : ℤ) n, 1 ≤ subRepCount A x :=
+    redeiRenyi_diffBasis n hnpos
+  have h1 : (1 : ℤ) ∈ Finset.Icc (1 : ℤ) n :=
+    Finset.mem_Icc.mpr ⟨le_rfl, by exact_mod_cast hnpos⟩
+  have htwo := two_le_card_of_subRepCount one_ne_zero (hA.2 1 h1)
+  have hne : A.Nonempty := Finset.card_pos.mp (by omega)
+  obtain ⟨B, hBcard, hB⟩ := exists_disjoint_translates hne g
+  have hbound : diffBasisNumber g n ≤ g * (2 * k) :=
+    Nat.sInf_le ⟨B, hBcard.trans (congrArg (g * ·) hA.1), fun x hx => hB x (hA.2 x hx)⟩
+  have hs : 0 < Real.sqrt (n : ℝ) := Real.sqrt_pos.2 (by exact_mod_cast hnpos)
+  have hk : (k : ℝ) ≤ Real.sqrt n + 1 := (Nat.ceil_lt_add_one hs.le).le
+  rw [div_le_iff₀ hs]
+  calc
+    (diffBasisNumber g n : ℝ) ≤ (g : ℝ) * (2 * (k : ℝ)) := by exact_mod_cast hbound
+    _ ≤ (g : ℝ) * (2 * (Real.sqrt n + 1)) :=
+      mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left hk (by norm_num)) (Nat.cast_nonneg g)
+    _ = 2 * (1 + 1 / Real.sqrt n) * (g : ℝ) * Real.sqrt n := by
+      have h : (1 + 1 / Real.sqrt (n : ℝ)) * Real.sqrt n = Real.sqrt n + 1 := by
+        rw [add_mul, one_mul, div_mul_cancel₀ _ hs.ne']
+      rw [show 2 * (1 + 1 / Real.sqrt (n : ℝ)) * (g : ℝ) * Real.sqrt n =
+        (g : ℝ) * (2 * ((1 + 1 / Real.sqrt n) * Real.sqrt n)) by ac_rfl, h]
 
 end MetaMathlibExt

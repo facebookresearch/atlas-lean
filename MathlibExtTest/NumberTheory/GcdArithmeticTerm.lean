@@ -11,7 +11,7 @@ module
 import MathlibExt.NumberTheory.GcdArithmeticTerm
 
 /-!
-# Boundary cases for the gcd-term sequence
+# Boundary cases for the gcd-term sequence and the double-remainder formula
 -/
 
 open MetaMathlibExt
@@ -42,3 +42,18 @@ example : gcdTermSeq 1 1 1 = 2 := by
   have h := (gcdTermSeq_natural_and_eq_gcd_add_one 1 1 le_rfl le_rfl).2
   norm_num at h
   exact h
+
+-- Both inputs are minimal, so the two remainders are taken modulo 16 and 5.
+example : (-125 : ℤ) % 16 % 5 = 3 := by
+  have h := gcd_eq_neg_emod_emod_five_sub_two 1 1 le_rfl le_rfl
+  change (1 : ℤ) = (-125 : ℤ) % 16 % 5 - 2 at h
+  omega
+
+-- On the diagonal both factors of the first modulus coincide.
+example (a : ℕ) (ha : 1 ≤ a) :
+    (-(5 : ℤ) ^ (a ^ 2 * (a ^ 2 + a + a))) %
+      (((5 : ℤ) ^ (a ^ 3) - 1) ^ 2) % (5 : ℤ) ^ (a ^ 2) = (a : ℤ) + 2 := by
+  have h := gcd_eq_neg_emod_emod_five_sub_two a a ha ha
+  rw [Nat.gcd_self] at h
+  ring_nf at h ⊢
+  omega

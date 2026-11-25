@@ -4,6 +4,7 @@
 - [Weighted Davenport constant of $\mathbb{Z}/n\mathbb{Z}$ for the weights $\{1, \dots, r\}$](weighted-davenport-zmod-icc.md)
 - [Initial-interval weights with weighted Davenport constant $m$](weighted-davenport-zmod-icc-of-dvd.md)
 - [Long weighted zero-sum free sequences in groups of rank two](exists-weighted-zero-sum-free-zmod-prod.md)
+- [Long weighted zero-sum free sequences in finite products of cyclic groups](exists-weighted-zero-sum-free-pi-zmod.md)
 - [Weight sets with prescribed weighted Davenport constant on $\mathbb{Z}/n\mathbb{Z} \times \mathbb{Z}/kn\mathbb{Z}$, divisible case](weighted-davenport-zmod-prod-of-dvd.md)
 - [Weight sets with prescribed weighted Davenport constant on $\mathbb{Z}/n\mathbb{Z} \times \mathbb{Z}/kn\mathbb{Z}$, non-divisible case](weighted-davenport-zmod-prod-of-not-dvd.md)
 - [Weight sets with weighted Davenport constant $2m - 1$ on $\mathbb{Z}/n\mathbb{Z} \times \mathbb{Z}/n\mathbb{Z}$](weighted-davenport-zmod-prod-self-of-dvd.md)

@@ -1,6 +1,7 @@
 # Hahn–Banach theorem
 
 - [One-step Hahn–Banach extension](hahn-banach-one-step-extension-bound.md)
+- [Hahn–Banach extension with the same norm](hahn-banach-norm-preserving-extension.md)
 - [Quotient seminorm equals distance to the subspace](norm-mk-ql-apply.md)
 - [The quotient map has norm at most one](norm-mk-ql-le.md)
 - [Hahn–Banach distance formula, attainment form](exists-annihilating-apply-eq-inf-dist.md)

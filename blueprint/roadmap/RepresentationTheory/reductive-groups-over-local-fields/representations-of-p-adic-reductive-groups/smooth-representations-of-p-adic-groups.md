@@ -43,6 +43,19 @@ admissible representations are linearly independent, and two admissible represen
 length have the same irreducible composition factors, with multiplicities, if and only if they have
 the same distribution character.
 
+## Depends on
+
+- [Linear algebraic groups over local fields and their groups of rational points](../linear-algebraic-groups-over-local-fields.md), for the groups $\mathbf{G}(F)$ as $\ell$-groups (the example in the first paragraph) and for connected reductive groups, the setting of Schur's lemma and central characters
+- [ℓ-spaces, distributions and smooth representations of ℓ-groups](l-spaces-distributions-and-smooth-representations-of-l-groups.md), for $\ell$-groups and smooth and admissible representations, which the first paragraph and the first two items recall
+
+## Proof depends on
+
+- [Existence of an eigenvalue over an algebraically closed field](../../../LinearAlgebra/eigenvalues-and-canonical-forms/existence-of-eigenvalues/exists-eigenvalue.md), for Schur's lemma: a nonzero vector has an open stabilizer containing a compact open subgroup $K$, so $V^K \ne 0$; a $G$-endomorphism $T$ of an irreducible admissible $V$ preserves the finite-dimensional space $V^K$, so it has an eigenvalue $c$ there, and $\ker(T - c)$ is a nonzero subrepresentation, hence $V$ (Wedhorn, (2.1.16))
+- [Trace splits along a surjective intertwining map](../../../LinearAlgebra/linear-maps-and-duality/trace-on-invariant-subspaces/trace-eq-trace-restrict-ker-add-of-surje.md), for the additivity of distribution characters: for $f$ bi-invariant under a compact open subgroup $K$, $\pi(f) = \pi(e_K)\pi(f)\pi(e_K)$ maps $V$ into $V^K$ and vanishes on $\ker \pi(e_K)$, so $\mathrm{ch}_\pi(f)$ is the trace on $V^K$; in an exact sequence $0 \to V' \to V \to V'' \to 0$, taking $K$-fixed vectors is exact (averaging a lift of a $K$-fixed vector over $K$ gives a $K$-fixed lift), and this page applies to the surjection $V^K \to V''^K$ (Casselman, the proof of Corollary 2.3.3)
+- [Hecke-algebra corners of smooth representations and independence of their characters](hecke-algebra-corners-and-character-independence.md), for the linear independence of distribution characters: for finitely many pairwise inequivalent irreducible admissible $V_i$, a compact open $K$ with every $V_i^K \ne 0$ makes the $V_i^K$ pairwise inequivalent simple $\mathcal{H}(G, K)$-modules, whose traces are linearly independent (Casselman, Proposition 2.3.1, citing Jacquet–Langlands, Lemma 7.1)
+- [Locally constant compactly supported functions have uniform stabilizers](../../../Topology/topological-groups/exists-is-open-one-mem-forall-mul-eq-of.md), for the finite rank of $\pi(f)$ when $\pi$ is admissible: $f$ is invariant under left and right translation by an open neighbourhood of $1$, which contains a compact open subgroup $K$ as $G$ is an $\ell$-group, so $\pi(f)$ maps $V$ into $V^K$
+- [Generation of the special linear group by elementary transvections](../../../GroupTheory/linear-groups/generation-of-special-linear-groups-by-transvections.md), for the characters of $\mathrm{GL}_n(F)$: the kernel of a character is open, so it contains $1 + a e_{ij}$ for $i < j$ and $a$ small, hence, conjugating by diagonal matrices, the whole upper unitriangular group, and the character factors through $\det$ (Wedhorn, the proof of (2.1.18))
+
 ## Sources
 
 - I. N. Bernstein and A. V. Zelevinsky, "Induced representations of reductive p-adic groups. I",

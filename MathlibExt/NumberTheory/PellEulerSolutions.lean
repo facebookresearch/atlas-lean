@@ -62,6 +62,7 @@ private theorem pell_euler_solutions_fixed (a b T U x y : ℤ)
   rw [hT0, hU0]
   ring
 
+set_option linter.unusedVariables false in
 /-- **Euler's family of solutions of $aT^2 - bU^2 = c$.** Let $a$, $b$, $c$ be integers
 with $ab > 1$, $ab$ not a perfect square and $c \ne 0$, and let $T_1$, $U_1$ be integers with
 $aT_1^2 - bU_1^2 = c$. Let $\varepsilon = x_1 + y_1\sqrt{ab}$ be the fundamental solution of
@@ -76,7 +77,7 @@ is $(0, 0)$, since $ab$ is not a square.
 Source: E. L. Roettger and H. C. Williams, *Some Remarks Concerning the Lucas-Lehmer Primality
 Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Theorem 8. -/
 public theorem pell_euler_solutions (a b c T₁ U₁ : ℤ) (hab : 1 < a * b)
-    (_hsq : ¬ IsSquare (a * b)) (hc : c ≠ 0) (h₁ : a * T₁ ^ 2 - b * U₁ ^ 2 = c)
+    (hsq : ¬ IsSquare (a * b)) (hc : c ≠ 0) (h₁ : a * T₁ ^ 2 - b * U₁ ^ 2 = c)
     (ε : Pell.Solution₁ (a * b)) (hε : Pell.IsFundamental ε) :
     (∀ j : ℕ, a * (T₁ * (ε ^ j).x + b * U₁ * (ε ^ j).y) ^ 2 -
         b * (a * T₁ * (ε ^ j).y + U₁ * (ε ^ j).x) ^ 2 = c) ∧

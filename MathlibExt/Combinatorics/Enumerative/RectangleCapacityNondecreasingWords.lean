@@ -481,6 +481,46 @@ theorem nondecreasingRectangleTotal_r_by_s (k r s : ℕ) (hk : 1 ≤ k) (hr : 1 
       push_cast
       ring
 
+/-- **Generating function for $1 \times s$ rectangles in nondecreasing words.** Let $k \ge 1$ and
+$s \ge 1$, and let $f_k(n)$ be the total number of $1 \times s$ rectangles over all nondecreasing
+words of length $n$ over $[k] = \{1, \dots, k\}$. Then, as formal power series over $\mathbb{Z}$,
+$$
+\Big(\sum_{n \ge 0} f_k(n)\, x^n\Big) (1 - x)^{k+1} =
+x^s \sum_{i=0}^{k-1} (-1)^i \binom{i+s-2}{i} \binom{k+s}{s+i+1} x^i,
+$$
+and for every $n \ge s$,
+$$
+f_k(n) = \sum_{i=0}^{\min(k-1,\, n-s)} (-1)^i \binom{i+s-2}{i} \binom{k+s}{s+i+1}
+\binom{n-s-i+k}{k}.
+$$
+
+For $s = 1$ the factor $\binom{i+s-2}{i} = \binom{i-1}{i}$ is $1$ at $i = 0$ and $0$ for $i \ge 1$.
+
+Source: Sela Fried and Toufik Mansour, *Counting Rectangles of Size r × s in Nondecreasing and
+Smirnov Words*, Journal of Integer Sequences 27 (2024),
+Article 24.8.4, Corollary 2 (`jis-2024-24.8.4-cor-2`). -/
+theorem nondecreasingRectangleTotal_one_by_s (k s : ℕ) (hk : 1 ≤ k) (hs : 1 ≤ s) :
+    PowerSeries.mk (fun n => (nondecreasingRectangleTotal k 1 s n : ℤ)) *
+        (1 - PowerSeries.X) ^ (k + 1) =
+      PowerSeries.X ^ s * ∑ i ∈ Finset.range k,
+        PowerSeries.C ((-1 : ℤ) ^ i * ((i + s - 2).choose i * (k + s).choose (s + i + 1) : ℕ)) *
+          PowerSeries.X ^ i ∧
+    ∀ n, s ≤ n → (nondecreasingRectangleTotal k 1 s n : ℤ) =
+      ∑ i ∈ Finset.range (min (k - 1) (n - s) + 1),
+        (-1 : ℤ) ^ i * ((i + s - 2).choose i * (k + s).choose (s + i + 1) *
+          (n - s - i + k).choose k : ℕ) := by
+  obtain ⟨hseries, hcoeff⟩ := nondecreasingRectangleTotal_r_by_s k 1 s hk le_rfl hs
+  have hzero : (k + s).choose (s + k + 1) = 0 := Nat.choose_eq_zero_of_lt (by omega)
+  simp only [Nat.add_sub_cancel] at hseries hcoeff
+  constructor
+  · simpa [Finset.sum_range_succ, hzero] using hseries
+  · intro n hn
+    by_cases h : n - s < k
+    · simpa only [min_eq_right (show n - s ≤ k by omega),
+        min_eq_right (show n - s ≤ k - 1 by omega)] using hcoeff n hn
+    · rw [min_eq_left (by omega : k - 1 ≤ n - s), Nat.sub_add_cancel hk]
+      simpa [min_eq_left (by omega : k ≤ n - s), Finset.sum_range_succ, hzero] using hcoeff n hn
+
 end
 
 end MetaMathlibExt

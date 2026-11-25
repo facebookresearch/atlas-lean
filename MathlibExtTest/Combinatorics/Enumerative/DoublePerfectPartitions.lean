@@ -35,4 +35,18 @@ example : IsPerfectPartition 0 (perfectPartitionOfFactorization []) := by
   unfold IsPerfectPartition subpartitionCount
   decide
 
+-- The first excluded positive multiplicity is three.
+example : ¬ ∃ n : ℕ, ∃ p : n.Partition, ∃ m,
+    3 ≤ m ∧ m ≤ n - 3 ∧ subpartitionCount p.parts m = 3 ∧
+      ∀ k, 0 < k → k < n → k ≠ m → subpartitionCount p.parts k = 1 := by
+  intro h
+  have := (exists_partition_unique_subsums_but_one_iff 3 (by decide)).mp h
+  omega
+
+-- With zero multiplicity, the partition (2) misses its only interior sum.
+example : ∃ p : Nat.Partition 2, subpartitionCount p.parts 1 = 0 ∧
+    ∀ k, 0 < k → k < 2 → k ≠ 1 → subpartitionCount p.parts k = 1 := by
+  refine ⟨Nat.Partition.indiscrete 2, by decide, ?_⟩
+  omega
+
 end MetaMathlibExt

@@ -16,4 +16,7 @@ Non-asymptotic tail and moment bounds: Hoeffding, Azuma, McDiarmid, Kim–Vu, Ta
 - [The Paley–Zygmund inequality](paley-zygmund.md)
 - [Talagrand's transport inequality for the Gaussian measure](talagrand-std-gaussian.md)
 - [Transport-cost inequalities](transport-cost-inequalities/README.md)
+- [Conditional Hoeffding lemma for symmetric bounds](cond-exp-exp-mul-le-of-abs-le.md)
+- [Conditional Hoeffding lemma](has-cond-subgaussian-mgf-of-mem-icc-of-c.md)
+- [Sub-Gaussian bound for martingales with bounded increments](has-subgaussian-mgf-sub-of-abs-sub-le.md)
 - [Azuma's inequality](azuma-inequality.md)

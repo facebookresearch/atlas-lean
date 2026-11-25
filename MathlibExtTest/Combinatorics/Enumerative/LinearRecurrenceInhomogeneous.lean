@@ -13,13 +13,15 @@ import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
 
 /-!
-# Tests for the explicit recurrence formula
+# Tests for inhomogeneous recurrence formulas
 
 The second-difference recurrence has normalized homogeneous solution `f n = n`.
 Check its first admissible index and a later index with three distinct forcing terms.
+For the convolution identity, check order zero and an order-two recurrence with
+zero last coefficient and a nonvanishing second triangular sum.
 -/
 
-namespace MetaMathlibExt.linearRecurrence_inhomogeneous_explicit
+namespace MetaMathlibExt
 
 example (G w : ℕ → ℂ) (hG : ∀ m, G (m + 2) = 2 * G (m + 1) - G m + w m) :
     G 2 = 2 * G 1 - G 0 + w 0 ∧
@@ -48,4 +50,24 @@ example (G w : ℕ → ℂ) (hG : ∀ m, G (m + 2) = 2 * G (m + 1) - G m + w m) 
     rw [h₄]
     ring
 
-end MetaMathlibExt.linearRecurrence_inhomogeneous_explicit
+example (f w : ℕ → ℂ) (hf : ∀ m, f m = 0) (n : ℕ) :
+    (∑ j ∈ Finset.range (n + 1), f (n - j) * w j) = 0 := by
+  have h := linearRecurrence_inhomogeneous_identity 0 (fun _ ↦ 0) f w w
+    (by intro m _; simpa using hf m) (by simp) (Nat.zero_le n)
+  simpa using h.symm
+
+example (G w : ℕ → ℂ) (hG : ∀ m, G (m + 2) = G (m + 1) + w m) :
+    G 4 + G 3 = G 1 + G 3 + (w 0 + w 1 + w 2) := by
+  let A := fun i : ℕ ↦ if i = 1 then (1 : ℂ) else 0
+  have hI : Finset.Icc 1 2 = ({1, 2} : Finset ℕ) := by decide
+  have hf (m : ℕ) (_ : 2 ≤ m) :
+      (1 : ℂ) = ∑ i ∈ Finset.Icc 1 2, A i * 1 := by
+    simp [hI, A]
+  have hg (m : ℕ) (hm : 2 ≤ m) :
+      G m = ∑ i ∈ Finset.Icc 1 2, A i * G (m - i) + w (m - 2) := by
+    obtain ⟨l, rfl⟩ : ∃ l, m = l + 2 := ⟨m - 2, by omega⟩
+    simpa [hI, A] using hG l
+  simpa [Finset.sum_range_succ, A, add_assoc] using
+    linearRecurrence_inhomogeneous_identity 2 A (fun _ ↦ 1) G w hf hg (n := 2) (by decide)
+
+end MetaMathlibExt

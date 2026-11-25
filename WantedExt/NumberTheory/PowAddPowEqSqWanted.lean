@@ -49,7 +49,9 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.GCD.Basic
 public import Mathlib.Data.Nat.Prime.Basic
 public import MathlibExt.NumberTheory.PowAddPowEqSq
+public import MathlibExt.NumberTheory.PowAddPowEqSqEvenExponent
 public import MathlibExt.NumberTheory.PowAddPowEqSqModFourOne
+public import MathlibExt.NumberTheory.PowAddPowEqSqModSixty
 public import MathlibExt.NumberTheory.PowAddPowEqSqOppositeParity
 public import MathlibExt.NumberTheory.ThreePowAddThirtyfivePow
 public import MathlibExt.NumberTheory.TwoPowAddFifteenPow
@@ -69,17 +71,6 @@ Source: Suton Tadee, "On the Diophantine Equation
 theorem_wanted pow_add_one_eq_sq (n x z : ℕ) (hn : 1 ≤ n)
     (hn2 : n ≠ 2) :
     n ^ x + 1 = z ^ 2 ↔ x = 1 ∧ z ^ 2 = n + 1
-
-/-- **Evenness of $x$ in $n^x + (5p)^y = z^2$ when $n \equiv 2, 3 \pmod 5$.** Let $p$ be a prime
-and $n$ a natural number with $n \equiv 2 \pmod 5$ or $n \equiv 3 \pmod 5$. If natural numbers
-$x$, $y$, $z$ with $y > 0$ satisfy $n^x + (5p)^y = z^2$, then $x$ is even.
-
-Source: Suton Tadee, "On the Diophantine Equation
-`n^x + (5p)^y = z^2`", Lemma 2. -/
-theorem_wanted even_of_pos_exp (n p x y z : ℕ) (hp : p.Prime)
-    (hn : n % 5 = 2 ∨ n % 5 = 3) (hy : 0 < y)
-    (h : n ^ x + (5 * p) ^ y = z ^ 2) :
-    Even x
 
 /-- **Corollary 2** (Moonchaisook et al.): the
 Diophantine equation `(5^n)^x + (4^m p + 1)^y = z^2`
@@ -108,20 +99,5 @@ theorem_wanted two_pow_solutions (p x y z : ℕ) (hp : p.Prime)
       (x = 3 ∧ y = 0 ∧ z = 3) ∨
         (p = 3 ∧ x = 6 ∧ y = 2 ∧ z = 17) ∨
         (x = 0 ∧ y = 1 ∧ z ^ 2 = 5 * p + 1)
-
-/-- **Solutions of $n^x + (5p)^y = z^2$ for $n \equiv 3, 27 \pmod{60}$ and $p \equiv 7 \pmod{12}$.**
-Let $p$ be a prime with $p \equiv 7 \pmod{12}$, and let $n$ be a natural number with
-$n \equiv 3 \pmod{60}$ or $n \equiv 27 \pmod{60}$ such that $\gcd(n, p) = 1$ and
-$\gcd(n, 5p - 1) = 1$. For natural numbers $x$, $y$, $z$, $n^x + (5p)^y = z^2$ holds if and
-only if either $x = 0$, $y = 1$ and $z^2 = 5p + 1$, or $x = 1$, $y = 0$ and $z^2 = n + 1$.
-
-Source: Suton Tadee, "On the Diophantine Equation
-`n^x + (5p)^y = z^2`", Theorem 4. -/
-theorem_wanted solutions_mod_sixty (n p x y z : ℕ) (hp : p.Prime)
-    (hn : n % 60 = 3 ∨ n % 60 = 27) (hp12 : p % 12 = 7)
-    (h1 : Nat.Coprime n p) (h2 : Nat.Coprime n (5 * p - 1)) :
-    n ^ x + (5 * p) ^ y = z ^ 2 ↔
-      (x = 0 ∧ y = 1 ∧ z ^ 2 = 5 * p + 1) ∨
-        (x = 1 ∧ y = 0 ∧ z ^ 2 = n + 1)
 
 end MathlibExt.NumberTheory.PowAddPowEqSqWanted

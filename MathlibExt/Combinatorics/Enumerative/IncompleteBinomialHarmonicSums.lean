@@ -24,8 +24,8 @@ import Mathlib.Tactic.Ring
 /-!
 # Kollár's incomplete binomial sums
 
-Pascal's rule gives recursions for partial binomial sums and a closed form for the
-harmonic-weighted first half of an odd row.
+Pascal's rule gives recursions for partial binomial sums and closed forms for the
+harmonic-weighted first half of both odd and even rows.
 -/
 
 @[expose] public section
@@ -219,5 +219,46 @@ theorem sum_range_choose_two_mul_sub_one_mul_harmonic
     simp only [show 2 * (n + 1) = 2 * n + 2 by omega, pow_add, pow_two]
     field_simp
     ring
+
+/-- **Half-range binomial sum of harmonic numbers with top index $2n$.** Let $H_i$ denote
+the $i$-th harmonic number (with $H_0 = 0$), and let Kollár's auxiliary sums be
+$C_n = \sum_{k=1}^{n} \frac{1}{k \, 2^k}$ and
+$D_n = \sum_{k=1}^{n} \frac{\binom{2k}{k}}{2k \cdot 2^{2k}}$.
+For every positive integer $n$,
+$$\sum_{i=0}^{n} \binom{2n}{i} H_i =
+2^{2n-1} \left( H_{2n} - 2 C_{2n} + D_n \right) + \frac{1}{2} \binom{2n}{n} H_n.$$
+
+Source: Richard Kollár, "Incomplete Finite Binomial Sums of
+Harmonic Numbers", Theorem 3, equation `evenH`. -/
+theorem sum_range_choose_two_mul_mul_harmonic
+    (n : ℕ) (hn : 0 < n) :
+    (∑ i ∈ Finset.range (n + 1), ((2 * n).choose i : ℚ) * harmonic i) =
+      (2 : ℚ) ^ (2 * n - 1) *
+          (harmonic (2 * n) - 2 * invPowTwoSum (2 * n) +
+            centralBinomWeightedSum n) +
+        (1 / 2 : ℚ) * ((2 * n).choose n : ℚ) * harmonic n := by
+  have hodd := sum_range_choose_two_mul_sub_one_mul_harmonic (n + 1) (by omega)
+  change harmonicSum (2 * n + 1) (n + 1) = 2 ^ (2 * n) *
+    (harmonic (2 * n + 1) - 2 * invPowTwoSum (2 * n + 1) + centralBinomWeightedSum n) at hodd
+  have hhalf : binomSum (2 * n + 1) (n + 1) = (2 : ℚ) ^ (2 * n) := by
+    rw [pow_mul]
+    unfold binomSum
+    exact_mod_cast Nat.sum_range_choose_halfway n
+  -- The two even-row sums in Pascal's rule differ only at the central term.
+  have hpascal := harmonicSum_pascal (2 * n) n
+  rw [hhalf] at hpascal
+  calc
+    harmonicSum (2 * n) (n + 1) =
+        (harmonicSum (2 * n + 1) (n + 1) + (2 * n).choose n * harmonic n -
+          (2 ^ (2 * n) - 1) / (↑(2 * n : ℕ) + 1)) / 2 := by
+      linear_combination (harmonicSum_succ (2 * n) n - hpascal) / 2
+    _ = _ := by
+      rw [hodd, harmonic_succ, invPowTwoSum_succ, pow_succ]
+      have hp : (2 : ℚ) ^ (2 * n) = 2 ^ (2 * n - 1) * 2 := by
+        rw [← pow_succ, Nat.sub_add_cancel (by omega)]
+      rw [hp]
+      push_cast
+      field_simp
+      ring
 
 end MathlibExt.Combinatorics.Enumerative.IncompleteBinomialHarmonicSumsWanted

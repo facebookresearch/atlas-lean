@@ -23,7 +23,8 @@ import MathlibExt.Combinatorics.Enumerative.Partition.Counting
 
 We prove Stanley's identity for ordinary partitions. We also enumerate partitions in which
 each size has as many colors as its value and prove the generating function for the total
-number of even-sized parts, counted with multiplicity.
+number of even-sized parts, counted with multiplicity, and for the number of distinct colored
+parts occurring at least a given number of times.
 -/
 
 open PowerSeries
@@ -506,5 +507,136 @@ public theorem nColor_evenParts_generatingFunction :
   have sums := summable_summand.hasSum.tendsto_sum_nat
   have heq := tendsto_nhds_unique sums (limit.congr fun N => bounded_identity N)
   simpa [summand, factor, term, mul_assoc, evenCount] using heq
+
+namespace nColor_partsMultiplicityGe_generatingFunction
+
+open Finset
+
+private def markedCount (t : ℕ) (s : Multiset (ℕ × ℕ)) : ℚ :=
+  (s.toFinset.filter fun p => t ≤ s.count p).card
+
+/-- Removing the marked copies of a fixed color shifts its series by their total size. -/
+private lemma series_mark_color (S : Finset (ℕ × ℕ)) (hS : ∀ p ∈ S, 0 < p.1)
+    {c : ℕ × ℕ} (hc : c ∈ S) (t : ℕ) :
+    series S (fun s => if t ≤ s.count c then 1 else 0) =
+      X ^ (c.1 * t) * series S (fun _ => 1) := by
+  classical
+  ext n
+  rw [coeff_X_pow_mul']
+  simp only [series, coeff_mk, sum_boole, sum_const, nsmul_one]
+  let addCopies : Multiset (ℕ × ℕ) ↪ Multiset (ℕ × ℕ) :=
+    ⟨(Multiset.replicate t c + ·), fun _ _ => add_left_cancel⟩
+  have weight (r : Multiset (ℕ × ℕ)) :
+      ((addCopies r).map Prod.fst).sum = c.1 * t + (r.map Prod.fst).sum := by
+    change ((Multiset.replicate t c + r).map Prod.fst).sum = _
+    simp [Multiset.map_replicate, Multiset.sum_replicate, Nat.mul_comm]
+  have allowed (r : Multiset (ℕ × ℕ)) :
+      (∀ p ∈ addCopies r, p ∈ S) ↔ ∀ p ∈ r, p ∈ S := by
+    change (∀ p ∈ Multiset.replicate t c + r, p ∈ S) ↔ _
+    constructor
+    · exact fun h p hp => h p (Multiset.mem_add.mpr (.inr hp))
+    · intro h p hp
+      obtain hrep | hr := Multiset.mem_add.mp hp
+      · exact (Multiset.eq_of_mem_replicate hrep) ▸ hc
+      · exact h p hr
+  have decompose (s : Multiset (ℕ × ℕ)) :
+      t ≤ s.count c ↔ ∃ r, addCopies r = s := by
+    rw [Multiset.le_count_iff_replicate_le, Multiset.le_iff_exists_add]
+    exact exists_congr fun _ => eq_comm
+  by_cases hn : c.1 * t ≤ n
+  · have heq : (bounded S n).filter (fun s => t ≤ s.count c) =
+        (bounded S (n - c.1 * t)).map addCopies := by
+      ext s
+      simp only [mem_filter, Finset.mem_map, mem_bounded hS, decompose]
+      constructor
+      · rintro ⟨⟨hall, hsum⟩, r, rfl⟩
+        rw [weight] at hsum
+        exact ⟨r, ⟨(allowed r).mp hall, by omega⟩, rfl⟩
+      · rintro ⟨r, ⟨hall, hsum⟩, rfl⟩
+        exact ⟨⟨(allowed r).mpr hall, by rw [weight, hsum]; omega⟩, r, rfl⟩
+    simp [hn, heq]
+  · have heq : (bounded S n).filter (fun s => t ≤ s.count c) = ∅ := by
+      apply eq_empty_iff_forall_notMem.mpr
+      intro s hs
+      obtain ⟨hs, hcount⟩ := mem_filter.mp hs
+      obtain ⟨r, rfl⟩ := (decompose s).mp hcount
+      have hsum := ((mem_bounded hS n _).mp hs).2
+      rw [weight] at hsum
+      omega
+    simp [hn, heq]
+
+/-- Sum over the possible marked colors, then cancel the ordinary partition series. -/
+private lemma marked_identity (S : Finset (ℕ × ℕ)) (hS : ∀ p ∈ S, 0 < p.1)
+    (t : ℕ) (ht : 1 ≤ t) :
+    (∏ c ∈ S, (1 - X ^ c.1 : ℚ⟦X⟧)) * series S (markedCount t) =
+      ∑ c ∈ S, X ^ (c.1 * t) := by
+  classical
+  have split : series S (markedCount t) =
+      ∑ c ∈ S, series S (fun s => if t ≤ s.count c then 1 else 0) := by
+    ext n
+    simp only [series, coeff_mk, map_sum]
+    rw [sum_comm]
+    apply sum_congr rfl
+    intro s hs
+    rw [markedCount, sum_boole]
+    congr 2
+    ext c
+    simp only [mem_filter, Multiset.mem_toFinset]
+    have hall := ((mem_bounded hS n s).mp hs).1
+    exact ⟨fun h => ⟨hall c h.1, h.2⟩, fun h => ⟨Multiset.count_pos.mp (ht.trans h.2), h.2⟩⟩
+  rw [split, mul_sum]
+  refine sum_congr rfl fun c hc => ?_
+  rw [series_mark_color S hS hc, mul_left_comm, (finite_identity S hS).1, mul_one]
+
+private noncomputable def contribution (t i : ℕ) : ℚ⟦X⟧ :=
+  ((i + 1 : ℕ) : ℚ⟦X⟧) * X ^ ((i + 1) * t)
+
+private lemma palette_identity (t : ℕ) (ht : 1 ≤ t) (N : ℕ) :
+    (∏ i ∈ range N, factor i) * series (palette N) (markedCount t) =
+      ∑ i ∈ range N, contribution t i := by
+  have h := marked_identity (palette N) (fun p hp => by have := mem_palette.mp hp; omega) t ht
+  have hd : (range N : Set ℕ).PairwiseDisjoint colors :=
+    fun _ _ _ _ hij => disjoint_colors hij
+  simpa only [palette, prod_biUnion hd, sum_biUnion hd, colors, prod_map, sum_map, color_apply,
+    prod_const, sum_const, card_range, nsmul_eq_mul, factor, contribution] using h
+
+private lemma summable_contribution (t : ℕ) (ht : 1 ≤ t) : Summable (contribution t) := by
+  apply summable_of_tendsto_order_atTop_nhds_top
+  apply ENat.tendsto_nhds_top_iff_natCast_lt.mpr
+  intro n
+  filter_upwards [eventually_ge_atTop n] with i hi
+  have h : n < (i + 1) * t := (Nat.lt_succ_of_le hi).trans_le (Nat.le_mul_of_pos_right _ ht)
+  rw [contribution, order_mul, order_X_pow]
+  exact lt_of_lt_of_le (by exact_mod_cast h) le_add_self
+
+end nColor_partsMultiplicityGe_generatingFunction
+
+open nColor_partsMultiplicityGe_generatingFunction
+
+/-- **Generating function for colored parts of multiplicity at least $t$.** Let $t \ge 1$. For
+$m \ge 0$ let $N^t(m)$ be the sum, over all $n$-color partitions of $m$, of the number of
+distinct colored parts that occur at least $t$ times. Then, as formal power series in $q$ with
+rational coefficients,
+$$\sum_{m \ge 1} m q^{mt} = \prod_{m \ge 1} (1 - q^m)^m \sum_{m \ge 0} N^t(m) q^m.$$
+
+Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
+INTEGERS 25 (2025), Article A94, Theorem 6 (`integers-2025-A94-thm-6`). -/
+public theorem nColor_partsMultiplicityGe_generatingFunction (t : ℕ) (ht : 1 ≤ t) :
+    ∑' m : ℕ, ((m + 1 : ℕ) : ℚ⟦X⟧) * X ^ ((m + 1) * t) =
+      (∏' m : ℕ, (1 - X ^ (m + 1)) ^ (m + 1) : ℚ⟦X⟧) *
+        PowerSeries.mk fun n =>
+          ((∑ s ∈ nColorPartitions n, (s.toFinset.filter fun p => t ≤ s.count p).card : ℕ) :
+            ℚ) := by
+  have marked : Tendsto (fun N => series (palette N) (markedCount t)) atTop
+      (𝓝 (PowerSeries.mk fun n => ∑ s ∈ nColorPartitions n, markedCount t s)) := by
+    apply (tendsto_iff_coeff_tendsto ..).mpr
+    intro n
+    apply tendsto_atTop_of_eventually_const (i₀ := n)
+    intro N hN
+    simp [series, bounded_stable hN]
+  have limit := multipliable_factor.tendsto_prod_tprod_nat.mul marked
+  have sums := (summable_contribution t ht).hasSum.tendsto_sum_nat
+  have heq := tendsto_nhds_unique sums (limit.congr fun N => palette_identity t ht N)
+  simpa [contribution, factor, markedCount] using heq
 
 end MetaMathlibExt

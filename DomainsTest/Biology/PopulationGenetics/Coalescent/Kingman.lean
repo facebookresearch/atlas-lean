@@ -130,4 +130,23 @@ example : Tendsto (fun M : ℕ => noCoalProb M 3 ^ ⌊(2 : ℝ) * M⌋₊) atTop
   convert tendsto_noCoalProb_pow_floor 3 zero_le_two using 3
   norm_num [Nat.choose]
 
+/-- Two lineages: the TMRCA Laplace transform is `1 / (1 + s)`. -/
+example (K : KingmanTimes μ 2) {s : ℝ} (hs : 0 ≤ s) :
+    ∫ ω, Real.exp (-(s * K.tmrca ω)) ∂μ = 1 / (1 + s) := by
+  rw [K.integral_exp_neg_mul_tmrca hs]
+  norm_num
+
+/-- Three lineages: the TMRCA Laplace transform is `3 / ((1 + s) * (3 + s))`. -/
+example (K : KingmanTimes μ 3) {s : ℝ} (hs : 0 ≤ s) :
+    ∫ ω, Real.exp (-(s * K.tmrca ω)) ∂μ = 3 / ((1 + s) * (3 + s)) := by
+  rw [K.integral_exp_neg_mul_tmrca hs]
+  norm_num [Finset.prod_Icc_succ_top]
+
+/-- One lineage: the TMRCA is `0`, so its Laplace transform is `1` for a probability
+measure. -/
+example [IsProbabilityMeasure μ] (K : KingmanTimes μ 1) {s : ℝ} (hs : 0 ≤ s) :
+    ∫ ω, Real.exp (-(s * K.tmrca ω)) ∂μ = 1 := by
+  rw [K.integral_exp_neg_mul_tmrca hs]
+  norm_num
+
 end MathlibExtTest.Biology.PopulationGenetics.Coalescent.Kingman

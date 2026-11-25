@@ -17,6 +17,7 @@ finite set $\Omega$ the inequality follows by Talagrand's induction on $N$.
 - [Talagrand's set $U_A(x)$](convex-support.md)
 - [Talagrand's convex distance](convex-distance.md)
 - [Points of $A$ are at convex distance zero](convex-distance-eq-zero-of-mem.md)
+- [The convex distance decreases as the set grows](convex-distance-le-convex-distance-of-su.md)
 - [The convex distance is at most the square root of the Hamming distance](convex-distance-le-sqrt-card.md)
 - [Talagrand's convex-distance inequality](lintegral-exp-convex-distance-sq-le.md)
 - [Tail form of the convex-distance inequality](measure-le-convex-distance-le.md)
@@ -30,6 +31,7 @@ finite set $\Omega$ the inequality follows by Talagrand's induction on $N$.
 - [Talagrand's convex-distance inequality on a product of finite sets](sum-exp-convex-distance-mul-weight-of-le.md)
 - [Tail form on a product of finite sets](weight-of-le-convex-distance-mul-weight.md)
 - [The convex-distance inequality for a finite probability space, measure form](lintegral-exp-convex-distance-sq-le-of-f.md)
+- [Talagrand's convex-distance inequality, with a measurable majorant](exists-measurable-ge-exp-convex-distance.md)
 
 ## Related topics
 
