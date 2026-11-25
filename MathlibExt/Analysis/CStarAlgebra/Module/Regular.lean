@@ -39,13 +39,16 @@ variable [NonUnitalCStarAlgebra B] [PartialOrder Bᵐᵒᵖ]
 variable [NormedAddCommGroup E] [NormedSpace ℂ E] [SMul Bᵐᵒᵖ E]
   [CStarModule Bᵐᵒᵖ E]
 
-/-- A densely-defined complex-linear operator before regularity hypotheses
+/-- A complex-linear partial map before density or regularity hypotheses
 are imposed. -/
 abbrev PartialOperator := E →ₗ.[ℂ] E
 
-/-- `S` is the maximal adjoint of `T`: its domain is exactly the vectors
-admitting an adjoint witness, and its action is that unique witness. -/
-def IsMaximalAdjoint (T S : PartialOperator (E := E)) : Prop :=
+/-- For a partial operator `T` with the supplied dense-domain proof, `S` is
+its maximal adjoint: its domain is exactly the vectors admitting an adjoint
+witness, and its action is that unique witness. Density uses the original
+norm topology on `E` and makes uniqueness of the witness meaningful. -/
+def IsMaximalAdjoint (T S : PartialOperator (E := E))
+    (_hT : Dense (T.domain : Set E)) : Prop :=
   (∀ y : E, y ∈ S.domain ↔
     ∃! z : E, ∀ x : T.domain,
       rightInner (B := B) (T x) y = rightInner (B := B) (x : E) z) ∧
@@ -60,14 +63,14 @@ structure RegularOperator [CompleteSpace E] where
   toPartial : PartialOperator (E := E)
   /-- Its maximal adjoint. -/
   adjoint : PartialOperator (E := E)
-  /-- The selected partial map is maximal as the adjoint of `toPartial`. -/
-  adjoint_maximal : IsMaximalAdjoint (B := B) toPartial adjoint
-  /-- The original map is the maximal adjoint of `adjoint`. -/
-  doubleAdjoint_maximal : IsMaximalAdjoint (B := B) adjoint toPartial
   /-- The domain of `T` is dense. -/
   dense_domain : Dense (toPartial.domain : Set E)
   /-- The domain of `T*` is dense. -/
   dense_adjointDomain : Dense (adjoint.domain : Set E)
+  /-- The selected partial map is maximal as the adjoint of `toPartial`. -/
+  adjoint_maximal : IsMaximalAdjoint (B := B) toPartial adjoint dense_domain
+  /-- The original map is the maximal adjoint of `adjoint`. -/
+  doubleAdjoint_maximal : IsMaximalAdjoint (B := B) adjoint toPartial dense_adjointDomain
   /-- The partial range of `1 + T* T` is dense. -/
   dense_one_add_adjoint_comp_range : Dense
     {z : E | ∃ (x : E) (hx : x ∈ toPartial.domain)

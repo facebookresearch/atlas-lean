@@ -41,7 +41,7 @@ namespace DenselyDefinedRightPartialOperator
 
 /-- The actual full computed adjoint satisfies literal canonical maximality. -/
 theorem adjoint_isMaximal (t : DenselyDefinedRightPartialOperator B E E) :
-    IsMaximalAdjoint (B := B) t.toPartial (adjoint t) := by
+    IsMaximalAdjoint (B := B) t.toPartial (adjoint t) t.dense_domain := by
   constructor
   · intro y
     constructor
@@ -54,7 +54,7 @@ theorem adjoint_isMaximal (t : DenselyDefinedRightPartialOperator B E E) :
 
 /-- A maximal adjoint is the actual unique full witness construction. -/
 theorem maximalAdjoint_eq_adjoint (t : DenselyDefinedRightPartialOperator B E E)
-    (S : E →ₗ.[ℂ] E) (hS : IsMaximalAdjoint (B := B) t.toPartial S) :
+    (S : E →ₗ.[ℂ] E) (hS : IsMaximalAdjoint (B := B) t.toPartial S t.dense_domain) :
     S = adjoint t := by
   apply LinearPMap.dExt
   · apply Submodule.ext
@@ -120,8 +120,11 @@ theorem toDenselyDefinedAdjoint_toPartial (T : RegularOperator (B := B) (E := E)
 /-- Canonical mutual maximality identifies the actual computed double adjoint. -/
 theorem computedDoubleAdjoint_eq (T : RegularOperator (B := B) (E := E)) :
     DenselyDefinedRightPartialOperator.adjoint T.toDenselyDefinedAdjoint = T.toPartial := by
-  have hmax : IsMaximalAdjoint (B := B) T.toDenselyDefinedAdjoint.toPartial T.toPartial :=
-    T.toDenselyDefinedAdjoint_toPartial.symm ▸ T.doubleAdjoint_maximal
+  have hmax : IsMaximalAdjoint (B := B) T.toDenselyDefinedAdjoint.toPartial T.toPartial
+      T.toDenselyDefinedAdjoint.dense_domain := by
+    unfold IsMaximalAdjoint
+    rw [T.toDenselyDefinedAdjoint_toPartial]
+    exact T.doubleAdjoint_maximal
   exact (DenselyDefinedRightPartialOperator.maximalAdjoint_eq_adjoint
     T.toDenselyDefinedAdjoint T.toPartial hmax).symm
 
