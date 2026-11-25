@@ -115,7 +115,8 @@ private theorem positiveTensorBoundary_realization (p q : ℕ) :
       (differential R L p a : E) ⊗ₜ[R] (b : E) +
         ((-1 : ℤ) ^ (p + 1)) • ((a : E) ⊗ₜ[R] (differential R L q b : E)) =
       tensorBoundary R L ((a : E) ⊗ₜ[R] (b : E)) := by
-    have hγ := ExteriorAlgebra.involute_of_mem_exteriorPower R L (p + 1) a a.property
+    have hγ := ExteriorAlgebra.involute_of_mem_exteriorPower
+      (A := R) (M := L) (n := p + 1) (x := (a : E)) a.property
     have hsign (t : E ⊗[R] E) :
         ((-1 : ℤ) ^ (p + 1)) • t = (-1 : R) ^ (p + 1) • t := by
       rw [← Int.cast_smul_eq_zsmul R]
@@ -192,7 +193,8 @@ theorem nativeTensorDifferential_realize (n : ℕ) :
                 ModuleCat.hom_id, LinearMap.id_apply, canonicalComplex_d_hom]
               have hγ : CliffordAlgebra.involute (a : E) = (a : E) := by
                 simpa only [pow_zero, one_smul] using
-                  ExteriorAlgebra.involute_of_mem_exteriorPower R L 0 a a.property
+                  ExteriorAlgebra.involute_of_mem_exteriorPower
+                    (A := R) (M := L) (n := 0) (x := (a : E)) a.property
               change (a : E) ⊗ₜ[R] (differential R L n b : E) =
                 tensorBoundary R L ((a : E) ⊗ₜ[R] (b : E))
               rw [tensorBoundary_tmul, boundary_exterior_zero R L a, hγ,

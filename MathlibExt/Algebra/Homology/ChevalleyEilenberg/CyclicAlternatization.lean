@@ -49,7 +49,8 @@ local notation "Cλ" => ModuleCat.Algebra.Hochschild.NonUnital.connesComplex
 local notation "q" => ModuleCat.Algebra.Hochschild.Matrix.connesTensorRepresentative
 
 /-- The original whole tensor generator followed by the Connes projection. -/
-def cyclicMultilinear (n : ℕ) : MultilinearMap k (fun _ : Fin (n + 1) => A) ((Cλ k A).X n) :=
+def cyclicMultilinear (n : ℕ) :
+    MultilinearMap (RingHom.id k) (fun _ : Fin (n + 1) => A) ((Cλ k A).X n) :=
   (q k A n).compMultilinearMap (PiTensorProduct.tprod k)
 
 /-- Integral full native alternatization, with no normalization or division. -/
@@ -67,7 +68,6 @@ theorem cyclicFullExterior_pure (n : ℕ) (a : Fin (n + 1) → A) :
         (PiTensorProduct.tprod k (a ∘ σ)) := by
   rw [cyclicFullExterior, exteriorPower.alternatingMapLinearEquiv_apply_ιMulti,
     cyclicFullAlternating, MultilinearMap.alternatization_apply]
-  rfl
 
 /-- The ordered tail sum, before establishing its exterior descent. -/
 def cyclicTailSum (n : ℕ) (a : Fin (n + 1) → A) : (Cλ k A).X n :=

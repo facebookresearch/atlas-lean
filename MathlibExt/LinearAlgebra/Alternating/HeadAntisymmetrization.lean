@@ -37,7 +37,7 @@ variable {k : Type u} [CommRing k] {M : Type v} [AddCommGroup M] [Module k M]
 
 /-- Tail alternatization is linear in the original singled-out head input. -/
 def alternatizeTail {n : ℕ}
-    (f : M →ₗ[k] MultilinearMap k (fun _ : Fin n => M) N) :
+    (f : M →ₗ[k] MultilinearMap (RingHom.id k) (fun _ : Fin n => M) N) :
     M →ₗ[k] M [⋀^Fin n]→ₗ[k] N where
   toFun x := (f x).alternatization
   map_add' x y := by rw [f.map_add, map_add]
@@ -53,7 +53,7 @@ def alternatizeTail {n : ℕ}
 
 /-- Tail alternatization as a linear map on the original head-linear maps. -/
 def alternatizeTailLinearMap (n : ℕ) :
-    (M →ₗ[k] MultilinearMap k (fun _ : Fin n => M) N) →ₗ[k]
+    (M →ₗ[k] MultilinearMap (RingHom.id k) (fun _ : Fin n => M) N) →ₗ[k]
       (M →ₗ[k] M [⋀^Fin n]→ₗ[k] N) where
   toFun := alternatizeTail
   map_add' f g := by ext x a; simp [alternatizeTail, map_add]
@@ -68,7 +68,7 @@ def alternatizeTailLinearMap (n : ℕ) :
 
 /-- The original full permutation sum is the native alternating head-uncurry of its tail sum. -/
 theorem alternatization_uncurryLeft {n : ℕ}
-    (f : M →ₗ[k] MultilinearMap k (fun _ : Fin n => M) N) :
+    (f : M →ₗ[k] MultilinearMap (RingHom.id k) (fun _ : Fin n => M) N) :
     f.uncurryLeft.alternatization = AlternatingMap.alternatizeUncurryFin (alternatizeTail f) := by
   apply AlternatingMap.ext
   intro a
@@ -109,9 +109,10 @@ theorem alternatization_uncurryLeft {n : ℕ}
 
 /-- Alternating two original head inputs is the full native permutation sum with an alternating tail. -/
 theorem alternatization_uncurryLeft_twice {n : ℕ}
-    (f : M →ₗ[k] M →ₗ[k] MultilinearMap k (fun _ : Fin n => M) N) :
+    (f : M →ₗ[k] M →ₗ[k] MultilinearMap (RingHom.id k) (fun _ : Fin n => M) N) :
     (LinearMap.uncurryLeft
-      (((multilinearCurryLeftEquiv k (fun _ : Fin (n + 1) => M) N).symm.toLinearMap).comp f)).alternatization =
+      (((multilinearCurryLeftEquiv (RingHom.id k) (fun _ : Fin (n + 1) => M) N).symm.toLinearMap).comp
+        f)).alternatization =
       AlternatingMap.alternatizeUncurryFin
         (AlternatingMap.alternatizeUncurryFinLM.comp
           ((alternatizeTailLinearMap n).comp f)) := by

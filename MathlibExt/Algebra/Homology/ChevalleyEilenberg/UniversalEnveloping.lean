@@ -14,6 +14,7 @@ public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.CommutingScalars
 public import MathlibExt.LinearAlgebra.ExteriorPower.Projective
 public import Mathlib.Algebra.Category.ModuleCat.Projective
 public import Mathlib.Algebra.Homology.Single
+public import Mathlib.LinearAlgebra.TensorProduct.Projective
 
 /-!
 # Enveloping-algebra coefficients for Chevalley–Eilenberg chains
@@ -219,7 +220,8 @@ module is projective. Exactness and PBW are not assumed or concluded. -/
 instance envelopingComplex_moduleProjective [Module.Projective R L] (n : ℕ) :
     Module.Projective U ((envelopingComplex R L).X n) := by
   let _ : Module.Projective R (⋀[R]^n L) := inferInstance
-  let _ : Module.Projective U (U ⊗[R] (⋀[R]^n L)) := inferInstance
+  let _ : Module.Projective U (U ⊗[R] (⋀[R]^n L)) :=
+    Module.Projective.tensorProduct (R := U) (R₀ := R) (M := U) (N := ⋀[R]^n L)
   exact Module.Projective.of_equiv' (envelopingCoordinates R L n).symm
 
 /-- The module projectivity supplies the native categorical notion

@@ -181,7 +181,7 @@ theorem orderedWordLinear_normalize (b : Module.Basis I R L) (xs : List I) :
     orderedWordLinear b (normalize b xs) = basisWord b xs := by
   generalize hn : List.inversionWeight xs = n
   induction n using Nat.strong_induction_on generalizing xs with
-  | h n ih =>
+  | ind n ih =>
       cases hr : List.adjacentInversion xs with
       | none =>
           have hordered : normalize b xs =
