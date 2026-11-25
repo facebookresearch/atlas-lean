@@ -51,9 +51,12 @@ public theorem_wanted exists_lowerGroup_eq_bot
     [Module.Finite K L] [IsGalois K L] :
     ∃ N : ℕ, lowerGroup K L N = ⊥
 
-/-- Serre's higher-rank conductor integrality, for the conductors computed from
-any certified ramification bound (one exists by `exists_lowerGroup_eq_bot`), with
-the standard omission of i=0 in the Swan term. -/
+/-- Integrality of Artin and Swan conductors (Serre, *Corps locaux*, VI §2): let $L/K$ be a finite
+Galois extension of nonarchimedean local fields, $ℓ$ a prime, $V$ a finite-dimensional
+$ℚ_ℓ$-vector space with a representation $ρ$ of the decomposition group of the valuation ring of
+$L$ over $K$, and $N$ a natural number with $G_N = 1$ for the lower ramification groups. Then the
+Artin conductor and the Swan conductor of $ρ$, computed from the bound $N$ (the Swan term
+omitting $i = 0$), are natural numbers. -/
 public theorem_wanted finiteImage_artin_swan_integral
     (K : Type u) [Field K] [ValuativeRel K] [TopologicalSpace K]
     [IsNonarchimedeanLocalField K]

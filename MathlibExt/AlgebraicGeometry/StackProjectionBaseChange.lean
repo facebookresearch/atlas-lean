@@ -122,8 +122,17 @@ def targetValue (N : QCoh S.stack) (a : AffinePoint RY)
           (hq a))).val.app (op (⊤ : a.obj.base.left.Opens))).hom
       (L.sections ((basePullback f S T K L H).obj N) ((affineMap q).obj a) y))
 
-/-- The integration square has no unconstrained coefficient map:
-every component is fixed on every actual section by native pullbackComp. -/
+/-- Base change for the projections $p : R \to X$ and $q : R_Y \to Y$, where $R_Y$ is the
+restriction of $R$ along $f : Y \to X$, and $X$ and $Y$ are represented by the models $S$ and $T$,
+whose quasi-coherent modules the dictionaries $K$ and $L$ identify with those on the schemes: a
+natural isomorphism $\mathrm{res} \circ p^* \cong q^* \circ f^*$ of functors from quasi-coherent
+modules on $X$ to quasi-coherent modules on $R_Y$, where $\mathrm{res}$ restricts modules from $R$
+to $R_Y$ (`comparison`), which on sections is the canonical isomorphism
+$(f \circ t)^* N \cong t^* f^* N$: for every quasi-coherent module $N$ on $X$, every affine point
+of $R_Y$, with base map $t$ to $Y$, and every section $x$ over that point, the global section of
+$t^* f^* N$ that `targetValue` attaches to the image of $x$ under the comparison is the image under
+this isomorphism of the global section of $(f \circ t)^* N$ that `sourceValue` attaches to $x$
+(`normalization`). -/
 structure PullbackSquare where
   comparison : pullback p ⋙ rootRestriction f R RY hr ≅
     basePullback f S T K L H ⋙ pullback q
@@ -136,7 +145,12 @@ structure PullbackSquare where
 variable (Q : DirectImage p) (V : DirectImage q)
   (C : PullbackSquare f R RY hr S T p q K L H hp hq)
 
-/-- Native unit/counit mate; no separately chosen direct-image map. -/
+/-- The base-change map $f^* p_* \to q_* \,\mathrm{res}$, for right adjoints $p_*$ of $p^*$ and
+$q_*$ of $q^*$ (`Q`, `V`): the mate of the inverse of the isomorphism
+$\mathrm{res} \circ p^* \cong q^* \circ f^*$ of `C`, whose component at $M$ is the composite
+$f^* p_* M \to q_* q^* f^* p_* M \cong q_* \mathrm{res}\, p^* p_* M \to q_* \mathrm{res}\, M$ of
+the unit of $q^* \dashv q_*$, the inverse of that isomorphism, and the counit of
+$p^* \dashv p_*$. -/
 def directImageMap : Q.functor ⋙ basePullback f S T K L H ⟶
     rootRestriction f R RY hr ⋙ V.functor :=
   MathlibExt.CategoryTheory.CanonicalAdjunctionBaseChange.map Q.adjunction V.adjunction

@@ -47,3 +47,5 @@
 - [First-order arithmetic is expressive for while programs](first-order-arithmetic-is-expressive-for-while.md)
 - [Hoare logic for recursive procedures is sound and relatively complete](hoare-logic-for-recursive-procedures-is-sound.md)
 - [Soundness of the recursion rule](soundness-of-the-recursion-rule.md)
+- [Self-composition reduces 2-safety to safety](self-composition-reduces-2-safety-to-safety.md)
+- [Two-run product of IMP commands](two-run-product-of-imp-commands.md)
