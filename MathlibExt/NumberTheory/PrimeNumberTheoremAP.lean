@@ -231,12 +231,16 @@ end MathlibExt.NumberTheory.PrimeNumberTheoremAPWanted
 namespace MathlibExt.NumberTheory.PrimeNumberTheoremAPWanted
 
 /--
-For `q ≥ 2` and `Nat.Coprime a q`, the count of primes `p ≤ n` with `p ≡ a [MOD q]` satisfies
-`count * log n / n → 1 / φ(q)` as `n → ∞`, where `φ = Nat.totient`. Source: G. L. Dirichlet 1837
-existence, PNT for AP by de la Vallée Poussin and Hadamard 1896-1899 extensions; textbook in
-Montgomery-Vaughan, Multiplicative Number Theory I, Multiplicative Number Theory
+**Prime number theorem in arithmetic progressions.** Let $q \ge 2$ and $a$ be natural numbers
+with $\gcd(a, q) = 1$, and for each natural number $n$ let $N(n)$ be the number of primes
+$p \le n$ with $p \equiv a \pmod q$. Then $N(n) \log n / n \to 1 / \varphi(q)$ as $n \to \infty$,
+where $\varphi$ is Euler's totient function and $\log$ is the natural logarithm.
 
 Proves `Wanted` entry `prime_number_theorem_arithmetic_progression`.
+
+Source: G. L. Dirichlet 1837
+existence, PNT for AP by de la Vallée Poussin and Hadamard 1896-1899 extensions; textbook in
+Montgomery-Vaughan, Multiplicative Number Theory I, Multiplicative Number Theory
 -/
 public theorem prime_number_theorem_arithmetic_progression :
     ∀ (q a : ℕ), 2 ≤ q → Nat.Coprime a q →
@@ -269,7 +273,10 @@ public theorem prime_number_theorem_arithmetic_progression :
     ring
   simpa using hlim
 
-/-- PNT for AP via the `Nat.primeCountingMod` residue-class counting API. -/
+/-- **Prime number theorem for the residue-class prime count.** Let $q \ge 2$ and $a$ be natural
+numbers with $\gcd(a, q) = 1$, and let $\pi(n; q, a)$ be the number of primes $p \le n$ with
+$p \equiv a \pmod q$. Then $\pi(n; q, a) \log n / n \to 1 / \varphi(q)$ as $n \to \infty$,
+where $\varphi$ is Euler's totient function and $\log$ is the natural logarithm. -/
 public theorem tendsto_primeCountingMod_mul_log_div (q a : ℕ)
     (hq : 2 ≤ q) (hcop : Nat.Coprime a q) :
     Filter.Tendsto

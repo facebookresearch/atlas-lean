@@ -11,35 +11,29 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Polynomial.Roots
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import MathlibExt.Analysis.Complex.EnestromKakeya
+public import MathlibExt.NumberTheory.Recurrences.PerturbedTailProduct
 
 /-! # Root lemmas for reciprocal sums of `m`th-order linear recursive sequences
 
 Statement-only requests for the self-contained lemmas of Du's paper on reciprocal sums
-and products of `m`th-order linear recursive sequences.
+and products of `m`th-order linear recursive sequences. The Eneström–Kakeya bound
+`norm_le_one_of_aeval_eq_zero_of_monotone_coeff` is proved in
+`MathlibExt.Analysis.Complex.EnestromKakeya`.
 -/
 
-open Polynomial Filter Asymptotics
+open Polynomial
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Eneström–Kakeya theorem, monotone form: if a nonzero real polynomial
-`a₀ + a₁ x + ⋯ + aₙ xⁿ` of degree `n` satisfies `0 ≤ a₀ ≤ a₁ ≤ ⋯ ≤ aₙ`, then every complex
-root `z` satisfies `‖z‖ ≤ 1`.
-
-Source: Tingting Du, *On the Reciprocal Sums and Products of m th-order Linear Recursive
-Sequences*, Journal of Integer Sequences 27 (2024), Article 24.2.3, Lemma 3
-(`jis-2024-24.2.3-lem-3`), quoted there as the Eneström–Kakeya theorem. -/
-public theorem_wanted norm_le_one_of_aeval_eq_zero_of_monotone_coeff
-    (p : ℝ[X]) (hp : p ≠ 0) (h0 : 0 ≤ p.coeff 0)
-    (hmono : ∀ i < p.natDegree, p.coeff i ≤ p.coeff (i + 1))
-    (z : ℂ) (hz : aeval z p = 0) : ‖z‖ ≤ 1
-
-/-- For `m ≥ 2` and positive integers `a₁, …, aₘ` (here `a i = a_{i+1}`), the polynomial
-`φ(x) = xᵐ - a₁ xᵐ⁻¹ - ⋯ - aₘ` has exactly one positive root `λ`, it satisfies `λ > 1`, and
-the complex roots of `φ` are `λ` (once) together with `m - 1` roots of modulus less
-than `λ`.
+/-- **Dominant root of $x^m - a_1 x^{m-1} - \cdots - a_m$ with positive coefficients.** Let
+$m \ge 2$ and let $a_1, \dots, a_m$ be positive integers. Then the polynomial
+$\varphi(x) = x^m - a_1 x^{m-1} - \cdots - a_m$ has exactly one positive real root $\lambda$,
+this root satisfies $\lambda > 1$, and the complex roots of $\varphi$, counted with
+multiplicity, are $\lambda$ (a simple root) together with $m - 1$ roots of modulus less than
+$\lambda$.
 
 Source: Tingting Du, *On the Reciprocal Sums and Products of m th-order Linear Recursive
 Sequences*, Journal of Integer Sequences 27 (2024), Article 24.2.3, Lemma 4
@@ -50,20 +44,6 @@ public theorem_wanted exists_dominant_root_of_pos_coeff_charPoly
     ∃ ρ : ℝ, 1 < ρ ∧ (∀ x : ℝ, 0 < x → aeval x φ = 0 → x = ρ) ∧
       ∃ s : Multiset ℂ, (φ.map (Int.castRingHom ℂ)).roots = (ρ : ℂ) ::ₘ s ∧
         ∀ z ∈ s, ‖z‖ < ρ
-
-/-- Let `1 < μ < λ` (written `α` here) and let `eₖ = O((μ/λ³)^{k/2})`. Then for every
-nonzero real constant `c`, as `n → ∞`,
-`∏_{k ≥ n} (1 - 1/(c λᵏ) + eₖ) = 1 - ∑_{k ≥ n} 1/(c λᵏ) + O((μ/λ³)^{n/2})`.
-
-Source: Tingting Du, *On the Reciprocal Sums and Products of m th-order Linear Recursive
-Sequences*, Journal of Integer Sequences 27 (2024), Article 24.2.3, Lemma 7
-(`jis-2024-24.2.3-lem-7`). -/
-public theorem_wanted tprod_one_sub_inv_add_eq_one_sub_tsum_add_isBigO
-    (c α μ : ℝ) (hc : c ≠ 0) (hμ : 1 < μ) (hμα : μ < α) (e : ℕ → ℝ)
-    (he : e =O[atTop] fun k : ℕ => (μ / α ^ 3) ^ ((k : ℝ) / 2)) :
-    (fun n : ℕ => (∏' k : ℕ, (1 - 1 / (c * α ^ (n + k)) + e (n + k))) -
-        (1 - ∑' k : ℕ, 1 / (c * α ^ (n + k)))) =O[atTop]
-      fun n : ℕ => (μ / α ^ 3) ^ ((n : ℝ) / 2)
 
 end
 

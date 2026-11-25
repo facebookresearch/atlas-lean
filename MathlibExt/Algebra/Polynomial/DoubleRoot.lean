@@ -34,9 +34,11 @@ here are in direct divisibility form and cover `f = 0` as well, with no
 domain hypothesis.
 -/
 
-/-- Corollary 9.13: `f (a) = 0` and `f' (a) = 0` if and only if `a` is
-(at least) a double root of `f`, that is, `f = (X - C a) ^ 2 * g` for some
-`g`. -/
+/-- **Double root criterion.** Let $R$ be a commutative ring, let $f \in R[x]$ and $a \in R$, and
+let $f'$ be the formal derivative of $f$. Then $f(a) = 0$ and $f'(a) = 0$ if and only if
+$f = (x - a)^2 g$ for some $g \in R[x]$.
+
+Source: ATLAS NumberTheoryI, Corollary 9.13. -/
 public theorem eval_and_derivative_eval_eq_zero_iff (f : R[X]) (a : R) :
     f.eval a = 0 ∧ f.derivative.eval a = 0 ↔
       ∃ g : R[X], f = (X - C a) ^ 2 * g := by
@@ -53,16 +55,23 @@ public theorem eval_and_derivative_eval_eq_zero_iff (f : R[X]) (a : R) :
     · rw [derivative_mul, derivative_pow]
       simp
 
-/-- Corollary 9.13 in divisibility form: `(X - C a) ^ 2` divides `f` if
-and only if `f` and its derivative both vanish at `a`. -/
+/-- **Double root criterion in divisibility form.** Let $R$ be a commutative ring, let
+$f \in R[x]$ and $a \in R$, and let $f'$ be the formal derivative of $f$. Then $(x - a)^2$
+divides $f$ in $R[x]$ if and only if $f(a) = 0$ and $f'(a) = 0$.
+
+Source: ATLAS NumberTheoryI, Corollary 9.13. -/
 public theorem sq_dvd_iff_eval_and_derivative_eval_eq_zero (f : R[X])
     (a : R) :
     (X - C a) ^ 2 ∣ f ↔ f.eval a = 0 ∧ f.derivative.eval a = 0 := by
   rw [eval_and_derivative_eval_eq_zero_iff, dvd_iff_exists_eq_mul_right]
 
-/-- A nonzero derivative at `a` excludes `(X - C a) ^ 2` as a factor of
-`f`, as a consequence of Corollary 9.13. This holds at every point with
-nonzero derivative, including points where `f.eval a ≠ 0`. -/
+/-- **A nonvanishing derivative excludes a double root.** Let $R$ be a commutative ring, let
+$f \in R[x]$ and $a \in R$, and let $f'$ be the formal derivative of $f$. If $f'(a) \neq 0$,
+then $(x - a)^2$ does not divide $f$ in $R[x]$.
+
+No assumption on $f(a)$ is needed.
+
+Source: ATLAS NumberTheoryI, consequence of Corollary 9.13. -/
 public theorem not_sq_dvd_of_derivative_eval_ne_zero
     (f : R[X]) (a : R) (hf' : f.derivative.eval a ≠ 0) :
     ¬ (X - C a) ^ 2 ∣ f := by

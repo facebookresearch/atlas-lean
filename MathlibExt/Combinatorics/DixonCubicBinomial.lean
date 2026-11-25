@@ -623,10 +623,15 @@ private lemma choose_prod_eq (n : ℕ) :
   field_simp
   linear_combination (((Nat.choose (3*n) (2*n) : ℕ) : ℚ) * (Nat.factorial n : ℚ)) * h1q + h2q
 
-/-- Dixon's alternating cubic binomial sum (Mikić, equation (2.0.1)): for every
-nonnegative integer `n`, the alternating sum of the cubes of the binomial
-coefficients `C(2n, k)` over `k = 0, ..., 2n` equals
-`(-1)^n * C(2n, n) * C(3n, 2n)`.
+/-- **Dixon's alternating cubic binomial sum.** For every natural number $n$,
+$\sum_{k=0}^{2n} (-1)^k \binom{2n}{k}^3 = (-1)^n \binom{2n}{n} \binom{3n}{2n}$.
+
+Mikić attributes the identity to A. C. Dixon, "On the sum of the cubes of the
+coefficients in a certain expansion by the binomial theorem", Messenger of
+Mathematics 20 (1891), 79--80. This is the specialization of Dixon's three-parameter
+identity in which all three parameters equal $n$; the three-parameter identity is not stated.
+
+Proves `Wanted` entry `dixon_alternating_cubic_binomial_sum`.
 
 Source: Jovan Mikić, "A Method For Examining Divisibility Properties Of Some
 Binomial Sums", Journal of Integer Sequences 21 (2018), Article 18.8.7,
@@ -635,13 +640,6 @@ equation (2.0.1), lines 119--124. Source file SHA-256
 `6a6fc0f14a3e02c8d5cbbbb626412ac1151d9853c1ebf6ce8860b8b98d4306a2`,
 canonical source-span SHA-256
 `8511f3d8adc6b3c69d4bcc08bd4f88b9c62c93b1ff2fd0c01dd3fe720b7df3a2`.
-
-Mikić attributes the identity to A. C. Dixon, "On the sum of the cubes of the
-coefficients in a certain expansion by the binomial theorem", Messenger of
-Mathematics 20 (1891), 79--80. This is the one-parameter specialization
-`a = b = c = n` only; it does not state Dixon's distinct three-parameter identity.
-
-Proves `Wanted` entry `dixon_alternating_cubic_binomial_sum`.
 -/
 theorem dixon_alternating_cubic_binomial_sum (n : ℕ) :
     ∑ k ∈ Finset.range (2 * n + 1),

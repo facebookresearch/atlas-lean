@@ -26,12 +26,9 @@ absorption/elimination rates, with integral `F * D / k` (concentration AUC `F * 
 
 namespace MathlibExt.Biology.Biophysics.Absorption.AUC
 
-/-- **Absorption AUC, distinct rates.** For `ka ≠ k`, `ka, k > 0`,
-the central amount component
-`F * D * ka * (exp (-k t) - exp (-ka t)) / (ka - k)` is integrable
-on `Set.Ici 0` with integral `F * D / k` (hence concentration AUC
-`F * D / (k * V)` after dividing by `V`). FK: the set integral
-statement below is exactly that claim for the amount. -/
+/-- **Absorption AUC, distinct rates.** For `ka ≠ k`, `ka, k > 0`, the central amount component
+`F * D * ka * (exp (-k t) - exp (-ka t)) / (ka - k)` is integrable on `Set.Ici 0` with integral
+`F * D / k` (hence concentration AUC `F * D / (k * V)` after dividing by `V`). -/
 lemma auc_distinct_amount {F D ka k : ℝ} (hka : 0 < ka)
     (hk : 0 < k) (hne : ka ≠ k) :
     MeasureTheory.IntegrableOn (fun t => F * D * ka * (Real.exp (-k * t) - Real.exp (-ka * t)) / (ka - k))
@@ -87,9 +84,9 @@ Real.exp (-ka * t)))
   have hkk : ka - k ≠ 0 := sub_ne_zero.mpr hne
   field_simp
 
-/-- Equal-rate AUC: at `ka = k` the component
-`F * D * ka * t * exp (-ka * t)` is integrable on `Set.Ici 0` with
-the same integral `F * D / ka`. -/
+/-- Equal-rate AUC: for `ka > 0` and all real `F`, `D`, at `ka = k` the component
+`F * D * ka * t * exp (-ka * t)` is integrable on `Set.Ici 0` with the same integral
+`F * D / ka`. -/
 lemma auc_equal_amount {F D ka : ℝ} (hka : 0 < ka) :
     MeasureTheory.IntegrableOn (fun t => F * D * ka * t * Real.exp (-ka * t))
       (Set.Ici 0) ∧

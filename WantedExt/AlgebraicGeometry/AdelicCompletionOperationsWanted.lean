@@ -1,0 +1,100 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+module
+
+public import Batteries.Util.ProofWanted
+public import MathlibExt.AlgebraicGeometry.AdelicCompletionOperations
+public import MathlibExt.AlgebraicGeometry.CompletedAdelicPointHeights
+
+/-!
+# Construction requests on the literal adelic Cauchy quotient
+
+All outputs use its already computed pointwise limit norms. Height
+convergence retains the actual boundary integrability condition.
+Modelled on Yuan--Zhang, arXiv:2105.13587v9, Sections 2.5--2.6, 3.4 and 5.3.
+The completion is the fixed-gauge completion of `BoundaryMetricCompletionModels`, not
+Yuan--Zhang's boundary topology: their adelic line bundles and positivity notions are not
+claimed here.
+-/
+
+set_option autoImplicit false
+@[expose] public noncomputable section
+
+namespace WantedExt.AlgebraicGeometry.AdelicCompletionOperations
+
+open CategoryTheory _root_.AlgebraicGeometry
+open MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
+open MathlibExt.AlgebraicGeometry.PlacewiseMetrizedLineModels
+open MathlibExt.AlgebraicGeometry.BoundaryMetricCompletionModels
+open MathlibExt.AlgebraicGeometry.RationalAdelicModelMetrics
+open MathlibExt.AlgebraicGeometry.AdelicCompletionOperations
+
+variable {K : Type} [Field K] (A : AdelicField K) (X : Over (Spec (.of K)))
+  (L M : X.left.Modules) (B : EffectiveBoundary A X)
+
+/-- Continuity realizes the native quotient's exact pointwise limit norms. -/
+public def_wanted completedMetric (m : BoundaryMetricCompletion (L := L) B) :
+    MathlibExt.AlgebraicGeometry.AdelicCompletionEvaluations.Realization B m
+
+/-- Native tensor fibres retain every original algebraic local-section germ. -/
+public def_wanted allPlaceTensor (hL : IsLineBundle L) (hM : IsLineBundle M) :
+    AllPlaceTensor (A := A) (X := X) (L := L) (M := M)
+
+/-- Every algebraic line isomorphism has its source-normalized completed-fibre map. -/
+public def_wanted allPlaceIso (e : L ≅ M) : AllPlaceIso (A := A) (X := X) e
+
+/-- Tensor model refinements produce a class in the same boundary completion. -/
+public def_wanted tensor (F : AllPlaceTensor (A := A) (X := X) (L := L) (M := M))
+    (m : FixedGaugeAdelicMetric (L := L) B) (n : FixedGaugeAdelicMetric (L := M) B) :
+    TensorResult B F m n
+
+/-- Power norms and rational model denominators are retained on the same quotient. -/
+public def_wanted power (m : FixedGaugeAdelicMetric (L := L) B) (r : ℕ)
+    (F : AllPlacePower (A := A) (X := X) (L := L) r) : PowerResult B m r F
+
+/-- Completed dual functionals of an invertible sheaf are normalized by actual
+section-pair evaluation. The algebraic dual `AlgebraicDual`, which is
+`MetrizedLineOperationModels.DualLine`, is requested by `MetrizedLineOperations.lineDual`. -/
+public def_wanted allPlaceDual (hL : IsLineBundle L) (D : AlgebraicDual (X := X) (L := L)) :
+    AllPlaceDual (A := A) D
+
+/-- Dual model norms use the actual functional/value quotient. -/
+public def_wanted dual (m : FixedGaugeAdelicMetric (L := L) B) (D : AlgebraicDual (X := X) (L := L))
+    (F : AllPlaceDual (A := A) D) : DualResult B m D F
+
+/-- Native base change fixes every residue-field unit and pulled-back section. -/
+public def_wanted allPlacePullback {Y : Over (Spec (.of K))} (f : Y ⟶ X) :
+    AllPlacePullback (A := A) (L := L) f
+
+/-- Boundary domination preserves Cauchy convergence under the actual scheme pullback. -/
+public def_wanted pullback {Y : Over (Spec (.of K))} (f : Y ⟶ X)
+    (C : EffectiveBoundary A Y) (H : BoundaryDominated B f C)
+    (m : FixedGaugeAdelicMetric (L := L) B) (F : AllPlacePullback (A := A) (L := L) f) :
+    PullbackResult B f C m F
+
+end WantedExt.AlgebraicGeometry.AdelicCompletionOperations
+
+namespace WantedExt.AlgebraicGeometry.CompletedAdelicPointHeights
+
+open CategoryTheory _root_.AlgebraicGeometry
+open MathlibExt.AlgebraicGeometry.PlacewiseMetrizedLineModels
+open MathlibExt.AlgebraicGeometry.BoundaryMetricCompletionModels
+open MathlibExt.AlgebraicGeometry.MeasuredLinePointHeights
+open MathlibExt.AlgebraicGeometry.CompletedAdelicPointHeights
+
+variable {K : Type} [Field K] {A : AdelicField K} {X : Over (Spec (.of K))}
+  {L : X.left.Modules} (B : EffectiveBoundary A X) (m : BoundaryMetricCompletion (L := L) B)
+  {x : BasePoint (K := K) ⟶ X} (F : PointFrame A X L x)
+
+/-- The integrable model norms and actual integrable boundary gauge dominate the limit. -/
+public theorem_wanted admissible (D : DominatedApproximation B m F) : IsAdmissible B m F
+
+/-- Heights of the native model sequence converge to the computed quotient height. -/
+public theorem_wanted heightLimit (D : DominatedApproximation B m F) : HeightConverges B m F D
+
+end WantedExt.AlgebraicGeometry.CompletedAdelicPointHeights

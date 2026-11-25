@@ -36,8 +36,9 @@ length `t = 2T` between them; we state them per path length.
 `a = -(1/2) · log (1 - 2P - Q) + (1/4) · log (1 - 2Q)`, and the **Kimura distance**
 `d = -(1/2) · log (1 - 2P - Q) - (1/4) · log (1 - 2Q)` equals `a + 2b`. The map
 `(a, b) ↦ (P, Q)` is a bijection from `ℝ × ℝ` onto the algebraic domain. The boundary
-`1 - 2Q = 0` or `1 - 2P - Q = 0` (saturation) is excluded: there the distance diverges and
-Lean's `log 0 = 0` gives junk.
+`1 - 2Q = 0` or `1 - 2P - Q = 0` (saturation) is excluded: the distance tends to `+∞` as it is
+approached from inside, while at the boundary itself the convention `log 0 = 0` gives a finite
+value.
 
 The *biological region*, the image of `a, b ≥ 0`, is smaller: it is the part of the algebraic
 domain with in addition `Q ≥ 0` (i.e. `1 - 2Q ≤ 1`, so `b ≥ 0`) and
@@ -99,7 +100,8 @@ theorem k80Rate_apply (κ : ℝ) (i j : Fin 4) :
     simp [k80Rate, hkyRate, gtrRate, hkyExchangeability, sum_erase_eq_sub, Fin.sum_univ_four] <;>
     ring
 
-/-- An eigenbasis of the K80 rate matrix, as columns (order `A, C, G, T`): the constant vector
+/-- An eigenbasis of the K80 rate matrix, as columns with coordinates in the order `A, C, G, T`:
+the constant vector
 (eigenvalue `0`), the purine/pyrimidine contrast (eigenvalue `-1`), and the contrasts within the
 purines and within the pyrimidines (eigenvalue `-(κ + 1) / 2`). -/
 def k80Eigenbasis : Matrix (Fin 4) (Fin 4) ℝ :=
@@ -111,10 +113,10 @@ noncomputable def k80EigenbasisUnit : (Matrix (Fin 4) (Fin 4) ℝ)ˣ where
   inv := !![1/4, 1/4, 1/4, 1/4; 1/4, -1/4, 1/4, -1/4; 1/2, 0, -1/2, 0; 0, 1/2, 0, -1/2]
   val_inv := by
     ext i j
-    fin_cases i <;> fin_cases j <;> norm_num [k80Eigenbasis, mul_apply, Fin.sum_univ_four]
+    fin_cases i <;> fin_cases j <;> norm_num [k80Eigenbasis, Matrix.mul_apply, Fin.sum_univ_four]
   inv_val := by
     ext i j
-    fin_cases i <;> fin_cases j <;> norm_num [k80Eigenbasis, mul_apply, Fin.sum_univ_four]
+    fin_cases i <;> fin_cases j <;> norm_num [k80Eigenbasis, Matrix.mul_apply, Fin.sum_univ_four]
 
 /-- Diagonalization of `t • k80Rate κ`. -/
 theorem smul_k80Rate_eq (κ t : ℝ) :
@@ -124,7 +126,7 @@ theorem smul_k80Rate_eq (κ t : ℝ) :
         (↑k80EigenbasisUnit⁻¹ : Matrix (Fin 4) (Fin 4) ℝ) := by
   ext i j
   simp only [k80EigenbasisUnit, Units.inv_mk, Units.val_mk, Matrix.smul_apply, k80Rate_apply,
-    mul_apply, Fin.sum_univ_four]
+    Matrix.mul_apply, Fin.sum_univ_four]
   fin_cases i <;> fin_cases j <;> norm_num [k80Eigenbasis] <;> ring
 
 /-- The **Kimura two-parameter transition matrix** in terms of the composite parameters
@@ -143,9 +145,9 @@ noncomputable def kimuraProb (a b : ℝ) : Matrix (Fin 4) (Fin 4) ℝ :=
       1 / 4 + 1 / 4 * exp (-4 * b) - 1 / 2 * exp (-2 * (a + b))
     else 1 / 4 - 1 / 4 * exp (-4 * b)
 
-/-- **K80 transition probabilities in closed form**: the transition function of `k80Rate κ`
-(transition rate `α = κ / 4`, transversion rate `β = 1 / 4`) over time `t` is
-`kimuraProb (κ t / 4) (t / 4)`, for all real `κ` and `t`. -/
+/-- **K80 transition matrix in closed form**: the matrix exponential of `k80Rate κ` (transition rate
+`α = κ / 4`, transversion rate `β = 1 / 4`) over time `t` is `kimuraProb (κ t / 4) (t / 4)`, for all
+real `κ` and `t`. It is a transition probability matrix when `κ ≥ 0` and `t ≥ 0`. -/
 theorem ctmcTransition_k80Rate (κ t : ℝ) :
     ctmcTransition (k80Rate κ) t = kimuraProb (κ * t / 4) (t / 4) := by
   have h1 : -4 * (t / 4) = -t := by ring
@@ -153,14 +155,14 @@ theorem ctmcTransition_k80Rate (κ t : ℝ) :
   ext i j
   rw [ctmcTransition, smul_k80Rate_eq, Matrix.exp_units_conj, Matrix.exp_diagonal]
   simp only [kimuraProb, of_apply, h1, h2, k80EigenbasisUnit, Units.inv_mk, Units.val_mk,
-    mul_apply, Fin.sum_univ_four, Pi.exp_def]
+    Matrix.mul_apply, Fin.sum_univ_four, Pi.exp_def]
   fin_cases i <;> fin_cases j <;> norm_num [k80Eigenbasis, ← Real.exp_eq_exp_ℝ] <;> ring
 
 /-- Each row of the Kimura transition matrix sums to `1`, for all real `a`, `b`. -/
 theorem sum_kimuraProb (a b : ℝ) (i : Fin 4) : ∑ j, kimuraProb a b i j = 1 := by
   fin_cases i <;> simp [kimuraProb, Fin.sum_univ_four] <;> ring
 
-/-- At `a = b = 0` (time `0`) the Kimura transition matrix is the identity. -/
+/-- At `a = b = 0` (in particular at time `0`) the Kimura transition matrix is the identity. -/
 theorem kimuraProb_zero : kimuraProb 0 0 = 1 := by
   ext i j
   by_cases h : i = j
@@ -187,13 +189,15 @@ theorem kimuraProb_nonneg {a b : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (i j : Fin 4
 
 /-! ## Transition and transversion proportions -/
 
-/-- The proportion of **transition differences** in row `i` of a nucleotide matrix `M`: the
-entry `M i j` for the base `j ≠ i` of the same class (purine/pyrimidine), Kimura's `P`. -/
+/-- The proportion of **transition differences** in row `i` of a nucleotide matrix `M`: the entry
+`M i j` for the base `j ≠ i` of the same class (purine/pyrimidine), Kimura's `P`. For an arbitrary
+real matrix it is only a row weight; it is a probability when row `i` is a probability vector. -/
 noncomputable def transitionProp (M : Matrix (Fin 4) (Fin 4) ℝ) (i : Fin 4) : ℝ :=
   ∑ j ∈ univ.filter (fun j : Fin 4 => j ≠ i ∧ (j : ℕ) % 2 = (i : ℕ) % 2), M i j
 
-/-- The proportion of **transversion differences** in row `i` of a nucleotide matrix `M`: the
-total of `M i j` over the two bases `j` of the other class, Kimura's `Q`. -/
+/-- The proportion of **transversion differences** in row `i` of a nucleotide matrix `M`: the total
+of `M i j` over the two bases `j` of the other class, Kimura's `Q`. For an arbitrary real matrix it
+is only a row weight; it is a probability when row `i` is a probability vector. -/
 noncomputable def transversionProp (M : Matrix (Fin 4) (Fin 4) ℝ) (i : Fin 4) : ℝ :=
   ∑ j ∈ univ.filter (fun j : Fin 4 => (j : ℕ) % 2 ≠ (i : ℕ) % 2), M i j
 
@@ -232,28 +236,33 @@ theorem one_sub_two_mul_transitionProp_sub_transversionProp_kimuraProb (a b : �
 /-! ## Recovery of the composite parameters and the Kimura distance -/
 
 /-- The transversion parameter recovered from a transversion proportion `Q`:
-`b = -(1/4) · log (1 - 2Q)`. Defined on the algebraic domain `1 - 2Q > 0` (elsewhere it is
-Lean's totalized logarithm); it is `≥ 0` exactly when moreover `Q ≥ 0`. -/
+`b = -(1/4) · log (1 - 2Q)`. Defined on the algebraic domain `1 - 2Q > 0`, where it is `≥ 0`
+exactly when moreover `Q ≥ 0`. Elsewhere `log 0 = 0` and `log x = log |x|` give `b = 0` at
+`Q = 1/2` and `b = -(1/4) · log (2Q - 1)` for `Q > 1/2`. -/
 noncomputable def kimuraTransversionParam (Q : ℝ) : ℝ :=
   -(1 / 4) * log (1 - 2 * Q)
 
 /-- The transition parameter recovered from proportions `P`, `Q`:
 `a = -(1/2) · log (1 - 2P - Q) + (1/4) · log (1 - 2Q)`. Defined on the algebraic domain
 `1 - 2P - Q > 0`, `1 - 2Q > 0`; it is `≥ 0` exactly when moreover
-`1 - 2P - Q ≤ √(1 - 2Q)`. -/
+`1 - 2P - Q ≤ √(1 - 2Q)`. With `log 0 = 0` and `log x = log |x|` it is defined for all real
+`P`, `Q`: a vanishing argument contributes `0`. -/
 noncomputable def kimuraTransitionParam (P Q : ℝ) : ℝ :=
   -(1 / 2) * log (1 - 2 * P - Q) + 1 / 4 * log (1 - 2 * Q)
 
-/-- The **Kimura two-parameter distance** (Kimura 1980) from the proportions `P` of transition
-and `Q` of transversion differences: `d = -(1/2) · log (1 - 2P - Q) - (1/4) · log (1 - 2Q)`.
-It is defined on the algebraic domain `1 - 2P - Q > 0`, `1 - 2Q > 0` and diverges at its
-boundary, where the totalized logarithm returns junk. It is the expected number of
-substitutions per site only on the biological region, for proportions generated by a K80
-model with `a, b ≥ 0` (see the module docstring). -/
+/-- The **Kimura two-parameter distance** (Kimura 1980) from the proportions `P` of transition and
+`Q` of transversion differences: `d = -(1/2) · log (1 - 2P - Q) - (1/4) · log (1 - 2Q)`. It is
+defined on the algebraic domain `1 - 2P - Q > 0`, `1 - 2Q > 0` and tends to `+∞` as a finite
+boundary point is approached from inside. Elsewhere `log 0 = 0` and `log x = log |x|` apply: a
+vanishing argument contributes `0`, so at a boundary point `d` is finite. For proportions generated
+by a K80 model with `a, b ≥ 0` it is the expected number of substitutions per site (see the module
+docstring). -/
 noncomputable def kimuraDistance (P Q : ℝ) : ℝ :=
   -(1 / 2) * log (1 - 2 * P - Q) - 1 / 4 * log (1 - 2 * Q)
 
-/-- The distance splits as `d = a + 2b`: one transition and two transversion classes. -/
+/-- The distance splits as `d = a + 2b`: one transition and two transversion classes. This holds for
+all real `P` and `Q`, the logarithms taken with `log 0 = 0` and `log x = log |x|`; the intended
+inverse model is the algebraic domain `1 - 2P - Q > 0`, `1 - 2Q > 0`. -/
 theorem kimuraDistance_eq (P Q : ℝ) :
     kimuraDistance P Q = kimuraTransitionParam P Q + 2 * kimuraTransversionParam Q := by
   unfold kimuraDistance kimuraTransitionParam kimuraTransversionParam; ring
@@ -292,7 +301,9 @@ theorem kimuraProb_injective :
   rw [ha, hb]
 
 /-- **Every point of the algebraic domain is attained**, transversion part: if `1 - 2Q > 0`, the
-recovered parameters reproduce the transversion proportion `Q` (whatever `P`). -/
+recovered parameters reproduce the transversion proportion `Q`, whatever `P`. The argument
+`1 - 2P - Q` of the recovered transition parameter may vanish or be negative (`log 0 = 0`,
+`log x = log |x|`); the transversion proportion does not depend on it. -/
 theorem transversionProp_kimuraProb_recover {P Q : ℝ} (hQ : 0 < 1 - 2 * Q) (i : Fin 4) :
     transversionProp (kimuraProb (kimuraTransitionParam P Q) (kimuraTransversionParam Q)) i =
       Q := by
@@ -316,9 +327,10 @@ theorem transitionProp_kimuraProb_recover {P Q : ℝ} (hQ : 0 < 1 - 2 * Q)
 
 /-! ## The K80 model: what the transition matrix identifies -/
 
-/-- The K80 model with an overall rate `c`, `c • k80Rate κ`, has transition rate `α = c κ / 4`
-and transversion rate `β = c / 4`; its transition function over time `t` is
-`kimuraProb (α t) (β t)`. -/
+/-- The K80 model with an overall rate `c`, `c • k80Rate κ`, has transition rate `α = c κ / 4` and
+transversion rate `β = c / 4`; its matrix exponential over time `t` is `kimuraProb (α t) (β t)`, for
+all real `c`, `κ`, `t`. It is a transition probability matrix when, for example, `c ≥ 0`, `κ ≥ 0`
+and `t ≥ 0`. -/
 theorem ctmcTransition_smul_k80Rate (c κ t : ℝ) :
     ctmcTransition (c • k80Rate κ) t = kimuraProb (c * κ * t / 4) (c * t / 4) := by
   rw [ctmcTransition_smul, ctmcTransition_k80Rate]
@@ -350,9 +362,11 @@ theorem ctmcTransition_k80Rate_eq_iff {κ₁ t₁ κ₂ t₂ : ℝ} :
     ctmcTransition_smul_k80Rate_eq_iff (c₁ := 1) (κ₁ := κ₁) (t₁ := t₁) (c₂ := 1) (κ₂ := κ₂)
       (t₂ := t₂)
 
-/-- **K80 distance recovery**: the Kimura distance of the transition and transversion
-proportions of `k80Rate κ` over time `t` is `(κ + 2) t / 4`, the total substitution rate
-`-k80Rate κ i i = (κ + 2) / 4` times `t`. -/
+/-- **K80 distance recovery**: for all real `κ` and `t`, the Kimura distance of the transition and
+transversion row weights of `exp (t • k80Rate κ)` is `(κ + 2) t / 4`, that is `-k80Rate κ i i * t`.
+For `κ ≥ 0`, `-k80Rate κ i i = (κ + 2) / 4` is the total substitution rate out of each base; if also
+`t ≥ 0`, the row weights are proportions and the distance is the expected number of substitutions
+per site. For `κ < -2` the coefficient is negative. -/
 theorem kimuraDistance_k80Rate (κ t : ℝ) (i : Fin 4) :
     kimuraDistance (transitionProp (ctmcTransition (k80Rate κ) t) i)
         (transversionProp (ctmcTransition (k80Rate κ) t) i) = (κ + 2) / 4 * t := by
@@ -360,8 +374,9 @@ theorem kimuraDistance_k80Rate (κ t : ℝ) (i : Fin 4) :
 
 /-! ## The Jukes–Cantor specialization `α = β` -/
 
-/-- With equal transition and transversion parameters `a = b = μ t / 3`, the Kimura matrix is
-the Jukes–Cantor transition matrix `jcProb μ t`. -/
+/-- With equal transition and transversion parameters `a = b = μ t / 3`, the Kimura matrix is the
+Jukes–Cantor matrix `jcProb μ t`, for all real `μ` and `t`; it is a transition probability matrix
+when `μ t ≥ 0`. -/
 theorem kimuraProb_jukesCantor (μ t : ℝ) :
     kimuraProb (μ * t / 3) (μ * t / 3) = Matrix.of (jcProb μ t) := by
   have h1 : -4 * (μ * t / 3) = -4 * μ * t / 3 := by ring
@@ -370,16 +385,18 @@ theorem kimuraProb_jukesCantor (μ t : ℝ) :
   simp only [kimuraProb, jcProb, of_apply, h1, h2]
   split_ifs <;> ring
 
-/-- On Jukes–Cantor data the two Kimura proportions add up to the proportion of differing
-sites `pDiff`. -/
+/-- For all real `μ` and `t`, the two Kimura row weights of the Jukes–Cantor matrix add up to its
+off-diagonal row sum `pDiff μ t i`. This is the probability that the two ends of a branch differ
+when `μ t ≥ 0`, and is negative when `μ t < 0`. -/
 theorem transitionProp_add_transversionProp_jcProb (μ t : ℝ) (i : Fin 4) :
     transitionProp (Matrix.of (jcProb μ t)) i + transversionProp (Matrix.of (jcProb μ t)) i =
       pDiff μ t i := by
   rw [transitionProp_add_transversionProp, pDiff]
   rfl
 
-/-- **The Kimura distance reduces to the Jukes–Cantor distance** on Jukes–Cantor data:
-`kimuraDistance P Q = jcDistance (P + Q)`, both equal to `μ t`. -/
+/-- **The Kimura distance reduces to the Jukes–Cantor distance** on the Jukes–Cantor matrix, for all
+real `μ` and `t`: `kimuraDistance P Q = jcDistance (P + Q)`, both equal to `μ t`, where `P` and `Q`
+are the transition and transversion row weights of `jcProb μ t`. -/
 theorem kimuraDistance_jukesCantor (μ t : ℝ) (i : Fin 4) :
     kimuraDistance (transitionProp (Matrix.of (jcProb μ t)) i)
         (transversionProp (Matrix.of (jcProb μ t)) i) =
@@ -389,8 +406,9 @@ theorem kimuraDistance_jukesCantor (μ t : ℝ) (i : Fin 4) :
     kimuraDistance_kimuraProb]
   ring
 
-/-- K80 with `κ = 1` has the Jukes–Cantor transition function with rate `μ = 3/4`, through
-the existing `k80Rate_one` and `JukesCantor.jcProb_eq_exp`. -/
+/-- K80 with `κ = 1` has the Jukes–Cantor matrix exponential with rate `μ = 3/4`:
+`exp (t • k80Rate 1) = jcProb (3/4) t` for every real `t`, a transition probability matrix when
+`t ≥ 0`. -/
 theorem ctmcTransition_k80Rate_one (t : ℝ) :
     ctmcTransition (k80Rate 1) t = Matrix.of (jcProb (3 / 4) t) := by
   ext i j

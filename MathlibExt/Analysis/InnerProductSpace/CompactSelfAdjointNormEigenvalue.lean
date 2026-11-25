@@ -67,8 +67,10 @@ private theorem spectrum_nonempty_of_ne_zero (T : H →L[𝕜] H) (hT : IsSelfAd
   rw [T.spectralRadius_eq_nnnorm hT] at h0
   exact hT0 (by simpa using h0)
 
-/-- **A nonzero compact self-adjoint operator has an eigenvalue of norm
-`‖T‖`.** -/
+/-- **A nonzero compact self-adjoint operator has an eigenvalue of modulus equal to its norm.**
+Let $T \neq 0$ be a compact self-adjoint operator on a Hilbert space $H$ over
+$\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$. Then $T$ has an eigenvalue $\mu \in \mathbb{K}$ with
+$\mu \neq 0$ and $|\mu| = \|T\|$, where $\|T\|$ is the operator norm of $T$. -/
 theorem exists_hasEigenvalue_norm_eq (T : H →L[𝕜] H) (hT : IsSelfAdjoint T)
     (hc : IsCompactOperator (T : H → H)) (hT0 : T ≠ 0) :
     ∃ μ : 𝕜, μ ≠ 0 ∧ ‖μ‖ = ‖T‖ ∧ Module.End.HasEigenvalue (T : Module.End 𝕜 H) μ := by
@@ -87,10 +89,10 @@ theorem exists_hasEigenvalue_norm_eq (T : H →L[𝕜] H) (hT : IsSelfAdjoint T)
     exact hT0 (norm_eq_zero.mp hnorm.symm)
   exact ⟨μ, hμ0, hnorm, (hc.hasEigenvalue_iff_mem_spectrum hμ0).mpr hμspec⟩
 
-/-- **A compact self-adjoint operator has a real eigenvalue of modulus
-`‖T‖`, attained at a unit vector.** If `T ≠ 0` is compact and self-adjoint,
-there are `r : ℝ` and a unit vector `u` with `T u = r • u` and
-`|r| = ‖T‖`. -/
+/-- **A nonzero compact self-adjoint operator has a real eigenvalue of modulus equal to its norm,
+with a unit eigenvector.** Let $T \neq 0$ be a compact self-adjoint operator on a Hilbert space
+$H$ over $\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$. Then there are a real number $r$ and a unit
+vector $u \in H$ with $T u = r u$ and $|r| = \|T\|$, where $\|T\|$ is the operator norm of $T$. -/
 theorem exists_unit_eigenvector_real_eigenvalue (T : H →L[𝕜] H) (hT : IsSelfAdjoint T)
     (hc : IsCompactOperator (T : H → H)) (hT0 : T ≠ 0) :
     ∃ r : ℝ, ∃ u : H, ‖u‖ = 1 ∧ T u = (r : 𝕜) • u ∧ |r| = ‖T‖ := by

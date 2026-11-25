@@ -41,8 +41,10 @@ namespace IsDedekindDomain
 
 variable {R : Type*} [CommRing R] [IsDedekindDomain R]
 
-/-- Corollary 3.15, first equivalence: a Dedekind domain is a unique
-factorization domain iff it is a principal ideal domain. -/
+/-- **Dedekind domains: UFD iff PID.** A Dedekind domain $R$ is a unique factorization domain if
+and only if it is a principal ideal domain.
+
+Source: ATLAS NumberTheoryI, Section 3.2, Corollary 3.15 (first equivalence). -/
 theorem uniqueFactorizationMonoid_iff_isPrincipalIdealRing :
     UniqueFactorizationMonoid R ↔ IsPrincipalIdealRing R := by
   constructor
@@ -53,8 +55,10 @@ theorem uniqueFactorizationMonoid_iff_isPrincipalIdealRing :
     have := h
     infer_instance
 
-/-- Corollary 3.15, second equivalence: a Dedekind domain is a
-principal ideal domain iff its class group is trivial. -/
+/-- **Dedekind domains: PID iff trivial class group.** A Dedekind domain $R$ is a principal ideal
+domain if and only if its ideal class group is trivial.
+
+Source: ATLAS NumberTheoryI, Section 3.2, Corollary 3.15 (second equivalence). -/
 theorem isPrincipalIdealRing_iff_subsingleton_classGroup :
     IsPrincipalIdealRing R ↔ Subsingleton (ClassGroup R) := by
   constructor
@@ -68,8 +72,10 @@ theorem isPrincipalIdealRing_iff_subsingleton_classGroup :
     rw [← card_classGroup_eq_one_iff]
     exact Fintype.card_ofSubsingleton 1
 
-/-- Corollary 3.15, combined: a Dedekind domain is a unique
-factorization domain iff its class group is trivial. -/
+/-- **Dedekind domains: UFD iff trivial class group.** A Dedekind domain $R$ is a unique
+factorization domain if and only if its ideal class group is trivial.
+
+Source: ATLAS NumberTheoryI, Section 3.2, Corollary 3.15 (combined). -/
 theorem uniqueFactorizationMonoid_iff_subsingleton_classGroup :
     UniqueFactorizationMonoid R ↔ Subsingleton (ClassGroup R) :=
   uniqueFactorizationMonoid_iff_isPrincipalIdealRing.trans
