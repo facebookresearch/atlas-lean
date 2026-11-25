@@ -13,6 +13,7 @@ public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Fintype.Inv
 public import Mathlib.Data.Fintype.Perm
 public import Mathlib.Data.Nat.Choose.Basic
+public import MathlibExt.Combinatorics.Enumerative.AscentDescent123132
 public import MathlibExt.Combinatorics.Enumerative.AscentDescent132321
 public import MathlibExt.Combinatorics.Enumerative.PermutationStatistics
 public import Mathlib.RingTheory.MvPolynomial.Basic
@@ -115,25 +116,6 @@ public theorem permAscents_permDescents_small :
     permAscents (1 : Equiv.Perm (Fin 3)) = 2 ∧ permDescents (1 : Equiv.Perm (Fin 3)) = 0 ∧
       permAscents (pattern3 ![0, 2, 1]) = 1 ∧ permDescents (pattern3 ![0, 2, 1]) = 1 := by
   decide +kernel
-
-/-- **Ascents and descents over permutations avoiding $123$ and $132$.** Let
-$$G = \sum_{n \ge 0} \sum_{\sigma} x^n p^{\mathrm{asc}(\sigma)} q^{\mathrm{des}(\sigma)},$$
-where $\sigma$ runs over the permutations of $\{0, 1, \dots, n-1\}$ that avoid both patterns
-$123$ and $132$, and $\mathrm{asc}(\sigma)$ and $\mathrm{des}(\sigma)$ are the numbers of ascents
-and descents of $\sigma$; $G$ is a formal power series in $x$ with coefficients in
-$\mathbb{Q}[p, q]$. Then
-$$(1 - 2qx - pqx^2 + q^2x^2)\, G = 1 + x - 2qx + px^2 - qx^2 - pqx^2 + q^2x^2.$$
-
-Source: Han, *Joint Distributions of 10 Classical Statistics over Permutations
-Avoiding Two Patterns of Length 3*, INTEGERS 26 (2026), Article A18, Corollary 1
-(`integers-2026-A18-cor-1`). -/
-public theorem_wanted ascDesGF_123_132 :
-    let p : PowerSeries (MvPolynomial (Fin 2) ℚ) := PowerSeries.C (MvPolynomial.X 0)
-    let q : PowerSeries (MvPolynomial (Fin 2) ℚ) := PowerSeries.C (MvPolynomial.X 1)
-    (1 - 2 * q * PowerSeries.X - p * q * PowerSeries.X ^ 2 + q ^ 2 * PowerSeries.X ^ 2) *
-        ascDesGF (pattern3 ![0, 1, 2]) (pattern3 ![0, 2, 1]) =
-      1 + PowerSeries.X - 2 * q * PowerSeries.X + p * PowerSeries.X ^ 2 -
-        q * PowerSeries.X ^ 2 - p * q * PowerSeries.X ^ 2 + q ^ 2 * PowerSeries.X ^ 2
 
 /-- **Ascents and descents over permutations avoiding $213$ and $231$.** Let
 $$G = \sum_{n \ge 0} \sum_{\sigma} x^n p^{\mathrm{asc}(\sigma)} q^{\mathrm{des}(\sigma)},$$
