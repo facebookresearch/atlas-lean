@@ -17,7 +17,7 @@ inclusion)?
 module
 
 public import Batteries.Util.ProofWanted
-public import WantedExt.GroupTheory.FittingClassWithoutInjectorKourovka12Problem96Wanted
+public import MathlibExt.GroupTheory.FittingClassWithoutInjectorKourovka12Problem96
 
 @[expose] public section
 
