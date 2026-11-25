@@ -16,8 +16,10 @@ public import MathlibExt.NumberTheory.AlternatingSumFloorDiv
 public import MathlibExt.NumberTheory.CeilQuotientOddCount
 public import MathlibExt.NumberTheory.DivisorCountBound
 public import MathlibExt.NumberTheory.FloorDivisionCounts
+public import MathlibExt.NumberTheory.FloorQuotientDivisorSummatory
 public import MathlibExt.NumberTheory.FloorQuotientOddCount
 public import MathlibExt.NumberTheory.RoundQuotientOddCount
+public import MathlibExt.NumberTheory.RoundedQuotientThresholdCounts
 
 namespace MetaMathlibExt
 
@@ -57,20 +59,6 @@ public theorem shiftedFloorResidueCount_modulus_one (n : ℕ) (α ν : ℝ)
   unfold shiftedFloorResidueCount
   rw [Finset.filter_true_of_mem (fun k _ => by simp [Int.ModEq])]
   simp
-
-/-- **The floor parity count through the divisor summatory function.** Let $\tau(m)$ be the
-number of positive divisors of $m$, let $D(x) = \sum_{1 \le m \le x} \tau(m)$, and let
-$\mathcal{F}_n$ be the number of integers $k$ with $1 \le k \le n$ for which
-$\lfloor n/k \rfloor$ is odd. For every natural number $n$, $\mathcal{F}_n = D(n) - 2D(n/2)$,
-where $D(n/2) = D(\lfloor n/2 \rfloor)$.
-
-Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
-Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
-Article 24.2.5, Corollary 3 (`jis-2024-24.2.5-cor-3`). -/
-public theorem_wanted floorQuotientOddCount_eq_divisor_summatory_sub (n : ℕ) :
-    (floorQuotientOddCount n : ℤ) =
-      ∑ m ∈ Finset.Icc 1 n, (m.divisors.card : ℤ) -
-        2 * ∑ m ∈ Finset.Icc 1 (n / 2), (m.divisors.card : ℤ)
 
 /-- **Odd floor quotients as a hyperbolic lattice-point difference.** For every natural number
 $n$, the floor sequence parity count $\mathcal{F}_n$ equals the number of integer pairs $(x, y)$
@@ -129,22 +117,6 @@ public theorem_wanted ceilQuotientOddCount_asymptotic :
         C * Real.sqrt n) ∧
     Tendsto (fun n : ℕ => (ceilQuotientOddCount n : ℝ) / n) atTop
       (𝓝 (1 - Real.log 2))
-
-/-- **Counting large terms of the rounded quotient sequence.** Let $n$ be a natural number.
-Every $d$ with $1 \le d \le n$ satisfies $\lfloor n/d + 1/2 \rfloor \ge 1$, and for every
-integer $k \ge 2$ the number of $d$ with $1 \le d \le n$ and $\lfloor n/d + 1/2 \rfloor \ge k$
-is $\lfloor 2n/(2k-1) \rfloor$.
-
-Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
-Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
-Article 24.2.5, Lemma 13 (`jis-2024-24.2.5-lem-13`). -/
-public theorem_wanted round_div_sequence_card_ge (n : ℕ) :
-    ((Finset.Icc 1 n).filter (fun d : ℕ => (1 : ℤ) ≤ ⌊(n : ℚ) / (d : ℚ) + 1 / 2⌋)).card
-        = n ∧
-      ∀ k : ℕ, 2 ≤ k →
-        ((Finset.Icc 1 n).filter
-            (fun d : ℕ => (k : ℤ) ≤ ⌊(n : ℚ) / (d : ℚ) + 1 / 2⌋)).card =
-          2 * n / (2 * k - 1)
 
 /-- **Divisor-sum formula for the rounding sequence parity count.** For a positive integer $k$
 and $r \in \{1, 3\}$, let $d_{r,4}(k)$ be the number of positive divisors of $k$ congruent to

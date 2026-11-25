@@ -25,7 +25,7 @@ finitely presented terms.
 References: J.-P. Serre, *Géométrie algébrique et géométrie analytique*,
 Ann. Inst. Fourier 6 (1956), 1–42, Théorème 1 (projective case),
 https://doi.org/10.5802/aif.59; A. Grothendieck, SGA 1, Exposé XII,
-Théorème 4.4 (proper case). The bounded-complex statement follows from the
+Théorème 4.2 (proper case; Théorème 4.4 is the equivalence of categories). The bounded-complex statement follows from the
 statement for coherent sheaves by induction on the length of the complex.
 -/
 
