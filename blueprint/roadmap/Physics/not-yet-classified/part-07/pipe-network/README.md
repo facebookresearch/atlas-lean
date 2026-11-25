@@ -6,7 +6,7 @@
 
 ## B. Passive refinement
 
-- [Is Passive Pipe Flow](is-passive-pipe-flow.md)
+- [Passive pipe flow](is-passive-pipe-flow.md)
 - [Head drop in a passive pipe network](passive-pipe-flow-head-drop.md)
 - [Dissipation of a passive pipe flow](passive-pipe-flow-dissipation.md)
 - [Passive pipe flow dissipates energy](passive-pipe-flow-dissipation-nonneg.md)

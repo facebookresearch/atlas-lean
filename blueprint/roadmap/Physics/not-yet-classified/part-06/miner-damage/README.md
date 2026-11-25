@@ -3,7 +3,7 @@
 ## A. The damage sum and class counts
 
 - [Miner damage](miner-damage.md)
-- [Cycle Class Counts](cycle-class-counts.md)
+- [Cycle class counts](cycle-class-counts.md)
 - [Miner damage by cycle class](miner-damage-cycle-class-counts.md)
 
 ## B. Units, damage domain and monotonicity

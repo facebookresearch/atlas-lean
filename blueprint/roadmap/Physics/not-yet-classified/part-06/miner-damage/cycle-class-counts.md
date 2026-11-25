@@ -1,4 +1,3 @@
-# Cycle Class Counts
+# Cycle class counts
 
-Class counts of declared records: record `k` carries `r k` cycles of class `g k`, and the
-count of class `i` is the sum of `r k` over the records with `g k = i`.
+For finitely many records $k$, where record $k$ carries $r_k$ cycles of class $g(k)$, the count of class $i$ is $\sum_{k \,:\, g(k) = i} r_k$.

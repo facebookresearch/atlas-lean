@@ -1,13 +1,3 @@
 # Asymptotic normality of a consistent root of a cluster estimating equation
 
-In sandwich form: let clusters `X 0, X 1, …` be IID with law `μC` (no independence is
-assumed within a cluster: `ψ` consumes the whole cluster), and let
-`ψ : E → 𝓒 → E` satisfy, for every cluster and every `θ` in the ball of radius
-`δ > 0` about `θ₀`: `θ ↦ ψ θ x` is differentiable with derivative `Dψ θ x` obeying the
-Lipschitz uniform remainder `‖Dψ θ x - Dψ θ₀ x‖ ≤ M x ‖θ - θ₀‖` for an integrable `M`.
-Assume `E ψ θ₀ = 0` with finite second moment, `Dψ θ₀` strongly measurable and
-integrable, and the limiting Jacobian `A = E Dψ θ₀` **nonsingular**. Let `θhat n` solve
-`∑_{i<n} ψ θ (X i) = 0` with probability tending to one and converge to `θ₀` in
-probability. Then `√n (θhat n - θ₀) ⇒ Z` in distribution, where
-`⟪Z, t⟫ ~ N(0, ⟪A⁻¹ B A⁻ᵀ t, t⟫)`, where `B` is the second-moment operator of the cluster score `ψ θ₀`. All clusters share the law `μC`; cluster laws that vary between clusters or with `n`
-are not covered.
+Let $E$ be a finite-dimensional real inner product space. On a probability space, let clusters $X_0, X_1, \ldots$ be independent with common law $\mu_C$ (no independence is assumed within a cluster). Let $\psi(\theta, x) \in E$ and $\delta > 0$ be such that for every cluster $x$ and every $\theta$ with $\|\theta - \theta_0\| < \delta$, $\theta \mapsto \psi(\theta, x)$ is differentiable at $\theta$ with derivative $D\psi(\theta, x)$ satisfying $\|D\psi(\theta, x) - D\psi(\theta_0, x)\| \le M(x)\,\|\theta - \theta_0\|$, where $M$ is measurable and $\mu_C$-integrable. Assume $x \mapsto \psi(\theta_0, x)$ is measurable with $\int \|\psi(\theta_0, x)\|^2\, d\mu_C < \infty$ and $\int \psi(\theta_0, x)\, d\mu_C = 0$, that $x \mapsto D\psi(\theta_0, x)$ is strongly measurable and integrable, and that $A = \int D\psi(\theta_0, x)\, d\mu_C$ is invertible. Let each estimator $\hat\theta_n$ be almost-everywhere measurable, with $P\big(\sum_{i<n} \psi(\hat\theta_n, X_i) \ne 0\big) \to 0$ and $\hat\theta_n \to \theta_0$ in probability. Let $Z$ be an almost-everywhere measurable random vector in $E$ on a probability space with $\langle Z, t\rangle \sim \mathcal{N}\big(0, \langle A^{-1} B A^{-*} t, t\rangle\big)$ for every $t$, where $B$ is the second-moment operator of $\psi(\theta_0, \cdot)$ under $\mu_C$. Then $\sqrt{n}\,(\hat\theta_n - \theta_0) \to Z$ in distribution.

@@ -2,7 +2,7 @@
 
 ## A. Equilibrium and the amount-parameterized concentration
 
-- [Ventilation Equilibrium](ventilation-equilibrium.md)
+- [Ventilation equilibrium concentration](ventilation-equilibrium.md)
 - [Ventilation equilibrium without an indoor source](ventilation-equilibrium-zero-source.md)
 
 ## C. Ventilation concentration from the canonical amount

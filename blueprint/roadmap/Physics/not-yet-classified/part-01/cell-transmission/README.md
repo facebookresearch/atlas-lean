@@ -1,8 +1,8 @@
 # Cell Transmission
 
 - [Capacity of the triangular fundamental diagram](capacity.md)
-- [Demand](demand.md)
-- [Supply](supply.md)
+- [Cell demand](demand.md)
+- [Receiving supply of a cell](supply.md)
 - [Face Flux](face-flux.md)
 - [Nonnegative face flux in the cell transmission model](face-flux-nonneg-of-le.md)
 - [Cell-transmission face flux is at most the upstream demand](face-flux-le-demand.md)

@@ -25,7 +25,7 @@
 
 ## D. Mass-flow view and mass composition
 
-- [Mass Flow](mass-flow.md)
+- [Mass flow of a stream](mass-flow.md)
 - [Mass fractions of a stream are mole fractions of its mass flows](mass-fraction-eq-mole-fraction-mass-flow.md)
 - [Mass composition of a stream](mass-composition.md)
 - [Mass composition undefined for a nonpositive molar mass](mass-composition-eq-none-of-nonpos-at.md)

@@ -1,7 +1,7 @@
 # Ideal Airfoil Models
 
 - [Joukowski map](joukowski.md)
-- [Far Field Zeta](far-field-zeta.md)
+- [Far-field inverse Joukowski branch](far-field-zeta.md)
 - [Joukowski map on the circle](joukowski-circle.md)
 - [Radicand mem slit Plane](radicand-mem-slit-plane.md)
 - [Far-field inverse of the Joukowski map](joukowski-far-field-zeta.md)

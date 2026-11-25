@@ -11,7 +11,7 @@
 
 ## E. The isentropic mass flux
 
-- [Isentropic Mass Flux](isentropic-mass-flux.md)
+- [Isentropic mass flux](isentropic-mass-flux.md)
 - [Mass flux of an isentropic state](mass-flux-eq-isentropic-mass-flux.md)
 - [Derivative of the isentropic mass flux](has-deriv-at-isentropic-mass-flux.md)
 
@@ -32,7 +32,7 @@
 
 ## J. Normal-shock jump conditions and branch ratios
 
-- [Is Normal Shock Jump](is-normal-shock-jump.md)
+- [Normal-shock jump conditions](is-normal-shock-jump.md)
 
 ## K. The two normal-shock branches
 

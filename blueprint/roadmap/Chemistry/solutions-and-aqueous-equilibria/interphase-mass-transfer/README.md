@@ -14,7 +14,7 @@ concentration, and the volumetric rate multiplies it by the interfacial area per
 - [The volumetric rate vanishes exactly at equilibrium](volumetric-rate-eq-zero-iff.md)
 - [Doubling the partial pressure](volumetric-rate-pressure-double.md)
 - [The volumetric rate with a volatility-form Henry constant](volumetric-rate-volatility-form.md)
-- [Overall KL](overall-kl.md)
+- [Overall liquid-side mass-transfer coefficient](overall-kl.md)
 - [Overall gas-side mass-transfer coefficient](overall-kg.md)
 - [Resistance addition for the overall liquid-side coefficient](overall-kl-inv-eq.md)
 - [Resistance addition for the overall gas-side coefficient](overall-kg-inv-eq.md)

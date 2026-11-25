@@ -1,9 +1,9 @@
 # Drying
 
 - [Wet-basis moisture fraction](wet-basis.md)
-- [Dry Basis](dry-basis.md)
-- [Dry Of Wet](dry-of-wet.md)
-- [Wet Of Dry](wet-of-dry.md)
+- [Dry-basis moisture ratio](dry-basis.md)
+- [Dry basis from wet basis](dry-of-wet.md)
+- [Wet basis from dry basis](wet-of-dry.md)
 - [The wet-basis moisture fraction is nonnegative](wet-basis-nonneg.md)
 - [Wet-basis moisture is below one](wet-basis-lt-one.md)
 - [The dry-basis moisture ratio is nonnegative](dry-basis-nonneg.md)

@@ -58,7 +58,7 @@
 ## L. Cylindrical Poiseuille flow
 
 - [Pipe Poiseuille velocity](pipe-poiseuille-velocity.md)
-- [Pipe Poiseuille Pressure](pipe-poiseuille-pressure.md)
+- [Pipe Poiseuille pressure](pipe-poiseuille-pressure.md)
 - [Pipe Poiseuille Fluid](pipe-poiseuille-fluid.md)
 - [Pipe Poiseuille flow](pipe-poiseuille-flow.md)
 

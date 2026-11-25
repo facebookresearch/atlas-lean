@@ -1,3 +1,3 @@
-# Unit Conversion Linear Equiv
+# Unit conversion as a linear equivalence
 
-A positive unit-scale conversion as an invertible real linear map.
+For a positive real scale factor $a$, the unit conversion $x \mapsto a x$ is defined as an invertible linear map $\mathbb{R} \to \mathbb{R}$.

@@ -1,3 +1,3 @@
-# Celsius To Kelvin Affine Equiv
+# Celsius-to-Kelvin affine equivalence
 
-Celsius-to-Kelvin conversion as an affine equivalence of real coordinates.
+The Celsius-to-Kelvin conversion is the affine equivalence of $\mathbb{R}$ given by the translation $x \mapsto x + 273.15$.
