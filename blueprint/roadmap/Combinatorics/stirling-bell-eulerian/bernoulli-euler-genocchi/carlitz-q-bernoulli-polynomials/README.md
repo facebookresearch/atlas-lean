@@ -32,3 +32,5 @@
 - [Extended Carlitz $q$-Bernoulli numbers via $q$-Stirling numbers](extended-carlitz-beta-eq-sum-q-stirling.md)
 - [Carlitz $q$-Bernoulli numbers via $q$-Stirling numbers](carlitz-beta-add-mul-succ-eq-sum-q-stirl.md)
 - [Sum of consecutive Bernoulli numbers via Stirling numbers](bernoulli-add-bernoulli-succ-eq-sum-stir.md)
+
+- [Is Carlitz Type With pow](is-carlitz-type-with-pow.md)

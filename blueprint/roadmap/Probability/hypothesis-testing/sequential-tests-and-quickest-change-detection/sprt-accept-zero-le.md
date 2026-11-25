@@ -19,4 +19,4 @@ The proof splits the event according to the value $n$ of the stopping time. On $
 
 ## Background
 
-- [Wald's equation](../../martingales/wald-s-equations/wald-equation.md): combined with these inequalities (ignoring overshoot) it gives Wald's approximations (a3) to the average sample numbers $\mathsf E_0 N$ and $\mathsf E_1 N$.
+- [Wald's equation](../../martingales/wald-s-equations/wald-s-equation/wald-equation.md): combined with these inequalities (ignoring overshoot) it gives Wald's approximations (a3) to the average sample numbers $\mathsf E_0 N$ and $\mathsf E_1 N$.

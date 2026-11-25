@@ -362,7 +362,8 @@ theorem walkMax_eq_zero_of_forall {l : List ℝ} (h : ∀ j ≤ l.length, (l.tak
   rw [← hsum, List.prefix_iff_eq_take.1 hs]
   exact h _ hs.length_le
 
-/-- The first ladder epoch is unique. -/
+/-- The first ladder epoch is unique: at most one prefix `l.take j` with `j ≤ l.length` ends at the
+first ladder epoch (a list need not have one). -/
 theorem eq_of_isFirstLadder_take {l : List ℝ} {j k : ℕ} (hj : IsFirstLadder (l.take j))
     (hk : IsFirstLadder (l.take k)) (hjl : j ≤ l.length) (hkl : k ≤ l.length) : j = k := by
   have key : ∀ {a b : ℕ}, IsFirstLadder (l.take a) → IsFirstLadder (l.take b) → b ≤ l.length →
@@ -400,16 +401,21 @@ variable {β : Type*} [Fintype β]
 /-- **Expectation over an iid score sequence of length `n`.** Letters `w₀, …, w_{n-1}` are drawn
 independently from the law `q` on the finite alphabet `β` (sequence likelihood `bgLik q w`, from
 `Cslib.Bioinformatics.Motifs.PWM`) and scored by `f`; `scoreExpect q f n F` is the expectation of
-the functional `F` of the score list `[f w₀, …, f w_{n-1}]`. -/
+the functional `F` of the score list `[f w₀, …, f w_{n-1}]`. This reading needs `q` to be a
+probability vector; for other real weights it is a weighted sum, which need not be an
+expectation. For `n = 0` it is `F []`. -/
 noncomputable def scoreExpect (q f : β → ℝ) (n : ℕ) (F : List ℝ → ℝ) : ℝ :=
   ∑ w : Fin n → β, bgLik q w * F (List.ofFn fun i => f (w i))
 
 open Classical in
-/-- The probability that the score list of an iid sequence of length `n` satisfies `P`. -/
+/-- The probability that the score list of an iid sequence of length `n` satisfies `P`, when `q`
+is a probability vector; for other real weights, the total weight of the words whose score list
+satisfies `P`. -/
 noncomputable def scoreProb (q f : β → ℝ) (n : ℕ) (P : List ℝ → Prop) : ℝ :=
   scoreExpect q f n fun l => if P l then 1 else 0
 
-/-- The **moment generating function** `E[e^{θX}] = ∑_b q_b e^{θ f(b)}` of one score. -/
+/-- The **moment generating function** `E[e^{θX}] = ∑_b q_b e^{θ f(b)}` of one score (an
+expectation when `q` is a probability vector). -/
 noncomputable def scoreMGF (q f : β → ℝ) (θ : ℝ) : ℝ := ∑ b, q b * exp (θ * f b)
 
 section Expect
@@ -466,7 +472,8 @@ theorem scoreExpect_const (hq : IsDist q) (n : ℕ) (c : ℝ) :
   | succ n ih => rw [scoreExpect_succ]; simp only [ih, ← sum_mul, hq.2, one_mul]
 
 /-- **Independence of disjoint blocks** (Fubini for iid words): a word of length `k + m` is a word
-of length `k` followed by an independent word of length `m`. -/
+of length `k` followed by an independent word of length `m`. The identity holds for all real
+weights `q`; it is an independence statement when `q` is a probability vector. -/
 theorem scoreExpect_append (k m : ℕ) (F : List ℝ → ℝ) :
     scoreExpect q f (k + m) F =
       scoreExpect q f k fun u => scoreExpect q f m fun v => F (u ++ v) := by
@@ -476,7 +483,8 @@ theorem scoreExpect_append (k m : ℕ) (F : List ℝ → ℝ) :
       rw [Nat.add_right_comm, scoreExpect_succ, scoreExpect_succ]
       exact sum_congr rfl fun a _ => by rw [ih]; rfl
 
-/-- Splitting a word at position `k`: the first `k` scores and the rest are independent. -/
+/-- Splitting a word at position `k`: the first `k` scores and the rest are independent (for a
+probability vector `q`; the identity holds for all real weights). -/
 theorem scoreExpect_take_drop {k n : ℕ} (hk : k ≤ n) (Φ : List ℝ → List ℝ → ℝ) :
     scoreExpect q f n (fun l => Φ (l.take k) (l.drop k)) =
       scoreExpect q f k fun u => scoreExpect q f (n - k) fun v => Φ u v := by
@@ -560,7 +568,9 @@ theorem existsUnique_scoreMGF_eq_one (hq : IsDist q) (hq0 : ∀ b, 0 < q b)
   simpa only [scoreMGF_eq_pairMGF f hq] using
     existsUnique_pairMGF_eq_one hq hq0 hneg' ⟨b, b, hb⟩
 
-/-- **The exponential martingale**: `E[e^{θ Sₙ}] = E[e^{θX}]ⁿ`; at the Cramér root it is `1`. -/
+/-- **The exponential martingale**: `E[e^{θ Sₙ}] = E[e^{θX}]ⁿ` for all real weights `q`; at a root
+of `E[e^{θX}] = 1` it is `1`, which for a probability vector `q` is the constant mean of the
+martingale `e^{θ Sₙ}`. -/
 theorem scoreExpect_exp_sum (θ : ℝ) (n : ℕ) :
     scoreExpect q f n (fun l => exp (θ * l.sum)) = scoreMGF q f θ ^ n := by
   induction n with
@@ -637,7 +647,8 @@ section Ladder
 
 variable {q : β → ℝ} (f : β → ℝ)
 
-/-- **Exchangeability**: reversing an iid score sequence does not change its law. -/
+/-- **Exchangeability**: reversing an iid score sequence does not change its law. The identity
+holds for all real weights `q`; it is a statement about laws when `q` is a probability vector. -/
 theorem scoreExpect_reverse (n : ℕ) (F : List ℝ → ℝ) :
     scoreExpect q f n (fun l => F l.reverse) = scoreExpect q f n F := by
   unfold scoreExpect
@@ -663,15 +674,15 @@ theorem scoreProb_reverse (n : ℕ) (P : List ℝ → Prop) :
   exact scoreExpect_reverse f n fun l => @ite ℝ (P l) (Classical.propDecidable _) 1 0
 
 /-- **The Lindley process has the law of the walk maximum**: `P(Wₙ ≥ t) = P(max_{k ≤ n} S_k ≥ t)`,
-so at a Cramér root `θ ≥ 0` the reflected walk is tight, `P(Wₙ ≥ t) ≤ e^{-θ t}` uniformly in
-`n` (`scoreProb_le_walkMax_le`). -/
+for all real weights `q`. So, for a probability vector `q` and a Cramér root `θ ≥ 0`, the
+reflected walk is tight, `P(Wₙ ≥ t) ≤ e^{-θ t}` uniformly in `n` (`scoreProb_le_walkMax_le`). -/
 theorem scoreProb_le_lindley (n : ℕ) (t : ℝ) :
     scoreProb q f n (fun l => t ≤ lindley l) = scoreProb q f n (fun l => t ≤ walkMax l) := by
   rw [← scoreProb_reverse f n (fun l => t ≤ walkMax l)]
   exact scoreProb_congr f fun l _ => by rw [lindley_eq_walkMax_reverse]
 
 /-- **Regeneration at a fixed time**: the first `k` scores and the remaining `n - k` are
-independent. -/
+independent (for a probability vector `q`; the product identity holds for all real weights). -/
 theorem scoreExpect_take_mul_drop {k n : ℕ} (hk : k ≤ n) (F G : List ℝ → ℝ) :
     scoreExpect q f n (fun l => F (l.take k) * G (l.drop k)) =
       scoreExpect q f k F * scoreExpect q f (n - k) G := by
@@ -683,7 +694,8 @@ open Classical in
 `{τ₊ = k}` the walk after `τ₊` is a fresh iid walk, independent of the ladder segment up to `τ₊`
 (hence of the ladder height). For any functionals `H` of the segment and `G` of the remainder,
 `E[H; τ₊ = k] · E[G]` factorizes. Iterating (`scoreProb_two_ladders`) the successive
-(ladder epoch gap, ladder height) pairs are iid. -/
+(ladder epoch gap, ladder height) pairs are iid. The product identity holds for all real weights
+`q`; the probabilistic reading needs a probability vector. -/
 theorem scoreExpect_firstLadder_regeneration {k n : ℕ} (hk : k ≤ n) (H G : List ℝ → ℝ) :
     scoreExpect q f n (fun l =>
         (if IsFirstLadder (l.take k) then H (l.take k) else 0) * G (l.drop k)) =
@@ -692,7 +704,8 @@ theorem scoreExpect_firstLadder_regeneration {k n : ℕ} (hk : k ≤ n) (H G : L
   scoreExpect_take_mul_drop f hk (fun u => if IsFirstLadder u then H u else 0) G
 
 /-- **Independent blocks**: an event about the first `k` scores and an event about the rest have
-independent probabilities. -/
+independent probabilities (for a probability vector `q`; the product identity holds for all real
+weights). -/
 theorem scoreProb_take_and_drop {k n : ℕ} (hk : k ≤ n) (A B : List ℝ → Prop) :
     scoreProb q f n (fun l => A (l.take k) ∧ B (l.drop k)) =
       scoreProb q f k A * scoreProb q f (n - k) B := by
@@ -742,7 +755,8 @@ theorem le_walkMax_iff {l : List ℝ} {t : ℝ} (ht : 0 < t) :
 open Classical in
 /-- **The defective renewal equation for the walk maximum** (finite horizon): for `t > 0`,
 `P(max_{j ≤ n} S_j ≥ t) = ∑_{k ≤ n} E[P_{n-k}(max ≥ t - H); τ₊ = k]`, where `H` is the ladder
-height. The tail of the maximum is determined by the ladder-height distribution
+height; the identity holds for all real weights `q`. For a probability vector `q`, the tail of the
+maximum is determined by the ladder-height distribution
 `P(τ₊ = k, H ∈ ·) = scoreProb q f k (fun u => IsFirstLadder u ∧ u.sum ∈ ·)`. -/
 theorem scoreProb_le_walkMax_eq_sum {t : ℝ} (ht : 0 < t) (n : ℕ) :
     scoreProb q f n (fun l => t ≤ walkMax l) = ∑ k ∈ range (n + 1),
@@ -824,7 +838,9 @@ section Boundary
 
 variable {q : β → ℝ} (f : β → ℝ)
 
-/-- **No positive scores** (`P(X > 0) = 0`): the maximal segment score is `0` almost surely. -/
+/-- **No positive scores** (`P(X > 0) = 0`): for nonnegative weights `q` with `f b ≤ 0` whenever
+`q b > 0`, the event `{Mₙ > 0}` has weight `0`; for a probability vector `q` the maximal segment
+score is `0` almost surely. -/
 theorem scoreProb_maxSegScore_pos_eq_zero (hq : ∀ b, 0 ≤ q b) (hf : ∀ b, 0 < q b → f b ≤ 0)
     (n : ℕ) : scoreProb q f n (fun l => 0 < maxSegScore l) = 0 := by
   refine sum_eq_zero fun w _ => ?_
@@ -839,8 +855,8 @@ theorem scoreProb_maxSegScore_pos_eq_zero (hq : ∀ b, 0 ≤ q b) (hf : ∀ b, 0
     have : bgLik q w = 0 := prod_eq_zero (mem_univ i) (le_antisymm hi (hq _))
     simp [this]
 
-/-- With `k` copies of a letter of positive score `c`, the walk reaches `k c` with probability at
-least `q_b^k`. -/
+/-- For nonnegative weights `q`, a letter `b₀` and `t ≤ k f(b₀)`, the sum of `k` scores is at least
+`t` with probability (weight) at least `q_{b₀}^k`, the weight of the word of `k` copies of `b₀`. -/
 theorem pow_le_scoreProb_le_sum (hq : ∀ b, 0 ≤ q b) (b₀ : β) (k : ℕ) {t : ℝ}
     (ht : t ≤ k * f b₀) : q b₀ ^ k ≤ scoreProb q f k (fun l => t ≤ l.sum) := by
   induction k generalizing t with

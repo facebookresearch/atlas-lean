@@ -28,8 +28,11 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The classical odd-prime LTE formula for signed integer bases, expressed with finite
-`p`-adic valuations.  This is a wrapper around `Int.emultiplicity_pow_sub_pow`. -/
+/-- **Lifting the exponent for odd primes.** Let $p$ be an odd prime, let $a \ne b$ be integers
+such that $p$ divides $a - b$ but does not divide $ab$, and let $n \ge 1$ be a natural number.
+Then
+$$v_p(a^n - b^n) = v_p(n) + v_p(a - b),$$
+where $v_p$ denotes the $p$-adic valuation. -/
 theorem padicValInt_pow_sub_pow (p : ℕ) [Fact (Nat.Prime p)] {a b : ℤ} {n : ℕ}
     (hodd : Odd p) (hne : a ≠ b) (hcop : ¬ (p : ℤ) ∣ a * b)
     (hdiv : (p : ℤ) ∣ a - b) (hn : n ≠ 0) :
@@ -45,7 +48,7 @@ theorem padicValInt_pow_sub_pow (p : ℕ) [Fact (Nat.Prime p)] {a b : ℤ} {n : 
   have hem := Int.emultiplicity_pow_sub_pow hp hodd hdiv ha n
   have hval (z : ℤ) : padicValInt p z = (emultiplicity (p : ℤ) z).toNat := by
     rw [padicValInt, ← Nat.toNat_emultiplicity, Int.emultiplicity_natAbs]
-  rw [hval, hval, ← Nat.toNat_emultiplicity]
+  rw [hval, hval, Nat.padicValNat_def, ← Nat.toNat_emultiplicity]
   rw [hem, ENat.toNat_add
     (finiteMultiplicity_iff_emultiplicity_ne_top.mp hbase)
     (finiteMultiplicity_iff_emultiplicity_ne_top.mp hnfin), add_comm]

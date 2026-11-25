@@ -36,10 +36,12 @@ harmless. Compared with the formal-conjectures statement `ErdosProblems/722.lean
 code imported).
 -/
 
-/-- Erdős Problem 722 (existence of designs): for all `r < k` and all sufficiently large `n`
-satisfying the divisibility conditions `C(k - i, r - i) ∣ C(n - i, r - i)` for `0 ≤ i < r`, there
-is a Steiner system `S(r, k, n)`: a family of `k`-element subsets of `{1, …, n}` such that every
-`r`-element subset is contained in exactly one member of the family. -/
+/-- **Existence conjecture for Steiner systems.** The statement that for all natural numbers
+$r < k$ there is an $N$ such that for every $n \ge N$ with
+$\binom{k-i}{r-i} \mid \binom{n-i}{r-i}$ for all $0 \le i < r$, there is a Steiner system
+$S(r, k, n)$: a family $F$ of $k$-element subsets of $\{0, \dots, n-1\}$ such that every
+$r$-element subset of $\{0, \dots, n-1\}$ is contained in exactly one member of $F$
+(Erdős Problem 722). -/
 def steinerSystemsExistForLargeN : Prop :=
   ∀ r k : ℕ, r < k → ∀ᶠ n : ℕ in Filter.atTop,
     (∀ i < r, (k - i).choose (r - i) ∣ (n - i).choose (r - i)) →
@@ -47,10 +49,17 @@ def steinerSystemsExistForLargeN : Prop :=
         ∀ S : Finset (Fin n), S.card = r → ∃! A, A ∈ F ∧ S ⊆ A
 
 /--
-Resolved true: Keevash proved the existence conjecture for designs: for fixed `r < k` and all
-sufficiently large `n` satisfying the divisibility conditions, a Steiner system `S(r, k, n)` exists
-(earlier cases: Kirkman for `(2, 3)`, Hanani, Wilson for `r = 2`); erdosproblems.com/722 lists the
-problem as proved. Source: T. F. Bloom, Erdős Problems, Problem #722,
+**Keevash's existence theorem for Steiner systems.** For all natural numbers $r < k$ there is
+an $N$ such that for every $n \ge N$ with $\binom{k-i}{r-i} \mid \binom{n-i}{r-i}$ for all
+$0 \le i < r$, there is a Steiner system $S(r, k, n)$: a family $F$ of $k$-element subsets of
+$\{0, \dots, n-1\}$ such that every $r$-element subset of $\{0, \dots, n-1\}$ is contained in
+exactly one member of $F$.
+
+Keevash proved the existence conjecture for designs, which gives this statement (earlier cases:
+Kirkman for $(r, k) = (2, 3)$, Hanani, Wilson for $r = 2$); erdosproblems.com/722 lists the
+problem as proved.
+
+Source: T. F. Bloom, Erdős Problems, Problem #722,
 https://www.erdosproblems.com/722 (status PROVED); resolution: P. Keevash, The existence of designs,
 arXiv:1401.3665 (2014), abstract: proves the existence conjecture for combinatorial designs
 (Steiner's question of 1853): the divisibility conditions suffice for all large n;

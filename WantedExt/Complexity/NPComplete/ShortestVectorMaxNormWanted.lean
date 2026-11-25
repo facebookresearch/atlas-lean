@@ -20,7 +20,7 @@ footnote 1 (van Emde Boas's "Closest Vector" is the shortest vector problem in t
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity

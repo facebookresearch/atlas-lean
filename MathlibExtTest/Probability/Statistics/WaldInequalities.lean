@@ -64,7 +64,7 @@ theorem fairCoin_ac : fairCoin ≪ biasedCoin :=
   ofFintype_absolutelyContinuous _ _ (fun _ => by simp) (fun b => by cases b <;> simp)
 
 /-- The two coins are distinct laws, so the instance is not degenerate. -/
-example : fairCoin ≠ biasedCoin := by
+theorem fairCoin_ne_biasedCoin : fairCoin ≠ biasedCoin := by
   intro h
   have := congrArg (fun μ : Measure Bool => μ {true}) h
   simp only [fairCoin, biasedCoin, PMF.toMeasure_apply_singleton _ _ (measurableSet_singleton _),

@@ -1,0 +1,3 @@
+# Priority tree of a treap
+
+Let $\kappa$ be a type of keys and $\nu$ a type of values; a treap tree is empty or a node made of a left subtree, a key, a value, a natural-number priority and a right subtree. The priority tree of a treap tree $t$ is the binary tree of natural numbers of the same shape that keeps only the priorities: the empty treap tree goes to the empty binary tree, and a node with left subtree $L$, any key and value, priority $p$ and right subtree $R$ goes to the binary-tree node with key $p$ whose left and right subtrees are the priority trees of $L$ and $R$. Keys and values are forgotten.

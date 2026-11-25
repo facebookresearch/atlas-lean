@@ -1,0 +1,3 @@
+# STAR 3-COLORABILITY OF PLANAR BIPARTITE GRAPHS as a decision problem
+
+The decision problem STAR 3-COLORABILITY OF PLANAR BIPARTITE GRAPHS accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of pairs $(n, E)$ (a natural number and a list of pairs), to an instance that is well-formed and feasible for STAR 3-COLORABILITY OF PLANAR BIPARTITE GRAPHS. It rejects every bitstring that does not decode to such an instance.

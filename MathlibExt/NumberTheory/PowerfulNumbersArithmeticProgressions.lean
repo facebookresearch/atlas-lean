@@ -19,9 +19,9 @@ import Mathlib.Tactic.Ring.RingNF
 
 namespace MetaMathlibExt
 
-/-- For every length `k`, there is a nonconstant arithmetic progression of `k` positive
-powerful numbers. `arbitrarily_long_arithmetic_progressions_of_powerful_numbers` is the
-source-shaped form. -/
+/-- **Arithmetic progressions of 2-full numbers of every length.** For every natural number
+$k$ there are positive integers $a$ and $d$ such that $a + id$ is $2$-full (powerful) for every
+natural number $i < k$. -/
 theorem arbitrarily_long_arithmetic_progressions_of_powerful_numbers_general (k : ℕ) :
     ∃ a d : ℕ, 0 < a ∧ 0 < d ∧
       ∀ i : ℕ, i < k → Nat.IsKFull 2 (a + i * d) := by
@@ -45,10 +45,11 @@ theorem arbitrarily_long_arithmetic_progressions_of_powerful_numbers_general (k 
 
 set_option linter.unusedVariables false in
 /--
-For every length at least three, there is a nonconstant arithmetic progression of positive
-powerful numbers.
+**Arbitrarily long arithmetic progressions of powerful numbers.** For every integer $k \ge 3$
+there are positive integers $a$ and $d$ such that each of the $k$ numbers $a + id$ with
+$0 \le i < k$ is powerful: every prime that divides $a + id$ has its square dividing $a + id$.
 
-Provenance: Tsz Ho Chan, "Arithmetic Progressions Among Powerful Numbers",
+Source: Tsz Ho Chan, "Arithmetic Progressions Among Powerful Numbers",
 Journal of Integer Sequences 26 (2023), Article 23.1.1, Theorem `thm-longAP`,
 source lines 97–99,
 <https://cs.uwaterloo.ca/journals/JIS/VOL26/Chan/chan33.tex>.

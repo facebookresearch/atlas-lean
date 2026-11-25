@@ -46,7 +46,9 @@ Preparation, tests and reporting make no model calls. Repository CI never launch
 ```bash
 git clone https://github.com/RemyDegenne/lean-quality-indicators ../lean-quality-indicators
 git -C ../lean-quality-indicators checkout 0f3f1778e65c3118ffb9bf4644e55b2b406abede
-git clone --depth 1 --branch v4.35.0 https://github.com/leanprover/lean4 ../lean-core
+# The Lean core checkout must be the release named in `lean-toolchain`.
+git clone --depth 1 --branch "$(cut -d: -f2 lean-toolchain)" \
+  https://github.com/leanprover/lean4 ../lean-core
 
 # --compile-declaration-index needs Mathlib built at the manifest pins
 # (for example `lake exe cache get`); it does not judge theorems.
