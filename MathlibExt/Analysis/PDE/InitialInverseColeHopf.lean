@@ -138,7 +138,8 @@ theorem initialInverseProfile_continuousOn {u : ℝ → ℝ → ℝ}
     (hc : ContinuousOn (Function.uncurry u) (Ici 0 ×ˢ univ)) (ν a : ℝ) :
     ContinuousOn (Function.uncurry (initialInverseProfile ν u a)) (Ici 0 ×ˢ univ) :=
   (((initialInverseNormalization_continuousOn hc ν a).comp continuousOn_fst
-    (fun _ hp => hp.1)).sub ((primitive_continuousOn hc a).div_const (2 * ν))).rexp
+    (fun p (hp : p ∈ Ici (0 : ℝ) ×ˢ (univ : Set ℝ)) => hp.1)).sub
+      ((primitive_continuousOn hc a).div_const (2 * ν))).rexp
 
 
 private theorem positive_slice {u : ℝ → ℝ → ℝ}

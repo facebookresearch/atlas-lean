@@ -75,8 +75,12 @@ variable {K L : Type*} [Field K] [Field L] [NumberField K] [NumberField L]
 variable (v : HeightOneSpectrum (𝓞 K)) (w : HeightOneSpectrum (𝓞 L))
   [w.asIdeal.LiesOver v.asIdeal]
 
-/-- The canonical map on finite-place completion integer rings preserves the
-inertia degree. -/
+/-- **Completion preserves the inertia degree.** Let $L/K$ be an extension of number fields, let
+$v$ be a nonzero prime ideal of $\mathcal{O}_K$ and $w$ a nonzero prime ideal of $\mathcal{O}_L$
+lying over $v$. Let $\mathcal{O}_{K_v}$ and $\mathcal{O}_{L_w}$ be the rings of integers of the
+completions $K_v$ and $L_w$, with $\mathcal{O}_{L_w}$ an algebra over $\mathcal{O}_{K_v}$ via the
+canonical map. Then the inertia degree of the maximal ideal of $\mathcal{O}_{L_w}$ over
+$\mathcal{O}_{K_v}$ equals the inertia degree of $w$ over $v$. -/
 theorem inertiaDeg_adicCompletionIntegersMap :
     (IsLocalRing.maximalIdeal (w.adicCompletionIntegers L)).inertiaDeg
       (v.adicCompletionIntegers K) =

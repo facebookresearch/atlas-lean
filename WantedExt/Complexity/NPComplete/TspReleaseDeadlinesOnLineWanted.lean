@@ -16,7 +16,7 @@ windows", Networks 22(3) (1992), 263-282, doi:10.1002/net.3230220305, Theorem 2.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Data.Nat.Dist

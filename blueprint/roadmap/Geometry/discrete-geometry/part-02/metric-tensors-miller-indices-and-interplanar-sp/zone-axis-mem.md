@@ -1,0 +1,3 @@
+# The zone axis lies in both plane families
+
+Let $\Lambda$ be a Bravais lattice in $\mathbb{R}^3$ with primitive vectors $a_0, a_1, a_2$, the columns of its invertible basis matrix $B$. Its crystallographic reciprocal basis $b_0, b_1, b_2$ consists of the columns of $(B^{-1})^{\mathsf T}$ (no factor $2\pi$). For integer indices $h = (h_0, h_1, h_2)$, the reciprocal vector is $G_h = \sum_j h_j b_j$. The lattice direction $[u]$ for integer $u$ is $\sum_j u_j a_j$. For integer triples $h, h'$, the zone axis is the integer cross product $h \times h'$. Then $G_h \cdot [h \times h'] = 0$ and $G_{h'} \cdot [h \times h'] = 0$.

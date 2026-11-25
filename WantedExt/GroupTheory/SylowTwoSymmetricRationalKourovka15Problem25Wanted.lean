@@ -34,28 +34,39 @@ rational if and only if every element `g` is conjugate to `gᵏ` for every `k` c
 groups of order `1` and `2`).
 -/
 
-/-- `G` is rational in the conjugacy formulation: every element `g` is conjugate to `g ^ k` for
-every `k` coprime to the order of `g`. For finite groups this is equivalent to every irreducible
-complex character taking only rational values. -/
+/-- **Rational group (conjugacy form, Kourovka 15.25).** A group $G$ is rational when every element
+$g \in G$ is conjugate in $G$ to $g^k$ for every natural number $k$ coprime to the order of $g$ (an
+element of infinite order counts as having order $0$, so for it only $k = 1$ qualifies).
+
+For finite groups this is equivalent to every irreducible complex character taking only rational
+values. -/
 def IsRationalGroup (G : Type*) [Group G] : Prop :=
   ∀ (g : G) (k : ℕ), k.Coprime (orderOf g) → IsConj g (g ^ k)
 
-/-- Kourovka 15.25 (Ya. G. Berkovich): for every `n`, every Sylow `2`-subgroup of the symmetric
-group `S_{2ⁿ}` is rational. -/
+/-- **Kourovka Problem 15.25 (statement).** The statement that for every natural number $n$, every
+Sylow $2$-subgroup $P$ of the symmetric group $S_{2^n}$ on $2^n$ points is rational as a group in
+its own right: every $g \in P$ is conjugate within $P$ to $g^k$ for every natural number $k$ coprime
+to the order of $g$. -/
 def sylowTwoSubgroupSymmetricRational : Prop :=
   ∀ (n : ℕ) (P : Sylow 2 (Equiv.Perm (Fin (2 ^ n)))),
     IsRationalGroup (P : Subgroup (Equiv.Perm (Fin (2 ^ n))))
 
 /--
-Resolved true: the Kourovka Archive answers 15.25 "Yes, they are" (A. Mann): a Sylow `2`-subgroup
-`Tₙ` of `S_{2ⁿ}` is the wreath product of `T_{n-1}` with a group of order `2`, which is rational
-when `T_{n-1}` is (Kletzing, Corollary 70), and induction on `n` applies. Source: E. I. Khukhro and
-V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue,
-arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 15.25 (Ya. G. Berkovich); resolution:
-A. Mann, letter of 1 October 2002, as recorded in the Kourovka Archive, Problem 15.25, using D.
-Kletzing, Structure and representations of Q-groups, Lecture Notes in Math. 1084, Springer, Berlin,
-1984, Corollary 70, Kourovka Archive, Problem 15.25 (answer: Yes, they are; T_n = T_(n-1) wr C_2 and
-wreath products with C_2 preserve rationality), https://arxiv.org/abs/1401.0300v49.
+**Sylow 2-subgroups of the symmetric groups of degree $2^n$ are rational (Kourovka 15.25).** For
+every natural number $n$, every Sylow $2$-subgroup $P$ of the symmetric group $S_{2^n}$ on $2^n$
+points is rational as a group in its own right: every $g \in P$ is conjugate within $P$ to $g^k$ for
+every natural number $k$ coprime to the order of $g$.
+
+A Sylow $2$-subgroup $T_n$ of $S_{2^n}$ is the wreath product of $T_{n-1}$ with a group of order
+$2$, which is rational when $T_{n-1}$ is (Kletzing, Corollary 70), so induction on $n$ applies.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
+Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 15.25 (Ya. G.
+Berkovich); resolution: A. Mann, letter of 1 October 2002, as recorded in the Kourovka Archive,
+Problem 15.25, using D. Kletzing, Structure and representations of Q-groups, Lecture Notes in Math.
+1084, Springer, Berlin, 1984, Corollary 70, Kourovka Archive, Problem 15.25 (answer: Yes, they are;
+T_n = T_(n-1) wr C_2 and wreath products with C_2 preserve rationality),
+https://arxiv.org/abs/1401.0300v49.
 -/
 public theorem_wanted sylowTwoSubgroupSymmetricRational_holds : sylowTwoSubgroupSymmetricRational
 

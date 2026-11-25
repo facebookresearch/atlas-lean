@@ -1,0 +1,16 @@
+# Solid Frobenius Comparison
+
+- [Torsion Coefficients](torsion-coefficients.md)
+- [Normalized Frobenius](normalized-frobenius.md)
+- [Discrete Unit Induction](discrete-unit-induction.md)
+- [Compact Frobenius Unit](compact-frobenius-unit.md)
+- [Almost Frobenius Unit](almost-frobenius-unit.md)
+- [Phi Enhancement](phi-enhancement.md)
+- [Local Fp Scalars](local-fp-scalars.md)
+- [Fp Unit Functor](fp-unit-functor.md)
+- [Fp Unit Hom Functor](fp-unit-hom-functor.md)
+- [Local RH](local-rh.md)
+- [Local RHFully Faithful](local-rhfully-faithful.md)
+- [Local RHPerfect](local-rhperfect.md)
+- [Local RHEssentially Perfect](local-rhessentially-perfect.md)
+- [Etale Coefficient Operations](etale-coefficient-operations.md)

@@ -21,7 +21,7 @@ Theory, Series B 41 (1986), 141-181, doi:10.1016/0095-8956(86)90042-1 (the class
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Combinatorics.SimpleGraph.Acyclic
 public import MathlibExt.Combinatorics.SimpleGraph.Dichromatic
 public import MathlibExt.Computability.BinaryNatEncoding

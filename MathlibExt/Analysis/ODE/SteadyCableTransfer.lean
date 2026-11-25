@@ -31,15 +31,19 @@ lemma eq_of_hasDerivWithinAt_zero {f : ℝ → ℝ} {a b : ℝ}
   constant_of_has_deriv_right_zero (fun x hx ↦ (hf x hx).continuousWithinAt) fun x hx ↦
     (hf x (Ico_subset_Icc_self hx)).mono_of_mem_nhdsWithin (Icc_mem_nhdsGE_of_mem hx)
 
-/-- Length scale `λ = sqrt (rm / ri)` of the transfer system. -/
+/-- Length scale `λ = sqrt (rm / ri)` of the transfer system (positive for `rm, ri > 0`). With
+`u / 0 = 0` and `sqrt u = 0` for `u < 0`, it is `0` when `ri = 0` or when `rm` and `ri` have
+opposite signs. -/
 noncomputable def lengthConstant (rm ri : ℝ) : ℝ := sqrt (rm / ri)
 
-/-- Characteristic resistance `r∞ = sqrt (rm ri)` of the transfer system. -/
+/-- Characteristic resistance `r∞ = sqrt (rm ri)` of the transfer system (positive for
+`rm, ri > 0`). With `sqrt u = 0` for `u < 0`, it is `0` when `rm ri ≤ 0`. -/
 noncomputable def charResistance (rm ri : ℝ) : ℝ := sqrt (rm * ri)
 
 /-- Steady-state core-conductor equations of a passive cable on a set `s` of positions: the
 voltage `V` and axial current `I` satisfy `V' = -ri I` and `I' = -V / rm` (derivatives within
-`s`). -/
+`s`). At an isolated point of `s` the conditions always hold; with `u / 0 = 0`, `I' = 0` when
+`rm = 0`. -/
 structure IsSteadyState (rm ri : ℝ) (s : Set ℝ) (V I : ℝ → ℝ) : Prop where
   /-- Ohm's law along the core: `V' = -ri I`. -/
   hasDerivWithinAt_voltage : ∀ x ∈ s, HasDerivWithinAt V (-(ri * I x)) s x
@@ -47,12 +51,14 @@ structure IsSteadyState (rm ri : ℝ) (s : Set ℝ) (V I : ℝ → ℝ) : Prop w
   hasDerivWithinAt_current : ∀ x ∈ s, HasDerivWithinAt I (-(V x / rm)) s x
 
 /-- Transfer-form steady-state voltage `V(x) = V₀ cosh (x / λ) - r∞ I₀ sinh (x / λ)` with
-voltage `V₀` and axial current `I₀` at `x = 0`. -/
+voltage `V₀` and axial current `I₀` at `x = 0`. With `u / 0 = 0` it is the constant `V₀` when
+`λ = 0`. -/
 noncomputable def cableVoltage (rm ri V₀ I₀ x : ℝ) : ℝ :=
   V₀ * cosh (x / lengthConstant rm ri) - charResistance rm ri * I₀ * sinh (x / lengthConstant rm ri)
 
 /-- Transfer-form steady-state axial current `I(x) = I₀ cosh (x / λ) - (V₀ / r∞) sinh (x / λ)`
-with voltage `V₀` and axial current `I₀` at `x = 0`. -/
+with voltage `V₀` and axial current `I₀` at `x = 0`. With `u / 0 = 0` the second term is `0`
+when `r∞ = 0`, and the current is the constant `I₀` when `λ = 0`. -/
 noncomputable def cableCurrent (rm ri V₀ I₀ x : ℝ) : ℝ :=
   I₀ * cosh (x / lengthConstant rm ri) - V₀ / charResistance rm ri * sinh (x / lengthConstant rm ri)
 
@@ -68,15 +74,16 @@ theorem lengthConstant_pos (hm : 0 < rm) (hi : 0 < ri) : 0 < lengthConstant rm r
 theorem charResistance_pos (hm : 0 < rm) (hi : 0 < ri) : 0 < charResistance rm ri :=
   sqrt_pos.2 (mul_pos hm hi)
 
-/-- `λ² = rm / ri`. -/
+/-- `λ² = rm / ri` for `rm, ri > 0`; equivalently `ri λ² = rm`. -/
 theorem lengthConstant_sq (hm : 0 < rm) (hi : 0 < ri) : lengthConstant rm ri ^ 2 = rm / ri :=
   sq_sqrt (div_pos hm hi).le
 
-/-- `ri λ² = rm`. -/
+/-- `ri λ² = rm` for `rm, ri > 0`. -/
 theorem mul_lengthConstant_sq (hm : 0 < rm) (hi : 0 < ri) : ri * lengthConstant rm ri ^ 2 = rm := by
   rw [lengthConstant_sq hm hi]; field_simp
 
-/-- `r∞ = ri λ`. -/
+/-- `r∞ = ri λ` for `rm, ri > 0`; equivalently `r∞ = rm / λ`, since `ri λ² = rm` and
+`λ > 0`. -/
 theorem charResistance_eq (hm : 0 < rm) (hi : 0 < ri) :
     charResistance rm ri = ri * lengthConstant rm ri := by
   unfold charResistance lengthConstant

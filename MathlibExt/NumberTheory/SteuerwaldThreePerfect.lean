@@ -708,10 +708,10 @@ private lemma pillaiC {X Y Z : ℕ} (hY : 2 ≤ Y) (hZ : 1 ≤ Z)
       obtain ⟨-, hVod, -⟩ := hpar
       exact pillaiC_finish hVod h
 
-/-- The complete solution sets of two Pillai equations involving powers of
-two and three. The first equation has solutions `(1, 1)` and `(3, 2)`; the
-second has the two exceptional solutions `(2, 1, 1)` and `(4, 2, 3)`, together
-with the family `(a, 0, a)`.
+/-- **Two Pillai equations in powers of two and three.** For natural numbers $a$ and $b$, the
+integer equation $2^a - 3^b = -1$ holds if and only if $(a, b) = (1, 1)$ or $(a, b) = (3, 2)$.
+For natural numbers $a$, $b$ and $c$, the integer equation $2^a - 3^b = 2^c - 1$ holds if and
+only if $(a, b, c) = (2, 1, 1)$, or $(a, b, c) = (4, 2, 3)$, or $b = 0$ and $c = a$.
 
 Source: Paulo J. Almeida and Gabriel Cardoso, *An Extension of the
 Euclid–Euler Theorem to Certain α-Perfect Numbers*, Journal of Integer
@@ -1427,9 +1427,11 @@ private lemma caseC {a b s t P Q : ℕ}
   have hcon := pillaiC (by omega : 2 ≤ b + 1) hs1 hC
   omega
 
-/-- Steuerwald's theorem on 3-perfect numbers: if `N = 2 ^ a * 3 ^ b * m` with
-`a, b ≥ 1`, `Nat.Coprime 6 m`, and `ArithmeticFunction.sigma 1 N = 3 * N`,
-then `(a = 1 ∧ b ≠ 1) ∨ (a ≠ 1 ∧ b = 1)`.
+/-- **Steuerwald's theorem on 3-perfect numbers.** Let $N$, $a$, $b$ and $m$ be natural numbers
+with $N = 2^a 3^b m$, $a \ge 1$, $b \ge 1$, and $m$ coprime to $6$. If $\sigma(N) = 3N$, where
+$\sigma(N)$ is the sum of the divisors of $N$, then either $a = 1$ and $b \ne 1$, or $a \ne 1$
+and $b = 1$.
+
 Source: https://cs.uwaterloo.ca/journals/JIS/VOL25/Almeida/almeida9.tex, lines 210-219,
 text SHA cfc728d5cbd8ccc703d9bfda34db0857b0ba43251881d2ba3a73b45503209f75,
 file SHA 47d90eedae7bb76cfb0845e93958ce17dff96d5d9a65ca310917738a33a1eea6. -/

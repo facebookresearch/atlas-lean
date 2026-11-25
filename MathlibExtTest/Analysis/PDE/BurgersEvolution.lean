@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.Analysis.PDE.BurgersEvolution
+import MathlibExt.Analysis.PDE.BurgersBounds
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 import Mathlib.Tactic.NormNum
 

@@ -12,124 +12,12 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Intervals
 public import Mathlib.Data.Int.ModEq
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
+public import MathlibExt.NumberTheory.SPerfect
+public import MathlibExt.NumberTheory.SignedBinarySum
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- The integers of the form `∑_{j=s}^{t} λⱼ * 2^j` with each coefficient
-`λⱼ ∈ {-1, m}`.
-
-Source: Ross, *A Perfect Number Generalization and Some Euclid-Euler Type Results*, JIS 27 (2024),
-Article 24.7.5, Lemma 7. -/
-public def IsSignedPowTwoSum (m s t : ℕ) (n : ℤ) : Prop :=
-  ∃ lam : ℕ → ℤ, (∀ j ∈ Finset.Icc s t, lam j = -1 ∨ lam j = (m : ℤ)) ∧
-    n = ∑ j ∈ Finset.Icc s t, lam j * 2 ^ j
-
-/-- Characteristic example: with `m = 3`, `s = 0`, `t = 1`, the value
-`3 * 1 + (-1) * 2 = 1` is a signed power-of-two sum.
-
-Source: Ross, *A Perfect Number Generalization and Some Euclid-Euler Type Results*, JIS 27 (2024),
-Article 24.7.5, Lemma 7. -/
-public theorem isSignedPowTwoSum_one : IsSignedPowTwoSum 3 0 1 1 := by
-  refine ⟨fun j => if j = 0 then 3 else -1, ?_, ?_⟩
-  · intro j hj
-    rw [Finset.mem_Icc] at hj
-    rcases (by omega : j = 0 ∨ j = 1) with rfl | rfl <;> simp
-  · have hIcc : Finset.Icc 0 1 = {0, 1} := by decide
-    rw [hIcc]
-    simp
-
-/-- Interval and congruence characterization of signed power-of-two sums.
-
-Source: Ross, *A Perfect Number Generalization and Some Euclid-Euler Type Results*, JIS 27 (2024),
-Article 24.7.5, Lemma 7 (`jis-2024-24.7.5-lem-7`): for `0 ≤ s ≤ t` and
-`m ≥ 1`, the integers of the form `∑_{j=s}^{t} λⱼ * 2^j` with
-`λⱼ ∈ {-1, m}` are precisely the integers `n` in the interval
-`[-2^s * (2^{t-s+1} - 1), 2^s * m * (2^{t-s+1} - 1)]` satisfying
-`n ≡ -2^s * (2^{t-s+1} - 1) [ZMOD 2^s * (m + 1)]`.
-
-Verified by brute-force enumeration for `m ∈ {1, 2, 3, 5}`, `s ≤ 2`,
-`t - s ≤ 3` before formalizing. -/
-public theorem_wanted isSignedPowTwoSum_iff (m s t : ℕ) (hm : 1 ≤ m)
-    (hst : s ≤ t) (n : ℤ) :
-    IsSignedPowTwoSum m s t n ↔
-      -(2 : ℤ) ^ s * (2 ^ (t - s + 1) - 1) ≤ n ∧
-      n ≤ 2 ^ s * (m : ℤ) * (2 ^ (t - s + 1) - 1) ∧
-      n ≡ -(2 : ℤ) ^ s * (2 ^ (t - s + 1) - 1) [ZMOD 2 ^ s * ((m : ℤ) + 1)]
-
-/-- Extension of signed power-of-two sums to longer intervals.
-
-Source: Ross, *A Perfect Number Generalization and Some Euclid-Euler Type Results*, JIS 27 (2024),
-Article 24.7.5, Corollary 8 (`jis-2024-24.7.5-cor-8`): fix `m ≥ 1` and let
-`β = ν₂(m + 1)`. If `n` is a signed power-of-two sum over `[s, t]` with
-`t ≥ s + β - 1`, then `n` is also expressible over `[s, t + α]` whenever
-`2^α ≡ 1 [(m + 1) / 2^β]`.
-
-The hypothesis `t ≥ s + β - 1` is written as `s + β ≤ t + 1` to cover the
-case `β = 0`. -/
-public theorem_wanted isSignedPowTwoSum_extend (m s t α : ℕ) (hm : 1 ≤ m)
-    (hβ : s + (m + 1).factorization 2 ≤ t + 1)
-    (hα : 2 ^ α ≡ 1 [ZMOD ((m + 1) / 2 ^ ((m + 1).factorization 2) : ℤ)])
-    (n : ℤ) (h : IsSignedPowTwoSum m s t n) :
-    IsSignedPowTwoSum m s (t + α) n
-
-/-- Characterization of `1 + ∑ λⱼ * 2^j` with `λⱼ ∈ {-1, 1}`.
-
-Source: Ross, *A Perfect Number Generalization and Some Euclid-Euler Type Results*, JIS 27 (2024),
-Article 24.7.5, Lemma 12 (`jis-2024-24.7.5-lem-12`): an integer `n` can be
-written as `1 + ∑_{j=1}^{k} λⱼ * 2^j` for some `k ≥ 1` and coefficients
-`λⱼ ∈ {-1, 1}` if and only if `n ≡ 3 [ZMOD 4]`. -/
-public theorem_wanted one_add_signedPowTwoSum_iff (n : ℤ) :
-    (∃ k : ℕ, 1 ≤ k ∧ ∃ lam : ℕ → ℤ,
-      (∀ j ∈ Finset.Icc 1 k, lam j = -1 ∨ lam j = 1) ∧
-      n = 1 + ∑ j ∈ Finset.Icc 1 k, lam j * 2 ^ j) ↔ n ≡ 3 [ZMOD 4]
-
-/-- An integer `n` with `|n| > 1` is `S`-perfect (of the first kind) if
-`n = 1 + ∑ λ_d * d`, the sum over the positive divisors `d` of `n` with
-`1 < d < |n|`, with every weight `λ_d ∈ S`. The set `𝒫(S)` of the paper is
-`{n | IsSPerfect S n}`.
-
-Source: Ross, *A Perfect Number Generalization and Some Euclid-Euler Type Results*, JIS 27 (2024),
-Article 24.7.5, Section 1 (definition of `S`-perfect numbers of the first
-kind). -/
-public def IsSPerfect (S : Set ℤ) (n : ℤ) : Prop :=
-  1 < n.natAbs ∧ ∃ lam : ℕ → ℤ, (∀ d ∈ n.natAbs.properDivisors.erase 1, lam d ∈ S) ∧
-    n = 1 + ∑ d ∈ n.natAbs.properDivisors.erase 1, lam d * d
-
-/-- Characteristic example: `6 = 1 + 2 + 3` is `{1}`-perfect (an ordinary
-perfect number).
-
-Source: Ross, *A Perfect Number Generalization and Some Euclid-Euler Type Results*, JIS 27 (2024),
-Article 24.7.5, Example 2 (`S = {1}`). -/
-public theorem isSPerfect_one_six : IsSPerfect {1} 6 := by
-  refine ⟨by decide, fun _ => 1, fun _ _ => rfl, ?_⟩
-  decide
-
-/-- Characteristic example: `12 = 1 - 2 + 3 + 4 + 6` is `{-1, 1}`-perfect.
-
-Source: Ross, *A Perfect Number Generalization and Some Euclid-Euler Type Results*, JIS 27 (2024),
-Article 24.7.5, Example 2 (`S = {-1, 1}`). -/
-public theorem isSPerfect_neg_one_one_twelve : IsSPerfect {-1, 1} 12 := by
-  refine ⟨by decide, fun d => if d = 2 then -1 else 1, ?_, ?_⟩
-  · intro d _
-    by_cases h : d = 2 <;> simp [h]
-  · decide
-
-/-- Characteristic non-example: a prime `p` is not `S`-perfect for any `S`,
-since the defining sum is empty.
-
-Source: Ross, *A Perfect Number Generalization and Some Euclid-Euler Type Results*, JIS 27 (2024),
-Article 24.7.5, Proposition 3 (the prime-power case with exponent one). -/
-public theorem not_isSPerfect_prime (S : Set ℤ) {p : ℕ} (hp : p.Prime) :
-    ¬ IsSPerfect S p := by
-  rintro ⟨-, lam, -, h⟩
-  have : (p : ℤ).natAbs.properDivisors.erase 1 = ∅ := by
-    rw [Int.natAbs_natCast, Nat.Prime.properDivisors hp]
-    simp
-  rw [this, Finset.sum_empty] at h
-  have := hp.two_le
-  omega
 
 /-- Integers with at least two distinct prime factors are `S`-perfect for some
 finite `S` with `#S ≤ τ(n) - 2`; prime powers are never `S`-perfect.

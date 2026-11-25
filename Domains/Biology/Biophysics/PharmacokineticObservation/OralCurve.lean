@@ -21,12 +21,10 @@ scaling of `(F, V, CL)`, and at unknown `ka` the absorption/elimination labels c
 
 namespace MathlibExt.Biology.Biophysics.PharmacokineticObservation.OralCurve
 
-/-- **Oral common scaling.** With fixed known `ka > 0`, dose `D`,
-rates `k = CL / V`, the oral concentration curve
-`C(t) = F * D * ka * (exp (-(CL/V) t) - exp (-ka t)) / (V * (ka - CL/V))`
-is preserved by the common scaling `(F, V, CL) ↦ (F * s, V * s, CL * s)`
-for any `s ≠ 0` (admissible scalings have `s > 0`, `F * s ≤ 1`):
-scale is not identified from oral curves alone. -/
+/-- **Oral common scaling.** For `V ≠ 0` and distinct rates `ka ≠ CL / V`, the oral concentration
+curve `C(t) = F * D * ka * (exp (-(CL/V) t) - exp (-ka t)) / (V * (ka - CL/V))` is preserved by the
+common scaling `(F, V, CL) ↦ (F * s, V * s, CL * s)` for any `s ≠ 0` (admissible scalings have
+`s > 0`, `F * s ≤ 1`, with `ka > 0` known): scale is not identified from oral curves alone. -/
 lemma oral_scaling_curve {F D ka V CL s t : ℝ} (hV : V ≠ 0)
     (hs : s ≠ 0) (hden : ka - CL / V ≠ 0) :
     F * D * ka * (Real.exp (-(CL / V) * t) - Real.exp (-ka * t)) / (V * (ka - CL / V)) =
@@ -42,17 +40,14 @@ lemma oral_scaling_curve {F D ka V CL s t : ℝ} (hV : V ≠ 0)
   rw [div_eq_div_iff hD hD']
   ring
 
-/-- **Flip-flop parameter transformation.** At distinct rates, the
-oral curve for the tuple `(F, D, ka, V, CL)` equals the oral curve
-for the flipped tuple
-`(F * ka / (CL / V), D, CL / V, V, ka * V)`: the absorption and
-elimination rates are exchanged, `D` and `V` are unchanged, and
-bioavailability is transformed to `F * ka / (CL / V)`, not kept
-fixed. Admissibility of the flipped tuple (`F * ka / (CL / V) ≤ 1`)
-is a precondition (`hFflip`), not a conclusion. This proves
-sufficiency of the transformed value; no necessity claim is made.
-Equal rates are excluded (the
-denominator vanishes; the limiting equal-rate form is different). -/
+/-- **Flip-flop parameter transformation.** For positive `V`, `ka` and `CL`, `F ≥ 0` and distinct
+rates `ka ≠ CL / V`, the oral curve for the tuple `(F, D, ka, V, CL)` equals the oral curve for the
+flipped tuple `(F * ka / (CL / V), D, CL / V, V, ka * V)`, and the flipped bioavailability
+`F * ka / (CL / V)` is nonnegative: the absorption and elimination rates are exchanged, `D` and `V`
+are unchanged, and bioavailability is transformed to `F * ka / (CL / V)`, not kept fixed.
+Admissibility of the flipped tuple (`F * ka / (CL / V) ≤ 1`) is a precondition (`hFflip`), not a
+conclusion. This proves sufficiency of the transformed value; no necessity claim is made. Equal
+rates are excluded (the denominator vanishes; the limiting equal-rate form is different). -/
 lemma oral_flip_flop {F D ka V CL t : ℝ} (hV : V ≠ 0)
     (hka : ka ≠ CL / V) (hka0 : ka ≠ 0) (hCL0 : CL ≠ 0)
     (hF : 0 ≤ F) (hka_pos : 0 < ka) (hCL_pos : 0 < CL) (hV_pos : 0 < V)

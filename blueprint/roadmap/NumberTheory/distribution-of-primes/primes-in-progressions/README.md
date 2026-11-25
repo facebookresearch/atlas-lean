@@ -10,3 +10,5 @@ Dirichlet density, PNT for progressions, Siegel–Walfisz, Bombieri–Vinogradov
 - [Siegel–Walfisz theorem](siegel-walfisz-theorem/README.md)
 - [Wallis-type prime products in residue classes](wallis-type-prime-products-in-residue-classes/README.md)
 - [Dirichlet density of primes in an arithmetic progression](dirichlet-density-primes-arithmetic-prog.md)
+- [Quantitative Linnik theorem for primes in arithmetic progressions](quantitative-linnik-theorem.md)
+- [Window bounds for weighted Chebyshev sums of cyclic families of characters](chebyshev-window-bounds-for-cyclic-character-families.md)
