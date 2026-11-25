@@ -35,6 +35,7 @@
 - [Attenuation ratio under constant stratification](attenuation-ratio-of-const.md)
 - [Confounding share of inflation under constant stratification](confounding-share-of-const.md)
 - [Confounding share lies between 0 and 1](confounding-share-mem-icc.md)
+- [Covariance induced by population stratification](population-stratification-creates-spurious-assoc.md)
 
 ## The regression identity and the unweighted estimator
 

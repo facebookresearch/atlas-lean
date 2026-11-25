@@ -25,3 +25,5 @@
 ## Independent sites
 
 - [Likelihood of independent sites is the product of site likelihoods](sum-prod-site-weight-eq-prod-likelihood.md)
+
+- [Site likelihoods under discrete rate heterogeneity](discrete-rate-heterogeneity-mixtures-of-site-lik.md)

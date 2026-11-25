@@ -51,23 +51,6 @@ public theorem_wanted genLeonardo_rpow_inv_logConvex (k : ℕ) (hk : 1 ≤ k) (n
       (genLeonardo k (n - 1) : ℝ) ^ ((1 : ℝ) / (n - 1 : ℕ)) *
         (genLeonardo k (n + 1) : ℝ) ^ ((1 : ℝ) / (n + 1 : ℕ))
 
-/-- **Log-concavity of partial sums of generalized Leonardo numbers.** Let $k \ge 1$ be an
-integer, let $L_{k,n}$ be the generalized Leonardo numbers, and let
-$R_n = \sum_{i=0}^{n} L_{k,i}$. Then $R_{n-1} R_{n+1} \le R_n^2$ for every integer $n \ge 2$.
-
-The inequality fails at $n = 1$: there $R_0 = 1$, $R_1 = 2$ and $R_2 = k + 4$, so
-$R_1^2 - R_0 R_2 = -k < 0$. The paper states it for every $n \ge 1$, although its identity
-$R_n^2 - R_{n-1} R_{n+1} = (k+1)^2 (F_n + (-1)^n) + k(k+1)(n F_n - 2 F_{n+1}) + k^2$, with
-$F_n$ the Fibonacci numbers, gives the same value $-k$ at $n = 1$.
-
-Source: Feng-Zhen Zhao, *The Log-Behavior of Some Sequences Related to the
-Generalized Leonardo Numbers*, INTEGERS 24 (2024), Article A82, Theorem 2
-(`integers-2024-A82-thm-2`). -/
-public theorem_wanted genLeonardo_partialSum_logConcave (k : ℕ) (hk : 1 ≤ k) (n : ℕ)
-    (hn : 2 ≤ n) :
-    (∑ i ∈ Finset.range n, genLeonardo k i) * (∑ i ∈ Finset.range (n + 2), genLeonardo k i) ≤
-      (∑ i ∈ Finset.range (n + 1), genLeonardo k i) ^ 2
-
 /-- **Log-balancedness of the n-th roots of generalized Leonardo numbers.** Let $k \ge 1$ be an
 integer, let $L_{k,n}$ be the generalized Leonardo numbers, and let $n_k$ be an integer with
 $n_k \ge 9$ and $n_k \ge (1 + \sqrt{64k - 7})/4$. Then for every integer $n \ge n_k + 1$,
