@@ -2,6 +2,7 @@
 
 Categories of modules and finitely generated modules over a ring: abelian and monoidal structure, change of rings, injective and projective objects, Ext over a ring, and topological modules. Presheaves and sheaves of modules have their own subfield.
 
+- [Actual universe lifts of original native Lie coefficients](actual-universe-lifts-of-original-native-lie-coe/README.md)
 - [Balanced tensor functors on left modules](balanced-tensor-functors-on-left-modules/README.md)
 - [Bundled modules over a Lie algebra](bundled-modules-over-a-lie-algebra/README.md)
 - [Coherence for successive native module universe lifts](coherence-for-successive-native-module-universe/README.md)
@@ -18,6 +19,8 @@ Categories of modules and finitely generated modules over a ring: abelian and mo
 - [Lie modules and universal-enveloping-algebra modules](lie-modules-and-universal-enveloping-algebra-mod/README.md)
 - [Module direct limits as categorical colimits](module-direct-limits-as-categorical-colimits/README.md)
 - [Naturality of balanced tensor maps under change of scalars](naturality-of-balanced-tensor-maps-under-change/README.md)
+- [Original native Lie coefficients as right enveloping modules](original-native-lie-coefficients-as-right-envelo/README.md)
+- [Original right UEA representations and actual coefficient carrier lifts](original-right-uea-representations-and-actual-co/README.md)
 - [Outer scalar actions on balanced tensor functors](outer-scalar-actions-on-balanced-tensor-functors/README.md)
 - [Relative injectivity of coextended modules](relative-injectivity-of-coextended-modules/README.md)
 - [Relative projectivity of induced modules](relative-projectivity-of-induced-modules/README.md)

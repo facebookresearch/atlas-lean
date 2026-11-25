@@ -1,0 +1,17 @@
+# Horizontal graded-piece ingredients
+
+- [Horizontal Column Cochain](horizontal-column-cochain.md)
+- [Horizontal Column Cochain XIso](horizontal-column-cochain-xiso.md)
+- [Horizontal Column Cochain is Zero X of lt](horizontal-column-cochain-is-zero-x-of-l.md)
+- [Horizontal Complete Filtered Total Mono Over upper](horizontal-complete-filtered-total-mono.md)
+- [Horizontal Complete Filtered Total Mono Over Upper Iso](horizontal-complete-filtered-total-mono-2.md)
+- [Horizontal Complete Filtration Cochain Mono Upper Iso](horizontal-complete-filtration-cochain-m.md)
+- [Horizontal Complete Filtration Cochain Upper Iso](horizontal-complete-filtration-cochain-u.md)
+- [Horizontal Column Projection Component](horizontal-column-projection-component.md)
+- [Horizontal Filtered Top Index](horizontal-filtered-top-index.md)
+- [Horizontal Filtered Top Projection](horizontal-filtered-top-projection.md)
+- [Horizontal Filtered Total Map succ top Projection](horizontal-filtered-total-map-succ-top-p.md)
+- [Horizontal Column Degree](horizontal-column-degree.md)
+- [Horizontal Column Projection](horizontal-column-projection.md)
+- [Horizontal Total Top Projection](horizontal-total-top-projection.md)
+- [Horizontal Filtered Total D top Projection](horizontal-filtered-total-d-top-projecti.md)
