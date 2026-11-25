@@ -1,7 +1,8 @@
 # Is Formal Coordinates
 
-Coordinates are formal coordinates for a formal group if they are
-natural in the nilpotent point and if, on each ideal `J` with
-`J ^ (n + 1) = ⊥`, they map the points with coordinates in `J`
-bijectively onto the points infinitesimal along `J` and carry the
-truncated formal group law to the group law.
+A coordinate family `θ` is a system of formal coordinates for the
+formal group `F` if it is natural in `B'` at points with nilpotent
+coordinates and if, for each ideal `J` with `J ^ (n + 1) = ⊥`, it maps the
+points with coordinates in `J` bijectively onto the points infinitesimal
+along `J` and carries the law `F.nilMul n` on those points to the group
+law.

@@ -6,8 +6,6 @@
 - [Push Pt](push-pt.md)
 - [Comp Pt](comp-pt.md)
 - [Factors Through](factors-through.md)
-- [Nsmul Pt](nsmul-pt.md)
-- [Is Commutative Law](is-commutative-law.md)
 - [Geom Point](geom-point.md)
 - [Tangent Base](tangent-base.md)
 - [Tangent Zero](tangent-zero.md)
