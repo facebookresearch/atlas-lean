@@ -13,3 +13,8 @@ Topics added since this subject's fields were last revised.
 - [Reindex](reindex/README.md)
 - [Ring](ring/README.md)
 - [Hermitian Flags](standard-matrices.md)
+- [Totally unimodular systems have integer solutions](exists-int-vec.md)
+- [Cross Product](cross-product/README.md)
+- [Plastic Work](plastic-work/README.md)
+- [Sinkhorn Margins](sinkhorn-margins/README.md)
+- [Two Level](two-level/README.md)
