@@ -79,4 +79,54 @@ public theorem arithProgPoly_eq3_existsUnique_pos {m a d : ℕ} (hm : 2 ≤ m) (
   exact ⟨⟨r, ⟨hrpos, (hroot r hrpos).2 hfr⟩, fun x ⟨hx, heq⟩ ↦ hu x hx ((hroot x hx).1 heq)⟩,
     fun x hx heq ↦ hu x hx ((hroot x hx).1 heq) ▸ hr⟩
 
+/-- **Lower bound on a power of the auxiliary root.** Let $m \ge 2$, let $a$, $d$ be integers with
+$0 < d \le a$, and let $\lambda > 0$ be a real number with
+$a \lambda^{m+2} + (a - d) \lambda^{m+1} - (a + (m + 1)d) \lambda - (a + md) = 0$. Then
+$a + md < a \lambda^m$.
+
+Source: Hiroaki Kakuma, *Irreducibility of Polynomials with Coefficients in a Positive
+Arithmetic Progression*, INTEGERS 26 (2026), Article A92, Lemma 2 (`integers-2026-A92-lem-2`). -/
+public theorem arithProgPoly_lam_pow_gt {m a d : ℕ} (hm : 2 ≤ m) (hd : 0 < d)
+    (hda : d ≤ a) (lam : ℝ) (hlam : 0 < lam)
+    (hG : (a : ℝ) * lam ^ (m + 2) + ((a : ℝ) - d) * lam ^ (m + 1) -
+      ((a : ℝ) + (m + 1) * d) * lam - ((a : ℝ) + m * d) = 0) :
+    (a : ℝ) + m * d < a * lam ^ m := by
+  have ha : (0 : ℝ) < a := by exact_mod_cast hd.trans_le hda
+  have h1 := (arithProgPoly_eq3_existsUnique_pos hm hd hda).2 lam hlam hG
+  let F (n : ℕ) : ℝ := lam * ((lam ^ n) ^ 2 - 1) - n * lam ^ n * (lam ^ 2 - 1)
+  -- The defect in the power inequality has a positive increment after rescaling.
+  have hstep (n : ℕ) :
+      F (n + 1) = lam * F n + lam * (lam - 1) * (lam ^ n - 1) * (lam ^ (n + 1) - 1) := by
+    simp only [F, pow_succ', Nat.cast_succ]
+    ring
+  have hnonneg (n : ℕ) : 0 ≤ F n := by
+    induction n with
+    | zero => simp [F]
+    | succ n ih =>
+      have hn : 0 ≤ lam ^ n - 1 := sub_nonneg.mpr (one_le_pow₀ h1.le)
+      have hn' : 0 ≤ lam ^ (n + 1) - 1 := sub_nonneg.mpr (one_le_pow₀ h1.le)
+      rw [hstep]
+      positivity
+  have hstrict : 0 < F m := by
+    obtain ⟨n, rfl⟩ : ∃ n, m = n + 1 := ⟨m - 1, by omega⟩
+    have hn : 0 < lam ^ n - 1 := sub_pos.mpr (one_lt_pow₀ h1 (by omega))
+    have hn' : 0 < lam ^ (n + 1) - 1 := sub_pos.mpr (one_lt_pow₀ h1 (by omega))
+    have hFn := hnonneg n
+    rw [hstep]
+    positivity
+  -- Eliminate `d` using the auxiliary equation, with positive multiplier `B`.
+  let B : ℝ := lam ^ (m + 1) + (m + 1) * lam + m
+  have hB : 0 < B := by dsimp [B]; positivity
+  have hroot : (d : ℝ) * B = a * (lam + 1) * (lam ^ (m + 1) - 1) := by
+    simp only [B, pow_succ] at hG ⊢
+    nlinarith only [hG]
+  have hmul : ((a : ℝ) * lam ^ m - (a + m * d)) * B = (a : ℝ) * F m := by
+    calc
+      _ = (a : ℝ) * (lam ^ m - 1) * B - (m : ℝ) * ((d : ℝ) * B) := by ring
+      _ = _ := by rw [hroot]; simp only [B, F, pow_succ]; ring
+  have hpos : 0 < ((a : ℝ) * lam ^ m - (a + m * d)) * B := by
+    rw [hmul]
+    exact mul_pos ha hstrict
+  exact sub_pos.mp (pos_of_mul_pos_left hpos hB.le)
+
 end MetaMathlibExt
