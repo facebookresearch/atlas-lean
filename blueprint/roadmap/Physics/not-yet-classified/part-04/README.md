@@ -1,7 +1,7 @@
 # Part 4 of 10
 
 - [Exit Time](exit-time/README.md)
-- [Finite State](finite-state/README.md)
+- [Finite State](finite-state/README.md): the pages of this module are now under Postulates of finite-dimensional quantum mechanics.
 - [Flowsheets](flowsheets/README.md)
 - [Fundamental Diagram](fundamental-diagram/README.md)
 - [Gaussian Matched Decision](gaussian-matched-decision/README.md): the pages of this module are now under Risk and Bayes risk of an estimator.

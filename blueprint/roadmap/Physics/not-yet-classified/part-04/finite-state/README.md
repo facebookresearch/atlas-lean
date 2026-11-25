@@ -1,9 +1,3 @@
 # Finite State
 
-## A. Normalized states
-
-- [Normalized state vector](is-normalized.md)
-
-## B. Born probabilities
-
-- [Born weight](born-prob.md)
+The pages of this module are now under [Postulates of finite-dimensional quantum mechanics](../../../quantum-mechanics/postulates-of-finite-dimensional-quantum-mechani/README.md).
