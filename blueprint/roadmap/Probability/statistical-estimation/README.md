@@ -19,3 +19,6 @@ Point estimation theory and confidence sets: bias, risk and mean squared error, 
 - [Sufficient statistics and the factorization theorem](sufficient-statistics-and-the-factorization-theo/README.md)
 - [Coverage of a confidence set transfers to its image under a map](coverage-transfer-image.md)
 - [Rao–Blackwell theorem](rao-blackwell-theorem/README.md)
+- [Identifiability and gauge freedom](identifiability-and-gauge-freedom/README.md)
+- [Process quality and monitoring](process-quality-and-monitoring/README.md)
+- [Data assimilation](data-assimilation/README.md)
