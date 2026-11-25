@@ -78,11 +78,15 @@ def unitCoefficientFunctor : Scheme.{0}ᵒᵖ ⥤ ModuleCat.{1} Scalar :=
         integerModules ⋙ ModuleCat.restrictScalars
           (ULift.ringEquiv : Scalar ≃+* ℤ).toRingHom
 
-/-- Completed source formula for the actual small-étale regular-function units. -/
+/-- The presheaf of units of regular functions on the small étale site of a scheme $X$: an étale
+$X$-scheme $U$ goes to the unit group $\Gamma(U, \mathcal{O}_U)^\times$, written additively and
+viewed as a module over `Scalar` (the integers, lifted to universe 1), and a morphism of étale
+$X$-schemes to the induced map on units. -/
 def multiplicativePresheaf (X : Scheme.{0}) : X.Etaleᵒᵖ ⥤ ModuleCat.{1} Scalar :=
   (Scheme.Etale.forget X ⋙ Over.forget X).op ⋙ unitCoefficientFunctor
 
-/-- Proof-only source integration for the fixed representable units presheaf. -/
+/-- The presheaf of units of regular functions, $U \mapsto \Gamma(U, \mathcal{O}_U)^\times$ on the
+small étale site of $X$ (as $\mathbb{Z}$-modules), is a sheaf for the small étale topology. -/
 structure MultiplicativeNormalization (X : Scheme.{0}) : Prop where
   isSheaf : Presheaf.IsSheaf X.smallEtaleTopology (multiplicativePresheaf X)
 
@@ -119,11 +123,18 @@ def tateTwist (l : ℕ) : ℕ → Coefficients X
   | j+2 => (presheafToSheaf X.smallEtaleTopology (ModuleCat.{1} Scalar)).obj
       ((tateTwist l (j+1)).obj ⊗ (rootsSheaf X G l).obj)
 
-/-- The actual Kummer short complex, whose exactness is a completed source dependency. -/
+/-- The Kummer short complex $\mu_l \to \mathbb{G}_m \to \mathbb{G}_m$ of sheaves on the small étale
+site of $X$, for $l \in \mathbb{N}$: the inclusion of the kernel $\mu_l$ (`rootsSheaf`) of the
+$l$-th power map of $\mathbb{G}_m$, followed by that power map (`powerMap`, written additively as
+$l$ times the identity). Here $\mathbb{G}_m$ is the sheaf of units of regular functions
+(`multiplicativeSheaf`, for the sheaf property $G$), in the category of sheaves of
+`Scalar`-modules with its given abelian structure. -/
 def kummerSequence (l : ℕ) : ShortComplex (Coefficients X) :=
   ShortComplex.mk (kernel.ι (powerMap X G l)) (powerMap X G l) (kernel.condition _)
 
-/-- Generic Kummer exactness is a proof on the fixed source sequence, not a new theorem request. -/
+/-- The condition that the Kummer sequence $0 \to \mu_l \to \mathbb{G}_m \to \mathbb{G}_m \to 0$
+of sheaves on the small étale site of $X$, whose last map is the $l$-th power map
+(`kummerSequence`), is short exact. -/
 structure KummerExactness (l : ℕ) : Prop where
   shortExact : (kummerSequence X G l).ShortExact
 

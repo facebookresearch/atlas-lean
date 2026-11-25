@@ -14,10 +14,13 @@ public import Mathlib.Analysis.SpecialFunctions.Exp
 /-!
 # Two-compartment positivity
 
-For the two-compartment bolus model with nonnegative rates and
-dose, the peripheral amount in Duhamel (convolution) form is
-nonnegative at nonnegative times: transferred mass decays without
-sign change.
+For a two-compartment bolus model without return flow (the
+peripheral compartment loses its content to outside the system)
+and with nonnegative rates and dose, the peripheral amount in
+Duhamel (convolution) form is nonnegative at nonnegative times:
+transferred mass decays without sign change. With transfer back to
+the central compartment (and positive transfer and dose) the Duhamel
+integral is not the peripheral amount.
 -/
 
 @[expose] public section
@@ -27,13 +30,14 @@ open MeasureTheory intervalIntegral
 namespace MathlibExt.Biology.Biophysics.CompartmentKinetics.TwoCompartment
 
 set_option linter.unusedVariables false in
-/-- **Peripheral amount nonnegativity (Duhamel form).** With
-nonnegative transfer `k12 ≥ 0`, elimination `k21 ≥ 0`, central rate
-`k10 ≥ 0` and dose `D ≥ 0`, the peripheral amount at `a ≥ 0` in
-Duhamel form,
-`∫ s in 0..a, exp (-k21 (a - s)) * (k12 * D * exp (-(k10+k12) s))`,
-is nonnegative: mass transferred in is nonnegative and decays
-without sign change. -/
+/-- **Peripheral amount nonnegativity without return flow (Duhamel form).** With nonnegative
+transfer `k12 ≥ 0`, peripheral loss rate `k21 ≥ 0`, central elimination `k10 ≥ 0` and dose `D ≥ 0`,
+the Duhamel integral `∫ s in 0..a, exp (-k21 (a - s)) * (k12 * D * exp (-(k10+k12) s))` is
+nonnegative at `a ≥ 0`: mass transferred in is nonnegative and decays without sign change. It is the
+peripheral amount of a two-compartment model without return flow, whose central amount is
+`D exp (-(k10+k12) s)` and whose peripheral compartment loses its content at rate `k21` to outside
+the system. With transfer back to the central compartment at rate `k21 > 0` (with `k12 > 0` and
+`D > 0`), as in the two-compartment generator, it is not the peripheral amount. -/
 lemma peripheral_amount_nonneg {k10 k12 k21 D a : ℝ}
     (hk10 : 0 ≤ k10) (hk12 : 0 ≤ k12) (hk21 : 0 ≤ k21) (hD : 0 ≤ D)
     (ha : 0 ≤ a) :

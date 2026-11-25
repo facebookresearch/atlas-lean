@@ -1,0 +1,16 @@
+# Derived Fibre Closing Paths
+
+- [Universal Path](universal-path.md)
+- [Shifted NCMap](shifted-ncmap.md)
+- [Closed Pullback eq realize shifted NC](closed-pullback-eq-realize-shifted-nc.md)
+- [Fibre NCPath Model](fibre-ncpath-model.md)
+- [First Endpoint](first-endpoint.md)
+- [Second Endpoint](second-endpoint.md)
+- [Homotopy](homotopy.md)
+- [Homotopy d](homotopy-d.md)
+- [Comparison Path](comparison-path.md)
+- [Comparison Path source](comparison-path-source.md)
+- [Comparison Path target](comparison-path-target.md)
+- [Derived Residue Paths](derived-residue-paths.md)
+- [Derived Residue Class](derived-residue-class.md)
+- [Fibre NCModels](fibre-ncmodels.md)

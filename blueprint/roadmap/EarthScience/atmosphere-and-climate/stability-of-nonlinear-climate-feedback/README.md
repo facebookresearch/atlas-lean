@@ -4,3 +4,4 @@
 - [Pointwise decay of the quadratic energy about a reference value](quadratic-energy-decay-about-reference.md)
 - [Linear damping feedback has the restoring sign](linear-witness.md)
 - [Linear amplifying feedback has the repelling sign](unstable-witness.md)
+- [Local attraction in a scalar energy-balance model](local-attraction-in-a-scalar-energy-balance-model.md)
