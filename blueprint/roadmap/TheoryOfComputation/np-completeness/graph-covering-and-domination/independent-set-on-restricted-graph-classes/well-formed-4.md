@@ -1,0 +1,3 @@
+# Well-formed instances of INDEPENDENT SET ON GRAPHS WITHOUT A SUBDIVIDED K_{3,3}
+
+An instance $(n, E, K)$ is well-formed for INDEPENDENT SET ON GRAPHS WITHOUT A SUBDIVIDED $K_{3,3}$ when its edge list $E$ has no repeated entries and every pair $(u, v)$ in $E$ satisfies $u < n$, $v < n$, $u \ne v$ and $(v, u) \notin E$, the graph of the instance (on the vertices $0, \dots, n-1$, with $u$ and $v$ adjacent when $u \ne v$ and $(u, v)$ or $(v, u)$ is in $E$) contains no subdivision of $K_{3,3}$ (six branch vertices joined by nine paths that are internally disjoint and avoid the branch vertices inside), and $0 < K \le n$.

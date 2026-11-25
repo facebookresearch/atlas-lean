@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Regenerate provenance/formal-math-sync.json from a local Formal-Math checkout.
+"""Regenerate the Formal-Math provenance ledger from a local upstream checkout.
 
     scripts/sync_formal_math.py --formal-math ~/formal-math --commit <sha> \\
         [--rationales divergences.json] [--report sync-report.md]
@@ -29,8 +29,11 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from check_formal_math_sync import (  # noqa: E402  (the checker owns the header parser)
-    BACKPORT, MANIFEST, ROOTS, SCHEMA_VERSION, UPSTREAM_REPOSITORY, count_rows, dump_manifest, is_flt, leading_notice,
-    last_committed_text, library_files, retired_row, sha256, split_published, upstream_body,
+    BACKPORT, MANIFEST, ROOTS, SCHEMA_VERSION, UPSTREAM_REPOSITORY, count_rows, is_flt,
+    git as atlas_git,
+    last_committed_text, leading_notice, library_files, load, load_revision, manifest_documents,
+    manifest_rel, retired_row, row_structure_problems, shard_directory, sha256, split_published,
+    upstream_body, write_manifest,
 )
 
 ZERO = "0" * 40
@@ -216,7 +219,7 @@ def build(atlas: Path, repo: Path, commit: str, previous: dict,
     rows.sort(key=lambda row: row["path"])
     toolchain = (atlas / "lean-toolchain").read_text().strip()
     manifest = {
-        "schema_version": SCHEMA_VERSION,
+        "schema_version": previous.get("schema_version", SCHEMA_VERSION),
         "upstream": {"repository": UPSTREAM_REPOSITORY, "commit": commit},
         "lean_toolchain": toolchain,
         "roots": list(ROOTS),
@@ -257,6 +260,36 @@ def report(previous: dict, manifest: dict, local: int) -> str:
     return "\n".join(lines)
 
 
+def previous_manifest(atlas: Path, manifest_path: Path) -> dict:
+    """Read an existing ledger, refusing to forget committed rows before a sync."""
+    shards = shard_directory(manifest_path)
+    if manifest_path.exists() or manifest_path.is_symlink() or shards.exists() or shards.is_symlink():
+        previous, problems = load(manifest_path)
+        if previous is not None:
+            problems.extend(row_structure_problems(atlas, previous))
+        if problems or previous is None:
+            raise SystemExit("sync: cannot read the existing ledger: " + "; ".join(problems))
+    else:
+        previous = {}
+    if atlas_git(atlas, "rev-parse", "--show-toplevel") != str(atlas.resolve()):
+        return previous
+    rel = manifest_rel(atlas, manifest_path)
+    if rel.startswith("../") or not atlas_git(atlas, "rev-parse", "--verify", "HEAD"):
+        return previous
+    committed, problems = load_revision(atlas, "HEAD", rel)
+    if committed is not None:
+        problems.extend(row_structure_problems(atlas, committed))
+    if problems:
+        raise SystemExit("sync: cannot read the committed ledger: " + "; ".join(problems))
+    if committed is not None:
+        old = {row["path"] for row in committed["rows"]}
+        missing = old - {row["path"] for row in previous.get("rows", [])}
+        if not previous or committed["schema_version"] > previous["schema_version"] or missing:
+            raise SystemExit("sync: restore the existing ledger layout and all committed rows before "
+                             "syncing" + (f": {', '.join(sorted(missing)[:10])}" if missing else ""))
+    return previous
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--formal-math", type=Path, required=True, help="local Formal-Math git repository")
@@ -267,11 +300,20 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--report", type=Path, help="also write the sync report here")
     a = ap.parse_args(argv)
     manifest_path = a.manifest or a.atlas / MANIFEST
+    if a.report:
+        report_target = a.report.resolve()
+        if (report_target == manifest_path.resolve()
+                or report_target.is_relative_to(shard_directory(manifest_path).resolve())):
+            ap.error("--report must be outside the provenance ledger")
     if git(a.formal_math, "rev-parse", "--is-shallow-repository").decode().strip() != "false":
         raise SystemExit(f"sync: {a.formal_math} is a shallow clone; classification needs the full first-parent "
                          "history (run `git fetch --unshallow` first)")
     commit = git(a.formal_math, "rev-parse", "--verify", f"{a.commit}^{{commit}}").decode().strip()
-    previous = load_json(manifest_path)
+    previous = previous_manifest(a.atlas, manifest_path)
+    if previous and a.report and a.report.exists():
+        for target in manifest_documents(manifest_path, previous):
+            if target.exists() and a.report.samefile(target):
+                ap.error("--report must not alias a provenance ledger file")
     rationales = load_json(a.rationales)
     if not isinstance(rationales, dict):
         raise SystemExit("sync: --rationales must be a JSON object mapping paths to {rationale, backport}")
@@ -285,10 +327,13 @@ def main(argv: list[str] | None = None) -> int:
             print(f"  {path}", file=sys.stderr)
         return 1
     if a.report:
-        a.report.write_text(text + "\n", encoding="utf-8")
-    manifest_path.parent.mkdir(parents=True, exist_ok=True)
-    manifest_path.write_text(dump_manifest(manifest), encoding="utf-8")
-    print(f"wrote {manifest_path} ({len(manifest['rows'])} rows)")
+        try:
+            a.report.write_text(text + "\n", encoding="utf-8")
+        except OSError as error:
+            print(f"sync: cannot write report {a.report}: {error}; ledger not written", file=sys.stderr)
+            return 1
+    write_manifest(manifest_path, manifest)
+    print(f"wrote ledger at {manifest_path} ({len(manifest['rows'])} rows)")
     return 0
 
 

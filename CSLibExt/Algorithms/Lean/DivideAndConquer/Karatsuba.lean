@@ -297,7 +297,7 @@ theorem karatsubaCost_le_rpow {n : ℕ} (hn : 1 ≤ n) :
   set k := Nat.clog 2 n with hkdef
   have hpow : 2 ^ (k - 1) ≤ n := by
     rcases Nat.lt_or_ge 1 n with h | h
-    · exact (Nat.pow_pred_clog_lt_self (by norm_num) h).le
+    · exact (Nat.pow_pred_clog_lt_self 2 h).le
     · have : n = 1 := by omega
       subst this
       simp [hkdef]

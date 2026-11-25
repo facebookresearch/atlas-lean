@@ -53,8 +53,9 @@ theorem hankelTransform.eq_zero_of_recurrence {R : Type*} [CommRing R] [IsDomain
   funext j
   have hj := hrec (r + j.val) (by omega)
   rw [← Fin.sum_univ_eq_sum_range] at hj
-  simp only [Finset.sum_apply, Pi.smul_apply, Function.comp_apply, Matrix.of_apply,
-    row, Fin.val_castLE, Fin.val_rev, Nat.succ_sub_succ_eq_sub, smul_eq_mul, Pi.zero_apply]
+  simp only [Finset.sum_apply, Pi.smul_apply, Function.comp_apply, Matrix.row_apply,
+    Matrix.of_apply, row, Fin.val_castLE, Fin.val_rev, Nat.succ_sub_succ_eq_sub, smul_eq_mul,
+    Pi.zero_apply]
   refine (Finset.sum_congr rfl fun a _ ↦ ?_).trans hj
   rw [Nat.sub_add_comm (Nat.le_of_lt_succ a.isLt)]
 

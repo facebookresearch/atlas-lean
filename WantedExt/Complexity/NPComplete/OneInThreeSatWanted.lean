@@ -17,7 +17,7 @@ problems" (1978).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import CSLibExt.Logics.Propositional.CNF.Semantics
@@ -48,7 +48,7 @@ $n$, the number of variables, and a CNF formula $\varphi$.
 
 Any CNF formula is allowed here; that $\varphi$ has three literals per clause, all over the
 variables below $n$, is required separately by well-formedness. -/
-abbrev OneInThreeSatInstance := ℕ × Cslib.Logic.PL.CNF
+abbrev OneInThreeSatInstance := ℕ × Cslib.Logic.LegacyPL.CNF
 
 /-- **Well-formed 1-in-3-SAT instances.** A 1-in-3-SAT instance $(n, \varphi)$ is well formed
 when every clause of $\varphi$ has exactly three literals and every literal $(x, b)$ in it has
@@ -64,10 +64,10 @@ def OneInThreeSatFeasible
     (i : OneInThreeSatInstance) : Prop :=
   ∃ assign : List Bool, assign.length = i.1 ∧
     ∀ clause ∈ i.2, ∃ k < clause.length,
-      Cslib.Logic.PL.CNFLiteral.Satisfies (fun x => assign.getD x false)
+      Cslib.Logic.LegacyPL.CNFLiteral.Satisfies (fun x => assign.getD x false)
         (clause.getD k (0, false)) ∧
         ∀ j < clause.length,
-          Cslib.Logic.PL.CNFLiteral.Satisfies (fun x => assign.getD x false)
+          Cslib.Logic.LegacyPL.CNFLiteral.Satisfies (fun x => assign.getD x false)
             (clause.getD j (0, false)) → j = k
 
 open Classical in
