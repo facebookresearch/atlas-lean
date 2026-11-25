@@ -156,21 +156,16 @@ end ModularForm
 
 namespace CuspForm
 
-open ModularForm ModularFormClass PeriodMapPort.Internal.Regularity.M4cP1W2
+open ModularForm ModularFormClass
 
 variable {N : ℕ}
-
-private theorem one_mem_strictPeriods (N : ℕ) :
-    (1 : ℝ) ∈ ((CongruenceSubgroup.Gamma0 N : Subgroup SL(2, ℤ)) :
-      Subgroup (GL (Fin 2) ℝ)).strictPeriods :=
-  CongruenceSubgroup.one_mem_strictPeriods_Gamma0 N
 
 private theorem qCoeff_heckeTLin (k : ℤ) {p : ℕ} (hp : p.Prime) (hpN : ¬ p ∣ N)
     (f : CuspForm (CongruenceSubgroup.Gamma0 N) k) :
     qCoeff ⇑(heckeTLin k hp hpN f) = coeffHeckeT k p (qCoeff ⇑f) := by
   funext n
   rw [coe_heckeTLin_apply]
-  exact qCoeff_heckeT_class hp.ne_zero f (one_mem_strictPeriods N) n
+  exact qCoeff_heckeT f (CongruenceSubgroup.one_mem_strictPeriods_Gamma0 N) hp.ne_zero n
 
 private theorem qCoeff_heckeULin (k : ℤ) {p : ℕ} [NeZero N] (hpN : p ∣ N)
     (f : CuspForm (CongruenceSubgroup.Gamma0 N) k) :
@@ -180,11 +175,19 @@ private theorem qCoeff_heckeULin (k : ℤ) {p : ℕ} [NeZero N] (hpN : p ∣ N)
     exact NeZero.ne N (Nat.eq_zero_of_zero_dvd hpN)
   funext n
   rw [coe_heckeULin_apply]
-  exact qCoeff_heckeU_class hp f (one_mem_strictPeriods N) n
+  exact qCoeff_heckeU f (CongruenceSubgroup.one_mem_strictPeriods_Gamma0 N) hp n
 
 private theorem ext_qCoeff {k : ℤ} {f g : CuspForm (CongruenceSubgroup.Gamma0 N) k}
-    (h : qCoeff ⇑f = qCoeff ⇑g) : f = g :=
-  eq_of_forall_qCoeff_eq (one_mem_strictPeriods N) fun n => congrFun h n
+    (h : qCoeff ⇑f = qCoeff ⇑g) : f = g := by
+  have hΓ := CongruenceSubgroup.one_mem_strictPeriods_Gamma0 N
+  have : Fact (IsCusp OnePoint.infty
+      ((CongruenceSubgroup.Gamma0 N : Subgroup SL(2, ℤ)) : Subgroup (GL (Fin 2) ℝ))) :=
+    ⟨Subgroup.isCusp_of_mem_strictPeriods one_pos hΓ⟩
+  have hc : ∀ n, (qExpansion 1 ⇑f).coeff n = (qExpansion 1 ⇑g).coeff n := congrFun h
+  refine DFunLike.ext f g fun τ => ?_
+  have hf := ModularForm.hasSum_qExpansion one_pos hΓ (f := f) τ
+  simp only [hc] at hf
+  exact hf.unique (ModularForm.hasSum_qExpansion one_pos hΓ (f := g) τ)
 
 /-- The Hecke operators `T_ℓ` and `T_ℓ'` on cusp forms on `Γ₀(N)` commute. -/
 theorem heckeTLin_comm (k : ℤ) {ℓ ℓ' : ℕ} (hℓ : ℓ.Prime) (hℓN : ¬ ℓ ∣ N) (hℓ' : ℓ'.Prime)
@@ -310,7 +313,8 @@ theorem mem_intLattice_of_coe_eq_heckeT {k : ℤ} (hk : 1 ≤ k) {p : ℕ} (hp :
   rw [mem_intLattice_iff_qCoeff] at hf ⊢
   intro n
   obtain ⟨m, hm⟩ := coeffHeckeT_int k hk p hf n
-  exact ⟨m, by rw [hg, qCoeff_heckeT_class hp f (one_mem_strictPeriods N) n, hm]⟩
+  exact ⟨m, by
+    rw [hg, qCoeff_heckeT f (CongruenceSubgroup.one_mem_strictPeriods_Gamma0 N) hp n, hm]⟩
 
 /-- The Hecke operator `U_p` preserves the integral lattice. -/
 theorem mem_intLattice_of_coe_eq_heckeU {k : ℤ} {p : ℕ} (hp : p ≠ 0)
@@ -319,7 +323,8 @@ theorem mem_intLattice_of_coe_eq_heckeU {k : ℤ} {p : ℕ} (hp : p ≠ 0)
   rw [mem_intLattice_iff_qCoeff] at hf ⊢
   intro n
   obtain ⟨m, hm⟩ := coeffHeckeU_int p hf n
-  exact ⟨m, by rw [hg, qCoeff_heckeU_class hp f (one_mem_strictPeriods N) n, hm]⟩
+  exact ⟨m, by
+    rw [hg, qCoeff_heckeU f (CongruenceSubgroup.one_mem_strictPeriods_Gamma0 N) hp n, hm]⟩
 
 /-- In weight `k ≥ 1`, every element of the Hecke algebra preserves the
 integral lattice of cusp forms. -/
