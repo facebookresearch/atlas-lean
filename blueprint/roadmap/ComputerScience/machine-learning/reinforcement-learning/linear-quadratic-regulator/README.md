@@ -16,6 +16,7 @@ The linear quadratic regulator (LQR) controls the linear system $x_{t+1} = A x_t
 - [The linear feedback attains the Riccati value](lqr-cost-feedback.md)
 - [The Riccati recursion converges to the stabilizing solution](riccati-recursion-converges-to-the-stabilizing-solution.md)
 - [Infinite-horizon optimality of the stabilizing Riccati feedback](infinite-horizon-lqr-optimality-of-the-stabilizing-feedback.md)
+- [Exact cost decomposition and the unique optimal control of finite-horizon LQR](exact-cost-decomposition-and-unique-optimal-control-of-finite-horizon-lqr.md)
 
 ## Related topics
 

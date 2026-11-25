@@ -1,0 +1,138 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.CompletelyPositiveMap.Basic
+public import MathlibExt.Analysis.CStarAlgebra.CompletelyPositiveMap.Canonical
+public import Mathlib.Algebra.Order.Star.Prod
+public import Mathlib.LinearAlgebra.Prod
+
+/-!
+# Products of completely positive maps
+
+Two completely positive maps with a common source pair to a completely
+positive map into the C-star product with its canonical spectral order.
+The proof passes through a genuine star homomorphism from the product of the
+two matrix algebras to matrices over the product.
+-/
+
+@[expose] public section
+
+noncomputable section
+
+open scoped CStarAlgebra
+
+namespace CompletelyPositiveMap
+
+universe uA uB uC
+
+variable {A : Type uA} {B : Type uB} {C : Type uC}
+variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
+variable [NonUnitalCStarAlgebra C]
+
+/-- Pair matrices over `B` and `C` entrywise into matrices over `B × C`.
+This private homomorphism is the positivity bridge for `prod`. -/
+private def matrixPairStarAlgHom (n : Type*) [Fintype n] :
+    CStarMatrix n n B × CStarMatrix n n C →⋆ₙₐ[ℂ]
+      CStarMatrix n n (B × C) where
+  toFun X := CStarMatrix.ofMatrix fun i j => (X.1 i j, X.2 i j)
+  map_zero' := by
+    ext i j <;> rfl
+  map_add' := by
+    intro X Y
+    ext i j <;> rfl
+  map_smul' := by
+    intro z X
+    ext i j <;> rfl
+  map_mul' := by
+    intro X Y
+    apply CStarMatrix.ext
+    intro i j
+    change ((X.1 * Y.1) i j, (X.2 * Y.2) i j) =
+      ((CStarMatrix.ofMatrix fun i j => (X.1 i j, X.2 i j)) *
+        (CStarMatrix.ofMatrix fun i j => (Y.1 i j, Y.2 i j))) i j
+    simp only [CStarMatrix.mul_apply]
+    exact prod_mk_sum Finset.univ _ _
+  map_star' := by
+    intro X
+    apply CStarMatrix.ext
+    intro i j
+    change ((star X.1) i j, (star X.2) i j) =
+      (star (CStarMatrix.ofMatrix fun i j => (X.1 i j, X.2 i j))) i j
+    rw [CStarMatrix.star_apply, CStarMatrix.star_apply, CStarMatrix.star_apply]
+    rfl
+
+/-- **Product of completely positive maps.** For nonunital complex C*-algebras `A,B,C` in spectral
+order, CP maps `f : A → B` and `g : A → C` define the CP map `a ↦ (f(a), g(a))` into `B × C`,
+equipped with its maximum C*-norm. -/
+noncomputable def prod (f : Canonical A B) (g : Canonical A C) :
+    Canonical A (B × C) := by
+  let _ : PartialOrder A := CStarAlgebra.spectralOrder A
+  let _ : StarOrderedRing A := CStarAlgebra.spectralOrderedRing A
+  let _ : PartialOrder B := CStarAlgebra.spectralOrder B
+  let _ : StarOrderedRing B := CStarAlgebra.spectralOrderedRing B
+  let _ : PartialOrder C := CStarAlgebra.spectralOrder C
+  let _ : StarOrderedRing C := CStarAlgebra.spectralOrderedRing C
+  let _ : PartialOrder (B × C) := CStarAlgebra.spectralOrder (B × C)
+  let _ : StarOrderedRing (B × C) := CStarAlgebra.spectralOrderedRing (B × C)
+  exact
+    { toLinearMap := LinearMap.prod f.toLinearMap g.toLinearMap
+      map_cstarMatrix_nonneg' := fun k M hM => by
+        have hf : 0 ≤ M.map f.toLinearMap :=
+          f.map_cstarMatrix_nonneg' k M hM
+        have hg : 0 ≤ M.map g.toLinearMap :=
+          g.map_cstarMatrix_nonneg' k M hM
+        have hpair :
+            0 ≤ (M.map f.toLinearMap, M.map g.toLinearMap) :=
+          ⟨hf, hg⟩
+        have hmapped :=
+          map_nonneg (matrixPairStarAlgHom (B := B) (C := C) (Fin k)) hpair
+        have heq :
+            M.map (LinearMap.prod f.toLinearMap g.toLinearMap) =
+              matrixPairStarAlgHom (B := B) (C := C) (Fin k)
+                (M.map f.toLinearMap, M.map g.toLinearMap) := by
+          apply CStarMatrix.ext
+          intro i j
+          change LinearMap.prod f.toLinearMap g.toLinearMap (M i j) =
+            ((M.map f.toLinearMap) i j, (M.map g.toLinearMap) i j)
+          simp only [CStarMatrix.map_apply, LinearMap.prod_apply, Function.prod_apply]
+        rw [heq]
+        exact hmapped }
+
+@[simp]
+theorem prod_apply (f : Canonical A B) (g : Canonical A C) (a : A) :
+    prod f g a = (f a, g a) := by
+  rfl
+
+@[simp]
+theorem toLinearMap_prod (f : Canonical A B) (g : Canonical A C) :
+    let _ : PartialOrder A := CStarAlgebra.spectralOrder A
+    let _ : StarOrderedRing A := CStarAlgebra.spectralOrderedRing A
+    let _ : PartialOrder B := CStarAlgebra.spectralOrder B
+    let _ : StarOrderedRing B := CStarAlgebra.spectralOrderedRing B
+    let _ : PartialOrder C := CStarAlgebra.spectralOrder C
+    let _ : StarOrderedRing C := CStarAlgebra.spectralOrderedRing C
+    let _ : PartialOrder (B × C) := CStarAlgebra.spectralOrder (B × C)
+    let _ : StarOrderedRing (B × C) := CStarAlgebra.spectralOrderedRing (B × C)
+    (prod f g).toLinearMap = LinearMap.prod f.toLinearMap g.toLinearMap := by
+  rfl
+
+/-- **Contractivity of a pair of CP maps.** For nonunital complex C*-algebras `A,B,C` in spectral order,
+suppose `f : A → B` and `g : A → C` are completely positive and satisfy `‖f(a)‖ ≤ ‖a‖` and `‖g(a)‖ ≤
+‖a‖` for every `a`. Then `a ↦ (f(a),g(a))` is contractive for the maximum norm on `B × C`. -/
+theorem norm_prod_apply_le (f : Canonical A B) (g : Canonical A C)
+    (hf : ∀ a : A, ‖f a‖ ≤ ‖a‖) (hg : ∀ a : A, ‖g a‖ ≤ ‖a‖)
+    (a : A) : ‖prod f g a‖ ≤ ‖a‖ := by
+  rw [prod_apply, Prod.norm_def]
+  exact max_le (hf a) (hg a)
+
+end CompletelyPositiveMap
