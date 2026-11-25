@@ -21,7 +21,7 @@ public import Mathlib.GroupTheory.IsSubnormal
 public import Mathlib.GroupTheory.Nilpotent
 public import Mathlib.GroupTheory.SpecificGroups.Quaternion
 public import Mathlib.Order.CompletePartialOrder
-public import WantedExt.GroupTheory.GroupClassesShared
+public import MathlibExt.GroupTheory.GroupClassesShared
 public import WantedExt.GroupTheory.NilpotentThreeConjugatesFittingKourovka17Problem40Wanted
 
 @[expose] public section

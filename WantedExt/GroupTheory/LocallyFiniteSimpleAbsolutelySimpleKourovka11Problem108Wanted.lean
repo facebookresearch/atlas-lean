@@ -22,7 +22,7 @@ public import Mathlib.Data.Finset.Defs
 public import Mathlib.GroupTheory.QuotientGroup.Defs
 public import Mathlib.GroupTheory.Subgroup.Simple
 public import Mathlib.Order.CompletePartialOrder
-public import WantedExt.GroupTheory.GroupClassesShared
+public import MathlibExt.GroupTheory.GroupClassesShared
 
 @[expose] public section
 

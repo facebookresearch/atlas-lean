@@ -19,7 +19,7 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Group.Subgroup.Lattice
 public import Mathlib.Basic.Finite.Defs
-public import WantedExt.GroupTheory.GroupClassesShared
+public import MathlibExt.GroupTheory.GroupClassesShared
 
 @[expose] public section
 

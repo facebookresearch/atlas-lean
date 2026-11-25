@@ -21,7 +21,7 @@ public import Mathlib.Algebra.Module.Projective
 public import Mathlib.Algebra.MonoidAlgebra.Defs
 public import Mathlib.GroupTheory.OrderOfElement
 public import Mathlib.RingTheory.Finiteness.Defs
-public import WantedExt.GroupTheory.GroupClassesShared
+public import MathlibExt.GroupTheory.GroupClassesShared
 
 @[expose] public section
 

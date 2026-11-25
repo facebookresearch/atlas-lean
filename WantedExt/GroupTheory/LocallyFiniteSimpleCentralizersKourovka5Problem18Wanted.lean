@@ -17,7 +17,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.GroupTheory.Subgroup.Centralizer
-public import WantedExt.GroupTheory.GroupClassesShared
+public import MathlibExt.GroupTheory.GroupClassesShared
 
 @[expose] public section
 

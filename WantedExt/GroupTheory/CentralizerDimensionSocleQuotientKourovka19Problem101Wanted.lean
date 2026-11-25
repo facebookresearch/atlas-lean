@@ -22,7 +22,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.GroupTheory.Index
 public import Mathlib.GroupTheory.Solvable
 public import Mathlib.Order.CompletePartialOrder
-public import WantedExt.GroupTheory.GroupClassesShared
+public import MathlibExt.GroupTheory.GroupClassesShared
 
 @[expose] public section
 
