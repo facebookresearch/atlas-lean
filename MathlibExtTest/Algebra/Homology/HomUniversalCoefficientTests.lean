@@ -103,7 +103,8 @@ private lemma reindexedP_d (i j : ℤ) :
       P.d (-i) (-j) := rfl
 
 private lemma p_d_zero_neg_one : P.d 0 (-1) = twiceFirst := by
-  simpa only [Int.neg_add_cancel, chainStep, dif_pos rfl] using
+  have hindex : (-1 : ℤ) + 1 = 0 := by omega
+  simpa only [hindex, chainStep, dite_eq_left] using
     (ChainComplex.of_d chainTerm chainStep (-1))
 
 private lemma projectiveTerms (p : ℤ) : Projective (P.X p) :=
@@ -184,50 +185,83 @@ example : (degreeMinusOne.v 0 (-1) (by omega)).hom
 example :
     ((((homCochainComplex P Q).d (-2) (-1)).hom degreeMinusTwo).v
       1 0 (by omega)).hom (fun _ : Fin 1 => (4 : ℤ)) (0 : Fin 1) = -8 := by
+  let dP : V 1 ⟶ V 0 := P.d (-1) (-2)
+  let z₂ : V 0 ⟶ V 1 := degreeMinusTwo.v 2 0 (by omega)
+  let z₁ : V 1 ⟶ V 1 := degreeMinusTwo.v 1 (-1) (by omega)
+  let dQ : V 1 ⟶ V 1 := Q.d (-1) 0
+  have hdP : dP = 0 := by
+    have hindex : (-2 : ℤ) + 1 = -1 := by omega
+    simpa only [hindex, chainStep, dite_eq_right (by decide : (-2 : ℤ) ≠ -1)] using
+      (ChainComplex.of_d chainTerm chainStep (-2))
+  have hz₂ : z₂ = 0 := by
+    rw [homCochainPiEquiv_symm_v]
+    rfl
+  have hz₁ : z₁ = 𝟙 (V 1) := by
+    rw [homCochainPiEquiv_symm_v]
+    rfl
+  have hdQ : dQ = (2 : ℤ) • 𝟙 (V 1) :=
+    CochainComplex.of_d coefficientTerm coefficientStep (-1)
   rw [homCochainComplex_d_v P Q (-2) (-1) (by omega) degreeMinusTwo 1 0 (by omega)]
-  rw [reindexedP_d]
-  norm_num [degreeMinusTwo, homCochainPiEquiv_symm_v, degreeMinusTwoFamily,
-    P, Q, chainTerm, coefficientTerm, chainRank, coefficientRank,
-    ChainComplex.of.d, CochainComplex.of.d, chainStep, coefficientStep,
-    cochainComplexEquivalence, ComplexShape.Embedding.restrictionFunctor,
-    ComplexShape.embeddingUpIntDownInt, HomologicalComplex.restriction,
-    HomologicalComplex.XIsoOfEq, ModuleCat.hom_comp, ModuleCat.hom_id,
-    ModuleCat.hom_zero, ModuleCat.hom_ofHom, ModuleCat.hom_zsmul, ModuleCat.hom_neg,
-    CategoryTheory.Limits.comp_zero, CategoryTheory.Limits.zero_comp,
-    Category.id_comp, Category.comp_id, LinearMap.comp_apply, LinearMap.smul_apply]
+  change ((dP ≫ z₂ + (-1 : ℤ).negOnePow • (z₁ ≫ dQ)).hom
+    (fun _ : Fin 1 => (4 : ℤ))) (0 : Fin 1) = -8
+  rw [hdP, hz₂, hz₁, hdQ]
+  simp only [CategoryTheory.Limits.zero_comp, zero_add, Category.id_comp]
+  norm_num [ModuleCat.hom_zsmul, ModuleCat.hom_neg, ModuleCat.hom_id,
+    LinearMap.smul_apply, LinearMap.neg_apply, LinearMap.id_apply,
+    Pi.smul_apply, smul_eq_mul]
 
 example :
     ((((homCochainComplex P Q).d (-2) (-1)).hom degreeMinusTwo).v
       0 (-1) (by omega)).hom
         (fun i : Fin 2 => if i = 0 then (3 : ℤ) else 5) (0 : Fin 1) = 6 := by
+  let dP : V 2 ⟶ V 1 := P.d 0 (-1)
+  let z₁ : V 1 ⟶ V 1 := degreeMinusTwo.v 1 (-1) (by omega)
+  let z₀ : V 2 ⟶ V 0 := degreeMinusTwo.v 0 (-2) (by omega)
+  let dQ : V 0 ⟶ V 1 := Q.d (-2) (-1)
+  have hdP : dP = twiceFirst := p_d_zero_neg_one
+  have hz₁ : z₁ = 𝟙 (V 1) := by
+    rw [homCochainPiEquiv_symm_v]
+    rfl
+  have hz₀ : z₀ = 0 := by
+    rw [homCochainPiEquiv_symm_v]
+    rfl
+  have hdQ : dQ = 0 := by
+    have hindex : (-2 : ℤ) + 1 = -1 := by omega
+    simpa only [hindex, coefficientStep, dite_eq_right (by decide : (-2 : ℤ) ≠ -1)] using
+      (CochainComplex.of_d coefficientTerm coefficientStep (-2))
   rw [homCochainComplex_d_v P Q (-2) (-1) (by omega) degreeMinusTwo 0 (-1) (by omega)]
-  rw [reindexedP_d, p_d_zero_neg_one]
-  norm_num [degreeMinusTwo, homCochainPiEquiv_symm_v, degreeMinusTwoFamily,
-    P, Q, chainTerm, coefficientTerm, chainRank, coefficientRank,
-    ChainComplex.of.d, CochainComplex.of.d, chainStep, coefficientStep, twiceFirst,
-    cochainComplexEquivalence, ComplexShape.Embedding.restrictionFunctor,
-    ComplexShape.embeddingUpIntDownInt, HomologicalComplex.restriction,
-    HomologicalComplex.XIsoOfEq, ModuleCat.hom_comp, ModuleCat.hom_id,
-    ModuleCat.hom_zero, ModuleCat.hom_ofHom, ModuleCat.hom_zsmul, ModuleCat.hom_neg,
-    CategoryTheory.Limits.comp_zero, CategoryTheory.Limits.zero_comp,
-    Category.id_comp, Category.comp_id, LinearMap.comp_apply, LinearMap.smul_apply]
+  change ((dP ≫ z₁ + (-1 : ℤ).negOnePow • (z₀ ≫ dQ)).hom
+    (fun i : Fin 2 => if i = 0 then (3 : ℤ) else 5)) (0 : Fin 1) = 6
+  rw [hdP, hz₁, hz₀, hdQ]
+  simp only [Category.comp_id, CategoryTheory.Limits.zero_comp, smul_zero, add_zero]
+  change (2 : ℤ) * 3 = 6
+  norm_num
 
 example :
     ((((homCochainComplex P Q).d (-1) 0).hom degreeMinusOne).v
       0 0 (by omega)).hom
         (fun i : Fin 2 => if i = 0 then (3 : ℤ) else 5) (0 : Fin 1) = 16 := by
+  let dP : V 2 ⟶ V 1 := P.d 0 (-1)
+  let z₁ : V 1 ⟶ V 1 := degreeMinusOne.v 1 0 (by omega)
+  let z₀ : V 2 ⟶ V 1 := degreeMinusOne.v 0 (-1) (by omega)
+  let dQ : V 1 ⟶ V 1 := Q.d (-1) 0
+  have hdP : dP = twiceFirst := p_d_zero_neg_one
+  have hz₁ : z₁ = 𝟙 (V 1) := by
+    rw [homCochainPiEquiv_symm_v]
+    rfl
+  have hz₀ : z₀ = secondCoordinate := by
+    rw [homCochainPiEquiv_symm_v]
+    rfl
+  have hdQ : dQ = (2 : ℤ) • 𝟙 (V 1) :=
+    CochainComplex.of_d coefficientTerm coefficientStep (-1)
   rw [homCochainComplex_d_v P Q (-1) 0 (by omega) degreeMinusOne 0 0 (by omega)]
-  rw [reindexedP_d, p_d_zero_neg_one]
-  norm_num [degreeMinusOne, homCochainPiEquiv_symm_v, degreeMinusOneFamily,
-    P, Q, chainTerm, coefficientTerm, chainRank, coefficientRank,
-    ChainComplex.of.d, CochainComplex.of.d, chainStep, coefficientStep,
-    twiceFirst, secondCoordinate, cochainComplexEquivalence,
-    ComplexShape.Embedding.restrictionFunctor, ComplexShape.embeddingUpIntDownInt,
-    HomologicalComplex.restriction, HomologicalComplex.XIsoOfEq,
-    ModuleCat.hom_comp, ModuleCat.hom_id, ModuleCat.hom_zero, ModuleCat.hom_ofHom,
-    ModuleCat.hom_zsmul, ModuleCat.hom_neg, CategoryTheory.Limits.comp_zero,
-    CategoryTheory.Limits.zero_comp, Category.id_comp, Category.comp_id,
-    LinearMap.comp_apply, LinearMap.smul_apply]
+  change ((dP ≫ z₁ + (0 : ℤ).negOnePow • (z₀ ≫ dQ)).hom
+    (fun i : Fin 2 => if i = 0 then (3 : ℤ) else 5)) (0 : Fin 1) = 16
+  rw [hdP, hz₁, hz₀, hdQ]
+  norm_num [ModuleCat.hom_add, ModuleCat.hom_comp, ModuleCat.hom_zsmul,
+    ModuleCat.hom_id, ModuleCat.hom_ofHom, twiceFirst, secondCoordinate,
+    LinearMap.add_apply, LinearMap.comp_apply, LinearMap.smul_apply,
+    LinearMap.id_apply, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
 
 example : UCT.ShortExact :=
   homUniversalCoefficientSequence_shortExact P Q 0 projectiveTerms projectiveImages
@@ -262,15 +296,23 @@ example :
     ((((homCochainComplexMap sourceMap coefficientMap).f (-1)).hom degreeMinusOne).v
       0 (-1) (by omega)).hom
         (fun i : Fin 2 => if i = 0 then (3 : ℤ) else 5) (0 : Fin 1) = -15 := by
+  let f₀ : V 2 ⟶ V 2 :=
+    ((cochainComplexEquivalence (ModuleCat.{0} ℤ)).functor.map sourceMap).f 0
+  let z₀ : V 2 ⟶ V 1 := degreeMinusOne.v 0 (-1) (by omega)
+  let g₁ : V 1 ⟶ V 1 := coefficientMap.f (-1)
+  have hf₀ : f₀ = (3 : ℤ) • 𝟙 (V 2) := reindexedSourceMap_f 0
+  have hz₀ : z₀ = secondCoordinate := by
+    rw [homCochainPiEquiv_symm_v]
+    rfl
+  have hg₁ : g₁ = (-1 : ℤ) • 𝟙 (V 1) := coefficientMap_f (-1)
   rw [homCochainComplexMap_v sourceMap coefficientMap (-1) 0 (-1) (by omega)]
-  rw [reindexedSourceMap_f, coefficientMap_f]
-  norm_num [sourceMap, coefficientMap, degreeMinusOne, homCochainPiEquiv_symm_v,
-    degreeMinusOneFamily, secondCoordinate, cochainComplexEquivalence,
-    ComplexShape.Embedding.restrictionFunctor, ComplexShape.embeddingUpIntDownInt,
-    HomologicalComplex.restriction, HomologicalComplex.restrictionMap,
-    HomologicalComplex.XIsoOfEq, ModuleCat.hom_comp, ModuleCat.hom_id,
-    ModuleCat.hom_zero, ModuleCat.hom_ofHom, ModuleCat.hom_zsmul, ModuleCat.hom_neg,
-    Category.id_comp, Category.comp_id, LinearMap.comp_apply, LinearMap.smul_apply]
+  change ((f₀ ≫ z₀ ≫ g₁).hom
+    (fun i : Fin 2 => if i = 0 then (3 : ℤ) else 5)) (0 : Fin 1) = -15
+  rw [hf₀, hz₀, hg₁]
+  norm_num [ModuleCat.hom_comp, ModuleCat.hom_zsmul, ModuleCat.hom_neg,
+    ModuleCat.hom_id, ModuleCat.hom_ofHom, secondCoordinate,
+    LinearMap.comp_apply, LinearMap.smul_apply, LinearMap.id_apply,
+    Pi.smul_apply, smul_eq_mul]
 
 private abbrev uctMap : UCT ⟶ UCT :=
   homUniversalCoefficientSequenceMap sourceMap coefficientMap 0
@@ -287,7 +329,8 @@ example (e : UCT.X₁) :
       ((Ext.mk₀ (HomologicalComplex.homologyMap sourceMap (-1))).comp (e (-1))
         (zero_add 1)).comp (Ext.mk₀ (HomologicalComplex.homologyMap coefficientMap 0))
           (add_zero 1) := by
-  simpa only [uctMap, zero_sub, sub_neg_eq_add, neg_add_cancel] using
+  have hdegree : (0 : ℤ) - 1 - (-1) = 0 := by omega
+  simpa only [uctMap, hdegree] using
     homUniversalCoefficientSequenceMap_τ₁_apply sourceMap coefficientMap 0
     projectiveTerms projectiveImages projectiveTerms projectiveImages e (-1)
 
