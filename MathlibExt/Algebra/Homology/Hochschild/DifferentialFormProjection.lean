@@ -149,7 +149,7 @@ theorem differentialWord_mulAdjacent (n : ℕ) (i : Fin n) (a : Fin (n + 1) → 
         a i.succ • differentialWord k A n (a ∘ i.succ.succAbove) := by
   classical
   rw [differentialWord_apply, differential_mulAdjacent_update]
-  let e : MultilinearMap A (fun _ : Fin n => Ω) (⋀[A]^n Ω) :=
+  let e : MultilinearMap (RingHom.id A) (fun _ : Fin n => Ω) (⋀[A]^n Ω) :=
     (exteriorPower.ιMulti A n).toMultilinearMap
   let v : Fin n → KaehlerDifferential k A := fun j => KaehlerDifferential.D k A (a (i.castSucc.succAbove j))
   let x := KaehlerDifferential.D k A (a i.succ)

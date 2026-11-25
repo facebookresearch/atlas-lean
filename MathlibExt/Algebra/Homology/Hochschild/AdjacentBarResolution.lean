@@ -18,6 +18,7 @@ public import Mathlib.Algebra.Category.ModuleCat.Projective
 public import Mathlib.CategoryTheory.Abelian.Projective.Resolution
 public import Mathlib.Algebra.Homology.QuasiIso
 public import Mathlib.RingTheory.MvPolynomial.Basic
+public import Mathlib.LinearAlgebra.TensorProduct.Projective
 
 /-!
 # The enveloping bar resolution
@@ -159,6 +160,8 @@ theorem tensorPower_projective [Module.Projective k A] (n : ℕ) :
   | zero => exact Module.Projective.of_equiv' (TensorPower.zeroEquiv k A).symm
   | succ n hn =>
     letI : Module.Projective k (TensorPower k n A) := hn
+    letI : Module.Projective k (A ⊗[k] TensorPower k n A) :=
+      Module.Projective.tensorProduct (R := k) (R₀ := k) (M := A) (N := TensorPower k n A)
     exact Module.Projective.of_equiv' (TensorPower.consEquiv k A n)
 
 /-- The original bar terms are projective over A^e by the original base-change coordinate. -/
@@ -166,7 +169,9 @@ theorem envelopingBarDegree_projective [Module.Projective k A] (n : ℕ) :
     Projective ((envelopingBar k A).X n) := by
   letI : Module.Projective k (TensorPower k n A) := tensorPower_projective k A n
   letI : Module.Projective (EnvelopingAlgebra k A)
-      ((EnvelopingAlgebra k A) ⊗[k] TensorPower k n A) := inferInstance
+      ((EnvelopingAlgebra k A) ⊗[k] TensorPower k n A) :=
+    Module.Projective.tensorProduct (R := EnvelopingAlgebra k A) (R₀ := k)
+      (M := EnvelopingAlgebra k A) (N := TensorPower k n A)
   letI : Module.Projective (EnvelopingAlgebra k A) ((envelopingBar k A).X n) :=
     Module.Projective.of_equiv' (envelopingBarDegreeEquivBaseChange k A n).symm
   infer_instance

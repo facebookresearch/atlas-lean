@@ -144,3 +144,21 @@ theorem projection_naturality (n : ℕ) (f : M →ₗ[R] N) :
 end Naturality
 
 end exteriorPower
+
+namespace ExteriorAlgebra
+
+/-- The grade involution multiplies a homogeneous exterior element of degree `n` by `(-1)^n`. -/
+theorem involute_of_mem_exteriorPower
+    {A : Type u} [CommRing A] {M : Type v} [AddCommGroup M] [Module A M]
+    {n : ℕ} {x : ExteriorAlgebra A M} (hx : x ∈ ⋀[A]^n M) :
+    CliffordAlgebra.involute x = (-1 : A) ^ n • x := by
+  have h :
+      (CliffordAlgebra.involute : ExteriorAlgebra A M →ₐ[A] ExteriorAlgebra A M).toLinearMap.comp
+          (⋀[A]^n M).subtype = (-1 : A) ^ n • (⋀[A]^n M).subtype := by
+    apply exteriorPower.linearMap_ext
+    apply AlternatingMap.ext
+    intro v
+    exact exteriorPower.involute_ιMulti A M n v
+  exact LinearMap.congr_fun h ⟨x, hx⟩
+
+end ExteriorAlgebra

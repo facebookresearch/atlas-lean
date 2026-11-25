@@ -37,7 +37,7 @@ theorem sort_comp_strictMono (f : Fin n → α) (g : α → β) (hg : StrictMono
   obtain ⟨hmono, htie⟩ := (eq_sort_iff).mp (rfl : sort f = sort f)
   refine ⟨hg.monotone.comp hmono, ?_⟩
   intro i j hij h
-  exact htie i j hij (hg.injective h)
+  exact htie (i := i) (j := j) hij (hg.injective h)
 
 /-- The original combined labels, with second-stage labels first in the lexicographic order. -/
 def successiveStableLabels (f : Fin n → α) (g : Fin n → β) : Fin n → β ×ₗ α :=
@@ -61,11 +61,14 @@ theorem sort_successiveStableLabels (f : Fin n → α) (g : Fin n → β) :
   apply Prod.Lex.toLex_lt_toLex.mpr
   obtain hgl | hge := (hgmono hij.le).lt_or_eq
   · exact Or.inl (Prod.Lex.toLex_lt_toLex.mpr (Or.inl hgl))
-  · have hindex := hgtie i j hij hge
+  · have hindex : sort g i < sort g j :=
+      lt_of_le_of_ne (hgtie (i := i) (j := j) hij.le hge)
+        ((sort g).injective.ne hij.ne)
     obtain hfl | hfe := (hfmono hindex.le).lt_or_eq
     · exact Or.inl (Prod.Lex.toLex_lt_toLex.mpr (Or.inr ⟨hge, hfl⟩))
     · exact Or.inr ⟨by exact congrArg toLex (Prod.ext hge hfe),
-        hftie (sort g i) (sort g j) hindex hfe⟩
+        lt_of_le_of_ne (hftie (i := sort g i) (j := sort g j) hindex.le hfe)
+          ((sort f).injective.ne hindex.ne)⟩
 
 /-- The original two labelings are in bijection with their original combined labels. -/
 def successiveStableLabelsEquiv (n : ℕ) (α β : Type*) [LinearOrder α] [LinearOrder β] :

@@ -40,18 +40,6 @@ local notation "ℰ" => fun n : ℕ => ⋀[R]^n M
 local notation "G" => ℰ ᵍ⊗[R] ℰ
 local notation "γ" => (CliffordAlgebra.involute : E →ₐ[R] E)
 
-/-- The full degree-`n` sign of the native grade involution. -/
-theorem involute_of_mem_exteriorPower (n : ℕ) (a : E) (ha : a ∈ ⋀[R]^n M) :
-    γ a = (-1 : R) ^ n • a := by
-  have hγ : (exteriorPower.projection R M n (γ a) : E) = γ a :=
-    congrArg Subtype.val (exteriorPower.projection_subtype_apply R M n
-      ⟨γ a, involute_mem_exteriorPower R M n a ha⟩)
-  have hπ : (exteriorPower.projection R M n a : E) = a :=
-    congrArg Subtype.val (exteriorPower.projection_subtype_apply R M n ⟨a, ha⟩)
-  rw [← hγ, exteriorPower.projection_involute]
-  change (-1 : R) ^ n • (exteriorPower.projection R M n a : E) = (-1 : R) ^ n • a
-  rw [hπ]
-
 /-- The actual exterior diagonal, with the native graded tensor algebra as target. -/
 def diagonalGraded : E →ₐ[R] G :=
   (prodEquivTensor R M M).toAlgHom.comp
@@ -102,7 +90,8 @@ private theorem diagonalGraded_mul_insertion (x : M) (t : E ⊗[R] E) :
           GradedTensorProduct.tmul_coe_mul_coe_tmul ℰ ℰ 1 sx a b
         rw [diagonalGraded_ι, add_mul, map_add,
           GradedTensorProduct.tmul_one_mul_coe_tmul]
-        rw [hm, signedInsertion_tmul, involute_of_mem_exteriorPower R M n a a.property]
+        rw [hm, signedInsertion_tmul, involute_of_mem_exteriorPower
+          (A := R) (M := M) (n := n) (x := a) a.property]
         simp only [one_mul, sx]
         rw [@Units.smul_def _ _ (_) (_), ← Int.cast_smul_eq_zsmul R, LinearEquiv.map_smul]
         simp only [Units.val_pow_eq_pow_val, Units.val_neg, Units.val_one,

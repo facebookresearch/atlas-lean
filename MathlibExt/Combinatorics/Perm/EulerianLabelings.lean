@@ -228,7 +228,7 @@ theorem card_descentLabeling {n : ℕ} (σ : Perm (Fin (n + 1))) (m : ℕ) :
   · rw [Fintype.card_congr (descentLabelingEquivMonotone σ m hm), Sym.card_monotone_fin]
     congr 1
     omega
-  · letI : IsEmpty (DescentLabeling σ m) :=
+  · let : IsEmpty (DescentLabeling σ m) :=
       ⟨fun g => hm (descentNumber_lt_labelAlphabet σ g)⟩
     rw [Fintype.card_of_isEmpty, Nat.choose_eq_zero_of_lt (by omega)]
 
@@ -243,9 +243,10 @@ def sortFiberEquivDescentLabeling {n m : ℕ} (σ : Perm (Fin n)) :
       have hle := hmono (show j ≤ ⟨j.val + 1, hj⟩ by change j.val ≤ j.val + 1; omega)
       apply lt_of_le_of_ne hle
       intro heq
-      have hindex := htie j ⟨j.val + 1, hj⟩ (by change j.val < j.val + 1; omega) heq
+      have hindex := htie (i := j) (j := ⟨j.val + 1, hj⟩)
+        (by change j.val ≤ j.val + 1; omega) heq
       obtain ⟨h, hdesc⟩ := (Finset.mem_filter.mp hd).2
-      exact lt_asymm (a := σ j) (b := σ ⟨j.val + 1, hj⟩) hindex hdesc⟩
+      exact (not_le_of_gt hdesc) hindex⟩
   invFun g :=
     ⟨g.val ∘ σ.symm, by
       apply Eq.symm
@@ -288,7 +289,11 @@ def sortFiberEquivDescentLabeling {n m : ℕ} (σ : Perm (Fin n)) :
             exact i.succ.isLt) hd
           exact (ne_of_lt (a := g.val i.castSucc) (b := g.val i.succ) h) heq⟩
   left_inv f := by apply Subtype.ext; funext i; exact congrArg f.val (σ.apply_symm_apply i)
-  right_inv g := by apply Subtype.ext; funext i; exact congrArg g.val (σ.symm_apply_apply i)
+  right_inv g := by
+    apply Subtype.ext
+    change (g.val ∘ σ.symm) ∘ σ = g.val
+    funext i
+    exact congrArg g.val (σ.symm_apply_apply i)
 
 /-- The actual native stable-sort fiber has the original descent-binomial cardinality. -/
 theorem card_sortFiber {n : ℕ} (σ : Perm (Fin (n + 1))) (m : ℕ) :

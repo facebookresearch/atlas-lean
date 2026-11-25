@@ -53,8 +53,24 @@ def polynomialDiagonalGroundMap :
         (KoszulComplex.polynomialDiagonalComplex k σ) ⟶
       ((ModuleCat.restrictScalars (algebraMap k ET)).mapHomologicalComplex (.down ℕ)).obj
         (KoszulComplex.polynomialDiagonalComplex k τ) :=
-  KoszulComplex.semilinearMap (R := ES) (S := ET) (M := VS) (N := VT) k (φ) xS xT (J)
-    (MvPolynomial.polynomialDiagonalGeneratorMap_functional k τ g)
+  by
+    let R : Type (max u v) := ES
+    let S : Type (max u v) := ET
+    let X : Type (max u v) := σ →₀ R
+    let Y : Type (max u v) := τ →₀ S
+    let e : R →ₐ[k] S := MvPolynomial.polynomialEnvelopingMap k τ g
+    let x : X →ₗ[R] R := KoszulComplex.finsuppFunctional R
+      (MvPolynomial.diagonalDifference k σ)
+    let y : Y →ₗ[S] S := KoszulComplex.finsuppFunctional S
+      (MvPolynomial.diagonalDifference k τ)
+    let f : X →ₛₗ[e.toRingHom] Y := MvPolynomial.polynomialDiagonalGeneratorMap k τ g
+    have hf : ∀ z : X, y (f z) = e (x z) :=
+      MvPolynomial.polynomialDiagonalGeneratorMap_functional k τ g
+    change ((ModuleCat.restrictScalars (algebraMap k R)).mapHomologicalComplex (.down ℕ)).obj
+        (KoszulComplex.complex R X x) ⟶
+      ((ModuleCat.restrictScalars (algebraMap k S)).mapHomologicalComplex (.down ℕ)).obj
+        (KoszulComplex.complex S Y y)
+    exact KoszulComplex.semilinearMap (R := R) (S := S) (M := X) (N := Y) k e x y f hf
 
 /-- Every original wedge is mapped by the lifted diagonal generators. -/
 theorem polynomialDiagonalGroundMap_basis (n : ℕ) (a : Fin n → σ) :
@@ -84,8 +100,9 @@ def polynomialEnvelopingSourceAlgebraMap :
 /-- Native restriction along the identity is canonically the original
 complex functor, with the native identity-action dictionary retained. -/
 def polynomialDiagonalSourceRestrictionIso (ρ : Type v) :
-    ((ModuleCat.restrictScalars (RingHom.id (MvPolynomial.PolynomialEnveloping k ρ))).mapHomologicalComplex
-      (.down ℕ)).obj (KoszulComplex.polynomialDiagonalComplex k ρ) ≅
+    ((ModuleCat.restrictScalars
+      (RingHom.id (MvPolynomial.PolynomialEnveloping k ρ))).mapHomologicalComplex (.down ℕ)).obj
+        (KoszulComplex.polynomialDiagonalComplex k ρ) ≅
         KoszulComplex.polynomialDiagonalComplex k ρ :=
   (NatIso.mapHomologicalComplex
     (ModuleCat.restrictScalarsId (MvPolynomial.PolynomialEnveloping k ρ)) (.down ℕ) ≪≫
@@ -98,11 +115,26 @@ def polynomialDiagonalRestrictedMap :
     KoszulComplex.polynomialDiagonalComplex k σ ⟶
       ((ModuleCat.restrictScalars (φ).toRingHom).mapHomologicalComplex (.down ℕ)).obj
         (KoszulComplex.polynomialDiagonalComplex k τ) := by
-  letI : Algebra ES ET := (φ).toRingHom.toAlgebra
-  exact (polynomialDiagonalSourceRestrictionIso k σ).inv ≫
-    KoszulComplex.semilinearMap (R := ES) (S := ET) (M := VS) (N := VT)
-      ES (polynomialEnvelopingSourceAlgebraMap k g) xS xT (J)
-      (MvPolynomial.polynomialDiagonalGeneratorMap_functional k τ g)
+  let R : Type (max u v) := ES
+  let S : Type (max u v) := ET
+  let X : Type (max u v) := σ →₀ R
+  let Y : Type (max u v) := τ →₀ S
+  let e : R →+* S := (MvPolynomial.polynomialEnvelopingMap k τ g).toRingHom
+  let : Algebra R S := e.toAlgebra
+  let eA : R →ₐ[R] S := polynomialEnvelopingSourceAlgebraMap k g
+  let x : X →ₗ[R] R := KoszulComplex.finsuppFunctional R
+    (MvPolynomial.diagonalDifference k σ)
+  let y : Y →ₗ[S] S := KoszulComplex.finsuppFunctional S
+    (MvPolynomial.diagonalDifference k τ)
+  let f : X →ₛₗ[e] Y := MvPolynomial.polynomialDiagonalGeneratorMap k τ g
+  have hf : ∀ z : X, y (f z) = eA (x z) :=
+    MvPolynomial.polynomialDiagonalGeneratorMap_functional k τ g
+  let h : ((ModuleCat.restrictScalars (RingHom.id R)).mapHomologicalComplex (.down ℕ)).obj
+        (KoszulComplex.complex R X x) ⟶
+      ((ModuleCat.restrictScalars e).mapHomologicalComplex (.down ℕ)).obj
+        (KoszulComplex.complex S Y y) :=
+    KoszulComplex.semilinearMap (R := R) (S := S) (M := X) (N := Y) R eA x y f hf
+  exact (polynomialDiagonalSourceRestrictionIso k σ).inv ≫ h
 
 /-- The source-restricted map has the same semilinear exterior value. -/
 theorem polynomialDiagonalRestrictedMap_f_apply (n : ℕ) (z : ⋀[ES]^n VS) :
