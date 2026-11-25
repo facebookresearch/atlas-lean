@@ -19,9 +19,9 @@ typed by the projections of a well-formed global type
 (`Multiparty.Typing`).
 
 * Subject reduction (Theorem 5.19 (2)): `Net.TypedBy.step_of_global`. If a
-  typed network takes a synchronous step with label `ℓ`, it is typed by
-  every global type that the original global type reaches by a step with
-  the same label. Every network step is a session interaction, so the
+  typed network takes a synchronous step with label `ℓ` to `net'`, then
+  `net'` is typed by every global type that the original global type
+  reaches by a step with the same label. Every network step is a session interaction, so the
   source's case where the session environment does not move cannot arise.
 * Session fidelity (Corollary 5.23 (1)): `Net.TypedBy.step` gives, for every
   network step, a global step with the same label whose target types the
@@ -444,9 +444,9 @@ section Fidelity
 variable {P S V L : Type} [DecidableEq P] [DecidableEq S] [DecidableEq L]
   {sortOf : V → S}
 
-/-- Subject reduction (HYC Theorem 5.19 (2), finite synchronous): a network
-typed by `G` that steps with label `ℓ` is typed by every `G'` with
-`G →ℓ G'`. -/
+/-- Subject reduction (HYC Theorem 5.19 (2), finite synchronous): if a network
+typed by `G` steps with label `ℓ` to `net'`, then `net'` is typed by
+every `G'` with `G →ℓ G'`. -/
 theorem Net.TypedBy.step_of_global {G G' : GlobalType P S L}
     {net net' : Net P V L} {ℓ : GlobalType.Label P S L} :
     Net.TypedBy sortOf G net → Net.Step sortOf net ℓ net' →
