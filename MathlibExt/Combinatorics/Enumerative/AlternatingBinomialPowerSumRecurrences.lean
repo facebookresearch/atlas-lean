@@ -11,6 +11,7 @@ module
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.Complex.Basic
 import Mathlib.Analysis.Calculus.Deriv.Add
+import Mathlib.Analysis.Calculus.Deriv.Comp
 import Mathlib.Analysis.Calculus.Deriv.Mul
 import Mathlib.Analysis.Calculus.Deriv.Pow
 import Mathlib.Data.Nat.Choose.Sum
@@ -110,12 +111,11 @@ private theorem shift (ℓ m : ℕ) (x y : ℂ) :
           omega
         simp [zero_of_lt hjm]
 
-private theorem derivative (ℓ m : ℕ) (x y : ℂ) :
-    deriv (fun z => alternatingBinomialPowerSum ℓ m x z) y =
-      ℓ * alternatingBinomialPowerSum (ℓ - 1) m x y := by
+private theorem hasDerivAt (ℓ m : ℕ) (x y : ℂ) :
+    HasDerivAt (fun z => alternatingBinomialPowerSum ℓ m x z)
+      (ℓ * alternatingBinomialPowerSum (ℓ - 1) m x y) y := by
   unfold alternatingBinomialPowerSum
   rw [mul_sum]
-  apply HasDerivAt.deriv
   apply HasDerivAt.fun_sum
   intro k _
   simpa only [id_eq, mul_one, mul_left_comm] using
@@ -168,7 +168,7 @@ public theorem alternatingBinomialPowerSum_recurrences (x y : ℂ) (ℓ m : ℕ)
           (n + 1) * x * alternatingBinomialPowerSum d n x y := by
     rw [degree_succ, order_succ d n]
     ring
-  refine ⟨horder, hshift, ?_, ?_, hdegree ℓ m, fun _ => derivative ℓ m x y, ?_⟩
+  refine ⟨horder, hshift, ?_, ?_, hdegree ℓ m, fun _ => (hasDerivAt ℓ m x y).deriv, ?_⟩
   · by_cases h : m ≤ ℓ
     · rw [horder, hshift, ← sum_Ico_add_eq_sum_Icc h]
       simp
@@ -181,5 +181,31 @@ public theorem alternatingBinomialPowerSum_recurrences (x y : ℂ) (ℓ m : ℕ)
     cases m with
     | zero => simp [alternatingBinomialPowerSum, pow_succ, mul_comm]
     | succ m => simpa using hdegree k m
+
+/-- **Derivative and recurrence of the shifted alternating binomial power sums.** Let
+$p_{\ell,m}(x, y) = \sum_{k=0}^{m} (-1)^k \binom{m}{k} (kx + y)^\ell$ and, for a complex number
+$n$, let $c_{\ell,m}(n) = p_{\ell,m}(1, n + 1)$. For natural numbers $\ell, m \ge 1$ and every
+complex number $n$, the complex derivative of $c_{\ell,m}$ at $n$ is $\ell\, c_{\ell-1,m}(n)$, and
+$c_{\ell,m}(n) = (m + n + 1)\, c_{\ell-1,m}(n) - m\, c_{\ell-1,m-1}(n)$.
+
+The variable $n$ is complex here because the paper differentiates in $n$.
+
+Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted Sums*,
+INTEGERS 24 (2024), Article A70, Corollary 4, Equation (3.38) (`integers-2024-A70-cor-4`). -/
+public theorem carlitzSum_deriv_and_recurrence {ℓ m : ℕ} (hℓ : 1 ≤ ℓ) (hm : 1 ≤ m)
+    (n : ℂ) :
+    deriv (fun z => alternatingBinomialPowerSum ℓ m 1 (z + 1)) n =
+        ℓ * alternatingBinomialPowerSum (ℓ - 1) m 1 (n + 1) ∧
+      alternatingBinomialPowerSum ℓ m 1 (n + 1) =
+        (m + n + 1) * alternatingBinomialPowerSum (ℓ - 1) m 1 (n + 1) -
+          m * alternatingBinomialPowerSum (ℓ - 1) (m - 1) 1 (n + 1) := by
+  constructor
+  · have hshift : HasDerivAt (fun z : ℂ => z + 1) 1 n := (hasDerivAt_id n).add_const 1
+    simpa only [Function.comp_def, mul_one] using
+      (HasDerivAt.comp n (alternatingBinomialPowerSum_recurrences.hasDerivAt ℓ m 1 (n + 1))
+        hshift).deriv
+  · obtain ⟨m, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (Nat.ne_of_gt hm)
+    simpa only [mul_one, add_assoc] using
+      (alternatingBinomialPowerSum_recurrences 1 (n + 1) ℓ (m + 1)).2.2.2.2.2.2 hℓ
 
 end MetaMathlibExt
