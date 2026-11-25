@@ -1,4 +1,4 @@
 # Family Projective Resolution Of Is Weakly Regular
 
-The actual regular Koszul complex resolves its original categorical
-quotient target, retaining the existing universe lift of the augmentation.
+The Koszul complex of a finite weakly regular family gives a projective
+resolution of the universe-lifted quotient by the generated ideal.

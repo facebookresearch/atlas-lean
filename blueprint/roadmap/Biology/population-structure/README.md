@@ -24,6 +24,7 @@ f-statistics, admixture graphs, ancestry models and linkage-disequilibrium metho
 - [Negative f3 as a test of admixture](negative-f3-as-a-test-of-admixture/README.md)
 - [Rank of the f4 matrix of left and right populations](rank-of-the-f4-matrix-of-left-and-right-populati/README.md)
 - [Tree-shaped admixture graphs and the four-point condition](tree-shaped-admixture-graphs-and-the-four-point/README.md)
+- [Wright's F-statistics](wright-s-f-statistics/README.md)
 
 ## Related topics
 

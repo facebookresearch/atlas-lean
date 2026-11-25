@@ -9,11 +9,10 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
-public import Mathlib.Data.Nat.Digits.Defs
-public import MathlibExt.NumberTheory.MahlerPopkenComplexity
+public import MathlibExt.NumberTheory.MahlerPopkenComplexity.BinaryUpperBound
 
 /-!
-# Recursion and upper bounds for Mahler–Popken complexity
+# Recursions for Mahler–Popken complexity
 
 Statements from John M. Campbell, "A Binary Version of the
 Mahler-Popken Complexity Function", *INTEGERS* 24 (2024),
@@ -56,18 +55,6 @@ Complexity Function", Proposition 1. -/
 theorem_wanted mahlerPopkenComplexity_two_eq_recursionValue
     (n : ℕ) (hn : 3 ≤ n) :
     mahlerPopkenComplexity 2 n = mahlerPopkenRecursionValue 2 n
-
-/-- **Upper bound for the binary Mahler–Popken complexity.** For every natural number $n \ge 2$,
-the binary ($2$-ary) Mahler–Popken complexity $\lVert n \rVert_2$ is at most
-$\lfloor \log_2 n \rfloor + \nu_2(n) - 1$, where $\nu_2(n)$ is the number of ones in the base-$2$
-expansion of $n$.
-
-Source: John M. Campbell, "A Binary Version of the Mahler-Popken
-Complexity Function", Theorem 2. -/
-theorem_wanted mahlerPopkenComplexity_two_le_log_add_digitCount_sub_one
-    (n : ℕ) (hn : 2 ≤ n) :
-    mahlerPopkenComplexity 2 n ≤
-      Nat.log 2 n + (Nat.digits 2 n).count 1 - 1
 
 end MahlerPopkenComplexityWanted
 

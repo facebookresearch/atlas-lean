@@ -1,4 +1,4 @@
 # Family Complex homology is Zero of is Weakly Regular
 
-Positive homology of the original regular Koszul complex vanishes.
-This uses the constructed boundaries, rather than a resolution premise.
+The Koszul complex of a finite weakly regular family has zero homology
+in every positive degree.

@@ -13,7 +13,7 @@ import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Data.Finset.Range
 import Mathlib.Data.List.OfFn
 
-/-! Tests for Hales–Jewett configurations in J-sets of words. -/
+/-! Tests for Hales–Jewett configurations in J-sets and C-sets of words. -/
 
 open MetaMathlibExt
 
@@ -90,5 +90,26 @@ example {D : Set (FreeSemigroup Bool)} (hD : IsMulJSet D) :
     (fun j => 3 ^ j) (fun _ => Nat.pow_pos (by decide))
   refine ⟨w, fun m a => hw m a (Finset.mem_univ _), ?_⟩
   simpa using hsum {0, 2} (by simp)
+
+-- Zero variables give a word in the C-set even at the empty initial level.
+example {D : Set (FreeSemigroup ℕ)} (hD : IsCSet D) :
+    ∃ w : FreeSemigroup (ℕ ⊕ Fin 0), FreeSemigroup.map (Sum.elim id Fin.elim0) w ∈ D := by
+  obtain ⟨w, _, hw⟩ := exists_variableWords_prod_mem_of_isCSet Finset.range Finset.range_mono
+    (fun x => ⟨x + 1, Finset.mem_range.mpr (Nat.lt_succ_self x)⟩) 0 hD
+  exact ⟨w 0, hw 0 (fun _ => 0) (fun _ => Fin.elim0)
+    (Fin.strictMono_iff_lt_succ.mpr fun i => i.elim0) (fun _ i => i.elim0)⟩
+
+-- The two nonconsecutive factors admit independent substitutions in their original order.
+example {D : Set (FreeSemigroup Bool)} (hD : IsCSet D) :
+    ∃ w : ℕ → FreeSemigroup (Bool ⊕ Fin 2), (∀ k i, Sum.inr i ∈ (w k).head :: (w k).tail) ∧
+      ∀ a b : Fin 2 → Bool,
+        FreeSemigroup.map (Sum.elim id a) (w 0) * FreeSemigroup.map (Sum.elim id b) (w 2) ∈ D := by
+  obtain ⟨w, hvars, hw⟩ := exists_variableWords_prod_mem_of_isCSet (fun _ => Finset.univ)
+    monotone_const (fun x => ⟨0, Finset.mem_univ x⟩) 2 hD
+  refine ⟨w, hvars, fun a b => ?_⟩
+  have hm : StrictMono (fun j : Fin 2 => 2 * j.val) :=
+    fun _ _ h => Nat.mul_lt_mul_of_pos_left h (by decide)
+  simpa [List.ofFn_succ] using
+    hw 1 _ (Fin.cons a fun _ => b) hm (fun _ _ => Finset.mem_univ _)
 
 end MetaMathlibExt.InfinitaryHalesJewettTest

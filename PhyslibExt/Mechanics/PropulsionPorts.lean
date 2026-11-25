@@ -115,9 +115,9 @@ burn cost, about which nothing is stated here.
   step that leaves positive mass, where the constant-flow step is the actual parcel step.
 - `parcelVelocity_zero_flow`: for `m > 0` and no expelled mass, the fixed-mass constant-force
   velocity.
-- `parcel_accel_pos`, `naive_slope_tendsto`, `naive_limit_ne`: for `m > 0`, a positive flow at a
-  positive exhaust speed accelerates the vehicle, and ignoring the expelled momentum gives the
-  wrong derivative whenever `q (v - ve) ≠ 0`.
+- `parcel_accel_pos`, `naive_slope_tendsto`, `naive_limit_ne`: for `m > 0` and no external force,
+  a positive flow at a positive exhaust speed accelerates the vehicle, and ignoring the expelled
+  momentum gives the wrong derivative whenever `q (v - ve) ≠ 0`.
 - `separateFlowThrust`, `standForce_eq_separateFlowThrust_add`, `standForce_eq_separateFlowThrust`:
   the thrust expression and the stand force from the port balance, with the storage and feed
   terms, and the steady thrust.
@@ -263,14 +263,14 @@ lemma velocity_increment_burn_and_boundary {m v m' v' : ℝ → ℝ} {ve tb : �
 
 /-! ## B. Specific impulse -/
 
-/-- Specific impulse `T / (mdot * g0)` of thrust `T` at propellant mass flow `mdot`, quoted
-with the reference acceleration `g0` (a fixed standard value, not necessarily local
-gravity). -/
+/-- Specific impulse `T / (mdot * g0)` of thrust `T` at propellant mass flow `mdot`, quoted with the
+reference acceleration `g0` (a fixed standard value, not necessarily local gravity). With the
+convention `x / 0 = 0` it is `0` when `mdot * g0 = 0`. -/
 noncomputable def specificImpulse (T mdot g0 : ℝ) : ℝ :=
   T / (mdot * g0)
 
-/-- In the pressure-matched model the thrust is the momentum rate `m * v' = (-m') * ve`, so at
-any burning instant (`m' t < 0`) the specific impulse is `ve / g0`. -/
+/-- In the pressure-matched model the thrust is the momentum rate `m * v' = (-m') * ve`, so for
+`g0 > 0`, at any burning instant (`m' t < 0`) the specific impulse is `ve / g0`. -/
 lemma specificImpulse_eq_of_law {m v' m' : ℝ → ℝ} {ve g0 t : ℝ} (hg0 : 0 < g0)
     (hburn : m' t < 0) (hlaw : m t * v' t = -ve * m' t) :
     specificImpulse (m t * v' t) (-m' t) g0 = ve / g0 := by
@@ -313,8 +313,9 @@ open Filter Topology PhyslibExt.Mechanics.PowerPorts
 /-! ## D. One parcel step -/
 
 /-- Vehicle velocity after one parcel step of length `h` from the state `(m, v)`: the momentum
-balance `(m - q h) v_h + q h (v - ve) = m v + F h` solved for `v_h`, which needs the remaining
-mass `m - q h` to be nonzero. -/
+balance `(m - q h) v_h + q h (v - ve) = m v + F h` solved for `v_h`, which needs the remaining mass
+`m - q h` to be nonzero; with the convention `x / 0 = 0` the formula gives `0` when
+`m - q h = 0`. In the physical reading `m - q h > 0`, `q ≥ 0` and `h > 0`. -/
 noncomputable def parcelVelocity (m v q ve F h : ℝ) : ℝ :=
   (m * v + F * h - q * h * (v - ve)) / (m - q * h)
 
@@ -376,12 +377,12 @@ lemma parcel_slope_tendsto {m : ℝ} (hm : 0 < m) (v q ve F : ℝ) :
     exact hnum.div hden hm'
   exact Tendsto.congr' heq.symm hlim
 
-/-- A differentiable mass history `M` that is burning at `t`, `M' = m' < 0`. A forward parcel step
-from `t` to `t + h`, `h > 0`, expels the actual mass `M t - M (t + h)`, at the rate
-`q_h = (M t - M (t + h)) / h`, which tends to `-m'`. For small `h > 0` the expelled mass is
+/-- A differentiable mass history `M` that is burning at `t`, `M' = m' < 0`, with `M t > 0`. A
+forward parcel step from `t` to `t + h`, `h > 0`, expels the actual mass `M t - M (t + h)`, at the
+rate `q_h = (M t - M (t + h)) / h`, which tends to `-m'`. For small `h > 0` the expelled mass is
 nonnegative, the remaining mass `M t - q_h h` is exactly `M (t + h)` and positive, and the step
-conserves momentum; its slope at the state `(M t, v)` tends to `(F - ve m') / M t`: the
-acceleration `a` of the reduced law `M a = -ve M' + F`. -/
+conserves momentum; its slope at the state `(M t, v)` tends to `(F - ve m') / M t`: the acceleration
+`a` of the reduced law `M a = -ve M' + F`. -/
 lemma parcel_continuum {M : ℝ → ℝ} {m' t : ℝ} (hM : HasDerivAt M m' t) (hdec : m' < 0)
     (hpos : 0 < M t) (v ve F : ℝ) :
     Tendsto (fun h => (M t - M (t + h)) / h) (𝓝[>] 0) (𝓝 (-m')) ∧
@@ -465,10 +466,10 @@ lemma parcel_continuum {M : ℝ → ℝ} {m' t : ℝ} (hM : HasDerivAt M m' t) (
   rw [hval] at hlim
   exact ⟨hq', hstep, Tendsto.congr' heq.symm hlim⟩
 
-/-- A linear mass history `M (t + h) = M t + m' h` that is burning, `m' < 0`. Every forward step
-`h > 0` that leaves positive mass, `0 < M (t + h)` (that is, `h < M t / (-m')`), expels the
-nonnegative mass `M t - M (t + h)` at exactly the constant rate `-m'`, and the parcel step with the
-constant flow `-m'` leaves exactly the mass `M (t + h)` and conserves momentum: there it is the
+/-- A linear mass history `M (t + h) = M t + m' h` that is burning, `m' < 0`, with `M t > 0`. Every
+forward step `h > 0` that leaves positive mass, `0 < M (t + h)` (that is, `h < M t / (-m')`), expels
+the nonnegative mass `M t - M (t + h)` at exactly the constant rate `-m'`, and the parcel step with
+the constant flow `-m'` leaves exactly the mass `M (t + h)` and conserves momentum: there it is the
 actual parcel step. A longer step would leave no mass or negative mass, and is not a parcel step.
 The slope of the constant-flow step tends to `(F - ve m') / M t` as `h → 0⁺`. -/
 lemma parcel_continuum_linear {M : ℝ → ℝ} {m' t : ℝ} (hlin : ∀ h, M (t + h) = M t + m' * h)
@@ -518,7 +519,9 @@ lemma parcel_accel_pos {m q ve F : ℝ} (hm : 0 < m) (hq : 0 < q) (hve : 0 < ve)
   positivity
 
 /-- Velocity after one step of the balance that ignores the expelled momentum,
-`(m - q h) w_h = m v + F h`, which needs the remaining mass `m - q h` to be nonzero. -/
+`(m - q h) w_h = m v + F h`, which needs the remaining mass `m - q h` to be nonzero; with the
+convention `x / 0 = 0` the formula gives `0` when `m - q h = 0`. In the physical reading
+`m - q h > 0`, `q ≥ 0` and `h > 0`. -/
 noncomputable def naiveParcelVelocity (m v q F h : ℝ) : ℝ :=
   (m * v + F * h) / (m - q * h)
 
@@ -689,10 +692,10 @@ lemma separateFlowThrust_airBreather {mdotIn pIn mdotF mdotOut pA : ℝ} (hcap :
   rw [hmass, hcap, separateFlowThrust]
   ring
 
-/-- **Exhaust flow of an air-breather.** Under the steady mass balance `ṁ_out = ṁ_in + ṁ_f`,
-fuel `ṁ_f > 0` makes the exhaust flow exceed the inlet flow; the exhaust and inlet flows are equal
-exactly when `ṁ_f = 0`, and the equal-flow thrust (exhaust flow replaced by `ṁ_in`) falls short
-of the thrust by `ṁ_f v_e`. -/
+/-- **Exhaust flow of an air-breather.** Under the steady mass balance `ṁ_out = ṁ_in + ṁ_f`, fuel
+`ṁ_f > 0` makes the exhaust flow exceed the inlet flow; the exhaust and inlet flows are equal
+exactly when `ṁ_f = 0`, and the thrust minus the equal-flow thrust (exhaust flow replaced by `ṁ_in`)
+is `ṁ_f v_e`. -/
 lemma airBreather_exhaustFlow {mdotIn mdotF mdotOut : ℝ} (hmass : mdotOut = mdotIn + mdotF)
     (vIn pIn AIn vE pE AE pA : ℝ) :
     (0 < mdotF → mdotIn < mdotOut) ∧ (mdotOut = mdotIn ↔ mdotF = 0) ∧
@@ -705,11 +708,12 @@ lemma airBreather_exhaustFlow {mdotIn mdotF mdotOut : ℝ} (hmass : mdotOut = md
 
 /-! ## I. Effective exhaust velocity and specific impulse -/
 
-/-- The effective exhaust velocity `c = T / ṁ_out` of a thrust `T` at the exhaust mass flow
-`ṁ_out`. -/
+/-- The effective exhaust velocity `c = T / ṁ_out` of a thrust `T` at the exhaust mass flow `ṁ_out`;
+with the convention `x / 0 = 0` it is `0` when `ṁ_out = 0`. -/
 noncomputable def effectiveExhaustVelocity (T mdotOut : ℝ) : ℝ := T / mdotOut
 
-/-- **Total-flow specific impulse.** `T / (ṁ_out g0) = c / g0`. -/
+/-- **Total-flow specific impulse.** `T / (ṁ_out g0) = c / g0`, for all real inputs (both sides are
+`0` when `ṁ_out g0 = 0`). -/
 lemma specificImpulse_totalFlow_eq (T mdotOut g0 : ℝ) :
     specificImpulse T mdotOut g0 = effectiveExhaustVelocity T mdotOut / g0 := by
   unfold specificImpulse effectiveExhaustVelocity
@@ -744,7 +748,7 @@ lemma specificImpulse_totalFlow_lt_fuelFlow {mdotIn mdotF mdotOut T g0 : ℝ} (h
   nlinarith
 
 /-- **Pressure-matched rocket.** A rocket with `p_e = p_a` and positive propellant flow has the
-effective exhaust velocity `c = v_e`, so its specific impulse is `v_e / g0`, as in
+effective exhaust velocity `c = v_e`, so its specific impulse is `v_e / g0` (`0` at `g0 = 0`), as in
 `specificImpulse_eq_of_law`. -/
 lemma effectiveExhaustVelocity_rocket_matched {mdotIn AIn mdotF mdotOut pE pA : ℝ}
     (hin : mdotIn = 0) (hA : AIn = 0) (hmass : mdotOut = mdotIn + mdotF) (hf : 0 < mdotF)

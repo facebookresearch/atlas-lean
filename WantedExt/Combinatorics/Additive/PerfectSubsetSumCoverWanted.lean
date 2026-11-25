@@ -256,35 +256,6 @@ public theorem_wanted oddCombinations_inter_of_isPerfectCover {G : Type*} [AddCo
       oddCombinations A ∩ oddCombinations B = {0}) ∧
     ∀ A : Finset G, A ⊆ S → ∀ s ∈ S, s ∉ A → s ∉ oddCombinations A
 
-/-- **Odd combinations are closed under odd multiples.** Let $A$ be a finite subset of an abelian
-group $G$. If $g$ lies in the set $\mathcal{T}(A)$ of odd combinations of $A$, then
-$(2j+1)g \in \mathcal{T}(A)$ for every integer $j$.
-
-Source: John Greene and Clayton Higgins, *Maximal Subset Sums in a Group of Order a Power
-of 2*, Journal of Integer Sequences 28 (2025), Article 25.7.8, Theorem 15 (c)
-(`jis-2025-25.7.8-thm-15`). "Union of equivalence classes" is stated as closure under odd
-multiples (`0 ∈ 𝒯(A)` is `zero_mem_oddCombinations`). -/
-public theorem_wanted zsmul_mem_oddCombinations {G : Type*} [AddCommGroup G] [DecidableEq G]
-    (A : Finset G) {g : G} (hg : g ∈ oddCombinations A) (j : ℤ) :
-    (2 * j + 1) • g ∈ oddCombinations A
-
-/-- **Distinct subset sums from the odd-combination condition.** Let $G$ be an abelian group,
-and for a finite set $A \subseteq G$ write $\mathcal{T}(A)$ for the set of odd combinations of
-$A$. Let $x = (x_1, \dots, x_m)$ be a family in $G$ such that
-$x_i \notin \mathcal{T}(\{x_1, \dots, x_{i-1}\})$ for every $i$ (for $i = 1$ this says
-$x_1 \ne 0$, and for $i \ge 2$ it forces $x_i \ne 0$). Then $x$ covers every element of $G$ at
-most once, that is, all subset sums of $x$ are distinct; if moreover $|G| = 2^m$, then $x$ is a
-perfect $1$-cover of $G$.
-
-Source: John Greene and Clayton Higgins, *Maximal Subset Sums in a Group of Order a Power
-of 2*, Journal of Integer Sequences 28 (2025), Article 25.7.8, Lemma 16
-(`jis-2025-25.7.8-lem-16`). The paper's "nonzero" hypothesis is the `i = 1` case of `hx`;
-distinctness needs no finiteness, and "`m = n`" is `Nat.card G = 2 ^ m`. -/
-public theorem_wanted coverCount_le_one_of_not_mem_oddCombinations {G : Type*}
-    [AddCommGroup G] [DecidableEq G] {m : ℕ} {x : Fin m → G}
-    (hx : ∀ i : Fin m, x i ∉ oddCombinations ((Finset.Iio i).image x)) :
-    (∀ g : G, coverCount x g ≤ 1) ∧ (Nat.card G = 2 ^ m → IsPerfectMCover 1 x)
-
 /-- **Perfect covers containing a perfect cover of a subgroup.** Let $G$ be an abelian group of
 order $2^n$ and $H$ a subgroup of order $2^m$. Then the number of perfect covers of $G$ that
 contain a perfect cover of $H$ is $2^{m(n-m)} \cdot C(G/H) \cdot C(H)$, where $C(K)$ denotes the
