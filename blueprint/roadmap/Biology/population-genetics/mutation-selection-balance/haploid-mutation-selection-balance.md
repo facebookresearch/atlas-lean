@@ -23,9 +23,13 @@ $1 - s q_e = 1 - u$, so the mutational load is $u$, independent of $s$. If $u \g
 
 The map $p \mapsto p(1 - u)/(1 - s + sp)$ is increasing on $[0, 1]$ for $s < 1$, and $p' - p$ has the sign
 of $p_e - p$ on $(0, 1]$ when $u < s$ (of $-p$ when $u \ge s$), which gives monotone convergence to the
-only fixed point in $(0, 1]$, respectively to $0$; for $s = 1$, $p_1 = 1 - u = p_e$.
+only fixed point in $(0, 1]$, respectively to $0$ (strictly decreasing for $u \ge s$); for $s = 1$,
+$p_1 = 1 - u = p_e$.
+
+The text's inequality after equation (III-18) has its sign reversed: for $s < u$ and $p > 0$,
+equation (III-15) gives $p' < p$, consistent with the text's conclusion that the wild type is lost.
 
 ## Sources
 
 - J. Felsenstein, *Theoretical Evolutionary Genetics* (GENOME 562 course text, University of Washington, version of December 2019), <https://felsenst.github.io/pgbook/pgbook.pdf>, Section III.4 "Mutation versus Selection: Haploids", equations (III-13)–(III-18),
-  pp. 146–148.
+  pp. 146–148; Section III.7 "Mutational Load", pp. 156–157.
