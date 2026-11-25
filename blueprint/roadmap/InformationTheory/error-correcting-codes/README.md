@@ -16,3 +16,5 @@ Codes that detect or correct transmission errors, including linear codes, Hammin
 - [MacWilliams identity](macwilliams-identity.md)
 - [Dimension and distance of binary Reed–Muller codes](reed-muller-codes-dimension-and-distance.md)
 - [Local decoding of the Hadamard code](hadamard-code-local-decoding.md)
+
+- [Bit-serial CRC and framing](bit-serial-crc-and-framing/README.md)
