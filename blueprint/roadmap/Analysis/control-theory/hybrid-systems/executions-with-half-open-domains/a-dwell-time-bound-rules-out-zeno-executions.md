@@ -15,6 +15,10 @@ Without a uniform $\delta$ the conclusion fails: positive lengths $\tau'_i - \ta
 
 - [Executions of a hybrid automaton](executions-of-a-hybrid-automaton.md): hybrid time sets and executions
 
+## Background
+
+- [Zeno executions and finite-jump hypotheses](../remaining-clauses-of-zeno-executions-and-finite-jump-hypothe.md): the remaining clauses on Zeno executions, apart from this positive-dwell case
+
 ## Sources
 
 - J. Lygeros, *Lecture Notes on Hybrid Systems*, ENSIETA, 2004, <https://people.eecs.berkeley.edu/~sastry/ee291e/lygeros.pdf>, Definition 3.5 (finite, infinite and Zeno executions, with Zeno meaning infinite with $\sum_i (\tau'_i - \tau_i) < \infty$, p. 26) the bouncing ball with restitution $x_2 := -c x_2$ (Section 3.1.1, p. 17), and Section 4.4 (Zeno executions take infinitely many discrete transitions in finite time, p. 34). The dwell-time bound is derived on the page.

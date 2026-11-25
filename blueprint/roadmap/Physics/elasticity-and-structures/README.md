@@ -26,4 +26,3 @@ Linear elasticity and the mechanics of structures: Cauchy stress, small strain a
 - [Stiffness method for space frames](stiffness-method-for-space-frames/README.md)
 - [Unsteady aerodynamics and flutter](unsteady-aerodynamics-and-flutter/README.md)
 - [Vibration of thin plates](vibration-of-thin-plates/README.md)
-- [Fracture and fatigue](fracture-and-fatigue/README.md)

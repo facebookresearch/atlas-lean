@@ -12,6 +12,10 @@ An **execution** of $H$ is a hybrid trajectory such that
 
 The domain is required only on the half-open interval $[\tau_i, \tau'_i)$: the state may leave the domain exactly at the instant of a discrete transition. An execution is **finite** if $\tau$ is a finite sequence whose last interval is closed; its **final state** is $(q_N(\tau'_N), x_N(\tau'_N))$. A state is **reachable** if it is the final state of some finite execution.
 
+## Background
+
+- [Hybrid automata and their executions](../hybrid-automata-and-their-executions.md): the same notion with location invariants required on closed intervals, and reachability through the timed transition system
+
 ## Sources
 
 - J. Lygeros, *Lecture Notes on Hybrid Systems*, ENSIETA, 2004, <https://people.eecs.berkeley.edu/~sastry/ee291e/lygeros.pdf>, Definition 3.1 (hybrid automaton, p. 21), Definition 3.2 (hybrid time set, p. 23), Definitions 3.3 and 3.4 (hybrid trajectory and execution, with the domain condition on $[\tau_i, \tau'_i)$, p. 25), Definition 3.5 (finite executions, p. 26) and Definition 4.1 (reachable states, p. 29).

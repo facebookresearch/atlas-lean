@@ -13,7 +13,7 @@ If the primary controller is kept at the first decision time $t_0$, or the backu
 
 ## Proof depends on
 
-- [The region-based simplex filter keeps the state in a backup-invariant safe set](the-region-based-simplex-filter-keeps-the-state-in-a-backup-invariant-safe-set.md): the discrete-time form of the same invariance argument
+- [Runtime safety shield (simplex) over discrete dynamics](../runtime-safety-shield-over-discrete-dynamics.md): the discrete-time form of the same invariance argument
 - [A sampled safety margin with bounded drift certifies safety over a latency window](a-sampled-safety-margin-with-bounded-drift-certifies-safety-over-a-latency-window.md): the margin form of the lookahead test over the latency window
 
 ## Sources

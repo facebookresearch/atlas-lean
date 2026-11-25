@@ -18,10 +18,6 @@ $$
 
 The criterion concerns a single crack in a homogeneous brittle solid. Damage in composites, meaning matrix cracking, delamination and fiber failure under rate- and history-dependent laws, needs damage-evolution laws and homogenization error bounds beyond this energy balance.
 
-## Background
-
-- [Isotropic elastic energy](../isotropic-elastic-energy/README.md)
-
 ## Sources
 
 - D. Roylance, *Introduction to Fracture Mechanics*, course module, Department of Materials Science and Engineering, MIT, 2001, <http://web.mit.edu/course/3/3.11/www/modules/frac.pdf>, Introduction (the fracture energy balance) and "The stress intensity approach":

@@ -14,13 +14,13 @@ $n$ with $n h \le T - t_0$,
 
 $$|X_n - x(t_0 + n h)| \le e^{\|\hat A\|(T - t_0)}\,|X_0 - x_0| + K h, \qquad |Y_n - y(t_0 + n h)| \le \|D^{-1} C\|\,\bigl(e^{\|\hat A\|(T - t_0)}\,|X_0 - x_0| + K h\bigr) .$$
 
-For $X_0 = x_0$ the first bound is the [first-order convergence of the explicit Euler method](../euler-method/explicit-euler-first-order-convergence.md)
+For $X_0 = x_0$ the first bound is the [first-order convergence of the explicit Euler method](explicit-euler-first-order-convergence.md)
 for the reduced right-hand side, which is twice continuously differentiable and globally Lipschitz in $x$; the initial-error term follows because the Euler sequences from $X_0$ and from $x_0$ differ by $(I + h\hat A)^n (X_0 - x_0)$; the second bound follows
 because $Y_n - y(t_0 + nh) = -D^{-1} C\,(X_n - x(t_0 + nh))$.
 
 ## Depends on
 
-- [First-order convergence of the explicit Euler method](../euler-method/explicit-euler-first-order-convergence.md)
+- [First-order convergence of the explicit Euler method](explicit-euler-first-order-convergence.md)
 
 ## Sources
 

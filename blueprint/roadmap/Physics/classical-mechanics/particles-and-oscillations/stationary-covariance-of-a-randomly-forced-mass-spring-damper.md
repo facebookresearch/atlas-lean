@@ -37,7 +37,7 @@ Solving the Lyapunov equation alone does not show that a stationary process exis
 
 This page becomes ready once these prerequisites are stated:
 
-- Stationary law of the vector Ornstein–Uhlenbeck process: for Hurwitz $A$, the process $dX = AX\,dt + B\,dW$ has a unique stationary Gaussian law, with mean zero and covariance equal to the solution of $A\Sigma + \Sigma A^\top + BB^\top = 0$ (statement prerequisite; not yet stated).
+- Stationary law of the vector Ornstein–Uhlenbeck process: for Hurwitz $A$, the process $dX = AX\,dt + B\,dW$ has a unique stationary Gaussian law, with mean zero and covariance equal to the solution of $A\Sigma + \Sigma A^\top + BB^\top = 0$. It is planned as [Stationary law of a linear stochastic system and the Lyapunov equation](../../../Probability/stochastic-calculus/multidimensional-ornstein-uhlenbeck-process/stationary-law-of-a-linear-stochastic-system-and-the-lyapunov-equation.md), which is not yet ready (statement prerequisite).
 
 ## Sources
 

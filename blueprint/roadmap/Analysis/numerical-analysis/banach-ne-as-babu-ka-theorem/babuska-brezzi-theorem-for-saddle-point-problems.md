@@ -22,18 +22,18 @@ $$
 \|p\| \le \frac{1}{\beta}\Bigl(1 + \frac{\|a\|}{\alpha}\Bigr)\|f\| + \frac{\|a\|}{\beta^2}\Bigl(1 + \frac{\|a\|}{\alpha}\Bigr)\|g\|.
 $$
 
-**Proof sketch.** The problem is well posed if and only if the restriction of $a$ to $\ker B$ induces an isomorphism $\ker B \to (\ker B)'$, and the operator $B : V \to Q'$ induced by $b$ is surjective. For surjectivity, use that $B$ has closed range with $\operatorname{im}(B^*) = (\ker B)^\perp$. By the [Banach–Nečas–Babuška theorem](banach-ne-as-babu-ka-theorem/continuous-linear-equiv-of-bilinear-form.md), the first property is condition 1, and the second is condition 2. For the estimates, lift $g$ to some $u_g$ with $\|u_g\| \le \|g\|/\beta$, solve on $\ker B$, and then recover $p$ from the inf-sup condition for $b$.
+**Proof sketch.** The problem is well posed if and only if the restriction of $a$ to $\ker B$ induces an isomorphism $\ker B \to (\ker B)'$, and the operator $B : V \to Q'$ induced by $b$ is surjective. For surjectivity, use that $B$ has closed range with $\operatorname{im}(B^*) = (\ker B)^\perp$. By the [Banach–Nečas–Babuška theorem](continuous-linear-equiv-of-bilinear-form.md), the first property is condition 1, and the second is condition 2. For the estimates, lift $g$ to some $u_g$ with $\|u_g\| \le \|g\|/\beta$, solve on $\ker B$, and then recover $p$ from the inf-sup condition for $b$.
 
 The constants depend only on $\alpha$, $\beta$ and $\|a\|$. So a family of problems is stable uniformly in its parameters when $\alpha$ and $\beta$ stay uniformly bounded away from zero and $\|a\|$ stays uniformly bounded above. That is the mechanism behind locking-free mixed methods for nearly incompressible elasticity, where a Galerkin pair must satisfy a discrete inf-sup condition uniformly in the mesh size and in the Lamé parameter.
 
 ## Depends on
 
-- [Banach–Nečas–Babuška theorem](banach-ne-as-babu-ka-theorem/continuous-linear-equiv-of-bilinear-form.md)
+- [Banach–Nečas–Babuška theorem](continuous-linear-equiv-of-bilinear-form.md)
 
 ## Background
 
-- [Céa's lemma](c-a-s-lemma/README.md)
-- [Strang's lemma](strang-s-lemma/README.md)
+- [Céa's lemma](../c-a-s-lemma/README.md)
+- [Strang's lemma](../strang-s-lemma/README.md)
 
 ## Sources
 

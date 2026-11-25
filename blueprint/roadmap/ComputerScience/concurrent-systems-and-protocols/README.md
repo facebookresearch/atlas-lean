@@ -32,4 +32,3 @@ Specific concurrent or distributed systems and their verified properties: deadlo
 - [Distributed execution models](distributed-execution-models/README.md)
 
 - [Shared-memory objects](shared-memory-objects/README.md)
-- [Sampled registers and polling drivers](sampled-registers-and-polling-drivers/README.md)

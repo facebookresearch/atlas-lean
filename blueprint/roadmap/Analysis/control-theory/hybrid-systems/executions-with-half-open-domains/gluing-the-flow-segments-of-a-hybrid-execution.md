@@ -12,7 +12,7 @@ If every interval has length zero, the time domain is the single instant $\tau_0
 
 ## Background
 
-- [Gluing solutions of an ODE](../../ordinary-differential-equations/maximal-solutions-and-global-existence/has-deriv-at-piecewise-union-of-eq-on.md): gluing two solutions of one differential equation on overlapping open sets
+- [Gluing solutions of an ODE](../../../ordinary-differential-equations/maximal-solutions-and-global-existence/has-deriv-at-piecewise-union-of-eq-on.md): gluing two solutions of one differential equation on overlapping open sets
 - [Executions of a hybrid automaton](executions-of-a-hybrid-automaton.md): hybrid time sets and their segments
 
 ## Sources

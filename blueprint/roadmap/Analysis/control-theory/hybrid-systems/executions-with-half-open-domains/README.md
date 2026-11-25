@@ -1,4 +1,4 @@
-# Hybrid automata
+# Executions of hybrid automata with half-open domains
 
 - [Executions of a hybrid automaton](executions-of-a-hybrid-automaton.md)
 - [With closed domains, an execution stays in its domain at each switching time](with-closed-domains-an-execution-stays-in-its-domain-at-each-switching-time.md)

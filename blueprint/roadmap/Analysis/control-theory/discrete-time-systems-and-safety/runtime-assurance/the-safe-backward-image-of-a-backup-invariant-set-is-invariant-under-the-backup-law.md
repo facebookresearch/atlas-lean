@@ -12,11 +12,11 @@ Then:
 
 Membership in $C_S$ is checked by simulating $N$ steps of the backup law, so the backup set $C_b$ can be much smaller than the region $C_S$ the filter allows.
 
-**Proof.** For part 1, a point of $C_b$ stays in $C_b \subseteq C_A$ under the backup law, and $i = 0$ gives $C_S \subseteq C_A$. For part 2, let $x \in C_S$ and $y = \phi(1; x)$, so that $\phi(i; y) = \phi(i + 1; x)$. For $i \le N - 2$ this lies in $C_A$; for $i = N - 1$ it equals $\phi(N; x) \in C_b \subseteq C_A$; and $\phi(N; y) = \phi(1; \phi(N; x)) \in C_b$ by the invariance of $C_b$. Part 3 is the induction of the region-based simplex filter with $C_S$ in place of an explicitly given invariant set.
+**Proof.** For part 1, a point of $C_b$ stays in $C_b \subseteq C_A$ under the backup law, and $i = 0$ gives $C_S \subseteq C_A$. For part 2, let $x \in C_S$ and $y = \phi(1; x)$, so that $\phi(i; y) = \phi(i + 1; x)$. For $i \le N - 2$ this lies in $C_A$; for $i = N - 1$ it equals $\phi(N; x) \in C_b \subseteq C_A$; and $\phi(N; y) = \phi(1; \phi(N; x)) \in C_b$ by the invariance of $C_b$. Part 3 is the induction of the runtime safety shield with $C_S$ as the recoverable set and no disturbance.
 
 ## Proof depends on
 
-- [The region-based simplex filter keeps the state in a backup-invariant safe set](the-region-based-simplex-filter-keeps-the-state-in-a-backup-invariant-safe-set.md): the filter keeps the state in any set invariant under the backup law
+- [Runtime safety shield (simplex) over discrete dynamics](../runtime-safety-shield-over-discrete-dynamics.md): the shield keeps the state in any set invariant under the fallback law
 
 ## Sources
 
