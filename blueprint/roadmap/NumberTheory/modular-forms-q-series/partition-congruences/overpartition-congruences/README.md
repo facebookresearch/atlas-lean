@@ -1,5 +1,7 @@
 # Overpartition congruences
 
+- [Gauss's product formula for the signed square theta series](theta-euler-product.md)
+- [Five-dissection of the square theta series](theta-five-components.md)
 - [Theta mul rescale gen Fun](theta-mul-rescale-gen-fun.md)
 - [Overpartitions of $5n$ modulo $5$, explicit form](overpartition-mul-five-mod-five.md)
 - [Overpartitions as pairs of a multiset and a set](nat-card-eq-card-subtype.md)
