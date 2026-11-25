@@ -1,0 +1,3 @@
+# DOMINATING SET ON UNDIRECTED PATH GRAPHS as a decision problem
+
+The decision problem DOMINATING SET ON UNDIRECTED PATH GRAPHS accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of triples $(n, E, K)$ (a natural number, a list of pairs of natural numbers and a natural number), to an instance that is well-formed for DOMINATING SET ON UNDIRECTED PATH GRAPHS and feasible for DOMINATING SET: some set of at most $K$ vertices contains or is adjacent to every vertex. It rejects every bitstring that does not decode to such an instance.
