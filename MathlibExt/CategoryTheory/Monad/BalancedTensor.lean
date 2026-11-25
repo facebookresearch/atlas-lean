@@ -6,28 +6,29 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+
 module
 
 public import Mathlib.CategoryTheory.Limits.Shapes.Equalizers
 public import MathlibExt.CategoryTheory.Monad.BarAugmentation
 
 /-!
-# Ordinary balanced tensor product from the two-sided bar
+# Balanced tensor products of monadic modules
 
-Mathematical source: J. P. May, *The Geometry of Iterated Loop Spaces*,
-Lecture Notes in Mathematics 271, Springer, 1972, Chapter 9,
-Construction 9.6 and Remark 9.12, <https://doi.org/10.1007/BFb0067491>.
+For a monad `T`, a right module `R`, and a left module `L`, the balanced tensor product
+`R ⊗_T L` is the coequalizer of the two degree-one Bar faces `balanceFst` and `balanceSnd`.
+Its projection is a balanced pairing, and the pairing gives an augmentation of the Bar.
+The coequalizer universal property defines maps of balanced tensor products from compatible
+module morphisms and proves their identity and composition laws.
 
-May's degree-`n` term `Y C^n X` is `B(R,T,L)_n = R(T^n(L(-)))`, in Lean order
-`L.functor ⋙ monadPow T n ⋙ R.functor` (see `Monad.Bar`). The ordinary tensor
-`R ⊗_T L` here is the coequalizer of the two degree-one bar faces
-`balanceFst`/`balanceSnd`; the projection is a balanced pairing, so the bar
-augments over the tensor via `BalancedPairing.toSimplicialAugmented`.
-Compatible module morphisms induce tensor maps through the coequalizer
-universal property.
+The degree-`n` Bar term is `R(T^n(L(-)))`, expressed as
+`L.functor ⋙ monadPow T n ⋙ R.functor`.
 
-Strict ordinary (`C9a`) layer only: no realization, derived tensor, weak
-equivalence, preservation, monoidal-bar, or classifying-space claim here.
+## References
+
+* J. P. May, *The Geometry of Iterated Loop Spaces*, Lecture Notes in Mathematics 271,
+  Springer, 1972, Chapter 9, Construction 9.6 and Remark 9.12,
+  <https://doi.org/10.1007/BFb0067491>.
 -/
 
 @[expose] public section

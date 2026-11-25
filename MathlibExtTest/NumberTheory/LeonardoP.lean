@@ -15,6 +15,10 @@ namespace MathlibExt.NumberTheory.LeonardoPWanted
 -- Cross the initial block and reach the first step with two noninitial summands.
 example : leonardoPKSeq 2 3 6 = [1, 1, 1, 5, 9, 13, 21] := by decide
 
+-- The integer extension crosses from −k to 1 at zero and agrees with later natural terms.
+example : (leonardoPKZ 2 3 (-1), leonardoPKZ 2 3 0, leonardoPKZ 2 3 3) = (-3, 1, 5) := by
+  decide
+
 -- The sum through index four includes the term at index four.
 example : ∑ i ∈ Finset.range 5, leonardoPK 2 3 i = 17 := by
   rw [sum_leonardoPK 2 3 4 (by decide) (by decide)]

@@ -21,3 +21,6 @@ Prediction from labelled data: least squares, ridge, lasso, logistic regression,
 - [Implicit regularization of SGD in linear models](implicit-regularization-of-sgd-in-linear-models/README.md)
 - [Finite-sample expressivity of ReLU networks](finite-sample-expressivity-of-relu-networks/README.md)
 - [Classification-calibrated losses](classification-calibrated-losses/README.md)
+
+- [Message-passing graph neural networks and the Weisfeiler–Leman test](message-passing-graph-neural-networks-and-the-weisfeilerlema.md)
+- [VC dimension of sign-activation neural networks](vc-dimension-of-sign-activation-neural-networks.md)

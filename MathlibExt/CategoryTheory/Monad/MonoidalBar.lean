@@ -6,6 +6,7 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+
 module
 
 public import Mathlib.CategoryTheory.Monoidal.Category
@@ -15,34 +16,22 @@ public import Mathlib.CategoryTheory.Discrete.Basic
 public import MathlibExt.CategoryTheory.Monad.BalancedTensor
 
 /-!
-# Strict monoidal two-sided bar from the general monadic bar
+# Two-sided Bar constructions in a monoidal category
 
-Mathematical source: J. P. May, *The Geometry of Iterated Loop Spaces*,
-Lecture Notes in Mathematics 271, Springer, 1972, Chapter 9,
-Construction 9.6 and Remark 9.12, <https://doi.org/10.1007/BFb0067491>.
+A monoid object `M` defines the monad `M ⊗ -`. A left `M`-module `X` and a right action
+`Y ⊗ M ⟶ Y` give the two module inputs of the two-sided Bar construction. Its degree-`n` term
+is the iterated tensor `Y ⊗ M ⊗ ⋯ ⊗ M ⊗ X`; faces use the two actions and multiplication of
+`M`, and degeneracies insert its unit. Compatible module morphisms induce simplicial maps.
 
-This file specializes May's `B(R,T,L)` with `T = tensorMonad M`,
-`R = rightModuleOfRightAction Y`, and `L = leftPointModule X`, so
-`monoidalBar Y M X` is the existing `twoSidedBar` at those modules.
-For a monoid object `M` in a monoidal category `C`, the left-tensor
-functor `M ⊗ -` carries a monad structure with unit built from the
-left unitor and `MonObj.one` and multiplication built from
-`tensorLeftTensor` and `MonObj.mul`. A left `M`-module `X` gives a
-point-valued monadic left module over the terminal indexing category.
-The outer factor needs a right action `Y ⊗ M ⟶ Y`; pinned Mathlib
-provides only left `ModObj`, so this file takes that right action as
-an explicit hypothesis rather than claiming `ModObj` alone gives it.
-A purely `ModObj`-only outer face would need braiding or a future
-right-module API, which is not created here.
+When the two degree-one faces have a coequalizer, the balanced tensor product is their
+coequalizer and the Bar has the corresponding augmentation. The coequalizer is specified by
+`HasCoequalizer`; its universal maps are expressed through balanced pairings.
 
-`monoidalBar` is the `twoSidedBar` specialization. All
-simplicial identities, functoriality, and augmentation come from the
-general two-sided bar and balanced-tensor APIs. No new simplicial
-identity is proved. The coequalizer tensor is exposed only through
-existing `balancedTensor` / `BalancedPairing` with explicit
-`HasCoequalizer` assumptions; `Y ⊗ X` itself is never claimed to be
-the quotient. No classifying, realization, derived, dg, operadic, or
-model-category content belongs here.
+## References
+
+* J. P. May, *The Geometry of Iterated Loop Spaces*, Lecture Notes in Mathematics 271,
+  Springer, 1972, Chapter 9, Construction 9.6 and Remark 9.12,
+  <https://doi.org/10.1007/BFb0067491>.
 -/
 
 @[expose] public section

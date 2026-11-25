@@ -6,6 +6,7 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+
 module
 
 public import MathlibExt.CategoryTheory.Monad.BarSimplicial
@@ -759,7 +760,7 @@ section TwoSidedBarHomTransport
 
 variable {R R' : RightModule T D} {L L' : LeftModule A T}
 
-/-- Genuine simplicial morphism induced by module homs, via generic `Data` transport. -/
+/-- Simplicial morphism induced by module homs, via generic `Data` transport. -/
 noncomputable def twoSidedBarHom (fR : R ⟶ R') (fL : L ⟶ L') :
     twoSidedBar T R L ⟶ twoSidedBar T R' L' :=
   SimplicialObject.Data.toSimplicialNatTrans (barDataHom fR fL)
@@ -891,7 +892,7 @@ end TwoSidedBarIsoTransport
 
 section TwoSidedBarFunctorTransport
 
-/-- Genuine bifunctorial two-sided bar, as composite of data-level functor and generic transport. -/
+/-- Bifunctorial two-sided bar, as composite of data-level functor and generic transport. -/
 noncomputable def twoSidedBarFunctor (T : Monad C) :
     (RightModule T D) × (LeftModule A T) ⥤ SimplicialObject (A ⥤ D) :=
   barDataFunctor T ⋙ SimplicialObject.Data.toSimplicialFunctor
@@ -975,10 +976,12 @@ universe v₄ u₄
 variable {E : Type u₄} [Category.{v₄} E]
 variable (K : D ⥤ E)
 
-/-- Outer target postcomposition whiskering by `K : D ⥤ E`.
+/--
+Outer target postcomposition whiskering by `K : D ⥤ E`.
 
 Thin alias for Mathlib's `(Functor.whiskeringRight _ _ _).obj K`; the previous
-explicit structure is deleted to avoid duplicate ambient coherence. -/
+explicit structure is deleted to avoid duplicate ambient coherence.
+-/
 abbrev functorPostcompOuter : (A ⥤ D) ⥤ (A ⥤ E) :=
   (Functor.whiskeringRight A D E).obj K
 
@@ -1066,9 +1069,11 @@ theorem barDataPostcompOuterIsoObj_inv_app (R : RightModule T D) (L : LeftModule
     (barDataPostcompOuterIsoObj (E := E) K R L n).inv.app a =
       (Functor.associator (L.functor ⋙ monadPow T n) R.functor K).inv.app a := rfl
 
-/-- Data-level target-postcomposition comparison, assembled from the associator
+/--
+Data-level target-postcomposition comparison, assembled from the associator
 degreewise isomorphism with the generic degreewise-isomorphism infrastructure.
-No simplicial identity is reproved here. -/
+No simplicial identity is reproved here.
+-/
 noncomputable def barDataPostcompOuterIso (R : RightModule T D) (L : LeftModule A T) :
     SimplicialObject.Data.mapObj (functorPostcompOuter (E := E) K) (barData T R L) ≅
       barData T (R.postcomp K) L :=
@@ -1112,11 +1117,12 @@ end PostcompIso
 
 section PostcompSimplicial
 
-/-- Genuine simplicial target-postcomposition comparison, obtained functorially from
-`barDataPostcompOuterIso` via `Data.toSimplicialFunctor`. Covariant in both modules;
-postcomposition is outer whiskering in the target. No simplicial identity is
-reproved. This is the `K`-postcomposition of the original bar compared with the bar
-of the postcomposed right module. -/
+/--
+Simplicial target-postcomposition comparison, obtained functorially from `barDataPostcompOuterIso`
+via `Data.toSimplicialFunctor`. Covariant in both modules; postcomposition is outer whiskering in
+the target.  This is the `K`-postcomposition of the bar compared with the bar of the postcomposed
+right module.
+-/
 noncomputable def twoSidedBarPostcompOuterIso (R : RightModule T D)
     (L : LeftModule A T) :
     (SimplicialObject.Data.toSimplicialFunctor (C := A ⥤ E)).obj
@@ -1160,14 +1166,14 @@ end PostcompSimplicial
 
 section PostcompWhisker
 
-/-- Genuine target-postcomposition comparison with whiskered source.
+/--
+Target-postcomposition comparison with whiskered source.
 
-The source is literally the whiskered genuine bar
-`twoSidedBar T R L ⋙ functorPostcompOuter K`, not
+The source is literally the whiskered bar `twoSidedBar T R L ⋙ functorPostcompOuter K`, not
 `toSimplicialFunctor.obj (Data.mapObj _ _)`. It composes the generic
-`toSimplicialFunctor_mapFunctorIso` bridge with the existing genuine
-transport of the data-level `barDataPostcompOuterIso` (functor associator
-orientation preserved). No simplicial identity is reproved. -/
+`toSimplicialFunctor_mapFunctorIso` bridge with the transport of the data-level
+`barDataPostcompOuterIso` (functor associator orientation preserved).
+-/
 noncomputable def twoSidedBarPostcompWhiskerIso (R : RightModule T D)
     (L : LeftModule A T) :
     (twoSidedBar T R L ⋙ functorPostcompOuter (E := E) K) ≅
@@ -1246,14 +1252,15 @@ theorem twoSidedBarPostcompWhiskerIso_inv_app_op_mk (R : RightModule T D)
   rw [hComp, hOuterInv, hBridgeInv, hRhsInv]
   exact Category.id_comp _
 
-/-- Smallest robust naturality in module maps, at `op (mk n)` components.
+/--
+Smallest robust naturality in module maps, at `op (mk n)` components.
 
-Whiskered genuine maps commute with the whisker comparison; the postcomposed
-right-module map is `(RightModule.postcompFunctor K).map fR`. This component
-naturality is reused by the product-level `twoSidedBarPostcompWhiskerNatIso`;
-identity/composition coherence in `K` is proved at components in
-`PostcompProductNaturality` (all components are identities, so the associator
-triangle/pentagon close by `simp`). -/
+Whiskered maps commute with the whisker comparison; the postcomposed right-module map is
+`(RightModule.postcompFunctor K).map fR`. This component naturality is reused by the product-level
+`twoSidedBarPostcompWhiskerNatIso`; identity/composition coherence in `K` is proved at components
+in `PostcompProductNaturality` (all components are identities, so the associator triangle/pentagon
+close by `simp`).
+-/
 theorem twoSidedBarPostcompWhiskerIso_naturality_app_op_mk
     {R R' : RightModule T D} {L L' : LeftModule A T}
     (fR : R ⟶ R') (fL : L ⟶ L') (n : ℕ) :
@@ -1326,9 +1333,11 @@ theorem twoSidedBarPostcompWhiskerIso_naturality_app
   rw [hΔ]
   exact twoSidedBarPostcompWhiskerIso_naturality_app_op_mk (E := E) K fR fL _
 
-/-- Genuinely natural target-postcomposition whisker isomorphism over the
+/--
+Genuinely natural target-postcomposition whisker isomorphism over the
 product of module categories, reusing the degreewise associator isos and
-component naturality. -/
+component naturality.
+-/
 noncomputable def twoSidedBarPostcompWhiskerNatIso :
     twoSidedBarPostcompWhiskerFunctorLeft (T := T) (A := A) (E := E) K ≅
       twoSidedBarPostcompWhiskerFunctorRight (T := T) (A := A) (E := E) K :=
@@ -1355,8 +1364,10 @@ theorem twoSidedBarPostcompWhiskerNatIso_inv_app (p : RightModule T D × LeftMod
     ((twoSidedBarPostcompWhiskerNatIso (E := E) K).inv.app p).app Δ =
       (twoSidedBarPostcompWhiskerIso (E := E) K p.1 p.2).inv.app Δ := rfl
 
-/-- Whisker comparison components are identities at `app a`: the associator
-has identity components, so Mathlib's triangle/pentagon close by `simp`. -/
+/--
+Whisker comparison components are identities at `app a`: the associator
+has identity components, so Mathlib's triangle/pentagon close by `simp`.
+-/
 @[simp]
 theorem twoSidedBarPostcompWhiskerIso_hom_app_app_id
     (R : RightModule T D) (L : LeftModule A T) (n : ℕ) (a : A) :
@@ -1375,13 +1386,15 @@ universe v₅ u₅
 
 variable {F : Type u₅} [Category.{v₅} F]
 
-/-- Degree-`n` component of identity whisker coherence.
+/--
+Degree-`n` component of identity whisker coherence.
 
 The identity whisker followed by the module-side `postcompId` bridge is the
 identity at `op (mk n)`; see `twoSidedBarPostcompWhiskerNatIso_id` for the
 functor-level statement. Together with the categorical
 `functorPostcompOuterId` and `twoSidedBarIso_postcompId_hom_app` identities,
-this is the associator triangle; no pseudofunctor is built. -/
+this is the associator triangle; no pseudofunctor is built.
+-/
 theorem twoSidedBarPostcompWhiskerIso_id_hom_app
     (R : RightModule T D) (L : LeftModule A T) (n : ℕ) :
     (twoSidedBarPostcompWhiskerIso (E := D) (𝟭 D) R L).hom.app
@@ -1391,8 +1404,10 @@ theorem twoSidedBarPostcompWhiskerIso_id_hom_app
   ext a
   simp
 
-/-- Identity whisker coherence at components, derived from the degree-`n`
-`twoSidedBarPostcompWhiskerIso_id_hom_app` equality. -/
+/--
+Identity whisker coherence at components, derived from the degree-`n`
+`twoSidedBarPostcompWhiskerIso_id_hom_app` equality.
+-/
 theorem twoSidedBarPostcompWhiskerIso_id_hom_app_app
     (R : RightModule T D) (L : LeftModule A T) (n : ℕ) (a : A) :
     (((twoSidedBarPostcompWhiskerIso (E := D) (𝟭 D) R L).hom.app
@@ -1402,15 +1417,17 @@ theorem twoSidedBarPostcompWhiskerIso_id_hom_app_app
   have h := twoSidedBarPostcompWhiskerIso_id_hom_app (T := T) R L n
   exact congrArg (fun α => α.app a) h
 
-/-- Degree-`n` component of composition whisker coherence, with the
-accepted orientation `postcomp K ⋙ postcomp Q ≅ postcomp (K ⋙ Q)`.
+/--
+Degree-`n` component of composition whisker coherence, with the
+orientation `postcomp K ⋙ postcomp Q ≅ postcomp (K ⋙ Q)`.
 
 The `Q`-whiskering of the `K` comparison, followed by the `Q` comparison and
 the module-side `postcompComp` bridge, coincides with the single `K ⋙ Q`
 comparison at `op (mk n)`; see `twoSidedBarPostcompWhiskerNatIso_comp` for the
 functor-level statement. All sides have identity components, so Mathlib's
 associator pentagon closes by `simp`; the ambient
-`functorPostcompOuterComp` bridge is likewise componentwise identity. -/
+`functorPostcompOuterComp` bridge is likewise componentwise identity.
+-/
 theorem twoSidedBarPostcompWhiskerIso_comp_hom_app
     (R : RightModule T D) (L : LeftModule A T) (Q : E ⥤ F) (n : ℕ) :
     (functorPostcompOuter Q).map
@@ -1426,8 +1443,10 @@ theorem twoSidedBarPostcompWhiskerIso_comp_hom_app
   ext a
   simp
 
-/-- Composition whisker coherence at components, derived from the degree-`n`
-`twoSidedBarPostcompWhiskerIso_comp_hom_app` equality. -/
+/--
+Composition whisker coherence at components, derived from the degree-`n`
+`twoSidedBarPostcompWhiskerIso_comp_hom_app` equality.
+-/
 theorem twoSidedBarPostcompWhiskerIso_comp_hom_app_app
     (R : RightModule T D) (L : LeftModule A T) (Q : E ⥤ F) (n : ℕ) (a : A) :
     (Q.map (((twoSidedBarPostcompWhiskerIso (E := E) K R L).hom.app
@@ -1450,18 +1469,19 @@ universe v₅ u₅
 
 variable {F : Type u₅} [Category.{v₅} F]
 
-/-- Bar-level identity coherence for the module side of target whiskering.
+/--
+Bar-level identity coherence for the module side of target whiskering.
 
-`RightModule.postcompId` lifts through `twoSidedBarIso` to a degreewise-identity
-genuine bar iso. The whisker comparison itself remains the `Functor.associator`
-component recorded in `twoSidedBarPostcompWhiskerIso_hom_app_op_mk`; only the
-postcomposed module is identified here. Functor-level whisker-composite
-coherence is `twoSidedBarPostcompWhiskerNatIso_id`, with degree-`n` corollary
-`twoSidedBarPostcompWhiskerIso_id_hom_app` and component consequence
-`twoSidedBarPostcompWhiskerIso_id_hom_app_app`: the identity whisker and this
-module bridge compose to the identity, using identity-preservation for
-`functorPostcompOuter` (alias for Mathlib's `whiskeringRight`) together with
-the associator triangle, all via componentwise identities. -/
+`RightModule.postcompId` lifts through `twoSidedBarIso` to a degreewise-identity bar iso. The
+whisker comparison itself remains the `Functor.associator` component recorded in
+`twoSidedBarPostcompWhiskerIso_hom_app_op_mk`; only the postcomposed module is identified here.
+Functor-level whisker-composite coherence is `twoSidedBarPostcompWhiskerNatIso_id`, with
+degree-`n` corollary `twoSidedBarPostcompWhiskerIso_id_hom_app` and component consequence
+`twoSidedBarPostcompWhiskerIso_id_hom_app_app`: the identity whisker and this module bridge
+compose to the identity, using identity-preservation for `functorPostcompOuter` (alias for
+Mathlib's `whiskeringRight`) together with the associator triangle, all via componentwise
+identities.
+-/
 @[simp]
 theorem twoSidedBarIso_postcompId_hom_app (R : RightModule T D)
     (L : LeftModule A T) (n : ℕ) :
@@ -1488,18 +1508,18 @@ theorem twoSidedBarIso_postcompId_inv_app (R : RightModule T D)
   simp only [hL, hR]
   simp
 
-/-- Bar-level composition coherence for the module side of target whiskering.
+/--
+Bar-level composition coherence for the module side of target whiskering.
 
-`RightModule.postcompComp K Q` lifts through `twoSidedBarIso` to a
-degreewise-identity genuine bar iso, preserving the accepted orientation
-`(R.postcomp K).postcomp Q ≅ R.postcomp (K ⋙ Q)`. Functor-level
-whisker-composite coherence is `twoSidedBarPostcompWhiskerNatIso_comp`, with
-degree-`n` corollary `twoSidedBarPostcompWhiskerIso_comp_hom_app` and component
-consequence `twoSidedBarPostcompWhiskerIso_comp_hom_app_app`: the two iterated
-whisker comparisons followed by this module bridge coincide with the single
-`K ⋙ Q` comparison, using composition-preservation for `functorPostcompOuter`
-(alias for Mathlib's `whiskeringRight`) together with the associator pentagon,
-all via componentwise identities. -/
+`RightModule.postcompComp K Q` lifts through `twoSidedBarIso` to a degreewise-identity bar iso,
+preserving the orientation `(R.postcomp K).postcomp Q ≅ R.postcomp (K ⋙ Q)`.
+Functor-level whisker-composite coherence is `twoSidedBarPostcompWhiskerNatIso_comp`, with
+degree-`n` corollary `twoSidedBarPostcompWhiskerIso_comp_hom_app` and component consequence
+`twoSidedBarPostcompWhiskerIso_comp_hom_app_app`: the two iterated whisker comparisons followed by
+this module bridge coincide with the single `K ⋙ Q` comparison, using composition-preservation for
+`functorPostcompOuter` (alias for Mathlib's `whiskeringRight`) together with the associator
+pentagon, all via componentwise identities.
+-/
 @[simp]
 theorem twoSidedBarIso_postcompComp_hom_app (R : RightModule T D)
     (L : LeftModule A T) (Q : E ⥤ F) (n : ℕ) :
@@ -1538,11 +1558,13 @@ universe v₅ u₅
 
 variable {F : Type u₅} [Category.{v₅} F]
 
-/-- Identity coherence for the outer target postcomposition functor.
+/--
+Identity coherence for the outer target postcomposition functor.
 
 Direct use of Mathlib's `whiskeringRightObjIdIso` (which is `Iso.refl _`);
 the right-unitor description follows since all components are identities.
-No pseudofunctor is built. -/
+No pseudofunctor is built.
+-/
 abbrev functorPostcompOuterId :
     functorPostcompOuter (E := D) (𝟭 D) ≅ 𝟭 (A ⥤ D) :=
   Functor.whiskeringRightObjIdIso
@@ -1567,12 +1589,14 @@ theorem functorPostcompOuterId_hom_app_app (G : A ⥤ D) (a : A) :
 theorem functorPostcompOuterId_inv_app_app (G : A ⥤ D) (a : A) :
     ((functorPostcompOuterId).inv.app G).app a = 𝟙 _ := rfl
 
-/-- Composition coherence for the outer target postcomposition functor.
+/--
+Composition coherence for the outer target postcomposition functor.
 
 Direct use of Mathlib's `whiskeringRightObjCompIso` (which is `Iso.refl _`),
-preserving the accepted orientation `postcomp K ⋙ postcomp Q ≅ postcomp (K ⋙ Q)`.
+preserving the orientation `postcomp K ⋙ postcomp Q ≅ postcomp (K ⋙ Q)`.
 The associator description follows since all components are identities.
-No pseudofunctor is built. -/
+No pseudofunctor is built.
+-/
 abbrev functorPostcompOuterComp (Q : E ⥤ F) :
     functorPostcompOuter (A := A) (E := E) K ⋙
         functorPostcompOuter (A := A) (D := E) (E := F) Q ≅
@@ -1627,11 +1651,13 @@ universe v₅ u₅
 
 variable {F : Type u₅} [Category.{v₅} F]
 
-/-- Product-level module bridge for identity postcomposition.
+/--
+Product-level module bridge for identity postcomposition.
 
 `RightModule.postcompId` lifted through `twoSidedBarIso`; the smallest package
 needed to state `twoSidedBarPostcompWhiskerNatIso_id`. No pseudofunctor is
-built. -/
+built.
+-/
 noncomputable def twoSidedBarPostcompModuleIdNatIso :
     twoSidedBarPostcompWhiskerFunctorRight (T := T) (A := A) (E := D) (𝟭 D) ≅
       twoSidedBarFunctor T :=
@@ -1658,12 +1684,14 @@ noncomputable def twoSidedBarPostcompModuleIdNatIso :
         simp only [Iso.refl_hom, Category.comp_id, Category.id_comp]
       rw [hR, hL])
 
-/-- Product-level module bridge for composed postcomposition, preserving the
-accepted orientation `postcomp K ⋙ postcomp Q ≅ postcomp (K ⋙ Q)`.
+/--
+Product-level module bridge for composed postcomposition, preserving the
+orientation `postcomp K ⋙ postcomp Q ≅ postcomp (K ⋙ Q)`.
 
 `RightModule.postcompComp K Q` lifted through `twoSidedBarIso`; the smallest
 package needed to state `twoSidedBarPostcompWhiskerNatIso_comp`. No
-pseudofunctor is built. -/
+pseudofunctor is built.
+-/
 noncomputable def twoSidedBarPostcompModuleCompNatIso (Q : E ⥤ F) :
     ((RightModule.postcompFunctor (T := T) K ⋙ RightModule.postcompFunctor (T := T) Q).prod
         (𝟭 (LeftModule A T)) ⋙ twoSidedBarFunctor T) ≅
@@ -1692,12 +1720,14 @@ noncomputable def twoSidedBarPostcompModuleCompNatIso (Q : E ⥤ F) :
         simp only [Iso.refl_hom, Category.comp_id, Category.id_comp]
       rw [hR, hL])
 
-/-- Functor-level identity coherence for target postcomposition.
+/--
+Functor-level identity coherence for target postcomposition.
 
 The identity whisker followed by the product-level `postcompId` bridge equals
 the ambient `functorPostcompOuterId` coherence lifted through the bar and the
 right unitor; no `R`, `L`, `n`, or `Δ` is bound. The degree-`n` corollary is
-`twoSidedBarPostcompWhiskerIso_id_hom_app`. No pseudofunctor is built. -/
+`twoSidedBarPostcompWhiskerIso_id_hom_app`. No pseudofunctor is built.
+-/
 theorem twoSidedBarPostcompWhiskerNatIso_id :
     (twoSidedBarPostcompWhiskerNatIso (T := T) (A := A) (E := D) (𝟭 D)).hom ≫
       twoSidedBarPostcompModuleIdNatIso.hom =
@@ -1724,14 +1754,16 @@ theorem twoSidedBarPostcompWhiskerNatIso_id :
   change (𝟙 _) = ((𝟙 _) ≫ (𝟙 _))
   exact (Category.comp_id _).symm
 
-/-- Functor-level composition coherence for target postcomposition, with the
-accepted orientation `postcomp K ⋙ postcomp Q ≅ postcomp (K ⋙ Q)`.
+/--
+Functor-level composition coherence for target postcomposition, with the
+orientation `postcomp K ⋙ postcomp Q ≅ postcomp (K ⋙ Q)`.
 
 The `Q`-whiskering of the `K` comparison, followed by the `Q` comparison at
 the postcomposed module and the product-level `postcompComp` bridge, equals
 the single `K ⋙ Q` comparison up to the ambient `functorPostcompOuterComp`
 coherence; no `R`, `L`, `n`, or `Δ` is bound. The degree-`n` corollary is
-`twoSidedBarPostcompWhiskerIso_comp_hom_app`. No pseudofunctor is built. -/
+`twoSidedBarPostcompWhiskerIso_comp_hom_app`. No pseudofunctor is built.
+-/
 theorem twoSidedBarPostcompWhiskerNatIso_comp (Q : E ⥤ F) :
     (Functor.isoWhiskerRight (twoSidedBarPostcompWhiskerNatIso (T := T) (A := A) (E := E) K)
       ((SimplicialObject.whiskering (A ⥤ E) (A ⥤ F)).obj (functorPostcompOuter Q))).hom ≫
@@ -1779,10 +1811,12 @@ universe v₄ u₄
 variable {B : Type u₄} [Category.{v₄} B]
 variable (H : B ⥤ A)
 
-/-- Outer source precomposition whiskering by `H : B ⥤ A`.
+/--
+Outer source precomposition whiskering by `H : B ⥤ A`.
 
 Thin alias for Mathlib's `(Functor.whiskeringLeft _ _ _).obj H`; the previous
-explicit structure is deleted to avoid duplicate ambient coherence. -/
+explicit structure is deleted to avoid duplicate ambient coherence.
+-/
 abbrev functorPrecompOuter : (A ⥤ D) ⥤ (B ⥤ D) :=
   (Functor.whiskeringLeft B A D).obj H
 
@@ -1842,10 +1876,12 @@ theorem barDegeneracy_precomp (R : RightModule T D) (L : LeftModule A T) (n : �
 
 section PrecompIso
 
-/-- Degreewise source-precomposition comparison: `H ⋙ ((L ⋙ Tⁿ) ⋙ R)` with
+/--
+Degreewise source-precomposition comparison: `H ⋙ ((L ⋙ Tⁿ) ⋙ R)` with
 `((H ⋙ L) ⋙ Tⁿ) ⋙ R`, as the composite of the two required functor associators.
 Covariant in `R` and `L`; contravariant in the indexing category through `H`.
-All universe levels stay distinct, and the comparison is not a definitional identity. -/
+All universe levels stay distinct, and the comparison is not a definitional identity.
+-/
 noncomputable def barDataPrecompOuterIsoObj (R : RightModule T D) (L : LeftModule A T)
     (n : ℕ) :
     (SimplicialObject.Data.mapObj (functorPrecompOuter H) (barData T R L)).obj n ≅
@@ -1887,9 +1923,11 @@ theorem barDataPrecompOuterIsoObj_inv_app (R : RightModule T D) (L : LeftModule 
         Functor.isoWhiskerRight (Functor.associator H L.functor (monadPow T n)).symm
           R.functor).inv.app b := rfl
 
-/-- Data-level source-precomposition comparison, assembled from
+/--
+Data-level source-precomposition comparison, assembled from
 `barDataPrecompOuterIsoObj` with the generic degreewise-isomorphism infrastructure.
-No simplicial identity is reproved here. -/
+No simplicial identity is reproved here.
+-/
 noncomputable def barDataPrecompOuterIso (R : RightModule T D) (L : LeftModule A T) :
     SimplicialObject.Data.mapObj (functorPrecompOuter H) (barData T R L) ≅
       barData T R (L.precomp H) :=
@@ -1933,10 +1971,11 @@ end PrecompIso
 
 section PrecompSimplicial
 
-/-- Genuine simplicial source-precomposition comparison, obtained functorially from
-`barDataPrecompOuterIso` via `Data.toSimplicialFunctor`. No simplicial identity is
-reproved. This is the `H`-precomposition of the original bar compared with the bar
-of the precomposed left module. -/
+/--
+Simplicial source-precomposition comparison, obtained functorially from `barDataPrecompOuterIso`
+via `Data.toSimplicialFunctor`.  This is the `H`-precomposition of the bar compared with the bar
+of the precomposed left module.
+-/
 noncomputable def twoSidedBarPrecompOuterIso (R : RightModule T D)
     (L : LeftModule A T) :
     (SimplicialObject.Data.toSimplicialFunctor (C := B ⥤ D)).obj
@@ -2009,14 +2048,14 @@ end PrecompSimplicial
 
 section PrecompWhisker
 
-/-- Genuine source-precomposition comparison with whiskered source.
+/--
+Source-precomposition comparison with whiskered source.
 
-The source is literally the whiskered genuine bar
-`twoSidedBar T R L ⋙ functorPrecompOuter H`, not
+The source is literally the whiskered bar `twoSidedBar T R L ⋙ functorPrecompOuter H`, not
 `toSimplicialFunctor.obj (Data.mapObj _ _)`. It composes the generic
-`toSimplicialFunctor_mapFunctorIso` bridge with the existing genuine
-transport of the data-level `barDataPrecompOuterIso` (double-associator
-orientation preserved). No simplicial identity is reproved. -/
+`toSimplicialFunctor_mapFunctorIso` bridge with the transport of the data-level
+`barDataPrecompOuterIso` (double-associator orientation preserved).
+-/
 noncomputable def twoSidedBarPrecompWhiskerIso (R : RightModule T D)
     (L : LeftModule A T) :
     (twoSidedBar T R L ⋙ functorPrecompOuter H) ≅
@@ -2095,15 +2134,16 @@ theorem twoSidedBarPrecompWhiskerIso_inv_app_op_mk (R : RightModule T D)
   rw [hComp, hOuterInv, hBridgeInv, hRhsInv]
   exact Category.id_comp _
 
-/-- Smallest robust naturality in module maps, at `op (mk n)` components.
+/--
+Smallest robust naturality in module maps, at `op (mk n)` components.
 
-Whiskered genuine maps commute with the whisker comparison; the precomposed
-left-module map is `(LeftModule.precompFunctor H).map fL`. This component
-naturality is reused by the product-level `twoSidedBarPrecompWhiskerNatIso`;
-identity/composition coherence in `H` is proved at components in
-`PrecompProductNaturality` (all components are identities, so the associator
-triangle/double-associator pentagon close by `simp`, with correct
-contravariant `J ⋙ H` source order). -/
+Whiskered maps commute with the whisker comparison; the precomposed left-module map is
+`(LeftModule.precompFunctor H).map fL`. This component naturality is reused by the product-level
+`twoSidedBarPrecompWhiskerNatIso`; identity/composition coherence in `H` is proved at components
+in `PrecompProductNaturality` (all components are identities, so the associator
+triangle/double-associator pentagon close by `simp`, with correct contravariant `J ⋙ H` source
+order).
+-/
 theorem twoSidedBarPrecompWhiskerIso_naturality_app_op_mk
     {R R' : RightModule T D} {L L' : LeftModule A T}
     (fR : R ⟶ R') (fL : L ⟶ L') (n : ℕ) :
@@ -2181,9 +2221,11 @@ noncomputable def twoSidedBarPrecompWhiskerFunctorRight :
     (RightModule T D × LeftModule A T) ⥤ SimplicialObject (B ⥤ D) :=
   (𝟭 _).prod (LeftModule.precompFunctor (T := T) H) ⋙ twoSidedBarFunctor T
 
-/-- Genuinely natural source-precomposition whisker isomorphism over the
+/--
+Genuinely natural source-precomposition whisker isomorphism over the
 product of module categories, reusing the degreewise double-associator isos
-and component naturality, with correct contravariant source order. -/
+and component naturality, with correct contravariant source order.
+-/
 noncomputable def twoSidedBarPrecompWhiskerNatIso :
     twoSidedBarPrecompWhiskerFunctorLeft (T := T) (D := D) H ≅
       twoSidedBarPrecompWhiskerFunctorRight (T := T) (D := D) H :=
@@ -2210,9 +2252,11 @@ theorem twoSidedBarPrecompWhiskerNatIso_inv_app (p : RightModule T D × LeftModu
     ((twoSidedBarPrecompWhiskerNatIso H).inv.app p).app Δ =
       (twoSidedBarPrecompWhiskerIso H p.1 p.2).inv.app Δ := rfl
 
-/-- Whisker comparison components are identities at `app b`: the
+/--
+Whisker comparison components are identities at `app b`: the
 double-associator has identity components, so Mathlib's triangle/pentagon
-close by `simp`. -/
+close by `simp`.
+-/
 @[simp]
 theorem twoSidedBarPrecompWhiskerIso_hom_app_app_id
     (R : RightModule T D) (L : LeftModule A T) (n : ℕ) (b : B) :
@@ -2231,13 +2275,15 @@ universe v₅ u₅
 
 variable {B₂ : Type u₅} [Category.{v₅} B₂]
 
-/-- Degree-`n` component of identity whisker coherence.
+/--
+Degree-`n` component of identity whisker coherence.
 
 The identity whisker followed by the module-side `precompId` bridge is the
 identity at `op (mk n)`; see `twoSidedBarPrecompWhiskerNatIso_id` for the
 functor-level statement. Together with the categorical
 `functorPrecompOuterId` and `twoSidedBarIso_precompId_hom_app` identities,
-this is the associator triangle; no pseudofunctor is built. -/
+this is the associator triangle; no pseudofunctor is built.
+-/
 theorem twoSidedBarPrecompWhiskerIso_id_hom_app
     (R : RightModule T D) (L : LeftModule A T) (n : ℕ) :
     (twoSidedBarPrecompWhiskerIso (𝟭 A) R L).hom.app
@@ -2247,8 +2293,10 @@ theorem twoSidedBarPrecompWhiskerIso_id_hom_app
   ext a
   simp
 
-/-- Identity whisker coherence at components, derived from the degree-`n`
-`twoSidedBarPrecompWhiskerIso_id_hom_app` equality. -/
+/--
+Identity whisker coherence at components, derived from the degree-`n`
+`twoSidedBarPrecompWhiskerIso_id_hom_app` equality.
+-/
 theorem twoSidedBarPrecompWhiskerIso_id_hom_app_app
     (R : RightModule T D) (L : LeftModule A T) (n : ℕ) (a : A) :
     (((twoSidedBarPrecompWhiskerIso (𝟭 A) R L).hom.app
@@ -2258,7 +2306,8 @@ theorem twoSidedBarPrecompWhiskerIso_id_hom_app_app
   have h := twoSidedBarPrecompWhiskerIso_id_hom_app (T := T) R L n
   exact congrArg (fun α => α.app a) h
 
-/-- Degree-`n` component of composition whisker coherence, with
+/--
+Degree-`n` component of composition whisker coherence, with
 correct contravariant order `(L.precomp H).precomp J ≅ L.precomp (J ⋙ H)`.
 
 The `J`-whiskering of the `H` comparison, followed by the `J` comparison and
@@ -2267,7 +2316,8 @@ comparison at `op (mk n)`; see `twoSidedBarPrecompWhiskerNatIso_comp` for the
 functor-level statement. All sides have identity components, so Mathlib's
 double-associator pentagon closes by `simp`; the ambient
 `functorPrecompOuterComp` bridge is likewise componentwise identity, with
-Mathlib refl alias `whiskeringLeftObjCompIso` in symm orientation. -/
+Mathlib refl alias `whiskeringLeftObjCompIso` in symm orientation.
+-/
 theorem twoSidedBarPrecompWhiskerIso_comp_hom_app
     (R : RightModule T D) (L : LeftModule A T) (J : B₂ ⥤ B) (n : ℕ) :
     (functorPrecompOuter J).map
@@ -2283,8 +2333,10 @@ theorem twoSidedBarPrecompWhiskerIso_comp_hom_app
   ext b₂
   simp
 
-/-- Composition whisker coherence at components, derived from the degree-`n`
-`twoSidedBarPrecompWhiskerIso_comp_hom_app` equality. -/
+/--
+Composition whisker coherence at components, derived from the degree-`n`
+`twoSidedBarPrecompWhiskerIso_comp_hom_app` equality.
+-/
 theorem twoSidedBarPrecompWhiskerIso_comp_hom_app_app
     (R : RightModule T D) (L : LeftModule A T) (J : B₂ ⥤ B) (n : ℕ) (b₂ : B₂) :
     (((twoSidedBarPrecompWhiskerIso H R L).hom.app
@@ -2307,18 +2359,18 @@ universe v₅ u₅
 
 variable {B₂ : Type u₅} [Category.{v₅} B₂]
 
-/-- Bar-level identity coherence for the module side of source whiskering.
+/--
+Bar-level identity coherence for the module side of source whiskering.
 
-`LeftModule.precompId` lifts through `twoSidedBarIso` to a degreewise-identity
-genuine bar iso. The whisker comparison itself remains the double-associator
-component recorded in `twoSidedBarPrecompWhiskerIso_hom_app_op_mk`; only the
-precomposed module is identified here. Functor-level whisker-composite
-coherence is `twoSidedBarPrecompWhiskerNatIso_id`, with degree-`n` corollary
-`twoSidedBarPrecompWhiskerIso_id_hom_app` and component consequence
-`twoSidedBarPrecompWhiskerIso_id_hom_app_app`: the identity whisker and this
-module bridge compose to the identity, using identity-preservation for
-`functorPrecompOuter` (alias for Mathlib's `whiskeringLeft`) together with
-the associator triangle, all via componentwise identities. -/
+`LeftModule.precompId` lifts through `twoSidedBarIso` to a degreewise-identity bar iso. The
+whisker comparison itself remains the double-associator component recorded in
+`twoSidedBarPrecompWhiskerIso_hom_app_op_mk`; only the precomposed module is identified here.
+Functor-level whisker-composite coherence is `twoSidedBarPrecompWhiskerNatIso_id`, with degree-`n`
+corollary `twoSidedBarPrecompWhiskerIso_id_hom_app` and component consequence
+`twoSidedBarPrecompWhiskerIso_id_hom_app_app`: the identity whisker and this module bridge compose
+to the identity, using identity-preservation for `functorPrecompOuter` (alias for Mathlib's
+`whiskeringLeft`) together with the associator triangle, all via componentwise identities.
+-/
 @[simp]
 theorem twoSidedBarIso_precompId_hom_app (R : RightModule T D)
     (L : LeftModule A T) (n : ℕ) :
@@ -2347,19 +2399,18 @@ theorem twoSidedBarIso_precompId_inv_app (R : RightModule T D)
   simp only [hL, hR]
   simp
 
-/-- Bar-level composition coherence for the module side of source whiskering.
+/--
+Bar-level composition coherence for the module side of source whiskering.
 
-`LeftModule.precompComp H J` lifts through `twoSidedBarIso` to a
-degreewise-identity genuine bar iso, preserving the accepted orientation
-`(L.precomp H).precomp J ≅ L.precomp (J ⋙ H)`. Functor-level whisker-composite
-coherence is `twoSidedBarPrecompWhiskerNatIso_comp`, with degree-`n` corollary
+`LeftModule.precompComp H J` lifts through `twoSidedBarIso` to a degreewise-identity bar iso,
+preserving the orientation `(L.precomp H).precomp J ≅ L.precomp (J ⋙ H)`. Functor-level
+whisker-composite coherence is `twoSidedBarPrecompWhiskerNatIso_comp`, with degree-`n` corollary
 `twoSidedBarPrecompWhiskerIso_comp_hom_app` and component consequence
-`twoSidedBarPrecompWhiskerIso_comp_hom_app_app`: the two iterated whisker
-comparisons (with correct contravariant `J ⋙ H` order) followed by this module
-bridge coincide with the single `J ⋙ H` comparison, using
-composition-preservation for `functorPrecompOuter` (alias for Mathlib's
-`whiskeringLeft`) together with the double-associator pentagon, all via
-componentwise identities. -/
+`twoSidedBarPrecompWhiskerIso_comp_hom_app_app`: the two iterated whisker comparisons (with
+correct contravariant `J ⋙ H` order) followed by this module bridge coincide with the single `J ⋙
+H` comparison, using composition-preservation for `functorPrecompOuter` (alias for Mathlib's
+`whiskeringLeft`) together with the double-associator pentagon, all via componentwise identities.
+-/
 @[simp]
 theorem twoSidedBarIso_precompComp_hom_app (R : RightModule T D)
     (L : LeftModule A T) (J : B₂ ⥤ B) (n : ℕ) :
@@ -2400,11 +2451,13 @@ universe v₅ u₅
 
 variable {B₂ : Type u₅} [Category.{v₅} B₂]
 
-/-- Identity coherence for the outer source precomposition functor.
+/--
+Identity coherence for the outer source precomposition functor.
 
 Direct use of Mathlib's `whiskeringLeftObjIdIso` (which is `Iso.refl _`);
 the left-unitor description follows since all components are identities.
-No pseudofunctor is built. -/
+No pseudofunctor is built.
+-/
 abbrev functorPrecompOuterId :
     functorPrecompOuter (𝟭 A) ≅ 𝟭 (A ⥤ D) :=
   Functor.whiskeringLeftObjIdIso
@@ -2429,14 +2482,16 @@ theorem functorPrecompOuterId_hom_app_app (G : A ⥤ D) (a : A) :
 theorem functorPrecompOuterId_inv_app_app (G : A ⥤ D) (a : A) :
     ((functorPrecompOuterId).inv.app G).app a = 𝟙 _ := rfl
 
-/-- Composition coherence for the outer source precomposition functor.
+/--
+Composition coherence for the outer source precomposition functor.
 
 For `H : B ⥤ A` and `J : B₂ ⥤ B`, this is the appropriately oriented
 `(Functor.whiskeringLeftObjCompIso J H).symm` (which is `Iso.refl _.symm`),
-preserving the accepted contravariant orientation
+preserving the contravariant orientation
 `precomp H ⋙ precomp J ≅ precomp (J ⋙ H)`.
 The reversed-associator description follows since all components are identities.
-No pseudofunctor is built. -/
+No pseudofunctor is built.
+-/
 abbrev functorPrecompOuterComp (J : B₂ ⥤ B) :
     functorPrecompOuter (D := D) H ⋙ functorPrecompOuter (D := D) J ≅
       functorPrecompOuter (D := D) (J ⋙ H) :=
@@ -2490,11 +2545,13 @@ universe v₅ u₅
 
 variable {B₂ : Type u₅} [Category.{v₅} B₂]
 
-/-- Product-level module bridge for identity precomposition.
+/--
+Product-level module bridge for identity precomposition.
 
 `LeftModule.precompId` lifted through `twoSidedBarIso`; the smallest package
 needed to state `twoSidedBarPrecompWhiskerNatIso_id`. No pseudofunctor is
-built. -/
+built.
+-/
 noncomputable def twoSidedBarPrecompModuleIdNatIso :
     twoSidedBarPrecompWhiskerFunctorRight (T := T) (D := D) (𝟭 A) ≅
       twoSidedBarFunctor T :=
@@ -2521,12 +2578,14 @@ noncomputable def twoSidedBarPrecompModuleIdNatIso :
         exact h
       rw [hR, hL])
 
-/-- Product-level module bridge for composed precomposition, preserving the
-accepted contravariant orientation `(L.precomp H).precomp J ≅ L.precomp (J ⋙ H)`.
+/--
+Product-level module bridge for composed precomposition, preserving the
+contravariant orientation `(L.precomp H).precomp J ≅ L.precomp (J ⋙ H)`.
 
 `LeftModule.precompComp H J` lifted through `twoSidedBarIso`; the smallest
 package needed to state `twoSidedBarPrecompWhiskerNatIso_comp`. No
-pseudofunctor is built. -/
+pseudofunctor is built.
+-/
 noncomputable def twoSidedBarPrecompModuleCompNatIso (J : B₂ ⥤ B) :
     ((𝟭 (RightModule T D)).prod
         (LeftModule.precompFunctor (T := T) H ⋙ LeftModule.precompFunctor (T := T) J) ⋙
@@ -2556,12 +2615,14 @@ noncomputable def twoSidedBarPrecompModuleCompNatIso (J : B₂ ⥤ B) :
         (LeftModule.precompComp H J).hom.naturality fL
       rw [hR, hL])
 
-/-- Functor-level identity coherence for source precomposition.
+/--
+Functor-level identity coherence for source precomposition.
 
 The identity whisker followed by the product-level `precompId` bridge equals
 the ambient `functorPrecompOuterId` coherence lifted through the bar and the
 right unitor; no `R`, `L`, `n`, or `Δ` is bound. The degree-`n` corollary is
-`twoSidedBarPrecompWhiskerIso_id_hom_app`. No pseudofunctor is built. -/
+`twoSidedBarPrecompWhiskerIso_id_hom_app`. No pseudofunctor is built.
+-/
 theorem twoSidedBarPrecompWhiskerNatIso_id :
     (twoSidedBarPrecompWhiskerNatIso (T := T) (D := D) (𝟭 A)).hom ≫
       twoSidedBarPrecompModuleIdNatIso.hom =
@@ -2588,7 +2649,8 @@ theorem twoSidedBarPrecompWhiskerNatIso_id :
   change (𝟙 _) = ((𝟙 _) ≫ (𝟙 _))
   exact (Category.comp_id _).symm
 
-/-- Functor-level composition coherence for source precomposition, with correct
+/--
+Functor-level composition coherence for source precomposition, with correct
 contravariant order `(L.precomp H).precomp J ≅ L.precomp (J ⋙ H)`.
 
 The `J`-whiskering of the `H` comparison, followed by the `J` comparison at
@@ -2596,7 +2658,8 @@ the precomposed module and the product-level `precompComp` bridge, equals the
 single `J ⋙ H` comparison up to the ambient `functorPrecompOuterComp`
 coherence (direct use of `(Functor.whiskeringLeftObjCompIso J H).symm`); no
 `R`, `L`, `n`, or `Δ` is bound. The degree-`n` corollary is
-`twoSidedBarPrecompWhiskerIso_comp_hom_app`. No pseudofunctor is built. -/
+`twoSidedBarPrecompWhiskerIso_comp_hom_app`. No pseudofunctor is built.
+-/
 theorem twoSidedBarPrecompWhiskerNatIso_comp (J : B₂ ⥤ B) :
     (Functor.isoWhiskerRight (twoSidedBarPrecompWhiskerNatIso (T := T) (D := D) H)
       ((SimplicialObject.whiskering (B ⥤ D) (B₂ ⥤ D)).obj (functorPrecompOuter J))).hom ≫

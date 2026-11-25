@@ -6,6 +6,7 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+
 module
 
 public import MathlibExt.CategoryTheory.Monad.Bar
@@ -45,8 +46,10 @@ variable {A : Type u₃} [Category.{v₃} A]
 
 section FinRevLemmas
 
-/-- Index conversion: `Fin.castSucc` commutes with `Fin.rev` up to `Fin.succ`,
-transporting public right-counted bar indices to raw left-counted positions. -/
+/--
+Index conversion: `Fin.castSucc` commutes with `Fin.rev` up to `Fin.succ`,
+transporting public right-counted bar indices to raw left-counted positions.
+-/
 theorem fin_rev_castSucc {n : ℕ} (i : Fin n) :
     (Fin.castSucc i : Fin (n + 1)).rev = (i.rev).succ :=
   Fin.rev_castSucc i
@@ -64,8 +67,10 @@ section BarFaceHelpers
 
 variable {T : Monad C} {R : RightModule T D} {L : LeftModule A T}
 
-/-- Right endpoint: face index `0` (`d₀`) is the iterated right action
-`rightActionPow`. -/
+/--
+Right endpoint: face index `0` (`d₀`) is the iterated right action
+`rightActionPow`.
+-/
 lemma barFaceApp_of_val_zero {n : ℕ} {a : A} {i : Fin (n + 2)} (hi : i.val = 0) :
     barFaceApp (T := T) (R := R) (L := L) n i a = rightActionPow T R n (L.functor.obj a) := by
   unfold barFaceApp
@@ -79,8 +84,10 @@ lemma barFaceApp_of_val_last {n : ℕ} {a : A} {i : Fin (n + 2)} (hi : i.val = n
   unfold barFaceApp
   rw [dite_eq_right h0, dite_eq_left hi]
 
-/-- Interior faces: index `i.val = k.val + 1` acts by mapped `barMuAtPos`
-(that is, `muAtPos` at the reversed index `k.rev`). -/
+/--
+Interior faces: index `i.val = k.val + 1` acts by mapped `barMuAtPos`
+(that is, `muAtPos` at the reversed index `k.rev`).
+-/
 lemma barFaceApp_of_middle {n : ℕ} {a : A} {i : Fin (n + 2)} {k : Fin n}
     (hk : i.val = k.val + 1) :
     barFaceApp (T := T) (R := R) (L := L) n i a =
@@ -863,8 +870,10 @@ section TwoSidedBar
 
 variable {T : Monad C} {R : RightModule T D} {L : LeftModule A T}
 
-/-- Genuine Cat-valued two-sided monadic bar as a thin instantiation of the
-generic `Data.toSimplicialObject` transport. -/
+/--
+Cat-valued two-sided monadic bar as a thin instantiation of the generic `Data.toSimplicialObject`
+transport.
+-/
 noncomputable def twoSidedBar (T : Monad C) (R : RightModule T D)
     (L : LeftModule A T) : SimplicialObject (A ⥤ D) :=
   (barData T R L).toSimplicialObject
@@ -949,8 +958,10 @@ theorem twoSidedBar_map_σ_op_app (T : Monad C) (R : RightModule T D)
   rw [twoSidedBar_map_σ_op]
   rfl
 
-/-- Arbitrary simplex maps in the two-sided bar compute through `barGenRel`
-after `fromSimplexCategory`. -/
+/--
+Arbitrary simplex maps in the two-sided bar compute through `barGenRel`
+after `fromSimplexCategory`.
+-/
 theorem twoSidedBar_map (T : Monad C) (R : RightModule T D)
     (L : LeftModule A T) {Δ Δ' : SimplexCategoryᵒᵖ} (f : Δ ⟶ Δ') :
     (twoSidedBar T R L).map f =
