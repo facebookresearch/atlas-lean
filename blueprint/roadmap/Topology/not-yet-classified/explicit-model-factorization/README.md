@@ -1,0 +1,16 @@
+# Explicit Model Factorization
+
+- [Factorization On Carrier](factorization-on-carrier.md)
+- [Factorization On Carrier Z](factorization-on-carrier-z.md)
+- [Factorization On Carrier Z obj](factorization-on-carrier-z-obj.md)
+- [Factorization On Carrier Z map](factorization-on-carrier-z-map.md)
+- [Factorization On Carrier i app](factorization-on-carrier-i-app.md)
+- [Factorization On Carrier p app](factorization-on-carrier-p-app.md)
+- [Factorization On Carrier fac](factorization-on-carrier-fac.md)
+- [Factorization On Carrier i naturality](factorization-on-carrier-i-naturality.md)
+- [Factorization On Carrier p naturality](factorization-on-carrier-p-naturality.md)
+- [Factorization On Carrier map id](factorization-on-carrier-map-id.md)
+- [Factorization On Carrier map comp](factorization-on-carrier-map-comp.md)
+- [Factorization On Carrier i mem](factorization-on-carrier-i-mem.md)
+- [Factorization On Carrier p mem](factorization-on-carrier-p-mem.md)
+- [Factorization On Carrier exists](factorization-on-carrier-exists.md)

@@ -327,3 +327,9 @@ Files:
   MathlibExtTest/CategoryTheory/CategoryBar/SimplicialReplacementTests.lean
 
 Authors: @toskua, Avocado
+
+Files:
+  MathlibExt/AlgebraicTopology/ModelCategory/AnodyneTesting.lean
+  MathlibExt/AlgebraicTopology/ModelCategory/NaiveFibrantHomotopy.lean
+
+Authors: toskua, Avocado
