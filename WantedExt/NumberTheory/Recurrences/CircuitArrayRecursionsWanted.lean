@@ -17,6 +17,7 @@ public import Mathlib.RingTheory.Localization.FractionRing
 public import Mathlib.RingTheory.Polynomial.Basic
 public import MathlibExt.NumberTheory.Recurrences.CircuitArray
 public import MathlibExt.NumberTheory.Recurrences.CircuitArrayM
+public import MathlibExt.NumberTheory.Recurrences.GeometricAnnihilator
 
 /-!
 Statements from Evans and Hendel on recursions of the rows of the circuit array: Section 3
@@ -29,17 +30,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open Polynomial
-
-/-- **The operator $E - c$ annihilates the powers of $c$.** Let $K$ be a field, $c \in K$, and let
-$E$ be the translation operator $E(G_s) = G_{s+1}$ on sequences $G \colon \mathbb{N} \to K$. Then
-the operator $E - c$, that is, $p(E)$ for the polynomial $p = X - c \in K[X]$, annihilates the
-sequence $s \mapsto c^s$.
-
-Source: Emily J. Evans and Russell Jay Hendel, *Recursions and Characteristic Polynomials of the
-Rows of the Circuit Array*, Fibonacci Quarterly 62 (2024), Article 62-4/hendel08232024rev2,
-Lemma 3.7 (`fq-2024-hendel08232024rev2-lem-3.7`), part (i). -/
-public theorem_wanted annihilatesSeq_X_sub_C_pow {K : Type*} [Field K] (c : K) :
-    AnnihilatesSeq (X - C c) (fun s => c ^ s)
 
 /-- **The Addition-Multiplication Lemma for annihilators.** Let $E$ be the translation operator
 $E(G_s) = G_{s+1}$ on sequences. (i) Let $K$ be a field, $I$ a finite index set, and for each
