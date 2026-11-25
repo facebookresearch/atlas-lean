@@ -11,6 +11,7 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Real.Sqrt
 public import MathlibExt.AlgebraicGeometry.SeshadriConstant
+public import MathlibExt.AlgebraicGeometry.SeshadriConstantEckl
 
 @[expose] public section
 
@@ -35,14 +36,6 @@ Seshadri constant of $\mathbb{P}^2$, in the affine-chart model, equals $1/\sqrt{
 It is recorded as a proposition only and is not asserted. -/
 def nagataConjecture10 : Prop :=
   seshadriConstant10 = 1 / Real.sqrt 10
-
-/-- **Eckl's 2008 lower bound for the ten-point Seshadri constant.**
-The generic ten-point Seshadri constant of $\mathbb{P}^2$, in the affine-chart model, is at least
-$4/13$.
-
-Source: Eckl (2008), asymptotic Dumnicki method, catalogue lower bound `4/13`. -/
-theorem_wanted eckl2008LowerBound_wanted :
-    (4 / 13 : ℝ) ≤ seshadriConstant10
 
 /-- **Harbourne–Roé lower bound for the ten-point Seshadri constant.**
 The generic ten-point Seshadri constant of $\mathbb{P}^2$, in the affine-chart model, is at least

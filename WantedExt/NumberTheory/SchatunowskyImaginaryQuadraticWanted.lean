@@ -72,18 +72,6 @@ public theorem_wanted eisenstein_exists_prime_norm_between
       Algebra.norm ℚ (π : CyclotomicField 3 ℚ) < Algebra.norm ℚ (ρ : CyclotomicField 3 ℚ) ∧
       Algebra.norm ℚ (ρ : CyclotomicField 3 ℚ) ≤ 2 * Algebra.norm ℚ (π : CyclotomicField 3 ℚ)
 
-/-- **Iwata's generalization of Schatunowsky's theorem.** For every natural number $\ell$, there
-are only finitely many natural numbers $a$ such that every natural number $b$ with $1 < b < a$
-and $\gcd(a, b) = 1$ satisfies $\Omega(b) \le \ell$, where $\Omega(b)$ is the number of prime
-factors of $b$ counted with multiplicity.
-
-Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Theorem 2,
-quoting Iwata (`integers-2026-A110-thm-2`). `ℓ = 0` is included (trivially finite). -/
-public theorem_wanted nat_iwata_finite (ℓ : ℕ) :
-    {a : ℕ | ∀ b : ℕ, 1 < b → b < a → Nat.Coprime a b →
-      ArithmeticFunction.cardFactors b ≤ ℓ}.Finite
-
 /-- **Dalezman's Schatunowsky theorem for the Gaussian integers.** Let $N(a + bi) = a^2 + b^2$ be
 the norm on the Gaussian integers $\mathbb{Z}[i]$, and let $S$ be the set of
 $\alpha \in \mathbb{Z}[i]$ such that every $\beta \in \mathbb{Z}[i]$ coprime to $\alpha$ with
