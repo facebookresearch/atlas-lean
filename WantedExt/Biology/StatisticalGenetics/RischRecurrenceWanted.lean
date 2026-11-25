@@ -53,7 +53,9 @@ independent given genotypes). -/
 noncomputable def pairAffected {G : Type*} [Fintype G] (J : G → G → ℝ) (f : G → ℝ) : ℝ :=
   ∑ g, ∑ h, J g h * f g * f h
 
-/-- **Risch's recurrence-risk ratio** `λ_R = K_R / K = P(both affected) / K²`. -/
+/-- **Risch's recurrence-risk ratio** `λ_R = K_R / K = P(both affected) / K²`, where
+`K = prevalence π f`. The intended domain is a positive prevalence `K > 0`. If `K = 0` the
+denominator vanishes and the value is `0`, since Lean's division is total (`x / 0 = 0`). -/
 noncomputable def recurrenceRatio {G : Type*} [Fintype G] (π : G → ℝ) (J : G → G → ℝ)
     (f : G → ℝ) : ℝ :=
   pairAffected J f / prevalence π f ^ 2

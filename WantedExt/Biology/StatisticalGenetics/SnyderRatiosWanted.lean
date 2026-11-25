@@ -58,14 +58,19 @@ noncomputable def recessiveFreq (q : ℝ) : ℝ := hwGenotype q 2
 
 /-- **Snyder's `S`**: the probability that a child of a dominant × recessive mating is recessive,
 for parents drawn independently from the Hardy–Weinberg law. The recessive parent always
-transmits `t`, so the child is recessive exactly when the dominant parent transmits `t`. -/
+transmits `t`, so the child is recessive exactly when the dominant parent transmits `t`. It is a
+quotient by the dominant-phenotype frequency `dominantFreq q = 1 - q²`, which is positive exactly
+for `q < 1` when `0 ≤ q ≤ 1`, the intended domain. At `q = 1` the denominator vanishes and the
+value is `0`, since Lean's division is total (`x / 0 = 0`). -/
 noncomputable def ratioDominantRecessive (q : ℝ) : ℝ :=
   (∑ k : Fin 3, if IsDominant k then hwGenotype q k * transmitRecessive k else 0) /
     dominantFreq q
 
 /-- **Snyder's `R`**: the probability that a child of a dominant × dominant mating is recessive,
 for parents drawn independently from the Hardy–Weinberg law: both parents must transmit `t`,
-independently. -/
+independently. It is a quotient by `(dominantFreq q)²` with `dominantFreq q = 1 - q²`, which is
+positive exactly for `q < 1` when `0 ≤ q ≤ 1`, the intended domain. At `q = 1` the denominator
+vanishes and the value is `0`, since Lean's division is total (`x / 0 = 0`). -/
 noncomputable def ratioDominantDominant (q : ℝ) : ℝ :=
   (∑ k₁ : Fin 3, ∑ k₂ : Fin 3,
       if IsDominant k₁ ∧ IsDominant k₂ then

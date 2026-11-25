@@ -8,3 +8,4 @@
 - [Positive state prices give a positive risk-free discount factor](risk-free-discount-factor-pos.md)
 - [Positive state prices divided by their sum form a probability vector](risk-neutral-weights-pos-and-sum-eq-one.md)
 - [Risk-neutral default probability as a sum of state weights](risk-neutral-default-prob-eq-sum-div.md)
+- [Effect of paying recovery at default instead of at maturity](value-of-recovery-timing.md)

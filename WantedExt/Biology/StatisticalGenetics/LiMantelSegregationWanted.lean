@@ -44,7 +44,11 @@ open MeasureTheory ProbabilityTheory Filter Topology Finset
 
 /-- The **zero-truncated binomial law**: the probability that an ascertained sibship of size `s`
 has exactly `k` affected children, when each child is affected independently with probability
-`p` and the sibship is ascertained if and only if `k ≥ 1`. It vanishes for `k = 0` and `k > s`. -/
+`p` and the sibship is ascertained if and only if `k ≥ 1`. It vanishes for `k = 0` and `k > s`.
+For `1 ≤ k ≤ s` it is `C(s, k) p^k (1 - p)^(s - k) / (1 - (1 - p)^s)`. The intended domain is
+`s ≥ 1` and `0 < p < 1`, where the denominator `1 - (1 - p)^s` is positive. Outside it the
+denominator can vanish (e.g. `p = 0`), and then the value is `0`, since Lean's division is total
+(`x / 0 = 0`). -/
 noncomputable def truncBinom (s : ℕ) (p : ℝ) (k : ℕ) : ℝ :=
   if 1 ≤ k ∧ k ≤ s then
     (s.choose k : ℝ) * p ^ k * (1 - p) ^ (s - k) / (1 - (1 - p) ^ s)
@@ -57,7 +61,10 @@ def affectedCount (x : ℕ → ℕ) (n : ℕ) : ℕ := ∑ i ∈ range n, x i
 def singletonCount (x : ℕ → ℕ) (n : ℕ) : ℕ := #{i ∈ range n | x i = 1}
 
 /-- The **Li–Mantel estimator** `(R - J) / (T - J)` of the segregation ratio from the first `n`
-ascertained sibships of size `s`, where `T = n s` is the number of children. -/
+ascertained sibships of size `s`, where `T = n s` is the number of children. Since `J ≤ n`, the
+denominator satisfies `T - J ≥ n (s - 1) > 0` whenever `n ≥ 1` and `s ≥ 2`, the intended domain.
+Otherwise it can vanish (for `n = 0`, or for `s = 1`, where every sibship is a singleton), and
+then the value is `0` because Lean's division is total (`x / 0 = 0`). -/
 noncomputable def liMantel (s : ℕ) (x : ℕ → ℕ) (n : ℕ) : ℝ :=
   ((affectedCount x n : ℝ) - singletonCount x n) / ((n * s : ℕ) - (singletonCount x n : ℝ))
 
