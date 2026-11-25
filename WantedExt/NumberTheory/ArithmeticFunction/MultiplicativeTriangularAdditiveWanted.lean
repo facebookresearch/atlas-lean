@@ -58,20 +58,6 @@ theorem_wanted multiplicative_additive_on_sum_two_triangular_eq_id_le_21
     (hf2 : f 2 ≠ 0) :
     ∀ n : ℕ, n ≤ 21 → f n = (n : ℂ)
 
-/-- **Park's Lemma 4: vanishing from 2 to 21 except at 5.** Let $f$ be a multiplicative
-arithmetic function with values in $\mathbb{C}$ such that $f(a + b) = f(a) + f(b)$ whenever
-$a$ and $b$ are both sums of two positive triangular numbers. If $f(2) = 0$ and $f(5) \neq 0$,
-then $f(n) = 0$ for every natural number $n$ with $2 \le n \le 21$ and $n \neq 5$.
-
-Source: Poo-Sung Park, "Multiplicative Functions Additive on the Sums
-of Two Positive Triangular Numbers", Lemma 4. -/
-theorem_wanted multiplicative_additive_on_sum_two_triangular_zero_of_five_ne_zero
-    (f : ArithmeticFunction ℂ) (hf : f.IsMultiplicative)
-    (hadd : ∀ a b : ℕ, IsSumTwoPositiveTriangular a →
-      IsSumTwoPositiveTriangular b → f (a + b) = f a + f b)
-    (hf2 : f 2 = 0) (hf5 : f 5 ≠ 0) :
-    ∀ n : ℕ, 2 ≤ n → n ≤ 21 → n ≠ 5 → f n = 0
-
 /-- **Park's Lemma 5: vanishing from 2 to 21 when the values at 2, 3 and 5 are zero.** Let $f$
 be a multiplicative arithmetic function with values in $\mathbb{C}$ such that
 $f(a + b) = f(a) + f(b)$ whenever $a$ and $b$ are both sums of two positive triangular numbers.
