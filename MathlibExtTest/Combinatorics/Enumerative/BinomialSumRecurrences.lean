@@ -90,4 +90,29 @@ example : coeff 0 (Xq * (1 - Xq ^ 2)⁻¹) = 0 := by
   rw [← h]
   norm_num [Finset.sum_range_succ, coeff_X_pow]
 
+section RationalRiordan
+
+local notation "Xz" => (Polynomial.X : Polynomial ℤ)
+
+-- Pascal's triangle `g = 1 / (1 - x)`, `h = x / (1 - x)` with step `3`: the sums of the binomial
+-- coefficients `C(n, 3j + p)` for `p = 0, 1, 2` share one recurrence.
+example := rationalRiordan_stepSum_linearRecurrence 1 (1 - Xz) 1 (1 - Xz) 1 (by simp) (by simp)
+  (by simp) le_rfl 3 (by decide)
+
+-- Step `1` (whole rows), which `riordan_stepSum_coeff` excludes, with `ν = 2`.
+example := rationalRiordan_stepSum_linearRecurrence (1 + Xz) 1 (1 + 2 * Xz) (1 - Xz - Xz ^ 2) 2
+  (by simp) (by simp) (by simp) (by decide) 1 one_pos
+
+-- For `g = 1` and `h = x` with step `1`, every step sum is `1`, so the coefficients of the
+-- recurrence sum to `1`.
+example : ∃ (r : ℕ) (αs : ℕ → ℤ), ∑ i ∈ Finset.Icc 1 r, αs i = 1 := by
+  obtain ⟨r, αs, H⟩ := rationalRiordan_stepSum_linearRecurrence 1 1 1 1 1 (by simp) (by simp)
+    (by simp) le_rfl 1 one_pos
+  refine ⟨r, αs, ?_⟩
+  have := H 0 one_pos r le_rfl
+  simp [coeff_X_pow] at this
+  exact_mod_cast this.symm
+
+end RationalRiordan
+
 end MetaMathlibExt

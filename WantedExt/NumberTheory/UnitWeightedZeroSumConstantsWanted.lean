@@ -78,27 +78,6 @@ local notation "NoConsecutiveUnitWeightedZeroSum" n:max L:max x:max =>
   ¬ ∃ s t : ℕ, s ≤ t ∧ t < L ∧ ∃ a : ℕ → ZMod n,
     (∀ i ∈ Finset.Icc s t, IsUnit (a i)) ∧ ∑ i ∈ Finset.Icc s t, a i * x i = 0
 
-/-- **Weighted Davenport constant of a product with product weights.** Let $R$ and $R'$ be rings,
-$M$ an $R$-module, $N$ an $R'$-module, $A \subseteq R$ and $B \subseteq R'$. Let $D_A(M)$ be the
-least positive integer $k$, if one exists, such that every sequence $x_1, \dots, x_k$ in $M$ has
-a nonempty set of indices $I$ and weights $a_i \in A$ for $i \in I$ with
-$\sum_{i \in I} a_i x_i = 0$, and define $D_B(N)$ in the same way. Let $D_{A \times B}(M \times N)$
-be the least positive integer $k$, if one exists, such that every sequence
-$(y_1, z_1), \dots, (y_k, z_k)$ in $M \times N$ has a nonempty set of indices $I$ and weights
-$(a_i, b_i) \in A \times B$ for $i \in I$ with $\sum_{i \in I} (a_i y_i, b_i z_i) = 0$. If all
-three constants exist, then $D_{A \times B}(M \times N) \ge D_A(M) + D_B(N) - 1$.
-
-Source: Santanu Mondal, Krishnendu Paul and Shameek Paul, *On Unit-Weighted Zero-Sum Constants
-of `ℤ_n`*, INTEGERS 24 (2024), Article A38, Theorem 2.1 (`integers-2024-A38-thm-2-1`). -/
-public theorem_wanted davenport_prod_ring_ge {R R' M N : Type*} [Ring R] [Ring R']
-    [AddCommGroup M] [Module R M] [AddCommGroup N] [Module R' N] (A : Set R) (B : Set R')
-    {dA dB d : ℕ} (hA : IsLeast (davenportSet R M A) dA)
-    (hB : IsLeast (davenportSet R' N B) dB)
-    (h : IsLeast {k : ℕ | 0 < k ∧ ∀ x : Fin k → M × N, ∃ I : Finset (Fin k), I.Nonempty ∧
-      ∃ a : Fin k → R × R', (∀ i ∈ I, a i ∈ A ×ˢ B) ∧
-        ∑ i ∈ I, ((a i).1 • (x i).1, (a i).2 • (x i).2) = 0} d) :
-    dA + dB - 1 ≤ d
-
 /-- **Consecutive weighted zero-sum constant of a product with product weights.** Let $R$ and
 $R'$ be rings, $M$ an $R$-module, $N$ an $R'$-module, $A \subseteq R$ and $B \subseteq R'$. Let
 $C_A(M)$ be the least positive integer $k$, if one exists, such that every sequence
@@ -134,16 +113,6 @@ public theorem_wanted consecutive_prod_ge {R M N : Type*} [Ring R] [AddCommGroup
     (hM : IsLeast (consecutiveSet R M A) cM) (hN : IsLeast (consecutiveSet R N A) cN)
     (h : IsLeast (consecutiveSet R (M × N) A) c) :
     cM * cN ≤ c
-
-/-- **A block of consecutive integers meeting $a$ given sets evenly.** Let $2^a \le m$ and let
-$X_1, \dots, X_a$ be finite sets of natural numbers. Then there are integers $s, t$ with
-$1 \le s \le t \le m$ such that $|\{s, s + 1, \dots, t\} \cap X_i|$ is even for every $i$.
-
-Source: Santanu Mondal, Krishnendu Paul and Shameek Paul, *On Unit-Weighted Zero-Sum Constants
-of `ℤ_n`*, INTEGERS 24 (2024), Article A38, Lemma 3.3 (`integers-2024-A38-lem-3-3`). -/
-public theorem_wanted exists_consecutive_even_inter {a m : ℕ} (hm : 2 ^ a ≤ m)
-    (X : Fin a → Finset ℕ) :
-    ∃ s t : ℕ, 1 ≤ s ∧ s ≤ t ∧ t ≤ m ∧ ∀ i, Even (Finset.Icc s t ∩ X i).card
 
 /-- **Griffiths' criterion for unit-weighted zero sums modulo a prime power.** Let $p$ be a prime,
 let $r$ and $k$ be natural numbers, put $n = p^r$, and let

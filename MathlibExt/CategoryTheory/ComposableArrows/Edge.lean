@@ -6,20 +6,16 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Author: @toskua
--/
+
 module
 
 public import Mathlib.CategoryTheory.ComposableArrows.Basic
 
 /-!
-# Edges in functorial strings of composable arrows
+# Edges of functorial strings of composable arrows
 
-This file packages a fixed edge of a functorial string of composable arrows as
-a natural transformation.  It is useful when a construction already produces
-a functor into `ComposableArrows`, and individual arrows of that string are the
-semantic maps exposed to clients.
+A fixed edge of a functorial string of composable arrows defines
+a natural transformation.
 -/
 
 @[expose] public section
