@@ -50,7 +50,11 @@ theorem smallEtaleLongSequence_initial_injective (hS : S.ShortExact) :
 /-- The complete all-degree sequence, including its initial zero term. -/
 theorem original_small_etale_long_exact_sequence (hS : S.ShortExact) :
     (∀ n, (smallEtaleLongSequence hS n).Exact) ∧
-      Function.Injective (Sheaf.H.map S.f 0) :=
-  ⟨smallEtaleLongSequence_exact hS, smallEtaleLongSequence_initial_injective hS⟩
+      Function.Injective (Sheaf.H.map S.f 0) := by
+  have hExact : ∀ n : ℕ, (smallEtaleLongSequence.{u, w} hS n).Exact :=
+    fun n => smallEtaleLongSequence_exact.{u, w} (X := X) (S := S) hS n
+  have hInitial : Function.Injective (Sheaf.H.map S.f 0) :=
+    smallEtaleLongSequence_initial_injective.{u, w} (X := X) (S := S) hS
+  exact And.intro hExact hInitial
 
 end AlgebraicGeometry.Scheme.DerivedSections

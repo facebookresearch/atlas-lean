@@ -407,79 +407,114 @@ private lemma linearHomCochainPair_one_left_apply
         (((linearHomCochainGradedPairing R (ComonObj.comul (X := K))
           (MonObj.mul (X := A))).pair 0 q).hom
           (linearHomCochainOne R K A ⊗ₜ[R] φ)) = φ := by
-  change (K.X q ⟶ A) at φ
-  erw [linearHomCochainGradedPairing_pair, linearHomCochainPair_tmul,
-    linearHomCochainComplex_XIsoOfEq_hom,
-    ModuleCat.ofHom_apply, Linear.leftComp_apply]
-  rw [linearHomCochainOne]
-  unfold linearHomPairingDesc
-  erw [XIsoOfEq_comp_linearHomPairingDesc R
-    (ComonObj.comul (X := K)) (MonObj.mul (X := A)) 0 q q
-    (Nat.zero_add q).symm
-    (ComonObj.counit (X := K).f 0 ≫
-      (singleObjXSelf (ComplexShape.down ℕ) 0
-        (𝟙_ (ModuleCat.{u} R))).hom ≫ MonObj.one (X := A)) φ]
+  dsimp only [linearHomCochainComplexFunctor_obj_X] at φ
+  have hcoord : (λ_ K).inv.f q = (leftUnitor' K).inv q := rfl
+  have hinv : (λ_ K).inv.f q =
+      (λ_ (K.X q)).inv ≫
+        ((singleObjXSelf (ComplexShape.down ℕ) 0
+          (𝟙_ (ModuleCat.{u} R))).inv ▷ K.X q) ≫
+            ιTensorObj (𝟙_ (ChainComplex (ModuleCat.{u} R) ℕ)) K
+              0 q q (Nat.zero_add q) := by
+    rw [hcoord, leftUnitor'_inv]
+  have hcancel : (λ_ K).hom.f q ≫ (λ_ K).inv.f q =
+      𝟙 (((𝟙_ (ChainComplex (ModuleCat.{u} R) ℕ)) ⊗ K).X q) := by
+    simpa only [HomologicalComplex.comp_f, HomologicalComplex.id_f] using
+      congrArg
+        (fun f : (𝟙_ (ChainComplex (ModuleCat.{u} R) ℕ)) ⊗ K ⟶
+            (𝟙_ (ChainComplex (ModuleCat.{u} R) ℕ)) ⊗ K => f.f q)
+        (λ_ K).hom_inv_id
+  have hunitor :
+      ιTensorObj (𝟙_ (ChainComplex (ModuleCat.{u} R) ℕ)) K
+          0 q q (Nat.zero_add q) ≫ (λ_ K).hom.f q =
+        ((singleObjXSelf (ComplexShape.down ℕ) 0
+          (𝟙_ (ModuleCat.{u} R))).hom ▷ K.X q) ≫ (λ_ (K.X q)).hom := by
+    apply (cancel_mono ((λ_ K).inv.f q)).mp
+    calc
+      _ = ιTensorObj (𝟙_ (ChainComplex (ModuleCat.{u} R) ℕ)) K
+          0 q q (Nat.zero_add q) := by
+        rw [Category.assoc, hcancel, Category.comp_id]
+      _ = _ := by
+        rw [hinv]
+        simp only [Category.assoc, Iso.hom_inv_id_assoc,
+          MonoidalCategory.hom_inv_whiskerRight_assoc]
+  have hunitorPost := congrArg
+    (fun f : (𝟙_ (ChainComplex (ModuleCat.{u} R) ℕ)).X 0 ⊗ K.X q ⟶ K.X q =>
+      f ≫ φ) hunitor
+  simp only [Category.assoc] at hunitorPost
+  have hwhisk : (ComonObj.counit (X := K) ▷ K).f q =
+      (tensorHom (ComonObj.counit (X := K)) (𝟙 K)).f q := rfl
   have hdesc :
-      linearHomPairingDescOfEq R (MonObj.mul (X := A)) 0 q q
-          (Nat.zero_add q)
+      linearYonedaPairingDescOfEq (ModuleCat.{u} R) (MonObj.mul (X := A))
+          0 q q (Nat.zero_add q)
           (ComonObj.counit (X := K).f 0 ≫
             (singleObjXSelf (ComplexShape.down ℕ) 0
               (𝟙_ (ModuleCat.{u} R))).hom ≫ MonObj.one (X := A)) φ =
-        (ComonObj.counit (X := K) ▷ K).f q ≫
-          (λ_ K).hom.f q ≫ φ := by
+        (ComonObj.counit (X := K) ▷ K).f q ≫ (λ_ K).hom.f q ≫ φ := by
     apply mapBifunctor.hom_ext
     intro i j h
-    rw [ιTensorObj_comp_linearHomPairingDescOfEq]
-    change _ = ιTensorObj K K i j q h ≫
-      (tensorHom (ComonObj.counit (X := K)) (𝟙 K)).f q ≫
-        (λ_ K).hom.f q ≫ φ
-    rw [ι_mapBifunctorMap_assoc]
+    rw [ιTensorObj_comp_linearYonedaPairingDescOfEq, hwhisk,
+      ι_mapBifunctorMap_assoc]
     by_cases hi : i = 0
     · subst i
-      have hj : j = q := by simpa using h
+      have hj : j = q := by simpa only [Nat.zero_add] using h
       subst j
-      rw [show h = Nat.zero_add q from Subsingleton.elim _ _]
-      simp only [dite_eq_left]
-      have hunitor :
-          ιTensorObj (𝟙_ (ChainComplex (ModuleCat.{u} R) ℕ)) K
-                0 q q (Nat.zero_add q) ≫ (λ_ K).hom.f q =
-            ((singleObjXSelf (ComplexShape.down ℕ) 0
-                (𝟙_ (ModuleCat.{u} R))).hom ▷ K.X q) ≫
-              (λ_ (K.X q)).hom := by
-        rw [← cancel_epi ((singleObjXSelf (ComplexShape.down ℕ) 0
-          (𝟙_ (ModuleCat.{u} R))).inv ▷ K.X q)]
-        rw [← cancel_epi (λ_ (K.X q)).inv]
-        slice_lhs 1 3 => erw [← leftUnitor'_inv]
-        have hhom : (λ_ K).hom.f q = (leftUnitor' K).hom q := rfl
-        rw [hhom]
-        simp
-      simp only [curriedTensor_obj_obj, curriedTensor_map_app, id_f,
-        curriedTensor_obj_map, whiskerLeft_id, Category.id_comp]
-      slice_rhs 2 3 => erw [hunitor]
-      rw [MonoidalCategory.tensorHom_def_assoc]
-      rw [MonoidalCategory.comp_whiskerRight_assoc,
-        MonoidalCategory.comp_whiskerRight_assoc]
-      rw [← MonoidalCategory.whisker_exchange_assoc, MonObj.one_mul]
-      slice_lhs 3 4 => rw [MonoidalCategory.leftUnitor_naturality]
-      rw [Category.assoc]
+      simp only [dite_eq_left, curriedTensor_obj_obj, curriedTensor_map_app,
+        HomologicalComplex.id_f, curriedTensor_obj_map, whiskerLeft_id,
+        Category.id_comp]
+      rw [hunitorPost]
+      calc
+        _ = ((ComonObj.counit (X := K).f 0 ≫
+              (singleObjXSelf (ComplexShape.down ℕ) 0
+                (𝟙_ (ModuleCat.{u} R))).hom) ⊗ₘ φ) ≫
+            (MonObj.one (X := A) ▷ A) ≫ MonObj.mul (X := A) := by
+          rw [MonoidalCategory.tensorHom_comp_whiskerRight_assoc, Category.assoc]
+        _ = ((ComonObj.counit (X := K).f 0 ≫
+              (singleObjXSelf (ComplexShape.down ℕ) 0
+                (𝟙_ (ModuleCat.{u} R))).hom) ⊗ₘ φ) ≫ (λ_ A).hom := by
+          rw [MonObj.one_mul]
+        _ = _ := by
+          rw [MonoidalCategory.tensorHom_def_assoc,
+            MonoidalCategory.comp_whiskerRight_assoc,
+            MonoidalCategory.leftUnitor_naturality]
     · simp only [dite_eq_right hi]
-      have hcounit : ComonObj.counit (X := K).f i = 0 := by
-        apply (isZero_single_obj_X (ComplexShape.down ℕ) 0
-          (𝟙_ (ModuleCat.{u} R)) i hi).eq_of_tgt
+      have hcounit : ComonObj.counit (X := K).f i = 0 :=
+        (isZero_single_obj_X (ComplexShape.down ℕ) 0
+          (𝟙_ (ModuleCat.{u} R)) i hi).eq_of_tgt _ _
       rw [hcounit, Functor.map_zero]
       simp
-  rw [hdesc]
-  have hfinal : ComonObj.comul (X := K).f q ≫
-      (ComonObj.counit (X := K) ▷ K).f q ≫
-        (λ_ K).hom.f q ≫ φ = φ := by
-    have hc := congrArg (fun f => f.f q) (ComonObj.counit_comul K)
-    dsimp only [HomologicalComplex.comp_f] at hc
-    slice_lhs 1 2 => rw [hc]
-    simp
-  exact hfinal
+  have htriangle : ComonObj.comul (X := K) ≫
+      (ComonObj.counit (X := K) ▷ K) ≫ (λ_ K).hom = 𝟙 K := by
+    rw [← Category.assoc, ComonObj.counit_comul, Iso.inv_hom_id]
+  have hdegree := congrArg (fun f : K ⟶ K => f.f q) htriangle
+  have hcore :
+      (K.XIsoOfEq (Nat.zero_add q).symm).hom ≫ ComonObj.comul (X := K).f (0 + q) ≫
+          linearYonedaPairingDesc (ModuleCat.{u} R) (MonObj.mul (X := A)) 0 q
+            (ComonObj.counit (X := K).f 0 ≫
+              (singleObjXSelf (ComplexShape.down ℕ) 0
+                (𝟙_ (ModuleCat.{u} R))).hom ≫ MonObj.one (X := A)) φ = φ := by
+    calc
+      _ = ComonObj.comul (X := K).f q ≫
+          linearYonedaPairingDescOfEq (ModuleCat.{u} R) (MonObj.mul (X := A))
+            0 q q (Nat.zero_add q)
+            (ComonObj.counit (X := K).f 0 ≫
+              (singleObjXSelf (ComplexShape.down ℕ) 0
+                (𝟙_ (ModuleCat.{u} R))).hom ≫ MonObj.one (X := A)) φ :=
+        XIsoOfEq_comp_linearYonedaPairingDesc (ModuleCat.{u} R)
+          (ComonObj.comul (X := K)) (MonObj.mul (X := A)) 0 q q
+          (Nat.zero_add q).symm
+          (ComonObj.counit (X := K).f 0 ≫
+            (singleObjXSelf (ComplexShape.down ℕ) 0
+              (𝟙_ (ModuleCat.{u} R))).hom ≫ MonObj.one (X := A)) φ
+      _ = φ := by
+        rw [hdesc]
+        simpa only [HomologicalComplex.comp_f, HomologicalComplex.id_f,
+          Category.assoc, Category.id_comp] using
+          congrArg (fun f : K.X q ⟶ K.X q => f ≫ φ) hdegree
+  simpa only [linearHomCochainComplexFunctor_obj_X, linearHomCochainOne,
+    linearHomCochainGradedPairing_pair,
+    linearHomCochainPair_tmul, linearHomCochainComplex_XIsoOfEq_hom_apply,
+    linearHomPairingDesc, Category.assoc] using hcore
 
-
-set_option backward.isDefEq.respectTransparency.types false in
 public theorem linearHomCochainPair_one_left (q : ℕ) :
     (linearHomCochainOneHom R K A ⊗ₘ
         𝟙 (((linearHomCochainComplexFunctor R (ModuleCat.{u} R) A).obj (op K)).X q)) ≫
@@ -488,18 +523,19 @@ public theorem linearHomCochainPair_one_left (q : ℕ) :
       (((linearHomCochainComplexFunctor R (ModuleCat.{u} R) A).obj
         (op K)).XIsoOfEq (Nat.zero_add q)).hom =
     (λ_ (((linearHomCochainComplexFunctor R (ModuleCat.{u} R) A).obj (op K)).X q)).hom := by
-  apply ModuleCat.MonoidalCategory.tensor_ext
-  intro r φ
-  change R at r
-  change ((((linearHomCochainComplexFunctor R (ModuleCat.{u} R) A).obj
-      (op K)).XIsoOfEq (Nat.zero_add q)).hom).hom
-        (((linearHomCochainGradedPairing R (ComonObj.comul (X := K))
-          (MonObj.mul (X := A))).pair 0 q).hom
-          ((r • linearHomCochainOne R K A) ⊗ₜ[R] φ)) = r • φ
-  rw [← TensorProduct.smul_tmul']
-  rw [map_smul, map_smul]
-  rw [linearHomCochainPair_one_left_apply]
-
+  apply (cancel_epi
+    (λ_ (((linearHomCochainComplexFunctor R (ModuleCat.{u} R) A).obj (op K)).X q)).inv).mp
+  apply ModuleCat.hom_ext
+  apply LinearMap.ext
+  intro φ
+  have hunit : (linearHomCochainOneHom R K A).hom 1 =
+      linearHomCochainOne R K A := by
+    simpa only [linearHomCochainOne] using linearHomCochainOneHom_apply_one R K A
+  simpa only [moduleHom_comp_apply,
+    ModuleCat.MonoidalCategory.leftUnitor_inv_apply, moduleTensorHom_tmul,
+    ModuleCat.hom_id, LinearMap.id_apply, hunit,
+    ModuleCat.MonoidalCategory.leftUnitor_hom_apply, one_smul] using
+    linearHomCochainPair_one_left_apply R K A q φ
 
 private lemma linearHomCochainPair_one_right_apply
     (p : ℕ)
@@ -510,83 +546,119 @@ private lemma linearHomCochainPair_one_right_apply
         (((linearHomCochainGradedPairing R (ComonObj.comul (X := K))
           (MonObj.mul (X := A))).pair p 0).hom
           (φ ⊗ₜ[R] linearHomCochainOne R K A)) = φ := by
-  change (K.X p ⟶ A) at φ
-  erw [linearHomCochainGradedPairing_pair, linearHomCochainPair_tmul]
-  rw [linearHomCochainOne]
-  unfold linearHomPairingDesc
-  change ComonObj.comul (X := K).f p ≫
-      linearHomPairingDescOfEq R (MonObj.mul (X := A)) p 0 p rfl φ
-        (ComonObj.counit (X := K).f 0 ≫
-          (singleObjXSelf (ComplexShape.down ℕ) 0
-            (𝟙_ (ModuleCat.{u} R))).hom ≫ MonObj.one (X := A)) = φ
+  dsimp only [linearHomCochainComplexFunctor_obj_X] at φ
+  have hcoord : (ρ_ K).inv.f p = (rightUnitor' K).inv p := rfl
+  have hinv : (ρ_ K).inv.f p =
+      (ρ_ (K.X p)).inv ≫
+        (K.X p ◁ (singleObjXSelf (ComplexShape.down ℕ) 0
+          (𝟙_ (ModuleCat.{u} R))).inv) ≫
+            ιTensorObj K (𝟙_ (ChainComplex (ModuleCat.{u} R) ℕ))
+              p 0 p (Nat.add_zero p) := by
+    rw [hcoord, rightUnitor'_inv]
+  have hcancel : (ρ_ K).hom.f p ≫ (ρ_ K).inv.f p =
+      𝟙 ((K ⊗ (𝟙_ (ChainComplex (ModuleCat.{u} R) ℕ))).X p) := by
+    simpa only [HomologicalComplex.comp_f, HomologicalComplex.id_f] using
+      congrArg
+        (fun f : K ⊗ (𝟙_ (ChainComplex (ModuleCat.{u} R) ℕ)) ⟶
+            K ⊗ (𝟙_ (ChainComplex (ModuleCat.{u} R) ℕ)) => f.f p)
+        (ρ_ K).hom_inv_id
+  have hunitor :
+      ιTensorObj K (𝟙_ (ChainComplex (ModuleCat.{u} R) ℕ))
+          p 0 p (Nat.add_zero p) ≫ (ρ_ K).hom.f p =
+        (K.X p ◁ (singleObjXSelf (ComplexShape.down ℕ) 0
+          (𝟙_ (ModuleCat.{u} R))).hom) ≫ (ρ_ (K.X p)).hom := by
+    apply (cancel_mono ((ρ_ K).inv.f p)).mp
+    calc
+      _ = ιTensorObj K (𝟙_ (ChainComplex (ModuleCat.{u} R) ℕ))
+          p 0 p (Nat.add_zero p) := by
+        rw [Category.assoc, hcancel, Category.comp_id]
+      _ = _ := by
+        rw [hinv]
+        simp only [Category.assoc, Iso.hom_inv_id_assoc,
+          MonoidalCategory.whiskerLeft_hom_inv_assoc]
+  have hunitorPost := congrArg
+    (fun f : K.X p ⊗ (𝟙_ (ChainComplex (ModuleCat.{u} R) ℕ)).X 0 ⟶ K.X p =>
+      f ≫ φ) hunitor
+  simp only [Category.assoc] at hunitorPost
+  have hwhisk : (K ◁ ComonObj.counit (X := K)).f p =
+      (tensorHom (𝟙 K) (ComonObj.counit (X := K))).f p := rfl
   have hdesc :
-      linearHomPairingDescOfEq R (MonObj.mul (X := A)) p 0 p
-          (Nat.add_zero p) φ
+      linearYonedaPairingDescOfEq (ModuleCat.{u} R) (MonObj.mul (X := A))
+          p 0 p (Nat.add_zero p) φ
           (ComonObj.counit (X := K).f 0 ≫
             (singleObjXSelf (ComplexShape.down ℕ) 0
               (𝟙_ (ModuleCat.{u} R))).hom ≫ MonObj.one (X := A)) =
-        (K ◁ ComonObj.counit (X := K)).f p ≫
-          (ρ_ K).hom.f p ≫ φ := by
+        (K ◁ ComonObj.counit (X := K)).f p ≫ (ρ_ K).hom.f p ≫ φ := by
     apply mapBifunctor.hom_ext
     intro i j h
-    rw [ιTensorObj_comp_linearHomPairingDescOfEq]
-    change _ = ιTensorObj K K i j p h ≫
-      (tensorHom (𝟙 K) (ComonObj.counit (X := K))).f p ≫
-        (ρ_ K).hom.f p ≫ φ
-    rw [ι_mapBifunctorMap_assoc]
+    rw [ιTensorObj_comp_linearYonedaPairingDescOfEq, hwhisk,
+      ι_mapBifunctorMap_assoc]
     by_cases hi : i = p
     · subst i
-      have hj : j = 0 := by
-        change p + j = p at h
-        omega
+      have hs : p + j = p := h
+      have hj : j = 0 := by omega
       subst j
-      rw [show h = Nat.add_zero p from Subsingleton.elim _ _]
-      simp only [dite_eq_left]
-      have hunitor :
-          ιTensorObj K (𝟙_ (ChainComplex (ModuleCat.{u} R) ℕ))
-                p 0 p (Nat.add_zero p) ≫ (ρ_ K).hom.f p =
-            (K.X p ◁ (singleObjXSelf (ComplexShape.down ℕ) 0
-                (𝟙_ (ModuleCat.{u} R))).hom) ≫
-              (ρ_ (K.X p)).hom := by
-        rw [← cancel_epi (K.X p ◁
-          (singleObjXSelf (ComplexShape.down ℕ) 0
-            (𝟙_ (ModuleCat.{u} R))).inv)]
-        rw [← cancel_epi (ρ_ (K.X p)).inv]
-        slice_lhs 1 3 => erw [← rightUnitor'_inv]
-        have hhom : (ρ_ K).hom.f p = (rightUnitor' K).hom p := rfl
-        rw [hhom]
-        simp
-      simp only [curriedTensor_obj_obj, curriedTensor_map_app, id_f,
-        curriedTensor_obj_map, id_whiskerRight, Category.id_comp]
-      slice_rhs 2 3 => erw [hunitor]
-      rw [MonoidalCategory.tensorHom_def_assoc]
-      rw [MonoidalCategory.whiskerLeft_comp_assoc,
-        MonoidalCategory.whiskerLeft_comp_assoc]
-      rw [← MonoidalCategory.whisker_exchange_assoc,
-        ← MonoidalCategory.whisker_exchange_assoc]
-      rw [MonObj.mul_one]
-      slice_lhs 3 4 => rw [MonoidalCategory.rightUnitor_naturality]
-      rw [Category.assoc]
+      simp only [dite_eq_left, curriedTensor_obj_obj, curriedTensor_map_app,
+        HomologicalComplex.id_f, curriedTensor_obj_map, id_whiskerRight,
+        Category.id_comp]
+      rw [hunitorPost]
+      calc
+        _ = (φ ⊗ₘ (ComonObj.counit (X := K).f 0 ≫
+              (singleObjXSelf (ComplexShape.down ℕ) 0
+                (𝟙_ (ModuleCat.{u} R))).hom)) ≫
+            (A ◁ MonObj.one (X := A)) ≫ MonObj.mul (X := A) := by
+          rw [MonoidalCategory.tensorHom_comp_whiskerLeft_assoc, Category.assoc]
+        _ = (φ ⊗ₘ (ComonObj.counit (X := K).f 0 ≫
+              (singleObjXSelf (ComplexShape.down ℕ) 0
+                (𝟙_ (ModuleCat.{u} R))).hom)) ≫ (ρ_ A).hom := by
+          rw [MonObj.mul_one]
+        _ = _ := by
+          rw [MonoidalCategory.tensorHom_def'_assoc,
+            MonoidalCategory.whiskerLeft_comp_assoc,
+            MonoidalCategory.rightUnitor_naturality]
     · have hj : j ≠ 0 := by
         intro hj
         subst j
         apply hi
-        simpa using h
+        simpa only [Nat.add_zero] using h
       simp only [dite_eq_right hi]
-      have hcounit : ComonObj.counit (X := K).f j = 0 := by
-        apply (isZero_single_obj_X (ComplexShape.down ℕ) 0
-          (𝟙_ (ModuleCat.{u} R)) j hj).eq_of_tgt
+      have hcounit : ComonObj.counit (X := K).f j = 0 :=
+        (isZero_single_obj_X (ComplexShape.down ℕ) 0
+          (𝟙_ (ModuleCat.{u} R)) j hj).eq_of_tgt _ _
       rw [hcounit, Functor.map_zero]
       simp
-  rw [hdesc]
-  have hfinal : ComonObj.comul (X := K).f p ≫
-      (K ◁ ComonObj.counit (X := K)).f p ≫
-        (ρ_ K).hom.f p ≫ φ = φ := by
-    have hc := congrArg (fun f => f.f p) (ComonObj.comul_counit K)
-    dsimp only [HomologicalComplex.comp_f] at hc
-    slice_lhs 1 2 => rw [hc]
-    simp
-  exact hfinal
+  have htriangle : ComonObj.comul (X := K) ≫
+      (K ◁ ComonObj.counit (X := K)) ≫ (ρ_ K).hom = 𝟙 K := by
+    rw [← Category.assoc, ComonObj.comul_counit, Iso.inv_hom_id]
+  have hdegree := congrArg (fun f : K ⟶ K => f.f p) htriangle
+  have hcore :
+      (K.XIsoOfEq (Nat.add_zero p).symm).hom ≫ ComonObj.comul (X := K).f (p + 0) ≫
+          linearYonedaPairingDesc (ModuleCat.{u} R) (MonObj.mul (X := A)) p 0 φ
+            (ComonObj.counit (X := K).f 0 ≫
+              (singleObjXSelf (ComplexShape.down ℕ) 0
+                (𝟙_ (ModuleCat.{u} R))).hom ≫ MonObj.one (X := A)) = φ := by
+    calc
+      _ = ComonObj.comul (X := K).f p ≫
+          linearYonedaPairingDescOfEq (ModuleCat.{u} R) (MonObj.mul (X := A))
+            p 0 p (Nat.add_zero p) φ
+            (ComonObj.counit (X := K).f 0 ≫
+              (singleObjXSelf (ComplexShape.down ℕ) 0
+                (𝟙_ (ModuleCat.{u} R))).hom ≫ MonObj.one (X := A)) :=
+        XIsoOfEq_comp_linearYonedaPairingDesc (ModuleCat.{u} R)
+          (ComonObj.comul (X := K)) (MonObj.mul (X := A)) p 0 p
+          (Nat.add_zero p).symm φ
+          (ComonObj.counit (X := K).f 0 ≫
+            (singleObjXSelf (ComplexShape.down ℕ) 0
+              (𝟙_ (ModuleCat.{u} R))).hom ≫ MonObj.one (X := A))
+      _ = φ := by
+        rw [hdesc]
+        simpa only [HomologicalComplex.comp_f, HomologicalComplex.id_f,
+          Category.assoc, Category.id_comp] using
+          congrArg (fun f : K.X p ⟶ K.X p => f ≫ φ) hdegree
+  simpa only [linearHomCochainComplexFunctor_obj_X, linearHomCochainOne,
+    linearHomCochainGradedPairing_pair,
+    linearHomCochainPair_tmul, linearHomCochainComplex_XIsoOfEq_hom_apply,
+    linearHomPairingDesc, Category.assoc] using hcore
 
 private lemma linearHomCochainPair_one_right_smul
     (p : ℕ)
@@ -601,7 +673,6 @@ private lemma linearHomCochainPair_one_right_smul
     linearHomCochainPair_one_right_apply R K A p φ]
 
 
-set_option backward.isDefEq.respectTransparency.types false in
 public theorem linearHomCochainPair_one_right (p : ℕ) :
     (𝟙 (((linearHomCochainComplexFunctor R (ModuleCat.{u} R) A).obj (op K)).X p) ⊗ₘ
         linearHomCochainOneHom R K A) ≫
@@ -610,15 +681,19 @@ public theorem linearHomCochainPair_one_right (p : ℕ) :
       (((linearHomCochainComplexFunctor R (ModuleCat.{u} R) A).obj
         (op K)).XIsoOfEq (Nat.add_zero p)).hom =
     (ρ_ (((linearHomCochainComplexFunctor R (ModuleCat.{u} R) A).obj (op K)).X p)).hom := by
-  apply ModuleCat.MonoidalCategory.tensor_ext
-  intro φ r
-  change R at r
-  change ((((linearHomCochainComplexFunctor R (ModuleCat.{u} R) A).obj
-      (op K)).XIsoOfEq (Nat.add_zero p)).hom).hom
-        (((linearHomCochainGradedPairing R (ComonObj.comul (X := K))
-          (MonObj.mul (X := A))).pair p 0).hom
-          (φ ⊗ₜ[R] (r • linearHomCochainOne R K A))) = r • φ
-  exact linearHomCochainPair_one_right_smul R K A p φ r
+  apply (cancel_epi
+    (ρ_ (((linearHomCochainComplexFunctor R (ModuleCat.{u} R) A).obj (op K)).X p)).inv).mp
+  apply ModuleCat.hom_ext
+  apply LinearMap.ext
+  intro φ
+  have hunit : (linearHomCochainOneHom R K A).hom 1 =
+      linearHomCochainOne R K A := by
+    simpa only [linearHomCochainOne] using linearHomCochainOneHom_apply_one R K A
+  simpa only [moduleHom_comp_apply,
+    ModuleCat.MonoidalCategory.rightUnitor_inv_apply, moduleTensorHom_tmul,
+    ModuleCat.hom_id, LinearMap.id_apply, hunit,
+    ModuleCat.MonoidalCategory.rightUnitor_hom_apply, one_smul] using
+    linearHomCochainPair_one_right_apply R K A p φ
 
 set_option backward.isDefEq.respectTransparency.types false in
 public theorem linearHomCochainPair_assoc (p q r : ℕ) :

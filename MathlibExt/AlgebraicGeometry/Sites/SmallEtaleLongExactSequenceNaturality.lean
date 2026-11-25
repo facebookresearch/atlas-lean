@@ -29,18 +29,19 @@ def smallEtaleLongSequenceFunctor (X : Scheme.{u}) (n : ℕ) :
       ComposableArrows AddCommGrpCat.{max u w} 5 :=
   Sheaf.H.longSequenceFunctor n (n + 1) rfl
 
--- Normalizing all six actual sequence components exceeded 200000 heartbeats.
 /-- The six components are the original sheaf-morphism cohomology maps. -/
 def SmallEtaleLongSequenceComponents (X : Scheme.{u}) (n : ℕ)
     {S T : ShortExactSequence (Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w})}
     (α : S ⟶ T) : Prop :=
-  let m := (smallEtaleLongSequenceFunctor.{u, w} X n).map α
-  m.app 0 = AddCommGrpCat.ofHom (Sheaf.H.map α.hom.τ₁ n) ∧
-  m.app 1 = AddCommGrpCat.ofHom (Sheaf.H.map α.hom.τ₂ n) ∧
-  m.app 2 = AddCommGrpCat.ofHom (Sheaf.H.map α.hom.τ₃ n) ∧
-  m.app 3 = AddCommGrpCat.ofHom (Sheaf.H.map α.hom.τ₁ (n + 1)) ∧
-  m.app 4 = AddCommGrpCat.ofHom (Sheaf.H.map α.hom.τ₂ (n + 1)) ∧
-  m.app 5 = AddCommGrpCat.ofHom (Sheaf.H.map α.hom.τ₃ (n + 1))
+  let m : smallEtaleLongSequence.{u, w} S.property n ⟶
+      smallEtaleLongSequence.{u, w} T.property n :=
+    (smallEtaleLongSequenceFunctor.{u, w} X n).map α
+  m.app 0 = AddCommGrpCat.ofHom (Sheaf.H.map.{max u w, max u w, u, u + 1} α.hom.τ₁ n) ∧
+  m.app 1 = AddCommGrpCat.ofHom (Sheaf.H.map.{max u w, max u w, u, u + 1} α.hom.τ₂ n) ∧
+  m.app 2 = AddCommGrpCat.ofHom (Sheaf.H.map.{max u w, max u w, u, u + 1} α.hom.τ₃ n) ∧
+  m.app 3 = AddCommGrpCat.ofHom (Sheaf.H.map.{max u w, max u w, u, u + 1} α.hom.τ₁ (n + 1)) ∧
+  m.app 4 = AddCommGrpCat.ofHom (Sheaf.H.map.{max u w, max u w, u, u + 1} α.hom.τ₂ (n + 1)) ∧
+  m.app 5 = AddCommGrpCat.ofHom (Sheaf.H.map.{max u w, max u w, u, u + 1} α.hom.τ₃ (n + 1))
 
 /-- The stock sequence morphism has those same literal six components. -/
 theorem smallEtaleLongSequenceFunctor_components (X : Scheme.{u}) (n : ℕ)

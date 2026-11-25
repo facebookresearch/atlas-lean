@@ -261,68 +261,64 @@ theorem linearYonedaCochainPair_associativity_of_diagrams
       (linearYonedaCochainGradedPairing R C Deltaᵣ muᵣ).pair p (q + r) := by
   apply ModuleCat.MonoidalCategory.tensor_ext₃'
   intro phi psi chi
-  change (K₁.X p ⟶ M₁) at phi
-  change (K₂.X q ⟶ M₂) at psi
-  change (K₃.X r ⟶ M₃) at chi
-  change ((((linearHomCochainComplexFunctor R C Mᵣ).obj
-      (op Kᵣ)).XIsoOfEq (Nat.add_assoc p q r)).hom).hom
-        (((linearYonedaCochainComparison R C c a).f ((p + q) + r)).hom
-          (((linearYonedaCochainGradedPairing R C Deltaₗ muₗ).pair (p + q) r).hom
-            ((((linearYonedaCochainGradedPairing R C Delta₁₂ mu₁₂).pair p q).hom
-              (phi ⊗ₜ[R] psi)) ⊗ₜ[R] chi))) =
-    ((linearYonedaCochainGradedPairing R C Deltaᵣ muᵣ).pair p (q + r)).hom
-      (phi ⊗ₜ[R] (((linearYonedaCochainGradedPairing R C Delta₂₃ mu₂₃).pair q r).hom
-        (psi ⊗ₜ[R] chi)))
-  erw [linearYonedaCochainGradedPairing_pair, linearYonedaCochainPair_tmul,
+  dsimp only [linearHomCochainComplexFunctor_obj_X] at phi psi chi
+  have hDeltaN := congrArg
+    (fun F : Kᵣ ⟶ tensorObj K₁ (tensorObj K₂ K₃) => F.f (p + (q + r))) hDelta
+  simp only [HomologicalComplex.comp_f, Category.assoc] at hDeltaN
+  have hpair :
+      (Kᵣ.XIsoOfEq (Nat.add_assoc p q r).symm).hom ≫
+          c.f ((p + q) + r) ≫ Deltaₗ.f ((p + q) + r) ≫
+            linearYonedaPairingDesc C muₗ (p + q) r
+              (Delta₁₂.f (p + q) ≫ linearYonedaPairingDesc C mu₁₂ p q phi psi)
+              chi ≫ a =
+        Deltaᵣ.f (p + (q + r)) ≫ linearYonedaPairingDesc C muᵣ p (q + r) phi
+          (Delta₂₃.f (q + r) ≫ linearYonedaPairingDesc C mu₂₃ q r psi chi) := by
+    calc
+      _ = (Kᵣ.XIsoOfEq (Nat.add_assoc p q r).symm).hom ≫
+          (c ≫ Deltaₗ).f ((p + q) + r) ≫
+            linearYonedaPairingDesc C muₗ (p + q) r
+              (Delta₁₂.f (p + q) ≫ linearYonedaPairingDesc C mu₁₂ p q phi psi)
+              chi ≫ a := by simp only [HomologicalComplex.comp_f, Category.assoc]
+      _ = (c ≫ Deltaₗ).f (p + (q + r)) ≫
+          linearYonedaPairingDescOfEq C muₗ (p + q) r (p + (q + r))
+            (Nat.add_assoc p q r)
+            (Delta₁₂.f (p + q) ≫ linearYonedaPairingDesc C mu₁₂ p q phi psi)
+            chi ≫ a := by
+        rw [XIsoOfEq_comp_linearYonedaPairingDesc_assoc C
+          (c ≫ Deltaₗ) muₗ (p + q) r (p + (q + r)) (Nat.add_assoc p q r).symm
+          (Delta₁₂.f (p + q) ≫ linearYonedaPairingDesc C mu₁₂ p q phi psi) chi]
+      _ = (c ≫ Deltaₗ).f (p + (q + r)) ≫
+          (tensorHom Delta₁₂ (𝟙 K₃)).f (p + (q + r)) ≫
+            linearYonedaPairingDescOfEq C muₗ (p + q) r (p + (q + r))
+              (Nat.add_assoc p q r)
+              (linearYonedaPairingDesc C mu₁₂ p q phi psi) chi ≫ a := by
+        rw [linearYonedaPairingDescOfEq_naturality_assoc,
+          HomologicalComplex.id_f, Category.id_comp]
+      _ = (c ≫ Deltaₗ).f (p + (q + r)) ≫
+          (tensorHom Delta₁₂ (𝟙 K₃)).f (p + (q + r)) ≫
+            (HomologicalComplex.associator K₁ K₂ K₃).hom.f (p + (q + r)) ≫
+              linearYonedaPairingDescOfEq C muᵣ p (q + r) (p + (q + r)) rfl phi
+                (linearYonedaPairingDesc C mu₂₃ q r psi chi) := by
+        rw [linearYonedaPairingDesc_assoc C mu₁₂ muₗ mu₂₃ muᵣ a hmu
+          p q r (p + (q + r)) (Nat.add_assoc p q r) rfl phi psi chi]
+      _ = Deltaᵣ.f (p + (q + r)) ≫
+          (tensorHom (𝟙 K₁) Delta₂₃).f (p + (q + r)) ≫
+            linearYonedaPairingDescOfEq C muᵣ p (q + r) (p + (q + r)) rfl phi
+              (linearYonedaPairingDesc C mu₂₃ q r psi chi) := by
+        simpa only [HomologicalComplex.comp_f, Category.assoc] using
+          congrArg
+            (fun F : Kᵣ.X (p + (q + r)) ⟶
+                (tensorObj K₁ (tensorObj K₂ K₃)).X (p + (q + r)) =>
+              F ≫ linearYonedaPairingDescOfEq C muᵣ p (q + r) (p + (q + r)) rfl
+                phi (linearYonedaPairingDesc C mu₂₃ q r psi chi)) hDeltaN
+      _ = _ := by
+        rw [linearYonedaPairingDescOfEq_naturality]
+        simp only [HomologicalComplex.id_f, Category.id_comp, linearYonedaPairingDesc]
+  simpa only [linearHomCochainComplexFunctor_obj_X, ModuleCat.comp_apply,
+    ModuleCat.MonoidalCategory.tensorHom_tmul,
+    ModuleCat.id_apply, ModuleCat.MonoidalCategory.associator_hom_apply,
     linearYonedaCochainGradedPairing_pair, linearYonedaCochainPair_tmul,
     linearYonedaCochainComparison_f_apply,
-    linearYonedaCochainComplex_XIsoOfEq_hom_apply,
-    linearYonedaCochainGradedPairing_pair, linearYonedaCochainPair_tmul,
-    linearYonedaCochainGradedPairing_pair, linearYonedaCochainPair_tmul]
-  simp only [Category.assoc]
-  change (Kᵣ.XIsoOfEq (Nat.add_assoc p q r).symm).hom ≫
-      c.f ((p + q) + r) ≫ Deltaₗ.f ((p + q) + r) ≫
-        linearYonedaPairingDesc C muₗ (p + q) r
-          (Delta₁₂.f (p + q) ≫ linearYonedaPairingDesc C mu₁₂ p q phi psi) chi ≫ a =
-    Deltaᵣ.f (p + (q + r)) ≫ linearYonedaPairingDesc C muᵣ p (q + r) phi
-      (Delta₂₃.f (q + r) ≫ linearYonedaPairingDesc C mu₂₃ q r psi chi)
-  slice_lhs 2 3 => rw [← HomologicalComplex.comp_f]
-  simp only [Category.assoc]
-  change (Kᵣ.XIsoOfEq (Nat.add_assoc p q r).symm).hom ≫
-      (c ≫ Deltaₗ).f ((p + q) + r) ≫
-        linearYonedaPairingDesc C muₗ (p + q) r
-          (Delta₁₂.f (p + q) ≫ linearYonedaPairingDesc C mu₁₂ p q phi psi) chi ≫ a = _
-  rw [XIsoOfEq_comp_linearYonedaPairingDesc_assoc C
-    (c ≫ Deltaₗ) muₗ (p + q) r (p + (q + r))
-    (Nat.add_assoc p q r).symm
-    (Delta₁₂.f (p + q) ≫ linearYonedaPairingDesc C mu₁₂ p q phi psi) chi]
-  have hleftNat := linearYonedaPairingDescOfEq_naturality
-    (C := C) Delta₁₂ (𝟙 K₃) muₗ (p + q) r (p + (q + r))
-    (Nat.add_assoc p q r)
-    (linearYonedaPairingDesc C mu₁₂ p q phi psi) chi
-  simp only [id_f, Category.id_comp] at hleftNat
-  have hrightNat := linearYonedaPairingDescOfEq_naturality
-    (C := C) (𝟙 K₁) Delta₂₃ muᵣ p (q + r) (p + (q + r)) rfl phi
-    (linearYonedaPairingDesc C mu₂₃ q r psi chi)
-  simp only [id_f, Category.id_comp] at hrightNat
-  rw [← hleftNat]
-  change _ = Deltaᵣ.f (p + (q + r)) ≫
-    linearYonedaPairingDescOfEq C muᵣ p (q + r) (p + (q + r)) rfl phi
-      (Delta₂₃.f (q + r) ≫ linearYonedaPairingDesc C mu₂₃ q r psi chi)
-  erw [← hrightNat]
-  simp only [Category.assoc]
-  rw [← linearYonedaPairingDesc_assoc C mu₁₂ muₗ mu₂₃ muᵣ a hmu
-    p q r (p + (q + r)) (Nat.add_assoc p q r) rfl phi psi chi]
-  have hDeltaN := congrArg (fun f => f.f (p + (q + r))) hDelta
-  dsimp only [HomologicalComplex.comp_f] at hDeltaN
-  change c.f (p + (q + r)) ≫ Deltaₗ.f (p + (q + r)) ≫
-      (tensorHom Delta₁₂ (𝟙 K₃)).f (p + (q + r)) ≫
-        (HomologicalComplex.associator K₁ K₂ K₃).hom.f (p + (q + r)) =
-    Deltaᵣ.f (p + (q + r)) ≫
-      (tensorHom (𝟙 K₁) Delta₂₃).f (p + (q + r)) at hDeltaN
-  simpa only [HomologicalComplex.comp_f, Category.assoc] using
-    congrArg (fun f => f ≫
-      linearYonedaPairingDescOfEq C muᵣ p (q + r) (p + (q + r))
-        rfl phi (linearYonedaPairingDesc C mu₂₃ q r psi chi)) hDeltaN
+    linearYonedaCochainComplex_XIsoOfEq_hom_apply, Category.assoc] using hpair
 
 end HomologicalComplex

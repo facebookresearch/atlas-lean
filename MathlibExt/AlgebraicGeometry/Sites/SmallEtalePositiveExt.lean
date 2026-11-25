@@ -155,7 +155,6 @@ end AlgebraicGeometry.Scheme.DerivedSections.Reuse
 namespace AlgebraicGeometry.Scheme.DerivedSections.Reuse
 variable (X : Scheme.{u})
 
--- The original sheaf, Ext-universe, and resolution comparisons need a larger budget.
 private theorem originalComparison_extMk
     (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (n : ℕ)
     (f : integralSheaf.{u, w} X ⟶ (injectiveResolution Q).cocomplex.X (n + 1))
@@ -166,86 +165,86 @@ private theorem originalComparison_extMk
         ((injectiveResolution Q).extMk.{max u w, max (u + 1) w, (max u w) + 1}
           f (n + 2) rfl hf) =
       positiveCycleClass.{u, w} X Q n z := by
-  let : HasExt.{max (u + 1) w}
-    (Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) := largeExt.{u, w} X
-  let R := injectiveResolution Q
-  let G := Γ.{u, w} X
-  let U := AddCommGrpCat.uliftFunctor.{u + 1, max u w}
-  let Z := integralSheaf.{u, w} X
-  let hE := DerivedCoyoneda.homologyDataExt Z R (n + 1)
-  let c : hE.K := ⟨f, hf⟩
-  let a := ((DerivedCoyoneda.mappedCocomplex Z R).sc (n + 1)).homologyπ
-    (hE.cyclesIso.inv c)
-  let K := (G.mapHomologicalComplex (ComplexShape.up ℕ)).obj R.cocomplex
-  let E := K.isoSc' n (n + 1) (n + 2)
+  let C := Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}
+  let _ : HasExt.{max (u + 1) w} C := largeExt.{u, w} X
+  let R : InjectiveResolution Q := injectiveResolution Q
+  let G : C ⥤ AddCommGrpCat.{max u w} := Γ.{u, w} X
+  let U : AddCommGrpCat.{max u w} ⥤ AddCommGrpCat.{max (u + 1) w} :=
+    AddCommGrpCat.uliftFunctor.{u + 1, max u w}
+  let F : C ⥤ AddCommGrpCat.{max (u + 1) w} := P.{u, w} X
+  let Z : C := integralSheaf.{u, w} X
+  let q := n + 1
+  let T : CochainComplex AddCommGrpCat.{max (u + 1) w} ℕ :=
+    DerivedCoyoneda.mappedCocomplex Z R
+  let K : CochainComplex AddCommGrpCat.{max u w} ℕ :=
+    (G.mapHomologicalComplex (ComplexShape.up ℕ)).obj R.cocomplex
+  let S : ShortComplex AddCommGrpCat.{max u w} := K.sc q
+  let S' : ShortComplex AddCommGrpCat.{max u w} := positiveShort.{u, w} X Q n
+  let E : S ≅ S' := K.isoSc' n (n + 1) (n + 2)
     (CochainComplex.prev_nat_succ n) (CochainComplex.next ℕ (n + 1))
+  let hE : (T.sc q).LeftHomologyData := DerivedCoyoneda.homologyDataExt Z R q
+  let c : hE.K := ⟨f, hf⟩
+  let a : (T.sc q).homology := (T.sc q).homologyπ (hE.cyclesIso.inv c)
   obtain ⟨z₀, hvalue, hclass⟩ := ShortComplex.ab_cycle_transport_inv E z
   change z₀.val = z.val at hvalue
-  let α := (homLiftIso.{u, w} X).hom
-  let β := (NatTrans.mapHomologicalComplex α (ComplexShape.up ℕ)).app R.cocomplex
-  let φ : (DerivedCoyoneda.mappedCocomplex Z R).sc (n + 1) ⟶
-      (K.sc (n + 1)).map U :=
+  let α : F ⟶ G ⋙ U := (homLiftIso.{u, w} X).hom
+  let β : T ⟶ ((G ⋙ U).mapHomologicalComplex (ComplexShape.up ℕ)).obj R.cocomplex :=
+    (NatTrans.mapHomologicalComplex α (ComplexShape.up ℕ)).app R.cocomplex
+  let φ : T.sc q ⟶ S.map U :=
     (HomologicalComplex.shortComplexFunctor AddCommGrpCat.{max (u + 1) w}
-      (ComplexShape.up ℕ) (n + 1)).map β
+      (ComplexShape.up ℕ) q).map β
+  let Hβ : (T.sc q).homology ⟶ (S.map U).homology :=
+    HomologicalComplex.homologyMap β q
+  let B : (S.map U).homology ≅ U.obj S.homology := S.mapHomologyIso U
   have hmiddle : φ.τ₂ (hE.i c) = ULift.up z₀.val := by
     change ULift.up (integralHomSections.{u, w} X _ f) = ULift.up z₀.val
     exact congrArg ULift.up (hz.symm.trans hvalue.symm)
-  have hcycles := ShortComplex.ulift_cyclesMap_eq_of_middle_eq
-    (K.sc (n + 1)) ((DerivedCoyoneda.mappedCocomplex Z R).sc (n + 1)) hE φ c z₀ hmiddle
-  have hπ : HomologicalComplex.homologyMap β (n + 1) a =
-      ((K.sc (n + 1)).map U).homologyπ (ShortComplex.cyclesMap φ (hE.cyclesIso.inv c)) :=
-    ConcreteCategory.congr_hom (ShortComplex.homologyπ_naturality φ) (hE.cyclesIso.inv c)
-  let M := (K.sc (n + 1)).mapHomologyIso U
-  have hUπ := ConcreteCategory.congr_hom
-    (ShortComplex.homologyπ_comp_mapHomologyIso_hom (K.sc (n + 1)) U)
-    (ShortComplex.cyclesMap φ (hE.cyclesIso.inv c))
-  have hUvalue : U.map (K.sc (n + 1)).homologyπ
-        (ULift.up ((K.sc (n + 1)).abCyclesIso.inv z₀)) =
+  have hTransport : B.hom (Hβ a) =
+      (ULift.up (S.homologyπ (S.abCyclesIso.inv z₀)) : U.obj S.homology) :=
+    ShortComplex.ulift_homologyMap_eq_of_middle_eq S (T.sc q) hE φ c z₀ hmiddle
+  have hH : B.hom (Hβ a) =
       (ULift.up ((ShortComplex.homologyMapIso E).inv
-        ((positiveShort.{u, w} X Q n).homologyπ
-          ((positiveShort.{u, w} X Q n).abCyclesIso.inv z))) : U.obj (K.sc (n + 1)).homology) :=
-    congrArg (fun x : (K.sc (n + 1)).homology =>
-      (ULift.up x : U.obj (K.sc (n + 1)).homology)) hclass
-  have hH : M.hom (HomologicalComplex.homologyMap β (n + 1) a) =
-      (ULift.up ((ShortComplex.homologyMapIso E).inv
-        ((positiveShort.{u, w} X Q n).homologyπ
-          ((positiveShort.{u, w} X Q n).abCyclesIso.inv z))) : U.obj (K.sc (n + 1)).homology) :=
-    (congrArg M.hom hπ).trans
-      (hUπ.trans ((congrArg (U.map (K.sc (n + 1)).homologyπ) hcycles).trans hUvalue))
-  have hDC := Abelian.rightDerivedCoyonedaIsoExtFunctorObj_inv_extMk Z Q (n + 1) f hf
-  have hComp : ((G.rightDerivedCompIsoOfPreservesHomology U (n + 1)).app Q).inv
-        ((NatTrans.rightDerived α (n + 1)).app Q
-          ((R.isoRightDerivedObj (P.{u, w} X) (n + 1)).inv a)) =
-      U.map (R.isoRightDerivedObj G (n + 1)).inv
-        (M.hom (HomologicalComplex.homologyMap β (n + 1) a)) :=
+        (S'.homologyπ (S'.abCyclesIso.inv z))) : U.obj S.homology) :=
+    hTransport.trans (congrArg
+      (fun x : S.homology => (ULift.up x : U.obj S.homology)) hclass)
+  let eF : (F.rightDerived q).obj Q ≅ (T.sc q).homology :=
+    R.isoRightDerivedObj F q
+  let eG : (G.rightDerived q).obj Q ≅ S.homology :=
+    R.isoRightDerivedObj G q
+  let D : (F.rightDerived q).obj Q ≅ AddCommGrpCat.of (Abelian.Ext.{max (u + 1) w} Z Q q) :=
+    (Abelian.rightDerivedCoyonedaIsoExtFunctorObj Z q).app Q
+  let V : U.obj ((G.rightDerived q).obj Q) ≅ ((G ⋙ U).rightDerived q).obj Q :=
+    (G.rightDerivedCompIsoOfPreservesHomology U q).app Q
+  let d : (F.rightDerived q).obj Q ⟶ ((G ⋙ U).rightDerived q).obj Q :=
+    (NatTrans.rightDerived α q).app Q
+  let L : AddCommGrpCat.of (Abelian.Ext.{max (u + 1) w} Z Q q) ≅
+      U.obj ((G.rightDerived q).obj Q) := (largeComparisonIso.{u, w} X q).app Q
+  let ξ : Sheaf.H.{max u w, max u w, u, u + 1} Q q :=
+    R.extMk.{max u w, max (u + 1) w, (max u w) + 1} f (n + 2) rfl hf
+  let ξ' : Abelian.Ext.{max (u + 1) w} Z Q q :=
+    R.extMk.{max (u + 1) w, max (u + 1) w, (max u w) + 1} f (n + 2) rfl hf
+  have hDC : D.inv ξ' = eF.inv a :=
+    Abelian.rightDerivedCoyonedaIsoExtFunctorObj_inv_extMk Z Q q f hf
+  have hComp : V.inv (d (eF.inv a)) = U.map eG.inv (B.hom (Hβ a)) :=
     ConcreteCategory.congr_hom
-      (CategoryTheory.Functor.rightDerivedCompIsoOfPreservesHomology_inv_naturality_functor
-        G U (P.{u, w} X) α Q (n + 1)) a
-  have hLarge : ((largeComparisonIso.{u, w} X (n + 1)).app Q).hom
-        (R.extMk.{max (u + 1) w, max (u + 1) w, (max u w) + 1} f (n + 2) rfl hf) =
-      U.map (R.isoRightDerivedObj G (n + 1)).inv
-        (M.hom (HomologicalComplex.homologyMap β (n + 1) a)) := by
-    exact (largeComparison_apply.{u, w} X Q (n + 1)
-      (R.extMk.{max (u + 1) w, max (u + 1) w, (max u w) + 1} f (n + 2) rfl hf)).trans
-        ((congrArg (fun x : ((P.{u, w} X).rightDerived (n + 1)).obj Q =>
-          ((G.rightDerivedCompIsoOfPreservesHomology U (n + 1)).app Q).inv
-            ((NatTrans.rightDerived α (n + 1)).app Q x)) hDC).trans hComp)
-  have hFinal : U.map (R.isoRightDerivedObj G (n + 1)).inv
-        (ULift.up ((ShortComplex.homologyMapIso E).inv
-          ((positiveShort.{u, w} X Q n).homologyπ
-            ((positiveShort.{u, w} X Q n).abCyclesIso.inv z)))) =
-      (ULift.up (positiveCycleClass.{u, w} X Q n z) : U.obj ((G.rightDerived (n + 1)).obj Q)) := rfl
-  have hSize := extSizeEquiv_extMk.{u, w} X Q (n + 1) f hf
-  have hResult : ((largeComparisonIso.{u, w} X (n + 1)).app Q).hom
-        (extSizeEquiv.{u, w} X Q (n + 1)
-          (R.extMk.{max u w, max (u + 1) w, (max u w) + 1} f (n + 2) rfl hf)) =
-      (ULift.up (positiveCycleClass.{u, w} X Q n z) : U.obj ((G.rightDerived (n + 1)).obj Q)) :=
-    (congrArg (fun ξ : Abelian.Ext.{max (u + 1) w} Z Q (n + 1) =>
-      ((largeComparisonIso.{u, w} X (n + 1)).app Q).hom ξ) hSize).trans
-      (hLarge.trans ((congrArg (U.map (R.isoRightDerivedObj G (n + 1)).inv) hH).trans hFinal))
-  change (((largeComparisonIso.{u, w} X (n + 1)).app Q).hom
-    (extSizeEquiv.{u, w} X Q (n + 1)
-      (R.extMk.{max u w, max (u + 1) w, (max u w) + 1} f (n + 2) rfl hf))).down = _
+      (Functor.rightDerivedCompIsoOfPreservesHomology_inv_naturality_functor
+        G U F α Q q) a
+  have hLarge : L.hom ξ' = U.map eG.inv (B.hom (Hβ a)) :=
+    (largeComparison_apply.{u, w} X Q q ξ').trans
+      ((congrArg (fun x : (F.rightDerived q).obj Q => V.inv (d x)) hDC).trans hComp)
+  have hFinal : U.map eG.inv
+      (ULift.up ((ShortComplex.homologyMapIso E).inv
+        (S'.homologyπ (S'.abCyclesIso.inv z)))) =
+      (ULift.up (positiveCycleClass.{u, w} X Q n z) :
+        U.obj ((G.rightDerived q).obj Q)) := rfl
+  have hSize : extSizeEquiv.{u, w} X Q q ξ = ξ' :=
+    extSizeEquiv_extMk.{u, w} X Q q f hf
+  have hResult : L.hom (extSizeEquiv.{u, w} X Q q ξ) =
+      (ULift.up (positiveCycleClass.{u, w} X Q n z) :
+        U.obj ((G.rightDerived q).obj Q)) :=
+    (congrArg L.hom hSize).trans
+      (hLarge.trans ((congrArg (U.map eG.inv) hH).trans hFinal))
+  change (L.hom (extSizeEquiv.{u, w} X Q q ξ)).down = _
   exact congrArg ULift.down hResult
 
 end AlgebraicGeometry.Scheme.DerivedSections.Reuse
@@ -293,7 +292,6 @@ private def canonicalPositiveCycleMap
     (originalComparison.{u, w} X Q (n + 1)).symm).toAddMonoidHom).comp
       (QuotientAddGroup.mk' (positiveShort.{u, w} X Q n).abToCycles.range)
 
--- Normalizing the original sheaf/Ext equivalences exceeds the default recursion depth.
 private theorem canonicalPositivePacket
     (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (n : ℕ) :
     let R := injectiveResolution Q
@@ -306,23 +304,37 @@ private theorem canonicalPositivePacket
       ∃ z : (positiveShort.{u, w} X Q n).g.hom.ker,
         z.val = integralHomSections.{u, w} X _ f ∧
           canonicalPositiveCycleMap.{u, w} X Q n z = R.extMk f (n + 2) rfl hf := by
-  let S := positiveShort.{u, w} X Q n
-  let e := originalComparison.{u, w} X Q (n + 1)
-  let g := (positiveQuotientDerivedIso.{u, w} X Q n).addCommGroupIsoToAddEquiv.trans e.symm
-  let π := QuotientAddGroup.mk' S.abToCycles.range
-  have hSurj : Function.Surjective (canonicalPositiveCycleMap.{u, w} X Q n) :=
+  intro R
+  let C := Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}
+  let S : ShortComplex AddCommGrpCat.{max u w} := positiveShort.{u, w} X Q n
+  let G : C ⥤ AddCommGrpCat.{max u w} := Γ.{u, w} X
+  let e : Sheaf.H.{max u w, max u w, u, u + 1} Q (n + 1) ≃+
+      (G.rightDerived (n + 1)).obj Q := originalComparison.{u, w} X Q (n + 1)
+  let d : AddCommGrpCat.of (S.g.hom.ker ⧸ S.abToCycles.range) ≅
+      (G.rightDerived (n + 1)).obj Q := positiveQuotientDerivedIso.{u, w} X Q n
+  let g : (S.g.hom.ker ⧸ S.abToCycles.range) ≃+
+      Sheaf.H.{max u w, max u w, u, u + 1} Q (n + 1) :=
+    d.addCommGroupIsoToAddEquiv.trans e.symm
+  let π : S.g.hom.ker →+ S.g.hom.ker ⧸ S.abToCycles.range :=
+    QuotientAddGroup.mk' S.abToCycles.range
+  let p : S.g.hom.ker →+ Sheaf.H.{max u w, max u w, u, u + 1} Q (n + 1) :=
+    g.toAddMonoidHom.comp π
+  change Function.Surjective p ∧ S.abToCycles.range = p.ker ∧
+    (∀ z : S.g.hom.ker, e (p z) = positiveCycleClass.{u, w} X Q n z) ∧
+    ∀ (f : integralSheaf.{u, w} X ⟶ R.cocomplex.X (n + 1))
+      (hf : f ≫ R.cocomplex.d (n + 1) (n + 2) = 0),
+      ∃ z : S.g.hom.ker, z.val = integralHomSections.{u, w} X _ f ∧
+        p z = R.extMk f (n + 2) rfl hf
+  have hSurj : Function.Surjective p :=
     g.surjective.comp (QuotientAddGroup.mk'_surjective S.abToCycles.range)
-  have hKer : (canonicalPositiveCycleMap.{u, w} X Q n).ker = S.abToCycles.range :=
+  have hKer : p.ker = S.abToCycles.range :=
     (AddMonoidHom.ker_comp_of_injective π g.toAddMonoidHom g.injective).trans
       (QuotientAddGroup.ker_mk' S.abToCycles.range)
-  have hClass (z : S.g.hom.ker) :
-      e (canonicalPositiveCycleMap.{u, w} X Q n z) = positiveCycleClass.{u, w} X Q n z := by
-    change e (e.symm ((positiveQuotientDerivedIso.{u, w} X Q n).hom (π z))) = _
+  have hClass (z : S.g.hom.ker) : e (p z) = positiveCycleClass.{u, w} X Q n z := by
+    change e (e.symm (d.hom (π z))) = _
     exact (e.apply_symm_apply _).trans (positiveQuotientDerivedIso_class.{u, w} X Q n z)
   refine ⟨hSurj, hKer.symm, hClass, ?_⟩
   intro f hf
-  let R := injectiveResolution Q
-  let G := Γ.{u, w} X
   have hcycle : G.map (R.cocomplex.d (n + 1) (n + 2))
       (integralHomSections.{u, w} X _ f) = 0 :=
     (integralHomSections_naturality.{u, w} X f (R.cocomplex.d (n + 1) (n + 2))).symm.trans

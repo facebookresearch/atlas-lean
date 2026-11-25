@@ -115,20 +115,52 @@ theorem original_small_etale_derived_sections :
           e F (n + 1) = ep (L.obj F) n := by
   intro J Γ L
   obtain ⟨p, ep, hPacket, hn, hU⟩ := positive_ext_original_map_naturality.{u, w} X
-  refine ⟨fun F q => joinDegree
-    (H := fun j => Sheaf.H.{max u w, max u w, u, u + 1} (L.obj F) j)
-    (D := fun j => (Γ.rightDerived j).obj (L.obj F))
-    (zeroDerivedEquiv.{u, w} X (L.obj F)) (fun n => ep (L.obj F) n) q, ?_, ?_, ?_, ?_, ?_⟩
-  · intro F F' f q x
+  let H : Sheaf J AddCommGrpCat.{w} → ℕ → Type (max u w) :=
+    fun F q => Sheaf.H.{max u w, max u w, u, u + 1} (L.obj F) q
+  let D : Sheaf J AddCommGrpCat.{w} → ℕ → Type (max u w) :=
+    fun F q => (Γ.rightDerived q).obj (L.obj F)
+  let e : ∀ (F : Sheaf J AddCommGrpCat.{w}) (q : ℕ), H F q ≃+ D F q :=
+    fun F q => joinDegree (H := H F) (D := D F)
+      (zeroDerivedEquiv.{u, w} X (L.obj F)) (fun n => ep (L.obj F) n) q
+  have hNatural :
+      ∀ (F F' : Sheaf J AddCommGrpCat.{w}) (f : F ⟶ F') (q : ℕ) (x : H F q),
+        e F' q (Sheaf.H.map (L.map f) q x) =
+          (Γ.rightDerived q).map (L.map f) (e F q x) := by
+    intro F F' f q x
     cases q with
-    | zero => exact zeroDerivedEquiv_naturality.{u, w} X (L.map f) x
-    | succ n => exact hn (L.obj F) (L.obj F') (L.map f) n x
-  · intro F x
+    | zero =>
+      change zeroDerivedEquiv.{u, w} X (L.obj F') (Sheaf.H.map (L.map f) 0 x) =
+        (Γ.rightDerived 0).map (L.map f) (zeroDerivedEquiv.{u, w} X (L.obj F) x)
+      exact zeroDerivedEquiv_naturality.{u, w} X (L.map f) x
+    | succ n =>
+      change ep (L.obj F') n (Sheaf.H.map (L.map f) (n + 1) x) =
+        (Γ.rightDerived (n + 1)).map (L.map f) (ep (L.obj F) n x)
+      exact hn (L.obj F) (L.obj F') (L.map f) n x
+  have hZero :
+      ∀ (F : Sheaf J AddCommGrpCat.{w}) (x : H F 0),
+        (Sheaf.ΓNatIsoSheafSections J AddCommGrpCat.{max u w}
+          (identityEtaleIsTerminal X)).hom.app (L.obj F)
+          ((Γ.rightDerivedZeroIsoSelf.hom.app (L.obj F)) (e F 0 x)) =
+          Sheaf.H.equiv₀ (L.obj F) (identityEtaleIsTerminal X) x := by
+    intro F x
+    change (Sheaf.ΓNatIsoSheafSections J AddCommGrpCat.{max u w}
+      (identityEtaleIsTerminal X)).hom.app (L.obj F)
+      ((Γ.rightDerivedZeroIsoSelf.hom.app (L.obj F))
+        (zeroDerivedEquiv.{u, w} X (L.obj F) x)) = _
     exact zeroDerivedEquiv_sections.{u, w} X (L.obj F) x
-  · intros
+  have hObjectMaps :
+      ∀ (F : Sheaf J AddCommGrpCat.{w}) (U V : X.Etaleᵒᵖ) (θ : U ⟶ V)
+        (x : F.obj.obj U),
+        (L.obj F).obj.map θ (ULift.up x) = ULift.up (F.obj.map θ x) := by
+    intros
     rfl
-  · intros
+  have hCoefficientMaps :
+      ∀ (F F' : Sheaf J AddCommGrpCat.{w}) (f : F ⟶ F') (U : X.Etaleᵒᵖ)
+        (x : F.obj.obj U),
+        (L.map f).hom.app U (ULift.up x) = ULift.up (f.hom.app U x) := by
+    intros
     rfl
-  · exact ⟨p, ep, hPacket, fun _ _ => rfl⟩
+  refine ⟨e, hNatural, hZero, hObjectMaps, hCoefficientMaps, ?_⟩
+  exact ⟨p, ep, hPacket, fun _ _ => rfl⟩
 
 end AlgebraicGeometry.Scheme.DerivedSections
