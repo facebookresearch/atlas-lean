@@ -1,0 +1,3 @@
+# Asymptotic law of the Pearson residuals
+
+Let $\iota$ be a finite set of cells and $X_0, X_1, \dots$ mutually independent, identically distributed random elements of $\iota$ on a probability space with $P(X_0 = i) = p_i > 0$ for every cell. Write $N_i = \#\{k < n : X_k = i\}$ for the cell counts of the first $n$ observations and $\chi^2_n = \sum_i (N_i - np_i)^2/(np_i)$ for Pearson's statistic. Then the Pearson residual vector $\big((N_i - np_i)/\sqrt{np_i}\big)_i$ converges in distribution to $\Pi Z$, where $Z$ is standard Gaussian on Euclidean $\mathbb{R}^\iota$ and $\Pi$ is the orthogonal projection onto the hyperplane orthogonal to $(\sqrt{p_i})_i$. The limit covariance $I - \sqrt p\sqrt p^\top$ is singular.

@@ -12,3 +12,4 @@
 - [Poisson family with antitone mean has antitone likelihood ratio](poisson-lik-has-antitone-lr.md)
 - [Binomial likelihood](binomial-lik.md)
 - [Binomial family has monotone likelihood ratio](binomial-lik-has-mlr.md)
+- [Threshold tests under a monotone likelihood ratio satisfy the Neyman–Pearson conditions](mlr-threshold-np-clauses.md)

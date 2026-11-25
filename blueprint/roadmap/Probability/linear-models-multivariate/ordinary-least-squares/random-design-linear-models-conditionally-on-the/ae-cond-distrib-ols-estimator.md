@@ -1,0 +1,3 @@
+# Conditional law of the least-squares estimator under a random design
+
+Let $X$ be a random real $m \times k$ design matrix and $\varepsilon$ a random vector in $\mathbb{R}^m$ on a probability space, both almost everywhere measurable, let $\sigma > 0$, and suppose the conditional law of $\sigma^{-1}\varepsilon$ given $X$ is almost surely the standard Gaussian law $\mathcal N(0, 1)^{\otimes m}$. Let $\beta \in \mathbb{R}^k$ and $y = X\beta + \varepsilon$, and call a design $x$ full rank when $x^\top x$ is invertible. Then for almost every full-rank $x$ (with respect to the law of $X$), the conditional law of $\hat\beta = (X^\top X)^{-1}X^\top y$ given $X = x$ is $\mathcal N\big(\beta, \sigma^2(x^\top x)^{-1}\big)$.

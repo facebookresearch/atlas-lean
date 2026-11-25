@@ -1,0 +1,3 @@
+# Minimality of the best linear unbiased predictor
+
+Let $X$ ($n \times p$), $Z$ ($n \times q$), $G$ ($q \times q$) and $V$ ($n \times n$) be real matrices with $G$ symmetric, $V$ positive definite with $X^\top V^{-1}X$ invertible, and let $L = GZ^\top V^{-1}(I - X(X^\top V^{-1}X)^{-1}X^\top V^{-1})$ be the BLUP weight matrix. For every real $q \times n$ matrix $C$ with $CX = 0$, the difference $\mathcal M(C) - \mathcal M(L)$ is positive semidefinite, where $\mathcal M(C) = CVC^\top - CZG - GZ^\top C^\top + G$. This is an algebraic statement: reading $\mathcal M(C)$ as the covariance of the prediction error $Cy - u$ requires $\operatorname{Cov} y = V$, $\operatorname{Cov} u = G$ and $\operatorname{Cov}(y, u) = ZG$, which are not assumed.

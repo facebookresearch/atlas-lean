@@ -11,3 +11,4 @@
 - [Sum of the edge cut over all $t$-subsets](sum-card-interedges-compl-powerset-card.md)
 - [Variance of the edge cut of a uniform $t$-subset](variance-card-interedges-compl-powerset.md)
 - [Averaging over an invariant finite group](measure-eq-card-div-of-ae-card-filter-sm.md)
+- [Complete randomization is invariant under relabeling units](invariant-complete-randomization-map-ima.md)

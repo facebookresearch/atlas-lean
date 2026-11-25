@@ -1,0 +1,3 @@
+# Conditional chi-square law of the residual sum of squares
+
+Let $X$ be a random real $m \times k$ design matrix and $\varepsilon$ a random vector in $\mathbb{R}^m$ on a probability space, both almost everywhere measurable, let $\sigma > 0$, and suppose the conditional law of $\sigma^{-1}\varepsilon$ given $X$ is almost surely the standard Gaussian law $\mathcal N(0, 1)^{\otimes m}$. Let $\beta \in \mathbb{R}^k$ and $y = X\beta + \varepsilon$, and call a design $x$ full rank when $x^\top x$ is invertible. If $k < m$, then for almost every full-rank $x$, the conditional law of $\|y - X\hat\beta\|^2/\sigma^2$ given $X = x$ is the chi-square law with $m - k$ degrees of freedom.

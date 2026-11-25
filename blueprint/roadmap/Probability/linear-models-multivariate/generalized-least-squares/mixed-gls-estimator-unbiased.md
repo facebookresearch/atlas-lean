@@ -1,0 +1,3 @@
+# Unbiasedness of generalized least squares in a mixed model
+
+Let $X$ ($n \times p$) and $Z$ ($n \times q$) be real matrices, $G$ a real $q \times q$ and $R$ a real $n \times n$ matrix, and $V = ZGZ^\top + R$ the marginal covariance of the mixed model $y = X\beta + Zu + e$; suppose $X^\top V^{-1}X$ is invertible and let $\hat\beta(y) = (X^\top V^{-1}X)^{-1}X^\top V^{-1}y$. Let $\varepsilon$ be a random vector in $\mathbb{R}^n$ on a probability space and $\beta \in \mathbb{R}^p$. If the coordinates of $\varepsilon$ are integrable with mean zero, then $\mathbb{E}[\hat\beta(X\beta + \varepsilon)] = \beta$.

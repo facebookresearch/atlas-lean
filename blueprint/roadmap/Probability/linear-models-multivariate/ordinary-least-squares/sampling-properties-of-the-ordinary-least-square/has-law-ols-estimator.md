@@ -1,0 +1,3 @@
+# Gaussian law of the least-squares estimator
+
+Let $X$ be a real $m \times k$ design matrix with $X^\top X$ invertible, and consider the linear model $y = X\beta + \varepsilon$ with $\beta \in \mathbb{R}^k$ and a random error vector $\varepsilon$ in $\mathbb{R}^m$ on a probability space. Write $\hat\beta(y) = (X^\top X)^{-1} X^\top y$ for the ordinary least-squares estimator. Suppose $\sigma > 0$ and $\sigma^{-1}\varepsilon$ is a standard Gaussian vector (independent standard normal coordinates). Then $\hat\beta(X\beta + \varepsilon)$ has the multivariate normal law $\mathcal N\big(\beta, \sigma^2(X^\top X)^{-1}\big)$ on $\mathbb{R}^k$. No condition $k < m$ is needed.
