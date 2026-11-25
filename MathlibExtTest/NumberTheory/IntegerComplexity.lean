@@ -17,7 +17,7 @@ open IntegerComplexity.Expr
 
 -- C1-C3: explicit parenthesized expression for 6 with five ones
 -- (1+1)*(1+1+1) = 2*3 = 6
-private def expr6 : Expr := .mul (.add .one .one) (.add (.add .one .one) .one)
+def expr6 : Expr := .mul (.add .one .one) (.add (.add .one .one) .one)
 
 example : expr6.eval = 6 := rfl
 example : expr6.count = 5 := rfl

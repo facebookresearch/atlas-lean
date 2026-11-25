@@ -44,10 +44,10 @@ example : (QuotientGroup.mk (s := TopologicalIdeleGroup.principalIdeles ℤ ℚ)
       TopologicalIdeleClassGroup ℤ ℚ) = 1 := by
   simp
 
-private def testAdeleUnitsToIdele : (AdeleRing ℤ ℚ)ˣ →* TopologicalIdeleGroup ℤ ℚ :=
+def testAdeleUnitsToIdele : (AdeleRing ℤ ℚ)ˣ →* TopologicalIdeleGroup ℤ ℚ :=
   (TopologicalIdeleGroup.unitsEquiv ℤ ℚ).toMonoidHom
 
-private def testIdeleToAdeleUnits : TopologicalIdeleGroup ℤ ℚ →* (AdeleRing ℤ ℚ)ˣ :=
+def testIdeleToAdeleUnits : TopologicalIdeleGroup ℤ ℚ →* (AdeleRing ℤ ℚ)ˣ :=
   (TopologicalIdeleGroup.unitsEquiv ℤ ℚ).symm.toMonoidHom
 
 example (u : (AdeleRing ℤ ℚ)ˣ) :

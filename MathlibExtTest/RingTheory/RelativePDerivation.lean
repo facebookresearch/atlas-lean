@@ -52,7 +52,7 @@ example {B : Type*} [CommRing B] (x y : B) : pDerivationCorrection 3 x y = -x * 
   ring
 
 -- Zero ring is terminal: the unique ring hom to ZMod 1.
-private def uZero (A : Type*) [CommRing A] : A →+* ZMod 1 where
+def uZero (A : Type*) [CommRing A] : A →+* ZMod 1 where
   toFun _ := 0
   map_one' := Subsingleton.elim _ _
   map_mul' _ _ := Subsingleton.elim _ _
@@ -61,7 +61,7 @@ private def uZero (A : Type*) [CommRing A] : A →+* ZMod 1 where
 
 -- Real RelativePDerivation into the zero ring ZMod 1.
 -- All laws hold because ZMod 1 is subsingleton (0 = 1).
-private def zeroDerivation (A : Type*) [CommRing A] (p : ℕ) [Fact p.Prime] :
+def zeroDerivation (A : Type*) [CommRing A] (p : ℕ) [Fact p.Prime] :
     RelativePDerivation p (uZero A) where
   toFun _ := 0
   map_one := rfl

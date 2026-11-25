@@ -18,8 +18,8 @@ public meta import Mathlib.Algebra.Star.Basic
 
 open Cslib.Algorithms.Lean Cslib.Algorithms.Lean.TimeM
 
-private local instance convolutionFFTTestStarRing : StarRing (ZMod 17) := starRingOfComm
-private local instance convolutionFFTTestPrime : Fact (Nat.Prime 17) := ⟨by decide⟩
+local instance convolutionFFTTestStarRing : StarRing (ZMod 17) := starRingOfComm
+local instance convolutionFFTTestPrime : Fact (Nat.Prime 17) := ⟨by decide⟩
 
 private def checkConvolution (actual : TimeM Nat (Option (Array (ZMod 17))))
     (expected : Option (Array (ZMod 17))) (cost : Nat) : IO String := do

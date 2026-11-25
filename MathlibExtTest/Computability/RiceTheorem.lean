@@ -13,15 +13,15 @@ public import MathlibExt.Computability.RiceTheorem
 
 public section
 
-private abbrev riceTheoremTest_standardNumbering (e : ℕ) : ℕ →. ℕ :=
+abbrev riceTheoremTest_standardNumbering (e : ℕ) : ℕ →. ℕ :=
   Nat.Partrec.Code.eval (Denumerable.ofNat Nat.Partrec.Code e)
 
-private theorem riceTheoremTest_standardNumbering_row (e : ℕ) :
+theorem riceTheoremTest_standardNumbering_row (e : ℕ) :
     Nat.Partrec (riceTheoremTest_standardNumbering e) :=
   Partrec.nat_iff.1 <|
     Nat.Partrec.Code.eval_part.comp (Computable.const _) Computable.id
 
-private theorem riceTheoremTest_standardNumbering_univ :
+theorem riceTheoremTest_standardNumbering_univ :
     Nat.Partrec (Nat.unpaired riceTheoremTest_standardNumbering) := by
   apply Partrec₂.unpaired'.2
   change Partrec fun p : ℕ × ℕ =>
@@ -29,13 +29,13 @@ private theorem riceTheoremTest_standardNumbering_univ :
   exact Nat.Partrec.Code.eval_part.comp
     ((Computable.ofNat Nat.Partrec.Code).comp Computable.fst) Computable.snd
 
-private theorem riceTheoremTest_standardNumbering_index (f : ℕ →. ℕ) (hf : Nat.Partrec f) :
+theorem riceTheoremTest_standardNumbering_index (f : ℕ →. ℕ) (hf : Nat.Partrec f) :
     ∃ e, ∀ n, riceTheoremTest_standardNumbering e n = f n := by
   obtain ⟨c, hc⟩ := Nat.Partrec.Code.exists_code.1 hf
   refine ⟨Encodable.encode c, fun n => ?_⟩
   simp only [riceTheoremTest_standardNumbering, Denumerable.ofNat_encode, hc]
 
-private theorem riceTheoremTest_standardNumbering_smn (g : ℕ → ℕ →. ℕ)
+theorem riceTheoremTest_standardNumbering_smn (g : ℕ → ℕ →. ℕ)
     (hg : Nat.Partrec (Nat.unpaired g)) :
     ∃ s : ℕ → ℕ, Nat.Partrec (fun n => Part.some (s n)) ∧
       ∀ e n, riceTheoremTest_standardNumbering (s e) n = g e n := by

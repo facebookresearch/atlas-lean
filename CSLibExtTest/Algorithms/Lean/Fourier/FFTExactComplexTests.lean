@@ -26,7 +26,7 @@ open Cslib.Algorithms.Lean Cslib.Algorithms.Lean.TimeM
 -- Canonical rational quadratic arithmetic supplies a computable field and conjugation.
 private abbrev ExactComplex := QuadraticAlgebra ℚ (-1) 0
 
-private local instance : Fact (∀ r : ℚ, r ^ 2 ≠ (-1 : ℚ) + 0 * r) := ⟨by
+local instance : Fact (∀ r : ℚ, r ^ 2 ≠ (-1 : ℚ) + 0 * r) := ⟨by
   intro r h
   have hr := sq_nonneg r
   norm_num at h

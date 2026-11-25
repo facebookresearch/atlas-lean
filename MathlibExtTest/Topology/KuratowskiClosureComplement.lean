@@ -13,7 +13,7 @@ open Topology.ClosureCompl
 open MathlibExt.Topology.KuratowskiClosureComplement
 
 /-- Discrete topology on `Fin 2` for the concrete examples below. -/
-private local instance : TopologicalSpace (Fin 2) where
+local instance : TopologicalSpace (Fin 2) where
   IsOpen _ := True
   isOpen_univ := trivial
   isOpen_inter _ _ _ _ := trivial
