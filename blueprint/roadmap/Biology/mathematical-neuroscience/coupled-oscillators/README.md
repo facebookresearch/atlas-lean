@@ -1,3 +1,7 @@
 # Coupled biological oscillators
 
-- [Mirollo–Strogatz synchronization of pulse-coupled oscillators](mirollo-strogatz-synchronization-of-pulse-coupled-integrate-and-fire-o.md)
+- [State Function](state-function.md)
+- [Fire](fire.md)
+- [Synchronized](synchronized.md)
+- [Mirollo–Strogatz theorem](ae-eventually-synchronized.md)
+

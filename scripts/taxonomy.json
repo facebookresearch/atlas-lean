@@ -14976,7 +14976,7 @@
   "WantedExt/Biology/PopulationGenetics/Coalescent/VariableSFSWanted": {"to": "Biology/coalescent-theory", "title": "Site frequency spectrum under variable population size"},
   "WantedExt/Biology/Neuroscience/CohenGrossbergWanted": {"to": "Biology/mathematical-neuroscience", "title": "Cohen–Grossberg competitive neural networks"},
   "WantedExt/Biology/Neuroscience/OttAntonsenWanted": {"to": "Biology/mathematical-neuroscience", "title": "Ott–Antonsen ansatz for the continuum Kuramoto model"},
-  "WantedExt/Biology/Neuroscience/PulseCoupledSynchronyWanted": {"to": "Biology/mathematical-neuroscience", "title": "Synchronization of pulse-coupled oscillators"},
+  "WantedExt/Biology/Neuroscience/PulseCoupledSynchronyWanted": {"to": "Biology/mathematical-neuroscience", "title": "Coupled oscillators"},
   "WantedExt/CategoryTheory/FundamentalToposWanted": {"to": "CategoryTheory/topos-theory", "title": "Elementary toposes"},
   "WantedExt/Combinatorics/AcceleratedZeckendorfGameWanted": {"to": "GameTheory/combinatorial-games", "title": "Accelerated Zeckendorf game"},
   "WantedExt/Combinatorics/AccessibleSetsWanted": {"to": "Combinatorics/ramsey-theory/van-der-waerden-theorems", "title": "Accessible sets and diffsequences"},
