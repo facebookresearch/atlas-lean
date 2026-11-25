@@ -10,6 +10,82 @@ module
 public import Mathlib
 public import PhyslibExt.EarthScience.WeakDiffusion
 
+/-!
+# Weak solutions of one-dimensional parabolic diffusion
+
+Rothe's method for `∂ₜu = ∂ₓ(κ ∂ₓu) + F` on `(t0, t1) × (0, 1)` with zero boundary
+values, and existence and uniqueness of weak solutions, conditional on the existence data
+and on the energy identity.
+
+## i. Overview
+
+The equation describes one-dimensional diffusion with a diffusivity `κ (t, x)` that may
+vary in time and in space, for example heat conduction across a layer whose boundary
+temperatures are held fixed (after the boundary values are subtracted). The diffusivity is
+a.e. strongly measurable with `0 < kmin ≤ κ ≤ kmax` a.e. The space `H¹₀(0,1)` is
+`EarthScience.WeakH10` from `PhyslibExt.EarthScience.WeakDiffusion`. Its values off
+`[0, 1]` are unconstrained, so the `H¹(0,1)` inner product put on it here (`weakH10_inner`)
+gives only a seminorm, and Lax–Milgram is applied on its `SeparationQuotient`. Test
+functions (`ParabolicTest`) are C^∞ with compact support in the open rectangle, and weak
+forms are iterated integrals with time outside.
+
+Rothe's method splits `[t0, t1]` into `N` slabs of length `τ = (t1 - t0) / N`, averages `κ`
+and `F` over each slab, and solves one implicit Euler step per slab
+(`parabolic_euler_step`). This gives the Rothe sequence `rotheSeq` and its discrete energy
+estimate (`parabolic_euler_step_energy`, `rothe_iter_bounds`). Sections E to N pass to the
+limit `N → ∞` along subsequences: weak limits of the piecewise constant interpolants, the
+weak equation and the energy estimate of the limit, and the profiles, time slices and
+initial values of a representative of the limit. Many of these results take analytic
+inputs as explicit hypotheses (named `h…Thm`); their assembly into an unconditional
+existence proof is not carried out here.
+
+The final theorem `weak_parabolic_exists_unique_conditional` therefore takes the existence
+data as a hypothesis. Uniqueness among solutions that are continuous in time with values in
+`L²(0,1)` is proved from the energy identity of the homogeneous equation
+(`weak_parabolic_unique_final`), which is the second hypothesis. That identity holds for
+every admissible `κ` (Evans, §5.9.2, Theorem 3) but is not proved here. Without time
+continuity it fails, since a solution changed at a single time still satisfies the weak
+equation.
+
+## ii. Key results
+
+- `EarthScience.parabolic_euler_step`: one implicit Euler step has a solution in
+  `H¹₀(0,1)`, by Lax–Milgram for the step's bilinear form.
+- `EarthScience.parabolic_euler_step_energy`: the energy inequality of one step.
+- `EarthScience.rotheSeq` and `EarthScience.rotheSeq_spec`: the Rothe sequence.
+- `EarthScience.weak_parabolic_unique_final`: uniqueness of time-continuous weak
+  solutions, given the energy identity.
+- `EarthScience.weak_parabolic_exists_unique_conditional`: existence and uniqueness of the
+  weak solution, conditional on the existence data and on the energy identity.
+
+## iii. Table of contents
+
+- A. Test functions and the energy inequality of one step
+- B. `H¹₀(0,1)` as a Hilbert space
+- C. One implicit Euler step
+- D. The Rothe sequence and its a priori bounds
+- E. Slab averages
+- F. Slab test functions and weak limits
+- G. Passage to the limit in the weak equation
+- H. The energy estimate of the limit
+- I. Time slices and pairings
+- J. The initial layer and pairing representatives
+- K. Time translates and the initial limit
+- L. Bounds on the interpolants
+- M. Bump averages of time slices
+- N. Profiles of the limit
+- O. Uniqueness and the conditional theorem
+
+## iv. References
+
+- L. C. Evans, *Partial Differential Equations*, 2nd ed., Graduate Studies in Mathematics
+  19, American Mathematical Society, 2010: §7.1 (weak solutions of second-order parabolic
+  equations, energy estimates and uniqueness) and §5.9.2, Theorem 3 (continuity in time
+  and the energy identity for `u ∈ L²(0, T; H¹₀)` with `u' ∈ L²(0, T; H⁻¹)`).
+- K. Rektorys, *The Method of Discretization in Time and Partial Differential Equations*,
+  D. Reidel, 1982: Rothe's method.
+- `PhyslibExt.EarthScience.WeakDiffusion`: the `H¹₀(0,1)` structure `WeakH10`.
+-/
 
 open MeasureTheory
 open scoped ENNReal
@@ -25,6 +101,8 @@ set_option linter.unusedVariables false
 set_option linter.style.haveILetI false
 
 namespace EarthScience
+
+/-! ## A. Test functions and the energy inequality of one step -/
 
 /-- Test functions for the parabolic weak formulation: smooth functions on
 time × space, compactly supported inside `(t0, t1) × (0, 1)`.
@@ -327,6 +405,8 @@ theorem parabolic_euler_step_energy
   rw [h_inner_eq] at h_cs
   exact parabolic_assembly hτ hkmin rfl rfl hmono hmono_k hstep_u h_cs
 
+
+/-! ## B. `H¹₀(0,1)` as a Hilbert space -/
 
 theorem weakH10_meas_finite :
     IsFiniteMeasure (volume.restrict (Set.Icc (0 : ℝ) (1 : ℝ))) :=
@@ -654,6 +734,7 @@ theorem WeakH10.ext (a b : WeakH10)
   cases a; cases b; simp_all
 
 
+/-- The zero `H¹₀(0,1)` function: zero representative and zero weak derivative. -/
 instance : Zero WeakH10 where
   zero :=
     { toFun := 0
@@ -663,6 +744,8 @@ instance : Zero WeakH10 where
       integral_weakDeriv_eq_zero := by simp [intervalIntegral.integral_zero] }
 
 
+/-- Pointwise sum of `H¹₀(0,1)` functions, of the representatives and of the weak
+derivatives. -/
 instance : Add WeakH10 where
   add a b :=
     { toFun := a.toFun + b.toFun
@@ -693,6 +776,7 @@ instance : Add WeakH10 where
           _ = 0 := add_zero _ }
 
 
+/-- Pointwise negation of an `H¹₀(0,1)` function and of its weak derivative. -/
 instance : Neg WeakH10 where
   neg a :=
     { toFun := -a.toFun
@@ -714,6 +798,8 @@ instance : Neg WeakH10 where
           _ = 0 := neg_zero }
 
 
+/-- Pointwise difference of `H¹₀(0,1)` functions, of the representatives and of the
+weak derivatives. -/
 instance : Sub WeakH10 where
   sub a b :=
     { toFun := a.toFun - b.toFun
@@ -744,6 +830,7 @@ instance : Sub WeakH10 where
           _ = 0 := sub_zero _ }
 
 
+/-- Real multiple of an `H¹₀(0,1)` function and of its weak derivative. -/
 instance : SMul ℝ WeakH10 where
   smul c a :=
     { toFun := c • a.toFun
@@ -765,6 +852,8 @@ instance : SMul ℝ WeakH10 where
           _ = 0 := smul_zero c }
 
 
+/-- The `H¹₀(0,1)` functions form an additive commutative group under the pointwise
+operations. -/
 instance : AddCommGroup WeakH10 where
   nsmul := nsmulRec
   zsmul := zsmulRec
@@ -794,6 +883,7 @@ instance : AddCommGroup WeakH10 where
     · exact sub_eq_add_neg _ _
 
 
+/-- The `H¹₀(0,1)` functions form a real vector space under the pointwise operations. -/
 instance : Module ℝ WeakH10 where
   smul_add c a b := by
     ext x
@@ -840,6 +930,8 @@ theorem weakH10_toFun_memLp (u : WeakH10) :
         weakH10_prim_bound _ u.weakDeriv_memLp x hx
 
 
+/-- The `H¹(0,1)` inner product `∫₀¹ u v + ∫₀¹ u' v'`, computed on the `L²(0,1)`
+classes of the representatives and of the weak derivatives. -/
 noncomputable def weakH10_inner (u v : WeakH10) : ℝ :=
   inner ℝ ((weakH10_toFun_memLp u).toLp u.toFun)
     ((weakH10_toFun_memLp v).toLp v.toFun)
@@ -847,6 +939,8 @@ noncomputable def weakH10_inner (u v : WeakH10) : ℝ :=
     (v.weakDeriv_memLp.toLp v.weakDeriv)
 
 
+/-- The `H¹(0,1)` inner product `weakH10_inner` as a pre-inner-product structure; it is
+only positive semidefinite, because values off `[0, 1]` are unconstrained. -/
 noncomputable instance weakH10_preInnerCore : PreInnerProductSpace.Core ℝ WeakH10 where
   inner := weakH10_inner
   conj_inner_symm u v := by
@@ -876,10 +970,12 @@ noncomputable instance weakH10_preInnerCore : PreInnerProductSpace.Core ℝ Weak
     ring
 
 
+/-- The seminorm of `weakH10_inner` on `WeakH10`. -/
 noncomputable instance weakH10_seminormedAddCommGroup : SeminormedAddCommGroup WeakH10 :=
   InnerProductSpace.Core.toSeminormedAddCommGroup (𝕜 := ℝ)
 
 
+/-- `WeakH10` as a real inner product space for `weakH10_inner`. -/
 noncomputable instance weakH10_innerProductSpace : InnerProductSpace ℝ WeakH10 :=
   InnerProductSpace.ofCore (𝕜 := ℝ) inferInstance
 
@@ -958,6 +1054,7 @@ theorem weakH10_norm_le_add (w : WeakH10) :
   exact hsqrt
 
 
+/-- `WeakH10` is complete for the seminorm of `weakH10_inner`. -/
 noncomputable instance weakH10_completeSpace : CompleteSpace WeakH10 :=
   UniformSpace.complete_of_cauchySeq_tendsto (fun u hu => by
     rw [Metric.cauchySeq_iff] at hu
@@ -1026,6 +1123,8 @@ theorem weakH10_innerProductSpace_exists :
     ∃ _ : InnerProductSpace ℝ WeakH10, True := by
   exact ⟨inferInstance, trivial⟩
 
+
+/-! ## C. One implicit Euler step -/
 
 theorem eulerB_eLpNorm_sq (f : ℝ → ℝ)
     (hf : MemLp f 2 (volume.restrict (Set.Icc (0 : ℝ) 1))) :
@@ -1975,6 +2074,8 @@ theorem weakH10_intervalIntegral_eq_zero_of_null (F : ℝ → ℝ) (w : WeakH10)
   exact hF x hx1 hx2
 
 
+/-- The linear map induced on `SeparationQuotient WeakH10` by a continuous linear map
+`L₀` that vanishes on the elements of seminorm zero. -/
 noncomputable def weakH10_descendCLM_lin {F : Type*} [NormedAddCommGroup F]
     [NormedSpace ℝ F] (L₀ : WeakH10 →L[ℝ] F)
     (hvan : ∀ w : WeakH10, ‖w‖ = 0 → L₀ w = 0) :
@@ -2013,6 +2114,9 @@ theorem weakH10_descendCLM_lin_mk {F : Type*} [NormedAddCommGroup F]
     weakH10_descendCLM_lin L₀ hvan (SeparationQuotient.mk v) = L₀ v := rfl
 
 
+/-- The continuous linear map induced on `SeparationQuotient WeakH10` by a continuous
+linear map `L₀` that vanishes on the elements of seminorm zero; its norm is at most
+`‖L₀‖`. -/
 noncomputable def weakH10_descendCLM {F : Type*} [NormedAddCommGroup F]
     [NormedSpace ℝ F] (L₀ : WeakH10 →L[ℝ] F)
     (hvan : ∀ w : WeakH10, ‖w‖ = 0 → L₀ w = 0) :
@@ -2062,6 +2166,8 @@ theorem weakH10_B_vanish_right {τ : ℝ} {κ : ℝ → ℝ}
     (fun t ht1 ht2 => by simp [ht1, ht2])
 
 
+/-- The bilinear form `B` of one implicit Euler step with its second argument read on
+`SeparationQuotient WeakH10` (`B u` vanishes on the elements of seminorm zero). -/
 noncomputable def weakH10_descendB_lin {τ : ℝ} {κ : ℝ → ℝ}
     (B : WeakH10 →L[ℝ] WeakH10 →L[ℝ] ℝ)
     (hB : ∀ u v : WeakH10,
@@ -2103,6 +2209,8 @@ theorem weakH10_descendB_lin_apply {τ : ℝ} {κ : ℝ → ℝ}
         (fun w hw => weakH10_B_vanish_right B hB u w hw) := rfl
 
 
+/-- The continuous version of `weakH10_descendB_lin`, with the bound `max (1 / τ) kmax`
+of the step's bilinear form. -/
 noncomputable def weakH10_descendB_clm {τ : ℝ} {κ : ℝ → ℝ} {kmax : ℝ}
     (B : WeakH10 →L[ℝ] WeakH10 →L[ℝ] ℝ)
     (hB : ∀ u v : WeakH10,
@@ -2162,6 +2270,8 @@ theorem weakH10_descendB_clm_vanish {τ : ℝ} {κ : ℝ → ℝ} {kmax : ℝ}
   exact weakH10_B_vanish_left B hB w v hw
 
 
+/-- The bilinear form `B` of one implicit Euler step on `SeparationQuotient WeakH10`, a
+Hilbert space where Lax–Milgram applies. -/
 noncomputable def weakH10_descendB {τ : ℝ} {κ : ℝ → ℝ} {kmax : ℝ}
     (B : WeakH10 →L[ℝ] WeakH10 →L[ℝ] ℝ)
     (hB : ∀ u v : WeakH10,
@@ -2508,6 +2618,8 @@ theorem parabolic_euler_step
   have hEn := hEnergy u hStep
   exact ⟨u, hStep, hEn⟩
 
+
+/-! ## D. The Rothe sequence and its a priori bounds -/
 
 theorem kappa_avg
     {t0 t1 : ℝ} (ht : t0 < t1)
@@ -3466,6 +3578,9 @@ theorem rothe_slab_assemble
     hBnd hCoer hInt ⟨u0, hu0⟩ hIdent hEnergy
 
 
+/-- The Rothe sequence for `N` steps. Entry `0` is `0`; entry `k + 1`, for `k < N`, is a
+solution chosen by `hOneStep` of the step relation `P k uprev`, where `uprev` is `u0` for
+`k = 0` and the representative of entry `k` otherwise; entries past `N` are `0`. -/
 noncomputable def rotheSeq (u0 : ℝ → ℝ)
     (hu0 : MemLp u0 2 (volume.restrict (Set.Icc (0 : ℝ) 1))) (N : ℕ)
     (P : ℕ → (ℝ → ℝ) → WeakH10 → Prop)
@@ -3835,6 +3950,8 @@ theorem interp_memLp_bounds
   exact ⟨hmem1, hmem2, C' + 1, by linarith,
     hle _ ENNReal.toReal_nonneg hsq1, hle _ ENNReal.toReal_nonneg hsq2⟩
 
+
+/-! ## E. Slab averages -/
 
 theorem sq_integral_le_length_mul_sq_integral
     {a b : ℝ} (hab : a ≤ b) {f : ℝ → ℝ}
@@ -5267,6 +5384,8 @@ theorem slab_avg_eventually_le_three_eps_final
   linarith [hT, hA', hN, hφsmall]
 
 
+/-! ## F. Slab test functions and weak limits -/
+
 theorem parabolicTest_deriv_memLp
     {t0 t1 : ℝ}
     (φ : ℝ → ℝ → ℝ) (hφ : ParabolicTest t0 t1 φ) :
@@ -5386,6 +5505,9 @@ theorem parabolicTest_deriv_memLp
   have hunc2 : MemLp (Function.uncurry (fun t x => deriv (fun y => φ t y) x)) 2
       (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)) := hmem2
   exact ⟨hcont1, hcont2, hunc1, hunc2⟩
+
+/-- Left endpoint of the slab containing `t`, for the partition of `[t0, t1]` into `N`
+slabs of length `(t1 - t0) / N`. -/
 noncomputable def slabLeft (t0 t1 : ℝ) (N : ℕ) (t : ℝ) : ℝ :=
   t0 + (Nat.floor ((t - t0) / ((t1 - t0) / N)) : ℝ) * ((t1 - t0) / N)
 
@@ -6294,6 +6416,8 @@ theorem rothe_discrete_weak_identity
   rw [← habel, ← htime, ← hsplit]
   exact hmaster
 
+
+/-! ## G. Passage to the limit in the weak equation -/
 
 theorem tau_pos {t0 t1 : ℝ} (ht : t0 < t1) (N : ℕ) (hN : 0 < N) :
     0 < (t1 - t0) / (N : ℝ) := by
@@ -7552,6 +7676,8 @@ theorem rothe_term1_tendsto
   exact hGoal
 
 
+/-- Right-endpoint slab sample of `g` at `p = (t, x)`: the value of `g` at the right
+endpoint of the slab containing `t`, and at `t1` when `t = t1`. -/
 noncomputable def slabSampleFn (t0 t1 : ℝ) (N : ℕ) (g : ℝ → ℝ → ℝ) (p : ℝ × ℝ) : ℝ :=
   if p.1 = t1 then g t1 p.2
   else g (slabRight t0 t1 N p.1) p.2
@@ -8706,6 +8832,8 @@ theorem rothe_limit_passage
   exact fun φ hφ => hCombineThm φ hφ (hTerm1Thm φ hφ) (hTerm2Thm φ hφ) (hTerm3Thm φ hφ)
 
 
+/-! ## H. The energy estimate of the limit -/
+
 lemma inner_eq_integral_of_ae_eq (μ : Measure ℝ)
     (g1 g2 : ℝ → ℝ) (G1 G2 : Lp ℝ 2 μ)
     (h1 : (G1 : ℝ → ℝ) =ᵐ[μ] g1) (h2 : (G2 : ℝ → ℝ) =ᵐ[μ] g2) :
@@ -9291,6 +9419,8 @@ theorem rothe_limit_energy_asm_fixed
   exact energy_asm_of_liminf _ _ _ _ _ _ _ ha hd hle
     (hNormLiminfThm τ hτ) (hDissLiminfThm τ hτ) (hForcingThm τ hτ)
 
+
+/-! ## I. Time slices and pairings -/
 
 theorem rothe_bump_concentration
     {t0 t1 : ℝ} (ht : t0 < t1)
@@ -11458,6 +11588,8 @@ theorem pairing_rep_final
   exact tendsto_nhds_unique h1 h2'
 
 
+/-! ## J. The initial layer and pairing representatives -/
+
 theorem timetrans_cs_bound
     {t0 t1 : ℝ} (ht : t0 < t1)
     (U : ℕ → ℕ → (ℝ → ℝ))
@@ -12984,6 +13116,8 @@ theorem eLpNorm_sub_sq_eq
   exact integral_sub_sq_expand (integrable_sq_of_memLp hf) (integrable_sq_of_memLp hg)
     (integrable_mul_of_memLp hf hg)
 
+/-! ## K. Time translates and the initial limit -/
+
 /-- Polarization limit at `t0` via energy inequality + slice weak convergence. -/
 
 theorem rothe_polarization_limit_t0_prime
@@ -14142,6 +14276,8 @@ theorem ae_prod_of_ae_slice
   simp
 
 
+/-! ## L. Bounds on the interpolants -/
+
 theorem sq_integral_le_mul_integral_sq
     {α : Type*} [MeasurableSpace α] {μ : Measure α} [IsFiniteMeasure μ]
     {u : α → ℝ} (hu : Integrable u μ) (hu2 : Integrable (fun x => (u x)^2) μ)
@@ -15046,6 +15182,8 @@ theorem ioc_ae_eq_icc_zero_one : Set.Ioc (0 : ℝ) 1 =ᵐ[volume] Set.Icc (0 : �
   exact hiff
 
 
+/-! ## M. Bump averages of time slices -/
+
 /-- Bump average as a space-time integral. -/
 
 theorem bump_as_spacetime
@@ -15886,6 +16024,8 @@ theorem slice_cauchy_asm
     simpa only [hGmdef, hGndef] using (lt_of_le_of_lt htri hsum)
 
 
+/-! ## N. Profiles of the limit -/
+
 theorem WeakH10_intervalIntegrable (w : WeakH10) :
     IntervalIntegrable w.weakDeriv volume 0 1 := by
   have hside : ‖w.weakDeriv 0‖ₑ ≠ ⊤ := by simp
@@ -15977,6 +16117,8 @@ theorem WeakH10_ibp_Icc (h v : WeakH10) :
   exact WeakH10_ibp h v
 
 
+/-- Index of the Rothe step used on the slab containing `t`, along the subsequence `φ`:
+`⌊(t - t0) / τ⌋ + 1` with `τ = (t1 - t0) / φ N`, and the last step `φ N` at `t = t1`. -/
 noncomputable def sliceIdx (t0 t1 : ℝ) (φ : ℕ → ℕ) (N : ℕ) (t : ℝ) : ℕ :=
   if t = t1 then φ N else Nat.floor ((t - t0) / ((t1 - t0) / (φ N))) + 1
 
@@ -17547,6 +17689,8 @@ theorem spacetime_as_time
     setIntegral_congr_set Ioc_ae_eq_Icc]
 
 
+
+/-! ## O. Uniqueness and the conditional theorem -/
 
 theorem iterated_eq_product
     {t0 t1 : ℝ} (ht : t0 < t1)
