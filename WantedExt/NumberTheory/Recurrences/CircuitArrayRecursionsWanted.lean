@@ -15,6 +15,7 @@ public import Mathlib.Basic.Complex.Basic
 public import Mathlib.FieldTheory.RatFunc.AsPolynomial
 public import Mathlib.RingTheory.Localization.FractionRing
 public import Mathlib.RingTheory.Polynomial.Basic
+public import MathlibExt.NumberTheory.Recurrences.CircuitArray
 public import MathlibExt.NumberTheory.Recurrences.CircuitArrayM
 
 /-!
@@ -28,40 +29,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open Polynomial
-
-/-- **Annihilator of a sequence.** Let $K$ be a semiring, $p = \sum_i a_i X^i \in K[X]$ and
-$G \colon \mathbb{N} \to K$ a sequence, and let $E$ be the translation operator
-$E(G_s) = G_{s+1}$. The operator $p(E)$ annihilates $G$ when $\sum_i a_i G_{s+i} = 0$ for every
-$s \ge 0$.
-
-Source: Emily J. Evans and Russell Jay Hendel, *Recursions and Characteristic Polynomials of the
-Rows of the Circuit Array*, Fibonacci Quarterly 62 (2024), Article 62-4/hendel08232024rev2,
-Section 3 (definitions of the translation operator and of an annihilator). -/
-def AnnihilatesSeq {K : Type*} [Semiring K] (p : K[X]) (G : ℕ → K) : Prop :=
-  ∀ s : ℕ, p.sum (fun i a => a * G (s + i)) = 0
-
-/-- **Every operator annihilates the zero sequence.** For every semiring $K$ and every polynomial
-$p \in K[X]$, the operator $p(E)$ annihilates the zero sequence, where $E$ is the translation
-operator $E(G_s) = G_{s+1}$.
-
-Source: Emily J. Evans and Russell Jay Hendel, *Recursions and Characteristic Polynomials of the
-Rows of the Circuit Array*, Fibonacci Quarterly 62 (2024), Article 62-4/hendel08232024rev2,
-Section 3 (definition of an annihilator). -/
-theorem annihilatesSeq_zero {K : Type*} [Semiring K] (p : K[X]) : AnnihilatesSeq p (0 : ℕ → K) := by
-  intro s
-  simp [Polynomial.sum]
-
-/-- **The characteristic polynomial annihilates the solutions of its recurrence.** Let $K$ be a
-field, $d \ge 0$ and $a_0, \dots, a_{d-1} \in K$. If a sequence $G \colon \mathbb{N} \to K$
-satisfies $G_{n+d} = \sum_{i=0}^{d-1} a_i G_{n+i}$ for every $n \ge 0$, then the characteristic
-polynomial $X^d - \sum_{i=0}^{d-1} a_i X^i$ of this recurrence annihilates $G$.
-
-Source: Emily J. Evans and Russell Jay Hendel, *Recursions and Characteristic Polynomials of the
-Rows of the Circuit Array*, Fibonacci Quarterly 62 (2024), Article 62-4/hendel08232024rev2,
-Lemma 3.4 (`fq-2024-hendel08232024rev2-lem-3.4`). -/
-public theorem_wanted annihilatesSeq_charPoly_of_isSolution {K : Type*} [Field K]
-    (E : LinearRecurrence K) (G : ℕ → K) (hG : E.IsSolution G) :
-    AnnihilatesSeq E.charPoly G
 
 /-- **The operator $E - c$ annihilates the powers of $c$.** Let $K$ be a field, $c \in K$, and let
 $E$ be the translation operator $E(G_s) = G_{s+1}$ on sequences $G \colon \mathbb{N} \to K$. Then
