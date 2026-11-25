@@ -2,9 +2,11 @@
 
 Write $P_hg(x)$ for the whole-line Gaussian heat evolution, with $P_hg=g$
 when $h\le0$, and
-\[
+
+$$
 D_\nu f(t,x)=\int_0^t P_{\nu(t-s)}(f(s,\cdot))(x)\,ds.
-\]
+$$
+
 A field $g$ has uniform exponential growth on $[0,T]$ when there exist
 $M,c\ge0$ such that $|g(s,x)|\le M e^{c|x|}$ for every $s\in[0,T]$ and
 $x\in\mathbb R$. Different fields may have different constants.
@@ -15,9 +17,11 @@ $\partial_x f(s,x)=f_x(s,x)$ and $\partial_x f_x(s,x)=f_{xx}(s,x)$ for every
 $s\in[0,T]$, $x\in\mathbb R$. No time derivative of these fields is assumed.
 
 For $\nu>0$, $0<t<T$ and $x\in\mathbb R$, the ordinary time derivative exists:
-\[
+
+$$
 \partial_tD_\nu f(t,x)=f(t,x)+\nu D_\nu f_{xx}(t,x).
-\]
+$$
+
 A fixed-interval representation and a uniform Lipschitz bound justify differentiation;
 the integration point with zero heat time is excluded only as a null set. No ordinary
 time derivative at $0$ or $T$ is asserted.

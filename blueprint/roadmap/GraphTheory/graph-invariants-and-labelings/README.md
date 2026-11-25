@@ -10,3 +10,5 @@ Numerical and polynomial invariants of graphs such as degree sequences, arborici
 - [Shannon capacity of a graph](shannon-capacity-of-a-graph/README.md)
 - [Theta function of a graph](theta-function-of-a-graph/README.md)
 - [Erdős–Gallai theorem](erdos-gallai.md)
+
+- [Šoltés's problem for the Wiener index](soltes-problem-for-the-wiener-index.md)

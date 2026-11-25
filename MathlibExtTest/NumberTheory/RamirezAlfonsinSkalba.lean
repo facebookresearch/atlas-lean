@@ -10,7 +10,7 @@ module
 
 import MathlibExt.NumberTheory.RamirezAlfonsinSkalba
 
-/-! # Tests for two representations by coprime generators -/
+/-! # Tests for representations by two coprime generators -/
 
 open MetaMathlibExt
 
@@ -23,3 +23,33 @@ example : (2 : ℤ) ∣ -2 ∧ (3 : ℤ) ∣ 3 :=
 example (x x' y : ℕ) : (0 : ℤ) ∣ (y : ℤ) - y ∧ (1 : ℤ) ∣ (x : ℤ) - x' :=
   twoGenerator_dvd_sub_of_eq (c := 0) (d := 1) (x := x) (x' := x') (y := y) (y' := y)
     (by decide) (by simp)
+
+-- For ℓ = 0 the primes represented by 3 and 7 up to 11 are 3 and 7.
+example : ((Finset.range 12).filter fun n =>
+    n.Prime ∧ 0 < {p : ℕ × ℕ | 3 * p.1 + 7 * p.2 = n}.ncard).card = 2 := by
+  refine (card_primes_ellNumericalSemigroup_eq (c := 3) (d := 7)
+    (by decide) (by decide) (by decide) 0).trans ?_
+  decide
+
+-- Up to 32 only the prime 31 has two representations: 3 * 8 + 7 and 3 + 7 * 4.
+example : ((Finset.range 33).filter fun n =>
+    n.Prime ∧ 1 < {p : ℕ × ℕ | 3 * p.1 + 7 * p.2 = n}.ncard).card = 1 := by
+  refine (card_primes_ellNumericalSemigroup_eq (c := 3) (d := 7)
+    (by decide) (by decide) (by decide) 1).trans ?_
+  decide
+
+-- The gap 1 for generators 2 and 3 needs the negative shift in the normal form.
+example : ∃ x₀ < (3 : ℕ), ∃ y₀ < (2 : ℕ), (1 : ℤ) = -6 + 2 * x₀ + 3 * y₀ := by
+  have hgap : {p : ℕ × ℕ | 2 * p.1 + 3 * p.2 = 1} = ∅ := by
+    apply Set.eq_empty_iff_forall_notMem.mpr
+    rintro ⟨x, y⟩ (h : 2 * x + 3 * y = 1)
+    omega
+  exact exists_eq_of_ncard_twoGeneratorReps (c := 2) (d := 3)
+    (by decide) (by decide) (by decide) 1 0 (by simp [hgap])
+
+-- For two unit generators the bounded coefficients vanish, giving the count for every n.
+example (n : ℕ) : {p : ℕ × ℕ | p.1 + p.2 = n}.ncard = n + 1 := by
+  obtain ⟨x, hx, y, hy, h⟩ := exists_eq_of_ncard_twoGeneratorReps (c := 1) (d := 1)
+    (by decide) (by decide) (by decide) n _ rfl
+  simp only [one_mul, Nat.cast_one, mul_one] at h
+  omega

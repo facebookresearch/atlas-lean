@@ -40,20 +40,23 @@ https://arxiv.org/abs/math/0306030.
 namespace WantedExt.AlgebraicGeometry.SmoothPerverseFiltrationComparisonWanted
 
 open _root_.AlgebraicGeometry _root_.CategoryTheory
-open _root_.MathlibExt.AlgebraicGeometry.PerverseSheaves
-open _root_.MathlibExt.AlgebraicGeometry.DeCataldoMiglioriniDecompositionWanted
+open _root_.MathlibExt.AlgebraicGeometry _root_.MathlibExt.AlgebraicGeometry.PerverseSheaves
 
 attribute [local instance] HasDerivedCategory.standard
 
-/-- For a smooth proper map, the normalized direct image is bounded
-constructible, and its perverse truncation at `k - d` is canonically its
-ordinary truncation at `k - (m + d)`, compatibly with their inclusion maps. -/
+/-- **Perverse and ordinary truncations of a smooth proper direct image.** Let $X$ and $Y$ be
+complex varieties, $Y$ smooth of relative dimension $m$ over $\mathbb{C}$, with the given middle
+perverse t-structure on $Y$ (`PerverseSheafTheory Y`), and let $f : X \to Y$ be proper and smooth
+of relative dimension $d$. Let $K = Rf_* \mathbb{Q}_X[m + d]$ on $Y(\mathbb{C})$ and let
+$k \in \mathbb{Z}$. Then $K$ is bounded constructible, and its perverse truncation
+${}^p\tau_{\le k - d} K$ is identified with its ordinary truncation $\tau_{\le k - (m + d)} K$ by an
+isomorphism compatible with their maps to $K$. -/
 public def_wanted smoothPerverseTruncationComparison
     (X Y : ComplexScheme) [IsComplexVariety X] [IsComplexVariety Y]
     [PerverseSheafTheory Y] (f : X ⟶ Y) (d m : ℕ)
     [IsProper f.left] [SmoothOfRelativeDimension d f.left]
     [SmoothOfRelativeDimension m Y.hom] (k : ℤ) :
-    let K := normalizedDirectImage X Y f (m + d)
+    let K := ConstructibleComplexes.normalizedDirectImage ℚ X Y f (m + d)
     Σ' hK : boundedConstructible Y K,
       let KC : (boundedConstructible Y).FullSubcategory := ⟨K, hK⟩
       let t := perverseTStructure Y

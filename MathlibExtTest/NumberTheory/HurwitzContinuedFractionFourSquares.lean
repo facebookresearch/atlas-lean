@@ -11,7 +11,7 @@ module
 import MathlibExt.NumberTheory.HurwitzContinuedFractionFourSquares
 import Mathlib.Tactic.NormNum
 
-/-! # Tests for the errors of Hurwitz convergents -/
+/-! # Tests for the errors and denominator growth of Hurwitz convergents -/
 
 open MetaMathlibExt
 
@@ -35,6 +35,10 @@ private theorem legal_two : HurwitzLegal z 2 := by
     norm_num [hurwitzDigit, iter_one, hurwitzIter, hurwitzRound, Complex.div_re, Complex.div_im,
       Complex.normSq_apply]
 
+-- Growth includes the last denominator, even when the preceding iterate was a rounding tie.
+example : ‖hurwitzQ z 1‖ < ‖hurwitzQ z 2‖ :=
+  norm_hurwitzQ_lt_succ z 1 (hn := legal_two)
+
 -- At index one the product is nonzero and the two errors recover the last nonzero iterate.
 example : hurwitzQ z 1 * z - hurwitzP z 1 = 1 / 5 ∧
     -(hurwitzQ z 0 * z - hurwitzP z 0) / (hurwitzQ z 1 * z - hurwitzP z 1) = -2 := by
@@ -57,3 +61,28 @@ example : hurwitzQ z 2 * z - hurwitzP z 2 = 0 ∧
   · simpa [hstop] using (hratio (by decide)).symm
 
 end MetaMathlibExt.hurwitzQ_mul_sub_hurwitzP
+
+namespace MetaMathlibExt.norm_hurwitzQ_lt_succ
+
+-- Both coordinates are rounding ties. The first legal next iterate is a diagonal digit.
+local notation "corner" => ((-1 - Complex.I) / 2 : ℂ)
+
+private theorem corner_iter : hurwitzIter corner 1 = -1 + Complex.I := by
+  apply Complex.ext <;>
+    norm_num [hurwitzIter, hurwitzRound, Complex.inv_re, Complex.inv_im, Complex.div_re,
+      Complex.div_im, Complex.normSq_apply]
+
+example : ‖hurwitzQ corner 0‖ < ‖hurwitzQ corner 1‖ := by
+  apply norm_hurwitzQ_lt_succ
+  intro j hj
+  have hj₀ : j = 0 := Nat.lt_one_iff.mp hj
+  subst j
+  intro h
+  have hz : hurwitzIter corner 1 = 0 := by
+    change (hurwitzIter corner 0 - hurwitzDigit corner 0)⁻¹ = 0
+    simp [h]
+  rw [corner_iter] at hz
+  have hre := congrArg Complex.re hz
+  norm_num at hre
+
+end MetaMathlibExt.norm_hurwitzQ_lt_succ

@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.NumberTheory.PrimeCounting.CalzadoSieveEulerProduct
 public import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Data.Nat.Totient
@@ -20,8 +21,7 @@ public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
 
 Statement-only records for the sieve lemmas of Calzado's INTEGERS 26 (2026)
 paper that are stated over explicit objects: the Mertens-type sums over primes
-in `x^{1/5} < p ≤ x^{1/2}` (Lemma 1), the size of the Euler product `V(z)` of a
-sieve of dimension `k` (Lemma 3), and the sifting bounds for the shifted primes
+in `x^{1/5} < p ≤ x^{1/2}` (Lemma 1), and the sifting bounds for the shifted primes
 `{p + a : p ≤ x}` with `a` even and nonzero (Lemmas 4 and 6).
 
 For the shifted primes, `S(A, P, z)` is the number of primes `n ≤ x` such that
@@ -68,31 +68,6 @@ public theorem_wanted calzado_sum_inv_totient_near_sqrt_isBigO (B : ℝ) (hB : 0
             (p : ℝ) ≤ x ^ ((1 : ℝ) / 2)),
         1 / (Nat.totient p : ℝ)
         ≤ C * Real.log (Real.log x) / Real.log x
-
-/-- **Size of the Euler product of a sieve of dimension $k$.** Let $P$ be a set of primes, $k > 0$
-a real number, and $\omega$ a real-valued function on the natural numbers with
-$0 \le \omega(p) < p$ for $p \in P$. Suppose there is a constant $C_0$ with
-$|\sum_{p \in P,\ t \le p < z} \omega(p) \log p / p - k \log(z/t)| \le C_0$ for all real $t$ and
-$z$ with $2 \le t \le z$. Then there are constants $c > 0$ and $C > 0$ such that for every real
-$z \ge 2$, $c / (\log z)^k \le \prod_{p \in P,\ p < z} (1 - \omega(p)/p) \le C / (\log z)^k$.
-
-The constants depend on $\omega$ and $P$, not only on $k$.
-
-Source: Angel Calzado, *A Bombieri-Vinogradov Result to Address the Parity
-Problem*, INTEGERS 26 (2026), Article A117, Lemma 3
-(`integers-2026-A117-lem-3`). -/
-public theorem_wanted calzado_sieve_euler_product_asymp (P : Set ℕ)
-    [DecidablePred (· ∈ P)] (ω : ℕ → ℝ) (k : ℝ) (hk : 0 < k)
-    (hP : ∀ p ∈ P, p.Prime ∧ 0 ≤ ω p ∧ ω p < p)
-    (hdim : ∃ C₀ : ℝ, ∀ t z : ℝ, 2 ≤ t → t ≤ z →
-      |∑ p ∈ (Finset.range (⌈z⌉₊)).filter (fun p : ℕ => p ∈ P ∧ t ≤ (p : ℝ) ∧ (p : ℝ) < z),
-          ω p * Real.log p / p - k * Real.log (z / t)| ≤ C₀) :
-    ∃ c C : ℝ, 0 < c ∧ 0 < C ∧ ∀ z : ℝ, 2 ≤ z →
-      c / Real.log z ^ k ≤
-          ∏ p ∈ (Finset.range (⌈z⌉₊)).filter (fun p : ℕ => p ∈ P ∧ (p : ℝ) < z),
-            (1 - ω p / p) ∧
-        ∏ p ∈ (Finset.range (⌈z⌉₊)).filter (fun p : ℕ => p ∈ P ∧ (p : ℝ) < z),
-            (1 - ω p / p) ≤ C / Real.log z ^ k
 
 open Classical in
 /-- **Upper bound for sifted shifted primes divisible by a large prime.** Let $a$ be a nonzero
