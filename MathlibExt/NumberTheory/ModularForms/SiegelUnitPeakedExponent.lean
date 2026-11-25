@@ -50,18 +50,19 @@ open Finset Real
 namespace Ws47
 namespace BSpan
 
-def wt (N : ℕ) (t : ℕ) : ℤ := 6 * (t : ℤ) ^ 2 - 6 * (N : ℤ) * (t : ℤ) + (N : ℤ) ^ 2
+private def wt (N : ℕ) (t : ℕ) : ℤ := 6 * (t : ℤ) ^ 2 - 6 * (N : ℤ) * (t : ℤ) + (N : ℤ) ^ 2
 
-theorem wt_cast (N t : ℕ) : (wt N t : ℝ) = 6 * (t : ℝ) ^ 2 - 6 * (N : ℝ) * t + (N : ℝ) ^ 2 := by
+private theorem wt_cast (N t : ℕ) :
+    (wt N t : ℝ) = 6 * (t : ℝ) ^ 2 - 6 * (N : ℝ) * t + (N : ℝ) ^ 2 := by
   unfold wt; push_cast; ring
 
-theorem eval_map_bernoulli_two (x : ℝ) :
+private theorem eval_map_bernoulli_two (x : ℝ) :
     (Polynomial.map (algebraMap ℚ ℝ) (Polynomial.bernoulli 2)).eval x = x ^ 2 - x + 1 / 6 := by
   simp [Polynomial.bernoulli, Finset.sum_range_succ, bernoulli_one, bernoulli_two,
     Polynomial.eval_monomial]
   ring
 
-theorem hasSum_cos_div_sq {x : ℝ} (hx : x ∈ Set.Icc (0 : ℝ) 1) :
+private theorem hasSum_cos_div_sq {x : ℝ} (hx : x ∈ Set.Icc (0 : ℝ) 1) :
     HasSum (fun n : ℕ => 1 / (n : ℝ) ^ 2 * Real.cos (2 * π * n * x)) (π ^ 2 * (x ^ 2 - x + 1 / 6))
       := by
   have h := hasSum_one_div_nat_pow_mul_cos one_ne_zero hx
@@ -71,7 +72,7 @@ theorem hasSum_cos_div_sq {x : ℝ} (hx : x ∈ Set.Icc (0 : ℝ) 1) :
   rw [e] at h
   exact h
 
-theorem hasSum_cos_wt (N t : ℕ) (hN : N ≠ 0) (ht : t ≤ N) :
+private theorem hasSum_cos_wt (N t : ℕ) (hN : N ≠ 0) (ht : t ≤ N) :
     HasSum (fun n : ℕ => 6 * (N : ℝ) ^ 2 / π ^ 2 * (1 / (n : ℝ) ^ 2 * Real.cos (2 * π * n * (t /
       N))))
       (wt N t : ℝ) := by
@@ -89,9 +90,9 @@ theorem hasSum_cos_wt (N t : ℕ) (hN : N ≠ 0) (ht : t ≤ N) :
 
 variable {N : ℕ} [NeZero N]
 
-noncomputable def cosZ (a : ZMod N) : ℝ := Real.cos (2 * π * a.val / N)
+private noncomputable def cosZ (a : ZMod N) : ℝ := Real.cos (2 * π * a.val / N)
 
-theorem cosZ_intCast (m : ℤ) : cosZ ((m : ZMod N)) = Real.cos (2 * π * m / N) := by
+private theorem cosZ_intCast (m : ℤ) : cosZ ((m : ZMod N)) = Real.cos (2 * π * m / N) := by
   unfold cosZ
   have hN : (N : ℝ) ≠ 0 := by exact_mod_cast (NeZero.ne N)
   have hv : ((m : ZMod N).val : ℤ) = m % (N : ℤ) := ZMod.val_intCast m
@@ -112,18 +113,18 @@ theorem cosZ_intCast (m : ℤ) : cosZ ((m : ZMod N)) = Real.cos (2 * π * m / N)
     field_simp
   rw [harg, Real.cos_sub_int_mul_two_pi]
 
-theorem cosZ_natCast (m : ℕ) : cosZ ((m : ZMod N)) = Real.cos (2 * π * m / N) := by
+private theorem cosZ_natCast (m : ℕ) : cosZ ((m : ZMod N)) = Real.cos (2 * π * m / N) := by
   have := cosZ_intCast (N := N) (m : ℤ)
   push_cast at this
   exact this
 
-theorem cos_nat_mul_eq_cosZ (n : ℕ) (a : ZMod N) :
+private theorem cos_nat_mul_eq_cosZ (n : ℕ) (a : ZMod N) :
     Real.cos (2 * π * n * (a.val / N)) = cosZ ((n : ZMod N) * a) := by
   rw [← ZMod.natCast_zmod_val a, ← Nat.cast_mul, cosZ_natCast, ZMod.natCast_zmod_val]
   push_cast
   ring_nf
 
-theorem cosZ_neg (a : ZMod N) : cosZ (-a) = cosZ a := by
+private theorem cosZ_neg (a : ZMod N) : cosZ (-a) = cosZ a := by
   unfold cosZ
   rw [ZMod.neg_val]
   split_ifs with h
@@ -143,15 +144,15 @@ open Finset Real
 
 variable {N : ℕ} [NeZero N]
 
-noncomputable def psi (g : ZMod N → ℝ) (k : ZMod N) : ℝ := ∑ r : ZMod N, g r * cosZ (k * r)
+private noncomputable def psi (g : ZMod N → ℝ) (k : ZMod N) : ℝ := ∑ r : ZMod N, g r * cosZ (k * r)
 
-theorem abs_psi_le (g : ZMod N → ℝ) (k : ZMod N) : |psi g k| ≤ ∑ r : ZMod N, |g r| := by
+private theorem abs_psi_le (g : ZMod N → ℝ) (k : ZMod N) : |psi g k| ≤ ∑ r : ZMod N, |g r| := by
   unfold psi
   refine (Finset.abs_sum_le_sum_abs _ _).trans (Finset.sum_le_sum fun r _ => ?_)
   rw [abs_mul]
   exact mul_le_of_le_one_right (abs_nonneg _) (Real.abs_cos_le_one _)
 
-theorem tsum_psi_div_sq_eq_zero (g : ZMod N → ℝ)
+private theorem tsum_psi_div_sq_eq_zero (g : ZMod N → ℝ)
     (horth : ∀ s : ZMod N, ∑ r : ZMod N, g r * (wt N (s * r).val : ℝ) = 0) (s : ZMod N) :
     ∑' n : ℕ, psi g ((n : ZMod N) * s) / (n : ℝ) ^ 2 = 0 := by
   have hN : N ≠ 0 := NeZero.ne N
@@ -179,7 +180,7 @@ theorem tsum_psi_div_sq_eq_zero (g : ZMod N → ℝ)
     positivity
   exact (mul_eq_zero.mp h3).resolve_left hc
 
-theorem summable_psi_div_sq (g : ZMod N → ℝ) (s : ZMod N) :
+private theorem summable_psi_div_sq (g : ZMod N → ℝ) (s : ZMod N) :
     Summable fun n : ℕ => psi g ((n : ZMod N) * s) / (n : ℝ) ^ 2 := by
   refine Summable.of_norm_bounded ((summable_one_div_nat_pow.mpr one_lt_two).mul_left (∑ r : ZMod
     N, |g r|))
@@ -188,7 +189,7 @@ theorem summable_psi_div_sq (g : ZMod N → ℝ) (s : ZMod N) :
     div_eq_mul_inv]
   exact mul_le_mul_of_nonneg_right (abs_psi_le g _) (by positivity)
 
-theorem psi_zero_eq_zero (g : ZMod N → ℝ)
+private theorem psi_zero_eq_zero (g : ZMod N → ℝ)
     (horth : ∀ s : ZMod N, ∑ r : ZMod N, g r * (wt N (s * r).val : ℝ) = 0) : psi g 0 = 0 := by
   have h := tsum_psi_div_sq_eq_zero g horth 0
   simp only [mul_zero] at h
@@ -199,9 +200,10 @@ theorem psi_zero_eq_zero (g : ZMod N → ℝ)
   have : π ^ 2 / 6 ≠ 0 := by positivity
   exact (mul_eq_zero.mp h).resolve_right this
 
-noncomputable def Zres (M : ℕ) (c : ZMod M) : ℝ := ∑' m : ℕ, 1 / ((c.val + M * m : ℕ) : ℝ) ^ 2
+private noncomputable def Zres (M : ℕ) (c : ZMod M) : ℝ :=
+  ∑' m : ℕ, 1 / ((c.val + M * m : ℕ) : ℝ) ^ 2
 
-theorem summable_Zres (M : ℕ) [NeZero M] (c : ZMod M) :
+private theorem summable_Zres (M : ℕ) [NeZero M] (c : ZMod M) :
     Summable fun m : ℕ => 1 / ((c.val + M * m : ℕ) : ℝ) ^ 2 := by
   have hinj : Function.Injective fun m : ℕ => c.val + M * m := by
     intro a b h
@@ -211,13 +213,12 @@ theorem summable_Zres (M : ℕ) [NeZero M] (c : ZMod M) :
 
 omit [NeZero N] in
 
-theorem natCast_mul_eq_of_mod (k : ZMod N) (x : ℕ) :
+private theorem natCast_mul_eq_of_mod (k : ZMod N) (x : ℕ) :
     ((x : ℕ) : ZMod N) * k = (((x % addOrderOf k : ℕ) : ℕ) : ZMod N) * k := by
   rw [← nsmul_eq_mul, ← nsmul_eq_mul, mod_addOrderOf_nsmul]
 
-theorem tsum_psi_eq_sum_residues (g : ZMod N → ℝ) (k : ZMod N) (M : ℕ) [NeZero M] (hM : addOrderOf
-  k = M)
-    (u : ℕ) :
+private theorem tsum_psi_eq_sum_residues (g : ZMod N → ℝ) (k : ZMod N) (M : ℕ) [NeZero M]
+    (hM : addOrderOf k = M) (u : ℕ) :
     ∑' n : ℕ, psi g ((n : ZMod N) * (((u : ℕ) : ZMod N) * k)) / (n : ℝ) ^ 2 =
       ∑ c : ZMod M, psi g ((((c * (u : ZMod M)).val : ℕ) : ZMod N) * k) * Zres M c := by
   rw [Nat.sumByResidueClasses (summable_psi_div_sq g (((u : ℕ) : ZMod N) * k)) M]
@@ -234,8 +235,8 @@ theorem tsum_psi_eq_sum_residues (g : ZMod N → ℝ) (k : ZMod N) (M : ℕ) [Ne
   rw [Zres, ← tsum_mul_left]
   exact tsum_congr fun m => by ring
 
-theorem sum_units_eq_sum {M : ℕ} [NeZero M] (F : ZMod M → ℂ) (hF : ∀ c : ZMod M, ¬ IsUnit c → F c =
-  0) :
+private theorem sum_units_eq_sum {M : ℕ} [NeZero M] (F : ZMod M → ℂ)
+    (hF : ∀ c : ZMod M, ¬ IsUnit c → F c = 0) :
     ∑ u : (ZMod M)ˣ, F u = ∑ c : ZMod M, F c := by
   classical
   have hinj : Set.InjOn (fun u : (ZMod M)ˣ => (u : ZMod M)) ↑(Finset.univ : Finset (ZMod M)ˣ) :=
@@ -247,7 +248,7 @@ theorem sum_units_eq_sum {M : ℕ} [NeZero M] (F : ZMod M → ℂ) (hF : ∀ c :
 
 open Complex in
 
-theorem sum_char_mul_Zres (M : ℕ) [NeZero M] (χ : DirichletCharacter ℂ M) :
+private theorem sum_char_mul_Zres (M : ℕ) [NeZero M] (χ : DirichletCharacter ℂ M) :
     ∑ c : ZMod M, χ c * (Zres M c : ℂ) = LSeries (fun n : ℕ => χ (n : ZMod M)) 2 := by
   have hs : Summable fun n : ℕ => χ (n : ZMod M) / ((n : ℂ)) ^ 2 := by
     refine Summable.of_norm_bounded (summable_one_div_nat_pow.mpr one_lt_two) fun n => ?_
@@ -271,7 +272,7 @@ theorem sum_char_mul_Zres (M : ℕ) [NeZero M] (χ : DirichletCharacter ℂ M) :
 
 open Complex in
 
-theorem eq_zero_of_forall_sum_char_inv_mul_eq_zero (M : ℕ) [NeZero M] (a : ZMod M → ℂ)
+private theorem eq_zero_of_forall_sum_char_inv_mul_eq_zero (M : ℕ) [NeZero M] (a : ZMod M → ℂ)
     (h : ∀ χ : DirichletCharacter ℂ M, ∑ v : (ZMod M)ˣ, χ ((v⁻¹ : (ZMod M)ˣ) : ZMod M) * a v = 0)
     (b : (ZMod M)ˣ) : a b = 0 := by
   have hswap : ∑ χ : DirichletCharacter ℂ M, χ (b : ZMod M) * ∑ v : (ZMod M)ˣ, χ ((v⁻¹ : (ZMod M)ˣ)
@@ -303,7 +304,7 @@ theorem eq_zero_of_forall_sum_char_inv_mul_eq_zero (M : ℕ) [NeZero M] (a : ZMo
 
 open Complex in
 
-theorem eq_zero_of_convolution (M : ℕ) [NeZero M] (a : ZMod M → ℝ)
+private theorem eq_zero_of_convolution (M : ℕ) [NeZero M] (a : ZMod M → ℝ)
     (hnu : ∀ c : ZMod M, ¬ IsUnit c → a c = 0)
     (hconv : ∀ u : (ZMod M)ˣ, ∑ c : ZMod M, a (c * u) * Zres M c = 0) (b : (ZMod M)ˣ) : a b = 0 :=
       by
@@ -359,7 +360,7 @@ open Finset Real
 section D
 variable {N : ℕ} [NeZero N]
 
-theorem psi_eq_zero (g : ZMod N → ℝ)
+private theorem psi_eq_zero (g : ZMod N → ℝ)
     (horth : ∀ s : ZMod N, ∑ r : ZMod N, g r * (wt N (s * r).val : ℝ) = 0) (k : ZMod N) : psi g k =
       0 := by
   suffices H : ∀ M : ℕ, ∀ k : ZMod N, addOrderOf k = M → psi g k = 0 from H _ k rfl
@@ -405,9 +406,9 @@ end D
 section E
 variable {N : ℕ} [NeZero N]
 
-noncomputable def sinZ (a : ZMod N) : ℝ := Real.sin (2 * π * a.val / N)
+private noncomputable def sinZ (a : ZMod N) : ℝ := Real.sin (2 * π * a.val / N)
 
-theorem sinZ_neg (a : ZMod N) : sinZ (-a) = -sinZ a := by
+private theorem sinZ_neg (a : ZMod N) : sinZ (-a) = -sinZ a := by
   unfold sinZ
   rw [ZMod.neg_val]
   split_ifs with h
@@ -418,7 +419,7 @@ theorem sinZ_neg (a : ZMod N) : sinZ (-a) = -sinZ a := by
       N by
       field_simp, Real.sin_two_pi_sub]
 
-theorem stdAddChar_eq_cosZ_add_sinZ (a : ZMod N) :
+private theorem stdAddChar_eq_cosZ_add_sinZ (a : ZMod N) :
     (ZMod.stdAddChar a : ℂ) = (cosZ a : ℂ) + (sinZ a : ℂ) * Complex.I := by
   rw [ZMod.stdAddChar_apply, ZMod.toCircle_apply, cosZ, sinZ]
   rw [show (2 * (π : ℂ) * Complex.I * (a.val : ℂ) / (N : ℂ)) = ((2 * π * (a.val : ℝ) / N : ℝ) : ℂ)
@@ -428,7 +429,7 @@ theorem stdAddChar_eq_cosZ_add_sinZ (a : ZMod N) :
   push_cast
   ring
 
-theorem eq_zero_of_psi_eq_zero (g : ZMod N → ℝ) (heven : ∀ r : ZMod N, g (-r) = g r)
+private theorem eq_zero_of_psi_eq_zero (g : ZMod N → ℝ) (heven : ∀ r : ZMod N, g (-r) = g r)
     (hpsi : ∀ k : ZMod N, psi g k = 0) : g = 0 := by
   set G : ZMod N → ℂ := fun r => (g r : ℂ) with hG
 
@@ -463,47 +464,47 @@ end E
 section F
 variable (N : ℕ) [NeZero N]
 
-def fam (s : ZMod N) : ZMod N → ℚ := fun r : ZMod N =>
+private def fam (s : ZMod N) : ZMod N → ℚ := fun r : ZMod N =>
   ((6 * (((s * r).val : ℕ) : ℤ) ^ 2 - 6 * (N : ℤ) * (((s * r).val : ℕ) : ℤ) + (N : ℤ) ^ 2 : ℤ) : ℚ)
 
 omit [NeZero N] in
-theorem fam_apply (s r : ZMod N) : fam N s r = ((wt N (s * r).val : ℤ) : ℚ) := rfl
+private theorem fam_apply (s r : ZMod N) : fam N s r = ((wt N (s * r).val : ℤ) : ℚ) := rfl
 
 variable {N}
 
 omit [NeZero N] in
-theorem wt_sub (t : ℕ) (ht : t ≤ N) : wt N (N - t) = wt N t := by
+private theorem wt_sub (t : ℕ) (ht : t ≤ N) : wt N (N - t) = wt N t := by
   unfold wt; push_cast [Nat.cast_sub ht]; ring
 
-theorem fam_neg (s r : ZMod N) : fam N s (-r) = fam N s r := by
+private theorem fam_neg (s r : ZMod N) : fam N s (-r) = fam N s r := by
   rw [fam_apply, fam_apply, mul_neg, ZMod.neg_val]
   split_ifs with h
   · rw [h, ZMod.val_zero]
   · rw [wt_sub _ (ZMod.val_lt _).le]
 
-noncomputable def T : (ZMod N → ℚ) →ₗ[ℚ] (ZMod N → ℚ) :=
+private noncomputable def T : (ZMod N → ℚ) →ₗ[ℚ] (ZMod N → ℚ) :=
   ∑ s : ZMod N, (LinearMap.proj s : (ZMod N → ℚ) →ₗ[ℚ] ℚ).smulRight (fam N s)
 
-theorem T_apply (c : ZMod N → ℚ) (r : ZMod N) : T c r = ∑ s : ZMod N, c s * fam N s r := by
+private theorem T_apply (c : ZMod N → ℚ) (r : ZMod N) : T c r = ∑ s : ZMod N, c s * fam N s r := by
   simp [T, LinearMap.sum_apply, LinearMap.smulRight_apply, Finset.sum_apply, smul_eq_mul]
 
-theorem T_mem_span (c : ZMod N → ℚ) : T c ∈ Submodule.span ℚ (Set.range (fam N)) := by
+private theorem T_mem_span (c : ZMod N → ℚ) : T c ∈ Submodule.span ℚ (Set.range (fam N)) := by
   rw [T, LinearMap.sum_apply]
   exact Submodule.sum_mem _ fun s _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨s, rfl⟩)
 
-theorem T_neg (c : ZMod N → ℚ) (r : ZMod N) : T c (-r) = T c r := by
+private theorem T_neg (c : ZMod N → ℚ) (r : ZMod N) : T c (-r) = T c r := by
   simp only [T_apply, fam_neg]
 
-def evenSub (N : ℕ) [NeZero N] : Submodule ℚ (ZMod N → ℚ) where
+private def evenSub (N : ℕ) [NeZero N] : Submodule ℚ (ZMod N → ℚ) where
   carrier := {φ | ∀ r : ZMod N, φ (-r) = φ r}
   add_mem' ha hb r := by simp [Pi.add_apply, ha r, hb r]
   zero_mem' r := rfl
   smul_mem' c φ hφ r := by simp [Pi.smul_apply, hφ r]
 
-theorem mem_evenSub {φ : ZMod N → ℚ} : φ ∈ evenSub N ↔ ∀ r : ZMod N, φ (-r) = φ r := Iff.rfl
+private theorem mem_evenSub {φ : ZMod N → ℚ} : φ ∈ evenSub N ↔ ∀ r : ZMod N, φ (-r) = φ r := Iff.rfl
 
-theorem T_eq_zero_imp (c : ZMod N → ℚ) (hc : ∀ r : ZMod N, c (-r) = c r) (hT : T c = 0) : c = 0 :=
-  by
+private theorem T_eq_zero_imp (c : ZMod N → ℚ) (hc : ∀ r : ZMod N, c (-r) = c r) (hT : T c = 0) :
+    c = 0 := by
   set g : ZMod N → ℝ := fun r => (c r : ℝ) with hg
   have horth : ∀ s : ZMod N, ∑ r : ZMod N, g r * (wt N (s * r).val : ℝ) = 0 := by
     intro s
@@ -520,10 +521,10 @@ theorem T_eq_zero_imp (c : ZMod N → ℚ) (hc : ∀ r : ZMod N, c (-r) = c r) (
   simp only [hg, Pi.zero_apply, Rat.cast_eq_zero] at this
   exact this
 
-noncomputable def TE : evenSub N →ₗ[ℚ] evenSub N :=
+private noncomputable def TE : evenSub N →ₗ[ℚ] evenSub N :=
   (T (N := N)).restrict fun φ _ => fun r => T_neg φ r
 
-theorem TE_surjective : Function.Surjective (TE (N := N)) := by
+private theorem TE_surjective : Function.Surjective (TE (N := N)) := by
   rw [← LinearMap.injective_iff_surjective]
   intro x y hxy
   apply Subtype.ext
@@ -537,7 +538,7 @@ theorem TE_surjective : Function.Surjective (TE (N := N)) := by
     simp only [Pi.sub_apply, hx, hy]) h
   exact sub_eq_zero.mp this
 
-theorem mem_span_iff_even (φ : ZMod N → ℚ) :
+private theorem mem_span_iff_even (φ : ZMod N → ℚ) :
     φ ∈ Submodule.span ℚ (Set.range (fam N)) ↔ ∀ r : ZMod N, φ (-r) = φ r := by
   constructor
   · intro h
@@ -570,9 +571,9 @@ open Finset
 
 namespace Ws18BDist
 
-def Bt (N t : ℤ) : ℤ := 6 * t ^ 2 - 6 * N * t + N ^ 2
+private def Bt (N t : ℤ) : ℤ := 6 * t ^ 2 - 6 * N * t + N ^ 2
 
-theorem sum_range_Bt_aux (N p₀ g : ℤ) (M : ℕ) :
+private theorem sum_range_Bt_aux (N p₀ g : ℤ) (M : ℕ) :
     ∑ j ∈ range M, Bt N (p₀ + g * j) =
       M * (6 * p₀ ^ 2 - 6 * N * p₀ + N ^ 2) + (6 * p₀ * g - 3 * N * g) * (M * (M - 1)) +
         g ^ 2 * ((M - 1) * M * (2 * M - 1)) := by
@@ -583,12 +584,13 @@ theorem sum_range_Bt_aux (N p₀ g : ℤ) (M : ℕ) :
       push_cast
       ring
 
-theorem sum_range_Bt (p₀ g : ℤ) (M : ℕ) :
+private theorem sum_range_Bt (p₀ g : ℤ) (M : ℕ) :
     ∑ j ∈ range M, Bt (g * M) (p₀ + g * j) = M * (6 * p₀ ^ 2 - 6 * g * p₀ + g ^ 2) := by
   rw [sum_range_Bt_aux]
   ring
 
-theorem sum_zmod_eq_sum_range {β : Type*} [AddCommMonoid β] (N : ℕ) [NeZero N] (Φ : ZMod N → β) :
+private theorem sum_zmod_eq_sum_range {β : Type*} [AddCommMonoid β] (N : ℕ) [NeZero N]
+    (Φ : ZMod N → β) :
     ∑ s : ZMod N, Φ s = ∑ i ∈ range N, Φ (i : ZMod N) := by
   obtain ⟨n, rfl⟩ : ∃ n, N = n + 1 := ⟨N - 1, (Nat.succ_pred_eq_of_pos (Nat.pos_of_ne_zero
     (NeZero.ne N))).symm⟩
@@ -596,13 +598,14 @@ theorem sum_zmod_eq_sum_range {β : Type*} [AddCommMonoid β] (N : ℕ) [NeZero 
   refine Fintype.sum_congr _ _ fun s => ?_
   exact congrArg Φ (ZMod.natCast_zmod_val s).symm
 
-theorem periodic_shift {β : Type*} (M : ℕ) (h : ℕ → β) (hper : ∀ n, h (n + M) = h n) (k n : ℕ) :
+private theorem periodic_shift {β : Type*} (M : ℕ) (h : ℕ → β) (hper : ∀ n, h (n + M) = h n)
+    (k n : ℕ) :
     h (k * M + n) = h n := by
   induction k with
   | zero => simp
   | succ k ihk => rw [Nat.succ_mul, show k * M + M + n = (k * M + n) + M by ring, hper, ihk]
 
-theorem sum_range_mul_of_periodic {β : Type*} [AddCommMonoid β] (M g : ℕ) (h : ℕ → β)
+private theorem sum_range_mul_of_periodic {β : Type*} [AddCommMonoid β] (M g : ℕ) (h : ℕ → β)
     (hper : ∀ n, h (n + M) = h n) : ∑ n ∈ range (g * M), h n = g • ∑ n ∈ range M, h n := by
   induction g with
   | zero => simp
@@ -611,7 +614,7 @@ theorem sum_range_mul_of_periodic {β : Type*} [AddCommMonoid β] (M g : ℕ) (h
       congr 1
       exact sum_congr rfl fun n _ => periodic_shift M h hper g n
 
-theorem emod_progression (p₀ g k : ℤ) (M : ℕ) (hp₀ : 0 ≤ p₀) (hp₀g : p₀ < g) (hM : 0 < M) :
+private theorem emod_progression (p₀ g k : ℤ) (M : ℕ) (hp₀ : 0 ≤ p₀) (hp₀g : p₀ < g) (hM : 0 < M) :
     (p₀ + g * k) % (g * M) = p₀ + g * (k % M) := by
   have hg : 0 < g := lt_of_le_of_lt hp₀ hp₀g
   have hM' : (0 : ℤ) < M := by exact_mod_cast hM
@@ -628,7 +631,8 @@ theorem emod_progression (p₀ g k : ℤ) (M : ℕ) (hp₀ : 0 ≤ p₀) (hp₀g
       _ < g + g * (M - 1) := by linarith
       _ = g * M := by ring
 
-theorem sum_range_affine_unit (M : ℕ) (hM : 0 < M) (c u : ℤ) (hu : IsCoprime u M) (φ : ℤ → ℤ) :
+private theorem sum_range_affine_unit (M : ℕ) (hM : 0 < M) (c u : ℤ) (hu : IsCoprime u M)
+    (φ : ℤ → ℤ) :
     ∑ n ∈ range M, φ ((c + n * u) % M) = ∑ n ∈ range M, φ n := by
   haveI : NeZero M := ⟨Nat.pos_iff_ne_zero.mp hM⟩
 
@@ -663,8 +667,8 @@ theorem sum_range_affine_unit (M : ℕ) (hM : 0 < M) (c u : ℤ) (hu : IsCoprime
     _ = ∑ n ∈ range M, ψ (n : ZMod M) := sum_zmod_eq_sum_range M ψ
     _ = ∑ n ∈ range M, φ n := sum_congr rfl fun n hn => (hR n hn).symm
 
-theorem sum_zmod_comp_val_affine (N g M : ℕ) [NeZero N] (hN : N = g * M) (hg : 0 < g) (hM : 0 < M)
-    (p r : ℤ) (hgr : (g : ℤ) ∣ r) (hcop : IsCoprime (r / g) (M : ℤ)) (F : ℤ → ℤ) :
+private theorem sum_zmod_comp_val_affine (N g M : ℕ) [NeZero N] (hN : N = g * M) (hg : 0 < g)
+    (hM : 0 < M) (p r : ℤ) (hgr : (g : ℤ) ∣ r) (hcop : IsCoprime (r / g) (M : ℤ)) (F : ℤ → ℤ) :
     ∑ s : ZMod N, F ((((p : ZMod N) + s * (r : ZMod N)).val : ℤ)) =
       g * ∑ n ∈ range M, F (p % g + g * n) := by
   obtain ⟨r', hr'⟩ := hgr
@@ -702,7 +706,7 @@ theorem sum_zmod_comp_val_affine (N g M : ℕ) [NeZero N] (hN : N = g * M) (hg :
   rw [sum_congr rfl fun n _ => hval n]
   exact sum_range_affine_unit M hM (p / g) r' hcop (fun k => F (p % g + g * k))
 
-theorem gcd_bookkeeping (N : ℕ) (hN : N ≠ 0) (r : ℤ) :
+private theorem gcd_bookkeeping (N : ℕ) (hN : N ≠ 0) (r : ℤ) :
     ((Int.gcd r N : ℤ) ∣ r) ∧ (Int.gcd r N ∣ N) ∧ 0 < Int.gcd r N ∧
       IsCoprime (r / Int.gcd r N) ((N / Int.gcd r N : ℕ) : ℤ) := by
   set g := Int.gcd r N with hgdef
@@ -717,7 +721,7 @@ theorem gcd_bookkeeping (N : ℕ) (hN : N ≠ 0) (r : ℤ) :
   rw [hdiv]
   exact Int.gcd_div_gcd_div_gcd hgpos
 
-theorem sum_zmod_Bt (N : ℕ) [NeZero N] (p r : ℤ) :
+private theorem sum_zmod_Bt (N : ℕ) [NeZero N] (p r : ℤ) :
     ∑ s : ZMod N, Bt N ((((p : ZMod N) + s * (r : ZMod N)).val : ℤ)) =
       N * (6 * (p % Int.gcd r N) ^ 2 - 6 * (Int.gcd r N) * (p % Int.gcd r N) + (Int.gcd r N) ^ 2)
         := by
@@ -749,184 +753,18 @@ set_option autoImplicit false
 
 open Finset
 
-namespace Ws18BDistTot
-
-def Bt (N t : ℤ) : ℤ := 6 * t ^ 2 - 6 * N * t + N ^ 2
-
-theorem sum_range_Bt_aux (N p₀ g : ℤ) (M : ℕ) :
-    ∑ j ∈ range M, Bt N (p₀ + g * j) =
-      M * (6 * p₀ ^ 2 - 6 * N * p₀ + N ^ 2) + (6 * p₀ * g - 3 * N * g) * (M * (M - 1)) +
-        g ^ 2 * ((M - 1) * M * (2 * M - 1)) := by
-  induction M with
-  | zero => simp
-  | succ M ih =>
-      rw [sum_range_succ, ih, Bt]
-      push_cast
-      ring
-
-theorem sum_range_Bt (p₀ g : ℤ) (M : ℕ) :
-    ∑ j ∈ range M, Bt (g * M) (p₀ + g * j) = M * (6 * p₀ ^ 2 - 6 * g * p₀ + g ^ 2) := by
-  rw [sum_range_Bt_aux]
-  ring
-
-theorem sum_zmod_eq_sum_range {β : Type*} [AddCommMonoid β] (N : ℕ) [NeZero N] (Φ : ZMod N → β) :
-    ∑ s : ZMod N, Φ s = ∑ i ∈ range N, Φ (i : ZMod N) := by
-  obtain ⟨n, rfl⟩ : ∃ n, N = n + 1 := ⟨N - 1, (Nat.succ_pred_eq_of_pos (Nat.pos_of_ne_zero
-    (NeZero.ne N))).symm⟩
-  rw [← Fin.sum_univ_eq_sum_range (fun i => Φ (i : ZMod (n + 1)))]
-  refine Fintype.sum_congr _ _ fun s => ?_
-  exact congrArg Φ (ZMod.natCast_zmod_val s).symm
-
-theorem periodic_shift {β : Type*} (M : ℕ) (h : ℕ → β) (hper : ∀ n, h (n + M) = h n) (k n : ℕ) :
-    h (k * M + n) = h n := by
-  induction k with
-  | zero => simp
-  | succ k ihk => rw [Nat.succ_mul, show k * M + M + n = (k * M + n) + M by ring, hper, ihk]
-
-theorem sum_range_mul_of_periodic {β : Type*} [AddCommMonoid β] (M g : ℕ) (h : ℕ → β)
-    (hper : ∀ n, h (n + M) = h n) : ∑ n ∈ range (g * M), h n = g • ∑ n ∈ range M, h n := by
-  induction g with
-  | zero => simp
-  | succ g ih =>
-      rw [Nat.succ_mul, sum_range_add, ih, succ_nsmul]
-      congr 1
-      exact sum_congr rfl fun n _ => periodic_shift M h hper g n
-
-theorem emod_progression (p₀ g k : ℤ) (M : ℕ) (hp₀ : 0 ≤ p₀) (hp₀g : p₀ < g) (hM : 0 < M) :
-    (p₀ + g * k) % (g * M) = p₀ + g * (k % M) := by
-  have hg : 0 < g := lt_of_le_of_lt hp₀ hp₀g
-  have hM' : (0 : ℤ) < M := by exact_mod_cast hM
-  have hk : k = M * (k / M) + k % M := (Int.mul_ediv_add_emod k M).symm
-  have hsplit : p₀ + g * k = (p₀ + g * (k % M)) + (g * M) * (k / M) := by
-    conv_lhs => rw [hk]
-    ring
-  rw [hsplit, Int.add_mul_emod_self_left]
-  apply Int.emod_eq_of_lt
-  · have := Int.emod_nonneg k (ne_of_gt hM')
-    positivity
-  · have h1 : k % M ≤ M - 1 := by have := Int.emod_lt_of_pos k hM'; omega
-    calc p₀ + g * (k % M) ≤ p₀ + g * (M - 1) := by gcongr
-      _ < g + g * (M - 1) := by linarith
-      _ = g * M := by ring
-
-theorem sum_range_affine_unit (M : ℕ) (hM : 0 < M) (c u : ℤ) (hu : IsCoprime u M) (φ : ℤ → ℤ) :
-    ∑ n ∈ range M, φ ((c + n * u) % M) = ∑ n ∈ range M, φ n := by
-  haveI : NeZero M := ⟨Nat.pos_iff_ne_zero.mp hM⟩
-
-  have hL : ∀ n : ℕ, φ ((c + n * u) % M) = (fun σ : ZMod M => φ (σ.val : ℤ)) ((c : ZMod M) + (n :
-    ZMod M) * (u : ZMod M)) := by
-    intro n
-    simp only
-    congr 1
-    rw [show ((c : ZMod M) + (n : ZMod M) * (u : ZMod M)) = ((c + n * u : ℤ) : ZMod M) by
-      push_cast; ring,
-      ZMod.val_intCast]
-  have hR : ∀ n ∈ range M, φ n = (fun σ : ZMod M => φ (σ.val : ℤ)) (n : ZMod M) := by
-    intro n hn
-    simp only
-    rw [ZMod.val_natCast_of_lt (mem_range.mp hn)]
-
-  have hunit : IsUnit (u : ZMod M) := by
-    obtain ⟨a, b, hab⟩ := hu
-    refine isUnit_iff_exists_inv.mpr ⟨(a : ZMod M), ?_⟩
-    have := congrArg (fun z : ℤ => (z : ZMod M)) hab
-    push_cast at this
-    rw [ZMod.natCast_self, mul_zero, add_zero, mul_comm] at this
-    exact this
-  let e : ZMod M ≃ ZMod M := (hunit.unit.mulRight).trans (Equiv.addLeft (c : ZMod M))
-  set ψ : ZMod M → ℤ := fun σ => φ (σ.val : ℤ) with hψ
-  calc ∑ n ∈ range M, φ ((c + n * u) % M)
-      = ∑ n ∈ range M, ψ ((c : ZMod M) + (n : ZMod M) * (u : ZMod M)) := sum_congr rfl fun n _ =>
-        hL n
-    _ = ∑ σ : ZMod M, ψ ((c : ZMod M) + σ * (u : ZMod M)) :=
-        (sum_zmod_eq_sum_range M (fun σ => ψ ((c : ZMod M) + σ * (u : ZMod M)))).symm
-    _ = ∑ σ : ZMod M, ψ σ := Fintype.sum_equiv e _ _ fun σ => by simp [e]
-    _ = ∑ n ∈ range M, ψ (n : ZMod M) := sum_zmod_eq_sum_range M ψ
-    _ = ∑ n ∈ range M, φ n := sum_congr rfl fun n hn => (hR n hn).symm
-
-theorem sum_zmod_comp_val_affine (N g M : ℕ) [NeZero N] (hN : N = g * M) (hg : 0 < g) (hM : 0 < M)
-    (p r : ℤ) (hgr : (g : ℤ) ∣ r) (hcop : IsCoprime (r / g) (M : ℤ)) (F : ℤ → ℤ) :
-    ∑ s : ZMod N, F ((((p : ZMod N) + s * (r : ZMod N)).val : ℤ)) =
-      g * ∑ n ∈ range M, F (p % g + g * n) := by
-  obtain ⟨r', hr'⟩ := hgr
-  have hr'eq : r / g = r' := by rw [hr', Int.mul_ediv_cancel_left _ (by exact_mod_cast hg.ne')]
-  rw [hr'eq] at hcop
-
-  rw [sum_zmod_eq_sum_range N]
-  set h : ℕ → ℤ := fun n => F ((((p : ZMod N) + (n : ZMod N) * (r : ZMod N)).val : ℤ)) with hh
-  have hper : ∀ n : ℕ, h (n + M) = h n := by
-    intro n
-    simp only [hh]
-    congr 3
-    push_cast
-    have hMr : (M : ZMod N) * (r : ZMod N) = 0 := by
-      rw [hr', show ((g * r' : ℤ) : ZMod N) = (g : ZMod N) * (r' : ZMod N) by push_cast; ring, ←
-        mul_assoc,
-        show (M : ZMod N) * (g : ZMod N) = ((g * M : ℕ) : ZMod N) by push_cast; ring, ← hN,
-          ZMod.natCast_self,
-        zero_mul]
-    rw [add_mul, hMr, add_zero]
-  rw [show range N = range (g * M) by rw [hN], sum_range_mul_of_periodic M g h hper, nsmul_eq_mul]
-  congr 1
-
-  have hp : p = g * (p / g) + p % g := (Int.mul_ediv_add_emod p g).symm
-  have hval : ∀ n : ℕ, h n = F (p % g + g * ((p / g + n * r') % M)) := by
-    intro n
-    simp only [hh]
-    rw [show ((p : ZMod N) + (n : ZMod N) * (r : ZMod N)) = ((p + n * r : ℤ) : ZMod N) by
-      push_cast; ring,
-      ZMod.val_intCast, hN]
-    push_cast
-    have : p + n * r = p % g + g * (p / g + n * r') := by rw [hr']; linear_combination hp
-    rw [this, emod_progression _ _ _ M (Int.emod_nonneg p (by exact_mod_cast hg.ne'))
-      (Int.emod_lt_of_pos p (by exact_mod_cast hg)) hM]
-  rw [sum_congr rfl fun n _ => hval n]
-  exact sum_range_affine_unit M hM (p / g) r' hcop (fun k => F (p % g + g * k))
-
-theorem gcd_bookkeeping (N : ℕ) (hN : N ≠ 0) (r : ℤ) :
-    ((Int.gcd r N : ℤ) ∣ r) ∧ (Int.gcd r N ∣ N) ∧ 0 < Int.gcd r N ∧
-      IsCoprime (r / Int.gcd r N) ((N / Int.gcd r N : ℕ) : ℤ) := by
-  set g := Int.gcd r N with hgdef
-  have h1 : (g : ℤ) ∣ r := Int.gcd_dvd_left _ _
-  have h2' : (g : ℤ) ∣ (N : ℤ) := Int.gcd_dvd_right _ _
-  have h2 : g ∣ N := by exact_mod_cast h2'
-  have hgpos : 0 < g := Int.gcd_pos_iff.mpr (Or.inr (by exact_mod_cast hN))
-  refine ⟨h1, h2, hgpos, ?_⟩
-  rw [Int.isCoprime_iff_gcd_eq_one]
-  have hdiv : ((N / g : ℕ) : ℤ) = (N : ℤ) / g := by
-    rw [Int.natCast_div]
-  rw [hdiv]
-  exact Int.gcd_div_gcd_div_gcd hgpos
-
-theorem sum_zmod_Bt (N : ℕ) [NeZero N] (p r : ℤ) :
-    ∑ s : ZMod N, Bt N ((((p : ZMod N) + s * (r : ZMod N)).val : ℤ)) =
-      N * (6 * (p % Int.gcd r N) ^ 2 - 6 * (Int.gcd r N) * (p % Int.gcd r N) + (Int.gcd r N) ^ 2)
-        := by
-  have hN : N ≠ 0 := NeZero.ne N
-  obtain ⟨hgr, hgN, hgpos, hcop⟩ := gcd_bookkeeping N hN r
-  set g := Int.gcd r N with hgdef
-  obtain ⟨M, hM⟩ := hgN
-  have hMpos : 0 < M := Nat.pos_of_ne_zero (by rintro rfl; exact hN (by rw [hM, mul_zero]))
-  have hNg : N / g = M := by rw [hM, Nat.mul_div_cancel_left _ hgpos]
-  rw [hNg] at hcop
-  rw [sum_zmod_comp_val_affine N g M hM hgpos hMpos p r hgr hcop (Bt N)]
-  rw [show (N : ℤ) = (g : ℤ) * (M : ℤ) by rw [hM]; push_cast; ring, sum_range_Bt]
-  ring
-
-end Ws18BDistTot
-
 namespace Ws18BDeg
 
-open Ws18BDistTot
+open Ws18BDist
 
-def J2 (n : ℕ) : ℤ := ∑ x ∈ n.divisorsAntidiagonal, (ArithmeticFunction.moebius x.1 : ℤ) • (x.2 :
-  ℤ) ^ 2
+private def J2 (n : ℕ) : ℤ :=
+  ∑ x ∈ n.divisorsAntidiagonal, (ArithmeticFunction.moebius x.1 : ℤ) • (x.2 : ℤ) ^ 2
 
-theorem sum_divisors_J2 (n : ℕ) (hn : 0 < n) : ∑ i ∈ n.divisors, J2 i = (n : ℤ) ^ 2 :=
+private theorem sum_divisors_J2 (n : ℕ) (hn : 0 < n) : ∑ i ∈ n.divisors, J2 i = (n : ℤ) ^ 2 :=
   (ArithmeticFunction.sum_eq_iff_sum_smul_moebius_eq (f := J2) (g := fun n => (n : ℤ) ^ 2)).mpr
     (fun _ _ => rfl) n hn
 
-theorem filter_dvd_divisors (n s : ℕ) (hn : n ≠ 0) :
+private theorem filter_dvd_divisors (n s : ℕ) (hn : n ≠ 0) :
     n.divisors.filter (· ∣ s) = (Nat.gcd s n).divisors := by
   ext i
   simp only [Finset.mem_filter, Nat.mem_divisors, Nat.dvd_gcd_iff]
@@ -936,7 +774,7 @@ theorem filter_dvd_divisors (n s : ℕ) (hn : n ≠ 0) :
   · rintro ⟨⟨his, hin⟩, -⟩
     exact ⟨⟨hin, hn⟩, his⟩
 
-theorem sum_moebius_gcd_sq (s N : ℕ) (hN : 0 < N) (hs : ¬ N ∣ s) :
+private theorem sum_moebius_gcd_sq (s N : ℕ) (hN : 0 < N) (hs : ¬ N ∣ s) :
     ∑ x ∈ N.divisorsAntidiagonal, (ArithmeticFunction.moebius x.1 : ℤ) • (Nat.gcd s x.2 : ℤ) ^ 2 =
       0 := by
   let F : ℕ → ℤ := fun n => if n ∣ s then J2 n else 0
@@ -951,7 +789,7 @@ theorem sum_moebius_gcd_sq (s N : ℕ) (hN : 0 < N) (hs : ¬ N ∣ s) :
   rw [this]
   simp [F, hs]
 
-theorem sum_moebius_mul_div_eq_totient (g : ℕ) (hg : 0 < g) :
+private theorem sum_moebius_mul_div_eq_totient (g : ℕ) (hg : 0 < g) :
     ∑ a ∈ g.divisors, (ArithmeticFunction.moebius a : ℤ) * (g / a : ℕ) = (Nat.totient g : ℤ) := by
   have h := (ArithmeticFunction.sum_eq_iff_sum_smul_moebius_eq (f := fun n => (Nat.totient n : ℤ))
     (g := fun n => (n : ℤ))).mp (fun n _ => by exact_mod_cast Nat.sum_totient n) g hg
@@ -959,7 +797,7 @@ theorem sum_moebius_mul_div_eq_totient (g : ℕ) (hg : 0 < g) :
     ℤ))]
   simp
 
-theorem weight_eq_sum (N : ℕ) (hN : 0 < N) (r : ℕ) :
+private theorem weight_eq_sum (N : ℕ) (hN : 0 < N) (r : ℕ) :
     ((N / Nat.gcd r N : ℕ) : ℤ) * (Nat.totient (Nat.gcd r N) : ℤ) =
       ∑ a ∈ N.divisors, if a ∣ r then (ArithmeticFunction.moebius a : ℤ) * (N / a : ℕ) else 0 := by
   set g := Nat.gcd r N with hgdef
@@ -981,7 +819,7 @@ theorem weight_eq_sum (N : ℕ) (hN : 0 < N) (r : ℕ) :
   push_cast
   ring
 
-theorem filter_dvd_range (a L : ℕ) (ha : 0 < a) :
+private theorem filter_dvd_range (a L : ℕ) (ha : 0 < a) :
     (Finset.range (a * L)).filter (a ∣ ·) = (Finset.range L).map ⟨(a * ·), mul_right_injective₀
       ha.ne'⟩ := by
   ext n
@@ -992,7 +830,7 @@ theorem filter_dvd_range (a L : ℕ) (ha : 0 < a) :
   · rintro ⟨j, hj, rfl⟩
     exact ⟨Nat.mul_lt_mul_of_pos_left hj ha, dvd_mul_right a j⟩
 
-theorem sum_zmod_ite_dvd (N a L : ℕ) [NeZero N] (hN : N = a * L) (G : ZMod N → ℤ) :
+private theorem sum_zmod_ite_dvd (N a L : ℕ) [NeZero N] (hN : N = a * L) (G : ZMod N → ℤ) :
     ∑ r : ZMod N, (if a ∣ r.val then G r else 0) = ∑ j ∈ Finset.range L, G ((a * j : ℕ) : ZMod N)
       := by
   subst hN
@@ -1005,7 +843,7 @@ theorem sum_zmod_ite_dvd (N a L : ℕ) [NeZero N] (hN : N = a * L) (G : ZMod N �
   rw [Finset.sum_congr rfl h1, ← Finset.sum_filter, filter_dvd_range a L ha, Finset.sum_map]
   rfl
 
-theorem sum_range_Bt_mul_mod (L : ℕ) (hL : 0 < L) (s : ℕ) :
+private theorem sum_range_Bt_mul_mod (L : ℕ) (hL : 0 < L) (s : ℕ) :
     ∑ j ∈ Finset.range L, Bt L (((j * s) % L : ℕ) : ℤ) = L * (Nat.gcd s L : ℤ) ^ 2 := by
   haveI : NeZero L := ⟨hL.ne'⟩
   have h := sum_zmod_Bt L 0 s
@@ -1017,7 +855,7 @@ theorem sum_range_Bt_mul_mod (L : ℕ) (hL : 0 < L) (s : ℕ) :
   · congr 2
     rw [← Nat.cast_mul, ZMod.val_natCast]
 
-theorem inner_sum (N a L : ℕ) [NeZero N] (hN : N = a * L) (s : ZMod N) :
+private theorem inner_sum (N a L : ℕ) [NeZero N] (hN : N = a * L) (s : ZMod N) :
     ∑ j ∈ Finset.range L, Bt N (((s * ((a * j : ℕ) : ZMod N)).val : ℤ)) =
       (a : ℤ) ^ 2 * (L * (Nat.gcd s.val L : ℤ) ^ 2) := by
   subst hN
@@ -1032,7 +870,7 @@ theorem inner_sum (N a L : ℕ) [NeZero N] (hN : N = a * L) (s : ZMod N) :
   push_cast
   ring
 
-theorem sum_zmod_weight_Bt (N : ℕ) [NeZero N] (s : ZMod N) (hs : s ≠ 0) :
+private theorem sum_zmod_weight_Bt (N : ℕ) [NeZero N] (s : ZMod N) (hs : s ≠ 0) :
     ∑ r : ZMod N, (((N / Nat.gcd r.val N : ℕ) : ℤ) * (Nat.totient (Nat.gcd r.val N) : ℤ)) *
       Bt N (((s * r).val : ℤ)) = 0 := by
   have hN : 0 < N := Nat.pos_of_ne_zero (NeZero.ne N)
@@ -1080,7 +918,7 @@ theorem sum_zmod_weight_Bt (N : ℕ) [NeZero N] (s : ZMod N) (hs : s ≠ 0) :
 
 end Ws18BDeg
 
-open Ws18BDistTot Ws18BDeg in
+open Ws18BDist Ws18BDeg in
 private theorem siegelTotient_solution (N : ℕ) [NeZero N]
     (s : ZMod N) (hs : s ≠ 0) :
     ∑ r : ZMod N,
@@ -1096,28 +934,28 @@ set_option autoImplicit false
 
 namespace Peak
 
-def W (N v : ℕ) : ℤ := 6 * (v : ℤ) ^ 2 - 6 * (N : ℤ) * (v : ℤ) + (N : ℤ) ^ 2
+private def W (N v : ℕ) : ℤ := 6 * (v : ℤ) ^ 2 - 6 * (N : ℤ) * (v : ℤ) + (N : ℤ) ^ 2
 
-theorem W_zero (N : ℕ) : W N 0 = (N : ℤ) ^ 2 := by simp [W]
+private theorem W_zero (N : ℕ) : W N 0 = (N : ℤ) ^ 2 := by simp [W]
 
-theorem W_le_sq {N v : ℕ} (hv : v ≤ N) : W N v ≤ (N : ℤ) ^ 2 := by
+private theorem W_le_sq {N v : ℕ} (hv : v ≤ N) : W N v ≤ (N : ℤ) ^ 2 := by
   have : (v : ℤ) ≤ N := by exact_mod_cast hv
   have h0 : (0 : ℤ) ≤ v := by exact_mod_cast Nat.zero_le v
   simp only [W]
   nlinarith
 
-theorem neg_sq_le_W (N v : ℕ) : -(N : ℤ) ^ 2 ≤ W N v := by
+private theorem neg_sq_le_W (N v : ℕ) : -(N : ℤ) ^ 2 ≤ W N v := by
   simp only [W]
   nlinarith [sq_nonneg (2 * (v : ℤ) - N)]
 
-theorem W_one_sub (N v : ℕ) : W N 1 - W N v = 6 * ((v : ℤ) - 1) * ((N : ℤ) - 1 - v) := by
+private theorem W_one_sub (N v : ℕ) : W N 1 - W N v = 6 * ((v : ℤ) - 1) * ((N : ℤ) - 1 - v) := by
   simp only [W]; push_cast; ring
 
 section sums
 
 variable {N : ℕ} [NeZero N]
 
-theorem sum_W_val : ∑ u : ZMod N, W N u.val = N := by
+private theorem sum_W_val : ∑ u : ZMod N, W N u.val = N := by
   have h := siegelSum_solution N 0 1
   simp only [Int.cast_zero, Int.cast_one, zero_add, mul_one] at h
   have hg : Int.gcd 1 (N : ℤ) = 1 := by simp
@@ -1126,7 +964,7 @@ theorem sum_W_val : ∑ u : ZMod N, W N u.val = N := by
     ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow] at h
   simpa [W] using h
 
-theorem sum_sum_W_linear (x y a b : ZMod N) (hab : a * x + b * y = 1) :
+private theorem sum_sum_W_linear (x y a b : ZMod N) (hab : a * x + b * y = 1) :
     ∑ r : ZMod N, ∑ s : ZMod N, W N (r * x + s * y).val = (N : ℤ) ^ 2 := by
   set F : ZMod N → ℤ := fun u => ∑ r : ZMod N, ∑ s : ZMod N, W N (r * x + s * y + u).val with hF
   have hshift : ∀ u, F u = F 0 := by
@@ -1171,7 +1009,8 @@ theorem sum_sum_W_linear (x y a b : ZMod N) (hab : a * x + b * y = 1) :
   have hF0 := mul_left_cancel₀ hN this
   simpa [hF] using hF0
 
-theorem sum_W_add_mul_le (x y : ZMod N) : ∑ s : ZMod N, W N (x + s * y).val ≤ (N : ℤ) ^ 3 := by
+private theorem sum_W_add_mul_le (x y : ZMod N) :
+    ∑ s : ZMod N, W N (x + s * y).val ≤ (N : ℤ) ^ 3 := by
   have h := siegelSum_solution N (x.val : ℤ) (y.val : ℤ)
   have hx : ((x.val : ℤ) : ZMod N) = x := by rw [Int.cast_natCast, ZMod.natCast_zmod_val]
   have hy : ((y.val : ℤ) : ZMod N) = y := by rw [Int.cast_natCast, ZMod.natCast_zmod_val]
@@ -1206,14 +1045,14 @@ section construction
 
 variable {N : ℕ} [NeZero N]
 
-def wt (N : ℕ) (r : ZMod N) : ℕ := (N / Nat.gcd r.val N) * Nat.totient (Nat.gcd r.val N)
+private def wt (N : ℕ) (r : ZMod N) : ℕ := (N / Nat.gcd r.val N) * Nat.totient (Nat.gcd r.val N)
 
-theorem wt_pos (r : ZMod N) : 0 < wt N r := by
+private theorem wt_pos (r : ZMod N) : 0 < wt N r := by
   have hNpos : 0 < N := Nat.pos_of_ne_zero (NeZero.ne N)
   have hg : 0 < Nat.gcd r.val N := Nat.gcd_pos_of_pos_right _ hNpos
   refine Nat.mul_pos (Nat.div_pos (Nat.gcd_le_right _ hNpos) hg) (Nat.totient_pos.mpr hg)
 
-theorem sum_mZ_mul (K : ℤ) (C : ZMod N → ℤ) (w : ZMod N → ZMod N → ℤ) :
+private theorem sum_mZ_mul (K : ℤ) (C : ZMod N → ℤ) (w : ZMod N → ZMod N → ℤ) :
     ∑ r : ZMod N, ∑ s : ZMod N,
       (K - K * (if r = 0 ∧ s = 0 then 1 else 0) - (if r = 1 then 1 else 0) + (if r = 0 then C s
         else 0)) * w r s =
