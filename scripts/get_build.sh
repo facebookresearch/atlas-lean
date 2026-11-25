@@ -27,8 +27,15 @@ id=""
 for sha in $(git rev-list --first-parent --max-count=100 HEAD); do
   # A build made with another toolchain or other packages is of no use here.
   git diff --quiet "$sha" HEAD -- lean-toolchain lake-manifest.json || break
-  id="$(gh api "repos/$repo/actions/artifacts?name=lake-build-$sha" \
-    --jq '[.artifacts[] | select(.expired | not)][0].id // empty')" || id=""
+  # Take only the build of a successful merge-group run of ci.yml for this
+  # commit, as build-cache.yml does: a pull request's run can upload an
+  # artifact under any name.
+  run="$(gh api "repos/$repo/actions/workflows/ci.yml/runs?event=merge_group&head_sha=$sha&status=success" \
+    --jq '.workflow_runs[0].id // empty')" || run=""
+  if [[ -n "$run" ]]; then
+    id="$(gh api "repos/$repo/actions/runs/$run/artifacts?name=lake-build-$sha" \
+      --jq '[.artifacts[] | select(.expired | not)][0].id // empty')" || id=""
+  fi
   if [[ -n "$id" ]]; then break; fi
 done
 
@@ -43,7 +50,8 @@ tmp="$(mktemp -d .lake/get-build.XXXXXX)"
 trap 'rm -rf "$tmp"' EXIT
 echo "Downloading CI's build of $sha (about 2 GB)..."
 if gh api "repos/$repo/actions/artifacts/$id/zip" > "$tmp/build.zip" &&
-  unzip -p "$tmp/build.zip" lake-build.tar.zst | zstd -dc | tar -x -C "$tmp"; then
+  unzip -p "$tmp/build.zip" lake-build.tar.zst | zstd -dc | tar -x -C "$tmp" &&
+  [[ -d "$tmp/build" ]]; then
   if [[ -d .lake/build ]]; then mv .lake/build "$tmp/old"; fi
   mv "$tmp/build" .lake/build
   echo "Installed CI's build of $sha in .lake/build; now run lake build."
