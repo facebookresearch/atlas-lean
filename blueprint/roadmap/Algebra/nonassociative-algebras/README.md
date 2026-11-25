@@ -10,3 +10,8 @@ Lie algebras and their structure and representations, free Lie algebras, Poisson
 - [Witt's formula for free Lie algebras](witt-s-formula-for-free-lie-algebras/README.md)
 - [Universal enveloping algebra of a Lie algebra](universal-enveloping-algebra.md)
 - [Poincaré–Birkhoff–Witt theorem](poincare-birkhoff-witt-theorem.md)
+- [Engel's theorem](engel-theorem.md)
+- [Cartan's criterion for a zero solvable radical in characteristic zero](semisimplicity-criterion-killing.md)
+- [Ideal of a Lie algebra](lie-algebra-ideal.md)
+- [Killing form of a Lie algebra](killing-form.md)
+- [Solvable Lie algebra](solvable-lie-algebra.md)

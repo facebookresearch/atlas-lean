@@ -2,9 +2,11 @@
 
 Write $P_hg(x)$ for the whole-line Gaussian heat evolution, with $P_hg=g$
 when $h\le0$, and
-\[
+
+$$
 D_\nu f(t,x)=\int_0^t P_{\nu(t-s)}(f(s,\cdot))(x)\,ds.
-\]
+$$
+
 A field $g$ has uniform exponential growth on $[0,T]$ when there exist
 $M,c\ge0$ such that $|g(s,x)|\le M e^{c|x|}$ for every $s\in[0,T]$ and
 $x\in\mathbb R$. Different fields may have different constants.
@@ -16,9 +18,11 @@ $s\in[0,T]$, $x\in\mathbb R$. No time derivative of these fields is assumed.
 
 For $\nu\ge0$, $t\in[0,T]$ and $x\in\mathbb R$, the ordinary derivative of
 the actual first spatial derivative exists and satisfies
-\[
+
+$$
 \partial_x(\partial_xD_\nu f)(t,x)=D_\nu f_{xx}(t,x).
-\]
+$$
+
 The statement includes zero viscosity and both strip endpoints.
 
 The construction and spatial transfer argument are those of

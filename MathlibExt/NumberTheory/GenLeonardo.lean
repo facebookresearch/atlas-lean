@@ -24,7 +24,7 @@ Leonardo numbers `1, 1, 3, 5, 9, 15, …`.
 
 The companion sequence is determined by sums of pairs of generalized Leonardo numbers.
 
-Main result:
+Main results:
 
 * `genLeonardo_shift`: for `1 ≤ t ≤ n` and `n + 1 ≤ m + t`,
   `L_{k,m} L_{k,n} - L_{k,m+t} L_{k,n-t}
@@ -32,6 +32,9 @@ Main result:
       - k (L_{k,m} + L_{k,n} - L_{k,m+t} - L_{k,n-t})`
   (Kuhapatanakul, *Note on the Generalized Leonardo Numbers*, Fibonacci Quarterly 62 (2024),
   Theorem 2.5).
+
+* `genLeonardo_sq_sum_diff` gives the difference and sum of squares at the sum and difference
+  indices by specializing the shift identity at two consecutive shifts.
 
 Further identities from the paper are stated in `WantedExt.NumberTheory.GenLeonardoWanted`.
 
@@ -171,5 +174,42 @@ public theorem genLeonardo_shift (k : ℤ) (m n t : ℕ)
     eq_sub_of_add_eq (genLeonardo_add_eq_mul_fib k i)
   rw [hL (d + e + 1), hL (d + s + 1), hL (d + e + s + 2), hL d, hL e, hL s]
   linear_combination (1 + k) ^ 2 * fib_vajda d e s
+
+/-- **Sum-and-difference square identities for generalized Leonardo numbers.** For every
+integer $k$ and all natural numbers $m$, $n$ with $1 \le n < m$, the generalized Leonardo
+numbers $L_{k,n}$ satisfy
+$$L_{k,m+n}^2 - L_{k,m-n}^2 =
+(L_{k,2m+1} + k)(L_{k,2n-1} + k) - 2k (L_{k,m+n} - L_{k,m-n})$$
+and
+$$L_{k,m+n}^2 + L_{k,m-n-1}^2 =
+(L_{k,2m} + k)(L_{k,2n} + k) - 2k (L_{k,m+n} + L_{k,m-n-1}) - 2k^2.$$
+
+In the second identity the last term inside the parentheses is $L_{k,m-n-1}$. The paper as
+printed shows $L_{k,m-n}$ there, which is false: at $k = 1$, $m = 3$, $n = 1$ the printed
+identity reads $82 = 78$. The reading used here agrees with the paper's outline derivation.
+
+Source: Kuhapatanakul, *Note on the Generalized Leonardo Numbers*, Fibonacci
+Quarterly (2024), Theorem 2.6 (`fq-2024-kuhapatanakul05292024-thm-2.6`). -/
+public theorem genLeonardo_sq_sum_diff (k : ℤ) (m n : ℕ)
+    (hn : 1 ≤ n) (hmn : n < m) :
+    (genLeonardo k (m + n) ^ 2 - genLeonardo k (m - n) ^ 2
+      = (genLeonardo k (2 * m + 1) + k) * (genLeonardo k (2 * n - 1) + k)
+        - 2 * k * (genLeonardo k (m + n) - genLeonardo k (m - n))) ∧
+    (genLeonardo k (m + n) ^ 2 + genLeonardo k (m - n - 1) ^ 2
+      = (genLeonardo k (2 * m) + k) * (genLeonardo k (2 * n) + k)
+        - 2 * k * (genLeonardo k (m + n) + genLeonardo k (m - n - 1))
+        - 2 * k ^ 2) := by
+  constructor
+  · -- Shifting both copies of the index `m + n` by `m - n + 1` gives an even exponent.
+    have h := genLeonardo_shift k (m + n) (m + n) (m - n + 1) (by omega) (by omega) (by omega)
+    rw [Nat.add_sub_cancel_left, Nat.add_sub_cancel, show m + n + (m - n + 1) = 2 * m + 1 by omega,
+      show m + n - (m - n + 1) = 2 * n - 1 by omega, show 2 * n - 1 + 1 = 2 * n by omega,
+      (even_two_mul n).neg_one_pow] at h
+    linear_combination h
+  · -- Shifting by `m - n` instead gives an odd exponent.
+    have h := genLeonardo_shift k (m + n) (m + n) (m - n) (by omega) (by omega) (by omega)
+    rw [Nat.add_sub_cancel_left, show m + n + (m - n) = 2 * m by omega,
+      show m + n - (m - n) = 2 * n by omega, pow_succ, (even_two_mul n).neg_one_pow] at h
+    linear_combination h
 
 end MetaMathlibExt

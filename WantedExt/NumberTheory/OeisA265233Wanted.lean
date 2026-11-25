@@ -50,44 +50,13 @@ public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Analysis.Real.Sqrt
 public import MathlibExt.NumberTheory.ArithmeticFunction.BinomialPowerRealizability
 public import MathlibExt.NumberTheory.FranelDiagonalCoeff
+public import MathlibExt.NumberTheory.OeisA265233
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.OeisA265233Wanted
-
-/-- **The sequence A265233.** The sequence $(a_n)_{n \ge 0}$ of rational numbers is given by
-$a_0 = 1$, $a_1 = 1$, $a_2 = 7$, $a_3 = 56$ and, for every integer $N \ge 4$,
-
-$$N^2 a_N = (19N^2 - 19N + 6)\, a_{N-1} - 96 (N-1)^2 a_{N-2} + 144 (N-1)(N-2)\, a_{N-3}.$$
-
-Source: Juntao Jin, "An Explicit Formula and a Recurrence for OEIS A265233", Theorem 1(2). -/
-def a265233 : ℕ → ℚ
-  | 0 => 1
-  | 1 => 1
-  | 2 => 7
-  | 3 => 56
-  | n + 4 =>
-      ((19 * ((n : ℚ) + 4) ^ 2 - 19 * ((n : ℚ) + 4) + 6) *
-          a265233 (n + 3)
-        - 96 * ((n : ℚ) + 3) ^ 2 * a265233 (n + 2)
-        + 144 * ((n : ℚ) + 3) * ((n : ℚ) + 2) *
-          a265233 (n + 1))
-        / ((n : ℚ) + 4) ^ 2
-
-/-- **Explicit formula for A265233 in terms of Franel numbers.** Let $(a_n)_{n \ge 0}$ be the
-sequence A265233 and let $f_m = \sum_{k=0}^{m} \binom{m}{k}^3$ be the $m$-th Franel number. For
-every integer $n \ge 1$,
-
-$$a_n = \frac{1}{6} \sum_{m=0}^{n} \binom{n}{m} 4^{n-m} f_m.$$
-
-Source: Juntao Jin, "An Explicit Formula and a
-Recurrence for OEIS A265233", Theorem 1. -/
-theorem_wanted a265233_eq_sum_franel (n : ℕ) (hn : 1 ≤ n) :
-    a265233 n = (1 / 6) * ∑ m ∈ Finset.range (n + 1),
-      (Nat.choose n m : ℚ) * 4 ^ (n - m) *
-        (MetaMathlibExt.binomialPowerSeq 3 0 m : ℚ)
 
 /-- **Generating function of A265233.** Let $(a_n)_{n \ge 0}$ be the sequence A265233 and let
 ${}_2F_1$ be the Gauss hypergeometric function. For every real number $x$ with $|x| < 1/12$ and

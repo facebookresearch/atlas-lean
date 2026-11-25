@@ -42,15 +42,19 @@ open MathlibExt.AlgebraicGeometry.CurvePositivity
 
 universe u
 
-/-- The precise degree-zero torsion exception in semiampleness. -/
+/-- Let $k$ be an algebraically closed field, $C$ a smooth proper integral curve over $k$ and $L$ a
+line bundle on $C$. Then some positive tensor power of $L$ is globally generated (semiampleness) if
+and only if $\deg L > 0$ or some positive tensor power of $L$ is trivial. -/
 theorem_wanted semiample_iff (k : Type u) [Field k] [IsAlgClosed k]
     (C : Over (Spec (.of k))) [IsProper C.hom]
     [SmoothOfRelativeDimension 1 C.hom] [IsIntegral C.left]
     (L : C.left.Modules)
     (hL : IsLineBundle L) :
-    IsSemiample L ↔ 0 < degree C.hom L hL ∨ IsTorsion L
+    IsSemiample L hL ↔ 0 < degree C.hom L hL ∨ IsTorsion L hL
 
-/-- Positive asymptotic section growth agrees with numerical positive degree. -/
+/-- Let $k$ be an algebraically closed field, $C$ a smooth proper integral curve over $k$ and $L$ a
+line bundle on $C$. Then there are $c > 0$ and $N$ with $\dim_k H^0(C, L^{\otimes n}) \ge c n$ for
+all $n \ge N$ (`IsBigOnCurve`) if and only if $\deg L > 0$. -/
 theorem_wanted big_iff (k : Type u) [Field k] [IsAlgClosed k]
     (C : Over (Spec (.of k))) [IsProper C.hom]
     [SmoothOfRelativeDimension 1 C.hom] [IsIntegral C.left]
