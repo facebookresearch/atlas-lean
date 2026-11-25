@@ -39,7 +39,7 @@ private def jamesClusterHull {X : Type*} [TopologicalSpace X]
     [AddCommGroup X] [Module ℝ X] (u : ℕ → X) : Set X :=
   closedConvexHull ℝ (jamesClusterSet u)
 
-private def jamesDualBall (E : Type*) [NormedAddCommGroup E] [NormedSpace ℝ E] :
+private noncomputable def jamesDualBall (E : Type*) [NormedAddCommGroup E] [NormedSpace ℝ E] :
     Set (WeakDual ℝ E) :=
   WeakDual.toStrongDual ⁻¹' Metric.closedBall (0 : StrongDual ℝ E) 1
 
@@ -383,7 +383,7 @@ private theorem james_clusterHull_eq_iInter_tail
   · intro x hx
     simp only [Set.mem_iInter]
     intro n
-    apply closedConvexHull_min (𝕜 := ℝ)
+    apply closedConvexHull_min (𝕜 := ℝ) (s := jamesClusterSet u)
       (t := closure (convexHull ℝ (u '' Set.Ici n)))
     · intro z hz
       have htail : z ∈ closure (u '' Set.Ici n) := by

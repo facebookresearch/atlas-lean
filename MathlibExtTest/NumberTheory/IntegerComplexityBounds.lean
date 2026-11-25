@@ -23,3 +23,13 @@ example : 7 < cx 13 := complexity_lt_of_gt_extremal 2 1 13 (by decide) (by decid
 
 -- The two internal thresholds between consecutive powers of three.
 example : [11, 12, 17, 18].map complexityLowerBoundG = [6, 7, 7, 8] := by decide
+
+-- At two the lower bound equals the cost of the expression 1 + 1.
+example : cx 2 = 2 :=
+  Nat.le_antisymm (IntegerComplexity.complexity_le (e := .add .one .one) rfl)
+    (complexityLowerBoundG_le 2 (by decide))
+
+-- Each left endpoint has the lower bound for the interval it starts.
+example : 6 ≤ cx 9 := complexityLowerBoundG_le 9 (by decide)
+example : 7 ≤ cx 12 := complexityLowerBoundG_le 12 (by decide)
+example : 8 ≤ cx 18 := complexityLowerBoundG_le 18 (by decide)

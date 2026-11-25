@@ -14,6 +14,7 @@ public import Mathlib.NumberTheory.PrimeCounting
 public import Mathlib.NumberTheory.LSeries.Basic
 public import Mathlib.Analysis.Asymptotics.AsymptoticEquivalent
 import Mathlib.NumberTheory.Chebyshev
+import Mathlib.Data.Nat.Factorization.Induction
 import Mathlib.Data.Nat.Prime.Factorial
 import Mathlib.Data.Nat.Choose.Factorization
 import MathlibExt.NumberTheory.PrimeGapLiminf
@@ -152,6 +153,68 @@ public theorem isCompletelyAdditiveNat_additiveOfPrimeValues (v : ℕ → ℕ) :
   unfold additiveOfPrimeValues
   rw [Nat.factorization_mul ha.ne' hb.ne']
   exact Finsupp.sum_add_index' (fun _ => zero_mul _) (fun _ _ _ => add_mul _ _ _)
+
+namespace sum_height_eq_sum_prime_powers
+
+open Finset
+
+private theorem height_eq_prime_values {H : ℕ → ℕ} (hH : IsCompletelyAdditiveNat H)
+    (n : ℕ) (hn : 0 < n) : H n = additiveOfPrimeValues H n := by
+  induction n using Nat.prime_composite_induction with
+  | zero => omega
+  | one => rw [hH.map_one, additiveOfPrimeValues_one]
+  | prime p hp => exact (additiveOfPrimeValues_prime H hp).symm
+  | composite a ha iha b hb ihb =>
+    have ha' : 0 < a := by omega
+    have hb' : 0 < b := by omega
+    rw [hH a b ha' hb', isCompletelyAdditiveNat_additiveOfPrimeValues H a b ha' hb',
+      iha ha', ihb hb']
+
+private theorem sum_height_eq_factorization_sum {H : ℕ → ℕ} (hH : IsCompletelyAdditiveNat H)
+    (n : ℕ) :
+    ∑ k ∈ Icc 1 n, H k = ∑ p ∈ n.primesLE, n.factorial.factorization p * H p := by
+  have hfac : ∑ k ∈ Icc 1 n, H k = H n.factorial := by
+    induction n with
+    | zero => simp [hH.map_one]
+    | succ n ih =>
+      rw [sum_Icc_succ_top (by omega), ih, Nat.factorial_succ,
+        hH _ _ (Nat.succ_pos n) (Nat.factorial_pos n), add_comm]
+  rw [hfac, height_eq_prime_values hH _ (Nat.factorial_pos n), additiveOfPrimeValues]
+  apply Finsupp.sum_of_support_subset _ _ _ (by simp)
+  intro p hp
+  obtain ⟨hprime, hdvd, _⟩ := Nat.mem_primeFactors.mp hp
+  exact Nat.mem_primesLE.mpr ⟨hprime.dvd_factorial.mp hdvd, hprime⟩
+
+end sum_height_eq_sum_prime_powers
+
+/-- **Prime-power decomposition of summatory heights.** Let $H : \mathbb{N} \to \mathbb{N}$ be
+completely additive on the positive integers, and let $x \ge 2$ be a natural number. Then
+$$\sum_{m=1}^{x} H(m) = \sum_{p \le x} \sum_{\alpha \ge 1,\ p^\alpha \le x} H(p)
+\left\lfloor \frac{x}{p^\alpha} \right\rfloor,$$
+where $p$ runs over the primes $p \le x$.
+
+The paper states this for real $x \ge 2$; both sides depend on $x$ only through $\lfloor x \rfloor$.
+
+Source: Hartosh Singh Bal, *Completely Additive Height Functions: Profile Laws, Matula Bounds,
+and Inverse Growth*, INTEGERS 26 (2026), Article A116, Proposition 7
+(`integers-2026-A116-prop-7`), Equation (6). -/
+public theorem sum_height_eq_sum_prime_powers {H : ℕ → ℕ} (hH : IsCompletelyAdditiveNat H)
+    {x : ℕ} (hx : 2 ≤ x) :
+    ∑ m ∈ Finset.Icc 1 x, H m =
+      ∑ p ∈ (Finset.Iic x).filter Nat.Prime,
+        ∑ α ∈ (Finset.Icc 1 x).filter (fun α => p ^ α ≤ x), H p * (x / p ^ α) := by
+  rw [sum_height_eq_sum_prime_powers.sum_height_eq_factorization_sum hH,
+    ← Nat.range_succ_eq_Iic, ← Nat.primesLE_eq_filter_range]
+  refine Finset.sum_congr rfl fun p hp => ?_
+  have hprime := Nat.prime_of_mem_primesLE hp
+  have hcut : (Finset.Icc 1 x).filter (fun α => p ^ α ≤ x) = Finset.Icc 1 (Nat.log p x) := by
+    ext α
+    simp only [Finset.mem_filter, Finset.mem_Icc,
+      ← Nat.le_log_iff_pow_le hprime.one_lt (by omega : x ≠ 0)]
+    have := Nat.log_le_self p x
+    omega
+  rw [hcut, Nat.factorization_factorial hprime (Nat.lt_add_one (Nat.log p x)),
+    Finset.Ico_add_one_right_eq_Icc, Nat.mul_comm, Finset.mul_sum]
 
 /-- **Gutman–Ivić maximal Matula numbers.** Write $p_i$ for the $i$-th prime, indexed from one
 ($p_1 = 2$). For a natural number $n$, $P(n)$ is the result of applying $i \mapsto p_i$ to $8$
@@ -335,15 +398,6 @@ private lemma sum_prime_heights (n : ℕ) :
     · have hc : (n + 1).primeCounting = n.primeCounting := Nat.count_succ_eq_count h
       simpa [Nat.primesLE_succ, h, hc] using ih
 
-private lemma factorial_height (n : ℕ) :
-    ∑ k ∈ Icc 1 n, height k = height n.factorial := by
-  induction n with
-  | zero => simp [height, canonicalSeqHeight, additiveOfPrimeValues_one]
-  | succ n ih =>
-    rw [sum_Icc_succ_top (by omega), ih, Nat.factorial_succ, height, canonicalSeqHeight,
-      isCompletelyAdditiveNat_additiveOfPrimeValues _ _ _ (Nat.succ_pos n) (Nat.factorial_pos n),
-      add_comm]
-
 private noncomputable abbrev harmonic (x : ℝ) :=
   ∑ p ∈ Nat.primesLE ⌊x⌋₊, (height p : ℝ) / p
 
@@ -353,18 +407,10 @@ private noncomputable abbrev total (x : ℝ) :=
 -- Legendre's bound for the exponent of p in n! controls all multiples of p at once.
 private lemma total_le {x : ℝ} (hx : 0 ≤ x) : total x ≤ 2 * x * harmonic x := by
   let n := ⌊x⌋₊
-  have hs : n.factorial.factorization.support ⊆ n.primesLE := by
-    intro p hp
-    have h := Nat.mem_primeFactors.mp (show p ∈ n.factorial.primeFactors from hp)
-    exact Nat.mem_primesLE.mpr ⟨h.1.dvd_factorial.mp h.2.1, h.1⟩
-  have hfac : height n.factorial = ∑ p ∈ n.primesLE, n.factorial.factorization p * height p := by
-    unfold height canonicalSeqHeight additiveOfPrimeValues
-    rw [Finsupp.sum_of_support_subset _ hs _ (by simp)]
-    exact sum_congr rfl fun p hp => by
-      rw [Nat.prime_of_mem_primesLE hp |>.factorization]
-      simp
+  have hsum := sum_height_eq_sum_prime_powers.sum_height_eq_factorization_sum
+    (H := height) (isCompletelyAdditiveNat_additiveOfPrimeValues _) n
   change (∑ k ∈ Icc 1 n, (height k : ℝ)) ≤ 2 * x * ∑ p ∈ n.primesLE, (height p : ℝ) / p
-  rw [← Nat.cast_sum, factorial_height, hfac, Nat.cast_sum, mul_sum]
+  rw [← Nat.cast_sum, hsum, Nat.cast_sum, mul_sum]
   refine sum_le_sum fun p hp => ?_
   have hp₂ := Nat.two_le_of_mem_primesLE hp
   have he : (p - 1) * n.factorial.factorization p ≤ n :=

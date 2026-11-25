@@ -10,7 +10,9 @@ module
 
 public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.Data.PNat.Defs
+public import Mathlib.Topology.Bases
 public import Mathlib.Topology.Constructions
+import Mathlib.Data.Nat.GCD.Basic
 
 /-!
 # Macías's comaximal space
@@ -56,5 +58,21 @@ def primeSet : Set ℕ+ :=
 different from $1$, this is the subset consisting of the prime numbers. -/
 def primeSet₁ : Set {x : ℕ+ // (x : ℕ) ≠ 1} :=
   {x | Nat.Prime ((x : ℕ+) : ℕ)}
+
+/-- **Macías's coprime sets form a basis.** For a positive integer $n$ let $\Omega_n$ be the set
+of positive integers coprime to $n$. The family $\beta = \{\Omega_n : n \ge 1\}$ is a basis of
+the topology on the positive integers that it generates (Macías's coprime topology).
+
+Source: Jhixon Macías, "Another Topological Proof of the
+Infinitude of Prime Numbers", Theorem 1. -/
+theorem maciasBasis_isTopologicalBasis :
+    @TopologicalSpace.IsTopologicalBasis ℕ+ maciasTopology
+      maciasBasis := by
+  let := maciasTopology
+  apply TopologicalSpace.isTopologicalBasis_of_subbasis_of_finiteInter rfl
+  constructor
+  · exact ⟨1, Set.eq_univ_of_forall fun m ↦ Nat.coprime_one_left (m : ℕ)⟩
+  · rintro _ ⟨r, rfl⟩ _ ⟨s, rfl⟩
+    exact ⟨⟨r * s, Nat.mul_pos r.pos s.pos⟩, Set.ext fun _ ↦ Nat.coprime_mul_iff_left⟩
 
 end MathlibExt.Topology.MaciasCoprimeTopologyWanted

@@ -14,7 +14,9 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.NumberTheory.LSeries.Basic
 public import Mathlib.NumberTheory.Padics.PadicVal.Defs
 public import MathlibExt.Analysis.Series.ThreeAdicMultiples
+public import MathlibExt.Analysis.Series.TwoAdicMultiples
 public import MathlibExt.Analysis.Series.TwoAdicNonmultiples
+public import MathlibExt.Analysis.Series.TwoAdicTruncatedRegroup
 public import MathlibExt.Analysis.SpecialFunctions.LambertSeries
 public import MathlibExt.Analysis.SpecialFunctions.QPochhammer
 
@@ -118,35 +120,6 @@ public theorem_wanted tsum_baseAdic_weighted_multisection (B : ℕ) (hB : 2 ≤ 
         + χ x.1 * c (B * (x.2 + 1) * B ^ x.1))
       = ∑' m : ℕ, (φ (padicValNat B (m + 1))
           + ∑ k ∈ Finset.range (padicValNat B (m + 1)), χ k) * c (m + 1)
-
-/-- **Truncated two-adic regrouping.** For every natural number $J$ and all sequences
-$\varphi, c : \mathbb{N} \to \mathbb{C}$,
-$$\sum_{j \ge J,\ n \ge 1} \varphi(j) c_{(2n-1) 2^j}
-= \sum_{p \ge 1} \varphi(J + \nu_2(p)) c_{p 2^J},$$
-where $\nu_2(p)$ is the exponent of the largest power of $2$ dividing $p$, the left side runs over
-the pairs $(j, n)$ of natural numbers with $j \ge J$ and $n \ge 1$, the right side runs over the
-positive integers $p$, and each side is an unconditional sum, taken to be $0$ when its family is
-not summable.
-
-Source: Christophe Vignat and Michael Milgram, *Curious Multisection Identities by
-Index Factorization*, Journal of Integer Sequences 27 (2024), Article 24.5.5,
-Proposition 13, in sum form (`jis-2024-24.5.5-prop-13`). -/
-public theorem_wanted tsum_twoAdic_truncated_regroup (J : ℕ) (φ c : ℕ → ℂ) :
-    ∑' x : ℕ × ℕ, φ (x.1 + J) * c ((2 * x.2 + 1) * 2 ^ (x.1 + J))
-      = ∑' p : ℕ, φ (J + padicValNat 2 (p + 1)) * c ((p + 1) * 2 ^ J)
-
-/-- **Regrouping the multiples of a power of 2 by their 2-adic factorization.** For every
-natural number $J$ and every sequence $(c_m)_{m \ge 1}$ of complex numbers,
-$$\sum_{j \ge J,\, n \ge 1} c_{(2n-1) 2^j} = \sum_{p \ge 1} c_{p 2^J},$$
-where the left side is an unconditional sum over the pairs $(j, n)$. No summability is assumed:
-$(j, n) \mapsto (2n-1) 2^{j-J}$ is a bijection onto the positive integers, so the two families
-are summable together or not at all, and a non-summable family has sum $0$ by convention.
-
-Source: Christophe Vignat and Michael Milgram, *Curious Multisection Identities by
-Index Factorization*, Journal of Integer Sequences 27 (2024), Article 24.5.5,
-Corollary 14, first display in sum form (`jis-2024-24.5.5-cor-14`). -/
-public theorem_wanted tsum_twoAdic_high_regroup (J : ℕ) (c : ℕ → ℂ) :
-    ∑' x : ℕ × ℕ, c ((2 * x.2 + 1) * 2 ^ (x.1 + J)) = ∑' p : ℕ, c ((p + 1) * 2 ^ J)
 
 /-- **Double 2-adic multisection of a double series.** Let $(b_{p,q})_{p, q \ge 1}$ be a double
 sequence of complex numbers such that each of the four families

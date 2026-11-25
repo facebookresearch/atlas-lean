@@ -1,0 +1,3 @@
+# Proportional lift of a feasible flow is arc-feasible
+
+Let a finite directed multigraph have arcs $e$ from $\mathrm{tail}(e)$ to $\mathrm{head}(e)$ with capacities $u_e \ge 0$, and let $c(p, q) = \sum_{\mathrm{tail}(e) = p,\ \mathrm{head}(e) = q} u_e$ be the aggregated capacity. Let $F$ be a feasible $s$-$t$ flow for $c$: $0 \le F(p, q) \le c(p, q)$ and $F$ is conserved at every vertex other than $s$ and $t$. Define the arc flow $f_e = F(\mathrm{tail}\,e, \mathrm{head}\,e)\, u_e / c(\mathrm{tail}\,e, \mathrm{head}\,e)$, or $f_e = 0$ when that aggregated capacity is $0$. Then $0 \le f_e \le u_e$ for every arc and $f$ has zero net inflow at every vertex other than $s$ and $t$.

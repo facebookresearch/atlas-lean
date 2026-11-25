@@ -330,7 +330,7 @@ theorem measureMutualInformation_gaussianInput_fin_one (h k r : ℝ) (hk : 0 ≤
           (!![h] : Matrix (Fin 1) (Fin 1) ℝ)ᵀ).det /
         (!![r] : Matrix (Fin 1) (Fin 1) ℝ).det = 1 + h ^ 2 * k / r := by
     rw [Matrix.det_fin_one, Matrix.det_fin_one]
-    simp [Matrix.vecMul, dotProduct]
+    simp [Matrix.vecMul, dotProduct, Matrix.vecHead, Function.swap]
     field_simp
   rw [hd]
 

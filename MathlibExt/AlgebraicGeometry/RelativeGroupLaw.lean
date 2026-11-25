@@ -11,6 +11,7 @@ Portions of this file are adapted from:
 
 `Definitions/Def_AlgebraicGeometry_RelativeGroupLaw.lean`,
 `Definitions/Def_AlgebraicGeometry_RelativeGroupLawGrpObj.lean`,
+`Definitions/Def_GoodReductionJacobian_RelativeGroupLawBaseChange.lean`,
 `Theorems/Thm_GoodReductionJacobian_RelativeGroupLaw_exists_grpObj_eq.lean`
 and
 `P2M/Sol/S_GoodReductionJacobian_RelativeGroupLaw_exists_grpObj_eq.lean`
@@ -232,6 +233,100 @@ theorem exists_grpObj_eq {R : Type u} [CommRing R] {A : Scheme.{u}}
         a ≫ g.inv = G.inv t a) :=
   ⟨G.grpObjOverMk, fun t a b => G.mul_overMk t a b,
     fun t => G.one_overMk t, fun t a => G.inv_overMk t a⟩
+
+/-- The scheme obtained by base changing a scheme over `Spec R` along
+`i : Spec R' ⟶ Spec R`. -/
+noncomputable abbrev baseChangeScheme {R : Type u} [CommRing R] {R' : Type u} [CommRing R']
+    (i : Spec (CommRingCat.of R') ⟶ Spec (CommRingCat.of R)) {A : Scheme.{u}}
+    (f : A ⟶ Spec (CommRingCat.of R)) : Scheme.{u} :=
+  pullback f i
+
+/-- The structure morphism of a base-changed scheme. -/
+noncomputable abbrev baseChangeStr {R : Type u} [CommRing R] {R' : Type u} [CommRing R']
+    (i : Spec (CommRingCat.of R') ⟶ Spec (CommRingCat.of R)) {A : Scheme.{u}}
+    (f : A ⟶ Spec (CommRingCat.of R)) :
+    baseChangeScheme i f ⟶ Spec (CommRingCat.of R') :=
+  pullback.snd f i
+
+/-- A point of the base change over a test scheme `t'` gives a point of the
+original scheme over `t' ≫ i`, by composing with the first projection. -/
+noncomputable def baseChangePointToBase {R : Type u} [CommRing R] {R' : Type u} [CommRing R']
+    (i : Spec (CommRingCat.of R') ⟶ Spec (CommRingCat.of R)) {A : Scheme.{u}}
+    {f : A ⟶ Spec (CommRingCat.of R)} {T : Scheme.{u}}
+    {t' : T ⟶ Spec (CommRingCat.of R')}
+    (x : Over.mk t' ⟶ Over.mk (baseChangeStr i f)) :
+    Over.mk (t' ≫ i) ⟶ Over.mk f :=
+  Over.homMk (x.left ≫ pullback.fst f i) (by
+    have hw : x.left ≫ pullback.snd f i = t' := x.w
+    show x.left ≫ pullback.fst f i ≫ f = t' ≫ i
+    rw [pullback.condition, ← Category.assoc, hw])
+
+/-- A point of the original scheme over `t' ≫ i` gives a point of the base
+change over `t'`; this is the inverse of `baseChangePointToBase`. -/
+noncomputable def baseChangePointOfBase {R : Type u} [CommRing R] {R' : Type u} [CommRing R']
+    (i : Spec (CommRingCat.of R') ⟶ Spec (CommRingCat.of R)) {A : Scheme.{u}}
+    {f : A ⟶ Spec (CommRingCat.of R)} {T : Scheme.{u}}
+    {t' : T ⟶ Spec (CommRingCat.of R')}
+    (y : Over.mk (t' ≫ i) ⟶ Over.mk f) :
+    Over.mk t' ⟶ Over.mk (baseChangeStr i f) :=
+  Over.homMk (pullback.lift y.left t' y.w) (pullback.lift_snd _ _ _)
+
+/-- `baseChangePointToBase` is a left inverse of `baseChangePointOfBase`. -/
+theorem baseChangePointToBase_ofBase {R : Type u} [CommRing R]
+    {R' : Type u} [CommRing R']
+    (i : Spec (CommRingCat.of R') ⟶ Spec (CommRingCat.of R)) {A : Scheme.{u}}
+    {f : A ⟶ Spec (CommRingCat.of R)} {T : Scheme.{u}}
+    {t' : T ⟶ Spec (CommRingCat.of R')}
+    (y : Over.mk (t' ≫ i) ⟶ Over.mk f) :
+    baseChangePointToBase i (baseChangePointOfBase i y) = y :=
+  Over.OverMorphism.ext (pullback.lift_fst _ _ _)
+
+/-- `baseChangePointOfBase` is a left inverse of `baseChangePointToBase`. -/
+theorem baseChangePointOfBase_toBase {R : Type u} [CommRing R]
+    {R' : Type u} [CommRing R']
+    (i : Spec (CommRingCat.of R') ⟶ Spec (CommRingCat.of R)) {A : Scheme.{u}}
+    {f : A ⟶ Spec (CommRingCat.of R)} {T : Scheme.{u}}
+    {t' : T ⟶ Spec (CommRingCat.of R')}
+    (x : Over.mk t' ⟶ Over.mk (baseChangeStr i f)) :
+    baseChangePointOfBase i (baseChangePointToBase i x) = x := by
+  apply Over.OverMorphism.ext
+  apply pullback.hom_ext
+  · simp [baseChangePointOfBase, baseChangePointToBase]
+  · have hw : x.left ≫ pullback.snd f i = t' := x.w
+    simp [baseChangePointOfBase, baseChangePointToBase, hw]
+
+/-- The base change of a relative group law along a morphism of base
+schemes. -/
+noncomputable def baseChange {R : Type u} [CommRing R] {R' : Type u} [CommRing R']
+    (i : Spec (CommRingCat.of R') ⟶ Spec (CommRingCat.of R)) {A : Scheme.{u}}
+    {f : A ⟶ Spec (CommRingCat.of R)} (G : RelativeGroupLaw R f) :
+    RelativeGroupLaw R' (baseChangeStr i f) where
+  mul t' x y :=
+    baseChangePointOfBase i (G.mul _ (baseChangePointToBase i x) (baseChangePointToBase i y))
+  one t' := baseChangePointOfBase i (G.one _)
+  inv t' x := baseChangePointOfBase i (G.inv _ (baseChangePointToBase i x))
+  mul_assoc t' x y z := by
+    simp only [baseChangePointToBase_ofBase, G.mul_assoc]
+  one_mul t' x := by
+    simp only [baseChangePointToBase_ofBase, G.one_mul, baseChangePointOfBase_toBase]
+  mul_one t' x := by
+    simp only [baseChangePointToBase_ofBase, G.mul_one, baseChangePointOfBase_toBase]
+  inv_mul_cancel t' x := by
+    simp only [baseChangePointToBase_ofBase, G.inv_mul_cancel]
+  mul_natural t t' ψ hψ x y := by
+    apply Over.OverMorphism.ext
+    apply pullback.hom_ext
+    · have h := congrArg (fun φ => φ.left)
+        (G.mul_natural (t ≫ i) (t' ≫ i) ψ (by rw [← Category.assoc, hψ])
+          (baseChangePointToBase i x) (baseChangePointToBase i y))
+      simp only [Over.comp_left, Over.homMk_left, baseChangePointOfBase,
+        pullback.lift_fst, Category.assoc] at h ⊢
+      rw [h]
+      congr 1 <;> exact Over.OverMorphism.ext (by
+        simp only [Over.comp_left, Over.homMk_left, Category.assoc])
+    · simp only [Over.comp_left, Over.homMk_left, baseChangePointOfBase,
+        Category.assoc, pullback.lift_snd]
+      exact hψ
 
 end RelativeGroupLaw
 
