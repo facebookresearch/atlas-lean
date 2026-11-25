@@ -51,10 +51,27 @@ example {N : Ideal (𝓞 ℚ)} (hN : N ≠ ⊥) (g : GL (Fin 2) (FiniteAdeleRing
       glFin (𝓞 ℚ) ℚ (globalPoints (𝓞 ℚ) ℚ γ) * g ∈ finiteLevelOne (𝓞 ℚ) ℚ N :=
   exists_glFin_globalPoints_mul_mem_finiteLevelOne_rat hN g
 
-/-- The component at an infinite place reads off the entries at that place. -/
-example (w : InfinitePlace ℚ) (g : GL (Fin 2) (InfiniteAdeleRing ℚ)) (i j : Fin 2) :
-    (archComponent ℚ w g : Matrix (Fin 2) (Fin 2) w.Completion) i j =
-      (g : Matrix (Fin 2) (Fin 2) (InfiniteAdeleRing ℚ)) i j w :=
-  archComponent_apply ℚ w g i j
+/-- The adelic statement: after a rational matrix, the finite part lies in the level at `N` and
+the determinant at the real place is positive. -/
+example {N : Ideal (𝓞 ℚ)} (hN : N ≠ ⊥) (g : GL (Fin 2) (AdeleRing (𝓞 ℚ) ℚ)) :
+    ∃ γ : GL (Fin 2) ℚ,
+      glFin (𝓞 ℚ) ℚ (globalPoints (𝓞 ℚ) ℚ γ * g) ∈ finiteLevelOne (𝓞 ℚ) ℚ N ∧
+        0 < ((Matrix.GeneralLinearGroup.map
+          (InfinitePlace.Completion.ringEquivRealOfIsReal Rat.isReal_infinitePlace).toRingHom
+            (archComponent ℚ Rat.infinitePlace (glArch (𝓞 ℚ) ℚ (globalPoints (𝓞 ℚ) ℚ γ * g))) :
+              GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ).det := by
+  obtain ⟨γ, hmem, hpos⟩ := exists_globalPoints_mul_mem_levelOne_rat hN g
+  refine ⟨γ, mem_levelOne_iff.mp hmem, ?_⟩
+  have h := hpos _ Rat.isReal_infinitePlace
+  rwa [Matrix.mem_glpos, Matrix.GeneralLinearGroup.val_det_apply] at h
+
+/-- A concrete level: the ideal `(2)` is nonzero, so the factorization holds at that level. -/
+example (D : Set (AutomorphicForm.AdelicGL2 (𝓞 ℚ) ℚ)) (g : AutomorphicForm.AdelicGL2 (𝓞 ℚ) ℚ) :
+    ∃ (γ : GL (Fin 2) ℚ) (h u : AutomorphicForm.AdelicGL2 (𝓞 ℚ) ℚ),
+      glFin (𝓞 ℚ) ℚ u ∈ finiteLevelOne (𝓞 ℚ) ℚ (Ideal.span {2}) ∧ glFin (𝓞 ℚ) ℚ h = 1 ∧
+        g = globalPoints (𝓞 ℚ) ℚ γ * h * u := by
+  obtain ⟨γ, h, u, hu, hh, -, hg⟩ :=
+    exists_mem_productionPinsCompact_U_mul_eq_rat D (N := Ideal.span {2}) (by simp) g
+  exact ⟨γ, h, u, glFin_mem_finiteLevelOne_of_mem_productionPinsCompact_U ℚ D _ hu, hh, hg⟩
 
 end RationalStrongApproximationTest
