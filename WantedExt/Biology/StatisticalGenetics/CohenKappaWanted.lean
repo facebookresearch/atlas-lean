@@ -30,30 +30,11 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Basic.Real.Basic
+public import Domains.Biology.StatisticalGenetics.CohenKappa
 
 @[expose] public section
 
 namespace WantedExt.Biology.StatisticalGenetics.CohenKappaWanted
-
-/-- `P` is a joint probability table: every entry is nonnegative and the entries sum to `1`. -/
-def IsTable {k : ℕ} (P : Fin k → Fin k → ℝ) : Prop := (∀ i j, 0 ≤ P i j) ∧ ∑ i, ∑ j, P i j = 1
-
-/-- Row margin `pᵢ. = ∑ⱼ pᵢⱼ`. -/
-noncomputable def rowMargin {k : ℕ} (P : Fin k → Fin k → ℝ) (i : Fin k) : ℝ := ∑ j, P i j
-
-/-- Column margin `p.ⱼ = ∑ᵢ pᵢⱼ`. -/
-noncomputable def colMargin {k : ℕ} (P : Fin k → Fin k → ℝ) (j : Fin k) : ℝ := ∑ i, P i j
-
-/-- Observed agreement `p_o = ∑ᵢ pᵢᵢ`. -/
-noncomputable def observed {k : ℕ} (P : Fin k → Fin k → ℝ) : ℝ := ∑ i, P i i
-
-/-- Chance agreement `p_e = ∑ᵢ pᵢ. p.ᵢ`. -/
-noncomputable def chance {k : ℕ} (P : Fin k → Fin k → ℝ) : ℝ :=
-  ∑ i, rowMargin P i * colMargin P i
-
-/-- **Cohen's kappa** `κ = (p_o - p_e) / (1 - p_e)`. -/
-noncomputable def kappa {k : ℕ} (P : Fin k → Fin k → ℝ) : ℝ :=
-  (observed P - chance P) / (1 - chance P)
 
 /-- The **maximum kappa for the margins of `P`**:
 `κ_max = (∑ᵢ min(pᵢ., p.ᵢ) - p_e) / (1 - p_e)`. -/
@@ -67,16 +48,6 @@ Source: Cohen (1960). -/
 public theorem_wanted kappa_eq_one_iff {k : ℕ} (P : Fin k → Fin k → ℝ) (hP : IsTable P)
     (he : chance P < 1) :
     kappa P = 1 ↔ observed P = 1
-
-/-- **Independent raters** (Cohen 1960; derived): let `P` be a joint probability table that is the
-product of its margins (`pᵢⱼ = pᵢ. p.ⱼ` for all `i, j`) with chance agreement `p_e < 1`. Then
-`κ = 0`.
-
-Source: Cohen (1960). -/
-public theorem_wanted kappa_eq_zero_of_independent {k : ℕ} (P : Fin k → Fin k → ℝ)
-    (hP : IsTable P) (hind : ∀ i j, P i j = rowMargin P i * colMargin P j)
-    (he : chance P < 1) :
-    kappa P = 0
 
 /-- **The maximum kappa for fixed margins** (Cohen 1960; derived): let `P` be a joint probability
 table with chance agreement `p_e < 1`. Then (1) `κ(P) ≤ κ_max(P)`; (2) every joint probability
