@@ -5,7 +5,7 @@ $S(n) \ge \log n$ be a space bound for $M$. A *configuration* of $M$ consists of
 cells. For an input $x$, the *configuration graph* $G_{M,x}$ is the directed graph whose vertices are all configurations of $M$ on inputs of length $|x|$ that use at most $S(|x|)$ work-tape cells, with an edge from $C$ to $C'$ when $C'$ is reached from $C$ in one step of the transition function; it has out-degree one if $M$ is
 deterministic and at most two if $M$ is nondeterministic.
 
-- After modifying $M$ to erase its work tapes before accepting, there is a single accepting configuration $C_{\mathrm{accept}}$, and $M$ accepts $x$ if and only if
+- After modifying $M$ to erase its work tapes and move all of its heads to the leftmost cell before entering its accepting state, there is a single accepting configuration $C_{\mathrm{accept}}$, and $M$ accepts $x$ if and only if
   $G_{M,x}$ has a directed path from $C^x_{\mathrm{start}}$ to $C_{\mathrm{accept}}$.
 - If $M$ uses space $S(n)$, every vertex of $G_{M,x}$ is described by $c\,S(n)$ bits for a constant $c$ depending on $M$, so $G_{M,x}$ has at most $2^{c S(n)}$
   vertices, and given $x$, whether two strings of $c\,S(n)$ bits encode configurations $C$ and $C'$ with an edge from $C$ to $C'$ can be decided in space $O(S(n))$, by reading the input symbol under the input head of $C$ and checking one application of the transition function.

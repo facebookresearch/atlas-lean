@@ -1,8 +1,8 @@
 # Soundness of the graph 3-coloring protocol
 
 A *commitment scheme* is a polynomial-time machine $\mathrm{Com}$ with a polynomial $\ell$ such that commitments are perfectly binding, $\mathrm{Com}(v_0, r_0) \ne \mathrm{Com}(v_1, r_1)$
-for all $v_0 \ne v_1$ in $\{0,1\}^n$ and all $r_0, r_1 \in \{0,1\}^{\ell(n)}$, and computationally hiding: for every non-uniform probabilistic polynomial-time distinguisher there is a
-negligible $e$ such that it distinguishes $\mathrm{Com}(v_0, r)$ from $\mathrm{Com}(v_1, r)$, for uniform $r$, with probability at most $e(n)$, for all $v_0, v_1$.
+for all $v_0 \ne v_1$ in $\{0,1\}^n$ and all $r_0, r_1 \in \{0,1\}^{\ell(n)}$, and computationally hiding: for every non-uniform probabilistic polynomial-time distinguisher $D$ there is a
+negligible $e$ such that $\bigl|\Pr[D(\mathrm{Com}(v_0, r)) = 1] - \Pr[D(\mathrm{Com}(v_1, r)) = 1]\bigr| \le e(n)$ for uniform $r$ and all $v_0, v_1 \in \{0,1\}^n$.
 
 Consider the protocol for graph 3-coloring on $G = (V, E)$ with $|V| = n$ and $|E| \ge 1$. In each round the prover chooses a uniformly random permutation $\pi$
 of the three colors and commits to the color $\pi(c_i)$ of every vertex $i$; the verifier picks a uniformly random edge $(i, j) \in E$; the prover opens the

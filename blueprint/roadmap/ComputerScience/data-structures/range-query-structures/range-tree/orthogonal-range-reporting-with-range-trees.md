@@ -4,7 +4,7 @@ Let $P$ be a set of $n$ points in $\mathbb{R}^d$. A one-dimensional [range tree]
 
 **Theorem.**
 1. A $d$-dimensional range tree uses $O(n\log^{d-1} n)$ space. It reports the $k$ points inside an axis-parallel box in $O(\log^d n + k)$ time.
-2. *Layered range trees* replace the last level by sorted arrays with *fractional-cascading* pointers from each node's array into its children's arrays. They reduce the query time to $O(\log^{d-1} n + k)$, with the same space. In the plane, this gives $O(\log n + k)$.
+2. *Layered range trees* replace the last level by sorted arrays with *fractional-cascading* pointers from each node's array into its children's arrays. For $d \ge 2$ they reduce the query time to $O(\log^{d-1} n + k)$, with the same space; in the plane this gives $O(\log n + k)$. In one dimension the range tree itself answers queries in $O(\log n + k)$ time.
 
 **Proof.**
 1. A query in the first coordinate selects $O(\log n)$ canonical subtrees whose union is exactly the points in the range. The query then recurses into the $(d - 1)$-dimensional structure of each, giving $O(\log^d n)$ search time plus $O(k)$ for output. Each point appears in $O(\log n)$ structures per level of nesting.
