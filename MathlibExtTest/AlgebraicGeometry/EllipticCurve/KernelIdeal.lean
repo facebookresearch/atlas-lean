@@ -12,6 +12,6 @@ import MathlibExt.AlgebraicGeometry.EllipticCurve.KernelIdeal
 open WeierstrassCurve
 
 example {F : Type*} [Field F] (k : Type*) [Field k] [Algebra F k] [DecidableEq k]
-    (W : WeierstrassCurve F) :
+    [IsAlgClosed k] (W : WeierstrassCurve F) :
     (1 : rationalEndSubring k W) ∈ kernelIdealSet k W W (AddMonoidHom.id _) :=
   one_mem_kernelIdealSet_id k W

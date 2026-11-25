@@ -57,7 +57,12 @@ namespace Place
 
 variable {K F}
 
-/-- The degree of a place: the dimension of its residue field over the base. -/
+/-- The degree of a place: the dimension of its residue field over the base. It is meaningful only
+for places whose residue field is finite over `K`: `Module.finrank` vanishes on an infinite
+extension, so a place with an infinite residue extension gets degree `0`, and results about degrees
+therefore assume `Module.Finite K v.ResidueField`. For a function field in one variable over `K`
+(finitely generated of transcendence degree one) this always holds, since every place, being
+trivial on `K`, has residue field finite over `K`. -/
 noncomputable def deg (v : Place K F) : ℕ :=
   Module.finrank K (IsLocalRing.ResidueField v.toValuationSubring)
 

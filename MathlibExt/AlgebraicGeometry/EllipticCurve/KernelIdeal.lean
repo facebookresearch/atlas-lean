@@ -41,6 +41,7 @@ namespace WeierstrassCurve
 universe u v
 
 variable {F : Type u} [Field F] (k : Type v) [Field k] [Algebra F k] [DecidableEq k]
+  [IsAlgClosed k]
 
 def kernelIdealSet (W₀ W : WeierstrassCurve F)
     (χ : (W₀.baseChange k).toAffine.Point →+ (W.baseChange k).toAffine.Point) :

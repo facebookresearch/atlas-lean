@@ -18,3 +18,7 @@ example {F : Type*} [Field F] [DecidableEq F] {W : Affine F} [GenusOnePlaceGate 
 example {F : Type*} [Field F] [DecidableEq F] {W : Affine F} [GenusOnePlaceGate W]
     [AbelTheorem W] (P : W.Point) : pic0ToPoint (pointClass P) = P :=
   pic0ToPoint_pointClass P
+
+example {F : Type*} [Field F] [DecidableEq F] {W : Affine F} [GenusOnePlaceGate W]
+    (v : AlgebraicCurve.Place F W.FunctionField) : Module.Finite F v.ResidueField :=
+  inferInstance

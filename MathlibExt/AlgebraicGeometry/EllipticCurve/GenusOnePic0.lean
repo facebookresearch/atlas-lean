@@ -81,6 +81,14 @@ theorem deg_eq_one (v : AlgebraicCurve.Place F W.FunctionField) : v.deg = 1 :=
 theorem deg_placeOfPoint (P : W.Point) : (placeOfPoint (W := W) P).deg = 1 :=
   deg_eq_one _
 
+/-- Degree one forces a finite residue field, so the gate meets the finiteness hypothesis that
+results about `Place.deg` assume. -/
+instance GenusOnePlaceGate.instFiniteResidueField (v : AlgebraicCurve.Place F W.FunctionField) :
+    Module.Finite F v.ResidueField :=
+  Module.finite_of_finrank_pos (by
+    have h : Module.finrank F v.ResidueField = 1 := deg_eq_one (W := W) v
+    omega)
+
 theorem degree_eq_sum (D : AlgebraicCurve.Divisor F W.FunctionField) :
     Divisor.degree D = D.sum fun _ n => n := by
   rw [Divisor.degree, Finsupp.liftAddHom_apply]
