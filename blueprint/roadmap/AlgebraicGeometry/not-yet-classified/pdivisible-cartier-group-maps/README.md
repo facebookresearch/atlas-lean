@@ -8,3 +8,5 @@
 - [Frobenius Hom](frobenius-hom.md)
 - [Verschiebung Hom](verschiebung-hom.md)
 - [Cartier Frobenius Verschiebung](cartier-frobenius-verschiebung.md)
+- [Cartier Dual Tower Map](cartier-dual-tower-map.md)
+- [Cartier Group Frobenius Verschiebung](cartier-group-frobenius-verschiebung.md)
