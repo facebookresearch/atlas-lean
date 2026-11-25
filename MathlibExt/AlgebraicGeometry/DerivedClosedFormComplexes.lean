@@ -213,9 +213,10 @@ theorem ncPullbackLift_spec {Q : AlgebraReplacementFunctor k} {D : AffineDRSyste
     (fun j => ⟨GY.closed.mono ((reindex f).obj j), GY.closed.weak ((reindex f).obj j)⟩)
     GX.closed.map)
 
-/-- The NC pullback defined by the lift `ℓ`. Different lifts give cochain-homotopic maps, and
-pullback is functorial up to homotopy; these are requested in
-`WantedExt.AlgebraicGeometry.DerivedPullbackFunctorialityWanted`. -/
+/-- The global negative-cyclic (NC) pullback along `f` defined by a map `ℓ` from the replaced NC
+diagram of `GY`, reindexed along `f`, to that of `GX`: the map of limits
+`ncComplex GY ⟶ ncComplex GX` whose components are the limit projections of `GY` at the reindexed
+families followed by `ℓ`. -/
 def ncPullbackOf {Q : AlgebraReplacementFunctor k} {D : AffineDRSystem Q}
     {p : ℕ} {NC : NegativeCyclicDiagram D.functor (p : ℤ)}
     {X Y : Prestack k} (f : X ⟶ Y)
@@ -225,8 +226,8 @@ def ncPullbackOf {Q : AlgebraReplacementFunctor k} {D : AffineDRSystem Q}
     ⟨ncComplex GY, Functor.whiskerLeft (reindex f) (limit.cone GY.closed.diagram).π ≫ ℓ⟩
 
 /-- Native limit restriction and the chosen lift `ncPullbackLift` define global NC pullback
-(`ncPullbackOf` with that lift). The choice is not canonical: it is determined up to cochain
-homotopy, and so is functoriality (see `ncPullbackOf`). -/
+(`ncPullbackOf` with that lift). The lift is a choice; lifts need not be unique (see
+`IsNCPullbackLift`). -/
 def ncPullback {Q : AlgebraReplacementFunctor k} {D : AffineDRSystem Q}
     {p : ℕ} {NC : NegativeCyclicDiagram D.functor (p : ℤ)}
     {X Y : Prestack k} (f : X ⟶ Y)

@@ -10,6 +10,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.SimpleGraph.GraphLimits.GraphonCounting
+public import MathlibExt.Combinatorics.SimpleGraph.GraphLimits.GraphonSampling
 
 /-!
 # Graph limits: the limit theorem, compactness and uniqueness (wanted)
@@ -45,16 +46,6 @@ public theorem_wanted exists_graphon_limit {N : ℕ → ℕ} (G : ∀ n, SimpleG
     [∀ n, DecidableRel (G n).Adj] (hN : ∀ n, 0 < N n) (hG : IsConvergentGraphSequence G) :
     ∃ W : ℝ → ℝ → ℝ, IsGraphon W ∧ ∀ (k : ℕ) (F : SimpleGraph (Fin k)) [DecidableRel F.Adj],
       Tendsto (fun n => homDensity F (adjWeight (G n))) atTop (𝓝 (graphonHomDensity F W))
-
-/-- **Every graphon is a graph limit.** For every graphon `W` there is a sequence of nonempty simple
-graphs `Gₙ` with `t(F, Gₙ) → t(F, W)` for every simple graph `F` (Lovász–Szegedy, *Limits of dense
-graph sequences* (2006), Theorem 2.2, (b) ⇒ (a), via Corollary 2.6 on `W`-random graphs;
-Borgs–Chayes–Lovász–Sós–Vesztergombi, *Convergent sequences of dense graphs I* (2008),
-Theorem 3.1). -/
-public theorem_wanted exists_graph_sequence_tendsto {W : ℝ → ℝ → ℝ} (hW : IsGraphon W) :
-    ∃ (N : ℕ → ℕ) (G : ∀ n, SimpleGraph (Fin (N n))) (_ : ∀ n, DecidableRel (G n).Adj),
-      (∀ n, 0 < N n) ∧ ∀ (k : ℕ) (F : SimpleGraph (Fin k)) [DecidableRel F.Adj],
-        Tendsto (fun n => homDensity F (adjWeight (G n))) atTop (𝓝 (graphonHomDensity F W))
 
 /-- **Compactness of the graphon space.** Every sequence of graphons has a subsequence converging
 in the cut distance to a graphon: after identifying graphons at cut distance `0`, the space of
