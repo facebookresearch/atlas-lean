@@ -35,11 +35,12 @@ removed and the names restated in Mathlib style.
 
 module
 
+public import Mathlib.Algebra.Field.ZMod
 public import Mathlib.Algebra.Squarefree.Basic
-public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Weierstrass
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
+public import MathlibExt.AlgebraicGeometry.EllipticCurve.PointCount
 public import MathlibExt.NumberTheory.ModularForms.CuspFormConj
 
 @[expose] public section
@@ -73,30 +74,19 @@ end CuspForm
 
 namespace WeierstrassCurve
 
-variable {F : Type*} [CommRing F] (W : WeierstrassCurve F)
-
-/-- The number of affine points of a Weierstrass curve, as a natural
-cardinal; it is `0` when there are infinitely many points. -/
-noncomputable def card : ℕ := Nat.card W.toAffine.Point
-
-/-- The trace of Frobenius of a Weierstrass curve over a finite ring:
-the cardinality of the ring plus one minus the number of points. -/
-noncomputable def traceOfFrobenius : ℤ := (Nat.card F : ℤ) + 1 - (W.card : ℤ)
-
-theorem traceOfFrobenius_def :
-    W.traceOfFrobenius = (Nat.card F : ℤ) + 1 - (W.card : ℤ) := rfl
-
 /-- Reduction of an integral Weierstrass curve modulo `p`. -/
 def reductionMod (W : WeierstrassCurve ℤ) (p : ℕ) : WeierstrassCurve (ZMod p) :=
   W.map (Int.castRingHom (ZMod p))
 
 /-- The trace of Frobenius of the reduction of an integral Weierstrass
-curve modulo `p`. -/
-noncomputable def apOfModel (W : WeierstrassCurve ℤ) (p : ℕ) : ℤ :=
-  (W.reductionMod p).traceOfFrobenius
+curve modulo a prime `p`: the Frobenius trace `p + 1 - #W(𝔽_p)` of the
+reduction over the finite field `ZMod p`, where `#W(𝔽_p)` counts the
+nonsingular points of the reduction, including the point at infinity. -/
+noncomputable def apOfModel (W : WeierstrassCurve ℤ) (p : ℕ) [hp : Fact p.Prime] : ℤ :=
+  (W.reductionMod p).toAffine.frobeniusTrace
 
-theorem apOfModel_def (W : WeierstrassCurve ℤ) (p : ℕ) :
-    W.apOfModel p = (W.reductionMod p).traceOfFrobenius := rfl
+theorem apOfModel_def (W : WeierstrassCurve ℤ) (p : ℕ) [Fact p.Prime] :
+    W.apOfModel p = (W.reductionMod p).toAffine.frobeniusTrace := rfl
 
 /-- An integral Weierstrass curve has good reduction at `p` when `p`
 does not divide its discriminant. -/
@@ -108,8 +98,8 @@ some normalized eigenform of weight `2` on `Γ₀ N` has `q`-coefficients
 agreeing with its Frobenius traces at good primes outside `N`. -/
 def IsModularModelOfLevel (W : WeierstrassCurve ℤ) (N : ℕ) : Prop :=
   ∃ f : CuspForm (CongruenceSubgroup.Gamma0 N) 2, f.IsNormalizedEigenform ∧
-    ∀ p : ℕ, p.Prime → W.IsGoodPrimeFor p → ¬ p ∣ N →
-      ModularFormClass.qCoeff f p = (W.apOfModel p : ℂ)
+    ∀ p : ℕ, ∀ hp : p.Prime, W.IsGoodPrimeFor p → ¬ p ∣ N →
+      ModularFormClass.qCoeff f p = (W.apOfModel p (hp := ⟨hp⟩) : ℂ)
 
 /-- An integral Weierstrass curve is a modular model of its exact
 conductor level when it is a modular model of some squarefree level

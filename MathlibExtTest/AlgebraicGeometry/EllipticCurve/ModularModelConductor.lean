@@ -34,6 +34,25 @@ example {W : WeierstrassCurve ℤ}
       ∀ ℓ : ℕ, ℓ.Prime → (ℓ : ℤ) ∣ W.Δ → ℓ ∣ N :=
   h
 
-example (W : WeierstrassCurve ℤ) (p : ℕ) :
-    W.apOfModel p = (W.reductionMod p).traceOfFrobenius :=
+-- `apOfModel` is the Frobenius trace of the reduction over the finite field
+-- `ZMod p`, taken from the shared point-count API.
+example (W : WeierstrassCurve ℤ) (p : ℕ) [Fact p.Prime] :
+    W.apOfModel p = (W.reductionMod p).toAffine.frobeniusTrace :=
   W.apOfModel_def p
+
+-- The point count behind `apOfModel` includes the point at infinity:
+-- `#W(𝔽_p) = p + 1 - a_p`.
+example (W : WeierstrassCurve ℤ) (p : ℕ) [Fact p.Prime] :
+    (Nat.card (W.reductionMod p).toAffine.Point : ℤ) = p + 1 - W.apOfModel p := by
+  rw [W.apOfModel_def,
+    (W.reductionMod p).toAffine.natCard_point_eq_natCard_add_one_sub_frobeniusTrace,
+    Nat.card_zmod]
+
+-- A modular model gives the trace at a good prime outside the level, with the
+-- primality instance supplied by the caller.
+example {W : WeierstrassCurve ℤ} {N : ℕ} (h : W.IsModularModelOfLevel N)
+    (p : ℕ) [hp : Fact p.Prime] (hgood : W.IsGoodPrimeFor p) (hpN : ¬ p ∣ N) :
+    ∃ f : CuspForm (CongruenceSubgroup.Gamma0 N) 2, f.IsNormalizedEigenform ∧
+      ModularFormClass.qCoeff f p = (W.apOfModel p : ℂ) := by
+  obtain ⟨f, hf, hcoeff⟩ := h
+  exact ⟨f, hf, hcoeff p hp.out hgood hpN⟩
