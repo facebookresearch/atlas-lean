@@ -47,7 +47,7 @@ viabilities `wAA`, `wAa`, `waa`, encoded as the symmetric genotype-fitness matri
 
 * J. Felsenstein, *Theoretical Evolutionary Genetics* (version of December 2019), Section II.4,
   equations (II-31)–(II-34), pp. 62–63; Section II.7, equations (II-101)–(II-102), pp. 84–89;
-  Chapter II, Exercise 15, p. 135.
+  Chapter II, Complements/Problems, Problem 15, p. 135.
 -/
 
 @[expose] public section

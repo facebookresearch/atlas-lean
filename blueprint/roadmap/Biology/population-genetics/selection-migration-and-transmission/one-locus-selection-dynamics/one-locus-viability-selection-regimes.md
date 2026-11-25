@@ -35,5 +35,5 @@ convergence without overshooting.
 
 - J. Felsenstein, *Theoretical Evolutionary Genetics* (GENOME 562 course text, University of Washington, version of December 2019), <https://felsenst.github.io/pgbook/pgbook.pdf>, Section II.4 "Selection in Diploids", equation (II-31) and the form of $\Delta p$ derived from it, pp. 62–63; Section II.7 "Overdominance and Underdominance", equations (II-101)–(II-102), pp. 84–89
   (the change in gene frequency, the interior equilibrium, the sign analysis and the global
-  behaviour under overdominance and underdominance), and Chapter II, Exercise 15, p. 135 (no
-  overshooting under overdominance).
+  behaviour under overdominance and underdominance), and Chapter II, Complements/Problems,
+  Problem 15, p. 135 (no overshooting under overdominance).
