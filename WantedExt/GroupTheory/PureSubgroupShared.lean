@@ -22,8 +22,9 @@ public import Mathlib.Algebra.Group.Int.Defs
 
 namespace MathlibExt.GroupTheory.PureSubgroupShared
 
-/-- The subgroup `B` of the abelian group `A` is pure: `nA ∩ B = nB` for every integer `n`, that
-is, `n • a ∈ B` implies `n • a = n • b` for some `b ∈ B`. -/
+/-- **Pure subgroups of abelian groups.** A subgroup $B$ of an abelian group $A$ is pure when
+$nA \cap B = nB$ for every integer $n$: for every integer $n$ and every $a \in A$ with
+$na \in B$ there is some $b \in B$ with $nb = na$. -/
 def IsPureSubgroup {A : Type} [AddCommGroup A] (B : AddSubgroup A) : Prop :=
   ∀ (n : ℤ) (a : A), n • a ∈ B → ∃ b ∈ B, n • b = n • a
 

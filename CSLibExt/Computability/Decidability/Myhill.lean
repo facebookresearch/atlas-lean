@@ -30,14 +30,20 @@ set_option autoImplicit false
 
 namespace Cslib.Decidability
 
-/-- Two predicates are **recursively isomorphic** when a computable bijection
-translates membership in one to membership in the other.
+/-- **Recursively isomorphic predicates.** Two predicates $P$ and $Q$ on $\mathbb{N}$ are
+recursively isomorphic when there is a computable bijection $f : \mathbb{N} \to \mathbb{N}$ such
+that for every $n$, $P(n)$ holds if and only if $Q(f(n))$ holds.
+
 Source: Soare, *Recursively Enumerable Sets and Degrees*, Ch. I, Definition 7.1. -/
 def RecursiveIsomorphic (P Q : ℕ → Prop) : Prop :=
   ∃ f : ℕ → ℕ, Computable f ∧ Function.Bijective f ∧ ∀ n, P n ↔ Q (f n)
 
-/-- **The inverse of a computable bijection is computable**, by unbounded search
-for the unique preimage.
+/-- **The inverse of a computable bijection is computable.** Let
+$f : \mathbb{N} \to \mathbb{N}$ be a computable bijection. Then its inverse function
+$f^{-1} : \mathbb{N} \to \mathbb{N}$ is computable.
+
+The inverse is computed by unbounded search for the unique preimage.
+
 Source: Rogers, *Theory of Recursive Functions and Effective Computability*,
 §1.6 (inverses of recursive permutations). -/
 theorem computable_invFun_of_bijective {f : ℕ → ℕ} (hf : Computable f)
@@ -68,8 +74,14 @@ theorem computable_invFun_of_bijective {f : ℕ → ℕ} (hf : Computable f)
     exact Part.eq_some_iff.2 ⟨hDom, hget⟩
   exact hpart.of_eq heq
 
-/-- **A recursive isomorphism gives a 1-equivalence** (the easy direction of
-Myhill's isomorphism theorem).
+/-- **A recursive isomorphism gives a 1-equivalence.** Let $P$ and $Q$ be predicates on
+$\mathbb{N}$. If $P$ and $Q$ are recursively isomorphic, then they are 1-equivalent: $P$ is
+one-one reducible to $Q$ and $Q$ is one-one reducible to $P$. Here $P$ is one-one reducible to
+$Q$ when there is a computable injective function $g : \mathbb{N} \to \mathbb{N}$ such that for
+every $n$, $P(n)$ holds if and only if $Q(g(n))$ holds.
+
+This is the easy direction of Myhill's isomorphism theorem.
+
 Source: Soare, *Recursively Enumerable Sets and Degrees*, Ch. I, Theorem 7.1. -/
 theorem recursiveIsomorphic_to_oneOneEquiv {P Q : ℕ → Prop}
     (h : RecursiveIsomorphic P Q) : OneOneEquiv P Q := by

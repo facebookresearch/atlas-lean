@@ -7,7 +7,8 @@ $$
 d_{\mathrm{Hell}}(\mu, \nu) = \sqrt{\frac12 \int \Big(\sqrt{\tfrac{d\mu}{d\zeta}} - \sqrt{\tfrac{d\nu}{d\zeta}}\Big)^2 \, d\zeta}, \qquad \zeta = \mu + \nu .
 $$
 
-Any other measure dominating both gives the same value
+Any $\sigma$-finite measure $\rho$ with respect to which $\mu$ and $\nu$ have densities, measurable and
+finite $\rho$-almost everywhere, gives the same value
 ([change of reference measure](hellinger-dist-with-density.md)), so the choice $\zeta = \mu + \nu$
 only makes the definition free of choices. The factor $\tfrac12$ is the normalisation of Dashti and
 Stuart, for which the distance between probability measures lies in $[0, 1]$.

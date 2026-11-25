@@ -22,7 +22,8 @@ posterior `a / (a + b)` is thus the logistic function of the log odds.
 
 namespace Real
 
-/-- `a / (a + b)` is the logistic function of the log odds `log a - log b`. -/
+/-- **The logistic function of the log odds.** For real numbers $a > 0$ and $b > 0$, the logistic
+function $\sigma(z) = 1 / (1 + e^{-z})$ satisfies $\sigma(\log a - \log b) = a / (a + b)$. -/
 theorem sigmoid_log_sub_log {a b : ℝ} (ha : 0 < a) (hb : 0 < b) :
     sigmoid (log a - log b) = a / (a + b) := by
   rw [sigmoid_def, neg_sub, exp_sub, exp_log hb, exp_log ha]

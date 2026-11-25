@@ -46,10 +46,12 @@ namespace MathlibExt.NumberTheory.Ramanujan.Part1Ch3
 
 namespace Entry10PoissonAsymptotic
 
-/-- The 2-associated Stirling number of the second kind: the number of partitions of an
-`n`-element set into `k` blocks, each containing at least two elements.
-It is kept as written because the Entry 10 statement refers to it, and it agrees with
-`MetaMathlibExt.twoAssocStirlingSecond` by `twoAssocStirlingSecond_eq_canonical`. -/
+/-- **2-associated Stirling numbers in Ramanujan's Entry 10.** For natural numbers $n$ and $k$,
+$S_2(n, k)$ is the integer $\sum_{j=0}^{k} (-1)^j \binom{n}{j} S(n - j, k - j)$, where $S$
+denotes the Stirling numbers of the second kind.
+
+$S_2(n, k)$ is the number of partitions of an $n$-element set into $k$ blocks, each containing at
+least two elements. -/
 def twoAssocStirlingSecond (n k : ℕ) : ℤ :=
   ∑ j ∈ Finset.range (k + 1), ((-1 : ℤ) ^ j) * (Nat.choose n j : ℤ) *
       (Nat.stirlingSecond (n - j) (k - j) : ℤ)
@@ -758,7 +760,10 @@ private lemma poisson_central_moment (x : ℝ)
   intro i hi
   ring
 
-/-- The Entry 10 definition agrees with the canonical 2-associated Stirling numbers. -/
+/-- **The Entry 10 Stirling numbers are the 2-associated Stirling numbers.** For all natural
+numbers $n$ and $k$, the integer $\sum_{j=0}^{k} (-1)^j \binom{n}{j} S(n - j, k - j)$ used in
+Ramanujan's Entry 10, where $S$ denotes the Stirling numbers of the second kind, equals the
+2-associated Stirling number of the second kind $S_2(n, k)$. -/
 theorem twoAssocStirlingSecond_eq_canonical (n k : ℕ) :
     twoAssocStirlingSecond n k = MetaMathlibExt.twoAssocStirlingSecond n k := by
   rfl
@@ -1970,13 +1975,26 @@ private lemma poisson_selected_tsum_eq (F : Finset ℕ) (φ : ℝ → ℂ) (x : 
     push_cast
     ring
 
-/-- Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, Entry 10, printed pp. 57-58 / PDF
-    pp. 67-68.
-
-Proves `Wanted` entry `ramanujan_part1_ch3_entry10_poisson_asymptotic`.
+/-- **Ramanujan's asymptotic expansion of Poisson averages.** Let $M \ge 1$ be an integer,
+$\varphi : \mathbb{R} \to \mathbb{C}$ and $G : \mathbb{R} \to \mathbb{R}$ functions, $A \ge 1$ a
+real number and $F$ a finite set of natural numbers. Write $\varphi^{(n)}$ for the $n$-th
+iterated derivative of $\varphi$ and $S_2(n, k)$ for the 2-associated Stirling numbers of the
+second kind. Assume that there are $C \ge 0$ and $p \in \mathbb{N}$ such that
+$|\varphi(x)| \le C x^p$ and $|G(x)| \le C x^p$ for all sufficiently large $x$; that $G(x) \ge 1$
+for all sufficiently large $x$; and that for every integer $m \ge 1$ and all sufficiently large
+$x$, the derivatives $\varphi^{(0)}, \dots, \varphi^{(m-1)}$ are differentiable at $x$ and
+$|\varphi^{(m)}(x)| / m! \le G(x) (A / x)^m$. Then, as $x \to \infty$,
+$$e^{-x} \sum_{j \in \mathbb{N} \setminus F} \frac{x^j}{j!} \varphi(j) - \varphi(x) -
+\sum_{k=2}^{M} \sum_{n=k}^{2k-2} S_2(n, n + 1 - k) \, x^{n-k+1} \frac{\varphi^{(n)}(x)}{n!}
+= O\left(\frac{G(x)}{x^M}\right).$$
 
 Proof: Taylor expansion on the central Poisson range is combined with the associated-Stirling
 central-moment identity from Comtet; Berndt's route and even-moment tails control the remainder.
+
+Proves `Wanted` entry `ramanujan_part1_ch3_entry10_poisson_asymptotic`.
+
+Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, Entry 10, printed pp. 57-58 / PDF
+    pp. 67-68.
 -/
 theorem ramanujan_part1_ch3_entry10_poisson_asymptotic
   (M : ℕ) (hM : 0 < M)

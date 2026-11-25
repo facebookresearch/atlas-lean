@@ -43,11 +43,15 @@ multiplication.
 
 open MathlibExt.GroupTheory.WordProblemSolvableShared
 
-/-- `G` is recursively presented with respect to `φ : FreeGroup (Fin k) →* G`: the set of words
-(lists of letters `(i, ε)`, the letter `(i, false)` standing for the inverse of the `i`-th
-generator) whose image under `φ` is `1` is recursively enumerable. For `φ` onto, this is the same as
-a presentation on the images of the generators with a recursively enumerable set of relators; it
-is the enumerable counterpart of the shared `WordProblemSolvable`. -/
+/-- **Recursively presented group.** Let $G$ be a group, $k$ a natural number and $\varphi$ a
+homomorphism from the free group on $k$ generators to $G$. The group $G$ is recursively presented
+with respect to $\varphi$ when the set of words $w$ (finite lists of letters $(i, \varepsilon)$
+with $i < k$ and $\varepsilon$ true or false, the letter $(i, \mathrm{false})$ standing for the
+inverse of the $i$-th generator) with $\varphi(w) = 1$ in $G$ is recursively enumerable.
+
+When $\varphi$ is surjective, this is the same as a presentation of $G$ on the images of the
+generators with a recursively enumerable set of relators; it is the enumerable counterpart of a
+solvable word problem. -/
 def IsRecursivelyPresented {G : Type*} [Group G] {k : ℕ} (φ : FreeGroup (Fin k) →* G) : Prop :=
   REPred (fun w : List (Fin k × Bool) => φ (FreeGroup.mk w) = 1)
 
@@ -55,17 +59,29 @@ def IsRecursivelyPresented {G : Type*} [Group G] {k : ℕ} (φ : FreeGroup (Fin 
 def rightOrders (G : Type*) [Group G] : Set (G → G → Prop) :=
   {r | IsLinearOrder G r ∧ ∀ a b c : G, r a b → r (a * c) (b * c)}
 
-/-- Kourovka 17.28 (V. V. Bludov, A. M. W. Glass): there is a finitely generated, recursively
-presented, soluble right-orderable group with insoluble word problem. -/
+/-- **The Bludov–Glass question (Kourovka 17.28).** The statement that there exist a soluble group
+$G$ that admits a right order, a natural number $k$ and elements $g_0, \dots, g_{k-1}$ generating
+$G$ such that, for the homomorphism $\varphi$ from the free group on $k$ generators to $G$ sending
+the $i$-th generator to $g_i$, the group $G$ is recursively presented with respect to $\varphi$
+and the word problem for $\varphi$ is not solvable. In words: there is a finitely generated,
+recursively presented, soluble right-orderable group with insoluble word problem. -/
 def solubleRightOrderableInsolubleWordProblem : Prop :=
   ∃ (G : Type) (_ : Group G), Group.IsSolvable G ∧ (rightOrders G).Nonempty ∧
     ∃ (k : ℕ) (gens : Fin k → G), Subgroup.closure (Set.range gens) = ⊤ ∧
       IsRecursivelyPresented (FreeGroup.lift gens) ∧ ¬ WordProblemSolvable (FreeGroup.lift gens)
 
 /--
+**A soluble right-orderable group with insoluble word problem (Kourovka 17.28).** There exist a
+soluble group $G$ that admits a right order, a natural number $k$ and elements
+$g_0, \dots, g_{k-1}$ generating $G$ such that, for the homomorphism $\varphi$ from the free group
+on $k$ generators to $G$ sending the $i$-th generator to $g_i$, the group $G$ is recursively
+presented with respect to $\varphi$ and the word problem for $\varphi$ is not solvable.
+
 Resolved true: Darbinyan constructs a two-generated, recursively presented, bi-orderable (hence
 right-orderable) soluble group of derived length 3 with undecidable word problem; the Kourovka
-Archive answers 17.28 "Yes, there is". Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved
+Archive answers 17.28 "Yes, there is".
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved
 Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of
 Solved Problems, Problem 17.28 (V. V. Bludov, A. M. W. Glass); resolution: A. Darbinyan,
 Computability, orders, and solvable groups, J. Symbolic Logic 85 (2020), 1588-1598

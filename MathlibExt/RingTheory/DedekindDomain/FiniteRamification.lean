@@ -43,8 +43,13 @@ variable {A B : Type*} [CommRing A] [IsDedekindDomain A] [CommRing B] [IsDedekin
   [Algebra A B] [Module.Finite A B] [Module.IsTorsionFree A B]
   [Algebra.IsSeparable (FractionRing A) (FractionRing B)]
 
-/-- Only finitely many (height-one) primes of `B` are ramified over `A`.
-This is the "primes of `B`" half of ATLAS Corollary 12.20. -/
+/-- **Only finitely many primes of the extension ramify.** Let $A$ and $B$ be Dedekind domains,
+where $B$ is an $A$-algebra that is finitely generated and torsion-free as an $A$-module and the
+field of fractions of $B$ is separable over the field of fractions of $A$. Then only finitely many
+nonzero prime ideals $\mathfrak P$ of $B$ are ramified over $A$. Here $\mathfrak P$ is unramified
+over $A$ when the localization $B_{\mathfrak P}$ is formally unramified over $A$.
+
+Source: ATLAS `NumberTheoryI` Corollary 12.20, the statement for primes of $B$. -/
 theorem Ideal.finite_ramified_primes :
     {P : HeightOneSpectrum B | ¬ Algebra.IsUnramifiedAt A P.asIdeal}.Finite := by
   have hne : differentIdeal A B ≠ ⊥ := differentIdeal_ne_bot
@@ -52,9 +57,14 @@ theorem Ideal.finite_ramified_primes :
   intro P hP
   exact (dvd_differentIdeal_iff (A := A) (B := B) (P := P.asIdeal)).mpr hP
 
-/-- Only finitely many (height-one) primes of `A` are ramified in `B`.
-This is the "primes of `A`" half of ATLAS Corollary 12.20: a prime of `A`
-counts as ramified when some prime of `B` lying over it is ramified. -/
+/-- **Only finitely many primes of the base ramify.** Let $A$ and $B$ be Dedekind domains, where
+$B$ is an $A$-algebra that is finitely generated and torsion-free as an $A$-module and the field of
+fractions of $B$ is separable over the field of fractions of $A$. Then only finitely many nonzero
+prime ideals $\mathfrak p$ of $A$ are ramified in $B$. Here $\mathfrak p$ is unramified in $B$ when
+every prime ideal $\mathfrak P$ of $B$ lying over $\mathfrak p$ is unramified over $A$, that is, the
+localization $B_{\mathfrak P}$ is formally unramified over $A$.
+
+Source: ATLAS `NumberTheoryI` Corollary 12.20, the statement for primes of $A$. -/
 theorem Ideal.finite_ramified_primes_below :
     {p : HeightOneSpectrum A | ¬ Algebra.IsUnramifiedIn B p.asIdeal}.Finite := by
   classical

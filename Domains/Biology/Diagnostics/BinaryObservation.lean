@@ -32,28 +32,27 @@ open MeasureTheory Set
 
 namespace MathlibExt.Biology.Diagnostics.BinaryObservation
 
-/-- The positive predictive value of parameters `θ = (π, se, sp)` as
-a real ratio (a genuine predictive value on the admissible domain
-where the denominator is positive). -/
+/-- The positive predictive value of parameters `θ = (π, se, sp)` as a real ratio (a genuine
+predictive value on the admissible domain where the denominator is positive). With the convention
+`x / 0 = 0` it is `0` when the denominator vanishes (for example `π = 0`, `sp = 1`); for
+`π, se, sp ∈ [0, 1]` and a positive denominator it is the probability of disease given a positive
+test. -/
 noncomputable def ppv (θ : ℝ × ℝ × ℝ) : ℝ :=
   θ.1 * θ.2.1 / (θ.1 * θ.2.1 + (1 - θ.1) * (1 - θ.2.2))
 
-/-- The PPV formula unfolded. -/
+/-- The PPV formula unfolded (with the convention `x / 0 = 0`). -/
 theorem ppv_eq (θ : ℝ × ℝ × ℝ) :
     ppv θ = θ.1 * θ.2.1 / (θ.1 * θ.2.1 + (1 - θ.1) * (1 - θ.2.2)) := rfl
 
 set_option linter.unusedVariables false in
-/-- **PPV coverage transfer.** Let `θ ω = (π, se, sp)` be the true
-diagnostic parameters, `S ω` a joint confidence set for them, and
-`T ω` a conservative PPV output set containing the transformed
-covered value (`θ ω ∈ S ω → ppv (θ ω) ∈ T ω`). On the admissible
-domain, whenever `θ ω ∈ S ω` the parameters lie in
-`π, se, sp ∈ [0, 1]` and the PPV denominator is strictly positive.
-Then the coverage event for `T` has at least the measure of the
-joint coverage event: coverage transfers conservatively through the
-PPV map, for any (not necessarily rectangular) joint set and any
-measurable conservative output set. Only the PPV denominator
-appears; no NPV denominator condition is imposed. -/
+/-- **PPV coverage transfer.** Let `μ` be a probability measure, `θ ω = (π, se, sp)` the true
+diagnostic parameters, `S ω` a joint confidence set for them, and `T ω` a conservative PPV output
+set containing the PPV image of `S ω` (`ppv '' S ω ⊆ T ω`, so `θ ω ∈ S ω → ppv (θ ω) ∈ T ω`), with
+both coverage events measurable. On the admissible domain, whenever `θ ω ∈ S ω` the parameters lie
+in `π, se, sp ∈ [0, 1]` and the PPV denominator is strictly positive. Then the coverage event for
+`T` has at least the measure of the joint coverage event: coverage transfers conservatively through
+the PPV map, for any (not necessarily rectangular) joint set and any measurable conservative output
+set. Only the PPV denominator appears; no NPV denominator condition is imposed. -/
 theorem ppv_coverage_transfer {Ω : Type*} [MeasurableSpace Ω]
     (μ : Measure Ω) [IsProbabilityMeasure μ]
     (S : Ω → Set (ℝ × ℝ × ℝ)) (T : Ω → Set ℝ) (θ : Ω → ℝ × ℝ × ℝ)

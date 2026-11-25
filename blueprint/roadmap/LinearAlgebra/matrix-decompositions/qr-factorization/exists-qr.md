@@ -9,7 +9,7 @@ Proof: Gram–Schmidt orthonormalization of the columns of $A$.
 
 ## Background
 
-- [Real singular value decomposition](../singular-value-decomposition/real-singular-value-decomposition.md): the other orthogonal factorization of a rectangular matrix; QR is computable in finitely many steps, the SVD is not.
+- [Real singular value decomposition](../singular-value-decomposition/singular-value-decomposition-theorem/real-singular-value-decomposition.md): the other orthogonal factorization of a rectangular matrix; QR is computable in finitely many steps, the SVD is not.
 
 ## Sources
 
