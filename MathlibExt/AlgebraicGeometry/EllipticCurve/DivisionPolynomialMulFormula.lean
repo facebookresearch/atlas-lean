@@ -47,8 +47,9 @@ For a nonsingular affine point `P = (x, y)`, `MFred W m h` says that the
 evaluated at `x`, expressed without division as
 `xCoordOrZero (m • P) * (ΨSq m).eval x = (Φ m).eval x`, together with
 `(ΨSq m).eval x ≠ 0`. `LowTorsionFree W m h` says that no multiple
-`k • P` with `1 ≤ k ≤ m` vanishes. `StarIdentity W j` is the polynomial
-identity in one variable that drives the induction step.
+`k • P` with `1 ≤ k ≤ m` vanishes. `StarIdentity W j` is the equation
+in `R[X]` that drives the induction step, and `StarIdentity.eval`
+evaluates it at a point of `R`.
 -/
 
 @[expose] public section
@@ -62,17 +63,27 @@ universe u v
 variable {R : Type u} [CommRing R] (W : WeierstrassCurve R)
 
 /-- The star identity for the division polynomials of `W` at index `j`:
-the polynomial identity in `t` relating `Φ` and `ΨSq` at `j - 1`, `j`,
-and `j + 1` that drives the induction step of the multiplication
-formula. -/
+the equation in `R[X]` relating `Φ` and `ΨSq` at `j - 1`, `j`, and
+`j + 1` that drives the induction step of the multiplication formula.
+It is stated as an equality of polynomials, not of their values: over a
+finite ring, equal values at every point do not imply equal polynomials.
+`StarIdentity.eval` gives the values. -/
 def StarIdentity (j : ℤ) : Prop :=
-  ∀ t : R,
+  2 * X * W.Φ j * (W.Φ j + X * W.ΨSq j) + C W.b₂ * X * (W.Φ j * W.ΨSq j) +
+      C W.b₄ * ((W.Φ j + X * W.ΨSq j) * W.ΨSq j) + C W.b₆ * W.ΨSq j ^ 2 =
+    W.Φ (j + 1) * W.ΨSq (j - 1) + W.Φ (j - 1) * W.ΨSq (j + 1)
+
+variable {W} in
+theorem StarIdentity.eval {j : ℤ} (h : W.StarIdentity j) (t : R) :
     2 * t * (W.Φ j).eval t * ((W.Φ j).eval t + t * (W.ΨSq j).eval t) +
         W.b₂ * t * ((W.Φ j).eval t * (W.ΨSq j).eval t) +
         W.b₄ * (((W.Φ j).eval t + t * (W.ΨSq j).eval t) * (W.ΨSq j).eval t) +
         W.b₆ * (W.ΨSq j).eval t ^ 2 =
       (W.Φ (j + 1)).eval t * (W.ΨSq (j - 1)).eval t +
-        (W.Φ (j - 1)).eval t * (W.ΨSq (j + 1)).eval t
+        (W.Φ (j - 1)).eval t * (W.ΨSq (j + 1)).eval t := by
+  have h' := congrArg (Polynomial.eval t) h
+  simp only [eval_add, eval_mul, eval_pow, eval_C, eval_X, eval_ofNat] at h'
+  exact h'
 
 namespace Affine
 
