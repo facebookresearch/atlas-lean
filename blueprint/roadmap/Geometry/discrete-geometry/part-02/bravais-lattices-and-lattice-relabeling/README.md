@@ -37,7 +37,7 @@
 - [Lattice translations move atoms between cells](lattice-vector-add-position.md)
 - [Coordinates of an atomic position](repr-position.md)
 - [Positions determine atoms exactly when offsets are distinct modulo the lattice](position-injective-iff.md)
-- [Each atomic position has a unique cell and label](exists-unique-index.md)
+- [With offsets distinct modulo the lattice, each atom has a unique index](exists-unique-index.md)
 
 ## E. Unimodular relabeling and cell volume
 
@@ -63,7 +63,7 @@
 - [Translating a crystal site](vadd-mk.md)
 - [Translating a site translates its position](site-position-vadd.md)
 - [The sites occupy exactly the atomic positions](range-site-position.md)
-- [Distinct sites occupy distinct positions](site-position-injective.md)
+- [With offsets distinct modulo the lattice, sites have distinct places](site-position-injective.md)
 - [Sites correspond to atomic positions](site-equiv-positions.md)
 - [The site correspondence sends a site to its position](coe-site-equiv-positions.md)
 

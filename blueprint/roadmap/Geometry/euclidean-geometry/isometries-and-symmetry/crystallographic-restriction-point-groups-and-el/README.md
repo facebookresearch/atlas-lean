@@ -68,7 +68,7 @@
 
 - [Inversion symmetry forbids a polar vector](polar-vector-inversion.md)
 - [Inversion symmetry forbids a polar rank-three tensor](polar-rank3-inversion.md)
-- [Cubic symmetry makes a symmetric tensor scalar](symmetric-cubic-is-scalar.md)
+- [Cubic symmetry makes a symmetric rank-two tensor scalar](symmetric-cubic-is-scalar.md)
 
 ## F. Independent elastic constants
 
