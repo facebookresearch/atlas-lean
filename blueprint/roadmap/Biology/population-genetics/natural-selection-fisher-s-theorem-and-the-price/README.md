@@ -29,3 +29,17 @@
 
 - [Law of total covariance for a nested finite population](cov-eq-between-add-within.md)
 - [Multilevel Price equation](multilevel-price.md)
+
+## Mean-fitness counterexample
+
+- [An example where the change in mean fitness differs from the additive variance](change-in-mean-fitness-differs-from-additive-variance.md)
+
+## Selection in stages and the cost of substitution
+
+- [Successive viability selection stages compose multiplicatively](successive-viability-selection-stages-compose-mu.md)
+- [Logarithmic substitution cost and a reproductive budget in haploid selection](haldane-s-dilemma-and-substitutional-load.md)
+
+## Two-locus selection and recombination
+
+- [Diploid two-locus viability selection followed by meiosis](two-locus-viability-selection-with-recombination.md)
+- [A uniform weak-selection bound on two-locus linkage disequilibrium](two-locus-ld-contraction-under-weak-selection.md)

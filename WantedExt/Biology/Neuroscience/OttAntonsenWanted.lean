@@ -139,17 +139,21 @@ theorem_wanted integral_mul_lorentzian (ω₀ Δ : ℝ) (hΔ : 0 < Δ) (β : ℂ
 Antonsen 2008, Section IV and Eq. (14)). Let `K, Λ, Ω, ω₀` be real and let `α₀` be admissible
 (`Admissible`). Then there is a solution `r` of the order-parameter equation (14)
 (`r' = orderField K Λ Ω ω₀ r`, right derivative at every `t ≥ 0`) on `[0, ∞)` with
-`r 0 = conj (α₀ (ω₀ - i))`, and for every family `α(w, t)` that solves the ansatz equation
-`α(w, ·)' = ansatzField Ω w (K r(t) + Λ) α(w, ·)` on `[0, ∞)` with `α(w, 0) = α₀ w` for each
-`w` with `Im w ≤ 0`, and every `t ≥ 0`: `α(·, t)` is admissible, and
-`conj (r t) = ∫ α(ω, t) g_L(ω) dω` for the Lorentzian density `g_L` with `Δ = 1` centred at
-`ω₀` (self-consistency, Eq. (7)).
+`r 0 = conj (α₀ (ω₀ - i))`, such that:
+* there is a family `α(w, t)` that, for each `w` with `Im w ≤ 0`, solves the ansatz equation
+  `α(w, ·)' = ansatzField Ω w (K r(t) + Λ) α(w, ·)` on `[0, ∞)` (right derivative at every
+  `t ≥ 0`) with `α(w, 0) = α₀ w`; and
+* every such family satisfies, for every `t ≥ 0`: `α(·, t)` is admissible, and
+  `conj (r t) = ∫ α(ω, t) g_L(ω) dω` for the Lorentzian density `g_L` with `Δ = 1` centred at
+  `ω₀` (self-consistency, Eq. (7)).
 
 Source: Ott and Antonsen (2008), Section IV and Eq. (14). -/
 theorem_wanted exists_order_parameter_invariant (K Λ Ω ω₀ : ℝ) (α₀ : ℂ → ℂ)
     (hα₀ : Admissible α₀) :
     ∃ r : ℝ → ℂ, r 0 = (starRingEnd ℂ) (α₀ (ω₀ - I)) ∧
       (∀ t, 0 ≤ t → HasDerivWithinAt r (orderField K Λ Ω ω₀ (r t)) (Set.Ici 0) t) ∧
+      (∃ α : ℂ → ℝ → ℂ, ∀ w : ℂ, w.im ≤ 0 → α w 0 = α₀ w ∧ ∀ t, 0 ≤ t →
+          HasDerivWithinAt (α w) (ansatzField Ω w (K * r t + Λ) (α w t)) (Set.Ici 0) t) ∧
       ∀ α : ℂ → ℝ → ℂ, (∀ w : ℂ, w.im ≤ 0 → α w 0 = α₀ w ∧ ∀ t, 0 ≤ t →
           HasDerivWithinAt (α w) (ansatzField Ω w (K * r t + Λ) (α w t)) (Set.Ici 0) t) →
         ∀ t, 0 ≤ t → Admissible (fun w => α w t) ∧

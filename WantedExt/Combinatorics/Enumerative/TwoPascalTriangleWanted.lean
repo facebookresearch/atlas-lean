@@ -14,6 +14,7 @@ public import Mathlib.RingTheory.PowerSeries.Binomial
 public import Mathlib.RingTheory.PowerSeries.Derivative
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import Mathlib.RingTheory.PowerSeries.Substitution
+public import MathlibExt.Combinatorics.Enumerative.ExtendedTrinomialAlternating
 public import MathlibExt.Combinatorics.Enumerative.RiordanArraySum
 public import MathlibExt.Combinatorics.Enumerative.TrinomialAlternatingColumn
 public import MathlibExt.Combinatorics.Enumerative.TrinomialBinomialTransform
@@ -368,23 +369,6 @@ public theorem_wanted sum_choose_gould_and_extended_trinomial (x y : ℂ) (n : �
           Ring.choose x k * Ring.choose (y - 2 * k) (n - k) * (-3) ^ k ∧
       ∑ k ∈ Finset.range (n / 3 + 1), E (-x) (n - 3 * k) * Ring.choose x k * (-1) ^ k =
         (-1) ^ n * Ring.choose x n
-
-/-- **An alternating convolution of extended trinomial coefficients.** For complex $u$ and
-$j \in \mathbb{N}$ write $\binom{u}{j}_2$ for the coefficient of $t^j$ in
-$(1 + t + t^2)^u = \sum_{i \ge 0} \binom{u}{i}(t + t^2)^i$ (Comtet's extension), where
-$\binom{u}{i}$ is the generalized binomial coefficient. Then for every complex $x$ and every
-$n \in \mathbb{N}$,
-
-$$\sum_{k=0}^{n} \binom{2n - x}{n - k}_2 \binom{x}{k}_2 (-1)^k =
-\sum_{k=0}^{\lfloor n/2 \rfloor} \binom{2n - 2x}{n - 2k}_2 \binom{x}{k}_2.$$
-
-Source: Yassine Otmani, *The 2-Pascal Triangle and a Related Riordan Array*, Journal of
-Integer Sequences 28 (2025), Article 25.3.5, Theorem 23 (`jis-2025-25.3.5-thm-23`). -/
-public theorem_wanted sum_extended_trinomial_alternating_eq (x : ℂ) (n : ℕ) :
-    let E : ℂ → ℕ → ℂ := fun u j =>
-      coeff j ((PowerSeries.binomialSeries ℂ u).subst (X + X ^ 2 : PowerSeries ℂ))
-    ∑ k ∈ Finset.range (n + 1), E (2 * n - x) (n - k) * E x k * (-1) ^ k =
-      ∑ k ∈ Finset.range (n / 2 + 1), E (2 * n - 2 * x) (n - 2 * k) * E x k
 
 /-- **Tribonacci numbers from every third term of A077943.** Let $T_n$ be the Tribonacci
 numbers, $T_0 = T_1 = 0$, $T_2 = 1$ and $T_{n+3} = T_{n+2} + T_{n+1} + T_n$. Let

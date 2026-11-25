@@ -68,7 +68,7 @@ noncomputable def lyapunov (b d : ι → ℝ → ℝ) (C : Matrix ι ι ℝ) (lo
 
 /-- Hypotheses a)–d) of Theorem 1 of Cohen and Grossberg (1983): `C` is symmetric with
 nonnegative entries; each `a_i` is continuous on `[0, ∞)` and positive on `(0, ∞)`; each `b_i`
-is continuous on `(0, ∞)`; each `d_i` is nonnegative, and differentiable and nondecreasing on
+is continuous on `(0, ∞)`; each `d_i` is nonnegative, differentiable and nondecreasing on
 `[0, ∞)`. -/
 structure StandingHypotheses (a b d : ι → ℝ → ℝ) (C : Matrix ι ι ℝ) : Prop where
   symm : ∀ i j, C i j = C j i
@@ -76,7 +76,7 @@ structure StandingHypotheses (a b d : ι → ℝ → ℝ) (C : Matrix ι ι ℝ)
   continuousOn_a : ∀ i, ContinuousOn (a i) (Set.Ici 0)
   pos_a : ∀ i ξ, 0 < ξ → 0 < a i ξ
   continuousOn_b : ∀ i, ContinuousOn (b i) (Set.Ioi 0)
-  nonneg_d : ∀ i ξ, 0 ≤ d i ξ
+  nonneg_d : ∀ i ξ, 0 ≤ ξ → 0 ≤ d i ξ
   differentiableOn_d : ∀ i, DifferentiableOn ℝ (d i) (Set.Ici 0)
   monotoneOn_d : ∀ i, MonotoneOn (d i) (Set.Ici 0)
 
