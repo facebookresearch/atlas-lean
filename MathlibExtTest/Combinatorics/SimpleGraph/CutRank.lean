@@ -51,6 +51,23 @@ example (X : Set (Fin 3)) :
     ((pathGraph 3).localComplement 1).cutRank Xᶜ = (pathGraph 3).cutRank X := by
   rw [cutRank_compl, cutRank_localComplement]
 
+-- Crossing cuts with all four regions nonempty: the result applies to genuinely different cuts.
+example (G : SimpleGraph (Fin 4)) :
+    G.cutRank ({1} : Set (Fin 4)) + G.cutRank {0, 1, 2} ≤ G.cutRank {0, 1} + G.cutRank {1, 2} := by
+  have hInter : ({0, 1} : Set (Fin 4)) ∩ {1, 2} = {1} := by
+    ext i
+    fin_cases i <;> decide
+  have hUnion : ({0, 1} : Set (Fin 4)) ∪ {1, 2} = {0, 1, 2} := by
+    ext i
+    fin_cases i <;> decide
+  simpa only [hInter, hUnion] using G.cutRank_inter_add_cutRank_union_le {0, 1} {1, 2}
+
+-- Complementary cuts give an empty intersection and a full union.
+example {V : Type*} [Fintype V] (G : SimpleGraph V) (X : Set V) :
+    G.cutRank ∅ + G.cutRank Set.univ ≤ G.cutRank X + G.cutRank X := by
+  simpa only [Set.inter_compl_self, Set.union_compl_self, cutRank_compl] using
+    G.cutRank_inter_add_cutRank_union_le X Xᶜ
+
 -- Complete graphs have cut-rank at most one.
 example (X : Set (Fin 5)) : (⊤ : SimpleGraph (Fin 5)).cutRank X ≤ 1 := cutRank_top_le_one X
 

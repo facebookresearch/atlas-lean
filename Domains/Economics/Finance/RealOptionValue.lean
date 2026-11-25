@@ -62,8 +62,9 @@ noncomputable def optionValue {α Ω : Type*} [Fintype Ω] (actions : Finset α)
     (hne : actions.Nonempty) (p : Ω → ℝ) (V : α → Ω → ℝ) : ℝ :=
   expectation p (fun ω => actions.sup' hne (fun a => V a ω))
 
-/-- **An optional action beats committing to any one feasible action.** For every feasible
-`b`, the expected value of committing to `b` is at most the option value. -/
+/-- **Choosing after seeing the state is worth at least committing to any feasible action.** For
+nonnegative weights `p` and every feasible `b`, the expected value of committing to `b` is at most
+the option value. -/
 theorem optionValue_ge_commitment {α Ω : Type*} [Fintype Ω] {actions : Finset α}
     {hne : actions.Nonempty} {p : Ω → ℝ} (hp : ∀ ω, 0 ≤ p ω) {V : α → Ω → ℝ}
     {b : α} (hb : b ∈ actions) :
@@ -73,8 +74,9 @@ theorem optionValue_ge_commitment {α Ω : Type*} [Fintype Ω] {actions : Finset
   intro ω _
   exact mul_le_mul_of_nonneg_left (Finset.le_sup' (fun a => V a ω) hb) (hp ω)
 
-/-- **An optional action beats the best commitment.** The maximum over actions of the
-committed expected values is at most the option value. -/
+/-- **Choosing after seeing the state is worth at least the best commitment.** For nonnegative
+weights `p`, the maximum over actions of the committed expected values is at most the option value.
+-/
 theorem maxCommitment_le_optionValue {α Ω : Type*} [Fintype Ω] {actions : Finset α}
     {hne : actions.Nonempty} {p : Ω → ℝ} (hp : ∀ ω, 0 ≤ p ω) {V : α → Ω → ℝ} :
     actions.sup' hne (fun a => expectation p (V a)) ≤

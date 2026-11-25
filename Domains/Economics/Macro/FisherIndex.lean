@@ -44,17 +44,21 @@ cost-of-living interpretation are not claimed.
 
 namespace MathlibExt.Economics.Macro.FisherIndex
 
-/-- **Laspeyres price index** over the finite basket `s`: the cost of the base-period
-basket `q0` at current prices `p1`, over its cost at base prices `p0`. -/
+/-- **Laspeyres price index** over the finite basket `s`: the cost of the base-period basket `q0` at
+current prices `p1`, over its cost at base prices `p0`. With the convention `x / 0 = 0`, `L = 0`
+when the base-period basket costs `0` at base prices. -/
 noncomputable def laspeyres {ι : Type*} (p0 p1 q0 : ι → ℝ) (s : Finset ι) : ℝ :=
   (∑ i ∈ s, p1 i * q0 i) / (∑ i ∈ s, p0 i * q0 i)
 
-/-- **Paasche price index** over the finite basket `s`: the cost of the current-period
-basket `q1` at current prices `p1`, over its cost at base prices `p0`. -/
+/-- **Paasche price index** over the finite basket `s`: the cost of the current-period basket `q1`
+at current prices `p1`, over its cost at base prices `p0`. With the convention `x / 0 = 0`, `P = 0`
+when the current basket costs `0` at base prices. -/
 noncomputable def paasche {ι : Type*} (p0 p1 q1 : ι → ℝ) (s : Finset ι) : ℝ :=
   (∑ i ∈ s, p1 i * q1 i) / (∑ i ∈ s, p0 i * q1 i)
 
-/-- **Fisher price index**: the geometric mean of the Laspeyres and Paasche indices. -/
+/-- **Fisher price index**: the geometric mean of the Laspeyres and Paasche indices. It is defined
+for all prices and quantities: when the product of the two indices is negative, the convention
+`√x = 0` for `x < 0` makes it `0`; the intended domain is strictly positive basket values. -/
 noncomputable def fisherIndex {ι : Type*} (p0 p1 q0 q1 : ι → ℝ) (s : Finset ι) : ℝ :=
   Real.sqrt (laspeyres p0 p1 q0 s * paasche p0 p1 q1 s)
 
@@ -84,8 +88,9 @@ theorem fisher_time_reversal {ι : Type*} {p0 p1 q0 q1 : ι → ℝ} {s : Finset
 
 /-- Concrete two-good basket: base prices `(1, 2)`, current prices `(2, 3)`, basket
 `(1, 1)` in both periods. Then Laspeyres = Paasche = `5 / 3`, so the forward Fisher index
-is `5 / 3` and the reversed index is `3 / 5`. Prove by applying `fisher_time_reversal`,
-discharging the four positivity hypotheses with `simp [Fin.sum_univ_two]` and `norm_num`. -/
+is `5 / 3`, the reversed index is `3 / 5`, and their product is `1`. Prove by applying
+`fisher_time_reversal`, discharging the four positivity hypotheses with
+`simp [Fin.sum_univ_two]` and `norm_num`. -/
 theorem fisher_time_reversal_example :
     fisherIndex ![2, 3] ![1, 2] ![1, 1] ![1, 1] (Finset.univ : Finset (Fin 2)) *
         fisherIndex ![1, 2] ![2, 3] ![1, 1] ![1, 1] (Finset.univ : Finset (Fin 2)) = 1 := by

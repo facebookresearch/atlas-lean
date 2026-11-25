@@ -60,7 +60,9 @@ def IsFeasible {ι : Type*} [Fintype ι] (μ : ι → ℝ) (m : ℝ) (w : ι →
   ∑ i, w i = 1 ∧ ∑ i, μ i * w i = m
 
 /-- The minimum-variance portfolio for target return `m`: `w* = Bᵀ (1, m)` with
-`B = (Mᵀ S⁻¹ M)⁻¹ Mᵀ S⁻¹` the GLS matrix of the constraint matrix `M` and covariance `S`. -/
+`B = (Mᵀ S⁻¹ M)⁻¹ Mᵀ S⁻¹` the GLS matrix of the constraint matrix `M` and covariance `S`. The
+formula is defined for every `S`, with the convention that the inverse of a singular matrix is `0`.
+-/
 noncomputable def minVariancePortfolio {ι : Type*} [Fintype ι] [DecidableEq ι]
     (S : Matrix ι ι ℝ) (μ : ι → ℝ) (m : ℝ) : ι → ℝ :=
   (glsMatrix (constraintMatrix μ) S)ᵀ *ᵥ ![1, m]
@@ -239,14 +241,16 @@ theorem isUnit_gram_iff {ι : Type*} [Fintype ι] [DecidableEq ι] {S : Matrix �
     rw [conjTranspose_eq_transpose_of_trivial] at h
     exact h.isUnit
 
-/-- The minimum-variance portfolio satisfies the budget and mean constraints. -/
+/-- The minimum-variance portfolio satisfies the budget and mean constraints, for a positive
+definite covariance `S` and a mean vector `μ` that is not constant. -/
 theorem minVariancePortfolio_isFeasible {ι : Type*} [Fintype ι] [DecidableEq ι]
     {S : Matrix ι ι ℝ} (hS : S.PosDef) {μ : ι → ℝ} (hμ : ∃ i j, μ i ≠ μ j) (m : ℝ) :
     IsFeasible μ m (minVariancePortfolio S μ m) := by
   rw [isFeasible_iff_transpose]
   exact transpose_mulVec_minVariancePortfolio μ m ((isUnit_gram_iff hS μ).mpr hμ)
 
-/-- Every feasible portfolio has variance at least that of the minimum-variance portfolio. -/
+/-- For a positive definite covariance `S` and a mean vector `μ` that is not constant, every
+feasible portfolio has variance at least that of the minimum-variance portfolio. -/
 theorem portfolioVariance_minVariancePortfolio_le {ι : Type*} [Fintype ι] [DecidableEq ι]
     {S : Matrix ι ι ℝ} (hS : S.PosDef) {μ : ι → ℝ} (hμ : ∃ i j, μ i ≠ μ j) {m : ℝ}
     {w : ι → ℝ} (hw : IsFeasible μ m w) :
@@ -260,7 +264,8 @@ theorem portfolioVariance_minVariancePortfolio_le {ι : Type*} [Fintype ι] [Dec
     simpa [quadForm] using h
   linarith
 
-/-- Uniqueness: a feasible portfolio whose variance does not exceed that of the minimum-variance
+/-- Uniqueness: for a positive definite covariance `S` and a mean vector `μ` that is not
+constant, a feasible portfolio whose variance does not exceed that of the minimum-variance
 portfolio is the minimum-variance portfolio. -/
 theorem eq_minVariancePortfolio_of_portfolioVariance_le {ι : Type*} [Fintype ι] [DecidableEq ι]
     {S : Matrix ι ι ℝ} (hS : S.PosDef) {μ : ι → ℝ} (hμ : ∃ i j, μ i ≠ μ j) {m : ℝ}

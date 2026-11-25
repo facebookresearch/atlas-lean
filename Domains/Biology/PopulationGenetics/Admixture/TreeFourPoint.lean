@@ -76,8 +76,8 @@ theorem parents_eq_singleton_of_mem_of_isTree (hG : G.IsTree) {X Y : V}
   Finset.eq_singleton_iff_unique_mem.mpr
     ⟨hY, fun Z hZ => Finset.card_le_one.mp (hG X) Z hZ Y hY⟩
 
-/-- If `Y` is the only parent of `X ≠ c`, the lineage of `X` passes through `c` iff the
-lineage of `Y` does. -/
+/-- If `Y` is the only parent of `X ≠ c`, then `visit X c = visit Y c`: the lineage of `X` passes
+through `c` with the same probability as the lineage of `Y`. -/
 theorem visit_eq_visit_of_parents_eq_singleton {X Y c : V} (hY : G.parents X = {Y})
     (hXc : X ≠ c) : G.visit X c = G.visit Y c := by
   have hXr : X ≠ G.root := by
@@ -175,7 +175,8 @@ theorem weight_eq_visit_of_isTree (hG : G.IsTree) (X : V) (e : G.Edge) :
   rw [weight, hp, mul_one]
 
 /-- Lineage edges on a tree are laminar: if the lineage of `X` traverses both `e` and `f`,
-then every lineage through one of them also traverses the other one. -/
+then either every lineage through `e` also traverses `f`, or every lineage through `f` also
+traverses `e`. -/
 theorem weight_laminar_of_isTree (hG : G.IsTree) {X : V} {e f : G.Edge}
     (he : G.weight X e = 1) (hf : G.weight X f = 1) :
     (∀ Y, G.weight Y e = 1 → G.weight Y f = 1) ∨
@@ -195,10 +196,10 @@ private theorem binary_pattern {a b c d : ℝ} (ha : a = 0 ∨ a = 1) (hb : b = 
   rcases ha with rfl | rfl <;> rcases hb with rfl | rfl <;> rcases hc with rfl | rfl <;>
     rcases hd with rfl | rfl <;> norm_num at h <;> norm_num
 
-/-- Quartet compatibility on a tree: either no edge is an `xz | yt` edge (traversed by exactly
-the lineages of `x` and `z`, or exactly those of `y` and `t`), or no edge is an `xt | yz`
-edge. In product form, the summands of one of the two quartet differences of `f2` are all
-nonnegative. -/
+/-- Quartet compatibility on a tree: either no edge is an `xz | yt` edge (traversed, among the
+lineages of `x`, `y`, `z`, `t`, by exactly those of `x` and `z`, or exactly those of `y` and
+`t`), or no edge is an `xt | yz` edge. In product form, the summands of one of the two quartet
+differences of `f2` are all nonnegative. -/
 theorem quartet_compatible_of_isTree (hG : G.IsTree) (x y z t : V) :
     (∀ e, 0 ≤ (G.weight x e - G.weight t e) * (G.weight y e - G.weight z e)) ∨
       ∀ e, 0 ≤ (G.weight x e - G.weight z e) * (G.weight y e - G.weight t e) := by
@@ -230,8 +231,9 @@ end AdmixtureGraph
 /-! ### The four-point condition -/
 
 /-- In a drift model carrying the weights of a tree-shaped admixture graph, `f2` satisfies the
-four-point condition. Binary loadings alone do not suffice: the square weights `00, 10, 01,
-11` are binary but their `f2` violates it. Here the lineages are root-ward paths of one tree,
+four-point condition. Binary loadings alone do not suffice: the square weights
+`00, 10, 01, 11` on two edges of positive length are binary but their `f2` violates it. Here
+the lineages are root-ward paths of one tree,
 so for each quartet the edges cannot separate it in two different ways
 (`AdmixtureGraph.quartet_compatible_of_isTree`). -/
 theorem AdmixtureGraph.fourPointCondition_f2_of_isTree {V Ω : Type*} [DecidableEq V]

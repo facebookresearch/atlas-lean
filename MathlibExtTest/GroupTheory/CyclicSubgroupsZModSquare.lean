@@ -13,7 +13,7 @@ public import MathlibExt.GroupTheory.CyclicSubgroupsZModSquare
 @[expose] public section
 
 /-- The source statement, with its original binders. -/
-theorem exactSource (n : ℕ) [NeZero n] :
+private theorem exactSource (n : ℕ) [NeZero n] :
     Nat.card {H : AddSubgroup (ZMod n × ZMod n) // IsAddCyclic H ∧ Nat.card H = n}
       = ArithmeticFunction.dedekindPsi n :=
   ZMod.natCard_isAddCyclic_addSubgroup_prod_eq_dedekindPsi n

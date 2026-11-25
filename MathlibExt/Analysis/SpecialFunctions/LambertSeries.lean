@@ -29,57 +29,79 @@ Sources:
 All series are indexed by `k : ℕ`, with the papers' index `n = k + 1`.
 -/
 
-/-- The summand `qⁿ / (1 - qⁿ)` of the basic Lambert series. -/
+/-- **Lambert series summand.** For a complex number $q$ with $|q| < 1$ and a natural number $k$,
+the $k$-th summand of the basic Lambert series is $q^{k+1} / (1 - q^{k+1})$, that is, the term
+$q^n / (1 - q^n)$ with $n = k + 1$. -/
 public noncomputable def lambertSeriesSummand (q : {q : ℂ // ‖q‖ < 1}) (k : ℕ) : ℂ :=
   (q : ℂ) ^ (k + 1) / (1 - (q : ℂ) ^ (k + 1))
 
-/-- The basic Lambert series `L(q) = ∑_{n≥1} qⁿ / (1 - qⁿ)`. -/
+/-- **Lambert series.** For a complex number $q$ with $|q| < 1$, the basic Lambert series is
+$L(q) = \sum_{n \ge 1} q^n / (1 - q^n)$. -/
 public noncomputable def lambertSeries (q : {q : ℂ // ‖q‖ < 1}) : ℂ :=
   ∑' k, lambertSeriesSummand q k
 
-/-- The summand `n qⁿ / (1 - qⁿ)` of the source's `f(q)`. -/
+/-- **Terms of the weighted Lambert series $f$.** For a complex number $q$ with $|q| < 1$ and a
+natural number $k$, the term of index $k$ is $n q^n / (1 - q^n)$ with $n = k + 1$. These are the
+terms of the weighted Lambert series $f(q) = \sum_{n \ge 1} n q^n / (1 - q^n)$. -/
 public noncomputable def lambertFSummand (q : {q : ℂ // ‖q‖ < 1}) (k : ℕ) : ℂ :=
   (k + 1 : ℂ) * (q : ℂ) ^ (k + 1) / (1 - (q : ℂ) ^ (k + 1))
 
-/-- The weighted Lambert series `f(q) = ∑_{n≥1} n qⁿ / (1 - qⁿ)`. -/
+/-- **The weighted Lambert series $f$.** For a complex number $q$ with $|q| < 1$, the weighted
+Lambert series is $f(q) = \sum_{n \ge 1} n q^n / (1 - q^n)$. -/
 public noncomputable def lambertF (q : {q : ℂ // ‖q‖ < 1}) : ℂ :=
   ∑' k, lambertFSummand q k
 
-/-- The summand `n qⁿ / (1 + qⁿ)` of the source's `g(q)`. -/
+/-- **Terms of the weighted Lambert series $g$.** For a complex number $q$ with $|q| < 1$ and a
+natural number $k$, the term of index $k$ is $n q^n / (1 + q^n)$ with $n = k + 1$. These are the
+terms of the weighted Lambert series $g(q) = \sum_{n \ge 1} n q^n / (1 + q^n)$. -/
 public noncomputable def lambertGSummand (q : {q : ℂ // ‖q‖ < 1}) (k : ℕ) : ℂ :=
   (k + 1 : ℂ) * (q : ℂ) ^ (k + 1) / (1 + (q : ℂ) ^ (k + 1))
 
-/-- The weighted Lambert series `g(q) = ∑_{n≥1} n qⁿ / (1 + qⁿ)`. -/
+/-- **The weighted Lambert series $g$.** For a complex number $q$ with $|q| < 1$, the weighted
+Lambert series is $g(q) = \sum_{n \ge 1} n q^n / (1 + q^n)$. -/
 public noncomputable def lambertG (q : {q : ℂ // ‖q‖ < 1}) : ℂ :=
   ∑' k, lambertGSummand q k
 
-/-- The summand `n^μ qⁿ / (1 - qⁿ)` of the source's `f_μ(q)`. -/
+/-- **Terms of the power-weighted Lambert series $f_\mu$.** For a complex number $q$ with
+$|q| < 1$, an integer $\mu \ge 1$ and a natural number $k$, the term of index $k$ is
+$n^\mu q^n / (1 - q^n)$ with $n = k + 1$. These are the terms of the power-weighted Lambert series
+$f_\mu(q) = \sum_{n \ge 1} n^\mu q^n / (1 - q^n)$. -/
 public noncomputable def lambertFMuSummand (q : {q : ℂ // ‖q‖ < 1})
     (μ : {μ : ℕ // 1 ≤ μ}) (k : ℕ) : ℂ :=
   (k + 1 : ℂ) ^ (μ : ℕ) * (q : ℂ) ^ (k + 1) / (1 - (q : ℂ) ^ (k + 1))
 
-/-- The power-weighted series `f_μ(q) = ∑_{n≥1} n^μ qⁿ / (1 - qⁿ)`. -/
+/-- **The power-weighted Lambert series $f_\mu$.** For a complex number $q$ with $|q| < 1$ and an
+integer $\mu \ge 1$, the power-weighted Lambert series is
+$f_\mu(q) = \sum_{n \ge 1} n^\mu q^n / (1 - q^n)$. -/
 public noncomputable def lambertFMu (q : {q : ℂ // ‖q‖ < 1})
     (μ : {μ : ℕ // 1 ≤ μ}) : ℂ :=
   ∑' k, lambertFMuSummand q μ k
 
-/-- The summand `n^μ qⁿ / (1 + qⁿ)` of the source's `g_μ(q)`. -/
+/-- **Terms of the power-weighted Lambert series $g_\mu$.** For a complex number $q$ with
+$|q| < 1$, an integer $\mu \ge 1$ and a natural number $k$, the term of index $k$ is
+$n^\mu q^n / (1 + q^n)$ with $n = k + 1$. These are the terms of the power-weighted Lambert series
+$g_\mu(q) = \sum_{n \ge 1} n^\mu q^n / (1 + q^n)$. -/
 public noncomputable def lambertGMuSummand (q : {q : ℂ // ‖q‖ < 1})
     (μ : {μ : ℕ // 1 ≤ μ}) (k : ℕ) : ℂ :=
   (k + 1 : ℂ) ^ (μ : ℕ) * (q : ℂ) ^ (k + 1) / (1 + (q : ℂ) ^ (k + 1))
 
-/-- The power-weighted series `g_μ(q) = ∑_{n≥1} n^μ qⁿ / (1 + qⁿ)`. -/
+/-- **The power-weighted Lambert series $g_\mu$.** For a complex number $q$ with $|q| < 1$ and an
+integer $\mu \ge 1$, the power-weighted Lambert series is
+$g_\mu(q) = \sum_{n \ge 1} n^\mu q^n / (1 + q^n)$. -/
 public noncomputable def lambertGMu (q : {q : ℂ // ‖q‖ < 1})
     (μ : {μ : ℕ // 1 ≤ μ}) : ℂ :=
   ∑' k, lambertGMuSummand q μ k
 
-/-- The summand `q^(mn) / (1 - q^(2n))^m` of the source's family `L_m(q)`. -/
+/-- **Terms of the Lambert family $L_m$.** For a complex number $q$ with $|q| < 1$, an integer
+$m \ge 1$ and a natural number $k$, the term of index $k$ is $q^{mn} / (1 - q^{2n})^m$ with
+$n = k + 1$. These are the terms of $L_m(q) = \sum_{n \ge 1} q^{mn} / (1 - q^{2n})^m$. -/
 public noncomputable def lambertLmSummand (q : {q : ℂ // ‖q‖ < 1})
     (m : {m : ℕ // 1 ≤ m}) (k : ℕ) : ℂ :=
   (q : ℂ) ^ ((m : ℕ) * (k + 1)) /
     (1 - (q : ℂ) ^ (2 * (k + 1))) ^ (m : ℕ)
 
-/-- The Lambert family `L_m(q) = ∑_{n≥1} q^(mn) / (1 - q^(2n))^m`. -/
+/-- **The Lambert family $L_m$.** For a complex number $q$ with $|q| < 1$ and an integer $m \ge 1$,
+the Lambert family is $L_m(q) = \sum_{n \ge 1} q^{mn} / (1 - q^{2n})^m$. -/
 public noncomputable def lambertLm (q : {q : ℂ // ‖q‖ < 1})
     (m : {m : ℕ // 1 ≤ m}) : ℂ :=
   ∑' k, lambertLmSummand q m k

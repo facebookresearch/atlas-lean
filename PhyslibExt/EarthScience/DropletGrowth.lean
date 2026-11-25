@@ -60,17 +60,17 @@ namespace EarthScience
 
 
 set_option linter.unusedVariables false in
-/-- Diffusion-limited droplet growth: with `r(t) = sqrt(r0^2 + 2*K*S*t)`,
-the squared radius satisfies `r(t)^2 = r0^2 + 2*K*S*t` whenever
-`r0^2 + 2*K*S*t >= 0`. -/
+/-- Diffusion-limited droplet growth: for `r0 > 0`, `K >= 0` and
+`r(t) = sqrt(r0^2 + 2*K*S*t)`, the squared radius satisfies
+`r(t)^2 = r0^2 + 2*K*S*t` whenever `r0^2 + 2*K*S*t >= 0`. -/
 theorem radius_sq {r0 K S t : ℝ} (hr0 : 0 < r0) (hK : 0 ≤ K)
     (h : 0 ≤ r0 ^ 2 + 2 * K * S * t) :
     (Real.sqrt (r0 ^ 2 + 2 * K * S * t)) ^ 2 = r0 ^ 2 + 2 * K * S * t := by
   exact Real.sq_sqrt h
 
 set_option linter.unusedVariables false in
-/-- Diffusion-limited droplet growth: the squared radius has derivative
-`2*K*S` at every `t` with `r0^2 + 2*K*S*t > 0`. -/
+/-- Diffusion-limited droplet growth: for `r0 > 0` and `K >= 0`, the squared
+radius has derivative `2*K*S` at every `t` with `r0^2 + 2*K*S*t > 0`. -/
 theorem radius_sq_hasDerivAt {r0 K S : ℝ} (hr0 : 0 < r0) (hK : 0 ≤ K) (t : ℝ)
     (hpos : 0 < r0 ^ 2 + 2 * K * S * t) :
     HasDerivAt (fun t => (Real.sqrt (r0 ^ 2 + 2 * K * S * t)) ^ 2) (2 * K * S) t := by
@@ -86,8 +86,8 @@ theorem radius_sq_hasDerivAt {r0 K S : ℝ} (hr0 : 0 < r0) (hK : 0 ≤ K) (t : �
   exact hinner.congr_of_eventuallyEq heq
 
 set_option linter.unusedVariables false in
-/-- Diffusion-limited droplet growth: at a time with `r(t) > 0`,
-`HasDerivAt r (K*S / r(t)) t`, i.e. `r(t) * r'(t) = K*S`. -/
+/-- Diffusion-limited droplet growth: for `r0 > 0` and `K >= 0`, at a time
+with `r(t) > 0`, `HasDerivAt r (K*S / r(t)) t`, i.e. `r(t) * r'(t) = K*S`. -/
 theorem radius_hasDerivAt {r0 K S : ℝ} (hr0 : 0 < r0) (hK : 0 ≤ K) (t : ℝ)
     (hr : 0 < Real.sqrt (r0 ^ 2 + 2 * K * S * t)) :
     HasDerivAt (fun t => Real.sqrt (r0 ^ 2 + 2 * K * S * t))
@@ -108,7 +108,8 @@ theorem radius_hasDerivAt {r0 K S : ℝ} (hr0 : 0 < r0) (hK : 0 ≤ K) (t : ℝ)
   rwa [heq] at h
 
 set_option linter.unusedVariables false in
-/-- No supersaturation (`S = 0`): the radius stays `r0`. -/
+/-- No supersaturation (`S = 0`): for `r0 > 0` and `K >= 0` the radius
+stays `r0`. -/
 theorem no_supersaturation {r0 K t : ℝ} (hr0 : 0 < r0) (hK : 0 ≤ K) :
     Real.sqrt (r0 ^ 2 + 2 * K * (0 : ℝ) * t) = r0 := by
   have harg : r0 ^ 2 + 2 * K * (0 : ℝ) * t = r0 ^ 2 := by ring

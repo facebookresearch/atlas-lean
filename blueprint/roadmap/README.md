@@ -48,3 +48,21 @@
 - [Mathematical Physics](Physics/README.md)
 - [Mathematical Chemistry](Chemistry/README.md)
 - [Earth Science](EarthScience/README.md)
+
+## Domains
+
+Application-specific models and their roadmaps.
+
+- [Browse Domains](../coverage/README.md#domains)
+
+## CSLibExt
+
+Computer-science developments and their roadmaps.
+
+- [Browse CSLibExt](../coverage/README.md#cslibext)
+
+## PhyslibExt
+
+Physics developments and their roadmaps.
+
+- [Browse PhyslibExt](../coverage/README.md#physlibext)

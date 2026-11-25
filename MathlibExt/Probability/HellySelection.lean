@@ -63,27 +63,31 @@ open scoped Topology
 
 namespace ProbabilityTheory
 
-/-- A Stieltjes function is a (cumulative) distribution function if it tends to `0`
-at `-∞` and to `1` at `+∞`. The bundle supplies monotonicity and right continuity.
-These are exactly the distribution functions of probability measures on `ℝ`. -/
+/-- **Distribution function.** A nondecreasing, right-continuous function
+$F : \mathbb{R} \to \mathbb{R}$ (a Stieltjes function) is a (cumulative) distribution function if
+$F(x) \to 0$ as $x \to -\infty$ and $F(x) \to 1$ as $x \to +\infty$.
+
+These are exactly the distribution functions of probability measures on $\mathbb{R}$. -/
 structure IsDistributionFunction (F : StieltjesFunction ℝ) : Prop where
   tendsto_atBot : Tendsto F atBot (𝓝 0)
   tendsto_atTop : Tendsto F atTop (𝓝 1)
 
-/-- A distribution function is non-negative: `0 ≤ F x` for all `x ∈ ℝ`. -/
+/-- **Distribution functions are nonnegative.** If $F$ is a distribution function on
+$\mathbb{R}$, then $0 \le F(x)$ for every $x \in \mathbb{R}$. -/
 theorem IsDistributionFunction.nonneg {F : StieltjesFunction ℝ}
     (hF : IsDistributionFunction F) (x : ℝ) :
     0 ≤ F x :=
   le_of_tendsto hF.tendsto_atBot (eventually_atBot.mpr ⟨x, fun _ hy => F.mono hy⟩)
 
-/-- A distribution function is bounded above by `1`: `F x ≤ 1` for all `x ∈ ℝ`. -/
+/-- **Distribution functions are at most one.** If $F$ is a distribution function on
+$\mathbb{R}$, then $F(x) \le 1$ for every $x \in \mathbb{R}$. -/
 theorem IsDistributionFunction.le_one {F : StieltjesFunction ℝ}
     (hF : IsDistributionFunction F) (x : ℝ) :
     F x ≤ 1 :=
   ge_of_tendsto hF.tendsto_atTop (eventually_atTop.mpr ⟨x, fun _ hy => F.mono hy⟩)
 
-/-- For any distribution function `F` and any `x ∈ ℝ`, `F x` lies in the unit
-interval `[0, 1]`. -/
+/-- **Distribution functions take values in the unit interval.** If $F$ is a distribution
+function on $\mathbb{R}$, then $F(x) \in [0, 1]$ for every $x \in \mathbb{R}$. -/
 theorem IsDistributionFunction.mem_Icc {F : StieltjesFunction ℝ}
     (hF : IsDistributionFunction F) (x : ℝ) :
     F x ∈ Icc (0 : ℝ) 1 :=
@@ -103,11 +107,13 @@ private theorem sSup_image_rat_eq (g : ℚ → ℝ) (hg_mono : ∀ q₁ q₂ : �
   · exact le_csSup ⟨1, by rintro _ ⟨r, _, rfl⟩; exact (hg_bdd r).2⟩
       ⟨q, show (q : ℝ) ≤ ↑q from le_rfl, rfl⟩
 
-/-- **Helly's selection theorem**. Every sequence `F : ℕ → StieltjesFunction ℝ` of distribution
-functions has a subsequence `F ∘ φ` that converges pointwise to a monotone,
-right-continuous function `G : ℝ → ℝ` at every continuity point of `G`. The limit
-`G` need not itself be a distribution function (it may lose mass to ±∞), but it is
-always monotone and right-continuous. -/
+/-- **Helly's selection theorem.** Let $(F_n)_{n \in \mathbb{N}}$ be a sequence of
+distribution functions on $\mathbb{R}$. Then there are a strictly increasing map
+$\varphi : \mathbb{N} \to \mathbb{N}$ and a nondecreasing, right-continuous function
+$G : \mathbb{R} \to \mathbb{R}$ such that $F_{\varphi(k)}(x) \to G(x)$ as $k \to \infty$ at every
+point $x \in \mathbb{R}$ at which $G$ is continuous.
+
+The limit $G$ need not itself be a distribution function: it may lose mass to $\pm\infty$. -/
 theorem helly_selection (F : ℕ → StieltjesFunction ℝ)
     (hF : ∀ n, IsDistributionFunction (F n)) :
     ∃ (φ : ℕ → ℕ) (G : StieltjesFunction ℝ),

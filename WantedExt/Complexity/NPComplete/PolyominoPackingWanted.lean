@@ -17,7 +17,7 @@ doi:10.1007/s00373-007-0713-4.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Data.Fin.VecNotation
 public import MathlibExt.Combinatorics.Enumerative.LunnonDimensionDecomposition
 public import MathlibExt.Computability.BinaryNatEncoding
