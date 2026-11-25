@@ -43,9 +43,13 @@ def residueBaseMap (x : ZeroPoint X) : k →+* X.scheme.left.residueField x.val 
   (X.scheme.left.Γevaluation x.val).hom.comp
     ((Scheme.ΓSpecIso (.of k)).inv ≫ X.scheme.hom.appTop).hom
 
-/-- Source transfer dictionaries at a native residue-field point. The field
-comparison is not stored here: every evaluation reads the same geometrically
-normalized family supplied to `residueEvaluation`. -/
+/-- Data for transferring Brauer classes from the residue field $\kappa(x)$ of a dimension-zero
+point $x$ of $X$ to $k$: a $k$-embedding `embedding` of $\kappa(x)$ into the separable closure of
+$k$; a `FiniteFieldPair` for it, which identifies the separable closures and, compatibly with their
+actions, the absolute Galois group of $\kappa(x)$ with the subgroup of that of $k$ fixing the image,
+this subgroup being open of finite index; and a corestriction
+$\mathrm{Br}(\kappa(x)) \to \mathrm{Br}(k)$ given on cocycle classes by the transfer formula
+(`NormalizedCorestriction`). -/
 structure ResidueFieldData (x : ZeroPoint X) where
   embedding :
     letI := (residueBaseMap X x).toAlgebra
@@ -81,8 +85,10 @@ def cycleEvaluation (B : FieldComparisonFamily)
   (Finsupp.linearCombination ℤ (residueEvaluation X B D a)).toAddMonoidHom.comp
     (cycleCoordinates X)
 
-/-- Arithmetic Chow descent has a fixed source quotient and normalized cycle sum.
-Existence is the retained arithmetic comparison obligation. -/
+/-- The type of additive maps $f : \mathrm{CH}_0(X) \to \mathrm{Br}(k)$ sending the class of every
+zero-cycle $c$ to `cycleEvaluation X B D a c`: factorizations through rational equivalence of the
+evaluation of the Brauer class $a$ on zero-cycles, for the field comparisons $B$ and the
+residue-field data $D$. -/
 abbrev ChowEvaluation (B : FieldComparisonFamily)
     (D : ∀ x : ZeroPoint X, ResidueFieldData X x)
     (a : Brauer X.scheme.left) :=
@@ -103,8 +109,9 @@ structure CartesianFieldExtension where
   /-- The field extension is finite. -/
   finite : i.Finite
 
-/-- The normalized integral Chow norm is proper pushforward of cycles along the finite
-base-change map. Its constructor is completed scheme source integration, with this map fixed. -/
+/-- The type of additive maps $N : \mathrm{CH}_0(Y) \to \mathrm{CH}_0(X)$ sending the class of every
+zero-cycle $c$ on $Y$ to the class of the dimension-zero part of the pushforward of $c$ (with
+residue-degree multiplicities) along the base-change map `E.map`. -/
 abbrev NormalizedNorm (E : CartesianFieldExtension X Y i) :=
   {N : ChowGroup Y 0 →+ ChowGroup X 0 //
     ∀ c : CycleGroup Y.scheme.left 0,

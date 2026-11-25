@@ -1,0 +1,15 @@
+# Integral Chow Chern Models
+
+- [Push Basis](push-basis.md)
+- [Proper Push Descent](proper-push-descent.md)
+- [Smooth Pull Descent](smooth-pull-descent.md)
+- [Line Total Model](line-total-model.md)
+- [Line Chow Comparison](line-chow-comparison.md)
+- [First Chern](first-chern.md)
+- [Projective Model](projective-model.md)
+- [Projective Chern Data](projective-chern-data.md)
+- [First Chern Power](first-chern-power.md)
+- [Projective Segre](projective-segre.md)
+- [Chern Rec](chern-rec.md)
+- [Chern Construction](chern-construction.md)
+- [Chern Cap](chern-cap.md)
