@@ -99555,6 +99555,7 @@
     "WeierstrassCurve.VariableChange.mapAffineCoordinates": "4bbc9ab4fed2b46c",
     "WeierstrassCurve.VariableChange.natCard_point_eq": "6ca3a1cb00ebdde5",
     "WeierstrassCurve.VariableChange.pointEquiv": "879ff75821aef3d7",
+    "WeierstrassCurve.rank_eq_one_of_simple_zero_lSeries": "8d83b90aae8e335a",
     "WithConv.algHom_inv_apply": "e0ce8764b20bd658",
     "WithConv.algHom_inv_def": "52b4d8f43c68bdb5",
     "WithConv.mapValue_algebraOfId": "cff3786ab0341f32",
