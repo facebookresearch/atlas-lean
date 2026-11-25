@@ -473,10 +473,13 @@ private lemma log_harmonicMeanSize_bounds (hN : ∀ i, N i ≠ 0) {t : ℕ} (ht 
 (VI-39)–(VI-44)). In a neutral Wright–Fisher population of diploids whose size in generation `i`
 is `N i ≥ 1` (`2 N i` gene copies), let `h t = nonIdentityProb N R t` be the probability that two
 distinct gene copies of generation `t`, drawn at random together with a random genealogy, are not
-identical by descent, given the identity by descent `R` of generation `0`. Then, for `t ≥ 1`:
+identical by descent, given the identity by descent `R` of generation `0`. Then:
 
-* `h (i + 1) = (1 - 1 / (2 N i)) h i` for every `i`, and so `h t = Φ t * h 0`, where
-  `Φ t = ∏_{i < t} (1 - 1 / (2 N i))`; in particular `Φ t = h t / h 0` when `h 0 > 0`;
+* `h (i + 1) = (1 - 1 / (2 N i)) h i` for every `i`, and so `h s = Φ s * h 0` for every `s`,
+  where `Φ s = ∏_{i < s} (1 - 1 / (2 N i))`; in particular `Φ s = h s / h 0` when `h 0 > 0`.
+
+For `t ≥ 1` generations:
+
 * the inbreeding effective size `N_e = 1 / (2 (1 - Φ t ^ (1 / t)))` is greater than `1 / 2`, and
   it is the only `M > 1 / 2` with `(1 - 1 / (2 M)) ^ t = Φ t`: the constant size of a
   Wright–Fisher population giving the same factor `Φ t`;
@@ -489,9 +492,9 @@ identical by descent, given the identity by descent `R` of generation `0`. Then,
 theorem effectiveSize_fluctuating (hN : ∀ i, 1 ≤ N i)
     (R : Fin (2 * N 0) → Fin (2 * N 0) → Prop) [DecidableRel R] {t : ℕ} (ht : 1 ≤ t) :
     (∀ i, nonIdentityProb N R (i + 1) = (1 - 1 / (2 * (N i : ℝ))) * nonIdentityProb N R i) ∧
-    nonIdentityProb N R t = nonIdentityFactor N t * nonIdentityProb N R 0 ∧
-    (0 < nonIdentityProb N R 0 →
-      nonIdentityFactor N t = nonIdentityProb N R t / nonIdentityProb N R 0) ∧
+    (∀ s, nonIdentityProb N R s = nonIdentityFactor N s * nonIdentityProb N R 0) ∧
+    (∀ s, 0 < nonIdentityProb N R 0 →
+      nonIdentityFactor N s = nonIdentityProb N R s / nonIdentityProb N R 0) ∧
     1 / 2 < inbreedingEffectiveSize N t ∧
     (∀ M : ℝ, 1 / 2 < M →
       ((1 - 1 / (2 * M)) ^ t = nonIdentityFactor N t ↔ M = inbreedingEffectiveSize N t)) ∧
@@ -505,7 +508,7 @@ theorem effectiveSize_fluctuating (hN : ∀ i, 1 ≤ N i)
     harmonicMeanSize N t ≤ (∏ i ∈ range t, (N i : ℝ)) ^ (1 / (t : ℝ)) ∧
     (∏ i ∈ range t, (N i : ℝ)) ^ (1 / (t : ℝ)) ≤ (∑ i ∈ range t, (N i : ℝ)) / t := by
   have hN' : ∀ i, N i ≠ 0 := fun i => Nat.one_le_iff_ne_zero.mp (hN i)
-  have hprod := nonIdentityProb_eq R hN' t
+  have hprod := nonIdentityProb_eq R hN'
   obtain ⟨hNe, hNe'⟩ := inbreedingEffectiveSize_spec hN' ht
   obtain ⟨hlow, hupp⟩ := log_harmonicMeanSize_bounds hN' ht
   have hNpos : ∀ i, (0 : ℝ) < N i := fun i => by exact_mod_cast Nat.pos_of_ne_zero (hN' i)
@@ -532,7 +535,7 @@ theorem effectiveSize_fluctuating (hN : ∀ i, 1 ≤ N i)
     (fun _ _ => zero_le_one) (by rw [hcard]; exact htR) (fun i _ => (hNpos i).le)
   simp only [hcard, rpow_one, one_mul] at hHG hGA
   refine ⟨fun i => nonIdentityProb_succ R i (hN' i) (hN' (i + 1)), hprod,
-    fun h0 => by rw [hprod, mul_div_cancel_right₀ _ h0.ne'], hNe, hNe', hlow, hupp, ?_, ?_, ?_⟩
+    fun s h0 => by rw [hprod, mul_div_cancel_right₀ _ h0.ne'], hNe, hNe', hlow, hupp, ?_, ?_, ?_⟩
   · rw [hfactor]
     exact ⟨exp_le_exp.mpr (by linarith), exp_le_one_iff.mpr (by linarith)⟩
   · rw [harmonicMeanSize, one_div (t : ℝ)]

@@ -47,7 +47,7 @@ theorem nonIdentityProb_zero_bot (N : ℕ → ℕ) (h : 1 ≤ N 0) :
 /-- With no identity by descent in generation `0`, `h t = Φ t`: Felsenstein's (VI-40). -/
 example (N : ℕ → ℕ) (hN : ∀ i, 1 ≤ N i) (t : ℕ) (ht : 1 ≤ t) :
     nonIdentityProb N (fun _ _ => False) t = nonIdentityFactor N t := by
-  rw [(effectiveSize_fluctuating hN _ ht).2.1, nonIdentityProb_zero_bot N (hN 0), mul_one]
+  rw [(effectiveSize_fluctuating hN _ ht).2.1 t, nonIdentityProb_zero_bot N (hN 0), mul_one]
 
 /-- Gene copies of generation `1` with the same parent are identical by descent, whatever the
 identity by descent of generation `0`. -/
@@ -63,7 +63,8 @@ example (n t : ℕ) : nonIdentityFactor (fun _ => n) t = (1 - 1 / (2 * (n : ℝ)
 
 /-- The inbreeding effective size of a population of constant size `n ≥ 1` is `n`. -/
 example (n t : ℕ) (hn : 1 ≤ n) (ht : 1 ≤ t) : inbreedingEffectiveSize (fun _ => n) t = n := by
-  have h := (effectiveSize_fluctuating (N := fun _ => n) (fun _ => hn) (fun _ _ => False) ht).2.2.2.2
+  have h :=
+    (effectiveSize_fluctuating (N := fun _ => n) (fun _ => hn) (fun _ _ => False) ht).2.2.2.2
   have hn' : (1 : ℝ) ≤ n := by exact_mod_cast hn
   exact ((h.1 n (by linarith)).mp (by simp [nonIdentityFactor])).symm
 

@@ -8,7 +8,8 @@ copies of generation $0$ that are identical by descent, as a given relation on t
 generation $0$ records. Let $h_t$ be the probability that two distinct gene copies of generation $t$,
 drawn at random, are not identical by descent. Then $h_{i+1} = (1 - 1/(2N_i))\,h_i$ for every $i$,
 because two distinct gene copies of generation $i + 1$ are copies of the same gene of generation $i$
-with probability $1/(2N_i)$ and otherwise copies of two distinct genes of generation $i$. Hence
+with probability $1/(2N_i)$ and otherwise copies of two distinct genes of generation $i$. Hence, for
+every $t$,
 
 $$h_t = \Phi_t\, h_0, \qquad \Phi_t = \prod_{i=0}^{t-1} \Bigl(1 - \frac{1}{2N_i}\Bigr) ,$$
 
