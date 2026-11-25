@@ -62,6 +62,11 @@ public noncomputable def ssCountFormula (N q : ℕ) : ℚ :=
 public theorem eichlerMass_one (q : ℕ) : eichlerMass 1 q = ((q : ℚ) - 1) / 12 := by
   simp [eichlerMass]
 
+public theorem ssCountFormula_eq (N q : ℕ) :
+    ssCountFormula N q = eichlerMass N q + (2 - (nuTwo q : ℚ)) * (nuTwo N : ℚ) / 4
+      + (2 - (nuThree q : ℚ)) * (nuThree N : ℚ) / 3 :=
+  rfl
+
 /-- The automorphism weight of a supersingular `j`-invariant in prime characteristic `q`: half the
 order of the automorphism group of an elliptic curve `E` over an algebraic closure of `ZMod q`
 with `j`-invariant `j`, that is, the order of `Aut E / {±1}`. It is `12` in characteristic `2` at
@@ -119,6 +124,10 @@ public noncomputable def ssPolyThirteen : Polynomial (ZMod 13) :=
 public theorem ssPolyTwo_eq : ssPolyTwo = Polynomial.X - Polynomial.C 0 := by
   simp [ssPolyTwo, ssSetTwo]
 public theorem card_ssSetEleven : ssSetEleven.card = 2 := by decide
+
+public theorem ssPolyEleven_monic : ssPolyEleven.Monic := by
+  rw [ssPolyEleven]
+  exact Polynomial.monic_prod_of_monic _ _ fun a _ => Polynomial.monic_X_sub_C a
 
 /-- The coefficient `A` of the short Weierstrass equation `y ^ 2 = x ^ 3 + A * x + B` of the
 model curve `ssModel q j` attached to `j : ZMod q`, with `B = ssModelB q j`. -/
