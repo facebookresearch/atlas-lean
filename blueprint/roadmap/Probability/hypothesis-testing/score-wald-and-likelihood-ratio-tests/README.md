@@ -7,6 +7,7 @@
 
 ## Asymptotic tests
 
+- [Abs taylor two le](abs-taylor-two-le.md)
 - [Rao's score test, known information](tendsto-in-distribution-score-statistic.md)
 - [Rao's score test with an estimated information](tendsto-in-distribution-score-statistic-2.md)
 - [Consistency of the observed information](tendsto-in-measure-observed-information.md)

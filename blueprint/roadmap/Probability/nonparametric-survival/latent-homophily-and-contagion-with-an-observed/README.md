@@ -1,0 +1,17 @@
+# Latent homophily and contagion with an observed tie
+
+- [Trait Ego](trait-ego.md)
+- [Trait Peer](trait-peer.md)
+- [Tie](tie.md)
+- [Ego Behavior](ego-behavior.md)
+- [Homophily Outcome](homophily-outcome.md)
+- [Contagion Outcome₀](contagion-outcome.md)
+- [Contagion Outcome₁](contagion-outcome-2.md)
+- [Observation Map](observation-map.md)
+- [Observed Law](observed-law.md)
+- [Observation Map homophily eq contagion](observation-map-homophily-eq-contagion.md)
+- [Observed Law homophily apply](observed-law-homophily-apply.md)
+- [Ate homophily](ate-homophily.md)
+- [Ate contagion](ate-contagion.md)
+- [The average effect is not identified from the observed law](ate-not-identified.md)
+- [Ate not recoverable](ate-not-recoverable.md)

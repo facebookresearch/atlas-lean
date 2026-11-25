@@ -32,11 +32,23 @@
 - [Measurability of the jump times](measurable-ctmc-jump-time.md)
 - [Joint measurability of the chain path in time and steps](measurable-ctmc-path-uncurry.md)
 - [Measurability of the chain state at a fixed time](measurable-ctmc-path.md)
+- [Measurable ctmc Shift](measurable-ctmc-shift.md)
+- [Ctmc indep infinite Pi](ctmc-indep-infinite-pi.md)
+- [Ctmc map shift infinite Pi](ctmc-map-shift-infinite-pi.md)
+- [Ctmc map first infinite Pi](ctmc-map-first-infinite-pi.md)
+- [Ctmc map clock infinite Pi](ctmc-map-clock-infinite-pi.md)
+- [Ae tendsto sum clock infinite Pi](ae-tendsto-sum-clock-infinite-pi.md)
+- [Integral exp Measure renewal](integral-exp-measure-renewal.md)
 
 ## The chain of a rate matrix
 
+- [Ctmc Step Measure map snd](ctmc-step-measure-map-snd.md)
+- [Ae tendsto sum clock](ae-tendsto-sum-clock.md)
 - [Non-explosion](ae-tendsto-ctmc-jump-time.md)
+- [Ctmc indep](ctmc-indep.md)
+- [Ctmc map shift](ctmc-map-shift.md)
 - [Strong Markov property at jump times](ctmc-input-measure-ctmc-path-jump-time-a.md)
+- [Ctmc map first](ctmc-map-first.md)
 - [Transition probabilities of the constructed chain](ctmc-input-measure-real-ctmc-path-eq.md)
 - [Restart law at a fixed time](ctmc-input-measure-real-ctmc-path-add.md)
 - [Finite-dimensional distributions](ctmc-input-measure-real-ctmc-path-fdd.md)

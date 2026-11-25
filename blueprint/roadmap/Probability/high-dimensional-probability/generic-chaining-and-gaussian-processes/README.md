@@ -62,3 +62,6 @@ Source: M. Talagrand, *Upper and Lower Bounds for Stochastic Processes: Decompos
   Gaussian concentration, which the proof of the majorizing measure theorem uses for the
   supremum of a Gaussian process (Talagrand, Lemma 2.10.6), follows from Talagrand's quadratic
   transport inequality for the Gaussian measure.
+
+- [The canonical distance of square-integrable increments](canonical-dist-eq-of-real-sqrt.md)
+- [Increments of a Gaussian process are square integrable](mem-lp-sub-of-is-gaussian.md)
