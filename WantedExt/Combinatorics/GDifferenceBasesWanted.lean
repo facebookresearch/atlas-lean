@@ -13,6 +13,7 @@ public import Mathlib.FieldTheory.Finite.GaloisField
 public import MathlibExt.Combinatorics.Additive.BoseChowlaSubgroup
 public import MathlibExt.Combinatorics.Additive.FiniteFieldDifferenceBases
 public import MathlibExt.Combinatorics.Additive.GDifferenceBasisScaling
+public import MathlibExt.Combinatorics.Additive.SingerProductDifferenceBasis
 public import MathlibExt.Combinatorics.Additive.ZModDifferenceBasis
 
 namespace MetaMathlibExt
@@ -33,29 +34,6 @@ Source: Eric Schmutz and Michael Tait, *Cardinalities of g-Difference Sets*, INT
 public theorem_wanted tendsto_diffBasisNumber_div_sqrt (g : ℕ) (hg : 0 < g) :
     ∃ c : ℝ, 0 < c ∧
       Tendsto (fun n : ℕ => (diffBasisNumber g n : ℝ) / Real.sqrt n) atTop (𝓝 c)
-
-/-- **Singer product construction of difference bases.** Let $g, q, v \in \mathbb{N}$ and
-$m = q^2 + q + 1$. Let $a_0, \dots, a_q$ be integers in $\{1, \dots, m\}$ such that every
-$r \in \{1, \dots, m - 1\}$ is congruent modulo $m$ to $a_i - a_j$ for exactly one ordered pair
-$(i, j)$ with $i \ne j$ (a Singer difference set modulo $m$). Let $B$ be a finite set of
-integers such that every $x \in \{1, \dots, v\}$ equals $b - b'$ for at least $g$ ordered pairs
-$(b, b') \in B \times B$. Then, with $F = \{a_i + mb : 0 \le i \le q,\ b \in B\}$, every
-$s \in \{1, \dots, mv\}$ equals $f - f'$ for at least $g$ ordered pairs $(f, f') \in F \times F$.
-
-All $q + 1$ Singer elements are used; the paper prints $1 \le i \le q$, for which the statement
-fails.
-
-Source: Eric Schmutz and Michael Tait, *Cardinalities of g-Difference Sets*, INTEGERS 25
-(2025), Article A77, Lemma 4 (`integers-2025-A77-lem-4`). -/
-public theorem_wanted singer_product_diffBasis (g q v : ℕ) (a : Fin (q + 1) → ℤ)
-    (ha : ∀ i, a i ∈ Finset.Icc (1 : ℤ) (q ^ 2 + q + 1))
-    (hsinger : ∀ r ∈ Finset.Icc (1 : ℤ) (q ^ 2 + q),
-      ∃! ij : Fin (q + 1) × Fin (q + 1),
-        ij.1 ≠ ij.2 ∧ a ij.1 - a ij.2 ≡ r [ZMOD (q ^ 2 + q + 1 : ℤ)])
-    (B : Finset ℤ) (hB : ∀ x ∈ Finset.Icc (1 : ℤ) v, g ≤ subRepCount B x) :
-    ∀ s ∈ Finset.Icc (1 : ℤ) ((q ^ 2 + q + 1) * v),
-      g ≤ subRepCount
-        ((Finset.univ ×ˢ B).image fun ib : Fin (q + 1) × ℤ => a ib.1 + (q ^ 2 + q + 1) * ib.2) s
 
 /-- **Square-root bound for difference bases of finite fields.** For every finite field $K$ with
 $q$ elements, the least size $\eta_1(K)$ of a set $A \subseteq K$ such that every element of $K$
