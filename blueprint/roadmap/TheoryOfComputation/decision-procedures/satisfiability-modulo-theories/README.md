@@ -8,3 +8,7 @@
 - [Congruence closure decides conjunctions of ground equalities](congruence-closure-decides-conjunctions-of.md)
 - [Fourier–Motzkin elimination](fouriermotzkin-elimination.md)
 - [Farkas certificates for linear rational arithmetic](farkas-certificates-for-linear-rational.md)
+- [Theory solvers for DPLL(T)](theory-solvers-for-dpll-t.md)
+- [Purification into separate form](purification-into-separate-form.md)
+- [Arrangements of shared variables in theory combination](arrangements-of-shared-variables-in-theory.md)
+- [Nelson–Oppen combination of decision procedures](nelsonoppen-combination-of-decision-procedures.md)
