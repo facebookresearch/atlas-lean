@@ -15366,6 +15366,7 @@
   "WantedExt/Complexity/NPComplete/FiveColorabilityP6FreeWanted": {"to": "TheoryOfComputation/np-completeness/graph-coloring-and-partitioning", "title": "Coloring graphs with forbidden subgraphs"},
   "WantedExt/Complexity/NPComplete/FixedIntervalSchedulingEligibleMachinesWanted": {"to": "TheoryOfComputation/np-completeness/scheduling", "title": "Special scheduling models"},
   "WantedExt/Complexity/NPComplete/FixedKColorabilityWanted": {"to": "TheoryOfComputation/np-completeness/graph-coloring-and-partitioning", "title": "Graph coloring"},
+  "WantedExt/Complexity/NPComplete/FixedPointFreeInvolutionWanted": {"to": "TheoryOfComputation/np-completeness/paths-cycles-and-subgraphs", "title": "Fixed-point-free graph involutions"},
   "WantedExt/Complexity/NPComplete/FixedStartTwoMachineTypesCostWanted": {"to": "TheoryOfComputation/np-completeness/scheduling", "title": "Special scheduling models"},
   "WantedExt/Complexity/NPComplete/FlowShopWanted": {"to": "TheoryOfComputation/np-completeness/scheduling", "title": "Three-machine flow shop scheduling"},
   "WantedExt/Complexity/NPComplete/FourColorabilityP7FreeWanted": {"to": "TheoryOfComputation/np-completeness/graph-coloring-and-partitioning", "title": "Coloring graphs with forbidden subgraphs"},
