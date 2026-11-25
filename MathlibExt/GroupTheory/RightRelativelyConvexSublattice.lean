@@ -20,6 +20,23 @@ import Mathlib.Tactic.Ring
 The subgroups on the two diagonals of the plane `y = 0` are convex in suitable right orders.
 Their join omits a square root of one of its elements, giving a negative answer to
 Kourovka Notebook Problem 21.147.
+
+## Record carried over from the retired wanted module
+
+From `WantedExt/GroupTheory/RightRelativelyConvexSublatticeKourovka21Problem147Wanted.lean`:
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
+Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 21.147 (V. M. Kopytov, N. Ya. Medvedev; A.
+V. Zenkov). UnsolvedMath record UM-00002656 (`KOU-21.147`), dataset ulamai/UnsolvedMath v1.8.0.
+
+A right ordering is a linear order `o` on `G` with `a ≤ b → a c ≤ b c`; `H` is convex for `o` when
+`h₁ ≤ g ≤ h₂` with `h₁, h₂ ∈ H` forces `g ∈ H` (`IsRightOrderable` of the Kourovka 10.30 entry,
+reused here, and `IsRightRelativelyConvex`).
+Being a sublattice of the subgroup lattice means being closed under `⊓` (intersection) and `⊔`
+(generated subgroup). The group is required to be non-abelian: van Doorn, Judin, Monticone and
+Morrison (Appendix A) report that an abelian counterexample was already known and that the proposers
+meant to ask about non-abelian groups. A refutation of this form also refutes the question as
+printed.
 -/
 
 @[expose] public section
