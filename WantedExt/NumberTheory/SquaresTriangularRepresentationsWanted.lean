@@ -16,6 +16,7 @@ public import Mathlib.NumberTheory.Divisors
 public import Mathlib.RingTheory.PowerSeries.Inverse
 
 public import MathlibExt.NumberTheory.SquareRepresentationCongruences
+public import MathlibExt.NumberTheory.TriangularRepresentationWindow
 
 /-!
 # Congruences for representations as sums of squares and triangular numbers
@@ -35,56 +36,6 @@ those polynomial values.
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Triangular theta series.** The triangular theta series is the formal power series
-$\psi(q) = \sum_{m \ge 0} q^{m(m+1)/2}$ with integer coefficients: for each natural number $n$,
-its coefficient of $q^n$ is the number of natural numbers $m$ with $m(m+1)/2 = n$.
-
-Source: Alegri and Christopher, *On Formulas, Recurrences, and Congruences for
-Representations of Integers as Sums of Squares and Triangular Numbers*, INTEGERS
-26 (2026), Article A93, Section 1. -/
-public noncomputable def triangularThetaSeries : PowerSeries ℤ :=
-  PowerSeries.mk fun n => (((Finset.range (n + 1)).filter fun m => m * (m + 1) / 2 = n).card : ℤ)
-
-/-- **First coefficients of the triangular theta series.** In the triangular theta series
-$\psi(q) = \sum_{m \ge 0} q^{m(m+1)/2}$, the coefficients of $q^0$, $q^1$, $q^2$ and $q^3$ are $1$,
-$1$, $0$ and $1$ respectively.
-
-Source: Alegri and Christopher, *On Formulas, Recurrences, and Congruences for
-Representations of Integers as Sums of Squares and Triangular Numbers*, INTEGERS
-26 (2026), Article A93, Section 1. -/
-public theorem coeff_triangularThetaSeries_small :
-    PowerSeries.coeff 0 triangularThetaSeries = 1 ∧ PowerSeries.coeff 1 triangularThetaSeries = 1 ∧
-      PowerSeries.coeff 2 triangularThetaSeries = 0 ∧
-        PowerSeries.coeff 3 triangularThetaSeries = 1 := by
-  simp only [triangularThetaSeries, PowerSeries.coeff_mk]
-  decide
-
-/-- **The triangular theta series is a unit.** The triangular theta series
-$\psi(q) = \sum_{m \ge 0} q^{m(m+1)/2}$ is a unit of the ring $\mathbb{Z}[[q]]$ of formal power
-series with integer coefficients, since its constant coefficient is $1$.
-
-Source: Alegri and Christopher, *On Formulas, Recurrences, and Congruences for
-Representations of Integers as Sums of Squares and Triangular Numbers*, INTEGERS
-26 (2026), Article A93, Section 1. -/
-public theorem isUnit_triangularThetaSeries : IsUnit triangularThetaSeries := by
-  rw [PowerSeries.isUnit_iff_constantCoeff, ← PowerSeries.coeff_zero_eq_constantCoeff_apply,
-    coeff_triangularThetaSeries_small.1]
-  exact isUnit_one
-
-/-- **Representation numbers for sums of triangular numbers.** For an integer $k$ and a natural
-number $n$, $t_k(n)$ is the coefficient of $q^n$ in $\psi(q)^k$, where
-$\psi(q) = \sum_{m \ge 0} q^{m(m+1)/2}$. Since $\psi$ has constant coefficient $1$, it is a unit of
-$\mathbb{Z}[[q]]$, so $\psi^k$ is a power series for negative $k$ as well.
-
-For $k \ge 1$, $t_k(n)$ is the number of ways to write $n$ as an ordered sum of $k$ triangular
-numbers $m(m+1)/2$ with $m \ge 0$.
-
-Source: Alegri and Christopher, *On Formulas, Recurrences, and Congruences for
-Representations of Integers as Sums of Squares and Triangular Numbers*, INTEGERS
-26 (2026), Article A93, Section 1. -/
-public noncomputable def sumOfTriangularRepCount (k : ℤ) (n : ℕ) : ℤ :=
-  PowerSeries.coeff n ((isUnit_triangularThetaSeries.unit ^ k : (PowerSeries ℤ)ˣ) : PowerSeries ℤ)
 
 /-- **Triangular representation numbers with one summand.** For an integer $k$, let $t_k(n)$ be the
 coefficient of $q^n$ in $\psi(q)^k$, where $\psi(q) = \sum_{m \ge 0} q^{m(m+1)/2}$. Then for every
@@ -122,18 +73,6 @@ Representations of Integers as Sums of Squares and Triangular Numbers*, INTEGERS
 public theorem_wanted sum_sumOfSquaresRepCount_window {n p : ℕ} (hn : 1 ≤ n) (hp : p.Prime)
     (hp2 : p ≠ 2) (hpn : n + 1 ≤ p - 1) {s : ℤ} (hs : (p : ℤ) ≤ s) :
     (p : ℤ) ∣ ∑ i ∈ Finset.range p, sumOfSquaresRepCount (s - i) n
-
-/-- **Window congruence for sums of triangular numbers.** For an integer $k$, let $t_k(n)$ be the
-coefficient of $q^n$ in $\psi(q)^k$, where $\psi(q) = \sum_{m \ge 0} q^{m(m+1)/2}$. Let $n \ge 1$,
-let $p$ be an odd prime with $p - 1 \ge n + 1$, and let $s \ge p$ be an integer. Then $p$ divides
-$\sum_{i=0}^{p-1} t_{s-i}(n)$.
-
-Source: Alegri and Christopher, *On Formulas, Recurrences, and Congruences for
-Representations of Integers as Sums of Squares and Triangular Numbers*, INTEGERS
-26 (2026), Article A93, Theorem 6 (`integers-2026-A93-thm-6`). -/
-public theorem_wanted sum_sumOfTriangularRepCount_window {n p : ℕ} (hn : 1 ≤ n)
-    (hp : p.Prime) (hp2 : p ≠ 2) (hpn : n + 1 ≤ p - 1) {s : ℤ} (hs : (p : ℤ) ≤ s) :
-    (p : ℤ) ∣ ∑ i ∈ Finset.range p, sumOfTriangularRepCount (s - i) n
 
 /-- **Representability criterion from a window of counts.** For an integer $k$ and $n \ge 0$, let
 $r_k(n)$ and $t_k(n)$ be the coefficients of $q^n$ in $\theta(q)^k$ and $\psi(q)^k$, where $\theta$

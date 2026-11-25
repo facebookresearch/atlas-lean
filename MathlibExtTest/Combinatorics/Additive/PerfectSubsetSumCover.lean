@@ -49,4 +49,30 @@ example : (2 : ℤ) ∉ oddCombinations {1} := by
   simp at heq
   rcases h with hz | ⟨k, hk⟩ <;> omega
 
+/-- The two coordinate generators of `ZMod 2 × ZMod 2` satisfy the odd-combination condition. -/
+example : IsPerfectMCover 1 (![(1, 0), (0, 1)] : Fin 2 → ZMod 2 × ZMod 2) := by
+  let s : Fin 2 → ZMod 2 × ZMod 2 := ![(1, 0), (0, 1)]
+  have hs (i : Fin 2) : s i ∉ oddCombinations ((Finset.Iio i).image s) := by
+    have hIio0 : Finset.Iio (0 : Fin 2) = ∅ := by decide
+    have hIio1 : Finset.Iio (1 : Fin 2) = {0} := by decide
+    rcases (show i = 0 ∨ i = 1 by omega) with rfl | rfl
+    · rw [hIio0, Finset.image_empty, oddCombinations_empty]
+      decide
+    · rw [hIio1, Finset.image_singleton]
+      rintro ⟨c, -, h⟩
+      have hcoord := congrArg Prod.snd h
+      simp [s] at hcoord
+  exact (coverCount_le_one_of_not_mem_oddCombinations hs).2 (by
+    rw [Nat.card_eq_fintype_card]
+    decide)
+
+-- An odd multiple may be negative, and an unused generator keeps coefficient zero.
+example : (-3 : ℤ) ∈ oddCombinations {1, 2} := by
+  have h : (1 : ℤ) ∈ oddCombinations {1, 2} := mem_oddCombinations_of_mem (by simp)
+  simpa using zsmul_mem_oddCombinations {1, 2} h (-2)
+
+-- Closure includes the zero combination on the empty set.
+example (j : ℤ) : (2 * j + 1) • (0 : ℤ) ∈ oddCombinations ∅ :=
+  zsmul_mem_oddCombinations ∅ (zero_mem_oddCombinations ∅) j
+
 end MetaMathlibExt

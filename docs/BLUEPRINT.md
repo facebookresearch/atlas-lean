@@ -270,8 +270,9 @@ articles and separates expansions from imported pages whose pending prerequisite
 need review. It is not a readiness verdict: read the page and check its sources,
 prerequisites, and any existing PRs before starting. See [Expanding a node](#expanding-a-node)
 and the [mathgraph import policy](mathgraph-import.md#policy) for the two cases.
-Coordinate via a draft PR naming the article ID and referencing the issue, if
-there is one. The formalization task picker remains unchanged.
+Follow [Claim the work you start](../CONTRIBUTING.md#claim-the-work-you-start)
+to coordinate. For a draft PR, name the article ID and link the issue if there
+is one. The formalization task picker remains unchanged.
 
 ### Procedures
 

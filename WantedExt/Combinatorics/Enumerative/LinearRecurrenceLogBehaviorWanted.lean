@@ -28,8 +28,9 @@ log-convex (log-concave) if `z n ^ 2 ≤ z (n - 1) z (n + 1)` (`≥`) for every 
 log-balanced (Došlić) if it is log-convex and `(z n / n!)_{n ≥ m}` is log-concave.
 
 Proved in `MathlibExt.Combinatorics.Enumerative.LinearRecurrenceLogBehavior`: Lemma 1
-(`MetaMathlibExt.a005773Recurrence_ratio_bounds`), the weighted log-concavity result
-(`MetaMathlibExt.a005773Recurrence_weighted_logConcave`), and Theorem 4
+(`MetaMathlibExt.a005773Recurrence_ratio_bounds`), Theorem 2 on third differences
+(`MetaMathlibExt.a005773Recurrence_thirdDiff_logConvex_logBalanced`), the weighted log-concavity
+result (`MetaMathlibExt.a005773Recurrence_weighted_logConcave`), and Theorem 4
 (`MetaMathlibExt.a005773Recurrence_pow_logConvex`).
 -/
 
@@ -62,27 +63,6 @@ public theorem_wanted a005773Recurrence_diff_logBalanced (A : ℕ → ℝ) (h0 :
       D₂ n ^ 2 ≤ D₂ (n - 1) * D₂ (n + 1) ∧
         D₂ (n - 1) / (n - 1).factorial * (D₂ (n + 1) / (n + 1).factorial) ≤
           (D₂ n / n.factorial) ^ 2
-
-/-- **The third differences of A005773 are log-convex and log-balanced.**
-Let $(A_n)_{n \ge 0}$ be a sequence of real numbers with $A_0 = A_1 = 1$ and
-$(n+1) A_{n+1} = 2(n+1) A_n + 3(n-1) A_{n-1}$ for every $n \ge 1$, and write
-$z_n = \Delta^3 A_n = A_{n+3} - 3A_{n+2} + 3A_{n+1} - A_n$. Then $z_n^2 \le z_{n-1} z_{n+1}$
-for every $n \ge 3$, and
-$$\frac{z_{n-1}}{(n-1)!} \cdot \frac{z_{n+1}}{(n+1)!} \le \left(\frac{z_n}{n!}\right)^2$$
-for every $n \ge 4$. That is, $(\Delta^3 A_n)_{n \ge 2}$ is log-convex and
-$(z_n / n!)_{n \ge 3}$ is log-concave, so $(\Delta^3 A_n)_{n \ge 3}$ is log-balanced.
-
-Source: Feng-Zhen Zhao, *The Log-Behavior of Some Sequences Related to a Linear Recurrence
-Sequence*, INTEGERS 25 (2025), Article A100, Theorem 2. -/
-public theorem_wanted a005773Recurrence_thirdDiff_logConvex_logBalanced (A : ℕ → ℝ)
-    (h0 : A 0 = 1) (h1 : A 1 = 1)
-    (hrec : ∀ n : ℕ, 1 ≤ n →
-      ((n : ℝ) + 1) * A (n + 1) = 2 * ((n : ℝ) + 1) * A n + 3 * ((n : ℝ) - 1) * A (n - 1)) :
-    let D₃ : ℕ → ℝ := fun m => A (m + 3) - 3 * A (m + 2) + 3 * A (m + 1) - A m
-    (∀ n, 3 ≤ n → D₃ n ^ 2 ≤ D₃ (n - 1) * D₃ (n + 1)) ∧
-      ∀ n, 4 ≤ n →
-        D₃ (n - 1) / (n - 1).factorial * (D₃ (n + 1) / (n + 1).factorial) ≤
-          (D₃ n / n.factorial) ^ 2
 
 end
 
