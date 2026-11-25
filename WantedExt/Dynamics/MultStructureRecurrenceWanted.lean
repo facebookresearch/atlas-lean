@@ -28,13 +28,12 @@ multiplicative action `T : ℕ → (X ≃ᵐ X)` (that is,
 `T (a * b) = T a * T b` and `T 1 = 1`) by measure-preserving
 equivalences. -/
 
-/-- [AMR-047-0034] For every multiplicative measure-preserving action
-by bimeasurable transformations (measurable equivalences), indexed
-by the positive naturals so the action is not collapsed by a zero
-index, and every measurable set `A` of positive measure, there exist
-positive `m > n` with
-`μ(T_{2mn} '' A ∩ T_{(m-n)(m+n)} '' A) > 0`. (Resolved: see the
-registry status.) -/
+/-- **Pythagorean-pair recurrence problem (AMR-047-0034).** The proposition that for every
+probability space $(X, \mu)$ and every family $(T_a)_{a \ge 1}$, indexed by the positive integers,
+of measurable bijections of $X$ with measurable inverses that preserve $\mu$, such that $T_1$ is
+the identity and $T_{ab} = T_a \circ T_b$ for all positive integers $a, b$, every measurable set
+$A \subseteq X$ with $\mu(A) > 0$ admits positive integers $m > n$ with
+$$\mu\bigl(T_{2mn}(A) \cap T_{(m-n)(m+n)}(A)\bigr) > 0.$$ -/
 def conjecture : Prop :=
   ∀ (X : Type u) [MeasurableSpace X] (μ : MeasureTheory.Measure X)
     [MeasureTheory.IsProbabilityMeasure μ]
@@ -47,7 +46,13 @@ def conjecture : Prop :=
         0 < μ (⇑(T (2 * m * n)) '' A ∩
           ⇑(T ((m - n) * (m + n))) '' A)
 
-/--
+/-- **Multiplicative recurrence along Pythagorean pairs.** Let $(X, \mu)$ be a probability space
+and let $(T_a)_{a \ge 1}$, indexed by the positive integers, be measurable bijections of $X$ with
+measurable inverses that preserve $\mu$, such that $T_1$ is the identity and
+$T_{ab} = T_a \circ T_b$ for all positive integers $a, b$. Then for every measurable set
+$A \subseteq X$ with $\mu(A) > 0$ there exist positive integers $m > n$ such that
+$$\mu\bigl(T_{2mn}(A) \cap T_{(m-n)(m+n)}(A)\bigr) > 0.$$
+
 Resolved true: Resolved by Frantzikinakis-Klurman-Moreira, Partition Regularity of Pythagorean
 Pairs (arXiv:2309.10636), Theorem 2.1(i): applied with coefficients 1 and 2 to the inverse
 family, it yields the two forward-image indices of AMR-047-0034. The statement is retained as a

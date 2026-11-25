@@ -27,22 +27,24 @@ namespace MathlibExt.NumberTheory.ErdosDivisibilityFamilyGrowthWanted
 
 /-! Source record `EP-793`. -/
 
-/-- A finite set of naturals is good when no element divides the product of
-any two other (not necessarily distinct from each other) elements, and every
-element is positive. -/
+/-- **Sets in which no element divides the product of two others.** A finite set $A$ of natural
+numbers is good when every element of $A$ is positive and no $a \in A$ divides $bc$ for any
+$b, c \in A$ with $a \ne b$ and $a \ne c$; here $b = c$ is allowed. -/
 def Good (A : Finset ℕ) : Prop :=
   (∀ a ∈ A, ∀ b ∈ A, ∀ c ∈ A, a ≠ b → a ≠ c → ¬ a ∣ b * c) ∧ (∀ a ∈ A, 1 ≤ a)
 
-/-- `F(n)`: the maximum cardinality of a good subset of `{1, …, n}`,
-as the supremum of all sizes attained by good subsets. -/
+/-- **Maximum size of a good subset.** For a natural number $n$, $F(n)$ is the largest size of a
+good subset of $\{1, \dots, n\}$, defined as the supremum of the sizes of the good sets
+$A \subseteq \{1, \dots, n\}$. -/
 noncomputable def F (n : ℕ) : ℕ :=
   sSup {k | ∃ A : Finset ℕ, A ⊆ Finset.Icc 1 n ∧ Good A ∧ A.card = k}
 
-/-- Erdős Problem 793: there is a positive constant `C` such that the excess
-of `F(n)` over `π(n)`, normalized by `n^(2/3) / (log n)^2`, tends to `C`.
-The difference is taken in `ℤ` before casting to `ℝ`. At `n = 0, 1` the
-ratio is junk (`log n ≤ 0`, division by zero), which is well-formed and
-irrelevant to the limit at infinity. -/
+/-- **Statement of Erdős Problem 793.** For a natural number $n$, let $F(n)$ be the largest size
+of a set $A \subseteq \{1, \dots, n\}$ with $a \nmid bc$ for all $a, b, c \in A$ such that
+$a \ne b$ and $a \ne c$, and let $\pi(n)$ be the number of primes at most $n$. This is the
+proposition that there is a real constant $C > 0$ such that
+$(F(n) - \pi(n)) / (n^{2/3} / (\log n)^2) \to C$ as $n \to \infty$.
+Equivalently, $F(n) = \pi(n) + (C + o(1))\, n^{2/3} / (\log n)^2$. -/
 def conjecture : Prop :=
   ∃ C : ℝ, 0 < C ∧ Filter.Tendsto
     (fun n : ℕ => (((F n : ℤ) - (Nat.primeCounting n : ℤ)) : ℝ) /
@@ -50,9 +52,15 @@ def conjecture : Prop :=
     Filter.atTop (nhds C)
 
 /--
-Resolved true: Chojecki (arXiv:2607.15306, 2026), Theorem 1.1, proves
-F(n)=π(n)+(27/2+o(1))n^(2/3)/(log n)^2 for sets with a∤bc whenever a∉{b,c}, b=c allowed, which
-is the Lean Good predicate; so the target holds with C=27/2. Source: P. Chojecki, The Second
+**Erdős Problem 793 has a positive answer.** Let $F(n)$ be the largest size of a set
+$A \subseteq \{1, \dots, n\}$ such that $a \nmid bc$ whenever $a, b, c \in A$ with $a \ne b$ and
+$a \ne c$ ($b = c$ is allowed), and let $\pi(n)$ be the number of primes at most $n$. Then there
+is a real constant $C > 0$ such that $(F(n) - \pi(n)) / (n^{2/3} / (\log n)^2) \to C$ as
+$n \to \infty$.
+
+Chojecki (2026, Theorem 1.1) proves this with $C = 27/2$.
+
+Source: P. Chojecki, The Second
 Term for Strongly 2-Primitive Sets, arXiv preprint (2026), arXiv:2607.15306,
 https://arxiv.org/abs/2607.15306. Moved from
 `OpenConjectures/NumberTheory/ErdosDivisibilityFamilyGrowth`.

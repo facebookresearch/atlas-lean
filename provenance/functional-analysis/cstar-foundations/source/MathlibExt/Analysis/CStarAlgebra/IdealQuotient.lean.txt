@@ -1,0 +1,1085 @@
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Analysis.Normed.Algebra.NonUnitalSubalgebra.Quotient
+public import Mathlib.Analysis.CStarAlgebra.Classes
+public import Mathlib.Algebra.Star.StarAlgHom
+
+import Mathlib.Analysis.CStarAlgebra.ApproximateUnit
+import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Range
+import Mathlib.Analysis.CStarAlgebra.Hom
+import Mathlib.Analysis.CStarAlgebra.Unitization
+
+/-!
+# Quotients by closed two-sided nonunital star subalgebras
+
+This file supplies the algebraic and topological carrier needed to quotient a
+complex nonunital star algebra by a two-sided star-stable subspace. Mathlib's
+canonical `Submodule.Quotient` remains the carrier, so its additive,
+complex-linear, quotient-norm, and completeness API is reused definitionally.
+
+The induced multiplication and star structures are scoped: importing this
+file installs no global quotient-ring or quotient-star instance. Multiplication,
+the ring and scalar laws, and the normed-ring structure delegate definitionally
+to the neutral `NonUnitalSubalgebra.Quotient` construction. For a closed
+two-sided star ideal, the quotient C-star structure is provided explicitly as
+`NonUnitalStarSubalgebra.Quotient.nonUnitalCStarAlgebra`, also not as an instance.
+If a nonunital star algebra homomorphism sends one two-sided star ideal into
+another, `NonUnitalStarSubalgebra.Quotient.map` is the induced map on the two
+quotients and `map_comp_mk` records its factorization through the projections.
+
+Novelty boundary: `Ideal.Quotient` and `Ideal.quotientMap` support
+noncommutative ideals carrying `Ideal.IsTwoSided`, and `TwoSidedIdeal` supplies
+a ring-congruence quotient.  None provides this canonical complex
+normed-module quotient together with the scoped star and C-star structure.
+-/
+
+@[expose] public section
+
+namespace NonUnitalStarSubalgebra
+
+variable {A : Type*} [NonUnitalNormedRing A] [StarRing A] [NormedSpace ℂ A]
+  [IsScalarTower ℂ A A] [SMulCommClass ℂ A A] [StarModule ℂ A]
+
+/-- A nonunital star subalgebra is two-sided when it absorbs multiplication
+by arbitrary ambient elements on both sides. -/
+class IsTwoSided (S : NonUnitalStarSubalgebra ℂ A) : Prop where
+  mul_mem_left (a : A) {x : A} : x ∈ S → a * x ∈ S
+  mul_mem_right {x : A} : x ∈ S → (a : A) → x * a ∈ S
+
+/-- A two-sided star subalgebra has a two-sided underlying nonunital
+subalgebra. -/
+instance instIsTwoSidedToNonUnitalSubalgebra
+    (S : NonUnitalStarSubalgebra ℂ A) [S.IsTwoSided] :
+    NonUnitalSubalgebra.IsTwoSided S.toNonUnitalSubalgebra where
+  mul_mem_left a {_x} hx := IsTwoSided.mul_mem_left a hx
+  mul_mem_right {_x} hx a := IsTwoSided.mul_mem_right hx a
+
+/-- The canonical complex submodule underlying a nonunital star subalgebra. -/
+abbrev quotientSubmodule (S : NonUnitalStarSubalgebra ℂ A) : Submodule ℂ A :=
+  NonUnitalSubalgebra.quotientSubmodule S.toNonUnitalSubalgebra
+
+/-- Quotient carrier, retaining existing `Submodule.Quotient` structures. -/
+abbrev Quotient (S : NonUnitalStarSubalgebra ℂ A) :=
+  NonUnitalSubalgebra.Quotient S.toNonUnitalSubalgebra
+
+namespace Quotient
+
+variable (S : NonUnitalStarSubalgebra ℂ A)
+
+/-- The canonical quotient projection as a complex linear map. -/
+def mkL : A →ₗ[ℂ] S.Quotient :=
+  (quotientSubmodule S).mkQ
+
+omit [IsScalarTower ℂ A A] [SMulCommClass ℂ A A] [StarModule ℂ A] in
+@[simp]
+theorem mkL_apply (a : A) : mkL S a = Submodule.Quotient.mk a := rfl
+
+omit [IsScalarTower ℂ A A] [SMulCommClass ℂ A A] [StarModule ℂ A] in
+theorem mkL_surjective : Function.Surjective (mkL S) :=
+  (quotientSubmodule S).mkQ_surjective
+
+/-- Quotient multiplication before it is activated as a scoped instance. -/
+@[instance_reducible]
+def quotientMul [S.IsTwoSided] : Mul S.Quotient :=
+  NonUnitalSubalgebra.Quotient.quotientMul S.toNonUnitalSubalgebra
+
+/-- Quotient involution before it is activated as a scoped instance. -/
+@[instance_reducible]
+def quotientStar : Star S.Quotient where
+  star := _root_.Quotient.map' (fun x : A ↦ star x) fun x y hxy ↦ by
+    apply (Submodule.quotientRel_def (quotientSubmodule S)).2
+    have hxy' : x - y ∈ S :=
+      (Submodule.quotientRel_def (quotientSubmodule S)).1 hxy
+    change star x - star y ∈ S
+    simpa only [star_sub] using (star_mem (s := S) hxy')
+
+/-- Scoped quotient multiplication. -/
+scoped instance instMul [S.IsTwoSided] : Mul S.Quotient := quotientMul S
+
+/-- Scoped quotient involution. -/
+scoped instance instStar : Star S.Quotient := quotientStar S
+
+open scoped NonUnitalStarSubalgebra.Quotient
+
+omit [IsScalarTower ℂ A A] [SMulCommClass ℂ A A] [StarModule ℂ A] in
+theorem mk_mul [S.IsTwoSided] (x y : A) :
+    (Submodule.Quotient.mk (x * y) : S.Quotient) =
+      Submodule.Quotient.mk x * Submodule.Quotient.mk y :=
+  NonUnitalSubalgebra.Quotient.mk_mul S.toNonUnitalSubalgebra x y
+
+omit [IsScalarTower ℂ A A] [SMulCommClass ℂ A A] [StarModule ℂ A] in
+@[simp]
+theorem mk_star (x : A) :
+    (Submodule.Quotient.mk (star x) : S.Quotient) =
+      star (Submodule.Quotient.mk x : S.Quotient) := by
+  rfl
+
+/-- Scoped nonunital ring structure induced from the ambient ring. -/
+scoped instance instNonUnitalRing [S.IsTwoSided] :
+    NonUnitalRing S.Quotient :=
+  NonUnitalSubalgebra.Quotient.instNonUnitalRing S.toNonUnitalSubalgebra
+
+/-- Scoped star-ring structure induced from the ambient involution. -/
+scoped instance instStarRing [S.IsTwoSided] :
+    StarRing S.Quotient where
+  star_involutive := by
+    rintro ⟨x⟩
+    change Submodule.Quotient.mk (star (star x)) = Submodule.Quotient.mk x
+    rw [star_star]
+  star_add := by
+    rintro ⟨x⟩ ⟨y⟩
+    change Submodule.Quotient.mk (star (x + y)) =
+      Submodule.Quotient.mk (star x + star y)
+    rw [star_add]
+  star_mul := by
+    rintro ⟨x⟩ ⟨y⟩
+    change Submodule.Quotient.mk (star (x * y)) =
+      Submodule.Quotient.mk (star y * star x)
+    rw [star_mul]
+
+/-- Scoped complex star-module structure. -/
+scoped instance instStarModule :
+    StarModule ℂ S.Quotient where
+  star_smul := by
+    intro c x
+    rcases x with ⟨x⟩
+    change Submodule.Quotient.mk (star (c • x)) =
+      Submodule.Quotient.mk (star c • star x)
+    rw [star_smul]
+
+/-- Scoped scalar-tower law, the first half of the nonunital complex algebra structure. -/
+scoped instance instIsScalarTower [S.IsTwoSided] :
+    IsScalarTower ℂ S.Quotient S.Quotient :=
+  NonUnitalSubalgebra.Quotient.instIsScalarTower S.toNonUnitalSubalgebra
+
+/-- Scoped scalar-commutation law, the second half of the nonunital complex algebra structure. -/
+scoped instance instSMulCommClass [S.IsTwoSided] :
+    SMulCommClass ℂ S.Quotient S.Quotient :=
+  NonUnitalSubalgebra.Quotient.instSMulCommClass S.toNonUnitalSubalgebra
+
+/-- The quotient projection as a nonunital star algebra homomorphism. -/
+def mk [S.IsTwoSided] : A →⋆ₙₐ[ℂ] S.Quotient where
+  toFun := Submodule.Quotient.mk
+  map_zero' := rfl
+  map_add' _ _ := rfl
+  map_smul' _ _ := rfl
+  map_mul' _ _ := rfl
+  map_star' _ := rfl
+
+omit [IsScalarTower ℂ A A] [SMulCommClass ℂ A A] [StarModule ℂ A] in
+@[simp]
+theorem mk_apply [S.IsTwoSided] (x : A) : mk S x = Submodule.Quotient.mk x := rfl
+
+omit [IsScalarTower ℂ A A] [SMulCommClass ℂ A A] [StarModule ℂ A] in
+theorem mk_eq_zero [S.IsTwoSided] (x : A) : mk S x = 0 ↔ x ∈ S :=
+  Submodule.Quotient.mk_eq_zero (quotientSubmodule S)
+
+section Normed
+
+/-- The quotient projection as a continuous complex linear map. -/
+def mkCL : A →L[ℂ] S.Quotient :=
+  (quotientSubmodule S).mkQL
+
+omit [IsScalarTower ℂ A A] [SMulCommClass ℂ A A] [StarModule ℂ A] in
+@[simp]
+theorem mkCL_apply (x : A) : mkCL S x = Submodule.Quotient.mk x := rfl
+
+omit [IsScalarTower ℂ A A] [SMulCommClass ℂ A A] [StarModule ℂ A] in
+/-- The canonical quotient norm makes the projection norm-nonincreasing. -/
+theorem norm_mk_le (x : A) :
+    ‖(Submodule.Quotient.mk x : S.Quotient)‖ ≤ ‖x‖ :=
+  NonUnitalSubalgebra.Quotient.norm_mk_le S.toNonUnitalSubalgebra x
+
+end Normed
+
+variable {B : Type*} [NonUnitalRing B] [StarRing B] [Module ℂ B]
+  [IsScalarTower ℂ B B] [SMulCommClass ℂ B B]
+
+/-- Descend a nonunital star algebra homomorphism which vanishes on the
+two-sided ideal. -/
+def lift [S.IsTwoSided] (f : A →⋆ₙₐ[ℂ] B) (hS : ∀ x ∈ S, f x = 0) :
+    S.Quotient →⋆ₙₐ[ℂ] B := by
+  let fL : S.Quotient →ₗ[ℂ] B :=
+    (quotientSubmodule S).liftQ (LinearMap.ofClass f) fun x hx ↦ hS x hx
+  exact
+    { toFun := fL
+      map_zero' := fL.map_zero
+      map_add' := fL.map_add
+      map_smul' := fL.map_smul
+      map_mul' := by
+        rintro ⟨x⟩ ⟨y⟩
+        change f (x * y) = f x * f y
+        exact map_mul f x y
+      map_star' := by
+        rintro ⟨x⟩
+        change f (star x) = star (f x)
+        exact map_star f x }
+
+omit [IsScalarTower ℂ A A] [SMulCommClass ℂ A A] [StarModule ℂ A]
+  [IsScalarTower ℂ B B] [SMulCommClass ℂ B B] in
+theorem lift_mk [S.IsTwoSided] (f : A →⋆ₙₐ[ℂ] B)
+    (hS : ∀ x ∈ S, f x = 0) (x : A) :
+    lift S f hS (mk S x) = f x := by
+  rfl
+
+omit [IsScalarTower ℂ A A] [SMulCommClass ℂ A A] [StarModule ℂ A]
+  [IsScalarTower ℂ B B] [SMulCommClass ℂ B B] in
+/-- Quotient-lift evaluation in the normal form of the submodule inclusion.
+The named `lift_mk` equation remains available for explicit rewrites. -/
+@[simp]
+theorem lift_mkQ [S.IsTwoSided] (f : A →⋆ₙₐ[ℂ] B)
+    (hS : ∀ x ∈ S, f x = 0) (x : A) :
+    lift S f hS (Submodule.Quotient.mk x) = f x :=
+  lift_mk S f hS x
+
+omit [IsScalarTower ℂ A A] [SMulCommClass ℂ A A] [StarModule ℂ A]
+  [IsScalarTower ℂ B B] [SMulCommClass ℂ B B] in
+/-- Extensionality for quotient nonunital star algebra homomorphisms. -/
+theorem hom_ext [S.IsTwoSided]
+    (f g : S.Quotient →⋆ₙₐ[ℂ] B)
+    (h : f.comp (mk S) = g.comp (mk S)) : f = g := by
+  ext x
+  obtain ⟨x, rfl⟩ := mkL_surjective S x
+  exact DFunLike.congr_fun h x
+
+section Map
+
+variable {C : Type*} [NonUnitalNormedRing C] [StarRing C] [NormedSpace ℂ C]
+  [IsScalarTower ℂ C C] [SMulCommClass ℂ C C] [StarModule ℂ C]
+variable (T : NonUnitalStarSubalgebra ℂ C)
+
+/-- The map on quotients induced by a nonunital star algebra homomorphism
+which sends the source ideal into the target ideal. -/
+def map [S.IsTwoSided] [T.IsTwoSided]
+    (f : A →⋆ₙₐ[ℂ] C) (hf : Set.MapsTo f S T) :
+    S.Quotient →⋆ₙₐ[ℂ] T.Quotient :=
+  lift S ((mk T).comp f) fun x hx ↦ (mk_eq_zero T (f x)).2 (hf hx)
+
+omit [IsScalarTower ℂ A A] [SMulCommClass ℂ A A] [StarModule ℂ A]
+  [IsScalarTower ℂ C C] [SMulCommClass ℂ C C] [StarModule ℂ C] in
+theorem map_mk [S.IsTwoSided] [T.IsTwoSided]
+    (f : A →⋆ₙₐ[ℂ] C) (hf : Set.MapsTo f S T) (x : A) :
+    NonUnitalStarSubalgebra.Quotient.map S T f hf (mk S x) = mk T (f x) :=
+  lift_mk S ((mk T).comp f) _ x
+
+omit [IsScalarTower ℂ A A] [SMulCommClass ℂ A A] [StarModule ℂ A]
+  [IsScalarTower ℂ C C] [SMulCommClass ℂ C C] [StarModule ℂ C] in
+/-- Induced quotient-map evaluation in the canonical submodule projection normal form.
+The named `map_mk` equation remains available for explicit rewrites. -/
+@[simp]
+theorem map_mkQ [S.IsTwoSided] [T.IsTwoSided]
+    (f : A →⋆ₙₐ[ℂ] C) (hf : Set.MapsTo f S T) (x : A) :
+    NonUnitalStarSubalgebra.Quotient.map S T f hf
+      (Submodule.Quotient.mk x) = Submodule.Quotient.mk (f x) :=
+  map_mk S T f hf x
+
+omit [IsScalarTower ℂ A A] [SMulCommClass ℂ A A] [StarModule ℂ A]
+  [IsScalarTower ℂ C C] [SMulCommClass ℂ C C] [StarModule ℂ C] in
+/-- The induced quotient map intertwines the two quotient projections. -/
+theorem map_comp_mk [S.IsTwoSided] [T.IsTwoSided]
+    (f : A →⋆ₙₐ[ℂ] C) (hf : Set.MapsTo f S T) :
+    (NonUnitalStarSubalgebra.Quotient.map S T f hf).comp (mk S) = (mk T).comp f := by
+  ext x
+  exact map_mk S T f hf x
+
+end Map
+
+section Analytic
+
+open Filter Metric
+open scoped CStarAlgebra Topology
+
+variable {B : Type*} [NonUnitalCStarAlgebra B]
+variable (T : NonUnitalStarSubalgebra ℂ B)
+
+/-- Multiplication is submultiplicative for the quotient seminorm. -/
+theorem norm_mul_le [T.IsTwoSided] (x y : T.Quotient) :
+    ‖x * y‖ ≤ ‖x‖ * ‖y‖ :=
+  NonUnitalSubalgebra.Quotient.norm_mul_le T.toNonUnitalSubalgebra x y
+
+/-- The quotient normed-ring structure is the neutral quotient structure. -/
+noncomputable scoped instance instNonUnitalNormedRing
+    [T.IsTwoSided] [IsClosed (T : Set B)] :
+    NonUnitalNormedRing T.Quotient :=
+  NonUnitalSubalgebra.Quotient.instNonUnitalNormedRing T.toNonUnitalSubalgebra
+
+/-- The quotient involution preserves the quotient seminorm. -/
+theorem norm_star_eq [T.IsTwoSided] (x : T.Quotient) : ‖star x‖ = ‖x‖ := by
+  have hle (y : T.Quotient) : ‖star y‖ ≤ ‖y‖ := by
+    refine le_of_forall_pos_le_add fun ε hε ↦ ?_
+    obtain ⟨a, ha, haε⟩ :=
+      Submodule.Quotient.norm_mk_lt (S := quotientSubmodule T) y hε
+    calc
+      ‖star y‖ = ‖(Submodule.Quotient.mk (star a) : T.Quotient)‖ := by
+        rw [← ha, mk_star]
+      _ ≤ ‖star a‖ := norm_mk_le T _
+      _ = ‖a‖ := _root_.norm_star a
+      _ ≤ ‖y‖ + ε := haε.le
+  refine le_antisymm (hle x) ?_
+  have hss : star (star x) = x := (instStarRing T).star_involutive x
+  simpa only [hss] using hle (star x)
+
+private theorem norm_compression_le (e b : B)
+    (he : ‖1 - (e : B⁺¹)‖ ≤ 1) :
+    ‖b - e * b - b * e + e * b * e‖ ≤ ‖b‖ := by
+  rw [← Unitization.norm_inr (𝕜 := ℂ)]
+  simp only [Unitization.inr_add, Unitization.inr_sub, Unitization.inr_mul]
+  rw [show (b : B⁺¹) - e * b - b * e + e * b * e =
+      (1 - e) * b * (1 - e) by noncomm_ring]
+  calc
+    ‖(1 - (e : B⁺¹)) * (b : B⁺¹) * (1 - e)‖ ≤
+        ‖(1 - (e : B⁺¹)) * (b : B⁺¹)‖ * ‖1 - (e : B⁺¹)‖ :=
+      _root_.norm_mul_le _ _
+    _ ≤ (‖1 - (e : B⁺¹)‖ * ‖(b : B⁺¹)‖) * ‖1 - (e : B⁺¹)‖ :=
+      mul_le_mul_of_nonneg_right (_root_.norm_mul_le _ _) (norm_nonneg _)
+    _ ≤ (1 * ‖(b : B⁺¹)‖) * 1 := by gcongr
+    _ = ‖b‖ := by simp [Unitization.norm_inr]
+
+private theorem exists_complementary_contraction_norm_sub_mul_lt
+    [IsClosed (T : Set B)] (i : T) {ε : ℝ} (hε : 0 < ε) :
+    ∃ e : T, star (e : B) = e ∧ ‖e‖ ≤ 1 ∧
+      ‖1 - ((e : B) : B⁺¹)‖ ≤ 1 ∧ ‖i - e * i‖ < ε := by
+  let _ : PartialOrder B := CStarAlgebra.spectralOrder B
+  let _ : StarOrderedRing B := CStarAlgebra.spectralOrderedRing B
+  let l := CStarAlgebra.approximateUnit T
+  have hl : Filter.IsIncreasingApproximateUnit l := CStarAlgebra.increasingApproximateUnit T
+  have ht : Tendsto (fun e : T ↦ i - e * i) l (𝓝 0) := by
+    simpa using (tendsto_const_nhds (x := i) (f := l)).sub (hl.tendsto_mul_right i)
+  have hevent : ∀ᶠ e in l, ‖i - e * i‖ < ε := by
+    simpa [dist_eq_norm] using Metric.tendsto_nhds.mp ht ε hε
+  obtain ⟨e, he0, he1, heclose⟩ :=
+    (hl.eventually_nonneg.and <| hl.eventually_norm.and hevent).exists
+  have he0B : 0 ≤ (e : B) := by
+    have he0' : ((0 : T) : B) ≤ (e : B) := Subtype.coe_le_coe.mpr he0
+    simpa only [NonUnitalStarSubalgebra.coe_zero T] using he0'
+  have heIcc : ((e : B) : B⁺¹) ∈ Set.Icc 0 1 := by
+    refine ⟨Unitization.inr_nonneg_iff.mpr he0B, ?_⟩
+    rw [← CStarAlgebra.norm_le_one_iff_of_nonneg _
+        (Unitization.inr_nonneg_iff.mpr he0B),
+      Unitization.norm_inr]
+    exact he1
+  have hOneSub : ‖1 - ((e : B) : B⁺¹)‖ ≤ 1 := by
+    have hnonneg : 0 ≤ 1 - ((e : B) : B⁺¹) := sub_nonneg.mpr heIcc.2
+    exact (CStarAlgebra.norm_le_one_iff_of_nonneg _ hnonneg).2
+      (sub_le_self 1 heIcc.1)
+  exact ⟨e, he0B.isSelfAdjoint.star_eq, he1, hOneSub, heclose⟩
+
+/-- The reverse C⋆ inequality for the quotient norm. -/
+theorem norm_sq_le_norm_star_mul_self [T.IsTwoSided] [IsClosed (T : Set B)]
+    (x : T.Quotient) : ‖x‖ * ‖x‖ ≤ ‖star x * x‖ := by
+  obtain ⟨a, rfl⟩ := mkL_surjective T x
+  refine le_of_forall_pos_le_add fun ε hε ↦ ?_
+  obtain ⟨b, hb, hbε⟩ := Submodule.Quotient.norm_mk_lt
+    (S := quotientSubmodule T)
+    (star (Submodule.Quotient.mk a : T.Quotient) * Submodule.Quotient.mk a) (half_pos hε)
+  let i : B := star a * a - b
+  have hi : i ∈ T := by
+    apply (mk_eq_zero T i).1
+    dsimp only [i]
+    have hb' : mk T b = star (mk T a) * mk T a := by simpa using hb
+    rw [map_sub, map_mul, map_star, hb']
+    simp
+  obtain ⟨e, hestar, heNorm, heContract, heclose⟩ :=
+    exists_complementary_contraction_norm_sub_mul_lt T (⟨i, hi⟩ : T) (by positivity : 0 < ε / 4)
+  let eB : B := e
+  change ‖i - eB * i‖ < ε / 4 at heclose
+  have hresidual : ‖(i - eB * i) - (i - eB * i) * eB‖ < ε / 2 := by
+    calc
+      ‖(i - eB * i) - (i - eB * i) * eB‖ ≤
+          ‖i - eB * i‖ + ‖(i - eB * i) * eB‖ := norm_sub_le _ _
+      _ ≤ ‖i - eB * i‖ + ‖i - eB * i‖ * ‖eB‖ :=
+        add_le_add le_rfl (_root_.norm_mul_le _ _)
+      _ ≤ ‖i - eB * i‖ + ‖i - eB * i‖ :=
+        add_le_add le_rfl <| by
+          calc
+            ‖i - eB * i‖ * ‖eB‖ ≤ ‖i - eB * i‖ * 1 :=
+              mul_le_mul_of_nonneg_left (by simpa [eB] using heNorm) (norm_nonneg _)
+            _ = ‖i - eB * i‖ := mul_one _
+      _ < ε / 2 := by linarith
+  have hae : a * eB ∈ T := IsTwoSided.mul_mem_left a e.property
+  have hae0 : (Submodule.Quotient.mk (a * eB) : T.Quotient) = 0 :=
+    (mk_eq_zero T _).2 hae
+  have hquot : ‖(Submodule.Quotient.mk a : T.Quotient)‖ ≤ ‖a - a * eB‖ := by
+    rw [← show (Submodule.Quotient.mk (a - a * eB) : T.Quotient) =
+      Submodule.Quotient.mk a by
+        rw [Submodule.Quotient.mk_sub, hae0, sub_zero]]
+    exact norm_mk_le T _
+  have hsquare :
+      star (a - a * eB) * (a - a * eB) =
+        (b - eB * b - b * eB + eB * b * eB) +
+          ((i - eB * i) - (i - eB * i) * eB) := by
+    dsimp only [i]
+    rw [star_sub, star_mul, hestar]
+    noncomm_ring
+  calc
+    ‖(Submodule.Quotient.mk a : T.Quotient)‖ *
+        ‖(Submodule.Quotient.mk a : T.Quotient)‖ ≤
+        ‖a - a * eB‖ * ‖a - a * eB‖ :=
+      mul_self_le_mul_self (norm_nonneg _) hquot
+    _ = ‖star (a - a * eB) * (a - a * eB)‖ :=
+      CStarRing.norm_star_mul_self.symm
+    _ = ‖(b - eB * b - b * eB + eB * b * eB) +
+          ((i - eB * i) - (i - eB * i) * eB)‖ := by rw [hsquare]
+    _ ≤ ‖b - eB * b - b * eB + eB * b * eB‖ +
+          ‖(i - eB * i) - (i - eB * i) * eB‖ := norm_add_le _ _
+    _ ≤ ‖b‖ + ε / 2 := (add_lt_add_of_le_of_lt
+      (norm_compression_le eB b heContract) hresidual).le
+    _ ≤ (‖star (Submodule.Quotient.mk a : T.Quotient) *
+          Submodule.Quotient.mk a‖ + ε / 2) + ε / 2 :=
+      by linarith
+    _ = ‖star (Submodule.Quotient.mk a : T.Quotient) *
+          Submodule.Quotient.mk a‖ + ε := by ring
+
+/-- The explicit nonunital C⋆-algebra structure on a quotient by a closed
+two-sided star ideal. It is deliberately not installed as a global instance. -/
+@[instance_reducible]
+noncomputable def nonUnitalCStarAlgebra [T.IsTwoSided] [IsClosed (T : Set B)] :
+    NonUnitalCStarAlgebra T.Quotient where
+  toNonUnitalNormedRing := instNonUnitalNormedRing T
+  __ : StarRing T.Quotient := instStarRing T
+  __ : CompleteSpace T.Quotient := inferInstance
+  __ : NormedSpace ℂ T.Quotient := inferInstance
+  __ : IsScalarTower ℂ T.Quotient T.Quotient := instIsScalarTower T
+  __ : SMulCommClass ℂ T.Quotient T.Quotient := instSMulCommClass T
+  __ : StarModule ℂ T.Quotient := instStarModule T
+  norm_mul_self_le := norm_sq_le_norm_star_mul_self T
+
+end Analytic
+
+end Quotient
+
+end NonUnitalStarSubalgebra
+
+namespace NonUnitalStarAlgHom
+
+open scoped CStarAlgebra NonUnitalStarSubalgebra.Quotient
+
+variable {A B : Type*} [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
+
+private def closedRangeKernel (rho : A →⋆ₙₐ[ℂ] B) :
+    NonUnitalStarSubalgebra ℂ A :=
+  NonUnitalStarSubalgebra.comap rho ⊥
+
+@[simp]
+private theorem mem_closedRangeKernel_iff (rho : A →⋆ₙₐ[ℂ] B) (a : A) :
+    a ∈ closedRangeKernel rho ↔ rho a = 0 := by
+  change rho a ∈ (⊥ : NonUnitalStarSubalgebra ℂ B) ↔ rho a = 0
+  exact NonUnitalStarAlgebra.mem_bot
+
+private theorem closedRangeKernelIsTwoSided (rho : A →⋆ₙₐ[ℂ] B) :
+    (closedRangeKernel rho).IsTwoSided where
+  mul_mem_left a {x} hx := by
+    rw [mem_closedRangeKernel_iff] at hx ⊢
+    simp [hx]
+  mul_mem_right {x} hx a := by
+    rw [mem_closedRangeKernel_iff] at hx ⊢
+    simp [hx]
+
+private theorem isClosed_closedRangeKernel (rho : A →⋆ₙₐ[ℂ] B) :
+    IsClosed (closedRangeKernel rho : Set A) := by
+  simpa [closedRangeKernel] using
+    (isClosed_singleton.preimage (map_continuous rho) : IsClosed (rho ⁻¹' ({0} : Set B)))
+
+private def closedRangeKernelLift (rho : A →⋆ₙₐ[ℂ] B)
+    [(closedRangeKernel rho).IsTwoSided] :
+    (closedRangeKernel rho).Quotient →⋆ₙₐ[ℂ] B :=
+  NonUnitalStarSubalgebra.Quotient.lift (closedRangeKernel rho) rho
+    fun x hx ↦ (mem_closedRangeKernel_iff rho x).1 hx
+
+private theorem closedRangeKernelLift_mk (rho : A →⋆ₙₐ[ℂ] B)
+    [(closedRangeKernel rho).IsTwoSided] (a : A) :
+    closedRangeKernelLift rho (NonUnitalStarSubalgebra.Quotient.mk
+      (closedRangeKernel rho) a) = rho a :=
+  NonUnitalStarSubalgebra.Quotient.lift_mk (closedRangeKernel rho) rho _ a
+
+@[simp]
+private theorem closedRangeKernelLift_mkQ (rho : A →⋆ₙₐ[ℂ] B)
+    [(closedRangeKernel rho).IsTwoSided] (a : A) :
+    closedRangeKernelLift rho (Submodule.Quotient.mk a) = rho a :=
+  closedRangeKernelLift_mk rho a
+
+private theorem closedRangeKernelLift_injective (rho : A →⋆ₙₐ[ℂ] B)
+    [(closedRangeKernel rho).IsTwoSided] :
+    Function.Injective (closedRangeKernelLift rho) := by
+  intro x y hxy
+  obtain ⟨a, rfl⟩ :=
+    NonUnitalStarSubalgebra.Quotient.mkL_surjective (closedRangeKernel rho) x
+  obtain ⟨b, rfl⟩ :=
+    NonUnitalStarSubalgebra.Quotient.mkL_surjective (closedRangeKernel rho) y
+  apply (Submodule.Quotient.eq
+    (NonUnitalStarSubalgebra.quotientSubmodule (closedRangeKernel rho))).2
+  have hxy' : rho a = rho b := by
+    rw [← closedRangeKernelLift_mk rho a, ← closedRangeKernelLift_mk rho b]
+    exact hxy
+  change a - b ∈ closedRangeKernel rho
+  rw [mem_closedRangeKernel_iff, map_sub, sub_eq_zero]
+  exact hxy'
+
+private theorem range_closedRangeKernelLift (rho : A →⋆ₙₐ[ℂ] B)
+    [(closedRangeKernel rho).IsTwoSided] :
+    Set.range (closedRangeKernelLift rho) = Set.range rho := by
+  ext y
+  constructor
+  · rintro ⟨q, rfl⟩
+    obtain ⟨a, rfl⟩ :=
+      NonUnitalStarSubalgebra.Quotient.mkL_surjective (closedRangeKernel rho) q
+    exact ⟨a, (closedRangeKernelLift_mk rho a).symm⟩
+  · rintro ⟨a, rfl⟩
+    exact ⟨NonUnitalStarSubalgebra.Quotient.mk (closedRangeKernel rho) a,
+      closedRangeKernelLift_mk rho a⟩
+
+/-- The range of a nonunital star algebra homomorphism between complex
+C⋆-algebras is closed. -/
+theorem isClosed_range (rho : A →⋆ₙₐ[ℂ] B) : IsClosed (Set.range rho) := by
+  let _ : (closedRangeKernel rho).IsTwoSided := closedRangeKernelIsTwoSided rho
+  let _ : IsClosed (closedRangeKernel rho : Set A) := isClosed_closedRangeKernel rho
+  let _ : NonUnitalCStarAlgebra (closedRangeKernel rho).Quotient :=
+    NonUnitalStarSubalgebra.Quotient.nonUnitalCStarAlgebra (closedRangeKernel rho)
+  rw [← range_closedRangeKernelLift rho]
+  exact (NonUnitalStarAlgHom.isometry (closedRangeKernelLift rho)
+    (closedRangeKernelLift_injective rho)).isClosedEmbedding.isClosed_range
+
+end NonUnitalStarAlgHom
+
+/-! ## Bundled closed two-sided star ideals -/
+
+/-- A closed two-sided star ideal in a complex nonunital C-star algebra.
+
+The ideal stores its closedness and two-sidedness proofs without installing
+either proof globally.  Quotient constructions below activate them only in a
+local `letI` scope and delegate to `NonUnitalStarSubalgebra.Quotient`. -/
+structure ClosedStarIdeal (A : Type*) [NonUnitalCStarAlgebra A] where
+  /-- The actual scalar-stable star subalgebra underlying the two-sided ideal. -/
+  carrier : NonUnitalStarSubalgebra ℂ A
+  isTwoSided : carrier.IsTwoSided
+  isClosed : IsClosed (carrier : Set A)
+
+namespace ClosedStarIdeal
+
+variable {A : Type*} [NonUnitalCStarAlgebra A]
+
+open scoped CStarAlgebra
+
+instance instSetLike : SetLike (ClosedStarIdeal A) A where
+  coe I := I.carrier
+  coe_injective I J h := by
+    cases I
+    cases J
+    congr
+    exact SetLike.coe_injective h
+
+instance instCoeCarrier :
+    Coe (ClosedStarIdeal A) (NonUnitalStarSubalgebra ℂ A) :=
+  ⟨carrier⟩
+
+@[simp]
+theorem mem_carrier (I : ClosedStarIdeal A) (x : A) :
+    x ∈ I.carrier ↔ x ∈ I :=
+  Iff.rfl
+
+@[ext]
+theorem ext {I J : ClosedStarIdeal A}
+    (h : ∀ x : A, x ∈ I ↔ x ∈ J) : I = J := by
+  apply SetLike.coe_injective
+  ext x
+  exact h x
+
+/-- Closed star ideals are ordered by inclusion of their carriers. -/
+instance instPartialOrder : PartialOrder (ClosedStarIdeal A) :=
+  PartialOrder.lift ((↑) : ClosedStarIdeal A → Set A) SetLike.coe_injective
+
+/-- The zero closed star ideal. -/
+def bot (A : Type*) [NonUnitalCStarAlgebra A] : ClosedStarIdeal A where
+  carrier := ⊥
+  isTwoSided := by
+    constructor
+    · intro a x hx
+      have hx0 : x = 0 := NonUnitalStarAlgebra.mem_bot.mp hx
+      subst x
+      simp
+    · intro x hx a
+      have hx0 : x = 0 := NonUnitalStarAlgebra.mem_bot.mp hx
+      subst x
+      simp
+  isClosed := by
+    simpa only [NonUnitalStarAlgebra.coe_bot] using
+      (isClosed_singleton : IsClosed ({0} : Set A))
+
+@[simp]
+theorem mem_bot (x : A) : x ∈ bot A ↔ x = 0 :=
+  NonUnitalStarAlgebra.mem_bot
+
+instance instOrderBot : OrderBot (ClosedStarIdeal A) where
+  bot := bot A
+  bot_le I := by
+    intro x hx
+    have hx0 : x = 0 := (mem_bot x).1 hx
+    subst x
+    exact I.carrier.zero_mem
+
+/-- The whole closed star ideal. -/
+def top (A : Type*) [NonUnitalCStarAlgebra A] : ClosedStarIdeal A where
+  carrier := ⊤
+  isTwoSided := by
+    constructor <;> simp
+  isClosed := by
+    simpa only [NonUnitalStarAlgebra.coe_top] using
+      (isClosed_univ : IsClosed (Set.univ : Set A))
+
+@[simp]
+theorem mem_top (x : A) : x ∈ top A :=
+  Set.mem_univ x
+
+instance instOrderTop : OrderTop (ClosedStarIdeal A) where
+  top := top A
+  le_top _I := by
+    intro x _hx
+    exact mem_top x
+
+/-! ### Essential closed star ideals -/
+
+/-- A closed star ideal is essential when its left annihilator is zero. -/
+def IsEssential (I : ClosedStarIdeal A) : Prop :=
+  ∀ a : A, (∀ x : I, a * (x : A) = 0) → a = 0
+
+/-- For a closed star ideal, having zero left annihilator is equivalent to
+having zero right annihilator. -/
+theorem isEssential_iff_right_annihilator_zero (I : ClosedStarIdeal A) :
+    I.IsEssential ↔
+      ∀ a : A, (∀ x : I, (x : A) * a = 0) → a = 0 := by
+  constructor
+  · intro hI a ha
+    have hstar : star a = 0 := hI (star a) fun x ↦ by
+      have hxstar : star (x : A) ∈ I :=
+        StarMemClass.star_mem (s := I.carrier) x.property
+      have hzero := ha (⟨star (x : A), hxstar⟩ : I)
+      have := congrArg star hzero
+      simpa only [star_mul, star_zero, star_star] using this
+    simpa only [star_eq_zero] using hstar
+  · intro hI a ha
+    have hstar : star a = 0 := hI (star a) fun x ↦ by
+      have hxstar : star (x : A) ∈ I :=
+        StarMemClass.star_mem (s := I.carrier) x.property
+      have hzero := ha (⟨star (x : A), hxstar⟩ : I)
+      have := congrArg star hzero
+      simpa only [star_mul, star_zero, star_star] using this
+    simpa only [star_eq_zero] using hstar
+
+/-- Preimage of a closed two-sided star ideal under a nonunital star algebra
+homomorphism. -/
+def comap
+    {B : Type*} [NonUnitalCStarAlgebra B]
+    (f : A →⋆ₙₐ[ℂ] B) (J : ClosedStarIdeal B) : ClosedStarIdeal A where
+  carrier := NonUnitalStarSubalgebra.comap f J.carrier
+  isTwoSided := by
+    constructor
+    · intro a x hx
+      change f (a * x) ∈ J
+      rw [map_mul]
+      exact J.isTwoSided.mul_mem_left (f a) hx
+    · intro x hx a
+      change f (x * a) ∈ J
+      rw [map_mul]
+      exact J.isTwoSided.mul_mem_right hx (f a)
+  isClosed := by
+    change IsClosed (f ⁻¹' (J : Set B))
+    exact J.isClosed.preimage (map_continuous f)
+
+@[simp]
+theorem mem_comap
+    {B : Type*} [NonUnitalCStarAlgebra B]
+    (f : A →⋆ₙₐ[ℂ] B) (J : ClosedStarIdeal B) (x : A) :
+    x ∈ comap f J ↔ f x ∈ J :=
+  Iff.rfl
+
+/-- Kernel as a bundled closed two-sided star ideal. -/
+def ker
+    {B : Type*} [NonUnitalCStarAlgebra B]
+    (f : A →⋆ₙₐ[ℂ] B) : ClosedStarIdeal A :=
+  comap f (bot B)
+
+@[simp]
+theorem mem_ker
+    {B : Type*} [NonUnitalCStarAlgebra B]
+    (f : A →⋆ₙₐ[ℂ] B) (x : A) :
+    x ∈ ker f ↔ f x = 0 := by
+  rw [ker, mem_comap, mem_bot]
+
+/-! ### Canonical carrier and quotient structures -/
+
+/-- Explicit C-star structure on the carrier of a bundled closed star ideal.
+It is deliberately not installed as a global instance. -/
+@[instance_reducible]
+noncomputable def carrierCStarAlgebra (I : ClosedStarIdeal A) :
+    NonUnitalCStarAlgebra I.carrier := by
+  let _ : IsClosed (I.carrier : Set A) := I.isClosed
+  exact NonUnitalStarSubalgebra.nonUnitalCStarAlgebra I.carrier
+
+/-- Canonical quotient carrier of a bundled closed star ideal. -/
+abbrev Quotient (I : ClosedStarIdeal A) := I.carrier.Quotient
+
+open scoped NonUnitalStarSubalgebra.Quotient
+
+/-- Explicit quotient C-star structure, delegated to the canonical quotient
+API and deliberately not installed as an instance. -/
+@[instance_reducible]
+noncomputable def quotientCStarAlgebra (I : ClosedStarIdeal A) :
+    let _ : I.carrier.IsTwoSided := I.isTwoSided
+    NonUnitalCStarAlgebra I.Quotient := by
+  let _ : I.carrier.IsTwoSided := I.isTwoSided
+  let _ : IsClosed (I.carrier : Set A) := I.isClosed
+  exact NonUnitalStarSubalgebra.Quotient.nonUnitalCStarAlgebra I.carrier
+
+/-- Canonical quotient projection, delegated to the existing quotient map. -/
+noncomputable def quotientMap (I : ClosedStarIdeal A) :
+    let _ : I.carrier.IsTwoSided := I.isTwoSided
+    A →⋆ₙₐ[ℂ] I.Quotient := by
+  let _ : I.carrier.IsTwoSided := I.isTwoSided
+  exact NonUnitalStarSubalgebra.Quotient.mk I.carrier
+
+@[simp]
+theorem quotientMap_apply (I : ClosedStarIdeal A) (x : A) :
+    I.quotientMap x = (Submodule.Quotient.mk x : I.Quotient) :=
+  rfl
+
+theorem quotientMap_eq_zero_iff (I : ClosedStarIdeal A) (x : A) :
+    I.quotientMap x = 0 ↔ x ∈ I := by
+  let _ : I.carrier.IsTwoSided := I.isTwoSided
+  exact NonUnitalStarSubalgebra.Quotient.mk_eq_zero I.carrier x
+
+theorem quotientMap_surjective (I : ClosedStarIdeal A) :
+    Function.Surjective I.quotientMap := by
+  let _ : I.carrier.IsTwoSided := I.isTwoSided
+  exact NonUnitalStarSubalgebra.Quotient.mkL_surjective I.carrier
+
+/-! ### Explicit unital quotient structure -/
+
+section UnitalQuotient
+
+variable {U : Type*} [CStarAlgebra U]
+
+/-- The quotient by a closed star ideal in a unital C-star algebra, with its
+unital C-star structure kept as an explicit value.  The underlying additive,
+multiplicative, star, norm, and scalar structures are the existing nonunital
+quotient structures. -/
+@[instance_reducible]
+noncomputable def unitalQuotientCStarAlgebra
+    (I : ClosedStarIdeal U) : CStarAlgebra I.Quotient := by
+  let _ : NonUnitalCStarAlgebra I.Quotient := I.quotientCStarAlgebra
+  let _ : One I.Quotient := ⟨I.quotientMap 1⟩
+  let _ : Pow I.Quotient ℕ := ⟨fun q n ↦ npowRec n q⟩
+  let _ : NatCast I.Quotient := ⟨fun n ↦ I.quotientMap (n : U)⟩
+  let _ : IntCast I.Quotient := ⟨fun n ↦ I.quotientMap (n : U)⟩
+  let ring : Ring I.Quotient := fast_instance%
+    Function.Surjective.ring I.quotientMap I.quotientMap_surjective
+      (map_zero I.quotientMap) rfl
+      (map_add I.quotientMap) (map_mul I.quotientMap)
+      (map_neg I.quotientMap) (map_sub I.quotientMap)
+      (fun n x ↦ map_nsmul I.quotientMap n x)
+      (fun n x ↦ map_zsmul I.quotientMap n x)
+      (fun x n ↦ by
+        induction n with
+        | zero =>
+            rw [pow_zero]
+            rfl
+        | succ n ih =>
+            rw [pow_succ]
+            change I.quotientMap (x ^ n * x) =
+              npowRec n (I.quotientMap x) * I.quotientMap x
+            rw [map_mul, ih]
+            rfl)
+      (fun _ ↦ rfl) fun _ ↦ rfl
+  let _ : Ring I.Quotient := ring
+  let algebra : Algebra ℂ I.Quotient :=
+    Algebra.ofModule smul_mul_assoc mul_smul_comm
+  let _ : Algebra ℂ I.Quotient := algebra
+  let normedRing : NormedRing I.Quotient :=
+    { toRing := ring
+      toNorm := inferInstance
+      toMetricSpace := inferInstance
+      dist_eq := (I.quotientCStarAlgebra).toNonUnitalNormedRing.dist_eq
+      norm_mul_le := (I.quotientCStarAlgebra).toNonUnitalNormedRing.norm_mul_le }
+  let _ : NormedRing I.Quotient := normedRing
+  let normedAlgebra : NormedAlgebra ℂ I.Quotient :=
+    { toAlgebra := algebra
+      norm_smul_le := norm_smul_le }
+  let _ : NormedAlgebra ℂ I.Quotient := normedAlgebra
+  exact
+    { toNormedRing := normedRing
+      toStarRing := (I.quotientCStarAlgebra).toStarRing
+      toCompleteSpace := (I.quotientCStarAlgebra).toCompleteSpace
+      toCStarRing := (I.quotientCStarAlgebra).toCStarRing
+      toNormedAlgebra := normedAlgebra
+      toStarModule := (I.quotientCStarAlgebra).toStarModule }
+
+/-- The unital quotient projection.  Its underlying function is definitionally
+the existing nonunital quotient projection. -/
+noncomputable def unitalQuotientMap
+    (I : ClosedStarIdeal U) :
+    let _ : CStarAlgebra I.Quotient := I.unitalQuotientCStarAlgebra
+    U →⋆ₐ[ℂ] I.Quotient := by
+  let _ : CStarAlgebra I.Quotient := I.unitalQuotientCStarAlgebra
+  exact
+    { toFun := I.quotientMap
+      map_one' := rfl
+      map_mul' := map_mul I.quotientMap
+      map_zero' := map_zero I.quotientMap
+      map_add' := map_add I.quotientMap
+      commutes' := fun c ↦ by
+        rw [Algebra.algebraMap_eq_smul_one, Algebra.algebraMap_eq_smul_one,
+          map_smul]
+        rfl
+      map_star' := map_star I.quotientMap }
+
+@[simp]
+theorem unitalQuotientMap_apply
+    (I : ClosedStarIdeal U) (a : U) :
+    let _ : CStarAlgebra I.Quotient := I.unitalQuotientCStarAlgebra
+    I.unitalQuotientMap a = I.quotientMap a := by
+  rfl
+
+/-- Forgetting the unit from the explicit unital quotient map recovers the
+canonical nonunital quotient map. -/
+theorem unitalQuotientMap_toNonUnitalStarAlgHom
+    (I : ClosedStarIdeal U) :
+    let _ : CStarAlgebra I.Quotient := I.unitalQuotientCStarAlgebra
+    I.unitalQuotientMap.toNonUnitalStarAlgHom = I.quotientMap := by
+  let _ : CStarAlgebra I.Quotient := I.unitalQuotientCStarAlgebra
+  apply NonUnitalStarAlgHom.ext
+  intro a
+  rfl
+
+theorem unitalQuotientMap_surjective
+    (I : ClosedStarIdeal U) :
+    let _ : CStarAlgebra I.Quotient := I.unitalQuotientCStarAlgebra
+    Function.Surjective I.unitalQuotientMap := by
+  let _ : CStarAlgebra I.Quotient := I.unitalQuotientCStarAlgebra
+  exact I.quotientMap_surjective
+
+theorem unitalQuotientMap_eq_zero_iff
+    (I : ClosedStarIdeal U) (a : U) :
+    let _ : CStarAlgebra I.Quotient := I.unitalQuotientCStarAlgebra
+    I.unitalQuotientMap a = 0 ↔ a ∈ I := by
+  let _ : CStarAlgebra I.Quotient := I.unitalQuotientCStarAlgebra
+  exact I.quotientMap_eq_zero_iff a
+
+theorem unitalQuotientMap_one
+    (I : ClosedStarIdeal U) :
+    let _ : CStarAlgebra I.Quotient := I.unitalQuotientCStarAlgebra
+    I.unitalQuotientMap 1 = 1 := by
+  let _ : CStarAlgebra I.Quotient := I.unitalQuotientCStarAlgebra
+  exact map_one I.unitalQuotientMap
+
+/-- The ambient unit's class is the unit of the canonical unital quotient.
+This uses the actual submodule projection normal form. -/
+@[simp]
+theorem quotient_mk_one (I : ClosedStarIdeal U) :
+    let _ : CStarAlgebra I.Quotient := I.unitalQuotientCStarAlgebra
+    (Submodule.Quotient.mk (1 : U) : I.Quotient) = 1 := by
+  let _ : CStarAlgebra I.Quotient := I.unitalQuotientCStarAlgebra
+  simpa only [unitalQuotientMap_apply, quotientMap_apply] using
+    unitalQuotientMap_one I
+
+end UnitalQuotient
+
+/-- The canonical map `A / I → A / J` induced by an inclusion `I ≤ J` of
+bundled closed star ideals.  The stored two-sidedness proofs are activated only
+inside this construction. -/
+noncomputable def quotientMapOfLE (I J : ClosedStarIdeal A) (h : I ≤ J) :
+    let _ : I.carrier.IsTwoSided := I.isTwoSided
+    let _ : J.carrier.IsTwoSided := J.isTwoSided
+    I.Quotient →⋆ₙₐ[ℂ] J.Quotient := by
+  let _ : I.carrier.IsTwoSided := I.isTwoSided
+  let _ : J.carrier.IsTwoSided := J.isTwoSided
+  exact NonUnitalStarSubalgebra.Quotient.map I.carrier J.carrier
+    (NonUnitalStarAlgHom.id ℂ A) fun x hx ↦ h hx
+
+/-- The quotient map induced by `I ≤ J` sends the class of an ambient
+element to its class modulo `J`. -/
+theorem quotientMapOfLE_quotientMap
+    (I J : ClosedStarIdeal A) (h : I ≤ J) (x : A) :
+    quotientMapOfLE I J h (I.quotientMap x) = J.quotientMap x := by
+  let _ : I.carrier.IsTwoSided := I.isTwoSided
+  let _ : J.carrier.IsTwoSided := J.isTwoSided
+  rfl
+
+/-- Inclusion-induced quotient-map evaluation in submodule projection normal form.
+The original `quotientMapOfLE_quotientMap` equation retains its rewrite interface. -/
+@[simp]
+theorem quotientMapOfLE_mkQ
+    (I J : ClosedStarIdeal A) (h : I ≤ J) (x : A) :
+    quotientMapOfLE I J h (Submodule.Quotient.mk x) =
+      (Submodule.Quotient.mk x : J.Quotient) := by
+  let _ : I.carrier.IsTwoSided := I.isTwoSided
+  let _ : J.carrier.IsTwoSided := J.isTwoSided
+  simpa only [quotientMap_apply] using quotientMapOfLE_quotientMap I J h x
+
+/-- The quotient map induced by reflexivity is the identity. -/
+@[simp]
+theorem quotientMapOfLE_refl (I : ClosedStarIdeal A) :
+    let _ : I.carrier.IsTwoSided := I.isTwoSided
+    quotientMapOfLE I I le_rfl = NonUnitalStarAlgHom.id ℂ I.Quotient := by
+  let _ : I.carrier.IsTwoSided := I.isTwoSided
+  apply NonUnitalStarAlgHom.ext
+  intro q
+  obtain ⟨x, rfl⟩ := I.quotientMap_surjective q
+  rw [quotientMapOfLE_quotientMap]
+  rfl
+
+/-- Quotient maps induced by inclusions compose according to transitivity of
+ideal inclusion. -/
+theorem quotientMapOfLE_trans
+    (I J K : ClosedStarIdeal A) (hIJ : I ≤ J) (hJK : J ≤ K) :
+    let _ : I.carrier.IsTwoSided := I.isTwoSided
+    let _ : J.carrier.IsTwoSided := J.isTwoSided
+    let _ : K.carrier.IsTwoSided := K.isTwoSided
+    quotientMapOfLE I K (hIJ.trans hJK) =
+      (quotientMapOfLE J K hJK).comp (quotientMapOfLE I J hIJ) := by
+  let _ : I.carrier.IsTwoSided := I.isTwoSided
+  let _ : J.carrier.IsTwoSided := J.isTwoSided
+  let _ : K.carrier.IsTwoSided := K.isTwoSided
+  apply NonUnitalStarAlgHom.ext
+  intro q
+  obtain ⟨x, rfl⟩ := I.quotientMap_surjective q
+  simp only [NonUnitalStarAlgHom.comp_apply, quotientMapOfLE_quotientMap]
+
+end ClosedStarIdeal
+
+namespace NonUnitalStarAlgHom
+
+open scoped CStarAlgebra NonUnitalStarSubalgebra.Quotient
+
+universe u v
+
+variable {A : Type u} {B : Type v}
+variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
+
+/-- The canonical map from the quotient by the bundled closed kernel to the
+bundled range. -/
+noncomputable def quotientKerRangeHom (rho : A →⋆ₙₐ[ℂ] B) :
+    let _ : (ClosedStarIdeal.ker rho).carrier.IsTwoSided :=
+      (ClosedStarIdeal.ker rho).isTwoSided
+    (ClosedStarIdeal.ker rho).Quotient →⋆ₙₐ[ℂ]
+      NonUnitalStarAlgHom.range rho := by
+  let _ : (ClosedStarIdeal.ker rho).carrier.IsTwoSided :=
+    (ClosedStarIdeal.ker rho).isTwoSided
+  exact NonUnitalStarSubalgebra.Quotient.lift
+    (ClosedStarIdeal.ker rho).carrier (NonUnitalStarAlgHom.rangeRestrict rho) fun x hx ↦ by
+      apply Subtype.ext
+      exact (ClosedStarIdeal.mem_ker rho x).1 hx
+
+/-- The canonical quotient-to-range map sends the class of `a` to `rho a` in
+the bundled range. -/
+theorem quotientKerRangeHom_quotientMap (rho : A →⋆ₙₐ[ℂ] B) (a : A) :
+    quotientKerRangeHom rho ((ClosedStarIdeal.ker rho).quotientMap a) =
+      NonUnitalStarAlgHom.rangeRestrict rho a := by
+  let _ : (ClosedStarIdeal.ker rho).carrier.IsTwoSided :=
+    (ClosedStarIdeal.ker rho).isTwoSided
+  rfl
+
+/-- Quotient-to-range evaluation in the canonical submodule projection normal form. -/
+@[simp]
+theorem quotientKerRangeHom_mkQ (rho : A →⋆ₙₐ[ℂ] B) (a : A) :
+    quotientKerRangeHom rho (Submodule.Quotient.mk a) =
+      NonUnitalStarAlgHom.rangeRestrict rho a := by
+  let _ : (ClosedStarIdeal.ker rho).carrier.IsTwoSided :=
+    (ClosedStarIdeal.ker rho).isTwoSided
+  simpa only [ClosedStarIdeal.quotientMap_apply] using
+    quotientKerRangeHom_quotientMap rho a
+
+/-- Canonical first isomorphism theorem for nonunital complex C-star algebra
+homomorphisms: the quotient by the bundled closed kernel is star-algebra
+equivalent to the bundled range. -/
+noncomputable def quotientKerEquivRange (rho : A →⋆ₙₐ[ℂ] B) :
+    let _ : (ClosedStarIdeal.ker rho).carrier.IsTwoSided :=
+      (ClosedStarIdeal.ker rho).isTwoSided
+    (ClosedStarIdeal.ker rho).Quotient ≃⋆ₐ[ℂ]
+      NonUnitalStarAlgHom.range rho := by
+  let _ : (ClosedStarIdeal.ker rho).carrier.IsTwoSided :=
+    (ClosedStarIdeal.ker rho).isTwoSided
+  refine StarAlgEquiv.ofBijective (quotientKerRangeHom rho) ⟨?_, ?_⟩
+  · intro x y hxy
+    obtain ⟨a, rfl⟩ := (ClosedStarIdeal.ker rho).quotientMap_surjective x
+    obtain ⟨b, rfl⟩ := (ClosedStarIdeal.ker rho).quotientMap_surjective y
+    apply (Submodule.Quotient.eq
+      (NonUnitalStarSubalgebra.quotientSubmodule
+        (ClosedStarIdeal.ker rho).carrier)).2
+    change a - b ∈ ClosedStarIdeal.ker rho
+    rw [ClosedStarIdeal.mem_ker, map_sub, sub_eq_zero]
+    simpa only [quotientKerRangeHom_quotientMap,
+      NonUnitalStarAlgHom.coe_codRestrict] using congrArg Subtype.val hxy
+  · intro y
+    obtain ⟨a, ha⟩ := (NonUnitalStarAlgHom.mem_range rho).1 y.property
+    refine ⟨(ClosedStarIdeal.ker rho).quotientMap a, ?_⟩
+    apply Subtype.ext
+    simpa only [quotientKerRangeHom_quotientMap,
+      NonUnitalStarAlgHom.coe_codRestrict] using ha
+
+/-- The first-isomorphism equivalence sends the canonical class of `a` to
+`rho a` in the bundled range. -/
+theorem quotientKerEquivRange_quotientMap (rho : A →⋆ₙₐ[ℂ] B) (a : A) :
+    quotientKerEquivRange rho
+        ((ClosedStarIdeal.ker rho).quotientMap a) =
+      NonUnitalStarAlgHom.rangeRestrict rho a := by
+  let _ : (ClosedStarIdeal.ker rho).carrier.IsTwoSided :=
+    (ClosedStarIdeal.ker rho).isTwoSided
+  change quotientKerRangeHom rho
+      ((ClosedStarIdeal.ker rho).quotientMap a) =
+    NonUnitalStarAlgHom.rangeRestrict rho a
+  exact quotientKerRangeHom_quotientMap rho a
+
+/-- First-isomorphism range evaluation in the canonical submodule projection normal form. -/
+@[simp]
+theorem quotientKerEquivRange_mkQ (rho : A →⋆ₙₐ[ℂ] B) (a : A) :
+    quotientKerEquivRange rho (Submodule.Quotient.mk a) =
+      NonUnitalStarAlgHom.rangeRestrict rho a := by
+  let _ : (ClosedStarIdeal.ker rho).carrier.IsTwoSided :=
+    (ClosedStarIdeal.ker rho).isTwoSided
+  simpa only [ClosedStarIdeal.quotientMap_apply] using
+    quotientKerEquivRange_quotientMap rho a
+
+/-- Surjective form of the canonical first isomorphism theorem. -/
+noncomputable def quotientKerEquivOfSurjective
+    (rho : A →⋆ₙₐ[ℂ] B) (hrho : Function.Surjective rho) :
+    let _ : (ClosedStarIdeal.ker rho).carrier.IsTwoSided :=
+      (ClosedStarIdeal.ker rho).isTwoSided
+    (ClosedStarIdeal.ker rho).Quotient ≃⋆ₐ[ℂ] B := by
+  let _ : (ClosedStarIdeal.ker rho).carrier.IsTwoSided :=
+    (ClosedStarIdeal.ker rho).isTwoSided
+  exact (quotientKerEquivRange rho).trans <|
+    StarAlgEquiv.ofBijective
+      (NonUnitalStarSubalgebraClass.subtype (NonUnitalStarAlgHom.range rho)) ⟨
+        fun _ _ h ↦ Subtype.ext h,
+        fun b ↦ by
+          obtain ⟨a, rfl⟩ := hrho b
+          exact ⟨⟨rho a, NonUnitalStarAlgHom.mem_range_self rho a⟩, rfl⟩⟩
+
+/-- The surjective first-isomorphism equivalence sends the canonical class of
+`a` to `rho a`. -/
+theorem quotientKerEquivOfSurjective_quotientMap
+    (rho : A →⋆ₙₐ[ℂ] B) (hrho : Function.Surjective rho) (a : A) :
+    quotientKerEquivOfSurjective rho hrho
+        ((ClosedStarIdeal.ker rho).quotientMap a) = rho a := by
+  let _ : (ClosedStarIdeal.ker rho).carrier.IsTwoSided :=
+    (ClosedStarIdeal.ker rho).isTwoSided
+  simp only [quotientKerEquivOfSurjective, StarAlgEquiv.trans_apply]
+  change (((quotientKerEquivRange rho)
+      ((ClosedStarIdeal.ker rho).quotientMap a) :
+        NonUnitalStarAlgHom.range rho) : B) = rho a
+  simpa only [NonUnitalStarAlgHom.coe_codRestrict] using
+    congrArg Subtype.val (quotientKerEquivRange_quotientMap rho a)
+
+/-- Surjective first-isomorphism evaluation in the canonical submodule projection normal form. -/
+@[simp]
+theorem quotientKerEquivOfSurjective_mkQ
+    (rho : A →⋆ₙₐ[ℂ] B) (hrho : Function.Surjective rho) (a : A) :
+    quotientKerEquivOfSurjective rho hrho (Submodule.Quotient.mk a) = rho a := by
+  let _ : (ClosedStarIdeal.ker rho).carrier.IsTwoSided :=
+    (ClosedStarIdeal.ker rho).isTwoSided
+  simpa only [ClosedStarIdeal.quotientMap_apply] using
+    quotientKerEquivOfSurjective_quotientMap rho hrho a
+
+end NonUnitalStarAlgHom

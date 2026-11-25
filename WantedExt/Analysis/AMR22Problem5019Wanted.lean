@@ -44,7 +44,7 @@ namespace AMR22P5019
 -/
 
 /-- Unit disc `D` in [AMR-022-5019] Problem 5.19. -/
-def openUnitDisc : Set ℂ := Metric.ball 0 1
+noncomputable def openUnitDisc : Set ℂ := Metric.ball 0 1
 
 /-- Circumference `T` in [AMR-022-5019] Problem 5.19. -/
 def unitCircle : Set ℂ := {z | ‖z‖ = 1}

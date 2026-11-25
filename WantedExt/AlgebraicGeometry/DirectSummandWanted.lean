@@ -85,7 +85,11 @@ noncomputable def singleFunctorMapHomotopyCategoryPlus {W₁ W₂ : Type*} [Cate
     (fun X ↦ ObjectProperty.isoMk _ <| (singleFunctorMapHomotopyCategory F n).app X) <| by
     intros; ext; exact (singleFunctorMapHomotopyCategory F n).hom.naturality _
 
-/-- The bounded-below single functor is induced by the homotopy-category single functor. -/
+/-- **Single complexes in the bounded-below derived category.** For an abelian category $C$ with
+a derived category and an integer $n$, the functor sending an object of $C$ to the complex
+concentrated in degree $n$, viewed in the bounded-below derived category $D^+(C)$, is naturally
+isomorphic to the corresponding single-complex functor into the bounded-below homotopy category
+$K^+(C)$ followed by the localization functor $K^+(C) \to D^+(C)$. -/
 noncomputable def singleFunctorPlusIsoCompQh {C : Type*} [Category* C] [Abelian C]
     [HasDerivedCategory C] (n : ℤ) :
     DerivedCategory.Plus.singleFunctor C n ≅
@@ -121,7 +125,18 @@ instance (X : Scheme) {S : Type*} [Ring S] (φ : S →+* Γ(X, ⊤)) :
     (SheafOfModules.evaluation X.ringCatSheaf ⟨⊤⟩ ⋙ ModuleCat.restrictScalars φ).Additive :=
   ⟨rfl⟩
 
-/-- Source: see manifest Via leanprover/lean-eval@38361be, problem `direct_summand`. -/
+/-- **Derived direct summand theorem.** Let $A$ be a regular commutative ring, let $X$ be a
+scheme and let $f \colon X \to \operatorname{Spec} A$ be a proper morphism that is surjective on
+underlying points. Let $\varphi \colon A \to \Gamma(X, \mathcal{O}_X)$ be the ring map
+corresponding to $f$, and let $R\Gamma$ be the right derived functor, between bounded-below
+derived categories, of global sections of sheaves of $\mathcal{O}_X$-modules followed by
+restriction of scalars along $\varphi$. If the category of sheaves of $\mathcal{O}_X$-modules
+has enough injectives, then the composite of $\varphi$, placed in degree $0$, with the canonical
+map from $\Gamma(X, \mathcal{O}_X)$ in degree $0$ to $R\Gamma(\mathcal{O}_X)$ is a split
+monomorphism $A \to R\Gamma(\mathcal{O}_X)$ in the bounded-below derived category of
+$A$-modules.
+
+Source: see manifest Via leanprover/lean-eval@38361be, problem `direct_summand`. -/
 public theorem_wanted derived_direct_summand [HasDerivedCategory (ModuleCat A)]
     (X : Scheme) (f : X ⟶ Spec (.of A)) [IsProper f] (surj : Function.Surjective f)
     [HasDerivedCategory (SheafOfModules X.ringCatSheaf)] :
@@ -133,7 +148,13 @@ public theorem_wanted derived_direct_summand [HasDerivedCategory (ModuleCat A)]
       (rightDerivedFunctorPlusUnit' (SheafOfModules.evaluation X.ringCatSheaf ⟨⊤⟩ ⋙
         ModuleCat.restrictScalars φ) 0).app (SheafOfModules.unit X.ringCatSheaf)
 
-/-- Source: see manifest Via leanprover/lean-eval@38361be, problem `direct_summand`. -/
+/-- **Direct summand theorem.** Let $A$ be a regular commutative ring and let $B$ be a commutative
+$A$-algebra that is finitely generated as an $A$-module and on which $A$ acts faithfully
+(equivalently, the structure map $A \to B$ is injective). Then there is an $A$-linear map
+$\pi \colon B \to A$ with $\pi(a \cdot 1) = a$ for every $a \in A$; that is, $A$ is a direct
+summand of $B$ as an $A$-module.
+
+Source: see manifest Via leanprover/lean-eval@38361be, problem `direct_summand`. -/
 public theorem_wanted direct_summand (B : Type*) [CommRing B] [Algebra A B]
     [Module.Finite A B] [FaithfulSMul A B] :
     ∃ π : B →ₗ[A] A, π ∘ₗ Algebra.linearMap A B = .id

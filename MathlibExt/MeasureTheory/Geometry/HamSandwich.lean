@@ -403,13 +403,17 @@ open scoped InnerProductSpace MeasureTheory
 namespace MathlibExt.MeasureTheory.Geometry.HamSandwichWanted
 
 /--
-For `0 < n`, every `n`-family of finite Borel measures on `EuclideanSpace ℝ (Fin n)` with `μ i ≪
-volume` admits a unit vector `v` and `t : ℝ` bisecting each measure into two half-spaces of equal
-mass `μ i univ / 2`. Source: A. H. Stone and J. W. Tukey, Duke Math. J. 9 (1942) 356–359 ham
-sandwich theorem; J. Matoušek, Using the Borsuk–Ulam Theorem; Lean states measure-theoretic
-Euclidean specialization with `μ i ≪ volume` making the bisecting hyperplane null.
+**Ham sandwich theorem.** Let $n \ge 1$ and let $\mu_1, \dots, \mu_n$ be finite Borel
+measures on the Euclidean space $\mathbb{R}^n$, each absolutely continuous with respect to
+Lebesgue measure. Then there exist a unit vector $v \in \mathbb{R}^n$ and a real number $t$
+such that for every $i$, both closed half-spaces $\{x : \langle v, x \rangle \le t\}$ and
+$\{x : \langle v, x \rangle \ge t\}$ have $\mu_i$-measure equal to $\mu_i(\mathbb{R}^n)/2$.
 
 Proves `Wanted` entry `ham_sandwich`.
+
+Source: A. H. Stone and J. W. Tukey, Duke Math. J. 9 (1942) 356–359 ham
+sandwich theorem; J. Matoušek, Using the Borsuk–Ulam Theorem; Lean states measure-theoretic
+Euclidean specialization with `μ i ≪ volume` making the bisecting hyperplane null.
 -/
 public theorem ham_sandwich
     {n : ℕ} (hn : 0 < n)
