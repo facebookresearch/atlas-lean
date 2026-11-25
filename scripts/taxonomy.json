@@ -1816,6 +1816,7 @@
   "CSLibExt/Languages/SessionTypes/Endpoint/SwapTyping": {"to": "ComputerScience/process-calculi/session-types", "title": "Subject reduction for endpoint typing"},
   "CSLibExt/Languages/SessionTypes/Endpoint/TypeEquivalence": {"to": "ComputerScience/process-calculi/session-types", "title": "Session typing up to protocol equivalence"},
   "CSLibExt/Languages/SessionTypes/Endpoint/UnliftContext": {"to": "ComputerScience/process-calculi/session-types", "title": "Subject reduction for endpoint typing"},
+  "CSLibExt/Languages/TypeSafety": {"to": "ComputerScience/programming-language-semantics", "title": "Type safety schema"},
   "CSLibExt/Logics/CTL/Basic": {"to": "Logic/temporal-logic", "title": "Computation tree logic"},
   "CSLibExt/Logics/CTL/ModelChecking": {"to": "Logic/temporal-logic", "title": "Model checking for computation tree logic"},
   "CSLibExt/Logics/CTLStar": {"to": "Logic/temporal-logic", "title": "CTL*"},

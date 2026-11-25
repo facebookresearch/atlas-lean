@@ -35,15 +35,14 @@ instantiating a variable by a term, a context-extension relation, and the action
 terms. There is no generic substitution operation.
 
 The instances apply existing theorems: the locally nameless simply typed λ-calculus of CSLib
-under full β-reduction, at the level of relations because its values reduce under binders; the
-simply typed λ-calculus with references through the store-world variant, with store typings
-ordered by list prefix; and the closed fibre of the intrinsically typed STLC through the anchor.
+under full β-reduction, at the level of relations because its values reduce under binders, and
+the closed fibre of the intrinsically typed STLC through the anchor.
 Both the locally nameless STLC and the calculus with references satisfy `StructuralTyping`.
 
 ## References
 
 * B. C. Pierce et al., *Software Foundations*, chapter `StlcProp`: `Theorem progress`,
-  `Theorem preservation`, `Corollary soundness`, `Lemma substitution_preserves_typing`, and
+  `Theorem preservation`, `Corollary type_soundness`, `Lemma substitution_preserves_typing`, and
   `Lemma weakening` (Programming Language Foundations edition).
 * P. Sewell, *Semantics of Programming Languages*, Cambridge CST Part IB 2025-26: Theorem 4
   (Safety), Theorems 18-19 (Progress, Type Preservation), Lemma 20 (Substitution), and
@@ -67,7 +66,7 @@ Assume progress, every typed state is final or steps, and preservation, every st
 of type `A` reaches a state of type `A`. Then every state reachable from a typed state is not
 stuck, that is, it is not a non-final normal form.
 
-Source: Software Foundations, `StlcProp`, `Corollary soundness`, where
+Source: Software Foundations, `StlcProp`, `Corollary type_soundness`, where
 `stuck t := normal_form step t ∧ ¬ value t`. -/
 theorem not_stuck_of_reflTransGen {State : Type u} {Ty : Type v}
     (Step : State → State → Prop) (Final : State → Prop) (HasType : State → Ty → Prop)
@@ -243,37 +242,6 @@ theorem structuralTyping_references {Base : Type u} :
     rw [List.length_append, Nat.add_sub_cancel,
       List.getElem?_append_right (Nat.le_add_left _ _), Nat.add_sub_cancel]
     exact hx
-
-/-- **Preservation and safety for references from the store-world schema.** Let `t` be a closed
-term of type `T` under the store typing `S`, run in a store `μ` that is well typed under `S`.
-If `(t, μ)` evaluates in zero or more steps to `(t', μ')`, then some store typing `S'` extending
-`S` as a prefix types `t'` at `T` and types `μ'`, and `t'` is a value or `(t', μ')` steps. These
-are the shapes of `Steps.preservation` (in the empty variable context) and `typeSafety`, here
-with worlds the store typings ordered by list prefix. -/
-theorem references_preservation_and_value_or_step {Base : Type u} {S : List (Ty Base)}
-    {t t' : Term Base} {μ μ' : Store Base} {T : Ty Base} :
-    HasType [] S t T → StoreTyped [] S μ → Steps t μ t' μ' →
-      (∃ S', S <+: S' ∧ HasType [] S' t' T ∧ StoreTyped [] S' μ') ∧
-        (t'.Value ∨ ∃ t'' μ'', Step t' μ' t'' μ'') := by
-  intro ht hμ h
-  have hpres : ∀ {w : List (Ty Base)} {s s' : Term Base × Store Base} {A : Ty Base},
-      (HasType [] w s.1 A ∧ StoreTyped [] w s.2) → Step s.1 s.2 s'.1 s'.2 →
-        ∃ w', w <+: w' ∧ (HasType [] w' s'.1 A ∧ StoreTyped [] w' s'.2) :=
-    fun hs hstep => preservation hs.1 hs.2 hstep
-  have hprog : ∀ {w : List (Ty Base)} {s : Term Base × Store Base} {A : Ty Base},
-      (HasType [] w s.1 A ∧ StoreTyped [] w s.2) →
-        s.1.Value ∨ ∃ s' : Term Base × Store Base, Step s.1 s.2 s'.1 s'.2 := fun hs =>
-    (progress hs.1 hs.2).imp id fun ⟨t', μ', h⟩ => ⟨(t', μ'), h⟩
-  refine ⟨exists_ext_of_reflTransGen
-      (fun c c' : Term Base × Store Base => Step c.1 c.2 c'.1 c'.2) (· <+: ·)
-      (fun w c T => HasType [] w c.1 T ∧ StoreTyped [] w c.2) hpres
-      (s := (t, μ)) (s' := (t', μ')) ⟨ht, hμ⟩ h, ?_⟩
-  rcases final_or_step_of_reflTransGen_ext
-      (fun c c' : Term Base × Store Base => Step c.1 c.2 c'.1 c'.2) (fun c => c.1.Value)
-      (· <+: ·) (fun w c T => HasType [] w c.1 T ∧ StoreTyped [] w c.2) hprog hpres
-      (s := (t, μ)) (s' := (t', μ')) ⟨ht, hμ⟩ h with hv | ⟨⟨t'', μ''⟩, h''⟩
-  · exact Or.inl hv
-  · exact Or.inr ⟨t'', μ'', h''⟩
 
 end References
 

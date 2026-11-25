@@ -152,15 +152,6 @@ theorem structuralTyping_references_pin {Base : Type u} :
       (fun c d t => t.rename (· + (d.1.length - c.1.length))) :=
   structuralTyping_references
 
-/-- Pin: preservation and safety for references. -/
-theorem references_preservation_and_value_or_step_pin :
-    ∀ {Base : Type u} {S : List (Ty Base)} {t t' : Term Base} {μ μ' : Store Base}
-      {T : Ty Base},
-      HasType [] S t T → StoreTyped [] S μ → Steps t μ t' μ' →
-        (∃ S', S <+: S' ∧ HasType [] S' t' T ∧ StoreTyped [] S' μ') ∧
-          (t'.Value ∨ ∃ t'' μ'', Step t' μ' t'' μ'') :=
-  @references_preservation_and_value_or_step
-
 end ReferencesPins
 
 /-- Pin: safety of closed terms of the intrinsically typed STLC through the anchor. -/
@@ -408,14 +399,6 @@ theorem alloc_typing : HasType [] [] alloc (.ref .unit) :=
 theorem alloc_steps : Steps alloc [] (.loc 0) [.unit] :=
   Steps.single (.refValue .unit)
 
-/-- Preservation and safety for references on the allocating program. -/
-theorem alloc_preservation_and_value_or_step :
-    (∃ S', ([] : List (Ty Unit)) <+: S' ∧ HasType [] S' (.loc 0) (.ref .unit) ∧
-        StoreTyped [] S' [.unit]) ∧
-      ((Term.loc 0 : Term Unit).Value ∨
-        ∃ (t'' : Term Unit) (μ'' : Store Unit), Step (.loc 0) [.unit] t'' μ'') :=
-  references_preservation_and_value_or_step alloc_typing .nil alloc_steps
-
 /-- The allocated location has no type under the empty store typing. -/
 theorem loc0_not_typed_empty : ¬ HasType [] ([] : List (Ty Unit)) (.loc 0) (.ref .unit) := by
   intro h
@@ -436,8 +419,8 @@ theorem references_preservation_needs_growth :
 
 /-- **References through the store-world schema.** Instantiating `exists_ext_of_reflTransGen`
 and `final_or_step_of_reflTransGen_ext` with configurations, store typings ordered by prefix,
-the existing `progress` and `preservation` gives the statement of
-`references_preservation_and_value_or_step`. -/
+the existing `progress` and `preservation` gives preservation under a store typing extended as a
+prefix, and safety. -/
 theorem references_of_world_schema {S : List (Ty Unit)} {t t' : Term Unit}
     {μ μ' : Store Unit} {T : Ty Unit}
     (ht : HasType [] S t T) (hμ : StoreTyped [] S μ) (h : Steps t μ t' μ') :
@@ -463,13 +446,21 @@ theorem references_of_world_schema {S : List (Ty Unit)} {t t' : Term Unit}
     · exact Or.inl hv
     · exact Or.inr ⟨t'', μ'', h''⟩
 
+/-- Preservation and safety for references on the allocating program. -/
+theorem alloc_preservation_and_value_or_step :
+    (∃ S', ([] : List (Ty Unit)) <+: S' ∧ HasType [] S' (.loc 0) (.ref .unit) ∧
+        StoreTyped [] S' [.unit]) ∧
+      ((Term.loc 0 : Term Unit).Value ∨
+        ∃ (t'' : Term Unit) (μ'' : Store Unit), Step (.loc 0) [.unit] t'' μ'') :=
+  references_of_world_schema alloc_typing .nil alloc_steps
+
 /-- The two conjuncts have the types of the existing `Steps.preservation` (empty variable
 context) and `typeSafety`. -/
 theorem references_recovers_existing_shapes {S : List (Ty Unit)} {t t' : Term Unit}
     {μ μ' : Store Unit} {T : Ty Unit}
     (ht : HasType [] S t T) (hμ : StoreTyped [] S μ) (h : Steps t μ t' μ') :
     type_of% (Steps.preservation h ht hμ) ∧ type_of% (typeSafety ht hμ h) :=
-  references_preservation_and_value_or_step ht hμ h
+  references_of_world_schema ht hμ h
 
 /-- Substitution through the interface: `x₀ : Unit ⊢ x₀ : Unit` and `⊢ unit : Unit`. -/
 theorem references_subst_example :
