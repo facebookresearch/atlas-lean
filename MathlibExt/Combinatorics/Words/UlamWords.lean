@@ -8,8 +8,10 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Algebra.Ring.Parity
 public import Mathlib.Data.Finset.Sort
 public import Mathlib.Data.Fintype.Pi
+public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Data.Nat.Digits.Defs
 public import Mathlib.Data.ZMod.Defs
 
@@ -528,68 +530,54 @@ private theorem four_leading (b : ℕ) : IsUlamWord (block 4 (b + 1)) ↔ (b + 1
     rw [block_succ 3 (b + 1) (by omega), three_leading, ih]
     omega
 
-private abbrev padded (a b : ℕ) :=
-  List.replicate a false ++ List.replicate 4 true ++ List.replicate b false
+end isUlamWord_zeros_four_ones_zeros_iff
 
--- With zeros at both ends, discard all cuts strictly inside either zero run except
--- those splitting off a singleton. Three consecutive indices split the block of ones.
-private theorem count_five (p : ℕ → Bool) (a b : ℕ)
-    (hl : ∀ k < a, ¬p (k + 1)) (hr : ∀ k < b, ¬p (a + 4 + k)) :
-    (List.range (a + 1 + 3 + (b + 1))).countP p =
-      (if p 0 then 1 else 0) + (if p (a + 1) then 1 else 0) +
-      (if p (a + 2) then 1 else 0) + (if p (a + 3) then 1 else 0) +
-      (if p (a + 4 + b) then 1 else 0) := by
-  have hleft : (List.range a).countP (p ∘ Nat.succ) = 0 :=
-    List.countP_eq_zero.mpr fun k hk => hl k (List.mem_range.mp hk)
-  have hright : (List.range b).countP (p ∘ (a + 4 + ·)) = 0 :=
-    List.countP_eq_zero.mpr fun k hk => hr k (List.mem_range.mp hk)
-  rw [List.range_add, List.countP_append, List.countP_map, List.range_add,
-    List.countP_append, List.countP_map, List.range_succ_eq_map (n := a),
-    List.countP_cons, List.countP_map, hleft, List.range_succ (n := b),
-    List.countP_append, List.countP_singleton, hright]
-  simp only [show List.range 3 = [0, 1, 2] by rfl, List.countP_cons, List.countP_nil,
-    Function.comp_apply, Nat.zero_add, Nat.add_zero, show a + 1 + 3 = a + 4 from rfl,
-    show a + 1 + 1 = a + 2 from rfl, show a + 1 + 2 = a + 3 from rfl]
-  omega
+namespace isUlamWord_zeros_two_ones_zeros_iff
 
-private theorem middle_cut (a b i j : ℕ) (hij : i + (j + 1) = 4) :
-    cut (padded (a + 1) (b + 1)) (a + i) ↔
+open isUlamWord_three_ones_zeros_iff isUlamWord_zeros_four_ones_zeros_iff
+
+private abbrev padded (a n b : ℕ) :=
+  List.replicate a false ++ List.replicate n true ++ List.replicate b false
+
+private theorem middle_cut (a b i j : ℕ) :
+    cut (padded (a + 1) (i + (j + 1)) (b + 1)) (a + i) ↔
       IsUlamWord (block i (a + 1)) ∧ IsUlamWord (block (j + 1) (b + 1)) := by
   let u := List.replicate (a + 1) false ++ List.replicate i true
   let v := block (j + 1) (b + 1)
-  have hw : padded (a + 1) (b + 1) = u ++ v := by
-    simp only [u, v, padded, block, ← hij, List.replicate_add, List.append_assoc]
+  have hw : padded (a + 1) (i + (j + 1)) (b + 1) = u ++ v := by
+    simp only [u, v, padded, block, List.replicate_add, List.append_assoc]
   have hne : u ≠ v := by simp [u, v, block, List.replicate_succ]
   have hu : (block i (a + 1)).reverse = u := by simp [block, u]
   rw [cut_append (u := u) (v := v) hw (by simp [u]; omega), and_iff_right hne, ← hu,
     ulam_reverse]
 
-private theorem outer_cuts (a b : ℕ) :
-    (cut (padded (a + 1) (b + 1)) 0 ↔ IsUlamWord (padded a (b + 1))) ∧
-    (cut (padded (a + 1) (b + 1)) (a + 4 + b) ↔ IsUlamWord (padded (a + 1) b)) := by
+private theorem outer_cuts (a n b : ℕ) :
+    (cut (padded (a + 1) (n + 1) (b + 1)) 0 ↔ IsUlamWord (padded a (n + 1) (b + 1))) ∧
+    (cut (padded (a + 1) (n + 1) (b + 1)) (a + (n + 1) + b) ↔
+      IsUlamWord (padded (a + 1) (n + 1) b)) := by
   have hs : IsUlamWord [false] := by decide
   constructor
-  · have hne : [false] ≠ padded a (b + 1) := by
+  · have hne : [false] ≠ padded a (n + 1) (b + 1) := by
       apply ne_of_apply_ne List.length
       simp [padded]
       omega
-    have hw : padded (a + 1) (b + 1) = [false] ++ padded a (b + 1) := rfl
+    have hw : padded (a + 1) (n + 1) (b + 1) = [false] ++ padded a (n + 1) (b + 1) := rfl
     rw [cut_append (k := 0) hw rfl, and_iff_right hne, and_iff_right hs]
-  · have hne : padded (a + 1) b ≠ [false] := by
+  · have hne : padded (a + 1) (n + 1) b ≠ [false] := by
       apply ne_of_apply_ne List.length
       simp [padded]
       omega
-    have hw : padded (a + 1) (b + 1) = padded (a + 1) b ++ [false] := by
+    have hw : padded (a + 1) (n + 1) (b + 1) = padded (a + 1) (n + 1) b ++ [false] := by
       simp only [padded, List.replicate_succ' (n := b), List.append_assoc]
     rw [cut_append hw (by simp [padded]; omega), and_iff_right hne, and_iff_left hs]
 
-private theorem other_cuts (a b : ℕ) :
-    (∀ k < a, ¬cut (padded (a + 1) (b + 1)) (k + 1)) ∧
-    (∀ k < b, ¬cut (padded (a + 1) (b + 1)) (a + 4 + k)) := by
+private theorem other_cuts (a n b : ℕ) :
+    (∀ k < a, ¬cut (padded (a + 1) n (b + 1)) (k + 1)) ∧
+    (∀ k < b, ¬cut (padded (a + 1) n (b + 1)) (a + n + k)) := by
   constructor
   · intro k hk h
     have ht := ((cut_iff _ _).mp h).2.1
-    have he : (padded (a + 1) (b + 1)).take (k + 2) = List.replicate (k + 2) false := by
+    have he : (padded (a + 1) n (b + 1)).take (k + 2) = List.replicate (k + 2) false := by
       rw [padded, List.append_assoc, List.take_append_of_le_length (by simp; omega)]
       simp [Nat.min_eq_left (by omega : k + 2 ≤ a + 1)]
     rw [he] at ht
@@ -597,19 +585,74 @@ private theorem other_cuts (a b : ℕ) :
     omega
   · intro k hk h
     have hd := ((cut_iff _ _).mp h).2.2
-    have he : (padded (a + 1) (b + 1)).drop (a + 4 + k + 1) =
+    have he : (padded (a + 1) n (b + 1)).drop (a + n + k + 1) =
         List.replicate (b + 1 - k) false := by
       rw [padded, List.drop_append]
       simp only [List.length_append, List.length_replicate, List.drop_replicate]
-      rw [List.drop_eq_nil_of_le (by simp)]
-      simp
+      rw [List.drop_eq_nil_of_le (by simp; omega), List.nil_append,
+        show a + n + k + 1 - (a + 1 + n) = k by omega]
     rw [he] at hd
     have := length_eq_one_of_replicate hd
     omega
 
-end isUlamWord_zeros_four_ones_zeros_iff
+-- With zeros at both ends, only the two singleton-zero cuts and the cuts strictly
+-- inside the block of ones can contribute to the count.
+private theorem padded_iff (a n b : ℕ) :
+    IsUlamWord (padded (a + 1) (n + 1) (b + 1)) ↔
+      (if IsUlamWord (padded a (n + 1) (b + 1)) then 1 else 0) +
+      (List.range n).countP (fun k => cut (padded (a + 1) (n + 1) (b + 1)) (a + 1 + k)) +
+      (if IsUlamWord (padded (a + 1) (n + 1) b) then 1 else 0) = 1 := by
+  let w := padded (a + 1) (n + 1) (b + 1)
+  have hindex : a + 1 + n = a + (n + 1) := by omega
+  have h := other_cuts a (n + 1) b
+  have hleft : (List.range a).countP (cut w ∘ Nat.succ) = 0 :=
+    List.countP_eq_zero.mpr fun k hk => h.1 k (List.mem_range.mp hk)
+  have hright : (List.range b).countP (cut w ∘ (a + 1 + n + ·)) = 0 :=
+    List.countP_eq_zero.mpr fun k hk => by
+      simpa only [Function.comp_apply, hindex, w] using h.2 k (List.mem_range.mp hk)
+  change IsUlamWord w ↔ _
+  rw [count_cuts (by simp [w]; omega),
+    show w.length - 1 = a + 1 + n + (b + 1) by simp [w]; omega,
+    List.range_add, List.countP_append, List.countP_map, List.range_add,
+    List.countP_append, List.countP_map, List.range_succ_eq_map (n := a),
+    List.countP_cons, List.countP_map, hleft, List.range_succ (n := b),
+    List.countP_append, List.countP_singleton, hright]
+  have ends := outer_cuts a n b
+  simp only [Function.comp_apply, Nat.zero_add, w, hindex, ends.1, ends.2, Function.comp_def]
 
-open isUlamWord_zeros_four_ones_zeros_iff isUlamWord_three_ones_zeros_iff in
+end isUlamWord_zeros_two_ones_zeros_iff
+
+open isUlamWord_zeros_two_ones_zeros_iff isUlamWord_three_ones_zeros_iff
+  isUlamWord_zeros_four_ones_zeros_iff in
+/-- **Ulam words with a block of two ones.** For natural numbers $a$ and $b$, the binary word
+$0^a 11 0^b$ ($a$ zeros, then two ones, then $b$ zeros) is an Ulam word if and only if $a + b$ is
+odd.
+
+Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
+*Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Theorem 6
+(Theorem 3.5 of Bade, Cui, Labelle, and Li). -/
+public theorem isUlamWord_zeros_two_ones_zeros_iff (a b : ℕ) :
+    IsUlamWord (List.replicate a false ++ List.replicate 2 true ++ List.replicate b false) ↔
+      (a + b) % 2 = 1 := by
+  change IsUlamWord (padded a 2 b) ↔ _
+  cases a with
+  | zero => simpa [padded, block] using two_leading b
+  | succ a =>
+    cases b with
+    | zero =>
+      simpa [padded, block] using (ulam_reverse (block 2 (a + 1))).trans (two_leading _)
+    | succ b =>
+      have hmid := (middle_cut a b 1 0).2 ⟨one_leading _, one_leading _⟩
+      rw [padded_iff a 1 b]
+      simp only [isUlamWord_zeros_two_ones_zeros_iff a (b + 1),
+        isUlamWord_zeros_two_ones_zeros_iff (a + 1) b]
+      simp only [show List.range 1 = [0] by rfl, List.countP_singleton, Nat.add_zero, hmid,
+        ite_true]
+      split_ifs <;> omega
+termination_by a + b
+
+open isUlamWord_zeros_two_ones_zeros_iff isUlamWord_three_ones_zeros_iff
+  isUlamWord_zeros_four_ones_zeros_iff in
 /-- **Ulam words with a block of four ones.** For natural numbers $a$ and $b$ with $a + b \ge 1$,
 the binary word $0^a 1111 0^b$ ($a$ zeros, then four ones, then $b$ zeros) is an Ulam word if
 and only if $a + b \equiv 1 \pmod 4$.
@@ -619,7 +662,7 @@ Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
 public theorem isUlamWord_zeros_four_ones_zeros_iff (a b : ℕ) (hab : 1 ≤ a + b) :
     IsUlamWord (List.replicate a false ++ List.replicate 4 true ++ List.replicate b false) ↔
       (a + b) % 4 = 1 := by
-  change IsUlamWord (padded a b) ↔ _
+  change IsUlamWord (padded a 4 b) ↔ _
   cases a with
   | zero =>
     obtain ⟨b, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : b ≠ 0)
@@ -629,19 +672,58 @@ public theorem isUlamWord_zeros_four_ones_zeros_iff (a b : ℕ) (hab : 1 ≤ a +
     | zero =>
       simpa [padded, block] using (ulam_reverse (block 4 (a + 1))).trans (four_leading a)
     | succ b =>
-      have h := outer_cuts a b
-      have hfirst := h.1.trans (isUlamWord_zeros_four_ones_zeros_iff a (b + 1) (by omega))
-      have hlast := h.2.trans (isUlamWord_zeros_four_ones_zeros_iff (a + 1) b (by omega))
-      have h₁ := middle_cut a b 1 2 rfl
-      have h₂ := middle_cut a b 2 1 rfl
-      have h₃ := middle_cut a b 3 0 rfl
+      have h₁ := middle_cut a b 1 2
+      have h₂ := middle_cut a b 2 1
+      have h₃ := middle_cut a b 3 0
       simp only [Nat.reduceAdd, one_leading, three_leading, true_and, and_true] at h₁ h₃
       simp only [Nat.reduceAdd, two_leading] at h₂
-      rw [count_cuts (by simp [padded]; omega)]
-      rw [show (padded (a + 1) (b + 1)).length - 1 = a + 1 + 3 + (b + 1) by simp [padded]; omega,
-        count_five _ a b (other_cuts a b).1 (other_cuts a b).2]
-      simp only [hfirst, hlast, h₁, h₂, h₃]
+      rw [padded_iff a 3 b]
+      simp only [isUlamWord_zeros_four_ones_zeros_iff a (b + 1) (by omega),
+        isUlamWord_zeros_four_ones_zeros_iff (a + 1) b (by omega)]
+      simp only [show List.range 3 = [0, 1, 2] by rfl, List.countP_cons, List.countP_nil,
+        Nat.add_zero, h₁, h₂, h₃]
       split_ifs <;> omega
+termination_by a + b
+
+open isUlamWord_zeros_two_ones_zeros_iff isUlamWord_three_ones_zeros_iff
+  isUlamWord_zeros_four_ones_zeros_iff in
+/-- **Parity criterion for Ulam words with a single one.** For natural numbers $a$ and $b$, the
+binary word $0^a 1 0^b$ ($a$ zeros, then a one, then $b$ zeros) is an Ulam word if and only if
+the binomial coefficient $\binom{a + b}{a}$ is odd.
+
+Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
+*Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Theorem 8;
+Bade, Cui, Labelle, and Li, *Ulam Sets in New Settings*, arXiv:2008.02762v2, Theorem 3.3. -/
+public theorem isUlamWord_zeros_one_zeros_iff (a b : ℕ) :
+    IsUlamWord (List.replicate a false ++ [true] ++ List.replicate b false) ↔
+      Odd ((a + b).choose a) := by
+  change IsUlamWord (padded a 1 b) ↔ _
+  cases a with
+  | zero => simpa [padded, block] using iff_true_intro (one_leading b)
+  | succ a =>
+    cases b with
+    | zero =>
+      simpa [padded, block] using
+        (ulam_reverse (block 1 (a + 1))).trans (iff_true_intro (one_leading (a + 1)))
+    | succ b =>
+      -- There are no cuts inside the one-letter block. The endpoint cuts contribute
+      -- exactly when the corresponding smaller Ulam words occur.
+      rw [padded_iff a 0 b]
+      simp only [List.range_zero, List.countP_nil, Nat.add_zero]
+      change ((if IsUlamWord (List.replicate a false ++ [true] ++
+          List.replicate (b + 1) false) then 1 else 0) +
+        (if IsUlamWord (List.replicate (a + 1) false ++ [true] ++
+          List.replicate b false) then 1 else 0) = 1) ↔ _
+      have hl := isUlamWord_zeros_one_zeros_iff a (b + 1)
+      have hr := isUlamWord_zeros_one_zeros_iff (a + 1) b
+      simp only [hl, hr]
+      have hPascal : (a + 1 + (b + 1)).choose (a + 1) =
+          (a + (b + 1)).choose a + (a + 1 + b).choose (a + 1) := by
+        rw [show a + 1 + (b + 1) = (a + (b + 1)) + 1 by omega, Nat.choose_succ_succ',
+          show a + 1 + b = a + (b + 1) by omega]
+      rw [hPascal, Nat.odd_add, ← Nat.not_odd_iff_even]
+      by_cases hl : Odd ((a + (b + 1)).choose a) <;>
+        by_cases hr : Odd ((a + 1 + b).choose (a + 1)) <;> simp [hl, hr]
 termination_by a + b
 
 end

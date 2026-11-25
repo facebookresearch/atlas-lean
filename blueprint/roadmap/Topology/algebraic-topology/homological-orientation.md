@@ -4,12 +4,14 @@ Let $R$ be a commutative ring with identity and $M$ a topological $n$-manifold w
 
 ## Expansion
 
-A good expansion of this node links each notion it is built from: free modules; the local homology of a manifold at a point; open balls in metric spaces; the homomorphisms induced on relative homology by maps of pairs; relative singular homology with coefficients; topological manifolds.
+A good expansion of this node links each notion it is built from: the local homology of a manifold at a point; the homomorphisms induced on relative homology by maps of pairs; relative singular homology with coefficients; topological manifolds.
 
 ## Depends on
 
 - [Commutative ring with identity: a ring whose multiplication is commutative and has an identity element 1](../../Algebra/rings-and-fields/commutative-ring-with-identity.md)
 - [Homeomorphism](../topological-spaces/homeomorphism.md)
+- [Free module](../../LinearAlgebra/bases-and-dimension/free-module.md)
+- [Open ball in a pseudometric space](../metric-spaces/metric-open-ball.md)
 
 ## Sources
 

@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.Data.Rat.Defs
 public import Mathlib.LinearAlgebra.Matrix.Notation
+public import MathlibExt.NumberTheory.PerronPalindrome
 public import MathlibExt.NumberTheory.SternBrocotSumTwoSquares
 
 /-!
@@ -29,22 +30,6 @@ is Mathlib's `Nat.Prime.sq_add_sq`.
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Perron's lemma.** Let $p$ be a prime with $p \equiv 1 \pmod 4$, and let $x_0$ be an integer
-with $0 < x_0 < p/2$ and $x_0^2 \equiv -1 \pmod p$. Then there are positive integers
-$q_0, q_1, \dots, q_m$ with $m + 1$ even and $q_i = q_{m-i}$ for every $i$ such that
-$p / x_0 = [q_0; q_1, \dots, q_m] = q_0 + 1/(q_1 + 1/(\cdots + 1/q_m))$.
-
-Since $x_0 < p/2$ forces $q_0 \ge 2$, such an expansion is the canonical continued fraction of
-$p / x_0$ (the other expansion ends in $1$): the continued fraction of $p / x_0$ has an even
-number of terms and is palindromic.
-
-Source: Hongshen Chua, *Binary Trees and Sum of Two Squares*, INTEGERS 26 (2026), Article A76,
-Lemma 1 (Perron) (`integers-2026-A76-lem-1`). -/
-public theorem_wanted exists_palindrome_continuedFraction_div {p x₀ : ℕ} (hp : p.Prime)
-    (hp4 : p % 4 = 1) (hx : (x₀ ^ 2 + 1) % p = 0) (hx₀ : 0 < x₀) (hxp : 2 * x₀ < p) :
-    ∃ qs : List ℕ, Even qs.length ∧ qs.reverse = qs ∧ (∀ a ∈ qs, 1 ≤ a) ∧
-      (p : ℚ) / x₀ = qs.foldr (fun a acc => (a : ℚ) + acc⁻¹) 0
 
 /-- **Sums of two squares from the Stern–Brocot tree.** Let $p$ be a prime with
 $p \equiv 1 \pmod 4$, and let $x_0$ be an integer with $0 < x_0 < p/2$ and

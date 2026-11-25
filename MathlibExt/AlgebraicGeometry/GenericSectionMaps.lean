@@ -57,6 +57,32 @@ def homSection (X : Over (Spec (.of R))) {M : X.left.Modules}
     (s : structureModule X.left ⟶ M) : Sections X M :=
   (s.val.app (op ⊤)).hom (1 : Γ(X.left, ⊤))
 
+/-- Evaluating the morphism of a global section at one returns the section. -/
+@[simp] theorem homSection_sectionHom (X : Over (Spec (.of R))) (M : X.left.Modules)
+    (s : Sections X M) : homSection X (sectionHom X M s) = s := by
+  change (M.unitHomEquiv (sectionHom X M s)).val (op ⊤) = s
+  unfold sectionHom
+  simp only [Equiv.apply_symm_apply]
+  change M.val.map (homOfLE (le_top : (⊤ : X.left.Opens) ≤ ⊤)).op s = s
+  rw [show (homOfLE (le_top : (⊤ : X.left.Opens) ≤ ⊤)).op = 𝟙 (op ⊤) from Subsingleton.elim _ _]
+  simp
+  rfl
+
+/-- A morphism from the structure sheaf is the morphism of its value at one. -/
+@[simp] theorem sectionHom_homSection (X : Over (Spec (.of R))) (M : X.left.Modules)
+    (φ : structureModule X.left ⟶ M) : sectionHom X M (homSection X φ) = φ := by
+  apply (SheafOfModules.unitHomEquiv M).injective
+  unfold sectionHom
+  simp only [Equiv.apply_symm_apply]
+  ext U
+  change (SheafOfModules.val M).map (homOfLE (le_top : U.unop ≤ ⊤)).op
+      ((φ.val.app (op ⊤)).hom (1 : Γ(X.left, ⊤))) = (φ.val.app U).hom (1 : Γ(X.left, U.unop))
+  have h := PresheafOfModules.naturality_apply φ.val (homOfLE (le_top : U.unop ≤ ⊤)).op
+    (1 : Γ(X.left, ⊤))
+  refine h.symm.trans ?_
+  congr 1
+  exact PresheafOfModules.unit_map_one _ _
+
 /-- Actual restriction/pullback followed by the prescribed module map. -/
 def pullSection {X Y : Over (Spec (.of R))} (f : X ⟶ Y)
     {M : Y.left.Modules} {N : X.left.Modules}

@@ -13,8 +13,9 @@ import Mathlib.RingTheory.Int.Basic
 public import Mathlib.Basic.Complex.Basic
 public import Mathlib.Data.Int.ModEq
 public import Mathlib.NumberTheory.Zsqrtd.GaussianInt
-public import MathlibExt.Algebra.IntegerGroupDeterminantsC4SqNormDifference
+public import MathlibExt.Algebra.IntegerGroupDeterminantsC4SqNormProduct
 public import MathlibExt.LinearAlgebra.Matrix.CirculantDetFour
+public import MathlibExt.LinearAlgebra.Matrix.CirculantDetFourCongruences
 
 /-!
 # Integer group determinants for `C₄ × C₄` (Yamaguchi–Yamaguchi)
@@ -146,30 +147,6 @@ C_4^2*, INTEGERS 24 (2024), Article A30, Corollary 3 (`integers-2024-A30-cor-3`)
 public theorem_wanted sq_add_sq_eq_mul_of_mod_eight (a b : ℤ) (h : a ^ 2 + b ^ 2 ≡ -3 [ZMOD 8]) :
     ∃ k l : ℤ, 8 * l - 3 ∈ primesFiveModEight ∧ a ^ 2 + b ^ 2 = (8 * k + 1) * (8 * l - 3)
 
-/-- **Norms of β and γ as products of sums of two squares (C₄²).** Let $a$ be an integer-valued
-function on $C_4^2 = \mathbb{Z}/4 \times \mathbb{Z}/4$, with associated integers $d_0, \dots, d_7$
-and Gaussian integers $\beta$, $\gamma$, and write $\beta\bar\beta$, $\gamma\bar\gamma$ for the
-norms of $\beta$ and $\gamma$. Then
-
-$$\beta\bar\beta = \bigl((d_0 + d_2 + d_1 + d_3)^2 + (d_4 + d_6 + d_5 + d_7)^2\bigr)
-\bigl((d_0 + d_2 - d_1 - d_3)^2 + (d_4 + d_6 - d_5 - d_7)^2\bigr)$$
-
-and
-
-$$\gamma\bar\gamma = \bigl((d_0 - d_2 - d_5 + d_7)^2 + (d_4 - d_6 + d_1 - d_3)^2\bigr)
-\bigl((d_0 - d_2 + d_5 - d_7)^2 + (d_4 - d_6 - d_1 + d_3)^2\bigr).$$
-
-Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
-C_4^2*, INTEGERS 24 (2024), Article A30, Lemma 1 (`integers-2024-A30-lem-1`). -/
-public theorem_wanted c4Sq_norm_beta_gamma_eq (a : Fin 4 × Fin 4 → ℤ) :
-    let d := c4SqD a
-    Zsqrtd.norm (c4SqBeta a) =
-        ((d 0 + d 2 + d 1 + d 3) ^ 2 + (d 4 + d 6 + d 5 + d 7) ^ 2) *
-          ((d 0 + d 2 - d 1 - d 3) ^ 2 + (d 4 + d 6 - d 5 - d 7) ^ 2) ∧
-      Zsqrtd.norm (c4SqGamma a) =
-        ((d 0 - d 2 - d 5 + d 7) ^ 2 + (d 4 - d 6 + d 1 - d 3) ^ 2) *
-          ((d 0 - d 2 + d 5 - d 7) ^ 2 + (d 4 - d 6 - d 1 + d 3) ^ 2)
-
 /-- **The group determinant of $C_4^2$ modulo $2$.**
 Let $a \colon \mathbb{Z}/4 \times \mathbb{Z}/4 \to \mathbb{Z}$. For $0 \le i \le 3$ let
 $b_i = a(i, 0) + a(i, 2) + a(i, 1) + a(i, 3)$, $c_i = a(i, 0) + a(i, 2) - a(i, 1) - a(i, 3)$
@@ -240,17 +217,6 @@ public theorem_wanted c4SqD_cross_terms_mod_four (a : Fin 4 × Fin 4 → ℤ) :
         b 0 * b 1 + b 2 * b 3 - c 0 * c 1 - c 2 * c 3 [ZMOD 4] ∧
       2 * (d 0 * d 1 + d 2 * d 3 + d 4 * d 5 + d 6 * d 7) ≡
         b 0 * b 1 + b 2 * b 3 + c 0 * c 1 + c 2 * c 3 [ZMOD 4]
-
-/-- **The 4 × 4 circulant determinant modulo 16 at two parity patterns.** For all integers
-$k$, $l$, $m$, $n$, the $4 \times 4$ circulant determinant $D_4$ satisfies
-$D_4(2k + 1, 2l, 2m, 2n) \equiv 8m + 1 \pmod{16}$ and
-$D_4(2k, 2l + 1, 2m + 1, 2n + 1) \equiv 8(k + l + n) - 3 \pmod{16}$.
-
-Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
-C_4^2*, INTEGERS 24 (2024), Article A30, Lemma 6 (`integers-2024-A30-lem-6`). -/
-public theorem_wanted circulantDetFour_mod_sixteen (k l m n : ℤ) :
-    circulantDetFour ![2 * k + 1, 2 * l, 2 * m, 2 * n] ≡ 8 * m + 1 [ZMOD 16] ∧
-      circulantDetFour ![2 * k, 2 * l + 1, 2 * m + 1, 2 * n + 1] ≡ 8 * (k + l + n) - 3 [ZMOD 16]
 
 /-- **Powers of $2$ dividing the $C_4$ group determinant at four parity patterns.** Let
 $D(x_0, x_1, x_2, x_3)$ be the group determinant of $C_4$, that is the determinant of the

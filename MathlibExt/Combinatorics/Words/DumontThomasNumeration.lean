@@ -18,6 +18,8 @@ public import MathlibExt.Combinatorics.InfiniteWord.PureMorphicWord
 
 For an admissible sequence, `morphIterate_getElem_eq_substitutionAutomaton_tail` identifies
 the letter at its weighted position with the final state of the substitution automaton.
+The theorem `substitutionAutomaton_admissibleSequence` identifies the state after each digit
+with the corresponding letter of the sequence.
 -/
 
 namespace MetaMathlibExt
@@ -119,6 +121,60 @@ public theorem substitutionAutomaton_cons {A : Type*} (η : A → List A) (b : A
     substitutionAutomaton η b (i :: w) =
       (η b)[i]?.bind fun c => substitutionAutomaton η c w := rfl
 
+namespace substitutionAutomaton_admissibleSequence
+
+private theorem run_append {A : Type*} (η : A → List A) (x : A) (u v : List ℕ) :
+    substitutionAutomaton η x (u ++ v) =
+      (substitutionAutomaton η x u).bind (fun a => substitutionAutomaton η a v) := by
+  induction u generalizing x with
+  | nil => rfl
+  | cons d u ih =>
+    simp only [List.cons_append, substitutionAutomaton_cons, ih, Option.bind_assoc]
+
+end substitutionAutomaton_admissibleSequence
+
+-- Admissibility supplies all the transitions. Keep the named substitution hypothesis.
+set_option linter.unusedVariables false in
+/-- **The automaton reads off the letters of an admissible sequence.** Let $\eta$ be a
+substitution, let $x$ be a letter, let $k \ge 1$, and let $(m_i, a_i)_{i = 0, \dots, k-1}$ be an
+$x$-admissible sequence. Then for every $i < k$, the substitution automaton started at $x$ ends in
+the state $a_i$ after reading the digit word $|m_{k-1}|\,|m_{k-2}| \cdots |m_i|$, whose digits are
+the lengths of $m_{k-1}, \dots, m_i$ in this order.
+
+Source: Sébastien Labbé and Jana Lepšová, *Dumont-Thomas Complement Numeration Systems for
+ℤ*, INTEGERS 24 (2024), Article A112, Lemma 3.6. -/
+public theorem substitutionAutomaton_admissibleSequence {A : Type*} (η : A → List A)
+    (hη : IsSubstitution η) (k : ℕ) (hk : 1 ≤ k) (x : A) (s : ℕ → List A × A)
+    (hs : IsLetterAdmissibleSequence η x s (k - 1)) :
+    ∀ i < k,
+      substitutionAutomaton η x ((List.range (k - i)).map fun t => (s (k - 1 - t)).1.length) =
+        some (s i).2 := by
+  have step {m : List A} {a b : A} (h : m ++ [a] <+: η b) :
+      (η b)[m.length]? = some a := by
+    obtain ⟨rest, hrest⟩ := h
+    rw [← hrest, List.append_assoc, List.getElem?_append_right (Nat.le_refl _), Nat.sub_self]
+    rfl
+  have run (n : ℕ) (hn : n < k) :
+      substitutionAutomaton η x ((List.range (n + 1)).map fun t => (s (k - 1 - t)).1.length) =
+        some (s (k - 1 - n)).2 := by
+    induction n with
+    | zero =>
+      change substitutionAutomaton η x [(s (k - 1)).1.length] = some (s (k - 1)).2
+      simp only [substitutionAutomaton_cons, step hs.2, Option.bind_some,
+        substitutionAutomaton_nil]
+    | succ n ih =>
+      have hp : (s (k - 1 - (n + 1))).1 ++ [(s (k - 1 - (n + 1))).2] <+:
+          η (s (k - 1 - n)).2 := by
+        simpa only [show k - 1 - (n + 1) + 1 = k - 1 - n by omega] using
+          hs.1 (k - 1 - (n + 1)) (by omega)
+      rw [@List.range_succ (n + 1), List.map_append,
+        substitutionAutomaton_admissibleSequence.run_append, ih (by omega)]
+      simp only [List.map_singleton, Option.bind_some, substitutionAutomaton_cons, step hp,
+        substitutionAutomaton_nil]
+  intro i hi
+  simpa only [show k - 1 - i + 1 = k - i by omega, show k - 1 - (k - 1 - i) = i by omega]
+    using run (k - 1 - i) (by omega)
+
 /-- **Two runs of the Fibonacci automaton.** For the Fibonacci substitution $0 \mapsto 01$,
 $1 \mapsto 0$ on the alphabet $\{0, 1\}$, the substitution automaton started at the letter $0$
 ends in the state $0$ after reading the digit word $10$, and its run on the digit word $11$ is
@@ -143,14 +199,21 @@ private theorem iterate_split {A : Type*} (η : A → List A) {w u v : List A}
     rw [morphIterate, ih, morphExtend_append]
     rfl
 
+private theorem iterate_append {A : Type*} (η : A → List A) (k : ℕ) (u v : List A) :
+    morphIterate η k (u ++ v) = morphIterate η k u ++ morphIterate η k v := by
+  induction k with
+  | zero => rfl
+  | succ k ih => simp only [morphIterate, ih, morphExtend_append]
+
 -- The suffix after the selected letter absorbs the unvisited part of each image.
 private theorem read_with_suffix {A : Type*} (η : A → List A) (s : ℕ → List A × A)
     (p : ℕ) (x : A) (suffix : List A)
     (hs : 0 < p → IsLetterAdmissibleSequence η x s (p - 1)) :
-    (morphIterate η p (x :: suffix))[∑ j ∈ Finset.range p, (morphIterate η j (s j).1).length]? =
-      substitutionAutomaton η x ((List.range p).reverse.map fun j => (s j).1.length) := by
+    ∃ a, (morphIterate η p (x :: suffix))[
+        ∑ j ∈ Finset.range p, (morphIterate η j (s j).1).length]? = some a ∧
+      substitutionAutomaton η x ((List.range p).reverse.map fun j => (s j).1.length) = some a := by
   induction p generalizing x suffix with
-  | zero => simp [morphIterate, substitutionAutomaton]
+  | zero => exact ⟨x, by simp [morphIterate, substitutionAutomaton]⟩
   | succ p ih =>
     obtain ⟨hadm, rest, hrest⟩ := hs (Nat.zero_lt_succ p)
     simp only [Nat.add_one_sub_one] at hadm hrest
@@ -175,6 +238,7 @@ private theorem read_with_suffix {A : Type*} (η : A → List A) (s : ℕ → Li
 
 end morphIterate_getElem_eq_substitutionAutomaton_tail
 
+set_option linter.unusedVariables false in
 /-- **Letters of an iterated image are read by the automaton.** Let $\eta$ be a substitution
 on an alphabet $A$, let $p \ge 1$ and $x \in A$, let $(m_i, a_i)_{i = 0, \dots, p-1}$ be an
 $x$-admissible sequence, and put $\ell = \sum_{j=0}^{p-1} |\eta^j(m_j)|$. Let
@@ -189,11 +253,38 @@ $x$-admissible sequences correspond bijectively to the positions $\ell < |\eta^p
 Source: Sébastien Labbé and Jana Lepšová, *Dumont-Thomas Complement Numeration Systems for
 ℤ*, INTEGERS 24 (2024), Article A112, Lemma 3.11. -/
 public theorem morphIterate_getElem_eq_substitutionAutomaton_tail {A : Type*}
-    (η : A → List A) (_hη : IsSubstitution η) (p : ℕ) (_hp : 1 ≤ p) (x : A)
+    (η : A → List A) (hη : IsSubstitution η) (p : ℕ) (hp : 1 ≤ p) (x : A)
     (s : ℕ → List A × A) (hs : IsLetterAdmissibleSequence η x s (p - 1)) :
     (morphIterate η p [x])[∑ j ∈ Finset.range p, (morphIterate η j (s j).1).length]? =
-      substitutionAutomaton η x ((List.range p).reverse.map fun j => (s j).1.length) :=
-  morphIterate_getElem_eq_substitutionAutomaton_tail.read_with_suffix η s p x [] (fun _ => hs)
+      substitutionAutomaton η x ((List.range p).reverse.map fun j => (s j).1.length) := by
+  obtain ⟨a, hread, hrun⟩ :=
+    morphIterate_getElem_eq_substitutionAutomaton_tail.read_with_suffix η s p x [] (fun _ => hs)
+  exact hread.trans hrun.symm
+
+-- Keep the source's named hypothesis even though the admissible chain alone gives the bound.
+set_option linter.unusedVariables false in
+/-- **Weighted length of an admissible sequence.** Let $\eta$ be a substitution on an alphabet
+$A$, extended to finite words by concatenation, and let $(m_i, a_i)_{0 \le i \le k}$ be a
+sequence of pairs of a finite word $m_i$ over $A$ and a letter $a_i \in A$ that is admissible
+with respect to $\eta$. Then $\sum_{j=0}^{k} |\eta^j(m_j)| < |\eta^k(m_k a_k)|$, where
+$\eta^j$ is the $j$-th iterate of $\eta$ and $|w|$ is the length of a word $w$.
+
+Source: Sébastien Labbé and Jana Lepšová, *Dumont-Thomas Complement Numeration Systems for
+ℤ*, INTEGERS 24 (2024), Article A112, Lemma 3.3 (Dumont and Thomas, Lemma 1.1). -/
+public theorem admissibleSequence_weightedLength_lt {A : Type*} (η : A → List A)
+    (hη : IsSubstitution η) (s : ℕ → List A × A) (k : ℕ) (hs : IsAdmissibleSequence η s k) :
+    ∑ j ∈ Finset.range (k + 1), (morphIterate η j (s j).1).length <
+      (morphIterate η k ((s k).1 ++ [(s k).2])).length := by
+  -- Read the shorter chain from the terminal letter `aₖ`.
+  have hadm (hk : 0 < k) : IsLetterAdmissibleSequence η (s k).2 s (k - 1) := by
+    refine ⟨fun i hi => hs i (by omega), ?_⟩
+    simpa only [Nat.sub_add_cancel hk] using hs (k - 1) (by omega)
+  obtain ⟨a, hread, _⟩ :=
+    morphIterate_getElem_eq_substitutionAutomaton_tail.read_with_suffix η s k (s k).2 [] hadm
+  obtain ⟨hlen, _⟩ := List.getElem?_eq_some_iff.mp hread
+  rw [Finset.sum_range_succ, morphIterate_getElem_eq_substitutionAutomaton_tail.iterate_append,
+    List.length_append]
+  omega
 
 /-- **Two-sided periodic points.** Let $\eta$ map each letter of an alphabet $A$ to a finite
 word over $A$, extended to finite words by concatenation, with iterates $\eta^j$; let

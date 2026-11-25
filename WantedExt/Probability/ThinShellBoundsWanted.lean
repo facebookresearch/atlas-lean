@@ -12,7 +12,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import MathlibExt.Probability.Geometry.ThinShell
+public import MathlibExt.Probability.Geometry.ThinShellCubeBound
 public import Mathlib.Probability.Distributions.Gaussian.Multivariate
 public import Mathlib.Probability.Distributions.Uniform
 
@@ -158,17 +158,6 @@ Source: Klartag and Lehec, arXiv:2507.15495v1, Theorem 1.1. -/
 public theorem_wanted thinShellVarianceConstant_lt_top :
     thinShellVarianceConstant < ⊤
 
-/-- **The standard Gaussian has normalized radius variance 2.** For every dimension $n \ge 1$,
-the standard Gaussian measure $\gamma_n$ on $\mathbb{R}^n$ is isotropic log-concave (a probability
-measure with a log-concave Lebesgue density, mean $0$ and identity covariance), and its normalized
-radius variance $\frac{1}{n} \int (|x|^2 - n)^2 \, d\gamma_n(x)$ equals $2$.
-
-Source: Klartag--Lehec, arXiv:2507.15495v1, Introduction. -/
-public theorem_wanted stdGaussian_isotropic_variance (n : ℕ) (hn : 0 < n) :
-    IsIsotropicLogConcave (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin n))) ∧
-      normalizedRadiusVariance
-        (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin n))) = 2
-
 /-- **The isotropic cube has normalized radius variance 4/5.** For every dimension $n \ge 1$, let
 $\mu$ be the uniform probability measure on the cube $[-\sqrt{3}, \sqrt{3}]^n \subset \mathbb{R}^n$
 (Lebesgue measure restricted to the cube and divided by its volume). Then $\mu$ is isotropic
@@ -183,16 +172,6 @@ public theorem_wanted uniformCube_isotropic_variance (n : ℕ) (hn : 0 < n) :
       (volume : Measure (EuclideanSpace ℝ (Fin n)))
       {x | ∀ i : Fin n, |x i| ≤ Real.sqrt 3}
     IsIsotropicLogConcave μ ∧ normalizedRadiusVariance μ = ENNReal.ofReal (4 / 5)
-
-/-- **Cube lower bound for the thin-shell variance constant.** The thin-shell variance constant,
-an element of $[0, \infty]$, is at least $4/5$.
-
-The value $4/5$ is the exact normalized radius variance of the uniform law on a cube scaled to
-identity covariance.
-
-Source: Klartag and Lehec, arXiv:2507.15495v1, Introduction. -/
-public theorem_wanted fourFifths_le_thinShellVarianceConstant :
-    ENNReal.ofReal (4 / 5) ≤ thinShellVarianceConstant
 
 /-- **The thin-shell variance constant is at least 2.** The thin-shell variance constant, the
 supremum in $[0, \infty]$ of the normalized radius variances

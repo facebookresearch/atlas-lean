@@ -80,7 +80,9 @@ since the pin.
 - A link whose title is a declaration and whose address is written exactly as
   that declaration's source line at the pinned revision points to its Mathlib
   page. One that disagrees with its title is reported and left as written;
-  `--strict-links`, as pull requests run it, fails the build on it.
+  `--strict-links`, as a pull request's build runs it, fails the build on it.
+  A pull request builds the site when it changes the wiki, among others
+  ([GitHub Actions and publication](BLUEPRINT.md#github-actions-and-publication)).
 - The links that Autoform's Lean code blocks make to Mathlib's documentation
   point to the Mathlib page when they name a declaration that has one, and stay
   as written otherwise. Links to the documentation elsewhere are left alone.

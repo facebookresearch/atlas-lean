@@ -72,7 +72,8 @@ namespace EarthScience
 
 set_option linter.unusedVariables false in
 /-- Ekman pumping: for a wind-stress field `τ (x, y)`, density `ρ₀` and
-constant Coriolis parameter `f` with `ρ₀ f ≠ 0`, the horizontal divergence
+constant Coriolis parameter `f` with `ρ₀ f ≠ 0`, at a point where `τ 1` is
+differentiable in `x` and `τ 0` in `y`, the horizontal divergence
 `∂ₓ (M 0) + ∂ᵧ (M 1)` of the Ekman transport
 `M (x, y) = ekmanTransport ρ₀ f (τ x y)` equals the vertical curl
 `∂ₓ (τ 1) - ∂ᵧ (τ 0)` of the stress divided by `ρ₀ f`. -/
@@ -91,7 +92,8 @@ theorem ekman_pumping_divergence (τ : ℝ → ℝ → Fin 3 → ℝ) (ρ₀ f x
     ((hτ₀y.div_const (ρ₀ * f)).neg).deriv
   rw [h1, h2, sub_div, sub_eq_add_neg]
 
-/-- Hemispheric sign of Ekman pumping: with `ρ₀ > 0`, positive wind-stress
+/-- Hemispheric sign of Ekman pumping: with `ρ₀ > 0`, at a point where `τ 1` is
+differentiable in `x` and `τ 0` in `y`, positive wind-stress
 curl gives a positive divergence of the Ekman transport
 `M (x, y) = ekmanTransport ρ₀ f (τ x y)` (upwelling) for `f > 0` (northern
 hemisphere) and a negative divergence (downwelling) for `f < 0` (southern

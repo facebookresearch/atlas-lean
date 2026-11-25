@@ -365,10 +365,15 @@ class SnapshotDependencyTests(unittest.TestCase):
                     self.assertEqual(resolution.call_count, 0)
                     with self.assertRaisesRegex(RuntimeError, "explicit nested guard failure"):
                         with optimizer.guarded_inventory_components({other}):
+                            # The enclosing guard is still armed, so its
+                            # canonical path stays proven inside the nested one.
                             self.assertTrue(optimizer.inventory_path_outside_output(artifact, ("/", "absent")))
-                            self.assertEqual(resolution.call_count, 1)
+                            self.assertTrue(optimizer.inventory_path_outside_output(other, ("/", "absent")))
+                            self.assertEqual(resolution.call_count, 0)
                             raise RuntimeError("explicit nested guard failure")
+                    # The nested guard's own path left with its exception.
                     self.assertTrue(optimizer.inventory_path_outside_output(artifact, ("/", "absent")))
+                    self.assertTrue(optimizer.inventory_path_outside_output(other, ("/", "absent")))
                     self.assertEqual(resolution.call_count, 1)
                 self.assertTrue(optimizer.inventory_path_outside_output(artifact, ("/", "absent")))
                 self.assertEqual(resolution.call_count, 2)
@@ -526,7 +531,8 @@ class SnapshotDependencyTests(unittest.TestCase):
             setup = root / "setup.json"
             setup.write_text("{}\n")
             output = root / "not-created-output"
-            with patch.object(optimizer.sys, "platform", "darwin"):
+            with recovery.isolated_ancestor_metadata(root), \
+                    patch.object(optimizer.sys, "platform", "darwin"):
                 with optimizer.guarded_inventory_components({setup}, mutable_roots={output}):
                     self.assertEqual(optimizer.read_json(setup), {})
             self.assertFalse(output.exists())

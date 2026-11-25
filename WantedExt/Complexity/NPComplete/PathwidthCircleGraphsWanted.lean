@@ -22,7 +22,7 @@ graphs and circle graphs, and that circle graphs contain all distance-hereditary
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Combinatorics.SimpleGraph.Maps
 public import WantedExt.Complexity.NPComplete.DominatingSetCircleGraphWanted
 public import MathlibExt.Computability.BinaryNatEncoding

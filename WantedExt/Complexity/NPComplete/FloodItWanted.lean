@@ -17,7 +17,7 @@ Theory of Computing Systems 50(1) (2012), 72-92, doi:10.1007/s00224-011-9339-2
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected

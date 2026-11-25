@@ -118,22 +118,27 @@ def tensorSource (X : Scheme.{u}) :
     Functor.uncurry.obj ((curriedTensor P).map₂CochainComplex) ⋙
     A.mapHomologicalComplex (ComplexShape.up ℤ) ⋙ DerivedCategory.Q
 
-/-- Existence of the right Kan extensions defining derived pullback of the
-fixed module-sheaf cochain sources. No existence instance is asserted here. -/
+/-- Derived pullbacks of complexes of module sheaves exist: an instance asserts that for every
+morphism of schemes $f : X ⟶ Y$, the termwise pullback of cochain complexes followed by
+localization, `pullbackSource f`, has a left derived functor with respect to quasi-isomorphisms. -/
 class HasDerivedPullbacks : Prop where
   /-- Every actual pullback source admits a left derived functor. -/
   hasLeftDerivedFunctor : ∀ {X Y : Scheme.{u}} (f : X ⟶ Y),
     (pullbackSource f).HasLeftDerivedFunctor (quasiIso Y)
 
-/-- Existence of the left Kan extensions defining unbounded derived direct
-image of the fixed module-sheaf cochain sources. -/
+/-- Derived direct images of complexes of module sheaves exist: an instance asserts that for every
+morphism of schemes $f : X ⟶ Y$, the termwise direct image of cochain complexes followed by
+localization, `pushforwardSource f`, has a right derived functor with respect to
+quasi-isomorphisms. -/
 class HasDerivedPushforwards : Prop where
   /-- Every actual pushforward source admits a right derived functor. -/
   hasRightDerivedFunctor : ∀ {X Y : Scheme.{u}} (f : X ⟶ Y),
     (pushforwardSource f).HasRightDerivedFunctor (quasiIso X)
 
-/-- Existence of derived tensor along the product of the two localizations,
-with the total cochain tensor source fixed. -/
+/-- Derived tensor products of complexes of module sheaves exist: an instance asserts that for every
+scheme $X$, the sheafified total tensor product of cochain complexes followed by localization,
+`tensorSource X`, has a left derived functor with respect to quasi-isomorphisms in both
+variables. -/
 class HasDerivedTensors : Prop where
   /-- The right Kan extension along `Q × Q` exists. -/
   hasLeftDerivedFunctor : ∀ X : Scheme.{u},
@@ -214,8 +219,10 @@ def quasicoherent (X : Scheme.{u}) : ObjectProperty (D X) :=
 /-- The full subcategory of complexes with quasi-coherent cohomology. -/
 abbrev QCohDerived (X : Scheme.{u}) := (quasicoherent X).FullSubcategory
 
-/-- `Φ_K = L pr₁* ⋙ (− ⊗ᴸ K) ⋙ R pr₂,*`, for an actual kernel on `X ×_S Y`.
-Source: Stacks 0FYQ; AxiomMath/Stacks `FourierMukai/Basic.lean`. -/
+/-- The Fourier–Mukai functor `Φ_K = L pr₁* ⋙ (− ⊗ᴸ K) ⋙ R pr₂,*` from $D(X)$ to $D(Y)$ of a kernel
+$K$ in the derived category of $X ×_S Y$, for the derived pullbacks, direct images and tensor
+products given by `HasDerivedPullbacks`, `HasDerivedPushforwards` and `HasDerivedTensors`.
+Source: Stacks, Tag 0FYQ. -/
 def fourierMukai {S X Y : Scheme.{u}} (f : X ⟶ S) (g : Y ⟶ S)
     (K : D (pullback f g)) : D X ⥤ D Y :=
   derivedPullback (pullback.fst f g) ⋙
@@ -248,8 +255,11 @@ def pr23 {S X Y Z : Scheme.{u}} (f : X ⟶ S) (g : Y ⟶ S) (h : Z ⟶ S) :
       rw [Category.assoc, ← pullback.condition (f := f) (g := g)]
       exact pullback.condition)
 
-/-- The convolution kernel `R pr₁₃,* (L pr₁₂* K ⊗ᴸ L pr₂₃* K')` on `X ×_S Z`.
-Source: Stacks 0FYS; AxiomMath/Stacks `FourierMukai/Composition.lean`. -/
+/-- The convolution kernel `R pr₁₃,* (L pr₁₂* K ⊗ᴸ L pr₂₃* K')` on $X ×_S Z$ of kernels $K$ on
+$X ×_S Y$ and $K'$ on $Y ×_S Z$, where the $\mathrm{pr}_{ij}$ are the projections from
+$X ×_S Y ×_S Z$, for the derived pullbacks, direct images and tensor products given by
+`HasDerivedPullbacks`, `HasDerivedPushforwards` and `HasDerivedTensors`.
+Source: Stacks, Tag 0FYS. -/
 def convolution {S X Y Z : Scheme.{u}} (f : X ⟶ S) (g : Y ⟶ S)
     (h : Z ⟶ S) (K : D (pullback f g)) (K' : D (pullback g h)) :
     D (pullback f h) :=
@@ -258,9 +268,11 @@ def convolution {S X Y Z : Scheme.{u}} (f : X ⟶ S) (g : Y ⟶ S)
       ((derivedPullback (pr12 f g h)).obj K)).obj
         ((derivedPullback (pr23 f g h)).obj K'))
 
-/-- Restrict a Fourier–Mukai functor to two full subcategories once
-preservation of their actual object properties has been proved.
-Source: Stacks 0FYQ; AxiomMath/Stacks `FourierMukai/Basic.lean`. -/
+/-- The restriction of the Fourier–Mukai functor `fourierMukai f g K` to the full subcategories of
+$D(X)$ and $D(Y)$ given by object properties $P$ and $Q$, when it sends every object satisfying $P$
+to one satisfying $Q$ (hypothesis `hPQ`), for the derived pullbacks, direct images and tensor
+products given by `HasDerivedPullbacks`, `HasDerivedPushforwards` and `HasDerivedTensors`.
+Source: Stacks, Tag 0FYQ. -/
 def fourierMukaiOn {S X Y : Scheme.{u}} (f : X ⟶ S) (g : Y ⟶ S)
     (K : D (pullback f g)) (P : ObjectProperty (D X)) (Q : ObjectProperty (D Y))
     (hPQ : ∀ M : P.FullSubcategory, Q ((fourierMukai f g K).obj M.obj)) :
@@ -318,20 +330,20 @@ def convolutionTensor {S X Y Z : Scheme.{u}} (f : X ⟶ S) (g : Y ⟶ S) (h : Z 
   ((derivedTensor (tripleProduct f g h)).obj
     ((derivedPullback (pr12 f g h)).obj K)).obj ((derivedPullback (pr23 f g h)).obj K')
 
-/-- Assemble the seven-step comparison proof from public AxiomMath/Stacks
-`FourierMukai/Composition.lean`.
+/-- Composition of Fourier–Mukai functors, for the derived pullbacks, direct images and tensor
+products given by `HasDerivedPullbacks`, `HasDerivedPushforwards` and `HasDerivedTensors`: for
+kernels $K$ on $X ×_S Y$ and $K'$ on $Y ×_S Z$, a natural isomorphism $Φ_{K'} ∘ Φ_K ≅ Φ_{K ⋆ K'}$ on
+the complexes on $X$ with quasi-coherent cohomology, where $K ⋆ K'$ is the convolution kernel on
+$X ×_S Z$.
 
-The supplied natural isomorphisms are the derived base-change comparison,
-monoidality of derived pullback, the two projection-formula comparisons,
-tensor associativity, and the pullback/pushforward composition comparisons.
-Base change and the projection formulas are supplied only on their actual
-quasi-coherent input subcategories. The three preservation hypotheses allow
-the preceding functors to enter those subcategories.
-
-This is a complete conditional construction. It asserts neither existence
-nor invertibility of any geometric comparison. In the flat, quasi-compact,
-quasi-separated setting those must be established separately using Stacks
-08IB, 08EU and the quasi-coherent preservation results. -/
+It is assembled from the given natural isomorphisms: derived base change and the projection formulas
+for $\mathrm{pr}_{23}$ and $\mathrm{pr}_{13}$ (on complexes with quasi-coherent cohomology),
+compatibility of derived pullback along $\mathrm{pr}_{12}$ with the tensor product by $K$,
+associativity of the derived tensor product, and the composition isomorphisms of the derived
+pullbacks and of the derived direct images along the projections from $X ×_S Y ×_S Z$. The
+hypotheses `hA`, `hB` and `hC` say that the intermediate functors send complexes with quasi-coherent
+cohomology to such complexes.
+Source: Stacks, Tag 0FYS. -/
 def fourierMukaiCompIsoOfComparisons {S X Y Z : Scheme.{u}}
     (f : X ⟶ S) (g : Y ⟶ S) (h : Z ⟶ S)
     (K : D (pullback f g)) (K' : D (pullback g h))

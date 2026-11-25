@@ -187,6 +187,7 @@ theorem three_dvd_of_isSZumkeller (n : ℕ) (h : IsSZumkeller n) (he : Even n) :
     _ < _ := mul_lt_mul_of_pos_left (three_dvd_of_isSZumkeller.sum_inv_sq_lt n h₃) (by positivity)
   linarith
 
+set_option linter.unusedVariables false in
 /-- **Harmonic mean of squared divisors of s-Zumkeller numbers $2^\alpha(2^{\alpha+1}-1)$.** Let
 $\alpha \ge 1$ be an integer, let $n = 2^\alpha (2^{\alpha+1} - 1)$ and let $\tau(n)$ be the
 number of positive divisors of $n$. If $n$ is s-Zumkeller, then
@@ -195,7 +196,7 @@ divisors $d$ of $n$.
 
 Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
 Numbers*, INTEGERS 24 (2024), Article A95, Proposition 10. -/
-theorem harmonicMeanSq_lt_of_isSZumkeller_mersenne (α n : ℕ) (_hα : 1 ≤ α)
+theorem harmonicMeanSq_lt_of_isSZumkeller_mersenne (α n : ℕ) (hα : 1 ≤ α)
     (hn : n = 2 ^ α * (2 ^ (α + 1) - 1)) (h : IsSZumkeller n) :
     (n.divisors.card : ℚ) / ∑ d ∈ n.divisors, 1 / (d : ℚ) ^ 2 < 2 ^ (2 * α + 3) / 3 := by
   obtain ⟨A, hA, hne, _, _⟩ := h
@@ -215,6 +216,63 @@ theorem harmonicMeanSq_lt_of_isSZumkeller_mersenne (α n : ℕ) (_hα : 1 ≤ α
       rw [show 2 * α + 3 = (2 * α + 1) + 2 by omega, pow_add (2 : ℚ) _ 2,
         lt_div_iff₀ (by norm_num)]
       exact mul_lt_mul_of_pos_left (by norm_num : (3 : ℚ) < 2 ^ 2) (by positivity)
+
+/-- **Product formulas for the sum of divisors.** Let $n \ne 0$ be a natural number, let
+$\sigma(n)$ be the sum of the divisors of $n$, and for each prime $p$ dividing $n$ let $k_p$ be
+the exponent of $p$ in $n$. Then, with products over the primes $p$ dividing $n$,
+$$\sigma(n) = \prod_{p \mid n} \frac{p^{k_p + 1} - 1}{p - 1}$$
+and
+$$\frac{\sigma(n)}{n} = \prod_{p \mid n} \frac{p^{k_p + 1} - 1}{p^{k_p} (p - 1)}.$$
+If moreover $n > 1$, then $\sigma(n)/n < \prod_{p \mid n} p/(p - 1)$.
+
+Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
+Numbers*, INTEGERS 24 (2024), Article A95, Lemma 1(i) (quoting Peng and
+Bhaskara Rao). -/
+public theorem sigma_one_prod_formulas (n : ℕ) (hn : n ≠ 0) :
+    (ArithmeticFunction.sigma 1 n : ℚ) =
+        ∏ p ∈ n.primeFactors, ((p : ℚ) ^ (n.factorization p + 1) - 1) / (p - 1) ∧
+      (ArithmeticFunction.sigma 1 n : ℚ) / n =
+        ∏ p ∈ n.primeFactors,
+          ((p : ℚ) ^ (n.factorization p + 1) - 1) / ((p : ℚ) ^ n.factorization p * (p - 1)) ∧
+      (1 < n →
+        (ArithmeticFunction.sigma 1 n : ℚ) / n < ∏ p ∈ n.primeFactors, (p : ℚ) / (p - 1)) := by
+  have hprime (p : ℕ) (hp : p ∈ n.primeFactors) : (1 : ℚ) < p := by
+    exact_mod_cast (Nat.prime_of_mem_primeFactors hp).one_lt
+  have hsum : (ArithmeticFunction.sigma 1 n : ℚ) =
+      ∏ p ∈ n.primeFactors, ((p : ℚ) ^ (n.factorization p + 1) - 1) / (p - 1) := by
+    rw [ArithmeticFunction.sigma_eq_prod_primeFactors_sum_range_factorization_pow_mul hn,
+      Nat.cast_prod]
+    refine Finset.prod_congr rfl fun p hp => ?_
+    simpa only [Nat.cast_sum, Nat.cast_pow, mul_one] using
+      (geom_sum_eq (ne_of_gt (hprime p hp)) (n.factorization p + 1))
+  have hfactor : (n : ℚ) = ∏ p ∈ n.primeFactors, (p : ℚ) ^ n.factorization p := by
+    exact_mod_cast (Nat.prod_primeFactors_pow_factorization hn)
+  have hratio : (ArithmeticFunction.sigma 1 n : ℚ) / n =
+      ∏ p ∈ n.primeFactors,
+        ((p : ℚ) ^ (n.factorization p + 1) - 1) / ((p : ℚ) ^ n.factorization p * (p - 1)) := by
+    rw [hsum, hfactor, ← Finset.prod_div_distrib]
+    exact Finset.prod_congr rfl fun _ _ => by rw [div_div, mul_comm]
+  refine ⟨hsum, hratio, fun hn₁ => ?_⟩
+  rw [hratio]
+  have hnnonempty : n.primeFactors.Nonempty := by
+    by_contra hnempty
+    have he := Finset.not_nonempty_iff_eq_empty.mp hnempty
+    rw [he, Finset.prod_empty] at hfactor
+    exact (show (1 : ℚ) < n by exact_mod_cast hn₁).ne' hfactor
+  apply Finset.prod_lt_prod_of_nonempty₀ _ _ hnnonempty
+  · intro p hp
+    have hp₁ := hprime p hp
+    have hp₀ : (0 : ℚ) < p := zero_lt_one.trans hp₁
+    exact div_pos (sub_pos.mpr (one_lt_pow₀ hp₁ (Nat.succ_ne_zero _)))
+      (mul_pos (pow_pos hp₀ _) (sub_pos.mpr hp₁))
+  · intro p hp
+    have hp₁ := hprime p hp
+    have hpos : 0 < (p : ℚ) ^ n.factorization p := pow_pos (zero_lt_one.trans hp₁) _
+    have hsub : 0 < (p : ℚ) - 1 := sub_pos.mpr hp₁
+    calc
+      _ < (p : ℚ) ^ (n.factorization p + 1) / ((p : ℚ) ^ n.factorization p * (p - 1)) :=
+        div_lt_div_of_pos_right (sub_lt_self _ zero_lt_one) (mul_pos hpos hsub)
+      _ = _ := by rw [pow_succ, mul_div_mul_left _ _ hpos.ne']
 
 end
 

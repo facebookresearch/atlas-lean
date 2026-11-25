@@ -30,7 +30,7 @@ def bind_mock_command(tools: optimizer.Tools, relative: Path, arm: Path,
     prefix = Path(result["artifact_root"]) / relative.with_suffix("")
     argv = [str(tools.time_binary), "-f",
             '{"wall_seconds":%e,"user_seconds":%U,"system_seconds":%S,"max_rss_kib":%M}',
-            "-o", str(arm / "time.json"), str(tools.lean), "-j2", "-R",
+            "-o", str(arm / "time.json"), str(tools.lean), f"-j{tools.lean_threads}", "-R",
             str(arm / "source"), str(arm / "source" / relative), "--setup", str(arm / "setup.json"),
             "-o", str(prefix) + ".olean", "-i", str(prefix) + ".ilean", "-c", str(prefix) + ".c"]
     label = arm / "compile"

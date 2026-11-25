@@ -10,8 +10,11 @@ module
 
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Algebra.Module.Prod
+public import Mathlib.Data.Set.Prod
 public import Mathlib.Order.Bounds.Defs
 import Mathlib.Algebra.BigOperators.Pi
+import Mathlib.Algebra.Module.RingHom
+import Mathlib.Algebra.Ring.Prod
 import Mathlib.Data.Fin.Embedding
 import Mathlib.Logic.Equiv.Fin.Basic
 
@@ -19,7 +22,8 @@ import Mathlib.Logic.Equiv.Fin.Basic
 # Weighted Davenport constant of a product of modules
 
 Embedding zero-sum-free sequences along the two coordinate axes gives the lower bound
-`davenport_prod_ge` for the weighted Davenport constant of a product.
+`davenport_prod_ge` for the weighted Davenport constant of a product. With separate scalar rings,
+`davenport_prod_ring_ge` gives the bound for the product weight set.
 -/
 
 namespace MetaMathlibExt
@@ -98,5 +102,55 @@ public theorem davenport_prod_ge {R M N : Type*} [Ring R] [AddCommGroup M] [Modu
     refine ⟨I.toRight, ⟨i, Finset.mem_toRight.mpr hi⟩, a ∘ Sum.inr,
       fun j hj => ha _ (Finset.mem_toRight.mp hj), ?_⟩
     simpa [z, Prod.snd_sum] using congrArg Prod.snd hsum
+
+namespace davenport_prod_ring_ge
+
+/-- Restricting scalars along `f` has the same effect as taking the image of the weight set. -/
+private theorem davenportSet_compHom {R S M : Type*} [Ring R] [Ring S] [AddCommGroup M]
+    [Module R M] (f : S →+* R) (C : Set S) :
+    letI := Module.compHom M f
+    davenportSet(S, M, C) = davenportSet(R, M, f '' C) := by
+  let := Module.compHom M f
+  ext k
+  refine and_congr_right fun _ => forall_congr' fun x => ?_
+  constructor
+  · rintro ⟨I, hI, a, ha, hsum⟩
+    exact ⟨I, hI, f ∘ a, fun i hi => Set.mem_image_of_mem f (ha i hi), hsum⟩
+  · rintro ⟨I, hI, a, ha, hsum⟩
+    choose! b hb heq using ha
+    refine ⟨I, hI, b, hb, (Finset.sum_congr rfl fun i hi => ?_).trans hsum⟩
+    exact congrArg (· • x i) (heq i hi)
+
+end davenport_prod_ring_ge
+
+/-- **Weighted Davenport constant of a product with product weights.** Let $R$ and $R'$ be rings,
+$M$ an $R$-module, $N$ an $R'$-module, $A \subseteq R$ and $B \subseteq R'$. Let $D_A(M)$ be the
+least positive integer $k$, if one exists, such that every sequence $x_1, \dots, x_k$ in $M$ has
+a nonempty set of indices $I$ and weights $a_i \in A$ for $i \in I$ with
+$\sum_{i \in I} a_i x_i = 0$, and define $D_B(N)$ in the same way. Let $D_{A \times B}(M \times N)$
+be the least positive integer $k$, if one exists, such that every sequence
+$(y_1, z_1), \dots, (y_k, z_k)$ in $M \times N$ has a nonempty set of indices $I$ and weights
+$(a_i, b_i) \in A \times B$ for $i \in I$ with $\sum_{i \in I} (a_i y_i, b_i z_i) = 0$. If all
+three constants exist, then $D_{A \times B}(M \times N) \ge D_A(M) + D_B(N) - 1$.
+
+Source: Santanu Mondal, Krishnendu Paul and Shameek Paul, *On Unit-Weighted Zero-Sum Constants
+of `ℤ_n`*, INTEGERS 24 (2024), Article A38, Theorem 2.1 (`integers-2024-A38-thm-2-1`). -/
+public theorem davenport_prod_ring_ge {R R' M N : Type*} [Ring R] [Ring R']
+    [AddCommGroup M] [Module R M] [AddCommGroup N] [Module R' N] (A : Set R) (B : Set R')
+    {dA dB d : ℕ} (hA : IsLeast (davenportSet(R, M, A)) dA)
+    (hB : IsLeast (davenportSet(R', N, B)) dB)
+    (h : IsLeast {k : ℕ | 0 < k ∧ ∀ x : Fin k → M × N, ∃ I : Finset (Fin k), I.Nonempty ∧
+      ∃ a : Fin k → R × R', (∀ i ∈ I, a i ∈ A ×ˢ B) ∧
+        ∑ i ∈ I, ((a i).1 • (x i).1, (a i).2 • (x i).2) = 0} d) :
+    dA + dB - 1 ≤ d := by
+  obtain ⟨_, ⟨i, hi⟩, a, ha, _⟩ := h.1.2 (fun _ => 0)
+  obtain ⟨haA, haB⟩ := ha i hi
+  let := Module.compHom M (RingHom.fst R R')
+  let := Module.compHom N (RingHom.snd R R')
+  apply davenport_prod_ge (A ×ˢ B) (M := M) (N := N) _ _ h
+  · simpa only [davenport_prod_ring_ge.davenportSet_compHom (RingHom.fst R R'),
+      RingHom.coe_fst, Set.fst_image_prod A ⟨_, haB⟩] using hA
+  · simpa only [davenport_prod_ring_ge.davenportSet_compHom (RingHom.snd R R'),
+      RingHom.coe_snd, Set.snd_image_prod ⟨_, haA⟩ B] using hB
 
 end MetaMathlibExt

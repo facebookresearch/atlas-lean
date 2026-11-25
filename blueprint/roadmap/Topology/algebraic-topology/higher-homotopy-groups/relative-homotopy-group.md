@@ -15,7 +15,7 @@ Both formulas give $x_0$ where $s_1 = 1/2$ and on all of $J^{n-1}$, so $h$ is we
 
 ## Expansion
 
-A good expansion of this node links each notion it is built from: homotopies of continuous maps; quotient maps of topological spaces; the subspace topology.
+A good expansion of this node links each notion it is built from: homotopies of continuous maps.
 
 ## Depends on
 
@@ -23,6 +23,8 @@ A good expansion of this node links each notion it is built from: homotopies of 
 - [Group](../../../GroupTheory/group-basics/group.md)
 - [Continuous map between topological spaces](../../topological-spaces/continuous-map.md)
 - [Topological space](../../topological-spaces/topological-space.md)
+- [Quotient map](../../topological-spaces/lattice-of-topologies-and-induced-topologies/quotient-map-topological.md)
+- [Subspace topology](../../topological-spaces/lattice-of-topologies-and-induced-topologies/subspace-topology.md)
 
 ## Sources
 

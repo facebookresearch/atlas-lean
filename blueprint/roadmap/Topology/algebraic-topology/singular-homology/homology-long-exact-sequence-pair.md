@@ -12,13 +12,14 @@ The chain map induced by the inclusion is injective, and the quotient map is sur
 
 ## Expansion
 
-A good expansion identifies $C_\bullet(X)/C_\bullet(A)$ with the cokernel of the chain map induced by the inclusion $\operatorname{Sing}(A) \to \operatorname{Sing}(X)$, as for relative homology, and transports $i_*$, $j_*$ and the connecting homomorphism of the short exact sequence of chain complexes along this identification. It checks that the connecting homomorphism is given by the lift-and-boundary formula of the statement: lift a relative cycle to $x \in C_n(X)$ and take the class of $\partial x \in C_{n-1}(A)$. It then splices the exactness at $H_n(A)$, $H_n(X)$ and $H_n(X, A)$ into the displayed sequence, ending with the surjection $j_*\colon H_0(X) \to H_0(X, A)$. A good expansion also links each prerequisite of its statement and proof: the long exact homology sequence of a short exact sequence of chain complexes; short exact sequences of chain complexes; exact sequences of groups; the maps induced on singular chains and homology by a continuous map; the subspace topology.
+A good expansion identifies $C_\bullet(X)/C_\bullet(A)$ with the cokernel of the chain map induced by the inclusion $\operatorname{Sing}(A) \to \operatorname{Sing}(X)$, as for relative homology, and transports $i_*$, $j_*$ and the connecting homomorphism of the short exact sequence of chain complexes along this identification. It checks that the connecting homomorphism is given by the lift-and-boundary formula of the statement: lift a relative cycle to $x \in C_n(X)$ and take the class of $\partial x \in C_{n-1}(A)$. It then splices the exactness at $H_n(A)$, $H_n(X)$ and $H_n(X, A)$ into the displayed sequence, ending with the surjection $j_*\colon H_0(X) \to H_0(X, A)$. A good expansion also links each prerequisite of its statement and proof: the long exact homology sequence of a short exact sequence of chain complexes; short exact sequences of chain complexes; exact sequences of groups; the maps induced on singular chains and homology by a continuous map.
 
 ## Depends on
 
 - [Integral singular homology](../hurewicz-theorem/integral-homology.md)
 - [Topological space](../../topological-spaces/topological-space.md)
 - [Relative singular homology of a pair of spaces](relative-homology.md)
+- [Subspace topology](../../topological-spaces/lattice-of-topologies-and-induced-topologies/subspace-topology.md)
 
 ## Sources
 

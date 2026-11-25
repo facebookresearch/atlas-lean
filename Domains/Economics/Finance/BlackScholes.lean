@@ -46,27 +46,35 @@ open scoped NNReal
 
 open MeasureTheory ProbabilityTheory Real
 
-/-- The assumed risk-neutral law of the terminal price `S_T = S0 exp((r - σ²/2) T + σ √T Z)`
-with `Z` standard normal: the log-normal law with log-mean `log S0 + (r - σ²/2) T` and
-log-variance `σ² T`. No dividends. -/
+/-- The assumed risk-neutral law of the terminal price (no dividends): the log-normal law with
+log-mean `log S0 + (r - σ²/2) T` and log-variance `max (σ² T) 0`, a point mass when `σ² T ≤ 0`. For
+`S0 > 0` and `T ≥ 0` it is the law of `S_T = S0 exp((r - σ²/2) T + σ √T Z)` with `Z` standard
+normal. For `S0 ≤ 0` the log-mean is read with the conventions `log 0 = 0` and `log x = log |x|`. -/
 noncomputable def riskNeutralLaw (S0 r σ T : ℝ) : Measure ℝ :=
   logNormalMeasure (log S0 + (r - σ ^ 2 / 2) * T) (Real.toNNReal (σ ^ 2 * T))
 
-/-- The Black-Scholes `d₁ = (log (S0 / K) + (r + σ²/2) T) / (σ √T)`. -/
+/-- The Black-Scholes `d₁ = (log (S0 / K) + (r + σ²/2) T) / (σ √T)`. The formula is read with the
+conventions `x / 0 = 0` and `√T = 0` for `T ≤ 0`, so that `d₁ = 0` when `σ = 0` or `T ≤ 0`, and with
+`log 0 = 0` and `log x = log |x|` when `S0 / K ≤ 0`. -/
 noncomputable def d1 (S0 K r σ T : ℝ) : ℝ :=
   (log (S0 / K) + (r + σ ^ 2 / 2) * T) / (σ * √T)
 
-/-- The Black-Scholes `d₂ = d₁ - σ √T`. -/
+/-- The Black-Scholes `d₂ = d₁ - σ √T`. It has its usual meaning for `S0, K, σ, T > 0`; with
+`x / 0 = 0` and `√T = 0` for `T ≤ 0`, `d₂ = d₁ = 0` when `σ = 0` or `T ≤ 0`. When `S0 / K ≤ 0`, `d₁`
+uses the conventions `log 0 = 0` and `log x = log |x|`. -/
 noncomputable def d2 (S0 K r σ T : ℝ) : ℝ :=
   d1 S0 K r σ T - σ * √T
 
 /-- The Black-Scholes price of a European call with strike `K` and maturity `T`:
-`S0 Φ(d₁) - K e^{-rT} Φ(d₂)`, with `Φ = cdf (gaussianReal 0 1)` the standard normal cdf. -/
+`S0 Φ(d₁) - K e^{-rT} Φ(d₂)`, with `Φ = cdf (gaussianReal 0 1)` the standard normal cdf. It is the
+usual price for `S0, K, σ, T > 0`; when `σ = 0` or `T ≤ 0`, `x / 0 = 0` and `√T = 0` give
+`d₁ = d₂ = 0`. When `S0 / K ≤ 0`, `d₁` uses the conventions `log 0 = 0` and `log x = log |x|`. -/
 noncomputable def blackScholesCall (S0 K r σ T : ℝ) : ℝ :=
   S0 * cdf (gaussianReal 0 1) (d1 S0 K r σ T) -
     K * exp (-(r * T)) * cdf (gaussianReal 0 1) (d2 S0 K r σ T)
 
-/-- The assumed law has mean `S0 e^{rT}`: the discounted terminal mean is `S0`. -/
+/-- For `S0 > 0` and `T ≥ 0`, the assumed law has mean `S0 e^{rT}`: the discounted terminal mean
+is `S0`. -/
 theorem integral_id_riskNeutralLaw {S0 r σ T : ℝ} (hS0 : 0 < S0) (hT : 0 ≤ T) :
     ∫ x, x ∂(riskNeutralLaw S0 r σ T) = S0 * exp (r * T) := by
   unfold riskNeutralLaw

@@ -174,3 +174,25 @@ public theorem CuspForm.intLattice_fg (N : ℕ) [NeZero N] (k : ℤ) :
       Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
   exact Submodule.fg_of_fg_map_injective (CuspFormIntegralLattice.trunc N k)
     (CuspFormIntegralLattice.trunc_injective N k) (hMfg.of_le hle)
+
+namespace CuspForm
+
+/-- The cusp forms on `Γ₀(N)` of weight `k` have an integral structure
+when the complex span of the integral lattice is the whole space of
+cusp forms. -/
+public def HasIntegralStructure (N : ℕ) (k : ℤ) : Prop :=
+  Submodule.span ℂ
+    ((CuspForm.intLattice N k : Submodule ℤ (CuspForm (CongruenceSubgroup.Gamma0 N) k)) :
+      Set (CuspForm (CongruenceSubgroup.Gamma0 N) k)) = ⊤
+
+/-- An integral structure is exactly the statement that the complex span
+of the integral lattice is everything. -/
+public theorem hasIntegralStructure_iff (N : ℕ) (k : ℤ) :
+    CuspForm.HasIntegralStructure N k ↔
+      Submodule.span ℂ
+        ((CuspForm.intLattice N k :
+          Submodule ℤ (CuspForm (CongruenceSubgroup.Gamma0 N) k)) :
+          Set (CuspForm (CongruenceSubgroup.Gamma0 N) k)) = ⊤ :=
+  Iff.rfl
+
+end CuspForm
