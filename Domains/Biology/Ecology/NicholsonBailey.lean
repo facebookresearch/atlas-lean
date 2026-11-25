@@ -42,18 +42,34 @@ open scoped ContDiff
 
 namespace MathlibExt.Biology.Ecology.NicholsonBailey
 
-/-- Host and parasitoid populations both strictly above zero. -/
+/-- The positive quadrant `{x | 0 < x.1 ∧ 0 < x.2}`: host population `H = x.1` and parasitoid
+population `P = x.2` both strictly above zero. -/
 def positiveQuadrant : Set (ℝ × ℝ) := {x | 0 < x.1 ∧ 0 < x.2}
 
-/-- One generation of Nicholson–Bailey dynamics, with host coordinate first. -/
+/-- One generation of Nicholson–Bailey dynamics, with host coordinate first: for a state
+`x = (H, P)`, `step r a c x = (r H exp(-a P), c H (1 - exp(-a P)))`, where `r` is the host growth
+factor, `a` the search parameter and `c` the conversion factor. The map is defined for all real
+`r`, `a`, `c` and all states. -/
 def step (r a c : ℝ) (x : ℝ × ℝ) : ℝ × ℝ :=
   (r * x.1 * Real.exp (-(a * x.2)), c * x.1 * (1 - Real.exp (-(a * x.2))))
 
-/-- The positive equilibrium formula for `r > 1` and positive `a` and `c`. -/
+/-- The equilibrium formula
+`positiveEquilibrium r a c = (r log r / ((r - 1) a c), log r / a)`.
+
+It is defined for all real `r`, `a`, `c` with Lean's total conventions: `Real.log` is the natural
+logarithm with `log 0 = 0` and `log x = log |x|` for `x < 0`, and division by zero returns `0`.
+So when `r = 1`, `a = 0` or `c = 0` the host coordinate is `0`, and when `a = 0` the parasitoid
+coordinate is `0`. In the regime `r > 1`, `a > 0`, `c > 0` it is the unique fixed point of
+`step r a c` in the positive quadrant (`positiveEquilibrium_spec`,
+`eq_positiveEquilibrium_of_isFixedPt`). -/
 def positiveEquilibrium (r a c : ℝ) : ℝ × ℝ :=
   (r * Real.log r / ((r - 1) * a * c), Real.log r / a)
 
-/-- The Jacobian formula in the ordered host and parasitoid coordinates. -/
+/-- The Jacobian matrix of `step r a c` at `x = (H, P)`, in the ordered host and parasitoid
+coordinates: with `e = exp(-a P)`,
+`jacobian r a c x = [[r e, -r a H e], [c (1 - e), a c H e]]` (rows are the host and parasitoid
+components, columns the derivatives in `H` and `P`). It is defined for all real `r`, `a`, `c` and
+all `x`, and is the derivative of `step r a c` at every point (`hasFDerivAt_step`). -/
 def jacobian (r a c : ℝ) (x : ℝ × ℝ) : Matrix (Fin 2) (Fin 2) ℝ :=
   !![r * Real.exp (-(a * x.2)), -(r * a * x.1 * Real.exp (-(a * x.2)));
      c * (1 - Real.exp (-(a * x.2))), a * c * x.1 * Real.exp (-(a * x.2))]
