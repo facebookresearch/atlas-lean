@@ -2,9 +2,11 @@
 
 3-dimensional matching, exact cover, set cover, set packing, set splitting, maximum coverage, minimum test set, generalized and quadratic assignment, facility location, k-center and k-median.
 
+- [2-dimensional consecutive sets](2-dimensional-consecutive-sets/README.md)
 - [3-dimensional matching](3-dimensional-matching/README.md)
 - [Coalition formation](coalition-formation/README.md)
 - [Consecutive ones and block minimization](consecutive-ones-and-block-minimization/README.md)
+- [Election manipulation and bribery](election-manipulation-and-bribery/README.md)
 - [Exact cover](exact-cover/README.md)
 - [Exact cover by 3-sets](exact-cover-by-3-sets/README.md)
 - [Exact hitting set](exact-hitting-set/README.md)
@@ -19,3 +21,6 @@
 - [Set cover](set-cover/README.md)
 - [Set packing](set-packing/README.md)
 - [Set splitting](set-splitting/README.md)
+- [Side-chain positioning](side-chain-positioning/README.md)
+- [Stable matching with ties and in three dimensions](stable-matching-with-ties-and-in-three-dimension/README.md)
+- [Terrain guarding](terrain-guarding/README.md)

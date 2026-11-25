@@ -1,0 +1,15 @@
+# Hamiltonian paths and circuits in restricted graph classes
+
+- [Closed walk `c` (a cycle of length `ℓ`) has an odd chord in HAMILTONIAN PATH on strongly chordal split graphs](has-odd-chord.md)
+- [HAMILTONIAN PATH on strongly chordal split graphs: `G` is strongly chordal](is-strongly-chordal.md)
+- [Well-formed instances of HAMILTONIAN PATH on strongly chordal split graphs](well-formed.md)
+- [The HAMILTONIAN PATH on strongly chordal split graphs decision problem](strongly-chordal-split-hamiltonian-path.md)
+- [HAMILTONIAN PATH on strongly chordal split graphs is NP-complete](strongly-chordal-split-hamiltonian-path-2.md)
+- [Adjacency in the triangular lattice](tri-adj.md)
+- [Edges of the triangular grid graph in HAMILTONIAN CIRCUIT IN TRIANGULAR GRID GRAPHS](triangular-edges.md)
+- [Instances of HAMILTONIAN CIRCUIT IN TRIANGULAR GRID GRAPHS](to-hamiltonian-instance.md)
+- [The HAMILTONIAN CIRCUIT IN TRIANGULAR GRID GRAPHS decision problem](triangular-grid-graph-hamiltonian-circui.md)
+- [HAMILTONIAN CIRCUIT IN TRIANGULAR GRID GRAPHS is NP-complete](triangular-grid-graph-hamiltonian-circui-2.md)
+- [Well-formed instances of HAMILTONIAN CIRCUIT IN UNDIRECTED PATH GRAPHS](well-formed-2.md)
+- [The HAMILTONIAN CIRCUIT IN UNDIRECTED PATH GRAPHS decision problem](undirected-path-graph-hamiltonian-circui.md)
+- [HAMILTONIAN CIRCUIT IN UNDIRECTED PATH GRAPHS is NP-complete](undirected-path-graph-hamiltonian-circui-2.md)

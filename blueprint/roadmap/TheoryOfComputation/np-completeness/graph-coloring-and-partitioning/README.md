@@ -39,3 +39,4 @@ Vertex, edge, list and precoloring-extension coloring, achromatic number, graph 
 - [Precoloring extension](precoloring-extension/README.md)
 - [Treewidth](treewidth/README.md)
 - [Vertex ranking](vertex-ranking/README.md)
+- [Recognition of intersection graph classes](recognition-of-intersection-graph-classes/README.md)

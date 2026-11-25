@@ -1,0 +1,17 @@
+# Stable matching with ties and in three dimensions
+
+- [Instances of STABLE ROOMMATES WITH TIES (weak stability, complete lists)](stable-roommates-with-ties-instance.md)
+- [Rank of agent `w` in agent `v`'s preference list in STABLE ROOMMATES WITH TIES (weak stability, complete lists)](rank.md)
+- [Edge `vw` blocks the matching with partner function `μ` in STABLE ROOMMATES WITH TIES (weak stability, complete lists)](blocks.md)
+- [Well-formed instances of STABLE ROOMMATES WITH TIES (weak stability, complete lists)](well-formed.md)
+- [Feasible instances of STABLE ROOMMATES WITH TIES (weak stability, complete lists)](stable-roommates-with-ties-feasible.md)
+- [The STABLE ROOMMATES WITH TIES (weak stability, complete lists) decision problem](stable-roommates-with-ties-dec.md)
+- [STABLE ROOMMATES WITH TIES (weak stability, complete lists) is NP-complete](stable-roommates-with-ties-np-complete.md)
+- [Instances of THREE-DIMENSIONAL STABLE MATCHING](three-dimensional-stable-matching-instan.md)
+- [Preference list ranks every pair `(x, y)` with `x, y < n` exactly once in THREE-DIMENSIONAL STABLE MATCHING](is-ranking.md)
+- [Strict preference in THREE-DIMENSIONAL STABLE MATCHING](prefers.md)
+- [Well-formed instances of THREE-DIMENSIONAL STABLE MATCHING](well-formed-2.md)
+- [Unstable triples in THREE-DIMENSIONAL STABLE MATCHING](is-unstable-triple.md)
+- [Feasible instances of THREE-DIMENSIONAL STABLE MATCHING](three-dimensional-stable-matching-feasib.md)
+- [The THREE-DIMENSIONAL STABLE MATCHING decision problem](three-dimensional-stable-matching-dec.md)
+- [THREE-DIMENSIONAL STABLE MATCHING is NP-complete](three-dimensional-stable-matching-np-com.md)

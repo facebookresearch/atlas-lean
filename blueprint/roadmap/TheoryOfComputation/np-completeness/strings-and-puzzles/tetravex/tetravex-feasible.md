@@ -1,0 +1,3 @@
+# Feasible instances of TETRAVEX
+
+An instance of TETRAVEX is feasible when there is a Tetravex solution: `f x y` is the index (in the tile list) of the tile placed at position `(x, y)`. Every position gets a tile, distinct positions get distinct tiles (with `n²` tiles and `n²` positions, every tile is placed exactly once), horizontally neighbouring tiles agree on the right and left labels, and vertically neighbouring tiles agree on the bottom and top labels. Feasibility does not include well-formedness; the decision problem requires both. A position beyond the end of a list reads as the default entry `(0, 0, 0, 0)`.
