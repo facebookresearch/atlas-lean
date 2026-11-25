@@ -48,7 +48,7 @@ theorem exactSource_univ1 {S : Type 1} [CommRing S] {A : Scheme.{1}}
   ⟨h.isLineBundle, h.isSymmetric, h.kernelIsTwoTorsion,
     h.rosatiCompatible⟩
 
-/-- The geometric global-section rank depends only on the structure
+/-- The global-section rank on a fibre depends only on the structure
 morphism `f`, not on the group law, and the positive-rank field states it
 for `f`. -/
 example {S : Type u} [CommRing S] {A : Scheme.{u}}
@@ -59,6 +59,42 @@ example {S : Type u} [CommRing S] {A : Scheme.{u}}
     (k : Type u) [Field k] [IsAlgClosed k] (sk : S →+* k) :
     0 < geomFibreH0Finrank f L k sk :=
   h.positiveRank k sk
+
+/-- The canonical-form field needs no compatible law from outside: the base
+change of `G` meets its compatibility hypothesis, so the field gives an
+invertible sheaf that is kernel-trivial for that base change. -/
+example {S : Type u} [CommRing S] {A : Scheme.{u}}
+    {f : A ⟶ Spec (CommRingCat.of S)} (G : RelativeGroupLaw S f)
+    {I : Type v} (act : I → (A ⟶ A)) (act_over : ∀ b, act b ≫ f = f)
+    (star : I → I) (L : A.Modules)
+    (h : CanonicalPolarizationData G act act_over star L) :
+    ∃ (S' : Type u) (_ : CommRing S') (_ : Algebra S S'),
+      Module.FaithfullyFlat S S' ∧
+      ∃ L₀ : (pullback f
+          (Spec.map (CommRingCat.ofHom (algebraMap S S')))).Modules,
+        IsLineBundle L₀ ∧
+        KernelTrivial
+          (G.baseChange (Spec.map (CommRingCat.ofHom (algebraMap S S')))) L₀ := by
+  obtain ⟨S', _, _, hS', hform⟩ := h.locallyCanonicalForm
+  obtain ⟨L₀, hL₀, hK, -⟩ :=
+    hform (G.baseChange _) fun t' P Q ↦ baseChange_mul_left_fst G _ t' P Q
+  exact ⟨S', _, _, hS', L₀, hL₀, hK⟩
+
+/-- The same witness through `exists_baseChange_canonicalForm`. -/
+example {S : Type u} [CommRing S] {A : Scheme.{u}}
+    {f : A ⟶ Spec (CommRingCat.of S)} (G : RelativeGroupLaw S f)
+    {I : Type v} (act : I → (A ⟶ A)) (act_over : ∀ b, act b ≫ f = f)
+    (star : I → I) (L : A.Modules)
+    (h : CanonicalPolarizationData G act act_over star L) :
+    ∃ (S' : Type u) (_ : CommRing S') (_ : Algebra S S'),
+      Module.FaithfullyFlat S S' ∧
+      ∃ L₀ : (pullback f
+          (Spec.map (CommRingCat.ofHom (algebraMap S S')))).Modules,
+        IsLineBundle L₀ ∧
+        KernelTrivial
+          (G.baseChange (Spec.map (CommRingCat.ofHom (algebraMap S S')))) L₀ := by
+  obtain ⟨S', _, _, hS', L₀, hL₀, hK, -⟩ := h.exists_baseChange_canonicalForm
+  exact ⟨S', _, _, hS', L₀, hL₀, hK⟩
 
 /-- Boundary point: the identity point satisfies the `2`-torsion
 equation in the kernel condition, and negation is over the base. -/

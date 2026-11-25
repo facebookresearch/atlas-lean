@@ -57,14 +57,17 @@ built from a sheaf `L` and its dual `L^∨ = 𝓗om(L, 𝒪)`, its kernel
 conditions, and Rosati compatibility with an action are defined directly
 from the group law on points.  Canonical polarization data packages an
 invertible sheaf that is symmetric, whose Mumford kernel is exactly the
-`2`-torsion, that after a faithfully flat extension of the base ring is a
-tensor product of a kernel-trivial sheaf with its negation pullback, that
-has positive geometric global-section rank in every algebraically closed
-fibre, and that is Rosati compatible.
+`2`-torsion, that after a faithfully flat extension of the base ring is,
+locally over the new base, a tensor product of a kernel-trivial sheaf with
+its negation pullback for every group law on the base change compatible
+with the given one (the base change of the law is one, so the form holds
+for it), whose global sections on every geometric fibre are
+finite-dimensional and nonzero, and that is Rosati compatible.
 
 Line bundles, the structure sheaf and the tensor product are those of
 `CoherentCurveLinearSeries` and `SchemeModulesTensor`; the dual is the sheaf
-Hom `BundleTrace.homSheaf` into the structure sheaf.
+Hom `BundleTrace.homSheaf` into the structure sheaf; the base change of a
+group law and of its points is that of `RelativeGroupLaw`.
 -/
 
 namespace MathlibExt.AlgebraicGeometry.QMCanonicalPol
@@ -204,29 +207,26 @@ def RosatiCompatible (L : A.Modules) {I : Type v}
           (rosatiLiftRight act act_over star b)).obj
         (mumfordBundle G L))
 
-/-- A point of a pulled-back group law, viewed as a point of the
-original group law after base change. -/
-def baseChangePoint {S' : Type u} [CommRing S'] (ψ : S →+* S')
-    {T : Scheme.{u}} {t' : T ⟶ Spec (CommRingCat.of S')}
-    (P : Over.mk t' ⟶
-      Over.mk (pullback.snd f (Spec.map (CommRingCat.ofHom ψ)))) :
-    Over.mk (t' ≫ Spec.map (CommRingCat.ofHom ψ)) ⟶ Over.mk f :=
-  Over.homMk (P.left ≫ pullback.fst f (Spec.map (CommRingCat.ofHom ψ)))
-    (by
-      have hP : P.left ≫
-          pullback.snd f (Spec.map (CommRingCat.ofHom ψ)) = t' :=
-        Over.w P
-      calc (P.left ≫
-            pullback.fst f (Spec.map (CommRingCat.ofHom ψ))) ≫ f
-          = P.left ≫ (pullback.snd f
-              (Spec.map (CommRingCat.ofHom ψ)) ≫
-              Spec.map (CommRingCat.ofHom ψ)) := by
-            rw [Category.assoc, pullback.condition]
-        _ = t' ≫ Spec.map (CommRingCat.ofHom ψ) := by
-            rw [← Category.assoc, hP])
+/-- The base change `G.baseChange i` of a relative group law along
+`i : Spec S' ⟶ Spec S` is compatible with `G`: the first projection to `A`
+carries the product of two points of the base change to the product, under
+`G`, of their images. -/
+theorem baseChange_mul_left_fst {S' : Type u} [CommRing S']
+    (i : Spec (CommRingCat.of S') ⟶ Spec (CommRingCat.of S)) {T : Scheme.{u}}
+    (t' : T ⟶ Spec (CommRingCat.of S'))
+    (P Q : Over.mk t' ⟶ Over.mk (pullback.snd f i)) :
+    ((G.baseChange i).mul t' P Q).left ≫ pullback.fst f i =
+      (G.mul (t' ≫ i) (RelativeGroupLaw.baseChangePointToBase i P)
+        (RelativeGroupLaw.baseChangePointToBase i Q)).left :=
+  pullback.lift_fst _ _ _
 
-/-- The rank of global sections of `L` in the geometric fibre of `f` over an
-algebraically closed field. -/
+/-- The dimension over `k` of the global sections of `L` on the fibre of `f`
+over `sk : S →+* k`, that is, of the pullback of `L` to `A ×_S Spec k`.  The
+definition takes any field `k`; geometric fibres are the case `k`
+algebraically closed, which is how `CanonicalPolarizationData.positiveRank`
+uses it.  It is `Module.finrank`, so it is `0` when the sections are
+infinite-dimensional: a positive value says that they are finite-dimensional
+and nonzero. -/
 def geomFibreH0Finrank (f : A ⟶ Spec (CommRingCat.of S)) (L : A.Modules) (k : Type u) [Field k]
     (sk : S →+* k) : ℕ :=
   letI : Algebra k Γ(Limits.pullback f
@@ -245,10 +245,13 @@ def geomFibreH0Finrank (f : A ⟶ Spec (CommRingCat.of S)) (L : A.Modules) (k : 
         (Spec.map (CommRingCat.ofHom sk)))).obj L, ⊤)
 
 /-- Canonical polarization data for a sheaf `L`: `L` is invertible and
-symmetric, its Mumford kernel is exactly the `2`-torsion, after a faithfully
-flat extension of the base ring it is a kernel-trivial sheaf tensored with
-its negation pullback, its geometric global-section rank is positive, and it
-is Rosati compatible with the action. -/
+symmetric, its Mumford kernel is exactly the `2`-torsion, after some
+faithfully flat extension `S → S'` of the base ring every group law on the
+base change that is compatible with `G` (the base change of `G` is one)
+makes `L` locally isomorphic over `Spec S'` to `L₀ ⊗ (-1)^* L₀` for an
+invertible kernel-trivial `L₀`, its global sections on every geometric
+fibre are finite-dimensional and nonzero, and it is Rosati compatible with
+the action. -/
 structure CanonicalPolarizationData {I : Type v} (act : I → (A ⟶ A))
     (act_over : ∀ b, act b ≫ f = f) (star : I → I)
     (L : A.Modules) : Prop where
@@ -258,10 +261,16 @@ structure CanonicalPolarizationData {I : Type v} (act : I → (A ⟶ A))
   isSymmetric : IsSymmetric G L
   /-- The Mumford kernel is exactly the `2`-torsion. -/
   kernelIsTwoTorsion : KernelIsTwoTorsion G L
-  /-- After a faithfully flat extension `S → S'` of the base ring (an fpqc
-  cover: finite presentation is not required), the sheaf has the canonical
-  tensor form `L₀ ⊗ (-1)^* L₀` with `L₀` invertible and kernel-trivial,
-  locally over `Spec S'`. -/
+  /-- There is a faithfully flat extension `S → S'` of the base ring (an
+  fpqc cover: finite presentation is not required) such that every group law
+  `G'` on the base change that is compatible with `G` (the first projection
+  carries products under `G'` to products under `G`) gives the canonical
+  tensor form: an invertible `L₀`, kernel-trivial for `G'`, with `L`
+  locally isomorphic over `Spec S'` to `L₀ ⊗ (-1)^* L₀`.  The field supplies
+  no such law itself; the base change `G.baseChange` is one
+  (`baseChange_mul_left_fst`), and
+  `CanonicalPolarizationData.exists_baseChange_canonicalForm` gives the form
+  for it. -/
   locallyCanonicalForm :
     ∃ (S' : Type u) (_ : CommRing S') (_ : Algebra S S'),
       Module.FaithfullyFlat S S' ∧
@@ -277,8 +286,10 @@ structure CanonicalPolarizationData {I : Type v} (act : I → (A ⟶ A))
                   (Spec.map (CommRingCat.ofHom (algebraMap S S')))) =
               (G.mul (t' ≫
                   Spec.map (CommRingCat.ofHom (algebraMap S S')))
-                (baseChangePoint (algebraMap S S') P)
-                (baseChangePoint (algebraMap S S') Q)).left) →
+                (RelativeGroupLaw.baseChangePointToBase
+                  (Spec.map (CommRingCat.ofHom (algebraMap S S'))) P)
+                (RelativeGroupLaw.baseChangePointToBase
+                  (Spec.map (CommRingCat.ofHom (algebraMap S S'))) Q)).left) →
         ∃ L₀ :
             (pullback f
               (Spec.map (CommRingCat.ofHom (algebraMap S S')))).Modules,
@@ -291,11 +302,45 @@ structure CanonicalPolarizationData {I : Type v} (act : I → (A ⟶ A))
                 (Spec.map (CommRingCat.ofHom (algebraMap S S'))))).obj L)
             (moduleTensor _ L₀
               ((Scheme.Modules.pullback (negMor G')).obj L₀))
-  /-- The geometric global-section rank is positive. -/
+  /-- On every geometric fibre (`k` algebraically closed) the global sections
+  of `L` are finite-dimensional and nonzero: their `Module.finrank` over `k`
+  is positive, which rules out both zero and infinite-dimensional sections. -/
   positiveRank : ∀ (k : Type u) [Field k] [IsAlgClosed k] (sk : S →+* k),
     0 < geomFibreH0Finrank f L k sk
   /-- The sheaf is Rosati compatible with the action. -/
   rosatiCompatible : RosatiCompatible G L act act_over star
+
+variable {G} in
+/-- The canonical form after base change, with the compatible law supplied:
+the faithfully flat extension `S → S'` of canonical polarization data and
+the base change of `G` to `S'`, which is compatible with `G` by
+`baseChange_mul_left_fst`, give an invertible `L₀`, kernel-trivial for that
+base change, with `L` locally isomorphic over `Spec S'` to
+`L₀ ⊗ (-1)^* L₀`. -/
+theorem CanonicalPolarizationData.exists_baseChange_canonicalForm
+    {I : Type v} {act : I → (A ⟶ A)} {act_over : ∀ b, act b ≫ f = f}
+    {star : I → I} {L : A.Modules}
+    (h : CanonicalPolarizationData G act act_over star L) :
+    ∃ (S' : Type u) (_ : CommRing S') (_ : Algebra S S'),
+      Module.FaithfullyFlat S S' ∧
+      ∃ L₀ :
+          (pullback f
+            (Spec.map (CommRingCat.ofHom (algebraMap S S')))).Modules,
+        IsLineBundle L₀ ∧
+        KernelTrivial
+          (G.baseChange (Spec.map (CommRingCat.ofHom (algebraMap S S')))) L₀ ∧
+        LocIsoOnBase
+          (pullback.snd f
+            (Spec.map (CommRingCat.ofHom (algebraMap S S'))))
+          ((Scheme.Modules.pullback
+            (pullback.fst f
+              (Spec.map (CommRingCat.ofHom (algebraMap S S'))))).obj L)
+          (moduleTensor _ L₀
+            ((Scheme.Modules.pullback (negMor
+              (G.baseChange
+                (Spec.map (CommRingCat.ofHom (algebraMap S S')))))).obj L₀)) := by
+  obtain ⟨S', _, _, hS', hform⟩ := h.locallyCanonicalForm
+  exact ⟨S', _, _, hS', hform _ fun t' P Q ↦ baseChange_mul_left_fst G _ t' P Q⟩
 
 /-- The identity point always satisfies the `2`-torsion equation, so the
 right-hand side of the kernel condition is not vacuous. -/
