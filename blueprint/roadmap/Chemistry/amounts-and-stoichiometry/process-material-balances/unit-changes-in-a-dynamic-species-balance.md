@@ -1,23 +1,26 @@
 # Unit changes in a dynamic species balance
 
-Let $I$ be an interval and let $n : I \to \mathbb{R}^S$ be differentiable with
+Let $I \subseteq \mathbb{R}$ be a time set (for example, an interval), and let
+$n : I \to \mathbb{R}^S$ hold the species amounts. For every $t \in I$, suppose each species
+coordinate has the indicated derivative within $I$:
 
-$$n'(t) = F_{\mathrm{in}}(t) - F_{\mathrm{out}}(t) + g(t) \qquad (t \in I),$$
+$$n'(t) = F_{\mathrm{in}}(t) - F_{\mathrm{out}}(t) + g(t).$$
 
-where $n$ holds the species amounts and $F_{\mathrm{in}}, F_{\mathrm{out}}, g$ are the inflow, outflow and generation rates in
-amount per unit time. Let $\alpha > 0$ convert the amount unit (new amount $= \alpha \times$ old) and $\tau > 0$ the time unit
-(old time $= \tau \times$ new time). Put $\tilde n(s) = \alpha\,n(\tau s)$ and $\tilde F(s) = \alpha\tau\,F(\tau s)$ for each of
-the three rates. Then
+Here $F_{\mathrm{in}}, F_{\mathrm{out}}, g$ are the inflow, outflow, and generation rates in
+amount per unit time. Let $\alpha > 0$ convert the amount unit (new amount $= \alpha \times$ old)
+and $\tau > 0$ convert the time unit (old time $= \tau \times$ new time). Put
+$\tilde n(s) = \alpha\,n(\tau s)$ and $\tilde F(s) = \alpha\tau\,F(\tau s)$ for each of the three rates.
+Then each transformed species coordinate has the indicated derivative within
+$\{s \mid \tau s \in I\}$ at every $s$ in that set:
 
-$$\tilde n'(s) = \tilde F_{\mathrm{in}}(s) - \tilde F_{\mathrm{out}}(s) + \tilde g(s)$$
+$$\tilde n'(s) = \tilde F_{\mathrm{in}}(s) - \tilde F_{\mathrm{out}}(s) + \tilde g(s).$$
 
-for every $s$ with $\tau s \in I$, and conversely, by the inverse factors. Every rate, being an amount per time, scales by the same
-factor $\alpha\tau$, while the accumulation picks up the factor $\tau$ from the chain rule; mass balances behave in the same way
-under a change of mass unit. Converting between a wet and a dry moisture basis changes the composition basis and is not a unit
-change of this kind, and affine temperature scales such as Celsius are not admissible in laws stated for absolute temperature.
-
-The Lean statement uses a derivative within the original time set $I$ and, after conversion, within
-$\{s \mid \tau s \in I\}$. It expresses the balance in each species coordinate.
+Conversely, the inverse factors recover the balance within $I$. Every rate, being an amount per
+time, scales by the same factor $\alpha\tau$, while the accumulation picks up the factor $\tau$
+from the chain rule; mass balances behave in the same way under a change of mass unit. Converting
+between a wet and a dry moisture basis changes the composition basis and is not a unit change of
+this kind, and affine temperature scales such as Celsius are not admissible in laws stated for
+absolute temperature.
 
 ## Sources
 
