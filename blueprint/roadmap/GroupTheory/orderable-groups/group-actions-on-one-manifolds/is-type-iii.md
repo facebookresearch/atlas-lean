@@ -1,0 +1,5 @@
+# Globally contracting actions on the line (type (iii))
+
+An action $\rho$ of a group $G$ on $\mathbb{R}$ by homeomorphisms is of type (iii) (globally contracting) if there are an action $\psi$ of $G$ on $\mathbb{R}$ by non-decreasing (orientation-preserving) homeomorphisms and a continuous non-decreasing map $\varphi : \mathbb{R} \to \mathbb{R}$ with $\varphi(x) \to \pm\infty$ as $x \to \pm\infty$ such that $\varphi(\rho(g)x) = \psi(g)\varphi(x)$ for all $g, x$, the action $\psi$ is minimal (every orbit is dense), and for all reals $a, b$ there is a point $x$ such that for every $\varepsilon > 0$ some $g \in G$ maps $[a, b]$ into $(x - \varepsilon, x + \varepsilon)$ under $\psi(g)$. The action $\rho$ itself is not assumed orientation-preserving in this definition, and $\varphi$ need not be injective (a semiconjugacy).
+
+Source: A. Navas, Group actions on 1-manifolds: a list of very concrete open questions, Proceedings of the International Congress of Mathematicians 2018, Vol. 2, World Scientific (2018), 2029-2056, arXiv:1712.06462, Question 4.

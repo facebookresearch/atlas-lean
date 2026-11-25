@@ -1,0 +1,5 @@
+# Finitely presented non-amenable groups without free subgroups
+
+There is a finitely presented group that is not amenable and contains no free subgroup of rank $2$ (no injective homomorphism from $F_2$). A group $G$ is amenable if it satisfies the Følner condition: for every finite $K \subseteq G$ and real $\varepsilon > 0$ there is a finite nonempty $F \subseteq G$ with $|sF \mathbin{\triangle} F| < \varepsilon |F|$ for every $s \in K$. Ol'shanskii and Sapir construct such a group as an extension of a group of large finite exponent by a cyclic group. This answers Kourovka Problem 8.7 positively.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 8.7 (R. I. Grigorchuk); resolution: A. Yu. Ol'shanskii and M. V. Sapir, Non-amenable finitely presented torsion-by-cyclic groups, Publ. Math. IHÉS 96 (2002), 43-169, Theorem 1.1, https://arxiv.org/abs/math/0208237.

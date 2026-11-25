@@ -9,6 +9,7 @@ Complex characters and representations used to study finite groups: class functi
 - [Character degrees of symmetric groups](character-degrees-of-symmetric-groups/README.md)
 - [Character values of simple groups](character-values-of-simple-groups/README.md)
 - [Convolution on finite groups](convolution-on-finite-groups/README.md)
+- [Fields of values of characters](fields-of-values-of-characters/README.md)
 - [Frobenius group determinant](frobenius-group-determinant/README.md)
 - [Integer group determinants](integer-group-determinants/README.md)
 - [Irreducible characters and class functions](irreducible-characters-and-class-functions/README.md)

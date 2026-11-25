@@ -1,0 +1,5 @@
+# Compression exponents attained by a group
+
+For a group $G$, a finite subset $S \subseteq G$ and a real number $\alpha$, an exponent $\alpha$ is attained if there are a separable real Hilbert space $\mathcal{H}$, a map $f : G \to \mathcal{H}$ with $\lVert f(g) - f(h) \rVert \le d_S(g, h)$ for all $g, h$, and constants $C > 0$ and $D \in \mathbb{R}$ with $C\, d_S(g, h)^{\alpha} - D \le \lVert f(g) - f(h) \rVert$ for all $g, h$. $d_S$ denotes the word distance of a finite subset $S \subseteq G$: the graph distance in the Cayley graph of $S$, in which distinct $u, v \in G$ are adjacent when $us = v$ or $vs = u$ for some $s \in S$. The real power is the real power function, so $0^{\alpha} = 0$ for $\alpha \ne 0$ and $0^0 = 1$. The Hilbert space compression of $G$ is the supremum of the attained exponents.
+
+Source: G. N. Arzhantseva, Uniform embeddings of groups into a Hilbert space, in Manifold Perspectives, Oberwolfach Reports 6 (2009), no. 27, pp. 1527-1529, open problem (ii), p. 1529, DOI 10.4171/OWR/2009/27.

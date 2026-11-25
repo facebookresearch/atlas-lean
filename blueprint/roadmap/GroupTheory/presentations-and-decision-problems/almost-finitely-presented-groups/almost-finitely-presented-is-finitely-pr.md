@@ -1,0 +1,5 @@
+# Kourovka Problem 6.35 (almost finitely presented groups)
+
+The proposition that every group that is almost finitely presented over $\mathbb{Z}$ is finitely presented. Here $G$ is almost finitely presented over $\mathbb{Z}$ when for some $n$ there is a surjective homomorphism $\varphi$ from the free group $F_n$ of rank $n$ onto $G$ whose kernel $R$ satisfies $R = \langle\langle S \rangle\rangle [R, R]$ for some finite set $S \subseteq F_n$, where $\langle\langle S \rangle\rangle$ is the normal closure of $S$ in $F_n$; equivalently, the relation module $R/[R, R]$ is a finitely generated $\mathbb{Z}G$-module. The condition is required of each surjection $F_n \to G$ that witnesses it.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 6.35 (Yu. I. Merzlyakov; question of R. Bieri and R. Strebel); resolution: M. Bestvina and N. Brady, Morse theory and finiteness properties of groups, Invent. Math. 129 (1997), 445-470, Main Theorem, https://doi.org/10.1007/s002220050168.

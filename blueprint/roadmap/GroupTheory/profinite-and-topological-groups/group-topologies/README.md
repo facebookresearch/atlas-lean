@@ -6,3 +6,5 @@
 - [Kourovka Problem 14.4(b) (countable nilpotent groups)](countable-nilpotent-nonabelian-topology.md)
 - [A nilpotent group with non-modular lattice of group topologies](nilpotent-group-topology-lattice-not-mod-2.md)
 - [A countable nilpotent group with modular lattice of group topologies](countable-nilpotent-nonabelian-topology-2.md)
+- [Kourovka Problem 3.35 (locally compact group topologies with the same closed subgroups)](same-closed-subgroups-topologically-isom.md)
+- [Locally compact group topologies are not determined by their closed subgroups](same-closed-subgroups-topologically-isom-2.md)

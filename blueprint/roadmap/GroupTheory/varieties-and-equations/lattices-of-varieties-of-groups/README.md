@@ -1,0 +1,15 @@
+# Lattices of varieties of groups
+
+- [Fully invariant subgroups](is-fully-invariant.md)
+- [Law subgroups of subvarieties of the class-four nilpotent variety](is-nilpotent-class-four-law-subgroup.md)
+- [Kourovka Problem 3.53 (distributivity of the lattice of subvarieties of the class-four nilpotent variety)](nilpotent-class-four-variety-lattice-dis.md)
+- [The lattice of subvarieties of the class-four nilpotent variety is not distributive](nilpotent-class-four-variety-lattice-dis-2.md)
+- [Passable varieties of groups](is-passable.md)
+- [Kourovka Problem 8.26 (non-passable varieties)](non-passable-variety-exists.md)
+- [Non-passable varieties of groups exist](non-passable-variety-exists-holds.md)
+- [Kourovka Problem 6.16 (the number of sparse varieties)](sparse-varieties-continuum.md)
+- [There are continuum many sparse varieties](sparse-varieties-continuum-holds.md)
+- [Kourovka Problem 6.14 for locally finite varieties](locally-finite-varieties-lattice-locally.md)
+- [Kourovka Problem 6.14 for all varieties](varieties-lattice-locally-finite.md)
+- [The lattice of locally finite varieties is not locally finite](locally-finite-varieties-lattice-locally-2.md)
+- [The lattice of varieties of groups is not locally finite](varieties-lattice-locally-finite-refuted.md)

@@ -1,0 +1,3 @@
+# The elementary theory of a variety of groups
+
+For a set $W$ of laws (elements of the free group on countably many generators), the elementary theory of the variety defined by $W$: the set of first-order sentences of the language of groups, coded in prenex form, that hold in every group satisfying all laws in $W$. Sentences are coded in prenex form: a list of quantifiers binding $x_0, x_1, \dots$ in order, followed by a matrix in conjunctive normal form over literals $w = 1$, $w \ne 1$; variables not bound by the prefix are read as $1$. Every first-order sentence of the language of groups is effectively equivalent to such a code.

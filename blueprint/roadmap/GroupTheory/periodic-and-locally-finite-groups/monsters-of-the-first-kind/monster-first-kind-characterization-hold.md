@@ -1,0 +1,5 @@
+# Characterization of monsters of the first kind with finite proper subgroups
+
+An infinite group $G$ all of whose proper subgroups are finite is a monster of the first kind if and only if its centre equals the set $\{g \in G : g^2 = 1\}$ of elements of order at most $2$. A monster of the first kind is an infinite group that has an element of order greater than $2$ and in which, for every element $a$ of order greater than $2$ (infinite order included) and every proper subgroup $H$, some $g \notin H$ has $\langle a, g^{-1}ag \rangle = G$. Shunkov proved one direction and Sozutov the converse.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 6.63 (V. P. Shunkov); resolution: V. P. Shunkov, A periodic group with almost regular involutions, Algebra and Logic 7 (1968), 66-69; A. I. Sozutov, The existence of f-local subgroups in a group, Algebra and Logic 36 (1997), no. 5, 336-348.

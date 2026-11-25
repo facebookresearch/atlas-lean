@@ -1,0 +1,5 @@
+# Navas's Question 13 for the interval (critical regularity)
+
+The proposition that for all reals $0 < \alpha < \beta < 1$ there is a finitely generated group $G$ of homeomorphisms of $[0, 1]$, all of whose elements are orientation-preserving $C^{1+\alpha}$ diffeomorphisms, that does not embed into the group of orientation-preserving $C^{1+\beta}$ diffeomorphisms of $[0, 1]$. Not embedding means that every injective homomorphism from $G$ into the homeomorphism group has some image element that is not an orientation-preserving $C^{1+\beta}$ diffeomorphism. A homeomorphism $f$ of $[0, 1]$ is an orientation-preserving $C^{1+\alpha}$ diffeomorphism if it is non-decreasing and agrees on $[0, 1]$ with a function $F$ that is $C^1$ on $[0, 1]$ (one-sided derivatives at the endpoints) with positive derivative there and with $|F'(x) - F'(y)| \le C|x - y|^{\alpha}$ for some constant $C$ and all $x, y \in [0, 1]$.
+
+Source: A. Navas, Group actions on 1-manifolds: a list of very concrete open questions, Proceedings of the International Congress of Mathematicians 2018, Vol. 2, World Scientific (2018), 2029-2056, arXiv:1712.06462, Question 13.

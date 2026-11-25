@@ -1,0 +1,5 @@
+# Kourovka Problem 5.49(b) (lifting automorphisms of free soluble groups)
+
+The proposition that for all natural numbers $m$ and $n$, every automorphism of $F_m/F_m^{(n)}$ is induced by some automorphism of $F_m/F_m^{(n+1)}$, where an automorphism $\varphi$ of $F_m/F_m^{(n)}$ is induced by an automorphism $\psi$ of $F_m/F_m^{(n+1)}$ if for all $u, v \in F_m$, $\psi(uF_m^{(n+1)}) = vF_m^{(n+1)}$ implies $\varphi(uF_m^{(n)}) = vF_m^{(n)}$. The free soluble group $F_m/F_m^{(n)}$ is the quotient of the free group $F_m$ of rank $m$ by the $n$-th term of its derived series.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 5.49 (V. N. Remeslennikov).

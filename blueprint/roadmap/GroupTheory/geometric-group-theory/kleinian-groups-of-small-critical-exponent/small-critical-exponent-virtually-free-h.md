@@ -1,0 +1,5 @@
+# Discrete hyperbolic isometry groups of small critical exponent are virtually free
+
+For every $n$ there is $\varepsilon > 0$ such that every finitely generated discrete group $\Gamma$ of isometries of hyperbolic $n$-space with $\sum_{\gamma \in \Gamma} e^{-s\,d(o, \gamma o)} < \infty$ for some $s < \varepsilon$ has a free subgroup of finite index. Isometries of hyperbolic $n$-space are the real $(n+1) \times (n+1)$ matrices $A$ with $A^{\mathsf T}JA = J$ for $J = \mathrm{diag}(-1, 1, \dots, 1)$ and $A_{00} > 0$, acting on the hyperboloid model; the displacement of the base point $o = e_0$ is $d(o, Ao) = \operatorname{arcosh} A_{00}$. Liu and Wang prove this with a constant $D(n) < 1/2$, answering Kapovich's question.
+
+Source: M. Bestvina, Questions in Geometric Group Theory (updated July 2004), Q 5.6 (Misha Kapovich), https://www.math.utah.edu/~bestvina/eprints/questions-updated.pdf; resolution: B. Liu and S. Wang, Discrete subgroups of small critical exponent, Geom. Topol. 27 (2023), 2347-2381, arXiv:2008.12365, Corollary 1.6.

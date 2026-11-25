@@ -10,3 +10,5 @@
 - [Breadth of the identity](element-breadth-one.md)
 - [Element breadth is at most the group breadth](element-breadth-le-breadth.md)
 - [The group breadth is attained](exists-breadth-eq-element-breadth.md)
+- [Kourovka Problem 4.69 (Wiegold's conjecture on elements of large breadth)](generated-by-elements-of-large-breadth.md)
+- [Skutin's theorem on generation by elements of large breadth](generated-by-elements-of-large-breadth-h.md)

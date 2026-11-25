@@ -1,0 +1,5 @@
+# Finite relatively free groups have abelian normal subgroups
+
+Every nontrivial finite group $G$ that is free in some variety has a nontrivial abelian normal subgroup. A group $G$ is free in some variety (relatively free) if it has a generating family $(x_i)_{i \in I}$ such that every assignment $x_i \mapsto y_i \in G$ extends to an endomorphism of $G$. Syskin's argument uses the theorem of Aschbacher, Kleidman and Liebeck on exponents of almost simple groups, which relies on the classification of finite simple groups. This answers Kourovka Problem 5.41 positively.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 5.41 (A. Yu. Olshanskii); resolution: S. A. Syskin, letter of 20 August 1992, using M. Aschbacher, P. B. Kleidman and M. W. Liebeck, Exponents of almost simple groups and an application to the restricted Burnside problem, Math. Z. 208 (1991), 401-409, Theorem 1.

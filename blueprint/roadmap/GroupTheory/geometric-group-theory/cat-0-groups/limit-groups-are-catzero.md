@@ -1,0 +1,5 @@
+# Bestvina Question 3.5 (limit groups are CAT(0))
+
+The proposition that every limit group acts geometrically on a proper CAT(0) space. A limit group is a finitely generated group $G$ such that for every finite subset $W \subseteq G$ there is a homomorphism from $G$ to some free group that is injective on $W$. A group acts geometrically on a metric space $X$ when it acts by isometries, properly discontinuously (for compact $K, L \subseteq X$ only finitely many $g$ have $gK \cap L \ne \emptyset$) and cocompactly (some compact $K$ has $X = \bigcup_g gK$). A proper CAT(0) space is a nonempty proper geodesic metric space satisfying $d(x, z)^2 + d(y, w)^2 \le d(x, y)^2 + d(y, z)^2 + d(z, w)^2 + d(w, x)^2$ for all $x, y, z, w$ (the Berg–Nikolaev four-point condition, which characterizes CAT(0) among geodesic spaces).
+
+Source: M. Bestvina, Questions in Geometric Group Theory (updated July 2004), Q 3.5 (Z. Sela), https://www.math.utah.edu/~bestvina/eprints/questions-updated.pdf.
