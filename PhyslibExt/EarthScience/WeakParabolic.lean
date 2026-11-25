@@ -7,7 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib
+public import Mathlib.Analysis.Calculus.ContDiff.Defs
+public import Mathlib.MeasureTheory.Integral.Prod
 public import PhyslibExt.EarthScience.WeakDiffusion
 
 /-!

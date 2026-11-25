@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.EarthScience.WeakParabolic
+import Mathlib.Analysis.Calculus.Deriv.Pow
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 import Mathlib.Tactic.NormNum
 
@@ -84,16 +85,7 @@ example : (∫ _t in (0 : ℝ)..1, ∫ _x in (0 : ℝ)..1, (1 : ℝ))
       ∂(volume.restrict (Set.Icc (0 : ℝ) 1 ×ˢ Set.Icc (0 : ℝ) 1)) := by
   exact iterated_eq_product (by norm_num) _ (integrable_const _)
 
-/-- Floor is constant on the first slab of a 2-slab partition of `[0, 1]`. -/
-example : Nat.floor ((0.25 - 0) / ((1 - 0) / (2 : ℝ))) = 0 := by
-  have h := floor_slab_eq (t0 := (0 : ℝ)) (t1 := (1 : ℝ)) (by norm_num)
-    (N := 2) (by norm_num) (k := 0)
-    (t := (0.25 : ℝ)) (by
-      rw [Set.mem_Ico]
-      norm_num)
-  exact h
-
-/-! ## The time-continuity premise of the energy identity -/
+/-! ## The time-continuity field and the energy identity -/
 
 /-- A solution of the homogeneous equation that is nonzero only at the time `ts`, where its
 profile is `x (1 - x)`. -/
@@ -112,6 +104,19 @@ lemma spike_profile (ts : ℝ) :
 lemma rect_isFiniteMeasure (t0 t1 : ℝ) :
     IsFiniteMeasure (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1)) :=
   ⟨by rw [Measure.restrict_apply_univ]; exact (isCompact_Icc.prod isCompact_Icc).measure_lt_top⟩
+
+lemma quad_memLp : MemLp (fun x : ℝ => x * (1 - x)) 2 (volume.restrict (Set.Icc 0 1)) := by
+  refine MemLp.of_bound (by fun_prop : Continuous fun x : ℝ => x * (1 - x)).aestronglyMeasurable 1
+    ((ae_restrict_iff' measurableSet_Icc).mpr (Eventually.of_forall fun x hx => ?_))
+  obtain ⟨hx0, hx1⟩ := hx
+  rw [Real.norm_eq_abs, abs_le]
+  constructor <;> nlinarith
+
+lemma spike_slice_memLp (ts t : ℝ) :
+    MemLp (fun x => spikeW ts t x) 2 (volume.restrict (Set.Icc 0 1)) := by
+  by_cases ht : t = ts
+  · simpa [spikeW, ht] using quad_memLp
+  · simp [spikeW, ht]
 
 lemma spike_memLp (t0 t1 ts : ℝ) :
     MemLp (Function.uncurry (spikeW ts)) 2
@@ -163,16 +168,16 @@ lemma integral_eq_zero_of_ne_time {a b ts : ℝ} (g : ℝ → ℝ)
 lemma spike_weak {t0 t1 ts : ℝ} (κ φ : ℝ → ℝ → ℝ) :
     ∫ t in t0..t1, ∫ x in (0 : ℝ)..1,
         (-spikeW ts t x * deriv (fun s => φ s x) t
-          + κ t x * spikeWx ts t x * deriv (fun y => φ t y) x) = 0 :=
-  integral_eq_zero_of_ne_time (ts := ts) _ fun t ht => by simp [spikeW, spikeWx, ht]
+          + κ t x * spikeWx ts t x * deriv (fun y => φ t y) x)
+      = ∫ t in t0..t1, ∫ x in (0 : ℝ)..1, (0 : ℝ → ℝ → ℝ) t x * φ t x := by
+  rw [integral_eq_zero_of_ne_time (ts := ts) _ fun t ht => by simp [spikeW, spikeWx, ht]]
+  simp
 
 lemma quad_eLpNorm_ne_zero :
     (eLpNorm (fun x : ℝ => x * (1 - x)) 2 (volume.restrict (Set.Icc 0 1))).toReal ≠ 0 := by
   intro h
-  have hmem : MemLp (fun x : ℝ => x * (1 - x)) 2 (volume.restrict (Set.Icc 0 1)) :=
-    WeakH10.memLp_toFun quadWeak
   have h0 : eLpNorm (fun x : ℝ => x * (1 - x)) 2 (volume.restrict (Set.Icc 0 1)) = 0 :=
-    ((ENNReal.toReal_eq_zero_iff _).mp h).resolve_right hmem.eLpNorm_ne_top
+    ((ENNReal.toReal_eq_zero_iff _).mp h).resolve_right quad_memLp.eLpNorm_ne_top
   have hae := (eLpNorm_eq_zero_iff two_ne_zero).mp h0
   have heq := Measure.eqOn_Icc_of_ae_eq (μ := volume) zero_ne_one hae
     (by fun_prop : Continuous fun x : ℝ => x * (1 - x)).continuousOn continuousOn_const
@@ -219,62 +224,57 @@ lemma spike_energy_ne {t0 ts : ℝ} (h0 : t0 < ts) (κ : ℝ → ℝ → ℝ) :
     zero_pow two_ne_zero]
   exact pow_ne_zero 2 quad_eLpNorm_ne_zero
 
-/-- The energy identity hypothesis of `weak_parabolic_exists_unique_conditional` needs its
-time-continuity premise. For every `κ`, the time spike `spikeW` has an `H¹₀(0,1)` profile at
-each time, lies in `L²` on the rectangle with its weak derivative, and solves the
-homogeneous weak equation, yet it is not continuous in time and violates the identity at
-`ts`. This is the counterexample that made the unrestricted identity contradictory. -/
+/-- The time-continuity field of `IsWeakParabolicSolution` is what makes the energy-identity
+hypothesis of `weak_parabolic_unique` satisfiable. For every `κ`, the time spike `spikeW`
+meets every other field of the class for the homogeneous equation (`L²` slices, `H¹₀`
+profiles at every time, `L²` on the rectangle, the weak equation), but not the continuity
+field, and it violates the energy identity at `ts`. -/
 example {t0 t1 ts : ℝ} (h0 : t0 < ts) (h1 : ts < t1) (κ : ℝ → ℝ → ℝ) :
-    (∀ t, ∃ h : WeakH10, h.toFun = spikeW ts t ∧ h.weakDeriv = spikeWx ts t)
+    (∀ t ∈ Set.Icc t0 t1, MemLp (fun x => spikeW ts t x) 2 (volume.restrict (Set.Icc 0 1)))
+    ∧ (∀ᵐ t ∂(volume.restrict (Set.Icc t0 t1)),
+        ∃ h : WeakH10, h.toFun = spikeW ts t ∧ h.weakDeriv = spikeWx ts t)
     ∧ MemLp (Function.uncurry (spikeW ts)) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1))
     ∧ MemLp (Function.uncurry (spikeWx ts)) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1))
     ∧ (∀ φ : ℝ → ℝ → ℝ, ParabolicTest t0 t1 φ →
         ∫ t in t0..t1, ∫ x in (0 : ℝ)..1,
-          (-spikeW ts t x * deriv (fun s => φ s x) t
-            + κ t x * spikeWx ts t x * deriv (fun y => φ t y) x) = 0)
-    ∧ ¬ (∀ s ∈ Set.Icc t0 t1, Filter.Tendsto
-        (fun t => (eLpNorm (fun x => spikeW ts t x - spikeW ts s x) 2
-          (volume.restrict (Set.Icc 0 1))).toReal) (nhdsWithin s (Set.Icc t0 t1)) (nhds 0))
+            (-spikeW ts t x * deriv (fun s => φ s x) t
+              + κ t x * spikeWx ts t x * deriv (fun y => φ t y) x)
+          = ∫ t in t0..t1, ∫ x in (0 : ℝ)..1, (0 : ℝ → ℝ → ℝ) t x * φ t x)
+    ∧ ¬ IsWeakParabolicSolution t0 t1 κ 0 (spikeW ts) (spikeWx ts)
     ∧ (eLpNorm (fun x => spikeW ts ts x) 2 (volume.restrict (Set.Icc 0 1))).toReal ^ 2
           + 2 * ∫ t in t0..ts, ∫ x in (0 : ℝ)..1, κ t x * (spikeWx ts t x) ^ 2
         ≠ (eLpNorm (fun x => spikeW ts t0 x) 2 (volume.restrict (Set.Icc 0 1))).toReal ^ 2 :=
-  ⟨spike_profile ts, (spike_memLp t0 t1 ts).1, (spike_memLp t0 t1 ts).2,
-    fun φ _ => spike_weak κ φ,
-    fun h => spike_not_continuous h0.le h1 (h ts ⟨h0.le, h1.le⟩),
+  ⟨fun t _ => spike_slice_memLp ts t, Eventually.of_forall (spike_profile ts),
+    (spike_memLp t0 t1 ts).1, (spike_memLp t0 t1 ts).2, fun φ _ => spike_weak κ φ,
+    fun h => spike_not_continuous h0.le h1 (h.continuous_slice ts ⟨h0.le, h1.le⟩),
     spike_energy_ne h0 κ⟩
 
-/-! ## The existence data has a model -/
+/-! ## `weak_parabolic_unique` on concrete data -/
 
-/-- The zero solution, for `κ = 1`, zero forcing and zero initial data on `(0, 1) × (0, 1)`,
-meets every clause of the existence data of `weak_parabolic_exists_unique_conditional`.
-Given the energy identity for this `κ`, the theorem returns a solution together with its
-initial value `u 0 = 0` in `L²(0,1)` and its uniqueness clause. -/
+/-- The zero function solves the homogeneous equation, for every diffusivity. -/
+lemma zero_isWeakParabolicSolution (t0 t1 : ℝ) (κ : ℝ → ℝ → ℝ) :
+    IsWeakParabolicSolution t0 t1 κ 0 (fun _ _ => 0) (fun _ _ => 0) where
+  memLp_slice _ _ := MemLp.zero'
+  continuous_slice _ _ := by simpa using tendsto_const_nhds
+  profile := Eventually.of_forall fun _ => ⟨zeroWeak, rfl, rfl⟩
+  memLp := MemLp.zero'
+  memLp_deriv := MemLp.zero'
+  weak_eq _ _ := by simp
+
+/-- With `κ = 1`, no forcing and zero initial value on `(0, 1) × (0, 1)`, every solution of
+the class vanishes in `L²(0,1)` at every time, given the energy identity for `κ = 1`:
+`weak_parabolic_unique` compares it with the zero solution. -/
 example
-    (hEnergyId : ∀ (w wx : ℝ → ℝ → ℝ),
-      (∀ t, ∃ h : WeakH10, h.toFun = w t ∧ h.weakDeriv = wx t) →
-      MemLp (Function.uncurry w) 2 (volume.restrict (Set.Icc (0 : ℝ) 1 ×ˢ Set.Icc 0 1)) →
-      MemLp (Function.uncurry wx) 2 (volume.restrict (Set.Icc (0 : ℝ) 1 ×ˢ Set.Icc 0 1)) →
-      (∀ s ∈ Set.Icc (0 : ℝ) 1, Filter.Tendsto
-        (fun t => (eLpNorm (fun x => w t x - w s x) 2 (volume.restrict (Set.Icc 0 1))).toReal)
-        (nhdsWithin s (Set.Icc 0 1)) (nhds 0)) →
-      (∀ φ : ℝ → ℝ → ℝ, ParabolicTest 0 1 φ →
-        ∫ t in (0 : ℝ)..1, ∫ x in (0 : ℝ)..1,
-            (-w t x * deriv (fun s => φ s x) t + 1 * wx t x * deriv (fun y => φ t y) x) = 0) →
-      ∀ τ : ℝ, τ ∈ Set.Icc (0 : ℝ) 1 →
+    (hEnergyId : ∀ w wx : ℝ → ℝ → ℝ, IsWeakParabolicSolution 0 1 (fun _ _ => 1) 0 w wx →
+      ∀ τ ∈ Set.Icc (0 : ℝ) 1,
         (eLpNorm (fun x => w τ x) 2 (volume.restrict (Set.Icc 0 1))).toReal ^ 2
-          + 2 * ∫ t in (0 : ℝ)..τ, ∫ x in (0 : ℝ)..1, 1 * (wx t x) ^ 2
-          = (eLpNorm (fun x => w 0 x) 2 (volume.restrict (Set.Icc 0 1))).toReal ^ 2) :
-    ∃ u : ℝ → ℝ → ℝ,
-      eLpNorm (fun x => u 0 x - 0) 2 (volume.restrict (Set.Icc 0 1)) = 0 := by
-  obtain ⟨u, -, -, -, -, -, -, -, hInit, -, -⟩ :=
-    weak_parabolic_exists_unique_conditional (t0 := 0) (t1 := 1) (κ := fun _ _ => 1)
-      (kmin := 1) (kmax := 1) (F := fun _ _ => 0) (u0 := fun _ => 0) one_pos one_pos
-      aestronglyMeasurable_const (Eventually.of_forall fun _ => ⟨le_rfl, le_rfl⟩)
-      MemLp.zero'
-      ⟨fun _ _ => 0, fun _ _ => 0, fun _ => ⟨zeroWeak, rfl, rfl⟩, MemLp.zero', MemLp.zero',
-        fun _ _ => by simpa using tendsto_const_nhds, fun _ _ => by simp, by simp, by simp,
-        fun _ _ => by simp⟩
-      hEnergyId
-  exact ⟨u, hInit⟩
+          + 2 * ∫ t in (0 : ℝ)..τ, ∫ x in (0 : ℝ)..1, (fun _ _ => (1 : ℝ)) t x * (wx t x) ^ 2
+          = (eLpNorm (fun x => w 0 x) 2 (volume.restrict (Set.Icc 0 1))).toReal ^ 2)
+    {u ux : ℝ → ℝ → ℝ} (hu : IsWeakParabolicSolution 0 1 (fun _ _ => 1) 0 u ux)
+    (hinit : eLpNorm (fun x => u 0 x) 2 (volume.restrict (Set.Icc 0 1)) = 0) :
+    ∀ t ∈ Set.Icc (0 : ℝ) 1, (fun x => u t x) =ᵐ[volume.restrict (Set.Icc 0 1)] 0 :=
+  weak_parabolic_unique (u0 := 0) zero_lt_one (kmin := 1) (kmax := 1) zero_lt_one
+    aestronglyMeasurable_const (Eventually.of_forall fun _ => ⟨le_rfl, le_rfl⟩) hEnergyId
+    (zero_isWeakParabolicSolution 0 1 _) hu (by simp) (by simpa using hinit)
 
 end EarthScience
