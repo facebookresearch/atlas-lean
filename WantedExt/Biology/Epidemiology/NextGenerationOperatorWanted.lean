@@ -21,9 +21,10 @@ generations; under an irreducibility hypothesis every nonzero nonnegative introd
 infection grows at rate `R₀` (Remark 3). For a separable kernel `k(ξ, η) = a(ξ) b(η)` the
 operator has one-dimensional range and `R₀ = ∫ b S a` (Eqs. (3.1)–(3.3)).
 
-The generation-growth factor `inf_m ‖K^m‖^(1/m)` is the spectral radius of `K` by Gelfand's
-formula. The finite-dimensional threshold `R₀ = ρ(F V⁻¹)` of van den Driessche and Watmough is
-proved in `Domains.Biology.Epidemiology.NextGenerationMatrix`.
+The generation-growth factor `inf_m ‖K^m‖^(1/m)` is the Gelfand radius of the real bounded
+operator `K`, which equals the spectral radius of its complexification by Gelfand's formula. The
+finite-dimensional threshold `R₀ = ρ(F V⁻¹)` of van den Driessche and Watmough is proved in
+`Domains.Biology.Epidemiology.NextGenerationMatrix`.
 
 Sources: O. Diekmann, J. A. P. Heesterbeek and J. A. J. Metz, "On the definition and the
 computation of the basic reproduction ratio R₀ in models for infectious diseases in
@@ -46,8 +47,9 @@ open MeasureTheory Filter Topology
 
 variable {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
 
-/-- The per-generation growth factor `inf_{m ≥ 1} ‖K^m‖^(1/m)` of a bounded operator, the
-basic reproduction ratio `R₀ = r(K)` of Diekmann, Heesterbeek and Metz (1990, Eq. (2.2)). -/
+/-- The Gelfand radius (per-generation growth factor) `inf_{m ≥ 1} ‖K^m‖^(1/m)` of a bounded real
+operator `K`, which equals the spectral radius of its complexification and defines the basic
+reproduction ratio `R₀ = r(K)` of Diekmann, Heesterbeek and Metz (1990, Eq. (2.2)). -/
 noncomputable def generationGrowth (K : Lp ℝ 1 μ →L[ℝ] Lp ℝ 1 μ) : ℝ :=
   ⨅ m : ℕ, ‖K ^ (m + 1)‖ ^ ((1 : ℝ) / (m + 1))
 
