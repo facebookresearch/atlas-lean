@@ -110,7 +110,7 @@ $N(t) = N_0 \exp\bigl(-\int_0^t k(T(s))\,ds\bigr)$
 
 No sign condition on $D_{\mathrm{ref}}$ or $z$ is needed, reading a division by zero as $0$; in
 the model both are positive. -/
-theorem log_linear_inactivation {Dref Tref z N₀ tf : ℝ} {T : ℝ → ℝ}
+theorem log_linear_inactivation (Dref Tref z : ℝ) {N₀ tf : ℝ} {T : ℝ → ℝ}
     (hT : ContinuousOn T (Icc 0 tf)) (hN₀ : 0 < N₀) :
     let N : ℝ → ℝ := fun t => N₀ * exp (-∫ s in (0 : ℝ)..t, rate Dref Tref z (T s))
     (N 0 = N₀ ∧
