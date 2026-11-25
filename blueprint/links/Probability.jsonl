@@ -5544,3 +5544,5 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/Probability/not-yet-classified/part-15/value-of-information/README.md"}], "id": "af_f881bd57abe9f97ca149bdb1", "extensions": {"org.autoform": {"navigation": "module"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Probability/not-yet-classified/part-15/ville/README.md"}], "id": "af_c7061b2002767d1d64b45df6", "extensions": {"org.autoform": {"navigation": "module"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Probability/not-yet-classified/part-15/wald-envelope/README.md"}], "id": "af_27ddad8b4646e3f7ccff148d", "extensions": {"org.autoform": {"navigation": "module"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Probability/stochastic-calculus/multidimensional-ornstein-uhlenbeck-process/stationary-law-of-a-linear-stochastic-system-and-the-lyapunov-equation.md"}], "id": "af_8bfd2b708d7eaa43273d54df", "extensions": {"org.atlas-wiki": {"kind": "theorem"}, "org.autoform": {"not_ready": true}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Probability/stochastic-calculus/multidimensional-ornstein-uhlenbeck-process/README.md"}], "id": "af_7ffdbc00f0fc23dc61cea456"}
