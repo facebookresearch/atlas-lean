@@ -46,6 +46,8 @@
 - [Posterior expected number of correctly decoded states](expected-correct.md)
 - [The expected number of correct states is a sum of posteriors](expected-correct-eq-sum-smoothed.md)
 - [Posterior decoding maximizes the expected number of correctly decoded states](expected-correct-le-posterior-path.md)
+- [Scaled forward recursion: exact log-likelihood and filtering identities](scaled-forward-recursion-and-log-likelihood-with.md)
+- [Forward filtering with backward sampling draws the exact posterior path](forward-filter-backward-sample-threading-is-an-e.md)
 
 ## Related topics
 

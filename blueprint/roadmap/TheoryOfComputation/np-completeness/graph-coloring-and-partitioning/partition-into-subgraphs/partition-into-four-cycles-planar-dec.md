@@ -1,0 +1,3 @@
+# PARTITION INTO 4-CYCLES FOR PLANAR GRAPHS as a decision problem
+
+The decision problem PARTITION INTO 4-CYCLES FOR PLANAR GRAPHS accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of quadruples $(n, E, m, F)$ (two vertex counts and two edge lists), to an instance that is well-formed for PARTITION INTO 4-CYCLES FOR PLANAR GRAPHS and feasible for PARTITION INTO ISOMORPHIC SUBGRAPHS: the vertices of the planar graph split into blocks of four, each of which contains a 4-cycle (not necessarily as an induced subgraph). It rejects every bitstring that does not decode to such an instance.

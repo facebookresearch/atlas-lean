@@ -15,6 +15,7 @@ An agent with a value $t \in [a, b]$ who reports $s$ to a single-parameter mecha
 - [Revenue equivalence (in expectation)](set-integral-payment-eq.md)
 - [Individual rationality from the lowest type](utility-nonneg-of-lowest.md)
 - [Myerson's Lemma 2 for one bidder](is-incentive-compatible-on-and-utility-n.md)
+- [Single-parameter quasilinear mechanisms: model, DSIC and IR](remaining-clauses-of-single-parameter-quasilinear-mechanisms.md)
 
 ## Related topics
 
