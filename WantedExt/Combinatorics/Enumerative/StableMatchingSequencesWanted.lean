@@ -14,6 +14,7 @@ public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Data.Nat.Factorial.Basic
 public import Mathlib.Data.Rat.Defs
 public import MathlibExt.Combinatorics.Enumerative.GaleShapleyOneRound
+public import MathlibExt.Combinatorics.Enumerative.StableMatchingHellCouples
 public import MathlibExt.Combinatorics.Enumerative.StableMatchingSequences
 
 set_option autoImplicit false
@@ -150,17 +151,6 @@ public theorem_wanted mutually_latin_soulmate_profiles_card (n k : ℕ) :
           (∀ r : Fin n, Function.Injective fun j => P.2 j r) ∧ soulmatePairCount P = k} : ℚ) =
       (latinSquareCount n : ℚ) ^ 2 / (n ! : ℚ) * (n.choose k : ℚ) *
         ∑ i ∈ range (n - k + 1), (-1 : ℚ) ^ i * ((n - k)! : ℚ) / (i ! : ℚ)
-
-/-- **At most one hell-couple in a stable matching.** Let $P$ be a preference profile of $n$
-men and $n$ women, and let $\mu$ be a stable matching for $P$, in which man $i$ marries woman
-$\mu(i)$. Then at most one man $i$ forms a hell-couple with his wife $\mu(i)$.
-
-Source: Borodin et al., *Sequences of the Stable Matching Problem*, Journal of
-Integer Sequences 27 (2024), Article 24.2.2, Proposition 12
-(`jis-2024-24.2.2-prop-12`). -/
-public theorem_wanted hellCouple_subsingleton (P : PreferenceProfile n)
-    (μ : Equiv.Perm (Fin n)) (hμ : IsStableMatching P μ) :
-    {i : Fin n | IsHellCouple P μ i}.Subsingleton
 
 /-- **Profiles with a pair of outcasts.** In a preference profile for $n$ men and $n$ women, a man
 $i$ and a woman $j$ form a pair of outcasts when every man other than $i$ ranks $j$ last and every

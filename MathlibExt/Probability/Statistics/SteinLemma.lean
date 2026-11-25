@@ -60,8 +60,8 @@ covered.
 * `jamesSteinGrandMean`, `integral_jamesSteinGrandMean_risk_lt`: shrinkage towards the grand mean
   dominates `X` for `N ≥ 4` and any known `σ² > 0` (Efron 2021, Theorem 1, credited there to James
   and Stein 1961).
-* `jamesSteinPlus`: the positive-part estimator (its improvement over James–Stein is recorded in
-  `WantedExt.Probability.JamesSteinWanted`).
+* `jamesSteinPlus`: the positive-part estimator. Its risk comparison with James–Stein is proved in
+  `MathlibExt.Probability.Statistics.JamesSteinPlus`.
 
 ## References
 

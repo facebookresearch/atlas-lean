@@ -558,7 +558,9 @@ class ParallelAuditTests(unittest.TestCase):
             self.assertEqual(fake.peak, 1)
 
     def test_the_gate_is_off_for_an_explicit_count(self):
-        fake = FakeLean(delay=0.3)
+        all_started = threading.Event()
+        fake = FakeLean(hold={'L.M000': all_started, 'L.M008': all_started},
+                        launched=lambda calls: calls == 3 and all_started.set())
         with mock.patch.dict(os.environ, {audit.WORKERS_VARIABLE: '3'}), \
                 mock.patch.object(audit.subprocess, 'run', fake), mock.patch.object(audit, 'launch_lean', fake.launch), \
                 mock.patch.object(audit, 'available_memory', return_value=0), contextlib.redirect_stdout(io.StringIO()):

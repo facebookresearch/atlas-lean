@@ -1,6 +1,5 @@
 # Right Derived Comparison
 
-- [Map Homological Complex Homology Iso](map-homological-complex-homology-iso.md)
 - [Map Homotopy Category Homology Iso](map-homotopy-category-homology-iso.md)
 - [An exact functor may be pulled out of a right derived functor](right-derived-comp-iso.md)
 - [Right Derived Iso Of Nat Iso](right-derived-iso-of-nat-iso.md)

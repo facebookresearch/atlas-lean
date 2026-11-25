@@ -316,29 +316,6 @@ public theorem card_maxNormBall (h : ℕ) : (maxNormBall h).card = (2 * h + 1) ^
   simp [maxNormBall, Finset.card_product, hcard, pow_two]
 
 /--
-**Knight distance asymptotics.** There is an absolute constant $M \in \mathbb{R}$ with the
-following property. Let $a$ and $b$ be natural numbers with $1 \le a < b$, $\gcd(a, b) = 1$ and
-$a + b$ odd, let $N_{a,b} = \{(\pm a, \pm b), (\pm b, \pm a)\}$ be the $(a,b)$-knight's move set,
-and for $p \in \mathbb{Z}^2$ let $d_{a,b}(p)$ be the piece distance of $p$ for $N_{a,b}$. Then
-for all integers $x$ and $y$ with $0 \le y \le x$: if $by \le ax$, then
-$|d_{a,b}(x, y) - x/b| \le Mb$; and if $ax < by$, then
-$|d_{a,b}(x, y) - (x + y)/(a + b)| \le Mb$.
-
-Source: Christian Táfula, *Knights Are 24/13 Times Faster than the King*, The Fibonacci Quarterly
-62(3) (2024), Theorem 1.1.
--/
-public theorem_wanted knight_distance_asymptotics :
-    ∃ M : ℝ, ∀ (a b : ℕ) (x y : ℤ),
-      1 ≤ a → a < b → Nat.Coprime a b → Odd (a + b) →
-      0 ≤ y → y ≤ x →
-      (((b : ℤ) * y ≤ (a : ℤ) * x →
-          |(pieceDistance (knightMoves (a : ℤ) (b : ℤ)) (x, y) : ℝ) -
-              (x : ℝ) / (b : ℝ)| ≤ M * b) ∧
-        ((a : ℤ) * x < (b : ℤ) * y →
-          |(pieceDistance (knightMoves (a : ℤ) (b : ℤ)) (x, y) : ℝ) -
-              ((x : ℝ) + (y : ℝ)) / ((a : ℝ) + (b : ℝ))| ≤ M * b))
-
-/--
 **Velocity formula for the (a, b)-knight.** Let $a$ and $b$ be natural numbers with
 $1 \le a < b$, $\gcd(a, b) = 1$ and $a + b$ odd, let
 $N_{a,b} = \{(\pm a, \pm b), (\pm b, \pm a)\}$ be the $(a,b)$-knight's move set, and for

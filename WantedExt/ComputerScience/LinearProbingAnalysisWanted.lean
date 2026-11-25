@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Algorithms.Lean.DataStructures.LinearProbingAnalysis
+public import CSLibExt.Algorithms.Lean.DataStructures.LinearProbingInsertionCost
 public import Mathlib.Order.Filter.AtTopBot.Defs
 public import Mathlib.Topology.Instances.Real.Lemmas
 
@@ -21,7 +21,9 @@ Knuth's exact mean costs of linear probing and their load-factor asymptotics, fo
 independent uniform hash addresses). Source: D. E. Knuth, *Notes on "open" addressing*,
 22 July 1963, typeset by H. Prodinger in 1997.
 
-* `insertionCost_eq`: Theorem 2 of the note, `M(N, k) = (1 + E_1(N, k)) / 2` for `1 ≤ k ≤ N`.
+The exact insertion formula `insertionCost_eq` is proved in
+`CSLibExt.Algorithms.Lean.DataStructures.LinearProbingInsertionCost`.
+
 * `successfulSearchCost_eq`: Section 7 of the note, `T(N, k) = (1 + E_0(N, k)) / 2`.
 * `tendsto_insertionCost`, `tendsto_successfulSearchCost`: with `n` items in `N` cells and
   `n / N → α < 1`, the costs tend to `(1 + 1 / (1 - α) ^ 2) / 2` and `(1 + 1 / (1 - α)) / 2`.
@@ -39,14 +41,6 @@ set_option autoImplicit false
 open Filter Topology
 
 namespace Cslib.Algorithms.Lean.LinearProbing
-
-/-- **Knuth's exact mean insertion cost for linear probing** (Knuth, *Notes on "open"
-addressing*, 1963, Theorem 2). For `1 ≤ k ≤ N`, the expected number of probes to enter the
-`k`-th item into a cyclic table of `N` cells by linear probing, all hash addresses independent and
-uniform, is `M(N, k) = (1 + E_1(N, k)) / 2`, where
-`E_1(N, k) = ∑_{j < k} (j + 1) (k - 1)(k - 2)⋯(k - j) / N ^ j`. -/
-theorem_wanted insertionCost_eq (N k : ℕ) (hk : 1 ≤ k) (hkN : k ≤ N) :
-    insertionCost N (k - 1) = (1 + knuthE 1 N k) / 2
 
 /-- **Knuth's exact mean successful-search cost for linear probing** (Knuth, *Notes on "open"
 addressing*, 1963, Section 7, from Theorem 2). For `1 ≤ k ≤ N`, the average number of probes of

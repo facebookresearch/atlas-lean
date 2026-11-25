@@ -31,9 +31,13 @@ feasible set is a closed, hence compact, subset of the compact
 product `Us ^ (Fin N)` and the cost is continuous on it. At `N = 0`
 feasibility is exactly `x₀ ∈ Xf` (the empty control sequence exists
 even when `Us` is empty) and the cost is `V x₀`.
+The shifted-and-appended input sequence gives recursive feasibility:
+feasibility at a state implies feasibility at its successor when the
+terminal set is contained in the state constraint set and the terminal
+feedback keeps terminal states admissible and inside the terminal set.
 
 Provenance: the finite-horizon model-predictive-control attainment
-fact; control-theory roadmap leaf `SSC-S03.T01` (clause `SSC-S03.c01`).
+fact.
 -/
 
 open Set
@@ -105,8 +109,8 @@ private theorem cost_continuous {X U : Type*} [TopologicalSpace X]
     exact hℓ.comp ((traj_continuous hf x₀ k.val (Nat.le_of_lt k.2)).prodMk (continuous_apply k))
   · exact hV.comp (traj_continuous hf x₀ N le_rfl)
 
-/-- Finite-horizon constrained optimizer attainment (roadmap leaf
-`SSC-S03.T01`, clause `SSC-S03.c01`): with continuous dynamics `f`,
+/-- Finite-horizon constrained optimizer attainment: with continuous
+dynamics `f`,
 compact input set `Us` (in a Hausdorff input space), closed state and
 terminal constraint sets, continuous stage and terminal costs, and at
 least one feasible finite input sequence, the `N`-step problem attains
@@ -174,6 +178,110 @@ theorem exists_optimal {X U : Type*} [TopologicalSpace X]
   obtain ⟨u, hu_mem, hmin⟩ := hCompact.exists_isMinOn hNonempty hCont
   refine ⟨u, hu_mem, fun v hv => ?_⟩
   exact isMinOn_iff.mp hmin v hv
+
+/-- The shifted input sequence used for recursive feasibility: it drops
+the first input, shifts the remaining ones, and appends the terminal
+feedback `κ` applied to the terminal state. -/
+def shiftAppend {X U : Type*} (f : X → U → X) (x₀ : X) {N : ℕ}
+    (u : Fin N → U) (κ : X → U) : Fin N → U :=
+  fun k => if h : k.val + 1 < N then u ⟨k.val + 1, h⟩
+    else κ (traj f x₀ u N le_rfl)
+
+private theorem traj_zero {X U : Type*} (f : X → U → X) (x₀ : X) {N : ℕ}
+    (u : Fin N → U) (h : 0 ≤ N) :
+    traj f x₀ u 0 h = x₀ :=
+  rfl
+
+private theorem traj_succ {X U : Type*} (f : X → U → X) (x₀ : X) {N : ℕ}
+    (u : Fin N → U) (k : ℕ) (h : k + 1 ≤ N) :
+    traj f x₀ u (k + 1) h =
+      f (traj f x₀ u k (Nat.le_of_succ_le h)) (u ⟨k, h⟩) :=
+  rfl
+
+private theorem traj_proof_irrel {X U : Type*} (f : X → U → X) (x₀ : X) {N : ℕ}
+    (u : Fin N → U) (k : ℕ) (h1 h2 : k ≤ N) :
+    traj f x₀ u k h1 = traj f x₀ u k h2 :=
+  rfl
+
+/-- The trajectory under the shifted sequence, started from the first
+successor state, agrees with the original trajectory shifted by one. -/
+theorem traj_shiftAppend {X U : Type*} (f : X → U → X) (x₀ : X) {N : ℕ}
+    (hN : 1 ≤ N) (u : Fin N → U) (κ : X → U) (k : ℕ) (hk : k + 1 ≤ N) :
+    traj f (f x₀ (u ⟨0, hN⟩)) (shiftAppend f x₀ u κ) k (Nat.le_of_succ_le hk) =
+      traj f x₀ u (k + 1) hk := by
+  have aux : ∀ (k : ℕ) (hk : k + 1 ≤ N),
+      traj f (f x₀ (u ⟨0, hN⟩)) (shiftAppend f x₀ u κ) k (Nat.le_of_succ_le hk) =
+        traj f x₀ u (k + 1) hk := by
+    intro k
+    induction k with
+    | zero =>
+      intro hk
+      rw [traj_zero, traj_succ, traj_zero]
+    | succ k ih =>
+      intro hk
+      rw [traj_succ, traj_succ]
+      have hlt : k + 1 < N := by omega
+      have hsh : ∀ (h : k < N), shiftAppend f x₀ u κ ⟨k, h⟩ = u ⟨k + 1, hk⟩ := by
+        intro h
+        simp only [shiftAppend]
+        rw [dite_eq_left hlt]
+      rw [hsh _, ih (Nat.le_of_succ_le hk)]
+  exact aux k hk
+
+private theorem traj_shiftAppend_gen {X U : Type*} (f : X → U → X) (x₀ : X) {N : ℕ}
+    (hN : 1 ≤ N) (u : Fin N → U) (κ : X → U) (k : ℕ) (hk : k + 1 ≤ N)
+    (h1 : k ≤ N) (h2 : k + 1 ≤ N) :
+    traj f (f x₀ (u ⟨0, hN⟩)) (shiftAppend f x₀ u κ) k h1 =
+      traj f x₀ u (k + 1) h2 :=
+  (traj_proof_irrel _ _ _ k h1 (Nat.le_of_succ_le hk)).trans
+    ((traj_shiftAppend f x₀ hN u κ k hk).trans
+      (traj_proof_irrel _ _ _ (k + 1) hk h2))
+
+/-- Recursive feasibility by shift and append: if the terminal set
+`Xf` is contained in the state constraint set, and the terminal feedback
+`κ` keeps terminal states admissible and inside `Xf`, then feasibility
+at `x₀` over horizon `N ≥ 1` implies feasibility at the successor state
+`f x₀ (u 0)` under the shifted-and-appended sequence. -/
+theorem feasible_shift {X U : Type*} (f : X → U → X) (x₀ : X)
+    (Us : Set U) (Xs Xf : Set X) {N : ℕ} (hN : 1 ≤ N)
+    (hsub : Xf ⊆ Xs) (κ : X → U)
+    (hκU : ∀ x ∈ Xf, κ x ∈ Us)
+    (hκf : ∀ x ∈ Xf, f x (κ x) ∈ Xf)
+    (u : Fin N → U) (hu : Feasible f x₀ Us Xs Xf N u) :
+    Feasible f (f x₀ (u ⟨0, hN⟩)) Us Xs Xf N (shiftAppend f x₀ u κ) := by
+  obtain ⟨hU, hX, hXf⟩ := hu
+  refine ⟨?_, ?_, ?_⟩
+  · intro k
+    simp only [shiftAppend]
+    split
+    · exact hU _
+    · exact hκU _ hXf
+  · intro k hk
+    have hk' : k + 1 ≤ N := by omega
+    have heq : traj f (f x₀ (u ⟨0, hN⟩)) (shiftAppend f x₀ u κ) k (Nat.le_of_lt hk) =
+        traj f x₀ u (k + 1) hk' :=
+      traj_shiftAppend_gen f x₀ hN u κ k hk' _ _
+    rw [heq]
+    by_cases h : k + 1 < N
+    · exact hX (k + 1) h
+    · have hEq : k + 1 = N := by omega
+      subst hEq
+      exact hsub hXf
+  · obtain ⟨n, rfl⟩ : ∃ n, N = n + 1 := ⟨N - 1, by omega⟩
+    rw [traj_succ]
+    have hneg : ¬ (n + 1 < n + 1) := by omega
+    have hw : ∀ (h : n < n + 1),
+        shiftAppend f x₀ u κ ⟨n, h⟩ = κ (traj f x₀ u (n + 1) le_rfl) := by
+      intro h
+      simp only [shiftAppend]
+      rw [dite_eq_right hneg]
+    rw [hw _]
+    have heq : traj f (f x₀ (u ⟨0, hN⟩)) (shiftAppend f x₀ u κ) n
+        (Nat.le_of_succ_le le_rfl) =
+        traj f x₀ u (n + 1) le_rfl :=
+      traj_shiftAppend_gen f x₀ hN u κ n le_rfl _ _
+    rw [heq]
+    exact hκf _ hXf
 
 end MPC
 
