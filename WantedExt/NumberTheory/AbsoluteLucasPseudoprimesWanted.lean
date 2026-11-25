@@ -16,6 +16,7 @@ public import MathlibExt.Algebra.Polynomial.PrimeValueConditions
 public import MathlibExt.NumberTheory.AbsoluteLucasPseudoprimes
 public import MathlibExt.NumberTheory.LucasSequence
 public import MathlibExt.NumberTheory.ThreePrimeDCarmichael
+public import MathlibExt.NumberTheory.ThreePrimeDCarmichaelDivisibility
 import Mathlib.Tactic.NormNum.LegendreSymbol
 
 namespace MetaMathlibExt
@@ -468,22 +469,6 @@ Theorem 13 (`integers-2026-A102-thm-13`). -/
 public theorem_wanted jacobiSym_eq_of_isDCarmichael_three {D D' : ℤ} {n : ℕ}
     (h3 : n.primeFactors.card = 3) (h : IsDCarmichael D n) (h' : IsDCarmichael D' n) :
     jacobiSym D n = jacobiSym D' n
-
-/-- **Divisibility conditions for $D$-Carmichael numbers $3qr$.** Let $D$ be an integer, let
-$q < r$ be primes with $3 < q$, and write $\alpha = (D \mid 3)$, $\beta = (D \mid q)$ and
-$\gamma = (D \mid r)$ for the Jacobi symbols. If $3qr$ is a $D$-Carmichael number, then
-$q - \beta$ divides $3r - \alpha\gamma$ and $r - \gamma$ divides $3q - \alpha\beta$; moreover
-$r = 3q + 2\gamma$ if $\gamma = -\alpha\beta$, and $2r = 3q + \gamma$ if $\gamma = \alpha\beta$.
-
-Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
-Lemma 4 (`integers-2026-A102-lem-4`). -/
-public theorem_wanted threeQR_isDCarmichael_divisibility {D : ℤ} {q r : ℕ} (hq : q.Prime)
-    (hr : r.Prime) (h3q : 3 < q) (hqr : q < r)
-    (h : IsDCarmichael D (3 * q * r)) :
-    ((q : ℤ) - jacobiSym D q) ∣ (3 * r - jacobiSym D 3 * jacobiSym D r) ∧
-    ((r : ℤ) - jacobiSym D r) ∣ (3 * q - jacobiSym D 3 * jacobiSym D q) ∧
-    (jacobiSym D r = -(jacobiSym D 3 * jacobiSym D q) → (r : ℤ) = 3 * q + 2 * jacobiSym D r) ∧
-    (jacobiSym D r = jacobiSym D 3 * jacobiSym D q → 2 * (r : ℤ) = 3 * q + jacobiSym D r)
 
 end
 

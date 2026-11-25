@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Tactic.NormNum
 public import MathlibExt.Combinatorics.Enumerative.NarayanaSequence
 public import MathlibExt.NumberTheory.PadovanSequence
+public import MathlibExt.NumberTheory.PerrinInfiniteNotSumOfTwoPrimePowers
 public import MathlibExt.NumberTheory.PerrinSequence
 public import MathlibExt.NumberTheory.ThirdOrderPrimePowers
 public import MathlibExt.NumberTheory.TribonacciSequenceWithInitialValues001
@@ -68,21 +69,6 @@ public theorem_wanted vanDerLaan_not_isSumOfTwoPrimePowers_of_modEq :
     Set.Infinite {k : ℕ | ¬ IsSumOfTwoPrimePowers (shiftedPadovanSequence k : ℤ)} ∧
       ∃ K : ℕ, ∀ k : ℕ, K ≤ k → k ≡ 45752 [MOD 967206240] →
         ¬ IsSumOfTwoPrimePowers (shiftedPadovanSequence k : ℤ)
-
-/-- **Infinitely many Perrin numbers are not sums of two prime powers.** Let $(E_n)_{n \ge 0}$ be
-the Perrin sequence, given by $E_0 = 3$, $E_1 = 0$, $E_2 = 2$ and $E_{n+3} = E_{n+1} + E_n$.
-There are infinitely many natural numbers $k$ such that $E_k$ is not a sum of two prime powers.
-
-The paper, which indexes the sequence in the same way, proves the stronger statement that this
-holds for every sufficiently large $k \equiv 472190 \pmod{967206240}$; that form is not stated
-here.
-
-Source: Baczkowski and Keener, *Third-Order Recurrence Sequences with
-Infinitely Many Terms not Equal to the Sum of Two Prime Powers*, Journal
-of Integer Sequences 29 (2026), Article 26.2.3, Theorem 5
-(`jis-2026-26.2.3-thm-5`). -/
-public theorem_wanted perrin_infinite_not_isSumOfTwoPrimePowers :
-    Set.Infinite {k : ℕ | ¬ IsSumOfTwoPrimePowers (perrinSequence k : ℤ)}
 
 /-- **Infinitely many Leonardo numbers are not sums of two prime powers.** Let $(L_n)_{n \ge 0}$
 be the Leonardo numbers, the generalized Leonardo numbers $L_{1,n}$ with parameter $1$, given
