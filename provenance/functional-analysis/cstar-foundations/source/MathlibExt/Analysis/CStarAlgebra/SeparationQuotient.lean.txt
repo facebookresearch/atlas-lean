@@ -1,0 +1,103 @@
+/-
+Author: @toskua
+-/
+module
+
+public import Mathlib.Analysis.CStarAlgebra.Basic
+public import Mathlib.Analysis.Complex.Basic
+public import Mathlib.Analysis.Normed.Module.Basic
+public import Mathlib.Topology.Algebra.SeparationQuotient.Basic
+public import Mathlib.Topology.UniformSpace.Separation
+public import Mathlib.Algebra.Star.StarAlgHom
+public import MathlibExt.Analysis.CStarAlgebra.NonUnitalSeparationQuotient
+
+/-!
+# The involution on a seminormed ring's separation quotient
+
+The ring, scalar operations and norm on the quotient are the existing
+Mathlib operations. The isometric source involution descends along the
+canonical separation map. An actual source C-star norm inequality then
+supplies the C-star identity on the separated ring.
+
+These factories are explicit locally activated dictionaries. The source
+ring need not be separated, complete or nontrivial; in particular, the
+zero seminorm is permitted. No global instance is registered.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+noncomputable section
+
+namespace SeparationQuotient
+
+universe uA
+
+/-- The isometric source involution on the actual separation quotient.
+The quotient's ring and additive operations remain the stock operations. -/
+@[instance_reducible]
+def cstarStarRing
+    (A : Type uA) [SeminormedRing A] [StarRing A] [NormedStarGroup A] :
+    StarRing (SeparationQuotient A) :=
+  nonUnitalCstarStarRing A
+
+/-- The quotient involution preserves the original involution on every
+canonical source representative. -/
+@[simp]
+theorem mk_cstarStar
+    (A : Type uA) [SeminormedRing A] [StarRing A] [NormedStarGroup A] (a : A) :
+    let _ : StarRing (SeparationQuotient A) := cstarStarRing A
+    star (mk a) = mk (star a) := by
+  let _ : StarRing (SeparationQuotient A) := cstarStarRing A
+  exact mk_nonUnitalCstarStar A a
+
+/-- Scalar conjugation descends with the same canonical quotient scalar
+operations. -/
+theorem cstarStarModule
+    (A : Type uA) [SeminormedRing A] [NormedAlgebra ℂ A]
+    [StarRing A] [NormedStarGroup A] [StarModule ℂ A] :
+    let _ : StarRing (SeparationQuotient A) := cstarStarRing A
+    StarModule ℂ (SeparationQuotient A) := by
+  let _ : StarRing (SeparationQuotient A) := cstarStarRing A
+  exact nonUnitalCstarStarModule A
+
+/-- A proved C-star norm inequality on the original seminorm descends to
+the normed separation quotient. The source itself need not be normed. -/
+theorem cstarRing
+    (A : Type uA) [SeminormedRing A] [StarRing A] [NormedStarGroup A]
+    (hCStar : ∀ a : A, ‖a‖ * ‖a‖ ≤ ‖star a * a‖) :
+    let _ : StarRing (SeparationQuotient A) := cstarStarRing A
+    CStarRing (SeparationQuotient A) := by
+  let _ : StarRing (SeparationQuotient A) := cstarStarRing A
+  exact nonUnitalCstarRing A hCStar
+
+/-- The original algebra map into its actual separation quotient,
+with the descended involution. Its norm is exactly the original seminorm
+by `SeparationQuotient.norm_mk`. -/
+def mkCStarAlgHom
+    (A : Type uA) [SeminormedRing A] [NormedAlgebra ℂ A]
+    [StarRing A] [NormedStarGroup A] :
+    let _ : StarRing (SeparationQuotient A) := cstarStarRing A
+    A →⋆ₐ[ℂ] SeparationQuotient A := by
+  let _ : StarRing (SeparationQuotient A) := cstarStarRing A
+  exact
+    { toFun := mk
+      map_one' := mk_one
+      map_zero' := mk_zero
+      map_add' := mk_add
+      map_mul' := mk_mul
+      commutes' := mk_algebraMap
+      map_star' := fun a => (mk_cstarStar A a).symm }
+
+/-- The quotient star-algebra homomorphism is the literal separation map. -/
+@[simp]
+theorem mkCStarAlgHom_apply
+    (A : Type uA) [SeminormedRing A] [NormedAlgebra ℂ A]
+    [StarRing A] [NormedStarGroup A] (a : A) :
+    let _ : StarRing (SeparationQuotient A) := cstarStarRing A
+    mkCStarAlgHom A a = mk a :=
+  rfl
+
+end SeparationQuotient

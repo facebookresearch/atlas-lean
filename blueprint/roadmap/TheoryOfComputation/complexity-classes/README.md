@@ -19,3 +19,7 @@ Definitions of time and space complexity on machine models (P, NP, PSPACE, EXP, 
 - [Karp-Lipton theorem: NP in P/poly collapses PH](karp-lipton.md)
 - [Ladner's theorem: NP-intermediate languages exist](ladner.md)
 - [Savitch's theorem: NPSPACE = PSPACE](savitch.md)
+
+- [Search problems and TFNP](total-search-problems/README.md)
+- [Space and time complexity](space-and-time-complexity/README.md)
+- [Parameterized vertex cover](parameterized-vertex-cover/README.md)
