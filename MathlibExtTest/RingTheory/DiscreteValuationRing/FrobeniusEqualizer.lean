@@ -49,7 +49,7 @@ theorem exactSource_frobTwo
         (AlgHom.id 𝒪 Onr)) π) ^ (n + 1)})), IsUnit (Fr₂ α - α) ∧
       Algebra.adjoin 𝒪 {α} = ⊤ ∧
       ∃ s t : 𝒪, α ^ 2 = algebraMap 𝒪 _ s * α + algebraMap 𝒪 _ t :=
-  CerednikDrinfeld.FormalOmega.frobTwo_frobTwo_and_exists_generator
+  IsDiscreteValuationRing.frobTwo_frobTwo_and_exists_generator
     𝒪 hdvr π hπ hcomplete hres hunr Onr Fr hOnr_complete hOnr_max hOnr_alg hOnr_closed
     hFr n Fr₂ hFr₂
 
@@ -84,6 +84,6 @@ theorem exactSource_algHom
       ⧸ Ideal.span {(algebraMap 𝒪 ↥(AlgHom.equalizer ((Fr.trans Fr : Onr ≃ₐ[𝒪] Onr) : Onr →ₐ[𝒪]
         Onr) (AlgHom.id 𝒪 Onr)) π) ^ (n + 1)})) →ₐ[𝒪] B) :
     ε' = ε ∨ ε' = ε.comp Fr₂.toAlgHom :=
-  CerednikDrinfeld.FormalOmega.algHom_eq_or_eq_comp_frobTwo_of_isLocalRing
+  IsDiscreteValuationRing.algHom_eq_or_eq_comp_frobTwo_of_isLocalRing
     𝒪 hdvr π hπ hcomplete hres hunr Onr Fr hOnr_complete hOnr_max hOnr_alg hOnr_closed
     hFr n Fr₂ hFr₂ B ε ε'

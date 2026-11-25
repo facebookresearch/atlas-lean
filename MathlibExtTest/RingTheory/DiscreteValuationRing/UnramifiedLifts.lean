@@ -32,7 +32,7 @@ theorem exactSource_charP
     CharP (Onr ⧸ Ideal.span {algebraMap 𝒪 Onr π}) r ∧
       ∀ a : Onr ⧸ Ideal.span {algebraMap 𝒪 Onr π},
         ∃ b : Onr ⧸ Ideal.span {algebraMap 𝒪 Onr π}, b ^ r = a :=
-  CerednikDrinfeld.FormalOmega.charP_residue_and_forall_exists_pow_eq
+  IsDiscreteValuationRing.charP_residue_and_forall_exists_pow_eq
     𝒪 hdvr π hπ hcomplete hres hunr Onr hOnr_complete hOnr_max hOnr_alg hOnr_closed
 
 /-- `exactSource` consumer with the original binders. -/
@@ -43,7 +43,7 @@ theorem exactSource_ringHomExt
     (hres : Nat.card (𝒪 ⧸ Ideal.span {π}) = r)
     (hunr : Ideal.span {((r : ℕ) : 𝒪)} = Ideal.span {π})
     (C : Type u) [CommRing C] (hC : IsNilpotent ((r : ℕ) : C)) (f g : 𝒪 →+* C) : f = g :=
-  CerednikDrinfeld.FormalOmega.ringHom_ext_of_isNilpotent_natCast
+  IsDiscreteValuationRing.ringHom_ext_of_isNilpotent_natCast
     𝒪 hdvr π hπ hcomplete hres hunr C hC f g
 
 /-- `exactSource` consumer with the original binders. -/
@@ -70,7 +70,7 @@ theorem exactSource_existsRingHom
       Function.Surjective f ∧
       (∀ w : WittVector r k, f w = 0 ↔
         w ∈ Ideal.span {((r : ℕ) : WittVector r k) ^ N}) :=
-  CerednikDrinfeld.FormalOmega.exists_ringHom_wittVector_surjective_and_ker_eq_of_ker_eq_span
+  IsDiscreteValuationRing.exists_ringHom_wittVector_surjective_and_ker_eq_of_ker_eq_span
     𝒪 hdvr π hπ hcomplete hres hunr Onr hOnr_complete hOnr_max hOnr_alg hOnr_closed
     k ρ₁ hρ₁ hker
 
@@ -94,7 +94,7 @@ theorem exactSource_existsUniqueAlgHom
     (hp : Function.Surjective p) (hsq : ∀ s t : B, p s = 0 → p t = 0 → s * t = 0)
     (ψ₀ : Onr →ₐ[𝒪] B₀) :
     ∃! ψ : Onr →ₐ[𝒪] B, p.comp ψ = ψ₀ :=
-  CerednikDrinfeld.FormalOmega.existsUnique_algHom_comp_eq_of_surjective_of_isNilpotent
+  IsDiscreteValuationRing.existsUnique_algHom_comp_eq_of_surjective_of_isNilpotent
     𝒪 hdvr π hπ hcomplete hres hunr Onr hOnr_complete hOnr_max hOnr_alg hOnr_closed
     B B₀ p hB hB₀ hp hsq ψ₀
 
@@ -115,7 +115,7 @@ theorem exactSource_charP_type1
     CharP (Onr ⧸ Ideal.span {algebraMap 𝒪 Onr π}) r ∧
       ∀ a : Onr ⧸ Ideal.span {algebraMap 𝒪 Onr π},
         ∃ b : Onr ⧸ Ideal.span {algebraMap 𝒪 Onr π}, b ^ r = a :=
-  CerednikDrinfeld.FormalOmega.charP_residue_and_forall_exists_pow_eq
+  IsDiscreteValuationRing.charP_residue_and_forall_exists_pow_eq
     𝒪 hdvr π hπ hcomplete hres hunr Onr hOnr_complete hOnr_max hOnr_alg hOnr_closed
 
 /-- Boundary example: without a nilpotence hypothesis, ring maps need not

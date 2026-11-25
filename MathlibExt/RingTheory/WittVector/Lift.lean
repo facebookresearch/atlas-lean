@@ -32,15 +32,15 @@ removed and the names restated in Mathlib style.
 module
 
 public import Mathlib.FieldTheory.Perfect
-public import Mathlib.RingTheory.Perfection
 public import Mathlib.RingTheory.WittVector.Basic
-public import Mathlib.RingTheory.WittVector.Complete
-public import Mathlib.RingTheory.WittVector.Frobenius
-public import Mathlib.RingTheory.WittVector.Teichmuller
-public import Mathlib.RingTheory.WittVector.TeichmullerSeries
-public import Mathlib.RingTheory.Perfectoid.FontaineTheta
 
 import Mathlib.LinearAlgebra.SModEq.Pow
+import Mathlib.RingTheory.Perfection
+import Mathlib.RingTheory.WittVector.Complete
+import Mathlib.RingTheory.WittVector.Frobenius
+import Mathlib.RingTheory.WittVector.Teichmuller
+import Mathlib.RingTheory.WittVector.TeichmullerSeries
+import Mathlib.RingTheory.Perfectoid.FontaineTheta
 
 @[expose] public section
 

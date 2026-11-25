@@ -42,16 +42,12 @@ public import Mathlib.Algebra.Polynomial.Eval.Defs
 public import Mathlib.FieldTheory.Perfect
 public import Mathlib.RingTheory.DiscreteValuationRing.Basic
 public import Mathlib.RingTheory.Ideal.Quotient.Defs
-public import Mathlib.Algebra.Polynomial.Roots
-public import Mathlib.FieldTheory.Finite.Basic
-public import Mathlib.FieldTheory.IsAlgClosed.Basic
-public import Mathlib.RingTheory.Henselian
-import Mathlib.Tactic.LinearCombination
 public import Mathlib.RingTheory.WittVector.Basic
-public import Mathlib.Algebra.Polynomial.Roots
-public import Mathlib.FieldTheory.Finite.Basic
-public import Mathlib.FieldTheory.IsAlgClosed.Basic
-public import Mathlib.RingTheory.Henselian
+import Mathlib.Algebra.Polynomial.Roots
+import Mathlib.FieldTheory.Finite.Basic
+import Mathlib.FieldTheory.IsAlgClosed.Basic
+import Mathlib.RingTheory.Henselian
+import Mathlib.RingTheory.WittVector.Complete
 import Mathlib.Tactic.LinearCombination
 import MathlibExt.RingTheory.WittVector.Lift
 
@@ -59,7 +55,7 @@ import MathlibExt.RingTheory.WittVector.Lift
 
 universe u
 
-namespace CerednikDrinfeld.FormalOmega
+namespace IsDiscreteValuationRing
 
 set_option autoImplicit false
 
@@ -255,7 +251,7 @@ variable {𝒪 : Type u} [CommRing 𝒪] [IsDomain 𝒪] [CharZero 𝒪] {π : �
 variable {Onr : Type u} [CommRing Onr] [IsDomain Onr] [CharZero Onr] [Algebra 𝒪 Onr]
 variable {k : Type u} [Field k] [CharP k r] [PerfectRing k r] {ρ₁ : Onr →+* k}
 
-abbrev I (π : 𝒪) (Onr : Type u) [CommRing Onr] [Algebra 𝒪 Onr] (N : ℕ) : Ideal Onr :=
+private abbrev I (π : 𝒪) (Onr : Type u) [CommRing Onr] [Algebra 𝒪 Onr] (N : ℕ) : Ideal Onr :=
   Ideal.span {algebraMap 𝒪 Onr π ^ N}
 
 private theorem I_le (N : ℕ) : I π Onr (N + 1) ≤ I π Onr N := by
@@ -694,7 +690,7 @@ public theorem existsUnique_algHom_comp_eq_of_surjective_of_isNilpotent
 
   haveI hmax : (Ideal.span {algebraMap 𝒪 Onr π}).IsMaximal := hOnr_max
   letI : Field (Onr ⧸ Ideal.span {algebraMap 𝒪 Onr π}) := Ideal.Quotient.field _
-  obtain ⟨hchar, hroot⟩ := CerednikDrinfeld.FormalOmega.charP_residue_and_forall_exists_pow_eq 𝒪
+  obtain ⟨hchar, hroot⟩ := IsDiscreteValuationRing.charP_residue_and_forall_exists_pow_eq 𝒪
     hdvr π hπ hcomplete hres hunr Onr hOnr_complete hOnr_max hOnr_alg hOnr_closed
   haveI := hchar
   haveI : PerfectRing (Onr ⧸ Ideal.span {algebraMap 𝒪 Onr π}) r :=
@@ -702,13 +698,13 @@ public theorem existsUnique_algHom_comp_eq_of_surjective_of_isNilpotent
       obtain ⟨b, hb⟩ := hroot a; exact ⟨b, by rw [frobenius_def]; exact hb⟩)
 
   obtain ⟨fN, -, hfN, hker⟩ :=
-    CerednikDrinfeld.FormalOmega.exists_ringHom_wittVector_surjective_and_ker_eq_of_ker_eq_span
+    IsDiscreteValuationRing.exists_ringHom_wittVector_surjective_and_ker_eq_of_ker_eq_span
       𝒪 hdvr π hπ hcomplete hres hunr Onr hOnr_complete hOnr_max hOnr_alg hOnr_closed
     (Onr ⧸ Ideal.span {algebraMap 𝒪 Onr π}) (Ideal.Quotient.mk _) Ideal.Quotient.mk_surjective
       Ideal.mk_ker N
 
   exact core r π hrπ
-    (fun C _ hC f g => CerednikDrinfeld.FormalOmega.ringHom_ext_of_isNilpotent_natCast 𝒪 hdvr π hπ
+    (fun C _ hC f g => IsDiscreteValuationRing.ringHom_ext_of_isNilpotent_natCast 𝒪 hdvr π hπ
       hcomplete hres hunr C hC f g)
     N fN hfN
     (fun w hw => by
@@ -719,4 +715,4 @@ public theorem existsUnique_algHom_comp_eq_of_surjective_of_isNilpotent
       r (Onr ⧸ Ideal.span {algebraMap 𝒪 Onr π}) B B₀ p.toRingHom hp hsq hrB g₀)
     hN ψ₀
 
-end CerednikDrinfeld.FormalOmega
+end IsDiscreteValuationRing

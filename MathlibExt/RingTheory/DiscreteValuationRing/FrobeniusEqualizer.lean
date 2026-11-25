@@ -30,21 +30,22 @@ removed and the names restated in Mathlib style.
 
 module
 
+public import Mathlib.Algebra.Polynomial.AlgebraMap
 public import Mathlib.Algebra.Polynomial.Eval.Defs
 public import Mathlib.RingTheory.AdicCompletion.Basic
 public import Mathlib.RingTheory.DiscreteValuationRing.Basic
 public import Mathlib.RingTheory.Ideal.Quotient.Defs
-public import Mathlib.Algebra.Polynomial.Roots
-public import Mathlib.FieldTheory.Finite.Basic
-public import Mathlib.FieldTheory.IsAlgClosed.Basic
-public import Mathlib.RingTheory.Henselian
+import Mathlib.Algebra.Polynomial.Roots
+import Mathlib.FieldTheory.Finite.Basic
+import Mathlib.FieldTheory.IsAlgClosed.Basic
+import Mathlib.RingTheory.Henselian
 import Mathlib.Tactic.LinearCombination
 
 @[expose] public section
 
 universe u
 
-namespace CerednikDrinfeld.FormalOmega
+namespace IsDiscreteValuationRing
 
 set_option autoImplicit false
 
@@ -696,7 +697,7 @@ public theorem algHom_eq_or_eq_comp_frobTwo_of_isLocalRing
         Onr) (AlgHom.id 𝒪 Onr)) π) ^ (n + 1)}) →ₐ[𝒪] B) :
     ε' = ε ∨ ε' = ε.comp Fr₂.toAlgHom := by
   obtain ⟨hsq, α, hunit, hadj, s, t, hα⟩ :=
-    CerednikDrinfeld.FormalOmega.frobTwo_frobTwo_and_exists_generator 𝒪 hdvr π hπ hcomplete hres
+    IsDiscreteValuationRing.frobTwo_frobTwo_and_exists_generator 𝒪 hdvr π hπ hcomplete hres
       hunr Onr Fr hOnr_complete hOnr_max
       hOnr_alg hOnr_closed hFr n Fr₂ hFr₂
 
@@ -751,4 +752,4 @@ public theorem algHom_eq_or_eq_comp_frobTwo_of_isLocalRing
   · left; exact hext ε' ε (by rw [← hb, ← ha, h])
   · right; exact hext ε' (ε.comp Fr₂.toAlgHom) (by rw [← hb, h, ha', AlgHom.comp_apply]; rfl)
 
-end CerednikDrinfeld.FormalOmega
+end IsDiscreteValuationRing
