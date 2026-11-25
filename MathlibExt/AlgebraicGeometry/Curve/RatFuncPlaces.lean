@@ -88,17 +88,6 @@ theorem mem_maximalIdeal_iff_adicValuation_lt_one (a : v.toValuationSubring) :
   have hle : v.adicValuation (a : F) ≤ 1 := v.mem_iff_adicValuation_le_one.mp a.2
   tauto
 
-theorem ord_eq_zero_iff_adicValuation_eq_one {f : F} (hf : f ≠ 0) :
-    v.ord f = 0 ↔ v.adicValuation f = 1 := by
-  simp only [ord, neg_eq_zero]
-  constructor
-  · intro h
-    have h2 := exp_log (v.adicValuation_ne_zero hf)
-    rw [h, exp_zero] at h2
-    exact h2.symm
-  · intro h
-    rw [h, log_one]
-
 section OfHeightOneSpectrum
 
 variable {R : Type*} [CommRing R] [IsDedekindDomain R] [Algebra R F] [IsFractionRing R F]

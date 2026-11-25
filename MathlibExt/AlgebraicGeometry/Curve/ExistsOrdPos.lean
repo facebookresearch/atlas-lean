@@ -42,40 +42,16 @@ This file proves that every place has a nonzero element of positive order.
 * `AlgebraicCurve.Place.exists_ord_pos`
 -/
 
-namespace CurveGenus.ExistsOrdPos
+namespace AlgebraicCurve.Place
 
-open IsDedekindDomain WithZero IsLocalRing
-
-noncomputable section
-
-namespace AlgebraicCurve
-open _root_.AlgebraicCurve
-
-namespace Place
-open _root_.AlgebraicCurve.Place
-
-variable {K F : Type*} [Field K] [Field F] [Algebra K F] (v : Place K F)
-
-private theorem rowMain : ∃ f : F, f ≠ 0 ∧ 0 < v.ord f := by
+/-- Every place has a nonzero element of positive order, for instance a uniformizer. -/
+public theorem exists_ord_pos {K F : Type*} [Field K] [Field F]
+    [Algebra K F] (v : Place K F) :
+    ∃ f : F, f ≠ 0 ∧ 0 < v.ord f := by
   obtain ⟨π, hπ⟩ := IsDiscreteValuationRing.exists_irreducible v.toValuationSubring
   refine ⟨(π : F), ?_, ?_⟩
   · simpa [ne_eq, ZeroMemClass.coe_eq_zero] using hπ.ne_zero
   · rw [v.ord_coe_irreducible hπ]
     exact one_pos
 
-end Place
-
-end AlgebraicCurve
-
-end
-
-open _root_.AlgebraicCurve _root_.CurveGenus.ExistsOrdPos.AlgebraicCurve in
-/-- Every place has a nonzero element of positive order, for instance a uniformizer. -/
-public theorem _root_.AlgebraicCurve.Place.exists_ord_pos {K F : Type*} [Field K] [Field F]
-    [Algebra K F] (v : Place K F) :
-    ∃ f : F, f ≠ 0 ∧ 0 < v.ord f :=
-  AlgebraicCurve.Place.rowMain v
-
-end ExistsOrdPos
-
-end CurveGenus
+end AlgebraicCurve.Place

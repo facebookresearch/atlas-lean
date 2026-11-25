@@ -58,54 +58,9 @@ namespace CurveGenus.RatFuncGenusExists
 open Polynomial
 
 namespace AlgebraicCurve
-open _root_.AlgebraicCurve hiding Place.ord_nonneg_of_mem Place.mem_of_ord_nonneg
-    Place.mem_iff_ord_nonneg
-namespace Place
-open _root_.AlgebraicCurve.Place hiding ord_nonneg_of_mem mem_of_ord_nonneg mem_iff_ord_nonneg
-    restrict_placeOfPrime placeOfPrime comap_algebraMap_ne_top
-variable {K F : Type*} [Field K] [Field F] [Algebra K F] (v : Place K F)
-private theorem ord_nonneg_of_mem {f : F} (hf : f ∈ v.toValuationSubring) : 0 ≤ v.ord f := by
-  rcases eq_or_ne f 0 with rfl | hf0
-  · simp
-  obtain ⟨π, hπ⟩ := IsDiscreteValuationRing.exists_irreducible v.toValuationSubring
-  obtain ⟨n, u, hu⟩ :=
-    IsDiscreteValuationRing.eq_unit_mul_pow_irreducible
-      (x := (⟨f, hf⟩ : v.toValuationSubring)) (by simpa [Subtype.ext_iff] using hf0) hπ
-  have hcoe : f = ((u : v.toValuationSubring) : F) * ((π : F) ^ (n : ℤ)) := by
-    have h := congrArg (Subtype.val) hu
-    push_cast at h
-    rw [zpow_natCast]
-    exact h
-  rw [hcoe, v.ord_unit_smul_zpow u hπ (n : ℤ)]
-  exact Int.natCast_nonneg n
-private theorem mem_of_ord_nonneg {f : F} (hf : f ≠ 0) (h : 0 ≤ v.ord f) :
-    f ∈ v.toValuationSubring := by
-  obtain ⟨π, hπ⟩ := IsDiscreteValuationRing.exists_irreducible v.toValuationSubring
-  obtain ⟨u, hu⟩ := v.exists_unit_mul_zpow hf hπ
-  rw [hu, show v.ord f = (((v.ord f).toNat : ℕ) : ℤ) from (Int.toNat_of_nonneg h).symm,
-    zpow_natCast]
-  exact mul_mem (u : v.toValuationSubring).2 (pow_mem (π : v.toValuationSubring).2 _)
-private theorem mem_iff_ord_nonneg {f : F} (hf : f ≠ 0) :
-    f ∈ v.toValuationSubring ↔ 0 ≤ v.ord f :=
-  ⟨v.ord_nonneg_of_mem, v.mem_of_ord_nonneg hf⟩
-end Place
-end AlgebraicCurve
-
-namespace AlgebraicCurve
-open _root_.AlgebraicCurve hiding Place.ord_nonneg_of_mem Place.mem_of_ord_nonneg
-    Place.mem_iff_ord_nonneg
+open _root_.AlgebraicCurve
 variable {K F : Type*} [Field K] [Field F] [Algebra K F]
-open scoped _root_.AlgebraicCurve.Divisor in
-private theorem Divisor.degree_eq_sum_support (D : Divisor K F) :
-    Divisor.degree D = ∑ v ∈ D.support, D v * (v.deg : ℤ) := by
-  rw [Divisor.degree, Finsupp.liftAddHom_apply, Finsupp.sum]
-  rfl
 variable {D : Divisor K F}
-open scoped _root_.AlgebraicCurve.Divisor in
-private theorem Divisor.degree_nonneg_of_nonneg [IsCurveOver K F]
-    {D : Divisor K F} (hD : ∀ v, 0 ≤ D v) : 0 ≤ Divisor.degree D := by
-  rw [Divisor.degree_eq_sum_support]
-  exact Finset.sum_nonneg fun v _ => mul_nonneg (hD v) (Int.natCast_nonneg _)
 private theorem lSpace_eq_bot_of_degree_neg [IsCurveOver K F]
     (hD : Divisor.degree D < 0) : LSpace D = ⊥ := by
   rw [eq_bot_iff]
@@ -136,14 +91,12 @@ open _root_.IsDedekindDomain
 open _root_.WithZero
 
 namespace AlgebraicCurve
-open _root_.AlgebraicCurve hiding Place.ord_nonneg_of_mem Place.mem_of_ord_nonneg
-    Place.mem_iff_ord_nonneg
+open _root_.AlgebraicCurve
 
 variable {K F : Type*} [Field K] [Field F] [Algebra K F]
 
 namespace Place
-open _root_.AlgebraicCurve.Place hiding ord_nonneg_of_mem mem_of_ord_nonneg mem_iff_ord_nonneg
-    restrict_placeOfPrime placeOfPrime comap_algebraMap_ne_top
+open _root_.AlgebraicCurve.Place
 
 variable (v : Place K F)
 
@@ -269,10 +222,6 @@ private theorem ell_le_ell_sub_single_add_deg [IsCurveOver K F] (D : Divisor K F
   · have h0 : ell D = 0 := by rw [ell]; exact finrank_of_infinite_dimensional hfin
     omega
 
-private theorem one_le_deg [IsCurveOver K F] (P : Place K F) : 1 ≤ P.deg := by
-  have : Module.Finite K P.ResidueField := IsCurveOver.finiteResidueField P
-  exact Module.finrank_pos
-
 private theorem ell_le_degree_add_ellZero [IsCurveOver K F] {D : Divisor K F}
     (hD : ∀ v, 0 ≤ D v) :
     (ell D : ℤ) ≤ Divisor.degree D + ell (0 : Divisor K F) := by
@@ -299,7 +248,7 @@ private theorem ell_le_degree_add_ellZero [IsCurveOver K F] {D : Divisor K F}
         · rw [Finsupp.single_eq_of_ne hv, sub_zero]; exact hD v
       have hdegE : Divisor.degree E = Divisor.degree D - P.deg := by
         rw [hE, map_sub, Divisor.degree_single, one_mul]
-      have hPdeg1 : 1 ≤ (P.deg : ℤ) := by exact_mod_cast one_le_deg P
+      have hPdeg1 : 1 ≤ (P.deg : ℤ) := by exact_mod_cast IsCurveOver.one_le_deg P
       have hDnn : 0 ≤ Divisor.degree D := Divisor.degree_nonneg_of_nonneg hD
       have hEnn : 0 ≤ Divisor.degree E := Divisor.degree_nonneg_of_nonneg hEeff
       have hmlt : (Divisor.degree E).toNat < m := by rw [← hm]; omega
@@ -454,8 +403,7 @@ private theorem finrank_quotient_chain' {A B C : Submodule K X} (hAB : A ≤ B) 
 end Submodule
 
 namespace AlgebraicCurve
-open _root_.AlgebraicCurve hiding Place.ord_nonneg_of_mem Place.mem_of_ord_nonneg
-    Place.mem_iff_ord_nonneg
+open _root_.AlgebraicCurve
 
 variable {K F : Type*} [Field K] [Field F] [Algebra K F]
 
@@ -623,7 +571,7 @@ private theorem finrank_adeleBdd_quotient [IsCurveOver K F] {D₁ D₂ : Divisor
         · rw [Finsupp.single_eq_of_ne hv, sub_zero]
       have hdegD₂' : Divisor.degree D₂' = Divisor.degree D₂ - P.deg := by
         rw [hD₂', map_sub, Divisor.degree_single, one_mul]
-      have hPdeg1 : 1 ≤ (P.deg : ℤ) := by exact_mod_cast one_le_deg P
+      have hPdeg1 : 1 ≤ (P.deg : ℤ) := by exact_mod_cast IsCurveOver.one_le_deg P
       have hEnn : 0 ≤ Divisor.degree (D₂ - D₁) := Divisor.degree_nonneg_of_nonneg hEeff
       have hE'nn : 0 ≤ Divisor.degree (D₂' - D₁) := Divisor.degree_nonneg_of_nonneg
         (fun v => by rw [Finsupp.sub_apply]; have := h12' v; omega)
@@ -761,8 +709,7 @@ private theorem finrank_quotient_chain_top {M : Type*} [AddCommGroup M] [Module 
 end Submodule
 
 namespace AlgebraicCurve
-open _root_.AlgebraicCurve hiding Place.ord_nonneg_of_mem Place.mem_of_ord_nonneg
-    Place.mem_iff_ord_nonneg
+open _root_.AlgebraicCurve
 
 variable {K F : Type*} [Field K] [Field F] [Algebra K F]
 
@@ -1055,8 +1002,7 @@ noncomputable section
 open Module IsDedekindDomain WithZero
 
 namespace AlgebraicCurve
-open _root_.AlgebraicCurve hiding Place.ord_nonneg_of_mem Place.mem_of_ord_nonneg
-    Place.mem_iff_ord_nonneg
+open _root_.AlgebraicCurve
 
 variable {K F : Type*} [Field K] [Field F] [Algebra K F]
 
@@ -1175,8 +1121,7 @@ noncomputable section
 open Module IsDedekindDomain WithZero
 
 namespace AlgebraicCurve
-open _root_.AlgebraicCurve hiding Place.ord_nonneg_of_mem Place.mem_of_ord_nonneg
-    Place.mem_iff_ord_nonneg
+open _root_.AlgebraicCurve
 
 variable {K F : Type*} [Field K] [Field F] [Algebra K F]
 
@@ -1212,7 +1157,7 @@ private theorem exists_weilSmul_eq_of_genusReached
     rw [hD, map_neg, Divisor.degree_single]; ring
   have hdegWD : Divisor.degree (W - D) = Divisor.degree W + (n : ℤ) * (P.deg : ℤ) := by
     rw [map_sub, hdegD]; ring
-  have hPdeg1 : 1 ≤ (P.deg : ℤ) := by exact_mod_cast one_le_deg P
+  have hPdeg1 : 1 ≤ (P.deg : ℤ) := by exact_mod_cast IsCurveOver.one_le_deg P
   have habsγ : -(|γ|) ≤ γ ∧ γ ≤ |γ| := ⟨neg_abs_le _, le_abs_self _⟩
   have habsW : -|Divisor.degree W| ≤ Divisor.degree W ∧
       Divisor.degree W ≤ |Divisor.degree W| := ⟨neg_abs_le _, le_abs_self _⟩
@@ -1286,8 +1231,7 @@ noncomputable section
 open Module IsDedekindDomain WithZero
 
 namespace AlgebraicCurve
-open _root_.AlgebraicCurve hiding Place.ord_nonneg_of_mem Place.mem_of_ord_nonneg
-    Place.mem_iff_ord_nonneg
+open _root_.AlgebraicCurve
 
 variable {K F : Type*} [Field K] [Field F] [Algebra K F]
 
@@ -1447,23 +1391,9 @@ noncomputable section
 open Module IsDedekindDomain WithZero
 
 namespace AlgebraicCurve
-open _root_.AlgebraicCurve hiding Place.ord_nonneg_of_mem Place.mem_of_ord_nonneg
-    Place.mem_iff_ord_nonneg
+open _root_.AlgebraicCurve
 
 variable {K F : Type*} [Field K] [Field F] [Algebra K F]
-
-private theorem mul_mem_lSpace_add {D E : Divisor K F} {f g : F}
-    (hf : f ∈ LSpace D) (hg : g ∈ LSpace E) :
-    f * g ∈ LSpace (D + E) := by
-  rcases eq_or_ne f 0 with rfl | hf0
-  · rw [zero_mul]; exact (LSpace _).zero_mem
-  rcases eq_or_ne g 0 with rfl | hg0
-  · rw [mul_zero]; exact (LSpace _).zero_mem
-  rw [mem_lSpace_iff_ord]
-  refine Or.inr fun v => ?_
-  rw [Finsupp.add_apply, neg_add, v.ord_mul hf0 hg0]
-  exact add_le_add ((mem_lSpace_iff_ord.mp hf).resolve_left hf0 v)
-    ((mem_lSpace_iff_ord.mp hg).resolve_left hg0 v)
 
 private theorem pow_mem_lSpace_nsmul {B : Divisor K F} {f : F} (hf : f ∈ LSpace B) (j : ℕ) :
     f ^ j ∈ LSpace (j • B) := by
@@ -1669,8 +1599,7 @@ end AlgebraicCurve
 end
 
 namespace AlgebraicCurve
-open _root_.AlgebraicCurve hiding Place.ord_nonneg_of_mem Place.mem_of_ord_nonneg
-    Place.mem_iff_ord_nonneg
+open _root_.AlgebraicCurve
 
 private scoped instance instSumRamificationInertia_port {K F F' : Type*} [Field K] [Field F] [Field
     F'] [Algebra K F] [Algebra K F']
@@ -1685,8 +1614,7 @@ noncomputable section
 open Module IsDedekindDomain WithZero
 
 namespace AlgebraicCurve
-open _root_.AlgebraicCurve hiding Place.ord_nonneg_of_mem Place.mem_of_ord_nonneg
-    Place.mem_iff_ord_nonneg
+open _root_.AlgebraicCurve
 
 variable {K E F : Type*} [Field K] [Field E] [Field F]
   [Algebra K E] [Algebra K F] [Algebra E F] [IsScalarTower K E F]
@@ -1899,12 +1827,10 @@ noncomputable section
 open Module
 
 namespace AlgebraicCurve
-open _root_.AlgebraicCurve hiding Place.ord_nonneg_of_mem Place.mem_of_ord_nonneg
-    Place.mem_iff_ord_nonneg
+open _root_.AlgebraicCurve
 
 namespace Place
-open _root_.AlgebraicCurve.Place hiding ord_nonneg_of_mem mem_of_ord_nonneg mem_iff_ord_nonneg
-    restrict_placeOfPrime placeOfPrime comap_algebraMap_ne_top
+open _root_.AlgebraicCurve.Place
 
 variable {K F : Type*} [Field K] [Field F] [Algebra K F] (w : Place K F)
 
@@ -2140,8 +2066,7 @@ noncomputable section
 open Module Polynomial
 
 namespace AlgebraicCurve
-open _root_.AlgebraicCurve hiding Place.ord_nonneg_of_mem Place.mem_of_ord_nonneg
-    Place.mem_iff_ord_nonneg
+open _root_.AlgebraicCurve
 
 section Transcendental
 
@@ -2305,8 +2230,7 @@ noncomputable section
 open Module Polynomial IsDedekindDomain
 
 namespace AlgebraicCurve
-open _root_.AlgebraicCurve hiding Place.ord_nonneg_of_mem Place.mem_of_ord_nonneg
-    Place.mem_iff_ord_nonneg
+open _root_.AlgebraicCurve
 
 namespace RationalFunctionField
 open _root_.AlgebraicCurve.RationalFunctionField
@@ -2319,15 +2243,8 @@ section LyingOver
 
 variable [FiniteDimensional (RatFunc K) F] [Algebra.IsSeparable (RatFunc K) F]
 
-omit [DecidableEq (RatFunc K)] in
-omit [DecidableEq (RatFunc K)] in
-private theorem _root_.AlgebraicCurve.RationalFunctionField.exists_restrict_eq (v : Place K
-    (RatFunc K)) :
-    ∃ w : Place K F, w.restrict (RatFunc K) = v :=
-  Place.exists_restrict_eq v
-
 private theorem nonempty_place_of_ratFunc_tower : Nonempty (Place K F) :=
-  (exists_restrict_eq K F (placeInfty K)).nonempty
+  (Place.exists_restrict_eq (M := F) (placeInfty K)).nonempty
 
 end LyingOver
 open scoped _root_.CurveGenus.RatFuncGenusExists.AlgebraicCurve

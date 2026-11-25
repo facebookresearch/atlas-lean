@@ -37,8 +37,8 @@ public import MathlibExt.AlgebraicGeometry.Curve.DivisorClassGroup
 `IsCurveOver K F`, defined in `MathlibExt.AlgebraicGeometry.Curve.LPolynomial`, says that every
 nonzero element of `F` has a degree-zero principal divisor, residue fields of places are finite
 over `K`, and the Kähler differentials of `F / K` are free of rank one. This file derives the
-instances `HasPrincipalDivisors K F`, `Place.FiniteResidue` and the Kähler instances from it, and
-shows that every place has degree one over an algebraically closed field.
+instances `HasPrincipalDivisors K F`, `Module.Finite K v.ResidueField` and the Kähler instances from
+it, and shows that every place has degree one over an algebraically closed field.
 -/
 
 @[expose] public section
@@ -62,8 +62,9 @@ instance (priority := 100) toHasPrincipalDivisors [IsCurveOver K F] :
 theorem hasPrincipalDivisors [IsCurveOver K F] : HasPrincipalDivisors K F :=
   inferInstance
 
-instance instFiniteResidue [IsCurveOver K F] (v : Place K F) : v.FiniteResidue :=
-  ⟨IsCurveOver.finiteResidue v⟩
+instance instFiniteResidueField [IsCurveOver K F] (v : Place K F) :
+    Module.Finite K v.ResidueField :=
+  IsCurveOver.finiteResidue v
 
 instance instFreeKaehler [h : IsCurveOver K F] : Module.Free F Ω[F⁄K] :=
   h.kaehler_free_rank_one.1

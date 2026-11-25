@@ -41,10 +41,10 @@ import Mathlib.RingTheory.SimpleRing.Principal
 The degree of a place, divisors, their degree map, principal divisors and the class group
 `Pic0` are defined in `MathlibExt.AlgebraicGeometry.Curve.LPolynomial`, and the residue field
 `AlgebraicCurve.Place.ResidueField` in `MathlibExt.AlgebraicGeometry.Curve.ChartDichotomy`. This
-file adds finiteness of residue fields (`Place.FiniteResidue`), the condition that every nonzero
-function has a principal divisor of degree zero (`HasPrincipalDivisors`), the full class group
-`Pic`, and the places attached to height-one primes of a Dedekind domain with fraction field
-`F`.
+file adds the order criterion `Place.ord_eq_zero_iff_adicValuation_eq_one`, the condition that
+every nonzero function has a principal divisor of degree zero (`HasPrincipalDivisors`), the full
+class group `Pic`, and the places attached to height-one primes of a Dedekind domain with fraction
+field `F`.
 -/
 
 @[expose] public section
@@ -61,8 +61,16 @@ namespace Place
 
 variable {K F} (v : Place K F)
 
-class FiniteResidue : Prop where
-  finite : Module.Finite K v.ResidueField
+theorem ord_eq_zero_iff_adicValuation_eq_one {f : F} (hf : f ≠ 0) :
+    v.ord f = 0 ↔ v.adicValuation f = 1 := by
+  simp only [ord, neg_eq_zero]
+  constructor
+  · intro h
+    have h2 := exp_log (v.adicValuation_ne_zero hf)
+    rw [h, exp_zero] at h2
+    exact h2.symm
+  · intro h
+    rw [h, log_one]
 
 end Place
 

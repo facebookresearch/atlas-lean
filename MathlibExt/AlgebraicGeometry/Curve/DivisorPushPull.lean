@@ -29,6 +29,7 @@ removed and the names restated in Mathlib style.
 module
 
 public import MathlibExt.AlgebraicGeometry.Curve.DivisorClassGroup
+import MathlibExt.AlgebraicGeometry.Curve.ExistsOrdPos
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Analysis.Normed.Ring.Lemmas
@@ -53,19 +54,6 @@ open IsDedekindDomain WithZero IsLocalRing
 namespace AlgebraicCurve
 
 namespace Place
-
-section SinglePlace
-
-variable {K F : Type*} [Field K] [Field F] [Algebra K F] (v : Place K F)
-
-private theorem exists_ord_pos : ∃ f : F, f ≠ 0 ∧ 0 < v.ord f := by
-  obtain ⟨π, hπ⟩ := IsDiscreteValuationRing.exists_irreducible v.toValuationSubring
-  refine ⟨(π : F), ?_, ?_⟩
-  · simpa [ne_eq, ZeroMemClass.coe_eq_zero] using hπ.ne_zero
-  · rw [v.ord_coe_irreducible hπ]
-    exact one_pos
-
-end SinglePlace
 
 section Restrict
 

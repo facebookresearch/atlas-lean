@@ -22,9 +22,14 @@ variable {K F : Type*} [Field K] [Field F] [Algebra K F] [IsCurveOver K F]
 -- Kähler differentials.
 example : HasPrincipalDivisors K F := inferInstance
 
-example (v : Place K F) : v.FiniteResidue := inferInstance
+example (v : Place K F) : Module.Finite K v.ResidueField := inferInstance
 
 example (v : Place K F) : Module.Finite K v.ResidueField := IsCurveOver.finiteResidueField v
+
+-- The finiteness instance feeds Mathlib's `Module.Finite` API directly.
+example (v : Place K F) : 0 < Module.finrank K v.ResidueField := Module.finrank_pos
+
+example (v : Place K F) : 1 ≤ v.deg := IsCurveOver.one_le_deg v
 
 example : Module.Free F Ω[F⁄K] := inferInstance
 

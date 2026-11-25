@@ -387,13 +387,28 @@ private theorem inertiaDeg_eq_inertiaDeg_fiberCenter (hw : w.restrict F = v) :
 
 end ResidueDictionary
 
-section Assembly
+end Place
+open scoped _root_.CurveGenus.FundamentalIdentityFiber.AlgebraicCurve.Place
 
-variable (v : Place K F)
+end AlgebraicCurve
+open scoped _root_.CurveGenus.FundamentalIdentityFiber.AlgebraicCurve.Place
+    _root_.CurveGenus.FundamentalIdentityFiber.AlgebraicCurve
 
-private theorem sum_ramificationIndex_mul_inertiaDeg_fiberOver :
-    ∑ w ∈ v.fiberOver F', (w.ramificationIndex F : ℤ) * (w.inertiaDeg F : ℤ)
-      = (Module.finrank F F' : ℤ) := by
+end
+open scoped _root_.CurveGenus.FundamentalIdentityFiber.AlgebraicCurve.Place
+    _root_.CurveGenus.FundamentalIdentityFiber.AlgebraicCurve
+
+open IsDedekindDomain _root_.AlgebraicCurve _root_.AlgebraicCurve.Place
+open _root_.CurveGenus.FundamentalIdentityFiber.AlgebraicCurve.Place
+
+/-- The fundamental identity `∑ e(w | v) f(w | v) = [F' : F]` over the places of `F'` described
+through the integral closure of the valuation ring of `v`. -/
+public theorem _root_.AlgebraicCurve.Place.sum_ramificationIndex_mul_inertiaDeg_fiberOver
+    {K F F' : Type*} [Field K] [Field F] [Field F'] [Algebra K F] [Algebra K F']
+    [Algebra F F'] [IsScalarTower K F F'] [FiniteDimensional F F'] [Algebra.IsSeparable F F']
+    (v : Place K F) :
+    ∑ w ∈ v.fiberOver F',
+        (w.ramificationIndex F : ℤ) * (w.inertiaDeg F : ℤ) = (Module.finrank F F' : ℤ) := by
   classical
   have hkey := Ideal.sum_ramification_inertia (integralClosureAt F' v) F F'
     (p := IsLocalRing.maximalIdeal v.toValuationSubring) (maximalIdeal_ne_bot v)
@@ -426,32 +441,6 @@ private theorem sum_ramificationIndex_mul_inertiaDeg_fiberOver :
   · intro w hw
     rw [ramificationIndex_eq_ramificationIdx_fiberCenter ((mem_fiberOver v).mp hw),
       inertiaDeg_eq_inertiaDeg_fiberCenter ((mem_fiberOver v).mp hw)]
-
-end Assembly
-
-end Place
-open scoped _root_.CurveGenus.FundamentalIdentityFiber.AlgebraicCurve.Place
-
-end AlgebraicCurve
-open scoped _root_.CurveGenus.FundamentalIdentityFiber.AlgebraicCurve.Place
-    _root_.CurveGenus.FundamentalIdentityFiber.AlgebraicCurve
-
-end
-open scoped _root_.CurveGenus.FundamentalIdentityFiber.AlgebraicCurve.Place
-    _root_.CurveGenus.FundamentalIdentityFiber.AlgebraicCurve
-
-open _root_.AlgebraicCurve
-open _root_.CurveGenus.FundamentalIdentityFiber.AlgebraicCurve
-
-/-- The fundamental identity `∑ e(w | v) f(w | v) = [F' : F]` over the places of `F'` described
-through the integral closure of the valuation ring of `v`. -/
-public theorem _root_.AlgebraicCurve.Place.sum_ramificationIndex_mul_inertiaDeg_fiberOver
-    {K F F' : Type*} [Field K] [Field F] [Field F'] [Algebra K F] [Algebra K F']
-    [Algebra F F'] [IsScalarTower K F F'] [FiniteDimensional F F'] [Algebra.IsSeparable F F']
-    (v : Place K F) :
-    ∑ w ∈ v.fiberOver F',
-        (w.ramificationIndex F : ℤ) * (w.inertiaDeg F : ℤ) = (Module.finrank F F' : ℤ) :=
-  Place.sum_ramificationIndex_mul_inertiaDeg_fiberOver v
 
 end FundamentalIdentityFiber
 

@@ -31,47 +31,25 @@ removed and the names restated in Mathlib style.
 module
 
 public import MathlibExt.AlgebraicGeometry.Curve.Place
+import MathlibExt.AlgebraicGeometry.Curve.RatFuncPlaces
 
 /-!
 # The valuation of a place is discrete of rank one
 
-This file proves that the normalized valuation of a place is discrete of rank one.
+This file records that the normalized valuation of a place is discrete of rank one; the instance
+comes from `MathlibExt.AlgebraicGeometry.Curve.RatFuncPlaces`.
 
 ## Main statement
 
 * `AlgebraicCurve.Place.adicValuation_isRankOneDiscrete`
 -/
 
-namespace CurveGenus.AdicValuationRankOne
+namespace AlgebraicCurve.Place
 
-open IsDedekindDomain WithZero IsLocalRing
-
-noncomputable section
-
-namespace AlgebraicCurve
-open _root_.AlgebraicCurve
-
-namespace Place
-open _root_.AlgebraicCurve.Place
-
-variable {K F : Type*} [Field K] [Field F] [Algebra K F] (v : Place K F)
-
-private theorem rowMain : v.adicValuation.IsRankOneDiscrete :=
-  IsDiscreteValuationRing.isRankOneDiscrete v.toValuationSubring F
-
-end Place
-
-end AlgebraicCurve
-
-end
-
-open _root_.AlgebraicCurve _root_.CurveGenus.AdicValuationRankOne.AlgebraicCurve in
 /-- The normalized valuation of a place is discrete of rank one. -/
-public theorem _root_.AlgebraicCurve.Place.adicValuation_isRankOneDiscrete {K F : Type*}
+public theorem adicValuation_isRankOneDiscrete {K F : Type*}
     [Field K] [Field F] [Algebra K F] (v : Place K F) :
     v.adicValuation.IsRankOneDiscrete :=
-  AlgebraicCurve.Place.rowMain v
+  inferInstance
 
-end AdicValuationRankOne
-
-end CurveGenus
+end AlgebraicCurve.Place

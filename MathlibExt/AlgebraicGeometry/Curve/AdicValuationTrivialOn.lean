@@ -31,64 +31,25 @@ removed and the names restated in Mathlib style.
 module
 
 public import MathlibExt.AlgebraicGeometry.Curve.Place
+import MathlibExt.AlgebraicGeometry.Curve.RatFuncPlaces
 
 /-!
 # The valuation of a place is trivial on constants
 
-This file proves that the normalized valuation of a place of `F` over `K` is trivial on `K`.
+This file records that the normalized valuation of a place of `F` over `K` is trivial on `K`; the
+instance comes from `MathlibExt.AlgebraicGeometry.Curve.RatFuncPlaces`.
 
 ## Main statement
 
 * `AlgebraicCurve.Place.adicValuation_isTrivialOn`
 -/
 
-namespace CurveGenus.AdicValuationTrivialOn
+namespace AlgebraicCurve.Place
 
-open IsDedekindDomain WithZero IsLocalRing
-
-noncomputable section
-
-namespace AlgebraicCurve
-open _root_.AlgebraicCurve
-
-namespace Place
-open _root_.AlgebraicCurve.Place
-
-variable {K F : Type*} [Field K] [Field F] [Algebra K F] (v : Place K F)
-
-private theorem _root_.AlgebraicCurve.Place.adicValuation_valuationSubring :
-    v.adicValuation.valuationSubring = v.toValuationSubring := by
-  ext x
-  rw [Valuation.mem_valuationSubring_iff]
-  constructor
-  · intro hx
-    obtain ⟨a, rfl⟩ := IsDiscreteValuationRing.exists_lift_of_le_one hx
-    exact a.2
-  · intro hx
-    exact v.heightOneSpectrum.valuation_le_one (⟨x, hx⟩ : v.toValuationSubring)
-
-private theorem _root_.AlgebraicCurve.Place.mem_iff_adicValuation_le_one {f : F} :
-    f ∈ v.toValuationSubring ↔ v.adicValuation f ≤ 1 := by
-  rw [← v.adicValuation_valuationSubring]
-  exact Valuation.mem_valuationSubring_iff _ _
-
-private theorem rowMain : v.adicValuation.IsTrivialOn K :=
-  Valuation.IsTrivialOn.of_le_one v.adicValuation fun a =>
-    v.mem_iff_adicValuation_le_one.mp (v.algebraMap_mem' a)
-
-end Place
-
-end AlgebraicCurve
-
-end
-
-open _root_.AlgebraicCurve _root_.CurveGenus.AdicValuationTrivialOn.AlgebraicCurve in
 /-- The normalized valuation of a place of `F` over `K` is trivial on the constants `K`. -/
-public theorem _root_.AlgebraicCurve.Place.adicValuation_isTrivialOn {K F : Type*} [Field K]
+public theorem adicValuation_isTrivialOn {K F : Type*} [Field K]
     [Field F] [Algebra K F] (v : Place K F) :
     v.adicValuation.IsTrivialOn K :=
-  AlgebraicCurve.Place.rowMain v
+  inferInstance
 
-end AdicValuationTrivialOn
-
-end CurveGenus
+end AlgebraicCurve.Place

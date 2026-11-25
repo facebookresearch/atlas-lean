@@ -58,13 +58,8 @@ variable [DecidableEq (RatFunc K)]
 
 instance instNontrivialValueGroupInftyValuation :
     Nontrivial (MonoidWithZeroHom.valueGroup
-      (MonoidWithZeroHom.ofClass (RatFunc.inftyValuation K))) := by
-  rw [Subgroup.nontrivial_iff_exists_ne_one]
-  refine ⟨Units.mk0 (RatFunc.inftyValuation K RatFunc.X)
-    (by rw [RatFunc.inftyValuation.X]; exact exp_ne_zero), ?_, ?_⟩
-  · exact MonoidWithZeroHom.mem_valueGroup _ ⟨RatFunc.X, rfl⟩
-  · rw [ne_eq, Units.ext_iff, Units.val_mk0, Units.val_one, RatFunc.inftyValuation.X]
-    simp
+      (MonoidWithZeroHom.ofClass (RatFunc.inftyValuation K))) :=
+  nontrivial_valueGroup_inftyValuation K
 
 theorem placeInfty_ne_ofHeightOneSpectrum (w : HeightOneSpectrum K[X]) :
     placeInfty K ≠ Place.ofHeightOneSpectrum w := by
