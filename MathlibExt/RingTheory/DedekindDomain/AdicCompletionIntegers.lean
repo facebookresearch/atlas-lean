@@ -142,7 +142,7 @@ theorem adicCompletionIntegers_isAdicComplete (v : HeightOneSpectrum A) :
   have hv : (Valued.v : Valuation (v.adicCompletion K)
       (WithZero (Multiplicative ℤ))).Integers ↥(v.adicCompletionIntegers K) :=
     adicCompletionIntegers.integers K v
-  haveI : MulArchimedean (MonoidHom.mrange (Valued.v :
+  have : MulArchimedean (MonoidHom.mrange (Valued.v :
       Valuation (v.adicCompletion K) (WithZero (Multiplicative ℤ)))) :=
     MulArchimedean.comap (G := ↥(MonoidHom.mrange (Valued.v :
         Valuation (v.adicCompletion K) (WithZero (Multiplicative ℤ)))))
@@ -150,9 +150,9 @@ theorem adicCompletionIntegers_isAdicComplete (v : HeightOneSpectrum A) :
       (MonoidHom.mrange (Valued.v :
         Valuation (v.adicCompletion K) (WithZero (Multiplicative ℤ)))).subtype
       (by intro a b h; exact h)
-  haveI : IsPrincipalIdealRing ↥(v.adicCompletionIntegers K) := by
-    haveI : LocallyFiniteOrder ℤ := Int.instLocallyFiniteOrder
-    haveI : LocallyFiniteOrder (Multiplicative ℤ) :=
+  have : IsPrincipalIdealRing ↥(v.adicCompletionIntegers K) := by
+    have : LocallyFiniteOrder ℤ := Int.instLocallyFiniteOrder
+    have : LocallyFiniteOrder (Multiplicative ℤ) :=
       OrderIso.locallyFiniteOrder (⟨Multiplicative.toAdd, by simp⟩ :
         Multiplicative ℤ ≃o ℤ)
     unfold IsDedekindDomain.HeightOneSpectrum.adicCompletionIntegers
@@ -160,7 +160,7 @@ theorem adicCompletionIntegers_isAdicComplete (v : HeightOneSpectrum A) :
       (Valued.v)).isPrincipalIdealRing_iff_not_denselyOrdered,
       WithZero.denselyOrdered_set_iff_subsingleton]
     simpa using Valued.v.range_nontrivial
-  haveI : IsDiscreteValuationRing ↥(v.adicCompletionIntegers K) := by
+  have : IsDiscreteValuationRing ↥(v.adicCompletionIntegers K) := by
     refine { not_a_field' := ?_ }
     unfold IsDedekindDomain.HeightOneSpectrum.adicCompletionIntegers
     simp only [ne_eq, Ideal.ext_iff, Valuation.mem_maximalIdeal_iff, Ideal.mem_bot,
@@ -215,7 +215,7 @@ theorem adicCompletionIntegers_isAdicComplete (v : HeightOneSpectrum A) :
     linarith
   refine { haus' := fun x hx => ?_, prec' := fun f hf => ?_ }
   · apply Subtype.ext
-    show (x : v.adicCompletion K) = 0
+    change (x : v.adicCompletion K) = 0
     rw [← (Valued.v : Valuation (v.adicCompletion K)
       (WithZero (Multiplicative ℤ))).zero_iff]
     by_contra h0
@@ -236,7 +236,7 @@ theorem adicCompletionIntegers_isAdicComplete (v : HeightOneSpectrum A) :
         exact γ.ne_zero (MonoidWithZeroHom.ValueGroup₀.embedding_strictMono.injective
           (h0.trans (map_zero _).symm)))
       refine ⟨N, fun m hm n hn => ?_⟩
-      show Valued.v.restrict (g n - g m) < γ.1
+      change Valued.v.restrict (g n - g m) < γ.1
       rw [Valuation.restrict_lt_iff_lt_embedding, Valuation.map_sub_swap]
       calc Valued.v (g m - g n) = Valued.v (g m - g N + (g N - g n)) := by
             rw [sub_add_sub_cancel]
@@ -251,13 +251,13 @@ theorem adicCompletionIntegers_isAdicComplete (v : HeightOneSpectrum A) :
       intro c a
       rw [← isOpen_compl_iff, isOpen_iff_mem_nhds]
       intro y hy
-      simp only [Set.mem_compl_iff, Set.mem_setOf_eq, not_le] at hy
+      simp only [Set.mem_compl_iff, Set.mem_ofPred_eq, not_le] at hy
       rw [Valued.mem_nhds]
-      have hy0 : Valued.v (a - y) ≠ 0 := ne_of_gt (lt_of_le_of_lt zero_le' hy)
+      have hy0 : Valued.v (a - y) ≠ 0 := ne_of_gt (lt_of_le_of_lt zero_le hy)
       refine ⟨Units.mk0 (Valued.v.restrict (a - y)) (fun h => hy0
         ((Valuation.restrict_eq_zero_iff Valued.v).1 h)), fun z hz => ?_⟩
-      simp only [Set.mem_setOf_eq, Units.val_mk0, Valuation.restrict_lt_iff] at hz
-      simp only [Set.mem_compl_iff, Set.mem_setOf_eq, not_le]
+      simp only [Set.mem_ofPred_eq, Units.val_mk0, Valuation.restrict_lt_iff] at hz
+      simp only [Set.mem_compl_iff, Set.mem_ofPred_eq, not_le]
       have heq : Valued.v (a - z) = Valued.v (a - y) := by
         have h := Valuation.map_add_eq_of_lt_left Valued.v (x := a - y) (y := -(z - y))
           (by rwa [Valuation.map_neg])
