@@ -230,29 +230,39 @@ noncomputable def schemeKerStr (G : RelativeGroupLaw R f) (hc : G.IsCommutative)
     G.schemeKer hc n ⟶ Spec (CommRingCat.of R) :=
   pullback.snd (G.nsmulEnd hc n).hom.left (G.one (𝟙 (Spec (CommRingCat.of R)))).left
 
+/-- The kernel of an endomorphism of a relative group law: the pullback of
+the endomorphism along the identity section. -/
+noncomputable def endKer (G : RelativeGroupLaw R f) (β : G.End) : Scheme.{u} :=
+  pullback β.hom.left (G.one (𝟙 (Spec (CommRingCat.of R)))).left
+
+/-- The structure morphism of the kernel of an endomorphism. -/
+noncomputable def endKerStr (G : RelativeGroupLaw R f) (β : G.End) :
+    G.endKer β ⟶ Spec (CommRingCat.of R) :=
+  pullback.snd β.hom.left (G.one (𝟙 (Spec (CommRingCat.of R)))).left
+
+/-- The inclusion of the kernel of an endomorphism into `A`. -/
+noncomputable def endKerι (G : RelativeGroupLaw R f) (β : G.End) :
+    G.endKer β ⟶ A :=
+  pullback.fst β.hom.left (G.one (𝟙 (Spec (CommRingCat.of R)))).left
+
+theorem endKerι_comp (G : RelativeGroupLaw R f) (β : G.End) :
+    G.endKerι β ≫ β.hom.left =
+      G.endKerStr β ≫ (G.one (𝟙 (Spec (CommRingCat.of R)))).left :=
+  pullback.condition
+
+/-- The kernel of multiplication by `n`, as an endomorphism, is `schemeKer`. -/
+theorem endKer_nsmulEnd (G : RelativeGroupLaw R f) (hc : G.IsCommutative) (n : ℕ) :
+    G.endKer (G.nsmulEnd hc n) = G.schemeKer hc n :=
+  rfl
+
+instance isIso_endKerStr_idEnd (G : RelativeGroupLaw R f) :
+    IsIso (G.endKerStr G.idEnd) := by
+  change IsIso (pullback.snd (𝟙 A) (G.one (𝟙 (Spec (CommRingCat.of R)))).left)
+  infer_instance
+
 section Field
 
 variable {K : Type u} [Field K] {B : Scheme.{u}} {g : B ⟶ Spec (CommRingCat.of K)}
-
-/-- The kernel of an endomorphism of a relative group law: the pullback of
-the endomorphism along the identity section. -/
-noncomputable def endKer (G : RelativeGroupLaw K g) (β : G.End) : Scheme.{u} :=
-  pullback β.hom.left (G.one (𝟙 (Spec (CommRingCat.of K)))).left
-
-/-- The structure morphism of the kernel of an endomorphism. -/
-noncomputable def endKerStr (G : RelativeGroupLaw K g) (β : G.End) :
-    G.endKer β ⟶ Spec (CommRingCat.of K) :=
-  pullback.snd β.hom.left (G.one (𝟙 (Spec (CommRingCat.of K)))).left
-
-/-- The inclusion of the kernel of an endomorphism into `B`. -/
-noncomputable def endKerι (G : RelativeGroupLaw K g) (β : G.End) :
-    G.endKer β ⟶ B :=
-  pullback.fst β.hom.left (G.one (𝟙 (Spec (CommRingCat.of K)))).left
-
-theorem endKerι_comp (G : RelativeGroupLaw K g) (β : G.End) :
-    G.endKerι β ≫ β.hom.left =
-      G.endKerStr β ≫ (G.one (𝟙 (Spec (CommRingCat.of K)))).left :=
-  pullback.condition
 
 /-- The degree of an endomorphism of a relative group law over a field: the
 rank at the closed point of its kernel when the kernel is finite over the
@@ -271,11 +281,6 @@ theorem endDegree_of_not_isFinite (G : RelativeGroupLaw K g) (β : G.End)
     (h : ¬ IsFinite (G.endKerStr β)) : G.endDegree β = 0 := by
   rw [endDegree, ite_eq_right h]
 
-/-- The kernel of multiplication by `n`, as an endomorphism, is `schemeKer`. -/
-theorem endKer_nsmulEnd (G : RelativeGroupLaw K g) (hc : G.IsCommutative) (n : ℕ) :
-    G.endKer (G.nsmulEnd hc n) = G.schemeKer hc n :=
-  rfl
-
 /-- When the kernel of multiplication by `n` is finite over the base, the
 degree of multiplication by `n` is the rank of that kernel at the closed
 point. -/
@@ -285,11 +290,6 @@ theorem endDegree_nsmulEnd (G : RelativeGroupLaw K g) (hc : G.IsCommutative) (n 
       (G.schemeKerStr hc n).finrank (IsLocalRing.closedPoint K) :=
   have : IsFinite (G.endKerStr (G.nsmulEnd hc n)) := ‹IsFinite (G.schemeKerStr hc n)›
   G.endDegree_of_isFinite (G.nsmulEnd hc n)
-
-instance isIso_endKerStr_idEnd (G : RelativeGroupLaw K g) :
-    IsIso (G.endKerStr G.idEnd) := by
-  change IsIso (pullback.snd (𝟙 B) (G.one (𝟙 (Spec (CommRingCat.of K)))).left)
-  infer_instance
 
 theorem endDegree_idEnd (G : RelativeGroupLaw K g) :
     G.endDegree G.idEnd = 1 := by

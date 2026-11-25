@@ -51,10 +51,11 @@ example {R : Type u} [CommRing R] {A : Scheme.{u}} (f : A ⟶ Spec (CommRingCat.
     (t : T ⟶ Spec (CommRingCat.of R)) : L.one t ≫ β.hom = L.one t :=
   β.map_one t
 
-/-- Kernel identification: the kernel of multiplication by `n`, as an
-endomorphism, is `schemeKer`, and its underlying scheme map is `schemeNsmul`. -/
-example {K : Type u} [Field K] {A : Scheme.{u}} (f : A ⟶ Spec (CommRingCat.of K))
-    (L : RelativeGroupLaw K f) (hc : L.IsCommutative) (n : ℕ) :
+/-- Kernel identification over any commutative base ring: the kernel of
+multiplication by `n`, as an endomorphism, is `schemeKer`, and its underlying
+scheme map is `schemeNsmul`. -/
+example {R : Type u} [CommRing R] {A : Scheme.{u}} (f : A ⟶ Spec (CommRingCat.of R))
+    (L : RelativeGroupLaw R f) (hc : L.IsCommutative) (n : ℕ) :
     L.endKer (L.nsmulEnd hc n) = L.schemeKer hc n :=
   L.endKer_nsmulEnd hc n
 
@@ -63,13 +64,18 @@ example {R : Type u} [CommRing R] {A : Scheme.{u}} (f : A ⟶ Spec (CommRingCat.
     (L.nsmulEnd hc n).hom.left = L.schemeNsmul n :=
   L.nsmulEnd_hom_left hc n
 
-/-- The kernel inclusion followed by the endomorphism factors through the
-identity section. -/
-example {K : Type u} [Field K] {A : Scheme.{u}} (f : A ⟶ Spec (CommRingCat.of K))
-    (L : RelativeGroupLaw K f) (β : L.End) :
+/-- Over any commutative base ring, the kernel inclusion followed by the
+endomorphism factors through the identity section, and the kernel of the
+identity endomorphism maps isomorphically to the base. -/
+example {R : Type u} [CommRing R] {A : Scheme.{u}} (f : A ⟶ Spec (CommRingCat.of R))
+    (L : RelativeGroupLaw R f) (β : L.End) :
     L.endKerι β ≫ β.hom.left =
-      L.endKerStr β ≫ (L.one (𝟙 (Spec (CommRingCat.of K)))).left :=
+      L.endKerStr β ≫ (L.one (𝟙 (Spec (CommRingCat.of R)))).left :=
   L.endKerι_comp β
+
+example {R : Type u} [CommRing R] {A : Scheme.{u}} (f : A ⟶ Spec (CommRingCat.of R))
+    (L : RelativeGroupLaw R f) : IsIso (L.endKerStr L.idEnd) :=
+  inferInstance
 
 /-- The degree is the rank of a finite kernel, and `0` for a kernel that is
 not finite over the base. -/
