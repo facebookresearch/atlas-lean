@@ -131,18 +131,22 @@ theorem horizontalFilteredTotalHomotopyHom_toTotal (k n m : ℕ) :
       horizontalFilteredTotalToTotal K k n ≫ (verticalTotalHomotopy h).hom n m := by
   by_cases hnm : n + 1 = m
   · subst m
+    dsimp only [horizontalFilteredTotalObj]
     apply Sigma.hom_ext
     intro pq
-    change horizontalFilteredTotalι K k n pq ≫
-        (horizontalFilteredTotalHomotopyHom h k n (n + 1) ≫
-          horizontalFilteredTotalToTotal L k (n + 1)) =
-      horizontalFilteredTotalι K k n pq ≫
-        (horizontalFilteredTotalToTotal K k n ≫ (verticalTotalHomotopy h).hom n (n + 1))
-    rw [horizontalFilteredTotalHomotopyHom_ι_assoc]
-    rw [Linear.units_smul_comp, Category.assoc, horizontalFilteredTotalι_toTotal]
-    rw [← Category.assoc, horizontalFilteredTotalι_toTotal,
-      ιTotal_verticalTotalHomotopy_hom]
-    rfl
+    have hComponent :
+        horizontalFilteredTotalι K k n pq ≫
+            (horizontalFilteredTotalHomotopyHom h k n (n + 1) ≫
+              horizontalFilteredTotalToTotal L k (n + 1)) =
+          horizontalFilteredTotalι K k n pq ≫
+            (horizontalFilteredTotalToTotal K k n ≫
+              (verticalTotalHomotopy h).hom n (n + 1)) := by
+      rw [horizontalFilteredTotalHomotopyHom_ι_assoc]
+      rw [Linear.units_smul_comp, Category.assoc, horizontalFilteredTotalι_toTotal]
+      rw [← Category.assoc, horizontalFilteredTotalι_toTotal,
+        ιTotal_verticalTotalHomotopy_hom]
+      rfl
+    simpa only [horizontalFilteredTotalι] using hComponent
   · rw [horizontalFilteredTotalHomotopyHom_zero h k n m hnm,
       (verticalTotalHomotopy h).zero n m hnm]
     simp
@@ -161,7 +165,8 @@ def horizontalFilteredTotalHomotopy (k : ℕ) :
         (fun n m => horizontalFilteredTotalHomotopyHom h k n m ≫ iL.f m) =
           (fun n m => iK.f n ≫ (verticalTotalHomotopy h).hom n m) := by
       funext n m
-      exact horizontalFilteredTotalHomotopyHom_toTotal h k n m
+      simpa only [iK, iL, horizontalFilteredTotalComplexToTotal] using
+        horizontalFilteredTotalHomotopyHom_toTotal h k n m
     have hd : dNext n (horizontalFilteredTotalHomotopyHom h k) ≫ iL.f n =
         iK.f n ≫ dNext n (verticalTotalHomotopy h).hom := by
       rw [← dNext_comp_right, hfac, dNext_comp_left]
@@ -169,19 +174,25 @@ def horizontalFilteredTotalHomotopy (k : ℕ) :
         iK.f n ≫ prevD n (verticalTotalHomotopy h).hom := by
       rw [← prevD_comp_right, hfac, prevD_comp_left]
     have hf : (horizontalFilteredTotalComplexMapOfBicomplex f k).f n ≫ iL.f n =
-        iK.f n ≫ (total.map f c).f n :=
-      horizontalFilteredTotalMapOfBicomplex_toTotal f k n
+        iK.f n ≫ (total.map f c).f n := by
+      simpa only [iK, iL, horizontalFilteredTotalComplexToTotal,
+        horizontalFilteredTotalComplexMapOfBicomplex] using
+        horizontalFilteredTotalMapOfBicomplex_toTotal f k n
     have hg : (horizontalFilteredTotalComplexMapOfBicomplex g k).f n ≫ iL.f n =
-        iK.f n ≫ (total.map g c).f n :=
-      horizontalFilteredTotalMapOfBicomplex_toTotal g k n
+        iK.f n ≫ (total.map g c).f n := by
+      simpa only [iK, iL, horizontalFilteredTotalComplexToTotal,
+        horizontalFilteredTotalComplexMapOfBicomplex] using
+        horizontalFilteredTotalMapOfBicomplex_toTotal g k n
     apply (cancel_mono (horizontalFilteredTotalToTotal L k n)).mp
-    change (horizontalFilteredTotalComplexMapOfBicomplex f k).f n ≫ iL.f n =
-      (dNext n (horizontalFilteredTotalHomotopyHom h k) +
-        prevD n (horizontalFilteredTotalHomotopyHom h k) +
-        (horizontalFilteredTotalComplexMapOfBicomplex g k).f n) ≫ iL.f n
-    rw [hf, (verticalTotalHomotopy h).comm n]
-    simp only [Preadditive.comp_add, Preadditive.add_comp]
-    rw [hd, hp, hg]
+    have hComm :
+        (horizontalFilteredTotalComplexMapOfBicomplex f k).f n ≫ iL.f n =
+          (dNext n (horizontalFilteredTotalHomotopyHom h k) +
+            prevD n (horizontalFilteredTotalHomotopyHom h k) +
+            (horizontalFilteredTotalComplexMapOfBicomplex g k).f n) ≫ iL.f n := by
+      rw [hf, (verticalTotalHomotopy h).comm n]
+      simp only [Preadditive.comp_add, Preadditive.add_comp]
+      rw [hd, hp, hg]
+    simpa only [iL, horizontalFilteredTotalComplexToTotal] using hComm
 
 omit [HasZeroObject C] in
 /-- The finite-stage homotopy commutes with its canonical inclusion into the total. -/
@@ -200,12 +211,15 @@ theorem horizontalFilteredTotalHomotopy_naturality {k l : ℕ} (hkl : k ≤ l) (
         (horizontalFilteredTotalHomotopy h l).hom n m =
       (horizontalFilteredTotalHomotopy h k).hom n m ≫
         (horizontalFilteredTotalComplexMap L hkl).f m := by
-  change horizontalFilteredTotalMap K hkl n ≫ horizontalFilteredTotalHomotopyHom h l n m =
-    horizontalFilteredTotalHomotopyHom h k n m ≫ horizontalFilteredTotalMap L hkl m
-  apply (cancel_mono (horizontalFilteredTotalToTotal L l m)).mp
-  rw [Category.assoc, horizontalFilteredTotalHomotopyHom_toTotal,
-    ← Category.assoc, horizontalFilteredTotalMap_toTotal,
-    Category.assoc, horizontalFilteredTotalMap_toTotal, horizontalFilteredTotalHomotopyHom_toTotal]
+  have hNat :
+      horizontalFilteredTotalMap K hkl n ≫ horizontalFilteredTotalHomotopyHom h l n m =
+        horizontalFilteredTotalHomotopyHom h k n m ≫ horizontalFilteredTotalMap L hkl m := by
+    apply (cancel_mono (horizontalFilteredTotalToTotal L l m)).mp
+    rw [Category.assoc, horizontalFilteredTotalHomotopyHom_toTotal,
+      ← Category.assoc, horizontalFilteredTotalMap_toTotal,
+      Category.assoc, horizontalFilteredTotalMap_toTotal,
+      horizontalFilteredTotalHomotopyHom_toTotal]
+  simpa only [horizontalFilteredTotalComplexMap, horizontalFilteredTotalHomotopy] using hNat
 
 /-- Conjugating a finite-stage map by the canonical carrier isomorphisms
 recovers exactly its complete-stage map. -/
@@ -306,8 +320,10 @@ private theorem completeOfNonneg_toTotal (a : ℤ) (ha : 0 ≤ a) (n m : ℕ) :
         horizontalFilteredTotalComplexToTotal L a.toNat := by
     rw [← horizontalCompleteFilteredTotalComplexFiniteIso_hom_toTotal L a ha,
       ← Category.assoc, Iso.inv_hom_id, Category.id_comp]
-  have hLf := congrArg (fun φ => φ.f m) hL
-  have hKf := congrArg (fun φ => φ.f n)
+  have hLf := congrArg
+    (fun φ : horizontalFilteredTotalComplex L a.toNat ⟶ L.total c => φ.f m) hL
+  have hKf := congrArg
+    (fun φ : horizontalCompleteFilteredTotalComplex K (a : EInt) ⟶ K.total c => φ.f n)
     (horizontalCompleteFilteredTotalComplexFiniteIso_hom_toTotal K a ha)
   simp only [HomologicalComplex.comp_f] at hLf hKf
   rw [horizontalCompleteFilteredTotalHomotopyOfNonneg_hom]
@@ -387,8 +403,12 @@ theorem horizontalCompleteFilteredTotalHomotopy_naturality
         (horizontalCompleteFilteredTotalHomotopy h j).hom n m =
       (horizontalCompleteFilteredTotalHomotopy h i).hom n m ≫
         (horizontalCompleteFilteredTotalMap L hij).f m := by
-  have hK := congrArg (fun φ => φ.f n) (horizontalCompleteFilteredTotalMap_toTotal K hij)
-  have hL := congrArg (fun φ => φ.f m) (horizontalCompleteFilteredTotalMap_toTotal L hij)
+  have hK := congrArg
+    (fun φ : horizontalCompleteFilteredTotalComplex K i ⟶ K.total c => φ.f n)
+    (horizontalCompleteFilteredTotalMap_toTotal K hij)
+  have hL := congrArg
+    (fun φ : horizontalCompleteFilteredTotalComplex L i ⟶ L.total c => φ.f m)
+    (horizontalCompleteFilteredTotalMap_toTotal L hij)
   simp only [HomologicalComplex.comp_f] at hK hL
   apply (cancel_mono ((horizontalCompleteFilteredTotalToTotal L j).f m)).mp
   rw [Category.assoc, horizontalCompleteFilteredTotalHomotopy_toTotal,
