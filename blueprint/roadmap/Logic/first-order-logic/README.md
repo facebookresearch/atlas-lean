@@ -10,3 +10,5 @@ Syntax, proof calculi and semantics of first-order predicate logic, including so
 - [Peano arithmetic and Robinson's Q](peano-arithmetic-and-robinson-s-q/README.md)
 - [Complete theory of a first-order structure](theory-of-structure.md)
 - [Background theories in typed first-order logic](background-theories-in-typed-first-order-logic.md)
+
+- [Kripke completeness of intuitionistic first-order logic](kripke-completeness-of-intuitionistic-first-order-logic.md)

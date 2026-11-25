@@ -9,6 +9,13 @@ The language $\{\langle \varphi, k\rangle : \varphi \text{ is a CNF formula with
 ## Proof depends on
 
 - [The sum-check protocol](the-sum-check-protocol.md)
+- [PRIMES is in P](../../polynomial-time-problems/aks-primality-test/primes-in-p.md)
+
+## Expansion
+
+This page becomes ready once:
+
+- Bertrand's postulate, that there is a prime between $Q$ and $2Q$ for every $Q \ge 1$ (proof prerequisite; not yet stated)
 
 ## Sources
 

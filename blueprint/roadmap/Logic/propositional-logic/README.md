@@ -17,3 +17,5 @@ Classical propositional logic: truth-table semantics, natural deduction and its 
 - [Tseitin transformation](tseitin-transformation/README.md)
 - [Propositional proof complexity](propositional-proof-complexity/README.md)
 - [Sat solving](sat-solving/README.md)
+
+- [Kripke semantics for intuitionistic propositional logic](kripke-semantics-for-intuitionistic-propositional-logic.md)
