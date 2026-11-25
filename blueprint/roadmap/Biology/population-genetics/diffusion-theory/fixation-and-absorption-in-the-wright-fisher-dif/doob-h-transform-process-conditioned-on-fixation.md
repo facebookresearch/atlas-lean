@@ -1,7 +1,9 @@
 # Doob h-transform: the Wright–Fisher diffusion conditioned on fixation
 
 Let $\alpha \in \mathbb R$, let $X$ solve the [martingale problem for the Wright–Fisher diffusion](is-wright-fisher-solution.md) with genic selection,
+
 $$L f(x) = \tfrac12 x(1 - x) f''(x) + \alpha x(1 - x) f'(x),$$
+
 without mutation, started at $p \in (0, 1)$, and let $u_\alpha$ be the [fixation probability](measure-real-fixation.md), the solution of $L u_\alpha = 0$ with $u_\alpha(0) = 0$, $u_\alpha(1) = 1$. Under $\mathbb P(\,\cdot \mid \text{fixation})$, $X$ solves the martingale problem for
 
 $$L^{\mathrm{fix}} f(x) = \tfrac12 x(1 - x) f''(x) + \Bigl(\alpha x(1 - x) + x(1 - x)\frac{u_\alpha'(x)}{u_\alpha(x)}\Bigr) f'(x);$$
