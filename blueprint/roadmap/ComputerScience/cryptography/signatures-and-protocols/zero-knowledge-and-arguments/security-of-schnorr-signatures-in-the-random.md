@@ -9,6 +9,7 @@ Combined with the security of Schnorr identification under the discrete logarith
 ## Depends on
 
 - [Polynomial-query unforgeability of signatures](../../security-games/asymptotic-security/poly-query-sig-secure.md)
+- [The random oracle model](../../public-key/random-oracle-constructions/the-random-oracle-model.md)
 
 ## Proof depends on
 

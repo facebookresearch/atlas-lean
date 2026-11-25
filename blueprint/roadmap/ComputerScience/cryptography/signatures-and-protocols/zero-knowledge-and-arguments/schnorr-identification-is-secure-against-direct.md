@@ -6,6 +6,7 @@ Let $\mathbb{G}$ be a cyclic group of prime order $q$ with generator $g$, and co
 
 - [Discrete-logarithm experiment](../../public-key/hardness-assumptions/dlog-game.md)
 - [Winning probability of a game](../../security-games/games-and-advantages/win-prob.md)
+- [The Schnorr identification protocol as a Sigma protocol](../zero-knowledge-proofs/schnorr-sigma-protocol.md)
 
 ## Proof depends on
 

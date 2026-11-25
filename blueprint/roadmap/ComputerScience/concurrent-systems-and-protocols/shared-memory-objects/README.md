@@ -1,5 +1,6 @@
 # Shared-memory objects
 
+- [Correctness of the Treiber stack](correctness-of-the-treiber-stack.md)
 - [Concurrent histories](concurrent-histories.md)
 - [Sequential specifications of objects](sequential-specifications-of-objects.md)
 - [Linearizability](linearizability.md)

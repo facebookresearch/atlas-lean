@@ -12,3 +12,5 @@ Syntax, proof calculi and semantics of first-order predicate logic, including so
 - [Background theories in typed first-order logic](background-theories-in-typed-first-order-logic.md)
 
 - [Kripke completeness of intuitionistic first-order logic](kripke-completeness-of-intuitionistic-first-order-logic.md)
+
+- [Automated deduction](automated-deduction/README.md)

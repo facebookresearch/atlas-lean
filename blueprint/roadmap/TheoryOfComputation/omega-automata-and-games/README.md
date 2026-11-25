@@ -13,3 +13,5 @@ Büchi, generalized Büchi, parity, Rabin, Streett and Muller automata on infini
 - [Logic and tree automata](logic-and-tree-automata/README.md)
 
 - [Polynomial-time solvability of mean-payoff games](polynomial-time-solvability-of-mean-payoff-games.md)
+
+- [Reactive synthesis](reactive-synthesis/README.md)
