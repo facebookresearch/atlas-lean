@@ -7,4 +7,4 @@ $$\int_0^1 x^r (1 - x)^r \, dx = \frac{1}{(2r + 1) \binom{2r}{r}}.$$
 
 ## Sources
 
-- Peiran Ding, Yanjun Zhu and Lei Wang, "A New Formula for the Sum of Integer Powers Based on Elementary Matrix Theory", Lemma 3.
+- Peiran Ding, Yanjun Zhu and Lei Wang, "A New Formula for the Sum of Integer Powers Based on Elementary Matrix Theory", Lemma 3, for positive integers $r$; for $r = 0$ the integrand is constant and both sides are $1$.

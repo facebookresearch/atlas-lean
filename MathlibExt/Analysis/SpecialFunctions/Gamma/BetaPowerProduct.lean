@@ -21,7 +21,8 @@ import Mathlib.Tactic.Ring
 $(2r+1)\binom{2r}{r}$, including when $r=0$.
 
 Source: Peiran Ding, Yanjun Zhu and Lei Wang, *A New Formula for the Sum of Integer Powers
-Based on Elementary Matrix Theory*, Lemma 3. -/
+Based on Elementary Matrix Theory*, Lemma 3, for positive integers $r$; for $r = 0$ the
+integrand is constant and both sides are $1$. -/
 theorem intervalIntegral.integral_pow_one_sub_pow (r : ℕ) :
     (∫ x in (0 : ℝ)..1, x ^ r * (1 - x) ^ r) =
       1 / ((2 * r + 1 : ℝ) * (Nat.choose (2 * r) r : ℝ)) := by

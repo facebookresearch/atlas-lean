@@ -20,8 +20,10 @@ of a power of a real `2 × 2` matrix in terms of its
 trace and determinant; both parities were verified
 exactly over random rational matrices for `m ≤ 5`.
 Lemma 3 is the Beta integral
-`∫₀¹ x^r (1 - x)^r dx = 1 / ((2r + 1) * C(2r, r))`,
-proved as `intervalIntegral.integral_pow_one_sub_pow` in
+`∫₀¹ x^r (1 - x)^r dx = 1 / ((2r + 1) * C(2r, r))`
+for positive integers `r`; it is proved for every `r : ℕ`
+(at `r = 0` both sides are `1`) as
+`intervalIntegral.integral_pow_one_sub_pow` in
 `MathlibExt.Analysis.SpecialFunctions.Gamma.BetaPowerProduct`
 and re-exported here.
 
