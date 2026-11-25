@@ -369,6 +369,7 @@ theorem padicValNat_fib_mul (p : ℕ) [Fact (Nat.Prime p)] (hp2 : p ≠ 2)
     (m : ℕ) (hm : 1 ≤ m) (hdvd : p ∣ Nat.fib m) (j : ℕ) (hj : 1 ≤ j) :
     padicValNat p (Nat.fib (m * j)) = padicValNat p (Nat.fib m) + padicValNat p j := by
   have hp : Nat.Prime p := Fact.out
+  simp only [Nat.padicValNat_def]
   -- Facts about m' := m * p ^ s for any s.
   have hm's : ∀ s : ℕ, 1 ≤ m * p ^ s := fun s => by
     calc 1 = 1 * 1 := by ring
@@ -399,7 +400,7 @@ theorem padicValNat_fib_mul (p : ℕ) [Fact (Nat.Prime p)] (hp2 : p ≠ 2)
     omega
   -- Step 1: pure prime powers.
   have step1 : ∀ s : ℕ,
-      padicValNat p (Nat.fib (m * p ^ s)) = padicValNat p (Nat.fib m) + s := by
+      multiplicity p (Nat.fib (m * p ^ s)) = multiplicity p (Nat.fib m) + s := by
     intro s
     induction s with
     | zero => simp
@@ -418,12 +419,12 @@ theorem padicValNat_fib_mul (p : ℕ) [Fact (Nat.Prime p)] (hp2 : p ≠ 2)
             Nat.dvd_sub hd h1
           rwa [Nat.add_sub_cancel] at hsub
         exact hnot s (hp.prime.dvd_of_dvd_pow h2)
-      have hB0 : padicValNat p (Nat.fib (m * p ^ s - 1) ^ (p - 1) + p * W) = 0 :=
-        padicValNat.eq_zero_of_not_dvd hBnot
+      have hB0 : multiplicity p (Nat.fib (m * p ^ s - 1) ^ (p - 1) + p * W) = 0 :=
+        multiplicity_eq_zero_of_not_dvd hBnot
       have hFne : Nat.fib (m * p ^ s) ≠ 0 :=
         (Nat.fib_pos.mpr (hm's s)).ne'
-      rw [hexp, hW, padicValNat.mul (mul_ne_zero hp.ne_zero hFne) hBpos.ne',
-        padicValNat.mul hp.ne_zero hFne, padicValNat_self, hB0, ih]
+      rw [hexp, hW, Nat.multiplicity_mul (mul_ne_zero hp.ne_zero hFne) hBpos.ne',
+        Nat.multiplicity_mul hp.ne_zero hFne, Nat.Prime.multiplicity_self, hB0, ih]
       omega
   -- Step 2: general j.
   obtain ⟨s, t, ht, hjst⟩ := Nat.exists_eq_pow_mul_and_not_dvd (show j ≠ 0 by omega) p hp.one_lt.ne'
@@ -448,14 +449,14 @@ theorem padicValNat_fib_mul (p : ℕ) [Fact (Nat.Prime p)] (hp2 : p ≠ 2)
     rcases hp.dvd_mul.mp h2 with h3 | h3
     · exact ht h3
     · exact hnot s (hp.prime.dvd_of_dvd_pow h3)
-  have hB0 : padicValNat p
+  have hB0 : multiplicity p
       (t * Nat.fib (m * p ^ s - 1) ^ (t - 1) + Nat.fib (m * p ^ s) * W) = 0 :=
-    padicValNat.eq_zero_of_not_dvd hBnot
+    multiplicity_eq_zero_of_not_dvd hBnot
   have hFne : Nat.fib (m * p ^ s) ≠ 0 := (Nat.fib_pos.mpr (hm's s)).ne'
-  have hjv : padicValNat p j = s := by
-    rw [hjst, padicValNat.mul (pow_ne_zero s hp.ne_zero) ht0, padicValNat.prime_pow,
-      padicValNat.eq_zero_of_not_dvd ht, add_zero]
-  rw [hexp, hW, padicValNat.mul hFne hBpos.ne', step1 s, hB0, hjv, add_zero]
+  have hjv : multiplicity p j = s := by
+    rw [hjst, Nat.multiplicity_mul (pow_ne_zero s hp.ne_zero) ht0, Nat.multiplicity_prime_pow,
+      multiplicity_eq_zero_of_not_dvd ht, add_zero]
+  rw [hexp, hW, Nat.multiplicity_mul hFne hBpos.ne', step1 s, hB0, hjv, add_zero]
 
 /-- N9: Legendre-type formula for Fibonacci factorials. -/
 private theorem padicValNat_fib_prod_range (p : ℕ) [Fact (Nat.Prime p)] (hp2 : p ≠ 2)
@@ -463,8 +464,9 @@ private theorem padicValNat_fib_prod_range (p : ℕ) [Fact (Nat.Prime p)] (hp2 :
     padicValNat p (∏ i ∈ Finset.range N, Nat.fib (i + 1))
       = padicValNat p (Nat.fib z) * (N / z) + padicValNat p (N / z).factorial := by
   have hp : Nat.Prime p := Fact.out
-  have hv1 : padicValNat p 1 = 0 :=
-    padicValNat.eq_zero_of_not_dvd (by
+  simp only [Nat.padicValNat_def]
+  have hv1 : multiplicity p 1 = 0 :=
+    multiplicity_eq_zero_of_not_dvd (by
       intro h
       have h1 := Nat.dvd_one.mp h
       have := hp.one_lt
@@ -489,23 +491,25 @@ private theorem padicValNat_fib_prod_range (p : ℕ) [Fact (Nat.Prime p)] (hp2 :
       have hN8 := padicValNat_fib_mul p hp2 z (by omega) ((hiff z).mpr dvd_rfl) (q + 1)
         (Nat.succ_pos q)
       rw [hmul] at hN8
-      have hfact : padicValNat p (q + 1).factorial
-          = padicValNat p (q + 1) + padicValNat p q.factorial := by
+      simp only [Nat.padicValNat_def] at hN8
+      have hfact : multiplicity p (q + 1).factorial
+          = multiplicity p (q + 1) + multiplicity p q.factorial := by
         rw [Nat.factorial_succ,
-          padicValNat.mul (Nat.succ_ne_zero q) (Nat.factorial_ne_zero q)]
-      rw [hFF, padicValNat.mul hFFne hFne, ih, hdiv, hfact, hN8, mul_add, mul_one]
+          Nat.multiplicity_mul (Nat.succ_ne_zero q) (Nat.factorial_ne_zero q)]
+      rw [hFF, Nat.multiplicity_mul hFFne hFne, ih, hdiv, hfact, hN8, mul_add, mul_one]
       omega
     · have hdiv : (N + 1) / z = N / z := Nat.succ_div_of_not_dvd hzdvd
       have hnot : ¬ p ∣ Nat.fib (N + 1) := fun h => hzdvd ((hiff (N + 1)).mp h)
-      have hF0 : padicValNat p (Nat.fib (N + 1)) = 0 :=
-        padicValNat.eq_zero_of_not_dvd hnot
-      rw [hFF, padicValNat.mul hFFne hFne, ih, hdiv, hF0, add_zero]
+      have hF0 : multiplicity p (Nat.fib (N + 1)) = 0 :=
+        multiplicity_eq_zero_of_not_dvd hnot
+      rw [hFF, Nat.multiplicity_mul hFFne hFne, ih, hdiv, hF0, add_zero]
 
 /-- N10: no-carry addition in base p for factorials. -/
 private theorem padicValNat_factorial_add_pow_mul (p : ℕ) [Fact (Nat.Prime p)]
     (a A B : ℕ) (hA : A < p ^ a) :
     padicValNat p (A + p ^ a * B).factorial =
       padicValNat p A.factorial + padicValNat p (p ^ a * B).factorial := by
+  simp only [Nat.padicValNat_def]
   induction a generalizing A with
   | zero =>
     have hA0 : A = 0 := by simpa using hA
@@ -525,14 +529,14 @@ private theorem padicValNat_factorial_add_pow_mul (p : ℕ) [Fact (Nat.Prime p)]
     have ihA := ih A1 hA1
     have hsplit : A + p ^ (a + 1) * B = p * (A1 + p ^ a * B) + r := by
       rw [hAeq, hB]; ring
-    have e1 : padicValNat p (A + p ^ (a + 1) * B).factorial
-        = padicValNat p (A1 + p ^ a * B).factorial + (A1 + p ^ a * B) := by
-      rw [hsplit, padicValNat_factorial_mul_add _ hr, padicValNat_factorial_mul]
-    have e2 : padicValNat p A.factorial = padicValNat p A1.factorial + A1 := by
-      rw [hAeq, padicValNat_factorial_mul_add _ hr, padicValNat_factorial_mul]
-    have e3 : padicValNat p (p ^ (a + 1) * B).factorial
-        = padicValNat p (p ^ a * B).factorial + p ^ a * B := by
-      rw [hB, padicValNat_factorial_mul]
+    have e1 : multiplicity p (A + p ^ (a + 1) * B).factorial
+        = multiplicity p (A1 + p ^ a * B).factorial + (A1 + p ^ a * B) := by
+      rw [hsplit, multiplicity_factorial_mul_add _ hr, multiplicity_factorial_mul]
+    have e2 : multiplicity p A.factorial = multiplicity p A1.factorial + A1 := by
+      rw [hAeq, multiplicity_factorial_mul_add _ hr, multiplicity_factorial_mul]
+    have e3 : multiplicity p (p ^ (a + 1) * B).factorial
+        = multiplicity p (p ^ a * B).factorial + p ^ a * B := by
+      rw [hB, multiplicity_factorial_mul]
     omega
 
 /-- N11: division split. -/
@@ -607,6 +611,7 @@ theorem fibonomial_primePower_padicVal_eq_zero
     intro i _
     exact (Nat.fib_pos.mpr (Nat.succ_pos i)).ne'
   have hsplit := padicValNat_fib_prod_prime_pow_split p a b hp2 hp5 hab hbranch
-  rw [padicValNat.div_of_dvd hdvd, padicValNat.mul hne1 hne2, hsplit, Nat.sub_self]
+  simp only [Nat.padicValNat_def] at hsplit ⊢
+  rw [Nat.multiplicity_div_of_dvd hdvd, Nat.multiplicity_mul hne1 hne2, hsplit, Nat.sub_self]
 
 end MetaMathlibExt

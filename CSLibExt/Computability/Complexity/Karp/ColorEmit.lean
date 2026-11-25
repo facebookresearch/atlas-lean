@@ -46,7 +46,7 @@ with the size invariant `Sz` bounding the counters and `D`. The step count is cu
 
 namespace Cslib.Complexity.Karp.EmitColor
 
-open Turing Function MetaMathlibExt MetaMathlibExt.TM2Program Cslib.CookLevin Cslib.Logic.PL
+open Turing Function MetaMathlibExt MetaMathlibExt.TM2Program Cslib.CookLevin Cslib.Logic.LegacyPL
   Computability Cslib.Complexity.SatVerifier
 
 /-! ### The output, edge by edge -/

@@ -19,3 +19,5 @@ Continuation and zeros of ζ, zero-free regions, moments and subconvexity, RH cr
 - [Lagarias' inequality for every positive integer](lagarias-inequality.md)
 - [Meromorphy of the Riemann zeta function](meromorphic-on-riemann-zeta.md)
 - [Ramanujan's formula for the alternating zeta function at $-r$](ramanujan-part1-ch7-entry2-faulhaber.md)
+- [Even zeta values and Bernoulli numbers](zeta-even-integers-bernoulli.md)
+- [Statement of the Riemann hypothesis](riemann-hypothesis-statement.md)

@@ -290,52 +290,59 @@ numbers `A j`: the nucleon number of a lightest isotope. -/
 def isotopeMin {ι : Type*} (iso : Finset ι) (hiso : iso.Nonempty) (A : ι → ℕ) : ℕ :=
   (iso.image A).min' (hiso.image A)
 
-/-- The physical nominal mass shift of an isotope `j ∈ iso`: its nucleon number `A j` minus the
-least nucleon number `isotopeMin iso hiso A` over the isotope set. -/
+/-- The nominal mass shift `A j - isotopeMin iso hiso A` of an index `j` relative to a nonempty
+isotope set `iso`: the nucleon number `A j` minus the least nucleon number `isotopeMin iso hiso A`
+over the set. It is defined for every index `j`, as a subtraction of natural numbers truncated at
+`0`, so it is `0` when `A j < isotopeMin iso hiso A`. Its physical use is on isotopes `j ∈ iso`,
+where `isotopeMin iso hiso A ≤ A j` and the subtraction is exact. -/
 def isotopeShift {ι : Type*} (iso : Finset ι) (hiso : iso.Nonempty) (A : ι → ℕ) (j : ι) : ℕ :=
   A j - isotopeMin iso hiso A
 
-/-- The least nucleon number is at most the nucleon number of every isotope of the set. -/
+/-- For a nonempty isotope set, the least nucleon number is at most the nucleon number of every
+isotope of the set. -/
 lemma isotopeMin_le {ι : Type*} {iso : Finset ι} (hiso : iso.Nonempty) (A : ι → ℕ) {j : ι}
     (hj : j ∈ iso) : isotopeMin iso hiso A ≤ A j :=
   Finset.min'_le _ _ (Finset.mem_image_of_mem A hj)
 
-/-- Some isotope of the set attains the least nucleon number: a lightest isotope exists. -/
+/-- In a nonempty isotope set, some isotope attains the least nucleon number: a lightest isotope
+exists. -/
 lemma exists_mem_eq_isotopeMin {ι : Type*} {iso : Finset ι} (hiso : iso.Nonempty) (A : ι → ℕ) :
     ∃ j ∈ iso, A j = isotopeMin iso hiso A :=
   Finset.mem_image.1 (Finset.min'_mem _ _)
 
-/-- An isotope attaining the least nucleon number has shift `0`. -/
+/-- For a nonempty isotope set, an isotope whose nucleon number equals the least nucleon number of
+the set has shift `0`. -/
 lemma isotopeShift_eq_zero_of_eq {ι : Type*} {iso : Finset ι} {hiso : iso.Nonempty}
     {A : ι → ℕ} {j : ι} (hj : A j = isotopeMin iso hiso A) : isotopeShift iso hiso A j = 0 := by
   rw [isotopeShift, hj, Nat.sub_self]
 
-/-- A lightest isotope, one whose nucleon number is at most that of every isotope of the set, has
-shift `0`. -/
+/-- In a nonempty isotope set, a lightest isotope, one of the set whose nucleon number is at most
+that of every isotope of the set, has shift `0`. -/
 lemma isotopeShift_eq_zero_of_forall_le {ι : Type*} {iso : Finset ι} (hiso : iso.Nonempty)
     {A : ι → ℕ} {j : ι} (hj : j ∈ iso) (hmin : ∀ i ∈ iso, A j ≤ A i) :
     isotopeShift iso hiso A j = 0 :=
   isotopeShift_eq_zero_of_eq
     ((Finset.le_min' _ _ _ (Finset.forall_mem_image.2 hmin)).antisymm (isotopeMin_le hiso A hj))
 
-/-- The nucleon number of every isotope of the set is the least nucleon number plus its shift. The
-truncated subtraction in `isotopeShift` loses nothing, since `isotopeMin_le` gives
-`isotopeMin iso hiso A ≤ A j`. -/
+/-- In a nonempty isotope set, the nucleon number of every isotope of the set is the least nucleon
+number plus its shift. The truncated subtraction in `isotopeShift` loses nothing, since
+`isotopeMin_le` gives `isotopeMin iso hiso A ≤ A j`. -/
 lemma eq_isotopeMin_add_isotopeShift {ι : Type*} {iso : Finset ι} (hiso : iso.Nonempty)
     (A : ι → ℕ) {j : ι} (hj : j ∈ iso) :
     A j = isotopeMin iso hiso A + isotopeShift iso hiso A j :=
   (Nat.add_sub_of_le (isotopeMin_le hiso A hj)).symm
 
-/-- With the physical shifts, the generating polynomial of an atom is
-`∑ j ∈ iso, C (a j) * X ^ (A j - isotopeMin iso hiso A)`. -/
+/-- For a nonempty isotope set `iso`, with the physical shifts, the generating polynomial of an atom
+is `∑ j ∈ iso, C (a j) * X ^ (A j - isotopeMin iso hiso A)`. -/
 lemma atomPattern_isotopeShift {R ι : Type*} [Semiring R] (iso : Finset ι)
     (hiso : iso.Nonempty) (a : ι → R) (A : ι → ℕ) :
     atomPattern iso a (isotopeShift iso hiso A) =
       ∑ j ∈ iso, C (a j) * X ^ (A j - isotopeMin iso hiso A) :=
   rfl
 
-/-- With the physical shifts, the coefficient of `X ^ k` in the polynomial of an atom is the total
-weight of its isotopes of nucleon number `isotopeMin iso hiso A + k`. -/
+/-- For a nonempty isotope set, with the physical shifts, the coefficient of `X ^ k` in the
+polynomial of an atom is the total weight of its isotopes of nucleon number
+`isotopeMin iso hiso A + k`. -/
 lemma coeff_atomPattern_isotopeShift {R ι : Type*} [Semiring R] (iso : Finset ι)
     (hiso : iso.Nonempty) (a : ι → R) (A : ι → ℕ) (k : ℕ) :
     (atomPattern iso a (isotopeShift iso hiso A)).coeff k =
@@ -478,7 +485,8 @@ abundances. -/
 noncomputable def FiniteMassDist.mean (d : FiniteMassDist) : ℝ :=
   d.pmf.expect id
 
-/-- The mean is the finite sum over the witness, via `PMF.expect_eq_sum_of_finite_support`. -/
+/-- The mean is the finite sum `∑ m ∈ support, P(m) * m` over the witness, via
+`PMF.expect_eq_sum_of_finite_support`. -/
 lemma FiniteMassDist.mean_eq_sum (d : FiniteMassDist) :
     d.mean = ∑ m ∈ d.support, (d.pmf m).toReal * m := by
   unfold FiniteMassDist.mean
@@ -578,8 +586,8 @@ noncomputable def mPlusOneRatio {K : Type*} [Field K] (p : K) (n : ℕ)
     (_hp : n = 0 ∨ p ≠ 1) : K :=
   (twoIsotopePattern (1 - p) p 1 n).coeff 1 / (twoIsotopePattern (1 - p) p 1 n).coeff 0
 
-/-- The binomial form `C(n, 1) p (1 - p) ^ (n - 1) / (1 - p) ^ n` of the exact `(M+1)/M`
-ratio. -/
+/-- For `n = 0` or `p ≠ 1`, where it is defined, the exact `(M+1)/M` ratio has the binomial form
+`C(n, 1) p (1 - p) ^ (n - 1) / (1 - p) ^ n`. -/
 lemma mPlusOneRatio_eq_choose {K : Type*} [Field K] (p : K) (n : ℕ)
     (hp : n = 0 ∨ p ≠ 1) :
     mPlusOneRatio p n hp = n.choose 1 * p * (1 - p) ^ (n - 1) / (1 - p) ^ n := by
@@ -730,15 +738,17 @@ def Element.commonValences : Element → Finset ℕ
   | .Br => {1}
   | .I => {1}
 
-/-- At a common valence `v`, the sum of the nucleon number and `v` is odd exactly for nitrogen:
-for every other element the nucleon number and the valence have the same parity. -/
+/-- For each of the nine elements of the model (C, H, N, O, S, F, Cl, Br, I), at a common valence
+`v`, the sum of the model nucleon number and `v` is odd exactly for nitrogen: for the eight other
+elements the nucleon number and the valence have the same parity. -/
 lemma Element.massNumber_add_mod_two {e : Element} {v : ℕ} (hv : v ∈ e.commonValences) :
     (e.massNumber + v) % 2 = if e = .N then 1 else 0 := by
   cases e <;> simp [Element.commonValences, Element.massNumber] at hv ⊢ <;> omega
 
 open Finset in
-/-- The nitrogen rule from the valence-balance hypothesis. Suppose every atom `i ∈ s` has a common
-valence `v i` of its element (M2), and the valences have an even sum (M3). Then the nominal mass
+/-- The nitrogen rule from the valence-balance hypothesis, for atoms of the nine model elements
+at their model nucleon numbers. Suppose every atom `i ∈ s` has a common valence `v i` of its
+element (M2), and the valences have an even sum (M3). Then the nominal mass
 is odd exactly when the number of nitrogen atoms is odd. -/
 theorem nitrogenRule_of_even_sum_valence {ι : Type*} (s : Finset ι) (el : ι → Element)
     (v : ι → ℕ) (hv : ∀ i ∈ s, v i ∈ (el i).commonValences) (hbal : Even (∑ i ∈ s, v i)) :
@@ -752,8 +762,8 @@ theorem nitrogenRule_of_even_sum_valence {ι : Type*} (s : Finset ι) (el : ι �
   rw [Nat.odd_iff, Nat.odd_iff]
   omega
 
-/-- A bond graph of a molecule: atoms labeled by elements, and bonds, each joining two distinct
-atoms with a bond order. The valence of an atom is the total order of its bonds
+/-- A bond graph of a molecule: atoms labeled by the nine model elements, and bonds, each joining
+two distinct atoms with a bond order. The valence of an atom is the total order of its bonds
 (`BondGraph.valence`). -/
 structure BondGraph (ι β : Type*) where
   /-- The atoms. -/
@@ -789,12 +799,13 @@ lemma BondGraph.sum_valence {ι β : Type*} [DecidableEq ι] (G : BondGraph ι �
     two_mul]
 
 open Finset in
-/-- The nitrogen rule for a bond graph at common valences: a common-valence bond-graph
-result, not a neutrality claim. If every atom is bonded at a common valence of its element,
-the nominal mass is odd exactly when the number of nitrogen atoms is odd. The valence
-balance (M3) is not assumed: it follows from `BondGraph.sum_valence`. A bond graph records
-only elements and bond orders, so this says nothing about charge or unpaired electrons: a
-charged or radical species with the same bond graph is not excluded. -/
+/-- The nitrogen rule for a bond graph whose atoms carry the nine model elements at their model
+nucleon numbers and common valences: a common-valence bond-graph result, not a neutrality claim. If
+every atom is bonded at a common valence of its element, the nominal mass is odd exactly when the
+number of nitrogen atoms is odd. The valence balance (M3) is not assumed: it follows from
+`BondGraph.sum_valence`. A bond graph records only elements and bond orders, so this says nothing
+about charge or unpaired electrons: a charged or radical species with the same bond graph is not
+excluded. -/
 theorem BondGraph.nitrogenRule {ι β : Type*} [DecidableEq ι] (G : BondGraph ι β)
     (hv : ∀ i ∈ G.atoms, G.valence i ∈ (G.element i).commonValences) :
     Odd (nominalMass G.atoms fun i => (G.element i).massNumber) ↔

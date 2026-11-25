@@ -12,7 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Combinatorics.Enumerative.Stirling
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import MathlibExt.Combinatorics.Enumerative.Partition.PeakGeneratingFunction
-public import WantedExt.Combinatorics.Enumerative.SymmetricPeaksCompositionsWanted
+public import MathlibExt.Combinatorics.Enumerative.SymmetricPeaksCompositions
 
 /-!
 # Symmetric and non-symmetric peaks in set partitions

@@ -50,19 +50,30 @@ open Filter Topology
 variable {S A : Type*} [Fintype S] [Fintype A] [Nonempty A] {M : MDP S A ℝ} {γ : ℝ}
   (hM : M.Stochastic) (hγ0 : 0 ≤ γ) (hγ1 : γ < 1)
 
-/-- Policy improvement: a policy greedy for the value of `π`. -/
+/-- **Policy improvement step.** Let $M$ be a Markov decision process with a finite set of states
+$S$, a finite nonempty set of actions $A$, real rewards $r(s, a)$ and stochastic transition
+probabilities $P(s' \mid s, a)$, and let $0 \le \gamma < 1$. The improvement of a deterministic
+policy $\pi : S \to A$ is a fixed choice of policy greedy for the value $V^\pi$ of $\pi$: in each
+state $s$ it takes a chosen action $a$ maximizing
+$r(s, a) + \gamma \sum_{s'} P(s' \mid s, a) V^\pi(s')$ over $A$ (ties broken arbitrarily). -/
 noncomputable def improve (π : S → A) : S → A :=
   greedy M γ (policyValue M γ hM hγ0 hγ1 π)
 
-/-- Policy iteration: `n` improvement steps from `π`. -/
+/-- **Policy iteration.** Let $M$ be a Markov decision process with a finite set of states $S$, a
+finite nonempty set of actions $A$, real rewards and stochastic transition probabilities, and let
+$0 \le \gamma < 1$. Policy iteration run for $n$ steps from a deterministic policy $\pi : S \to A$
+is the policy obtained from $\pi$ by applying the policy improvement step $n$ times. -/
 noncomputable def policyIteration (n : ℕ) (π : S → A) : S → A :=
   (improve hM hγ0 hγ1)^[n] π
 
 include hM hγ0 hγ1
 
 omit [Fintype A] [Nonempty A] in
-/-- Iterating a policy's Bellman operator from a value it does not decrease converges to the
-policy's value from below. -/
+/-- **Values below their Bellman image lie below the policy value.** Let $M$ be a Markov decision
+process with a finite set of states $S$, real rewards and stochastic transition probabilities,
+and let $0 \le \gamma < 1$. Let $\pi$ be a deterministic policy, with Bellman operator $T^\pi$ and
+value $V^\pi$. If $V : S \to \mathbb{R}$ satisfies $V(s) \le (T^\pi V)(s)$ for every state $s$,
+then $V(s) \le V^\pi(s)$ for every state $s$. -/
 theorem le_policyValue_of_le_policyBellman (π : S → A) {V : S → ℝ}
     (h : V ≤ policyBellman M γ π V) : V ≤ policyValue M γ hM hγ0 hγ1 π := by
   have hle : ∀ n, V ≤ (policyBellman M γ π)^[n] V := by
@@ -76,7 +87,11 @@ theorem le_policyValue_of_le_policyBellman (π : S → A) {V : S → ℝ}
   intro s
   exact ge_of_tendsto' ((continuous_apply s).continuousAt.tendsto.comp ht) fun n => hle n s
 
-/-- **Policy improvement theorem**: the improved policy is at least as good everywhere. -/
+/-- **Policy improvement theorem.** Let $M$ be a Markov decision process with a finite set of
+states $S$, a finite nonempty set of actions $A$, real rewards and stochastic transition
+probabilities, and let $0 \le \gamma < 1$. Write $V^\pi$ for the value of a deterministic policy
+$\pi : S \to A$. For every deterministic policy $\pi$, the improved policy $\pi'$, which is greedy
+for $V^\pi$, satisfies $V^\pi(s) \le V^{\pi'}(s)$ for every state $s$. -/
 theorem policyValue_le_policyValue_improve (π : S → A) :
     policyValue M γ hM hγ0 hγ1 π ≤ policyValue M γ hM hγ0 hγ1 (improve hM hγ0 hγ1 π) := by
   refine le_policyValue_of_le_policyBellman hM hγ0 hγ1 _ ?_
@@ -86,7 +101,12 @@ theorem policyValue_le_policyValue_improve (π : S → A) :
         (policyBellman_policyValue hM hγ0 hγ1 π).symm
     _ ≤ bellman M γ (policyValue M γ hM hγ0 hγ1 π) := policyBellman_le_bellman π _
 
-/-- **Improvement stalls exactly at optimal policies.** -/
+/-- **Improvement stalls exactly at optimal policies.** Let $M$ be a Markov decision process with a
+finite set of states $S$, a finite nonempty set of actions $A$, real rewards and stochastic
+transition probabilities, and let $0 \le \gamma < 1$. Write $V^\pi$ for the value of a
+deterministic policy $\pi : S \to A$ and $V^*$ for the optimal value. For every deterministic
+policy $\pi$, with improved policy $\pi'$, we have $V^{\pi'} = V^\pi$ if and only if
+$V^\pi = V^*$ (as functions on $S$). -/
 theorem policyValue_improve_eq_iff (π : S → A) :
     policyValue M γ hM hγ0 hγ1 (improve hM hγ0 hγ1 π) = policyValue M γ hM hγ0 hγ1 π ↔
       policyValue M γ hM hγ0 hγ1 π = optimalValue M γ hM hγ0 hγ1 := by
@@ -101,13 +121,21 @@ theorem policyValue_improve_eq_iff (π : S → A) :
     rw [h]
     exact policyValue_le_optimalValue hM hγ0 hγ1 _
 
-/-- Away from optimality the value strictly improves somewhere. -/
+/-- **Away from optimality, improvement changes the value.** Let $M$ be a Markov decision process
+with a finite set of states $S$, a finite nonempty set of actions $A$, real rewards and stochastic
+transition probabilities, and let $0 \le \gamma < 1$. Write $V^\pi$ for the value of a
+deterministic policy $\pi : S \to A$ and $V^*$ for the optimal value. If $V^\pi \ne V^*$, then the
+improved policy $\pi'$ satisfies $V^{\pi'} \ne V^\pi$ (as functions on $S$). -/
 theorem policyValue_improve_ne (π : S → A)
     (h : policyValue M γ hM hγ0 hγ1 π ≠ optimalValue M γ hM hγ0 hγ1) :
     policyValue M γ hM hγ0 hγ1 (improve hM hγ0 hγ1 π) ≠ policyValue M γ hM hγ0 hγ1 π :=
   fun he => h ((policyValue_improve_eq_iff hM hγ0 hγ1 π).1 he)
 
-/-- The values along policy iteration never decrease. -/
+/-- **Policy iteration never decreases the value.** Let $M$ be a Markov decision process with a
+finite set of states $S$, a finite nonempty set of actions $A$, real rewards and stochastic
+transition probabilities, and let $0 \le \gamma < 1$. Write $V^\pi$ for the value of a
+deterministic policy $\pi : S \to A$, and $\pi_k$ for the policy after $k$ steps of policy
+iteration from $\pi$. If $i \le j$, then $V^{\pi_i}(s) \le V^{\pi_j}(s)$ for every state $s$. -/
 theorem policyValue_policyIteration_mono (π : S → A) {i j : ℕ} (hij : i ≤ j) :
     policyValue M γ hM hγ0 hγ1 (policyIteration hM hγ0 hγ1 i π) ≤
       policyValue M γ hM hγ0 hγ1 (policyIteration hM hγ0 hγ1 j π) := by
@@ -118,7 +146,12 @@ theorem policyValue_policyIteration_mono (π : S → A) {i j : ℕ} (hij : i ≤
       simp only [policyIteration, Function.iterate_succ_apply']
       exact policyValue_le_policyValue_improve hM hγ0 hγ1 _
 
-/-- Once optimal, policy iteration stays optimal. -/
+/-- **Once optimal, policy iteration stays optimal.** Let $M$ be a Markov decision process with a
+finite set of states $S$, a finite nonempty set of actions $A$, real rewards and stochastic
+transition probabilities, and let $0 \le \gamma < 1$. Write $V^\pi$ for the value of a
+deterministic policy $\pi : S \to A$, $V^*$ for the optimal value, and $\pi_k$ for the policy
+after $k$ steps of policy iteration from $\pi$. If $i \le j$ and $V^{\pi_i} = V^*$, then
+$V^{\pi_j} = V^*$. -/
 theorem policyValue_policyIteration_of_eq (π : S → A) {i j : ℕ} (hij : i ≤ j)
     (h : policyValue M γ hM hγ0 hγ1 (policyIteration hM hγ0 hγ1 i π) =
       optimalValue M γ hM hγ0 hγ1) :
@@ -127,8 +160,12 @@ theorem policyValue_policyIteration_of_eq (π : S → A) {i j : ℕ} (hij : i �
   le_antisymm (policyValue_le_optimalValue hM hγ0 hγ1 _)
     (h ▸ policyValue_policyIteration_mono hM hγ0 hγ1 π hij)
 
-/-- **Policy iteration terminates**: after `Fintype.card (S → A)` steps (at most `|A| ^ |S|`), the
-policy is optimal. -/
+/-- **Policy iteration terminates.** Let $M$ be a Markov decision process with a finite set of
+states $S$, a finite nonempty set of actions $A$, real rewards and stochastic transition
+probabilities, and let $0 \le \gamma < 1$. Write $V^\pi$ for the value of a deterministic policy
+$\pi : S \to A$, $V^*$ for the optimal value, and $N = |A|^{|S|}$ for the number of deterministic
+policies. For every deterministic policy $\pi$, the policy $\pi_N$ obtained after $N$ steps of
+policy iteration from $\pi$ is optimal: $V^{\pi_N} = V^*$. -/
 theorem policyValue_policyIteration [DecidableEq S] (π : S → A) :
     policyValue M γ hM hγ0 hγ1 (policyIteration hM hγ0 hγ1 (Fintype.card (S → A)) π) =
       optimalValue M γ hM hγ0 hγ1 := by

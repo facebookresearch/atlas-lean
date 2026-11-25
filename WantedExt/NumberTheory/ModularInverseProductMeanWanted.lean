@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.NumberTheory.ArithmeticFunction.Moebius
 public import Mathlib.NumberTheory.DirichletCharacter.Orthogonality
+public import MathlibExt.NumberTheory.ModularInverseProductMean
 
 namespace MetaMathlibExt
 
@@ -211,16 +212,6 @@ public theorem_wanted weighted_kloosterman_sum_bound {n k m : ℕ} (hn : 1 ≤ n
         (a : ℂ) * exp (2 * Real.pi * I * (k * m * ((a : ZMod n)⁻¹).val : ℕ) / n)‖ ≤
       2 * (n : ℝ) ^ ((3 : ℝ) / 2) * n.divisors.card * Real.sqrt (Nat.gcd n k) *
         Real.log (Real.exp 1 * n)
-
-/-- **Weighted sum of an additive character.** Let $q \ge 2$, let $k$ be a natural number not
-divisible by $q$, and write $e_q(x) = e^{2\pi i x / q}$. Then
-$$\sum_{b=1}^{q-1} b\, e_q(-kb) = -\frac{q}{1 - e_q(-k)}.$$
-
-Source: O. Bordellès and L. Tóth, *Mean Values of the Product of an Integer and Its Modular
-Inverse*, INTEGERS 24 (2024), Article A33, Lemma 3. -/
-public theorem_wanted sum_mul_additive_character {q k : ℕ} (hq : 2 ≤ q) (hk : ¬ q ∣ k) :
-    ∑ b ∈ Icc 1 (q - 1), (b : ℂ) * exp (2 * Real.pi * I * (-(k * b : ℂ)) / q) =
-      -q / (1 - exp (2 * Real.pi * I * (-(k : ℂ)) / q))
 
 /-- **Weighted additive character sum over reduced residues.** For a positive integer $r$ and an
 integer $x$ write $e_r(x) = \exp(2\pi i x / r)$, and let $\mu$ be the Möbius function. For all

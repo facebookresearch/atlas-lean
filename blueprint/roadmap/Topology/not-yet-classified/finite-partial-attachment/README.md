@@ -1,0 +1,15 @@
+# Finite Partial Attachment
+
+- [Domain](domain.md)
+- [Target](target.md)
+- [Coproduct Map](coproduct-map.md)
+- [Attaching](attaching.md)
+- [Object](object.md)
+- [Root](root.md)
+- [Cell](cell.md)
+- [Boundary](boundary.md)
+- [Hom ext](hom-ext.md)
+- [Desc](desc.md)
+- [Root desc](root-desc.md)
+- [Cell desc](cell-desc.md)
+- [Desc unique](desc-unique.md)
