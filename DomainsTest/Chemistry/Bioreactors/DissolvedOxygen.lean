@@ -48,6 +48,15 @@ example {kLa Cstar C₀ T : ℝ} (hkLa : 0 < kLa) (hC₀ : C₀ ∈ Icc 0 Cstar)
     (fun _ _ ↦ mul_nonneg hkLa.le (hC₀.1.trans hC₀.2)) ?_
   simpa using hC₀
 
+/-- The same through `mem_Icc_of_uptake_le_transfer`, with `kLa ≥ 0` only. With the namespace
+open, `mem_Icc` is still Mathlib's `Set.mem_Icc`. -/
+example {kLa Cstar C₀ T : ℝ} (hkLa : 0 ≤ kLa) (hC₀ : 0 ≤ C₀) (hC₀' : C₀ ≤ Cstar) :
+    ∀ t ∈ Icc 0 T, Cstar - (Cstar - C₀) * exp (-kLa * t) ∈ Icc 0 Cstar :=
+  mem_Icc_of_uptake_le_transfer (u := fun _ ↦ 0) (D := fun _ ↦ 0) hkLa (fun _ _ ↦ le_rfl)
+    (fun _ _ ↦ le_rfl) (fun t _ ↦ hasDerivWithinAt_aeration kLa Cstar C₀ T t)
+    (fun _ _ ↦ mul_nonneg hkLa (hC₀.trans hC₀'))
+    (mem_Icc.mpr ⟨by simpa using hC₀, by simpa using hC₀'⟩)
+
 /-- With `K_L a = 2`, `C* = 3`, `u = 1` and `D = 1`, the equilibrium is
 `C_eq = (2 * 3 - 1) / (2 + 1) = 5 / 3`, and the constant solution `C = 5 / 3` solves the balance. -/
 theorem hasDerivWithinAt_equilibrium (T t : ℝ) :

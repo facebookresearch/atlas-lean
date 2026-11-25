@@ -23,7 +23,10 @@ every $t \in [0, T]$ is given by this equation. Then:
 
 In applications $C_{\mathrm{crit}}$ is a critical oxygen concentration with $0 \le C_{\mathrm{crit}} < C^*$, and
 $C_{\mathrm{eq}}$ is the concentration at which the right-hand side vanishes for the constant inputs. The bounds need
-no continuity of $u$ or $D$; continuity matters only for a solution to exist. Each bound is a barrier argument:
+no continuity of $u$ or $D$; continuity matters only for a solution to exist. The equation must hold at every
+$t \in [0, T]$, so an input with a jump, such as a piecewise-constant feed, in general has no solution in this sense
+across the jump, since a derivative has no jump discontinuities; the results then apply piece by piece, on each
+interval between jumps, starting from the value the previous interval ends at. Each bound is a barrier argument:
 $w = C - C_{\mathrm{crit}}$, or $w = C^* - C$ for the upper bound in 1, starts nonnegative and has $w' \ge 0$ wherever
 $w < 0$, so it never becomes negative; the lower bound in 1 is 2 with $C_{\mathrm{crit}} = 0$. Using a $K_L a$ from an
 interfacial mass-transfer correlation requires that correlation's assumptions; gas-phase dynamics are outside this

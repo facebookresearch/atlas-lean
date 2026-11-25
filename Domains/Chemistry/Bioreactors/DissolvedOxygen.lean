@@ -31,7 +31,10 @@ concentration. A solution on the horizon `[0, T]` is a function `C : ℝ → ℝ
 that is, differentiable on `[0, T]` with one-sided derivatives at the endpoints, the form of the
 solutions that Mathlib's Picard–Lindelöf theorem provides. The results bound every such solution
 and do not address its existence; the inputs `u` and `D` need only be nonnegative on `[0, T]`,
-not continuous.
+not continuous. The equation must hold at every time of `[0, T]`, so an input with a jump, such
+as a piecewise-constant feed, in general has no solution in this sense across the jump, since a
+derivative has no jump discontinuities; the results then apply piece by piece, on each interval
+between jumps, starting from the value the previous interval ends at.
 
 ## Main results
 
@@ -39,8 +42,8 @@ All in the namespace `Chemistry.Bioreactors.DissolvedOxygen`:
 
 * `le_of_uptake_add_dilution_le_transfer`: if `C(0) ≥ C_crit` and
   `K_L a (C* - C_crit) ≥ u(t) + D(t) C_crit` on `[0, T]`, then `C ≥ C_crit` on `[0, T]`.
-* `mem_Icc`: if `u ≤ K_L a C*` on `[0, T]` and `C(0) ∈ [0, C*]`, then `C` stays in `[0, C*]` on
-  `[0, T]`.
+* `mem_Icc_of_uptake_le_transfer`: if `u ≤ K_L a C*` on `[0, T]` and `C(0) ∈ [0, C*]`, then `C`
+  stays in `[0, C*]` on `[0, T]`.
 * `uptake_add_dilution_le_transfer_iff`: for constant inputs `u₀` and `D₀` that condition is
   `C_eq = (K_L a C* - u₀) / (K_L a + D₀) ≥ C_crit`.
 * `balance`: the three statements together.
@@ -120,7 +123,7 @@ and $D(t) \ge 0$ for every $t \in [0, T]$, and let $C$ solve
 $C' = K_L a\,(C^* - C) - u(t) - D(t)\,C$ on $[0, T]$: differentiable on $[0, T]$, with one-sided
 derivatives at the endpoints. If $u(t) \le K_L a\,C^*$ for every $t \in [0, T]$ and
 $C(0) \in [0, C^*]$, then $C(t) \in [0, C^*]$ for every $t \in [0, T]$. -/
-theorem mem_Icc {kLa Cstar T : ℝ} {u D C : ℝ → ℝ} (hkLa : 0 ≤ kLa)
+theorem mem_Icc_of_uptake_le_transfer {kLa Cstar T : ℝ} {u D C : ℝ → ℝ} (hkLa : 0 ≤ kLa)
     (hu : ∀ t ∈ Icc 0 T, 0 ≤ u t) (hD : ∀ t ∈ Icc 0 T, 0 ≤ D t)
     (hC : ∀ t ∈ Icc 0 T,
       HasDerivWithinAt C (kLa * (Cstar - C t) - u t - D t * C t) (Icc 0 T) t)
@@ -174,7 +177,7 @@ theorem balance {kLa Cstar T : ℝ} {u D C : ℝ → ℝ} (hkLa : 0 < kLa)
       (∀ u₀ D₀ Ccrit, 0 ≤ T → (∀ t ∈ Icc 0 T, u t = u₀) → (∀ t ∈ Icc 0 T, D t = D₀) →
         ((∀ t ∈ Icc 0 T, u t + D t * Ccrit ≤ kLa * (Cstar - Ccrit)) ↔
           Ccrit ≤ (kLa * Cstar - u₀) / (kLa + D₀))) := by
-  refine ⟨fun huC hC0 ↦ mem_Icc hkLa.le hu hD hC huC hC0,
+  refine ⟨fun huC hC0 ↦ mem_Icc_of_uptake_le_transfer hkLa.le hu hD hC huC hC0,
     fun Ccrit hC0 hcrit ↦ le_of_uptake_add_dilution_le_transfer hkLa.le hD hC hC0 hcrit,
     fun u₀ D₀ Ccrit hT hu₀ hD₀ ↦ ?_⟩
   have h0 : (0 : ℝ) ∈ Icc 0 T := ⟨le_rfl, hT⟩
