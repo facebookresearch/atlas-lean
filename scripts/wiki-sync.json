@@ -9700,6 +9700,7 @@
 "Chebyshev.tendsto_psiResidueClass_div_self": "bedf2112905abf7e",
 "Chebyshev.theta_isEquivalent_of_primeCounting_isEquivalent": "45405c8b4be4bd32",
 "Chebyshev.weakPNT_arithmeticProgression": "98070a46aaf27083",
+"Chemistry.AdiabaticReactor.steady_states_and_energy_invariant": "b558b01b378b260d",
 "Chemistry.Amounts.amountOfSubstance": "234dfc92da3841f0",
 "Chemistry.Amounts.amountOfSubstance_add": "b0bb2691e5685a09",
 "Chemistry.Amounts.amountOfSubstance_eq_iff": "a79d49866aa33cbb",

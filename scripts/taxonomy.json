@@ -14232,6 +14232,7 @@
   "MathlibExt/Topology/TDA/ZeroDimensionalPersistence": {"to": "Topology/algebraic-topology", "title": "Persistence modules and barcodes"},
   "MathlibExt/Topology/ThreeManifold": {"to": "Topology/manifolds-geometric-topology", "title": "Topological 3-manifolds"},
   "Domains/Urban/StockNonneg": {"to": "Economics/inventory-transport-and-spatial-models", "title": "Stock balances on transfer networks"},
+  "PhyslibExt/Chemistry/AdiabaticReactor": {"to": "Chemistry/chemical-kinetics", "title": "Exothermic stirred-tank reactor"},
   "PhyslibExt/Chemistry/Amounts/MolarMassComposition": {"to": "Chemistry/amounts-and-stoichiometry", "title": "Amount of substance and molar mass"},
   "PhyslibExt/Chemistry/AngularMomentumRotorHydrogen": {"to": "Chemistry/quantum-chemistry-and-spectroscopy", "title": "Angular momentum, rigid rotor and hydrogen-like atom"},
   "PhyslibExt/Chemistry/Calibration": {"to": "Chemistry/analytical-chemistry", "title": "Analytical calibration and inverse prediction"},
