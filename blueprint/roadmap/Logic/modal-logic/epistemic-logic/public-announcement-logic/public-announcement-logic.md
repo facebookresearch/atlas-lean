@@ -23,6 +23,12 @@ together with replacement of provable equivalents. This axiomatization is sound 
 - [Announcement elimination](announcement-elimination.md)
 - [The announcement translation is free of announcements and common knowledge](the-announcement-translation-is-announcement-free.md)
 
+## Expansion
+
+This page becomes ready once these prerequisites are stated:
+
+- A proof system for multi-agent epistemic logic and its soundness and completeness over epistemic models, the base logic the reduction axioms extend (proof prerequisite)
+
 ## Sources
 
 - A. Baltag and B. Renne, "Dynamic epistemic logic", *Stanford Encyclopedia of Philosophy*, the language and semantics of public announcement logic, the axiomatic theory PAL with its reduction axioms, the PAL Reduction Theorem and PAL soundness and completeness, <https://plato.stanford.edu/entries/dynamic-epistemic/>

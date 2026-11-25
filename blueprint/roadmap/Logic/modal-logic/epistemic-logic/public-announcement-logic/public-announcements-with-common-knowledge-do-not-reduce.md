@@ -7,6 +7,12 @@ Add a common-knowledge operator $C_G$ for groups $G$ of agents to the epistemic 
 - [Epistemic models](../model.md)
 - [Soundness and completeness of public announcement logic](public-announcement-logic.md)
 
+## Expansion
+
+This page becomes ready once these prerequisites are stated:
+
+- A model-comparison method for epistemic logic with common knowledge, such as bisimulation games bounded by modal depth, that shows two models agree on all announcement-free formulas of bounded size (proof prerequisite)
+
 ## Sources
 
 - A. Baltag and B. Renne, "Dynamic epistemic logic", *Stanford Encyclopedia of Philosophy*, the theorem that public announcement logic with common knowledge is more expressive than epistemic logic with common knowledge, <https://plato.stanford.edu/entries/dynamic-epistemic/>
