@@ -15,3 +15,9 @@ Typed lambda calculi and type inference: the simply typed lambda calculus (synta
 - [Type checking for the simply typed lambda calculus](type-checking-for-the-simply-typed-lambda-calcul/README.md)
 - [Lambda calculus with references](lambda-calculus-with-references/README.md)
 - [Syntax with binders](syntax-with-binders/README.md)
+
+- [Gödel's System T](system-t/README.md)
+- [Type soundness](type-soundness/README.md)
+- [Normalization and logical relations](normalization-and-logical-relations/README.md)
+- [Advanced type systems](advanced-type-systems/README.md)
+- [Syntax with binders](syntax-with-binders/README.md)

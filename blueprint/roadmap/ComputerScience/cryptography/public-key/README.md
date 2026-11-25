@@ -14,6 +14,9 @@ Diffie–Hellman key agreement; ElGamal encryption and its security under the de
 - [Rabin cryptosystem](rabin-cryptosystem/README.md)
 - [RSA cryptosystem](rsa-cryptosystem/README.md)
 - [Security of Diffie–Hellman key exchange](security-of-diffie-hellman-key-exchange/README.md)
+- [Random-oracle constructions](random-oracle-constructions/README.md)
+- [Pairing-based cryptography](advanced-encryption-and-pairings/README.md)
+- [Homomorphic encryption](homomorphic-encryption/README.md)
 
 - [Circular security from fully composable homomorphic encryption](circular-security-from-composable-homomorphic-encryption.md)
 

@@ -1,0 +1,3 @@
+# The back-door criterion identifies the interventional probability
+
+Fix a DAG with parent sets $\mathrm{pa}$ on $n$ variables with values in a finite nonempty set, a treatment $k$, an outcome $y \ne k$, an adjustment set $Z$ with $y \notin Z$, a treatment value $a$ and an outcome value $v$. Consider the class of causal Bayesian networks with this graph that satisfy the back-door criterion for $(k, y, Z)$ and the positivity condition $P(X_k = a, Z = z) > 0$ whenever $P(Z = z) > 0$. On this class, $P(X_y = v \mid \mathrm{do}(X_k = a))$ is identified by the observational joint law: two networks in the class with the same joint law give the same value.

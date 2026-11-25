@@ -27,6 +27,7 @@ public import Mathlib.NumberTheory.Real.GoldenRatio
 public import Mathlib.RingTheory.Binomial
 public import MathlibExt.Combinatorics.Enumerative.ArndtCompositions
 public import MathlibExt.Combinatorics.Enumerative.ArndtLastPartBounds
+public import MathlibExt.Combinatorics.Enumerative.ArndtPositiveSum
 public import MathlibExt.Combinatorics.Enumerative.KArndtTotalGFNeg
 public import MathlibExt.Combinatorics.Enumerative.KArndtTotalGFNonneg
 public import WantedExt.Combinatorics.Enumerative.ArndtCompositionsWanted
@@ -183,26 +184,6 @@ public theorem_wanted arndtCompositionCount_eq_alternating_sum_and_recurrence :
           arndtCompositionCount (fun _ => True) (n - 2) m -
             arndtCompositionCount (fun _ => True) (n - 3) m +
               arndtCompositionCount (fun _ => True) (n - 3) (m - 2)
-
-/-- **Positive sum for Arndt compositions.** Let $a(n, m)$ be the number of Arndt compositions of
-$n$ with $m$ parts, and write $h = \lfloor m/2 \rfloor$. For all $n \ge 0$ and $m \ge 1$: if
-$m + h \le n$, then
-$$a(n, m) = \sum_{\ell=0}^{\lfloor (n-m-h)/2 \rfloor} \binom{h+\ell-1}{\ell}
-\binom{n-2h-2\ell-1}{\lfloor (m-1)/2 \rfloor},$$
-and otherwise $a(n, m) = 0$. Here $\binom{-1}{0} = 1$ (this term occurs for $m = 1$).
-
-The paper states it for all $n, m \ge 0$; at $n = m = 0$ it fails ($a(0, 0) = 1$, while the only
-term has lower index $\lfloor -1/2 \rfloor = -1$ and vanishes), so the case $m = 0$ is omitted.
-
-Source: Daniel F. Checa and José L. Ramírez, *Arndt Compositions: A Generating Functions
-Approach*, INTEGERS 24 (2024), Article A35, Theorem 3 (`integers-2024-A35-thm-3`). -/
-public theorem_wanted arndtCompositionCount_eq_positive_sum (n m : ℕ) (hm : 0 < m) :
-    (arndtCompositionCount (fun _ => True) n m : ℤ) =
-      if m + m / 2 ≤ n then
-        ∑ ℓ ∈ Finset.range ((n - m - m / 2) / 2 + 1),
-          Ring.choose (((m / 2 : ℕ) : ℤ) + ℓ - 1) ℓ *
-            Ring.choose ((n : ℤ) - 2 * (m / 2 : ℕ) - 2 * ℓ - 1) ((m - 1) / 2)
-      else 0
 
 /-- **Holonomic recurrence for Arndt compositions.** Let $a(n, m)$ be the number of Arndt
 compositions of $n$ with $m$ parts. For all $n, m \ge 0$,
