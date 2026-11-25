@@ -34,7 +34,7 @@ universe v u
 
 namespace CategoryTheory.Waldhausen
 
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- Both injections of the existing binary-coproduct cocone derived from
 Waldhausen zero pushouts are original base cofibrations. -/
@@ -52,9 +52,9 @@ theorem binaryCoproductColimitCocone_injections_isCofibration (X Y : C) :
     rw [hXmap, hYmap] at hp'
     exact hp'
   have hX : IsCofibration ((isZero_zero C).to_ X) :=
-    WaldhausenCategory.zero_isCofibration X _
+    WaldhausenCategoryWithoutGluing.zero_isCofibration X _
   have hY : IsCofibration ((isZero_zero C).to_ Y) :=
-    WaldhausenCategory.zero_isCofibration Y _
+    WaldhausenCategoryWithoutGluing.zero_isCofibration Y _
   exact ⟨MorphismProperty.IsStableUnderCobaseChange.of_isPushout hp hY,
     MorphismProperty.IsStableUnderCobaseChange.of_isPushout hp.flip hX⟩
 

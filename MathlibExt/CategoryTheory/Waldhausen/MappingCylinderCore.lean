@@ -41,13 +41,13 @@ namespace CategoryTheory
 
 variable {C : Type u₁} [Category.{v₁} C] [HasZeroObject C]
 variable {D : Type u₂} [Category.{v₂} D] [HasZeroObject D]
-variable [WaldhausenCategory C] [WaldhausenCategory D]
+variable [WaldhausenCategoryWithoutGluing C] [WaldhausenCategoryWithoutGluing D]
 
 /-- Minimal functorial mapping-cylinder data sufficient for one
 cofibration-replacement calculation. -/
 structure WaldhausenMappingCylinderCore
     (C : Type u₁) [Category.{v₁} C] [HasZeroObject C]
-    [WaldhausenCategory C] where
+    [WaldhausenCategoryWithoutGluing C] where
   /-- The mapping-cylinder object, functorial in an arrow. -/
   functor : Arrow C ⥤ C
   /-- Front inclusion from the source of the arrow. -/
@@ -89,7 +89,7 @@ theorem cofibrationApproximation_of_approximation
   refine ⟨T.functor.obj (Arrow.mk a), T.front.app (Arrow.mk a),
     F.map (T.projection.app (Arrow.mk a)) ≫ p,
     T.front_cofibration (Arrow.mk a), ?_, ?_⟩
-  · exact (WaldhausenCategory.weakEquivalences (C := D)).comp_mem _ _
+  · exact (WaldhausenCategoryWithoutGluing.weakEquivalences (C := D)).comp_mem _ _
       (hF.map_weakEquivalence _ (hCyl (Arrow.mk a))) hp
   · have hfront :
         T.front.app (Arrow.mk a) ≫

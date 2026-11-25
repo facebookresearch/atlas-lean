@@ -50,7 +50,7 @@ def moduleProduct : ShortComplex (ModuleCat.{max u v} R) :=
       ext x i
       exact ConcreteCategory.congr_hom (S i).zero (x i))
 
-/-- Every product cycle has an original componentwise preimage when the component complexes are exact. -/
+/-- Every product cycle has a componentwise preimage when each component complex is exact. -/
 theorem moduleProduct_exact (hS : ∀ i, (S i).Exact) : (moduleProduct S).Exact := by
   rw [moduleCat_exact_iff]
   intro x hx
@@ -69,7 +69,8 @@ variable [Finite I]
 /-- The standard biproduct/product comparison at an arbitrary finite index universe. -/
 def moduleBiproductIsoPi (X : I → ModuleCat.{max u v} R) :
     (⨁ X) ≅ ModuleCat.of R (∀ i, X i) :=
-  IsLimit.conePointUniqueUpToIso (biproduct.isLimit X) (ModuleCat.HasLimit.productLimitCone X).isLimit
+  IsLimit.conePointUniqueUpToIso (biproduct.isLimit X)
+    (ModuleCat.HasLimit.productLimitCone X).isLimit
 
 theorem moduleBiproductIsoPi_inv_comp_π (X : I → ModuleCat.{max u v} R) (i : I) :
     (moduleBiproductIsoPi X).inv ≫ biproduct.π X i =

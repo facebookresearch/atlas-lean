@@ -89,7 +89,10 @@ private theorem boundary_coordinate_one :
 private theorem boundary_nonzero : boundary ≠ 0 := by
   intro hzero
   have h := congrArg (fun z : K.X 1 => (exteriorPower.oneEquiv R M z) i1) hzero
-  rw [boundary_coordinate_one, map_zero] at h
+  rw [boundary_coordinate_one] at h
+  have hmap : exteriorPower.oneEquiv R M (0 : ⋀[R]^1 M) = 0 :=
+    (exteriorPower.oneEquiv R M).map_zero
+  rw [hmap] at h
   change (3 : R) = 0 at h
   exact (by decide : (3 : R) ≠ 0) h
 
@@ -98,7 +101,9 @@ private theorem next_boundary_zero : (K.d 1 0).hom boundary = 0 := by
     KoszulComplex.complex_d_succ R M φ 0
   rw [hd]
   apply (exteriorPower.zeroEquiv R M).injective
-  rw [map_zero]
+  change exteriorPower.zeroEquiv R M (KoszulComplex.differential R M φ 0 boundary) =
+    exteriorPower.zeroEquiv R M (0 : ⋀[R]^0 M)
+  rw [(exteriorPower.zeroEquiv R M).map_zero]
   have h := LinearMap.congr_fun (KoszulComplex.differential_zero_equiv R M φ) boundary
   change exteriorPower.zeroEquiv R M (KoszulComplex.differential R M φ 0 boundary) =
     φ (exteriorPower.oneEquiv R M boundary) at h

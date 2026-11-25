@@ -122,9 +122,17 @@ private theorem comultiplication_counit_right :
 
 /-- The universal enveloping algebra has the bialgebra structure with primitive Lie generators. -/
 instance instBialgebra : Bialgebra R U :=
-  Bialgebra.ofAlgHom (comultiplication R L) (augmentation R L)
-    (comultiplication_coassoc R L) (comultiplication_counit_left R L)
-    (comultiplication_counit_right R L)
+  Bialgebra.ofAlgHom
+    (lift R
+      { __ := (TensorProduct.mk R U U 1).comp (ι R).toLinearMap +
+          ((TensorProduct.mk R U U).flip 1).comp (ι R).toLinearMap
+        map_lie' := by
+          intro x y
+          exact comultiplicationLinear_map_lie R L x y })
+    (augmentation R L)
+    (by exact comultiplication_coassoc R L)
+    (by exact comultiplication_counit_left R L)
+    (by exact comultiplication_counit_right R L)
 
 /-- The native bialgebra counit is the canonical scalar augmentation. -/
 @[simp]
@@ -137,8 +145,9 @@ theorem counitAlgHom_eq_augmentation :
 /-- Every Lie generator has coproduct `1 ⊗ ι x + ι x ⊗ 1`. -/
 @[simp]
 theorem comul_ι (x : L) :
-    Coalgebra.comul (R := R) (ι R x) = 1 ⊗ₜ[R] ι R x + ι R x ⊗ₜ[R] 1 :=
-  comultiplication_ι R L x
+    Coalgebra.comul (R := R) (ι R x) = 1 ⊗ₜ[R] ι R x + ι R x ⊗ₜ[R] 1 := by
+  change comultiplication R L (ι R x) = 1 ⊗ₜ[R] ι R x + ι R x ⊗ₜ[R] 1
+  exact comultiplication_ι R L x
 
 /-- The counit annihilates every Lie generator. -/
 @[simp]

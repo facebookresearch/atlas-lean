@@ -42,7 +42,7 @@ universe u v uD vD
 
 namespace CategoryTheory.Waldhausen
 
-variable {C : Type u} [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable {C : Type u} [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 section Corner
 
@@ -53,7 +53,7 @@ def cylinderBoundaryMap (T : Arrow C ⥤ C)
     (front : Arrow.leftFunc ⟶ T) (back : Arrow.rightFunc ⟶ T) (f : Arrow C) :
     f.left ⨿ f.right ⟶ T.obj f := coprod.desc (front.app f) (back.app f)
 
-omit [HasZeroObject C] [WaldhausenCategory C] in
+omit [HasZeroObject C] [WaldhausenCategoryWithoutGluing C] in
 /-- The original joint boundary retains its whole front inclusion. -/
 theorem cylinderBoundaryMap_inl (T : Arrow C ⥤ C)
     (front : Arrow.leftFunc ⟶ T) (back : Arrow.rightFunc ⟶ T) (f : Arrow C) :
@@ -61,7 +61,7 @@ theorem cylinderBoundaryMap_inl (T : Arrow C ⥤ C)
   dsimp only [cylinderBoundaryMap]
   exact coprod.inl_desc _ _
 
-omit [HasZeroObject C] [WaldhausenCategory C] in
+omit [HasZeroObject C] [WaldhausenCategoryWithoutGluing C] in
 /-- The original joint boundary retains its whole back inclusion. -/
 theorem cylinderBoundaryMap_inr (T : Arrow C ⥤ C)
     (front : Arrow.leftFunc ⟶ T) (back : Arrow.rightFunc ⟶ T) (f : Arrow C) :
@@ -69,7 +69,7 @@ theorem cylinderBoundaryMap_inr (T : Arrow C ⥤ C)
   dsimp only [cylinderBoundaryMap]
   exact coprod.inr_desc _ _
 
-omit [HasZeroObject C] [WaldhausenCategory C] in
+omit [HasZeroObject C] [WaldhausenCategoryWithoutGluing C] in
 /-- The original combined inclusion is natural in every commutative arrow square. -/
 theorem cylinderBoundaryMap_naturality (T : Arrow C ⥤ C)
     (front : Arrow.leftFunc ⟶ T) (back : Arrow.rightFunc ⟶ T)
@@ -89,7 +89,7 @@ theorem cylinderCorner_hasPushout (T : Arrow C ⥤ C)
     (hBoundary : ∀ f, IsCofibration (cylinderBoundaryMap T front back f))
     {f g : Arrow C} (α : f ⟶ g) :
     HasPushout (cylinderBoundaryMap T front back f) (coprod.map α.left α.right) := by
-  obtain ⟨P, inNew, inOld, hp, _⟩ := WaldhausenCategory.cofibration_pushout
+  obtain ⟨P, inNew, inOld, hp, _⟩ := WaldhausenCategoryWithoutGluing.cofibration_pushout
     (C := C) (cylinderBoundaryMap T front back f) (hBoundary f)
     (g.left ⨿ g.right) (coprod.map α.left α.right)
   exact hp.flip.hasPushout
@@ -132,7 +132,7 @@ end Corner
 Binary coproducts are the named values derived from the original Waldhausen
 pushouts. The zero-arrow equality is represented by its canonical natural isomorphism. -/
 structure FullCylinder (C : Type u) [Category.{v} C] [HasZeroObject C]
-    [WaldhausenCategory C] extends WaldhausenMappingCylinderCore C where
+    [WaldhausenCategoryWithoutGluing C] extends WaldhausenMappingCylinderCore C where
   /-- The original projection and back inclusion normalize the zero-arrow cylinder. -/
   normalization : CylinderNormalization functor back projection
   /-- Both original boundary components jointly form a cofibration. -/
@@ -183,8 +183,8 @@ theorem back_isCofibration (f : Arrow C) : IsCofibration (T.back.app f) := by
     have hp := IsPushout.of_is_coproduct (coprodIsCoprod f.left f.right)
       (isZero_zero C).isInitial
     exact MorphismProperty.IsStableUnderCobaseChange.of_isPushout hp.flip
-      (WaldhausenCategory.zero_isCofibration f.left _)
-  have hComp := (WaldhausenCategory.cofibrations (C := C)).comp_mem
+      (WaldhausenCategoryWithoutGluing.zero_isCofibration f.left _)
+  have hComp := (WaldhausenCategoryWithoutGluing.cofibrations (C := C)).comp_mem
     (coprod.inr : f.right ⟶ f.left ⨿ f.right)
     (cylinderBoundaryMap T.functor T.front T.back f) hInr (T.boundary_cofibration f)
   simpa only [cylinderBoundaryMap, coprod.inr_desc] using hComp
@@ -207,7 +207,7 @@ theorem obj_isZero_of_endpoints {f : Arrow C} (hSource : IsZero f.left)
 /-- Full source cylinders give the literal approximation cofibration replacement
 with the original front map and weak composite projection. -/
 theorem cofibrationApproximation {D : Type uD} [Category.{vD} D]
-    [HasZeroObject D] [WaldhausenCategory D] {F : C ⥤ D}
+    [HasZeroObject D] [WaldhausenCategoryWithoutGluing D] {F : C ⥤ D}
     (hF : F.IsWaldhausenExact) (hApp : F.WaldhausenApproximationProperty)
     (hCyl : T.SatisfiesCylinderAxiom) :
     ∀ (X : C) (Y : D) (g : F.obj X ⟶ Y),

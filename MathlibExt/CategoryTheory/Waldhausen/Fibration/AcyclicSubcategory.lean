@@ -50,7 +50,7 @@ variable {C : Type u} [Category.{v} C] [HasZeroObject C]
 
 section PushoutClosure
 
-variable [WaldhausenCategory C]
+variable [WaldhausenCategoryWithoutGluing C]
 
 /-- Original gluing from the all-zero square proves acyclicity of the
 given pushout apex from the three original acyclic span objects. -/
@@ -58,13 +58,14 @@ theorem WaldhausenGluingAxiom.acyclicObjects_of_pushout
     (hG : WaldhausenGluingAxiom (C := C))
     {X Y Z P : C} (i : X ⟶ Y) (f : X ⟶ Z) (inY : Y ⟶ P) (inZ : Z ⟶ P)
     (hi : IsCofibration i) (hP : IsPushout i f inY inZ)
-    (hX : WaldhausenCategory.acyclicObjects X)
-    (hY : WaldhausenCategory.acyclicObjects Y)
-    (hZ : WaldhausenCategory.acyclicObjects Z) : WaldhausenCategory.acyclicObjects P :=
+    (hX : WaldhausenCategoryWithoutGluing.acyclicObjects X)
+    (hY : WaldhausenCategoryWithoutGluing.acyclicObjects Y)
+    (hZ : WaldhausenCategoryWithoutGluing.acyclicObjects Z) :
+    WaldhausenCategoryWithoutGluing.acyclicObjects P :=
   hG.gluing (IsPushout.of_id_fst (f := 𝟙 (0 : C))) hP
     ((isZero_zero C).to_ X) ((isZero_zero C).to_ Y)
     ((isZero_zero C).to_ Z) ((isZero_zero C).to_ P)
-    (WaldhausenCategory.cofibrations.of_isIso (𝟙 (0 : C))) hi
+    (WaldhausenCategoryWithoutGluing.cofibrations.of_isIso (𝟙 (0 : C))) hi
     ((isZero_zero C).eq_of_src _ _) ((isZero_zero C).eq_of_src _ _)
     ((isZero_zero C).eq_of_src _ _) ((isZero_zero C).eq_of_src _ _)
     hX hY hZ
@@ -75,67 +76,68 @@ namespace Waldhausen
 
 /-- The original full subcategory of objects acyclic for the specified
 larger weak structure, with its inherited original morphisms. -/
-abbrev AcyclicSubcategory (W : WaldhausenCategory C) : Type u :=
-  (@WaldhausenCategory.acyclicObjects C _ _ W).FullSubcategory
+abbrev AcyclicSubcategory (W : WaldhausenCategoryWithoutGluing C) : Type u :=
+  (@WaldhausenCategoryWithoutGluing.acyclicObjects C _ _ W).FullSubcategory
 
 /-- The original fully faithful inclusion of the acyclic full subcategory. -/
-abbrev acyclicι (W : WaldhausenCategory C) : AcyclicSubcategory W ⥤ C :=
-  (@WaldhausenCategory.acyclicObjects C _ _ W).ι
+abbrev acyclicι (W : WaldhausenCategoryWithoutGluing C) : AcyclicSubcategory W ⥤ C :=
+  (@WaldhausenCategoryWithoutGluing.acyclicObjects C _ _ W).ι
 
 /-- The whole inclusion retains the original object. -/
-theorem acyclicι_obj (W : WaldhausenCategory C) (X : AcyclicSubcategory W) :
+theorem acyclicι_obj (W : WaldhausenCategoryWithoutGluing C) (X : AcyclicSubcategory W) :
     (acyclicι W).obj X = X.obj := rfl
 
 /-- The whole inclusion retains the original morphism. -/
-theorem acyclicι_map (W : WaldhausenCategory C)
+theorem acyclicι_map (W : WaldhausenCategoryWithoutGluing C)
     {X Y : AcyclicSubcategory W} (f : X ⟶ Y) : (acyclicι W).map f = f.hom := rfl
 
 /-- The original ambient zero, admitted by its weak identity. -/
-def acyclicZero (W : WaldhausenCategory C) : AcyclicSubcategory W :=
-  ⟨(0 : C), @WaldhausenCategory.zero_mem_acyclicObjects C _ _ W⟩
+def acyclicZero (W : WaldhausenCategoryWithoutGluing C) : AcyclicSubcategory W :=
+  ⟨(0 : C), @WaldhausenCategoryWithoutGluing.zero_mem_acyclicObjects C _ _ W⟩
 
 /-- The admitted original zero is zero through the original full inclusion. -/
-theorem acyclicZero_isZero (W : WaldhausenCategory C) : IsZero (acyclicZero W) :=
+theorem acyclicZero_isZero (W : WaldhausenCategoryWithoutGluing C) : IsZero (acyclicZero W) :=
   IsZero.of_full_of_faithful_of_isZero (acyclicι W) (acyclicZero W) (isZero_zero C)
 
 /-- The actual zero-object witness for the original acyclic category. -/
-theorem acyclicHasZeroObject (W : WaldhausenCategory C) : HasZeroObject (AcyclicSubcategory W) :=
+theorem acyclicHasZeroObject (W : WaldhausenCategoryWithoutGluing C) :
+    HasZeroObject (AcyclicSubcategory W) :=
   (acyclicZero_isZero W).hasZeroObject
 
 /-- The actual selected subcategory zero is compared with the admitted
 original ambient zero, without replacing either selected object. -/
-def acyclicZeroIso (W : WaldhausenCategory C) :
+def acyclicZeroIso (W : WaldhausenCategoryWithoutGluing C) :
     letI := acyclicHasZeroObject W
     (0 : AcyclicSubcategory W) ≅ acyclicZero W := by
   let := acyclicHasZeroObject W
   exact (isZero_zero (AcyclicSubcategory W)).iso (acyclicZero_isZero W)
 
 /-- The original inclusion's complete selected-zero chart. -/
-def acyclicιZeroIso (W : WaldhausenCategory C) :
+def acyclicιZeroIso (W : WaldhausenCategoryWithoutGluing C) :
     letI := acyclicHasZeroObject W
     (acyclicι W).obj (0 : AcyclicSubcategory W) ≅ (0 : C) := by
   let := acyclicHasZeroObject W
   exact (acyclicι W).mapIso (acyclicZeroIso W)
 
 /-- The zero chart's whole forward map is the original inclusion map. -/
-theorem acyclicιZeroIso_hom (W : WaldhausenCategory C) :
+theorem acyclicιZeroIso_hom (W : WaldhausenCategoryWithoutGluing C) :
     letI := acyclicHasZeroObject W
     (acyclicιZeroIso W).hom = (acyclicι W).map (acyclicZeroIso W).hom := rfl
 
 /-- The zero chart's whole inverse map is the original inclusion map. -/
-theorem acyclicιZeroIso_inv (W : WaldhausenCategory C) :
+theorem acyclicιZeroIso_inv (W : WaldhausenCategoryWithoutGluing C) :
     letI := acyclicHasZeroObject W
     (acyclicιZeroIso W).inv = (acyclicι W).map (acyclicZeroIso W).inv := rfl
 
 /-- The complete forward zero chart is the original unique map to zero. -/
-theorem acyclicιZeroIso_hom_eq_from (W : WaldhausenCategory C) :
+theorem acyclicιZeroIso_hom_eq_from (W : WaldhausenCategoryWithoutGluing C) :
     letI := acyclicHasZeroObject W
     (acyclicιZeroIso W).hom =
       (isZero_zero C).from_ ((acyclicι W).obj (0 : AcyclicSubcategory W)) :=
   (isZero_zero C).eq_of_tgt _ _
 
 /-- The complete inverse zero chart is the original unique map from zero. -/
-theorem acyclicιZeroIso_inv_eq_to (W : WaldhausenCategory C) :
+theorem acyclicιZeroIso_inv_eq_to (W : WaldhausenCategoryWithoutGluing C) :
     letI := acyclicHasZeroObject W
     (acyclicιZeroIso W).inv =
       (isZero_zero C).to_ ((acyclicι W).obj (0 : AcyclicSubcategory W)) :=
@@ -143,7 +145,7 @@ theorem acyclicιZeroIso_inv_eq_to (W : WaldhausenCategory C) :
 
 /-- The original full inclusion preserves and reflects zero objects,
 using the actual admitted ambient zero for the forward direction. -/
-theorem acyclic_isZero_iff (W : WaldhausenCategory C) (X : AcyclicSubcategory W) :
+theorem acyclic_isZero_iff (W : WaldhausenCategoryWithoutGluing C) (X : AcyclicSubcategory W) :
     IsZero X ↔ IsZero X.obj := by
   constructor
   · intro hX
@@ -154,7 +156,7 @@ theorem acyclic_isZero_iff (W : WaldhausenCategory C) (X : AcyclicSubcategory W)
 
 /-- Construct the same original smaller-structure cofibration pushout in
 the acyclic full subcategory. Larger-structure gluing earns its apex. -/
-theorem acyclic_cofibration_pushout (V W : WaldhausenCategory C)
+theorem acyclic_cofibration_pushout (V W : WaldhausenCategoryWithoutGluing C)
     (hCof : V.cofibrations = W.cofibrations)
     (hGW : @WaldhausenGluingAxiom C _ _ W)
     {X Y : AcyclicSubcategory W} (i : X ⟶ Y) (hi : V.cofibrations i.hom)
@@ -168,7 +170,7 @@ theorem acyclic_cofibration_pushout (V W : WaldhausenCategory C)
     change W.cofibrations i.hom
     rw [← hCof]
     exact hi
-  have hAcyclic : WaldhausenCategory.acyclicObjects P :=
+  have hAcyclic : WaldhausenCategoryWithoutGluing.acyclicObjects P :=
     hGW.acyclicObjects_of_pushout i.hom f.hom inr inl hiW hP.flip
       X.property Y.property Z.property
   let P' : AcyclicSubcategory W := ⟨P, hAcyclic⟩
@@ -179,7 +181,7 @@ theorem acyclic_cofibration_pushout (V W : WaldhausenCategory C)
 
 /-- The constructed source and mapped pushout pair earns preservation of
 every original source cofibration pushout by the full inclusion. -/
-theorem acyclicι_map_isPushout (V W : WaldhausenCategory C)
+theorem acyclicι_map_isPushout (V W : WaldhausenCategoryWithoutGluing C)
     (hCof : V.cofibrations = W.cofibrations)
     (hGW : @WaldhausenGluingAxiom C _ _ W)
     {X Y Z P : AcyclicSubcategory W}
@@ -195,11 +197,11 @@ theorem acyclicι_map_isPushout (V W : WaldhausenCategory C)
 /-- The inherited smaller weak structure uses exactly the original
 smaller cofibrations and weak maps under the original full inclusion. -/
 @[instance_reducible]
-def acyclicWaldhausenCategory (V W : WaldhausenCategory C)
+def acyclicWaldhausenCategory (V W : WaldhausenCategoryWithoutGluing C)
     (hCof : V.cofibrations = W.cofibrations)
     (hGW : @WaldhausenGluingAxiom C _ _ W) :
     letI := acyclicHasZeroObject W
-    WaldhausenCategory (AcyclicSubcategory W) := by
+    WaldhausenCategoryWithoutGluing (AcyclicSubcategory W) := by
   let := V
   let := acyclicHasZeroObject W
   refine {
@@ -223,7 +225,7 @@ def acyclicWaldhausenCategory (V W : WaldhausenCategory C)
     exact ⟨P, inl, inr, hP, hInl⟩
 
 /-- The source cofibration class is the literal original smaller class. -/
-theorem isCofibration_acyclicWaldhausenCategory_iff (V W : WaldhausenCategory C)
+theorem isCofibration_acyclicWaldhausenCategory_iff (V W : WaldhausenCategoryWithoutGluing C)
     (hCof : V.cofibrations = W.cofibrations)
     (hGW : @WaldhausenGluingAxiom C _ _ W)
     {X Y : AcyclicSubcategory W} (f : X ⟶ Y) :
@@ -232,7 +234,7 @@ theorem isCofibration_acyclicWaldhausenCategory_iff (V W : WaldhausenCategory C)
       IsCofibration f) ↔ V.cofibrations f.hom := Iff.rfl
 
 /-- The source weak class is the literal original smaller weak class. -/
-theorem isWeakEquivalence_acyclicWaldhausenCategory_iff (V W : WaldhausenCategory C)
+theorem isWeakEquivalence_acyclicWaldhausenCategory_iff (V W : WaldhausenCategoryWithoutGluing C)
     (hCof : V.cofibrations = W.cofibrations)
     (hGW : @WaldhausenGluingAxiom C _ _ W)
     {X Y : AcyclicSubcategory W} (f : X ⟶ Y) :
@@ -242,7 +244,7 @@ theorem isWeakEquivalence_acyclicWaldhausenCategory_iff (V W : WaldhausenCategor
 
 /-- The original acyclic inclusion into the original smaller weak
 structure is exact on the constructed source structure and original maps. -/
-theorem acyclicι_isWaldhausenExact (V W : WaldhausenCategory C)
+theorem acyclicι_isWaldhausenExact (V W : WaldhausenCategoryWithoutGluing C)
     (hCof : V.cofibrations = W.cofibrations)
     (hGW : @WaldhausenGluingAxiom C _ _ W) :
     letI := V
@@ -262,7 +264,7 @@ theorem acyclicι_isWaldhausenExact (V W : WaldhausenCategory C)
 
 /-- Inclusion of the actual weak classes makes the same acyclic
 inclusion exact into the larger original weak structure. -/
-theorem acyclicι_toLarger_isWaldhausenExact (V W : WaldhausenCategory C)
+theorem acyclicι_toLarger_isWaldhausenExact (V W : WaldhausenCategoryWithoutGluing C)
     (hCof : V.cofibrations = W.cofibrations)
     (hWeak : V.weakEquivalences ≤ W.weakEquivalences)
     (hGW : @WaldhausenGluingAxiom C _ _ W) :
@@ -287,7 +289,7 @@ theorem acyclicι_toLarger_isWaldhausenExact (V W : WaldhausenCategory C)
 
 /-- The original identity functor from the smaller to the larger weak
 structure is exact, with the two actual structures separately supplied. -/
-theorem changeWeakEquivalences_isWaldhausenExact (V W : WaldhausenCategory C)
+theorem changeWeakEquivalences_isWaldhausenExact (V W : WaldhausenCategoryWithoutGluing C)
     (hCof : V.cofibrations = W.cofibrations)
     (hWeak : V.weakEquivalences ≤ W.weakEquivalences) :
     @Functor.IsWaldhausenExact C _ _ V C _ _ W (𝟭 C) := by
@@ -307,7 +309,7 @@ theorem changeWeakEquivalences_isWaldhausenExact (V W : WaldhausenCategory C)
 
 /-- The given original map to ambient zero, transported by the actual
 inverse selected-zero chart, as a map to the selected subcategory zero. -/
-def acyclicCofiberZeroMap (W : WaldhausenCategory C)
+def acyclicCofiberZeroMap (W : WaldhausenCategoryWithoutGluing C)
     {X : AcyclicSubcategory W} (s : X.obj ⟶ (0 : C)) :
     letI := acyclicHasZeroObject W
     X ⟶ (0 : AcyclicSubcategory W) := by
@@ -316,7 +318,7 @@ def acyclicCofiberZeroMap (W : WaldhausenCategory C)
 
 /-- The given original map from ambient zero, transported by the actual
 forward selected-zero chart, as a map from the selected subcategory zero. -/
-def acyclicCofiberFromZeroMap (W : WaldhausenCategory C)
+def acyclicCofiberFromZeroMap (W : WaldhausenCategoryWithoutGluing C)
     {Q : AcyclicSubcategory W} (z : (0 : C) ⟶ Q.obj) :
     letI := acyclicHasZeroObject W
     (0 : AcyclicSubcategory W) ⟶ Q := by
@@ -324,13 +326,13 @@ def acyclicCofiberFromZeroMap (W : WaldhausenCategory C)
   exact ObjectProperty.homMk ((acyclicιZeroIso W).hom ≫ z)
 
 /-- The whole transported map retains the original map and inverse zero chart. -/
-theorem acyclicCofiberZeroMap_hom (W : WaldhausenCategory C)
+theorem acyclicCofiberZeroMap_hom (W : WaldhausenCategoryWithoutGluing C)
     {X : AcyclicSubcategory W} (s : X.obj ⟶ (0 : C)) :
     letI := acyclicHasZeroObject W
     (acyclicCofiberZeroMap W s).hom = s ≫ (acyclicιZeroIso W).inv := rfl
 
 /-- The whole transported map retains the forward zero chart and original map. -/
-theorem acyclicCofiberFromZeroMap_hom (W : WaldhausenCategory C)
+theorem acyclicCofiberFromZeroMap_hom (W : WaldhausenCategoryWithoutGluing C)
     {Q : AcyclicSubcategory W} (z : (0 : C) ⟶ Q.obj) :
     letI := acyclicHasZeroObject W
     (acyclicCofiberFromZeroMap W z).hom = (acyclicιZeroIso W).hom ≫ z := rfl
@@ -338,7 +340,7 @@ theorem acyclicCofiberFromZeroMap_hom (W : WaldhausenCategory C)
 /-- The same original cofiber row is admitted in both directions. The
 reverse direction transports its given zero corner through the actual
 selected-zero chart before reflecting the whole original pushout. -/
-theorem acyclic_isCofiberSequence_iff (V W : WaldhausenCategory C)
+theorem acyclic_isCofiberSequence_iff (V W : WaldhausenCategoryWithoutGluing C)
     (hCof : V.cofibrations = W.cofibrations)
     (hGW : @WaldhausenGluingAxiom C _ _ W)
     {X Y Q : AcyclicSubcategory W} (i : X ⟶ Y) (q : Y ⟶ Q) :
@@ -363,7 +365,7 @@ theorem acyclic_isCofiberSequence_iff (V W : WaldhausenCategory C)
 
 /-- The constructed acyclic category inherits the genuine smaller-class
 gluing axiom from the original smaller weak structure, on the same maps. -/
-theorem acyclicGluingAxiom (V W : WaldhausenCategory C)
+theorem acyclicGluingAxiom (V W : WaldhausenCategoryWithoutGluing C)
     (hCof : V.cofibrations = W.cofibrations)
     (hGW : @WaldhausenGluingAxiom C _ _ W)
     (hGV : @WaldhausenGluingAxiom C _ _ V) :

@@ -32,8 +32,6 @@ noncomputable section
 
 open CategoryTheory CategoryTheory.Limits ComplexShape.NatInitialInterval
 
-attribute [local implicit_reducible] HomologicalComplex.homologyFunctor
-
 universe u v
 
 namespace CochainComplex
@@ -85,7 +83,7 @@ abbrev πFiniteCotruncation (K : CochainComplex C ℕ) (q : ℕ) :
 
 theorem πFiniteCotruncation_f (K : CochainComplex C ℕ) (q n : ℕ) (hn : n ≤ q) :
     (K.πFiniteCotruncation q).f n = (K.finiteCotruncationXIso q n hn).inv :=
-  K.πStupidTrunc_f (upEmbedding q) (p := ⟨n, by omega⟩) rfl
+  K.πStupidTrunc_f_eq (upEmbedding q) (p := ⟨n, by omega⟩) rfl
 
 theorem πFiniteCotruncation_f_zero (K : CochainComplex C ℕ) (q n : ℕ) (hn : q < n) :
     (K.πFiniteCotruncation q).f n = 0 :=
@@ -96,7 +94,7 @@ theorem πFiniteCotruncation_f_zero (K : CochainComplex C ℕ) (q n : ℕ) (hn :
 theorem πFiniteCotruncation_naturality {K L : CochainComplex C ℕ} (f : K ⟶ L) (q : ℕ) :
     f ≫ L.πFiniteCotruncation q =
       K.πFiniteCotruncation q ≫ finiteCotruncationMap f q :=
-  HomologicalComplex.πStupidTrunc_naturality (upEmbedding q) f
+  (HomologicalComplex.πStupidTrunc_naturality f (upEmbedding q)).symm
 
 /-- Identification of a larger cotruncation on a smaller interval with the restricted complex. -/
 def finiteCotruncationRestrictionIso (K : CochainComplex C ℕ) {p q : ℕ} (hpq : p ≤ q) :
@@ -150,7 +148,8 @@ theorem finiteCotruncationTransition_f (K : CochainComplex C ℕ) {p q : ℕ}
         hR hComponent).trans (Category.id_comp _))
   have hCoordinate : eP.inv =
       ((K.restriction (upEmbedding p)).extendXIso (upEmbedding p) (i := i) rfl).inv := by
-    unfold eP finiteCotruncationXIso HomologicalComplex.stupidTruncXIso HomologicalComplex.stupidTrunc
+    unfold eP finiteCotruncationXIso HomologicalComplex.stupidTruncXIso
+      HomologicalComplex.stupidTrunc
     rw [Iso.trans_inv]
     exact Category.id_comp _
   exact hValue.trans (congrArg (fun z => eQ.hom ≫ z) hCoordinate.symm)

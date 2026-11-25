@@ -72,7 +72,7 @@ theorem degreewiseAdmissibleMonomorphisms_zero (X : Bounded E) (f : (0 : Bounded
 omit [F.IsExact] in
 /-- Waldhausen structure with degreewise admissible cofibrations and ambient quasi-isomorphisms. -/
 @[instance_reducible, no_expose]
-def ambientWaldhausenCategory : WaldhausenCategory (Bounded E) where
+def ambientWaldhausenCategory : WaldhausenCategoryWithoutGluing (Bounded E) where
   cofibrations := degreewiseAdmissibleMonomorphisms E
   weakEquivalences := ambientWeakEquivalences F
   cofibrations_isMultiplicative := inferInstance
@@ -105,7 +105,8 @@ omit [F.IsExact] in
 /-- The Waldhausen weak equivalences satisfy the two-out-of-three property. -/
 theorem ambientWaldhausen_hasTwoOutOfThree :
     letI := ambientWaldhausenCategory F
-    (WaldhausenCategory.weakEquivalences (C := Bounded E)).HasTwoOutOfThreeProperty := by
+    (WaldhausenCategoryWithoutGluing.weakEquivalences
+      (C := Bounded E)).HasTwoOutOfThreeProperty := by
   let _ := ambientWaldhausenCategory F
   exact ambientWeakEquivalences_hasTwoOutOfThree F
 

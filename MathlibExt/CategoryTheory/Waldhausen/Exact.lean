@@ -28,7 +28,7 @@ from the exact-category instances for admissible monos and the standard
 `isomorphisms` instances. `zero_isCofibration` is `IsAdmissibleMono.fromZero`
 and the pushout axiom reuses `ExactCategory.admissibleMono_pushout` directly.
 
-This is a `def`, not a global `WaldhausenCategory C` instance, because an
+This is a `def`, not a global `WaldhausenCategoryWithoutGluing C` instance, because an
 additive category may carry multiple Waldhausen structures (e.g. chain-complex
 categories). Use locally as `letI := ExactCategory.waldhausenCategory C`.
 
@@ -38,7 +38,7 @@ For the standard structure `waldhausenCategory C`, a short complex `S`
 is admissible exact iff `S.f`, `S.g` is a Waldhausen cofibration sequence:
 
 * `IsAdmissibleExact S ↔ IsCofibrationSequence (C := C) S.f S.g`
-  (with `WaldhausenCategory C` taken as `waldhausenCategory C`).
+  (with `WaldhausenCategoryWithoutGluing C` taken as `waldhausenCategory C`).
 
 The forward direction turns the cokernel universal property
 `isColimit_cokernelCofork_of_isAdmissibleExact S` into the pushout
@@ -74,11 +74,11 @@ isomorphisms. This is the canonical bridge from exact categories to Waldhausen
 categories used in H0.
 
 Use locally as `letI := ExactCategory.waldhausenCategory C`; no global
-`WaldhausenCategory C` instance is installed so that other Waldhausen
+`WaldhausenCategoryWithoutGluing C` instance is installed so that other Waldhausen
 structures on the same underlying category (e.g. chain complexes) remain
 available. -/
 @[instance_reducible]
-def waldhausenCategory : WaldhausenCategory C where
+def waldhausenCategory : WaldhausenCategoryWithoutGluing C where
   cofibrations := admissibleMonosOf C IsAdmissibleExact
   weakEquivalences := MorphismProperty.isomorphisms C
   cofibrations_isMultiplicative := inferInstance

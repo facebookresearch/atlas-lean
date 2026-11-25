@@ -7,6 +7,6 @@ isomorphisms. This is the canonical bridge from exact categories to Waldhausen
 categories used in H0.
 
 Use locally as `letI := ExactCategory.waldhausenCategory C`; no global
-`WaldhausenCategory C` instance is installed so that other Waldhausen
+`WaldhausenCategoryWithoutGluing C` instance is installed so that other Waldhausen
 structures on the same underlying category (e.g. chain complexes) remain
 available.

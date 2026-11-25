@@ -35,14 +35,15 @@ universe vJ uJ vC uC
 namespace CategoryTheory.Waldhausen
 
 variable {J : Type uJ} [Category.{vJ} J]
-  {C : Type uC} [Category.{vC} C] [HasZeroObject C] [WaldhausenCategory C]
+  {C : Type uC} [Category.{vC} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
   {X Y Z : J ⥤ C}
 
 private theorem componentSpanHasColimit (i : X ⟶ Y) (g : X ⟶ Z)
     (hi : ∀ j : J, IsCofibration (i.app j)) (j : J) :
     HasColimit ((span g i).flip.obj j) := by
   obtain ⟨P, inZ, inY, hp, _⟩ :=
-    WaldhausenCategory.cofibration_pushout (C := C) (i.app j) (hi j) (Z.obj j) (g.app j)
+    WaldhausenCategoryWithoutGluing.cofibration_pushout (C := C)
+      (i.app j) (hi j) (Z.obj j) (g.app j)
   have hspan : span (((evaluation J C).obj j).map g) (((evaluation J C).obj j).map i) =
       span (g.app j) (i.app j) := rfl
   let : HasColimit (span (((evaluation J C).obj j).map g) (((evaluation J C).obj j).map i)) := by

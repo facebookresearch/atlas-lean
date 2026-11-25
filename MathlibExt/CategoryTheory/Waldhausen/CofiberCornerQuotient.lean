@@ -36,7 +36,7 @@ universe v u
 
 namespace CategoryTheory.Waldhausen
 
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- The original source quotient is the quotient of the actual corner by
 the new source, and its map to the target quotient is a cobase change of

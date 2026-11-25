@@ -13,6 +13,7 @@ Author: @toskua, Avocado
 module
 
 public import MathlibExt.Algebra.Homology.ExactSequence
+public import Mathlib.CategoryTheory.Abelian.FunctorCategory
 public import Mathlib.CategoryTheory.Abelian.GrothendieckAxioms.Colim
 public import Mathlib.CategoryTheory.Functor.ReflectsIso.Exact
 

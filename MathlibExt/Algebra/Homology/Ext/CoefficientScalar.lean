@@ -44,9 +44,12 @@ variable {C : Type u} [Category.{v} C] [Abelian C] [HasExt.{w} C]
   {S : Type s} [Semiring S]
 
 /-- Restrict the native coefficient-endomorphism action along a semiring map. -/
-def coefficientModule {Y : C} (ρ : S →+* End Y) (X : C) (n : ℕ) :
-    Module S (Ext.{w} X Y n) :=
-  Module.compHom (Ext.{w} X Y n) ρ
+@[instance_reducible]
+def coefficientModule.{extU, homU, objU, scalarU}
+    {C : Type objU} [Category.{homU} C] [Abelian C] [HasExt.{extU} C]
+    {S : Type scalarU} [Semiring S] {Y : C} (ρ : S →+* End Y) (X : C) (n : ℕ) :
+    Module S (Ext.{extU} X Y n) :=
+  Module.compHom (Ext.{extU} X Y n) ρ
 
 /-- Coefficient scalars act by the native degree-zero Ext postcomposition. -/
 theorem coefficient_smul_def {X Y : C} (ρ : S →+* End Y) (n : ℕ)
@@ -103,11 +106,11 @@ theorem precompOfCoefficientScalar_apply {X X' Y : C}
 /-- Native Ext carrier transport is linear for the same coefficient action. -/
 def coefficientSizeEquiv [HasExt.{w'} C] [HasDerivedCategory.{wD} C]
     {Y : C} (ρ : S →+* End Y) (X : C) (n : ℕ) :
-    letI : Module S (Ext.{w} X Y n) := coefficientModule ρ X n
-    letI : Module S (Ext.{w'} X Y n) := coefficientModule ρ X n
+    letI : Module S (Ext.{w} X Y n) := coefficientModule.{w, v, u, s} ρ X n
+    letI : Module S (Ext.{w'} X Y n) := coefficientModule.{w', v, u, s} ρ X n
     Ext.{w} X Y n ≃ₗ[S] Ext.{w'} X Y n := by
-  letI : Module S (Ext.{w} X Y n) := coefficientModule ρ X n
-  letI : Module S (Ext.{w'} X Y n) := coefficientModule ρ X n
+  letI : Module S (Ext.{w} X Y n) := coefficientModule.{w, v, u, s} ρ X n
+  letI : Module S (Ext.{w'} X Y n) := coefficientModule.{w', v, u, s} ρ X n
   refine
     { sizeEquiv.{wD, w, w', v, u} X Y n with
       map_smul' := ?_ }
@@ -120,12 +123,14 @@ def coefficientSizeEquiv [HasExt.{w'} C] [HasDerivedCategory.{wD} C]
 @[simp]
 theorem coefficientSizeEquiv_apply [HasExt.{w'} C] [HasDerivedCategory.{wD} C]
     {Y : C} (ρ : S →+* End Y) (X : C) (n : ℕ) (x : Ext.{w} X Y n) :
-    coefficientSizeEquiv ρ X n x = sizeEquiv.{wD, w, w', v, u} X Y n x := rfl
+    (coefficientSizeEquiv ρ X n x : Ext.{w'} X Y n) =
+      sizeEquiv.{wD, w, w', v, u} X Y n x := rfl
 
 @[simp]
 theorem coefficientSizeEquiv_symm_apply [HasExt.{w'} C] [HasDerivedCategory.{wD} C]
     {Y : C} (ρ : S →+* End Y) (X : C) (n : ℕ) (x : Ext.{w'} X Y n) :
-    (coefficientSizeEquiv ρ X n).symm x = sizeEquiv.{wD, w', w, v, u} X Y n x := rfl
+    ((coefficientSizeEquiv ρ X n).symm x : Ext.{w} X Y n) =
+      sizeEquiv.{wD, w', w, v, u} X Y n x := rfl
 
 end CategoryTheory.Abelian.Ext
 
@@ -153,6 +158,7 @@ theorem extCoefficientRingHom_apply (N : ModuleCat.{v} S) (s : S) (n : N) :
 variable [HasExt.{w} (ModuleCat.{v} R)]
 
 /-- The coefficient `S`-action on native `R`-module Ext. -/
+@[instance_reducible]
 def extCoefficientModule (P : ModuleCat.{v} R) (N : ModuleCat.{v} S) (n : ℕ) :
     Module S (Abelian.Ext.{w} P ((restrictScalars σ).obj N) n) :=
   Abelian.Ext.coefficientModule (extCoefficientRingHom σ N) P n

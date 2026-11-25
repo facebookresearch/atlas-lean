@@ -46,7 +46,7 @@ universe u v
 
 namespace CategoryTheory
 
-variable {C : Type u} [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable {C : Type u} [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- The extension axiom for maps of original Waldhausen cofiber sequences:
 weak source and quotient maps imply a weak middle map. -/
@@ -59,7 +59,7 @@ structure WaldhausenExtensionAxiom : Prop where
         i ≫ b = a ≫ i' → q ≫ c = b ≫ q' →
         IsWeakEquivalence a → IsWeakEquivalence c → IsWeakEquivalence b
 
-namespace WaldhausenCategory
+namespace WaldhausenCategoryWithoutGluing
 
 /-- The objects receiving a weak map from the original chosen zero object.
 For the larger weak structure in localization, this is the source's `Cʷ`. -/
@@ -94,7 +94,7 @@ theorem acyclicObjects_iso_iff {Q Q' : C} (e : Q ≅ Q') :
     acyclicObjects Q ↔ acyclicObjects Q' :=
   ⟨acyclicObjects_of_iso e, acyclicObjects_of_iso e.symm⟩
 
-end WaldhausenCategory
+end WaldhausenCategoryWithoutGluing
 
 /-- Gluing the literal identity cofiber to the given original cofiber square
 makes its chosen map from zero weak whenever its cofibration is weak. -/
@@ -106,10 +106,10 @@ theorem WaldhausenGluingAxiom.zero_to_quotient_isWeakEquivalence
     (hw : IsWeakEquivalence i) : IsWeakEquivalence z :=
   hG.gluing (IsPushout.of_id_fst (f := s)) hP.flip
     (𝟙 A) i (𝟙 (0 : C)) z
-    (WaldhausenCategory.cofibrations.of_isIso (𝟙 A)) hi
+    (WaldhausenCategoryWithoutGluing.cofibrations.of_isIso (𝟙 A)) hi
     (by simp) (by simp) hP.w (by simp)
-    (WaldhausenCategory.weakEquivalences.of_isIso (𝟙 A)) hw
-    (WaldhausenCategory.weakEquivalences.of_isIso (𝟙 (0 : C)))
+    (WaldhausenCategoryWithoutGluing.weakEquivalences.of_isIso (𝟙 A)) hw
+    (WaldhausenCategoryWithoutGluing.weakEquivalences.of_isIso (𝟙 (0 : C)))
 
 /-- The extension axiom applied to the literal identity cofiber and the same
 original cofiber square makes its cofibration weak from its chosen zero leg. -/
@@ -120,10 +120,10 @@ theorem WaldhausenExtensionAxiom.isWeakEquivalence_of_zero_to_quotient
     (hi : IsCofibration i) (hP : IsPushout s i z q)
     (hz : IsWeakEquivalence z) : IsWeakEquivalence i := by
   have hIdentity : IsCofiberSequence (𝟙 A) s :=
-    ⟨WaldhausenCategory.cofibrations.of_isIso (𝟙 A), s, 𝟙 (0 : C),
+    ⟨WaldhausenCategoryWithoutGluing.cofibrations.of_isIso (𝟙 A), s, 𝟙 (0 : C),
       (IsPushout.of_id_fst (f := s)).flip⟩
   exact hE.extension hIdentity ⟨hi, s, z, hP⟩ (𝟙 A) i z
-    (by simp) hP.w (WaldhausenCategory.weakEquivalences.of_isIso (𝟙 A)) hz
+    (by simp) hP.w (WaldhausenCategoryWithoutGluing.weakEquivalences.of_isIso (𝟙 A)) hz
 
 /-- A weak cofibration is exactly one whose original chosen quotient
 receives a weak map from the original zero object. -/
@@ -146,7 +146,7 @@ theorem IsCofibrationSequence.isWeakEquivalence_iff_acyclic
     (hE : WaldhausenExtensionAxiom (C := C))
     {A B Q : C} {i : A ⟶ B} {q : B ⟶ Q}
     (hS : IsCofibrationSequence i q) :
-    IsWeakEquivalence i ↔ WaldhausenCategory.acyclicObjects Q :=
+    IsWeakEquivalence i ↔ WaldhausenCategoryWithoutGluing.acyclicObjects Q :=
   IsCofibrationSequence.isWeakEquivalence_iff_zero_to_quotient hG hE hS
     ((isZero_zero C).to_ Q)
 

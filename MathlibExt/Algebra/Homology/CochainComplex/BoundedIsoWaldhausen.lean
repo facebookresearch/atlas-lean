@@ -42,7 +42,7 @@ variable (E : Type uE) [Category.{vE} E] [Preadditive E]
 
 /-- Waldhausen structure with degreewise admissible cofibrations and isomorphism weak equivalences. -/
 @[instance_reducible, no_expose]
-def isoWaldhausenCategory : WaldhausenCategory (Bounded E) where
+def isoWaldhausenCategory : WaldhausenCategoryWithoutGluing (Bounded E) where
   cofibrations := degreewiseAdmissibleMonomorphisms E
   weakEquivalences := MorphismProperty.isomorphisms (Bounded E)
   cofibrations_isMultiplicative := inferInstance

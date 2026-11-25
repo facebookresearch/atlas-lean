@@ -41,8 +41,8 @@ namespace CategoryTheory.Functor
 variable {C : Type u₁} [Category.{v₁} C] [HasZeroObject C]
 variable {D : Type u₂} [Category.{v₂} D] [HasZeroObject D]
 variable {E : Type u₃} [Category.{v₃} E] [HasZeroObject E]
-variable [WaldhausenCategory C] [WaldhausenCategory D]
-  [WaldhausenCategory E]
+variable [WaldhausenCategoryWithoutGluing C] [WaldhausenCategoryWithoutGluing D]
+  [WaldhausenCategoryWithoutGluing E]
 variable {F : C ⥤ D} {G : D ⥤ E}
 
 /-- The literal Waldhausen approximation property `(App)`.
@@ -62,9 +62,9 @@ protected theorem id :
     (Functor.id C).WaldhausenApproximationProperty where
   factorization X Y g :=
     ⟨Y, g, 𝟙 Y,
-      (WaldhausenCategory.weakEquivalences (C := C)).id_mem Y, by simp⟩
+      (WaldhausenCategoryWithoutGluing.weakEquivalences (C := C)).id_mem Y, by simp⟩
 
-omit [HasZeroObject C] [WaldhausenCategory C] in
+omit [HasZeroObject C] [WaldhausenCategoryWithoutGluing C] in
 /-- Literal approximation properties compose when the second functor
 explicitly preserves weak equivalences. -/
 theorem comp (hF : F.WaldhausenApproximationProperty)
@@ -75,7 +75,7 @@ theorem comp (hF : F.WaldhausenApproximationProperty)
     obtain ⟨Y, b, q, hq, hg⟩ := hG.factorization (F.obj X) Z g
     obtain ⟨Xnext, a, p, hp, hb⟩ := hF.factorization X Y b
     refine ⟨Xnext, a, G.map p ≫ q, ?_, ?_⟩
-    · exact (WaldhausenCategory.weakEquivalences (C := E)).comp_mem _ _
+    · exact (WaldhausenCategoryWithoutGluing.weakEquivalences (C := E)).comp_mem _ _
         (hGExact.map_weakEquivalence p hp) hq
     · change G.map (F.map a) ≫ (G.map p ≫ q) = g
       calc

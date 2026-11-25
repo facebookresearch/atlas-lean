@@ -104,9 +104,9 @@ section Lift
 variable (R : Type r) [Semiring R]
 
 /-- The canonical universe lift of a semimodule, retaining its linear maps. -/
-def uliftFunctor.{h, r, vM} (R : Type r) [Semiring R] :
-    SemimoduleCat.{vM} R ⥤ SemimoduleCat.{max h vM} R where
-  obj M := of R (ULift.{h} M)
+def uliftFunctor.{liftU, ringU, carrierU} (R : Type ringU) [Semiring R] :
+    SemimoduleCat.{carrierU} R ⥤ SemimoduleCat.{max liftU carrierU} R where
+  obj M := of R (ULift.{liftU} M)
   map f := ofHom (ULift.moduleEquiv.symm.toLinearMap.comp
     (f.hom.comp ULift.moduleEquiv.toLinearMap))
   map_id M := by
@@ -135,7 +135,7 @@ section Hom
 variable {R : Type r} {S : Type s} [Semiring R] [CommSemiring S] (σ : R →+* S)
 
 /-- The semilinear Hom functor in its coefficient, with unrestricted source. -/
-def semilinearHomCoeffFunctor (M : SemimoduleCat.{vM} R) :
+def semilinearHomCoeffFunctor (σ : R →+* S) (M : SemimoduleCat.{vM} R) :
     SemimoduleCat.{vN} S ⥤ SemimoduleCat.{max vM vN} S where
   obj N := of S (M →ₛₗ[σ] N)
   map {N N'} f := ofHom (LinearMap.llcomp S M N N' f.hom)
@@ -167,7 +167,7 @@ instance semilinearHomCoeffFunctor_preservesZero (M : SemimoduleCat.{vM} R) :
   rfl
 
 /-- Semilinear Hom as the original contravariant/covariant bifunctor. -/
-def semilinearHomFunctor : (SemimoduleCat.{vM} R)ᵒᵖ ⥤
+def semilinearHomFunctor (σ : R →+* S) : (SemimoduleCat.{vM} R)ᵒᵖ ⥤
     SemimoduleCat.{vN} S ⥤ SemimoduleCat.{max vM vN} S where
   obj M := semilinearHomCoeffFunctor σ M.unop
   map {M M'} k :=
@@ -199,7 +199,7 @@ def semilinearHomFunctor : (SemimoduleCat.{vM} R)ᵒᵖ ⥤
     rfl
 
 /-- Semilinear Hom in the source, at a fixed independently sized coefficient. -/
-def semilinearHomSourceFunctor (N : SemimoduleCat.{vN} S) :
+def semilinearHomSourceFunctor (σ : R →+* S) (N : SemimoduleCat.{vN} S) :
     (SemimoduleCat.{vM} R)ᵒᵖ ⥤ SemimoduleCat.{max vM vN} S :=
   semilinearHomFunctor σ ⋙
     (evaluation (SemimoduleCat.{vN} S) (SemimoduleCat.{max vM vN} S)).obj N
@@ -314,7 +314,7 @@ theorem semilinearMapLinearEquiv_symm_apply (M : ModuleCat.{vM} R) (N : ModuleCa
     (semilinearMapLinearEquiv σ M N).symm f x = f.hom x := rfl
 
 /-- The coefficient `S`-linear Hom functor for an arbitrary `R`-module source. -/
-def semilinearHomCoeffFunctor (M : ModuleCat.{vM} R) :
+def semilinearHomCoeffFunctor (σ : R →+* S) (M : ModuleCat.{vM} R) :
     ModuleCat.{vN} S ⥤ ModuleCat.{max vM vN} S where
   obj N := of S (M →ₛₗ[σ] N)
   map {N N'} f := ofHom (LinearMap.llcomp S M N N' f.hom)
@@ -356,7 +356,7 @@ instance semilinearHomCoeffFunctor_linear (M : ModuleCat.{vM} R) :
     rfl
 
 /-- The independently sized semilinear Hom bifunctor on the native module categories. -/
-def semilinearHomFunctor : (ModuleCat.{vM} R)ᵒᵖ ⥤
+def semilinearHomFunctor (σ : R →+* S) : (ModuleCat.{vM} R)ᵒᵖ ⥤
     ModuleCat.{vN} S ⥤ ModuleCat.{max vM vN} S where
   obj M := semilinearHomCoeffFunctor σ M.unop
   map {M M'} k :=
@@ -388,7 +388,7 @@ def semilinearHomFunctor : (ModuleCat.{vM} R)ᵒᵖ ⥤
     rfl
 
 /-- The source-variable Hom functor at an independently sized coefficient module. -/
-def semilinearHomSourceFunctor (N : ModuleCat.{vN} S) :
+def semilinearHomSourceFunctor (σ : R →+* S) (N : ModuleCat.{vN} S) :
     (ModuleCat.{vM} R)ᵒᵖ ⥤ ModuleCat.{max vM vN} S :=
   semilinearHomFunctor σ ⋙
     (evaluation (ModuleCat.{vN} S) (ModuleCat.{max vM vN} S)).obj N
