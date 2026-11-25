@@ -45,3 +45,29 @@ example : Nat.ModEq 2 (sigmaMexOverpartition 1 2) 0 := by
     rcases this with rfl | rfl <;> revert hj <;> decide
 
 end MetaMathlibExt.sigmaMexOverpartition_parity
+
+namespace MetaMathlibExt.sigmaMexOverpartition_eq_D3
+
+-- At the first two sizes the identity gives the counts `3` and `6` of `D3_one` and `D3_two`.
+example : sigmaMexOverpartition 1 1 = 3 :=
+  (sigmaMexOverpartition_eq_D3 1 (by decide)).trans D3_one
+
+example : sigmaMexOverpartition 1 2 = 6 :=
+  (sigmaMexOverpartition_eq_D3 2 (by decide)).trans D3_two
+
+-- At four the identity gives the enumerated value `24`, which the overpartition counts at the
+-- triangular shifts `0`, `1` and `3` also sum to.
+example : sigmaMexOverpartition 1 4 = 24 :=
+  (sigmaMexOverpartition_eq_D3 4 (by decide)).trans (by decide +kernel)
+
+example : D3 4 = overpartitionCount 4 + overpartitionCount 3 + overpartitionCount 1 := by
+  rw [← sigmaMexOverpartition_eq_D3 4 (by decide)]
+  simpa [Finset.sum_filter, Finset.sum_range_succ] using
+    (sigmaMexOverpartition_eq_sum_shifted_count 4 1 le_rfl).symm
+
+-- With the parity theorem, `D3` is odd at the triangular number `10`.
+example : Nat.ModEq 2 (D3 10) 1 := by
+  rw [← sigmaMexOverpartition_eq_D3 10 (by decide)]
+  exact (sigmaMexOverpartition_parity 10 (by decide)).1 ⟨4, rfl⟩
+
+end MetaMathlibExt.sigmaMexOverpartition_eq_D3
