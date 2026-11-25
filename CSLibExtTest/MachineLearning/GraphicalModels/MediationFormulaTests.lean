@@ -1215,4 +1215,150 @@ example (μ : (k : Fin 3) → StdSimplex ℝ ℝ) :
       fun u => by ring]
     exact noiseExpect_const _ _
 
+private theorem med_aux_pos_hXZ_T : NoiseCondIndep med_aux_posNoise
+    (fun u => med_aux_posControl.counterfactual 0 true u 2)
+    (fun u => med_aux_posControl.solve u 0)
+    (fun u (i : (({1} : Finset (Fin 4)))) => med_aux_posControl.solve u i) := by
+  unfold NoiseCondIndep
+  intro a b c
+  rcases med_aux_pos_Wcases c with rfl | rfl <;> cases a <;> cases b <;>
+    unfold noiseProb <;> rw [med_aux_pos16] <;> beta_reduce <;>
+    simp [Finset.sum_filter, med_aux_sum16, med_aux_pos_wt, med_aux_pos_solve0,
+      med_aux_pos_solve1, med_aux_pos_cf2, med_aux_pos_fCeq] <;>
+    norm_num
+
+private theorem med_aux_pos_hcross_TT_xT : NoiseCondIndep med_aux_posNoise
+    (fun u => med_aux_posControl.counterfactual₂ 0 true 2 true u 3)
+    (fun u => med_aux_posControl.counterfactual 0 true u 2)
+    (fun u (i : (({1} : Finset (Fin 4)))) => med_aux_posControl.solve u i) := by
+  unfold NoiseCondIndep
+  intro a b c
+  rcases med_aux_pos_Wcases c with rfl | rfl <;> cases a <;> cases b <;>
+    unfold noiseProb <;> rw [med_aux_pos16] <;> beta_reduce <;>
+    simp [Finset.sum_filter, med_aux_sum16, med_aux_pos_wt, med_aux_pos_solve1,
+      med_aux_pos_cf2, med_aux_pos_cf23, med_aux_pos_fCeq] <;>
+    norm_num
+
+private theorem med_aux_pos_hcross_TF_xT : NoiseCondIndep med_aux_posNoise
+    (fun u => med_aux_posControl.counterfactual₂ 0 true 2 false u 3)
+    (fun u => med_aux_posControl.counterfactual 0 true u 2)
+    (fun u (i : (({1} : Finset (Fin 4)))) => med_aux_posControl.solve u i) := by
+  unfold NoiseCondIndep
+  intro a b c
+  rcases med_aux_pos_Wcases c with rfl | rfl <;> cases a <;> cases b <;>
+    unfold noiseProb <;> rw [med_aux_pos16] <;> beta_reduce <;>
+    simp [Finset.sum_filter, med_aux_sum16, med_aux_pos_wt, med_aux_pos_solve1,
+      med_aux_pos_cf2, med_aux_pos_cf23, med_aux_pos_fCeq] <;>
+    norm_num
+
+private theorem med_aux_pos_PosW_T : med_aux_PosW med_aux_posControl med_aux_posNoise 0 {1} true := by
+  intro w hw
+  rcases med_aux_pos_Wcases w with rfl | rfl
+  · simp only [lawProb_inducedLaw]
+    unfold noiseProb
+    rw [med_aux_pos16]
+    beta_reduce
+    simp [Finset.sum_filter, med_aux_sum16, med_aux_pos_wt, med_aux_pos_solve0,
+      med_aux_pos_solve1, med_aux_pos_fCeq]
+    norm_num
+  · simp only [lawProb_inducedLaw]
+    unfold noiseProb
+    rw [med_aux_pos16]
+    beta_reduce
+    simp [Finset.sum_filter, med_aux_sum16, med_aux_pos_wt, med_aux_pos_solve0,
+      med_aux_pos_solve1, med_aux_pos_fCeq]
+    norm_num
+/-- Positive control for the NIE identification theorem: its independence and positivity
+hypotheses hold for the positive-control model at `(x, x*) = (false, true)`, and the
+identified formula gives the value below, so `nie_eq_mediationFormulaNIE` is not vacuous
+on this model. -/
+example : med_aux_posControl.nie med_aux_posNoise 0 2 3 boolVal false true =
+    mediationFormulaNIE (med_aux_posControl.inducedLaw med_aux_posNoise) 0 2 3 {1} boolVal
+      false true := by
+  have htm : (0 : Fin 4) ≠ 2 := by decide
+  have hXY : ∀ z : Bool, NoiseCondIndep med_aux_posNoise
+      (fun u => med_aux_posControl.counterfactual₂ 0 true 2 z u 3)
+      (fun u => med_aux_posControl.solve u 0)
+      (fun u (i : (({1} : Finset (Fin 4)))) => med_aux_posControl.solve u i) := by
+    intro z
+    cases z
+    · exact med_aux_pos_hXY_TF
+    · exact med_aux_pos_hXY_TT
+  have hZY : ∀ z : Bool, NoiseCondIndep med_aux_posNoise
+      (fun u => med_aux_posControl.counterfactual₂ 0 true 2 z u 3)
+      (fun u => med_aux_posControl.solve u 2)
+      (fun u => (med_aux_posControl.solve u 0,
+        (fun i : (({1} : Finset (Fin 4))) => med_aux_posControl.solve u i))) := by
+    intro z
+    cases z
+    · unfold NoiseCondIndep
+      intro a b c
+      rcases c with ⟨c1, c2⟩
+      rcases med_aux_pos_Wcases c2 with rfl | rfl
+      · exact med_aux_pos_hZY_TF_T a b c1
+      · exact med_aux_pos_hZY_TF_F a b c1
+    · unfold NoiseCondIndep
+      intro a b c
+      rcases c with ⟨c1, c2⟩
+      rcases med_aux_pos_Wcases c2 with rfl | rfl
+      · exact med_aux_pos_hZY_TT_T a b c1
+      · exact med_aux_pos_hZY_TT_F a b c1
+  have hXZ : ∀ x' ∈ ({false, true} : Finset Bool), NoiseCondIndep med_aux_posNoise
+      (fun u => med_aux_posControl.counterfactual 0 x' u 2)
+      (fun u => med_aux_posControl.solve u 0)
+      (fun u (i : (({1} : Finset (Fin 4)))) => med_aux_posControl.solve u i) := by
+    intro x' hx'
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hx'
+    rcases hx' with rfl | rfl
+    · exact med_aux_pos_hXZ
+    · exact med_aux_pos_hXZ_T
+  have hcross : ∀ x' ∈ ({false, true} : Finset Bool), ∀ z : Bool,
+      NoiseCondIndep med_aux_posNoise
+        (fun u => med_aux_posControl.counterfactual₂ 0 true 2 z u 3)
+        (fun u => med_aux_posControl.counterfactual 0 x' u 2)
+        (fun u (i : (({1} : Finset (Fin 4)))) => med_aux_posControl.solve u i) := by
+    intro x' hx' z
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hx'
+    rcases hx' with rfl | rfl
+    · cases z
+      · exact med_aux_pos_hcross_TF
+      · exact med_aux_pos_hcross_TT
+    · cases z
+      · exact med_aux_pos_hcross_TF_xT
+      · exact med_aux_pos_hcross_TT_xT
+  have hposW : ∀ w : ((({1} : Finset (Fin 4))) → Bool),
+      lawProb (med_aux_posControl.inducedLaw med_aux_posNoise)
+        (fun v => (fun i : (({1} : Finset (Fin 4))) => v i) = w) ≠ 0 →
+      ∀ x' ∈ ({false, true} : Finset Bool),
+        lawProb (med_aux_posControl.inducedLaw med_aux_posNoise)
+          (fun v => v 0 = x' ∧ (fun i : (({1} : Finset (Fin 4))) => v i) = w) ≠ 0 := by
+    intro w hw x' hx'
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hx'
+    rcases hx' with rfl | rfl
+    · exact med_aux_pos_PosW w hw
+    · exact med_aux_pos_PosW_T w hw
+  have hposZ : ∀ (w : ((({1} : Finset (Fin 4))) → Bool)) (z : Bool),
+      lawProb (med_aux_posControl.inducedLaw med_aux_posNoise)
+        (fun v => v 0 = false ∧ v 2 = z ∧ (fun i : (({1} : Finset (Fin 4))) => v i) = w) ≠ 0 →
+      lawProb (med_aux_posControl.inducedLaw med_aux_posNoise)
+        (fun v => v 0 = true ∧ v 2 = z ∧ (fun i : (({1} : Finset (Fin 4))) => v i) = w) ≠ 0 :=
+    med_aux_pos_PosZ
+  exact nie_eq_mediationFormulaNIE med_aux_posControl med_aux_posNoise htm 3 {1} boolVal
+    false true hXY hZY hXZ hcross hposW hposZ
+
+example :
+    mediationFormulaNIE (med_aux_posControl.inducedLaw med_aux_posNoise) 0 2 3 {1} boolVal
+      false true = -1 / 6 := by
+  unfold mediationFormulaNIE
+  rw [med_aux_pos_Wuniv, Finset.sum_insert (by decide), Finset.sum_singleton,
+    med_aux_Bool_univ, Finset.sum_insert (by decide), Finset.sum_singleton,
+    Finset.sum_insert (by decide), Finset.sum_singleton]
+  simp only [med_aux_pos_lawMean, lawProb_inducedLaw]
+  unfold noiseExpect noiseProb
+  rw [med_aux_pos16]
+  beta_reduce
+  simp [Finset.sum_filter, med_aux_sum16, med_aux_pos_wt, med_aux_pos_solve0,
+    med_aux_pos_solve1, med_aux_pos_solve2, med_aux_pos_solve3, med_aux_pos_fCeq, boolVal]
+  norm_num
+
 end Cslib.MachineLearning.MediationFormulaTests
