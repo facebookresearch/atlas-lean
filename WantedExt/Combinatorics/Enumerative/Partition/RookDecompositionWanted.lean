@@ -30,6 +30,7 @@ public import Mathlib.Analysis.Asymptotics.AsymptoticEquivalent
 public import MathlibExt.Combinatorics.Enumerative.Partition.RookParityFive
 public import MathlibExt.Combinatorics.Enumerative.Partition.RookParityThree
 public import MathlibExt.Combinatorics.Enumerative.Partition.RookPeriodicity
+public import MathlibExt.Combinatorics.Enumerative.Partition.RookThreeRecurrence
 public import MathlibExt.Analysis.SpecialFunctions.QPochhammer
 
 namespace MetaMathlibExt
@@ -51,19 +52,6 @@ public theorem_wanted hasSum_partitionMaxRookNumberMax (q : ℂ) (hq : ‖q‖ <
         (QPochhammer.qPochhammerInf (q ^ 2) (q ^ 2)
             (by rw [norm_pow]; exact pow_lt_one₀ (norm_nonneg q) hq two_ne_zero) *
           QPochhammer.qPochhammerInf (-q) q hq - q))
-
-/-- **Linear recurrence for $R_3(n)$.** Let $R_3(n)$ be the number of partitions of $n$ with
-max-rook number $3$. For every natural number $n > 14$,
-$R_3(n) = 2R_3(n-1) - R_3(n-2) + R_3(n-3) - 2R_3(n-4) + R_3(n-5)$.
-
-Source: N. Guru Sharan, *Rook Decomposition of the Partition Function*,
-Journal of Integer Sequences 29 (2026), Article 26.2.6, Corollary 3
-(`jis-2026-26.2.6-cor-3`). -/
-public theorem_wanted maxRookPartitionCount_three_recurrence (n : ℕ) (hn : 14 < n) :
-    (maxRookPartitionCount 3 n : ℤ) =
-      2 * maxRookPartitionCount 3 (n - 1) - maxRookPartitionCount 3 (n - 2) +
-        maxRookPartitionCount 3 (n - 3) - 2 * maxRookPartitionCount 3 (n - 4) +
-        maxRookPartitionCount 3 (n - 5)
 
 /-- **Generating function of partitions with max-rook number 4.** Let $R_4(n)$ be the number of
 partitions of $n$ with max-rook number $4$. In the ring of formal power series in $q$ with integer
