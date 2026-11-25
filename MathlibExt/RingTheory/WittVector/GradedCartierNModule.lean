@@ -193,7 +193,7 @@ noncomputable def nVarpi : D.NMod →ₗ[WittVector p B] D.NMod :=
     (by
       rintro x ⟨m, rfl⟩
       refine ⟨D.toSigma (D.varpi (D.ofSigma m)), ?_⟩
-      show (D.verschiebung (D.ofSigma (D.toSigma (D.varpi (D.ofSigma m)))),
+      change (D.verschiebung (D.ofSigma (D.toSigma (D.varpi (D.ofSigma m)))),
           D.toSigma (-D.varpi
             (D.ofSigma (D.toSigma (D.varpi (D.ofSigma m)))))) =
         (D.varpi (D.verschiebung (D.ofSigma m)),
@@ -216,7 +216,7 @@ noncomputable def nMap {B' : Type u} [CommRing B'] {j' : Zp2 p →+* B'}
       (D'.toSigma.toAddMonoidHom.comp (f.comp D.ofSigma.toAddMonoidHom))) (by
     rintro x ⟨m, rfl⟩
     refine ⟨D'.toSigma (f (D.ofSigma m)), ?_⟩
-    show (D'.verschiebung (D'.ofSigma (D'.toSigma (f (D.ofSigma m)))),
+    change (D'.verschiebung (D'.ofSigma (D'.toSigma (f (D.ofSigma m)))),
         D'.toSigma (-D'.varpi
           (D'.ofSigma (D'.toSigma (f (D.ofSigma m)))))) =
       (f (D.verschiebung (D.ofSigma m)),

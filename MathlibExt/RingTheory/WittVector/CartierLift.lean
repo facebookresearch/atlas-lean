@@ -56,8 +56,8 @@ private theorem eq_zero_of_C_mul_eq_zero {π : R}
     (h : C π * g = 0) : g = 0 := by
   ext e
   have he := congrArg (fun g : MvPolynomial σ R => g.coeff e) h
-  rw [coeff_C_mul, MvPolynomial.coeff_zero] at he
-  rw [MvPolynomial.coeff_zero]
+  rw [coeff_C_mul, AddMonoidAlgebra.coeff_zero] at he
+  rw [AddMonoidAlgebra.coeff_zero]
   exact hπ _ he
 
 private theorem exists_eq_C_mul_of_forall_dvd_coeff {π : R}
@@ -124,7 +124,7 @@ theorem liftVar_mul_liftVar (u v : B) :
     liftVar (p := p) (R := R) u v u * liftVar (p := p) (R := R) u v v = p := by
   rw [liftVar, liftVar, ← map_mul,
     ← map_natCast (Ideal.Quotient.mk (Ideal.span {liftRel p R u v})),
-    ← MvPolynomial.C_eq_coe_nat]
+    ← MvPolynomial.C_eq_natCast]
   refine (Ideal.Quotient.eq).mpr (Ideal.subset_span ?_)
   simp [liftRel]
 
@@ -166,7 +166,7 @@ theorem natCast_mul_eq_zero (hR : ∀ r : R, (p : R) * r = 0 → r = 0)
   obtain ⟨g, rfl⟩ := Ideal.Quotient.mk_surjective x
   rw [Ideal.Quotient.eq_zero_iff_mem]
   refine MvPolynomial.mem_span_of_C_mul_mem_span_X_mul_X_sub_C hR u v ?_
-  rw [← Ideal.Quotient.eq_zero_iff_mem, map_mul, MvPolynomial.C_eq_coe_nat,
+  rw [← Ideal.Quotient.eq_zero_iff_mem, map_mul, MvPolynomial.C_eq_natCast,
     map_natCast]
   exact hx
 
@@ -191,7 +191,7 @@ with `p ^ 2` elements. -/
 theorem zp2_natCast_mul_eq_zero [Fact p.Prime] (r : Zp2 p)
     (h : (p : Zp2 p) * r = 0) : r = 0 := by
   rcases mul_eq_zero.mp h with h0 | h0
-  · exact absurd h0 (WittVector.p_nonzero p (GaloisField p 2))
+  · exact absurd h0 (WittVector.p_ne_zero p (GaloisField p 2))
   · exact h0
 
 /-- Multiplication by `p` is injective in the lift ring over `Zp2`. -/
