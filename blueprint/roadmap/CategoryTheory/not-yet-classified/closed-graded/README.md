@@ -1,0 +1,15 @@
+# Closed Graded
+
+- [Graded Source Equiv](graded-source-equiv.md)
+- [Graded Hom Equiv](graded-hom-equiv.md)
+- [Unit from Kan component](unit-from-kan-component.md)
+- [Graded Hom Equiv apply π](graded-hom-equiv-apply.md)
+- [Graded Hom Equiv symm gen](graded-hom-equiv-symm-gen.md)
+- [Graded Hom Equiv regrade](graded-hom-equiv-regrade.md)
+- [Graded Hom Equiv unit](graded-hom-equiv-unit.md)
+- [Graded Hom Equiv naturality right](graded-hom-equiv-naturality-right.md)
+- [Graded Hom Equiv naturality left](graded-hom-equiv-naturality-left.md)
+- [Weight Map](weight-map.md)
+- [Graded Hom Equiv naturality source](graded-hom-equiv-naturality-source.md)
+- [Graded Presheaf Iso](graded-presheaf-iso.md)
+- [Graded Presheaf Iso hom app](graded-presheaf-iso-hom-app.md)

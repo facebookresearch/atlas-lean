@@ -1,0 +1,18 @@
+# Weighted Bar Inner
+
+- [W Omit Inner obj zero](w-omit-inner-obj-zero.md)
+- [W Omit Inner obj last](w-omit-inner-obj-last.md)
+- [W Dup Inner obj zero](w-dup-inner-obj-zero.md)
+- [W Dup Inner obj last](w-dup-inner-obj-last.md)
+- [W Face Inner Idx](w-face-inner-idx.md)
+- [W Deg Inner Idx](w-deg-inner-idx.md)
+- [W Face Inner Component](w-face-inner-component.md)
+- [W Deg Inner Component](w-deg-inner-component.md)
+- [Wbar Face Inner](wbar-face-inner.md)
+- [Wbar Face Inner ι](wbar-face-inner-2.md)
+- [Wbar Deg Inner](wbar-deg-inner.md)
+- [Wbar Deg Inner ι](wbar-deg-inner-2.md)
+- [Wbar Face Inner map F](wbar-face-inner-map-f.md)
+- [Wbar Deg Inner map F](wbar-deg-inner-map-f.md)
+- [Wbar Face Inner map W](wbar-face-inner-map-w.md)
+- [Wbar Deg Inner map W](wbar-deg-inner-map-w.md)
