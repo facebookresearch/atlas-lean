@@ -10,4 +10,5 @@ Laws on countable sets, with their mass functions, moments and tails: discrete u
 - [Multinomial distribution](multinomial-distribution/README.md)
 - [Negative binomial and beta-binomial distributions](negative-binomial-and-beta-binomial-distribution/README.md)
 - [Poisson binomial distribution](poisson-binomial-distribution/README.md)
+- [Probability mass functions](probability-mass-functions/README.md)
 - [Sums of independent Poisson variables](poisson-distribution/README.md)
