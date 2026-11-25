@@ -8,6 +8,7 @@
 - [Closed-form solution of the normal equations](normal-inv.md)
 - [Convexity of the residual sum of squares](convex-on-rss.md)
 - [Leave-one-out least squares: leverage and deleted residual](leave-one-out-leverage-residual.md)
+- [The set of least-squares minimizers](the-set-of-least-squares-minimizers.md)
 
 ## Gaussian noise: least squares is maximum likelihood
 

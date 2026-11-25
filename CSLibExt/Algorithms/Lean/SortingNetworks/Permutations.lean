@@ -39,7 +39,11 @@ namespace Cslib.Algorithms.Lean.SortingNetworks
 
 variable {n : ℕ}
 
-/-- The distinct-valued input `(if v i then n else 0) + i` behind a Boolean input `v`. -/
+/-- **Spread of a Boolean input.** For a Boolean input $v$ on $n$ wires, the spread of $v$ is the
+input with natural-number values whose value on wire $i < n$ is $n + i$ if $v(i)$ is true and $i$
+if $v(i)$ is false.
+
+The values of the spread are pairwise distinct. -/
 def spread (v : Fin n → Bool) (i : Fin n) : ℕ := (if v i then n else 0) + i
 
 theorem spread_injective (v : Fin n → Bool) : Function.Injective (spread v) := by
@@ -50,7 +54,12 @@ theorem spread_injective (v : Fin n → Bool) : Function.Injective (spread v) :=
   apply Fin.ext
   split_ifs at h <;> omega
 
-/-- The Boolean input is a monotone image of the spread one. -/
+/-- **A Boolean input is a threshold of its spread.** For every Boolean input $v$ on $n$ wires,
+applying the threshold map that sends a natural number $k$ to true if $n \le k$ and to false
+otherwise to the spread of $v$ gives back $v$: for every wire $i$, the spread of $v$ at $i$ is at
+least $n$ exactly when $v(i)$ is true.
+
+Since the threshold map is monotone, $v$ is a monotone image of its spread. -/
 theorem decide_le_spread (v : Fin n → Bool) : (fun k => decide (n ≤ k)) ∘ spread v = v := by
   funext i
   have := i.isLt
@@ -75,7 +84,9 @@ theorem sorts_of_sorts_injective {net : Network n}
 
 /-! ## The permutation principle -/
 
-/-- The rank of `w i` among the values of `w`. -/
+/-- **Rank among the values of an input.** For a map $w$ from $\{0, \dots, n-1\}$ to the natural
+numbers and an index $i < n$, the rank of $w(i)$ among the values of $w$ is the number of indices
+$j < n$ with $w(j) < w(i)$. It is less than $n$, so it is again an index in $\{0, \dots, n-1\}$. -/
 def rank (w : Fin n → ℕ) (i : Fin n) : Fin n :=
   ⟨(Finset.univ.filter fun j => w j < w i).card, by
     calc (Finset.univ.filter fun j => w j < w i).card
@@ -99,12 +110,18 @@ theorem rank_injective {w : Fin n → ℕ} (hw : Function.Injective w) :
   · exact absurd h (rank_lt_rank hlt).ne
   · exact absurd h (rank_lt_rank hlt).ne'
 
-/-- The permutation of `Fin n` with the same relative order as an injective `w`. -/
+/-- **The ranking permutation.** For an injective map $w$ from $\{0, \dots, n-1\}$ to the natural
+numbers, the ranking permutation of $w$ is the permutation of $\{0, \dots, n-1\}$ that sends each
+$i$ to the rank of $w(i)$ among the values of $w$, that is, to the number of indices $j$ with
+$w(j) < w(i)$. Since $w$ is injective, this map is a bijection.
+
+The ranking permutation has the same relative order as $w$. -/
 noncomputable def rankPerm {w : Fin n → ℕ} (hw : Function.Injective w) : Equiv.Perm (Fin n) :=
   Equiv.ofBijective (rank w) (Finite.injective_iff_bijective.1 (rank_injective hw))
 
-/-- **The permutation principle**: a network that sorts all `n!` permutations of `Fin n` sorts
-every input over every linear order. -/
+/-- **The permutation principle.** A comparator network on $n$ wires that sorts each of the $n!$
+permutations $\sigma$ of $\{0, \dots, n-1\}$, viewed as the input whose value on wire $i$ is
+$\sigma(i)$, sorts every input over every linear order. -/
 theorem sorts_of_sorts_perm {net : Network n}
     (h : ∀ σ : Equiv.Perm (Fin n), Monotone (run net σ)) (α : Type*) [LinearOrder α] :
     Sorts net α := by

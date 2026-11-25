@@ -18,7 +18,7 @@ ISGCI (https://www.graphclasses.org/classes/gc_1079.html and gc_1080.html), prob
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Computability.Complexity.Karp.Color
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Order.Interval.Set.Defs

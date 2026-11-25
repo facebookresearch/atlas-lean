@@ -26,7 +26,11 @@ open Matrix
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
-/-- `S` is `ε`-light if `εL - L_S` is positive semidefinite. -/
+/-- **ε-light vertex sets.** Let $G$ be a simple graph on a finite vertex set $V$, let
+$\varepsilon$ be a real number and let $S \subseteq V$. Let $L$ be the real Laplacian matrix of
+$G$ and $L_S$ the real Laplacian matrix of the graph on $V$ whose edges are the edges of $G$ with
+both endpoints in $S$. The set $S$ is $\varepsilon$-light in $G$ if $\varepsilon L - L_S$ is
+positive semidefinite. -/
 def IsEpsilonLight (G : SimpleGraph V) (ε : ℝ) (S : Finset V) : Prop :=
   open Classical in
   letI G_S := G.induce S |>.spanningCoe
@@ -34,15 +38,26 @@ def IsEpsilonLight (G : SimpleGraph V) (ε : ℝ) (S : Finset V) : Prop :=
   letI L_S := lapMatrix ℝ (G_S)
   PosSemidef (ε • L - L_S)
 
-/-- Large `ε`-light subsets exist uniformly. -/
+/-- **The large ε-light subset property.** The statement that there is a real constant $c > 0$
+such that for every natural number $n$, every simple graph $G$ on the vertex set
+$\{0, \dots, n-1\}$ and every real number $\varepsilon$ with $0 < \varepsilon < 1$, some set $S$
+of vertices that is $\varepsilon$-light in $G$ has at least $c \varepsilon n$ elements. -/
 def epsilonLightSubsetExists : Prop :=
   ∃ (c : ℝ), c > 0 ∧ ∀ (n : ℕ) (G : SimpleGraph (Fin n)) (ε : ℝ),
   0 < ε → ε < 1 →
   ∃ (S : Finset (Fin n)), IsEpsilonLight G ε S ∧ (S.card : ℝ) ≥ c * ε * n
 
 /--
-Resolved true: Question 6 of arXiv:2602.05192 is proved: v2 (16 Mar 2026), Appendix B.6 proves
-Lemma B.1 (an epsilon-light subset of size at least eps*n/42 exists in every weighted graph).
+**Every graph has a large ε-light vertex set.** There is a real constant $c > 0$ such that for
+every natural number $n$, every simple graph $G$ on the vertex set $\{0, \dots, n-1\}$ and every
+real number $\varepsilon$ with $0 < \varepsilon < 1$, there is a set $S$ of vertices with at least
+$c \varepsilon n$ elements that is $\varepsilon$-light in $G$: the matrix $\varepsilon L - L_S$ is
+positive semidefinite, where $L$ is the real Laplacian matrix of $G$ and $L_S$ is the real
+Laplacian matrix of the graph on all $n$ vertices whose edges are the edges of $G$ with both
+endpoints in $S$.
+
+Appendix B.6 of the source proves this, with $c = 1/42$, as Lemma B.1 (stated for weighted graphs).
+
 Source: First Proof authors, arXiv:2602.05192v2, Appendix B.6 (Lemma B.1),
 https://arxiv.org/html/2602.05192v2. Moved from
 `OpenConjectures/Combinatorics/EpsilonLightSubset`.

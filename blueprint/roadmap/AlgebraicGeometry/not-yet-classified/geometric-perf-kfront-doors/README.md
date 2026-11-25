@@ -1,0 +1,15 @@
+# Geometric Perf KFront Doors
+
+- [Perfect Input](perfect-input.md)
+- [Small Perfect Source](small-perfect-source.md)
+- [Large Perfect Source](large-perfect-source.md)
+- [Perfect Input Of Sources](perfect-input-of-sources.md)
+- [Perfect Map](perfect-map.md)
+- [Geometric K](geometric-k.md)
+- [Geometric KMap](geometric-kmap.md)
+- [Geometric K0](geometric-k0.md)
+- [Supported Perf](supported-perf.md)
+- [Support Inclusion](support-inclusion.md)
+- [Supported Input](supported-input.md)
+- [Quotient Restriction](quotient-restriction.md)
+- [Ring Perfect Input](ring-perfect-input.md)

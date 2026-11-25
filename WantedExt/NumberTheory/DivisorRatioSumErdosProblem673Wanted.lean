@@ -17,6 +17,7 @@ formula for `∑_{n ≤ X} G(n)`?
 module
 
 public import Batteries.Util.ProofWanted
+public import Mathlib.Data.Finset.Sort
 public import MathlibExt.Data.Set.Density
 
 @[expose] public section

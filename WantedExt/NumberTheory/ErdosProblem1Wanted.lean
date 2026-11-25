@@ -36,7 +36,10 @@ def conjecture : Prop :=
   ∃ C > (0 : ℝ), ∀ (N : ℕ) (A : Finset ℕ) (_ : IsSumDistinctSet A N),
     N ≠ 0 → C * 2 ^ A.card < N
 
-/--
+/-- **Disproof of Erdős Problem 1 on distinct subset sums.** There is no real number $C > 0$
+such that for every natural number $N \ne 0$ and every finite set $A \subseteq \{1, \dots, N\}$
+whose distinct subsets have distinct sums, $C \cdot 2^{|A|} < N$.
+
 Resolved false: Disproved: machine-checked disproof recorded in the FormalConjectures source
 record. Source: Lean 4 disproof of Erdos Problem 1 (proof by GPT-6 Astra in the FrontierMath
 Erdos benchmark; repository by T. Adamczewski), tadamcz/erdos1 at commit

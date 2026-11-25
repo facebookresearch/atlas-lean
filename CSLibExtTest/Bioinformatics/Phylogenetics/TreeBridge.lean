@@ -19,7 +19,7 @@ Both fixtures are reused from existing tests:
 * the quartet tree `01|23` of `CSLibExtTest.Bioinformatics.Phylogenetics.NeighborJoining`
   (leaves `0, 1` on vertex `4`, leaves `2, 3` on vertex `5`, with its proof
   `quartet_isBinaryPhylogeneticTree`), converted to an `UnrootedBinaryTree`;
-* the three-taxon star of `MathlibExtTest.Biology.Phylogenetics.UnrootedTreeCount`, copied
+* the three-taxon star of `MathlibExtTest.Combinatorics.Enumerative.UnrootedBinaryTreeCount`, copied
   here as a local fixture (test libraries do not import each other across library boundaries)
   and converted to a neighbor-joining tree.
 
@@ -119,7 +119,7 @@ example : ({0, 1} : Finset (Fin 4)) ∈ sideSplits quartet quartetLeaf ∧
 /-! ## Unrooted to neighbor joining: the star -/
 
 /-! Local fixture, copied from the star tree of
-`MathlibExtTest/Biology/Phylogenetics/UnrootedTreeCount.lean`. -/
+`MathlibExtTest/Combinatorics/Enumerative/UnrootedBinaryTreeCount.lean`. -/
 
 /-- The star with center `3` and leaves `0, 1, 2`. -/
 def starGraph : SimpleGraph (Fin 4) := SimpleGraph.fromRel fun i _ => i = 3
