@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Digits.Defs
 public import MathlibExt.NumberTheory.Digits.CommaChildParent
+public import MathlibExt.NumberTheory.Digits.CommaNonSuccessors
 public import MathlibExt.NumberTheory.Digits.CommaParent
 
 namespace MetaMathlibExt
@@ -50,17 +51,6 @@ public theorem_wanted two_commaChildren_iff (b : ℕ) (hb : 2 ≤ b) :
       ((∃ y₁ y₂ : Fin b, y₁ ≠ y₂ ∧ IsCommaCandidate b n y₁ ∧ IsCommaCandidate b n y₂) ↔
         ∃ d i : ℕ, 1 ≤ d ∧ d ≤ b - 2 ∧
           Nat.digits b n = [b - 1 - d, d] ++ List.replicate i (b - 1) ++ [d])
-
-/-- **Numbers that are not comma successors.** Let $b \ge 3$ and $n \ge b^2 - 1$. Then $n$ is not
-the comma successor in base $b$ of any positive integer if and only if $n = c\, b^i$ for some
-$i \ge 2$ and some $c$ with $2 \le c \le b - 1$.
-
-Source: Éric Angelini, Michael S. Branicky, Giovanni Resta, N. J. A. Sloane, and
-David W. Wilson, *The Comma Sequence: A Simple Sequence with Bizarre Properties*, The Fibonacci
-Quarterly 62 (2024), no. 3, Theorem 5.4 (`fq-2024-sloane05302024-thm-5.4`). -/
-public theorem_wanted not_commaSucc_iff (b n : ℕ) (hb : 3 ≤ b) (hn : b ^ 2 - 1 ≤ n) :
-    (¬ ∃ k : ℕ, 0 < k ∧ IsCommaSucc b k n) ↔
-      ∃ c i : ℕ, 2 ≤ i ∧ 2 ≤ c ∧ c ≤ b - 1 ∧ n = c * b ^ i
 
 /-- **The comma-child graph has an infinite path.** For every base $b \ge 2$ there is a sequence
 $a_0, a_1, \dots$ of positive integers such that for every $i$ there is a comma candidate digit

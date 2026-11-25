@@ -763,6 +763,74 @@ private theorem finite_block {ℓ m r v : ℕ} (hr1 : ℓ + 1 ∉ zeckendorf r)
     rwa [show value l + value s + (value b + (rt + S)) = v + r by omega,
       show value l + (value b + (rt + S)) = v + (rt + S) by omega] at h
 
+private theorem low_add {v r ℓ : ℕ} (hℓ : 4 ≤ ℓ)
+    (hℓ0 : ℓ ∉ Nat.zeckendorf v) (hℓ1 : ℓ + 1 ∉ Nat.zeckendorf v)
+    (hr : ∀ j, 2 ≤ j → j ≤ ℓ + 1 → j ∉ Nat.zeckendorf r)
+    {k : ℕ} (hk : k + 2 ≤ ℓ) :
+    zeckAdicOfNat (v + r) k = zeckAdicOfNat v k := by
+  have hvrep := isZeckendorfRep_zeckendorf v
+  have hrrep := isZeckendorfRep_zeckendorf r
+  have hge (i : ℕ) (hi : i ∈ Nat.zeckendorf r) : ℓ + 2 ≤ i := by
+    have hi2 := (rep_iff.mp hrrep).2 i hi
+    by_contra hc
+    have hlt : i < ℓ + 2 := Nat.not_le.mp hc
+    exact hr i hi2 (by omega) hi
+  have hlow (i : ℕ) (hi : i ∈ Nat.zeckendorf v) : i < ℓ ∨ ℓ + 2 ≤ i := by
+    have hi2 := (rep_iff.mp hvrep).2 i hi
+    rcases lt_trichotomy i ℓ with h | h | h
+    · exact Or.inl h
+    · exact absurd (h ▸ hi) hℓ0
+    · have h' : i = ℓ + 1 ∨ ℓ + 2 ≤ i := by omega
+      rcases h' with h' | h'
+      · exact absurd (h' ▸ hi) hℓ1
+      · exact Or.inr h'
+  let lv := (Nat.zeckendorf v).filter (· < ℓ)
+  let hv := (Nat.zeckendorf v).filter (ℓ + 2 ≤ ·)
+  have hlvrep : lv.IsZeckendorfRep := rep_filter hvrep _
+  have hhvrep : hv.IsZeckendorfRep := rep_filter hvrep _
+  have hsplit : hv ++ lv = Nat.zeckendorf v := by
+    refine rep_ext (rep_append hhvrep hlvrep fun a ha b hb => ?_) hvrep ?_
+    · have ha' : ℓ + 2 ≤ a := of_decide_eq_true (List.mem_filter.mp ha).2
+      have hb' : b < ℓ := of_decide_eq_true (List.mem_filter.mp hb).2
+      omega
+    · intro i
+      constructor
+      · intro h
+        rcases List.mem_append.mp h with h | h
+        · exact (List.mem_filter.mp h).1
+        · exact (List.mem_filter.mp h).1
+      · intro h
+        rcases hlow i h with hlt | hge'
+        · exact List.mem_append.mpr (Or.inr
+            (List.mem_filter.mpr ⟨h, by simp only [decide_eq_true_eq]; exact hlt⟩))
+        · exact List.mem_append.mpr (Or.inl
+            (List.mem_filter.mpr ⟨h, by simp only [decide_eq_true_eq]; exact hge'⟩))
+  have hval : value hv + value lv = v := by
+    have h := congrArg value hsplit
+    simpa only [value, List.map_append, List.sum_append, sum_zeckendorf_fib] using h
+  have hlvlt : value lv < Nat.fib ℓ :=
+    value_lt hlvrep (by omega) fun i hi =>
+      of_decide_eq_true (List.mem_filter.mp hi).2
+  obtain ⟨z, hzrep, hzb, hzv⟩ := high_sum (d := ℓ - 2) hhvrep hrrep
+    (fun i hi => by
+      have hi' : ℓ + 2 ≤ i := of_decide_eq_true (List.mem_filter.mp hi).2
+      omega)
+    (fun i hi => by have := hge i hi; omega)
+  have hzlo : ∀ i ∈ z, ℓ ≤ i := fun i hi => by have := hzb i hi; omega
+  have hjoinV : zeckAdicOfNat (value hv + value lv) k = zeckAdicOfNat (value lv) k :=
+    join_low hhvrep hℓ
+      (fun i hi => by
+        have hi' : ℓ + 2 ≤ i := of_decide_eq_true (List.mem_filter.mp hi).2
+        omega)
+      hlvlt hk
+  have hjoinR : zeckAdicOfNat (value z + value lv) k = zeckAdicOfNat (value lv) k :=
+    join_low hzrep hℓ hzlo hlvlt hk
+  have hvr : v + r = value z + value lv := by
+    have hrval : value (Nat.zeckendorf r) = r := sum_zeckendorf_fib r
+    omega
+  rw [hvr, ← hval]
+  exact hjoinR.trans hjoinV.symm
+
 end zeckOdometer_stopping_block
 
 open zeckOdometer_stopping_block in
@@ -829,5 +897,49 @@ public theorem zeckOdometer_stopping_block {x : ℕ → Bool} (hx : x ∈ zeckAd
   rw [hit (rt + S) (by dsimp [N]; omega), hit rt (by dsimp [N]; omega),
     hit r (by dsimp [N]; omega), ← hpre k (by dsimp [N]; omega)]
   exact ⟨hf.1 k, hf.2 k⟩
+
+open zeckOdometer_stopping_block in
+/-- **Adding $r$ without low digits leaves the low digits unchanged.** Write $F_j$ for the
+Fibonacci numbers ($F_1 = F_2 = 1$). For $r \in \mathbb{N}$ let $Z(r)$ be the set of indices in
+the Zeckendorf representation $r = \sum_{j \in Z(r)} F_j$ (all indices $\ge 2$, no two
+consecutive), and let $r_j = 1$ if $j \in Z(r)$ and $r_j = 0$ otherwise. Let
+$\mathbb{X} \subseteq \{0,1\}^{\mathbb{N}}$ be the set of Zeckendorf-adic integers (sequences
+with $x_0 = x_1 = 0$ and no two consecutive ones), and write $x + n = T^n(x)$ for the $n$-th
+iterate of the Zeckendorf odometer $T$. Let $x \in \mathbb{X}$ and $\ell \ge 2$ with
+$x_\ell = x_{\ell+1} = 0$, and let $r$ satisfy $r_j = 0$ for $2 \le j \le \ell + 1$. Then
+$(x + r)_n = x_n$ for every $n$ with $2 \le n \le \ell - 2$.
+
+Source: Yohan Hosten, *On the Variation of the Sum of Digits in the Zeckendorf Representation:
+An Algorithm to Compute the Distribution and Mixing Properties*, Journal of Integer Sequences 27
+(2024), Article 24.3.2, Corollary 9 (`jis-2024-24.3.2-cor-9`). -/
+public theorem zeckOdometer_iterate_low_digits {x : ℕ → Bool} (hx : x ∈ zeckAdic)
+    {ℓ r : ℕ} (hℓ : 2 ≤ ℓ) (hx0 : x ℓ = false) (hx1 : x (ℓ + 1) = false)
+    (hr : ∀ j, 2 ≤ j → j ≤ ℓ + 1 → j ∉ Nat.zeckendorf r) :
+    ∀ n, 2 ≤ n → n ≤ ℓ - 2 → zeckOdometer^[r] x n = x n := by
+  intro n hn2 hnℓ
+  have hℓ4 : 4 ≤ ℓ := by omega
+  let N := n + r + ℓ + 3
+  let v := value (digits x N)
+  have hrep := digits_rep hx N
+  have hpre (i : ℕ) (hi : i < N) : zeckAdicOfNat v i = x i := by
+    change zeckAdicOfNat (value (digits x N)) i = x i
+    rw [ofNat_value hrep]
+    apply Bool.eq_iff_iff.mpr
+    simp [mem_digits, hi]
+  have hℓ0 : ℓ ∉ Nat.zeckendorf v := by
+    have h := hpre ℓ (by dsimp [N]; omega)
+    rw [hx0] at h
+    exact of_decide_eq_false h
+  have hℓ1 : ℓ + 1 ∉ Nat.zeckendorf v := by
+    have h := hpre (ℓ + 1) (by dsimp [N]; omega)
+    rw [hx1] at h
+    exact of_decide_eq_false h
+  have hpre' : ∀ i ≤ n + r, x i = zeckAdicOfNat v i :=
+    fun i hi => (hpre i (by dsimp [N]; omega)).symm
+  calc zeckOdometer^[r] x n = zeckOdometer^[r] (zeckAdicOfNat v) n :=
+        iterate_local r n hpre'
+    _ = zeckAdicOfNat (v + r) n := by rw [ofNat_iterate]
+    _ = zeckAdicOfNat v n := low_add hℓ4 hℓ0 hℓ1 hr (by omega)
+    _ = x n := hpre n (by dsimp [N]; omega)
 
 end MetaMathlibExt
