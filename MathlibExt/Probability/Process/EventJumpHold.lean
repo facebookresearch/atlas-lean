@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Biology.Dynamics.StochasticCRNNonExplosion
+public import MathlibExt.Probability.Process.ContinuousTimeMarkovChain.JumpHold
 
 open MathlibExt.Biology.Dynamics.StochasticCRNNonExplosion
 
