@@ -19,7 +19,7 @@ define `R₀ = r(K) = lim_m ‖K^m‖^(1/m) = inf_m ‖K^m‖^(1/m)` (Eq. (2.2))
 zero for every `φ` when `R₀ < 1`, while for `R₀ > 1` some `φ` leads to arbitrarily large later
 generations; under an irreducibility hypothesis every nonzero nonnegative introduction of
 infection grows at rate `R₀` (Remark 3). For a separable kernel `k(ξ, η) = a(ξ) b(η)` the
-operator has one-dimensional range and `R₀ = ∫ b S a` (Eqs. (3.1)–(3.3)).
+operator has range of dimension at most one and `R₀ = ∫ b S a` (Eqs. (3.1)–(3.3)).
 
 The generation-growth factor `inf_m ‖K^m‖^(1/m)` is the Gelfand radius of the real bounded
 operator `K`, which equals the spectral radius of its complexification by Gelfand's formula. The
