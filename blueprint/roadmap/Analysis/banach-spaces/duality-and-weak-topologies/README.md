@@ -23,3 +23,4 @@ Hahn–Banach, annihilators and bipolars, weak and weak-star convergence and top
 - [Nearest points in reflexive Banach spaces](exists-norm-sub-eq-i-inf-of-reflexive-of.md)
 - [Principle of local reflexivity](principle-of-local-reflexivity.md)
 - [Hahn–Banach extension of a linear functional dominated by a sublinear functional](hahn-banach-real-sublinear.md)
+- [Krein–Milman theorem](krein-milman.md)

@@ -1,0 +1,16 @@
+# Derived Module Scalar Operations
+
+- [Quasi Iso](quasi-iso.md)
+- [Extension Source](extension-source.md)
+- [Has Extension](has-extension.md)
+- [Extension](extension.md)
+- [Extension Counit](extension-counit.md)
+- [Tensor Left](tensor-left.md)
+- [Tensor Bifunctor](tensor-bifunctor.md)
+- [Tensor Source](tensor-source.md)
+- [Has Tensor](has-tensor.md)
+- [Tensor](tensor.md)
+- [Tensor Counit](tensor-counit.md)
+- [Completion](completion.md)
+- [Completed Extension](completed-extension.md)
+- [Completed Tensor](completed-tensor.md)

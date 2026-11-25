@@ -71,6 +71,17 @@ one, and people and agents follow the same steps:
    that others see the task is taken. Mark it ready for review when it is done,
    or close it if you stop.
 
+Proving a task needs a built checkout. `lake exe cache get` fetches only
+Mathlib's build, and ATLAS's own modules take hours to build from source, so
+start from CI's build of `main` instead. It needs a `gh` login, `zstd` and
+about 15 GB free:
+
+```sh
+lake exe cache get    # Mathlib
+scripts/get_build.sh  # ATLAS, from CI's build of the nearest commit of main
+lake build            # what changed since
+```
+
 ### Which areas come first
 
 [`blueprint/priorities.json`](blueprint/priorities.json) weighs the areas of
@@ -398,6 +409,18 @@ To queue a standalone PR, use one of:
   `expectedHeadOid` to pin the head). It queues the PR only if it can be queued
   now, and otherwise returns an error that says why; it never merges directly.
 
+Before you queue a PR, run `python3 -I scripts/queue/preflight.py <number>` from
+an up-to-date checkout of `main`, never from the PR's branch. It prints READY or
+NOT READY and what to do next. It checks Codex's approval of the exact head and
+the required checks. It checks that CI tested the head on a `main` that has the
+current pins, less than 6 hours ago. It checks conflicts with `main` and the
+queued PRs, and declarations that a queued PR also adds. With `--enqueue` it
+queues a READY PR with `enqueuePullRequest`, pinned to the head it checked. The
+[atlas-merge-queue](.agents/skills/atlas-merge-queue/SKILL.md) skill gives the
+rules that no check enforces. Never push to a queued PR. Take a PR out of the
+middle of the queue only when it is known to be bad. After a bump, check PRs
+again before you queue them.
+
 To queue a stack of pull requests (its branches must be in this repository), use
 the merge box of the highest PR you want to merge, or `PUT /repos/{owner}/{repo}/pulls/{number}/merge-async` with
 `"merge_action": "merge_queue"` on that PR. Either queues that PR together with
@@ -424,6 +447,16 @@ in the stack leave the queue too. Fix the PR and queue it again. To take a PR
 out of the queue, use **Remove from queue** on the PR or on the queue's page, or
 the GraphQL mutation `dequeuePullRequest` (for example through `gh api
 graphql`); there is no `gh pr` command for it.
+
+The Merge queue retry workflow (`.github/workflows/merge-queue-retry.yml`)
+re-runs a merge group's failed jobs once when every failed required check of
+that merge group failed for an infrastructure reason (a lost runner, or a
+truncated answer or server error from GitHub's API) while the PR is still
+queued with it, so that a flaky check does not remove the PR and
+restart the builds behind it. It never removes a PR from the queue; for other
+failures its run summary only records whether it would have removed the PR
+early. It records what it would do, and re-runs nothing, unless the repository
+variable `MERGE_QUEUE_RETRY` is `active`.
 
 Queue a Lean or Mathlib bump like any other PR, preferably at a quiet time. With
 new pins, CI can fetch Mathlib's cache but must rebuild ATLAS when there is no

@@ -41,24 +41,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Sum of an eventually periodic sequence.** Let $K$ be a field of characteristic zero, let
-$f : \mathbb{N} \to K$, and let $L \ge 1$ and $D \ge 1$ be natural numbers such that
-$f(i + L) = f(i)$ for all $i \ge D$. Let $\bar f = \frac{1}{L} \sum_{k=D}^{D+L-1} f(k)$ be the
-average over one period. Then for every natural number $N \ge D - 1$,
-$$\sum_{i=1}^{N} f(i) = \sum_{i=1}^{D-1} f(i) + (N - D + 1) \bar f +
-\sum_{k=1}^{(N-D+1) \bmod L} \left(f(k + D - 1) - \bar f\right).$$
-
-Source: Jeremy Booher, Jack Hsieh, Rakesh Rivera, Vincent Tran, James Upton, and Carol Wu,
-*Higher a-Numbers in `ℤ_p`-Towers via Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
-Corollary 1 (Sum of an eventually periodic sequence) (`integers-2026-A78-cor-1`). -/
-public theorem_wanted sum_Icc_of_eventually_periodic {K : Type*} [Field K] [CharZero K]
-    (f : ℕ → K) {L D : ℕ} (hL : 0 < L) (hD : 1 ≤ D) (hf : ∀ i, D ≤ i → f (i + L) = f i)
-    {N : ℕ} (hN : D - 1 ≤ N) :
-    ∑ i ∈ Icc 1 N, f i =
-      ∑ i ∈ Icc 1 (D - 1), f i + ((N + 1 - D : ℕ) : K) * ((∑ k ∈ Ico D (D + L), f k) / L) +
-        ∑ k ∈ Icc 1 ((N + 1 - D) % L), (f (k + D - 1) - (∑ k ∈ Ico D (D + L), f k) / L)
-
-
 /-- **Base-$p$ digits of a rational number.** For a natural number $p$, a rational number $x$ and
 an integer $k$, the $k$-th base-$p$ digit of $x$ is $[p^k](x) = \lfloor x / p^k \rfloor \bmod p$;
 for $p \ge 1$ this is the residue of $\lfloor x / p^k \rfloor$ modulo $p$ in $\{0, \dots, p - 1\}$.

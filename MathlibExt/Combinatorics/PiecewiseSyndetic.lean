@@ -20,7 +20,10 @@ public import Mathlib.Order.Lattice.Nat
 
 This module proves Brown’s dense color class lemma for lattice cubes, and its consequence that
 some color class is `d`-dense in a subcube of side `m > f(d)` inside a cube `[1, A]^t` whose
-size `A` depends only on `r`, `t` and `f` (Lemmas 1 and 2). The definitions follow
+size `A` depends only on `r`, `t` and `f` (Lemmas 1 and 2). It also proves that piecewise
+syndeticity is partition regular: when a piecewise syndetic set is the union of finitely many
+sets, one of them is piecewise syndetic. The proof shows that a union of two sets that are not
+piecewise syndetic is not piecewise syndetic. The definitions follow
 Tom C. Brown, *Piecewise Syndetic Sets in `N^t` and `N^X`*,
 INTEGERS 24 (2024), Article A2.
 
@@ -124,6 +127,83 @@ theorem not_isPiecewiseSyndetic_empty {t : ℕ} :
   obtain ⟨a, ha⟩ := h 1
   obtain ⟨y, hy, -⟩ := ha (by rw [latticeCube_one]; exact Set.mem_singleton a)
   exact hy
+
+/-- A superset of a piecewise syndetic set is piecewise syndetic. -/
+private theorem IsPiecewiseSyndetic.mono {t : ℕ} {A A' : Set (Fin t → ℕ)}
+    (hA : IsPiecewiseSyndetic A) (hAA' : A ⊆ A') : IsPiecewiseSyndetic A' := by
+  obtain ⟨d, hd⟩ := hA
+  refine ⟨d, fun m => ?_⟩
+  obtain ⟨a, ha⟩ := hd m
+  refine ⟨a, fun x hx => ?_⟩
+  obtain ⟨y, hy, z, hz, rfl⟩ := ha hx
+  exact ⟨y, hAA' hy, z, hz, rfl⟩
+
+/-- If $B \cup C$ is piecewise syndetic and $B$ is not, then $C$ is piecewise syndetic. -/
+private theorem IsPiecewiseSyndetic.of_union_of_not {t : ℕ} {B C : Set (Fin t → ℕ)}
+    (h : IsPiecewiseSyndetic (B ∪ C)) (hB : ¬ IsPiecewiseSyndetic B) :
+    IsPiecewiseSyndetic C := by
+  obtain ⟨d, hd⟩ := h
+  -- For the same `d`, no lattice cube of some side `k` fits inside `B + [0, d]^t`.
+  obtain ⟨k, hk⟩ : ∃ k : ℕ, ∀ b : Fin t → ℕ,
+      ¬ latticeCube b k ⊆ {x | ∃ y ∈ B, ∃ z ∈ latticeCube 0 (d + 1), x = y + z} :=
+    Classical.byContradiction fun hcon => hB ⟨d, fun k => Classical.byContradiction
+      fun hk => hcon ⟨k, fun b hb => hk ⟨b, hb⟩⟩⟩
+  -- Cut `k` off the lower corner of a cube of side `m + k` inside `(B ∪ C) + [0, d]^t`.
+  refine ⟨d + k, fun m => ?_⟩
+  obtain ⟨a, ha⟩ := hd (m + k)
+  refine ⟨a + fun _ => k, fun x hx => ?_⟩
+  -- The cube of side `k` just below `x` has a point `w` outside `B + [0, d]^t`. It lies in the
+  -- big cube, so `w = y + z` with `y ∈ B ∪ C` and `z ∈ [0, d]^t`, and then `y ∈ C`.
+  obtain ⟨w, hw, hwB⟩ := Set.not_subset.mp (hk (x - fun _ => k))
+  have hxi := mem_latticeCube.mp hx
+  have hwi := mem_latticeCube.mp hw
+  simp only [Pi.add_apply, Pi.sub_apply] at hxi hwi
+  have hwa : w ∈ latticeCube a (m + k) := mem_latticeCube.mpr fun i => by
+    have := hxi i
+    have := hwi i
+    omega
+  obtain ⟨y, hy | hy, z, hz, rfl⟩ := ha hwa
+  · exact absurd ⟨y, hy, z, hz, rfl⟩ hwB
+  have hzi := mem_latticeCube.mp hz
+  simp only [Pi.add_apply, Pi.zero_apply, zero_add] at hwi hzi
+  -- Since `x - k ≤ y + z < x` coordinatewise, `x = y + (z + (x - (y + z)))` with the shift in
+  -- `[0, d + k]^t`.
+  refine ⟨y, hy, z + (x - (y + z)), mem_latticeCube.mpr fun i => ?_, funext fun i => ?_⟩
+  · have := hwi i
+    have := hzi i
+    simp only [Pi.add_apply, Pi.sub_apply, Pi.zero_apply]
+    omega
+  · have := hxi i
+    have := hwi i
+    simp only [Pi.add_apply, Pi.sub_apply]
+    omega
+
+/-- **Piecewise syndeticity is partition regular.** Let $A \subseteq \mathbb{N}^t$ be piecewise
+syndetic and let $A_1, \dots, A_r \subseteq \mathbb{N}^t$ with $A = A_1 \cup \dots \cup A_r$. Then
+some $A_i$ is piecewise syndetic.
+
+Source: Tom C. Brown, *Piecewise Syndetic Sets in `N^t` and `N^X`*, INTEGERS 24
+(2024), Article A2, Theorem 1 (`integers-2024-A2-thm-1`). -/
+theorem IsPiecewiseSyndetic.exists_of_eq_iUnion {t r : ℕ}
+    {A : Set (Fin t → ℕ)} (hA : IsPiecewiseSyndetic A) (B : Fin r → Set (Fin t → ℕ))
+    (hAB : A = ⋃ i, B i) : ∃ i, IsPiecewiseSyndetic (B i) := by
+  subst hAB
+  induction r with
+  | zero =>
+    -- With no pieces the union is empty, and the empty set is not piecewise syndetic.
+    exact (not_isPiecewiseSyndetic_empty (hA.mono fun x hx =>
+      (Set.mem_iUnion.mp hx).elim fun i _ => i.elim0)).elim
+  | succ r ih =>
+    -- Either the first piece is piecewise syndetic, or the union of the others is.
+    by_cases h0 : IsPiecewiseSyndetic (B 0)
+    · exact ⟨0, h0⟩
+    have hsplit : IsPiecewiseSyndetic (B 0 ∪ ⋃ i : Fin r, B i.succ) := hA.mono fun x hx => by
+      obtain ⟨i, hi⟩ := Set.mem_iUnion.mp hx
+      rcases Fin.eq_zero_or_eq_succ i with rfl | ⟨j, rfl⟩
+      · exact Or.inl hi
+      · exact Or.inr (Set.mem_iUnion.mpr ⟨j, hi⟩)
+    obtain ⟨i, hi⟩ := ih (fun i => B i.succ) (hsplit.of_union_of_not h0)
+    exact ⟨i.succ, hi⟩
 
 /-- **A color class is dense in a subcube (Brown, Lemma 1).** Let $t, r \in \mathbb{N}$ and let
 $1 = m_0 < m_1 < m_2 < \cdots$ be a strictly increasing sequence of natural numbers. Let $M$ be a
