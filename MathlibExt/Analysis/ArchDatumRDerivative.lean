@@ -371,7 +371,6 @@ private theorem exists_norm_inv_Gamma_le_of_strip (A B : ℝ) :
   obtain ⟨n, hn⟩ : ∃ n : ℕ, 1 / 2 ≤ A + n :=
     ⟨⌈1 / 2 - A⌉₊, by linarith [Nat.le_ceil (1 / 2 - A)]⟩
   have hGh : 0 < ‖Gamma (1 / 2 : ℂ)‖ := norm_Gamma_pos (by norm_num)
-
   obtain ⟨κ, hκ, hκle⟩ : ∃ κ : ℝ, 0 < κ ∧
       ∀ x : ℝ, A + n ≤ x → x ≤ B + n → κ ≤ ‖Gamma (x : ℂ)‖ := by
     by_cases hAB : A + n ≤ B + n
@@ -525,9 +524,7 @@ private theorem strip_bound_of_edges (a b : ℝ) (hab : a < b) (N : ℕ) : ∃ c
   refine ⟨2 ^ N * (b + 1 - a) ^ N, mul_pos (pow_pos two_pos N) (pow_pos hb1 N),
     fun f M hM hf hgrowth hedge s hsa hsb => ?_⟩
   obtain ⟨C, D, hCD⟩ := hgrowth
-
   set g : ℂ → ℂ := fun w => f w / (w + ((1 - a : ℝ) : ℂ)) ^ N
-
   have hcl : closure (Complex.re ⁻¹' Set.Ioo a b) = Complex.re ⁻¹' Set.Icc a b := by
     rw [Complex.closure_preimage_re, closure_Ioo hab.ne]
   have hpow_diff : Differentiable ℂ fun w : ℂ => (w + ((1 - a : ℝ) : ℂ)) ^ N :=
@@ -538,7 +535,6 @@ private theorem strip_bound_of_edges (a b : ℝ) (hab : a < b) (N : ℕ) : ∃ c
     refine hf.continuousOn.div hpow_diff.continuous.continuousOn fun w hw => ?_
     rw [hcl] at hw
     exact add_pow_ne_zero hw.1 N
-
   have hκ : 0 < π / (2 * (b - a)) := by positivity
   have hκlt : π / (2 * (b - a)) < π / (b - a) :=
     div_lt_div_of_pos_left Real.pi_pos hba (by linarith)
@@ -564,7 +560,7 @@ private theorem strip_bound_of_edges (a b : ℝ) (hab : a < b) (N : ℕ) : ∃ c
         Real.exp (max D 0 / (π / (2 * (b - a))) * Real.exp (π / (2 * (b - a)) * |w.im|)) :=
       Real.norm_of_nonneg (Real.exp_pos _).le
     rw [hE]
-    show ‖f w / (w + ((1 - a : ℝ) : ℂ)) ^ N‖ ≤ _
+    change ‖f w / (w + ((1 - a : ℝ) : ℂ)) ^ N‖ ≤ _
     rw [norm_div, div_le_iff₀ hpos]
     calc ‖f w‖ ≤ max C 0 * Real.exp (D * |w.im|) := h1
       _ ≤ max C 0 * Real.exp (max D 0 / (π / (2 * (b - a))) * Real.exp
@@ -580,18 +576,16 @@ private theorem strip_bound_of_edges (a b : ℝ) (hab : a < b) (N : ℕ) : ∃ c
       _ = 2 ^ N * max C 0 * Real.exp (max D 0 / (π / (2 * (b - a))) * Real.exp
           (π / (2 * (b - a)) * |w.im|)) *
             ‖(w + ((1 - a : ℝ) : ℂ)) ^ N‖ := by ring
-
   have hedge' : ∀ w : ℂ, w.re = a ∨ w.re = b → ‖g w‖ ≤ 2 ^ N * M := by
     intro w hw
     have hwa : a ≤ w.re := by rcases hw with h | h <;> linarith
     have hpos := norm_pow_add_pos hwa N
-    show ‖f w / (w + ((1 - a : ℝ) : ℂ)) ^ N‖ ≤ 2 ^ N * M
+    change ‖f w / (w + ((1 - a : ℝ) : ℂ)) ^ N‖ ≤ 2 ^ N * M
     rw [norm_div, div_le_iff₀ hpos]
     calc ‖f w‖ ≤ M * (1 + |w.im|) ^ N := hedge w hw
       _ ≤ M * (2 ^ N * ‖(w + ((1 - a : ℝ) : ℂ)) ^ N‖) := mul_le_mul_of_nonneg_left
           (one_add_abs_im_pow_le hwa N) hM
       _ = 2 ^ N * M * ‖(w + ((1 - a : ℝ) : ℂ)) ^ N‖ := by ring
-
   have hPL : ‖g s‖ ≤ 2 ^ N * M :=
     PhragmenLindelof.vertical_strip hgd hB (fun w hw => hedge' w (Or.inl hw))
       (fun w hw => hedge' w (Or.inr hw)) hsa hsb
@@ -619,7 +613,6 @@ private theorem strip_decay_of_edges (a b : ℝ) (hab : a < b) (n : ℕ) : ∃ c
   have hb1 : 0 < b + 1 - a := by linarith
   refine ⟨c₀ * (b + 1 - a) ^ n * 2 ^ n, by positivity, fun f M hM hf hgrowth hedge s hsa hsb => ?_⟩
   obtain ⟨C, D, hCD⟩ := hgrowth
-
   set g : ℂ → ℂ := fun w => f w * (w + ((1 - a : ℝ) : ℂ)) ^ n
   have hpow_diff : Differentiable ℂ fun w : ℂ => (w + ((1 - a : ℝ) : ℂ)) ^ n :=
     (differentiable_id.add_const _).pow n
@@ -629,7 +622,7 @@ private theorem strip_decay_of_edges (a b : ℝ) (hab : a < b) (n : ℕ) : ∃ c
   have hgrowth' : ∃ C' D' : ℝ, ∀ w : ℂ, a ≤ w.re → w.re ≤ b → ‖g w‖ ≤ C' * Real.exp
       (D' * |w.im|) := by
     refine ⟨max C 0 * (b + 1 - a) ^ n, D + n, fun w hwa hwb => ?_⟩
-    show ‖f w * (w + ((1 - a : ℝ) : ℂ)) ^ n‖ ≤ _
+    change ‖f w * (w + ((1 - a : ℝ) : ℂ)) ^ n‖ ≤ _
     rw [norm_mul]
     have h1 : ‖f w‖ ≤ max C 0 * Real.exp (D * |w.im|) :=
       (hCD w hwa hwb).trans (mul_le_mul_of_nonneg_right (le_max_left _ _) (Real.exp_pos _).le)
@@ -648,7 +641,7 @@ private theorem strip_decay_of_edges (a b : ℝ) (hab : a < b) (n : ℕ) : ∃ c
     have hwa : a ≤ w.re := by rcases hw with h | h <;> linarith
     have hwb : w.re ≤ b := by rcases hw with h | h <;> linarith
     have hden : 0 < (1 + |w.im|) ^ n := by positivity
-    show ‖f w * (w + ((1 - a : ℝ) : ℂ)) ^ n‖ ≤ _
+    change ‖f w * (w + ((1 - a : ℝ) : ℂ)) ^ n‖ ≤ _
     rw [norm_mul, pow_zero, mul_one]
     calc ‖f w‖ * ‖(w + ((1 - a : ℝ) : ℂ)) ^ n‖
         ≤ (M / (1 + |w.im|) ^ n) * ((b + 1 - a) * (1 + |w.im|)) ^ n :=
@@ -657,14 +650,12 @@ private theorem strip_decay_of_edges (a b : ℝ) (hab : a < b) (n : ℕ) : ∃ c
       _ = M * (b + 1 - a) ^ n := by
           rw [mul_pow]; field_simp
   have hPL := h₀ g (M * (b + 1 - a) ^ n) (by positivity) hgd hgrowth' hedge' s hsa hsb
-
   have hPL' : ‖f s‖ * ‖(s + ((1 - a : ℝ) : ℂ)) ^ n‖ ≤ c₀ * (M * (b + 1 - a) ^ n) := by
     have h : ‖f s * (s + ((1 - a : ℝ) : ℂ)) ^ n‖ ≤ c₀ * (M * (b + 1 - a) ^ n) *
         (1 + |s.im|) ^ 0 := hPL
     rwa [norm_mul, pow_zero, mul_one] at h
   have hden : 0 < (1 + |s.im|) ^ n := by positivity
   have hlow := one_add_abs_im_pow_le hsa n
-
   rw [le_div_iff₀ hden]
   calc ‖f s‖ * (1 + |s.im|) ^ n
       ≤ ‖f s‖ * (2 ^ n * ‖(s + ((1 - a : ℝ) : ℂ)) ^ n‖) := mul_le_mul_of_nonneg_left hlow
@@ -865,7 +856,6 @@ private theorem norm_Gammaℂ (w : ℂ) : ‖Gammaℂ w‖ = 2 * (2 * π) ^ (-w.
 private theorem exists_norm_Gammaℝ_shift_le {A : ℝ} (B : ℝ) (μ : ℂ) (N : ℕ)
     (h : 0 < A + μ.re + 2 * N) :
     ∃ K : ℝ, ∀ s : ℂ, A ≤ s.re → s.re ≤ B → ‖Gammaℝ (s + μ + 2 * N)‖ ≤ K := by
-
   obtain ⟨K, hK⟩ := exists_norm_Gamma_le_of_strip (A := (A + μ.re + 2 * N) / 2)
       ((B + μ.re + 2 * N) / 2)
     (by positivity)
@@ -1182,14 +1172,14 @@ private theorem differentiableOn_shiftFactor {R C : Multiset ℂ} {N : ℕ} {A :
     (differentiableOn_prod _ C (fun ν s => Gammaℂ (s + ν + N)) fun ν hν => ?_)
   · intro s hs
     have hre : 0 < (s + μ + 2 * (N : ℂ)).re := by
-      simp only [Set.mem_setOf_eq] at hs
+      simp only [Set.mem_ofPred_eq] at hs
       have := h.1 μ hμ
       simp; linarith
     exact ((differentiableAt_Gammaℝ_of_re_pos hre).comp s
       ((differentiableAt_id.add_const μ).add_const _)).differentiableWithinAt
   · intro s hs
     have hre : 0 < (s + ν + (N : ℂ)).re := by
-      simp only [Set.mem_setOf_eq] at hs
+      simp only [Set.mem_ofPred_eq] at hs
       have := h.2 ν hν
       simp; linarith
     exact ((differentiableAt_Gammaℂ_of_re_pos hre).comp s
@@ -1336,7 +1326,6 @@ private theorem interior_decay_of_edges (R C : Multiset ℂ) {A c₀ σ₁ : ℝ
       (N * Multiset.card R + N * Multiset.card C)
   refine ⟨c₁ * (max K 1 * (σ₁ + 1 - A) ^ n) * 2 ^ n / κ, by positivity,
       fun Φ M hM hΦ hgrowth hedge s hs₀ hs₁ => ?_⟩
-
   have hGd : DiffContOnCl ℂ (fun w => Φ w * shiftFactor R C N w * (w + ((1 - A : ℝ) : ℂ)) ^ n)
       (Complex.re ⁻¹' Set.Ioo A σ₁) := by
     refine DifferentiableOn.diffContOnCl ?_
@@ -1344,7 +1333,7 @@ private theorem interior_decay_of_edges (R C : Multiset ℂ) {A c₀ σ₁ : ℝ
     refine (hΦ.differentiableOn.mul ((differentiableOn_shiftFactor hN).mono fun w hw => ?_)).mul
       ((differentiable_id.add_const _).pow n).differentiableOn
     have hw1 : A ≤ w.re := hw.1
-    show A - 1 < w.re
+    change A - 1 < w.re
     linarith
   have hGgrowth : ∃ C₀ D : ℝ, ∀ w : ℂ, A ≤ w.re → w.re ≤ σ₁ →
       ‖Φ w * shiftFactor R C N w * (w + ((1 - A : ℝ) : ℂ)) ^ n‖ ≤ C₀ * Real.exp (D * |w.im|) := by
@@ -1367,7 +1356,6 @@ private theorem interior_decay_of_edges (R C : Multiset ℂ) {A c₀ σ₁ : ℝ
           (Real.exp (D * |w.im|) * Real.exp (n * |w.im|)) := by ring
       _ = max C₀ 0 * max K₂ 0 * (σ₁ + 1 - A) ^ n * Real.exp ((D + n) * |w.im|) := by
           rw [← Real.exp_add]; congr 2; ring
-
   have hGedge : ∀ w : ℂ, w.re = A ∨ w.re = σ₁ →
       ‖Φ w * shiftFactor R C N w * (w + ((1 - A : ℝ) : ℂ)) ^ n‖ ≤
         M * (max K 1 * (σ₁ + 1 - A) ^ n) * (1 + |w.im|) ^
@@ -1400,9 +1388,7 @@ private theorem interior_decay_of_edges (R C : Multiset ℂ) {A c₀ σ₁ : ℝ
           field_simp
   have hG := hstrip (fun w => Φ w * shiftFactor R C N w * (w + ((1 - A : ℝ) : ℂ)) ^ n)
     (M * (max K 1 * (σ₁ + 1 - A) ^ n)) (by positivity) hGd hGgrowth hGedge s (by linarith) hs₁
-
   have hsA : A ≤ s.re := by linarith
-
   have hoff : OffPoles R C N s := offPoles_of_re hR hC N hs₀
   have hsp := shiftPoly_ne_zero_of_re hR hC N hs₀
   have hG' : ‖gammaFactor R C s * Φ s‖ * ‖shiftPoly R C N s‖ * ‖(s + ((1 - A : ℝ) : ℂ)) ^ n‖ ≤
@@ -1415,12 +1401,10 @@ private theorem interior_decay_of_edges (R C : Multiset ℂ) {A c₀ σ₁ : ℝ
         c₁ * (M * (max K 1 * (σ₁ + 1 - A) ^ n)) * (1 + |s.im|) ^
             (N * Multiset.card R + N * Multiset.card C) := hG
     rwa [hsplit, norm_mul, norm_mul] at h
-
   have hlow₁ := hκle s hs₀
   have hlow₂ := one_add_abs_im_pow_le hsA n
   have hdeg : (0 : ℝ) < (1 + |s.im|) ^ (N * Multiset.card R + N * Multiset.card C) := by positivity
   have hden : (0 : ℝ) < (1 + |s.im|) ^ n := by positivity
-
   have hmain : ‖gammaFactor R C s * Φ s‖ * (κ * (1 + |s.im|) ^
       (N * Multiset.card R + N * Multiset.card C)) *
       (1 + |s.im|) ^ n ≤
@@ -1438,7 +1422,6 @@ private theorem interior_decay_of_edges (R C : Multiset ℂ) {A c₀ σ₁ : ℝ
       _ ≤ 2 ^ n * (c₁ * (M * (max K 1 * (σ₁ + 1 - A) ^ n)) *
             (1 + |s.im|) ^ (N * Multiset.card R + N * Multiset.card C)) :=
           mul_le_mul_of_nonneg_left hG' (by positivity)
-
   rw [le_div_iff₀ hden]
   have hκpos : 0 < κ * (1 + |s.im|) ^ (N * Multiset.card R + N * Multiset.card C) := by positivity
   have h2 : ‖gammaFactor R C s * Φ s‖ * (1 + |s.im|) ^ n *
@@ -1486,7 +1469,6 @@ private theorem exists_norm_Gammaℝ_le_paired {μ μ' : ℂ} (hp : Paired μ μ
     (hoff : ∀ j : ℕ, A + μ.re + 2 * j ≠ 0) (hfar : A + μ.re ≤ -1) :
     ∃ K : ℝ, ∀ s : ℂ, s.re = A → ‖Gammaℝ (s + μ)‖ ≤ K * ‖Gammaℝ (1 - s + μ')‖ := by
   obtain ⟨r, hr, rfl⟩ := hp
-
   have hα : ∀ j : ℕ, (A + μ.re) / 2 ≠ -j := by
     intro j h
     apply hoff j
@@ -1706,7 +1688,6 @@ private theorem uniqueDiffOn_invertibleCoords : UniqueDiffOn ℝ (invertibleCoor
   isOpen_invertibleCoords.uniqueDiffOn
 
 variable (𝕜) in
-
 private def mulCoordsₗ : (Fin 2 → Fin 2 → 𝕜) →ₗ[ℝ] (Fin 2 → Fin 2 → 𝕜) →ₗ[ℝ] (Fin 2 → Fin 2 → 𝕜) :=
   LinearMap.mk₂ ℝ (fun a b => Matrix.of.symm (Matrix.of a * Matrix.of b))
     (fun a a' b => by ext i j; simp [Matrix.mul_apply, add_mul, Finset.sum_add_distrib])
@@ -1715,7 +1696,6 @@ private def mulCoordsₗ : (Fin 2 → Fin 2 → 𝕜) →ₗ[ℝ] (Fin 2 → Fin
     (fun c a b => by ext i j; simp [Matrix.mul_apply])
 
 variable (𝕜) in
-
 private def mulCoords : (Fin 2 → Fin 2 → 𝕜) →L[ℝ] (Fin 2 → Fin 2 → 𝕜) →L[ℝ] (Fin 2 → Fin 2 → 𝕜) :=
   LinearMap.toContinuousLinearMap
     { toFun := fun a => LinearMap.toContinuousLinearMap (mulCoordsₗ 𝕜 a)
@@ -1761,19 +1741,20 @@ private theorem contDiffOn_invCoords : ContDiffOn ℝ (⊤ : ℕ∞) (invCoords 
     (invertibleCoords 𝕜) := by
   refine contDiffOn_pi' fun i => contDiffOn_pi' fun j => ?_
   simp only [invCoords_apply, Matrix.adjugate_fin_two, Matrix.of_apply]
-  fin_cases i <;> fin_cases j <;> simp <;>
+  fin_cases i <;> fin_cases j <;>
+    simp only [Fin.isValue, Fin.zero_eta, Fin.mk_one, Matrix.cons_val', Matrix.cons_val_zero,
+      Matrix.cons_val_one, Matrix.cons_val_fin_one, mul_neg] <;>
     first
     | exact contDiffOn_det_inv.mul (by fun_prop)
     | exact (contDiffOn_det_inv.mul (by fun_prop)).neg
 
 variable (𝕜) in
-
 private def invQuad :=
   mkBilin (G := (Fin 2 → Fin 2 → 𝕜) →L[ℝ] (Fin 2 → Fin 2 → 𝕜))
     (fun a c : Fin 2 → Fin 2 → 𝕜 => -(((mulCoords 𝕜).flip c).comp (mulCoords 𝕜 a)))
-    (fun a a' c => by ext w i j; simp [Matrix.mul_apply, add_mul, Finset.sum_add_distrib]; try abel)
+    (fun a a' c => by ext w i j; simp [Matrix.mul_apply, add_mul, Finset.sum_add_distrib]; abel)
     (fun r a c => by ext w i j; simp [Matrix.mul_apply])
-    (fun a c c' => by ext w i j; simp [Matrix.mul_apply]; try abel)
+    (fun a c c' => by ext w i j; simp [Matrix.mul_apply]; abel)
     (fun r a c => by ext w i j; simp [Matrix.mul_apply])
 
 @[scoped simp] private theorem invQuad_apply (a c w : Fin 2 → Fin 2 → 𝕜) :
@@ -1796,15 +1777,15 @@ private theorem fderivWithin_invCoords {p : Fin 2 → Fin 2 → 𝕜} (hp : p �
   have hzero := (uniqueDiffOn_invertibleCoords p hp).eq hprod hconst
   ext w : 1
   have hw := congrArg (fun L => L w) hzero
-  simp only [ContinuousLinearMap.add_apply, ContinuousLinearMap.precompR_apply,
+  simp only [add_apply, ContinuousLinearMap.precompR_apply,
       ContinuousLinearMap.precompL_apply,
-    id, ContinuousLinearMap.zero_apply] at hw
+    id, zero_apply] at hw
   have hkey : mulCoords 𝕜 (f' w) p = -(mulCoords 𝕜 (invCoords p) w) := by
     rw [eq_neg_iff_add_eq_zero, add_comm]; exact hw
   calc f' w = mulCoords 𝕜 (mulCoords 𝕜 (f' w) p) (invCoords p) :=
          (mulCoords_mulCoords_invCoords hp _).symm
     _ = invQuad 𝕜 (invCoords p) (invCoords p) w := by
-        rw [hkey, invQuad_apply, map_neg, ContinuousLinearMap.neg_apply]
+        rw [hkey, invQuad_apply, map_neg, neg_apply]
 
 private theorem norm_iteratedFDerivWithin_invCoords_le (n : ℕ) :
     ∃ c : ℝ, 0 ≤ c ∧ ∀ a ≤ n, ∀ p ∈ invertibleCoords 𝕜,
@@ -1940,10 +1921,10 @@ private def coeffCLM (c : (Fin 2 → Fin 2 → 𝕜) →L[ℝ] ℝ) :=
   mkLin (G := (Fin 2 → Fin 2 → 𝕜) →L[ℝ] ℝ) (fun m : Fin 2 → Fin 2 → 𝕜 => c.comp (mulCoords 𝕜 m))
     (fun m m' => by
       ext v
-      simp only [ContinuousLinearMap.comp_apply, ContinuousLinearMap.add_apply, map_add])
+      simp only [ContinuousLinearMap.comp_apply, add_apply, map_add])
     (fun r m => by
       ext v
-      simp only [ContinuousLinearMap.comp_apply, ContinuousLinearMap.smul_apply, map_smul])
+      simp only [ContinuousLinearMap.comp_apply, smul_apply, map_smul])
 
 @[scoped simp] private theorem coeffCLM_apply (c : (Fin 2 → Fin 2 → 𝕜) →L[ℝ] ℝ)
     (m v : Fin 2 → Fin 2 → 𝕜) :
@@ -1951,7 +1932,6 @@ private def coeffCLM (c : (Fin 2 → Fin 2 → 𝕜) →L[ℝ] ℝ) :=
   simp [coeffCLM]
 
 variable (𝕜) in
-
 private def pairing :=
   mkBilin (G := (Fin 2 → Fin 2 → 𝕜) →L[ℝ] ℂ)
     (fun (l : (Fin 2 → Fin 2 → 𝕜) →L[ℝ] ℝ) (z : ℂ) => l.smulRight z)
@@ -2129,7 +2109,7 @@ private theorem det_ne_zero_of_mem_unitaryGroup {k : Matrix (Fin 2) (Fin 2) 𝕜
 private theorem _root_.ArchWhittakerGrowth.diagOneMulCoords_mem (t : 𝕜)
     (k : Matrix (Fin 2) (Fin 2) 𝕜) (hk : k ∈ Matrix.unitaryGroup (Fin 2) 𝕜)
     (ht : t ≠ 0) : diagOneMulCoords t k ∈ invertibleCoords 𝕜 := by
-  show (Matrix.of (Matrix.of.symm (!![t, 0; 0, 1] * k))).det ≠ 0
+  change (Matrix.of (Matrix.of.symm (!![t, 0; 0, 1] * k))).det ≠ 0
   rw [Equiv.apply_symm_apply, Matrix.det_mul, Matrix.det_fin_two_of]
   simpa using mul_ne_zero ht (det_ne_zero_of_mem_unitaryGroup hk)
 
@@ -2163,11 +2143,15 @@ private theorem norm_invCoords_diagOneMulCoords_le (t : 𝕜) (k : Matrix (Fin 2
   intro j
   fin_cases j
   · simp only [Matrix.of_symm_apply, Matrix.mul_apply, Fin.sum_univ_two, Matrix.star_apply]
-    simp [norm_mul, norm_inv]
+    simp only [Fin.isValue, RCLike.star_def, Fin.zero_eta, Matrix.of_apply, Matrix.cons_val',
+      Matrix.cons_val_zero, Matrix.cons_val_fin_one, Matrix.cons_val_one, mul_zero, add_zero,
+      norm_mul, RCLike.norm_conj, norm_inv]
     calc ‖k 0 i‖ * ‖t‖⁻¹ ≤ 1 * ‖t‖⁻¹ := mul_le_mul_of_nonneg_right (hentry 0 i) hinv0
       _ = ‖t‖⁻¹ := one_mul _
   · simp only [Matrix.of_symm_apply, Matrix.mul_apply, Fin.sum_univ_two, Matrix.star_apply]
-    simp
+    simp only [Fin.isValue, RCLike.star_def, Fin.mk_one, Matrix.of_apply, Matrix.cons_val',
+      Matrix.cons_val_one, Matrix.cons_val_fin_one, Matrix.cons_val_zero, mul_zero, mul_one,
+      zero_add, RCLike.norm_conj]
     exact (hentry 1 i).trans h1inv
 
 private theorem norm_iteratedFDerivWithin_diagOneMulCoords_le {ι : Type} [Fintype ι]
@@ -2203,8 +2187,8 @@ private def coordR (ij : Fin 2 × Fin 2) : (Fin 2 → Fin 2 → ℝ) →L[ℝ] �
 private theorem coordR_spec (v : Fin 2 → Fin 2 → ℝ) : v = ∑ ij, coordR ij v • Matrix.of.symm
     (lettersR ij) := by
   ext a b
-  simp [coordR, lettersR, Fintype.sum_prod_type, Finset.sum_apply]
-  fin_cases a <;> fin_cases b <;> simp
+  fin_cases a <;> fin_cases b <;>
+    simp [coordR, lettersR, Fintype.sum_prod_type, Finset.sum_apply]
 
 private def lettersC (x : Fin 2 × Fin 2 × Fin 2) : Matrix (Fin 2) (Fin 2) ℂ :=
   Matrix.single x.2.1 x.2.2 (if x.1 = 0 then 1 else Complex.I)
@@ -2217,8 +2201,8 @@ private def coordC (x : Fin 2 × Fin 2 × Fin 2) : (Fin 2 → Fin 2 → ℂ) →
 private theorem coordC_spec (v : Fin 2 → Fin 2 → ℂ) : v = ∑ x, coordC x v • Matrix.of.symm
     (lettersC x) := by
   ext a b
-  simp [coordC, lettersC, Fintype.sum_prod_type, Finset.sum_apply, Fin.sum_univ_two]
-  fin_cases a <;> fin_cases b <;> simp
+  fin_cases a <;> fin_cases b <;>
+    simp [coordC, lettersC, Fintype.sum_prod_type, Finset.sum_apply, Fin.sum_univ_two]
 
 private theorem norm_iteratedFDerivWithin_diagOneMulCoords_le_real (M : ℕ) :
     ∃ C : ℝ, ∀ F : (Fin 2 → Fin 2 → ℝ) → ℂ, ContDiffOn ℝ (⊤ : ℕ∞) F (invertibleCoords ℝ) →
@@ -2620,13 +2604,13 @@ private theorem isK_diagOne_neg_one : ArchR.IsK (ArchR.diagOne (-1 : ℝ)) := by
   rw [isK_iff]
   ext i j
   fin_cases i <;> fin_cases j <;>
-    simp [ArchR.diagOne, Matrix.mul_apply, Matrix.transpose_apply, Fin.sum_univ_two]
+    simp [ArchR.diagOne, Matrix.mul_apply, Fin.sum_univ_two]
 
 private theorem isK_weyl : ArchR.IsK ArchR.weyl := by
   rw [isK_iff]
   ext i j
   fin_cases i <;> fin_cases j <;>
-    simp [ArchR.weyl, Matrix.mul_apply, Matrix.transpose_apply, Fin.sum_univ_two]
+    simp [ArchR.weyl, Matrix.mul_apply, Fin.sum_univ_two]
 
 private theorem abs_diagOne_mul_le {k : Matrix (Fin 2) (Fin 2) ℝ} (hk : ArchR.IsK k) (y : ℝ)
     (i j : Fin 2) :
@@ -2725,7 +2709,7 @@ private theorem rot_mul_transpose (g : Matrix (Fin 2) (Fin 2) ℝ) :
     rot g * (rot g)ᵀ = rowSq g • (1 : Matrix (Fin 2) (Fin 2) ℝ) := by
   ext i j
   fin_cases i <;> fin_cases j <;>
-    simp [rot, rowSq, Matrix.mul_apply, Matrix.transpose_apply, Fin.sum_univ_two] <;> ring
+    simp [rot, rowSq, Matrix.mul_apply, Fin.sum_univ_two] <;> ring
 
 private theorem isK_kPart {g : Matrix (Fin 2) (Fin 2) ℝ} (hg : g.det ≠ 0) : ArchR.IsK
     (kPart g) := by
@@ -2851,7 +2835,7 @@ private def _root_.ArchWhittakerGrowth.DerivR.derivW (X : Matrix (Fin 2) (Fin 2)
 private theorem derivW_of_det_ne_zero (X : Matrix (Fin 2) (Fin 2) ℝ)
     (W : Matrix (Fin 2) (Fin 2) ℝ → ℂ)
     {g : Matrix (Fin 2) (Fin 2) ℝ} (hg : g.det ≠ 0) :
-    derivW X W g = rightDeriv X (ArchR.asPi W) (Matrix.of.symm g) := if_pos hg
+    derivW X W g = rightDeriv X (ArchR.asPi W) (Matrix.of.symm g) := ite_eq_left hg
 
 private theorem derivW_of_det_eq_zero (X : Matrix (Fin 2) (Fin 2) ℝ)
     (W : Matrix (Fin 2) (Fin 2) ℝ → ℂ)
@@ -2893,7 +2877,7 @@ private theorem fderiv_transport {F : (Fin 2 → Fin 2 → ℝ) → ℂ}
     rw [fderiv_comp p hFL L.differentiableAt, ContinuousLinearMap.fderiv]
   have happ := congrArg (fun φ : (Fin 2 → Fin 2 → ℝ) →L[ℝ] ℂ => φ v) hcomp
   simp only [ContinuousLinearMap.comp_apply] at happ
-  rw [← happ, hfun, fderiv_const_smul hF c, ContinuousLinearMap.smul_apply, smul_eq_mul]
+  rw [← happ, hfun, fderiv_const_smul hF c, smul_apply, smul_eq_mul]
 
 private def leftMul (n : Matrix (Fin 2) (Fin 2) ℝ) : (Fin 2 → Fin 2 → ℝ) →L[ℝ]
     (Fin 2 → Fin 2 → ℝ) :=
@@ -3063,7 +3047,6 @@ private theorem hasDerivAt_asPi_line (W : Matrix (Fin 2) (Fin 2) ℝ → ℂ)
     (hWs : ContDiffOn ℝ (⊤ : ℕ∞) (ArchR.asPi W) ArchR.glSet)
     (M V : Matrix (Fin 2) (Fin 2) ℝ) {t : ℝ} (ht : (M + t • V).det ≠ 0) :
     HasDerivAt (fun τ : ℝ => W (M + τ • V)) (derivW ((M + t • V)⁻¹ * V) W (M + t • V)) t := by
-
   have hpath : HasDerivAt (fun τ : ℝ => Matrix.of.symm (M + τ • V)) (Matrix.of.symm V) t := by
     have h1 : HasDerivAt (fun τ : ℝ => τ • Matrix.of.symm V) ((1 : ℝ) • Matrix.of.symm V) t :=
       (hasDerivAt_id t).smul_const _
@@ -3203,9 +3186,11 @@ open GroupR DerivR OrbitR
 
 private def env (σ N y : ℝ) : ℝ := if |y| ≤ 1 then |y| ^ (-σ) else |y| ^ (-N)
 
-private theorem env_of_le {σ N y : ℝ} (h : |y| ≤ 1) : env σ N y = |y| ^ (-σ) := if_pos h
+private theorem env_of_le {σ N y : ℝ} (h : |y| ≤ 1) : env σ N y = |y| ^ (-σ) :=
+  ite_eq_left h
 
-private theorem env_of_lt {σ N y : ℝ} (h : 1 < |y|) : env σ N y = |y| ^ (-N) := if_neg (not_le.2 h)
+private theorem env_of_lt {σ N y : ℝ} (h : 1 < |y|) : env σ N y = |y| ^ (-N) :=
+  ite_eq_right (not_le.2 h)
 
 private theorem env_nonneg (σ N y : ℝ) : 0 ≤ env σ N y := by
   unfold env
@@ -3386,7 +3371,7 @@ private theorem norm_diagOneMulCoords_le {k : Matrix (Fin 2) (Fin 2) ℝ} (hk : 
 private theorem diagOneMulCoords_mem {k : Matrix (Fin 2) (Fin 2) ℝ} (hk : ArchR.IsK k) {y : ℝ}
     (hy : y ≠ 0) :
     ArchR.diagOneMulCoords y k ∈ ArchR.glSet := by
-  show (Matrix.of (Matrix.of.symm (ArchR.diagOne y * k))).det ≠ 0
+  change (Matrix.of (Matrix.of.symm (ArchR.diagOne y * k))).det ≠ 0
   rw [Equiv.apply_symm_apply, Matrix.det_mul, det_diagOne]
   exact mul_ne_zero hy (isK_det_ne_zero hk)
 
@@ -3557,10 +3542,8 @@ private theorem norm_dirDeriv_le {P : RealArchParam} {W : Matrix (Fin 2) (Fin 2)
   have hLd : LeftLaws P (derivW (defoDir X τ) W) := leftLaws_derivW hL hWs _
   have hyT : y * iwT gτ ≠ 0 := mul_ne_zero hy (fun h => by
     rw [h, abs_zero] at hT; exact absurd hT (not_le.2 hτ₀))
-
   rw [dirDeriv_eq_derivW W hg X hy h1, ← hgτ, hLd.diagOne_mul hgτdet y, norm_mul,
       norm_reduce_factor P _ hrn]
-
   have horb := norm_derivW_orbit_le (defoDir X τ) W hK hyT
   have henv1 := henv (y * iwT gτ) (kPart gτ) hK hyT
   have hresc : env σ N (y * iwT gτ) ≤ τ₀ ^ (-(σ + N)) * env σ N y := env_rescale hσ hN hτ₀ hτ₀1 hT
@@ -3578,7 +3561,6 @@ private theorem norm_dirDeriv_le {P : RealArchParam} {W : Matrix (Fin 2) (Fin 2)
       ‖(Matrix.of.symm (defoDir X τ) : Fin 2 → Fin 2 → ℝ)‖)
     with hK
   have hτpow : 0 ≤ τ₀ ^ (-(σ + N)) := Real.rpow_nonneg hτ₀.le _
-
   have hD : ‖derivW (defoDir X τ) W (ArchR.diagOne (y * iwT gτ) * kPart gτ)‖ ≤ K * env σ
       (N - 1) y := by
     have hA : C₁ * env σ N (y * iwT gτ) ≤ C₁ * (τ₀ ^ (-(σ + N)) * env σ N y) :=
@@ -3622,7 +3604,7 @@ private theorem continuousAt_dirDeriv (W : Matrix (Fin 2) (Fin 2) ℝ → ℂ)
     rw [this]
     fun_prop
   have hp : Matrix.of.symm (ArchR.diagOne y * defo g X τ) ∈ ArchR.glSet := by
-    show (Matrix.of (Matrix.of.symm (ArchR.diagOne y * defo g X τ))).det ≠ 0
+    change (Matrix.of (Matrix.of.symm (ArchR.diagOne y * defo g X τ))).det ≠ 0
     rw [Equiv.apply_symm_apply, Matrix.det_mul, det_diagOne, det_defo]
     exact mul_ne_zero hy (mul_ne_zero hg h1)
   have hcont : ContinuousOn (fderiv ℝ (ArchR.asPi W)) ArchR.glSet :=
@@ -3713,7 +3695,7 @@ private theorem continuousOn_defo_value (W : Matrix (Fin 2) (Fin 2) ℝ → ℂ)
       ℝ)) {0}ᶜ
       ArchR.glSet := by
     intro y hy
-    show (Matrix.of (Matrix.of.symm (ArchR.diagOne y * defo g X τ))).det ≠ 0
+    change (Matrix.of (Matrix.of.symm (ArchR.diagOne y * defo g X τ))).det ≠ 0
     rw [Equiv.apply_symm_apply, Matrix.det_mul, det_diagOne, det_defo]
     exact mul_ne_zero hy (mul_ne_zero hg h1)
   exact hWs.continuousOn.comp hp.continuousOn hmaps
@@ -3741,7 +3723,7 @@ private theorem continuousOn_dirDeriv_height (W : Matrix (Fin 2) (Fin 2) ℝ →
       ℝ)) {0}ᶜ
       ArchR.glSet := by
     intro y hy
-    show (Matrix.of (Matrix.of.symm (ArchR.diagOne y * defo g X τ))).det ≠ 0
+    change (Matrix.of (Matrix.of.symm (ArchR.diagOne y * defo g X τ))).det ≠ 0
     rw [Equiv.apply_symm_apply, Matrix.det_mul, det_diagOne, det_defo]
     exact mul_ne_zero hy (mul_ne_zero hg h1)
   have hcont : ContinuousOn (fderiv ℝ (ArchR.asPi W)) ArchR.glSet :=
@@ -3917,7 +3899,6 @@ private theorem zint_package (hL : LeftLaws P W) (hWs : ContDiffOn ℝ (⊤ : �
         ‖(h : ℂ)⁻¹ * ((∫ y, ArchR.zetaIntegrand W (defo g X h) u a s y) - ∫ y,
             ArchR.zetaIntegrand W g u a s y) -
             ∫ y, ArchR.zetaIntegrand (derivW X W) g u a s y‖ ≤ ε) := by
-
   obtain ⟨t₀, ht₀, ht₀1, hdet⟩ := exists_defo_interval X
   obtain ⟨K₀, hK₀, hdom0⟩ := exists_value_domination hL hC₀ hσ hN henv0 hg X ht₀ hdet
   obtain ⟨K₁, hK₁, hdom1⟩ := exists_dirDeriv_domination hL hWs hC₁ hσ hN henv1 hg X ht₀ hdet
@@ -3925,12 +3906,10 @@ private theorem zint_package (hL : LeftLaws P W) (hWs : ContDiffOn ℝ (⊤ : �
   have hα0 : -1 < α - σ := by rw [hα]; linarith
   have hα1 : α - N < -1 := by rw [hα]; linarith
   have hα1' : α - (N - 1) < -1 := by rw [hα]; linarith
-
   have hbd0 : Integrable fun y : ℝ => K₀ * (env σ N y * |y| ^ α) :=
       (integrable_env_mul_rpow hα0 hα1).const_mul K₀
   have hbd1 : Integrable fun y : ℝ => K₁ * (env σ (N - 1) y * |y| ^ α) :=
     (integrable_env_mul_rpow hα0 hα1').const_mul K₁
-
   have hF_meas : ∀ (s : ℂ) (τ : ℝ), |τ| ≤ t₀ →
       AEStronglyMeasurable (fun y : ℝ => ArchR.zetaIntegrand W (defo g X τ) u a s y) volume := by
     intro s τ hτ
@@ -3957,7 +3936,6 @@ private theorem zint_package (hL : LeftLaws P W) (hWs : ContDiffOn ℝ (⊤ : �
     filter_upwards [ae_ne_zero] with y hy
     rw [norm_mul, norm_zw u a s hy, hs, show u.re + σ₁ - 2 = α from rfl, ← mul_assoc]
     exact mul_le_mul_of_nonneg_right (hdom1 τ hτ y hy) (Real.rpow_nonneg (abs_nonneg _) _)
-
   have hderiv : ∀ (s : ℂ), s.re = σ₁ → ∀ τ₁ : ℝ, |τ₁| < t₀ →
       Integrable (fun y : ℝ => dirDeriv W g X τ₁ y * zw u a s y) ∧
       HasDerivAt (fun τ : ℝ => ∫ y, ArchR.zetaIntegrand W (defo g X τ) u a s y)
@@ -3980,7 +3958,6 @@ private theorem zint_package (hL : LeftLaws P W) (hWs : ContDiffOn ℝ (⊤ : �
       have hd := (hasDerivAt_defo W hWs hg X hy h1).mul_const (zw u a s y)
       refine hd.congr_of_eventuallyEq (Filter.Eventually.of_forall fun t => ?_)
       exact zetaIntegrand_eq W _ u a s y
-
   have hcontD : ∀ (s : ℂ), s.re = σ₁ →
       ContinuousOn (fun τ : ℝ => ∫ y, dirDeriv W g X τ y * zw u a s y) (Ioo (-t₀) t₀) := by
     intro s hs
@@ -3991,7 +3968,6 @@ private theorem zint_package (hL : LeftLaws P W) (hWs : ContDiffOn ℝ (⊤ : �
     intro τ hτ
     have h1 : (1 + τ • X).det ≠ 0 := det_one_add_smul_ne_zero hdet (hIoo τ hτ)
     exact ((continuousAt_dirDeriv W hWs hg X hy h1).mul continuousAt_const).continuousWithinAt
-
   have hIt₀ : Ioo (-t₀) t₀ ∈ 𝓝 (0 : ℝ) := Ioo_mem_nhds (by linarith) ht₀
   have hIoo : ∀ τ ∈ Ioo (-t₀) t₀, |τ| ≤ t₀ := fun τ hτ => (abs_lt.2 ⟨hτ.1, hτ.2⟩).le
   have h10 : (1 + (0 : ℝ) • X).det ≠ 0 := by simp
@@ -4027,7 +4003,6 @@ private theorem zint_package (hL : LeftLaws P W) (hWs : ContDiffOn ℝ (⊤ : �
             continuousAt_const
       have := hc.tendsto
       simpa using this
-
   have hdiff : ∀ (s : ℂ), s.re = σ₁ → ∀ τ : ℝ, |τ| < t₀ →
       ‖(∫ y, dirDeriv W g X τ y * zw u a s y) - ∫ y, dirDeriv W g X 0 y * zw u a s y‖ ≤
         ∫ y, ‖dirDeriv W g X τ y - dirDeriv W g X 0 y‖ * |y| ^ α := by
@@ -4038,7 +4013,6 @@ private theorem zint_package (hL : LeftLaws P W) (hWs : ContDiffOn ℝ (⊤ : �
     refine (norm_integral_le_integral_norm _).trans (le_of_eq (integral_congr_ae ?_))
     filter_upwards [ae_ne_zero] with y hy
     rw [← sub_mul, norm_mul, norm_zw u a s hy, hs]
-
   have hzero : ∀ s : ℂ, (fun y : ℝ => dirDeriv W g X 0 y * zw u a s y) =ᵐ[volume]
       ArchR.zetaIntegrand (derivW X W) g u a s := by
     intro s
@@ -4049,8 +4023,7 @@ private theorem zint_package (hL : LeftLaws P W) (hWs : ContDiffOn ℝ (⊤ : �
     refine ⟨h0.1.congr (hzero s), ?_⟩
     rw [← integral_congr_ae (hzero s)]
     exact h0.2
-  ·
-    obtain ⟨δ₁, hδ₁, hη⟩ := Metric.tendsto_nhds_nhds.1 hmod ε hε
+  · obtain ⟨δ₁, hδ₁, hη⟩ := Metric.tendsto_nhds_nhds.1 hmod ε hε
     refine ⟨min δ₁ t₀, lt_min hδ₁ ht₀, fun s hs h hh hhδ => ?_⟩
     have hht₀ : |h| < t₀ := lt_of_lt_of_le hhδ (min_le_right _ _)
     have hhδ₁ : |h| < δ₁ := lt_of_lt_of_le hhδ (min_le_left _ _)
@@ -4232,7 +4205,6 @@ private theorem parts (a : ZMod 2) {f f' g : ℝ → ℂ} (hf : ∀ y : ℝ, y �
     (hbot : Tendsto (fun y : ℝ => f y * ((|y| : ℝ) : ℂ) ^ w) atBot (𝓝 0))
     (htop : Tendsto (fun y : ℝ => f y * ((|y| : ℝ) : ℂ) ^ w) atTop (𝓝 0)) :
     w * ∫ y : ℝ, f y * kernel a w y = -∫ y : ℝ, g y * kernel a w y := by
-
   have hpos_f : ∫ y in Ioi (0 : ℝ), f y * kernel a w y = ∫ y in Ioi (0 : ℝ), f y * (y : ℂ) ^
       (w - 1) :=
     setIntegral_congr_fun measurableSet_Ioi fun y hy => by rw [kernel_of_pos a w hy]
@@ -4256,7 +4228,6 @@ private theorem parts (a : ZMod 2) {f f' g : ℝ → ℂ} (hf : ∀ y : ℝ, y �
     rw [abs_of_pos hy]
   have hP := parts_Ioi (fun y hy => hf y hy.ne') (fun y hy => hg y hy.ne') hw hfi_pos hgi_pos h0_pos
       htop_pos
-
   set ε : ℂ := if a = 0 then 1 else -1 with hε
   have hneg_f : ∫ y in Iic (0 : ℝ), f y * kernel a w y = ε * ∫ y in Ioi (0 : ℝ), f (-y) * (y : ℂ) ^
       (w - 1) := by
@@ -4321,7 +4292,6 @@ private theorem parts (a : ZMod 2) {f f' g : ℝ → ℂ} (hf : ∀ y : ℝ, y �
     filter_upwards [eventually_gt_atTop 0] with y hy
     simp [abs_of_pos hy]
   have hN := parts_Ioi hf_neg hg_neg hw hfi_neg hgi_neg h0_neg htop_neg
-
   rw [← intervalIntegral.integral_Iic_add_Ioi hfi.integrableOn hfi.integrableOn,
     ← intervalIntegral.integral_Iic_add_Ioi hgi.integrableOn hgi.integrableOn, hpos_f, hpos_g,
         hneg_f, hneg_g]
@@ -4515,10 +4485,8 @@ private theorem strip_decay {P : RealArchParam} (d : ArchDatumR P) (hZ : EdgeDec
     (a : ZMod 2) {σ₁ : ℝ} (hσ₁ : c₀ ≤ σ₁) (n : ℕ) :
     ∃ C : ℝ, ∀ k : Matrix (Fin 2) (Fin 2) ℝ, ArchR.IsK k → ∀ s : ℂ, c₀ ≤ s.re → s.re ≤ σ₁ →
       ‖(P.twist 0 a).archFactor s * d.zetaEntire k 0 a s‖ ≤ C / (1 + |s.im|) ^ n := by
-
   obtain ⟨σR, hσR⟩ := hZ 0 a n
   obtain ⟨σD, hσD⟩ := hZ (-(0 + P.centralExponent)) (a + P.centralSign) n
-
   obtain ⟨σ₂, hσ₁₂, hRσ₂⟩ : ∃ σ₂ : ℝ, σ₁ ≤ σ₂ ∧ σR ≤ σ₂ :=
       ⟨max σ₁ σR, le_max_left _ _, le_max_right _ _⟩
   have hcσ₂ : c₀ ≤ σ₂ := hσ₁.trans hσ₁₂
@@ -4526,17 +4494,14 @@ private theorem strip_decay {P : RealArchParam} (d : ArchDatumR P) (hZ : EdgeDec
     exists_left_edge' (P.twist 0 a).gammaR (P.twist 0 a).gammaC (min c₀ (1 - σD))
   have hAc : A < c₀ := hAlt.trans_le (min_le_left _ _)
   have hAD : σD ≤ 1 - A := by linarith [hAlt.trans_le (min_le_right c₀ (1 - σD))]
-
   obtain ⟨c, -, hmachine⟩ := interior_decay_of_edges (P.twist 0 a).gammaR
       (P.twist 0 a).gammaC hAc hcσ₂
     (pos_of_hc₀R hc₀ a) (pos_of_hc₀C hc₀ a) hAoff n
-
   obtain ⟨MR, hMR⟩ := hσR σ₂ hRσ₂
   obtain ⟨MD, hMD⟩ := hσD (1 - A) hAD
   obtain ⟨K, hK⟩ := exists_norm_gammaFactor_le_dual (rel_gammaR P 0 a)
       (rel_gammaC P 0 a) hAoff hAfar
   have hε : 0 < ‖(P.twist 0 a).epsilonFactor‖ := norm_pos_iff.2 (epsilonFactor_ne_zero _)
-
   obtain ⟨M, hM0, hMR_le, hMD_le⟩ : ∃ M : ℝ, 0 ≤ M ∧ MR ≤ M ∧
       max K 0 * MD / ‖(P.twist 0 a).epsilonFactor‖ ≤ M :=
     ⟨max (max MR (max K 0 * MD / ‖(P.twist 0 a).epsilonFactor‖)) 0, le_max_right _ _,
@@ -4548,8 +4513,7 @@ private theorem strip_decay {P : RealArchParam} (d : ArchDatumR P) (hZ : EdgeDec
     intro w hw
     have hden : (0 : ℝ) < (1 + |w.im|) ^ n := by positivity
     rcases hw with hwA | hwσ
-    ·
-      have hFE := d.functional_equation k 0 a w (GroupR.isK_det_ne_zero hk)
+    · have hFE := d.functional_equation k 0 a w (GroupR.isK_det_ne_zero hk)
       have hwk : ArchR.IsK (ArchR.weyl * k) := GroupR.isK_mul GroupR.isK_weyl hk
       have hre : (1 - w).re = 1 - A := by simp [hwA]
       have hdual := hMD (ArchR.weyl * k) hwk (1 - w) hre
@@ -4589,8 +4553,7 @@ private theorem strip_decay {P : RealArchParam} (d : ArchDatumR P) (hZ : EdgeDec
             div_le_div_of_nonneg_right h1 hε.le
         _ = max K 0 * MD / ‖(P.twist 0 a).epsilonFactor‖ / (1 + |w.im|) ^ n := by ring
         _ ≤ M / (1 + |w.im|) ^ n := div_le_div_of_nonneg_right hMD_le hden.le
-    ·
-      have h := hMR k hk w hwσ
+    · have h := hMR k hk w hwσ
       rw [archFactor_eq] at h
       exact h.trans (div_le_div_of_nonneg_right hMR_le hden.le)
   have h := hmachine (d.zetaEntire k 0 a) M hM0 (d.zetaEntire_differentiable k 0 a)
@@ -4870,7 +4833,6 @@ private theorem level (m : ℕ) :
     set w : ℂ := u + s - 1 with hw_def
     have hwre : 1 ≤ w.re := by rw [hw_def, re_add_sub_one, hs]; linarith
     have hw : w ≠ 0 := fun h0 => by rw [h0, Complex.zero_re] at hwre; linarith
-
     have hf : ∀ y : ℝ, y ≠ 0 → HasDerivAt (orbit W k)
         (((y : ℂ))⁻¹ * ∑ ij ∈ (Finset.univ : Finset (Fin 2 × Fin 2)),
           ((k 0 ij.1 * k 0 ij.2 : ℝ) : ℂ) * DerivR.derivW (DerivR.unitMat ij.1 ij.2) W
@@ -4904,7 +4866,6 @@ private theorem level (m : ℕ) :
       exact integrable_finsetSum _ fun ij _ => ((hMI ij k hk s hs).1.const_mul _)
     obtain ⟨h0, hbot, htop⟩ := hσL σ hσL' k hk s hs
     have hP := parts a hf hg hw hfi hgi h0 hbot htop
-
     have hrhs : ‖∫ y : ℝ, (∑ ij ∈ (Finset.univ : Finset (Fin 2 × Fin 2)),
           ((k 0 ij.1 * k 0 ij.2 : ℝ) : ℂ) * DerivR.derivW (DerivR.unitMat ij.1 ij.2) W
               (ArchR.diagOne y * k))
@@ -4924,7 +4885,6 @@ private theorem level (m : ℕ) :
              (DerivR.derivW (DerivR.unitMat ij.1 ij.2) W) k y * kernel a w y‖
           ≤ 1 * (MD ij / (1 + |s.im|) ^ m) := mul_le_mul hc hz (norm_nonneg _) zero_le_one
         _ = MD ij / (1 + |s.im|) ^ m := one_mul _
-
     have hzint : ‖zint W k u a s‖ * ‖w‖ = ‖∫ y : ℝ, (∑ ij ∈ (Finset.univ : Finset (Fin 2 × Fin 2)),
         ((k 0 ij.1 * k 0 ij.2 : ℝ) : ℂ) * DerivR.derivW (DerivR.unitMat ij.1 ij.2) W
             (ArchR.diagOne y * k))
@@ -5045,7 +5005,6 @@ private theorem integral_line_eq (hcσ : c ≤ σ) (hF : DifferentiableOn ℂ F 
   have hiσ := integrable_line hFc hB hbound hcσ le_rfl
   have hic := integrable_line hFc hB hbound le_rfl hcσ
   have hII : I * I = -1 := I_mul_I
-
   have rect : ∀ T : ℝ, 0 ≤ T →
       (∫ y : ℝ in (-T)..T, F (σ + y * I)) - (∫ y : ℝ in (-T)..T, F (c + y * I)) =
         I * ((∫ x : ℝ in c..σ, F (x + (-T : ℝ) * I)) - ∫ x : ℝ in c..σ, F (x + T * I)) := by
@@ -5061,7 +5020,6 @@ private theorem integral_line_eq (hcσ : c ≤ σ) (hF : DifferentiableOn ℂ F 
     have h := Complex.integral_boundary_rect_eq_zero_of_differentiableOn F ⟨c, -T⟩ ⟨σ, T⟩
         (hF.mono hsub)
     simp only [smul_eq_mul] at h
-
     linear_combination (-I) * h +
       ((∫ y : ℝ in (-T)..T, F (σ + y * I)) - ∫ y : ℝ in (-T)..T, F (c + y * I)) * hII
   have hV : Tendsto (fun T : ℝ => (∫ y : ℝ in (-T)..T, F (σ + y * I)) - ∫ y : ℝ in (-T)..T, F
@@ -5090,7 +5048,6 @@ private theorem norm_mellinInv_le {c σ : ℝ} (hcσ : c ≤ σ) {Ψ : ℂ → �
     (hB : 0 ≤ B) (hbound : ∀ s ∈ strip c σ, ‖Ψ s‖ ≤ B / (1 + |s.im|) ^ 2) {x : ℝ} (hx : 0 < x) :
     ‖mellinInv σ Ψ x‖ ≤ inversionConst * B * x ^ (-c) := by
   have hx0 : (x : ℂ) ≠ 0 := by exact_mod_cast hx.ne'
-
   set F : ℂ → ℂ := fun s => (x : ℂ) ^ (-s) • Ψ s with hFdef
   have hFd : DifferentiableOn ℂ F (strip c σ) :=
     ((differentiable_neg.const_cpow (Or.inl hx0)).differentiableOn).smul hΨ
@@ -5099,24 +5056,19 @@ private theorem norm_mellinInv_le {c σ : ℝ} (hcσ : c ≤ σ) {Ψ : ℂ → �
   have hwle : ∀ s ∈ strip c σ, x ^ (-s.re) ≤ max (x ^ (-c)) (x ^ (-σ)) := by
     intro s hs
     rcases le_total x 1 with hx1 | hx1
-    ·
-      exact (Real.rpow_le_rpow_of_exponent_ge hx hx1 (neg_le_neg hs.2)).trans (le_max_right _ _)
-    ·
-      exact (Real.rpow_le_rpow_of_exponent_le hx1 (neg_le_neg hs.1)).trans (le_max_left _ _)
+    · exact (Real.rpow_le_rpow_of_exponent_ge hx hx1 (neg_le_neg hs.2)).trans (le_max_right _ _)
+    · exact (Real.rpow_le_rpow_of_exponent_le hx1 (neg_le_neg hs.1)).trans (le_max_left _ _)
   have hFbound : ∀ s ∈ strip c σ, ‖F s‖ ≤ max (x ^ (-c)) (x ^ (-σ)) * B / (1 + |s.im|) ^ 2 := by
     intro s hs
     simp only [hFdef, smul_eq_mul, norm_mul, hnormw]
     rw [mul_div_assoc]
     exact mul_le_mul (hwle s hs) (hbound s hs) (norm_nonneg _) (le_max_of_le_left (by positivity))
   have hB' : 0 ≤ max (x ^ (-c)) (x ^ (-σ)) * B := mul_nonneg (le_max_of_le_left (by positivity)) hB
-
   have hshift : ∫ y : ℝ, F (σ + y * I) = ∫ y : ℝ, F
       (c + y * I) := integral_line_eq hcσ hFd hB' hFbound
   have hmi : mellinInv σ Ψ x = (1 / (2 * π)) • ∫ y : ℝ, F (c + y * I) := by
-
     rw [← hshift, hFdef]
     rfl
-
   have hline : ∀ y : ℝ, ‖F (c + y * I)‖ ≤ x ^ (-c) * B * (1 + y ^ 2)⁻¹ := by
     intro y
     simp only [hFdef, smul_eq_mul, norm_mul, hnormw]
@@ -5162,8 +5114,7 @@ private theorem norm_le_of_parity {f : ℝ → ℂ} {c B₀ B₁ : ℝ}
         (h₁ : ∀ t : ℝ, 0 < t → ‖f t - f (-t)‖ ≤ B₁ * t ^ (-c))
     {t : ℝ} (ht : t ≠ 0) : ‖f t‖ ≤ (B₀ + B₁) / 2 * |t| ^ (-c) := by
   rcases lt_or_gt_of_ne ht with hneg | hpos
-  ·
-    have hu : 0 < -t := by linarith
+  · have hu : 0 < -t := by linarith
     have e : f t = ((f (-t) + f (-(-t))) - (f (-t) - f (-(-t)))) / 2 := by rw [neg_neg]; ring
     rw [e, norm_div, Complex.norm_ofNat, abs_of_neg hneg]
     have := norm_sub_le (f (-t) + f (-(-t))) (f (-t) - f (-(-t)))
@@ -5302,14 +5253,14 @@ private theorem differentiableOn_gammaFactor {R C : Multiset ℂ} {A : ℝ} (hR 
     (differentiableOn_prod _ C (fun ν s => Gammaℂ (s + ν)) fun ν hν => ?_)
   · intro s hs
     have hre : 0 < (s + μ).re := by
-      simp only [Set.mem_setOf_eq] at hs
+      simp only [Set.mem_ofPred_eq] at hs
       have := hR μ hμ
       simp; linarith
     exact ((differentiableAt_Gammaℝ_of_re_pos hre).comp s
         (differentiableAt_id.add_const μ)).differentiableWithinAt
   · intro s hs
     have hre : 0 < (s + ν).re := by
-      simp only [Set.mem_setOf_eq] at hs
+      simp only [Set.mem_ofPred_eq] at hs
       have := hC ν hν
       simp; linarith
     exact ((differentiableAt_Gammaℂ_of_re_pos hre).comp s
@@ -5323,7 +5274,7 @@ private theorem differentiableOn_lphi (d : ArchDatumR P) (k : Matrix (Fin 2) (Fi
   have hmaps : MapsTo (fun w : ℂ => w + 1) (Inversion.strip (c₀ - 1) σ) {s : ℂ | c₀ ≤ s.re} := by
     intro w hw
     have h1 : c₀ - 1 ≤ w.re := hw.1
-    show c₀ ≤ (w + 1).re
+    change c₀ ≤ (w + 1).re
     simp; linarith
   have h1 : DifferentiableOn ℂ (fun w : ℂ => (P.twist 0 a).archFactor (w + 1))
       (Inversion.strip (c₀ - 1) σ) := by
@@ -5360,7 +5311,6 @@ private theorem exists_norm_fold_le (d : ArchDatumR P) (hZ : EdgeDecay d) {c₀ 
     (a : ZMod 2) :
     ∃ B : ℝ, ∀ k : Matrix (Fin 2) (Fin 2) ℝ, ArchR.IsK k → ∀ t : ℝ, 0 < t →
       ‖fold d k a t‖ ≤ B * t ^ (-(c₀ - 1)) := by
-
   set σ₁ : ℝ := max c₀ (d.zeta_abscissa + 1) with hσ₁def
   have hcσ₁ : c₀ ≤ σ₁ := le_max_left _ _
   have habs : d.zeta_abscissa < (σ₁ - 1) + 1 := by
@@ -5369,7 +5319,6 @@ private theorem exists_norm_fold_le (d : ArchDatumR P) (hZ : EdgeDecay d) {c₀ 
   obtain ⟨C, hC⟩ := strip_decay d hZ hc₀ a hcσ₁ 2
   refine ⟨inversionConst * max C 0, fun k hk t ht => ?_⟩
   have hdet : k.det ≠ 0 := isK_det_ne_zero hk
-
   have hbound : ∀ w ∈ Inversion.strip (c₀ - 1) (σ₁ - 1), ‖lphi d k a w‖ ≤ max C 0 /
       (1 + |w.im|) ^ 2 := by
     intro w hw
@@ -5450,9 +5399,7 @@ private theorem norm_le_of_edges {R C R' C' : Multiset ℂ} (hrelR : Multiset.Re
       (∀ s : ℂ, s.re = B → ‖gammaFactor R C s * Φ s‖ ≤ M) →
       (∀ s : ℂ, s.re = A → ‖gammaFactor R' C' (1 - s) * Φ s‖ ≤ M) →
       ∀ s : ℂ, A ≤ s.re → s.re ≤ B → ‖Φ s‖ ≤ K * M * Real.exp (D * |s.im|) := by
-
   obtain ⟨Kd, hKd⟩ := exists_norm_gammaFactor_le_dual hrelR hrelC hA hfar
-
   obtain ⟨N, hN⟩ := exists_shiftsPos R C (A - 1)
   have hN' : ShiftsPos R C N A := shiftsPos_mono hN (by linarith)
   obtain ⟨Ksf, hKsf⟩ := exists_norm_shiftFactor_le (R := R) (C := C) B hN
@@ -5460,25 +5407,22 @@ private theorem norm_le_of_edges {R C R' C' : Multiset ℂ} (hrelR : Multiset.Re
   obtain ⟨Kp, hKp⟩ := exists_norm_shiftPoly_le R C N A B
   set deg : ℕ := N * Multiset.card R + N * Multiset.card C with hdeg
   obtain ⟨c, hc, hPL⟩ := strip_bound_of_edges A B hAB deg
-
   set Ke : ℝ := max 1 Kd * max Kp 0 with hKe
   have hKe0 : 0 ≤ Ke := by positivity
   refine ⟨c * Ke * max Ki 0, (deg : ℝ) + ci, by positivity,
       fun Φ M hM hΦ hapr hright hleft s hsA hsB => ?_⟩
-
   set G : ℂ → ℂ := fun s => Φ s * shiftFactor R C N s with hG
   have hU : IsOpen {s : ℂ | A - 1 < s.re} := isOpen_lt continuous_const Complex.continuous_re
   have hGdiff : DifferentiableOn ℂ G {s : ℂ | A - 1 < s.re} :=
     (hΦ.differentiableOn).mul (differentiableOn_shiftFactor hN)
   have hstrip_sub : Complex.re ⁻¹' Ioo A B ⊆ {s : ℂ | A - 1 < s.re} := fun s hs => by
-    simp only [mem_preimage, mem_Ioo] at hs; simp only [mem_setOf_eq]; linarith [hs.1]
+    simp only [mem_preimage, mem_Ioo] at hs; simp only [mem_ofPred_eq]; linarith [hs.1]
   have hclos_sub : closure (Complex.re ⁻¹' Ioo A B) ⊆ {s : ℂ | A - 1 < s.re} := by
     refine (Complex.continuous_re.closure_preimage_subset _).trans fun s hs => ?_
     rw [closure_Ioo hAB.ne, mem_preimage, mem_Icc] at hs
-    simp only [mem_setOf_eq]; linarith [hs.1]
+    simp only [mem_ofPred_eq]; linarith [hs.1]
   have hGdc : DiffContOnCl ℂ G (Complex.re ⁻¹' Ioo A B) :=
     ⟨hGdiff.mono hstrip_sub, (hGdiff.continuousOn).mono hclos_sub⟩
-
   have hGapr : ∃ C₁ D₁ : ℝ, ∀ s : ℂ, A ≤ s.re → s.re ≤ B → ‖G s‖ ≤ C₁ * Real.exp (D₁ * |s.im|) := by
     obtain ⟨C₀, D₀, h0⟩ := hapr
     refine ⟨C₀ * max Ksf 0, D₀, fun s h1 h2 => ?_⟩
@@ -5491,7 +5435,6 @@ private theorem norm_le_of_edges {R C R' C' : Multiset ℂ} (hrelR : Multiset.Re
     calc ‖Φ s‖ * ‖shiftFactor R C N s‖ ≤ (C₀ * Real.exp (D₀ * |s.im|)) * max Ksf 0 :=
           mul_le_mul hΦs hsf (norm_nonneg _) hC₀
       _ = C₀ * max Ksf 0 * Real.exp (D₀ * |s.im|) := by ring
-
   have hGedge : ∀ s : ℂ, s.re = A ∨ s.re = B → ‖G s‖ ≤ (Ke * M) * (1 + |s.im|) ^ deg := by
     intro s hs
     have hoff : OffPoles R C N s := by
@@ -5501,14 +5444,19 @@ private theorem norm_le_of_edges {R C R' C' : Multiset ℂ} (hrelR : Multiset.Re
     have hGs : G s = (gammaFactor R C s * Φ s) * shiftPoly R C N s := by
       rw [hG]; simp only
       rw [← gammaFactor_mul_shiftPoly R C N hoff]; ring
-    have hsA' : A ≤ s.re := by rcases hs with h | h; exact h.ge; rw [h]; exact hAB.le
-    have hsB' : s.re ≤ B := by rcases hs with h | h; rw [h]; exact hAB.le; exact h.le
+    have hsA' : A ≤ s.re := by
+      rcases hs with h | h
+      · exact h.ge
+      · rw [h]; exact hAB.le
+    have hsB' : s.re ≤ B := by
+      rcases hs with h | h
+      · rw [h]; exact hAB.le
+      · exact h.le
     have hpoly : ‖shiftPoly R C N s‖ ≤ max Kp 0 * (1 + |s.im|) ^ deg :=
       (hKp s hsA' hsB').trans (mul_le_mul_of_nonneg_right (le_max_left _ _) (by positivity))
     have hγΦ : ‖gammaFactor R C s * Φ s‖ ≤ max 1 Kd * M := by
       rcases hs with h | h
-      ·
-        rw [norm_mul]
+      · rw [norm_mul]
         have hcmp := hKd s h
         have hl := hleft s h
         rw [norm_mul] at hl
@@ -5526,9 +5474,7 @@ private theorem norm_le_of_edges {R C R' C' : Multiset ℂ} (hrelR : Multiset.Re
            (max Kp 0 * (1 + |s.im|) ^ deg) :=
           mul_le_mul hγΦ hpoly (norm_nonneg _) (by positivity)
       _ = Ke * M * (1 + |s.im|) ^ deg := by rw [hKe]; ring
-
   have hGint := hPL G (Ke * M) (by positivity) hGdc hGapr hGedge s hsA hsB
-
   have hsf0 : shiftFactor R C N s ≠ 0 := shiftFactor_ne_zero hN' hsA
   have hΦeq : Φ s = G s * (shiftFactor R C N s)⁻¹ := by
     rw [hG]; simp only; rw [mul_assoc, mul_inv_cancel₀ hsf0, mul_one]
@@ -5639,7 +5585,6 @@ private theorem right_edge (d : ArchDatumR P) {g : Matrix (Fin 2) (Fin 2) ℝ} (
   obtain ⟨hab, henvσ⟩ := derivAbscissa_spec d
   set σ := Classical.choose (exists_envelopes d) with hσdef
   obtain ⟨hσ0, hall⟩ := Classical.choose_spec (exists_envelopes d)
-
   obtain ⟨N, hN⟩ := exists_nat_gt (σ₁ + u.re + 1)
   obtain ⟨C₀, C₁, hC₀, hC₁, henv0, henv1⟩ := hall N
   have hlo : 1 + σ < σ₁ + u.re := by rw [hσdef]; linarith
@@ -5647,9 +5592,7 @@ private theorem right_edge (d : ArchDatumR P) {g : Matrix (Fin 2) (Fin 2) ℝ} (
   obtain ⟨t₀, ht₀, hpack, hmod⟩ := zint_package (leftLaws_datum d) d.smooth hC₀ hC₁ hσ0
       (Nat.cast_nonneg N)
     henv0 henv1 hg X u a σ₁ hlo hhi
-
   obtain ⟨t₁, ht₁, -, hdet⟩ := exists_defo_interval X
-
   have hid : ∀ s : ℂ, s.re = σ₁ → ∀ h : ℝ, h ≠ 0 → |h| ≤ t₁ →
       (P.twist u a).archFactor s * dq d g X u a h s =
         (h : ℂ)⁻¹ * ((∫ y, ArchR.zetaIntegrand d.W (defo g X h) u a s y) -
@@ -5664,8 +5607,7 @@ private theorem right_edge (d : ArchDatumR P) {g : Matrix (Fin 2) (Fin 2) ℝ} (
     refine ⟨min δ t₁, lt_min hδ ht₁, fun s hs h hh hhδ => ?_⟩
     rw [hid s hs h hh (le_of_lt (lt_of_lt_of_le hhδ (min_le_right _ _)))]
     exact hm s hs h hh (lt_of_lt_of_le hhδ (min_le_left _ _))
-  ·
-    obtain ⟨K₁, hK₁, hdom1⟩ := exists_dirDeriv_domination (leftLaws_datum d) d.smooth hC₁ hσ0
+  · obtain ⟨K₁, hK₁, hdom1⟩ := exists_dirDeriv_domination (leftLaws_datum d) d.smooth hC₁ hσ0
         (Nat.cast_nonneg N) henv1
       hg X ht₁ hdet
     set α : ℝ := u.re + σ₁ - 2 with hα
@@ -5705,7 +5647,6 @@ private theorem dq_strip (d : ArchDatumR P) {g : Matrix (Fin 2) (Fin 2) ℝ} (hg
             (D * |s.im|)) ∧
       (∃ K δ : ℝ, 0 < δ ∧ ∀ h : ℝ, h ≠ 0 → |h| < δ →
         ∀ s : ℂ, A'' ≤ s.re → s.re ≤ B'' → ‖dq d g X u a h s‖ ≤ K * Real.exp (D * |s.im|)) := by
-
   set Q := P.twist u a with hQ
   set u' : ℂ := -(u + P.centralExponent) with hu'
   set a' : ZMod 2 := a + P.centralSign with ha'
@@ -5713,7 +5654,6 @@ private theorem dq_strip (d : ArchDatumR P) {g : Matrix (Fin 2) (Fin 2) ℝ} (hg
   have hrelR : Multiset.Rel Paired Q.gammaR Q'.gammaR := rel_gammaR P u a
   have hrelC : Multiset.Rel Paired Q.gammaC Q'.gammaC := rel_gammaC P u a
   have hwg : (ArchR.weyl * g).det ≠ 0 := by rw [Matrix.det_mul, det_weyl, one_mul]; exact hg
-
   obtain ⟨LR, hLR⟩ := exists_le_of_multiset Q.gammaR fun μ => -μ.re
   obtain ⟨LC, hLC⟩ := exists_le_of_multiset Q.gammaC fun ν => -ν.re
   set B : ℝ := max (max B'' (max LR LC + 1)) (derivAbscissa d - u.re + 1) with hB
@@ -5727,7 +5667,6 @@ private theorem dq_strip (d : ArchDatumR P) {g : Matrix (Fin 2) (Fin 2) ℝ} (hg
   have hBabs : derivAbscissa d < B + u.re := by
     have : derivAbscissa d - u.re + 1 ≤ B := le_max_right _ _
     linarith
-
   set L₀ : ℝ := min A'' (1 - (derivAbscissa d - u'.re + 1)) with hL₀
   obtain ⟨A, hAL, hA, hfar⟩ := exists_left_edge' Q.gammaR Q.gammaC L₀
   have hAA'' : A < A'' := lt_of_lt_of_le hAL (min_le_left _ _)
@@ -5735,16 +5674,12 @@ private theorem dq_strip (d : ArchDatumR P) {g : Matrix (Fin 2) (Fin 2) ℝ} (hg
   have hAdual : derivAbscissa d < (1 - A) + u'.re := by
     have : A < 1 - (derivAbscissa d - u'.re + 1) := lt_of_lt_of_le hAL (min_le_right _ _)
     linarith
-
   obtain ⟨-, hRmod, ⟨MbR, δR, hδR, hRbd⟩⟩ := right_edge d hg X u a B hBabs
   obtain ⟨-, hLmod, ⟨MbL, δL, hδL, hLbd⟩⟩ := right_edge d hwg X u' a' (1 - A) hAdual
-
   obtain ⟨K, D, hK, hPL⟩ := norm_le_of_edges hrelR hrelC hAB hA hfar hBR hBC
   have hε0 : Q.epsilonFactor ≠ 0 := epsilonFactor_ne_zero Q
   have hεpos : 0 < ‖Q.epsilonFactor‖ := norm_pos_iff.2 hε0
-
   obtain ⟨t₁, ht₁, -, hdet⟩ := exists_defo_interval X
-
   have hLfe : ∀ s : ℂ, ∀ h : ℝ, |h| ≤ t₁ →
       gammaFactor Q'.gammaR Q'.gammaC (1 - s) * dq d g X u a h s =
         Q.epsilonFactor⁻¹ * (Q'.archFactor (1 - s) * dq d (ArchR.weyl * g) X u' a' h (1 - s)) := by
@@ -5754,8 +5689,7 @@ private theorem dq_strip (d : ArchDatumR P) {g : Matrix (Fin 2) (Fin 2) ℝ} (hg
     field_simp
     rw [hQ]
   refine ⟨D, fun ε hε => ?_, ?_⟩
-  ·
-    set ε' : ℝ := ε / (K + 1) with hε'
+  · set ε' : ℝ := ε / (K + 1) with hε'
     have hε'pos : 0 < ε' := div_pos hε (by linarith)
     have hKε : K * ε' ≤ ε := by
       rw [hε', mul_div_assoc']
@@ -5770,7 +5704,6 @@ private theorem dq_strip (d : ArchDatumR P) {g : Matrix (Fin 2) (Fin 2) ℝ} (hg
     have hh'δ₂ : |h'| < δ₂ := lt_of_lt_of_le hh'δ ((min_le_left _ _).trans (min_le_right _ _))
     have hht : |h| ≤ t₁ := (lt_of_lt_of_le hhδ (min_le_right _ _)).le
     have hh't : |h'| ≤ t₁ := (lt_of_lt_of_le hh'δ (min_le_right _ _)).le
-
     have hΦdiff : Differentiable ℂ fun s => dq d g X u a h s - dq d g X u a h' s :=
       (differentiable_dq d g X u a h).sub (differentiable_dq d g X u a h')
     have hΦapr : ∃ C₀ D₀ : ℝ, ∀ s : ℂ, A ≤ s.re → s.re ≤ B →
@@ -5790,7 +5723,6 @@ private theorem dq_strip (d : ArchDatumR P) {g : Matrix (Fin 2) (Fin 2) ℝ} (hg
               ((h₂ s h1 h2).trans (mul_le_mul (le_max_left _ _) e2 (Real.exp_pos _).le
                   (le_max_right _ _)))
         _ = (max C₁ 0 + max C₂ 0) * Real.exp (max D₁ D₂ * |s.im|) := by ring
-
     have hright : ∀ s : ℂ, s.re = B →
         ‖gammaFactor Q.gammaR Q.gammaC s * (dq d g X u a h s - dq d g X u a h' s)‖ ≤ ε' := by
       intro s hs
@@ -5807,7 +5739,6 @@ private theorem dq_strip (d : ArchDatumR P) {g : Matrix (Fin 2) (Fin 2) ℝ} (hg
               congr 1; ring
         _ ≤ ε' / 2 + ε' / 2 := add_le_add e1 e2
         _ = ε' := by ring
-
     have hleft : ∀ s : ℂ, s.re = A →
         ‖gammaFactor Q'.gammaR Q'.gammaC (1 - s) *
             (dq d g X u a h s - dq d g X u a h' s)‖ ≤ ε' := by
@@ -5843,8 +5774,7 @@ private theorem dq_strip (d : ArchDatumR P) {g : Matrix (Fin 2) (Fin 2) ℝ} (hg
       have hexp : 0 ≤ Real.exp (D * |s.im|) := (Real.exp_pos _).le
       calc K * ε' * Real.exp (D * |s.im|) ≤ ε * Real.exp
              (D * |s.im|) := mul_le_mul_of_nonneg_right hKε hexp)
-  ·
-    refine ⟨K * max (max MbR (‖Q.epsilonFactor‖⁻¹ * MbL)) 0, min (min δR δL) t₁, lt_min
+  · refine ⟨K * max (max MbR (‖Q.epsilonFactor‖⁻¹ * MbL)) 0, min (min δR δL) t₁, lt_min
         (lt_min hδR hδL) ht₁,
       fun h hh hhδ s hsA hsB => ?_⟩
     have hhδR : |h| < δR := lt_of_lt_of_le hhδ ((min_le_left _ _).trans (min_le_left _ _))
@@ -5907,23 +5837,22 @@ private theorem tendsto_dq (d : ArchDatumR P) {g : Matrix (Fin 2) (Fin 2) ℝ} (
     (u : ℂ) (a : ZMod 2) (s : ℂ) :
     Tendsto (fun n => dq d g X u a (hseq n) s) atTop (𝓝 (zetaEntire' d X g u a s)) := by
   unfold zetaEntire'
-  rw [if_neg hg]
+  rw [ite_eq_right hg]
   exact tendsto_nhds_limUnder (cauchySeq_tendsto_of_complete (cauchySeq_dq d hg X u a s))
 
 private theorem zetaEntire'_of_det_eq_zero (d : ArchDatumR P) (X : Matrix (Fin 2) (Fin 2) ℝ)
     {g : Matrix (Fin 2) (Fin 2) ℝ}
     (hg : g.det = 0) (u : ℂ) (a : ZMod 2) : zetaEntire' d X g u a = fun _ => 0 := by
-  funext s; unfold zetaEntire'; rw [if_pos hg]
+  funext s; unfold zetaEntire'; rw [ite_eq_left hg]
 
 private theorem tendstoLocallyUniformlyOn_dq (d : ArchDatumR P) {g : Matrix (Fin 2) (Fin 2) ℝ}
     (hg : g.det ≠ 0)
     (X : Matrix (Fin 2) (Fin 2) ℝ) (u : ℂ) (a : ZMod 2) :
     TendstoLocallyUniformlyOn (fun n s => dq d g X u a (hseq n) s)
         (zetaEntire' d X g u a) atTop univ := by
-
   have hcover : (univ : Set ℂ) = ⋃ m : ℕ, {s : ℂ | |s.re| < m ∧ |s.im| < m} := by
     ext s
-    simp only [mem_univ, mem_iUnion, mem_setOf_eq, true_iff]
+    simp only [mem_univ, mem_iUnion, mem_ofPred_eq, true_iff]
     obtain ⟨m, hm⟩ := exists_nat_gt (max |s.re| |s.im|)
     exact ⟨m, lt_of_le_of_lt (le_max_left _ _) hm, lt_of_le_of_lt (le_max_right _ _) hm⟩
   rw [hcover]
@@ -5937,7 +5866,6 @@ private theorem tendstoLocallyUniformlyOn_dq (d : ArchDatumR P) {g : Matrix (Fin
     obtain ⟨δ, hδ, hδC⟩ := hC (ε / 2 / Real.exp (|D| * m)) (by positivity)
     filter_upwards [eventually_abs_hseq_lt hδ] with n hn s hs
     rw [dist_comm, dist_eq_norm]
-
     have hlim := tendsto_dq d hg X u a s
     have hev : ∀ᶠ k in atTop, ‖dq d g X u a (hseq n) s - dq d g X u a (hseq k) s‖ ≤
         ε / 2 / Real.exp (|D| * m) * Real.exp (D * |s.im|) := by
@@ -6005,7 +5933,6 @@ private theorem zeta_eq' (d : ArchDatumR P) (X : Matrix (Fin 2) (Fin 2) ℝ)
   obtain ⟨hpack, hmod, -⟩ := right_edge d hg X u a s.re hs
   obtain ⟨hint, -⟩ := hpack s rfl
   refine ⟨hint, ?_⟩
-
   have h2 : Tendsto (fun n => (P.twist u a).archFactor s * dq d g X u a (hseq n) s) atTop
       (𝓝 ((P.twist u a).archFactor s * zetaEntire' d X g u a s)) :=
           (tendsto_dq d hg X u a s).const_mul _
@@ -6163,7 +6090,6 @@ private theorem wordSum_le (d : ArchDatumR P) {c₀ : ℝ}
     ∃ C : ℝ, ∀ (y : ℝ) (k : Matrix (Fin 2) (Fin 2) ℝ), ArchR.IsK k → y ≠ 0 →
       wordSum lettersR M (ArchR.asPi d.W) (ArchR.diagOneMulCoords y k) ≤ C * |y| ^ (1 - c₀) := by
   classical
-
   have hword : ∀ (j : ℕ) (I : Fin j → Fin 2 × Fin 2), ∃ C : ℝ, 0 ≤ C ∧ ∀ (y : ℝ)
       (k : Matrix (Fin 2) (Fin 2) ℝ),
       ArchR.IsK k → y ≠ 0 →
