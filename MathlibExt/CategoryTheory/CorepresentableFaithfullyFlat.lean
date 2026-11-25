@@ -853,8 +853,7 @@ private theorem descends_iff
       rw [he₁, h]
   rw [key]
   constructor
-  ·
-    intro h a
+  · intro h a
     have h1 : inlA (gPt e y (a : C₁)) = inrA (gPt e y (a : C₁)) := by
       rw [← hGa a, ← h]; rfl
 
@@ -890,8 +889,7 @@ private theorem descends_iff
       exact this.symm
     obtain ⟨b₀, hb₀⟩ := AmitsurDegreeZero.exists_algebraMap_eq_of_tmul_one_eq_one_tmul h2
     exact ⟨b₀, hb₀⟩
-  ·
-    intro h
+  · intro h
     apply algHom_ext_of_surjective hsurj
     · intro s
       rw [AlgHom.comp_apply, hgS]

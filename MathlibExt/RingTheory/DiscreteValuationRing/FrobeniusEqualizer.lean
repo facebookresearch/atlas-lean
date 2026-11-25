@@ -575,8 +575,7 @@ public theorem frobTwo_frobTwo_and_exists_generator
       (AlgHom.id 𝒪 Onr) := by
     intro y; have h := (memE y).1 y.2; rw [memE, h]
   refine ⟨?_, ?_⟩
-  ·
-    intro z
+  · intro z
     obtain ⟨y, rfl⟩ := Ideal.Quotient.mk_surjective z
     let y' : ↥(AlgHom.equalizer ((Fr.trans Fr : Onr ≃ₐ[𝒪] Onr) : Onr →ₐ[𝒪] Onr) (AlgHom.id 𝒪 Onr))
       := ⟨Fr (y : Onr), hstab y⟩
@@ -590,8 +589,7 @@ public theorem frobTwo_frobTwo_and_exists_generator
     let ζE' : ↥(AlgHom.equalizer ((Fr.trans Fr : Onr ≃ₐ[𝒪] Onr) : Onr →ₐ[𝒪] Onr) (AlgHom.id 𝒪 Onr))
       := ⟨Fr ζ, hstab ζE⟩
     refine ⟨Ideal.Quotient.mk _ ζE, ?_, ?_, ?_⟩
-    ·
-      rw [hFr₂ ζE ζE' rfl, ← map_sub]
+    · rw [hFr₂ ζE ζE' rfl, ← map_sub]
       apply IsUnit.map
 
       obtain ⟨u, hu⟩ := hunit
@@ -609,8 +607,7 @@ public theorem frobTwo_frobTwo_and_exists_generator
       refine ⟨⟨ζE' - ζE, ⟨((u⁻¹ : Onrˣ) : Onr), hwE⟩, Subtype.ext ?_, Subtype.ext ?_⟩, rfl⟩
       · change (Fr ζ - ζ) * ((u⁻¹ : Onrˣ) : Onr) = 1; rw [← hu, Units.mul_inv]
       · change ((u⁻¹ : Onrˣ) : Onr) * (Fr ζ - ζ) = 1; rw [← hu, Units.inv_mul]
-    ·
-      refine eq_top_iff.2 fun z _ => ?_
+    · refine eq_top_iff.2 fun z _ => ?_
       obtain ⟨v, rfl⟩ := Ideal.Quotient.mk_surjective z
       obtain ⟨a, b, hv⟩ := hspan v.1 v.2
       have hv' : v = algebraMap 𝒪 _ a + algebraMap 𝒪 _ b * ζE := Subtype.ext (by simpa using hv)
@@ -619,8 +616,7 @@ public theorem frobTwo_frobTwo_and_exists_generator
         _))
       · exact Subalgebra.algebraMap_mem _ a
       · exact Subalgebra.algebraMap_mem _ b
-    ·
-      have hζ2 : Fr (Fr ζ) = ζ := (memE ζ).1 hζE
+    · have hζ2 : Fr (Fr ζ) = ζ := (memE ζ).1 hζE
       obtain ⟨s, hs⟩ := (hfix (ζ + Fr ζ)).1 (by rw [map_add, hζ2, add_comm])
       obtain ⟨p, hp⟩ := (hfix (ζ * Fr ζ)).1 (by rw [map_mul, hζ2, mul_comm])
       refine ⟨s, -p, ?_⟩

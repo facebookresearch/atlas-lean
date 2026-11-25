@@ -69,8 +69,7 @@ theorem IsStandardEtale.exists_isStandardEtale_tensorProduct_algEquiv_of_surject
   classical
   obtain ⟨P₀⟩ := Algebra.IsStandardEtale.nonempty_standardEtalePresentation (R := C₀) (S := S₀)
   rcases subsingleton_or_nontrivial C₀ with hC₀ | hC₀
-  ·
-    haveI : Subsingleton S₀ := Module.subsingleton C₀ S₀
+  · haveI : Subsingleton S₀ := Module.subsingleton C₀ S₀
     refine ⟨C, inferInstance, inferInstance, inferInstance, ⟨?_⟩⟩
     exact AlgEquiv.ofBijective
       ((Algebra.ofId C₀ S₀).comp (Algebra.TensorProduct.rid C C₀ C₀).toAlgHom)

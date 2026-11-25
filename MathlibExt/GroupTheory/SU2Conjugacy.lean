@@ -54,16 +54,14 @@ theorem su2_conj_to_diag (A : ↥(Matrix.specialUnitaryGroup (Fin 2) ℂ)) :
   obtain ⟨α, β, hA, hnorm⟩ :=
     Matrix.exists_eq_of_mem_specialUnitaryGroup_fin_two A.val A.2
   by_cases hβ : β = 0
-  ·
-    have hα_norm : Complex.normSq α = 1 := by simp [hβ] at hnorm; exact hnorm
+  · have hα_norm : Complex.normSq α = 1 := by simp [hβ] at hnorm; exact hnorm
     have hz : α * starRingEnd ℂ α = 1 := by
       rw [Complex.mul_conj]; exact_mod_cast hα_norm
     have hA_diag : (A : Matrix (Fin 2) (Fin 2) ℂ) =
         !![α, (0 : ℂ); 0, starRingEnd ℂ α] := by
       rw [hA, hβ]; simp
     exact ⟨A, ⟨α, hz, hA_diag⟩, IsConj.refl A⟩
-  ·
-    have hβ_pos : Complex.normSq β > 0 := Complex.normSq_pos.mpr hβ
+  · have hβ_pos : Complex.normSq β > 0 := Complex.normSq_pos.mpr hβ
     have hα_lt : Complex.normSq α < 1 := by linarith
     have h_re_lt : α.re ^ 2 < 1 := by
       calc α.re ^ 2 ≤ Complex.normSq α := by
@@ -235,12 +233,10 @@ theorem su2_diag_conj_of_trace (D₁ D₂ : ↥(Matrix.specialUnitaryGroup (Fin 
     have h3 : z₁.re * z₁.re = z₂.re * z₂.re := by rw [hre]
     linarith
   rcases mul_self_eq_mul_self_iff.mp him_sq with him_eq | him_neg
-  ·
-    have heq : z₁ = z₂ := Complex.ext hre him_eq
+  · have heq : z₁ = z₂ := Complex.ext hre him_eq
     have hD_eq : D₁ = D₂ := by ext1; rw [hD₁, hD₂, heq]
     rw [hD_eq]
-  ·
-    have hconj : z₁ = starRingEnd ℂ z₂ := by
+  · have hconj : z₁ = starRingEnd ℂ z₂ := by
       simp [Complex.ext_iff, Complex.conj_re, Complex.conj_im, hre, him_neg]
     let W : ↥(Matrix.specialUnitaryGroup (Fin 2) ℂ) :=
       ⟨!![(0 : ℂ), 1; -1, 0], antidiag_mem⟩

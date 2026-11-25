@@ -150,8 +150,7 @@ private theorem isPushout_shear : IsPushout (ofHom s) (ofHom s) (ofHom inl) (ofH
   refine IsPushout.of_isColimit' ⟨by rw [← ofHom_comp, ← ofHom_comp, hcs]⟩ ?_
   refine Limits.PushoutCocone.IsColimit.mk _ (fun sq => hP.desc sq.inl (ofHom (v' sq)) (hdesc sq))
     (fun sq => hP.inl_desc _ _ _) (fun sq => ?_) (fun sq m hm₁ hm₂ => ?_)
-  ·
-    ext b : 2
+  · ext b : 2
     change ((hP.desc sq.inl (ofHom (v' sq)) (hdesc sq)).hom.comp c) b = sq.inr.hom b
     congr 1
     apply hom_ext hgen
@@ -161,8 +160,7 @@ private theorem isPushout_shear : IsPushout (ofHom s) (ofHom s) (ofHom inl) (ofH
     · rw [RingHom.comp_assoc, hct, ← RingHom.comp_assoc, ← hv'₂ sq]
       congr 1
       exact congrArg CommRingCat.Hom.hom (hP.inr_desc sq.inl (ofHom (v' sq)) (hdesc sq))
-  ·
-    apply hP.hom_ext
+  · apply hP.hom_ext
     · rw [hP.inl_desc]; exact hm₁
     · rw [hP.inr_desc]
       ext b : 2
@@ -378,11 +376,9 @@ private theorem rankAtStalk_eq_rankAtStalk_of_isLocalRing [IsLocalRing C] (p q :
     PrimeSpectrum.basicOpen_injOn_isIdempotentElem (he.map _) (he.map _) (SetLike.ext' hb)
   have hp : p ∈ f ⁻¹' {f p} := rfl
   rcases eq_zero_or_eq_one_of_isIdempotentElem (t := t) hinj hinv he hse with rfl | rfl
-  ·
-    rw [hUe, PrimeSpectrum.basicOpen_zero] at hp
+  · rw [hUe, PrimeSpectrum.basicOpen_zero] at hp
     exact absurd hp (by simp)
-  ·
-    have hq : q ∈ f ⁻¹' {f p} := by rw [hUe, PrimeSpectrum.basicOpen_one]; trivial
+  · have hq : q ∈ f ⁻¹' {f p} := by rw [hUe, PrimeSpectrum.basicOpen_one]; trivial
     exact hq.symm
 
 include hgen hequiv hinj hinv in
@@ -1044,8 +1040,7 @@ private theorem vC_bijective : Function.Bijective fun w : Fin r → C => ∑ i,
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_mul, ((hst _).2 ⟨w i, rfl⟩)]
   constructor
-  ·
-    rw [injective_iff_map_eq_zero]
+  · rw [injective_iff_map_eq_zero]
     intro w hw
     have h1 : vA t x (fun i => algebraMap C A (w i)) = 0 := by rw [← hcomm, hw, map_zero]
     have h2 : (fun i => algebraMap C A (w i)) = 0 := by
@@ -1054,8 +1049,7 @@ private theorem vC_bijective : Function.Bijective fun w : Fin r → C => ∑ i,
       simpa [vA_apply] using h1
     funext i
     exact hinj (by simpa using congrFun h2 i)
-  ·
-    intro a
+  · intro a
     obtain ⟨α, hα⟩ := hx.2 (t a)
     have hα' : vA t x α = t a := by rw [vA_apply]; exact hα
 

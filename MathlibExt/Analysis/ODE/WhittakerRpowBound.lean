@@ -459,8 +459,7 @@ theorem LanglandsTunnell.exists_rpow_bound_near_zero_of_whittaker_ode_of_abs_re_
               f y = 0) :
     ∃ δ : ℝ, 0 < δ ∧ ∃ C : ℝ, ∀ y : ℝ, 0 < y → y ≤ 1 → ‖f y‖ ≤ C * y ^ δ := by
   by_cases hν : ν = 0
-  ·
-    subst hν
+  · subst hν
     have hl : (((1 / 8 : ℝ) : ℂ)) ≠ 0 := Complex.ofReal_ne_zero.mpr (by norm_num)
     have hnorm : ‖(((1 / 8 : ℝ) : ℂ))‖ = 1 / 8 := by
       rw [Complex.norm_real, Real.norm_eq_abs, abs_of_pos (by norm_num)]
@@ -471,8 +470,7 @@ theorem LanglandsTunnell.exists_rpow_bound_near_zero_of_whittaker_ode_of_abs_re_
     refine engine 0 (((1 / 8 : ℝ) : ℂ)) k f hf hf' hfeq hl (1 / 64) hm ?_
     rw [hnorm, Complex.ofReal_re, abs_of_pos (by norm_num : (0 : ℝ) < 1 / 8)]
     norm_num
-  ·
-    have hm : ‖ν ^ 2 - ν ^ 2‖ ≤ 0 := by simp
+  · have hm : ‖ν ^ 2 - ν ^ 2‖ ≤ 0 := by simp
     refine engine ν ν k f hf hf' hfeq hν 0 hm ?_
     rw [mul_zero, add_zero]
     linarith

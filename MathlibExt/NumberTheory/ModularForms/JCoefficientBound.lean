@@ -277,8 +277,7 @@ private theorem one_sub_X_pow_mul_geomSeries {d : ℕ} (hd : d ≠ 0) :
   rw [sub_mul, one_mul, map_sub, ← mul_comm (geomSeries d) (X ^ d),
     PowerSeries.coeff_mul_X_pow', coeff_geomSeries, PowerSeries.coeff_one]
   by_cases hdn : d ≤ n
-  ·
-    have hn0 : ¬ (n = 0) := by omega
+  · have hn0 : ¬ (n = 0) := by omega
     rw [if_pos hdn, coeff_geomSeries, if_neg hn0]
     have hiff : d ∣ n ↔ d ∣ n - d := by
       constructor
@@ -289,8 +288,7 @@ private theorem one_sub_X_pow_mul_geomSeries {d : ℕ} (hd : d ≠ 0) :
     by_cases h : d ∣ n
     · rw [if_pos h, if_pos (hiff.mp h), sub_self]
     · rw [if_neg h, if_neg (fun hc => h (hiff.mpr hc)), sub_self]
-  ·
-    rw [if_neg hdn, sub_zero]
+  · rw [if_neg hdn, sub_zero]
     by_cases hn : n = 0
     · subst hn; rw [if_pos (dvd_zero d), if_pos rfl]
     · rw [if_neg hn, if_neg (fun hc => hdn (Nat.le_of_dvd (Nat.pos_of_ne_zero hn) hc))]

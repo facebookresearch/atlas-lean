@@ -142,15 +142,13 @@ theorem one_param_subgroup_form (m : ℕ)
   have hg_eq_zero : ∀ t : ℝ, g t = 0 := by
     intro t
     by_cases ht : 0 ≤ t
-    ·
-      exact eq_zero_of_abs_deriv_le_mul_abs_self_of_eq_zero_right (f' := fun x => deriv g x)
+    · exact eq_zero_of_abs_deriv_le_mul_abs_self_of_eq_zero_right (f' := fun x => deriv g x)
         hg_diff.continuous.continuousOn
         (fun x _ => (hg_diff x).hasDerivAt.hasDerivWithinAt)
         hg_zero
         (fun x _ => by rw [hg_ode x]; exact norm_mul_le A (g x))
         t ⟨ht, le_refl t⟩
-    ·
-      have ht' : t < 0 := not_le.mp ht
+    · have ht' : t < 0 := not_le.mp ht
       have hh_diff : Differentiable ℝ (fun s => g (-s)) := hg_diff.comp differentiable_neg
       have hmem : -t ∈ Set.Icc 0 (-t) := ⟨by linarith, le_refl _⟩
       have h_eq := eq_zero_of_abs_deriv_le_mul_abs_self_of_eq_zero_right
@@ -166,10 +164,8 @@ theorem one_param_subgroup_form (m : ℕ)
         (-t) hmem
       simpa using h_eq
   refine ⟨A, ?_, ?_⟩
-  ·
-    intro t; exact sub_eq_zero.mp (hg_eq_zero t)
-  ·
-    intro B hB
+  · intro t; exact sub_eq_zero.mp (hg_eq_zero t)
+  · intro B hB
     have heq : (fun s : ℝ => φ s) = (fun s : ℝ => NormedSpace.exp ((↑s : ℂ) • B)) :=
       funext hB
     have hB_deriv : deriv (fun s : ℝ => NormedSpace.exp ((↑s : ℂ) • B)) 0 = B := by

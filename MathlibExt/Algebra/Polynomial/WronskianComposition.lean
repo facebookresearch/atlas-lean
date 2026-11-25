@@ -346,8 +346,7 @@ private theorem main : IsCoprime U V ∧ 0 < max U.natDegree V.natDegree ∧ wro
     rw [U_eq huv hu hU, V_eq huv hu hV]
     exact max_le (natDegree_hom_le _ _ _ _) (natDegree_hom_le _ _ _ _)
   refine ⟨hcop, ?_, ?_⟩
-  ·
-    by_contra h0
+  · by_contra h0
     push Not at h0
     have h1 : (fib U V c₀).card ≤ 0 := by
       refine (card_fib_le U V c₀).trans ((natDegree_sub_C_mul_le U V c₀).trans h0)
@@ -357,15 +356,13 @@ private theorem main : IsCoprime U V ∧ 0 < max U.natDegree V.natDegree ∧ wro
 
     obtain ⟨q, hq⟩ := ExpChar.exists k
     rcases hq with _ | ⟨hprime, _⟩
-    ·
-      have hU0 : U.natDegree = 0 := derivative_eq_zero.mp hdU
+    · have hU0 : U.natDegree = 0 := derivative_eq_zero.mp hdU
       have hV0 : V.natDegree = 0 := derivative_eq_zero.mp hdV
       have h1 : (fib U V c₀).card ≤ 0 := by
         refine (card_fib_le U V c₀).trans ((natDegree_sub_C_mul_le U V c₀).trans ?_)
         rw [hU0, hV0, max_self]
       omega
-    ·
-      haveI := Fact.mk hprime
+    · haveI := Fact.mk hprime
       have hq0 : q ≠ 0 := hprime.ne_zero
       have eU : U = expand k q (contract q U) := (expand_contract q hdU hq0).symm
       have eV : V = expand k q (contract q V) := (expand_contract q hdV hq0).symm

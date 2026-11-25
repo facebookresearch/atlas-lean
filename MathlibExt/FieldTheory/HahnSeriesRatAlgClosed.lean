@@ -110,8 +110,7 @@ private theorem exists_evalNewtonSlope {f : (HahnSeries ℚ K)[X]} (hf : f.Monic
   set γ : ℚ := ψ j₀
   have hj₀pos : (0 : ℚ) < (j₀ : ℚ) := by exact_mod_cast hj₀1
   refine ⟨γ, ?_, j₀, hj₀1, hj₀le, hj₀ne, ?_⟩
-  ·
-    intro j hj1 hjle hjne
+  · intro j hj1 hjle hjne
     have hjpos : (0 : ℚ) < (j : ℚ) := by exact_mod_cast hj1
     have hmem : j ∈ evalSlopeSupport f := mem_evalSlopeSupport.mpr ⟨hjle, hj1, hjne⟩
     have hle : ψ j ≤ γ := hj₀max j hmem
@@ -120,8 +119,7 @@ private theorem exists_evalNewtonSlope {f : (HahnSeries ℚ K)[X]} (hf : f.Monic
     have hmul : δ - (f.coeff j).order ≤ (j : ℚ) * γ := by
       rw [div_le_iff₀ hjpos] at hle; linarith [hle]
     linarith
-  ·
-    rw [nsmul_eq_mul]
+  · rw [nsmul_eq_mul]
     have heq : (j₀ : ℚ) * γ = δ - (f.coeff j₀).order := by
       simp only [γ, ψ]; field_simp
     linarith
@@ -168,11 +166,9 @@ private theorem coeff_eval_single_of_lt_order_zero {f : (HahnSeries ℚ K)[X]} {
   refine Finset.sum_eq_zero fun j hj => ?_
   have hjle : j ≤ f.natDegree := Nat.lt_succ_iff.mp (Finset.mem_range.mp hj)
   rcases Nat.eq_zero_or_pos j with hzero | hpos
-  ·
-    subst hzero
+  · subst hzero
     rw [zero_smul, sub_zero, HahnSeries.coeff_eq_zero_of_lt_order hg, zero_mul]
-  ·
-    rcases eq_or_ne (f.coeff j) 0 with hcoeff | hcoeff
+  · rcases eq_or_ne (f.coeff j) 0 with hcoeff | hcoeff
     · simp [hcoeff]
     · have hbound : (f.coeff 0).order ≤ (f.coeff j).order + j • γ := hslope j hpos hjle hcoeff
       have hlt : g - j • γ < (f.coeff j).order := by linarith
@@ -423,8 +419,7 @@ private theorem exists_kaplanskyLE_of_eval_ne_zero [IsAlgClosed K] {f : (HahnSer
         rw [add_zero]; exact heq.symm
       exact add_left_cancel heq'
     exact HahnSeries.single_eq_zero_iff.mp h0
-  ·
-    intro j hj hjle
+  · intro j hj hjle
     rw [add_sub_cancel_left, heval0, HahnSeries.addVal_apply_of_ne hg0]
     rcases eq_or_ne ((Polynomial.taylor r f).coeff j) 0 with hzero | hne
     · rw [hzero, AddValuation.map_zero, top_add]; exact le_top

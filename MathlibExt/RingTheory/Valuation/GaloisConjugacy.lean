@@ -179,8 +179,7 @@ public theorem ValuationSubring.exists_algEquiv_comap_eq_of_isGalois
       (∀ x : ↥V, algebraMap ↥V K x ∈ D.nonunits ↔ x ∈ IsLocalRing.maximalIdeal ↥V) := by
     intro D hD
     refine ⟨fun c => ?_, fun x => ?_⟩
-    ·
-      have hc : IsIntegral ↥V (algebraMap _ K c) := c.2
+    · have hc : IsIntegral ↥V (algebraMap _ K c) := c.2
       let fV : ↥V →+* ↥D :=
         { toFun := fun x => ⟨algebraMap E K x, (hD x).2 x.2⟩
           map_one' := Subtype.ext (by simp)
@@ -191,8 +190,7 @@ public theorem ValuationSubring.exists_algEquiv_comap_eq_of_isGalois
         hc.map_of_comp_eq fV (RingHom.id K) (by ext x; rfl)
       obtain ⟨d, hd⟩ := (IsIntegrallyClosed.isIntegral_iff (R := ↥D) (K := K)).mp hcD
       rw [← hd]; exact d.2
-    ·
-      constructor
+    · constructor
       · intro hx
         by_contra hxu
         have hxu' : IsUnit x := by

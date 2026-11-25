@@ -708,8 +708,7 @@ theorem eq_one_of_forall_archSlice_eq_one {ψ : AddChar 𝔸 ℂ} (hψ : IsGloba
 
     have hrest_mem : rest ∈ Ui ×ˢ Uf := by
       constructor
-      ·
-        have harch : rest.1 = (x.1 - algebraMap F 𝔸i ξ)
+      · have harch : rest.1 = (x.1 - algebraMap F 𝔸i ξ)
             - AdelicR2Slices.archSingle w₀ ((x.1 - algebraMap F 𝔸i ξ) w₀) := rfl
         have hw : ∀ w : InfinitePlace F, ‖rest.1 w‖ < ε := by
           intro w
@@ -736,8 +735,7 @@ theorem eq_one_of_forall_archSlice_eq_one {ψ : AddChar 𝔸 ℂ} (hψ : IsGloba
         refine hballs v ?_
         rw [Metric.mem_ball, dist_zero_right]
         exact lt_of_lt_of_le (hw v) (hεle v)
-      ·
-        have hsnd : rest.2 = x.2 - algebraMap F 𝔸f ξ := by
+      · have hsnd : rest.2 = x.2 - algebraMap F 𝔸f ξ := by
           rw [hrest]
           show (x - algebraMap F 𝔸 ξ).2 - (0 : 𝔸f) = _
           rw [sub_zero]
@@ -903,11 +901,9 @@ theorem exists_minkowskiBound_mul_inv_pow_lt (v₀ : HeightOneSpectrum (RingOfIn
   by_cases hD : T / B₁ = ⊤
   · refine ⟨0, ?_⟩
     rcases ENNReal.div_eq_top.mp hD with ⟨hT, hB⟩ | ⟨hTtop, _⟩
-    ·
-      rw [minkowskiBound_eq_absNorm_mul, ← hB₁, hB, mul_zero]
+    · rw [minkowskiBound_eq_absNorm_mul, ← hB₁, hB, mul_zero]
       exact pos_iff_ne_zero.mpr hT0
-    ·
-      rw [minkowskiBound_eq_absNorm_mul, ← hB₁, hTtop, lt_top_iff_ne_top]
+    · rw [minkowskiBound_eq_absNorm_mul, ← hB₁, hTtop, lt_top_iff_ne_top]
       exact ENNReal.mul_ne_top ENNReal.ofReal_ne_top hB₁top
   · have hD0 : T / B₁ ≠ 0 := by
       refine ENNReal.div_ne_zero.mpr ⟨hT0, hB₁top⟩
@@ -1024,8 +1020,7 @@ theorem eq_one_of_forall_finSlice_eq_one {ψ : AddChar 𝔸 ℂ} (hψ : IsGlobal
         hψ.principalInvariant ξ, hslice, one_mul, one_mul]
     have hrest_mem : rest ∈ Ui ×ˢ Uf := by
       constructor
-      ·
-        have harch : rest.1 = x.1 - algebraMap F 𝔸i ξ := by
+      · have harch : rest.1 = x.1 - algebraMap F 𝔸i ξ := by
           rw [hrest]
           show (x - algebraMap F 𝔸 ξ).1 - (0 : 𝔸i) = _
           rw [sub_zero]
@@ -1043,8 +1038,7 @@ theorem eq_one_of_forall_finSlice_eq_one {ψ : AddChar 𝔸 ℂ} (hψ : IsGlobal
         refine hballs v ?_
         rw [Metric.mem_ball, dist_zero_right]
         exact lt_of_lt_of_le (hw v) (hεle v)
-      ·
-        have hsnd0 : x.2 - algebraMap F 𝔸f ξ = algebraMap F 𝔸f Nb * w' := by
+      · have hsnd0 : x.2 - algebraMap F 𝔸f ξ = algebraMap F 𝔸f Nb * w' := by
           rw [hxf, hξ, map_add, hw', mul_sub]
           have hca : algebraMap F 𝔸f Nb * algebraMap F 𝔸f b = algebraMap F 𝔸f a := by
             rw [← map_mul, ← hab]
@@ -1327,8 +1321,7 @@ theorem finite_setOf_algebraMap_mem {C : Set (AdeleRing (𝓞 F) F)} (hC : IsCom
       sub_left_inj.1 (mixedEmbedding_injective F h)).subset ?_
     rintro ξ ⟨hξC, hξy⟩
     refine ⟨?_, ?_⟩
-    ·
-      refine ⟨(InfiniteAdeleRing.ringEquiv_mixedSpace F (algebraMap F (AdeleRing (𝓞 F) F) ξ).1,
+    · refine ⟨(InfiniteAdeleRing.ringEquiv_mixedSpace F (algebraMap F (AdeleRing (𝓞 F) F) ξ).1,
           InfiniteAdeleRing.ringEquiv_mixedSpace F (algebraMap F (AdeleRing (𝓞 F) F) ξ₀).1),
         ⟨⟨(algebraMap F (AdeleRing (𝓞 F) F) ξ).1, ⟨_, hξC, rfl⟩, rfl⟩,
           ⟨(algebraMap F (AdeleRing (𝓞 F) F) ξ₀).1, ⟨_, hξ₀C, rfl⟩, rfl⟩⟩, ?_⟩
@@ -1337,8 +1330,7 @@ theorem finite_setOf_algebraMap_mem {C : Set (AdeleRing (𝓞 F) F)} (hC : IsCom
         = mixedEmbedding F (ξ - ξ₀)
       rw [map_sub, fst_algebraMap, fst_algebraMap, ← InfiniteAdeleRing.mixedEmbedding_eq_algebraMap_comp,
         ← InfiniteAdeleRing.mixedEmbedding_eq_algebraMap_comp]
-    ·
-      have h2 : (algebraMap F (AdeleRing (𝓞 F) F) (ξ - ξ₀)).2
+    · have h2 : (algebraMap F (AdeleRing (𝓞 F) F) (ξ - ξ₀)).2
           = (algebraMap F (AdeleRing (𝓞 F) F) ξ).2 - (algebraMap F (AdeleRing (𝓞 F) F) ξ₀).2 := by
         rw [map_sub]; rfl
       have hdiff : (algebraMap F (AdeleRing (𝓞 F) F) (ξ - ξ₀)).2 ∈ integralFiniteAdeles (𝓞 F) F := by

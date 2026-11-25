@@ -112,8 +112,7 @@ private theorem solution_aux
     (∀ f : ModularForm Γ 0, ∃ c : ℂ, (f : ℍ → ℂ) = fun _ => c) ∧
     (∀ k : ℤ, k < 0 → ∀ f : ModularForm Γ k, (f : ℍ → ℂ) = 0) := by
   refine ⟨fun f => ?_, fun k hk f => ?_⟩
-  ·
-    obtain ⟨τ₀, hτ₀⟩ := exists_forall_mgauge_le hcpt f
+  · obtain ⟨τ₀, hτ₀⟩ := exists_forall_mgauge_le hcpt f
     have hmax : IsMaxOn (norm ∘ fun z : ℂ => f (ofComplex z)) U (τ₀ : ℂ) := by
       intro z hz
       have h := hτ₀ ⟨z, hz⟩
@@ -129,8 +128,7 @@ private theorem solution_aux
     have := heq τ.im_pos
     simp only [Function.const_apply, ofComplex_apply] at this
     exact this
-  ·
-    obtain ⟨n, hn⟩ : ∃ n : ℕ, (k : ℤ) = -(n : ℤ) := ⟨(-k).toNat, by omega⟩
+  · obtain ⟨n, hn⟩ : ∃ n : ℕ, (k : ℤ) = -(n : ℤ) := ⟨(-k).toNat, by omega⟩
     have hn1 : 1 ≤ n := by omega
     obtain ⟨τ₀, hτ₀⟩ := exists_forall_mgauge_le hcpt f
     set M : ℝ := mgauge f τ₀ with hM

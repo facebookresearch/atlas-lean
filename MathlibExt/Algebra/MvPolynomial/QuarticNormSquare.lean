@@ -88,8 +88,7 @@ private theorem eq_X_pow_of_mul : ∀ (N : ℕ) (p : K[X]), p.natDegree ≤ N �
   | succ N ih =>
       intro p hN hmul h1
       by_cases h0 : p.eval 0 = 0
-      ·
-        obtain ⟨p₁, rfl⟩ : X ∣ p := Polynomial.X_dvd_iff.mpr (by rwa
+      · obtain ⟨p₁, rfl⟩ : X ∣ p := Polynomial.X_dvd_iff.mpr (by rwa
             [Polynomial.coeff_zero_eq_eval_zero])
         have hp₁ : p₁ ≠ 0 := by
           rintro rfl
@@ -118,8 +117,7 @@ private theorem eq_X_pow_of_mul : ∀ (N : ℕ) (p : K[X]), p.natDegree ≤ N �
           simpa only [eval_comp, eval_mul, eval_X, eval_C] using this
         obtain ⟨α, hα⟩ := ih p₁ hdeg hmul' h1'
         exact ⟨α + 1, by rw [hα, pow_succ, mul_comm]⟩
-      ·
-        refine ⟨0, ?_⟩
+      · refine ⟨0, ?_⟩
         rw [pow_zero]
         apply poly_eq_of_forall_ne_zero
         intro s hs
@@ -404,8 +402,7 @@ private theorem two_of_rat (x : ℝ) (hx : Irrational x) (X : ℚ) (hx2 : x ^ 2 
   have h4 : (4 + 4 * (X : ℝ)) ≠ 0 := by positivity
   have ha : a ≤ 2 := by omega
   interval_cases a
-  ·
-    exfalso
+  · exfalso
     have hB4 : B = 4 := by omega
     subst hB4
     simp only [add_zero, pow_zero, one_mul] at hm
@@ -417,8 +414,7 @@ private theorem two_of_rat (x : ℝ) (hx : Irrational x) (X : ℚ) (hx2 : x ^ 2 
     field_simp
     linarith
   · rfl
-  ·
-    exfalso
+  · exfalso
     have hB0 : B = 0 := by omega
     subst hB0
     simp only [pow_zero, mul_one] at hm
@@ -554,8 +550,7 @@ private theorem main (D c : ℤ) (hD : 0 < D) (hc : 0 < c)
   obtain ⟨k3, hk3⟩ := heven 3
 
   by_cases hDc : IsSquare (D * c)
-  ·
-    obtain ⟨r, hr⟩ := hDc
+  · obtain ⟨r, hr⟩ := hDc
     set r₀ : ℤ := |r| with hr₀
     have hr₀sq : r₀ ^ 2 = D * c := by rw [hr, hr₀, sq_abs, sq]
     have hr₀pos : 0 < r₀ := by
@@ -589,8 +584,7 @@ private theorem main (D c : ℤ) (hD : 0 < D) (hc : 0 < c)
       rw [h0, pow_zero, one_mul, show (-(r₀ : ℝ) - r₀) = -(r₀ + r₀) by ring] at hv2
       exact pow_ne_zero _ (neg_ne_zero.mpr hr2) hv2.symm
     omega
-  ·
-    have hde2 : (d * e) ^ 2 = (((D * c : ℤ) : ℚ) : ℝ) := by
+  · have hde2 : (d * e) ^ 2 = (((D * c : ℤ) : ℚ) : ℝ) := by
       rw [mul_pow, hd2, he2]; push_cast; ring
     have hdeirr : Irrational (d * e) := by
       have : d * e = Real.sqrt ((D * c : ℤ) : ℝ) := by

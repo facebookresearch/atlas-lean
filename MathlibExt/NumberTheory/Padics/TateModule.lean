@@ -312,14 +312,12 @@ theorem liftFun_mem
     (n : ℕ) (m : torsionBy ℤ M ((p ^ n : ℕ) : ℤ)) : liftFun next n m ∈ TateModule p M := by
   intro k
   constructor
-  ·
-    by_cases hk : n ≤ k
+  · by_cases hk : n ≤ k
     · rw [liftFun_of_le hk]
       exact pow_smul_coe_liftAux (k - n) (by omega)
     · rw [liftFun_of_lt (not_le.mp hk)]
       exact (mem_torsionBy_iff _ _).mp (pow_smul_mem_torsionBy (not_le.mp hk).le m.2)
-  ·
-    by_cases hk : n ≤ k
+  · by_cases hk : n ≤ k
     · rw [liftFun_of_le hk, liftFun_of_le (by omega : n ≤ k + 1),
         coe_liftAux_congr (by omega : k + 1 - n = (k - n) + 1)]
       exact hnext _ _

@@ -41,23 +41,18 @@ theorem ring_product_iff_nontrivial_idempotent (Q : Type u) [CommRing Q] :
       Nonempty (Q ≃+* R × S)) ↔
     (∃ e : Q, IsIdempotentElem e ∧ e ≠ 0 ∧ e ≠ 1) := by
   constructor
-  ·
-    rintro ⟨R, S, _, _, hR, hS, ⟨φ⟩⟩
+  · rintro ⟨R, S, _, _, hR, hS, ⟨φ⟩⟩
     refine ⟨φ.symm (1, 0), ?_, ?_, ?_⟩
-    ·
-      rw [IsIdempotentElem, ← map_mul φ.symm]
+    · rw [IsIdempotentElem, ← map_mul φ.symm]
       congr 1
       simp
-    ·
-      intro h
+    · intro h
       have := congr_arg φ h
       simp at this
-    ·
-      intro h
+    · intro h
       have := congr_arg φ h
       simp at this
-  ·
-    rintro ⟨e, he, he0, he1⟩
+  · rintro ⟨e, he, he0, he1⟩
     have hf : IsIdempotentElem (1 - e) := he.one_sub
     have hef1 : e + (1 - e) = 1 := by ring
     have hef2 : e * (1 - e) = 0 := by

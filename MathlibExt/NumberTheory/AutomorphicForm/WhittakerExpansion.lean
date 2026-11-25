@@ -953,15 +953,13 @@ open scoped Classical in
 
 theorem zero_mem_adelicBox : (0 : AdeleRing (𝓞 F) F) ∈ adelicBox F := by
   refine ⟨?_, ?_⟩
-  ·
-    show InfiniteAdeleRing.ringEquiv_mixedSpace F 0 ∈
+  · show InfiniteAdeleRing.ringEquiv_mixedSpace F 0 ∈
       ZSpan.fundamentalDomain (mixedEmbedding.latticeBasis F)
     rw [map_zero, ZSpan.mem_fundamentalDomain]
     intro i
     rw [map_zero, Finsupp.zero_apply]
     exact ⟨le_refl 0, zero_lt_one⟩
-  ·
-    intro v; exact zero_mem _
+  · intro v; exact zero_mem _
 
 scoped instance : IsProbabilityMeasure
     (@ProbabilityTheory.cond _ (adeleBorel (𝓞 F) F) (adelicAddHaar (𝓞 F) F) (adelicBox F)) :=

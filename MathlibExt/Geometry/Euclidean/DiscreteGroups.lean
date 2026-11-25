@@ -274,10 +274,8 @@ theorem discrete_subgroup_R2_classification
         (Fintype.equivOfCardEq (by rw [hcard, Fintype.card_fin]))
 
     refine ⟨(B 0).val, (B 1).val, ?_, ?_⟩
-    ·
-      apply linearIndependent_of_top_le_span_of_card_eq_finrank
-      ·
-        set S := Submodule.span ℝ (Set.range ![(B 0).val, (B 1).val])
+    · apply linearIndependent_of_top_le_span_of_card_eq_finrank
+      · set S := Submodule.span ℝ (Set.range ![(B 0).val, (B 1).val])
         set_option backward.isDefEq.respectTransparency false in
         have hspan_top : Submodule.span ℝ (L : Set E2) = ⊤ := by
           apply Submodule.eq_top_of_finrank_eq
@@ -309,8 +307,7 @@ theorem discrete_subgroup_R2_classification
           exact S.smul_mem _ hv1
         exact S.add_mem h0 h1
       · simp [Fintype.card_fin]
-    ·
-      ext x
+    · ext x
       simp only [AddSubgroup.mem_sup, AddSubgroup.mem_zmultiples_iff]
       constructor
       · intro hx

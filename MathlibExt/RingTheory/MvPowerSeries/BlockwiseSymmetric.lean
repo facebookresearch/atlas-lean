@@ -689,8 +689,7 @@ theorem step_conjugate :
           (MvPolynomial.mapAlgHom (R := k)
             (MvPolynomial.aeval (bes k m (rs ∘ Fin.castSucc)))) := by
   refine AlgHom.coe_ringHom_injective (MvPolynomial.ringHom_ext ?_ ?_)
-  ·
-    intro r
+  · intro r
     simp only [AlgHom.coe_toRingHom, AlgHom.comp_apply, AlgEquiv.coe_toAlgHom,
       AlgHom.restrictScalars_apply]
     rw [psiX_symm_C, MvPolynomial.mapAlgHom_apply, MvPolynomial.map_C, MvPolynomial.aeval_C]
@@ -712,8 +711,7 @@ theorem step_conjugate :
       psiX_rename_blockIn_castSucc]
     congr 1
     exact (bes_blockIn_gen (k := k) (rs := rs ∘ Fin.castSucc) j' i').symm
-  ·
-    intro i
+  · intro i
     simp only [AlgHom.coe_toRingHom, AlgHom.comp_apply, AlgEquiv.coe_toAlgHom,
       AlgHom.restrictScalars_apply]
     rw [psiX_symm_X, MvPolynomial.aeval_X, bes_blockIn, psiX_rename_blockIn_last,
@@ -741,8 +739,7 @@ theorem psiX_rename_blockPermEmbed (σ : ∀ j, Equiv.Perm (Fin (rs j)))
           ((MvPolynomial.mapAlgHom (R := k)
             (MvPolynomial.rename (blockPermEmbed m (rs ∘ Fin.castSucc)
               (fun j => σ (Fin.castSucc j))))).comp (psiX k rs).toAlgHom)) p
-  ·
-    intro c
+  · intro c
     show psiX k rs (MvPolynomial.rename _ (MvPolynomial.C c))
       = MvPolynomial.rename _ (MvPolynomial.mapAlgHom _ (psiX k rs (MvPolynomial.C c)))
     rw [MvPolynomial.rename_C,
@@ -752,8 +749,7 @@ theorem psiX_rename_blockPermEmbed (σ : ∀ j, Equiv.Perm (Fin (rs j)))
         = MvPolynomial.C (MvPolynomial.C c) from rfl,
       MvPolynomial.map_C, MvPolynomial.rename_C]
     exact congrArg MvPolynomial.C (MvPolynomial.rename_C _ _).symm
-  ·
-    intro l
+  · intro l
     show psiX k rs (MvPolynomial.rename _ (MvPolynomial.X l))
       = MvPolynomial.rename _ (MvPolynomial.mapAlgHom _ (psiX k rs (MvPolynomial.X l)))
     rw [MvPolynomial.rename_X]

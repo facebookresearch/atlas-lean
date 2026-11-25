@@ -186,8 +186,7 @@ private theorem Gamma0_le_conj_Gamma0 {M N d : ℕ} (hd : d ≠ 0) (hdiv : d * M
     rw [Matrix.det_fin_two_of]
     linear_combination hdet + (A : Matrix (Fin 2) (Fin 2) ℤ) 0 1 * hc'⟩
   refine ⟨B, ?_, ?_⟩
-  ·
-    rw [SetLike.mem_coe, CongruenceSubgroup.Gamma0_mem]
+  · rw [SetLike.mem_coe, CongruenceSubgroup.Gamma0_mem]
     show ((c' : ℤ) : ZMod M) = 0
     exact (ZMod.intCast_zmod_eq_zero_iff_dvd _ M).mpr hMc'
   · have hc'' : ((A.1 1 0 : ℤ) : ℝ) = (d : ℝ) * (c' : ℝ) := by exact_mod_cast hc'
