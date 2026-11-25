@@ -81,8 +81,8 @@ section L1
 
 variable (ι : Type*) [Fintype ι]
 
-/-- The `ℓ₁` norm $x \mapsto \sum_i |x_i|$ on the Euclidean space $\mathbb{R}^\iota$, as a
-seminorm. -/
+/-- For a finite index set $\iota$, the $\ell_1$ seminorm on $\mathbb R^\iota$ is
+$x \mapsto \sum_{i\in\iota}|x_i|$. -/
 noncomputable def l1Seminorm : Seminorm ℝ (EuclideanSpace ℝ ι) :=
   Seminorm.of (fun x => ∑ i, |x i|)
     (fun x y => (Finset.sum_le_sum fun i _ => abs_add_le (x i) (y i)).trans_eq
@@ -107,7 +107,9 @@ theorem l1Seminorm_single [DecidableEq ι] (i : ι) (a : ℝ) :
   rw [l1Seminorm_apply, Finset.sum_eq_single i (fun j _ hj => by simp [hj]) (by simp)]
   simp
 
-/-- Every signing `∑ εᵢ eᵢ` of the standard basis vectors has `ℓ₁` norm `card ι`. -/
+/-- For a finite index set $\iota$ and signs $\varepsilon_i\in\{-1,1\}$, the signed sum of
+the standard basis vectors of $\mathbb R^\iota$ satisfies
+$\bigl\|\sum_{i\in\iota}\varepsilon_i e_i\bigr\|_1=|\iota|$. -/
 theorem l1Seminorm_sum_smul_single [DecidableEq ι] (ε : ι → ℤˣ) :
     l1Seminorm ι (∑ i, ((ε i : ℤ) : ℝ) • EuclideanSpace.single i (1 : ℝ)) = Fintype.card ι := by
   have hcoord (j : ι) : (∑ i, ((ε i : ℤ) : ℝ) • EuclideanSpace.single i (1 : ℝ)) j =

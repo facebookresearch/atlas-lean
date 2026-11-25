@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Algebra.GCDMonoid.Finset
 public import Mathlib.Algebra.Group.Submonoid.Basic
+import Mathlib.Algebra.Group.Submonoid.BigOperators
 public import MathlibExt.NumberTheory.BinomidIndex
 
 /-!
@@ -17,7 +18,8 @@ public import MathlibExt.NumberTheory.BinomidIndex
 
 We use zero-based indexing for the binomid indices of Caalim and Tanaka. The gcd of the
 maximizing prefix lengths divides every length attaining the same average in a lex-minimal
-extension.
+extension. We also show that the atoms of an atom-generated submonoid of natural-valued
+functions form its unique basis.
 -/
 
 namespace MetaMathlibExt
@@ -207,6 +209,86 @@ Section 4. -/
 public theorem isAddMonoidBasis_empty {α : Type*} [AddCommMonoid α] :
     IsAddMonoidBasis ({0} : Set α) ∅ :=
   ⟨by simp, fun _ _ _ hβ _ j _ => absurd (hβ j) (Set.notMem_empty _)⟩
+
+/-- A combination of a subset of a basis can equal a basis element only in that subset. -/
+private theorem IsAddMonoidBasis.mem_of_mem_closure {α : Type*} [AddCommMonoid α]
+    {M B S : Set α} (hB : IsAddMonoidBasis M B) (hSB : S ⊆ B) {x : α} (hx : x ∈ B)
+    (hgen : x ∈ AddSubmonoid.closure S) : x ∈ S := by
+  classical
+  obtain ⟨c, t, ht, hsupp, hsum⟩ := AddSubmonoid.mem_closure_iff_exists_finset_subset.mp hgen
+  by_contra hxS
+  have hxt : x ∉ t := fun h => hxS (ht h)
+  have hc : c x = 0 := Function.support_subset_iff'.mp hsupp x hxt
+  -- Include x in the indexed family, with coefficient zero.
+  let u := insert x t
+  let e := u.equivFin
+  let j := e ⟨x, Finset.mem_insert_self x t⟩
+  have hu : ↑u ⊆ B := by
+    simpa [u] using Set.insert_subset hx (ht.trans hSB)
+  have hpos := hB.2 u.card (fun i => (e.symm i : α))
+    (Subtype.val_injective.comp e.symm.injective) (fun i => hu (e.symm i).property)
+    (fun i => c (e.symm i)) j (by
+      rw [e.symm.sum_comp (fun a : u => c a • (a : α)),
+        Finset.sum_coe_sort u (fun a => c a • a)]
+      simpa [u, j, hc, hxt] using hsum.symm)
+  simp [j, hc] at hpos
+
+/-- **Atoms are the unique basis of an atom-generated submonoid.** Let $\iota$ be a type and
+let $M$ be a submonoid of $\mathbb{N}^\iota$ under componentwise addition. Let $A$ be the set
+of atoms of $M$: the elements $a \in M$ with $a \ne 0$ such that $y = 0$ or $z = 0$ whenever
+$a = y + z$ with $y, z \in M$. If every element of $M$ is a finite sum of elements of $A$, then
+a set $B \subseteq \mathbb{N}^\iota$ is a basis of $M$ if and only if $B = A$; that is, $A$ is
+the unique basis of $M$.
+
+Source: Caalim and Tanaka, *Generalized Binomial Coefficients and the Monoid
+of Lexicographically Minimal Extensions*, INTEGERS 26 (2026), Article A113,
+Proposition 4 (`integers-2026-A113-prop-4`). -/
+public theorem isAddMonoidBasis_iff_eq_atoms {ι : Type*} (M : AddSubmonoid (ι → ℕ))
+    (hM : ∀ x ∈ M, x ∈ AddSubmonoid.closure
+      {a | a ∈ M ∧ a ≠ 0 ∧ ∀ y ∈ M, ∀ z ∈ M, a = y + z → y = 0 ∨ z = 0})
+    (B : Set (ι → ℕ)) :
+    IsAddMonoidBasis (M : Set (ι → ℕ)) B ↔
+      B = {a | a ∈ M ∧ a ≠ 0 ∧ ∀ y ∈ M, ∀ z ∈ M, a = y + z → y = 0 ∨ z = 0} := by
+  classical
+  let A : Set (ι → ℕ) :=
+    {a | a ∈ M ∧ a ≠ 0 ∧ ∀ y ∈ M, ∀ z ∈ M, a = y + z → y = 0 ∨ z = 0}
+  change IsAddMonoidBasis (M : Set (ι → ℕ)) B ↔ B = A
+  have hAM : A ⊆ M := fun _ ha => ha.1
+  -- An atom in the closure of a subset of M must already belong to that subset.
+  have atom_mem {S : Set (ι → ℕ)} (hS : S ⊆ M) {x} (hx : x ∈ AddSubmonoid.closure S) :
+      x ∈ A → x ∈ S := by
+    induction hx using AddSubmonoid.closure_induction with
+    | mem x hx => exact fun _ => hx
+    | zero => exact fun ha => (ha.2.1 rfl).elim
+    | add y z hy hz ihy ihz =>
+      intro ha
+      obtain rfl | rfl := ha.2.2 y (AddSubmonoid.closure_le.mpr hS hy) z
+        (AddSubmonoid.closure_le.mpr hS hz) rfl
+      · simp only [zero_add] at ha ⊢
+        exact ihz ha
+      · simp only [add_zero] at ha ⊢
+        exact ihy ha
+  constructor
+  · intro hB
+    have hclosure : AddSubmonoid.closure B = M := SetLike.coe_injective hB.1
+    have hBM : B ⊆ M := hclosure ▸ AddSubmonoid.subset_closure
+    have hAB : A ⊆ B := fun x hx => atom_mem hBM (hclosure ▸ hAM hx) hx
+    exact Set.Subset.antisymm (fun x hx => hB.mem_of_mem_closure hAB hx (hM x (hBM hx))) hAB
+  · rintro rfl
+    refine ⟨Set.Subset.antisymm (AddSubmonoid.closure_le.mpr hAM) (fun x => hM x), ?_⟩
+    intro n β hinj hβ c j heq
+    by_contra! hj
+    have hc : c j = 0 := by omega
+    let S := A \ {β j}
+    have hgen : β j ∈ AddSubmonoid.closure S := by
+      rw [heq]
+      apply AddSubmonoid.sum_mem
+      intro i _
+      by_cases hij : i = j
+      · simp [hij, hc]
+      · exact AddSubmonoid.nsmul_mem _ (AddSubmonoid.subset_closure
+          (show β i ∈ S from ⟨hβ i, fun h => hij (hinj h)⟩)) _
+    exact (atom_mem (S := S) (fun _ h => hAM h.1) hgen (hβ j)).2 rfl
 
 /-- **Atomic binomid index.** A sequence $\eta$ of nonnegative integers is a nonzero atomic
 binomid index (an element of the paper's set $\mathrm{Atom}$) when $\eta$ is a nonzero binomid

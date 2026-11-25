@@ -16,6 +16,7 @@ public import Mathlib.Data.Nat.PrimeFin
 public import Mathlib.NumberTheory.Divisors
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 public import MathlibExt.NumberTheory.ArithmeticFunction.TotientSqrtLowerBound
+public import MathlibExt.NumberTheory.Cyclotomic.HomogenizedCyclotomicPrimeMul
 public import MathlibExt.NumberTheory.Cyclotomic.HomogenizedCyclotomicProduct
 public import MathlibExt.NumberTheory.PrimitiveDivisor
 
@@ -89,21 +90,6 @@ theorem_wanted homogenizedCyclotomic_mem_Icc {a b n : ℕ} (hb : 0 < b) (hba : b
     (hn : 0 < n) :
     ((a : ℤ) - b) ^ Nat.totient n ≤ homogenizedCyclotomic n a b ∧
       homogenizedCyclotomic n a b ≤ ((a : ℤ) + b) ^ Nat.totient n
-
-/-- **Homogenized cyclotomic values at $pn$.** Let $p$ be a prime, $n$ a positive integer and
-$a, b$ integers, and write $\Phi_m(a, b)$ for the homogenized cyclotomic value. If $p \mid n$,
-then $\Phi_{pn}(a, b) = \Phi_n(a^p, b^p)$. If $p \nmid n$, then
-$\Phi_{pn}(a, b) \cdot \Phi_n(a, b) = \Phi_n(a^p, b^p)$.
-
-The paper states the case $p \nmid n$ as a quotient; here it is cleared of its denominator.
-
-Source: Ömer Avcı, *Large Zsigmondy Primes*, INTEGERS 24 (2024), Article A62, Lemma 3 (iii)
-(quoted from reference [6]). -/
-theorem_wanted homogenizedCyclotomic_prime_mul {p n : ℕ} (hp : p.Prime) (hn : 0 < n)
-    (a b : ℤ) :
-    (p ∣ n → homogenizedCyclotomic (p * n) a b = homogenizedCyclotomic n (a ^ p) (b ^ p)) ∧
-      (¬ p ∣ n → homogenizedCyclotomic (p * n) a b * homogenizedCyclotomic n a b =
-        homogenizedCyclotomic n (a ^ p) (b ^ p))
 
 /-- **$p$-adic valuation of homogenized cyclotomic values at an odd prime.** Let $a > b$ be
 positive integers, let $p$ be an odd prime dividing neither $a$ nor $b$, and let $k$ be the least

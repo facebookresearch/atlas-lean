@@ -32,10 +32,13 @@ example (G : ZeroEulerGeometry O X E r) :
     G.totalPurity = O.purity G.bundle.total (G.dimension + r) := rfl
 
 -- The rank-zero Euler class, computed by the actual zero-section push, is the unit class for
--- every orientation datum (the zero section of the zero bundle is an isomorphism).
-example (G : ZeroEulerGeometry O X E 0) [IsIso (GlobalZeroSectionRecipe.zeroSection G.bundle)] :
-    G.euler = unitClass ℂ (space X.scheme) :=
+-- every orientation datum, with no further hypothesis.
+example (G : ZeroEulerGeometry O X E 0) : G.euler = unitClass ℂ (space X.scheme) :=
   G.euler_eq_unitClass
+
+-- The zero section of a rank-zero bundle is an isomorphism, found by instance search.
+example (G : ZeroEulerGeometry O X E 0) : IsIso (GlobalZeroSectionRecipe.zeroSection G.bundle) :=
+  inferInstance
 
 -- Pullback preserves the unit class, and the purity identification sends the fundamental class
 -- to the unit class.
