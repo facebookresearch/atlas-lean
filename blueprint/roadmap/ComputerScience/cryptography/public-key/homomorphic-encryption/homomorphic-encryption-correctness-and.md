@@ -23,4 +23,3 @@ trivial scheme whose evaluation outputs $(C, \Psi)$ would be correct.
 ## Sources
 
 - C. Gentry, *A fully homomorphic encryption scheme*, PhD thesis, Stanford University, 2009, <https://crypto.stanford.edu/craig/craig-thesis.pdf>: Section 2.1, Definitions 2.1.1–2.1.5 and the remark on trivial schemes before Definition 2.1.2.
-- Z. Brakerski, C. Gentry and V. Vaikuntanathan, "(Leveled) fully homomorphic encryption without bootstrapping", *ITCS 2012*, ACM, 2012 (not opened; the definitions here are Gentry's).

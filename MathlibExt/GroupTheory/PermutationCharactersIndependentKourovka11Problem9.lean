@@ -30,7 +30,9 @@ Following Brescia, Ingrosso and Trombetti, we factor the characters through the 
 classes of cyclic subgroups. In a noncyclic group these omit the class of the whole group.
 The dimension bound works directly over the rationals since the characters count fixed cosets.
 
-## Record carried over from the retired `WantedExt/GroupTheory/PermutationCharactersIndependentKourovka11Problem9Wanted.lean`
+## Record carried over from the retired wanted module
+
+From `WantedExt/GroupTheory/PermutationCharactersIndependentKourovka11Problem9Wanted.lean`:
 
 Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
 Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 11.9 (Ya. G. Berkovich). UnsolvedMath

@@ -22,7 +22,9 @@ We count signed transitions between adjacent letters after free reduction. Rever
 the count, and multiplication has defect at most three. Thus each letter change in a palindrome
 has bounded effect, while the count grows linearly on powers of the commutator.
 
-## Record carried over from the retired `WantedExt/GroupTheory/AlmostPalindromicWidthKourovka19Problem8Wanted.lean`
+## Record carried over from the retired wanted module
+
+From `WantedExt/GroupTheory/AlmostPalindromicWidthKourovka19Problem8Wanted.lean`:
 
 Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
 Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 19.8 (V. G. Bardakov). UnsolvedMath record

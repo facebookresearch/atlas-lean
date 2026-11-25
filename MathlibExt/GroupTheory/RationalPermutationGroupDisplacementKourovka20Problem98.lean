@@ -27,7 +27,9 @@ Every subgroup of the permutations of the naturals isomorphic to the additive ra
 an element with infinitely many distinct integer displacements (Kourovka Notebook, Problem 20.98).
 The proof counts orbit points of the permutation corresponding to `1 / r` for large `r`.
 
-## Record carried over from the retired `WantedExt/GroupTheory/RationalPermutationGroupDisplacementKourovka20Problem98Wanted.lean`
+## Record carried over from the retired wanted module
+
+From `WantedExt/GroupTheory/RationalPermutationGroupDisplacementKourovka20Problem98Wanted.lean`:
 
 Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
 Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 20.98 (N. M. Suchkov). UnsolvedMath record

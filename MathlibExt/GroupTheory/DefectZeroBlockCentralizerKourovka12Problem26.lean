@@ -30,7 +30,9 @@ import Mathlib.Tactic.Ring
 The affine group of the plane over `ZMod 3` has a `2`-block of defect zero, while every element in
 its largest normal subgroup of odd order has even centralizer order.
 
-## Record carried over from the retired `WantedExt/GroupTheory/DefectZeroBlockCentralizerKourovka12Problem26Wanted.lean`
+## Record carried over from the retired wanted module
+
+From `WantedExt/GroupTheory/DefectZeroBlockCentralizerKourovka12Problem26Wanted.lean`:
 
 Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
 Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 12.26 (Shi
