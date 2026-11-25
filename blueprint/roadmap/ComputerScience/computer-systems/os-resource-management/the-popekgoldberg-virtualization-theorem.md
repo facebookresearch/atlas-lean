@@ -1,6 +1,6 @@
 # The Popek–Goldberg virtualization theorem
 
-For a conventional third-generation machine in the [Popek–Goldberg model](the-popekgoldberg-machine-model.md), a virtual machine monitor with the properties of equivalence, efficiency and resource control may be constructed if the set of sensitive instructions is a subset of the set of privileged instructions. In other words, every instruction must either behave the same in user and supervisor mode or trap when executed in user mode.
+For a conventional third-generation machine in the [Popek–Goldberg model](the-popekgoldberg-machine-model.md), a virtual machine monitor with the properties of equivalence, efficiency and resource control may be constructed if the set of sensitive instructions is a subset of the set of privileged instructions. In other words, every sensitive instruction must trap when executed in user mode.
 
 The paper also gives variants for *recursive* virtualization, a monitor that can run a copy of itself, and for *hybrid* monitors, which interpret all instructions executed in virtual supervisor mode.
 

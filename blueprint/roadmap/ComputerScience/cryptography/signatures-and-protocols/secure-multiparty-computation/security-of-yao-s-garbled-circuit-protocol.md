@@ -16,6 +16,12 @@ gate, so apart from the output decoding the labels reveal nothing about the wire
 - [Two-party security against semi-honest adversaries](two-party-security-against-semi-honest.md)
 - [Oblivious transfer from the decisional Diffie–Hellman assumption](oblivious-transfer-from-the-decisional.md)
 
+## Expansion
+
+This page becomes ready once:
+
+- Security of the garbling scheme under a stated row-encryption assumption, and the simulation-based definition of semi-honest security for two-party protocols, with the simulators for both corrupted parties (statement prerequisites; not yet stated)
+
 ## Sources
 
 - D. Evans, V. Kolesnikov and M. Rosulek, *A Pragmatic Introduction to Secure Multi-Party Computation*, Foundations and Trends in Privacy and Security 2(2–3), 2018, <https://securecomputation.org/docs/pragmaticmpc.pdf>: Section 3.1 (Figures 3.1–3.2, point-and-permute, the instantiation by a random oracle or a pseudorandom function, and the security argument for both corruptions).

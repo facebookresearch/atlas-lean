@@ -4,7 +4,7 @@ In the *cell-probe model*, a data structure's memory is an array of cells of $w$
 
 The model is stronger than the transdichotomous RAM and the [word RAM](../../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/the-word-ram-model.md). A word-RAM data structure with word size $w$ that uses $t$ time per operation makes at most $O(t)$ probes, since each word-RAM instruction touches $O(1)$ cells. So a lower bound on probes in the cell-probe model with word size $w$ is a lower bound on time for every word-RAM implementation with the same word size.
 
-Usually $w = \Theta(\log n)$, or more generally $w \ge \log n$, so that a cell can hold a pointer. For example, for predecessor search over $n$ keys from $\{0, \dots, 2^w - 1\}$ with $n\,\mathrm{polylog}(n)$ space, the cell-probe complexity is $\Theta\bigl(\min\{\log_w n,\ \log w / \log(\log w/\log\log n)\}\bigr)$, which matches the better of [van Emde Boas trees](../../tries-and-integer-dictionaries/van-emde-boas-tree/predecessor-in-doubly-logarithmic-time.md) and fusion trees.
+Usually $w = \Theta(\log n)$, or more generally $w \ge \log n$, so that a cell can hold a pointer.
 
 ## Background
 
