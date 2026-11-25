@@ -20,3 +20,5 @@ See [single-input single-output linear systems](../../../Analysis/control-theory
 
 - [Integral feedback gives robust perfect adaptation](output-eq-zero-of-integral-feedback.md)
 - [Antithetic integral feedback and stochastic set-point tracking](antithetic-integral-feedback-ensures-stochastic-set-point-tracking.md)
+- [The integral-feedback loop as a linear system and its equilibrium](the-integral-feedback-loop-as-a-linear-system-and-its-equilibrium.md)
+- [Exponential perfect adaptation of the integral-feedback loop](exponential-perfect-adaptation-of-the-integral-feedback-loop.md)

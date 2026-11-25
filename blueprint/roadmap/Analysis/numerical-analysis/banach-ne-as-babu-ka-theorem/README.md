@@ -18,3 +18,4 @@
 - [Banach–Nečas–Babuška equivalence acts as the bilinear form](continuous-linear-equiv-of-bilinear-form-2.md)
 - [Unique solvability of the inf-sup variational problem](exists-unique-apply-eq.md)
 - [Stability bound for the inf-sup variational problem](exists-apply-eq-and-norm-le.md)
+- [Babuška–Brezzi theorem for saddle-point problems](babuska-brezzi-theorem-for-saddle-point-problems.md)

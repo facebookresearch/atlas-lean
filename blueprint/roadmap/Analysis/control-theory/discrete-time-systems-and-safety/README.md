@@ -15,3 +15,4 @@
 - [Controlled invariant sets are traps for the environment](controlled-invariant-sets-are-traps-for-the-environment.md)
 
 - [Round-off versus truncation in time stepping](round-off-versus-truncation-in-time-stepping.md)
+- [Runtime assurance](runtime-assurance/README.md)

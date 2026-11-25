@@ -7064,6 +7064,8 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/Biology/not-yet-classified/string-overlap/README.md"}], "id": "af_a49c6b5b1d3214e10f58bb70", "extensions": {"org.autoform": {"navigation": "module"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Biology/population-dynamics/life-tables/multistate-life-table-by-matrix-products.md"}], "id": "af_3c23e57c57abda2809588db7", "extensions": {"org.atlas-wiki": {"kind": "theorem"}, "org.autoform": {"not_ready": true}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Biology/population-dynamics/life-tables/README.md"}], "id": "af_084e3039f303729c101c7cff"}
+{"subject": [{"type": "generic", "uri": "../roadmap/Biology/systems-biology/integral-feedback-and-perfect-adaptation/the-integral-feedback-loop-as-a-linear-system-and-its-equilibrium.md"}], "id": "af_a54cbe1e0a492cec4cc9f66e", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Biology/systems-biology/integral-feedback-and-perfect-adaptation/exponential-perfect-adaptation-of-the-integral-feedback-loop.md"}], "id": "af_1db09bf31ebe9d7540104d44", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Biology/systems-biology/chemical-reaction-network-theory/multisite-phosphorylation/README.md"}], "id": "af_9a5eb96f9b6e24bc7822aa9b"}
 {"subject": [{"type": "generic", "uri": "../roadmap/Biology/population-dynamics/discrete-population-models/README.md"}], "id": "af_7fa6ebd7b3b82186d79a89b8"}
 {"subject": [{"type": "generic", "uri": "../roadmap/Biology/mathematical-neuroscience/hopfield-networks/README.md"}], "id": "af_9ef15d22ff4b1fc02969f2ea"}
