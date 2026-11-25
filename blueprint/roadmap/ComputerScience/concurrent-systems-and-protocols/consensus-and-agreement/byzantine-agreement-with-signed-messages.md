@@ -10,7 +10,7 @@ traitors behave arbitrarily. Messages satisfy:
   (b) anyone can verify the authenticity of a general's signature. Nothing is assumed about traitors' signatures, which other traitors
   may forge.
 
-Write $v : i$ for the value $v$ signed by General $i$, and fix a function $\mathrm{choice}$ on finite sets of orders with $\mathrm{choice}(\{v\}) = v$ and
+Write $v : i$ for the value $v$ signed by General $i$. A message $v : 0 : j_1 : \cdots : j_k$ received by lieutenant $i$ is *properly signed* if every signature in it is authentic and $j_1, \dots, j_k$ are pairwise distinct lieutenants, all different from $i$; messages with repeated signers are discarded. Fix a function $\mathrm{choice}$ on finite sets of orders with $\mathrm{choice}(\{v\}) = v$ and
 $\mathrm{choice}(\emptyset) = \mathrm{RETREAT}$. In algorithm $\mathrm{SM}(m)$ each lieutenant $i$ keeps a set $V_i$ of orders, initially empty:
 
 1. the commander signs his order and sends it to every lieutenant;

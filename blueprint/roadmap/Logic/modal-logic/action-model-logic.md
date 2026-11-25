@@ -1,7 +1,7 @@
 # Action model logic
 
 This node covers action models and the logic of epistemic actions of Baltag, Moss and Solecki, which
-generalize public announcements. An action model is a relational structure of events with an
+generalize public announcements. An action model is a relational structure with a finite set of events, an
 accessibility relation for each agent and a precondition formula for each event. The product update of
 a Kripke model $M$ with an action model $A$ has as worlds the pairs $(v, f)$ of a world and an event
 whose precondition holds at $v$, an $a$-arrow from $(v_1, f_1)$ to $(v_2, f_2)$ exactly when
