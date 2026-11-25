@@ -15,7 +15,7 @@ public import MathlibExt.RingTheory.Valuation.HenselianFixedField
 universe u
 
 -- Exact-source consumer, with the original binders.
-theorem exactSource
+private theorem exactSource
     {K L : Type u} [Field K] [Field L] [Algebra K L] [IsAlgClosed L] (A : ValuationSubring L)
     (I : Subgroup (L ≃ₐ[K] L)) (hI : I ≤ A.inertiaSubgroupIn K) :
     HenselianLocalRing ↥(A.toSubring ⊓ (IntermediateField.fixedField I).toSubring) :=
@@ -39,5 +39,5 @@ example
       (IntermediateField.fixedField (⊥ : Subgroup (L ≃ₐ[K] L))).toSubring
       = A.toSubring := by
     ext x
-    simp [IntermediateField.mem_fixedField_iff]
+    simp
   rwa [hsub] at h

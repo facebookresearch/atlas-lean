@@ -33,7 +33,7 @@ public import Mathlib.RingTheory.Henselian
 public import Mathlib.RingTheory.Valuation.RamificationGroup
 public import Mathlib.FieldTheory.Galois.Basic
 public import MathlibExt.RingTheory.Valuation.Henselian
-public import MathlibExt.RingTheory.Valuation.InertiaRootsOfUnity
+public import MathlibExt.RingTheory.Valuation.InertiaSubgroupIn
 import Mathlib.Algebra.Polynomial.GroupRingAction
 import Mathlib.RingTheory.LocalRing.ResidueField.Basic
 import Mathlib.RingTheory.Polynomial.Basic
@@ -119,7 +119,7 @@ private theorem isUnit_iff (o : ↥(OI A I)) : IsUnit o ↔ IsUnit (incl A I o) 
   have hinvO : (o : L)⁻¹ ∈ OI A I := Subring.mem_inf.mpr ⟨hinvA, hinvF⟩
   refine IsUnit.of_mul_eq_one ⟨_, hinvO⟩ ?_
   apply Subtype.ext
-  show (o : L) * (o : L)⁻¹ = 1
+  change (o : L) * (o : L)⁻¹ = 1
   exact mul_inv_cancel₀ ho'
 
 private instance isLocalRingOI : IsLocalRing ↥(OI A I) := by
@@ -165,7 +165,7 @@ private theorem henselian (hI : I ≤ A.inertiaSubgroupIn K) :
     HenselianLocalRing ↥(OI A I) where
   toIsLocalRing := inferInstance
   is_henselian f hf a₀ h₀ hu := by
-    haveI : HenselianLocalRing ↥A := ValuationSubring.henselianLocalRing_of_isAlgClosed A
+    have : HenselianLocalRing ↥A := ValuationSubring.henselianLocalRing_of_isAlgClosed A
     set ι := incl A I with hι
     set fA := f.map ι with hfA
     have hfAm : fA.Monic := hf.map ι
@@ -181,9 +181,9 @@ private theorem henselian (hI : I ≤ A.inertiaSubgroupIn K) :
       obtain ⟨τ, hτ, rfl⟩ := exists_decomp_of_mem A (hI hσ)
       have hsm : τ • fA = fA := by
         ext n
-        rw [coeff_smul, hfA, coeff_map, smul_incl A I τ hσ]
+        rw [AddMonoidAlgebra.coeff_smul_apply, hfA, coeff_map, smul_incl A I τ hσ]
       have hβroot : fA.IsRoot (τ • α) := by
-        show fA.eval (τ • α) = 0
+        change fA.eval (τ • α) = 0
         conv_lhs => rw [← hsm]
         rw [smul_eval_smul, (show fA.eval α = 0 from hα), smul_zero]
       have hβ₀ : τ • α - ι a₀ ∈ maximalIdeal ↥A := by
@@ -197,11 +197,11 @@ private theorem henselian (hI : I ≤ A.inertiaSubgroupIn K) :
     have ha : ι a = α := Subtype.ext rfl
     refine ⟨a, ?_, ?_⟩
     · apply incl_injective A I
-      show ι (f.eval a) = ι 0
+      change ι (f.eval a) = ι 0
       rw [map_zero, ← hev, ha]
       exact hα
     · rw [mem_maximalIdeal_iff A I, map_sub]
-      show ι a - ι a₀ ∈ maximalIdeal ↥A
+      change ι a - ι a₀ ∈ maximalIdeal ↥A
       rw [ha]
       exact hα₀
 
