@@ -12,16 +12,21 @@ public import Mathlib.Analysis.InnerProductSpace.PiL2
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 public import Mathlib.LinearAlgebra.Dimension.Finrank
 public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
+public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 public import Mathlib.LinearAlgebra.Matrix.Notation
+public import Physlib.ClassicalMechanics.EulerLagrange
 public import PhyslibExt.Units.EngineeringFrames
+import Mathlib.Analysis.Calculus.ContDiff.RCLike
+import Mathlib.Analysis.Calculus.Gradient.Basic
 import Mathlib.Analysis.InnerProductSpace.Calculus
+import Mathlib.Analysis.ODE.ExistUnique
 import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Positivity
 
 /-!
-# Two-link kinetic energy, regular mass matrix, tangent space and rod reactions
+# Two-link kinetic energy, mass matrix, rod reactions and reduced equation of motion
 
 A planar open double pendulum: point masses `m₁, m₂ > 0` on massless rods of lengths
 `l₁, l₂ > 0`, the first rod pivoted at the origin and the second at the first mass. The
@@ -61,14 +66,30 @@ force pair that does no virtual work along it is such a reaction, with unique mu
 positive rod tension is a negative multiplier. A closed chain behaves differently: one point on
 two unit circles tangent at `(1, 0)` has a constraint Jacobian of rank one there.
 
+The Euler-Lagrange operator `ClassicalMechanics.eulerLagrangeOp L q = ∂L/∂q - ∂ₜ (∂L/∂v)` of Physlib
+takes values in a real inner product space, so there the angles and angular velocities are vectors
+of `EuclideanSpace ℝ (Fin 2)`. Along an angle trajectory that is `C²` at `t` the operator is
+`f(q, q̇) - M(q) q̈` with the generalized force
+`f₁ = -m₂ l₁ l₂ sin (q₁ - q₂) q̇₂² - (m₁ + m₂) g l₁ sin q₁`,
+`f₂ = m₂ l₁ l₂ sin (q₁ - q₂) q̇₁² - m₂ g l₂ sin q₂`; for positive masses and lengths the
+Euler-Lagrange equation is the reduced ODE `q̈ = M(q)⁻¹ f(q, q̇)`, written out by Cramer's rule.
+Newton's equations `mᵢ p̈ᵢ = mᵢ (0, -g) + Rᵢ` along the Cartesian motion `posMap (q t)` hold with a
+rod reaction `R` exactly when the angles satisfy the reduced ODE, and then the rod multipliers are
+unique. The first-order field `(q, w) ↦ (w, M(q)⁻¹ f(q, w))` is smooth, collinear links included,
+so every initial angle and angular velocity starts a solution on an open time interval, along
+which the Euler-Lagrange operator vanishes.
+
 Model inputs: point masses on ideal massless rods; absolute link angles in one inertial frame, a
 chosen coordinate model on all of `ℝ²` (periodic, not a global chart of the configuration
 manifold), with tangent spaces taken locally at a supplied configuration; uniform gravity along
 the downward vertical; no friction and no actuation. Virtual velocities are the kernel vectors of
 the constraint Jacobian, and a reaction is ideal when it does no virtual work along them
-(d'Alembert's principle). The Euler-Lagrange equations and their initial value problem, general
-constant-rank or manifold constraints, chart-free or differential-algebraic formulations, and
-empirical adequacy or system safety are not treated.
+(d'Alembert's principle). Newton's second law holds for each mass, with gravity and the rod
+reactions as the only forces. Not treated: global existence or uniqueness for the initial value
+problem, closed chains, the lift of an arbitrary constrained Cartesian motion to angles, general
+constant-rank or manifold constraints, chart-free or differential-algebraic formulations, the
+variational characterization of the Euler-Lagrange operator, numerical integration, and empirical
+adequacy or system safety.
 
 ## ii. Key results
 
@@ -91,6 +112,15 @@ empirical adequacy or system safety are not treated.
   the kernel of the constraint Jacobian, the velocities of constrained motions.
 - `virtualWork_rodReaction_eq_zero`, `existsUnique_rodReaction`: rod-normal reactions do no
   virtual work, and they are the only force pairs that do none, with unique multipliers.
+- `eulerLagrangeOp_angleLagrangian`, `eulerLagrangeOp_angleLagrangian_eq_zero_iff`,
+  `reducedAccel_eq_inv_mulVec`: the Euler-Lagrange operator is `f(q, q̇) - M(q) q̈`, and its
+  vanishing is the reduced ODE `q̈ = M(q)⁻¹ f(q, q̇)`.
+- `exists_rodReaction_newton_iff`, `existsUnique_rodReaction_newton_iff`: Newton's equations with
+  rod reactions hold exactly along solutions of the reduced ODE, with unique multipliers.
+- `contDiff_reducedField`, `locallyLipschitz_reducedField`,
+  `exists_forall_mem_Ioo_hasDerivAt_reducedField`, `exists_eulerLagrangeOp_angleLagrangian_eq_zero`:
+  the reduced field is smooth and locally Lipschitz, and every initial state starts a local
+  solution of the Euler-Lagrange equation.
 
 ## iii. Table of contents
 
@@ -101,6 +131,9 @@ empirical adequacy or system safety are not treated.
 - E. The rod constraints and their Jacobian
 - F. The tangent space
 - G. Rod reactions and virtual work
+- H. The reduced Euler-Lagrange equation
+- I. Newton's equations with rod reactions
+- J. Local regularity and the local initial value problem
 
 ## iv. References
 
@@ -110,8 +143,12 @@ empirical adequacy or system safety are not treated.
   (constraints, generalized coordinates, and the kinetic energy as a quadratic form in the
   generalized velocities; Sections 1.3 and 1.4 for virtual displacements, d'Alembert's principle
   and workless constraint forces).
+- E. A. Coddington and N. Levinson, *Theory of Ordinary Differential Equations*, Chapter 1 (local
+  existence by successive approximations).
 - `PhyslibExt.Units.EngineeringFrames` (frame convention) and `PhyslibExt.Mechanics.PowerPorts`
   (particle kinetic energy).
+- Physlib `ClassicalMechanics.eulerLagrangeOp` (the Euler-Lagrange operator) and Mathlib
+  `IsPicardLindelof.exists_eq_forall_mem_Icc_hasDerivWithinAt` (the Picard-Lindelöf theorem).
 -/
 
 @[expose] public section
@@ -144,7 +181,8 @@ private lemma norm_unit_sin_cos (q : ℝ) : ‖!₂[Real.sin q, -Real.cos q]‖ 
         (Real.sqrt_sq (norm_nonneg _)).symm
     _ = 1 := by rw [hsq, Real.sqrt_one]
 
-/-- The positions satisfy the two rod constraints `‖p₁‖ = l₁` and `‖p₂ - p₁‖ = l₂`. -/
+/-- For nonnegative lengths the positions satisfy the two rod constraints `‖p₁‖ = l₁` and
+`‖p₂ - p₁‖ = l₂`. -/
 lemma pos_rod_constraints {l₁ l₂ : ℝ} (hl₁ : 0 ≤ l₁) (hl₂ : 0 ≤ l₂) (q₁ q₂ : ℝ) :
     ‖pos₁ l₁ q₁‖ = l₁ ∧ ‖pos₂ l₁ l₂ q₁ q₂ - pos₁ l₁ q₁‖ = l₂ := by
   constructor
@@ -279,8 +317,8 @@ lemma kineticEnergy_eq_massMatrix (m₁ m₂ l₁ l₂ q₁ q₂ w₁ w₂ : ℝ
   simp [massMatrix]
   ring
 
-/-- On an actual angle trajectory the kinetic energy of the actual Cartesian velocities, the time
-derivatives of the positions, is `q'ᵀ M(q) q' / 2`. -/
+/-- If `q₁, q₂` have derivatives `w₁, w₂` at `t`, the kinetic energy of the actual Cartesian
+velocities (the derivatives of the positions at `t`) is `wᵀ M(q(t)) w / 2`. -/
 lemma kineticEnergy_actual {q₁ q₂ : ℝ → ℝ} {w₁ w₂ t : ℝ} (m₁ m₂ l₁ l₂ : ℝ)
     (h₁ : HasDerivAt q₁ w₁ t) (h₂ : HasDerivAt q₂ w₂ t) :
     m₁ * ‖deriv (fun s => pos₁ l₁ (q₁ s)) t‖ ^ 2 / 2 +
@@ -356,7 +394,7 @@ lemma kineticEnergy_pos {m₁ m₂ l₁ l₂ : ℝ} (hm₁ : 0 < m₁) (hm₂ : 
     linarith
 
 /-- Collinear links, `sin (q₁ - q₂) = 0` (stretched or folded), keep the determinant
-`m₁ m₂ l₁² l₂²`: no rank loss for this open chain. -/
+`m₁ m₂ l₁² l₂²`, nonzero for nonzero masses and lengths: no rank loss for this open chain. -/
 lemma massMatrix_det_of_collinear {q₁ q₂ : ℝ} (h : Real.sin (q₁ - q₂) = 0) (m₁ m₂ l₁ l₂ : ℝ) :
     (massMatrix m₁ m₂ l₁ l₂ q₁ q₂).det = m₁ * m₂ * l₁ ^ 2 * l₂ ^ 2 := by
   rw [massMatrix_det, h]
@@ -374,14 +412,14 @@ open scoped InnerProductSpace Topology
 
 local notation "ℝ²" => EuclideanSpace ℝ (Fin 2)
 
-
 /-- The explicit angle-to-position map: the Cartesian configuration `(p₁, p₂)` of the two point
 masses at the absolute link angles `q = (q₁, q₂)`. -/
 noncomputable def posMap (l₁ l₂ : ℝ) (q : ℝ × ℝ) : ℝ² × ℝ² :=
   (pos₁ l₁ q.1, pos₂ l₁ l₂ q.1 q.2)
 
 /-- The rod constraints on a Cartesian configuration `p = (p₁, p₂)`:
-`g(p) = (‖p₁‖² - l₁², ‖p₂ - p₁‖² - l₂²)`; the rods of lengths `l₁, l₂` hold where `g(p) = 0`. -/
+`g(p) = (‖p₁‖² - l₁², ‖p₂ - p₁‖² - l₂²)`; the rods, of lengths `|l₁|` and `|l₂|`, hold exactly where
+`g(p) = 0`. -/
 noncomputable def rodConstraint (l₁ l₂ : ℝ) (p : ℝ² × ℝ²) : ℝ × ℝ :=
   (‖p.1‖ ^ 2 - l₁ ^ 2, ‖p.2 - p.1‖ ^ 2 - l₂ ^ 2)
 
@@ -467,8 +505,8 @@ lemma hasFDerivAt_rodConstraint (l₁ l₂ : ℝ) (p : ℝ² × ℝ²) :
       refine Prod.ext ?_ ?_ <;> simp [rodJacobian, nsmul_eq_mul])
   exact h
 
-/-- The angle derivative sends angular velocities to the Cartesian velocities of the two-link
-module. -/
+/-- The angle derivative sends angular velocities to the Cartesian velocities `(vel₁, vel₂)` of the
+two masses. -/
 lemma angleJacobian_apply (l₁ l₂ : ℝ) (q w : ℝ × ℝ) :
     angleJacobian l₁ l₂ q w = (vel₁ l₁ q.1 w.1, vel₂ l₁ l₂ q.1 q.2 w.1 w.2) := by
   simp [angleJacobian, vel₁, vel₂, smul_smul, mul_comm]
@@ -609,8 +647,8 @@ lemma rodJacobian_velocity_eq_zero {l₁ l₂ : ℝ} {c : ℝ → ℝ² × ℝ²
     (hasDerivAt_const t (0 : ℝ × ℝ)).congr_of_eventuallyEq hc
   exact h1.unique h2
 
-/-- Every kernel vector at `posMap q` is the velocity at `s = 0` of the explicit constrained curve
-`s ↦ posMap (q + s w)`, for exactly one angular velocity `w`. -/
+/-- For positive lengths, every kernel vector at `posMap q` is the velocity at `s = 0` of the
+explicit constrained curve `s ↦ posMap (q + s w)`, for exactly one angular velocity `w`. -/
 lemma existsUnique_hasDerivAt_posMap {l₁ l₂ : ℝ} (hl₁ : 0 < l₁) (hl₂ : 0 < l₂) (q : ℝ × ℝ)
     {v : ℝ² × ℝ²} (hv : rodJacobian (posMap l₁ l₂ q) v = 0) :
     ∃! w : ℝ × ℝ, HasDerivAt (fun s : ℝ => posMap l₁ l₂ (q + s • w)) v 0 := by
@@ -638,8 +676,9 @@ lemma existsUnique_hasDerivAt_posMap {l₁ l₂ : ℝ} (hl₁ : 0 < l₁) (hl₂
 
 /-- Rod-normal reactions with multipliers `c₁, c₂` at `p = (p₁, p₂)`: the first rod acts on the
 first mass along `p₁`; the second rod acts on the second mass along `p₂ - p₁` and on the first mass
-with the opposite force. This is `(c₁ ∇g₁ + c₂ ∇g₂) / 2`; a tension `T₁ > 0` in the first rod is
-`c₁ = -T₁ / l₁`, and a tension `T₂ > 0` in the second is `c₂ = -T₂ / l₂`. -/
+with the opposite force. This is `(c₁ ∇g₁ + c₂ ∇g₂) / 2`; at a configuration with `‖p₁‖ = l₁ > 0`
+and `‖p₂ - p₁‖ = l₂ > 0`, a tension `T₁ > 0` in the first rod is `c₁ = -T₁ / l₁`, and a tension
+`T₂ > 0` in the second is `c₂ = -T₂ / l₂`. -/
 noncomputable def rodReaction (c₁ c₂ : ℝ) (p : ℝ² × ℝ²) : ℝ² × ℝ² :=
   (c₁ • p.1 - c₂ • (p.2 - p.1), c₂ • (p.2 - p.1))
 
@@ -719,5 +758,436 @@ lemma existsUnique_rodReaction {l₁ l₂ : ℝ} (hl₁ : 0 < l₁) (hl₂ : 0 <
         linear_combination (-1 : ℝ) * hC₁ - s₁ * (u0 + u2) + k₁ * (u1 + u3) - d₁ * l₁ * hc1
       exact sub_eq_zero.mp ((mul_eq_zero.mp h).resolve_left hl₁')
     rw [e1, e2]
+
+/-! ## H. The reduced Euler-Lagrange equation -/
+
+open scoped ContDiff Time
+open ClassicalMechanics (eulerLagrangeOp)
+
+/-- The two-link Lagrangian in the carrier type of `ClassicalMechanics.eulerLagrangeOp`:
+time-independent, with the angles `q = (q₁, q₂)` and the angular velocities `v = (w₁, w₂)` as
+vectors of the Euclidean plane; in coordinates it is `lagrangian`. -/
+noncomputable def angleLagrangian (m₁ m₂ l₁ l₂ g : ℝ) (_ : Time) (q v : ℝ²) : ℝ :=
+  lagrangian m₁ m₂ l₁ l₂ g (q 0) (q 1) (v 0) (v 1)
+
+/-- The generalized force `f(q, w)` of the reduced equation `M(q) q̈ = f(q, q̇)`: the gravity
+torques and the velocity-quadratic terms, `f₁ = -m₂ l₁ l₂ sin (q₁ - q₂) w₂² - (m₁ + m₂) g l₁ sin q₁`
+and `f₂ = m₂ l₁ l₂ sin (q₁ - q₂) w₁² - m₂ g l₂ sin q₂`. -/
+noncomputable def generalizedForce (m₁ m₂ l₁ l₂ g : ℝ) (q w : ℝ²) : ℝ² :=
+  !₂[-(m₂ * l₁ * l₂ * Real.sin (q 0 - q 1) * w 1 ^ 2) - (m₁ + m₂) * g * l₁ * Real.sin (q 0),
+    m₂ * l₁ * l₂ * Real.sin (q 0 - q 1) * w 0 ^ 2 - m₂ * g * l₂ * Real.sin (q 1)]
+
+/-- The reduced Euler-Lagrange acceleration `M(q)⁻¹ f(q, w)`, by Cramer's rule with the determinant
+`l₁² l₂² m₂ (m₁ + m₂ sin² (q₁ - q₂))` of the reduced mass matrix. With the convention `x / 0 = 0`,
+both components are `0` where that determinant vanishes, for example when `m₂ = 0` or a length
+is `0`. -/
+noncomputable def reducedAccel (m₁ m₂ l₁ l₂ g : ℝ) (q w : ℝ²) : ℝ² :=
+  !₂[(m₂ * l₂ ^ 2 * generalizedForce m₁ m₂ l₁ l₂ g q w 0 -
+        m₂ * l₁ * l₂ * Real.cos (q 0 - q 1) * generalizedForce m₁ m₂ l₁ l₂ g q w 1) /
+      (l₁ ^ 2 * l₂ ^ 2 * m₂ * (m₁ + m₂ * Real.sin (q 0 - q 1) ^ 2)),
+    ((m₁ + m₂) * l₁ ^ 2 * generalizedForce m₁ m₂ l₁ l₂ g q w 1 -
+        m₂ * l₁ * l₂ * Real.cos (q 0 - q 1) * generalizedForce m₁ m₂ l₁ l₂ g q w 0) /
+      (l₁ ^ 2 * l₂ ^ 2 * m₂ * (m₁ + m₂ * Real.sin (q 0 - q 1) ^ 2))]
+
+private lemma det_pos' {m₁ m₂ l₁ l₂ : ℝ} (hm₁ : 0 < m₁) (hm₂ : 0 < m₂) (hl₁ : 0 < l₁)
+    (hl₂ : 0 < l₂) (x : ℝ) : 0 < l₁ ^ 2 * l₂ ^ 2 * m₂ * (m₁ + m₂ * Real.sin x ^ 2) := by
+  positivity
+
+private lemma massMatrix_mulVec_reducedAccel {m₁ m₂ l₁ l₂ : ℝ} (hm₁ : 0 < m₁) (hm₂ : 0 < m₂)
+    (hl₁ : 0 < l₁) (hl₂ : 0 < l₂) (g : ℝ) (q w : ℝ²) :
+    massMatrix m₁ m₂ l₁ l₂ (q 0) (q 1) *ᵥ (reducedAccel m₁ m₂ l₁ l₂ g q w).ofLp =
+      (generalizedForce m₁ m₂ l₁ l₂ g q w).ofLp := by
+  have hD := (det_pos' hm₁ hm₂ hl₁ hl₂ (q 0 - q 1)).ne'
+  have h := Real.sin_sq_add_cos_sq (q 0 - q 1)
+  ext i
+  fin_cases i
+  · simp [massMatrix, reducedAccel, Matrix.mulVec, dotProduct, Fin.sum_univ_two]
+    field_simp
+    linear_combination (-(m₂ * l₂ * (generalizedForce m₁ m₂ l₁ l₂ g q w).ofLp 0)) * h
+  · simp [massMatrix, reducedAccel, Matrix.mulVec, dotProduct, Fin.sum_univ_two]
+    field_simp
+    linear_combination (-(m₂ * l₁ * (generalizedForce m₁ m₂ l₁ l₂ g q w).ofLp 1)) * h
+
+/-- For positive masses and lengths the reduced acceleration is `M(q)⁻¹ f(q, w)` for the invertible
+reduced mass matrix. -/
+lemma reducedAccel_eq_inv_mulVec {m₁ m₂ l₁ l₂ : ℝ} (hm₁ : 0 < m₁) (hm₂ : 0 < m₂) (hl₁ : 0 < l₁)
+    (hl₂ : 0 < l₂) (g : ℝ) (q w : ℝ²) :
+    (reducedAccel m₁ m₂ l₁ l₂ g q w).ofLp =
+      (massMatrix m₁ m₂ l₁ l₂ (q 0) (q 1))⁻¹ *ᵥ (generalizedForce m₁ m₂ l₁ l₂ g q w).ofLp := by
+  have hdet : IsUnit (massMatrix m₁ m₂ l₁ l₂ (q 0) (q 1)).det :=
+    (massMatrix_det_pos hm₁ hm₂ hl₁ hl₂ (q 0) (q 1)).ne'.isUnit
+  rw [← massMatrix_mulVec_reducedAccel hm₁ hm₂ hl₁ hl₂ g q w, Matrix.mulVec_mulVec,
+    Matrix.nonsing_inv_mul _ hdet, Matrix.one_mulVec]
+
+/-- `M a = f` determines `a` as the reduced acceleration. -/
+private lemma mulVec_eq_iff_eq_reducedAccel {m₁ m₂ l₁ l₂ : ℝ} (hm₁ : 0 < m₁) (hm₂ : 0 < m₂)
+    (hl₁ : 0 < l₁) (hl₂ : 0 < l₂) (g : ℝ) (q w a : ℝ²) :
+    massMatrix m₁ m₂ l₁ l₂ (q 0) (q 1) *ᵥ a.ofLp = (generalizedForce m₁ m₂ l₁ l₂ g q w).ofLp ↔
+      a = reducedAccel m₁ m₂ l₁ l₂ g q w := by
+  constructor
+  · intro h
+    have hdet : IsUnit (massMatrix m₁ m₂ l₁ l₂ (q 0) (q 1)).det :=
+      (massMatrix_det_pos hm₁ hm₂ hl₁ hl₂ (q 0) (q 1)).ne'.isUnit
+    apply WithLp.ofLp_injective
+    rw [reducedAccel_eq_inv_mulVec hm₁ hm₂ hl₁ hl₂, ← h, Matrix.mulVec_mulVec,
+      Matrix.nonsing_inv_mul _ hdet, Matrix.one_mulVec]
+  · rintro rfl
+    exact massMatrix_mulVec_reducedAccel hm₁ hm₂ hl₁ hl₂ g q w
+
+private lemma gradient_eq_two (f : ℝ² → ℝ) (x : ℝ²) :
+    gradient f x = !₂[fderiv ℝ f x (EuclideanSpace.single 0 1),
+      fderiv ℝ f x (EuclideanSpace.single 1 1)] := by
+  have key : ∀ i : Fin 2, gradient f x i = fderiv ℝ f x (EuclideanSpace.single i 1) := by
+    intro i
+    rw [← inner_gradient_left, EuclideanSpace.inner_single_right]
+    simp
+  ext i
+  fin_cases i <;> simp [key]
+
+private lemma hasFDerivAt_coord (i : Fin 2) (x : ℝ²) :
+    HasFDerivAt (fun y : ℝ² => y i) (EuclideanSpace.proj i : ℝ² →L[ℝ] ℝ) x :=
+  (EuclideanSpace.proj i : ℝ² →L[ℝ] ℝ).hasFDerivAt
+
+/-- The gradient of the two-link Lagrangian in the angles. -/
+private lemma gradient_angleLagrangian_left (m₁ m₂ l₁ l₂ g : ℝ) (t : Time) (x v : ℝ²) :
+    gradient (fun y => angleLagrangian m₁ m₂ l₁ l₂ g t y v) x =
+      !₂[-(m₂ * l₁ * l₂ * Real.sin (x 0 - x 1) * v 0 * v 1) - (m₁ + m₂) * g * l₁ * Real.sin (x 0),
+        m₂ * l₁ * l₂ * Real.sin (x 0 - x 1) * v 0 * v 1 - m₂ * g * l₂ * Real.sin (x 1)] := by
+  have h0 := hasFDerivAt_coord 0 x
+  have h1 := hasFDerivAt_coord 1 x
+  have hF := (((((hasFDerivAt_const ((m₁ + m₂) * l₁ ^ 2 * v 0 ^ 2 / 2) x).add
+    ((((h0.sub h1).cos.const_mul (m₂ * l₁ * l₂)).mul_const (v 0)).mul_const (v 1))).add
+    (hasFDerivAt_const (m₂ * l₂ ^ 2 * v 1 ^ 2 / 2) x)).add
+    (h0.cos.const_mul ((m₁ + m₂) * g * l₁))).add (h1.cos.const_mul (m₂ * g * l₂)))
+  have hL : HasFDerivAt (fun y => angleLagrangian m₁ m₂ l₁ l₂ g t y v) _ x :=
+    hF.congr_of_eventuallyEq (Filter.Eventually.of_forall fun y => by
+      simp only [angleLagrangian, lagrangian_eq, Pi.add_apply, Pi.sub_apply])
+  rw [gradient_eq_two, hL.fderiv]
+  ext i
+  fin_cases i
+  · simp; ring
+  · simp; ring
+
+/-- The gradient of the two-link Lagrangian in the angular velocities: `M(q) v`. -/
+private lemma gradient_angleLagrangian_right (m₁ m₂ l₁ l₂ g : ℝ) (t : Time) (x v : ℝ²) :
+    gradient (angleLagrangian m₁ m₂ l₁ l₂ g t x) v =
+      !₂[(m₁ + m₂) * l₁ ^ 2 * v 0 + m₂ * l₁ * l₂ * Real.cos (x 0 - x 1) * v 1,
+        m₂ * l₁ * l₂ * Real.cos (x 0 - x 1) * v 0 + m₂ * l₂ ^ 2 * v 1] := by
+  have h0 := hasFDerivAt_coord 0 v
+  have h1 := hasFDerivAt_coord 1 v
+  have hF := ((((h0.pow 2).const_mul ((m₁ + m₂) * l₁ ^ 2)).mul_const (1 / 2)).add
+    ((h0.const_mul (m₂ * l₁ * l₂ * Real.cos (x 0 - x 1))).mul h1)).add
+    (((h1.pow 2).const_mul (m₂ * l₂ ^ 2)).mul_const (1 / 2)) |>.add_const
+    ((m₁ + m₂) * g * l₁ * Real.cos (x 0) + m₂ * g * l₂ * Real.cos (x 1))
+  have hL : HasFDerivAt (angleLagrangian m₁ m₂ l₁ l₂ g t x) _ v :=
+    hF.congr_of_eventuallyEq (Filter.Eventually.of_forall fun u => by
+      simp only [angleLagrangian, lagrangian_eq, Pi.add_apply, Pi.mul_apply]; ring)
+  rw [gradient_eq_two, hL.fderiv]
+  ext i
+  fin_cases i
+  · simp; ring
+  · simp; ring
+
+private lemma differentiableAt_deriv_of_contDiffAt_two {q : Time → ℝ²} {t : Time}
+    (hq : ContDiffAt ℝ 2 q t) : DifferentiableAt ℝ (∂ₜ q) t := by
+  have h1 : ContDiffAt ℝ 1 (fderiv ℝ q) t := hq.fderiv_right (m := 1) (by norm_num)
+  exact (h1.differentiableAt (by norm_num)).clm_apply (differentiableAt_const (1 : Time))
+
+private lemma hasFDerivAt_comp_coord {f : Time → ℝ²} {t : Time} (hf : DifferentiableAt ℝ f t)
+    (i : Fin 2) :
+    HasFDerivAt (fun s => f s i) ((EuclideanSpace.proj i : ℝ² →L[ℝ] ℝ).comp (fderiv ℝ f t)) t :=
+  (EuclideanSpace.proj i : ℝ² →L[ℝ] ℝ).hasFDerivAt.comp t hf.hasFDerivAt
+
+/-- The time derivative of the generalized momentum `M(q) q̇` along a trajectory `C²` at `t`. -/
+private lemma deriv_gradient_angleLagrangian_right (m₁ m₂ l₁ l₂ g : ℝ) {q : Time → ℝ²} {t : Time}
+    (hq : ContDiffAt ℝ 2 q t) :
+    ∂ₜ (fun t' => gradient (angleLagrangian m₁ m₂ l₁ l₂ g t' (q t')) (∂ₜ q t')) t =
+      !₂[(m₁ + m₂) * l₁ ^ 2 * ∂ₜ (∂ₜ q) t 0 + m₂ * l₁ * l₂ * (Real.cos (q t 0 - q t 1) *
+            ∂ₜ (∂ₜ q) t 1 - Real.sin (q t 0 - q t 1) * (∂ₜ q t 0 - ∂ₜ q t 1) * ∂ₜ q t 1),
+        m₂ * l₁ * l₂ * (Real.cos (q t 0 - q t 1) * ∂ₜ (∂ₜ q) t 0 -
+            Real.sin (q t 0 - q t 1) * (∂ₜ q t 0 - ∂ₜ q t 1) * ∂ₜ q t 0) +
+          m₂ * l₂ ^ 2 * ∂ₜ (∂ₜ q) t 1] := by
+  have hqd : DifferentiableAt ℝ q t := hq.differentiableAt (by norm_num)
+  have hvd : DifferentiableAt ℝ (∂ₜ q) t := differentiableAt_deriv_of_contDiffAt_two hq
+  have hq0 := hasFDerivAt_comp_coord hqd 0
+  have hq1 := hasFDerivAt_comp_coord hqd 1
+  have hv0 := hasFDerivAt_comp_coord hvd 0
+  have hv1 := hasFDerivAt_comp_coord hvd 1
+  have hc := (hq0.sub hq1).cos
+  have hΦ0 := (hv0.const_mul ((m₁ + m₂) * l₁ ^ 2)).add ((hc.const_mul (m₂ * l₁ * l₂)).mul hv1)
+  have hΦ1 := ((hc.const_mul (m₂ * l₁ * l₂)).mul hv0).add (hv1.const_mul (m₂ * l₂ ^ 2))
+  have hΦ := (hΦ0.smul_const (!₂[1, 0] : ℝ²)).add (hΦ1.smul_const (!₂[0, 1] : ℝ²))
+  have hΦ' : HasFDerivAt
+      (fun t' => gradient (angleLagrangian m₁ m₂ l₁ l₂ g t' (q t')) (∂ₜ q t')) _ t :=
+    hΦ.congr_of_eventuallyEq (Filter.Eventually.of_forall fun s => by
+      simp only [gradient_angleLagrangian_right]
+      ext i; fin_cases i <;> simp)
+  rw [Time.deriv_eq, hΦ'.fderiv]
+  ext i; fin_cases i <;> simp [Time.deriv_eq] <;> ring
+
+/-- The Euler-Lagrange operator of the two-link Lagrangian along an angle trajectory that is `C²` at
+`t` is `f(q, q̇) - M(q) q̈`, for any real parameters. -/
+lemma eulerLagrangeOp_angleLagrangian (m₁ m₂ l₁ l₂ g : ℝ) {q : Time → ℝ²} {t : Time}
+    (hq : ContDiffAt ℝ 2 q t) :
+    eulerLagrangeOp (angleLagrangian m₁ m₂ l₁ l₂ g) q t =
+      generalizedForce m₁ m₂ l₁ l₂ g (q t) (∂ₜ q t) -
+        WithLp.toLp 2 (massMatrix m₁ m₂ l₁ l₂ (q t 0) (q t 1) *ᵥ (∂ₜ (∂ₜ q) t).ofLp) := by
+  simp only [ClassicalMechanics.eulerLagrangeOp_eq, gradient_angleLagrangian_left]
+  rw [deriv_gradient_angleLagrangian_right m₁ m₂ l₁ l₂ g hq]
+  ext i; fin_cases i <;>
+    simp [generalizedForce, massMatrix, dotProduct, Fin.sum_univ_two] <;> ring
+
+/-- For positive masses and lengths and an angle trajectory that is `C²` at `t`, the Euler-Lagrange
+equation at `t` is the reduced ODE `q̈ = M(q)⁻¹ f(q, q̇)`. -/
+lemma eulerLagrangeOp_angleLagrangian_eq_zero_iff {m₁ m₂ l₁ l₂ : ℝ} (hm₁ : 0 < m₁) (hm₂ : 0 < m₂)
+    (hl₁ : 0 < l₁) (hl₂ : 0 < l₂) (g : ℝ) {q : Time → ℝ²} {t : Time} (hq : ContDiffAt ℝ 2 q t) :
+    eulerLagrangeOp (angleLagrangian m₁ m₂ l₁ l₂ g) q t = 0 ↔
+      ∂ₜ (∂ₜ q) t = reducedAccel m₁ m₂ l₁ l₂ g (q t) (∂ₜ q t) := by
+  rw [eulerLagrangeOp_angleLagrangian m₁ m₂ l₁ l₂ g hq, sub_eq_zero,
+    ← mulVec_eq_iff_eq_reducedAccel hm₁ hm₂ hl₁ hl₂ g (q t) (∂ₜ q t)]
+  constructor
+  · intro h; rw [h]
+  · intro h; rw [h]
+
+/-! ## I. Newton's equations with rod reactions -/
+
+/-- The Cartesian motion `t ↦ posMap (q₁ t, q₂ t)` of the two masses along an angle trajectory. -/
+noncomputable def cartesianMotion (l₁ l₂ : ℝ) (q : Time → ℝ²) (t : Time) : ℝ² × ℝ² :=
+  posMap l₁ l₂ (q t 0, q t 1)
+
+/-- Gravity on the two masses, `(m₁ (0, -g), m₂ (0, -g))`: minus the Cartesian gradient of the
+potential energy `g (m₁ y₁ + m₂ y₂)`. -/
+noncomputable def gravityForce (m₁ m₂ g : ℝ) : ℝ² × ℝ² :=
+  (m₁ • !₂[0, -g], m₂ • !₂[0, -g])
+
+/-- The Cartesian accelerations of the two masses at angles `q`, angular velocities `w` and angular
+accelerations `a`. -/
+private noncomputable def cartAccel (l₁ l₂ : ℝ) (q w a : ℝ²) : ℝ² × ℝ² :=
+  (!₂[l₁ * a 0 * Real.cos (q 0) - l₁ * w 0 ^ 2 * Real.sin (q 0),
+      l₁ * a 0 * Real.sin (q 0) + l₁ * w 0 ^ 2 * Real.cos (q 0)],
+    !₂[l₁ * a 0 * Real.cos (q 0) - l₁ * w 0 ^ 2 * Real.sin (q 0) +
+        (l₂ * a 1 * Real.cos (q 1) - l₂ * w 1 ^ 2 * Real.sin (q 1)),
+      l₁ * a 0 * Real.sin (q 0) + l₁ * w 0 ^ 2 * Real.cos (q 0) +
+        (l₂ * a 1 * Real.sin (q 1) + l₂ * w 1 ^ 2 * Real.cos (q 1))])
+
+private lemma deriv_cartesianMotion (l₁ l₂ : ℝ) {q : Time → ℝ²} {s : Time}
+    (hq : DifferentiableAt ℝ q s) :
+    ∂ₜ (cartesianMotion l₁ l₂ q) s =
+      (vel₁ l₁ (q s 0) (∂ₜ q s 0), vel₂ l₁ l₂ (q s 0) (q s 1) (∂ₜ q s 0) (∂ₜ q s 1)) := by
+  have h : HasFDerivAt (cartesianMotion l₁ l₂ q) _ s :=
+    (hasFDerivAt_posMap l₁ l₂ (q s 0, q s 1)).comp s
+      ((hasFDerivAt_comp_coord hq 0).prodMk (hasFDerivAt_comp_coord hq 1))
+  rw [Time.deriv_eq, h.fderiv, ContinuousLinearMap.comp_apply, angleJacobian_apply]
+  rfl
+
+private lemma deriv_deriv_cartesianMotion (l₁ l₂ : ℝ) {q : Time → ℝ²} {t : Time}
+    (hq : ContDiffAt ℝ 2 q t) :
+    ∂ₜ (∂ₜ (cartesianMotion l₁ l₂ q)) t = cartAccel l₁ l₂ (q t) (∂ₜ q t) (∂ₜ (∂ₜ q) t) := by
+  have hev : ∂ₜ (cartesianMotion l₁ l₂ q) =ᶠ[𝓝 t] fun s =>
+      (vel₁ l₁ (q s 0) (∂ₜ q s 0), vel₂ l₁ l₂ (q s 0) (q s 1) (∂ₜ q s 0) (∂ₜ q s 1)) :=
+    (hq.eventually (by simp)).mono fun s hs => deriv_cartesianMotion l₁ l₂ (hs.differentiableAt
+      (by norm_num))
+  have hqd : DifferentiableAt ℝ q t := hq.differentiableAt (by norm_num)
+  have hvd : DifferentiableAt ℝ (∂ₜ q) t := differentiableAt_deriv_of_contDiffAt_two hq
+  have hq0 := hasFDerivAt_comp_coord hqd 0
+  have hq1 := hasFDerivAt_comp_coord hqd 1
+  have hv0 := hasFDerivAt_comp_coord hvd 0
+  have hv1 := hasFDerivAt_comp_coord hvd 1
+  have hV₁ := (((hv0.const_mul l₁).mul hq0.cos).smul_const (!₂[1, 0] : ℝ²)).add
+    (((hv0.const_mul l₁).mul hq0.sin).smul_const (!₂[0, 1] : ℝ²))
+  have hV₂ := (hV₁.add (((hv1.const_mul l₂).mul hq1.cos).smul_const (!₂[1, 0] : ℝ²))).add
+    (((hv1.const_mul l₂).mul hq1.sin).smul_const (!₂[0, 1] : ℝ²))
+  have hV : HasFDerivAt (fun s =>
+      (vel₁ l₁ (q s 0) (∂ₜ q s 0), vel₂ l₁ l₂ (q s 0) (q s 1) (∂ₜ q s 0) (∂ₜ q s 1))) _ t :=
+    (hV₁.prodMk hV₂).congr_of_eventuallyEq (Filter.Eventually.of_forall fun s => by
+      refine Prod.ext ?_ ?_ <;> ext i <;> fin_cases i <;> simp [vel₁, vel₂])
+  rw [Time.deriv_eq, hev.fderiv_eq, hV.fderiv]
+  refine Prod.ext ?_ ?_ <;> ext i <;> fin_cases i <;> simp [cartAccel, Time.deriv_eq] <;> ring
+
+/-- d'Alembert-Lagrange: the virtual work of the Newton residual `m a - F_gravity` along the
+velocity `angleJacobian q u` is `u ⬝ (M(q) a - f(q, w))`. -/
+private lemma virtualWork_newton (m₁ m₂ l₁ l₂ g : ℝ) (q w a u : ℝ²) :
+    virtualWork ((m₁ • (cartAccel l₁ l₂ q w a).1, m₂ • (cartAccel l₁ l₂ q w a).2) -
+        gravityForce m₁ m₂ g) (angleJacobian l₁ l₂ (q 0, q 1) (u 0, u 1)) =
+      u 0 * ((massMatrix m₁ m₂ l₁ l₂ (q 0) (q 1) *ᵥ a.ofLp) 0 -
+          generalizedForce m₁ m₂ l₁ l₂ g q w 0) +
+        u 1 * ((massMatrix m₁ m₂ l₁ l₂ (q 0) (q 1) *ᵥ a.ofLp) 1 -
+          generalizedForce m₁ m₂ l₁ l₂ g q w 1) := by
+  have hs0 := Real.sin_sq_add_cos_sq (q 0)
+  have hs1 := Real.sin_sq_add_cos_sq (q 1)
+  rw [angleJacobian_apply]
+  simp [virtualWork, cartAccel, gravityForce, vel₁, vel₂, massMatrix, generalizedForce,
+    Matrix.mulVec, dotProduct, Fin.sum_univ_two, PiLp.inner_apply, Real.cos_sub, Real.sin_sub]
+  linear_combination ((m₁ + m₂) * l₁ ^ 2 * a 0 * u 0) * hs0 + (m₂ * l₂ ^ 2 * a 1 * u 1) * hs1
+
+private lemma newton_iff_residual (m₁ m₂ g : ℝ) (A R : ℝ² × ℝ²) :
+    (m₁ • A.1, m₂ • A.2) = gravityForce m₁ m₂ g + R ↔
+      (m₁ • A.1, m₂ • A.2) - gravityForce m₁ m₂ g = R := by
+  rw [sub_eq_iff_eq_add']
+
+/-- Newton's equations with some rod reaction force the reduced ODE. -/
+private lemma eq_reducedAccel_of_newton {m₁ m₂ l₁ l₂ : ℝ} (hm₁ : 0 < m₁) (hm₂ : 0 < m₂)
+    (hl₁ : 0 < l₁) (hl₂ : 0 < l₂) (g : ℝ) (q w a : ℝ²) (c : ℝ × ℝ)
+    (hc : (m₁ • (cartAccel l₁ l₂ q w a).1, m₂ • (cartAccel l₁ l₂ q w a).2) =
+      gravityForce m₁ m₂ g + rodReaction c.1 c.2 (posMap l₁ l₂ (q 0, q 1))) :
+    a = reducedAccel m₁ m₂ l₁ l₂ g q w := by
+  rw [← mulVec_eq_iff_eq_reducedAccel hm₁ hm₂ hl₁ hl₂]
+  have hN := (newton_iff_residual m₁ m₂ g _ _).mp hc
+  have key : ∀ u : ℝ², u 0 * ((massMatrix m₁ m₂ l₁ l₂ (q 0) (q 1) *ᵥ a.ofLp) 0 -
+      generalizedForce m₁ m₂ l₁ l₂ g q w 0) + u 1 * ((massMatrix m₁ m₂ l₁ l₂ (q 0) (q 1) *ᵥ
+      a.ofLp) 1 - generalizedForce m₁ m₂ l₁ l₂ g q w 1) = 0 := fun u => by
+    rw [← virtualWork_newton, hN]
+    exact virtualWork_rodReaction_angleJacobian c.1 c.2 l₁ l₂ _ _
+  ext i
+  fin_cases i
+  · have h := key !₂[1, 0]; simp at h; simp; linarith
+  · have h := key !₂[0, 1]; simp at h; simp; linarith
+
+/-- The reduced ODE gives Newton's equations with unique rod multipliers. -/
+private lemma existsUnique_newton_of_eq_reducedAccel {m₁ m₂ l₁ l₂ : ℝ} (hm₁ : 0 < m₁)
+    (hm₂ : 0 < m₂) (hl₁ : 0 < l₁) (hl₂ : 0 < l₂) (g : ℝ) (q w a : ℝ²)
+    (h : a = reducedAccel m₁ m₂ l₁ l₂ g q w) :
+    ∃! c : ℝ × ℝ, (m₁ • (cartAccel l₁ l₂ q w a).1, m₂ • (cartAccel l₁ l₂ q w a).2) =
+      gravityForce m₁ m₂ g + rodReaction c.1 c.2 (posMap l₁ l₂ (q 0, q 1)) := by
+  have hMa := (mulVec_eq_iff_eq_reducedAccel hm₁ hm₂ hl₁ hl₂ g q w a).mpr h
+  have hF : ∀ v, rodJacobian (posMap l₁ l₂ (q 0, q 1)) v = 0 →
+      virtualWork ((m₁ • (cartAccel l₁ l₂ q w a).1, m₂ • (cartAccel l₁ l₂ q w a).2) -
+        gravityForce m₁ m₂ g) v = 0 := by
+    intro v hv
+    have hmem : v ∈ LinearMap.range (angleJacobian l₁ l₂ (q 0, q 1)).toLinearMap := by
+      rw [range_angleJacobian hl₁ hl₂]; exact hv
+    obtain ⟨d, rfl⟩ := hmem
+    have e := virtualWork_newton m₁ m₂ l₁ l₂ g q w a !₂[d.1, d.2]
+    rw [hMa] at e
+    simpa using e
+  obtain ⟨c, hc, huniq⟩ := existsUnique_rodReaction hl₁ hl₂ (q 0, q 1) hF
+  exact ⟨c, (newton_iff_residual m₁ m₂ g _ _).mpr hc,
+    fun c' hc' => huniq c' ((newton_iff_residual m₁ m₂ g _ _).mp hc')⟩
+
+/-- For positive masses and lengths, Newton's equations `mᵢ p̈ᵢ = mᵢ (0, -g) + Rᵢ` of the two
+masses along the Cartesian motion of an angle trajectory that is `C²` at `t` hold at `t` with some
+rod reaction `R` exactly when the angles satisfy the reduced ODE at `t`. -/
+lemma exists_rodReaction_newton_iff {m₁ m₂ l₁ l₂ : ℝ} (hm₁ : 0 < m₁) (hm₂ : 0 < m₂) (hl₁ : 0 < l₁)
+    (hl₂ : 0 < l₂) (g : ℝ) {q : Time → ℝ²} {t : Time} (hq : ContDiffAt ℝ 2 q t) :
+    (∃ c : ℝ × ℝ, (m₁ • (∂ₜ (∂ₜ (cartesianMotion l₁ l₂ q)) t).1,
+        m₂ • (∂ₜ (∂ₜ (cartesianMotion l₁ l₂ q)) t).2) =
+        gravityForce m₁ m₂ g + rodReaction c.1 c.2 (cartesianMotion l₁ l₂ q t)) ↔
+      ∂ₜ (∂ₜ q) t = reducedAccel m₁ m₂ l₁ l₂ g (q t) (∂ₜ q t) := by
+  rw [deriv_deriv_cartesianMotion l₁ l₂ hq]
+  exact ⟨fun ⟨c, hc⟩ => eq_reducedAccel_of_newton hm₁ hm₂ hl₁ hl₂ g _ _ _ c hc,
+    fun h => (existsUnique_newton_of_eq_reducedAccel hm₁ hm₂ hl₁ hl₂ g _ _ _ h).exists⟩
+
+/-- For positive masses and lengths and an angle trajectory that is `C²` at `t`, Newton's
+equations hold at `t` with exactly one pair of rod multipliers exactly when the angles satisfy the
+reduced ODE at `t`: along solutions of the reduced ODE the rod multipliers are unique. -/
+lemma existsUnique_rodReaction_newton_iff {m₁ m₂ l₁ l₂ : ℝ} (hm₁ : 0 < m₁) (hm₂ : 0 < m₂)
+    (hl₁ : 0 < l₁) (hl₂ : 0 < l₂) (g : ℝ) {q : Time → ℝ²} {t : Time} (hq : ContDiffAt ℝ 2 q t) :
+    (∃! c : ℝ × ℝ, (m₁ • (∂ₜ (∂ₜ (cartesianMotion l₁ l₂ q)) t).1,
+        m₂ • (∂ₜ (∂ₜ (cartesianMotion l₁ l₂ q)) t).2) =
+        gravityForce m₁ m₂ g + rodReaction c.1 c.2 (cartesianMotion l₁ l₂ q t)) ↔
+      ∂ₜ (∂ₜ q) t = reducedAccel m₁ m₂ l₁ l₂ g (q t) (∂ₜ q t) := by
+  rw [deriv_deriv_cartesianMotion l₁ l₂ hq]
+  exact ⟨fun h => eq_reducedAccel_of_newton hm₁ hm₂ hl₁ hl₂ g _ _ _ h.exists.choose
+      h.exists.choose_spec,
+    fun h => existsUnique_newton_of_eq_reducedAccel hm₁ hm₂ hl₁ hl₂ g _ _ _ h⟩
+
+/-! ## J. Local regularity and the local initial value problem -/
+
+/-- The reduced first-order field on states `x = (q, w)` of angles and angular velocities:
+`(q, w) ↦ (w, M(q)⁻¹ f(q, w))`. Where `det M(q) = 0` (for example `m₂ = 0` or a length `0`),
+`M(q)⁻¹ = 0` and the field is `(w, 0)`. -/
+noncomputable def reducedField (m₁ m₂ l₁ l₂ g : ℝ) (x : ℝ² × ℝ²) : ℝ² × ℝ² :=
+  (x.2, reducedAccel m₁ m₂ l₁ l₂ g x.1 x.2)
+
+private lemma contDiff_coord_fst (i : Fin 2) :
+    ContDiff ℝ ∞ (fun x : ℝ² × ℝ² => x.1 i) :=
+  (EuclideanSpace.proj i : ℝ² →L[ℝ] ℝ).contDiff.comp contDiff_fst
+
+private lemma contDiff_coord_snd (i : Fin 2) :
+    ContDiff ℝ ∞ (fun x : ℝ² × ℝ² => x.2 i) :=
+  (EuclideanSpace.proj i : ℝ² →L[ℝ] ℝ).contDiff.comp contDiff_snd
+
+/-- For positive masses and lengths the reduced field is smooth on the whole state space, collinear
+links included. -/
+lemma contDiff_reducedField {m₁ m₂ l₁ l₂ : ℝ} (hm₁ : 0 < m₁) (hm₂ : 0 < m₂) (hl₁ : 0 < l₁)
+    (hl₂ : 0 < l₂) (g : ℝ) : ContDiff ℝ ∞ (reducedField m₁ m₂ l₁ l₂ g) := by
+  have h0 := contDiff_coord_fst 0
+  have h1 := contDiff_coord_fst 1
+  have v0 := contDiff_coord_snd 0
+  have v1 := contDiff_coord_snd 1
+  have hD : ∀ x : ℝ² × ℝ², l₁ ^ 2 * l₂ ^ 2 * m₂ * (m₁ + m₂ * Real.sin (x.1 0 - x.1 1) ^ 2) ≠ 0 :=
+    fun x => (det_pos' hm₁ hm₂ hl₁ hl₂ _).ne'
+  refine contDiff_snd.prodMk (contDiff_euclidean.mpr fun i => ?_)
+  fin_cases i
+  · simp only [reducedAccel, generalizedForce, Fin.isValue, Matrix.cons_val_zero,
+      Matrix.cons_val_one, Matrix.cons_val_fin_one, Fin.zero_eta]
+    exact ContDiff.div (by fun_prop) (by fun_prop) hD
+  · simp only [reducedAccel, generalizedForce, Fin.isValue, Matrix.cons_val_zero,
+      Matrix.cons_val_one, Matrix.cons_val_fin_one, Fin.mk_one]
+    exact ContDiff.div (by fun_prop) (by fun_prop) hD
+
+/-- For positive masses and lengths the reduced field is locally Lipschitz, the regularity
+hypothesis of the Picard-Lindelöf theorem. -/
+lemma locallyLipschitz_reducedField {m₁ m₂ l₁ l₂ : ℝ} (hm₁ : 0 < m₁) (hm₂ : 0 < m₂)
+    (hl₁ : 0 < l₁) (hl₂ : 0 < l₂) (g : ℝ) : LocallyLipschitz (reducedField m₁ m₂ l₁ l₂ g) := by
+  exact ((contDiff_reducedField hm₁ hm₂ hl₁ hl₂ g).of_le (by simp)).locallyLipschitz
+
+/-- Local Picard existence: for positive masses and lengths, every state `x₀` at every time `t₀`
+starts a solution of the reduced field on an open interval `(t₀ - ε, t₀ + ε)` with `ε > 0`. -/
+lemma exists_forall_mem_Ioo_hasDerivAt_reducedField {m₁ m₂ l₁ l₂ : ℝ} (hm₁ : 0 < m₁)
+    (hm₂ : 0 < m₂) (hl₁ : 0 < l₁) (hl₂ : 0 < l₂) (g t₀ : ℝ) (x₀ : ℝ² × ℝ²) :
+    ∃ ε > (0 : ℝ), ∃ α : ℝ → ℝ² × ℝ², α t₀ = x₀ ∧
+      ∀ t ∈ Set.Ioo (t₀ - ε) (t₀ + ε), HasDerivAt α (reducedField m₁ m₂ l₁ l₂ g (α t)) t := by
+  have hf : ContDiffAt ℝ 1 (reducedField m₁ m₂ l₁ l₂ g) x₀ :=
+    ((contDiff_reducedField hm₁ hm₂ hl₁ hl₂ g).of_le (by simp)).contDiffAt
+  obtain ⟨ε, hε, a, r, L, K, hr, hpl⟩ := IsPicardLindelof.of_contDiffAt_one hf
+  obtain ⟨α, hα₀, hα⟩ :=
+    (hpl t₀).exists_eq_forall_mem_Icc_hasDerivWithinAt (Metric.mem_closedBall_self r.2)
+  exact ⟨ε, hε, α, hα₀, fun t ht =>
+    (hα t (Set.Ioo_subset_Icc_self ht)).hasDerivAt (Icc_mem_nhds ht.1 ht.2)⟩
+
+private lemma deriv_comp_val {E : Type} [NormedAddCommGroup E] [NormedSpace ℝ E] {γ : ℝ → E}
+    {v : E} {s : Time} (h : HasDerivAt γ v s.val) : ∂ₜ (fun s : Time => γ s.val) s = v :=
+  Time.deriv_comp_toRealCLE_of_hasDerivAt γ s v h
+
+/-- The local initial value problem of the Euler-Lagrange equation: for positive masses and
+lengths, initial angles `q₀` and angular velocities `w₀` at `t₀` start an angle trajectory that is
+`C²` at every instant of an open interval around `t₀` and along which the Euler-Lagrange operator
+vanishes. -/
+lemma exists_eulerLagrangeOp_angleLagrangian_eq_zero {m₁ m₂ l₁ l₂ : ℝ} (hm₁ : 0 < m₁)
+    (hm₂ : 0 < m₂) (hl₁ : 0 < l₁) (hl₂ : 0 < l₂) (g : ℝ) (t₀ : Time) (q₀ w₀ : ℝ²) :
+    ∃ ε > (0 : ℝ), ∃ q : Time → ℝ², q t₀ = q₀ ∧ ∂ₜ q t₀ = w₀ ∧
+      ∀ t : Time, t.val ∈ Set.Ioo (t₀.val - ε) (t₀.val + ε) →
+        ContDiffAt ℝ 2 q t ∧ eulerLagrangeOp (angleLagrangian m₁ m₂ l₁ l₂ g) q t = 0 := by
+  have hF := contDiff_reducedField hm₁ hm₂ hl₁ hl₂ g
+  have hf : ContDiffAt ℝ 1 (reducedField m₁ m₂ l₁ l₂ g) (q₀, w₀) :=
+    (hF.of_le (by simp)).contDiffAt
+  obtain ⟨ε, hε, a, r, L, K, hr, hpl⟩ := IsPicardLindelof.of_contDiffAt_one hf
+  obtain ⟨α, hα₀, hα⟩ :=
+    (hpl t₀.val).exists_eq_forall_mem_Icc_hasDerivWithinAt (Metric.mem_closedBall_self r.2)
+  have hC : ContDiffOn ℝ 2 α (Set.Icc (t₀.val - ε) (t₀.val + ε)) :=
+    ODE.contDiffOn_enat_Icc_of_hasDerivWithinAt (n := 2) (u := Set.univ)
+      ((hF.of_le (by simp)).comp contDiff_snd).contDiffOn hα (Set.mapsTo_univ _ _)
+  have hD : ∀ τ ∈ Set.Ioo (t₀.val - ε) (t₀.val + ε),
+      HasDerivAt α (reducedField m₁ m₂ l₁ l₂ g (α τ)) τ := fun τ hτ =>
+    (hα τ (Set.Ioo_subset_Icc_self hτ)).hasDerivAt (Icc_mem_nhds hτ.1 hτ.2)
+  have hD₁ : ∀ τ ∈ Set.Ioo (t₀.val - ε) (t₀.val + ε), HasDerivAt (fun τ => (α τ).1) (α τ).2 τ :=
+    fun τ hτ => (hasFDerivAt_fst (𝕜 := ℝ) (p := α τ)).comp_hasDerivAt τ (hD τ hτ)
+  have hD₂ : ∀ τ ∈ Set.Ioo (t₀.val - ε) (t₀.val + ε),
+      HasDerivAt (fun τ => (α τ).2) (reducedAccel m₁ m₂ l₁ l₂ g (α τ).1 (α τ).2) τ :=
+    fun τ hτ => (hasFDerivAt_snd (𝕜 := ℝ) (p := α τ)).comp_hasDerivAt τ (hD τ hτ)
+  have hv : ∀ s : Time, s.val ∈ Set.Ioo (t₀.val - ε) (t₀.val + ε) →
+      ∂ₜ (fun s : Time => (α s.val).1) s = (α s.val).2 := fun s hs =>
+    deriv_comp_val (hD₁ s.val hs)
+  have hmem : t₀.val ∈ Set.Ioo (t₀.val - ε) (t₀.val + ε) := ⟨by linarith, by linarith⟩
+  refine ⟨ε, hε, fun s => (α s.val).1, by simp [hα₀], by rw [hv t₀ hmem, hα₀], fun t ht => ?_⟩
+  have hCt : ContDiffAt ℝ 2 (fun s : Time => (α s.val).1) t :=
+    ((contDiff_fst.comp_contDiffOn hC).contDiffAt (Icc_mem_nhds ht.1 ht.2)).comp t
+      (Time.val_contDiff (n := 2)).contDiffAt
+  refine ⟨hCt, (eulerLagrangeOp_angleLagrangian_eq_zero_iff hm₁ hm₂ hl₁ hl₂ g hCt).mpr ?_⟩
+  have hev : ∂ₜ (fun s : Time => (α s.val).1) =ᶠ[𝓝 t] fun s : Time => (α s.val).2 :=
+    Filter.mem_of_superset ((Time.val_contDiff (n := 0)).continuous.continuousAt.preimage_mem_nhds
+      (Ioo_mem_nhds ht.1 ht.2)) fun s hs => hv s hs
+  rw [Time.deriv_eq, hev.fderiv_eq, ← Time.deriv_eq, deriv_comp_val (hD₂ t.val ht), hv t ht]
 
 end PhyslibExt.Mechanics.ConstrainedTwoLink

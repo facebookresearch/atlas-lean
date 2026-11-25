@@ -31,19 +31,23 @@ namespace SimpleGraph
 
 variable {V : Type*}
 
-/-- `G` is a **unique subgraph** of `H` if there is exactly one subgraph of `H` isomorphic to
-`G`. Subgraphs of `H` are taken in the spanning sense: elements `G' ≤ H` of the lattice
-`SimpleGraph V`, i.e. subsets of the edges of `H` (not necessarily induced). -/
+/-- **Unique subgraph.** Let $G$ and $H$ be graphs on the same vertex set $V$. Then $G$ is a
+unique subgraph of $H$ if exactly one subgraph of $H$ is isomorphic to $G$. Here a subgraph of
+$H$ means a spanning subgraph: a graph on $V$ all of whose edges are edges of $H$ (not
+necessarily induced). -/
 def IsUniqueSubgraph (G H : SimpleGraph V) : Prop :=
   ∃! G' : SimpleGraph V, G' ≤ H ∧ Nonempty (G.Iso G')
 
-/-- For a finite vertex type, the number of distinct unique subgraphs of `H`: the number of
-isomorphism classes of graphs
-that occur exactly once as a subgraph of `H`. The set-builder ranges over spanning subgraphs
-`G ≤ H` satisfying `IsUniqueSubgraph G H`; mapping each such `G` to its isomorphism class is a
-bijection onto the once-occurring classes. In particular, automorphic copies do not inflate the
-count: if distinct `G₁ ≤ H` and `G₂ ≤ H` are isomorphic, neither satisfies `IsUniqueSubgraph`
-(the other is a second isomorphic copy), so neither is counted. -/
+/-- **Number of unique subgraphs.** Let $H$ be a graph on a finite vertex set $V$. The number of
+unique subgraphs of $H$ is the number of spanning subgraphs $G$ of $H$ (graphs on $V$ all of
+whose edges are edges of $H$) that are unique subgraphs of $H$, that is, isomorphic to no other
+spanning subgraph of $H$.
+
+Equivalently, it is the number of isomorphism classes of graphs on $V$ that occur exactly once
+as a spanning subgraph of $H$: sending each such $G$ to its isomorphism class is a bijection onto
+these classes. In particular, isomorphic copies do not inflate the count: if two distinct
+spanning subgraphs of $H$ are isomorphic, neither is a unique subgraph of $H$, so neither is
+counted. -/
 noncomputable def uniqueSubgraphCount [Finite V] (H : SimpleGraph V) : ℕ :=
   {G : SimpleGraph V | G ≤ H ∧ IsUniqueSubgraph G H}.ncard
 

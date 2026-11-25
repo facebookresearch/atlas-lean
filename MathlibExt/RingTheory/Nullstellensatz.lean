@@ -37,17 +37,19 @@ namespace HilbertNullstellensatz
 
 open MvPolynomial Ideal
 
-/-- The vanishing ideal of a singleton is the kernel of evaluation at
-that point. -/
+/-- **Vanishing ideal of a point.** For a point $a \in \mathbb{C}^n$, the ideal of polynomials in
+$\mathbb{C}[x_1, \ldots, x_n]$ that vanish on $\{a\}$ equals the kernel of the evaluation
+homomorphism $\mathbb{C}[x_1, \ldots, x_n] \to \mathbb{C}$, $f \mapsto f(a)$. -/
 theorem vanishingIdeal_singleton_eq_ker_aeval (n : ℕ) (a : Fin n → ℂ) :
     (vanishingIdeal ℂ {a} : Ideal (MvPolynomial (Fin n) ℂ)) =
       RingHom.ker (aeval a : MvPolynomial (Fin n) ℂ →ₐ[ℂ] ℂ) := by
   ext p
   simp [RingHom.mem_ker]
 
-/-- **Weak Nullstellensatz, kernel form.** An ideal of
-`ℂ[x₁, …, xₙ]` is maximal if and only if it is the kernel of evaluation
-at some point of `ℂⁿ`. -/
+/-- **Weak Nullstellensatz, kernel form.** Let $n$ be a natural number. An ideal $I$ of the
+polynomial ring $\mathbb{C}[x_1, \ldots, x_n]$ is maximal if and only if there is a point
+$a \in \mathbb{C}^n$ such that $I$ is the kernel of the evaluation homomorphism
+$\mathbb{C}[x_1, \ldots, x_n] \to \mathbb{C}$, $f \mapsto f(a)$. -/
 theorem isMaximal_iff_eq_ker_aeval (n : ℕ) (I : Ideal (MvPolynomial (Fin n) ℂ)) :
     I.IsMaximal ↔
       ∃ a : Fin n → ℂ, I = RingHom.ker (aeval a : MvPolynomial (Fin n) ℂ →ₐ[ℂ] ℂ) := by
@@ -59,10 +61,11 @@ theorem isMaximal_iff_eq_ker_aeval (n : ℕ) (I : Ideal (MvPolynomial (Fin n) �
     exact ⟨a, ha.trans (vanishingIdeal_singleton_eq_ker_aeval n a).symm⟩
 
 set_option linter.style.haveILetI false in
-/-- **Weak Nullstellensatz, quotient form.** An ideal `J` of
-`ℂ[x₁, …, xₙ] / (P₁, …, Pₘ)` is maximal if and only if there is a
-common zero `a` of the `Pᵢ` with `J` the image of the vanishing ideal
-of `{a}` in the quotient. -/
+/-- **Weak Nullstellensatz, quotient form.** Let $P_1, \ldots, P_m$ be polynomials in
+$\mathbb{C}[x_1, \ldots, x_n]$ and let $A = \mathbb{C}[x_1, \ldots, x_n]/(P_1, \ldots, P_m)$.
+An ideal $J$ of $A$ is maximal if and only if there is a common zero $a \in \mathbb{C}^n$ of
+$P_1, \ldots, P_m$ such that $J$ is the image in $A$ of the ideal of polynomials vanishing at
+$a$. -/
 theorem isMaximal_quotient_iff_exists_common_zero (n m : ℕ)
     (P : Fin m → MvPolynomial (Fin n) ℂ)
     (J : Ideal (MvPolynomial (Fin n) ℂ ⧸ Ideal.span (Set.range P))) :

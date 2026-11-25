@@ -81,7 +81,14 @@ private lemma y_next_after_prev {α : Type u} {n : Nat}
     simp only [get_set, ite_true, Option.get_some]
   · simp only [get_set, hxy, ite_false]
 
-/-- Execution of all five source lines, with access validity only. -/
+/-- **Doubly-linked-list insertion (LIST-INSERT).** A store is an array of $n$ cells, each
+either empty or holding a node with a payload and optional next and previous pointers to cells.
+Given allocated cells $x$ and $y$ such that the successor of $y$, if any, is allocated,
+inserting $x$ after $y$ performs the five lines of LIST-INSERT in order, each reading the store
+as updated so far: set the next pointer of $x$ to the next pointer of $y$; set the previous
+pointer of $x$ to $y$; test whether the next pointer of $y$ is NIL; if it is some cell $z$, set
+the previous pointer of $z$ to $x$; set the next pointer of $y$ to $x$. The result is the
+updated store, with cost one unit per pointer assignment and per NIL test. -/
 public def listInsert {α : Type u} {n : Nat}
     (store : Vector (Option (Node α (Fin n))) n) (x y : Fin n)
     (hx : (store.get x).isSome) (hy : (store.get y).isSome)
@@ -139,7 +146,12 @@ private lemma first_two_store {α : Type u} {n : Nat}
   dsimp only
   simp only [get_set, ite_true, Option.get_some, Vector.set_set]
 
-/-- Exact source assignment/NIL-test events, including access-valid aliases. -/
+/-- **Cost of doubly-linked-list insertion.** For a store $S$ and allocated cells $x$ and $y$
+such that the successor of $y$ in $S$, if any, is allocated, the cost of inserting $x$ after
+$y$, counting one unit per pointer assignment and per NIL test, is $5$ if $y$ has a successor
+in $S$ and $4$ if the next pointer of $y$ in $S$ is NIL.
+
+No distinctness of $x$ and $y$ is assumed. -/
 public theorem listInsert_time {α : Type u} {n : Nat}
     (store : Vector (Option (Node α (Fin n))) n) (x y : Fin n)
     (hx : (store.get x).isSome) (hy : (store.get y).isSome)
@@ -165,7 +177,15 @@ public theorem listInsert_time {α : Type u} {n : Nat}
     change ((store.get y).get hy).next = _ at hOld
     simp [TimeM.time_bind, TimeM.time_tick, TimeM.time_pure, hOld]
 
-/-- Complete carried-store update; no freshness or representation premise. -/
+/-- **Result of doubly-linked-list insertion.** For a store $S$ and allocated cells $x$ and $y$
+such that the successor of $y$ in $S$, if any, is allocated, let $s$ be the next pointer of $y$
+in $S$. Let $S_1$ be $S$ with cell $x$ replaced by the node of $x$ with next pointer $s$ and
+previous pointer $y$. Let $S_2 = S_1$ if $s$ is NIL; if $s$ is a cell $z$, let $S_2$ be $S_1$
+with the previous pointer of the node in cell $z$ of $S_1$ replaced by $x$. Then the store
+returned by inserting $x$ after $y$ is $S_2$ with the next pointer of the node in cell $y$ of
+$S_2$ replaced by $x$.
+
+No distinctness or representation hypothesis is assumed. -/
 public theorem listInsert_ret {α : Type u} {n : Nat}
     (store : Vector (Option (Node α (Fin n))) n) (x y : Fin n)
     (hx : (store.get x).isSome) (hy : (store.get y).isSome)
@@ -250,7 +270,15 @@ public theorem listInsert_ret {α : Type u} {n : Nat}
         set_map_get store3 y hy3 (fun node => { node with next := some x })
       _ = _ := by rw [hS3]
 
-/-- The whole-store characteristic reduced at one index, preserving all aliases. -/
+/-- **Cells after doubly-linked-list insertion.** For a store $S$, allocated cells $x$ and $y$
+such that the successor of $y$ in $S$, if any, is allocated, and any cell $z$, let $s$ be the
+next pointer of $y$ in $S$. Let $c_1$ be the node of $x$ in $S$ with next pointer replaced by
+$s$ and previous pointer replaced by $y$ if $z = x$, and the content of cell $z$ in $S$
+otherwise. Let $c_2$ be $c_1$ with previous pointer replaced by $x$ if $s = z$, and $c_1$
+otherwise. Then cell $z$ of the store returned by inserting $x$ after $y$ is $c_2$ with next
+pointer replaced by $x$ if $z = y$, and $c_2$ otherwise (an empty cell stays empty).
+
+No distinctness of $x$, $y$ and $s$ is assumed. -/
 public theorem listInsert_get {α : Type u} {n : Nat}
     (store : Vector (Option (Node α (Fin n))) n) (x y z : Fin n)
     (hx : (store.get x).isSome) (hy : (store.get y).isSome)
@@ -270,7 +298,10 @@ public theorem listInsert_get {α : Type u} {n : Nat}
     by_cases hyz : y = z <;> by_cases hwz : w = z <;>
       subst_vars <;> simp_all [get_set]
 
-/-- Cells outside the three source write targets are unchanged. -/
+/-- **Frame property of doubly-linked-list insertion.** For a store $S$ and allocated cells $x$
+and $y$ such that the successor of $y$ in $S$, if any, is allocated, let $z$ be a cell with
+$z \ne x$, $z \ne y$, and $z$ not the successor of $y$ in $S$. Then cell $z$ of the store
+returned by inserting $x$ after $y$ equals cell $z$ of $S$. -/
 public theorem listInsert_frame {α : Type u} {n : Nat}
     (store : Vector (Option (Node α (Fin n))) n) (x y z : Fin n)
     (hx : (store.get x).isSome) (hy : (store.get y).isSome)
@@ -280,7 +311,10 @@ public theorem listInsert_frame {α : Type u} {n : Nat}
   rw [listInsert_get]
   simp [hxz, hyz, hsz]
 
-/-- Allocation is preserved at every cell, including overlapping write targets. -/
+/-- **Doubly-linked-list insertion neither allocates nor frees cells.** For a store $S$ and
+allocated cells $x$ and $y$ such that the successor of $y$ in $S$, if any, is allocated, every
+cell $z$ of the store returned by inserting $x$ after $y$ is allocated if and only if cell $z$ of
+$S$ is allocated. No distinctness of $x$, $y$ and the successor of $y$ is assumed. -/
 public theorem listInsert_allocated {α : Type u} {n : Nat}
     (store : Vector (Option (Node α (Fin n))) n) (x y z : Fin n)
     (hx : (store.get x).isSome) (hy : (store.get y).isSome)
@@ -293,7 +327,12 @@ public theorem listInsert_allocated {α : Type u} {n : Nat}
     split_ifs <;> simp_all
   · split_ifs <;> simp_all
 
-/-- Full payloads are preserved at every cell; no payload equality is required. -/
+/-- **Doubly-linked-list insertion preserves payloads.** For a store $S$ and allocated cells $x$
+and $y$ such that the successor of $y$ in $S$, if any, is allocated, every cell $z$ of the store
+returned by inserting $x$ after $y$ is empty exactly when cell $z$ of $S$ is empty, and
+otherwise holds a node with the same payload as the node in cell $z$ of $S$.
+
+No hypothesis on the payloads, such as distinct keys, is needed. -/
 public theorem listInsert_payload {α : Type u} {n : Nat}
     (store : Vector (Option (Node α (Fin n))) n) (x y z : Fin n)
     (hx : (store.get x).isSome) (hy : (store.get y).isSome)
@@ -472,8 +511,14 @@ private lemma inserted_node {α : Type u} {n : Nat}
   · rw [List.getElem?_insertIdx_of_gt (by omega)]
     simpa using represented_next rep k hk hy
 
-/-- Inserting an allocated fresh node after index `k` preserves the exact source-list
-representation, with no head write. Freshness is a proof premise, not an execution guard. -/
+/-- **Insertion into a represented doubly-linked list.** Suppose the store $S$ with head $h$
+represents the list of distinct cells $(i_0, \dots, i_{m-1})$. Let $k < m$, let $x$ be an
+allocated cell not among $i_0, \dots, i_{m-1}$, and assume that cell $i_k$ and its successor in
+$S$, if any, are allocated. Then the store returned by inserting $x$ after $i_k$, with the same
+head $h$, represents the list $(i_0, \dots, i_k, x, i_{k+1}, \dots, i_{m-1})$.
+
+The hypothesis that $x$ is not in the list is used only in the proof; the insertion itself runs
+without it. -/
 public theorem listInsert_represents {α : Type u} {n : Nat}
     (store : Vector (Option (Node α (Fin n))) n) (x : Fin n)
     (head : Option (Fin n)) (ids : List (Fin n)) (rep : Represents store head ids)
@@ -492,8 +537,12 @@ public theorem listInsert_represents {α : Type u} {n : Nat}
       exact inserted_node store x rep fresh k hk hx hy hs hi
     · exact suffix_node store x rep fresh k hk hx hy hs i (by omega) hi
 
-/-- Insertion preserves another represented list whose identities are disjoint from
-the original list and do not contain the fresh insertion identity. -/
+/-- **Doubly-linked-list insertion preserves disjoint lists.** Suppose the store $S$ with head
+$h$ represents the list of cells $(i_0, \dots, i_{m-1})$ and with head $h'$ represents a list
+$L'$ of cells, and that the two lists have no cell in common. Let $k < m$, let $x$ be an
+allocated cell not in $L'$, and assume that cell $i_k$ and its successor in $S$, if any, are
+allocated. Then the store returned by inserting $x$ after $i_k$, with head $h'$, still
+represents $L'$. -/
 public theorem listInsert_disjoint_represents {α : Type u} {n : Nat}
     (store : Vector (Option (Node α (Fin n))) n) (x : Fin n)
     (head otherHead : Option (Fin n)) (ids otherIds : List (Fin n))

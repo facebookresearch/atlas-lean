@@ -1,0 +1,15 @@
+# Double-entry ledgers and the accounting equation
+
+- [Balance-sheet class of an account](account-class.md)
+- [Balanced journal entry](is-balanced.md)
+- [Posting a journal entry to the ledger](post.md)
+- [Total assets of a ledger](assets.md)
+- [Total liabilities of a ledger](liabilities.md)
+- [Total equity of a ledger](equity.md)
+- [Accounting equation for ledger balances](accounting-equation.md)
+- [A balanced entry leaves the trial balance unchanged](sum-post-of-is-balanced.md)
+- [Accounting equation holds iff the trial balance is zero](accounting-equation-iff-sum-eq-zero.md)
+- [A balanced entry preserves the accounting equation](accounting-equation-post.md)
+- [Posting a sequence of journal entries](post-all.md)
+- [A sequence of balanced entries leaves the trial balance unchanged](sum-post-all-of-forall-is-balanced.md)
+- [A sequence of balanced entries preserves the accounting equation](accounting-equation-post-all.md)

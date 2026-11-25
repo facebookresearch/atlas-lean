@@ -9,9 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
-public import Mathlib.Analysis.InnerProductSpace.l2Space
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import MathlibExt.Analysis.Wavelet.Multiresolution
+public import MathlibExt.Analysis.Wavelet.ScalingFunction
 
 /-!
 # Scaling functions and wavelet bases of multiresolution approximations (wanted)
@@ -26,10 +25,9 @@ approximation `(V_j)` in the sense of
 * Section 4: there is a wavelet `ψ` such that `√(2^j) ψ(2^j x - k)`, `(j, k) ∈ ℤ²`, is an
   orthonormal basis of `L²(ℝ)`.
 
-The proofs (orthonormalization of the Riesz basis given by property (5) in the Fourier domain,
-the filter `H` and the conjugate filter `G(ω) = e^{-iω} conj(H(ω + π))`) are deferred. Statements
-are existence statements; the paper's normalization of `φ` and its uniqueness claim are not
-recorded.
+The scaling function is supplied by `MathlibExt.Analysis.Wavelet.ScalingFunction`. The wavelet
+construction using the filter `H` and the conjugate filter `G(ω) = e^{-iω} conj(H(ω + π))`
+is deferred. Both statements assert existence.
 -/
 
 @[expose] public section
@@ -39,16 +37,6 @@ open MeasureTheory
 namespace MathlibExt.Analysis.Wavelet.MultiresolutionWanted
 
 open MathlibExt.Analysis.Wavelet.Multiresolution
-
-/-- **Scaling function of a multiresolution approximation** (S. Mallat, *Multiresolution
-approximations and wavelet orthonormal bases of `L²(ℝ)`*, Trans. Amer. Math. Soc. 315 (1989),
-Section 2). If `(V_j)` is a multiresolution approximation of `L²(ℝ)`, there is `φ ∈ L²(ℝ)` whose
-integer translates `x ↦ φ(x - k)`, `k ∈ ℤ`, form an orthonormal basis of `V_0`: a Hilbert basis
-of `V_0` indexed by `ℤ` whose elements are a.e. equal to these translates. -/
-theorem_wanted exists_scaling_function {V : ℤ → Submodule ℂ (Lp ℂ 2 (volume : Measure ℝ))}
-    (hV : IsMultiresolutionApproximation V) :
-    ∃ φ : Lp ℂ 2 (volume : Measure ℝ), ∃ b : HilbertBasis ℤ ℂ (V 0),
-      ∀ k : ℤ, ⇑((b k : V 0) : Lp ℂ 2 (volume : Measure ℝ)) =ᵐ[volume] fun x => φ (x - k)
 
 /-- **Wavelet orthonormal basis of a multiresolution approximation** (S. Mallat,
 *Multiresolution approximations and wavelet orthonormal bases of `L²(ℝ)`*, Trans. Amer. Math.
