@@ -86674,6 +86674,7 @@
 "MetaMathlibExt.affineFreeSum_idp": "825092fd42ee85de",
 "MetaMathlibExt.affineFreeSum_reflexive_idp_hStarUnimodal": "8398426cccef817d",
 "MetaMathlibExt.affineScaleSet": "2ca41d42778974e6",
+"MetaMathlibExt.affine_mean_variance_laws": "9007dd7c4caba47b",
 "MetaMathlibExt.aigner_motzkin_ratio_inequality": "1a329974bdc5815f",
 "MetaMathlibExt.aleph0_lt_of_isRegular_beth_ord": "4bd8a6a1a330227b",
 "MetaMathlibExt.alfred_consecutive_fibonacci_powers_determinant": "66bf7c45ed8b9089",
