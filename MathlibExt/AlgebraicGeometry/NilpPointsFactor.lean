@@ -50,6 +50,40 @@ import Mathlib.Tactic.Conv
 import Mathlib.Tactic.Ring
 import Mathlib.Tactic.SimpRw
 
+/-!
+# Nilpotent points factor through a finite quotient
+
+For a scheme `X` with `f : X ⟶ Spec 𝒪`, `Scheme.pointsOver f : CommAlgCat 𝒪 ⥤ Type u` is its
+functor of points over `Spec 𝒪`: a commutative `𝒪`-algebra `B` goes to the morphisms
+`Spec B ⟶ X` over `Spec 𝒪`, covariantly in `B`. A morphism over `Spec 𝒪` induces a natural
+transformation `Scheme.pointsOver.mapHom` between these functors.
+
+The main theorem takes a finite group `G` acting on `M` over a Noetherian ring `𝒪`, and a
+`G`-invariant morphism `p : M ⟶ X` over `Spec 𝒪` that is integral and affine, with `X` affine, `M`
+and `X` locally of finite type over `𝒪`, `p` injective on global sections, and the global sections
+of `X` mapping onto the `G`-invariant global sections of `M`. It shows that a `G`-invariant family
+of maps from the points of `M` to the points of an affine `T` over `Spec 𝒪`, natural on the
+`𝒪`-algebras in which a fixed `π : 𝒪` is nilpotent, factors uniquely through `p`.
+
+## Main definitions
+
+* `AlgebraicGeometry.Scheme.specOver`: the structure morphism `Spec B ⟶ Spec 𝒪` of an algebra.
+* `AlgebraicGeometry.Scheme.pointsOver`: the functor of points over `Spec 𝒪`.
+* `AlgebraicGeometry.Scheme.pointsOver.mapHom`: the natural transformation induced by a morphism
+  over `Spec 𝒪`.
+
+## Main results
+
+* `Scheme.existsUnique_nilpPoints_factor_of_quotient_of_isAffine_of_isAffine_of_isNoetherianRing`
+
+## Implementation notes
+
+The proof works with global sections: the family gives a compatible tower of ring maps
+`Γ(T, ⊤) → Γ(M, ⊤) ⧸ (π ^ n)`, which descends to `Γ(X, ⊤) ⧸ (π ^ n)` by the Artin–Rees lemma
+applied to the `G`-invariants. The functor of points is universe-polymorphic; the theorem is stated
+at universe 0.
+-/
+
 @[expose] public section
 
 open CategoryTheory AlgebraicGeometry
@@ -61,6 +95,8 @@ universe u
 
 variable {𝒪 : Type u} [CommRing 𝒪]
 
+/-- **Structure morphism of an algebra.** For a commutative `𝒪`-algebra `B`, the morphism
+`Spec B ⟶ Spec 𝒪` induced by `algebraMap 𝒪 B`. -/
 noncomputable abbrev Scheme.specOver (B : Type u) [CommRing B] [Algebra 𝒪 B] :
     Spec (.of B) ⟶ Spec (.of 𝒪) :=
   Spec.map (CommRingCat.ofHom (algebraMap 𝒪 B))
@@ -71,6 +107,10 @@ theorem Scheme.specMap_algHom_comp_specOver {B : Type u} [CommRing B] [Algebra �
   rw [Scheme.specOver, Scheme.specOver, ← Spec.map_comp, ← CommRingCat.ofHom_comp, AlgHom.toRingHom_eq_coe,
     AlgHom.comp_algebraMap]
 
+/-- **Functor of points over a ring.** For `f : X ⟶ Spec 𝒪`, the functor from commutative
+`𝒪`-algebras to types that sends `B` to the morphisms `Spec B ⟶ X` over `Spec 𝒪`. It is covariant
+in `B`: a morphism `B ⟶ B'` acts by precomposition with `Spec B' ⟶ Spec B`. No condition is put on
+`B`. -/
 noncomputable def Scheme.pointsOver {X : Scheme.{u}} (f : X ⟶ Spec (.of 𝒪)) :
     CommAlgCat.{u} 𝒪 ⥤ Type u where
   obj B := { φ : Spec (.of B) ⟶ X // φ ≫ f = Scheme.specOver B }
@@ -93,6 +133,8 @@ noncomputable def Scheme.pointsOver {X : Scheme.{u}} (f : X ⟶ Spec (.of 𝒪))
     ((Scheme.pointsOver f).map g φ).1 = Spec.map (CommRingCat.ofHom g.hom.toRingHom) ≫ φ.1 :=
   rfl
 
+/-- **Map of points over a ring.** A morphism `h : X ⟶ Y` over `Spec 𝒪` induces the natural
+transformation `pointsOver fX ⟶ pointsOver fY` that composes each point with `h`. -/
 noncomputable def Scheme.pointsOver.mapHom {X Y : Scheme.{u}} (fX : X ⟶ Spec (.of 𝒪))
     (fY : Y ⟶ Spec (.of 𝒪)) (h : X ⟶ Y) (w : h ≫ fY = fX) :
     Scheme.pointsOver fX ⟶ Scheme.pointsOver fY where
@@ -765,6 +807,14 @@ end FormalInvFactor29
 
 open FormalInvFactor29 FormalInvFactor29.SchemeNilpFactor
 
+/-- **Nilpotent points factor through a finite quotient.** Let a finite group `G` act on `M` over
+`Spec 𝒪`, with `𝒪` Noetherian, and let `p : M ⟶ X` be a `G`-invariant morphism over `Spec 𝒪` that
+is integral and affine, with `X` affine, `M` and `X` locally of finite type over `𝒪`, `p` injective
+on global sections, and the global sections of `X` mapping onto the `G`-invariant global sections
+of `M`. Fix `π : 𝒪` and an affine `T` over `Spec 𝒪`. Then every `G`-invariant family `u` of maps
+from the points of `M` to the points of `T`, defined on the `𝒪`-algebras in which `π` is nilpotent
+and natural in them, factors through `p` as such a family `ubar` on the points of `X`, and `ubar`
+is the only one that does. -/
 theorem AlgebraicGeometry.Scheme.existsUnique_nilpPoints_factor_of_quotient_of_isAffine_of_isAffine_of_isNoetherianRing
     {𝒪 : Type} [CommRing 𝒪] [IsNoetherianRing 𝒪] (π : 𝒪)
     {M X : Scheme.{0}} (fM : M ⟶ Spec (CommRingCat.of 𝒪)) (f : X ⟶ Spec (CommRingCat.of 𝒪))
