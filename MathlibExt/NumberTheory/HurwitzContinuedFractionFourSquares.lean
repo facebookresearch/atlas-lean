@@ -17,6 +17,8 @@ import Mathlib.Tactic.IntervalCases
 `hurwitzQ_mul_sub_hurwitzP` expresses the convergent error as a signed reciprocal
 product of the iterates and recovers the next iterate from two consecutive errors.
 `norm_hurwitzQ_lt_succ` proves that the denominator norms increase at legal indices.
+`norm_sub_hurwitz_convergent_le` proves Lakein's first theorem: at every legal index the
+distance from $z$ to its convergent is at most the reciprocal of the squared denominator norm.
 
 The iterates and convergents follow Zhaonan Wang and Yingpu Deng, *Finding Sums of Four
 Squares via Complex Continued Fractions*. Rounding ties go to the larger integer in each
@@ -350,6 +352,494 @@ private theorem denominator_state (z : ℂ) (n : ℕ) (hn : HurwitzLegal z (n + 
 
 end norm_hurwitzQ_lt_succ
 
+namespace norm_sub_hurwitz_convergent_le
+
+private theorem geom_h4 (p q u v : ℝ) (hp0 : 0 ≤ p) (hp : p ≤ 1 / 2) (hq0 : 0 ≤ q)
+    (hq : q ≤ 1 / 2) (hN : (1 - (p ^ 2 + q ^ 2)) * (u ^ 2 + v ^ 2) -
+      2 * (p * u + q * v) + (p ^ 2 + q ^ 2) < 0)
+    (hd00 : (0 : ℝ) < u ^ 2 + v ^ 2 - 1) (hd10 : (0 : ℝ) < (u - 1) ^ 2 + v ^ 2 - 1)
+    (hd01 : (0 : ℝ) < u ^ 2 + (v - 1) ^ 2 - 1)
+    (hd11 : (0 : ℝ) < (u - 1) ^ 2 + (v - 1) ^ 2 - 1) : False := by
+  have hRle : p ^ 2 + q ^ 2 ≤ 1 / 2 := by
+    nlinarith [mul_nonneg hp0 (sub_nonneg.mpr hp), mul_nonneg hq0 (sub_nonneg.mpr hq)]
+  have hR : (0 : ℝ) < 1 - (p ^ 2 + q ^ 2) := by linarith
+  have hA : (0 : ℝ) ≤ (1 - (p ^ 2 + q ^ 2) - p) * (1 - (p ^ 2 + q ^ 2) - q) := by
+    apply mul_nonneg <;> nlinarith [hRle, hp, hq]
+  have hB : (0 : ℝ) ≤ p * (1 - (p ^ 2 + q ^ 2) - q) := mul_nonneg hp0 (by nlinarith [hRle, hp, hq])
+  have hC : (0 : ℝ) ≤ q * (1 - (p ^ 2 + q ^ 2) - p) := mul_nonneg hq0 (by nlinarith [hRle, hp, hq])
+  have hD : (0 : ℝ) ≤ p * q := mul_nonneg hp0 hq0
+  set m : ℝ := min (min (u ^ 2 + v ^ 2 - 1) ((u - 1) ^ 2 + v ^ 2 - 1))
+    (min (u ^ 2 + (v - 1) ^ 2 - 1) ((u - 1) ^ 2 + (v - 1) ^ 2 - 1)) with hmdef
+  have hm : (0 : ℝ) < m := lt_min (lt_min hd00 hd10) (lt_min hd01 hd11)
+  have hW : (0 : ℝ) < (1 - (p ^ 2 + q ^ 2) - p) * (1 - (p ^ 2 + q ^ 2) - q) +
+      p * (1 - (p ^ 2 + q ^ 2) - q) + q * (1 - (p ^ 2 + q ^ 2) - p) + p * q := by
+    have e : (1 - (p ^ 2 + q ^ 2) - p) * (1 - (p ^ 2 + q ^ 2) - q) +
+        p * (1 - (p ^ 2 + q ^ 2) - q) + q * (1 - (p ^ 2 + q ^ 2) - p) + p * q =
+        (1 - (p ^ 2 + q ^ 2)) ^ 2 := by ring
+    rw [e]; exact pow_pos hR 2
+  have hm00 : m ≤ u ^ 2 + v ^ 2 - 1 := by
+    rw [hmdef]; exact le_trans (min_le_left _ _) (min_le_left _ _)
+  have hm10 : m ≤ (u - 1) ^ 2 + v ^ 2 - 1 := by
+    rw [hmdef]; exact le_trans (min_le_left _ _) (min_le_right _ _)
+  have hm01 : m ≤ u ^ 2 + (v - 1) ^ 2 - 1 := by
+    rw [hmdef]; exact le_trans (min_le_right _ _) (min_le_left _ _)
+  have hm11 : m ≤ (u - 1) ^ 2 + (v - 1) ^ 2 - 1 := by
+    rw [hmdef]; exact le_trans (min_le_right _ _) (min_le_right _ _)
+  have e1 := mul_le_mul_of_nonneg_left hm00 hA
+  have e2 := mul_le_mul_of_nonneg_left hm10 hB
+  have e3 := mul_le_mul_of_nonneg_left hm01 hC
+  have e4 := mul_le_mul_of_nonneg_left hm11 hD
+  have hpos : (0 : ℝ) < (1 - (p ^ 2 + q ^ 2) - p) * (1 - (p ^ 2 + q ^ 2) - q) *
+      (u ^ 2 + v ^ 2 - 1) + p * (1 - (p ^ 2 + q ^ 2) - q) * ((u - 1) ^ 2 + v ^ 2 - 1) +
+      q * (1 - (p ^ 2 + q ^ 2) - p) * (u ^ 2 + (v - 1) ^ 2 - 1) +
+      p * q * ((u - 1) ^ 2 + (v - 1) ^ 2 - 1) := by
+    have hprod : (0 : ℝ) < m * ((1 - (p ^ 2 + q ^ 2) - p) * (1 - (p ^ 2 + q ^ 2) - q) +
+        p * (1 - (p ^ 2 + q ^ 2) - q) + q * (1 - (p ^ 2 + q ^ 2) - p) + p * q) :=
+      mul_pos hm hW
+    have hring : m * ((1 - (p ^ 2 + q ^ 2) - p) * (1 - (p ^ 2 + q ^ 2) - q) +
+        p * (1 - (p ^ 2 + q ^ 2) - q) + q * (1 - (p ^ 2 + q ^ 2) - p) + p * q) =
+        (1 - (p ^ 2 + q ^ 2) - p) * (1 - (p ^ 2 + q ^ 2) - q) * m +
+        p * (1 - (p ^ 2 + q ^ 2) - q) * m + q * (1 - (p ^ 2 + q ^ 2) - p) * m +
+        p * q * m := by ring
+    linarith [hprod, hring, e1, e2, e3, e4]
+  have hid : (1 - (p ^ 2 + q ^ 2) - p) * (1 - (p ^ 2 + q ^ 2) - q) *
+      (u ^ 2 + v ^ 2 - 1) + p * (1 - (p ^ 2 + q ^ 2) - q) * ((u - 1) ^ 2 + v ^ 2 - 1) +
+      q * (1 - (p ^ 2 + q ^ 2) - p) * (u ^ 2 + (v - 1) ^ 2 - 1) +
+      p * q * ((u - 1) ^ 2 + (v - 1) ^ 2 - 1) =
+      (1 - (p ^ 2 + q ^ 2)) * ((1 - (p ^ 2 + q ^ 2)) * (u ^ 2 + v ^ 2) -
+        2 * (p * u + q * v) + (p ^ 2 + q ^ 2)) + (p + q - 1) * (1 - (p ^ 2 + q ^ 2)) := by
+    ring
+  have h1 : (1 - (p ^ 2 + q ^ 2)) * ((1 - (p ^ 2 + q ^ 2)) * (u ^ 2 + v ^ 2) -
+      2 * (p * u + q * v) + (p ^ 2 + q ^ 2)) < 0 := mul_neg_of_pos_of_neg hR hN
+  have h2 : (p + q - 1) * (1 - (p ^ 2 + q ^ 2)) ≤ 0 :=
+    mul_nonpos_of_nonpos_of_nonneg (by linarith) (le_of_lt hR)
+  rw [hid] at hpos
+  linarith
+
+private theorem geom_h3 (p q u v : ℝ) (hp0 : 0 ≤ p) (hp : p ≤ 1 / 2) (hq0 : 0 ≤ q)
+    (hq : q ≤ 1 / 2) (hN : (1 - (p ^ 2 + q ^ 2)) * (u ^ 2 + v ^ 2) -
+      2 * (p * u + q * v) + (p ^ 2 + q ^ 2) < 0)
+    (hd00 : (0 : ℝ) < u ^ 2 + v ^ 2 - 1) (hd10 : (0 : ℝ) < (u - 1) ^ 2 + v ^ 2 - 1)
+    (hd01 : (0 : ℝ) < u ^ 2 + (v - 1) ^ 2 - 1)
+    (hW : (0 : ℝ) ≤ 1 - (p ^ 2 + q ^ 2) - p - q) : False := by
+  have hRle : p ^ 2 + q ^ 2 ≤ 1 / 2 := by
+    nlinarith [mul_nonneg hp0 (sub_nonneg.mpr hp), mul_nonneg hq0 (sub_nonneg.mpr hq)]
+  have hR : (0 : ℝ) < 1 - (p ^ 2 + q ^ 2) := by linarith
+  set m : ℝ := min (u ^ 2 + v ^ 2 - 1) (min ((u - 1) ^ 2 + v ^ 2 - 1) (u ^ 2 + (v - 1) ^ 2 - 1))
+    with hmdef
+  have hm : (0 : ℝ) < m := lt_min hd00 (lt_min hd10 hd01)
+  have hWsum : (0 : ℝ) < (1 - (p ^ 2 + q ^ 2) - p - q) + p + q := by linarith
+  have hm00 : m ≤ u ^ 2 + v ^ 2 - 1 := by rw [hmdef]; exact min_le_left _ _
+  have hm10 : m ≤ (u - 1) ^ 2 + v ^ 2 - 1 := by
+    rw [hmdef]; exact le_trans (min_le_right _ _) (min_le_left _ _)
+  have hm01 : m ≤ u ^ 2 + (v - 1) ^ 2 - 1 := by
+    rw [hmdef]; exact le_trans (min_le_right _ _) (min_le_right _ _)
+  have e1 := mul_le_mul_of_nonneg_left hm00 hW
+  have e2 := mul_le_mul_of_nonneg_left hm10 hp0
+  have e3 := mul_le_mul_of_nonneg_left hm01 hq0
+  have hpos : (0 : ℝ) < (1 - (p ^ 2 + q ^ 2) - p - q) * (u ^ 2 + v ^ 2 - 1) +
+      p * ((u - 1) ^ 2 + v ^ 2 - 1) + q * (u ^ 2 + (v - 1) ^ 2 - 1) := by
+    have hprod : (0 : ℝ) < m * ((1 - (p ^ 2 + q ^ 2) - p - q) + p + q) := mul_pos hm hWsum
+    have hring : m * ((1 - (p ^ 2 + q ^ 2) - p - q) + p + q) =
+        (1 - (p ^ 2 + q ^ 2) - p - q) * m + p * m + q * m := by ring
+    linarith [hprod, hring, e1, e2, e3]
+  have hid : (1 - (p ^ 2 + q ^ 2) - p - q) * (u ^ 2 + v ^ 2 - 1) +
+      p * ((u - 1) ^ 2 + v ^ 2 - 1) + q * (u ^ 2 + (v - 1) ^ 2 - 1) =
+      (1 - (p ^ 2 + q ^ 2)) * (u ^ 2 + v ^ 2) - 2 * (p * u + q * v) + (p ^ 2 + q ^ 2) +
+        (p + q - 1) := by ring
+  rw [hid] at hpos
+  linarith [hN, hp, hq]
+
+private theorem geom_vbound (p q u v : ℝ) (hN : (1 - (p ^ 2 + q ^ 2)) * (u ^ 2 + v ^ 2) -
+    2 * (p * u + q * v) + (p ^ 2 + q ^ 2) < 0)
+    (hR : (0 : ℝ) < 1 - (p ^ 2 + q ^ 2)) :
+    ((1 - (p ^ 2 + q ^ 2)) * v - q) ^ 2 < (p ^ 2 + q ^ 2) ^ 2 := by
+  nlinarith [sq_nonneg ((1 - (p ^ 2 + q ^ 2)) * u - p), hN, hR,
+    mul_pos hR (show (0 : ℝ) < 1 - (p ^ 2 + q ^ 2) from hR)]
+
+private theorem geom_h2 (p q u v : ℝ) (hp0 : 0 ≤ p) (hp : p ≤ 1 / 2) (hq0 : 0 ≤ q)
+    (hq : q ≤ 1 / 2) (hN : (1 - (p ^ 2 + q ^ 2)) * (u ^ 2 + v ^ 2) -
+      2 * (p * u + q * v) + (p ^ 2 + q ^ 2) < 0)
+    (hd00 : (0 : ℝ) < u ^ 2 + v ^ 2 - 1) (hd10 : (0 : ℝ) < (u - 1) ^ 2 + v ^ 2 - 1)
+    (hkey : 2 * q * (q + (p ^ 2 + q ^ 2)) ≤ (1 - p) * (1 - (p ^ 2 + q ^ 2))) : False := by
+  have hRle : p ^ 2 + q ^ 2 ≤ 1 / 2 := by
+    nlinarith [mul_nonneg hp0 (sub_nonneg.mpr hp), mul_nonneg hq0 (sub_nonneg.mpr hq)]
+  have hR : (0 : ℝ) < 1 - (p ^ 2 + q ^ 2) := by linarith
+  have hvbound : 2 * q * v ≤ 1 - p := by
+    by_cases hv : v ≤ 0
+    · nlinarith [mul_nonpos_of_nonneg_of_nonpos hq0 hv, hp]
+    · rw [not_le] at hv
+      rcases eq_or_lt_of_le hq0 with hqeq | hqpos
+      · rw [← hqeq]; norm_num; linarith [hp]
+      have hv2 := geom_vbound p q u v hN hR
+      have hRnn : (0 : ℝ) ≤ p ^ 2 + q ^ 2 := add_nonneg (sq_nonneg _) (sq_nonneg _)
+      have habs : |(1 - (p ^ 2 + q ^ 2)) * v - q| < p ^ 2 + q ^ 2 := by
+        have h := sq_lt_sq.mp hv2
+        rwa [abs_of_nonneg hRnn] at h
+      have hvlt : (1 - (p ^ 2 + q ^ 2)) * v - q < p ^ 2 + q ^ 2 := (abs_lt.mp habs).2
+      have hvlt2 : v < (q + (p ^ 2 + q ^ 2)) / (1 - (p ^ 2 + q ^ 2)) := by
+        rw [lt_div_iff₀ hR]; linarith [hvlt]
+      have hlt : 2 * q * v < 2 * q * ((q + (p ^ 2 + q ^ 2)) / (1 - (p ^ 2 + q ^ 2))) :=
+        mul_lt_mul_of_pos_left hvlt2 (by linarith [hqpos])
+      rw [mul_div_assoc'] at hlt
+      have hle : 2 * q * (q + (p ^ 2 + q ^ 2)) / (1 - (p ^ 2 + q ^ 2)) ≤ 1 - p := by
+        rw [div_le_iff₀ hR]; linarith [hkey]
+      linarith [hlt, hle]
+  have hWge : (0 : ℝ) ≤ 1 - (p ^ 2 + q ^ 2) - p := by nlinarith [hRle, hp, hq]
+  set m : ℝ := min (u ^ 2 + v ^ 2 - 1) ((u - 1) ^ 2 + v ^ 2 - 1) with hmdef
+  have hm : (0 : ℝ) < m := lt_min hd00 hd10
+  have hWsum : (0 : ℝ) < (1 - (p ^ 2 + q ^ 2) - p) + p := by linarith
+  have hm00 : m ≤ u ^ 2 + v ^ 2 - 1 := by rw [hmdef]; exact min_le_left _ _
+  have hm10 : m ≤ (u - 1) ^ 2 + v ^ 2 - 1 := by rw [hmdef]; exact min_le_right _ _
+  have e1 := mul_le_mul_of_nonneg_left hm00 hWge
+  have e2 := mul_le_mul_of_nonneg_left hm10 hp0
+  have hpos : (0 : ℝ) < (1 - (p ^ 2 + q ^ 2) - p) * (u ^ 2 + v ^ 2 - 1) +
+      p * ((u - 1) ^ 2 + v ^ 2 - 1) := by
+    have hprod : (0 : ℝ) < m * ((1 - (p ^ 2 + q ^ 2) - p) + p) := mul_pos hm hWsum
+    have hring : m * ((1 - (p ^ 2 + q ^ 2) - p) + p) =
+        (1 - (p ^ 2 + q ^ 2) - p) * m + p * m := by ring
+    linarith [hprod, hring, e1, e2]
+  have hid : (1 - (p ^ 2 + q ^ 2) - p) * (u ^ 2 + v ^ 2 - 1) +
+      p * ((u - 1) ^ 2 + v ^ 2 - 1) =
+      (1 - (p ^ 2 + q ^ 2)) * (u ^ 2 + v ^ 2) - 2 * (p * u + q * v) + (p ^ 2 + q ^ 2) +
+        2 * q * v + p - 1 := by ring
+  rw [hid] at hpos
+  linarith [hN, hvbound]
+
+private theorem geom_aux (p q u v : ℝ) (hp0 : 0 ≤ p) (hp : p ≤ 1 / 2) (hq0 : 0 ≤ q)
+    (hq : q ≤ 1 / 2)
+    (hsep : ∀ a b : ℤ, (p - a) ^ 2 + (q - b) ^ 2 < 1 → (u - a) ^ 2 + (v - b) ^ 2 > 1) :
+    (p ^ 2 + q ^ 2) * (u ^ 2 + v ^ 2) ≤ (p - u) ^ 2 + (q - v) ^ 2 := by
+  by_contra hcon
+  have hN : (1 - (p ^ 2 + q ^ 2)) * (u ^ 2 + v ^ 2) -
+      2 * (p * u + q * v) + (p ^ 2 + q ^ 2) < 0 := by nlinarith [hcon]
+  have hd00 : (0 : ℝ) < u ^ 2 + v ^ 2 - 1 := by
+    have h := hsep 0 0 (by
+      simp only [Int.cast_zero, sub_zero]
+      nlinarith [hp0, hp, hq0, hq, mul_nonneg hp0 (sub_nonneg.mpr hp),
+        mul_nonneg hq0 (sub_nonneg.mpr hq)])
+    have h2 := h
+    simp only [Int.cast_zero, sub_zero] at h2
+    linarith
+  by_cases h10 : (p - 1) ^ 2 + q ^ 2 < 1
+  · have ht10 := hsep 1 0 (by
+      simp only [Int.cast_one, Int.cast_zero, sub_zero]
+      exact h10)
+    simp only [Int.cast_one, Int.cast_zero, sub_zero] at ht10
+    have hd10 : (0 : ℝ) < (u - 1) ^ 2 + v ^ 2 - 1 := by linarith
+    by_cases h01 : p ^ 2 + (q - 1) ^ 2 < 1
+    · have ht01 := hsep 0 1 (by
+        simp only [Int.cast_one, Int.cast_zero, sub_zero]
+        exact h01)
+      simp only [Int.cast_one, Int.cast_zero, sub_zero] at ht01
+      have hd01 : (0 : ℝ) < u ^ 2 + (v - 1) ^ 2 - 1 := by linarith
+      by_cases h11 : (p - 1) ^ 2 + (q - 1) ^ 2 < 1
+      · have ht11 := hsep 1 1 (by
+          simp only [Int.cast_one]
+          exact h11)
+        simp only [Int.cast_one] at ht11
+        have hd11 : (0 : ℝ) < (u - 1) ^ 2 + (v - 1) ^ 2 - 1 := by linarith
+        exact geom_h4 p q u v hp0 hp hq0 hq hN hd00 hd10 hd01 hd11
+      · have g11 : (p - 1) ^ 2 + (q - 1) ^ 2 ≥ 1 := not_lt.mp h11
+        have hW : (0 : ℝ) ≤ 1 - (p ^ 2 + q ^ 2) - p - q := by
+          nlinarith only [sq_nonneg (p - q), sq_nonneg (p + q - 1), mul_nonneg hp0 hq0,
+            mul_nonneg (sub_nonneg.mpr hp) (sub_nonneg.mpr hq), sq_nonneg (2 * p - 1),
+            sq_nonneg (2 * q - 1), mul_nonneg hp0 (sub_nonneg.mpr hp),
+            mul_nonneg hq0 (sub_nonneg.mpr hq), g11]
+        exact geom_h3 p q u v hp0 hp hq0 hq hN hd00 hd10 hd01 hW
+    · have g01 : p ^ 2 + (q - 1) ^ 2 ≥ 1 := not_lt.mp h01
+      by_cases h11 : (p - 1) ^ 2 + (q - 1) ^ 2 < 1
+      · exfalso
+        have e : (q - 1) ^ 2 = q ^ 2 - 2 * q + 1 := by ring
+        linarith [h11, g01, e, hq]
+      · have hkey : 2 * q * (q + (p ^ 2 + q ^ 2)) ≤ (1 - p) * (1 - (p ^ 2 + q ^ 2)) := by
+          nlinarith only [sq_nonneg (p - q), sq_nonneg (p + q - 1), mul_nonneg hp0 hq0,
+            mul_nonneg (sub_nonneg.mpr hp) (sub_nonneg.mpr hq), sq_nonneg (2 * p - 1),
+            sq_nonneg (2 * q - 1), mul_nonneg hp0 (sub_nonneg.mpr hp), h10, g01]
+        exact geom_h2 p q u v hp0 hp hq0 hq hN hd00 hd10 hkey
+  · have g10 : (p - 1) ^ 2 + q ^ 2 ≥ 1 := not_lt.mp h10
+    by_cases h01 : p ^ 2 + (q - 1) ^ 2 < 1
+    · have ht01 := hsep 0 1 (by
+        simp only [Int.cast_one, Int.cast_zero, sub_zero]
+        exact h01)
+      simp only [Int.cast_one, Int.cast_zero, sub_zero] at ht01
+      have hd01 : (0 : ℝ) < u ^ 2 + (v - 1) ^ 2 - 1 := by linarith
+      by_cases h11 : (p - 1) ^ 2 + (q - 1) ^ 2 < 1
+      · exfalso
+        have e : (p - 1) ^ 2 = p ^ 2 - 2 * p + 1 := by ring
+        linarith [h11, g10, e, hp]
+      · have hkey : 2 * p * (p + (p ^ 2 + q ^ 2)) ≤ (1 - q) * (1 - (p ^ 2 + q ^ 2)) := by
+          nlinarith only [sq_nonneg (p - q), sq_nonneg (p + q - 1), mul_nonneg hp0 hq0,
+            mul_nonneg (sub_nonneg.mpr hp) (sub_nonneg.mpr hq), sq_nonneg (2 * p - 1),
+            sq_nonneg (2 * q - 1), mul_nonneg hq0 (sub_nonneg.mpr hq), h01, g10]
+        -- swapped version of geom_h2
+        have hN' : (1 - (q ^ 2 + p ^ 2)) * (v ^ 2 + u ^ 2) -
+            2 * (q * v + p * u) + (q ^ 2 + p ^ 2) < 0 := by
+          have e : (1 - (q ^ 2 + p ^ 2)) * (v ^ 2 + u ^ 2) -
+              2 * (q * v + p * u) + (q ^ 2 + p ^ 2) =
+              (1 - (p ^ 2 + q ^ 2)) * (u ^ 2 + v ^ 2) -
+                2 * (p * u + q * v) + (p ^ 2 + q ^ 2) := by ring
+          rw [e]; exact hN
+        have hd00' : (0 : ℝ) < v ^ 2 + u ^ 2 - 1 := by linarith [hd00]
+        have hd01' : (0 : ℝ) < (v - 1) ^ 2 + u ^ 2 - 1 := by linarith [hd01]
+        have hkey' : 2 * p * (p + (q ^ 2 + p ^ 2)) ≤ (1 - q) * (1 - (q ^ 2 + p ^ 2)) := by
+          rw [show q ^ 2 + p ^ 2 = p ^ 2 + q ^ 2 from add_comm _ _]
+          exact hkey
+        exact geom_h2 q p v u hq0 hq hp0 hp hN' hd00' hd01' hkey'
+    · have g01 : p ^ 2 + (q - 1) ^ 2 ≥ 1 := not_lt.mp h01
+      exfalso
+      have e10 : (p - 1) ^ 2 + q ^ 2 = (p ^ 2 + q ^ 2) - 2 * p + 1 := by ring
+      have e01 : p ^ 2 + (q - 1) ^ 2 = (p ^ 2 + q ^ 2) - 2 * q + 1 := by ring
+      have hrp : 2 * p ≤ p ^ 2 + q ^ 2 := by linarith [g10, e10]
+      have hrq : 2 * q ≤ p ^ 2 + q ^ 2 := by linarith [g01, e01]
+      have hp2 : p ^ 2 ≤ p / 2 := by nlinarith [mul_nonneg hp0 (sub_nonneg.mpr hp)]
+      have hq2 : q ^ 2 ≤ q / 2 := by nlinarith [mul_nonneg hq0 (sub_nonneg.mpr hq)]
+      have hp_eq : p = 0 := by linarith
+      have hq_eq : q = 0 := by linarith
+      rw [hp_eq, hq_eq] at hN
+      simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, add_zero,
+        sub_zero, one_mul] at hN
+      have h0 : u ^ 2 + v ^ 2 < 0 := by linarith [hN]
+      exact absurd (add_nonneg (sq_nonneg u) (sq_nonneg v)) (by linarith)
+
+private theorem normSq_sub_gaussian (x : ℂ) (a b : ℤ) :
+    normSq (x - ((a : ℂ) + (b : ℂ) * I)) = (x.re - a) ^ 2 + (x.im - b) ^ 2 := by
+  simp only [normSq_apply, sub_re, sub_im, add_re, add_im, intCast_re, intCast_im,
+    mul_re, mul_im, I_re, I_im, mul_zero, mul_one, sub_zero, zero_add, add_zero]
+  ring
+
+/-- General-sign version of `geom_aux`, by reflecting each coordinate. -/
+private theorem geom_general (p q u v : ℝ) (hp : |p| ≤ 1 / 2) (hq : |q| ≤ 1 / 2)
+    (hsep : ∀ a b : ℤ, (p - a) ^ 2 + (q - b) ^ 2 < 1 → (u - a) ^ 2 + (v - b) ^ 2 > 1) :
+    (p ^ 2 + q ^ 2) * (u ^ 2 + v ^ 2) ≤ (p - u) ^ 2 + (q - v) ^ 2 := by
+  have hpabs := abs_le.mp hp
+  have hqabs := abs_le.mp hq
+  by_cases hp0 : 0 ≤ p
+  · by_cases hq0 : 0 ≤ q
+    · exact geom_aux p q u v hp0 hpabs.2 hq0 hqabs.2 hsep
+    · have hq0' : 0 ≤ -q := by linarith [not_le.mp hq0]
+      have hsep' : ∀ a b : ℤ, (p - a) ^ 2 + (-q - b) ^ 2 < 1 →
+          (u - a) ^ 2 + (-v - b) ^ 2 > 1 := by
+        intro a b h
+        have h2 := hsep a (-b) (by
+          simp only [Int.cast_neg]
+          have e : (q - -((b : ℤ) : ℝ)) ^ 2 = (-q - (b : ℝ)) ^ 2 := by ring
+          rw [e]
+          exact h)
+        simp only [Int.cast_neg] at h2
+        have e : (-v - (b : ℝ)) ^ 2 = (v - -((b : ℤ) : ℝ)) ^ 2 := by ring
+        rw [e]; exact h2
+      have h := geom_aux p (-q) u (-v) hp0 hpabs.2 hq0' (by linarith) hsep'
+      have e1 : (p - u) ^ 2 + (q - v) ^ 2 ≥ (p - u) ^ 2 + (-q - -v) ^ 2 := by
+        have e' : (q - v) ^ 2 = (-q - -v) ^ 2 := by ring
+        rw [e']
+      linarith [h, e1]
+  · have hp0' : 0 ≤ -p := by linarith [not_le.mp hp0]
+    by_cases hq0 : 0 ≤ q
+    · have hsep' : ∀ a b : ℤ, (-p - a) ^ 2 + (q - b) ^ 2 < 1 →
+          (-u - a) ^ 2 + (v - b) ^ 2 > 1 := by
+        intro a b h
+        have h2 := hsep (-a) b (by
+          simp only [Int.cast_neg]
+          have e : (p - -((a : ℤ) : ℝ)) ^ 2 = (-p - (a : ℝ)) ^ 2 := by ring
+          rw [e]
+          exact h)
+        simp only [Int.cast_neg] at h2
+        have e : (-u - (a : ℝ)) ^ 2 = (u - -((a : ℤ) : ℝ)) ^ 2 := by ring
+        rw [e]; exact h2
+      have h := geom_aux (-p) q (-u) v hp0' (by linarith) hq0 hqabs.2 hsep'
+      have e1 : (p - u) ^ 2 + (q - v) ^ 2 ≥ (-p - -u) ^ 2 + (q - v) ^ 2 := by
+        have e' : (p - u) ^ 2 = (-p - -u) ^ 2 := by ring
+        rw [e']
+      linarith [h, e1]
+    · have hq0' : 0 ≤ -q := by linarith [not_le.mp hq0]
+      have hsep' : ∀ a b : ℤ, (-p - a) ^ 2 + (-q - b) ^ 2 < 1 →
+          (-u - a) ^ 2 + (-v - b) ^ 2 > 1 := by
+        intro a b h
+        have h2 := hsep (-a) (-b) (by
+          simp only [Int.cast_neg]
+          have e1 : (p - -((a : ℤ) : ℝ)) ^ 2 = (-p - (a : ℝ)) ^ 2 := by ring
+          have e2 : (q - -((b : ℤ) : ℝ)) ^ 2 = (-q - (b : ℝ)) ^ 2 := by ring
+          rw [e1, e2]
+          exact h)
+        simp only [Int.cast_neg] at h2
+        have e1 : (-u - (a : ℝ)) ^ 2 = (u - -((a : ℤ) : ℝ)) ^ 2 := by ring
+        have e2 : (-v - (b : ℝ)) ^ 2 = (v - -((b : ℤ) : ℝ)) ^ 2 := by ring
+        rw [e1, e2]; exact h2
+      have h := geom_aux (-p) (-q) (-u) (-v) hp0' (by linarith) hq0' (by linarith) hsep'
+      have e1 : (p - u) ^ 2 + (q - v) ^ 2 ≥ (-p - -u) ^ 2 + (-q - -v) ^ 2 := by
+        have e1' : (p - u) ^ 2 = (-p - -u) ^ 2 := by ring
+        have e2' : (q - v) ^ 2 = (-q - -v) ^ 2 := by ring
+        rw [e1', e2']
+      linarith [h, e1]
+
+private theorem one_le_normSq_inv_sub {s t : ℂ}
+    (hs : |s.re| ≤ 1 / 2 ∧ |s.im| ≤ 1 / 2)
+    (hsep : ∀ a b : ℤ, normSq (s - ((a : ℂ) + (b : ℂ) * I)) < 1 →
+      1 < normSq (t - ((a : ℂ) + (b : ℂ) * I)))
+    (hs0 : s ≠ 0) (ht : 1 < normSq t) :
+    1 ≤ normSq (s⁻¹ - t⁻¹) := by
+  have ht0 : t ≠ 0 := by
+    rintro rfl
+    rw [normSq_zero] at ht
+    norm_num at ht
+  have hpos : (0 : ℝ) < normSq s * normSq t :=
+    mul_pos (normSq_pos.mpr hs0) (by linarith [normSq_pos.mpr ht0])
+  have h1 : normSq (s⁻¹ - t⁻¹) = normSq (s - t) / (normSq s * normSq t) := by
+    have e : s⁻¹ - t⁻¹ = (t - s) / (s * t) := by
+      field_simp
+    rw [e, normSq_div, normSq_mul, show t - s = -(s - t) by ring, normSq_neg]
+  rw [h1, le_div_iff₀ hpos, one_mul]
+  have hsep' : ∀ a b : ℤ, (s.re - a) ^ 2 + (s.im - b) ^ 2 < 1 →
+      (t.re - a) ^ 2 + (t.im - b) ^ 2 > 1 := by
+    intro a b hab
+    have h := hsep a b (by rw [normSq_sub_gaussian]; exact hab)
+    rw [normSq_sub_gaussian] at h
+    exact h
+  have h2 := geom_general s.re s.im t.re t.im hs.1 hs.2 hsep'
+  rw [normSq_apply, normSq_apply, normSq_apply]
+  simp only [sub_re, sub_im, pow_two] at h2 ⊢
+  exact h2
+
+private theorem one_le_norm_of_one_le_normSq {x : ℂ} (hx : 1 ≤ normSq x) :
+    1 ≤ ‖x‖ := by
+  rw [normSq_eq_norm_sq] at hx
+  by_contra hlt
+  rw [not_le] at hlt
+  have hsq : ‖x‖ ^ 2 < (1 : ℝ) ^ 2 :=
+    (sq_lt_sq₀ (norm_nonneg x) zero_le_one).mpr hlt
+  nlinarith [hsq, hx]
+
+private theorem prod_eq_denom (z : ℂ) (n : ℕ) (hn : HurwitzLegal z (n + 1)) :
+    ∏ j ∈ Finset.range (n + 1), hurwitzIter z (j + 1) =
+      hurwitzIter z (n + 1) * hurwitzQ z n + (hurwitzPQ z n).1.2 := by
+  induction n with
+  | zero => simp [hurwitzQ, hurwitzPQ]
+  | succ n ih =>
+    have hn' : HurwitzLegal z (n + 1) := fun j hj => hn j (Nat.lt_succ_of_lt hj)
+    have hprod := ih hn'
+    rw [Finset.prod_range_succ _ (n + 1), hprod]
+    have hne : hurwitzIter z (n + 1) - hurwitzDigit z (n + 1) ≠ 0 :=
+      sub_ne_zero.mpr (hn (n + 1) (Nat.lt_succ_self _))
+    have hpair : (hurwitzPQ z (n + 1)).1.2 = hurwitzQ z n := rfl
+    have hQ : hurwitzQ z (n + 1) =
+        hurwitzDigit z (n + 1) * hurwitzQ z n + (hurwitzPQ z n).1.2 := by
+      simp [hurwitzQ, hurwitzPQ]
+    have hiter : hurwitzIter z (n + 2) =
+        (hurwitzIter z (n + 1) - hurwitzDigit z (n + 1))⁻¹ := rfl
+    rw [hpair, hQ, hiter]
+    field_simp
+    ring
+
+private theorem separated_dist (z : ℂ) (n : ℕ) (hn : HurwitzLegal z (n + 1)) :
+    ∃ w, w * hurwitzQ z n = -(hurwitzPQ z n).1.2 ∧ hurwitzQ z n ≠ 0 ∧
+      norm_hurwitzQ_lt_succ.Separated (hurwitzIter z (n + 1)) w ∧
+      1 ≤ ‖hurwitzIter z (n + 1) - w‖ := by
+  induction n with
+  | zero =>
+    obtain ⟨w, hw, hq, hsep⟩ := norm_hurwitzQ_lt_succ.denominator_state z 0 hn
+    have hw0 : w = 0 := by
+      have h0 : w * hurwitzQ z 0 = 0 := by
+        rw [hw]
+        simp [hurwitzPQ]
+      have hQ0 : hurwitzQ z 0 = 1 := rfl
+      rw [hQ0, mul_one] at h0
+      exact h0
+    refine ⟨w, hw, hq, hsep, ?_⟩
+    rw [hw0, sub_zero]
+    have hne : hurwitzIter z 0 ≠ hurwitzDigit z 0 := hn 0 Nat.zero_lt_one
+    have hsq : normSq (hurwitzIter z 0 - hurwitzDigit z 0) ≤ 1 / 2 := by
+      have hb := abs_re_sub_hurwitzRound_le (hurwitzIter z 0)
+      have e : hurwitzIter z 0 - hurwitzDigit z 0 =
+          hurwitzIter z 0 - hurwitzRound (hurwitzIter z 0) := rfl
+      rw [e]
+      rw [normSq_apply]
+      obtain ⟨hr₁, hr₂⟩ := abs_le.mp hb.1
+      obtain ⟨hi₁, hi₂⟩ := abs_le.mp hb.2
+      nlinarith [mul_nonneg (sub_nonneg.mpr hr₂) (sub_nonneg.mpr hr₁),
+        mul_nonneg (sub_nonneg.mpr hi₂) (sub_nonneg.mpr hi₁)]
+    have hnorm : ‖hurwitzIter z 0 - hurwitzDigit z 0‖ ≤ 1 := by
+      have h1 : ‖hurwitzIter z 0 - hurwitzDigit z 0‖ ^ 2 ≤ (1 : ℝ) ^ 2 := by
+        rw [← normSq_eq_norm_sq]
+        nlinarith [hsq]
+      have h2 : ‖hurwitzIter z 0 - hurwitzDigit z 0‖ ≤ (1 : ℝ) :=
+        (sq_le_sq₀ (norm_nonneg _) zero_le_one).mp (by simpa using h1)
+      exact h2
+    have hiter : hurwitzIter z 1 = (hurwitzIter z 0 - hurwitzDigit z 0)⁻¹ := rfl
+    rw [hiter, norm_inv]
+    have hpos : (0 : ℝ) < ‖hurwitzIter z 0 - hurwitzDigit z 0‖ :=
+      norm_pos_iff.mpr (sub_ne_zero.mpr hne)
+    exact one_le_inv₀ hpos |>.mpr hnorm
+  | succ n ih =>
+    have hn' : HurwitzLegal z (n + 1) := fun j hj => hn j (Nat.lt_succ_of_lt hj)
+    obtain ⟨w, hw, hq, hsep, -⟩ := ih hn'
+    obtain ⟨w', hw', hq', hsep'⟩ := norm_hurwitzQ_lt_succ.denominator_state z (n + 1) hn
+    have hne : hurwitzIter z (n + 1) - hurwitzDigit z (n + 1) ≠ 0 :=
+      sub_ne_zero.mpr (hn (n + 1) (Nat.lt_succ_self _))
+    have hfar : 1 < normSq (w - hurwitzDigit z (n + 1)) := norm_hurwitzQ_lt_succ.digit_far hsep
+    have ht0 : w - hurwitzDigit z (n + 1) ≠ 0 := by
+      rintro h
+      rw [h, normSq_zero] at hfar
+      norm_num at hfar
+    have hweq : w' = (w - hurwitzDigit z (n + 1))⁻¹ := by
+      have hrec := norm_hurwitzQ_lt_succ.denominator_step hw
+      have hpair : (hurwitzPQ z (n + 1)).1.2 = hurwitzQ z n := rfl
+      have heq : (w - hurwitzDigit z (n + 1))⁻¹ * hurwitzQ z (n + 1) =
+          -(hurwitzPQ z (n + 1)).1.2 := by
+        rw [hpair, hrec]
+        have hneg : hurwitzDigit z (n + 1) - w = -(w - hurwitzDigit z (n + 1)) := by ring
+        rw [hneg, neg_mul, mul_neg, ← mul_assoc, inv_mul_cancel₀ ht0, one_mul]
+      exact (mul_left_inj' hq').mp (by rw [hw', heq])
+    refine ⟨w', hw', hq', hsep', ?_⟩
+    have hgeom := one_le_normSq_inv_sub
+      (s := hurwitzIter z (n + 1) - hurwitzDigit z (n + 1)) (t := w - hurwitzDigit z (n + 1))
+      (by
+        have hb := abs_re_sub_hurwitzRound_le (hurwitzIter z (n + 1))
+        have e : hurwitzIter z (n + 1) - hurwitzDigit z (n + 1) =
+            hurwitzIter z (n + 1) - hurwitzRound (hurwitzIter z (n + 1)) := rfl
+        rw [e]
+        exact hb)
+      (by
+        intro p q hab
+        have hAq : hurwitzDigit z (n + 1) = norm_hurwitzQ_lt_succ.gaussian
+            ⌊(hurwitzIter z (n + 1)).re + 1 / 2⌋
+            ⌊(hurwitzIter z (n + 1)).im + 1 / 2⌋ := rfl
+        have key := hsep (p + ⌊(hurwitzIter z (n + 1)).re + 1 / 2⌋)
+          (q + ⌊(hurwitzIter z (n + 1)).im + 1 / 2⌋) (by
+          have hg : norm_hurwitzQ_lt_succ.gaussian (p + ⌊(hurwitzIter z (n + 1)).re + 1 / 2⌋)
+                (q + ⌊(hurwitzIter z (n + 1)).im + 1 / 2⌋) =
+              norm_hurwitzQ_lt_succ.gaussian p q + hurwitzDigit z (n + 1) := by
+            rw [hAq, norm_hurwitzQ_lt_succ.gaussian_add]
+          rw [hg]
+          have e : hurwitzIter z (n + 1) -
+              (norm_hurwitzQ_lt_succ.gaussian p q + hurwitzDigit z (n + 1)) =
+              (hurwitzIter z (n + 1) - hurwitzDigit z (n + 1)) -
+                ((p : ℂ) + (q : ℂ) * I) := by
+            have hgg : norm_hurwitzQ_lt_succ.gaussian p q = (p : ℂ) + (q : ℂ) * I := rfl
+            rw [hgg]; ring
+          rw [e]
+          exact hab)
+        have hg : norm_hurwitzQ_lt_succ.gaussian (p + ⌊(hurwitzIter z (n + 1)).re + 1 / 2⌋)
+              (q + ⌊(hurwitzIter z (n + 1)).im + 1 / 2⌋) =
+            norm_hurwitzQ_lt_succ.gaussian p q + hurwitzDigit z (n + 1) := by
+          rw [hAq, norm_hurwitzQ_lt_succ.gaussian_add]
+        rw [hg] at key
+        have e : w - (norm_hurwitzQ_lt_succ.gaussian p q + hurwitzDigit z (n + 1)) =
+            (w - hurwitzDigit z (n + 1)) - ((p : ℂ) + (q : ℂ) * I) := by
+          have hgg : norm_hurwitzQ_lt_succ.gaussian p q = (p : ℂ) + (q : ℂ) * I := rfl
+          rw [hgg]; ring
+        rw [e] at key
+        exact key)
+      (by
+        have : hurwitzIter z (n + 1) - hurwitzDigit z (n + 1) ≠ 0 := hne
+        exact this)
+      hfar
+    have hiter : hurwitzIter z (n + 2) = (hurwitzIter z (n + 1) - hurwitzDigit z (n + 1))⁻¹ := rfl
+    rw [hweq, hiter]
+    exact one_le_norm_of_one_le_normSq hgeom
+
+end norm_sub_hurwitz_convergent_le
+
 /-- **Hurwitz's theorem: the convergent denominators grow in absolute value.** Let $z$ be a
 complex number and let $Q_0, Q_1, \dots$ be the convergent denominators of its Hurwitz continued
 fraction expansion. For every $n \ge 0$ such that $n + 1$ is a legal index for $z$ (the
@@ -370,6 +860,67 @@ theorem norm_hurwitzQ_lt_succ (z : ℂ) (n : ℕ) (hn : HurwitzLegal z (n + 1)) 
   rw [norm_hurwitzQ_lt_succ.denominator_step hw, norm_mul, norm_sub_rev]
   simpa only [one_mul] using mul_lt_mul_of_pos_right hnorm (norm_pos_iff.mpr hq)
 
+/-- **Lakein's first theorem on Hurwitz convergents.** Let $z$ be a complex number and let $P_k$
+and $Q_k$ be the convergent numerators and denominators of its Hurwitz continued fraction
+expansion. For every legal index $k$ for $z$ (the expansion has not terminated before step $k$),
+$|z - P_k / Q_k| \le 1 / |Q_k|^2$.
+
+Source: Zhaonan Wang and Yingpu Deng, *Finding Sums of Four Squares via Complex Continued
+Fractions*, INTEGERS 24 (2024), Article A25, Lemma 2 (`integers-2024-A25-lem-2`). -/
+theorem norm_sub_hurwitz_convergent_le (z : ℂ) (k : ℕ) (hk : HurwitzLegal z k) :
+    ‖z - hurwitzP z k / hurwitzQ z k‖ ≤ 1 / ‖hurwitzQ z k‖ ^ 2 := by
+  have hQ : hurwitzQ z k ≠ 0 := by
+    cases k with
+    | zero => simp [hurwitzQ, hurwitzPQ]
+    | succ k =>
+      have hlt := norm_hurwitzQ_lt_succ z k hk
+      exact norm_ne_zero_iff.mp (ne_of_gt (lt_of_le_of_lt (norm_nonneg _) hlt))
+  have hQpos : (0 : ℝ) < ‖hurwitzQ z k‖ := norm_pos_iff.mpr hQ
+  obtain ⟨herr, -⟩ := hurwitzQ_mul_sub_hurwitzP z k hk
+  have hdiv : z - hurwitzP z k / hurwitzQ z k =
+      (hurwitzQ z k * z - hurwitzP z k) / hurwitzQ z k := by
+    rw [eq_div_iff hQ, sub_mul, div_mul_cancel₀ _ hQ]
+    ring
+  rw [hdiv, herr, norm_div, norm_mul]
+  simp only [norm_pow, norm_neg, norm_one, one_pow, one_mul]
+  by_cases hprod : (∏ j ∈ Finset.range (k + 1), hurwitzIter z (j + 1)) = 0
+  · simp only [hprod, inv_zero, norm_zero, zero_div]
+    exact one_div_nonneg.mpr (pow_nonneg (norm_nonneg _) 2)
+  · have hlegal : HurwitzLegal z (k + 1) := by
+      intro j hj
+      by_cases hjk : j < k
+      · exact hk j hjk
+      · have hjk' : k = j := by omega
+        subst hjk'
+        intro heq
+        have hz : hurwitzIter z (k + 1) = 0 := by
+          have hrfl : hurwitzIter z (k + 1) =
+              (hurwitzIter z k - hurwitzDigit z k)⁻¹ := rfl
+          rw [hrfl, heq, sub_self, inv_zero]
+        have hmem : k ∈ Finset.range (k + 1) := Finset.mem_range.mpr (Nat.lt_succ_self k)
+        exact hprod (Finset.prod_eq_zero hmem hz)
+    obtain ⟨w, hw, -, -, hdist⟩ :=
+      norm_sub_hurwitz_convergent_le.separated_dist z k hlegal
+    have hprod_eq := norm_sub_hurwitz_convergent_le.prod_eq_denom z k hlegal
+    have hdenom : hurwitzIter z (k + 1) * hurwitzQ z k + (hurwitzPQ z k).1.2 =
+        hurwitzQ z k * (hurwitzIter z (k + 1) - w) := by
+      rw [mul_sub, mul_comm (hurwitzQ z k) w, hw]
+      ring
+    have hnormprod : ‖hurwitzQ z k‖ ≤
+        ‖∏ j ∈ Finset.range (k + 1), hurwitzIter z (j + 1)‖ := by
+      rw [hprod_eq, hdenom, norm_mul]
+      exact le_mul_of_one_le_right (norm_nonneg _) hdist
+    have hle : ‖(∏ j ∈ Finset.range (k + 1), hurwitzIter z (j + 1))⁻¹‖ ≤
+        1 / ‖hurwitzQ z k‖ := by
+      rw [norm_inv, inv_eq_one_div]
+      exact one_div_le_one_div_of_le hQpos hnormprod
+    have hrhs : (1 : ℝ) / ‖hurwitzQ z k‖ ^ 2 =
+        (1 / ‖hurwitzQ z k‖) / ‖hurwitzQ z k‖ := by
+      rw [div_div, sq]
+    rw [hrhs, div_le_div_iff_of_pos_right hQpos]
+    exact hle
+
 end
+
 
 end MetaMathlibExt

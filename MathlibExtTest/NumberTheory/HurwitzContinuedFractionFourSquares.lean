@@ -11,7 +11,7 @@ module
 import MathlibExt.NumberTheory.HurwitzContinuedFractionFourSquares
 import Mathlib.Tactic.NormNum
 
-/-! # Tests for the errors and denominator growth of Hurwitz convergents -/
+/-! # Tests for the errors, denominator growth and convergent bound of Hurwitz convergents -/
 
 open MetaMathlibExt
 
@@ -86,3 +86,29 @@ example : ‖hurwitzQ corner 0‖ < ‖hurwitzQ corner 1‖ := by
   norm_num at hre
 
 end MetaMathlibExt.norm_hurwitzQ_lt_succ
+
+namespace MetaMathlibExt.norm_sub_hurwitz_convergent_le
+
+-- The expansion of 2/5 is [0; 3, -2]; the bound is applied at the terminating index
+-- (where the error vanishes) and at the two earlier legal indices.
+private theorem legal_zero : HurwitzLegal (2 / 5 : ℂ) 0 :=
+  fun j hj => (Nat.not_lt_zero j hj).elim
+
+private theorem legal_one : HurwitzLegal (2 / 5 : ℂ) 1 :=
+  fun j hj =>
+    MetaMathlibExt.hurwitzQ_mul_sub_hurwitzP.legal_two j (Nat.lt_succ_of_lt hj)
+
+example : ‖(2 / 5 : ℂ) - hurwitzP (2 / 5 : ℂ) 0 / hurwitzQ (2 / 5 : ℂ) 0‖ ≤
+    1 / ‖hurwitzQ (2 / 5 : ℂ) 0‖ ^ 2 :=
+  MetaMathlibExt.norm_sub_hurwitz_convergent_le _ _ legal_zero
+
+example : ‖(2 / 5 : ℂ) - hurwitzP (2 / 5 : ℂ) 1 / hurwitzQ (2 / 5 : ℂ) 1‖ ≤
+    1 / ‖hurwitzQ (2 / 5 : ℂ) 1‖ ^ 2 :=
+  MetaMathlibExt.norm_sub_hurwitz_convergent_le _ _ legal_one
+
+example : ‖(2 / 5 : ℂ) - hurwitzP (2 / 5 : ℂ) 2 / hurwitzQ (2 / 5 : ℂ) 2‖ ≤
+    1 / ‖hurwitzQ (2 / 5 : ℂ) 2‖ ^ 2 :=
+  MetaMathlibExt.norm_sub_hurwitz_convergent_le _ _
+    MetaMathlibExt.hurwitzQ_mul_sub_hurwitzP.legal_two
+
+end MetaMathlibExt.norm_sub_hurwitz_convergent_le
