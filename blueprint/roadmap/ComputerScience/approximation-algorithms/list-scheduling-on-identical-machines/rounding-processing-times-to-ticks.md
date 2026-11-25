@@ -12,12 +12,6 @@ since $p_j \le \delta \tilde p_j < p_j + \delta$ for every job. The additive ter
 jobs of time $0.01$ on one machine with $\delta = 1$ give $C(S) = 1$ and $\delta\,\tilde C(S) = 100$. Setup and sequence-dependent
 times are outside this result.
 
-## Depends on
-
-- [Makespan](makespan.md)
-
-## Proof depends on
-
 ## Sources
 
-- Derived on this page from the linked definition of the makespan: the bound follows from $p_j \le \delta \tilde p_j < p_j + \delta$ for each job, summed over each machine. No external source is followed.
+- Derived on this page from the definition of [makespan](makespan.md): the bound follows from $p_j \le \delta \tilde p_j < p_j + \delta$ for each job, summed over each machine. No external source is followed.
