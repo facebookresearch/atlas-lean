@@ -59,6 +59,7 @@ public import Mathlib.Combinatorics.Enumerative.Partition.Basic
 public import Mathlib.Data.Finset.Card
 public import Mathlib.SetTheory.Cardinal.Finite
 public import MathlibExt.Combinatorics.Enumerative.SchreierSparseCount
+public import MathlibExt.Combinatorics.Enumerative.StrongSchreierCount
 
 set_option autoImplicit false
 
@@ -104,13 +105,6 @@ of $A$ is at least $\ell|A| - \ell + 1$. -/
 def stronglySparseStrongCount (n l : ℕ) : ℕ :=
   ((Finset.Icc 1 n).powerset.filter (fun A => n ∈ A ∧
     IsStronglySparse A ∧ IsStrongSchreier l A)).card
-
-/-- **Number of strong Schreier sets with a given maximum.** For natural numbers $n$ and $\ell$,
-$|B_{n,\ell}|$ is the number of sets $B \subseteq \{1, \dots, n\}$ with $n \in B$ that are
-$\ell$-strong Schreier, that is, every element of $B$ is at least $\ell|B| - \ell + 1$. -/
-def strongSchreierCount (n l : ℕ) : ℕ :=
-  ((Finset.Icc 1 n).powerset.filter (fun B => n ∈ B ∧
-    IsStrongSchreier l B)).card
 
 /-- **Number of strong Schreier sets of given size with maximum $n$.** For natural numbers $n$,
 $\ell$ and $m$, $|B_{n,\ell,m}|$ is the number of $\ell$-strong Schreier sets
@@ -163,12 +157,6 @@ integers summing to $u$) into exactly $s$ parts, each at least $v$. -/
 def compositionMinPartExactCount (u v s : ℕ) : ℕ :=
   Fintype.card {c : Composition u //
     (∀ x ∈ c.blocks, v ≤ x) ∧ c.length = s}
-
-/-- **Compositions with parts at least $v$.** For natural numbers $u$ and $v$, $c(u, v)$ is the
-number of compositions of $u$ (ordered sequences of positive integers summing to $u$) all of
-whose parts are at least $v$. -/
-def compositionMinPartCount (u v : ℕ) : ℕ :=
-  Fintype.card {c : Composition u // ∀ x ∈ c.blocks, v ≤ x}
 
 /-- **Refined Schreier count.** For natural numbers $n$ and $\ell$, $|F_{n,\ell}|$ is the number of
 finite sets $A$ of natural numbers such that $n + 1 \in A$, every element of $A$ is at most
@@ -268,17 +256,6 @@ theorem_wanted strongSchreierCardCount_eq (m n l : ℕ) (hn : 1 ≤ n)
     (hm : 1 ≤ m) :
     strongSchreierCardCount n l m =
       compositionMinPartExactCount (n + l) (l + 1) m
-
-/-- **Strong Schreier sets with a given maximum are counted by compositions.** For all natural
-numbers $n \ge 1$ and $\ell \ge 0$, the number $|B_{n,\ell}|$ of $\ell$-strong Schreier sets
-$B \subseteq \{1, \dots, n\}$ with $n \in B$ equals $c(n + \ell, \ell + 1)$, the number of
-compositions of $n + \ell$ into parts that are all at least $\ell + 1$. Here a set $B$ is
-$\ell$-strong Schreier when every element of $B$ is at least $\ell|B| - \ell + 1$.
-
-Source: Kevin Beanland and Hùng Việt Chu, "On Schreier-Type
-Sets, Partitions, and Compositions", Theorem 9. -/
-theorem_wanted strongSchreierCount_eq (n l : ℕ) (hn : 1 ≤ n) :
-    strongSchreierCount n l = compositionMinPartCount (n + l) (l + 1)
 
 /-- **Refined Schreier sets with a given minimum and partitions with a given top gap.** Let
 $n$, $\ell$, $k$ and $q$ be natural numbers with $n \ge \ell + 1$, $k \ge 2$ and $q \ge 1$.

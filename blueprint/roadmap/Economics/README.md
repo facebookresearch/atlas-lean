@@ -17,3 +17,4 @@ Mathematical economics studies accounting identities, markets, decisions and the
 - [Asset pricing and financial risk](asset-pricing-and-financial-risk/README.md)
 - [Corporate finance](corporate-finance/README.md)
 - [Inventory, transport and spatial models](inventory-transport-and-spatial-models/README.md)
+- [Actuarial mathematics](actuarial-mathematics/README.md)

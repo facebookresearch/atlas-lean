@@ -1,8 +1,9 @@
 # Partial differential equations
 
-PDE existence, regularity and qualitative results: Cauchy–Kovalevskaya, heat and Airy equations, weak solutions and elliptic regularity, Euler singularity formation, σ₂ Hessian estimates, radial symmetry, viscosity solutions, Dirichlet and Neumann spectra of the Laplacian.
+PDE existence, regularity and qualitative results: Cauchy–Kovalevskaya, heat and Airy equations, weak solutions and elliptic regularity, Euler singularity formation, σ₂ Hessian estimates, radial symmetry, viscosity solutions, reaction–diffusion systems and Turing instability, Dirichlet and Neumann spectra of the Laplacian.
 
 - [Airy equation and Kato smoothing](airy-equation-and-kato-smoothing/README.md)
+- [Bifurcation of Turing pattern branches](bifurcation-of-turing-pattern-branches/README.md)
 - [Cauchy–Kovalevskaya theorem](cauchy-kovalevskaya-theorem/README.md)
 - [Duhamel spatial smoothing](duhamel-spatial-smoothing/README.md)
 - [Heat equation](heat-equation/README.md)
@@ -15,8 +16,14 @@ PDE existence, regularity and qualitative results: Cauchy–Kovalevskaya, heat a
 - [Potential-heat spatial bootstrap](potential-heat-spatial-bootstrap/README.md)
 - [Potential-heat time evolution and smoothness](potential-heat-time-evolution-and-smoothness/README.md)
 - [Potential-heat Volterra construction](potential-heat-volterra-construction/README.md)
+- [Lyapunov–Schmidt reduction for Turing pattern branches](lyapunov-schmidt-reduction-for-turing-pattern-br/README.md)
+- [Nonlinear Turing instability](nonlinear-turing-instability/README.md)
+- [Lumped thermal capacitance limit](lumped-thermal-capacitance-limit/README.md)
+- [One-phase Stefan problem](one-phase-stefan-problem/README.md)
 - [Pólya's conjecture on Laplacian eigenvalues](p-lya-s-conjecture-on-laplacian-eigenvalues/README.md)
 - [Radial symmetry of semilinear elliptic equations](radial-symmetry-of-semilinear-elliptic-equations/README.md)
+- [Radiative transfer in a gray slab](radiative-transfer-in-a-gray-slab/README.md)
+- [Riemann problem for hyperbolic systems](riemann-problem-for-hyperbolic-systems/README.md)
 - [Singularity formation for the Euler equations](singularity-formation-for-the-euler-equations/README.md)
 - [Summation under heat integrals](summation-under-heat-integrals/README.md)
 - [Viscosity solutions of Hamilton–Jacobi equations](viscosity-solutions-of-hamilton-jacobi-equations/README.md)
@@ -24,4 +31,10 @@ PDE existence, regularity and qualitative results: Cauchy–Kovalevskaya, heat a
 - [Weighted heat gradient estimates](weighted-heat-gradient-estimates/README.md)
 - [Whole-line heat comparison](whole-line-heat-comparison/README.md)
 - [Whole-line potential-heat comparison](whole-line-potential-heat-comparison/README.md)
+- [Weak solutions of parabolic equations](weak-solutions-of-parabolic-equations/README.md)
+- [Conservation laws with concave flux](conservation-laws-with-concave-flux/README.md)
 - [Analytic elliptic regularity](analytic-elliptic-regularity.md)
+
+- [Global regularity of the three-dimensional Navier–Stokes equations](global-regularity-of-the-navier-stokes-equations.md)
+
+- [Optimality system for linear-quadratic elliptic optimal control](optimality-system-for-linear-quadratic-elliptic-optimal-control.md)

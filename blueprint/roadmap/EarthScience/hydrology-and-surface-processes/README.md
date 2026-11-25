@@ -18,6 +18,7 @@ Water at and below the land surface and the materials it moves through: catchmen
 - [Hydraulic jump](part-01/hydraulic-jump/README.md)
 - [Streeter–Phelps oxygen deficit](part-01/streeter-phelps-oxygen-deficit/README.md)
 - [Steady diffusive hillslope](part-01/steady-diffusive-hillslope/README.md)
+- [Agricultural water and nutrient budgets](part-01/agricultural-water-and-nutrient-budgets/README.md)
 
 ## [Groundwater, solute transport and soil mechanics](part-02/README.md)
 
@@ -38,3 +39,5 @@ Water at and below the land surface and the materials it moves through: catchmen
 - [Infinite-slope stability](part-02/infinite-slope-stability/README.md)
 - [Rankine earth pressure](part-02/rankine-earth-pressure/README.md)
 - [Modified Cam-Clay yield surface](part-02/modified-cam-clay-yield-surface/README.md)
+- [Unsaturated flow](part-02/unsaturated-flow/README.md)
+- [Reactive transport](part-02/reactive-transport/README.md)

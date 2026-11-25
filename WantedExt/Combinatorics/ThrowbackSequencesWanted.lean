@@ -13,6 +13,9 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Set.Card
 public import Mathlib.Topology.Instances.Real.Lemmas
 public import MathlibExt.Combinatorics.Sequences.ThrowbackFrequency
+public import MathlibExt.Combinatorics.Sequences.ThrowbackPerfectMixing
+public import MathlibExt.Combinatorics.Sequences.ThrowbackRecurrence
+public import MathlibExt.Combinatorics.Sequences.ThrowbackUniformRecurrence
 
 /-!
 # Throwback sequences of positive integers (Darnell, Dribus)
@@ -29,17 +32,6 @@ The throwback operation moves the leader `x₀` of a sequence `X = (x₀, x₁, 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Every term recurs in the throwback sequence.** Let $X = (x_0, x_1, \dots)$ be a sequence of
-pairwise distinct positive integers, and let $T(X) = (t_0, t_1, \dots)$ be its throwback
-sequence. Then every term $x_j$ of $X$ appears infinitely often in $T(X)$: there are infinitely
-many $k$ with $t_k = x_j$.
-
-Source: Jesiah Darnell and Benjamin F. Dribus, *Throwback Sequences of Positive Integers*,
-Journal of Integer Sequences 28 (2025), Article 25.5.1, Theorem 2 (`jis-2025-25.5.1-thm-2`). -/
-public theorem_wanted throwbackSequence_infinite_eq (X : ℕ → ℕ) (hX : ∀ n, 0 < X n)
-    (hinj : Function.Injective X) (j : ℕ) :
-    {k | throwbackSequence X k = X j}.Infinite
 
 /-- **Recursive bound on the time to become leader.** Let $X = (x_0, x_1, \dots)$ be a sequence
 of pairwise distinct positive integers, with positions numbered from $0$, the leader being at
@@ -100,20 +92,6 @@ public theorem_wanted partialPlacement_periodic (X : ℕ → ℕ) (hX : StrictMo
     (hX0 : 0 < X 0) (n : ℕ) :
     ∃ p : ℤ, 0 < p ∧ ∀ z, partialPlacement X n (z + p) = partialPlacement X n z
 
-/-- **Throwback sequences of increasing sequences are uniformly recurrent.** Let
-$X = (x_0, x_1, \dots)$ be a strictly increasing sequence of positive integers with throwback
-sequence $T(X) = (t_0, t_1, \dots)$. Then every block of consecutive terms of $T(X)$ recurs with
-bounded gaps: for all natural numbers $i$ and $L$ there is a natural number $G$ such that for
-every natural number $m$ there is an index $j$ with $m \le j \le m + G$ and $t_{j+s} = t_{i+s}$
-for all $s < L$.
-
-Source: Jesiah Darnell and Benjamin F. Dribus, *Throwback Sequences of Positive Integers*,
-Journal of Integer Sequences 28 (2025), Article 25.5.1, Theorem 7 (`jis-2025-25.5.1-thm-7`). -/
-public theorem_wanted throwbackSequence_uniformly_recurrent (X : ℕ → ℕ) (hX : StrictMono X)
-    (hX0 : 0 < X 0) (i L : ℕ) :
-    ∃ G, ∀ m, ∃ j, m ≤ j ∧ j ≤ m + G ∧
-      ∀ t < L, throwbackSequence X (j + t) = throwbackSequence X (i + t)
-
 /-- **Minimal complete blocks of partial placements match configurations.** Let
 $X = (x_0, x_1, \dots)$ be a strictly increasing sequence of positive integers, let $\tau$ be
 the throwback, let $n \ge 0$, and write $P_n(X)_z$ for the entry, possibly empty, of the
@@ -138,21 +116,6 @@ public theorem_wanted partialPlacement_minimal_complete_blocks_iff_configuration
     (∀ k l : ℕ, block k = block l ↔
       ∀ i ≤ n, ∀ p, (((throwback id)^[k] X) p = X i ↔ ((throwback id)^[l] X) p = X i)) ∧
       ∀ z : ℤ, ∃ k : ℕ, block z = block k
-
-/-- **Perfect mixing for consecutive integers.** Let $m \ge 1$ and $n \ge 0$, let
-$X = (m, m + 1, m + 2, \dots)$, and let $\tau$ be the throwback. Then the positions of the terms
-$m, m + 1, \dots, m + n$ in $\tau^k(X)$ are different for different $k$ with
-$0 \le k < (m + 1)^{n + 1}$: for $0 \le k < l < (m + 1)^{n + 1}$, some $m + i$ with $i \le n$
-occupies different positions in $\tau^k(X)$ and $\tau^l(X)$. Moreover, each of
-$m, m + 1, \dots, m + n$ occupies the same positions in $\tau^{(m+1)^{n+1}}(X)$ as in $X$.
-
-Source: Jesiah Darnell and Benjamin F. Dribus, *Throwback Sequences of Positive Integers*,
-Journal of Integer Sequences 28 (2025), Article 25.5.1, Theorem 9 (`jis-2025-25.5.1-thm-9`). -/
-public theorem_wanted throwback_consecutive_perfect_mixing (m n : ℕ) (hm : 0 < m) :
-    let Y : ℕ → ℕ → ℕ := fun k => (throwback id)^[k] (fun i => m + i)
-    (∀ i ≤ n, ∀ p, (Y ((m + 1) ^ (n + 1)) p = m + i ↔ Y 0 p = m + i)) ∧
-      ∀ k l, k < l → l < (m + 1) ^ (n + 1) →
-        ¬ ∀ i ≤ n, ∀ p, (Y k p = m + i ↔ Y l p = m + i)
 
 end
 

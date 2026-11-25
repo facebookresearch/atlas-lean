@@ -55,4 +55,13 @@ example {k : Type} [Field k]
     Nonempty (AlgebraicGeometry.StackCycleGeometry.CycleAtlas X) :=
   h.1
 
+/-- A genus-preserving contraction makes the canonical structure-sheaf map `𝒪_Y ⟶ f_* 𝒪_X` an
+isomorphism (not merely gives some abstract isomorphism). -/
+example {X Y : Scheme.{u}} (f : X ⟶ Y) (h : IsGenusPreservingContraction f) :
+    IsIso (SheafOfModules.unitToPushforwardObjUnit f.toRingCatSheafHom :
+      MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries.structureModule Y ⟶
+        (Scheme.Modules.pushforward f).obj
+          (MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries.structureModule X)) :=
+  h.2.2.1
+
 end MarkedCurveStabilizationTest
