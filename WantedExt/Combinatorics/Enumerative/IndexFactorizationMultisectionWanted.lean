@@ -14,6 +14,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.NumberTheory.LSeries.Basic
 public import Mathlib.NumberTheory.Padics.PadicVal.Defs
 public import MathlibExt.Analysis.Series.ThreeAdicMultiples
+public import MathlibExt.Analysis.Series.TwoAdicDoubleMultisection
 public import MathlibExt.Analysis.Series.TwoAdicMultiples
 public import MathlibExt.Analysis.Series.TwoAdicNonmultiples
 public import MathlibExt.Analysis.Series.TwoAdicTruncatedRegroup
@@ -120,36 +121,6 @@ public theorem_wanted tsum_baseAdic_weighted_multisection (B : ℕ) (hB : 2 ≤ 
         + χ x.1 * c (B * (x.2 + 1) * B ^ x.1))
       = ∑' m : ℕ, (φ (padicValNat B (m + 1))
           + ∑ k ∈ Finset.range (padicValNat B (m + 1)), χ k) * c (m + 1)
-
-/-- **Double 2-adic multisection of a double series.** Let $(b_{p,q})_{p, q \ge 1}$ be a double
-sequence of complex numbers such that each of the four families
-$2^{j+k} b_{(2n-1) 2^j, (2m-1) 2^k}$, $2^{j+k} b_{(2n) 2^j, (2m) 2^k}$,
-$2^{j+k} b_{(2n) 2^j, (2m-1) 2^k}$ and $2^{j+k} b_{(2n-1) 2^j, (2m) 2^k}$, indexed by the
-quadruples $(j, k, n, m)$ with $j, k \ge 0$ and $n, m \ge 1$, is summable. Then
-$$\sum_{p, q \ge 1} b_{p,q} = \sum_{j, k \ge 0,\ n, m \ge 1} 2^{j+k} \bigl(
-b_{(2n-1) 2^j, (2m-1) 2^k} + b_{(2n) 2^j, (2m) 2^k} -
-b_{(2n) 2^j, (2m-1) 2^k} - b_{(2n-1) 2^j, (2m) 2^k} \bigr),$$
-where both sides are unconditional sums, over the pairs $(p, q)$ and the quadruples
-$(j, k, n, m)$ respectively.
-
-Source: Christophe Vignat and Michael Milgram, *Curious Multisection Identities by
-Index Factorization*, Journal of Integer Sequences 27 (2024), Article 24.5.5,
-Proposition 15, sum version (`jis-2024-24.5.5-prop-15`). -/
-public theorem_wanted tsum_twoAdic_double_multisection (b : ℕ → ℕ → ℂ)
-    (h₁ : Summable fun x : (ℕ × ℕ) × (ℕ × ℕ) =>
-      (2 : ℂ) ^ (x.1.1 + x.1.2) * b ((2 * x.2.1 + 1) * 2 ^ x.1.1) ((2 * x.2.2 + 1) * 2 ^ x.1.2))
-    (h₂ : Summable fun x : (ℕ × ℕ) × (ℕ × ℕ) =>
-      (2 : ℂ) ^ (x.1.1 + x.1.2) * b ((2 * x.2.1 + 2) * 2 ^ x.1.1) ((2 * x.2.2 + 2) * 2 ^ x.1.2))
-    (h₃ : Summable fun x : (ℕ × ℕ) × (ℕ × ℕ) =>
-      (2 : ℂ) ^ (x.1.1 + x.1.2) * b ((2 * x.2.1 + 2) * 2 ^ x.1.1) ((2 * x.2.2 + 1) * 2 ^ x.1.2))
-    (h₄ : Summable fun x : (ℕ × ℕ) × (ℕ × ℕ) =>
-      (2 : ℂ) ^ (x.1.1 + x.1.2) * b ((2 * x.2.1 + 1) * 2 ^ x.1.1) ((2 * x.2.2 + 2) * 2 ^ x.1.2)) :
-    ∑' p : ℕ × ℕ, b (p.1 + 1) (p.2 + 1)
-      = ∑' x : (ℕ × ℕ) × (ℕ × ℕ), (2 : ℂ) ^ (x.1.1 + x.1.2)
-          * (b ((2 * x.2.1 + 1) * 2 ^ x.1.1) ((2 * x.2.2 + 1) * 2 ^ x.1.2)
-            + b ((2 * x.2.1 + 2) * 2 ^ x.1.1) ((2 * x.2.2 + 2) * 2 ^ x.1.2)
-            - b ((2 * x.2.1 + 2) * 2 ^ x.1.1) ((2 * x.2.2 + 1) * 2 ^ x.1.2)
-            - b ((2 * x.2.1 + 1) * 2 ^ x.1.1) ((2 * x.2.2 + 2) * 2 ^ x.1.2))
 
 /-- **$2$-adic expansion of the weighted Lambert series $f$.** For every complex number $q$ with
 $|q| < 1$, the weighted Lambert series $f(q) = \sum_{n \ge 1} n q^n / (1 - q^n)$ and
