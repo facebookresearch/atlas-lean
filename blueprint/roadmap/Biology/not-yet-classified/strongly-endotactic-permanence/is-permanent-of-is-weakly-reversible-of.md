@@ -1,7 +1,9 @@
 # Weakly reversible networks with one linkage class are permanent
 
 **Weakly reversible networks with one linkage class are permanent** (Gopalkrishnan–Miller–
-Shiu 2014, Theorem 1.3).
+Shiu 2014, Theorem 1.3). Every weakly reversible reaction network with real complexes, finitely
+many species and reactions, and exactly one linkage class is permanent (in the sense of
+`isPermanent_of_isStronglyEndotactic`).
 
 ## Sources
 

@@ -5,6 +5,7 @@ Smooth dynamics studies differentiable maps and flows: hyperbolicity, stable man
 - [Entropy, dimension and Lyapunov exponents](entropy-dimension-and-lyapunov-exponents/README.md)
 - [Kolmogorov–Arnold–Moser theorem](kolmogorov-arnold-moser-theorem/README.md)
 - [LaSalle's invariance principle](lasalle-s-invariance-principle/README.md)
+- [Reaction networks with real exponents](reaction-networks-with-real-exponents/README.md)
 - [Shadowing lemma](shadowing-lemma/README.md)
 - [Stable manifold theorem](stable-manifold-theorem/README.md)
 
@@ -19,3 +20,7 @@ Smooth dynamics studies differentiable maps and flows: hyperbolicity, stable man
 - [Number of linkage classes of a reaction network](num-linkage-classes.md)
 - [Deficiency of a chemical reaction network](deficiency.md)
 - [Weakly reversible reaction network](is-weakly-reversible.md)
+
+## Research directions
+
+- [Finiteness of planar central configurations of six bodies](finiteness-of-six-body-central-configurations.md)

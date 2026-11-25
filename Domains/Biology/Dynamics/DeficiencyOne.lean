@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Domains.Biology.Dynamics.DeficiencyZero.API
+public import MathlibExt.Dynamics.PolynomialNetworks.LinkageClass
 public import Domains.Biology.Dynamics.DeficiencyZero.RankIdentities
 public import Mathlib.LinearAlgebra.DFinsupp
 import Mathlib.LinearAlgebra.Dimension.Constructions
@@ -26,18 +27,19 @@ the span `𝒮_θ` of the reaction vectors of the reactions in the class. Its hy
 2. `∑_θ δ_θ = δ`, and
 3. each linkage class contains exactly one terminal strong linkage class.
 
-Its conclusion is that, for every choice of positive rate constants, each positive
-stoichiometric compatibility class contains at most one positive equilibrium, and exactly one
-when the network is weakly reversible.
+Its conclusion is that each positive stoichiometric compatibility class contains at most one
+positive equilibrium, and exactly one for every choice of rate constants when the network is
+weakly reversible.
 
 This file proves the linear-algebra part of the theorem: what hypothesis 2 says and what it
 does to the equilibrium equations. The stoichiometric subspace is always the sum
-`𝒮 = ∑_θ 𝒮_θ`, so `∑_θ δ_θ ≤ δ` for finitely many species and reactions. Equality holds
-exactly when the sum is direct, and then the mass-action field vanishes iff the field of each
-linkage class does, so the equilibrium equations decouple across linkage classes (Feinberg
-1995; Boros 2012).
+`𝒮 = ∑_θ 𝒮_θ`, so `∑_θ δ_θ ≤ δ`. Equality holds exactly when the sum is direct, and then
+the mass-action field vanishes iff its restriction to each linkage class does, so the
+equilibrium equations decouple across linkage classes (Feinberg 1995; Boros 2012).
 
 ## Main definitions
+
+These are defined in `MathlibExt.Dynamics.PolynomialNetworks.LinkageClass`:
 
 * `linkageClassOf r`: the linkage class of the reaction `r` (that of its source complex);
 * `linkageClassNetwork θ`: the reactions of the linkage class `θ`, as a network on `S`;
@@ -69,8 +71,10 @@ the deficiency-one theorem is proved: not uniqueness of positive equilibria in a
 stoichiometric compatibility class, and not existence in the weakly reversible case.
 Uniqueness needs the general kernel theory of the Laplacian of the weighted reaction digraph:
 its kernel is spanned by nonnegative vectors supported on the terminal strong linkage classes,
-one per class. The weakly reversible case has a positive kernel vector, as shown in
-`Domains.Biology.Dynamics.DeficiencyZero.Existence`.
+one per class. Only the weakly reversible case is proved so far (step 1 of
+`Domains.Biology.Dynamics.DeficiencyZero.Existence`: a positive kernel vector). The general
+theory would also give the open non-weakly-reversible half of the deficiency-zero theorem,
+`not_exists_positive_equilibrium` in `WantedExt/Biology/Dynamics/DeficiencyZeroWanted.lean`.
 
 ## References
 
@@ -94,47 +98,7 @@ variable {S ρ : Type*}
 
 namespace ReactionNetwork
 
-variable (N : ReactionNetwork S ρ)
-
-/-- The linkage class of the reaction `r`: the connected component of its source complex in
-the linkage graph (its product complex lies in the same class, `linkageClassOf_prod`). -/
-def linkageClassOf (r : ρ) : N.linkageGraph.ConnectedComponent :=
-  N.linkageGraph.connectedComponentMk ⟨N.src r, src_mem_complexes r⟩
-
-/-- The reactions of the linkage class `θ`, as a reaction network on the same species. -/
-def linkageClassNetwork (θ : N.linkageGraph.ConnectedComponent) :
-    ReactionNetwork S {r // N.linkageClassOf r = θ} where
-  src r := N.src r
-  prod r := N.prod r
-
-/-- The stoichiometric subspace `𝒮_θ` of the linkage class `θ`: the span of the reaction
-vectors `prod r - src r` of its reactions.
-
-Source: Feinberg (1987); Feinberg (2019). -/
-def linkageClassStoichiometricSubspace (θ : N.linkageGraph.ConnectedComponent) :
-    Submodule ℝ (S → ℝ) :=
-  (N.linkageClassNetwork θ).stoichiometricSubspace
-
-/-- The deficiency `δ_θ = n_θ - 1 - s_θ` of the linkage class `θ` of a network with finitely
-many complexes, an integer, where `n_θ` is the number of complexes in `θ` and `s_θ = dim 𝒮_θ`
-(finite, since `𝒮_θ` is spanned by differences of the finitely many complexes).
-
-Source: Feinberg (1987); Feinberg (1995). -/
-noncomputable def linkageClassDeficiency [Finite N.complexes]
-    (θ : N.linkageGraph.ConnectedComponent) : ℤ :=
-  (Nat.card θ.supp : ℤ) - 1 - finrank ℝ (N.linkageClassStoichiometricSubspace θ)
-
-open Classical in
-/-- The part of the mass-action field with rate constants `k` contributed by the reactions of
-the linkage class `θ`: `x ↦ ∑_{r ∈ θ} k r (∏_s x_s ^ (src r s)) (prod r - src r)`. It is
-defined for all real `k` and `x`; the powers are natural powers, so `x_s ^ 0 = 1` also at
-`x_s = 0`. -/
-noncomputable def linkageClassField [Fintype S] [Fintype ρ]
-    (θ : N.linkageGraph.ConnectedComponent) (k : ρ → ℝ) (x : S → ℝ) : S → ℝ :=
-  fun s => ∑ r ∈ univ.filter (fun r => N.linkageClassOf r = θ),
-    k r * (∏ s', x s' ^ N.src r s') * ((N.prod r s : ℝ) - N.src r s)
-
-variable {N}
+variable {N : ReactionNetwork S ρ}
 
 /-! ### Reactions and linkage classes -/
 
@@ -226,8 +190,7 @@ private lemma finrank_iSup_add_finrank_ker {ι M : Type*} [Fintype ι] [AddCommG
       funext i
       exact Subtype.ext (h univ (fun i => (v i : M)) (fun i _ => (v i).2) hv i (mem_univ i))
 
-/-- For finitely many species and finitely many linkage classes,
-`dim (∑_θ 𝒮_θ) ≤ ∑_θ dim 𝒮_θ`, i.e. `s ≤ ∑_θ s_θ`. -/
+/-- `dim (∑_θ 𝒮_θ) ≤ ∑_θ dim 𝒮_θ`, i.e. `s ≤ ∑_θ s_θ`. -/
 theorem finrank_stoichiometricSubspace_le_sum [Finite S]
     [Fintype N.linkageGraph.ConnectedComponent] :
     finrank ℝ N.stoichiometricSubspace ≤
@@ -236,8 +199,8 @@ theorem finrank_stoichiometricSubspace_le_sum [Finite S]
   rw [stoichiometricSubspace_eq_iSup]
   omega
 
-/-- For finitely many species and finitely many linkage classes, `s = ∑_θ s_θ` exactly when the
-linkage-class stoichiometric subspaces are independent, i.e. `𝒮 = ⊕_θ 𝒮_θ`. -/
+/-- `s = ∑_θ s_θ` exactly when the linkage-class stoichiometric subspaces are independent,
+i.e. `𝒮 = ⊕_θ 𝒮_θ`. -/
 theorem finrank_stoichiometricSubspace_eq_sum_iff [Finite S]
     [Fintype N.linkageGraph.ConnectedComponent] :
     finrank ℝ N.stoichiometricSubspace =
@@ -249,17 +212,17 @@ theorem finrank_stoichiometricSubspace_eq_sum_iff [Finite S]
 
 /-! ### Linkage-class deficiencies -/
 
-/-- For a network with finitely many complexes, the number of complexes is the sum over the
-linkage classes of their numbers of complexes. -/
+/-- The number of complexes is the sum over the linkage classes of their numbers of
+complexes. -/
 theorem card_complexes_eq_sum [Finite N.complexes]
     [Fintype N.linkageGraph.ConnectedComponent] :
     Nat.card N.complexes = ∑ θ : N.linkageGraph.ConnectedComponent, Nat.card θ.supp := by
   rw [← Nat.card_sigma]
   exact Nat.card_congr (Equiv.sigmaFiberEquiv N.linkageGraph.connectedComponentMk).symm
 
-/-- **Each linkage class has nonnegative deficiency**, `0 ≤ δ_θ`, for a network with finitely
-many reactions: Feinberg's rank identity `n - ℓ - s = dim (ker Y ∩ Δ)` applied to the reactions
-of `θ`, whose linkage graph is connected.
+/-- **Each linkage class has nonnegative deficiency**, `0 ≤ δ_θ`: Feinberg's rank identity
+`n - ℓ - s = dim (ker Y ∩ Δ)` applied to the reactions of `θ`, whose linkage graph is
+connected.
 
 Source: Feinberg (1987); Feinberg (2019). -/
 theorem linkageClassDeficiency_nonneg [Finite ρ] (θ : N.linkageGraph.ConnectedComponent) :
@@ -300,8 +263,8 @@ theorem linkageClassDeficiency_nonneg [Finite ρ] (θ : N.linkageGraph.Connected
   rw [h1, ← Nat.card_eq_fintype_card] at h
   exact h
 
-/-- **Deficiency minus the sum of the linkage-class deficiencies**: for finitely many species
-and reactions, `δ - ∑_θ δ_θ = ∑_θ s_θ - s` in `ℤ`.
+/-- **Deficiency minus the sum of the linkage-class deficiencies**:
+`δ - ∑_θ δ_θ = ∑_θ s_θ - s`.
 
 Source: Feinberg (1987). -/
 theorem deficiency_sub_sum_linkageClassDeficiency [Finite S] [Finite ρ]
@@ -320,8 +283,7 @@ theorem deficiency_sub_sum_linkageClassDeficiency [Finite S] [Finite ρ]
   rw [hn, hℓ]
   ring
 
-/-- **The linkage-class deficiencies sum to at most the deficiency**, `∑_θ δ_θ ≤ δ`, for
-finitely many species and reactions.
+/-- **The linkage-class deficiencies sum to at most the deficiency**, `∑_θ δ_θ ≤ δ`.
 
 Source: Feinberg (1987); Feinberg (1995). -/
 theorem sum_linkageClassDeficiency_le [Finite S] [Finite ρ]
@@ -334,8 +296,7 @@ theorem sum_linkageClassDeficiency_le [Finite S] [Finite ρ]
   linarith
 
 /-- **`∑_θ δ_θ = δ` iff the linkage-class stoichiometric subspaces are independent**, i.e.
-`𝒮 = ⊕_θ 𝒮_θ`, for finitely many species and reactions. This is hypothesis 2 of the
-deficiency-one theorem.
+`𝒮 = ⊕_θ 𝒮_θ`. This is hypothesis 2 of the deficiency-one theorem.
 
 Source: Feinberg (1987); Feinberg (1995). -/
 theorem sum_linkageClassDeficiency_eq_iff [Finite S] [Finite ρ]
@@ -358,24 +319,22 @@ theorem sum_linkageClassDeficiency_eq_iff [Finite S] [Finite ρ]
     push_cast at this
     linarith
 
-/-- For finitely many species and reactions, the deficiency of a linkage class is at most the
-deficiency of the network. -/
+/-- The deficiency of a linkage class is at most the deficiency of the network. -/
 theorem linkageClassDeficiency_le_deficiency [Finite S] [Finite ρ]
     (θ : N.linkageGraph.ConnectedComponent) : N.linkageClassDeficiency θ ≤ N.deficiency :=
   have := Fintype.ofFinite N.linkageGraph.ConnectedComponent
   (Finset.single_le_sum (fun θ _ => linkageClassDeficiency_nonneg θ) (mem_univ θ)).trans
     sum_linkageClassDeficiency_le
 
-/-- In a network of deficiency zero with finitely many species and reactions, every linkage class
-has deficiency zero. -/
+/-- In a network of deficiency zero every linkage class has deficiency zero. -/
 theorem linkageClassDeficiency_eq_zero_of_deficiency_eq_zero [Finite S] [Finite ρ]
     (h : N.deficiency = 0)
     (θ : N.linkageGraph.ConnectedComponent) : N.linkageClassDeficiency θ = 0 :=
   le_antisymm (h ▸ linkageClassDeficiency_le_deficiency θ) (linkageClassDeficiency_nonneg θ)
 
-/-- A network of deficiency zero with finitely many species and reactions satisfies
-`∑_θ δ_θ = δ`: together with `linkageClassDeficiency_eq_zero_of_deficiency_eq_zero`, it satisfies
-hypotheses 1 and 2 of the deficiency-one theorem.
+/-- A network of deficiency zero satisfies `∑_θ δ_θ = δ`: together with
+`linkageClassDeficiency_eq_zero_of_deficiency_eq_zero`, it satisfies hypotheses 1 and 2 of the
+deficiency-one theorem.
 
 Source: Feinberg (1987). -/
 theorem sum_linkageClassDeficiency_eq_of_deficiency_eq_zero [Finite S] [Finite ρ]
@@ -387,8 +346,7 @@ theorem sum_linkageClassDeficiency_eq_of_deficiency_eq_zero [Finite S] [Finite �
 
 variable [Fintype S] [Fintype ρ]
 
-/-- For finitely many species and reactions, and for all real `k` and `x`, the mass-action field
-is the sum of the linkage-class fields. -/
+/-- The mass-action field is the sum of the linkage-class fields. -/
 theorem sum_linkageClassField [Fintype N.linkageGraph.ConnectedComponent] (k : ρ → ℝ) (x : S → ℝ) :
     ∑ θ, N.linkageClassField θ k x = N.massActionField k x := by
   classical
@@ -397,8 +355,7 @@ theorem sum_linkageClassField [Fintype N.linkageGraph.ConnectedComponent] (k : �
   convert Finset.sum_fiberwise univ N.linkageClassOf
     (fun r => k r * (∏ s', x s' ^ N.src r s') * ((N.prod r s : ℝ) - N.src r s))
 
-/-- For finitely many species and reactions, and for all real `k` and `x`, the field of the
-linkage class `θ` takes values in `𝒮_θ`. -/
+/-- The field of the linkage class `θ` takes values in `𝒮_θ`. -/
 theorem linkageClassField_mem (θ : N.linkageGraph.ConnectedComponent) (k : ρ → ℝ)
     (x : S → ℝ) : N.linkageClassField θ k x ∈ N.linkageClassStoichiometricSubspace θ := by
   classical
@@ -411,10 +368,10 @@ theorem linkageClassField_mem (θ : N.linkageGraph.ConnectedComponent) (k : ρ �
   exact Submodule.sum_mem _ fun r hr => Submodule.smul_mem _ _
     (reactionVector_mem_linkageClassStoichiometricSubspace (Finset.mem_filter.1 hr).2)
 
-/-- **The equilibrium equations decouple across independent linkage classes.** For finitely many
-species and reactions, if the linkage-class stoichiometric subspaces are independent, then for
-all real rate constants `k` and concentrations `x`, the mass-action field vanishes at `x` iff the
-field of every linkage class vanishes at `x`. -/
+/-- **The equilibrium equations decouple across independent linkage classes.** If the
+linkage-class stoichiometric subspaces are independent, then for all real rate constants `k`
+and concentrations `x`, the mass-action field vanishes at `x` iff the field of every linkage
+class vanishes at `x`. -/
 theorem massActionField_eq_zero_iff_of_iSupIndep
     (h : iSupIndep N.linkageClassStoichiometricSubspace) {k : ρ → ℝ} {x : S → ℝ} :
     N.massActionField k x = 0 ↔ ∀ θ, N.linkageClassField θ k x = 0 := by
@@ -424,10 +381,10 @@ theorem massActionField_eq_zero_iff_of_iSupIndep
     (fun θ _ => linkageClassField_mem θ k x) h0 θ (mem_univ θ), fun h0 => ?_⟩
   simp [h0]
 
-/-- **Under `∑_θ δ_θ = δ` the equilibrium equations decouple across linkage classes**: for
-finitely many species and reactions and for all real rate constants `k` and concentrations `x`,
-`x` is an equilibrium of the mass-action system iff the field of every linkage class vanishes at
-`x`. This is the reduction to single linkage classes on which the deficiency-one theorem rests.
+/-- **Under `∑_θ δ_θ = δ` the equilibrium equations decouple across linkage classes**: for all
+real rate constants `k` and concentrations `x`, `x` is an equilibrium of the mass-action system
+iff the field of every linkage class vanishes at `x`. This is the reduction to single linkage
+classes on which the deficiency-one theorem rests.
 
 Source: Feinberg (1995); Boros (2012); Feinberg (2019). -/
 theorem massActionField_eq_zero_iff_of_sum_linkageClassDeficiency_eq

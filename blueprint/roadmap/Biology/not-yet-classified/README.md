@@ -16,4 +16,4 @@ Topics added since this subject's fields were last revised.
 - [TBRAgreement Forest](tbragreement-forest/README.md)
 - [Toric Dynamical Systems](toric-dynamical-systems/README.md)
 - [Toric Steady States](toric-steady-states/README.md)
-- [Weakly Reversible Positive Steady State](weakly-reversible-positive-steady-state/README.md)
+- [Boros's existence theorem](exists-pos-steady-state-mem-class.md)

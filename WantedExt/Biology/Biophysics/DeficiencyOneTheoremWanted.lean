@@ -29,11 +29,13 @@ one positive steady state in each positive stoichiometric compatibility class.
 
 The linear-algebra part of the proof (hypothesis (ii) holds exactly when the subspaces `𝒮_θ` are
 independent, and the mass-action equations then decouple across linkage classes) is proved in
-`Domains.Biology.Dynamics.DeficiencyOne`, whose definitions of linkage-class subspaces and
-deficiencies are the ones restated here. The network, its stoichiometric subspace, linkage
-graph, deficiency, weak reversibility and mass-action field are those of
-`MathlibExt.Dynamics.PolynomialNetworks.Deficiency`. Complexes are encoded with natural-number
-stoichiometric coefficients, as for the chemical networks of the source. The existence half for
+`Domains.Biology.Dynamics.DeficiencyOne` (`sum_linkageClassDeficiency_eq_iff`). The
+linkage-class subspaces and deficiencies used here are the shared definitions of
+`MathlibExt.Dynamics.PolynomialNetworks.LinkageClass`, on which that file is built, and the
+network, its stoichiometric subspace, linkage graph, deficiency, weak reversibility and
+mass-action field are those of `MathlibExt.Dynamics.PolynomialNetworks.Deficiency`. Complexes
+are encoded with natural-number stoichiometric coefficients, as for the chemical networks of the
+source. The existence half for
 weakly reversible networks is also a consequence of Boros's theorem (every weakly reversible
 mass-action system has a positive steady state in every positive stoichiometric class).
 
@@ -46,10 +48,7 @@ Anal. 132 (1995) 311–370.
 module
 
 public import Batteries.Util.ProofWanted
-public import MathlibExt.Dynamics.PolynomialNetworks.Deficiency
-public import Mathlib.Algebra.BigOperators.Finprod
-public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
-public import Mathlib.LinearAlgebra.Dimension.Finrank
+public import MathlibExt.Dynamics.PolynomialNetworks.LinkageClass
 public import Mathlib.Logic.Relation
 
 @[expose] public section
@@ -59,29 +58,6 @@ namespace WantedExt.Biology.Biophysics.DeficiencyOneTheoremWanted
 open MathlibExt.Biology.Dynamics.ComplexBalanced
 
 variable {S ρ : Type*} (N : ReactionNetwork S ρ)
-
-/-- The source complex of reaction `r`, as a complex of the network. -/
-def srcComplex (r : ρ) : N.complexes :=
-  ⟨N.src r, Or.inl ⟨r, rfl⟩⟩
-
-/-- The complexes of the linkage class `θ` (a connected component of the undirected reaction
-graph). -/
-def linkageClassComplexes (θ : N.linkageGraph.ConnectedComponent) : Set N.complexes :=
-  {c | N.linkageGraph.connectedComponentMk c = θ}
-
-/-- The stoichiometric subspace `𝒮_θ` of the linkage class `θ`: the span of the reaction vectors
-`prod r - src r` of the reactions whose source complex lies in `θ`. -/
-def linkageClassStoichiometricSubspace (θ : N.linkageGraph.ConnectedComponent) :
-    Submodule ℝ (S → ℝ) :=
-  Submodule.span ℝ ((fun r s => (N.prod r s : ℝ) - N.src r s) ''
-    {r | N.linkageGraph.connectedComponentMk (srcComplex N r) = θ})
-
-/-- The deficiency `δ_θ = n_θ - 1 - dim 𝒮_θ` of the linkage class `θ`, where `n_θ` is its number
-of complexes. -/
-noncomputable def linkageClassDeficiency [Finite N.complexes]
-    (θ : N.linkageGraph.ConnectedComponent) : ℤ :=
-  (Nat.card (linkageClassComplexes N θ) : ℤ) - 1 -
-    Module.finrank ℝ (linkageClassStoichiometricSubspace N θ)
 
 /-- A complex lies in a terminal strong linkage class: every complex reachable from it along a
 directed path of reactions reaches it back. -/
@@ -93,8 +69,8 @@ of a terminal strong linkage class, and any two such complexes in it are linked 
 of reactions (so they lie in the same strong linkage class). -/
 def OneTerminalClassPerLinkageClass : Prop :=
   ∀ θ : N.linkageGraph.ConnectedComponent,
-    (∃ c ∈ linkageClassComplexes N θ, IsTerminalComplex N c.1) ∧
-      ∀ c ∈ linkageClassComplexes N θ, ∀ c' ∈ linkageClassComplexes N θ,
+    (∃ c ∈ θ.supp, IsTerminalComplex N c.1) ∧
+      ∀ c ∈ θ.supp, ∀ c' ∈ θ.supp,
         IsTerminalComplex N c.1 → IsTerminalComplex N c'.1 →
           Relation.ReflTransGen N.Reacts c.1 c'.1
 
@@ -108,8 +84,8 @@ compatibility class) are equal.
 Source: M. Feinberg, Chem. Eng. Sci. 42 (1987) 2229–2268, Theorem 6.2.1. -/
 theorem_wanted eq_of_pos_steadyState [Fintype S] [Fintype ρ]
     (hT : OneTerminalClassPerLinkageClass N)
-    (hδ : ∀ θ, linkageClassDeficiency N θ ≤ 1)
-    (hsum : ∑ᶠ θ, linkageClassDeficiency N θ = N.deficiency)
+    [Fintype N.linkageGraph.ConnectedComponent] (hδ : ∀ θ, N.linkageClassDeficiency θ ≤ 1)
+    (hsum : ∑ θ, N.linkageClassDeficiency θ = N.deficiency)
     {k : ρ → ℝ} (hk : ∀ r, 0 < k r) {x y : S → ℝ} (hx : ∀ s, 0 < x s) (hy : ∀ s, 0 < y s)
     (hxy : x - y ∈ N.stoichiometricSubspace) (hxe : N.massActionField k x = 0)
     (hye : N.massActionField k y = 0) :
@@ -123,8 +99,8 @@ state `x` of the mass-action system with `x - x₀` in the stoichiometric subspa
 Source: M. Feinberg, Chem. Eng. Sci. 42 (1987) 2229–2268, Theorem 6.2.1. -/
 theorem_wanted existsUnique_pos_steadyState_of_isWeaklyReversible [Fintype S] [Fintype ρ]
     (hT : OneTerminalClassPerLinkageClass N)
-    (hδ : ∀ θ, linkageClassDeficiency N θ ≤ 1)
-    (hsum : ∑ᶠ θ, linkageClassDeficiency N θ = N.deficiency)
+    [Fintype N.linkageGraph.ConnectedComponent] (hδ : ∀ θ, N.linkageClassDeficiency θ ≤ 1)
+    (hsum : ∑ θ, N.linkageClassDeficiency θ = N.deficiency)
     (hwr : N.IsWeaklyReversible) {k : ρ → ℝ} (hk : ∀ r, 0 < k r) {x₀ : S → ℝ}
     (hx₀ : ∀ s, 0 < x₀ s) :
     ∃! x : S → ℝ, (∀ s, 0 < x s) ∧ x - x₀ ∈ N.stoichiometricSubspace ∧

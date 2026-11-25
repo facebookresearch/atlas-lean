@@ -13,3 +13,5 @@ The genetics of continuously varying traits: decomposition of genetic variance, 
 - [Linear mixed models and BLUP](linear-mixed-models-and-blup/README.md)
 - [Mendelian segregation and the infinitesimal model](mendelian-segregation-and-the-infinitesimal-mode/README.md)
 - [Pedigree kinship and inbreeding](pedigree-kinship-and-inbreeding/README.md)
+
+- [Optimal selection indices](optimal-selection-indices/README.md)

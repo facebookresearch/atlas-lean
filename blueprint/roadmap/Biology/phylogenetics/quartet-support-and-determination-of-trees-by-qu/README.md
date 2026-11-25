@@ -23,3 +23,5 @@
 - [An unrooted binary tree is determined by its induced quartet trees](iso-of-induces-iff.md)
 - [Under strict plurality equal support forces the species topology](iso-of-quartet-score-eq.md)
 - [Under strict plurality other topologies have smaller support](quartet-score-lt-of-not-iso.md)
+
+- [Empirical quartet frequencies eventually recover the species quartets](positive-quartet-margin-and-eventual-strict-plur.md)

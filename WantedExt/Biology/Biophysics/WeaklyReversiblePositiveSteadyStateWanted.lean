@@ -31,7 +31,10 @@ states of the aggregated digraph. The source's weak reversibility (every weak co
 reaction digraph is strongly connected) is equivalent to every reaction lying on a directed cycle.
 Finiteness of the set of positive steady states in a class is not claimed. The deficiency-zero
 special case is proved in `Domains.Biology.Dynamics.DeficiencyZero.Integration` for networks
-with natural-number coefficients.
+with natural-number coefficients. The network, its stoichiometric subspace, weak reversibility
+and mass-action field are the shared definitions of
+`MathlibExt.Dynamics.PolynomialNetworks.RealExponent`, also used by the permanence theorems of
+`WantedExt.Biology.Biophysics.StronglyEndotacticPermanenceWanted`.
 
 Sources: B. Boros, "Existence of positive steady states for weakly reversible mass-action
 systems", SIAM J. Math. Anal. 51 (2019) 435–449, Theorem 1 (arXiv:1710.04732, Section 4).
@@ -39,46 +42,13 @@ systems", SIAM J. Math. Anal. 51 (2019) 435–449, Theorem 1 (arXiv:1710.04732, 
 module
 
 public import Batteries.Util.ProofWanted
-public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import Mathlib.LinearAlgebra.Span.Defs
-public import Mathlib.Logic.Relation
+public import MathlibExt.Dynamics.PolynomialNetworks.RealExponent
 
 @[expose] public section
 
 namespace WantedExt.Biology.Biophysics.WeaklyReversiblePositiveSteadyStateWanted
 
-/-- A reaction network on the species `S` with reactions indexed by `ρ` and real stoichiometric
-coefficients: reaction `r` turns the source complex `src r` into the product complex `prod r`. -/
-structure RealExponentNetwork (S ρ : Type*) where
-  /-- The source (reactant) complex of each reaction. -/
-  src : ρ → S → ℝ
-  /-- The product complex of each reaction. -/
-  prod : ρ → S → ℝ
-
-namespace RealExponentNetwork
-
-variable {S ρ : Type*} (N : RealExponentNetwork S ρ)
-
-/-- The stoichiometric subspace: the span of the reaction vectors `prod r - src r`. -/
-def stoichiometricSubspace : Submodule ℝ (S → ℝ) :=
-  Submodule.span ℝ (Set.range fun r s => N.prod r s - N.src r s)
-
-/-- The mass-action vector field with rate constants `k`, using real powers:
-`x ↦ ∑_r k r (∏_s x_s ^ (src r s)) (prod r - src r)`. It is meant for positive states `x`. -/
-noncomputable def massActionField [Fintype S] [Fintype ρ] (k : ρ → ℝ) (x : S → ℝ) : S → ℝ :=
-  fun s => ∑ r, k r * (∏ s', x s' ^ N.src r s') * (N.prod r s - N.src r s)
-
-/-- The directed reaction relation on complexes: `y ⟶ y'` if some reaction has source `y` and
-product `y'`. -/
-def Reacts (y y' : S → ℝ) : Prop :=
-  ∃ r, N.src r = y ∧ N.prod r = y'
-
-/-- The network is weakly reversible: for every reaction `y → y'` there is a directed path of
-reactions from `y'` back to `y`. -/
-def IsWeaklyReversible : Prop :=
-  ∀ r, Relation.ReflTransGen N.Reacts (N.prod r) (N.src r)
-
-end RealExponentNetwork
+open MathlibExt.Biology.Dynamics
 
 /-- **Boros's existence theorem** (Boros 2019, Theorem 1). Let `N` be a weakly reversible
 reaction network with real stoichiometric coefficients and finitely many species and reactions,
