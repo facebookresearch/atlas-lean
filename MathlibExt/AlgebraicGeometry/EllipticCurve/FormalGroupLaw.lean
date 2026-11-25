@@ -68,16 +68,16 @@ theorem coeff_add_succ_mul_of_X_pow_dvd {f g : R⟦X⟧} {a b : ℕ}
   obtain ⟨g', rfl⟩ := hg
   have h : (X : R⟦X⟧) ^ a * f' * ((X : R⟦X⟧) ^ b * g') = (X : R⟦X⟧) ^ (a + b) * (f' * g') := by
     ring
-  rw [h, coeff_X_pow_mul', if_pos (by omega : a + b ≤ a + b + 1),
+  rw [h, coeff_X_pow_mul', ite_eq_left (by omega : a + b ≤ a + b + 1),
     (show a + b + 1 - (a + b) = 1 by omega), coeff_one_mul]
   have e1 : coeff (a + 1) ((X : R⟦X⟧) ^ a * f') = coeff 1 f' := by
-    rw [coeff_X_pow_mul', if_pos (by omega : a ≤ a + 1), (show a + 1 - a = 1 by omega)]
+    rw [coeff_X_pow_mul', ite_eq_left (by omega : a ≤ a + 1), (show a + 1 - a = 1 by omega)]
   have e2 : coeff b ((X : R⟦X⟧) ^ b * g') = constantCoeff g' := by
-    rw [coeff_X_pow_mul', if_pos le_rfl, Nat.sub_self, coeff_zero_eq_constantCoeff_apply]
+    rw [coeff_X_pow_mul', ite_eq_left le_rfl, Nat.sub_self, coeff_zero_eq_constantCoeff_apply]
   have e3 : coeff a ((X : R⟦X⟧) ^ a * f') = constantCoeff f' := by
-    rw [coeff_X_pow_mul', if_pos le_rfl, Nat.sub_self, coeff_zero_eq_constantCoeff_apply]
+    rw [coeff_X_pow_mul', ite_eq_left le_rfl, Nat.sub_self, coeff_zero_eq_constantCoeff_apply]
   have e4 : coeff (b + 1) ((X : R⟦X⟧) ^ b * g') = coeff 1 g' := by
-    rw [coeff_X_pow_mul', if_pos (by omega : b ≤ b + 1), (show b + 1 - b = 1 by omega)]
+    rw [coeff_X_pow_mul', ite_eq_left (by omega : b ≤ b + 1), (show b + 1 - b = 1 by omega)]
   rw [e1, e2, e3, e4]
   ring
 
@@ -454,27 +454,11 @@ noncomputable def fgZ3Denom : MvPowerSeries (Fin 2) R :=
     + MvPowerSeries.C W.a₄ * W.fgSlope ^ 2
     + MvPowerSeries.C W.a₆ * W.fgSlope ^ 3
 
-noncomputable def fgZ3Num : MvPowerSeries (Fin 2) R :=
-  MvPowerSeries.C W.a₁ * W.fgSlope
-    + MvPowerSeries.C W.a₃ * W.fgSlope ^ 2
-    - MvPowerSeries.C W.a₂ * W.fgNu
-    - MvPowerSeries.C (2 * W.a₄) * (W.fgSlope * W.fgNu)
-    - MvPowerSeries.C (3 * W.a₆) * (W.fgSlope ^ 2 * W.fgNu)
-
-noncomputable def fgZ3 : MvPowerSeries (Fin 2) R :=
-  - MvPowerSeries.X (0 : Fin 2) - MvPowerSeries.X (1 : Fin 2)
-    + W.fgZ3Num * MvPowerSeries.invOfUnit W.fgZ3Denom (1 : Rˣ)
-
 noncomputable def fgInvDenom : R⟦X⟧ :=
   1 - PowerSeries.C W.a₁ * PowerSeries.X - PowerSeries.C W.a₃ * W.formalW
 
 noncomputable def fgInv : R⟦X⟧ :=
   - PowerSeries.X * PowerSeries.invOfUnit W.fgInvDenom (1 : Rˣ)
-
-/-- The one-dimensional formal group law attached to a Weierstrass curve,
-constructed from the slope series between two points at the origin. -/
-noncomputable def formalGroupLaw : MvPowerSeries (Fin 2) R :=
-  PowerSeries.subst W.fgZ3 W.fgInv
 
 theorem coeff_fgSlope (d : Fin 2 →₀ ℕ) :
     MvPowerSeries.coeff d W.fgSlope = PowerSeries.coeff (d 0 + d 1 + 1) W.formalW :=
@@ -508,18 +492,6 @@ theorem constantCoeff_fgNu : MvPowerSeries.constantCoeff (σ := Fin 2) W.fgNu = 
       PowerSeries.constantCoeff_subst_eq_zero
         (by simp [MvPowerSeries.constantCoeff_X]) W.formalW W.constantCoeff_formalW,
       MvPowerSeries.constantCoeff_X, mul_zero, sub_zero]
-
-theorem constantCoeff_fgZ3Num : MvPowerSeries.constantCoeff (σ := Fin 2) W.fgZ3Num = 0 := by
-  unfold fgZ3Num
-  simp [map_add, map_sub, map_mul, MvPowerSeries.constantCoeff_C, W.constantCoeff_fgSlope,
-        W.constantCoeff_fgNu]
-
-theorem constantCoeff_fgZ3 : MvPowerSeries.constantCoeff (σ := Fin 2) W.fgZ3 = 0 := by
-  unfold fgZ3
-  simp [map_add, map_sub, map_neg, map_mul, MvPowerSeries.constantCoeff_X, W.constantCoeff_fgZ3Num]
-
-theorem hasSubst_fgZ3 : PowerSeries.HasSubst W.fgZ3 :=
-  PowerSeries.HasSubst.of_constantCoeff_zero W.constantCoeff_fgZ3
 
 theorem hasSubst_X0 :
     PowerSeries.HasSubst (MvPowerSeries.X (0 : Fin 2) : MvPowerSeries (Fin 2) R) :=
@@ -559,19 +531,19 @@ theorem two_le_order_fgW1 : (2 : ℕ∞) ≤ W.fgW₁.order := by
   unfold fgW₁
   rw [PowerSeries.coeff_subst hasSubst_X0,
       finsum_eq_single _ (d 0) (fun n hn => by
-        rw [MvPowerSeries.coeff_X_pow, if_neg (fun h => hn (by
+        rw [MvPowerSeries.coeff_X_pow, ite_eq_right (fun h => hn (by
           have := congrFun (congrArg DFunLike.coe h) 0
           simp at this; omega)), smul_zero]),
       MvPowerSeries.coeff_X_pow]
   by_cases hd1 : d 1 = 0
   · have hdeq : d = Finsupp.single 0 (d 0) := by
       ext j; fin_cases j <;> simp [hd1]
-    rw [if_pos hdeq]
+    rw [ite_eq_left hdeq]
     have : d 0 ≤ 1 := by omega
     interval_cases hh : (d 0)
     · simp [W.coeff_formalW_zero]
     · simp [W.coeff_formalW_one]
-  · rw [if_neg (fun h => hd1 (by
+  · rw [ite_eq_right (fun h => hd1 (by
       have := congrFun (congrArg DFunLike.coe h) 1
       simpa [Finsupp.single_apply] using this)), smul_zero]
 
@@ -585,6 +557,41 @@ theorem two_le_order_fgNu : (2 : ℕ∞) ≤ W.fgNu.order := by
         (lt_of_lt_of_le hd (two_le_order_mul_left W.two_le_order_fgSlope)),
       sub_zero]
 
+end WeierstrassCurve
+
+end
+
+noncomputable section
+
+open PowerSeries MvPowerSeries
+
+namespace WeierstrassCurve
+
+variable {R : Type*} [CommRing R] (W : WeierstrassCurve R)
+
+noncomputable def fgZ3Num : MvPowerSeries (Fin 2) R :=
+  - ( MvPowerSeries.C W.a₁ * W.fgSlope
+    + MvPowerSeries.C W.a₃ * W.fgSlope ^ 2
+    + MvPowerSeries.C W.a₂ * W.fgNu
+    + MvPowerSeries.C (2 * W.a₄) * (W.fgSlope * W.fgNu)
+    + MvPowerSeries.C (3 * W.a₆) * (W.fgSlope ^ 2 * W.fgNu) )
+
+noncomputable def fgZ3 : MvPowerSeries (Fin 2) R :=
+  - MvPowerSeries.X (0 : Fin 2) - MvPowerSeries.X (1 : Fin 2)
+    + W.fgZ3Num * MvPowerSeries.invOfUnit W.fgZ3Denom (1 : Rˣ)
+
+/-- The formal group law `F(z₁, z₂)` of a Weierstrass curve: `fgZ3` is the third point
+where the chord through `(z₁, w(z₁))` and `(z₂, w(z₂))` meets the curve, and
+`F(z₁, z₂)` is its image under the formal inverse `fgInv`. -/
+noncomputable def formalGroupLaw : MvPowerSeries (Fin 2) R :=
+  PowerSeries.subst W.fgZ3 W.fgInv
+
+theorem constantCoeff_fgZ3Num :
+    MvPowerSeries.constantCoeff (σ := Fin 2) W.fgZ3Num = 0 := by
+  unfold fgZ3Num
+  simp [map_neg, map_add, map_mul, map_pow, MvPowerSeries.constantCoeff_C, W.constantCoeff_fgSlope,
+        W.constantCoeff_fgNu]
+
 theorem two_le_order_fgZ3Num : (2 : ℕ∞) ≤ W.fgZ3Num.order := by
   apply MvPowerSeries.le_order
   intro d hd
@@ -594,9 +601,19 @@ theorem two_le_order_fgZ3Num : (2 : ℕ∞) ≤ W.fgZ3Num.order := by
   have e : ∀ P : MvPowerSeries (Fin 2) R, (2 : ℕ∞) ≤ P.order → MvPowerSeries.coeff d P = 0 :=
     fun P hP => MvPowerSeries.coeff_of_lt_order (lt_of_lt_of_le hd hP)
   unfold fgZ3Num
-  simp only [map_add, map_sub, MvPowerSeries.coeff_C_mul,
+  rw [map_neg, neg_eq_zero]
+  simp only [map_add, MvPowerSeries.coeff_C_mul,
     e _ oS, e _ oS2, e _ oN, e _ (two_le_order_mul_left oS), e _ (two_le_order_mul_left oS2),
-    mul_zero, add_zero, sub_zero]
+    mul_zero, add_zero]
+
+theorem constantCoeff_fgZ3 :
+    MvPowerSeries.constantCoeff (σ := Fin 2) W.fgZ3 = 0 := by
+  unfold fgZ3
+  simp [map_add, map_sub, map_neg, map_mul, MvPowerSeries.constantCoeff_X,
+        W.constantCoeff_fgZ3Num]
+
+theorem hasSubst_fgZ3 : PowerSeries.HasSubst W.fgZ3 :=
+  PowerSeries.HasSubst.of_constantCoeff_zero W.constantCoeff_fgZ3
 
 theorem coeff_single_fgZ3 (i : Fin 2) :
     MvPowerSeries.coeff (Finsupp.single i 1) W.fgZ3 = -1 := by
@@ -611,8 +628,8 @@ theorem coeff_single_fgZ3 (i : Fin 2) :
   rw [map_add, map_sub, map_neg, hprod, add_zero]
   fin_cases i <;> simp [MvPowerSeries.coeff_X, Finsupp.single_eq_single_iff]
 
-theorem coeff_fgZ3_pow_eq_zero (d : Fin 2 →₀ ℕ) (hd : Finsupp.degree d ≤ 1) {n : ℕ} (hn : 2 ≤ n) :
-    MvPowerSeries.coeff d (W.fgZ3 ^ n) = 0 := by
+theorem coeff_fgZ3_pow_eq_zero (d : Fin 2 →₀ ℕ) (hd : Finsupp.degree d ≤ 1) {n : ℕ}
+    (hn : 2 ≤ n) : MvPowerSeries.coeff d (W.fgZ3 ^ n) = 0 := by
   apply MvPowerSeries.coeff_of_lt_order
   calc ((Finsupp.degree d : ℕ) : ℕ∞) ≤ (1 : ℕ∞) := by exact_mod_cast hd
     _ < (n : ℕ∞) := by exact_mod_cast hn
@@ -649,114 +666,6 @@ theorem coeff_one_formalGroupLaw :
     MvPowerSeries.coeff (Finsupp.single 1 1) W.formalGroupLaw = 1 :=
   W.coeff_single_formalGroupLaw 1
 
-end WeierstrassCurve
-
-end
-
-noncomputable section
-
-open PowerSeries MvPowerSeries
-
-namespace WeierstrassCurve
-
-variable {R : Type*} [CommRing R] (W : WeierstrassCurve R)
-
-noncomputable def fgZ3NumFixed : MvPowerSeries (Fin 2) R :=
-  - ( MvPowerSeries.C W.a₁ * W.fgSlope
-    + MvPowerSeries.C W.a₃ * W.fgSlope ^ 2
-    + MvPowerSeries.C W.a₂ * W.fgNu
-    + MvPowerSeries.C (2 * W.a₄) * (W.fgSlope * W.fgNu)
-    + MvPowerSeries.C (3 * W.a₆) * (W.fgSlope ^ 2 * W.fgNu) )
-
-noncomputable def fgZ3Fixed : MvPowerSeries (Fin 2) R :=
-  - MvPowerSeries.X (0 : Fin 2) - MvPowerSeries.X (1 : Fin 2)
-    + W.fgZ3NumFixed * MvPowerSeries.invOfUnit W.fgZ3Denom (1 : Rˣ)
-
-/-- The corrected formal group law, with the sign convention for the
-third coordinate fixed so that the linear coefficients are `1`. -/
-noncomputable def formalGroupLawFixed : MvPowerSeries (Fin 2) R :=
-  PowerSeries.subst W.fgZ3Fixed W.fgInv
-
-theorem constantCoeff_fgZ3NumFixed :
-    MvPowerSeries.constantCoeff (σ := Fin 2) W.fgZ3NumFixed = 0 := by
-  unfold fgZ3NumFixed
-  simp [map_neg, map_add, map_mul, map_pow, MvPowerSeries.constantCoeff_C, W.constantCoeff_fgSlope,
-        W.constantCoeff_fgNu]
-
-theorem two_le_order_fgZ3NumFixed : (2 : ℕ∞) ≤ W.fgZ3NumFixed.order := by
-  apply MvPowerSeries.le_order
-  intro d hd
-  have oS := W.two_le_order_fgSlope
-  have oN := W.two_le_order_fgNu
-  have oS2 : (2 : ℕ∞) ≤ (W.fgSlope ^ 2).order := by rw [pow_two]; exact two_le_order_mul_left oS
-  have e : ∀ P : MvPowerSeries (Fin 2) R, (2 : ℕ∞) ≤ P.order → MvPowerSeries.coeff d P = 0 :=
-    fun P hP => MvPowerSeries.coeff_of_lt_order (lt_of_lt_of_le hd hP)
-  unfold fgZ3NumFixed
-  rw [map_neg, neg_eq_zero]
-  simp only [map_add, MvPowerSeries.coeff_C_mul,
-    e _ oS, e _ oS2, e _ oN, e _ (two_le_order_mul_left oS), e _ (two_le_order_mul_left oS2),
-    mul_zero, add_zero]
-
-theorem constantCoeff_fgZ3Fixed :
-    MvPowerSeries.constantCoeff (σ := Fin 2) W.fgZ3Fixed = 0 := by
-  unfold fgZ3Fixed
-  simp [map_add, map_sub, map_neg, map_mul, MvPowerSeries.constantCoeff_X,
-        W.constantCoeff_fgZ3NumFixed]
-
-theorem hasSubst_fgZ3Fixed : PowerSeries.HasSubst W.fgZ3Fixed :=
-  PowerSeries.HasSubst.of_constantCoeff_zero W.constantCoeff_fgZ3Fixed
-
-theorem coeff_single_fgZ3Fixed (i : Fin 2) :
-    MvPowerSeries.coeff (Finsupp.single i 1) W.fgZ3Fixed = -1 := by
-  unfold fgZ3Fixed
-  have hprod : MvPowerSeries.coeff (Finsupp.single i 1)
-      (W.fgZ3NumFixed * MvPowerSeries.invOfUnit W.fgZ3Denom 1) = 0 := by
-    apply MvPowerSeries.coeff_of_lt_order
-    calc ((Finsupp.degree (Finsupp.single i 1) : ℕ) : ℕ∞)
-          = (1 : ℕ∞) := by simp [Finsupp.degree_single]
-      _ < (2 : ℕ∞) := by norm_num
-      _ ≤ _ := two_le_order_mul_left W.two_le_order_fgZ3NumFixed
-  rw [map_add, map_sub, map_neg, hprod, add_zero]
-  fin_cases i <;> simp [MvPowerSeries.coeff_X, Finsupp.single_eq_single_iff]
-
-theorem coeff_fgZ3Fixed_pow_eq_zero (d : Fin 2 →₀ ℕ) (hd : Finsupp.degree d ≤ 1) {n : ℕ}
-    (hn : 2 ≤ n) : MvPowerSeries.coeff d (W.fgZ3Fixed ^ n) = 0 := by
-  apply MvPowerSeries.coeff_of_lt_order
-  calc ((Finsupp.degree d : ℕ) : ℕ∞) ≤ (1 : ℕ∞) := by exact_mod_cast hd
-    _ < (n : ℕ∞) := by exact_mod_cast hn
-    _ ≤ (W.fgZ3Fixed ^ n).order :=
-        MvPowerSeries.le_order_pow_of_constantCoeff_eq_zero n W.constantCoeff_fgZ3Fixed
-
-theorem constantCoeff_formalGroupLawFixed :
-    MvPowerSeries.constantCoeff (σ := Fin 2) W.formalGroupLawFixed = 0 := by
-  unfold formalGroupLawFixed
-  rw [PowerSeries.constantCoeff_subst W.hasSubst_fgZ3Fixed]
-  rw [finsum_eq_single _ 0 (fun d hd => by
-    rw [map_pow, W.constantCoeff_fgZ3Fixed, zero_pow hd, smul_zero])]
-  rw [map_pow, pow_zero]
-  simp [W.constantCoeff_fgInv]
-
-theorem coeff_single_formalGroupLawFixed (i : Fin 2) :
-    MvPowerSeries.coeff (Finsupp.single i 1) W.formalGroupLawFixed = 1 := by
-  unfold formalGroupLawFixed
-  rw [PowerSeries.coeff_subst W.hasSubst_fgZ3Fixed]
-  rw [finsum_eq_single _ 1 (fun d hd => by
-    rcases Nat.lt_or_ge d 2 with h2 | h2
-    · interval_cases d
-      · simp [pow_zero, MvPowerSeries.coeff_one, Finsupp.single_eq_zero]
-      · exact absurd rfl hd
-    · rw [W.coeff_fgZ3Fixed_pow_eq_zero _ (by simp [Finsupp.degree_single]) h2, smul_zero])]
-  rw [pow_one, W.coeff_one_fgInv, W.coeff_single_fgZ3Fixed]
-  simp
-
-theorem coeff_zero_formalGroupLawFixed :
-    MvPowerSeries.coeff (Finsupp.single 0 1) W.formalGroupLawFixed = 1 :=
-  W.coeff_single_formalGroupLawFixed 0
-
-theorem coeff_one_formalGroupLawFixed :
-    MvPowerSeries.coeff (Finsupp.single 1 1) W.formalGroupLawFixed = 1 :=
-  W.coeff_single_formalGroupLawFixed 1
-
 theorem coeff_two_fgInv : PowerSeries.coeff 2 W.fgInv = - W.a₁ := by
   have hden0 : PowerSeries.constantCoeff W.fgInvDenom = 1 := by
     unfold fgInvDenom
@@ -790,20 +699,20 @@ theorem three_le_order_fgW1 : (3 : ℕ∞) ≤ W.fgW₁.order := by
   unfold fgW₁
   rw [PowerSeries.coeff_subst hasSubst_X0,
       finsum_eq_single _ (d 0) (fun n hn => by
-        rw [MvPowerSeries.coeff_X_pow, if_neg (fun h => hn (by
+        rw [MvPowerSeries.coeff_X_pow, ite_eq_right (fun h => hn (by
           have := congrFun (congrArg DFunLike.coe h) 0
           simp at this; omega)), smul_zero]),
       MvPowerSeries.coeff_X_pow]
   by_cases hd1 : d 1 = 0
   · have hdeq : d = Finsupp.single 0 (d 0) := by
       ext j; fin_cases j <;> simp [hd1]
-    rw [if_pos hdeq]
+    rw [ite_eq_left hdeq]
     have : d 0 ≤ 2 := by omega
     interval_cases hh : (d 0)
     · simp [W.coeff_formalW_zero]
     · simp [W.coeff_formalW_one]
     · simp [W.coeff_formalW_two]
-  · rw [if_neg (fun h => hd1 (by
+  · rw [ite_eq_right (fun h => hd1 (by
       have := congrFun (congrArg DFunLike.coe h) 1
       simpa [Finsupp.single_apply] using this)), smul_zero]
 
@@ -813,7 +722,7 @@ theorem three_le_order_fgNu : (3 : ℕ∞) ≤ W.fgNu.order := by
   have hX0 : (1 : ℕ∞) ≤ (MvPowerSeries.X (0 : Fin 2) : MvPowerSeries (Fin 2) R).order := by
     apply MvPowerSeries.le_order
     intro e he
-    rw [MvPowerSeries.coeff_X, if_neg (fun hcon => by
+    rw [MvPowerSeries.coeff_X, ite_eq_right (fun hcon => by
       rw [hcon, Finsupp.degree_single] at he
       exact absurd he (by norm_num))]
   have hSX : (3 : ℕ∞) ≤ (W.fgSlope * MvPowerSeries.X (0 : Fin 2)).order := by
@@ -859,8 +768,8 @@ theorem coeff_sq_mul_invD {Num : MvPowerSeries (Fin 2) R} (hNum : (2 : ℕ∞) �
   have hsplit : Num * D = Num + Num * (D - 1) := by ring
   rw [hsplit, map_add, hcross, add_zero]
 
-theorem coeff_sq_fgZ3NumFixed (i : Fin 2) :
-    MvPowerSeries.coeff (Finsupp.single i 2) W.fgZ3NumFixed = - W.a₁ := by
+theorem coeff_sq_fgZ3Num (i : Fin 2) :
+    MvPowerSeries.coeff (Finsupp.single i 2) W.fgZ3Num = - W.a₁ := by
   have ez : ∀ P : MvPowerSeries (Fin 2) R, (3 : ℕ∞) ≤ P.order →
       MvPowerSeries.coeff (Finsupp.single i 2) P = 0 := by
     intro P hP
@@ -888,22 +797,22 @@ theorem coeff_sq_fgZ3NumFixed (i : Fin 2) :
     le_trans (by calc (3 : ℕ∞) ≤ 3 + 3 := by norm_num
                       _ ≤ (W.fgSlope ^ 2).order + W.fgNu.order := add_le_add hsl2 oN)
       MvPowerSeries.le_order_mul
-  unfold fgZ3NumFixed
+  unfold fgZ3Num
   rw [map_neg, map_add, map_add, map_add, map_add,
       MvPowerSeries.coeff_C_mul, MvPowerSeries.coeff_C_mul, MvPowerSeries.coeff_C_mul,
       MvPowerSeries.coeff_C_mul, MvPowerSeries.coeff_C_mul,
       hsl, ez _ hsl2, ez _ oN, ez _ hslN, ez _ hsl2N]
   ring
 
-theorem coeff_sq_fgZ3Fixed (i : Fin 2) :
-    MvPowerSeries.coeff (Finsupp.single i 2) W.fgZ3Fixed = - W.a₁ := by
+theorem coeff_sq_fgZ3 (i : Fin 2) :
+    MvPowerSeries.coeff (Finsupp.single i 2) W.fgZ3 = - W.a₁ := by
   have hlin : MvPowerSeries.coeff (Finsupp.single i 2)
       ((- MvPowerSeries.X (0 : Fin 2) - MvPowerSeries.X (1 : Fin 2)) : MvPowerSeries (Fin 2) R)
         = 0 := by
     simp [map_sub, map_neg, MvPowerSeries.coeff_X, Finsupp.single_eq_single_iff]
-  unfold fgZ3Fixed
-  rw [map_add, hlin, zero_add, W.coeff_sq_mul_invD W.two_le_order_fgZ3NumFixed,
-      W.coeff_sq_fgZ3NumFixed]
+  unfold fgZ3
+  rw [map_add, hlin, zero_add, W.coeff_sq_mul_invD W.two_le_order_fgZ3Num,
+      W.coeff_sq_fgZ3Num]
 
 theorem coeff_pow_lt {g : MvPowerSeries (Fin 2) R}
     (hg : MvPowerSeries.constantCoeff (σ := Fin 2) g = 0) (d : Fin 2 →₀ ℕ) {n : ℕ}
@@ -960,7 +869,7 @@ theorem coeff_sq_pow2 {H : MvPowerSeries (Fin 2) R} (hH : (2 : ℕ∞) ≤ H.ord
     rw [MvPowerSeries.X_def, MvPowerSeries.X_def, MvPowerSeries.monomial_mul_monomial, mul_one]
   have hX0X1c : MvPowerSeries.coeff (Finsupp.single i 2)
       (MvPowerSeries.X (0 : Fin 2) * MvPowerSeries.X 1 : MvPowerSeries (Fin 2) R) = 0 := by
-    rw [hmono, MvPowerSeries.coeff_monomial, if_neg]
+    rw [hmono, MvPowerSeries.coeff_monomial, ite_eq_right]
     intro hcon
     have hc := congrFun (congrArg (DFunLike.coe) hcon.symm) i
     fin_cases i <;> simp [Finsupp.add_apply] at hc
@@ -985,7 +894,7 @@ theorem coeff_sq_subst {g : MvPowerSeries (Fin 2) R} {i : Fin 2} (hg : PowerSeri
       rw [Function.mem_support] at hn
       match n with
       | 0 => exact absurd (by
-          rw [pow_zero, MvPowerSeries.coeff_one, if_neg (by simp [Finsupp.single_eq_zero]),
+          rw [pow_zero, MvPowerSeries.coeff_one, ite_eq_right (by simp [Finsupp.single_eq_zero]),
               smul_zero]) hn
       | 1 => simp
       | 2 => simp
@@ -997,17 +906,17 @@ theorem coeff_sq_subst {g : MvPowerSeries (Fin 2) R} {i : Fin 2} (hg : PowerSeri
   simp only [smul_eq_mul]
   ring
 
-theorem coeff_sq_formalGroupLawFixed (i : Fin 2) :
-    MvPowerSeries.coeff (Finsupp.single i 2) W.formalGroupLawFixed = 0 := by
-  have hpow2 : MvPowerSeries.coeff (Finsupp.single i 2) (W.fgZ3Fixed ^ 2) = 1 := by
-    have hH : (2 : ℕ∞) ≤ (W.fgZ3NumFixed * MvPowerSeries.invOfUnit W.fgZ3Denom 1).order :=
-      le_trans W.two_le_order_fgZ3NumFixed (le_trans le_self_add MvPowerSeries.le_order_mul)
+theorem coeff_sq_formalGroupLaw (i : Fin 2) :
+    MvPowerSeries.coeff (Finsupp.single i 2) W.formalGroupLaw = 0 := by
+  have hpow2 : MvPowerSeries.coeff (Finsupp.single i 2) (W.fgZ3 ^ 2) = 1 := by
+    have hH : (2 : ℕ∞) ≤ (W.fgZ3Num * MvPowerSeries.invOfUnit W.fgZ3Denom 1).order :=
+      le_trans W.two_le_order_fgZ3Num (le_trans le_self_add MvPowerSeries.le_order_mul)
     have := coeff_sq_pow2 hH i
     rwa [show (- MvPowerSeries.X (0 : Fin 2) - MvPowerSeries.X (1 : Fin 2)
-      + W.fgZ3NumFixed * MvPowerSeries.invOfUnit W.fgZ3Denom 1) = W.fgZ3Fixed from rfl] at this
-  unfold formalGroupLawFixed
-  rw [W.coeff_sq_subst W.hasSubst_fgZ3Fixed W.constantCoeff_fgZ3Fixed hpow2,
-      W.coeff_sq_fgZ3Fixed]
+      + W.fgZ3Num * MvPowerSeries.invOfUnit W.fgZ3Denom 1) = W.fgZ3 from rfl] at this
+  unfold formalGroupLaw
+  rw [W.coeff_sq_subst W.hasSubst_fgZ3 W.constantCoeff_fgZ3 hpow2,
+      W.coeff_sq_fgZ3]
   ring
 
 end WeierstrassCurve

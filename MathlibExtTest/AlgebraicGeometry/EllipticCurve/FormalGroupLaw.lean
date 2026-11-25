@@ -31,8 +31,8 @@ example {R : Type 1} [CommRing R] (W : WeierstrassCurve R) :
   W.formalW_eq
 
 example {R : Type*} [CommRing R] (W : WeierstrassCurve R) (i : Fin 2) :
-    MvPowerSeries.coeff (Finsupp.single i 1) W.formalGroupLawFixed = 1 :=
-  W.coeff_single_formalGroupLawFixed i
+    MvPowerSeries.coeff (Finsupp.single i 1) W.formalGroupLaw = 1 :=
+  W.coeff_single_formalGroupLaw i
 
 -- Boundary: over a nontrivial ring the order is exactly `3`, so `formalW`
 -- is nonzero and is not divisible by `X ^ 4`.
