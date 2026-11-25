@@ -22,6 +22,16 @@ example (n : ℕ) :
   norm_num [Nat.cast_add] at h
   linear_combination h / 4
 
+-- Starting the odd numbers at index -2 gives weight 5/3, even when the sum crosses index zero.
+example (n : ℕ) :
+    ∑ i ∈ Finset.range (n + 1), (5 / 3 : ℚ) ^ (n - i) * (2 * (i : ℚ) - 3) =
+      -3 * ((n : ℚ) + 1) := by
+  have h := second_order_recurrence_offset_sury_sum (fun j => 2 * (j : ℚ) + 1) 2 (-1)
+    (by norm_num) (fun j => by push_cast; ring) (-2) (by norm_num) (by norm_num) n
+  push_cast at h
+  norm_num at h
+  linear_combination (norm := ring_nf) -(3 / 4) * h
+
 -- Signed Fibonacci and Lucas numbers have opposite signs at the same negative index.
 example : fibAtInt (-4) = -3 ∧ lucasAtInt (-4) = 7 := by decide +kernel
 example : fibAtInt (-3) = 2 ∧ lucasAtInt (-3) = -4 := by decide +kernel

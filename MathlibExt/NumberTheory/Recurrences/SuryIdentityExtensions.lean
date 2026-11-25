@@ -25,6 +25,9 @@ Multiplication by `c₁ - A 1` advances the weights of all terms already in the 
 This gives the induction step in Gregory Dresden and Xiaoya Gao,
 "Further Extensions of Sury's Identity", Theorem 1 (<https://arxiv.org/abs/2512.12841>).
 
+For the offset identity (Theorem 2), apply Theorem 1 to the normalized sequence
+`X (i + k) / X k` and shift the two determinants back to index zero.
+
 For the Lucas step identity (Theorem 4), Binet's formulas give
 `L_j F_{k+j} - F_j L_{k+j} = 2 (-1)^j F_k`. At `k = j*n` this accounts for the new
 summand, while multiplication by `(-1)^j` updates the signs of the previous terms.
@@ -89,6 +92,78 @@ theorem second_order_recurrence_initial_one_sury_sum
       _ = _ := by
         rw [ih, hS]
         ring
+
+-- Moving both columns of the determinant one step multiplies it by `-c₂`.
+private theorem offset_determinant (X : ℤ → ℚ) (c₁ c₂ : ℚ) (hc₂ : c₂ ≠ 0)
+    (hrec : ∀ j : ℤ, X (j + 2) = c₁ * X (j + 1) + c₂ * X j) (m k : ℤ) :
+    X k * X (m + k + 2) - X (k + 1) * X (m + k + 1) =
+      (-c₂) ^ k * (X 0 * X (m + 2) - X 1 * X (m + 1)) := by
+  let D (j : ℤ) := X j * X (m + j + 2) - X (j + 1) * X (m + j + 1)
+  have step (j : ℤ) : D (j + 1) = -c₂ * D j := by
+    dsimp only [D]
+    rw [← add_assoc m j 1, hrec (m + j + 1), show j + 1 + 1 = j + 2 by omega, hrec j,
+      show m + j + 1 + 1 = m + j + 2 by omega]
+    ring
+  have advance (j : ℤ) :
+      (D (j + 1) = (-c₂) ^ (j + 1) * D 0) ↔ (D j = (-c₂) ^ j * D 0) := by
+    rw [step, zpow_add_one₀ (neg_ne_zero.mpr hc₂), mul_comm ((-c₂) ^ j), mul_assoc,
+      mul_right_inj' (neg_ne_zero.mpr hc₂)]
+  suffices D k = (-c₂) ^ k * D 0 by simpa [D] using this
+  induction k with
+  | zero => simp
+  | succ j ih => exact (advance j).2 ih
+  | pred j ih => exact (advance (-↑j - 1)).1 (by simpa using ih)
+
+/-- **Offset form of Sury's identity for a second-order recurrence.** Let $c_1, c_2$ be rational
+numbers with $c_2 \neq 0$, and let $(X_n)_{n \in \mathbb{Z}}$ be a sequence of rational numbers
+with $X_{n+2} = c_1 X_{n+1} + c_2 X_n$ for all integers $n$. Let $k$ be an integer with
+$X_k \neq 0$ and $X_{k-1} \neq 0$. Then for every natural number $n$,
+$$X_0 X_{n+2} - X_1 X_{n+1} = \frac{X_0 X_2 - X_1^2}{X_k}
+\sum_{i=0}^{n} \left(\frac{-c_2 X_{k-1}}{X_k}\right)^{n-i} X_{i+k}.$$
+
+The offset $k$ may be negative; requiring the recurrence at every integer index encodes the
+paper's backward extension of the sequence, which uses $c_2 \neq 0$.
+
+Source: Gregory Dresden and Xiaoya Gao, "Further Extensions of Sury's Identity", Theorem 2. -/
+theorem second_order_recurrence_offset_sury_sum
+    (X : ℤ → ℚ) (c₁ c₂ : ℚ)
+    (hc₂ : c₂ ≠ 0)
+    (hrec : ∀ n : ℤ, X (n + 2) = c₁ * X (n + 1) + c₂ * X n)
+    (k : ℤ) (hXk : X k ≠ 0) (hXk_pred : X (k - 1) ≠ 0)
+    (n : ℕ) :
+    X 0 * X ((n : ℤ) + 2) - X 1 * X ((n : ℤ) + 1) =
+      ((X 0 * X 2 - X 1 ^ 2) / X k) *
+        ∑ i ∈ Finset.range (n + 1),
+          (-c₂ * X (k - 1) / X k) ^ (n - i) * X ((i : ℤ) + k) := by
+  set t := -c₂ * X (k - 1) / X k
+  let A (i : ℕ) := X ((i : ℤ) + k) / X k
+  have hA (i : ℕ) : A (i + 2) = c₁ * A (i + 1) + c₂ * A i := by
+    simp only [A, Nat.cast_add, Nat.cast_ofNat, Nat.cast_one, add_right_comm (i : ℤ) _ k]
+    rw [hrec ((i : ℤ) + k)]
+    ring
+  have ht : c₁ - A 1 = t := by
+    have h : X (1 + k) = c₁ * X k + c₂ * X (k - 1) := by
+      simpa only [show k - 1 + 2 = 1 + k by omega, sub_add_cancel] using hrec (k - 1)
+    dsimp [A, t]
+    rw [h]
+    field_simp
+    ring
+  have ht₀ : t ≠ 0 := div_ne_zero (mul_ne_zero (neg_ne_zero.mpr hc₂) hXk_pred) hXk
+  have hsum := second_order_recurrence_initial_one_sury_sum A c₁ c₂ hc₂
+    (by simp [A, hXk]) hA (ht ▸ ht₀) n
+  set S := ∑ i ∈ Finset.range (n + 1), t ^ (n - i) * X ((i : ℤ) + k)
+  have hS : ∑ i ∈ Finset.range (n + 1), t ^ (n - i) * A i = S / X k := by
+    simp only [S, A, div_eq_mul_inv, Finset.sum_mul, mul_assoc]
+  rw [ht, hS] at hsum
+  simp only [A, Nat.cast_add, Nat.cast_ofNat, Nat.cast_one,
+    add_right_comm (n : ℤ) _ k, add_comm 1 k, add_comm 2 k] at hsum
+  -- Clear the normalization and cancel the common determinant factor at offset `k`.
+  have hd := offset_determinant X c₁ c₂ hc₂ hrec n k
+  have hd₀ := offset_determinant X c₁ c₂ hc₂ hrec 0 k
+  simp only [zero_add] at hd₀
+  apply mul_left_cancel₀ (zpow_ne_zero k (neg_ne_zero.mpr hc₂))
+  field_simp [hXk] at hsum ⊢
+  linear_combination X k * hd.symm + hsum + S * hd₀
 
 private theorem lucas_mul_fib_sub_fib_mul_lucas (j k : ℕ) :
     lucasAtInt j * fibAtInt ↑(k + j) - fibAtInt j * lucasAtInt ↑(k + j) =

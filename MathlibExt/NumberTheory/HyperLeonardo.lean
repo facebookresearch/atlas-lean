@@ -11,6 +11,7 @@ module
 public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.RingTheory.PowerSeries.WellKnown
 public import MathlibExt.NumberTheory.GenLeonardo
+import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Ring
 
 /-!
@@ -67,6 +68,58 @@ theorem hyperLeonardo_one_small :
     hyperLeonardo 1 0 = 1 ∧ hyperLeonardo 1 1 = 2 ∧ hyperLeonardo 1 2 = 5 ∧
       hyperLeonardo 1 3 = 10 := by
   simp [hyperLeonardo, Finset.sum_range_succ, genLeonardo]
+
+/-- **Recurrences for the hyper-Leonardo numbers of orders zero, one and two.** The
+hyper-Leonardo numbers $Le^{(r)}_n$ satisfy $Le^{(0)}_0 = Le^{(0)}_1 = 1$, $Le^{(1)}_0 = 1$,
+$Le^{(1)}_1 = 2$, $Le^{(2)}_0 = 1$ and $Le^{(2)}_1 = 3$, and for every natural number $n \ge 2$,
+$$Le^{(0)}_n = Le^{(0)}_{n-1} + Le^{(0)}_{n-2} + 1,$$
+$$Le^{(1)}_n = Le^{(1)}_{n-1} + Le^{(1)}_{n-2} + \binom{n-1}{1} + 1,$$
+$$Le^{(2)}_n = Le^{(2)}_{n-1} + Le^{(2)}_{n-2} + \binom{n}{2} + \binom{n-1}{1} + 2.$$
+
+Source: Elen Viviani Pereira Spreafico and Paula Maria Machado Cruz Catarino, *A Note on
+Hyper-Leonardo Numbers*, INTEGERS 26 (2026), Article A48, Proposition 1
+(`integers-2026-A48-prop-1`). -/
+public theorem hyperLeonardo_recurrence_small_order :
+    (∀ n, hyperLeonardo 0 (n + 2) = hyperLeonardo 0 (n + 1) + hyperLeonardo 0 n + 1) ∧
+    hyperLeonardo 0 0 = 1 ∧ hyperLeonardo 0 1 = 1 ∧
+    (∀ n, hyperLeonardo 1 (n + 2) =
+      hyperLeonardo 1 (n + 1) + hyperLeonardo 1 n + ((n + 1).choose 1 : ℕ) + 1) ∧
+    hyperLeonardo 1 0 = 1 ∧ hyperLeonardo 1 1 = 2 ∧
+    (∀ n, hyperLeonardo 2 (n + 2) = hyperLeonardo 2 (n + 1) + hyperLeonardo 2 n +
+      ((n + 2).choose 2 : ℕ) + ((n + 1).choose 1 : ℕ) + 2) ∧
+    hyperLeonardo 2 0 = 1 ∧ hyperLeonardo 2 1 = 3 := by
+  -- The difference between a term and the sum of its two predecessors is the correction term.
+  let correction (r n : ℕ) :=
+    hyperLeonardo r (n + 2) - hyperLeonardo r (n + 1) - hyperLeonardo r n
+  have step (r n : ℕ) :
+      correction (r + 1) (n + 1) = correction (r + 1) n + correction r (n + 1) := by
+    have partialSum (k : ℕ) :
+        hyperLeonardo (r + 1) (k + 1) = hyperLeonardo (r + 1) k + hyperLeonardo r (k + 1) := by
+      simp only [hyperLeonardo_succ, Finset.sum_range_succ _ (k + 1)]
+    unfold correction
+    linear_combination partialSum (n + 2) - partialSum (n + 1) - partialSum n
+  have orderZero (n : ℕ) : correction 0 n = 1 := by
+    simp only [correction, hyperLeonardo_zero, genLeonardo]
+    ring
+  have orderOne (n : ℕ) : correction 1 n = (n : ℤ) + 2 := by
+    induction n with
+    | zero => decide
+    | succ n ih =>
+      rw [step 0 n, ih, orderZero]
+      omega
+  have orderTwo (n : ℕ) : correction 2 n = ((n + 2).choose 2 : ℤ) + n + 3 := by
+    induction n with
+    | zero => decide
+    | succ n ih =>
+      rw [step 1 n, ih, orderOne, Nat.choose_succ_succ' (n + 2) 1, Nat.choose_one_right]
+      simp only [Nat.reduceAdd]
+      omega
+  refine ⟨fun _ => rfl, rfl, rfl, fun n => ?_, hyperLeonardo_one_small.1,
+    hyperLeonardo_one_small.2.1, fun n => ?_, by decide, by decide⟩
+  · simp only [Nat.choose_one_right, Nat.cast_add, Nat.cast_one]
+    linear_combination orderOne n
+  · simp only [Nat.choose_one_right, Nat.cast_add, Nat.cast_one]
+    linear_combination orderTwo n
 
 /-- **Hyper-Fibonacci numbers.** The hyper-Fibonacci numbers $F^{(r)}_n$, for natural numbers $r$
 and $n$, are the natural numbers defined by $F^{(0)}_n = F_n$, the $n$-th Fibonacci number

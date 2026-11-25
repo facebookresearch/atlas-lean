@@ -19,6 +19,7 @@ public import MathlibExt.NumberTheory.Recurrences.WeightedHigherFibSum
 This file defines shifted Fibonacci self-convolutions.
 `evenFibWalkCount_odd_length_eq_oddFibWalkCount` proves that the even and odd parts of the
 ordinary Fibonacci self-convolution agree at odd length.
+`fibWalkCounts_odd_length_eq_half` shows that each part is half of the full convolution.
 -/
 
 set_option autoImplicit false
@@ -111,5 +112,32 @@ theorem evenFibWalkCount_odd_length_eq_oddFibWalkCount
   · exact Nat.sub_sub_self hj.1
   · rw [Nat.cast_sub hj.1, sub_sub_cancel]
     exact mul_comm _ _
+
+/-- **Halving the Fibonacci self-convolution at odd length.** Let $F_n$ denote the Fibonacci
+numbers ($F_0 = 0$, $F_1 = 1$) and, for $n \ge 0$, let $v_n = \sum_{j=0}^{n} F_{j+1} F_{n-j+1}$,
+and let $E_n$ and $O_n$ be the sums of the same terms $F_{j+1} F_{n-j+1}$ over the even and over
+the odd integers $j$ with $0 \le j \le n$. For every integer $k \ge 1$,
+$E_{2k-1} = v_{2k-1}/2$ and $O_{2k-1} = v_{2k-1}/2$.
+
+Source: Jan Sedlák and Antonín Slavík, "Walks in Tiled Rectangles
+and Self-Convolutions of Higher-Order Fibonacci Numbers",
+Theorem 6. -/
+theorem fibWalkCounts_odd_length_eq_half
+    (k : ℕ) (hk : 1 ≤ k) :
+    evenFibWalkCount (2 * k - 1) = fibWalkCount (2 * k - 1) / 2 ∧
+      oddFibWalkCount (2 * k - 1) = fibWalkCount (2 * k - 1) / 2 := by
+  let n := 2 * k - 1
+  change evenFibWalkCount n = fibWalkCount n / 2 ∧ oddFibWalkCount n = fibWalkCount n / 2
+  have hParity : evenFibWalkCount n = oddFibWalkCount n :=
+    evenFibWalkCount_odd_length_eq_oddFibWalkCount k hk
+  have hSum : evenFibWalkCount n + oddFibWalkCount n = fibWalkCount n := by
+    unfold evenFibWalkCount oddFibWalkCount fibWalkCount
+    simpa only [Nat.not_even_iff_odd] using
+      Finset.sum_filter_add_sum_filter_not (Finset.range (n + 1)) Even
+        (fun j => fibQ ((j : ℤ) + 1) * fibQ ((n : ℤ) - (j : ℤ) + 1))
+  have hHalf : evenFibWalkCount n = fibWalkCount n / 2 := by
+    rw [eq_div_iff (by decide : (2 : ℚ) ≠ 0), mul_two]
+    simpa only [← hParity] using hSum
+  exact ⟨hHalf, hParity.symm.trans hHalf⟩
 
 end MathlibExt.NumberTheory.Recurrences.HigherFibonacciWalksWanted

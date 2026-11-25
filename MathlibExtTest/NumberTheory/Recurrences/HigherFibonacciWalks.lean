@@ -21,6 +21,11 @@ example : evenFibWalkCount 0 = 1 ∧ oddFibWalkCount 0 = 0 := by decide +kernel
 example : evenFibWalkCount 1 = oddFibWalkCount 1 :=
   evenFibWalkCount_odd_length_eq_oddFibWalkCount 1 le_rfl
 
+-- At the smallest odd length, each half of the total is one.
+example : evenFibWalkCount 1 = 1 ∧ oddFibWalkCount 1 = 1 := by
+  have hHalf : fibWalkCount 1 / 2 = 1 := by decide +kernel
+  simpa only [hHalf] using fibWalkCounts_odd_length_eq_half (k := 1) (hk := le_rfl)
+
 -- At length five the three distinct summands are paired by reflection.
 example : evenFibWalkCount 5 = 19 ∧ oddFibWalkCount 5 = 19 := by decide +kernel
 
