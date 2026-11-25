@@ -454,7 +454,6 @@ theorem tensor_assoc {m n p : ℤ}
   rw [HomComplex.Cochain.comp_v _ _ _ r s s hrs (add_zero s),
     HomComplex.Cochain.comp_v _ _ _ r r s (add_zero r) (by omega),
     HomComplex.Cochain.ofHom_v, HomComplex.Cochain.ofHom_v]
-  simp only [tensor_v]
   apply HomologicalComplex.mapBifunctor₁₂.hom_ext
   intro i₁ i₂ i₃ hii
   have h12_3 : (i₁ + i₂) + i₃ = r := hii
@@ -489,11 +488,25 @@ theorem tensor_assoc {m n p : ℤ}
     (c₁₂ := ComplexShape.up ℤ) (c₂₃ := ComplexShape.up ℤ) (c₄ := ComplexShape.up ℤ)
     (i₁ := i₁) (i₂ := i₂) (i₃ := i₃) (i₂₃ := i₂ + i₃) (j := r)
     (h₂₃ := rfl) (h := h1_23)]
-  simp only [Category.assoc,
-    HomologicalComplex.ι_mapBifunctorDesc_assoc,
-    MonoidalCategory.curriedTensor_obj_obj,
-    curriedTensor_map_app,
-    Linear.units_smul_comp, Linear.comp_units_smul]
+  have hLeftSummand :
+      HomologicalComplex.ιMapBifunctor (HomologicalComplex.tensorObj C₁ C₂) C₃
+        (curriedTensor C) (ComplexShape.up ℤ) (i₁ + i₂) i₃ r h12_3 ≫
+        ((tensor f g).tensor h).v r s hrs =
+      (p * (i₁ + i₂)).negOnePow •
+        (((tensor f g).v (i₁ + i₂) ((i₁ + i₂) + (m + n)) rfl ⊗ₘ
+            h.v i₃ (i₃ + p) rfl) ≫
+          HomologicalComplex.ιTensorObj (HomologicalComplex.tensorObj A₁ A₂) A₃
+            ((i₁ + i₂) + (m + n)) (i₃ + p) s (by omega)) := by
+    rw [tensor_v]
+    rw [HomologicalComplex.ι_mapBifunctorDesc
+      (K₁ := HomologicalComplex.tensorObj C₁ C₂) (K₂ := C₃)
+      (F := curriedTensor C) (c := ComplexShape.up ℤ)
+      (i₁ := i₁ + i₂) (i₂ := i₃) (h := h12_3)]
+    simp only [Linear.units_smul_comp]
+  simp only [Category.assoc]
+  rw [reassoc_of% hLeftSummand]
+  simp only [tensor_v, Category.assoc, MonoidalCategory.curriedTensor_obj_obj,
+    curriedTensor_map_app, Linear.units_smul_comp, Linear.comp_units_smul]
   have hs : (i₁ + m) + (i₂ + n) + (i₃ + p) = s := by omega
   have hs12Shape :
       (ComplexShape.up ℤ).r (ComplexShape.up ℤ) (ComplexShape.up ℤ)
