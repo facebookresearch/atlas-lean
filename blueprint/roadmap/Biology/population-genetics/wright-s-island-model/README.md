@@ -12,3 +12,5 @@
 - [Island-model equilibrium is below one under migration](island-equilibrium-mem-ico.md)
 - [Complete identity by descent in isolated demes](island-equilibrium-zero-right.md)
 - [Wright's $F_{ST} = 1/(1 + 4Nm)$](tendsto-island-equilibrium.md)
+
+- [Effective size of an island-model population](effective-size-of-a-subdivided-population-island.md)

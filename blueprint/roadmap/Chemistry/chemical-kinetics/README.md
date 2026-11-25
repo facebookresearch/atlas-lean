@@ -21,4 +21,7 @@ Rates of chemical reactions and reactors: integrated rate laws and half-lives, t
 - [Thermal inactivation kinetics](thermal-inactivation-kinetics/README.md)
 - [Catalyst pellet diffusion and reaction](catalyst-pellet-diffusion-and-reaction/README.md)
 - [Stochastic batch reactors](stochastic-batch-reactors/README.md)
+
+- [Plug-flow reactors](plug-flow-reactor/README.md)
+- [Residence-time distributions](residence-time-distributions/README.md)
 - [Turing patterns of the Brusselator](turing-patterns-of-the-brusselator/README.md)
