@@ -143,7 +143,9 @@ theorem modifiedState_ae_eq_eval (x : I) (t : NNReal) :
 
 /-! ### Laws of the realization -/
 
-/-- The one-time law of the realization is the neutral transition kernel. -/
+/-- The one-time law of the realization is the neutral transition kernel, a law on `[0, 1]` for the
+interval-valued state; read in `ℝ`, the law is its image under the inclusion `[0, 1] → ℝ`, a
+measurable embedding (`map_modifiedProcess`). -/
 theorem map_modifiedState (x : I) (t : NNReal) :
     (rawMeasure x).map (modifiedState x t) = neutralKernel t x := by
   rw [Measure.map_congr (modifiedState_ae_eq_eval x t), map_eval_rawMeasure]

@@ -32,7 +32,7 @@ private theorem exists_jacobiSym_neg_one {d : ℕ} (ho : Odd d) (hd : ¬ IsSquar
   rw [Nat.isSquare_iff_even_factorization] at hd
   push Not at hd
   obtain ⟨p, hp, he⟩ := hd
-  have heOdd : Odd (d.factorization p) := Nat.not_even_iff_odd.mp he
+  have heOdd : Odd (d.factorization p) := he
   have hp2 := ho.ne_two_of_dvd_nat (Nat.dvd_of_factorization_pos heOdd.pos.ne')
   have : Fact p.Prime := ⟨hp⟩
   obtain ⟨b, hb⟩ := FiniteField.exists_nonsquare ((ZMod.ringChar_zmod_n p).trans_ne hp2)

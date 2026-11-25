@@ -123,7 +123,8 @@ private theorem two_mul_gaussianReal_inter_Ioi {A : Set ℝ} (hA : MeasurableSet
     ext x
     simp [hsym]
   have hIci : gaussianReal 0 1 (A ∩ Set.Ici 0) = gaussianReal 0 1 (A ∩ Set.Ioi 0) :=
-    measure_congr (EventuallyEqSet.inter (ae_eq_refl A) (Ioi_ae_eq_Ici' (measure_singleton 0)).symm)
+    measure_congr (EventuallyEqSet.inter (EventuallyEqSet.refl _ A)
+      (Ioi_ae_eq_Ici' (measure_singleton 0)).symm)
   rw [← measure_inter_add_sdiff A measurableSet_Iio, Set.sdiff_eq, Set.compl_Iio, hIio, hIci,
     two_mul]
 

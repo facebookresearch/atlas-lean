@@ -14,6 +14,7 @@ public import Mathlib.Analysis.InnerProductSpace.Rayleigh
 public import Mathlib.LinearAlgebra.Matrix.Notation
 public import Mathlib.Combinatorics.SimpleGraph.LapMatrix
 public import Mathlib.Combinatorics.SimpleGraph.CycleGraph
+public import Mathlib.Combinatorics.SimpleGraph.Hasse
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Algebra.Ring.Parity

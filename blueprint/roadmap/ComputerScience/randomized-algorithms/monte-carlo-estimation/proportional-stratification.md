@@ -1,0 +1,9 @@
+# Proportional stratification at equal sample size and at equal cost
+
+Let $f(X)$ be square-integrable, let the domain of $X$ be partitioned into finitely many strata of probabilities $\omega_1, \dots, \omega_J > 0$, and let $\mu_j$ and $\sigma_j^2$ be the conditional mean and variance of $f(X)$ in stratum $j$, so that $\sigma^2 = \operatorname{Var} f(X) = \sigma_W^2 + \sigma_B^2$ with $\sigma_W^2 = \sum_j \omega_j\sigma_j^2$ and $\sigma_B^2 = \sum_j \omega_j(\mu_j - \mu)^2$. Take $n_j = n\omega_j$ samples in stratum $j$ (proportional allocation, the $n_j$ positive integers), all independent, those in stratum $j$ drawn from the conditional law of $X$ given stratum $j$. The stratified estimator $\sum_j \omega_j\hat\mu_j$ is then the plain mean of the $n$ samples and has variance $\sigma_W^2/n \le \sigma^2/n$, the variance of plain Monte Carlo with $n$ independent samples. If a stratified sample costs $c_s > 0$ and a plain sample $c_p > 0$, and a budget $C > 0$ buys integer sample sizes $n_s = C/c_s$ (with $n_s\omega_j$ integers) and $n_p = C/c_p$, the variances are $c_s\sigma_W^2/C$ and $c_p\sigma^2/C$, and stratification is at least as efficient exactly when $c_s\sigma_W^2 \le c_p\sigma^2$. Independence matters: two strata of probability $1/2$ sampled once each from one common Bernoulli$(1/2)$ draw can have variance $1/4$ instead of $1/8$.
+
+Proof. By independence, the stratified estimator has variance $\sum_j \omega_j^2\sigma_j^2/n_j$, which is $\sigma_W^2/n$ for $n_j = n\omega_j$; $\sigma^2 = \sigma_W^2 + \sigma_B^2$ is the law of total variance.
+
+## Sources
+
+- A. B. Owen, *Monte Carlo Theory, Methods and Examples*, chapter 8 "Variance reduction", <https://artowen.su.domains/mc/>, §8.4 (formulas (8.9), (8.13)–(8.14)) and the remark on the cost of sampling from the strata

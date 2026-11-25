@@ -2225,7 +2225,7 @@ private theorem reach_odd (P : Finset ℕ) (l : List ℕ) (hg : Good P l)
   let deficit (xs : List ℕ) := Fintype.card (ZMod q)ˣ - (geneuclidUnits q xs).card
   generalize hk : deficit l = k
   induction k using Nat.strong_induction_on generalizing l with
-  | h k ih =>
+  | ind k ih =>
       by_cases hqapp : GeneuclidAppendable l q
       · obtain ⟨_hqprime, I, hI, hqdvd⟩ := hqapp
         refine ⟨l ++ [q], List.prefix_append l [q], by simp,

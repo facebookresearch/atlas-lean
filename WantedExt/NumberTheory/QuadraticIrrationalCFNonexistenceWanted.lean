@@ -13,6 +13,8 @@ public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.Data.ZMod.Defs
 public import Mathlib.Data.Set.Card
 public import MathlibExt.NumberTheory.QuadraticIrrationalCFNonexistence
+public import MathlibExt.NumberTheory.SymmetricContinuantParity
+public import MathlibExt.NumberTheory.SymmetricConvergentDenParity
 
 /-!
 # Nonexistence of continued fractions of `√d` with a given symmetric period
@@ -65,64 +67,6 @@ public theorem_wanted sqrt_hasPeriodicCF_exists_iff_of_even (l : ℕ) (hl : Even
     (hsymm : ∀ i, 1 ≤ i → i < l → a i = a (l - i)) :
     (∃ d a₀ : ℕ, ¬IsSquare d ∧ HasPeriodicCF √(d : ℝ) a₀ a l (2 * a₀)) ↔
       (Odd (a (l / 2)) ∧ Odd (convergentDen a (l - 1))) ∨ Even (a (l / 2))
-
-/-- **Splitting the last convergent denominator of a symmetric sequence.** Let $l$ be a
-natural number and let $a_0, a_1, a_2, \dots$ be natural numbers with convergent denominators
-$q_0, q_1, q_2, \dots$, such that $a_i = a_{l-i}$ for $1 \le i < l$. Then for every $i$ with
-$1 \le i \le l - 2$,
-$$q_{l-1} = q_i q_{l-1-i} + q_{i-1} q_{l-2-i}.$$
-
-The case $i = 0$ of the paper, which uses $q_{-1} = 0$, is omitted.
-
-Source: Jun Ho Lee, *Nonexistence of the Continued Fraction of a Quadratic Irrational
-Number with a Given Sequence*, INTEGERS 26 (2026), Article A69, Proposition 3 (i)
-(`integers-2026-A69-prop-3`). -/
-public theorem_wanted convergentDen_symm_split (l : ℕ) (a : ℕ → ℕ)
-    (hsymm : ∀ i, 1 ≤ i → i < l → a i = a (l - i)) (i : ℕ) (hi : 1 ≤ i) (hil : i + 2 ≤ l) :
-    convergentDen a (l - 1) =
-      convergentDen a i * convergentDen a (l - 1 - i) +
-        convergentDen a (i - 1) * convergentDen a (l - 2 - i)
-
-/-- **Parity of $q_{l-1}$ for a symmetric sequence, even $l$.** Let $l \ge 2$ be even and let
-$a_0, a_1, a_2, \dots$ be natural numbers with convergent denominators $q_0, q_1, q_2, \dots$,
-such that $a_i = a_{l-i}$ for $1 \le i < l$. Then $q_{l-1} \equiv a_{l/2} \, q_{l/2-1} \pmod 2$.
-
-Source: Jun Ho Lee, *Nonexistence of the Continued Fraction of a Quadratic Irrational
-Number with a Given Sequence*, INTEGERS 26 (2026), Article A69, Corollary 1 (i)
-(`integers-2026-A69-cor-1`). -/
-public theorem_wanted convergentDen_parity_of_even (l : ℕ) (hl : Even l) (hl0 : 0 < l)
-    (a : ℕ → ℕ) (hsymm : ∀ i, 1 ≤ i → i < l → a i = a (l - i)) :
-    convergentDen a (l - 1) ≡ a (l / 2) * convergentDen a (l / 2 - 1) [MOD 2]
-
-/-- **Parity of $q_{l-1}$ for a symmetric sequence, odd $l$.** Let $l \ge 3$ be odd and let
-$a_0, a_1, a_2, \dots$ be natural numbers with convergent denominators $q_0, q_1, q_2, \dots$,
-such that $a_i = a_{l-i}$ for $1 \le i < l$. Then
-$q_{l-1} \equiv q_{(l-1)/2} + q_{(l-3)/2} \pmod 2$.
-
-Source: Jun Ho Lee, *Nonexistence of the Continued Fraction of a Quadratic Irrational
-Number with a Given Sequence*, INTEGERS 26 (2026), Article A69, Corollary 2 (i)
-(`integers-2026-A69-cor-2`). -/
-public theorem_wanted convergentDen_parity_of_odd (l : ℕ) (hl : Odd l) (hl3 : 3 ≤ l)
-    (a : ℕ → ℕ) (hsymm : ∀ i, 1 ≤ i → i < l → a i = a (l - i)) :
-    convergentDen a (l - 1) ≡
-      convergentDen a ((l - 1) / 2) + convergentDen a ((l - 3) / 2) [MOD 2]
-
-/-- **Parity of the shifted continuant of a symmetric sequence, odd length.** Let $l \ge 5$ be
-odd and let $a_1, \dots, a_{l-1}$ be natural numbers with $a_i = a_{l-i}$ for
-$1 \le i \le l - 1$. For $j \ge 1$ let $r_j = K(a_2, \dots, a_j)$ be the continuant, given by
-$r_1 = 1$, $r_2 = a_2$ and $r_{j+2} = a_{j+2} r_{j+1} + r_j$. Then
-$r_{l-2} \equiv r_{(l-1)/2} + r_{(l-3)/2} \pmod 2$.
-
-The case $l = 3$ of the paper, which needs $r_0 = 0$, is omitted.
-
-Source: Jun Ho Lee, *Nonexistence of the Continued Fraction of a Quadratic Irrational
-Number with a Given Sequence*, INTEGERS 26 (2026), Article A69, Corollary 2 (ii)
-(`integers-2026-A69-cor-2`). -/
-public theorem_wanted shifted_convergentDen_parity_of_odd (l : ℕ) (hl : Odd l) (hl5 : 5 ≤ l)
-    (a : ℕ → ℕ) (hsymm : ∀ i, 1 ≤ i → i < l → a i = a (l - i)) :
-    convergentDen (fun n => a (n + 1)) (l - 3) ≡
-      convergentDen (fun n => a (n + 1)) ((l - 1) / 2 - 1) +
-        convergentDen (fun n => a (n + 1)) ((l - 3) / 2 - 1) [MOD 2]
 
 /-- **Number of unrealizable parity patterns for $\sqrt{d}$, odd length.** Let $l \ge 3$ be odd.
 Call a parity pattern $(v_1, \dots, v_{(l-1)/2}) \in (\mathbb{Z}/2)^{(l-1)/2}$ realizable if

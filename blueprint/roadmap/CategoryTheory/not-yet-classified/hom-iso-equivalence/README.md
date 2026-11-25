@@ -1,0 +1,15 @@
+# Hom Iso Equivalence
+
+- [Forward](forward.md)
+- [Inverse Map](inverse-map.md)
+- [Inverse id](inverse-id.md)
+- [Inverse comp](inverse-comp.md)
+- [Inverse Map image](inverse-map-image.md)
+- [Inverse](inverse.md)
+- [Forward inverse](forward-inverse.md)
+- [Inverse forward](inverse-forward.md)
+- [Forward obj](forward-obj.md)
+- [Forward map](forward-map.md)
+- [Inverse obj](inverse-obj.md)
+- [Inverse map](inverse-map-2.md)
+- [Inverse Map eq](inverse-map-eq.md)
