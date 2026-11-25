@@ -16,3 +16,7 @@ Topics added since this subject's fields were last revised.
 - [The Ruzsa–Turjányi ratio tends to infinity](ruzsa-turjanyi.md)
 - [Neighborhood Independence](indep-neighbors-card.md)
 - [Written on the Wall II, Conjecture 100](conjecture100.md)
+- [Nonnegativity of a transfer step](nonneg-transfer-step.md)
+- [Arc Network](arc-network/README.md)
+- [Arc Network Demand](arc-network-demand/README.md)
+- [Arc Network Walk](arc-network-walk/README.md)

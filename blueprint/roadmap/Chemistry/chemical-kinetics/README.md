@@ -14,6 +14,8 @@ Rates of chemical reactions and reactors: integrated rate laws and half-lives, t
 - [Product-form laws on stoichiometric compatibility classes](product-form-laws-on-stoichiometric-compatibilit/README.md)
 - [Rate laws](rate-laws/README.md)
 - [Regeneration of stochastic reaction networks](regeneration-of-stochastic-reaction-networks/README.md)
+- [Electrode kinetics](electrode-kinetics/README.md)
+- [Reaction-diffusion systems and flame fronts](reaction-diffusion-and-flame-fronts/README.md)
 - [Thermal runaway and combustion acoustics](thermal-runaway-and-combustion-acoustics/README.md)
 - [Particle population balances](particle-population-balances/README.md)
 - [Bioreactor balances](bioreactor-balances/README.md)
@@ -21,4 +23,7 @@ Rates of chemical reactions and reactors: integrated rate laws and half-lives, t
 - [Thermal inactivation kinetics](thermal-inactivation-kinetics/README.md)
 - [Catalyst pellet diffusion and reaction](catalyst-pellet-diffusion-and-reaction/README.md)
 - [Stochastic batch reactors](stochastic-batch-reactors/README.md)
+
+- [Plug-flow reactors](plug-flow-reactor/README.md)
+- [Residence-time distributions](residence-time-distributions/README.md)
 - [Turing patterns of the Brusselator](turing-patterns-of-the-brusselator/README.md)

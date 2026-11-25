@@ -1,0 +1,3 @@
+# Well-formed instances of 3-COLORABILITY OF k-REGULAR HAMILTONIAN GRAPHS
+
+Fix a natural number $k$. An instance $(n, E, K)$ is well-formed for 3-COLORABILITY OF $k$-REGULAR HAMILTONIAN GRAPHS when it is a well-formed GRAPH COLORING instance (the list $E$ has no repeated entries, and every pair $(u, v)$ in $E$ satisfies $u < n$, $v < n$, $u \ne v$ and $(v, u) \notin E$), $K = 3$, every vertex of the graph of the instance (on the vertices $0, \dots, n-1$, with $u$ and $v$ adjacent when $u \ne v$ and $(u, v)$ or $(v, u)$ is in $E$) has exactly $k$ neighbors, and that graph is Hamiltonian: if $n \ne 1$ it has a cycle through every vertex (a graph with one vertex counts as Hamiltonian).
