@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.FieldTheory.Finite.GaloisField
 public import MathlibExt.Combinatorics.Additive.BoseChowlaSubgroup
+public import MathlibExt.Combinatorics.Additive.BoundedDifferenceSetUpperBound
 public import MathlibExt.Combinatorics.Additive.FiniteFieldDifferenceBases
 public import MathlibExt.Combinatorics.Additive.GDifferenceBasisScaling
 public import MathlibExt.Combinatorics.Additive.ZModDifferenceBasis
@@ -106,19 +107,6 @@ public theorem_wanted tendsto_groupDiffBasisNumber_even_odd (p g : ℕ) [Fact p.
         (groupDiffBasisNumber g (Fin (2 * k + 1) → ZMod p) : ℝ) /
           Real.sqrt ((p : ℝ) ^ (2 * k + 1)))
       atTop (𝓝 Lo))
-
-/-- **Upper bound for sets with bounded difference multiplicities.** For natural numbers $g$ and
-$n$, let $\alpha_g(n)$ be the largest size of a set $A \subseteq \{1, \dots, n\}$ such that every
-nonzero integer $x$ is the difference $a - a'$ of at most $g$ ordered pairs
-$(a, a') \in A \times A$. If $g \ge 1$, then for every real $\varepsilon > 0$ we have
-$\alpha_g(n) \le (1 + \varepsilon)\sqrt{gn}$ for all sufficiently large $n$; that is,
-$\alpha_g(n) \le (1 + o(1))\sqrt{gn}$.
-
-Source: Eric Schmutz and Michael Tait, *Cardinalities of g-Difference Sets*, INTEGERS 25
-(2025), Article A77, Proposition 1 (`integers-2025-A77-prop-1`). -/
-public theorem_wanted boundedDiffSetNumber_le_one_add_mul_sqrt (g : ℕ) (hg : 0 < g) (ε : ℝ)
-    (hε : 0 < ε) :
-    ∀ᶠ n : ℕ in atTop, (boundedDiffSetNumber g n : ℝ) ≤ (1 + ε) * Real.sqrt (g * n)
 
 /-- **Lower-bound construction for sets with bounded difference multiplicities.** For every
 integer $g \ge 1$ there are finite sets $A_n \subseteq \{1, \dots, n\}$ of integers, one for each
