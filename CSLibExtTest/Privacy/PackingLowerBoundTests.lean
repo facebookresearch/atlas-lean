@@ -78,6 +78,84 @@ private theorem rr_hprob : ∀ i : Fin 2,
   rw [PMF.toOuterMeasure_apply_singleton]
   simp [rrTest, PMF.ofFintype_apply]
 
+private noncomputable def approxTest (d : Bool) : PMF Bool :=
+  PMF.ofFintype (fun b => ((if b = d then (if d then 3 / 4 else 1 / 2) else (if d then 1 / 4 else 1 / 2) : ℝ≥0) : ℝ≥0∞)) (by
+    cases d
+    · simp only [Fintype.sum_bool, reduceCtorEq, ite_true, ite_false]
+      rw [← ENNReal.coe_add, show ((1 / 2 + 1 / 2 : ℝ≥0)) = 1 by norm_num, ENNReal.coe_one]
+    · simp only [Fintype.sum_bool, reduceCtorEq, ite_true, ite_false]
+      rw [← ENNReal.coe_add, show ((3 / 4 + 1 / 4 : ℝ≥0)) = 1 by norm_num, ENNReal.coe_one])
+
+private theorem approxTest_false_false : approxTest false false = (1 / 2 : ℝ≥0∞) := by
+  have h1 : (1 : ℝ≥0∞) = ((1 : ℝ≥0) : ℝ≥0∞) := by norm_cast
+  have h2 : (2 : ℝ≥0∞) = ((2 : ℝ≥0) : ℝ≥0∞) := by norm_cast
+  have h2ne : (2 : ℝ≥0) ≠ 0 := by norm_num
+  simp only [approxTest, PMF.ofFintype_apply, reduceCtorEq, ite_true, ite_false]
+  rw [h1, h2, ← ENNReal.coe_div h2ne]
+
+private theorem approxTest_false_true : approxTest false true = (1 / 2 : ℝ≥0∞) := by
+  have h1 : (1 : ℝ≥0∞) = ((1 : ℝ≥0) : ℝ≥0∞) := by norm_cast
+  have h2 : (2 : ℝ≥0∞) = ((2 : ℝ≥0) : ℝ≥0∞) := by norm_cast
+  have h2ne : (2 : ℝ≥0) ≠ 0 := by norm_num
+  simp only [approxTest, PMF.ofFintype_apply, reduceCtorEq, ite_false]
+  rw [h1, h2, ← ENNReal.coe_div h2ne]
+
+private theorem approxTest_true_false : approxTest true false = (1 / 4 : ℝ≥0∞) := by
+  have h1 : (1 : ℝ≥0∞) = ((1 : ℝ≥0) : ℝ≥0∞) := by norm_cast
+  have h4 : (4 : ℝ≥0∞) = ((4 : ℝ≥0) : ℝ≥0∞) := by norm_cast
+  have h4ne : (4 : ℝ≥0) ≠ 0 := by norm_num
+  simp only [approxTest, PMF.ofFintype_apply, reduceCtorEq, ite_true, ite_false]
+  rw [h1, h4, ← ENNReal.coe_div h4ne]
+
+private theorem approxTest_true_true : approxTest true true = (3 / 4 : ℝ≥0∞) := by
+  have h3 : (3 : ℝ≥0∞) = ((3 : ℝ≥0) : ℝ≥0∞) := by norm_cast
+  have h4 : (4 : ℝ≥0∞) = ((4 : ℝ≥0) : ℝ≥0∞) := by norm_cast
+  have h4ne : (4 : ℝ≥0) ≠ 0 := by norm_num
+  simp only [approxTest, PMF.ofFintype_apply, ite_true]
+  rw [h3, h4, ← ENNReal.coe_div h4ne]
+
+private theorem approxTest_isApproxDP : IsApproxDP approxTest (fun _ _ => True) 0 (1 / 4 : ℝ) := by
+  refine ⟨le_rfl, by norm_num, fun d d' _ s => ?_⟩
+  have hexp : ENNReal.ofReal (Real.exp 0) = (1 : ℝ≥0∞) := by
+    rw [Real.exp_zero, ENNReal.ofReal_one]
+  have h14 : ENNReal.ofReal (1 / 4 : ℝ) = (1 / 4 : ℝ≥0∞) := by
+    rw [ENNReal.ofReal_div_of_pos (by norm_num), ENNReal.ofReal_one, ENNReal.ofReal_ofNat]
+  have h0c : (0 : ℝ≥0∞) = ((0 : ℝ≥0) : ℝ≥0∞) := by norm_cast
+  have h1c : (1 : ℝ≥0∞) = ((1 : ℝ≥0) : ℝ≥0∞) := by norm_cast
+  have h2c : (2 : ℝ≥0∞) = ((2 : ℝ≥0) : ℝ≥0∞) := by norm_cast
+  have h3c : (3 : ℝ≥0∞) = ((3 : ℝ≥0) : ℝ≥0∞) := by norm_cast
+  have h4c : (4 : ℝ≥0∞) = ((4 : ℝ≥0) : ℝ≥0∞) := by norm_cast
+  have h2ne : (2 : ℝ≥0) ≠ 0 := by norm_num
+  have h4ne : (4 : ℝ≥0) ≠ 0 := by norm_num
+  rw [hexp, h14, one_mul, PMF.toOuterMeasure_apply, PMF.toOuterMeasure_apply,
+    tsum_fintype, tsum_fintype, Fintype.sum_bool, Fintype.sum_bool]
+  cases d <;> cases d' <;>
+    by_cases hf : false ∈ s <;> by_cases ht : true ∈ s <;>
+    (repeat' first
+      | rw [Set.indicator_of_mem hf] | rw [Set.indicator_of_notMem hf]
+      | rw [Set.indicator_of_mem ht] | rw [Set.indicator_of_notMem ht]) <;>
+    simp only [approxTest_false_false, approxTest_false_true,
+      approxTest_true_false, approxTest_true_true,
+      h0c, h1c, h2c, h3c, h4c, ← ENNReal.coe_div h2ne,
+      ← ENNReal.coe_div h4ne, ← ENNReal.coe_add, ENNReal.coe_le_coe,
+      ← NNReal.coe_le_coe] <;>
+    norm_num
+
+private theorem approx_hprob : ∀ i : Fin 2, (1 / 2 : ℝ) ≤ ((approxTest (decide (i = 1))).toOuterMeasure ({decide (i = 1)} : Set Bool)).toReal := by
+  intro i
+  rw [PMF.toOuterMeasure_apply_singleton]
+  have h1c : (1 : ℝ≥0∞) = ((1 : ℝ≥0) : ℝ≥0∞) := by norm_cast
+  have h2c : (2 : ℝ≥0∞) = ((2 : ℝ≥0) : ℝ≥0∞) := by norm_cast
+  have h3c : (3 : ℝ≥0∞) = ((3 : ℝ≥0) : ℝ≥0∞) := by norm_cast
+  have h4c : (4 : ℝ≥0∞) = ((4 : ℝ≥0) : ℝ≥0∞) := by norm_cast
+  have h2ne : (2 : ℝ≥0) ≠ 0 := by norm_num
+  have h4ne : (4 : ℝ≥0) ≠ 0 := by norm_num
+  cases h : decide (i = 1)
+  · rw [approxTest_false_false, h1c, h2c, ← ENNReal.coe_div h2ne, ENNReal.coe_toReal]
+    norm_num
+  · rw [approxTest_true_true, h3c, h4c, ← ENNReal.coe_div h4ne, ENNReal.coe_toReal]
+    norm_num
+
 theorem test_histCount_packingDB : histCount (histPackingDB (n := 3) (N := 2) 2 0 1) 1 = 2 ∧ histCount (histPackingDB (n := 3) (N := 2) 2 0 1) 0 = 1 := by
   refine ⟨by decide, by decide⟩
 
@@ -123,6 +201,24 @@ theorem test_packing_approx_vacuous : (Fintype.card (Fin 2) : ℝ) * ((1 / 2 : �
   have h := packing_lower_bound_approx_vacuous_of_delta_large (I := Fin 2) (m := 1)
     (ε := 0) (δ := 1) (p := 1 / 2) (by norm_num [Real.exp_zero])
   simpa using h
+
+theorem test_packing_approx_approxTest : (2 : ℝ) * (1 / 2) ≤ Real.exp ((1 : ℝ) * 0) + (2 : ℝ) * ((1 / 4 : ℝ) * ∑ j ∈ Finset.range 1, Real.exp ((j : ℝ) * 0)) := by
+  have hbase := packing_lower_bound_approx (I := Fin 2) (M := approxTest) (adj := fun _ _ => True)
+    (ε := 0) (δ := 1 / 4) (p := 1 / 2) (m := 1) approxTest_isApproxDP false
+    (fun i : Fin 2 => decide (i = 1)) (fun i => ({decide (i = 1)} : Set Bool))
+    rr_hchain rr_hdisj approx_hprob
+  rw [Fintype.card_fin, Nat.cast_one] at hbase
+  simp only [Nat.cast_ofNat] at hbase
+  exact hbase
+
+theorem test_packing_approx_errata_approxTest : (2 : ℝ) * ((1 / 2 : ℝ) * Real.exp (-((1 : ℝ) * 0)) - (1 : ℝ) * (1 / 4)) ≤ 1 := by
+  have hbase := packing_lower_bound_approx_errata (I := Fin 2) (M := approxTest) (adj := fun _ _ => True)
+    (ε := 0) (δ := 1 / 4) (p := 1 / 2) (m := 1) approxTest_isApproxDP false
+    (fun i : Fin 2 => decide (i = 1)) (fun i => ({decide (i = 1)} : Set Bool))
+    rr_hchain rr_hdisj approx_hprob
+  rw [Fintype.card_fin, Nat.cast_one] at hbase
+  simp only [Nat.cast_ofNat] at hbase
+  exact hbase
 
 theorem test_histogram_packing_inst {M : (Fin 1 → Fin 2) → PMF (Fin 2 → ℝ)} {ε p : ℝ} (hM : IsDP M ReplaceOne ε) (hprob : ∀ d : Fin 1 → Fin 2, p ≤ ((M d).toOuterMeasure (histAccurate (1 / 4 : ℝ) d)).toReal) : (2 : ℝ) * p ≤ Real.exp ((1 : ℝ) * ε) := by
   have h := histogram_packing_lower_bound (n := 1) (N := 2) (m := 1) (α := 1 / 4)
