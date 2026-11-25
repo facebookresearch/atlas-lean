@@ -19,9 +19,19 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!
 # Algebraic divide-and-conquer cost audit
-Adapter audit restating FFT, Karatsuba, Strassen cost theorems.
-Gates: Karatsuba digit-operation bound and ring-only FFT count
-are not supplied here.
+
+Value and cost results for Karatsuba multiplication, the radix-two FFT and Strassen's matrix
+accumulator, each in its provider's charged model. Every cost here is a total charge, summed over
+all recursive calls.
+
+Karatsuba's results are cited from the imported `Karatsuba` module, not restated:
+`karatsuba_ret` gives the value `x * y`, and `karatsuba_time_le_rpow` bounds the declared total
+charge by `9 * n ^ logb 2 3` for `n ≥ 1`. That charge, `karatsubaCost n`, adds `1` for each call
+with `n ≤ 1` and `n` for each call with `n ≥ 2`; it is an accounting convention, not a count of
+digit operations.
+
+Not supplied here: a bound on Karatsuba's digit operations, and an FFT count of ring operations
+alone (the FFT charge also counts array reads and writes).
 -/
 
 universe u
@@ -30,24 +40,21 @@ namespace Cslib.Algorithms.Lean.AlgebraicCostAudit
 
 open Cslib.Algorithms.Lean.TimeM Cslib.Algorithms.Lean.Matrix
 
-theorem karatsuba_value (B n x y : ℕ) :
-    (karatsuba B n x y).ret = x * y :=
-  karatsuba_ret B n x y
+/-- **Charge bound for the radix-two FFT.** Let $R$ be a commutative ring. For every natural
+number $d$, every $\omega \in R$ and every vector $x \in R^{2^d}$, the total charge of the
+radix-two FFT of $x$ with root $\omega$, summed over all its recursive calls, is at most
+$(7d + 1) \cdot 2^d$.
 
-/-- Bounded quantity is the module's declared per-call charge,
-not a count of digit operations. -/
-theorem karatsuba_declaredCharge_le (B : ℕ) {n : ℕ} (hn : 1 ≤ n)
-    (x y : ℕ) :
-    ((karatsuba B n x y).time : ℝ) ≤ 9 * (n : ℝ) ^ Real.logb 2 3 :=
-  karatsuba_time_le_rpow B hn x y
-
-/-- Charge counts scalar ring operations and array element reads/writes. -/
+The charge counts scalar ring operations and array element reads and writes. -/
 theorem fft_charge_le {R : Type*} [CommRing R] (d : ℕ) (ω : R)
     (xs : Vector R (2 ^ d)) :
     (fft d ω xs).time ≤ (7 * d + 1) * 2 ^ d := by
   have h := fft_time_add_one d ω xs; rw [← h]; exact Nat.le_succ _
 
-/-- Bounded first component counts scalar multiplications. -/
+/-- **Multiplication count of Strassen's accumulator.** Let $R$ be a type with a zero, an
+addition, a subtraction and a multiplication. For every $k \ge 0$ and all $n \times n$ matrices
+$A$, $B$, $C$ over $R$ with $n = 2^k$, Strassen's accumulator on $A$, $B$, $C$ performs exactly
+$n^{\log_2 7}$ scalar multiplications, summed over all its recursive calls. -/
 theorem strassen_mul_count {R : Type u} [Zero R] [Add R] [Sub R] [Mul R]
     (k : ℕ) (A B C : Vector (Vector R (2 ^ k)) (2 ^ k)) :
     ((strassenMatrixAccumulate k A B C).time.1 : ℝ) =
@@ -63,7 +70,11 @@ theorem strassen_mul_count {R : Type u} [Zero R] [Add R] [Sub R] [Mul R]
   rw [← Real.rpow_natCast, ← Real.rpow_mul (x := 2) (by norm_num),
     ← Real.rpow_mul (x := 2) (by norm_num), mul_comm (Real.logb 2 7) ((k : ℕ) : ℝ)]
 
-/-- Bounded sum counts scalar multiplications and scalar additions/subtractions. -/
+/-- **Bound on the scalar operations of Strassen's accumulator.** Let $R$ be a type with a zero,
+an addition, a subtraction and a multiplication. For every $k \ge 0$ and all $n \times n$
+matrices $A$, $B$, $C$ over $R$ with $n = 2^k$, the total number of scalar multiplications,
+additions and subtractions that Strassen's accumulator performs on $A$, $B$, $C$, summed over all
+its recursive calls, is at most $\frac{28}{3}\, n^{\log_2 7}$. -/
 theorem strassen_ops_le {R : Type u} [Zero R] [Add R] [Sub R] [Mul R]
     (k : ℕ) (A B C : Vector (Vector R (2 ^ k)) (2 ^ k)) :
     ((((strassenMatrixAccumulate k A B C).time.1 +
