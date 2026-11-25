@@ -80,6 +80,28 @@ theorem glFin_apply (g : GL (Fin 2) (AdeleRing R K)) (i j : Fin 2) :
       ((g : Matrix (Fin 2) (Fin 2) (AdeleRing R K)) i j).2 :=
   rfl
 
+/-- The component at an infinite place `w` of `GL₂` over the infinite adeles. -/
+def archComponent (w : InfinitePlace K) :
+    GL (Fin 2) (InfiniteAdeleRing K) →* GL (Fin 2) w.Completion :=
+  Matrix.GeneralLinearGroup.map (archEval K w)
+
+/-- The component at a finite place `v` of `GL₂` over the finite adeles. -/
+def finComponent (v : HeightOneSpectrum R) :
+    GL (Fin 2) (FiniteAdeleRing R K) →* GL (Fin 2) (v.adicCompletion K) :=
+  Matrix.GeneralLinearGroup.map (finAdeleEval R K v)
+
+theorem archComponent_apply (w : InfinitePlace K) (g : GL (Fin 2) (InfiniteAdeleRing K))
+    (i j : Fin 2) :
+    (archComponent K w g : Matrix (Fin 2) (Fin 2) w.Completion) i j =
+      (g : Matrix (Fin 2) (Fin 2) (InfiniteAdeleRing K)) i j w :=
+  rfl
+
+theorem finComponent_apply (v : HeightOneSpectrum R) (g : GL (Fin 2) (FiniteAdeleRing R K))
+    (i j : Fin 2) :
+    (finComponent R K v g : Matrix (Fin 2) (Fin 2) (v.adicCompletion K)) i j =
+      (g : Matrix (Fin 2) (Fin 2) (FiniteAdeleRing R K)) i j v :=
+  rfl
+
 end Projections
 
 section FiniteLevel
