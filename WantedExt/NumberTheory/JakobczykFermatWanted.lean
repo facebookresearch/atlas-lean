@@ -17,6 +17,7 @@ public import Mathlib.Order.Bounds.Defs
 public import MathlibExt.NumberTheory.FermatNumberSquareFactors
 public import MathlibExt.NumberTheory.GeneralizedFermatGCD
 public import MathlibExt.NumberTheory.GeneralizedFermatPeriod
+public import MathlibExt.NumberTheory.GeneralizedFermatShiftDivisibility
 public import MathlibExt.NumberTheory.GeneralizedFermatSquareFactors
 public import MathlibExt.NumberTheory.GeneralizedFermatWieferich
 public import MathlibExt.NumberTheory.WieferichPrime
@@ -90,22 +91,6 @@ INTEGERS 26 (2026), Article A77, Lemma 2 (`integers-2026-A77-lem-2`). -/
 public theorem_wanted not_pow_pow_modEq_one_of_lt {a b m n t : ℕ} (ha : 2 ≤ a) (hb : 2 ≤ b)
     (hm : 2 ≤ m) (hn : 1 ≤ n) (h : ¬ a ^ b ^ n ≡ 1 [MOD m]) (ht : t < n) :
     ¬ a ^ b ^ t ≡ 1 [MOD m]
-
-/-- **Divisibility of later generalized Fermat numbers.** For natural numbers $a$, $b$ and $m$
-write $F_m(a, b) = a^{b^m} + 1$. Let $a, b, D \ge 2$ and $n$ be natural numbers such that $D$
-divides $F_n(a, b)$. If $b$ is odd, then $D$ divides $F_{n+k}(a, b)$ for every $k \ge 1$. If $b$
-is even and $D \ge 3$, then $D$ does not divide $F_{n+k}(a, b)$ for any $k \ge 1$.
-
-The source states the even case for $D \ge 2$; its proof gives $F_{n+k}(a, b) \equiv 2 \pmod D$,
-which excludes only $D = 2$, and the even case is false there: for $a = 3$, $b = 2$, $n = 0$ and
-$k = 1$, $2$ divides both $F_0(3, 2) = 4$ and $F_1(3, 2) = 10$.
-
-Source: Klaška, *Several Notes on Jakóbczyk's Hypothesis on Fermat Numbers*,
-INTEGERS 26 (2026), Article A77, Theorem 7 (`integers-2026-A77-thm-7`). -/
-public theorem_wanted dvd_pow_pow_add_one_shift {a b D n : ℕ} (ha : 2 ≤ a) (hb : 2 ≤ b)
-    (hD : 2 ≤ D) (h : D ∣ a ^ b ^ n + 1) :
-    (Odd b → ∀ k, 1 ≤ k → D ∣ a ^ b ^ (n + k) + 1) ∧
-      (Even b → 3 ≤ D → ∀ k, 1 ≤ k → ¬ D ∣ a ^ b ^ (n + k) + 1)
 
 end
 

@@ -18,6 +18,7 @@ Statistics of a permutation `σ` of `Fin n` in one-line notation.
 
 * Left-to-right and right-to-left maxima and minima: `permLeftToRightMaxCount`,
   `permRightToLeftMaxCount`, `permLeftToRightMinCount`, `permRightToLeftMinCount`.
+* `permDescents` counts descents of adjacent entries.
 * Local statistics of three consecutive entries `σ i`, `σ (i + 1)`, `σ (i + 2)`: double ascents
   `σ i < σ (i + 1) < σ (i + 2)`, double descents `σ i > σ (i + 1) > σ (i + 2)`, peaks
   `σ i < σ (i + 1) > σ (i + 2)` and valleys `σ i > σ (i + 1) < σ (i + 2)`, as position predicates
@@ -75,6 +76,17 @@ Source: Dan Li and Sergey Kitaev, *King Permutations and Partially Ordered Patte
 INTEGERS 26 (2026), Article A59, Section 1 (statistics). -/
 def permRightToLeftMinCount (σ : Equiv.Perm (Fin n)) : ℕ :=
   (Finset.univ.filter fun i : Fin n => ∀ j : Fin n, i < j → σ i < σ j).card
+
+/-! ### Descents -/
+
+/-- **Descent number of a permutation.** For a permutation $\sigma$ of $\{0, 1, \dots, n - 1\}$,
+$\operatorname{des}(\sigma)$ is the number of positions $i$ with $i + 1 < n$ and
+$\sigma(i + 1) < \sigma(i)$.
+
+Source: Han, *Joint Distributions of 10 Classical Statistics over Permutations
+Avoiding Two Patterns of Length 3*, INTEGERS 26 (2026), Article A18, Section 1 (`asc`, `des`). -/
+abbrev permDescents (σ : Equiv.Perm (Fin n)) : ℕ :=
+  (Finset.univ.filter fun i : Fin n => ∃ h : i.val + 1 < n, σ ⟨i.val + 1, h⟩ < σ i).card
 
 /-! ### Double ascents, double descents, peaks and valleys -/
 

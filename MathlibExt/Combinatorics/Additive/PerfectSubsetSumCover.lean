@@ -164,6 +164,31 @@ end PerfectSubsetSumCover
 
 open PerfectSubsetSumCover
 
+-- Preserve the existing `DecidableEq` instance argument for legacy clients.
+set_option linter.unusedDecidableInType false in
+/-- **Odd combinations are closed under odd multiples.** Let $A$ be a finite subset of an abelian
+group $G$. If $g$ lies in the set $\mathcal{T}(A)$ of odd combinations of $A$, then
+$(2j+1)g \in \mathcal{T}(A)$ for every integer $j$.
+
+Source: John Greene and Clayton Higgins, *Maximal Subset Sums in a Group of Order a Power
+of 2*, Journal of Integer Sequences 28 (2025), Article 25.7.8, Theorem 15 (c)
+(`jis-2025-25.7.8-thm-15`). "Union of equivalence classes" is stated as closure under odd
+multiples (`0 ∈ 𝒯(A)` is `zero_mem_oddCombinations`). -/
+public theorem zsmul_mem_oddCombinations {G : Type*} [AddCommGroup G] [DecidableEq G]
+    (A : Finset G) {g : G} (hg : g ∈ oddCombinations A) (j : ℤ) :
+    (2 * j + 1) • g ∈ oddCombinations A := by
+  obtain ⟨c, hc, rfl⟩ := hg
+  have hj : Odd (2 * j + 1) := ⟨j, rfl⟩
+  refine ⟨fun x => (2 * j + 1) * c x, ?_, ?_⟩
+  · intro x hx
+    rcases hc x hx with hzero | hodd
+    · exact Or.inl (by simp [hzero])
+    · exact Or.inr (hj.mul hodd)
+  · change zsmulAddGroupHom (2 * j + 1) (∑ x ∈ A, c x • x) =
+      ∑ x ∈ A, ((2 * j + 1) * c x) • x
+    rw [map_sum]
+    exact Finset.sum_congr rfl fun x _ => (mul_zsmul x _ _).symm
+
 /-- **Adjoining an element doubles the multiplicity of a perfect cover.** Let $G$ be an abelian
 group and let $s = (s_1, \dots, s_k)$ be a perfect $m$-cover of $G$. For every $g \in G$, the
 family $(g, s_1, \dots, s_k)$ is a perfect $2m$-cover of $G$.

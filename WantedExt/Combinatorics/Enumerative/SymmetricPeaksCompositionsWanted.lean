@@ -16,6 +16,7 @@ public import Mathlib.Probability.Distributions.Geometric
 public import Mathlib.RingTheory.MvPolynomial.Basic
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import MathlibExt.Combinatorics.Enumerative.SymmetricPeaksCompositions
+public import MathlibExt.Combinatorics.Enumerative.SymmetricPeakHeightBivariateGeneratingFunction
 public import MathlibExt.Combinatorics.Enumerative.SymmetricPeakHeightGeneratingFunction
 public import MathlibExt.Combinatorics.Enumerative.SymmetricValleyDepthClosedForm
 public import MathlibExt.Combinatorics.Enumerative.SymmetricValleyDepthGeneratingFunction
@@ -44,7 +45,9 @@ multivariate power series; Theorem 3 uses the corrected reading recorded in its 
 and audit row.
 
 The univariate generating function of `hsp(n)` in Lemma 1, (5) is proved in
-`MathlibExt.Combinatorics.Enumerative.SymmetricPeakHeightGeneratingFunction`.
+`MathlibExt.Combinatorics.Enumerative.SymmetricPeakHeightGeneratingFunction`, and the bivariate
+generating function of `hsp(n, k)` in Lemma 1 in
+`MathlibExt.Combinatorics.Enumerative.SymmetricPeakHeightBivariateGeneratingFunction`.
 
 Not stated (see the source audit table): the bivariate part of Lemma 2 (false as
 extracted), Theorem 2(b) (false as extracted) and the variances of Theorem 6 (false as printed in the journal).
@@ -55,25 +58,6 @@ open MeasureTheory ProbabilityTheory PowerSeries
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Bivariate generating function of the total symmetric peak height over compositions.**
-For $n, k \ge 0$ let $\mathrm{hsp}(n, k)$ be the sum, over all compositions $c$ of $n$ with
-exactly $k$ parts, of the symmetric peak height sum of the sequence of parts of $c$. Then in
-the ring $\mathbb{Z}[y][[x]]$ of formal power series in $x$ over $\mathbb{Z}[y]$,
-$$
-\left(\sum_{n \ge 0} \sum_{k \ge 0} \mathrm{hsp}(n, k)\, y^k x^n\right)
-(1 - x^3)(1 - x - yx)^2 = y^3 x^4,
-$$
-that is, $\sum_{n, k \ge 0} \mathrm{hsp}(n, k)\, x^n y^k = y^3 x^4 / ((1 - x^3)(1 - x - yx)^2)$.
-
-Source: Walaa Asakly and Noor Kezil, *The Heights of Symmetric Peaks and the Depths of
-Symmetric Valleys over Compositions of an Integer*, INTEGERS 26 (2026), Article A65,
-Lemma 1 (`integers-2026-A65-lem-1`). -/
-public theorem_wanted symmetricPeakHeightSum_compositions_bivariate_genFun :
-    PowerSeries.mk (fun n => ∑ c : Composition n,
-        Polynomial.C ((symmetricPeakHeightSum c.blocks : ℕ) : ℤ) * Polynomial.X ^ c.length) *
-        ((1 - X ^ 3) * (1 - X - PowerSeries.C (Polynomial.X : Polynomial ℤ) * X) ^ 2) =
-      PowerSeries.C (Polynomial.X ^ 3 : Polynomial ℤ) * X ^ 4
 
 /-- **Closed form for the total symmetric peak height over compositions.** For $n \ge 0$ let
 $\mathrm{hsp}(n)$ be the sum, over all compositions $c$ of $n$, of the symmetric peak height

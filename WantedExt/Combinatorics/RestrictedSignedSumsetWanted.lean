@@ -13,6 +13,7 @@ public import Mathlib.Algebra.BigOperators.Ring.Finset
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import MathlibExt.Combinatorics.AP.Basic
 public import MathlibExt.Combinatorics.Additive.RestrictedSignedSumset
+public import MathlibExt.Combinatorics.Additive.RestrictedSignedSumsetAPOneExtra
 public import MathlibExt.Combinatorics.Additive.RestrictedSignedSumsetFour
 
 /-!
@@ -30,19 +31,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 -- `orderedFinset`, `initialSegment`, and the extension bound are re-exported above.
-
-/-- **Finite integer sequences in arithmetic progression.** A sequence $a_0, \dots, a_{k-1}$ of
-integers is an arithmetic progression with common difference $d$ if $d > 0$ and
-$a_{i+1} = a_i + d$ for every $i$ with $i + 1 < k$.
-
-The condition is stated on adjacent terms, so no nonemptiness assumption is needed to name a
-first term.
-
-Source: Mohan, Raj Kumar Mistri, Ram Krishna Pandey, *Some Direct and Inverse Problems for the
-Restricted Signed Sumset in the Set of Integers*, INTEGERS 24 (2024), Article A81, definition of
-arithmetic progression. -/
-public def IsIndexedAP {k : ℕ} (a : Fin k → ℤ) (d : ℤ) : Prop :=
-  0 < d ∧ ∀ (i j : Fin k), (i : ℕ) + 1 = (j : ℕ) → a j = a i + d
 
 /-- **Dilation of a finite set of integers.** For an integer $d$ and a finite set $B$ of
 integers, the dilation $d \cdot B$ is the set $\{db : b \in B\}$.
@@ -173,25 +161,6 @@ public theorem_wanted card_restrictedSumset_ge_and_eq_iff_ap
     (5 ≤ A.card → 2 ≤ h → h ≤ A.card - 2 →
       (((restrictedSumset h A).card : ℤ) = (h : ℤ) * A.card - (h : ℤ) ^ 2 + 1 ↔
         ∃ a d : ℤ, 0 < d ∧ (A : Set ℤ).IsAPOfLengthWith A.card a d))
-
-/-- **Restricted signed sumsets of arithmetic progressions with one more term than summands.**
-Let $h \ge 3$ be a natural number and let $a_1 < a_2 < \cdots < a_{h+1}$ be positive integers that
-form an arithmetic progression with common difference $d > 0$, that is, $a_{i+1} = a_i + d$ for
-$1 \le i \le h$. Let $A = \{a_1, \ldots, a_{h+1}\}$ and let $h^{\wedge}_{\pm} A$ be the
-restricted signed sumset of $A$. Then $|h^{\wedge}_{\pm} A| \ge (h+1)^2$ if $d = 2a_1$, and
-$|h^{\wedge}_{\pm} A| \ge (h+1)^2 + 1$ otherwise. Moreover, $|h^{\wedge}_{\pm} A| = (h+1)^2$ if
-and only if $d = 2a_1$.
-
-Source: Mohan, Raj Kumar Mistri, Ram Krishna Pandey, *Some Direct and Inverse Problems for the
-Restricted Signed Sumset in the Set of Integers*, INTEGERS 24 (2024), Article A81, Theorem 3. -/
-public theorem_wanted card_restrictedSignedSumset_ap_h_add_one
-    (h : ℕ) (hh : 3 ≤ h) (a : Fin (h + 1) → ℤ) (d : ℤ)
-    (ha : StrictMono a) (hpos : ∀ i, 0 < a i) (hap : IsIndexedAP a d) :
-    (((restrictedSignedSumset h (orderedFinset a)).card : ℤ) ≥
-      if d = 2 * a ⟨0, by omega⟩ then ((h + 1 : ℕ) : ℤ) ^ 2
-      else ((h + 1 : ℕ) : ℤ) ^ 2 + 1) ∧
-    (((restrictedSignedSumset h (orderedFinset a)).card : ℤ) =
-        ((h + 1 : ℕ) : ℤ) ^ 2 ↔ d = 2 * a ⟨0, by omega⟩)
 
 /-- **Lower bound for restricted signed sumsets of arithmetic progressions.** Let $h \ge 3$ and
 $k \ge h + 1$ be natural numbers, and let $a_1 < a_2 < \cdots < a_k$ be integers with $a_1 > 0$
