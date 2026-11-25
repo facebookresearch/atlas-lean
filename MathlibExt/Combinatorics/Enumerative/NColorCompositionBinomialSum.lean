@@ -9,9 +9,15 @@ module
 
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 public import Mathlib.Data.Nat.Choose.Basic
+public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.SetTheory.Cardinal.Finite
+import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Basic.Finite.Sum
+import Mathlib.Data.Finsupp.Multiset
+import Mathlib.Data.Fintype.Powerset
+import Mathlib.Data.List.OfFn
+import Mathlib.Data.Sym.NatCard
 import Mathlib.Tactic.Ring
 
 /-!
@@ -233,5 +239,175 @@ theorem ccoAllowed_one_eq_sum (n : ℕ) (hn : 1 ≤ n) :
       ∑ m ∈ Finset.range (n / 2 + 1), 2 ^ m * Nat.choose n (2 * m) := by
   obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (Nat.ne_of_gt hn)
   exact ccoAllowed_eq_evenSum (k + 1) _ (Nat.lt_succ_self _)
+
+-- At a fixed length, record each part's excess above its color and the upper-color positions.
+private abbrev AllowedVectors (b n m : ℕ) :=
+  {p : (Fin m → ℕ) × Finset (Fin m) // b * m + (∑ j, p.1 j) + p.2.card = n}
+
+private def partAt (b : ℕ) {m : ℕ} (f : Fin m → ℕ) (s : Finset (Fin m))
+    (j : Fin m) : ℕ × ℕ :=
+  let c := b + if j ∈ s then 1 else 0
+  (c + f j, c)
+
+private theorem sum_partAt (b : ℕ) {m : ℕ} (f : Fin m → ℕ) (s : Finset (Fin m)) :
+    ((List.ofFn (partAt b f s)).map Prod.fst).sum = b * m + (∑ j, f j) + s.card := by
+  rw [List.map_ofFn, List.sum_ofFn]
+  simp only [Function.comp_apply, partAt, Finset.sum_add_distrib]
+  have hs : (∑ j : Fin m, if j ∈ s then (1 : ℕ) else 0) = s.card := by
+    rw [← Finset.sum_filter]
+    simp
+  rw [hs]
+  simp [Nat.mul_comm, add_right_comm]
+
+private noncomputable def allowedLengthEquiv (b n m : ℕ) (hb : 1 ≤ b) :
+    AllowedVectors b n m ≃ {p : ColorCompAllowed b n // p.val.length = m} := by
+  let decode (p : AllowedVectors b n m) : {p : ColorCompAllowed b n // p.val.length = m} :=
+    ⟨⟨List.ofFn (partAt b p.1.1 p.1.2), by
+      refine ⟨List.forall_mem_ofFn_iff.mpr ?_, (sum_partAt b _ _).trans p.2⟩
+      intro j
+      by_cases hj : j ∈ p.1.2 <;> simp [partAt, hj, hb]⟩, List.length_ofFn⟩
+  refine Equiv.ofBijective decode ⟨?_, ?_⟩
+  · intro p q h
+    have hparts (j : Fin m) : partAt b p.1.1 p.1.2 j = partAt b q.1.1 q.1.2 j :=
+      congrFun (List.ofFn_injective (congrArg (fun r => r.val.val) h)) j
+    have hs : p.1.2 = q.1.2 := by
+      ext j
+      have hc := congrArg Prod.snd (hparts j)
+      by_cases hp : j ∈ p.1.2 <;> by_cases hq : j ∈ q.1.2 <;>
+        simp [partAt, hp, hq] at hc ⊢
+    apply Subtype.ext
+    refine Prod.ext (funext fun j => ?_) hs
+    have hf := congrArg Prod.fst (hparts j)
+    simpa [partAt, hs] using hf
+  · intro p
+    let get (j : Fin m) := p.val.val[j.val]'(by simpa only [p.2] using j.isLt)
+    let f (j : Fin m) := (get j).1 - (get j).2
+    let s := Finset.univ.filter fun j : Fin m => (get j).2 = b + 1
+    have hparts (j : Fin m) : partAt b f s j = get j := by
+      have hj : get j ∈ p.val.val := List.getElem_mem _
+      have h := p.val.property.1 _ hj
+      have hc : b + (if j ∈ s then 1 else 0) = (get j).2 := by
+        rcases h.2.2 with hc | hc <;> simp [s, hc]
+      apply Prod.ext
+      · simp [partAt, hc, f, Nat.add_sub_of_le h.2.1]
+      · exact hc
+    have hlist : List.ofFn (partAt b f s) = p.val.val := by
+      rw [show partAt b f s = get from funext hparts]
+      apply List.ext_getElem
+      · simp [p.2]
+      · intro j hj hj'
+        rw [List.getElem_ofFn]
+    refine ⟨⟨(f, s), ?_⟩, Subtype.ext (Subtype.ext hlist)⟩
+    rw [← sum_partAt, hlist]
+    exact p.val.property.2
+
+private def allowedLength {b n : ℕ} (hn : 1 ≤ n) (p : ColorCompAllowed b n) :
+    ↥(Finset.Icc 1 n) := by
+  refine ⟨p.val.length, Finset.mem_Icc.mpr ⟨?_, ?_⟩⟩
+  · cases h : p.val with
+    | nil =>
+      have hs := p.property.2
+      simp [h] at hs
+      omega
+    | cons => simp
+  · have h := List.length_le_sum_of_one_le (p.val.map Prod.fst) (by
+      intro k hk
+      obtain ⟨pc, hpc, rfl⟩ := List.mem_map.mp hk
+      exact (p.property.1 pc hpc).1.trans (p.property.1 pc hpc).2.1)
+    simpa only [List.length_map, p.property.2] using h
+
+private abbrev Excesses (m i : ℕ) := {f : Fin m → ℕ // ∑ j, f j = i}
+
+private abbrev UpperPositions (m k : ℕ) := {s : Finset (Fin m) // s.card = k}
+
+-- For a feasible length, the sum of the excesses determines the number of upper colors.
+private def allowedExcessEquiv {b n m : ℕ} (h : b * m ≤ n) :
+    AllowedVectors b n m ≃
+      Σ i : ↥(Finset.Icc 0 (n - b * m)), Excesses m i × UpperPositions m (n - b * m - i) where
+  toFun p :=
+    ⟨⟨∑ j, p.1.1 j, Finset.mem_Icc.mpr ⟨Nat.zero_le _, by have := p.2; omega⟩⟩,
+      ⟨⟨p.1.1, rfl⟩, ⟨p.1.2, by
+        change p.1.2.card = n - b * m - (∑ j, p.1.1 j)
+        have := p.2
+        omega⟩⟩⟩
+  invFun p := ⟨(p.2.1.1, p.2.2.1), by
+    have hi := (Finset.mem_Icc.mp p.1.2).2
+    have hf := p.2.1.2
+    have hs := p.2.2.2
+    change b * m + (∑ j, p.2.1.1 j) + p.2.2.1.card = n
+    omega⟩
+  left_inv p := rfl
+  right_inv := by
+    rintro ⟨⟨i, hi⟩, ⟨f, hf⟩, ⟨s, hs⟩⟩
+    change (∑ j, f j) = i at hf
+    subst i
+    rfl
+
+@[instance_reducible]
+private noncomputable def excessesFintype (m i : ℕ) : Fintype (Excesses m i) :=
+  Fintype.ofEquiv _ (Sym.equivNatSumOfFintype (Fin m) i)
+
+private theorem isEmpty_allowedVectors {b n m : ℕ} (h : ¬ b * m ≤ n) :
+    IsEmpty (AllowedVectors b n m) :=
+  ⟨fun p => h (by have := p.2; omega)⟩
+
+private theorem finite_allowedVectors (b n m : ℕ) : Finite (AllowedVectors b n m) := by
+  by_cases h : b * m ≤ n
+  · let (i : ↥(Finset.Icc 0 (n - b * m))) := excessesFintype m i
+    exact Finite.of_equiv _ (allowedExcessEquiv h).symm
+  · let := isEmpty_allowedVectors h
+    infer_instance
+
+private theorem card_excesses (m i : ℕ) (hm : 1 ≤ m) :
+    Nat.card (Excesses m i) = Nat.choose (i + m - 1) (m - 1) := by
+  classical
+  rw [← Nat.card_congr (Sym.equivNatSumOfFintype (Fin m) i), Sym.natCard_sym_eq_choose,
+    Nat.card_fin]
+  rw [Nat.add_comm m i, ← Nat.choose_symm (by omega : i ≤ i + m - 1),
+    show i + m - 1 - i = m - 1 by omega]
+
+private theorem card_allowedVectors (b n m : ℕ) (hm : 1 ≤ m) :
+    Nat.card (AllowedVectors b n m) =
+      ∑ i ∈ Finset.Icc 0 (n - b * m),
+        if b * m + i ≤ n then Nat.choose (i + m - 1) (m - 1) * Nat.choose m (n - b * m - i)
+        else 0 := by
+  by_cases h : b * m ≤ n
+  · let (i : ↥(Finset.Icc 0 (n - b * m))) := excessesFintype m i
+    rw [Nat.card_congr (allowedExcessEquiv h), Nat.card_sigma,
+      ← Finset.sum_coe_sort (Finset.Icc 0 (n - b * m))]
+    apply Finset.sum_congr rfl
+    intro i _
+    have hi := (Finset.mem_Icc.mp i.property).2
+    rw [ite_eq_left (by omega), Nat.card_prod, card_excesses m i hm]
+    simp [UpperPositions, Nat.card_eq_fintype_card, Fintype.card_finset_len]
+  · rw [Nat.card_eq_zero.mpr (.inl (isEmpty_allowedVectors h))]
+    exact (Finset.sum_eq_zero fun i _ => ite_eq_right (by omega)).symm
+
+/-- **Double-sum formula for n-color compositions with two consecutive colors.** Let $b \ge 1$
+and $n \ge 1$ be natural numbers, and let $\operatorname{cco}_{b,b+1}(n)$ be the number of
+$n$-color compositions of $n$ in which every part has color $b$ or $b+1$. Then
+$$\operatorname{cco}_{b,b+1}(n) = \sum_{m=1}^{n} \sum_{i=0}^{n-bm}
+\binom{i+m-1}{m-1} \binom{m}{n-bm-i},$$
+where the upper limit $n - bm$ is read as $0$ when $bm > n$, and every term with $bm + i > n$
+is $0$.
+
+Source: Brian Hopkins and Hua Wang, "Allowing or Prohibiting
+Two Consecutive Colors in `n`-Color Compositions",
+Proposition 1. -/
+theorem ccoAllowed_eq_sum (b n : ℕ) (hb : 1 ≤ b) (hn : 1 ≤ n) :
+    ccoAllowed b n =
+      ∑ m ∈ Finset.Icc 1 n,
+        ∑ i ∈ Finset.Icc 0 (n - b * m),
+          if b * m + i ≤ n then
+            Nat.choose (i + m - 1) (m - 1) *
+              Nat.choose m (n - b * m - i)
+          else 0 := by
+  let e : ColorCompAllowed b n ≃ Σ m : ↥(Finset.Icc 1 n), AllowedVectors b n m :=
+    (Equiv.sigmaFiberEquiv (allowedLength hn)).symm.trans <|
+      Equiv.sigmaCongrRight fun m =>
+        (Equiv.subtypeEquivRight fun _ => Subtype.ext_iff).trans (allowedLengthEquiv b n m hb).symm
+  let (m : ↥(Finset.Icc 1 n)) := finite_allowedVectors b n m
+  rw [ccoAllowed, Nat.card_congr e, Nat.card_sigma, ← Finset.sum_coe_sort (Finset.Icc 1 n)]
+  exact Finset.sum_congr rfl fun m _ => card_allowedVectors b n m (Finset.mem_Icc.mp m.2).1
 
 end MathlibExt.Combinatorics.Enumerative.NColorCompositionsWanted

@@ -30,6 +30,16 @@ example : ccoAllowed 1 4 = 17 := by
   rw [ccoAllowed_one_eq_sum (n := 4) (hn := by decide)]
   decide
 
+-- The nonzero terms have (m, i) = (1, 3), (1, 2), and (2, 0) or (2, 1).
+example : ccoAllowed 2 5 = 6 := by
+  rw [ccoAllowed_eq_sum 2 5 (by decide) (by decide)]
+  decide
+
+-- No part fits below the smaller allowed color.
+example : ccoAllowed 3 2 = 0 := by
+  rw [ccoAllowed_eq_sum 3 2 (by decide) (by decide)]
+  decide
+
 -- Color 2 is legal for a part of size 2, but not for a singleton.
 example : ∃ p : ColorCompAllowed 1 2, p.val = [(2, 2)] := by
   exact ⟨⟨[(2, 2)], by simp⟩, rfl⟩
