@@ -17,7 +17,7 @@ import MathlibExt.Probability.Distributions.GaussianCdf
 @[expose] public section
 
 open Filter Function MeasureTheory ProbabilityTheory Set BerryEsseenModel
-open scoped NNReal Topology
+open scoped Topology
 
 namespace BerryEsseenWanted
 
