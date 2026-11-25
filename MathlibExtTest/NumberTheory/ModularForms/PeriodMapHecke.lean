@@ -16,7 +16,7 @@ public import MathlibExt.NumberTheory.ModularForms.PeriodMapHecke
 with the cohomological Hecke operator, for a prime `ℓ` not dividing the
 level. This is the statement of `ModularCurve.periodMap_heckeTLin` with its
 source form preserved. -/
-theorem exactSource {N : ℕ} {ℓ : ℕ} (hℓ : ℓ.Prime) (hℓN : ¬ ℓ ∣ N)
+private theorem exactSource {N : ℕ} {ℓ : ℕ} (hℓ : ℓ.Prime) (hℓN : ¬ ℓ ∣ N)
     (f : CuspForm (CongruenceSubgroup.Gamma0 N) 2) :
     haveI : NeZero ℓ := ⟨hℓ.ne_zero⟩
     ModularCurve.periodMap N (CuspForm.heckeTLin 2 hℓ hℓN f)
