@@ -5,7 +5,6 @@ Topics added since this subject's fields were last revised.
 ## [Part 1 of 10](part-01/README.md)
 
 - [Advection Error](part-01/advection-error/README.md)
-- [Balanced Fault Current](part-01/balanced-fault-current/README.md)
 - [Batch Reactor](part-01/batch-reactor/README.md)
 - [Building Envelope](part-01/building-envelope/README.md)
 - [Cell Transmission](part-01/cell-transmission/README.md)
@@ -21,7 +20,6 @@ Topics added since this subject's fields were last revised.
 
 ## [Part 3 of 10](part-03/README.md)
 
-- [Declared Friis Link](part-03/declared-friis-link/README.md)
 - [Drying](part-03/drying/README.md)
 - [Ensemble Momentum](part-03/ensemble-momentum/README.md)
 
@@ -48,7 +46,6 @@ Topics added since this subject's fields were last revised.
 - [Lossless DCFlow Model](part-06/lossless-dcflow-model/README.md)
 - [Miner Damage](part-06/miner-damage/README.md)
 - [Moving Front](part-06/moving-front/README.md)
-- [Per Unit Bases](part-06/per-unit-bases/README.md)
 - [Perfect Gas Ports](part-06/perfect-gas-ports/README.md)
 
 ## [Part 7 of 10](part-07/README.md)

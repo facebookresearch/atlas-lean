@@ -1,5 +1,3 @@
 # Inverse Calibration Budget
 
-- [Inverse prediction error under bounded parameter errors](inverse-prediction-error-le.md)
-- [Inverse prediction error with known calibration parameters](inverse-prediction-error-le-known-params.md)
-- [Bad-event bound for inverse calibration](inverse-prediction-error-event-measure-l.md)
+The pages of this module are now under [Analytical calibration and inverse prediction](../../../../Chemistry/analytical-chemistry/analytical-calibration-and-inverse-prediction/README.md).

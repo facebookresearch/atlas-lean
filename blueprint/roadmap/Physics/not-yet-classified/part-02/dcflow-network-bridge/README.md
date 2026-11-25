@@ -1,5 +1,3 @@
 # DCFlow Network Bridge
 
-## C. Headline
-
-- [Grounded DC load-flow solve and flow transfer](l2-correct.md)
+The pages of this module are now under [DC power flow](../../../electromagnetism-and-circuits/power-systems/dc-power-flow/README.md).

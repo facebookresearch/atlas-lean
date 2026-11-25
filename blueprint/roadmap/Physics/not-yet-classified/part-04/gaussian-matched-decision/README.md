@@ -1,5 +1,3 @@
 # Gaussian Matched Decision
 
-## C. Bayes optimality
-
-- [Gaussian matched-filter test is Bayes optimal](matched-filter-rule-minimizes-binary-cos.md)
+The pages of this module are now under [Risk and Bayes risk of an estimator](../../../../Probability/statistical-estimation/risk-and-bayes-risk-of-an-estimator/README.md).
