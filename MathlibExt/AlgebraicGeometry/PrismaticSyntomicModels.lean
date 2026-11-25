@@ -45,14 +45,17 @@ variable (p : ℕ) [Fact p.Prime] (A : QuasiSyntomicPrismSites.Ring p)
   (D : ∀ B : Basis p A, InitialLift p (ring p B))
   (Z : ZeroReduction p A D) (T : TwistTower p A D Z)
 
-/-- Completed Frobenius is construction output normalized on actual source coordinates.
-The covering requirement keeps these normalization tests nonvacuous on every basis object.
+/-- A Frobenius on the Nygaard-completed twists `T`: maps of complexes $\varphi_i$ from
+`T.nygaard i` to `T.complex i`, for $i \in \mathbb{Z}$, such that every basis object $B$ has a
+morphism $B \to C$ to a basis object $C$ with coordinates (`Context`) whose ring map is a
+quasisyntomic cover, together with, for every basis object with coordinates `F` and every $i$, a
+realization of the coordinate complexes (`Realization`) whose source map followed by $\varphi_i$
+(evaluated at the basis object) is homotopic to the signed divided Frobenius `phiSigned` of the
+coordinates followed by its target map.
 
-The normalization pins the evaluated Frobenius only on the image of the uncompleted coordinates
-`N^{≥i}Δ_S → Δ_S`; the complexes `T.nygaard i` and `T.complex i` are Nygaard-completed, and the
-continuous extension (from the Nygaard topology to the `(p, I)`-adic one) that determines it on
-the completion is not encoded. So a `FrobeniusModel` is not unique, and statements that depend on
-the choice of Frobenius are requested for a model chosen jointly with them. -/
+These conditions constrain $\varphi_i$ only through its composites with the source maps of the
+realizations, which are defined on the uncompleted coordinate complexes (the Nygaard steps of the
+initial prism), whereas `T.nygaard i` and `T.complex i` are Nygaard-completed. -/
 structure FrobeniusModel where
   phi : ∀ i : ℤ, T.nygaard i ⟶ T.complex i
   coordinateCover : ∀ B : Basis p A, ∃ (C : Basis p A) (f : B ⟶ C),

@@ -64,7 +64,13 @@ def normalizedUnit {X Y : Scheme.{0}} (f : X ⟶ Y) (K : Cochains Y)
       ((Scheme.Modules.pullback f).mapHomologicalComplex (.up ℤ) |>.obj K) ≫
         (derivedPushforward f).map (inv ((derivedPullbackCounit f).app K))
 
-/-- Source-covered adjunction of the fixed native functors with its actual cochain unit. -/
+/-- An adjunction $Lf^* \dashv Rf_*$ between the total derived pullback and direct image along a
+morphism of schemes $f : X \to Y$ (assumed to exist: `HasDerivedPullbacks`,
+`HasDerivedPushforwards`), whose unit is normalized by the ordinary unit: for every cochain complex
+$K$ of $\mathcal{O}_Y$-modules such that the canonical map $Lf^*(QK) \to Q(f^*K)$ is an
+isomorphism, the unit at $QK$ is `normalizedUnit f K h`, the composite of the localized termwise
+unit $QK \to Q(f_*f^*K)$, the canonical map $Q(f_*f^*K) \to Rf_*(Q(f^*K))$ and $Rf_*$ of the
+inverse of that isomorphism. Here $Q$ is the localization functor and $f^*$, $f_*$ act termwise. -/
 structure PullPushAdjunction {X Y : Scheme.{0}} (f : X ⟶ Y) where
   adjunction : derivedPullback f ⊣ derivedPushforward f
   normalized : ∀ (K : Cochains Y) (h : IsIso ((derivedPullbackCounit f).app K)),
@@ -87,7 +93,13 @@ def compositeCounit {X Y Z : Scheme.{0}} (f : X ⟶ Y) (g : Y ⟶ Z) (K : Cochai
       ((Scheme.Modules.pullback g).mapHomologicalComplex (.up ℤ) |>.obj K) ≫
         DerivedCategory.Q.map (cochainPullbackComp f g K).hom
 
-/-- Source-covered derived pasting, normalized on every ordinary cochain representative. -/
+/-- A natural isomorphism $Lf^* \circ Lg^* \cong L(g \circ f)^*$ of total derived pullbacks along
+morphisms of schemes $f : X \to Y$ and $g : Y \to Z$ (assumed to exist), normalized on every
+cochain complex $K$ of $\mathcal{O}_Z$-modules: its component at $QK$, followed by the canonical
+map $L(g \circ f)^*(QK) \to Q((g \circ f)^*K)$, is `compositeCounit f g K`, the composite of
+$Lf^*$ of the canonical map $Lg^*(QK) \to Q(g^*K)$, the canonical map
+$Lf^*(Q(g^*K)) \to Q(f^*g^*K)$ and the localized termwise isomorphism $f^*g^* \cong (g \circ f)^*$.
+Here $Q$ is the localization functor and $f^*$, $g^*$ act termwise. -/
 structure PullbackPasting {X Y Z : Scheme.{0}} (f : X ⟶ Y) (g : Y ⟶ Z) where
   comparison : derivedPullback g ⋙ derivedPullback f ≅ derivedPullback (f ≫ g)
   normalized : ∀ K : Cochains Z,

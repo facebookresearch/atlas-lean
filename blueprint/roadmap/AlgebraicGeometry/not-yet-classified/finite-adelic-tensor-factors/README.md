@@ -1,0 +1,15 @@
+# Finite Adelic Tensor Factors
+
+- [Completed Tensor](completed-tensor.md)
+- [Factorization](factorization.md)
+- [Residue](residue.md)
+- [Factor Map](factor-map.md)
+- [Residue Map](residue-map.md)
+- [Factor Length](factor-length.md)
+- [Residue Rank](residue-rank.md)
+- [Metric Weight](metric-weight.md)
+- [Factor Norm](factor-norm.md)
+- [Completion Data](completion-data.md)
+- [Completion Map](completion-map.md)
+- [Completion Rank](completion-rank.md)
+- [Completed Norm](completed-norm.md)

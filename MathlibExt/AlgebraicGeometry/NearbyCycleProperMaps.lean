@@ -46,15 +46,20 @@ abbrev pushforwardSource {V W : TopCat.{0}} (f : V ⟶ W) :
     QCochain V ⥤ QDerived W :=
   cochainPushforward f ⋙ DerivedCategory.Q
 
-/-- Generic existence of the actual right Kan-derived functor at this
-particular continuous map. No global provider is asserted. -/
+/-- For a continuous map $f : V ⟶ W$, an instance asserts that the functor `pushforwardSource f`
+(direct image of cochain complexes of sheaves of $ℚ$-vector spaces on $V$, followed by the
+localization to the derived category of $W$) has a right derived functor with respect to
+quasi-isomorphisms. -/
 class HasDerivedPushforward {V W : TopCat.{0}} (f : V ⟶ W) : Prop where
   [hasDerived : (pushforwardSource f).HasRightDerivedFunctor
     (HomologicalComplex.quasiIso (QSheaf V) (.up ℤ))]
 
 attribute [instance] HasDerivedPushforward.hasDerived
 
-/-- The actual Rf*, fixed by Mathlib's right-derived construction. -/
+/-- The derived direct image $Rf_*$ from the derived category of sheaves of $\mathbb{Q}$-vector
+spaces on $V$ to that on $W$, for a continuous map $f : V \to W$: the total right derived functor,
+with respect to quasi-isomorphisms, of the direct image of cochain complexes followed by the
+localization functor (`pushforwardSource f`). -/
 def derivedPushforward {V W : TopCat.{0}} (f : V ⟶ W) [HasDerivedPushforward f] :
     QDerived V ⥤ QDerived W :=
   (pushforwardSource f).totalRightDerived DerivedCategory.Q
@@ -295,9 +300,12 @@ def coverPushInterchange {X Y : ComplexScheme}
     derivedPushforwardCongr (coverMap_square G) ≪≫
       (derivedPushforwardComp (coverProjection X s) (spaceMap G.g)).symm
 
-/-- The actual proper-nearby comparison: first the cover base-change
-mate, then direct-image composition, then the zero-fiber base-change mate.
-Its geometric invertibility is requested separately. -/
+/-- For a morphism $G$ from the zero fibre $A$ of $s$ on $X$ to the zero fibre $B$ of $t$ on $Y$
+(maps $g$ and $g_0$ on complex points), with the given derived data `DiagramDerivedData G`: the
+natural map $ψ_B ∘ Rg_* ⟶ Rg_{0*} ∘ ψ_A$, where $ψ = i^* Rq_* q^*$ is the nearby-cycle formula
+`formulaNearby` on the exponential cover, composed of the base-change map of the cover square,
+the interchange of derived direct images in that square (`coverPushInterchange`) and the
+base-change map of the zero-fibre square. -/
 def properNearbyComparison {X Y : ComplexScheme}
     {s : Γ(X.left, ⊤)} {t : Γ(Y.left, ⊤)}
     {A : ZeroFiber X s} {B : ZeroFiber Y t} (G : FunctionMorphism A B)
@@ -327,14 +335,17 @@ def properNearbyComparison {X Y : ComplexScheme}
     whiskerLeft P₁ (Functor.associator R₁ J₁ S₀).inv ≫
     (Functor.associator P₁ (R₁ ⋙ J₁) S₀).inv
 
-/-- An existence-only proper comparison of the actual cycle triangles on bounded
-constructible source complexes. The first two components are fixed by
-the actual base-change maps; monodromy is the actual deck map. The third
-(vanishing-cycle) component is only required to complete these to an
-isomorphism of triangles intertwining the vanishing monodromies: a triangle
-does not determine the map on cones, so this records the existence of a
-compatible comparison, not a canonical cone map, and no coherence under
-composition of proper maps is required. -/
+/-- For a morphism $G$ from the zero fibre $A$ of $s$ on $X$ to the zero fibre $B$ of $t$ on $Y$
+(maps $g$ and $g_0$ on complex points) with the given derived data, chosen functorial resolutions
+$R_1$, $R_2$ of the exponential covers, and comparisons $E_1$, $E_2$ of these resolutions with the
+deck translation by 1 for which the nearby monodromy fixes the specialization map (`hc₁`, `hc₂`):
+an isomorphism of cycle triangles, natural in the bounded constructible complex $K$ on $X$, from
+the cycle triangle of $B$ at $Rg_* K$ to the image under $Rg_{0*}$ of the cycle triangle of $A$
+at $K$, whose first component is the base-change map of the zero-fibre square (through
+`cycleFirstIso`), whose second component is `properNearbyComparison G` (through
+`nearbyFormulaIso`) and intertwines the nearby monodromies, and whose third (vanishing-cycle)
+component intertwines the vanishing monodromies. The third component is not otherwise
+constrained. -/
 structure ProperCycleComparison {X Y : ComplexScheme}
     {s : Γ(X.left, ⊤)} {t : Γ(Y.left, ⊤)}
     {A : ZeroFiber X s} {B : ZeroFiber Y t} (G : FunctionMorphism A B)
