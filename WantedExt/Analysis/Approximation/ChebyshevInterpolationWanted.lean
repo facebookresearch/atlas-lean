@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
+public import MathlibExt.Analysis.Approximation.ChebyshevAnalytic
 public import MathlibExt.Analysis.Approximation.ChebyshevLebesgue
 public import MathlibExt.Analysis.Approximation.ChebyshevSeries
 public import MathlibExt.Analysis.Approximation.Equioscillation
@@ -44,12 +45,14 @@ The definitions above and the convergence theorem for Lipschitz functions are pr
 The Lebesgue constant bound `sum_abs_lagrange_basis_chebyshev_le` (ATAP Theorem 15.2) is
 provided by `MathlibExt.Analysis.Approximation.ChebyshevLebesgue`.
 
+The coefficient bound `norm_chebCoeff_le_of_analytic` (ATAP Theorem 8.1) is provided by
+`MathlibExt.Analysis.Approximation.ChebyshevAnalytic`: if `f` is analytic in `E_ρ` with
+`|f| ≤ M` there, then `|a_0| ≤ M` and `|a_k| ≤ 2 M ρ^{-k}` for `k ≥ 1`.
+
 Wanted statements:
 
-* `norm_chebCoeff_le_of_analytic` (ATAP Theorem 8.1): if `f` is analytic in `E_ρ` with
-  `|f| ≤ M` there, then `|a_0| ≤ M` and `|a_k| ≤ 2 M ρ^{-k}` for `k ≥ 1`.
 * `norm_sub_chebProj_le_of_analytic`, `norm_sub_chebInterp_le_of_analytic` (ATAP Theorem 8.2):
-  under the same hypotheses `‖f - f_n‖ ≤ 2 M ρ^{-n} / (ρ - 1)` and
+  under the hypotheses of Theorem 8.1, `‖f - f_n‖ ≤ 2 M ρ^{-n} / (ρ - 1)` and
   `‖f - p_n‖ ≤ 4 M ρ^{-n} / (ρ - 1)` on `[-1, 1]`.
 * `exists_equioscillates_of_continuousOn` (ATAP Theorem 10.1, the existence and necessity half
   of Chebyshev's equioscillation theorem): a continuous function on `[a, b]` has a polynomial
@@ -79,15 +82,6 @@ For the minimax property `2^{1-n} T_n` that underlies these bounds see
 open Polynomial Real
 
 namespace MathlibExt.Analysis.Approximation.ChebyshevInterpolationWanted
-
-/-- **Chebyshev coefficients of analytic functions** (ATAP Theorem 8.1): if `f` is analytic in the
-open Bernstein ellipse `E_ρ`, `ρ > 1`, with `|f| ≤ M` there, then `|a_0| ≤ M` and
-`|a_k| ≤ 2 M ρ^{-k}` for `k ≥ 1`. -/
-theorem_wanted norm_chebCoeff_le_of_analytic {ρ M : ℝ} (hρ : 1 < ρ) {f : ℂ → ℂ}
-    (hf : DifferentiableOn ℂ f (bernsteinEllipse ρ))
-    (hM : ∀ z ∈ bernsteinEllipse ρ, ‖f z‖ ≤ M) :
-    ‖chebCoeff (fun x => f x) 0‖ ≤ M ∧
-      ∀ k : ℕ, 1 ≤ k → ‖chebCoeff (fun x => f x) k‖ ≤ 2 * M * (ρ ^ k)⁻¹
 
 /-- **Convergence of Chebyshev projections for analytic functions** (ATAP Theorem 8.2, first
 bound): under the hypotheses of Theorem 8.1, `|f(x) - f_n(x)| ≤ 2 M ρ^{-n} / (ρ - 1)` on
