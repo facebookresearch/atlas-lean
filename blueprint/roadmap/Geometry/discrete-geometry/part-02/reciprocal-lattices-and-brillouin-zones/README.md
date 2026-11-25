@@ -6,10 +6,10 @@
 - [Columns of the cross-product matrix](col-cross-columns.md)
 - [The cross-product matrix is the transposed adjugate](cross-columns-eq-transpose-adjugate.md)
 - [Triple products of the columns](transpose-mul-cross-columns.md)
-- [Scaled cross products are dual to the columns](transpose-mul-smul-cross-columns.md)
+- [For det B ≠ 0, the scaled cross products are 2π-dual to the columns](transpose-mul-smul-cross-columns.md)
 - [Reciprocal lattice](reciprocal.md)
 - [Basis matrix of the reciprocal lattice](reciprocal-basis-matrix.md)
-- [Cell volume as a triple product](det-basis-matrix-eq-triple-product.md)
+- [Oriented cell volume as a triple product](det-basis-matrix-eq-triple-product.md)
 - [Cross-product formula for reciprocal vectors](reciprocal-primitive-vector.md)
 
 ## B. Duality, cell volume and the double reciprocal
@@ -18,7 +18,7 @@
 - [Duality of the reciprocal lattice in matrix form](transpose-mul-reciprocal-basis-matrix.md)
 - [Duality of the reciprocal basis](inner-primitive-vector-reciprocal.md)
 - [Duality of the reciprocal basis, factors swapped](inner-reciprocal-primitive-vector.md)
-- [The reciprocal basis is the unique dual basis](reciprocal-basis-matrix-eq-iff.md)
+- [The reciprocal basis is the unique 2π-dual basis](reciprocal-basis-matrix-eq-iff.md)
 - [The reciprocal basis matrix is the scaled inverse transpose](reciprocal-basis-matrix-eq-inv-transpose.md)
 - [Oriented volume of the reciprocal cell](det-reciprocal-basis-matrix.md)
 - [Volume of the reciprocal primitive cell](volume-parallelepiped-reciprocal.md)
@@ -31,7 +31,7 @@
 - [Reciprocal and direct lattice vectors pair to multiples of two pi](inner-reciprocal-lattice-vector.md)
 - [The reciprocal lattice consists of the wave vectors with integral phases](mem-lattice-reciprocal-iff.md)
 - [Plane-wave form of the reciprocal lattice](mem-lattice-reciprocal-iff-exp.md)
-- [The reciprocal lattice depends only on the lattice](lattice-reciprocal-relabel.md)
+- [Unimodular relabeling leaves the reciprocal lattice unchanged](lattice-reciprocal-relabel.md)
 
 ## D. Cubic lattices
 

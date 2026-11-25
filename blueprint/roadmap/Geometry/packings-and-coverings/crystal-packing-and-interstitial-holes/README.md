@@ -32,7 +32,7 @@
 
 ## D. Radius-ratio values and empirical predictive use
 
-- [Triangular radius ratio](radius-ratio-eq-two-div-sqrt-three-sub-o.md)
+- [Radius ratio 2/√3 − 1 from the centre distance 2R / √3](radius-ratio-eq-two-div-sqrt-three-sub-o.md)
 - [Tetrahedral radius ratio](radius-ratio-eq-sqrt-three-halves-sub-on.md)
 - [Octahedral radius ratio](radius-ratio-eq-sqrt-two-sub-one.md)
-- [Cubic radius ratio](radius-ratio-eq-sqrt-three-sub-one.md)
+- [Radius ratio √3 − 1 from the centre distance √3 a / 2](radius-ratio-eq-sqrt-three-sub-one.md)

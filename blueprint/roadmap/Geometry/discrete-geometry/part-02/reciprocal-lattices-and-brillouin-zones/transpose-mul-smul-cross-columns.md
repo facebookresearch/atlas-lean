@@ -1,3 +1,5 @@
-# Scaled cross products are dual to the columns
+# For det B ≠ 0, the scaled cross products are 2π-dual to the columns
 
-For a real $3 \times 3$ matrix $B$ with columns $a_0, a_1, a_2$, let $X(B)$ be the matrix with columns $a_1 \times a_2$, $a_2 \times a_0$, $a_0 \times a_1$. If $\det B \ne 0$, then $B^{\mathsf T}\bigl((2\pi/\det B)\,X(B)\bigr) = 2\pi I$.
+For a real $3 \times 3$ matrix $B$ with columns $a_0, a_1, a_2$, let $X(B)$ be the matrix with
+columns $a_1 \times a_2$, $a_2 \times a_0$, $a_0 \times a_1$. If $\det B \ne 0$, then
+$B^{\mathsf T}\bigl((2\pi/\det B)\,X(B)\bigr) = 2\pi I$.

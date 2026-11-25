@@ -2,7 +2,7 @@
 
 ## A. Dispersion relation
 
-- [Normal-mode frequencies of a monatomic chain](chain-normal-mode-angular-frequency.md)
+- [Normal-mode angular frequencies of the periodic monatomic chain](chain-normal-mode-angular-frequency.md)
 
 ## B. Basic properties
 
